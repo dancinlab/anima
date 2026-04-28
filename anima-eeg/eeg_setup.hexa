@@ -18,6 +18,7 @@
 //     adjust             → electrode_adjustment_helper.hexa (live single-channel touch)
 //     rich               → electrode_helper_rich.hexa    (Rich TUI variant)
 //     full               → full_helmet_view.hexa         (16ch concurrent 5-state)
+//     record             → eeg_recorder.hexa             (segmented .npy task recording)
 //     list               → enumerate available subcommands + their files
 //     selftest           → run --selftest on every backend, summarize PASS/FAIL
 //
@@ -53,6 +54,7 @@ fn _backend_for(sub: string) -> string {
     if sub == "adjust"             { return "anima-eeg/electrode_adjustment_helper.hexa" }
     if sub == "rich"               { return "anima-eeg/electrode_helper_rich.hexa" }
     if sub == "full"               { return "anima-eeg/full_helmet_view.hexa" }
+    if sub == "record"             { return "anima-eeg/eeg_recorder.hexa" }
     return ""
 }
 
@@ -67,6 +69,7 @@ fn _print_usage() {
     eprintln("  adjust              electrode_adjustment               live single-channel touch")
     eprintln("  rich                electrode_helper_rich              Rich TUI variant")
     eprintln("  full                full_helmet_view                   16ch concurrent 5-state")
+    eprintln("  record              eeg_recorder                       segmented .npy task recording")
     eprintln("  list                enumerate subcommands + backends")
     eprintln("  selftest            run --selftest on every backend")
     eprintln("")
@@ -79,7 +82,7 @@ fn _print_usage() {
 fn _print_list() {
     println("── eeg_setup available backends ──")
     println("schema: " + SCHEMA)
-    let subs = ["health", "impedance", "impedance_validate", "headplot", "adjust", "rich", "full"]
+    let subs = ["health", "impedance", "impedance_validate", "headplot", "adjust", "rich", "full", "record"]
     let mut i = 0
     while i < len(subs) {
         let s = subs[i]
@@ -138,7 +141,7 @@ fn _run_backend_stream(backend: string, fwd_args: array) -> int {
 fn _run_selftest_all() -> int {
     println("── eeg_setup selftest dispatcher ──")
     println("schema: " + SCHEMA)
-    let subs = ["health", "impedance", "impedance_validate", "headplot", "adjust", "rich", "full"]
+    let subs = ["health", "impedance", "impedance_validate", "headplot", "adjust", "rich", "full", "record"]
     let mut pass = 0
     let mut fail = 0
     let mut details = []

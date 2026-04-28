@@ -41,9 +41,13 @@
 //   hexa run anima-eeg/eeg_recorder.hexa --selftest
 //   hexa run anima-eeg/eeg_recorder.hexa --record --task resting_eyes_open --duration 300 --segment 60
 //   hexa run anima-eeg/eeg_recorder.hexa --tasks resting_eyes_open,nback_2back --per-task 180
+//
+//  @resolver-bypass(reason="darwin-native: globs /dev/cu.usbserial-* and uses
+//                   .venv-eeg/bin/python BrainFlow venv. Hetzner / linux pods
+//                   do not expose host USB nor local venv.")
 
 let SCHEMA              = "anima-eeg/eeg_recorder/1"
-let HELPER_PATH         = "/tmp/anima_eeg_recorder_helper.hexa_tmp"
+let HELPER_PATH         = "/tmp/anima_eeg_recorder_helper.py"
 
 let DEFAULT_BOARD_ID            = 2
 let DEFAULT_BOARD_NAME          = "cyton_daisy"
@@ -106,7 +110,7 @@ fn _write_helper() {
 
     parts.push("USB_SERIAL_GLOB = '/dev/cu.usbserial-*'\n")
     parts.push("USB_MODEM_GLOB  = '/dev/cu.usbmodem*'\n")
-    parts.push("VENV_PYTHON     = '" + DEFAULT_VENV_PYTHON + "'\n")
+    parts.push("VENV_PYTHON     = os.environ.get('ANIMA_EEG_VENV_PYTHON', '" + DEFAULT_VENV_PYTHON + "')\n")
     parts.push("DEFAULT_OUTPUT_DIR = '" + DEFAULT_OUTPUT_DIR + "'\n\n")
 
     parts.push("WELL_KNOWN_TASKS = {\n")
@@ -153,7 +157,7 @@ fn _write_helper() {
     parts.push("    return datetime.datetime.now(datetime.timezone.utc).strftime('%Y%m%dT%H%M%SZ')\n\n")
 
     parts.push("RECORD_PY = textwrap.dedent('''\n")
-    parts.push("    import json, sys, time\n")
+    parts.push("    import json, os, sys, time\n")
     parts.push("    import numpy as np\n")
     parts.push("    from brainflow.board_shim import BoardShim, BrainFlowInputParams, BoardIds\n")
     parts.push("    BOARD_ID = int(sys.argv[1]); PORT = sys.argv[2]\n")
@@ -192,9 +196,19 @@ fn _write_helper() {
     parts.push("    r = subprocess.run([VENV_PYTHON, '-c', RECORD_PY,\n")
     parts.push("                        str(board_id), port, str(duration), output_path],\n")
     parts.push("                       capture_output=True, text=True, timeout=duration + 60)\n")
-    parts.push("    if r.returncode != 0 or not r.stdout.strip(): return None\n")
-    parts.push("    try: return json.loads(r.stdout.strip().splitlines()[-1])\n")
-    parts.push("    except Exception: return None\n\n")
+    parts.push("    if r.returncode != 0 or not r.stdout.strip():\n")
+    parts.push("        # raw#12 silent-error-ban: surface inner failure to stderr.\n")
+    parts.push("        sys.stderr.write(f'record_one_segment subprocess rc={r.returncode}\\n')\n")
+    parts.push("        if r.stderr: sys.stderr.write(f'inner_stderr: {r.stderr.strip()[:400]}\\n')\n")
+    parts.push("        return None\n")
+    parts.push("    try:\n")
+    parts.push("        payload = json.loads(r.stdout.strip().splitlines()[-1])\n")
+    parts.push("        if payload.get('rc', 0) != 0:\n")
+    parts.push("            sys.stderr.write(f'record_one_segment payload err: {payload.get(\"err\",\"\")[:400]}\\n')\n")
+    parts.push("        return payload\n")
+    parts.push("    except Exception as exc:\n")
+    parts.push("        sys.stderr.write(f'record_one_segment json parse fail: {exc!r}\\n')\n")
+    parts.push("        return None\n\n")
 
     parts.push("def cmd_record(args):\n")
     parts.push("    port = choose_port(args)\n")
@@ -363,7 +377,11 @@ fn _write_helper() {
 }
 
 fn _run_helper(args: string) -> list {
-    let cmd = "python3 " + HELPER_PATH + " " + args
+    // raw#10 honest: must use .venv-eeg/bin/python (brainflow installed there).
+    // System python3 lacks brainflow → segment failed (verdict FAIL). Mirror
+    // board_health_check.hexa / calibrate.hexa canonical venv pattern.
+    let venv_py = DEFAULT_VENV_PYTHON
+    let cmd = venv_py + " " + HELPER_PATH + " " + args
     let r = exec_with_status(cmd)
     return [to_string(r[0]).trim(), to_int(r[1])]
 }
