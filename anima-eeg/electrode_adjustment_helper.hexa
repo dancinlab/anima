@@ -388,11 +388,12 @@ def run_selftest():
     out_kv('verdict', 'ALL_OK')
     return 0
 
-def run_live(board_id, port):
+def run_live(board_id, port, fps=60):
     '''Single-BrainFlow-session live touch detector.
-    Opens session once, loops 1s ticks, renders ASCII with ANSI clear+home.
-    Rolling baseline (in-memory deque) per channel — touch = rms > 2.5x own baseline AND > 30000 absolute.
-    Ctrl-C clean exit.'''
+    Opens session once, loops at fps Hz, renders ASCII via fast in-place ANSI render.
+    Rolling baseline per channel — touch = bi-directional deviation from baseline.
+    Ctrl-C clean exit.
+    fps parameter: 60 default, 120 supported for ultra-responsive display.'''
     try:
         import numpy as np
         from brainflow.board_shim import BoardShim, BrainFlowInputParams, BoardIds
@@ -428,13 +429,22 @@ def run_live(board_id, port):
     n_ch = len(eeg_channels)
     history = []  # list of per-channel rms arrays
     HISTORY_MAX = 5
-    TICK_INTERVAL = 1.0 / 60.0   # 60fps display (16.7ms)
-    HISTORY_TICK_STRIDE = 30     # throttle history sampling: every 30 ticks (~0.5s)
-    JSONL_TICK_STRIDE = 6        # throttle JSONL: every 6 ticks (~10fps logging)
 
-    # Rolling sample buffer per channel — RMS computed over last ROLLING_SIZE samples
-    # (decouples display rate from rms-window). 60 samples @ 125Hz = 480ms window.
-    ROLLING_SIZE = 60
+    # ═══════════════════════════════════════════════════════════════════════
+    # PERFORMANCE TUNING — fps from --fps CLI arg (60 default, 120 supported)
+    # ═══════════════════════════════════════════════════════════════════════
+    FPS = max(10, min(240, int(fps)))   # clamp to sane range
+    HISTORY_INTERVAL_SEC = 0.5          # baseline history sampling cadence (sec)
+    JSONL_LOG_FPS = 10                  # JSONL logging cadence (always sub-FPS)
+    ROLLING_WINDOW_SEC = 0.1            # RMS rolling-window — 100ms snap response
+    # ═══════════════════════════════════════════════════════════════════════
+    # Derived constants (auto-scale with FPS)
+    TICK_INTERVAL = 1.0 / FPS                                            # seconds per tick
+    HISTORY_TICK_STRIDE = max(1, int(FPS * HISTORY_INTERVAL_SEC))        # ticks between history adds
+    JSONL_TICK_STRIDE = max(1, int(FPS / JSONL_LOG_FPS))                 # ticks between JSONL writes
+    ROLLING_SIZE = max(20, int(sample_rate * ROLLING_WINDOW_SEC))        # rolling buffer size in samples
+
+    # Rolling sample buffer per channel
     buffer = np.zeros((n_ch, ROLLING_SIZE), dtype=np.float64)
     buffer_filled = False
 
@@ -445,6 +455,9 @@ def run_live(board_id, port):
         with open(JSONL_PATH, 'w') as _f: pass
     except: pass
 
+    # ESC byte for ANSI escape sequences (defined early — used by both screen_clear and fast_render)
+    ESC = chr(27)
+    NL = chr(10)
     # Fast in-place ANSI render (no full clear, no os.system fork)
     ANSI_HOME = ESC + '[H'
     ANSI_CLR_LINE = ESC + '[K'
@@ -453,12 +466,11 @@ def run_live(board_id, port):
         out = [ANSI_HOME]
         for ln in lines:
             out.append(ln + ANSI_CLR_LINE)
-            out.append('\n')
+            out.append(NL)
         out.append(ANSI_CLR_END)
         sys.stdout.write(''.join(out))
         sys.stdout.flush()
-    # Multi-strategy screen clear: ANSI escape + tput clear (more reliable across terminals)
-    ESC = chr(27)
+    # Multi-strategy screen clear (used at startup only): ANSI escape + tput clear
     def screen_clear():
         sys.stdout.write(ESC + '[H' + ESC + '[2J' + ESC + '[3J')
         sys.stdout.flush()
@@ -476,6 +488,10 @@ def run_live(board_id, port):
 
     tick = 0
     last_history_tick = 0
+    # FPS measurement: rolling window of last N tick timestamps
+    fps_window = []
+    FPS_WINDOW_SIZE = max(30, FPS)  # ~1s window
+    measured_fps = 0.0
     screen_clear()
     print('연결 중... BrainFlow session 열림. baseline 학습 시작.', flush=True)
     time.sleep(1.5)  # let initial buffer fill
@@ -486,8 +502,8 @@ def run_live(board_id, port):
         except: pass
 
         while True:
+            tick_start = time.time()
             tick += 1
-            time.sleep(TICK_INTERVAL)
             try:
                 data = board.get_board_data()
             except Exception as e:
@@ -534,6 +550,7 @@ def run_live(board_id, port):
             touch_ratio = 0.0
             touch_direction = ''
             top3_info = []  # init so debug panel never raises UnboundLocalError during warmup
+            active_indices = []  # multi-channel concurrent: all touched channels
 
             WARMUP_TICKS = 3
             # History sampling is throttled — at 60fps tick rate, only sample every 30 ticks (~0.5s).
@@ -545,25 +562,24 @@ def run_live(board_id, port):
                     last_history_tick = tick
                 baseline = np.median(np.array(history), axis=0) if len(history) >= 2 else rms_per_ch.copy()
             else:
-                # Detection phase — sensitive thresholds to catch finger touches
+                # Detection phase — UNI-DIRECTIONAL (UP only). Bi-directional was mis-firing
+                # on baseline-bias scenarios (release after baseline corruption during warmup).
+                # Touch typically causes rms INCREASE; if floating-reference DOWN case needed,
+                # we'll add hysteresis-gated bi-directional later.
                 baseline = np.median(np.array(history[-HISTORY_MAX:]), axis=0)
                 ratio_up = rms_per_ch / (baseline + 1e-9)
-                ratio_dn = (baseline + 1e-9) / (rms_per_ch + 1e-9)
-                deviation = np.maximum(ratio_up, ratio_dn)
-                abs_change = np.abs(rms_per_ch - baseline)
-                # Calibrated from real session data 2026-04-28: F3 finger-touch peaked at
-                # 1.86x dev / 10734µV abs / 86% rel. Set thresholds below peak observation
-                # to catch touches reliably while filtering idle noise (which stayed dev<1.15x).
+                deviation = ratio_up  # UP only
+                abs_change = rms_per_ch - baseline  # signed: positive = UP
                 rel_change = abs_change / (baseline + 1e-9)
+                # Calibrated from session 2026-04-28: F3 touch peaked at 1.86x dev / 10734µV up / 86% rel.
                 touch_active = (deviation > 1.4) & (abs_change > 3000.0) & (rel_change > 0.20)
-                if np.any(touch_active):
+                # Multi-channel concurrent: collect ALL active channels (not just argmax)
+                active_indices = [int(c) for c in range(n_ch) if touch_active[c]]
+                if active_indices:
                     masked = np.where(touch_active, deviation, 0.0)
-                    touch_idx = int(np.argmax(masked))
+                    touch_idx = int(np.argmax(masked))  # primary (highest deviation)
                     touch_ratio = float(deviation[touch_idx])
-                    if rms_per_ch[touch_idx] > baseline[touch_idx]:
-                        touch_direction = '↑'
-                    else:
-                        touch_direction = '↓'
+                    touch_direction = '↑'
                 # Update history ONLY if no touch detected AND time-throttled — keeps
                 # baseline frozen during sustained touch + matches history sampling rate.
                 if touch_idx < 0 and should_sample_history:
@@ -576,80 +592,110 @@ def run_live(board_id, port):
                 top3_info = [(POS[i], float(rms_per_ch[i]), float(baseline[i]), float(deviation[i])) for i in top3_idx]
 
             # Immediate state — no sticky carry-over. Released = cleared next tick.
+            # Multi-channel: set of all currently active positions
+            current_active_pos_set = set(POS[i] for i in active_indices)
             current_active_pos = POS[touch_idx] if touch_idx >= 0 else ''
 
-            # Render ASCII map (precompute syms with ANSI green color for active)
-            GREEN = ESC + '[32;1m'  # bright green (use chr(27) to avoid hexa string-escape strip)
+            # Build display lines (ANSI-fast in-place render, no full clear)
+            GREEN = ESC + '[32;1m'
             RESET = ESC + '[0m'
             def _s(p):
-                if p == current_active_pos:
-                    return GREEN + '●' + RESET
-                return '·'
+                # Multi-channel: light up ALL touched positions, not just primary
+                return (GREEN + '●' + RESET) if p in current_active_pos_set else '·'
             sfp1 = _s('Fp1'); sfp2 = _s('Fp2')
             sf7 = _s('F7');   sf3 = _s('F3');   sf4 = _s('F4');   sf8 = _s('F8')
             st7 = _s('T7');   sc3 = _s('C3');   sc4 = _s('C4');   st8 = _s('T8')
             sp3 = _s('P3');   sp4 = _s('P4')
             sp7 = _s('P7');   sp8 = _s('P8')
             so1 = _s('O1');   so2 = _s('O2')
-            screen_clear()
-            print('══════════════════════════════════════════════════')
-            print(f'  LIVE TOUCH DETECTOR — tick #{tick}')
-            print('══════════════════════════════════════════════════')
-            print()
-            print(f'                Fp1[{sfp1}]   Fp2[{sfp2}]            Frontal pole')
-            print( '                    \\\\   /')
-            print(f'           F7[{sf7}] - F3[{sf3}] - F4[{sf4}] - F8[{sf8}]      Frontal')
-            print( '                    |   |')
-            print(f'           T7[{st7}] - C3[{sc3}] - C4[{sc4}] - T8[{st8}]      Central / Temporal')
-            print( '                    |   |')
-            print(f'                P3[{sp3}] - P4[{sp4}]            Parietal')
-            print( '                   / | | \\\\')
-            print(f'           P7[{sp7}]         P8[{sp8}]           Parietal-temporal')
-            print(f'                O1[{so1}]   O2[{so2}]            Occipital')
-            print()
-            print(f'    [{GREEN}●{RESET}] = 손가락 닿은 곳   [·] = 비활성')
-            print()
-            if touch_idx >= 0:
-                print(f'    🟢 ACTIVE: {GREEN}{POS[touch_idx]}{RESET}  ({BOARD[touch_idx]} {PIN[touch_idx]} — {COLOR[touch_idx]} 와이어)')
-                print(f'    rms = {rms_per_ch[touch_idx]:.0f} µV {touch_direction}  baseline = {baseline[touch_idx]:.0f} µV  deviation = {touch_ratio:.2f}x')
-            elif len(history) < WARMUP_TICKS:
-                print(f'    🟡 baseline 학습 중... (tick {tick}/{WARMUP_TICKS}) — 가만히 기다려주세요')
-            else:
-                print(f'    🟡 No touch — 손가락으로 metal/spike 만져보세요')
+            median_rms = float(np.median(rms_per_ch))
 
-            # Debug: always show top-3 deviation channels (helps tune threshold)
-            print()
-            print('    ── DEBUG: top-3 deviation (어느 채널이 변하는지) ──')
-            if len(history) >= WARMUP_TICKS:
+            lines = []
+            lines.append('══════════════════════════════════════════════════')
+            lines.append(f'  LIVE TOUCH DETECTOR — tick #{tick}  (target {FPS}fps, actual {measured_fps:.1f}fps)')
+            lines.append('══════════════════════════════════════════════════')
+            lines.append('')
+            lines.append(f'                Fp1[{sfp1}]   Fp2[{sfp2}]            Frontal pole')
+            lines.append( '                    \\\\   /')
+            lines.append(f'           F7[{sf7}] - F3[{sf3}] - F4[{sf4}] - F8[{sf8}]      Frontal')
+            lines.append( '                    |   |')
+            lines.append(f'           T7[{st7}] - C3[{sc3}] - C4[{sc4}] - T8[{st8}]      Central / Temporal')
+            lines.append( '                    |   |')
+            lines.append(f'                P3[{sp3}] - P4[{sp4}]            Parietal')
+            lines.append( '                   / | | \\\\')
+            lines.append(f'           P7[{sp7}]         P8[{sp8}]           Parietal-temporal')
+            lines.append(f'                O1[{so1}]   O2[{so2}]            Occipital')
+            lines.append('')
+            lines.append(f'    [{GREEN}●{RESET}] = 손가락 닿은 곳   [·] = 비활성')
+            lines.append('')
+            if active_indices:
+                # Multi-channel: list all active touched positions
+                pos_list = ', '.join(GREEN + POS[i] + RESET for i in active_indices)
+                lines.append(f'    🟢 ACTIVE [{len(active_indices)}ch]: {pos_list}')
+                # Detail for primary (highest deviation) channel
+                lines.append(f'    primary: {POS[touch_idx]} rms={rms_per_ch[touch_idx]:.0f} base={baseline[touch_idx]:.0f} dev={touch_ratio:.2f}x {touch_direction}')
+            elif len(history) < WARMUP_TICKS:
+                lines.append(f'    🟡 baseline 학습 중... (history {len(history)}/{WARMUP_TICKS})')
+                lines.append('')
+            else:
+                lines.append(f'    🟡 No touch — 손가락으로 metal/spike 만져보세요')
+                lines.append('')
+
+            lines.append('')
+            lines.append('    ── DEBUG: top-3 deviation ──')
+            if len(history) >= WARMUP_TICKS and top3_info:
                 for rank, info in enumerate(top3_info, 1):
                     pos, rms, base, dev = info
                     direction = '↑' if rms > base else '↓'
-                    print(f'      #{rank} {pos:4s}  rms={rms:8.0f}  base={base:8.0f}  dev={dev:5.2f}x {direction}')
+                    lines.append(f'      #{rank} {pos:4s}  rms={rms:8.0f}  base={base:8.0f}  dev={dev:5.2f}x {direction}')
             else:
-                print('      (학습 중)')
-            median_rms = float(np.median(rms_per_ch))
-            print(f'    median rms = {median_rms:.0f} µV  |  history = {len(history)} ticks  |  cols/tick = {cols}')
+                lines.append('      (학습 중)')
+                lines.append('')
+                lines.append('')
+            lines.append(f'    median rms = {median_rms:.0f} µV  |  history = {len(history)}/{HISTORY_MAX}')
+            lines.append('')
+            lines.append('    ── Ctrl-C 로 종료 ──')
 
-            # Emit JSONL row for live tail-analysis
-            try:
-                row = {
-                    'ts': time.time(),
-                    'tick': tick,
-                    'cols': cols,
-                    'median_rms': round(median_rms, 0),
-                    'history_depth': len(history),
-                    'touch_idx': touch_idx,
-                    'touch_pos': POS[touch_idx] if touch_idx >= 0 else None,
-                    'touch_color': COLOR[touch_idx] if touch_idx >= 0 else None,
-                    'touch_direction': touch_direction if touch_idx >= 0 else None,
-                    'touch_ratio': round(touch_ratio, 3) if touch_idx >= 0 else None,
-                    'top3': [{'pos': p, 'rms': round(r, 0), 'base': round(b, 0), 'dev': round(d, 3)} for p, r, b, d in top3_info],
-                }
-                with open(JSONL_PATH, 'a') as _f:
-                    print(_json.dumps(row, ensure_ascii=False), file=_f)
-            except: pass
-            print()
-            print('    ── Ctrl-C 로 종료 ──', flush=True)
+            fast_render(lines)
+
+            # Measure actual fps over rolling window of recent tick timestamps
+            fps_window.append(tick_start)
+            if len(fps_window) > FPS_WINDOW_SIZE:
+                fps_window.pop(0)
+            if len(fps_window) >= 2:
+                window_dur = fps_window[-1] - fps_window[0]
+                if window_dur > 0:
+                    measured_fps = (len(fps_window) - 1) / window_dur
+
+            # Adaptive sleep: subtract elapsed work time so total tick = TICK_INTERVAL exactly
+            elapsed = time.time() - tick_start
+            sleep_dur = TICK_INTERVAL - elapsed
+            if sleep_dur > 0:
+                time.sleep(sleep_dur)
+
+            # JSONL emit throttled (every 6 ticks ≈ 10fps logging)
+            if tick % JSONL_TICK_STRIDE == 0:
+                try:
+                    row = {
+                        'ts': time.time(),
+                        'tick': tick,
+                        'cols': cols,
+                        'n_new': n_new,
+                        'median_rms': round(median_rms, 0),
+                        'history_depth': len(history),
+                        'touch_idx': touch_idx,
+                        'touch_pos': POS[touch_idx] if touch_idx >= 0 else None,
+                        'touch_color': COLOR[touch_idx] if touch_idx >= 0 else None,
+                        'touch_direction': touch_direction if touch_idx >= 0 else None,
+                        'touch_ratio': round(touch_ratio, 3) if touch_idx >= 0 else None,
+                        'active_count': len(active_indices),
+                        'active_positions': [POS[i] for i in active_indices],
+                        'measured_fps': round(measured_fps, 1),
+                        'top3': [{'pos': p, 'rms': round(r, 0), 'base': round(b, 0), 'dev': round(d, 3)} for p, r, b, d in top3_info],
+                    }
+                    with open(JSONL_PATH, 'a') as _f:
+                        print(_json.dumps(row, ensure_ascii=False), file=_f)
+                except: pass
 
     except KeyboardInterrupt:
         print()
@@ -667,11 +713,12 @@ if __name__ == '__main__':
     p.add_argument('--board-id', type=int, default=2)
     p.add_argument('--port', type=str, default='')
     p.add_argument('--seconds', type=int, default=3)
+    p.add_argument('--fps', type=int, default=60, help='live mode fps (60/120, clamped 10-240)')
     args = p.parse_args()
     if args.mode == 'check':
         rc = main_check(args.board_id, args.port, args.seconds)
     elif args.mode == 'live':
-        rc = run_live(args.board_id, args.port)
+        rc = run_live(args.board_id, args.port, fps=args.fps)
     else:
         rc = run_selftest()
     sys.exit(rc)
