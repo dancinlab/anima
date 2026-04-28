@@ -41,10 +41,10 @@ fn pick_python() -> string {
     if chk == "OK" { return ".venv-eeg/bin/python" }
     return "/usr/bin/python3"
 }
-fn is_digit_ch(c: string) -> int {
-    if c == "0" || c == "1" || c == "2" || c == "3" || c == "4" { return 1 }
-    if c == "5" || c == "6" || c == "7" || c == "8" || c == "9" { return 1 }
-    return 0
+fn is_digit_ch(c: string) -> bool {
+    if c == "0" || c == "1" || c == "2" || c == "3" || c == "4" { return true }
+    if c == "5" || c == "6" || c == "7" || c == "8" || c == "9" { return true }
+    return false
 }
 fn digit_val(c: string) -> int {
     if c == "0" { return 0 } if c == "1" { return 1 } if c == "2" { return 2 }
@@ -67,7 +67,7 @@ fn parse_int_kv(blob: string, key: string) -> int {
     let n = len(blob); let mut q = kp + len(key); let mut acc = 0; let mut neg = 0; let mut hd = 0
     while q < n && blob[q] != "\n" {
         let c = blob[q]; if c == "-" && hd == 0 { neg = 1 }
-        if is_digit_ch(c) == 1 { acc = acc * 10 + digit_val(c); hd = 1 }
+        if is_digit_ch(c) { acc = acc * 10 + digit_val(c); hd = 1 }
         q = q + 1
     }
     if hd == 0 { return -2147483647 }; if neg == 1 { return -acc }; return acc

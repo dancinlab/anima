@@ -94,15 +94,15 @@ fn synth_metric(seed: int, base: int, span: int) -> int {
 }
 
 // Task validation — frozen 7 types (raw#12)
-fn is_valid_task(t: string) -> int {
-    if t == "coding" { return 1 }
-    if t == "meditation" { return 1 }
-    if t == "exercise" { return 1 }
-    if t == "meal_30" { return 1 }
-    if t == "meal_60" { return 1 }
-    if t == "caffeine_30" { return 1 }
-    if t == "caffeine_60" { return 1 }
-    return 0
+fn is_valid_task(t: string) -> bool {
+    if t == "coding" { return true }
+    if t == "meditation" { return true }
+    if t == "exercise" { return true }
+    if t == "meal_30" { return true }
+    if t == "meal_60" { return true }
+    if t == "caffeine_30" { return true }
+    if t == "caffeine_60" { return true }
+    return false
 }
 
 // Per-task expected delta direction (sign-only synth bias for selftest realism)
@@ -135,7 +135,7 @@ fn main() {
     let timestamp   = flag_value("--timestamp", "2026-04-28T12:00:00Z")
     let ledger_path = flag_value("--ledger", LEDGER_DEFAULT)
 
-    if is_valid_task(task) == 0 {
+    if !is_valid_task(task) {
         println("ERROR: invalid --task. Frozen 7: coding|meditation|exercise|meal_30|meal_60|caffeine_30|caffeine_60")
         exit(2)
     }

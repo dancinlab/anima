@@ -64,12 +64,12 @@ fn _flags_only_argv() -> list {
     return out
 }
 
-fn has_flag(name: string) -> int {
+fn has_flag(name: string) -> bool {
     let av = _flags_only_argv()
     let n = len(av)
     let mut i = 0
-    while i < n { if av[i] == name { return 1 } i = i + 1 }
-    return 0
+    while i < n { if av[i] == name { return true } i = i + 1 }
+    return false
 }
 
 fn flag_value(name: string, default_val: string) -> string {
@@ -347,12 +347,12 @@ fn main() {
     let default_out = DEFAULT_OUT_DIR + "/" + date + "_wearable.jsonl"
     let out_path    = flag_value("--out", default_out)
 
-    if has_flag("--falsifiers") == 1 { exit(run_falsifiers()) }
-    if has_flag("--selftest") == 1 {
+    if has_flag("--falsifiers") { exit(run_falsifiers()) }
+    if has_flag("--selftest") {
         let test_out = flag_value("--out", "state/anima_eeg_wearable_selftest.jsonl")
         exit(run_selftest(test_out))
     }
-    if has_flag("--ingest") == 1 {
+    if has_flag("--ingest") {
         let source  = flag_value("--source", "")
         let in_path = flag_value("--in", "")
         if source != "apple" {
