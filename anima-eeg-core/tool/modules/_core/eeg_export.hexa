@@ -1,0 +1,393 @@
+// anima-eeg-core/tool/modules/_core/eeg_export.hexa
+// raw#9 hexa-only · raw#10 honest · raw#12 falsifier · raw#37 transient
+// raw#65 idempotent · raw#71 falsifier-evaluation · raw#82 darwin · raw#91 evidence
+//
+// PURPOSE
+//   Phase 1 _core/ module #6 — convert anima .npy recordings to standard EEG
+//   formats compatible with MNE-Python / EEGLAB / OpenBCI GUI.
+//
+//   Supported formats:
+//     fif  -> MNE-Python native (mne.io.RawArray + raw.save)
+//     edf  -> European Data Format (mne.export.export_raw, edfio backend)
+//     bdf  -> BioSemi Data Format (mne.export.export_raw, edfio backend)
+//     csv  -> timestamp + 16ch columns (OpenBCI GUI / generic)
+//
+//   Channel info:
+//     16ch names from 10-20: Fp1/Fp2/C3/C4/P7/P8/O1/O2/F7/F8/F3/F4/T7/T8/P3/P4
+//     standard_1020 montage applied
+//     sample_rate from sidecar .meta.json (default 125 Hz)
+//     subject info anonymized
+//
+// API
+//   _core_eeg_export_kv(npy_path: string, fmt: string, out_path: string) -> string
+//     returns kv-block:
+//       schema=anima-eeg-core/_core/eeg_export/1
+//       format=<fif|edf|bdf|csv>
+//       input_npy=<path>
+//       output_path=<path>
+//       n_channels=<int>
+//       n_samples=<int>
+//       sample_rate=<float>
+//       output_sha256=<hex>
+//       output_size_bytes=<int>
+//       roundtrip_ok=<true|false>     (only for fif; mne re-load + shape match)
+//       roundtrip_max_abs_diff=<float>
+//       verdict=PASS|FAIL
+//
+// CLI
+//   hexa run eeg_export.hexa --selftest
+//   hexa run eeg_export.hexa --input <npy> --format <fif|edf|bdf|csv> --output <path>
+//
+//  @resolver-bypass(reason="darwin-native: uses .venv-eeg/bin/python with mne+edfio;
+//                   raw#37 transient helper /tmp.")
+
+let SCHEMA       = "anima-eeg-core/_core/eeg_export/1"
+let HELPER_PATH  = "/tmp/anima_eeg_core_eeg_export_helper.py"
+let VENV_PYTHON  = ".venv-eeg/bin/python"
+let DEFAULT_SR   = 125.0
+// 16ch 10-20 montage names — Cyton(8) + Daisy(8) order matching anima-eeg recorder.
+let CH_NAMES_CSV = "Fp1,Fp2,C3,C4,P7,P8,O1,O2,F7,F8,F3,F4,T7,T8,P3,P4"
+
+// ─── helpers ────────────────────────────────────────────────────────────
+
+fn _kv_lookup(body: string, key: string) -> string {
+    let prefix = key + "="
+    let lines = body.split("\n")
+    let mut i = 0
+    while i < len(lines) {
+        let ln = lines[i].trim()
+        if ln.starts_with(prefix) {
+            return ln.substring(prefix.len(), ln.len())
+        }
+        i = i + 1
+    }
+    return ""
+}
+
+fn _sh_quote(s: string) -> string {
+    let mut o = "'"
+    o = o + s.replace("'", "'\\''")
+    o = o + "'"
+    return o
+}
+
+// ─── helper python emitter (raw#37 transient) ──────────────────────────
+
+fn _write_helper() {
+    let parts = []
+    parts.push("#!/usr/bin/env python3\n")
+    parts.push("# anima-eeg-core/_core eeg_export helper — raw#37 transient.\n")
+    parts.push("import argparse, hashlib, json, os, sys, csv as _csv\n")
+    parts.push("import numpy as np\n\n")
+
+    parts.push("CH_NAMES = '" + CH_NAMES_CSV + "'.split(',')\n\n")
+
+    parts.push("def emit(k, v):\n")
+    parts.push("    print(f'{k}={v}')\n\n")
+
+    parts.push("def sha256_file(path):\n")
+    parts.push("    h = hashlib.sha256()\n")
+    parts.push("    with open(path, 'rb') as f:\n")
+    parts.push("        for chunk in iter(lambda: f.read(65536), b''):\n")
+    parts.push("            h.update(chunk)\n")
+    parts.push("    return h.hexdigest()\n\n")
+
+    parts.push("def load_npy_eeg(npy_path):\n")
+    parts.push("    arr = np.load(npy_path)\n")
+    parts.push("    if arr.ndim != 2:\n")
+    parts.push("        raise ValueError(f'ndim={arr.ndim} not 2')\n")
+    parts.push("    rows, cols = arr.shape\n")
+    parts.push("    # sidecar metadata\n")
+    parts.push("    sidecar = npy_path + '.meta.json'\n")
+    parts.push("    meta = {}\n")
+    parts.push("    if os.path.exists(sidecar):\n")
+    parts.push("        try:\n")
+    parts.push("            with open(sidecar) as f: meta = json.load(f)\n")
+    parts.push("        except Exception: pass\n")
+    parts.push("    sr = float(meta.get('sample_rate', " + to_string(DEFAULT_SR) + "))\n")
+    parts.push("    eeg_idx = meta.get('eeg_indices', None)\n")
+    parts.push("    if eeg_idx is None or rows == 16:\n")
+    parts.push("        # already-extracted 16ch layout, OR no sidecar → treat all rows as EEG\n")
+    parts.push("        if rows >= 16:\n")
+    parts.push("            data = arr[:16, :]\n")
+    parts.push("        else:\n")
+    parts.push("            data = arr\n")
+    parts.push("    else:\n")
+    parts.push("        eeg_idx = list(eeg_idx)\n")
+    parts.push("        if max(eeg_idx) < rows:\n")
+    parts.push("            data = arr[eeg_idx, :]\n")
+    parts.push("        else:\n")
+    parts.push("            data = arr[:16, :]\n")
+    parts.push("    return data.astype(np.float64), sr, meta\n\n")
+
+    parts.push("def build_raw(data, sr):\n")
+    parts.push("    import mne\n")
+    parts.push("    n_ch = data.shape[0]\n")
+    parts.push("    ch_names = list(CH_NAMES[:n_ch])\n")
+    parts.push("    if len(ch_names) < n_ch:\n")
+    parts.push("        # pad if more channels than names\n")
+    parts.push("        ch_names = ch_names + [f'EEG{i:02d}' for i in range(len(ch_names), n_ch)]\n")
+    parts.push("    info = mne.create_info(ch_names=ch_names, sfreq=float(sr), ch_types=['eeg']*n_ch)\n")
+    parts.push("    # BrainFlow returns microvolts; MNE expects volts → scale by 1e-6.\n")
+    parts.push("    raw = mne.io.RawArray(data * 1e-6, info, verbose='ERROR')\n")
+    parts.push("    try:\n")
+    parts.push("        montage = mne.channels.make_standard_montage('standard_1020')\n")
+    parts.push("        raw.set_montage(montage, match_case=False, on_missing='ignore', verbose='ERROR')\n")
+    parts.push("    except Exception:\n")
+    parts.push("        pass\n")
+    parts.push("    raw.info['subject_info'] = {'his_id':'anonymous','first_name':'anon','last_name':'anon'}\n")
+    parts.push("    return raw\n\n")
+
+    parts.push("def export_fif(raw, out_path):\n")
+    parts.push("    raw.save(out_path, overwrite=True, verbose='ERROR')\n\n")
+
+    parts.push("def export_edf_or_bdf(raw, out_path, fmt):\n")
+    parts.push("    import mne\n")
+    parts.push("    mne.export.export_raw(out_path, raw, fmt=fmt, overwrite=True, verbose='ERROR')\n\n")
+
+    parts.push("def export_csv(data, sr, out_path):\n")
+    parts.push("    n_ch, n_samp = data.shape\n")
+    parts.push("    ch_names = list(CH_NAMES[:n_ch])\n")
+    parts.push("    if len(ch_names) < n_ch:\n")
+    parts.push("        ch_names = ch_names + [f'EEG{i:02d}' for i in range(len(ch_names), n_ch)]\n")
+    parts.push("    with open(out_path, 'w', newline='') as f:\n")
+    parts.push("        w = _csv.writer(f)\n")
+    parts.push("        w.writerow(['timestamp_s'] + ch_names)\n")
+    parts.push("        dt = 1.0/float(sr)\n")
+    parts.push("        for i in range(n_samp):\n")
+    parts.push("            row = [f'{i*dt:.6f}'] + [f'{data[c,i]:.6f}' for c in range(n_ch)]\n")
+    parts.push("            w.writerow(row)\n\n")
+
+    parts.push("def cmd_export(args):\n")
+    parts.push("    npy_path = args.input\n")
+    parts.push("    fmt      = args.format\n")
+    parts.push("    out_path = args.output\n")
+    parts.push("    if not os.path.exists(npy_path):\n")
+    parts.push("        emit('verdict', 'FAIL'); emit('reason', 'npy-missing'); sys.exit(2)\n")
+    parts.push("    if fmt not in ('fif','edf','bdf','csv'):\n")
+    parts.push("        emit('verdict', 'FAIL'); emit('reason', f'fmt={fmt}-unsupported'); sys.exit(3)\n")
+    parts.push("    os.makedirs(os.path.dirname(os.path.abspath(out_path)) or '.', exist_ok=True)\n")
+    parts.push("    data, sr, meta = load_npy_eeg(npy_path)\n")
+    parts.push("    n_ch, n_samp = data.shape\n")
+    parts.push("    rt_ok = 'NA'\n")
+    parts.push("    rt_diff = 0.0\n")
+    parts.push("    if fmt == 'csv':\n")
+    parts.push("        export_csv(data, sr, out_path)\n")
+    parts.push("    else:\n")
+    parts.push("        raw = build_raw(data, sr)\n")
+    parts.push("        if fmt == 'fif':\n")
+    parts.push("            export_fif(raw, out_path)\n")
+    parts.push("            try:\n")
+    parts.push("                import mne\n")
+    parts.push("                rl = mne.io.read_raw_fif(out_path, preload=True, verbose='ERROR')\n")
+    parts.push("                d2 = rl.get_data()\n")
+    parts.push("                if d2.shape == raw.get_data().shape:\n")
+    parts.push("                    diff = float(np.max(np.abs(d2 - raw.get_data())))\n")
+    parts.push("                    rt_diff = diff\n")
+    parts.push("                    # FIF stores float32 → tolerance reflects float32 epsilon * scale\n")
+    parts.push("                    rt_ok = 'true' if diff < 1e-7 else 'false'\n")
+    parts.push("                else:\n")
+    parts.push("                    rt_ok = 'false'\n")
+    parts.push("            except Exception as e:\n")
+    parts.push("                rt_ok = 'false'\n")
+    parts.push("        else:\n")
+    parts.push("            export_edf_or_bdf(raw, out_path, fmt)\n")
+    parts.push("    sha = sha256_file(out_path)\n")
+    parts.push("    size = os.path.getsize(out_path)\n")
+    parts.push("    emit('schema', '" + SCHEMA + "')\n")
+    parts.push("    emit('format', fmt)\n")
+    parts.push("    emit('input_npy', npy_path)\n")
+    parts.push("    emit('output_path', out_path)\n")
+    parts.push("    emit('n_channels', n_ch)\n")
+    parts.push("    emit('n_samples', n_samp)\n")
+    parts.push("    emit('sample_rate', sr)\n")
+    parts.push("    emit('output_sha256', sha)\n")
+    parts.push("    emit('output_size_bytes', size)\n")
+    parts.push("    emit('roundtrip_ok', rt_ok)\n")
+    parts.push("    emit('roundtrip_max_abs_diff', rt_diff)\n")
+    parts.push("    emit('verdict', 'PASS')\n\n")
+
+    parts.push("def cmd_selftest(args):\n")
+    parts.push("    out_dir = '/tmp/anima_eeg_core_eeg_export_selftest'\n")
+    parts.push("    os.makedirs(out_dir, exist_ok=True)\n")
+    parts.push("    rows, cols, sr = 16, 1250, 125.0  # 10s @ 125Hz\n")
+    parts.push("    rng = np.random.default_rng(20260428)\n")
+    parts.push("    data = np.zeros((rows, cols), dtype=np.float32)\n")
+    parts.push("    t = np.arange(cols)/sr\n")
+    parts.push("    for k in range(rows):\n")
+    parts.push("        data[k] = (12.0*np.sin(2*np.pi*(8.0+k*0.4)*t) +\n")
+    parts.push("                   3.0*rng.standard_normal(cols)).astype(np.float32)\n")
+    parts.push("    npy_path = os.path.join(out_dir, 'selftest_synth.npy')\n")
+    parts.push("    np.save(npy_path, data)\n")
+    parts.push("    meta = {'schema':'anima-eeg/eeg_recorder/1','task':'selftest_export',\n")
+    parts.push("            'session_ts':'20260428T000000Z','sample_rate':sr,\n")
+    parts.push("            'eeg_indices':list(range(rows)),'rows':rows,'cols':cols,\n")
+    parts.push("            'tier':'DEGRADED'}\n")
+    parts.push("    with open(npy_path+'.meta.json','w') as f: json.dump(meta, f)\n")
+    parts.push("    results = {}\n")
+    parts.push("    for fmt, ext in (('fif','.fif'),('edf','.edf'),('bdf','.bdf'),('csv','.csv')):\n")
+    parts.push("        out_path = os.path.join(out_dir, 'selftest_export'+ext)\n")
+    parts.push("        class A: pass\n")
+    parts.push("        a = A(); a.input = npy_path; a.format = fmt; a.output = out_path\n")
+    parts.push("        try:\n")
+    parts.push("            cmd_export(a)\n")
+    parts.push("            results[fmt] = ('ok', os.path.getsize(out_path))\n")
+    parts.push("        except SystemExit as se:\n")
+    parts.push("            results[fmt] = (f'rc={se.code}', 0)\n")
+    parts.push("        except Exception as e:\n")
+    parts.push("            results[fmt] = (f'err={type(e).__name__}', 0)\n")
+    parts.push("    # round-trip fif again, more strict\n")
+    parts.push("    import mne\n")
+    parts.push("    fif_path = os.path.join(out_dir, 'selftest_export.fif')\n")
+    parts.push("    rt_pass = False\n")
+    parts.push("    rt_diff_uv = 0.0\n")
+    parts.push("    if os.path.exists(fif_path):\n")
+    parts.push("        rl = mne.io.read_raw_fif(fif_path, preload=True, verbose='ERROR')\n")
+    parts.push("        d2 = rl.get_data() * 1e6  # back to microvolts\n")
+    parts.push("        if d2.shape == data.shape:\n")
+    parts.push("            rt_diff_uv = float(np.max(np.abs(d2 - data.astype(np.float64))))\n")
+    parts.push("            rt_pass = rt_diff_uv < 1e-3\n")
+    parts.push("    print('=== selftest results ===')\n")
+    parts.push("    for fmt,(s,sz) in results.items(): emit(f'{fmt}_status', f'{s}|{sz}')\n")
+    parts.push("    emit('roundtrip_fif', 'PASS' if rt_pass else 'FAIL')\n")
+    parts.push("    emit('roundtrip_diff_uv', rt_diff_uv)\n")
+    parts.push("    emit('selftest', 'ok')\n\n")
+
+    parts.push("def main():\n")
+    parts.push("    p = argparse.ArgumentParser()\n")
+    parts.push("    sub = p.add_subparsers(dest='cmd', required=True)\n")
+    parts.push("    sub.add_parser('selftest')\n")
+    parts.push("    c = sub.add_parser('export')\n")
+    parts.push("    c.add_argument('--input', required=True)\n")
+    parts.push("    c.add_argument('--format', required=True, choices=['fif','edf','bdf','csv'])\n")
+    parts.push("    c.add_argument('--output', required=True)\n")
+    parts.push("    args = p.parse_args()\n")
+    parts.push("    if args.cmd == 'selftest':\n")
+    parts.push("        class A: pass\n")
+    parts.push("        cmd_selftest(A())\n")
+    parts.push("    elif args.cmd == 'export':\n")
+    parts.push("        cmd_export(args)\n\n")
+
+    parts.push("if __name__ == '__main__': main()\n")
+
+    write_file(HELPER_PATH, parts.join(""))
+}
+
+fn _run_helper(args: string) -> array {
+    let cmd = VENV_PYTHON + " " + HELPER_PATH + " " + args
+    let r = exec_with_status(cmd)
+    return [to_string(r[0]).trim(), to_int(r[1])]
+}
+
+// ─── public-ish API ────────────────────────────────────────────────────
+
+fn _core_eeg_export_kv(npy_path: string, fmt: string, out_path: string) -> string {
+    _write_helper()
+    let args = "export --input " + _sh_quote(npy_path)
+        + " --format " + _sh_quote(fmt)
+        + " --output " + _sh_quote(out_path)
+    let r = _run_helper(args)
+    return r[0]
+}
+
+// ─── CLI ───────────────────────────────────────────────────────────────
+
+fn _print_usage() {
+    eprintln("usage: hexa run eeg_export.hexa --selftest")
+    eprintln("       hexa run eeg_export.hexa --input <npy> --format <fif|edf|bdf|csv> --output <path>")
+}
+
+fn _flags_only_argv() -> array {
+    let av = argv()
+    let mut start = 0
+    while start < len(av) {
+        let a = av[start]
+        let mut is_path = false
+        if a.ends_with(".hexa") { is_path = true }
+        if !is_path { if a.ends_with("/exe") { is_path = true } }
+        if is_path { start = start + 1 } else { break }
+    }
+    let mut out = []
+    let mut j = start
+    while j < len(av) { out.push(av[j]); j = j + 1 }
+    return out
+}
+
+fn assert_true(cond: bool, label: string) -> bool {
+    if cond { println("  PASS: " + label) } else { println("  FAIL: " + label) }
+    return cond
+}
+
+fn main() {
+    let av = _flags_only_argv()
+    let mut selftest = false
+    let mut input_path = ""
+    let mut fmt = ""
+    let mut output_path = ""
+    let mut i = 0
+    while i < len(av) {
+        let a = av[i]
+        if a == "--selftest" { selftest = true; i = i + 1; continue }
+        if a == "--input" {
+            if (i+1) >= len(av) { eprintln("missing arg --input"); exit(2) }
+            input_path = av[i+1]; i = i + 2; continue
+        }
+        if a == "--format" {
+            if (i+1) >= len(av) { eprintln("missing arg --format"); exit(2) }
+            fmt = av[i+1]; i = i + 2; continue
+        }
+        if a == "--output" {
+            if (i+1) >= len(av) { eprintln("missing arg --output"); exit(2) }
+            output_path = av[i+1]; i = i + 2; continue
+        }
+        if a == "--help" || a == "-h" { _print_usage(); exit(0) }
+        eprintln("unknown arg: " + a); _print_usage(); exit(2)
+    }
+
+    _write_helper()
+
+    if selftest {
+        println("== _core eeg_export selftest ==")
+        let r = _run_helper("selftest")
+        let body = r[0]
+        let rc   = r[1]
+        println(body)
+        if rc != 0 { eprintln("helper rc=" + to_string(rc)); exit(1) }
+        let mut pass = 0
+        let mut fail = 0
+        let t1 = assert_true(_kv_lookup(body, "selftest") == "ok", "selftest=ok")
+        if t1 { pass = pass + 1 } else { fail = fail + 1 }
+        let fif_status = _kv_lookup(body, "fif_status")
+        let t2 = assert_true(fif_status.starts_with("ok|"), "fif_status starts ok|")
+        if t2 { pass = pass + 1 } else { fail = fail + 1 }
+        let edf_status = _kv_lookup(body, "edf_status")
+        let t3 = assert_true(edf_status.starts_with("ok|"), "edf_status starts ok|")
+        if t3 { pass = pass + 1 } else { fail = fail + 1 }
+        let bdf_status = _kv_lookup(body, "bdf_status")
+        let t4 = assert_true(bdf_status.starts_with("ok|"), "bdf_status starts ok|")
+        if t4 { pass = pass + 1 } else { fail = fail + 1 }
+        let csv_status = _kv_lookup(body, "csv_status")
+        let t5 = assert_true(csv_status.starts_with("ok|"), "csv_status starts ok|")
+        if t5 { pass = pass + 1 } else { fail = fail + 1 }
+        let rt = _kv_lookup(body, "roundtrip_fif")
+        let t6 = assert_true(rt == "PASS", "roundtrip_fif=PASS")
+        if t6 { pass = pass + 1 } else { fail = fail + 1 }
+        println("")
+        println("Results: " + to_string(pass) + " PASS / " + to_string(fail) + " FAIL")
+        if fail != 0 { exit(1) }
+        println("schema=" + SCHEMA)
+        println("selftest: OK")
+        exit(0)
+    }
+
+    if input_path == "" || fmt == "" || output_path == "" {
+        eprintln("ABORT: need --input, --format, --output  (or --selftest)")
+        _print_usage(); exit(2)
+    }
+
+    let body = _core_eeg_export_kv(input_path, fmt, output_path)
+    println(body)
+    let v = _kv_lookup(body, "verdict")
+    if v != "PASS" { exit(1) }
+    exit(0)
+}
