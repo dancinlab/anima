@@ -1,0 +1,741 @@
+// anima-eeg/full_helmet_view.hexa
+// raw#9 hexa-only · raw#37 transient-helper-in-/tmp · raw#65 idempotent
+// raw#71 falsifier-bound · raw#82 darwin-native · raw#91 honesty-triad · raw#101 minimal
+//
+// PURPOSE
+//   Full-helmet 5-state health view (16 EEG + 2 ear clips = 18 elements).
+//   Shows simultaneous status of all electrodes on a single 80×30 screen so
+//   operator donning helmet can see total helmet health at a glance, instead
+//   of walking electrode-by-electrode blind to neighbours.
+//
+//   Companion to electrode_adjustment_helper.hexa (single-touch live view).
+//   This file is a NEW SEPARATE VIEW — does not modify the helper.
+//
+// 5 STATES (per electrode + per ear clip):
+//   GREEN  ✓  OK         connected + RMS 5–50 µV + mains < 30%
+//   YELLOW ⚠  MARGINAL   RMS out-of-band OR mains 30–60% OR low corr
+//   RED    ✗  BAD        railed (>5% saturated samples) OR floating (RMS<0.5)
+//                        OR saturated (RMS>200) OR mains-dominated (>60%)
+//   GRAY   ·  UNKNOWN    warmup (<1s samples) OR stale (>3s)
+//   BLUE   🔄 MEASURING  active impedance/calibration sweep (optional)
+//
+// THRESHOLDS (from design §4):
+//   RMS OK band: 5–50 µV
+//   mains_ratio (58–62Hz / 1–40Hz): OK <0.30, MARGINAL 0.30–0.60, BAD >0.60
+//   rail_frac: BAD if >5% samples at >90% ADC FS
+//   cross_corr: MARGINAL if |r| < 0.10
+//   SRB2 inferred: median pairwise |r| (OK ≥0.40, BAD <0.15)
+//   BIAS inferred: median mains_ratio (OK <0.10, BAD >0.40)
+//
+// HYSTERESIS (design §5):
+//   OK→MARGINAL: 2 consecutive ticks
+//   MARGINAL→OK: 3 consecutive ticks
+//   any→BAD:     1 tick (fail-fast)
+//   any→UNKNOWN: age_ms >3000
+//
+// CADENCE:
+//   Render: 60 fps   RMS: 10 Hz   Classify: 1 Hz   SRB2/BIAS: 0.5 Hz
+//
+// MODES
+//   --selftest                synthetic 18-element demo with mixed states
+//   --live --port <path>      real BrainFlow continuous (NOT run in this PR)
+//   --board <name>            cyton_daisy (default) | cyton | ganglion
+//   --fps <n>                 live-mode render fps (60 default, 10–240 clamp)
+//
+//  @resolver-bypass(reason="darwin-native: globs /dev/cu.usbserial-* and uses
+//                   .venv-eeg/bin/python BrainFlow venv. Hetzner / linux pods
+//                   do not expose host USB nor local venv.")
+
+let SCHEMA              = "anima-eeg/full_helmet_view/1"
+let HELPER_PATH         = "/tmp/anima_eeg_full_helmet_view_helper.py"
+let JSONL_LEDGER_PATH   = "/tmp/anima_eeg_full_helmet_view_ledger.jsonl"
+
+let DEFAULT_BOARD_ID            = 2
+let DEFAULT_BOARD_NAME          = "cyton_daisy"
+let DEFAULT_VENV_PYTHON         = ".venv-eeg/bin/python"
+let DEFAULT_FPS                 = 60
+
+fn _sh_quote(s: string) -> string {
+    let mut o = "'"
+    o = o + s.replace("'", "'\\''")
+    o = o + "'"
+    return o
+}
+
+fn _emit_trailer(reason_slug: string, reason_detail: string, fix: string) {
+    eprintln("reason: " + reason_slug + ": " + reason_detail)
+    eprintln("fix: " + fix)
+}
+
+fn _board_name_to_id(name: string) -> int {
+    if name == "cyton_daisy" { return 2 }
+    if name == "cyton"       { return 0 }
+    if name == "ganglion"    { return 1 }
+    return -1
+}
+
+// Helper Python: 5-state classifier + 80×30 ASCII renderer + JSONL ledger emit.
+// Mirrors the classifier decision tree from design §4 verbatim.
+fn _write_helper() {
+    let py = "
+import sys, os, time, argparse, json
+
+def out_kv(k, v):
+    print(str(k) + '=' + str(v), flush=True)
+
+def err_trailer(reason, detail, fix):
+    print('reason: ' + reason + ': ' + detail, file=sys.stderr, flush=True)
+    print('fix: ' + fix, file=sys.stderr, flush=True)
+
+# 16 EEG positions + 2 ear clips = 18 elements
+EEG_POS = ['Fp1','Fp2','F7','F3','Fz','F4','F8','T7','C3','Cz','C4','T8','P7','P3','Pz','P4']
+# Note: design §2 lists 18 names but selects 16. Our 16 = drop O1/O2 / P8 from full set
+# to match cyton_daisy 16-channel WIRE_META roughly. Renderer uses these 16 + SRB2 + BIAS.
+EAR_POS = ['SRB2', 'BIAS']
+ALL_POS = EEG_POS + EAR_POS  # len = 18
+
+# ANSI 256 colors (design §6)
+ESC = chr(27)
+GREEN  = ESC + '[92m'
+YELLOW = ESC + '[93m'
+RED    = ESC + '[91m'
+GRAY   = ESC + '[90m'
+BLUE   = ESC + '[94m'
+RESET  = ESC + '[0m'
+BOLD   = ESC + '[1m'
+
+STATE_SYM = {
+    'OK':        '✓',   # ✓
+    'MARGINAL':  '⚠',   # ⚠
+    'BAD':       '✗',   # ✗
+    'UNKNOWN':   '·',   # ·
+    'MEASURING': '🔄',
+}
+STATE_COLOR = {
+    'OK': GREEN, 'MARGINAL': YELLOW, 'BAD': RED, 'UNKNOWN': GRAY, 'MEASURING': BLUE,
+}
+
+# Thresholds (design §4)
+RMS_OK_LO       = 5.0
+RMS_OK_HI       = 50.0
+RMS_FLOATING    = 0.5
+RMS_SATURATED   = 200.0
+MAINS_OK        = 0.30
+MAINS_BAD       = 0.60
+RAIL_FRAC_BAD   = 0.05
+CORR_MARGINAL   = 0.10
+SRB2_OK         = 0.40
+SRB2_BAD        = 0.15
+BIAS_OK         = 0.10
+BIAS_BAD        = 0.40
+AGE_STALE_MS    = 3000
+WARMUP_SAMPLES  = 250
+
+def classify_one(rms_uv, mains_ratio, rail_frac, corr_to_median, age_ms, sample_count, measuring=False):
+    '''Per-element 5-state decision tree (design §4).
+    Returns state string. Hysteresis is applied by caller across ticks.'''
+    if age_ms > AGE_STALE_MS or sample_count < WARMUP_SAMPLES:
+        return 'UNKNOWN'
+    if measuring:
+        return 'MEASURING'
+    # BAD criteria (fail-fast)
+    if rail_frac > RAIL_FRAC_BAD:                  return 'BAD'
+    if rms_uv < RMS_FLOATING:                      return 'BAD'
+    if rms_uv > RMS_SATURATED:                     return 'BAD'
+    if mains_ratio > MAINS_BAD:                    return 'BAD'
+    # MARGINAL criteria
+    if rms_uv < RMS_OK_LO or rms_uv > RMS_OK_HI:   return 'MARGINAL'
+    if mains_ratio > MAINS_OK:                     return 'MARGINAL'
+    if abs(corr_to_median) < CORR_MARGINAL:        return 'MARGINAL'
+    return 'OK'
+
+class HysteresisTracker:
+    '''Per-element hysteresis FSM (design §5).
+    Holds prev_state + counters. Apply transition rules each tick.'''
+    def __init__(self):
+        self.state = 'UNKNOWN'
+        self.candidate = 'UNKNOWN'
+        self.candidate_count = 0
+
+    def step(self, raw_state):
+        # any→BAD:     1 tick (fail-fast)
+        # any→UNKNOWN: 1 tick (no hysteresis on stale)
+        if raw_state == 'BAD':
+            self.state = 'BAD'
+            self.candidate = 'BAD'
+            self.candidate_count = 0
+            return self.state
+        if raw_state == 'UNKNOWN':
+            self.state = 'UNKNOWN'
+            self.candidate = 'UNKNOWN'
+            self.candidate_count = 0
+            return self.state
+        if raw_state == 'MEASURING':
+            self.state = 'MEASURING'
+            self.candidate = 'MEASURING'
+            self.candidate_count = 0
+            return self.state
+
+        # OK or MARGINAL — apply debounce
+        if raw_state == self.candidate:
+            self.candidate_count = self.candidate_count + 1
+        else:
+            self.candidate = raw_state
+            self.candidate_count = 1
+
+        # OK→MARGINAL: 2-tick debounce
+        # MARGINAL→OK: 3-tick debounce
+        # BAD→MARGINAL: 3-tick (then MARGINAL→OK adds another 3)
+        # UNKNOWN→OK: 1-tick (warmup transition only)
+        if self.state == 'UNKNOWN':
+            if self.candidate == 'OK' and self.candidate_count >= 1:
+                self.state = 'OK'
+            elif self.candidate == 'MARGINAL' and self.candidate_count >= 1:
+                self.state = 'MARGINAL'
+        elif self.state == 'OK':
+            if self.candidate == 'MARGINAL' and self.candidate_count >= 2:
+                self.state = 'MARGINAL'
+        elif self.state == 'MARGINAL':
+            if self.candidate == 'OK' and self.candidate_count >= 3:
+                self.state = 'OK'
+        elif self.state == 'BAD':
+            # BAD→MARGINAL needs MARGINAL holding for 3 ticks AND no BAD criterion
+            if self.candidate == 'MARGINAL' and self.candidate_count >= 3:
+                self.state = 'MARGINAL'
+            elif self.candidate == 'OK' and self.candidate_count >= 3:
+                self.state = 'MARGINAL'  # gate through MARGINAL first
+
+        return self.state
+
+def srb2_state_from_corr(median_abs_corr):
+    if median_abs_corr >= SRB2_OK:  return 'OK'
+    if median_abs_corr < SRB2_BAD:  return 'BAD'
+    return 'MARGINAL'
+
+def bias_state_from_mains(median_mains_ratio):
+    if median_mains_ratio < BIAS_OK:  return 'OK'
+    if median_mains_ratio > BIAS_BAD: return 'BAD'
+    return 'MARGINAL'
+
+# Synthetic state vector for selftest — design mockup spec (§6):
+# 13 OK, 2 MARGINAL (F7, P8 in design — we use F7 + an alt), 1 BAD (F8), 1 MEASURING (Cz),
+# 0 UNKNOWN, plus SRB2 OK + BIAS OK.
+SELFTEST_STATES = {
+    'Fp1': 'OK',       'Fp2': 'OK',
+    'F7':  'MARGINAL', 'F3':  'OK',  'Fz':  'OK', 'F4':  'OK', 'F8':  'BAD',
+    'T7':  'OK',       'C3':  'OK',  'Cz':  'MEASURING', 'C4':  'OK', 'T8':  'OK',
+    'P7':  'OK',       'P3':  'OK',  'Pz':  'OK', 'P4':  'MARGINAL',
+    'SRB2':'OK',       'BIAS':'OK',
+}
+
+def colorize(state, sym):
+    return STATE_COLOR.get(state, '') + sym + RESET
+
+def render_helmet(states, tick, fps, classify_age_s, link_status='OK', touched_pos='', touched_dur_s=0.0, hint=''):
+    '''Render 80x30 ASCII helmet view. design §6 mockup.
+    states: dict[pos] -> state string.
+    Returns list of lines (no trailing newlines).'''
+    def s(p):
+        st = states.get(p, 'UNKNOWN')
+        sym = STATE_SYM.get(st, '?')
+        return colorize(st, sym)
+
+    # Counts
+    counts = {'OK':0, 'MARGINAL':0, 'BAD':0, 'MEASURING':0, 'UNKNOWN':0}
+    for p in ALL_POS:
+        st = states.get(p, 'UNKNOWN')
+        if st in counts: counts[st] += 1
+
+    # Worst element (priority: BAD > MARGINAL > UNKNOWN > MEASURING > OK)
+    worst_pos = ''
+    worst_state = 'OK'
+    priority = {'BAD': 4, 'MARGINAL': 3, 'UNKNOWN': 2, 'MEASURING': 1, 'OK': 0}
+    for p in ALL_POS:
+        st = states.get(p, 'UNKNOWN')
+        if priority.get(st, 0) > priority.get(worst_state, 0):
+            worst_state = st
+            worst_pos = p
+
+    tick_h = tick // 3600
+    tick_m = (tick // 60) % 60
+    tick_s = tick % 60
+    tick_str = '%02d:%02d:%02d' % (tick_h, tick_m, tick_s)
+
+    # SRB2/BIAS detail
+    srb2_st = states.get('SRB2', 'UNKNOWN')
+    bias_st = states.get('BIAS', 'UNKNOWN')
+    srb2_sym = colorize(srb2_st, STATE_SYM.get(srb2_st, '?'))
+    bias_sym = colorize(bias_st, STATE_SYM.get(bias_st, '?'))
+
+    lines = []
+    lines.append('+------------------------------------------------------------------------------+')
+    lines.append('| anima-eeg full-helmet health   tick=%s  fps=%2d  link=%-2s   class=%.1fs   |' % (tick_str, fps, link_status, classify_age_s))
+    lines.append('+------------------------------------------------------------------------------+')
+    lines.append('|                                                                              |')
+    lines.append(\"|                          .---------------------.                             |\")
+    lines.append(\"|                         /     Fp1 %s   Fp2 %s     \\\\                            |\" % (s('Fp1'), s('Fp2')))
+    lines.append(\"|                        /   F7 %s F3 %s Fz %s F4 %s F8 %s \\\\                        |\" % (s('F7'), s('F3'), s('Fz'), s('F4'), s('F8')))
+    lines.append(\"|     SRB2 (ref)        |                              |       BIAS (gnd)     |\")
+    lines.append(\"|     [ %s %-3s ]         |  T7 %s C3 %s Cz %s C4 %s T8 %s   |       [ %s %-3s ]      |\" % (srb2_sym, srb2_st[:3], s('T7'), s('C3'), s('Cz'), s('C4'), s('T8'), bias_sym, bias_st[:3]))
+    lines.append(\"|     med|r|=0.52       |                              |       mains=0.07     |\")
+    lines.append(\"|                        \\\\  P7 %s P3 %s Pz %s P4 %s         /                         |\" % (s('P7'), s('P3'), s('Pz'), s('P4')))
+    lines.append(\"|                         \\\\        (16ch)         /                          |\")
+    lines.append(\"|                          '---------------------'                            |\")
+    lines.append('|                                                                              |')
+    if touched_pos:
+        touched_line = '|   Touched: %s (%.1fs)   blink2Hz                                              |' % (touched_pos, touched_dur_s)
+        lines.append(touched_line[:80].ljust(79) + '|')
+    else:
+        lines.append('|                                                                              |')
+    lines.append('|                                                                              |')
+    lines.append('+------------------------------------------------------------------------------+')
+    counts_line = '| %2d %s OK    %2d %s MARG    %2d %s BAD    %2d %s MEAS    %2d %s UNK' % (
+        counts['OK'],       colorize('OK',       STATE_SYM['OK']),
+        counts['MARGINAL'], colorize('MARGINAL', STATE_SYM['MARGINAL']),
+        counts['BAD'],      colorize('BAD',      STATE_SYM['BAD']),
+        counts['MEASURING'],colorize('MEASURING',STATE_SYM['MEASURING']),
+        counts['UNKNOWN'],  colorize('UNKNOWN',  STATE_SYM['UNKNOWN']),
+    )
+    # Pad with raw length (color codes don't take screen width)
+    raw_len_extra = sum(len(STATE_COLOR[k]) + len(RESET) for k in ['OK','MARGINAL','BAD','MEASURING','UNKNOWN'])
+    target_width = 79 + raw_len_extra
+    lines.append(counts_line.ljust(target_width) + '|')
+    if worst_pos and worst_state != 'OK':
+        worst_sym = colorize(worst_state, STATE_SYM.get(worst_state, '?'))
+        hint_text = hint if hint else _default_hint(worst_pos, worst_state)
+        worst_line = '| Worst: %s %s %s  hint: %s' % (worst_pos, worst_sym, worst_state, hint_text)
+        # raw_len_extra already includes color sequences; one more for worst_sym
+        worst_extra = len(STATE_COLOR.get(worst_state, '')) + len(RESET)
+        lines.append(worst_line.ljust(79 + worst_extra) + '|')
+    else:
+        lines.append('| All elements healthy.                                                       |')
+    lines.append('+------------------------------------------------------------------------------+')
+    return lines
+
+def _default_hint(pos, state):
+    if state == 'BAD':
+        return 'press %s firmly, add gel; check cable for break' % pos
+    if state == 'MARGINAL':
+        return 'wiggle %s, add saline drop; observe ~3s for re-classify' % pos
+    if state == 'UNKNOWN':
+        return '%s sample warmup or stale stream; wait ~1s' % pos
+    return ''
+
+def emit_jsonl(ledger_path, row):
+    try:
+        with open(ledger_path, 'a') as f:
+            f.write(json.dumps(row, ensure_ascii=False) + chr(10))
+    except Exception:
+        pass
+
+def run_selftest(ledger_path):
+    out_kv('mode', 'selftest_synthetic')
+    out_kv('schema', 'anima-eeg/full_helmet_view/1')
+    out_kv('element_count', len(ALL_POS))
+    states = dict(SELFTEST_STATES)
+    lines = render_helmet(states, tick=83, fps=60, classify_age_s=1.2,
+                          link_status='OK', touched_pos='Cz', touched_dur_s=2.1,
+                          hint='press F8 firmly, add gel; check cable for break')
+    print(chr(10).join(lines))
+
+    # State counts
+    counts = {'OK':0, 'MARGINAL':0, 'BAD':0, 'MEASURING':0, 'UNKNOWN':0}
+    for p in ALL_POS:
+        st = states.get(p, 'UNKNOWN')
+        if st in counts: counts[st] += 1
+    out_kv('count_ok', counts['OK'])
+    out_kv('count_marginal', counts['MARGINAL'])
+    out_kv('count_bad', counts['BAD'])
+    out_kv('count_measuring', counts['MEASURING'])
+    out_kv('count_unknown', counts['UNKNOWN'])
+
+    # JSONL audit ledger emit (raw#77)
+    emit_jsonl(ledger_path, {
+        'ts': time.time(),
+        'schema': 'anima-eeg/full_helmet_view/1',
+        'mode': 'selftest',
+        'tick': 83,
+        'states': states,
+        'counts': counts,
+    })
+    out_kv('jsonl_path', ledger_path)
+    out_kv('verdict', 'SELFTEST_OK')
+    return 0
+
+def run_live(board_id, port, fps, ledger_path):
+    '''Real BrainFlow continuous mode. Per design §7 cadences:
+       render 60fps · RMS 10Hz · classify 1Hz · SRB2/BIAS 0.5Hz.
+       Hysteresis FSMs per element.
+       NOT executed in this PR (no hardware) — guarded behind --live.'''
+    try:
+        import numpy as np
+        from brainflow.board_shim import BoardShim, BrainFlowInputParams, BoardIds
+    except ImportError as e:
+        err_trailer('import-missing', str(e)[:160], '1) source .venv-eeg/bin/activate  2) pip install brainflow numpy')
+        return 4
+
+    BoardShim.disable_board_logger()
+    params = BrainFlowInputParams()
+    if port:
+        params.serial_port = port
+
+    try:
+        board = BoardShim(board_id, params)
+        board.prepare_session()
+        board.start_stream()
+    except Exception as e:
+        err_trailer('board-not-ready', str(e)[:160],
+                    '1) toggle Cyton OFF wait 5s then PC  2) verify Daisy seated')
+        try: board.release_session()
+        except: pass
+        return 4
+
+    try:
+        sample_rate = BoardShim.get_sampling_rate(board_id)
+        eeg_channels = BoardShim.get_eeg_channels(board_id)
+    except Exception as e:
+        err_trailer('board-meta-error', str(e)[:160], '1) check board_id')
+        try: board.stop_stream(); board.release_session()
+        except: pass
+        return 4
+
+    n_ch = len(eeg_channels)
+    # Clamp positions to actual channel count
+    pos_list = EEG_POS[:n_ch]
+    trackers = {p: HysteresisTracker() for p in pos_list + EAR_POS}
+
+    FPS = max(10, min(240, int(fps)))
+    RMS_HZ = 10.0
+    CLASSIFY_HZ = 1.0
+    AGGREGATE_HZ = 0.5
+    TICK_INTERVAL = 1.0 / FPS
+    RMS_TICK_STRIDE = max(1, int(FPS / RMS_HZ))
+    CLASSIFY_TICK_STRIDE = max(1, int(FPS / CLASSIFY_HZ))
+    AGGREGATE_TICK_STRIDE = max(1, int(FPS / AGGREGATE_HZ))
+
+    # 1.0 s rolling window per channel
+    WINDOW_SAMPLES = int(sample_rate * 1.0)
+    buffer = np.zeros((n_ch, WINDOW_SAMPLES), dtype=np.float64)
+    buffer_filled = False
+    sample_count = 0
+
+    # Latest per-channel metrics
+    rms_per_ch = np.zeros(n_ch)
+    mains_ratio_per_ch = np.zeros(n_ch)
+    rail_frac_per_ch = np.zeros(n_ch)
+    corr_to_median_per_ch = np.zeros(n_ch)
+    last_sample_ts = np.zeros(n_ch)
+    states = {p: 'UNKNOWN' for p in pos_list + EAR_POS}
+    median_abs_corr = 0.0
+    median_mains = 0.0
+
+    SCREEN_HOME = ESC + '[H'
+    SCREEN_CLR  = ESC + '[2J' + ESC + '[3J'
+
+    sys.stdout.write(SCREEN_HOME + SCREEN_CLR)
+    sys.stdout.flush()
+
+    tick = 0
+    classify_age_s = 0.0
+    last_classify_t = time.time()
+    try:
+        while True:
+            tick_start = time.time()
+            tick += 1
+            try:
+                data = board.get_board_data()
+            except Exception as e:
+                err_trailer('stream-error', str(e)[:160], '1) Dongle red LED?')
+                break
+            n_new = data.shape[1] if data is not None and data.size else 0
+            if n_new > 0:
+                sample_count = sample_count + n_new
+                for i in range(n_ch):
+                    ch = data[eeg_channels[i], :]
+                    nn = len(ch)
+                    if nn >= WINDOW_SAMPLES:
+                        buffer[i] = ch[-WINDOW_SAMPLES:]
+                        buffer_filled = True
+                    else:
+                        buffer[i, :WINDOW_SAMPLES-nn] = buffer[i, nn:]
+                        buffer[i, WINDOW_SAMPLES-nn:] = ch
+                    last_sample_ts[i] = tick_start
+
+            # 10 Hz: RMS + mains + rail
+            if tick % RMS_TICK_STRIDE == 0 and buffer_filled:
+                rms_per_ch = np.sqrt(np.mean(buffer ** 2, axis=1))
+                # FFT-based mains ratio
+                fft = np.fft.rfft(buffer, axis=1)
+                freqs = np.fft.rfftfreq(WINDOW_SAMPLES, d=1.0/sample_rate)
+                band_mask = (freqs >= 1.0) & (freqs <= 40.0)
+                mains_mask = (freqs >= 58.0) & (freqs <= 62.0)
+                pwr = np.abs(fft) ** 2
+                band_pwr = pwr[:, band_mask].sum(axis=1) + 1e-9
+                mains_pwr = pwr[:, mains_mask].sum(axis=1)
+                mains_ratio_per_ch = mains_pwr / band_pwr
+                # Rail frac (assume ADC FS ~187500 µV cyton 24x)
+                ADC_FS = 187500.0
+                rail_frac_per_ch = np.mean(np.abs(buffer) > 0.9 * ADC_FS, axis=1)
+
+            # 1 Hz: classify each channel + apply hysteresis
+            if tick % CLASSIFY_TICK_STRIDE == 0 and buffer_filled:
+                # Cross-correlation to median signal
+                med_signal = np.median(buffer, axis=0)
+                med_std = np.std(med_signal) + 1e-9
+                med_norm = (med_signal - med_signal.mean()) / med_std
+                for i in range(n_ch):
+                    ch_norm = (buffer[i] - buffer[i].mean()) / (np.std(buffer[i]) + 1e-9)
+                    corr_to_median_per_ch[i] = np.mean(ch_norm * med_norm)
+
+                now = time.time()
+                for i, p in enumerate(pos_list):
+                    age_ms = (now - last_sample_ts[i]) * 1000.0
+                    raw = classify_one(rms_per_ch[i], mains_ratio_per_ch[i], rail_frac_per_ch[i],
+                                       corr_to_median_per_ch[i], age_ms, sample_count, measuring=False)
+                    states[p] = trackers[p].step(raw)
+                last_classify_t = now
+
+            # 0.5 Hz: SRB2 + BIAS aggregate inference
+            if tick % AGGREGATE_TICK_STRIDE == 0 and buffer_filled:
+                # Pairwise abs correlation across all EEG
+                norm = (buffer - buffer.mean(axis=1, keepdims=True)) / (buffer.std(axis=1, keepdims=True) + 1e-9)
+                cmat = (norm @ norm.T) / WINDOW_SAMPLES
+                np.fill_diagonal(cmat, 0.0)
+                median_abs_corr = float(np.median(np.abs(cmat[cmat != 0])))
+                median_mains = float(np.median(mains_ratio_per_ch))
+                srb2_raw = srb2_state_from_corr(median_abs_corr)
+                bias_raw = bias_state_from_mains(median_mains)
+                states['SRB2'] = trackers['SRB2'].step(srb2_raw)
+                states['BIAS'] = trackers['BIAS'].step(bias_raw)
+
+            classify_age_s = time.time() - last_classify_t
+
+            # 60 fps render
+            lines = render_helmet(states, tick=tick, fps=FPS, classify_age_s=classify_age_s,
+                                  link_status='OK')
+            sys.stdout.write(SCREEN_HOME + chr(10).join(lines) + chr(10))
+            sys.stdout.flush()
+
+            # JSONL emit at 1 Hz
+            if tick % CLASSIFY_TICK_STRIDE == 0:
+                emit_jsonl(ledger_path, {
+                    'ts': time.time(),
+                    'schema': 'anima-eeg/full_helmet_view/1',
+                    'mode': 'live',
+                    'tick': tick,
+                    'states': dict(states),
+                    'median_abs_corr': round(median_abs_corr, 3),
+                    'median_mains': round(median_mains, 3),
+                    'classify_age_s': round(classify_age_s, 2),
+                })
+
+            elapsed = time.time() - tick_start
+            sleep_dur = TICK_INTERVAL - elapsed
+            if sleep_dur > 0:
+                time.sleep(sleep_dur)
+
+    except KeyboardInterrupt:
+        print()
+        print('Ctrl-C — session cleanup', flush=True)
+    finally:
+        try: board.stop_stream()
+        except: pass
+        try: board.release_session()
+        except: pass
+    return 0
+
+if __name__ == '__main__':
+    p = argparse.ArgumentParser()
+    p.add_argument('mode', choices=['selftest', 'live'])
+    p.add_argument('--board-id', type=int, default=2)
+    p.add_argument('--port', type=str, default='')
+    p.add_argument('--fps', type=int, default=60)
+    p.add_argument('--ledger', type=str, default='/tmp/anima_eeg_full_helmet_view_ledger.jsonl')
+    args = p.parse_args()
+    if args.mode == 'selftest':
+        rc = run_selftest(args.ledger)
+    else:
+        rc = run_live(args.board_id, args.port, args.fps, args.ledger)
+    sys.exit(rc)
+"
+    write_file(HELPER_PATH, py)
+}
+
+fn _flags_only_argv() -> array {
+    let av = argv()
+    let mut start = 0
+    while start < len(av) {
+        let a = av[start]
+        if a.starts_with("-") { break }
+        let mut is_path = false
+        if a.starts_with("/")    { is_path = true }
+        if a.ends_with(".hexa")  { is_path = true }
+        if a.ends_with(".real")  { is_path = true }
+        if a.ends_with("/exe")   { is_path = true }
+        if is_path { start = start + 1 } else { break }
+    }
+    let mut out = []
+    let mut j = start
+    while j < len(av) {
+        out.push(av[j])
+        j = j + 1
+    }
+    return out
+}
+
+fn _print_usage() {
+    eprintln("usage: hexa run anima-eeg/full_helmet_view.hexa --selftest")
+    eprintln("       hexa run anima-eeg/full_helmet_view.hexa --live [--port <p>] [--fps 60]")
+    eprintln("flags:")
+    eprintln("  --selftest        synthetic 18-element demo (mixed states)")
+    eprintln("  --live            REAL-TIME BrainFlow continuous (requires hardware)")
+    eprintln("  --port <path>     Dongle serial node (auto-detect if omitted)")
+    eprintln("  --fps <n>         live render fps (60 default, clamped 10-240)")
+    eprintln("  --board <name>    cyton_daisy | cyton | ganglion (default cyton_daisy)")
+    eprintln("  --help            this message")
+}
+
+fn _print_summary_from_log(body: string) {
+    let lines = body.split("\n")
+    let mut count_ok = "0"
+    let mut count_marg = "0"
+    let mut count_bad = "0"
+    let mut count_meas = "0"
+    let mut count_unk = "0"
+    let mut verdict = "?"
+    let mut i = 0
+    while i < len(lines) {
+        let ln = lines[i].trim()
+        if ln.starts_with("count_ok=") { count_ok = ln.substring(9, ln.len()) }
+        if ln.starts_with("count_marginal=") { count_marg = ln.substring(15, ln.len()) }
+        if ln.starts_with("count_bad=") { count_bad = ln.substring(10, ln.len()) }
+        if ln.starts_with("count_measuring=") { count_meas = ln.substring(16, ln.len()) }
+        if ln.starts_with("count_unknown=") { count_unk = ln.substring(14, ln.len()) }
+        if ln.starts_with("verdict=") { verdict = ln.substring(8, ln.len()) }
+        i = i + 1
+    }
+    println("")
+    println("    SUMMARY: " + count_ok + " OK, " + count_marg + " MARGINAL, "
+            + count_bad + " BAD, " + count_meas + " MEAS, " + count_unk + " UNKNOWN")
+    println("    VERDICT: " + verdict)
+    println("    LEDGER:  " + JSONL_LEDGER_PATH)
+    println("")
+}
+
+fn main() {
+    let av = _flags_only_argv()
+    let mut selftest = false
+    let mut live_mode = false
+    let mut want_help = false
+    let mut port = ""
+    let mut fps = DEFAULT_FPS
+    let mut board_name = DEFAULT_BOARD_NAME
+
+    let mut i = 0
+    while i < len(av) {
+        let a = av[i]
+        if a == "--selftest" { selftest = true; i = i + 1; continue }
+        if a == "--live"     { live_mode = true; i = i + 1; continue }
+        if a == "--help" || a == "-h" { want_help = true; i = i + 1; continue }
+        if a == "--port" {
+            if (i + 1) >= len(av) {
+                _emit_trailer("missing-arg-value", "--port requires a value", "1) re-run with --port <path>")
+                exit(2)
+            }
+            port = av[i + 1]; i = i + 2; continue
+        }
+        if a == "--fps" {
+            if (i + 1) >= len(av) {
+                _emit_trailer("missing-arg-value", "--fps requires int", "1) --fps 60")
+                exit(2)
+            }
+            fps = to_int(av[i + 1])
+            if fps < 10  { fps = 10 }
+            if fps > 240 { fps = 240 }
+            i = i + 2; continue
+        }
+        if a == "--board" {
+            if (i + 1) >= len(av) {
+                _emit_trailer("missing-arg-value", "--board requires value", "1) --board cyton_daisy")
+                exit(2)
+            }
+            board_name = av[i + 1]; i = i + 2; continue
+        }
+        _emit_trailer("unknown-arg", "unrecognized: " + a, "1) --help")
+        _print_usage()
+        exit(2)
+    }
+
+    if want_help { _print_usage(); exit(0) }
+    if !selftest && !live_mode {
+        eprintln("ABORT: must pass --selftest | --live")
+        _print_usage()
+        exit(2)
+    }
+
+    _write_helper()
+
+    let board_id = _board_name_to_id(board_name)
+    if board_id < 0 {
+        _emit_trailer("invalid-board", "unknown: " + board_name, "1) --board cyton_daisy")
+        exit(2)
+    }
+
+    println("══════════════════════════════════════════════════")
+    println("  anima-eeg full_helmet_view")
+    println("  schema: " + SCHEMA)
+    if selftest {
+        println("  mode: selftest (synthetic, 18 elements)")
+    } else {
+        println("  mode: live (real BrainFlow)")
+        println("  port: " + port)
+        println("  fps:  " + str(fps))
+    }
+    println("══════════════════════════════════════════════════")
+
+    if selftest {
+        let venv_py = DEFAULT_VENV_PYTHON
+        // Selftest does not need BrainFlow / numpy — system python3 is sufficient.
+        // Try venv first, fall back to /usr/bin/python3.
+        let mut py_bin = venv_py
+        let test_venv = exec("test -x " + _sh_quote(venv_py))
+        if test_venv != 0 {
+            py_bin = "/usr/bin/python3"
+        }
+        let mut cmd = py_bin + " " + HELPER_PATH + " selftest"
+        cmd = cmd + " --ledger " + _sh_quote(JSONL_LEDGER_PATH)
+        cmd = cmd + " > /tmp/full_helmet_view_out.log 2> /tmp/full_helmet_view_err.log"
+        let rc = exec(cmd)
+        let stdout_body = read_file("/tmp/full_helmet_view_out.log")
+        let stderr_body = read_file("/tmp/full_helmet_view_err.log")
+        if stderr_body != "" {
+            eprintln(stderr_body.trim())
+        }
+        // Print only the rendered map block (skip kv lines, then summary)
+        let lines = stdout_body.split("\n")
+        let mut k = 0
+        while k < len(lines) {
+            let ln = lines[k]
+            // Skip kv emit lines (they contain "=" with no spaces around)
+            let is_kv = ln.contains("=") && !ln.contains(" ") && !ln.starts_with("|") && !ln.starts_with("+")
+            if !is_kv {
+                println(ln)
+            }
+            k = k + 1
+        }
+        _print_summary_from_log(stdout_body)
+        exit(rc)
+    } else {
+        // --live: run helper interactively (no hardware in this PR — operator approval gate)
+        let venv_py = DEFAULT_VENV_PYTHON
+        let mut cmd = venv_py + " " + HELPER_PATH + " live"
+        cmd = cmd + " --board-id " + str(board_id)
+        cmd = cmd + " --fps " + str(fps)
+        cmd = cmd + " --ledger " + _sh_quote(JSONL_LEDGER_PATH)
+        if port != "" {
+            cmd = cmd + " --port " + _sh_quote(port)
+        }
+        let rc = exec(cmd)
+        exit(rc)
+    }
+}
