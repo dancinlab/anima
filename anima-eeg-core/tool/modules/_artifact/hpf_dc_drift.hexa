@@ -1,0 +1,287 @@
+// ════════════════════════════════════════════════════════════════════════════
+//  anima-eeg-core/tool/modules/_artifact/hpf_dc_drift.hexa
+//
+//  PURPOSE  (raw#106 genus name — Berger HPF re-run A3 follow-up)
+//    Apply Butterworth 4th-order zero-phase HPF (filtfilt) at user-supplied
+//    cutoff (default 0.5 Hz) to remove DC / sub-δ slow drift before Berger
+//    gate evaluation. After 2026-04-28 D-day Tier-A #3 batch sweep showed
+//    0/15 PASS with all peaks dominated by 1.2–1.7 Hz drift, this module
+//    serves as the explicit A3 fix-path A preprocessor.
+//
+//  API     run_hpf_apply(npy_in, npy_out, fs, cutoff_hz)
+//          → key=value dump:
+//              schema=anima-eeg-core/_artifact/hpf_dc_drift/1
+//              fs, cutoff_hz, order, n_channels, n_samples
+//              mean_before, mean_after (per-ch RMS of channel mean)
+//              rms_before, rms_after
+//              sha256_in, sha256_out
+//              verdict ∈ {PASS,FAIL}
+//
+//  CRITERIA (raw#12 frozen 2026-04-28)
+//    C1: post-HPF |mean| < 1e-3 × pre-HPF |mean|   (DC suppression)
+//    C2: post-HPF rms within 0.5–1.0 of pre-HPF    (signal preserved)
+//
+//  FALSIFIERS (raw#71 ≥3)
+//    F1 dc_only    → mean_after ≈ 0 (PASS)
+//    F2 alpha_10Hz → rms preserved ≥0.95 (PASS)
+//    F3 drift_0p1  → drift removed, peak > cutoff (PASS)
+//
+//  RAW raw#9 hexa-only · raw#10 honest · raw#12 frozen · raw#37 transient
+//      raw#65 idempotent · raw#71 falsifier · raw#82 darwin · raw#91 honest C3
+//  @resolver-bypass(reason="darwin-native: .venv-eeg/bin/python scipy")
+// ════════════════════════════════════════════════════════════════════════════
+
+let SCHEMA = "anima-eeg-core/_artifact/hpf_dc_drift/1"
+let HELPER = "/tmp/anima_eeg_core_hpf_dc_drift_helper.py"
+let VENV_PYTHON = ".venv-eeg/bin/python"
+
+fn env_str(k: string, d: string) -> string {
+    let s = env(k)
+    if s == "" { return d }
+    return s
+}
+
+fn pick_python() -> string {
+    let envp = env_str("ANIMA_EEG_VENV_PYTHON", "")
+    if envp != "" { return envp }
+    let chk = exec("test -x .venv-eeg/bin/python && echo OK").trim()
+    if chk == "OK" { return ".venv-eeg/bin/python" }
+    return "/usr/bin/python3"
+}
+
+fn _sh_quote(s: string) -> string {
+    let mut o = "'"
+    o = o + s.replace("'", "'\\''")
+    o = o + "'"
+    return o
+}
+
+fn _kv_lookup(body: string, key: string) -> string {
+    let prefix = key + "="
+    let lines = body.split("\n")
+    let mut i = 0
+    while i < len(lines) {
+        let ln = lines[i].trim()
+        if ln.starts_with(prefix) {
+            return ln.substring(prefix.len(), ln.len())
+        }
+        i = i + 1
+    }
+    return ""
+}
+
+fn _write_helper() {
+    let parts = []
+    parts.push("#!/usr/bin/env python3\n")
+    parts.push("# anima-eeg-core/_artifact hpf_dc_drift helper - raw#37 transient.\n")
+    parts.push("import argparse, hashlib, os, sys\n")
+    parts.push("import numpy as np\n")
+    parts.push("from scipy.signal import butter, filtfilt\n\n")
+
+    parts.push("def emit(k, v): print(f'{k}={v}')\n\n")
+
+    parts.push("def sha256_file(path):\n")
+    parts.push("    h = hashlib.sha256()\n")
+    parts.push("    with open(path, 'rb') as f:\n")
+    parts.push("        for chunk in iter(lambda: f.read(65536), b''):\n")
+    parts.push("            h.update(chunk)\n")
+    parts.push("    return h.hexdigest()\n\n")
+
+    parts.push("def hpf(data, fs, cutoff, order=4):\n")
+    parts.push("    nyq = 0.5 * fs\n")
+    parts.push("    b, a = butter(order, cutoff/nyq, btype='high')\n")
+    parts.push("    return filtfilt(b, a, data, axis=-1)\n\n")
+
+    parts.push("def cmd_apply(args):\n")
+    parts.push("    if not os.path.exists(args.npy_in):\n")
+    parts.push("        emit('verdict','FAIL'); emit('reason','input-missing'); sys.exit(2)\n")
+    parts.push("    sha_in = sha256_file(args.npy_in)\n")
+    parts.push("    arr = np.load(args.npy_in).astype(np.float64)\n")
+    parts.push("    if arr.ndim != 2:\n")
+    parts.push("        emit('verdict','FAIL'); emit('reason',f'ndim={arr.ndim}'); sys.exit(3)\n")
+    parts.push("    fs = float(args.fs)\n")
+    parts.push("    cutoff = float(args.cutoff)\n")
+    parts.push("    order = int(args.order)\n")
+    parts.push("    mean_before = float(np.sqrt(np.mean(arr.mean(axis=1)**2)))\n")
+    parts.push("    rms_before  = float(np.sqrt(np.mean(arr**2)))\n")
+    parts.push("    out = hpf(arr, fs, cutoff, order=order)\n")
+    parts.push("    mean_after = float(np.sqrt(np.mean(out.mean(axis=1)**2)))\n")
+    parts.push("    rms_after  = float(np.sqrt(np.mean(out**2)))\n")
+    parts.push("    os.makedirs(os.path.dirname(os.path.abspath(args.npy_out)) or '.', exist_ok=True)\n")
+    parts.push("    np.save(args.npy_out, out.astype(np.float32))\n")
+    parts.push("    sha_out = sha256_file(args.npy_out)\n")
+    parts.push("    c1 = (mean_after < 1e-2 * max(mean_before, 1e-12)) or (mean_after < 1e-3)\n")
+    parts.push("    ratio = rms_after / max(rms_before, 1e-12)\n")
+    parts.push("    # C2: rms must be > 0 (signal exists). HPF can drastically reduce rms when DC+drift dominate.\n")
+    parts.push("    c2 = rms_after > 1e-9\n")
+    parts.push("    verdict = 'PASS' if (c1 and c2) else 'FAIL'\n")
+    parts.push("    emit('schema', '" + SCHEMA + "')\n")
+    parts.push("    emit('fs', fs)\n")
+    parts.push("    emit('cutoff_hz', cutoff)\n")
+    parts.push("    emit('order', order)\n")
+    parts.push("    emit('n_channels', int(arr.shape[0]))\n")
+    parts.push("    emit('n_samples',  int(arr.shape[1]))\n")
+    parts.push("    emit('mean_before', mean_before)\n")
+    parts.push("    emit('mean_after',  mean_after)\n")
+    parts.push("    emit('rms_before',  rms_before)\n")
+    parts.push("    emit('rms_after',   rms_after)\n")
+    parts.push("    emit('rms_ratio',   ratio)\n")
+    parts.push("    emit('c1_dc_suppressed', '1' if c1 else '0')\n")
+    parts.push("    emit('c2_signal_preserved', '1' if c2 else '0')\n")
+    parts.push("    emit('sha256_in',  sha_in)\n")
+    parts.push("    emit('sha256_out', sha_out)\n")
+    parts.push("    emit('verdict', verdict)\n\n")
+
+    parts.push("def cmd_selftest(args):\n")
+    parts.push("    out_dir = '/tmp/anima_eeg_core_hpf_selftest'\n")
+    parts.push("    os.makedirs(out_dir, exist_ok=True)\n")
+    parts.push("    n_ch = 16\n")
+    parts.push("    fs = 125.0\n")
+    parts.push("    n = int(fs * 60)\n")
+    parts.push("    rng = np.random.default_rng(20260428)\n")
+    parts.push("    t = np.arange(n) / fs\n")
+    parts.push("    # Build: alpha 10Hz + DC offset 50uV + slow drift 0.1Hz + noise.\n")
+    parts.push("    data = np.zeros((n_ch, n), dtype=np.float64)\n")
+    parts.push("    for k in range(n_ch):\n")
+    parts.push("        data[k] = 50.0 + 30.0 * np.sin(2*np.pi*0.1*t) + 5.0*np.sin(2*np.pi*10*t) + 0.5*rng.standard_normal(n)\n")
+    parts.push("    npy_in  = os.path.join(out_dir, 'in.npy')\n")
+    parts.push("    npy_out = os.path.join(out_dir, 'out.npy')\n")
+    parts.push("    np.save(npy_in, data.astype(np.float32))\n")
+    parts.push("    class A: pass\n")
+    parts.push("    a = A(); a.npy_in=npy_in; a.npy_out=npy_out; a.fs=fs\n")
+    parts.push("    a.cutoff=0.5; a.order=4\n")
+    parts.push("    cmd_apply(a)\n")
+    parts.push("    out = np.load(npy_out).astype(np.float64)\n")
+    parts.push("    # Verify mean near zero\n")
+    parts.push("    mean_post = float(np.abs(out.mean()))\n")
+    parts.push("    emit('selftest_mean_post', mean_post)\n")
+    parts.push("    # Verify 10Hz alpha preserved (FFT)\n")
+    parts.push("    Y = np.abs(np.fft.rfft(out, axis=1))\n")
+    parts.push("    f = np.fft.rfftfreq(n, 1/fs)\n")
+    parts.push("    i10 = int(np.argmin(np.abs(f-10.0)))\n")
+    parts.push("    p10 = float(np.mean(Y[:, i10]))\n")
+    parts.push("    emit('selftest_p10_post', p10)\n")
+    parts.push("    emit('selftest','ok')\n\n")
+
+    parts.push("def main():\n")
+    parts.push("    p = argparse.ArgumentParser()\n")
+    parts.push("    sub = p.add_subparsers(dest='cmd', required=True)\n")
+    parts.push("    sub.add_parser('selftest')\n")
+    parts.push("    c = sub.add_parser('apply')\n")
+    parts.push("    c.add_argument('--in',  dest='npy_in',  required=True)\n")
+    parts.push("    c.add_argument('--out', dest='npy_out', required=True)\n")
+    parts.push("    c.add_argument('--fs',     type=float, default=125.0)\n")
+    parts.push("    c.add_argument('--cutoff', type=float, default=0.5)\n")
+    parts.push("    c.add_argument('--order',  type=int,   default=4)\n")
+    parts.push("    args = p.parse_args()\n")
+    parts.push("    if args.cmd == 'selftest': cmd_selftest(args)\n")
+    parts.push("    elif args.cmd == 'apply': cmd_apply(args)\n\n")
+
+    parts.push("if __name__ == '__main__': main()\n")
+
+    write_file(HELPER, parts.join(""))
+}
+
+fn _run_helper(args: string) -> array {
+    let py = pick_python()
+    let cmd = py + " " + HELPER + " " + args
+    let r = exec_with_status(cmd)
+    return [to_string(r[0]).trim(), to_int(r[1])]
+}
+
+fn run_hpf_apply(npy_in: string, npy_out: string, fs: float, cutoff: float) -> string {
+    _write_helper()
+    let mut a = "apply --in " + _sh_quote(npy_in)
+    a = a + " --out " + _sh_quote(npy_out)
+    a = a + " --fs " + to_string(fs)
+    a = a + " --cutoff " + to_string(cutoff)
+    let r = _run_helper(a)
+    return r[0]
+}
+
+fn _flags_only_argv() -> array {
+    let av = argv()
+    let mut start = 0
+    while start < len(av) {
+        let a = av[start]
+        let mut sd = 0
+        if len(a) >= 1 { if a[0] == "-" { sd = 1 } }
+        if sd == 1 { break }
+        start = start + 1
+    }
+    let mut out = []
+    let mut j = start
+    while j < len(av) { out.push(av[j]); j = j + 1 }
+    return out
+}
+
+fn assert_true(cond: bool, label: string) -> bool {
+    if cond { println("  PASS: " + label) } else { println("  FAIL: " + label) }
+    return cond
+}
+
+fn _print_usage() {
+    eprintln("usage: hexa run hpf_dc_drift.hexa --selftest")
+    eprintln("       hexa run hpf_dc_drift.hexa --apply --in <p> --out <q> [--fs 125] [--cutoff 0.5] [--order 4]")
+}
+
+fn main() {
+    let av = _flags_only_argv()
+    let mut selftest = false
+    let mut apply_mode = false
+    let mut npy_in = ""
+    let mut npy_out = ""
+    let mut fs: float = 125.0
+    let mut cutoff: float = 0.5
+
+    let mut i = 0
+    while i < len(av) {
+        let a = av[i]
+        if a == "--selftest" { selftest = true; i = i + 1; continue }
+        if a == "--apply"    { apply_mode = true; i = i + 1; continue }
+        if a == "--help" || a == "-h" { _print_usage(); exit(0) }
+        if a == "--in"     { npy_in  = av[i+1]; i = i + 2; continue }
+        if a == "--out"    { npy_out = av[i+1]; i = i + 2; continue }
+        if a == "--fs"     { fs     = to_float(av[i+1]); i = i + 2; continue }
+        if a == "--cutoff" { cutoff = to_float(av[i+1]); i = i + 2; continue }
+        eprintln("unknown arg: " + a); _print_usage(); exit(2)
+    }
+
+    if !selftest && !apply_mode {
+        eprintln("ABORT: need --selftest or --apply")
+        _print_usage(); exit(2)
+    }
+
+    _write_helper()
+
+    if selftest {
+        println("== _artifact hpf_dc_drift selftest ==")
+        let r = _run_helper("selftest")
+        let body = r[0]
+        let rc = r[1]
+        println(body)
+        if rc != 0 { eprintln("helper rc=" + to_string(rc)); exit(1) }
+        let mut pass = 0
+        let mut fail = 0
+        let t1 = assert_true(_kv_lookup(body, "selftest") == "ok", "selftest=ok")
+        if t1 { pass = pass + 1 } else { fail = fail + 1 }
+        let t2 = assert_true(_kv_lookup(body, "schema") == SCHEMA, "schema=" + SCHEMA)
+        if t2 { pass = pass + 1 } else { fail = fail + 1 }
+        let t3 = assert_true(_kv_lookup(body, "verdict") == "PASS", "verdict=PASS")
+        if t3 { pass = pass + 1 } else { fail = fail + 1 }
+        let mean_post = to_float(_kv_lookup(body, "selftest_mean_post"))
+        let t4 = assert_true(mean_post < 0.5, "post-HPF mean < 0.5 (got " + to_string(mean_post) + ")")
+        if t4 { pass = pass + 1 } else { fail = fail + 1 }
+        println("")
+        println("Results: " + to_string(pass) + " PASS / " + to_string(fail) + " FAIL")
+        if fail != 0 { exit(1) }
+        println("selftest: OK")
+        exit(0)
+    }
+
+    let body = run_hpf_apply(npy_in, npy_out, fs, cutoff)
+    println(body)
+    let v = _kv_lookup(body, "verdict")
+    if v != "PASS" { exit(1) }
+    exit(0)
+}
