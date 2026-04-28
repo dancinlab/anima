@@ -10,9 +10,21 @@
 //      and the absolute deviation from human baseline is bounded.
 //
 //    PRE-REGISTERED CRITERIA (frozen, this file IS the SSOT)
-//      C1.  LZ76(EEG)   ≥ 0.65         — human-resting LZ76 floor (Schartner 2017)
-//      C2.  |Δ| / human ≤ 0.20         — CLM-LZ deviation from human bounded
+//      C1.  LZ76(EEG)   ≥ 0.65         — operational pre-commitment (raw#12
+//                                        frozen 2026-04-26); visual-estimate
+//                                        midpoint of Schartner 2015 Fig 7
+//                                        wakeful-rest band ~0.6–0.7, NOT a
+//                                        paper-derived mean−k·SD threshold
+//      C2.  |Δ| / human ≤ 0.20         — operational tolerance (raw#12 frozen)
 //      Verdict P1.PASS = (C1 AND C2)
+//
+//    raw#10 honest C3 retraction (2026-04-28, mirror of commit 98d61133):
+//      "Schartner 2017 PLOS ONE" does NOT exist. Schartner PLOS ONE is 2015
+//      (10.1371/journal.pone.0133532, propofol scalp EEG, Hilbert-envelope
+//      mean). Schartner 2017 (Neurosci Conscious 2017(1):niw022,
+//      10.1093/nc/niw022) is intracranial SEEG NREM, also Hilbert-envelope.
+//      anima uses median binarisation (Bódizs eNeuro 2024, ENEURO.0259-23)
+//      — numeric LZc values not directly comparable across methods.
 //
 //    ANY post-hoc threshold change ⇒ v2 bump (no silent edit).
 //
@@ -40,9 +52,13 @@
 // ════════════════════════════════════════════════════════════════════════════
 
 // ─── frozen criteria (pre-registered, this file = SSOT) ─────────────────────
-let LZ76_EEG_MIN_X1000        = 650   // C1: human-resting LZ76 floor (Schartner 2017)
-let DELTA_HUMAN_MAX_PERMILLE  = 200   // C2: 20.0% (×1000)
-let HUMAN_BASELINE_LZ76_X1000 = 850   // human-conscious LZ76 reference (×1000)
+//   raw#12 frozen 2026-04-26; values UNCHANGED at 98d61133 retraction.
+//   Provenance: operational pre-commitments (visual-estimate midpoint of
+//   Schartner 2015 Fig 7 wakeful-rest band ~0.6–0.7), NOT paper-derived
+//   mean−k·SD thresholds. See header raw#10 honest C3 retraction.
+let LZ76_EEG_MIN_X1000        = 650   // C1: operational floor (raw#12 frozen)
+let DELTA_HUMAN_MAX_PERMILLE  = 200   // C2: operational tolerance 20.0% (×1000)
+let HUMAN_BASELINE_LZ76_X1000 = 850   // operational baseline (×1000) — placeholder, replace with empirical mean−2·SD when N≥10 anima resting runs accumulate
 
 // ─── env helpers ────────────────────────────────────────────────────────────
 fn env_str(key: string, default_val: string) -> string {
@@ -58,7 +74,11 @@ fn env_str(key: string, default_val: string) -> string {
 //     2) counts distinct binary-pattern transitions across 16 channels
 //     3) normalizes to [0, 1000]
 //   This is NOT real LZ76 — it is a sanity proxy that lets the harness
-//   chain run end-to-end on synthetic data.  Real LZ76 (Schartner 2017)
+//   chain run end-to-end on synthetic data. Real LZ76 (Kaspar-Schuster
+//   1987 production-count, 10.1103/PhysRevA.36.842; cf. Schartner 2015
+//   PLOS ONE 10.1371/journal.pone.0133532 + Schartner 2017 Neurosci
+//   Conscious 10.1093/nc/niw022 for prior LZc-on-EEG context, Hilbert-
+//   envelope binarisation NOT directly comparable to anima median path)
 //   replaces this in post-arrival workflow.
 fn median5_x1000(d: int, t: int, a: int, b: int, g: int) -> int {
     // Sort the 5 values, return the median.  Insertion sort for 5 elements.
@@ -277,7 +297,8 @@ fn main() {
     cert = cert + "    \"C1_lz76_eeg_min_x1000\": " + str(LZ76_EEG_MIN_X1000) + ",\n"
     cert = cert + "    \"C2_delta_human_max_permille\": " + str(DELTA_HUMAN_MAX_PERMILLE) + ",\n"
     cert = cert + "    \"human_baseline_lz76_x1000\": " + str(HUMAN_BASELINE_LZ76_X1000) + ",\n"
-    cert = cert + "    \"verdict_rule\": \"P1.PASS = (LZ76 >= C1) AND (|Δ|/human <= C2)\"\n"
+    cert = cert + "    \"verdict_rule\": \"P1.PASS = (LZ76 >= C1) AND (|Δ|/human <= C2)\",\n"
+    cert = cert + "    \"criteria_provenance\": \"C1 0.65 floor and C2 20% tolerance and human_baseline 0.85 are OPERATIONAL PRE-COMMITMENTS (raw#12 frozen 2026-04-26), NOT paper-derived mean±SD values. Source-paper visual estimate places wakeful-rest LZc at ~0.6–0.7 (Schartner 2015 Fig 7 graph-only). Recommended future work: replace operational thresholds with empirical mean − 2·SD once N≥10 anima resting runs accumulate. Mirror of clm_eeg_lz76_real.hexa retraction (commit 98d61133, 2026-04-28).\"\n"
     cert = cert + "  },\n"
     cert = cert + "  \"dry_run\": {\n"
     cert = cert + "    \"fixture_path\": \"" + fixture_path + "\",\n"
@@ -293,13 +314,13 @@ fn main() {
     cert = cert + "    \"C2_pass\": " + str(c2_pass) + ",\n"
     cert = cert + "    \"p1_dry_run_pass\": " + str(p1_pass) + ",\n"
     cert = cert + "    \"classification\": \"NOT_VERIFIED_SYNTHETIC\",\n"
-    cert = cert + "    \"note\": \"LZ proxy on synthetic fixture is sanity-only. Real LZ76 (Schartner 2017) replaces in post-arrival D+1.\"\n"
+    cert = cert + "    \"note\": \"LZ proxy on synthetic fixture is sanity-only. Real LZ76 (Kaspar-Schuster 1987, Phys Rev A 36:842) replaces in post-arrival D+1; cf. Schartner 2015 PLOS ONE 10.1371/journal.pone.0133532 + Schartner 2017 Neurosci Conscious 10.1093/nc/niw022 (Hilbert-envelope, NOT directly comparable to anima median binarisation).\"\n"
     cert = cert + "  },\n"
     cert = cert + "  \"post_arrival_workflow\": {\n"
     cert = cert + "    \"day\": \"D+1\",\n"
     cert = cert + "    \"input\": \"anima-eeg/recordings/<resting_session>.npy (16ch × 125Hz Cyton+Daisy native × ≥60s)\",\n"
     cert = cert + "    \"clm_substrate\": \"edu/cell/lagrangian/l_ix_integrator.hexa V_sync hidden trace\",\n"
-    cert = cert + "    \"replace\": \"this dry-run lz76_proxy with Schartner-2017 LZ76 binary stream\",\n"
+    cert = cert + "    \"replace\": \"this dry-run lz76_proxy with Kaspar-Schuster 1987 LZ76 production-count on median-binarised stream (anima-clm-eeg/tool/clm_eeg_lz76_real.hexa); Schartner 2015/2017 cited as prior context only, Hilbert-envelope binarisation not directly comparable\",\n"
     cert = cert + "    \"verdict_rule\": \"identical (frozen criteria above)\"\n"
     cert = cert + "  }\n"
     cert = cert + "}\n"
