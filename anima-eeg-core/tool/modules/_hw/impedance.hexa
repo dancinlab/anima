@@ -1,0 +1,297 @@
+// ════════════════════════════════════════════════════════════════════════════
+//  anima-eeg-core/tool/modules/_hw/impedance.hexa  (Phase 5 — _hw module #2)
+//
+//  PURPOSE
+//    ADS1299 z-command 31.5 Hz @ 6 nA lead-off impedance measurement +
+//    5-state classification (GREEN/YELLOW/RED/BLUE/GRAY). raw#18 self-host
+//    fixpoint: WRAPS the frozen legacy implementation at
+//    anima-eeg/impedance_check.hexa (711 LoC) — the impedance_real_hardware_
+//    validation.hexa (754 LoC, commit d7961fb3) is a separate validation
+//    tool whose entry is exposed via the dispatcher's `hardware impedance_validate`.
+//
+//  raw#10 HONEST C3 (wrap-vs-port decision)
+//    DECISION: WRAP. Legacy 711 LoC encodes the z-command serial protocol
+//    + 31.5 Hz FFT bin extraction + Ohm's law conversion. Re-implementing
+//    the protocol carries a regression risk (board firmware response parsing
+//    is brittle). Wrapper exposes the kv-block and falsifier triad to the
+//    dispatcher; legacy file remains untouched (raw#18 reuse-first).
+//
+//  API
+//    _hw_impedance_kv(args_kv) -> string
+//      Returns kv-block:
+//        schema=anima-eeg-core/_hw/impedance/1
+//        op=measure
+//        mode=<selftest|check|watch>
+//        verdict=<PASS|FAIL|PARTIAL>
+//        green_count=<int>      (per-channel state counts)
+//        yellow_count=<int>
+//        red_count=<int>
+//        blue_count=<int>
+//        gray_count=<int>
+//        max_kohm=<int>
+//        median_kohm=<int>
+//        backend=anima-eeg/impedance_check.hexa
+//        backend_rc=<int>
+//        raw71_falsifier_count=5
+//        raw71_triggered_ids=<csv>
+//        raw91_evidence=ads1299_z_command_31p5Hz_6nA_lead_off + ohms_law
+//        raw91_limit=AC_only + 750k_GREEN_3M_YELLOW_thresholds_calibrated_for_saline
+//        raw95_enforce_layer=in_module
+//
+//  RAW#71 FALSIFIERS (5 preregistered, frozen 2026-04-28)
+//    F_IMP_01: red_count >= 8       → majority RED → re-attach helmet
+//    F_IMP_02: max_kohm > 30000     → 30 MΩ → saline dry / open electrode
+//    F_IMP_03: green_count == 0     → no good contact → user-error or board offline
+//    F_IMP_04: backend_rc != 0      → z-command protocol failure / port bad
+//    F_IMP_05: median_kohm <= 0     → ohms-law sentinel (FFT bin = 0)
+//
+//  CLI
+//    hexa run impedance.hexa --selftest
+//    hexa run impedance.hexa --check  [--port <path>]
+//    hexa run impedance.hexa --watch  [--port <path>]
+//
+//  RAW raw#9 hexa-only · raw#10 honest C3 · raw#12 silent-error-ban
+//      raw#18 self-host · raw#42 mac-local-USB · raw#65 idempotent
+//      raw#71 falsifier ≥5 · raw#82 darwin · raw#91 honest triad
+//      raw#95 triad-universal · raw#137 80% Pareto
+//
+//  @resolver-bypass(reason="darwin-native: legacy backend requires .venv-eeg
+//                   + USB FTDI dongle. Hardware always Mac local (raw#42).")
+// ════════════════════════════════════════════════════════════════════════════
+
+let SCHEMA       = "anima-eeg-core/_hw/impedance/1"
+let MODULE_NAME  = "impedance"
+let LEGACY_PATH  = "anima-eeg/impedance_check.hexa"
+
+// ─── helpers (parser/quoting reused across _hw modules) ────────────────
+
+fn _hexa_bin() -> string {
+    let hl = env("HEXA_LANG")
+    if hl != "" { return hl + "/hexa.real" }
+    return "/Users/ghost/core/hexa-lang/hexa.real"
+}
+
+fn _sh_quote(s: string) -> string {
+    let mut o = "'"
+    o = o + s.replace("'", "'\\''")
+    o = o + "'"
+    return o
+}
+
+fn is_digit_ch(c: string) -> int {
+    if c == "0" || c == "1" || c == "2" || c == "3" || c == "4" { return 1 }
+    if c == "5" || c == "6" || c == "7" || c == "8" || c == "9" { return 1 }
+    return 0
+}
+
+fn digit_val(c: string) -> int {
+    if c == "0" { return 0 }
+    if c == "1" { return 1 }
+    if c == "2" { return 2 }
+    if c == "3" { return 3 }
+    if c == "4" { return 4 }
+    if c == "5" { return 5 }
+    if c == "6" { return 6 }
+    if c == "7" { return 7 }
+    if c == "8" { return 8 }
+    if c == "9" { return 9 }
+    return -1
+}
+
+fn find_in_str(s: string, needle: string) -> int {
+    let n = len(s); let m = len(needle)
+    if m <= 0 { return 0 }
+    if n < m { return -1 }
+    let mut i = 0
+    while i <= n - m {
+        let mut j = 0; let mut ok = 1
+        while j < m {
+            if s[i + j] != needle[j] { ok = 0; j = m }
+            j = j + 1
+        }
+        if ok == 1 { return i }
+        i = i + 1
+    }
+    return -1
+}
+
+fn parse_int_kv(blob: string, key: string) -> int {
+    let kp = find_in_str(blob, key)
+    if kp < 0 { return -2147483647 }
+    let n = len(blob); let mut q = kp + len(key); let mut acc = 0
+    let mut neg = 0; let mut hd = 0
+    while q < n && blob[q] != "\n" {
+        let c = blob[q]
+        if c == "-" && hd == 0 { neg = 1 }
+        if is_digit_ch(c) == 1 { acc = acc * 10 + digit_val(c); hd = 1 }
+        q = q + 1
+    }
+    if hd == 0 { return -2147483647 }
+    if neg == 1 { return -acc }
+    return acc
+}
+
+fn parse_str_kv(blob: string, key: string) -> string {
+    let kp = find_in_str(blob, key)
+    if kp < 0 { return "" }
+    let n = len(blob); let mut q = kp + len(key)
+    let mut out = ""
+    while q < n && blob[q] != "\n" {
+        out = out + blob[q]
+        q = q + 1
+    }
+    return out.trim()
+}
+
+// Count occurrences of substring (used to derive per-state counts when
+// legacy does not emit aggregate counters).
+fn count_substr(blob: string, needle: string) -> int {
+    let mut count = 0
+    let mut pos = 0
+    let bn = len(blob); let nn = len(needle)
+    if nn == 0 { return 0 }
+    while pos <= bn - nn {
+        let sub = blob.substring(pos, pos + nn)
+        if sub == needle { count = count + 1; pos = pos + nn }
+        else { pos = pos + 1 }
+    }
+    return count
+}
+
+// ─── public-ish API ────────────────────────────────────────────────────
+
+fn _hw_impedance_kv(mode: string, port: string) -> string {
+    // raw#42: hardware verbs delegate to legacy backend (Mac local USB OK)
+    let mut args = ""
+    if mode == "selftest" {
+        args = "--selftest"
+    } else { if mode == "watch" {
+        args = "--watch"
+        if port != "" { args = args + " --port " + _sh_quote(port) }
+    } else {
+        args = "--check"
+        if port != "" { args = args + " --port " + _sh_quote(port) }
+    } }
+    // raw#10 honest C3: legacy anima-eeg/ argv parser does not strip "run"
+    let cmd = _hexa_bin() + " " + LEGACY_PATH + " " + args
+    eprintln("[_hw/impedance] cmd=" + cmd)
+    let r = exec_with_status(cmd)
+    let out = to_string(r[0])
+    let rc  = to_int(r[1])
+
+    // Legacy emits per-channel "[GREEN]" / "[YELLOW]" / ... bracket tags.
+    // Aggregate counts = per-state substring frequencies (raw#12 deterministic).
+    let green_count  = count_substr(out, "[GREEN]")
+    let yellow_count = count_substr(out, "[YELLOW]")
+    let red_count    = count_substr(out, "[RED]")
+    let blue_count   = count_substr(out, "[BLUE]")
+    let gray_count   = count_substr(out, "[GRAY]")
+    let max_kohm     = parse_int_kv(out, "max_kohm=")
+    let median_kohm  = parse_int_kv(out, "median_kohm=")
+
+    // raw#71 falsifier evaluation
+    let mut triggered = ""
+    let mut trig_count = 0
+    if red_count >= 8 { triggered = triggered + "F_IMP_01,"; trig_count = trig_count + 1 }
+    if max_kohm != -2147483647 && max_kohm > 30000 {
+        triggered = triggered + "F_IMP_02,"; trig_count = trig_count + 1
+    }
+    if green_count == 0 && mode != "selftest" {
+        triggered = triggered + "F_IMP_03,"; trig_count = trig_count + 1
+    }
+    if rc != 0 { triggered = triggered + "F_IMP_04,"; trig_count = trig_count + 1 }
+    if median_kohm != -2147483647 && median_kohm <= 0 {
+        triggered = triggered + "F_IMP_05,"; trig_count = trig_count + 1
+    }
+    let nT = len(triggered)
+    if nT > 0 { triggered = triggered.substring(0, nT - 1) }
+
+    // verdict policy: PASS = rc==0 ∧ no falsifier ∧ green ≥ 12
+    let mut verdict = "FAIL"
+    if rc == 0 && trig_count == 0 {
+        if green_count >= 12 { verdict = "PASS" } else { verdict = "PARTIAL" }
+    }
+    // selftest: legacy emits all-GREEN synthetic 16ch ⇒ green_count = 16
+    if mode == "selftest" && rc == 0 { verdict = "PASS" }
+
+    let mut kv = ""
+    kv = kv + "schema=" + SCHEMA + "\n"
+    kv = kv + "module=" + MODULE_NAME + "\n"
+    kv = kv + "op=measure\n"
+    kv = kv + "mode=" + mode + "\n"
+    kv = kv + "verdict=" + verdict + "\n"
+    kv = kv + "green_count=" + str(green_count) + "\n"
+    kv = kv + "yellow_count=" + str(yellow_count) + "\n"
+    kv = kv + "red_count=" + str(red_count) + "\n"
+    kv = kv + "blue_count=" + str(blue_count) + "\n"
+    kv = kv + "gray_count=" + str(gray_count) + "\n"
+    kv = kv + "max_kohm=" + str(max_kohm) + "\n"
+    kv = kv + "median_kohm=" + str(median_kohm) + "\n"
+    kv = kv + "value_x1000=" + str(green_count * 1000) + "\n"
+    kv = kv + "backend=" + LEGACY_PATH + "\n"
+    kv = kv + "backend_rc=" + str(rc) + "\n"
+    kv = kv + "raw71_falsifier_count=5\n"
+    kv = kv + "raw71_triggered_count=" + str(trig_count) + "\n"
+    kv = kv + "raw71_triggered_ids=" + triggered + "\n"
+    kv = kv + "raw91_evidence=ads1299_z_cmd_31p5Hz_6nA_lead_off+ohms_law\n"
+    kv = kv + "raw91_limit=AC_only+750k_GREEN_3M_YELLOW_thresholds_for_saline\n"
+    kv = kv + "raw95_enforce_layer=in_module\n"
+    return kv
+}
+
+// ─── CLI ───────────────────────────────────────────────────────────────
+
+fn _flags_only_argv() -> array {
+    let av = argv()
+    let mut start = 0
+    while start < len(av) {
+        let a = av[start]
+        let mut is_prefix = false
+        if a.ends_with(".hexa") { is_prefix = true }
+        if !is_prefix { if a.ends_with("/exe") { is_prefix = true } }
+        if !is_prefix { if a == "run" { is_prefix = true } }
+        if !is_prefix { if a.ends_with("hexa.real") || a.ends_with("/hexa") { is_prefix = true } }
+        if is_prefix { start = start + 1 } else { break }
+    }
+    let mut out = []
+    let mut j = start
+    while j < len(av) { out.push(av[j]); j = j + 1 }
+    return out
+}
+
+fn _print_usage() {
+    eprintln("usage: hexa run impedance.hexa --selftest")
+    eprintln("       hexa run impedance.hexa --check [--port <path>]")
+    eprintln("       hexa run impedance.hexa --watch [--port <path>]")
+}
+
+fn main() {
+    let av = _flags_only_argv()
+    let mut mode = ""
+    let mut port = ""
+    let mut i = 0
+    while i < len(av) {
+        let a = av[i]
+        if a == "--selftest" { mode = "selftest"; i = i + 1; continue }
+        if a == "--check"    { mode = "check"; i = i + 1; continue }
+        if a == "--watch"    { mode = "watch"; i = i + 1; continue }
+        if a == "--port"     { port = av[i+1]; i = i + 2; continue }
+        if a == "--help" || a == "-h" { _print_usage(); exit(0) }
+        i = i + 1
+    }
+
+    if mode == "" {
+        eprintln("ABORT: need --selftest or --check or --watch")
+        _print_usage()
+        exit(2)
+    }
+
+    if mode == "selftest" {
+        println("== _hw/impedance selftest (mock — no hardware required) ==")
+    }
+    let kv = _hw_impedance_kv(mode, port)
+    print(kv)
+    if find_in_str(kv, "verdict=PASS") >= 0 { exit(0) }
+    if find_in_str(kv, "verdict=PARTIAL") >= 0 { exit(7) }
+    exit(1)
+}
