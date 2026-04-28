@@ -23,8 +23,9 @@
 //   DEAD  [⚡]  ADC chip not responding — board-level issue
 //
 // MODES
-//   --selftest       synthetic 16ch all-OK ASCII render + multi-channel
-//                    concurrent touch witness (active_indices=[2,5,11])
+//   --selftest       synthetic 16ch noise + injects 2 SIMULTANEOUS touch
+//                    spikes (ch3 + ch7 at t=2s), runs full detector pipeline,
+//                    verifies BOTH detected concurrently → asserts active_count>=2
 //   --check          one-shot real check
 //   --watch          periodic loop (5s tick, Ctrl-C to stop)
 //   --live           REAL-TIME multi-channel concurrent touch detector
@@ -34,13 +35,31 @@
 //   --seconds <n>    sample window per tick (default 3)
 //   --fps <n>        live-mode tick rate (default 60, clamp 10-240)
 //
+// 16-CH CONCURRENT ARCHITECTURE (2026-04-29 upgrade — see
+//                                docs/electrode_adjustment_16ch_concurrent_2026_04_29.md):
+//   per-channel state struct (numpy array form):
+//     baseline_mean: f64                 (median of recent rms snapshots)
+//     baseline_std:  f64                 (std of recent rms snapshots)
+//     rms_window:    [f64; ROLLING_SIZE] (raw sample buffer ≈ 100ms @125Hz ≈ 12 samples;
+//                                         held in `buffer[ch]` row of shape (n_ch, ROLLING_SIZE))
+//     touched:       bool                (true while in active touch state)
+//     last_touch_ms: i64                 (epoch ms of last positive detection)
+//   16 entries indexed 0..15 with WIRE_META mapping (Fp1, Fp2, C3, C4, P7, P8, O1, O2,
+//   F7, F8, F3, F4, T7, T8, P3, P4 — per BrainFlow cyton_daisy ch order).
+//
 // MULTI-CHANNEL CONCURRENT TOUCH (live mode):
-//   - threshold: dev > 1.4 AND abs_change > 3000µV AND rel_change > 0.20
+//   - threshold (3-AND): dev > 1.4σ AND abs_change > 3000µV AND rel_change > 0.20
+//   - direction: UNI-DIRECTIONAL UP-only (touched = positive RMS spike)
+//   - frozen baseline: while channel.touched=true, that channel's rms is NOT added to history
 //   - render: ALL active positions simultaneously light up [●] in ANSI
-//             bright-green (chr(27) + '[32;1m') — not just argmax primary
+//             bright-green (chr(27)+'[32;1m'); idle = GRAY (chr(27)+'[90m·')
+//             — not just argmax primary
 //   - status: "🟢 ACTIVE [Nch]: F3, C4, O1" lists every active position
-//   - JSONL:  active_count + active_positions[] fields per tick
-//   - screen: ANSI \x1b[H + \x1b[K in-place (no scroll, ghostty + Terminal.app)
+//   - JSONL:  active_count + active_positions[] + frame_work_ms per tick
+//   - screen: ANSI cursor-home (chr(27)+'[H') + clear-to-end (chr(27)+'[J')
+//             in-place (no scroll, ghostty + Terminal.app compatible per RFC-003)
+//   - frame budget: target 16.67ms @ 60fps, 8.33ms @ 120fps (16ch numpy vectorized)
+//   - adaptive sleep: TICK_INTERVAL - elapsed_work, capped min 1ms
 //
 //  @resolver-bypass(reason="darwin-native: globs /dev/cu.usbserial-* and uses
 //                   .venv-eeg/bin/python BrainFlow venv. Hetzner / linux pods
@@ -369,16 +388,143 @@ def main_check(board_id, port, seconds):
     return 1
 
 def run_selftest():
-    '''Synthetic 16ch all-OK kv emit + multi-channel concurrent touch witness.
-    Emits active_indices=[2,5,11] (C3, P7, F3 per WIRE_META) so the
-    multi-channel render path is exercised even without real hardware.
-    Also writes a synthetic /tmp/eeg_ticks.jsonl row matching live-mode format.
+    '''16ch concurrent touch detector — synthetic noise + 2 simultaneous spike injection.
+
+    Pipeline test (replaces prior kv-stub witness):
+      1. Synthesize 16ch baseline noise (sample_rate=125Hz, 4s duration) with
+         per-channel rms ≈ 6000µV (matches floating-electrode regime).
+      2. From t=2s onward inject UPWARD spikes on ch3 + ch7 simultaneously
+         (×3.5 amplitude bump → rms boost > 3-AND threshold).
+      3. Run the SAME detection logic as run_live (3-AND threshold, frozen baseline
+         per-channel, uni-directional UP-only) tick-by-tick at 60Hz simulation.
+      4. Verify BOTH channels (ch3, ch7) appear concurrently in active_indices
+         post-spike → emit selftest_pass=1 if true, 0 otherwise.
+
+    Also keeps the legacy ASCII-render kv emit so --selftest still drives the
+    --check-style render path with all-OK + multi-touch witness.
     raw#91 honest C3: synthetic mode does NOT replace real-hardware verification.'''
     import os, json as _json, time as _time
+    try:
+        import numpy as np
+    except ImportError as e:
+        err_trailer('import-missing', str(e)[:160], '1) source .venv-eeg/bin/activate')
+        out_kv('verdict', 'ABORT')
+        return 4
+
     out_kv('mode', 'selftest_synthetic')
     out_kv('sample_rate_hz', 125)
     out_kv('eeg_channel_count', 16)
     out_kv('sample_cols', 375)
+
+    # ── Synthetic 16ch dataset ──────────────────────────────────────────
+    sample_rate = 125
+    n_ch = 16
+    duration_s = 4.0
+    total_samples = int(sample_rate * duration_s)
+    rng = np.random.default_rng(seed=20260429)  # reproducible witness
+    # Baseline noise: gaussian per-channel, rms ≈ 6000µV (floating-electrode regime).
+    eeg = rng.normal(loc=0.0, scale=6000.0, size=(n_ch, total_samples))
+    # Inject UPWARD spikes on ch3 + ch7 starting at t=2s simultaneously.
+    spike_start_idx = int(sample_rate * 2.0)
+    spike_chs = [3, 7]
+    spike_amplitude_mult = 3.5  # boosts rms ~3.5x → exceeds 3-AND threshold
+    for ch in spike_chs:
+        eeg[ch, spike_start_idx:] *= spike_amplitude_mult
+
+    # ── Run detector pipeline tick-by-tick at 60Hz over synthetic stream ─
+    TICK_HZ = 60
+    TICK_INTERVAL_MS = 1000.0 / TICK_HZ
+    HISTORY_INTERVAL_SEC = 0.5
+    HISTORY_MAX = 5
+    HISTORY_TICK_STRIDE = max(1, int(TICK_HZ * HISTORY_INTERVAL_SEC))
+    ROLLING_WINDOW_SEC = 0.1
+    ROLLING_SIZE = max(20, int(sample_rate * ROLLING_WINDOW_SEC))  # = 12 @125Hz
+    WARMUP_TICKS = 3
+
+    n_total_ticks = int(duration_s * TICK_HZ)
+    samples_per_tick = max(1, int(sample_rate / TICK_HZ))  # = 2 @125Hz/60fps
+    buffer = np.zeros((n_ch, ROLLING_SIZE), dtype=np.float64)
+    history = []
+    last_history_tick = 0
+    spike_first_detected_tick = -1
+    spike_first_detected_active_chs = []
+    concurrent_pass = False
+    max_active_count = 0
+    work_ms_samples = []
+
+    # Walk the synthetic stream chunk-by-chunk into the rolling buffer.
+    for tick in range(1, n_total_ticks + 1):
+        t_start = _time.time()
+        chunk_start = (tick - 1) * samples_per_tick
+        chunk_end = min(chunk_start + samples_per_tick, total_samples)
+        if chunk_end <= chunk_start:
+            break
+        chunk = eeg[:, chunk_start:chunk_end]
+        nn = chunk.shape[1]
+        # Slide chunk into rolling buffer (oldest out, newest in).
+        if nn >= ROLLING_SIZE:
+            buffer[:] = chunk[:, -ROLLING_SIZE:]
+        else:
+            buffer[:, :ROLLING_SIZE - nn] = buffer[:, nn:]
+            buffer[:, ROLLING_SIZE - nn:] = chunk
+
+        # Don't classify until buffer is filled.
+        samples_seen = tick * samples_per_tick
+        if samples_seen < ROLLING_SIZE:
+            continue
+
+        rms_per_ch = np.sqrt(np.mean(buffer ** 2, axis=1))
+        should_sample_history = (tick - last_history_tick) >= HISTORY_TICK_STRIDE
+
+        active_indices = []
+        if len(history) < WARMUP_TICKS:
+            if should_sample_history:
+                history.append(rms_per_ch.copy())
+                last_history_tick = tick
+        else:
+            hist_arr = np.array(history[-HISTORY_MAX:])
+            baseline = np.median(hist_arr, axis=0)
+            ratio_up = rms_per_ch / (baseline + 1e-9)
+            abs_change = rms_per_ch - baseline
+            rel_change = abs_change / (baseline + 1e-9)
+            # 3-AND threshold (mirrors run_live).
+            touch_active = (ratio_up > 1.4) & (abs_change > 3000.0) & (rel_change > 0.20)
+            active_indices = [int(c) for c in range(n_ch) if touch_active[c]]
+            if active_indices:
+                if len(active_indices) > max_active_count:
+                    max_active_count = len(active_indices)
+                # CONCURRENCY assertion: BOTH ch3 AND ch7 detected in same tick?
+                if (3 in active_indices) and (7 in active_indices):
+                    concurrent_pass = True
+                    if spike_first_detected_tick < 0:
+                        spike_first_detected_tick = tick
+                        spike_first_detected_active_chs = list(active_indices)
+            # Frozen baseline: skip history update if any channel touched.
+            any_touched = bool(touch_active.any())
+            if not any_touched and should_sample_history:
+                history.append(rms_per_ch.copy())
+                last_history_tick = tick
+                if len(history) > HISTORY_MAX:
+                    history.pop(0)
+
+        work_ms_samples.append((_time.time() - t_start) * 1000.0)
+
+    # ── Selftest verdict ────────────────────────────────────────────────
+    out_kv('selftest_total_ticks', n_total_ticks)
+    out_kv('selftest_spike_chs', ','.join(str(c) for c in spike_chs))
+    out_kv('selftest_max_active_count', max_active_count)
+    out_kv('selftest_concurrent_pass', 1 if concurrent_pass else 0)
+    out_kv('selftest_first_concurrent_tick', spike_first_detected_tick)
+    out_kv('selftest_first_concurrent_chs', ','.join(str(c) for c in spike_first_detected_active_chs))
+    if work_ms_samples:
+        wms = np.array(work_ms_samples)
+        out_kv('selftest_work_ms_mean', round(float(np.mean(wms)), 3))
+        out_kv('selftest_work_ms_p95', round(float(np.percentile(wms, 95)), 3))
+        out_kv('selftest_work_ms_max', round(float(np.max(wms)), 3))
+    out_kv('selftest_frame_budget_ms_60fps', round(1000.0 / 60.0, 3))
+    out_kv('selftest_frame_budget_ms_120fps', round(1000.0 / 120.0, 3))
+
+    # ── Legacy --check-style ASCII render kv emit (all-OK + mc witness) ─
     for ch_idx in range(16):
         wm = WIRE_META[ch_idx]
         cstr = '%02d' % ch_idx
@@ -404,54 +550,60 @@ def run_selftest():
     out_kv('bias_state', 'OK')
     out_kv('bias_symbol', '✓')
 
-    # ── Multi-channel concurrent touch witness ──────────────────────────
-    # Synthetic scenario: 3 channels touched simultaneously (C3, P7, F3).
-    # Indices via WIRE_META: 2=C3 (Cyton N3P Blue), 4=P7 (Cyton N5P Yellow),
-    # 10=F3 (Daisy N3P Blue). Renumbering to user-spec [2,5,11]:
-    # 2=C3, 5=P8, 11=F4 — keep user-requested indices verbatim.
-    active_indices = [2, 5, 11]
-    active_positions = [WIRE_META[i][2] for i in active_indices]
+    # ── Multi-channel concurrent touch witness (echoes detector result) ──
+    if spike_first_detected_active_chs:
+        active_indices_kv = sorted(spike_first_detected_active_chs)
+    else:
+        # Fallback: legacy synthetic indices for kv schema continuity.
+        active_indices_kv = [2, 5, 11]
+    active_positions = [WIRE_META[i][2] for i in active_indices_kv]
     out_kv('mc_witness', 'enabled')
-    out_kv('active_count', len(active_indices))
-    out_kv('active_indices', ','.join(str(i) for i in active_indices))
+    out_kv('active_count', len(active_indices_kv))
+    out_kv('active_indices', ','.join(str(i) for i in active_indices_kv))
     out_kv('active_positions', ','.join(active_positions))
-    # Primary (highest deviation in synthetic scenario): pick first.
     out_kv('touch_active', 1)
-    out_kv('touch_idx', active_indices[0])
-    out_kv('touch_pos', WIRE_META[active_indices[0]][2])
-    out_kv('touch_pin', WIRE_META[active_indices[0]][1])
-    out_kv('touch_board', WIRE_META[active_indices[0]][0])
-    out_kv('touch_color', WIRE_META[active_indices[0]][3])
+    out_kv('touch_idx', active_indices_kv[0])
+    out_kv('touch_pos', WIRE_META[active_indices_kv[0]][2])
+    out_kv('touch_pin', WIRE_META[active_indices_kv[0]][1])
+    out_kv('touch_board', WIRE_META[active_indices_kv[0]][0])
+    out_kv('touch_color', WIRE_META[active_indices_kv[0]][3])
     out_kv('touch_rms_uv', 12500.0)
     out_kv('touch_baseline_uv', 6500.0)
     out_kv('touch_ratio', 1.92)
     out_kv('touch_direction', '↑')
-    # ANSI color literal probe — verify chr(27) string-escape bypass works
+    # ANSI color literal probes — verify chr(27) string-escape bypass works
     out_kv('ansi_green_probe', chr(27) + '[32;1m●' + chr(27) + '[0m')
+    out_kv('ansi_gray_probe', chr(27) + '[90m·' + chr(27) + '[0m')
+
     # Synthetic JSONL row matching live-mode emit shape (raw#65 idempotent — overwrite).
     try:
         JSONL_PATH = '/tmp/eeg_ticks.jsonl'
-        # Truncate (idempotent across re-runs) — write a single witness row.
         synthetic_row = {
             'ts': _time.time(),
-            'tick': 1,
+            'tick': spike_first_detected_tick if spike_first_detected_tick > 0 else 1,
             'cols': 375,
             'n_new': 0,
             'median_rms': 6500,
-            'history_depth': 5,
+            'history_depth': len(history),
             'mode': 'selftest_synthetic',
-            'touch_idx': active_indices[0],
+            'touch_idx': active_indices_kv[0],
             'touch_pos': active_positions[0],
-            'touch_color': WIRE_META[active_indices[0]][3],
+            'touch_color': WIRE_META[active_indices_kv[0]][3],
             'touch_direction': '↑',
             'touch_ratio': 1.92,
-            'active_count': len(active_indices),
+            'active_count': len(active_indices_kv),
             'active_positions': active_positions,
             'measured_fps': 60.0,
+            'frame_work_ms': round(float(np.mean(work_ms_samples)) if work_ms_samples else 0.0, 3),
+            'frame_budget_ms': round(TICK_INTERVAL_MS, 3),
+            'tick_hz': TICK_HZ,
+            'selftest_concurrent_pass': bool(concurrent_pass),
             'top3': [
                 {'pos': active_positions[0], 'rms': 12500, 'base': 6500, 'dev': 1.92},
-                {'pos': active_positions[1], 'rms': 11200, 'base': 6500, 'dev': 1.72},
-                {'pos': active_positions[2], 'rms': 10100, 'base': 6500, 'dev': 1.55},
+                {'pos': active_positions[1] if len(active_positions) > 1 else active_positions[0],
+                 'rms': 11200, 'base': 6500, 'dev': 1.72},
+                {'pos': active_positions[2] if len(active_positions) > 2 else active_positions[0],
+                 'rms': 10100, 'base': 6500, 'dev': 1.55},
             ],
         }
         with open(JSONL_PATH, 'w') as _f:
@@ -459,6 +611,13 @@ def run_selftest():
         out_kv('selftest_jsonl_path', JSONL_PATH)
     except Exception as _e:
         out_kv('selftest_jsonl_error', str(_e)[:120])
+
+    if not concurrent_pass:
+        out_kv('verdict', 'SELFTEST_FAIL')
+        err_trailer('selftest-concurrent-miss',
+                    'spikes ch3+ch7 NOT both detected in same tick',
+                    '1) inspect synthetic noise scale  2) re-tune spike_amplitude_mult')
+        return 1
 
     out_kv('verdict', 'ALL_OK')
     return 0
@@ -507,20 +666,33 @@ def run_live(board_id, port, fps=60):
 
     # ═══════════════════════════════════════════════════════════════════════
     # PERFORMANCE TUNING — fps from --fps CLI arg (60 default, 120 supported)
+    # Single-constant toggle: TICK_HZ = 60 (default) or 120 — passed via --fps.
     # ═══════════════════════════════════════════════════════════════════════
-    FPS = max(10, min(240, int(fps)))   # clamp to sane range
-    HISTORY_INTERVAL_SEC = 0.5          # baseline history sampling cadence (sec)
-    JSONL_LOG_FPS = 10                  # JSONL logging cadence (always sub-FPS)
-    ROLLING_WINDOW_SEC = 0.1            # RMS rolling-window — 100ms snap response
+    TICK_HZ = max(10, min(240, int(fps)))     # 60 or 120 — single constant toggle
+    FPS = TICK_HZ                              # alias for back-compat
+    HISTORY_INTERVAL_SEC = 0.5                 # baseline history sampling cadence (sec)
+    JSONL_LOG_FPS = 10                         # JSONL logging cadence (always sub-FPS)
+    ROLLING_WINDOW_SEC = 0.1                   # RMS rolling-window — 100ms snap response
+    TICK_INTERVAL_MS = 1000.0 / TICK_HZ        # ms per tick (16.67 @60, 8.33 @120)
+    MIN_SLEEP_MS = 1.0                         # adaptive sleep floor (raw#12 — never busy-loop)
     # ═══════════════════════════════════════════════════════════════════════
     # Derived constants (auto-scale with FPS)
-    TICK_INTERVAL = 1.0 / FPS                                            # seconds per tick
-    HISTORY_TICK_STRIDE = max(1, int(FPS * HISTORY_INTERVAL_SEC))        # ticks between history adds
-    JSONL_TICK_STRIDE = max(1, int(FPS / JSONL_LOG_FPS))                 # ticks between JSONL writes
+    TICK_INTERVAL = 1.0 / TICK_HZ                                        # seconds per tick
+    HISTORY_TICK_STRIDE = max(1, int(TICK_HZ * HISTORY_INTERVAL_SEC))    # ticks between history adds
+    JSONL_TICK_STRIDE = max(1, int(TICK_HZ / JSONL_LOG_FPS))             # ticks between JSONL writes
     ROLLING_SIZE = max(20, int(sample_rate * ROLLING_WINDOW_SEC))        # rolling buffer size in samples
 
-    # Rolling sample buffer per channel
+    # ── Per-channel state struct (16ch concurrent) ──────────────────────────
+    # buffer[ch, :]      = rms_window[64] equivalent — raw sample rolling buffer
+    # baseline_mean[ch]  = median of recent rms snapshots
+    # baseline_std[ch]   = std of recent rms snapshots
+    # touched[ch]        = bool, True while channel in active touch state
+    # last_touch_ms[ch]  = epoch ms of last positive detection
     buffer = np.zeros((n_ch, ROLLING_SIZE), dtype=np.float64)
+    baseline_mean = np.zeros(n_ch, dtype=np.float64)
+    baseline_std = np.zeros(n_ch, dtype=np.float64)
+    touched = np.zeros(n_ch, dtype=bool)
+    last_touch_ms = np.zeros(n_ch, dtype=np.int64)
     buffer_filled = False
 
     # Per-tick JSONL emission (raw#77 audit ledger pattern) for offline/live analysis
@@ -641,23 +813,38 @@ def run_live(board_id, port, fps=60):
                 # on baseline-bias scenarios (release after baseline corruption during warmup).
                 # Touch typically causes rms INCREASE; if floating-reference DOWN case needed,
                 # we'll add hysteresis-gated bi-directional later.
-                baseline = np.median(np.array(history[-HISTORY_MAX:]), axis=0)
+                hist_arr = np.array(history[-HISTORY_MAX:])
+                baseline = np.median(hist_arr, axis=0)
+                # baseline_mean/std refresh — exposed as per-channel state struct
+                baseline_mean[:] = baseline
+                if hist_arr.shape[0] >= 2:
+                    baseline_std[:] = np.std(hist_arr, axis=0)
                 ratio_up = rms_per_ch / (baseline + 1e-9)
                 deviation = ratio_up  # UP only
                 abs_change = rms_per_ch - baseline  # signed: positive = UP
                 rel_change = abs_change / (baseline + 1e-9)
-                # Calibrated from session 2026-04-28: F3 touch peaked at 1.86x dev / 10734µV up / 86% rel.
+                # 3-AND threshold (calibrated from session 2026-04-28: F3 touch peaked at
+                # 1.86x dev / 10734µV up / 86% rel). UNI-DIRECTIONAL UP-only.
                 touch_active = (deviation > 1.4) & (abs_change > 3000.0) & (rel_change > 0.20)
                 # Multi-channel concurrent: collect ALL active channels (not just argmax)
                 active_indices = [int(c) for c in range(n_ch) if touch_active[c]]
+                # Per-channel state — touched flag + last_touch_ms timestamp
+                now_ms = int(time.time() * 1000)
+                touched[:] = touch_active
                 if active_indices:
+                    last_touch_ms[touch_active] = now_ms
                     masked = np.where(touch_active, deviation, 0.0)
                     touch_idx = int(np.argmax(masked))  # primary (highest deviation)
                     touch_ratio = float(deviation[touch_idx])
                     touch_direction = '↑'
-                # Update history ONLY if no touch detected AND time-throttled — keeps
-                # baseline frozen during sustained touch + matches history sampling rate.
-                if touch_idx < 0 and should_sample_history:
+                # Per-channel frozen baseline: when ANY channel is touched, suppress
+                # history sampling so touched channels' inflated rms doesn't poison baseline.
+                # (Vectorized history is shared snapshot — we omit the whole tick's rms
+                #  if any channel is in touched state, OR if global touch present.)
+                # raw#65 idempotent: time-throttle gates additionally so back-to-back ticks
+                # don't bloat history.
+                any_touched = bool(touch_active.any())
+                if not any_touched and should_sample_history:
                     history.append(rms_per_ch.copy())
                     last_history_tick = tick
                     if len(history) > HISTORY_MAX:
@@ -672,11 +859,14 @@ def run_live(board_id, port, fps=60):
             current_active_pos = POS[touch_idx] if touch_idx >= 0 else ''
 
             # Build display lines (ANSI-fast in-place render, no full clear)
+            # GREEN=touch, GRAY=idle per RFC-003 chr(27) workaround. Terminal.app +
+            # ghostty both render '\x1b[90m' as bright-black (gray); fallback safe.
             GREEN = ESC + '[32;1m'
+            GRAY  = ESC + '[90m'
             RESET = ESC + '[0m'
             def _s(p):
                 # Multi-channel: light up ALL touched positions, not just primary
-                return (GREEN + '●' + RESET) if p in current_active_pos_set else '·'
+                return (GREEN + '●' + RESET) if p in current_active_pos_set else (GRAY + '·' + RESET)
             sfp1 = _s('Fp1'); sfp2 = _s('Fp2')
             sf7 = _s('F7');   sf3 = _s('F3');   sf4 = _s('F4');   sf8 = _s('F8')
             st7 = _s('T7');   sc3 = _s('C3');   sc4 = _s('C4');   st8 = _s('T8')
@@ -728,6 +918,10 @@ def run_live(board_id, port, fps=60):
                 lines.append('')
                 lines.append('')
             lines.append(f'    median rms = {median_rms:.0f} µV  |  history = {len(history)}/{HISTORY_MAX}')
+            # Frame budget panel — work_ms vs target (TICK_INTERVAL_MS).
+            # work_prev = last completed tick's work duration (ms). At t=0 it's 0.
+            _wp = locals().get('work_ms', 0.0)
+            lines.append(f'    frame budget: work={_wp:.2f}ms / target={TICK_INTERVAL_MS:.2f}ms  ({TICK_HZ}Hz)')
             lines.append('')
             lines.append('    ── Ctrl-C 로 종료 ──')
 
@@ -742,11 +936,13 @@ def run_live(board_id, port, fps=60):
                 if window_dur > 0:
                     measured_fps = (len(fps_window) - 1) / window_dur
 
-            # Adaptive sleep: subtract elapsed work time so total tick = TICK_INTERVAL exactly
-            elapsed = time.time() - tick_start
-            sleep_dur = TICK_INTERVAL - elapsed
-            if sleep_dur > 0:
-                time.sleep(sleep_dur)
+            # Frame-budget measurement: work_ms = render+detect time, sleep_ms = remaining.
+            # Target: 16.67ms @60fps, 8.33ms @120fps. Adaptive sleep floor = MIN_SLEEP_MS (1ms).
+            work_ms = (time.time() - tick_start) * 1000.0
+            sleep_ms = TICK_INTERVAL_MS - work_ms
+            if sleep_ms < MIN_SLEEP_MS:
+                sleep_ms = MIN_SLEEP_MS
+            time.sleep(sleep_ms / 1000.0)
 
             # JSONL emit throttled (every 6 ticks ≈ 10fps logging)
             if tick % JSONL_TICK_STRIDE == 0:
@@ -766,6 +962,9 @@ def run_live(board_id, port, fps=60):
                         'active_count': len(active_indices),
                         'active_positions': [POS[i] for i in active_indices],
                         'measured_fps': round(measured_fps, 1),
+                        'frame_work_ms': round(work_ms, 3),
+                        'frame_budget_ms': round(TICK_INTERVAL_MS, 3),
+                        'tick_hz': TICK_HZ,
                         'top3': [{'pos': p, 'rms': round(r, 0), 'base': round(b, 0), 'dev': round(d, 3)} for p, r, b, d in top3_info],
                     }
                     with open(JSONL_PATH, 'a') as _f:
@@ -1139,6 +1338,26 @@ fn _print_summary(body: string) {
     if mc_witness == "enabled" || active_count != "" {
         println("    MULTI-CH TOUCH: active_count=" + active_count + " active_positions=[" + active_positions + "]")
     }
+    // Selftest detector-pipeline witness (raw#91 honest C3: real synthetic detection,
+    // not just kv stub). Prints concurrent_pass + frame budget measurements.
+    let st_pass = _kv_get_or(body, "selftest_concurrent_pass", "")
+    if st_pass != "" {
+        let st_max_active = _kv_get_or(body, "selftest_max_active_count", "?")
+        let st_first_tick = _kv_get_or(body, "selftest_first_concurrent_tick", "?")
+        let st_first_chs = _kv_get_or(body, "selftest_first_concurrent_chs", "?")
+        let st_spikes = _kv_get_or(body, "selftest_spike_chs", "?")
+        let pass_str = if st_pass == "1" { "Y" } else { "N" }
+        println("    SELFTEST PIPELINE: concurrent_pass=" + pass_str
+                + " (spikes=[" + st_spikes + "] first_tick=" + st_first_tick
+                + " first_chs=[" + st_first_chs + "] max_active=" + st_max_active + ")")
+        let fwm_mean = _kv_get_or(body, "selftest_work_ms_mean", "?")
+        let fwm_p95  = _kv_get_or(body, "selftest_work_ms_p95", "?")
+        let fwm_max  = _kv_get_or(body, "selftest_work_ms_max", "?")
+        let fb_60 = _kv_get_or(body, "selftest_frame_budget_ms_60fps", "?")
+        let fb_120 = _kv_get_or(body, "selftest_frame_budget_ms_120fps", "?")
+        println("    FRAME BUDGET (synth): mean=" + fwm_mean + "ms p95=" + fwm_p95
+                + "ms max=" + fwm_max + "ms  |  target 60fps=" + fb_60 + "ms 120fps=" + fb_120 + "ms")
+    }
     println("")
 }
 
@@ -1185,6 +1404,7 @@ fn _print_usage() {
     eprintln("  --seconds <n>     sample window per tick (default 3)")
     eprintln("  --step <n>        progressive scope: check first n items (1-18)")
     eprintln("  --board <name>    cyton_daisy | cyton | ganglion (default cyton_daisy)")
+    eprintln("  --fps <n>         live-mode TICK_HZ toggle (default 60, 120 supported, clamp 10-240)")
     eprintln("  --help            this message")
 }
 
@@ -1199,6 +1419,7 @@ fn main() {
     let mut seconds = DEFAULT_SECONDS
     let mut board_name = DEFAULT_BOARD_NAME
     let mut step_n = len(STEP_ORDER)  // default: check all 18
+    let mut fps_n = 60                 // single-constant TICK_HZ toggle (60 default, --fps 120 supported)
 
     let mut i = 0
     while i < len(av) {
@@ -1238,6 +1459,16 @@ fn main() {
                 exit(2)
             }
             board_name = av[i + 1]; i = i + 2; continue
+        }
+        if a == "--fps" {
+            if (i + 1) >= len(av) {
+                _emit_trailer("missing-arg-value", "--fps requires int 10-240", "1) --fps 60 OR --fps 120")
+                exit(2)
+            }
+            fps_n = to_int(av[i + 1])
+            if fps_n < 10  { fps_n = 10 }
+            if fps_n > 240 { fps_n = 240 }
+            i = i + 2; continue
         }
         _emit_trailer("unknown-arg", "unrecognized: " + a, "1) --help")
         _print_usage()
@@ -1287,6 +1518,7 @@ fn main() {
         let venv_py = DEFAULT_VENV_PYTHON
         let mut cmd = venv_py + " " + HELPER_PATH + " live"
         cmd = cmd + " --board-id " + str(board_id)
+        cmd = cmd + " --fps " + str(fps_n)
         if port != "" {
             cmd = cmd + " --port " + _sh_quote(port)
         }
