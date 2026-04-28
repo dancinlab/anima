@@ -427,8 +427,36 @@ def run_live(board_id, port):
 
     n_ch = len(eeg_channels)
     history = []  # list of per-channel rms arrays
-    HISTORY_MAX = 5      # shorter for snappier adaptation
-    TICK_INTERVAL = 0.3  # 3x faster — 0.3s tick = ~37 samples @ 125Hz, fast response
+    HISTORY_MAX = 5
+    TICK_INTERVAL = 1.0 / 60.0   # 60fps display (16.7ms)
+    HISTORY_TICK_STRIDE = 30     # throttle history sampling: every 30 ticks (~0.5s)
+    JSONL_TICK_STRIDE = 6        # throttle JSONL: every 6 ticks (~10fps logging)
+
+    # Rolling sample buffer per channel — RMS computed over last ROLLING_SIZE samples
+    # (decouples display rate from rms-window). 60 samples @ 125Hz = 480ms window.
+    ROLLING_SIZE = 60
+    buffer = np.zeros((n_ch, ROLLING_SIZE), dtype=np.float64)
+    buffer_filled = False
+
+    # Per-tick JSONL emission (raw#77 audit ledger pattern) for offline/live analysis
+    import json as _json
+    JSONL_PATH = '/tmp/eeg_ticks.jsonl'
+    try:
+        with open(JSONL_PATH, 'w') as _f: pass
+    except: pass
+
+    # Fast in-place ANSI render (no full clear, no os.system fork)
+    ANSI_HOME = ESC + '[H'
+    ANSI_CLR_LINE = ESC + '[K'
+    ANSI_CLR_END = ESC + '[J'
+    def fast_render(lines):
+        out = [ANSI_HOME]
+        for ln in lines:
+            out.append(ln + ANSI_CLR_LINE)
+            out.append('\n')
+        out.append(ANSI_CLR_END)
+        sys.stdout.write(''.join(out))
+        sys.stdout.flush()
     # Multi-strategy screen clear: ANSI escape + tput clear (more reliable across terminals)
     ESC = chr(27)
     def screen_clear():
@@ -447,6 +475,7 @@ def run_live(board_id, port):
     sticky_ticks = 0
 
     tick = 0
+    last_history_tick = 0
     screen_clear()
     print('연결 중... BrainFlow session 열림. baseline 학습 시작.', flush=True)
     time.sleep(1.5)  # let initial buffer fill
@@ -465,15 +494,37 @@ def run_live(board_id, port):
                 err_trailer('stream-error', str(e)[:160], '1) Dongle red LED?  2) toggle OFF/PC')
                 break
 
-            cols = data.shape[1] if data is not None and data.size else 0
-            if cols < 20:
-                continue  # not enough samples (allow 20+ for 0.3s tick = 37 samples nominal)
+            n_new = data.shape[1] if data is not None and data.size else 0
 
-            eeg = np.zeros((n_ch, cols))
-            for i, row in enumerate(eeg_channels):
-                eeg[i, :] = data[row, :]
+            # Append new samples into rolling buffer (slide oldest out)
+            if n_new > 0:
+                for i in range(n_ch):
+                    ch_data = data[eeg_channels[i], :]
+                    nn = len(ch_data)
+                    if nn >= ROLLING_SIZE:
+                        buffer[i] = ch_data[-ROLLING_SIZE:]
+                        buffer_filled = True
+                    else:
+                        buffer[i, :ROLLING_SIZE-nn] = buffer[i, nn:]
+                        buffer[i, ROLLING_SIZE-nn:] = ch_data
+                        # mark filled once we've accumulated enough
+                        if not buffer_filled and (tick * TICK_INTERVAL * sample_rate) >= ROLLING_SIZE:
+                            buffer_filled = True
 
-            rms_per_ch = np.array([float(np.sqrt(np.mean(eeg[c, :] ** 2))) for c in range(n_ch)])
+            # Don't render until rolling buffer has enough samples
+            if not buffer_filled:
+                if tick % 6 == 0:
+                    fast_render([
+                        '══════════════════════════════════════════════════',
+                        f'  LIVE TOUCH DETECTOR — tick #{tick}',
+                        '══════════════════════════════════════════════════',
+                        '',
+                        f'    🟡 rolling buffer 채우는 중... ({tick}/{int(ROLLING_SIZE/(sample_rate*TICK_INTERVAL))} ticks)',
+                    ])
+                continue
+
+            cols = ROLLING_SIZE
+            rms_per_ch = np.sqrt(np.mean(buffer ** 2, axis=1))
 
             # Touch detection — bi-directional, sustained-touch friendly.
             # Strategy: keep ROLLING BASELINE only over NON-TOUCHED ticks. Touched ticks
@@ -485,9 +536,13 @@ def run_live(board_id, port):
             top3_info = []  # init so debug panel never raises UnboundLocalError during warmup
 
             WARMUP_TICKS = 3
+            # History sampling is throttled — at 60fps tick rate, only sample every 30 ticks (~0.5s).
+            should_sample_history = (tick - last_history_tick) >= HISTORY_TICK_STRIDE
             if len(history) < WARMUP_TICKS:
-                # Warm-up phase — always add to history, no detection
-                history.append(rms_per_ch)
+                # Warm-up phase — always add to history (throttled), no detection
+                if should_sample_history:
+                    history.append(rms_per_ch.copy())
+                    last_history_tick = tick
                 baseline = np.median(np.array(history), axis=0) if len(history) >= 2 else rms_per_ch.copy()
             else:
                 # Detection phase — sensitive thresholds to catch finger touches
@@ -496,10 +551,11 @@ def run_live(board_id, port):
                 ratio_dn = (baseline + 1e-9) / (rms_per_ch + 1e-9)
                 deviation = np.maximum(ratio_up, ratio_dn)
                 abs_change = np.abs(rms_per_ch - baseline)
-                # Strict: deviation > 2.0x AND abs > 5000µV AND abs > 30% of baseline
-                # (high-baseline channels naturally have large abs swings without touch)
+                # Calibrated from real session data 2026-04-28: F3 finger-touch peaked at
+                # 1.86x dev / 10734µV abs / 86% rel. Set thresholds below peak observation
+                # to catch touches reliably while filtering idle noise (which stayed dev<1.15x).
                 rel_change = abs_change / (baseline + 1e-9)
-                touch_active = (deviation > 2.0) & (abs_change > 5000.0) & (rel_change > 0.30)
+                touch_active = (deviation > 1.4) & (abs_change > 3000.0) & (rel_change > 0.20)
                 if np.any(touch_active):
                     masked = np.where(touch_active, deviation, 0.0)
                     touch_idx = int(np.argmax(masked))
@@ -508,9 +564,11 @@ def run_live(board_id, port):
                         touch_direction = '↑'
                     else:
                         touch_direction = '↓'
-                # Update history ONLY if no touch detected — keeps baseline frozen during sustained touch
-                if touch_idx < 0:
-                    history.append(rms_per_ch)
+                # Update history ONLY if no touch detected AND time-throttled — keeps
+                # baseline frozen during sustained touch + matches history sampling rate.
+                if touch_idx < 0 and should_sample_history:
+                    history.append(rms_per_ch.copy())
+                    last_history_tick = tick
                     if len(history) > HISTORY_MAX:
                         history.pop(0)
                 # Always compute top-3 most-deviated channels for debug view
@@ -571,6 +629,25 @@ def run_live(board_id, port):
                 print('      (학습 중)')
             median_rms = float(np.median(rms_per_ch))
             print(f'    median rms = {median_rms:.0f} µV  |  history = {len(history)} ticks  |  cols/tick = {cols}')
+
+            # Emit JSONL row for live tail-analysis
+            try:
+                row = {
+                    'ts': time.time(),
+                    'tick': tick,
+                    'cols': cols,
+                    'median_rms': round(median_rms, 0),
+                    'history_depth': len(history),
+                    'touch_idx': touch_idx,
+                    'touch_pos': POS[touch_idx] if touch_idx >= 0 else None,
+                    'touch_color': COLOR[touch_idx] if touch_idx >= 0 else None,
+                    'touch_direction': touch_direction if touch_idx >= 0 else None,
+                    'touch_ratio': round(touch_ratio, 3) if touch_idx >= 0 else None,
+                    'top3': [{'pos': p, 'rms': round(r, 0), 'base': round(b, 0), 'dev': round(d, 3)} for p, r, b, d in top3_info],
+                }
+                with open(JSONL_PATH, 'a') as _f:
+                    print(_json.dumps(row, ensure_ascii=False), file=_f)
+            except: pass
             print()
             print('    ── Ctrl-C 로 종료 ──', flush=True)
 
