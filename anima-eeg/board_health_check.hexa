@@ -494,7 +494,11 @@ fn main() {
 
     eprintln("[GATE] dispatch=local cmd=" + cmd)
 
-    let rc = exec(cmd)
+    // raw#91 C3 + audit 2026-04-28: exec() returns captured stdout (string),
+    // exit code was being silently lost; use exec_with_status() for int rc.
+    let r = exec_with_status(cmd)
+    let rc = to_int(r[1])
+    print(to_string(r[0]))
 
     println("──")
     println("schema: " + SCHEMA)

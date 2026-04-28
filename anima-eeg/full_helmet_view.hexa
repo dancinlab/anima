@@ -698,14 +698,18 @@ fn main() {
         // Selftest does not need BrainFlow / numpy — system python3 is sufficient.
         // Try venv first, fall back to /usr/bin/python3.
         let mut py_bin = venv_py
-        let test_venv = exec("test -x " + _sh_quote(venv_py))
-        if test_venv != 0 {
+        // raw#91 C3 + audit 2026-04-28: exec() returns string; comparing to int 0
+        // was always-false silent fail. Use exec_with_status() for the test -x exit code.
+        let test_venv = exec_with_status("test -x " + _sh_quote(venv_py))
+        if to_int(test_venv[1]) != 0 {
             py_bin = "/usr/bin/python3"
         }
         let mut cmd = py_bin + " " + HELPER_PATH + " selftest"
         cmd = cmd + " --ledger " + _sh_quote(JSONL_LEDGER_PATH)
         cmd = cmd + " > /tmp/full_helmet_view_out.log 2> /tmp/full_helmet_view_err.log"
-        let rc = exec(cmd)
+        // raw#91 C3 + audit 2026-04-28: exec() returns string; exit() needs int.
+        let r = exec_with_status(cmd)
+        let rc = to_int(r[1])
         let stdout_body = read_file("/tmp/full_helmet_view_out.log")
         let stderr_body = read_file("/tmp/full_helmet_view_err.log")
         if stderr_body != "" {
@@ -735,7 +739,8 @@ fn main() {
         if port != "" {
             cmd = cmd + " --port " + _sh_quote(port)
         }
-        let rc = exec(cmd)
-        exit(rc)
+        // raw#91 C3 + audit 2026-04-28: exec() returns string; exit() needs int.
+        let r = exec_with_status(cmd)
+        exit(to_int(r[1]))
     }
 }

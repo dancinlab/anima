@@ -415,7 +415,10 @@ fn _do_render(mode: string) -> int {
     let venv_py = DEFAULT_VENV_PYTHON
     let mut cmd = venv_py + " " + HELPER_PATH + " " + mode
     cmd = cmd + " > /tmp/anima_eeg_headplot_out.log 2> /tmp/anima_eeg_headplot_err.log"
-    let rc = exec(cmd)
+    // raw#91 C3 + audit 2026-04-28: exec() returns string; caller does exit(rc) which
+    // expects int. Use exec_with_status() and unwrap the int exit code.
+    let r = exec_with_status(cmd)
+    let rc = to_int(r[1])
     let stdout_body = read_file("/tmp/anima_eeg_headplot_out.log")
     let stderr_body = read_file("/tmp/anima_eeg_headplot_err.log")
     if stderr_body != "" {

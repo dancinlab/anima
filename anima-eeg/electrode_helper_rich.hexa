@@ -708,6 +708,7 @@ fn main() {
     if !selftest && port != "" {
         cmd = cmd + " --port " + _sh_quote(port)
     }
-    let rc = exec(cmd)
-    exit(rc)
+    // raw#91 C3 + audit 2026-04-28: exec() returns string; exit() needs int.
+    let r = exec_with_status(cmd)
+    exit(to_int(r[1]))
 }
