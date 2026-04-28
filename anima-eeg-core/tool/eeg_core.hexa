@@ -166,14 +166,29 @@ fn _resolve_backend(verb: string, noun: string) -> string {
     if verb == "gate-hjorth"  { return CORE_ROOT + "/_gates/hjorth_band.hexa" }
 
     // ── metrics (Phase 3 LANDED — _metrics/ wrappers; raw#18 self-host) ─
+    //   batch 1 (2026-04-28): lz76 / pe / hjorth / gamma_theta — WRAP frozen legacy
+    //   batch 2 (2026-04-29): alpha_coherence / alpha_phase_plv / dmn_coherence
+    //                         / frontal_asymmetry — PORT shared scipy helper.
+    //                         raw#10 honest C3: batch 2 spec'd as 6, landed 4;
+    //                         spectral_entropy + change_points deferred to batch 3
+    //                         (data-paths emitted by helper, hexa wrapper P1).
     if verb == "metric" {
-        if noun == "lz76"        { return CORE_ROOT + "/_metrics/lz76.hexa" }
-        if noun == "pe"          { return CORE_ROOT + "/_metrics/permutation_entropy.hexa" }
-        if noun == "hjorth"      { return CORE_ROOT + "/_metrics/hjorth.hexa" }
-        if noun == "gamma_theta" { return CORE_ROOT + "/_metrics/gamma_theta.hexa" }
-        if noun == "gamma-theta" { return CORE_ROOT + "/_metrics/gamma_theta.hexa" }
-        if noun == "berger"      { return "legacy:anima-clm-eeg/tool/clm_eeg_berger_sanity.hexa" }
-        if noun == "all"         { return "pending:metric_all_dispatcher" }
+        if noun == "lz76"               { return CORE_ROOT + "/_metrics/lz76.hexa" }
+        if noun == "pe"                 { return CORE_ROOT + "/_metrics/permutation_entropy.hexa" }
+        if noun == "hjorth"             { return CORE_ROOT + "/_metrics/hjorth.hexa" }
+        if noun == "gamma_theta"        { return CORE_ROOT + "/_metrics/gamma_theta.hexa" }
+        if noun == "gamma-theta"        { return CORE_ROOT + "/_metrics/gamma_theta.hexa" }
+        if noun == "alpha_coherence"    { return CORE_ROOT + "/_metrics/alpha_coherence.hexa" }
+        if noun == "alpha-coherence"    { return CORE_ROOT + "/_metrics/alpha_coherence.hexa" }
+        if noun == "alpha_phase_plv"    { return CORE_ROOT + "/_metrics/alpha_phase_plv.hexa" }
+        if noun == "alpha-phase-plv"    { return CORE_ROOT + "/_metrics/alpha_phase_plv.hexa" }
+        if noun == "alpha-plv"          { return CORE_ROOT + "/_metrics/alpha_phase_plv.hexa" }
+        if noun == "dmn_coherence"      { return CORE_ROOT + "/_metrics/dmn_coherence.hexa" }
+        if noun == "dmn-coherence"      { return CORE_ROOT + "/_metrics/dmn_coherence.hexa" }
+        if noun == "frontal_asymmetry"  { return CORE_ROOT + "/_metrics/frontal_asymmetry.hexa" }
+        if noun == "frontal-asymmetry"  { return CORE_ROOT + "/_metrics/frontal_asymmetry.hexa" }
+        if noun == "berger"             { return "legacy:anima-clm-eeg/tool/clm_eeg_berger_sanity.hexa" }
+        if noun == "all"                { return "pending:metric_all_dispatcher" }
     }
 
     // ── pipelines (Phase 4 PENDING — composite recipes) ─────────────────
@@ -275,8 +290,10 @@ fn _print_usage() {
     eprintln("  gate-all       [--input <npy>]         landed: 4-gate composite")
     eprintln("  gate-{berger,rms,pe,hjorth}            landed: single gate")
     eprintln("")
-    eprintln("  metric <name>  --input <npy>           legacy: lz76|pe|hjorth|gamma_theta|berger")
-    eprintln("  metric all     --input <npy>           pending")
+    eprintln("  metric <name>  --input <npy>           landed batch 1: lz76|pe|hjorth|gamma_theta")
+    eprintln("                                         landed batch 2: alpha-coherence|alpha-plv|")
+    eprintln("                                                         dmn-coherence|frontal-asymmetry")
+    eprintln("                                         legacy: berger     pending: all")
     eprintln("")
     eprintln("  pipeline standard   --input <npy>      pending")
     eprintln("  pipeline daily-life --input <npy>      legacy")
@@ -329,6 +346,10 @@ fn _print_list() {
         ["metric", "pe"],
         ["metric", "hjorth"],
         ["metric", "gamma_theta"],
+        ["metric", "alpha-coherence"],
+        ["metric", "alpha-phase-plv"],
+        ["metric", "dmn-coherence"],
+        ["metric", "frontal-asymmetry"],
         ["metric", "berger"],
         ["metric", "all"],
         ["pipeline", "standard"],
