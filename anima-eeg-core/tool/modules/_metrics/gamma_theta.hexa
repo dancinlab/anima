@@ -1,0 +1,258 @@
+// ════════════════════════════════════════════════════════════════════════════
+//  anima-eeg-core/tool/modules/_metrics/gamma_theta.hexa  (Phase 3 — metric #2)
+//
+//  PURPOSE
+//    γ/θ band-power ratio = Σ PSD(30..50 Hz) / Σ PSD(4..8 Hz). own3 σ/τ=3
+//    SSOT predicts ρ ≈ 3.0 on awake-resting EEG (paper P3). raw#18 self-host
+//    fixpoint: WRAPS frozen anima-clm-eeg/tool/clm_eeg_gamma_theta_ratio.hexa
+//    (commit ef3efeb09 frozen, 718 LoC).
+//
+//  raw#10 HONEST C3 (wrap-vs-port decision)
+//    DECISION: WRAP. Legacy verifier scipy.welch helper is non-trivial and
+//    raw#12 frozen — re-implementing under Phase 0 module API would risk
+//    drift vs. own3 SSOT. Wrap exposes kv-block surface; legacy untouched.
+//
+//  API
+//    _metric_gamma_theta_kv(npy_path, sidecar_kv) -> string
+//      kv-block:
+//        schema=anima-eeg-core/_metrics/gamma_theta/1
+//        metric=gamma_theta
+//        ratio_x1000=<int>          (grand_mean ratio × 1000; target ≈ 3000)
+//        occipital_ratio_x1000=<int>
+//        frontal_ratio_x1000=<int>
+//        verdict=<PASS|FAIL|FALSIFIED|PARTIAL>
+//        raw71_*  raw91_* raw95_*
+//
+//  RAW#71 FALSIFIERS (≥3 preregister, frozen 2026-04-28; mirror legacy F1..F3)
+//    F_GT_01: ratio_x1000 < 1000     → gamma absent (amplifier scale)
+//    F_GT_02: ratio_x1000 > 10000    → theta absent (abnormal arousal)
+//    F_GT_03: occipital_ratio < frontal_ratio → regional reversal
+//
+//  CLI
+//    hexa run gamma_theta.hexa --selftest
+//    hexa run gamma_theta.hexa --input <npy>
+//
+//  RAW raw#9 hexa-only · raw#10 honest C3 · raw#12 frozen · raw#18 self-host
+//      raw#42 mac-zero-compute · raw#65 idempotent · raw#71 falsifier ≥3
+//      raw#82 darwin · raw#91 honest triad · raw#95 triad · raw#137 80% Pareto
+//
+//  @resolver-bypass(reason="darwin-native: scipy.welch via .venv-eeg")
+// ════════════════════════════════════════════════════════════════════════════
+
+let SCHEMA       = "anima-eeg-core/_metrics/gamma_theta/1"
+let METRIC_NAME  = "gamma_theta"
+let LEGACY_PATH  = "anima-clm-eeg/tool/clm_eeg_gamma_theta_ratio.hexa"
+
+// raw#71 frozen falsifiers
+let F_GT_01_RATIO_LO_X1000 = 1000
+let F_GT_02_RATIO_HI_X1000 = 10000
+
+// ─── helpers ────────────────────────────────────────────────────────────
+
+fn _hexa_bin() -> string {
+    let hl = env("HEXA_LANG")
+    if hl != "" { return hl + "/hexa.real" }
+    return "/Users/ghost/core/hexa-lang/hexa.real"
+}
+
+fn _sh_quote(s: string) -> string {
+    let mut o = "'"
+    o = o + s.replace("'", "'\\''")
+    o = o + "'"
+    return o
+}
+
+fn is_digit_ch(c: string) -> int {
+    if c == "0" || c == "1" || c == "2" || c == "3" || c == "4" { return 1 }
+    if c == "5" || c == "6" || c == "7" || c == "8" || c == "9" { return 1 }
+    return 0
+}
+
+fn digit_val(c: string) -> int {
+    if c == "0" { return 0 }
+    if c == "1" { return 1 }
+    if c == "2" { return 2 }
+    if c == "3" { return 3 }
+    if c == "4" { return 4 }
+    if c == "5" { return 5 }
+    if c == "6" { return 6 }
+    if c == "7" { return 7 }
+    if c == "8" { return 8 }
+    if c == "9" { return 9 }
+    return -1
+}
+
+fn find_in_str(s: string, needle: string) -> int {
+    let n = len(s); let m = len(needle)
+    if m <= 0 { return 0 }
+    if n < m { return -1 }
+    let mut i = 0
+    while i <= n - m {
+        let mut j = 0; let mut ok = 1
+        while j < m {
+            if s[i + j] != needle[j] { ok = 0; j = m }
+            j = j + 1
+        }
+        if ok == 1 { return i }
+        i = i + 1
+    }
+    return -1
+}
+
+fn parse_int_after_marker(blob: string, marker: string) -> int {
+    let p = find_in_str(blob, marker)
+    if p < 0 { return -2147483647 }
+    let n = len(blob)
+    let mut eol = p + len(marker)
+    while eol < n && blob[eol] != "\n" { eol = eol + 1 }
+    let mut k = eol - 1
+    let mut digits_end = -1
+    while k >= 0 {
+        let c = blob[k]
+        if is_digit_ch(c) == 1 { digits_end = k; break }
+        if c == " " || c == "\t" || c == "\r" { k = k - 1; continue }
+        return -2147483647
+    }
+    if digits_end < 0 { return -2147483647 }
+    let mut digits_start = digits_end
+    while digits_start > 0 {
+        let c = blob[digits_start - 1]
+        if is_digit_ch(c) == 1 { digits_start = digits_start - 1 }
+        else { break }
+    }
+    let mut neg = 0
+    if digits_start > 0 { if blob[digits_start - 1] == "-" { neg = 1 } }
+    let mut acc = 0
+    let mut q = digits_start
+    while q <= digits_end {
+        acc = acc * 10 + digit_val(blob[q])
+        q = q + 1
+    }
+    if neg == 1 { return -acc }
+    return acc
+}
+
+fn _metric_gamma_theta_kv(npy_path: string, sidecar_kv: string) -> string {
+    let mut args = ""
+    if npy_path != "" { args = "--input " + _sh_quote(npy_path) }
+    else { args = "--selftest --selftest-mode synthetic_3" }
+    let cmd = _hexa_bin() + " run " + LEGACY_PATH + " " + args
+    eprintln("[_metrics/gamma_theta] cmd=" + cmd)
+    let r = exec_with_status(cmd)
+    let out = to_string(r[0])
+    let rc  = to_int(r[1])
+
+    // legacy stdout markers (pretty-printed):
+    //   "  grand_mean_x1000      = N"
+    //   "  occipital_x1000       = N"
+    //   "  frontal_x1000         = N"
+    let mut ratio = parse_int_after_marker(out, "grand_mean_x1000")
+    if ratio == -2147483647 { ratio = parse_int_after_marker(out, "grand_mean_ratio_x1000=") }
+    let mut occ = parse_int_after_marker(out, "occipital_x1000")
+    if occ == -2147483647 { occ = parse_int_after_marker(out, "occipital_ratio_x1000=") }
+    let mut fro = parse_int_after_marker(out, "frontal_x1000")
+    if fro == -2147483647 { fro = parse_int_after_marker(out, "frontal_ratio_x1000=") }
+
+    // raw#71 falsifier eval
+    let mut triggered = ""
+    let mut trig_count = 0
+    if ratio != -2147483647 {
+        if ratio < F_GT_01_RATIO_LO_X1000 { triggered = triggered + "F_GT_01,"; trig_count = trig_count + 1 }
+        if ratio > F_GT_02_RATIO_HI_X1000 { triggered = triggered + "F_GT_02,"; trig_count = trig_count + 1 }
+    }
+    if occ != -2147483647 && fro != -2147483647 {
+        if occ < fro { triggered = triggered + "F_GT_03,"; trig_count = trig_count + 1 }
+    }
+    let nT = len(triggered)
+    if nT > 0 { triggered = triggered.substring(0, nT - 1) }
+
+    let mut verdict = "FAIL"
+    if rc == 0 && trig_count == 0 { verdict = "PASS" }
+    if trig_count > 0 { verdict = "FALSIFIED" }
+    if ratio == -2147483647 { verdict = "FAIL" }   // silent-error-ban
+
+    let mut kv = ""
+    kv = kv + "schema=" + SCHEMA + "\n"
+    kv = kv + "metric=" + METRIC_NAME + "\n"
+    kv = kv + "npy_path=" + npy_path + "\n"
+    kv = kv + "sidecar_kv=" + sidecar_kv + "\n"
+    kv = kv + "ratio_x1000=" + str(ratio) + "\n"
+    kv = kv + "value_x1000=" + str(ratio) + "\n"
+    kv = kv + "occipital_ratio_x1000=" + str(occ) + "\n"
+    kv = kv + "frontal_ratio_x1000=" + str(fro) + "\n"
+    kv = kv + "verdict=" + verdict + "\n"
+    kv = kv + "backend=" + LEGACY_PATH + "\n"
+    kv = kv + "backend_rc=" + str(rc) + "\n"
+    kv = kv + "raw71_falsifier_count=3\n"
+    kv = kv + "raw71_triggered_count=" + str(trig_count) + "\n"
+    kv = kv + "raw71_triggered_ids=" + triggered + "\n"
+    kv = kv + "raw91_evidence=welch_psd_30_50_div_4_8|own3_sigma_tau_3_ssot\n"
+    kv = kv + "raw91_limit=125hz_nyquist_62_5_gamma_upper_50_marginal_eyes_closed_only\n"
+    kv = kv + "raw95_enforce_layer=in_module\n"
+    return kv
+}
+
+// ─── CLI ───────────────────────────────────────────────────────────────
+
+fn _flags_only_argv() -> array {
+    let av = argv()
+    let mut start = 0
+    while start < len(av) {
+        let a = av[start]
+        let mut is_prefix = false
+        if a.ends_with(".hexa") { is_prefix = true }
+        if !is_prefix { if a.ends_with("/exe") { is_prefix = true } }
+        if !is_prefix { if a == "run" { is_prefix = true } }
+        if !is_prefix { if a.ends_with("hexa.real") || a.ends_with("/hexa") { is_prefix = true } }
+        if is_prefix { start = start + 1 } else { break }
+    }
+    let mut out = []
+    let mut j = start
+    while j < len(av) { out.push(av[j]); j = j + 1 }
+    return out
+}
+
+fn _print_usage() {
+    eprintln("usage: hexa run gamma_theta.hexa --selftest")
+    eprintln("       hexa run gamma_theta.hexa --input <npy>")
+}
+
+fn main() {
+    let av = _flags_only_argv()
+    let mut selftest = false
+    let mut input = ""
+    let mut sidecar = ""
+    let mut i = 0
+    while i < len(av) {
+        let a = av[i]
+        if a == "--selftest" { selftest = true; i = i + 1; continue }
+        if a == "--input"    { input = av[i+1]; i = i + 2; continue }
+        if a == "--sidecar"  { sidecar = av[i+1]; i = i + 2; continue }
+        if a == "--help" || a == "-h" { _print_usage(); exit(0) }
+        i = i + 1
+    }
+
+    if selftest {
+        println("== _metrics/gamma_theta selftest (synthetic_3 mode) ==")
+        let kv = _metric_gamma_theta_kv("", sidecar)
+        print(kv)
+        let r = parse_int_after_marker(kv, "ratio_x1000=")
+        if r == -2147483647 {
+            eprintln("reason: ratio_x1000 not parsed from kv")
+            exit(1)
+        }
+        println("selftest=ok")
+        exit(0)
+    }
+
+    if input == "" {
+        eprintln("ABORT: need --selftest or --input <npy>")
+        _print_usage()
+        exit(2)
+    }
+    let kv = _metric_gamma_theta_kv(input, sidecar)
+    print(kv)
+    if find_in_str(kv, "verdict=PASS") >= 0 { exit(0) }
+    if find_in_str(kv, "verdict=FALSIFIED") >= 0 { exit(1) }
+    exit(2)
+}
