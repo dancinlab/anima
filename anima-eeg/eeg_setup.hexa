@@ -11,14 +11,15 @@
 //   hexa run anima-eeg/eeg_setup.hexa <subcommand> [flags]
 //
 //   Subcommands:
-//     health      → board_health_check.hexa       (no-helmet hardware sanity)
-//     impedance   → impedance_check.hexa          (z<CH><PCHAN><NCHAN>Z 5-state)
-//     headplot    → headplot_helper.hexa          (ASCII 10-20 head plot)
-//     adjust      → electrode_adjustment_helper.hexa (live single-channel touch)
-//     rich        → electrode_helper_rich.hexa    (Rich TUI variant)
-//     full        → full_helmet_view.hexa         (16ch concurrent 5-state)
-//     list        → enumerate available subcommands + their files
-//     selftest    → run --selftest on every backend, summarize PASS/FAIL
+//     health             → board_health_check.hexa       (no-helmet hardware sanity)
+//     impedance          → impedance_check.hexa          (z<CH><PCHAN><NCHAN>Z 5-state)
+//     impedance_validate → impedance_real_hardware_validation.hexa (worn-helmet evidence)
+//     headplot           → headplot_helper.hexa          (ASCII 10-20 head plot)
+//     adjust             → electrode_adjustment_helper.hexa (live single-channel touch)
+//     rich               → electrode_helper_rich.hexa    (Rich TUI variant)
+//     full               → full_helmet_view.hexa         (16ch concurrent 5-state)
+//     list               → enumerate available subcommands + their files
+//     selftest           → run --selftest on every backend, summarize PASS/FAIL
 //
 //   Pass-through flags after subcommand are forwarded verbatim to backend.
 //   Example:
@@ -45,12 +46,13 @@ fn _sh_quote(s: string) -> string {
 }
 
 fn _backend_for(sub: string) -> string {
-    if sub == "health"    { return "anima-eeg/board_health_check.hexa" }
-    if sub == "impedance" { return "anima-eeg/impedance_check.hexa" }
-    if sub == "headplot"  { return "anima-eeg/headplot_helper.hexa" }
-    if sub == "adjust"    { return "anima-eeg/electrode_adjustment_helper.hexa" }
-    if sub == "rich"      { return "anima-eeg/electrode_helper_rich.hexa" }
-    if sub == "full"      { return "anima-eeg/full_helmet_view.hexa" }
+    if sub == "health"             { return "anima-eeg/board_health_check.hexa" }
+    if sub == "impedance"          { return "anima-eeg/impedance_check.hexa" }
+    if sub == "impedance_validate" { return "anima-eeg/impedance_real_hardware_validation.hexa" }
+    if sub == "headplot"           { return "anima-eeg/headplot_helper.hexa" }
+    if sub == "adjust"             { return "anima-eeg/electrode_adjustment_helper.hexa" }
+    if sub == "rich"               { return "anima-eeg/electrode_helper_rich.hexa" }
+    if sub == "full"               { return "anima-eeg/full_helmet_view.hexa" }
     return ""
 }
 
@@ -58,14 +60,15 @@ fn _print_usage() {
     eprintln("usage: hexa run anima-eeg/eeg_setup.hexa <subcommand> [flags]")
     eprintln("")
     eprintln("subcommands:")
-    eprintln("  health      board_health_check       no-helmet hardware sanity")
-    eprintln("  impedance   impedance_check          z<CH><PCHAN><NCHAN>Z 5-state")
-    eprintln("  headplot    headplot_helper          ASCII 10-20 head plot")
-    eprintln("  adjust      electrode_adjustment     live single-channel touch")
-    eprintln("  rich        electrode_helper_rich    Rich TUI variant")
-    eprintln("  full        full_helmet_view         16ch concurrent 5-state")
-    eprintln("  list        enumerate subcommands + backends")
-    eprintln("  selftest    run --selftest on every backend")
+    eprintln("  health              board_health_check                 no-helmet hardware sanity")
+    eprintln("  impedance           impedance_check                    z<CH><PCHAN><NCHAN>Z 5-state")
+    eprintln("  impedance_validate  impedance_real_hardware_validation real-helmet 5-state + JSONL evidence")
+    eprintln("  headplot            headplot_helper                    ASCII 10-20 head plot")
+    eprintln("  adjust              electrode_adjustment               live single-channel touch")
+    eprintln("  rich                electrode_helper_rich              Rich TUI variant")
+    eprintln("  full                full_helmet_view                   16ch concurrent 5-state")
+    eprintln("  list                enumerate subcommands + backends")
+    eprintln("  selftest            run --selftest on every backend")
     eprintln("")
     eprintln("flags after subcommand are forwarded to the backend.")
     eprintln("examples:")
@@ -76,7 +79,7 @@ fn _print_usage() {
 fn _print_list() {
     println("── eeg_setup available backends ──")
     println("schema: " + SCHEMA)
-    let subs = ["health", "impedance", "headplot", "adjust", "rich", "full"]
+    let subs = ["health", "impedance", "impedance_validate", "headplot", "adjust", "rich", "full"]
     let mut i = 0
     while i < len(subs) {
         let s = subs[i]
@@ -135,7 +138,7 @@ fn _run_backend_stream(backend: string, fwd_args: array) -> int {
 fn _run_selftest_all() -> int {
     println("── eeg_setup selftest dispatcher ──")
     println("schema: " + SCHEMA)
-    let subs = ["health", "impedance", "headplot", "adjust", "rich", "full"]
+    let subs = ["health", "impedance", "impedance_validate", "headplot", "adjust", "rich", "full"]
     let mut pass = 0
     let mut fail = 0
     let mut details = []

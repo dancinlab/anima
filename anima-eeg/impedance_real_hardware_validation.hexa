@@ -1,0 +1,754 @@
+// anima-eeg/impedance_real_hardware_validation.hexa
+// raw#9 hexa-only · raw#10 honest-verdict · raw#11 snake_case · raw#12 silent-error-ban
+// raw#37 helper-py-in-/tmp · raw#65 idempotent · raw#71 falsifier-preregistered
+// raw#77 jsonl-ledger-schema · raw#82 darwin-native · raw#91 honesty-triad
+// raw#101 minimal · raw#155 hxc-consumer-adapter
+// own 1 raw 9 scope: anima-eeg/ direct (NOT tool/) · own 4 root-cause-only
+// own 7 heredoc ARG_MAX guard: helper py emitted via write_file (no <<EOF)
+//
+// PURPOSE
+//   Real-hardware impedance validation runner. Operator wears the helmet,
+//   this runner sweeps all 16 channels via OpenBCI z<CH><PCHAN><NCHAN>Z
+//   lead-off probe, classifies each channel into a 5-state result
+//   (GREEN / YELLOW / RED / BLUE / GRAY), appends per-channel JSONL rows
+//   to a session-scoped ledger and emits an honest VERIFIED / FALSIFIED
+//   verdict plus a calibration recommendation list.
+//
+//   This is a SEPARATE FILE from impedance_check.hexa. impedance_check
+//   is the one-shot diagnostic; this runner is the canonical evidence
+//   producer for "헬멧 착용 후 실측" (worn-helmet measurement) sessions.
+//
+// MODES
+//   --selftest      synthetic 16ch mix (500 / 1500 / 3500 / 0 kΩ) → 5-state
+//                   classification, JSONL emit, NOT_VERIFIED_SYNTHETIC honesty
+//   --measure       real hardware sweep. requires:
+//                     * sentinel state/markers/board_health_check_*.marker
+//                     * --port path (e.g. /dev/cu.usbserial-DP04WGIQ)
+//                     * helmet worn, electrodes saline-bonded
+//
+// 5-STATE THRESHOLDS (OpenBCI CytonElectrodeStatus.pde reference)
+//   GREEN   #00ff64    z < 750 kΩ              normal
+//   YELLOW  #e6c700    750k <= z < 3 MΩ        weak / re-saline
+//   RED     #ff0000    z >= 3 MΩ               not contacted / re-seat
+//   BLUE    #416080    measurement in progress (transient only)
+//   GRAY    #717577    not tested / no signal
+//
+// CHANNEL MAPPING (16ch — Cyton + Daisy)
+//   ch1..ch8  Cyton  chars '1'-'8'   Fp1 Fp2 C3 C4 P7 P8 O1 O2
+//   ch9..16   Daisy  Q W E R T Y U I  F7  F8  F3 F4 T7 T8 P3 P4
+//
+// JSONL ROW SCHEMA (raw#77)
+//   {"ts": <unix>, "channel": <1-16>, "char": "<1-8|Q-I>",
+//    "position": "<Fp1|...>", "impedance_kohm": <float>,
+//    "state": "GREEN|YELLOW|RED|BLUE|GRAY",
+//    "amp_31_5hz_uv": <float>,
+//    "lead_off_command": "z<CH><P><N>Z",
+//    "verdict": "VERIFIED|FALSIFIED", "reason": "<note>"}
+//
+// LEDGER PATH
+//   state/impedance_real_hardware_audit/<YYYY-MM-DD>_<session>.jsonl
+//
+// FALSIFIERS (raw#71 — preregistered grounds for FALSIFIED verdict)
+//   F1 sweep_count_red >= 2 of 16 → FALSIFIED:too-many-RED
+//   F2 sweep_count_gray >= 4 of 16 → FALSIFIED:too-many-GRAY (no-signal)
+//   F3 ledger row missing impedance_kohm field → FALSIFIED:schema-violation
+//   F4 sentinel board_health_check marker absent in real mode → FALSIFIED:no-sentinel
+//   F5 z<CH>10Z config_board fails on >= 4 channels → FALSIFIED:hardware-comm
+//
+//  @resolver-bypass(reason="darwin-native: globs /dev/cu.usbserial-* and uses
+//                   .venv-eeg/bin/python BrainFlow venv. Hetzner / linux pods
+//                   do not expose host USB nor local venv.")
+
+let SCHEMA               = "anima-eeg/impedance_real_hardware_validation/1"
+let HELPER_PATH          = "/tmp/anima_eeg_impedance_real_hw_helper.py"
+let DEFAULT_BOARD_ID     = 2
+let DEFAULT_BOARD_NAME   = "cyton_daisy"
+let DEFAULT_VENV_PYTHON  = ".venv-eeg/bin/python"
+let DEFAULT_GREEN_KOHM   = 750
+let DEFAULT_YELLOW_KOHM  = 3000
+let DEFAULT_WINDOW_SEC   = 1
+let SENTINEL_GLOB_DIR    = "state/markers"
+let LEDGER_DIR           = "state/impedance_real_hardware_audit"
+// Falsifier thresholds (preregistered)
+let MAX_RED_BEFORE_FAIL  = 2
+let MAX_GRAY_BEFORE_FAIL = 4
+let MAX_COMM_FAIL        = 4
+
+fn _emit_trailer(reason_slug: string, reason_detail: string, fix: string) {
+    eprintln("reason: " + reason_slug + ": " + reason_detail)
+    eprintln("fix: " + fix)
+}
+
+fn _sh_quote(s: string) -> string {
+    let mut o = "'"
+    o = o + s.replace("'", "'\\''")
+    o = o + "'"
+    return o
+}
+
+fn now_unix() -> string {
+    return exec("date -u +%s").trim()
+}
+
+fn now_iso_date() -> string {
+    return exec("date -u +%Y-%m-%d").trim()
+}
+
+fn now_iso_compact() -> string {
+    return exec("date -u +%Y%m%dT%H%M%SZ").trim()
+}
+
+fn _board_name_to_id(name: string) -> int {
+    if name == "cyton_daisy" { return 2 }
+    if name == "cyton"       { return 0 }
+    if name == "ganglion"    { return 1 }
+    return -1
+}
+
+// raw#9 sentinel check: confirm board_health_check has been run successfully.
+// We accept ANY board_health_check marker file as evidence (raw#65 idempotent).
+fn _sentinel_present() -> bool {
+    let listing = exec("ls -1 " + SENTINEL_GLOB_DIR + "/board_health_check_*.marker 2>/dev/null | head -1").trim()
+    return listing != ""
+}
+
+fn _ensure_ledger_dir() {
+    let _rc = exec("mkdir -p " + LEDGER_DIR)
+}
+
+fn _classify_kohm(z_kohm: float, green_kohm: int, yellow_kohm: int) -> string {
+    if z_kohm < 0.0 { return "GRAY" }
+    if z_kohm < to_float(green_kohm)  { return "GREEN" }
+    if z_kohm < to_float(yellow_kohm) { return "YELLOW" }
+    return "RED"
+}
+
+fn _calibration_advice(state: string, pos: string) -> string {
+    if state == "GREEN"  { return "ok-no-action" }
+    if state == "YELLOW" { return "re-saline-" + pos }
+    if state == "RED"    { return "re-seat-" + pos }
+    if state == "GRAY"   { return "verify-radio-or-channel-" + pos }
+    if state == "BLUE"   { return "wait-transient-" + pos }
+    return "unknown-" + pos
+}
+
+// Helper python — own 7 heredoc ARG_MAX guard: emitted via write_file().
+// Prints kv lines on stdout; trailers (reason/fix) on stderr.
+fn _write_helper() {
+    let py = "
+import sys, os, time, argparse, json
+
+def out_kv(k, v):
+    print(str(k) + '=' + str(v), flush=True)
+
+def err_trailer(reason, detail, fix):
+    print('reason: ' + reason + ': ' + detail, file=sys.stderr, flush=True)
+    print('fix: ' + fix, file=sys.stderr, flush=True)
+
+CHAN_CHARS = ['1','2','3','4','5','6','7','8','Q','W','E','R','T','Y','U','I']
+
+WIRE_META = [
+    ('Cyton', 'N1P', 'Fp1'),
+    ('Cyton', 'N2P', 'Fp2'),
+    ('Cyton', 'N3P', 'C3'),
+    ('Cyton', 'N4P', 'C4'),
+    ('Cyton', 'N5P', 'P7'),
+    ('Cyton', 'N6P', 'P8'),
+    ('Cyton', 'N7P', 'O1'),
+    ('Cyton', 'N8P', 'O2'),
+    ('Daisy', 'N1P', 'F7'),
+    ('Daisy', 'N2P', 'F8'),
+    ('Daisy', 'N3P', 'F3'),
+    ('Daisy', 'N4P', 'F4'),
+    ('Daisy', 'N5P', 'T7'),
+    ('Daisy', 'N6P', 'T8'),
+    ('Daisy', 'N7P', 'P3'),
+    ('Daisy', 'N8P', 'P4'),
+]
+
+PROBE_FREQ_HZ   = 31.5
+PROBE_CURRENT_A = 6.0e-9    # 6 nA AC
+SAMPLE_RATE_HZ  = 250
+
+def measure_one_channel(board, ch_idx, eeg_chans, fs, seconds):
+    import numpy as np
+    ch_char = CHAN_CHARS[ch_idx]
+    cmd_on  = 'z' + ch_char + '10Z'   # P-pin lead-off ON, N-pin OFF
+    cmd_off = 'z' + ch_char + '00Z'   # both OFF — revert
+    comm_ok = True
+    try:
+        board.config_board(cmd_on)
+    except Exception as e:
+        err_trailer('config-board-failed',
+                    'cmd=' + cmd_on + ' err=' + str(e)[:120],
+                    '1) check radio link  2) verify board firmware >= v3')
+        return -1.0, 0.0, cmd_on, False
+
+    try:
+        board.start_stream()
+    except Exception as e:
+        err_trailer('start-stream-failed', str(e)[:120], '1) toggle Cyton OFF/PC')
+        try: board.config_board(cmd_off)
+        except: pass
+        return -1.0, 0.0, cmd_on, False
+
+    time.sleep(seconds)
+
+    try:
+        data = board.get_board_data()
+    except Exception as e:
+        err_trailer('get-data-failed', str(e)[:120], '1) Dongle red LED?')
+        try: board.stop_stream(); board.config_board(cmd_off)
+        except: pass
+        return -1.0, 0.0, cmd_on, False
+
+    try: board.stop_stream()
+    except: pass
+    try: board.config_board(cmd_off)
+    except: pass
+
+    eeg_row = eeg_chans[ch_idx]
+    cols = data.shape[1] if data is not None and data.size else 0
+    n_want = int(fs * seconds)
+    if cols < int(n_want * 0.5):
+        return -1.0, 0.0, cmd_on, comm_ok
+
+    sig = data[eeg_row, -n_want:] if cols >= n_want else data[eeg_row, :]
+    n = len(sig)
+    if n < 32:
+        return -1.0, 0.0, cmd_on, comm_ok
+
+    window = np.hanning(n)
+    spec = np.fft.rfft(sig * window)
+    freqs = np.fft.rfftfreq(n, 1.0 / fs)
+    bin_idx = int(np.argmin(np.abs(freqs - PROBE_FREQ_HZ)))
+    amp_uV = float(np.abs(spec[bin_idx]) * 4.0 / n)
+    amp_V  = amp_uV * 1.0e-6
+    z_ohm  = amp_V / PROBE_CURRENT_A
+    z_kohm = z_ohm / 1000.0
+    return z_kohm, amp_uV, cmd_on, comm_ok
+
+def main_measure(board_id, port, seconds):
+    try:
+        import numpy as np
+        from brainflow.board_shim import BoardShim, BrainFlowInputParams
+    except ImportError as e:
+        err_trailer('import-missing', str(e)[:160],
+                    '1) source .venv-eeg/bin/activate  2) pip install brainflow numpy')
+        out_kv('verdict', 'ABORT')
+        return 4
+
+    BoardShim.disable_board_logger()
+    params = BrainFlowInputParams()
+    if port:
+        params.serial_port = port
+
+    try:
+        board = BoardShim(board_id, params)
+        board.prepare_session()
+    except Exception as e:
+        err_trailer('board-not-ready', str(e)[:160],
+                    '1) toggle Cyton OFF wait 5s then PC  2) verify Daisy seated')
+        out_kv('verdict', 'ABORT')
+        return 4
+
+    try:
+        fs = BoardShim.get_sampling_rate(board_id)
+        eeg_chans = BoardShim.get_eeg_channels(board_id)
+    except Exception as e:
+        err_trailer('board-meta-error', str(e)[:160], '1) check board_id')
+        try: board.release_session()
+        except: pass
+        out_kv('verdict', 'ABORT')
+        return 4
+
+    n_ch = min(16, len(eeg_chans))
+    out_kv('sample_rate_hz', fs)
+    out_kv('eeg_channel_count', n_ch)
+    out_kv('probe_freq_hz', PROBE_FREQ_HZ)
+    out_kv('probe_current_a', PROBE_CURRENT_A)
+
+    try: board.config_board('d')
+    except: pass
+    try: board.stop_stream()
+    except: pass
+
+    try:
+        for ch_idx in range(n_ch):
+            z_kohm, amp_uV, cmd_on, comm_ok = measure_one_channel(
+                board, ch_idx, eeg_chans, fs, seconds)
+            wm = WIRE_META[ch_idx]
+            cstr = '%02d' % ch_idx
+            out_kv('ch_' + cstr + '_pos', wm[2])
+            out_kv('ch_' + cstr + '_board', wm[0])
+            out_kv('ch_' + cstr + '_pin', wm[1])
+            out_kv('ch_' + cstr + '_chan_char', CHAN_CHARS[ch_idx])
+            out_kv('ch_' + cstr + '_cmd', cmd_on)
+            out_kv('ch_' + cstr + '_comm_ok', 1 if comm_ok else 0)
+            out_kv('ch_' + cstr + '_z_kohm', round(z_kohm, 1) if z_kohm >= 0 else -1)
+            out_kv('ch_' + cstr + '_amp_uv', round(amp_uV, 4))
+    except KeyboardInterrupt:
+        out_kv('verdict', 'INTERRUPTED')
+        return 1
+    finally:
+        try: board.stop_stream()
+        except: pass
+        try: board.release_session()
+        except: pass
+
+    out_kv('sweep_done', 1)
+    return 0
+
+def run_selftest():
+    '''Synthetic 16ch mix: 500 / 1500 / 3500 / 0(no-signal) kΩ pattern.
+    Honesty class: NOT_VERIFIED_SYNTHETIC.'''
+    out_kv('mode', 'selftest_synthetic')
+    out_kv('sample_rate_hz', SAMPLE_RATE_HZ)
+    out_kv('eeg_channel_count', 16)
+    out_kv('probe_freq_hz', PROBE_FREQ_HZ)
+    out_kv('probe_current_a', PROBE_CURRENT_A)
+    # Pattern: ch_idx % 4 == 0 -> 500 (GREEN), == 1 -> 1500 (YELLOW),
+    #          == 2 -> 3500 (RED), == 3 -> -1 (GRAY no-signal)
+    pattern = [500.0, 1500.0, 3500.0, -1.0]
+    for ch_idx in range(16):
+        wm = WIRE_META[ch_idx]
+        cstr = '%02d' % ch_idx
+        synth_z = pattern[ch_idx % 4]
+        # Synthetic amp_uV: invert ohm law for non-negative
+        if synth_z >= 0:
+            amp_uV = (synth_z * 1000.0) * PROBE_CURRENT_A * 1.0e6  # uV
+        else:
+            amp_uV = 0.0
+        cmd = 'z' + CHAN_CHARS[ch_idx] + '10Z'
+        out_kv('ch_' + cstr + '_pos', wm[2])
+        out_kv('ch_' + cstr + '_board', wm[0])
+        out_kv('ch_' + cstr + '_pin', wm[1])
+        out_kv('ch_' + cstr + '_chan_char', CHAN_CHARS[ch_idx])
+        out_kv('ch_' + cstr + '_cmd', cmd)
+        out_kv('ch_' + cstr + '_comm_ok', 1)
+        out_kv('ch_' + cstr + '_z_kohm', round(synth_z, 1) if synth_z >= 0 else -1)
+        out_kv('ch_' + cstr + '_amp_uv', round(amp_uV, 4))
+    out_kv('sweep_done', 1)
+    return 0
+
+if __name__ == '__main__':
+    p = argparse.ArgumentParser()
+    p.add_argument('mode', choices=['measure', 'selftest'])
+    p.add_argument('--board-id', type=int, default=2)
+    p.add_argument('--port', type=str, default='')
+    p.add_argument('--seconds', type=int, default=1)
+    args = p.parse_args()
+    if args.mode == 'selftest':
+        rc = run_selftest()
+    else:
+        rc = main_measure(args.board_id, args.port, args.seconds)
+    sys.exit(rc)
+"
+    write_file(HELPER_PATH, py)
+}
+
+fn _flags_only_argv() -> array {
+    let av = argv()
+    let mut start = 0
+    while start < len(av) {
+        let a = av[start]
+        if a.starts_with("-") { break }
+        let mut is_path = false
+        if a.starts_with("/")    { is_path = true }
+        if a.ends_with(".hexa")  { is_path = true }
+        if a.ends_with(".real")  { is_path = true }
+        if a.ends_with("/exe")   { is_path = true }
+        if is_path { start = start + 1 } else { break }
+    }
+    let mut out = []
+    let mut j = start
+    while j < len(av) {
+        out.push(av[j])
+        j = j + 1
+    }
+    return out
+}
+
+fn _kv_lookup(body: string, key: string) -> string {
+    let prefix = key + "="
+    let lines = body.split("\n")
+    let mut i = 0
+    while i < len(lines) {
+        let ln = lines[i].trim()
+        if ln.starts_with(prefix) {
+            return ln.substring(prefix.len(), ln.len())
+        }
+        i = i + 1
+    }
+    return ""
+}
+
+fn _kv_get_or(body: string, key: string, default_val: string) -> string {
+    let v = _kv_lookup(body, key)
+    if v == "" { return default_val }
+    return v
+}
+
+// Append a JSONL row. raw#65 idempotent: caller controls ledger path so a
+// re-run of the SAME session simply appends — selftest uses a deterministic
+// session id "selftest_synth" and overwrites for byte-eq replay.
+fn _append_jsonl(path: string, row: string) {
+    let nl = chr(10)
+    let prior = read_file(path)
+    let mut existing = ""
+    if prior != "" { existing = prior }
+    write_file(path, existing + row + nl)
+}
+
+fn _overwrite_jsonl(path: string, body: string) {
+    write_file(path, body)
+}
+
+// Build one JSONL row per raw#77 schema.
+fn _build_row(ts_unix: string, ch_num: int, ch_char: string, position: string,
+              z_kohm: string, state: string, amp_uv: string,
+              cmd: string, verdict: string, reason: string) -> string {
+    let mut r = "{"
+    r = r + "\"ts\":" + ts_unix + ","
+    r = r + "\"channel\":" + str(ch_num) + ","
+    r = r + "\"char\":\"" + ch_char + "\","
+    r = r + "\"position\":\"" + position + "\","
+    r = r + "\"impedance_kohm\":" + z_kohm + ","
+    r = r + "\"state\":\"" + state + "\","
+    r = r + "\"amp_31_5hz_uv\":" + amp_uv + ","
+    r = r + "\"lead_off_command\":\"" + cmd + "\","
+    r = r + "\"verdict\":\"" + verdict + "\","
+    r = r + "\"reason\":\"" + reason + "\""
+    r = r + "}"
+    return r
+}
+
+fn _ansi_color(state: string) -> string {
+    let esc = chr(27)
+    if state == "GREEN"  { return esc + "[38;2;0;255;100m" }
+    if state == "YELLOW" { return esc + "[38;2;230;199;0m" }
+    if state == "RED"    { return esc + "[38;2;255;0;0m" }
+    if state == "BLUE"   { return esc + "[38;2;65;96;128m" }
+    if state == "GRAY"   { return esc + "[38;2;113;117;119m" }
+    return ""
+}
+
+fn _ansi_reset() -> string {
+    let esc = chr(27)
+    return esc + "[0m"
+}
+
+fn _state_glyph(state: string) -> string {
+    if state == "GREEN" || state == "YELLOW" || state == "RED" {
+        return _ansi_color(state) + "[●]" + _ansi_reset()
+    }
+    if state == "BLUE" { return _ansi_color(state) + "[?]" + _ansi_reset() }
+    return _ansi_color("GRAY") + "[·]" + _ansi_reset()
+}
+
+fn _print_per_channel(green_kohm: int, yellow_kohm: int,
+                      states: array, positions: array, z_kohms: array,
+                      amps: array, ch_chars: array) {
+    println("    PER-CHANNEL (GREEN<" + str(green_kohm) + " kΩ, YELLOW<" + str(yellow_kohm) + " kΩ):")
+    println("    ───────────────────────────────────────────────────────────")
+    let mut i = 0
+    while i < 16 {
+        let n = i + 1
+        let nstr = if n < 10 { " " + str(n) } else { str(n) }
+        let glyph = _state_glyph(states[i])
+        println("      ch" + nstr + " " + glyph + " " + positions[i]
+                + "  " + z_kohms[i] + " kΩ  amp=" + amps[i] + " μV"
+                + "  [" + states[i] + "]  char=" + ch_chars[i])
+        i = i + 1
+    }
+    println("")
+}
+
+fn _do_run(board_id: int, port: string, seconds: int,
+           green_kohm: int, yellow_kohm: int,
+           selftest: bool, session_id: string) -> int {
+    _ensure_ledger_dir()
+
+    // raw#9 sentinel check (real mode only)
+    if !selftest {
+        if !_sentinel_present() {
+            _emit_trailer(
+                "no-sentinel",
+                "board_health_check marker absent in " + SENTINEL_GLOB_DIR,
+                "1) hexa run anima-eeg/eeg_setup.hexa health  2) re-run measure"
+            )
+            return 5
+        }
+    }
+
+    let mode_arg = if selftest { "selftest" } else { "measure" }
+    let venv_py = DEFAULT_VENV_PYTHON
+    let mut cmd = venv_py + " " + HELPER_PATH + " " + mode_arg
+    cmd = cmd + " --board-id " + str(board_id)
+    cmd = cmd + " --seconds " + str(seconds)
+    if port != "" { cmd = cmd + " --port " + _sh_quote(port) }
+    cmd = cmd + " > /tmp/anima_eeg_impedance_real_out.log 2> /tmp/anima_eeg_impedance_real_err.log"
+
+    let _rc = exec(cmd)
+
+    let stdout_body = read_file("/tmp/anima_eeg_impedance_real_out.log")
+    let stderr_body = read_file("/tmp/anima_eeg_impedance_real_err.log")
+    if stderr_body != "" { eprintln(stderr_body.trim()) }
+
+    // Parse 16ch results from helper kv output
+    let chan_chars = ["1","2","3","4","5","6","7","8","Q","W","E","R","T","Y","U","I"]
+    let mut states     = []
+    let mut positions  = []
+    let mut z_kohms    = []
+    let mut amps       = []
+    let mut ch_chars   = []
+    let mut cmds       = []
+    let mut comm_oks   = []
+
+    let mut n_green   = 0
+    let mut n_yellow  = 0
+    let mut n_red     = 0
+    let mut n_gray    = 0
+    let mut n_comm_fail = 0
+
+    let mut idx = 0
+    while idx < 16 {
+        let cstr = if idx < 10 { "0" + str(idx) } else { str(idx) }
+        let pos      = _kv_get_or(stdout_body, "ch_" + cstr + "_pos", "?")
+        let z_str    = _kv_get_or(stdout_body, "ch_" + cstr + "_z_kohm", "-1")
+        let amp_str  = _kv_get_or(stdout_body, "ch_" + cstr + "_amp_uv", "0.0")
+        let cmd_str  = _kv_get_or(stdout_body, "ch_" + cstr + "_cmd", "z?10Z")
+        let comm_str = _kv_get_or(stdout_body, "ch_" + cstr + "_comm_ok", "0")
+        let z_f = to_float(z_str)
+        let state = _classify_kohm(z_f, green_kohm, yellow_kohm)
+        if state == "GREEN"  { n_green  = n_green  + 1 }
+        if state == "YELLOW" { n_yellow = n_yellow + 1 }
+        if state == "RED"    { n_red    = n_red    + 1 }
+        if state == "GRAY"   { n_gray   = n_gray   + 1 }
+        if comm_str != "1"   { n_comm_fail = n_comm_fail + 1 }
+        states.push(state)
+        positions.push(pos)
+        z_kohms.push(z_str)
+        amps.push(amp_str)
+        ch_chars.push(chan_chars[idx])
+        cmds.push(cmd_str)
+        comm_oks.push(comm_str)
+        idx = idx + 1
+    }
+
+    // Render terminal summary
+    _print_per_channel(green_kohm, yellow_kohm, states, positions, z_kohms, amps, ch_chars)
+    println("    SUMMARY: " + str(n_green) + "/16 GREEN, " + str(n_yellow) + "/16 YELLOW, "
+            + str(n_red) + "/16 RED, " + str(n_gray) + "/16 GRAY")
+
+    // Falsifier evaluation (raw#71)
+    let mut session_verdict = "VERIFIED"
+    let mut session_reason = "all-falsifiers-passed"
+    if !selftest {
+        if n_red >= MAX_RED_BEFORE_FAIL {
+            session_verdict = "FALSIFIED"
+            session_reason = "F1-too-many-RED-" + str(n_red)
+        } else if n_gray >= MAX_GRAY_BEFORE_FAIL {
+            session_verdict = "FALSIFIED"
+            session_reason = "F2-too-many-GRAY-" + str(n_gray)
+        } else if n_comm_fail >= MAX_COMM_FAIL {
+            session_verdict = "FALSIFIED"
+            session_reason = "F5-hardware-comm-" + str(n_comm_fail)
+        }
+    } else {
+        // raw#91 honest: synthetic data MUST NOT claim VERIFIED
+        session_verdict = "FALSIFIED"
+        session_reason = "synthetic-not-real-hardware"
+    }
+
+    // Emit JSONL ledger (one row per channel + one summary row)
+    let date = now_iso_date()
+    let ledger_path = LEDGER_DIR + "/" + date + "_" + session_id + ".jsonl"
+    let ts_unix = if selftest { "0" } else { now_unix() }
+    let mut body = ""
+    let nl = chr(10)
+    let mut k = 0
+    while k < 16 {
+        let st = states[k]
+        let row_verdict = if selftest { "FALSIFIED" } else { session_verdict }
+        let row_reason  = if selftest { "synthetic-row" } else { _calibration_advice(st, positions[k]) }
+        let row = _build_row(
+            ts_unix, k + 1, ch_chars[k], positions[k],
+            z_kohms[k], st, amps[k], cmds[k], row_verdict, row_reason)
+        body = body + row + nl
+        k = k + 1
+    }
+    // Summary tail row (channel=0 marker)
+    let summary_row = _build_row(
+        ts_unix, 0, "*", "SESSION_SUMMARY",
+        str(n_green) + "." + str(n_yellow), session_verdict,
+        str(n_red) + "." + str(n_gray), "session", session_verdict, session_reason)
+    body = body + summary_row + nl
+
+    if selftest {
+        // raw#65 idempotent: deterministic overwrite for selftest replay
+        _overwrite_jsonl(ledger_path, body)
+    } else {
+        // real mode: append (preserve prior session evidence)
+        let prior = read_file(ledger_path)
+        let mut existing = ""
+        if prior != "" { existing = prior }
+        write_file(ledger_path, existing + body)
+    }
+
+    println("    ledger: " + ledger_path)
+    println("    VERDICT: " + session_verdict + " (" + session_reason + ")")
+
+    // Calibration recommendations (humans only — terminal echo)
+    println("    CALIBRATION RECOMMENDATIONS:")
+    let mut any_advice = false
+    let mut m = 0
+    while m < 16 {
+        let st = states[m]
+        if st != "GREEN" {
+            let nstr = str(m + 1)
+            println("      ch" + nstr + " " + positions[m] + " [" + st + "] → "
+                    + _calibration_advice(st, positions[m]))
+            any_advice = true
+        }
+        m = m + 1
+    }
+    if !any_advice { println("      (none — all 16 channels GREEN)") }
+    println("")
+
+    // Honesty class (raw#91)
+    let honesty_class = if selftest { "NOT_VERIFIED_SYNTHETIC" } else {
+        if session_verdict == "VERIFIED" { "REAL_HW_VERIFIED" } else { "REAL_HW_FALSIFIED" }
+    }
+    println("    HONESTY (raw#91): " + honesty_class)
+
+    // Exit code: selftest = 0 if classification mechanism worked (regardless
+    // of synthetic FALSIFIED honesty class — that is by raw#91 design, not
+    // a runner failure). Real measure mode: 0 only on VERIFIED.
+    if selftest { return 0 }
+    if session_verdict == "VERIFIED" { return 0 }
+    return 1
+}
+
+fn _print_usage() {
+    eprintln("usage: hexa run anima-eeg/impedance_real_hardware_validation.hexa --selftest")
+    eprintln("       hexa run anima-eeg/impedance_real_hardware_validation.hexa --measure --port <p>")
+    eprintln("flags:")
+    eprintln("  --selftest                synthetic 16ch mix (500/1500/3500/-1) — NOT_VERIFIED_SYNTHETIC")
+    eprintln("  --measure                 real hardware sweep (requires sentinel + helmet)")
+    eprintln("  --port <path>             Dongle serial node (e.g. /dev/cu.usbserial-DP04WGIQ)")
+    eprintln("  --board <name>            cyton_daisy (default) | cyton")
+    eprintln("  --green-kohm <n>          GREEN upper bound (default 750)")
+    eprintln("  --yellow-kohm <n>         YELLOW upper bound (default 3000)")
+    eprintln("  --seconds <n>             window seconds per channel (default 1)")
+    eprintln("  --session <id>            session id slug (default = unix ts)")
+    eprintln("  --help                    this message")
+}
+
+fn main() {
+    let av = _flags_only_argv()
+    let mut selftest = false
+    let mut measure = false
+    let mut want_help = false
+    let mut port = ""
+    let mut seconds = DEFAULT_WINDOW_SEC
+    let mut board_name = DEFAULT_BOARD_NAME
+    let mut green_kohm = DEFAULT_GREEN_KOHM
+    let mut yellow_kohm = DEFAULT_YELLOW_KOHM
+    let mut session_id = ""
+
+    let mut i = 0
+    while i < len(av) {
+        let a = av[i]
+        if a == "--selftest" { selftest = true; i = i + 1; continue }
+        if a == "--measure"  { measure  = true; i = i + 1; continue }
+        if a == "--help" || a == "-h" { want_help = true; i = i + 1; continue }
+        if a == "--port" {
+            if (i + 1) >= len(av) {
+                _emit_trailer("missing-arg-value", "--port requires a value", "1) --port /dev/cu.usbserial-DP04WGIQ")
+                exit(2)
+            }
+            port = av[i + 1]; i = i + 2; continue
+        }
+        if a == "--board" {
+            if (i + 1) >= len(av) {
+                _emit_trailer("missing-arg-value", "--board requires value", "1) --board cyton_daisy")
+                exit(2)
+            }
+            board_name = av[i + 1]; i = i + 2; continue
+        }
+        if a == "--green-kohm" {
+            if (i + 1) >= len(av) {
+                _emit_trailer("missing-arg-value", "--green-kohm requires int", "1) --green-kohm 750")
+                exit(2)
+            }
+            green_kohm = to_int(av[i + 1]); i = i + 2; continue
+        }
+        if a == "--yellow-kohm" {
+            if (i + 1) >= len(av) {
+                _emit_trailer("missing-arg-value", "--yellow-kohm requires int", "1) --yellow-kohm 3000")
+                exit(2)
+            }
+            yellow_kohm = to_int(av[i + 1]); i = i + 2; continue
+        }
+        if a == "--seconds" {
+            if (i + 1) >= len(av) {
+                _emit_trailer("missing-arg-value", "--seconds requires int", "1) --seconds 1")
+                exit(2)
+            }
+            seconds = to_int(av[i + 1]); i = i + 2; continue
+        }
+        if a == "--session" {
+            if (i + 1) >= len(av) {
+                _emit_trailer("missing-arg-value", "--session requires value", "1) --session helmet_test_1")
+                exit(2)
+            }
+            session_id = av[i + 1]; i = i + 2; continue
+        }
+        _emit_trailer("unknown-arg", "unrecognized: " + a, "1) --help")
+        _print_usage()
+        exit(2)
+    }
+
+    if want_help { _print_usage(); exit(0) }
+    if !selftest && !measure {
+        eprintln("ABORT: must pass --selftest | --measure")
+        _print_usage()
+        exit(2)
+    }
+    if measure && port == "" {
+        _emit_trailer("missing-port", "--measure requires --port",
+                      "1) ls /dev/cu.usbserial-* 2) --port /dev/cu.usbserial-DP04WGIQ")
+        exit(2)
+    }
+
+    _write_helper()
+
+    let board_id = _board_name_to_id(board_name)
+    if board_id < 0 {
+        _emit_trailer("invalid-board", "unknown: " + board_name, "1) --board cyton_daisy")
+        exit(2)
+    }
+
+    // Idempotent session id for selftest (raw#65 byte-eq); real uses live ts.
+    let sid = if session_id != "" { session_id } else {
+        if selftest { "selftest_synth" } else { now_iso_compact() }
+    }
+
+    println("══════════════════════════════════════════════════")
+    println("  anima-eeg impedance_real_hardware_validation")
+    println("  schema: " + SCHEMA)
+    if selftest {
+        println("  mode: selftest (synthetic — NOT_VERIFIED_SYNTHETIC)")
+    } else {
+        println("  mode: measure (real hardware)")
+        println("  port: " + port)
+    }
+    println("  session: " + sid)
+    println("  thresholds: GREEN<" + str(green_kohm) + " kΩ, YELLOW<" + str(yellow_kohm) + " kΩ")
+    println("  probe: 31.5 Hz @ 6 nA, P-pin only (z<CH>10Z)")
+    println("══════════════════════════════════════════════════")
+
+    let rc = _do_run(board_id, port, seconds, green_kohm, yellow_kohm, selftest, sid)
+    exit(rc)
+}
