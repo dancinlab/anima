@@ -1,0 +1,245 @@
+// anima-eeg-core/tool/modules/_core/falsifier_runner.hexa
+// raw#9 hexa-only · raw#65 idempotent · raw#71 falsifier-evaluation · raw#82 darwin
+//
+// PURPOSE
+//   Phase 1 _core/ module #4 — evaluate raw#71 falsifier specs against measured
+//   metrics. Verdict = PASS iff zero falsifiers triggered.
+//
+// FALSIFIER SPEC FORMAT (CSV)
+//   "id=F01,metric=snr_db,direction=lt,threshold=10.0"
+//     direction ∈ {lt, le, gt, ge, eq, ne, abs_gt, abs_lt}
+//     "trigger" condition: metric <op> threshold ⇒ falsifier FIRES.
+//
+// API
+//   _core_run_falsifiers_kv(metrics_csv: string, specs_pipe: string) -> string
+//     metrics_csv  = "k1=v1,k2=v2,..." (numeric only; non-numeric skipped)
+//     specs_pipe   = "id=F01,metric=k1,direction=lt,threshold=1.0|id=F02,..."
+//                    pipe-separated to avoid CSV collision.
+//     returns kv-block:
+//       schema=anima-eeg-core/_core/falsifier_runner/1
+//       total=<int>
+//       triggered_count=<int>
+//       triggered_ids=<csv>
+//       verdict=PASS|FAIL
+//
+// CLI
+//   hexa run falsifier_runner.hexa --selftest
+//   hexa run falsifier_runner.hexa --eval --metrics 'a=1.5,b=2' --specs 'id=F1,metric=a,direction=lt,threshold=2|...'
+
+let SCHEMA = "anima-eeg-core/_core/falsifier_runner/1"
+
+// ─── helpers ────────────────────────────────────────────────────────────
+
+fn _kv_lookup(body: string, key: string) -> string {
+    let prefix = key + "="
+    let lines = body.split("\n")
+    let mut i = 0
+    while i < len(lines) {
+        let ln = lines[i].trim()
+        if ln.starts_with(prefix) {
+            return ln.substring(prefix.len(), ln.len())
+        }
+        i = i + 1
+    }
+    return ""
+}
+
+fn _csv_lookup(csv: string, key: string) -> string {
+    let prefix = key + "="
+    let pairs = csv.split(",")
+    let mut i = 0
+    while i < len(pairs) {
+        let kv = pairs[i].trim()
+        if kv.starts_with(prefix) {
+            return kv.substring(prefix.len(), kv.len())
+        }
+        i = i + 1
+    }
+    return ""
+}
+
+fn _abs_f(x: float) -> float {
+    if x < 0.0 { return 0.0 - x }
+    return x
+}
+
+fn _eval_one(metric_val: float, direction: string, threshold: float) -> bool {
+    // returns TRUE if falsifier FIRES (i.e. metric satisfies bad condition)
+    if direction == "lt" { return metric_val < threshold }
+    if direction == "le" { return metric_val <= threshold }
+    if direction == "gt" { return metric_val > threshold }
+    if direction == "ge" { return metric_val >= threshold }
+    if direction == "eq" { return metric_val == threshold }
+    if direction == "ne" { return metric_val != threshold }
+    if direction == "abs_gt" { return _abs_f(metric_val) > threshold }
+    if direction == "abs_lt" { return _abs_f(metric_val) < threshold }
+    return false  // unknown → never fire (raw#10 honest: silent skip would be bad)
+}
+
+// ─── public-ish API ────────────────────────────────────────────────────
+
+fn _core_run_falsifiers_kv(metrics_csv: string, specs_pipe: string) -> string {
+    let specs = specs_pipe.split("|")
+    let mut total = 0
+    let mut triggered = 0
+    let mut triggered_ids = ""
+    let mut details = ""
+    let mut errors = 0
+    let mut i = 0
+    while i < len(specs) {
+        let spec = specs[i].trim()
+        if spec == "" { i = i + 1; continue }
+        total = total + 1
+        let id      = _csv_lookup(spec, "id")
+        let metric  = _csv_lookup(spec, "metric")
+        let dir     = _csv_lookup(spec, "direction")
+        let thr_str = _csv_lookup(spec, "threshold")
+        let val_str = _csv_lookup(metrics_csv, metric)
+        if val_str == "" {
+            // raw#10 honest: missing metric = ERROR (not silent skip)
+            errors = errors + 1
+            if details != "" { details = details + ";" }
+            details = details + id + ":missing_metric:" + metric
+            i = i + 1; continue
+        }
+        let val = to_float(val_str)
+        let thr = to_float(thr_str)
+        let fires = _eval_one(val, dir, thr)
+        if fires {
+            triggered = triggered + 1
+            if triggered_ids != "" { triggered_ids = triggered_ids + "," }
+            triggered_ids = triggered_ids + id
+            if details != "" { details = details + ";" }
+            details = details + id + ":FIRE:" + metric + "=" + val_str + dir + thr_str
+        } else {
+            if details != "" { details = details + ";" }
+            details = details + id + ":ok"
+        }
+        i = i + 1
+    }
+    let mut out = ""
+    out = out + "schema=" + SCHEMA + "\n"
+    out = out + "total=" + to_string(total) + "\n"
+    out = out + "triggered_count=" + to_string(triggered) + "\n"
+    out = out + "triggered_ids=" + triggered_ids + "\n"
+    out = out + "errors=" + to_string(errors) + "\n"
+    out = out + "details=" + details + "\n"
+    let verdict = if (triggered == 0 && errors == 0) { "PASS" } else { "FAIL" }
+    out = out + "verdict=" + verdict + "\n"
+    return out
+}
+
+// ─── CLI ───────────────────────────────────────────────────────────────
+
+fn _flags_only_argv() -> array {
+    let av = argv()
+    let mut start = 0
+    while start < len(av) {
+        let a = av[start]
+        let mut is_path = false
+        if a.ends_with(".hexa") { is_path = true }
+        if !is_path { if a.ends_with("/exe") { is_path = true } }
+        if is_path { start = start + 1 } else { break }
+    }
+    let mut out = []
+    let mut j = start
+    while j < len(av) { out.push(av[j]); j = j + 1 }
+    return out
+}
+
+fn assert_true(cond: bool, label: string) -> bool {
+    if cond { println("  PASS: " + label) } else { println("  FAIL: " + label) }
+    return cond
+}
+
+fn _print_usage() {
+    eprintln("usage: hexa run falsifier_runner.hexa --selftest")
+    eprintln("       hexa run falsifier_runner.hexa --eval --metrics 'k=v,k=v' --specs 'id=,metric=,direction=,threshold=|...'")
+}
+
+fn main() {
+    let av = _flags_only_argv()
+    let mut selftest = false
+    let mut eval_mode = false
+    let mut metrics = ""
+    let mut specs = ""
+    let mut i = 0
+    while i < len(av) {
+        let a = av[i]
+        if a == "--selftest" { selftest = true; i = i + 1; continue }
+        if a == "--eval"     { eval_mode = true; i = i + 1; continue }
+        if a == "--help" || a == "-h" { _print_usage(); exit(0) }
+        if a == "--metrics"  { metrics = av[i+1]; i = i + 2; continue }
+        if a == "--specs"    { specs   = av[i+1]; i = i + 2; continue }
+        eprintln("unknown arg: " + a); _print_usage(); exit(2)
+    }
+
+    if selftest {
+        println("== _core falsifier_runner selftest ==")
+        let mut pass = 0
+        let mut fail = 0
+
+        // case 1: PASS — all metrics within bounds
+        let m1 = "snr_db=15.0,p60_attenuation_db=42.0,rms_after=0.7"
+        let s1 = "id=F01,metric=snr_db,direction=lt,threshold=10.0|id=F02,metric=p60_attenuation_db,direction=lt,threshold=20.0|id=F03,metric=rms_after,direction=gt,threshold=5.0"
+        let r1 = _core_run_falsifiers_kv(m1, s1)
+        println("--- case 1 (all PASS) ---")
+        println(r1)
+        let t1 = assert_true(_kv_lookup(r1, "verdict") == "PASS", "case1 verdict=PASS")
+        if t1 { pass = pass + 1 } else { fail = fail + 1 }
+        let t1b = assert_true(_kv_lookup(r1, "triggered_count") == "0", "case1 triggered_count=0")
+        if t1b { pass = pass + 1 } else { fail = fail + 1 }
+
+        // case 2: FAIL — F01 fires (snr<10)
+        let m2 = "snr_db=8.0,p60_attenuation_db=42.0,rms_after=0.7"
+        let r2 = _core_run_falsifiers_kv(m2, s1)
+        println("--- case 2 (F01 fires) ---")
+        println(r2)
+        let t2 = assert_true(_kv_lookup(r2, "verdict") == "FAIL", "case2 verdict=FAIL")
+        if t2 { pass = pass + 1 } else { fail = fail + 1 }
+        let t2b = assert_true(_kv_lookup(r2, "triggered_ids") == "F01", "case2 triggered_ids=F01")
+        if t2b { pass = pass + 1 } else { fail = fail + 1 }
+
+        // case 3: missing metric → errors
+        let m3 = "p60_attenuation_db=42.0,rms_after=0.7"
+        let r3 = _core_run_falsifiers_kv(m3, s1)
+        println("--- case 3 (missing snr_db) ---")
+        println(r3)
+        let t3 = assert_true(_kv_lookup(r3, "errors") == "1", "case3 errors=1")
+        if t3 { pass = pass + 1 } else { fail = fail + 1 }
+        let t3b = assert_true(_kv_lookup(r3, "verdict") == "FAIL", "case3 verdict=FAIL (missing metric)")
+        if t3b { pass = pass + 1 } else { fail = fail + 1 }
+
+        // case 4: abs_gt direction
+        let m4 = "drift=-0.8"
+        let s4 = "id=F10,metric=drift,direction=abs_gt,threshold=0.5"
+        let r4 = _core_run_falsifiers_kv(m4, s4)
+        println("--- case 4 (abs_gt -0.8 vs 0.5) ---")
+        println(r4)
+        let t4 = assert_true(_kv_lookup(r4, "triggered_count") == "1", "case4 abs_gt fires")
+        if t4 { pass = pass + 1 } else { fail = fail + 1 }
+
+        println("")
+        println("Results: " + to_string(pass) + " PASS / " + to_string(fail) + " FAIL")
+        if fail != 0 { exit(1) }
+        println("schema=" + SCHEMA)
+        println("selftest=ok")
+        println("selftest: OK")
+        exit(0)
+    }
+
+    if eval_mode {
+        if metrics == "" || specs == "" {
+            eprintln("ABORT: --eval needs --metrics + --specs"); exit(2)
+        }
+        let r = _core_run_falsifiers_kv(metrics, specs)
+        print(r)
+        let v = _kv_lookup(r, "verdict")
+        if v != "PASS" { exit(1) }
+        exit(0)
+    }
+
+    eprintln("ABORT: need --selftest or --eval")
+    _print_usage()
+    exit(2)
+}
