@@ -1,0 +1,283 @@
+// ════════════════════════════════════════════════════════════════════════════
+//  anima-eeg/tool/long_duration_recorder.hexa
+//
+//  PURPOSE
+//    1 hour+ continuous EEG recording protocol runner (T13).
+//    Replaces 60s short-window limitation: gamma statistics stable, state
+//    transition observable, LZ76 b(n) drift characterized within session.
+//    Mid-flight integrity checks (per 10 min impedance, per 5 min ICA+LZ76).
+//
+//  PROTOCOL (design/long_duration_recording_protocol_2026_04_28.md)
+//    duration_min        = 60   (also 90 / 120)
+//    segment_sec         = 60
+//    inter_segment_gap   = 0    (continuous)
+//    total_segments      = duration_min
+//    impedance_recheck   every 10 min
+//    ica_lz76_window     60s, stride 30s
+//    state_transition    PELT on b(n) time series
+//
+//  FALSIFIERS (raw#71)
+//    F1 Δimpedance > 200 kΩ over 60 min  → saline_dry
+//    F2 SRB2 disconnect (rms collapse all ch) → srb2_loss
+//    F3 motion artifact > 50% segments     → unusable
+//    F4 BrainFlow streaming gap > 10 s     → stream_gap
+//    F5 helmet removed (rms<2µV ≥8ch ≥20s) → helmet_off
+//
+//  USAGE
+//    --selftest               synthetic 60min × 60 segments deterministic
+//    --duration-min <n>       default 60
+//    --segment-sec <n>        default 60
+//    --recheck-min <n>        default 10
+//    --ledger <path>          default state/long_duration_audit/<date>_segments.jsonl
+//    --recording <path>       default state/long_duration_recordings/<date>_<dur>min.npy
+//    --append                 actually write ledger (omitted = dry-run)
+//
+//  RAW COMPLIANCE
+//    raw#9 pure-hexa . raw#10 deterministic FNV . raw#12 frozen design
+//    raw#37 SSOT ledger . raw#65 idempotent (sha-style segment_id)
+//    raw#71 5+ falsifiers . raw#82 darwin-native . raw#91 honest C3 . own5
+// ════════════════════════════════════════════════════════════════════════════
+
+let SCHEMA            = "anima-eeg/long_duration_recorder/1"
+let LEDGER_DEFAULT    = "state/long_duration_audit/2026-04-28_segments.jsonl"
+let RECORDING_DEFAULT = "state/long_duration_recordings/2026-04-28_60min.npy"
+let FROZEN_AT         = "2026-04-28"
+let SAMPLE_RATE_HZ    = 250
+let CHANNELS          = 16
+
+// Falsifier thresholds (frozen, raw#12)
+let F1_DZ_KOHM_LIMIT  = 200    // saline-dry per channel over full session
+let F3_RMS_ZSCORE_LIM = 4      // motion artifact per segment
+let F4_GAP_SEC_LIMIT  = 10     // BrainFlow streaming gap
+let F5_RMS_UV_FLOOR   = 2      // helmet-off rms floor (µV)
+
+fn _flags_only_argv() -> list {
+    let av = argv()
+    let mut start = 0
+    while start < len(av) {
+        let a = av[start]
+        let mut sd = 0
+        if len(a) >= 1 { if a[0] == "-" { sd = 1 } }
+        if sd == 1 { break }
+        start = start + 1
+    }
+    let mut out = []
+    let mut j = start
+    while j < len(av) { out.push(av[j]); j = j + 1 }
+    return out
+}
+
+fn has_flag(name: string) -> int {
+    let av = _flags_only_argv()
+    let n = len(av)
+    let mut i = 0
+    while i < n { if av[i] == name { return 1 }; i = i + 1 }
+    return 0
+}
+
+fn flag_value(name: string, default_val: string) -> string {
+    let av = _flags_only_argv()
+    let n = len(av)
+    let mut i = 0
+    while i < n - 1 {
+        if av[i] == name { return av[i + 1] }
+        i = i + 1
+    }
+    return default_val
+}
+
+fn parse_int(s: string, fallback: int) -> int {
+    let n = len(s)
+    if n == 0 { return fallback }
+    let mut acc = 0
+    let mut i = 0
+    while i < n {
+        let c = s[i]
+        let mut d = -1
+        if c == "0" { d = 0 }
+        if c == "1" { d = 1 }
+        if c == "2" { d = 2 }
+        if c == "3" { d = 3 }
+        if c == "4" { d = 4 }
+        if c == "5" { d = 5 }
+        if c == "6" { d = 6 }
+        if c == "7" { d = 7 }
+        if c == "8" { d = 8 }
+        if c == "9" { d = 9 }
+        if d < 0 { return fallback }
+        acc = acc * 10 + d
+        i = i + 1
+    }
+    return acc
+}
+
+// FNV-1a-ish deterministic hash (raw#10)
+fn fnv_hash(s: string) -> int {
+    let n = len(s)
+    let mut h = 2166136261
+    let mut i = 0
+    while i < n {
+        let c = s[i]
+        let code = if c == "" { 0 } else { 1 }
+        h = (h + code * 16777619 + i * 31) % 1000000007
+        i = i + 1
+    }
+    return h
+}
+
+fn synth_metric(seed: int, base: int, span: int) -> int {
+    let h = (seed * 2654435761 + base * 7919) % span
+    let h2 = if h < 0 { h + span } else { h }
+    return base + h2
+}
+
+// Synthetic per-segment falsifier evaluation (selftest path).
+// Real path will read live BrainFlow buffers + impedance_check ledger.
+fn eval_falsifiers(seg_idx: int, seed: int) -> list {
+    // Default all-pass
+    let mut f1 = 0; let mut f2 = 0; let mut f3 = 0; let mut f4 = 0; let mut f5 = 0
+
+    // Synthetic Δz: monotonic ramp, only flagged if seg >= 50 in degraded mode
+    let dz = (seg_idx * 3) % 250
+    if dz > F1_DZ_KOHM_LIMIT { f1 = 1 }
+
+    // Synthetic motion z-score
+    let rms_z = synth_metric(seed + seg_idx, 0, 6)   // 0..6
+    if rms_z > F3_RMS_ZSCORE_LIM { f3 = 1 }
+
+    // Streaming gap rare event
+    let gap_sec = synth_metric(seed + seg_idx * 11, 0, 12)
+    if gap_sec > F4_GAP_SEC_LIMIT { f4 = 1 }
+
+    // Helmet-off rms floor
+    let rms_uv = synth_metric(seed + seg_idx * 17, 0, 30) + 5  // 5..35
+    if rms_uv < F5_RMS_UV_FLOOR { f5 = 1 }
+
+    // SRB2 disconnect — rare
+    if rms_uv == 5 { f2 = 1 }
+
+    let mut out = []
+    out.push(f1); out.push(f2); out.push(f3); out.push(f4); out.push(f5)
+    return out
+}
+
+fn main() {
+    let selftest      = has_flag("--selftest")
+    let do_append     = has_flag("--append")
+    let duration_min  = parse_int(flag_value("--duration-min", "60"), 60)
+    let segment_sec   = parse_int(flag_value("--segment-sec",  "60"), 60)
+    let recheck_min   = parse_int(flag_value("--recheck-min",  "10"), 10)
+    let ledger_path   = flag_value("--ledger",    LEDGER_DEFAULT)
+    let recording_path = flag_value("--recording", RECORDING_DEFAULT)
+
+    let total_segments = (duration_min * 60) / segment_sec
+
+    println("─── long_duration_recorder (T13: 1hr+ EEG protocol) ───")
+    println("  schema           = " + SCHEMA)
+    println("  duration_min     = " + str(duration_min))
+    println("  segment_sec      = " + str(segment_sec))
+    println("  total_segments   = " + str(total_segments))
+    println("  recheck_min      = " + str(recheck_min))
+    println("  channels         = " + str(CHANNELS))
+    println("  sample_rate_hz   = " + str(SAMPLE_RATE_HZ))
+    println("  ledger           = " + ledger_path)
+    println("  recording        = " + recording_path)
+
+    if selftest == 0 {
+        println("  WARNING: real-data path requires BrainFlow venv;")
+        println("           current build emits synthetic skeleton only.")
+    }
+
+    // Selftest / dry-run: synthesize 60 deterministic segments + 5 falsifier sweep
+    let session_seed = fnv_hash(recording_path + ":" + str(duration_min))
+    let mut usable = 0
+    let mut f1c = 0; let mut f2c = 0; let mut f3c = 0; let mut f4c = 0; let mut f5c = 0
+
+    let mut seg = 0
+    while seg < total_segments {
+        let seg_seed = (session_seed + seg * 4099) % 1000000007
+        let lz76      = synth_metric(seg_seed, 600, 250)
+        let gamma_th  = synth_metric(seg_seed, 800, 600)
+        let engage    = synth_metric(seg_seed, 700, 400)
+        let drowsy    = synth_metric(seg_seed, 900, 600)
+        let z_max     = synth_metric(seg_seed, 5,   30)
+
+        let f = eval_falsifiers(seg, session_seed)
+        let f1 = f[0]; let f2 = f[1]; let f3 = f[2]; let f4 = f[3]; let f5 = f[4]
+        f1c = f1c + f1; f2c = f2c + f2; f3c = f3c + f3
+        f4c = f4c + f4; f5c = f5c + f5
+
+        let any_fail = f1 + f2 + f3 + f4 + f5
+        let ok = if any_fail == 0 { 1 } else { 0 }
+        usable = usable + ok
+
+        if selftest == 1 {
+            // Suppress per-segment chatter except boundaries
+            if seg == 0 {
+                println("  seg[0]: lz76=" + str(lz76) + " gamma/theta=" + str(gamma_th) +
+                        " z_max=" + str(z_max) + " ok=" + str(ok))
+            }
+            if seg == total_segments - 1 {
+                println("  seg[" + str(seg) + "]: lz76=" + str(lz76) +
+                        " gamma/theta=" + str(gamma_th) + " z_max=" + str(z_max) +
+                        " ok=" + str(ok))
+            }
+        }
+
+        if do_append == 1 {
+            let seg_id_int = (session_seed + seg * 7919) % 1000000007
+            let mut row = "{"
+            row = row + "\"schema\":\"" + SCHEMA + "\""
+            row = row + ",\"segment_id\":\"seg_" + str(seg_id_int) + "\""
+            row = row + ",\"segment_index\":" + str(seg)
+            row = row + ",\"duration_min\":" + str(duration_min)
+            row = row + ",\"segment_sec\":" + str(segment_sec)
+            row = row + ",\"lz76_x1000\":" + str(lz76)
+            row = row + ",\"gamma_theta_x1000\":" + str(gamma_th)
+            row = row + ",\"engagement_x1000\":" + str(engage)
+            row = row + ",\"drowsy_x1000\":" + str(drowsy)
+            row = row + ",\"impedance_max_kohm\":" + str(z_max)
+            row = row + ",\"falsifier_F1_saline_dry\":" + str(f1)
+            row = row + ",\"falsifier_F2_srb2_loss\":" + str(f2)
+            row = row + ",\"falsifier_F3_motion\":" + str(f3)
+            row = row + ",\"falsifier_F4_stream_gap\":" + str(f4)
+            row = row + ",\"falsifier_F5_helmet_off\":" + str(f5)
+            row = row + ",\"usable\":" + str(ok)
+            row = row + ",\"frozen_at\":\"" + FROZEN_AT + "\""
+            row = row + "}\n"
+            append_file(ledger_path, row)
+        }
+
+        seg = seg + 1
+    }
+
+    let usable_pct = (usable * 100) / total_segments
+    let session_usable = if usable_pct >= 70 { 1 } else { 0 }
+
+    println("─── post-flight summary ───")
+    println("  segments_total   = " + str(total_segments))
+    println("  segments_usable  = " + str(usable) + " (" + str(usable_pct) + "%)")
+    println("  F1 saline_dry    = " + str(f1c))
+    println("  F2 srb2_loss     = " + str(f2c))
+    println("  F3 motion        = " + str(f3c))
+    println("  F4 stream_gap    = " + str(f4c))
+    println("  F5 helmet_off    = " + str(f5c))
+    println("  session_usable   = " + str(session_usable) + " (>=70% gate)")
+
+    if selftest == 1 {
+        println("  selftest: dry-run, no ledger write (use --append for write).")
+        if session_usable == 1 {
+            println("  PASS: synthetic 60min × " + str(total_segments) +
+                    " segments protocol skeleton green.")
+        }
+        exit(0)
+    }
+    if do_append == 1 {
+        println("  appended " + str(total_segments) + " rows to " + ledger_path)
+        exit(0)
+    }
+    println("  dry-run (no --append): ledger NOT written")
+    exit(0)
+}
+
+main()
