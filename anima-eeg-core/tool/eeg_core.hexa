@@ -220,14 +220,25 @@ fn _resolve_backend(verb: string, noun: string) -> string {
         if noun == "auditory-p300"    { return CORE_ROOT + "/_paradigms/auditory_p300.hexa" }
     }
 
-    // ── hardware helpers (legacy anima-eeg/ wrappers) ───────────────────
-    if verb == "hardware" {
-        if noun == "health"             { return "legacy:anima-eeg/board_health_check.hexa" }
-        if noun == "impedance"          { return "legacy:anima-eeg/impedance_check.hexa" }
+    // ── hardware helpers (Phase 5 LANDED for 5 core ops, legacy for rest) ─
+    //   board-health / impedance / adjust / headplot / record are the
+    //   _hw/ Phase 5 module wrappers; they expose kv-block + raw#71
+    //   falsifier triad to the dispatcher. The `hw <op>` namespace is the
+    //   canonical short alias; `hardware <op>` is preserved for backward
+    //   compat. raw#42: hardware verbs always run on Mac local USB.
+    if verb == "hardware" || verb == "hw" {
+        if noun == "health"             { return CORE_ROOT + "/_hw/board_health.hexa" }
+        if noun == "board-health"       { return CORE_ROOT + "/_hw/board_health.hexa" }
+        if noun == "board_health"       { return CORE_ROOT + "/_hw/board_health.hexa" }
+        if noun == "impedance"          { return CORE_ROOT + "/_hw/impedance.hexa" }
+        if noun == "adjust"             { return CORE_ROOT + "/_hw/adjustment.hexa" }
+        if noun == "adjustment"         { return CORE_ROOT + "/_hw/adjustment.hexa" }
+        if noun == "headplot"           { return CORE_ROOT + "/_hw/headplot.hexa" }
+        if noun == "record"             { return CORE_ROOT + "/_hw/recorder.hexa" }
+        if noun == "recorder"           { return CORE_ROOT + "/_hw/recorder.hexa" }
+        // legacy fallthroughs (not yet Phase 5 wrapped)
         if noun == "impedance_validate" { return "legacy:anima-eeg/impedance_real_hardware_validation.hexa" }
-        if noun == "adjust"             { return "legacy:anima-eeg/electrode_adjustment_helper.hexa" }
         if noun == "rich"               { return "legacy:anima-eeg/electrode_helper_rich.hexa" }
-        if noun == "headplot"           { return "legacy:anima-eeg/headplot_helper.hexa" }
         if noun == "full"               { return "legacy:anima-eeg/full_helmet_view.hexa" }
         if noun == "ftdi-fix"           { return "legacy:anima-eeg/eeg_ftdi_latency_fix.hexa" }
         if noun == "brainflow-sanity"   { return "legacy:anima-eeg/eeg_brainflow_sanity.hexa" }
@@ -260,6 +271,32 @@ fn _resolve_backend(verb: string, noun: string) -> string {
         if noun == "mobile"          { return "legacy:anima-eeg/tool/mobile_eeg_integrator.hexa" }
         if noun == "cardiac"         { return "legacy:anima-eeg/tool/cardiac_eeg_integrator.hexa" }
         if noun == "eye-tracker"     { return "legacy:anima-eeg/tool/eye_tracker_webcam.hexa" }
+    }
+
+    // ── integration verb namespace (Phase 6 LANDED — _integrations/ batch1) ─
+    //   Cross-module integrations where multiple metrics + a paradigm combine
+    //   into a higher-level verdict. 7 modules: clm_eeg_p1/p3, berger_validate,
+    //   artifact_pipeline, rsn_validate, cyborg_token_emit, multi_subject_
+    //   aggregate. raw#10 honest C3: live mode is NOT_YET_LANDED for all 7
+    //   pending real-EEG ingest / .venv-eeg / D+1 hardware arrival.
+    if verb == "integration" {
+        if noun == "clm-eeg-p1"        { return CORE_ROOT + "/_integrations/clm_eeg_p1.hexa" }
+        if noun == "clm_eeg_p1"        { return CORE_ROOT + "/_integrations/clm_eeg_p1.hexa" }
+        if noun == "p1"                { return CORE_ROOT + "/_integrations/clm_eeg_p1.hexa" }
+        if noun == "clm-eeg-p3"        { return CORE_ROOT + "/_integrations/clm_eeg_p3.hexa" }
+        if noun == "clm_eeg_p3"        { return CORE_ROOT + "/_integrations/clm_eeg_p3.hexa" }
+        if noun == "p3"                { return CORE_ROOT + "/_integrations/clm_eeg_p3.hexa" }
+        if noun == "berger"            { return CORE_ROOT + "/_integrations/berger_validate.hexa" }
+        if noun == "berger-validate"   { return CORE_ROOT + "/_integrations/berger_validate.hexa" }
+        if noun == "artifact-pipeline" { return CORE_ROOT + "/_integrations/artifact_pipeline.hexa" }
+        if noun == "artifact_pipeline" { return CORE_ROOT + "/_integrations/artifact_pipeline.hexa" }
+        if noun == "rsn"               { return CORE_ROOT + "/_integrations/rsn_validate.hexa" }
+        if noun == "rsn-validate"      { return CORE_ROOT + "/_integrations/rsn_validate.hexa" }
+        if noun == "cyborg-token"      { return CORE_ROOT + "/_integrations/cyborg_token_emit.hexa" }
+        if noun == "cyborg_token_emit" { return CORE_ROOT + "/_integrations/cyborg_token_emit.hexa" }
+        if noun == "multi-subject"     { return CORE_ROOT + "/_integrations/multi_subject_aggregate.hexa" }
+        if noun == "multi_subject_aggregate" { return CORE_ROOT + "/_integrations/multi_subject_aggregate.hexa" }
+        if noun == "cohort"            { return CORE_ROOT + "/_integrations/multi_subject_aggregate.hexa" }
     }
 
     // ── ML modules (legacy clm-eeg) ──────────────────────────────────────
@@ -305,8 +342,9 @@ fn _print_usage() {
     eprintln("  paradigm {resting|resting-baseline|daily-life|visual-p300|auditory-p300}")
     eprintln("                                         landed: 4 paradigms (selftest+live-NYL)")
     eprintln("")
-    eprintln("  hardware {health|impedance|impedance_validate|adjust|rich|")
-    eprintln("            headplot|full|ftdi-fix|brainflow-sanity}")
+    eprintln("  hw|hardware {health|impedance|adjust|headplot|record}")
+    eprintln("                                         landed: Phase 5 _hw/ 5 modules")
+    eprintln("  hw|hardware {impedance_validate|rich|full|ftdi-fix|brainflow-sanity}")
     eprintln("                                         legacy anima-eeg/ wrappers")
     eprintln("")
     eprintln("  artifact {detect-all|meta|clean|env-emi|blink|motion|emg|ecg|")
@@ -315,6 +353,10 @@ fn _print_usage() {
     eprintln("")
     eprintln("  integrate {claude-cli|claude-cli-long|wearable|mobile|cardiac|eye-tracker}")
     eprintln("                                         legacy wrappers")
+    eprintln("")
+    eprintln("  integration {clm-eeg-p1|clm-eeg-p3|berger|artifact-pipeline|")
+    eprintln("               rsn|cyborg-token|multi-subject}")
+    eprintln("                                         landed: Phase 6 _integrations/ 7 modules")
     eprintln("")
     eprintln("  ml {anomaly|token-cyborg}              legacy clm-eeg wrappers")
     eprintln("")
@@ -365,12 +407,18 @@ fn _print_list() {
         ["paradigm", "daily-life"],
         ["paradigm", "visual-p300"],
         ["paradigm", "auditory-p300"],
+        ["hw", "health"],
+        ["hw", "impedance"],
+        ["hw", "adjust"],
+        ["hw", "headplot"],
+        ["hw", "record"],
         ["hardware", "health"],
         ["hardware", "impedance"],
         ["hardware", "impedance_validate"],
         ["hardware", "adjust"],
         ["hardware", "rich"],
         ["hardware", "headplot"],
+        ["hardware", "record"],
         ["hardware", "full"],
         ["hardware", "ftdi-fix"],
         ["hardware", "brainflow-sanity"],
@@ -391,6 +439,13 @@ fn _print_list() {
         ["integrate", "mobile"],
         ["integrate", "cardiac"],
         ["integrate", "eye-tracker"],
+        ["integration", "clm-eeg-p1"],
+        ["integration", "clm-eeg-p3"],
+        ["integration", "berger"],
+        ["integration", "artifact-pipeline"],
+        ["integration", "rsn"],
+        ["integration", "cyborg-token"],
+        ["integration", "multi-subject"],
         ["ml", "anomaly"],
         ["ml", "token-cyborg"],
         ["analyze", "rsn"],
