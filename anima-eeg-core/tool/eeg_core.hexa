@@ -169,9 +169,9 @@ fn _resolve_backend(verb: string, noun: string) -> string {
     //   batch 1 (2026-04-28): lz76 / pe / hjorth / gamma_theta — WRAP frozen legacy
     //   batch 2 (2026-04-29): alpha_coherence / alpha_phase_plv / dmn_coherence
     //                         / frontal_asymmetry — PORT shared scipy helper.
-    //                         raw#10 honest C3: batch 2 spec'd as 6, landed 4;
-    //                         spectral_entropy + change_points deferred to batch 3
-    //                         (data-paths emitted by helper, hexa wrapper P1).
+    //                         raw#10 honest C3: batch 2 spec'd as 6, landed 4.
+    //   batch 3 (2026-04-29): spectral_entropy + change_points — PORT shared
+    //                         scipy helper (P1 follow-up to batch 2 closure).
     if verb == "metric" {
         if noun == "lz76"               { return CORE_ROOT + "/_metrics/lz76.hexa" }
         if noun == "pe"                 { return CORE_ROOT + "/_metrics/permutation_entropy.hexa" }
@@ -187,6 +187,12 @@ fn _resolve_backend(verb: string, noun: string) -> string {
         if noun == "dmn-coherence"      { return CORE_ROOT + "/_metrics/dmn_coherence.hexa" }
         if noun == "frontal_asymmetry"  { return CORE_ROOT + "/_metrics/frontal_asymmetry.hexa" }
         if noun == "frontal-asymmetry"  { return CORE_ROOT + "/_metrics/frontal_asymmetry.hexa" }
+        if noun == "spectral_entropy"   { return CORE_ROOT + "/_metrics/spectral_entropy.hexa" }
+        if noun == "spectral-entropy"   { return CORE_ROOT + "/_metrics/spectral_entropy.hexa" }
+        if noun == "spec-entropy"       { return CORE_ROOT + "/_metrics/spectral_entropy.hexa" }
+        if noun == "change_points"      { return CORE_ROOT + "/_metrics/change_points.hexa" }
+        if noun == "change-points"      { return CORE_ROOT + "/_metrics/change_points.hexa" }
+        if noun == "cp"                 { return CORE_ROOT + "/_metrics/change_points.hexa" }
         if noun == "berger"             { return "legacy:anima-clm-eeg/tool/clm_eeg_berger_sanity.hexa" }
         if noun == "all"                { return "pending:metric_all_dispatcher" }
     }
@@ -330,6 +336,7 @@ fn _print_usage() {
     eprintln("  metric <name>  --input <npy>           landed batch 1: lz76|pe|hjorth|gamma_theta")
     eprintln("                                         landed batch 2: alpha-coherence|alpha-plv|")
     eprintln("                                                         dmn-coherence|frontal-asymmetry")
+    eprintln("                                         landed batch 3: spectral-entropy|change-points")
     eprintln("                                         legacy: berger     pending: all")
     eprintln("")
     eprintln("  pipeline standard   --input <npy>      pending")
@@ -392,6 +399,8 @@ fn _print_list() {
         ["metric", "alpha-phase-plv"],
         ["metric", "dmn-coherence"],
         ["metric", "frontal-asymmetry"],
+        ["metric", "spectral-entropy"],
+        ["metric", "change-points"],
         ["metric", "berger"],
         ["metric", "all"],
         ["pipeline", "standard"],
