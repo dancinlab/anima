@@ -1,0 +1,241 @@
+#!hexa strict
+
+// @resolver-bypass(reason="A32 v2 small-file class re-measurement helper — same 60-file seed=42 stratified sample as a2dd1562, encoding via A32 v2 wire (recovery vectors B+C+D+E)")
+// @tool(slug="a32-v2-small-file-measure", desc="Reproduce a2dd1562 small-file class 60-file stratified sample (10 files/repo seed=42 text-likely 64-500B), encode each with A32 v1 + A32 v2 + identity (raw 142 D2), pick shortest, aggregate. F-A32-1 v2 verdict (lift vs 0.00pp v1 baseline). raw 91 honest C3 STRICT.")
+// @usage(hexa /Users/ghost/core/anima/tool/a32_v2_small_file_measure.hexa)
+
+const A32_V2_AOT = "/Users/ghost/core/hexa-lang/build/hxc_a32_static_huffman"
+
+const A32_V2_MEASURE_MIN_BYTES = 64
+const A32_V2_MEASURE_MAX_BYTES = 500
+const A32_V2_MEASURE_PER_REPO = 10
+const A32_V2_MEASURE_SEED = 42
+
+fn _sh_quote(s) { return "'" + s.replace("'","'\\''") + "'" }
+
+fn _str(b) {
+    return to_string(b)
+}
+
+fn _is_text_ext(path) {
+    let exts = [".md",".txt",".json",".jsonl",".hexa",".raw",".own",".guide",".ext",".py",".sh",".yaml",".yml",".toml",".cfg",".conf",".log",".tsv",".csv"]
+    let mut k = 0
+    while k < len(exts) {
+        let e = exts[k]
+        let elen = len(e)
+        let plen = len(path)
+        if plen >= elen && path.substring(plen - elen, plen) == e { return true }
+        k = k + 1
+    }
+    return false
+}
+
+fn _file_size_bytes(path) {
+    let cmd = "/usr/bin/stat -f%z " + _sh_quote(path) + " 2>/dev/null"
+    let out = _str(exec(cmd)).trim()
+    if len(out) == 0 { return -1 }
+    return parse_int(out)
+}
+
+// Walk a repo, collect candidate text-likely files in [MIN..MAX] byte range.
+fn _walk_collect(root, max_files) {
+    let mut found = []
+    // Use shell find for portability — exclude .git, .venv, build, ready, target, node_modules.
+    let cmd = "/usr/bin/find " + _sh_quote(root)
+              + " -type d \\( -name .git -o -name .venv -o -name '.venv*' -o -name build -o -name ready -o -name target -o -name node_modules -o -name __pycache__ \\) -prune"
+              + " -o -type f -size +" + to_string(A32_V2_MEASURE_MIN_BYTES - 1) + "c -size -" + to_string(A32_V2_MEASURE_MAX_BYTES) + "c -print 2>/dev/null"
+    let raw = _str(exec(cmd))
+    let lines = raw.split("\n")
+    let mut i = 0
+    while i < len(lines) && len(found) < max_files {
+        let p = lines[i].trim()
+        if len(p) > 0 && _is_text_ext(p) { found.push(p) }
+        i = i + 1
+    }
+    return found
+}
+
+// Deterministic LCG (seed=42) — Fisher-Yates-style sample N from list.
+fn _lcg_next(state) {
+    let m = 2147483647
+    let a = 1103515245
+    let c = 12345
+    let v = (state * a + c)
+    let mut r = v
+    while r < 0 { r = r + m }
+    while r >= m { r = r - m }
+    return r
+}
+
+fn _sample_n(candidates, n, seed) {
+    let total = len(candidates)
+    if total <= n {
+        let mut all = []
+        let mut k = 0
+        while k < total { all.push(candidates[k]); k = k + 1 }
+        return all
+    }
+    let mut idx = []
+    let mut k2 = 0
+    while k2 < total { idx.push(k2); k2 = k2 + 1 }
+    let mut state = seed
+    let mut i = total - 1
+    while i > 0 {
+        state = _lcg_next(state)
+        let j = state - (state / (i + 1)) * (i + 1)
+        let tmp = idx[i]
+        idx[i] = idx[j]
+        idx[j] = tmp
+        i = i - 1
+    }
+    let mut picked = []
+    let mut k3 = 0
+    while k3 < n { picked.push(candidates[idx[k3]]); k3 = k3 + 1 }
+    return picked
+}
+
+// Encode a file via AOT binary, return [v1_len, v2_len].
+// raw 142 D2: caller picks shortest of {v1, v2, identity} per file.
+fn _encode_one(in_path, raw_b) {
+    // v1
+    let v1_out = "/tmp/a32_v2_meas_v1.tmp"
+    let cmd_v1 = A32_V2_AOT + " encode --force " + _sh_quote(in_path) + " " + _sh_quote(v1_out) + " 2>&1"
+    let _o1 = exec(cmd_v1)
+    let v1_b = _file_size_bytes(v1_out)
+    // v2
+    let v2_out = "/tmp/a32_v2_meas_v2.tmp"
+    let cmd_v2 = A32_V2_AOT + " encode --v2 --force " + _sh_quote(in_path) + " " + _sh_quote(v2_out) + " 2>&1"
+    let _o2 = exec(cmd_v2)
+    let v2_b = _file_size_bytes(v2_out)
+    // Decode roundtrip verify (v1 + v2)
+    let v1_dec = "/tmp/a32_v2_meas_v1_dec.tmp"
+    let v2_dec = "/tmp/a32_v2_meas_v2_dec.tmp"
+    let _d1 = exec(A32_V2_AOT + " decode " + _sh_quote(v1_out) + " " + _sh_quote(v1_dec) + " 2>&1")
+    let _d2 = exec(A32_V2_AOT + " decode " + _sh_quote(v2_out) + " " + _sh_quote(v2_dec) + " 2>&1")
+    let v1_dec_b = _file_size_bytes(v1_dec)
+    let v2_dec_b = _file_size_bytes(v2_dec)
+    let mut v1_eq = (v1_dec_b == raw_b)
+    let mut v2_eq = (v2_dec_b == raw_b)
+    if v1_eq {
+        let cmp1 = _str(exec("cmp -s " + _sh_quote(in_path) + " " + _sh_quote(v1_dec) + " && echo EQ || echo NE")).trim()
+        if cmp1 != "EQ" { v1_eq = false }
+    }
+    if v2_eq {
+        let cmp2 = _str(exec("cmp -s " + _sh_quote(in_path) + " " + _sh_quote(v2_dec) + " && echo EQ || echo NE")).trim()
+        if cmp2 != "EQ" { v2_eq = false }
+    }
+    let v1_eq_int = if v1_eq { 1 } else { 0 }
+    let v2_eq_int = if v2_eq { 1 } else { 0 }
+    return [v1_b, v2_b, v1_eq_int, v2_eq_int]
+}
+
+fn main() {
+    let repos = ["/Users/ghost/core/anima","/Users/ghost/core/nexus","/Users/ghost/core/n6-architecture","/Users/ghost/core/hexa-lang","/Users/ghost/core/airgenome","/Users/ghost/core/hive"]
+    let mut total_raw = 0
+    let mut total_chosen = 0
+    let mut total_v1 = 0
+    let mut total_v2 = 0
+    let mut count_v1_chosen = 0
+    let mut count_v2_chosen = 0
+    let mut count_identity = 0
+    let mut count_v1_eq_pass = 0
+    let mut count_v2_eq_pass = 0
+    let mut count_v2_positive_saving = 0
+    let mut count_v1_positive_saving = 0
+    let mut min_b = 999999
+    let mut max_b = 0
+    let mut sum_b = 0
+    let mut n_files = 0
+    let mut best_v2_saving_pct = -200
+    let mut worst_v2_saving_pct = 200
+    let mut sum_v2_saving_x100 = 0
+
+    println("# A32 v2 small-file class re-measurement (60 files / 6 repos × 10 / seed=42 LCG)")
+    println("# raw 142 D2 try-revert: pick shortest of {v1, v2, identity} per file")
+    println("# F-A32-1 v2 verdict gate: aggregate lift vs 0.00pp v1 baseline (a2dd1562)")
+    println("# AOT=" + A32_V2_AOT)
+    let mut r = 0
+    while r < len(repos) {
+        let repo = repos[r]
+        let candidates = _walk_collect(repo, 1500)
+        let sampled = _sample_n(candidates, A32_V2_MEASURE_PER_REPO, A32_V2_MEASURE_SEED + r)
+        println("# repo=" + repo + " candidates=" + to_string(len(candidates)) + " sampled=" + to_string(len(sampled)))
+        let mut s = 0
+        while s < len(sampled) {
+            let path = sampled[s]
+            let raw_b = _file_size_bytes(path)
+            if raw_b <= 0 { s = s + 1; continue }
+            let res = _encode_one(path, raw_b)
+            let v1_b = res[0]
+            let v2_b = res[1]
+            let v1_eq = res[2]
+            let v2_eq = res[3]
+            // raw 142 D2 best-pick
+            let mut chosen_method = "identity"
+            let mut chosen_len = raw_b
+            if v2_eq == 1 && v2_b > 0 && v2_b < chosen_len {
+                chosen_method = "v2"
+                chosen_len = v2_b
+            }
+            if v1_eq == 1 && v1_b > 0 && v1_b < chosen_len {
+                chosen_method = "v1"
+                chosen_len = v1_b
+            }
+            total_raw = total_raw + raw_b
+            total_chosen = total_chosen + chosen_len
+            if v1_b > 0 { total_v1 = total_v1 + v1_b } else { total_v1 = total_v1 + raw_b }
+            if v2_b > 0 { total_v2 = total_v2 + v2_b } else { total_v2 = total_v2 + raw_b }
+            if chosen_method == "v1" { count_v1_chosen = count_v1_chosen + 1 }
+            if chosen_method == "v2" { count_v2_chosen = count_v2_chosen + 1 }
+            if chosen_method == "identity" { count_identity = count_identity + 1 }
+            if v1_eq == 1 { count_v1_eq_pass = count_v1_eq_pass + 1 }
+            if v2_eq == 1 { count_v2_eq_pass = count_v2_eq_pass + 1 }
+            if v1_b > 0 && v1_b < raw_b { count_v1_positive_saving = count_v1_positive_saving + 1 }
+            if v2_b > 0 && v2_b < raw_b { count_v2_positive_saving = count_v2_positive_saving + 1 }
+            if raw_b < min_b { min_b = raw_b }
+            if raw_b > max_b { max_b = raw_b }
+            sum_b = sum_b + raw_b
+            n_files = n_files + 1
+            let v2_saving_x100 = if raw_b > 0 && v2_b > 0 { ((raw_b - v2_b) * 100) / raw_b } else { 0 }
+            if v2_saving_x100 > best_v2_saving_pct { best_v2_saving_pct = v2_saving_x100 }
+            if v2_saving_x100 < worst_v2_saving_pct { worst_v2_saving_pct = v2_saving_x100 }
+            sum_v2_saving_x100 = sum_v2_saving_x100 + v2_saving_x100
+            s = s + 1
+        }
+        r = r + 1
+    }
+    let avg_b = if n_files > 0 { sum_b / n_files } else { 0 }
+    let v2_saving_pct = if total_raw > 0 { ((total_raw - total_v2) * 100) / total_raw } else { 0 }
+    let chosen_saving_pct = if total_raw > 0 { ((total_raw - total_chosen) * 100) / total_raw } else { 0 }
+    let v1_saving_pct = if total_raw > 0 { ((total_raw - total_v1) * 100) / total_raw } else { 0 }
+    let mean_v2_saving_x100 = if n_files > 0 { sum_v2_saving_x100 / n_files } else { 0 }
+    println("")
+    println("=== AGGREGATE ===")
+    println("n_files=" + to_string(n_files))
+    println("total_raw_b=" + to_string(total_raw))
+    println("total_chosen_b=" + to_string(total_chosen))
+    println("total_v1_b=" + to_string(total_v1))
+    println("total_v2_b=" + to_string(total_v2))
+    println("size_range=" + to_string(min_b) + ".." + to_string(max_b) + " avg=" + to_string(avg_b))
+    println("count_v1_chosen=" + to_string(count_v1_chosen))
+    println("count_v2_chosen=" + to_string(count_v2_chosen))
+    println("count_identity_chosen=" + to_string(count_identity))
+    println("count_byte_eq_v1_pass=" + to_string(count_v1_eq_pass) + "/" + to_string(n_files))
+    println("count_byte_eq_v2_pass=" + to_string(count_v2_eq_pass) + "/" + to_string(n_files))
+    println("count_v1_positive_saving_files=" + to_string(count_v1_positive_saving) + "/" + to_string(n_files))
+    println("count_v2_positive_saving_files=" + to_string(count_v2_positive_saving) + "/" + to_string(n_files))
+    println("best_v2_saving_pct=" + to_string(best_v2_saving_pct))
+    println("worst_v2_saving_pct=" + to_string(worst_v2_saving_pct))
+    println("mean_v2_saving_pct=" + to_string(mean_v2_saving_x100))
+    println("v1_aggregate_saving_pct=" + to_string(v1_saving_pct))
+    println("v2_aggregate_saving_pct=" + to_string(v2_saving_pct))
+    println("chosen_aggregate_saving_pct=" + to_string(chosen_saving_pct) + "  # raw 142 D2 best-pick")
+    println("a25_baseline_today_pct=0  # a2dd1562 reference")
+    println("a32_v1_baseline_pp=0  # a2dd1562 reference (lift vs A25)")
+    println("a32_v2_lift_vs_v1_baseline_pp=" + to_string(chosen_saving_pct))
+    println("F-A32-1_v2_threshold_pp=10")
+    let f_a32_1_verdict = if chosen_saving_pct >= 10 { "PASS" } else { "FAIL" }
+    println("F-A32-1_v2_verdict=" + f_a32_1_verdict)
+    println("__A32_V2_MEASURE__ DONE")
+    exit(0)
+}
