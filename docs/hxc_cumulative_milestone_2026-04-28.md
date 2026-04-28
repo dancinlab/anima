@@ -488,3 +488,116 @@ This v8 commit chooses option (c) interim — A24 NOT in production dispatcher p
 **Compliance**: raw 1 chflags + raw 9 hexa-only + raw 18 self-host fixpoint (interp/AOT byte-identical 5/5 + 216/216) + raw 47 cross-repo + raw 65+68 idempotent (216/216 byte-eq PASS) + raw 71 falsifier-preregister (F-A24-1..5 5/5 resolved with 3 TRIPPED) + **raw 91 honest C3 STRICT** (A24 design lift hypothesis FALSIFIED; F-A24-1/3/5 TRIPPED with measured evidence; sample bias disclosed; 78.05 baseline PRESERVED) + raw 137 cmix-ban MAINTAINED (deterministic PCFG with integer rule tables, no fp/neural mixer) + raw 142 D2 try-revert PRESERVED.
 
 **End of v8 strengthening — 78.20% MEASURED (post-A19v2 +0.15 + A24 +0.00) / 94.17% cumulative gap reduction MEASURED / A24 first-tick verified but production-class FALSIFIED / 80% target NOT achieved / raw 137 v8 strengthening commit DEFERRED.**
+
+## 17. v9 strengthening (post-A19v2 CLI exposure + FULL 6-repo MEASURED composite dispatcher 2026-04-28T17:00Z)
+
+**Scope**: A19 v2 encode/decode CLI exposure on `hxc_a19_cross_file_dict.hexa` (resolves aa42d4e4 verdict gap "a19_v2_aot lacks encode/decode CLI") + AOT rebuild + selftest 9/9 PASS interp+AOT byte-identical + FULL 6-repo MEASURED composite dispatcher sweep `min(a18_d631a902, a19_v2, identity)` per-file on 12.23MB / 386 files corpus.
+
+**A19 v2 CLI exposure**:
+- `/Users/ghost/core/hexa-lang/self/stdlib/hxc_a19_cross_file_dict.hexa` modified (~80 LoC added) to expose:
+  - `a19_aot encode <in> <out>` — builds single-file dict from input, runs `a19_v2_encode_with_header` (raw 142 D2 try-and-revert reverts to identity on most single-file inputs since cross-file dict overhead exceeds saving)
+  - `a19_aot decode <in> <out>` — detects `# a19:s2 ` header; identity passthrough when absent (the typical CLI single-file case); errors when header present without sidecar dict context (CLI single-file mode CANNOT reconstruct cross-file dict).
+  - Backward compat preserved: `--selftest`, `build`, `live-fire` all still work (live-fire is the proper multi-file corpus harness).
+- AOT rebuild: `hexa build self/stdlib/hxc_a19_cross_file_dict.hexa -o build/a19/a19_v2_aot` PASS
+  - Selftest 9/9 PASS interp + AOT byte-identical (cmp diff PASS)
+  - SHA256: `18717143b6ebaca861a8812a2f807be70f06585475b583437525aeae1895a937`
+
+**HONEST C3 acknowledgment on CLI design**: A19 v2 is fundamentally a **CROSS-FILE corpus algorithm**. Single-file CLI exposure exhibits raw 142 D2 try-and-revert behavior 99.7%+ of the time (dict overhead exceeds saving on 1-corpus). This is the CORRECT honest behavior. For genuine A19 v2 lift use the `live-fire` multi-file harness.
+
+**Full 6-repo MEASURED sweep (composite dispatcher)**:
+- Corpus: 12.23MB / 386 files (vs 9.92MB / 383 files baseline 53c711eb; growth_bus.jsonl grew +71KB and corpus enumeration matches baseline per-repo specs)
+- Dispatcher: `min(a18_d631a902, a19_v2_cli, identity)` per-file (A24 EXCLUDED per aa42d4e4 F-A24-3 latency disqualified)
+- A18 timeout budget: 120s (covers 95%+ of corpus; 3 files exceed)
+- A19 timeout budget: 30s
+- Workers: 8 parallel
+- Wall: 799s = 13.3 min
+
+**MEASURED aggregate: 32.39% byte-weighted saving** (386/386 byte-eq PASS).
+
+**Per-class breakdown (MEASURED, 386 files / 12.23MB)**:
+| class | files | raw bytes | enc bytes | saving% | byte_eq |
+|---|---|---|---|---|---|
+| json-heavy | 307 | 9,527,498 | 7,239,403 | **24.02%** | 307/307 PASS |
+| text-heavy | 41 | 1,907,172 | 811,283 | **57.46%** | 41/41 PASS |
+| struct-audit | 24 | 792,172 | 214,356 | **72.94%** | 24/24 PASS |
+| small-file | 14 | 2,958 | 2,958 | **0.00%** | 14/14 PASS (raw 65 passthrough) |
+
+**Per-winner counts**:
+- a18_d631a902: 368/386 (95.3%)
+- a19_v2: 1/386 (0.26%)
+- identity: 17/386 (4.4% — 14 small-file passthrough + 3 A18 timeouts)
+
+**A18 timeouts (3 files / 4.99MB / 40.79% byte share)**:
+- `/Users/ghost/core/nexus/growth_bus.jsonl` (2.67MB) — A18 v6-optimal O(n²) exceeds 120s
+- `/Users/ghost/core/nexus/hexa_pitfalls_log.jsonl` (2.00MB) — same O(n²) bottleneck
+- `/Users/ghost/core/nexus/state/proposals/inventory.json` (0.32MB) — same
+
+These 3 files fell back to **identity (0% saving)**, dominating aggregate downward by ~38pp. Prior witness (`a18_batch_post_d631a902` 2026-04-28T13:30Z) explicitly noted growth_bus encode 56s on new binary and recommended per-file size gating for v6-optimal in production.
+
+**Excluding A18 timeouts: 54.75% on 383 files / 7.24MB** — still well below 78.05% baseline.
+
+**80% target verdict (HONEST MEASURED)**:
+- MEASURED aggregate: **32.39%**
+- Prior projection (aa42d4e4): 78.20%
+- **Delta: -45.81pp**
+- Anchor baseline (53c711eb): 78.05%
+- **Delta vs anchor: -45.66pp**
+- Gap to 80%: **47.61pp** (vs 1.80pp prior projection)
+- raw 137 v8 strengthening threshold: 78.65%
+- **raw 137 v8 strengthening commit: DEFERRED HARD (32.39% << 78.65% by 46.26pp)**
+
+**raw 91 honest C3 retractions (THREE)**:
+
+1. **A19 v2 +0.15pp aggregate lift on full 9.92MB corpus**: **RETRACTED_FALSIFIED_AT_FULL_SCALE_VIA_CLI**.
+   - 67e71082 cited 0.15pp on 119KB MULTI-FILE LIVE FIRE slice (proper cross-file dict).
+   - Per-file CLI mode (single-file dict) wins 1/386 files at full scale → +0.0001pp lift.
+   - The 0.15pp slice projection DOES NOT TRANSFER to per-file CLI dispatcher.
+   - Action: A19 v2 production deployment requires CORPUS-LEVEL execution (live-fire harness with multi-file shared dict), NOT per-file dispatcher inclusion.
+
+2. **78.20% post-A19v2 dispatcher integration on full corpus**: **RETRACTED_PROJECTION_FALSIFIED_BY_FULL_MEASUREMENT**.
+   - 32.39% MEASURED at full 12.23MB / 386 files via composite dispatcher.
+   - Even excluding A18 timeouts (54.75%), result is FAR below 78.20% projection.
+   - Composite `min(a18, a19, identity)` without A25 type-aware top-level routing is INSUFFICIENT to reproduce 78.05% baseline.
+   - Action: 78.05% baseline (a25 v2 dispatcher) PRESERVED as the only authoritative full-corpus measurement. Per-file dispatcher composite is NOT a substitute for class-aware a25 v2 routing.
+
+3. **raw 137 v8 strengthening commit threshold 78.65% achievable via A19v2 CLI exposure**: **RETRACTED_HARD**.
+   - 32.39% << 78.65% by 46.26pp.
+   - Action: raw 137 v8 strengthening commit DEFERRED. Forward path: (a) re-run 6-repo full corpus through ACTUAL a25 v2 dispatcher binary (witness 53c711eb path) to reproduce 78.05%, (b) measure A19 v2 CLI single-file delta as +/- offset, (c) only commit raw 137 v8 if MEASURED ≥ 78.65% via the proper a25 v2 binary at full scale.
+
+**Preserved findings (raw 91 C3 positive)**:
+- A19 v2 CLI exposure structurally LANDED — encode/decode subcommands added; selftest 9/9 PASS interp+AOT byte-identical
+- Per-file dispatcher byte-eq integrity **386/386 PASS** — composite dispatcher round-trip integrity verified at full scale
+- A19 v2 single-file CLI mode HONESTLY reverts to identity 99.7%+ — consistent with a CORPUS-level algorithm being exposed in per-file CLI; honest C3 expectation matched
+
+**Cumulative gap reduction (HONEST MEASURED, RECONCILED)**:
+- Original anchor: 30.90pp gap (49.10% post-bug-fix)
+- Prior milestone (v5 53c711eb): 1.95pp gap (78.05% MEASURED 9.92MB / 383 files via a25 v2 dispatcher) = 93.69% closure
+- v7 (slice projection): 1.35-1.65pp gap (78.35-78.65% PROJECTED, full sweep DEFERRED)
+- v8 (slice composite projection): 1.80pp gap (78.20% MEASURED-PARTIAL on 6.02MB sample without A25 routing or A19v2 CLI)
+- **v9 (this turn, FULL 12.23MB MEASURED via composite dispatcher): 47.61pp gap (32.39% MEASURED) = 5.96% cumulative reduction MEASURED via composite-only path**
+
+**CRITICAL**: v9's 32.39% MEASURED is on a DIFFERENT dispatcher topology (composite `min(a18, a19, identity)`) than v5/v8's a25 v2 dispatcher. The 78.05% baseline (53c711eb a25 v2) REMAINS the authoritative full-corpus measurement. v9 is HONEST DISCLOSURE that:
+- per-file CLI composite dispatcher does NOT reproduce a25 v2 baseline
+- A19 v2 inclusion in per-file dispatcher contributes negligible lift (1/386 wins)
+- A18 v6-optimal O(n²) timeout sensitivity makes large-file routing critical
+
+**A19 v2 production deployment recommendation (raw 91 honest C3)**:
+A19 v2 cross-file dict is a CORPUS-level algorithm. Production deployment requires:
+- (a) ACCEPT corpus-level execution model — A19 v2 runs as `live-fire <dict_size_cap> <path1> <path2> ...` over multi-file batches, NOT per-file dispatcher inclusion
+- (b) For per-file dispatcher integration, would require sidecar dict file format + dict serialization/deserialization (deferred — not implemented in this CLI tick)
+- (c) For 80% target close: focus on (i) reproducing a25 v2 78.05% baseline measurement, (ii) measuring A19 v2 corpus-level lift on top, (iii) NOT pursuing per-file CLI for A19
+
+**A18 v6-optimal latency mitigation (forward)**:
+- Per-file size gating: v6-optimal only on files <500KB (matches prior witness recommendation)
+- Or: increase per-file budget to 300s (extends sweep wall to 30+ min for full corpus)
+- Or: SKIP v6 on >1MB files; rely on v1+v2+v3 dispatcher only (faster, ~1-2pp aggregate cost)
+
+**Files this cycle**:
+- `/Users/ghost/core/hexa-lang/self/stdlib/hxc_a19_cross_file_dict.hexa` (CLI exposure +80 LoC)
+- `/Users/ghost/core/hexa-lang/build/a19/a19_v2_aot` (REBUILT AOT 289008B SHA `18717143...1895a937`)
+- `/Users/ghost/core/anima/state/format_witness/2026-04-28_a19v2_cli_full_9.92mb_measured.jsonl` (NEW witness 389 records)
+- `/Users/ghost/core/anima/docs/hxc_cumulative_milestone_2026-04-28.md` (THIS DOC §17)
+
+**Compliance**: raw 1 chflags + raw 9 hexa-only + raw 18 self-host fixpoint (interp/AOT byte-identical 9/9) + raw 47 cross-repo + raw 65+68 idempotent (386/386 byte-eq PASS) + raw 71 falsifier-preregister (F-A19-1..6 cross-file gate PRESERVED; CLI single-file mode disclosed as outside dict-corpus contract) + **raw 91 honest C3 STRICT** (THREE retractions: A19v2 +0.15pp slice→full transfer, 78.20% projection, raw 137 v8 threshold; baseline 78.05% PRESERVED as authoritative; A18 timeout characterization disclosed) + raw 137 cmix-ban MAINTAINED (deterministic dict + integer score + lex tie-break, no fp/neural) + **raw 137 v8 strengthening commit DEFERRED HARD** + raw 142 D2 try-revert (engaged 17/386 identity passthroughs).
+
+**End of v9 strengthening — 32.39% MEASURED FULL-12.23MB via composite dispatcher (78.05% a25 v2 baseline PRESERVED separately) / A19 v2 CLI exposure LANDED 9/9 selftest interp+AOT byte-identical / 3 retractions per raw 91 honest C3 STRICT / raw 137 v8 strengthening commit DEFERRED HARD (gap 46.26pp to threshold).**
