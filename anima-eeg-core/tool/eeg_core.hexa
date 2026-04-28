@@ -47,7 +47,10 @@
 //    eeg_core hardware impedance [--check]        ─ impedance_check
 //    eeg_core hardware adjust                     ─ electrode_adjustment_helper
 //
-//    eeg_core artifact detect-all --input <npy>   ─ environmental EMI etc.
+//    eeg_core artifact detect-all --input <npy>   ─ 7-detector composite verdict
+//    eeg_core artifact clean --input <npy>        ─ meta + suppressor cleaning chain
+//    eeg_core artifact {env-emi|blink|motion|emg|ecg|ref-drift|aging} --input <npy>
+//                                                 ─ individual detectors
 //
 //    eeg_core integrate claude-cli --cli-jsonl P  ─ claude-cli correlation
 //    eeg_core integrate wearable --source apple --in <xml>
@@ -81,16 +84,15 @@ fn _hexa_bin() -> string {
 }
 
 // ─── streaming exec — forwards backend stdout line-by-line ──────────────
-fn _stream_line(line: string) {
-    print(line)
-}
-
-fn _exec_stream(cmd: string) -> int {
-    eprintln("[eeg_core] cmd=" + cmd)
-    let rc = exec_stream(cmd, _stream_line)
-    return rc
-}
-
+//
+// raw#10 honest: hexa runtime exposes 3 exec APIs:
+//   exec(cmd) -> string         — captures stdout, no rc
+//   exec_with_status(cmd) -> [stdout, rc]  — capture + rc
+//   exec_stream(cmd, cb) -> int — line-by-line cb (interp may not have it)
+//
+// We prefer exec_with_status for portability — buffers backend output and
+// emits at end. Future enhancement: try exec_stream first, fall back on
+// undefined-function. For now the simpler form unblocks all routes.
 fn _run_backend(backend_path: string, fwd: array) -> int {
     let mut cmd = _hexa_bin() + " run " + backend_path
     let mut i = 0
@@ -98,19 +100,39 @@ fn _run_backend(backend_path: string, fwd: array) -> int {
         cmd = cmd + " " + _sh_quote(fwd[i])
         i = i + 1
     }
-    return _exec_stream(cmd)
+    eprintln("[eeg_core] cmd=" + cmd)
+    let r = exec_with_status(cmd)
+    let out = to_string(r[0])
+    let rc  = to_int(r[1])
+    print(out)
+    return rc
 }
 
 // ─── argv normalizer ─────────────────────────────────────────────────────
+//
+// raw#10 honest: argv() forms vary by hexa launch path:
+//   1. `hexa.real run X.hexa <args>` → av starts with binary path, then "run",
+//      then path/X.hexa, then user args.
+//   2. AOT `./X.hexa/exe <args>` → av starts with "/...exe", then user args.
+//   3. Direct hexa run via shell wrapper → may interleave.
+// We strip leading prefix tokens until we hit a non-path, non-keyword token.
 fn _flags_only_argv() -> array {
     let av = argv()
     let mut start = 0
     while start < len(av) {
         let a = av[start]
-        let mut is_path = false
-        if a.ends_with(".hexa") { is_path = true }
-        if !is_path { if a.ends_with("/exe") { is_path = true } }
-        if is_path { start = start + 1 } else { break }
+        let mut is_prefix = false
+        // path-like
+        if a.ends_with(".hexa") { is_prefix = true }
+        if !is_prefix { if a.ends_with("/exe") { is_prefix = true } }
+        // hexa runtime keywords that may appear in argv before user verb
+        if !is_prefix { if a == "run" { is_prefix = true } }
+        if !is_prefix { if a == "build" { is_prefix = true } }
+        // hexa.real / hexa binary path itself (any path containing "hexa")
+        if !is_prefix {
+            if a.ends_with("hexa.real") || a.ends_with("/hexa") { is_prefix = true }
+        }
+        if is_prefix { start = start + 1 } else { break }
     }
     let mut out = []
     let mut j = start
@@ -183,10 +205,23 @@ fn _resolve_backend(verb: string, noun: string) -> string {
         if noun == "brainflow-sanity"   { return "legacy:anima-eeg/eeg_brainflow_sanity.hexa" }
     }
 
-    // ── artifact detection (Phase artifact agent partially LANDED) ───────
+    // ── artifact detection (Phase artifact agent LANDED — 9 modules) ────
+    //   detect-all  → meta classifier composite verdict (7 detectors voted)
+    //   clean       → ai_cleaning_pipeline (meta → suppressors → re-meta)
+    //   per-detector individual modules: env-emi, blink, motion, emg, ecg,
+    //   ref-drift, aging, meta (alias of detect-all)
     if verb == "artifact" {
-        if noun == "detect-all"          { return "pending:artifact_detect_all" }
+        if noun == "detect-all"          { return CORE_ROOT + "/_artifact/artifact_meta_classifier.hexa" }
+        if noun == "meta"                { return CORE_ROOT + "/_artifact/artifact_meta_classifier.hexa" }
+        if noun == "clean"               { return CORE_ROOT + "/_artifact/ai_cleaning_pipeline.hexa" }
+        if noun == "env-emi"             { return CORE_ROOT + "/_artifact/environmental_emi_classifier.hexa" }
         if noun == "environmental-emi"   { return CORE_ROOT + "/_artifact/environmental_emi_classifier.hexa" }
+        if noun == "blink"               { return CORE_ROOT + "/_artifact/eye_blink_detector.hexa" }
+        if noun == "motion"              { return CORE_ROOT + "/_artifact/motion_artifact_detector.hexa" }
+        if noun == "emg"                 { return CORE_ROOT + "/_artifact/emg_muscle_detector.hexa" }
+        if noun == "ecg"                 { return CORE_ROOT + "/_artifact/ecg_heart_artifact_detector.hexa" }
+        if noun == "ref-drift"           { return CORE_ROOT + "/_artifact/reference_drift_detector.hexa" }
+        if noun == "aging"               { return CORE_ROOT + "/_artifact/electrode_aging_classifier.hexa" }
     }
 
     // ── integrations (legacy clm-eeg / anima-eeg wrappers) ──────────────
@@ -241,8 +276,9 @@ fn _print_usage() {
     eprintln("            headplot|full|ftdi-fix|brainflow-sanity}")
     eprintln("                                         legacy anima-eeg/ wrappers")
     eprintln("")
-    eprintln("  artifact {detect-all|environmental-emi}")
-    eprintln("                                         partial landed; rest pending")
+    eprintln("  artifact {detect-all|meta|clean|env-emi|blink|motion|emg|ecg|")
+    eprintln("            ref-drift|aging}")
+    eprintln("                                         landed: 9 AI artifact modules")
     eprintln("")
     eprintln("  integrate {claude-cli|claude-cli-long|wearable|mobile|cardiac|eye-tracker}")
     eprintln("                                         legacy wrappers")
@@ -298,7 +334,16 @@ fn _print_list() {
         ["hardware", "ftdi-fix"],
         ["hardware", "brainflow-sanity"],
         ["artifact", "detect-all"],
+        ["artifact", "meta"],
+        ["artifact", "clean"],
+        ["artifact", "env-emi"],
         ["artifact", "environmental-emi"],
+        ["artifact", "blink"],
+        ["artifact", "motion"],
+        ["artifact", "emg"],
+        ["artifact", "ecg"],
+        ["artifact", "ref-drift"],
+        ["artifact", "aging"],
         ["integrate", "claude-cli"],
         ["integrate", "claude-cli-long"],
         ["integrate", "wearable"],
@@ -362,7 +407,10 @@ fn _run_selftest() -> int {
         ["pipeline", "daily-life"],
         ["record", "resting"],
         ["hardware", "health"],
-        ["artifact", "environmental-emi"],
+        ["artifact", "detect-all"],
+        ["artifact", "clean"],
+        ["artifact", "blink"],
+        ["artifact", "motion"],
         ["integrate", "claude-cli"],
         ["ml", "anomaly"]
     ]

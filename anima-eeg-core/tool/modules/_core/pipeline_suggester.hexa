@@ -160,6 +160,13 @@ fn _write_helper() {
     parts.push("    # 1. ALWAYS: gate-all (raw#71 — falsifier coverage)\n")
     parts.push("    cmds.append((f'eeg_core gate-all --input {qpath}',\n")
     parts.push("                 'all 4 validity gates (berger,rms,pe,hjorth) — establish PASS/FAIL before metrics'))\n")
+    parts.push("    # 1b. PRIORITY: artifact detect-all when EMI/motion suspected\n")
+    parts.push("    #     (D-day Tier-B #8: 9-module artifact agent landed; run before metrics)\n")
+    parts.push("    if motion in ('moderate', 'high'):\n")
+    parts.push("        cmds.append((f'eeg_core artifact detect-all --input {qpath}',\n")
+    parts.push("                     f'motion={motion} suspected — 7-detector composite (EMI/blink/motion/EMG/ECG/refdrift/aging) before metrics; recommends cleaning chain'))\n")
+    parts.push("        cmds.append((f'eeg_core artifact clean --input {qpath}',\n")
+    parts.push("                     'cleaning pipeline: meta → suppressors (notch/clip/HP/LP/reject) → re-meta; emits *_aiclean.npy'))\n")
     parts.push("    # 2. duration-driven base recommendation\n")
     parts.push("    if dur_band == 'short':\n")
     parts.push("        cmds.append((f'eeg_core gate-all --input {qpath}',\n")
@@ -399,10 +406,14 @@ fn _flags_only_argv() -> array {
     let mut start = 0
     while start < len(av) {
         let a = av[start]
-        let mut is_path = false
-        if a.ends_with(".hexa") { is_path = true }
-        if !is_path { if a.ends_with("/exe") { is_path = true } }
-        if is_path { start = start + 1 } else { break }
+        let mut is_prefix = false
+        if a.ends_with(".hexa") { is_prefix = true }
+        if !is_prefix { if a.ends_with("/exe") { is_prefix = true } }
+        if !is_prefix { if a == "run" || a == "build" { is_prefix = true } }
+        if !is_prefix {
+            if a.ends_with("hexa.real") || a.ends_with("/hexa") { is_prefix = true }
+        }
+        if is_prefix { start = start + 1 } else { break }
     }
     let mut out = []
     let mut j = start
