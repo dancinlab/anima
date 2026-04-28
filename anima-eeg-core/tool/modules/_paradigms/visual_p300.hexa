@@ -1,0 +1,308 @@
+// ════════════════════════════════════════════════════════════════════════════
+//  anima-eeg-core/tool/modules/_paradigms/visual_p300.hexa
+//                                                  (Phase 4 — paradigm #3)
+//
+//  PURPOSE
+//    Visual P300 ERP oddball paradigm: 80% standard / 20% oddball, ISI 1.5-
+//    2.0s, n=240 trials default, parietal-max difference wave peak in
+//    250-400ms window, ≥2 µV. raw#18 self-host fixpoint: WRAP legacy
+//    anima-eeg/protocols/p300_visual_oddball.hexa (frozen, has interp
+//    auto-invoke conflict that prevents direct exec). Selftest synthesises
+//    the trial sequence + frozen ERP fixture in-module.
+//
+//  raw#10 HONEST C3 (wrap-vs-port)
+//    DECISION: PORT (selftest), WRAP-DESIGN-REFERENCE (live). The legacy
+//    file (509 LoC) cannot be invoked under hexa.real run path due to a
+//    top-level main() call conflicting with hexa-strict auto-invoke. This
+//    module ports the trial-sequence builder + nominal ERP fixture
+//    simulation (deterministic LCG seed=42), preserving the kv-block
+//    contract and 5 frozen falsifiers from the legacy spec. Live BrainFlow
+//    + Pyglet stimulus presentation remains DEFERRED (raw#10 honest scope).
+//
+//  API
+//    _paradigm_visual_p300_kv(args_kv: string) -> string
+//      kv-block:
+//        schema=anima-eeg-core/_paradigms/visual_p300/1
+//        paradigm=visual_p300
+//        n_trials=<int>
+//        n_oddball=<int> n_standard=<int>
+//        diff_peak_uv_x1000=<int>      (peak amplitude * 1000)
+//        diff_peak_ms=<int>            (latency)
+//        diff_peak_chan=<Pz|P3|P4|...>
+//        verdict=<PASS|FAIL|FALSIFIED>
+//        raw71_falsifier_count=5
+//
+//  RAW#71 FALSIFIERS (≥3 preregister — actually 5, frozen 2026-04-28)
+//    F_VP300_01 (F1): n_oddball < 20         → trial count short
+//    F_VP300_02 (F2): peak outside 250-400ms → no peak in window
+//    F_VP300_03 (F3): odd_peak < std_peak    → reversed polarity
+//    F_VP300_04 (F4): diff_peak_chan not Pz/P3/P4 → regional reversal
+//    F_VP300_05 (F5): diff_peak_uv < 2.0     → subthreshold
+//
+//  CLI
+//    hexa run visual_p300.hexa --selftest
+//    hexa run visual_p300.hexa --live   (→ NOT_YET_LANDED)
+//
+//  RAW raw#9 hexa-only · raw#10 honest C3 · raw#12 frozen · raw#18 self-host
+//      raw#42 mac-zero-compute · raw#65 idempotent · raw#71 5 falsifiers
+//      raw#82 darwin · raw#91 honest triad · raw#95 triad
+//
+//  @resolver-bypass(reason="darwin-native: live mode requires Pyglet stimulus
+//                   + BrainFlow trigger sync; mac selftest synth-only.")
+// ════════════════════════════════════════════════════════════════════════════
+
+let SCHEMA          = "anima-eeg-core/_paradigms/visual_p300/1"
+let PARADIGM_NAME   = "visual_p300"
+let LEGACY_PATH     = "anima-eeg/protocols/p300_visual_oddball.hexa"
+
+let DEFAULT_N_TRIALS         = 240
+let DEFAULT_ODDBALL_PCT      = 20
+let MIN_ODDBALL_TRIALS       = 20      // F1 / C1
+let LATENCY_MIN_MS           = 250     // C4 / F2
+let LATENCY_MAX_MS           = 400
+let AMPLITUDE_MIN_UV_X1000   = 2000    // C5 / F5 (>= 2 µV)
+
+// LCG (deterministic randomness — matches legacy seed=42 fixture)
+let LCG_A = 1103515245
+let LCG_C = 12345
+let LCG_M = 2147483648
+
+// ─── helpers ────────────────────────────────────────────────────────────
+
+fn _flags_only_argv() -> array {
+    let av = argv()
+    let mut start = 0
+    while start < len(av) {
+        let a = av[start]
+        let mut is_prefix = false
+        if a.ends_with(".hexa") { is_prefix = true }
+        if !is_prefix { if a.ends_with("/exe") { is_prefix = true } }
+        if !is_prefix { if a == "run" { is_prefix = true } }
+        if !is_prefix { if a.ends_with("hexa.real") || a.ends_with("/hexa") { is_prefix = true } }
+        if is_prefix { start = start + 1 } else { break }
+    }
+    let mut out = []
+    let mut j = start
+    while j < len(av) { out.push(av[j]); j = j + 1 }
+    return out
+}
+
+fn _kv_get(kv: string, key: string) -> string {
+    let prefix = key + "="
+    let lines = kv.split(",")
+    let mut i = 0
+    while i < len(lines) {
+        let ln = lines[i].trim()
+        if ln.starts_with(prefix) {
+            return ln.substring(prefix.len(), ln.len())
+        }
+        i = i + 1
+    }
+    return ""
+}
+
+fn _to_int_or(s: string, dflt: int) -> int {
+    if s == "" { return dflt }
+    return to_int(s)
+}
+
+// LCG — produce next pseudo-random int in [0, LCG_M)
+fn _lcg_next(state: int) -> int {
+    let mut s = state * LCG_A + LCG_C
+    // simulate mod LCG_M via masking (raw#9 hexa lacks bit ops; use modulo
+    // surrogate: keep it positive then take modulo)
+    if s < 0 { s = -s }
+    s = s - (s / LCG_M) * LCG_M
+    return s
+}
+
+// Build trial sequence — 80% standard, 20% oddball, no two adjacent oddballs.
+// Returns [n_total, n_oddball, n_standard, adjacent_oddball_collapsed].
+fn _build_sequence(n_trials: int, seed: int) -> array {
+    let target_odd = (n_trials * DEFAULT_ODDBALL_PCT) / 100
+    let mut state = seed
+    let mut placed_odd = 0
+    let mut adjacent_collapsed = 0
+    // sequence as array of ints (0=std, 1=odd)
+    let mut seq = []
+    let mut k = 0
+    while k < n_trials { seq.push(0); k = k + 1 }
+    // attempt placement; require not adjacent to existing oddball
+    let mut attempts = 0
+    while placed_odd < target_odd && attempts < n_trials * 20 {
+        state = _lcg_next(state)
+        let idx = state - (state / n_trials) * n_trials
+        if idx < 3 { attempts = attempts + 1; continue }   // F2: no oddball in first 3
+        if seq[idx] == 1 { attempts = attempts + 1; continue }
+        let mut adj = 0
+        if idx > 0 { if seq[idx-1] == 1 { adj = 1 } }
+        if idx + 1 < n_trials { if seq[idx+1] == 1 { adj = 1 } }
+        if adj == 1 { adjacent_collapsed = adjacent_collapsed + 1; attempts = attempts + 1; continue }
+        seq[idx] = 1
+        placed_odd = placed_odd + 1
+        attempts = attempts + 1
+    }
+    return [n_trials, placed_odd, n_trials - placed_odd, adjacent_collapsed]
+}
+
+// Synthetic ERP fixture — frozen nominal session reproduces legacy seed=42:
+//   diff_peak_uv  = 8.5 µV  (oddball - standard)
+//   diff_peak_ms  = 320 ms
+//   diff_peak_chan= Pz
+//   oddball_peak  = 12.3 µV
+//   standard_peak = 3.8 µV
+// Inputs allow injecting falsifier conditions for unit-test coverage.
+fn _synth_erp_fixture(inject_short: int, inject_no_peak: int, inject_reversed: int,
+                       inject_regional: int, inject_subthreshold: int) -> array {
+    let mut odd_peak_uv_x1000 = 12300
+    let mut std_peak_uv_x1000 = 3800
+    let mut diff_peak_uv_x1000 = 8500
+    let mut diff_peak_ms = 320
+    let mut diff_peak_chan = "Pz"
+    if inject_no_peak == 1 { diff_peak_ms = 600 }                // outside 250-400ms
+    if inject_reversed == 1 {
+        odd_peak_uv_x1000 = 3800
+        std_peak_uv_x1000 = 12300
+        diff_peak_uv_x1000 = -8500
+    }
+    if inject_regional == 1 { diff_peak_chan = "Fz" }            // not parietal
+    if inject_subthreshold == 1 { diff_peak_uv_x1000 = 1500 }    // < 2 µV
+    return [odd_peak_uv_x1000, std_peak_uv_x1000, diff_peak_uv_x1000, diff_peak_ms]
+}
+
+// ─── public API ────────────────────────────────────────────────────────
+
+fn _paradigm_visual_p300_kv(args_kv: string) -> string {
+    let n_trials  = _to_int_or(_kv_get(args_kv, "n_trials"),     DEFAULT_N_TRIALS)
+    let seed      = _to_int_or(_kv_get(args_kv, "seed"),         42)
+    let inj_short = _to_int_or(_kv_get(args_kv, "inject_short"), 0)
+    let inj_nopeak = _to_int_or(_kv_get(args_kv, "inject_no_peak"), 0)
+    let inj_rev   = _to_int_or(_kv_get(args_kv, "inject_reversed"), 0)
+    let inj_reg   = _to_int_or(_kv_get(args_kv, "inject_regional"), 0)
+    let inj_sub   = _to_int_or(_kv_get(args_kv, "inject_subthreshold"), 0)
+
+    // build sequence
+    let mut effective_n = n_trials
+    if inj_short == 1 { effective_n = 50 }   // forces n_odd ~10 << 20
+    let seq = _build_sequence(effective_n, seed)
+    let n_total = seq[0]
+    let n_odd   = seq[1]
+    let n_std   = seq[2]
+    let n_adj   = seq[3]
+
+    // ERP fixture
+    let erp = _synth_erp_fixture(inj_short, inj_nopeak, inj_rev, inj_reg, inj_sub)
+    let odd_peak  = erp[0]
+    let std_peak  = erp[1]
+    let diff_peak = erp[2]
+    let peak_ms   = erp[3]
+    let chan = if inj_reg == 1 { "Fz" } else { "Pz" }
+
+    // raw#71 falsifier evaluation
+    let mut triggered = ""
+    let mut trig_count = 0
+    if n_odd < MIN_ODDBALL_TRIALS                           { triggered = triggered + "F_VP300_01,"; trig_count = trig_count + 1 }
+    if peak_ms < LATENCY_MIN_MS || peak_ms > LATENCY_MAX_MS { triggered = triggered + "F_VP300_02,"; trig_count = trig_count + 1 }
+    if odd_peak < std_peak                                  { triggered = triggered + "F_VP300_03,"; trig_count = trig_count + 1 }
+    let mut chan_ok = 0
+    if chan == "Pz" || chan == "P3" || chan == "P4" { chan_ok = 1 }
+    if chan_ok == 0                                          { triggered = triggered + "F_VP300_04,"; trig_count = trig_count + 1 }
+    if diff_peak < AMPLITUDE_MIN_UV_X1000                   { triggered = triggered + "F_VP300_05,"; trig_count = trig_count + 1 }
+    let nT = len(triggered)
+    if nT > 0 { triggered = triggered.substring(0, nT - 1) }
+
+    let mut verdict = "PASS"
+    if trig_count > 0 { verdict = "FALSIFIED" }
+
+    let mut kv = ""
+    kv = kv + "schema=" + SCHEMA + "\n"
+    kv = kv + "paradigm=" + PARADIGM_NAME + "\n"
+    kv = kv + "n_trials=" + str(n_total) + "\n"
+    kv = kv + "n_oddball=" + str(n_odd) + "\n"
+    kv = kv + "n_standard=" + str(n_std) + "\n"
+    kv = kv + "adjacent_oddball_collapsed=" + str(n_adj) + "\n"
+    kv = kv + "oddball_peak_uv_x1000=" + str(odd_peak) + "\n"
+    kv = kv + "standard_peak_uv_x1000=" + str(std_peak) + "\n"
+    kv = kv + "diff_peak_uv_x1000=" + str(diff_peak) + "\n"
+    kv = kv + "diff_peak_ms=" + str(peak_ms) + "\n"
+    kv = kv + "diff_peak_chan=" + chan + "\n"
+    kv = kv + "isi_min_ms=1500\n"
+    kv = kv + "isi_max_ms=2000\n"
+    kv = kv + "stim_duration_ms=200\n"
+    kv = kv + "sample_rate_hz=250\n"
+    kv = kv + "protocol_steps=stim_visual_oddball_80_20_isi_1500_2000ms\n"
+    kv = kv + "verdict=" + verdict + "\n"
+    kv = kv + "value_x1000=" + str(diff_peak) + "\n"
+    kv = kv + "backend=" + LEGACY_PATH + "\n"
+    kv = kv + "backend_status=ported_in_module_synth_no_brainflow\n"
+    kv = kv + "raw71_falsifier_count=5\n"
+    kv = kv + "raw71_triggered_count=" + str(trig_count) + "\n"
+    kv = kv + "raw71_triggered_ids=" + triggered + "\n"
+    kv = kv + "raw91_evidence=trial_sequence_lcg_seed_42_synth_erp_fixture\n"
+    kv = kv + "raw91_limit=no_real_brainflow_no_pyglet_terminal_only\n"
+    kv = kv + "raw95_enforce_layer=in_module\n"
+    return kv
+}
+
+// ─── CLI ───────────────────────────────────────────────────────────────
+
+fn _print_usage() {
+    eprintln("usage: hexa run visual_p300.hexa --selftest")
+    eprintln("       hexa run visual_p300.hexa --live    (→ NOT_YET_LANDED)")
+}
+
+fn main() {
+    let av = _flags_only_argv()
+    let mut selftest = false
+    let mut live = false
+    let mut n_trials = DEFAULT_N_TRIALS
+    let mut seed = 42
+    let mut i = 0
+    while i < len(av) {
+        let a = av[i]
+        if a == "--selftest"    { selftest = true; i = i + 1; continue }
+        if a == "--live"        { live = true; i = i + 1; continue }
+        if a == "--n-trials"    { n_trials = to_int(av[i+1]); i = i + 2; continue }
+        if a == "--seed"        { seed = to_int(av[i+1]); i = i + 2; continue }
+        if a == "--help" || a == "-h" { _print_usage(); exit(0) }
+        i = i + 1
+    }
+
+    if !selftest && !live {
+        eprintln("ABORT: must pass --selftest or --live")
+        _print_usage()
+        exit(2)
+    }
+
+    if live && !selftest {
+        println("── _paradigms/visual_p300 LIVE ──")
+        println("schema=" + SCHEMA)
+        println("status=NOT_YET_LANDED")
+        println("kind=live_pyglet_brainflow_trigger_sync")
+        println("verdict=PENDING_MIGRATION")
+        println("backend=" + LEGACY_PATH)
+        eprintln("reason: legacy-interp-auto-invoke-conflict: " + LEGACY_PATH + " has main() conflict")
+        eprintln("fix: see design/visual_p300_oddball_paradigm_2026_04_28.md §5; live deferred until Phase 5")
+        exit(4)
+    }
+
+    println("== _paradigms/visual_p300 selftest (synth ERP fixture seed=" + str(seed) + ") ==")
+    let args_kv = "n_trials=" + str(n_trials) + ",seed=" + str(seed)
+    let kv = _paradigm_visual_p300_kv(args_kv)
+    print(kv)
+
+    let lines = kv.split("\n")
+    let mut found_pass = 0
+    let mut k = 0
+    while k < len(lines) {
+        let ln = lines[k].trim()
+        if ln == "verdict=PASS" { found_pass = 1 }
+        k = k + 1
+    }
+    if found_pass == 0 {
+        eprintln("reason: nominal selftest verdict not PASS — falsifier triggered")
+        exit(1)
+    }
+    println("selftest=ok")
+    exit(0)
+}
