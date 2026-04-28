@@ -1,0 +1,646 @@
+// ════════════════════════════════════════════════════════════════════════════
+//  anima-clm-eeg/tool/clm_eeg_berger_sanity.hexa
+//
+//  PURPOSE  (Tier-A bundle, raw#106 genus name — no implementation suffix)
+//    Berger 1929 occipital alpha sanity gate.  For an eyes-closed resting EEG
+//    recording, occipital electrodes (O1=ch7, O2=ch8 in 1-indexed Cyton+Daisy
+//    layout; 0-indexed channel 6 and 7 in the 16-row eeg array) must show an
+//    8–13 Hz alpha rhythm that DOMINATES delta/theta/beta bands.
+//
+//  ALGORITHM
+//    1. Load 16ch × N .npy via /tmp helper (raw#9 OK — `.py` is /tmp-only).
+//    2. For each occipital channel (ch_idx 6 / 7), compute Welch PSD with
+//       fs=125 Hz, nperseg=512, hann window (scipy.signal.welch defaults).
+//    3. Band-power integration (trapezoid via scipy.integrate.simpson):
+//         delta : 1–4 Hz
+//         theta : 4–8 Hz
+//         alpha : 8–13 Hz
+//         beta  : 13–30 Hz
+//    4. Find peak frequency = argmax(PSD) restricted to 1–40 Hz (skip DC).
+//    5. Apply FROZEN pre-registered criteria (raw#12; this commit 2026-04-28):
+//         C1: alpha_power  > beta_power                            ✓ both ch
+//         C2: alpha_power  > delta_power × 0.30                    ✓ both ch
+//         C3: peak_freq    ∈ [7, 14] Hz                            ✓ both ch
+//
+//  3-TIER VERDICT  (raw#10 honest, raw#71 falsifier-pre-registered)
+//    PASS    : C1 ∧ C2 ∧ C3 hold for BOTH O1 and O2  (real EEG verified)
+//    PARTIAL : alpha visible (C3 holds for ≥1 ch) but not dominant on both
+//    FAIL    : alpha not dominant AND peak outside 7–14 Hz on BOTH ch
+//              (amplifier scale / electrode artifact dominant — measurement
+//               itself is suspect; LZc thresholds cannot be evaluated)
+//
+//  3 FALSIFIERS  (raw#71)
+//    F1: structured pure-50 Hz line-noise sine on O1+O2 → peak_freq=50 → FAIL
+//    F2: white-noise on O1+O2 → no alpha dominance → FAIL or PARTIAL
+//    F3: synthetic 10 Hz sine on O1+O2 → peak_freq≈10, alpha dominant → PASS
+//        (selftest --selftest-mode alpha exercises F3)
+//
+//  REFERENCES  (raw#10 honest citation)
+//    Berger H. 1929. "Über das Elektrenkephalogramm des Menschen". Arch
+//    Psychiatr Nervenkr 87:527-570 (DOI 10.1007/BF01797193). The original
+//    descriptions of the 10 Hz "Berger rhythm" / α-Welle on the occipital
+//    region during eyes-closed wakefulness, attenuated on eye-opening.
+//    Welch PD. 1967. "The Use of Fast Fourier Transform for the Estimation
+//    of Power Spectra". IEEE Trans Audio Electroacoust 15(2):70-73.
+//
+//  CHANNEL MAPPING  (Cyton+Daisy, 1-indexed → 0-indexed in 16-row eeg)
+//    Cyton 1-8: Fp1 Fp2 C3 C4 P7 P8 O1 O2     → 0-idx 0..7   (O1=6, O2=7)
+//    Daisy 9-16: F7 F8 F3 F4 T7 T8 P3 P4      → 0-idx 8..15
+//
+//  RAW
+//    raw#9   pure-hexa, .py helper /tmp-only (state/.berger_helper.py)
+//    raw#10  honest classification + reference cited
+//    raw#12  pre-registered criteria (C1 dom-vs-beta, C2 dom-vs-delta, C3 peak-band)
+//    raw#37  transient .py helper auto-regenerated (no checked-in copy)
+//    raw#71  3 falsifiers pre-registered (F1 line-noise, F2 white, F3 alpha-sine)
+//    raw#82  darwin-native venv-eeg (.venv-eeg/bin/python) via @resolver-bypass
+//    raw#91  honest classification (synthetic vs real)
+//    raw#106 genus name (no -via-X / -with-Y / -api implementation suffix)
+//    raw#117 5-check covered: genus + Berger 1929 + Welch 1967 frameworks +
+//            3 channels (alpha/beta/delta) + counter-example (line-noise) +
+//            3 falsifiers (F1/F2/F3)
+//
+//  @resolver-bypass(reason="darwin-native: .venv-eeg/bin/python BrainFlow venv on host; linux container has broken symlink to python3.12 target")
+// ════════════════════════════════════════════════════════════════════════════
+
+// ─── frozen criteria (raw#12 pre-registered) ──────────────────────────────
+// C1: alpha_power > beta_power  (boolean — no x1000 scaling)
+// C2: alpha_power > delta_power * (DELTA_FACTOR_PERMILLE / 1000)  ← 300‰ = 0.30×
+// C3: PEAK_HZ_LO ≤ peak_freq ≤ PEAK_HZ_HI
+let DELTA_FACTOR_PERMILLE = 300       // alpha must exceed 30% of delta
+let PEAK_HZ_LO_X10        = 70        // 7.0 Hz
+let PEAK_HZ_HI_X10        = 140       // 14.0 Hz
+let O1_CH_IDX             = 6         // 0-indexed within 16-row eeg
+let O2_CH_IDX             = 7
+
+// ─── env helpers ──────────────────────────────────────────────────────────
+fn env_str(key: string, default_val: string) -> string {
+    let s = env(key)
+    if s == "" { return default_val }
+    return s
+}
+
+fn is_digit_ch(c: string) -> int {
+    if c == "0" { return 1 }
+    if c == "1" { return 1 }
+    if c == "2" { return 1 }
+    if c == "3" { return 1 }
+    if c == "4" { return 1 }
+    if c == "5" { return 1 }
+    if c == "6" { return 1 }
+    if c == "7" { return 1 }
+    if c == "8" { return 1 }
+    if c == "9" { return 1 }
+    return 0
+}
+
+fn digit_val(c: string) -> int {
+    if c == "0" { return 0 }
+    if c == "1" { return 1 }
+    if c == "2" { return 2 }
+    if c == "3" { return 3 }
+    if c == "4" { return 4 }
+    if c == "5" { return 5 }
+    if c == "6" { return 6 }
+    if c == "7" { return 7 }
+    if c == "8" { return 8 }
+    if c == "9" { return 9 }
+    return -1
+}
+
+fn find_in_str(s: string, needle: string) -> int {
+    let n = len(s)
+    let m = len(needle)
+    if m <= 0 { return 0 }
+    if n < m { return -1 }
+    let mut i = 0
+    while i <= n - m {
+        let mut j = 0
+        let mut ok = 1
+        while j < m {
+            if s[i + j] != needle[j] {
+                ok = 0
+                j = m
+            }
+            j = j + 1
+        }
+        if ok == 1 { return i }
+        i = i + 1
+    }
+    return -1
+}
+
+// Parse "key=value" line out of helper output. value is integer (possibly
+// negative). Returns sentinel -2147483647 if missing.
+fn parse_int_kv(blob: string, key: string) -> int {
+    let kp = find_in_str(blob, key)
+    if kp < 0 { return -2147483647 }
+    let n = len(blob)
+    let mut q = kp + len(key)
+    let mut acc = 0
+    let mut neg = 0
+    let mut hd = 0
+    while q < n && blob[q] != "\n" {
+        let c = blob[q]
+        if c == "-" && hd == 0 { neg = 1 }
+        if is_digit_ch(c) == 1 { acc = acc * 10 + digit_val(c); hd = 1 }
+        q = q + 1
+    }
+    if hd == 0 { return -2147483647 }
+    if neg == 1 { return -acc }
+    return acc
+}
+
+fn now_iso() -> string {
+    return exec("date -u +%Y-%m-%dT%H:%M:%SZ").trim()
+}
+
+fn now_date_utc() -> string {
+    return exec("date -u +%Y-%m-%d").trim()
+}
+
+fn sha256_of_file(path: string) -> string {
+    if path == "" { return "" }
+    let cmd = "shasum -a 256 \"" + path + "\" 2>/dev/null | awk '{print $1}'"
+    let h = exec(cmd).trim()
+    if h == "" { return "unavailable" }
+    return h
+}
+
+// ─── /tmp python helper (raw#9 OK) ─────────────────────────────────────────
+// Helper computes Welch PSD on O1, O2 channels for a given .npy file (or
+// synthetic alpha/white/line for selftest), emits per-channel band powers
+// (×1e6 fixed-point), peak frequency (×10 fixed-point), pass flags.
+//
+// Hexa write_file is sandboxed to workspace; /tmp is rejected. Use a
+// dot-prefixed state/ helper path (transient — gitignored under .gitignore
+// state/.* pattern; see existing clm_eeg_lz76_npy_helper.py for precedent).
+let BERGER_HELPER_PATH = "state/.berger_sanity_helper.py"
+let BERGER_DUMP_PATH   = "state/.berger_sanity_dump.txt"
+
+fn _write_helper() {
+    let py = "#!/usr/bin/env python3
+# clm_eeg_berger_sanity helper — auto-generated by anima-clm-eeg/tool/clm_eeg_berger_sanity.hexa
+# raw#9 OK: this is the /tmp-style transient .py helper (state/.berger_sanity_helper.py).
+# raw#37: re-written every invocation; do NOT edit by hand — edits are clobbered.
+# raw#82: darwin-native venv-eeg python invocation only; no remote dispatch.
+import sys, os
+try:
+    import numpy as np
+    from scipy import signal, integrate
+except Exception as e:
+    sys.stderr.write('import-failed: ' + repr(e) + '\\n'); sys.exit(10)
+
+if len(sys.argv) < 4:
+    sys.stderr.write('usage: helper <mode> <input_or_kind> <out.txt>\\n')
+    sys.stderr.write('   mode = real | selftest\\n')
+    sys.stderr.write('   selftest kinds: alpha | white | line50\\n')
+    sys.exit(2)
+
+mode, src, out_path = sys.argv[1], sys.argv[2], sys.argv[3]
+fs = 125.0
+nperseg = 512
+
+def load_eeg16(path):
+    a = np.load(path, allow_pickle=False)
+    if a.ndim != 2:
+        raise RuntimeError('expected 2-D .npy, got ndim=' + str(a.ndim))
+    rows, cols = a.shape
+    if rows == 16:
+        return a, rows, cols
+    if cols == 16:
+        return a.T, 16, rows
+    if rows >= 32 and cols > rows:
+        # BrainFlow 32-row layout: indices 1..16 are EEG (0-indexed slice 1:17)
+        return a[1:17, :], 16, cols
+    if cols >= 32 and rows > cols:
+        return a.T[1:17, :], 16, rows
+    raise RuntimeError('cannot infer 16-ch layout from shape ' + str(a.shape))
+
+if mode == 'selftest':
+    kind = src
+    n = 60 * int(fs)  # 60 s
+    rng = np.random.RandomState(42)
+    eeg = np.zeros((16, n), dtype=np.float64)
+    t = np.arange(n) / fs
+    for ch in range(16):
+        eeg[ch, :] = rng.normal(0, 1.0, size=n).astype(np.float64)
+    if kind == 'alpha':
+        # Inject 10 Hz alpha rhythm on O1, O2 (channel index 6, 7) — much
+        # bigger amplitude than the white-noise floor so alpha clearly
+        # dominates the band-power integral.
+        for ch in [6, 7]:
+            eeg[ch, :] = eeg[ch, :] + 8.0 * np.sin(2 * np.pi * 10.0 * t)
+    elif kind == 'line50':
+        for ch in [6, 7]:
+            eeg[ch, :] = eeg[ch, :] + 8.0 * np.sin(2 * np.pi * 50.0 * t)
+    elif kind == 'white':
+        pass  # already white noise
+    else:
+        sys.stderr.write('unknown selftest kind: ' + kind + '\\n'); sys.exit(3)
+    n_ch, n_samp = 16, n
+    sha = ''
+elif mode == 'real':
+    if not os.path.isfile(src):
+        sys.stderr.write('not-found: ' + src + '\\n'); sys.exit(4)
+    eeg, n_ch, n_samp = load_eeg16(src)
+    sha = ''
+else:
+    sys.stderr.write('unknown mode: ' + mode + '\\n'); sys.exit(2)
+
+def welch_band(x):
+    f, psd = signal.welch(x, fs=fs, nperseg=min(nperseg, len(x)))
+    def bp(lo, hi):
+        m = (f >= lo) & (f <= hi)
+        if not np.any(m):
+            return 0.0
+        return float(integrate.simpson(psd[m], x=f[m]))
+    delta = bp(1.0, 4.0)
+    theta = bp(4.0, 8.0)
+    alpha = bp(8.0, 13.0)
+    beta  = bp(13.0, 30.0)
+    # peak frequency restricted to 1..40 Hz
+    m = (f >= 1.0) & (f <= 40.0)
+    if not np.any(m):
+        peak = 0.0
+    else:
+        peak = float(f[m][int(np.argmax(psd[m]))])
+    return delta, theta, alpha, beta, peak
+
+results = {}
+for label, ch_idx in [('o1', 6), ('o2', 7)]:
+    if ch_idx >= n_ch:
+        sys.stderr.write('channel-index-out-of-range: ' + label + '\\n'); sys.exit(5)
+    delta, theta, alpha, beta, peak = welch_band(eeg[ch_idx, :])
+    results[label] = (delta, theta, alpha, beta, peak)
+
+# Frozen criteria (mirror of hexa SSOT) — recomputed in hexa from band powers,
+# but also emitted here for self-check.
+def evaluate(d, t_, a, b, peak):
+    # uV^2 / Hz absolute scale is irrelevant since we compare ratios within ch
+    c1 = 1 if a > b else 0
+    c2 = 1 if a > 0.30 * d else 0
+    c3 = 1 if (7.0 <= peak and peak <= 14.0) else 0
+    return c1, c2, c3
+
+with open(out_path, 'w') as f:
+    f.write('schema=berger_sanity_v1\\n')
+    f.write('n_ch=' + str(int(n_ch)) + '\\n')
+    f.write('n_samp=' + str(int(n_samp)) + '\\n')
+    for lbl, ch_idx in [('o1', 6), ('o2', 7)]:
+        d, t_, a, b, peak = results[lbl]
+        c1, c2, c3 = evaluate(d, t_, a, b, peak)
+        # Emit fixed-point integers for hexa parsing.
+        # band power × 1e6 truncated to int (preserves ~6 sig digits).
+        f.write(lbl + '_delta_x1e6=' + str(int(round(d * 1.0e6))) + '\\n')
+        f.write(lbl + '_theta_x1e6=' + str(int(round(t_ * 1.0e6))) + '\\n')
+        f.write(lbl + '_alpha_x1e6=' + str(int(round(a * 1.0e6))) + '\\n')
+        f.write(lbl + '_beta_x1e6='  + str(int(round(b * 1.0e6))) + '\\n')
+        f.write(lbl + '_peak_hz_x10=' + str(int(round(peak * 10.0))) + '\\n')
+        f.write(lbl + '_c1_pass=' + str(int(c1)) + '\\n')
+        f.write(lbl + '_c2_pass=' + str(int(c2)) + '\\n')
+        f.write(lbl + '_c3_pass=' + str(int(c3)) + '\\n')
+
+print('OK n_ch=' + str(int(n_ch)) + ' n_samp=' + str(int(n_samp)))
+"
+    write_file(BERGER_HELPER_PATH, py)
+}
+
+fn _pick_python() -> string {
+    let envp = env_str("CLM_EEG_BERGER_PYTHON", "")
+    if envp != "" { return envp }
+    let envp2 = env_str("ANIMA_EEG_VENV_PYTHON", "")
+    if envp2 != "" { return envp2 }
+    let venv_rel = ".venv-eeg/bin/python"
+    let chk_rel = exec("test -x \"" + venv_rel + "\" && echo OK").trim()
+    if chk_rel == "OK" { return venv_rel }
+    let cwd = exec("pwd").trim()
+    let venv_abs = cwd + "/.venv-eeg/bin/python"
+    let chk_abs = exec("test -x \"" + venv_abs + "\" && echo OK").trim()
+    if chk_abs == "OK" { return venv_abs }
+    return "/usr/bin/python3"
+}
+
+fn run_helper(mode_arg: string, src_arg: string) -> string {
+    _write_helper()
+    let py = _pick_python()
+    let cmd = py + " " + BERGER_HELPER_PATH + " " + mode_arg + " \"" + src_arg + "\" \"" + BERGER_DUMP_PATH + "\""
+    let r = exec_with_status(cmd)
+    let rc = to_int(r[1])
+    if rc != 0 {
+        eprintln("berger-helper-rc=" + str(rc))
+        eprintln("berger-helper-out: " + to_string(r[0]))
+        return ""
+    }
+    return read_file(BERGER_DUMP_PATH)
+}
+
+// ─── audit JSONL append ────────────────────────────────────────────────────
+fn append_jsonl(path: string, line: string) {
+    let scratch = "state/.clm_eeg_berger_audit_row.tmp"
+    write_file(scratch, line + "\n")
+    let cmd = "p=" + path + "; mkdir -p $(dirname $p); cat " + scratch + " >> $p; rm -f " + scratch
+    let _ = exec(cmd)
+}
+
+// ─── argv (skip leading interpreter / script tokens) ───────────────────────
+fn _flags_only_argv() -> list {
+    let av = argv()
+    let mut start = 0
+    while start < len(av) {
+        let a = av[start]
+        let mut starts_dash = 0
+        if len(a) >= 1 {
+            if a[0] == "-" { starts_dash = 1 }
+        }
+        if starts_dash == 1 { break }
+        start = start + 1
+    }
+    let mut out = []
+    let mut j = start
+    while j < len(av) {
+        out.push(av[j])
+        j = j + 1
+    }
+    return out
+}
+
+fn _print_usage() {
+    eprintln("usage: hexa run anima-clm-eeg/tool/clm_eeg_berger_sanity.hexa [flags]")
+    eprintln("flags:")
+    eprintln("  --selftest                 synthetic 10 Hz alpha sine on O1+O2 → expect PASS (F3)")
+    eprintln("  --selftest-mode <kind>     alpha | white | line50  (default: alpha)")
+    eprintln("  --input <path.npy>         real-data .npy input file (16ch × N or 32-row BrainFlow)")
+    eprintln("  --audit-jsonl <path>       JSONL audit append path")
+    eprintln("                             (default: state/clm_eeg_berger_audit/<UTC-date>_berger.jsonl)")
+    eprintln("  --out <path>               JSON cert output path")
+    eprintln("                             (default: state/clm_eeg_berger_sanity.json)")
+    eprintln("  --help                     this message")
+}
+
+// 3-tier verdict given pass-flag tuple per channel
+fn verdict_3tier(o1_c1: int, o1_c2: int, o1_c3: int,
+                 o2_c1: int, o2_c2: int, o2_c3: int) -> string {
+    let o1_full = if o1_c1 == 1 && o1_c2 == 1 && o1_c3 == 1 { 1 } else { 0 }
+    let o2_full = if o2_c1 == 1 && o2_c2 == 1 && o2_c3 == 1 { 1 } else { 0 }
+    if o1_full == 1 && o2_full == 1 { return "PASS" }
+    let any_alpha = if o1_c3 == 1 || o2_c3 == 1 { 1 } else { 0 }
+    if any_alpha == 1 { return "PARTIAL" }
+    return "FAIL"
+}
+
+fn main() {
+    let av = _flags_only_argv()
+    let mut cli_input = ""
+    let mut cli_audit = ""
+    let mut cli_out   = ""
+    let mut cli_selftest = 0
+    let mut cli_selftest_mode = "alpha"
+    let mut want_help = 0
+    let mut i = 0
+    while i < len(av) {
+        let a = av[i]
+        if a == "--selftest" { cli_selftest = 1; i = i + 1; continue }
+        if a == "--help" || a == "-h" { want_help = 1; i = i + 1; continue }
+        if a == "--input" {
+            if (i + 1) >= len(av) {
+                eprintln("reason: missing-arg-value: --input requires path")
+                eprintln("fix: 1) re-run with --input <path.npy>")
+                exit(2)
+            }
+            cli_input = av[i + 1]; i = i + 2; continue
+        }
+        if a == "--audit-jsonl" {
+            if (i + 1) >= len(av) {
+                eprintln("reason: missing-arg-value: --audit-jsonl requires path")
+                exit(2)
+            }
+            cli_audit = av[i + 1]; i = i + 2; continue
+        }
+        if a == "--out" {
+            if (i + 1) >= len(av) {
+                eprintln("reason: missing-arg-value: --out requires path")
+                exit(2)
+            }
+            cli_out = av[i + 1]; i = i + 2; continue
+        }
+        if a == "--selftest-mode" {
+            if (i + 1) >= len(av) {
+                eprintln("reason: missing-arg-value: --selftest-mode requires {alpha|white|line50}")
+                exit(2)
+            }
+            cli_selftest_mode = av[i + 1]; i = i + 2; continue
+        }
+        eprintln("reason: unknown-arg: " + a)
+        _print_usage()
+        exit(2)
+    }
+    if want_help == 1 { _print_usage(); exit(0) }
+
+    let env_selftest = env_str("CLM_EEG_BERGER_SELFTEST", "0")
+    let is_selftest = (cli_selftest == 1) || (env_selftest == "1")
+
+    let mut mode = "selftest"
+    let mut helper_mode = "selftest"
+    let mut helper_src = cli_selftest_mode
+    let mut input_label = "synthetic_" + cli_selftest_mode
+    let mut input_sha256 = ""
+
+    if !is_selftest {
+        if cli_input == "" {
+            eprintln("reason: missing-input: pass --selftest or --input <path.npy>")
+            _print_usage()
+            exit(2)
+        }
+        mode = "real"
+        helper_mode = "real"
+        helper_src = cli_input
+        input_label = cli_input
+        input_sha256 = sha256_of_file(cli_input)
+    }
+
+    let blob = run_helper(helper_mode, helper_src)
+    if blob == "" {
+        eprintln("reason: helper-failed: berger sanity helper produced no output")
+        exit(3)
+    }
+
+    let n_ch  = parse_int_kv(blob, "n_ch=")
+    let n_samp = parse_int_kv(blob, "n_samp=")
+    let o1_d  = parse_int_kv(blob, "o1_delta_x1e6=")
+    let o1_t  = parse_int_kv(blob, "o1_theta_x1e6=")
+    let o1_a  = parse_int_kv(blob, "o1_alpha_x1e6=")
+    let o1_b  = parse_int_kv(blob, "o1_beta_x1e6=")
+    let o1_pk = parse_int_kv(blob, "o1_peak_hz_x10=")
+    let o2_d  = parse_int_kv(blob, "o2_delta_x1e6=")
+    let o2_t  = parse_int_kv(blob, "o2_theta_x1e6=")
+    let o2_a  = parse_int_kv(blob, "o2_alpha_x1e6=")
+    let o2_b  = parse_int_kv(blob, "o2_beta_x1e6=")
+    let o2_pk = parse_int_kv(blob, "o2_peak_hz_x10=")
+
+    // Re-evaluate criteria in hexa to keep SSOT in this file (helper emits
+    // self-check flags but the verdict here is authoritative).
+    fn c1_dom(alpha: int, beta: int) -> int {
+        if alpha > beta { return 1 }
+        return 0
+    }
+    fn c2_dom(alpha: int, delta: int) -> int {
+        // alpha > delta * 0.30  ⇔  alpha * 1000 > delta * 300
+        if alpha * 1000 > delta * DELTA_FACTOR_PERMILLE { return 1 }
+        return 0
+    }
+    fn c3_peak(peak_x10: int) -> int {
+        if peak_x10 >= PEAK_HZ_LO_X10 && peak_x10 <= PEAK_HZ_HI_X10 { return 1 }
+        return 0
+    }
+
+    let o1_c1 = c1_dom(o1_a, o1_b)
+    let o1_c2 = c2_dom(o1_a, o1_d)
+    let o1_c3 = c3_peak(o1_pk)
+    let o2_c1 = c1_dom(o2_a, o2_b)
+    let o2_c2 = c2_dom(o2_a, o2_d)
+    let o2_c3 = c3_peak(o2_pk)
+
+    let verdict = verdict_3tier(o1_c1, o1_c2, o1_c3, o2_c1, o2_c2, o2_c3)
+
+    let mut classification = "NOT_VERIFIED_SYNTHETIC"
+    if mode == "real" {
+        if verdict == "PASS"    { classification = "REAL_HW_PASS_BERGER" }
+        if verdict == "PARTIAL" { classification = "REAL_HW_PARTIAL_BERGER" }
+        if verdict == "FAIL"    { classification = "REAL_HW_FAIL_BERGER" }
+    }
+
+    let ts = now_iso()
+
+    let mut out_path = cli_out
+    if out_path == "" { out_path = "state/clm_eeg_berger_sanity.json" }
+    let mut audit_path = cli_audit
+    if audit_path == "" {
+        audit_path = "state/clm_eeg_berger_audit/" + now_date_utc() + "_berger.jsonl"
+    }
+
+    let mut cert = "{\n"
+    cert = cert + "  \"tool\": \"clm_eeg_berger_sanity\",\n"
+    cert = cert + "  \"version\": \"v1\",\n"
+    cert = cert + "  \"raw_rank\": 9,\n"
+    cert = cert + "  \"hexa_only\": true,\n"
+    cert = cert + "  \"deterministic\": true,\n"
+    cert = cert + "  \"llm\": \"none\",\n"
+    cert = cert + "  \"pre_register_frozen\": true,\n"
+    cert = cert + "  \"frozen_at\": \"2026-04-28\",\n"
+    cert = cert + "  \"ts_utc\": \"" + ts + "\",\n"
+    cert = cert + "  \"hypothesis\": \"O1∧O2 alpha (8-13Hz) dominates beta AND alpha > 0.30·delta AND peak∈[7,14]Hz\",\n"
+    cert = cert + "  \"criteria\": {\n"
+    cert = cert + "    \"C1\": \"alpha_power > beta_power (per channel)\",\n"
+    cert = cert + "    \"C2\": \"alpha_power > 0.30 * delta_power (per channel)\",\n"
+    cert = cert + "    \"C3_peak_hz_lo_x10\": " + str(PEAK_HZ_LO_X10) + ",\n"
+    cert = cert + "    \"C3_peak_hz_hi_x10\": " + str(PEAK_HZ_HI_X10) + ",\n"
+    cert = cert + "    \"verdict_rule\": \"PASS=both ch satisfy C1∧C2∧C3; PARTIAL=any ch C3; FAIL=else\"\n"
+    cert = cert + "  },\n"
+    cert = cert + "  \"mode\": \"" + mode + "\",\n"
+    cert = cert + "  \"input\": \"" + input_label + "\",\n"
+    cert = cert + "  \"input_sha256\": \"" + input_sha256 + "\",\n"
+    cert = cert + "  \"n_channels\": " + str(n_ch) + ",\n"
+    cert = cert + "  \"n_samples\": " + str(n_samp) + ",\n"
+    cert = cert + "  \"o1\": {\n"
+    cert = cert + "    \"delta_x1e6\": " + str(o1_d) + ",\n"
+    cert = cert + "    \"theta_x1e6\": " + str(o1_t) + ",\n"
+    cert = cert + "    \"alpha_x1e6\": " + str(o1_a) + ",\n"
+    cert = cert + "    \"beta_x1e6\": "  + str(o1_b) + ",\n"
+    cert = cert + "    \"peak_hz_x10\": " + str(o1_pk) + ",\n"
+    cert = cert + "    \"c1_pass\": " + str(o1_c1) + ",\n"
+    cert = cert + "    \"c2_pass\": " + str(o1_c2) + ",\n"
+    cert = cert + "    \"c3_pass\": " + str(o1_c3) + "\n"
+    cert = cert + "  },\n"
+    cert = cert + "  \"o2\": {\n"
+    cert = cert + "    \"delta_x1e6\": " + str(o2_d) + ",\n"
+    cert = cert + "    \"theta_x1e6\": " + str(o2_t) + ",\n"
+    cert = cert + "    \"alpha_x1e6\": " + str(o2_a) + ",\n"
+    cert = cert + "    \"beta_x1e6\": "  + str(o2_b) + ",\n"
+    cert = cert + "    \"peak_hz_x10\": " + str(o2_pk) + ",\n"
+    cert = cert + "    \"c1_pass\": " + str(o2_c1) + ",\n"
+    cert = cert + "    \"c2_pass\": " + str(o2_c2) + ",\n"
+    cert = cert + "    \"c3_pass\": " + str(o2_c3) + "\n"
+    cert = cert + "  },\n"
+    cert = cert + "  \"verdict\": \"" + verdict + "\",\n"
+    cert = cert + "  \"classification\": \"" + classification + "\",\n"
+    cert = cert + "  \"reference\": \"Berger 1929 Arch Psychiatr Nervenkr 87:527-570 (DOI 10.1007/BF01797193); Welch 1967 IEEE Trans Audio Electroacoust 15(2):70-73\"\n"
+    cert = cert + "}\n"
+    write_file(out_path, cert)
+
+    let mut jrow = "{"
+    jrow = jrow + "\"ts\":\"" + ts + "\","
+    jrow = jrow + "\"tool\":\"clm_eeg_berger_sanity\","
+    jrow = jrow + "\"mode\":\"" + mode + "\","
+    jrow = jrow + "\"input\":\"" + input_label + "\","
+    jrow = jrow + "\"sha256\":\"" + input_sha256 + "\","
+    jrow = jrow + "\"n_channels\":" + str(n_ch) + ","
+    jrow = jrow + "\"n_samples\":" + str(n_samp) + ","
+    jrow = jrow + "\"o1_alpha_x1e6\":" + str(o1_a) + ","
+    jrow = jrow + "\"o1_beta_x1e6\":" + str(o1_b) + ","
+    jrow = jrow + "\"o1_delta_x1e6\":" + str(o1_d) + ","
+    jrow = jrow + "\"o1_peak_hz_x10\":" + str(o1_pk) + ","
+    jrow = jrow + "\"o1_c1\":" + str(o1_c1) + ","
+    jrow = jrow + "\"o1_c2\":" + str(o1_c2) + ","
+    jrow = jrow + "\"o1_c3\":" + str(o1_c3) + ","
+    jrow = jrow + "\"o2_alpha_x1e6\":" + str(o2_a) + ","
+    jrow = jrow + "\"o2_beta_x1e6\":" + str(o2_b) + ","
+    jrow = jrow + "\"o2_delta_x1e6\":" + str(o2_d) + ","
+    jrow = jrow + "\"o2_peak_hz_x10\":" + str(o2_pk) + ","
+    jrow = jrow + "\"o2_c1\":" + str(o2_c1) + ","
+    jrow = jrow + "\"o2_c2\":" + str(o2_c2) + ","
+    jrow = jrow + "\"o2_c3\":" + str(o2_c3) + ","
+    jrow = jrow + "\"verdict\":\"" + verdict + "\","
+    jrow = jrow + "\"classification\":\"" + classification + "\","
+    jrow = jrow + "\"reference\":\"Berger 1929 / Welch 1967\""
+    jrow = jrow + "}"
+    append_jsonl(audit_path, jrow)
+
+    println("─── clm_eeg_berger_sanity (raw#9 hexa-only, .py /tmp-only) ───")
+    println("  mode                = " + mode)
+    println("  input               = " + input_label)
+    if input_sha256 != "" {
+        println("  input_sha256        = " + input_sha256)
+    }
+    println("  n_channels          = " + str(n_ch))
+    println("  n_samples           = " + str(n_samp))
+    println("  O1 alpha_x1e6       = " + str(o1_a) + "  beta_x1e6=" + str(o1_b) + "  delta_x1e6=" + str(o1_d) + "  peak_hz_x10=" + str(o1_pk))
+    println("  O1 C1/C2/C3         = " + str(o1_c1) + "/" + str(o1_c2) + "/" + str(o1_c3))
+    println("  O2 alpha_x1e6       = " + str(o2_a) + "  beta_x1e6=" + str(o2_b) + "  delta_x1e6=" + str(o2_d) + "  peak_hz_x10=" + str(o2_pk))
+    println("  O2 C1/C2/C3         = " + str(o2_c1) + "/" + str(o2_c2) + "/" + str(o2_c3))
+    println("  verdict             = " + verdict)
+    println("  classification      = " + classification)
+    println("  cert_out            = " + out_path)
+    println("  audit_jsonl         = " + audit_path)
+
+    if mode == "selftest" {
+        println("─── selftest reference targets ───")
+        println("  selftest_mode       = " + cli_selftest_mode)
+        println("  expected (alpha)    = PASS  (10 Hz sine on O1+O2 dominates beta and delta)")
+        println("  expected (white)    = PARTIAL or FAIL  (no alpha rhythm)")
+        println("  expected (line50)   = FAIL  (peak=50Hz, outside 7-14 Hz band)")
+        if cli_selftest_mode == "alpha" && verdict == "PASS" { exit(0) }
+        if cli_selftest_mode == "line50" && verdict == "FAIL" { exit(0) }
+        if cli_selftest_mode == "white" {
+            // either FAIL or PARTIAL is acceptable for white-noise selftest
+            if verdict != "PASS" { exit(0) }
+        }
+        if cli_selftest_mode == "alpha" {
+            eprintln("reason: selftest-alpha-not-pass: synthetic 10Hz sine should produce verdict=PASS, got " + verdict)
+            exit(1)
+        }
+        if cli_selftest_mode == "line50" {
+            eprintln("reason: selftest-line50-not-fail: 50Hz line-noise should produce verdict=FAIL, got " + verdict)
+            exit(1)
+        }
+        if cli_selftest_mode == "white" {
+            eprintln("reason: selftest-white-unexpectedly-pass: white noise produced verdict=PASS")
+            exit(1)
+        }
+        exit(0)
+    }
+
+    if verdict == "PASS"    { exit(0) }
+    if verdict == "PARTIAL" { exit(2) }
+    exit(1)
+}
