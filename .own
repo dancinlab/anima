@@ -347,3 +347,62 @@ own 12 new "raw/own tree ASCII reporting — 강화정도 + 연결 강화정도 
   note strength tier formula (raw 91 honest C3): heuristic, not theoretically derived. Tier boundaries (20/12/7/4/1) calibrated from 11-entry empirical distribution to spread roughly evenly. Future refinement candidate: weighted score (proof×2 + why×1.5 + notes×1 + follow×0.5 + deps×0.8) once corpus reaches ~50 entries.
   enforce-layer cli-lint
   enforce-layer-rationale tool/anima_raw_own_tree_report.hexa --selftest provides cli-lint enforcement layer (5/5 fixture PASS verified). Production --own-tree / --raw-tree / --combined / --strength-mode invocation provides observability substrate. raw 95 triad-mandate compliance = cli-lint (self-test) + advisory (gap surface, not block) + audit-trail (state/audit/anima_own_strengthen_audit.jsonl row).
+
+own 13 new "anima-local: user-facing-response-friendliness — hive raw 165 cross-repo mirror"
+  slug user-facing-response-friendliness-mandate
+  base raw:user-facing-response-friendliness-mandate
+  scope anima user-facing surfaces only — anima CLI output (cell-learning autonomous-loop status / phi-vector report / consciousness gates verdict) + docs/* explanation surfaces (jargon-heavy: FEP / VFE / ELBO / IIT / Phi-vector / consciousness_laws / autonomy_loop) + alm/clm verifier output trailer (raw 53 deterministic-verifier paired) + audit ledger row 'why' / 'note' fields. raw 33 ai-native-english-only retains priority on .raw / .own / atlas SSOT files (counter-example).
+  enforce hive/tool/friendliness_lint.hexa (single-source canonical lint at hive — anima inherits via cross-repo invocation per raw 47)
+  why hive raw 165 LIVE 2026-04-28 (commit 2a2c3f1e2 + 5f12e1829 correction). anima T2 propagation target — anima docs/* are the highest-jargon-density surface in 5-sister set (FEP / VFE / ELBO / IIT / Phi-vector / Mk.IX L_IX / σ(6)=12 / τ(6)=4 약어 누적). raw 47 cross-repo trawl satisfaction event #2 (T2 of 5-sister path: hive=origin, nexus=T1 ✅ commit 7e69fab1, anima=T2 this commit, hexa-lang=T3, n6-architecture=T4).
+  bans anima docs/* 첫 등장 시 acronym 풀어쓰기 누락 (FEP, VFE, ELBO, IIT, Phi-vector 등)
+  bans anima CLI output 5-count emoji on simple acknowledge / 3+ different 5-count emoji types simultaneously / tier classification absent
+  bans cell-learning autonomy loop status report 에서 jargon-only summary (analogy-to-everyday-object 누락)
+  exceptions atlas.n6 + .own + .roadmap SSOT files — raw 33 priority — exempt
+  exceptions code identifiers / math symbols / commit SHA / DOI / file paths — exempt
+  exceptions formal proof artifacts (papers/<DOI>/main.pdf 인용) — author-side responsibility, anima docs 는 cite 만
+  proof hive/tool/friendliness_lint.hexa
+  proof hive/.raw raw 165 entry (slug user-facing-response-friendliness-mandate)
+  proof hive/docs/reference/friendly_response_canonical.md (canonical 5-element pattern + 3-tier emoji enum)
+  proof hive commit 2a2c3f1e2 (raw 165 LIVE) + 5f12e1829 (5-sister correction airgenome→hive)
+  proof nexus commit 7e69fab1 (own 9 T1 propagation #1)
+  realization-channels anima-CLI-output-friendly
+  realization-channels anima-docs-acronym-first-use-expansion-sweep
+  realization-channels alm-clm-verifier-output-trailer-friendly
+  realization-channels audit-ledger-why-note-field-friendly
+  cognitive-frameworks Plain-Language-Movement-Mazur-2000
+  cognitive-frameworks Cognitive-Load-Theory-Sweller-1988
+  counter-example atlas.n6 / .own / .roadmap SSOT files — raw 33 priority — exempt
+  counter-example code identifiers / math symbols (raw 33 exempt class)
+  counter-example formal proof artifacts (papers cite only, author-side responsibility)
+  ceiling-type semantic
+  breakthrough-grade APPROACH
+  deps raw:ai-native-english-only
+  deps raw:ai-native-error-message
+  deps raw:user-facing-response-friendliness-mandate
+  deps raw:design-deterministic-verifier-manifest
+  deps raw:proof-carrying
+  strategy-source hive raw 165 + nexus own 9 (T1 #1) + 2026-04-28 raw 100 fallback in-context T2 propagation (kick infra unwired — see raw 100 strengthening 2026-04-27 fallback clause). 5-sister-repo set corrected airgenome → hive (off-domain) per hive commit 5f12e1829.
+  cross-repo-trawl-witness /Users/ghost/core/hive/state/raw_addition_requests/registry.jsonl req-raw165-user-facing-response-friendliness-mandate (approval 2026-04-28T14:13:21Z signer manual-user-via-hive-cli)
+  measurement-axis anima-docs-acronym-first-use-expansion-rate = (acronyms expanded on first occurrence / total first-acronym occurrences in docs/) — target ≥ 0.80
+  measurement-axis anima-CLI-output-jargon-ratio = jargon-tokens / total-tokens on stdout — target ≤ 0.30
+  measurement-threshold anima-docs-acronym-first-use-expansion-rate>=0.80 anima-CLI-output-jargon-ratio<=0.30
+  proof-obligations hive/tool/friendliness_lint.hexa-selftest-PASS + anima-docs-sample-N20-scan-PASS + raw-165-base-cite-verified
+  spec-form forward-spec
+  falsifier F-ANIMA-OWN13-1 30d post: anima-docs-acronym-first-use-expansion-rate < 0.50 → mandate ineffective at anima docs scope, retire OR scope reduction (CLI only)
+  falsifier F-ANIMA-OWN13-2 hive raw 165 retire (F-RAW165-1..5 trigger) → own 13 auto-cascade-retire (base-raw dependency)
+  falsifier F-ANIMA-OWN13-3 3+ legitimate anima docs cannot fit acronym expansion (e.g. dense formal proof citation) → exempt-clause widening OR retire
+  omega-stop fixpoint-convergence
+  category code-quality
+  category meta-triad
+  applies-to design-doc
+  applies-to runtime-execution
+  phase pre-write
+  phase runtime
+  triad-exempt forward-spec-meta-rule - anima own 13 governs anima-local user-facing response style (cross-repo mirror of hive raw 165) not parser substrate; raw 95 compliance via canonical hive-agent + cli-lint + advisory trio (hive raw 165 trio inherited).
+  severity warn
+  note FORWARD SPEC. cross-repo mirror of hive raw 165 per raw 47 strategy-exploration-omega-cycle. monotonic-invariant compliant — base raw cite + scope narrowing only (universal user-facing → anima-local CLI / docs / verifier-trailer / audit-ledger surfaces). raw 91 honest C3 cumulative: kick infra 4-fail this session triggered raw 100 fallback clause; T2 propagation manual rather than kick fanout. 5-sister-repo set corrected airgenome → hive per hive commit 5f12e1829.
+  follow-up apply friendliness_lint.hexa scan to anima docs/* sample-N=20 (FEP/VFE/ELBO/IIT/Phi-vector first-use coverage)
+  follow-up retrofit anima cell-learning autonomy loop status report with raw 165 5-element pattern when applicable (analogy-to-everyday-object addition)
+  follow-up T3 propagation hexa-lang (resolver/error trailer paired with raw 66 ai-native-error)
+  follow-up T4 propagation n6-architecture (theory/ docs jargon-ratio measurement)
+  follow-up new -> warn 30d once friendliness_lint scan satisfies measurement-thresholds; warn -> live 60d once 5-sister cross-repo coverage = 5/5
