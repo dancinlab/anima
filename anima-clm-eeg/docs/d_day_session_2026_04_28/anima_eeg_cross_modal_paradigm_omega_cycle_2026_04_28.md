@@ -1,0 +1,1 @@
+../../../design/anima_eeg_cross_modal_paradigm_omega_cycle_2026_04_28.md

@@ -1,0 +1,1 @@
+../../../design/eeg_consciousness_paradigms_omega_cycle_2026_04_28.md
