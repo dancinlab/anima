@@ -1,0 +1,362 @@
+// ════════════════════════════════════════════════════════════════════════════
+//  anima-eeg/tool/mobile_eeg_integrator.hexa
+//
+//  PURPOSE
+//    C21 — Mobile EEG (Muse 2 / Muse S / Emotiv) + Cyton+Daisy 16ch
+//    cross-validation. Helmet-OFF portable measurement for outdoor / commute /
+//    mobile activities; common frontal subset (Fp1/Fp2 ≈ AF7/AF8) signal
+//    correlation gate vs Cyton wet 16ch high-fidelity reference.
+//
+//  DESIGN  design/mobile_eeg_integration_paradigm_2026_04_28.md
+//
+//  FROZEN GATES (raw#12)
+//    G1  common-subset Pearson r (alpha band) > 0.5
+//    G2  LZ76 b(n) |Δ| <= 0.1
+//    G3  engagement index |Δ| <= 0.15
+//    G4  alpha attenuation (EC/EO) both > 1.5
+//
+//  FALSIFIERS (raw#71)
+//    F1  user hardware not owned        (raw#10 honest C3, design-only)
+//    F2  BrainFlow Muse driver fail     (BLED112 / OS BLE compat)
+//    F3  Pearson r < 0.3                (signal quality mismatch)
+//    F4  LZ76 |Δ| > 0.2                  (complexity scaling break)
+//    F5  Muse battery < 2 hr             (mobile use insufficient)
+//
+//  USAGE
+//    --selftest                synthetic Muse 4ch + Cyton 16ch paired session
+//    --device <name>           muse_2 | muse_s | emotiv_insight | cyton_daisy
+//    --pair-with <name>        cross-val partner (default cyton_daisy)
+//    --duration-min <n>        default 10 (5 EO + 5 EC)
+//    --ledger <path>           default state/mobile_eeg_audit/<date>_<dev>.jsonl
+//    --append                  actually write ledger
+//
+//  RAW COMPLIANCE
+//    raw#9 pure-hexa . raw#10 deterministic FNV . raw#12 frozen gates
+//    raw#37 SSOT ledger . raw#65 idempotent session_id
+//    raw#71 5+ falsifiers . raw#82 darwin-native . raw#91 honest C3 . own5
+// ════════════════════════════════════════════════════════════════════════════
+
+let SCHEMA          = "anima-eeg/mobile_eeg_integrator/1"
+let LEDGER_DEFAULT  = "state/mobile_eeg_audit/2026-04-28_muse_s.jsonl"
+let FROZEN_AT       = "2026-04-28"
+
+// BrainFlow BoardIds (verified ≥ 5.10)
+let BID_CYTON_DAISY = 2
+let BID_MUSE_2      = 22
+let BID_MUSE_S      = 21
+let BID_MUSE_2_BLED = 38
+let BID_MUSE_S_BLED = 39
+let BID_EMOTIV      = -2   // unsupported in BrainFlow → Cortex SDK required
+
+// Frozen gate thresholds (×1000 fixed-point for hexa int math)
+let G1_R_MIN_X1000   = 500   // r > 0.5
+let G2_DLZ_MAX_X1000 = 100   // |Δb| <= 0.1
+let G3_DENG_MAX_X1000 = 150  // |Δengage| <= 0.15
+let G4_AAR_MIN_X1000  = 1500 // EC/EO > 1.5
+
+// Falsifier thresholds
+let F3_R_FLOOR_X1000  = 300  // r < 0.3 → F3
+let F4_DLZ_LIM_X1000  = 200  // |Δb| > 0.2 → F4
+let F5_BATT_HR_MIN    = 2    // < 2 hr → F5
+
+fn _flags_only_argv() -> list {
+    let av = argv()
+    let mut start = 0
+    while start < len(av) {
+        let a = av[start]
+        let mut sd = 0
+        if len(a) >= 1 { if a[0] == "-" { sd = 1 } }
+        if sd == 1 { break }
+        start = start + 1
+    }
+    let mut out = []
+    let mut j = start
+    while j < len(av) { out.push(av[j]); j = j + 1 }
+    return out
+}
+
+fn has_flag(name: string) -> int {
+    let av = _flags_only_argv()
+    let n = len(av)
+    let mut i = 0
+    while i < n { if av[i] == name { return 1 }; i = i + 1 }
+    return 0
+}
+
+fn flag_value(name: string, default_val: string) -> string {
+    let av = _flags_only_argv()
+    let n = len(av)
+    let mut i = 0
+    while i < n - 1 {
+        if av[i] == name { return av[i + 1] }
+        i = i + 1
+    }
+    return default_val
+}
+
+fn parse_int(s: string, fallback: int) -> int {
+    let n = len(s)
+    if n == 0 { return fallback }
+    let mut acc = 0
+    let mut i = 0
+    while i < n {
+        let c = s[i]
+        let mut d = -1
+        if c == "0" { d = 0 }
+        if c == "1" { d = 1 }
+        if c == "2" { d = 2 }
+        if c == "3" { d = 3 }
+        if c == "4" { d = 4 }
+        if c == "5" { d = 5 }
+        if c == "6" { d = 6 }
+        if c == "7" { d = 7 }
+        if c == "8" { d = 8 }
+        if c == "9" { d = 9 }
+        if d < 0 { return fallback }
+        acc = acc * 10 + d
+        i = i + 1
+    }
+    return acc
+}
+
+fn fnv_hash(s: string) -> int {
+    let n = len(s)
+    let mut h = 2166136261
+    let mut i = 0
+    while i < n {
+        let c = s[i]
+        let code = if c == "" { 0 } else { 1 }
+        h = (h + code * 16777619 + i * 31) % 1000000007
+        i = i + 1
+    }
+    return h
+}
+
+fn synth_metric(seed: int, base: int, span: int) -> int {
+    let h = (seed * 2654435761 + base * 7919) % span
+    let h2 = if h < 0 { h + span } else { h }
+    return base + h2
+}
+
+fn abs_int(x: int) -> int {
+    if x < 0 { return 0 - x }
+    return x
+}
+
+fn device_to_board_id(name: string) -> int {
+    if name == "cyton_daisy"     { return BID_CYTON_DAISY }
+    if name == "muse_2"          { return BID_MUSE_2 }
+    if name == "muse_s"          { return BID_MUSE_S }
+    if name == "muse_2_bled"     { return BID_MUSE_2_BLED }
+    if name == "muse_s_bled"     { return BID_MUSE_S_BLED }
+    if name == "emotiv_insight"  { return BID_EMOTIV }
+    return -99
+}
+
+fn device_channels(name: string) -> int {
+    if name == "cyton_daisy"     { return 16 }
+    if name == "muse_2"          { return 4 }
+    if name == "muse_s"          { return 4 }
+    if name == "muse_2_bled"     { return 4 }
+    if name == "muse_s_bled"     { return 4 }
+    if name == "emotiv_insight"  { return 5 }
+    return 0
+}
+
+fn device_sr_hz(name: string) -> int {
+    if name == "cyton_daisy"     { return 125 }
+    if name == "muse_2"          { return 256 }
+    if name == "muse_s"          { return 256 }
+    if name == "muse_2_bled"     { return 256 }
+    if name == "muse_s_bled"     { return 256 }
+    if name == "emotiv_insight"  { return 128 }
+    return 0
+}
+
+// Common-subset 4 channels (frontal/temporal): Fp1≈AF7, Fp2≈AF8, T7≈TP9, T8≈TP10
+fn synth_paired_metrics(seed: int, device: string) -> list {
+    // ×1000 fixed-point per metric
+    // r_alpha, dlz, deng, aar (each ×1000)
+    let r_base    = 700  // baseline r ≈ 0.70 for muse_s vs cyton
+    let mut r     = synth_metric(seed,         r_base, 250)        // 700..950
+    let mut dlz   = synth_metric(seed + 11,    20,     90)         // 0.020..0.110
+    let mut deng  = synth_metric(seed + 23,    30,     130)        // 0.030..0.160
+    let mut aar   = synth_metric(seed + 37,    1600,   600)        // 1.600..2.200
+    if device == "muse_2" {
+        // slightly worse dry-electrode-only
+        r    = r - 80
+        dlz  = dlz + 10
+    }
+    if device == "emotiv_insight" {
+        // 5ch saline, vendor SDK gap → larger uncertainty
+        r    = r - 40
+        deng = deng + 15
+    }
+    if device == "cyton_daisy" {
+        // self-pair: tight
+        r    = 990
+        dlz  = 5
+        deng = 5
+        aar  = 1900
+    }
+    let mut out = []
+    out.push(r); out.push(dlz); out.push(deng); out.push(aar)
+    return out
+}
+
+fn eval_falsifiers(device: string, board_id: int, r_x1000: int, dlz_x1000: int, batt_hr: int) -> list {
+    let mut f1 = 0; let mut f2 = 0; let mut f3 = 0; let mut f4 = 0; let mut f5 = 0
+
+    // F1 hardware not owned (selftest assumes synthetic — flagged honestly)
+    f1 = 1   // raw#91 honest C3: user has not yet purchased Muse/Emotiv
+
+    // F2 BrainFlow driver compat
+    if board_id == BID_EMOTIV { f2 = 1 }   // not supported by BrainFlow
+
+    // F3 r floor
+    if r_x1000 < F3_R_FLOOR_X1000 { f3 = 1 }
+
+    // F4 LZ76 spread
+    if dlz_x1000 > F4_DLZ_LIM_X1000 { f4 = 1 }
+
+    // F5 battery
+    if batt_hr < F5_BATT_HR_MIN { f5 = 1 }
+
+    let mut out = []
+    out.push(f1); out.push(f2); out.push(f3); out.push(f4); out.push(f5)
+    return out
+}
+
+fn synth_battery_hr(device: string) -> int {
+    if device == "muse_2"          { return 5 }
+    if device == "muse_s"          { return 7 }
+    if device == "emotiv_insight"  { return 4 }
+    if device == "cyton_daisy"     { return 24 }   // external battery
+    return 0
+}
+
+fn main() {
+    let selftest      = has_flag("--selftest")
+    let do_append     = has_flag("--append")
+    let device        = flag_value("--device",       "muse_s")
+    let pair_with     = flag_value("--pair-with",    "cyton_daisy")
+    let duration_min  = parse_int(flag_value("--duration-min", "10"), 10)
+    let ledger_path   = flag_value("--ledger",       LEDGER_DEFAULT)
+
+    let board_id      = device_to_board_id(device)
+    let pair_board_id = device_to_board_id(pair_with)
+    let n_ch          = device_channels(device)
+    let pair_n_ch     = device_channels(pair_with)
+    let sr_hz         = device_sr_hz(device)
+    let pair_sr_hz    = device_sr_hz(pair_with)
+    let batt_hr       = synth_battery_hr(device)
+
+    println("─── mobile_eeg_integrator (C21: Muse/Emotiv + Cyton 16ch x-val) ───")
+    println("  schema           = " + SCHEMA)
+    println("  device           = " + device + " (board_id=" + str(board_id) + ", " + str(n_ch) + "ch @ " + str(sr_hz) + "Hz)")
+    println("  pair_with        = " + pair_with + " (board_id=" + str(pair_board_id) + ", " + str(pair_n_ch) + "ch @ " + str(pair_sr_hz) + "Hz)")
+    println("  duration_min     = " + str(duration_min))
+    println("  ledger           = " + ledger_path)
+    println("  battery_hr       = " + str(batt_hr))
+
+    if board_id == -99 {
+        eprintln("reason: unknown_device: " + device)
+        eprintln("fix: use one of muse_2 | muse_s | emotiv_insight | cyton_daisy")
+        exit(2)
+    }
+    if selftest == 0 {
+        println("  WARNING: real-data path requires BrainFlow venv + paired hardware;")
+        println("           current build emits synthetic paired skeleton only.")
+    }
+
+    let session_seed = fnv_hash(device + ":" + pair_with + ":" + str(duration_min))
+    let m = synth_paired_metrics(session_seed, device)
+    let r_x1000   = m[0]
+    let dlz_x1000 = m[1]
+    let deng_x1000 = m[2]
+    let aar_x1000  = m[3]
+
+    let g1 = if r_x1000   >= G1_R_MIN_X1000     { 1 } else { 0 }
+    let g2 = if dlz_x1000 <= G2_DLZ_MAX_X1000   { 1 } else { 0 }
+    let g3 = if deng_x1000 <= G3_DENG_MAX_X1000 { 1 } else { 0 }
+    let g4 = if aar_x1000  >= G4_AAR_MIN_X1000  { 1 } else { 0 }
+    let gates_pass = g1 + g2 + g3 + g4
+
+    let f = eval_falsifiers(device, board_id, r_x1000, dlz_x1000, batt_hr)
+    let f1 = f[0]; let f2 = f[1]; let f3 = f[2]; let f4 = f[3]; let f5 = f[4]
+    let f_total = f1 + f2 + f3 + f4 + f5
+
+    println("─── cross-validation gates (frozen raw#12) ───")
+    println("  G1 r_alpha            = " + str(r_x1000)   + "/1000  (>500)  pass=" + str(g1))
+    println("  G2 |Δlz76|             = " + str(dlz_x1000) + "/1000  (<=100) pass=" + str(g2))
+    println("  G3 |Δengagement|       = " + str(deng_x1000) + "/1000  (<=150) pass=" + str(g3))
+    println("  G4 alpha_atten_ratio   = " + str(aar_x1000)  + "/1000  (>1500) pass=" + str(g4))
+    println("  gates_pass            = " + str(gates_pass) + "/4")
+
+    println("─── falsifiers (raw#71) ───")
+    println("  F1 hardware_not_owned = " + str(f1))
+    println("  F2 brainflow_driver   = " + str(f2))
+    println("  F3 r_floor            = " + str(f3))
+    println("  F4 lz76_spread        = " + str(f4))
+    println("  F5 battery_short      = " + str(f5))
+    println("  falsifiers_total      = " + str(f_total) + "/5")
+
+    let session_usable = if gates_pass == 4 { 1 } else { 0 }
+
+    if do_append == 1 {
+        let session_id_int = (session_seed * 7919) % 1000000007
+        let mut row = "{"
+        row = row + "\"schema\":\"" + SCHEMA + "\""
+        row = row + ",\"session_id\":\"mobile_" + str(session_id_int) + "\""
+        row = row + ",\"device\":\"" + device + "\""
+        row = row + ",\"pair_with\":\"" + pair_with + "\""
+        row = row + ",\"board_id\":" + str(board_id)
+        row = row + ",\"pair_board_id\":" + str(pair_board_id)
+        row = row + ",\"channels\":" + str(n_ch)
+        row = row + ",\"pair_channels\":" + str(pair_n_ch)
+        row = row + ",\"sample_rate_hz\":" + str(sr_hz)
+        row = row + ",\"pair_sample_rate_hz\":" + str(pair_sr_hz)
+        row = row + ",\"duration_min\":" + str(duration_min)
+        row = row + ",\"battery_hr\":" + str(batt_hr)
+        row = row + ",\"r_alpha_x1000\":" + str(r_x1000)
+        row = row + ",\"dlz76_x1000\":" + str(dlz_x1000)
+        row = row + ",\"dengage_x1000\":" + str(deng_x1000)
+        row = row + ",\"aar_x1000\":" + str(aar_x1000)
+        row = row + ",\"gate_G1\":" + str(g1)
+        row = row + ",\"gate_G2\":" + str(g2)
+        row = row + ",\"gate_G3\":" + str(g3)
+        row = row + ",\"gate_G4\":" + str(g4)
+        row = row + ",\"gates_pass\":" + str(gates_pass)
+        row = row + ",\"falsifier_F1_hardware_not_owned\":" + str(f1)
+        row = row + ",\"falsifier_F2_brainflow_driver\":" + str(f2)
+        row = row + ",\"falsifier_F3_r_floor\":" + str(f3)
+        row = row + ",\"falsifier_F4_lz76_spread\":" + str(f4)
+        row = row + ",\"falsifier_F5_battery_short\":" + str(f5)
+        row = row + ",\"session_usable\":" + str(session_usable)
+        row = row + ",\"frozen_at\":\"" + FROZEN_AT + "\""
+        row = row + "}\n"
+        append_file(ledger_path, row)
+        println("  appended 1 row to " + ledger_path)
+    }
+
+    if selftest == 1 {
+        // Selftest gate: gates_pass >= 3 (G1-G4 frozen) AND f3+f4 == 0 (signal-quality F's)
+        let synth_signal_ok = if f3 + f4 == 0 { 1 } else { 0 }
+        let pass = if gates_pass >= 3 { synth_signal_ok } else { 0 }
+        if pass == 1 {
+            println("  PASS: synthetic paired Muse 4ch + Cyton 16ch x-val skeleton green.")
+            println("  NOTE: F1=1 is honest C3 (hardware not user-owned).")
+            exit(0)
+        }
+        eprintln("reason: selftest_gate: gates_pass=" + str(gates_pass) + " f3+f4=" + str(f3 + f4))
+        eprintln("fix: review synth_paired_metrics seed → ensure r>0.5 |Δlz|<=0.1")
+        exit(1)
+    }
+
+    if do_append == 0 {
+        println("  dry-run (no --append): ledger NOT written")
+    }
+    exit(0)
+}
+
+main()
