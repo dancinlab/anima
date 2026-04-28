@@ -165,12 +165,13 @@ fn _resolve_backend(verb: string, noun: string) -> string {
     if verb == "gate-pe"      { return CORE_ROOT + "/_gates/pe_saturation.hexa" }
     if verb == "gate-hjorth"  { return CORE_ROOT + "/_gates/hjorth_band.hexa" }
 
-    // ── metrics (Phase 3 PENDING — wrap legacy clm-eeg modules) ─────────
+    // ── metrics (Phase 3 LANDED — _metrics/ wrappers; raw#18 self-host) ─
     if verb == "metric" {
-        if noun == "lz76"        { return "legacy:anima-clm-eeg/tool/clm_eeg_lz76_real.hexa" }
-        if noun == "pe"          { return "legacy:anima-clm-eeg/tool/clm_eeg_pe_real.hexa" }
-        if noun == "hjorth"      { return "legacy:anima-clm-eeg/tool/clm_eeg_hjorth_real.hexa" }
-        if noun == "gamma_theta" { return "legacy:anima-clm-eeg/tool/clm_eeg_gamma_theta_ratio.hexa" }
+        if noun == "lz76"        { return CORE_ROOT + "/_metrics/lz76.hexa" }
+        if noun == "pe"          { return CORE_ROOT + "/_metrics/permutation_entropy.hexa" }
+        if noun == "hjorth"      { return CORE_ROOT + "/_metrics/hjorth.hexa" }
+        if noun == "gamma_theta" { return CORE_ROOT + "/_metrics/gamma_theta.hexa" }
+        if noun == "gamma-theta" { return CORE_ROOT + "/_metrics/gamma_theta.hexa" }
         if noun == "berger"      { return "legacy:anima-clm-eeg/tool/clm_eeg_berger_sanity.hexa" }
         if noun == "all"         { return "pending:metric_all_dispatcher" }
     }
