@@ -1,0 +1,330 @@
+// ════════════════════════════════════════════════════════════════════════════
+//  anima-eeg-core/tool/modules/_integrations/multi_subject_aggregate.hexa
+//                                                  (Phase 6 — _integrations #7)
+//
+//  PURPOSE
+//    N≥3 cohort aggregation — composes resting-baseline paradigm with the
+//    LZ76 metric across N subjects, computes mean and SD, applies CP2 G5
+//    LIVE_HW_WITNESS_RATE (formerly Mk.IV consistency-of-cohort) cohort
+//    quorum policy:
+//      C1.  N_subjects ≥ 3
+//      C2.  cohort_mean_lz76 ≥ 0.65 (legacy P1 floor)
+//      C3.  cohort_sd_lz76 / mean ≤ 0.20 (low between-subject variance)
+//      C4.  per-subject min ≥ 0.5 (no subject failing baseline)
+//
+//  raw#10 HONEST C3 (wrap-vs-port decision)
+//    DECISION: PORT (selftest), WRAP-DESIGN-REFERENCE (live).
+//    Legacy backend: NONE — there is no existing N≥3 cohort aggregator under
+//    anima-eeg/ or anima-clm-eeg/ (raw#10 honest C3: this module is a green-
+//    field PORT). The legacy `eeg_to_token_cyborg.hexa` includes a notion of
+//    multi-subject ledger but does not aggregate. Selftest synthesizes 3
+//    subjects with deterministic LCG seeds (subject_seed = base_seed + k*101).
+//    Live mode requires N≥3 real .npy files, which DEPENDS on D+1 hardware
+//    arrival → NOT_YET_LANDED honest C3.
+//
+//  RAW#71 FALSIFIERS (5 preregistered, frozen 2026-04-29)
+//    F_MS_01: N_subjects < 3                            → COHORT_DEFICIT
+//    F_MS_02: cohort_mean_lz76 < 0.65                   → COHORT_BELOW_FLOOR
+//    F_MS_03: cohort_sd / mean > 0.20                   → COHORT_HETEROG
+//    F_MS_04: per-subject min < 0.5                     → SUBJECT_OUTLIER
+//    F_MS_05: any subject sentinel                      → INGEST_FAILED
+//
+//  CLI
+//    hexa run multi_subject_aggregate.hexa --selftest
+//    hexa run multi_subject_aggregate.hexa --live   (→ NOT_YET_LANDED honest C3)
+//
+//  RAW raw#9 hexa-only · raw#10 honest C3 · raw#12 sentinel · raw#42 host-deleg
+//      raw#65 idempotent · raw#71 5 falsifiers · raw#82 darwin · raw#91 honest
+//
+//  @resolver-bypass(reason="darwin-native: live requires N≥3 real .npy ingest;
+//                   selftest synthesises 3 subjects via LCG seeds.")
+// ════════════════════════════════════════════════════════════════════════════
+
+let SCHEMA      = "anima-eeg-core/_integrations/multi_subject_aggregate/1"
+let MODULE_NAME = "multi_subject_aggregate"
+let LEGACY_PATH = "none_greenfield_port"
+
+let N_SUBJECTS_MIN              = 3
+let COHORT_LZ_FLOOR_X1000       = 650
+let COHORT_CV_MAX_X1000         = 200
+let SUBJECT_LZ_MIN_X1000        = 500
+
+let SENTINEL = -2147483647
+let LCG_A = 1103515245
+let LCG_C = 12345
+let LCG_M = 2147483648
+
+// ─── helpers ────────────────────────────────────────────────────────────
+
+fn _flags_only_argv() -> array {
+    let av = argv()
+    let mut start = 0
+    while start < len(av) {
+        let a = av[start]
+        let mut is_prefix = false
+        if a.ends_with(".hexa") { is_prefix = true }
+        if !is_prefix { if a.ends_with("/exe") { is_prefix = true } }
+        if !is_prefix { if a == "run" { is_prefix = true } }
+        if !is_prefix { if a.ends_with("hexa.real") || a.ends_with("/hexa") { is_prefix = true } }
+        if is_prefix { start = start + 1 } else { break }
+    }
+    let mut out = []
+    let mut j = start
+    while j < len(av) { out.push(av[j]); j = j + 1 }
+    return out
+}
+
+fn _kv_get(kv: string, key: string) -> string {
+    let prefix = key + "="
+    let lines = kv.split(",")
+    let mut i = 0
+    while i < len(lines) {
+        let ln = lines[i].trim()
+        if ln.starts_with(prefix) { return ln.substring(prefix.len(), ln.len()) }
+        i = i + 1
+    }
+    return ""
+}
+
+fn _to_int_or(s: string, dflt: int) -> int {
+    if s == "" { return dflt }
+    return to_int(s)
+}
+
+fn _abs(x: int) -> int { if x < 0 { return -x } return x }
+
+fn _lcg_next(state: int) -> int {
+    let mut s = state * LCG_A + LCG_C
+    if s < 0 { s = -s }
+    s = s - (s / LCG_M) * LCG_M
+    return s
+}
+
+// per-subject LZ76 proxy: count distinct keys mod 32 across 16 channels
+fn _subject_lz_proxy_x1000(subject_seed: int) -> int {
+    let n = 16
+    let mut state = subject_seed
+    let mut keys = []
+    let mut c = 0
+    while c < n {
+        state = _lcg_next(state)
+        let mut k = state - (state / 32) * 32
+        if k < 0 { k = -k }
+        keys.push(k)
+        c = c + 1
+    }
+    let mut distinct = 0
+    let mut i = 0
+    while i < n {
+        let mut seen = 0
+        let mut j = 0
+        while j < i {
+            if keys[i] == keys[j] { seen = 1; j = i }
+            j = j + 1
+        }
+        if seen == 0 { distinct = distinct + 1 }
+        i = i + 1
+    }
+    let r = (distinct * 1000) / n
+    if r > 1000 { return 1000 }
+    if r < 0 { return 0 }
+    return r
+}
+
+// ─── public API ────────────────────────────────────────────────────────
+
+fn _integration_multi_subject_aggregate_kv(args_kv: string) -> string {
+    let n_subjects = _to_int_or(_kv_get(args_kv, "n_subjects"), 3)
+    let base_seed  = _to_int_or(_kv_get(args_kv, "seed"),       42)
+    let inj_n2     = _to_int_or(_kv_get(args_kv, "inject_n_lt_3"), 0)
+    let inj_low    = _to_int_or(_kv_get(args_kv, "inject_cohort_low"),  0)
+    let inj_het    = _to_int_or(_kv_get(args_kv, "inject_heterog"),     0)
+    let inj_out    = _to_int_or(_kv_get(args_kv, "inject_outlier"),     0)
+    let inj_sent   = _to_int_or(_kv_get(args_kv, "inject_sentinel"),    0)
+
+    let mut effective_n = n_subjects
+    if inj_n2 == 1 { effective_n = 2 }
+
+    // synthesise per-subject LZ76 proxy values
+    let mut per_subject = []
+    let mut k = 0
+    while k < effective_n {
+        let subject_seed = base_seed + k * 101
+        let lz = _subject_lz_proxy_x1000(subject_seed)
+        per_subject.push(lz)
+        k = k + 1
+    }
+    if inj_low == 1 {
+        let mut i = 0
+        while i < effective_n { per_subject[i] = 400; i = i + 1 }
+    }
+    if inj_het == 1 && effective_n >= 3 {
+        per_subject[0] = 200
+        per_subject[1] = 1000
+        per_subject[2] = 600
+    }
+    if inj_out == 1 && effective_n >= 1 {
+        per_subject[0] = 100  // single-subject outlier
+    }
+    if inj_sent == 1 && effective_n >= 1 {
+        per_subject[0] = SENTINEL
+    }
+
+    // cohort stats
+    let mut sum = 0
+    let mut any_sentinel = 0
+    let mut min_v = 1000000
+    let mut max_v = -1000000
+    let mut q = 0
+    while q < effective_n {
+        if per_subject[q] == SENTINEL { any_sentinel = 1 }
+        sum = sum + per_subject[q]
+        if per_subject[q] < min_v { min_v = per_subject[q] }
+        if per_subject[q] > max_v { max_v = per_subject[q] }
+        q = q + 1
+    }
+    let mean = if effective_n > 0 { sum / effective_n } else { SENTINEL }
+
+    // SD
+    let mut sq = 0
+    q = 0
+    while q < effective_n {
+        let d = per_subject[q] - mean
+        sq = sq + d * d
+        q = q + 1
+    }
+    let var_v = if effective_n > 0 { sq / effective_n } else { 0 }
+    let mut sd = 0
+    if var_v > 0 {
+        let mut x = var_v
+        let mut y = (x + 1) / 2
+        while y < x { x = y; y = (x + var_v / x) / 2 }
+        sd = x
+    }
+    let cv_x1000 = if mean > 0 { (sd * 1000) / mean } else { SENTINEL }
+
+    // criteria
+    let c1_pass = if effective_n >= N_SUBJECTS_MIN { 1 } else { 0 }
+    let c2_pass = if mean != SENTINEL && mean >= COHORT_LZ_FLOOR_X1000 { 1 } else { 0 }
+    let c3_pass = if cv_x1000 != SENTINEL && cv_x1000 <= COHORT_CV_MAX_X1000 { 1 } else { 0 }
+    let c4_pass = if min_v >= SUBJECT_LZ_MIN_X1000 { 1 } else { 0 }
+
+    // raw#71 falsifiers
+    let mut triggered = ""
+    let mut trig_count = 0
+    if c1_pass == 0    { triggered = triggered + "F_MS_01,"; trig_count = trig_count + 1 }
+    if c2_pass == 0    { triggered = triggered + "F_MS_02,"; trig_count = trig_count + 1 }
+    if c3_pass == 0    { triggered = triggered + "F_MS_03,"; trig_count = trig_count + 1 }
+    if c4_pass == 0    { triggered = triggered + "F_MS_04,"; trig_count = trig_count + 1 }
+    if any_sentinel == 1 { triggered = triggered + "F_MS_05,"; trig_count = trig_count + 1 }
+    let nT = len(triggered)
+    if nT > 0 { triggered = triggered.substring(0, nT - 1) }
+
+    let all_pass = c1_pass + c2_pass + c3_pass + c4_pass
+    let mut verdict = "FAIL"
+    if all_pass == 4 && trig_count == 0 { verdict = "PASS" }
+    else { if trig_count > 0 { verdict = "FALSIFIED" } }
+
+    // serialize per-subject array
+    let mut per_str = ""
+    let mut p = 0
+    while p < effective_n {
+        per_str = per_str + str(per_subject[p])
+        if p + 1 < effective_n { per_str = per_str + ";" }
+        p = p + 1
+    }
+
+    let mut kv = ""
+    kv = kv + "schema=" + SCHEMA + "\n"
+    kv = kv + "module=" + MODULE_NAME + "\n"
+    kv = kv + "metric=cohort_lz76_aggregate\n"
+    kv = kv + "paradigm=resting_baseline\n"
+    kv = kv + "n_subjects=" + str(effective_n) + "\n"
+    kv = kv + "base_seed=" + str(base_seed) + "\n"
+    kv = kv + "per_subject_lz_x1000=" + per_str + "\n"
+    kv = kv + "cohort_min_x1000=" + str(min_v) + "\n"
+    kv = kv + "cohort_max_x1000=" + str(max_v) + "\n"
+    kv = kv + "cohort_mean_x1000=" + str(mean) + "\n"
+    kv = kv + "cohort_sd_x1000=" + str(sd) + "\n"
+    kv = kv + "cohort_cv_x1000=" + str(cv_x1000) + "\n"
+    kv = kv + "C1_n_subjects_pass=" + str(c1_pass) + "\n"
+    kv = kv + "C2_cohort_mean_pass=" + str(c2_pass) + "\n"
+    kv = kv + "C3_cohort_cv_pass=" + str(c3_pass) + "\n"
+    kv = kv + "C4_subject_min_pass=" + str(c4_pass) + "\n"
+    kv = kv + "criteria_passed=" + str(all_pass) + "\n"
+    kv = kv + "criteria_total=4\n"
+    kv = kv + "verdict=" + verdict + "\n"
+    kv = kv + "value_x1000=" + str(mean) + "\n"
+    kv = kv + "backend=" + LEGACY_PATH + "\n"
+    kv = kv + "backend_status=greenfield_port_no_legacy_aggregator\n"
+    kv = kv + "raw71_falsifier_count=5\n"
+    kv = kv + "raw71_triggered_count=" + str(trig_count) + "\n"
+    kv = kv + "raw71_triggered_ids=" + triggered + "\n"
+    kv = kv + "raw91_evidence=cohort_mean_+sd_+cv_+per_subject_min_max_+sentinel_check\n"
+    kv = kv + "raw91_limit=N_subjects=3_synth_lcg_no_real_npy_no_hardware\n"
+    kv = kv + "raw95_enforce_layer=in_module\n"
+    return kv
+}
+
+// ─── CLI ───────────────────────────────────────────────────────────────
+
+fn _print_usage() {
+    eprintln("usage: hexa run multi_subject_aggregate.hexa --selftest")
+    eprintln("       hexa run multi_subject_aggregate.hexa --live   (→ NOT_YET_LANDED)")
+}
+
+fn main() {
+    let av = _flags_only_argv()
+    let mut selftest = false
+    let mut live = false
+    let mut n_subjects = 3
+    let mut seed = 42
+    let mut i = 0
+    while i < len(av) {
+        let a = av[i]
+        if a == "--selftest"     { selftest = true; i = i + 1; continue }
+        if a == "--live"         { live = true; i = i + 1; continue }
+        if a == "--n-subjects"   { n_subjects = to_int(av[i+1]); i = i + 2; continue }
+        if a == "--seed"         { seed = to_int(av[i+1]); i = i + 2; continue }
+        if a == "--help" || a == "-h" { _print_usage(); exit(0) }
+        i = i + 1
+    }
+
+    if !selftest && !live {
+        eprintln("ABORT: must pass --selftest or --live")
+        _print_usage()
+        exit(2)
+    }
+
+    if live && !selftest {
+        println("── _integrations/multi_subject_aggregate LIVE ──")
+        println("schema=" + SCHEMA)
+        println("status=NOT_YET_LANDED")
+        println("kind=live_N_ge_3_real_npy_ingest_+cohort_aggregate")
+        println("verdict=PENDING_MIGRATION")
+        println("backend=" + LEGACY_PATH)
+        eprintln("reason: not-yet-landed: greenfield, no legacy aggregator + N≥3 real subjects unavailable until D+1")
+        eprintln("fix: deferred until CP2 G5 LIVE_HW_WITNESS_RATE — N≥3 real .npy ingest path")
+        exit(4)
+    }
+
+    println("== _integrations/multi_subject_aggregate selftest (synth N=" + str(n_subjects) + " seed=" + str(seed) + ") ==")
+    let args_kv = "n_subjects=" + str(n_subjects) + ",seed=" + str(seed)
+    let kv = _integration_multi_subject_aggregate_kv(args_kv)
+    print(kv)
+
+    let lines = kv.split("\n")
+    let mut found_pass = 0
+    let mut k = 0
+    while k < len(lines) {
+        let ln = lines[k].trim()
+        if ln == "verdict=PASS" { found_pass = 1 }
+        k = k + 1
+    }
+    if found_pass == 0 {
+        eprintln("reason: nominal selftest verdict not PASS — falsifier triggered or sentinel")
+        exit(1)
+    }
+    println("selftest=ok")
+    exit(0)
+}
