@@ -2,12 +2,16 @@
 //  anima-clm-eeg/tool/clm_eeg_lz76_real.hexa
 //
 //  PURPOSE
-//    D+1 P1 falsifier — REAL-DATA Schartner 2017 LZ76 on 16-channel resting EEG.
-//    Replaces the synthetic LZ proxy in clm_eeg_p1_lz_pre_register.hexa with the
-//    classical Kaspar-Schuster 1987 LZ76 production-count algorithm applied to
-//    a per-channel-median-binarized concatenated stream.
+//    D+1 P1 falsifier — REAL-DATA Lempel-Ziv 1976 (Kaspar-Schuster 1987 form)
+//    LZc on 16-channel resting EEG. Replaces the synthetic LZ proxy in
+//    clm_eeg_p1_lz_pre_register.hexa with the classical Kaspar-Schuster 1987
+//    LZ76 production-count algorithm applied to a per-channel-median-binarized
+//    concatenated stream.
 //
-//  ALGORITHM (Schartner 2017, "LZ complexity for resting EEG")
+//  ALGORITHM (Kaspar-Schuster 1987 LZ76 production-count; binarization
+//             follows Bódizs et al. eNeuro 2024 median-amplitude method, NOT
+//             Schartner 2015/2017 Hilbert-envelope mean — see raw#10 honest
+//             retraction note below)
 //    1. Read 16-ch EEG arrays from JSON (an11_b_eeg_ingest output, schema
 //       anima/eeg_recording/1; shape: channels × samples).
 //    2. Binarize each channel by its own median (above_median=1, else 0)
@@ -18,8 +22,15 @@
 //       substring productions c(n).
 //    5. Normalize: LZ76_norm = c(n) · log2(n) / n   (×1000 fixed-point).
 //    6. Apply FROZEN pre-registered criteria (this file does NOT mutate them):
-//         C1: LZ76_norm_x1000  ≥ 650  (Schartner human-resting floor 0.65)
-//         C2: |Δ|/human_x1000  ≤ 200‰ (20 % of human-baseline 0.85)
+//         C1: LZ76_norm_x1000  ≥ 650  (operational pre-commitment, raw#12
+//                                      frozen 2026-04-26; visual-estimate
+//                                      midpoint of Schartner 2015 Fig 7
+//                                      wakeful-rest band ~0.6–0.7 — NOT a
+//                                      paper-derived mean−k·SD threshold)
+//         C2: |Δ|/human_x1000  ≤ 200‰ (operational tolerance, raw#12 frozen;
+//                                      20% band on a placeholder human
+//                                      baseline 0.85 that is NOT in any cited
+//                                      paper — see raw#10 retraction note)
 //
 //  INPUT MODES
 //    --selftest [--selftest-mode {random|structured}]
@@ -46,12 +57,44 @@
 //                 lz76_norm_x1000, b_n_x1000, verdict, reference}
 //
 //  REFERENCE VALUES (pre-registered, raw#12; cited in algorithm.reference)
-//    Kaspar & Schuster 1987 (Phys Rev A 36:842):
+//    Kaspar & Schuster 1987 (Phys Rev A 36:842, DOI 10.1103/PhysRevA.36.842):
 //      pure i.i.d. random binary sequence → b(n) → 1.0 as n → ∞
-//    Schartner 2017 (PLOS ONE; resting-EEG human cohort):
-//      median-binarized 16-ch 60-s resting EEG → b(n) ≈ 0.85 ± 0.05
+//      (correctly attributed; algorithm verified Lempel-Ziv 1976 production)
+//    Resting-EEG human-cohort baseline 0.85:
+//      OPERATIONAL PLACEHOLDER, raw#12 frozen 2026-04-26. NOT directly
+//      published in Schartner 2015 (PLOS ONE 10:e0133532) nor Schartner 2017
+//      (Neurosci Conscious 2017(1):niw022); Schartner 2015 Fig 7 visually
+//      places wakeful-rest LZc at ~0.6–0.7 (graph-only, no mean±SD table).
+//      Bódizs et al. eNeuro 2024 (DOI 10.1523/ENEURO.0259-23.2024) uses the
+//      matching median-binarisation pipeline but publishes figure-only
+//      values (numerical table on OSF doi:10.17605/OSF.IO/QGPW4).
+//      Future work: replace 0.85 with empirical mean − 2·SD once N≥10
+//      anima resting-EEG runs accumulate.
 //    Strongly periodic / structured signals (single sinusoid):
 //      median-binarized periodic stream → b(n) << 0.3
+//
+//  RAW#10 HONEST RETRACTION (2026-04-28, this commit)
+//    Earlier docstring/cert strings labelled the resting-EEG threshold
+//    "Schartner 2017 PLOS ONE" — this conflated two papers and is FALSE:
+//      • Schartner et al. 2015, PLOS ONE 10:e0133532 (propofol anaesthesia,
+//        scalp EEG, Hilbert-envelope mean binarisation) — DOES exist.
+//      • Schartner et al. 2017, Neurosci Conscious 2017(1):niw022
+//        (intracranial SEEG, NREM sleep, Hilbert-envelope) — DOES exist.
+//      • "Schartner 2017 PLOS ONE" — DOES NOT EXIST.
+//      • The number "0.85 ± 0.05 awake mean" is NOT in either paper.
+//    Binarisation method note: anima uses MEDIAN of raw amplitude
+//    (Bódizs eNeuro 2024 method); Schartner 2015/2017 use Hilbert-envelope
+//    MEAN. Numeric LZc values are NOT directly comparable across these two
+//    binarisation methods. C1 (0.65) and C2 (20%) are operational
+//    pre-commitments, NOT paper-derived (raw#10 / raw#91 honesty rule).
+//
+//  SELFTEST FINITE-LENGTH BIAS
+//    Default selftest n = 16 ch × 16 samples = 256 bits is far below the
+//    Kaspar-Schuster asymptote (Aboy/Hu 2006-era simulation: finite-length
+//    bias ~20–30% at n≤256). Selftest validates the random > structured
+//    ordering only; it does NOT support quantitative claims about the 0.65
+//    or 0.85 thresholds. The real-data path (≥60 s × 125 Hz × 16 ch =
+//    120 000 bits) is asymptote-stable.
 //
 //  OUTPUT
 //    state/clm_eeg_p1_lz_pre_register_real.json (or CLM_EEG_LZ76_OUT)
@@ -932,14 +975,16 @@ fn main() {
         cert = cert + "    \"ordering_check\": \"deferred-to-jsonl-inspector\",\n"
         cert = cert + "    \"reference_random_b_target\": \"~1.0 (Kaspar-Schuster 1987 random binary asymptote)\",\n"
         cert = cert + "    \"reference_structured_b_target\": \"<0.3 (single-period square wave)\",\n"
-        cert = cert + "    \"reference_resting_eeg_b_target\": \"~0.85 ± 0.05 (Schartner 2017 PLOS ONE)\"\n"
+        cert = cert + "    \"reference_resting_eeg_b_target\": \"0.85 placeholder — operational pre-commitment, NOT paper-derived (raw#10 retraction 2026-04-28: not published in Schartner 2015 PLOS ONE 10:e0133532 nor Schartner 2017 Neurosci Conscious 2017(1):niw022)\"\n"
         cert = cert + "  },\n"
     }
     cert = cert + "  \"algorithm\": {\n"
-    cert = cert + "    \"reference\": \"Schartner 2017 (LZ complexity for resting EEG); Kaspar-Schuster 1987 (Phys Rev A 36:842)\",\n"
-    cert = cert + "    \"binarization\": \"per-channel median threshold (above=1, else 0)\",\n"
-    cert = cert + "    \"concatenation\": \"16 channels sequentially → single binary stream\",\n"
-    cert = cert + "    \"normalization\": \"c(n) · log2(n) / n  (×1000 fixed-point)\"\n"
+    cert = cert + "    \"reference\": \"Kaspar-Schuster 1987 (Phys Rev A 36:842, DOI 10.1103/PhysRevA.36.842) — LZ76 production-count algorithm + random-asymptote b→1.0; Lempel-Ziv 1976 (IEEE Trans Inform Theory 22(1):75-81) — LZ76 complexity definition; Bódizs et al. 2024 (eNeuro 11(3):ENEURO.0259-23, PMC10978822) — median-binarisation method matching this pipeline. Cf. Schartner et al. 2015 (PLOS ONE 10:e0133532, DOI 10.1371/journal.pone.0133532) and Schartner et al. 2017 (Neurosci Conscious 2017(1):niw022, DOI 10.1093/nc/niw022) for prior LZc-on-EEG context, but those papers use Hilbert-envelope mean binarisation, not median — numeric LZc values are NOT directly comparable.\",\n"
+    cert = cert + "    \"binarization\": \"per-channel median of raw amplitude (above=1, else 0); follows Bódizs eNeuro 2024 method, NOT Schartner 2015/2017 Hilbert-envelope mean\",\n"
+    cert = cert + "    \"concatenation\": \"16 channels sequentially → single 1-D binary stream (not Schartner 2015/2017 2-D matrix LZc form)\",\n"
+    cert = cert + "    \"normalization\": \"c(n) · log2(n) / n  (×1000 fixed-point)\",\n"
+    cert = cert + "    \"criteria_provenance\": \"C1 0.65 floor and C2 20% tolerance and human_baseline 0.85 are OPERATIONAL PRE-COMMITMENTS (raw#12 frozen 2026-04-26), NOT paper-derived mean±SD values. Source-paper visual estimate places wakeful-rest LZc at ~0.6–0.7 (Schartner 2015 Fig 7 graph-only). Recommended future work: replace operational thresholds with empirical mean − 2·SD once N≥10 anima resting runs accumulate.\",\n"
+    cert = cert + "    \"selftest_finite_length_bias\": \"selftest n=256 bits exhibits ~20–30% finite-length bias per Aboy/Hu 2006-era simulation; real-data path n≥120000 bits is asymptote-stable\"\n"
     cert = cert + "  }\n"
     cert = cert + "}\n"
     write_file(out_path, cert)
@@ -961,7 +1006,8 @@ fn main() {
     if mode == "selftest" {
         jrow = jrow + "\"selftest_mode\":\"" + cli_selftest_mode + "\","
     }
-    jrow = jrow + "\"reference\":\"Kaspar-Schuster 1987 (Phys Rev A 36:842) | Schartner 2017\""
+    jrow = jrow + "\"reference\":\"Kaspar-Schuster 1987 (Phys Rev A 36:842, DOI 10.1103/PhysRevA.36.842) | Lempel-Ziv 1976 (IEEE Trans Inform Theory 22(1):75-81) | Bódizs 2024 eNeuro (DOI 10.1523/ENEURO.0259-23.2024, median-binarisation match) | cf. Schartner 2015 PLOS ONE 10:e0133532 + Schartner 2017 Neurosci Conscious 2017(1):niw022 (Hilbert-envelope, NOT directly comparable)\","
+    jrow = jrow + "\"criteria_provenance\":\"C1=0.65 / C2=20% / human_baseline=0.85 are operational pre-commitments (raw#12 frozen), NOT paper-derived\""
     jrow = jrow + "}"
     append_jsonl(audit_path, jrow)
 
@@ -991,7 +1037,8 @@ fn main() {
         println("  selftest_mode               = " + cli_selftest_mode)
         println("  reference (random)  b ~ 1.0 (Kaspar-Schuster 1987 asymptote)")
         println("  reference (struct)  b < 0.3 (single-period square wave)")
-        println("  reference (resting EEG)  b ~ 0.85 ± 0.05 (Schartner 2017)")
+        println("  reference (resting EEG)  b ~ 0.85 PLACEHOLDER — operational pre-commitment, NOT paper-derived (raw#10 retraction 2026-04-28)")
+        println("  selftest n=256 bits has ~20-30% finite-length bias (Aboy/Hu 2006 sim); real-data path n>=120000 is asymptote-stable")
         println("  ordering_check              = deferred-to-jsonl-inspector")
         println("                                (run twice: --selftest-mode random + structured;")
         println("                                 inspect JSONL audit for b(random) > b(structured))")
