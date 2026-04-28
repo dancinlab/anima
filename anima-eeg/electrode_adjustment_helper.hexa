@@ -185,6 +185,79 @@ def main_check(board_id, port, seconds):
     n_bad = 0
     n_dead = 0
 
+    # Per-channel correlation matrix for ear clip inference
+    eeg_mean = eeg - eeg.mean(axis=1, keepdims=True)
+    eeg_std_arr = eeg.std(axis=1, keepdims=True) + 1e-9
+    eeg_norm = eeg_mean / eeg_std_arr
+    corr_mat = (eeg_norm @ eeg_norm.T) / cols
+    np.fill_diagonal(corr_mat, 0.0)
+    avg_abs_corr = float(np.mean(np.abs(corr_mat)))
+
+    # Per-channel rms + mains stats (for ear clip inference + touch detection)
+    all_rms = []
+    all_mains = []
+    all_pconst = []
+    rms_per_ch = np.array([float(np.sqrt(np.mean(eeg[c, :] ** 2))) for c in range(n_ch)])
+    median_rms = float(np.median(rms_per_ch))
+
+    # Touch detection: track rolling baseline per-channel via /tmp state file.
+    # Touch = current rms > 3x channel's own historical median over last N ticks.
+    import os, json
+    BASELINE_PATH = '/tmp/anima_eeg_live_baseline.json'
+    history = []
+    if os.path.exists(BASELINE_PATH):
+        try:
+            with open(BASELINE_PATH, 'r') as f:
+                history = json.load(f)
+        except: history = []
+    history.append(rms_per_ch.tolist())
+    if len(history) > 8: history = history[-8:]  # keep last 8 ticks
+    try:
+        with open(BASELINE_PATH, 'w') as f:
+            json.dump(history, f)
+    except: pass
+
+    # Compute per-channel baseline = median rms over recent history (excluding latest)
+    if len(history) >= 2:
+        baseline_data = np.array(history[:-1])  # exclude current tick
+        if baseline_data.shape[0] >= 2:
+            baseline_per_ch = np.median(baseline_data, axis=0)
+        else:
+            baseline_per_ch = baseline_data[0]
+        # Touch detected: current >= 2.5x own baseline AND >= 30000 absolute
+        touch_active_ch = (rms_per_ch > 2.5 * baseline_per_ch) & (rms_per_ch > 30000.0)
+        touched_indices = [int(c) for c in range(n_ch) if touch_active_ch[c]]
+    else:
+        # First tick — no history, just record. No touch detection yet.
+        baseline_per_ch = rms_per_ch.copy()
+        touch_active_ch = np.zeros(n_ch, dtype=bool)
+        touched_indices = []
+
+    if touched_indices:
+        # Pick highest deviation-ratio channel (most clearly touched)
+        ratios = rms_per_ch / (baseline_per_ch + 1e-9)
+        # Mask non-touched
+        ratios_masked = np.where(touch_active_ch, ratios, 0.0)
+        touched_idx = int(np.argmax(ratios_masked))
+        out_kv('touch_active', 1)
+        out_kv('touch_idx', touched_idx)
+        if touched_idx < len(WIRE_META):
+            tm = WIRE_META[touched_idx]
+            out_kv('touch_pos', tm[2])
+            out_kv('touch_pin', tm[1])
+            out_kv('touch_board', tm[0])
+            out_kv('touch_color', tm[3])
+        out_kv('touch_rms_uv', round(float(rms_per_ch[touched_idx]), 2))
+        out_kv('touch_baseline_uv', round(float(baseline_per_ch[touched_idx]), 2))
+        out_kv('touch_ratio', round(float(rms_per_ch[touched_idx] / (baseline_per_ch[touched_idx] + 1e-9)), 2))
+    else:
+        out_kv('touch_active', 0)
+        out_kv('touch_idx', -1)
+        out_kv('touch_pos', '')
+
+    out_kv('median_rms_uv', round(median_rms, 2))
+    out_kv('history_ticks', len(history))
+
     for ch_idx in range(n_ch):
         ch = eeg[ch_idx, :]
         rms = float(np.sqrt(np.mean(ch ** 2)))
@@ -194,6 +267,9 @@ def main_check(board_id, port, seconds):
         m_uv = float(mains_amp[ch_idx])
 
         state, sym = classify(rms, std, m_uv, p_const)
+        all_rms.append(rms)
+        all_mains.append(m_uv)
+        all_pconst.append(p_const)
         if state == 'OK':            n_ok += 1
         elif state == 'LOOSE':       n_loose += 1
         elif state.startswith('BAD'): n_bad += 1
@@ -215,6 +291,62 @@ def main_check(board_id, port, seconds):
     out_kv('count_loose', n_loose)
     out_kv('count_bad', n_bad)
     out_kv('count_dead', n_dead)
+
+    # Ear clip inference (raw#10 honest — indirect detection from EEG patterns)
+    # Works even without helmet on, by examining ADC behavior:
+    # SRB2 path:
+    #   - If broken: ADCs saturate at reference rail (p_constant > 0.85 across ALL channels)
+    #     OR all 16 channels show identical correlated noise (corr ~ 1.0)
+    #   - If working: channels show varied behavior, p_constant near 0
+    # BIAS path:
+    #   - If broken: extreme uniform mains pickup (no common-mode rejection)
+    #     median_mains > 500 µV with low variance across channels
+    #   - If working: mains pickup variable across channels (BIAS partially compensates)
+    avg_pconst = float(np.mean(all_pconst))
+    median_mains = float(np.median(all_mains))
+    mains_array = np.array(all_mains)
+    mains_variability = float(np.std(mains_array)) if len(mains_array) > 1 else 0.0
+
+    # SRB2 ear clip state (works even helmet off)
+    if avg_pconst > 0.85:
+        srb2_state = 'BAD_DISCONNECTED'
+        srb2_sym = '✗'
+    elif avg_abs_corr > 0.99:
+        srb2_state = 'BAD_DISCONNECTED'
+        srb2_sym = '✗'
+    elif avg_pconst < 0.20:
+        # Channels varying healthily — SRB2 reference providing usable reference
+        srb2_state = 'OK'
+        srb2_sym = '✓'
+    else:
+        srb2_state = 'AMBIGUOUS'
+        srb2_sym = '⚠'
+
+    # BIAS ear clip state (works even helmet off)
+    if median_mains > 500.0 and mains_variability < 50.0:
+        # Uniformly extreme mains = BIAS rejection broken
+        bias_state = 'BAD_DISCONNECTED'
+        bias_sym = '✗'
+    elif median_mains > 200.0:
+        bias_state = 'LOOSE'
+        bias_sym = '⚠'
+    elif median_mains < 200.0 and avg_pconst < 0.20:
+        # mains bounded + ADCs varying = BIAS providing partial common-mode rejection
+        bias_state = 'OK'
+        bias_sym = '✓'
+    else:
+        bias_state = 'AMBIGUOUS'
+        bias_sym = '⚠'
+
+    out_kv('avg_pconst', round(avg_pconst, 4))
+    out_kv('avg_abs_corr', round(avg_abs_corr, 4))
+    out_kv('median_mains_uv', round(median_mains, 2))
+    out_kv('mains_variability_uv', round(mains_variability, 2))
+    out_kv('srb2_state', srb2_state)
+    out_kv('srb2_symbol', srb2_sym)
+    out_kv('bias_state', bias_state)
+    out_kv('bias_symbol', bias_sym)
+
     if n_dead > 0:
         out_kv('verdict', 'BOARD_ISSUE')
         return 4
@@ -245,23 +377,296 @@ def run_selftest():
     out_kv('count_loose', 0)
     out_kv('count_bad', 0)
     out_kv('count_dead', 0)
+    out_kv('avg_pconst', 0.0)
+    out_kv('avg_abs_corr', 0.1)
+    out_kv('median_mains_uv', 2.0)
+    out_kv('helmet_on_signal', 1)
+    out_kv('srb2_state', 'OK')
+    out_kv('srb2_symbol', '✓')
+    out_kv('bias_state', 'OK')
+    out_kv('bias_symbol', '✓')
     out_kv('verdict', 'ALL_OK')
+    return 0
+
+def run_live(board_id, port):
+    '''Single-BrainFlow-session live touch detector.
+    Opens session once, loops 1s ticks, renders ASCII with ANSI clear+home.
+    Rolling baseline (in-memory deque) per channel — touch = rms > 2.5x own baseline AND > 30000 absolute.
+    Ctrl-C clean exit.'''
+    try:
+        import numpy as np
+        from brainflow.board_shim import BoardShim, BrainFlowInputParams, BoardIds
+    except ImportError as e:
+        err_trailer('import-missing', str(e)[:160], '1) source .venv-eeg/bin/activate  2) pip install brainflow numpy')
+        return 4
+
+    BoardShim.disable_board_logger()
+    params = BrainFlowInputParams()
+    if port:
+        params.serial_port = port
+
+    try:
+        board = BoardShim(board_id, params)
+        board.prepare_session()
+        board.start_stream()
+    except Exception as e:
+        err_trailer('board-not-ready', str(e)[:160],
+                    '1) toggle Cyton OFF wait 5s then PC  2) verify Daisy seated  3) Stop OpenBCI GUI if running')
+        try: board.release_session()
+        except: pass
+        return 4
+
+    try:
+        sample_rate = BoardShim.get_sampling_rate(board_id)
+        eeg_channels = BoardShim.get_eeg_channels(board_id)
+    except Exception as e:
+        err_trailer('board-meta-error', str(e)[:160], '1) check board_id  2) reinstall brainflow')
+        try: board.stop_stream(); board.release_session()
+        except: pass
+        return 4
+
+    n_ch = len(eeg_channels)
+    history = []  # list of per-channel rms arrays
+    HISTORY_MAX = 8
+    TICK_INTERVAL = 1.0
+    # Multi-strategy screen clear: ANSI escape + tput clear (more reliable across terminals)
+    ESC = chr(27)
+    def screen_clear():
+        sys.stdout.write(ESC + '[H' + ESC + '[2J' + ESC + '[3J')
+        sys.stdout.flush()
+        os.system('clear')
+
+    # Wire metadata for ASCII render
+    POS = [m[2] for m in WIRE_META]
+    BOARD = [m[0] for m in WIRE_META]
+    PIN = [m[1] for m in WIRE_META]
+    COLOR = [m[3] for m in WIRE_META]
+
+    # Touch state per position (sticky for short window — last 3 ticks)
+    last_active_pos = ''
+    sticky_ticks = 0
+
+    tick = 0
+    screen_clear()
+    print('연결 중... BrainFlow session 열림. baseline 학습 시작.', flush=True)
+    time.sleep(1.5)  # let initial buffer fill
+
+    try:
+        # First throwaway read to flush startup buffer
+        try: board.get_board_data()
+        except: pass
+
+        while True:
+            tick += 1
+            time.sleep(TICK_INTERVAL)
+            try:
+                data = board.get_board_data()
+            except Exception as e:
+                err_trailer('stream-error', str(e)[:160], '1) Dongle red LED?  2) toggle OFF/PC')
+                break
+
+            cols = data.shape[1] if data is not None and data.size else 0
+            if cols < 50:
+                continue  # not enough samples
+
+            eeg = np.zeros((n_ch, cols))
+            for i, row in enumerate(eeg_channels):
+                eeg[i, :] = data[row, :]
+
+            rms_per_ch = np.array([float(np.sqrt(np.mean(eeg[c, :] ** 2))) for c in range(n_ch)])
+
+            # Touch detection — bi-directional, sustained-touch friendly.
+            # Strategy: keep ROLLING BASELINE only over NON-TOUCHED ticks. Touched ticks
+            # are NOT added to history, so baseline stays frozen during sustained touch.
+            # Warmup: first 3 ticks always added to history, no detection (baseline learning).
+            touch_idx = -1
+            touch_ratio = 0.0
+            touch_direction = ''
+            top3_info = []  # init so debug panel never raises UnboundLocalError during warmup
+
+            WARMUP_TICKS = 3
+            if len(history) < WARMUP_TICKS:
+                # Warm-up phase — always add to history, no detection
+                history.append(rms_per_ch)
+                baseline = np.median(np.array(history), axis=0) if len(history) >= 2 else rms_per_ch.copy()
+            else:
+                # Detection phase — sensitive thresholds to catch finger touches
+                baseline = np.median(np.array(history[-HISTORY_MAX:]), axis=0)
+                ratio_up = rms_per_ch / (baseline + 1e-9)
+                ratio_dn = (baseline + 1e-9) / (rms_per_ch + 1e-9)
+                deviation = np.maximum(ratio_up, ratio_dn)
+                abs_change = np.abs(rms_per_ch - baseline)
+                # Lenient: 1.3x deviation OR 2000µV abs change is enough
+                touch_active = ((deviation > 1.3) & (abs_change > 1000.0)) | (abs_change > 5000.0)
+                if np.any(touch_active):
+                    masked = np.where(touch_active, deviation, 0.0)
+                    touch_idx = int(np.argmax(masked))
+                    touch_ratio = float(deviation[touch_idx])
+                    if rms_per_ch[touch_idx] > baseline[touch_idx]:
+                        touch_direction = '↑'
+                    else:
+                        touch_direction = '↓'
+                # Update history ONLY if no touch detected — keeps baseline frozen during sustained touch
+                if touch_idx < 0:
+                    history.append(rms_per_ch)
+                    if len(history) > HISTORY_MAX:
+                        history.pop(0)
+                # Always compute top-3 most-deviated channels for debug view
+                top3_idx = np.argsort(deviation)[-3:][::-1].tolist()
+                top3_info = [(POS[i], float(rms_per_ch[i]), float(baseline[i]), float(deviation[i])) for i in top3_idx]
+
+            # Immediate state — no sticky carry-over. Released = cleared next tick.
+            current_active_pos = POS[touch_idx] if touch_idx >= 0 else ''
+
+            # Render ASCII map (precompute syms with ANSI green color for active)
+            GREEN = ESC + '[32;1m'  # bright green (use chr(27) to avoid hexa string-escape strip)
+            RESET = ESC + '[0m'
+            def _s(p):
+                if p == current_active_pos:
+                    return GREEN + '●' + RESET
+                return '·'
+            sfp1 = _s('Fp1'); sfp2 = _s('Fp2')
+            sf7 = _s('F7');   sf3 = _s('F3');   sf4 = _s('F4');   sf8 = _s('F8')
+            st7 = _s('T7');   sc3 = _s('C3');   sc4 = _s('C4');   st8 = _s('T8')
+            sp3 = _s('P3');   sp4 = _s('P4')
+            sp7 = _s('P7');   sp8 = _s('P8')
+            so1 = _s('O1');   so2 = _s('O2')
+            screen_clear()
+            print('══════════════════════════════════════════════════')
+            print(f'  LIVE TOUCH DETECTOR — tick #{tick}')
+            print('══════════════════════════════════════════════════')
+            print()
+            print(f'                Fp1[{sfp1}]   Fp2[{sfp2}]            Frontal pole')
+            print( '                    \\\\   /')
+            print(f'           F7[{sf7}] - F3[{sf3}] - F4[{sf4}] - F8[{sf8}]      Frontal')
+            print( '                    |   |')
+            print(f'           T7[{st7}] - C3[{sc3}] - C4[{sc4}] - T8[{st8}]      Central / Temporal')
+            print( '                    |   |')
+            print(f'                P3[{sp3}] - P4[{sp4}]            Parietal')
+            print( '                   / | | \\\\')
+            print(f'           P7[{sp7}]         P8[{sp8}]           Parietal-temporal')
+            print(f'                O1[{so1}]   O2[{so2}]            Occipital')
+            print()
+            print(f'    [{GREEN}●{RESET}] = 손가락 닿은 곳   [·] = 비활성')
+            print()
+            if touch_idx >= 0:
+                print(f'    🟢 ACTIVE: {GREEN}{POS[touch_idx]}{RESET}  ({BOARD[touch_idx]} {PIN[touch_idx]} — {COLOR[touch_idx]} 와이어)')
+                print(f'    rms = {rms_per_ch[touch_idx]:.0f} µV {touch_direction}  baseline = {baseline[touch_idx]:.0f} µV  deviation = {touch_ratio:.2f}x')
+            elif len(history) < WARMUP_TICKS:
+                print(f'    🟡 baseline 학습 중... (tick {tick}/{WARMUP_TICKS}) — 가만히 기다려주세요')
+            else:
+                print(f'    🟡 No touch — 손가락으로 metal/spike 만져보세요')
+
+            # Debug: always show top-3 deviation channels (helps tune threshold)
+            print()
+            print('    ── DEBUG: top-3 deviation (어느 채널이 변하는지) ──')
+            if len(history) >= WARMUP_TICKS:
+                for rank, info in enumerate(top3_info, 1):
+                    pos, rms, base, dev = info
+                    direction = '↑' if rms > base else '↓'
+                    print(f'      #{rank} {pos:4s}  rms={rms:8.0f}  base={base:8.0f}  dev={dev:5.2f}x {direction}')
+            else:
+                print('      (학습 중)')
+            median_rms = float(np.median(rms_per_ch))
+            print(f'    median rms = {median_rms:.0f} µV  |  history = {len(history)} ticks  |  cols/tick = {cols}')
+            print()
+            print('    ── Ctrl-C 로 종료 ──', flush=True)
+
+    except KeyboardInterrupt:
+        print()
+        print('Ctrl-C 종료 — session 정리 중...', flush=True)
+    finally:
+        try: board.stop_stream()
+        except: pass
+        try: board.release_session()
+        except: pass
     return 0
 
 if __name__ == '__main__':
     p = argparse.ArgumentParser()
-    p.add_argument('mode', choices=['check', 'selftest'])
+    p.add_argument('mode', choices=['check', 'selftest', 'live'])
     p.add_argument('--board-id', type=int, default=2)
     p.add_argument('--port', type=str, default='')
     p.add_argument('--seconds', type=int, default=3)
     args = p.parse_args()
     if args.mode == 'check':
         rc = main_check(args.board_id, args.port, args.seconds)
+    elif args.mode == 'live':
+        rc = run_live(args.board_id, args.port)
     else:
         rc = run_selftest()
     sys.exit(rc)
 "
     write_file(HELPER_PATH, py)
+}
+
+// Render compact live view: ASCII map with [●] on actively-touched position
+fn _render_live_view(body: string, tick: int) {
+    // Clear screen via system command (more reliable than ANSI escape across hexa builds)
+    let _c = exec("clear")
+
+    let touch_active = _kv_get_or(body, "touch_active", "0")
+    let touch_pos = _kv_get_or(body, "touch_pos", "")
+    let touch_color = _kv_get_or(body, "touch_color", "")
+    let touch_board = _kv_get_or(body, "touch_board", "")
+    let touch_pin = _kv_get_or(body, "touch_pin", "")
+    let touch_rms = _kv_get_or(body, "touch_rms_uv", "0")
+    let touch_baseline = _kv_get_or(body, "touch_baseline_uv", "0")
+    let touch_ratio = _kv_get_or(body, "touch_ratio", "0")
+    let median_rms = _kv_get_or(body, "median_rms_uv", "0")
+    let history_ticks = _kv_get_or(body, "history_ticks", "0")
+
+    fn _live_sym(touch_pos: string, pos: string) -> string {
+        if touch_pos == pos { return "●" }
+        return "·"
+    }
+    let s_fp1 = _live_sym(touch_pos, "Fp1")
+    let s_fp2 = _live_sym(touch_pos, "Fp2")
+    let s_f7  = _live_sym(touch_pos, "F7")
+    let s_f3  = _live_sym(touch_pos, "F3")
+    let s_f4  = _live_sym(touch_pos, "F4")
+    let s_f8  = _live_sym(touch_pos, "F8")
+    let s_t7  = _live_sym(touch_pos, "T7")
+    let s_c3  = _live_sym(touch_pos, "C3")
+    let s_c4  = _live_sym(touch_pos, "C4")
+    let s_t8  = _live_sym(touch_pos, "T8")
+    let s_p3  = _live_sym(touch_pos, "P3")
+    let s_p4  = _live_sym(touch_pos, "P4")
+    let s_p7  = _live_sym(touch_pos, "P7")
+    let s_p8  = _live_sym(touch_pos, "P8")
+    let s_o1  = _live_sym(touch_pos, "O1")
+    let s_o2  = _live_sym(touch_pos, "O2")
+
+    println("══════════════════════════════════════════════════")
+    println("  LIVE TOUCH DETECTOR — tick #" + str(tick))
+    println("══════════════════════════════════════════════════")
+    println("")
+    println("                Fp1[" + s_fp1 + "]   Fp2[" + s_fp2 + "]            Frontal pole")
+    println("                    \\   /")
+    println("           F7[" + s_f7 + "] - F3[" + s_f3 + "] - F4[" + s_f4 + "] - F8[" + s_f8 + "]      Frontal")
+    println("                    |   |")
+    println("           T7[" + s_t7 + "] - C3[" + s_c3 + "] - C4[" + s_c4 + "] - T8[" + s_t8 + "]      Central / Temporal")
+    println("                    |   |")
+    println("                P3[" + s_p3 + "] - P4[" + s_p4 + "]            Parietal")
+    println("                   / | | \\")
+    println("           P7[" + s_p7 + "]         P8[" + s_p8 + "]           Parietal-temporal")
+    println("                O1[" + s_o1 + "]   O2[" + s_o2 + "]            Occipital")
+    println("")
+    println("    [●] = 현재 손가락 닿은 곳   [·] = 비활성")
+    println("")
+    if touch_active == "1" {
+        println("    🟢 ACTIVE: " + touch_pos + "  (" + touch_board + " " + touch_pin + " — " + touch_color + " 와이어)")
+        println("    rms = " + touch_rms + " µV  (own baseline = " + touch_baseline + " µV, ratio = " + touch_ratio + "x)")
+    } else {
+        if history_ticks == "1" || history_ticks == "2" {
+            println("    🟡 baseline 학습 중... (tick " + history_ticks + "/3) — 가만히 기다려주세요")
+        } else {
+            println("    🟡 No touch detected — 손가락으로 metal/spike 만져보세요")
+        }
+        println("    median rms = " + median_rms + " µV  |  history = " + history_ticks + " ticks")
+    }
+    println("")
+    println("    ── Ctrl-C 로 종료 ──")
 }
 
 fn _flags_only_argv() -> array {
@@ -329,25 +734,49 @@ fn _sym_for_pos(body: string, pos: string) -> string {
     return "?"
 }
 
+// Progressive check order (1..18). Items beyond --step N rendered as "·" (not checked yet).
+// Order: ear clips first (reference + ground), then forehead, then expanding outward.
+let STEP_ORDER = ["SRB2", "BIAS", "Fp1", "Fp2", "F7", "F8", "F3", "F4",
+                  "C3", "C4", "T7", "T8", "P3", "P4", "P7", "P8", "O1", "O2"]
+
+fn _pos_in_step(pos: string, step_n: int) -> bool {
+    let mut k = 0
+    while k < step_n && k < len(STEP_ORDER) {
+        if STEP_ORDER[k] == pos { return true }
+        k = k + 1
+    }
+    return false
+}
+
+fn _sym_or_dim(body: string, pos: string, step_n: int) -> string {
+    if !_pos_in_step(pos, step_n) { return "·" }
+    if pos == "SRB2" { return _kv_get_or(body, "srb2_symbol", "?") }
+    if pos == "BIAS" { return _kv_get_or(body, "bias_symbol", "?") }
+    return _sym_for_pos(body, pos)
+}
+
 // Render 16-position 10-20 ASCII map (matches anima-eeg/README.md layout).
-// State symbols inserted next to each position label.
-fn _render_ascii_map(body: string) {
-    let s_fp1 = _sym_for_pos(body, "Fp1")
-    let s_fp2 = _sym_for_pos(body, "Fp2")
-    let s_f7  = _sym_for_pos(body, "F7")
-    let s_f3  = _sym_for_pos(body, "F3")
-    let s_f4  = _sym_for_pos(body, "F4")
-    let s_f8  = _sym_for_pos(body, "F8")
-    let s_t7  = _sym_for_pos(body, "T7")
-    let s_c3  = _sym_for_pos(body, "C3")
-    let s_c4  = _sym_for_pos(body, "C4")
-    let s_t8  = _sym_for_pos(body, "T8")
-    let s_p3  = _sym_for_pos(body, "P3")
-    let s_p4  = _sym_for_pos(body, "P4")
-    let s_p7  = _sym_for_pos(body, "P7")
-    let s_p8  = _sym_for_pos(body, "P8")
-    let s_o1  = _sym_for_pos(body, "O1")
-    let s_o2  = _sym_for_pos(body, "O2")
+// State symbols inserted next to each position label + ear clips at bottom.
+// step_n controls progressive scope: items beyond step_n shown as "·" (not yet checked).
+fn _render_ascii_map(body: string, step_n: int) {
+    let s_fp1 = _sym_or_dim(body, "Fp1", step_n)
+    let s_fp2 = _sym_or_dim(body, "Fp2", step_n)
+    let s_f7  = _sym_or_dim(body, "F7", step_n)
+    let s_f3  = _sym_or_dim(body, "F3", step_n)
+    let s_f4  = _sym_or_dim(body, "F4", step_n)
+    let s_f8  = _sym_or_dim(body, "F8", step_n)
+    let s_t7  = _sym_or_dim(body, "T7", step_n)
+    let s_c3  = _sym_or_dim(body, "C3", step_n)
+    let s_c4  = _sym_or_dim(body, "C4", step_n)
+    let s_t8  = _sym_or_dim(body, "T8", step_n)
+    let s_p3  = _sym_or_dim(body, "P3", step_n)
+    let s_p4  = _sym_or_dim(body, "P4", step_n)
+    let s_p7  = _sym_or_dim(body, "P7", step_n)
+    let s_p8  = _sym_or_dim(body, "P8", step_n)
+    let s_o1  = _sym_or_dim(body, "O1", step_n)
+    let s_o2  = _sym_or_dim(body, "O2", step_n)
+    let s_srb2 = _sym_or_dim(body, "SRB2", step_n)
+    let s_bias = _sym_or_dim(body, "BIAS", step_n)
 
     println("")
     println("    ┌─────────────────────────────────────────────┐")
@@ -365,7 +794,11 @@ fn _render_ascii_map(body: string) {
     println("           P7[" + s_p7 + "]         P8[" + s_p8 + "]           Parietal-temporal")
     println("                O1[" + s_o1 + "]   O2[" + s_o2 + "]            Occipital")
     println("")
-    println("    LEGEND:  [✓] OK   [⚠] LOOSE   [✗] BAD   [⚡] DEAD")
+    println("    Ear Clips (Reference):")
+    println("       SRB2[" + s_srb2 + "]  reference signal — Y-splitter → Cyton SRB2 socket")
+    println("       BIAS[" + s_bias + "]  common-mode ground — direct → Cyton BIAS socket")
+    println("")
+    println("    LEGEND:  [✓] OK   [⚠] LOOSE   [✗] BAD   [⚡] DEAD   [·] not yet checked   [?] UNKNOWN")
     println("")
 }
 
@@ -380,30 +813,32 @@ fn _action_advice(state: string, board: string, pin: string, pos: string, color:
         // Spike or flat?
         let is_flat = pos == "Fp1" || pos == "Fp2"
         if is_flat {
-            return "[✗] " + pos + " — 이마에 안 닿음. flat electrode 이마 피부에 밀착 (saline 한 방울)"
+            return "[✗] " + pos + " — 접촉 없음. (a) 이마/손가락에 flat electrode 밀착 OR (b) 손가락으로 metal 직접 만지기 (saline 한 방울 권장)"
         }
-        return "[✗] " + pos + " — 두피 미접촉. spike electrode 시계방향 회전해서 두피까지 밀어 넣기 (saline 권장)"
+        return "[✗] " + pos + " — 접촉 없음. (a) 두피 시계방향 밀어 넣기 OR (b) 손가락으로 spike metal 직접 만지기 (saline 권장)"
     }
     if state == "LOOSE" {
         let is_flat = pos == "Fp1" || pos == "Fp2"
         if is_flat {
-            return "[⚠] " + pos + " — 약함. 이마에 더 밀착 + saline 추가"
+            return "[⚠] " + pos + " — 약함. 손가락/이마 더 밀착 + saline 추가"
         }
-        return "[⚠] " + pos + " — 약함. spike 시계방향 추가 1/4 회전 + saline 추가"
+        return "[⚠] " + pos + " — 약함. 손가락 압력 더 OR spike 1/4 회전 추가 + saline"
     }
     return ""
 }
 
-fn _list_actions(body: string) {
+fn _list_actions(body: string, step_n: int) {
     let mut found_action = false
     let mut idx = 0
     while idx < 16 {
         let cstr = if idx < 10 { "0" + str(idx) } else { str(idx) }
+        let pos = _kv_get_or(body, "ch_" + cstr + "_pos", "?")
+        // Skip channels beyond current step
+        if !_pos_in_step(pos, step_n) { idx = idx + 1; continue }
         let state = _kv_get_or(body, "ch_" + cstr + "_state", "?")
         if state != "OK" && state != "?" {
             let board = _kv_get_or(body, "ch_" + cstr + "_board", "?")
             let pin = _kv_get_or(body, "ch_" + cstr + "_pin", "?")
-            let pos = _kv_get_or(body, "ch_" + cstr + "_pos", "?")
             let color = _kv_get_or(body, "ch_" + cstr + "_color", "?")
             let advice = _action_advice(state, board, pin, pos, color)
             if advice != "" {
@@ -417,10 +852,71 @@ fn _list_actions(body: string) {
         }
         idx = idx + 1
     }
+
+    // Ear clip advice (only if SRB2/BIAS within current step)
+    let srb2_state = _kv_get_or(body, "srb2_state", "?")
+    let bias_state = _kv_get_or(body, "bias_state", "?")
+
+    if _pos_in_step("SRB2", step_n) {
+        if srb2_state == "BAD_DISCONNECTED" {
+            if !found_action {
+                println("    조절 필요한 전극:")
+                println("    ─────────────────")
+                found_action = true
+            }
+            println("      [✗] SRB2 (reference) — ear clip 한쪽을 귀볼/손가락에 클립. Y-splitter male pin이 Cyton SRB2 socket에 단단히 꽂혔는지 확인.")
+        }
+        if srb2_state == "UNKNOWN_HELMET_OFF" {
+            if !found_action {
+                println("    조절 필요한 전극:")
+                println("    ─────────────────")
+                found_action = true
+            }
+            println("      [?] SRB2 — 손가락으로 ear clip metal contact 만지면 검출됨. 또는 귀볼에 클립.")
+        }
+    }
+    if _pos_in_step("BIAS", step_n) {
+        if bias_state == "BAD_DISCONNECTED" {
+            if !found_action {
+                println("    조절 필요한 전극:")
+                println("    ─────────────────")
+                found_action = true
+            }
+            println("      [✗] BIAS (ground) — ear clip 다른 쪽을 다른 귀/손가락에 클립. Cyton BIAS socket에 단단히 꽂혔는지 확인.")
+        }
+        if bias_state == "LOOSE" {
+            if !found_action {
+                println("    조절 필요한 전극:")
+                println("    ─────────────────")
+                found_action = true
+            }
+            println("      [⚠] BIAS — 약함. ear clip metal 피부에 더 단단히 닿게.")
+        }
+        if bias_state == "UNKNOWN_HELMET_OFF" {
+            if !found_action {
+                println("    조절 필요한 전극:")
+                println("    ─────────────────")
+                found_action = true
+            }
+            println("      [?] BIAS — 손가락/귀볼에 ear clip 클립 시 검출됨.")
+        }
+    }
+
     if !found_action {
-        println("    ✓ 모든 전극 OK — 조절 필요 없음")
+        println("    ✓ Step " + str(step_n) + " 까지 모두 OK — 다음 step 으로 진행 가능")
     }
     println("")
+
+    // Recommend next step
+    if step_n < len(STEP_ORDER) {
+        let next_pos = STEP_ORDER[step_n]
+        println("    다음 step (" + str(step_n + 1) + "/" + str(len(STEP_ORDER)) + "): " + next_pos + " 추가")
+        println("    명령: --step " + str(step_n + 1))
+        println("")
+    } else {
+        println("    🎉 ALL 18 step 완료! 헬멧 쓰고 calibrate.hexa 진행 가능.")
+        println("")
+    }
 }
 
 fn _print_summary(body: string) {
@@ -429,12 +925,15 @@ fn _print_summary(body: string) {
     let n_bad   = _kv_get_or(body, "count_bad", "0")
     let n_dead  = _kv_get_or(body, "count_dead", "0")
     let verdict = _kv_get_or(body, "verdict", "?")
+    let srb2 = _kv_get_or(body, "srb2_state", "?")
+    let bias = _kv_get_or(body, "bias_state", "?")
     println("    SUMMARY: " + n_ok + "/16 OK, " + n_loose + "/16 LOOSE, " + n_bad + "/16 BAD, " + n_dead + "/16 DEAD")
+    println("    EAR CLIPS: SRB2=" + srb2 + "  BIAS=" + bias)
     println("    VERDICT: " + verdict)
     println("")
 }
 
-fn _do_one_pass(board_id: int, port: string, seconds: int, selftest: bool) -> int {
+fn _do_one_pass(board_id: int, port: string, seconds: int, selftest: bool, step_n: int) -> int {
     let mode_arg = if selftest { "selftest" } else { "check" }
     let venv_py = DEFAULT_VENV_PYTHON
     let mut cmd = venv_py + " " + HELPER_PATH + " " + mode_arg
@@ -454,22 +953,25 @@ fn _do_one_pass(board_id: int, port: string, seconds: int, selftest: bool) -> in
         eprintln(stderr_body.trim())
     }
 
-    _render_ascii_map(stdout_body)
-    _list_actions(stdout_body)
+    _render_ascii_map(stdout_body, step_n)
+    _list_actions(stdout_body, step_n)
     _print_summary(stdout_body)
     return _rc
 }
 
 fn _print_usage() {
     eprintln("usage: hexa run anima-eeg/electrode_adjustment_helper.hexa --selftest")
-    eprintln("       hexa run anima-eeg/electrode_adjustment_helper.hexa --check [--port <p>] [--seconds <n>]")
-    eprintln("       hexa run anima-eeg/electrode_adjustment_helper.hexa --watch [--port <p>] [--seconds <n>]")
+    eprintln("       hexa run anima-eeg/electrode_adjustment_helper.hexa --check [--port <p>] [--step <n>]")
+    eprintln("       hexa run anima-eeg/electrode_adjustment_helper.hexa --watch [--port <p>]")
+    eprintln("       hexa run anima-eeg/electrode_adjustment_helper.hexa --live  [--port <p>]")
     eprintln("flags:")
     eprintln("  --selftest        synthetic 16ch all-OK ASCII demo")
-    eprintln("  --check           one-shot real check (helmet on)")
-    eprintln("  --watch           periodic loop, 5s tick (Ctrl-C to stop)")
+    eprintln("  --check           one-shot real check (with --step N for progressive)")
+    eprintln("  --watch           periodic loop with full check, 5s tick")
+    eprintln("  --live            REAL-TIME touch detector — finger touch shows on ASCII as [●]")
     eprintln("  --port <path>     Dongle serial node (auto-detect if omitted)")
     eprintln("  --seconds <n>     sample window per tick (default 3)")
+    eprintln("  --step <n>        progressive scope: check first n items (1-18)")
     eprintln("  --board <name>    cyton_daisy | cyton | ganglion (default cyton_daisy)")
     eprintln("  --help            this message")
 }
@@ -479,10 +981,12 @@ fn main() {
     let mut selftest = false
     let mut check_mode = false
     let mut watch_mode = false
+    let mut live_mode = false
     let mut want_help = false
     let mut port = ""
     let mut seconds = DEFAULT_SECONDS
     let mut board_name = DEFAULT_BOARD_NAME
+    let mut step_n = len(STEP_ORDER)  // default: check all 18
 
     let mut i = 0
     while i < len(av) {
@@ -490,6 +994,7 @@ fn main() {
         if a == "--selftest" { selftest = true; i = i + 1; continue }
         if a == "--check"    { check_mode = true; i = i + 1; continue }
         if a == "--watch"    { watch_mode = true; i = i + 1; continue }
+        if a == "--live"     { live_mode = true; i = i + 1; continue }
         if a == "--help" || a == "-h" { want_help = true; i = i + 1; continue }
         if a == "--port" {
             if (i + 1) >= len(av) {
@@ -505,6 +1010,16 @@ fn main() {
             }
             seconds = to_int(av[i + 1]); i = i + 2; continue
         }
+        if a == "--step" {
+            if (i + 1) >= len(av) {
+                _emit_trailer("missing-arg-value", "--step requires int 1-18", "1) --step 1")
+                exit(2)
+            }
+            step_n = to_int(av[i + 1])
+            if step_n < 1 { step_n = 1 }
+            if step_n > len(STEP_ORDER) { step_n = len(STEP_ORDER) }
+            i = i + 2; continue
+        }
         if a == "--board" {
             if (i + 1) >= len(av) {
                 _emit_trailer("missing-arg-value", "--board requires value", "1) --board cyton_daisy")
@@ -518,8 +1033,8 @@ fn main() {
     }
 
     if want_help { _print_usage(); exit(0) }
-    if !selftest && !check_mode && !watch_mode {
-        eprintln("ABORT: must pass --selftest | --check | --watch")
+    if !selftest && !check_mode && !watch_mode && !live_mode {
+        eprintln("ABORT: must pass --selftest | --check | --watch | --live")
         _print_usage()
         exit(2)
     }
@@ -541,20 +1056,42 @@ fn main() {
         println("  mode: " + (if watch_mode { "watch (loop)" } else { "check (one-shot)" }))
         println("  port: " + port)
     }
+    println("  step: " + str(step_n) + "/" + str(len(STEP_ORDER)))
+    if step_n <= len(STEP_ORDER) {
+        let mut scope_str = ""
+        let mut k = 0
+        while k < step_n {
+            if k > 0 { scope_str = scope_str + ", " }
+            scope_str = scope_str + STEP_ORDER[k]
+            k = k + 1
+        }
+        println("  scope: " + scope_str)
+    }
     println("══════════════════════════════════════════════════")
 
-    if watch_mode {
+    if live_mode {
+        // Live touch detector — single BrainFlow session in helper.py, internal loop + ANSI render.
+        // Hexa wrapper just invokes helper directly (foreground, passes through to terminal).
+        let venv_py = DEFAULT_VENV_PYTHON
+        let mut cmd = venv_py + " " + HELPER_PATH + " live"
+        cmd = cmd + " --board-id " + str(board_id)
+        if port != "" {
+            cmd = cmd + " --port " + _sh_quote(port)
+        }
+        let rc = exec(cmd)
+        exit(rc)
+    } else if watch_mode {
         let mut tick = 0
         while true {
             tick = tick + 1
             println("")
             println("─── tick #" + str(tick) + " ───")
-            let _rc = _do_one_pass(board_id, port, seconds, false)
+            let _rc = _do_one_pass(board_id, port, seconds, false, step_n)
             println("    (" + str(DEFAULT_WATCH_INTERVAL_SEC) + "s 후 다시 측정. Ctrl-C 로 종료)")
             sleep(DEFAULT_WATCH_INTERVAL_SEC)
         }
     } else {
-        let rc = _do_one_pass(board_id, port, seconds, selftest)
+        let rc = _do_one_pass(board_id, port, seconds, selftest, step_n)
         exit(rc)
     }
 }
