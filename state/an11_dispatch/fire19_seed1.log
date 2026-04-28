@@ -2,3 +2,42 @@
   def task_id(): return 'an11_fire_' + datetime.datetime.utcnow().strftime('%Y%m%dT%H%M%SZ')
 /tmp/anima_an11_fire_helper.hexa_tmp:20: DeprecationWarning: datetime.datetime.utcnow() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.now(datetime.UTC).
   def utc(): return datetime.datetime.utcnow().strftime('%Y-%m-%dT%H:%M:%SZ')
+{
+  "task_id": "an11_fire_20260428T103710Z",
+  "started_utc": "2026-04-28T10:37:10Z",
+  "tool": "anima_an11_fire",
+  "version": "v1",
+  "cost_center": "anima-an11-mistral7b-vast-h100-pod",
+  "vendor": "vast.ai",
+  "gpu_class": "H100_SXM",
+  "watchdog_min": 240,
+  "dry_run": false,
+  "preflight": {
+    "wrapper_local_exists": true,
+    "corpus_local_exists": true,
+    "templates_local_exists": true,
+    "prompts_local_exists": true,
+    "vast_ssh_key_exists": true,
+    "vastai_cli_present": true
+  },
+  "n_offers_filtered": 1,
+  "chosen_offer": {
+    "id": 34211770,
+    "dph_total": 2.7080555555555557,
+    "gpu_name": "H100 SXM",
+    "reliability": 0.9927064,
+    "cuda_max_good": 13.0
+  },
+  "estimated_cost_usd": 10.83,
+  "instance_id": 35740813,
+  "ssh": {
+    "host": "ssh1.vast.ai",
+    "port": 20812
+  },
+  "tcp_probe_attempts": 30,
+  "tcp_ready": false,
+  "result": "TCP_NOT_READY",
+  "exception": "tcp",
+  "destroy_returncode": 0,
+  "ended_utc": "2026-04-28T10:42:20Z"
+}
