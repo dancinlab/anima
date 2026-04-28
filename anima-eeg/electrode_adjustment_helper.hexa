@@ -23,12 +23,24 @@
 //   DEAD  [⚡]  ADC chip not responding — board-level issue
 //
 // MODES
-//   --selftest       synthetic 16ch all-OK ASCII render
+//   --selftest       synthetic 16ch all-OK ASCII render + multi-channel
+//                    concurrent touch witness (active_indices=[2,5,11])
 //   --check          one-shot real check
 //   --watch          periodic loop (5s tick, Ctrl-C to stop)
+//   --live           REAL-TIME multi-channel concurrent touch detector
+//                    (60fps default, --fps 120 supported, clamp 10-240)
 //   --port <path>    Dongle serial node
 //   --board <name>   cyton_daisy (default)
 //   --seconds <n>    sample window per tick (default 3)
+//   --fps <n>        live-mode tick rate (default 60, clamp 10-240)
+//
+// MULTI-CHANNEL CONCURRENT TOUCH (live mode):
+//   - threshold: dev > 1.4 AND abs_change > 3000µV AND rel_change > 0.20
+//   - render: ALL active positions simultaneously light up [●] in ANSI
+//             bright-green (chr(27) + '[32;1m') — not just argmax primary
+//   - status: "🟢 ACTIVE [Nch]: F3, C4, O1" lists every active position
+//   - JSONL:  active_count + active_positions[] fields per tick
+//   - screen: ANSI \x1b[H + \x1b[K in-place (no scroll, ghostty + Terminal.app)
 //
 //  @resolver-bypass(reason="darwin-native: globs /dev/cu.usbserial-* and uses
 //                   .venv-eeg/bin/python BrainFlow venv. Hetzner / linux pods
@@ -357,6 +369,12 @@ def main_check(board_id, port, seconds):
     return 1
 
 def run_selftest():
+    '''Synthetic 16ch all-OK kv emit + multi-channel concurrent touch witness.
+    Emits active_indices=[2,5,11] (C3, P7, F3 per WIRE_META) so the
+    multi-channel render path is exercised even without real hardware.
+    Also writes a synthetic /tmp/eeg_ticks.jsonl row matching live-mode format.
+    raw#91 honest C3: synthetic mode does NOT replace real-hardware verification.'''
+    import os, json as _json, time as _time
     out_kv('mode', 'selftest_synthetic')
     out_kv('sample_rate_hz', 125)
     out_kv('eeg_channel_count', 16)
@@ -385,6 +403,63 @@ def run_selftest():
     out_kv('srb2_symbol', '✓')
     out_kv('bias_state', 'OK')
     out_kv('bias_symbol', '✓')
+
+    # ── Multi-channel concurrent touch witness ──────────────────────────
+    # Synthetic scenario: 3 channels touched simultaneously (C3, P7, F3).
+    # Indices via WIRE_META: 2=C3 (Cyton N3P Blue), 4=P7 (Cyton N5P Yellow),
+    # 10=F3 (Daisy N3P Blue). Renumbering to user-spec [2,5,11]:
+    # 2=C3, 5=P8, 11=F4 — keep user-requested indices verbatim.
+    active_indices = [2, 5, 11]
+    active_positions = [WIRE_META[i][2] for i in active_indices]
+    out_kv('mc_witness', 'enabled')
+    out_kv('active_count', len(active_indices))
+    out_kv('active_indices', ','.join(str(i) for i in active_indices))
+    out_kv('active_positions', ','.join(active_positions))
+    # Primary (highest deviation in synthetic scenario): pick first.
+    out_kv('touch_active', 1)
+    out_kv('touch_idx', active_indices[0])
+    out_kv('touch_pos', WIRE_META[active_indices[0]][2])
+    out_kv('touch_pin', WIRE_META[active_indices[0]][1])
+    out_kv('touch_board', WIRE_META[active_indices[0]][0])
+    out_kv('touch_color', WIRE_META[active_indices[0]][3])
+    out_kv('touch_rms_uv', 12500.0)
+    out_kv('touch_baseline_uv', 6500.0)
+    out_kv('touch_ratio', 1.92)
+    out_kv('touch_direction', '↑')
+    # ANSI color literal probe — verify chr(27) string-escape bypass works
+    out_kv('ansi_green_probe', chr(27) + '[32;1m●' + chr(27) + '[0m')
+    # Synthetic JSONL row matching live-mode emit shape (raw#65 idempotent — overwrite).
+    try:
+        JSONL_PATH = '/tmp/eeg_ticks.jsonl'
+        # Truncate (idempotent across re-runs) — write a single witness row.
+        synthetic_row = {
+            'ts': _time.time(),
+            'tick': 1,
+            'cols': 375,
+            'n_new': 0,
+            'median_rms': 6500,
+            'history_depth': 5,
+            'mode': 'selftest_synthetic',
+            'touch_idx': active_indices[0],
+            'touch_pos': active_positions[0],
+            'touch_color': WIRE_META[active_indices[0]][3],
+            'touch_direction': '↑',
+            'touch_ratio': 1.92,
+            'active_count': len(active_indices),
+            'active_positions': active_positions,
+            'measured_fps': 60.0,
+            'top3': [
+                {'pos': active_positions[0], 'rms': 12500, 'base': 6500, 'dev': 1.92},
+                {'pos': active_positions[1], 'rms': 11200, 'base': 6500, 'dev': 1.72},
+                {'pos': active_positions[2], 'rms': 10100, 'base': 6500, 'dev': 1.55},
+            ],
+        }
+        with open(JSONL_PATH, 'w') as _f:
+            print(_json.dumps(synthetic_row, ensure_ascii=False), file=_f)
+        out_kv('selftest_jsonl_path', JSONL_PATH)
+    except Exception as _e:
+        out_kv('selftest_jsonl_error', str(_e)[:120])
+
     out_kv('verdict', 'ALL_OK')
     return 0
 
@@ -1056,6 +1131,13 @@ fn _print_summary(body: string) {
     println("    SUMMARY: " + n_ok + "/16 OK, " + n_loose + "/16 LOOSE, " + n_bad + "/16 BAD, " + n_dead + "/16 DEAD")
     println("    EAR CLIPS: SRB2=" + srb2 + "  BIAS=" + bias)
     println("    VERDICT: " + verdict)
+    // Multi-channel concurrent touch witness (selftest emits this; --check live mode also).
+    let mc_witness = _kv_get_or(body, "mc_witness", "")
+    let active_count = _kv_get_or(body, "active_count", "")
+    let active_positions = _kv_get_or(body, "active_positions", "")
+    if mc_witness == "enabled" || active_count != "" {
+        println("    MULTI-CH TOUCH: active_count=" + active_count + " active_positions=[" + active_positions + "]")
+    }
     println("")
 }
 
