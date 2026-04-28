@@ -1,0 +1,262 @@
+{
+  "schema": "anima/an11_c_p4_r8_direct_proxy/1",
+  "verifier": "an11_c_jsd_h_last_enhanced (raw#37 .py helper, multi-k re-measurement)",
+  "ts": "2026-04-29T00:00:00Z",
+  "method": {
+    "type": "h_last hidden-state JSD per prompt \u2014 multi-k bin sweep",
+    "k_bins_swept": [
+      32,
+      64,
+      128,
+      256
+    ],
+    "primary_k": 128,
+    "laplace_alpha": 1,
+    "log_base": 2,
+    "range_strategy": "per-prompt union [min,max] across r6 \u222a r8",
+    "impl": "raw#37 transient .py + numpy-equivalent pure-Python; deterministic",
+    "fallback_reason": "live HTTP serving NOT launched in this fix-cycle (cost-deferred); h_last hidden-state proxy used (same class as baseline)",
+    "raw10_honest_disclosure": [
+      "this is NOT live token-sampling JSD; it is hidden-state distribution JSD",
+      "the 0.5 PASS threshold was originally specified for token-sampling distribution",
+      "hidden-state JSD is bounded above by the geometry similarity of h_last across r6/r8 \u2014 saturating much lower than 0.693 (token-sampling theoretical max)",
+      "increasing k_bins from 32 to 256 tests robustness of the FAIL signal across resolutions",
+      "true closure requires r9 live-serve token-sampling (preregistered F1, cost ESTIMATE $0.05-0.20)"
+    ]
+  },
+  "pre_registered_predicate": {
+    "target": "r8 p4 (Mistral-7B-v0.3 + LoRA r8) vs r6 p4 (gemma-3-12b) per-prompt JSD",
+    "aggregator": "mean across 16 shared prompts",
+    "thresholds": {
+      "PASS": ">=0.5 bits",
+      "STRONG": ">=0.8 bits",
+      "FAIL": "<0.5 bits"
+    },
+    "register_ts": "2026-04-29T00:00:00Z"
+  },
+  "baseline_existing": {
+    "source": "state/an11_c_r8_jsd_1777328717.json",
+    "k_bins": 32,
+    "mean_jsd_bits": 0.110477,
+    "pass_count_ge_0_5": 0
+  },
+  "summary_by_k_bins": {
+    "32": {
+      "mean_jsd_bits": 0.11047673814646303,
+      "std": 0.027041372509512118,
+      "min": 0.06419842009847837,
+      "max": 0.15399993510088822,
+      "pass_count_ge_0_5": 0,
+      "pass_count_ge_0_3": 0,
+      "pass_count_ge_0_15": 2,
+      "n_prompts": 16
+    },
+    "64": {
+      "mean_jsd_bits": 0.10634697239232074,
+      "std": 0.018780311065743054,
+      "min": 0.07705981598918096,
+      "max": 0.13920478811531553,
+      "pass_count_ge_0_5": 0,
+      "pass_count_ge_0_3": 0,
+      "pass_count_ge_0_15": 0,
+      "n_prompts": 16
+    },
+    "128": {
+      "mean_jsd_bits": 0.08944411395125129,
+      "std": 0.013505653146303432,
+      "min": 0.06583599282687053,
+      "max": 0.11136578465384382,
+      "pass_count_ge_0_5": 0,
+      "pass_count_ge_0_3": 0,
+      "pass_count_ge_0_15": 0,
+      "n_prompts": 16
+    },
+    "256": {
+      "mean_jsd_bits": 0.07199094817852392,
+      "std": 0.009435010219100062,
+      "min": 0.0544835521677393,
+      "max": 0.08787696221933414,
+      "pass_count_ge_0_5": 0,
+      "pass_count_ge_0_3": 0,
+      "pass_count_ge_0_15": 0,
+      "n_prompts": 16
+    }
+  },
+  "primary_verdict": {
+    "k_bins": 128,
+    "mean_jsd_bits": 0.08944411395125129,
+    "pass_count_ge_0_5": 0,
+    "verdict": "FAIL",
+    "delta_vs_baseline": -0.021032886048748714
+  },
+  "per_prompt_k128": [
+    {
+      "idx": 0,
+      "prompt": "The substrate of consciousness is",
+      "k_bins": 128,
+      "jsd_bits": 0.06583599282687053,
+      "range": [
+        -75.1328125,
+        12.5166015625
+      ]
+    },
+    {
+      "idx": 1,
+      "prompt": "Integrated information theory says",
+      "k_bins": 128,
+      "jsd_bits": 0.09430292004880433,
+      "range": [
+        -76.86764526367188,
+        7.9269304275512695
+      ]
+    },
+    {
+      "idx": 2,
+      "prompt": "Global workspace broadcast implies",
+      "k_bins": 128,
+      "jsd_bits": 0.08967119920307393,
+      "range": [
+        -107.74264526367188,
+        10.635110855102539
+      ]
+    },
+    {
+      "idx": 3,
+      "prompt": "Attention schema models claim",
+      "k_bins": 128,
+      "jsd_bits": 0.0873000265088531,
+      "range": [
+        -79.40948486328125,
+        10.896282196044922
+      ]
+    },
+    {
+      "idx": 4,
+      "prompt": "Higher-order thought requires",
+      "k_bins": 128,
+      "jsd_bits": 0.08736991430078138,
+      "range": [
+        -100.10000610351562,
+        13.305209159851074
+      ]
+    },
+    {
+      "idx": 5,
+      "prompt": "Recurrent processing means",
+      "k_bins": 128,
+      "jsd_bits": 0.10895283692844387,
+      "range": [
+        -78.7225112915039,
+        9.70138931274414
+      ]
+    },
+    {
+      "idx": 6,
+      "prompt": "\uc758\uc2dd\uc758 \uae30\uc9c8\uc740",
+      "k_bins": 128,
+      "jsd_bits": 0.10472814534174306,
+      "range": [
+        -13.855978012084961,
+        5.2760701179504395
+      ]
+    },
+    {
+      "idx": 7,
+      "prompt": "\ud1b5\ud569\uc815\ubcf4\uc774\ub860\uc5d0 \ub530\ub974\uba74",
+      "k_bins": 128,
+      "jsd_bits": 0.08579860829031996,
+      "range": [
+        -13.56154727935791,
+        5.400533676147461
+      ]
+    },
+    {
+      "idx": 8,
+      "prompt": "\uc804\uc5ed\uc791\uc5c5\uacf5\uac04\uc758 \ubc29\uc1a1\uc740",
+      "k_bins": 128,
+      "jsd_bits": 0.08921079412559615,
+      "range": [
+        -14.117856979370117,
+        5.879910945892334
+      ]
+    },
+    {
+      "idx": 9,
+      "prompt": "\uc7ac\uadc0\ucc98\ub9ac\ub294",
+      "k_bins": 128,
+      "jsd_bits": 0.08680363687493436,
+      "range": [
+        -23.469999313354492,
+        5.400624752044678
+      ]
+    },
+    {
+      "idx": 10,
+      "prompt": "\uc8fc\uc758 \uc2a4\ud0a4\ub9c8 \ubaa8\ub378\uc740",
+      "k_bins": 128,
+      "jsd_bits": 0.06877628831454416,
+      "range": [
+        -17.48763084411621,
+        5.4203290939331055
+      ]
+    },
+    {
+      "idx": 11,
+      "prompt": "\uc0c1\uc704\ucc28\uc6d0 \uc0ac\uace0\ub294",
+      "k_bins": 128,
+      "jsd_bits": 0.07096482130561667,
+      "range": [
+        -11.359375953674316,
+        5.676682949066162
+      ]
+    },
+    {
+      "idx": 12,
+      "prompt": "phi_6 defines",
+      "k_bins": 128,
+      "jsd_bits": 0.08157627236750765,
+      "range": [
+        -75.08958435058594,
+        8.174479484558105
+      ]
+    },
+    {
+      "idx": 13,
+      "prompt": "hexad closure is",
+      "k_bins": 128,
+      "jsd_bits": 0.11136578465384382,
+      "range": [
+        -57.53676986694336,
+        14.933823585510254
+      ]
+    },
+    {
+      "idx": 14,
+      "prompt": "meta-loop observation is",
+      "k_bins": 128,
+      "jsd_bits": 0.10901261502230236,
+      "range": [
+        -38.02999496459961,
+        12.041875839233398
+      ]
+    },
+    {
+      "idx": 15,
+      "prompt": "Law 60 phase transition describes",
+      "k_bins": 128,
+      "jsd_bits": 0.08943596710678527,
+      "range": [
+        -55.991241455078125,
+        10.517045021057129
+      ]
+    }
+  ],
+  "raw71_falsifier_F1_status": {
+    "predicate": "r9 live-serve mean JSD < 0.30 bits \u2192 CP2 RED",
+    "status": "DEFERRED \u2014 not run in this fix-cycle",
+    "cost_estimate_usd": "0.05-0.20",
+    "next_cycle_action": "RunPod H100 dispatch via tool/anima_runpod_orchestrator.hexa --gpu-id 'NVIDIA H100 80GB HBM3' --pip-install 'transformers peft accelerate' with /workspace/lora_p4_r8 + 16-prompt \u00d7 20-call sampling"
+  },
+  "cost_actual_usd": 0.0,
+  "raw86_attribution": "$0 \u2014 local CPU computation only"
+}
