@@ -407,14 +407,14 @@ fn _emit_helper() -> string {
     return HELPER_PATH
 }
 
-fn _has_flag(name: string) -> int {
+fn _has_flag(name: string) -> bool {
     let av = argv()
     let mut i = 0
     while i < len(av) {
-        if av[i] == name { return 1 }
+        if av[i] == name { return true }
         i = i + 1
     }
-    return 0
+    return false
 }
 
 fn _flag_value(name: string, default_val: string) -> string {
@@ -432,7 +432,7 @@ fn main() {
     println("__COMMIT_MSG_DIFF_ALIGN_BEGIN__ raw#9 raw#37 raw#85")
     println("helper_emitted=" + HELPER_PATH)
     println("lint_version=" + LINT_VERSION)
-    if _has_flag("--selftest") == 1 {
+    if _has_flag("--selftest") {
         println("mode=selftest")
         let r = exec_with_status(PY3 + " " + HELPER_PATH + " --selftest")
         println(r[0])
@@ -443,7 +443,7 @@ fn main() {
         }
         return 0
     }
-    if _has_flag("--audit-sha") == 1 {
+    if _has_flag("--audit-sha") {
         let sha = _flag_value("--audit-sha", "HEAD")
         println("mode=audit-sha sha=" + sha)
         let r = exec_with_status(PY3 + " " + HELPER_PATH + " --audit-sha " + sha)
@@ -451,7 +451,7 @@ fn main() {
         println("__COMMIT_MSG_DIFF_ALIGN_RESULT__ AUDIT_SHA_DONE")
         return 0
     }
-    if _has_flag("--audit-recent") == 1 {
+    if _has_flag("--audit-recent") {
         let n = _flag_value("--audit-recent", "100")
         let out = _flag_value("--out", DEFAULT_AUDIT_OUT)
         println("mode=audit-recent n=" + n + " out=" + out)
