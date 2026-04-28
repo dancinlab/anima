@@ -183,14 +183,26 @@ fn _resolve_backend(verb: string, noun: string) -> string {
         if noun == "feedback"   { return "legacy:anima-eeg/tool/eeg_feedback_loop.hexa" }
     }
 
-    // ── recording paradigms (legacy wrappers) ────────────────────────────
+    // ── recording paradigms (Phase 4 batch 1 LANDED for resting/daily-life) ─
     if verb == "record" {
-        if noun == "resting"    { return "legacy:anima-eeg/eeg_recorder.hexa" }
-        if noun == "daily-life" { return "legacy:anima-eeg/tool/daily_life_context_logger.hexa" }
+        if noun == "resting"    { return CORE_ROOT + "/_paradigms/resting_baseline.hexa" }
+        if noun == "daily-life" { return CORE_ROOT + "/_paradigms/daily_life.hexa" }
         if noun == "sleep"      { return "legacy:anima-eeg/tool/sleep_tracker.hexa" }
         if noun == "long"       { return "legacy:anima-eeg/tool/long_duration_recorder.hexa" }
         if noun == "longitudinal" { return "legacy:anima-eeg/tool/longitudinal_session_recorder.hexa" }
         if noun == "pre-post"   { return "legacy:anima-eeg/tool/pre_post_task_recorder.hexa" }
+    }
+
+    // ── paradigm verb namespace (Phase 4 batch 1 LANDED — P300 family) ──
+    //   visual-p300 / auditory-p300 are stimulus-presentation paradigms,
+    //   distinct from passive-record paradigms (resting / daily-life). They
+    //   warrant their own verb namespace per design/anima_eeg_core_module_api.md.
+    if verb == "paradigm" {
+        if noun == "resting"          { return CORE_ROOT + "/_paradigms/resting_baseline.hexa" }
+        if noun == "resting-baseline" { return CORE_ROOT + "/_paradigms/resting_baseline.hexa" }
+        if noun == "daily-life"       { return CORE_ROOT + "/_paradigms/daily_life.hexa" }
+        if noun == "visual-p300"      { return CORE_ROOT + "/_paradigms/visual_p300.hexa" }
+        if noun == "auditory-p300"    { return CORE_ROOT + "/_paradigms/auditory_p300.hexa" }
     }
 
     // ── hardware helpers (legacy anima-eeg/ wrappers) ───────────────────
@@ -271,7 +283,10 @@ fn _print_usage() {
     eprintln("  pipeline feedback   --input <npy>      legacy")
     eprintln("")
     eprintln("  record {resting|daily-life|sleep|long|longitudinal|pre-post}")
-    eprintln("                                         legacy paradigm wrappers")
+    eprintln("                                         resting/daily-life landed; rest legacy")
+    eprintln("")
+    eprintln("  paradigm {resting|resting-baseline|daily-life|visual-p300|auditory-p300}")
+    eprintln("                                         landed: 4 paradigms (selftest+live-NYL)")
     eprintln("")
     eprintln("  hardware {health|impedance|impedance_validate|adjust|rich|")
     eprintln("            headplot|full|ftdi-fix|brainflow-sanity}")
@@ -325,6 +340,10 @@ fn _print_list() {
         ["record", "long"],
         ["record", "longitudinal"],
         ["record", "pre-post"],
+        ["paradigm", "resting"],
+        ["paradigm", "daily-life"],
+        ["paradigm", "visual-p300"],
+        ["paradigm", "auditory-p300"],
         ["hardware", "health"],
         ["hardware", "impedance"],
         ["hardware", "impedance_validate"],
