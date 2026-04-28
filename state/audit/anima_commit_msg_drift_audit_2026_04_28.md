@@ -1,17 +1,17 @@
 # anima commit-msg ↔ diff alignment audit
 
-- ts: 2026-04-28T12:06:49Z
+- ts: 2026-04-28T12:09:09Z
 - repo: /Users/ghost/core/anima
 - audited: 100 commits
-- eligible (excl exempt/no-scope/no-diff): 70
-- PASS:           46
-- WARN_LOOSE:     14
+- eligible (excl exempt/no-scope/no-diff): 71
+- PASS:           48
+- WARN_LOOSE:     13
 - FAIL_MISMATCH:  10
 - NO_SCOPE:       0
-- EXEMPT:         30
+- EXEMPT:         29
 - NO_DIFF:        0
-- mismatch_rate:  14.29% (10/70 eligible)
-- warn_rate:      20.00% (14/70 eligible)
+- mismatch_rate:  14.08% (10/71 eligible)
+- warn_rate:      18.31% (13/71 eligible)
 
 ## FAIL_MISMATCH commits
 
@@ -48,6 +48,7 @@
 
 ## WARN_LOOSE commits
 
+- `5d728705e` `ops(raw1): SCOPE-WIDE batch lock 491 anima/tool/*.hexa — raw#1 89.6% v`  (matched in top-3: ['raw1'])
 - `f6a30470c` `witness(a25-d631a902-wire): 6-repo 23.35MB MEASURED 60.79% — DEFER 80%`  (matched in top-3: ['a25', 'd631a902', 'wire'])
 - `50002d89f` `fix(an11-fire18): Mode H fix #4 — cuda_max_good>=12.8 복원 + cu118 force`  (matched in top-3: ['an11'])
 - `fdf782215` `fix(an11-fire12): torch cu118 wheel — Mode D fix #2 (cuda=12.6 driver `  (matched in top-3: ['an11'])
@@ -60,5 +61,31 @@
 - `95b43ddb1` `feat(F1-cycle4-T8g+T8h): Conway 40x40 + 80x80 physical-limit kick — CO`  (matched in top-3: ['f1', 'cycle4', 't8h'])
 - `5e711ffb6` `feat(F1-cycle4-T8f): 20x20 density sweep — SWEET SPOT SHIFTS UP with g`  (matched in top-3: ['f1', 'cycle4', 't8f'])
 - `3099a1363` `feat(F1-cycle4-T8e): density-controlled Conway sweep — DENSITY HYPOTHE`  (matched in top-3: ['f1', 'cycle4', 't8e'])
-- `e6863ff5f` `feat(F1-cycle4-T8d): Conway 20x20 — NON-MONOTONIC amplification (DECRE`  (matched in top-3: ['f1', 'cycle4', 't8d'])
-- `b6efb3949` `feat(F1-cycle4-T8c): Conway 10x10 LARGER grid — R-pentomino +30.2% CA `  (matched in top-3: ['f1', 'cycle4', 't8c'])
+
+## raw#10 honest C3 — real-time self-witness
+
+**Live drift event during this very lint's landing**:
+
+The files for this lint (`anima-eeg/tool/commit_msg_diff_alignment_lint.hexa` +
+docs + audit md) were silently absorbed into commit `e5e37cc66`
+("feat(eeg-t4-auditory-oddball): P300 ERP paradigm runner ...") by a
+parallel agent.  Top-1 file in that commit's diff is
+`anima-eeg/tool/eeg_feedback_loop.hexa` (+528 LoC) — P300 auditory work
+declared in subject is NOT the dominant change.
+
+### Lint verdict on `e5e37cc66`
+Verdict: **PASS** (false-negative).
+Reason: scope token `eeg` matches `anima-eeg/...` path; broad-token
+substring match is too lenient when the scope's *specific* tokens
+(`t4`, `auditory`, `oddball`) are absent from all top-3 paths.
+
+### Limitation surfaced (raw#10)
+The current substring heuristic over-credits broad infrastructure tokens
+(`eeg`, `an11`, `f1`, `cycle4`).  v2 candidate: weight tokens by inverse
+document frequency over recent commits (rare tokens count more).  Logged
+for next cycle, NOT fixed in v1 (frozen criteria, raw#12).
+
+### Witness implication
+Lint detected ≥10 FAIL_MISMATCH (14.08%) and ≥13 WARN_LOOSE (18.31%)
+across the recent 100 anima commits — an empirical baseline for the drift
+phenomenon raw#85 strengthening targets.
