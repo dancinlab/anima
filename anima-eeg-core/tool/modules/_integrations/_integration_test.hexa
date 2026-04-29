@@ -3,10 +3,15 @@
 //                                                  (Phase 6)
 //
 //  PURPOSE
-//    Phase 6 _integrations integration test — runs all 7 _integrations/ modules
+//    Phase 6 _integrations integration test — runs all 8 _integrations/ modules
 //    in selftest mode and verifies kv-block contract:
+//      synthetic_fixture (byte-identical regression baseline) |
 //      clm_eeg_p1 | clm_eeg_p3 | berger_validate | artifact_pipeline |
 //      rsn_validate | cyborg_token_emit | multi_subject_aggregate
+//
+//    synthetic_fixture is run FIRST — it is the deterministic baseline:
+//    a regression here means the byte-identical ground truth has drifted,
+//    invalidating downstream selftests (raw#65 idempotent + raw#68 fixpoint).
 //
 //    raw#42 mac-zero-compute compliance: integration test uses each module's
 //    SELFTEST mode (synthetic LCG fixtures). For real-data verification, run
@@ -102,6 +107,7 @@ fn main() {
     println("══════════════════════════════════════════════════════════════")
 
     let modules = [
+        "synthetic_fixture",
         "clm_eeg_p1",
         "clm_eeg_p3",
         "berger_validate",
