@@ -132,4 +132,35 @@ changes are required for the rollout.
 - `anima-eeg-core/tool/modules/_integrations/cyborg_token_emit.hexa` *(append kv line)*
 - `anima-eeg-core/tool/modules/_integrations/berger_validate.hexa` *(append kv line)*
 - `anima-eeg-core/tool/modules/_integrations/clm_eeg_p3.hexa` *(append kv line)*
+- `anima-eeg-core/tool/modules/_integrations/artifact_pipeline.hexa` *(append kv line — Task #11 deferral closure 2026-04-29)*
+- `anima-eeg-core/tool/modules/_integrations/rsn_validate.hexa` *(append kv line — Task #11 deferral closure 2026-04-29)*
 - `docs/state_ledger_schema_versioning_2026_04_29.md` *(this file)*
+
+## 10. Task #11 deferral closure (2026-04-29 follow-up)
+
+The two Phase 6 _integrations modules deferred from the main Task #11 closure
+(commits 5742538fb / 5d7988201 / 6446ca4e0 / 649b8cb69) — `artifact_pipeline`
+and `rsn_validate` — were verified for ledger-write wire status:
+
+- **artifact_pipeline.hexa**: NO state-ledger writer wire (kv-block-only via
+  stdout; `_integration_test.hexa` consumes kv). raw#10 honest C3.
+- **rsn_validate.hexa**: NO state-ledger writer wire (kv-block-only via
+  stdout; legacy `state/rsn_audit/*.jsonl` reference is a docstring fixture
+  pointer, not a write call). raw#10 honest C3.
+
+Both modules nonetheless received the `schema_version=eeg-core-phase6.v1` emit
+in their kv-block (matching the proactive pattern applied to the prior 3
+_integrations writers in 6446ca4e0) so that the discriminator is present at
+the kv-contract layer ahead of the dispatcher cutover that will append their
+output directly to a state ledger.
+
+**Coverage status:** 10/10 Phase 6 _integrations writers covered for
+`schema_version` emit at the kv-contract layer (8 _integrations + 2 deferral
+closure). The `_integration_test.hexa` audit-row writer (which currently
+extracts only `schema`/`verdict`/`value_x1000`/`raw71_triggered` and does NOT
+yet propagate `schema_version` to the audit ledger row) is a separate
+concern tracked outside Task #11.
+
+**Selftest verification:** all 8 _integrations modules PASS via
+`_integration_test.hexa` (8/8 contract verdict PHASE6_INTEGRATIONS_INTEGRATION_PASS).
+Validator selftest 8/8 PASS unchanged.

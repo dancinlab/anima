@@ -159,6 +159,7 @@ fn _integration_rsn_validate_kv(args_kv: string) -> string {
 
     let mut kv = ""
     kv = kv + "schema=" + SCHEMA + "\n"
+    kv = kv + "schema_version=eeg-core-phase6.v1\n"
     kv = kv + "module=" + MODULE_NAME + "\n"
     kv = kv + "metric=rsn_dmn_+frontal_asym_+occ_alpha\n"
     kv = kv + "paradigm=resting_baseline\n"
