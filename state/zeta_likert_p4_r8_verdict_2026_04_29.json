@@ -1,0 +1,51 @@
+{
+  "schema": "anima/zeta_likert_p4_r8_verdict/1",
+  "ts": "2026-04-29T00:00:00Z",
+  "roadmap_entry": 78,
+  "clause": "[CP2 clause 1/3] 제타가능 — bench/zeta_likert 블라인드 A/B PASS",
+  "adapter": "state/trained_adapters/p4_r8/final/",
+  "adapter_real_inference_executed": false,
+  "adapter_real_inference_blocker": "Mistral-7B-v0.3 base weights NOT cached (only refs/main, no blobs/snapshots/, ~14GB download required); transformers/peft/torch NOT installed (~3GB); RunPod pods all EXITED (verified 2026-04-29 via runpodctl pod list)",
+  "prompt_count": 20,
+  "anima_mean_likert": 4.08369,
+  "zeta_mean_likert": 3.66547,
+  "delta_likert": 0.418217,
+  "anima_win_rate": 1,
+  "threshold": 3,
+  "verdict_overall": "PASS",
+  "verdict_overall_note": "PASS/FAIL refers to stub-proxy Likert ≥ 3.0 (deterministic rubric over stub_anima_response). Real LoRA verdict pending GPU dispatch.",
+  "zeta_baseline_compare": {
+    "zeta_naturalness": 3.2,
+    "zeta_coherence": 3,
+    "zeta_style": 2.8,
+    "anima_proxy_naturalness_5pt": 4.41281,
+    "anima_proxy_coherence_5pt": 2.744,
+    "anima_proxy_style_5pt": 5,
+    "beats_zeta_naturalness": true,
+    "beats_zeta_coherence": false,
+    "beats_zeta_style": true,
+    "summary": "Zeta_부분_능가"
+  },
+  "satisfaction_update": {
+    "raw_pct_pre": 22.5,
+    "raw_pct_post": 27.5,
+    "live_pct_pre": 2.5,
+    "live_pct_post": 5,
+    "delta_raw": 5,
+    "delta_live": 2.5,
+    "basis": "78-d 5-카테고리 coverage criterion lifted SPEC-ONLY (0.2) → PARTIAL (0.4) by framework execution + stub baseline measurement; 78-a/b/c unchanged (real LoRA + latency + 30-turn pending GPU dispatch)"
+  },
+  "falsifier_preregister": [
+    {"id":"F1","predicate":"if real Mistral-7B-v0.3+p4_r8 LoRA mean_likert < 3.0 over same 20 prompts then this stub-baseline PASS is REVOKED","resolve":"GPU dispatch"},
+    {"id":"F2","predicate":"if real LoRA forward latency p95 > 1000ms then 78-b RED MISSING regardless of Likert score","resolve":"H100 latency probe"},
+    {"id":"F3","predicate":"if 30-turn session breaks coherence (anima_mean drops > 0.5 by turn 30) then 78-c RED MISSING regardless of single-turn score","resolve":"30-turn session harness"},
+    {"id":"F4","predicate":"if Zeta hardcoded 3.2/3.0/2.8 baseline does not match Scatter Lab Spotwrite-1 actual public benchmark then comparison invalid","resolve":"Spotwrite-1 published benchmark cite or live API probe"},
+    {"id":"F5","predicate":"if rubric weights (0.20/0.25/0.20/0.20/0.15) do not correlate with human Likert (>0.7 spearman) on >=30 held-out responses then deterministic scorer invalid","resolve":"human-labeled calibration set"}
+  ],
+  "cost_attribution": {
+    "this_cycle_usd": 0.0,
+    "this_cycle_basis": "hexa-only deterministic, no GPU, no API calls",
+    "real_lora_dispatch_estimate_usd": "$0.50-2.00 (RunPod H100 15-30min) OR $0 + 1-3h wall (Mac local install + Mistral-7B-v0.3 download + MPS inference)"
+  },
+  "next_cycle_action": "GPU dispatch via tool/anima_runpod_orchestrator.hexa --gpu-id 'NVIDIA H100 80GB HBM3' --upload state/trained_adapters/p4_r8/final/:/workspace/lora_p4_r8 --pip-install 'transformers peft accelerate' --command 'python3 /workspace/run_zeta_likert_real.py' --max-cost 5 --auto-terminate; OR Mac local: pip install transformers peft torch && hf download mistralai/Mistral-7B-v0.3"
+}
