@@ -180,6 +180,7 @@ fn _integration_cyborg_token_emit_kv(args_kv: string) -> string {
 
     let mut kv = ""
     kv = kv + "schema=" + SCHEMA + "\n"
+    kv = kv + "schema_version=eeg-core-phase6.v1\n"
     kv = kv + "module=" + MODULE_NAME + "\n"
     kv = kv + "metric=eeg_to_token_cyborg\n"
     kv = kv + "paradigm=daily_life\n"
