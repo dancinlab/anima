@@ -488,7 +488,8 @@ fn main() {
     jrow = jrow + "\"c2_pass\":" + str(c2_pass) + ","
     jrow = jrow + "\"verdict\":\"" + verdict + "\","
     jrow = jrow + "\"classification\":\"" + classification + "\","
-    jrow = jrow + "\"reference\":\"Hjorth 1970 / Oh 2014\""
+    jrow = jrow + "\"reference\":\"Hjorth 1970 / Oh 2014\","
+    jrow = jrow + "\"schema_version\":\"clm-eeg-legacy.v1\""
     jrow = jrow + "}"
     append_jsonl(audit_path, jrow)
 

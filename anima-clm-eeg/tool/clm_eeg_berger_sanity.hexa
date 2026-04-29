@@ -592,7 +592,8 @@ fn main() {
     jrow = jrow + "\"o2_c3\":" + str(o2_c3) + ","
     jrow = jrow + "\"verdict\":\"" + verdict + "\","
     jrow = jrow + "\"classification\":\"" + classification + "\","
-    jrow = jrow + "\"reference\":\"Berger 1929 / Welch 1967\""
+    jrow = jrow + "\"reference\":\"Berger 1929 / Welch 1967\","
+    jrow = jrow + "\"schema_version\":\"clm-eeg-legacy.v1\""
     jrow = jrow + "}"
     append_jsonl(audit_path, jrow)
 
