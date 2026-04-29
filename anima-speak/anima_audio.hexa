@@ -68,6 +68,7 @@
 // ═══════════════════════════════════════════════════════════════
 
 import "../../hexa-lang/stdlib/portable_fs.hexa"
+import "../../hexa-lang/stdlib/anima_audio_worker.hexa"
 
 let AX_MU = 1
 let AX_PHI = 2
@@ -128,7 +129,12 @@ fn _file_bytes(path: string) -> int {
 // inside container would fail every organ call. ANIMA_AUDIO_WORKER_PY_OK
 // caches a one-shot probe (file_exists /opt/homebrew/bin/python3 OR which).
 
-let WORKER_PY_PATH = "/Users/ghost/core/hexa-lang/stdlib/anima_audio_worker.py"
+// raw 9 final closure (2026-04-30): the worker's python source is now embedded
+// in hexa-lang/stdlib/anima_audio_worker.hexa. ensure_anima_audio_worker_script()
+// (called lazily from _ensure_worker_handle below) materializes the source to
+// /tmp/_hexa_anima_audio_worker.py exactly once per hexa process. The path
+// must match WORKER_PY_SHIM_PATH defined by the stdlib module.
+let WORKER_PY_PATH = "/tmp/_hexa_anima_audio_worker.py"
 let mut WORKER_HANDLE = -1
 let mut WORKER_REQ_ID = 0
 let mut WORKER_PY_OK_PROBED = false
@@ -159,6 +165,10 @@ fn _ensure_worker_handle() -> int {
         WORKER_HANDLE = -1
     }
     if !_python_available() { return -1 }
+    // raw 9 final closure: materialize the embedded worker source to /tmp
+    // (idempotent — writes once per hexa process). Returns the same path as
+    // WORKER_PY_PATH = WORKER_PY_SHIM_PATH.
+    ensure_anima_audio_worker_script()
     if !pfs_file_exists(WORKER_PY_PATH) { return -1 }
     // Resolve python binary (homebrew preferred on darwin, fall back to PATH).
     let mut py = "/opt/homebrew/bin/python3"
