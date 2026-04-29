@@ -297,51 +297,12 @@ fn vocal(freq_hz: float, gain: float, ms: int) -> string {
 //  WAV: 44-byte RIFF header + N×2 byte int16 LE PCM data.
 // ═══════════════════════════════════════════════════════════════
 
-fn _u16le(b: int) {
-    return [b & 0xFF, (b >> 8) & 0xFF]
-}
-
-fn _u32le(b: int) {
-    return [b & 0xFF, (b >> 8) & 0xFF, (b >> 16) & 0xFF, (b >> 24) & 0xFF]
-}
-
-fn _wav_header(sr: int, n_samples: int) {
-    // 16-bit mono PCM. block_align=2, byte_rate=sr*2.
-    let data_bytes = n_samples * 2
-    let chunk_size = 36 + data_bytes
-    let mut h = []
-    // "RIFF"
-    h.push(0x52); h.push(0x49); h.push(0x46); h.push(0x46)
-    // ChunkSize (LE u32) = 36 + data_bytes
-    let cs = _u32le(chunk_size)
-    h.push(cs[0]); h.push(cs[1]); h.push(cs[2]); h.push(cs[3])
-    // "WAVE"
-    h.push(0x57); h.push(0x41); h.push(0x56); h.push(0x45)
-    // "fmt "
-    h.push(0x66); h.push(0x6D); h.push(0x74); h.push(0x20)
-    // Subchunk1Size = 16
-    h.push(16); h.push(0); h.push(0); h.push(0)
-    // AudioFormat = 1 (PCM)
-    h.push(1); h.push(0)
-    // NumChannels = 1
-    h.push(1); h.push(0)
-    // SampleRate
-    let sr_b = _u32le(sr)
-    h.push(sr_b[0]); h.push(sr_b[1]); h.push(sr_b[2]); h.push(sr_b[3])
-    // ByteRate = sr * 2
-    let br_b = _u32le(sr * 2)
-    h.push(br_b[0]); h.push(br_b[1]); h.push(br_b[2]); h.push(br_b[3])
-    // BlockAlign = 2
-    h.push(2); h.push(0)
-    // BitsPerSample = 16
-    h.push(16); h.push(0)
-    // "data"
-    h.push(0x64); h.push(0x61); h.push(0x74); h.push(0x61)
-    // Subchunk2Size = data_bytes
-    let db_b = _u32le(data_bytes)
-    h.push(db_b[0]); h.push(db_b[1]); h.push(db_b[2]); h.push(db_b[3])
-    return h
-}
+// ω-audio-cleanup (2026-04-30): legacy push-based helpers _u16le, _u32le,
+// _wav_header retired. All hexa-native organs (vocal_hexa_alloc, breath_hexa,
+// pipe_hexa, notch_hexa, etc.) build their 44-byte RIFF header inline via
+// `array_alloc(44 + 2*n)` + indexed-assign — see vocal_hexa_alloc:365 for
+// canonical pattern. Dead-code removal eliminates 13 I1 (deny-push) violations
+// at no behavioural cost (no remaining caller in this file or repo).
 
 // ω-interp-3 bench variant (2026-04-26): alloc + indexed-assign instead of
 // header push + N×2 sample push. Pre-allocates buf of (44 + 2*n) bytes via
@@ -575,27 +536,26 @@ fn vocal_hexa(freq_hz: float, gain: float, ms: int) -> string {
 //  ω-audio-3 redo (2026-04-26) — hexa-native helpers
 //
 //  Shared utilities for the 3 remaining hexa-native organs:
-//    _push_int16_le(bytes, sample) — append signed int16 little-endian.
 //    _read_wav_int16_le(path) -> [samples] — parse 44-byte header + int16 LE.
 //    _hann_apply(arr, k_attack) — symmetric hann ramp on first/last k samples.
 //    _normalize_peak(arr, gain)  — divide by max-abs, scale by gain.
+//
+//  ω-audio-cleanup (2026-04-30): _push_int16_le retired. All organs now write
+//  int16 LE samples via inline `bytes[off] = u & 0xFF; bytes[off+1] = (u>>8)&0xFF`
+//  on alloc-pre-sized byte buffer (see breath_hexa / pipe_hexa / notch_hexa
+//  payload loops). Removes 2 I1 (deny-push) violations.
 // ═══════════════════════════════════════════════════════════════
-
-fn _push_int16_le(bytes, s: int) {
-    // s is already-clamped int in [-32768, 32767].
-    let mut u = s
-    if u < 0 { u = u + 65536 }
-    bytes.push(u & 0xFF)
-    bytes.push((u >> 8) & 0xFF)
-}
 
 fn _read_wav_int16_le(path: string) {
     // Returns [n_samples, sample_rate, samples...] as a single array.
     // First two slots are metadata, remainder are float64 samples in [-1, 1].
     // Empty array = parse failure / file too small.
+    //
+    // ω-audio-cleanup (2026-04-30): swapped 3× .push() for `array_alloc(n+2)`
+    // + indexed-write to retire 3 I1 (deny-push) violations. Behaviour-eq:
+    // out[0]=n, out[1]=sr, out[2..n+2]=float samples — identical layout.
     let raw = read_file_bytes(path)
-    let mut out = []
-    if len(raw) < 44 { return out }
+    if len(raw) < 44 { return [] }
     // Sample rate at offset 24 (4 LE bytes).
     let sr = raw[24] | (raw[25] << 8) | (raw[26] << 16) | (raw[27] << 24)
     // data subchunk size at offset 40 (4 LE bytes); n_samples = bytes/2.
@@ -603,15 +563,16 @@ fn _read_wav_int16_le(path: string) {
     let mut n = dlen / 2
     let avail = (len(raw) - 44) / 2
     if n > avail { n = avail }
-    out.push(n)
-    out.push(sr)
+    let mut out = array_alloc(n + 2)
+    out[0] = n
+    out[1] = sr
     let mut i = 0
     while i < n {
         let lo = raw[44 + i*2]
         let hi = raw[44 + i*2 + 1]
         let mut u = lo | (hi << 8)
         if u >= 32768 { u = u - 65536 }
-        out.push((u + 0.0) / 32768.0)
+        out[2 + i] = (u + 0.0) / 32768.0
         i = i + 1
     }
     return out
@@ -668,7 +629,9 @@ fn breath_hexa(band_lo: float, band_hi: float, gain: float, ms: int) -> string {
     if lcg == 0 { lcg = 1 }
 
     // Pass 1: generate filtered samples into float buffer, track peak.
-    let mut samples = []
+    // ω-audio-cleanup (2026-04-30): array_alloc(n) + samples[i]= replaces
+    // .push() to retire I1 (deny-push) violation. n is loop-invariant.
+    let mut samples = array_alloc(n)
     let mut x1 = 0.0
     let mut x2 = 0.0
     let mut y1 = 0.0
@@ -681,7 +644,7 @@ fn breath_hexa(band_lo: float, band_hi: float, gain: float, ms: int) -> string {
         let y = b0 * x + 0.0 * x1 + b2 * x2 - a1 * y1 - a2 * y2
         x2 = x1; x1 = x
         y2 = y1; y1 = y
-        samples.push(y)
+        samples[i] = y
         let mut ay = y
         if ay < 0.0 { ay = 0.0 - ay }
         if ay > peak { peak = ay }
@@ -806,12 +769,14 @@ fn pipe_hexa(in_path: string, f1: float, f2: float, q: float) -> string {
     let A2 = 1.0 - 2.0 * r2 * cos_th2 + r2sq
 
     // Pre-emphasis + cascade pass. Track peak for normalization.
+    // ω-audio-cleanup (2026-04-30): array_alloc(n) + buf[i]= replaces .push()
+    // to retire I1 (deny-push) violation. n is loop-invariant.
     let mut prev_x = parsed[2]   // first sample, used as x[-1] for pre-emphasis
     let mut y1a = 0.0
     let mut y2a = 0.0
     let mut y1b = 0.0
     let mut y2b = 0.0
-    let mut buf = []
+    let mut buf = array_alloc(n)
     let mut peak = 0.000000001
     let mut i = 0
     while i < n {
@@ -825,7 +790,7 @@ fn pipe_hexa(in_path: string, f1: float, f2: float, q: float) -> string {
         // formant 2.
         let yb = A2 * ya + a1f2 * y1b - r2sq * y2b
         y2b = y1b; y1b = yb
-        buf.push(yb)
+        buf[i] = yb
         let mut ab = yb
         if ab < 0.0 { ab = 0.0 - ab }
         if ab > peak { peak = ab }
@@ -948,11 +913,13 @@ fn notch_hexa(in_path: string, notch_hz: float, width_hz: float) -> string {
     let a2 = (1.0 - alpha) / a0
 
     // Direct-form-I biquad pass. Track peak for normalization.
+    // ω-audio-cleanup (2026-04-30): array_alloc(n) + buf[i]= replaces .push()
+    // to retire I1 (deny-push) violation. n is loop-invariant.
     let mut x1 = 0.0
     let mut x2 = 0.0
     let mut y1 = 0.0
     let mut y2 = 0.0
-    let mut buf = []
+    let mut buf = array_alloc(n)
     let mut peak = 0.000000001
     let mut i = 0
     while i < n {
@@ -960,7 +927,7 @@ fn notch_hexa(in_path: string, notch_hz: float, width_hz: float) -> string {
         let ys = b0 * xs + b1 * x1 + b2 * x2 - a1 * y1 - a2 * y2
         x2 = x1; x1 = xs
         y2 = y1; y1 = ys
-        buf.push(ys)
+        buf[i] = ys
         let mut ay = ys
         if ay < 0.0 { ay = 0.0 - ay }
         if ay > peak { peak = ay }
