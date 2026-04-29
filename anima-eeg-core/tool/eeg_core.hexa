@@ -279,16 +279,23 @@ fn _resolve_backend(verb: string, noun: string) -> string {
         if noun == "eye-tracker"     { return "legacy:anima-eeg/tool/eye_tracker_webcam.hexa" }
     }
 
-    // ── integration verb namespace (Phase 6 LANDED — _integrations/ batch1) ─
+    // ── integration verb namespace (Phase 6 LANDED — _integrations/ batch1+2+gap) ─
     //   Cross-module integrations where multiple metrics + a paradigm combine
-    //   into a higher-level verdict. 7 modules: clm_eeg_p1/p3, berger_validate,
+    //   into a higher-level verdict. 9 modules: clm_eeg_p1/p2/p3, berger_validate,
     //   artifact_pipeline, rsn_validate, cyborg_token_emit, multi_subject_
-    //   aggregate. raw#10 honest C3: live mode is NOT_YET_LANDED for all 7
-    //   pending real-EEG ingest / .venv-eeg / D+1 hardware arrival.
+    //   aggregate, synthetic_fixture. raw#10 honest C3: live mode is
+    //   NOT_YET_LANDED for 8 (real-EEG ingest pending); synthetic_fixture
+    //   has no live mode by design (raw#91 honest — synthetic-only).
+    //   clm_eeg_p2 (TLR Kuramoto) closes migration plan §3 P2 gap.
     if verb == "integration" {
         if noun == "clm-eeg-p1"        { return CORE_ROOT + "/_integrations/clm_eeg_p1.hexa" }
         if noun == "clm_eeg_p1"        { return CORE_ROOT + "/_integrations/clm_eeg_p1.hexa" }
         if noun == "p1"                { return CORE_ROOT + "/_integrations/clm_eeg_p1.hexa" }
+        if noun == "clm-eeg-p2"        { return CORE_ROOT + "/_integrations/clm_eeg_p2.hexa" }
+        if noun == "clm_eeg_p2"        { return CORE_ROOT + "/_integrations/clm_eeg_p2.hexa" }
+        if noun == "p2"                { return CORE_ROOT + "/_integrations/clm_eeg_p2.hexa" }
+        if noun == "tlr-kuramoto"      { return CORE_ROOT + "/_integrations/clm_eeg_p2.hexa" }
+        if noun == "tlr"               { return CORE_ROOT + "/_integrations/clm_eeg_p2.hexa" }
         if noun == "clm-eeg-p3"        { return CORE_ROOT + "/_integrations/clm_eeg_p3.hexa" }
         if noun == "clm_eeg_p3"        { return CORE_ROOT + "/_integrations/clm_eeg_p3.hexa" }
         if noun == "p3"                { return CORE_ROOT + "/_integrations/clm_eeg_p3.hexa" }
@@ -303,6 +310,10 @@ fn _resolve_backend(verb: string, noun: string) -> string {
         if noun == "multi-subject"     { return CORE_ROOT + "/_integrations/multi_subject_aggregate.hexa" }
         if noun == "multi_subject_aggregate" { return CORE_ROOT + "/_integrations/multi_subject_aggregate.hexa" }
         if noun == "cohort"            { return CORE_ROOT + "/_integrations/multi_subject_aggregate.hexa" }
+        if noun == "synthetic-fixture" { return CORE_ROOT + "/_integrations/synthetic_fixture.hexa" }
+        if noun == "synthetic_fixture" { return CORE_ROOT + "/_integrations/synthetic_fixture.hexa" }
+        if noun == "synth-fixture"     { return CORE_ROOT + "/_integrations/synthetic_fixture.hexa" }
+        if noun == "fixture"           { return CORE_ROOT + "/_integrations/synthetic_fixture.hexa" }
     }
 
     // ── ML modules (legacy clm-eeg) ──────────────────────────────────────
@@ -361,9 +372,9 @@ fn _print_usage() {
     eprintln("  integrate {claude-cli|claude-cli-long|wearable|mobile|cardiac|eye-tracker}")
     eprintln("                                         legacy wrappers")
     eprintln("")
-    eprintln("  integration {clm-eeg-p1|clm-eeg-p3|berger|artifact-pipeline|")
-    eprintln("               rsn|cyborg-token|multi-subject}")
-    eprintln("                                         landed: Phase 6 _integrations/ 7 modules")
+    eprintln("  integration {clm-eeg-p1|clm-eeg-p2|clm-eeg-p3|berger|artifact-pipeline|")
+    eprintln("               rsn|cyborg-token|multi-subject|synthetic-fixture|tlr-kuramoto}")
+    eprintln("                                         landed: Phase 6 _integrations/ 9 modules")
     eprintln("")
     eprintln("  ml {anomaly|token-cyborg}              legacy clm-eeg wrappers")
     eprintln("")
@@ -455,6 +466,7 @@ fn _print_list() {
         ["integration", "rsn"],
         ["integration", "cyborg-token"],
         ["integration", "multi-subject"],
+        ["integration", "synthetic-fixture"],
         ["ml", "anomaly"],
         ["ml", "token-cyborg"],
         ["analyze", "rsn"],
