@@ -3,6 +3,8 @@
 > CPU micro-scale PoC → 실사용 production 승격 로드맵 (60일).
 > Source: Seed task 38 (production upgrade spec), 2026-04-21.
 
+> **AI-native ETA SSOT (2026-05-01)**: For any closure / roadmap ETA in this repo, the authoritative computation is `$HIVE/tool/closure_eta.hexa` (LoC × parallel + bg × ∞ frame, rate 50,000 LoC/day/agent default, par+ser schema, DAG critical path). Static "+N 달" / "+N month" markdown estimates anchored to human single-developer baseline are DEPRECATED for closure-scope decisions per hive raw 257 (`ai-native-eta-closure-mandate`). Reference fixture: `--module critical-path --example gamebox --target CM-30` = 0.22d ≈ 5.3h vs static 630d (×2863 compression).
+
 ## 1. Scale gap 정량 (micro vs production)
 
 | metric | CPU micro | Qwen 14B production | gap |
