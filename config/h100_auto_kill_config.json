@@ -4,7 +4,8 @@
   "probe_cmd": {
     "who": "who | wc -l",
     "tmux": "tmux list-sessions 2>/dev/null | wc -l",
-    "nvidia_smi": "nvidia-smi --query-gpu=utilization.gpu --format=csv,noheader,nounits | head -1"
+    "nvidia_smi": "nvidia-smi --query-gpu=utilization.gpu --format=csv,noheader,nounits | head -1",
+    "heartbeat": "stat -c %Y /workspace/.heartbeat 2>/dev/null"
   },
   "dry_run": true,
   "apply_flag_required": true,
@@ -17,6 +18,7 @@
   "notes": [
     "raw#9 deterministic: thresholds + probe_cmd fixed by config",
     "raw#10 proof-carrying: state_path carries hash-chain",
-    "raw#12 no cherry-pick: iterates pods in config order; no re-sort"
+    "raw#12 no cherry-pick: iterates pods in config order; no re-sort",
+    "2026-04-30: added heartbeat source — training launch backgrounds tool/anima_heartbeat_emit.sh; probe returns mtime epoch, age in min compared to threshold (false-positive-safe)."
   ]
 }

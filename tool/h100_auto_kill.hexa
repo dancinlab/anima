@@ -181,8 +181,20 @@ fn _probe_exec(pod, cfg, threshold: int) -> int {
     }
     if digits == "" { return -1 }
     let val = to_int(digits)
-    // binary indicator: 0 = idle (STOP), >0 = active (KEEP)
-    if val == 0 { return threshold }   // ≥ threshold triggers STOP in caller
+    // raw#9 source-aware: heartbeat probe returns mtime epoch; convert to age min.
+    // Training script touches /workspace/.heartbeat every N sec via
+    // tool/anima_heartbeat_emit.sh; pod registry sets last_activity_source=heartbeat.
+    // Missing file -> stat rc!=0 -> -1 (UNKNOWN, no kill). Protects pods that have
+    // not yet started emitting; opt-in to aggressive kill via separate flag later.
+    let src = _pod_field_str(pod, "last_activity_source", "")
+    if src == "heartbeat" {
+        let now_s = to_int(to_string(now()))
+        if val <= 0 { return -1 }
+        if val > now_s { return -1 }   // future mtime - clock skew, treat as UNKNOWN
+        return (now_s - val) / 60      // age in minutes; >= threshold => STOP
+    }
+    // binary indicator (nvidia_smi/who/tmux): 0 = idle (STOP), >0 = active (KEEP)
+    if val == 0 { return threshold }   // >= threshold triggers STOP in caller
     return 0
 }
 
