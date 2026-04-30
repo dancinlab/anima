@@ -7,17 +7,15 @@
 
     <key>ProgramArguments</key>
     <array>
-        <string>/Users/ghost/core/hexa-lang/hexa</string>
-        <string>run</string>
-        <string>/Users/ghost/core/anima/tool/h100_auto_kill.hexa</string>
-        <string>--dry-run</string>
+        <string>/bin/bash</string>
+        <string>/Users/ghost/core/anima/tool/h100_idle_guard.bash</string>
     </array>
 
     <key>WorkingDirectory</key>
     <string>/Users/ghost/core/anima</string>
 
     <key>StartInterval</key>
-    <integer>3600</integer>
+    <integer>1800</integer>
 
     <key>RunAtLoad</key>
     <false/>
@@ -32,6 +30,8 @@
     <dict>
         <key>PATH</key>
         <string>/opt/homebrew/bin:/usr/local/bin:/usr/bin:/bin</string>
+        <key>HEXA_SHIM_NO_DARWIN_LANDING</key>
+        <string>1</string>
     </dict>
 </dict>
 </plist>
