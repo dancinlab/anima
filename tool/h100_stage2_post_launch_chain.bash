@@ -307,10 +307,35 @@ done
 wait
 log "  driver shipped all 4 pods"
 
+# --- step 3.5: ship heartbeat emit script -------------------------------------
+# 2026-04-30: pods auto-register as last_activity_source=heartbeat in pods_sync.
+# Each pod runs anima_heartbeat_emit.sh in background so h100_auto_kill probe
+# reads /workspace/.heartbeat mtime → age in min vs 5min threshold (false-
+# positive-safe; idle dips between batches do NOT trigger STOP).
+HEARTBEAT_EMIT_SRC="${ANIMA_ROOT}/tool/anima_heartbeat_emit.sh"
+if [[ -f "${HEARTBEAT_EMIT_SRC}" ]]; then
+  log "step 3.5: ship heartbeat emit (own-register liveness)"
+  for row in $(echo "${PODS_JSON}" | python3 -c "
+import json, sys
+for r in json.load(sys.stdin):
+    print(f\"{r['pid']}:{r['host']}:{r['port']}\")
+"); do
+    IFS=':' read -r pid host port <<< "$row"
+    cat "${HEARTBEAT_EMIT_SRC}" | ssh -o StrictHostKeyChecking=no -p "$port" "root@${host}" \
+      "cat > /workspace/anima_heartbeat_emit.sh && chmod +x /workspace/anima_heartbeat_emit.sh" &
+  done
+  wait
+  log "  heartbeat emit shipped all 4 pods"
+else
+  log "  [WARN] ${HEARTBEAT_EMIT_SRC} missing — heartbeat probe will see no emit (UNKNOWN)"
+fi
+
 # --- step 4: kickoff training (nohup, parallel) ------------------------------
 log "step 4/4: kickoff training nohup — NO IDLE"
 # 2026-04-25 r6-α attempt_5 recurrence prevention: coerce relative corpus path to absolute (pod cwd=/root → FileNotFoundError)
 [[ -n "${ANIMA_STAGE2_CORPUS_PATH:-}" && "${ANIMA_STAGE2_CORPUS_PATH}" != /* ]] && ANIMA_STAGE2_CORPUS_PATH=/root/core/anima/${ANIMA_STAGE2_CORPUS_PATH}
+# 2026-04-30: heartbeat emit started BEFORE training so the probe sees a fresh
+# mtime within seconds of pod kickoff (vs. waiting for first training step).
 for row in $(echo "${PODS_JSON}" | python3 -c "
 import json, sys
 for r in json.load(sys.stdin):
@@ -319,10 +344,10 @@ for r in json.load(sys.stdin):
   IFS=':' read -r pid host port model rank <<< "$row"
   # 2026-04-24 ROI V6: pass ANIMA_STAGE2_CORPUS_PATH through to pod-side driver
   ssh -o StrictHostKeyChecking=no -p "$port" "root@${host}" \
-    "HF_TOKEN='${HF_TOKEN}' PHI_PATH_ID='${pid}' PHI_MODEL='${model}' PHI_LORA_RANK='${rank}' PHI_MAX_STEPS='${MAX_STEPS}' ANIMA_STAGE2_CORPUS_PATH='${ANIMA_STAGE2_CORPUS_PATH:-/root/core/anima/experiments/alm_r13/corpus_alm_r13_v1.jsonl}' nohup python3 /workspace/train_${pid}.py > /workspace/train_${pid}.log 2>&1 & echo ${pid}_pid=\$!" 2>&1 | tail -1 &
+    "nohup bash /workspace/anima_heartbeat_emit.sh > /workspace/heartbeat_emit.log 2>&1 & echo ${pid}_hb_pid=\$!; HF_TOKEN='${HF_TOKEN}' PHI_PATH_ID='${pid}' PHI_MODEL='${model}' PHI_LORA_RANK='${rank}' PHI_MAX_STEPS='${MAX_STEPS}' ANIMA_STAGE2_CORPUS_PATH='${ANIMA_STAGE2_CORPUS_PATH:-/root/core/anima/experiments/alm_r13/corpus_alm_r13_v1.jsonl}' nohup python3 /workspace/train_${pid}.py > /workspace/train_${pid}.log 2>&1 & echo ${pid}_pid=\$!" 2>&1 | tail -1 &
 done
 wait
-log "  4 trainings kicked off (nohup bg)"
+log "  4 trainings kicked off (nohup bg) + heartbeat emit running"
 log "chain complete — pods are TRAINING, monitor logs via:"
 log "  ssh -p <port> root@<host> 'tail -5 /workspace/train_<pid>.log'"
 log "  Or await artifacts: /workspace/trained_<pid>/h_last_raw.json"

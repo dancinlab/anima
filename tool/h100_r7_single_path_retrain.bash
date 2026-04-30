@@ -521,12 +521,25 @@ PYDRIVER
 echo "${DRIVER_BODY}" | ssh -o StrictHostKeyChecking=no -p "${SSH_PORT}" "root@${SSH_HOST}" "cat > /workspace/train_${PATH_ID}.py"
 log "  driver shipped"
 
+# 2026-04-30: ship + start heartbeat emit (own-register liveness for h100_auto_kill).
+HEARTBEAT_EMIT_SRC="${ANIMA_ROOT:-/Users/ghost/core/anima}/tool/anima_heartbeat_emit.sh"
+if [[ -f "${HEARTBEAT_EMIT_SRC}" ]]; then
+  cat "${HEARTBEAT_EMIT_SRC}" | ssh -o StrictHostKeyChecking=no -p "${SSH_PORT}" "root@${SSH_HOST}" \
+    "cat > /workspace/anima_heartbeat_emit.sh && chmod +x /workspace/anima_heartbeat_emit.sh"
+  log "  heartbeat emit shipped"
+else
+  log "  [WARN] ${HEARTBEAT_EMIT_SRC} missing — heartbeat probe will see no emit (UNKNOWN)"
+fi
+
 # --- step 5: kickoff training (nohup bg, poll for h_last_raw.json) -----------
 log "step 5/7: kickoff training nohup + poll for h_last_raw.json"
 # Coerce relative corpus path to absolute (r6-α attempt_5 prevention)
 [[ "${CORPUS_PATH}" != /* ]] && CORPUS_PATH="/root/core/anima/${CORPUS_PATH}"
 
-KICKOFF_CMD="HF_TOKEN='${HF_TOKEN_VAL}' \
+# 2026-04-30: heartbeat emit started BEFORE training so probe sees fresh mtime
+# within seconds of kickoff (vs. waiting for first training step).
+KICKOFF_CMD="nohup bash /workspace/anima_heartbeat_emit.sh > /workspace/heartbeat_emit.log 2>&1 & echo hb_pid=\$!; \
+HF_TOKEN='${HF_TOKEN_VAL}' \
 PHI_PATH_ID='${PATH_ID}' PHI_MODEL='${BASE_MODEL}' \
 PHI_LORA_RANK='${LORA_RANK}' PHI_MAX_STEPS='${MAX_STEPS}' \
 ANIMA_STAGE2_CORPUS_PATH='${CORPUS_PATH}' \

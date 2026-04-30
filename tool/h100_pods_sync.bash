@@ -21,7 +21,7 @@
 #     "pods": [
 #       { "pod_id": "…", "provider": "runpod", "ssh_host": "…",
 #         "ssh_port": <public tcp port>, "ssh_user": "root",
-#         "last_activity_source": "nvidia_smi",
+#         "last_activity_source": "heartbeat",
 #         "notes": "auto-synced from runpodctl @ <iso>" }
 #     ],
 #     "updated_at": "<iso>",
@@ -92,7 +92,7 @@ if [[ -n "$ids" ]]; then
     fi
     rows+=("$(jq -n --arg id "$pid" --arg host "$host" --argjson port "$port" --arg ts "$TS" '{
       pod_id: $id, provider: "runpod", ssh_host: $host, ssh_port: $port,
-      ssh_user: "root", last_activity_source: "nvidia_smi",
+      ssh_user: "root", last_activity_source: "heartbeat",
       notes: "auto-synced from runpodctl @ \($ts)"
     }')")
   done <<< "$ids"
