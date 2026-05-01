@@ -166,20 +166,37 @@ raw#91 correction: actual sum = 353+475+433+256 = **1,517 LoC** (revised).
 
 ### §3.3 DEPRECATE (5 tools, ~3,524 LoC archived after port)
 
-Already covered by Phase 6 native module; legacy file → ARCHIVE class (chflags uchg + .marker).
+> **NOTE 2026-05-01 (audit `867392918` reframe)**: 본 §3.3 의 원래 의미("legacy file 삭제")는 **잘못된 전제** 위에 작성되었음. 실제 `_metrics/{lz76, permutation_entropy, hjorth, gamma_theta}.hexa` 4 native 파일 모두 docstring 에 `"DECISION: WRAP (not PORT). Re-implementation deferred until Phase 5 port"` 명시. native (~250L) = thin wrapper, legacy (~534-1055L) = real numeric backend. native 는 `hexa.real run <LEGACY>` 형태로 legacy 를 runtime backend 로 호출 → **legacy file 물리 삭제 시 backend_rc=127 FAIL** 확정.
+>
+> 따라서 DEPRECATE class 의 의미를 다음과 같이 reframe:
+>   - **(舊)** "legacy file 삭제" — physical removal, ARCHIVE class 와 합쳐 chflags uchg + .marker
+>   - **(新)** "external entrypoint 격리 (이미 완료)" — legacy file 은 native wrapper 의 backend 로 잔존, 다만 (a) `anima-clm-eeg/` 외부 caller 가 직접 `legacy:anima-clm-eeg/tool/clm_eeg_*_real.hexa` 로 invoke 하는 경로 차단, (b) 모든 호출이 `tool/eeg_core.hexa metric <noun>` 단일 entrypoint 를 거치도록 dispatcher pinning. 이 격리는 Phase 6 dispatcher landing (commits 02ac714c3, 86465c662, 4cd8e62da, 6cf5ded72) 시점에 **이미 사실상 완료**됨.
+>
+> **legacy file physical delete 는 §11 Phase 5 port (신설) 이후로 deferred** — wrapper 가 진짜 native re-implementation 으로 교체되기 전에는 backend 의존이 살아있다.
 
-| tool | LoC | superseded by |
-|---|---|---|
-| clm_eeg_lz76_real.hexa | 1055 | `_metrics/lz76.hexa` |
-| clm_eeg_pe_real.hexa | 562 | `_metrics/permutation_entropy.hexa` |
-| clm_eeg_hjorth_real.hexa | 534 | `_metrics/hjorth.hexa` |
-| clm_eeg_gamma_theta_ratio.hexa | 718 | `_metrics/gamma_theta.hexa` |
-| clm_eeg_synthetic_fixture.hexa | 274 | (Phase 6 has no synth fixture; tag as ABSORB-PORT-MAYBE — see §4 caveat) |
-| **Σ** | **3,143** | (excluding synthetic_fixture pending decision) |
+Already covered by Phase 6 native module **as wrapper** (NOT port); legacy file = wrapper 의 runtime backend, **물리 삭제 금지**, dispatcher entrypoint 만 격리.
 
-raw#91 correction: 1055+562+534+718 = **2,869** without fixture; +274 = 3,143 with fixture under DEPRECATE pending §4 decision.
+| tool | LoC | wrapper module (native) | reframe class |
+|---|---|---|---|
+| clm_eeg_lz76_real.hexa | 1055 | `_metrics/lz76.hexa` (~250L wrapper) | **WRAP-BACKEND** (entrypoint 격리 완료, file 보존) |
+| clm_eeg_pe_real.hexa | 562 | `_metrics/permutation_entropy.hexa` (~250L wrapper) | **WRAP-BACKEND** (동) |
+| clm_eeg_hjorth_real.hexa | 534 | `_metrics/hjorth.hexa` (~250L wrapper) | **WRAP-BACKEND** (동) |
+| clm_eeg_gamma_theta_ratio.hexa | 718 | `_metrics/gamma_theta.hexa` (~250L wrapper) | **WRAP-BACKEND** (동) |
+| clm_eeg_synthetic_fixture.hexa | 274 | Phase 6 `_integrations/synthetic_fixture.hexa` 존재 — A4 commit `7fc8c7e87` 사후 입증 | (§4 caveat 갱신 — §11 참조) |
+| **Σ** | **3,143** | | (4 metric backends 격리 완료 + 1 fixture §11 재분류) |
+
+raw#91 correction: 1055+562+534+718 = **2,869** without fixture; +274 = 3,143 with fixture. **2026-05-01 NOTE**: 4 metric pair 는 `audit(867392918)` 가 docstring-level 사후 입증 — DEPRECATE → WRAP-BACKEND class 로 격하/수평이동, **physical delete 권한 없음**. 진짜 DEPRECATE 가 되려면 §11 Phase 5 port 가 선행되어야 한다.
 
 ### §3.4 ARCHIVE (11 tools, ~7,159 LoC frozen, no migration target)
+
+> **NOTE 2026-05-01 (audit `867392918` + A4 `7fc8c7e87` cross-check)**: ARCHIVE class 는 §3.3 DEPRECATE 의 reframe 와 **동일 logic 적용 대상이 아님** — 이유는:
+>   1. ARCHIVE 12 tools (g8 x5, g9 x3, g10 x1, mk_xii x3) 는 dispatcher 가 **호출하지 않는다** (legacy: resolver hint 부재). 따라서 wrapper-backend 의존성 없음.
+>   2. native `_integrations/_metrics/` Phase 6 모듈 어떤 것도 g8/g9/g10/mk_xii 를 backend 로 invoke 하지 않는다 (filename grep + dispatcher noun-table cross-ref 양쪽으로 zero hit).
+>   3. 즉 ARCHIVE 는 **순수 historical artifact** — entrypoint 격리가 아니라 **chflags uchg lock + ARCHIVE_INDEX.md** 가 본래 목표 그대로 유효.
+>
+> 단, **A4 commit `7fc8c7e87`** 가 5 legacy file (clm_eeg_p1/p2/p3 + synthetic_fixture + harness_smoke) 에 대해 **macOS uchg-locked** 사실을 사후 입증한 점은 ARCHIVE class 의 lock 정책이 **이미 의도된 frozen-spec 정책** 임을 강화. ARCHIVE 12 tools 도 동일 lock 적용 가능 (raw#12 frozen-spec consistent).
+>
+> 따라서 ARCHIVE class 는 **변경 없음** — 다만 §6.6 + §11 cross-ref 추가만.
 
 Mk.XII research artifacts + g8/g9/g10 scaffolds — historical Mk.XII Integration tier evidence. Out-of-scope for `eeg_core` dispatcher (no EEG axis OR research-only one-shots whose evidence already lives in .roadmap entries #170-173, #239). Lock with chflags uchg + landing-doc preservation.
 
@@ -271,6 +288,8 @@ raw#10 honest C3: 6 entries proposed; .roadmap is at omega-stop FIXPOINT #248. A
 
 ## §6. Risk register
 
+> **NOTE 2026-05-01 (audit `867392918` reframe)**: 본 §6 의 §6.2 raw#12 frozen-spec hazards 는 ABSORB-WRAP class 5 tool 만 고려했으나, audit `867392918` 발견에 따르면 §3.3 DEPRECATE 4 tool (lz76 / pe / hjorth / gamma_theta legacy) 도 **사실상 ABSORB-WRAP backend 와 동일한 hazard surface** 를 갖는다. 즉 raw#12 frozen-spec hazard 적용 대상이 5 → **9 tool** 로 확대. §6.2 (a)(b)(c) 모드 모두 4 metric-backend 에 동일 적용. mitigation: 9 tool 모두에 sha256 + chflags uchg pre-cycle freeze.
+
 ### §6.1 Race conditions on shared state
 
 | state file | writer (legacy) | writer (Phase 6) | risk |
@@ -313,6 +332,20 @@ State JSONL ledgers (eeg_artifact_audit/, cyborg_eeg_audit/, rsn_audit/, clm_eeg
 
 `silent_edit_dual_lock.sh.txt` exists in `tool/` (escape hatch). DELETE class. If anyone has running cron/launchd hooks invoking it, deletion breaks them. **Risk LOW** but verify.
 
+### §6.7 WRAP-not-PORT runtime backend dependency (2026-05-01 신규)
+
+**Risk HIGH (신설)**: §3.3 reframe 에 따라 `_metrics/{lz76, permutation_entropy, hjorth, gamma_theta}.hexa` 4 native wrapper 가 `hexa.real run <LEGACY>` 형태로 legacy backend 를 invoke 한다. 실패 모드:
+- (a) legacy file physical delete (e.g., 누군가 ARCHIVE class 와 혼동) → backend_rc=127, dispatcher 에서 `metric lz76` 호출 시 silent FAIL 또는 verbose route-error
+- (b) legacy hexa runtime path (`hexa.real`) 가 stdlib 버전 drift 로 wrapper 의 `run` invocation 과 incompatible → wrapper sha 무결성 OK 인데도 backend 실행 실패
+- (c) wrapper 의 `legacy:` resolver hint 가 hardcoded 절대 경로일 경우, anima-clm-eeg/ tree 이동 시 backend resolution 실패
+
+**Mitigation**:
+1. §11 Phase 5 port 완료 전까지 4 metric legacy file 모두에 chflags uchg + sha256 lock (A4 commit `7fc8c7e87` 의 5 legacy file 같은 정책 확장).
+2. dispatcher CI 에 `metric {lz76, pe, hjorth, gamma_theta}` selftest mode 강제 — backend_rc != 0 시 dispatcher 자체가 noun-table 에서 routing 거부.
+3. wrapper docstring `"WRAP (not PORT)"` marker 를 grep 가능한 canonical token 으로 freeze (`# raw#9 wrap-not-port-marker-v1` 등) — Phase 5 port 시 marker 제거가 cutover signal.
+
+**raw#10 honest C3**: wrapper-backend 결합도가 raw#12 frozen-spec 의 경계를 흐리게 한다 — wrapper 는 native (Phase 6, 변경 가능 영역) 인데 backend 는 legacy (frozen) → 어느 쪽이 frozen 인지 ambiguous. Phase 5 port 가 이 ambiguity 를 해소하는 root cause fix (own#4).
+
 ---
 
 ## §7. Effort estimate
@@ -333,12 +366,15 @@ raw#137 80% Pareto: DEPRECATE+ARCHIVE alone (16 tools, 9,551 LoC, ~7 hrs) = 57% 
 
 ## §8. Order of operations (lowest risk + highest ROI first)
 
-1. **Phase 1 — DEPRECATE (4 tools, 4 hrs)**: zero new code. Verify Phase 6 _metrics/{lz76,permutation_entropy,hjorth,gamma_theta}.hexa byte-identical-or-better on synth fixture; freeze legacy + chflags uchg + .marker. **ROI HIGHEST** (active surface drops by 14%).
-2. **Phase 3 — ARCHIVE (12 tools, 3 hrs)**: pure metadata operation. chflags uchg + write `anima-clm-eeg/ARCHIVE_INDEX_2026_04_29.md`. No source change. **RISK LOWEST**.
-3. **Phase 2 — ABSORB-WRAP (5 tools, 7.5 hrs)**: dispatcher already routes 5 legacy: hints; add `_integrations/_legacy/wrapper_*.hexa` thin shells + sha256 freeze. **RISK MED** (raw#12 frozen-spec hazards).
+> **NOTE 2026-05-01 (audit `867392918` + A4 `7fc8c7e87` reframe)**: Phase 1 DEPRECATE 의 actual operation 은 "legacy file 삭제" 가 아니라 "external entrypoint 격리 (이미 완료) + WRAP-BACKEND lock" 이다. **Phase 1 ROI 재평가**: active surface 14% drop 주장은 무효 — file 은 그대로 잔존 (wrapper backend) 하고, dispatcher entrypoint pinning 만 효과. 진짜 "active surface drop" 은 §11 Phase 5 port 후에야 측정 가능.
+
+1. **Phase 1 — WRAP-BACKEND lock (4 tools, ~1 hr)** [reframed]: dispatcher entrypoint 격리는 **이미 완료** (Phase 6 dispatcher landing). 본 phase 의 잔여 작업 = (a) 4 legacy metric file (lz76/pe/hjorth/gamma_theta) 에 chflags uchg + sha256 freeze, (b) `# raw#9 wrap-not-port-marker-v1` canonical marker 를 4 native wrapper docstring 에 cement, (c) dispatcher CI 에 backend_rc != 0 routing-reject 추가. **byte-identical port verify 는 §11 Phase 5 로 deferred**.
+2. **Phase 3 — ARCHIVE (12 tools, 3 hrs)**: pure metadata operation. chflags uchg + write `anima-clm-eeg/ARCHIVE_INDEX_2026_04_29.md` (또는 `ARCHIVE_INDEX_2026_05_01.md` — A4 `7fc8c7e87` 가 이미 5 legacy file 분 작성). No source change. **RISK LOWEST**.
+3. **Phase 2 — ABSORB-WRAP (5 tools, 7.5 hrs)**: dispatcher already routes 5 legacy: hints; add `_integrations/_legacy/wrapper_*.hexa` thin shells + sha256 freeze. **RISK MED** (raw#12 frozen-spec hazards). 2026-05-01 NOTE: §3.3 4 metric pair 의 lock 정책이 같은 hazard surface — Phase 1 + Phase 2 lock 정책 일치 권장.
 4. **Phase 5 — KEEP-EXTERNAL (2 tools, 1 hr)**: relocate `an_lix_01_alpha_bridge_*` to `edu/cell/lagrangian/` or `anima-physics/`. **RISK LOW**.
-5. **Phase 4 — ABSORB-PORT (5 tools, 7.5 hrs)**: highest risk. clm_eeg_p1/p3 already partially native (Phase 6); need byte-identical port verification. P2 is NEW (no Phase 6 sibling). harness_smoke + synthetic_fixture port last.
-6. **Phase 6 — closure (1 hr)**: README → ARCHIVED, .roadmap #157 → archived, whole tree chflags uchg.
+5. **Phase 4 — ABSORB-PORT (5 tools, 7.5 hrs)**: highest risk. clm_eeg_p1/p3 already partially native (Phase 6); need byte-identical port verification. P2 is NEW (no Phase 6 sibling). harness_smoke + synthetic_fixture port last. 2026-05-01 NOTE: A4 `7fc8c7e87` 이 5 legacy 모두 uchg-locked 사후 입증 — physical mv 0 건, header-attestation 수준의 semantic-identical 만 확인됨 (kernel-equivalence proof 미수행).
+6. **Phase 5b — Numeric port (4 metric backends + 5 integrations, ~22 hrs)** [신설, §11 참조]: §3.3 4 metric backend (lz76/pe/hjorth/gamma_theta, ~1,650 LoC numeric core) 를 진짜 native re-implementation 으로 교체 + canonical fixture cross-validation harness. 이 phase 까지 완료해야 §3.3 가 진짜 DEPRECATE (legacy file physical delete 가능) 가 된다.
+7. **Phase 6 — closure (1 hr)**: README → ARCHIVED, .roadmap #157 → archived, whole tree chflags uchg. **사전 조건**: Phase 5b 완료 (4 metric backend 에 대한 진짜 port 가 끝나야 클로저 가능).
 
 ---
 
@@ -371,7 +407,99 @@ This plan is a **roadmap document, not a migration**. No source files moved; no 
 
 **Falsifier on the plan itself**: if at the end of clm-eeg-migration-06 the post-migration `find anima-clm-eeg/ -name "*.hexa" | wc -l` is > **3**, the absorption was incomplete (target ≤ 3 files: an_lix_01 alpha bridge x2 if KEEP-EXTERNAL retained in tree + 0-1 README pointer).
 
+> **NOTE 2026-05-01 (post-audit reframe)**: 위 falsifier 는 "post-migration `*.hexa` ≤ 3" 을 가정하지만, audit `867392918` 발견에 따라 4 metric backend (lz76/pe/hjorth/gamma_theta) 가 **§11 Phase 5 numeric port 완료 전까지 잔존 필수**. 따라서 실제 falsifier 임계값은 **post-Phase-5b 시점에서만** ≤ 3 적용 — 그 이전 단계 (Phase 1~4 완료) 에서는 ≤ **3 + 4 metric backend = 7** 가 새 임계값.
+
 ---
 
-> END OF MIGRATION PLAN — ~390 lines, planning-only, no source-tree mutation.
-> Doc cycle: author → commit → chflags uchg lock per task spec items 11-12.
+## §10. raw#10 honest C3 — 갱신 ledger (2026-05-01)
+
+> **본 plan 은 audit `867392918` 이전 작성됨 (2026-04-29).** §10 은 그 이후 cross-axis 발견을 inline 에 묻지 않고 ledger 형태로 누적 기록.
+
+### §10.1 갱신 entry
+
+| date | source | finding | impacted §§ | reframe summary |
+|---|---|---|---|---|
+| 2026-04-29 | original draft | 28 .hexa categorization (5/4/5/12/2/1) | §§3.1-3.7 | 초안 commit (categorization commitment) |
+| 2026-05-01 | audit `867392918` | 4 native `_metrics/*.hexa` 모두 docstring `"WRAP (not PORT). Re-implementation deferred until Phase 5 port"` 명시 | §3.3, §6.2, §6.7, §8, §9.3, §11 | DEPRECATE class → WRAP-BACKEND class 로 reframe; legacy file physical delete 는 §11 Phase 5 까지 deferred |
+| 2026-05-01 | A4 `7fc8c7e87` | 5 legacy file (clm_eeg_p1/p2/p3 + synthetic_fixture + harness_smoke) macOS uchg-locked 사후 입증 — physical mv 0 건, semantic-identical attestation 수준만 | §3.4, §8 phase 4, §11 | ARCHIVE/ABSORB-PORT lock 정책이 raw#12 frozen-spec 의 의도된 정책임을 강화; Phase 4 byte-identical port verify 는 header-level 만 — kernel-equivalence proof 미수행 |
+
+### §10.2 plan 자체에 대한 raw#91 honest
+
+- (a) 본 §10 ledger 가 plan 의 **mutable closure** 로 작동 — 원래 §9.3 closure 의 "categorization commitment" 가 immutable 하다는 주장과 충돌. raw#10 honest C3: plan 은 immutable 이 아니라 **append-only audit-trail with inline NOTE** 모델로 재정의됨.
+- (b) 4 metric pair 의 docstring marker 는 docstring-level 사실 — runtime backend 호출 자체를 byte-level 로 검증하지 않았다 (e.g., `legacy:` resolver 가 진짜 어떤 entry point 를 invoke 하는지 trace 미수행).
+- (c) §3.4 ARCHIVE 12 tool 에 대한 "dispatcher 가 호출하지 않는다" 주장은 grep 기반 — runtime-trace 기반 음성 증명 부재.
+
+---
+
+## §11. Phase 5 port spec (신설 — 2026-05-01)
+
+### §11.1 motivation
+
+audit `867392918` 가 4 native `_metrics/*.hexa` (lz76 / permutation_entropy / hjorth / gamma_theta) 가 thin wrapper (~250L) 이고 진짜 numeric backend 는 legacy `clm_eeg_*_real.hexa` (~534-1055L, 합계 ~2,869L) 라는 사실을 사후 입증함. wrapper 의 `"WRAP (not PORT). Re-implementation deferred until Phase 5 port"` docstring marker 는 **본 §11 의 phase 명시적 reference**.
+
+### §11.2 scope (4 짝, 1,650 LoC numeric core 추정)
+
+본 phase 는 4 metric pair 의 numeric core 를 native hexa 로 진짜 이식.
+
+| pair | legacy LoC | wrapper LoC | numeric core 추정 LoC | dependency |
+|---|---|---|---|---|
+| lz76: legacy `clm_eeg_lz76_real.hexa` → native `_metrics/lz76.hexa` | 1055 | ~250 | ~750 (Lempel-Ziv 1976 chunked, ASCII window) | mmap+ASCII hexa-stdlib |
+| permutation_entropy: legacy `clm_eeg_pe_real.hexa` → native `_metrics/permutation_entropy.hexa` | 562 | ~250 | ~280 (Bandt-Pompe ordinal pattern) | log/sort hexa-stdlib |
+| hjorth: legacy `clm_eeg_hjorth_real.hexa` → native `_metrics/hjorth.hexa` | 534 | ~250 | ~250 (activity/mobility/complexity) | 1차/2차 미분 hexa-stdlib |
+| gamma_theta: legacy `clm_eeg_gamma_theta_ratio.hexa` → native `_metrics/gamma_theta.hexa` | 718 | ~250 | ~370 (FFT band-power 4-8/30-100 Hz) | FFT/welch hexa-stdlib |
+| **Σ** | **2,869** | **~1,000** | **~1,650** | |
+
+(numeric core 추정 = legacy LoC − wrapper-overhead — header/IO/markers; 실측 시 ±20% 변동 가능, raw#137 80% Pareto.)
+
+### §11.3 port acceptance criteria
+
+각 pair 별 다음 4 조건 모두 만족시 "진짜 PORT" 로 인정 (wrapper docstring `"WRAP (not PORT)"` marker 제거 가능):
+
+1. **C-numeric**: native re-impl 이 legacy 호출 없이 standalone numeric 결과 emit. `hexa.real run <LEGACY>` invocation 0건 (grep 음성 증명).
+2. **C-fixture-cross-validate**: canonical fixture (e.g., `anima-clm-eeg/fixtures/synthetic_16ch_v1.json` — fingerprint cross-check 후 결정, audit `867392918` raw#91 honest 가 `2960889009` vs `831a1b5d` mismatch 지적함) 에서 native vs legacy output 의 numeric divergence < **0.1%** (relative).
+3. **C-falsifier-replay**: legacy 의 raw#71 falsifier (e.g., `F_PE_02` pe>990 가드 — audit `867392918` 가 native wrapper 에 추가됨을 발견) 가 native re-impl 에서도 동등 가드.
+4. **C-rc-clean**: dispatcher CI 에서 legacy file 을 일시적으로 rename (`*.hexa.bak`) 후 `metric <noun>` selftest 가 PASS — backend_rc 부재 환경에서도 native 단독 실행 가능.
+
+### §11.4 canonical fixture cross-validation harness
+
+신규 모듈 제안: `anima-eeg-core/tool/modules/_integrations/_port_verify/{lz76,pe,hjorth,gamma_theta}_xvalidate.hexa` (hexa-only, raw#9). 각 모듈은:
+
+- (a) canonical synth fixture load (16ch deterministic, fingerprint frozen post-audit-867392918 cross-check)
+- (b) native re-impl invoke + result vector emit
+- (c) legacy backend invoke (Phase 5 cutover 전까지는 wrapper 가 invoke 하던 그 backend 그대로) + result vector emit
+- (d) element-wise diff: `max(abs(native_i − legacy_i) / abs(legacy_i)) < 1e-3`
+- (e) ledger emit: `state/clm_eeg_phase5_port_xvalidate/<date>_<noun>.jsonl` (raw 77 append-only)
+
+raw#10 honest C3: harness 자체가 hexa-stdlib 의 numeric primitive 정확도에 의존 — harness 가 두 구현을 비교해서 PASS 라고 해도, 두 구현이 **공통의 hexa-stdlib bug** 를 공유한다면 false PASS. mitigation: (f) 외부 reference (e.g., scipy.signal.welch / Bandt-Pompe 표준 구현) 에 대한 spot-check 를 raw#91 N=1 audit 으로 별도 수행 — Phase 5 완료 시점에 1회.
+
+### §11.5 effort + ordering
+
+| pair | port 추정 | xvalidate harness | 합계 |
+|---|---|---|---|
+| hjorth | 2 hr (numeric core 가장 단순) | 0.5 hr | 2.5 hr |
+| permutation_entropy | 3 hr | 0.5 hr | 3.5 hr |
+| gamma_theta | 4 hr (FFT band power) | 0.5 hr | 4.5 hr |
+| lz76 | 8 hr (chunked + ASCII window 가장 복잡) | 1 hr | 9 hr |
+| 합계 | **17 hr** | **2.5 hr** | **19.5 hr** ≈ **2.5 days** |
+
+ordering: 단순한 것부터 (hjorth → pe → gamma_theta → lz76) — lz76 가 마지막 (P1 LZ OOM mitigation 이력 commit `e94936e1` 참조).
+
+### §11.6 raw#71 falsifiers
+
+- **F-port-01**: Phase 5 port 후 native re-impl 의 `hexa.real run <LEGACY>` invocation 이 grep 으로 1건 이상 검출 → port 미완.
+- **F-port-02**: canonical fixture cross-validation 에서 4 pair 중 1 pair 라도 numeric divergence ≥ 0.1% → port reject, root-cause-first (own#4) 후 재실행.
+- **F-port-03**: legacy file 을 dispatcher CI 에서 rename 후 selftest 시 backend_rc=127 발생 pair 가 1건이라도 있으면 port 미완 — wrapper 가 여전히 legacy 호출.
+
+### §11.7 Phase 5 완료 후 §3.3 실효화
+
+§11 4 pair 모두 C-numeric/C-fixture/C-falsifier/C-rc-clean 통과 후에야:
+
+- §3.3 가 진짜 DEPRECATE class 로 효력 발휘 (legacy file physical delete 가능)
+- §6.7 risk (WRAP-not-PORT runtime backend dependency) 해소
+- §9.3 falsifier 의 `*.hexa ≤ 3` 임계값이 그대로 적용 가능
+- 4 legacy metric file (~2,869 LoC) 가 chflags uchg + ARCHIVE 또는 hard-delete 로 결정 가능
+
+---
+
+> END OF MIGRATION PLAN — original 2026-04-29 draft + 2026-05-01 audit `867392918`/`7fc8c7e87` reframe NOTE inline + §10 ledger + §11 Phase 5 port spec 신설.
+> Doc cycle: author → commit → chflags uchg lock per task spec items 11-12. 단, append-only NOTE 갱신을 위한 unlock-edit-relock cycle 은 raw#10 honest C3 ledger 정책에 따라 허용.
