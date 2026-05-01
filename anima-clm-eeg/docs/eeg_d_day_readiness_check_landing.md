@@ -3,7 +3,7 @@
 > **scope**: EEG hardware (OpenBCI Cyton+Daisy 16ch) D-1 시점 readiness audit. D+0~D+7 7-day workflow의 모든 prerequisite 산출물 disk verify 후 도착 즉시 진입 가능한지 결정.
 > **created**: 2026-04-26 (ω-cycle session)
 > **raw_rank**: 9 (docs 완화, 한글 OK)
-> **status**: PARTIAL (P1/P2/P3 pre-register READY but D+0 hardware bring-up WRAPPER blocked)
+> **status**: EXECUTED 2026-04-28 (hardware ARRIVED + helmet session) — predecessor readiness verdict was PARTIAL; actual D-day partial empirical 결과 cross-link §10 참조 (impedance 16/16 GREEN ✓ / P3 γ/θ FALSIFIED / P1 LZ76 batch BLOCKED hetzner OOM / Berger 0/15 PASS / P2 PENDING). 본 §1-§9 본문은 D-1 시점 frozen audit (historical reference); §10 신규 retro section이 Apr 28 사실 보존.
 > **author**: anima-clm-eeg readiness audit subagent
 > **cap**: 30분 mac local, $0
 > **predecessor**: `anima-clm-eeg/docs/eeg_arrival_impact_5fold.md` + `anima-clm-eeg/state/clm_eeg_pre_register_v1.json`
@@ -279,7 +279,7 @@ hexa run anima-clm-eeg/tool/mk_xii_preflight_cascade.hexa --post-arrival
 ### Phase 4 — BrainFlow Python via `.venv-eeg`
 
 ```bash
-source /Users/ghost/core/anima/.venv-eeg/bin/activate
+source <repo-root>/.venv-eeg/bin/activate
 pip install --upgrade brainflow numpy
 ```
 
@@ -304,3 +304,51 @@ pip install --upgrade brainflow numpy
 - Intel kext 경로: `/Library/Extensions/FTDIUSBSerialDriver.kext/Contents/Info.plist` 에서 `LatencyTimer` → `1`
 
 **§7과의 chain**: Phase 0~6 통과 = §7 D+0 step 1 (`anima-eeg/calibrate.hexa`) 진입 가능 상태. Phase 4 sanity에서 **(32, ~625)** shape (= 32ch × 125 Hz × 5 s) 확인 시 fallback path `tool/an11_b_eeg_ingest.hexa` 도 즉시 호출 가능.
+
+## §10. 2026-04-28 EXECUTED — D-day actual results (retro)
+
+본 readiness check (2026-04-26 작성) PARTIAL 22/27 verdict 후, 2026-04-28 EEG hardware (OpenBCI Cyton+Daisy + Ultracortex Mark IV) **ARRIVED**. helmet session 실시. §1-§9 본문은 D-1 frozen 상태로 보존 (historical audit reference). 본 §10이 D-day 실제 수행 결과 retro.
+
+### §10.1 D+0 helmet session — VERIFIED + GREEN
+
+| dim | 예상 (§5) | 실제 (Apr 28) |
+|---|---|---|
+| Phase 4 trio (`calibrate`/`collect`/`eeg_recorder`) | STUB 5/27 → priority 1-3 land 권장 | DONE (commits `05af4a3f`, `ea1555c0`, `572673be`+`d1c8eead` cross-host 56/56 PASS) |
+| impedance 16/16 GREEN | < 750 kΩ 목표 | **16/16 GREEN** (Cyton 5-7 kΩ excellent / Daisy 19-23 kΩ good) |
+| port discovery | `/dev/cu.usbserial-*` | `/dev/cu.usbserial-DP04WGIQ` (BrainFlow Cyton+Daisy 230400 baud) |
+| board health | (32, ~625) shape | total_alive=16/16 ✓, adc_dead=0, srb2_share_ok=1, false-positive verdict BOARD_PINS_SHORTED §4 분석 |
+| O1/O2 alpha 8-12Hz peak | eyes-closed 30s 기대 | 미확인 (단발 helmet check session, full resting 60s 별도) |
+
+session details: `anima-clm-eeg/docs/d_day_session_2026_04_28/d_day_helmet_session_results_2026_04_28.md`.
+
+### §10.2 D+1~D+7 partial empirical
+
+| step | 예상 (§7) | 실제 (Apr 28+) |
+|---|---|---|
+| D+1 P1 LZ76 batch (15 .npy) | mac local $0 | **BLOCKED** — hetzner hexa interp linux OOM at 124GB (commit `5693e8611`, raw#10 honest C3 retraction). `clm_eeg_lz76_audit_2026_04_28.md` |
+| D+1 Berger gate sweep (15 valid .npy) | C1=650/C2=200 frozen | **0/15 PASS** (commit `06fe4142c`, raw#71 falsifier holds). MNE PSD vs anima Berger cross-validation AGREE (commit `2e69d896a`) |
+| D+3 P2 TLR | C1_alpha_coh ≥ 450 ∧ C2_clm_r ≥ 380 | PENDING |
+| D+5 P3 GCG | F(EEG→CLM) ≥ 4.0 ∧ ratio ≥ 2.0 | **FALSIFIED_P3** — own 3 σ/τ=3 first D-day empirical, selftest 4/4 PASS, real FALSIFIED_P3 (commit `f27d6363f`, raw#10 honest) |
+| D+5 4-backbone family×band Pearson r ≥ 0.40 | 4/4 → AGI v0.1 path | NOT measured (full resting/N-back recording 미수행) |
+| D+6 G8 transversal MI uniform_n_bin_2 | violations ≤ 0 | NOT executed |
+| D+7 composite ≥ 2/3 PASS | PHENOMENAL VALIDATED | NOT met (P3 FALSIFIED, P1 BLOCKED, P2 PENDING) |
+
+### §10.3 verdict (raw#10 honest)
+
+predecessor verdict PARTIAL 22/27 → D-day actual: **PARTIAL EMPIRICAL with FALSIFIED elements**.
+- hardware bring-up: VERIFIED (impedance 16/16 GREEN, port intact)
+- pre-register chain entry: BLOCKED at P1 (LZ76 batch OOM) + FALSIFIED at P3 (γ/θ ratio + Berger 0/15)
+- composite ≥ 2/3 PASS (PHENOMENAL VALIDATED) **NOT met**
+- AGI v0.1 path open criterion (§3 4/4 family×band r ≥ 0.40) **NOT measured**
+
+본 readiness check 의 §5 verdict (PARTIAL post-arrival friction medium) 는 disk-static audit으로서 valid. 그러나 falsifier surface (raw#10 honest §6 caveat) 가 실제로 trigger되어 hypothesis가 진정한 falsification에 들어감.
+
+### §10.4 cross-references (Apr 28+ retro)
+
+- aggregate D-day session: `anima-clm-eeg/docs/d_day_session_2026_04_28/INDEX.md` (13 .md docs)
+- helmet session: `anima-clm-eeg/docs/d_day_session_2026_04_28/d_day_helmet_session_results_2026_04_28.md`
+- D-day chain review reflected: `anima-clm-eeg/docs/clm_eeg_d_day_chain_review_20260427_landing.md` §10 retro
+- D-day post landing: `anima-clm-eeg/docs/eeg_arrival_d_day_post_2026_05_01_landing.md` (294L, 12 sections, raw#10 honest C3 10항목)
+- impact 5-fold retro: `anima-clm-eeg/docs/eeg_arrival_impact_5fold.md` §8 (NEW retro section)
+- commits: `41e15e139` (stale 정리 v1) · `f27d6363f` (P3 FALSIFIED) · `5693e8611` (P1 BLOCKED) · `06fe4142c` (Berger 0/15) · `2e69d896a` (MNE cross-validation AGREE)
+- `.roadmap` #119: `planned/BLOCKED-EEG` → `active/EEG-arrived partial empirical` (commit `41e15e139`)

@@ -348,7 +348,7 @@ raw#86: $0. Composite gate is integer arithmetic. Cost-center = `clm_eeg_composi
 
 6. **RunPod orchestrator stuck blocker** (`01a74d99`): pre-ssh orchestrator stuck 70min on axis 105 Pilot-T1. If recurs at D+5 dispatch, fall back to Hetzner H100 first; do NOT debug orchestrator on critical-path day.
 
-7. **Mac jetsam pressure on bare-Mac hexa**: documented as a recurring fault (2026-04-25 + 2026-04-27 G8 cycle). The G8 N_BIN=85 falsification analysis tool MUST run via `~/.hx/bin/hexa` resolver wrapper (NOT bare `/Users/ghost/core/hexa-lang/hexa` on PATH). This review is doc-only, jetsam-safe; D+6 re-run on real data must follow the resolver path.
+7. **Mac jetsam pressure on bare-Mac hexa**: documented as a recurring fault (2026-04-25 + 2026-04-27 G8 cycle). The G8 N_BIN=85 falsification analysis tool MUST run via `~/.hx/bin/hexa` resolver wrapper (NOT bare `<repo-root>/../hexa-lang/hexa` on PATH). This review is doc-only, jetsam-safe; D+6 re-run on real data must follow the resolver path.
 
 8. **Phase 4 priority 1-3 modules slightly over raw#101 600-LoC cap**: `experiment.hexa` 633 LoC (mostly helper-py emit). Documented as "within spirit" per the Phase 4 priority 1-3 landing doc. Not a chain risk, but worth noting if a future raw#101 audit gets stricter.
 
@@ -405,4 +405,57 @@ Total: **21-30h mac-local, $0**, all hexa-only, raw#9 strict, no GPU. Ride as a 
 - pattern runbook: `docs/runpod_large_model_dispatch_template_20260427.md` (7 patterns + 6b cumulative-bytes ceiling 35-40 GB confirmed + 7b cuInit=999 cold-start)
 - recent commits: `572673be`, `d1c8eead`, `66573e9f`, `64079201`, `ee761cb5`, `1f110da4`, `05af4a3f`, `ea1555c0`, `c67ca062`, `1de0e638`
 
-_End of D-day chain review._
+## §13. 2026-04-28 EXECUTED — D-day actual chain results (retro)
+
+본 review (2026-04-27 작성) verdict "READY 27/27 for D+0 hardware bring-up" + "$0-6 cost ceiling" + "raw#86 cost-attributed Hetzner H100 first" 후, 2026-04-28 EEG hardware **ARRIVED** + helmet session 실시. D-day chain D+0~D+7 실제 진행 vs 본 review 예측 cross-link.
+
+### §13.1 day-by-day 예측 vs 실제 (Apr 28+)
+
+| day | review §7 예측 | 실제 (Apr 28+) | 정합성 |
+|---|---|---|---|
+| D+0 Phase 0..6 macOS bring-up | 1-2h, $0 | DONE — port `/dev/cu.usbserial-DP04WGIQ` discovered, BrainFlow Cyton+Daisy 230400 baud | ✓ |
+| D+0 calibrate | 30 min, $0 | DONE — impedance 16/16 GREEN (Cyton 5-7 kΩ excellent / Daisy 19-23 kΩ good) | ✓ better-than-expected |
+| D+0 resting baseline 60s | 5 min, $0 | NOT executed (helmet session = impedance + 5s board health 한정) | partial |
+| D+0 N-back 5-10 min | 10 min, $0 | NOT executed | partial |
+| D+1 P1 LZ verify (real .npy) | $0 mac local | **BLOCKED** — hetzner hexa interp linux OOM at 124GB (commit `5693e8611`, raw#10 honest C3 retraction) | FALSIFIED prediction (mac local $0 가정) |
+| D+1 Berger gate sweep (15 .npy) | (review 외 추가 axis) | **0/15 PASS** (commit `06fe4142c`, raw#71 falsifier holds). MNE PSD vs anima Berger AGREE (commit `2e69d896a`) | NEW evidence |
+| D+3 P2 TLR | 10 min, $0 | PENDING | NOT yet |
+| D+5 P3 GCG | $0-6 (Hetzner $0 expected, RunPod $6 worst) | **FALSIFIED_P3** — own 3 σ/τ=3 first D-day empirical, selftest 4/4 PASS, real FALSIFIED (commit `f27d6363f`, raw#10 honest) | FALSIFIED hypothesis (cost $0 actual but verdict FAIL) |
+| D+6 G8 uniform_n_bin_2 | 30 min, $0 | NOT executed (P3 FALSIFIED 후 chain 보류) | NOT yet |
+| D+7 composite ≥ 2/3 PASS | PHENOMENAL VALIDATED | **NOT met** (P3 FALSIFIED, P1 BLOCKED, P2 PENDING) | predicted falsification surface triggered |
+
+### §13.2 본 review §6 PHENOMENAL VALIDATED outcome — 실제 적용
+
+review §6.2 outcome table:
+- 3/3 PASS → strongest, AGI path open
+- 2/3 PASS → weak-pass with raw#10 honest doc
+- ≤ 1/3 → falsified, escalate to v2 pre-register cycle
+
+**실제 outcome**: 0/3 (P1 BLOCKED ≠ PASS, P3 FALSIFIED, P2 PENDING) → review §6 falsified branch에 정직히 entry. v1.1 thresholds 보존 (raw#71 frozen, silent edit forbidden), v2 pre-register cycle 단서 보류.
+
+§9 caveat #9 "Synthetic_caveat persists — dry-run PASS does NOT imply real-EEG PASS, especially P3 (lag-1 echo synthesis)" 가 **실제로 현실화**됨. review §11 verdict "raw#71 honest: this review changes NO hypothesis text" — D-day post 도 동일 원칙 보존, hypothesis 침해 없이 falsifier surface 정직 보고.
+
+### §13.3 cost retro (raw#86)
+
+| cost-center | review estimate | actual |
+|---|---|---|
+| `eeg_d0` | $0 | $0 ✓ |
+| `clm_eeg_p1_lz_real` | $0 | $0 (BLOCKED 자체는 cost X) |
+| `clm_eeg_p3_gcg_real_d5` | $0-6 | $0 (mac own 3 σ/τ=3 measure로 FALSIFIED 결정 — GPU dispatch 진입 안 함) |
+| `clm_eeg_g8_real_d6` | $0 | $0 (NOT executed) |
+| **total D+0..D+7** | **$0-6** | **$0** ✓ — RunPod credit balance unchanged |
+
+review §9 caveat #6 "RunPod orchestrator stuck blocker" — 회피됨 (Hetzner first 정책 + mac own measure 우선). raw#86 cost-attribution policy 정합.
+
+### §13.4 cross-references (Apr 28+ retro)
+
+- aggregate D-day session: `anima-clm-eeg/docs/d_day_session_2026_04_28/INDEX.md` (13 .md docs)
+- helmet session: `anima-clm-eeg/docs/d_day_session_2026_04_28/d_day_helmet_session_results_2026_04_28.md`
+- LZ76 audit + filtered analysis: `anima-clm-eeg/docs/d_day_session_2026_04_28/clm_eeg_lz76_audit_2026_04_28.md` + `lz76_filtered_analysis_2026_04_28.md`
+- ICA + Schartner validation: `anima-clm-eeg/docs/d_day_session_2026_04_28/ica_lz76_analysis_2026_04_28.md` + `schartner_2017_lz76_criteria_validation_2026_04_28.md`
+- D-day post landing: `anima-clm-eeg/docs/eeg_arrival_d_day_post_2026_05_01_landing.md`
+- readiness check retro reflected: `anima-clm-eeg/docs/eeg_d_day_readiness_check_landing.md` §10
+- impact 5-fold retro reflected: `anima-clm-eeg/docs/eeg_arrival_impact_5fold.md` §8
+- commits: `41e15e139` (stale v1) · `f27d6363f` (P3 FALSIFIED) · `5693e8611` (P1 BLOCKED) · `06fe4142c` (Berger 0/15) · `2e69d896a` (MNE AGREE) · `eced229f8` (eeg-core wire 11 artifact routes)
+
+_End of D-day chain review (with §13 Apr 28 retro)._

@@ -126,9 +126,77 @@ CP2 5-축 병렬 진입 (`.roadmap` #121) 中 EEG가 critical path. Multi-day ex
 
 | flag | value | last-update |
 |---|---|---|
-| EEG hardware status | D-1 (며칠 내 도착 expected) | 2026-04-26 |
-| `.roadmap` #119 status | BLOCKED-EEG (planned) | 2026-04-26 |
-| paradigm v11 7th axis | not yet implemented (post-arrival) | 2026-04-26 |
-| Mk.XI v10 phenomenal correlate | hypothesis only (post-arrival D+5) | 2026-04-26 |
-| R33 witness | pre-registered above (§4 criteria frozen) | 2026-04-26 |
-| anima-eeg migration | Phase 0/1 complete (subagent), Phase 3 pending | 2026-04-26 |
+| EEG hardware status | **ARRIVED 2026-04-28** (helmet session VERIFIED, impedance 16/16 GREEN) | 2026-05-01 |
+| `.roadmap` #119 status | active/EEG-arrived partial empirical (was BLOCKED-EEG/planned) | 2026-04-28 (commit `41e15e139`) |
+| paradigm v11 7th axis | not yet implemented (D+7 EEG-CORR registration deferred — composite NOT met) | 2026-05-01 |
+| Mk.XI v10 phenomenal correlate | NOT measured (4/4 family×band Pearson r — full resting/N-back recording 미수행) | 2026-05-01 |
+| R33 witness | NOT appended (composite ≥ 2/3 PASS unmet → R33 criteria 미충족) | 2026-05-01 |
+| anima-eeg migration | Phase 4 trio + priority 1-3 DONE (commits `05af4a3f`, `ea1555c0`); priority 4-7 deferred raw#87 paired | 2026-04-27 |
+
+---
+
+## §8. 2026-04-28+ retro — 5-fold impact 예측 vs 실제 결과
+
+본 doc 은 2026-04-26 (D-1) 작성 시점의 5-fold 영향 예측 catalog. 2026-04-28 hardware ARRIVED 이후 실제 측정 결과를 5-fold 별로 retro한다. raw#10 honest (false PASS 주장 X).
+
+### §8.1 §1 CP2 G1/G3 unblocking — 실제
+
+| gate | 예측 (§1) | 실제 (Apr 28+) |
+|---|---|---|
+| G1 behavioral | EEG resting + N-back ground-truth 채집 | resting 60s recording 미수행 (helmet session = impedance + 5s board health 한정), N-back 미수행 |
+| G2 external (#119) | unblock → tier-10 seed × Mk.IX L_IX integrator validation | partially unblocked (hardware ARRIVED) but P1 LZ76 batch BLOCKED (hetzner OOM, commit `5693e8611`), P3 FALSIFIED (commit `f27d6363f`), atom files NOT emitted |
+| G3 grounding | anatomical ↔ 16-d eigenvec mapping | NOT measured |
+
+`.roadmap` #119 status: planned/BLOCKED-EEG → active/EEG-arrived partial empirical (commit `41e15e139`).
+
+### §8.2 §2 paradigm v11 7th axis — 실제
+
+EEG-CORR 7th axis 등록 NOT DONE. composite ≥ 2/3 PASS (PHENOMENAL VALIDATED) 미충족으로 D+7 registration 진입 불가. tool gap 그대로: `tool/anima_eeg_corr.hexa` (~150L) NOT landed, `anima_v11_main.hexa` 13th subcommand NOT registered.
+
+### §8.3 §3 Mk.XI v10 phenomenal correlate verification — **FALSIFIED**
+
+P3 GCG 측정 결과: **FALSIFIED_P3** (own 3 σ/τ=3 first D-day empirical, selftest 4/4 PASS, real FALSIFIED, commit `f27d6363f`, raw#10 honest). γ/θ ratio + Berger 0/15 PASS (commit `06fe4142c`, raw#71 falsifier holds). MNE PSD vs anima Berger cross-validation AGREE (commit `2e69d896a`).
+
+| backbone | 가설 r ≥ 0.40 | 실제 |
+|---|---|---|
+| Mistral / Law / beta / frontal | r ≥ 0.40 | **NOT measured** (4-backbone forward 미수행) |
+| Qwen3 / Phi / gamma / parietal | r ≥ 0.40 | NOT measured |
+| Llama / SelfRef / alpha / midline | r ≥ 0.40 | NOT measured |
+| gemma / Hexad / theta / temporal | r ≥ 0.40 | NOT measured |
+
+§3 outcome decision tree: "0-1/4 일치 → v10 family architecture 재설계 (months)" — 측정 자체 미수행이지만 P3 directional Granger 자체가 FALSIFIED 됨에 따라 family×band 가설 진입 자체가 의문. raw#10 honest: AGI v0.1 path open 조건 (4/4 일치) **NOT achieved**, 향후 v2 pre-register cycle 필요 가능.
+
+### §8.4 §4 R33 witness — NOT appended
+
+composite ≥ 2/3 PASS 미충족 (P3 FALSIFIED, P1 BLOCKED, P2 PENDING) 으로 R33 witness ledger append 진입 불가. atlas_convergence_witness.jsonl 기존 entry 보존, R33 candidate 보류.
+
+### §8.5 §5 Cost / 일정 — 실제
+
+| 항목 | 예측 | 실제 |
+|---|---|---|
+| EEG D8 측정 | $200-500 외부 시설 또는 self-measurement | self-measurement at home, $0 (helmet session 하드웨어 사용) |
+| post-arrival P1+P2+P3 GPU | $12-24 | $0 (P1 hetzner OOM BLOCKED, P3 mac own 3 σ/τ=3 측정으로 FALSIFIED 결정 — GPU dispatch 진입 안 함) |
+| Mk.XI v12 4-GPU-spot retrain | ₩300-450만 with EEG validation | NOT triggered (P3 FALSIFIED → retrain 진입 보류) |
+| arxiv preprint EEG empirical 포함 timing | base + 1-2주 if 4/4 일치 | base + months (FALSIFIED → architecture 재고 cycle 필요 가능) |
+
+§5 cost cap policy 평가: feedback_forward_auto_approval 정상 작동 (외부 시설 $200-500 cost cap 외부 branch 진입 안 함, home self-measurement 충분).
+
+### §8.6 retro verdict (raw#10 honest)
+
+**5-fold 예측 vs 실제 정합성**:
+- §1 G2 unblock: **partial** (hardware ARRIVED but blocker가 storage→falsifier로 이동)
+- §2 7th axis: **NOT triggered** (composite 미충족)
+- §3 phenomenal correlate: **FALSIFIED** at P3 (예측 outcome tree 0-1/4 brunch에 해당, architecture 재설계 검토 진입)
+- §4 R33: **NOT appended** (criteria 미충족)
+- §5 cost: **under-spent** ($0 actual vs $12-24 estimate, but P3 FALSIFIED로 cost-saving이 아닌 chain abort 결과)
+
+본 doc 의 "reference-only until arrival" status (§Status flags row 1) 는 2026-04-28 ARRIVED으로 종료. 본 §1-§7 본문은 D-1 frozen historical reference; §8 retro 가 Apr 28+ 사실 보존. 다음 cycle (v2 pre-register or architecture 재설계 단서) 은 별도 doc 에서 계속.
+
+### §8.7 cross-references (Apr 28+ retro)
+
+- aggregate D-day session: `anima-clm-eeg/docs/d_day_session_2026_04_28/INDEX.md`
+- helmet session results: `anima-clm-eeg/docs/d_day_session_2026_04_28/d_day_helmet_session_results_2026_04_28.md`
+- chain review reflected: `anima-clm-eeg/docs/clm_eeg_d_day_chain_review_20260427_landing.md` §10 retro
+- readiness check reflected: `anima-clm-eeg/docs/eeg_d_day_readiness_check_landing.md` §10 retro
+- D-day post landing: `anima-clm-eeg/docs/eeg_arrival_d_day_post_2026_05_01_landing.md`
+- commits: `41e15e139` (stale v1) · `f27d6363f` (P3 FALSIFIED) · `5693e8611` (P1 BLOCKED) · `06fe4142c` (Berger 0/15) · `2e69d896a` (MNE AGREE)

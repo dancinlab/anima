@@ -1535,7 +1535,9 @@ roadmap 113 done "[Llama-3.1-8B Meta direct approval] 자체 종결 polling cycl
   refs           commits 6abfd51b (r3 mirror) · 6c658134 (r2 gemma) · bc043105 (r3a byte-exact) · 186c2a1d (r4 SHA verify)
 
 # ═══════════════════════════════════════════════════════════════════════
-# CP1/CP2 Parallelization Plan (2026-04-25, EEG hardware 도착 대기 中)
+# CP1/CP2 Parallelization Plan (2026-04-25 frozen; EEG hardware ARRIVED
+# 2026-04-28 — partial empirical 진행 中: impedance 16/16 GREEN, P3 γ/θ
+# FALSIFIED, P1 LZ76 batch BLOCKED, Berger 0/15, P2 PENDING)
 # 5축 동시 진입 (CP1 deploy + CP2 G1 + CP2 G3 + atom-prep non-EEG +
 # backbone expansion). H100 unlimited count + raw#9 hexa-only orchestration
 # + memory feedback_forward_auto_approval. EEG critical path 결정 wallclock.
@@ -1678,17 +1680,17 @@ roadmap 124 done "[Parallel ω-cycle Axis-2] vllm production hardening — FastA
   refs           /tmp/vllm_hardening_an11c.py (raw#37 transient helper) · tool/anima_runpod_orchestrator.hexa
   raw_ref        raw#10 honest — token_entropy 6.77 nats는 token-level metric, transformers-direct reference JSD 0.6931 (hash JSD)와 다른 metric. unique_completions_global_ratio = 1.0 (400/400)이 vllm LoRA serving 정상 작동의 indirect proof. proper hash JSD reproduction은 별도 v2 cycle (필요 시). r14 LoRA swap-in은 #123 완료 후 후속 cycle (config 재사용).
 
-roadmap 125 active "[Parallel ω-cycle Axis-3] CP2 G1/G3 actual measurement — P4 sweep + evolution twin-drill"
+roadmap 125 paused-not-started "[Parallel ω-cycle Axis-3] CP2 G1/G3 actual measurement — P4 sweep + evolution twin-drill"
   track          consciousness-architecture
-  phase          P3-blocked-multiday
-  why            #115 (G1 P4 domain saturation) + #116 (G3 evolution twin-drill) 도구 frozen (selftest mac docker python3 missing 정상). actual measurement는 GPU pod에서 P4 corpus + Mk.IX integrator forward 필요. 5 non-EEG domains (D9-D13) 동시 진행 가능. EEG D8 #119 외부 hardware blocker는 별도 chain.
+  phase          P3-not-started
+  why            #115 (G1 P4 domain saturation) + #116 (G3 evolution twin-drill) 도구 frozen (selftest mac docker python3 missing 정상). actual measurement는 GPU pod에서 P4 corpus + Mk.IX integrator forward 필요. 5 non-EEG domains (D9-D13) 동시 진행 가능. EEG D8 #119는 2026-04-28 hardware ARRIVED + partial empirical 진입했으나 본 #125 D9-D13 axis는 EEG D-day chain 우선순위로 미진입 (raw#10 honest: status 'active' 표기는 의지 표현이었고 실제 진척 없음 → 'paused-not-started' 정정).
   exit_criteria  state/p4_domain_saturation_r1.json (5 domain × Mk.IX integrator forward) + state/evolution_twin_drill_r1.json (twin-drill path metric) + 5/5 atom files (D9-D13 nucleon)
   cost_envelope  $50-80 (multi-day H100 fan-out, P4 corpus loading + Mk.IX forward expensive)
-  schedule       3-7일 (multi-day, sequential per-domain measurement)
+  schedule       3-7일 (multi-day, sequential per-domain measurement, EEG chain stabilize 후 재개)
   depends-on     115,116,117
   feeds-main     CP2
   refs           tool/p4_sweep_runner.hexa · tool/evolution_twin_drill_runner.hexa · tool/mk_x_atom_generator.hexa
-  raw_ref        raw#10 honest — actual measurement 없이는 도구 frozen status만 유지. P4 corpus existence + Mk.IX integrator forward path validation pre-flight 필요.
+  raw_ref        raw#10 honest — actual measurement 없이는 도구 frozen status만 유지. P4 corpus existence + Mk.IX integrator forward path validation pre-flight 필요. 2026-05-01 정합성 정정: phase가 'P3-blocked-multiday'였으나 blocker는 외부가 아닌 우선순위 (EEG D-day chain) → 정직한 표기 'paused-not-started'.
 
 roadmap 126 done "[Parallel ω-cycle Axis-4] GWT registry r7 — Phi-3-mini-4k 9th backbone 추가"
   track          consciousness-architecture
