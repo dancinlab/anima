@@ -1,7 +1,7 @@
 # anima-clm-eeg — CLM ↔ EEG Empirical Alignment (R&D)
 
 > **scope**: raw#9 hexa-only strict R&D track for CLM (Cell-Language Model) ↔ EEG empirical alignment. Falsifier pre-registration + synthetic dry-run harness + post-arrival pilot infrastructure for `.roadmap` #119 D8 EEG.
-> **status**: Path A (Q1 prep, EEG D-1 lever-ready). Hardware not required for pre-register.
+> **status**: EEG hardware ARRIVED (2026-04-28). D-day helmet session VERIFIED (impedance 16/16 GREEN, 5-23 kΩ). Apr 28 first D-day empiricals partial: P3 σ/τ=3 γ/θ FALSIFIED on N=1 60s post-battery (raw#10 honest C3, both ICA + aiclean signals fall in F1 γ-absent regime). P1 LZ76 selftest VERIFIED but real .npy batch BLOCKED (Mac OOM + Hetzner OOM 124GB). Berger gate sweep: 0/15 PASS on real .npy (raw#71 falsifier holds). P2 TLR not yet run on real data. See `docs/eeg_arrival_d_day_post_2026_05_01_landing.md` for full status.
 > **created**: 2026-04-26
 > **canonical session**: see `~/.claude/projects/-Users-ghost-core-anima/memory/project_clm_eeg_pre_register.md`
 
@@ -115,14 +115,18 @@ Re-running any tool with the same env produces byte-identical output (FNV-hash d
 
 ## §5. Post-EEG-arrival workflow (D+0 → D+7)
 
-| day | step | tool |
-|---|---|---|
-| D+0 | EEG hardware arrival, calibration | `anima-eeg/calibrate.py` (or `.hexa` successor) |
-| D+0 | 16ch resting + N-back recording, 5-10 min each | `anima-eeg/collect.py` |
-| D+1 | P1 LZ pre-register VERIFY against real `.npy` | `clm_eeg_p1_lz_pre_register.hexa` (env `--real-npy <path>`) |
-| D+3 | P2 TLR pre-register VERIFY | `clm_eeg_p2_tlr_pre_register.hexa` |
-| D+5 | P3 GCG pre-register VERIFY | `clm_eeg_p3_gcg_pre_register.hexa` |
-| D+7 | composite verdict + paradigm v11 7th axis registration | new tool (TBD post-D+5) |
+| day | step | tool | status (2026-05-01) |
+|---|---|---|---|
+| D+0 (Apr 28) | EEG hardware arrival, helmet bring-up, impedance | `anima-eeg/eeg_setup.hexa impedance_validate` | **DONE** — 16/16 GREEN (5-23 kΩ), `state/impedance_real_hardware_audit/2026-04-28_20260428T111506Z.jsonl` |
+| D+0 (Apr 28) | 16ch resting baseline + low_emi recordings, 60s | `anima-eeg/eeg_setup.hexa record` | **DONE** — 2 baseline + post_battery + daily_life captures, ICA cleaned to ~50 µV rms |
+| D+1 (Apr 28) | P1 LZ pre-register VERIFY against real `.npy` | `clm_eeg_lz76_real.hexa --input <path>` / `clm_eeg_p1_lz_pre_register.hexa` | **PARTIAL** — selftest VERIFIED (b=1218 random, b=250 structured, ordering holds); real .npy batch BLOCKED (Mac OOM at n=119840 + Hetzner OOM 124 GB jetsam, raw#10 honest retraction commit `5693e8611`); prior canonical Mac runs P1_FAIL (b=350‰ post_battery_ica, b=286‰ daily_life_ica) |
+| D+1 (Apr 28) | P3 own 3 σ/τ=3 γ/θ ratio first D-day empirical | `clm_eeg_gamma_theta_ratio.hexa` | **DONE — FALSIFIED_P3** (N=1 60s, both ICA `grand=0.240` and aiclean `grand=0.009` in F1 γ-absent regime, target was 3.0; commit `f27d6363f` raw#10 honest C3) |
+| D+1 (Apr 28) | Berger α-band sanity gate sweep | `_gates/berger_alpha.hexa` (Phase 2) | **DONE — 0/15 PASS** real .npy (peaks cluster 1.2-1.7 Hz delta drift, C3 fail; eyes-open falsifier holds; commit `06fe4142c`) |
+| D+1 (Apr 28) | MNE PSD vs anima Berger cross-validation | (manual) | **DONE — AGREE on verdict** (commit `2e69d896a`) |
+| D+1 (Apr 29) | electrode_adjustment_helper 16ch concurrent upgrade | `anima-eeg/electrode_adjustment_helper.hexa` (1310→1542 LoC) | **DONE** — selftest concurrent_pass=Y, ch3+ch7 dual-touch detected (commit `98f438b5e` + `f73670a4a`) |
+| D+3 | P2 TLR pre-register VERIFY | `clm_eeg_p2_tlr_pre_register.hexa` | **PENDING** — selftest only; real-data run not executed (depends on P1 .npy unblock + dual-stream CLM substrate timing) |
+| D+5 | P3 GCG pre-register VERIFY | `clm_eeg_p3_gcg_pre_register.hexa` | **PENDING** — selftest only; first γ/θ proxy P3 already FALSIFIED, GCG variant separate test |
+| D+7 | composite verdict + paradigm v11 7th axis registration | new tool (TBD post-D+5) | **PENDING** — current empirical evidence base: 1 FALSIFIED + 1 falsifier-holds + 1 partial P1 (composite ≥2/3 PASS for VALIDATED is currently NOT met; PHENOMENAL axis 0.67 baseline not yet improved) |
 
 ---
 
@@ -133,7 +137,11 @@ Re-running any tool with the same env produces byte-identical output (FNV-hash d
 - omega-cycle: `docs/omega_cycle_alm_free_paradigms_20260426.md` §4 PHENOMENAL axis
 - paradigm v11: `docs/paradigm_v11_stack_20260426.md` (7th axis target)
 - CLM substrate: `edu/cell/lagrangian/l_ix_integrator.hexa` (V_sync Kuramoto, raw#30)
-- `.roadmap` entries: `#119` (BLOCKED-EEG, depends-on hardware), new entry TBD post Path A landing
+- D-day landing (this folder): `docs/eeg_arrival_d_day_post_2026_05_01_landing.md` — arrival + first empiricals cross-link
+- D-day session inventory: `docs/d_day_session_2026_04_28/INDEX.md` — 12-doc landing index
+- D-day helmet hardware (anima-eeg): `anima-eeg/docs/d_day_helmet_session_results_2026_04_28.md` (impedance 16/16 GREEN)
+- electrode adjustment 16ch upgrade: `anima-eeg/docs/electrode_adjustment_16ch_concurrent_2026_04_29.md`
+- `.roadmap` entries: `#119` (BLOCKED-EEG, hardware ARRIVED but production track migration ongoing via eeg-core dispatcher), new entry TBD post composite verdict
 
 ---
 
