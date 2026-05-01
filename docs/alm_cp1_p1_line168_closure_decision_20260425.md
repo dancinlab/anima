@@ -65,7 +65,7 @@ P1 line 165 `Φ 4-path ≥3` 게이트는 `1e064038` r6 (L2 6/6 + KL 5/6, ≥3 �
 
 Broad 해석 (`hx_unlock` → `audit_append` → `hx_lock` ceremony) 은:
 - `.roadmap` L168 에 명시 acceptance criterion 으로 기술되지 않음
-- 외부 SSOT (`/Users/ghost/Dev/hexa-lang`) uchg flag — anima 측 자동 closure 불가
+- 외부 SSOT (`<repo-root>/../hexa-lang`) uchg flag — anima 측 자동 closure 불가
 - raw#10 정의 ("proof-carrying hash-chain") 의 기능적 충족은 narrow 매핑 으로 이미 달성
 - 외부 ceremony 는 "single-line drill-verdict event" 형식 강요 — 본 게이트의 구체 형식 요구 없음
 

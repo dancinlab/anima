@@ -77,7 +77,7 @@ top-10 item still needs a human approve step.
 
 * **Kind / source**: fix / secret_scan
 * **Evidence**: `state/secret_scan_violations.json` →
-  `/Users/ghost/core/anima/config/pr_preview_env_spec.json` (MEDIUM entropy,
+  `<repo-root>/config/pr_preview_env_spec.json` (MEDIUM entropy,
   near-keyword classification).
 * **Effort / impact**: 1h / 60
 * **Decision**: **approve (urgent)** — secret scanner flagged a MEDIUM hit

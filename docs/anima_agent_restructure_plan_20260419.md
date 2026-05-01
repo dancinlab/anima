@@ -9,7 +9,7 @@
 ## 0. 배경
 
 ### 현재 상태
-- 위치: `/Users/ghost/Dev/anima/anima-agent/`
+- 위치: `<repo-root>/anima-agent/`
 - 구조: **flat** (서브디렉토리 6 개 + 루트 직접 .hexa 30+ 개 혼재)
 - LOC: **10,368** (.hexa 단일언어)
 - 파일 수: .hexa 51 개 + 설정/문서 약 15 개

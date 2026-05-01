@@ -84,4 +84,4 @@ These 3 can start this session without waiting for any shipment.
 - [ ] Draft `qrng_bridge.hexa --simulate` flag
 - [ ] URDF 8-DOF model in `motor_cortex/`
 
-**Doc path**: `/Users/ghost/Dev/anima/docs/physics_tier2_hw_plan_20260419.md`
+**Doc path**: `<repo-root>/docs/physics_tier2_hw_plan_20260419.md`

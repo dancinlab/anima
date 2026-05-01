@@ -1,6 +1,6 @@
 # Resource Orchestration Map — 2026-04-19
 
-SSOT: `/Users/ghost/Dev/nexus/shared/config/infrastructure.json` (`orchestration_cheatsheet` block)
+SSOT: `<repo-root>/../nexus/shared/config/infrastructure.json` (`orchestration_cheatsheet` block)
 Scope: 5-host unified view (mac / ubu / ubu2 / htz / runpod)
 Last live probe: 2026-04-18 02:00Z
 
@@ -65,8 +65,8 @@ htz DNS: `htz` does not resolve — always use alias `hetzner` (ip 157.180.8.154
 
 ## 6. Cross-references
 
-- SSOT infrastructure: `/Users/ghost/Dev/nexus/shared/config/infrastructure.json`
-- CLAUDE.md: `/Users/ghost/Dev/anima/CLAUDE.md` (refs section should point here)
+- SSOT infrastructure: `<repo-root>/../nexus/shared/config/infrastructure.json`
+- CLAUDE.md: `<repo-root>/CLAUDE.md` (refs section should point here)
 - offload strategy block: `infrastructure.json#offload_strategy`
 - orchestration cheatsheet: `infrastructure.json#orchestration_cheatsheet`
 - Mac perf & spotlight excludes: `infrastructure.json#mac_perf`

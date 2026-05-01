@@ -86,10 +86,10 @@ hexa run tool/roadmap_83_auto_mark.hexa --self-test   # 6-scenario test
 ### Approval dance (user-driven, after VERIFIED)
 
 ```
-chflags nouchg /Users/ghost/core/anima/.roadmap
+chflags nouchg <repo-root>/.roadmap
 # edit line matching '^roadmap 83 planned' → 'roadmap 83 done'
 # append done_at + done_evidence pointer
-chflags uchg   /Users/ghost/core/anima/.roadmap
+chflags uchg   <repo-root>/.roadmap
 hexa run tool/roadmap_83_auto_mark.hexa --print  # confirm consistent
 ```
 
@@ -99,7 +99,7 @@ Re-running the ingest tool every 5–15 min after H100 kickoff is safe
 and idempotent. Example crontab line:
 
 ```
-*/10 * * * * cd /Users/ghost/core/anima && /Users/ghost/core/hexa-lang/hexa run tool/h100_post_launch_ingest.hexa >> /tmp/h100_ingest.log 2>&1
+*/10 * * * * cd <repo-root> && <repo-root>/../hexa-lang/hexa run tool/h100_post_launch_ingest.hexa >> /tmp/h100_ingest.log 2>&1
 ```
 
 Auto-mark consumer can chain afterwards via `&&` if desired.

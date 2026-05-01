@@ -109,8 +109,8 @@ chmod 600 ~/.akida/credentials.json
 가입 전이라도 4-gate 검증 가능 — algorithmic 흉내:
 
 ```bash
-cd /Users/ghost/core/anima
-/Users/ghost/.hx/packages/hexa/build/hexa.real run anima-physics/neuromorphic/cloud_facade_poc.hexa
+cd <repo-root>
+<user-home>/.hx/packages/hexa/build/hexa.real run anima-physics/neuromorphic/cloud_facade_poc.hexa
 ```
 
 기대 결과:
@@ -151,7 +151,7 @@ export BRAINCHIP_AKIDA_TOKEN="<발급받은_token>"
 ### 3.4 Hexa 4-gate 통합 verifier (모든 모드 자동 dispatch)
 
 ```bash
-/Users/ghost/.hx/packages/hexa/build/hexa.real run \
+<user-home>/.hx/packages/hexa/build/hexa.real run \
     anima-physics/neuromorphic/cloud_facade_poc.hexa
 ```
 

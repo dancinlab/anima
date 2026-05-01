@@ -5,7 +5,7 @@
 
 ## Verified hexa runtime exec API (code-level, not hypothesis)
 
-Source: `/Users/ghost/core/hexa-lang/self/rt/proc.hexa`
+Source: `<repo-root>/../hexa-lang/self/rt/proc.hexa`
 
 | API | Signature | Returns |
 |---|---|---|

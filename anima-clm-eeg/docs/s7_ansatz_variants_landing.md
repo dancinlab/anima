@@ -196,12 +196,12 @@ top-3 avg 와 weighted L2 가 baseline 과 identical 결과 → 4-family aggrega
 
 ## §9. Related artifacts
 
-- `/Users/ghost/core/anima/anima-hci-research/tool/cusp_depth_variants.hexa` (sha256 `4c755161a5795e43f93b8e60...`)
-- `/Users/ghost/core/anima/anima-hci-research/state/cusp_depth_variants_v1.json` (sha256 `e1c790bae81f5394ef0e54ce...`, verdict best_variant=A1.Hexad)
-- `/Users/ghost/core/anima/anima-clm-eeg/docs/s7_n8_extension_landing.md` (predecessor N=8 baseline)
-- `/Users/ghost/core/anima/anima-hci-research/state/cusp_depth_projector_n8_v1.json` (N=8 baseline JSON)
-- `/Users/ghost/core/anima/state/v10_benchmark_v3/{mistral,qwen3,llama,gemma}/cmt.json`
-- `/Users/ghost/core/anima/state/v10_benchmark_v4/{mistral,qwen3,llama,gemma}/cmt.json`
+- `<repo-root>/anima-hci-research/tool/cusp_depth_variants.hexa` (sha256 `4c755161a5795e43f93b8e60...`)
+- `<repo-root>/anima-hci-research/state/cusp_depth_variants_v1.json` (sha256 `e1c790bae81f5394ef0e54ce...`, verdict best_variant=A1.Hexad)
+- `<repo-root>/anima-clm-eeg/docs/s7_n8_extension_landing.md` (predecessor N=8 baseline)
+- `<repo-root>/anima-hci-research/state/cusp_depth_projector_n8_v1.json` (N=8 baseline JSON)
+- `<repo-root>/state/v10_benchmark_v3/{mistral,qwen3,llama,gemma}/cmt.json`
+- `<repo-root>/state/v10_benchmark_v4/{mistral,qwen3,llama,gemma}/cmt.json`
 - `.roadmap` #145 (CMT depth divergence cross-validate)
 
 ---

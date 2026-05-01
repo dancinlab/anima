@@ -228,16 +228,16 @@
 
 ## §8. Related artifacts
 
-- `/Users/ghost/core/anima/anima-hci-research/tool/hci_substrate_probe_real.hexa` (sha256 c45b48083cf3942063a00ecb444c93f73afe409b4b788bbb30557ec8ac187cfe, F5 real backbone)
-- `/Users/ghost/core/anima/anima-hci-research/state/hci_substrate_probe_real_v1.json` (4-bb {605/350/290/352} depth_norm {875/111/625/857})
-- `/Users/ghost/core/anima/anima-hci-research/docs/f5_real_substrate_verdict.md`
-- `/Users/ghost/core/anima/edu/cell/lagrangian/l_ix_integrator.hexa` (raw#30 IRREVERSIBILITY embedded, 4-gen crystallize)
-- `/Users/ghost/core/anima/edu/cell/README.md` (Hexad 4/4 axiom CLOSED + 6 morphism + adversarial 2/2 reject)
-- `/Users/ghost/core/anima/anima-eeg/` (Phase 3 Cycle 1+2 9/10 modules raw#9 strict 69/69 selftests PASS)
-- `/Users/ghost/core/anima/anima-eeg/PHASE3_PROGRESS.md`
-- `/Users/ghost/core/anima/.roadmap` #145 (CMT depth divergence) + #162 (HCI Path B F5 landed) + #119 (EEG D8 dependency)
-- `/Users/ghost/core/anima/docs/omega_cycle_alm_free_paradigms_20260426.md` (predecessor ω-cycle)
-- `/Users/ghost/core/anima/docs/phi_substrate_metric_spec.md` (Φ substrate metric spec)
+- `<repo-root>/anima-hci-research/tool/hci_substrate_probe_real.hexa` (sha256 c45b48083cf3942063a00ecb444c93f73afe409b4b788bbb30557ec8ac187cfe, F5 real backbone)
+- `<repo-root>/anima-hci-research/state/hci_substrate_probe_real_v1.json` (4-bb {605/350/290/352} depth_norm {875/111/625/857})
+- `<repo-root>/anima-hci-research/docs/f5_real_substrate_verdict.md`
+- `<repo-root>/edu/cell/lagrangian/l_ix_integrator.hexa` (raw#30 IRREVERSIBILITY embedded, 4-gen crystallize)
+- `<repo-root>/edu/cell/README.md` (Hexad 4/4 axiom CLOSED + 6 morphism + adversarial 2/2 reject)
+- `<repo-root>/anima-eeg/` (Phase 3 Cycle 1+2 9/10 modules raw#9 strict 69/69 selftests PASS)
+- `<repo-root>/anima-eeg/PHASE3_PROGRESS.md`
+- `<repo-root>/.roadmap` #145 (CMT depth divergence) + #162 (HCI Path B F5 landed) + #119 (EEG D8 dependency)
+- `<repo-root>/docs/omega_cycle_alm_free_paradigms_20260426.md` (predecessor ω-cycle)
+- `<repo-root>/docs/phi_substrate_metric_spec.md` (Φ substrate metric spec)
 - `~/.claude/projects/-Users-ghost-core-anima/memory/project_cmt_backbone_depth_divergence_20260426.md`
 - `~/.claude/projects/-Users-ghost-core-anima/memory/project_hci_f5_real_landed.md` (참조 — 만약 존재)
 - `~/.claude/projects/-Users-ghost-core-anima/memory/project_eeg_hardware_openbci_16ch.md`

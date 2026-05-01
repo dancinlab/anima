@@ -1,6 +1,6 @@
 # ICA artifact rejection + LZ76 re-run — 2026-04-28
 
-**Repo**: `/Users/ghost/core/anima`
+**Repo**: `<repo-root>`
 **Verifier**: `anima-clm-eeg/tool/clm_eeg_lz76_real.hexa` (frozen, raw#12)
 **Helper**: `/tmp/ica_helper.py` (raw#9 — `.py` is `/tmp`-only)
 **Pre-registered criteria (FROZEN, no post-hoc tuning, raw#12)**
@@ -136,8 +136,8 @@ Neither file reached `b ≥ 0.65`. P1 remains **FAIL** for both.
 
 ## 7. Artifacts produced
 
-- `/Users/ghost/core/anima/recordings/sessions/baseline_resting_60s_20260428_ica.npy` (16×7491 float64)
-- `/Users/ghost/core/anima/recordings/sessions/baseline_resting_low_emi_20260428T113016Z_seg000_eeg16_ica.npy` (16×7493 float64)
+- `<repo-root>/recordings/sessions/baseline_resting_60s_20260428_ica.npy` (16×7491 float64)
+- `<repo-root>/recordings/sessions/baseline_resting_low_emi_20260428T113016Z_seg000_eeg16_ica.npy` (16×7493 float64)
 - `/tmp/ica_helper.py`, `/tmp/ica_helper_summary.json`
 - `/tmp/lz76_file1_ica.json`, `/tmp/lz76_file1_ica.jsonl`
 - `/tmp/lz76_file2_ica.json`, `/tmp/lz76_file2_ica.jsonl`

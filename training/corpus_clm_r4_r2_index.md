@@ -4,7 +4,7 @@
 - start: 2026-04-18T15:42:12Z
 - end:   2026-04-18T15:53:01Z
 - total: ~10m49s (gz ~4m46s, raw ~10m43s; parallel)
-- mac:   /Users/ghost/Dev/anima (rclone r2 remote)
+- mac:   <repo-root> (rclone r2 remote)
 
 ## R2 Paths (bucket: anima-corpus)
 | file | r2 key | size | local sha256 | md5 (local==r2) |
@@ -39,5 +39,5 @@ Scaffold flag:
 
 ## Local Preservation
 Local files untouched (not deleted, not modified):
-- /Users/ghost/Dev/anima/training/corpus_clm_r4.txt
-- /Users/ghost/Dev/anima/training/corpus_clm_r4.txt.gz
+- <repo-root>/training/corpus_clm_r4.txt
+- <repo-root>/training/corpus_clm_r4.txt.gz

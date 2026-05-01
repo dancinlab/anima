@@ -157,11 +157,11 @@ PASS 4 RSS attribution to `hash_prev` map overhead.
 Results: 5 PASS / 0 FAIL
 ```
 
-AOT: `/Users/ghost/core/anima/.hxc_aot/hxc_a33_pass5` (PASS 5 build).
-v1 backup: `/Users/ghost/core/anima/.hxc_aot/hxc_a33_v1_backup` sha256
+AOT: `<repo-root>/.hxc_aot/hxc_a33_pass5` (PASS 5 build).
+v1 backup: `<repo-root>/.hxc_aot/hxc_a33_v1_backup` sha256
 `4b30fd560d2c1859e71a4e05992d77f681d157b1830b8f837c987de798a77dc8`
 (retained per raw 142 D2).
-PASS 4 AOT: `/Users/ghost/core/anima/.hxc_aot/hxc_a33` sha256 `802e860d`
+PASS 4 AOT: `<repo-root>/.hxc_aot/hxc_a33` sha256 `802e860d`
 (retained as PASS 4 reference).
 
 ## 4. F-A33-6 RSS measurement — 4-probe (PASS 5 vs PASS 4 baseline)
@@ -198,7 +198,7 @@ Probe D (5MB stratified, 484 files anchored to manifest commit
 
 ```
 {"event":"a33_pass4_session_roundtrip",
- "manifest":"/Users/ghost/core/anima/state/seed_buffers/a33_5mb_stratified_manifest.txt",
+ "manifest":"<repo-root>/state/seed_buffers/a33_5mb_stratified_manifest.txt",
  "n_files":484, "seed_path":"", "seed_bytes_filtered":0,
  "raw_bytes":4808181, "enc_bytes":4205045, "saving_pct":12.54,
  "mode":"wire_active", "byte_eq":true,
@@ -232,7 +232,7 @@ overhead in the chosen wire format.
 ## 6. raw 142 D2 disposition
 
 - PASS 5 module retained at
-  `/Users/ghost/core/hexa-lang/self/stdlib/hxc_a33_cross_repo_dict.hexa`.
+  `<repo-root>/../hexa-lang/self/stdlib/hxc_a33_cross_repo_dict.hexa`.
 - PASS 5 AOT retained at `.hxc_aot/hxc_a33_pass5`.
 - PASS 4 AOT retained at `.hxc_aot/hxc_a33` (sha256 `802e860d`).
 - v1 backup retained at `.hxc_aot/hxc_a33_v1_backup` (sha256 `4b30fd56`).

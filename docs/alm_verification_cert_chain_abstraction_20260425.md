@@ -33,7 +33,7 @@ external append)** 까지는 broad 해석이 필요한 구간이며, L2~L5 은 �
 ## §1 L0 — anima-local raw_audit + .meta2-cert (현재 점유)
 
 ### 정의
-- **`.raw-audit` hash-chain** (canonical 위치 = `/Users/ghost/Dev/hexa-lang/.raw-audit`,
+- **`.raw-audit` hash-chain** (canonical 위치 = `<repo-root>/../hexa-lang/.raw-audit`,
   size 40,582 bytes, uchg-locked SSOT) — `prev_sha → curr_sha` append-only
 - **`.meta2-cert/` index** (anima local, 13 entry JSON + `index.json`):
   10 base + 본 세션 3 추가 (`raw31-population-rg-coupling`, `axis10-sigma-phi-identity`,

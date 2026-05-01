@@ -32,7 +32,7 @@ If repo not on htz:
 rsync -avz --delete \
     --exclude='.git/' --exclude='checkpoints/' --exclude='models/' \
     --exclude='/tmp_audit/' --exclude='/build/' --exclude='/dist/' \
-    /Users/ghost/core/anima/ hetzner:/opt/anima/
+    <repo-root>/ hetzner:/opt/anima/
 ```
 
 ## 1. Pre-boot env file (htz, NOT committed)

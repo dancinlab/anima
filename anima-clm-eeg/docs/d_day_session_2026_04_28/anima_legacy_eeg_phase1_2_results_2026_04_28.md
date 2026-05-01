@@ -1,6 +1,6 @@
 # anima legacy-tech × EEG Phase-1 + Phase-2 Bundle Results
 **Date**: 2026-04-28
-**Repo**: /Users/ghost/core/anima
+**Repo**: <repo-root>
 **Reference**: design/anima_legacy_tech_eeg_integration_omega_cycle_2026_04_28.md
 
 ---

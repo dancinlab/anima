@@ -1,8 +1,8 @@
 # Track A v3 — hire_sim_claude critique tune diagnosis
 
 date: 2026-04-16
-log: /Users/ghost/Dev/anima/training/deploy/hire_sim_claude_v3_20260416_051720.log
-state: /Users/ghost/Dev/anima/shared/state/hire_sim_claude_v2_results.jsonl
+log: <repo-root>/training/deploy/hire_sim_claude_v3_20260416_051720.log
+state: <repo-root>/shared/state/hire_sim_claude_v2_results.jsonl
 
 ## Result
 

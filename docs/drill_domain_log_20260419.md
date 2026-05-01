@@ -1,7 +1,7 @@
 # Parallel Domain-Drill Batch — 2026-04-19
 
 **Purpose**: Distinct batch from main drill-evolve loop. 30 seeds across 7 domains.
-**Tool**: `/Users/ghost/Dev/nexus/shared/bin/nexus-cli drill --seed "..." --max-rounds 8 --json`
+**Tool**: `<repo-root>/../nexus/shared/bin/nexus-cli drill --seed "..." --max-rounds 8 --json`
 **Budget**: 4h OR 35 iterations, whichever first. Per-drill timeout: 20 min.
 **Started**: 2026-04-19 13:10 KST
 

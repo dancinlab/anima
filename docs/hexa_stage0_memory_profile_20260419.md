@@ -5,11 +5,11 @@ viability of **Path C (compile train_clm.hexa directly through stage0)**.
 
 ## Binary under test
 
-- `hexa_stage0` shim: `/Users/ghost/Dev/hexa-lang/build/hexa_stage0` (bash
+- `hexa_stage0` shim: `<repo-root>/../hexa-lang/build/hexa_stage0` (bash
   shim, mkdir-lock + launchd RSS cap 4GB).
-- Real binary: `/Users/ghost/.hx/packages/hexa/build/hexa_stage0.real`
+- Real binary: `<user-home>/.hx/packages/hexa/build/hexa_stage0.real`
   (Mach-O arm64, 2.74 MB, built 2026-04-19 02:12).
-- Also at `/Users/ghost/Dev/hexa-lang/build/hexa_stage0.real` (same mtime).
+- Also at `<repo-root>/../hexa-lang/build/hexa_stage0.real` (same mtime).
 - Measurement tool: macOS `/usr/bin/time -l` — `maximum resident set size`
   and `peak memory footprint`. 3 runs per point, median reported.
 - Shim bypassed by invoking `.real` directly (wrapper adds launchd overhead

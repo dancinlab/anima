@@ -3,13 +3,13 @@
     "ts": "2026-04-16T07:30:00Z",
     "audit_type": "full_repo_read_only",
     "scope": "full_repo (lint --all itself is scoped to shared/; audit walks repo-wide)",
-    "harness_tool": "/Users/ghost/Dev/anima/shared/harness/lint.hexa",
+    "harness_tool": "<repo-root>/shared/harness/lint.hexa",
     "invocation_tried": [
       "hexa shared/harness/lint.hexa --all",
       "HARNESS_LINT_MODE=all hexa.real shared/harness/lint.hexa --all"
     ],
     "invocation_note": "lint --all completed exit=0 with no violations in shared/ (the scope the lint uses). Full-repo audit performed via direct pattern search using ripgrep + glob matching the exact lint rule regexes. MD-scope H-HEXA-CANONICAL regex uses \\s which is non-portable on BSD (macOS) grep — lint would under-count on Mac, over-count on Linux. Counts below use ripgrep semantics (PCRE-like, same as Linux/H100 host).",
-    "baseline_lint_log": "/Users/ghost/Dev/nexus/shared/harness/lint_log.jsonl (2026-04-16 entries: all 'staged' mode pass=true except one HARNESS-LOCK warn on h100_idle_guard.hexa)"
+    "baseline_lint_log": "<repo-root>/../nexus/shared/harness/lint_log.jsonl (2026-04-16 entries: all 'staged' mode pass=true except one HARNESS-LOCK warn on h100_idle_guard.hexa)"
   },
   "violations_by_rule": {
     "R1_HEXA_FIRST": {
@@ -343,7 +343,7 @@
     {
       "finding": "ready/.claude/settings.json has active hooks (PreToolUse + UserPromptSubmit) despite H-NOHOOK policy",
       "impact": "The ready/ tree has its own Claude settings that inject a bash hook subprocess running /usr/bin/python3 -c, violating both H-NOHOOK and (because the command is inline) R22-spirit.",
-      "why_surprising": "Main /Users/ghost/Dev/anima/.claude/settings.json has hooks={}, but the ready/ twin has full active hooks. Drift between stage-tree and main tree."
+      "why_surprising": "Main <repo-root>/.claude/settings.json has hooks={}, but the ready/ twin has full active hooks. Drift between stage-tree and main tree."
     },
     {
       "finding": "shared/harness/evolve_gate.py exists inside harness — the harness should be .hexa-first by its own rules",
@@ -376,7 +376,7 @@
     ]
   },
   "invocation_limits_observed": [
-    "hexa wrapper in /Users/ghost/Dev/hexa-lang/hexa attempts remote dispatch via /Users/ghost/Dev/nexus/shared/scripts/bin/hexa, which then tries to SSH to /home/summer/Dev/hexa-lang/hexa (hetzner) — fails locally with 'no such file'. Using /Users/ghost/Dev/hexa-lang/hexa.real (stage1 binary) works but lint --all exits 0 with zero reported violations because find(1) invocation inside lint was not producing any files in sandboxed bash environment of this agent shell.",
+    "hexa wrapper in <repo-root>/../hexa-lang/hexa attempts remote dispatch via <repo-root>/../nexus/shared/scripts/bin/hexa, which then tries to SSH to /home/summer/Dev/hexa-lang/hexa (hetzner) — fails locally with 'no such file'. Using <repo-root>/../hexa-lang/hexa.real (stage1 binary) works but lint --all exits 0 with zero reported violations because find(1) invocation inside lint was not producing any files in sandboxed bash environment of this agent shell.",
     "find(1) in agent bash returns empty output consistently (sandboxed/blocked). Worked around via Glob/Grep tools and direct globbing in target bash one-liners.",
     "Full-repo walk done via ripgrep + manually-applied exemption logic matching lint.hexa source exactly."
   ]

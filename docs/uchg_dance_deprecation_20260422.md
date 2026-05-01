@@ -40,7 +40,7 @@ With:
 let tmp = path + ".tmp.with_unlock." + ts
 write_file(tmp, new_body)
 // 2. atomic mv via the helper (relock on EXIT/INT/TERM via bash trap)
-let cmd = "hexa /Users/ghost/core/hexa-lang/tool/roadmap_with_unlock.hexa" +
+let cmd = "hexa <repo-root>/../hexa-lang/tool/roadmap_with_unlock.hexa" +
           " --file " + path + " -- mv " + tmp + " " + path
 let r = exec_with_status(cmd)
 ```
@@ -49,7 +49,7 @@ For an in-place append (e.g. `printf %s\\n line >> path`):
 
 ```hexa
 let inner = "printf %s\\\\n " + sh_quote(line) + " >> " + sh_quote(path)
-let cmd = "hexa /Users/ghost/core/hexa-lang/tool/roadmap_with_unlock.hexa" +
+let cmd = "hexa <repo-root>/../hexa-lang/tool/roadmap_with_unlock.hexa" +
           " --file " + sh_quote(path) +
           " -- bash -c " + sh_quote(inner)
 exec_with_status(cmd)

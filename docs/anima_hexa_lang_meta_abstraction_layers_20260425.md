@@ -3,7 +3,7 @@
 **Date:** 2026-04-25
 **Scope:** anima 의 SSOT 언어 (hexa-lang) 자체 — stage1 CPU-interpret, AOT codegen, builtin gaps, raw#9 hexa-only enforcement, self-bootstrapping ceiling, verified compiler horizon, dependent-type Curry-Howard limit.
 **Truth policy:** raw#12 cherry-pick 금지. ✓ 실측, △ partial, ✗ 미달성/원리적 차단. 5+ open language gaps 를 ceiling 으로 정직 보고. Korean + English brutally honest.
-**SSOT roots:** `state/proposals/inbox/hxa-20260425-byteAt-builtin.json`, `state/proposals/inventory.json` (lang_gap cluster), `/Users/ghost/Dev/hexa-lang/PLAN.md`, `/Users/ghost/Dev/hexa-lang/ROADMAP.md`, `.roadmap` (raw#9, raw#37 hexa-only-execution).
+**SSOT roots:** `state/proposals/inbox/hxa-20260425-byteAt-builtin.json`, `state/proposals/inventory.json` (lang_gap cluster), `<repo-root>/../hexa-lang/PLAN.md`, `<repo-root>/../hexa-lang/ROADMAP.md`, `.roadmap` (raw#9, raw#37 hexa-only-execution).
 
 ---
 
@@ -155,4 +155,4 @@ Tarski (1936) — sufficient formal language 은 자기 truth predicate 을 자�
 
 **Raw compliance:** raw#9 hexa-only · raw#10 proof-carrying (hxa-* inbox refs) · raw#11 ai-native (deterministic) · raw#12 no-cherry-pick (5+ gaps 정직 보고) · raw#15 no-hardcode · raw#37 hexa-only-execution
 **Line budget:** ~150 (target met)
-**Canonical:** `/Users/ghost/core/anima/docs/anima_hexa_lang_meta_abstraction_layers_20260425.md`
+**Canonical:** `<repo-root>/docs/anima_hexa_lang_meta_abstraction_layers_20260425.md`

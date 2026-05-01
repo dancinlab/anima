@@ -3,7 +3,7 @@
 **Date**: 2026-04-29
 **Phase**: 14 P0 (post-A34 v1 first-tick)
 **Sigil**: `^l` (UNCHANGED — v2 is a routing modification, not a new module)
-**Module path**: `/Users/ghost/core/hexa-lang/self/stdlib/hxc_a34_sub_byte_arith.hexa`
+**Module path**: `<repo-root>/../hexa-lang/self/stdlib/hxc_a34_sub_byte_arith.hexa`
 **Wire version**: `v=arith-v1` (preserved — v2 is encoder-side only; decoder
 must remain backward-compatible since the on-wire bit-stream is what changes)
 **v1 baseline (in-sample 4 KB fixtures)**: F1 English 5%, F2 JSON 8%,
@@ -257,7 +257,7 @@ territory and remains DEFERRED.
 
 ## 7. Witness ledger plan (PASS 3 of this tick)
 
-`/Users/ghost/core/anima/state/format_witness/2026-04-29_a34_v2_ppmd_wire.jsonl`
+`<repo-root>/state/format_witness/2026-04-29_a34_v2_ppmd_wire.jsonl`
 
 Keys: `event`, `verdict` (FIRST_TICK_V2_BUILD_PASS or REVERT_TO_V1),
 `module_path`, `module_sha256_v1`, `module_sha256_v2`,

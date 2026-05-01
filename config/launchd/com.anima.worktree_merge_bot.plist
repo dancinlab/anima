@@ -7,12 +7,12 @@
 
     <key>ProgramArguments</key>
     <array>
-        <string>/Users/ghost/core/anima/bin/worktree_merge_bot</string>
+        <string><repo-root>/bin/worktree_merge_bot</string>
         <string>--dry-run</string>
     </array>
 
     <key>WorkingDirectory</key>
-    <string>/Users/ghost/core/anima</string>
+    <string><repo-root></string>
 
     <key>StartInterval</key>
     <integer>600</integer>
@@ -21,9 +21,9 @@
     <false/>
 
     <key>StandardOutPath</key>
-    <string>/Users/ghost/core/anima/logs/worktree_merge_bot.out.log</string>
+    <string><repo-root>/logs/worktree_merge_bot.out.log</string>
 
     <key>StandardErrorPath</key>
-    <string>/Users/ghost/core/anima/logs/worktree_merge_bot.err.log</string>
+    <string><repo-root>/logs/worktree_merge_bot.err.log</string>
 </dict>
 </plist>

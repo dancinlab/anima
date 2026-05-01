@@ -22,7 +22,7 @@
 ```
 anima session — B axis (post-H100 research · Mk.XII / r14 / Φ paper draft)
 
-Working dir: /Users/ghost/core/anima
+Working dir: <repo-root>
 Precondition:
 - β main (hexa-lang) merge 완료 + main acceleration mirror 확보
 - H100 launch verdict 확보 (PASS / PARTIAL / FAIL 중 하나)

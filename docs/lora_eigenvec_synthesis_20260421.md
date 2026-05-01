@@ -91,8 +91,8 @@ look fabricated under a stricter auditor).
 ## 4. Verifier Run
 
 ```
-/Users/ghost/core/hexa-lang/build/hexa_stage0.real \
-  /Users/ghost/core/anima/tool/an11_b_verifier.hexa --dest alm --round r12
+<repo-root>/../hexa-lang/build/hexa_stage0.real \
+  <repo-root>/tool/an11_b_verifier.hexa --dest alm --round r12
 ```
 
 Output:

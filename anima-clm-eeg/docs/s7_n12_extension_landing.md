@@ -208,13 +208,13 @@ Qwen2.5-1.5B 와 gemma2-2B 모두 peak layer = 0:
 
 ## §9. Related artifacts
 
-- `/Users/ghost/core/anima/anima-cpgd-research/scripts/s7_4backbone_cmt_forward.py.txt` (sha256 `257d0d568766bf7aa36ee8e456f396f019d4ef75447b71ce879adac743c64fd3`)
-- `/Users/ghost/core/anima/anima-hci-research/state/s7_n12_extension_v1.json` (sha256 `99df1f451a12db15106ff08ccc4f9cb956341cea1b2d6783fe1d5ffdc17984bb`, verdict `S7_SUBSTRATE_COHERENCE_PASS_SIGNIFICANT`, p=0.020)
-- `/Users/ghost/core/anima/anima-clm-eeg/docs/s7_n8_extension_landing.md` (predecessor N=8)
-- `/Users/ghost/core/anima/anima-clm-eeg/docs/s7_cusp_depth_projection_landing.md` (origin N=4)
-- `/Users/ghost/core/anima/state/v10_benchmark_v3/{mistral,qwen3,llama,gemma}/cmt.json` (4 ablation v3 trials)
-- `/Users/ghost/core/anima/state/v10_benchmark_v4/{mistral,qwen3,llama,gemma}/cmt.json` (4 ablation v4 trials)
-- `/Users/ghost/core/anima/state/s7_n12_4bb/{qwen25_15b,gemma2_2b}/cmt.json` (2 fresh forward trials)
+- `<repo-root>/anima-cpgd-research/scripts/s7_4backbone_cmt_forward.py.txt` (sha256 `257d0d568766bf7aa36ee8e456f396f019d4ef75447b71ce879adac743c64fd3`)
+- `<repo-root>/anima-hci-research/state/s7_n12_extension_v1.json` (sha256 `99df1f451a12db15106ff08ccc4f9cb956341cea1b2d6783fe1d5ffdc17984bb`, verdict `S7_SUBSTRATE_COHERENCE_PASS_SIGNIFICANT`, p=0.020)
+- `<repo-root>/anima-clm-eeg/docs/s7_n8_extension_landing.md` (predecessor N=8)
+- `<repo-root>/anima-clm-eeg/docs/s7_cusp_depth_projection_landing.md` (origin N=4)
+- `<repo-root>/state/v10_benchmark_v3/{mistral,qwen3,llama,gemma}/cmt.json` (4 ablation v3 trials)
+- `<repo-root>/state/v10_benchmark_v4/{mistral,qwen3,llama,gemma}/cmt.json` (4 ablation v4 trials)
+- `<repo-root>/state/s7_n12_4bb/{qwen25_15b,gemma2_2b}/cmt.json` (2 fresh forward trials)
 - `.roadmap` #145 (CMT depth divergence cross-validate)
 
 ---

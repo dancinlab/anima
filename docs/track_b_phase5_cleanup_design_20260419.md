@@ -88,7 +88,7 @@ use-chain: 전부 anima-agent-core/ 루트 모듈 (`autonomy_loop`, `llm_claude_
 
 ### 3.3 `pyproject.toml` 삭제 (R37 / Py 전면 금지)
 
-- `/Users/ghost/Dev/anima/anima-agent/pyproject.toml` 루트 1 파일.
+- `<repo-root>/anima-agent/pyproject.toml` 루트 1 파일.
 - AN7 HEXA-FIRST 완료 상태 → 잔재.
 
 ### 3.4 `Dockerfile` 감사

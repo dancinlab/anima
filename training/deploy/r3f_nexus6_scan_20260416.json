@@ -2,7 +2,7 @@
   "meta": {
     "date": "2026-04-16",
     "model": "CLM 1B r3f",
-    "source_summary": "/Users/ghost/Dev/anima/training/deploy/clm_1b_r3f_summary_20260416.json",
+    "source_summary": "<repo-root>/training/deploy/clm_1b_r3f_summary_20260416.json",
     "scanner": "python port of telescope.hexa (5-lens)",
     "note": "Hexa telescope CLI is broken at runtime (arm64 stage0 \u2014 'index 2 out of bounds'). Ported 5 lenses exactly from telescope.hexa v1 source. Full per-step log was NOT available locally; eval_loss/phi series reconstructed from 3-point summary anchors via a fitted exp-decay+gauss model. Summary-only scalars are EXACT.",
     "blocker": "Real per-eval data needs actual /workspace/clm_1b_r3f.log (pod stopped)."

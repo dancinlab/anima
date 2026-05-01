@@ -12,7 +12,7 @@ enforcement gap by promoting anima's two SSOT files to `uchg`.
 ## Pre-state (step 1)
 
 ```
-$ ls -lO /Users/ghost/core/anima/.own /Users/ghost/core/anima/.roadmap
+$ ls -lO <repo-root>/.own <repo-root>/.roadmap
 -rw-r--r--@ 1 ghost  staff  -  215 Apr 20 00:57 .own
 -rw-r--r--@ 1 ghost  staff  - 7677 Apr 21 00:45 .roadmap
 ```
@@ -45,8 +45,8 @@ No `sudo` required — owner can set `uchg` on owned files on macOS (BSD
 file flags semantics).
 
 ```
-$ chflags uchg /Users/ghost/core/anima/.own       # exit 0
-$ chflags uchg /Users/ghost/core/anima/.roadmap   # exit 0
+$ chflags uchg <repo-root>/.own       # exit 0
+$ chflags uchg <repo-root>/.roadmap   # exit 0
 $ ls -lO ...
 -rw-r--r--@ 1 ghost  staff  uchg  215 Apr 20 00:57 .own
 -rw-r--r--@ 1 ghost  staff  uchg 7677 Apr 21 00:45 .roadmap
@@ -61,10 +61,10 @@ $ ls -lO ...
 ### write-test — MUST be denied
 
 ```
-$ echo "test" >> /Users/ghost/core/anima/.own
-zsh: operation not permitted: /Users/ghost/core/anima/.own    # exit 1 OK
-$ echo "test" >> /Users/ghost/core/anima/.roadmap
-zsh: operation not permitted: /Users/ghost/core/anima/.roadmap # exit 1 OK
+$ echo "test" >> <repo-root>/.own
+zsh: operation not permitted: <repo-root>/.own    # exit 1 OK
+$ echo "test" >> <repo-root>/.roadmap
+zsh: operation not permitted: <repo-root>/.roadmap # exit 1 OK
 ```
 
 Verdict: **DENIED** (both files). Enforcement active.
@@ -109,7 +109,7 @@ commits, but is an on-disk runtime property).
 
 If rollback needed:
 ```
-chflags nouchg /Users/ghost/core/anima/.own /Users/ghost/core/anima/.roadmap
-cp /Users/ghost/core/anima/docs/backup/.own.bak.20260421     /Users/ghost/core/anima/.own
-cp /Users/ghost/core/anima/docs/backup/.roadmap.bak.20260421 /Users/ghost/core/anima/.roadmap
+chflags nouchg <repo-root>/.own <repo-root>/.roadmap
+cp <repo-root>/docs/backup/.own.bak.20260421     <repo-root>/.own
+cp <repo-root>/docs/backup/.roadmap.bak.20260421 <repo-root>/.roadmap
 ```

@@ -76,7 +76,7 @@ MEMORY axis 77 (Cyton+Daisy 16ch, BrainFlow 실측 125Hz, 이전 250Hz spec 잘�
 ### §3.2 .venv-eeg distutils precedence regression
 
 ```
-$ /Users/ghost/core/anima/.venv-eeg/bin/python3 -m pip list
+$ <repo-root>/.venv-eeg/bin/python3 -m pip list
 Error processing line 1 of .venv-eeg/lib/python3.14/site-packages/distutils-precedence.pth:
   AttributeError: module '_distutils_hack' has no attribute 'add_shim'
 Remainder of file ignored
@@ -144,7 +144,7 @@ ls /dev/cu.usbserial*
 # (없으면) FTDI VCP driver 설치: https://ftdichip.com/drivers/vcp-drivers/
 
 # 2. brainflow venv health check
-/Users/ghost/core/anima/.venv-eeg/bin/python3 -c "import brainflow; print(brainflow.__version__)"
+<repo-root>/.venv-eeg/bin/python3 -c "import brainflow; print(brainflow.__version__)"
 # 기대: 5.21.0 (or higher)
 
 # 3. brainflow ingest helper synthetic selftest (no hardware)

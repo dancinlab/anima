@@ -218,16 +218,16 @@ Monte Carlo SE: 1024 perm SE ≈ 0.014 vs 4096 perm SE ≈ 0.007 → 1.7σ 확�
 
 ## §9. Related artifacts
 
-- `/Users/ghost/core/anima/anima-cpgd-research/scripts/s7_llama32_1b_cmt_forward.py.txt` (sha256 `844f2af695a531430f144b3c1fe975832a1b01ab15df80cf953e8281270b86b9`)
-- `/Users/ghost/core/anima/anima-hci-research/tool/cusp_depth_projector_n11.hexa` (sha256 `40f92310122a54cf4fa2a39ab339580ff3a6ee5ab97c13598935fe562cad1880`)
-- `/Users/ghost/core/anima/anima-hci-research/state/s7_n11_extension_v1.json` (sha256 `e48560ff76a01c411ea73c7a3b279ac5d2b14155cb7313f8958c710699438585`, verdict `S7_SUBSTRATE_COHERENCE_PASS_TIGHT`, p=0.018)
-- `/Users/ghost/core/anima/state/s7_n11_4bb/llama32_1b/cmt.json` (sha256 `a57f45e17e96ab83648c77f9477a2f217d7a5663342c3b91b29064b6626123dd`, NEW input-mode trial)
-- `/Users/ghost/core/anima/anima-clm-eeg/docs/s7_n12_extension_landing.md` (predecessor effective N=10)
-- `/Users/ghost/core/anima/anima-clm-eeg/docs/s7_n8_extension_landing.md` (N=8)
-- `/Users/ghost/core/anima/anima-clm-eeg/docs/s7_cusp_depth_projection_landing.md` (origin N=4)
-- `/Users/ghost/core/anima/state/v10_benchmark_v{3,4}/{mistral,qwen3,llama,gemma}/cmt.json` (8 ablation trials)
-- `/Users/ghost/core/anima/state/s7_n12_4bb/{qwen25_15b,gemma2_2b}/cmt.json` (2 fresh trials)
-- `/Users/ghost/core/anima/anima-clm-eeg/state/markers/s7_n11_extension_complete.marker`
+- `<repo-root>/anima-cpgd-research/scripts/s7_llama32_1b_cmt_forward.py.txt` (sha256 `844f2af695a531430f144b3c1fe975832a1b01ab15df80cf953e8281270b86b9`)
+- `<repo-root>/anima-hci-research/tool/cusp_depth_projector_n11.hexa` (sha256 `40f92310122a54cf4fa2a39ab339580ff3a6ee5ab97c13598935fe562cad1880`)
+- `<repo-root>/anima-hci-research/state/s7_n11_extension_v1.json` (sha256 `e48560ff76a01c411ea73c7a3b279ac5d2b14155cb7313f8958c710699438585`, verdict `S7_SUBSTRATE_COHERENCE_PASS_TIGHT`, p=0.018)
+- `<repo-root>/state/s7_n11_4bb/llama32_1b/cmt.json` (sha256 `a57f45e17e96ab83648c77f9477a2f217d7a5663342c3b91b29064b6626123dd`, NEW input-mode trial)
+- `<repo-root>/anima-clm-eeg/docs/s7_n12_extension_landing.md` (predecessor effective N=10)
+- `<repo-root>/anima-clm-eeg/docs/s7_n8_extension_landing.md` (N=8)
+- `<repo-root>/anima-clm-eeg/docs/s7_cusp_depth_projection_landing.md` (origin N=4)
+- `<repo-root>/state/v10_benchmark_v{3,4}/{mistral,qwen3,llama,gemma}/cmt.json` (8 ablation trials)
+- `<repo-root>/state/s7_n12_4bb/{qwen25_15b,gemma2_2b}/cmt.json` (2 fresh trials)
+- `<repo-root>/anima-clm-eeg/state/markers/s7_n11_extension_complete.marker`
 - `.roadmap` #145 (CMT depth divergence cross-validate)
 
 ---

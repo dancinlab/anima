@@ -3,12 +3,12 @@
   "title": "roadmap_integrity_guard — OS-level live 실수 방지 config",
   "created": "2026-04-21",
   "raw_compliance": "raw#1 chflags raw#9 hexa-only raw#11 snake_case raw#15 no-hardcode raw#10 proof-carrying",
-  "repo_root": "/Users/ghost/core/anima",
-  "roadmap_path": "/Users/ghost/core/anima/.roadmap",
-  "raw_audit_path": "/Users/ghost/core/anima/.raw-audit",
-  "state_dir": "/Users/ghost/core/anima/state",
-  "hexa_bin": "/Users/ghost/.hx/bin/hexa",
-  "lint_tool": "/Users/ghost/core/hexa-lang/tool/roadmap_lint.hexa",
+  "repo_root": "<repo-root>",
+  "roadmap_path": "<repo-root>/.roadmap",
+  "raw_audit_path": "<repo-root>/.raw-audit",
+  "state_dir": "<repo-root>/state",
+  "hexa_bin": "<user-home>/.hx/bin/hexa",
+  "lint_tool": "<repo-root>/../hexa-lang/tool/roadmap_lint.hexa",
   "paths_json_sources": [
     "edu/paths.json"
   ],
@@ -98,9 +98,9 @@
     "check_8_closure_debt": {
       "severity": "WARN",
       "auto_fix": false,
-      "closure_debt_config": "/Users/ghost/core/anima/config/closure_debt_patterns.json",
-      "closure_debt_result": "/Users/ghost/core/anima/state/closure_debt_result.json",
-      "closure_debt_scanner": "/Users/ghost/core/anima/tool/closure_debt_scanner.hexa",
+      "closure_debt_config": "<repo-root>/config/closure_debt_patterns.json",
+      "closure_debt_result": "<repo-root>/state/closure_debt_result.json",
+      "closure_debt_scanner": "<repo-root>/tool/closure_debt_scanner.hexa",
       "note": "agent report + SSOT + docs 에서 closure_debt 패턴 감지. debt_hits>0 → WARN. auto-dispatch 는 scanner 쪽에서 수행"
     }
   },
@@ -130,8 +130,8 @@
     }
   },
   "output": {
-    "drift_log_dir": "/Users/ghost/core/anima/state",
+    "drift_log_dir": "<repo-root>/state",
     "drift_log_prefix": "integrity_drift_",
-    "summary_ssot": "/Users/ghost/core/anima/state/roadmap_integrity_result.json"
+    "summary_ssot": "<repo-root>/state/roadmap_integrity_result.json"
   }
 }

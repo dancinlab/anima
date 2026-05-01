@@ -5,7 +5,7 @@
 **Predecessor**:
   - D1 P1 single pilot canary (commit a3ac440a, in-flight) — `discovery_absorption_lint` LIVE 2026-04-28
   - D1 P2 batch proposal `docs/hxc_deploy_d1_p2_batch_proposal_20260428.md` (Wave 1/2/3 multi-consumer scope)
-  - hxc_pre_encoder tool landing (`/Users/ghost/core/anima/tool/hxc_pre_encoder.hexa`, 236 LoC, 3/3 selftest PASS)
+  - hxc_pre_encoder tool landing (`<repo-root>/tool/hxc_pre_encoder.hexa`, 236 LoC, 3/3 selftest PASS)
   - A19 PASS 0.5 HXC-pre-encode production LIVE FIRE measurement (this tick — `state/format_witness/2026-04-28_a19_pass_0_5_hxc_pre_encode_production.jsonl`)
 **Compliance**: raw 1 chflags · raw 9 hexa-only · raw 18 self-host · raw 47 cross-repo · raw 65+68 idempotent · raw 71 falsifier-preregister · raw 91 honest C3 · raw 137 80%-Pareto cmix-ban · raw 142 D2 try-revert · raw 154 deploy-rollout · raw 155 consumer-adapter
 
@@ -77,7 +77,7 @@ This is **forward-spec, not promotion-pending**. D1 P3 entry is GATED on:
 ### 3.1 F-D1-3 (D1 P3 entry condition falsifier)
 
 **ID**: F-D1-3
-**Claim**: producer-side HXC pre-encoded output remains byte-eq compatible with consumer-adapter (`/Users/ghost/core/hive/tool/hxc_consumer_adapter.hexa`) reverse decode chain across all 6 sister repos.
+**Claim**: producer-side HXC pre-encoded output remains byte-eq compatible with consumer-adapter (`<repo-root>/../hive/tool/hxc_consumer_adapter.hexa`) reverse decode chain across all 6 sister repos.
 **Measurement method**: 5-corpus producer→consumer round-trip byte-eq sweep — for each of 6 repos, pick 5 representative files; run `producer.emit(content) → hxc_pre_encoded_file → consumer_adapter.decode → original_content_bytes`; compare with `cmp -s`.
 **Pass criterion**: 99%+ round-trip byte-eq AND 0% downstream consumer regression (existing consumer behavior unchanged) AND aggregate storage delta ≤ +5pp (or NEGATIVE).
 **Verdict pending**: D1 P3 W1 entry condition; LIVE FIRE not yet executed.

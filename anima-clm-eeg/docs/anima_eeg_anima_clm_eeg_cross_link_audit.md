@@ -60,7 +60,7 @@ anima-eeg/config/eeg_config.json    ──read──▶  anima-clm-eeg/tool/clm_
 ### 2.3 직접 코드 의존 0건 (one-way verified)
 
 ```bash
-$ grep -r "anima-clm-eeg" /Users/ghost/core/anima/anima-eeg/ 2>/dev/null
+$ grep -r "anima-clm-eeg" <repo-root>/anima-eeg/ 2>/dev/null
 # expected: 0 matches (production never imports R&D)
 ```
 

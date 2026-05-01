@@ -10,9 +10,9 @@ all PASS. 5 real-corpus measurements byte-eq roundtrip PASS.
 
 ## Module
 
-- impl: `/Users/ghost/core/hexa-lang/self/stdlib/hxc_a11_cross_row_delta.hexa`
-- plug-in slot symlink: `/Users/ghost/core/hive/tool/hxc_a11_cross_row_delta.hexa`
-  → `/Users/ghost/core/hexa-lang/self/stdlib/hxc_a11_cross_row_delta.hexa`
+- impl: `<repo-root>/../hexa-lang/self/stdlib/hxc_a11_cross_row_delta.hexa`
+- plug-in slot symlink: `<repo-root>/../hive/tool/hxc_a11_cross_row_delta.hexa`
+  → `<repo-root>/../hexa-lang/self/stdlib/hxc_a11_cross_row_delta.hexa`
 - LoC: ~720 (well under the 200-400 spec; selftest + b64 + iso epoch math expanded
   the floor). Active code surface (encode + decode + detect): ~350 LoC.
 - annotations: `@resolver-bypass(...)` + `@omega-saturation-exempt(operational utility ...)`
@@ -106,7 +106,7 @@ logs are noisier than the projection assumed.
 
 ## Phase 6 follow-up (out of scope, separate cycle)
 
-Wire `_A11_apply` / `_A11_available` into `/Users/ghost/core/hive/tool/hxc_migrate.hexa`
+Wire `_A11_apply` / `_A11_available` into `<repo-root>/../hive/tool/hxc_migrate.hexa`
 in the same plug-in slot pattern as A7/A10 (lines 211-262). Tier-A autonomous
 once the module lands. Profile heuristic: `use_A11 = (has_iso_ts_col OR
 has_monotonic_int_col) AND row_count >= 8 AND uniform_type_per_col`.
@@ -123,7 +123,7 @@ has_monotonic_int_col) AND row_count >= 8 AND uniform_type_per_col`.
 
 ## Witness
 
-- impl: `/Users/ghost/core/hexa-lang/self/stdlib/hxc_a11_cross_row_delta.hexa`
-- symlink: `/Users/ghost/core/hive/tool/hxc_a11_cross_row_delta.hexa`
-- measurements: `/Users/ghost/core/anima/state/format_witness/2026-04-28_hxc_a11_measurements.json`
-- selftest: `~/.hx/bin/hexa run /Users/ghost/core/hexa-lang/self/stdlib/hxc_a11_cross_row_delta.hexa --selftest` → `PASS`
+- impl: `<repo-root>/../hexa-lang/self/stdlib/hxc_a11_cross_row_delta.hexa`
+- symlink: `<repo-root>/../hive/tool/hxc_a11_cross_row_delta.hexa`
+- measurements: `<repo-root>/state/format_witness/2026-04-28_hxc_a11_measurements.json`
+- selftest: `~/.hx/bin/hexa run <repo-root>/../hexa-lang/self/stdlib/hxc_a11_cross_row_delta.hexa --selftest` → `PASS`

@@ -6,10 +6,10 @@ Toolchain: jq-1.7, awk, shuf (no `.py`)
 
 ## Source
 
-- Original: `/Users/ghost/Dev/anima/training/corpus_alm_70b.jsonl` (93,400,043 B / 93.4 MB)
+- Original: `<repo-root>/training/corpus_alm_70b.jsonl` (93,400,043 B / 93.4 MB)
   - Format: `{role, messages:[{role,content}...], source}` ChatML jsonl
   - Extraction: `jq -r '.messages[]?.content // empty' | awk NF>0 | tr -s whitespace | fold -s -w 800`
-- Kowiki source: `/Users/ghost/Dev/anima/training/corpus_auto/kowiki.jsonl` (1.37 GB)
+- Kowiki source: `<repo-root>/training/corpus_auto/kowiki.jsonl` (1.37 GB)
   - First 100 MB of jsonl, `.text` field, same stripping pipeline → 15 MB slice → trimmed to 15% target
 
 ## R2 Bucket: `r2:anima-corpus/alm/`
@@ -38,9 +38,9 @@ sha256sum /workspace/data/corpus_alm_70b_stripped*.txt  # verify against table a
 
 ## Local artifacts (Mac)
 
-- `/Users/ghost/Dev/anima/training/corpus_alm_70b_stripped.txt`
-- `/Users/ghost/Dev/anima/training/corpus_alm_70b_stripped_kowiki15.txt`
-- original `/Users/ghost/Dev/anima/training/corpus_alm_70b.jsonl` **unchanged**
+- `<repo-root>/training/corpus_alm_70b_stripped.txt`
+- `<repo-root>/training/corpus_alm_70b_stripped_kowiki15.txt`
+- original `<repo-root>/training/corpus_alm_70b.jsonl` **unchanged**
 
 ## Token estimate
 

@@ -45,11 +45,11 @@
     <array>
         <string>/bin/bash</string>
         <string>-c</string>
-        <string>cd /Users/ghost/core/anima &amp;&amp; OUT="$(/Users/ghost/core/hexa-lang/hexa /Users/ghost/core/hexa-lang/tool/ai_native_scan.hexa 2&gt;&amp;1)"; EC=$?; TS="$(date -u +%Y-%m-%dT%H:%M:%SZ)"; F1=$(printf '%s' "$OUT" | grep -c '^  F1-' || true); F2=$(printf '%s' "$OUT" | grep -c '^  F2-' || true); F3=$(printf '%s' "$OUT" | grep -c '^  F3-' || true); F4=$(printf '%s' "$OUT" | grep -c '^  F4-' || true); F5=$(printf '%s' "$OUT" | grep -c '^  F5-' || true); F6=$(printf '%s' "$OUT" | grep -c '^  F6-' || true); TOTAL=$((F1+F2+F3+F4+F5+F6)); printf '{"ts":"%s","total":%d,"f1":%d,"f2":%d,"f3":%d,"f4":%d,"f5":%d,"f6":%d,"exit_code":%d}\n' "$TS" "$TOTAL" "$F1" "$F2" "$F3" "$F4" "$F5" "$F6" "$EC" &gt;&gt; /Users/ghost/core/anima/state/lint_cron_history.jsonl; printf '%s\n' "$OUT"</string>
+        <string>cd <repo-root> &amp;&amp; OUT="$(<repo-root>/../hexa-lang/hexa <repo-root>/../hexa-lang/tool/ai_native_scan.hexa 2&gt;&amp;1)"; EC=$?; TS="$(date -u +%Y-%m-%dT%H:%M:%SZ)"; F1=$(printf '%s' "$OUT" | grep -c '^  F1-' || true); F2=$(printf '%s' "$OUT" | grep -c '^  F2-' || true); F3=$(printf '%s' "$OUT" | grep -c '^  F3-' || true); F4=$(printf '%s' "$OUT" | grep -c '^  F4-' || true); F5=$(printf '%s' "$OUT" | grep -c '^  F5-' || true); F6=$(printf '%s' "$OUT" | grep -c '^  F6-' || true); TOTAL=$((F1+F2+F3+F4+F5+F6)); printf '{"ts":"%s","total":%d,"f1":%d,"f2":%d,"f3":%d,"f4":%d,"f5":%d,"f6":%d,"exit_code":%d}\n' "$TS" "$TOTAL" "$F1" "$F2" "$F3" "$F4" "$F5" "$F6" "$EC" &gt;&gt; <repo-root>/state/lint_cron_history.jsonl; printf '%s\n' "$OUT"</string>
     </array>
 
     <key>WorkingDirectory</key>
-    <string>/Users/ghost/core/anima</string>
+    <string><repo-root></string>
 
     <key>StartCalendarInterval</key>
     <dict>
@@ -63,10 +63,10 @@
     <false/>
 
     <key>StandardOutPath</key>
-    <string>/Users/ghost/core/anima/logs/lint_cron.out.log</string>
+    <string><repo-root>/logs/lint_cron.out.log</string>
 
     <key>StandardErrorPath</key>
-    <string>/Users/ghost/core/anima/logs/lint_cron.err.log</string>
+    <string><repo-root>/logs/lint_cron.err.log</string>
 
     <key>EnvironmentVariables</key>
     <dict>

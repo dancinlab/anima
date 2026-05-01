@@ -2,7 +2,7 @@
 
 > **Purpose**: hand off CLM (Cell-Language Model) research to a fresh session for parallel exploration. Captures current state, open questions, ready-to-run pilots, and the launch prompt.
 > **Source session**: `~/.claude/projects/-Users-ghost-core-anima/f1a910b0-dddc-40ef-92f7-60130f40a06e.jsonl` (paradigm v11 stack + ω-cycle ALM-free 26-paradigm exploration).
-> **Working directory**: `/Users/ghost/core/anima`
+> **Working directory**: `<repo-root>`
 
 ---
 
@@ -144,7 +144,7 @@ Source: `docs/omega_cycle_alm_free_paradigms_20260426.md` (commit `24d2fa4f`).
 Copy-paste this into the new session:
 
 ```
-anima 프로젝트 (/Users/ghost/core/anima) 에서 CLM (Cell-Language Model) 연구를 진행해줘.
+anima 프로젝트 (<repo-root>) 에서 CLM (Cell-Language Model) 연구를 진행해줘.
 
 배경:
 - 이전 세션에서 paradigm v11 stack 17-helper 완성 + ω-cycle ALM-free 26-paradigm 탐색 완료.

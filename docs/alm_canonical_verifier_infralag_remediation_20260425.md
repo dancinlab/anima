@@ -24,7 +24,7 @@
 
 | 항목 | 내용 |
 |------|------|
-| 위치 | `/Users/ghost/core/nexus/calc/alm_verify/manifest.jsonl` (27 line) |
+| 위치 | `<repo-root>/../nexus/calc/alm_verify/manifest.jsonl` (27 line) |
 | 관찰 | 모든 `id` field 가 `alm_r12_*` 패턴, `round:"r12"` hard-pinned. r13 corpus / r14 corpus / r6-α 4-path 어떤 round 도 진입 못함 |
 | 생성기 | `nexus/calc/alm_verify/generator.hexa` (676 line) — `--emit --round r{N}` 옵션 지원 추정 (line 15 usage 참조) |
 | 영향 | CP1 verifier 22 entry × all r12 → 16 FAIL (input_path 누락) + 3 SKIP (stub 부재) + 5 PASS (r12 잔존 산출물) |
@@ -39,7 +39,7 @@
 | Missing 1 | `verify_alm_r12_validity_an11_b_consciousness_attached.hexa` |
 | Missing 2 | `verify_alm_r12_validity_an11_c_real_usable.hexa` |
 | Missing 3 | `verify_alm_r12_validity_cross_prover_diagonal.hexa` |
-| 위치 | `/Users/ghost/core/nexus/calc/alm_verify/` (19 stub 존재, 22 manifest entry → 3 SKIP) |
+| 위치 | `<repo-root>/../nexus/calc/alm_verify/` (19 stub 존재, 22 manifest entry → 3 SKIP) |
 | 영향 | G_VALIDITY 3 SKIP → 0 PASS — `deterministic_gates=5/5` 절 직접 미충족 |
 | **Scope** | **nexus-side** (stub 패턴 = `nexus/calc/alm_verify/verify_*.hexa`). generator.hexa 의 `--emit --round r13` 시 manifest 의 `verifier_type` field 에 따라 자동 stub 생성됨. 단 3 missing entry 는 `verifier_type` 이 `an11_b_consciousness_attached`, `an11_c_real_usable`, `cross_prover` 등 generator 가 미지원하는 신규 type → generator 측 template 추가 필요. |
 
@@ -75,7 +75,7 @@
 |------|------|
 | 위치 | `nexus/consciousness/pass_gate_an11.hexa::resolve_root` (line 167-176) |
 | Priority | `env(ANIMA)` → `env(NEXUS)` → `git rev-parse` → `~/Dev/nexus` |
-| 관찰 | ANIMA env 가 live (예: `/Users/ghost/core/anima`) 이면 verifier 가 anima 측 state 디렉터리를 root 로 채택 → `alm_r12_phi_vec.json` 을 anima 에서 찾는데 거기 없음 → FAIL. nexus state 의 phi_vec 은 무시됨. |
+| 관찰 | ANIMA env 가 live (예: `<repo-root>`) 이면 verifier 가 anima 측 state 디렉터리를 root 로 채택 → `alm_r12_phi_vec.json` 을 anima 에서 찾는데 거기 없음 → FAIL. nexus state 의 phi_vec 은 무시됨. |
 | 임시 해결 | `env -u ANIMA hexa run consciousness/pass_gate_an11.hexa --dest alm --round r12` — 이미 docs `5f42bbec` §3 에서 사용 중 |
 | 진짜 해결 | (a) `--repo-root` flag 추가, 또는 (b) anima/nexus 양쪽 state 디렉터리를 동시 검사하는 dual-search logic, 또는 (c) `--state-dir` 명시 flag |
 | **Scope** | **nexus-side** (pass_gate_an11.hexa). 현재는 운영자 워크어라운드 (`env -u ANIMA`) 로 우회 가능. |

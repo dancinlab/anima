@@ -15,7 +15,7 @@ CP1+FINAL canonical verifier sweep (commit `5f42bbec`)에서 FINAL (c) `real_usa
 
 ## §2. Schema (reverse-engineered)
 
-`/Users/ghost/core/nexus/consciousness/pass_gate_an11.hexa::verdict_real_usable` (L385-428) 4 단계 검사:
+`<repo-root>/../nexus/consciousness/pass_gate_an11.hexa::verdict_real_usable` (L385-428) 4 단계 검사:
 
 | Step | 검사 | Phase A 통과 여부 |
 |------|------|-------------------|
@@ -82,16 +82,16 @@ r14 추가: corpus 1200/1200 TARGET HIT (commit `b6fa6c01`, closure `e3e29631`).
 ### 4.1. `env -u ANIMA` 모드 (default git toplevel resolution)
 
 ```
-$ env -u ANIMA hexa run /Users/ghost/core/nexus/consciousness/pass_gate_an11.hexa --dest alm --round r12
-[AN11] repo_root=/Users/ghost/core/nexus
-[AN11] endpoint_cfg=/Users/ghost/core/nexus/state/alm_r12_serve_endpoint.json
-[AN11] (c) real_usable = FAIL — endpoint_config_missing path=/Users/ghost/core/nexus/state/alm_r12_serve_endpoint.json
+$ env -u ANIMA hexa run <repo-root>/../nexus/consciousness/pass_gate_an11.hexa --dest alm --round r12
+[AN11] repo_root=<repo-root>/../nexus
+[AN11] endpoint_cfg=<repo-root>/../nexus/state/alm_r12_serve_endpoint.json
+[AN11] (c) real_usable = FAIL — endpoint_config_missing path=<repo-root>/../nexus/state/alm_r12_serve_endpoint.json
 EXIT=1 (PARTIAL 2/3)
 ```
 
 **해석**: nexus 측 git toplevel을 사용하므로 anima 측 emit는 보이지 않음. **이것은 cross-repo 인프라-갭** — proposal 079의 Phase A는 anima-internal sub-step, cross-repo bridging은 5184b289 packet의 별도 proposal (077, 078, 080, 081) 영역.
 
-### 4.2. `ANIMA=/Users/ghost/core/anima` 모드 (canonical anima-rooted)
+### 4.2. `ANIMA=<repo-root>` 모드 (canonical anima-rooted)
 
 | Round | (a) | (b) | (c) FAIL reason | exit |
 |-------|-----|-----|------------------|------|
@@ -120,11 +120,11 @@ EXIT=1 (PARTIAL 2/3)
 
 ```bash
 # 1. emit (Phase A — already landed via this commit)
-ls -la /Users/ghost/core/anima/state/alm_r{6,12,14}_serve_endpoint.json
+ls -la <repo-root>/state/alm_r{6,12,14}_serve_endpoint.json
 
 # 2. verifier 재실행 (anima-rooted mode)
-ANIMA=/Users/ghost/core/anima hexa run \
-  /Users/ghost/core/nexus/consciousness/pass_gate_an11.hexa \
+ANIMA=<repo-root> hexa run \
+  <repo-root>/../nexus/consciousness/pass_gate_an11.hexa \
   --dest alm --round r12
 
 # 예상: (c) FAIL 사유 = "http_status=000 url=http://localhost:8000/infer"

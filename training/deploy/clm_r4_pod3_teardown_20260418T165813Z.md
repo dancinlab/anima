@@ -40,7 +40,7 @@
 - **Logs**: local tmux log only (pod gone)
 
 ## ubu/ubu2 Migration Checklist
-- [ ] Confirm hxcuda source tree present in /Users/ghost/Dev (or nexus hexa-lang repo)
+- [ ] Confirm hxcuda source tree present in <core-root> (or nexus hexa-lang repo)
 - [ ] Launch RTX 3090 COMMUNITY pod per `reference_hexa_c4_launch.md` for hxcuda build
 - [ ] Verify GPU kernel dispatch (sm_80/sm_90 smoke test) BEFORE H100 relaunch
 - [ ] Re-port clm_r4_native.hexa to call hxcuda primitives explicitly

@@ -51,7 +51,7 @@ fixture-5 in-sample PPM-order-4 bound 1000 -> 27 B (97% saving, target 90%)
 Results: 5 PASS / 0 FAIL
 ```
 
-File: `/Users/ghost/core/hexa-lang/self/stdlib/hxc_a18_lz_ppm_order4.hexa`
+File: `<repo-root>/../hexa-lang/self/stdlib/hxc_a18_lz_ppm_order4.hexa`
 (843 LoC, working tree only — last committed at PASS-1 first-tick e789a5f9
 @ 319 LoC; the additional 524 LoC are uncommitted in `hexa-lang` worktree).
 

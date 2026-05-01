@@ -93,7 +93,7 @@ ssh ubu2 'ls /home/summer/Dev/anima/docs/drill_min_20260420/sweep_p5_*.json | wc
 
 ## Artifacts
 
-- Progress JSON: `/Users/ghost/Dev/nexus/shared/state/sweep_p5_progress_20260420.json`
+- Progress JSON: `<repo-root>/../nexus/shared/state/sweep_p5_progress_20260420.json`
 - Per-iter outputs: `/home/summer/Dev/anima/docs/drill_min_20260420/sweep_p5_{148..231}.json` (on ubu2)
 - This summary: `docs/drill_min_20260420/_summary_p5_complete.md` (status = in-flight; final counts pending)
 

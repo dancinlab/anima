@@ -14,7 +14,7 @@
 
   STATUS / VERIFY:
     launchctl print gui/$(id -u)/com.anima.log_rotation_weekly | head -40
-    cat /Users/ghost/core/anima/state/log_rotation_zstd_last.json
+    cat <repo-root>/state/log_rotation_zstd_last.json
 
   DEACTIVATION:
     launchctl bootout gui/$(id -u)/com.anima.log_rotation_weekly
@@ -28,12 +28,12 @@
     <key>ProgramArguments</key>
     <array>
         <string>/bin/bash</string>
-        <string>/Users/ghost/core/anima/tool/log_rotation_zstd.bash</string>
+        <string><repo-root>/tool/log_rotation_zstd.bash</string>
         <string>--apply</string>
     </array>
 
     <key>WorkingDirectory</key>
-    <string>/Users/ghost/core/anima</string>
+    <string><repo-root></string>
 
     <!-- Sundays 04:15 local; matches G40 cron_recommendation -->
     <key>StartCalendarInterval</key>
@@ -50,17 +50,17 @@
     <false/>
 
     <key>StandardOutPath</key>
-    <string>/Users/ghost/core/anima/logs/log_rotation_weekly.out.log</string>
+    <string><repo-root>/logs/log_rotation_weekly.out.log</string>
 
     <key>StandardErrorPath</key>
-    <string>/Users/ghost/core/anima/logs/log_rotation_weekly.err.log</string>
+    <string><repo-root>/logs/log_rotation_weekly.err.log</string>
 
     <key>EnvironmentVariables</key>
     <dict>
         <key>PATH</key>
         <string>/opt/homebrew/bin:/usr/local/bin:/usr/bin:/bin</string>
         <key>ANIMA_ROOT</key>
-        <string>/Users/ghost/core/anima</string>
+        <string><repo-root></string>
     </dict>
 
     <!-- Resource bounds: zstd -19 -T0 is CPU-heavy; nice it down. -->

@@ -4,7 +4,7 @@
 # fish 3+ standard completion format
 #
 # install:
-#   cp /Users/ghost/core/anima/tool/fish/anima.fish ~/.config/fish/completions/
+#   cp <repo-root>/tool/fish/anima.fish ~/.config/fish/completions/
 #   # fish auto-loads on next prompt; or `exec fish` to restart
 #
 # verify:

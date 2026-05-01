@@ -7,9 +7,9 @@ upstream notice. 본 문서는 hexa-lang/airgenome maintainer 측에 그대로 p
 ## paste-ready prompt (시작)
 
 ```
-Working dir: /Users/ghost/core/hexa-lang  (또는 nexus, sync hub 위치 결정)
+Working dir: <repo-root>/../hexa-lang  (또는 nexus, sync hub 위치 결정)
 관련:
-  - $WS = /Users/ghost/core
+  - $WS = <core-root>
   - 각 repo state/proposals/ — anima + hexa-lang + airgenome
   - anima 측 spec: $WS/anima/docs/anima_proposal_stack_paradigm_20260422.md (§10 cross-repo sync)
   - anima 측 inventory: $WS/anima/state/proposals/inventory.json (P1-P11 완료 시점)
@@ -113,9 +113,9 @@ Success criteria:
 
 ## 관련 문서
 
-- `/Users/ghost/core/anima/docs/anima_proposal_stack_paradigm_20260422.md` (anima 측 spec, §10 cross-repo + §16 P12)
-- `/Users/ghost/core/anima/docs/upstream_notes/hexa_lang_20260422.md` (hexa-lang 마이그레이션 cheatsheet)
-- `/Users/ghost/core/anima/docs/upstream_notes/roadmap_engine_continuous_meta_proposal_20260422.md` (roadmap engine 미러)
+- `<repo-root>/docs/anima_proposal_stack_paradigm_20260422.md` (anima 측 spec, §10 cross-repo + §16 P12)
+- `<repo-root>/docs/upstream_notes/hexa_lang_20260422.md` (hexa-lang 마이그레이션 cheatsheet)
+- `<repo-root>/docs/upstream_notes/roadmap_engine_continuous_meta_proposal_20260422.md` (roadmap engine 미러)
 
 ## 진행 순서 (3 repo 통합 timeline)
 

@@ -289,12 +289,12 @@ D+22-30 Mk.XII first validation
 
 ## §7. Related artifacts
 
-- `/Users/ghost/core/anima/docs/omega_cycle_alm_free_paradigms_20260426.md` — predecessor 4-axis ω-cycle
-- `/Users/ghost/core/anima/anima-clm-eeg/docs/path_comparison_a_b_c.md` — Path A/B/C decision
-- `/Users/ghost/core/anima/anima-clm-eeg/docs/eeg_arrival_impact_5fold.md` — EEG D-day impact catalog
-- `/Users/ghost/core/anima/docs/mk_xii_scale_plan.md` — Mk.XII (Scale tier), 본 cycle 의 Integration tier 와 orthogonal
-- `/Users/ghost/core/anima/docs/mk_xi_minimum_consciousness_architecture_20260425.md` — Mk.XI parent
-- `/Users/ghost/core/anima/anima-clm-eeg/docs/mk_xii_proposal_outline_20260426.md` — sister doc: Mk.XII proposal 단독
+- `<repo-root>/docs/omega_cycle_alm_free_paradigms_20260426.md` — predecessor 4-axis ω-cycle
+- `<repo-root>/anima-clm-eeg/docs/path_comparison_a_b_c.md` — Path A/B/C decision
+- `<repo-root>/anima-clm-eeg/docs/eeg_arrival_impact_5fold.md` — EEG D-day impact catalog
+- `<repo-root>/docs/mk_xii_scale_plan.md` — Mk.XII (Scale tier), 본 cycle 의 Integration tier 와 orthogonal
+- `<repo-root>/docs/mk_xi_minimum_consciousness_architecture_20260425.md` — Mk.XI parent
+- `<repo-root>/anima-clm-eeg/docs/mk_xii_proposal_outline_20260426.md` — sister doc: Mk.XII proposal 단독
 - `~/.claude/projects/-Users-ghost-core-anima/memory/project_paradigm_v11_stack_complete.md` — paradigm v11 17-helper canonical
 - `~/.claude/projects/-Users-ghost-core-anima/memory/project_cmt_backbone_depth_divergence_20260426.md` — CMT depth axis-orthogonality finding
 - `~/.claude/projects/-Users-ghost-core-anima/memory/project_v_phen_gwt_v2_axis_orthogonal.md` — V_phen_GWT v9 4-family ensemble REVISION

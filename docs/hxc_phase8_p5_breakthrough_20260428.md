@@ -68,10 +68,10 @@ fn _write_file(path: string, content: string) -> int {
 
 Hexa runtime caches AOT-compiled code by hashed source path. The hxc_a13
 module is a single source file at:
-`/Users/ghost/core/hexa-lang/self/stdlib/hxc_a13_constant_column.hexa`
+`<repo-root>/../hexa-lang/self/stdlib/hxc_a13_constant_column.hexa`
 
 But hxc_migrate invokes it via symlink:
-`/Users/ghost/core/hive/tool/hxc_a13_constant_column.hexa`
+`<repo-root>/../hive/tool/hxc_a13_constant_column.hexa`
 
 These two paths produce different cache slot hashes. After recent A13
 simple-pipe-split fix, the symlink slot held STALE code from before the fix.
@@ -79,7 +79,7 @@ simple-pipe-split fix, the symlink slot held STALE code from before the fix.
 Symptom: A13 detected only 1 const via subprocess chain (stale code without
 fix) but 3 consts via direct invocation (real-path slot rebuilt).
 
-Fix: `rm -rf /Users/ghost/core/hexa-lang/.hexa-cache` re-triggered fresh
+Fix: `rm -rf <repo-root>/../hexa-lang/.hexa-cache` re-triggered fresh
 compilation from current source on both paths.
 
 Permanent fix: hexa runtime should resolve symlinks to canonical path

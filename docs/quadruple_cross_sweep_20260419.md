@@ -68,6 +68,6 @@ reproduction) are independent gates — no shortcut is claimed here.
 
 ```
 HEXA_LOCAL=1 HEXA_NO_LAUNCHD=1 HEXA_STAGE0_LOCK_WAIT=2400 \
-  /Users/ghost/Dev/nexus/shared/bin/hexa run \
-  /Users/ghost/Dev/anima/training/quadruple_cross_sweep.hexa
+  <repo-root>/../nexus/shared/bin/hexa run \
+  <repo-root>/training/quadruple_cross_sweep.hexa
 ```

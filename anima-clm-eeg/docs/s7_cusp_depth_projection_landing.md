@@ -194,12 +194,12 @@ S7 (cross-coupling) confidence 0.75 → DALI(S1) + SLI(S3) 통합 candidate 로 
 
 ## §9. Related artifacts
 
-- `/Users/ghost/core/anima/anima-hci-research/tool/cusp_depth_projector.hexa` (sha256 `200d307872e8409a0994caf9ac08e7cfe00f1f7c720d35869fcf80d80ce237b1`)
-- `/Users/ghost/core/anima/anima-hci-research/state/cusp_depth_projector_v1.json` (verdict `S7_SUBSTRATE_COHERENCE_LARGE_EFFECT`)
-- `/Users/ghost/core/anima/anima-clm-eeg/docs/omega_cycle_mk_xii_substrate_axis_20260426.md` §4.1 (predecessor — weakest link 식별)
-- `/Users/ghost/core/anima/edu/cell/lagrangian/l_ix_integrator.hexa` (raw#30 IRREVERSIBILITY embedded, gen 4→5 cusp)
-- `/Users/ghost/core/anima/anima-hci-research/tool/hci_substrate_probe_real.hexa` (F5, sha256 `c45b48083cf3...`, depth_norm 측정 reference)
-- `/Users/ghost/core/anima/state/v10_benchmark_v4/{mistral,qwen3,llama,gemma}/cmt.json` (real backbone activation source)
+- `<repo-root>/anima-hci-research/tool/cusp_depth_projector.hexa` (sha256 `200d307872e8409a0994caf9ac08e7cfe00f1f7c720d35869fcf80d80ce237b1`)
+- `<repo-root>/anima-hci-research/state/cusp_depth_projector_v1.json` (verdict `S7_SUBSTRATE_COHERENCE_LARGE_EFFECT`)
+- `<repo-root>/anima-clm-eeg/docs/omega_cycle_mk_xii_substrate_axis_20260426.md` §4.1 (predecessor — weakest link 식별)
+- `<repo-root>/edu/cell/lagrangian/l_ix_integrator.hexa` (raw#30 IRREVERSIBILITY embedded, gen 4→5 cusp)
+- `<repo-root>/anima-hci-research/tool/hci_substrate_probe_real.hexa` (F5, sha256 `c45b48083cf3...`, depth_norm 측정 reference)
+- `<repo-root>/state/v10_benchmark_v4/{mistral,qwen3,llama,gemma}/cmt.json` (real backbone activation source)
 - `.roadmap` #145 CMT backbone-conditional depth divergence (cross-validate match)
 - `.roadmap` #146 (이번 entry, S7 cusp_depth landing)
 

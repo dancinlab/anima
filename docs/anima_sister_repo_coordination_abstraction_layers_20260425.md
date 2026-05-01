@@ -11,12 +11,12 @@
 
 | repo | 역할 | path | inbox prefix |
 |---|---|---|---|
-| anima | hybrid framework home (cell+lora+ALM/CLM) | `/Users/ghost/core/anima` | (consumer) |
-| nexus | meta-engine + atlas convergence witness (R24-R32) | `/Users/ghost/core/nexus` | `nxs-` |
-| hexa-lang | language/SSOT substrate, raw_audit canonical, uchg-locked | `/Users/ghost/Dev/hexa-lang` | `hxa-` |
-| airgenome | mac-local resource manager (hooks retired 2026-04-25) | `/Users/ghost/core/airgenome` | `agm-` |
-| hive | governance / cross-host enforcement (succeeded airgenome AG2-AG9) | `/Users/ghost/core/hive` | (host) |
-| n6-architecture | n=6 atlas primitives + foundation projection (R31 peer cousin) | `/Users/ghost/core/n6-architecture` | `n6a-` |
+| anima | hybrid framework home (cell+lora+ALM/CLM) | `<repo-root>` | (consumer) |
+| nexus | meta-engine + atlas convergence witness (R24-R32) | `<repo-root>/../nexus` | `nxs-` |
+| hexa-lang | language/SSOT substrate, raw_audit canonical, uchg-locked | `<repo-root>/../hexa-lang` | `hxa-` |
+| airgenome | mac-local resource manager (hooks retired 2026-04-25) | `<repo-root>/../airgenome` | `agm-` |
+| hive | governance / cross-host enforcement (succeeded airgenome AG2-AG9) | `<repo-root>/../hive` | (host) |
+| n6-architecture | n=6 atlas primitives + foundation projection (R31 peer cousin) | `<repo-root>/../n6-architecture` | `n6a-` |
 
 **Shared substrate**: R2 buckets (`~/.config/rclone/rclone.conf` → cloudflare endpoint `ce4bdcce...`), proposal `state/proposals/inbox/{prefix}-YYYYMMDD-*.json`, hash-chain provenance.
 
@@ -42,7 +42,7 @@
   - **proposal_inbox**: `state/proposals/inbox/{prefix}-YYYYMMDD-*.json` — 단방향 message-passing. 예시: `hxa-20260425-byteAt-builtin.json` (anima → hexa-lang lang_gap report; `target_repo`+`blocking`+`error_signature`+`reproduction`+`current_workaround` schema).
   - **task category prefix**: `hxa-` / `nxs-` / `agm-` / `n6a-` — repo 단위 namespace 분리. anima 자체 backlog 와 sister-repo task 가 같은 inbox 디렉토리에 cohabit, prefix 로 dispatch 라우팅.
   - **V8 SAFE_COMMIT**: hexa-lang `tool/cross_prover.hexa` line 46 + `docs/new_paradigm_edu_tension_drop_20260421.md` line 7 정의 — *"this file + manifest entries land in one commit. deterministic / no LLM / no network."* anima `.roadmap` line 204 의 raw#25 (concurrent-git-lock safe commit) 와 결합되어 동작.
-  - **uchg lock canonical**: `/Users/ghost/Dev/hexa-lang/.raw-audit` (chflags uchg) — 5 repo 의 raw_audit 중 hexa-lang 이 SSOT. anima/nexus/airgenome/n6 raw_audit 은 hexa-lang 으로 sync (raw#1).
+  - **uchg lock canonical**: `<repo-root>/../hexa-lang/.raw-audit` (chflags uchg) — 5 repo 의 raw_audit 중 hexa-lang 이 SSOT. anima/nexus/airgenome/n6 raw_audit 은 hexa-lang 으로 sync (raw#1).
   - **R2 shared**: `[r2]` cloudflare endpoint — anima h_last_*, nexus drill state, airgenome resource snapshot 모두 같은 bucket 계층 사용.
 - **bounds**:
   - **manual ceremony cost (BRUTAL)**: V8 SAFE_COMMIT 은 인간 (또는 agent) 이 "this file + manifest entries" 를 *직접 묶어* commit 해야 한다. 자동 atomic guarantee 없음. inbox 에 hxa-20260425-byteAt-builtin 이 들어와도 hexa-lang 측 commit 과 anima 측 referrer commit 이 **두 개의 독립 git tx** 로 분리되며, 그 사이에 race / partial-state / 시간 skew 가 발생할 수 있다.

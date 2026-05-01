@@ -68,7 +68,7 @@ of that file). To activate:
    <key>EnvironmentVariables</key>
    <dict>
        <key>PATH</key>
-       <string>/Users/ghost/.hx/bin:/opt/homebrew/bin:/usr/local/bin:/usr/bin:/bin</string>
+       <string><user-home>/.hx/bin:/opt/homebrew/bin:/usr/local/bin:/usr/bin:/bin</string>
        <key>SLACK_WEBHOOK_URL</key>
        <string>https://hooks.slack.com/services/T.../B.../...</string>
    </dict>

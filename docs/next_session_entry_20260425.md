@@ -32,7 +32,7 @@ Total session burn: **~$40 (16 H100 × 43min @ $56/hr cluster)**. Pods all kille
 ## Cold-start check
 
 ```bash
-cd /Users/ghost/core/anima
+cd <repo-root>
 git log -1 --oneline              # expect cf598018 or later
 runpodctl pod list | jq 'length'  # expect 0 (pods killed)
 jq '.revision' state/phi_4path_cross_result_v3_TRAINED.json

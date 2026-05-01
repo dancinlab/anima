@@ -12,12 +12,12 @@
 
 | Tree | Files touched | KEEP | PATCH | CONFIG | TEST |
 |---|---:|---:|---:|---:|---:|
-| `/Users/ghost/Dev/anima` (main + ready/) | 5 | 3 | 2 | 0 | 0 |
-| `/Users/ghost/Dev/hexa-lang/self/serve` | 2 | 1 | 1 | 1 | 0 |
-| `/Users/ghost/Dev/hexa-lang/self/ml` | 10 | 5 | 2 | 2 | 1 |
-| `/Users/ghost/Dev/hexa-lang/self/ai_native` | 1 | 1 | 0 | 0 | 0 |
-| `/Users/ghost/Dev/hexa-lang/self/test_*` | 4 | 0 | 0 | 0 | 4 |
-| `/Users/ghost/Dev/hexa-lang/bench` | 2 | 0 | 0 | 0 | 2 |
+| `<repo-root>` (main + ready/) | 5 | 3 | 2 | 0 | 0 |
+| `<repo-root>/../hexa-lang/self/serve` | 2 | 1 | 1 | 1 | 0 |
+| `<repo-root>/../hexa-lang/self/ml` | 10 | 5 | 2 | 2 | 1 |
+| `<repo-root>/../hexa-lang/self/ai_native` | 1 | 1 | 0 | 0 | 0 |
+| `<repo-root>/../hexa-lang/self/test_*` | 4 | 0 | 0 | 0 | 4 |
+| `<repo-root>/../hexa-lang/bench` | 2 | 0 | 0 | 0 | 2 |
 | **Total** | **24** | **10** | **5** | **3** | **7** |
 
 PATCH 필수 = **5 파일 / 7 위치**.
@@ -75,7 +75,7 @@ sed -i '' '100s/rope_base: 10000\.0,/rope_base: 1000000.0,/' self/serve/serve_al
 
 ```bash
 # 유일한 hard patch — serve_alm smoke config 1e4 → 1e6
-cd /Users/ghost/Dev/hexa-lang
+cd <repo-root>/../hexa-lang
 sed -i '' '100s/rope_base: 10000\.0,/rope_base: 1000000.0,/' self/serve/serve_alm.hexa
 
 # 검증

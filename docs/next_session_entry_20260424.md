@@ -27,7 +27,7 @@ Total session burn: **~$6.44**. All pods removed. `pods=0`.
 ## Cold-start check
 
 ```bash
-cd /Users/ghost/core/anima
+cd <repo-root>
 git log -1 --oneline              # expect 68f8efae or later
 bin/anima compute status          # expect pods=0, all stages READY/CLOSED
 bin/anima doctor                  # expect 10/10 PASS

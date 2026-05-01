@@ -191,13 +191,13 @@ violation-detection mechanism verified across the full extended N_BIN sweep rang
 
 ```sh
 # Positive (default) — bare binary bypass for resolver wrapper hang
-/Users/ghost/.hx/packages/hexa/build/hexa.real run \
+<user-home>/.hx/packages/hexa/build/hexa.real run \
     anima-clm-eeg/tool/g8_n_bin_sweep_extended.hexa
 
 # Negative falsify
 G8_SWEEP_MODE=negative \
   G8_SWEEP_OUT=anima-clm-eeg/state/g8_n_bin_sweep_extended_v1_negative.json \
-  /Users/ghost/.hx/packages/hexa/build/hexa.real run \
+  <user-home>/.hx/packages/hexa/build/hexa.real run \
     anima-clm-eeg/tool/g8_n_bin_sweep_extended.hexa
 
 # Wall time (M1, native compiled cache present)

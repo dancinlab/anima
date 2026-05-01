@@ -101,6 +101,6 @@ anima-side workaround-eligible (not sister issue):
 
 ## Artifacts
 
-- TSV: `/Users/ghost/Dev/anima/training/deploy/smoke_full_ubu2_20260418T171520Z.tsv`
-- This report: `/Users/ghost/Dev/anima/training/deploy/smoke_full_ubu2_report_20260418.md`
+- TSV: `<repo-root>/training/deploy/smoke_full_ubu2_20260418T171520Z.tsv`
+- This report: `<repo-root>/training/deploy/smoke_full_ubu2_report_20260418.md`
 - ubu2 workdir: `/tmp/anima_full/` + `/tmp/smoke_c/` (to clean after sign-off)

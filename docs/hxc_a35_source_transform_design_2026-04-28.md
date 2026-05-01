@@ -195,7 +195,7 @@ path (raw 142 D2 try-revert short-circuits header emit).
 
 `^o` sigil is raw 92 sigil-line compliant, lowercase distinct from `^A..^Z` and
 existing lowercase sigils `^c` (A32), `^v/^w` (A23), `^Z` (A19 v2 — uppercase).
-Sigil-distinct verified against `/Users/ghost/core/hexa-lang/self/stdlib/hxc_a*.hexa`.
+Sigil-distinct verified against `<repo-root>/../hexa-lang/self/stdlib/hxc_a*.hexa`.
 
 ---
 
@@ -235,7 +235,7 @@ NO 80% verdict in this document. NO raw 137 v8 strengthening claim.
 ## 7. anima/n6 schemaful_jsonl_ratio sample (10 files each)
 
 Sample method: `random.seed(42)`, glob `*.jsonl` in
-`/Users/ghost/core/anima/state` and `/Users/ghost/core/nexus/n6`, filter
+`<repo-root>/state` and `<repo-root>/../nexus/n6`, filter
 size > 50B, take first 10 after shuffle. Schemaful = ≥70% of first 10 lines
 share line[0] keyset (parse all as JSON dict).
 
@@ -319,12 +319,12 @@ Out of scope at first tick:
 ## 10. References
 
 - Entropy verdict: commit `4cd8e62da` —
-  `/Users/ghost/core/anima/.hxc_aot/hxc_a25` history line; verdict text
+  `<repo-root>/.hxc_aot/hxc_a25` history line; verdict text
   archived in commit message body.
 - A29 v3 baseline: anima 50.83% / n6 60.62% (commit `4cd8e62da` body).
 - A19 v2 sigil ^Z scale-out result: +0.15pp slice / 0.00pp scale-out.
 - Skeleton module (this tick):
-  `/Users/ghost/core/hexa-lang/self/stdlib/hxc_a35_source_transform.hexa`
+  `<repo-root>/../hexa-lang/self/stdlib/hxc_a35_source_transform.hexa`
   (~600 LoC target, sigil `^o`).
 - Witness ledger (this tick):
-  `/Users/ghost/core/anima/state/format_witness/2026-04-28_a35_first_tick.jsonl`.
+  `<repo-root>/state/format_witness/2026-04-28_a35_first_tick.jsonl`.

@@ -8,7 +8,7 @@
 
 | host | CPU | cores(nproc) | transpile binary | compiler |
 |---|---|---|---|---|
-| mac | Apple M-series arm64 | 8 | `/Users/ghost/Dev/hexa-lang/self/native/hexa_v2` | clang |
+| mac | Apple M-series arm64 | 8 | `<repo-root>/../hexa-lang/self/native/hexa_v2` | clang |
 | ubu | x86_64 (Intel/AMD desktop) | 12 | `/tmp/hexa_v2_linux` | gcc |
 | ubu2 | AMD Ryzen 5 9600X (assumed) | 12 | `/tmp/hexa_v2_linux` | clang |
 | htz | AMD Ryzen 9 7950X3D (16C/32T) | 32 | `/tmp/hexa_v2_linux` | clang |

@@ -21,7 +21,7 @@ v3 trigger spec §raw#10 §5 가 명시한 silent-fail risk (aggregator hard-cod
 spec §2 의 CLI flag 형식 (`--ledger-out=`/`--marker-out=`/`--version-tag=`) 은 v2 aggregator 가 argv 를 parse 하지 않는다는 사실로 *invalid* 임이 confirmed. v2.1 부터의 **실효 invocation 은 env-var 기반**:
 
 ```bash
-cd /Users/ghost/core/anima && \
+cd <repo-root> && \
 HEXA_RESOLVER_NO_REROUTE=1 \
 LEDGER_VERSION=v3 \
 LEDGER_OUT=state/v10_anima_physics_cloud_facade/integration_ledger/witness_ledger_v3.json \
@@ -203,7 +203,7 @@ prerequisite resolved → spec §10 의 trigger 절차 그대로 가능:
 4. 사용자: `state/v10_anima_physics_cloud_facade/<sub_dir>/marker.json::verdict` 가 LIVE 패턴 매칭 확인 (`PHASE2_PASS_REAL_*` 또는 `LIVE_PASS`).
 5. 사용자: 본 doc §1 의 정정된 1줄 env-var 명령 실행:
    ```bash
-   cd /Users/ghost/core/anima && \
+   cd <repo-root> && \
    HEXA_RESOLVER_NO_REROUTE=1 LEDGER_VERSION=v3 \
    LEDGER_OUT=state/v10_anima_physics_cloud_facade/integration_ledger/witness_ledger_v3.json \
    MARKER_OUT=state/v10_anima_physics_cloud_facade/integration_ledger/marker_v3.json \

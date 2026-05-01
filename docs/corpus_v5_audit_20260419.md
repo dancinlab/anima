@@ -8,8 +8,8 @@ R-series naming). This doc audits the artifact without downloading 5 GB.
 
 | where              | path                                                      | size (bytes)  | size (GiB) |
 |--------------------|-----------------------------------------------------------|---------------|------------|
-| Mac local (raw)    | `/Users/ghost/Dev/anima/training/corpus_clm_r4.txt`       | 5,380,874,900 | 5.011 GiB  |
-| Mac local (gzip)   | `/Users/ghost/Dev/anima/training/corpus_clm_r4.txt.gz`    | 1,709,490,208 | 1.592 GiB  |
+| Mac local (raw)    | `<repo-root>/training/corpus_clm_r4.txt`       | 5,380,874,900 | 5.011 GiB  |
+| Mac local (gzip)   | `<repo-root>/training/corpus_clm_r4.txt.gz`    | 1,709,490,208 | 1.592 GiB  |
 | R2 raw             | `r2:anima-corpus/clm_r4/corpus_clm_r4.txt`                | 5,380,874,900 | 5.011 GiB  |
 | R2 gzip            | `r2:anima-corpus/clm_r4/corpus_clm_r4.txt.gz`             | 1,709,490,208 | 1.592 GiB  |
 

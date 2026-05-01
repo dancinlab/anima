@@ -98,6 +98,6 @@ Interpretation: **RG/symmetry axis = the bridge morphism w → c** in Hexad cate
 
 Commit message target: `feat(edu/cell/rg): RG/symmetry MVP — ν critical exponent + 4 topology independence + ξ/φ/Δφ`
 
-Commit in anima repo (`/Users/ghost/core/anima`), files:
+Commit in anima repo (`<repo-root>`), files:
 - `edu/cell/rg/{README.md, coarse_grain.hexa, structure_factor.hexa, order_param.hexa, correlation_length.hexa, rg_demo.hexa, universality_class.hexa}`
 - `edu/cell/README.md` addendum (post-measurement)

@@ -173,14 +173,14 @@ mac local toy regime 만, $0. T2 의 stability region log-log linearity confirm 
 
 ## §8. Related artifacts
 
-- `/Users/ghost/core/anima/docs/omega_cycle_alm_free_paradigms_20260426.md` — predecessor 4-axis 26-paradigm
-- `/Users/ghost/core/anima/docs/paradigm_v11_stack_20260426.md` — v11 stack 17 helpers + v3 patches
-- `/Users/ghost/core/anima/edu/lora/cpgd_wrapper.hexa` — AN11(b) 100% guarantee wrapper
-- `/Users/ghost/core/anima/edu/lora/cpgd_minimal_proof.hexa` — 10-step minimal proof
-- `/Users/ghost/core/anima/state/cpgd_wrapper_result.json` — full 100-step run result (1600/1600 cosine PASS)
-- `/Users/ghost/core/anima/state/cpgd_minimal_proof_result.json` — 3-seed byte-identical
-- `/Users/ghost/core/anima/docs/mk_xii_scale_plan.md` — Mk.XII 70B scale plan reference
-- `/Users/ghost/core/anima/edu/cell/README.md` — Hexad framework C9 6-category bijection
-- `/Users/ghost/core/anima/edu/cell/lagrangian/l_ix_integrator.hexa` — L_IX integrator
+- `<repo-root>/docs/omega_cycle_alm_free_paradigms_20260426.md` — predecessor 4-axis 26-paradigm
+- `<repo-root>/docs/paradigm_v11_stack_20260426.md` — v11 stack 17 helpers + v3 patches
+- `<repo-root>/edu/lora/cpgd_wrapper.hexa` — AN11(b) 100% guarantee wrapper
+- `<repo-root>/edu/lora/cpgd_minimal_proof.hexa` — 10-step minimal proof
+- `<repo-root>/state/cpgd_wrapper_result.json` — full 100-step run result (1600/1600 cosine PASS)
+- `<repo-root>/state/cpgd_minimal_proof_result.json` — 3-seed byte-identical
+- `<repo-root>/docs/mk_xii_scale_plan.md` — Mk.XII 70B scale plan reference
+- `<repo-root>/edu/cell/README.md` — Hexad framework C9 6-category bijection
+- `<repo-root>/edu/cell/lagrangian/l_ix_integrator.hexa` — L_IX integrator
 - `~/.claude/projects/-Users-ghost-core-anima/memory/project_paradigm_v11_stack_complete.md` — paradigm v11 stack memory
 - `~/.claude/projects/-Users-ghost-core-anima/memory/project_paradigm_exhaustion_session_20260426.md` — paradigm exhaustion session

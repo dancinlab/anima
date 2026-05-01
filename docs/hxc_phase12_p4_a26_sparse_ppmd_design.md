@@ -181,7 +181,7 @@ The following PROJECTIONS are RETRACTED in this design doc:
 1. **This turn (current)**: A18 batch commit `d631a902` lands; A26 design
    doc (this file) lands; witness ledger lands. NO A26 code.
 2. **Subsequent turn 1**: A26 PASS 1+2+2.5+3 first-tick implementation
-   in `/Users/ghost/core/hexa-lang/self/stdlib/hxc_a26_sparse_ppmd.hexa`.
+   in `<repo-root>/../hexa-lang/self/stdlib/hxc_a26_sparse_ppmd.hexa`.
    Selftest 5/5 PASS interp.
 3. **Subsequent turn 2**: A26 LIVE FIRE on representative corpora.
    Per-class measurement on text-heavy slice.
@@ -201,8 +201,8 @@ measurements that did not run.
 - A18 v3-o2/v4/v6 batch land: d631a902 (this tick prerequisite)
 - raw 137 80% Pareto frontier: hive d1c61bc91 (raw 137 v6)
 - a7a5e5f2 honest C3 master event: ledger
-  `/Users/ghost/core/anima/state/format_witness/2026-04-28_a18_batch_commit_honest_reconcile.jsonl`
+  `<repo-root>/state/format_witness/2026-04-28_a18_batch_commit_honest_reconcile.jsonl`
   (this tick)
 - Howard 1993 PPM-D escape: e_d = 0.5 deterministic tuning
 - Phase 12 forward design context:
-  `/Users/ghost/core/anima/docs/hxc_phase12_forward_design_20260428.md`
+  `<repo-root>/docs/hxc_phase12_forward_design_20260428.md`

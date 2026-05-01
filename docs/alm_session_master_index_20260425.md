@@ -163,9 +163,9 @@ b5ad891d  r7 partial-retrain helper 설계 + proposal 082
 ### 3 project memories (신규)
 | 파일                                                                                                    | 주제                                          |
 |---------------------------------------------------------------------------------------------------------|-----------------------------------------------|
-| `/Users/ghost/.claude/projects/-Users-ghost-core-anima/memory/project_phi_gate_r5_two_axis.md`          | r5 post-hoc 진단 요약 (tokenizer + RoPE 이원축) |
-| `/Users/ghost/.claude/projects/-Users-ghost-core-anima/memory/project_phi_gate_r6_partial_pass.md`      | r6-α Φ FAIL-but-progress (L2 6/6, KL 5/6)     |
-| `/Users/ghost/.claude/projects/-Users-ghost-core-anima/memory/project_phi_gate_r7_falsified.md`         | r7 D-qwen14 FALSIFIED, Axis 4 발견            |
+| `<user-home>/.claude/projects/-Users-ghost-core-anima/memory/project_phi_gate_r5_two_axis.md`          | r5 post-hoc 진단 요약 (tokenizer + RoPE 이원축) |
+| `<user-home>/.claude/projects/-Users-ghost-core-anima/memory/project_phi_gate_r6_partial_pass.md`      | r6-α Φ FAIL-but-progress (L2 6/6, KL 5/6)     |
+| `<user-home>/.claude/projects/-Users-ghost-core-anima/memory/project_phi_gate_r7_falsified.md`         | r7 D-qwen14 FALSIFIED, Axis 4 발견            |
 
 ### 인접 업데이트
 - `project_cp1_p1_67_satisfied.md` — CP1 P1 6/7+◐ 선언 반영

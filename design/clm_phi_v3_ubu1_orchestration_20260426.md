@@ -64,7 +64,7 @@ Expected: `aiden-B650M-K, NVIDIA GeForce RTX 5070, 12227 MiB, ~398 MiB used, ~0%
 
 ```bash
 # Push hexa source
-rsync -avz /Users/ghost/core/anima/tool/anima_phi_v3_clm.hexa ubu1:/home/aiden/anima/tool/
+rsync -avz <repo-root>/tool/anima_phi_v3_clm.hexa ubu1:/home/aiden/anima/tool/
 
 # Audit checkpoint locations on ubu1
 ssh ubu1 'ls -la /home/aiden/anima/state/*.hexackpt 2>/dev/null; \
@@ -98,11 +98,11 @@ ssh ubu1 'cd /home/aiden/anima && \
 ### Step 5 — download result + commit
 
 ```bash
-mkdir -p /Users/ghost/core/anima/state/v10_phi_v3_clm/
-rsync -avz ubu1:/home/aiden/anima/state/v10_phi_v3_clm/ /Users/ghost/core/anima/state/v10_phi_v3_clm/
+mkdir -p <repo-root>/state/v10_phi_v3_clm/
+rsync -avz ubu1:/home/aiden/anima/state/v10_phi_v3_clm/ <repo-root>/state/v10_phi_v3_clm/
 
 # Verify result schema
-jq '.schema, .verdict, .phi_star_min, .gate_positive_PASS' /Users/ghost/core/anima/state/v10_phi_v3_clm/phi_v3_clm.json
+jq '.schema, .verdict, .phi_star_min, .gate_positive_PASS' <repo-root>/state/v10_phi_v3_clm/phi_v3_clm.json
 
 # Update .roadmap entry from "done (plan)" → "done (executed, H9? VALIDATED/FALSIFIED)"
 ```
@@ -149,15 +149,15 @@ H9 verdict gates downstream:
 
 ## Files — absolute paths
 
-- Helper hexa source: `/Users/ghost/core/anima/tool/anima_phi_v3_clm.hexa`
-- This design doc: `/Users/ghost/core/anima/design/clm_phi_v3_ubu1_orchestration_20260426.md`
-- Memory entry: `/Users/ghost/.claude/projects/-Users-ghost-core-anima/memory/project_phi_v3_clm_substrate_plan_20260426.md`
-- Sister source (transformer baseline): `/Users/ghost/core/anima/tool/anima_phi_v3_canonical.hexa`
-- Sister result (SSM): `/Users/ghost/core/anima/state/v10_phi_v3_nontransformer/mamba/phi_v3_canonical.json`
-- Sister result (jamba hybrid): `/Users/ghost/core/anima/state/v10_phi_v3_nontransformer/jamba_run2/phi_v3_canonical.json`
-- Substrate viability evidence: `/Users/ghost/core/anima/state/clm_r6_gpu_smoke_result.json`
-- CLM training config: `/Users/ghost/core/anima/training/clm_1b_config.json`
-- CLM forward dynamics: `/Users/ghost/core/anima/training/train_clm.hexa`, `/Users/ghost/core/anima/training/clm_holographic_loop.hexa`
+- Helper hexa source: `<repo-root>/tool/anima_phi_v3_clm.hexa`
+- This design doc: `<repo-root>/design/clm_phi_v3_ubu1_orchestration_20260426.md`
+- Memory entry: `<user-home>/.claude/projects/-Users-ghost-core-anima/memory/project_phi_v3_clm_substrate_plan_20260426.md`
+- Sister source (transformer baseline): `<repo-root>/tool/anima_phi_v3_canonical.hexa`
+- Sister result (SSM): `<repo-root>/state/v10_phi_v3_nontransformer/mamba/phi_v3_canonical.json`
+- Sister result (jamba hybrid): `<repo-root>/state/v10_phi_v3_nontransformer/jamba_run2/phi_v3_canonical.json`
+- Substrate viability evidence: `<repo-root>/state/clm_r6_gpu_smoke_result.json`
+- CLM training config: `<repo-root>/training/clm_1b_config.json`
+- CLM forward dynamics: `<repo-root>/training/train_clm.hexa`, `<repo-root>/training/clm_holographic_loop.hexa`
 - SSH config: `~/.ssh/config` (ubu1, ubu1-ts, ubu1-d aliases)
 
 ## raw#10 honest

@@ -93,7 +93,7 @@ substrate_backend ∈ {
 
 ```sh
 ~/.hx/packages/hexa/build/hexa.real run \
-    /Users/ghost/core/anima/anima-physics/fpga/cloud_facade_poc.hexa
+    <repo-root>/anima-physics/fpga/cloud_facade_poc.hexa
 ```
 
 `hexa run` wrapper 는 nexus dispatch 단계에서 인자 파싱 충돌 (memory 노트 #182 와 동일
@@ -146,11 +146,11 @@ cycle 과 동일한 운영 패턴.
 ## 9. Reproduction
 
 ```sh
-cd /Users/ghost/core/anima
+cd <repo-root>
 ~/.hx/packages/hexa/build/hexa.real run \
-    /Users/ghost/core/anima/anima-physics/fpga/cloud_facade_poc.hexa --selftest
+    <repo-root>/anima-physics/fpga/cloud_facade_poc.hexa --selftest
 ~/.hx/packages/hexa/build/hexa.real run \
-    /Users/ghost/core/anima/anima-physics/fpga/cloud_facade_poc.hexa
+    <repo-root>/anima-physics/fpga/cloud_facade_poc.hexa
 ```
 
 **Expected**: `4/4 PASS — POC fpga local-verilator VERIFIED`, marker JSON

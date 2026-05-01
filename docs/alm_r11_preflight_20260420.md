@@ -1,9 +1,9 @@
 # ALM r11 Preflight — 2026-04-20
 
 Source-of-truth:
-- Config: `/Users/ghost/Dev/nexus/shared/state/alm_r11_config.json`
-- Plan:   `/Users/ghost/Dev/anima/training/deploy/alm_r11_plan.json`
-- Trainer: `/Users/ghost/Dev/anima/training/train_alm_lora.hexa` (1112 LOC, dry-run PASS)
+- Config: `<repo-root>/../nexus/shared/state/alm_r11_config.json`
+- Plan:   `<repo-root>/training/deploy/alm_r11_plan.json`
+- Trainer: `<repo-root>/training/train_alm_lora.hexa` (1112 LOC, dry-run PASS)
 
 ## Verdict: NO-GO (conditional — 1 hard blocker on hexa-native path)
 
@@ -18,7 +18,7 @@ for this run), trainer fires immediately with the command below.
 | 1 | Config SSOT sane | GO   | `base.adapter_source = null` (fresh-from-base, r9/r10 not stacked). `no_resume = true`. lr 5e-7, lora_r 8, alpha 16, batch 4, seq 1024, steps 500, warmup 50, bf16, save_every 100. |
 | 2 | Config vs plan drift | GO (noted) | Plan (2026-04-16 11:25) still references `base_lora=/runpod/ckpt_r9`; config SSOT (2026-04-16 23:33) `supersedes` that — fresh-from-base is authoritative. |
 | 3 | Hexa trainer exists | GO | `training/train_alm_lora.hexa`. Parse+build+dry-run PASS per header. |
-| 4 | Day-2 FFI (`hxqwen14b_forward_with_lora` / `_backward_lora_only` / `_apply_lora_delta`) | **NO-GO** | Present in `/Users/ghost/Dev/hexa-lang/self/native/hxqwen14b.c` as v4 stubs returning `RC_ERR_CUDA_TODO` (-5). v5 CUDA kernel sequence commented out. Trainer will report BLOCKED_FFI on first forward. |
+| 4 | Day-2 FFI (`hxqwen14b_forward_with_lora` / `_backward_lora_only` / `_apply_lora_delta`) | **NO-GO** | Present in `<repo-root>/../hexa-lang/self/native/hxqwen14b.c` as v4 stubs returning `RC_ERR_CUDA_TODO` (-5). v5 CUDA kernel sequence commented out. Trainer will report BLOCKED_FFI on first forward. |
 | 5 | Corpus file | GO (renamed) | Config lists `/workspace/anima/training/corpus_alm_r11.jsonl` — does NOT exist. Actual corpus staged on R2 as `r2:anima-corpus/alm/corpus_alm_70b_stripped_kowiki15.txt` (88.98 MB, 86% KO stripped + 15% kowiki admix, SHA256 `04395bf3…`). Matches r11 80/20 KO-blend intent. Config path string is stale but content is ready; recommend pulling the R2 file to `/workspace/data/` on pod. |
 | 6 | Forbidden-resume paths absent | GO | No `/runpod/ckpt_r9`, `/runpod/ckpt_r10`, `r2:…/r9/`, `r2:…/r10/` in effective launch command. |
 | 7 | ckpt dir reserved | GO | `/workspace/ckpt_alm14b_r11_20260420` (fresh, no collision). R2 prefix `r2:anima-models/alm14b/r11/step_{step}/`. `alm14b/r11/` does not yet exist on R2 — clean slate. |

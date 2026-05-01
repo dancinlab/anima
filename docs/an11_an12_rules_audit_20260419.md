@@ -1,6 +1,6 @@
 # AN11 / AN12 Rules Audit — 2026-04-19
 
-**Source**: `/Users/ghost/Dev/nexus/shared/rules/anima.json` (읽기 전용 감사, 수정 없음)
+**Source**: `<repo-root>/../nexus/shared/rules/anima.json` (읽기 전용 감사, 수정 없음)
 
 ## Summary
 

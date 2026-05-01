@@ -239,5 +239,5 @@ raw#12 강제: 본 doc 은 informal entailment 만 주장, formal independence t
 
 **Raw compliance:** raw#9 (이 doc 은 hexa-only spec 외 markdown — 정식 SSOT 가 아니라 abstraction note) · raw#10 (commit refs 명시) · raw#11 (snake_case 파일명) · raw#12 (Gödel wall 명시, 과장 없음) · raw#15 (state/commit refs로만 evidence) · raw#25 (단일 atomic write) · raw#28 (audit → DAG → independence 순서)
 **Predecessor:** `docs/anima_math_foundations_abstraction_layers_20260425.md` §L1
-**Canonical:** `/Users/ghost/core/anima/docs/anima_math_raw_axiom_dag_20260425.md`
+**Canonical:** `<repo-root>/docs/anima_math_raw_axiom_dag_20260425.md`
 **Line budget:** ~210

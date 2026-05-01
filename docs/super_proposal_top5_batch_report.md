@@ -13,7 +13,7 @@
 |----|-------|---------|-------|-----------|------|---------|--------|
 | 20260422-044 | fix_json | 22 | 100 | true | 0.1 | approve | largest cluster, loss_free, low risk, coherent kind_keyword fix::json |
 | 20260422-047 | fix_phi | 11 | 99 | true | 0.1 | approve | coherent phi-subsystem cluster |
-| 20260422-051 | fix_users | 9 | 99 | true | 0.1 | **reject** | duplicate membership with 052 (identical 9 ids); fix::users is path-artifact noise from `/Users/ghost/` absolute paths |
+| 20260422-051 | fix_users | 9 | 99 | true | 0.1 | **reject** | duplicate membership with 052 (identical 9 ids); fix::users is path-artifact noise from `<user-home>/` absolute paths |
 | 20260422-052 | fix_ghost | 9 | 99 | true | 0.1 | approve | representative 9-member cluster (preferred over 051 dupe) |
 | 20260422-056 | fix_hexa | 8 | 98 | true | 0.1 | approve | hexa-runtime related cluster |
 
@@ -40,7 +40,7 @@
 
 ## Notable Finding — Path-Artifact Noise
 
-The `fix::users` kind_keyword (id 051) and `fix::ghost` kind_keyword (id 052) share **identical member sets** (9 proposals). Both keywords originate from tokenization of absolute paths like `/Users/ghost/core/anima/...`, which accidentally becomes a cluster signal. The cluster_consolidate sub-agent's kind_keyword extraction appears to split path segments on `/`, producing redundant sibling clusters.
+The `fix::users` kind_keyword (id 051) and `fix::ghost` kind_keyword (id 052) share **identical member sets** (9 proposals). Both keywords originate from tokenization of absolute paths like `<repo-root>/...`, which accidentally becomes a cluster signal. The cluster_consolidate sub-agent's kind_keyword extraction appears to split path segments on `/`, producing redundant sibling clusters.
 
 **Recommendation for next iteration of cluster_consolidate:**
 - Strip absolute path prefixes before extracting kind_keyword

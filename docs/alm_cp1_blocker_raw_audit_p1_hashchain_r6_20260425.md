@@ -35,7 +35,7 @@ SAFE_COMMIT 정책 준수).
 trail 에 기록되어야 한다는 통합 ledger 요구사항. 두 audit channel 존재:
 - **anima-local** `.raw-audit/*.log` — 도구별 daily-run trail (adversarial,
   phase_progression, true_closure 등)
-- **canonical hexa-lang** `/Users/ghost/Dev/hexa-lang/.raw-audit` — single-rooted
+- **canonical hexa-lang** `<repo-root>/../hexa-lang/.raw-audit` — single-rooted
   uchg-locked drill-verdict ledger (`tool/raw_audit_drill_integration.hexa` 가
   scan)
 
@@ -45,7 +45,7 @@ trail 에 기록되어야 한다는 통합 ledger 요구사항. 두 audit channe
 
 ### 3.1 anima-local `.raw-audit` log files
 
-`/Users/ghost/core/anima/.raw-audit/`:
+`<repo-root>/.raw-audit/`:
 
 | file | role |
 |---|---|
@@ -71,14 +71,14 @@ P1 achievement 의 anima-local audit 매핑:
 
 ### 3.2 canonical hexa-lang `.raw-audit`
 
-`/Users/ghost/Dev/hexa-lang/.raw-audit` — uchg-locked SSOT, V8 SAFE_COMMIT 하에서
+`<repo-root>/../hexa-lang/.raw-audit` — uchg-locked SSOT, V8 SAFE_COMMIT 하에서
 anima 가 직접 write 하지 않음. `tool/raw_audit_drill_integration.hexa` 가 scan-only
 모드 제공:
 
 ```
 $ hexa tool/raw_audit_drill_integration.hexa --scan --since "48 hours ago"
 === .raw-audit drill verdict scan ===
-canonical:  /Users/ghost/Dev/hexa-lang/.raw-audit
+canonical:  <repo-root>/../hexa-lang/.raw-audit
 since:      24 hours ago    # sys_argv 미정의로 default 사용
 uchg-locked: yes
 
@@ -126,7 +126,7 @@ raw#10 proof-carrying invariant 준수: 각 라인 `proof=<sha256> cert=<sha256>
 ### 4.3 Canonical hexa-lang append (DEFERRED — NEEDS-EXTERNAL)
 
 P1 achievement 6 건의 single-line drill-verdict 형태로 canonical
-`/Users/ghost/Dev/hexa-lang/.raw-audit` 에 append 하려면:
+`<repo-root>/../hexa-lang/.raw-audit` 에 append 하려면:
 
 ```
 hx_unlock.hexa --reason 'CP1 P1 achievement set hash-chain event'
@@ -179,7 +179,7 @@ P1 achievement set 의 single hash-chain event 를 canonical hexa-lang `.raw-aud
 에 명시 append 하려면 사용자가 다음을 수동 실행해야 함:
 
 ```bash
-cd /Users/ghost/Dev/hexa-lang
+cd <repo-root>/../hexa-lang
 hexa tool/hx_unlock.hexa --reason "anima CP1 P1 achievement event"
 hexa tool/raw_audit.hexa audit_append \
   --kind p1-achievement \

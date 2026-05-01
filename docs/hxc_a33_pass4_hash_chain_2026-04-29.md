@@ -107,9 +107,9 @@ Results: 5 PASS / 0 FAIL
 __HXC_A33_CROSS_REPO_DICT_SELFTEST__ PASS (PASS 4: hash-chain replace naive O(max_dist*max_len); 5MB stratified MEASURED via session_encode_opts)
 ```
 
-AOT path: `/Users/ghost/core/anima/.hxc_aot/hxc_a33` sha256 `802e860d`.
-v1 backup: `/Users/ghost/core/anima/.hxc_aot/hxc_a33_v1_backup` sha256 `4b30fd56` (retained per raw 142 D2).
-Source: `/Users/ghost/core/hexa-lang/self/stdlib/hxc_a33_cross_repo_dict.hexa` 1067 LoC.
+AOT path: `<repo-root>/.hxc_aot/hxc_a33` sha256 `802e860d`.
+v1 backup: `<repo-root>/.hxc_aot/hxc_a33_v1_backup` sha256 `4b30fd56` (retained per raw 142 D2).
+Source: `<repo-root>/../hexa-lang/self/stdlib/hxc_a33_cross_repo_dict.hexa` 1067 LoC.
 
 ## 4. F-A33-6 jetsam mandate VIOLATED at production scale (raw 91 honest C3 disclosure)
 
@@ -186,13 +186,24 @@ simply not measurable with this implementation.
   semantically correct (5/5 selftest PASS, F4 match-find verifies equivalence
   to naive baseline). The blocker is per-byte map overhead, fixable at the
   language-runtime level rather than the algorithm level.
-- **v1 backup retained** at `/Users/ghost/core/anima/.hxc_aot/hxc_a33_v1_backup`
+- **v1 backup retained** at `<repo-root>/.hxc_aot/hxc_a33_v1_backup`
   (sha256 `4b30fd56`). A25 dispatcher promotion of A33 was NEVER attempted in
   prior ticks; nothing to revert dispatcher-side.
 - **A25 dispatcher unchanged** — A29 v3 remains text-heavy baseline.
 - **Composite skeleton untouched** (read-only mandate honored).
 
 ## 7. Path forward (NOT executed this tick — recorded for future ticks)
+
+**Upstream proposal filed**: see `hexa-lang/proposals/rfc_010_typed_i32_map.md`
+(RFC 010 — typed-i32-map / sparse-int-array stdlib primitive, P0 status
+`proposed`, raw 159 hexa-lang-upstream-proposal-mandate Tier-A). The RFC
+documents the three solution shapes (Option A typed-i32-map<string,int>,
+Option B sparse_int_array, Option C int_map<int,int>), benchmark
+methodology, and acceptance criteria targeting < 50 MB RSS on A33 PASS 4
+Probe A re-measurement post-landing. Workaround (A33 PASS 5 fixed-array
+ring) is the same Option B pattern applied manually in hexa user-code at
+the anima downstream consumer; stdlib-level primitive remains preferable
+for cross-module reuse.
 
 To honor F-A33-6 jetsam without abandoning the hash-chain semantic, replace
 the string-keyed `hash_prev` map with a fixed-length integer array

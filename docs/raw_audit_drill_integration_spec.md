@@ -2,7 +2,7 @@
 
 **Status**: DRAFT (V8 SAFE_COMMIT; no `.raw-audit` mutation in this landing)
 **Landing commit target**: `feat(raw): .raw-audit drill verdict integration spec + tool`
-**Canonical `.raw-audit`**: `/Users/ghost/Dev/hexa-lang/.raw-audit` (raw#1 hash-chain)
+**Canonical `.raw-audit`**: `<repo-root>/../hexa-lang/.raw-audit` (raw#1 hash-chain)
 **Companion tool**: `tool/raw_audit_drill_integration.hexa`
 
 ## 1. Motivation
@@ -77,7 +77,7 @@ Scanned via `git log --since "24 hours ago" --grep "^feat(drill)\|^feat(verifier
 step 1  git log --since "24 hours ago"
            | grep "^feat(drill)\|^feat(verifier)"   → commit_shas[]
 step 2  for sha in commit_shas:
-           grep -F "$sha" /Users/ghost/Dev/hexa-lang/.raw-audit
+           grep -F "$sha" <repo-root>/../hexa-lang/.raw-audit
                → present / missing
 step 3  for each present:
            parse reason slot → verify verdict / verifier_used / seed fields
@@ -146,7 +146,7 @@ single `printf >>`).
 ## 7. Anima ↔ hexa-lang boundary
 
 Anima does **not** own `.raw-audit`. Canonical file lives at
-`/Users/ghost/Dev/hexa-lang/.raw-audit`. Anima's `.raw-ref` (when present)
+`<repo-root>/../hexa-lang/.raw-audit`. Anima's `.raw-ref` (when present)
 pins the canonical hash. The drill tool lives in anima but:
 
 - Writes **only** via hexa-lang's `hx_unlock / audit_append / hx_lock` tools.

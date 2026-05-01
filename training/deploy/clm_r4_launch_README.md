@@ -129,7 +129,7 @@ Idle = 0 s. r3f teardown was instant; r4 should follow.
 ## What the user needs to do to actually fire
 
 ```bash
-runpodctl pod create -f /Users/ghost/Dev/anima/training/deploy/clm_r4_runpod_create.json && \
+runpodctl pod create -f <repo-root>/training/deploy/clm_r4_runpod_create.json && \
   POD_ID=$(runpodctl get pods | grep anima-clm1b-r4 | awk '{print $1}') && \
   echo "Pod created: $POD_ID — proceed with staging steps in this README."
 ```

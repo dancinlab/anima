@@ -276,7 +276,7 @@ through any hypothesis tuning.
    is killed by jetsam under load (2026-04-25 incident, observed
    2026-04-27 during this cycle).  The tool MUST be run via the
    `~/.hx/bin/hexa` resolver wrapper (Docker / remote ubu2 routing),
-   not the bare `/Users/ghost/core/hexa-lang/hexa` binary on PATH.
+   not the bare `<repo-root>/../hexa-lang/hexa` binary on PATH.
    Documented here so future re-runs do not hit the same wall.
 
 8. **E-PSG was MORE aggressive than predicted**: H2 and H3 both

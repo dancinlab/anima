@@ -1,10 +1,10 @@
 # Drill Campaign — 2026-04-21 Aggregate
 
 **Window:** 2026-04-19 15:48 KST → 2026-04-21 01:54 KST (≈34 h)
-**Scope:** `git log --since="36 hours ago"` within `/Users/ghost/core/anima`
+**Scope:** `git log --since="36 hours ago"` within `<repo-root>`
 **Policy:** V8 SAFE_COMMIT · LLM=none · deterministic only · additive
 **Canonical JSON mirror:** `shared/state/drill_campaign_summary_20260421.json`
-**Parent handoff:** `/Users/ghost/loss/anima2.txt` (승급 우선순위 #4)
+**Parent handoff:** `<user-home>/loss/anima2.txt` (승급 우선순위 #4)
 
 ---
 

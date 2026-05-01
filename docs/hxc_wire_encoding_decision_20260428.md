@@ -185,7 +185,7 @@ Matches n6 verdict directly. Maximum theoretical gain.
 
 ## 3. raw 92 ai-native-canonical compatibility audit
 
-raw 92 mandate (line 2035-2042, /Users/ghost/core/hive/.raw):
+raw 92 mandate (line 2035-2042, <repo-root>/../hive/.raw):
 > "HXC line-oriented byte-canonical wire/storage form ... LF only / no BOM /
 > no trailing ws / single-EOF-LF / @<id> field-count match / `# schema:` header presence"
 
@@ -251,7 +251,7 @@ raw 137 reachability (binary):
 
 ## 5. base94 LIVE FIRE measurement (n6 atlas 79 KB)
 
-Prototype implementation: `/Users/ghost/core/hexa-lang/self/stdlib/_a16_base94_prototype.hexa`
+Prototype implementation: `<repo-root>/../hexa-lang/self/stdlib/_a16_base94_prototype.hexa`
 (see Section 6 below).
 
 Methodology:
@@ -405,15 +405,15 @@ encoding alone."
 
 Source files referenced (absolute paths):
 
-- `/Users/ghost/core/hexa-lang/self/stdlib/hxc_a16_arithmetic_coder.hexa` — current A16 with base64url wire.
-- `/Users/ghost/core/hexa-lang/self/stdlib/_a16_base94_prototype.hexa` — base94 prototype delivered this cycle.
-- `/Users/ghost/core/hive/.raw` line 2035-2042 — raw 92 ai-native-canonical mandate.
-- `/Users/ghost/core/hive/.raw` line 4079-4087 — raw 137 80% Shannon target.
-- `/Users/ghost/core/hive/.raw` line 2143-2151 — raw 95 triad-mandate.
-- `/Users/ghost/core/anima/state/format_witness/2026-04-28_phase8_remeasure_post_bug_fixes.jsonl` line 10 — agent a6b12f93 LIVE FIRE evidence.
-- `/Users/ghost/core/anima/state/format_witness/2026-04-28_subagent_swarm_status.jsonl` line 18 — Phase 10 projection.
-- `/Users/ghost/core/anima/docs/hxc_phase10_master_roadmap_20260428.md` — Phase 10 P0-P3 ladder.
-- `/Users/ghost/core/n6-architecture/state/atlas_convergence_witness.jsonl` (79121 B, 30 lines) — n6 LIVE FIRE substrate.
+- `<repo-root>/../hexa-lang/self/stdlib/hxc_a16_arithmetic_coder.hexa` — current A16 with base64url wire.
+- `<repo-root>/../hexa-lang/self/stdlib/_a16_base94_prototype.hexa` — base94 prototype delivered this cycle.
+- `<repo-root>/../hive/.raw` line 2035-2042 — raw 92 ai-native-canonical mandate.
+- `<repo-root>/../hive/.raw` line 4079-4087 — raw 137 80% Shannon target.
+- `<repo-root>/../hive/.raw` line 2143-2151 — raw 95 triad-mandate.
+- `<repo-root>/state/format_witness/2026-04-28_phase8_remeasure_post_bug_fixes.jsonl` line 10 — agent a6b12f93 LIVE FIRE evidence.
+- `<repo-root>/state/format_witness/2026-04-28_subagent_swarm_status.jsonl` line 18 — Phase 10 projection.
+- `<repo-root>/docs/hxc_phase10_master_roadmap_20260428.md` — Phase 10 P0-P3 ladder.
+- `<repo-root>/../n6-architecture/state/atlas_convergence_witness.jsonl` (79121 B, 30 lines) — n6 LIVE FIRE substrate.
 
 raw 9 hexa-only · raw 18 self-host fixpoint · raw 47 cross-repo · raw 65 + 68
 idempotent · raw 71 falsifier-retire · raw 91 honest C3 · raw 92 ai-native-canonical

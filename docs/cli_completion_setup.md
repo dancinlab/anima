@@ -14,9 +14,9 @@ zsh tab-completion for `hexa` and `airgenome` CLIs.
 mkdir -p ~/.zsh/completions
 
 # 2. Symlink the anima-shipped completion files
-ln -sf /Users/ghost/core/anima/shared/completions/_hexa.zsh \
+ln -sf <repo-root>/shared/completions/_hexa.zsh \
        ~/.zsh/completions/_hexa
-ln -sf /Users/ghost/core/anima/shared/completions/_airgenome.zsh \
+ln -sf <repo-root>/shared/completions/_airgenome.zsh \
        ~/.zsh/completions/_airgenome
 
 # 3. Append to ~/.zshrc (idempotent: check first)

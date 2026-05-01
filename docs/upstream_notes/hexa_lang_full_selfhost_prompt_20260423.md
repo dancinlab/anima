@@ -19,7 +19,7 @@
 | 자산 | 경로 | 정체 | 용도 |
 |---|---|---|---|
 | Rust 드라이버 | `/opt/homebrew/bin/hexa` (Mac arm64, Mach-O) | Rust 로 작성된 orchestrator. `hexa run <f>` 받아서 transpile→clang→exec 전체 파이프 구동 | Mac 개발자 경험 (유일한 풀-CLI) |
-| 자호스팅 transpiler (Mac) | `/Users/ghost/core/hexa-lang/self/native/hexa_v2` (Mac arm64) | `.hexa` 파싱 + codegen_c2 → C 소스 출력. `hexa-cc <input.hexa> <output.c>` | 트랜스파일 단계 |
+| 자호스팅 transpiler (Mac) | `<repo-root>/../hexa-lang/self/native/hexa_v2` (Mac arm64) | `.hexa` 파싱 + codegen_c2 → C 소스 출력. `hexa-cc <input.hexa> <output.c>` | 트랜스파일 단계 |
 | 자호스팅 transpiler (Linux) | `build/hexa_v2_linux_x86_64` (5.58 MB, static musl ELF, hexa-lang `1fdc0100`) | 위와 동일 기능, Linux 빌드 | 2026-04-23 이번에 처음 배포됨. Linux 용 풀-CLI 는 없음. |
 | C runtime | `self/runtime.c` (~7000 줄) | NaN-boxing `HexaVal`, arena, 문자열/배열/맵, TAG_FN 셔림, `hexa_timestamp`, `hexa_str_*`, `hexa_array_*`, 신호/파일락/소켓/FFI, 끝자리에 `#define` 기반 builtin 셔림 | 트랜스파일된 C 가 `#include "runtime.c"` 로 빨아들이는 실행 backbone |
 | 빌드 툴체인 | `clang` (혹은 `gcc`) + `libc` + `libm` | transpile 산출물 `.c` 를 실제 실행 바이너리로 만들어내는 외부 의존 | 필수 외부 툴체인 |

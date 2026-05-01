@@ -15,7 +15,7 @@
         ProgramArguments includes --apply AND env SLACK_WEBHOOK_URL is set.
 
         ACTIVATION (USER-EXPLICIT ONLY)
-            launchctl load -w /Users/ghost/core/anima/config/launchd/com.anima.runpod_credit_check.plist
+            launchctl load -w <repo-root>/config/launchd/com.anima.runpod_credit_check.plist
         The agent NEVER auto-loads this plist.
 
         StartInterval = 300 sec  →  5 min
@@ -24,14 +24,14 @@
 
     <key>ProgramArguments</key>
     <array>
-        <string>/Users/ghost/.hx/bin/hexa</string>
+        <string><user-home>/.hx/bin/hexa</string>
         <string>run</string>
-        <string>/Users/ghost/core/anima/tool/runpod_credit_check.hexa</string>
+        <string><repo-root>/tool/runpod_credit_check.hexa</string>
         <string>--apply</string>
     </array>
 
     <key>WorkingDirectory</key>
-    <string>/Users/ghost/core/anima</string>
+    <string><repo-root></string>
 
     <key>StartInterval</key>
     <integer>300</integer>
@@ -40,15 +40,15 @@
     <false/>
 
     <key>StandardOutPath</key>
-    <string>/Users/ghost/core/anima/logs/runpod_credit_check.out.log</string>
+    <string><repo-root>/logs/runpod_credit_check.out.log</string>
 
     <key>StandardErrorPath</key>
-    <string>/Users/ghost/core/anima/logs/runpod_credit_check.err.log</string>
+    <string><repo-root>/logs/runpod_credit_check.err.log</string>
 
     <key>EnvironmentVariables</key>
     <dict>
         <key>PATH</key>
-        <string>/Users/ghost/.hx/bin:/opt/homebrew/bin:/usr/local/bin:/usr/bin:/bin</string>
+        <string><user-home>/.hx/bin:/opt/homebrew/bin:/usr/local/bin:/usr/bin:/bin</string>
     </dict>
 </dict>
 </plist>

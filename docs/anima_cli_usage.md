@@ -225,7 +225,7 @@ PASS anima_cli/cost selftest
 
 `HEXA_BIN` is resolved in this order:
 1. `$HEXA_BIN` env var (if executable)
-2. `/Users/ghost/.hx/bin/hexa`
+2. `<user-home>/.hx/bin/hexa`
 3. `command -v hexa`
 
 ## Exit codes

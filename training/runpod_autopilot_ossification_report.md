@@ -54,7 +54,7 @@ burn. All rules live in SSOT JSON — no magic strings in hexa code.
 E5 owns pod `lnzliav2e8du6i` during r10 restart. Autopilot artifacts are
 **passive** until E5 signals r10 running again. Wiring plan after E5 done:
 
-1. E5 scp's `/Users/ghost/Dev/anima/training/runpod_watchdog.hexa` to pod
+1. E5 scp's `<repo-root>/training/runpod_watchdog.hexa` to pod
 2. E5 launches bootstrap with `TRAIN_PID` captured into watchdog args
 3. Local autopilot poll loop reads `autopilot.status` via ssh every 60s
 4. On `CRASHED`: autopilot fetches last 100 log lines, runs `crash_recover`

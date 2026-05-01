@@ -1,7 +1,7 @@
 # Schartner LZ76 Criteria Validation — anima verifier vs literature
 
 **Date:** 2026-04-28
-**Verifier under audit:** `/Users/ghost/core/anima/anima-clm-eeg/tool/clm_eeg_lz76_real.hexa`
+**Verifier under audit:** `<repo-root>/anima-clm-eeg/tool/clm_eeg_lz76_real.hexa`
 **Frozen criteria (raw#12):**
 - C1: `LZ76_norm ≥ 0.65`  (`LZ76_EEG_MIN_X1000 = 650`)
 - C2: `|Δ|/human ≤ 20%`   (`DELTA_HUMAN_MAX_PERMILLE = 200`, baseline `HUMAN_BASELINE_LZ76_X1000 = 850`)

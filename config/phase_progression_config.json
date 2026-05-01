@@ -5,8 +5,8 @@
   "raw_compliance": "raw#1 raw#9 raw#10 raw#11 raw#12 raw#15 deterministic LLM=none",
   "description": "100% check → 100% plan → live adjust progression rule. Each stage has a hard gate; failures block forward progression. The controller dispatches to existing sub-tools; no sub-tool mutation required.",
 
-  "repo_root": "/Users/ghost/core/anima",
-  "hexa_bin": "/Users/ghost/.hx/bin/hexa",
+  "repo_root": "<repo-root>",
+  "hexa_bin": "<user-home>/.hx/bin/hexa",
   "state_dir": "state",
   "raw_audit_path": ".raw-audit",
 
@@ -16,7 +16,7 @@
     "closure_debt_scanner": "tool/closure_debt_scanner.hexa",
     "roadmap_auto_reflect": "tool/roadmap_auto_reflect.hexa",
     "roadmap_mistake_auto_fix": "tool/roadmap_mistake_auto_fix.hexa",
-    "roadmap_lint": "/Users/ghost/core/hexa-lang/tool/roadmap_lint.hexa",
+    "roadmap_lint": "<repo-root>/../hexa-lang/tool/roadmap_lint.hexa",
     "phase_flow_planner": "tool/phase_flow_planner.hexa",
     "phase_live_adjuster": "tool/phase_live_adjuster.hexa"
   },
@@ -195,9 +195,9 @@
     "rollback_on_lint_fail": true,
     "daemon_tick_interval_sec": 3600,
     "fsevents_watchpaths": [
-      "/Users/ghost/core/anima/.roadmap",
-      "/Users/ghost/core/anima/edu/paths.json",
-      "/Users/ghost/core/anima/.ext"
+      "<repo-root>/.roadmap",
+      "<repo-root>/edu/paths.json",
+      "<repo-root>/.ext"
     ],
     "warn_severity_escalation_threshold_ticks": 3,
     "halt_on_error_severity": true

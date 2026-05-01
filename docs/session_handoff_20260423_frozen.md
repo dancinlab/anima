@@ -95,7 +95,7 @@ unimplemented. Compiler-engineering territory, not a one-turn fix.
 ## 3. Entry point for next session
 
 ```bash
-cd /Users/ghost/core/anima
+cd <repo-root>
 bin/anima compute status          # pods=0, stage1=READY, last_run=LIVE+BOOTSTRAPPED+DRILL_PASS
 bin/anima doctor                  # 10/10 PASS expected
 cat docs/pod_bootstrap_checklist_20260423.md   # the runbook

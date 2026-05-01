@@ -19,7 +19,7 @@ echo $?
 
 **검증 reproduce** (fix 전):
 ```bash
-$ /Users/ghost/core/hexa-lang/hexa docs/alm_an11_a_weight_emergent_r6_evidence_20260425.md --selftest ; echo EXIT=$?
+$ <repo-root>/../hexa-lang/hexa docs/alm_an11_a_weight_emergent_r6_evidence_20260425.md --selftest ; echo EXIT=$?
 error: unknown subcommand '...'
 HEXA — self-hosted language toolchain ...
 EXIT=0
@@ -99,7 +99,7 @@ EXIT=0
 ```
 $ hexa tool/proposal_archive.hexa --id 20260422-075 \
        --module-path docs/alm_an11_a_weight_emergent_r6_evidence_20260425.md
-proposal_archive: module verification FAILED — module file extension must be .hexa (got: /Users/ghost/core/anima/docs/alm_an11_a_weight_emergent_r6_evidence_20260425.md)
+proposal_archive: module verification FAILED — module file extension must be .hexa (got: <repo-root>/docs/alm_an11_a_weight_emergent_r6_evidence_20260425.md)
 EXIT=1
 ```
 

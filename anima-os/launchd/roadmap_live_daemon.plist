@@ -38,13 +38,13 @@
 
     <key>ProgramArguments</key>
     <array>
-        <string>/Users/ghost/.hx/bin/hexa</string>
-        <string>/Users/ghost/core/anima/tool/roadmap_live_daemon.hexa</string>
+        <string><user-home>/.hx/bin/hexa</string>
+        <string><repo-root>/tool/roadmap_live_daemon.hexa</string>
         <string>--tick</string>
     </array>
 
     <key>WorkingDirectory</key>
-    <string>/Users/ghost/core/anima</string>
+    <string><repo-root></string>
 
     <key>StartInterval</key>
     <integer>3600</integer>
@@ -54,9 +54,9 @@
 
     <key>WatchPaths</key>
     <array>
-        <string>/Users/ghost/core/anima/.roadmap</string>
-        <string>/Users/ghost/core/anima/edu/paths.json</string>
-        <string>/Users/ghost/core/anima/.ext</string>
+        <string><repo-root>/.roadmap</string>
+        <string><repo-root>/edu/paths.json</string>
+        <string><repo-root>/.ext</string>
     </array>
 
     <key>ThrottleInterval</key>
@@ -71,7 +71,7 @@
     <key>EnvironmentVariables</key>
     <dict>
         <key>PATH</key>
-        <string>/Users/ghost/.hx/bin:/opt/homebrew/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin</string>
+        <string><user-home>/.hx/bin:/opt/homebrew/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin</string>
         <key>HOME</key>
         <string>/Users/ghost</string>
         <key>LANG</key>

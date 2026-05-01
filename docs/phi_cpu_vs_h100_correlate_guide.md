@@ -109,7 +109,7 @@ The synthetic pre-run already rules out:
 ## 4. Re-running the CPU synthetic
 
 ```bash
-/Users/ghost/.hx/bin/hexa run tool/phi_cpu_synthetic_4path.hexa
+<user-home>/.hx/bin/hexa run tool/phi_cpu_synthetic_4path.hexa
 # → writes byte-identical outputs (seed fixed, LCG deterministic)
 # → exits 0 on PASS (worst_ratio < 0.10), 1 on FAIL
 ```

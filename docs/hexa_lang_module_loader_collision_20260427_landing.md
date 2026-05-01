@@ -5,7 +5,7 @@
 **raw level allowed**: yes (raw 102 + prior cycle "raw level 허용")
 **tier**: B (autonomous OK per raw 102 + prior cycle directive)
 **paired roadmap id (proposed)**: `P-hexa-N-module-loader-collision-lint-20260427`
-**witness JSON**: `/Users/ghost/core/anima/state/design_strategy_trawl/2026-04-27_hexa_lang_module_loader_collision_omega_cycle.json`
+**witness JSON**: `<repo-root>/state/design_strategy_trawl/2026-04-27_hexa_lang_module_loader_collision_omega_cycle.json`
 
 ## TL;DR
 
@@ -20,7 +20,7 @@ env propagation, see `nexus/.raw-audit` BUG#3 + 2026-04-28 follow-up).
 
 ## Module-loader concat semantics — exact mechanism
 
-`/Users/ghost/core/hexa-lang/self/module_loader.hexa` (566 lines) is an
+`<repo-root>/../hexa-lang/self/module_loader.hexa` (566 lines) is an
 iterative-DFS preprocessor. For each `use "self/stdlib/<name>"` directive
 it resolves via 3-way (caller-relative → stdlib → project-root) and emits
 the imported module body in post-DFS order BEFORE the host script body.
@@ -126,8 +126,8 @@ before the brace-counter runs. Reduced to 1 real violation.
 ## Selftest results
 
 ```
-$ HEXA_LANG=/Users/ghost/core/hexa-lang \
-    /Users/ghost/.hx/packages/hexa/hexa.real run \
+$ HEXA_LANG=<repo-root>/../hexa-lang \
+    <user-home>/.hx/packages/hexa/hexa.real run \
     tool/module_loader_collision_lint.hexa --selftest
 [mlc-lint selftest] 4/4 fixtures PASS (A clean / B bad C1+C2 / C good guarded / D C4 advisory)
 ```
@@ -178,12 +178,12 @@ audit pass to add `pub` to every export-intended fn.
 
 Evidence trail:
 
-1. `/Users/ghost/core/nexus/cli/run.hexa` — 0 occurrences of `use "` or
+1. `<repo-root>/../nexus/cli/run.hexa` — 0 occurrences of `use "` or
    `ai_err_exit` (verified by `grep -c`). The string does not appear in
    the nexus run.hexa entry point.
-2. `/Users/ghost/core/hexa-lang/self/stdlib/ai_err.hexa` — 0 top-level
+2. `<repo-root>/../hexa-lang/self/stdlib/ai_err.hexa` — 0 top-level
    statements. Cannot collide.
-3. `/Users/ghost/core/hive/tool/subagent_dispatch.hexa` line 63 imports
+3. `<repo-root>/../hive/tool/subagent_dispatch.hexa` line 63 imports
    `use "self/stdlib/ai_err"` correctly. 16+ `ai_err_exit` call-sites
    work on Mac.
 4. `nexus/.raw-audit` BUG#3 (2026-04-27 ts=07:29:10Z) already root-caused:

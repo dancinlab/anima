@@ -308,12 +308,12 @@ omega-saturation:fixpoint-mk-xii-integration
 
 ## §9. Cross-references
 
-- `/Users/ghost/core/anima/anima-clm-eeg/docs/omega_cycle_mk_xii_integration_axis_20260426.md` — sister doc (INTEGRATION axis 7-paradigm + cross-axis convergent)
-- `/Users/ghost/core/anima/docs/omega_cycle_alm_free_paradigms_20260426.md` — predecessor 4-axis ω-cycle
-- `/Users/ghost/core/anima/docs/mk_xii_scale_plan.md` — Mk.XII (Scale tier), 본 Integration tier 와 orthogonal
-- `/Users/ghost/core/anima/docs/mk_xi_minimum_consciousness_architecture_20260425.md` — Mk.XI v10 parent
-- `/Users/ghost/core/anima/anima-clm-eeg/docs/path_comparison_a_b_c.md` — Path A/B/C decision context
-- `/Users/ghost/core/anima/anima-clm-eeg/docs/eeg_arrival_impact_5fold.md` — EEG D-day 5-fold impact
+- `<repo-root>/anima-clm-eeg/docs/omega_cycle_mk_xii_integration_axis_20260426.md` — sister doc (INTEGRATION axis 7-paradigm + cross-axis convergent)
+- `<repo-root>/docs/omega_cycle_alm_free_paradigms_20260426.md` — predecessor 4-axis ω-cycle
+- `<repo-root>/docs/mk_xii_scale_plan.md` — Mk.XII (Scale tier), 본 Integration tier 와 orthogonal
+- `<repo-root>/docs/mk_xi_minimum_consciousness_architecture_20260425.md` — Mk.XI v10 parent
+- `<repo-root>/anima-clm-eeg/docs/path_comparison_a_b_c.md` — Path A/B/C decision context
+- `<repo-root>/anima-clm-eeg/docs/eeg_arrival_impact_5fold.md` — EEG D-day 5-fold impact
 - `~/.claude/projects/-Users-ghost-core-anima/memory/project_paradigm_v11_stack_complete.md` — paradigm v11 17-helper stack canonical
 - `~/.claude/projects/-Users-ghost-core-anima/memory/project_v_phen_gwt_v2_axis_orthogonal.md` — Mk.XI v10 4-family ensemble REVISION
 - `.roadmap` #115 / #116 / #119 / #138-#143 / #144 / #145

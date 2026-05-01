@@ -249,12 +249,12 @@ s7 §3 의 "3/4 backbones perfect match" finding 을 직접 확인 위해 Llama 
 
 ## §9. Related artifacts
 
-- `/Users/ghost/core/anima/tool/anima_dali_sli_coupled.hexa` (sha256 `5fc02edb0c2a40999530ee5e8fa9d435d2bd398c92d498bf64af5571fea9eb01`)
-- `/Users/ghost/core/anima/state/dali_sli_coupled_v1.json` (sha256 `7643627f6912b559fedc60519d2e91594c50ec6c775266b1be957052a51eca87`)
-- `/Users/ghost/core/anima/anima-clm-eeg/docs/omega_cycle_mk_xii_substrate_axis_20260426.md` §2.1 S1+S3 paradigm spec
-- `/Users/ghost/core/anima/anima-clm-eeg/docs/s7_cusp_depth_projection_landing.md` (predecessor — cusp_depth ansatz)
-- `/Users/ghost/core/anima/anima-hci-research/tool/cusp_depth_projector.hexa` (S7 산출물 source 일치)
-- `/Users/ghost/core/anima/state/v10_benchmark_v4/{mistral,qwen3,llama,gemma}/cmt.json` (real backbone activations)
+- `<repo-root>/tool/anima_dali_sli_coupled.hexa` (sha256 `5fc02edb0c2a40999530ee5e8fa9d435d2bd398c92d498bf64af5571fea9eb01`)
+- `<repo-root>/state/dali_sli_coupled_v1.json` (sha256 `7643627f6912b559fedc60519d2e91594c50ec6c775266b1be957052a51eca87`)
+- `<repo-root>/anima-clm-eeg/docs/omega_cycle_mk_xii_substrate_axis_20260426.md` §2.1 S1+S3 paradigm spec
+- `<repo-root>/anima-clm-eeg/docs/s7_cusp_depth_projection_landing.md` (predecessor — cusp_depth ansatz)
+- `<repo-root>/anima-hci-research/tool/cusp_depth_projector.hexa` (S7 산출물 source 일치)
+- `<repo-root>/state/v10_benchmark_v4/{mistral,qwen3,llama,gemma}/cmt.json` (real backbone activations)
 - `.roadmap` #145 CMT backbone-conditional depth divergence (Mistral late vs Qwen3 early — DALI_min=236 의 mechanistic root)
 - `.roadmap` #146 (S7 cusp_depth landing)
 

@@ -8,7 +8,7 @@
 ## Tool output
 
 ### airgenome doctor / airgenome status
-- Both commands **hung past 30s with zero stdout** (EXIT=124 on timeout). These commands invoke `cmd_doctor` in `/Users/ghost/Dev/airgenome/run.hexa` which checks local hexa/core/launchd/ring/throttle — not remote GPU topology. Skipped in favor of direct SSH probes.
+- Both commands **hung past 30s with zero stdout** (EXIT=124 on timeout). These commands invoke `cmd_doctor` in `<repo-root>/../airgenome/run.hexa` which checks local hexa/core/launchd/ring/throttle — not remote GPU topology. Skipped in favor of direct SSH probes.
 
 ### nx status
 - `nx status` → `⬡ nx type=app 프로젝트` (project marker only, no host data).
@@ -50,5 +50,5 @@ Online: 3 / Offline: 2 (both ubu paths).
 
 ## Artifacts
 
-- Machine-readable: `/Users/ghost/core/anima/shared/state/h100_remote_probe.json`
-- This report: `/Users/ghost/core/anima/docs/h100_remote_status_20260421.md`
+- Machine-readable: `<repo-root>/shared/state/h100_remote_probe.json`
+- This report: `<repo-root>/docs/h100_remote_status_20260421.md`

@@ -8,7 +8,7 @@ Phase 5 P3 of the HXC raw 137 80% saturation cycle. A8 is the column-marginal st
 
 ## Mandate trace
 - raw 137 (80% Shannon Pareto target)
-- raw 9 hexa-only (`/Users/ghost/core/hexa-lang/self/stdlib/hxc_a8_column_stat.hexa` + symlink `/Users/ghost/core/hive/tool/hxc_a8_column_stat.hexa`)
+- raw 9 hexa-only (`<repo-root>/../hexa-lang/self/stdlib/hxc_a8_column_stat.hexa` + symlink `<repo-root>/../hive/tool/hxc_a8_column_stat.hexa`)
 - raw 12 silent-error-ban (encode roundtrip mismatch returns exit code 4; CLI surfaces ratio + byte-eq verdict in measure JSON)
 - raw 65 idempotent (encode∘decode = identity; decode∘decode = decode; encode∘decode∘encode = encode — verified 8/8 selftest)
 - raw 68 byte-eq roundtrip (real corpus serve_alm_persona_log: 1830B v1 → 1504B v2 → 1830B back, diff returns empty)
@@ -76,9 +76,9 @@ Findings:
 A8 closes the column-marginal axis on text-heavy categorical columns. Honest projection per the original A8 spec: +10-15pp on text-heavy categorical workloads inside the anima top-8 corpus (event types / tag enums / status flags). Only the persona log demonstrably hits this band among the two probed corpora; the 4gate corpus does not (correctly — A7 territory). Aggregate top-8 byte-weighted impact requires re-running the Phase 4 pilot with A8 inserted into the chain (out of scope for this landing — separate Phase 5 P4 mandate).
 
 ## Files
-- impl: `/Users/ghost/core/hexa-lang/self/stdlib/hxc_a8_column_stat.hexa` (993 LoC, 8/8 selftest PASS, parse-clean)
-- symlink: `/Users/ghost/core/hive/tool/hxc_a8_column_stat.hexa` -> impl
-- this doc: `/Users/ghost/core/anima/docs/hxc_a8_column_stat_20260428_landing.md`
+- impl: `<repo-root>/../hexa-lang/self/stdlib/hxc_a8_column_stat.hexa` (993 LoC, 8/8 selftest PASS, parse-clean)
+- symlink: `<repo-root>/../hive/tool/hxc_a8_column_stat.hexa` -> impl
+- this doc: `<repo-root>/docs/hxc_a8_column_stat_20260428_landing.md`
 
 ## Phase 5 catalog status (post-A8)
 - A1 LANDED (line-baseline, raw 137 Phase 1 pilot)

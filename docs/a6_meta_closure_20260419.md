@@ -160,8 +160,8 @@ operationalize tier 6 ULTRA:
 
 ```bash
 HEXA_LOCAL=1 HEXA_NO_LAUNCHD=1 HEXA_STAGE0_LOCK_WAIT=2400 \
-    /Users/ghost/Dev/nexus/shared/bin/hexa run \
-    /Users/ghost/Dev/anima/training/a6_meta_closure_bridge.hexa
+    <repo-root>/../nexus/shared/bin/hexa run \
+    <repo-root>/training/a6_meta_closure_bridge.hexa
 ```
 
 Expected tail:
@@ -189,7 +189,7 @@ Expected tail:
 
 ## Contention note
 
-Bridge run on mac host via `/Users/ghost/Dev/nexus/shared/bin/hexa run`.
+Bridge run on mac host via `<repo-root>/../nexus/shared/bin/hexa run`.
 `HEXA_STAGE0_LOCK_WAIT=2400` is honored; `HEXA_LOCAL=1` was rejected on Darwin
 by the stage0 shim (expected — forces wrapper path, panic-safe). No impact on
 correctness.

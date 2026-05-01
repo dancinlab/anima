@@ -150,7 +150,7 @@ Cert JSON at `state/eeg_to_token_cyborg.json` mirrors the audit row schema with 
 
 **Step 1 — Capture 60 s resting EEG**:
 ```
-cd /Users/ghost/core/anima
+cd <repo-root>
 .venv-eeg/bin/python anima-eeg/eeg_recorder.hexa --duration 60 --out state/cyborg_eeg_audit/raw_60s.json
 ```
 (or `.npy` — both supported by the tokenizer.)

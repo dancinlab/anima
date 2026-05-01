@@ -25,7 +25,7 @@ git history 증거: `68d2236c feat(hexa-first): .py 791개 + .rs 7개 + .sh 37�
 
 ## 1. raw#9 strict 정의 (모범 사례 기반)
 
-`/Users/ghost/core/anima/tool/an11_b_eeg_ingest.hexa` (360L) + `/Users/ghost/core/anima/edu/cell/lagrangian/l_ix_integrator.hexa` 를 reference 로:
+`<repo-root>/tool/an11_b_eeg_ingest.hexa` (360L) + `<repo-root>/edu/cell/lagrangian/l_ix_integrator.hexa` 를 reference 로:
 
 1. header comment 에 raw# 인용 + spec doc 경로
 2. `comptime const` 또는 `let` 으로 상수 명시 (no magic numbers)
@@ -132,9 +132,9 @@ byte-identical: 두 번 run → 동일 stdout (RNG 없음 → trivially determin
 ### 5.1 prerequisite: test locator
 
 **Critical**: production 108 tests 위치 확정. 후보:
-- `/Users/ghost/core/anima/test/` → `find ... -name 'test_eeg*'`
+- `<repo-root>/test/` → `find ... -name 'test_eeg*'`
 - archived in commit 68d2236c
-- separate `/Users/ghost/core/anima/anima-clm-eeg/` (메인 세션 작업, 충돌 회피)
+- separate `<repo-root>/anima-clm-eeg/` (메인 세션 작업, 충돌 회피)
 
 찾으면 .py interface contract (input/output shape, 6 metric float ranges) 추출 → .hexa FULL impl 의 invariant 로 freeze.
 
@@ -234,14 +234,14 @@ C. **HOLD — pilot 검증 + Φ-game 우선순위로 재배치**
    - 본 마이그레이션은 production tests 미존재 가설 strong → Phase 3 비용 의심
    - 메인 세션 anima-clm-eeg/ 와 통합 후 reschedule
 
-**weakest evidence link:** test 108개의 위치. 그 답이 나오기 전 Phase 3 진입 = blind. 따라서 권장 = (A) 의 prerequisite step 만 먼저 1h 안에 (`find /Users/ghost/core/anima/test -name 'test_eeg*' -o -name '*eeg_test*'` + git history grep) 후 사용자 보고.
+**weakest evidence link:** test 108개의 위치. 그 답이 나오기 전 Phase 3 진입 = blind. 따라서 권장 = (A) 의 prerequisite step 만 먼저 1h 안에 (`find <repo-root>/test -name 'test_eeg*' -o -name '*eeg_test*'` + git history grep) 후 사용자 보고.
 
 ---
 
 ## 10. 산출물 paths
 
-- `/Users/ghost/core/anima/anima-eeg/MIGRATION_PLAN.md` (this file)
-- `/Users/ghost/core/anima/anima-eeg/MIGRATION_INVENTORY.json`
-- `/Users/ghost/core/anima/anima-eeg/migration_phase2_pilot/neurofeedback.hexa`
+- `<repo-root>/anima-eeg/MIGRATION_PLAN.md` (this file)
+- `<repo-root>/anima-eeg/MIGRATION_INVENTORY.json`
+- `<repo-root>/anima-eeg/migration_phase2_pilot/neurofeedback.hexa`
 
 destructive 0건. 기존 파일 수정 0건. git commit 미수행.

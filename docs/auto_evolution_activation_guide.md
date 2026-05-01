@@ -19,7 +19,7 @@ Plist file: [`config/launchd/com.anima.auto_evolution.plist`](../config/launchd/
 | Label | `com.anima.auto_evolution` |
 | StartInterval | 43200 sec (= 12h) |
 | RunAtLoad | `false` |
-| Working dir | `/Users/ghost/core/anima` |
+| Working dir | `<repo-root>` |
 | Command | `hexa run tool/auto_evolution_loop.hexa --apply` |
 | stdout | `/tmp/anima_auto_evolution.out` |
 | stderr | `/tmp/anima_auto_evolution.err` |

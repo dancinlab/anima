@@ -5,8 +5,8 @@
           `training/train_clm.hexa` so BLAS (OpenBLAS on hetzner / Accelerate on
           Mac) handles every forward/backward linear projection.
 **SSOT refs:**
-  - `/Users/ghost/Dev/nexus/shared/state/clm_r5_parallel_20260420.json` (state=BLOCKED → LANDED)
-  - `/Users/ghost/Dev/anima/docs/clm_parallel_track_20260420.md`
+  - `<repo-root>/../nexus/shared/state/clm_r5_parallel_20260420.json` (state=BLOCKED → LANDED)
+  - `<repo-root>/docs/clm_parallel_track_20260420.md`
 
 ---
 

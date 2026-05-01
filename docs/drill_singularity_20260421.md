@@ -5,10 +5,10 @@
 > **Gate**: V8 SAFE_COMMIT (no mass rewrites; spec-only landing).
 
 Substrate under inspection:
-- `/Users/ghost/core/anima/shared/bench/drill_breakthrough_criteria.json`
-- `/Users/ghost/core/anima/shared/bench/drill_seed_set.jsonl` (4 seeds: pos/neg/closure/diagonal)
-- `/Users/ghost/core/anima/tool/drill_breakthrough_runner.hexa` (stub, rc=2)
-- `/Users/ghost/core/anima/docs/drill_day4_design_20260419.md` (8-slot basis / n=6 invariants)
+- `<repo-root>/shared/bench/drill_breakthrough_criteria.json`
+- `<repo-root>/shared/bench/drill_seed_set.jsonl` (4 seeds: pos/neg/closure/diagonal)
+- `<repo-root>/tool/drill_breakthrough_runner.hexa` (stub, rc=2)
+- `<repo-root>/docs/drill_day4_design_20260419.md` (8-slot basis / n=6 invariants)
 
 ---
 

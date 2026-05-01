@@ -158,7 +158,7 @@ Six gates cleared in A22 tick 2 (commit `95f843b5`):
 | P3 | A22 self-decoding HXC | **LIVE + VERIFIED** | `080023d9` → `95f843b5` | 882 | 10/10 PASS |
 | REF | A21 write-side advisory | ALWAYS-GO | n/a | n/a | n/a |
 
-**Closure formal**: see `/Users/ghost/core/anima/docs/hxc_phase11_closure_20260428.md`.
+**Closure formal**: see `<repo-root>/docs/hxc_phase11_closure_20260428.md`.
 
 ---
 
@@ -194,10 +194,10 @@ raw 91 honest C3: prior P0 deploy table (text-heavy 83.83%, structured-audit 87.
 **Per-class 2/4 ACHIEVED** + 2/4 잔여. Total per-class achievement matrix is the load-bearing partial-achievement evidence for the raw 137 v4 strengthening commit.
 
 **Deploy ledgers landed**:
-- `/Users/ghost/core/anima/state/phase12_p0_deploy/2026-04-28_text_heavy_live.jsonl`
-- `/Users/ghost/core/anima/state/phase12_p0_deploy/2026-04-28_structured_audit_live.jsonl`
+- `<repo-root>/state/phase12_p0_deploy/2026-04-28_text_heavy_live.jsonl`
+- `<repo-root>/state/phase12_p0_deploy/2026-04-28_structured_audit_live.jsonl`
 
-**Deploy chain (both classes)**: A1 + A18(AOT). AOT binary `/Users/ghost/core/hexa-lang/build/hxc_a18_test 301920B 5/5 selftest`.
+**Deploy chain (both classes)**: A1 + A18(AOT). AOT binary `<repo-root>/../hexa-lang/build/hxc_a18_test 301920B 5/5 selftest`.
 
 **Deploy gate (3 steps each, 6 total)**: raw 1 chflags VERIFIED + byte-eq round-trip VERIFIED + rollback path VERIFIED (raw 142 D2 try-and-revert).
 
@@ -298,11 +298,11 @@ Per-rank priority from 5 close-path verdict triangulation (a7a059f0 + a58efacb +
 
 ## 12. Files this cycle
 
-- `/Users/ghost/core/anima/state/phase12_p0_deploy/2026-04-28_text_heavy_live.jsonl` (NEW)
-- `/Users/ghost/core/anima/state/phase12_p0_deploy/2026-04-28_structured_audit_live.jsonl` (NEW)
-- `/Users/ghost/core/anima/state/format_witness/2026-04-28_phase12_p0_deploy_phase11_closure.jsonl` (NEW witness ledger)
-- `/Users/ghost/core/anima/docs/hxc_phase11_closure_20260428.md` (NEW Phase 11 closure formal)
-- `/Users/ghost/core/anima/docs/hxc_cumulative_milestone_2026-04-28.md` (THIS DOC)
+- `<repo-root>/state/phase12_p0_deploy/2026-04-28_text_heavy_live.jsonl` (NEW)
+- `<repo-root>/state/phase12_p0_deploy/2026-04-28_structured_audit_live.jsonl` (NEW)
+- `<repo-root>/state/format_witness/2026-04-28_phase12_p0_deploy_phase11_closure.jsonl` (NEW witness ledger)
+- `<repo-root>/docs/hxc_phase11_closure_20260428.md` (NEW Phase 11 closure formal)
+- `<repo-root>/docs/hxc_cumulative_milestone_2026-04-28.md` (THIS DOC)
 
 ---
 
@@ -340,7 +340,7 @@ Per-rank priority from 5 close-path verdict triangulation (a7a059f0 + a58efacb +
 **Byte-eq integrity**: 379/379 cmp byte-eq PASS + 11/11 SHA256 round-trip sample PASS (4 EMPTY files skipped).
 **Classification accuracy**: 100% — all 271 a18-routed (text/json/struct/mixed) + 95 a23-routed (small-file) + 12 passthrough + 1 a24 dispatched per dispatcher table.
 **Falsifier**: F-A25-WIRE-V2-3 NEW NOT_TRIPPED (full deployment 78.05% > 76.07% pre-v2 anchor; +1.98pp).
-**Witness**: `/Users/ghost/core/anima/state/format_witness/2026-04-28_a25_v2_full_deployment_6repo_80pct_measured.jsonl`
+**Witness**: `<repo-root>/state/format_witness/2026-04-28_a25_v2_full_deployment_6repo_80pct_measured.jsonl`
 **raw 91 honest C3**: A25 v2 full deployment is structurally CORRECT but byte-weighted aggregate target requires a per-class CEILING advance on text-heavy (current bottleneck at 47%, A18 v3 order-2 byte-context projected lever).
 
 **End of v5 strengthening — 78.05% / 93.69% cumulative gap reduction / per-class 1/7 ACHIEVED on full deployment.**
@@ -401,10 +401,10 @@ Per-rank priority from 5 close-path verdict triangulation (a7a059f0 + a58efacb +
 3. this turn: AOT rebuilt from d631a902 (407296B, 22/22 PASS interp + AOT) + AB comparison 10 files MEASURED -> 80% NOT achieved + text-heavy null delta + V6-OPTIMAL-3 latency tripped
 
 **Files this cycle**:
-- `/Users/ghost/core/hexa-lang/build/a18_d631a902_aot` (NEW AOT binary 407296B)
-- `/Users/ghost/core/hexa-lang/build/artifacts/a18_d631a902_aot.c` (NEW codegen 135927B)
-- `/Users/ghost/core/anima/state/format_witness/2026-04-28_a18_batch_post_d631a902_6repo_honest_measured.jsonl` (NEW witness)
-- `/Users/ghost/core/anima/docs/hxc_cumulative_milestone_2026-04-28.md` (THIS DOC §15)
+- `<repo-root>/../hexa-lang/build/a18_d631a902_aot` (NEW AOT binary 407296B)
+- `<repo-root>/../hexa-lang/build/artifacts/a18_d631a902_aot.c` (NEW codegen 135927B)
+- `<repo-root>/state/format_witness/2026-04-28_a18_batch_post_d631a902_6repo_honest_measured.jsonl` (NEW witness)
+- `<repo-root>/docs/hxc_cumulative_milestone_2026-04-28.md` (THIS DOC §15)
 
 **Compliance**: raw 1 chflags + raw 9 hexa-only + raw 18 self-host fixpoint (interp/AOT byte-identical) + raw 47 cross-repo + raw 65+68 idempotent (10/10 byte-eq PASS) + raw 71 falsifier-preregister + **raw 91 honest C3 STRICT** (projection retractions documented, text-heavy null delta disclosed, full sweep DEFERRED labeled) + raw 137 cmix-ban MAINTAINED + raw 142 D2 try-revert PRESERVED.
 
@@ -415,14 +415,14 @@ Per-rank priority from 5 close-path verdict triangulation (a7a059f0 + a58efacb +
 **Scope**: A24 grammar induction first-tick verification (selftest 5/5 PASS interp + AOT byte-identical) + dispatcher integration MEASURED on representative 6.02MB / 216 files / 6-repo sample with min(A18 d631a902 batch v1..v6+identity, A24, identity) pool.
 
 **A24 first-tick verification**:
-- Module: `/Users/ghost/core/hexa-lang/self/stdlib/hxc_a24_grammar_induction.hexa` (1138 LoC, Stolcke-Omohundro PCFG-style with greedy frequency-saving proxy)
+- Module: `<repo-root>/../hexa-lang/self/stdlib/hxc_a24_grammar_induction.hexa` (1138 LoC, Stolcke-Omohundro PCFG-style with greedy frequency-saving proxy)
 - Selftest: **5/5 PASS** interp + AOT byte-identical (cmp diff PASS)
   - F1 mixed-JSON byte-eq -26% saving (wrapper overhead dominates on 468B input)
   - F2 Korean multibyte byte-eq -5% saving (multibyte preserved, wrapper overhead)
   - F3 ledger/audit byte-eq -12% saving (wrapper overhead)
   - F4 large-text byte-eq **+21% wire-saving** (highly-repetitive English, n_rules=16, rule_density 36%)
   - F5 short-input passthrough idempotent PASS (raw 65+68)
-- AOT build: `/Users/ghost/core/hexa-lang/build/a24/a24_aot` SHA256 `143fb4abd7d95b30edf2d10f920db54bbd517d54da79da4d5b0b938f3507ef98`, byte-identical to interp output
+- AOT build: `<repo-root>/../hexa-lang/build/a24/a24_aot` SHA256 `143fb4abd7d95b30edf2d10f920db54bbd517d54da79da4d5b0b938f3507ef98`, byte-identical to interp output
 - Falsifier preregister: F-A24-1..5 documented in module header
 
 **Production sweep MEASURED (representative 6.02MB / 216 files / 6-repo sample)**:
@@ -479,11 +479,11 @@ A24 grammar induction first-tick is structurally LANDED (selftest PASS, AOT byte
 This v8 commit chooses option (c) interim — A24 NOT in production dispatcher pool until F-A24-3 latency falsifier is resolved.
 
 **Files this cycle**:
-- `/Users/ghost/core/hexa-lang/self/stdlib/hxc_a24_grammar_induction.hexa` (NEW first-tick module 1138 LoC)
-- `/Users/ghost/core/hexa-lang/build/a24/a24_aot` (NEW AOT binary 318688B SHA `143fb4ab`)
-- `/Users/ghost/core/anima/state/format_witness/2026-04-28_full_6repo_aggregate_post_a19_dispatcher_measured.jsonl` (NEW witness)
-- `/Users/ghost/core/anima/state/format_witness/2026-04-28_full_6repo_aggregate_post_a19_dispatcher_measured_per_file.json` (NEW per-file appendix)
-- `/Users/ghost/core/anima/docs/hxc_cumulative_milestone_2026-04-28.md` (THIS DOC §16)
+- `<repo-root>/../hexa-lang/self/stdlib/hxc_a24_grammar_induction.hexa` (NEW first-tick module 1138 LoC)
+- `<repo-root>/../hexa-lang/build/a24/a24_aot` (NEW AOT binary 318688B SHA `143fb4ab`)
+- `<repo-root>/state/format_witness/2026-04-28_full_6repo_aggregate_post_a19_dispatcher_measured.jsonl` (NEW witness)
+- `<repo-root>/state/format_witness/2026-04-28_full_6repo_aggregate_post_a19_dispatcher_measured_per_file.json` (NEW per-file appendix)
+- `<repo-root>/docs/hxc_cumulative_milestone_2026-04-28.md` (THIS DOC §16)
 
 **Compliance**: raw 1 chflags + raw 9 hexa-only + raw 18 self-host fixpoint (interp/AOT byte-identical 5/5 + 216/216) + raw 47 cross-repo + raw 65+68 idempotent (216/216 byte-eq PASS) + raw 71 falsifier-preregister (F-A24-1..5 5/5 resolved with 3 TRIPPED) + **raw 91 honest C3 STRICT** (A24 design lift hypothesis FALSIFIED; F-A24-1/3/5 TRIPPED with measured evidence; sample bias disclosed; 78.05 baseline PRESERVED) + raw 137 cmix-ban MAINTAINED (deterministic PCFG with integer rule tables, no fp/neural mixer) + raw 142 D2 try-revert PRESERVED.
 
@@ -494,7 +494,7 @@ This v8 commit chooses option (c) interim — A24 NOT in production dispatcher p
 **Scope**: A19 v2 encode/decode CLI exposure on `hxc_a19_cross_file_dict.hexa` (resolves aa42d4e4 verdict gap "a19_v2_aot lacks encode/decode CLI") + AOT rebuild + selftest 9/9 PASS interp+AOT byte-identical + FULL 6-repo MEASURED composite dispatcher sweep `min(a18_d631a902, a19_v2, identity)` per-file on 12.23MB / 386 files corpus.
 
 **A19 v2 CLI exposure**:
-- `/Users/ghost/core/hexa-lang/self/stdlib/hxc_a19_cross_file_dict.hexa` modified (~80 LoC added) to expose:
+- `<repo-root>/../hexa-lang/self/stdlib/hxc_a19_cross_file_dict.hexa` modified (~80 LoC added) to expose:
   - `a19_aot encode <in> <out>` — builds single-file dict from input, runs `a19_v2_encode_with_header` (raw 142 D2 try-and-revert reverts to identity on most single-file inputs since cross-file dict overhead exceeds saving)
   - `a19_aot decode <in> <out>` — detects `# a19:s2 ` header; identity passthrough when absent (the typical CLI single-file case); errors when header present without sidecar dict context (CLI single-file mode CANNOT reconstruct cross-file dict).
   - Backward compat preserved: `--selftest`, `build`, `live-fire` all still work (live-fire is the proper multi-file corpus harness).
@@ -528,9 +528,9 @@ This v8 commit chooses option (c) interim — A24 NOT in production dispatcher p
 - identity: 17/386 (4.4% — 14 small-file passthrough + 3 A18 timeouts)
 
 **A18 timeouts (3 files / 4.99MB / 40.79% byte share)**:
-- `/Users/ghost/core/nexus/growth_bus.jsonl` (2.67MB) — A18 v6-optimal O(n²) exceeds 120s
-- `/Users/ghost/core/nexus/hexa_pitfalls_log.jsonl` (2.00MB) — same O(n²) bottleneck
-- `/Users/ghost/core/nexus/state/proposals/inventory.json` (0.32MB) — same
+- `<repo-root>/../nexus/growth_bus.jsonl` (2.67MB) — A18 v6-optimal O(n²) exceeds 120s
+- `<repo-root>/../nexus/hexa_pitfalls_log.jsonl` (2.00MB) — same O(n²) bottleneck
+- `<repo-root>/../nexus/state/proposals/inventory.json` (0.32MB) — same
 
 These 3 files fell back to **identity (0% saving)**, dominating aggregate downward by ~38pp. Prior witness (`a18_batch_post_d631a902` 2026-04-28T13:30Z) explicitly noted growth_bus encode 56s on new binary and recommended per-file size gating for v6-optimal in production.
 
@@ -593,10 +593,10 @@ A19 v2 cross-file dict is a CORPUS-level algorithm. Production deployment requir
 - Or: SKIP v6 on >1MB files; rely on v1+v2+v3 dispatcher only (faster, ~1-2pp aggregate cost)
 
 **Files this cycle**:
-- `/Users/ghost/core/hexa-lang/self/stdlib/hxc_a19_cross_file_dict.hexa` (CLI exposure +80 LoC)
-- `/Users/ghost/core/hexa-lang/build/a19/a19_v2_aot` (REBUILT AOT 289008B SHA `18717143...1895a937`)
-- `/Users/ghost/core/anima/state/format_witness/2026-04-28_a19v2_cli_full_9.92mb_measured.jsonl` (NEW witness 389 records)
-- `/Users/ghost/core/anima/docs/hxc_cumulative_milestone_2026-04-28.md` (THIS DOC §17)
+- `<repo-root>/../hexa-lang/self/stdlib/hxc_a19_cross_file_dict.hexa` (CLI exposure +80 LoC)
+- `<repo-root>/../hexa-lang/build/a19/a19_v2_aot` (REBUILT AOT 289008B SHA `18717143...1895a937`)
+- `<repo-root>/state/format_witness/2026-04-28_a19v2_cli_full_9.92mb_measured.jsonl` (NEW witness 389 records)
+- `<repo-root>/docs/hxc_cumulative_milestone_2026-04-28.md` (THIS DOC §17)
 
 **Compliance**: raw 1 chflags + raw 9 hexa-only + raw 18 self-host fixpoint (interp/AOT byte-identical 9/9) + raw 47 cross-repo + raw 65+68 idempotent (386/386 byte-eq PASS) + raw 71 falsifier-preregister (F-A19-1..6 cross-file gate PRESERVED; CLI single-file mode disclosed as outside dict-corpus contract) + **raw 91 honest C3 STRICT** (THREE retractions: A19v2 +0.15pp slice→full transfer, 78.20% projection, raw 137 v8 threshold; baseline 78.05% PRESERVED as authoritative; A18 timeout characterization disclosed) + raw 137 cmix-ban MAINTAINED (deterministic dict + integer score + lex tie-break, no fp/neural) + **raw 137 v8 strengthening commit DEFERRED HARD** + raw 142 D2 try-revert (engaged 17/386 identity passthroughs).
 

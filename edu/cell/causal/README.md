@@ -42,7 +42,7 @@ hexa run edu/cell/causal/mvp_demo.hexa > shared/state/edu_causal_mvp.jsonl
 
 ## Dependency
 
-`/Users/ghost/core/hexa-lang/self/ml/phi_metric.hexa` — stage0 module loader is fragile,
+`<repo-root>/../hexa-lang/self/ml/phi_metric.hexa` — stage0 module loader is fragile,
 so we **INLINE** a minimal EI() compatible with phi_metric.effective_information()
 (byte-equivalent algorithm, not a source import).
 

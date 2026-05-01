@@ -131,11 +131,11 @@ CLI binary 로 직접** 한다:
 
 ```bash
 # selftest (deps check)
-/Users/ghost/.hx/packages/hexa/build/hexa.real run \
+<user-home>/.hx/packages/hexa/build/hexa.real run \
   anima-physics/cmos/cloud_facade_poc.hexa --selftest
 
 # full POC (4-gate evaluation)
-/Users/ghost/.hx/packages/hexa/build/hexa.real run \
+<user-home>/.hx/packages/hexa/build/hexa.real run \
   anima-physics/cmos/cloud_facade_poc.hexa
 ```
 

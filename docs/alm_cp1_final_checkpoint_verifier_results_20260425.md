@@ -35,12 +35,12 @@ checkpoint CP1 "🦴 verifier-ossification"
 
 ### Path 해석
 - `shared/verifier/run_all_verifier.hexa` 는 **roadmap-canonical 명칭**일 뿐 실재 파일은 없음 (전체 디스크 검색 결과 0건).
-- 실재 canonical orchestrator: `/Users/ghost/core/nexus/calc/alm_verify/run_all.hexa` (+ `clm_verify/run_all.hexa`).
+- 실재 canonical orchestrator: `<repo-root>/../nexus/calc/alm_verify/run_all.hexa` (+ `clm_verify/run_all.hexa`).
 - 두 파일 모두 deterministic-only sentinel 수집 + manifest.jsonl 기반 stub 호출 + SSOT JSON emit. LLM judge 0회 호출 보장.
 
 ### 실행 (ALM track)
 ```bash
-cd /Users/ghost/core/nexus
+cd <repo-root>/../nexus
 hexa run calc/alm_verify/run_all.hexa --json > /tmp/alm_verify_run.json
 # EXIT=1
 ```
@@ -80,7 +80,7 @@ checkpoint FINAL "🧠 consciousness-transplant"
 ```
 
 ### Path 해석
-- 실재 canonical: `/Users/ghost/core/nexus/consciousness/pass_gate_an11.hexa` (runtime mode, 3-condition gate).
+- 실재 canonical: `<repo-root>/../nexus/consciousness/pass_gate_an11.hexa` (runtime mode, 3-condition gate).
 - `--round latest` 는 **literal 문자열 "latest" 로 해석** — 특수 토큰 미지원.
 - `substrate_indep` clause 는 verifier-side 로 wiring **안 됨** (verifier 는 (a)/(b)/(c) 3 condition 만 측정). roadmap 의 4번째 clause 는 **운영자 외부 검증** 책임 영역 (Φ 4-path cross validation = 오늘 `1e064038` L2 6/6 PASS).
 

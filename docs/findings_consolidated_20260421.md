@@ -3,7 +3,7 @@
 **Canonical single-file SSOT** for 2026-04-21 β Learning-Free session.
 Primary = 실측 (raw#12). Speculation 은 명시. CPU micro-scale 만 측정, Qwen 14B / cross-substrate 는 unverified.
 
-- Repo: `anima` (main branch, worktree `/Users/ghost/core/anima`)
+- Repo: `anima` (main branch, worktree `<repo-root>`)
 - Date: 2026-04-21
 - Scope: drill α-ι + EXP-1/2 + Option B PoC + AN-LIX-01 + Bridge PoC + learning-free driver + flops_landauer + SSOT infra + additional categories
 
@@ -206,4 +206,4 @@ raw_strict: raw#9 raw#11 raw#15 deterministic LLM=none
 - **Push**: 금지 (push X)
 - **Raw compliance**: raw#9 hexa-only · raw#11 snake_case · raw#12 실측 primary · raw#15 no-hardcode deterministic · raw#25 atomic-write
 - **Line budget**: < 2000 lines
-- **Canonical location**: `/Users/ghost/core/anima/docs/findings_consolidated_20260421.md`
+- **Canonical location**: `<repo-root>/docs/findings_consolidated_20260421.md`

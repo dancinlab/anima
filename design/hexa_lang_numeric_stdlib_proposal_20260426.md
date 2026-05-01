@@ -8,10 +8,10 @@
 ## 0. Prior-art findings
 
 Hexa-lang already ships:
-- `/Users/ghost/core/hexa-lang/stdlib/linalg/` — BLAS-lite (`sgemm`/`sgemv`/`sdot`/`saxpy`/`snrm2`) with dual backend (`reference.hexa` pure-hexa + `ffi.hexa` native, `dispatch.hexa` selector via `HEXA_LINALG_BACKEND`). 1e-5 relative parity contract.
-- `/Users/ghost/core/hexa-lang/stdlib/math/eigen.hexa` — symmetric eigendecomposition via cyclic Jacobi (`eigh`, `eigvalsh`, `eigh_jacobi`).
-- `/Users/ghost/core/hexa-lang/stdlib/nn.hexa` — activations, numerically-stable softmax.
-- `/Users/ghost/core/anima/tool/an11_c_jsd_h_last.hexa` — precedent: jq + awk subprocess pattern, 6-digit numerical equivalence vs python.
+- `<repo-root>/../hexa-lang/stdlib/linalg/` — BLAS-lite (`sgemm`/`sgemv`/`sdot`/`saxpy`/`snrm2`) with dual backend (`reference.hexa` pure-hexa + `ffi.hexa` native, `dispatch.hexa` selector via `HEXA_LINALG_BACKEND`). 1e-5 relative parity contract.
+- `<repo-root>/../hexa-lang/stdlib/math/eigen.hexa` — symmetric eigendecomposition via cyclic Jacobi (`eigh`, `eigvalsh`, `eigh_jacobi`).
+- `<repo-root>/../hexa-lang/stdlib/nn.hexa` — activations, numerically-stable softmax.
+- `<repo-root>/tool/an11_c_jsd_h_last.hexa` — precedent: jq + awk subprocess pattern, 6-digit numerical equivalence vs python.
 
 **Gap:** no SVD, no axis-aware reductions (mean/std/argmax with `axis=`), no canonical matrix file format, no `safetensors` reader, no documented contract between hexa-lang `linalg` and downstream consumers.
 

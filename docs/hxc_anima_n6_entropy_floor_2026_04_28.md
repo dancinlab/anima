@@ -12,7 +12,7 @@ class shift required.
 ## Anchor (a29 v3 standalone, 6-repo benchmark, 2026-04-28T13:53Z)
 
 Per-repo MEASURED saving on `manifest_commit=16ff3e55`, AOT
-`/Users/ghost/core/anima/.hxc_aot/hxc_a29` sha256
+`<repo-root>/.hxc_aot/hxc_a29` sha256
 `4847917a288f2a89a996b137ae35231e03aa5bdc8ca3b1da2d0efa5156eb35e7`:
 
 | Repo               | Files | Raw bytes  | Saving %   |

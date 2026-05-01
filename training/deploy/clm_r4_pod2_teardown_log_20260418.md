@@ -41,7 +41,7 @@ Per `shared/state/clm_r4_pod2_abnormal_20260418.json`:
   - `train_r4.log` (845 B) — curriculum banner only, no training steps
   - `corpus_dl.log` (90 B)
   - `_clm_r4_launch_runner.sh` (6,224 B) — runner script
-- **Local corpus**: `/Users/ghost/Dev/anima/training/corpus_clm_r4.txt` (5.38 GB)
+- **Local corpus**: `<repo-root>/training/corpus_clm_r4.txt` (5.38 GB)
 
 ## Teardown verification
 

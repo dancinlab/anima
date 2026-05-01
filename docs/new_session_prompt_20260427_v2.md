@@ -53,7 +53,7 @@ hexa run tool/h100_auto_kill.hexa
 hexa run tool/h100_auto_kill.hexa --apply
 
 # Step 5: cron prevention (RISK: LOW)
-(crontab -l 2>/dev/null; echo "7 * * * * cd /Users/ghost/core/anima && bash tool/h100_pods_sync.bash >/dev/null 2>&1 && hexa run tool/h100_auto_kill.hexa --apply >/dev/null 2>&1") | crontab -
+(crontab -l 2>/dev/null; echo "7 * * * * cd <repo-root> && bash tool/h100_pods_sync.bash >/dev/null 2>&1 && hexa run tool/h100_auto_kill.hexa --apply >/dev/null 2>&1") | crontab -
 ```
 
 **Pod 1 (bnabak3i4r38bg = anima-sae-steer-pilot)**:

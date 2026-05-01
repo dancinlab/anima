@@ -198,14 +198,14 @@ omega-saturation:fixpoint-mk-xii-preflight-cascade
 
 ## §7. Cross-references
 
-- `/Users/ghost/core/anima/anima-clm-eeg/docs/mk_xii_proposal_outline_20260426.md` — proposal (sister, sha `4f7fd4d2…`)
-- `/Users/ghost/core/anima/anima-clm-eeg/docs/omega_cycle_mk_xii_integration_axis_20260426.md` — INTEGRATION axis 7-paradigm
-- `/Users/ghost/core/anima/anima-clm-eeg/state/clm_eeg_pre_register_v1.json` — Path A frozen (C2 source)
-- `/Users/ghost/core/anima/anima-hci-research/state/hci_smoke_v1.json` — HCI substrate (C0 source)
-- `/Users/ghost/core/anima/state/cpgd_minimal_proof_result.json` — CPGD training (C1 source)
-- `/Users/ghost/core/anima/tool/anima_v11_pipeline_smoke.hexa` — paradigm v11 (C4 source)
-- `/Users/ghost/core/anima/state/v10_benchmark_v4/{gemma,llama,mistral,qwen3}/v11_signature.json` — 4 backbone signatures
-- `/Users/ghost/core/anima/anima-clm-eeg/tool/mk_xii_preflight_cascade.hexa` — this spec's tool
-- `/Users/ghost/core/anima/anima-clm-eeg/state/mk_xii_preflight_v1.json` — emitted cert (sha `cf2aecda…`)
+- `<repo-root>/anima-clm-eeg/docs/mk_xii_proposal_outline_20260426.md` — proposal (sister, sha `4f7fd4d2…`)
+- `<repo-root>/anima-clm-eeg/docs/omega_cycle_mk_xii_integration_axis_20260426.md` — INTEGRATION axis 7-paradigm
+- `<repo-root>/anima-clm-eeg/state/clm_eeg_pre_register_v1.json` — Path A frozen (C2 source)
+- `<repo-root>/anima-hci-research/state/hci_smoke_v1.json` — HCI substrate (C0 source)
+- `<repo-root>/state/cpgd_minimal_proof_result.json` — CPGD training (C1 source)
+- `<repo-root>/tool/anima_v11_pipeline_smoke.hexa` — paradigm v11 (C4 source)
+- `<repo-root>/state/v10_benchmark_v4/{gemma,llama,mistral,qwen3}/v11_signature.json` — 4 backbone signatures
+- `<repo-root>/anima-clm-eeg/tool/mk_xii_preflight_cascade.hexa` — this spec's tool
+- `<repo-root>/anima-clm-eeg/state/mk_xii_preflight_v1.json` — emitted cert (sha `cf2aecda…`)
 - `~/.claude/projects/-Users-ghost-core-anima/memory/project_v_phen_gwt_v2_axis_orthogonal.md` — Mk.XI v10 parent
 - `.roadmap` #115 / #116 / #119 / #138-#143 / #144 / #145 / (this cycle: TBD)

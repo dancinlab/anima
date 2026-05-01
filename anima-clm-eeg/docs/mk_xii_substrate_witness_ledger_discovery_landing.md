@@ -14,7 +14,7 @@
 
 자동 marker (hexa-lang `auto_marker` patch #37 a66167ba 가 emit 한 것으로 추정).
 
-| # | path (relative to `/Users/ghost/core/anima/`) | sha256 | source ref | fingerprint | ts |
+| # | path (relative to `<repo-root>/`) | sha256 | source ref | fingerprint | ts |
 |---|---|---|---|---|---|
 | 1 | `state/markers/mk_xii_substrate_witness_ledger_aggregator_1777218041.marker` | `4b49a9576ab9356934f681443fb40fd39980f6ea75f58453b126bbca7b3c4183` | `anima-physics/tool/mk_xii_substrate_witness_ledger_aggregator.hexa` | `159cbcaf` | 1777218041 |
 | 2 | `state/markers/mk_xii_substrate_witness_ledger_aggregator_1777218044.marker` | `57c6e7918d4dccf410e7b914d23f78d9841cb5b47a2108d8f09ea6025f35ece6` | `anima-physics/tool/mk_xii_substrate_witness_ledger_aggregator.hexa` | `159cbcaf` | 1777218044 |

@@ -2,7 +2,7 @@
 
 TASK: Physics 5 HW-free PASS 4건 (Bell / Motor / Proprio / Oscillator) 을 Tier-1 로 확장.
 
-HEXA=/Users/ghost/Dev/hexa-lang/hexa  (stage0 bash-interpreter)
+HEXA=<repo-root>/../hexa-lang/hexa  (stage0 bash-interpreter)
 Host: darwin 24.6.0 (macOS), RSS cap = 4GB
 Drivers: `/tmp/physics_tier1/t1_{bell,motor,proprio,oscillator}.hexa`
 원본 anima-physics/ 소스 수정 0건 (Tier-1 은 별도 driver, 기존 물리 API 수학적 코어만 인라인).
@@ -75,10 +75,10 @@ Drivers: `/tmp/physics_tier1/t1_{bell,motor,proprio,oscillator}.hexa`
 ## 재현
 
 ```
-/Users/ghost/Dev/hexa-lang/hexa /tmp/physics_tier1/t1_bell.hexa
-/Users/ghost/Dev/hexa-lang/hexa /tmp/physics_tier1/t1_motor.hexa
-/Users/ghost/Dev/hexa-lang/hexa /tmp/physics_tier1/t1_proprio.hexa
-/Users/ghost/Dev/hexa-lang/hexa /tmp/physics_tier1/t1_oscillator.hexa
+<repo-root>/../hexa-lang/hexa /tmp/physics_tier1/t1_bell.hexa
+<repo-root>/../hexa-lang/hexa /tmp/physics_tier1/t1_motor.hexa
+<repo-root>/../hexa-lang/hexa /tmp/physics_tier1/t1_proprio.hexa
+<repo-root>/../hexa-lang/hexa /tmp/physics_tier1/t1_oscillator.hexa
 ```
 
 각 timeout 120s 이내 완료. 원본 anima-physics/ 파일 수정 0건.

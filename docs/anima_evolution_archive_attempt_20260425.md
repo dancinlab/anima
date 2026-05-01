@@ -55,7 +55,7 @@ hexa tool/proposal_archive.hexa --id 20260422-075 \
 
 ```sh
 #!/bin/sh
-'/Users/ghost/core/hexa-lang/hexa' '<module_abs>' --selftest >/tmp/...out 2>&1
+'<repo-root>/../hexa-lang/hexa' '<module_abs>' --selftest >/tmp/...out 2>&1
 echo $?
 ```
 
@@ -68,7 +68,7 @@ HEXA — self-hosted language toolchain ...
 
 **검증 reproduce**:
 ```bash
-$ /Users/ghost/core/hexa-lang/hexa docs/alm_an11_a_weight_emergent_r6_evidence_20260425.md --selftest ; echo EXIT=$?
+$ <repo-root>/../hexa-lang/hexa docs/alm_an11_a_weight_emergent_r6_evidence_20260425.md --selftest ; echo EXIT=$?
 error: unknown subcommand 'docs/alm_an11_a_weight_emergent_r6_evidence_20260425.md' ...
 EXIT=0
 ```

@@ -1,6 +1,6 @@
 # ALM r12 B3 — `hxtok.c` Implementation Handoff (2026-04-20)
 
-**Target session**: `/Users/ghost/Dev/hexa-lang` (또는 `/mac_home/dev/hexa-lang`). `anima` repo 가 아닌 **hexa-lang repo** 세션에서 실구현.
+**Target session**: `<repo-root>/../hexa-lang` (또는 `/mac_home/dev/hexa-lang`). `anima` repo 가 아닌 **hexa-lang repo** 세션에서 실구현.
 
 **Scope**: `shared/roadmaps/anima.json#destinations.dest1_alm` P4 (BPE tokenizer) — hexa Phase-5 pipeline 의 진정한 학습 loss gating 을 언블록.
 
@@ -19,9 +19,9 @@ ANIMA 프로젝트 ALM r12 P4 BPE 블로커 해소. 배경부터 읽고 구현.
 
 - 프로젝트: anima-hexa-lang 듀얼 레포. hexa-lang 은 self-hosted 언어 +
   FFI shim 공급자, anima 는 학습 파이프라인 소비자.
-- 로드맵: /Users/ghost/Dev/anima/shared/roadmaps/anima.json (4 도착지).
+- 로드맵: <repo-root>/shared/roadmaps/anima.json (4 도착지).
   dest1_alm.P4 (BPE tokenizer) 가 이 태스크 목표.
-- 스펙: /Users/ghost/Dev/anima/docs/alm_r12_hxtok_bpe_proposal_20260420.md
+- 스펙: <repo-root>/docs/alm_r12_hxtok_bpe_proposal_20260420.md
   (commit f52e9776). 섹션 1-14 전부 숙지 후 시작.
 - 이웃 패턴: self/native/hxqwen14b.c (5752 LOC), self/native/hxblas.c,
   self/native/hxnccl.c — 동일 FFI 레이아웃 + 빌드 레시피 재사용.
@@ -84,14 +84,14 @@ int    hxtok_version_v1(void);  // returns 1
      설치된 binary 사용). Python interpreter 실행 없음 (R37 준수).
    - 50 테스트 문자열 (EN/KR/code/특수문자 혼합) 을
      tokenizers-cli 로 encode → JSON 캡처.
-   - /Users/ghost/Dev/anima/shared/state/hxtok_reference_qwen25_v1.json 로
+   - <repo-root>/shared/state/hxtok_reference_qwen25_v1.json 로
      저장 (anima repo 에 commit).
    - hxtok_encode 반복 호출 → byte-exact 비교. discrepancy → 디버깅.
 
 ## 빌드
 
 Mac (로컬 검증):
-  cd /Users/ghost/Dev/hexa-lang/self/native
+  cd <repo-root>/../hexa-lang/self/native
   clang -O2 -fPIC -shared hxtok.c -o libhxtok.dylib
   install_name_tool -id @rpath/libhxtok.dylib libhxtok.dylib
 
@@ -126,11 +126,11 @@ Linux (pod 배포):
 
 ## 먼저 읽을 것
 
-1. /Users/ghost/Dev/anima/docs/alm_r12_hxtok_bpe_proposal_20260420.md
+1. <repo-root>/docs/alm_r12_hxtok_bpe_proposal_20260420.md
    (전체, 특히 §3 §5 §6 §9)
-2. /Users/ghost/Dev/anima/training/tokenizer_qwen.hexa
+2. <repo-root>/training/tokenizer_qwen.hexa
    (hexa 측 API surface — ABI 호출자 참고)
-3. /Users/ghost/Dev/hexa-lang/self/native/hxblas.c (이웃 패턴, FFI 레이
+3. <repo-root>/../hexa-lang/self/native/hxblas.c (이웃 패턴, FFI 레이
    아웃)
 4. Qwen2.5-14B-Instruct tokenizer.json (HF hub 또는 기존 pod 캐시):
    /workspace/models/Qwen2.5-14B-Instruct/tokenizer.json
@@ -141,7 +141,7 @@ Linux (pod 배포):
 - [ ] self/native/hxtok_smoke.c + smoke PASS 로그
 - [ ] tool/build_hxtok.hexa (Mac+Linux 듀얼)
 - [ ] libhxtok.dylib (Mac) + libhxtok.so (pod) — 빌드 artifact
-- [ ] /Users/ghost/Dev/anima/shared/state/hxtok_reference_qwen25_v1.json
+- [ ] <repo-root>/shared/state/hxtok_reference_qwen25_v1.json
   (reference 50개, anima repo 에 commit)
 - [ ] anima doc 갱신: alm_r12_hxtok_bpe_proposal_20260420.md §15 에 구현
   완료 주석 추가 + commit hash 링크

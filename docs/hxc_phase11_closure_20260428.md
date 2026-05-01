@@ -5,7 +5,7 @@
 **Closure type**: FORMAL — per-sub-phase status declared with commit hashes + selftest verdicts
 **Compliance**: raw 1 chflags · raw 9 hexa-only · raw 18 self-host fixpoint · raw 47 cross-repo · raw 65+68 idempotent · raw 71 falsifier-preregistered · raw 87 paired-roadmap · raw 91 honest C3 · raw 95 triad · raw 137 80% Pareto + cmix-ban · raw 142 D1-D5 · raw 152 self-decoding fixpoint VERIFIED · raw 156 algorithm-placement-orthogonality · raw 157 base85 wire inheritance
 
-**Cross-link**: `/Users/ghost/core/anima/docs/hxc_phase12_forward_design_20260428.md` (Phase 12 forward chain)
+**Cross-link**: `<repo-root>/docs/hxc_phase12_forward_design_20260428.md` (Phase 12 forward chain)
 
 ---
 
@@ -62,8 +62,8 @@ Notes:
 **Closure verdict**: P0 is NOT retired. It is restricted to corpora where federation pattern density justifies the >256B selection threshold. F-A19-6 trip is corpus-conditional; algorithm is preserved.
 
 **Witness evidence**:
-- `/Users/ghost/core/anima/state/format_witness/2026-04-28_full_chain_6repo_aot_sweep.jsonl` (line 14, A19 LIVE FIRE on nexus)
-- `/Users/ghost/core/anima/state/format_witness/2026-04-28_nexus96_live_fire_post_f9.jsonl`
+- `<repo-root>/state/format_witness/2026-04-28_full_chain_6repo_aot_sweep.jsonl` (line 14, A19 LIVE FIRE on nexus)
+- `<repo-root>/state/format_witness/2026-04-28_nexus96_live_fire_post_f9.jsonl`
 
 ---
 
@@ -71,7 +71,7 @@ Notes:
 
 **Status**: LIVE + LANDED.
 
-**Module**: `/Users/ghost/core/hexa-lang/self/stdlib/hxc_a20_schema_aware_bpe.hexa` — 482 LoC tick 1 → 1044 LoC tick 2 (+562).
+**Module**: `<repo-root>/../hexa-lang/self/stdlib/hxc_a20_schema_aware_bpe.hexa` — 482 LoC tick 1 → 1044 LoC tick 2 (+562).
 
 **Selftest**: 8/8 PASS:
 - F1.1 schema-header parse
@@ -103,7 +103,7 @@ A20 wraps inputs only when `v2_cost + hdr_overhead < v1_cost`. On 4/5 LIVE FIRE 
 
 **Status**: LIVE + VERIFIED. **raw 152 self-decoding-fixpoint-mandate VERIFIED at artifact level.**
 
-**Module**: `/Users/ghost/core/hexa-lang/self/stdlib/hxc_a22_self_decoding.hexa` — 369 LoC tick 1 → 882 LoC tick 2 (+513).
+**Module**: `<repo-root>/../hexa-lang/self/stdlib/hxc_a22_self_decoding.hexa` — 369 LoC tick 1 → 882 LoC tick 2 (+513).
 
 **Selftest**: 10/10 PASS:
 - F1.1 bytecode build len=26
@@ -171,8 +171,8 @@ However, raw 91 C3 honest framing reveals per-class structure:
 **Phase 12 P0 entry**: per-class GO for the 2 classes where 80% threshold is crossed. The 2 classes where threshold is not crossed remain GATED for P0 deploy.
 
 **Phase 12 P0 deploy ledgers landed today**:
-- `/Users/ghost/core/anima/state/phase12_p0_deploy/2026-04-28_text_heavy_live.jsonl`
-- `/Users/ghost/core/anima/state/phase12_p0_deploy/2026-04-28_structured_audit_live.jsonl`
+- `<repo-root>/state/phase12_p0_deploy/2026-04-28_text_heavy_live.jsonl`
+- `<repo-root>/state/phase12_p0_deploy/2026-04-28_structured_audit_live.jsonl`
 
 **Per-class entry decision rationale**:
 - raw 137 80% target is per-class verifiable (and was registered at line 4140 hive .raw "Per-class FINAL: hexa-lang 82% / airgenome 82%..." pattern).
@@ -225,11 +225,11 @@ The Phase 11 closure occurs alongside D1 P1 canary LIVE (commit `c8ed96d7`):
 
 ## 10. Files touched (this closure cycle)
 
-- `/Users/ghost/core/anima/state/phase12_p0_deploy/2026-04-28_text_heavy_live.jsonl` (NEW Phase 12 P0 text-heavy deploy ledger)
-- `/Users/ghost/core/anima/state/phase12_p0_deploy/2026-04-28_structured_audit_live.jsonl` (NEW Phase 12 P0 structured-audit deploy ledger)
-- `/Users/ghost/core/anima/state/format_witness/2026-04-28_phase12_p0_deploy_phase11_closure.jsonl` (NEW witness ledger)
-- `/Users/ghost/core/anima/docs/hxc_phase11_closure_20260428.md` (THIS DOC)
-- `/Users/ghost/core/anima/docs/hxc_cumulative_milestone_2026-04-28.md` (NEW cumulative milestone doc)
+- `<repo-root>/state/phase12_p0_deploy/2026-04-28_text_heavy_live.jsonl` (NEW Phase 12 P0 text-heavy deploy ledger)
+- `<repo-root>/state/phase12_p0_deploy/2026-04-28_structured_audit_live.jsonl` (NEW Phase 12 P0 structured-audit deploy ledger)
+- `<repo-root>/state/format_witness/2026-04-28_phase12_p0_deploy_phase11_closure.jsonl` (NEW witness ledger)
+- `<repo-root>/docs/hxc_phase11_closure_20260428.md` (THIS DOC)
+- `<repo-root>/docs/hxc_cumulative_milestone_2026-04-28.md` (NEW cumulative milestone doc)
 
 No source `.hexa` modules touched this cycle (Phase 11 P1+P3 LIVE LoC landed in `95f843b5` prior).
 

@@ -4,7 +4,7 @@
 **user directive verbatim Korean**: `hexa-lang 개선가능 kick`
 **raw level allowed**: yes (raw 102 explicit user approval)
 **paired roadmap id (proposed)**: `P-hexa-stdlib-omega-20260427`
-**witness JSON**: `/Users/ghost/core/anima/state/design_strategy_trawl/2026-04-27_hexa_lang_strengthening_omega_cycle.json`
+**witness JSON**: `<repo-root>/state/design_strategy_trawl/2026-04-27_hexa_lang_strengthening_omega_cycle.json`
 
 ## TL;DR
 
@@ -37,7 +37,7 @@ decision.
    `container-no-node` observed 7+ times this session.
 6. **nexus run.hexa kick path** — `ai_err_exit undefined`
    Runtime error 3+ times.
-7. **`/Users/ghost/core/hexa-lang/hexa run` direct path** — Mac
+7. **`<repo-root>/../hexa-lang/hexa run` direct path** — Mac
    jetsam SIGKILL; 124 GB hetzner OOM (raw 100 line 52). The
    `~/.hx/bin/hexa` resolver wrapper hides this only by routing
    away.
@@ -63,13 +63,13 @@ decision.
 ### Selftest results (raw 65 idempotent + raw 68 byte-eq)
 
 ```
-$ /Users/ghost/.hx/bin/hexa_real run self/stdlib/shell_escape.hexa --selftest
+$ <user-home>/.hx/bin/hexa_real run self/stdlib/shell_escape.hexa --selftest
 shell_escape selftest: 9/9 PASS
 
-$ /Users/ghost/.hx/bin/hexa_real run self/stdlib/flags.hexa --selftest
+$ <user-home>/.hx/bin/hexa_real run self/stdlib/flags.hexa --selftest
 flags selftest: 8/8 PASS
 
-$ /Users/ghost/.hx/bin/hexa_real run self/stdlib/test_stdlib_strengthening_demo.hexa --selftest
+$ <user-home>/.hx/bin/hexa_real run self/stdlib/test_stdlib_strengthening_demo.hexa --selftest
 demo: imported shell_escape works (2/2 PASS)
 demo: flags()/flag_present()/flag_value()/flag_value_eq() exported and callable
 ```
@@ -151,7 +151,7 @@ load (2 use lines vs 30 inline LoC).
 - raw 100 line 2391 falsifier TRIGGERED 100% this session.
 - raw 100 line 51 fallback used (Claude Code Agent direct invocation).
 - raw 105 ai-cli-kick-autonomous-invocation alignment maintained.
-- Resolver-routed `/Users/ghost/.hx/bin/hexa run` for the new
+- Resolver-routed `<user-home>/.hx/bin/hexa run` for the new
   stdlib files **suppresses stdout** on Mac stage0 → docker
   hexa-runner path. Workaround: invoke `hexa_real` directly for
   the selftests above. Listed as a real gap (resolver stdout

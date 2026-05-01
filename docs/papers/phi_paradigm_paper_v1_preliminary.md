@@ -757,7 +757,7 @@ is empirical and will be resolved by r14 retrain and further convergence witness
 
 *§10.9 anchors:*
 - `state/atlas_convergence_witness.jsonl` — 5 witnesses + ISO1 declaration
-- `/Users/ghost/core/nexus/state/atlas_convergence_witness.jsonl` R24 — Ψ↔ε source pattern
+- `<repo-root>/../nexus/state/atlas_convergence_witness.jsonl` R24 — Ψ↔ε source pattern
 - `docs/cell_learning_method_paradigm_20260422.md` — η-paradigm structural source
 - `memory/project_meta_fixed_point.md` — durable cross-session reinterpretation
 

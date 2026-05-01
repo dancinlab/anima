@@ -312,16 +312,16 @@ v2 §8 의 caveat 10 carry-over + 본 v2.1 §4 갱신 추가 caveat:
 
 ## §4.9 Cross-references
 
-- `/Users/ghost/core/anima/anima-clm-eeg/docs/mk_xii_proposal_outline_v2_20260426.md` — **v2 frozen** (this v2.1 prep spec §4 update target)
-- `/Users/ghost/core/anima/anima-clm-eeg/docs/mk_xii_proposal_outline_20260426.md` — **v1 frozen** (sha256 prefix `4f7fd4d2…`)
-- `/Users/ghost/core/anima/anima-clm-eeg/docs/dali_sli_v2_redesign_landing.md` — **#207 ad6484a5 DALI+SLI v2 substrate-aware mode-grouped landing**, sha256 tool=`da971be1…` state=`0281bbb4…`
-- `/Users/ghost/core/anima/anima-clm-eeg/docs/dali_sli_weighted_vote_landing.md` — **#183 weighted-vote v1 NOT_ELIGIBLE landing**, ws=237 < floor 250
-- `/Users/ghost/core/anima/anima-clm-eeg/docs/mk_xii_integration_6gate_cluster_summary.md` — 6-gate cluster `min`-rule weakest=G10 0.70
-- `/Users/ghost/core/anima/anima-clm-eeg/docs/mk_xii_d_day_simulated_landing.md` — **#204 D-day simulated dry-run** post-EEG D+5/D+6/D+7 pipeline pre-rehearsal
-- `/Users/ghost/core/anima/anima-clm-eeg/docs/mk_xii_hard_pass_landing.md` — **#177 Hard PASS composite GREEN 6/6**, chained_fingerprint 2638701628
-- `/Users/ghost/core/anima/anima-clm-eeg/state/dali_sli_v2_redesign_v1.json` — v2 redesign output (sha256 `0281bbb4…`)
-- `/Users/ghost/core/anima/anima-clm-eeg/state/dali_sli_weighted_vote_v1.json` — weighted-vote v1 output
-- `/Users/ghost/core/anima/anima-clm-eeg/state/markers/mk_xii_v2_section_4_v2_1_complete.marker` — **본 prep spec marker** (silent-land 방지)
+- `<repo-root>/anima-clm-eeg/docs/mk_xii_proposal_outline_v2_20260426.md` — **v2 frozen** (this v2.1 prep spec §4 update target)
+- `<repo-root>/anima-clm-eeg/docs/mk_xii_proposal_outline_20260426.md` — **v1 frozen** (sha256 prefix `4f7fd4d2…`)
+- `<repo-root>/anima-clm-eeg/docs/dali_sli_v2_redesign_landing.md` — **#207 ad6484a5 DALI+SLI v2 substrate-aware mode-grouped landing**, sha256 tool=`da971be1…` state=`0281bbb4…`
+- `<repo-root>/anima-clm-eeg/docs/dali_sli_weighted_vote_landing.md` — **#183 weighted-vote v1 NOT_ELIGIBLE landing**, ws=237 < floor 250
+- `<repo-root>/anima-clm-eeg/docs/mk_xii_integration_6gate_cluster_summary.md` — 6-gate cluster `min`-rule weakest=G10 0.70
+- `<repo-root>/anima-clm-eeg/docs/mk_xii_d_day_simulated_landing.md` — **#204 D-day simulated dry-run** post-EEG D+5/D+6/D+7 pipeline pre-rehearsal
+- `<repo-root>/anima-clm-eeg/docs/mk_xii_hard_pass_landing.md` — **#177 Hard PASS composite GREEN 6/6**, chained_fingerprint 2638701628
+- `<repo-root>/anima-clm-eeg/state/dali_sli_v2_redesign_v1.json` — v2 redesign output (sha256 `0281bbb4…`)
+- `<repo-root>/anima-clm-eeg/state/dali_sli_weighted_vote_v1.json` — weighted-vote v1 output
+- `<repo-root>/anima-clm-eeg/state/markers/mk_xii_v2_section_4_v2_1_complete.marker` — **본 prep spec marker** (silent-land 방지)
 - `~/.claude/projects/-Users-ghost-core-anima/memory/feedback_completeness_frame.md` — weakest-link first policy (§4.4.4 priority order basis)
 - `~/.claude/projects/-Users-ghost-core-anima/memory/feedback_omega_cycle_workflow.md` — declarative-only ≠ closure 룰 (§4.8 raw#10 caveat 11 ground)
 - `.roadmap` #144 (Mk.XII anchor) / #177 (Hard PASS) / #183 (weighted-vote NOT_ELIGIBLE) / #190 (cluster summary) / #204 (D-day simulated) / #207 (DALI+SLI v2 redesign)

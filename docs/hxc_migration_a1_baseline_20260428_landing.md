@@ -15,7 +15,7 @@ Phase 1 of the HXC (HeXa-lang Canonical) migration pilot for raw 137 (anima top-
 - raw 101 landing doc ≥60 lines (this artifact)
 
 ## Tool used
-`/Users/ghost/core/hive/tool/hxc_convert.hexa` — A1 byte-canonical schema-hash-delta converter, hexa-only per raw 9. Selftest result: 3 PASS / 1 FAIL on synthetic 3-row 2-schema fixture (hxc 134B > native 125B). The FAIL reproduces the documented A1 small-N regime: schema-header amortization needs roughly 4+ rows-per-schema to break even; below that, the header column-0 anchor outweighs the savings. This is raw 91 C3 honesty disclosure, not a tool defect.
+`<repo-root>/../hive/tool/hxc_convert.hexa` — A1 byte-canonical schema-hash-delta converter, hexa-only per raw 9. Selftest result: 3 PASS / 1 FAIL on synthetic 3-row 2-schema fixture (hxc 134B > native 125B). The FAIL reproduces the documented A1 small-N regime: schema-header amortization needs roughly 4+ rows-per-schema to break even; below that, the header column-0 anchor outweighs the savings. This is raw 91 C3 honesty disclosure, not a tool defect.
 
 ## Per-file measurement table
 
@@ -87,7 +87,7 @@ Phase 2-4 forward-spec (each is a separate subagent per "병렬 all kick"):
 - doc-only — no chflags changes, no SSOT mutation, no .raw edit; only adds to `state/format_witness/` and `docs/`
 
 ## Honest disclosures (raw 91 C3)
-- escalation_pending.jsonl was not findable in `/Users/ghost/core/anima/state/audit/`; the directory does not exist. Substituted with alm_r13_4gate_pass_subset.jsonl. The substitution is documented in the JSONL ledger row with `files_added` field.
+- escalation_pending.jsonl was not findable in `<repo-root>/state/audit/`; the directory does not exist. Substituted with alm_r13_4gate_pass_subset.jsonl. The substitution is documented in the JSONL ledger row with `files_added` field.
 - byte-weighted vs simple-mean discrepancy is structural, not a measurement artifact — atlas_convergence_witness is 74.7% of 5-file primary native-byte mass.
 - selftest 1 FAIL is small-N expected (3-row 2-schema fixture); not retried with a larger fixture in this cycle to keep the selftest fast and the failure visible.
 - Saving percentages are A1-only point measurements at 2026-04-28 file states. They will drift as files grow; 30-day re-measurement is the F1 falsifier evaluation point.
@@ -95,13 +95,13 @@ Phase 2-4 forward-spec (each is a separate subagent per "병렬 all kick"):
 - This is doc-only; no production JSONL is migrated to .hxc in phase 1. Migration is a separate cycle with backup + rollback gates.
 
 ## Cross-references
-- /Users/ghost/core/anima/state/format_witness/2026-04-28_hxc_a1_baseline_5_jsonl.jsonl (per-file measurement ledger)
-- /Users/ghost/core/anima/docs/hxc_physical_math_limit_saturation_20260427_landing.md (parent ω-cycle from 2026-04-27)
-- /Users/ghost/core/hive/tool/hxc_convert.hexa (A1 converter used)
-- /Users/ghost/core/hive/tool/hxc_pilot.hexa (Pilot A+B baseline)
-- /Users/ghost/core/hive/tool/hxc_lint.hexa (HXC byte-canonical invariant lint)
-- /Users/ghost/core/hive/state/format_witness/2026-04-26_pilots.jsonl (Pilot B baseline 27.7% reference)
-- /Users/ghost/core/hive/docs/formats/hxc.md (HXC v1 format spec, 141 lines)
+- <repo-root>/state/format_witness/2026-04-28_hxc_a1_baseline_5_jsonl.jsonl (per-file measurement ledger)
+- <repo-root>/docs/hxc_physical_math_limit_saturation_20260427_landing.md (parent ω-cycle from 2026-04-27)
+- <repo-root>/../hive/tool/hxc_convert.hexa (A1 converter used)
+- <repo-root>/../hive/tool/hxc_pilot.hexa (Pilot A+B baseline)
+- <repo-root>/../hive/tool/hxc_lint.hexa (HXC byte-canonical invariant lint)
+- <repo-root>/../hive/state/format_witness/2026-04-26_pilots.jsonl (Pilot B baseline 27.7% reference)
+- <repo-root>/../hive/docs/formats/hxc.md (HXC v1 format spec, 141 lines)
 - raw 137 (anima top-5 JSONL surface measure HXC saving)
 - raw 92 (format-ai-native-canonical) F1 falsifier
 - raw 91 C3 (honest small-N edge disclosure)

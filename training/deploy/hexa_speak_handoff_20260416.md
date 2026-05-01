@@ -75,20 +75,20 @@
 
 | 경로 | 목적 |
 |------|------|
-| `/Users/ghost/Dev/anima/anima-speak/` | HEXA-SPEAK 엔진 (21 .hexa) |
-| `/Users/ghost/Dev/anima/serving/voice_routes.hexa` | 마운트 대기 |
-| `/Users/ghost/Dev/hexa-lang/self/native/hxcuda_stft.cu` | STFT/iSTFT 구현 완료 |
-| `/Users/ghost/Dev/hexa-lang/scripts/build_hxcuda_linux.sh` | Linux .so 빌드 |
-| `/Users/ghost/Dev/anima/training/deploy/hexa_speak_e2e_bench_20260416.json` | 이전 bench 결과 |
-| `/Users/ghost/Dev/anima/training/deploy/hexa_codegen_research_20260416.md` | 전체 codegen 계획 |
-| `/Users/ghost/Dev/anima/training/deploy/hexa_speak_handoff_20260416.md` | **이 파일** |
+| `<repo-root>/anima-speak/` | HEXA-SPEAK 엔진 (21 .hexa) |
+| `<repo-root>/serving/voice_routes.hexa` | 마운트 대기 |
+| `<repo-root>/../hexa-lang/self/native/hxcuda_stft.cu` | STFT/iSTFT 구현 완료 |
+| `<repo-root>/../hexa-lang/scripts/build_hxcuda_linux.sh` | Linux .so 빌드 |
+| `<repo-root>/training/deploy/hexa_speak_e2e_bench_20260416.json` | 이전 bench 결과 |
+| `<repo-root>/training/deploy/hexa_codegen_research_20260416.md` | 전체 codegen 계획 |
+| `<repo-root>/training/deploy/hexa_speak_handoff_20260416.md` | **이 파일** |
 
 ## 환경 변수
 
 ```bash
 HEXA=$HEXA_LANG/target/release/hexa         # 메인 hexa 바이너리
 # pod 상태 확인: runpodctl pod get u01lnnu8ywt92p
-# SSH key: /Users/ghost/.runpod/ssh/RunPod-Key-Go
+# SSH key: <user-home>/.runpod/ssh/RunPod-Key-Go
 ```
 
 ## Hexa 런타임 주의사항 (memory)
@@ -117,7 +117,7 @@ runpodctl pod get u01lnnu8ywt92p
 curl https://itfl66q4z768kh-8090.proxy.runpod.net/health
 
 # HEXA-SPEAK 파일 TODO 카운트
-grep -r "TODO\|Mock\|skeleton" /Users/ghost/Dev/anima/anima-speak/ | wc -l
+grep -r "TODO\|Mock\|skeleton" <repo-root>/anima-speak/ | wc -l
 ```
 
 ## 성공 기준

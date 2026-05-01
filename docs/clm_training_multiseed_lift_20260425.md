@@ -1,7 +1,7 @@
 # CLM Training L1 Multi-seed Lift — btr-evo 7-cargo + Banach Contraction Verification
 
 > **생성일**: 2026-04-25 (loss-free, $0 CPU only, no GPU, no .roadmap edit)
-> **부모 evidence**: `state/btr_evo_6_cargo_invariants_20260421.json` (single-seed PASS) + `docs/clm_training_abstraction_layers_20260425.md` (L1 50% → multi-seed lift target) + `tool/btr_n_recurse_stability.hexa` C5_PASS (`/Users/ghost/core/nexus/state/n_recurse_10gen_20260421.json`)
+> **부모 evidence**: `state/btr_evo_6_cargo_invariants_20260421.json` (single-seed PASS) + `docs/clm_training_abstraction_layers_20260425.md` (L1 50% → multi-seed lift target) + `tool/btr_n_recurse_stability.hexa` C5_PASS (`<repo-root>/../nexus/state/n_recurse_10gen_20260421.json`)
 > **POLICY R4**: `.roadmap` 미수정. raw#9 (deterministic) · raw#11 (snake_case ai-native) · raw#12 (cherry-pick rejection 강제 — pre-register-then-measure).
 > **목적**: L1 single-seed → multi-seed N=3 cross-validation lift. Banach contraction ratio + Lyapunov exponent estimate 도출.
 
@@ -75,13 +75,13 @@ where `d_init` = 1.0e-6 (initial seed-perturbation magnitude lower bound; intege
 
 ## §1. Tool inventory
 
-`/Users/ghost/core/anima/btr_evo/`:
+`<repo-root>/btr_evo/`:
 - `4x5_compose.hexa` — btr-evo step 4 (composition)
 - `4x5_compose_fdgrad.hexa` — btr-evo step 4 (finite-difference gradient)
 - `5_holographic_ib.hexa` — btr-evo step 5 (holographic IB / KSG MI estimator)
 - `6_cargo_invariants.hexa` — btr-evo step 6 (7-cargo invariant detector)
 
-`/Users/ghost/core/anima/tool/`:
+`<repo-root>/tool/`:
 - `btr_n_recurse_stability.hexa` — Mk.VII C5 N-recurse stability driver (10-gen cascade with 7-cargo at 4 checkpoints)
 - `btr_closed_loop.hexa` — canonical btr closed-loop trajectory
 - `edu_l_ix_kuramoto_driver.hexa` — Mk.IX V_sync Kuramoto driver
@@ -109,7 +109,7 @@ where `d_init` = 1.0e-6 (initial seed-perturbation magnitude lower bound; intege
 
 ### §3.0 Environmental fix (non-seed dependent, documented for transparency)
 
-`btr_evo/6_cargo_invariants.hexa` 의 I4 check 는 `consciousness/saturation_report_mk5.json` 을 읽는다. anima working tree 에는 해당 파일이 없었고 (실제 SSOT 는 `/Users/ghost/core/nexus/consciousness/saturation_report_mk5.json` 에 거주, `exact: 81 / coverage_pct: 100.0`). 본 measurement 전에 nexus → anima 로 byte-identical 복사 수행 (`cp /Users/ghost/core/nexus/consciousness/saturation_report_mk5.json /Users/ghost/core/anima/consciousness/saturation_report_mk5.json`). 이는 seed-independent environmental restoration 이며 모든 3 seed 에 동일 영향 (cross-seed comparison 에 bias 없음).
+`btr_evo/6_cargo_invariants.hexa` 의 I4 check 는 `consciousness/saturation_report_mk5.json` 을 읽는다. anima working tree 에는 해당 파일이 없었고 (실제 SSOT 는 `<repo-root>/../nexus/consciousness/saturation_report_mk5.json` 에 거주, `exact: 81 / coverage_pct: 100.0`). 본 measurement 전에 nexus → anima 로 byte-identical 복사 수행 (`cp <repo-root>/../nexus/consciousness/saturation_report_mk5.json <repo-root>/consciousness/saturation_report_mk5.json`). 이는 seed-independent environmental restoration 이며 모든 3 seed 에 동일 영향 (cross-seed comparison 에 bias 없음).
 
 ### §3.1 Per-seed measurement (P1 verdict)
 
@@ -122,9 +122,9 @@ where `d_init` = 1.0e-6 (initial seed-perturbation magnitude lower bound; intege
 **P1 verdict**: 3/3 seeds **PASS** all 7 cargo invariants. Single-seed → multi-seed lift 의 statistical floor 충족.
 
 Artifacts:
-- `/Users/ghost/core/anima/state/btr_evo_6_cargo_invariants_20260421.json`
-- `/Users/ghost/core/anima/state/btr_evo_6_cargo_invariants_42.json`
-- `/Users/ghost/core/anima/state/btr_evo_6_cargo_invariants_1729.json`
+- `<repo-root>/state/btr_evo_6_cargo_invariants_20260421.json`
+- `<repo-root>/state/btr_evo_6_cargo_invariants_42.json`
+- `<repo-root>/state/btr_evo_6_cargo_invariants_1729.json`
 
 ### §3.2 Cross-seed Banach contraction (P2 verdict)
 

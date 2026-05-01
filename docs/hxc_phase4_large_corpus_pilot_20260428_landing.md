@@ -8,22 +8,22 @@ Phase 4-B of the HXC migration pilot for raw 137 (anima JSONL surface measure HX
 
 ## Mandate trace
 - raw 137 (anima top-N JSONL surface measure HXC saving — 80% Pareto frontier target)
-- raw 9 hexa-only (`/Users/ghost/core/hive/tool/hxc_migrate.hexa` + linked `/Users/ghost/core/hive/tool/hxc_a7_shared_dict.hexa` + `/Users/ghost/core/hive/tool/hxc_a10_varint.hexa`)
+- raw 9 hexa-only (`<repo-root>/../hive/tool/hxc_migrate.hexa` + linked `<repo-root>/../hive/tool/hxc_a7_shared_dict.hexa` + `<repo-root>/../hive/tool/hxc_a10_varint.hexa`)
 - raw 12 silent-error-ban (A7/A10 subprocess fail returns input passthrough — visible in `algorithm_chain` CSV)
 - raw 65 idempotent (re-encoding HXC through A1 yields byte-equal output)
 - raw 91 honest (4 regressions empirically documented, Phase 3 commit claim falsified)
 - raw 101 minimal (this landing doc ≥60 lines, no ornamentation)
 
 ## Tool used
-- `/Users/ghost/core/hive/tool/hxc_migrate.hexa` at commit 363db75bc — Phase 3 corpus-profile-aware conditional apply
+- `<repo-root>/../hive/tool/hxc_migrate.hexa` at commit 363db75bc — Phase 3 corpus-profile-aware conditional apply
 - selftest 12/12 PASS (raw 65 + 68 idempotent + composability all stages)
-- A10 module: `/Users/ghost/core/hive/tool/hxc_a10_varint.hexa` (subprocess delegate)
-- A7 module: `/Users/ghost/core/hive/tool/hxc_a7_shared_dict.hexa` (subprocess delegate)
+- A10 module: `<repo-root>/../hive/tool/hxc_a10_varint.hexa` (subprocess delegate)
+- A7 module: `<repo-root>/../hive/tool/hxc_a7_shared_dict.hexa` (subprocess delegate)
 - A9 module: NOT_LANDED (passthrough confirmed)
 
 ## Candidate inventory methodology
 - Required: rows ≥ 16 (A1 amortization), schemas ≥ 2 (heterogeneity), avg_rps ≥ 4 (A7 dict overhead amortization). For A10: int_ratio ≥ 30%, rows ≥ 8.
-- Search scope: `/Users/ghost/core/anima/state/*.jsonl`, `/Users/ghost/core/anima/training/*.jsonl`, max-depth 4 (excluding `.claude/worktrees/`).
+- Search scope: `<repo-root>/state/*.jsonl`, `<repo-root>/training/*.jsonl`, max-depth 4 (excluding `.claude/worktrees/`).
 - 10 candidates selected covering: large multi-schema (alm_r13_4gate / corpus_tier_tier1), small multi-schema (cross_repo_sync_log / lint_cron_history / dd_bridge / h100_precache), large single-schema (corpus_universe_extended / stimulus_factory_candidates / corpus_universe_tier_labels / stimulus_tier_graph).
 
 ## Per-file measurement table
@@ -116,13 +116,13 @@ Combined ceiling estimate: A1-fixed + A7-fixed + A10-fixed + A11 + A8 + A9 → ~
 - Honesty disclosure on tool selection: corpus_alm_70b.jsonl (90283 rows / 93MB) was not measured because expected encode_ms exceeds Phase 4-B time budget; small/medium corpora are sufficient to falsify Phase 3 claim.
 
 ## Cross-references
-- /Users/ghost/core/anima/state/format_witness/2026-04-28_phase4_large_corpus.jsonl (per-file measurement ledger)
-- /Users/ghost/core/anima/state/format_witness/2026-04-28_hxc_a1_baseline_5_jsonl.jsonl (Phase 1 baseline reference)
-- /Users/ghost/core/anima/docs/hxc_migration_a1_baseline_20260428_landing.md (Phase 1 landing doc)
-- /Users/ghost/core/anima/docs/hxc_physical_math_limit_saturation_20260427_landing.md (parent omega-cycle)
-- /Users/ghost/core/hive/tool/hxc_migrate.hexa (Phase 3 commit 363db75bc, 688 lines)
-- /Users/ghost/core/hive/tool/hxc_a7_shared_dict.hexa (A7 module, regressing)
-- /Users/ghost/core/hive/tool/hxc_a10_varint.hexa (A10 module, regressing)
+- <repo-root>/state/format_witness/2026-04-28_phase4_large_corpus.jsonl (per-file measurement ledger)
+- <repo-root>/state/format_witness/2026-04-28_hxc_a1_baseline_5_jsonl.jsonl (Phase 1 baseline reference)
+- <repo-root>/docs/hxc_migration_a1_baseline_20260428_landing.md (Phase 1 landing doc)
+- <repo-root>/docs/hxc_physical_math_limit_saturation_20260427_landing.md (parent omega-cycle)
+- <repo-root>/../hive/tool/hxc_migrate.hexa (Phase 3 commit 363db75bc, 688 lines)
+- <repo-root>/../hive/tool/hxc_a7_shared_dict.hexa (A7 module, regressing)
+- <repo-root>/../hive/tool/hxc_a10_varint.hexa (A10 module, regressing)
 - raw 137 (format-compression-pareto-frontier-80pct-shannon)
 - raw 92 (format-ai-native-canonical) F1 falsifier preregistered
 - raw 91 C3 (honest small-N + counter-evidence disclosure)

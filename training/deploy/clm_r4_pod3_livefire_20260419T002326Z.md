@@ -55,4 +55,4 @@ Fix scaffold rc parsing for Step 0 (filter SSH warnings from stderr before rc ch
 
 ## Full log
 
-/Users/ghost/Dev/anima/training/deploy/clm_r4_pod3_livefire_20260419T002116Z.log
+<repo-root>/training/deploy/clm_r4_pod3_livefire_20260419T002116Z.log

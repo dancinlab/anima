@@ -1,6 +1,6 @@
 # LZ76 verifier audit — 2026-04-28 (read-only, no commits)
 
-Target: `/Users/ghost/core/anima/anima-clm-eeg/tool/clm_eeg_lz76_real.hexa`
+Target: `<repo-root>/anima-clm-eeg/tool/clm_eeg_lz76_real.hexa`
 Reference commit: `50002d89` (HEAD-touch of this file)
 
 ## 1. Commit 50002d89 metadata
@@ -59,7 +59,7 @@ contract intact. SAFE.
 - Permissions: `-rw-r--r--@` regular file. **NOT uchg-locked** (no `uchg`/`schg` flag in `ls -lO`).
 - xattr `@` present (likely com.apple.quarantine/macOS extended attrs, not a lock).
 
-## 5. Self-test execution (read-only, used `/Users/ghost/core/hexa-lang/hexa.real`)
+## 5. Self-test execution (read-only, used `<repo-root>/../hexa-lang/hexa.real`)
 
 `--help` works. Two-pass selftest succeeded:
 

@@ -11,8 +11,8 @@
 
 | 구분 | 경로 | 비고 |
 |---|---|---|
-| 기준 (18조건) | `/Users/ghost/Dev/anima/config/verification.json` | runtime mirror, 18 criteria (V1-V18), 2026-04-16 V12 fix 포함 |
-| 미러 (stale) | `/Users/ghost/Dev/anima/ready/config/verification.json` | V12 pre-fix 상태 — **desync 발생** |
+| 기준 (18조건) | `<repo-root>/config/verification.json` | runtime mirror, 18 criteria (V1-V18), 2026-04-16 V12 fix 포함 |
+| 미러 (stale) | `<repo-root>/ready/config/verification.json` | V12 pre-fix 상태 — **desync 발생** |
 | 임계값 SSOT | `shared/config/consciousness_laws.json` → `verify_*` | thresholds_from_json 블록 |
 | 테스트 구현 | `ready/bench/bench.py` (2638-3711) | `.hexa` 포팅 대기 (tests.hexa 스텁) |
 | 감사 기록 | `shared/state/verify_audit_20260416.json` | per-criterion risk scoring |

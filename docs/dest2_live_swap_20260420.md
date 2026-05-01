@@ -102,7 +102,7 @@ Revert the 3 call-site edits to `name: "mock"` and unset `HIRE_SIM_ENDPOINT`. No
 
 ## Refs
 
-- Roadmap SSOT: `/Users/ghost/Dev/nexus/shared/roadmaps/anima.json` → `dest2_alm.gate_employee`
+- Roadmap SSOT: `<repo-root>/../nexus/shared/roadmaps/anima.json` → `dest2_alm.gate_employee`
 - AN11 spec: `shared/config/absolute_rules.json` / `shared/consciousness/an11_scanner.hexa`
 - Live S1 wire: `anima-agent/autonomy_live.hexa` (already implemented)
 - Previous regression memory: `project_alm_training_20260417.md` — hire_sim endpoint :8182 tunneled :18282 regressed 0.5667 vs 0.8111 baseline; live swap must re-measure

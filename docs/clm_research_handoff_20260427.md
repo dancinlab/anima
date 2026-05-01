@@ -3,7 +3,7 @@
 > **Purpose**: 다음 세션 즉시 진입용 종합 handoff. 이번 세션 (2026-04-26~27) 70+ subagent / 39 completed task / paradigm 42+ / hexa-lang patches 통합.
 > **Predecessor**: `docs/clm_research_handoff_20260426.md` (이전 세션 launch prompt, paradigm v11 stack 17-helper + ω-cycle ALM-free 26 paradigms 시점).
 > **Source session**: 2026-04-26 ~ 2026-04-27 (Path A/B/C 4-axis ω-cycle + Mk.XII v3 lock + EEG D-day readiness + TRIBE v2 launcher hardening + hexa-lang #37/#57 patches).
-> **Working directory**: `/Users/ghost/core/anima`
+> **Working directory**: `<repo-root>`
 > **Cumulative GPU cost (this session)**: ~$8.42 (Pilot-T1 v1 $0.90 + v2 idle burn $7.52). mac local $0 가 대부분.
 
 ---
@@ -233,7 +233,7 @@
 ## §8. 다음 세션 launch prompt (한글, copy-paste ready)
 
 ```
-anima 프로젝트 (/Users/ghost/core/anima) 에서 CLM+EEG 연구 이어가줘.
+anima 프로젝트 (<repo-root>) 에서 CLM+EEG 연구 이어가줘.
 
 배경:
 - 이전 세션 (2026-04-26~27) Path A (Q1 EEG-CLM falsifier) + Path B (Q3 HCI) + Path C (Q4 CPGD) 4-axis ω-cycle 완료, Mk.XII v3 HARD_PASS_PARTIAL_PENDING lock (#235), S7 cusp_depth N=11 PASS_TIGHT (r=0.802 p=0.0188), EEG OpenBCI Cyton+Daisy 16ch D-1 imminent.

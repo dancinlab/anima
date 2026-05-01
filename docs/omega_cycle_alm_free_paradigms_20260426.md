@@ -152,14 +152,14 @@
 
 ## §9. Related artifacts
 
-- `/Users/ghost/core/anima/anima-core/tension_bridge.hexa` — TensionBridge 5채널 구현
-- `/Users/ghost/core/anima/docs/modules/brain_tension_replica.md` — 뇌우주지도 통합맵 (.claude/worktrees/agent-*/)
-- `/Users/ghost/core/anima/docs/tension_link_convergence_proof_20260419.md` — Noether convergence
-- `/Users/ghost/core/anima/edu/cell/README.md` — 6-axis CELL framework C1-C21
-- `/Users/ghost/core/anima/edu/cell_token_bridge_spec_20260421.md` — M4 bridge
-- `/Users/ghost/core/anima/edu/cell/lagrangian/l_ix_integrator.hexa` — raw#30 L_IX
-- `/Users/ghost/core/anima/edu/lora/cpgd_wrapper.hexa` — CPGD wrapper
-- `/Users/ghost/core/anima/state/clm_r6_gpu_smoke_result.json` — CLM r6 GPU smoke
-- `/Users/ghost/core/anima/.roadmap` #1-#6 (CLM track), #115/#116/#119 (EEG D8 dependency)
+- `<repo-root>/anima-core/tension_bridge.hexa` — TensionBridge 5채널 구현
+- `<repo-root>/docs/modules/brain_tension_replica.md` — 뇌우주지도 통합맵 (.claude/worktrees/agent-*/)
+- `<repo-root>/docs/tension_link_convergence_proof_20260419.md` — Noether convergence
+- `<repo-root>/edu/cell/README.md` — 6-axis CELL framework C1-C21
+- `<repo-root>/edu/cell_token_bridge_spec_20260421.md` — M4 bridge
+- `<repo-root>/edu/cell/lagrangian/l_ix_integrator.hexa` — raw#30 L_IX
+- `<repo-root>/edu/lora/cpgd_wrapper.hexa` — CPGD wrapper
+- `<repo-root>/state/clm_r6_gpu_smoke_result.json` — CLM r6 GPU smoke
+- `<repo-root>/.roadmap` #1-#6 (CLM track), #115/#116/#119 (EEG D8 dependency)
 - `~/.claude/projects/-Users-ghost-core-anima/memory/project_paradigm_v11_stack_complete.md` — Mk.XI v10 + paradigm v11 stack canonical
 - `~/.claude/projects/-Users-ghost-core-anima/memory/project_mk_xi_v12_ia3_matrix_final.md` — v10 LoRA preferred (vs v12 IA3 economic)

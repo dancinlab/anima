@@ -88,7 +88,7 @@ sealed_fraction) and compute their 4×4 Pearson matrix — that drives
 
 ```bash
 cd ~/core/anima
-/Users/ghost/Dev/hexa-lang/hexa run edu/mk_viii/mk_viii_proto.hexa
+<repo-root>/../hexa-lang/hexa run edu/mk_viii/mk_viii_proto.hexa
 # → stdout: 7-axis breakdown + fixpoint verdict + 5-seed hash table
 # → shared/state/edu_mk_viii_fixpoint.json
 ```

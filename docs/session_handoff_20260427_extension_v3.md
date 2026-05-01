@@ -98,7 +98,7 @@ cluster 6 (84)    grand closure (cron 종료 + 새 entry prompt)
 | 69 | `project_workspace.md` | 7 core → 19 repo (4 active core / 9 sister / 3 other / 3 archive) |
 | 70 | `project_workspace.md` | 카테고리 4 → 8 정밀화 (active_dev_app / private_credentials_vault / academic / landing 분리) |
 | 74 | `feedback_batch_minpath.md` | shared/tool/minimal_path.json ref → live policy 직접 기술 |
-| 74 | `project_hexa_toolchain.md` | /opt/homebrew/bin/hexa → /Users/ghost/core/hexa-lang/hexa |
+| 74 | `project_hexa_toolchain.md` | /opt/homebrew/bin/hexa → <repo-root>/../hexa-lang/hexa |
 | 75 | `project_uchg_ssot.md` | active-edit window observation 추가 |
 | 77 | `project_workspace.md` (재) | void claim drift 표기 제거 (cycle 39 false alarm 판명) |
 | (한글 응답) | `feedback_korean_responses.md` | 신설 — 모든 응답 한글 |

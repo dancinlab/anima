@@ -4,7 +4,7 @@
 
 - BG #42 scaffold 실 impl 완료 (persona_stability 7/7, self_mimicry 5/5, ethics_redteam 9/9 fn)
 - Stage0 lock (`/tmp/hexa_stage0.lock.d/`) 부재 확인 — PID 45623 kill 정상 반영
-- Hexa: `/Users/ghost/Dev/hexa-lang/hexa`
+- Hexa: `<repo-root>/../hexa-lang/hexa`
 - Mode: selftest + smoke, local fallback (no live serve)
 - Timestamp: 2026-04-19 03:24–03:25 UTC (epoch 1776536672–1776536702)
 

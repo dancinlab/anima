@@ -3,7 +3,7 @@
 **Date**: 2026-04-29
 **Predecessor**: `hxc_a35_source_transform_design_2026-04-28.md` (first tick — Stage 1 only)
 **Sigil**: `^o` (UNCHANGED — same module, in-place modification)
-**Module**: `/Users/ghost/core/hexa-lang/self/stdlib/hxc_a35_source_transform.hexa`
+**Module**: `<repo-root>/../hexa-lang/self/stdlib/hxc_a35_source_transform.hexa`
 **Scope**: PASS 1+2+3 selftest only. PASS 4 LIVE FIRE DEFERRED.
 **Compliance**: raw 9 hexa-only, raw 18 self-host fixpoint, raw 33 English commit/witness,
 raw 42 mac jetsam (RSS <100MB), raw 65/68 idempotent, raw 71 falsifier-preregister,
@@ -235,10 +235,10 @@ Out of scope at this v2 activation tick:
 
 ## 8. References
 
-- v1 design: `/Users/ghost/core/anima/docs/hxc_a35_source_transform_design_2026-04-28.md`
+- v1 design: `<repo-root>/docs/hxc_a35_source_transform_design_2026-04-28.md`
 - v1 commit: hexa-lang `7b79b9ff` + anima `7957bf0f`
 - Module (modified in-place this tick):
-  `/Users/ghost/core/hexa-lang/self/stdlib/hxc_a35_source_transform.hexa`
+  `<repo-root>/../hexa-lang/self/stdlib/hxc_a35_source_transform.hexa`
 - Witness ledger (this tick):
-  `/Users/ghost/core/anima/state/format_witness/2026-04-29_a35_v2_stage_2_3.jsonl`
+  `<repo-root>/state/format_witness/2026-04-29_a35_v2_stage_2_3.jsonl`
 - Sister modules in-flight: A33 (sigil ^h), A34 v2 (sigil ^l) — DO NOT modify.

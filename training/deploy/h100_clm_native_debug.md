@@ -93,7 +93,7 @@ SM peak = 27%. Loss flat — **expected** — because `lr` at step 20 with `WARM
 
 ## Artifacts
 
-- `/Users/ghost/Dev/hexa-lang/self/ml/cuda_rtc.hexa` — rtc_launch/_1d explicit return (uncommitted)
+- `<repo-root>/../hexa-lang/self/ml/cuda_rtc.hexa` — rtc_launch/_1d explicit return (uncommitted)
 - Pod `/workspace/cuda_native/train_clm_native_final` — working 825KB binary
 - Pod `/workspace/cuda_native/train_clm_composed.c` — patched composed C
 - Pod `/workspace/ckpt_clm_byte_kr/final.hexackpt` — saved 99-tensor checkpoint

@@ -28,7 +28,7 @@ The 80% Phase 10 P1 natural-achievement claim is **NOT falsified by base64url wi
 
 ## 1. A17 module status (this tick)
 
-`/Users/ghost/core/hexa-lang/self/stdlib/hxc_a17_ppm_order3.hexa` — 793 lines.
+`<repo-root>/../hexa-lang/self/stdlib/hxc_a17_ppm_order3.hexa` — 793 lines.
 
 Status: **COMPLETE**.
 - PASS 1 build context tree (`a17_build`) — landed.
@@ -175,8 +175,8 @@ The earlier `hxc_wire_encoding_decision_20260428.md` table at lines 67-68 actual
 ## 9. References
 
 - prior agent: `a6b12f93` A16 LIVE FIRE n6 79KB → ~3% wire saving (FACT, A16-specific)
-- module: `/Users/ghost/core/hexa-lang/self/stdlib/hxc_a17_ppm_order3.hexa`
-- prior wire decision: `/Users/ghost/core/anima/docs/hxc_wire_encoding_decision_20260428.md` (table rows 67-68, 130-131)
-- n6 fixture: `/Users/ghost/core/anima/state/atlas_convergence_witness.jsonl` (147645 bytes, 45 lines)
-- raw 137 ladder: `/Users/ghost/core/anima/docs/hxc_phase10_master_roadmap_20260428.md`
-- raw 9 / raw 71 / raw 91 / raw 137: `/Users/ghost/core/hive/.raw`
+- module: `<repo-root>/../hexa-lang/self/stdlib/hxc_a17_ppm_order3.hexa`
+- prior wire decision: `<repo-root>/docs/hxc_wire_encoding_decision_20260428.md` (table rows 67-68, 130-131)
+- n6 fixture: `<repo-root>/state/atlas_convergence_witness.jsonl` (147645 bytes, 45 lines)
+- raw 137 ladder: `<repo-root>/docs/hxc_phase10_master_roadmap_20260428.md`
+- raw 9 / raw 71 / raw 91 / raw 137: `<repo-root>/../hive/.raw`

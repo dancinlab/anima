@@ -78,7 +78,7 @@ Next action: run same `xargs -P 12` sweep on ubu2 with identical include path, d
 ```
 # Mac: stage anima tree
 rsync -az --include='*.hexa' --include='*/' --exclude='*' \
-  /Users/ghost/Dev/anima/ hetzner:/tmp/anima_htz/
+  <repo-root>/ hetzner:/tmp/anima_htz/
 
 # htz: 8-way nice'd batch
 ssh hetzner 'cd /tmp/anima_htz && find . -name "*.hexa" -type f | \

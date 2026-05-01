@@ -8,7 +8,7 @@
 ## 1. Artifact verification
 
 ### libhxmetal.dylib
-- Path: `/Users/ghost/Dev/hexa-lang/self/native/build/libhxmetal.dylib`
+- Path: `<repo-root>/../hexa-lang/self/native/build/libhxmetal.dylib`
 - Size: **53248 bytes** (53KB — matches handoff spec)
 - Arch: Mach-O 64-bit arm64
 - Exported T-symbols: **9** (matches spec)

@@ -156,11 +156,11 @@ Wall: 3 + 10 + 7 = **20 s total** on M-series CPU (budget 30 min). Determinism: 
 ### Reproduction
 
 ```
-cd /Users/ghost/core/anima
-/Users/ghost/.hx/packages/hexa/build/hexa_stage0.real edu/lora/train_lora_cpu.hexa 1    # or 2 / 3 / all
+cd <repo-root>
+<user-home>/.hx/packages/hexa/build/hexa_stage0.real edu/lora/train_lora_cpu.hexa 1    # or 2 / 3 / all
 ```
 
-Must use `hexa_stage0.real` directly. The `/Users/ghost/shared/scripts/bin/hexa` launchd wrapper imposes a 4GB RSS soft-cap that OOM-kills the pure-hexa interpreter mid-loop; V=8/H=4 fits through the wrapper too, but direct-binary invocation is the documented path.
+Must use `hexa_stage0.real` directly. The `<user-home>/shared/scripts/bin/hexa` launchd wrapper imposes a 4GB RSS soft-cap that OOM-kills the pure-hexa interpreter mid-loop; V=8/H=4 fits through the wrapper too, but direct-binary invocation is the documented path.
 
 ### What this closure does *not* do
 

@@ -54,7 +54,7 @@ T3  := equal(poc_neuromorphic_akida_cloud/marker.json::verdict,       "LIVE_PASS
 사용자가 cloud 가입 + sibling A re-run 으로 marker 가 위 LIVE pattern 에 매칭되도록 갱신된 직후, **다음 1줄 명령**을 실행한다:
 
 ```bash
-cd /Users/ghost/core/anima && \
+cd <repo-root> && \
   ~/.hx/packages/hexa/build/hexa.real run \
     anima-physics/tool/mk_xii_substrate_witness_ledger_aggregator_v2.hexa \
     --ledger-out=state/v10_anima_physics_cloud_facade/integration_ledger/witness_ledger_v3.json \

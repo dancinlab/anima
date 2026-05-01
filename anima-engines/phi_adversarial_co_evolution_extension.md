@@ -1,8 +1,8 @@
 # phi_adversarial_co_evolution_extension — raw 109 paradigmatic anchor extension
 
-**Companion to**: `/Users/ghost/core/anima/anima-engines/phi_adversarial.hexa`
+**Companion to**: `<repo-root>/anima-engines/phi_adversarial.hexa`
 **Track**: R4 raw 109 — adversarial co-evolution probe (paradigmatic anchor)
-**Convergence**: `/Users/ghost/core/anima/convergence/r4_raw109to126_anima_propagation_plan_2026_04_28.convergence`
+**Convergence**: `<repo-root>/convergence/r4_raw109to126_anima_propagation_plan_2026_04_28.convergence`
 **Status**: SPEC (registration only — engine-side `@co_evolution_loop` annotation lands in downstream implementation cycle)
 **Mode**: hexa-only (this is a markdown spec document; no .py/.bash/.rs/.toml created)
 

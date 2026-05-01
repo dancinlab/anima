@@ -92,7 +92,7 @@ hexa run tool/anima_an11_ensemble_aggregator.hexa --selftest  # emit helper
 
 `feedback_korean_response.md` (영구 사용자 선호도):
 - 한글 응답 mandate (식별자/명령어/파일명/commit message는 영어 유지)
-- `/Users/ghost/.claude-claude8/projects/-Users-ghost-core-anima/memory/`
+- `<user-home>/.claude-claude8/projects/-Users-ghost-core-anima/memory/`
 
 ---
 

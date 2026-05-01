@@ -33,7 +33,7 @@
 | `serving/hire_sim_judge_lenient.hexa` | 332 | D6 lenient judge (serving 소유, hire_sim_lenient convergence) |
 | `serving/hire_sim_judge_lenient_test.hexa` | 353 | lenient judge closed-loop 검증 (serving) |
 
-→ training/serving 모듈 경계 유지. 각 파일은 **string 경로 const** 로 `/Users/ghost/Dev/anima/anima-agent/hire_sim_100.hexa` 참조 (compile-time use 아님) → 이동 후 경로 상수 패치 필요.
+→ training/serving 모듈 경계 유지. 각 파일은 **string 경로 const** 로 `<repo-root>/anima-agent/hire_sim_100.hexa` 참조 (compile-time use 아님) → 이동 후 경로 상수 패치 필요.
 
 ---
 
@@ -83,7 +83,7 @@ test_hire_sim_harness.hexa ── use "hire_sim_stratify" / "hire_sim_judge" / "
 
 | 파일 | 라인 | 현 값 |
 |------|------|-------|
-| `training/deploy/hire_sim_pathc.hexa` | 62 | `"/Users/ghost/Dev/anima/anima-agent/hire_sim_100.hexa"` |
+| `training/deploy/hire_sim_pathc.hexa` | 62 | `"<repo-root>/anima-agent/hire_sim_100.hexa"` |
 | `training/deploy/hire_sim_baseline.hexa` | 65 | 동일 |
 | `training/deploy/hire_sim_lenient.hexa` | 26 | `HIRE_SIM_CORPUS default ...anima-agent/hire_sim_100.hexa` |
 | `training/deploy/synth_corpus.hexa` | 40 | 동일 |

@@ -8,7 +8,7 @@ Phase 5 P5 of the HXC raw 137 80% saturation cycle. A4 is content-addressed sub-
 
 ## Mandate trace
 - raw 137 (anima top-N JSONL surface measure HXC saving — 80% Pareto frontier target)
-- raw 9 hexa-only (`/Users/ghost/core/hexa-lang/self/stdlib/hxc_a4_structural.hexa` + symlink `/Users/ghost/core/hive/tool/hxc_a4_structural.hexa`)
+- raw 9 hexa-only (`<repo-root>/../hexa-lang/self/stdlib/hxc_a4_structural.hexa` + symlink `<repo-root>/../hive/tool/hxc_a4_structural.hexa`)
 - raw 12 silent-error-ban (input containing `\x01` SOH sigil → encoder refuses with stderr message + passthrough; never silently substitutes wrong bytes on FNV collision)
 - raw 65 idempotent (`encode(decode(encode(x))) == encode(x)` — verified Test 7 on atlas_like fixture)
 - raw 68 byte-eq roundtrip (`decode(encode(v1)) == v1` byte-equal — verified 6/6 fixtures + atlas / asset_archive / cross_repo_sync_log / alm_r13 corpora)
@@ -116,9 +116,9 @@ Encode latency on atlas (146KB, 41 rows): 54ms total = 1.3ms/row in hexa interpr
 - 04:18 — F-A4-4 fires on all 4 corpora; honest landing doc (THIS file)
 
 ## File deliverables
-- `/Users/ghost/core/hexa-lang/self/stdlib/hxc_a4_structural.hexa` (969 LoC, 9-stage selftest, 4 CLI subcommands)
-- `/Users/ghost/core/hive/tool/hxc_a4_structural.hexa` → symlink to stdlib
-- `/Users/ghost/core/anima/docs/hxc_a4_structural_20260428_landing.md` (this file)
+- `<repo-root>/../hexa-lang/self/stdlib/hxc_a4_structural.hexa` (969 LoC, 9-stage selftest, 4 CLI subcommands)
+- `<repo-root>/../hive/tool/hxc_a4_structural.hexa` → symlink to stdlib
+- `<repo-root>/docs/hxc_a4_structural_20260428_landing.md` (this file)
 
 ## Forward
 A4 RETIRE-RECOMMENDED on anima surface is itself a raw-91 honest finding; raw 137 ω-saturation Task #20 is now closed-by-empirical-falsification rather than closed-by-deploy. Atlas's 0.91% ceiling is information-theoretic on the current JSONL form. Further saving on atlas requires schema redesign (e.g. content-addressing the JSON values themselves at write-time, not at HXC-encode time) — outside Phase 5 scope.

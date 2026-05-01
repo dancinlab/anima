@@ -215,7 +215,7 @@ The following PROJECTIONS are explicitly LABELED:
 ## 5. Implementation sequencing
 
 1. **This turn (current)**: Design doc lands; first-tick module lands at
-   `/Users/ghost/core/hexa-lang/self/stdlib/hxc_a19_cross_file_dict.hexa`
+   `<repo-root>/../hexa-lang/self/stdlib/hxc_a19_cross_file_dict.hexa`
    with PASS 1+2+2.5+3; selftest 5/5 PASS interp; witness ledger lands.
 2. **Subsequent turn 1**: A19 wire encoder + decoder (greedy substitution
    + escape sigil) + AOT build + LIVE FIRE on 6-repo small-file slice +
@@ -237,7 +237,7 @@ measurements that did not run.
 - A26 first-tick precedent: post-d631a902 (Phase 12 P4 sparse PPM-D)
 - A25 v2 full deployment: 53c711eb (78.05% MEASURED)
 - A18 v3-o2/v4/v6 batch land: d631a902
-- A19 federation companion: `/Users/ghost/core/hexa-lang/self/stdlib/hxc_a19_cross_file_fed.hexa`
+- A19 federation companion: `<repo-root>/../hexa-lang/self/stdlib/hxc_a19_cross_file_fed.hexa`
 - raw 137 80% Pareto frontier: hive d1c61bc91 (raw 137 v6)
 - A19 first-tick witness:
-  `/Users/ghost/core/anima/state/format_witness/2026-04-28_a19_first_tick_implementation.jsonl`
+  `<repo-root>/state/format_witness/2026-04-28_a19_first_tick_implementation.jsonl`

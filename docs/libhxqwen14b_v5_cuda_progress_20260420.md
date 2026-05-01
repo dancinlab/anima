@@ -58,7 +58,7 @@ session, so the watchdog kept seeing an old stub artifact.
 
 ## Fix
 
-`/Users/ghost/Dev/hexa-lang/tool/build_hxqwen14b_linux.hexa` updated:
+`<repo-root>/../hexa-lang/tool/build_hxqwen14b_linux.hexa` updated:
 
 1. **3-step CUDA link recipe** (when `HXQWEN14B_CUDA=1`):
    - `gcc -c -fPIC -DHXQWEN14B_CUDA hxqwen14b.c -o hxqwen14b.host.o`

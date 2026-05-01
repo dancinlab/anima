@@ -60,15 +60,15 @@
 
 ## Appendix: Key file paths
 
-- `/Users/ghost/Dev/anima/anima-agent/hire_sim_100.hexa` — 100-task corpus SSOT (line 627 gate, line 519 evaluate_task)
-- `/Users/ghost/Dev/anima/anima-agent/autonomy_loop.hexa` — decomposition/execution/critique pipeline (line 302 `run_autonomy`)
-- `/Users/ghost/Dev/anima/anima-agent/llm_claude_adapter.hexa` — Claude CLI shell-out + `claude_critique` (line 131)
-- `/Users/ghost/Dev/anima/.claude/worktrees/agent-a08992fc/anima-agent/hire_sim_runner.hexa` — stratified-30 endpoint runner (the Path E entry)
-- `/Users/ghost/Dev/anima/.claude/worktrees/agent-a08992fc/anima-agent/hire_sim_judge.hexa` — deterministic per-domain judge (keyword + length + rule-specific)
-- `/Users/ghost/Dev/anima/training/deploy/BENCHMARKS_README.md` — naming convention (labeling contradiction noted)
-- `/Users/ghost/Dev/anima/training/deploy/alm_v2_revalidation_20260416.json` — live ALM spot-check evidence (plausibly_hire_worthy=true)
-- `/Users/ghost/Dev/anima/training/deploy/ALM_v2_RC_RELEASE.md` — release checklist (item 5, open question "Tag v2.0-RC, cut GA after hire_sim ≥ 0.85?")
-- `/Users/ghost/Dev/anima/shared/papers/v2_v3_full_throttle_path_20260416_v1.md` — 5-track plan (Track A/C apply here)
-- `/Users/ghost/Dev/anima/shared/papers/v3_employee_capability_path_20260416.md` — v3.0 timeline (14-21 days bakes in hire_sim lift)
+- `<repo-root>/anima-agent/hire_sim_100.hexa` — 100-task corpus SSOT (line 627 gate, line 519 evaluate_task)
+- `<repo-root>/anima-agent/autonomy_loop.hexa` — decomposition/execution/critique pipeline (line 302 `run_autonomy`)
+- `<repo-root>/anima-agent/llm_claude_adapter.hexa` — Claude CLI shell-out + `claude_critique` (line 131)
+- `<repo-root>/.claude/worktrees/agent-a08992fc/anima-agent/hire_sim_runner.hexa` — stratified-30 endpoint runner (the Path E entry)
+- `<repo-root>/.claude/worktrees/agent-a08992fc/anima-agent/hire_sim_judge.hexa` — deterministic per-domain judge (keyword + length + rule-specific)
+- `<repo-root>/training/deploy/BENCHMARKS_README.md` — naming convention (labeling contradiction noted)
+- `<repo-root>/training/deploy/alm_v2_revalidation_20260416.json` — live ALM spot-check evidence (plausibly_hire_worthy=true)
+- `<repo-root>/training/deploy/ALM_v2_RC_RELEASE.md` — release checklist (item 5, open question "Tag v2.0-RC, cut GA after hire_sim ≥ 0.85?")
+- `<repo-root>/shared/papers/v2_v3_full_throttle_path_20260416_v1.md` — 5-track plan (Track A/C apply here)
+- `<repo-root>/shared/papers/v3_employee_capability_path_20260416.md` — v3.0 timeline (14-21 days bakes in hire_sim lift)
 
 Word count: ~490.

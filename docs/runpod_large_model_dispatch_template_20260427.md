@@ -212,7 +212,7 @@ ssh hetzner "python verify_witness.py /shared/output.json"
 **Evidence**: anima/.roadmap commit 296a9133 (tool/kick_with_trailer_wrapper.hexa, 110 LoC raw#9 hexa-only). Production test PASS on cycle 1 anima evolution witness:
 ```
 reason: joint-3-axis-ceiling-witness (raw 72): banach-fixpoint + bekenstein-bound + halting-turing-diagonal...
-fix: 1) absorb 4 tier_1 to /Users/ghost/core/nexus/state/discovery_absorption/registry.jsonl
+fix: 1) absorb 4 tier_1 to <repo-root>/../nexus/state/discovery_absorption/registry.jsonl
      2) review witness 2026-04-27_anima-evolution-metacog-...
      3) carry_forward to next cycle per witness.carry_forward_to_next_cycle field
 ```
@@ -224,7 +224,7 @@ nexus kick "<topic>" --stratum L8 --axes a,b,c
 # (sentinel emits __KICK_RESULT__ <PASS|FAIL>)
 
 # Post-hoc trailer emission
-hexa run /Users/ghost/core/anima/tool/kick_with_trailer_wrapper.hexa --selftest > /dev/null
+hexa run <repo-root>/tool/kick_with_trailer_wrapper.hexa --selftest > /dev/null
 python3 /tmp/kick_with_trailer_wrapper_helper.hexa_tmp <witness_path>
 # Emits:
 #   reason: <fixpoint_marker[:120]>

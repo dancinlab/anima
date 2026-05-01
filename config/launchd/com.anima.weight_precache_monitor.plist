@@ -18,7 +18,7 @@
         actively appending to the progress file.
 
         ACTIVATION (USER-EXPLICIT ONLY)
-            launchctl load -w /Users/ghost/core/anima/config/launchd/com.anima.weight_precache_monitor.plist
+            launchctl load -w <repo-root>/config/launchd/com.anima.weight_precache_monitor.plist
         The agent NEVER auto-loads this plist.
 
         StartInterval = 600 sec  →  10 min
@@ -27,13 +27,13 @@
 
     <key>ProgramArguments</key>
     <array>
-        <string>/Users/ghost/.hx/bin/hexa</string>
+        <string><user-home>/.hx/bin/hexa</string>
         <string>run</string>
-        <string>/Users/ghost/core/anima/tool/weight_precache_progress_monitor.hexa</string>
+        <string><repo-root>/tool/weight_precache_progress_monitor.hexa</string>
     </array>
 
     <key>WorkingDirectory</key>
-    <string>/Users/ghost/core/anima</string>
+    <string><repo-root></string>
 
     <key>StartInterval</key>
     <integer>600</integer>
@@ -42,15 +42,15 @@
     <false/>
 
     <key>StandardOutPath</key>
-    <string>/Users/ghost/core/anima/logs/weight_precache_monitor.out.log</string>
+    <string><repo-root>/logs/weight_precache_monitor.out.log</string>
 
     <key>StandardErrorPath</key>
-    <string>/Users/ghost/core/anima/logs/weight_precache_monitor.err.log</string>
+    <string><repo-root>/logs/weight_precache_monitor.err.log</string>
 
     <key>EnvironmentVariables</key>
     <dict>
         <key>PATH</key>
-        <string>/Users/ghost/.hx/bin:/opt/homebrew/bin:/usr/local/bin:/usr/bin:/bin</string>
+        <string><user-home>/.hx/bin:/opt/homebrew/bin:/usr/local/bin:/usr/bin:/bin</string>
     </dict>
 </dict>
 </plist>

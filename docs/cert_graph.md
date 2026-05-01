@@ -1,6 +1,6 @@
 <!-- AUTO-GENERATED, DO NOT EDIT — source: tool/cert_graph_gen.hexa -->
 <!-- generated: 2026-04-25T03:34:35Z -->
-<!-- cert_dir: /Users/ghost/core/anima/.meta2-cert -->
+<!-- cert_dir: <repo-root>/.meta2-cert -->
 <!-- node_count: 12 -->
 <!-- edge_count: 20 -->
 

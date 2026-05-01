@@ -27,7 +27,7 @@ Pass criterion: 10/10 sha256 match. Fail criterion: any drift → 사유 분류 
 
 `HEXA_RESOLVER_NO_REROUTE=1 hexa run …` 5회 호출 시도.
 
-**Blocker**: 현재 mac hexa toolchain (`/Users/ghost/core/hexa-lang/hexa` 0.1.0-dispatch, mtime 2026-04-26 23:33) 에서 `run` 서브커맨드가 모든 입력에 대해 `error: unknown subcommand '<file>'` 출력. 백업 (`hexa.bak_pre_auto_marker_20260426`, `hexa.bak_pre_argv_quote_fix_20260426`) 도 동일 실패. 더 오래된 백업 (`hexa.bak_pre_argv0`, `hexa.pre-cc-backup-1776738474`) 는 `stage0 interpreter not found` 별개 실패.
+**Blocker**: 현재 mac hexa toolchain (`<repo-root>/../hexa-lang/hexa` 0.1.0-dispatch, mtime 2026-04-26 23:33) 에서 `run` 서브커맨드가 모든 입력에 대해 `error: unknown subcommand '<file>'` 출력. 백업 (`hexa.bak_pre_auto_marker_20260426`, `hexa.bak_pre_argv_quote_fix_20260426`) 도 동일 실패. 더 오래된 백업 (`hexa.bak_pre_argv0`, `hexa.pre-cc-backup-1776738474`) 는 `stage0 interpreter not found` 별개 실패.
 
 minimal hello-world (`fn main() { println("hello") } main()`) 도 동일 증상 → hexa toolchain 자체 문제, 본 path A hexa 코드와 무관.
 
@@ -139,8 +139,8 @@ ab4c43f9b62922f225be7fb81be5d08bab7f9d233ba0b7a89cbca04cf5fe5462  anima-clm-eeg/
 
 ## 7. Refs
 
-- frozen v1: `/Users/ghost/core/anima/anima-clm-eeg/state/clm_eeg_pre_register_v1.json`
-- 5 hexa: `/Users/ghost/core/anima/anima-clm-eeg/tool/clm_eeg_*.hexa`
-- 4 emitted JSON: `/Users/ghost/core/anima/state/clm_eeg_*.json`
-- marker: `/Users/ghost/core/anima/anima-clm-eeg/state/markers/path_a_integrity_verify_complete.marker`
+- frozen v1: `<repo-root>/anima-clm-eeg/state/clm_eeg_pre_register_v1.json`
+- 5 hexa: `<repo-root>/anima-clm-eeg/tool/clm_eeg_*.hexa`
+- 4 emitted JSON: `<repo-root>/state/clm_eeg_*.json`
+- marker: `<repo-root>/anima-clm-eeg/state/markers/path_a_integrity_verify_complete.marker`
 - memory: `~/.claude/projects/-Users-ghost-core-anima/memory/project_clm_eeg_pre_register.md` (P1 sha 갱신 entry)

@@ -141,7 +141,7 @@ non-gated=3).
 ## 6. Constraints satisfied
 
 - [x] H100 not activated (100% plan/precheck, static closed-form calc)
-- [x] `/Users/ghost/.hx/bin/hexa` only, **no `.py`**
+- [x] `<user-home>/.hx/bin/hexa` only, **no `.py`**
 - [x] deterministic (seed=2026 recorded)
 - [x] idempotent (re-run overwrites SSOT atomically, no mutation of
       history)

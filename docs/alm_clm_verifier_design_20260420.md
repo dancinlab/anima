@@ -162,7 +162,7 @@ sentinel 로 run_all.hexa 가 pipe 에서 추출 → aggregate.
 
 ## 6. generator.hexa 설계
 
-`/Users/ghost/Dev/nexus/shared/calc/auto_stubs_gen.hexa` 와 동일 패턴:
+`<repo-root>/../nexus/shared/calc/auto_stubs_gen.hexa` 와 동일 패턴:
 
 ```
 hexa run shared/calc/alm_verify/generator.hexa --emit        # manifest → verify_<id>.hexa
@@ -273,7 +273,7 @@ Tier C (AN11 verifier 실체):
 
 ## 12. 참조
 
-- nexus 원본 패턴: `/Users/ghost/Dev/nexus/shared/calc/auto_stubs/` + `auto_stubs_gen.hexa`
+- nexus 원본 패턴: `<repo-root>/../nexus/shared/calc/auto_stubs/` + `auto_stubs_gen.hexa`
 - Canonical 역할 SSOT: `docs/alm_clm_roles_canonical_20260420.md`
 - Roadmap: `shared/roadmaps/anima.json` mandatory_common_gates
 - Corpus rebuild: `docs/alm_r13_corpus_rebuild_plan_20260420.md`

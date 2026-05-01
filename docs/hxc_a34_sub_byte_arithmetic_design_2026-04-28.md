@@ -209,7 +209,7 @@ expansion), (c) interp+AOT byte-identical (raw 18 self-host).
 
 ## 5. Module layout
 
-`/Users/ghost/core/hexa-lang/self/stdlib/hxc_a34_sub_byte_arith.hexa`
+`<repo-root>/../hexa-lang/self/stdlib/hxc_a34_sub_byte_arith.hexa`
 
 | Section                              | LoC budget |
 |--------------------------------------|------------|

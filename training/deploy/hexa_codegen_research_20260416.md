@@ -28,7 +28,7 @@ Three layers:
   - `hxlmhead` (LM head forward/backward via BLAS)
   - `hxblas` (cblas_sgemm shim)
   - `hxcuda` (fused CUDA kernels, H100 bf16 Tensor Core)
-- **Limitation:** `@link` hardcoded to absolute paths (`/Users/ghost/Dev/...`); Mac dylib only
+- **Limitation:** `@link` hardcoded to absolute paths (`<repo-root>/../...`); Mac dylib only
 
 **Critical Gap:** `codegen_c2.hexa` emits scalar operations—no loop fusion pass exists. Result: compiled `.hexa` triple-loop matmul ≈ 100× slower than PyTorch.compile.
 
@@ -48,7 +48,7 @@ Three layers:
 - Pointers marshalled as int64 (alloc_raw + ptr_write pattern)
 
 **Current Issues:**
-- Mac: `@link("/Users/ghost/Dev/anima/training/build/libhxblas.dylib")` hardcoded absolute path
+- Mac: `@link("<repo-root>/training/build/libhxblas.dylib")` hardcoded absolute path
 - Linux: No `.so` built; no `@if_platform` conditional
 - Workaround: manually set LD_LIBRARY_PATH after build
 
@@ -155,9 +155,9 @@ Task 5 (Corpus I/O) ──────────────── 1–2 weeks
 
 ## Key Reference Files
 
-- **Codegen:** `/Users/ghost/Dev/hexa-lang/self/codegen_c2.hexa` (3700 LOC, no loop fusion)
-- **Transpiler:** `/Users/ghost/Dev/hexa-lang/self/native/hexa_v2` (Linux x86_64 binary)
-- **BLAS FFI:** `/Users/ghost/Dev/anima/training/hxblas_wrapper.c` + `/Users/ghost/Dev/hexa-lang/self/native/hxblas_linux.c`
-- **LM head:** `/Users/ghost/Dev/hexa-lang/self/native/hxlmhead_linux.c` (v2 struct-args ABI)
-- **CUDA model:** `/Users/ghost/Dev/hexa-lang/scripts/build_hxcuda_linux.sh` (template for hxblas build script)
-- **Training:** `/Users/ghost/Dev/anima/training/train_clm.hexa` (2475 LOC, scale_1_5b defined at line 139)
+- **Codegen:** `<repo-root>/../hexa-lang/self/codegen_c2.hexa` (3700 LOC, no loop fusion)
+- **Transpiler:** `<repo-root>/../hexa-lang/self/native/hexa_v2` (Linux x86_64 binary)
+- **BLAS FFI:** `<repo-root>/training/hxblas_wrapper.c` + `<repo-root>/../hexa-lang/self/native/hxblas_linux.c`
+- **LM head:** `<repo-root>/../hexa-lang/self/native/hxlmhead_linux.c` (v2 struct-args ABI)
+- **CUDA model:** `<repo-root>/../hexa-lang/scripts/build_hxcuda_linux.sh` (template for hxblas build script)
+- **Training:** `<repo-root>/training/train_clm.hexa` (2475 LOC, scale_1_5b defined at line 139)

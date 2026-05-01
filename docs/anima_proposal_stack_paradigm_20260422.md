@@ -287,7 +287,7 @@ state/proposals/meta/metrics.json:
 
 ## 20. 메모
 
-본 문서 = `/Users/ghost/core/anima/docs/anima_proposal_stack_paradigm_20260422.md`.
+본 문서 = `<repo-root>/docs/anima_proposal_stack_paradigm_20260422.md`.
 세션: 2026-04-22 anima.
 관련:
 - `docs/h100_roi_improvements_20260422.md` (ROI 82 항목)

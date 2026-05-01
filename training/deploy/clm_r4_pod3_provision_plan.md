@@ -26,7 +26,7 @@ Zero-idle policy satisfied.
 | container-disk | 100 GB | matches pod2 |
 | volume | 100 GB @ `/workspace` | **CHANGED from pod2's 0 GB ephemeral** — gives R2 recovery headroom if watcher lags |
 | ports | `22/tcp` | SSH only |
-| ssh | enabled, `/Users/ghost/.runpod/ssh/RunPod-Key-Go` | same key as pod2 |
+| ssh | enabled, `<user-home>/.runpod/ssh/RunPod-Key-Go` | same key as pod2 |
 | env | `PYTHONUNBUFFERED=1`, `PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True`, `ANIMA_ROOT=/workspace/anima`, `HF_HOME=/workspace/hf_cache` | mirror pod2 |
 
 ### Cost
@@ -48,7 +48,7 @@ Note: `runpodctl 2.x` new syntax — `pod create` (not deprecated `create pod`),
 
 ## 4. Pre-flight checklist (post-create, in order)
 
-1. `ssh root@<ip> -p <port> -i /Users/ghost/.runpod/ssh/RunPod-Key-Go 'hostname && nvidia-smi -L'` — SSH + GPU alive
+1. `ssh root@<ip> -p <port> -i <user-home>/.runpod/ssh/RunPod-Key-Go 'hostname && nvidia-smi -L'` — SSH + GPU alive
 2. `ssh ... 'dd if=/dev/zero of=/workspace/_q bs=1M count=20000 status=none && rm /workspace/_q'` — MFS quota preflight (MANDATORY)
 3. `ssh ... 'apt-get install -y rclone tmux'` — tools
 4. `scp ~/.config/rclone/rclone.conf root@<ip>:/root/.config/rclone/` — R2 creds

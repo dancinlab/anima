@@ -162,4 +162,4 @@ Tegmark (2008) — 모든 mathematically consistent structure 는 물리적으�
 
 **Raw compliance:** raw#9 hexa-only · raw#10 proof-carrying (state/.meta2-cert hash refs) · raw#11 ai-native (deterministic) · raw#12 no-cherry-pick (axis 9 BORDERLINE 보존) · raw#15 no-hardcode · raw#25 atomic-write
 **Line budget:** ~180 (target met)
-**Canonical:** `/Users/ghost/core/anima/docs/anima_math_foundations_abstraction_layers_20260425.md`
+**Canonical:** `<repo-root>/docs/anima_math_foundations_abstraction_layers_20260425.md`

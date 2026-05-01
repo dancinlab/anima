@@ -11,12 +11,12 @@
 ## Blocker A — stage0 shim lock stuck
 
 - `/tmp/hexa_stage0.lock.d/pid` = **45623** (rss_probe from parallel claude session, ELAPSED 10+ min, state `S`, genuinely hung on `/tmp/rss_probe.hexa`)
-- Shim policy (`/Users/ghost/Dev/hexa-lang/build/hexa_stage0`):
+- Shim policy (`<repo-root>/../hexa-lang/build/hexa_stage0`):
   - Layer-1 mkdir lock serializes all hexa invocations (macOS no flock → mkdir atom)
   - Stale-reap requires `kill -0 holder` to fail; holder is alive → reap refuses
   - Lock wait 300s default → `exit 75 EX_TEMPFAIL`
   - Darwin bypass (`HEXA_LOCAL=1` / `HEXA_LOCAL_NO_CAP=1`) is REFUSED (post 2026-04-18 panic guard)
-- Native binary `/Users/ghost/Dev/hexa-lang/hexa` internally spawns `hexa_stage0` → same lock
+- Native binary `<repo-root>/../hexa-lang/hexa` internally spawns `hexa_stage0` → same lock
 - Conclusion: no path to run hexa on Mac while PID 45623 alive. Did not kill cross-session process.
 
 ## Blocker B — scaffolds are pure stubs (secondary)

@@ -36,7 +36,7 @@ cell 이 독립적으로 동작 가능한 subgraph 들로 분해 불가능한 �
 
 ## 10-node atlas (edu_tension_drop_proto 재사용)
 
-Source: `/Users/ghost/core/hexa-lang/tool/edu_tension_drop_proto.hexa`
+Source: `<repo-root>/../hexa-lang/tool/edu_tension_drop_proto.hexa`
 (node/edge schema, expected_W 규칙, tension_of 공식이 완전 동일 — byte 호환).
 
 - 10 nodes: `N0_count` … `N9_commutativity`

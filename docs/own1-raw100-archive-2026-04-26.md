@@ -43,8 +43,8 @@ own 1 live "anima-local: raw 9 hexa-only scope override + grandfather list"
   retired-2026-04-26 anima-agent/pyproject.toml — `git rm` (Dockerfile mandates "no python/cargo single-binary hexa runtime"; documented retire decision in docs/anima_agent_restructure_plan_20260419.md "삭제 (R37)")
   retired-2026-04-26 training/archive/launchers_alm_py_legacy_20260416/launch_*.sh (5) — Phase 1a `git rm` clear retire (already in archive/ + _legacy_ + dated)
   why anima hexa-only declared in this `.raw` (canonical anima rule SSOT). ω-rules R9.1 raw count 2494 의 99.3% (ready/1431 + .claude/1045) 는 jurisdiction-out. 실제 active source 위반 16 (P0 baseline) → 11 (Phase 1a: 5 archive launchers) → 9 (Phase 3: piper_ab_gen.sh + pyproject.toml) → 0 (Phase 4: 5 .sh ported + 2 .py reclassified gitignored-exempt 2026-04-26) → confirmed 0 with Phase 6 (p_s_projector_proto.py → .hexa Jacobi SVD). raw 9 hexa-only 100% achievement under canonical lint.
-  proof /Users/ghost/core/hive/tool/hexa_only_lint.hexa --root /Users/ghost/core/anima
-  proof-expected-output raw#9 (--root /Users/ghost/core/anima): untracked 위반 없음 — pass (exit=0)
+  proof <repo-root>/../hive/tool/hexa_only_lint.hexa --root <repo-root>
+  proof-expected-output raw#9 (--root <repo-root>): untracked 위반 없음 — pass (exit=0)
   follow-up Phase 5 (optional): port an11_c_jsd_h_last.py → .hexa (lift exempt-via-gitignore → fully hexa-native; ~1일 with jq+awk math) / hexa-lang stdlib upstream: numpy SVD equivalent (multi-month) + subprocess UX polish (some 5 .hexa scripts use awk for log/sqrt math)
   r2-followup-2026-04-26 Ω-cycle Round 2 audit (Ω-philosophy R2 + Ω-rules R2) deferred items — operational integration gaps that Round 1 missed:
   LR2.1 HIGH: 6 anima-core modules (trinity/pure_field/tension_bridge/dimension_transform/servant/topology) hardcode `comptime const PSI_ALPHA = 0.014` despite P3 JSON SSOT migration; modules bypass laws.psi_alpha() accessor. Mitigation: warmup_check_all updated to flag honest (R2 partial-fix in laws.hexa). Full fix BLOCKED on hexa Phase 2b (cross-file import system; multi-month upstream)

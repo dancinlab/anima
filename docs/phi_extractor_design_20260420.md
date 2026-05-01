@@ -278,4 +278,4 @@ Steps 4–8 require a **separate hexa-lang worktree session** (see handoff doc).
 - `docs/alm_clm_verifier_design_20260420.md` §C
 - `docs/an11_an12_rules_audit_20260419.md`
 - `docs/phi_extractor_handoff_hexa_lang.md` (sibling, C-side)
-- hxqwen14b source: `/Users/ghost/Dev/hexa-lang/self/native/hxqwen14b.c` (v5.6.6, 5752 LOC)
+- hxqwen14b source: `<repo-root>/../hexa-lang/self/native/hxqwen14b.c` (v5.6.6, 5752 LOC)

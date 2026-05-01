@@ -1,9 +1,9 @@
 # hire_sim Lenient Judge — Closed-Loop Ossification (D6)
 
 ## Artifact
-- `/Users/ghost/Dev/anima/serving/hire_sim_judge_lenient.hexa` — single-file
+- `<repo-root>/serving/hire_sim_judge_lenient.hexa` — single-file
   lenient judge (pure hexa, no imports, no network).
-- `/Users/ghost/Dev/anima/serving/hire_sim_judge_lenient_test.hexa` —
+- `<repo-root>/serving/hire_sim_judge_lenient_test.hexa` —
   20-case closed-loop verification (4 assertions).
 
 ## Rubric (reconstructed from prior runners)

@@ -426,7 +426,7 @@ split + tooling fork; out of immediate scope.
 ### 7.1 Slot-conflict honest disclosure (raw 91 C3)
 
 **Critical finding**: raw 159 is **already registered** in
-`/Users/ghost/core/hive/.raw` as:
+`<repo-root>/../hive/.raw` as:
 
 ```
 raw 159 new "hexa-lang-upstream-proposal-mandate - every work session that
@@ -564,7 +564,7 @@ content-class drift), no Phase 13 wave planned without paradigm shift.
 ## 10. Witness ledger reference
 
 This document's ω-cycle witness:
-**`/Users/ghost/core/anima/state/format_witness/2026-04-28_phase12_forward_design.jsonl`**
+**`<repo-root>/state/format_witness/2026-04-28_phase12_forward_design.jsonl`**
 
 Contents include:
 - Phase 11 closure projection rows.

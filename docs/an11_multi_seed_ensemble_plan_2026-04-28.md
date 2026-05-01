@@ -24,7 +24,7 @@ R39 mandate "single-shot ML claims require multi-seed ensemble validation" 의 �
 ### 2.1 Sequential dispatch (안전, ~3.5h wallclock)
 
 ```bash
-cd /Users/ghost/core/anima
+cd <repo-root>
 
 # Fire 1: seed=0
 AN11_SEED=0 /opt/homebrew/bin/python3 /tmp/anima_an11_fire_helper.hexa_tmp --fire \

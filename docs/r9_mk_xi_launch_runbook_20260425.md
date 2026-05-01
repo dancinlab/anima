@@ -30,14 +30,14 @@
 ### §1.3 Artifact upload
 ```
 Local → Pod (rsync via SSH):
-  /Users/ghost/core/anima/state/mk_xi_anti_map_ledger_v2_20260425.json
-  /Users/ghost/core/anima/state/mk_xi_retrieval_head_spec_20260425.json
-  /Users/ghost/core/anima/state/mk_xi_r4_monitor_spec_20260425.json
-  /Users/ghost/core/anima/state/mk_xi_architecture_spec_20260425.json
-  /Users/ghost/core/anima/tool/an11_b_v2_papo_multi_axis.hexa (V2 measurement)
-  /Users/ghost/core/anima/tool/an11_b_v_pairrank.hexa (V_pairrank measurement)
-  /Users/ghost/core/anima/tool/an11_b_v3_cps.hexa (V3 measurement, fixed-perm flag)
-  /Users/ghost/core/anima/tool/an11_b_v_sub.hexa (V_sub, NOT YET implemented — spec only)
+  <repo-root>/state/mk_xi_anti_map_ledger_v2_20260425.json
+  <repo-root>/state/mk_xi_retrieval_head_spec_20260425.json
+  <repo-root>/state/mk_xi_r4_monitor_spec_20260425.json
+  <repo-root>/state/mk_xi_architecture_spec_20260425.json
+  <repo-root>/tool/an11_b_v2_papo_multi_axis.hexa (V2 measurement)
+  <repo-root>/tool/an11_b_v_pairrank.hexa (V_pairrank measurement)
+  <repo-root>/tool/an11_b_v3_cps.hexa (V3 measurement, fixed-perm flag)
+  <repo-root>/tool/an11_b_v_sub.hexa (V_sub, NOT YET implemented — spec only)
 ```
 
 ## §2 Mk.XI training script (Python implementation, actual code 필요)

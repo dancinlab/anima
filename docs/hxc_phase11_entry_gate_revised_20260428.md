@@ -254,16 +254,16 @@ This document strengthens raw 137 with two new history entries (see `commits` fi
 
 ## 10. Reference path inventory
 
-- `/Users/ghost/core/anima/docs/hxc_phase11_design_post_a18_20260428.md` (original design, agent `a07ea3d2`, anima commit `8694b9ea`)
-- `/Users/ghost/core/anima/docs/hxc_wire_encoding_decision_20260428.md` (wire decision, agent `a6b12f93`)
-- `/Users/ghost/core/anima/docs/hxc_phase10_master_roadmap_20260428.md` (Phase 10 ladder, original)
-- `/Users/ghost/core/anima/docs/hxc_phase10_roadmap_reformulation_20260428.md` (Phase 10 wire-aware reformulation, commit `dd6112ac`)
-- `/Users/ghost/core/anima/docs/hxc_phase11_a20_design_20260428.md` (A20 schema-aware tokenizer, commit `c7243763`)
-- `/Users/ghost/core/anima/docs/hxc_phase9_a9_tokenizer_design_20260428.md` (A9 BPE design)
-- `/Users/ghost/core/anima/docs/hxc_phase9_a16_cross_file_dict_design_20260428.md` (A16 cross-file/A19-fed precursor)
-- `/Users/ghost/core/hive/.raw` lines 4079-4183 — raw 137 entry + history
-- `/Users/ghost/core/hive/.raw` lines 5092-5359 — raws 149-153 entries
-- `/Users/ghost/core/hive/.raw` lines 5034 — raw 154 placement-orthogonality
+- `<repo-root>/docs/hxc_phase11_design_post_a18_20260428.md` (original design, agent `a07ea3d2`, anima commit `8694b9ea`)
+- `<repo-root>/docs/hxc_wire_encoding_decision_20260428.md` (wire decision, agent `a6b12f93`)
+- `<repo-root>/docs/hxc_phase10_master_roadmap_20260428.md` (Phase 10 ladder, original)
+- `<repo-root>/docs/hxc_phase10_roadmap_reformulation_20260428.md` (Phase 10 wire-aware reformulation, commit `dd6112ac`)
+- `<repo-root>/docs/hxc_phase11_a20_design_20260428.md` (A20 schema-aware tokenizer, commit `c7243763`)
+- `<repo-root>/docs/hxc_phase9_a9_tokenizer_design_20260428.md` (A9 BPE design)
+- `<repo-root>/docs/hxc_phase9_a16_cross_file_dict_design_20260428.md` (A16 cross-file/A19-fed precursor)
+- `<repo-root>/../hive/.raw` lines 4079-4183 — raw 137 entry + history
+- `<repo-root>/../hive/.raw` lines 5092-5359 — raws 149-153 entries
+- `<repo-root>/../hive/.raw` lines 5034 — raw 154 placement-orthogonality
 
 raw 9 hexa-only · raw 18 self-host fixpoint · raw 47 cross-repo · raw 65/68
 idempotent · raw 71 falsifier-preregistered · raw 91 honest C3 · raw 92

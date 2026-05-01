@@ -60,9 +60,9 @@ The exemption is the contract that documents the boundary. Expiry forces
 ## CLI (cross-repo, hexa-lang owns the binary)
 
 ```
-hexa /Users/ghost/core/hexa-lang/tool/raw_exemptions.hexa list
-hexa /Users/ghost/core/hexa-lang/tool/raw_exemptions.hexa list 7
-hexa /Users/ghost/core/hexa-lang/tool/raw_exemptions.hexa check
+hexa <repo-root>/../hexa-lang/tool/raw_exemptions.hexa list
+hexa <repo-root>/../hexa-lang/tool/raw_exemptions.hexa list 7
+hexa <repo-root>/../hexa-lang/tool/raw_exemptions.hexa check
 ```
 
 Note: as of 2026-04-26, `tool/ai_native_scan.hexa` consults `raw_6.list`

@@ -10,8 +10,8 @@
 
 | Binary | Path | Size | Timestamp |
 |---|---|---|---|
-| Mac hexa_v2 | `/Users/ghost/Dev/hexa-lang/self/native/hexa_v2` | 1.22 MB | 2026-04-19 02:15 |
-| Linux hexa_v2 | `/Users/ghost/Dev/hexa-lang/build/hexa_v2_linux` | 1.51 MB | 2026-04-19 00:27 |
+| Mac hexa_v2 | `<repo-root>/../hexa-lang/self/native/hexa_v2` | 1.22 MB | 2026-04-19 02:15 |
+| Linux hexa_v2 | `<repo-root>/../hexa-lang/build/hexa_v2_linux` | 1.51 MB | 2026-04-19 00:27 |
 | Runner (ubu2) | `summer@192.168.50.60:/tmp/hexa_v2_linux` | 1.51 MB | 2026-04-19 02:25 |
 
 `shasum hexa_v2` (Mac) = `c50a35a4be47ff63d8137ac49e0c8ec12514f89b0b5f222057bc8e5c8ebe26dc`
@@ -103,9 +103,9 @@ Add to sister handoff under "post-sister landing 잔여 blocker":
 
 ## Files
 
-- TSV (now): `/Users/ghost/Dev/anima/training/deploy/smoke_full_ubu2_resmoke_20260419T024146Z.tsv` (buggy 1st run, no -I)
-- TSV (valid): `/Users/ghost/Dev/anima/training/deploy/smoke_full_ubu2_resmoke_20260419T030019Z.tsv` (with `-I /tmp`)
-- TSV (baseline): `/Users/ghost/Dev/anima/training/deploy/smoke_full_ubu2_20260418T171520Z.tsv`
+- TSV (now): `<repo-root>/training/deploy/smoke_full_ubu2_resmoke_20260419T024146Z.tsv` (buggy 1st run, no -I)
+- TSV (valid): `<repo-root>/training/deploy/smoke_full_ubu2_resmoke_20260419T030019Z.tsv` (with `-I /tmp`)
+- TSV (baseline): `<repo-root>/training/deploy/smoke_full_ubu2_20260418T171520Z.tsv`
 - ubu2 workdirs: `/tmp/anima_resmoke/`, `/tmp/resmoke_c/`, `/tmp/hexa_v2_linux`
 
 ## Timing

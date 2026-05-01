@@ -132,7 +132,7 @@ preregister section 4 below.
 
 ### PASS 2 — skeleton module (~600 LoC)
 
-`/Users/ghost/core/hexa-lang/self/stdlib/hxc_a33_cross_repo_dict.hexa`:
+`<repo-root>/../hexa-lang/self/stdlib/hxc_a33_cross_repo_dict.hexa`:
 - ring buffer primitives: `_a33_ring_init`, `_a33_ring_push`,
   `_a33_ring_get_byte_at_offset_back`.
 - match-find primitives: `_a33_find_longest_match` — at write-cursor
@@ -149,7 +149,7 @@ preregister section 4 below.
 
 ### PASS 2.5 — seed buffer construction
 
-`/Users/ghost/core/anima/state/format_witness/_a33_seed_buffer_2026-04-28.bin`:
+`<repo-root>/state/format_witness/_a33_seed_buffer_2026-04-28.bin`:
 - 256KB byte sequence built from concatenation of 5 representative files:
   - 2 anima JSONL audit files (mixed-real class, ~80KB).
   - 2 n6 stratified samples (text-heavy + json-heavy, ~120KB).
@@ -258,9 +258,9 @@ companion-document pattern.
 
 ## 8. References
 
-- entropy verdict witness: `/Users/ghost/core/anima/state/format_witness/2026-04-28_anima_n6_entropy_floor_measurement.jsonl`
-- A19 v2 sibling: `/Users/ghost/core/hexa-lang/self/stdlib/hxc_a19_cross_file_dict.hexa`
-- A29 v3 deflate baseline: `/Users/ghost/core/hexa-lang/self/stdlib/hxc_a29_deflate.hexa`
-- A18 v6 LZ-PPM 32KB window: `/Users/ghost/core/hexa-lang/self/stdlib/hxc_a18_lz_ppm_order4.hexa`
-- A30 BWT companion landing: `/Users/ghost/core/anima/state/format_witness/2026-04-28_a30_bwt_mtf_first_tick.jsonl`
-- A32 static Huffman companion landing: `/Users/ghost/core/anima/state/format_witness/2026-04-28_a32_static_huffman_first_tick.jsonl`
+- entropy verdict witness: `<repo-root>/state/format_witness/2026-04-28_anima_n6_entropy_floor_measurement.jsonl`
+- A19 v2 sibling: `<repo-root>/../hexa-lang/self/stdlib/hxc_a19_cross_file_dict.hexa`
+- A29 v3 deflate baseline: `<repo-root>/../hexa-lang/self/stdlib/hxc_a29_deflate.hexa`
+- A18 v6 LZ-PPM 32KB window: `<repo-root>/../hexa-lang/self/stdlib/hxc_a18_lz_ppm_order4.hexa`
+- A30 BWT companion landing: `<repo-root>/state/format_witness/2026-04-28_a30_bwt_mtf_first_tick.jsonl`
+- A32 static Huffman companion landing: `<repo-root>/state/format_witness/2026-04-28_a32_static_huffman_first_tick.jsonl`

@@ -141,7 +141,7 @@ brew install --cask ftdi-vcp-driver
 ### §5.3 BrainFlow venv (Step 3)
 
 ```bash
-cd /Users/ghost/core/anima
+cd <repo-root>
 ls .venv-eeg/bin/python  2>/dev/null
 # if missing:
 python3 -m venv .venv-eeg

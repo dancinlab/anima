@@ -40,7 +40,7 @@ Pick **option A** (symlink, recommended) or **option B** (script copy).
 hexa tool/secret_scanner.hexa --selftest
 
 # 2. From the repo root, symlink the canonical hook script into .git/hooks/.
-cd /Users/ghost/core/anima
+cd <repo-root>
 ln -s ../../tool/git_hooks/pre_commit_secret_scanner.bash .git/hooks/pre-commit
 
 # 3. Mark executable.
@@ -54,7 +54,7 @@ ls -la .git/hooks/pre-commit
 ### Option B — copy (no symlink — survives `.git/hooks` resets)
 
 ```bash
-cd /Users/ghost/core/anima
+cd <repo-root>
 cp tool/git_hooks/pre_commit_secret_scanner.bash .git/hooks/pre-commit
 chmod +x .git/hooks/pre-commit
 ```
@@ -76,7 +76,7 @@ chmod +x .git/hooks/pre-commit
 set -u
 
 REPO_ROOT="$(git rev-parse --show-toplevel)"
-HEXA_BIN="${HEXA_BIN:-/Users/ghost/Dev/hexa-lang/hexa}"
+HEXA_BIN="${HEXA_BIN:-<repo-root>/../hexa-lang/hexa}"
 SCANNER="$REPO_ROOT/tool/secret_scanner.hexa"
 
 # Self-check escape hatch.
@@ -106,7 +106,7 @@ esac
 ## Uninstall (USER runs these — agent must NOT)
 
 ```bash
-rm /Users/ghost/core/anima/.git/hooks/pre-commit
+rm <repo-root>/.git/hooks/pre-commit
 ```
 
 ---

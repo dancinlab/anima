@@ -14,14 +14,14 @@ Two AOT stages. No separate typecheck / stage1+stage2 split visible at this
 level — `hexa_v2` is the monolithic transpile (parse + typecheck + codegen
 fused). Interpreter path `hexa run` is unrelated to AOT.
 
-Driver: `/Users/ghost/Dev/nexus/shared/scripts/bin/hexa` delegates to
-`/Users/ghost/Dev/hexa-lang/self/native/hexa_v2 <src> <out.c>` then `clang`.
+Driver: `<repo-root>/../nexus/shared/scripts/bin/hexa` delegates to
+`<repo-root>/../hexa-lang/self/native/hexa_v2 <src> <out.c>` then `clang`.
 
 ## Method
 
 - Platform: macOS 14.x arm64, `/usr/bin/time -l`.
 - Synthetic corpus: `/tmp/hexa_prof/t{100,500,1500,3500}.hexa` (linear `x = x + i` body).
-- Real: `/Users/ghost/Dev/anima/training/train_clm.hexa` (3504 LOC).
+- Real: `<repo-root>/training/train_clm.hexa` (3504 LOC).
 - Env: `HEXA_LOCAL=1` (bypass remote dispatch, ensure local measurement).
 - Metric: `maximum resident set size` (B) and wall real (s) per stage.
 

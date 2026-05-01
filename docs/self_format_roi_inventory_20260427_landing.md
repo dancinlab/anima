@@ -4,7 +4,7 @@
 
 **Trigger:** User directive 2026-04-28 (Korean preserved verbatim) — `자체양식 반영 ROI 목록 서브에이전트 kick`. Cumulative directives: `raw level 허용`, `hexa-lang 개선가능 kick`, `keep going kick`. raw 105 ai-cli-kick-autonomous + raw 100 line 2423 kick-infra-fallback engaged after 9/9 nexus kick FAIL session-cumulative.
 
-**Witness JSON:** `/Users/ghost/core/anima/state/design_strategy_trawl/2026-04-27_self_format_roi_inventory_omega_cycle.json`
+**Witness JSON:** `<repo-root>/state/design_strategy_trawl/2026-04-27_self_format_roi_inventory_omega_cycle.json`
 
 ---
 
@@ -17,7 +17,7 @@
 | `.roadmap` | timeline ledger / P-version system | 1739 | `roadmap_multi_goal_lint` + `roadmap_progress_check` | live | all 6 super-bundle repos covered |
 | `.ext` | external resource SSOT (raw 14) | 121 | `ext_lint.hexa` (hexa-lang) | live | hive + nexus + n6 only — anima / hexa-lang / airgenome MISSING |
 | `.guide` | cold-entry navigation (raw 0 triad) | 77 | `guide_lint.hexa` | live | hive + nexus only — anima / hexa-lang / airgenome / n6 MISSING |
-| `.workspace` | super-bundle topology (raw 14) | 213 | `workspace_sync.hexa` | live | single instance at `/Users/ghost/core/.workspace` (canonical) |
+| `.workspace` | super-bundle topology (raw 14) | 213 | `workspace_sync.hexa` | live | single instance at `<repo-root>/../.workspace` (canonical) |
 | `.turn` | per-turn policy (raw 89, FORWARD-SPEC) | 66 | `turn_lint.hexa` | live (impl ramp) | hive-only (5 sister repos absent) |
 | `.end` | META-composition (raw 90, FORWARD-SPEC) | 77 | `end_composition_check.hexa` | live | hive-only (5 sister repos absent) |
 | `.meta` | engine surface (raw 43) | 209 | `meta_lint.hexa` | live | hive-only |
@@ -36,7 +36,7 @@
 - raw 95 organic compliance: **2/84 = 2.4%** baseline; D+2 of D+30 falsifier window; 60% target.
 - Kick infrastructure: **9/9 FAIL** session-cumulative (rc=3 docker port-bind / rc=0 ai_err_exit witness-not-captured / rc=76 container-no-node). raw 100 line 2422 falsifier 0.20-threshold breached at session level (5x).
 - Anima JSONL ledgers: **30 files**, top 5 by size = `alm_r13_4gate_pass_subset.jsonl 960K` / `corpus_tier_tier1_low.jsonl 956K` / `atlas_convergence_witness.jsonl 148K` / `asset_archive_log.jsonl 36K` / `log_rotation_zstd_log.jsonl 12K`.
-- Nexus kick witnesses: **124 files** at `/Users/ghost/core/nexus/design/kick/` — single-schema dominance, highest cross-repo HXC migration volume.
+- Nexus kick witnesses: **124 files** at `<repo-root>/../nexus/design/kick/` — single-schema dominance, highest cross-repo HXC migration volume.
 - Anima cycle-JSON corpus: **5 files**, 16-40KB each, schema=`omega_cycle.witness_v1` universal — high HXC ROI candidate.
 
 ---

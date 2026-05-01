@@ -96,8 +96,8 @@ Error codes unchanged (-1..-5). `RC_ERR_SHAPE_MISMATCH` (-3) trips when probe fi
 
 ## File & path refs
 
-- `/Users/ghost/Dev/anima/training/train_alm_32b_r1.hexa`
-- `/Users/ghost/Dev/anima/training/launch_alm_r11_a.hexa`
-- `/Users/ghost/Dev/anima/training/alm32b_r1_prep_report.md`
-- `/Users/ghost/Dev/hexa-lang/self/native/hxqwen14b.c`
-- `/Users/ghost/Dev/nexus/shared/convergence/dest1_dest2_ship.convergence`
+- `<repo-root>/training/train_alm_32b_r1.hexa`
+- `<repo-root>/training/launch_alm_r11_a.hexa`
+- `<repo-root>/training/alm32b_r1_prep_report.md`
+- `<repo-root>/../hexa-lang/self/native/hxqwen14b.c`
+- `<repo-root>/../nexus/shared/convergence/dest1_dest2_ship.convergence`

@@ -45,7 +45,7 @@
 
 ### 1.3 `self/std_net.hexa` existence
 
-- **Exists on main** (`/Users/ghost/Dev/hexa-lang/self/std_net.hexa`) — bytes identical to worktrees
+- **Exists on main** (`<repo-root>/../hexa-lang/self/std_net.hexa`) — bytes identical to worktrees
 - Delegates to `__builtin_net_listen` / `__builtin_net_accept` / etc.
 - **Not compiled into live `hexa_stage0`**. The C impl was in the deleted Rust `src/std_net.rs` (hexa-lang@94ffd0f self-host absorption). Need to port to `self/runtime.c` or a new `self/native/net.c` and register in stage0 builtin dispatch. (rt-32-j claim was incorrect — verified 2026-04-16.)
 
@@ -193,8 +193,8 @@ Three routes evaluated:
 
 ```bash
 # 1. Sync source
-rsync -avz --delete /Users/ghost/Dev/anima/ \
-  -e "ssh -i /Users/ghost/.runpod/ssh/RunPod-Key-Go -p 61461" \
+rsync -avz --delete <repo-root>/ \
+  -e "ssh -i <user-home>/.runpod/ssh/RunPod-Key-Go -p 61461" \
   root@64.228.13.219:/workspace/anima/
 
 # 2. Install deps

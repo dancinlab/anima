@@ -110,7 +110,7 @@ a5bbd564  chore(gitignore): runtime ephemeral 정리
 ### hexa 인터프리터 계보 재확인
 - `/opt/homebrew/bin/hexa` — silent fail (exit 0, no output)
 - `$HEXA_LANG/hexa.real` — spctl 차단으로 SIGKILL (build/hexa_stage0 unsigned)
-- **`/Users/ghost/.hx/bin/hexa` (stage1 signed)** — 정상 작동, 기본값
+- **`<user-home>/.hx/bin/hexa` (stage1 signed)** — 정상 작동, 기본값
 
 ### HERZ/ubu1/ubu2/htz 상시 가용
 - H100 stop-gate 는 specific "H100 aggressive multi-GPU" 전용

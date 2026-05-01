@@ -15,7 +15,7 @@
 
 ## 2. 환경
 
-- `hexa` 바이너리: `/Users/ghost/Dev/nexus/shared/bin/hexa` (v0.1.0-stage1)
+- `hexa` 바이너리: `<repo-root>/../nexus/shared/bin/hexa` (v0.1.0-stage1)
 - build chain: `hexa_v2` (self-host stage1) → C 소스 emit → clang -O2 → Mach-O
 - 호스트: Mac (arm64)
 - ubu / hetzner 둘 다 alive 확인 (`ssh ubu 'echo alive'` PASS, `ssh hetzner 'echo alive'` PASS) — Path D 준비됐으나 사용 불필요

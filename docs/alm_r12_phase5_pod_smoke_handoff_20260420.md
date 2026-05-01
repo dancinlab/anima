@@ -97,7 +97,7 @@ tmux attach -t r12_p3
 
 ## 4. 산출물 보고 템플릿
 
-P2/P3 실행 후 아래 JSON 을 `/Users/ghost/Dev/anima/shared/state/alm_r12_phase5_smoke_20260420.json` (또는 적절한 파일) 로 쓰고 commit:
+P2/P3 실행 후 아래 JSON 을 `<repo-root>/shared/state/alm_r12_phase5_smoke_20260420.json` (또는 적절한 파일) 로 쓰고 commit:
 
 ```json
 {

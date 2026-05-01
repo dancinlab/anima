@@ -1,13 +1,13 @@
 <!-- AUTO-GENERATED, DO NOT EDIT — source: tool/proposal_dashboard.hexa -->
 <!-- generated: 2026-04-23T01:57:15Z -->
-<!-- source_root: /Users/ghost/core/anima/state/proposals -->
+<!-- source_root: <repo-root>/state/proposals -->
 <!-- proposal_total: 86 -->
 
 # anima proposal stack dashboard (auto)
 
 _AUTO-GENERATED, DO NOT EDIT — re-run `hexa run tool/proposal_dashboard.hexa` to refresh._
 
-Generated (UTC): `2026-04-23T01:57:15Z`  Source: `/Users/ghost/core/anima/state/proposals`
+Generated (UTC): `2026-04-23T01:57:15Z`  Source: `<repo-root>/state/proposals`
 
 ## 1. summary
 

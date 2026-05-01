@@ -199,12 +199,12 @@ v3-Llama 와 v4-Llama 모두 cusp_depth=125 (layer 4 multi-family L2 peak) 로 *
 
 ## §9. Related artifacts
 
-- `/Users/ghost/core/anima/anima-hci-research/tool/cusp_depth_projector_n8.hexa` (sha256 `c7072e528e890ad1...`)
-- `/Users/ghost/core/anima/anima-hci-research/state/cusp_depth_projector_n8_v1.json` (verdict `S7_SUBSTRATE_COHERENCE_LARGE_EFFECT`, p=0.058)
-- `/Users/ghost/core/anima/anima-clm-eeg/docs/s7_cusp_depth_projection_landing.md` (predecessor N=4)
-- `/Users/ghost/core/anima/anima-hci-research/state/cusp_depth_projector_v1.json` (predecessor N=4 result)
-- `/Users/ghost/core/anima/state/v10_benchmark_v3/{mistral,qwen3,llama,gemma}/cmt.json` (4 ablation v3 trials)
-- `/Users/ghost/core/anima/state/v10_benchmark_v4/{mistral,qwen3,llama,gemma}/cmt.json` (4 ablation v4 trials)
+- `<repo-root>/anima-hci-research/tool/cusp_depth_projector_n8.hexa` (sha256 `c7072e528e890ad1...`)
+- `<repo-root>/anima-hci-research/state/cusp_depth_projector_n8_v1.json` (verdict `S7_SUBSTRATE_COHERENCE_LARGE_EFFECT`, p=0.058)
+- `<repo-root>/anima-clm-eeg/docs/s7_cusp_depth_projection_landing.md` (predecessor N=4)
+- `<repo-root>/anima-hci-research/state/cusp_depth_projector_v1.json` (predecessor N=4 result)
+- `<repo-root>/state/v10_benchmark_v3/{mistral,qwen3,llama,gemma}/cmt.json` (4 ablation v3 trials)
+- `<repo-root>/state/v10_benchmark_v4/{mistral,qwen3,llama,gemma}/cmt.json` (4 ablation v4 trials)
 - `.roadmap` #145 (cross-validate)
 
 ---

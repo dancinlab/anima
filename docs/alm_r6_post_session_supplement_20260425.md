@@ -84,7 +84,7 @@
 
 ### 4.1 실행
 ```
-cd /Users/ghost/core/anima && hexa /Users/ghost/core/hexa-lang/tool/roadmap_progress_check.hexa --out state/roadmap_progress_check_20260425.json
+cd <repo-root> && hexa <repo-root>/../hexa-lang/tool/roadmap_progress_check.hexa --out state/roadmap_progress_check_20260425.json
 ```
 
 ### 4.2 결과
@@ -129,7 +129,7 @@ P1 = 6/7 satisfied + 1/7 working-closure (좁은 해석). dffe2d61 doc 의 worki
 - `unified_eval.log`: 2026-04-21T11:18:06Z 마지막
 
 ### 5.2 P1 achievement append 가능성
-- `tool/raw_audit.hexa` 는 anima-local 에 **존재하지 않음** (canonical 은 `/Users/ghost/core/hexa-lang/tool/raw_audit.hexa` external ceremony — uchg-locked, 사용자 수동)
+- `tool/raw_audit.hexa` 는 anima-local 에 **존재하지 않음** (canonical 은 `<repo-root>/../hexa-lang/tool/raw_audit.hexa` external ceremony — uchg-locked, 사용자 수동)
 - anima-local 로그는 tool-driven (`adversarial_bench.hexa` 등 자체 append) — generic `audit_append --kind p1-achievement` API 미존재
 - 결과: append count = 0 (정책 준수, 좁은 해석 path 의 정합)
 

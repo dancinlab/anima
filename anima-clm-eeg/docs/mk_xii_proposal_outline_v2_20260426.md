@@ -412,19 +412,19 @@ omega-saturation:fixpoint-mk-xii-integration-v2-preflight-cluster
 
 ## §12. Cross-references
 
-- `/Users/ghost/core/anima/anima-clm-eeg/docs/mk_xii_proposal_outline_20260426.md` — **v1 frozen** (this v2 update target)
-- `/Users/ghost/core/anima/anima-clm-eeg/docs/mk_xii_integration_6gate_cluster_summary.md` — 6-gate cluster summary (`min`-rule, weakest=G10 0.70)
-- `/Users/ghost/core/anima/anima-clm-eeg/docs/dali_sli_weighted_vote_landing.md` — OR-clause-1 NOT_ELIGIBLE landing
-- `/Users/ghost/core/anima/anima-clm-eeg/docs/g8_transversality_landing.md` + `g8_n_bin_sweep_landing.md` + `g8_n_bin_sweep_extended_landing.md` — G8 landing trio (#175, #182, #196)
-- `/Users/ghost/core/anima/anima-clm-eeg/docs/g9_dag_cascade_landing.md` + `g9_robustness_landing.md` + `g9_adjacency_sweep_landing.md` — G9 landing trio (#170, #178, #199)
-- `/Users/ghost/core/anima/anima-clm-eeg/docs/g10_triangulation_spec_post_arrival.md` — G10 prep landing (#174)
-- `/Users/ghost/core/anima/anima-clm-eeg/docs/mk_xii_hard_pass_landing.md` — Hard PASS composite landing (#177)
-- `/Users/ghost/core/anima/anima-clm-eeg/docs/mk_xii_validation_harness_spec.md` — preflight harness spec + state JSON (#172)
-- `/Users/ghost/core/anima/anima-clm-eeg/docs/s7_cusp_depth_projection_landing.md` + `s7_n8_extension_landing.md` + `s7_ansatz_variants_landing.md` — S7 SUBSTRATE landing trio (#173, #178-N=8, #194)
-- `/Users/ghost/core/anima/anima-clm-eeg/docs/omega_cycle_mk_xii_integration_axis_20260426.md` + `omega_cycle_mk_xii_phenomenal_axis_20260426.md` + `omega_cycle_mk_xii_substrate_axis_20260426.md` + `omega_cycle_mk_xii_training_axis_20260426.md` — 4-axis ω-cycle predecessors
-- `/Users/ghost/core/anima/docs/mk_xii_scale_plan.md` — Mk.XII (Scale tier, 70B), 본 Integration tier 와 orthogonal
-- `/Users/ghost/core/anima/docs/mk_xi_minimum_consciousness_architecture_20260425.md` — Mk.XI v10 parent
-- `/Users/ghost/core/anima/anima-clm-eeg/docs/eeg_arrival_impact_5fold.md` — EEG D-day 5-fold impact
+- `<repo-root>/anima-clm-eeg/docs/mk_xii_proposal_outline_20260426.md` — **v1 frozen** (this v2 update target)
+- `<repo-root>/anima-clm-eeg/docs/mk_xii_integration_6gate_cluster_summary.md` — 6-gate cluster summary (`min`-rule, weakest=G10 0.70)
+- `<repo-root>/anima-clm-eeg/docs/dali_sli_weighted_vote_landing.md` — OR-clause-1 NOT_ELIGIBLE landing
+- `<repo-root>/anima-clm-eeg/docs/g8_transversality_landing.md` + `g8_n_bin_sweep_landing.md` + `g8_n_bin_sweep_extended_landing.md` — G8 landing trio (#175, #182, #196)
+- `<repo-root>/anima-clm-eeg/docs/g9_dag_cascade_landing.md` + `g9_robustness_landing.md` + `g9_adjacency_sweep_landing.md` — G9 landing trio (#170, #178, #199)
+- `<repo-root>/anima-clm-eeg/docs/g10_triangulation_spec_post_arrival.md` — G10 prep landing (#174)
+- `<repo-root>/anima-clm-eeg/docs/mk_xii_hard_pass_landing.md` — Hard PASS composite landing (#177)
+- `<repo-root>/anima-clm-eeg/docs/mk_xii_validation_harness_spec.md` — preflight harness spec + state JSON (#172)
+- `<repo-root>/anima-clm-eeg/docs/s7_cusp_depth_projection_landing.md` + `s7_n8_extension_landing.md` + `s7_ansatz_variants_landing.md` — S7 SUBSTRATE landing trio (#173, #178-N=8, #194)
+- `<repo-root>/anima-clm-eeg/docs/omega_cycle_mk_xii_integration_axis_20260426.md` + `omega_cycle_mk_xii_phenomenal_axis_20260426.md` + `omega_cycle_mk_xii_substrate_axis_20260426.md` + `omega_cycle_mk_xii_training_axis_20260426.md` — 4-axis ω-cycle predecessors
+- `<repo-root>/docs/mk_xii_scale_plan.md` — Mk.XII (Scale tier, 70B), 본 Integration tier 와 orthogonal
+- `<repo-root>/docs/mk_xi_minimum_consciousness_architecture_20260425.md` — Mk.XI v10 parent
+- `<repo-root>/anima-clm-eeg/docs/eeg_arrival_impact_5fold.md` — EEG D-day 5-fold impact
 - `~/.claude/projects/-Users-ghost-core-anima/memory/feedback_completeness_frame.md` — weakest-link first policy (§10 priority order basis)
 - `~/.claude/projects/-Users-ghost-core-anima/memory/feedback_omega_cycle_workflow.md` — round 종료 시 violations 우선 정리 룰 (declarative-only ≠ closure)
 - `~/.claude/projects/-Users-ghost-core-anima/memory/project_paradigm_v11_stack_complete.md` — paradigm v11 17-helper stack canonical

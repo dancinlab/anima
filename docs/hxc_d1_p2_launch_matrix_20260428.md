@@ -9,7 +9,7 @@ prep status, rollback path per consumer, F-Wave-* falsifier active list.
   - hive `f6a510bda` — D1 P1 first-pilot canary + raw 160/161 register
   - hive `be921b562` — consumer adapter LIVE (343 LoC, 12/12 selftest)
   - anima `c8ed96d7` — D1 P1 canary LIVE production deploy ledger
-**Predecessor doc**: `/Users/ghost/core/anima/docs/hxc_deploy_d1_p2_batch_proposal_20260428.md` (original batch proposal — STRENGTHENED by this matrix)
+**Predecessor doc**: `<repo-root>/docs/hxc_deploy_d1_p2_batch_proposal_20260428.md` (original batch proposal — STRENGTHENED by this matrix)
 
 ---
 
@@ -182,4 +182,4 @@ raw 1 chflags (cycle on each consumer file: audit_ledger_lint + honesty_triad_li
 
 ## 11. Witness ledger
 
-`/Users/ghost/core/anima/state/format_witness/2026-04-28_d1_p2_w1_w2_w3_forward_live_prep.jsonl`
+`<repo-root>/state/format_witness/2026-04-28_d1_p2_w1_w2_w3_forward_live_prep.jsonl`

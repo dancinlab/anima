@@ -111,4 +111,4 @@ documented in `docs/q4_generalization_verdict.md`.
 
 - `edu/lora/cpgd_wrapper.hexa` (CPGD core algorithm reference)
 - `edu/lora/cpgd_minimal_proof.hexa` (10-step minimal pattern)
-- hexa-lang 0.2.0+ runtime (`/Users/ghost/core/hexa-lang/hexa run`)
+- hexa-lang 0.2.0+ runtime (`<repo-root>/../hexa-lang/hexa run`)

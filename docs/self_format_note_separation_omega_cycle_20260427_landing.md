@@ -267,7 +267,7 @@ T1 universally applicable; T2 / T3 opt-in per repo size.
 ## 19. Next Steps
 
 1. (BLOCKED on user approval) — apply T1 implementation steps 1-5 in
-   `/Users/ghost/core/hive/.raw` (requires `os_level_lock.hexa unlock`).
+   `<repo-root>/../hive/.raw` (requires `os_level_lock.hexa unlock`).
 2. (PARALLEL) — bootstrap `state/ssot_format_audit/audit.jsonl` registry
    per raw 101 follow-up #5.
 3. (BACKLOG) — T2 dual-tier proposal as raw 101 STRENGTHEN candidate after

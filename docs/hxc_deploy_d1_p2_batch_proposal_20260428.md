@@ -6,8 +6,8 @@
   - ab3a9045 — `docs/hxc_production_deploy_plan_20260428.md` (Option C gradual rollout)
   - 40052cb1 — `docs/hxc_deploy_d1_readiness_20260428.md` (D1 P1 entry-gate PARTIAL/GO scoped)
   - hive `be921b562` — consumer adapter LIVE (343 LoC, 12/12 selftest, A1..A19 reverse decode chain)
-**Consumer adapter**: `/Users/ghost/core/hive/tool/hxc_consumer_adapter.hexa` (343 LoC LIVE)
-**Pilot consumer (D1 P1 base)**: `/Users/ghost/core/hive/tool/discovery_absorption_lint.hexa` (139 LoC, +2 LoC swap LIVE)
+**Consumer adapter**: `<repo-root>/../hive/tool/hxc_consumer_adapter.hexa` (343 LoC LIVE)
+**Pilot consumer (D1 P1 base)**: `<repo-root>/../hive/tool/discovery_absorption_lint.hexa` (139 LoC, +2 LoC swap LIVE)
 **Compliance**: raw 1 chflags · raw 9 hexa-only · raw 47 cross-repo · raw 65 + 68 idempotent · raw 71 falsifier · raw 87 paired roadmap · raw 91 honest C3 · raw 95 triad · raw 99 hive cli · raw 142 D2 try-and-revert · raw 154 hxc-deploy-rollout-mandate · raw 155 hxc-consumer-adapter-mandate
 
 ---
@@ -208,11 +208,11 @@ If the slot-collision policy demands a NEW raw, this proposal RECOMMENDS
 falsifier surface).
 
 **chflags uchg lock disclosure (raw 1 cycle, raw 91 honest C3)**: the in-place
-strengthening edit of `/Users/ghost/core/hive/.raw` is **blocked at write-time**
+strengthening edit of `<repo-root>/../hive/.raw` is **blocked at write-time**
 because the file currently has `uchg` flag set (verified via `ls -lO`). Per
 raw 1 chflags cycle discipline, the strengthening text is DRAFTED in this doc
 + witness ledger; actual .raw insert (after current line 5560) requires a
-chflags-cycle commit (`chflags nouchg /Users/ghost/core/hive/.raw` → edit →
+chflags-cycle commit (`chflags nouchg <repo-root>/../hive/.raw` → edit →
 `chflags uchg`). This is a deferred follow-up, not a missed step.
 
 **Drafted strengthening block** (to insert in raw 154 stanza after line 5560):
@@ -320,7 +320,7 @@ single-source-of-truth interface).
 
 - D1 P2 candidate consumers list — §1 (per-wave breakdown, 8 consumers across W1+W2+W3)
 - migration cost per consumer (LoC estimate) — §1 + §4
-- D1 P2 batch migration plan doc path — `/Users/ghost/core/anima/docs/hxc_deploy_d1_p2_batch_proposal_20260428.md` (this file)
+- D1 P2 batch migration plan doc path — `<repo-root>/docs/hxc_deploy_d1_p2_batch_proposal_20260428.md` (this file)
 - raw 154 strengthen + raw 160 reserve — §6
 - chain dependency matrix — §2
 - per-wave canary cadence + falsifier list — §3

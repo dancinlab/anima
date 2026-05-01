@@ -100,11 +100,11 @@ raw 37/38/39/72 all satisfied; this artifact + the witness JSON serve as the joi
 - T2 raw 109 ADD-new cites user "raw level 허용" 2026-04-27/28 as autonomous-capability authority; main thread decides registration vs review-queue per raw 102 default
 
 ## Cross-references
-- /Users/ghost/core/anima/state/design_strategy_trawl/2026-04-27_hxc_physical_math_limit_saturation_omega_cycle.json (witness JSON)
-- /Users/ghost/core/hive/docs/formats/hxc.md (HXC v1 spec, 141 lines)
-- /Users/ghost/core/hive/tool/hxc_lint.hexa (lint enforcing byte-canonical invariants)
-- /Users/ghost/core/hive/tool/hxc_pilot.hexa (Pilot A + B byte-only)
-- /Users/ghost/core/hive/state/format_witness/2026-04-26_pilots.jsonl (baseline pilot ledger)
-- /Users/ghost/core/hive/state/format_witness/sample_v1.hxc (sample HXC corpus, 3 schemas + 7 rows)
-- /Users/ghost/core/hive/.raw raw 92 (format-ai-native-canonical), raw 93 (algorithm-ai-native-required-witness), raw 72 (ordinal-theoretic-ceiling-witness)
-- /Users/ghost/core/hive/state/design_strategy_trawl/2026-04-26_post_json_ai_native_omega_cycle.json (parent ω-cycle from 2026-04-26)
+- <repo-root>/state/design_strategy_trawl/2026-04-27_hxc_physical_math_limit_saturation_omega_cycle.json (witness JSON)
+- <repo-root>/../hive/docs/formats/hxc.md (HXC v1 spec, 141 lines)
+- <repo-root>/../hive/tool/hxc_lint.hexa (lint enforcing byte-canonical invariants)
+- <repo-root>/../hive/tool/hxc_pilot.hexa (Pilot A + B byte-only)
+- <repo-root>/../hive/state/format_witness/2026-04-26_pilots.jsonl (baseline pilot ledger)
+- <repo-root>/../hive/state/format_witness/sample_v1.hxc (sample HXC corpus, 3 schemas + 7 rows)
+- <repo-root>/../hive/.raw raw 92 (format-ai-native-canonical), raw 93 (algorithm-ai-native-required-witness), raw 72 (ordinal-theoretic-ceiling-witness)
+- <repo-root>/../hive/state/design_strategy_trawl/2026-04-26_post_json_ai_native_omega_cycle.json (parent ω-cycle from 2026-04-26)

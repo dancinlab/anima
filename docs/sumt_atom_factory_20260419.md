@@ -123,8 +123,8 @@ Run command:
 
 ```
 HEXA_STAGE0_LOCK_WAIT=2400 HEXA_LOCAL=1 HEXA_NO_LAUNCHD=1 \
-  /Users/ghost/Dev/nexus/shared/bin/hexa run \
-  /Users/ghost/Dev/anima/training/sumt_atom_factory.hexa
+  <repo-root>/../nexus/shared/bin/hexa run \
+  <repo-root>/training/sumt_atom_factory.hexa
 ```
 
 Configuration: `MAIN_ITERATIONS=100`, `tier_target=6`, `seed_start=4919`.

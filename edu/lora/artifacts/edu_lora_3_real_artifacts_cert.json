@@ -3,8 +3,8 @@
   "closure": "edu_lora_3_real_artifacts",
   "date": "2026-04-21",
   "policy": "cpu_only pure_hexa analytic_sgd no_synthetic_fallback",
-  "runtime": "/Users/ghost/.hx/packages/hexa/build/hexa_stage0.real (direct, bypasses launchd RSS cap)",
-  "corpus": "/Users/ghost/core/anima/experiments/alm_r13/seed_corpus_10mb/corpus.jsonl (1826785 bytes, 1621 lines)",
+  "runtime": "<user-home>/.hx/packages/hexa/build/hexa_stage0.real (direct, bypasses launchd RSS cap)",
+  "corpus": "<repo-root>/experiments/alm_r13/seed_corpus_10mb/corpus.jsonl (1826785 bytes, 1621 lines)",
   "model": {
     "task": "char-level bigram next-class prediction (V=8 byte-class folding)",
     "base": "emb[V,H] + W_out[H,V] + b[V], tanh hidden, softmax+CE",
@@ -55,7 +55,7 @@
     "interpretation": "all three post-LoRA CE is strictly lower than frozen-base CE on the fine-tune slice — adapter weights are NOT the zero initialization any more. SHA256 of serialized (A, B) distinguishes trained-checkpoint from zero-init."
   },
   "reproduction": {
-    "command": "cd /Users/ghost/core/anima && /Users/ghost/.hx/packages/hexa/build/hexa_stage0.real edu/lora/train_lora_cpu.hexa <run_id>",
+    "command": "cd <repo-root> && <user-home>/.hx/packages/hexa/build/hexa_stage0.real edu/lora/train_lora_cpu.hexa <run_id>",
     "run_id_values": ["1", "2", "3", "all"],
     "determinism_note": "LCG seed fixed per run (base_seed, lora_seed). Same seeds + same corpus bytes → same SHA256.",
     "cpu_budget_measured": "run1=3s, run2=10s, run3=7s, total < 30s wall — well under 30 min target",

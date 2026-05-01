@@ -7,7 +7,7 @@ Status: PROPOSE-ONLY (raw#20 — do NOT auto-implement)
 ---
 
 ## Title
-secret_scan: MEDIUM entropy hit in /Users/ghost/core/anima/config/pr_preview_env_spec.json
+secret_scan: MEDIUM entropy hit in <repo-root>/config/pr_preview_env_spec.json
 
 ## Kind
 fix

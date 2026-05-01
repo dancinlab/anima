@@ -180,9 +180,9 @@ captured as own forward item in `state/format_witness/` ledger).
 
 ## 5. Files touched (this commit set)
 
-- `/Users/ghost/core/hexa-lang/self/stdlib/hxc_a20_schema_aware_bpe.hexa` — 482 → 1044 LoC (+562)
-- `/Users/ghost/core/hexa-lang/self/stdlib/hxc_a22_self_decoding.hexa` — 369 → 882 LoC (+513)
-- `/Users/ghost/core/anima/state/format_witness/2026-04-28_a20_a22_phase11_live.jsonl` (NEW witness ledger)
-- `/Users/ghost/core/anima/docs/hxc_phase11_p1_p3_live_strengthening_20260428.md` (THIS DOC)
+- `<repo-root>/../hexa-lang/self/stdlib/hxc_a20_schema_aware_bpe.hexa` — 482 → 1044 LoC (+562)
+- `<repo-root>/../hexa-lang/self/stdlib/hxc_a22_self_decoding.hexa` — 369 → 882 LoC (+513)
+- `<repo-root>/state/format_witness/2026-04-28_a20_a22_phase11_live.jsonl` (NEW witness ledger)
+- `<repo-root>/docs/hxc_phase11_p1_p3_live_strengthening_20260428.md` (THIS DOC)
 
 Both .hexa modules locked via `chflags uchg` (raw 1).

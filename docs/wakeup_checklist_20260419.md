@@ -7,12 +7,12 @@
 ## 0. 첫 30초 — 현황 스냅샷
 
 ```bash
-cd /Users/ghost/Dev/anima && git log --oneline -20
-cd /Users/ghost/Dev/nexus && git log --oneline -10
+cd <repo-root> && git log --oneline -20
+cd <repo-root>/../nexus && git log --oneline -10
 runpodctl get pod                         # H100 zero-idle 확인
 ```
 
-Session summary: `/Users/ghost/Dev/anima/docs/session_20260418_19_overnight_summary.md`
+Session summary: `<repo-root>/docs/session_20260418_19_overnight_summary.md`
 
 ---
 
@@ -97,15 +97,15 @@ docs/htz_governor_tuning_20260419.md
 
 ```bash
 # 1. 현황
-cd /Users/ghost/Dev/anima && git log --oneline -20
-cd /Users/ghost/Dev/nexus && git log --oneline -10
+cd <repo-root> && git log --oneline -20
+cd <repo-root>/../nexus && git log --oneline -10
 
 # 2. Pod idle 확인
 runpodctl get pod
 
 # 3. 문서 열기
-open /Users/ghost/Dev/anima/docs/session_20260418_19_overnight_summary.md
-open /Users/ghost/Dev/anima/docs/wakeup_checklist_20260419.md
+open <repo-root>/docs/session_20260418_19_overnight_summary.md
+open <repo-root>/docs/wakeup_checklist_20260419.md
 
 # 4. CRITICAL 3건 결정 → READY 1~3 순차 fire
 ```

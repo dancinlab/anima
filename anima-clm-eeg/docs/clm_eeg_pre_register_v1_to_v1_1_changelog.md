@@ -90,14 +90,14 @@ raw#10 honest: `clm_eeg_p2_tlr_pre_register.json` 와 `clm_eeg_p3_gcg_pre_regist
 
 ```
 CHFLAGS_AI_ACK=1 chflags uchg \
-  /Users/ghost/core/anima/anima-clm-eeg/state/clm_eeg_pre_register_v1_1.json \
-  /Users/ghost/core/anima/anima-clm-eeg/state/clm_eeg_pre_register_v1.json \
-  /Users/ghost/core/anima/anima-clm-eeg/tool/clm_eeg_synthetic_fixture.hexa \
-  /Users/ghost/core/anima/anima-clm-eeg/tool/clm_eeg_p1_lz_pre_register.hexa \
-  /Users/ghost/core/anima/anima-clm-eeg/tool/clm_eeg_p2_tlr_pre_register.hexa \
-  /Users/ghost/core/anima/anima-clm-eeg/tool/clm_eeg_p3_gcg_pre_register.hexa \
-  /Users/ghost/core/anima/anima-clm-eeg/tool/clm_eeg_harness_smoke.hexa \
-  /Users/ghost/core/anima/anima-clm-eeg/fixtures/synthetic_16ch_v1.json
+  <repo-root>/anima-clm-eeg/state/clm_eeg_pre_register_v1_1.json \
+  <repo-root>/anima-clm-eeg/state/clm_eeg_pre_register_v1.json \
+  <repo-root>/anima-clm-eeg/tool/clm_eeg_synthetic_fixture.hexa \
+  <repo-root>/anima-clm-eeg/tool/clm_eeg_p1_lz_pre_register.hexa \
+  <repo-root>/anima-clm-eeg/tool/clm_eeg_p2_tlr_pre_register.hexa \
+  <repo-root>/anima-clm-eeg/tool/clm_eeg_p3_gcg_pre_register.hexa \
+  <repo-root>/anima-clm-eeg/tool/clm_eeg_harness_smoke.hexa \
+  <repo-root>/anima-clm-eeg/fixtures/synthetic_16ch_v1.json
 ```
 
 해제 시: `CHFLAGS_AI_ACK=1 chflags nouchg <file>` (write 시도는 EPERM 으로 실패 → silent-edit 차단).
@@ -105,7 +105,7 @@ CHFLAGS_AI_ACK=1 chflags uchg \
 ### 7.2 git tracking (version-control-side audit)
 
 ```
-cd /Users/ghost/core/anima
+cd <repo-root>
 git add anima-clm-eeg/state/clm_eeg_pre_register_v1.json \
         anima-clm-eeg/state/clm_eeg_pre_register_v1_1.json \
         anima-clm-eeg/tool/clm_eeg_*.hexa \
@@ -156,9 +156,9 @@ D+1 (P1 LZ 실측 verify) 시점에서:
 
 ## 12. Refs
 
-- v1.0 (preserved): `/Users/ghost/core/anima/anima-clm-eeg/state/clm_eeg_pre_register_v1.json`
-- v1.1 (this freeze): `/Users/ghost/core/anima/anima-clm-eeg/state/clm_eeg_pre_register_v1_1.json`
-- changelog (this file): `/Users/ghost/core/anima/anima-clm-eeg/docs/clm_eeg_pre_register_v1_to_v1_1_changelog.md`
-- marker: `/Users/ghost/core/anima/anima-clm-eeg/state/markers/clm_eeg_v1_1_patch_complete.marker`
-- issue#48 landing: `/Users/ghost/core/anima/anima-clm-eeg/docs/path_a_integrity_verify_landing.md`
+- v1.0 (preserved): `<repo-root>/anima-clm-eeg/state/clm_eeg_pre_register_v1.json`
+- v1.1 (this freeze): `<repo-root>/anima-clm-eeg/state/clm_eeg_pre_register_v1_1.json`
+- changelog (this file): `<repo-root>/anima-clm-eeg/docs/clm_eeg_pre_register_v1_to_v1_1_changelog.md`
+- marker: `<repo-root>/anima-clm-eeg/state/markers/clm_eeg_v1_1_patch_complete.marker`
+- issue#48 landing: `<repo-root>/anima-clm-eeg/docs/path_a_integrity_verify_landing.md`
 - memory: `~/.claude/projects/-Users-ghost-core-anima/memory/project_clm_eeg_v1_1_patch.md` (new)

@@ -8,11 +8,11 @@ from outside its owning repository.
 
 | item | value |
 | --- | --- |
-| live audit path | `/Users/ghost/Dev/hexa-lang/.raw-audit` |
+| live audit path | `<repo-root>/../hexa-lang/.raw-audit` |
 | live audit flags | `uchg` (tamper seal active) |
-| commit origin repo | `/Users/ghost/core/anima` (this repo) |
-| ceremony host repo | `/Users/ghost/core/anima` (V8 SAFE_COMMIT — new files only) |
-| shadow directory | `/Users/ghost/core/anima/.raw-audit-shadow/` |
+| commit origin repo | `<repo-root>` (this repo) |
+| ceremony host repo | `<repo-root>` (V8 SAFE_COMMIT — new files only) |
+| shadow directory | `<repo-root>/.raw-audit-shadow/` |
 | shadow append log | `.raw-audit-shadow/.raw-audit.shadow` (8-field pipe schema) |
 | shadow json mirror | `.raw-audit-shadow/.raw-audit.shadow.jsonl` (structured) |
 
@@ -26,8 +26,8 @@ Two gates made the blessed live-append path unsuitable:
    spawns a relock daemon. Running it 1× per backfill entry would have
    triggered 20 full raw_all passes plus 20 re-lock daemons — clearly
    outside the intent of a retroactive log-repair.
-2. Even a single ceremony fires from `/Users/ghost/Dev/hexa-lang/`; this
-   backfill runs from `/Users/ghost/core/anima` and has no authority to
+2. Even a single ceremony fires from `<repo-root>/../hexa-lang/`; this
+   backfill runs from `<repo-root>` and has no authority to
    unlock the peer repo's SSOT. The `.raw-audit` is `uchg` (per
    `ls -lO`), confirming the seal.
 
@@ -92,9 +92,9 @@ ready for promotion.
 ## Promotion recipe (future, from hexa-lang repo)
 
 ```sh
-cd /Users/ghost/Dev/hexa-lang
+cd <repo-root>/../hexa-lang
 ./hexa tool/hx_unlock.hexa --reason "backfill 20 drill verdict entries (2026-04-21)"
-grep -v -E '^(#|$)' /Users/ghost/core/anima/.raw-audit-shadow/.raw-audit.shadow >> .raw-audit
+grep -v -E '^(#|$)' <repo-root>/.raw-audit-shadow/.raw-audit.shadow >> .raw-audit
 ./hexa tool/raw_audit.hexa verify          # must report: chain intact
 ./hexa tool/hx_lock.hexa
 ```

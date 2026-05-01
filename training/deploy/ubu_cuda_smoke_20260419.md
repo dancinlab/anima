@@ -4,7 +4,7 @@
 - ubu: RTX 5070 12GB, SM 12.0 (Blackwell), driver 580.126.09
 - CUDA: `/usr/local/cuda-12.8/bin/nvcc` V12.8.93
 - cuDNN: 9.21.0
-- hexa-lang: `/Users/ghost/Dev/hexa-lang` (mount-share, uid 501)
+- hexa-lang: `<repo-root>/../hexa-lang` (mount-share, uid 501)
 - hexa linux: `/home/aiden/bin/hexa`
 
 ## CUDA source 탐색
@@ -36,8 +36,8 @@ nvcc -arch=sm_120 -O2 --shared -Xcompiler -fPIC \
 ```
 __ffi_sym_hxblas_sgemm
 __ffi_sym_hxblas_attn_softmax_causal
-RPATH: /Users/ghost/Dev/anima/training/build/libhxblas.dylib
-       /Users/ghost/Dev/hexa-lang/self/native/build/libhxlmhead.dylib
+RPATH: <repo-root>/training/build/libhxblas.dylib
+       <repo-root>/../hexa-lang/self/native/build/libhxlmhead.dylib
 ```
 
 libhxcuda.so 는 `hxcuda_matmul_bf16` / `hxcuda_fused_lmhead_fwd` ABI — **완전히 다른 symbol set**. hxblas_*/hxlmhead_* shim 이 존재하지 않아 drop-in 교체 불가.

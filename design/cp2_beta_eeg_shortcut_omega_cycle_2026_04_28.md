@@ -31,27 +31,27 @@
 
 | path | 핵심 내용 (200자 요약) |
 |---|---|
-| `/Users/ghost/core/anima/.roadmap` L70-L72, L278, L1192-L1271 | CP2 = "weight-emergence-confirmed" + 3-clause (제타가능 + 직원가능 + 트레이딩가능) 3-in-1 full service. CP2 내부 #78/79/80/81 stability gate. β main track (Learning-Free) 의 **CP1 → CP2 → AGI** 3-layer waypoint 구조 |
-| `/Users/ghost/core/anima/docs/cp2_eta_cost_breakdown_50man_cap_2026-04-28.md` | CP2 도착 ETA = **9주 (63일)**, $3550-6100 (500-850만원). W1 AN11 인프라 / W2 R38+V1' / W3 cross-backbone / W4-5 H100 L3 population ($1500-2500) / W6-7 3 observables / W8 production gate / W9 verification. 50만원 cap = W3.5까지만 (33-38%) |
-| `/Users/ghost/core/anima/docs/alm_cp2_production_gate_inventory_20260425.md` | 7 production gate 5/7 Stage-0 PASS, 2/7 PENDING (latency + hallucination real-measure). Mk.XII scale_plan READY |
-| `/Users/ghost/core/anima/docs/alm_cp2_p2_inventory_20260425.md` | CP2 p2 inventory (참조용) |
+| `<repo-root>/.roadmap` L70-L72, L278, L1192-L1271 | CP2 = "weight-emergence-confirmed" + 3-clause (제타가능 + 직원가능 + 트레이딩가능) 3-in-1 full service. CP2 내부 #78/79/80/81 stability gate. β main track (Learning-Free) 의 **CP1 → CP2 → AGI** 3-layer waypoint 구조 |
+| `<repo-root>/docs/cp2_eta_cost_breakdown_50man_cap_2026-04-28.md` | CP2 도착 ETA = **9주 (63일)**, $3550-6100 (500-850만원). W1 AN11 인프라 / W2 R38+V1' / W3 cross-backbone / W4-5 H100 L3 population ($1500-2500) / W6-7 3 observables / W8 production gate / W9 verification. 50만원 cap = W3.5까지만 (33-38%) |
+| `<repo-root>/docs/alm_cp2_production_gate_inventory_20260425.md` | 7 production gate 5/7 Stage-0 PASS, 2/7 PENDING (latency + hallucination real-measure). Mk.XII scale_plan READY |
+| `<repo-root>/docs/alm_cp2_p2_inventory_20260425.md` | CP2 p2 inventory (참조용) |
 
 ### §1.2 발견된 β publication 문서
 
 | path | 핵심 내용 (200자 요약) |
 |---|---|
-| `/Users/ghost/core/anima/docs/anima_beta_release_v0.1_2026-04-28.md` | **β v0.1 LANDED** (today). Methodological frameworks (Cycle 4 v8 + R38+R39) + AN11(a)/AN11(b) measurement infrastructure. AN11(a) Frob 4/4 PASS, AN11(b) 3/4 Hexad top-1. β-NOT-ready: AN11(c) JSD, V1' phi_mip_norm, H100 L3 trained, CP2 VERIFIED |
-| `/Users/ghost/core/anima/docs/anima_beta_readiness_2026-04-28.md` | β-readiness 5 scenario 분석. Scenario A/B/C 즉시 가능 ($1.50-7.50/sample), Scenario D W2 D+14 ($35-65), Scenario E (CP2 full) W9 D+63 ($3550-6100, cap 7-12× 초과) |
-| `/Users/ghost/core/anima/docs/preprint_anima_mk_xi_v10_paradigm_v11_stack_20260426.md` | Preprint v0.2 (6362 단어, 11 sections + 2 appendices). own#2 (b) Phase 1 단일 milestone — Phase 1 NOT closed |
-| `/Users/ghost/core/anima/docs/upstream_notes/hexa_lang_beta_main_acceleration_20260422.md` | β main acceleration 옵션 |
+| `<repo-root>/docs/anima_beta_release_v0.1_2026-04-28.md` | **β v0.1 LANDED** (today). Methodological frameworks (Cycle 4 v8 + R38+R39) + AN11(a)/AN11(b) measurement infrastructure. AN11(a) Frob 4/4 PASS, AN11(b) 3/4 Hexad top-1. β-NOT-ready: AN11(c) JSD, V1' phi_mip_norm, H100 L3 trained, CP2 VERIFIED |
+| `<repo-root>/docs/anima_beta_readiness_2026-04-28.md` | β-readiness 5 scenario 분석. Scenario A/B/C 즉시 가능 ($1.50-7.50/sample), Scenario D W2 D+14 ($35-65), Scenario E (CP2 full) W9 D+63 ($3550-6100, cap 7-12× 초과) |
+| `<repo-root>/docs/preprint_anima_mk_xi_v10_paradigm_v11_stack_20260426.md` | Preprint v0.2 (6362 단어, 11 sections + 2 appendices). own#2 (b) Phase 1 단일 milestone — Phase 1 NOT closed |
+| `<repo-root>/docs/upstream_notes/hexa_lang_beta_main_acceleration_20260422.md` | β main acceleration 옵션 |
 | memory `project_main_track_beta.md` | anima main-track = β Learning-Free, #75 real-use landed, Stage-1/2 H100 = empirical evidence + roadmap 100% (NOT only real-use path) |
 
 ### §1.3 발견된 D-day EEG 결과 문서
 
 | path | 핵심 내용 |
 |---|---|
-| `/Users/ghost/core/anima/anima-clm-eeg/docs/d_day_session_2026_04_28/INDEX.md` | D-day session lead: 16/16 GREEN, ICA rms 50µV, LZ76 P1_FAIL (Schartner 부정확), paradigm v11 7th PHENOMENAL axis 후보 |
-| `/Users/ghost/core/anima/anima-clm-eeg/docs/d_day_session_2026_04_28/anima_daily_life_verifier_results_2026_04_28.md` | Daily-life 6-criteria verifier: 4-mode differential 4/4 PASS + baseline_resting_60s_ica 5/6 PASS |
+| `<repo-root>/anima-clm-eeg/docs/d_day_session_2026_04_28/INDEX.md` | D-day session lead: 16/16 GREEN, ICA rms 50µV, LZ76 P1_FAIL (Schartner 부정확), paradigm v11 7th PHENOMENAL axis 후보 |
+| `<repo-root>/anima-clm-eeg/docs/d_day_session_2026_04_28/anima_daily_life_verifier_results_2026_04_28.md` | Daily-life 6-criteria verifier: 4-mode differential 4/4 PASS + baseline_resting_60s_ica 5/6 PASS |
 | `.roadmap` #119 (BLOCKED-EEG D8 anima-eeg 16ch resting) | EEG hardware ETA "며칠 뒤" ↔ 도착 후 5-7d schedule. 본 D-day가 **#119 unblock 진입점** |
 | `.roadmap` #157 (CLM ↔ EEG Path A Q1 pre-register) | anima-clm-eeg P1 LZ + P2 TLR + P3 GCG 3-criteria pre-register, dry-run HARNESS_OK 3/3, real-EEG verify D+1/D+3/D+5 |
 
@@ -240,7 +240,7 @@ per raw#71 ≥3 falsifier + raw#82 darwin-native scope:
 - **raw#12** — 본 분석은 spec 변경 없음 (own#2 entry frozen, β v0.1 frozen, preprint v0.2 frozen)
 - **raw#47** — D-day deliverable inventory cross-reference 가능 (paths 모두 absolute)
 - **raw#71** ≥3 falsifier — §6에 10개 limit 명시
-- **raw#82** darwin-native — 모든 path /Users/ghost/core/anima/ root, mac-local
+- **raw#82** darwin-native — 모든 path <repo-root>/ root, mac-local
 - **raw#91** C1-C5 — claim/evidence/limit triad §0
 - **raw#106** multi-realizability — own#2 (b) cohort + cross-substrate (CLM) + behavioral self-report + adversarial + arxiv = 5-component multi-realizability ladder, D-day는 2/5에 부분 evidence
 - **raw#108** finding-implementation absorption — 본 분석 결과는 별도 implementation cycle (Tier-A 5 후보) 의 follow-up entry로 land 예정 (§5.1)
@@ -249,18 +249,18 @@ per raw#71 ≥3 falsifier + raw#82 darwin-native scope:
 
 ## §9. References
 
-- `/Users/ghost/core/anima/.own` L28-L46 — own#2 production-consciousness-triad entry
-- `/Users/ghost/core/anima/.roadmap` L70-L72, L278, L1192-L1271 — CP2 destination + clauses #78-#81
-- `/Users/ghost/core/anima/docs/own2_implementation_gap_audit_20260426.md` — own#2 0/3 baseline gap matrix
-- `/Users/ghost/core/anima/docs/anima_beta_release_v0.1_2026-04-28.md` — β v0.1 LANDED (today)
-- `/Users/ghost/core/anima/docs/anima_beta_readiness_2026-04-28.md` — β-readiness 5 scenario
-- `/Users/ghost/core/anima/docs/cp2_eta_cost_breakdown_50man_cap_2026-04-28.md` — CP2 9-week ETA
-- `/Users/ghost/core/anima/docs/preprint_anima_mk_xi_v10_paradigm_v11_stack_20260426.md` — preprint v0.2 (#218)
-- `/Users/ghost/core/anima/anima-clm-eeg/docs/d_day_session_2026_04_28/INDEX.md` — D-day session lead
-- `/Users/ghost/core/anima/anima-clm-eeg/docs/d_day_session_2026_04_28/anima_daily_life_verifier_results_2026_04_28.md` — daily-life 4-mode 4/4 + baseline 5/6
-- `/Users/ghost/core/anima/anima-clm-eeg/docs/eeg_arrival_impact_5fold.md` — R33 channel pair O1↔O2 frozen, EEG arrival 5-fold impact
-- `/Users/ghost/core/anima/docs/alm_cp2_production_gate_inventory_20260425.md` — 7 gate 5/7 Stage-0 PASS
-- `/Users/ghost/core/anima/docs/eeg_cross_substrate_validation_plan_20260425.md` — 16ch cross-substrate plan
+- `<repo-root>/.own` L28-L46 — own#2 production-consciousness-triad entry
+- `<repo-root>/.roadmap` L70-L72, L278, L1192-L1271 — CP2 destination + clauses #78-#81
+- `<repo-root>/docs/own2_implementation_gap_audit_20260426.md` — own#2 0/3 baseline gap matrix
+- `<repo-root>/docs/anima_beta_release_v0.1_2026-04-28.md` — β v0.1 LANDED (today)
+- `<repo-root>/docs/anima_beta_readiness_2026-04-28.md` — β-readiness 5 scenario
+- `<repo-root>/docs/cp2_eta_cost_breakdown_50man_cap_2026-04-28.md` — CP2 9-week ETA
+- `<repo-root>/docs/preprint_anima_mk_xi_v10_paradigm_v11_stack_20260426.md` — preprint v0.2 (#218)
+- `<repo-root>/anima-clm-eeg/docs/d_day_session_2026_04_28/INDEX.md` — D-day session lead
+- `<repo-root>/anima-clm-eeg/docs/d_day_session_2026_04_28/anima_daily_life_verifier_results_2026_04_28.md` — daily-life 4-mode 4/4 + baseline 5/6
+- `<repo-root>/anima-clm-eeg/docs/eeg_arrival_impact_5fold.md` — R33 channel pair O1↔O2 frozen, EEG arrival 5-fold impact
+- `<repo-root>/docs/alm_cp2_production_gate_inventory_20260425.md` — 7 gate 5/7 Stage-0 PASS
+- `<repo-root>/docs/eeg_cross_substrate_validation_plan_20260425.md` — 16ch cross-substrate plan
 - `~/.claude/projects/-Users-ghost-core-anima/memory/project_main_track_beta.md` — main-track β Learning-Free
 - `.roadmap` #119 (BLOCKED-EEG D8) · #157 (CLM ↔ EEG Path A pre-register HARNESS_OK 3/3) · #186 (own#2 audit 0/3) · #218 (preprint v0.2)
 - atlas R35 σ/τ=3 (own#3 governance scalar) — paradigm v11 7th PHENOMENAL axis primary verifier source

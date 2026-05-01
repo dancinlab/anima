@@ -30,7 +30,7 @@
 
 set -uo pipefail
 
-ANIMA_ROOT="${ANIMA_ROOT:-/Users/ghost/core/anima}"
+ANIMA_ROOT="${ANIMA_ROOT:-<repo-root>}"
 PILOT_DIR="${ANIMA_ROOT}/anima-tribev2-pilot"
 STATE_DIR="${PILOT_DIR}/state"
 SCRIPTS_DIR="${PILOT_DIR}/scripts"
@@ -40,7 +40,7 @@ IDLE_KILL_SEC="${IDLE_KILL_SEC:-1800}"
 CLIENT_FAIL_FAST_SEC="${CLIENT_FAIL_FAST_SEC:-3600}"
 POLL_INTERVAL_SEC="${POLL_INTERVAL_SEC:-30}"
 DRY_RUN="${DRY_RUN:-0}"
-SSH_KEY="${SSH_KEY:-/Users/ghost/.runpod/ssh/RunPod-Key-Go}"
+SSH_KEY="${SSH_KEY:-<user-home>/.runpod/ssh/RunPod-Key-Go}"
 
 mkdir -p "$STATE_DIR" "${STATE_DIR}/markers"
 LOG="${STATE_DIR}/launch_h100_pilot_t1_v3.log"
@@ -170,9 +170,9 @@ for s in "$SCRIPTS_DIR/pilot_t1_inference_full.py" "$SCRIPTS_DIR/install_pod_dep
   fi
 done
 
-if [[ -f /Users/ghost/.cache/huggingface/token ]]; then
+if [[ -f <user-home>/.cache/huggingface/token ]]; then
   "${SSH_BASE[@]}" "mkdir -p ~/.cache/huggingface"
-  scp "${SCP_OPTS[@]}" /Users/ghost/.cache/huggingface/token \
+  scp "${SCP_OPTS[@]}" <user-home>/.cache/huggingface/token \
     "root@$POD_IP:/root/.cache/huggingface/token"
 fi
 

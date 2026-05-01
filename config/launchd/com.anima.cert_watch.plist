@@ -7,12 +7,12 @@
 
     <key>ProgramArguments</key>
     <array>
-        <string>/Users/ghost/core/anima/bin/cert_watch</string>
+        <string><repo-root>/bin/cert_watch</string>
         <string>--scan</string>
     </array>
 
     <key>WorkingDirectory</key>
-    <string>/Users/ghost/core/anima</string>
+    <string><repo-root></string>
 
     <key>StartInterval</key>
     <integer>60</integer>
@@ -21,9 +21,9 @@
     <false/>
 
     <key>StandardOutPath</key>
-    <string>/Users/ghost/core/anima/logs/cert_watch.out.log</string>
+    <string><repo-root>/logs/cert_watch.out.log</string>
 
     <key>StandardErrorPath</key>
-    <string>/Users/ghost/core/anima/logs/cert_watch.err.log</string>
+    <string><repo-root>/logs/cert_watch.err.log</string>
 </dict>
 </plist>

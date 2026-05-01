@@ -3,7 +3,7 @@
 TASK: physics_track_inventory 에서 식별한 **5 HW-free 실험** 실행.
 실제 타깃: 6개 (Bell 포함).
 
-HEXA=/Users/ghost/Dev/hexa-lang/hexa
+HEXA=<repo-root>/../hexa-lang/hexa
 Host: darwin 24.6.0 (macOS), RSS cap = 4GB (safe_hexa_launchd)
 
 ---

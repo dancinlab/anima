@@ -28,7 +28,7 @@ D1 P2 once subprocess-dispatch wire is in place.
 | # | criterion | status | evidence |
 |---|---|:---:|---|
 | 1 | Phase 10 P0 A16 LIVE or PROJECTED close | **LIVE (with negative corpus result)** | A16 LIVE FIRE landed at anima commit `0db2f483` (2026-04-28). Encoder integration COMPLETE (symlink + dispatch + try-and-revert). Selftest 5/5 PASS round-trip byte-eq on 79KB n6 atlas. Production result on 3 corpora: 0/3 hit Shannon H_0 28% target (-1.69% / +0.06% / -0.15%) due to base64url 4/3 inflation + 1063-byte freq-header overhead. raw 91 C3: A16 is LIVE-but-ineffective on current corpora; this is decoder-substrate-relevant (decode chain must still handle A16 streams from any future corpus where saving is positive) but does not unblock D1 P1 since current 285 .hxc tree has A16 try-and-revert reverted. |
-| 2 | consumer adapter (`read_artifact`) reader stub implementable | **PASS** | `/Users/ghost/core/hive/tool/hxc_consumer_adapter.hexa` (218 LoC) selftest 7/7 PASS, real-artifact read on `state/atlas_convergence_witness.jsonl` returns 146,074 B from .hxc (vs 147,645 B jsonl). |
+| 2 | consumer adapter (`read_artifact`) reader stub implementable | **PASS** | `<repo-root>/../hive/tool/hxc_consumer_adapter.hexa` (218 LoC) selftest 7/7 PASS, real-artifact read on `state/atlas_convergence_witness.jsonl` returns 146,074 B from .hxc (vs 147,645 B jsonl). |
 | 3 | ≥1 of 6 repos can adopt `.hxc`-prefer read | **PASS** | `anima` repo selected as pilot host. 52 .hxc files in `state/hxc/` directly readable via adapter; 1 pilot consumer identified (see §3). |
 | 4 | raw 18 self-host fixpoint compat verified | **PARTIAL** | A1-A15 stdlib decode is pure-hexa, integer-only, no external C libs (verified by stdlib path inspection). A16/A17/A18 decode entries exist in stdlib but adapter currently does **not** invoke them (D1 P1 falls back to .jsonl on entropy-coded payloads). Full verification deferred to D1 P2. |
 
@@ -40,7 +40,7 @@ Sufficient for D1 P1 entry (structural-subset rollout); D1 P2 requires criterion
 
 ## 2. Consumer adapter status
 
-**Path**: `/Users/ghost/core/hive/tool/hxc_consumer_adapter.hexa`
+**Path**: `<repo-root>/../hive/tool/hxc_consumer_adapter.hexa`
 **LoC**: 218 (within ~200 LoC budget; +9% accepted for falsifier-preregistered selftest expansion)
 **Selftest**: 7/7 PASS (basename, hxc_artifact_path, A4-detect, A16-detect, structural passthrough, entropy defer)
 **Real-artifact read**: PASS (atlas_convergence_witness.jsonl.hxc → 146,074 B retrieved end-to-end)

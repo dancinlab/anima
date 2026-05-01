@@ -252,18 +252,18 @@ own#3 main entry severity=warn governance reference scalar 역할 unchanged.
 ### 적용 절차 (사용자 승인 후)
 1. **chflags uchg unlock**:
    ```
-   sudo chflags nouchg /Users/ghost/core/anima/.own
+   sudo chflags nouchg <repo-root>/.own
    ```
 2. **anima/.own 편집**:
    - L57 (d) → Option C wording (위 §1 권장안)
    - L58 (e) → Option A wording (위 §2 권장안)
 3. **Re-lock**:
    ```
-   sudo chflags uchg /Users/ghost/core/anima/.own
+   sudo chflags uchg <repo-root>/.own
    ```
 4. **Verification**:
    - `cat .own | head -75` 로 변경 확인
-   - hexa-only lint: `~/.hx/packages/hexa/build/hexa.real run /Users/ghost/core/hive/tool/hexa_only_lint.hexa --root /Users/ghost/core/anima` exit=0 유지
+   - hexa-only lint: `~/.hx/packages/hexa/build/hexa.real run <repo-root>/../hive/tool/hexa_only_lint.hexa --root <repo-root>` exit=0 유지
 5. **Commit**:
    ```
    own(d-e-wording): own#3 (d)+(e) wording revision per axis 100/101 evidence

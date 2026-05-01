@@ -6,7 +6,7 @@
 
 ## Corpus
 
-- **File**: `/Users/ghost/Dev/anima/training/deploy/hire_sim_synthetic_r10_20260416.jsonl`
+- **File**: `<repo-root>/training/deploy/hire_sim_synthetic_r10_20260416.jsonl`
 - **Size**: 300 records (50 per domain × 6 domains)
 - **Format**: JSONL — `{domain, difficulty, prompt, response, keywords}`
 - **Synthesis**: template-based, 10 variants per 30 stratified seed tasks (Option 2; no API key available)
@@ -74,7 +74,7 @@ Prereq: an H100 RunPod pod with `/workspace/anima` synced to commit `166f5ee1` (
 
 ```bash
 # from Mac
-scp /Users/ghost/Dev/anima/training/deploy/hire_sim_synthetic_r10_20260416.jsonl \
+scp <repo-root>/training/deploy/hire_sim_synthetic_r10_20260416.jsonl \
     pod:/workspace/hire_sim_synthetic_r10_20260416.jsonl
 ```
 
@@ -137,8 +137,8 @@ Swap the serving adapter to r10 then rerun:
 
 ```bash
 # Mac side — RAW (no Path C) eval
-HIRE_SIM_OUTPUT=/Users/ghost/Dev/anima/training/deploy/hire_sim_alm_r10_raw_20260416.json \
-hexa /Users/ghost/Dev/anima/training/deploy/hire_sim_baseline.hexa
+HIRE_SIM_OUTPUT=<repo-root>/training/deploy/hire_sim_alm_r10_raw_20260416.json \
+hexa <repo-root>/training/deploy/hire_sim_baseline.hexa
 
 # Gate check: completion_rate >= 0.85 ⇒ v2.1 shipped
 ```
