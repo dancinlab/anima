@@ -91,7 +91,7 @@ Source: `docs/omega_cycle_alm_free_paradigms_20260426.md` §4 PHENOMENAL axis P1
 ## §4. Reproducibility
 
 ```bash
-# All commands from /Users/ghost/core/anima/
+# All commands from <repo-root>/ (e.g. anima/ checkout root)
 
 # 1. Generate synthetic 16ch fixture (no hardware required)
 HEXA_RESOLVER_NO_REROUTE=1 hexa run anima-clm-eeg/tool/clm_eeg_synthetic_fixture.hexa --selftest
