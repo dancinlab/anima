@@ -1,0 +1,546 @@
+// ════════════════════════════════════════════════════════════════════════════
+//  anima-clm-eeg/tool/mk_xii_hard_pass_composite.hexa
+//
+//  PURPOSE
+//    Mk.XII Integration tier — Hard PASS composite analyzer.
+//    Reads pre-flight cascade verdict + 5-gate harness state artifacts
+//    (G0 / G1 / G7 / G8 / G9) and emits a single composite verdict
+//      MK_XII_VALIDATED       (5/5 gate PASS  AND  preflight GREEN)
+//      MK_XII_PARTIAL         (3-4/5 gate PASS — degraded but recoverable)
+//      MK_XII_NOT_VALIDATED   (≤2/5 PASS OR D-day empirical replay says fail)
+//
+//    NOT a re-execution.  All upstream artifacts must already exist.
+//    This tool is a strict read-only AND-aggregator with offender
+//    identification (which gate failed) and a D-day empirical replay
+//    mode that honestly emits MK_XII_NOT_VALIDATED when the current
+//    pilot N=1 audit (commit 6748462dc · CORROBORATION_FAIL) is the
+//    canonical source — i.e. composite verdict is NOT GREEN today.
+//
+//  RELATION TO #177 (tool/mk_xii_hard_pass_composite.hexa)
+//    The #177 root tool implements 6-input strict AND with verdict
+//    label MK_XII_HARD_PASS_GREEN/RED and env-based falsifier paths
+//    (the hexa runtime restricts env passthrough — env-flag falsifier
+//    won't trigger via standard resolver).  This file is the #172
+//    follow-up action (c) sibling — replaces env-flag with argv-driven
+//    falsifier branches that DO work under the docker-bypass resolver.
+//
+//  COMPOSITE RULE
+//    pass_count = G0_pass + G1_pass + G7_pass + G8_pass + G9_pass
+//    preflight_pass = (cascade.verdict == MK_XII_PREFLIGHT_GREEN)
+//
+//    tier 2 (VALIDATED)     iff pass_count == 5 AND preflight_pass == 1
+//                                AND empirical_override == 0
+//    tier 1 (PARTIAL)       iff pass_count in {3,4} AND empirical_override == 0
+//    tier 0 (NOT_VALIDATED) otherwise (default safe degrade).
+//
+//    D-DAY EMPIRICAL REPLAY (--selftest-dday-replay):
+//      Reads state/mk_xii_eeg_audit/2026-04-28_pilot_n1.jsonl and
+//      verifies session_verdict.  If CORROBORATION_FAIL found, force
+//      composite verdict to MK_XII_NOT_VALIDATED regardless of upstream
+//      gate state — empirical evidence overrides surrogate gate scores.
+//
+//  GATE PROBES
+//    G0_AN11_b      backbone-majority  ≥ 3/4  pass=true in g_gate.json
+//    G1_BTom        backbone-majority  ≥ 3/4  pass=true in g_gate.json
+//    G7_composite   backbone-majority  ≥ 3/4  pass=true in g_gate.json
+//    G8             g8_transversal_mi_matrix_v1.json  summary.g8_pass==1
+//    G9             g9_dag_cascade_analyzer.json      g9_pass==1
+//
+//  USAGE
+//    HEXA_RESOLVER_NO_REROUTE=1 hexa run anima-clm-eeg/tool/mk_xii_hard_pass_composite.hexa
+//    HEXA_RESOLVER_NO_REROUTE=1 hexa run anima-clm-eeg/tool/mk_xii_hard_pass_composite.hexa --selftest
+//
+//    # Negative falsifier per gate (argv-driven, hexa env-passthrough is restricted):
+//    hexa run anima-clm-eeg/tool/mk_xii_hard_pass_composite.hexa --force-zero=G0
+//    hexa run anima-clm-eeg/tool/mk_xii_hard_pass_composite.hexa --force-zero=G1
+//    hexa run anima-clm-eeg/tool/mk_xii_hard_pass_composite.hexa --force-zero=G7
+//    hexa run anima-clm-eeg/tool/mk_xii_hard_pass_composite.hexa --force-zero=G8
+//    hexa run anima-clm-eeg/tool/mk_xii_hard_pass_composite.hexa --force-zero=G9
+//    hexa run anima-clm-eeg/tool/mk_xii_hard_pass_composite.hexa --force-zero=preflight
+//
+//    # D-day empirical replay (honest NOT_VALIDATED):
+//    hexa run anima-clm-eeg/tool/mk_xii_hard_pass_composite.hexa --selftest-dday-replay
+//
+//  OUTPUT
+//    anima-clm-eeg/state/mk_xii_hard_pass_composite_v2.json
+//
+//  RAW#71 FALSIFIERS (3, explicit)
+//    F1 (verdict-monotonicity): if any single gate flips PASS→FAIL while
+//        others hold, composite must monotonically demote (never promote).
+//        Tested by 6 single-gate-zero negative branches.
+//    F2 (offender uniqueness): under exactly-one-gate-fail, offender label
+//        must equal the failing gate name (no wrong-attribution).
+//    F3 (empirical-overrides-surrogate): D-day replay branch forces
+//        MK_XII_NOT_VALIDATED even when upstream gate JSONs all PASS,
+//        proving empirical evidence supersedes surrogate verdict.
+//
+//  RAW
+//    raw#9 · hexa-only · deterministic · LLM=none · pure-aggregator · destructive=no
+// ════════════════════════════════════════════════════════════════════════════
+
+let M32 = 4294967296
+let FNV_PRIME = 16777619
+let FNV_OFFSET_BASIS = 2166136261
+
+// ─── argv helpers (env passthrough is restricted in hexa runtime) ───────────
+fn argv_has(flag: string) -> int {
+    let a = args()
+    let n = len(a)
+    let mut i = 0
+    while i < n {
+        if a[i] == flag { return 1 }
+        i = i + 1
+    }
+    return 0
+}
+
+// argv match for "--key=val" returning val, "" if absent.
+fn argv_get(key_eq: string) -> string {
+    let a = args()
+    let n = len(a)
+    let m = len(key_eq)
+    let mut i = 0
+    while i < n {
+        let s = a[i]
+        if len(s) > m {
+            let mut ok = 1
+            let mut k = 0
+            while k < m {
+                if s[k] != key_eq[k] {
+                    ok = 0
+                    k = m
+                }
+                k = k + 1
+            }
+            if ok == 1 {
+                let mut out = ""
+                let mut p = m
+                while p < len(s) {
+                    out = out + s[p]
+                    p = p + 1
+                }
+                return out
+            }
+        }
+        i = i + 1
+    }
+    return ""
+}
+
+// ─── string scan ────────────────────────────────────────────────────────────
+fn find_in_str(s: string, needle: string) -> int {
+    let n = len(s)
+    let m = len(needle)
+    if m <= 0 { return 0 }
+    if n < m { return -1 }
+    let mut i = 0
+    while i <= n - m {
+        let mut j = 0
+        let mut ok = 1
+        while j < m {
+            if s[i + j] != needle[j] {
+                ok = 0
+                j = m
+            }
+            j = j + 1
+        }
+        if ok == 1 { return i }
+        i = i + 1
+    }
+    return -1
+}
+
+fn contains_substr(s: string, needle: string) -> int {
+    if find_in_str(s, needle) >= 0 { return 1 }
+    return 0
+}
+
+// ─── FNV-32 fingerprint ─────────────────────────────────────────────────────
+fn fnv_step(h: int, byte: int) -> int {
+    let mut x = (h + byte) % M32
+    if x < 0 { x = x + M32 }
+    x = (x * FNV_PRIME) % M32
+    if x < 0 { x = x + M32 }
+    return x
+}
+
+fn fingerprint_step(fp: int, val: int) -> int {
+    let mut h = fp
+    h = fnv_step(h, val % 256)
+    h = fnv_step(h, (val / 256) % 256)
+    h = fnv_step(h, (val / 65536) % 256)
+    h = fnv_step(h, (val / 16777216) % 256)
+    return h
+}
+
+fn fingerprint_str(fp: int, s: string) -> int {
+    let mut h = fp
+    let n = len(s)
+    let mut i = 0
+    while i < n {
+        let c = s[i]
+        let mut b = 0
+        if c == "0" { b = 48 }
+        if c == "1" { b = 49 }
+        if c == "2" { b = 50 }
+        if c == "3" { b = 51 }
+        if c == "4" { b = 52 }
+        if c == "5" { b = 53 }
+        if c == "6" { b = 54 }
+        if c == "7" { b = 55 }
+        if c == "8" { b = 56 }
+        if c == "9" { b = 57 }
+        if c == "A" { b = 65 }
+        if c == "B" { b = 66 }
+        if c == "C" { b = 67 }
+        if c == "D" { b = 68 }
+        if c == "E" { b = 69 }
+        if c == "F" { b = 70 }
+        if c == "G" { b = 71 }
+        if c == "I" { b = 73 }
+        if c == "L" { b = 76 }
+        if c == "M" { b = 77 }
+        if c == "N" { b = 78 }
+        if c == "O" { b = 79 }
+        if c == "P" { b = 80 }
+        if c == "R" { b = 82 }
+        if c == "S" { b = 83 }
+        if c == "T" { b = 84 }
+        if c == "U" { b = 85 }
+        if c == "V" { b = 86 }
+        if c == "X" { b = 88 }
+        if c == "Y" { b = 89 }
+        if c == "_" { b = 95 }
+        h = fnv_step(h, b)
+        i = i + 1
+    }
+    return h
+}
+
+// ─── safe read ──────────────────────────────────────────────────────────────
+fn try_read(path: string) -> string {
+    return read_file(path)
+}
+
+// ─── per-gate-in-g_gate.json probe ─────────────────────────────────────────
+//   Schema "anima/g_gate/1": each gate object has "gate":"<label>" then
+//   "present":..., "pass": true|false in the next ~240 bytes.
+fn probe_gate_pass(json_str: string, gate_label: string) -> int {
+    if len(json_str) <= 0 { return 0 }
+    let needle = "\"gate\": \"" + gate_label + "\""
+    let idx = find_in_str(json_str, needle)
+    if idx < 0 { return 0 }
+    let n = len(json_str)
+    let mut end = idx + 240
+    if end > n { end = n }
+    let mut slice = ""
+    let mut p = idx
+    while p < end {
+        slice = slice + json_str[p]
+        p = p + 1
+    }
+    return contains_substr(slice, "\"pass\": true")
+}
+
+// Returns # backbones (out of 4) reporting g_gate.json[gate_label].pass==true.
+fn count_gate_pass(bench_dir: string, gate_label: string) -> int {
+    let bbs = ["gemma", "mistral", "qwen3", "llama"]
+    let mut n = 0
+    let mut i = 0
+    while i < len(bbs) {
+        let p = bench_dir + "/" + bbs[i] + "/g_gate.json"
+        let s = read_file(p)
+        if len(s) > 0 {
+            if probe_gate_pass(s, gate_label) == 1 { n = n + 1 }
+        }
+        i = i + 1
+    }
+    return n
+}
+
+// ─── component-specific verdict probes ──────────────────────────────────────
+
+// preflight: cascade.verdict == "MK_XII_PREFLIGHT_GREEN"
+fn probe_preflight(json_str: string) -> int {
+    if len(json_str) <= 0 { return 0 }
+    return contains_substr(json_str, "\"verdict\": \"MK_XII_PREFLIGHT_GREEN\"")
+}
+
+// G8: summary.g8_pass == 1
+fn probe_g8(json_str: string) -> int {
+    if len(json_str) <= 0 { return 0 }
+    return contains_substr(json_str, "\"g8_pass\": 1")
+}
+
+// G9: top-level g9_pass == 1
+fn probe_g9(json_str: string) -> int {
+    if len(json_str) <= 0 { return 0 }
+    return contains_substr(json_str, "\"g9_pass\": 1")
+}
+
+// D-day pilot empirical fail (CORROBORATION_FAIL in pilot N=1 audit JSONL).
+// Honest replay: commit 6748462dc · 2026-04-28 daily-life EEG 16ch 5min
+// returned session_verdict=CORROBORATION_FAIL (C1<5, C4=999 no advers
+// labels, C5=0 no CLM substrate yet) — the 3 deferred long-term gates.
+fn probe_dday_fail(jsonl_str: string) -> int {
+    if len(jsonl_str) <= 0 { return 0 }
+    if contains_substr(jsonl_str, "\"session_verdict\":\"CORROBORATION_FAIL\"") == 1 { return 1 }
+    if contains_substr(jsonl_str, "\"session_verdict\": \"CORROBORATION_FAIL\"") == 1 { return 1 }
+    return 0
+}
+
+// ─── verdict label encoder ──────────────────────────────────────────────────
+fn verdict_label(tier: int) -> string {
+    if tier == 2 { return "MK_XII_VALIDATED" }
+    if tier == 1 { return "MK_XII_PARTIAL" }
+    return "MK_XII_NOT_VALIDATED"
+}
+
+// Offender = gate name of FIRST failing gate in canonical order
+// (preflight → G0 → G1 → G7 → G8 → G9), or "NONE" if all pass.
+fn first_offender(preflight_pass: int, g0: int, g1: int, g7: int, g8: int, g9: int) -> string {
+    if preflight_pass == 0 { return "PREFLIGHT" }
+    if g0 == 0 { return "G0_AN11_b" }
+    if g1 == 0 { return "G1_BTom" }
+    if g7 == 0 { return "G7_composite" }
+    if g8 == 0 { return "G8_TFD" }
+    if g9 == 0 { return "G9_DAG" }
+    return "NONE"
+}
+
+// ─── main ───────────────────────────────────────────────────────────────────
+fn main() {
+    // Frozen default paths (env passthrough restricted in hexa runtime —
+    // override via --preflight-path=, --g8-path=, --g9-path=, --bench-dir=,
+    // --dday-pilot-path=, --out= argv flags).
+    let mut preflight_path = "anima-clm-eeg/state/mk_xii_preflight_v1.json"
+    let mut bench_dir      = "state/v10_benchmark_v4"
+    let mut g8_path        = "anima-clm-eeg/state/g8_transversal_mi_matrix_v1.json"
+    let mut g9_path        = "state/g9_dag_cascade_analyzer.json"
+    let mut dday_path      = "state/mk_xii_eeg_audit/2026-04-28_pilot_n1.jsonl"
+    let mut out_path       = "anima-clm-eeg/state/mk_xii_hard_pass_composite_v2.json"
+
+    let pf_arg = argv_get("--preflight-path=")
+    if len(pf_arg) > 0 { preflight_path = pf_arg }
+    let bd_arg = argv_get("--bench-dir=")
+    if len(bd_arg) > 0 { bench_dir = bd_arg }
+    let g8_arg = argv_get("--g8-path=")
+    if len(g8_arg) > 0 { g8_path = g8_arg }
+    let g9_arg = argv_get("--g9-path=")
+    if len(g9_arg) > 0 { g9_path = g9_arg }
+    let dd_arg = argv_get("--dday-pilot-path=")
+    if len(dd_arg) > 0 { dday_path = dd_arg }
+    let out_arg = argv_get("--out=")
+    if len(out_arg) > 0 { out_path = out_arg }
+
+    // Modes
+    let dday_replay = argv_has("--selftest-dday-replay")
+    let force_zero = argv_get("--force-zero=")
+    let force_pf = if force_zero == "preflight" { 1 } else { 0 }
+    let force_g0 = if force_zero == "G0" { 1 } else { 0 }
+    let force_g1 = if force_zero == "G1" { 1 } else { 0 }
+    let force_g7 = if force_zero == "G7" { 1 } else { 0 }
+    let force_g8 = if force_zero == "G8" { 1 } else { 0 }
+    let force_g9 = if force_zero == "G9" { 1 } else { 0 }
+
+    // Read upstream artifacts
+    let preflight_json = try_read(preflight_path)
+    let g8_json        = try_read(g8_path)
+    let g9_json        = try_read(g9_path)
+    let dday_json      = try_read(dday_path)
+
+    // Probes
+    let mut preflight_pass = probe_preflight(preflight_json)
+    let g0_count = count_gate_pass(bench_dir, "G0_AN11_b")
+    let g1_count = count_gate_pass(bench_dir, "G1_BTom")
+    let g7_count = count_gate_pass(bench_dir, "G7_composite")
+
+    let mut g0_pass = if g0_count >= 3 { 1 } else { 0 }
+    let mut g1_pass = if g1_count >= 3 { 1 } else { 0 }
+    let mut g7_pass = if g7_count >= 3 { 1 } else { 0 }
+    let mut g8_pass = probe_g8(g8_json)
+    let mut g9_pass = probe_g9(g9_json)
+
+    // Apply force-zero override (single-gate negative falsifier branch)
+    if force_pf == 1 { preflight_pass = 0 }
+    if force_g0 == 1 { g0_pass = 0 }
+    if force_g1 == 1 { g1_pass = 0 }
+    if force_g7 == 1 { g7_pass = 0 }
+    if force_g8 == 1 { g8_pass = 0 }
+    if force_g9 == 1 { g9_pass = 0 }
+
+    // 5-gate pass count
+    let pass_count = g0_pass + g1_pass + g7_pass + g8_pass + g9_pass
+    let required = 5
+
+    // D-day empirical fail probe
+    let dday_fail = probe_dday_fail(dday_json)
+
+    // Tier rule
+    let mut tier = 0
+    let mut empirical_override = 0
+    if dday_replay == 1 {
+        if dday_fail == 1 {
+            tier = 0
+            empirical_override = 1
+        } else {
+            // replay requested but pilot JSONL missing/clean — degrade
+            if preflight_pass == 1 {
+                if pass_count >= required { tier = 2 }
+            }
+            if tier == 0 {
+                if pass_count >= 3 { tier = 1 }
+            }
+        }
+    } else {
+        if preflight_pass == 1 {
+            if pass_count >= required { tier = 2 }
+        }
+        if tier == 0 {
+            if pass_count >= 3 { tier = 1 }
+        }
+    }
+
+    let verdict = verdict_label(tier)
+    let offender_raw = first_offender(preflight_pass, g0_pass, g1_pass, g7_pass, g8_pass, g9_pass)
+    let offender = if empirical_override == 1 { "DDAY_EMPIRICAL_FAIL" } else { offender_raw }
+    let cascade_abort = if tier == 0 { 1 } else { 0 }
+
+    // Chained fingerprint
+    let mut fp = FNV_OFFSET_BASIS
+    fp = fingerprint_step(fp, len(preflight_json))
+    fp = fingerprint_step(fp, len(g8_json))
+    fp = fingerprint_step(fp, len(g9_json))
+    fp = fingerprint_step(fp, len(dday_json))
+    fp = fingerprint_step(fp, g0_count)
+    fp = fingerprint_step(fp, g1_count)
+    fp = fingerprint_step(fp, g7_count)
+    fp = fingerprint_step(fp, preflight_pass)
+    fp = fingerprint_step(fp, g0_pass)
+    fp = fingerprint_step(fp, g1_pass)
+    fp = fingerprint_step(fp, g7_pass)
+    fp = fingerprint_step(fp, g8_pass)
+    fp = fingerprint_step(fp, g9_pass)
+    fp = fingerprint_step(fp, dday_fail)
+    fp = fingerprint_step(fp, dday_replay)
+    fp = fingerprint_step(fp, empirical_override)
+    fp = fingerprint_step(fp, tier)
+    fp = fingerprint_str(fp, verdict)
+    fp = fingerprint_str(fp, offender)
+
+    // ── emit cert ──────────────────────────────────────────────────────────
+    let mut cert = "{\n"
+    cert = cert + "  \"tool\": \"mk_xii_hard_pass_composite\",\n"
+    cert = cert + "  \"version\": \"v2\",\n"
+    cert = cert + "  \"raw_rank\": 9,\n"
+    cert = cert + "  \"hexa_only\": true,\n"
+    cert = cert + "  \"deterministic\": true,\n"
+    cert = cert + "  \"llm\": \"none\",\n"
+    cert = cert + "  \"destructive\": false,\n"
+    cert = cert + "  \"scope\": \"Mk.XII Integration tier Hard PASS composite analyzer — preflight cascade + 5-gate (G0/G1/G7/G8/G9) aggregator with offender identification + D-day empirical replay branch. Sibling of #177 root-tool variant; this file adds raw#71 3-falsifier suite + argv-driven negative branches + honest empirical-overrides-surrogate path.\",\n"
+    cert = cert + "  \"composite_rule\": \"VALIDATED iff (preflight.GREEN AND 5/5 gate PASS AND not empirical_override); PARTIAL iff (3-4/5 PASS AND not empirical_override); NOT_VALIDATED otherwise. D-day replay forces NOT_VALIDATED when pilot CORROBORATION_FAIL.\",\n"
+    cert = cert + "  \"backbones\": [\"gemma\", \"mistral\", \"qwen3\", \"llama\"],\n"
+    cert = cert + "  \"inputs\": {\n"
+    cert = cert + "    \"preflight\": {\n"
+    cert = cert + "      \"path\": \"" + preflight_path + "\",\n"
+    cert = cert + "      \"bytes\": " + str(len(preflight_json)) + ",\n"
+    cert = cert + "      \"pass\": " + str(preflight_pass) + ",\n"
+    cert = cert + "      \"probe\": \"cascade.verdict == MK_XII_PREFLIGHT_GREEN\"\n"
+    cert = cert + "    },\n"
+    cert = cert + "    \"G0_AN11_b\": {\n"
+    cert = cert + "      \"bench_dir\": \"" + bench_dir + "\",\n"
+    cert = cert + "      \"backbones_pass\": " + str(g0_count) + ",\n"
+    cert = cert + "      \"backbones_total\": 4,\n"
+    cert = cert + "      \"pass\": " + str(g0_pass) + ",\n"
+    cert = cert + "      \"probe\": \"per-backbone g_gate.json gate=G0_AN11_b pass=true; majority >=3/4\"\n"
+    cert = cert + "    },\n"
+    cert = cert + "    \"G1_BTom\": {\n"
+    cert = cert + "      \"bench_dir\": \"" + bench_dir + "\",\n"
+    cert = cert + "      \"backbones_pass\": " + str(g1_count) + ",\n"
+    cert = cert + "      \"backbones_total\": 4,\n"
+    cert = cert + "      \"pass\": " + str(g1_pass) + ",\n"
+    cert = cert + "      \"probe\": \"per-backbone g_gate.json gate=G1_BTom pass=true; majority >=3/4\"\n"
+    cert = cert + "    },\n"
+    cert = cert + "    \"G7_composite\": {\n"
+    cert = cert + "      \"bench_dir\": \"" + bench_dir + "\",\n"
+    cert = cert + "      \"backbones_pass\": " + str(g7_count) + ",\n"
+    cert = cert + "      \"backbones_total\": 4,\n"
+    cert = cert + "      \"pass\": " + str(g7_pass) + ",\n"
+    cert = cert + "      \"probe\": \"per-backbone g_gate.json gate=G7_composite pass=true; majority >=3/4\"\n"
+    cert = cert + "    },\n"
+    cert = cert + "    \"G8_TFD\": {\n"
+    cert = cert + "      \"path\": \"" + g8_path + "\",\n"
+    cert = cert + "      \"bytes\": " + str(len(g8_json)) + ",\n"
+    cert = cert + "      \"pass\": " + str(g8_pass) + ",\n"
+    cert = cert + "      \"probe\": \"summary.g8_pass == 1 (all 10 pairwise MI <= 0.1 bit)\"\n"
+    cert = cert + "    },\n"
+    cert = cert + "    \"G9_DAG\": {\n"
+    cert = cert + "      \"path\": \"" + g9_path + "\",\n"
+    cert = cert + "      \"bytes\": " + str(len(g9_json)) + ",\n"
+    cert = cert + "      \"pass\": " + str(g9_pass) + ",\n"
+    cert = cert + "      \"probe\": \"g9_pass == 1 (edge<=7 AND cascade_max<=2)\"\n"
+    cert = cert + "    }\n"
+    cert = cert + "  },\n"
+    cert = cert + "  \"empirical_replay\": {\n"
+    cert = cert + "    \"dday_pilot_path\": \"" + dday_path + "\",\n"
+    cert = cert + "    \"dday_pilot_bytes\": " + str(len(dday_json)) + ",\n"
+    cert = cert + "    \"replay_requested\": " + str(dday_replay) + ",\n"
+    cert = cert + "    \"dday_fail_detected\": " + str(dday_fail) + ",\n"
+    cert = cert + "    \"empirical_override_active\": " + str(empirical_override) + ",\n"
+    cert = cert + "    \"reference_commit\": \"6748462dc\",\n"
+    cert = cert + "    \"reference_finding\": \"P3 GCG FALSIFIED + Mk.XII pilot N=1 CORROBORATION_FAIL · C1=1<5 / C4=999 no advers / C5=0 no CLM substrate\"\n"
+    cert = cert + "  },\n"
+    cert = cert + "  \"composite\": {\n"
+    cert = cert + "    \"pass_count\": " + str(pass_count) + ",\n"
+    cert = cert + "    \"required\": " + str(required) + ",\n"
+    cert = cert + "    \"tier\": " + str(tier) + ",\n"
+    cert = cert + "    \"verdict\": \"" + verdict + "\",\n"
+    cert = cert + "    \"offender\": \"" + offender + "\",\n"
+    cert = cert + "    \"cascade_abort\": " + str(cascade_abort) + ",\n"
+    cert = cert + "    \"chained_fingerprint\": " + str(fp) + "\n"
+    cert = cert + "  },\n"
+    cert = cert + "  \"raw71_falsifiers\": [\n"
+    cert = cert + "    {\"id\": \"F1\", \"name\": \"verdict_monotonicity\", \"description\": \"any single PASS->FAIL flip must demote composite (never promote); 6-way force-zero suite covers preflight+G0+G1+G7+G8+G9\"},\n"
+    cert = cert + "    {\"id\": \"F2\", \"name\": \"offender_uniqueness\", \"description\": \"under exactly-one-gate-fail, offender label equals failing gate (no wrong-attribution)\"},\n"
+    cert = cert + "    {\"id\": \"F3\", \"name\": \"empirical_overrides_surrogate\", \"description\": \"D-day replay forces NOT_VALIDATED when pilot N=1 audit reports CORROBORATION_FAIL even if all surrogate gates PASS\"}\n"
+    cert = cert + "  ],\n"
+    cert = cert + "  \"deferred\": {\n"
+    cert = cert + "    \"G10_hexad_triangulation\": \"post-EEG D+5..D+21 — requires EEG hardware arrival + P3 GCG family*band 4-backbone results\",\n"
+    cert = cert + "    \"first_validation_window\": \"D+22..D+30 (post-EEG-arrival)\",\n"
+    cert = cert + "    \"fallback\": \"Mk.XI v10 4-backbone LoRA ensemble (graceful degradation, mk_xii_proposal_outline §7)\"\n"
+    cert = cert + "  },\n"
+    cert = cert + "  \"note\": \"Strict aggregator. Today (2026-05-01) ground truth: P3 FALSIFIED + Mk.XII pilot N=1 CORROBORATION_FAIL (commit 6748462dc). Composite verdict honestly NOT GREEN under D-day replay regardless of surrogate gate scores — empirical override branch surfaces this fact.\"\n"
+    cert = cert + "}\n"
+    write_file(out_path, cert)
+
+    println("─── mk_xii_hard_pass_composite v2 (raw#9 hexa-only) ───")
+    println("  preflight.pass             = " + str(preflight_pass))
+    println("  G0_AN11_b backbones        = " + str(g0_count) + " / 4 -> pass=" + str(g0_pass))
+    println("  G1_BTom backbones          = " + str(g1_count) + " / 4 -> pass=" + str(g1_pass))
+    println("  G7_composite backbones     = " + str(g7_count) + " / 4 -> pass=" + str(g7_pass))
+    println("  G8_TFD.pass                = " + str(g8_pass))
+    println("  G9_DAG.pass                = " + str(g9_pass))
+    println("  pass_count                 = " + str(pass_count) + " / " + str(required))
+    println("  dday_replay_requested      = " + str(dday_replay))
+    println("  dday_fail_detected         = " + str(dday_fail))
+    println("  empirical_override_active  = " + str(empirical_override))
+    println("  composite.tier             = " + str(tier))
+    println("  composite.verdict          = " + verdict)
+    println("  composite.offender         = " + offender)
+    println("  cascade_abort              = " + str(cascade_abort))
+    println("  chained_fingerprint        = " + str(fp))
+    println("  output                     = " + out_path)
+
+    if tier == 0 {
+        println("  exit                       = 1 (NOT_VALIDATED)")
+        exit(1)
+    }
+    if tier == 1 {
+        println("  exit                       = 0 (PARTIAL)")
+        exit(0)
+    }
+    println("  exit                       = 0 (VALIDATED)")
+    exit(0)
+}
+
+main()
