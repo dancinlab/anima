@@ -1,24 +1,16 @@
 {
   "schema": "anima/h100_auto_kill/1",
-  "generated_at": "2026-04-27T02:57:49Z",
-  "generated_at_epoch": 1777258669,
-  "apply": false,
-  "prev_hash": "ad07faaa01624ba429467bc3ad7f962405fe81388eb9f666a4cf23bafb9b7af0",
+  "generated_at": "2026-05-01T14:51:24Z",
+  "generated_at_epoch": 1777647088,
+  "apply": true,
+  "prev_hash": "c2e212c0ca907f9f156885c69ec586c30e8381da8f6b2a3a1a6ec005fece91fc",
   "pods": [
     {
-      "pod_id": "bnabak3i4r38bg",
+      "pod_id": "lzw79649ob80uk",
       "verdict": "UNKNOWN",
       "idle_minutes": -1,
       "threshold_minutes": 5,
-      "probe_cmd": "ssh -o ConnectTimeout=8 -o BatchMode=yes -p 19147 root@103.207.149.52 'nvidia-smi --query-gpu=utilization.gpu --format=csv,noheader,nounits | head -1'",
-      "error": "no_probe_result_dry_run"
-    },
-    {
-      "pod_id": "1an0fdtr2mrif1",
-      "verdict": "UNKNOWN",
-      "idle_minutes": -1,
-      "threshold_minutes": 5,
-      "probe_cmd": "nvidia-smi --query-gpu=utilization.gpu --format=csv,noheader,nounits | head -1",
+      "probe_cmd": "ssh -o ConnectTimeout=8 -o BatchMode=yes -p 19762 root@64.247.201.34 'stat -c %Y /workspace/.heartbeat 2>/dev/null'",
       "error": "no_probe_result_dry_run"
     }
   ]

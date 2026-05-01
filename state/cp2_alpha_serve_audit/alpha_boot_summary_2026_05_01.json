@@ -1,0 +1,109 @@
+{
+  "schema": "anima/cp2_alpha_serve_audit/alpha_boot_summary/1",
+  "ts": "2026-05-01T13:25:00Z",
+  "tier": "alpha-invite",
+  "pod": {
+    "id": "lzw79649ob80uk",
+    "name": "anima-cp2-alpha-20260501T125909Z",
+    "gpu": "NVIDIA H100 80GB HBM3 (SXM, US)",
+    "image": "runpod/pytorch:2.4.0-py3.11-cuda12.4.1-devel-ubuntu22.04",
+    "cost_per_hr_usd": 2.99,
+    "ssh_command": "ssh -i ~/.runpod/ssh/RunPod-Key-Go root@64.247.201.34 -p 19762"
+  },
+  "endpoint": {
+    "public_url": "https://lzw79649ob80uk-8000.proxy.runpod.net",
+    "internal_vllm": "http://127.0.0.1:18080 (pod-loopback)",
+    "auth": "Bearer (token in state/cp2_alpha_serve_audit/alpha_token_2026_05_01.json, chmod 600)",
+    "endpoints_live": {
+      "GET /health": "200 (no-auth, public diagnostic)",
+      "POST /v1/completions": "Bearer-gated, rate-limit 60 RPM + 100k tok/day",
+      "POST /v1/chat/completions": "Bearer-gated, rate-limit 60 RPM + 100k tok/day"
+    },
+    "auth_smoke_LIVE_VERIFIED": {
+      "no_token": "401 Bearer token required",
+      "wrong_token": "403 invalid token",
+      "valid_token": "200 with real model output"
+    }
+  },
+  "served_model": {
+    "base": "mistralai/Mistral-7B-v0.3",
+    "lora": "NOT-LOADED (adapter file truncated — see lora_blocker)",
+    "lora_blocker": {
+      "fired": true,
+      "type": "adapter_truncation",
+      "path": "state/trained_adapters/p4_r8/final/adapter_model.safetensors",
+      "expected_size_bytes": 1006693544,
+      "actual_size_bytes": 185917440,
+      "missing_bytes": 820776104,
+      "md5_local_pod_match": "0cf189a72eb193877ad177048645d84f",
+      "explanation": "Stage-2 r8 adapter save was incomplete — header declares 1006693544 byte total payload but on-disk file is 185917440 bytes (~18.5%). Identically truncated locally and on pod, so corruption is at-rest, not transport. Cannot be loaded by safetensors lib or vllm.",
+      "remediation": "Re-train or re-export p4_r8 LoRA (state/trained_adapters/p4_r8/final/) from a clean checkpoint. If checkpoint also broken, full Stage-2 r8 retrain on H100 (~30-60 min @ $1.50-3.00).",
+      "raw#10_disclosure": "Without the LoRA, this alpha endpoint serves BASE Mistral-7B-v0.3, not the trained anima persona. Gate verdicts therefore reflect the BASE-FLOOR; trained-adapter performance is UNVERIFIED in this run."
+    }
+  },
+  "gates": {
+    "15_latency": {
+      "verdict": "PASS",
+      "p50_ms": 574.6, "p95_ms": 581.7, "p99_ms": 581.7,
+      "budget_ms_x1_10": 2200.0,
+      "AL-F2_fired": false,
+      "ledger": "state/cp2_alpha_serve_audit/gate15_latency_2026_05_01.json"
+    },
+    "17_hallucination": {
+      "verdict": "PASS",
+      "rate": 0.15,
+      "n_hallucinated": 3,
+      "n_prompts": 20,
+      "threshold_max": 0.30,
+      "AL-F3_fired": false,
+      "ledger": "state/cp2_alpha_serve_audit/gate17_hallucination_2026_05_01.json"
+    }
+  },
+  "alpha_token": {
+    "issued": true,
+    "id": "alpha_2026_05_01_001",
+    "bytes": 48,
+    "ledger": "state/cp2_alpha_serve_audit/alpha_token_2026_05_01.json (chmod 600)",
+    "rate_limit": {"rpm": 60, "daily_tok_cap": 100000}
+  },
+  "auto_shutdown": {
+    "idle_reclaim": "30 min idle → self-terminate",
+    "cost_cap_usd": 5.0,
+    "watchdog_pid": 433,
+    "auto_kill_log": "/workspace/out/idle_reclaim.log (pod-side)"
+  },
+  "cost": {
+    "boot_to_measure_usd_estimate": 1.95,
+    "boot_started_utc": "2026-05-01T12:59:10Z",
+    "measure_complete_utc": "2026-05-01T13:25:00Z",
+    "elapsed_min": 26,
+    "remaining_budget_usd": 3.05,
+    "AL-F4_threshold_usd_per_hr": 50.0,
+    "AL-F4_observed_usd_per_hr": 2.99,
+    "AL-F4_fired": false
+  },
+  "ship_verdict_transition": {
+    "from": "VERIFIED-INTERNAL",
+    "to": "VERIFIED-ALPHA-INVITE-BASE-ONLY",
+    "transition_ts": "2026-05-01T13:25:00Z",
+    "rationale": "Alpha-invite infrastructure (Bearer + rate limit + idle reclaim + cost cap + endpoint reachability) is LIVE and SMOKED on public proxy. Gates 15+17 PASS on base model. Adapter is broken so ALPHA-INVITE qualifier is BASE-ONLY pending p4_r8 re-training/re-export.",
+    "note": "Did NOT promote to bare VERIFIED-ALPHA-INVITE because the trained adapter (anima persona) is not actually served. Promotion to full VERIFIED-ALPHA-INVITE requires re-running gate 15+17 with a working p4_r8 LoRA loaded."
+  },
+  "falsifiers_status": {
+    "AL-F1_invitee_misperception_14d": "OPEN (window starts now; landing-page agent owns)",
+    "AL-F2_latency_baseline_x_1_5":     "NOT_FIRED (p95=582ms vs threshold=3000ms warm-up baseline)",
+    "AL-F3_hallucination_rate_30pct":   "NOT_FIRED (15% < 30%)",
+    "AL-F4_runaway_cost_50_per_hr":     "NOT_FIRED (2.99/hr < 50/hr)",
+    "AL-F5_ship_verdict_unawareness":   "MITIGATED (verdict explicitly downgraded to ALPHA-INVITE-BASE-ONLY rather than full)"
+  },
+  "race_isolation": {
+    "wrote_only_to": ["state/cp2_alpha_serve_audit/*", "state/anima_serve_production_ship.json"],
+    "did_not_touch": ["state/an11_c_p4_r8_f1_live_*", "docs/anima_cp2_alpha_landing_*"]
+  },
+  "next_actions": [
+    "Re-export p4_r8 LoRA from a clean checkpoint OR full Stage-2 r8 retrain (~$1.50-3.00)",
+    "Re-run gate 15+17 with working LoRA loaded → promote to full VERIFIED-ALPHA-INVITE",
+    "Configure RunPod cost-cap webhook (current cap is pod-side watchdog only)",
+    "Consider Cloudflare tunnel for stable hostname (RunPod proxy URL changes per pod cycle)"
+  ]
+}

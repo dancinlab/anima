@@ -187,3 +187,16 @@ Transports: UDP broadcast (LAN, port 9999, JSON), R2 Cloudflare (remote pairing)
 ---
 
 <sub>🧠 Two engines. One tension. Ψ = 1/2. · [need-singularity](https://github.com/need-singularity)</sub>
+
+---
+
+## raw 258 amendment v2 A-policy (2026-05-01) — kick canonical single-entry
+
+`kick` is the sole canonical CLI surface (`nexus kick <topic>`) for the kick cluster.
+Six terms (`drill / smash / blowup / free / meta-closure / absolute`) are absorbed into
+`kick` as internal saturation phases and are not exposed as external `--phase` flags.
+
+- Canonical : `nexus kick <topic>`
+- Help      : `nexus kick --help`
+- Banned    : direct `.hexa` invocation, deprecated direct subcommands (`nexus drill --seed`, etc.)
+- Mapping   : `airgenome/docs/raw_canonical_tool_term_canonical_mapping_2026-05-01.jsonl` (schema v2)

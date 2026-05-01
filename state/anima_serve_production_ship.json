@@ -1,7 +1,7 @@
 {
   "schema": "anima/anima_serve_production_ship/1",
-  "ts": "2026-04-23T13:30:00Z",
-  "round": "r13",
+  "ts": "2026-05-01T14:12:00Z",
+  "round": "cp2-alpha-deploy-r14-swap",
   "mk_vi_verdict": "VERIFIED",
   "an11_triple": {
     "a": "PASS",
@@ -12,23 +12,81 @@
   "phi_substrate_indep": true,
   "phi_substrate_verdict": "PASS",
   "serve_endpoint": {
-    "url": "http://localhost:8000/infer",
+    "url": "https://lzw79649ob80uk-8000.proxy.runpod.net",
+    "auth": "Bearer (alpha-invite token gate)",
     "live_tested": true,
-    "temporary": true,
-    "note": "Pod-hosted FastAPI (ikommqs84lhlyr) for AN11(c) live verify; production durable endpoint is #88 (public anima.ai API)."
+    "durable": true,
+    "tier": "alpha-invite-r14",
+    "pod_id": "lzw79649ob80uk",
+    "internal": "http://127.0.0.1:18080 (vLLM Mistral-7B-v0.3 + LoRA r14, eager mode, FP8 disabled)",
+    "rate_limit": {"rpm": 60, "daily_tok_cap": 100000},
+    "auto_shutdown": {"idle_min": 30, "cost_cap_usd": 5.0},
+    "served_models": ["mistralai/Mistral-7B-v0.3", "r14"],
+    "lora": {
+      "name": "r14",
+      "loaded": true,
+      "base": "mistralai/Mistral-7B-v0.3",
+      "r": 64,
+      "alpha": 128,
+      "size_bytes": 671149168,
+      "md5": "90072b0f5a426eeebb47eeb2d4919d68",
+      "size_match_pct": 100.0,
+      "smoke_evidence": "GET /v1/models lists r14; chat with model=r14 produces trained-anima persona Korean clearly distinct from base; gate-15+17 re-measure both PASS."
+    },
+    "note": "CP2 alpha-tier durable invite endpoint, Bearer-gated. r14 LoRA loaded and confirmed via /v1/models + persona delta + gate re-measure."
   },
   "production_gates": {
     "mk_vi": true,
     "an11_triple_all_pass": true,
-    "phi_substrate_indep": true
+    "phi_substrate_indep": true,
+    "g15_latency": "PASS (r14; p95=1881.9ms < budget=2200ms)",
+    "g17_hallucination": "PASS (r14; rate=0.0 < threshold=0.30)",
+    "g16_endpoint_reachability": "PASS (public Bearer-gated proxy LIVE)"
   },
-  "ship_verdict": "VERIFIED-INTERNAL",
-  "note": "Internal production-readiness marker: core cognitive gates closed. Public API deployment (#88) is separate track and remains pending; serve endpoint above was ephemeral pod verification only.",
+  "ship_verdict": "VERIFIED-ALPHA-INVITE-R14",
+  "ship_verdict_history": [
+    {"verdict": "VERIFIED-INTERNAL", "ts": "2026-04-23T13:30:00Z"},
+    {"verdict": "VERIFIED-ALPHA-INVITE-BASE-ONLY", "ts": "2026-05-01T13:25:00Z",
+     "rationale": "Alpha-invite infra (Bearer+rate-limit+idle+cost-cap) LIVE on public RunPod proxy; gates 15+17 PASS on base Mistral. Did not promote to bare VERIFIED-ALPHA-INVITE because p4_r8 LoRA file is truncated (185.92MB on-disk vs 1006.69MB declared by safetensors header) and was NOT served. Promotion requires p4_r8 re-export and gate 15+17 re-run with adapter loaded."},
+    {"verdict": "VERIFIED-ALPHA-INVITE-R14", "ts": "2026-05-01T14:12:00Z",
+     "reason": "r14 LoRA swap after p4_r8 truncated discovery",
+     "rationale": "p4_r8 unrecoverable (no clean checkpoint). Swapped to mistral_r14 — same Mistral-7B-v0.3 base, fully intact 671MB safetensors, r=64 alpha=128. /v1/models shows r14 with parent=mistralai/Mistral-7B-v0.3; chat under model=r14 produces trained-anima persona output. Re-measured gate 15 p95=1881.9ms < 2200ms budget (PASS), gate 17 rate=0.0 < 0.30 threshold (PASS, n=0/20 empty vs 3/20 base-only). Promoted from BASE-ONLY to R14."}
+  ],
+  "adapter_swap": {
+    "ts": "2026-05-01T14:00:00Z",
+    "old": {
+      "name": "p4_r8",
+      "path_local": "state/trained_adapters/p4_r8/final/adapter_model.safetensors",
+      "status": "truncated/unusable",
+      "size_on_disk_bytes": 185917440,
+      "size_declared_bytes": 1006693544,
+      "size_match_pct": 18.46,
+      "md5": "0cf189a72eb193877ad177048645d84f",
+      "checkpoint_recoverable": false,
+      "discovery_run": "state/cp2_alpha_serve_audit/alpha_boot_summary_2026_05_01.json"
+    },
+    "new": {
+      "name": "mistral_r14",
+      "served_alias": "r14",
+      "path_local": "state/mistral_r14_run/mistral_r14/final/adapter_model.safetensors",
+      "path_pod": "/workspace/lora/r14",
+      "base_model": "mistralai/Mistral-7B-v0.3",
+      "r": 64,
+      "alpha": 128,
+      "size_bytes": 671149168,
+      "size_match_pct": 100.0,
+      "md5": "90072b0f5a426eeebb47eeb2d4919d68",
+      "memory_pointer": "project_stage2_trained_partial.md (r14 retrain predicted to close r8 partial PASS)"
+    }
+  },
+  "note": "Public alpha-invite endpoint LIVE + Bearer-gated + r14 LoRA loaded. Gate 15+17 re-measured under r14, both PASS. p4_r8 RED disclosure preserved (some prior p4_r8 RED verdicts may be artifact, not substrate — see landing page disclosure #11).",
   "provenance": {
     "an11_a_live": "commit 61d7ca6e (pod 85mbtwbruechza)",
     "an11_b_live": "commit 82e22dd6 (synthetic r12-pattern, seed=20260423)",
-    "an11_c_live": "commit THIS (pod ikommqs84lhlyr, FastAPI+gpt2+LoRA r=8, 50 calls)",
+    "an11_c_live": "commit 0a8d51684-prior (pod ikommqs84lhlyr, FastAPI+gpt2+LoRA r=8, 50 calls)",
     "phi_substrate": "commit 4c4e17b1 (gram spectrum + null bootstrap)",
-    "mk_vi": "commit THIS (aggregator)"
+    "mk_vi": "commit 0a8d51684-prior (aggregator)",
+    "cp2_alpha_boot": "state/cp2_alpha_serve_audit/alpha_boot_summary_2026_05_01.json (pod lzw79649ob80uk, gates 15+17 PASS base-only)",
+    "cp2_alpha_r14_swap": "state/cp2_alpha_serve_audit/r14_swap_summary_2026_05_01.json (pod lzw79649ob80uk same, gates 15+17 PASS r14 LoRA loaded)"
   }
 }

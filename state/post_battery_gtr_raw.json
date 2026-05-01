@@ -1,0 +1,68 @@
+{
+  "schema": "anima-clm-eeg/clm_eeg_gamma_theta_ratio/1",
+  "tool": "clm_eeg_gamma_theta_ratio",
+  "version": "v1",
+  "raw_rank": 9,
+  "hexa_only": true,
+  "deterministic": true,
+  "resolver_bypass_reason": "darwin-native: scipy.welch in .venv-eeg, mac local execution required for venv access",
+  "pre_register_frozen": true,
+  "frozen_at": "2026-04-28",
+  "hypothesis": "awake EEG gamma(30-50Hz)/theta(4-8Hz) band-power ratio == 3.0 (own 3 = TECS-L H-CX-1 sigma/tau identity)",
+  "ssot_cite": {
+    "own_3_sigma_over_tau": "sigma=6, tau=2, sigma/tau=3, n=6 unique solution",
+    "paper_p3": "docs/discovery-algorithm-anima.md:289"
+  },
+  "criteria": {
+    "C1_loose_x1000":  [1500,4500],
+    "C1_strict_x1000": [2500,3500],
+    "C2_std_over_mean_max_x1000": 500,
+    "C3_rule": "mean(O1,O2)_ratio > grand_mean"
+  },
+  "falsifiers": {
+    "F1_gamma_absent_x1000_lt": 1000,
+    "F2_theta_absent_x1000_gt": 10000,
+    "F3_heterog_std_over_mean_x1000_gt": 1000,
+    "F4_theta_peak_outside_band_count_ge": 8,
+    "F5_gamma_peak_ge_49hz_count_ge": 8,
+    "F6_rule": "occipital < frontal (regional reversal)"
+  },
+  "run": {
+    "timestamp_utc": "2026-04-28T13:31:29Z",
+    "mode": "real",
+    "input_label": "post_battery_raw_16ch_2026_04_28.npy",
+    "input_sha256": "c15f577610e454c3c17b40a8d3610c120f8afdccb15820fcde6635957032bf18",
+    "n_channels": 16,
+    "n_samples": 7490,
+    "sample_rate_hz": 125,
+    "grand_mean_ratio_x1000": 174,
+    "occipital_ratio_x1000": 108,
+    "frontal_ratio_x1000": 232,
+    "std_over_mean_x1000": 572,
+    "f4_theta_peak_outside_band_count": 0,
+    "f5_gamma_peak_ge_49hz_count": 0,
+    "per_channel_ratio_x1000": [135,68,123,102,130,113,126,90,159,214,214,510,183,205,244,163],
+    "theta_peak_hz_x100": [586,586,586,586,586,586,586,586,586,586,586,586,586,586,586,586],
+    "gamma_peak_hz_x100": [3516,3125,3125,3125,3125,3125,3125,3125,3125,3906,3125,3906,3125,3711,3125,3711]
+  },
+  "verdict": {
+    "C1_loose_pass":  0,
+    "C1_strict_pass": 0,
+    "C2_pass":        0,
+    "C3_pass":        0,
+    "F1_trigger":     1,
+    "F2_trigger":     0,
+    "F3_trigger":     0,
+    "F4_trigger":     0,
+    "F5_trigger":     0,
+    "F6_trigger":     1,
+    "classification": "FALSIFIED_P3"
+  },
+  "raw10_honest": {
+    "60s_short": "60s window has unstable gamma-band statistics; at least 180s preferred",
+    "125hz_nyquist_marginal": "Nyquist=62.5Hz, gamma upper bound 50Hz only 12.5Hz away — anti-alias roll-off may attenuate",
+    "single_subject": "single-subject result is not paper-generalizable (N=1, no demographics matching)",
+    "eyes_state": "resting baseline only; eyes-open/eyes-closed pattern not separated; alpha-stop-band may inflate theta",
+    "no_independent_paper_p3": "paper P3 numerical target ratio=3 is internal SSOT (own 3 sigma/tau), not an external Buzsaki/Steriade citation"
+  }
+}
