@@ -11,7 +11,7 @@
 //
 // What it scans:
 //   - tests/*.hexa
-//   - anima-*/test_*.hexa  (anima-agent, anima-speak, ...)
+//   - anima-*/test_*.hexa  (anima-agent, anima-voice, ...)
 //   - anima-*/tests/*.hexa (future-proof)
 //   - training/test_*.hexa
 //   - serving/test_*.hexa
@@ -48,7 +48,7 @@
 
 fn default_roots() -> string {
     // comma-separated list of roots to walk
-    return "tests,training,serving,anima-agent,anima-speak,anima-physics,anima-body,anima-core,anima-hexad,anima-measurement,anima-engines,anima-eeg,anima-tools"
+    return "tests,training,serving,anima-agent,anima-voice,anima-physics,anima-body,anima-core,anima-hexad,anima-measurement,anima-engines,anima-eeg,anima-tools"
 }
 
 fn repo_root() -> string {

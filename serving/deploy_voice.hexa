@@ -12,8 +12,8 @@
 // Steps:
 //   1. Check pod connectivity (ssh echo ok)
 //   2. Upload serving/{http_server,voice_routes,hire_routes,avatar_sync,avatar_feed}.hexa
-//   3. Upload anima-speak/neural_vocoder.hexa
-//   4. Upload anima-speak/ckpt_w_ctrl.json
+//   3. Upload anima-voice/neural_vocoder.hexa
+//   4. Upload anima-voice/ckpt_w_ctrl.json
 //   5. Set env vars and start http_server.hexa in tmux "voice-serve"
 //   6. Wait briefly, then verify /voice/health responds
 //
@@ -40,7 +40,7 @@ let SERVE_PORT   = "8091"   // voice on 8091 to avoid collision with ALM on 8090
 
 // Local paths
 let LOCAL_SERVING  = "serving"
-let LOCAL_SPEAK    = "anima-speak"
+let LOCAL_SPEAK    = "anima-voice"
 
 // ═══════════════════════════════════════════════════════════════
 //  Section 2. Helpers
@@ -118,7 +118,7 @@ fn dv_upload_files() -> bool {
         i = i + 1
     }
 
-    // Upload neural_vocoder.hexa from anima-speak/
+    // Upload neural_vocoder.hexa from anima-voice/
     dv_log("  uploading neural_vocoder.hexa")
     dv_scp_up(LOCAL_SPEAK + "/neural_vocoder.hexa", REMOTE_DIR + "/neural_vocoder.hexa")
     let nv_check = dv_ssh("test -f " + REMOTE_DIR + "/neural_vocoder.hexa && echo exists")

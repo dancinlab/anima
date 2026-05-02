@@ -107,16 +107,16 @@
     "no_docker_rebuild": true,
     "no_linux_elf_rebuild": true,
     "no_git_commit": true,
-    "files_modified": ["/Users/ghost/core/anima/anima-speak/anima_audio.hexa"],
+    "files_modified": ["/Users/ghost/core/anima/anima-voice/anima_audio.hexa"],
     "files_created": [
-      "/Users/ghost/core/anima/anima-speak/_omega_audio_5_bench.hexa",
+      "/Users/ghost/core/anima/anima-voice/_omega_audio_5_bench.hexa",
       "/Users/ghost/core/anima/state/omega_audio_5_sincos_table.json"
     ]
   },
   "rollback": {
-    "method": "git checkout -- anima-speak/anima_audio.hexa",
+    "method": "git checkout -- anima-voice/anima_audio.hexa",
     "remove_artifacts": [
-      "rm /Users/ghost/core/anima/anima-speak/_omega_audio_5_bench.hexa",
+      "rm /Users/ghost/core/anima/anima-voice/_omega_audio_5_bench.hexa",
       "rm /Users/ghost/core/anima/state/omega_audio_5_sincos_table.json"
     ],
     "scope": "Only vocal_hexa() and vocal_lf_hexa() functions touched in anima_audio.hexa; all other organs (vocal_hexa_alloc, breath_hexa, pipe_hexa, vocal, breath, vocal_lf, etc.) untouched."

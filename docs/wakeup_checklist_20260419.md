@@ -56,7 +56,7 @@ training/alm_r11_branch_select.hexa
 training/corpus_yt_ko/
 training/deploy/clm_r4_bundler_relaunch*
 training/deploy/ubu_cuda_smoke_20260419.md
-anima-speak/docs/improvement_plan_20260419.md
+anima-voice/docs/improvement_plan_20260419.md
 experiments/holo_post/results/*.jsonl (6개)
 experiments/physics_*.md (2개)
 docs/htz_governor_tuning_20260419.md
@@ -86,7 +86,7 @@ docs/htz_governor_tuning_20260419.md
 - Φ 16D normalization 완료 — `docs/phi_16d_normalization_20260418.md`
 - BLAS 14 files portable (scalar fallback) — CUDA 없이 동작
 - Telegram bridge 14 extern fn strip 완료
-- anima-speak bf16 NEON bench landed
+- anima-voice bf16 NEON bench landed
 - MEMORY.md 추가 후보 3건: launch.hexa cvf 패턴 / r11 retry storm / Physics Tier-1 baseline
 - 로드맵: seed-freeze 플래그 ON 유지 중
 - anima HEAD: `d3c649a8`, nexus HEAD: `259b6875`

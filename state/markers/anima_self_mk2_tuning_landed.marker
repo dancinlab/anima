@@ -21,7 +21,7 @@
   },
   "audit_phase_1": {
     "name": "directory_audit",
-    "scope": "anima/, anima-eeg/, anima-clm-eeg/, anima-physics/, anima-speak/, anima-engines/, serving/, training/, tool/, modules/, core/, ready/, references/, state/, docs/, anima-agent*, anima-tools/, anima-measurement/, anima-hexad/, anima-body/, anima-os/, anima-serve/, anima-eeg-core/, anima-cpgd-research/, anima-hci-research/, anima-tribev2-pilot/, hive/, n6/, edu/, self/, build*/, btr_evo/, bench/",
+    "scope": "anima/, anima-eeg/, anima-clm-eeg/, anima-physics/, anima-voice/, anima-engines/, serving/, training/, tool/, modules/, core/, ready/, references/, state/, docs/, anima-agent*, anima-tools/, anima-measurement/, anima-hexad/, anima-body/, anima-os/, anima-serve/, anima-eeg-core/, anima-cpgd-research/, anima-hci-research/, anima-tribev2-pilot/, hive/, n6/, edu/, self/, build*/, btr_evo/, bench/",
     "top_level_dirs_total": 73,
     "anima_prefixed_dirs": 18
   },
@@ -45,7 +45,7 @@
     "candidates_total": 9,
     "files_emitted": 0,
     "rank_a": ["serving","training","anima_physics"],
-    "rank_b": ["anima_speak","anima_clm_eeg","anima_engines"],
+    "rank_b": ["anima_voice","anima_clm_eeg","anima_engines"],
     "rank_c": ["anima_agent","anima_tools","tool"],
     "avg_required_conditions_per_domain": 3,
     "total_potential_conditions": 27,
@@ -61,7 +61,7 @@
       "serving": {"core": false, "modules": false, "readme_ai_md": false, "tier": "T1"},
       "training": {"core": false, "modules": false, "readme_ai_md": false, "tier": "T1_large"},
       "anima_physics": {"core": false, "modules": "partial_17_subdirs", "readme_ai_md": "partial_via_ready", "tier": "T2"},
-      "anima_speak": {"core": false, "modules": false, "readme_ai_md": "partial_via_ready", "tier": "T1"},
+      "anima_voice": {"core": false, "modules": false, "readme_ai_md": "partial_via_ready", "tier": "T1"},
       "anima_clm_eeg": {"core": false, "modules": false, "readme_ai_md": false, "tier": "T0"},
       "anima_engines": {"core": false, "modules": "partial_1_subdir", "readme_ai_md": false, "tier": "T1_large"},
       "anima_agent": {"core": false, "modules": "partial_subdirs", "readme_ai_md": "partial_via_ready", "tier": "T2"},
@@ -77,7 +77,7 @@
       "tensionlink §65.2 P10 ↔ state/p10_tension_substrate_spec_2026_05_02/"
     ],
     "recommended_new_cross_links": [
-      "voice.cond.{1,2,3} ↔ new anima_speak (consumer ↔ impl pair)",
+      "voice.cond.{1,2,3} ↔ new anima_voice (consumer ↔ impl pair)",
       "clm.cond.2 (HF release) ↔ new serving (model card endpoint)",
       "eeg.cond.1 (B1-B4) ↔ anima-eeg-core/_gates ↔ new anima_clm_eeg",
       "n_substrate / triple_axis_pilots / dual_pair_pilots ↔ new anima_physics (substrate witness ledger)"

@@ -15,13 +15,13 @@
         "summary": "Header comments updated to document the Phase B IPC migration (FIFO+keepalive shim → direct pipe_spawn). No protocol/code changes — worker was already stdin/stdout NDJSON. The 'ready' event on stdout is now consumed by the hexa caller right after pipe_spawn() returns. PARENT_PID watchdog still works (under sh -c exec, getppid() == hexa interp pid), and the runtime atexit cleanup makes the parent-died path effectively redundant but kept as a safety net for SIGKILL of hexa."
       },
       {
-        "path": "/Users/ghost/core/anima/anima-speak/anima_audio.hexa",
+        "path": "/Users/ghost/core/anima/anima-voice/anima_audio.hexa",
         "summary": "Replaced FIFO-shim plumbing (lines 115-145 old: _hexa_pid + WORKER_CALL_SH + _run_py_worker calling _audio_worker_call.sh) with direct pipe_spawn-based IPC. Added module-scope state: WORKER_HANDLE (lazy-init, per-script lifetime), WORKER_REQ_ID (monotonic), WORKER_PY_OK_PROBED + WORKER_PY_OK (one-shot python3 availability cache). New helpers: _python_available() (container guard: file_exists /opt/homebrew/bin/python3 or `command -v python3`), _ensure_worker_handle() (lazy spawn + ready-event consume + alive-recheck), _run_py_worker() (base64_encode code, build NDJSON request, pipe_send_line + pipe_recv_line(5000ms), self-heal on pipe break). _run_py() default-ON cutover: route to worker unless ANIMA_AUDIO_WORKER == \"0\"; on worker failure (e.g. container without python3), fall through to legacy `python3 - <<PYEOF` path preserving baseline parity."
       }
     ],
     "files_deprecated_or_deleted": [
       {
-        "path": "/Users/ghost/core/anima/anima-speak/_audio_worker_call.sh",
+        "path": "/Users/ghost/core/anima/anima-voice/_audio_worker_call.sh",
         "action": "deleted",
         "rationale": "Subsumed entirely by pipe_spawn primitive + _ensure_worker_handle. Bash adapter, FIFOs, sleep-keepalive, per-PPID /tmp dirs, pid/keepalive bookkeeping all eliminated. Atexit handler in ω-runtime-1 (SIGTERM → 50ms grace → SIGKILL → waitpid) replaces all of it."
       }
@@ -81,15 +81,15 @@
       "follow_up": "Operator can `cp build/hexa_interp.real build/hexa_interp` to update the shim target."
     }
   ],
-  "rollback": "Restore /Users/ghost/core/anima/anima-speak/_audio_worker_call.sh from git (last committed at anima 9433af5e). Revert anima_audio.hexa lines 115-202 from git. ANIMA_AUDIO_WORKER=0 already provides operator-side safety valve to fall back to legacy spawn-per-call without any code revert.",
+  "rollback": "Restore /Users/ghost/core/anima/anima-voice/_audio_worker_call.sh from git (last committed at anima 9433af5e). Revert anima_audio.hexa lines 115-202 from git. ANIMA_AUDIO_WORKER=0 already provides operator-side safety valve to fall back to legacy spawn-per-call without any code revert.",
   "constraints_honored": {
     "git_uncommitted": true,
     "no_docker_rebuild": true,
     "no_anima_audio_unrelated_changes": true,
     "files_touched": [
       "/Users/ghost/core/hexa-lang/stdlib/anima_audio_worker.py (header comments only)",
-      "/Users/ghost/core/anima/anima-speak/anima_audio.hexa (worker-IPC region only)",
-      "/Users/ghost/core/anima/anima-speak/_audio_worker_call.sh (deleted)",
+      "/Users/ghost/core/anima/anima-voice/anima_audio.hexa (worker-IPC region only)",
+      "/Users/ghost/core/anima/anima-voice/_audio_worker_call.sh (deleted)",
       "/Users/ghost/core/anima/state/omega_audio_2_phase_b_cutover.json (this file)"
     ],
     "workers_spawned_for_measurement": "10 (5 worker bench + 3 baseline bench + 1 smoke + 1 spawn-debug). All cleaned up by atexit."

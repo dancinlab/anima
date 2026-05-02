@@ -23,7 +23,7 @@ preserved_unchanged:
   - all 19 existing README.ai.md files
   - .ai-native-readme-baseline (empty/conformed)
   - mk1 .roadmap (3817 lines narrative)
-  - all module dirs under anima/{core,modules}, anima-eeg/, anima-clm-eeg/, anima-physics/, anima-speak/, anima-engines/, serving/, training/, tool/
+  - all module dirs under anima/{core,modules}, anima-eeg/, anima-clm-eeg/, anima-physics/, anima-voice/, anima-engines/, serving/, training/, tool/
   - all configs
 policy:
   migration: forbidden
@@ -147,7 +147,7 @@ state/markers/anima_rank_a_3_domain_landed.marker
 
 ## §9 next-cycle (사용자 lock-in 후)
 
-1. **rank B 3개 land** (anima_speak / anima_clm_eeg / anima_engines) — 동일 패턴 (peer perspective, 3 cond mix, 1-2 blockers).
+1. **rank B 3개 land** (anima_voice / anima_clm_eeg / anima_engines) — 동일 패턴 (peer perspective, 3 cond mix, 1-2 blockers).
 2. **rank C 3개 land** (anima_agent / anima_tools / tool) — `tool` 은 clm.cond.1 verifier 와 중복 가능성, cross-link only 권장 (project memory 의 audit 권고 그대로).
 3. **raw 270/271 triplet 후속** (병렬) — rank A 3 surface 부터 README.ai.md + core+modules 분할 (training = T1_large 가장 큰 작업, anima_physics = T2 17 sub-dir).
 4. **verifier seam exit-0 selftest** (별도 cycle) — serving healthz smoke / training alm_a1 preflight / anima_physics 7cond_hw + dispatch + edge_deploy 3 cond 의 실제 exit-0 측정.

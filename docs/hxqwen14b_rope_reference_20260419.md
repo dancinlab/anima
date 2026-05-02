@@ -180,7 +180,7 @@ trip. Day-2 can ship the non-fused version above and defer the fusion.
 - `modules/decoder/decoder.hexa:284` — `repeat_kv` reference impl
 - `training/nn_core.hexa:571-597` — interleaved-pair hexa RoPE (CLM,
   base=1e4) — **do not copy** for Qwen 14B
-- `anima-speak/transformer.hexa:333-354` — same, speak vocoder
+- `anima-voice/transformer.hexa:333-354` — same, speak vocoder
 - `models/decoder.hexa:18`, `serving/http_server.hexa:55` — CLM
   `ROPE_BASE = 10000.0` constant (CLM-only, not 14B)
 - HuggingFace upstream: `transformers/models/qwen2/modeling_qwen2.py`

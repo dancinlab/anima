@@ -13,28 +13,28 @@
       "name": "vocal_hexa",
       "status": "PRE-EXISTING (POC from ω-audio-3 phase 1)",
       "loc": 54,
-      "file": "/Users/ghost/core/anima/anima-speak/anima_audio.hexa",
+      "file": "/Users/ghost/core/anima/anima-voice/anima_audio.hexa",
       "line": 333
     },
     {
       "name": "breath_hexa",
       "status": "NEW (this cycle)",
       "loc": 87,
-      "file": "/Users/ghost/core/anima/anima-speak/anima_audio.hexa",
+      "file": "/Users/ghost/core/anima/anima-voice/anima_audio.hexa",
       "line": 450
     },
     {
       "name": "pipe_hexa",
       "status": "NEW (this cycle)",
       "loc": 81,
-      "file": "/Users/ghost/core/anima/anima-speak/anima_audio.hexa",
+      "file": "/Users/ghost/core/anima/anima-voice/anima_audio.hexa",
       "line": 550
     },
     {
       "name": "vocal_lf_hexa",
       "status": "NEW (this cycle)",
       "loc": 76,
-      "file": "/Users/ghost/core/anima/anima-speak/anima_audio.hexa",
+      "file": "/Users/ghost/core/anima/anima-voice/anima_audio.hexa",
       "line": 645
     }
   ],
@@ -84,7 +84,7 @@
       "python_worker_chain_warm": 287,
       "python_worker_chain_cold": 1502
     },
-    "interpretation": "Per-call hexa-native is ~5x slower than warm python-worker (numpy vectorized DSP is fast; interp does per-sample float ops). However hexa-native has zero cold-start cost. For one-shot scripts (typical anima-speak utterance), hexa-native is competitive (1037ms vs 1502ms cold). For long-running anima-speak processes, python-worker warm path remains faster. Cutover default=ON prioritizes correctness/portability/zero-deps over peak warm-path throughput.",
+    "interpretation": "Per-call hexa-native is ~5x slower than warm python-worker (numpy vectorized DSP is fast; interp does per-sample float ops). However hexa-native has zero cold-start cost. For one-shot scripts (typical anima-voice utterance), hexa-native is competitive (1037ms vs 1502ms cold). For long-running anima-voice processes, python-worker warm path remains faster. Cutover default=ON prioritizes correctness/portability/zero-deps over peak warm-path throughput.",
     "expected_vs_observed": "Initial hypothesis (much faster than worker because no IPC) held only for COLD case. Warm case is dominated by interpreted per-sample loop cost (~96 µs/sample), not IPC. Acceptable trade — absolute numbers (~250ms/100ms-of-audio) still fast enough for non-realtime synthesis pipeline."
   },
   "regression": {
@@ -113,7 +113,7 @@
     "state": "RETAINED as opt-out fallback (per session constraint: NO python worker delete this cycle)",
     "trigger": "ANIMA_AUDIO_HEXA_NATIVE=0",
     "path": "/Users/ghost/core/hexa-lang/stdlib/anima_audio_worker.py",
-    "next_cycle_proposal": "Once hexa-native organs are exercised through ≥1 full anima-speak production session with no regressions, deprecate worker.py + remove the opt-out env gate. Estimated ω-audio-4."
+    "next_cycle_proposal": "Once hexa-native organs are exercised through ≥1 full anima-voice production session with no regressions, deprecate worker.py + remove the opt-out env gate. Estimated ω-audio-4."
   },
   "verification_artifacts": {
     "smoke_script": "/tmp/_audio3_smoke.hexa",
@@ -129,8 +129,8 @@
     "Defer breath_hexa Butterworth-4 (8th-order SOS) until a benchmark shows current 2-pole bandpass is audibly insufficient for fricative class. Likely never — RBJ 12dB/oct skirt is acceptable for breath/aspirate."
   ],
   "rollback": {
-    "method_1_disable_via_env": "Run anima-speak with ANIMA_AUDIO_HEXA_NATIVE=0 in environment to immediately revert all 4 organs to the python-worker path. Zero code change required.",
-    "method_2_revert_diffs": "git diff /Users/ghost/core/anima/anima-speak/anima_audio.hexa shows exactly 5 hunks (1 large insert + 4 guard inserts). `git checkout -- /Users/ghost/core/anima/anima-speak/anima_audio.hexa` reverts cleanly.",
+    "method_1_disable_via_env": "Run anima-voice with ANIMA_AUDIO_HEXA_NATIVE=0 in environment to immediately revert all 4 organs to the python-worker path. Zero code change required.",
+    "method_2_revert_diffs": "git diff /Users/ghost/core/anima/anima-voice/anima_audio.hexa shows exactly 5 hunks (1 large insert + 4 guard inserts). `git checkout -- /Users/ghost/core/anima/anima-voice/anima_audio.hexa` reverts cleanly.",
     "method_3_partial": "Remove only the guard line in any one of vocal/breath/pipe/vocal_lf to restore that single organ to python-worker while keeping others on hexa-native.",
     "blast_radius": "Confined to anima_audio.hexa. No changes to hexa-lang, no changes to anima_audio_worker.py, no docker rebuild, no Linux ELF rebuild, no git commit (per directive)."
   },

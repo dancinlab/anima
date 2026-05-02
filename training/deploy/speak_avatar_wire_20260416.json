@@ -5,13 +5,13 @@
     "session": "evening loop",
     "destination": "v2.0_RC",
     "criteria_completed": [
-      "criteria[0] — 음성 입출력 (anima-speak Mk.III) E2E (live ALM 14B)",
+      "criteria[0] — 음성 입출력 (anima-voice Mk.III) E2E (live ALM 14B)",
       "criteria[1] — 아바타 렌더링 동기화 (phi_holo wire)"
     ]
   },
   "wire": {
     "stage_1_speak": {
-      "tool": "anima-speak/speak_e2e.hexa",
+      "tool": "anima-voice/speak_e2e.hexa",
       "input": "--prompt \"speak in english\" + SPEAK_LLM_BACKEND=http",
       "output": "/tmp/test_phi_live.wav.meta.json",
       "phi_holo": 2.56618,

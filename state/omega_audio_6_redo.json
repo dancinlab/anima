@@ -8,10 +8,10 @@
     "predecessor_null_result": "state/omega_audio_6_alloc_indexed.json (2026-04-26 16:00Z): vocal_hexa 155→401ms (2.6× SLOWER) under old IndexAssign-via-Arena hot path; rolled back, push pattern preserved.",
     "interp_fix_landed": "ω-interp-4 (hexa-lang) added @no_arena array_set_inplace_idx fast path. Microbench 3.18× faster on indexed writes; A/B on vocal_hexa was 1.20× faster.",
     "hypothesis_re-validated": "With the IndexAssign gap closed, the per-sample 2× .push() into byte buffer (4800 push/call for 100ms vocal) is finally the dominant cost; pre-alloc + indexed write should beat it, and (this time) does.",
-    "scope": "anima/anima-speak/anima_audio.hexa only. NO docker. NO hexa-lang. NO interp rebuild (interp-4 already in host). NO git commit."
+    "scope": "anima/anima-voice/anima_audio.hexa only. NO docker. NO hexa-lang. NO interp rebuild (interp-4 already in host). NO git commit."
   },
   "method": {
-    "bench": "/Users/ghost/core/anima/anima-speak/_omega_audio_6_bench.hexa",
+    "bench": "/Users/ghost/core/anima/anima-voice/_omega_audio_6_bench.hexa",
     "warmup_runs": 1,
     "measured_runs": 5,
     "params": {
@@ -100,7 +100,7 @@
     "reason": "All 4 organs show speedup with byte-identical output; no regression observed. Keep migration in place.",
     "rollback_path_if_needed": "Restore _wav_header(SR, n) + _push_int16_le(bytes, s) pattern in vocal_hexa, breath_hexa, pipe_hexa, vocal_lf_hexa. Original push pattern fully documented in this file's predecessor (omega_audio_6_alloc_indexed.json) and audio-5 historical state.",
     "files_modified": [
-      "/Users/ghost/core/anima/anima-speak/anima_audio.hexa (vocal_hexa, breath_hexa, pipe_hexa, vocal_lf_hexa — emit-loops migrated to array_alloc + indexed-write; WAV header inlined per-organ)"
+      "/Users/ghost/core/anima/anima-voice/anima_audio.hexa (vocal_hexa, breath_hexa, pipe_hexa, vocal_lf_hexa — emit-loops migrated to array_alloc + indexed-write; WAV header inlined per-organ)"
     ]
   },
   "decomposition_decision": {
@@ -116,7 +116,7 @@
     "vs python warm: this is the first cycle where any hexa-native organ (vocal_hexa) is FASTER than its python worker counterpart."
   ],
   "constraints_honored": {
-    "scope": "anima/anima-speak/anima_audio.hexa only",
+    "scope": "anima/anima-voice/anima_audio.hexa only",
     "no_hexa_lang_change": true,
     "no_docker_change": true,
     "no_interp_rebuild": true,

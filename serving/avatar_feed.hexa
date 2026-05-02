@@ -13,7 +13,7 @@
 //      SBase + (CBase × 21 × 28) 구성이므로 jungseong 만 추출하여
 //      viseme 5개 중 하나로 매핑한다.
 //   3. Timeline pacing — 발화 duration / syllable_count 로 균등 배치
-//      (실 TTS phoneme duration wire 는 anima-speak E2E 완료 후 교체).
+//      (실 TTS phoneme duration wire 는 anima-voice E2E 완료 후 교체).
 //
 // Hexa quirk 회피:
 //   - struct list aliasing → 모든 mutator 는 새 struct return.
@@ -287,7 +287,7 @@ fn text_to_visemes(text: str) -> VisemeSeq {
 // estimate_duration_ms(n_vowels):
 //   Empirical ballpark — Korean running speech ~150 ms per vowel
 //   (syllable) + 120 ms head/tail silence. Replace with TTS
-//   phoneme timing wire (anima-speak E2E) in v2.0_RC final cut.
+//   phoneme timing wire (anima-voice E2E) in v2.0_RC final cut.
 fn estimate_duration_ms(n_vowels: int) -> int {
     let core = n_vowels * 150
     return core + 240

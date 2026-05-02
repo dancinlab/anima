@@ -262,7 +262,7 @@ own 7 new "anima-local: heredoc ARG_MAX content-size guard for anima/tool MED-ri
     - tool/an11_c_jsd_h_last.hexa:74,97,429 (numeric pairs+cert ~50 KB)
     - tool/anima_cli/handoff.hexa:463 (session_handoff.md ~15 KB)
   scope LOW-risk files (현재 안전, 변환 권장하지 않음 — < 4 KiB):
-    - tool/anima_v11_pipeline_smoke.hexa, tool/proof_carrying_extract.hexa, anima-speak/*.hexa, training/download_qwen72b.hexa, training/native/build.hexa, anima_cli/replay.hexa, anima_cli/stats.hexa, mk_x_evidence_gate.hexa, r6_followup_sidecar_emit.hexa, statusline_h100_burn.hexa, anima_cli/handoff.hexa(annotation only)
+    - tool/anima_v11_pipeline_smoke.hexa, tool/proof_carrying_extract.hexa, anima-voice/*.hexa, training/download_qwen72b.hexa, training/native/build.hexa, anima_cli/replay.hexa, anima_cli/stats.hexa, mk_x_evidence_gate.hexa, r6_followup_sidecar_emit.hexa, statusline_h100_burn.hexa, anima_cli/handoff.hexa(annotation only)
   enforcement migrate MED-risk files 2026-Q2 within. content size 동적 추정 시 native write_file() 사용. CI gate (tool/heredoc_arg_max_lint.hexa proposed) for new heredoc + dynamic-content occurrences. raw 91 honest C3 — current MED files 측정 안전 범위지만 corpus 성장 위험.
   exception small fixed-content (< 4 KiB) heredoc 은 readability 우위로 grandfather 가능. annotation `// own 7: small-fixed-content` 표시.
   bans new tool/*.hexa adding heredoc + dynamic-content > 4 KiB without write_file() migration

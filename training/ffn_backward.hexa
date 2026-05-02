@@ -17,7 +17,7 @@
 //   dup = dup_x + dup_g             ← same tensor is both x and gate
 //   dx, dWff1 = matmul_backward(x, Wff1, dup, seq, d, ff)
 //
-// Run with: HEXA_PATH=anima-speak hexa training/ffn_backward.hexa
+// Run with: HEXA_PATH=anima-voice hexa training/ffn_backward.hexa
 use "nn_core"
 
 // ─── Inline primitives (mirrors matmul_backward + ops_backward) ───

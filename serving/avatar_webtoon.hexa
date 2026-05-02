@@ -50,7 +50,7 @@ fn persona_name(id: int) -> string {
     if id == 7 { return "demon_lord" }
     if id == 8 { return "childlike" }
     if id == 9 { return "stoic_mentor" }
-    // 한국 웹툰 archetypes (10-19) — matches anima-speak/rp_voice_profiles.hexa
+    // 한국 웹툰 archetypes (10-19) — matches anima-voice/rp_voice_profiles.hexa
     if id == 10 { return "ice_queen" }          // 얼짱 일진
     if id == 11 { return "chaebol_heir" }       // 재벌 후계자
     if id == 12 { return "pure_heroine" }       // 순정 여주
@@ -398,7 +398,7 @@ fn build_html() -> string {
     // Viseme switch (for lip-sync)
     h = h + "function setViseme(id){curViseme=id;}"
 
-    // Phoneme -> viseme bridge (mirrors anima-speak/lipsync_pipe.hexa:phoneme_to_viseme)
+    // Phoneme -> viseme bridge (mirrors anima-voice/lipsync_pipe.hexa:phoneme_to_viseme)
     h = h + "const PH2VIS={"
     h = h + "a:10,eo:13,o:13,u:14,eu:12,i:12,ae:11,e:11,wa:10,wi:14,"
     h = h + "p:1,pp:1,b:1,m:1,t:4,tt:4,d:4,n:8,l:4,r:9,k:5,kk:5,g:5,"

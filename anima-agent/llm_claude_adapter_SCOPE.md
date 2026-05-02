@@ -26,7 +26,7 @@ All 10 callers wrap calls with `claude_cli_available()` guard (line 42) and trea
 - `anima-agent-hire-sim/run_hire_sim_claude.hexa` + `hire_sim_runner.hexa`
 - `anima-agent/test_claude_parse.hexa` + `autonomy_loop.hexa` + `test_claude_smoke.hexa`
 - `anima-agent/employee/goal_store.hexa` + `test_critique_parse_regression.hexa`
-- `anima-speak/speak_e2e.hexa`
+- `anima-voice/speak_e2e.hexa`
 
 ## raw#10 honest scope
 

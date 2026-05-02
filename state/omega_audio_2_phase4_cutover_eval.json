@@ -133,25 +133,25 @@
     "proposed_guard": "OPTIONAL hardening for cleaner container UX: in anima_audio.hexa _run_py(), add `if exec(\"test -f /.dockerenv && echo y || true\").trim() == \"y\" { fall through to spawn-per-call always }` so containers always go through the baseline path (which is the existing failure path) rather than wasting cycles on the worker spawn attempt. NOT REQUIRED for cutover safety; adapter spawn_failed path already returns silent-empty-WAV which matches baseline behavior. Defer unless container audio is ever fixed."
   },
   "next_step_if_cutover_approved": {
-    "diff_target": "/Users/ghost/core/anima/anima-speak/anima_audio.hexa",
+    "diff_target": "/Users/ghost/core/anima/anima-voice/anima_audio.hexa",
     "lines": "147-157 (fn _run_py)",
     "current_logic": "let flag = env(\"ANIMA_AUDIO_WORKER\"); if flag == \"1\" { return _run_py_worker(code) } -- baseline spawn-per-call",
     "proposed_logic": "let flag = env(\"ANIMA_AUDIO_WORKER\"); if flag == \"0\" { -- baseline spawn-per-call -- } return _run_py_worker(code)",
     "summary": "invert default: worker is taken unless explicit ANIMA_AUDIO_WORKER=0",
     "expected_blast_radius": "every anima_audio.hexa caller on Darwin dev host immediately picks up 2-17x speedup; first call in each new shell session pays ~1s cold spawn (one time); container/remote unchanged (both already fail same way); /tmp orphans accumulate at +2 per hexa run (mitigation: separate reaper task)",
-    "preflight_checks": "(1) re-run /Users/ghost/core/anima/anima-speak/omega_audio_emp.hexa with proposed default to confirm Ω-A/B/C/D/E all OK; (2) confirm git history clean; (3) update Phase 3 closure note that the gate inverted",
+    "preflight_checks": "(1) re-run /Users/ghost/core/anima/anima-voice/omega_audio_emp.hexa with proposed default to confirm Ω-A/B/C/D/E all OK; (2) confirm git history clean; (3) update Phase 3 closure note that the gate inverted",
     "rollback": "single-line revert of the inverted condition"
   },
   "next_step_if_stay_opt_in": {
-    "documentation_target": "/Users/ghost/core/anima/anima-speak/README.md OR a new /Users/ghost/core/anima/anima-speak/AUDIO_WORKER.md",
+    "documentation_target": "/Users/ghost/core/anima/anima-voice/README.md OR a new /Users/ghost/core/anima/anima-voice/AUDIO_WORKER.md",
     "content": "(a) operator overview: ANIMA_AUDIO_WORKER=1 enables 2-17x speedup; (b) failure modes: container fallback, scipy version pinning; (c) cleanup commands: pkill -f anima_audio_worker.py + rm -rf /tmp/anima_audio_worker_*; (d) reference Phase 3 perf numbers; (e) worked example: ANIMA_AUDIO_WORKER=1 hexa_real omega_audio_emp.hexa",
-    "onboarding_hook": "add a one-line note in /Users/ghost/core/anima/anima-speak/CLAUDE.md (if exists) or in anima cycle templates that audio benches default-on the worker"
+    "onboarding_hook": "add a one-line note in /Users/ghost/core/anima/anima-voice/CLAUDE.md (if exists) or in anima cycle templates that audio benches default-on the worker"
   },
   "audit_constraints_observed": {
     "no_code_edits": true,
     "no_git_commits": true,
     "no_docker_rebuild": true,
-    "test_artifacts_cleanup": "verified — pgrep anima_audio_worker -> 0 (no matches); ls /tmp/anima_audio_worker_* -> no matches; ls /tmp/anima_audio_*.wav -> no matches; _phase4_test_*.hexa removed from anima-speak; /tmp/_phase4_*.out removed",
+    "test_artifacts_cleanup": "verified — pgrep anima_audio_worker -> 0 (no matches); ls /tmp/anima_audio_worker_* -> no matches; ls /tmp/anima_audio_*.wav -> no matches; _phase4_test_*.hexa removed from anima-voice; /tmp/_phase4_*.out removed",
     "files_created_outside_state": "none (test harnesses removed; only this JSON written)"
   }
 }

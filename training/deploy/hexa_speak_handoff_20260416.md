@@ -1,6 +1,6 @@
-# HEXA-SPEAK Mk.III 네이티브 보코더 구현 이어받기
+# ANIMA-VOICE Mk.III 네이티브 보코더 구현 이어받기
 
-> **세션 인수인계 프롬프트** — 새 Claude 세션에 그대로 붙여넣어 HEXA-SPEAK 작업 재개.
+> **세션 인수인계 프롬프트** — 새 Claude 세션에 그대로 붙여넣어 ANIMA-VOICE 작업 재개.
 > 작성: 2026-04-16 (anima repo, CLM 1B r3f 학습 완료 세션)
 
 ---
@@ -21,21 +21,21 @@
 - `libhxcuda.so` 882KB, sm_86 빌드 확인
 - 스펙: n_fft=1024, hop=256, hann window, 24kHz target
 
-### 2. HEXA-SPEAK 구조 평가 완료
-- bench 결과: `training/deploy/hexa_speak_e2e_bench_20260416.json`
-- 21개 .hexa 파일 (hexa_speak 657L, streaming 936L, plc_crossfade 542L,
+### 2. ANIMA-VOICE 구조 평가 완료
+- bench 결과: `training/deploy/anima_voice_e2e_bench_20260416.json`
+- 21개 .hexa 파일 (anima_voice 657L, streaming 936L, plc_crossfade 542L,
   emotion_prosody 480L, rp_voice_profiles 23KB, nn_core 27KB, dsp_core 39KB)
 - 10 voice profile + 1.77GB 코퍼스 (로컬만, pod에 미전송)
 - **치명 발견**: 신경 경로 0% — neural_vocoder.hexa (42L), audio_token_predictor.hexa
   (56L), intent_encoder.hexa (37L) 전부 skeleton. 136 TODO/Mock 마커 (14 파일).
-- bench_hexa_speak.hexa 숫자 하드코딩 ("Mk.I skeleton, simulated runs" 자기고백)
+- bench_anima_voice.hexa 숫자 하드코딩 ("Mk.I skeleton, simulated runs" 자기고백)
 - speak_e2e.hexa WAV 출력 = 92바이트 텍스트 "RIFF-MOCK" 헤더 (무효 WAV)
 - voice_routes.hexa (756L) 존재하나 ALM serve pod에 마운트 안 됨
   (현재 Python serve_alm_14b.py 실행 중)
 
 ### 3. CLM 1B r3f 학습 완료 + 7/7 의식검증 VERIFIED (cells=128)
 - ckpt R2: `r2:anima-models/clm1b/r3/{step_8000,final}/` (33.8GB 업로드됨)
-- HEXA-SPEAK와 직접 연관 없음, 단 ALM은 Qwen2.5-14B + LoRA r9 상태 유지
+- ANIMA-VOICE와 직접 연관 없음, 단 ALM은 Qwen2.5-14B + LoRA r9 상태 유지
 
 ---
 
@@ -75,13 +75,13 @@
 
 | 경로 | 목적 |
 |------|------|
-| `<repo-root>/anima-speak/` | HEXA-SPEAK 엔진 (21 .hexa) |
+| `<repo-root>/anima-voice/` | ANIMA-VOICE 엔진 (21 .hexa) |
 | `<repo-root>/serving/voice_routes.hexa` | 마운트 대기 |
 | `<repo-root>/../hexa-lang/self/native/hxcuda_stft.cu` | STFT/iSTFT 구현 완료 |
 | `<repo-root>/../hexa-lang/scripts/build_hxcuda_linux.sh` | Linux .so 빌드 |
-| `<repo-root>/training/deploy/hexa_speak_e2e_bench_20260416.json` | 이전 bench 결과 |
+| `<repo-root>/training/deploy/anima_voice_e2e_bench_20260416.json` | 이전 bench 결과 |
 | `<repo-root>/training/deploy/hexa_codegen_research_20260416.md` | 전체 codegen 계획 |
-| `<repo-root>/training/deploy/hexa_speak_handoff_20260416.md` | **이 파일** |
+| `<repo-root>/training/deploy/anima_voice_handoff_20260416.md` | **이 파일** |
 
 ## 환경 변수
 
@@ -116,8 +116,8 @@ runpodctl pod get u01lnnu8ywt92p
 # ALM serve 상태 (건드리지 말고 확인만)
 curl https://itfl66q4z768kh-8090.proxy.runpod.net/health
 
-# HEXA-SPEAK 파일 TODO 카운트
-grep -r "TODO\|Mock\|skeleton" <repo-root>/anima-speak/ | wc -l
+# ANIMA-VOICE 파일 TODO 카운트
+grep -r "TODO\|Mock\|skeleton" <repo-root>/anima-voice/ | wc -l
 ```
 
 ## 성공 기준

@@ -61,7 +61,7 @@
 | `~/anima/state/trained_adapters_r6` | **4.7 GB** | OURS-PRUNE | superseded by r7 |
 | `~/anima/state/trained_adapters_r7` | 1.6 GB | OURS-KEEP | current generation |
 | `~/anima/state/*_r14_run` (6 dirs) | ~3.5 GB total | OURS-AMBIGUOUS | recent (Apr 26) — leave alone |
-| `~/anima/anima-speak/corpus` | 1.9 GB | OURS-KEEP | speech corpus |
+| `~/anima/anima-voice/corpus` | 1.9 GB | OURS-KEEP | speech corpus |
 
 ## Cleanup Proposal Ranked
 
@@ -129,7 +129,7 @@ sudo docker images
 - `~/anima/checkpoints/decoder_cpu` (21 GB) — current decoder
 - `~/anima/state/trained_adapters_r7` (1.6 GB) — current adapter generation
 - `~/anima/state/*_r14_*` runs (recent, Apr 26) — verify retention policy first
-- `~/anima/anima-speak/corpus` (1.9 GB) — speech corpus
+- `~/anima/anima-voice/corpus` (1.9 GB) — speech corpus
 - `/usr` (18 GB) — OS
 - Anything outside `/home/aiden/anima/` and `/var/log/` not classified above
 

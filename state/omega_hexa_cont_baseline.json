@@ -9,7 +9,7 @@
       "path": "/Users/ghost/core/hexa-lang/stdlib/portable_fs.hexa",
       "exposed_fns": ["file_size(path)->int", "now_ns()->string", "file_mtime(path)->int", "file_exists(path)->bool"],
       "size_bytes": 2594,
-      "first_consumer": "/Users/ghost/core/anima/anima-speak/anima_audio.hexa (1-site _file_bytes delegate, anima 6e4d6fef)"
+      "first_consumer": "/Users/ghost/core/anima/anima-voice/anima_audio.hexa (1-site _file_bytes delegate, anima 6e4d6fef)"
     },
 
     "verified_site_counts": {
@@ -83,7 +83,7 @@
 
     "hot_vs_cold_path_classification": {
       "every_invocation_hot": ["/Users/ghost/core/hexa-lang/gate/pre_tool_guard.hexa (every hexa run)", "/Users/ghost/core/hexa-lang/stdlib/portable_fs.hexa (every consumer call)"],
-      "session_hot": ["/Users/ghost/core/nexus/cli/run.hexa (every CLI invocation, 10 timing sites)", "/Users/ghost/core/anima/tool/serve_alm_persona.hexa", "/Users/ghost/core/anima/anima-speak/anima_audio.hexa (already migrated)"],
+      "session_hot": ["/Users/ghost/core/nexus/cli/run.hexa (every CLI invocation, 10 timing sites)", "/Users/ghost/core/anima/tool/serve_alm_persona.hexa", "/Users/ghost/core/anima/anima-voice/anima_audio.hexa (already migrated)"],
       "periodic_warm": ["rotate_discovery_log.hexa, rotate_auto_gap.hexa, rotate_auto_bt.hexa (cron/log rotation)", "anima/tool/anima_cli/gc.hexa, anima/tool/anima_cli/replay.hexa"],
       "cold_one_shot": ["airgenome/archive/v1/scripts/* (legacy/archive)", "training/download_qwen72b.hexa (one-time setup)", "verifier/an11_weight_emergent.hexa (research)"]
     }

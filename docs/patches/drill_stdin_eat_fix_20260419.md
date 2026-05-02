@@ -13,8 +13,8 @@
 |------|------|------|
 | `hetzner:/root/drill_v3/run_all` (canonical 드릴 런처) | **이미 수정됨 (live)** | stdout redirect 뒤 `< /dev/null` 적용, smoke 3/3 PASS |
 | anima repo 내 canonical drill 런처 | **존재하지 않음** | 본 조사에서 확인 — hetzner 만 source |
-| `anima-speak/experiments/build_tts_dataset.sh` | **취약** (ffmpeg) | 아래 diff §A 적용 필요 |
-| `anima-speak/experiments/corpus_pipeline_full.sh` | **취약** (ffmpeg) | 아래 diff §B 적용 필요 |
+| `anima-voice/experiments/build_tts_dataset.sh` | **취약** (ffmpeg) | 아래 diff §A 적용 필요 |
+| `anima-voice/experiments/corpus_pipeline_full.sh` | **취약** (ffmpeg) | 아래 diff §B 적용 필요 |
 | `ready/scripts/h100_sync.sh` (3 loop) | **취약** (ssh/scp) | 아래 diff §C 적용 필요 |
 | `docs/sweep_p4_plan_20260419.md` §3-1 driver template | **설계 단계 취약** | 발사 전 §D 반영 권장 |
 
@@ -84,11 +84,11 @@ done < <(find ...)
 
 ## 3. Anima repo 내 취약 call-site 상세 + diff
 
-### §A. `anima-speak/experiments/build_tts_dataset.sh` (L26)
+### §A. `anima-voice/experiments/build_tts_dataset.sh` (L26)
 
 ```diff
---- a/anima-speak/experiments/build_tts_dataset.sh
-+++ b/anima-speak/experiments/build_tts_dataset.sh
+--- a/anima-voice/experiments/build_tts_dataset.sh
++++ b/anima-voice/experiments/build_tts_dataset.sh
 @@ -23,7 +23,8 @@ for json in "$SRC"/*_full.json "$SRC"/*.json; do
 
    # Parse segments and extract chunks
@@ -110,11 +110,11 @@ done < <(find ...)
  done
 ```
 
-### §B. `anima-speak/experiments/corpus_pipeline_full.sh` (L53, L66)
+### §B. `anima-voice/experiments/corpus_pipeline_full.sh` (L53, L66)
 
 ```diff
---- a/anima-speak/experiments/corpus_pipeline_full.sh
-+++ b/anima-speak/experiments/corpus_pipeline_full.sh
+--- a/anima-voice/experiments/corpus_pipeline_full.sh
++++ b/anima-voice/experiments/corpus_pipeline_full.sh
 @@ -21,19 +21,21 @@ METADATA="$OUT/metadata.csv"
 
  echo "=== Stage 1: Download ==="
@@ -300,7 +300,7 @@ iters=1                                          ← stdin-eat 재현, 1 iter �
 - [x] `hexa run drill` 류 while-read 루프 전수 스캔 (anima repo)
 - [x] canonical `run_all` 위치 확인 — hetzner 에만 존재, anima 리포에 없음
 - [x] hetzner `run_all` 에 이미 `< /dev/null` 적용되어 있음을 확인
-- [x] 부가 취약 call-site 3 개 식별 (anima-speak 2 + h100_sync 1)
+- [x] 부가 취약 call-site 3 개 식별 (anima-voice 2 + h100_sync 1)
 - [x] hetzner 에서 3-iter smoke (with fix → 3/3, without → 1/3)
 - [x] .sh Edit 훅 차단 확인 → 본 패치 문서로 submit
 - [ ] 사용자가 diff 반영 (수동 또는 훅 완화 후)

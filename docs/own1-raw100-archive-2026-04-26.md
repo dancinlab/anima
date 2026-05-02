@@ -34,12 +34,12 @@ own 1 live "anima-local: raw 9 hexa-only scope override + grandfather list"
   retired-2026-04-26 tool/p_s_projector_proto.py — Phase 6: ported to tool/p_s_projector_proto.hexa (Jacobi SVD via Gram(A·A^T)→eigh awk subprocess + double-Gram-Schmidt orthonormalization, ~6s wall-time). 1e-6 relative numerical equivalence vs .py cert: predicate value 4.78e-08, per-path energy ratios ≤7e-7, drift_max 6e-8, recon_rel_err 8e-10. Top-σ rel err up to 1.5e-5 (Gram-via-eigh inherent precision floor for smaller σ); orthogonality 4.4e-16 (matches .py 3.1e-15 = machine epsilon). argmax5_dist diverges per-sign convention (V column sign canonicalize vs LAPACK gesdd). .py removed from disk; SSOT cert state/p_s_projector_proto_r6.json overwritten by hexa run.
   retired-2026-04-26 tool/an11_c_jsd_h_last.py — Phase 5: ported to tool/an11_c_jsd_h_last.hexa (hexa-native, jq + awk), 6-digit numerical equivalence verified vs .py baseline (mean_jsd_bits 0.110477 vs 0.11047673814646303, all 16 per-prompt diffs < 1e-6). .py removed from disk after `git rm --cached` had already gitignored it.
   exempt-via-gitignore tool/active_redteam_dEF_proto.py + tool/active_redteam_prototype.py — .gitignore'd Python research harness (raw 9 explicit relaxation per file headers); honored by canonical lint via `git ls-files --others --exclude-standard`
-  retired-2026-04-26 anima-speak/experiments/piper_v2gen.sh — `git rm` (replaced by piper_v2gen.hexa Phase 4 port)
-  retired-2026-04-26 anima-speak/experiments/yt_kor_corpus_fetch.sh — `git rm` (replaced by yt_kor_corpus_fetch.hexa Phase 4 port)
-  retired-2026-04-26 anima-speak/experiments/ab_metrics.sh — `git rm` (replaced by ab_metrics.hexa Phase 4 port)
-  retired-2026-04-26 anima-speak/experiments/build_tts_dataset.sh — `git rm` (replaced by build_tts_dataset.hexa Phase 4 port)
-  retired-2026-04-26 anima-speak/experiments/corpus_pipeline_full.sh — `git rm` (replaced by corpus_pipeline_full.hexa Phase 4 port)
-  retired-2026-04-26 anima-speak/experiments/piper_ab_gen.sh — `git rm` (full .hexa companion at piper_ab_gen.hexa 449L)
+  retired-2026-04-26 anima-voice/experiments/piper_v2gen.sh — `git rm` (replaced by piper_v2gen.hexa Phase 4 port)
+  retired-2026-04-26 anima-voice/experiments/yt_kor_corpus_fetch.sh — `git rm` (replaced by yt_kor_corpus_fetch.hexa Phase 4 port)
+  retired-2026-04-26 anima-voice/experiments/ab_metrics.sh — `git rm` (replaced by ab_metrics.hexa Phase 4 port)
+  retired-2026-04-26 anima-voice/experiments/build_tts_dataset.sh — `git rm` (replaced by build_tts_dataset.hexa Phase 4 port)
+  retired-2026-04-26 anima-voice/experiments/corpus_pipeline_full.sh — `git rm` (replaced by corpus_pipeline_full.hexa Phase 4 port)
+  retired-2026-04-26 anima-voice/experiments/piper_ab_gen.sh — `git rm` (full .hexa companion at piper_ab_gen.hexa 449L)
   retired-2026-04-26 anima-agent/pyproject.toml — `git rm` (Dockerfile mandates "no python/cargo single-binary hexa runtime"; documented retire decision in docs/anima_agent_restructure_plan_20260419.md "삭제 (R37)")
   retired-2026-04-26 training/archive/launchers_alm_py_legacy_20260416/launch_*.sh (5) — Phase 1a `git rm` clear retire (already in archive/ + _legacy_ + dated)
   why anima hexa-only declared in this `.raw` (canonical anima rule SSOT). ω-rules R9.1 raw count 2494 의 99.3% (ready/1431 + .claude/1045) 는 jurisdiction-out. 실제 active source 위반 16 (P0 baseline) → 11 (Phase 1a: 5 archive launchers) → 9 (Phase 3: piper_ab_gen.sh + pyproject.toml) → 0 (Phase 4: 5 .sh ported + 2 .py reclassified gitignored-exempt 2026-04-26) → confirmed 0 with Phase 6 (p_s_projector_proto.py → .hexa Jacobi SVD). raw 9 hexa-only 100% achievement under canonical lint.

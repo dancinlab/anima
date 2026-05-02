@@ -1,11 +1,11 @@
 {
   "session": "2026-04-16 evening",
-  "focus": "HEXA-SPEAK Mk.III + v3.0 employee capability tracks",
+  "focus": "ANIMA-VOICE Mk.III + v3.0 employee capability tracks",
 
-  "hexa_speak_progress": {
+  "anima_voice_progress": {
     "neural_vocoder": {
       "status": "REAL — 537L additive synthesis, valid 24kHz PCM16 WAV",
-      "checkpoint": "anima-speak/ckpt_w_ctrl.json (4608 params, loss 0.354)",
+      "checkpoint": "anima-voice/ckpt_w_ctrl.json (4608 params, loss 0.354)",
       "loader": "load_w_ctrl() in neural_vocoder.hexa, fallback to mock identity",
       "pod_training": "hexa-c4 (u01lnnu8ywt92p) — LR sweep 0.1/0.2/0.5 × 1000 steps running"
     },
@@ -45,8 +45,8 @@
       "target": "100M-300M tokens, 6 domains",
       "seed": "60 template pairs (10/domain)"
     },
-    "B_hexa_speak": {
-      "status": "DONE this session — see hexa_speak_progress above"
+    "B_anima_voice": {
+      "status": "DONE this session — see anima_voice_progress above"
     },
     "C_tool_use": {
       "status": "DONE — seed_tool_corpus.jsonl (50 pairs, 10 categories)",

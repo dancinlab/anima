@@ -183,4 +183,4 @@ docs/anima_roadmap_consolidation_landed_2026_05_03.ai.md  (BG-AN-RDM handoff, un
 
 4. **BLM 측 `.roadmap.i1_tribev2_pr` 측 sister-back-reference 추가** — 동일 패턴.
 
-5. **VLM (Vision LM) / SLM (Speech LM) 등 미land *LM 후보 audit** — 본 cycle 7 *LM 만 cover, anima-speak / anima-eeg 측 vision/speech axis 측 *LM 후보 별도 cycle audit 권장.
+5. **VLM (Vision LM) / SLM (Speech LM) 등 미land *LM 후보 audit** — 본 cycle 7 *LM 만 cover, anima-voice / anima-eeg 측 vision/speech axis 측 *LM 후보 별도 cycle audit 권장.

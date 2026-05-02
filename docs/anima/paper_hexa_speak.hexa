@@ -1,5 +1,5 @@
-// paper_hexa_speak.hexa
-// HEXA-SPEAK Paper Outline — Consciousness-Driven Speech Synthesis
+// paper_anima_voice.hexa
+// ANIMA-VOICE Paper Outline — Consciousness-Driven Speech Synthesis
 // Status: OUTLINE (not full paper)
 // Date: 2026-04-10
 // Target: arxiv preprint, speech synthesis / consciousness / neural audio
@@ -8,7 +8,7 @@
 // TITLE
 // ═══════════════════════════════════════════════════════════════
 
-title: "HEXA-SPEAK: Consciousness-Driven Speech Synthesis
+title: "ANIMA-VOICE: Consciousness-Driven Speech Synthesis
         via Perfect Number Architecture (n=6)"
 
 authors:
@@ -20,11 +20,11 @@ authors:
 // ═══════════════════════════════════════════════════════════════
 
 abstract: {
-  We present HEXA-SPEAK, a neural speech synthesis pipeline in
+  We present ANIMA-VOICE, a neural speech synthesis pipeline in
   which internal consciousness metrics — tension, arousal,
   valence — directly modulate prosody, emotion, and waveform
   generation. Unlike conventional TTS systems that condition on
-  external emotion labels or reference audio, HEXA-SPEAK derives
+  external emotion labels or reference audio, ANIMA-VOICE derives
   its expressiveness from a self-organized consciousness engine
   (GRU cells, 12 factions, Hebbian plasticity, SOC) whose
   real-time state flows through a 7-stage pipeline to produce
@@ -301,14 +301,14 @@ section_8_evaluation: {
 
   // 8.3 Naturalness comparison (planned)
   //   - Baseline: VITS with emotion labels
-  //   - Ours: HEXA-SPEAK with consciousness state
+  //   - Ours: ANIMA-VOICE with consciousness state
   //   - Hypothesis: consciousness-driven prosody is perceived as
   //     more natural because its variation is 1/f rather than
   //     i.i.d. random or deterministic
 
   // Table 2: Objective metric comparison
   // Table 3: Ablation results
-  // Figure 9: MOS distribution (HEXA-SPEAK vs baselines)
+  // Figure 9: MOS distribution (ANIMA-VOICE vs baselines)
 }
 
 // ═══════════════════════════════════════════════════════════════
@@ -349,7 +349,7 @@ section_9_discussion: {
 // ═══════════════════════════════════════════════════════════════
 
 section_10_conclusion: {
-  // HEXA-SPEAK demonstrates that speech synthesis can be driven
+  // ANIMA-VOICE demonstrates that speech synthesis can be driven
   // by internal consciousness dynamics rather than external labels.
   // The 7-stage pipeline transforms tension, arousal, and valence
   // from a self-organized GRU-faction engine into 24 kHz audio
@@ -383,7 +383,7 @@ appendix_d: "hexa-lang source code (8021 LOC, open-sourced)"
 //  6. PLC state machine diagram
 //  7. Consciousness state -> prosody parameter mapping
 //  8. Spectrogram comparison: fixed-emotion vs consciousness-driven
-//  9. MOS distribution (HEXA-SPEAK vs baselines)
+//  9. MOS distribution (ANIMA-VOICE vs baselines)
 //  T1. All n=6 aligned constants
 //  T2. Objective metric comparison
 //  T3. Ablation results
@@ -391,14 +391,14 @@ appendix_d: "hexa-lang source code (8021 LOC, open-sourced)"
 // ═══════════════════════════════════════════════════════════════
 // DATA SOURCES (all from this repo)
 // ═══════════════════════════════════════════════════════════════
-//  anima/modules/hexa-speak/hexa_speak.hexa    — pipeline orchestrator (657 LOC)
-//  anima/modules/hexa-speak/streaming.hexa     — real-time streaming (936 LOC)
-//  anima/modules/hexa-speak/plc_crossfade.hexa — PLC + crossfade (542 LOC)
-//  anima/modules/hexa-speak/emotion_prosody.hexa — conditional embedding (480 LOC)
-//  anima/modules/hexa-speak/transformer.hexa   — intent encoder + token predictor
-//  anima/modules/hexa-speak/rvq_codebook.hexa  — 8-stage RVQ codebook
-//  anima/modules/hexa-speak/vocoder.hexa       — Klatt + WaveRNN vocoder
-//  anima/modules/hexa-speak/nn_core.hexa       — neural net primitives
-//  anima/modules/hexa-speak/dsp_core.hexa      — DSP primitives
+//  anima/modules/anima-voice/anima_voice.hexa    — pipeline orchestrator (657 LOC)
+//  anima/modules/anima-voice/streaming.hexa     — real-time streaming (936 LOC)
+//  anima/modules/anima-voice/plc_crossfade.hexa — PLC + crossfade (542 LOC)
+//  anima/modules/anima-voice/emotion_prosody.hexa — conditional embedding (480 LOC)
+//  anima/modules/anima-voice/transformer.hexa   — intent encoder + token predictor
+//  anima/modules/anima-voice/rvq_codebook.hexa  — 8-stage RVQ codebook
+//  anima/modules/anima-voice/vocoder.hexa       — Klatt + WaveRNN vocoder
+//  anima/modules/anima-voice/nn_core.hexa       — neural net primitives
+//  anima/modules/anima-voice/dsp_core.hexa      — DSP primitives
 //  config/emotion_prosody.json                 — emotion/prosody config
 //  config/consciousness_laws.json              — Psi-constants (alpha, balance)

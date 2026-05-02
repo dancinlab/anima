@@ -11,10 +11,10 @@ Status: pipeline built, smoke inventory done, full-run QUEUED
 | corpus_tool/clean_tool_corpus_dryrun_20260418.jsonl   |   643,872 | jsonl |
 | corpus_auto/out/rotated.txt                           |   454,280 | txt   |
 | corpus_tool/seed_tool_corpus.jsonl                    |    31,090 | jsonl |
-| anima-speak persona transcripts (6 files)             |     4,709 | txt   |
+| anima-voice persona transcripts (6 files)             |     4,709 | txt   |
 | **Total**                                             | **4.38 MB** | — |
 
-anima-speak/corpus/ is 1.8GB but wav/flac only; non-audio text ≈5KB (matches 6 transcript files + empty logs).
+anima-voice/corpus/ is 1.8GB but wav/flac only; non-audio text ≈5KB (matches 6 transcript files + empty logs).
 
 ## Local < 100MB threshold → pivot
 

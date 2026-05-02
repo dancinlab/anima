@@ -15,7 +15,7 @@
 
   "organ_added": {
     "name": "notch_hexa(in_path: string, notch_hz: float, width_hz: float) -> string",
-    "file": "/Users/ghost/core/anima/anima-speak/anima_audio.hexa",
+    "file": "/Users/ghost/core/anima/anima-voice/anima_audio.hexa",
     "notch_hexa_lines": "904-1011",
     "notch_hexa_loc_with_header": "878-1011 (134 lines incl. comment block)",
     "notch_hexa_loc_body": 108,
@@ -139,7 +139,7 @@
   },
 
   "bench": {
-    "harness": "/Users/ghost/core/anima/anima-speak/_omega_audio_7_notch_bench.hexa",
+    "harness": "/Users/ghost/core/anima/anima-voice/_omega_audio_7_notch_bench.hexa",
     "runner": "/Users/ghost/core/hexa-lang/hexa run",
     "input_chain": "vocal_hexa(120, 0.5, 100) -> pipe_hexa(_, 250, 2500, 6.0)  (100 ms input, 4844 bytes)",
     "warmup_runs": 1,
@@ -157,8 +157,8 @@
   },
 
   "files_touched": [
-    "/Users/ghost/core/anima/anima-speak/anima_audio.hexa  (notch_hexa added 904-1011, public notch() added 1390-1411)",
-    "/Users/ghost/core/anima/anima-speak/_omega_audio_7_notch_bench.hexa  (new bench harness)",
+    "/Users/ghost/core/anima/anima-voice/anima_audio.hexa  (notch_hexa added 904-1011, public notch() added 1390-1411)",
+    "/Users/ghost/core/anima/anima-voice/_omega_audio_7_notch_bench.hexa  (new bench harness)",
     "/tmp/omega_audio_7_analyze.py  (analyzer-only python; cleaned up)"
   ],
   "files_NOT_touched": [
@@ -179,9 +179,9 @@
   },
 
   "rollback": {
-    "step_1": "remove notch_hexa block from /Users/ghost/core/anima/anima-speak/anima_audio.hexa (lines 878-1011, 134 lines incl. header)",
-    "step_2": "remove public notch() dispatch from /Users/ghost/core/anima/anima-speak/anima_audio.hexa (lines 1390-1411, 22 lines)",
-    "step_3": "rm /Users/ghost/core/anima/anima-speak/_omega_audio_7_notch_bench.hexa",
+    "step_1": "remove notch_hexa block from /Users/ghost/core/anima/anima-voice/anima_audio.hexa (lines 878-1011, 134 lines incl. header)",
+    "step_2": "remove public notch() dispatch from /Users/ghost/core/anima/anima-voice/anima_audio.hexa (lines 1390-1411, 22 lines)",
+    "step_3": "rm /Users/ghost/core/anima/anima-voice/_omega_audio_7_notch_bench.hexa",
     "step_4": "rm /tmp/omega_audio_7_analyze.py /tmp/omega_audio_7_*.wav",
     "step_5": "rm /Users/ghost/core/anima/state/omega_audio_7_notch_organ.json",
     "destructive_changes": "none — all additive; no other file touched, no docker rebuild, no hexa-lang edit, no git commit",

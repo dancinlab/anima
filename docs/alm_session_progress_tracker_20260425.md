@@ -104,7 +104,7 @@
 | phase progression | L0 CP1 closed | (no lift) | NP-hard scheduling |
 | math foundations | L0 + L1 40% | **L1 75%** (DAG complete) | **Gödel 2nd ceiling 85%** |
 | resource economics | L0 11-22× CP1 | (no lift) | Landauer 14 orders 여유 |
-| multimodal | L0 anima-speak | (no lift) | Shannon-Nyquist + Hard Problem |
+| multimodal | L0 anima-voice | (no lift) | Shannon-Nyquist + Hard Problem |
 | sister-repo | L0 V8 SAFE_COMMIT | (no lift) | FLP impossibility |
 
 ---

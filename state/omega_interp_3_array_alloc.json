@@ -54,8 +54,8 @@
     "speedup_x100": 98,
     "delta_ms_per_call": 1,
     "interpretation": "Effectively tied. Storage was never the bottleneck for vocal_hexa — sin/cos/floor + arithmetic per sample dominates. Optimizing the storage path alone leaves the chain ~unchanged.",
-    "bench_script": "/Users/ghost/core/anima/anima-speak/_omega_interp_3_bench.hexa",
-    "alloc_variant_added": "vocal_hexa_alloc in /Users/ghost/core/anima/anima-speak/anima_audio.hexa (preserves vocal_hexa unchanged for A/B)"
+    "bench_script": "/Users/ghost/core/anima/anima-voice/_omega_interp_3_bench.hexa",
+    "alloc_variant_added": "vocal_hexa_alloc in /Users/ghost/core/anima/anima-voice/anima_audio.hexa (preserves vocal_hexa unchanged for A/B)"
   },
   "estimated_chain_speedup": {
     "predicted": "vocal_hexa 144ms -> 50ms, chain 1037ms -> ~360ms (per cycle prompt hypothesis)",
@@ -85,11 +85,11 @@
     "git_revert_files": [
       "/Users/ghost/core/hexa-lang/self/hexa_full.hexa",
       "/Users/ghost/core/hexa-lang/self/runtime.c",
-      "/Users/ghost/core/anima/anima-speak/anima_audio.hexa"
+      "/Users/ghost/core/anima/anima-voice/anima_audio.hexa"
     ],
     "rebuild_cmd": "cd /Users/ghost/core/hexa-lang && ./hexa tool/build_interp.hexa",
     "delete_files": [
-      "/Users/ghost/core/anima/anima-speak/_omega_interp_3_bench.hexa",
+      "/Users/ghost/core/anima/anima-voice/_omega_interp_3_bench.hexa",
       "/Users/ghost/core/anima/state/omega_interp_3_array_alloc.json"
     ],
     "risk": "LOW. array_alloc is additive only — no existing call sites use it. vocal_hexa untouched (vocal_hexa_alloc is parallel sibling). C function is unreachable from interp path. Rollback is purely cosmetic."

@@ -4,7 +4,7 @@
   "session": "2026-04-26 — F1 closure post-migration",
   "status": "CONFIRMED",
   "migration_applied": {
-    "file": "/Users/ghost/core/anima/anima-speak/anima_audio.hexa",
+    "file": "/Users/ghost/core/anima/anima-voice/anima_audio.hexa",
     "change": "_file_bytes body delegated to file_size from stdlib/portable_fs.hexa",
     "import_added": "import \"../../hexa-lang/stdlib/portable_fs.hexa\"",
     "callsites_unchanged": 21,
@@ -18,7 +18,7 @@
       "verdict": "file_size works on Linux"
     },
     "empirical_omega_a": {
-      "driver": "/Users/ghost/core/anima/anima-speak/omega_audio_emp.hexa",
+      "driver": "/Users/ghost/core/anima/anima-voice/omega_audio_emp.hexa",
       "evidence_dir": "/Users/ghost/core/anima/state/omega_audio_emp/",
       "platform": "macOS host (numpy/scipy required for analyzer; not in container image)",
       "cycle_a_results": {
@@ -44,5 +44,5 @@
     "implication_for_f1": "none — Linux validation of file_size() is sufficient (executed in container, returned correct bytes). Empirical Ω-A on host validates organ pipeline integrity post-migration.",
     "future_work_optional": "if Linux-side empirical Ω-A is needed: add python3+numpy+scipy to docker/runner/Dockerfile (significant image bloat ~200MB)"
   },
-  "rollback": "git diff /Users/ghost/core/anima/anima-speak/anima_audio.hexa — undo import line + restore _file_bytes body (5-line revert)"
+  "rollback": "git diff /Users/ghost/core/anima/anima-voice/anima_audio.hexa — undo import line + restore _file_bytes body (5-line revert)"
 }

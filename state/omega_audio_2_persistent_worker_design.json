@@ -5,7 +5,7 @@
   "implementation_status": "DESIGN_ONLY (no code changes)",
   "predecessors": {
     "extended_baseline": "/Users/ghost/core/anima/state/omega_audio_extended_baseline.json",
-    "anima_audio_target": "/Users/ghost/core/anima/anima-speak/anima_audio.hexa"
+    "anima_audio_target": "/Users/ghost/core/anima/anima-voice/anima_audio.hexa"
   },
 
   "current_state": {
@@ -39,7 +39,7 @@
 
   "design": {
     "worker_startup": {
-      "process": "single python3 daemon spawned lazily on first _run_py() call within an anima session; binary at /Users/ghost/core/anima/anima-speak/_audio_worker.py (new file, design-only)",
+      "process": "single python3 daemon spawned lazily on first _run_py() call within an anima session; binary at /Users/ghost/core/anima/anima-voice/_audio_worker.py (new file, design-only)",
       "boot_actions": [
         "import numpy as np",
         "import wave",

@@ -39,7 +39,7 @@ Net reclaimed: **~9 GiB** (10 percentage points).
 ## What was deliberately NOT touched
 
 - `/home/*` (out of scope; 1.5 TiB free anyway)
-- `/root/anima/anima-speak/corpus/*` (1.9 GiB — r5-a5 training corpus,
+- `/root/anima/anima-voice/corpus/*` (1.9 GiB — r5-a5 training corpus,
   needed for upcoming run)
 - `/root/anima/`, `/root/Dev/anima/`, `/root/Dev/airgenome/`,
   `/home/hexa-lang/` (active work)

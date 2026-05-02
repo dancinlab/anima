@@ -24,7 +24,7 @@
 
 | repo | done | new (예정/active) |
 |---|---:|---|
-| anima | 33 commits (CP1 P1 6/7, ALM master abstraction 1415L, V0/V1/V2/V3 측정, anima-speak Phase N-Q) | r6-α retrain · r8 D-mistral · #92-96 meta-FP refs |
+| anima | 33 commits (CP1 P1 6/7, ALM master abstraction 1415L, V0/V1/V2/V3 측정, anima-voice Phase N-Q) | r6-α retrain · r8 D-mistral · #92-96 meta-FP refs |
 | nexus | scipy 250× eigsh · drill batch _seed_clamp · NEXUS_SEED_CAP · R24-R32 witness ledger | atlas n6 hash gate · composite sensitivity 0.832 |
 | hexa-lang | SSOT retire root → hive sole · prompt_scan ladder · canon/forge/molt 3종 등록 (L9-L11) · codegen_c2 defer/scope/spawn AOT | hxa-20260425 byte_at builtin (open) |
 | airgenome | scope-reduce: AG2-AG9 superseded → hive 이관 · mac-local only · cross-host runtime 제거 | filters-only convergence |

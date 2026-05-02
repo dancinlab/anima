@@ -4,7 +4,7 @@
 //   decoder_minimal.model_forward   (models/decoder_minimal.hexa)
 // + loss_blas_only.cross_entropy    (training/loss_blas_only.hexa)
 // + manifest check                  (training/dd175_techniques.hexa)
-// + nn_core primitives              (anima-speak/nn_core.hexa)
+// + nn_core primitives              (anima-voice/nn_core.hexa)
 //
 // This is the smallest file that proves the whole stack actually
 // trains forward-to-loss end-to-end in pure hexa. The decoder body
@@ -16,7 +16,7 @@
 // to sidestep the HEXA_PATH cross-file import dance (same pattern
 // as bench_rank_r_attention.hexa).
 //
-// Run with: HEXA_PATH=anima-speak hexa training/train_one_step.hexa
+// Run with: HEXA_PATH=anima-voice hexa training/train_one_step.hexa
 use "nn_core"
 
 // ─── Weights + model (mirrors decoder_minimal.hexa) ─────────

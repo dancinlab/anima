@@ -6,7 +6,7 @@
   "hexa_lang_additions": [],
   "hexa_lang_additions_note": "ZERO additions to hexa-lang/self/runtime.c or hexa-lang/self/hexa_full.hexa. All required primitives already exist and are used directly: sin/cos (runtime.c:3785-3786 + hexa_full.hexa:13993-14000), floor (runtime.c:3753 + hexa_full.hexa:13954), write_bytes / rt_write_bytes_v (runtime.c:3510 + hexa_full.hexa:12803), time_ms (runtime.c:6186 + hexa_full.hexa:11691). No host interp rebuild was performed.",
   "vocal_hexa_implementation": {
-    "location": "/Users/ghost/core/anima/anima-speak/anima_audio.hexa",
+    "location": "/Users/ghost/core/anima/anima-voice/anima_audio.hexa",
     "function": "vocal_hexa(freq_hz: float, gain: float, ms: int) -> string",
     "approx_line_range": "272-380",
     "loc_added_total": 91,
@@ -58,14 +58,14 @@
   ],
   "rollback": "vocal_hexa is parallel-only; existing vocal()/_run_py path is fully untouched. Remove vocal_hexa() + _u16le/_u32le/_wav_header helpers from anima_audio.hexa (lines ~272-380) to fully revert. No hexa-lang changes were made → no host interp rebuild needed → no risk to other consumers.",
   "files_touched": [
-    "/Users/ghost/core/anima/anima-speak/anima_audio.hexa (added vocal_hexa() + _u16le/_u32le/_wav_header helpers, ~91 LOC, lines ~272-380)"
+    "/Users/ghost/core/anima/anima-voice/anima_audio.hexa (added vocal_hexa() + _u16le/_u32le/_wav_header helpers, ~91 LOC, lines ~272-380)"
   ],
   "files_NOT_touched": [
     "/Users/ghost/core/hexa-lang/self/runtime.c (no new primitives needed)",
     "/Users/ghost/core/hexa-lang/self/hexa_full.hexa (no new bindings needed)",
-    "/Users/ghost/core/anima/anima-speak/anima_audio.hexa::_run_py (legacy worker path preserved)",
-    "/Users/ghost/core/anima/anima-speak/anima_audio.hexa::vocal (legacy python sawtooth preserved)",
-    "/Users/ghost/core/anima/anima-speak/anima_audio.hexa::breath/pipe/vocal_lf/pipe3/pipe_glide (deferred to follow-on)"
+    "/Users/ghost/core/anima/anima-voice/anima_audio.hexa::_run_py (legacy worker path preserved)",
+    "/Users/ghost/core/anima/anima-voice/anima_audio.hexa::vocal (legacy python sawtooth preserved)",
+    "/Users/ghost/core/anima/anima-voice/anima_audio.hexa::breath/pipe/vocal_lf/pipe3/pipe_glide (deferred to follow-on)"
   ],
   "verification_artifacts": [
     "/tmp/anima_audio_1777175061116739000.wav — python vocal(440,0.5,100), 4844 bytes, peak=18703 (sawtooth)",

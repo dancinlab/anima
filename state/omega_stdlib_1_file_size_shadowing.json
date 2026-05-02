@@ -15,7 +15,7 @@
       "calls": ["self (definitions only)"]
     },
     {
-      "path": "/Users/ghost/core/anima/anima-speak/anima_audio.hexa",
+      "path": "/Users/ghost/core/anima/anima-voice/anima_audio.hexa",
       "uses_portable_fs": true,
       "calls": ["file_size (1: _file_bytes)", "file_exists (3: python3 probe + worker path + brew py)"]
     },
@@ -40,7 +40,7 @@
   "changes_applied": {
     "files_modified": [
       "/Users/ghost/core/hexa-lang/stdlib/portable_fs.hexa",
-      "/Users/ghost/core/anima/anima-speak/anima_audio.hexa",
+      "/Users/ghost/core/anima/anima-voice/anima_audio.hexa",
       "/Users/ghost/core/nexus/cli/run.hexa",
       "/Users/ghost/core/hexa-lang/gate/pre_tool_guard.hexa",
       "/Users/ghost/core/anima/state/omega_smoke.hexa"
@@ -55,7 +55,7 @@
   },
   "regression_check": {
     "smoke_test": "hexa run /Users/ghost/core/anima/state/omega_smoke.hexa (covers all 3 portable_fs primitives via pfs_* prefix)",
-    "result": "PASS — emitted {\"smoke\":true,\"file_size\":587,\"now_ns\":\"1777172813975225842\",\"exists\":true}; pfs_file_size returned correct byte count, pfs_now_ns returned ns precision, pfs_file_exists returned true. Secondary: hexa run /Users/ghost/core/nexus/cli/run.hexa --help printed full subcommand listing without parse error. Tertiary: hexa run /Users/ghost/core/anima/anima-speak/anima_audio_demo.hexa loaded anima_audio.hexa, exercised pfs_now_ns (timestamps in WAV paths) and pfs_file_size (via _file_bytes) without parse error (python3-missing failures are container-side, unrelated)."
+    "result": "PASS — emitted {\"smoke\":true,\"file_size\":587,\"now_ns\":\"1777172813975225842\",\"exists\":true}; pfs_file_size returned correct byte count, pfs_now_ns returned ns precision, pfs_file_exists returned true. Secondary: hexa run /Users/ghost/core/nexus/cli/run.hexa --help printed full subcommand listing without parse error. Tertiary: hexa run /Users/ghost/core/anima/anima-voice/anima_audio_demo.hexa loaded anima_audio.hexa, exercised pfs_now_ns (timestamps in WAV paths) and pfs_file_size (via _file_bytes) without parse error (python3-missing failures are container-side, unrelated)."
   },
   "rollback": "git diff/checkout on the 5 files listed in changes_applied.files_modified; or sed-replace pfs_file_size->file_size, pfs_now_ns->now_ns, pfs_file_mtime->file_mtime, pfs_file_exists->file_exists across those 5 paths. No external state, no commit, no docker rebuild."
 }

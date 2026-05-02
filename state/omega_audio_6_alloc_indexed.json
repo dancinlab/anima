@@ -7,10 +7,10 @@
     "predecessor": "omega_audio_5 brought vocal_hexa to ~107ms via period-table; closed math gap.",
     "hypothesis": "Per-sample 2x .push() into byte buffer (4800 push/call for 100ms vocal) is the remaining cost; pre-alloc + indexed write should beat it.",
     "prior_signal": "omega_interp_3 added array_alloc(N) but vocal_hexa_alloc bench was NULL-RESULT — already a soft signal that this pattern doesn't help here.",
-    "scope": "anima/anima-speak/anima_audio.hexa only. NO docker, NO hexa-lang, NO git changes."
+    "scope": "anima/anima-voice/anima_audio.hexa only. NO docker, NO hexa-lang, NO git changes."
   },
   "method": {
-    "bench": "/Users/ghost/core/anima/anima-speak/_omega_audio_6_bench.hexa",
+    "bench": "/Users/ghost/core/anima/anima-voice/_omega_audio_6_bench.hexa",
     "warmup_runs": 1,
     "measured_runs": 5,
     "params": {
@@ -80,7 +80,7 @@
     "method": "Edit replaced vocal_hexa with original push-based body. _wav_header() restored as buffer initializer. .push() pairs restored in hot loop.",
     "verification": "Run 3 hash for vocal_hexa matches run 1 (4815fe9ae74...). All organ hashes byte-identical across the entire cycle.",
     "files_modified_then_restored": [
-      "/Users/ghost/core/anima/anima-speak/anima_audio.hexa (vocal_hexa only — function 429..515; reverted)"
+      "/Users/ghost/core/anima/anima-voice/anima_audio.hexa (vocal_hexa only — function 429..515; reverted)"
     ],
     "files_unchanged": [
       "breath_hexa (line 579)",
@@ -104,7 +104,7 @@
     "Hash equality across all three runs confirms the migration was semantically correct — the ONLY failure mode was performance."
   ],
   "constraints_honored": {
-    "scope": "anima/anima-speak/anima_audio.hexa only",
+    "scope": "anima/anima-voice/anima_audio.hexa only",
     "no_hexa_lang_change": true,
     "no_docker_change": true,
     "no_git_commit": true,

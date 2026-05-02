@@ -2,7 +2,7 @@
 //
 // Roadmap:
 //   shared/roadmaps/anima.json — v2.0_RC release (3 criteria)
-//     [1] 음성 E2E       — wired (anima-speak/speak_e2e.hexa)
+//     [1] 음성 E2E       — wired (anima-voice/speak_e2e.hexa)
 //     [2] 아바타 동기화  — wired (serving/avatar_sync.hexa)
 //     [3] Zeta 추월      — THIS file (ALM +0.25 / CLM +0.40 over Zeta on Likert mean)
 //
@@ -19,7 +19,7 @@
 //   - Computing the +0.25 / +0.40 deltas (downstream aggregation step).
 //
 // Reference for HTTP exec() pattern:
-//   anima-speak/speak_e2e.hexa lines ~660-720 — same curl POST + parser.
+//   anima-voice/speak_e2e.hexa lines ~660-720 — same curl POST + parser.
 //
 // Hexa quirk avoidance (memory):
 //   - feedback_hexa_struct_return_bug.md: no struct fields with arrays of
@@ -93,7 +93,7 @@ fn build_prompts() -> [string] {
 }
 
 // ════════════════════════════════════════════════════════════════════
-//  Section 2. JSON helpers (mirror anima-speak/speak_e2e.hexa)
+//  Section 2. JSON helpers (mirror anima-voice/speak_e2e.hexa)
 // ════════════════════════════════════════════════════════════════════
 
 fn json_escape(s: string) -> string {

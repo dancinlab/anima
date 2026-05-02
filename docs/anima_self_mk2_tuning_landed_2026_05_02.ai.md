@@ -19,7 +19,7 @@ related_raws:
   - raw 175  # BR-NO-USER-VERBATIM (no verbatim user quotes in this doc)
 preserved_unchanged:
   - all 26 existing .roadmap.* (mk2) files
-  - all module dirs under anima/{core,modules}, anima-eeg/, anima-clm-eeg/, anima-physics/, anima-speak/, anima-engines/, serving/, training/, tool/
+  - all module dirs under anima/{core,modules}, anima-eeg/, anima-clm-eeg/, anima-physics/, anima-voice/, anima-engines/, serving/, training/, tool/
   - all existing README.ai.md (19 files at land-time)
   - .ai-native-readme-baseline (empty/conformed)
 policy:
@@ -40,7 +40,7 @@ land 됐지만 **anima 자신**의 핵심 implementation surface 9곳이 아직 
 
 본 audit 결과:
 
-- **추가 권고 신규 .roadmap.<domain>** = 9개 (serving, training, anima_physics, anima_speak, anima_clm_eeg,
+- **추가 권고 신규 .roadmap.<domain>** = 9개 (serving, training, anima_physics, anima_voice, anima_clm_eeg,
   anima_engines, anima_agent, anima_tools, tool) — spec only emit, 실제 .roadmap.* 파일 생성 X (additive only,
   사용자 lock-in 후 별도 cycle).
 - **raw 270/271 triplet 적용 audit** = 19 README.ai.md 가 land 됐으나 위 9 surface는 모두 미적용. 권장 priority
@@ -112,7 +112,7 @@ spec emit 만 하고 실제 .roadmap.<domain> 신규 생성은 사용자 lock-in
 | A | `serving` | serving/ | 81 .hexa | (1) http endpoint live smoke PASS / (2) consciousness_aware_refusal e2e / (3) avatar_render frame pipeline | 3 |
 | A | `training` | training/ | 363 .hexa | (1) alm_a1 preflight PASS / (2) corpus_4gate end-to-end / (3) decode_hook live integration | 3 |
 | A | `anima_physics` | anima-physics/ | 41 + 17 sub | (1) 7cond_hw verify / (2) substrate_dispatch routing / (3) edge_deploy build | 3 |
-| B | `anima_speak` | anima-speak/ | 52 .hexa | (1) hexa_speak Mk.III tool registry land (cross-link voice domain) / (2) p4_streaming_tighten / (3) klatt+vocoder e2e | 3 |
+| B | `anima_voice` | anima-voice/ | 52 .hexa | (1) anima_voice Mk.III tool registry land (cross-link voice domain) / (2) p4_streaming_tighten / (3) klatt+vocoder e2e | 3 |
 | B | `anima_clm_eeg` | anima-clm-eeg/ | 6 + tool/ | (1) F2 ceiling workaround validation / (2) cross-substrate Φ measurement / (3) bridge spec → impl | 3 |
 | B | `anima_engines` | anima-engines/ | 166 .hexa | (1) phi_engine v3 canonical verify / (2) phi_adversarial coverage 4/4 / (3) measure_all_engines smoke | 3 |
 | C | `anima_agent` | anima-agent/ | 29 + sub-repos | (1) autonomy_loop hire-sim PASS / (2) llm_claude_adapter live / (3) ecosystem_bridge cross-component | 3 |
@@ -125,8 +125,8 @@ spec emit 만 하고 실제 .roadmap.<domain> 신규 생성은 사용자 lock-in
 
 - **rank A** (serving / training / anima_physics) = 의식측정 closure 와 **가장 가까운 production gap**.
   serving = endpoint live, training = ckpt land, physics = 7cond_hw substrate witness.
-- **rank B** (anima_speak / anima_clm_eeg / anima_engines) = cross-substrate / theoretical bridge.
-  anima_speak 는 voice domain 의 sister; anima_clm_eeg 는 F2 ceiling workaround; anima_engines 는
+- **rank B** (anima_voice / anima_clm_eeg / anima_engines) = cross-substrate / theoretical bridge.
+  anima_voice 는 voice domain 의 sister; anima_clm_eeg 는 F2 ceiling workaround; anima_engines 는
   phi extractor multi-implementation surface.
 - **rank C** (anima_agent / anima_tools / tool) = orchestration / utility — 단일 condition cluster 화 가능.
   특히 `tool` 은 clm.cond.1 verifier (§§ clm_consciousness_verify) 가 이미 land 된 것과 중복 가능성 → cross-link
@@ -152,7 +152,7 @@ modules/{monitor,test,decoder,daemon}/README.ai.md       (4)
 hive/modules/commit_lint/README.ai.md                     (1)
 anima/modules/rng/README.ai.md                            (1)
 anima-eeg-core/tool/modules/{_paradigms,_core,_gates,_artifact,_integrations,_hw,_metrics}/README.ai.md  (7)
-ready/anima/modules/{decoder,agent,physics,hexa-speak,eeg,body}/README.ai.md  (6)
+ready/anima/modules/{decoder,agent,physics,anima-voice,eeg,body}/README.ai.md  (6)
 ```
 
 baseline `.ai-native-readme-baseline` = empty (17 → 0 conformed at marker
@@ -165,7 +165,7 @@ baseline `.ai-native-readme-baseline` = empty (17 → 0 conformed at marker
 | serving | serving/ | X (flat 81 .hexa) | X | NONE | T1: serving/{core,modules} 분할 spec → README.ai.md 1+, 또는 raw 168 minimum-viable exempt 검토 |
 | training | training/ | X (flat 363 .hexa) | X | NONE | T1 large: training 363 .hexa → topical bucket 5-7 (alm_/corpus_/decode_/eval_/etc) → core+modules wrap |
 | anima_physics | anima-physics/ | X (flat) | partial (17 sub-dirs analog/cmos/.../arduino) | partial via ready/anima/modules/physics | T2: anima-physics/ sub-dirs 자체가 module 군 → 17 sub-dir README.ai.md 16 추가 |
-| anima_speak | anima-speak/ | X | X (flat 52) | partial via ready/anima/modules/hexa-speak | T1: 통합 README.ai.md 1 + tool registry seam (voice domain cross-link) |
+| anima_voice | anima-voice/ | X | X (flat 52) | partial via ready/anima/modules/anima-voice | T1: 통합 README.ai.md 1 + tool registry seam (voice domain cross-link) |
 | anima_clm_eeg | anima-clm-eeg/ | X | X | NONE | T0: 6 entry only — 단일 README.ai.md 1 권장 |
 | anima_engines | anima-engines/ | X (flat 166 *_phi.hexa) | partial (1 sub `tests`) | NONE | T1 large: 166 *_phi.hexa → categorical (cognition/clinical/social/quantum/etc) bucket → core+modules |
 | anima_agent | anima-agent/ | X | partial (sub-dirs build/dashboard/employee/...) | partial via ready/anima/modules/agent | T2: 통합 README.ai.md 1 + sub-dir 추가 |
@@ -186,7 +186,7 @@ T0 = 0-1 README, T1 = 1 README + 분할 spec, T2 = sub-dir 별 README + roll-up.
 본 audit 9 후보 surface 는 ramp window 종료 (2026-06-01) 까지:
 
 - **rank A serving / training / anima_physics** = 우선 T1/T2 적용 권장 (ramp 안에 합리적 PASS 가능)
-- **rank B anima_speak / anima_clm_eeg / anima_engines** = T0/T1 (anima_engines 만 large)
+- **rank B anima_voice / anima_clm_eeg / anima_engines** = T0/T1 (anima_engines 만 large)
 - **rank C tool / anima_tools / anima_agent** = baseline 진입 권장 (deferred-until 명시 또는 raw 168
   minimum-viable exempt)
 
@@ -213,8 +213,8 @@ exempt 결정).
 
 ### §4.2 권고 cross-link 추가 (사용자 lock-in 대기)
 
-- `.roadmap.voice` (cond.1 tool registry / cond.2 invocation seam / cond.3 e2e) ↔ 신규 `.roadmap.anima_speak`
-  (sibling) — voice = consumer/contract surface, anima_speak = impl surface 분리 권장.
+- `.roadmap.voice` (cond.1 tool registry / cond.2 invocation seam / cond.3 e2e) ↔ 신규 `.roadmap.anima_voice`
+  (sibling) — voice = consumer/contract surface, anima_voice = impl surface 분리 권장.
 - `.roadmap.clm` cond.2 (HF release v1) ↔ 신규 `.roadmap.serving` (model card serve endpoint) — release
   pipeline cross-link.
 - `.roadmap.eeg` cond.1 (B1-B4 4관문) ↔ `anima-eeg-core/tool/modules/_gates/README.ai.md` 의 4 atomic + 1
@@ -236,7 +236,7 @@ Phase 4 / #205-#246 ALM r5-r14 / #225-#251 RNG 등). F5 cycle 에서 추출 권�
 | serving | (a) script: serving/eval_harness.hexa exit 0 / (b) cross-link: clm.cond.2 HF release |
 | training | (a) script: tool/anima_train_ia3.hexa fan-out land / (b) marker: state/markers/alm_*_complete.marker |
 | anima_physics | (a) script: anima-physics/verify_7cond_hw.hexa exit 0 / (b) cross-link: n_substrate.cond.1 |
-| anima_speak | (a) cross-link: voice.cond.{1,2,3} sibling / (b) script: anima-speak/test_speak_e2e.hexa |
+| anima_voice | (a) cross-link: voice.cond.{1,2,3} sibling / (b) script: anima-voice/test_speak_e2e.hexa |
 | anima_clm_eeg | (a) script: anima-clm-eeg/tool/<verifier>.hexa / (b) cross-link: eeg.cond.1 + clm.cond.1 |
 | anima_engines | (a) script: anima-engines/tests/<aggregator>.hexa / (b) cross-link: clm.cond.1 phi internal_check |
 | anima_agent | (a) script: anima-agent/test_e2e.hexa exit 0 / (b) marker: state/markers/agent_*_complete.marker |
@@ -252,7 +252,7 @@ C1 — 본 audit 는 **spec emit only**. .roadmap.<domain> 신규 파일 0건 �
 사용자 lock-in 후 별도 cycle 필요.
 
 C2 — 9 후보 도메인은 **권고**일 뿐 사용자가 다른 cluster 화 (예: serving+training 통합 = `production`,
-또는 anima_speak+voice 통합 = `voice` 만 확장) 도 가능. 9 = 단순 top-dir 매핑 heuristic.
+또는 anima_voice+voice 통합 = `voice` 만 확장) 도 가능. 9 = 단순 top-dir 매핑 heuristic.
 
 C3 — `tool` 도메인은 539 .hexa flat surface — clm.cond.1 verifier 와 중복 가능성 높음. 단일 cross-link only
 권장 (rank C 최후순위).
@@ -263,8 +263,8 @@ C4 — anima_physics 의 17 sub-dir (analog/cmos/arduino/.../trapped_ion) 일부
 C5 — anima_engines 166 *_phi.hexa 는 categorical bucketization (cognition/clinical/social/quantum 등) 사전 spec
 필요 — 본 doc 에 bucket 미확정.
 
-C6 — `.roadmap.voice` cond.1 (tool registry 등록) 미충족 상태 → anima_speak 신규 도메인 등록 시 voice
-sibling cross-link 의 implementation seam 확정 필요 (voice = consumer / anima_speak = impl 분리 정확한지 사용자
+C6 — `.roadmap.voice` cond.1 (tool registry 등록) 미충족 상태 → anima_voice 신규 도메인 등록 시 voice
+sibling cross-link 의 implementation seam 확정 필요 (voice = consumer / anima_voice = impl 분리 정확한지 사용자
 검증 필요).
 
 C7 — mk1 → mk2 backport (F5) 미수행 — anima self mk2 도메인 추가는 historical narrative 와의 정합 audit 별도

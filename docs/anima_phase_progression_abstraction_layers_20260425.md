@@ -1,7 +1,7 @@
 # Anima Phase Progression — Abstraction Layers (L0 → L5, L∞)
 
 > **생성일**: 2026-04-25
-> **부모 commits**: `869dc6d5` CP1 closure consolidated · `f0efd2bc` P1 7/7 line 168 · `8d85ccb2` anima-speak organs
+> **부모 commits**: `869dc6d5` CP1 closure consolidated · `f0efd2bc` P1 7/7 line 168 · `8d85ccb2` anima-voice organs
 > **scope**: 3-layer waypoint (CP1 → CP2 → AGI), Phase 0-4 sequencing, `phase_progression_controller.hexa` 3-stage gate, build-up trajectory
 > **POLICY R4**: `.roadmap` 미수정. own#11 (extraordinary claim/ordinary evidence) 준수.
 > **honesty frame**: CP1 closure = narrow operational sense. AGI claim 은 L5+ 함의 → 본 문서 내 어떤 진술도 AGI 도달을 주장하지 않는다.

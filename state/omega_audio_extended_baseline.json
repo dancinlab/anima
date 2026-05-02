@@ -7,7 +7,7 @@
     "omega_audio_baseline": "/Users/ghost/core/anima/state/omega_audio_baseline.json",
     "omega_audio_3_latency": "/Users/ghost/core/anima/state/omega_audio_3_latency_physics.json",
     "omega_audio_6_vocal_tract": "/Users/ghost/core/anima/state/omega_audio_6_vocal_tract_physics.json",
-    "empirical_run": "/Users/ghost/core/anima/state/omega_audio_emp/omega_emp_{A,B,C,D,E}.json (anima-speak/omega_audio_emp.hexa)"
+    "empirical_run": "/Users/ghost/core/anima/state/omega_audio_emp/omega_emp_{A,B,C,D,E}.json (anima-voice/omega_audio_emp.hexa)"
   },
 
   "baseline_failures_recap": {
@@ -51,7 +51,7 @@
 
   "physics_or_limits": {
     "B_root_cause": {
-      "mechanism": "Klatt 2-pole IIR at /Users/ghost/core/anima/anima-speak/anima_audio.hexa:215-252",
+      "mechanism": "Klatt 2-pole IIR at /Users/ghost/core/anima/anima-voice/anima_audio.hexa:215-252",
       "transfer_function": "H(z) = A / (1 - 2r·cos(θ)·z^-1 + r²·z^-2)",
       "zeros": "all at z=0 (origin) — cannot be moved off origin without restructuring numerator",
       "human_nasal_mechanism": "side-branch (oral cavity) creates a parallel signal path; cancellation = transmission zero typically 700-1500 Hz, plus low nasal formant ~250 Hz, plus shifted oral formants",

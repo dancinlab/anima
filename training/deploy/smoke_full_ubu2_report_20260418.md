@@ -64,7 +64,7 @@ Regression vs sister is negligible. Full scope (1638) now includes previously un
 | anima-engines | 18 | 147 | 11% |
 | anima-hexad | 16 | ? | — |
 | modules | 11 | ? | — |
-| anima-speak | 10 | ? | — |
+| anima-voice | 10 | ? | — |
 
 `anima-agent/` and `serving/` are the worst — likely share missing `json_parse`, `shell`, `LLMAdapter` intrinsics.
 

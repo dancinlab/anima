@@ -42,7 +42,7 @@
 | 8 | anima-eeg           | 신규 | 6 seeds | brain-like 85.9%, 12조건, neural signature |
 | 9 | anima-physics       | 신규 | 6 seeds | ESP32/FPGA/양자, substrate, tier-2 HW |
 | 10 | anima-body         | 신규 | 6 seeds | robot embodiment, HW closure, sensorimotor |
-| 11 | anima-speak        | 신규 | 6 seeds | HEXA-SPEAK Mk.III/IV, neural vocoder, TTS |
+| 11 | anima-voice        | 신규 | 6 seeds | ANIMA-VOICE Mk.III/IV, neural vocoder, TTS |
 | 12 | anima-engines      | 신규 | 6 seeds | 양자 / 광자 / 멤리스터 / 오실레이터 |
 | 13 | anima-tools        | 신규 | 6 seeds | 독립 유틸 + anima-hexad CDESM + anima-measurement IIT |
 
@@ -154,9 +154,9 @@
 129 v4_hetzner body_dual_homeost   | dual homeostasis (에너지+정보) 닫힘
 ```
 
-### D11 · anima-speak (iter 130~135)
+### D11 · anima-voice (iter 130~135)
 ```
-130 v4_hetzner speak_mk3_vocoder    | HEXA-SPEAK Mk.III neural vocoder saturation
+130 v4_hetzner speak_mk3_vocoder    | ANIMA-VOICE Mk.III neural vocoder saturation
 131 v4_hetzner speak_mk4_design     | Mk.IV 차기 vocoder 설계 probe
 132 v4_hetzner speak_bf16_neon      | bf16 NEON bench + quality audit 닫힘
 133 v4_hetzner speak_kr_tts_ab      | Korean TTS A/B sample + YT audiobook corpus closure

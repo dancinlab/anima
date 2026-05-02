@@ -7,7 +7,7 @@
     "actual_breakdown": {
       "ready/": {"count": 1431, "status": "jurisdiction-out", "rationale": ".gitignore'd historical corpus archive (.growth/ absorption); only ready/README.md tracked"},
       ".claude/": {"count": 1045, "status": "vendor", "rationale": "Claude Code internal hooks/settings; outside anima repo authority"},
-      "anima_active_source": {"count": 16, "status": "in-scope", "breakdown": "tool/4 + anima-speak/6 + anima-agent/1 + training/5"}
+      "anima_active_source": {"count": 16, "status": "in-scope", "breakdown": "tool/4 + anima-voice/6 + anima-agent/1 + training/5"}
     },
     "corrected_baseline": "raw 9 active-source violations = 16 (not 2494)"
   },
@@ -34,7 +34,7 @@
         "tool/an11_c_jsd_h_last.py — port-pending (r8 jsd witness)",
         "tool/active_redteam_dEF_proto.py — UNTRACKED, decision-deferred",
         "tool/active_redteam_prototype.py — UNTRACKED, decision-deferred",
-        "anima-speak/experiments/*.sh (6 files) — Phase 3 decision",
+        "anima-voice/experiments/*.sh (6 files) — Phase 3 decision",
         "anima-agent/pyproject.toml — Phase 4 anima-agent language identity decision"
       ]
     },
@@ -57,7 +57,7 @@
   },
   "deferred_phases": {
     "phase_2": "hive/tool/hexa_only_lint.hexa anima-adapt + cron deploy + .raw-audit/hexa_only.jsonl output (3-5일)",
-    "phase_3": "anima-speak/experiments .sh × 6 — port vs whitelist 결정 (1-2주, ω-cycle 분리)",
+    "phase_3": "anima-voice/experiments .sh × 6 — port vs whitelist 결정 (1-2주, ω-cycle 분리)",
     "phase_4": "anima-agent pyproject.toml — language identity 결정 (1세션)",
     "ancillary_a": "tool/active_redteam_{dEF_proto,prototype}.py — untracked add-or-remove (1세션 decision)",
     "ancillary_b": "tool/{p_s_projector,an11_c_jsd_h_last}_proto.py — .hexa port (production spec, 2-3일 each)"

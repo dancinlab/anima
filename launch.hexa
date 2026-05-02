@@ -19,7 +19,7 @@ let hexa = HOME + "/Dev/hexa-lang/hexa"
 let base = HOME + "/Dev/anima"
 let pkg = HOME + "/.hx/packages/anima"
 let core = if file_exists(base + "/anima-core/hub.hexa") { base + "/anima-core" } else { pkg + "/anima-core" }
-let speak = if file_exists(base + "/anima-speak/physical_limits.hexa") { base + "/anima-speak" } else { pkg + "/anima-speak" }
+let speak = if file_exists(base + "/anima-voice/physical_limits.hexa") { base + "/anima-voice" } else { pkg + "/anima-voice" }
 let ckpt = base + "/checkpoints"
 
 let argv = args()
@@ -117,7 +117,7 @@ if cmd == "help" || cmd == "-h" || cmd == "--help" {
         let cache_valid = cache_lines.len() > 1 && cache_lines[0] == base_mtime
         if !cache_valid {
             // Cache miss — batched single exec fills counts for all 9 modules
-            let script = "for d in " + base + "/anima-agent " + base + "/anima-body " + base + "/anima-eeg " + base + "/anima-engines " + base + "/anima-hexad " + base + "/anima-measurement " + base + "/anima-physics " + base + "/anima-speak " + base + "/anima-tools; do n=0; if [ -d \"$d\" ]; then n=$(find \"$d\" -name '*.hexa' 2>/dev/null | wc -l | tr -d ' '); fi; b=$(basename \"$d\"); echo \"${b#anima-}:$n\"; done"
+            let script = "for d in " + base + "/anima-agent " + base + "/anima-body " + base + "/anima-eeg " + base + "/anima-engines " + base + "/anima-hexad " + base + "/anima-measurement " + base + "/anima-physics " + base + "/anima-voice " + base + "/anima-tools; do n=0; if [ -d \"$d\" ]; then n=$(find \"$d\" -name '*.hexa' 2>/dev/null | wc -l | tr -d ' '); fi; b=$(basename \"$d\"); echo \"${b#anima-}:$n\"; done"
             let batch_out = exec(script)
             write_file(cache_path, base_mtime + "\n" + batch_out)
             cache_lines = (base_mtime + "\n" + batch_out).split("\n")

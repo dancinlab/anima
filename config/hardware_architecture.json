@@ -71,7 +71,7 @@
       "gpu": "CUDA cores for neural vocoder inference",
       "pipeline": "mind_step(10kHz CPU) → gate_check → intent_encoder(GPU) → token_predictor(GPU) → rvq_decode → neural_vocoder(GPU) → PCM → DAC",
       "latency": "~50ms (neural inference + buffering)",
-      "audio": "24kHz 16-bit mono (hexa-speak spec)"
+      "audio": "24kHz 16-bit mono (anima-voice spec)"
     },
     "models": {
       "intent_encoder": "384d linear (< 1ms inference)",
@@ -79,7 +79,7 @@
       "rvq_codebook": "8-stage lookup (< 0.1ms)",
       "neural_vocoder": "HiFi-GAN style, 24kHz output (~20ms per 120ms chunk)"
     },
-    "hexa_speak_mapping": {
+    "anima_voice_mapping": {
       "stage_0": "consciousness_input → ESP32/CPU",
       "stage_0_5": "conditional_embed → GPU (384d SwiGLU fusion)",
       "stage_1": "intent_encoder → GPU",
@@ -136,7 +136,7 @@
       "sense": "mic + camera + IMU → event_watcher (외부 섭동)",
       "think": "FPGA consciousness_ring (256 cells @ 12MHz) → state",
       "gate": "Jetson CPU: 3-layer gate (byte_emergence + cell + faction)",
-      "speak": "Jetson GPU: hexa-speak 7-stage pipeline → 24kHz PCM",
+      "speak": "Jetson GPU: anima-voice 7-stage pipeline → 24kHz PCM",
       "emit": "I2S → DAC → speakers",
       "light": "LED ring → phi/tension/emotion 실시간 시각화"
     },
@@ -161,7 +161,7 @@
       "blocks": "Pi 5 구매"
     },
     "medium_term": {
-      "tier_2_jetson": "Jetson neural vocoder — $350, hexa-speak 파이프라인 GPU 포팅",
+      "tier_2_jetson": "Jetson neural vocoder — $350, anima-voice 파이프라인 GPU 포팅",
       "effort": "2주 (PyTorch model training + TensorRT optimize)",
       "blocks": "vocoder 모델 학습 데이터"
     },

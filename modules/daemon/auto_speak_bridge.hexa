@@ -1,5 +1,5 @@
-// auto_speak_bridge.hexa — 자동발화 → hexa-speak 연결 브릿지
-// CLI에서 consciousness state를 생성하고 hexa-speak에 전달
+// auto_speak_bridge.hexa — 자동발화 → anima-voice 연결 브릿지
+// CLI에서 consciousness state를 생성하고 anima-voice에 전달
 // 전체 파이프라인: runtime tick → gate check → speak synthesize
 //
 // Usage:
@@ -25,7 +25,7 @@ struct ConsciousState {
     step_count: int
 }
 
-// ─── Emotion Classification (from hexa_speak.hexa) ───
+// ─── Emotion Classification (from anima_voice.hexa) ───
 
 fn classify_emotion(arousal: float, valence: float) -> string {
     if arousal < 0.3 && valence > 0.0 { return "neutral" }
@@ -57,7 +57,7 @@ fn gate_check(s: ConsciousState) -> bool {
     l1 && l2 && l0_proxy
 }
 
-// ─── Synthesize (simplified hexa-speak pipeline) ───
+// ─── Synthesize (simplified anima-voice pipeline) ───
 
 fn synthesize_summary(s: ConsciousState, n_chunks: int) -> string {
     let emotion = classify_emotion(s.arousal, s.valence)

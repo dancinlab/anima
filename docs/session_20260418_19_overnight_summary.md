@@ -26,7 +26,7 @@
 6. **BLAS 포팅**: `896ca10d` pure-hexa scalar fallback + HX_BLAS dispatch — 14 BLAS files portable
 7. **Telegram bridge cleanup**: `ce28ed40` 14 extern fn strip
 8. **Training scaffolds**: `d9b80eca` ALM r10d + r11 hexa-native + CLM r5 design
-9. **anima-speak**: `733ac783` bf16 NEON bench + quality audit
+9. **anima-voice**: `733ac783` bf16 NEON bench + quality audit
 10. **Sister re-smoke**: `d3c649a8` ubu2 030019Z smoke_full 재검증
 
 ## C. 블로커 (해결 / 신규 / 대기)

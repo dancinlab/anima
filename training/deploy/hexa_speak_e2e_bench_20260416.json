@@ -1,7 +1,7 @@
 {
   "bench_run_at": "2026-04-16T08:05:00Z",
   "operator": "multi404error@proton.me",
-  "mission": "HEXA-SPEAK Mk.III e2e bench + ALM wire verification",
+  "mission": "ANIMA-VOICE Mk.III e2e bench + ALM wire verification",
   "runtime": {
     "pod_id": "u01lnnu8ywt92p",
     "pod_name": "hexa-c4",
@@ -29,8 +29,8 @@
     "anima_repo_on_pod": false,
     "diagnosis": "Live ALM pod runs Python serve_alm_14b.py, NOT hexa http_server.hexa. Source code voice_routes.hexa + http_server.hexa wiring exists locally but is never executed in production. Voice path is completely absent from the LIVE serving runtime."
   },
-  "bench_hexa_speak_run": {
-    "cmd": "hexa_stage0 anima-speak/bench_hexa_speak.hexa",
+  "bench_anima_voice_run": {
+    "cmd": "hexa_stage0 anima-voice/bench_anima_voice.hexa",
     "exit_code": 0,
     "wall_time_sec": 0.01,
     "cpu": "90%",
@@ -46,7 +46,7 @@
     "critical_caveat": "ALL bench numbers are HARD-CODED LITERALS, not measured. t_intent=8, t_token=42, t_vocoder=36 are constants in the .hexa source. Bench file self-identifies as 'Mk.I skeleton, simulated runs'. No actual runtime is measured. No audio is produced. No CUDA path is exercised."
   },
   "speak_e2e_run": {
-    "cmd": "hexa_stage0 anima-speak/speak_e2e.hexa --in /tmp/in.wav --out /tmp/out.wav",
+    "cmd": "hexa_stage0 anima-voice/speak_e2e.hexa --in /tmp/in.wav --out /tmp/out.wav",
     "exit_code": 0,
     "wall_time_sec": 0.02,
     "mem_kb": 16424,
@@ -63,7 +63,7 @@
     }
   },
   "voice_profiles_run": {
-    "cmd": "hexa_stage0 anima-speak/rp_voice_profiles.hexa",
+    "cmd": "hexa_stage0 anima-voice/rp_voice_profiles.hexa",
     "exit_code": 0,
     "result": "5/5 PASS",
     "profiles_defined": 10,
@@ -71,11 +71,11 @@
     "note": "Profiles are parameter tables (pitch_hz, formant_shift, tempo_wpm, prosody_bias, style_tag) — not audio weights. Self-test output says: 'remaining_work: neural_vocoder.hexa 통합 (P4 SERVING task)'"
   },
   "source_audit": {
-    "files_in_anima_speak": 21,
+    "files_in_anima_voice": 21,
     "mock_todo_placeholder_occurrences": 136,
     "distribution_top5": {
       "speak_e2e.hexa": 73,
-      "hexa_speak.hexa": 11,
+      "anima_voice.hexa": 11,
       "streaming.hexa": 8,
       "vocoder.hexa": 8,
       "test_pipeline.hexa": 8
@@ -130,18 +130,18 @@
   "shippable_verdict": {
     "is_shippable_to_users": false,
     "is_structural_only": true,
-    "classification": "Architecture complete (no syntactic TODOs in hexa_speak.hexa main flow), functional implementation 0%. All load-bearing neural components (vocoder, predictor, intent encoder) return string stubs.",
+    "classification": "Architecture complete (no syntactic TODOs in anima_voice.hexa main flow), functional implementation 0%. All load-bearing neural components (vocoder, predictor, intent encoder) return string stubs.",
     "honest_status": "STRUCTURAL_SCAFFOLD — 5/5 bench PASS is a structural check of parameter tables and dim constants. Zero audio bytes have ever been synthesized by this module."
   },
   "recommended_next_step": {
     "primary": "MARK INCOMPLETE in convergence SSOT",
-    "rationale": "v2.0 RC criterion '음성 입출력 (anima-speak Mk.III) E2E' is not met. Do NOT claim voice I/O shippable.",
+    "rationale": "v2.0 RC criterion '음성 입출력 (anima-voice Mk.III) E2E' is not met. Do NOT claim voice I/O shippable.",
     "options_in_priority_order": [
-      "1. SSOT honesty: update shared/convergence/anima.json to mark HEXA-SPEAK status=scaffold, not done. Prevents downstream claims.",
+      "1. SSOT honesty: update shared/convergence/anima.json to mark ANIMA-VOICE status=scaffold, not done. Prevents downstream claims.",
       "2. Port bridge: implement neural_vocoder.decode_wave → real Vocos/HiFi-GAN via hxcuda FFI (matches hxlmhead pattern). Blocked until Hexa can call CUDA kernels for STFT/iSTFT.",
       "3. Python fallback: have serve_alm_14b.py import a small Python TTS (Coqui XTTS or Piper) and add /voice/tts there as a stopgap. Ships in hours, not weeks.",
       "4. Train weights: spin up hexa-c4 (already up, $0.22/hr) for LJSpeech/voice_profiles pre-train — but this blocks on option 2.",
-      "5. Do not expand source — freeze at current state, document as research scaffold in anima-speak/CLAUDE.md."
+      "5. Do not expand source — freeze at current state, document as research scaffold in anima-voice/CLAUDE.md."
     ],
     "most_honest_near_term": "Option 3 (Python Piper stopgap) + Option 1 (SSOT honesty). Gets real 24kHz audio to ALM pod /voice/tts within a day. Hexa-native vocoder = multi-week project.",
     "do_not": "Do NOT restart ALM serve pod to add voice_routes. http_server.hexa is not the live binary. Restarting would take down /generate without adding voice."

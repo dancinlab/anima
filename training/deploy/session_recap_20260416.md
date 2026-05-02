@@ -7,7 +7,7 @@
 
 ## TL;DR
 
-**도달**: ALM 14B v2.0 GA 공식 태그 (`fc56f931`) + CLM 1B/3B pipeline 검증 + HEXA-SPEAK 구조 완성.
+**도달**: ALM 14B v2.0 GA 공식 태그 (`fc56f931`) + CLM 1B/3B pipeline 검증 + ANIMA-VOICE 구조 완성.
 
 **가속**: v3.0 직원 능력 도달 일정 14-21일 → **7-14일**.
 
@@ -97,7 +97,7 @@
 ### 도착지 2 — v3.0 직원 능력
 - [in_flight] ALM r10 synthetic corpus (agent #26)
 - [pending] ALM r10 학습 (~4-6h $18 after corpus)
-- [delegated] HEXA-SPEAK W_ctrl 학습 (다른 세션)
+- [delegated] ANIMA-VOICE W_ctrl 학습 (다른 세션)
 - [pending] Tool-use LoRA (24h $72)
 - [pending] 6채널 인지 (zeta-surpass 의존)
 
@@ -124,7 +124,7 @@
 
 | 문서 | 대상 |
 |------|------|
-| `training/deploy/hexa_speak_handoff_20260416.md` | HEXA-SPEAK Mk.III 실음 학습 |
+| `training/deploy/anima_voice_handoff_20260416.md` | ANIMA-VOICE Mk.III 실음 학습 |
 | `training/deploy/hexa_serve_native_plan_20260416.md` | Python → 네이티브 serve 전환 |
 | `training/deploy/hexa_codegen_research_20260416.md` | Hexa codegen 5 task critical path |
 | `training/deploy/alm_ga_gap_research_20260416.md` | ALM GA 5 path 비교 |

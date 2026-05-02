@@ -638,7 +638,7 @@ fn route_request(conn: TcpConn, req: HttpRequest, state: ServerState)
             state with { requests_served: state.requests_served + 1 }
         },
         // v2.0 RC voice I/O routes — wired from serving/voice_routes.hexa
-        // Connects anima-speak Mk.III E2E pipeline to the HTTP server.
+        // Connects anima-voice Mk.III E2E pipeline to the HTTP server.
         // POST /voice/tts:  text → TTS → audio (with voice profile)
         // POST /voice/e2e:  audio_in → STT → LLM → TTS → audio_out
         // GET  /voice/profiles: list 10 available voice profiles

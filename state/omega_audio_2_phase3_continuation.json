@@ -5,7 +5,7 @@
   "predecessor": "/Users/ghost/core/anima/state/omega_audio_2_poc_results.json (Phase 1 + Phase 2 vocal POC)",
   "design_ref": "/Users/ghost/core/anima/state/omega_audio_2_persistent_worker_design.json",
   "harness": {
-    "file": "/Users/ghost/core/anima/anima-speak/_omega_audio_2_phase3_bench.hexa (created, run, removed)",
+    "file": "/Users/ghost/core/anima/anima-voice/_omega_audio_2_phase3_bench.hexa (created, run, removed)",
     "shape": "5 runs each of vocal(440,0.5,100) / breath(2000,4000,0.3,100) / vocal_lf(180,0.5,100) / chain=pipe(vocal(180,0.5,100),700,1100,6.0)",
     "interpreter": "/Users/ghost/.hx/bin/hexa_real (bypass dispatcher; the default `hexa` shim auto-routed to remote ubu2 where numpy is unavailable, so all WAV writes silently failed and timings were meaningless ~46ms shell-only)",
     "ms_units": "wallclock per call, captured via date +%s%N before/after the organ call inside hexa, divided by 1e6 in this JSON"
@@ -56,19 +56,19 @@
     "path_chosen": "c (relocate to hexa-lang/stdlib)",
     "rationale": "anima/.gitignore enforces R37/AN13/L3-PY 'no python source in anima/' rule. hexa-lang/.gitignore has no .py exclusion. Moving the worker source-of-truth to hexa-lang/stdlib/ keeps the rule intact while making the worker tracked (deployable on fresh checkout via `git add`) — the worker is conceptually a hexa-runtime helper anyway, not anima domain code.",
     "files_moved": [
-      {"from": "/Users/ghost/core/anima/anima-speak/anima_audio_worker.py", "to": "/Users/ghost/core/hexa-lang/stdlib/anima_audio_worker.py", "size_bytes": 5851}
+      {"from": "/Users/ghost/core/anima/anima-voice/anima_audio_worker.py", "to": "/Users/ghost/core/hexa-lang/stdlib/anima_audio_worker.py", "size_bytes": 5851}
     ],
     "files_updated": [
-      {"path": "/Users/ghost/core/anima/anima-speak/_audio_worker_call.sh", "change": "Replaced fixed `WORKER_PY=$(dirname $0)/anima_audio_worker.py` with 3-tier resolution: (1) explicit $ANIMA_AUDIO_WORKER_PY env if set+exists, (2) $HEXA_LANG/stdlib/anima_audio_worker.py if env set, (3) absolute fallback /Users/ghost/core/hexa-lang/stdlib/anima_audio_worker.py. Emits NDJSON error and exits 1 if none found."}
+      {"path": "/Users/ghost/core/anima/anima-voice/_audio_worker_call.sh", "change": "Replaced fixed `WORKER_PY=$(dirname $0)/anima_audio_worker.py` with 3-tier resolution: (1) explicit $ANIMA_AUDIO_WORKER_PY env if set+exists, (2) $HEXA_LANG/stdlib/anima_audio_worker.py if env set, (3) absolute fallback /Users/ghost/core/hexa-lang/stdlib/anima_audio_worker.py. Emits NDJSON error and exits 1 if none found."}
     ],
     "files_unchanged": [
-      "/Users/ghost/core/anima/anima-speak/anima_audio.hexa (WORKER_CALL_SH points to the .sh which stays in anima-speak; only the .py reference inside the .sh changed)"
+      "/Users/ghost/core/anima/anima-voice/anima_audio.hexa (WORKER_CALL_SH points to the .sh which stays in anima-voice; only the .py reference inside the .sh changed)"
     ],
     "verification_after_relocation": {
       "vocal_smoke_via_worker": "PASS",
-      "evidence": "Phase 3 bench (above) ran ANIMA_AUDIO_WORKER=1 against the relocated worker and produced 25 WAVs (5 vocal + 5 breath + 5 vocal_lf + 5 chain*[vocal,pipe]) all exactly 4844 bytes (100ms @ 24kHz mono int16 + 44-byte WAV header). Worker spawned via the new resolution path (no /Users/ghost/core/anima/anima-speak/anima_audio_worker.py existed at run time — verified by `ls` returning No such file), confirming the .sh found the relocated copy.",
+      "evidence": "Phase 3 bench (above) ran ANIMA_AUDIO_WORKER=1 against the relocated worker and produced 25 WAVs (5 vocal + 5 breath + 5 vocal_lf + 5 chain*[vocal,pipe]) all exactly 4844 bytes (100ms @ 24kHz mono int16 + 44-byte WAV header). Worker spawned via the new resolution path (no /Users/ghost/core/anima/anima-voice/anima_audio_worker.py existed at run time — verified by `ls` returning No such file), confirming the .sh found the relocated copy.",
       "git_status_after": {
-        "anima_repo": "anima-speak/_audio_worker_call.sh modified; anima-speak/anima_audio_worker.py absent (gitignore matches it via **/*.py rule which now has nothing to ignore)",
+        "anima_repo": "anima-voice/_audio_worker_call.sh modified; anima-voice/anima_audio_worker.py absent (gitignore matches it via **/*.py rule which now has nothing to ignore)",
         "hexa_lang_repo": "stdlib/anima_audio_worker.py untracked, NOT gitignored (verified with `git check-ignore -v` returning empty)",
         "anima_ignore_check": ".gitignore:3:**/*.py would still match the path if it existed in anima — rule intact"
       }
@@ -104,6 +104,6 @@
     "harness portability — replace /Users/ghost/.hx/bin/hexa_real explicit path with a `hexa --local` flag or `HEXA_FORCE_LOCAL=1` env once the dispatcher exposes it"
   ],
   "cleanup_verified": true,
-  "cleanup_evidence": "post-bench: pgrep anima_audio_worker -> 0; pgrep hexa_real -> 0; ls /tmp/anima_audio_worker_* -> no matches; ls /tmp/anima_audio_*.wav -> no matches; rm /Users/ghost/core/anima/anima-speak/_omega_audio_2_phase3_bench.hexa (harness removed); /tmp/bench_baseline.* and /tmp/bench_worker.* removed.",
-  "rollback": "git checkout HEAD -- /Users/ghost/core/anima/anima-speak/_audio_worker_call.sh; mv /Users/ghost/core/hexa-lang/stdlib/anima_audio_worker.py /Users/ghost/core/anima/anima-speak/anima_audio_worker.py (restores Phase 2 layout). Note: anima/.gitignore still excludes the .py at the anima-speak path, so this rollback restores the on-disk-only state too. To fully revert, also restore _audio_worker_call.sh's original `WORKER_PY=$(dirname \"$0\")/anima_audio_worker.py` line."
+  "cleanup_evidence": "post-bench: pgrep anima_audio_worker -> 0; pgrep hexa_real -> 0; ls /tmp/anima_audio_worker_* -> no matches; ls /tmp/anima_audio_*.wav -> no matches; rm /Users/ghost/core/anima/anima-voice/_omega_audio_2_phase3_bench.hexa (harness removed); /tmp/bench_baseline.* and /tmp/bench_worker.* removed.",
+  "rollback": "git checkout HEAD -- /Users/ghost/core/anima/anima-voice/_audio_worker_call.sh; mv /Users/ghost/core/hexa-lang/stdlib/anima_audio_worker.py /Users/ghost/core/anima/anima-voice/anima_audio_worker.py (restores Phase 2 layout). Note: anima/.gitignore still excludes the .py at the anima-voice path, so this rollback restores the on-disk-only state too. To fully revert, also restore _audio_worker_call.sh's original `WORKER_PY=$(dirname \"$0\")/anima_audio_worker.py` line."
 }

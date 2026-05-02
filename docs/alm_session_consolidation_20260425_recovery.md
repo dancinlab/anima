@@ -3,7 +3,7 @@
 > **시간 범위**: 2026-04-25 (Mac freeze 02:00Z → recovery 11:18Z 이후)
 > **모드**: H-MINPATH 자동 픽 + 완성도 우선순 루프
 > **부모 세션**: 84e0989b (loop polling, Mac freeze 01:53:38Z)
-> **시작 head**: `8d85ccb2` (anima-speak organs)
+> **시작 head**: `8d85ccb2` (anima-voice organs)
 > **종료 head**: `97ddb0f4` (C3 partial + hxa inbox)
 
 ---

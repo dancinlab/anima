@@ -6,7 +6,7 @@ what, then follow the ownership chain to the SSOT files in
 `shared/sessions/20260411_session_summary.json` and
 `shared/hexa/interpreter_fixes_20260411.json`.
 
-All files run with `HEXA_PATH=$(realpath ../anima-speak) hexa <file>`
+All files run with `HEXA_PATH=$(realpath ../anima-voice) hexa <file>`
 unless they inline their own nn_core copy.
 
 ## The training stack (bottom-up)
@@ -56,7 +56,7 @@ files above:
 ## Dependencies
 
 All files use `nn_core.hexa` primitives (matmul, softmax, rms_norm,
-swiglu_vec, tensor_*, etc.) from `anima-speak/nn_core.hexa`. The
+swiglu_vec, tensor_*, etc.) from `anima-voice/nn_core.hexa`. The
 hexa interpreter's `use` resolver requires HEXA_PATH to point at
 the directory containing `nn_core.hexa`, or you can copy it into
 the running file's directory.
@@ -65,7 +65,7 @@ the running file's directory.
 
 ```sh
 cd $ANIMA
-cp anima-speak/nn_core.hexa training/nn_core.hexa
+cp anima-voice/nn_core.hexa training/nn_core.hexa
 hexa run training/train_full_decoder.hexa
 rm training/nn_core.hexa
 ```

@@ -1,7 +1,7 @@
-# anima Multimodal / anima-speak Abstraction Layers — 2026-04-25
+# anima Multimodal / anima-voice Abstraction Layers — 2026-04-25
 
 > **Domain**: audio organ (anima_audio.hexa) → universal embodied sensorimotor → phenomenal qualia.
-> **Anchor**: commit `8d85ccb2` "feat(anima-speak): anima_audio organs — 학습 X · 레이어 X · n=6 공리 grounded".
+> **Anchor**: commit `8d85ccb2` "feat(anima-voice): anima_audio organs — 학습 X · 레이어 X · n=6 공리 grounded".
 > **Cross-ref**: `.roadmap` #62 embodied-consciousness (sopfr(6)=5 modal), #63 multimodal-consciousness (McGurk φ(6)=2 + σ-φ=10 channels), `docs/strategic_decisions_cluster_36_20260422.md`.
 > **POLICY R3**: weakest evidence link first. R4: scope 유지, evidence 만 추가.
 > **Brutally honest** — 모든 위 layer 는 실증/구현 0%, L0 만 VERIFIED.

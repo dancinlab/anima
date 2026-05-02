@@ -45,7 +45,7 @@
 | 8 | anima-eeg           | P4 유지 | 190~195 | 6 | brain-like / 12cond / PCI |
 | 9 | anima-physics       | P4 유지 | 196~201 | 6 | ESP32 / FPGA / 양자 / memristor |
 | 10 | anima-body         | P4 유지 | 202~207 | 6 | robot / HW closure / affordance |
-| 11 | anima-speak        | P4 유지 | 208~213 | 6 | Mk.IV / bf16 / KR TTS |
+| 11 | anima-voice        | P4 유지 | 208~213 | 6 | Mk.IV / bf16 / KR TTS |
 | 12 | anima-engines      | P4 유지 | 214~219 | 6 | 양자 / 광자 / memristor / hybrid |
 | 13 | anima-tools        | P4 유지 | 220~225 | 6 | hexad / measurement / telescope |
 | 14 | **anima-agent**    | **신규**| 226~231 | 6 | core split / router / sandbox / hire / autonomy |

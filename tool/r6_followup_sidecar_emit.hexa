@@ -84,7 +84,7 @@ while oi < len(omega_lines) {
     let bname = exec("basename " + shell_escape(path)).trim()
     // Infer strategy_source from filename pattern
     let mut strat = "unknown"
-    if bname.starts_with("omega_audio") { strat = "raw#47 — audio limits cycle (anima-speak)" }
+    if bname.starts_with("omega_audio") { strat = "raw#47 — audio limits cycle (anima-voice)" }
     else if bname.starts_with("omega_hexa") { strat = "raw#47 — hexa-lang limits cycle" }
     else if bname.starts_with("omega_philosophy") { strat = "raw#47 — anima-core philosophy cycle (R1)" }
     else if bname.starts_with("omega_rules") { strat = "raw#47 — anima rules audit cycle (R2)" }

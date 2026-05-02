@@ -38,12 +38,12 @@
     "revision_reason": "raw 100 grandfather list includes 2 gitignored files (active_redteam_dEF_proto.py + active_redteam_prototype.py); .gitignore `**/*.py` rule excludes them from git ls-files; lint operates on git-tracked surface",
     "actual_findings": [
       "anima-agent/pyproject.toml",
-      "anima-speak/experiments/ab_metrics.sh",
-      "anima-speak/experiments/build_tts_dataset.sh",
-      "anima-speak/experiments/corpus_pipeline_full.sh",
-      "anima-speak/experiments/piper_ab_gen.sh",
-      "anima-speak/experiments/piper_v2gen.sh",
-      "anima-speak/experiments/yt_kor_corpus_fetch.sh",
+      "anima-voice/experiments/ab_metrics.sh",
+      "anima-voice/experiments/build_tts_dataset.sh",
+      "anima-voice/experiments/corpus_pipeline_full.sh",
+      "anima-voice/experiments/piper_ab_gen.sh",
+      "anima-voice/experiments/piper_v2gen.sh",
+      "anima-voice/experiments/yt_kor_corpus_fetch.sh",
       "tool/an11_c_jsd_h_last.py",
       "tool/p_s_projector_proto.py"
     ],
@@ -79,7 +79,7 @@
       "Option C (defer): Phase 2 stays BLOCKED; manual checks suffice until canonical tool exists"
     ],
     "raw_100_cleanup_pending": "remove 2 gitignored entries from grandfather list (1 unlock+edit+relock cycle)",
-    "phase_3_anima_speak_experiments": "6 .sh files; ω-cycle 분리 (1-2주)",
+    "phase_3_anima_voice_experiments": "6 .sh files; ω-cycle 분리 (1-2주)",
     "phase_4_anima_agent_pyproject": "language identity 결정 (1세션)"
   }
 }

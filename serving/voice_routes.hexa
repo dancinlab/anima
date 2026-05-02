@@ -1,8 +1,8 @@
-// serving/voice_routes.hexa — HEXA-SPEAK Mk.III voice I/O HTTP wire
+// serving/voice_routes.hexa — ANIMA-VOICE Mk.III voice I/O HTTP wire
 //
-// v2.0 RC criterion: "음성 입출력 (anima-speak Mk.III) E2E"
+// v2.0 RC criterion: "음성 입출력 (anima-voice Mk.III) E2E"
 //
-// Wire anima-speak/speak_e2e.hexa into the serving pipeline so that
+// Wire anima-voice/speak_e2e.hexa into the serving pipeline so that
 // http_server.hexa can accept text and return audio (TTS), or accept
 // audio and return text+audio (full E2E voice round-trip).
 //
@@ -346,7 +346,7 @@ fn vr_tts_mock(reply_text: string) -> VrTtsResult {
 // ═══════════════════════════════════════════════════════════════
 //  Section 4b. Real vocoder path (inlined from neural_vocoder.hexa)
 //  Reason: stage0 lacks import/use cross-dir. Remove when fixed.
-//  Source: anima-speak/neural_vocoder.hexa Mk.III (2026-04-16)
+//  Source: anima-voice/neural_vocoder.hexa Mk.III (2026-04-16)
 // ═══════════════════════════════════════════════════════════════
 
 let VR_HOP = 240
@@ -592,7 +592,7 @@ fn vr_tts_vocoder(reply_text: string) -> VrTtsResult {
 // (10 personas × 8 tts_XX.wav) stored in R2:anima-models/voice_corpus/,
 // fetch once into /tmp/anima_voice_cache, and return base64 PCM16 mono 16 kHz.
 // On any rclone / read failure we fall back to vr_tts_mock.
-// Clips are 16 kHz mono 16-bit per anima-speak/tts_say_driver.hexa — do NOT
+// Clips are 16 kHz mono 16-bit per anima-voice/tts_say_driver.hexa — do NOT
 // reuse VR_SAMPLE_RATE (24000) here.
 fn vr_tts_r2_clip(reply_text: string) -> VrTtsResult {
     let h = vr_djb2(reply_text)

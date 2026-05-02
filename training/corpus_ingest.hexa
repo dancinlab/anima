@@ -8,7 +8,7 @@
 //   2. training/corpus_tool/mixed_tool_corpus.jsonl                   (3.2MB jsonl)
 //   3. training/corpus_tool/seed_tool_corpus.jsonl                    (31KB jsonl)
 //   4. training/corpus_auto/out/rotated.txt                           (454KB txt)
-//   5. anima-speak/corpus/<persona>/transcript/*.txt                  (~5KB txt)
+//   5. anima-voice/corpus/<persona>/transcript/*.txt                  (~5KB txt)
 //
 // Local KR text total: ~4.5MB — far under 100MB threshold. Per task spec
 // we pivot to "pipeline + register pull target in corpus_sources.json".
@@ -198,7 +198,7 @@ fn discover_sources_impl(only_new: bool) -> [string] {
     let rotated = ANIMA_ROOT + "/training/corpus_auto/out/rotated.txt"
     if file_exists(rotated) { out = out.push(rotated) }
     // persona transcripts
-    let tls = exec("ls -1 " + ANIMA_ROOT + "/anima-speak/corpus/*/transcript/*.txt 2>/dev/null").trim()
+    let tls = exec("ls -1 " + ANIMA_ROOT + "/anima-voice/corpus/*/transcript/*.txt 2>/dev/null").trim()
     let titems = tls.split("\n")
     let mut j = 0
     let nj = len(titems)

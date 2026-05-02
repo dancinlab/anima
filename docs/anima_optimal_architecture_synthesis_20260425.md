@@ -35,7 +35,7 @@
 | 18 | phase progression CP1→AGI | `anima_phase_progression_abstraction_layers_20260425.md` | L0 (CP1) |
 | 19 | math foundations | `anima_math_foundations_abstraction_layers_20260425.md` | L0 ✓ / L1 ~40% |
 | 20 | resource economics | `anima_resource_economics_abstraction_layers_20260425.md` | L0 (CP1 efficient, AGI 0.25%) |
-| 21 | multimodal anima-speak | `anima_multimodal_abstraction_layers_20260425.md` | L0 audio only (1/10 channel) |
+| 21 | multimodal anima-voice | `anima_multimodal_abstraction_layers_20260425.md` | L0 audio only (1/10 channel) |
 | 22 | sister-repo coordination | `anima_sister_repo_coordination_abstraction_layers_20260425.md` | L0 (5-repo loose) |
 | (lift) | math raw axiom DAG | `anima_math_raw_axiom_dag_20260425.md` | L1 ~70% closure |
 | (lift) | memory Merkle L2 spec + prototype | `anima_memory_merkle_tree_spec_20260425.md` | L2 prototype VERIFIED |

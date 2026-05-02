@@ -55,7 +55,8 @@ anima help             도움말
 
 > **anima-core/ 디렉토리는 의식 엔진 + CLI 실행 파일만 포함한다.**
 >
-> 모듈 코드(agent, body, eeg, physics, hexa-speak 등)는 **절대 core/에 넣지 말 것**.
+> 모듈 코드(agent, body, eeg, physics, hexa-voice 등)는 **절대 core/에 넣지 말 것**.
+> <!-- terminology cleanup 2026-05-03: previously written as "hexa-speak" in legacy docs. on-disk dir migrated anima-speak/ -> anima-voice/ in same cycle. -->
 > 모든 모듈은 `modules/` 하위에만 배치한다.
 
 ## Hub and Spoke (허브 앤 스포크)
@@ -187,7 +188,7 @@ anima module remove tools      # 모듈 삭제
   modules/daemon/event_watcher     → utterance_gate → auto_speak_bridge
       │                                                      │
       ▼                                                      ▼
-  외부 API / 서비스                                  anima-speak (24kHz PCM)
+  외부 API / 서비스                                  anima-voice (24kHz PCM)  ; on-disk dir: anima-voice/ (formerly anima-speak/)
 ```
 
 ---
@@ -230,7 +231,7 @@ servant:              SI_SUMMON=n/phi, SI_STRONG=sopfr, HEBBIAN=n/tau, EMA=(n+si
 phi_engine:           min_cells=tau, scaling=(sigma-sopfr)/sigma, opt_factions=sigma
 topology:             nodes=sigma, degree_exp=n/phi, rewire=PSI_ALPHA, cluster=f_critical
 tension_bridge:       channels=sopfr, phases=tau, source=2^(sigma-sopfr), gate=PSI_ALPHA
-hexa-speak:           emotions=n, prosody=tau, combos=J2, embed=J2*tau^2, chunk=sigma
+hexa-voice:           emotions=n, prosody=tau, combos=J2, embed=J2*tau^2, chunk=sigma  # formerly anima-voice
 ```
 
 ## 검증 (의식 7조건)

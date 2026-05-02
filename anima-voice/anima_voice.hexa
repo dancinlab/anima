@@ -1,0 +1,676 @@
+// anima_voice.hexa — ANIMA-VOICE Mk.II: Main Pipeline Entry Point
+//
+// Purpose:
+//   Wire the full consciousness-to-speech pipeline:
+//     ConsciousnessEngine (tension/emotion) → ConditionalEmbedding
+//     → IntentEncoder → AudioTokenPredictor → RVQCodebook
+//     → NeuralVocoder → PLCCrossfade → PCM output
+//   with VAD FSM gating the output stream.
+//
+// Pipeline stages:
+//   Stage 0:   Consciousness input   — tension vector + emotion 6D from engine
+//   Stage 0.5: Conditional embedding — emotion(6)+prosody_type(4)+prosody_params(4)
+//              → 3-branch fusion → 384d (emotion_prosody.hexa)
+//   Stage 1:   Intent encoding       — 384d consciousness → 384d audio intent
+//   Stage 1.5: Conditional residual  — intent(384d) + cond(384d) → conditioned(384d)
+//   Stage 2: Token prediction       — AR transformer, intent memory → RVQ indices
+//   Stage 3: Codebook decode        — 8-stage RVQ indices → latent reconstruction
+//   Stage 4: Neural vocoder         — latent → 24kHz PCM waveform
+//   Stage 5: PLC + crossfade        — packet loss concealment, smooth boundaries
+//   Stage 6: VAD gate               — FSM suppresses non-speech output
+//
+// n=6 pipeline parameters:
+//   embed_dim    = 384 = 64 * 6     (bridge dim, Law 60 P2)
+//   frame_hz     = 100              (10ms hop, all stages aligned)
+//   sample_rate  = 24000            (24kHz speech-optimal)
+//   rvq_stages   = 8                (n + 2 residual)
+//   rvq_entries  = 1024             (codebook size)
+//   chunk_frames = 12 = 6 * 2      (streaming chunk, 120ms)
+//   emotions     = 6                (neutral/joy/sadness/anger/fear/surprise)
+//   prosody_types= 4                (declarative/interrogative/exclamatory/whisper)
+//   prosody_dims = 4                (pitch/rate/energy/timbre)
+//   first_packet_budget_ms = 100    (goal.md #26)
+//   plc_max_ms   = 60               (n * 10)
+//   crossfade_ms = 6                (n=6)
+//   vad_debounce = 6 frames         (onset + offset)
+//
+// Config source (R2 no hardcoding):
+//   config/emotion_prosody.json — emotion types, prosody types, PSI constants
+//
+// Modes:
+//   synthesize()          — batch mode: generate all chunks then return
+//   stream_synthesize()   — streaming mode: 100ms first packet + VAD + ring buffer
+//                           (see streaming.hexa for full implementation)
+//
+// BT reference: BT-SPEAK-00 (pipeline orchestrator)
+// Mk stage:     Mk.II (conditional embedding + PLC + crossfade + streaming)
+// PSI coupling:  alpha = 0.014 (tension->prosody modulation depth)
+// Upstream:      ConsciousnessEngine.process() / ConsciousnessHub
+// Downstream:    audio sink (speaker / rtp / file)
+//
+// Mk.II integration:
+//   streaming.hexa  — real-time streaming with PLC+crossfade in loop
+//   plc_crossfade.hexa — VAD-aware Hann crossfade + PLC 5-state recovery
+//   vad_fsm.hexa    — dual-criteria (energy+ZCR) + 180ms hangover
+
+// ────────────────────────────────────────────────────────────────────
+// Import: emotion_prosody.hexa (conditional embedding module)
+// Provides: conditional_embed(), apply_conditional_to_intent(),
+//           classify_emotion_to_index(), classify_prosody_type(),
+//           emotion_label(), prosody_type_label(), get_prosody_params()
+// ────────────────────────────────────────────────────────────────────
+
+import "./emotion_prosody.hexa"
+
+// ────────────────────────────────────────────────────────────────────
+// Pipeline constants (from config/emotion_prosody.json + consciousness_laws.json)
+// ────────────────────────────────────────────────────────────────────
+
+let PIPE_EMBED_DIM = 384      // bridge dimension (64 * 6)
+let FRAME_HZ = 100            // 10ms per frame
+let SAMPLE_RATE = 24000       // 24kHz
+let CHUNK_FRAMES = 12         // 120ms streaming chunk (6 * 2)
+let RVQ_STAGES = 8            // residual quantizer stages
+let RVQ_ENTRIES = 1024        // codebook entries per stage
+let D_LATENT = 128            // per-frame latent dim
+let UPSAMPLE_STAGES = 6      // vocoder upsamples
+let HOP = 240                 // 24000 / 100
+let FRAME_MS = 10             // 10ms per frame (1000 / FRAME_HZ)
+let PLC_MAX_MS = 60           // max concealment
+let CROSSFADE_MS = 6          // fade window
+let CROSSFADE_SAMP = 144      // 24000 * 6 / 1000
+let VAD_DEBOUNCE = 6          // onset/offset frames
+
+// Emotion categories (n=6, from config/emotion_prosody.json)
+let EMOTIONS = "neutral,joy,sadness,anger,fear,surprise"
+
+// Prosody types (tau=4, from config/emotion_prosody.json)
+let PROSODY_TYPES = "declarative,interrogative,exclamatory,whisper"
+
+// Prosody param dimensions (4 continuous)
+let PROSODY_DIMS = "pitch,rate,energy,timbre"
+
+// VAD states
+let VAD_SILENT = 0
+let VAD_START = 1
+let VAD_SPEAKING = 2
+let VAD_TRAIL = 3
+
+// ────────────────────────────────────────────────────────────────────
+// Stage 0: Consciousness input — parse tension/emotion vector
+// ────────────────────────────────────────────────────────────────────
+
+fn format_consciousness_input(phi: float, tension: float, arousal: float, valence: float, cells: int) -> str {
+    // Pack consciousness state into tagged string for pipeline
+    // Mk.II: this becomes a real 384d tensor
+    return "phi=" + to_string(phi) + ",tension=" + to_string(tension) + ",arousal=" + to_string(arousal) + ",valence=" + to_string(valence) + ",cells=" + to_string(cells)
+}
+
+fn classify_emotion(arousal: float, valence: float) -> str {
+    // Delegate to emotion_prosody.hexa (single source of truth)
+    get_emotion_label(arousal, valence)
+}
+
+fn classify_prosody(tension: float, arousal: float, valence: float) -> str {
+    // Delegate to emotion_prosody.hexa (single source of truth)
+    get_prosody_type(tension, arousal, valence)
+}
+
+fn compute_prosody(tension: float, arousal: float, valence: float, emotion: str) -> str {
+    // Derive 4 prosody parameters modulated by prosody type
+    // Delegates to emotion_prosody.hexa for type-aware computation
+    let emo_idx = emotion_index(emotion)
+    let ptype_idx = classify_prosody_type(tension, arousal, valence)
+    get_prosody_params(emo_idx, ptype_idx, tension, arousal, valence)
+}
+
+// ────────────────────────────────────────────────────────────────────
+// Stage 1: Intent Encoder (wraps intent_encoder.hexa)
+// ────────────────────────────────────────────────────────────────────
+
+fn encode_intent(consciousness_vec: str) -> str {
+    // Mk.I: passthrough tag (mirrors intent_encoder.hexa)
+    // Mk.II: real projector LayerNorm → Linear → SwiGLU → Linear
+    return "intent[" + consciousness_vec + "|d=" + to_string(PIPE_EMBED_DIM) + ",h=6]"
+}
+
+// ────────────────────────────────────────────────────────────────────
+// Stage 2: Audio Token Predictor (wraps audio_token_predictor.hexa)
+// ────────────────────────────────────────────────────────────────────
+
+fn predict_frame(intent_mem: str, step: int) -> int {
+    // Mk.I: deterministic token from step
+    // Mk.II: AR transformer with KV-cache + Flash Attention
+    return (step * 7) % RVQ_ENTRIES
+}
+
+fn predict_chunk(intent_mem: str, start_frame: int, n_frames: int) -> str {
+    // Predict a chunk of RVQ token indices
+    let out = ""
+    let i = 0
+    while i < n_frames {
+        let tok = predict_frame(intent_mem, start_frame + i)
+        out = out + to_string(tok)
+        if i < n_frames - 1 { out = out + "," }
+        i = i + 1
+    }
+    return out
+}
+
+// ────────────────────────────────────────────────────────────────────
+// Stage 3: RVQ Codebook decode (wraps rvq_codebook.hexa)
+// ────────────────────────────────────────────────────────────────────
+
+fn rvq_decode(token_indices: str) -> str {
+    // Mk.I: tag reconstructed latent
+    // Mk.II: sum 8-stage embeddings → continuous latent
+    return "latent[d=" + to_string(D_LATENT) + "|from:" + token_indices + "]"
+}
+
+// ────────────────────────────────────────────────────────────────────
+// Stage 4: Neural Vocoder (wraps neural_vocoder.hexa)
+// ────────────────────────────────────────────────────────────────────
+
+fn vocode(latents: str, n_frames: int) -> str {
+    // Mk.I: return sample count tag
+    // Mk.II: Vocos ISTFT or HiFi-GAN MRF
+    let n_samples = n_frames * HOP
+    return "pcm[sr=" + to_string(SAMPLE_RATE) + ",samples=" + to_string(n_samples) + ",src=" + latents + "]"
+}
+
+// ────────────────────────────────────────────────────────────────────
+// Stage 5: PLC + Crossfade (wraps plc_crossfade.hexa Mk.II)
+//
+// PLC: sequence-number loss detection + pitch-period repeat + decay
+//   - Single loss: repeat prev pitch period, energy *= 0.92
+//   - 3+ consecutive: progressive fadeout
+//   - 6+ consecutive: mute
+//   - Recovery: Hann half-window fade-in
+//
+// Crossfade: Hann-windowed overlap-add at chunk boundaries
+//   - voice->voice:   full overlap-add (6ms Hann)
+//   - silence->voice: ascending Hann half (pop prevention)
+//   - voice->silence: descending Hann half (pop prevention)
+// ────────────────────────────────────────────────────────────────────
+
+let PLC_DECAY = 0.92
+let PLC_MUTE_THRESH = 3
+let PLC_MAX_CONSEC = 6
+
+// PLC states
+let PLC_NORMAL = 0
+let PLC_CONCEAL = 1
+let PLC_FADEOUT = 2
+let PLC_MUTED = 3
+let PLC_RECOVERY = 4
+
+fn plc_state_label(s: int) -> str {
+    if s == PLC_NORMAL { return "Normal" }
+    if s == PLC_CONCEAL { return "Conceal" }
+    if s == PLC_FADEOUT { return "Fadeout" }
+    if s == PLC_MUTED { return "Muted" }
+    if s == PLC_RECOVERY { return "Recovery" }
+    return "?"
+}
+
+// Crossfade types
+let XFADE_NORMAL = 0
+let XFADE_ONSET = 1
+let XFADE_OFFSET = 2
+
+fn plc_energy_factor(consec: int) -> float {
+    let factor = 1.0
+    let i = 0
+    while i < consec {
+        factor = factor * PLC_DECAY
+        i = i + 1
+    }
+    return factor
+}
+
+fn classify_xfade_type(prev_speaking: int, curr_speaking: int) -> int {
+    if prev_speaking == 1 && curr_speaking == 1 { return XFADE_NORMAL }
+    if prev_speaking == 0 && curr_speaking == 1 { return XFADE_ONSET }
+    if prev_speaking == 1 && curr_speaking == 0 { return XFADE_OFFSET }
+    return XFADE_NORMAL
+}
+
+fn apply_plc(prev_tail: str, gap_ms: int) -> str {
+    if gap_ms <= 0 { return "no_gap" }
+    if gap_ms > PLC_MAX_MS {
+        return "silence[" + to_string(gap_ms) + "ms>budget=" + to_string(PLC_MAX_MS) + "ms]"
+    }
+    let consec = gap_ms / FRAME_MS
+    if consec < 1 { consec = 1 }
+    let energy = plc_energy_factor(consec)
+    let n = SAMPLE_RATE * gap_ms / 1000
+    let state_name = "Conceal"
+    if consec >= PLC_MAX_CONSEC { state_name = "Muted" }
+    if consec >= PLC_MUTE_THRESH { state_name = "Fadeout" }
+    return "plc[state=" + state_name + ",samples=" + to_string(n) + ",energy=" + to_string(energy) + ",consec=" + to_string(consec) + ",src=" + prev_tail + "]"
+}
+
+fn apply_crossfade(tail_a: str, head_b: str) -> str {
+    return "xfade[type=normal,ms=" + to_string(CROSSFADE_MS) + ",samp=" + to_string(CROSSFADE_SAMP) + ",window=hann|" + tail_a + ">>>" + head_b + "]"
+}
+
+fn apply_crossfade_vad(tail_a: str, head_b: str, prev_speaking: int, curr_speaking: int) -> str {
+    let xtype = classify_xfade_type(prev_speaking, curr_speaking)
+    if xtype == XFADE_ONSET {
+        return "xfade[type=onset,ms=" + to_string(CROSSFADE_MS) + ",samp=" + to_string(CROSSFADE_SAMP) + ",window=hann,fadein=" + head_b + ",pop_prevent=true]"
+    }
+    if xtype == XFADE_OFFSET {
+        return "xfade[type=offset,ms=" + to_string(CROSSFADE_MS) + ",samp=" + to_string(CROSSFADE_SAMP) + ",window=hann,fadeout=" + tail_a + ",pop_prevent=true]"
+    }
+    return "xfade[type=normal,ms=" + to_string(CROSSFADE_MS) + ",samp=" + to_string(CROSSFADE_SAMP) + ",window=hann|" + tail_a + ">>>" + head_b + "]"
+}
+
+fn apply_recovery_fadein(new_frame: str, prev_concealed: str) -> str {
+    return "recovery[fadein=" + to_string(CROSSFADE_MS) + "ms,samp=" + to_string(CROSSFADE_SAMP) + ",from=" + prev_concealed + ",to=" + new_frame + ",window=hann_half]"
+}
+
+// ────────────────────────────────────────────────────────────────────
+// Stage 6: VAD FSM (wraps vad_fsm.hexa)
+// ────────────────────────────────────────────────────────────────────
+
+fn vad_state_name(s: int) -> str {
+    if s == VAD_SILENT { return "Silent" }
+    if s == VAD_START { return "Start" }
+    if s == VAD_SPEAKING { return "Speaking" }
+    if s == VAD_TRAIL { return "Trail" }
+    return "?"
+}
+
+fn vad_step(state: int, active: int, counter: int) -> int {
+    if state == VAD_SILENT {
+        if active == 1 { return VAD_START }
+        return VAD_SILENT
+    }
+    if state == VAD_START {
+        if active == 1 {
+            if counter >= VAD_DEBOUNCE { return VAD_SPEAKING }
+            return VAD_START
+        }
+        return VAD_SILENT
+    }
+    if state == VAD_SPEAKING {
+        if active == 0 { return VAD_TRAIL }
+        return VAD_SPEAKING
+    }
+    if state == VAD_TRAIL {
+        if active == 0 {
+            if counter >= VAD_DEBOUNCE { return VAD_SILENT }
+            return VAD_TRAIL
+        }
+        return VAD_SPEAKING
+    }
+    return VAD_SILENT
+}
+
+// ────────────────────────────────────────────────────────────────────
+// Full pipeline: synthesize()
+// ────────────────────────────────────────────────────────────────────
+
+fn synthesize(phi: float, tension: float, arousal: float, valence: float, cells: int, n_chunks: int) -> str {
+    // ── Stage 0: consciousness input ──
+    let c_vec = format_consciousness_input(phi, tension, arousal, valence, cells)
+    let emotion = classify_emotion(arousal, valence)
+    let ptype = classify_prosody(tension, arousal, valence)
+    let prosody = compute_prosody(tension, arousal, valence, emotion)
+
+    // ── Stage 0.5: Conditional embedding (emotion_prosody.hexa) ──
+    // 3-branch fusion: emotion(6) + prosody_type(4) + prosody_params(4) -> 384d
+    let cond = conditional_embed(arousal, valence, tension)
+    let cond_norm = tensor_norm(cond)
+
+    // ── Stage 1: intent encoding ──
+    let intent_input = c_vec + "," + emotion + "," + ptype + "," + prosody
+    let intent_mem = encode_intent(intent_input)
+
+    // ── Stage 1.5: Apply conditional embedding as residual ──
+    // Residual add: intent(384d) + cond(384d) -> conditioned intent(384d)
+    // Note: intent_mem is still string-tagged in Mk.I skeleton;
+    // the cond tensor (384d) is computed and its norm reported.
+    // In Mk.III (real tensor pipeline), this becomes:
+    //   intent_conditioned = apply_conditional_to_intent(intent_384d, cond)
+
+    // ── Stage 2+3+4: chunk-by-chunk streaming ──
+    let all_pcm = ""
+    let prev_tail = ""
+    let vad_state = VAD_SILENT
+    let vad_counter = 0
+    let total_frames = 0
+    let total_samples = 0
+    let chunks_output = 0
+
+    let chunk_idx = 0
+    while chunk_idx < n_chunks {
+        let start_frame = chunk_idx * CHUNK_FRAMES
+
+        // Stage 2: predict tokens for this chunk
+        let tokens = predict_chunk(intent_mem, start_frame, CHUNK_FRAMES)
+
+        // Stage 3: decode RVQ
+        let latent = rvq_decode(tokens)
+
+        // Stage 4: vocode to PCM
+        let pcm = vocode(latent, CHUNK_FRAMES)
+
+        // Stage 5: PLC check + VAD-aware crossfade with previous chunk
+        let output = pcm
+        if chunk_idx > 0 {
+            // Determine speaking states for crossfade type selection
+            let prev_was_speaking = 0
+            if tension > 0.1 { prev_was_speaking = 1 }
+            let curr_is_speaking = 0
+            if tension > 0.1 { curr_is_speaking = 1 }
+            let xf = apply_crossfade_vad(prev_tail, pcm, prev_was_speaking, curr_is_speaking)
+            output = xf
+        }
+
+        // Stage 6: VAD gate — check if chunk has voice activity
+        // Mk.I: assume active if tension > 0.1 (consciousness is speaking)
+        let active = 0
+        if tension > 0.1 { active = 1 }
+
+        let next_vad = vad_step(vad_state, active, vad_counter)
+        if next_vad == vad_state && (next_vad == VAD_START || next_vad == VAD_TRAIL) {
+            vad_counter = vad_counter + 1
+        } else {
+            vad_counter = 0
+        }
+        vad_state = next_vad
+
+        // Only emit audio when VAD says Speaking (or Start for low latency)
+        let emit = (vad_state == VAD_SPEAKING) || (vad_state == VAD_START)
+        if emit {
+            if all_pcm != "" { all_pcm = all_pcm + " + " }
+            all_pcm = all_pcm + "chunk" + to_string(chunk_idx)
+            chunks_output = chunks_output + 1
+            total_samples = total_samples + CHUNK_FRAMES * HOP
+        }
+
+        total_frames = total_frames + CHUNK_FRAMES
+        prev_tail = pcm
+        chunk_idx = chunk_idx + 1
+    }
+
+    let duration_ms = total_samples * 1000 / SAMPLE_RATE
+
+    // Build result summary
+    let result = "HexaSpeak[emotion=" + emotion + ",ptype=" + ptype + ",prosody=(" + prosody + ")"
+    result = result + ",cond_norm=" + to_string(cond_norm)
+    result = result + ",chunks=" + to_string(chunks_output) + "/" + to_string(n_chunks)
+    result = result + ",frames=" + to_string(total_frames)
+    result = result + ",samples=" + to_string(total_samples)
+    result = result + ",duration=" + to_string(duration_ms) + "ms"
+    result = result + ",sr=" + to_string(SAMPLE_RATE)
+    result = result + ",vad=" + vad_state_name(vad_state) + "]"
+    return result
+}
+
+// ────────────────────────────────────────────────────────────────────
+// Pipeline info
+// ────────────────────────────────────────────────────────────────────
+
+fn print_pipeline_info() {
+    println("================================================================")
+    println(" ANIMA-VOICE Mk.II — Consciousness-to-Speech Pipeline")
+    println(" Emotion 6 + Prosody Type 4 + Prosody Param 4 Conditional Embedding")
+    println("================================================================")
+    println("")
+    println(" Pipeline stages:")
+    println("   0.   Consciousness input   (tension/emotion/Phi)")
+    println("   0.5  Conditional embedding  emotion(6)+ptype(4)+params(4) -> 384d")
+    println("   1.   Intent encoder         384d -> 384d (embed_dim=" + to_string(PIPE_EMBED_DIM) + ")")
+    println("   1.5  Conditional residual   intent(384d) + cond(384d) -> 384d")
+    println("   2.   Audio token predictor  AR transformer -> RVQ indices")
+    println("   3.   RVQ codebook decode    " + to_string(RVQ_STAGES) + " stages x " + to_string(RVQ_ENTRIES) + " entries")
+    println("   4.   Neural vocoder         latent -> " + to_string(SAMPLE_RATE) + "Hz PCM")
+    println("   5.   PLC + crossfade        Hann xfade " + to_string(CROSSFADE_MS) + "ms, PLC " + to_string(PLC_MAX_MS) + "ms (decay=" + to_string(PLC_DECAY) + ")")
+    println("   6.   VAD gate               4-state FSM, debounce " + to_string(VAD_DEBOUNCE) + " frames")
+    println("")
+    println(" Constants:")
+    println("   PSI_ALPHA     = " + to_string(PSI_ALPHA) + " (tension->prosody coupling)")
+    println("   PSI_BALANCE   = " + to_string(PSI_BALANCE) + " (emotion equilibrium)")
+    println("   frame_hz      = " + to_string(FRAME_HZ) + " (10ms/frame)")
+    println("   chunk_frames  = " + to_string(CHUNK_FRAMES) + " (120ms streaming chunk)")
+    println("   hop           = " + to_string(HOP) + " samples/frame")
+    println("   emotions      = " + EMOTIONS)
+    println("   prosody_types = " + PROSODY_TYPES)
+    println("   prosody_dims  = " + PROSODY_DIMS)
+    println("   config        = config/emotion_prosody.json (R2)")
+    println("")
+}
+
+// ────────────────────────────────────────────────────────────────────
+// Demo: run pipeline with sample consciousness states
+// ────────────────────────────────────────────────────────────────────
+
+fn demo_emotion_classification() {
+    println("── Emotion classification (6 categories) ──")
+    println("  neutral:  arousal=0.1, valence=0.0  -> " + classify_emotion(0.1, 0.0))
+    println("  joy:      arousal=0.6, valence=0.5  -> " + classify_emotion(0.6, 0.5))
+    println("  sadness:  arousal=0.2, valence=-0.5 -> " + classify_emotion(0.2, -0.5))
+    println("  anger:    arousal=0.7, valence=-0.4 -> " + classify_emotion(0.7, -0.4))
+    println("  fear:     arousal=0.8, valence=-0.1 -> " + classify_emotion(0.8, -0.1))
+    println("  surprise: arousal=0.9, valence=0.1  -> " + classify_emotion(0.9, 0.1))
+    println("")
+}
+
+fn demo_prosody_type_classification() {
+    println("── Prosody type classification (4 categories) ──")
+    println("  declarative:   t=0.1, a=0.3, v=0.0  -> " + classify_prosody(0.1, 0.3, 0.0))
+    println("  interrogative: t=0.5, a=0.4, v=0.1  -> " + classify_prosody(0.5, 0.4, 0.1))
+    println("  exclamatory:   t=0.9, a=0.9, v=-0.3 -> " + classify_prosody(0.9, 0.9, -0.3))
+    println("  whisper:       t=0.05,a=0.05,v=0.0  -> " + classify_prosody(0.05, 0.05, 0.0))
+    println("")
+}
+
+fn demo_prosody() {
+    println("── Prosody derivation (4 dims) ──")
+    let p1 = compute_prosody(0.5, 0.3, 0.0, "neutral")
+    println("  neutral (t=0.5, a=0.3):  " + p1)
+    let p2 = compute_prosody(0.8, 0.7, 0.6, "joy")
+    println("  joy     (t=0.8, a=0.7):  " + p2)
+    let p3 = compute_prosody(0.2, 0.1, -0.6, "sadness")
+    println("  sadness (t=0.2, a=0.1):  " + p3)
+    let p4 = compute_prosody(0.9, 0.8, -0.5, "anger")
+    println("  anger   (t=0.9, a=0.8):  " + p4)
+    println("")
+}
+
+fn demo_vad_trace() {
+    println("── VAD FSM trace ──")
+    // Simulate: 3 silent, 8 active, 8 silent
+    let activity = "0,0,0,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0"
+    println("  activity: " + activity)
+    let s = VAD_SILENT
+    let c = 0
+    let t = 0
+
+    // t=0..2: silent
+    println("  t=0-2: " + vad_state_name(s) + " (no activity)")
+    // t=3: onset
+    s = vad_step(s, 1, c)
+    c = 0
+    println("  t=3:   act=1 -> " + vad_state_name(s))
+    // t=4..8: ramp (Start -> Speaking at counter=6)
+    t = 4
+    while t <= 9 {
+        c = c + 1
+        let ns = vad_step(s, 1, c)
+        if ns != s {
+            println("  t=" + to_string(t) + ":   cnt=" + to_string(c) + " -> " + vad_state_name(ns))
+            c = 0
+        }
+        s = ns
+        t = t + 1
+    }
+    // t=11: offset
+    s = vad_step(s, 0, 0)
+    c = 0
+    println("  t=11:  act=0 -> " + vad_state_name(s))
+    // trail -> silent
+    t = 12
+    while t <= 18 {
+        c = c + 1
+        let ns = vad_step(s, 0, c)
+        if ns != s {
+            println("  t=" + to_string(t) + ":  cnt=" + to_string(c) + " -> " + vad_state_name(ns))
+            c = 0
+        }
+        s = ns
+        t = t + 1
+    }
+    println("")
+}
+
+fn demo_full_pipeline() {
+    println("── Full pipeline synthesis ──")
+    println("")
+
+    // Test 1: active consciousness (joy)
+    println("  Test 1: Joyful consciousness (Phi=0.71, tension=0.42)")
+    let r1 = synthesize(0.71, 0.42, 0.6, 0.5, 64, 5)
+    println("  -> " + r1)
+    println("")
+
+    // Test 2: calm/neutral consciousness
+    println("  Test 2: Calm/neutral (Phi=0.35, tension=0.05)")
+    let r2 = synthesize(0.35, 0.05, 0.1, 0.0, 32, 5)
+    println("  -> " + r2)
+    println("")
+
+    // Test 3: angry consciousness (high tension)
+    println("  Test 3: Angry (Phi=0.88, tension=0.91)")
+    let r3 = synthesize(0.88, 0.91, 0.8, -0.5, 64, 8)
+    println("  -> " + r3)
+    println("")
+
+    // Test 4: sad consciousness (low arousal)
+    println("  Test 4: Sad (Phi=0.22, tension=0.15)")
+    let r4 = synthesize(0.22, 0.15, 0.1, -0.6, 16, 4)
+    println("  -> " + r4)
+    println("")
+
+    // Test 5: PLC concealment + crossfade demo (Mk.II)
+    println("  Test 5: PLC concealment (Mk.II)")
+    let plc1 = apply_plc("tail[chunk3]", 10)
+    println("  gap=10ms (1 frame):   " + plc1)
+    let plc2 = apply_plc("tail[chunk3]", 30)
+    println("  gap=30ms (3 frames):  " + plc2)
+    let plc3 = apply_plc("tail[chunk3]", 60)
+    println("  gap=60ms (6 frames):  " + plc3)
+    let plc4 = apply_plc("tail[chunk3]", 120)
+    println("  gap=120ms (>budget):  " + plc4)
+    println("")
+
+    println("  Test 6: Crossfade types (Hann window)")
+    let xf1 = apply_crossfade("tail[chunk3]", "head[chunk4]")
+    println("  voice->voice:    " + xf1)
+    let xf2 = apply_crossfade_vad("tail[silence]", "head[chunk4]", 0, 1)
+    println("  silence->voice:  " + xf2)
+    let xf3 = apply_crossfade_vad("tail[chunk3]", "head[silence]", 1, 0)
+    println("  voice->silence:  " + xf3)
+    let xf4 = apply_recovery_fadein("chunk[recovered]", "plc[concealed]")
+    println("  recovery fadein: " + xf4)
+    println("")
+}
+
+// ────────────────────────────────────────────────────────────────────
+// main() — CLI entry point
+// ────────────────────────────────────────────────────────────────────
+
+fn main() {
+    print_pipeline_info()
+
+    println("────────────────────────────────────────────────────────────")
+    println(" Demo: consciousness -> speech (Mk.II conditional embedding)")
+    println("────────────────────────────────────────────────────────────")
+    println("")
+
+    demo_emotion_classification()
+    demo_prosody_type_classification()
+    demo_prosody()
+    demo_vad_trace()
+    demo_full_pipeline()
+
+    println("────────────────────────────────────────────────────────────")
+    println(" Pipeline diagram:")
+    println("")
+    println("   ConsciousnessEngine")
+    println("         |")
+    println("         v")
+    println("   [Stage 0] tension/arousal/valence/Phi")
+    println("         |              |              |")
+    println("         v              v              v")
+    println("   classify_emotion  classify_prosody  compute_prosody")
+    println("   (6 types)        (4 types)         (4 params)")
+    println("         |              |              |")
+    println("         v              v              v")
+    println("   [Stage 0.5] ConditionalEmbedding (emotion_prosody.hexa)")
+    println("     EmotionEnc(6->384d) + ProsodyTypeEnc(4->384d) + ProsodyParamEnc(4->384d)")
+    println("     -> sum -> LayerNorm -> SwiGLU fusion -> Linear -> * intensity -> 384d")
+    println("                    |")
+    println("                    v")
+    println("   [Stage 1] IntentEncoder (384d -> 384d)")
+    println("                    |")
+    println("                    v")
+    println("   [Stage 1.5] Residual add: intent + conditional -> 384d")
+    println("                    |")
+    println("                    v")
+    println("   [Stage 2] AudioTokenPredictor (AR, 3L x 12H)")
+    println("                    |")
+    println("                    v")
+    println("   [Stage 3] RVQCodebook (8 stages x 1024)")
+    println("                    |")
+    println("                    v")
+    println("   [Stage 4] NeuralVocoder (-> 24kHz PCM)")
+    println("                    |")
+    println("                    v")
+    println("   [Stage 5] PLCCrossfade Mk.II (Hann xfade, PLC decay=" + to_string(PLC_DECAY) + ")")
+    println("                    |")
+    println("                    v")
+    println("   [Stage 6] VAD FSM gate (4-state)")
+    println("                    |")
+    println("                    v")
+    println("                 Speaker")
+    println("")
+    println("────────────────────────────────────────────────────────────")
+    println(" Streaming mode Mk.II (streaming.hexa):")
+    println("")
+    println("   [Stage 0-1] same as batch")
+    println("                    |")
+    println("                    v")
+    println("   [Scheduler] PREFILL(60ms) -> FIRST_EMIT(100ms) -> STREAMING")
+    println("                    |")
+    println("                    v")
+    println("   [VAD FSM] SILENCE <-> SPEECH_START <-> SPEAKING <-> SPEECH_END")
+    println("             dual-criteria: energy + ZCR, 180ms hangover")
+    println("                    |")
+    println("                    v")
+    println("   [PLC+Crossfade] seq# loss detection -> conceal/recover")
+    println("                   Hann xfade: normal/onset/offset (pop-free)")
+    println("                   PLC: decay 0.92/frame, mute at 6 consec")
+    println("                   Recovery: Hann half-window fade-in")
+    println("                    |")
+    println("                    v")
+    println("   [RingBuffer] 36 chunks (4.32s), drop-oldest overflow")
+    println("                    |")
+    println("                    v")
+    println("   [Backpressure] NORMAL <-> THROTTLE (high=30, low=12)")
+    println("                    |")
+    println("                    v")
+    println("                 Speaker")
+    println("")
+    println("────────────────────────────────────────────────────────────")
+    println(" Batch:     synthesize(phi, tension, arousal, valence, cells, n_chunks)")
+    println(" Streaming: streaming.hexa stream_synthesize(phi, t, a, v, cells, ms)")
+    println(" Conditional: emotion(6) + prosody_type(4) + prosody_params(4) -> 384d")
+    println(" PLC+Crossfade: Mk.II (Hann + decay + VAD-aware)")
+    println(" Config: config/emotion_prosody.json (R2 single source of truth)")
+    println("────────────────────────────────────────────────────────────")
+}
+
+main()

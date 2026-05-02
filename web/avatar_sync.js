@@ -1,5 +1,5 @@
 // web/avatar_sync.js — v2.0_RC destination criterion #2
-// 아바타 렌더링 동기화 (avatar render sync). Pairs with anima-speak E2E.
+// 아바타 렌더링 동기화 (avatar render sync). Pairs with anima-voice E2E.
 //
 // Contract (see serving/avatar_feed.hexa for producer):
 //   payload = {
