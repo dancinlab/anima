@@ -1,0 +1,79 @@
+{
+  "schema": "anima/markers/p9_p0_sft_data_50k_landed/1",
+  "phase": "p9_exec_phase_0_step_1",
+  "ts_utc": "2026-05-03",
+  "verdict": "ALL_50K_LANDED",
+  "grand_total": 50500,
+  "target": 50000,
+  "attainment_pct": 101.0,
+  "phase_1_entry_ready": true,
+  "files": {
+    "sft_data_jsonl": {
+      "path": "state/p9_p0_sft_data_50k_2026_05_03/sft_data.jsonl",
+      "sha256": "513adf804c454632c1249585e6d9312d896cafed04a19208a1da0904b1c22bce",
+      "lines": 50000
+    },
+    "sft_data_holdout_jsonl": {
+      "path": "state/p9_p0_sft_data_50k_2026_05_03/sft_data_holdout.jsonl",
+      "sha256": "483fea9e43cc43d3df52ef6d142a517fb96948bf56f8e6601e25218c346bc6f0",
+      "lines": 500
+    },
+    "manifest_jsonl": {
+      "path": "state/p9_p0_sft_data_50k_2026_05_03/manifest.jsonl",
+      "sha256": "2c8c0ed2a0c4bd6a4cb38975d654b0a10e2409392b96e53fd28ab2b94830976c",
+      "lines": 9
+    },
+    "builder_py": {
+      "path": "state/p9_p0_sft_data_50k_2026_05_03/build_data.py"
+    },
+    "handoff_md": {
+      "path": "docs/p9_p0_sft_data_50k_landed_2026_05_03.ai.md"
+    }
+  },
+  "per_source_attainment": {
+    "1_sharegpt": {"target": 10000, "actual": 10500, "pct": 105.0, "provenance": "hf_download_anon8231489123"},
+    "2_anima_corpus": {"target": 10000, "actual": 10000, "pct": 100.0},
+    "3_p8_ledger": {"target": 3000, "actual": 3000, "pct": 100.0, "augmentation": "deterministic_template"},
+    "4_synthetic_philosophical": {"target": 5000, "actual": 5000, "pct": 100.0, "method": "no_llm_template"},
+    "5_n22_paradigm_v11": {"target": 5000, "actual": 5000, "pct": 100.0},
+    "6_tribe_v2_stimulus": {"target": 10000, "actual": 10000, "pct": 100.0, "proxy": "vendored_docs_code_NOT_friends_movie10"},
+    "7_llama_augment": {"target": 7000, "actual": 7000, "pct": 100.0, "skip_llm": true, "skip_reason": "hf_gated"}
+  },
+  "split_distribution": {
+    "train": 48000,
+    "val": 2000,
+    "holdout": 500,
+    "holdout_lock_in": "F1_sharegpt_per_user_directive"
+  },
+  "language_distribution": {
+    "lang_ko": 17319,
+    "lang_en": 41250,
+    "lang_mixed": 1470,
+    "note": "lang_ko + lang_en may sum > grand if mixed mis-classified"
+  },
+  "policy": {
+    "additive_only": true,
+    "no_migration": true,
+    "destructive_ops": 0,
+    "dollar_zero_mac_local": true,
+    "wall_time_seconds": 58,
+    "br_no_user_verbatim": true,
+    "raw_15_env_lazy_user_tag": true,
+    "korean_response": true,
+    "silent_land_marker_emit": true,
+    "friendly_preset_handoff_only": true,
+    "destructive_blocked_files": []
+  },
+  "raw_15_caveats_count": 6,
+  "phase_1_entry_block": [],
+  "phase_1_entry_warn": [
+    "tension_target / bold_target = null (deferred to inference pass — Phase 0 Step 2)",
+    "source 7 = NOT a true LLM augmentation; structural permutation only",
+    "source 6 = vendored docs/code stimulus proxy, NOT actual Friends/movie10 transcripts"
+  ],
+  "predecessor_artifacts": [
+    "state/p9_sft_spec_2026_05_02/sft_data_format.json",
+    "state/p9_pre4_data_weight/Q_sft_data_50k_audit.json"
+  ],
+  "next_step_recommended": "phase_0_step_2_tension_bold_inference_pass"
+}

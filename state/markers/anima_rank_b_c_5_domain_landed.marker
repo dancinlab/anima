@@ -1,0 +1,211 @@
+{
+  "marker": "anima_rank_b_c_5_domain_landed",
+  "completion_iso": "2026-05-03T00:00:00Z",
+  "kind": "additive_roadmap_land",
+  "scope": "anima rank B 2 + rank C 3 = 5 domain — anima_clm_eeg / anima_engines / anima_agent / anima_tools / tool 신규 .roadmap.<domain> 5개 land (peer perspective, mk2 schema, JSONL header + 3 conditions mixed status + 2 blockers each)",
+  "rank_b_correction": "rank B 정정 (사용자 directive): anima_speak → .roadmap.voice 흡수, rank B = 2 (anima_clm_eeg + anima_engines)",
+  "predecessor": {
+    "handoff_doc": "docs/anima_rank_a_3_domain_landed_2026_05_03.ai.md",
+    "marker": "state/markers/anima_rank_a_3_domain_landed.marker"
+  },
+  "policy": {
+    "migration": "forbidden",
+    "additive_only": true,
+    "in_place_writes": 0,
+    "destructive_ops": 0,
+    "cost_usd": 0,
+    "substrate": "mac-local",
+    "br_no_user_verbatim": true,
+    "friendly_preset": "handoff_doc_only"
+  },
+  "handoff_doc": {
+    "path": "docs/anima_rank_b_c_5_domain_landed_2026_05_03.ai.md",
+    "sha256": "31bfd41a5c0f90597dc39af61a0a301910f2230fae342a911c28fc101b9cd33f",
+    "loc": 217,
+    "bytes": 19046
+  },
+  "roadmaps_emitted": [
+    {
+      "path": ".roadmap.anima_clm_eeg",
+      "rank": "B",
+      "sha256": "1974444c1b3ea54d594f545f2ad81d2bd3d031220034b2c7b1f461cc11b00026",
+      "bytes": 7218,
+      "kind": "domain",
+      "perspective": "peer",
+      "n_conditions": 3,
+      "status_mix": {"met": 0, "partial": 1, "unmet": 2},
+      "n_blockers": 2,
+      "blocker_types": ["upstream", "structural"],
+      "verifier_seam_summary": [
+        "anima_clm_eeg.cond.1 = script: anima-clm-eeg/tool/clm_eeg_harness_smoke.hexa (5 sub-metric: berger + gamma_theta + hjorth_real + lz76_real + pe_real)",
+        "anima_clm_eeg.cond.2 = script: anima-clm-eeg/tool/clm_eeg_p1_lz_pre_register.hexa (cross-link state/dali_sli_v3_input_mode + sister .roadmap.dual_pair_pilots)",
+        "anima_clm_eeg.cond.3 = script: anima-clm-eeg/tool/mk_xii_hard_pass_composite.hexa (4-cascade chain)"
+      ],
+      "cross_link_sister_domains": ["eeg", "clm", "slm_speech_eeg_lm"],
+      "cross_link_meta": ["dual_pair_pilots", "triple_axis_pilots", "tensionlink"],
+      "cross_link_sub_axis": "EEG (raw signal) ⊥ CLM (tokens / consciousness verdict), phi_proxy_cross_comparable=false",
+      "triplet_pending_tier": "T2"
+    },
+    {
+      "path": ".roadmap.anima_engines",
+      "rank": "B",
+      "sha256": "12ba6115cdddbd7d51d3c0d9f4005d68be4604f44e05cb2f51f148b77713cfe0",
+      "bytes": 7958,
+      "kind": "domain",
+      "perspective": "peer",
+      "n_conditions": 3,
+      "status_mix": {"met": 1, "partial": 0, "unmet": 2},
+      "n_blockers": 2,
+      "blocker_types": ["structural", "decision"],
+      "verifier_seam_summary": [
+        "anima_engines.cond.1 = disk_artifact: anima-engines/engines.hexa (4 substrate registry land + bench_v2 measured coefficient)",
+        "anima_engines.cond.2 = script: tool/alm_tension_field_bridge.hexa (5 tension_link variant + 3 sister .roadmap)",
+        "anima_engines.cond.3 = script: tool/edu_cell_4gen_crystallize.hexa (H-CX-523 hypothesis cross-link)"
+      ],
+      "cross_link_sister_domains": ["clm", "training", "anima_physics"],
+      "cross_link_meta": ["tensionlink", "tlm_tension_lm", "n51_alm_tension", "substrate_bridge", "p10_substrate_poc"],
+      "cross_link_engine_registry_axis": "4 substrate (osc_laser/quantum/photonic/memristor) = engines.hexa SSOT, anima-engines/ 100+ phenomenology phi engine = sibling axis",
+      "met_evidence_basis": "disk artifact existence (engines.hexa registry + 4 sibling engine + tests/test_engine_bridge + bench_v2 measured coefficient + 4 Law cross-link header docstring) — training.cond.2 met 동일 disk-artifact post-hoc 패턴, fresh exit-0 selftest 별개 (ENG_CONST_PATH hardcoded blocker.blk.1 해소 후속)",
+      "triplet_pending_tier": "T1_large"
+    },
+    {
+      "path": ".roadmap.anima_agent",
+      "rank": "C",
+      "sha256": "f38ed4f9eab8f758cfec192578fd61a4710fd1b7213e16b645772751ed9813b9",
+      "bytes": 7939,
+      "kind": "domain",
+      "perspective": "peer",
+      "n_conditions": 3,
+      "status_mix": {"met": 0, "partial": 1, "unmet": 2},
+      "n_blockers": 2,
+      "blocker_types": ["structural", "upstream"],
+      "verifier_seam_summary": [
+        "anima_agent.cond.1 = script: anima-agent/anima_agent.hexa (3 entry alternative: anima_agent / anima_agent_core / anima_agent_full + claude_provider chain)",
+        "anima_agent.cond.2 = script: anima-agent-core/unified_registry.hexa (3-layer agent_tools + tool_policy + unified_registry + sibling byte-equivalence)",
+        "anima_agent.cond.3 = script: anima-agent/autonomy_loop.hexa (memory + cron 4-layer E2E, sister .roadmap.w1_anima_as_substrate cross-link)"
+      ],
+      "cross_link_sister_domains": ["w1_anima_as_substrate", "clm", "serving"],
+      "cross_link_meta": ["g1_g5_chat_substrate", "omega_cycle"],
+      "cross_link_sub_package_inventory": {
+        "anima-agent": "top-level entry + 6 test + 15+ component (dashboard/build/data/docs/employee/results/trading/dashboard_bridge/discovery_loop/ecosystem_bridge/llm_claude_adapter/metrics_exporter/philosophy_lenses)",
+        "anima-agent-core": "agent_sdk + agent_tools + code_guardian + run + tool_policy + unified_registry + config 7 entry",
+        "anima-agent-channels": "4 channel (cli/discord/slack/telegram) + channel_manager + base + __init__ 7 entry",
+        "anima-agent-providers": "4 provider (claude/animalm/conscious_lm/composio_bridge) + base + __init__ 6 entry"
+      },
+      "cross_link_w1_share": "anima_agent.blk.2 + w1_anima_as_substrate.blk.1 share — Phase 5 ARTIFACT_PERMANENT_DOWNGRADE 후 residual cron decision (OK W1 ARCHIVE OR OK W1 RESIDUAL_KEEP)",
+      "honest_memory_md_oversize": "anima/memory/MEMORY.md 84KB (limit 24.4KB 3.4× 초과) honest, cleanup cycle 별도",
+      "triplet_pending_tier": "T1_large"
+    },
+    {
+      "path": ".roadmap.anima_tools",
+      "rank": "C",
+      "sha256": "988bbfce9dbc2c21705d0fb7045b8ae4f488c45837219ddb57b7621508660c49",
+      "bytes": 7802,
+      "kind": "domain",
+      "perspective": "peer",
+      "n_conditions": 3,
+      "status_mix": {"met": 0, "partial": 0, "unmet": 3},
+      "n_blockers": 2,
+      "blocker_types": ["decision", "structural"],
+      "verifier_seam_summary": [
+        "anima_tools.cond.1 = script: tool/anima_tool_inventory_audit.hexa (target_globs anima_/alm_/an11_/clm_/cmt_/cyborg_ + anima/tool/ EMPTY 결정)",
+        "anima_tools.cond.2 = script: tool/anima_roadmap_v11_register.hexa (family_glob_chain × sister .roadmap.{clm, training, serving, anima_clm_eeg})",
+        "anima_tools.cond.3 = script: tool/anima_memory_broken_refs_remediation.hexa (8 meta-tool chain: 2 session_handoff + 4 memory + 1 worktrees + 1 git_commit_chain)"
+      ],
+      "cross_link_sister_domains": ["tool", "clm", "training", "serving", "anima_clm_eeg", "anima_engines", "anima_agent"],
+      "cross_link_meta": ["omega_cycle"],
+      "cross_link_ownership_boundary": "anima_tools = anima domain-specific (anima_/alm_/an11_/clm_/cmt_/cyborg_) | sister .roadmap.tool = generic meta cross-cut (roadmap_*/lint_*/auto_changelog/_omega_stdlib_*/_roadmap_repo_resolver), 두 도메인 ownership 명확 분리",
+      "cross_link_anima_tool_subdir_decision": "anima/tool/ EMPTY 0 entry 그대로 유지 권장 — top-level tool/ canonical, 사용자 directive 'anima/tool/*' paraphrase = top-level tool/ anima-domain entry 의미 (raw 270/271 sister 정합)",
+      "cross_link_family_inventory": {
+        "anima_prefix": 189,
+        "alm_prefix": "~30",
+        "an11_prefix": "~20",
+        "clm_prefix": "~10",
+        "cmt_prefix": "~5",
+        "cyborg_prefix": "~5"
+      },
+      "triplet_pending_tier": "T1_large"
+    },
+    {
+      "path": ".roadmap.tool",
+      "rank": "C",
+      "sha256": "5089699a0c2aeef12436c639bea093bd770be2103c24cfae8472892f853064f7",
+      "bytes": 8317,
+      "kind": "domain",
+      "perspective": "peer",
+      "n_conditions": 3,
+      "status_mix": {"met": 0, "partial": 1, "unmet": 2},
+      "n_blockers": 2,
+      "blocker_types": ["structural", "structural"],
+      "verifier_seam_summary": [
+        "tool.cond.1 = script: tool/roadmap_op.hexa (12 roadmap-meta chain + 3 anima sister meta)",
+        "tool.cond.2 = script: tool/lint_autofix.hexa (6 generic meta chain + 3 .py exempt 잔존)",
+        "tool.cond.3 = script: tool/anima_nexus_roadmaps_consistency_auditor.hexa (sister anima_tools.cond.1 share)"
+      ],
+      "cross_link_sister_domains": ["anima_tools", "clm", "training", "serving"],
+      "cross_link_meta": ["omega_cycle"],
+      "cross_link_ownership_boundary": "tool = generic meta cross-cut | sister .roadmap.anima_tools = anima-domain — condition 중복 0건",
+      "cross_link_tool_count_total": 539,
+      "cross_link_tool_classification": {
+        "roadmap_meta": 12,
+        "anima_prefix": 189,
+        "sub_system_family": "~70",
+        "generic_meta": "~30",
+        "internal_underscore_prefix": "~5",
+        "python_exempt": 3,
+        "unclassified": "~230"
+      },
+      "cross_link_clm_dependency": "clm.cond.1 verifier 와 중복 가능성 (rank C audit 권고 cross-link only) — 본 land cond.1/2/3 모두 clm verifier 와 분리, clm.cond.1 cross-link 0건",
+      "cross_link_raw_compliance": "raw 9 hexa-only 0% 달성 + 3 .py exempt 잔존 (p_s_projector numpy-blocked + 2 active_redteam research harness)",
+      "triplet_pending_tier": "T1_large",
+      "land_self_disclosure": "본 .roadmap.tool land 자체가 직접 Write 사용 (roadmap_op add 미사용) — predecessor handoff §9.5 idempotent audit deferred 그대로"
+    }
+  ],
+  "aggregate": {
+    "files_emitted_total": 7,
+    "roadmaps_new": 5,
+    "doc_new": 1,
+    "marker_new": 1,
+    "n_conditions_total": 15,
+    "status_mix_total": {"met": 1, "partial": 3, "unmet": 11},
+    "n_blockers_total": 10,
+    "blocker_type_distribution": {"structural": 5, "upstream": 3, "decision": 2}
+  },
+  "preserved_unchanged": {
+    "roadmap_files_existing": 44,
+    "roadmap_files_existing_breakdown": {"pre_rank_a": 41, "rank_a_3": 3},
+    "readme_ai_md_files": 19,
+    "module_dirs_top_level": 73,
+    "configs": 0,
+    "destructive_writes": 0,
+    "in_place_writes": 0
+  },
+  "json_parse_audit": {
+    "anima_clm_eeg": "PASS (kind=domain name=anima_clm_eeg mk=2 perspective=peer status=active n_cond=3 n_blockers=2)",
+    "anima_engines": "PASS (kind=domain name=anima_engines mk=2 perspective=peer status=active n_cond=3 n_blockers=2)",
+    "anima_agent": "PASS (kind=domain name=anima_agent mk=2 perspective=peer status=active n_cond=3 n_blockers=2)",
+    "anima_tools": "PASS (kind=domain name=anima_tools mk=2 perspective=peer status=active n_cond=3 n_blockers=2)",
+    "tool": "PASS (kind=domain name=tool mk=2 perspective=peer status=active n_cond=3 n_blockers=2)"
+  },
+  "raw_compliance": {
+    "raw_9_hexa_only": "single_doc_pattern_minimum_viable_exempt (additive 7-file land, hexa orchestrator 미사용)",
+    "raw_10_honest_c3": "6 caveats inline §6",
+    "raw_11_snake_case": "doc + marker + 5 .roadmap 모든 id snake_case (anima_clm_eeg.cond.N / anima_engines.cond.N / anima_agent.cond.N / anima_tools.cond.N / tool.cond.N)",
+    "raw_12_silent_error_ban": "single_shot_no_error_path",
+    "raw_15_env_lazy_user": "doc internal anchors repo-relative; absolute paths quoted only in marker for sha-pin transparency",
+    "raw_168_minimum_viable_exempt": "single_doc_pattern_5_file_land applied",
+    "raw_175_br_no_user_verbatim": "user prompt zero verbatim quotes — paraphrase only (rank B 정정 + ownership boundary + anima/tool/* 해석 paraphrase)",
+    "raw_270_271_triplet": "additive .roadmap only — README.ai.md follow-up deferred (5 roadmap cross_link.triplet_pending_tier 명시)",
+    "raw_272_lint_extension": "no_impact (additive only)",
+    "raw_273_hierarchy_direction": "rank B 정정 (anima_speak absorbed) + rank C 3 = 5 land (9 candidate 중 8 처리, anima_speak = absorbed into voice)"
+  },
+  "next_cycle_unlock": [
+    "raw 270/271 triplet 후속 — 5 도메인 surface 부터 README.ai.md + core+modules 분할. 우선순위: anima_engines T1_large (166 entry) + anima_agent T1_large (4 sub-package) + tool T1_large (539 entry) + anima_tools T1_large (sister-paired) + anima_clm_eeg T2 (30 tool + 20 doc)",
+    "verifier seam exit-0 selftest — 5 도메인 15 cond 의 실제 exit-0 측정 (우선: anima_engines.cond.1 met 강화 fresh selftest ENG_CONST_PATH 해소 후 → anima_clm_eeg.cond.1 16ch synthetic harness_smoke first → tool.cond.1 roadmap_op idempotent)",
+    "upstream blocker 해소 wait — .roadmap.eeg cond.1 (B1-B4 4관문 PASS) + .roadmap.w1_anima_as_substrate residual cron decision",
+    "decision unlock_keyword 6종 — (a) OK W1 ARCHIVE OR OK W1 RESIDUAL_KEEP (anima_agent.blk.2 + w1.blk.1 share) / (b) OK ENGINES A/G_AXIS_DEFINE (anima_engines.blk.2) / (c) OK ANIMA_TOOLS TOP_LEVEL_KEEP OR OK ANIMA_TOOLS MIGRATION (anima_tools.blk.1)",
+    "anima_speak rank B 정정 후속 — .roadmap.voice 흡수 검증 cycle (사용자 directive 정정 honest 기록, voice domain cond.1/2/3 와 anima_speak spec 정합 audit 별도)"
+  ],
+  "wallclock_minutes": 18,
+  "cap_minutes": 60
+}
