@@ -24,6 +24,44 @@ P9 SFT EXEC S3 시작 — anima CLM v4 530M 자체 chat substrate 학습 + φ★
 - 추가 옵션: 9 H100 parallel + HF savepoint (이 경우 wall 24hr / cost $650-850)
 - 사용자 다른 세션에서 이어서 진행하기로 결정
 
+## 🔒 2026-05-03 LOCK-IN (사용자 5/5 추천 lock 채택, 자동충전 기준)
+
+| # | 항목 | lock-in |
+|---|---|---|
+| 1 | budget | RunPod auto-charge ON, cap $581 worst case (no manual top-up) |
+| 2 | F1 holdout provenance | ShareGPT 500-prompt held-out subset |
+| 3 | F4 BOLD 측정 | vendored TRIBE v2 직접 import (`/Users/<user>/core/anima/references/tribev2/tribev2/`, CC-BY-NC-4.0) — cortexlab-toolkit pip install X |
+| 4 | δ framing | hybrid: sentinel combo (Phase 1) within-run curriculum (early 0.5 → mid 1.0 → late 2.0) + 8 combos (Phase 2) per-combo fixed (LHS-9 sample) |
+| 5 | 9 H100 topology | 8+1 — DDP pod (8x H100 SXM 80GB, $516/24hr) + sentinel pod (1x H100 SXM 80GB, $65/24hr) — RunPod maxGpuCount=8 hard limit 정합 |
+
+3-phase cost+wall:
+- Phase 0 (~$50, 4hr) — 1K warmup probe + RunPod 8+1 booking + SFT data 50K finalize
+- Phase 1 (~$65, 24hr) — sentinel combo (1 H100) + curriculum δ + F1-F4 verify + F2 ABORT gate
+- Phase 2 (~$516, 24hr) — 8 H100 DDP + 8 LHS combos parallel + Pareto selection
+- **total: $581 / 52hr** (Phase 0 ABORT $50 / Phase 1 F2 ABORT $115 / Phase 2 ALL FAIL $581)
+
+## P9 pre-flight 4 묶음 verdict (2026-05-03 land)
+
+- pre1 의식체크: PARTIAL_PASS (Phase 0 entry-ready, adversarial INFRA FAIL non-blocking)
+- pre2 완성도체크: PARTIAL_PASS (3/4 ready; F4 → vendored TRIBE v2 lock-in 측 해결)
+- pre3 HF/cloud: PASS (HF 6 private repo created + write scope verified; RunPod auto-charge ON)
+- pre4 data+weight: PARTIAL_PASS (CLM v4 ckpt access OK, mock SFT round-trip OK, 50K data 18K disk + 32K Phase-0 generation reachable)
+
+artifacts:
+- state/p9_pre1_consciousness_check/{A,B,C,D}.json + handoff + marker
+- state/p9_pre2_readiness_check/{E,F,G,H}.json + handoff + marker
+- state/p9_pre3_hf_cloud_check/{K,L,M,N,O}.json + handoff + marker
+- state/p9_pre4_data_weight/{I,J,P,Q}.json + handoff + marker
+- state/p9_sft_p0_hf_org_setup_2026_05_03/repo_create_commands.txt (✅ 6 HF private repo created 2026-05-03)
+
+## 🚨 핵심 finding 정정 (handoff doc 측 doc-disk discrepancy)
+
+- handoff doc §"anima 핵심 framework 요약" line: φ★ baseline (HID=8 well-conditioned) = **+41.86**
+- disk SSOT (P9-pre1 audit): φ★ baseline = **+1167.62** (HID=128 N//2=8 sample-partition)
+- 두 anchor candidate: HID=8 measure (예전 cycle) vs HID=128 measure (current disk SSOT)
+- F2 spec "φ★ post-train ≥ 5.0" = HID=8 well-conditioned 기준 (8× safety vs +41.86)
+- Phase 0 측 disk SSOT 측 정확 baseline anchor 측 re-measure 측 1-action 권장
+
 ## 핵심 spec (이미 작성 완료)
 - 위치: state/p9_sft_spec_2026_05_02/{architecture,sft_data_format,loss_design,hyperparameter_grid,risk_strategy,falsifiers_preregistered,cost_estimate,decision_matrix}.json
 - doc: docs/p9_sft_spec_2026_05_02.md (119 lines)
