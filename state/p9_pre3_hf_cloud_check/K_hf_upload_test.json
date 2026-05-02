@@ -1,0 +1,47 @@
+{
+  "schema": "anima/state/p9_pre3_hf_cloud_check/K_hf_upload_test/1",
+  "ts_utc": "2026-05-02T16:04:50+00:00",
+  "phase": "P9_SFT_PRE3_HF_CLOUD_CHECK",
+  "item": "K_hf_savepoint_upload_mechanism",
+  "verdict": "PASS",
+  "test": {
+    "kind": "mock_empty_checkpoint_upload",
+    "target_repo": "need-singularity/clm-v4-sft-stage1",
+    "target_path": "pre3_check/k_upload_test_dummy.bin",
+    "payload": {
+      "size_bytes": 10240,
+      "kind": "10KB_zero_filled_dummy",
+      "purpose": "measurement_only_will_be_revoked_by_L"
+    }
+  },
+  "result": {
+    "upload_status": "SUCCESS",
+    "commit_url": "https://huggingface.co/need-singularity/clm-v4-sft-stage1/commit/a7e1814ff251f4a0a0be50e6b165dfe5e8ca8ccb",
+    "commit_message": "P9 pre3 K: upload mechanism test (will be removed)",
+    "duration_sec": 8,
+    "file_verified_via_tree_api": true,
+    "file_size_on_hub": 10240,
+    "lfs_used": true,
+    "lfs_oid": "84ff92691f909a05b224e1c56abb4864f01b4f8e3c854e4bb4c7baf1d3f6d652"
+  },
+  "cli": {
+    "tool": "hf",
+    "version": "1.8.0",
+    "command": "hf upload <repo> <local> <path_in_repo> --commit-message <m> --commit-description <d> --quiet"
+  },
+  "auth": {
+    "token_source": "secret get hf.token",
+    "scope": "write",
+    "user": "dancinlife",
+    "org_role": "admin@need-singularity"
+  },
+  "cost_estimate_usd": 0.001,
+  "actual_cost_usd": 0.0,
+  "raw_10": [
+    "10KB dummy is below LFS threshold but hf CLI still routed via LFS pointer (lfs.size=10240, pointerSize=130) — production checkpoint (~hundreds MB-GB) will use same code path",
+    "8 sec duration includes auth + commit + LFS dedupe; full LoRA savepoint (~50-200MB) extrapolated 60-300s per push",
+    "stage1 repo used as test target (per task spec); K never touches step-{5,10,25,50}k or final repos",
+    "no concurrent upload tested — production parallel push (multi-savepoint) untested, but single-push mechanism PROVEN",
+    "MD5/SHA256 integrity not separately verified beyond hub-side LFS oid"
+  ]
+}

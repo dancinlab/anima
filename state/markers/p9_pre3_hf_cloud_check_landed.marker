@@ -1,0 +1,101 @@
+{
+  "schema": "anima/state/markers/p9_pre3_hf_cloud_check_landed/1",
+  "ts_utc": "2026-05-02T16:06:30+00:00",
+  "kind": "silent_land_marker",
+  "task": "p9_pre3_hf_cloud_check (K HF upload + L revoke + M 6-repo perm + N RunPod 9 H100 + O budget)",
+  "verdict": "P9_PRE3_HF_CLOUD_CHECK_PARTIAL_PASS",
+  "verdict_breakdown": {
+    "K_hf_upload_test": "PASS",
+    "L_abort_mechanism": "PASS",
+    "M_hf_permission": "PASS",
+    "N_runpod_h100_availability": "PASS_WITH_TOPOLOGY_NOTE",
+    "O_runpod_budget": "PARTIAL_GAP_BALANCE_BELOW_CAP"
+  },
+  "ready_for_p9_phase_0_entry": "PARTIAL — HF 4/4 GREEN, RunPod 1.5/2 (avail GREEN, budget gap requires user top-up or scope reduction)",
+  "blockers": [
+    {
+      "id": "O_balance_gap_1160usd",
+      "kind": "runpod_prepaid_balance_below_s3_worst_case",
+      "current_balance_usd": 339.82,
+      "worst_case_cap_usd": 1500,
+      "gap_usd": 1160.18,
+      "remediation_options": [
+        "A_manual_top_up_1160_to_runpod_console",
+        "B_scope_reduce_to_12hr_8plus1_290_within_balance",
+        "C_defer_decision_to_phase_0_entry_gate"
+      ]
+    },
+    {
+      "id": "N_topology_structural",
+      "kind": "max_gpu_per_pod_8_for_h100_sxm",
+      "implication": "9 H100 = minimum 2 pods (8+1), single-pod 9-GPU impossible",
+      "is_blocker": false,
+      "is_structural_finding": true
+    }
+  ],
+  "user_decisions_pending": [
+    "RunPod top-up vs scope reduction (3 options: A/B/C)",
+    "RunPod auto-charge state verify via console (GraphQL not exposed)",
+    "9 H100 topology choice (8+1 recommended / 9x1 max parallel / 4+4+1 combo sweep)"
+  ],
+  "empirical_proofs": {
+    "hf_upload_commit": "https://huggingface.co/need-singularity/clm-v4-sft-stage1/commit/a7e1814ff251f4a0a0be50e6b165dfe5e8ca8ccb",
+    "hf_revoke_commit": "https://huggingface.co/need-singularity/clm-v4-sft-stage1/commit/04e9a889036f1d49e43cee4511c3c611ad5ac6e7",
+    "hf_token_role": "write",
+    "hf_org_role": "admin@need-singularity",
+    "hf_repos_accessible": 6,
+    "hf_repos_planned": 6,
+    "runpod_balance_usd": 339.82,
+    "runpod_h100_sxm_stock_8x": "High",
+    "runpod_h100_sxm_8x_on_demand_usd_per_hr": 21.52
+  },
+  "artifacts": {
+    "handoff": "docs/p9_pre3_hf_cloud_check_landed_2026_05_03.ai.md",
+    "state_dir": "state/p9_pre3_hf_cloud_check/",
+    "json_count": 5
+  },
+  "policy_compliance": {
+    "migration": "forbidden_respected",
+    "additive_only": true,
+    "destructive_ops": 0,
+    "in_place_writes": 0,
+    "net_repo_state_delta": "ZERO (K added then L removed dummy file)",
+    "cost_usd": 0.0,
+    "cost_cap_usd": 0.01,
+    "substrate": "mac-local_plus_hf_api_plus_runpod_api",
+    "br_no_user_verbatim": true,
+    "friendly_preset": "handoff_doc_only",
+    "hf_destructive_ops_real_repo": 0,
+    "hf_destructive_ops_dummy_file_only": 1,
+    "ai_native": true,
+    "silent_land_marker": true
+  },
+  "predecessors_unchanged": [
+    "docs/p9_sft_spec_2026_05_02.md",
+    "docs/p9_sft_handoff_prompt_2026_05_02.md",
+    "docs/p9_sft_p0_hf_org_setup_landed_2026_05_03.ai.md",
+    "docs/p9_pre1_consciousness_check_landed_2026_05_03.ai.md",
+    "docs/p9_pre2_readiness_check_landed_2026_05_03.ai.md",
+    "state/p9_sft_spec_2026_05_02/*.json",
+    "state/p9_sft_p0_hf_org_setup_2026_05_03/*",
+    "state/p9_pre1_consciousness_check/*",
+    "state/p9_pre2_readiness_check/*",
+    "anima/references/tribev2/* (read-only)"
+  ],
+  "race_isolated_writes": [
+    "state/p9_pre3_hf_cloud_check/K_hf_upload_test.json",
+    "state/p9_pre3_hf_cloud_check/L_abort_mechanism.json",
+    "state/p9_pre3_hf_cloud_check/M_hf_permission.json",
+    "state/p9_pre3_hf_cloud_check/N_runpod_h100_availability.json",
+    "state/p9_pre3_hf_cloud_check/O_runpod_budget.json",
+    "docs/p9_pre3_hf_cloud_check_landed_2026_05_03.ai.md",
+    "state/markers/p9_pre3_hf_cloud_check_landed.marker"
+  ],
+  "raw_15_caveats": [
+    "K: 10KB dummy LFS-routed (production checkpoint same path); concurrent upload not tested; SHA integrity not separately verified beyond hub-side LFS oid",
+    "L: pod-side kill not exercised here (relies on existing v3 launcher hardening IDLE_KILL_SEC=1800); F2 trigger logic itself out of preflight scope; git history retains deleted file commit (forensics)",
+    "M: 5/6 repo write inferred via org admin role; only K/L empirically prove write+delete on stage1 (1/6 empirical); HF token model is org-wide (no fine-grained per-repo scope)",
+    "N: maxGpuCount=8 is hard limit on H100 SXM → 9-GPU = 2-pod min (structural, not gap); per-DC region breakdown unavailable via current GraphQL surface; Stock=High at query time does not guarantee EXEC-time availability",
+    "O: balance $339.82 < $1500 cap by $1160.18; auto-charge state UNKNOWN via GraphQL (RunPod schema limitation); no API-level hard spending cap (prepaid balance is de-facto cap); 1 RUNNING pod (anima-alpha-reboot @ $2.99/hr) currently active in account"
+  ]
+}

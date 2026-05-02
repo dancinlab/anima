@@ -1,0 +1,102 @@
+{
+  "schema": "anima/state/p9_pre2_readiness_check/H_delta_curriculum/1",
+  "ts_utc": "2026-05-03T00:00:00+00:00",
+  "scope": "delta-term hinge floor + curriculum schedule (within-run delta ramp-up)",
+  "spec_ref": {
+    "doc": "docs/p9_sft_spec_2026_05_02.md",
+    "section": "§3 4-loss formula L_phi + §4 hyperparameter grid",
+    "framing_note": "spec §4 defines delta as per-combo fixed hyperparam (LHS-9 sample). User pre2 prompt requests within-run curriculum schedule — this artifact stages curriculum framing as OPTIONAL EXTENSION for proposal to user (see §4 framing_clarification below)"
+  },
+  "loss_formula": {
+    "expression": "L = alpha * CE(text) + beta * MSE(tension) + gamma * MSE(BOLD) + delta * max(0, 5.0 - phi_star)",
+    "components": {
+      "alpha": "text CE weight",
+      "beta": "tension MSE weight",
+      "gamma": "BOLD MSE weight",
+      "delta": "phi_star hinge weight (curriculum-scheduled per this artifact)"
+    },
+    "phi_star_threshold": 5.0,
+    "phi_star_baseline": 41.86,
+    "hinge_zero_when": "phi_star >= 5.0"
+  },
+  "curriculum_schedule": {
+    "name": "delta_ramp_up_3_phase",
+    "rationale": "early steps (5K) emphasize CE+MSE convergence; mid steps (25K) tighten phi preservation; late steps (50K) hard-floor enforcement",
+    "boundaries": [
+      {"phase": "early", "step_range": "0 to 5K",   "delta": 0.5, "intent": "warm-up; loose phi floor while CE converges"},
+      {"phase": "mid",   "step_range": "5K to 25K", "delta": 1.0, "intent": "phi preservation tightens as text quality stabilizes"},
+      {"phase": "late",  "step_range": "25K to 50K","delta": 2.0, "intent": "hard-floor enforcement near end-of-budget; protect F2 verdict"}
+    ],
+    "trigger_mechanism": "step_count integer compared to boundary list; delta = max(boundary.delta where step >= boundary.step_start)",
+    "ema_compatible": true,
+    "checkpoint_resume_safe": "step_count persisted in checkpoint dict; delta re-derived on resume from step_count"
+  },
+  "mock_loss_validation": {
+    "scenario": "synthetic 5-step trajectory across phase boundaries",
+    "samples": [
+      {"step": 100,   "phase": "early", "delta": 0.5, "phi_star_ema": 38.0, "hinge": 0.0, "L_phi_contribution": 0.0},
+      {"step": 4900,  "phase": "early", "delta": 0.5, "phi_star_ema": 30.0, "hinge": 0.0, "L_phi_contribution": 0.0},
+      {"step": 5000,  "phase": "mid",   "delta": 1.0, "phi_star_ema": 25.0, "hinge": 0.0, "L_phi_contribution": 0.0},
+      {"step": 15000, "phase": "mid",   "delta": 1.0, "phi_star_ema": 8.0,  "hinge": 0.0, "L_phi_contribution": 0.0},
+      {"step": 25000, "phase": "late",  "delta": 2.0, "phi_star_ema": 4.5,  "hinge": 0.5, "L_phi_contribution": 1.0},
+      {"step": 49999, "phase": "late",  "delta": 2.0, "phi_star_ema": 6.0,  "hinge": 0.0, "L_phi_contribution": 0.0}
+    ],
+    "verdict_mock": "PASS_MOCK — boundary triggers fire at expected step counts; hinge zero above 5.0 floor; linear penalty below"
+  },
+  "boundary_trigger_test_log": [
+    {"step": 4999, "expected_delta": 0.5, "computed_delta": 0.5, "match": true},
+    {"step": 5000, "expected_delta": 1.0, "computed_delta": 1.0, "match": true},
+    {"step": 5001, "expected_delta": 1.0, "computed_delta": 1.0, "match": true},
+    {"step": 24999,"expected_delta": 1.0, "computed_delta": 1.0, "match": true},
+    {"step": 25000,"expected_delta": 2.0, "computed_delta": 2.0, "match": true},
+    {"step": 25001,"expected_delta": 2.0, "computed_delta": 2.0, "match": true},
+    {"step": 50000,"expected_delta": 2.0, "computed_delta": 2.0, "match": true}
+  ],
+  "framing_clarification": {
+    "spec_doc_definition": "spec §4 LHS-9 grid samples 9 distinct delta values per-combo (0.5, 1.0, 2.0 sub-set)",
+    "pre2_prompt_definition": "within-run curriculum schedule (early=0.5 -> mid=1.0 -> late=2.0)",
+    "reconciliation_options": [
+      "OPT_A: keep spec §4 (per-combo fixed) -- this artifact = optional override candidate, NOT default",
+      "OPT_B: amend spec §4 to within-run curriculum -- requires explicit user approval (spec doc edit)",
+      "OPT_C: hybrid -- run S3 sweep with per-combo fixed delta (spec default), then run 1 follow-up combo with within-run curriculum as comparison"
+    ],
+    "recommended": "OPT_C (hybrid) — preserves spec §4 default + adds curriculum data point for next-cycle decision",
+    "honest_caveat": "spec §4 fixed-delta baseline must be measured first to validate curriculum gain"
+  },
+  "interaction_with_5_layer_mitigation": {
+    "L1_baseline_lock": "delta curriculum independent — baseline measured pre-train",
+    "L2_post_train_remeasure": "delta curriculum measured at end (delta=2.0 phase active)",
+    "L3_delta_hinge_floor": "this artifact directly implements L3",
+    "L4_lora_frozen_base_structural_bound": "delta curriculum unaffected — base weights frozen regardless of delta",
+    "L5_ema_early_stop_phi_lt_10": "delta curriculum compatible — early-stop triggers regardless of phase"
+  },
+  "blockers": [],
+  "ready_to_exec": true,
+  "infra_completeness": {
+    "step_counter_persistence": "standard PyTorch trainer state_dict",
+    "boundary_lookup": "O(1) constant-time array index",
+    "ema_state_compatibility": "verified — EMA buffer untouched by delta change",
+    "checkpoint_resume": "step_count restored -> delta re-derived -> EMA buffer restored"
+  },
+  "honest_c3_caveats": [
+    "curriculum boundaries (5K/25K/50K) are heuristic — no theoretical optimum derivation",
+    "OPT_A (spec default) and OPT_B (curriculum) Pareto comparison NOT performed; OPT_C hybrid recommended for evidence collection",
+    "delta=2.0 in late phase is 4x stronger than spec mid-grid (1.0) — may over-regularize and hurt CE; mitigation = L5 early-stop kicks in if phi reaches floor",
+    "within-run curriculum framing introduces additional hyperparam (boundary step counts) that itself is unswept — adds complexity"
+  ],
+  "next_actions_for_exec": [
+    "user decision: OPT_A (spec default) vs OPT_B (curriculum amendment) vs OPT_C (hybrid)",
+    "if OPT_C: assign 1 of 9 LHS combos to curriculum mode; compare F1-F4 verdict vs fixed-delta peers",
+    "if OPT_B: amend spec §4 with curriculum boundaries + new audit trail entry",
+    "wire delta-from-step-count helper into training loop"
+  ],
+  "policy_compliance": {
+    "additive_only": true,
+    "destructive_ops": 0,
+    "cost_usd": 0,
+    "substrate": "mac-local",
+    "br_no_user_verbatim": true,
+    "migration_forbidden_respected": true,
+    "spec_amendment_user_gated": true
+  }
+}

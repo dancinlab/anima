@@ -1,0 +1,67 @@
+{
+  "schema": "anima/state/p9_pre3_hf_cloud_check/O_runpod_budget/1",
+  "ts_utc": "2026-05-02T16:06:10+00:00",
+  "phase": "P9_SFT_PRE3_HF_CLOUD_CHECK",
+  "item": "O_runpod_budget_plus_auto_charge_check",
+  "verdict": "PARTIAL_GAP_BALANCE_BELOW_CAP",
+  "balance": {
+    "client_balance_usd": 339.82,
+    "billing_mode": "prepaid",
+    "current_spend_per_hr_usd": 3.09,
+    "machine_quota": 0,
+    "referral_earned_usd": 0
+  },
+  "active_pods": {
+    "total_pods_in_account": 7,
+    "running_count": 1,
+    "exited_count": 6,
+    "running_pods": [
+      {
+        "id": "3ifwhtmvdieivy",
+        "name": "anima-alpha-reboot-20260502T143603Z",
+        "cost_per_hr_usd": 2.99,
+        "gpu_display_name": "H100 SXM",
+        "gpu_count": 1
+      }
+    ],
+    "implied_24hr_burn_at_current_rate_usd": 74.16,
+    "balance_runway_at_current_rate_hrs": 110
+  },
+  "auto_charge": {
+    "enabled": "UNKNOWN_VIA_GRAPHQL",
+    "rationale": "RunPod GraphQL myself query does not expose autoChargeEnabled or paymentMethodOnFile field directly — billing config is web-UI only",
+    "verification_path": "User must check https://runpod.io/console/user/billing manually",
+    "evidence_balance_does_not_auto_top_up": "balance has dropped from prior session levels (no auto-top observed in recent session history)"
+  },
+  "cap_reserve_check": {
+    "p9_exec_s3_worst_case_usd": 1500,
+    "current_balance_usd": 339.82,
+    "gap_usd": 1160.18,
+    "verdict": "BALANCE_INSUFFICIENT_FOR_S3_WORST_CASE",
+    "remediation_options": [
+      {"option": "manual_top_up_to_1500_pre_EXEC", "user_action": "RunPod console add credit", "amount_usd": 1160.18},
+      {"option": "scale_down_to_24hr_8plus1_only", "max_burn_usd": 581.04, "fits_balance": false, "fits_with_safety_margin": false},
+      {"option": "scale_down_to_12hr_8plus1", "max_burn_usd": 290.52, "fits_balance": true, "safety_margin_usd": 49.30}
+    ]
+  },
+  "spending_limit_audit": {
+    "rate_limit_per_hr_field": "currentSpendPerHr=3.09 (informational, not a cap)",
+    "machineQuota_field": "0 (no quota cap set)",
+    "hard_spending_cap_via_api": "NOT_AVAILABLE",
+    "prepaid_balance_acts_as_de_facto_cap": true
+  },
+  "recommended_action": [
+    "User: top up RunPod balance to >=$1500 (gap +$1160) BEFORE P9 EXEC Phase 1 entry, OR reduce S3 worst-case scope to fit current balance",
+    "User: verify auto-charge ENABLED in console (or DISABLED-with-balance-monitor) — cannot be checked via GraphQL",
+    "Pre-EXEC entry gate: balance >= worst-case + 20% safety margin"
+  ],
+  "cost_estimate_usd": 0.0,
+  "actual_cost_usd": 0.0,
+  "raw_10": [
+    "balance $339.82 < $1500 cap by $1160.18 — PARTIAL gap, not CRITICAL FAIL (12hr 8+1 still fits)",
+    "auto-charge state UNKNOWN via GraphQL (RunPod schema limitation) — user manual verification required",
+    "currentSpendPerHr=3.09 reflects 1 RUNNING pod ($2.99) + tiny buffer; not a cap mechanism",
+    "machineQuota=0 means no admin-set machine count limit (free to spin up to balance limit)",
+    "prepaid balance is the only effective hard stop — no per-period spend cap, no overage prevention beyond running out of credit"
+  ]
+}

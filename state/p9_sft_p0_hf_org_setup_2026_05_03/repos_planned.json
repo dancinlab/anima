@@ -1,0 +1,96 @@
+{
+  "schema": "anima/state/p9_sft_p0_hf_org_setup/repos_planned/1",
+  "ts_utc": "2026-05-03T00:00:00+00:00",
+  "phase": "P9_SFT_PHASE_0_HF_ORG_SETUP",
+  "exec_status": "BLOCKED_TOKEN_REVOKED",
+  "blocker": {
+    "kind": "hf_token_invalid",
+    "active_token_name": "dancinlife",
+    "evidence": [
+      "hf auth whoami → 'Invalid user token'",
+      "POST https://huggingface.co/api/whoami-v2 → {\"error\":\"Invalid username or password.\"}",
+      "POST https://huggingface.co/api/repos/create → {\"error\":\"Invalid username or password.\"}"
+    ],
+    "remediation": "User: re-issue write-scoped token at https://huggingface.co/settings/tokens with org access to need-singularity, then run state/p9_sft_p0_hf_org_setup_2026_05_03/repo_create_commands.txt"
+  },
+  "org": "need-singularity",
+  "owner_account": "dancinlife",
+  "visibility_initial": "private",
+  "visibility_promotion_gate": "F1 AND F2 AND F3 AND F4 ALL PASS at clm-v4-sft-final",
+  "repos": [
+    {
+      "name": "clm-v4-sft-step-5k",
+      "type": "model",
+      "private": true,
+      "purpose": "intermediate LoRA savepoint at 5K SFT steps",
+      "readme_template": "repo_templates/clm-v4-sft-step-5k.README.md",
+      "create_status": "PENDING_TOKEN"
+    },
+    {
+      "name": "clm-v4-sft-step-10k",
+      "type": "model",
+      "private": true,
+      "purpose": "intermediate LoRA savepoint at 10K SFT steps",
+      "readme_template": "repo_templates/clm-v4-sft-step-10k.README.md",
+      "create_status": "PENDING_TOKEN"
+    },
+    {
+      "name": "clm-v4-sft-step-25k",
+      "type": "model",
+      "private": true,
+      "purpose": "intermediate LoRA savepoint at 25K SFT steps (50% mark)",
+      "readme_template": "repo_templates/clm-v4-sft-step-25k.README.md",
+      "create_status": "PENDING_TOKEN"
+    },
+    {
+      "name": "clm-v4-sft-step-50k",
+      "type": "model",
+      "private": true,
+      "purpose": "end-of-budget LoRA savepoint per combo (F1-F4 measured here)",
+      "readme_template": "repo_templates/clm-v4-sft-step-50k.README.md",
+      "create_status": "PENDING_TOKEN"
+    },
+    {
+      "name": "clm-v4-sft-final",
+      "type": "model",
+      "private": true,
+      "purpose": "canonical winning combo (post-S3 sweep selection)",
+      "readme_template": "repo_templates/clm-v4-sft-final.README.md",
+      "create_status": "PENDING_TOKEN"
+    },
+    {
+      "name": "clm-v4-sft-stage1",
+      "type": "model",
+      "private": true,
+      "purpose": "Phase 1 sentinel single-combo dry-run (pipeline smoke)",
+      "readme_template": "repo_templates/clm-v4-sft-stage1.README.md",
+      "create_status": "PENDING_TOKEN"
+    }
+  ],
+  "naming_convention": {
+    "savepoint": "need-singularity/clm-v4-sft-step-{5k,10k,25k,50k}",
+    "winner": "need-singularity/clm-v4-sft-final",
+    "sentinel": "need-singularity/clm-v4-sft-stage1"
+  },
+  "spec_anchor": "docs/p9_sft_spec_2026_05_02.md",
+  "handoff_anchor": "docs/p9_sft_handoff_prompt_2026_05_02.md",
+  "lora_config": {
+    "r": 64,
+    "alpha": 128,
+    "target_modules": ["attention QKV", "FFN"],
+    "dropout": 0.05,
+    "precision": "bf16"
+  },
+  "delta_curriculum": {
+    "early": 0.5,
+    "mid": 1.0,
+    "late": 2.0,
+    "note": "Per-combo delta is fixed within an LHS sample; 'curriculum' here refers to the grid sweep across the 9 LHS samples of the 81-cell grid."
+  },
+  "honest_c3": [
+    "Token revocation discovered post-task-start; Phase 0 EXEC blocked until user re-issues token.",
+    "All 6 repo create commands and 6 README templates are pre-staged on disk; one bash command finishes Phase 0 once token is renewed.",
+    "Per policy, no destructive ops attempted (no delete/move/force).",
+    "delta_curriculum framing in this doc is interpretive — spec_2026_05_02 §4 defines delta as one of 4 per-combo hyperparameters in LHS-9, not a within-run schedule."
+  ]
+}

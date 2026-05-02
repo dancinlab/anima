@@ -1,0 +1,50 @@
+{
+  "schema": "anima/state/p9_pre3_hf_cloud_check/L_abort_mechanism/1",
+  "ts_utc": "2026-05-02T16:05:10+00:00",
+  "phase": "P9_SFT_PRE3_HF_CLOUD_CHECK",
+  "item": "L_abort_mechanism_mock_F2_fail",
+  "verdict": "PASS",
+  "scenario": {
+    "kind": "mock_F2_phi_star_below_threshold",
+    "trigger": "phi_star < 5.0 (mock)",
+    "expected_action": "immediate_kill_plus_HF_revoke",
+    "test_subject": "K_uploaded_dummy_file_only_NEVER_real_repo"
+  },
+  "revoke": {
+    "method": "hf repos delete-files",
+    "fallback_methods_documented": [
+      "file_overwrite_with_F2_ABORT_commit_message",
+      "hf repos delete --type model (extreme case, full repo nuke)"
+    ],
+    "target_repo": "need-singularity/clm-v4-sft-stage1",
+    "target_pattern": "pre3_check/k_upload_test_dummy.bin",
+    "commit_message": "P9 pre3 L: F2 ABORT mock - revoke uploaded checkpoint",
+    "commit_url": "https://huggingface.co/need-singularity/clm-v4-sft-stage1/commit/04e9a889036f1d49e43cee4511c3c611ad5ac6e7",
+    "duration_sec": 1
+  },
+  "verification": {
+    "tree_api_after_delete": "{\"error\":\"pre3_check does not exist on \\\"main\\\"\"}",
+    "resolve_url_http_status": 404,
+    "deletion_confirmed": true
+  },
+  "kill_mechanism": {
+    "scope": "in_real_EXEC_pod_side_runpod_terminate",
+    "tested_in_K_L": false,
+    "rationale": "K/L tests HF revoke only; pod kill is RunPod API responsibility (Phase 0 pod-launcher hardening covers this — see project_pilot_t1_v3_launcher_hardening IDLE_KILL_SEC=1800)"
+  },
+  "destructive_ops_safety": {
+    "real_repo_files_touched": 0,
+    "stage1_dummy_files_touched": 1,
+    "stage1_dummy_files_revoked": 1,
+    "net_repo_state_delta": "ZERO (K_added then L_removed)"
+  },
+  "cost_estimate_usd": 0.0001,
+  "actual_cost_usd": 0.0,
+  "raw_10": [
+    "L successfully revoked K's upload — full create+delete cycle PROVEN on HF side",
+    "pod-side kill NOT exercised here; relies on existing v3 launcher hardening (IDLE_KILL_SEC=1800s, watchdog auto-kill)",
+    "extreme case 'hf repos delete' NOT exercised — would destroy entire repo+history; production rule = delete-files preferred",
+    "F2 trigger logic itself (phi_star comparator) not implemented in this preflight — assumed Phase 0 EXEC scope",
+    "git-history retains the deleted file commit (404 means resolve fails, but commit log preserves audit trail) — this is desired behavior for forensics"
+  ]
+}

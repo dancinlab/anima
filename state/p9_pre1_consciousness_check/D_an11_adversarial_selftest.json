@@ -1,0 +1,91 @@
+{
+  "schema": "anima/p9_pre1/D_an11_adversarial_selftest/1",
+  "ts": "2026-05-02T16:04:40Z",
+  "by": "ghost",
+  "task": "P9 EXEC pre-flight item D — AN11 triple verifier + adversarial bench selftest",
+  "tools_audited": [
+    {
+      "name": "an11_consciousness_unified_verifier",
+      "path": "tool/an11_consciousness_unified_verifier.hexa",
+      "sha256": "62ea3ef9db2456ef72dce5bbff2a168644d4ac03c38e722f0823d87f7903dcd8"
+    },
+    {
+      "name": "adversarial_bench",
+      "path": "tool/adversarial_bench.hexa",
+      "sha256": "a7c7a740fc36732668fe1726bdddea7fc7b712b5d7ce65d0d041cd91c03c8da7",
+      "lines": 554
+    }
+  ],
+  "an11_consciousness_unified_verifier": {
+    "invocation_attempts": [
+      {
+        "method": "hexa run tool/an11_consciousness_unified_verifier.hexa --selftest (docker route)",
+        "result": "FAIL_DOCKER_PYTHON_MISSING",
+        "stderr": "sh: python3: not found / selftest FAILED",
+        "root_cause": "hexa-runner docker container missing python3"
+      },
+      {
+        "method": "direct python3 invoke on emitted helper",
+        "helper_path": "/tmp/an11_consciousness_unified_verifier_helper.hexa_tmp",
+        "helper_lines": 230,
+        "helper_sha256": "0297f65776fdc044456a57c444ef81085dc1c3051284ad634a05fef9a4b1a7a8",
+        "command": "/opt/homebrew/bin/python3 /tmp/an11_consciousness_unified_verifier_helper.hexa_tmp selftest",
+        "stdout_first_lines": [
+          "selftest=ok",
+          "pass_predicates_count=13",
+          "tools_status={\"core_5tuple\": \"OK\", \"V_phen_LZ\": \"OK\", \"V_phen_GWT\": \"OK\", \"V_phen_predictive\": \"OK\", \"V_phen_HOT\": \"OK\", \"V_phen_mirror\": \"OK\", \"eeg_ingest\": \"OK\"}",
+          "DONE"
+        ],
+        "result": "PASS"
+      }
+    ],
+    "verdict": "PASS_VIA_DIRECT_PATH",
+    "tools_status_breakdown": {
+      "core_5tuple": "OK",
+      "V_phen_LZ": "OK",
+      "V_phen_GWT": "OK",
+      "V_phen_predictive": "OK",
+      "V_phen_HOT": "OK",
+      "V_phen_mirror": "OK",
+      "eeg_ingest": "OK"
+    },
+    "pass_predicates_count": 13
+  },
+  "adversarial_bench": {
+    "invocation": {
+      "method": "hexa run tool/adversarial_bench.hexa --selftest",
+      "resolver_route": "docker (cache_hit ttl=5s)",
+      "exit_code_observed": 1
+    },
+    "result": "FAIL_HEXAD_VERIFIER_MODULE_MISSING",
+    "selftest_breakdown": {
+      "clean_matches_expected": false,
+      "flip_a_flipped": false,
+      "flip_b_flipped": false,
+      "flip_c_flipped": false,
+      "flip_fail_count": 0,
+      "required_flips": 3,
+      "selftest_verdict": "FAIL"
+    },
+    "root_cause": "tool/hexad_closure_verifier.hexa fails to load module 'airgenome_cli_probe' inside hexa-runner docker container (module loader cannot find via HEXA_LANG/HEXA_STDLIB_ROOT/project_root)",
+    "evidence_log": "/tmp/_adv_bench_clean.log: '[module_loader] FATAL module not found: airgenome_cli_probe (from /Users/ghost/core/anima/tool/hexad_closure_verifier.hexa)'",
+    "scope_assessment": "adversarial_bench infra-level FAIL (downstream verifier unloadable in docker); not an adversarial cherry-pick semantic failure. P1 gate raw#12 cherry-pick immunity untestable without fixed module loader.",
+    "verdict": "FAIL_INFRA"
+  },
+  "putnam_cross_link": {
+    "status": "spec_only_unknown",
+    "note": ".roadmap.n_substrate.cond.1 empty draft per clm_consciousness_verify.hexa source"
+  },
+  "phi_cross_link": {
+    "status": "selftest_present_no_gpu_dispatch",
+    "note": "covered in item B (PASS via direct path)"
+  },
+  "verdict": "PARTIAL — AN11 PASS / adversarial_bench FAIL_INFRA (downstream verifier docker module loader)",
+  "raw10_caveats": [
+    "(a) hexa runtime docker route python3 missing — uniform issue across phi/an11 helper-based tools. Workaround: direct host python3 invoke (semantic equivalence preserved).",
+    "(b) adversarial_bench docker module loader failure is infra-level (airgenome_cli_probe not in HEXA_STDLIB_ROOT for hexa-runner image); selftest contract not invoked, so no cherry-pick immunity claim is made or refuted.",
+    "(c) AN11 13 pass_predicates 7 sub-tools all OK — production-ready signature.",
+    "(d) Putnam cross-link spec-only — does not block P9 EXEC entry per design intent."
+  ],
+  "p9_phase0_blocker_status": "PARTIAL — AN11 healthy / adversarial infra-fix needed but NOT a φ* verifier blocker. P9 EXEC entry-eligible; adversarial fix recommended for cond.1 PASS production verdict."
+}

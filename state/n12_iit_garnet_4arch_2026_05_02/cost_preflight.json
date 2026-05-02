@@ -1,0 +1,32 @@
+{
+  "agent": "F4 EXEC IQM Garnet eu-north-1 4-circuit N-12 4-architecture upgrade",
+  "device_arn": "arn:aws:braket:eu-north-1::device/qpu/iqm/Garnet",
+  "device_name": "Garnet",
+  "provider": "IQM",
+  "device_type": "QPU (superconducting flux-tunable transmon)",
+  "device_location": "Espoo, Finland",
+  "region": "eu-north-1",
+  "qubit_count": 20,
+  "topology": "non-fully-connected (square lattice, see connectivityGraph)",
+  "native_gate_set": ["cz", "prx", "cc_prx", "measure_ff", "barrier"],
+  "supported_operations_via_compiler": ["ccnot","cnot","cphaseshift","cphaseshift00","cphaseshift01","cphaseshift10","cswap","swap","iswap","pswap","ecr","cy","cz","xy","xx","yy","zz","h","i","phaseshift","rx","ry","rz","s","si","t","ti","v","vi","x","y","z","prx","cc_prx","measure_ff","barrier"],
+  "shot_cost_usd": 0.00145,
+  "task_cost_usd": 0.30,
+  "shots_per_circuit": 500,
+  "circuits": ["and", "xor", "maj", "copy"],
+  "estimated_circuit_cost_usd": {
+    "and_3q": 1.025,
+    "xor_3q": 1.025,
+    "maj_4q": 1.025,
+    "copy_3q": 1.025
+  },
+  "estimated_total_usd": 4.10,
+  "budget_cap_usd": 10.0,
+  "within_budget": true,
+  "preflight_status": "PASS",
+  "device_status": "ONLINE",
+  "verbatim_required": false,
+  "rationale": "Braket compiler transpiles standard h/t/ti/cnot/ccnot into IQM native (prx, cz, cc_prx) — same source IR as IonQ runs is valid (gate set is superset of nativeGateSet)",
+  "s3_bucket": "amazon-braket-eu-north-1-267673635495",
+  "s3_prefix": "n12-garnet-4arch-2026-05-02"
+}

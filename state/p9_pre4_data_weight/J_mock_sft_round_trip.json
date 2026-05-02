@@ -1,0 +1,57 @@
+{
+  "schema": "anima/p9_pre4/J_mock_sft/1",
+  "item": "J_mock_sft_round_trip",
+  "n_steps": 1000,
+  "n_params": 103397,
+  "elapsed_s": 2.08,
+  "delta_curriculum": {
+    "early_0_to_333": 0.5,
+    "mid_334_to_666": 1.0,
+    "late_667_to_999": 2.0,
+    "schedule_triggered": true
+  },
+  "phi_star_measurements": {
+    "every_n_steps": 100,
+    "n_measurements": 10,
+    "first": {
+      "step": 0,
+      "phi_star": 47.3028,
+      "delta": 0.5
+    },
+    "last": {
+      "step": 900,
+      "phi_star": 53.1485,
+      "delta": 2.0
+    }
+  },
+  "F1_bleu1_mock": {
+    "value": 0.5927,
+    "threshold": 0.4,
+    "pass": true
+  },
+  "F2_phi_post_mock": {
+    "value": 53.1485,
+    "threshold": 5.0,
+    "pass": true
+  },
+  "F3_tension_mse_mock": {
+    "value": 0.233311,
+    "threshold": 0.1,
+    "pass": false
+  },
+  "F4_bold_r_mock": {
+    "value": 0.6132,
+    "threshold": 0.5,
+    "pass": true
+  },
+  "f_pass_count": 3,
+  "hf_savepoint_mock": {
+    "save_dir": "/var/folders/2g/blzd56lx2rvfvt61c1pc9g7r0000gn/T/p9_mock_hf_vmwteeo1",
+    "ckpt_size_bytes": 424821,
+    "ckpt_sha256_16": "f8147c0263d62bdd",
+    "network_uploaded": false,
+    "note": "local-only mock; no HF API call"
+  },
+  "round_trip_PASS": true,
+  "verdict": "PASS"
+}

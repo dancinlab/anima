@@ -1,0 +1,137 @@
+{
+  "marker": "anima_rank_a_3_domain_landed",
+  "completion_iso": "2026-05-03T00:00:00Z",
+  "kind": "additive_roadmap_land",
+  "scope": "anima rank A 3 domain — serving / training / anima_physics 신규 .roadmap.<domain> 3개 land (peer perspective, mk2 schema, JSONL header + 3 conditions mixed status + 1-2 blockers each)",
+  "predecessor": {
+    "handoff_doc": "docs/anima_self_mk2_tuning_landed_2026_05_02.ai.md",
+    "marker": "state/markers/anima_self_mk2_tuning_landed.marker"
+  },
+  "policy": {
+    "migration": "forbidden",
+    "additive_only": true,
+    "in_place_writes": 0,
+    "destructive_ops": 0,
+    "cost_usd": 0,
+    "substrate": "mac-local",
+    "br_no_user_verbatim": true,
+    "friendly_preset": "handoff_doc_only"
+  },
+  "handoff_doc": {
+    "path": "docs/anima_rank_a_3_domain_landed_2026_05_03.ai.md",
+    "sha256": "a4d656ec4b3d0b9599bc9d0ebdc56f615ea8eeba1c43ca925dba36084ddafc53",
+    "loc": 180,
+    "bytes": 12503
+  },
+  "roadmaps_emitted": [
+    {
+      "path": ".roadmap.serving",
+      "sha256": "1d4c5881eb4de9ad42e69bf11439c34df0d59d961752e1b529fda8940adcf429",
+      "bytes": 3472,
+      "kind": "domain",
+      "perspective": "peer",
+      "n_conditions": 3,
+      "status_mix": {"met": 0, "partial": 1, "unmet": 2},
+      "n_blockers": 2,
+      "blocker_types": ["structural", "upstream"],
+      "verifier_seam_summary": [
+        "serving.cond.1 = script: serving/http_server.hexa (smoke=/healthz)",
+        "serving.cond.2 = script: serving/consciousness_aware_refusal.hexa (cross-link clm.cond.1 + voice.cond.3)",
+        "serving.cond.3 = script: serving/avatar_render.hexa (frames_min=1, fps>=1)"
+      ],
+      "cross_link_sister_domains": ["voice", "clm"],
+      "triplet_pending_tier": "T1"
+    },
+    {
+      "path": ".roadmap.training",
+      "sha256": "5df3033a650f3404eee78acd135e13abbb990ada7c9974325eb8455570cbe713",
+      "bytes": 4496,
+      "kind": "domain",
+      "perspective": "peer",
+      "n_conditions": 3,
+      "status_mix": {"met": 1, "partial": 1, "unmet": 1},
+      "n_blockers": 2,
+      "blocker_types": ["structural", "budget"],
+      "verifier_seam_summary": [
+        "training.cond.1 = script: training/alm_a1_preflight.hexa (config=alm_a1_config.json)",
+        "training.cond.2 = script: training/corpus_aggregate.hexa (4 stage = build_tool_corpus + corpus_cc100_dedup + corpus_aggregate + convert_corpus_to_lines)",
+        "training.cond.3 = script: training/decode_hook.hexa (live forward hook fire 측정)"
+      ],
+      "cross_link_sister_domains": ["clm", "serving"],
+      "cross_link_mk_xii_retrain_plan": "docs/project_mk_xii_retrain_plan_v2.md ($2200-6700, 9-16주)",
+      "cross_link_pilot_t1_launcher": "state/markers/launcher_hardening_v3_complete.marker",
+      "cross_link_ia3_template": "tool/anima_train_ia3.hexa (raw#9 strict, sha cee75d63 helper byte-identical)",
+      "triplet_pending_tier": "T1_large",
+      "met_evidence_basis": "disk artifact existence (corpus_clm_combined.txt + .gz + corpus_alm_70b_stripped*.txt + corpus_clm_r4.txt.gz + corpus_alm_r11_r2_index.md 6+ artifacts)"
+    },
+    {
+      "path": ".roadmap.anima_physics",
+      "sha256": "c978104ac53e957b8c12054743902f5be67a0f0c2a07cff4cb415844824b33cc",
+      "bytes": 5575,
+      "kind": "domain",
+      "perspective": "peer",
+      "n_conditions": 3,
+      "status_mix": {"met": 0, "partial": 1, "unmet": 2},
+      "n_blockers": 2,
+      "blocker_types": ["structural", "upstream"],
+      "verifier_seam_summary": [
+        "anima_physics.cond.1 = script: anima-physics/verify_7cond_hw.hexa (cross-link n_substrate.cond.1 + ledger v3)",
+        "anima_physics.cond.2 = script: anima-physics/physics_substrate_dispatch.hexa (9 substrate)",
+        "anima_physics.cond.3 = script: anima-physics/edge_deploy.hexa (esp32/arduino/fpga 3 target)"
+      ],
+      "cross_link_sister_domains": ["clm", "eeg"],
+      "cross_link_meta": ["n_substrate", "substrate_bridge", "triple_axis_pilots", "dual_pair_pilots"],
+      "cross_link_sub_axis": "own#2 (b) PC empirical-max substrate-multiplicity sub-axis (≠ 메인 backbone-activation sub-axis)",
+      "cross_link_ledger_versions": {
+        "v1": {"markers": 8, "FNV": 470781997, "body_sha": "264f5cf7"},
+        "v2": {"markers": 11, "FNV": 661882989, "body_sha": "df545c5e1540"},
+        "v3": {"land": "anima-physics/tool/mk_xii_substrate_witness_ledger_aggregator_v3.hexa"}
+      },
+      "cross_link_discovery_doc": "anima-clm-eeg/docs/mk_xii_substrate_witness_ledger_discovery_landing.md",
+      "triplet_pending_tier": "T2"
+    }
+  ],
+  "aggregate": {
+    "files_emitted_total": 5,
+    "roadmaps_new": 3,
+    "doc_new": 1,
+    "marker_new": 1,
+    "n_conditions_total": 9,
+    "status_mix_total": {"met": 1, "partial": 3, "unmet": 5},
+    "n_blockers_total": 6,
+    "blocker_type_distribution": {"structural": 3, "upstream": 2, "budget": 1}
+  },
+  "preserved_unchanged": {
+    "roadmap_files_existing": 26,
+    "readme_ai_md_files": 19,
+    "module_dirs_top_level": 73,
+    "configs": 0,
+    "destructive_writes": 0,
+    "in_place_writes": 0
+  },
+  "json_parse_audit": {
+    "serving": "PASS (kind=domain name=serving mk=2 perspective=peer status=active n_cond=3 n_blockers=2)",
+    "training": "PASS (kind=domain name=training mk=2 perspective=peer status=active n_cond=3 n_blockers=2)",
+    "anima_physics": "PASS (kind=domain name=anima_physics mk=2 perspective=peer status=active n_cond=3 n_blockers=2)"
+  },
+  "raw_compliance": {
+    "raw_9_hexa_only": "single_doc_pattern_minimum_viable_exempt (additive 5-file land, hexa orchestrator 미사용)",
+    "raw_10_honest_c3": "5 caveats inline §6",
+    "raw_11_snake_case": "doc + marker + 3 .roadmap 모든 id snake_case (serving.cond.N / training.cond.N / anima_physics.cond.N)",
+    "raw_12_silent_error_ban": "single_shot_no_error_path",
+    "raw_15_env_lazy_user": "doc internal anchors repo-relative; absolute paths quoted only in marker for sha-pin transparency",
+    "raw_175_br_no_user_verbatim": "user prompt zero verbatim quotes — paraphrase only",
+    "raw_270_271_triplet": "additive .roadmap only — README.ai.md follow-up deferred (3 roadmap cross_link.triplet_pending_tier 명시)",
+    "raw_272_lint_extension": "no_impact (additive only)",
+    "raw_273_hierarchy_direction": "rank A 3 only (rank B/C lock-in pending)"
+  },
+  "next_cycle_unlock": [
+    "rank B 3 land (anima_speak / anima_clm_eeg / anima_engines) — same pattern (peer perspective, 3 cond mix, 1-2 blockers)",
+    "rank C 3 land (anima_agent / anima_tools / tool) — tool = clm.cond.1 verifier 중복 가능, cross-link only 권장",
+    "raw 270/271 triplet 후속 — rank A 3 surface 부터 README.ai.md + core+modules 분할 (training T1_large 가장 큰 작업, anima_physics T2 17 sub-dir)",
+    "verifier seam exit-0 selftest — serving healthz smoke / training alm_a1 preflight / anima_physics 7cond_hw + dispatch + edge_deploy 3 cond 실측",
+    "tool/roadmap_op.hexa add idempotent 정합 audit — 본 land 는 직접 Write 사용"
+  ],
+  "wallclock_minutes": 12,
+  "cap_minutes": 60
+}

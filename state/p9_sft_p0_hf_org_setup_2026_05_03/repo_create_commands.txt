@@ -1,0 +1,35 @@
+# P9 SFT Phase 0 — HF org repo creation commands (idempotent)
+# Generated: 2026-05-03
+# Prerequisite: hf_token=<NEW_VALID_TOKEN> from https://huggingface.co/settings/tokens
+#               (current dancinlife token revoked — verified 2026-05-03 via
+#                whoami + direct API POST both returning "Invalid username or password")
+#
+# Usage:
+#   1. Renew token at https://huggingface.co/settings/tokens (write scope, org need-singularity)
+#   2. hf auth login --token <NEW_TOKEN>  OR  export HF_TOKEN=<NEW_TOKEN>
+#   3. Run the 6 hf repo create commands below
+#   4. Upload README from repo_templates/<name>.README.md → README.md per repo
+#
+# All repos created PRIVATE initially. Made public only after F1-F4 ALL PASS at final.
+
+# === step 1: create 6 private repos ===
+hf repo create need-singularity/clm-v4-sft-step-5k  --type model --private --exist-ok
+hf repo create need-singularity/clm-v4-sft-step-10k --type model --private --exist-ok
+hf repo create need-singularity/clm-v4-sft-step-25k --type model --private --exist-ok
+hf repo create need-singularity/clm-v4-sft-step-50k --type model --private --exist-ok
+hf repo create need-singularity/clm-v4-sft-final    --type model --private --exist-ok
+hf repo create need-singularity/clm-v4-sft-stage1   --type model --private --exist-ok
+
+# === step 2: upload README per repo (run from this directory) ===
+hf upload need-singularity/clm-v4-sft-step-5k  repo_templates/clm-v4-sft-step-5k.README.md  README.md
+hf upload need-singularity/clm-v4-sft-step-10k repo_templates/clm-v4-sft-step-10k.README.md README.md
+hf upload need-singularity/clm-v4-sft-step-25k repo_templates/clm-v4-sft-step-25k.README.md README.md
+hf upload need-singularity/clm-v4-sft-step-50k repo_templates/clm-v4-sft-step-50k.README.md README.md
+hf upload need-singularity/clm-v4-sft-final    repo_templates/clm-v4-sft-final.README.md    README.md
+hf upload need-singularity/clm-v4-sft-stage1   repo_templates/clm-v4-sft-stage1.README.md   README.md
+
+# === step 3: verify ===
+hf auth whoami  # should print "dancinlife" + org "need-singularity"
+for r in clm-v4-sft-step-5k clm-v4-sft-step-10k clm-v4-sft-step-25k clm-v4-sft-step-50k clm-v4-sft-final clm-v4-sft-stage1; do
+  curl -s -H "Authorization: Bearer $HF_TOKEN" "https://huggingface.co/api/models/need-singularity/$r" | head -1
+done
