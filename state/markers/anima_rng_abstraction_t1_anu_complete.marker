@@ -1,0 +1,73 @@
+{
+  "schema": "anima/rng_abstraction/landing/1",
+  "title": "anima RNG source abstraction + T1 ANU implementation",
+  "completion_iso": "2026-05-02T00:01:37Z",
+  "core_files": [
+    {"path": "anima/core/rng/source.hexa",   "sha256": "5c4174a1e74bf6baab71012c5805faaa6e8a277d5243024060039105c1cd1e2e", "loc": 143},
+    {"path": "anima/core/rng/registry.hexa", "sha256": "0a2096fc93979b079f2398e1779bb38ca91093815ff00fb75b8535c060741cae", "loc": 339},
+    {"path": "anima/core/rng/router.hexa",   "sha256": "0eaa6d0a8b7187deda3666882b8677c70795ced68a1b2f6bbd985cf80d9aae8e", "loc": 319},
+    {"path": "anima/core/rng/rng_main.hexa", "sha256": "e6f431fd2469d637cb012104283de571e69d1fb399958875f637c7cb4fd7bbc1", "loc": 204}
+  ],
+  "module_files": [
+    {"path": "anima/modules/rng/urandom.hexa",       "sha256": "254e1c6ff473cd38d6b568adea6883c417a845029b18e2c43acfbfc807130469", "loc": 156, "tier": 0, "status": "IMPLEMENTED"},
+    {"path": "anima/modules/rng/esp32.hexa",         "sha256": "69694ce45ecf827aee41b5eeacd3f9b31b0d5d276b08f29d1c5b8f3c0e037e68", "loc": 175, "tier": 0, "status": "WRAPPED"},
+    {"path": "anima/modules/rng/anu.hexa",           "sha256": "7818b3dc061896c379a6db1754c6371285c50efdf82d7df4513f485d0bf239ed", "loc": 271, "tier": 1, "status": "IMPLEMENTED"},
+    {"path": "anima/modules/rng/ibm_q.hexa",         "sha256": "9cbbf07be455e21167a3a9218ba9321c384ac68fb46960d4c5a2818fb2ae2ae7", "loc": 104, "tier": 2, "status": "STUB"},
+    {"path": "anima/modules/rng/idq_quantis.hexa",   "sha256": "fc5e97039f8d77580c5add11c37288e83923140f5e6bf79fe384e1048aaea720", "loc": 104, "tier": 3, "status": "STUB"},
+    {"path": "anima/modules/rng/kaist_optical.hexa", "sha256": "3f37c753a0a5f70c2ca79f9f68c38527711e08fa6ec25fc8d4f18de4e1b51f1d", "loc": 102, "tier": 4, "status": "STUB"}
+  ],
+  "config_file": {
+    "path": "anima/config/rng_sources.json",
+    "sha256": "1b0fb6ff7391f42f81d6bd7673fc436636a71574afe9cbd95f62b478be72aba4"
+  },
+  "preserved_files": [
+    {"path": "anima-physics/esp32/qrng_bridge.hexa",   "sha256": "547fa48598535e656f8305e7cf0e9f29394f6402b474f15d40de984690828ed4", "verified_unchanged": true},
+    {"path": "anima-physics/verify_7cond_hw.hexa",     "sha256": "b7c60e30b022daf12a767bf8353c7a3e2e8725ad376bf46017879f9fbbbd61b2", "verified_unchanged": true},
+    {"path": "anima-physics/hw_engine_bridge.hexa",    "sha256": "92015e08a0393703eab8088e4c845de3b0a89491eca5d92ede60e71751e6ff20", "verified_unchanged": true}
+  ],
+  "tier_implementation": {
+    "T0_urandom":     "IMPLEMENTED",
+    "T0_esp32_local": "WRAPPED",
+    "T1_anu":         "IMPLEMENTED",
+    "T2_ibm_q":       "STUB",
+    "T3_idq_quantis": "STUB",
+    "T4_kaist":       "STUB"
+  },
+  "selftest": {
+    "interface_cases":  6,
+    "router_cases":     6,
+    "anu_mock_cases":   2,
+    "esp32_determinism": "PASS",
+    "stub_sentinel":    "3/3 OK",
+    "tier_coverage":    "5/5 (T0..T4)",
+    "consumer_verify_7cond_hw": "ALL_7_OF_7_PASS_unchanged",
+    "consumer_qrng_bridge":     "OK_unchanged",
+    "byte_identical_2run":      "PASS",
+    "rng_main_body_sha256":     "49b3434098e30753a0fe17353934d5f219165bf271cfbf980839919c8857c64a"
+  },
+  "router_cascade_demo": {
+    "chain_default":           ["anu", "esp32", "urandom"],
+    "chain_demo_stub_first":   ["ibm_q", "idq_quantis", "urandom"],
+    "demo_attempts":           3,
+    "demo_final_source":       "urandom",
+    "demo_via_env":            "ANIMA_RNG_FALLBACK_CHAIN"
+  },
+  "hexa_lang_dependency": "stdlib/qrng_anu.hexa (parallel BG subagent in flight) — fallback to system curl until landed (1-line swap at anima/modules/rng/anu.hexa _anu_fetch_via_curl)",
+  "raw9_strict_compliance": true,
+  "raw10_caveats": [
+    "(1) hexa-lang stdlib qrng_anu upstream not yet landed; ANU module uses exec(curl) until then (1-line swap point).",
+    "(2) ESP32 module wraps existing qrng_bridge mock-LCG layer; real serial HW path activates when hexa stdlib serial binding lands.",
+    "(3) NIST SP 800-90B health tests NOT applied (informational only).",
+    "(4) ANU public API rate-limit (~1 req/min unsigned); chunking with 1000ms inter-chunk pause used for n_bytes > 1024.",
+    "(5) Tier 3 IDQ throughput recorded as 240 Mbps default (PCIe-240M, 2026 model); legacy USB-4M=4Mbps recorded in vendor string for back-reference.",
+    "(6) Consumer-site verify_7cond_hw.hexa was NOT migrated to use the new abstraction in this cycle; T3 Embodiment still uses inline qrng_bias_vec from the original file. Migration is a separate cycle (router stays opt-in).",
+    "(7) struct definitions are inlined per-module (hexa stage0 has no use/import); SSOT canonicalized at anima/core/rng/source.hexa with byte-identical struct copies in each module."
+  ],
+  "destructive_changes": 0,
+  "environment": {
+    "host": "darwin_25_4_0",
+    "hexa_version": "0.1.0-dispatch",
+    "runner_routes": ["docker (mac_safe_landing)", "darwin-bypass (hexa_real direct)"],
+    "cost_usd": 0
+  }
+}

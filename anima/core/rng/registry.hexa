@@ -1,0 +1,339 @@
+// anima/core/rng/registry.hexa — RNG source registry (name → dispatch)
+//
+// raw#9 hexa-only strict. Stage0 has no first-class fn pointers / dyn-call,
+// so the registry uses a switch-style dispatch over canonical source names.
+// Each branch inlines the collect logic from the sibling module.
+//
+// REGISTERED SOURCES (8):
+//   urandom         — POSIX kernel CSPRNG       (IMPLEMENTED, Tier 0)
+//   esp32           — ESP32-S3 wrapper           (WRAPPED,    Tier 0)
+//   anu             — ANU public quantum         (IMPLEMENTED, Tier 1)
+//   ibm_q           — IBM Quantum cloud          (STUB,       Tier 2)
+//   idq_quantis     — IDQ commercial             (STUB,       Tier 3)
+//   kaist_optical   — KAIST research             (STUB,       Tier 4)
+//
+// raw#10:
+//   (1) Inlined dispatch is verbose but matches hexa stage0 capabilities.
+//       When trait/dyn-call lands, this collapses to a HashMap<&str, &dyn>.
+//   (2) sha256/byte logic is duplicated across modules+registry; SSOT is
+//       the per-module source file. Registry copies are kept byte-identical.
+
+// ── struct mirror (SSOT: anima/core/rng/source.hexa) ────────
+
+struct RngSourceMeta {
+    name:           str,
+    tier:           int,
+    throughput_bps: int,
+    cost_usd:       int,
+    lead_days:      int,
+    is_quantum:     int,
+    is_local:       int,
+    is_free:        int,
+    status:         str,
+    vendor:         str
+}
+
+struct RngCollectResult {
+    ok:             int,
+    n_bytes:        int,
+    bytes_:         [int],
+    sha256_hex:     str,
+    message:        str
+}
+
+fn rng_meta_make(
+    name: str, tier: int, throughput_bps: int, cost_usd: int,
+    lead_days: int, is_quantum: int, is_local: int, is_free: int,
+    status: str, vendor: str
+) -> RngSourceMeta {
+    return RngSourceMeta {
+        name: name, tier: tier, throughput_bps: throughput_bps,
+        cost_usd: cost_usd, lead_days: lead_days,
+        is_quantum: is_quantum, is_local: is_local, is_free: is_free,
+        status: status, vendor: vendor
+    }
+}
+
+fn rng_result_fail(reason: str) -> RngCollectResult {
+    return RngCollectResult { ok: 0, n_bytes: 0, bytes_: [], sha256_hex: "", message: reason }
+}
+
+fn rng_result_ok(bytes_: [int], sha256_hex: str, message: str) -> RngCollectResult {
+    return RngCollectResult { ok: 1, n_bytes: len(bytes_), bytes_: bytes_, sha256_hex: sha256_hex, message: message }
+}
+
+// ── Helpers ────────────────────────────────────────────────
+
+fn _byte_to_hex2(b: int) -> str {
+    let hi = b / 16
+    let lo = b - hi * 16
+    let hi_c = if hi < 10 { str(hi) } else { if hi == 10 { "a" } else { if hi == 11 { "b" } else { if hi == 12 { "c" } else { if hi == 13 { "d" } else { if hi == 14 { "e" } else { "f" } } } } } }
+    let lo_c = if lo < 10 { str(lo) } else { if lo == 10 { "a" } else { if lo == 11 { "b" } else { if lo == 12 { "c" } else { if lo == 13 { "d" } else { if lo == 14 { "e" } else { "f" } } } } } }
+    return hi_c + lo_c
+}
+
+fn _bytes_sha256(bytes_: [int], tag: str) -> str {
+    let n = len(bytes_)
+    if n == 0 { return "" }
+    let tmp = "/tmp/anima_rng_reg_" + tag + "_" + str(n) + ".bin"
+    let mut hex = ""
+    let mut k = 0
+    while k < n {
+        hex = hex + _byte_to_hex2(bytes_[k])
+        k = k + 1
+    }
+    let cmd = "printf '%s' '" + hex + "' | xxd -r -p > " + tmp + " 2>&1; (shasum -a 256 " + tmp + " 2>/dev/null || sha256sum " + tmp + ") | awk '{print $1}'"
+    let sha = exec(cmd).trim()
+    let _rc = exec("rm -f " + tmp + "; echo OK")
+    return sha
+}
+
+// ── Registered names (SSOT for list_available) ──────────────
+
+fn rng_registry_names() -> [str] {
+    let mut a = []
+    a = a.push("urandom")
+    a = a.push("esp32")
+    a = a.push("anu")
+    a = a.push("ibm_q")
+    a = a.push("idq_quantis")
+    a = a.push("kaist_optical")
+    return a
+}
+
+// ── Meta dispatch ──────────────────────────────────────────
+
+fn rng_registry_meta(name: str) -> RngSourceMeta {
+    if name == "urandom" {
+        return rng_meta_make("urandom", 0, 1000000000, 0, 0, 0, 1, 1, "IMPLEMENTED", "POSIX_kernel_CSPRNG")
+    }
+    if name == "esp32" {
+        return rng_meta_make("esp32", 0, 256000, 4, 0, 1, 1, 1, "WRAPPED", "ESP32-S3_USB-CDC")
+    }
+    if name == "anu" {
+        return rng_meta_make("anu", 1, 1000, 0, 0, 1, 0, 1, "IMPLEMENTED", "ANU_qrng_au")
+    }
+    if name == "ibm_q" {
+        return rng_meta_make("ibm_q", 2, 100, 0, 10, 1, 0, 1, "STUB", "IBM_Quantum_Network_qiskit_runtime")
+    }
+    if name == "idq_quantis" {
+        return rng_meta_make("idq_quantis", 3, 240000000, 5000, 42, 1, 1, 0, "STUB", "ID_Quantique_Quantis_PCIe_240M_default;legacy_USB_4M=4Mbps")
+    }
+    if name == "kaist_optical" {
+        return rng_meta_make("kaist_optical", 4, 1000000000, 0, 60, 1, 1, 1, "STUB", "KAIST_chip_scale_optical_QRNG_research")
+    }
+    // Unknown source → tier=-1 sentinel
+    return rng_meta_make(name, -1, 0, 0, 0, 0, 0, 0, "UNKNOWN", "")
+}
+
+// ── Collect dispatch ────────────────────────────────────────
+
+fn rng_registry_collect(name: str, n_bytes: int, seed: int) -> RngCollectResult {
+    if name == "urandom" {
+        return _registry_collect_urandom(n_bytes, seed)
+    }
+    if name == "esp32" {
+        return _registry_collect_esp32(n_bytes, seed)
+    }
+    if name == "anu" {
+        return _registry_collect_anu(n_bytes, seed)
+    }
+    if name == "ibm_q" {
+        return rng_result_fail("ibm_q: STUB — qiskit-ibm-runtime SDK + IBM_QUANTUM_TOKEN required")
+    }
+    if name == "idq_quantis" {
+        return rng_result_fail("idq_quantis: STUB — libQuantis SDK + PCIe/USB device required")
+    }
+    if name == "kaist_optical" {
+        return rng_result_fail("kaist_optical: STUB — research collaboration + IRB + custom FPGA fw required")
+    }
+    return rng_result_fail("unknown source: " + name)
+}
+
+// ── urandom collect (mirror anima/modules/rng/urandom.hexa) ─
+
+fn _registry_collect_urandom(n_bytes: int, seed: int) -> RngCollectResult {
+    if n_bytes < 1 {
+        return rng_result_fail("urandom: n_bytes must be >= 1")
+    }
+    let tmp = "/tmp/anima_rng_urandom_" + str(seed) + "_" + str(n_bytes) + ".bin"
+    let cmd_dd = "dd if=/dev/urandom of=" + tmp + " bs=1 count=" + str(n_bytes) + " status=none 2>&1; echo OK"
+    let _rc = exec(cmd_dd)
+    let cmd_od = "od -An -v -tu1 " + tmp + " | tr '\\n' ' '"
+    let out = exec(cmd_od)
+    let parts = out.split(" ")
+    let mut bytes_ = []
+    let mut i = 0
+    while i < len(parts) {
+        let p = parts[i]
+        if len(p) > 0 {
+            let b = to_int(p)
+            if b >= 0 {
+                if b <= 255 {
+                    bytes_ = bytes_.push(b)
+                }
+            }
+        }
+        i = i + 1
+    }
+    let cmd_sha = "(shasum -a 256 " + tmp + " 2>/dev/null || sha256sum " + tmp + ") | awk '{print $1}'"
+    let sha = exec(cmd_sha).trim()
+    let _rc2 = exec("rm -f " + tmp + "; echo OK")
+    if len(bytes_) != n_bytes {
+        return rng_result_fail("urandom: byte count mismatch want=" + str(n_bytes) + " got=" + str(len(bytes_)))
+    }
+    return rng_result_ok(bytes_, sha, "urandom: ok")
+}
+
+// ── esp32 collect (mirror anima/modules/rng/esp32.hexa) ────
+
+fn _registry_collect_esp32(n_bytes: int, seed: int) -> RngCollectResult {
+    if n_bytes < 1 {
+        return rng_result_fail("esp32: n_bytes must be >= 1")
+    }
+    let mut s = if seed > 0 { seed } else { 2463534242 }
+    let mut bytes_ = []
+    let mut i = 0
+    while i < n_bytes {
+        s = (1664525 * s + 1013904223) % 4294967296
+        let sample = (s * 1.0) / 4294967295.0
+        let b = to_int(sample * 256.0)
+        let b_clamp = if b > 255 { 255 } else { if b < 0 { 0 } else { b } }
+        bytes_ = bytes_.push(b_clamp)
+        i = i + 1
+    }
+    let sha = _bytes_sha256(bytes_, "esp32_" + str(seed))
+    return rng_result_ok(bytes_, sha, "esp32: ok (mock LCG; hw_serial pending)")
+}
+
+// ── anu collect (mirror anima/modules/rng/anu.hexa) ────────
+
+fn _anu_parse_json_reg(body: str) -> [int] {
+    if body.contains("\"success\":true") == false { return [] }
+    if body.contains("\"data\":[") == false { return [] }
+    let after = body.split("\"data\":[")
+    if len(after) < 2 { return [] }
+    let arr_and_rest = after[1]
+    let arr_parts = arr_and_rest.split("]")
+    if len(arr_parts) < 1 { return [] }
+    let arr_str = arr_parts[0]
+    let toks = arr_str.split(",")
+    let mut out = []
+    let mut i = 0
+    while i < len(toks) {
+        let t = toks[i].trim()
+        if len(t) > 0 {
+            let v = to_int(t)
+            if v >= 0 {
+                if v <= 255 {
+                    out = out.push(v)
+                }
+            }
+        }
+        i = i + 1
+    }
+    return out
+}
+
+fn _registry_collect_anu(n_bytes: int, seed: int) -> RngCollectResult {
+    if n_bytes < 1 {
+        return rng_result_fail("anu: n_bytes must be >= 1")
+    }
+    let mock_env = exec("printenv ANIMA_QRNG_MOCK 2>/dev/null || true").trim()
+    if mock_env == "1" {
+        let mut s = if seed > 0 { seed } else { 12345 }
+        let mut bytes_ = []
+        let mut i = 0
+        while i < n_bytes {
+            s = (1664525 * s + 1013904223) % 4294967296
+            let b = (s % 256)
+            bytes_ = bytes_.push(b)
+            i = i + 1
+        }
+        let sha = _bytes_sha256(bytes_, "anu_" + str(seed))
+        return rng_result_ok(bytes_, sha, "anu: mock fixture (ANIMA_QRNG_MOCK=1)")
+    }
+    let mut accum = []
+    let mut remaining = n_bytes
+    let mut chunk_idx = 0
+    while remaining > 0 {
+        let want = if remaining < 1024 { remaining } else { 1024 }
+        let url = "https://qrng.anu.edu.au/API/jsonI.php?length=" + str(want) + "&type=uint8"
+        let cmd = "curl -sS --max-time 10 '" + url + "' 2>&1"
+        let body = exec(cmd).trim()
+        if len(body) < 1 {
+            return rng_result_fail("anu: empty response (network/timeout) chunk=" + str(chunk_idx))
+        }
+        let chunk_bytes = _anu_parse_json_reg(body)
+        if len(chunk_bytes) != want {
+            return rng_result_fail("anu: parse mismatch want=" + str(want) + " got=" + str(len(chunk_bytes)) + " chunk=" + str(chunk_idx))
+        }
+        let mut i = 0
+        while i < len(chunk_bytes) {
+            accum = accum.push(chunk_bytes[i])
+            i = i + 1
+        }
+        remaining = remaining - want
+        chunk_idx = chunk_idx + 1
+        if remaining > 0 {
+            let _rc = exec("sleep 1; echo OK")
+        }
+    }
+    let sha = _bytes_sha256(accum, "anu_" + str(seed))
+    return rng_result_ok(accum, sha, "anu: ok (live, " + str(chunk_idx) + " chunks)")
+}
+
+// ── Selftest ───────────────────────────────────────────────
+
+fn _selftest_registry() -> int {
+    // 1. names list = 6
+    let names = rng_registry_names()
+    if len(names) != 6 { return 0 }
+    // 2. each name has well-formed meta
+    let mut i = 0
+    while i < len(names) {
+        let m = rng_registry_meta(names[i])
+        if m.name != names[i] { return 0 }
+        if m.tier < 0 { return 0 }
+        if len(m.status) < 1 { return 0 }
+        i = i + 1
+    }
+    // 3. unknown name → UNKNOWN sentinel
+    let m_x = rng_registry_meta("nonexistent_source")
+    if m_x.tier != -1 { return 0 }
+    if m_x.status != "UNKNOWN" { return 0 }
+    // 4. collect — urandom live (always works on POSIX)
+    let r_u = rng_registry_collect("urandom", 8, 11)
+    if r_u.ok != 1 { return 0 }
+    if r_u.n_bytes != 8 { return 0 }
+    // 5. collect — esp32 deterministic
+    let r_e1 = rng_registry_collect("esp32", 8, 42)
+    let r_e2 = rng_registry_collect("esp32", 8, 42)
+    if r_e1.ok != 1 { return 0 }
+    if r_e2.ok != 1 { return 0 }
+    let mut k = 0
+    while k < 8 {
+        if r_e1.bytes_[k] != r_e2.bytes_[k] { return 0 }
+        k = k + 1
+    }
+    // 6. collect — stubs return ok=0
+    let r_ibm = rng_registry_collect("ibm_q", 8, 0)
+    if r_ibm.ok != 0 { return 0 }
+    let r_idq = rng_registry_collect("idq_quantis", 8, 0)
+    if r_idq.ok != 0 { return 0 }
+    let r_kai = rng_registry_collect("kaist_optical", 8, 0)
+    if r_kai.ok != 0 { return 0 }
+    // 7. unknown source → ok=0
+    let r_x = rng_registry_collect("nonexistent_source", 8, 0)
+    if r_x.ok != 0 { return 0 }
+    return 1
+}
+
+fn main() {
+    println("[rng/registry] 6-source dispatch table")
+    if _selftest_registry() == 1 {
+        println("[rng/registry] SELFTEST PASS")
+    } else {
+        println("[rng/registry] SELFTEST FAIL")
+    }
+}
