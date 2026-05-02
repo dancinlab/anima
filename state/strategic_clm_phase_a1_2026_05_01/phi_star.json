@@ -1,0 +1,94 @@
+{
+  "schema": "anima/phi_star/1",
+  "backbone": "CLM_v4_530M",
+  "substrate": "CLM continuous-state recurrent (decoder_v3 byte-level)",
+  "ckpt": "/home/aiden/anima/checkpoints/clm_v4_350m/scale_350m/best.pt",
+  "d_model": 768,
+  "n_layer": 16,
+  "vocab_size": 64000,
+  "n_probes": 16,
+  "K_partitions": 8,
+  "hidden_truncated": 128,
+  "half_size": 8,
+  "ridge": 0.0001,
+  "seed": 42,
+  "I_full": -1066.9658,
+  "phi_star_min": 1167.6192,
+  "phi_mean": 1168.6966,
+  "phi_max": 1169.8805,
+  "gate_positive_PASS": true,
+  "gate_substantial_PASS": true,
+  "gate_magnitude_PASS": true,
+  "phi_star_signed_magnitude": 1167.6192,
+  "phi_star_sign": "positive_iit_integrated",
+  "partitions": [
+    {
+      "k": 0,
+      "S1_size": 8,
+      "S2_size": 8,
+      "I_1": -1116.8453,
+      "I_2": -1118.9858,
+      "phi": 1168.8653
+    },
+    {
+      "k": 1,
+      "S1_size": 8,
+      "S2_size": 8,
+      "I_1": -1117.1768,
+      "I_2": -1118.767,
+      "phi": 1168.978
+    },
+    {
+      "k": 2,
+      "S1_size": 8,
+      "S2_size": 8,
+      "I_1": -1117.2301,
+      "I_2": -1117.7398,
+      "phi": 1168.0041
+    },
+    {
+      "k": 3,
+      "S1_size": 8,
+      "S2_size": 8,
+      "I_1": -1117.9154,
+      "I_2": -1116.6696,
+      "phi": 1167.6192
+    },
+    {
+      "k": 4,
+      "S1_size": 8,
+      "S2_size": 8,
+      "I_1": -1118.9088,
+      "I_2": -1117.9375,
+      "phi": 1169.8805
+    },
+    {
+      "k": 5,
+      "S1_size": 8,
+      "S2_size": 8,
+      "I_1": -1120.0312,
+      "I_2": -1116.1635,
+      "phi": 1169.2289
+    },
+    {
+      "k": 6,
+      "S1_size": 8,
+      "S2_size": 8,
+      "I_1": -1116.5373,
+      "I_2": -1119.5162,
+      "phi": 1169.0876
+    },
+    {
+      "k": 7,
+      "S1_size": 8,
+      "S2_size": 8,
+      "I_1": -1117.8028,
+      "I_2": -1117.0724,
+      "phi": 1167.9095
+    }
+  ],
+  "partition_method": "sample-partition (N=16 -> 8|8 halves)",
+  "metric_design": "schema parity with state/v10_benchmark_v4/*/phi_star.json (HID=128 fixed, ridge=1e-4)",
+  "elapsed_sec": 5.84,
+  "ts": "2026-05-02T08:06:41Z"
+}

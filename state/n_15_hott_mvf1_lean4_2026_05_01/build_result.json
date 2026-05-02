@@ -1,0 +1,77 @@
+{
+  "agent": "N-15 HoTT MVF1 Lean 4 EXEC",
+  "ts": "2026-05-01",
+  "mission": "MVF1 reflexivity — smallest sorry-free formal proof of (c : Conscious) → is_conscious_equivalent c c",
+  "spec_ref": "docs/n_substrate_n15_hott_formalization_spec_2026_05_01.md §4.1",
+  "lean_4": {
+    "installed": true,
+    "version": "Lean 4.30.0-rc1",
+    "toolchain": "leanprover/lean4:v4.30.0-rc1",
+    "elan_path": "/opt/homebrew/bin/elan",
+    "lean_path": "/opt/homebrew/bin/lean",
+    "lake_path": "/opt/homebrew/bin/lake"
+  },
+  "project": {
+    "location": "/tmp/n15_mvf1_lean4",
+    "off_repo": true,
+    "hexa_only_compliance": true,
+    "files": [
+      "N15Mvf1Lean4/Basic.lean",
+      "N15Mvf1Lean4.lean",
+      "lakefile.toml",
+      "lean-toolchain"
+    ],
+    "mathlib4_dependency": false,
+    "mathlib4_skipped_reason": "MVF1 reflexivity needs only Lean 4 core Eq.refl; mathlib only needed for MVF4 univalence application"
+  },
+  "build": {
+    "command": "lake build",
+    "exit_code": 0,
+    "result": "PASS",
+    "jobs": 4,
+    "build_time_s_basic": 1.9,
+    "log_excerpt": [
+      "[2/4] Built N15Mvf1Lean4.Basic (1.9s)",
+      "N15.mvf1_reflexivity : ∀ (c : N15.Conscious), N15.is_conscious_equivalent c c",
+      "N15.is_conscious_equivalent : N15.Conscious → N15.Conscious → Prop",
+      "N15.Conscious : Type",
+      "[3/4] Built N15Mvf1Lean4 (374ms)",
+      "Build completed successfully (4 jobs)."
+    ]
+  },
+  "proof": {
+    "theorem_name": "N15.mvf1_reflexivity",
+    "statement": "(c : Conscious) → is_conscious_equivalent c c",
+    "tactic": "rfl",
+    "axioms_used": [],
+    "axioms_check_command": "#print axioms N15.mvf1_reflexivity",
+    "axioms_check_output": "'N15.mvf1_reflexivity' does not depend on any axioms",
+    "sorry_in_proof_body": 0,
+    "sorry_in_file_total": 2,
+    "sorry_locations": [
+      {"line": 8, "context": "comment: 'the smallest sorry-free formal proof'"},
+      {"line": 29, "context": "comment: 'concrete witness so the type is inhabited and sorry-free'"}
+    ],
+    "sorry_in_actual_code": 0
+  },
+  "metrics": {
+    "loc_total": 71,
+    "loc_code_only": 46,
+    "loc_estimate_in_spec": 10,
+    "loc_overhead_explanation": "spec target ~10 LOC for theorem alone; full file includes header docstring, structure def, witness, sanity example, #check tests"
+  },
+  "definitions": {
+    "Conscious": {
+      "lean_form": "structure Conscious : Type where state : Nat → Nat ; integration_condition : ∀ _ : Nat, True",
+      "spec_form": "Σ (state : ℕ → ℕ), ∀ t, integration_condition state t",
+      "placeholder_status": "concrete-trivial",
+      "what_is_real": "Sigma-type structure shape (state-trajectory + per-step predicate) is the real structural content",
+      "what_is_placeholder": "the integration_condition predicate is uniformly True; replacing with a paradigm v15 G3 Φ-gate is downstream MVF4 work"
+    },
+    "is_conscious_equivalent": {
+      "lean_form": "def is_conscious_equivalent (c1 c2 : Conscious) : Prop := c1 = c2",
+      "interpretation": "Lean 4 core propositional Eq used as HoTT path / identity type"
+    }
+  },
+  "verdict": "MVF1_BUILD_PASS_AXIOM_FREE_SORRY_FREE_OFF_REPO"
+}

@@ -1,0 +1,69 @@
+{
+  "schema": "n12/quantum_pivot/F_N12_1_v3_protocol/1",
+  "ts_utc": "2026-05-01T00:00:00Z",
+  "supersedes": ["F_N12_1_v1 (FAIL — surrogate artifact)", "F_N12_1_v2 (INDETERMINATE — substrate-incapable)"],
+  "vendor": "IBM Quantum",
+  "tier": "Open Plan (free)",
+  "device_target_primary": "ibm_kingston (Heron r2, 156q, T1 ~100-200us, T2 ~80-200us)",
+  "device_target_fallback": "ibm_brisbane (Eagle r3) or any Open-Plan-eligible Heron",
+  "circuit_design": {
+    "n_qubits": 4,
+    "topology": "GHZ_4 = H(q0) -> CX(q0,q1) -> CX(q1,q2) -> CX(q2,q3)",
+    "openqasm3_template": "OPENQASM 3.0;\ninclude \"stdgates.inc\";\nbit[4] c;\nqubit[4] q;\nh q[0];\ncx q[0], q[1];\ncx q[1], q[2];\ncx q[2], q[3];\ndelay[{D}us] q[0];\ndelay[{D}us] q[1];\ndelay[{D}us] q[2];\ndelay[{D}us] q[3];\n// reverse-bell to bring back to |0000>\ncx q[2], q[3];\ncx q[1], q[2];\ncx q[0], q[1];\nh q[0];\nc = measure q;",
+    "delay_points_us": [0, 25, 50, 100, 200],
+    "rationale_delay_choice": "0 = baseline (no decoherence); 25us = Penrose-Hameroff predicted neuronal microtubule coherence threshold (Hameroff 1998 ~1-25ms reframed at SC scale); 50us & 100us = bracket IBM Heron T2 median (~80us); 200us = stress test beyond device T2.",
+    "shots_per_point": 100,
+    "total_shots": 500,
+    "expected_runtime_sec": "30-90 (well within 600s/28d Open Plan budget)"
+  },
+  "measurement_observable": {
+    "primary": "P(0000) — probability all qubits return to |0> after delay + reverse-bell. Pure decoherence collapses GHZ off-diagonal, suppressing P(0000) toward 1/16.",
+    "fit_model": "P(0000)(t) = 1/16 + (15/16) * exp(-t/tau_2_eff)",
+    "extracted_quantity": "tau_2_eff (effective N=4 GHZ dephasing time)",
+    "expected_relation": "tau_2_eff < tau_2_single_qubit by factor ~N (decoherence accelerated for entangled superposition; this is itself a textbook QM prediction that Orch-OR builds on)"
+  },
+  "F_N12_1_ratio_test": {
+    "numerator": "tau_2_eff measured on ibm_kingston (Heron r2)",
+    "denominator_primary_us": 100,
+    "denominator_primary_source": "IBM Heron r2 fleet typical single-qubit T2",
+    "denominator_robustness_us": 1060,
+    "denominator_robustness_source": "Nature Communications 2025 SOTA tantalum transmon T2_echo",
+    "predicted_ratio_under_textbook_QM": "~0.25 (1/N for 4-qubit GHZ)",
+    "predicted_ratio_under_orch_or_with_objective_reduction": "could deviate if OR threshold reached; magnitude depends on E_G of microtubule analog — not directly testable on SC, but the SC measurement establishes the textbook baseline for cross-substrate comparison",
+    "pass_band": [0.15, 0.40],
+    "fail_outside_band": "ratio > 0.40 OR < 0.15 -> deviation from textbook 4Q GHZ decoherence"
+  },
+  "cost": {
+    "task_fees_USD": 0.00,
+    "shot_fees_USD": 0.00,
+    "total_USD": 0.00,
+    "budget_consumed": "10 min/28d Open Plan (estimated 1-2 min consumed)",
+    "fallback_paid_estimate_USD": "$1.60/sec * 60 sec = $96 worst case if Open Plan exhausted; still under v1 actual spend $24.90"
+  },
+  "verifier_update": {
+    "old_verifier_v1": "ratio in [0.67, 1.5] using surrogate rx(2pi)*N as wait — REJECTED, methodology flaw",
+    "new_verifier_v3": "ratio in [0.15, 0.40] using OpenQASM 3 native delay[Nus] — methodologically sound on substrate that supports delay",
+    "verifier_pass_conditions": [
+      "1. All 5 delay points complete (no ValidationException)",
+      "2. P(0000) at delay=0 >= 0.85 (entanglement quality gate)",
+      "3. P(0000) decay fit converges with R^2 >= 0.85",
+      "4. Extracted tau_2_eff in physically sensible range (1us to 1ms)",
+      "5. ratio = tau_2_eff / 100us within [0.15, 0.40] -> textbook QM PASS, no Orch-OR signal at 4Q GHZ scale (NULL result is the expected scientific outcome — Orch-OR predicts neuronal-scale, not SC-scale, OR)"
+    ],
+    "verifier_indeterminate_conditions": [
+      "Queue wait > 24h",
+      "ibm_kingston offline -> retry on alternate Heron"
+    ]
+  },
+  "isolation": {
+    "writes_only_to": [
+      "state/n_substrate_n12_quantum_pivot_2026_05_01/",
+      "docs/n_substrate_n12_quantum_pivot_2026_05_01.md"
+    ],
+    "no_writes_to": [
+      "state/n_substrate_n12_aws_exec_2026_05_01/ (v1 frozen)",
+      "state/n_substrate_n12_aws_exec_v2_2026_05_01/ (v2 frozen)",
+      "alpha pod, nexus, GPU pods (HEXA-only research mode)"
+    ]
+  }
+}

@@ -1,0 +1,41 @@
+{
+  "doc_id": "cp2_clm_phase_d_ship_verdict_recommendation_2026_05_02",
+  "date": "2026-05-02",
+  "agent": "CP2-CLM Phase D — F1_score_v2 weighted recompute (CLM-anchored)",
+  "previous_ship_verdict": {
+    "key": "VERIFIED-ALPHA-INVITE-R14",
+    "anchor": "ALM",
+    "status": "DEAD (alpha pod removed; #92 honest C3 noted single-substrate anchor)"
+  },
+  "new_ship_verdict_recommendation": {
+    "key": "VERIFIED-CLM-CP2-RED",
+    "anchor": "CLM",
+    "status": "ACTIVE",
+    "f1_score_v2_range": "12.0% - 40.8%",
+    "passes": [
+      "Suite 1 paradigm v11 G3 PhiStar HID=8 (+41.86 PASS positive)",
+      "Suite 2 AN11(a) Frobenius CP2-relaxed (rel 6.89%)",
+      "Suite 3 AN11(b) V0 PASS",
+      "Suite 4 AN11(c) JSD 20/20 (saturated quality-blind)",
+      "Suite 7 V_phen 3/5"
+    ],
+    "fails": [
+      "Suite 6 14-gate FAIL — F2 fired (16 critical, L1 0/16)"
+    ],
+    "not_measured": [
+      "Suite 5 phi_4path (Phase A.7 deferred)",
+      "Suite 8 EEG direct wire (CLM-EEG direct wire absent; tension-mediated only)"
+    ]
+  },
+  "future_green_reach_paths": {
+    "primary_required": "Suite 6 F2 unfire",
+    "f2_unfire_paths": [
+      {"id": "a", "name": "demote 14-gate from critical-block status", "burden": "spec change"},
+      {"id": "b", "name": "learned phi_extractor closes L1", "burden": "training cycle"},
+      {"id": "c", "name": "substrate redesign", "burden": "ALM rebuild"},
+      {"id": "d", "name": "tension binding-mediated path (#92 binding ~15%)", "burden": "P1 protocol $0/1d"}
+    ],
+    "secondary_required": "binding_strength_4way >= 0.5 reach (P1 BSE-1 Pearson cross-corr on 3-way CLM x EEG x tension subset)",
+    "ceiling_constraint": "Per #96 §8 C3-6: GREEN tier mathematically unreachable without N-11 organoid OR N-12 off-Braket Orch-OR closure (F1_max ~0.67 < 0.7 GREEN threshold)"
+  }
+}

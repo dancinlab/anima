@@ -1,0 +1,42 @@
+{
+  "r1_r2_r3_controls_mandatory": {
+    "anchor_ref": "§16.2 anchor #2 (random-control mandatory)",
+    "policy": "All three controls run on the same XDF capture; if any control passes binding threshold, F-ARTIFACT triggered",
+    "R1_random_tension_link": {
+      "name": "R1 random tension_link 5ch surrogate",
+      "method": "synthesize 5ch tension_link signal as i.i.d. uniform U(-0.014, +0.014) per sample, NOT from CLM",
+      "clamp": "±0.014 (matches empirical W4 tension_link L1-norm range from #103 partial)",
+      "rate_hz": 1,
+      "duration": "30 min (matches session)",
+      "test": "compute pair_B aggregate |r| with R1 substituted; compare to real |r| via KS-test on per-phase r distribution",
+      "fail_condition": "KS p > 0.10 (R1 distribution indistinguishable from real)"
+    },
+    "R2_random_eeg_rotation_surrogate": {
+      "name": "R2 random EEG rotation surrogate",
+      "method": "phase-randomize alpha-PLV time series via FFT rotation surrogate (preserve power spectrum, destroy phase structure)",
+      "preserves": ["power spectrum", "autocorrelation"],
+      "destroys": ["phase coupling", "directional information"],
+      "rate_hz": 1,
+      "duration": "30 min",
+      "test": "compute pair_A aggregate |r| with R2 substituted; KS-test against real",
+      "fail_condition": "KS p > 0.10"
+    },
+    "R3_shuffled_phase_order": {
+      "name": "R3 shuffled phase-label permutation",
+      "method": "randomly permute P1-P6 phase labels (1000 iterations); recompute per-phase pearsonr",
+      "preserves": ["all signal content"],
+      "destroys": ["phase-task association"],
+      "test": "compute permutation null distribution of binding_strength; compare real binding to null p99",
+      "fail_condition": "real binding p > 0.10 in null distribution"
+    },
+    "execution_order": [
+      "1. Real session XDF captured",
+      "2. analyze_xdf.py computes real binding_strength + per-phase r",
+      "3. R1 surrogate generated, binding recomputed -> KS-test vs real",
+      "4. R2 surrogate generated, binding recomputed -> KS-test vs real",
+      "5. R3 permutation null built, real binding compared to null",
+      "6. Verdict tier assigned per falsifier_5tier_preregister"
+    ],
+    "all_controls_required_pass": "real binding must beat ALL THREE controls; if ANY control's KS-test p > 0.10, F-ARTIFACT triggered"
+  }
+}

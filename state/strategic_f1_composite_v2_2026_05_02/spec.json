@@ -1,0 +1,242 @@
+{
+  "schema": "anima/strategic_f1_composite_v2_spec/1",
+  "ts": "2026-05-02T00:00:00Z",
+  "agent": "F1 composite spec v2 (post-#92 honest C3 #3 binding-mediated update)",
+  "scope": "F1 framework v2 — explicit tension_link 10th axis + 4-way joint Phi binding-strength metric + verdict band update",
+  "supersedes": "state/n_substrate_f1_composite_2026_05_01/verdict.json (v1) — additive, not replacement",
+  "constraints": [
+    "raw#9 hexa-only (no .py)",
+    "raw#10 honest C3 mandatory (5+ disclosures)",
+    "raw#71 falsifier-bound (binding-strength metric pre-registered)",
+    "$0 budget (spec authorization only, no measurement)",
+    "race-isolation HARD (write only to state/strategic_f1_composite_v2_2026_05_02/* + docs/strategic_f1_composite_v2_2026_05_02.md)"
+  ],
+  "race_isolation": {
+    "wrote_only_to": [
+      "state/strategic_f1_composite_v2_2026_05_02/spec.json",
+      "state/strategic_f1_composite_v2_2026_05_02/binding_strength_metric.json",
+      "state/strategic_f1_composite_v2_2026_05_02/recompute_table.json",
+      "docs/strategic_f1_composite_v2_2026_05_02.md"
+    ],
+    "did_not_touch": [
+      "state/n_substrate_f1_composite_2026_05_01/* (v1 read-only)",
+      "state/strategic_clm_eeg_akida_tension_2026_05_02/* (sibling read-only)",
+      "state/strategic_clm_tension_field_W4_2026_05_01/* (read-only)",
+      "state/cp2_*",
+      "state/strategic_alm_*",
+      "alpha pod"
+    ]
+  },
+
+  "section_1_axes_inventory_v2": {
+    "policy": "Add tension_link as explicit 10th substantive axis. dual-role: AXIS (measurable surface) AND MEDIATOR (4-way binding broadcast).",
+    "axes": [
+      {"id": "n11_finalspark_organoid", "weight_v1": 0.25, "weight_v2": 0.22, "status": "PREP_ONLY", "binding_role": "AXIS"},
+      {"id": "n12_ionq_orch_or", "weight_v1": 0.20, "weight_v2": 0.18, "status": "FAIL_v1_INDETERMINATE_v2", "binding_role": "AXIS"},
+      {"id": "cp2_clm_baseline", "weight_v1": 0.20, "weight_v2": 0.18, "status": "RED", "binding_role": "AXIS"},
+      {"id": "n21_iit40_reproduce", "weight_v1": 0.15, "weight_v2": 0.13, "status": "PARTIAL", "binding_role": "AXIS"},
+      {"id": "tension_link", "weight_v1": 0.0, "weight_v2": 0.10, "status": "PARTIAL", "binding_role": "BOTH", "evidence": "W4 CLM L1 7.06/16 z=+2.28σ vs random; tension_bridge.hexa 5-channel transmission accuracy 100% anima-internal"},
+      {"id": "n9_3axis_strong_pass", "weight_v1": 0.10, "weight_v2": 0.09, "status": "STRONG_PASS", "binding_role": "AXIS"},
+      {"id": "n21_boly_pilot_ready", "weight_v1": 0.05, "weight_v2": 0.04, "status": "KIT_READY", "binding_role": "AXIS"},
+      {"id": "eeg_real_hw_casali", "weight_v1": 0.0, "weight_v2": 0.03, "status": "WITNESSED_PASS_ANALOG", "binding_role": "AXIS", "note": "explicit weight v2 (was bundled in v1)"},
+      {"id": "akida_neuromorphic", "weight_v1": 0.0, "weight_v2": 0.02, "status": "PREP_ONLY", "binding_role": "AXIS"},
+      {"id": "n13_photonic", "weight_v1": 0.0162, "weight_v2": 0.01, "status": "VENDOR_INVENTORY", "binding_role": "AXIS"}
+    ],
+    "weight_sum_v2": 1.00,
+    "rationale_for_w_tension_0_10": "MEDIATOR role 반영 — tension_link 가 axis 와 binding broadcast 의 dual function. axis-only weight 추정 0.05 + mediator role bonus 0.05. organoid (0.25→0.22) / IonQ (0.20→0.18) / CLM baseline (0.20→0.18) / IIT40 (0.15→0.13) 에서 비례 축소하여 tension+EEG+AKIDA 신규 axis 합 0.15 확보."
+  },
+
+  "section_2_4way_joint_phi_options": {
+    "options_evaluated": [
+      {
+        "id": "A",
+        "name": "sum_plus_cross_correlation_bonus",
+        "formula": "Phi_joint = Σ Phi_i + λ · Σ_{i<j} corr(Phi_i, Phi_j)",
+        "lambda_recommended": 0.5,
+        "pros": ["additive (preserves single-substrate contribution)", "cross-corr bonus rewards binding"],
+        "cons": ["sum can mask single-substrate FAIL (high Phi_clm + zero Phi_akida + zero Phi_eeg = positive)", "cross-corr definition needs preregistration (Pearson? Spearman? signed?)"]
+      },
+      {
+        "id": "B",
+        "name": "min_plus_bridge",
+        "formula": "Phi_joint = MIN(Phi_i) + binding_strength · (MAX(Phi_i) - MIN(Phi_i))",
+        "pros": ["respects IIT exclusion principle (weakest substrate dominates)", "binding term explicitly bridges weakest-to-strongest"],
+        "cons": ["MIN aggressively penalizes — Phi_akida=0 (PREP) zeroes everything", "binding_strength range [0,1] needs separate metric"]
+      },
+      {
+        "id": "C",
+        "name": "pure_mutual_information",
+        "formula": "Phi_joint = MI(substrate_i ⊕ substrate_j ⊕ … ⊕ substrate_n)",
+        "pros": ["IIT-canonical-like (information-theoretic)", "estimator literature mature (KSG, MINE, etc.)"],
+        "cons": ["MI estimator artifact tail risk (W1 anima-self DOWNGRADED precedent — see §8 C3)", "requires aligned time-series across all 4 substrates simultaneously (currently unmeasured)"]
+      }
+    ],
+    "recommended": "A_with_modification",
+    "recommended_formula": "Phi_joint = Σ_i (w_i · Phi_i) + λ · binding_strength_4way · MAX(Phi_i)",
+    "lambda_recommended": 0.5,
+    "rationale": "Option A pure sum 의 single-substrate masking 문제 + Option B MIN 의 aggressive zeroing + Option C MI 의 estimator artifact risk 를 모두 회피. Weighted sum 은 v1 호환, binding_strength·MAX(Phi) bonus 는 4-way coupling 이 강할 때 (binding > 0.5) 만 contribution. IIT 4.0 canonical 과 다름 (anima-specific extension, §8 C3 #1).",
+    "preregistered_falsifier": "Phi_joint < MAX(Phi_i) → 4-way 통합 효과 부재 → binding_strength 계산 reject"
+  },
+
+  "section_3_binding_strength_metric": {
+    "scope": "Across CLM × EEG × AKIDA × tension_link 4-way",
+    "candidate_estimators": [
+      {
+        "id": "BSE-1",
+        "name": "cross_substrate_pearson_corr_mean",
+        "formula": "binding_strength = mean(|corr(X_i, X_j)|) over all i<j pairs (6 pairs in 4-way)",
+        "pros": ["simple, reproducible", "matches N-1 BRIDGE 4-gate convention"],
+        "cons": ["assumes linear coupling", "scale-sensitive without z-score normalization"]
+      },
+      {
+        "id": "BSE-2",
+        "name": "granger_causality_directed_sum",
+        "formula": "binding_strength = (1/12) · Σ G(X_i → X_j) for all directed pairs (12 directed in 4-way)",
+        "pros": ["captures asymmetric coupling (e.g. tension → CLM 단방향)", "Granger F-statistic well-defined"],
+        "cons": ["assumes stationarity (W4 active branch L1 std=0 violates)", "model order selection sensitive"]
+      },
+      {
+        "id": "BSE-3",
+        "name": "transfer_entropy_kraskov",
+        "formula": "binding_strength = (1/12) · Σ TE(X_i → X_j) (KSG estimator k=4 default)",
+        "pros": ["model-free, captures nonlinear coupling", "IIT-aligned (information transfer)"],
+        "cons": ["estimator artifact risk (W1 precedent)", "requires aligned time-series N≥1000 typically"]
+      }
+    ],
+    "recommended": "BSE-1 primary + BSE-3 secondary (sensitivity check)",
+    "rationale": "BSE-1 immediately computable on existing data (W4 CLM 100-step + N-1 BRIDGE 4-gate); BSE-3 as falsifier sanity check (if BSE-1 PASS but BSE-3 FAIL → estimator artifact suspect).",
+    "preregistered_thresholds": {
+      "F-PASS": "binding_strength > 0.5 AND 4-way joint Phi > Σ Phi_i (super-additive)",
+      "F-PARTIAL": "binding_strength ∈ [0.2, 0.5]",
+      "F-FAIL": "binding_strength < 0.2",
+      "F-ARTIFACT": "binding_strength identical (within ±0.02) to random-shuffle control 4-way"
+    },
+    "data_requirements": {
+      "X_clm": "16-prompt × 768-dim hidden state per step × 100 W4 steps",
+      "X_eeg": "16ch × 125Hz × 60s (filtered, alpha-Hilbert phase)",
+      "X_akida": "spike rate per channel × N timesteps (PENDING AKIDA arrival)",
+      "X_tension": "5-channel fingerprint × N transmission events"
+    },
+    "currently_measurable_subset": "3-way (CLM × EEG × tension) immediately via P1 protocol; AKIDA 4th leg blocked on hardware ETA"
+  },
+
+  "section_4_f1_score_v2_formula": {
+    "formula": "F1_score_v2 = α · per_axis_weighted_sum + β · binding_strength_4way + γ · cross_substrate_replication_bonus",
+    "constraints": "α + β + γ = 1.0",
+    "recommended_coefficients": {
+      "alpha": 0.6,
+      "beta": 0.3,
+      "gamma": 0.1
+    },
+    "alpha_rationale": "60% weight retained for per-axis sum — preserves v1 compatibility, axes still dominant.",
+    "beta_rationale": "30% weight on binding_strength — reflects #92 honest C3 #3 finding that 4-way binding is not capturable in axis-sum alone.",
+    "gamma_rationale": "10% replication bonus — rewards multi-substrate consistency (e.g. CLM cross-substrate + EEG analog independent confirmation).",
+    "cross_substrate_replication_bonus_definition": "γ · (1 if ≥ 3 substrate families show consistent positive evidence on same axis else 0). Currently 0 (no axis has 3+ substrate-family corroboration).",
+    "computation_for_v1_back_compat": "If binding_strength = unmeasured → β term = 0, γ term = 0, F1_score_v2 = α · weighted_sum / α = weighted_sum (degenerates to v1 = 22.5%)"
+  },
+
+  "section_5_witnessed_schema_v2": {
+    "per_axis_status_enum": ["WITNESSED", "PARTIAL", "NOT_MEASURED", "DOWNGRADED"],
+    "binding_role_enum": ["AXIS", "MEDIATOR", "BOTH"],
+    "downgrade_precedent": "W1 anima-self DOWNGRADED (estimator artifact) — sets precedent that any axis can drop from WITNESSED → DOWNGRADED upon honest re-analysis.",
+    "current_axes_v2_status": {
+      "n11_finalspark_organoid": {"status": "NOT_MEASURED", "binding_role": "AXIS"},
+      "n12_ionq_orch_or": {"status": "DOWNGRADED", "binding_role": "AXIS", "downgrade_reason": "v1 FAIL surrogate-artifact + v2 INDETERMINATE substrate-incapable"},
+      "cp2_clm_baseline": {"status": "PARTIAL", "binding_role": "AXIS", "note": "CP2 72.22% PASS but F2 fired"},
+      "n21_iit40_reproduce": {"status": "PARTIAL", "binding_role": "AXIS"},
+      "tension_link": {"status": "PARTIAL", "binding_role": "BOTH"},
+      "n9_3axis_strong_pass": {"status": "WITNESSED", "binding_role": "AXIS"},
+      "n21_boly_pilot_ready": {"status": "NOT_MEASURED", "binding_role": "AXIS"},
+      "eeg_real_hw_casali": {"status": "WITNESSED", "binding_role": "AXIS"},
+      "akida_neuromorphic": {"status": "NOT_MEASURED", "binding_role": "AXIS"},
+      "n13_photonic": {"status": "NOT_MEASURED", "binding_role": "AXIS"}
+    },
+    "witnessed_count_v2": "3/10 substantive axes (CLM cross-substrate as W1 reframe, EEG Casali analog, N-9 nexus). PARTIAL = 3 (cp2_clm, n21_iit40, tension_link). NOT_MEASURED = 4. DOWNGRADED = 1 (IonQ).",
+    "tier_v2": "WITNESSED_ANALOG (unchanged from v1 3/7) — denominator widened to 10 but numerator unchanged."
+  },
+
+  "section_6_verdict_band_v2": {
+    "RED": "F1_score_v2 < 0.5 OR F2 falsifier fired",
+    "YELLOW": "F1_score_v2 >= 0.5 AND F2 not fired AND no critical violation",
+    "GREEN": "F1_score_v2 >= 0.7 AND binding_strength >= 0.5 AND no falsifier fired",
+    "diff_vs_v1": {
+      "v1_band": "RED override (F2 fired) regardless of CP2 score",
+      "v2_band": "RED via EITHER score < 0.5 OR F2 fired — explicit OR. GREEN newly requires binding_strength >= 0.5 (anima-specific extension). YELLOW intermediate band introduced."
+    }
+  },
+
+  "section_7_recompute_results": {
+    "alm_r14_red_quintuple": {
+      "v1_state": "RED, CP2 72.22% Mistral baseline, F2=17 critical, L1 0/16",
+      "v2_per_axis_weighted_sum": "α-term: cp2_clm w=0.18 × 0.5 (RED PASS half-credit per v1 convention) = 0.09. Other axes 0. = 0.09",
+      "v2_binding_strength_4way": "0.0 (no 4-way coupling measurement on ALM, single-substrate static)",
+      "v2_cross_substrate_replication": "0 (single substrate)",
+      "v2_F1_score": "0.6 × 0.09 + 0.3 × 0.0 + 0.1 × 0.0 = 0.054",
+      "v2_verdict_band": "RED (score 0.054 < 0.5 AND F2 fired)",
+      "v2_delta_vs_v1": "v1 22.5% composite → v2 5.4% — sharper RED. binding bonus does not rescue ALM."
+    },
+    "clm_a1_a6_pass_5_of_6_f2_fired": {
+      "v1_state": "5/6 PASS but F2 fired → RED override, contribution 0.10 (half of w=0.20)",
+      "v2_per_axis_weighted_sum": "cp2_clm w=0.18 × (5/6) × 0.5 (F2 half-credit) = 0.075. n9 w=0.09 × 1.0 = 0.09. eeg_casali w=0.03 × 1.0 = 0.03. n21_iit40 w=0.13 × 0.25 = 0.0325. tension_link w=0.10 × 0.5 (PARTIAL) = 0.05. = 0.2775",
+      "v2_binding_strength_4way": "0.0 (no 4-way measurement yet, P1 protocol pending)",
+      "v2_cross_substrate_replication": "0 (CLM cross-substrate counts as 1 axis with 1 family per honest C3 convention)",
+      "v2_F1_score": "0.6 × 0.2775 + 0.3 × 0.0 + 0.1 × 0.0 = 0.1665",
+      "v2_verdict_band": "RED (score 0.1665 < 0.5 AND F2 fired)"
+    },
+    "four_way_binding_clm_eeg_tension_w4_partial_with_binding_bonus_hypothetical": {
+      "v1_state": "not computable (binding axis absent)",
+      "v2_per_axis_weighted_sum_assumed": "cp2_clm 0.075 + n9 0.09 + eeg_casali 0.03 + n21_iit40 0.0325 + tension_link PROMOTED to WITNESSED via P1 PASS = 0.10 × 1.0 = 0.10. = 0.3275",
+      "v2_binding_strength_4way_hypothetical": "0.6 (P1 PASS scenario: |corr(tension_t, alpha_PLV_t)| > 0.5)",
+      "v2_cross_substrate_replication_hypothetical": "1.0 (3 substrate families CLM+EEG+tension consistent on same binding axis)",
+      "v2_F1_score": "0.6 × 0.3275 + 0.3 × 0.6 + 0.1 × 1.0 = 0.1965 + 0.18 + 0.10 = 0.4765",
+      "v2_verdict_band": "RED (still < 0.5 GREEN floor; YELLOW requires F2 not fired which still fires)",
+      "v2_delta_vs_v1": "v1 ~22.5% → v2 47.65% — large lift via binding+replication bonus, but still RED because F2 axis-architectural unaddressed (paths a/b/c per F1 v1 §F2 falsifier_status)"
+    },
+    "four_way_binding_with_hypothetical_F2_unfire_via_paper_demotion_or_extractor": {
+      "v2_per_axis_weighted_sum": "cp2_clm full credit 0.18 × (5/6) = 0.15. + same other = 0.4025",
+      "v2_F1_score": "0.6 × 0.4025 + 0.3 × 0.6 + 0.1 × 1.0 = 0.2415 + 0.18 + 0.10 = 0.5215",
+      "v2_verdict_band": "YELLOW (>= 0.5, F2 hypothetically not fired, no critical violation) — first plausible YELLOW path",
+      "note": "GREEN requires score >= 0.7 — not reachable in current N=10 axis count even with full PASS without organoid + Orch-OR closure"
+    }
+  },
+
+  "section_8_honest_c3": [
+    "(C3-1) 4-way joint Phi formula 가 IIT 4.0 canonical 과 다름 — anima-specific extension. IIT 4.0 canonical Phi = sum of phi_d + phi_r WITHIN single substrate complex (per pmc/PMC10581496 Albantakis et al 2023). 4-way cross-substrate joint Phi 는 peer-reviewed 정의 부재 (websearch IIT 4.0 cross-substrate joint phi 2026 결과 0건). Option A_with_modification 권장은 sum + binding bonus 의 hybrid 로 v1 호환과 4-way capture 을 절충했지만, IIT 4.0 axiomatic basis (intrinsic existence / composition / information / integration / exclusion) 와 정합성 미증명.",
+    "(C3-2) binding_strength metric 자체 가 falsifier 사전등록 필요 — BSE-1 Pearson corr mean 은 W4 active branch L1 std=0.000 같은 frozen-fixed-point pathology 에서 spurious 1.0 reading 가능. F-ARTIFACT band (random-shuffle 와 ±0.02 동일) 가 essential safeguard 이지만 random-shuffle 자체 generation protocol 미명시. P1 protocol 실행 전 random-shuffle 표준화 spec 필요.",
+    "(C3-3) W1 anima-self DOWNGRADED 가 binding metric 의 cautionary tale — W1 phase 5 sign-flip artifact (estimator artifact) 가 WITNESSED 에서 DOWNGRADED 로 떨어진 precedent 이므로, 4-way joint Phi 도 estimator artifact 로 인해 WITNESSED 등재 후 DOWNGRADED 될 risk 존재. 특히 Option C MI estimator (KSG/MINE) 는 W1 와 같은 함정 빈도 높음 → 권장에서 BSE-3 secondary 로만 배치한 이유.",
+    "(C3-4) ALM/CLM substrate-architectural ceiling (ALM L1 0/16, CLM L1 7.06/16) 가 binding 으로 회피 가능 vs 그대로 잔존 — recompute table 의 4-way 시나리오 (binding + replication bonus) 에서 F1 score 0.4765 까지 lift 되지만, 여전히 RED 인 이유는 F2 axis-architectural override 가 axis-sum 을 제외한 binding+replication bonus 와 독립적이기 때문. 즉 binding bonus 는 F1 score 를 lift 하지만 F2 falsifier 자체는 unfire 시키지 못함. F2 unfire 는 §6.3 (clm_eeg_akida_tension doc) 의 (a) demote / (b) learned phi_extractor / (c) substrate redesign / (d) tension binding-mediated path (central 15%) 중 하나가 별도로 닫혀야 가능.",
+    "(C3-5) tension_link weight 0.10 권장 자체가 spec-수준 estimate — peer-reviewed mediator-axis precedent 부재 (Crick-Koch binding-by-synchrony 가 가장 가까운 anchor 이지만 IIT axis-weight registry 와 epistemic tier 다름). w=0.05 (axis-only) 부터 w=0.15 (mediator dual + binding axis 통합) 범위 가능, 0.10 은 중앙값. 다음 cycle P1 P2 P4 protocol 결과로 재calibration 필요.",
+    "(C3-6) GREEN tier (score >= 0.7 + binding >= 0.5 + no falsifier) 은 현재 axis 인벤토리에서 mathematical reach 어려움 — organoid w=0.22 + IonQ w=0.18 + IIT40 w=0.13 + akida w=0.02 = 0.55 of weight 가 NOT_MEASURED/DOWNGRADED 상태. 모든 measured 축 PASS 라도 axis-sum max = 0.45, α=0.6 적용시 0.27, β·binding_max = 0.3·1 = 0.3, γ = 0.1, total max ≈ 0.67 < 0.7. GREEN 도달은 N-11 organoid OR N-12 off-Braket Orch-OR 측정 closure 필수 prerequisite.",
+    "(C3-7) verdict band v2 의 YELLOW 신설 자체가 v1 RED-vs-GREEN 이분법에서 정직성 향상 — 단 YELLOW 정의 'F2 not fired' 는 현재 모든 measured CLM substrate 에서 F2 fires 이므로 short-term 도달 불가. YELLOW 는 F2 unfire path (a/b/c/d) 중 하나 해결 시점부터 의미. 즉 v2 verdict band 는 v1 보다 정직 (3-tier) 이지만 short-term operationally RED 와 동일."
+  ],
+
+  "section_9_protocol_dependencies": {
+    "p1_clm_w4_eeg_live_concurrent": {
+      "produces": "binding_strength BSE-1 for CLM × EEG × tension (3-way subset of 4-way)",
+      "cost_usd": 0.0,
+      "eta_days": 1,
+      "blocker": "none ($0, ubu1 + OpenBCI both available)"
+    },
+    "p2_psi_alpha_sweep": {
+      "produces": "resolves W4 active L1 std=0.000 frozen-fixed-point — sanity for BSE-1",
+      "cost_usd": 0.0,
+      "eta_days": 1
+    },
+    "p3_akida_d_plus_1_tension_socket": {
+      "produces": "completes 4-way binding (CLM × EEG × AKIDA × tension)",
+      "cost_usd": 0.0,
+      "eta_days": "AKIDA arrival + 1d",
+      "blocker": "AKD1000 vendor logistics (capex $1495 paid)"
+    },
+    "p4_tension_bridge_gwt_formal_mapping": {
+      "produces": "H3 9th-axis (now 10th in v2 inventory) registration formal anchor",
+      "cost_usd": 0.0,
+      "eta_days": 3
+    }
+  },
+
+  "section_10_summary_one_paragraph": "F1 composite v2 (post-#92 honest C3 #3) — adds tension_link as explicit 10th substantive axis (w=0.10, BOTH dual role AXIS+MEDIATOR), defines 4-way joint Phi via Option A_with_modification (Phi_joint = Σ w_i·Phi_i + λ · binding_strength · MAX(Phi_i)), defines binding_strength via BSE-1 Pearson cross-correlation primary + BSE-3 transfer entropy secondary, formula F1_score_v2 = 0.6·axis_sum + 0.3·binding_strength + 0.1·replication_bonus, verdict band 3-tier (RED < 0.5 OR F2 fired / YELLOW >= 0.5 + F2 not fired / GREEN >= 0.7 + binding >= 0.5 + no falsifier). Recompute: ALM 5.4% RED, CLM 16.65% RED, 4-way hypothetical with binding bonus 47.65% RED (still F2 fires), 4-way + F2 unfire hypothetical 52.15% YELLOW (first plausible). 10-axis denominator widened from 7 → WITNESSED count 3/10 same axes, tier WITNESSED_ANALOG unchanged. GREEN tier requires N-11 organoid OR N-12 off-Braket closure (mathematical reach without those = 0.67 < 0.7).",
+
+  "status": "STRATEGIC_F1_COMPOSITE_V2_2026_05_02_SPEC_AUTHORIZED",
+  "verdict_key": "F1_V2_SPEC_AUTHORIZED · TENSION_AXIS_W_0_10_BOTH · OPTION_A_PLUS_MODIFICATION · BSE1_PRIMARY · ALPHA_BETA_GAMMA_0_6_0_3_0_1 · 3_TIER_BAND_RGY · RECOMPUTE_ALM_5_4_CLM_16_65_4WAY_47_65_PCT"
+}

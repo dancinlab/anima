@@ -1,0 +1,50 @@
+{
+  "study": "Boly_2017_front_vs_back_no_report_protocol",
+  "reference": "Boly, Massimini, Tsuchiya, Postle, Koch, Tononi 2017 J Neurosci 37(40):9603-9613 (DOI 10.1523/JNEUROSCI.3218-16.2017)",
+  "status": "DEFERRED",
+  "reason": "Requires user wearing EEG + eye-tracker during bistable stimulus viewing across multiple sessions; eye-tracker hardware not yet provisioned",
+  "auto_executable": false,
+  "user_action_required": true,
+  "estimated_user_effort_days": 7,
+  "estimated_cost_usd": 0,
+  "hardware": {
+    "eeg_device": "OpenBCI Cyton 16-channel (owned)",
+    "eye_tracker": "Pupil Labs Core or Tobii 4C (NOT YET OWNED — ~$500-700 if needed; or use webcam-based GazeRecorder as zero-cost fallback)",
+    "stimulus_display": "any 60Hz monitor",
+    "stimulus_software": "PsychoPy (open source) or custom HEXA UI"
+  },
+  "stimulus_protocol": {
+    "type": "binocular rivalry or Necker cube bistable",
+    "preferred": "Necker cube (no special optics required); 5deg visual angle, neutral grey background, view 2m distance",
+    "trial_duration_s": 60,
+    "trials_per_session": 20,
+    "sessions_target": 7,
+    "rest_between_trials_s": 10
+  },
+  "no_report_paradigm_steps": [
+    "Step 1: Calibrate eye tracker (5-point calibration)",
+    "Step 2: User views Necker cube freely (no button press); eye tracker records pupil dilation + microsaccade rate",
+    "Step 3: Bistable percept switches inferred from optokinetic-nystagmus-like signature (OKN) or pupil dilation transient (Frassle 2014 method)",
+    "Step 4: Mark percept-switch timestamps automatically (no subjective report = no-report paradigm)",
+    "Step 5: Epoch EEG ±2s around each inferred switch",
+    "Step 6: Compare frontal (Fp1/Fp2/F3/F4) vs posterior (P3/P4/O1/O2) ERP amplitudes around switch",
+    "Step 7: Boly hypothesis: posterior cortex correlates with percept switch even without report; frontal activity falls away"
+  ],
+  "analysis_pipeline": {
+    "switch_detection": "pupil dilation transient peak detection, FWHM 200-500ms (Frassle 2014)",
+    "erp_window_ms": [-2000, 2000],
+    "stats": "frontal_erp_amplitude vs posterior_erp_amplitude paired t-test; expected: posterior > frontal at switch (-100 to +200ms)",
+    "minimum_switches": 60,
+    "pre_registration_required": true
+  },
+  "expected_pass_criterion": "Posterior ERP amplitude > frontal ERP amplitude at percept switch (p < 0.05, Cohen d > 0.4)",
+  "limitations_vs_paper": [
+    "16ch vs 256ch HD-EEG",
+    "n=1 vs Boly N=24",
+    "Eye-tracker-inferred switches vs Boly's button-press-then-no-report dual paradigm",
+    "Necker cube vs binocular rivalry (different bistable mechanism, similar phenomenology)"
+  ],
+  "blocker": "eye-tracker hardware acquisition (or webcam-fallback validation)",
+  "next_action": "User decision — purchase Pupil Labs Core (~$500) OR validate webcam GazeRecorder accuracy on Necker cube task; agent will pre-register protocol once hardware path chosen",
+  "ts_utc": "2026-05-02T04:05:00Z"
+}

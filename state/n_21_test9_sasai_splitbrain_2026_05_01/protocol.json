@@ -1,0 +1,55 @@
+{
+  "ts": "2026-05-01",
+  "agent": "N-21 #9 EXEC",
+  "parent_spec": "docs/n_21_iit40_12_remaining_spec_2026_05_01.md",
+  "parent_section": "§4.2 RANK-2",
+  "test_id": 9,
+  "test_name": "Sasai 2016 split-brain ANALOGIZE",
+  "category": "ANALOGIZE",
+  "iit_axioms_tested": ["exclusion", "integration"],
+  "substrate": "PyPhi 1.2.0 SIM Markov network",
+  "host": "ubu1 (aiden-B650M-K)",
+  "topology": {
+    "n_nodes_total": 7,
+    "left_indices": [0, 1, 2],
+    "bridge_index": 3,
+    "right_indices": [4, 5, 6],
+    "intra_clique_left": true,
+    "intra_clique_right": true,
+    "bridge_edges_whole": [[3, 0], [0, 3], [3, 4], [4, 3]],
+    "bridge_edges_severed": [],
+    "self_loops": "all"
+  },
+  "dynamics": {
+    "rule": "majority_with_logistic_noise",
+    "beta": 4.0,
+    "tpm_form": "state_by_node",
+    "node_update": "P(node_j=ON | state) = sigmoid(beta * (#on_parents - n_parents/2))"
+  },
+  "conditions": [
+    {"name": "WHOLE", "tpm": "tpm_full", "subsystem": [0,1,2,3,4,5,6]},
+    {"name": "SEVERED-L", "tpm": "tpm_cut", "subsystem": [0,1,2]},
+    {"name": "SEVERED-R", "tpm": "tpm_cut", "subsystem": [4,5,6]}
+  ],
+  "primary_state": [1, 0, 1, 0, 1, 0, 1],
+  "primary_outcome": "Φ_whole vs Φ_left + Φ_right",
+  "verdict_rule": {
+    "PASS_EXCLUSION": "Φ_whole - (Φ_L + Φ_R) > 1e-9",
+    "EQUAL": "|Φ_whole - (Φ_L + Φ_R)| <= 1e-6",
+    "FAIL_EXCLUSION": "Φ_whole < Φ_L + Φ_R"
+  },
+  "falsifier_preregister_5": [
+    "F1: cross-partition MI not lower than within-partition (no split detected) -> REJECT exclusion analog",
+    "F2: GNWT global-broadcast control (full-attention) shows same MI pattern -> dissociation failure",
+    "F3: split scales with partition entropy not task structure -> trivial-split flag",
+    "F4: CLM hidden-state cross-MI dominated by token-level overlap -> control via paraphrase",
+    "F5: effect vanishes at >7B param scale -> capability-dependent, weakens portability"
+  ],
+  "spec_divergence_notes": [
+    "Spec §4.2 sketch suggested CLM dual-prompt MI; user mission overrode with direct PyPhi Φ comparison (stronger axiom test).",
+    "Spec called for 8+8 nodes; downscaled to 3+1+3=7 because PyPhi 1.2 partition search is O(2^n)-bounded near n=7-8.",
+    "Single-state Φ snapshot (state=1010101) instead of full state-averaged Φ for tractability."
+  ],
+  "cost_usd": 0,
+  "cost_notes": "Allocated $30 H100 budget; executed on ubu1 local CPU at $0."
+}

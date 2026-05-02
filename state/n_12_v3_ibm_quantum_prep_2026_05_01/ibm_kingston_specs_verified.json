@@ -1,0 +1,40 @@
+{
+  "schema": "n12/v3/ibm_device_specs/1",
+  "ts_utc": "2026-05-01T00:00:00Z",
+  "agent": "n_12_v3_ibm_quantum_prep",
+  "device": "ibm_kingston",
+  "verified": true,
+  "verification_method": "WebSearch + IBM official announcements + IBM docs feature table cross-check",
+  "specs": {
+    "processor_family": "Heron r2",
+    "n_qubits": 156,
+    "topology": "heavy-hexagonal lattice",
+    "T1_us_typical": "100-300 (large-array safe estimate ~100; per-qubit best ~300+)",
+    "T2_us_typical": "80-200 (median ~80-100 for fleet)",
+    "two_qubit_gate_depth_demonstrated": 5000,
+    "delay_primitive_supported": true,
+    "delay_units_supported": ["ns", "us", "ms", "s", "dt"],
+    "openqasm_version": "3.0",
+    "qiskit_runtime_primitive": "SamplerV2",
+    "open_plan_eligible": true,
+    "open_plan_eligible_since": "2026-03-16 (per IBM announcement)"
+  },
+  "substrate_match_to_sc_ref": {
+    "primary_sc_ref_source": "IBM Heron r2 fleet typical T2 = 100us",
+    "match_y_n": "Y",
+    "rationale": "v3 explicitly uses same-substrate (Heron r2) T2 as the ratio denominator. This eliminates the v1/v2 cross-substrate fudge factor and the v2 unextractable PRNewswire reference."
+  },
+  "sources": [
+    "https://quantum.cloud.ibm.com/announcements/en/product-updates/2025-04-09-aachen-kingston",
+    "https://quantum.cloud.ibm.com/announcements/en/product-updates/2026-03-16-open-plan-news",
+    "https://quantum.cloud.ibm.com/docs/en/guides/qasm-feature-table",
+    "https://quantum.cloud.ibm.com/docs/en/guides/processor-types",
+    "https://en.wikipedia.org/wiki/IBM_Heron",
+    "https://postquantum.com/industry-news/ibm-heron-r2-quantum/"
+  ],
+  "honest_caveats": [
+    "IBM has not publicly published per-qubit T2 averages for kingston specifically; estimates derive from fleet typicals + TLS-mitigation announcement.",
+    "Actual T2 at experiment time may drift; submit_ibm.py records backend.name + job_id for post-hoc calibration lookup via service.backend('ibm_kingston').properties().",
+    "Fallback path (least_busy operational Heron) means actual device may differ -- verifier records device name in results JSON."
+  ]
+}

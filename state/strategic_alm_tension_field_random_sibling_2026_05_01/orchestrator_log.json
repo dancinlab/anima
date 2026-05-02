@@ -1,0 +1,32 @@
+{
+  "schema": "anima/n51_alm_tension_field_random_sibling_orchestrator/1",
+  "ts_started": "2026-05-02T06:02:51Z",
+  "ts_pod_created": "2026-05-02T06:02:51Z",
+  "pod_id": "jretwwik3nl1xz",
+  "pod_name": "anima-n51-random-sibling-20260502T060251Z",
+  "pod_machine": {
+    "gpu": "H100 SXM 80GB HBM3",
+    "cost_per_hr_usd": 2.99,
+    "location": "IN",
+    "ssh_ip": "103.207.149.110",
+    "ssh_port": 11778
+  },
+  "pod_isolation": {
+    "did_not_touch_alpha_pod": "lzw79649ob80uk (alpha endpoint vLLM r14)",
+    "did_not_touch_sibling_52_pod": "TBD (sibling#52 has its own pod)",
+    "wrote_only_to": [
+      "state/strategic_alm_tension_field_random_sibling_2026_05_01/*",
+      "docs/strategic_alm_tension_field_random_sibling_2026_05_01.md"
+    ]
+  },
+  "lora_md5": "90072b0f5a426eeebb47eeb2d4919d68",
+  "lora_md5_match_static_baseline": true,
+  "stage_status": "complete",
+  "branch_kind": "pure-random-control-only",
+  "n_steps_random": 100,
+  "n_steps_baseline_zero_gate": 3,
+  "psi_alpha": 0.014,
+  "d_model": 4096,
+  "seed": 20260502,
+  "status": "RUNNING — HF Mistral cold download in progress (loading base)"
+}

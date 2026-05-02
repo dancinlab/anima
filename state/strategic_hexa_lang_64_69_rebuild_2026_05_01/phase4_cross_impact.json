@@ -1,0 +1,53 @@
+{
+  "ts": "2026-05-01",
+  "agent": "N-51 W2",
+  "phase": "4_cross_impact",
+  "tracks_unblocked_by_w2_finding": [
+    {
+      "track": "N-51 EXEC E",
+      "unblock_status": "FULL",
+      "what_changes": "Phase 1 bridge build completes. EXEC E orchestrator can resume with HEXA_MAC_BUILD_OK=1 + non-/tmp staging dir + trailing-main()-strip preprocessor pass.",
+      "next_step_for_n51": "Re-run /tmp/n51_E build pipeline with the two policy fixes; estimated 5-10 min Phase 1; $15-20 Phase 2-5 unchanged."
+    },
+    {
+      "track": "N-51 #52 sequential",
+      "unblock_status": "FULL (likely same root cause)",
+      "what_changes": "Sister track #52 if blocked on same gates resolves identically. Worth cross-posting finding to W1 #55 and W4 #56 sibling agent dirs (left to caller — race-isolation forbids W2 from touching them)."
+    },
+    {
+      "track": "future N-22-24 hexa-native dynamic measurement scripts",
+      "unblock_status": "FULL on the hexa-toolchain axis (general `hexa build` is verified working today on Mac)",
+      "what_changes": "Author N-22-24 components with: (a) `@manual_main` attribute on fn main OR no top-level main() call, (b) staging dir under repo (not /tmp), (c) HEXA_MAC_BUILD_OK=1 set in pod-bootstrap or local build wrapper",
+      "remaining_axis_blockers_for_those_tracks": "Still gated on RFC-005 (ends_with AOT) and RFC-009 (int-fn-eq-int silent-false) IF those tracks emit code patterns matching those families. N-51 Comp 1/3/4 happen to not."
+    },
+    {
+      "track": "all other N-substrate trackers",
+      "unblock_status": "POTENTIAL FULL (each must be re-audited against G1+G2 gates rather than assuming `binary rebuild blocked`)",
+      "what_changes": "The blanket `wait for upstream 64-69` framing in any anima-side track that quotes that memory anchor should be re-checked. Most likely each is unblocked by the same 2-line policy compliance."
+    },
+    {
+      "track": "anima.git-tracked .hexa author tooling",
+      "unblock_status": "PARTIAL",
+      "caveat": "On-repo anima `.hexa` files cannot be authored by Claude per HEXA-FIRST policy (.gitignore + sandbox EPERM is .py-only, but the user-instruction echo is HEXA-only). However, off-repo staging compile + verify is Claude-feasible; pod-side install of resulting binaries proceeds via existing pod_bootstrap_checklist."
+    }
+  ],
+  "tracks_NOT_unblocked_by_w2_finding": [
+    {
+      "track": "SH-Omega narrow acceptance closure",
+      "reason": "Genuine in-flight upstream work; W-alpha + W-alpha' rebuild requires load <2 + tree clean, not a discoverability fix"
+    },
+    {
+      "track": "RFC-005 / RFC-009 AOT codegen correctness",
+      "reason": "Real silent-wrong codegen bugs in self/codegen_c2.hexa for specific AST patterns; not a Mac /tmp policy issue. These remain genuine upstream deliverables."
+    },
+    {
+      "track": "Linux x86_64 codegen_native_elf bridge",
+      "reason": "SH3 ladder phase work, parallel track to phase 1+ closure; orthogonal to G1/G2."
+    }
+  ],
+  "honest_c3_followups_for_anima": [
+    "Update memory `reference_hexa_roadmap_64_69.md` to reflect post-2026-04-26 SH1..SH-Omega + RFC-001..009 reorganization (memory currently describes legacy 64-69 numeric scheme that no longer exists in upstream).",
+    "Update `docs/strategic_alm_tension_field_exec_E_results_2026_05_01.md` §1 verdict from `INDETERMINATE — toolchain blocker` to `INDETERMINATE — caller policy non-compliance with G1+G2 gates; relaunch ready` (re-run is responsibility of N-51 caller, not W2).",
+    "Add hexa-build wrapper to anima pod_bootstrap_checklist that sets HEXA_MAC_BUILD_OK=1 on Mac (CI dry-run), strips trailing top-level main() calls, and routes outputs to repo-local staging (not /tmp). This converts the discoverability gap into a 1-time bootstrap fix."
+  ]
+}

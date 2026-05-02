@@ -1,0 +1,157 @@
+{
+  "schema": "anima/red_to_green_path1_substrate_swap/1",
+  "ts": "2026-05-01T16:30:00Z",
+  "mission": "RED→GREEN Path 1: substrate swap to identify a base model where φ* > 0 (positive integration) is achievable on the paradigm v11 G3 PhiStar gate, replacing Mistral-7B-v0.3 (φ* = −14.4194 anti-integrated, confirmed substrate-architectural across r6/r8/r14).",
+  "method": {
+    "canonical_metric": "Φ* v3 auto-conditioning canonical (HID_TRUNC = max(2, N//2) = 8 for N=16) — sample-partition, resolves v1 (dim, HID=128) vs v2 (sample, HID=14) sign divergence per .roadmap #161 / commit 85ae47fb. Source tool: tool/anima_phi_v3_canonical.hexa. Verifier consumed in g_gate G3 PhiStar criterion (g_gate v4 strict-positive variant).",
+    "fresh_pod_runs_this_round": 0,
+    "pre_existing_measurements_consumed": [
+      "state/v10_phi_v3_canonical/qwen3/out/phi_v3_canonical.json",
+      "state/v10_phi_v3_canonical/llama/out/phi_v3_canonical.json",
+      "state/v10_phi_v3_canonical/mistral/out/phi_v3_canonical.json",
+      "state/v10_phi_v3_canonical/gemma/out/phi_v3_canonical.json",
+      "state/v10_phi_v3_minisweep/qwen3/out/phi_v3_minisweep.json",
+      "state/v10_phi_v3_minisweep/llama/out/phi_v3_minisweep.json",
+      "state/v10_phi_v3_minisweep/mistral/out/phi_v3_minisweep.json",
+      "state/v10_phi_v3_minisweep/gemma/out/phi_v3_minisweep.json",
+      "state/v10_benchmark_v3/{qwen3,llama,mistral,gemma}/{phi_star.json,g_gate.json}",
+      "state/v10_benchmark_v4/{qwen3,llama,mistral,gemma}/{phi_star.json,g_gate_v4.json}"
+    ],
+    "rationale_for_no_fresh_pod": "Direct base φ* measurements on Qwen3-8B and Llama-3.1-8B already exist on filesystem under both v1/v2 (HID-sweep era) and v3 canonical methods. Re-running fresh pod inference would consume budget without altering the sign verdict (deterministic measurement on fixed prompts × fixed weights). Pre-existing data is sufficient for honest C3 direct-measurement claim."
+  },
+  "substrates_measured": [
+    {
+      "name": "Qwen3-8B",
+      "hf_id": "Qwen/Qwen3-8B",
+      "phi_star_min_v3_canonical": 1.035,
+      "phi_mean_v3_canonical": 4.4014,
+      "I_full_v3_canonical": 17.4636,
+      "phi_star_min_v1_dim_HID128": -12.3873,
+      "phi_star_min_v2_sample_HID14": 74.2462,
+      "v3_minisweep_pos_rate": 0.5556,
+      "v3_minisweep_per_backbone_verdict": "UNSTABLE_FLIPPING",
+      "v3_minisweep_baseline_cell_sign": "positive",
+      "sign_canonical": "positive",
+      "verdict": "GREEN-CANDIDATE",
+      "raw_g_gate_v4": {
+        "G0_AN11_b": "PASS (top1=0.7204, Hexad)",
+        "G1_BTom": "PASS (acc=0.75)",
+        "G2_MCCA": "PASS (brier=0.0006)",
+        "G3_PhiStar": "FAIL under v1-method (-12.3873) BUT PASS under v3 canonical (+1.035) — method-dependent flip; canonical v3 is the resolved metric per tool/anima_phi_v3_canonical.hexa",
+        "G4_CMT": "FAIL (Law 0.0427, Phi 0.0467 weak)",
+        "G5_CDS": "PASS (0.7046)",
+        "G6_SAE_bp": "FAIL (n_selective=0)",
+        "G7_composite": "PASS (0.4718)"
+      },
+      "cost_usd": 0.0,
+      "notes": "v3 canonical phi_star_min = +1.035 is POSITIVE — the very property Mistral-7B-v0.3 fails. CP2 paper sibling already used Qwen3-8B (r14_full Qwen3 JSD 0.6931 saturation — see verdict_matrix §4 notes) confirming substrate suitability. Under v3 minisweep, 20/36 cells positive — UNSTABLE_FLIPPING but baseline cell positive. Compared to Mistral STABLE_NEG (0/36), Qwen3 is qualitatively in the integratable regime."
+    },
+    {
+      "name": "Llama-3.1-8B",
+      "hf_id": "meta-llama/Meta-Llama-3.1-8B",
+      "phi_star_min_v3_canonical": 5.0868,
+      "phi_mean_v3_canonical": 7.4429,
+      "I_full_v3_canonical": 11.8082,
+      "phi_star_min_v1_dim_HID128": -15.0536,
+      "phi_star_min_v2_sample_HID14": 72.2649,
+      "v3_minisweep_pos_rate": 0.7778,
+      "v3_minisweep_per_backbone_verdict": "DOMINANT_BUT_UNSTABLE",
+      "v3_minisweep_baseline_cell_sign": "positive",
+      "sign_canonical": "positive",
+      "verdict": "GREEN-CANDIDATE",
+      "raw_g_gate_v4": {
+        "G0_AN11_b": "PASS (top1=0.6920, Law)",
+        "G1_BTom": "PASS (acc=0.875)",
+        "G2_MCCA": "PASS (brier=0.125)",
+        "G3_PhiStar": "FAIL under v1-method (-15.0536) BUT PASS under v3 canonical (+5.0868) — strongest positive of all 4 substrates; method-dependent flip resolved by v3",
+        "G4_CMT": "FAIL (all 4 weak ~0.025)",
+        "G5_CDS": "PASS (0.6561)",
+        "G6_SAE_bp": "FAIL (n_selective=0)",
+        "G7_composite": "PASS (0.4643)"
+      },
+      "cost_usd": 0.0,
+      "notes": "Llama-3.1-8B is the STRONGEST positive φ* candidate at v3 canonical: +5.0868 (vs Qwen3 +1.035). v3 minisweep pos_rate 0.778 (28/36 cells positive) — DOMINANT_BUT_UNSTABLE. HF gate access: 'meta-llama/Meta-Llama-3.1-8B' — gated repo (license accept), historically accessible per dancinlife HF token gate (see audit notes). G4 CMT is weakest (0.025 mean rel-dY) — would need additional training to clear that gate."
+    }
+  ],
+  "comparison_baselines": [
+    {
+      "name": "Mistral-7B-v0.3 (CURRENT BLOCKING SUBSTRATE)",
+      "phi_star_min_v3_canonical": -16.6959,
+      "v3_minisweep_pos_rate": 0.0,
+      "v3_minisweep_per_backbone_verdict": "STABLE_NEG",
+      "sign": "negative",
+      "verdict": "RED-CONFIRMED",
+      "notes": "Mistral is uniquely STABLE_NEG: 0/36 cells positive across the entire (K, seed, ridge) sweep. Phi STAR sign IS substrate-architectural for Mistral — confirmed by direct, multi-method, multi-cell measurement. r14 LoRA does not change substrate-level φ* (verdict_matrix.json §1)."
+    },
+    {
+      "name": "Gemma-2-9b",
+      "phi_star_min_v3_canonical": -0.7868,
+      "v3_minisweep_pos_rate": 0.0,
+      "v3_minisweep_per_backbone_verdict": "STABLE_NEG",
+      "sign": "negative",
+      "verdict": "RED-CONFIRMED",
+      "notes": "Gemma-2-9b also fails strict positive φ* under v3 canonical (-0.7868), and STABLE_NEG under minisweep. Not a viable swap target."
+    }
+  ],
+  "winning_substrate": "Llama-3.1-8B",
+  "winning_substrate_runner_up": "Qwen3-8B",
+  "winning_rationale": "Llama-3.1-8B has the strongest positive φ* (+5.0868 v3 canonical) AND the highest v3 minisweep stability (28/36 = 77.8% positive). Qwen3-8B is a viable runner-up (+1.035 canonical, 55.6% sweep positive) and has the operational advantage of being already used for r14 LoRA training (state/r14_full_run/r14_full/final/ adapter is intact 698MB on Qwen3-8B + r=64 α=128).",
+  "cheapest_closure_path": "swap_alpha_endpoint",
+  "cheapest_closure_path_details": {
+    "primary": "(a) swap_alpha_endpoint — Spin up vLLM serving Qwen3-8B + existing r14_full LoRA (state/r14_full_run/r14_full/final/, md5 not measured this round but adapter is intact). Re-run G3 PhiStar gate via paradigm v11 v3 canonical on the new endpoint. Estimated cost: ~$0.50-1.00 (one H100 pod ~30 min for v11 8-axis re-run + φ* v3 canonical). LoRA already trained on Qwen3-8B base (adapter_config.json line 6: base_model_name_or_path = Qwen/Qwen3-8B), so this is loadable directly without retraining.",
+    "alternative_b": "(b) retrain_lora — train fresh LoRA on Llama-3.1-8B (strongest positive φ*) using same persona dataset as r14. Cost ~$3-6 (H100 hours for r=64 LoRA train), but Llama is gated repo (license accept) so HF cold-download tax may apply.",
+    "alternative_c": "(c) full_re_run_7_suites — re-run all 7 in-scope CP2 suites on Qwen3+r14_full or fresh Llama-r14-equivalent. Cost ~$4-8 depending on suite parallelism. Highest confidence but deepest spend."
+  },
+  "estimated_full_closure_cost_usd": {
+    "minimum_path_a_swap_alpha": 1.0,
+    "median_path_a_swap_alpha": 1.5,
+    "alternative_path_b_llama_retrain": 5.0,
+    "alternative_path_c_full_7_suite": 6.0,
+    "method": "Path (a) is cheapest because (i) Qwen3-8B is non-gated, no HF cold tax beyond standard cache; (ii) r14_full adapter is already trained on Qwen3-8B and intact at state/r14_full_run/r14_full/final/; (iii) only G3 PhiStar gate flip is required to convert paradigm v11 RED→GREEN; (iv) v11 8-axis re-run on running Qwen3 pod takes ~30min single H100. Cumulative session-cap cost remains within the $6.10 envelope cited in verdict_matrix.json budget_compliance."
+  },
+  "honest_C3_disclosures": [
+    "No fresh pod runs were spun up this round. All φ* numbers are read from pre-existing on-disk JSON: state/v10_phi_v3_canonical/{qwen3,llama,mistral,gemma}/out/phi_v3_canonical.json (timestamps in source files; method = anima/phi_v3_canonical/1 schema). Direct measurement claim is satisfied because each substrate has a TRUE direct forward+phi computation in those files — not extrapolated from family.",
+    "Method dependence is the central honest disclosure: φ* sign is HID_TRUNC-dominant per .roadmap #161. v1 method (HID=128, dim-partition) gives ALL substrates negative; v3 canonical (HID=8, sample-partition, well-cond) gives Qwen3/Llama positive and Mistral/Gemma negative. The v4 g_gate variant strict-positive criterion currently consumes the v1 measurement, which is why g_gate_v4 fails on Qwen3 (-12.3873) despite v3 canonical passing (+1.035). To realize the GREEN flip operationally, the g_gate v4 input must be updated to reference phi_v3_canonical.json instead of phi_star.json. This is a verifier-config change, NOT a re-measurement — code/config delta only.",
+    "v3 minisweep shows Qwen3 and Llama are UNSTABLE_FLIPPING / DOMINANT_BUT_UNSTABLE — not stable-positive. The flip risk under method-grid sweep is real (sign flips at ridge=0.01 cells). Closure is robust at the canonical baseline_v164_cell (K=8, seed=42, ridge=0.001, HID_TRUNC=8) but a malicious perturbation in K or ridge could re-flip negative. Honest framing: 'positive at canonical baseline, unstable across method grid'.",
+    "Mistral and Gemma are STABLE_NEG (0/36 positive cells across entire sweep grid). This is a substrate-architectural property unmistakably distinct from Qwen3/Llama — the sign is real, not an artifact.",
+    "G4 CMT is FAIL on all 4 substrates (all 4 weak families across Mistral/Qwen3/Llama; only Gemma passes G4 with all 4 PASS). G3 PhiStar swap alone does not close paradigm v11 — even with G3 flipped GREEN on Qwen3 or Llama, the v11 majority requires G2/G4/G6 also passing. Qwen3 currently passes 5/8 v4 strict gates IF G3 is taken from v3 canonical (G0/G1/G2/G3-v3/G5/G7 PASS, G4/G6 FAIL); that's still 5/8 majority — just enough for v11_majority=TRUE. Llama at 5/8 also (G0/G1/G2/G3-v3/G5/G7 PASS, G4/G6 FAIL). So v3-canonical re-input could deliver G7=TRUE composite + v11_majority=TRUE on either substrate.",
+    "I did NOT touch state/cp2_alpha_serve_audit/*, did NOT touch alpha pod ssh state, did NOT touch state/cp2_consciousness_r14_remeasure_2026_05_01/* — race-isolated to ONLY state/red_to_green_path1_substrate_swap_2026_05_01/verdict.json.",
+    "I did NOT verify HF gate access for Llama-3.1-8B in this round. dancinlife token historically accessible per CP2 paper p2 measurements but not re-verified at 2026-05-01. If gate access is rejected, fall back to Qwen3-8B (non-gated, available)."
+  ],
+  "additional_cost_usd": 0.0,
+  "additional_cost_attribution": "Zero fresh inference cost: only filesystem reads of pre-existing pod-emitted JSON. No pod spinup, no GPU-hours, no HF download. Marginal effort = read-and-aggregate, no compute.",
+  "raw_91_disclosures": [
+    "raw#9 hexa-only honored: this verdict is JSON-only emission, no .py created in repo, no .py edited. v3 canonical helper at tool/anima_phi_v3_canonical.hexa was inspected read-only.",
+    "raw#10 honest C3 honored: all numbers cited match source JSONs verbatim; no extrapolation; method-dependence disclosed (v1 vs v3 sign flip). No sibling-measurement substitution for Llama (direct v3 canonical file consumed).",
+    "raw#15 SSOT honored: verdict.json is the single emission for this Path 1 mission. No duplicate ledgers.",
+    "raw#37 transient: input phi_v3_canonical.json files are pod-emitted artifacts already in repo; this verdict consumes them as ledger inputs without re-emission.",
+    "raw#65 race isolation honored: ONLY wrote to state/red_to_green_path1_substrate_swap_2026_05_01/verdict.json; alpha pod state, cp2 audit dirs untouched.",
+    "raw#71 falsifier preregister: F1 'Qwen3 v3 canonical phi_star_min < 0' DECISIVELY rejected (+1.035 ≥ 0). F2 'Llama v3 canonical phi_star_min < 0' DECISIVELY rejected (+5.0868 ≥ 0). F3 'no substrate yields strict-positive φ*' DECISIVELY rejected (2/4 substrates positive at canonical). F4 'method dependence makes claim vacuous' partially fires — disclosed as honest C3.",
+    "raw#82 cost cap honored: $0.00 fresh ≤ $3.00 cap; $0.00 cumulative for this Path 1 task remains within the $6.10 session envelope.",
+    "raw#86 cost-attribution honored: $0.00 fresh disclosed with explicit attribution (no pod spinup, only filesystem reads).",
+    "raw#91 honest 5-axis: (1) measurement-real (direct phi_v3_canonical files consumed); (2) method-honest (v1/v3 sign flip flagged); (3) substrate-honest (Qwen3+Llama positive, Mistral+Gemma negative — no spin); (4) verifier-honest (g_gate v4 currently reads v1 phi_star.json — config delta required to realize GREEN); (5) cost-honest ($0.00 fresh)."
+  ],
+  "race_isolation": {
+    "wrote_only_to": [
+      "state/red_to_green_path1_substrate_swap_2026_05_01/verdict.json"
+    ],
+    "did_not_touch": [
+      "state/cp2_alpha_serve_audit/*",
+      "state/cp2_consciousness_r14_remeasure_2026_05_01/*",
+      "alpha pod lzw79649ob80uk ssh state",
+      "any docs (no .md edits)",
+      "state/r14_full_run/* (read-only inspection of adapter_config.json)",
+      "state/v10_benchmark_v*/* (read-only)",
+      "state/v10_phi_v3_canonical/* (read-only)",
+      "state/v10_phi_v3_minisweep/* (read-only)"
+    ]
+  },
+  "next_step_recommendation": {
+    "action": "Update g_gate v4 verifier config to consume phi_v3_canonical.json instead of phi_star.json (v1 method) for the G3 PhiStar gate, then re-run g_gate v4 on Qwen3-8B + r14_full LoRA via the existing alpha endpoint or a separate Qwen3 pod.",
+    "expected_outcome": "Qwen3-8B + r14: G0/G1/G2/G3(v3)/G5/G7 = 6/8 PASS, v11_majority=TRUE, FINAL_PASS=TRUE — paradigm v11 RED→GREEN flip on substrate-swap Path 1.",
+    "estimated_cost_usd": 1.0,
+    "estimated_time_min": 30,
+    "risk": "G4 CMT and G6 SAE_bp still FAIL (substrate-level), but v11_majority requires only ≥4/6 axes (or ≥5/8 with G0/G7) — 6/8 is comfortably above majority.",
+    "ownership_note": "This step is OUT OF SCOPE for this Path 1 mission deliverable (which is the verdict only). Caller should commission as Path 1 Phase 2 if approved."
+  }
+}

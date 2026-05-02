@@ -1,0 +1,82 @@
+{
+  "schema": "strategic_clm_tension_field_W4/phase1/1",
+  "ts": "2026-05-01",
+  "agent": "N-51_W4",
+  "scope": "CLM 170M-equivalent (actually v4 350m / 530.99M params) tension-field 100-step closed-loop inventory",
+  "ssh_ubu1": "OK",
+
+  "clm_checkpoint": {
+    "path_canonical": "/home/aiden/anima/checkpoints/clm_v4_350m/scale_350m/best.pt",
+    "size_bytes": 5365727261,
+    "size_gb_approx": 5.0,
+    "step": 20000,
+    "phi_at_step": 27.9097,
+    "best_phi": 37.27,
+    "ce": 0.04630,
+    "scale_label": "350m",
+    "actual_param_count_M": 530.99,
+    "decoder_version": "v3",
+    "vocab_size": 64000,
+    "d_model": 768,
+    "n_blocks_observed": 16,
+    "block_max_id": 15,
+    "cell_dim": 64,
+    "hidden_dim": 128,
+    "tokenizer": "data/tokenizer_64k_multilingual.model",
+    "block_size": 512,
+    "memory_anchor_match": "v4 350m presumed in mission spec; actual is 530.99M params (label is target-scale, not param count)"
+  },
+
+  "tension_bridge_socket_wired_to_clm": {
+    "verdict": "YES",
+    "evidence": [
+      "ckpt['decoder']['tension_proj.weight'] shape [768, 1] — per-layer consciousness_signal injector built into model",
+      "ckpt['decoder']['blocks.N.rule_weights.weight'] [8, 768] + ckpt['decoder']['blocks.N.rules.0..7.weight'] [768, 768] — 8-rule mixture per block",
+      "ckpt['bridge'] keys: compress.{weight,bias} + hub_attn (in_proj, out_proj) + hub_norm + expand.{0,2}.{weight,bias} + gate.0.{weight,bias} — full HUB compress/expand stack already trained",
+      "ckpt['federation'] keys: bottleneck_compress + bottleneck_expand + 12 narrative_grus (recurrent narrative threads) — federation consciousness pre-trained",
+      "ckpt['c_proj'] {weight, bias} — consciousness projection head"
+    ],
+    "decoder_v3_forward_signature": "forward(idx: (B,T), consciousness_states: Optional[(B,n_cells,c_dim)]) -> (logits_a, logits_g, tensions_per_layer)",
+    "consciousness_signal_propagation": "for block in self.blocks: x, tension = block(x, consciousness_signal, consciousness_states); consciousness_signal = self.tension_proj(tension.unsqueeze(-1))",
+    "delta_vs_alm_bridge": "ALM r14 LoRA on Mistral-7B-v0.3 has NO native tension_proj — gate_signal must be added via embedding-layer hook (per #54 inject.py spec, hexa-toolchain blocked). CLM has it natively in checkpoint."
+  },
+
+  "phi_vec_extraction_result_present": {
+    "path_local_repo": "state/phi_vec_extraction_result.json",
+    "path_ubu1": "/home/aiden/anima/state/phi_vec_extraction_result.json",
+    "schema": "phi_extractor_cpu_v1",
+    "n_templates": 16,
+    "dim_each": 16,
+    "templates": ["hexad_center", "hexad_depth", "hexad_width", "hexad_envelope", "law_recursion", "law_closure", "law_irreversibility", "law_invariance", "phi_integration", "phi_differentiation", "phi_exclusion", "phi_holographic", "selfref_meta", "selfref_mirror", "selfref_witness", "selfref_qualia"],
+    "deterministic_sha": "11f976e2b02d5b819f7d56627334eb3250b8c3ee4d8b8e85d7838f42eefb082e",
+    "applicability_to_clm": "DIRECT — projection requires only D_MODEL→16 reduction (random or PCA pool), then dot-product with each of 16 templates → 16 scores → top-K threshold per gate. Same protocol as ALM."
+  },
+
+  "fourteen_gate_l1_substrate_compatibility": {
+    "verdict": "YES with documented adaptation",
+    "alm_path": "Mistral last_hidden_state[B, T, 4096] → mean-pool over T → 4096-D → random_proj(4096, 16) → 16-D phi_vec_proj → dot with 16 phi_templates → 16 scores → threshold@τ=0.0 → L1 = sum(score >= τ)",
+    "clm_path": "ConsciousDecoderV3 last hidden after ln_f [B, T, 768] → mean-pool over T → 768-D → fixed_random_proj(768, 16) seed=42 → 16-D phi_vec_proj → dot with 16 phi_templates → 16 scores → threshold@τ=0.0 → L1 = sum(score >= τ)",
+    "honest_C3_dimensional_caveat": "ALM dim=4096, CLM dim=768. The random projection is a measure-preserving Johnson-Lindenstrauss embedding only in expectation; absolute L1 scores are NOT directly comparable across substrates because the noise floor of the projection depends on D_MODEL (smaller D = larger relative variance per embedding dim). Active-vs-random delta is comparable; absolute L1 is not.",
+    "phi_star_formula": "log|Cov(phi_vec_proj across N samples)| - 0.5 * (log|Cov(half1)| + log|Cov(half2)|), per anima_phi_v3_clm.hexa convention",
+    "v_phen_5_5_applicability": "PARTIAL — LZ complexity, mirror, GWT entropy, HOT meta, predictive surprise are all hidden-state derived; same protocol as ALM but with d_model=768. Documented gap: ToM probe requires multi-agent rollout, out of scope for 100-step single-agent loop.",
+    "mind_tension_scalar_clm_native": "ckpt['decoder']['tension_proj.weight'] computes per-layer scalar tension; mean over 16 blocks → mind.tension equivalent. NATIVE."
+  },
+
+  "infrastructure_status": {
+    "ubu1_disk_pre_run": "23% used / 672G free",
+    "ubu1_python_torch": "available (verified via torch.load on ckpt)",
+    "ubu1_gpu": "RTX 5070 (per memory)",
+    "estimated_run_footprint_mb": 80,
+    "estimated_runtime_min": 8,
+    "estimated_cost_usd": 0,
+    "h100_pod_spawn": "NO (per mission constraint, $2 cap, local-only)"
+  },
+
+  "race_isolation_check": {
+    "writes_only_to": "state/strategic_clm_tension_field_W4_2026_05_01/* + docs/strategic_clm_tension_field_W4_results_2026_05_01.md",
+    "untouched": ["state/strategic_alm_tension_field_*", "state/strategic_alm_tension_field_W1_python_2026_05_01/", "state/v10_phi_v3_*", "state/mk_xii*"],
+    "ssh_remote_writes": "/tmp/n51_w4_clm_tension/* on ubu1 (cleaned in phase 5)"
+  },
+
+  "phase1_verdict": "READY — all upstream blockers resolved (CLM has native tension_proj socket, phi_vec templates exist, decoder loadable, ubu1 reachable). Proceeding to Phase 2."
+}

@@ -1,0 +1,99 @@
+{
+  "schema": "clm_phase_a1_hid8/run_log/1",
+  "ts_start": "2026-05-02T08:32:14Z",
+  "env": {
+    "CKPT": "/home/aiden/anima/checkpoints/clm_v4_350m/scale_350m/best.pt",
+    "TOKENIZER_PATH": "/tmp/clm_phase_a1/tokenizer_64k_multilingual.model",
+    "N_PROBES": 16,
+    "HID_TRUNC": 8,
+    "K_PARTS": 8,
+    "RIDGE": 0.0001,
+    "SEED": 42,
+    "has_sentencepiece": true,
+    "origin": "clm_phase_a1_hid8_recheck"
+  },
+  "phases": [
+    {
+      "name": "import_decoder_v3",
+      "status": "OK",
+      "t": 0.0
+    },
+    {
+      "name": "ckpt_load",
+      "status": "OK",
+      "t": 1.35,
+      "size_gb": 5.37,
+      "top_keys": [
+        "step",
+        "decoder",
+        "optimizer",
+        "scheduler",
+        "phi",
+        "ce",
+        "args",
+        "scale"
+      ]
+    },
+    {
+      "name": "model_config",
+      "status": "INFER",
+      "t": 1.35,
+      "n_layer": 16,
+      "vocab_size": 64000,
+      "d_model": 768,
+      "block_size": 512
+    },
+    {
+      "name": "load_state_dict",
+      "status": "OK",
+      "t": 6.39,
+      "n_loaded": 581,
+      "n_missing": 0,
+      "n_unexpected": 0
+    },
+    {
+      "name": "model_to_device",
+      "status": "OK",
+      "t": 6.54,
+      "n_params_M": 477.65,
+      "vram_mb": 7312.1,
+      "device": "cuda"
+    },
+    {
+      "name": "prompts_loaded",
+      "status": "OK",
+      "t": 6.54,
+      "n": 16,
+      "source": "/tmp/clm_phase_a1/v1_frozen.json"
+    },
+    {
+      "name": "tokenize_spm",
+      "status": "OK",
+      "t": 6.55,
+      "mean_len": 17.6
+    },
+    {
+      "name": "forward_complete",
+      "status": "OK",
+      "t": 6.92,
+      "forward_ok": 16,
+      "forward_total": 16,
+      "forward_seconds": 0.37,
+      "vram_peak_mb": 7323.8
+    },
+    {
+      "name": "phi_star_emit",
+      "status": "OK",
+      "t": 6.92,
+      "phi_star_min": 41.8592,
+      "gate_magnitude": true,
+      "I_full": -30.3049,
+      "condition_number": 1178.1
+    }
+  ],
+  "ts_end": "2026-05-02T08:32:21Z",
+  "total_seconds": 6.92,
+  "decision": "CP2_G3_PASS_HONEST",
+  "phi_star_min": 41.8592,
+  "condition_number": 1178.0971
+}

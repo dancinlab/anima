@@ -1,0 +1,82 @@
+{
+  "study": "Casali_2013_PCI_sponta_analog_reproduction",
+  "reference": "Casali et al. 2013 Sci Transl Med 5(198):198ra105 (PCI via TMS+EEG); analog substitutes spontaneous EEG LZc per Schartner 2015/2017",
+  "mode": "spontaneous_LZc_no_TMS",
+  "data_provenance": "/Users/ghost/core/anima/state/clm_eeg_lz76_audit/*.jsonl real EEG entries (mode=real, mode=real_npy)",
+  "n_real_entries": 19,
+  "pipeline_stages": {
+    "raw": {
+      "n": 5,
+      "mean": 0.0388,
+      "min": 0.026,
+      "max": 0.057,
+      "sd": 0.011819475453673909,
+      "median": 0.04
+    },
+    "filtered": {
+      "n": 5,
+      "mean": 0.4468,
+      "min": 0.385,
+      "max": 0.58,
+      "sd": 0.08361339605589523,
+      "median": 0.395
+    },
+    "ica": {
+      "n": 9,
+      "mean": 0.3888888888888889,
+      "min": 0.286,
+      "max": 0.519,
+      "sd": 0.07925661556684788,
+      "median": 0.362
+    }
+  },
+  "all_lzc_normalized": [
+    0.026,
+    0.58,
+    0.286,
+    0.057,
+    0.479,
+    0.04,
+    0.395,
+    0.04,
+    0.395,
+    0.362,
+    0.519,
+    0.519,
+    0.031,
+    0.385,
+    0.35,
+    0.351,
+    0.351,
+    0.398,
+    0.364
+  ],
+  "all_stats": {
+    "n": 19,
+    "mean": 0.312,
+    "min": 0.026,
+    "max": 0.58,
+    "sd": 0.18196916710744648,
+    "median": 0.362
+  },
+  "casali_2013_paper_thresholds": {
+    "conscious_wake_PCI_min": 0.31,
+    "conscious_wake_PCI_typical_max": 0.70,
+    "unconscious_NREM_PCI_max": 0.31,
+    "note": "PCI numbers from Casali 2013; LZc here is normalized Lempel-Ziv complexity from Schartner 2015 — analog, not directly comparable scale-wise"
+  },
+  "analog_interpretation": {
+    "ica_cleaned_mean_lzc": 0.3888888888888889,
+    "falls_in_conscious_range": true,
+    "within_session_variability_sd": 0.07925661556684788,
+    "verdict": "PASS_ANALOG"
+  },
+  "limitations": [
+    "16-channel low-density (Casali used 60-channel)",
+    "Spontaneous EEG, no TMS perturbation (true PCI requires perturbational complexity)",
+    "Single state (resting wake), no sleep/anesthesia comparison",
+    "Subject-of-one (n=1 user), no group statistics",
+    "p1_band verdict was P1_FAIL on raw — only ICA/filtered stages reach plausible LZc"
+  ],
+  "ts_utc": "2026-05-02T04:07:18Z"
+}

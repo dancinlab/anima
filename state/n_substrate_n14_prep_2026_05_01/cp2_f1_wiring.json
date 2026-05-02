@@ -1,0 +1,56 @@
+{
+  "substrate": "N-14",
+  "role": "high-time-resolution corroborator for N-19 PCI; multi-channel/multi-modal Phi ceiling test",
+  "ensemble": [
+    {"id": "N-1",  "system": "16-ch OpenBCI EEG",        "operational": true,  "phi_resolution_ms": 4},
+    {"id": "N-19", "system": "TMS-EEG PCI",              "operational": false, "blocker": "TMS rental"},
+    {"id": "N-14", "system": "Vectorview 306-ch MEG",    "operational": false, "blocker": "Korean co-PI + funding", "phi_resolution_ms": 1},
+    {"id": "N-21", "system": "IIT 4.0 16-test reproduce","operational": true},
+    {"id": "N-15", "system": "HoTT formal proof",        "operational": true}
+  ],
+  "edges": [
+    {
+      "from": "N-14",
+      "to": "N-19",
+      "kind": "method_upgrade_candidate",
+      "test": "MEG-PCI on same TMS pulse, same subjects, paired with EEG-PCI",
+      "if_pass": "MEG-PCI replaces EEG-PCI as primary clinical Phi instrument",
+      "if_fail": "N-19 EEG-PCI remains primary; N-14 archived as time-resolution control"
+    },
+    {
+      "from": "N-14",
+      "to": "N-1",
+      "kind": "channel_count_ladder",
+      "test": "16-ch OpenBCI -> 64-ch MEG-cap EEG -> 306-ch MEG on same subjects",
+      "predicate": "N14-F5 (Phi asymptote by 64-ch)"
+    },
+    {
+      "from": "N-14",
+      "to": "N-21",
+      "kind": "replication_target",
+      "test": "Any of 16 IIT 4.0 reproductions originally MEG-published become priority replicates on Vectorview"
+    },
+    {
+      "from": "N-14",
+      "to": "N-15",
+      "kind": "formal_proof_witness",
+      "test": "If MEG-Phi and EEG-Phi are equivalence-class members under HoTT formalization, N14-F1 should PASS"
+    }
+  ],
+  "decision_gates": [
+    {"gate": "G1", "trigger": "Korean co-PI secured",  "action": "Move N-14 from spec-only to IRB drafting"},
+    {"gate": "G2", "trigger": "IRB approval granted",  "action": "Schedule first scan window (~4 wk lead)"},
+    {"gate": "G3", "trigger": "First scan complete",   "action": "Compute N14-F1..F5; commit raw#71 entries"},
+    {"gate": "G4", "trigger": "All 5 predicates resolved", "action": "Upgrade N-14 to primary substrate (PASS) or archive (FAIL)"}
+  ],
+  "current_status": "SPEC-COMPLETE / SCAN-DEFERRED",
+  "race_isolation": {
+    "writes_only_to": [
+      "docs/n_substrate_n14_meg_snu_access_spec_2026_05_01.md",
+      "state/n_substrate_n14_prep_2026_05_01/falsifiers.json",
+      "state/n_substrate_n14_prep_2026_05_01/cost_model.json",
+      "state/n_substrate_n14_prep_2026_05_01/access_path.json",
+      "state/n_substrate_n14_prep_2026_05_01/cp2_f1_wiring.json"
+    ]
+  }
+}

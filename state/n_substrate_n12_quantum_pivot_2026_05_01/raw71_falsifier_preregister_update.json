@@ -1,0 +1,77 @@
+{
+  "schema": "n12/quantum_pivot/raw71_falsifier_update/1",
+  "ts_utc": "2026-05-01T00:00:00Z",
+  "raw_falsifier_id": "raw#71",
+  "falsifier_label": "F-N12-1",
+  "falsifier_topic": "Orch-OR cross-substrate decoherence ratio test",
+  "previous_state": {
+    "version": "v2",
+    "verdict": "INDETERMINATE",
+    "blocker": "Forte 1 substrate-incapable (no OpenQASM 3 delay primitive)",
+    "spend_USD": 0.00,
+    "v1_spend_USD": 24.90,
+    "cumulative_spend_USD": 24.90
+  },
+  "v3_preregister_updates": [
+    {
+      "field": "substrate",
+      "old": "IonQ Forte 1 via AWS Braket",
+      "new": "IBM Heron r2 (ibm_kingston) via IBM Quantum Cloud Open Plan"
+    },
+    {
+      "field": "delay_implementation",
+      "old": "rx(2pi)*N surrogate (REJECTED as virtual frame change) -> attempted OpenQASM3 delay[Nus] (REJECTED by Forte 1 server)",
+      "new": "OpenQASM3 delay[Nus] qubit, supported natively by IBM Heron r2 per qasm-feature-table"
+    },
+    {
+      "field": "sc_reference_tau_2",
+      "old_v1": "100us placeholder (unsourced)",
+      "old_v2": "PRNewswire 2025-03 (no extractable numeric)",
+      "new_primary_us": 100,
+      "new_primary_source": "IBM Heron r2 fleet typical T2 (matched substrate)",
+      "new_robustness_us": 1060,
+      "new_robustness_source_doi": "https://www.nature.com/articles/s41467-025-61126-0 (Nature Communications, 2025-07, tantalum transmon T2_echo = 1.06 ms)",
+      "new_ceiling_source_doi": "https://www.nature.com/articles/s41586-025-09687-4 (Nature, 2025, 2D transmon T1 = 1.68 ms ceiling)"
+    },
+    {
+      "field": "pass_band",
+      "old": "[0.67, 1.5] (surrogate-based, unsound)",
+      "new": "[0.15, 0.40] (4Q GHZ textbook QM N-fold dephasing acceleration)"
+    },
+    {
+      "field": "verdict_semantics",
+      "clarification": "PASS = textbook QM holds = NO Orch-OR signal at SC 4Q GHZ scale. This is the EXPECTED null outcome. Orch-OR predicts neuronal-microtubule-scale OR, not SC-scale OR. The v3 test establishes the SC baseline precisely so that future cross-substrate tests (Quantinuum H-series ion, photonic GBS, biological microtubule) can detect deviations against a sound denominator."
+    },
+    {
+      "field": "cross_substrate_followup",
+      "deferred_to": "F-N12-1-cross (separate falsifier)",
+      "reason": "Original ion-vs-SC ratio is reframed as multi-stage: v3 establishes SC denominator on IBM, future v4 (Quantinuum H1/H2 if budget approved) measures ion numerator. Comparing v2-attempted-and-failed Forte 1 vs IBM v3 directly is unsound (different control stacks, no apples-to-apples)."
+    },
+    {
+      "field": "budget",
+      "old_v1_spent_USD": 24.90,
+      "old_v2_spent_USD": 0.00,
+      "v3_estimated_USD": 0.00,
+      "v3_hard_cap_USD": 5.00,
+      "v3_hard_cap_rationale": "Open Plan free; if Open Plan exhausted, 1 min PAYG = $96, but 60 sec is enough for full 5-point sweep. Cap at $5 = ~3 sec PAYG buffer."
+    }
+  ],
+  "v3_falsifier_status": "PRE-REGISTERED, READY-TO-EXECUTE pending IBM Quantum Open Plan account creation authorization",
+  "blockers_remaining": [
+    "Account creation: IBM Cloud + Quantum Platform sign-up (constraint says 'no account creation' for research phase — execution requires explicit authorization)",
+    "Queue wait variance: Open Plan jobs can sit 1-24h; mitigated by submitting overnight",
+    "Open Plan ToS check: confirm research use of free tier is permitted (typically yes, but document for audit trail)"
+  ],
+  "audit_trail": {
+    "research_only_no_account_created": true,
+    "research_only_no_vendor_contacted": true,
+    "research_only_no_USD_spent": true,
+    "files_written": [
+      "state/n_substrate_n12_quantum_pivot_2026_05_01/vendor_comparison.json",
+      "state/n_substrate_n12_quantum_pivot_2026_05_01/sc_tau2_reference.json",
+      "state/n_substrate_n12_quantum_pivot_2026_05_01/f_n12_1_v3_protocol.json",
+      "state/n_substrate_n12_quantum_pivot_2026_05_01/raw71_falsifier_preregister_update.json",
+      "docs/n_substrate_n12_quantum_pivot_2026_05_01.md"
+    ]
+  }
+}

@@ -1,0 +1,56 @@
+{
+  "schema": "strategic_clm_tension_eeg_bridge/architecture/1",
+  "agent": "CLM ↔ tension_link ↔ EEG bridge architecture strategic analysis",
+  "ts": "2026-05-02",
+  "scope": "user-corrected 3-node bridge (CLM ↔ tension_link ↔ EEG); AKIDA excluded; tension_link as mediator NOT 3rd axis",
+
+  "topology": {
+    "nodes": [
+      {"id": "CLM", "type": "digital_LM", "tag": "anima 530M", "param_count_M": 530.99, "d_model": 768, "n_blocks": 16, "vocab_size": 64000, "n_ca_rules": 8},
+      {"id": "tension_link", "type": "mediator", "polysemy": ["A_tension_bridge_5ch_LIVE", "B_mind_tension_scalar_LIVE", "C_edulattice_atlas_partial"], "primary_locus": "anima-core/tension_bridge.hexa + anima_runtime.hexa mind.tension"},
+      {"id": "EEG", "type": "biological_signal", "tag": "OpenBCI 16ch Cyton+Daisy", "fs_hz": 125, "alpha_band_hz": [8, 12], "alpha_rich_channels": ["P3", "P4", "O1", "O2"]}
+    ],
+    "edges_bidirectional": [
+      {"from": "CLM", "to": "tension_link", "carrier": "hidden_state d=768 → fingerprint d=5 (encode_fingerprint, 25.6:1)"},
+      {"from": "tension_link", "to": "EEG", "carrier": "indirect via user cognition (no direct wire)"},
+      {"from": "EEG", "to": "tension_link", "carrier": "α-phase ψ_j → PLV_N → analogue of mind.tension"},
+      {"from": "tension_link", "to": "CLM", "carrier": "decode_fingerprint d=5 → d=128 reconstruction (channel eff 97.1%)"}
+    ],
+    "physical_truth": "no direct CLM-EEG wire exists; all measurable coupling routes through user cognition (read CLM output → cognitive state → EEG α modulation; or eyes-state → α-state → typed prompt → CLM)"
+  },
+
+  "forward_path_CLM_to_EEG": {
+    "stage_1": {"locus": "CLM hidden state h ∈ R^{768}", "operation": "anima_runtime.hexa mind_step → mind.tension scalar = abs(phi - target) * PSI_ALPHA * 10.0"},
+    "stage_2": {"locus": "anima-core/tension_bridge.hexa encode_fingerprint(state, sender_id)", "operation": "WHAT/WHERE/WHY/TRUST/WHO 5-channel; 128d→5d (25.6:1 compression); 97.1% RC-6 channel eff"},
+    "stage_3": {"locus": "binding_step DETECT/PARSE/GATE/INTEGRATE (4 phases = tau)", "operation": "GATE clamps each channel to ±PSI_ALPHA=0.014 around PSI_BALANCE=0.5"},
+    "stage_4": {"locus": "user (mediator)", "operation": "user reads CLM output text → cognitive state changes → α-band modulation"},
+    "stage_5": {"locus": "EEG OpenBCI", "operation": "8-12 Hz bandpass + Hilbert → ψ_j(t) per channel; PLV_N(t̄) instantaneous N-channel order param"},
+    "measurable_sockets": ["CLM hidden h (768d)", "mind.tension scalar (1d, 10 Hz)", "fingerprint 5ch (5d)", "EEG raw 16ch @125Hz", "EEG α-phase ψ_j", "PLV_N(t̄)"]
+  },
+
+  "reverse_path_EEG_to_CLM": {
+    "stage_1": {"locus": "EEG α-state (eyes-open vs closed)", "operation": "eyes-closed → α-power ↑ (Berger effect, replicated state/clm_eeg_berger_real.json)"},
+    "stage_2": {"locus": "user (mediator)", "operation": "α-state correlates with arousal/attention; user composes prompt"},
+    "stage_3": {"locus": "CLM input prompt", "operation": "tokenize → forward → mind.tension trace per step"},
+    "stage_4": {"locus": "CLM mind.tension scalar", "operation": "tension = abs(phi - target) * PSI_ALPHA * 10.0; trace 10 Hz"},
+    "measurable_sockets": ["EEG α-power", "user reaction-time / typing latency", "prompt token sequence", "CLM tension trace"],
+    "honest_caveat": "no closed CLM-side EEG ingest exists; reverse path is OPEN-LOOP (user-mediated only)"
+  },
+
+  "mediator_role_clarification": {
+    "tension_link_polysemy_A_5ch_bridge": "physical-channel-level mediator — encode/decode/binding (math homomorphism only, no neural identity)",
+    "tension_link_polysemy_B_mind_tension_scalar": "scalar instantaneous proxy for substrate strain — measurable per CLM step",
+    "tension_link_polysemy_C_edulattice_atlas": "partial — atlas_graph projection used in V_sync Kuramoto θ_j hash",
+    "user_as_mediator_part": "key insight: user is part of tension_link mediator stack — no other physical channel exists between digital CLM and biological EEG; therefore tension_link measurements include user cognitive variability as confound",
+    "information_theoretic_meaning": "mediator = information channel with bandwidth = bits/sec carried CLM→user→EEG and reverse",
+    "phenomenal_meaning": "OUT OF SCOPE per spec §6.3 — bridge math homomorphism does NOT establish substrate identity"
+  },
+
+  "ssot_refs": {
+    "tension_bridge_hexa": "/Users/ghost/core/anima/anima-core/tension_bridge.hexa",
+    "anima_runtime_hexa": "/Users/ghost/core/anima/anima-core/runtime/anima_runtime.hexa lines 200-333",
+    "alpha_mapping_spec": "/Users/ghost/core/anima/anima-clm-eeg/docs/clm_lix_eeg_alpha_direct_mapping_spec.md",
+    "n1_bridge_4gate_verdict": "/Users/ghost/core/anima/state/n_substrate_n1_bridge_4gate_2026_05_01/verdict.json",
+    "w4_clm_tension_field": "/Users/ghost/core/anima/state/strategic_clm_tension_field_W4_2026_05_01/aggregate.json"
+  }
+}

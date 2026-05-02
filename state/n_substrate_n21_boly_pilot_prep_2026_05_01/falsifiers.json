@@ -1,0 +1,43 @@
+{
+  "agent": "N-21-E Boly pilot kit",
+  "raw_id": "raw#71",
+  "preregister_date": "2026-05-01",
+  "n": 5,
+  "falsifiers": [
+    {
+      "id": "F-N21E-1",
+      "claim": "gaze<->EEG sync drift stays within 100 ms across a session",
+      "fail_threshold": "max-min(browser_ts - server_lsl) > 100 ms within one 20-min block",
+      "detection": "analyze_session.py reads BolyMarkers payload (browser_ts vs server_lsl) and computes drift histogram",
+      "consequence_if_fires": "OKN decoder timing assumption invalidated; switch alignment unreliable; protocol unusable until time-sync redesigned (e.g., direct LSL push from a desktop bridge instead of HTTP)"
+    },
+    {
+      "id": "F-N21E-2",
+      "claim": "webcam framerate stays >=25 Hz under typical room lighting for entire 20-min block",
+      "fail_threshold": "mean fps < 25 over any 5-min stretch",
+      "detection": "count gaze;... markers per second offline; flag if 5-min rolling mean < 25",
+      "consequence_if_fires": "below Boly minimum spec (30 Hz nominal, our budget allows -5 Hz); affected blocks must be discarded; if persistent, hardware path (Pupil Core) required"
+    },
+    {
+      "id": "F-N21E-3",
+      "claim": "OKN decoder achieves >=60% accuracy on synthetic test data",
+      "fail_threshold": "analyze_session.py --synthetic returns decoder.accuracy < 0.60",
+      "detection": "CI-style pre-pilot run; baseline 2026-05-01 = 1.0",
+      "consequence_if_fires": "decoder logic broken; pipeline cannot proceed; root-cause + retest required"
+    },
+    {
+      "id": "F-N21E-4",
+      "claim": "OpenBCI Cyton+Daisy holds <30 kOhm impedance on >=12/16 channels for 60 min",
+      "fail_threshold": ">4/16 channels exceed 30 kOhm at any impedance check",
+      "detection": "OpenBCI GUI impedance panel during electrode setup; verify pre-block-A and pre-block-B",
+      "consequence_if_fires": "channel count below pilot minimum; either re-prep electrodes (extra ~10 min) or accept reduced channel count with explicit Limitations note"
+    },
+    {
+      "id": "F-N21E-5",
+      "claim": "GazeCloudAPI non-commercial license permits academic-research / pre-publication use without paywall",
+      "fail_threshold": "ToS or service behavior blocks our use case (rate-limit, paywall, or explicit research exclusion clause)",
+      "detection": "manual ToS review at signup; runtime monitoring for HTTP 429 or auth errors in browser console",
+      "consequence_if_fires": "must escalate: (a) Pupil Core ~$2-3k purchase, OR (b) GazeRecorder local SDK (Windows-only, requires VM/dual-boot on Mac), OR (c) accept WebGazer.js as overt-only fallback (FAILs Boly OKN spec; downgrade scope)"
+    }
+  ]
+}

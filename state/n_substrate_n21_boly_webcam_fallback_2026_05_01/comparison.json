@@ -1,0 +1,43 @@
+{
+  "research_grade_baseline": {
+    "device": "Pupil Labs Core (open-source 200 Hz binocular headset)",
+    "spatial_accuracy_deg": "0.6 (best-case 2D mapping, sub-1 deg typical); validation studies report ~1.5 deg mean angular offset",
+    "spatial_source": "pupil-labs.com/products/core/tech-specs; Ehinger et al. 2019 PMC6625505 vs EyeLink 1000",
+    "sample_rate_hz": 200,
+    "temporal_sync_precision_ms": "<1 (LSL hardware timestamp)",
+    "price_usd_estimate": "Pupil Core typically ~$2,000-$3,000 USD per headset (DIY frame option lowers cost). Pupil Neon turnkey = $7,499. The $500 figure cited in N-21 is likely a refurb/DIY frame + camera estimate, not a new MSRP.",
+    "license": "LGPL software, hardware proprietary"
+  },
+  "gap_analysis": {
+    "spatial_accuracy_ratio": {
+      "WebGazer_vs_Pupil_Core": "~4.0 deg / ~0.6 deg = 6.7x worse",
+      "GazeRecorder_vs_Pupil_Core": "~1.0 deg / ~0.6 deg = 1.7x worse"
+    },
+    "sample_rate_ratio": {
+      "WebGazer_vs_Pupil_Core": "20 Hz / 200 Hz = 10x slower",
+      "GazeRecorder_vs_Pupil_Core": "30 Hz / 200 Hz = 6.7x slower"
+    },
+    "temporal_sync_ratio": {
+      "WebGazer_vs_Pupil_Core": "~75 ms / <1 ms = 75x worse",
+      "GazeRecorder_vs_Pupil_Core": "~45 ms / <1 ms = 45x worse"
+    },
+    "boly_min_30hz_required": {
+      "WebGazer_meets": false,
+      "WebGazer_margin": "fails by ~10 Hz (mean 20.7 Hz)",
+      "GazeRecorder_meets": true,
+      "GazeRecorder_margin": "exactly at threshold"
+    },
+    "boly_min_1.5deg_required": {
+      "WebGazer_meets": false,
+      "WebGazer_margin": "fails by 2.5 deg (4.0 deg actual vs 1.5 deg required)",
+      "GazeRecorder_meets": true,
+      "GazeRecorder_margin": "0.5 deg headroom"
+    }
+  },
+  "okn_specific_evidence": {
+    "consumer_webcam_okn_detection_accuracy": "89-93% sensitivity, 98% specificity (Turuwhenua et al. PMC4848063 / MDPI healthcare 10(7):1281 2022)",
+    "vs_human_observer": "93% webcam vs 98% human-rater = 5 pp gap",
+    "vs_boly_2017_eye_only_decoder": "Boly OKN-only SVM = 88% (research-grade tracker); webcam OKN classifiers reach 89-93% on global-motion stimuli with low-cost trackers",
+    "interpretation": "Webcam-grade OKN direction classification is FEASIBLE for the bistable plaid task IF sample rate >= 30 Hz and accuracy <= 1 deg are achieved — i.e. GazeRecorder-class hardware, NOT WebGazer-class."
+  }
+}

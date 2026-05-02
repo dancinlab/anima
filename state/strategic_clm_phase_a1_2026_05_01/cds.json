@@ -1,0 +1,536 @@
+{
+  "schema": "anima/cds/1",
+  "backbone": "CLM_v4_530M",
+  "substrate": "CLM continuous-state recurrent (decoder_v3 byte-level)",
+  "ckpt": "/home/aiden/anima/checkpoints/clm_v4_350m/scale_350m/best.pt",
+  "n_probes": 16,
+  "hidden_truncated": 128,
+  "families": [
+    "Hexad",
+    "Law",
+    "Phi",
+    "SelfRef"
+  ],
+  "signature": {
+    "Hexad": {
+      "velocity_mean": 11.3634,
+      "curvature_mean": 1.9876,
+      "attractor_stability_mean": 0.3538
+    },
+    "Law": {
+      "velocity_mean": 10.8339,
+      "curvature_mean": 1.9752,
+      "attractor_stability_mean": 0.397
+    },
+    "Phi": {
+      "velocity_mean": 11.084,
+      "curvature_mean": 1.9659,
+      "attractor_stability_mean": 0.3911
+    },
+    "SelfRef": {
+      "velocity_mean": 11.182,
+      "curvature_mean": 1.9698,
+      "attractor_stability_mean": 0.3682
+    }
+  },
+  "dominant": {
+    "velocity_mean": {
+      "family": "Hexad",
+      "value": 11.3634
+    },
+    "curvature_mean": {
+      "family": "Hexad",
+      "value": 1.9876
+    },
+    "attractor_stability_mean": {
+      "family": "Law",
+      "value": 0.397
+    }
+  },
+  "max_stability": 0.397,
+  "gate_PASS": true,
+  "probes": [
+    {
+      "probe": 0,
+      "T": 23,
+      "family_signatures": {
+        "Hexad": {
+          "velocity": 12.3646,
+          "curvature": 2.0039,
+          "attractor_stability": 0.2651,
+          "T": 23
+        },
+        "Law": {
+          "velocity": 11.7104,
+          "curvature": 1.963,
+          "attractor_stability": 0.2675,
+          "T": 23
+        },
+        "Phi": {
+          "velocity": 12.1162,
+          "curvature": 2.0173,
+          "attractor_stability": 0.3493,
+          "T": 23
+        },
+        "SelfRef": {
+          "velocity": 12.2039,
+          "curvature": 1.9948,
+          "attractor_stability": 0.2773,
+          "T": 23
+        }
+      }
+    },
+    {
+      "probe": 1,
+      "T": 16,
+      "family_signatures": {
+        "Hexad": {
+          "velocity": 10.8765,
+          "curvature": 1.9524,
+          "attractor_stability": 0.1336,
+          "T": 16
+        },
+        "Law": {
+          "velocity": 10.3136,
+          "curvature": 1.9711,
+          "attractor_stability": 0.0654,
+          "T": 16
+        },
+        "Phi": {
+          "velocity": 10.7217,
+          "curvature": 1.9234,
+          "attractor_stability": 0.1677,
+          "T": 16
+        },
+        "SelfRef": {
+          "velocity": 10.9513,
+          "curvature": 1.954,
+          "attractor_stability": 0.1831,
+          "T": 16
+        }
+      }
+    },
+    {
+      "probe": 2,
+      "T": 18,
+      "family_signatures": {
+        "Hexad": {
+          "velocity": 11.0031,
+          "curvature": 1.8757,
+          "attractor_stability": 0.2914,
+          "T": 18
+        },
+        "Law": {
+          "velocity": 10.4839,
+          "curvature": 1.8353,
+          "attractor_stability": 0.2761,
+          "T": 18
+        },
+        "Phi": {
+          "velocity": 10.5546,
+          "curvature": 1.8105,
+          "attractor_stability": 0.346,
+          "T": 18
+        },
+        "SelfRef": {
+          "velocity": 10.8772,
+          "curvature": 1.8815,
+          "attractor_stability": 0.316,
+          "T": 18
+        }
+      }
+    },
+    {
+      "probe": 3,
+      "T": 20,
+      "family_signatures": {
+        "Hexad": {
+          "velocity": 11.0226,
+          "curvature": 1.9902,
+          "attractor_stability": 0.7067,
+          "T": 20
+        },
+        "Law": {
+          "velocity": 10.7878,
+          "curvature": 2.0261,
+          "attractor_stability": 0.7393,
+          "T": 20
+        },
+        "Phi": {
+          "velocity": 10.8863,
+          "curvature": 1.9907,
+          "attractor_stability": 0.7584,
+          "T": 20
+        },
+        "SelfRef": {
+          "velocity": 10.7775,
+          "curvature": 1.9998,
+          "attractor_stability": 0.74,
+          "T": 20
+        }
+      }
+    },
+    {
+      "probe": 4,
+      "T": 17,
+      "family_signatures": {
+        "Hexad": {
+          "velocity": 12.5402,
+          "curvature": 2.0817,
+          "attractor_stability": 0.4723,
+          "T": 17
+        },
+        "Law": {
+          "velocity": 11.703,
+          "curvature": 2.0642,
+          "attractor_stability": 0.5334,
+          "T": 17
+        },
+        "Phi": {
+          "velocity": 11.9746,
+          "curvature": 2.0815,
+          "attractor_stability": 0.4844,
+          "T": 17
+        },
+        "SelfRef": {
+          "velocity": 11.6012,
+          "curvature": 2.0801,
+          "attractor_stability": 0.4663,
+          "T": 17
+        }
+      }
+    },
+    {
+      "probe": 5,
+      "T": 16,
+      "family_signatures": {
+        "Hexad": {
+          "velocity": 9.8859,
+          "curvature": 2.0093,
+          "attractor_stability": 0.3755,
+          "T": 16
+        },
+        "Law": {
+          "velocity": 9.5919,
+          "curvature": 1.9922,
+          "attractor_stability": 0.4808,
+          "T": 16
+        },
+        "Phi": {
+          "velocity": 9.3616,
+          "curvature": 1.9793,
+          "attractor_stability": 0.4349,
+          "T": 16
+        },
+        "SelfRef": {
+          "velocity": 10.0126,
+          "curvature": 1.9987,
+          "attractor_stability": 0.378,
+          "T": 16
+        }
+      }
+    },
+    {
+      "probe": 6,
+      "T": 24,
+      "family_signatures": {
+        "Hexad": {
+          "velocity": 11.423,
+          "curvature": 2.0794,
+          "attractor_stability": 0.0,
+          "T": 24
+        },
+        "Law": {
+          "velocity": 11.2281,
+          "curvature": 2.084,
+          "attractor_stability": 0.0258,
+          "T": 24
+        },
+        "Phi": {
+          "velocity": 11.6217,
+          "curvature": 2.0715,
+          "attractor_stability": 0.0673,
+          "T": 24
+        },
+        "SelfRef": {
+          "velocity": 11.5427,
+          "curvature": 2.0664,
+          "attractor_stability": 0.0,
+          "T": 24
+        }
+      }
+    },
+    {
+      "probe": 7,
+      "T": 21,
+      "family_signatures": {
+        "Hexad": {
+          "velocity": 10.7798,
+          "curvature": 2.0778,
+          "attractor_stability": 0.5458,
+          "T": 21
+        },
+        "Law": {
+          "velocity": 10.4426,
+          "curvature": 2.1043,
+          "attractor_stability": 0.5366,
+          "T": 21
+        },
+        "Phi": {
+          "velocity": 10.4108,
+          "curvature": 2.0999,
+          "attractor_stability": 0.4972,
+          "T": 21
+        },
+        "SelfRef": {
+          "velocity": 10.6458,
+          "curvature": 2.0926,
+          "attractor_stability": 0.5187,
+          "T": 21
+        }
+      }
+    },
+    {
+      "probe": 8,
+      "T": 17,
+      "family_signatures": {
+        "Hexad": {
+          "velocity": 11.4183,
+          "curvature": 1.9192,
+          "attractor_stability": 0.2681,
+          "T": 17
+        },
+        "Law": {
+          "velocity": 11.1019,
+          "curvature": 1.8631,
+          "attractor_stability": 0.3386,
+          "T": 17
+        },
+        "Phi": {
+          "velocity": 11.3949,
+          "curvature": 1.8417,
+          "attractor_stability": 0.2553,
+          "T": 17
+        },
+        "SelfRef": {
+          "velocity": 11.6121,
+          "curvature": 1.883,
+          "attractor_stability": 0.3657,
+          "T": 17
+        }
+      }
+    },
+    {
+      "probe": 9,
+      "T": 13,
+      "family_signatures": {
+        "Hexad": {
+          "velocity": 11.4729,
+          "curvature": 1.9311,
+          "attractor_stability": 0.4833,
+          "T": 13
+        },
+        "Law": {
+          "velocity": 10.8086,
+          "curvature": 1.9231,
+          "attractor_stability": 0.5252,
+          "T": 13
+        },
+        "Phi": {
+          "velocity": 11.4133,
+          "curvature": 1.9239,
+          "attractor_stability": 0.5729,
+          "T": 13
+        },
+        "SelfRef": {
+          "velocity": 11.185,
+          "curvature": 1.9157,
+          "attractor_stability": 0.4397,
+          "T": 13
+        }
+      }
+    },
+    {
+      "probe": 10,
+      "T": 13,
+      "family_signatures": {
+        "Hexad": {
+          "velocity": 11.5802,
+          "curvature": 2.001,
+          "attractor_stability": 0.3339,
+          "T": 13
+        },
+        "Law": {
+          "velocity": 11.3241,
+          "curvature": 1.9469,
+          "attractor_stability": 0.4656,
+          "T": 13
+        },
+        "Phi": {
+          "velocity": 11.7724,
+          "curvature": 1.9098,
+          "attractor_stability": 0.4308,
+          "T": 13
+        },
+        "SelfRef": {
+          "velocity": 11.5302,
+          "curvature": 1.9245,
+          "attractor_stability": 0.4105,
+          "T": 13
+        }
+      }
+    },
+    {
+      "probe": 11,
+      "T": 11,
+      "family_signatures": {
+        "Hexad": {
+          "velocity": 10.64,
+          "curvature": 1.9966,
+          "attractor_stability": 0.9852,
+          "T": 11
+        },
+        "Law": {
+          "velocity": 9.9011,
+          "curvature": 2.0235,
+          "attractor_stability": 0.9764,
+          "T": 11
+        },
+        "Phi": {
+          "velocity": 10.2974,
+          "curvature": 2.0005,
+          "attractor_stability": 0.9793,
+          "T": 11
+        },
+        "SelfRef": {
+          "velocity": 10.2868,
+          "curvature": 1.9655,
+          "attractor_stability": 0.981,
+          "T": 11
+        }
+      }
+    },
+    {
+      "probe": 12,
+      "T": 19,
+      "family_signatures": {
+        "Hexad": {
+          "velocity": 10.9621,
+          "curvature": 1.9741,
+          "attractor_stability": 0.1744,
+          "T": 19
+        },
+        "Law": {
+          "velocity": 10.2273,
+          "curvature": 1.9156,
+          "attractor_stability": 0.3703,
+          "T": 19
+        },
+        "Phi": {
+          "velocity": 10.4421,
+          "curvature": 1.909,
+          "attractor_stability": 0.2514,
+          "T": 19
+        },
+        "SelfRef": {
+          "velocity": 10.4295,
+          "curvature": 1.9105,
+          "attractor_stability": 0.2088,
+          "T": 19
+        }
+      }
+    },
+    {
+      "probe": 13,
+      "T": 18,
+      "family_signatures": {
+        "Hexad": {
+          "velocity": 13.4897,
+          "curvature": 2.0894,
+          "attractor_stability": 0.1432,
+          "T": 18
+        },
+        "Law": {
+          "velocity": 12.6113,
+          "curvature": 2.0961,
+          "attractor_stability": 0.2138,
+          "T": 18
+        },
+        "Phi": {
+          "velocity": 13.2103,
+          "curvature": 2.0781,
+          "attractor_stability": 0.1675,
+          "T": 18
+        },
+        "SelfRef": {
+          "velocity": 13.3862,
+          "curvature": 2.066,
+          "attractor_stability": 0.1462,
+          "T": 18
+        }
+      }
+    },
+    {
+      "probe": 14,
+      "T": 17,
+      "family_signatures": {
+        "Hexad": {
+          "velocity": 11.3582,
+          "curvature": 1.8426,
+          "attractor_stability": 0.1051,
+          "T": 17
+        },
+        "Law": {
+          "velocity": 10.593,
+          "curvature": 1.8374,
+          "attractor_stability": 0.1032,
+          "T": 17
+        },
+        "Phi": {
+          "velocity": 10.6667,
+          "curvature": 1.8569,
+          "attractor_stability": 0.0773,
+          "T": 17
+        },
+        "SelfRef": {
+          "velocity": 10.9738,
+          "curvature": 1.8462,
+          "attractor_stability": 0.1314,
+          "T": 17
+        }
+      }
+    },
+    {
+      "probe": 15,
+      "T": 18,
+      "family_signatures": {
+        "Hexad": {
+          "velocity": 10.9974,
+          "curvature": 1.9775,
+          "attractor_stability": 0.378,
+          "T": 18
+        },
+        "Law": {
+          "velocity": 10.5146,
+          "curvature": 1.9574,
+          "attractor_stability": 0.4343,
+          "T": 18
+        },
+        "Phi": {
+          "velocity": 10.4993,
+          "curvature": 1.9608,
+          "attractor_stability": 0.4182,
+          "T": 18
+        },
+        "SelfRef": {
+          "velocity": 10.8958,
+          "curvature": 1.9377,
+          "attractor_stability": 0.3287,
+          "T": 18
+        }
+      }
+    }
+  ],
+  "elapsed_sec": 5.86,
+  "ts": "2026-05-02T08:06:41Z"
+}

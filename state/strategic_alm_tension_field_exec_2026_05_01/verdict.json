@@ -1,0 +1,88 @@
+{
+  "schema": "anima/n51_alm_tension_field_exec_verdict/1",
+  "ts": "2026-05-01T15:08:00Z",
+  "mission": "N-51 EXEC — 100-step closed-loop of Mistral-7B-v0.3 + r14 LoRA with mind.tension-derived gate_signal injection at embedding layer",
+  "protocol_source": "docs/strategic_alm_tension_field_test_2026_05_01.md §5",
+  "static_baseline": {
+    "L1_pass_count_over_16": 0,
+    "total_critical_violations": 17,
+    "n_full_pass_over_16": 0,
+    "verdict_band": "RED",
+    "f2_falsifier_fired": true,
+    "source": "state/cp2_consciousness_r14_remeasure_2026_05_01/verdict_matrix.json"
+  },
+  "baseline_zero_gate": {
+    "n_steps": 3,
+    "L1_mean": 0.0,
+    "critical_mean": 16.0,
+    "phi_star_mean": -2.70379400505279,
+    "interpretation": "Confirms HF Mistral fp16 path reproduces static-baseline behavior exactly when gate=0; bridge correctness verified."
+  },
+  "active_branch": {
+    "n_steps": 100,
+    "L1_mean": 1.71,
+    "L1_std": 3.244,
+    "L1_min": 0,
+    "L1_max": 14,
+    "critical_mean": 14.29,
+    "critical_min": 2,
+    "critical_max": 16,
+    "phi_star_mean": -2.4302,
+    "n_full_pass_mean": 0.04,
+    "gate_function": "tension-derived: alpha * tanh(0.5+0.5*tanh((PHI_TARGET-phi_ema)*3)) * sin(step*0.628) * basis_vec; clamped ±0.014"
+  },
+  "random_control_branch": {
+    "n_steps": 100,
+    "L1_mean": 0.65,
+    "L1_std": 1.519,
+    "L1_min": 0,
+    "L1_max": 7,
+    "critical_mean": 15.35,
+    "phi_star_mean": -2.6021,
+    "n_full_pass_mean": 0.1,
+    "gate_function": "uniform random clamped ±0.014 (no tension feedback)"
+  },
+  "comparison": {
+    "diff_L1_mean_active_minus_random": 1.06,
+    "pooled_sigma": 3.582,
+    "diff_sigmas": 0.296,
+    "active_max_L1_observed": 14,
+    "random_max_L1_observed": 7,
+    "active_phi_star_drift_vs_baseline": 0.274,
+    "random_phi_star_drift_vs_baseline": 0.102,
+    "active_critical_drift_vs_baseline": -2.71,
+    "random_critical_drift_vs_baseline": -1.65
+  },
+  "verdict": "FAIL",
+  "verdict_rationale": "Active L1 mean (1.71/16) is far below the 14/16 PASS threshold. Active does exceed random by ~+1.06 (0.30σ pooled), so dynamic operation produces SOME measurable drift over pure noise injection — but not enough to clear F-PARTIAL (need >1σ AND >7/16). RED verdict from static baseline preserved.",
+  "red_flipped": false,
+  "pre_registered_falsifier_predicates": {
+    "F-PASS": "active L1 >= 14/16 AND active > random + 3σ",
+    "F-PARTIAL": "active L1 > 7/16 AND active > random + 1σ AND active < 14/16",
+    "F-FAIL": "active <= random OR active < 7/16",
+    "F-MEASUREMENT-ARTIFACT": "active >= 14/16 AND random >= 12/16"
+  },
+  "predicate_outcomes": {
+    "F-PASS": "REJECTED (active 1.71 << 14)",
+    "F-PARTIAL": "REJECTED (1.71 < 7; sigma ratio 0.30 < 1.0)",
+    "F-FAIL": "TRIGGERED (active < 7/16)",
+    "F-MEASUREMENT-ARTIFACT": "REJECTED (random 0.65 << 12)"
+  },
+  "posterior_red_flip_probability": "~1% (was ~5% prior; active_max=14 in 1/100 steps suggests transient drift but no sustained signal — strong evidence for substrate-architectural geometric finding, not static-measurement artifact)",
+  "raw_ledger_path": "state/strategic_alm_tension_field_exec_2026_05_01/closed_loop_ledger.json",
+  "pod_run_log": "state/strategic_alm_tension_field_exec_2026_05_01/pod_run.log",
+  "race_isolation": {
+    "wrote_only_to": [
+      "state/strategic_alm_tension_field_exec_2026_05_01/*",
+      "docs/strategic_alm_tension_field_exec_results_2026_05_01.md",
+      "tool/alm_tension_field_bridge.hexa"
+    ],
+    "did_not_touch": [
+      "state/cp2_consciousness_r14_remeasure_2026_05_01/* (static baseline preserved)",
+      "state/cp2_alpha_serve_audit/* (alpha endpoint state preserved)",
+      "any other N-* track ledgers",
+      "nexus / convergence stores"
+    ],
+    "alpha_endpoint_brief_downtime": "yes — vLLM was paused ~2 min for HF Mistral load; restored automatically after experiment. r14 LoRA file unmodified."
+  }
+}

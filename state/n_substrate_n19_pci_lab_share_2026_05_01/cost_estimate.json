@@ -1,0 +1,65 @@
+{
+  "ts": "2026-05-01",
+  "scope": "N-19 PCI lab-share total cost estimate (one-shot pilot, n=1 user + ~5 calibration volunteers)",
+  "honest_c3": "All numbers are PUBLIC-INFERRED from analog Korean university lab rates and IRB filing fees. No facility was quoted directly. Real cost may vary ±50%.",
+  "top1_facility": "F4_KOREA_U_AFFECTIVE",
+  "scenario_a_full_lab_share_path": {
+    "lab_share_4_sessions_at_400usd": 1600,
+    "irb_filing_via_korean_co_pi": {
+      "korea_u_irb_filing_fee_krw": "0–500,000 KRW (often waived for student-led non-clinical research)",
+      "irb_filing_usd_estimate": 350
+    },
+    "byoe_sync_hardware_self_build": {
+      "ttl_opto_isolator_arduino_cable": 200,
+      "magstim_trigger_BNC_adapter": 50
+    },
+    "transport": {
+      "seoul_local_round_trip_4_visits": 100,
+      "or_kosatra_ktx_to_daejeon_4_visits_for_KAIST": 320
+    },
+    "user_time_cost_no_dollar": "~30–40 hours (4 sessions × 90min + IRB prep 10h + transport 10h + calibration cohort recruitment 10h)",
+    "subtotal_seoul_path_korea_u_top1": {
+      "lab_share": 1600,
+      "irb": 350,
+      "hardware": 250,
+      "transport": 100,
+      "total_usd": 2300
+    },
+    "subtotal_daejeon_path_kaist_alternative": {
+      "lab_share": 2000,
+      "irb": 350,
+      "hardware": 250,
+      "transport": 320,
+      "total_usd": 2920
+    }
+  },
+  "scenario_b_clinical_treatment_off_label_research": {
+    "description": "Pay private TMS clinic (e.g., Seoul Psychiatry Gangnam) as treatment patient, ask permission to record OpenBCI in parallel during their session. Higher per-session cost, no IRB needed (BUT no peer-review publishability and ethics issues with using treatment as research surrogate).",
+    "session_rate_usd": 150,
+    "sessions_for_n1_pci_calibration": 4,
+    "subtotal_usd": 600,
+    "byoe_sync": 250,
+    "blockers": "Most private rTMS clinics use repetitive (10Hz/intermittent theta-burst) protocols, NOT single-pulse Massimini-style. Clinical TMS is therapeutic, not measurement-grade. PCI requires specific single-pulse jittered ISI ≥ 1500ms = NOT a clinical protocol. Clinic likely refuses request.",
+    "honest_c3": "Scenario B does not yield Massimini-protocol PCI data. Documented as fallback IF lab-share path fully blocked AND user accepts research-grade-only single-pulse rig at home (separate path)."
+  },
+  "scenario_c_capex_used_magstim_purchase": {
+    "from_n19_spec_section_5_3": true,
+    "used_magstim_200_usd": 14000,
+    "figure_of_8_coil_usd": 3000,
+    "subtotal_capex_usd": 17000,
+    "ongoing_cost_per_session": 0,
+    "lead_time_months": 1,
+    "blocker": "$17K capex >> $1.6–2.5K target. NOT recommended for one-shot pilot."
+  },
+  "recommendation": {
+    "primary": "Scenario A → TOP-1 = Korea University Affective Cognitive Neuroscience Lab (F4)",
+    "estimated_total_usd": 2300,
+    "estimated_lead_time_weeks": "10–14 weeks (IRB 6–10w + scheduling 4w)",
+    "fallback_chain": [
+      "F4 Korea U declines or unavailable → F2 KAIST Brain x Machine Intelligence Lab (Sang Wan Lee) — strongest TMS+EEG+computational fit, but Daejeon transport + KAIST IRB longer",
+      "F2 declines → F1 KAIST BINP (Seungwoo Lee) — neural prosthetics focus, less PCI overlap but TMS available",
+      "F1 declines → F3 Yonsei Severance Neurology — clinical-grade route, slowest but highest signal quality",
+      "All declined → Scenario B (private clinic + parallel BYOE) WITH HONEST C3 disclosure that single-pulse Massimini protocol cannot be obtained from clinical rTMS treatment session"
+    ]
+  }
+}

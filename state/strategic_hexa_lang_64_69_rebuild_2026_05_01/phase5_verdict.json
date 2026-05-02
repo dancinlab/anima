@@ -1,0 +1,23 @@
+{
+  "ts": "2026-05-01",
+  "agent": "N-51 W2",
+  "phase": "5_verdict",
+  "verdict": "NOT_FEASIBLE_IN_SESSION reframed as NOT_NECESSARY_IN_SESSION",
+  "reason": "Discovered through direct experiment that the `hexa-lang upstream roadmap 64-69 binary rebuild` framing is STALE (memory 9 days old; upstream restructured 2026-04-26 from numeric 64-69 to SH1..SH-Omega + RFC bundle) AND the specific N-51 EXEC E blocker (`absence of general hxc compiler`) is a MISDIAGNOSIS — `hexa build` works today on Mac when two intentional safety gates are honored: (G1) HEXA_MAC_BUILD_OK=1 to bypass the 2026-04-20 kernel-panic /tmp refusal, (G2) strip trailing `main()` call or use `@manual_main` to satisfy auto-invoke conflict enforcement.",
+  "evidence_summary": {
+    "trivial_smoke": "println(\"hello\") → Mach-O 233200 B → rc=0 PASS",
+    "n51_comp1": "123 LoC → 234384 B → 5/5 selftest PASS",
+    "n51_comp3": "160 LoC → 234832 B → 4/4 selftest PASS (1 non-fatal find_at codegen warning)",
+    "n51_comp4": "128 LoC → 235440 B → 3/3 selftest PASS",
+    "aggregate": "3/3 N-51 components fully unblocked using existing toolchain"
+  },
+  "code_changed_in_hexa_lang_repo": false,
+  "lines_diff_in_hexa_lang_repo": 0,
+  "wall_time_to_n51_unblock_from_finding": "<5 min (set env, change output dir, strip 1 line)",
+  "honest_c3_top_3": [
+    "1. Memory `reference_hexa_roadmap_64_69.md` is 9 days stale and describes a numeric entry scheme retired 2026-04-25 commit 3caebc54 — `64-69` no longer maps to live upstream entries. Continuing to cite this anchor without verification produces phantom blockers.",
+    "2. The N-51 EXEC E ledger's `INDETERMINATE — toolchain blocker` verdict was a category error: it conflated `single-program AOT shards hxc_a25..a34 only run their embedded selftests` (true, but those are pre-baked artifacts) with `no general hexa->native compiler exists` (false — `hexa build` is the general compiler and works today). The shards exist for hot-path agents that don't want a full transpile cycle, not as the only available compile path.",
+    "3. W2 did NOT modify hexa-lang. This is honest — there was nothing for W2 to fix upstream that would unblock N-51 in-session. The remaining genuine upstream items (SH3 phase 2.E/2.F deferred, SH-Omega W-alpha rewire, RFC-005/009 AOT codegen correctness) are real but ORTHOGONAL to N-51's specific Comp 1/3/4 needs. Claiming a fix to those would be false flag-planting; documenting the discoverability resolution is the truthful deliverable."
+  ],
+  "one_sentence_summary": "hexa-lang 64-69 stale-memory-mirage → N-51 fully unblockable today via HEXA_MAC_BUILD_OK=1 + non-/tmp output + trailing-main()-strip; 3/3 components compile + selftest PASS, $0 burn, 0 upstream code change."
+}

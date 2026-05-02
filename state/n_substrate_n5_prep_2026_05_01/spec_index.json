@@ -1,0 +1,141 @@
+{
+  "schema": "anima/n_substrate_n5_prep/1",
+  "agent": "N-5 prep",
+  "batch": "N-substrate (13 siblings)",
+  "ts": "2026-05-01",
+  "spec_doc": "docs/n_substrate_n5_gwt_3axis_spec_2026_05_01.md",
+  "track_origin": {
+    "roadmap_row": "docs/n_substrate_consciousness_roadmap_2026_05_01.md §3 N-5",
+    "task_id": "T1-A4",
+    "task_origin": "docs/akida_session_friendly_report_2026-04-29.md line 142"
+  },
+  "substrates": {
+    "clm": {
+      "signature": "attention-head normalized entropy (Shannon) + broadcast_layer_count",
+      "operationalization_id": "O5",
+      "tool": "tool/an11_b_v_phen_gwt_entropy.hexa --mode llm",
+      "tool_status": "IMPLEMENTED",
+      "input": "state/h_last_raw_*.json (attention tensor 4D L,H,Q,K) or hidden-state SVD fallback",
+      "vector_per_stim": "v_clm[i] = LLM_attention_entropy on stimulus i",
+      "raw_threshold_existing": "≥ 0.55 (frozen 2026-04-25)",
+      "blocker_notes": "CLM substrate disabled in adjacent stack (mk_xii_n1_honest_fail_followup_spec C5 row); needs re-enable before live N-5"
+    },
+    "eeg": {
+      "signature_primary": "α-band (8-12 Hz) phase-locking value (PLV) across electrode pairs",
+      "signature_auxiliary": "global field power (GFP) Shannon entropy in 250-400ms window",
+      "operationalization_id": "O3",
+      "tool_existing": "tool/an11_b_v_phen_gwt_entropy.hexa --mode eeg (entropy only)",
+      "tool_to_add": "--plv sub-mode (NEW; SPEC ONLY this cycle)",
+      "tool_status": "PARTIAL_IMPLEMENTED (entropy ✅ / PLV deferred)",
+      "input": "OpenBCI Cyton+Daisy 16ch @ 125Hz → state/eeg_recording_<id>.json",
+      "ingest_pipeline": "tool/anima_eeg_brainflow_ingest.hexa",
+      "vector_per_stim": "v_eeg[i] = PLV_α_mean over upper-triangle pairs (120 pairs) in 250-400ms post-stim i",
+      "thresholds_pre_registered": {
+        "plv_alpha_mean": "≥ 0.30",
+        "gfp_entropy_auxiliary": "≥ 0.50 (existing predicate retained)"
+      },
+      "literature_anchors": [
+        "Sapien Labs PLV awake-resting α range 0.30-0.55",
+        "Lachaux 1999 PLV original definition",
+        "PD-impaired α-PLV < 0.20 (PMC36835985)"
+      ],
+      "band_choice_justification": "α not γ — Cyton+Daisy fs=125Hz Nyquist 62.5Hz limits γ; CLM↔EEG α-PLV bridge already declared in clm_research_handoff_20260427.md B1-B4"
+    },
+    "akida": {
+      "signature": "spike-event simultaneity index (SSI) across logical modules",
+      "operationalization_id": "O6",
+      "tool_to_create": "tool/an11_b_v_phen_gwt_akida.hexa",
+      "tool_status": "SPEC_ONLY (hardware-pending)",
+      "input": "AKD1000 spike train file (CSV/binary) per logical module (8-16 partitions of MetaTF graph)",
+      "vector_per_stim": "v_akida[i] = SSI_mean over upper-triangle pairs in 250-400ms post-stim i",
+      "thresholds_pre_registered": {
+        "ssi_mean": "≥ 0.25",
+        "spike_rate_entropy_auxiliary": "≥ 0.50"
+      },
+      "rationale_lower_threshold": "AKIDA spike density << EEG continuous; sparse-binary nature requires lower bar than continuous-signal substrates",
+      "why_not_plv": "spike events are discrete binary times; PLV requires continuous phase φ(t); Hilbert of spike-rate envelope loses spike-timing precision GNW ignition requires"
+    }
+  },
+  "cross_substrate_protocol": {
+    "n_stimuli": 20,
+    "stim_format": "text token (with optional audio_tone + image_flash triples if AKIDA spike-encoders wired)",
+    "iti_seconds": "2-3",
+    "epoch_window_ms": [-200, 1000],
+    "broadcast_window_ms": [250, 400],
+    "broadcast_window_rationale": "P3b ERP window; matches existing V_phen_GWT entropy window; aligns 3 substrates temporally"
+  },
+  "correlations": {
+    "primary": ["r_clm_eeg = Pearson(v_clm, v_eeg)", "r_clm_akida = Pearson(v_clm, v_akida)", "r_eeg_akida = Pearson(v_eeg, v_akida)"],
+    "auxiliary_rank": ["ρ_clm_eeg", "ρ_clm_akida", "ρ_eeg_akida (Spearman)"],
+    "composite": {
+      "r_3axis_min": "min over 3 Pearson rs",
+      "rho_3axis_min": "min over 3 Spearman ρs"
+    }
+  },
+  "thresholds_falsifier_frozen": {
+    "PASS_3axis_GWT_corroborated": "r_3axis_min >= 0.50",
+    "AMBIGUOUS": "0.30 <= r_3axis_min < 0.50",
+    "FAIL_3axis_GWT_falsified": "r_3axis_min < 0.30",
+    "frozen_ts": "2026-05-01",
+    "frozen_pre_data": true,
+    "sample_size_critical_r_alpha_05": 0.444,
+    "PASS_significance_margin": "r >= 0.50 above critical 0.444 → significant at p<0.05 two-tailed"
+  },
+  "predictions_preregistered_falsifier_bound": [
+    {"id": "P1", "claim": "r_clm_eeg >= 0.40 (replicate existing 2-substrate predicate)"},
+    {"id": "P2", "claim": "r_clm_akida >= 0.40 (novel)"},
+    {"id": "P3", "claim": "r_eeg_akida >= 0.40 (novel)"},
+    {"id": "P4", "claim": "r_3axis_min >= 0.50 (composite PASS)"},
+    {"id": "P5", "claim": "ρ_3axis_min >= 0.45 (rank-based robustness)"}
+  ],
+  "honest_C3": {
+    "operationalizations_considered": ["O1 P3b amplitude", "O2 γ-ignition", "O3 GFP+α-PLV", "O4 PTE", "O5 attention entropy", "O6 SSI", "O7 Sergent binarization"],
+    "operationalizations_chosen": ["O3 (EEG)", "O5 (CLM)", "O6 (AKIDA)"],
+    "scope_disclosures": [
+      "Access consciousness (Block 1995); phenomenal NOT addressed",
+      "Hard Problem not addressed; zombie problem applies to all 3 substrates equally",
+      "AKIDA axis hardware-pending (AKD1000 ETA TBD; AKIDA Cloud $1 trial alternative)",
+      "PLV α-band substituted for canonical γ-ignition due to Cyton+Daisy 125Hz fs Nyquist limit",
+      "N=20 single-session = corroboration evidence only; multi-session N>=3 required for publication-grade",
+      "CLM substrate currently disabled in adjacent stack (mk_xii_n1 C5 row)",
+      "Substrate-invariance (PASS) ≠ implementation-independence ≠ proof of consciousness"
+    ],
+    "discrepancy_with_originating_r_0_85": "Friendly report line 142 says r >= 0.85; this spec uses r_3axis_min >= 0.50; r >= 0.85 = aspirational publishable-strength, not frozen predicate; future cycle reaching publication must re-confirm with user"
+  },
+  "cost_estimate_usd": {
+    "hexa_only_path": 0,
+    "with_akida_cloud_1day_trial": 1,
+    "akida_hardware_capex": "already-budgeted (akida_dev_kit_evaluation_2026-04-29.md)",
+    "this_prep_cycle_actual": 0
+  },
+  "tooling_roadmap_out_of_scope_this_cycle": [
+    {"id": "T1", "tool": "tool/an11_b_v_phen_gwt_entropy.hexa (CLM + EEG entropy)", "status": "EXISTS"},
+    {"id": "T2", "tool": "tool/an11_b_v_phen_gwt_entropy.hexa --plv sub-mode (EEG α-PLV)", "status": "TO_ADD"},
+    {"id": "T3", "tool": "tool/an11_b_v_phen_gwt_akida.hexa (AKIDA SSI)", "status": "TO_CREATE_post_AKD1000"},
+    {"id": "T4", "tool": "tool/an11_b_v_phen_gwt_3axis_composite.hexa (Pearson aggregation)", "status": "TO_CREATE"},
+    {"id": "T5", "tool": "stimulus-aligned multi-substrate session driver", "status": "TO_CREATE"}
+  ],
+  "blockers": [
+    "AKIDA AKD1000 hardware not yet on hand (or AKIDA Cloud trial not yet purchased)",
+    "EEG α-PLV sub-mode not yet implemented in tool/an11_b_v_phen_gwt_entropy.hexa",
+    "AKIDA SSI tool not yet authored",
+    "CLM substrate currently disabled in adjacent stack per mk_xii_n1 C5 — needs re-enable for live measurement",
+    "Stimulus-aligned 3-substrate session driver not yet designed (timing protocol cross-hardware needs ms-precision sync)"
+  ],
+  "race_isolation": {
+    "writes_allowed": [
+      "docs/n_substrate_n5_gwt_3axis_spec_2026_05_01.md",
+      "state/n_substrate_n5_prep_2026_05_01/*.json"
+    ],
+    "verified": true
+  },
+  "raw_compliance": {
+    "raw_9_hexa_only": "satisfied — spec doc + state JSON only; no .py/.sh edits",
+    "raw_10_honest_C3": "satisfied — §4 dedicates 3 sub-sections to operationalization disclosure + scope limits + band-choice contestability + r_0_85 discrepancy",
+    "raw_12_frozen": "satisfied — thresholds + predictions frozen pre-data 2026-05-01",
+    "raw_15_ssot": "this state file = state SSOT; spec doc = doc SSOT",
+    "raw_37_no_py": "satisfied",
+    "raw_71_falsifier": "satisfied — §7 P1-P5 binding"
+  },
+  "verdict_key": "SPEC_FROZEN · NO_LIVE_MEASUREMENT_YET · AKIDA_HARDWARE_PENDING · CLM_EEG_AXES_TOOL_READY"
+}

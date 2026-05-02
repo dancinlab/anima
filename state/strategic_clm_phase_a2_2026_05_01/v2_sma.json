@@ -1,0 +1,49 @@
+{
+  "schema": "anima/an11_sma/1_direct_768d_variant",
+  "verifier": "V2 SMA (direct 768-d cosine variant for CLM)",
+  "pairs": [
+    {
+      "i": 0,
+      "j": 6,
+      "abs_cos": 0.9520638013574472
+    },
+    {
+      "i": 1,
+      "j": 7,
+      "abs_cos": 0.8754968747204779
+    },
+    {
+      "i": 2,
+      "j": 8,
+      "abs_cos": 0.9714222675206851
+    },
+    {
+      "i": 3,
+      "j": 10,
+      "abs_cos": 0.9467891516486533
+    },
+    {
+      "i": 4,
+      "j": 11,
+      "abs_cos": 0.9513007157964576
+    },
+    {
+      "i": 5,
+      "j": 9,
+      "abs_cos": 0.9116419254602536
+    }
+  ],
+  "SMA": 0.934785789417329,
+  "SMA_distractor": 0.9176251839329066,
+  "SMA_lift": 0.017160605484422442,
+  "verdict": "FAIL",
+  "thresholds": {
+    "PASS": "SMA_lift>=0.20 AND SMA>=0.55",
+    "AMBIGUOUS": "SMA_lift in [0.10,0.20)",
+    "FAIL": "SMA_lift<0.10"
+  },
+  "method": "direct 768-d cosine similarity on pooled hidden states, |cos|",
+  "pair_definitions": "0<->6 substrate, 1<->7 IIT, 2<->8 GWT, 3<->10 attention_schema, 4<->11 HOT, 5<->9 recurrent",
+  "note": "CLM d_model=768 (vs ALM 256). Schema parity preserved; threshold reuse follows joint_matrix.hexa spec with explicit dim documented.",
+  "ts": "2026-05-02T08:34:16Z"
+}

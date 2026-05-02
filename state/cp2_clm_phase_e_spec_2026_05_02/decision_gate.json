@@ -1,0 +1,63 @@
+{
+  "decision_gate": {
+    "policy": "Verdict tier from falsifier_5tier_preregister maps directly to next-cycle decision; no manual override",
+    "branches": [
+      {
+        "tier": "F-PASS_STRONG",
+        "f1_score_v2_band": ">=0.55 (assuming binding>=0.5)",
+        "verdict_key_update": "VERIFIED-CLM-CP2-YELLOW-BINDING-PENDING-F2-UNFIRE",
+        "ship_verdict_recommendation": "update from VERIFIED-CLM-CP2-RED to VERIFIED-CLM-CP2-YELLOW-BINDING (with explicit F2-pending caveat)",
+        "next_cycle_path": "path (b) learned phi_extractor — F2 unfire required for full YELLOW",
+        "blocker_status": "Mk.XII v3 PARTIAL_PERMANENT_ACCEPT (own#13) unchanged"
+      },
+      {
+        "tier": "F-PASS_PARTIAL",
+        "f1_score_v2_band": "0.50-0.55",
+        "verdict_key_update": "VERIFIED-CLM-CP2-RED-WITH-BINDING-EVIDENCE",
+        "ship_verdict_recommendation": "VERIFIED-CLM-CP2-RED with binding annex; binding_strength noted as partial supporting evidence",
+        "next_cycle_path": "path (b) learned phi_extractor priority + replicate Phase E same-day for confirmation",
+        "blocker_status": "unchanged"
+      },
+      {
+        "tier": "F-WEAK",
+        "f1_score_v2_band": "0.45-0.50",
+        "verdict_key_update": "VERIFIED-CLM-CP2-RED-TRACE-BINDING",
+        "ship_verdict_recommendation": "VERIFIED-CLM-CP2-RED unchanged",
+        "next_cycle_path": "path (b) learned phi_extractor as primary; deprioritize binding investigation",
+        "blocker_status": "unchanged"
+      },
+      {
+        "tier": "F-FAIL",
+        "f1_score_v2_band": "0.408 (unchanged)",
+        "verdict_key_update": "VERIFIED-CLM-CP2-RED-CONFIRMED-BINDING-FALSIFIED",
+        "ship_verdict_recommendation": "VERIFIED-CLM-CP2-RED CONFIRMED + ALM Path F gambling-rejection strengthened",
+        "next_cycle_path": "path (b) learned phi_extractor mandatory; path (d) tension binding rejected",
+        "blocker_status": "binding-mediated approach closed; F2 unfire only via path (b)/(c)"
+      },
+      {
+        "tier": "F-ARTIFACT",
+        "f1_score_v2_band": "0.408 (unchanged)",
+        "verdict_key_update": "VERIFIED-CLM-CP2-RED-PROTOCOL-REVISION-REQUIRED",
+        "ship_verdict_recommendation": "VERIFIED-CLM-CP2-RED unchanged",
+        "next_cycle_path": "Phase E v2 with cognitive-load matched controls (NASA-TLX), surface Laplacian EEG correction, longer session (60 min), or N>=2 replication",
+        "blocker_status": "measurement protocol revision required before binding inference"
+      },
+      {
+        "tier": "F-INDETERMINATE",
+        "f1_score_v2_band": "0.408-0.50 (ambiguous)",
+        "verdict_key_update": "VERIFIED-CLM-CP2-RED-INDETERMINATE-BINDING",
+        "ship_verdict_recommendation": "VERIFIED-CLM-CP2-RED unchanged",
+        "next_cycle_path": "Phase E replication same-day before classifying; if 2nd session also INDETERMINATE, treat as F-WEAK",
+        "blocker_status": "unchanged"
+      }
+    ]
+  },
+  "user_actionable_next_step": {
+    "step_1": "Confirm OpenBCI 16ch headset + ubu1 + mac LSL infrastructure ready (per #103 user_5_step_checklist)",
+    "step_2": "Launch ubu1:~/n1_bridge_realtime/clm_w4_lsl_server.py (per #103 Phase 2 source)",
+    "step_3": "Open LabRecorder.app on Mac, confirm 4 streams visible (anima_clm_tension, anima_tension_link_5ch, anima_eeg_alpha_plv, anima_phase_marker)",
+    "step_4": "Launch /tmp/n1_bridge_realtime/phase_runner.sh on Mac (30-min auto session)",
+    "step_5": "After SESSION_END, stop LabRecorder, run python3 /tmp/n1_bridge_realtime/analyze_xdf.py <xdf_path> with Phase E binding aggregation enabled (3-way pair_A/B/C + R1/R2/R3 controls)",
+    "step_6": "Verdict tier auto-classified; ship_verdict update + next-cycle path follow decision_gate branches"
+  }
+}

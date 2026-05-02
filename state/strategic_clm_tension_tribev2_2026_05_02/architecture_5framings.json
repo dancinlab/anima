@@ -1,0 +1,94 @@
+{
+  "schema": "strategic_clm_tension_tribev2/architecture_5framings/1",
+  "agent": "CLM ↔ tension_link ↔ TRIBE v2 mediator architecture analysis",
+  "ts": "2026-05-02",
+  "scope": "5-framing comparison incl. NEW Framing E tension-mediated closed-loop and Framing F TRIBE-as-anima-cortex; user-mediator bypass via in-silico encoder",
+  "topology": {
+    "nodes": [
+      {"id": "CLM", "type": "digital_LM", "tag": "anima v4 530M", "d_model": 768, "n_blocks": 16},
+      {"id": "tension_link", "type": "mediator", "channels": 5, "tags": ["WHAT", "WHERE", "WHY", "TRUST", "WHO"], "compression": "128d -> 5d (25.6:1, RC-6 eff 97.1%)"},
+      {"id": "TRIBE_v2", "type": "in_silico_brain_encoder", "license": "CC-BY-NC-4.0", "input_modalities": ["text", "audio", "video"], "output": "fsaverage5 BOLD ~10242 vertices", "TR_s": 1.49, "hemodynamic_lag_s": 5.0, "text_encoder": "meta-llama/Llama-3.2-3B"}
+    ],
+    "key_difference_vs_eeg": "TRIBE v2 = in-silico forward encoder; bypasses user cognitive mediator (obligate in #93 EEG bridge); enables fully computational closed loop with deterministic latency (< 1s inference vs variable user reaction time)"
+  },
+  "framings": [
+    {
+      "id": "A",
+      "name": "text-mediated open-loop",
+      "topology": "CLM -> text -> TRIBE v2 -> BOLD (one-shot)",
+      "feedback": false,
+      "user_mediator": false,
+      "wrapper_loc_est": "<50",
+      "cost_usd": [0, 2],
+      "scientific_value": "medium",
+      "rank": 3,
+      "matches_baseline": "#95 baseline; same as cortexlab-toolkit happy path"
+    },
+    {
+      "id": "B",
+      "name": "direct hidden-state injection",
+      "topology": "CLM h(768d) -> proj(1152d) -> TRIBE v2 fusion head -> BOLD",
+      "feedback": false,
+      "user_mediator": false,
+      "wrapper_loc_est": "200-500",
+      "cost_usd": [0, 5],
+      "scientific_value": "high",
+      "rank": 5,
+      "honest_caveat": "TRIBE v2 fusion head expects token-level embeddings; CLM hidden = cell Lagrangian state; semantic mismatch likely"
+    },
+    {
+      "id": "C",
+      "name": "G3 manifestation (CLM PhiStar +41.86 -> cortical region)",
+      "topology": "CLM consciousness witness -> stimulus text -> TRIBE v2 -> ROI (DMN/fronto-parietal/salience) signature",
+      "feedback": false,
+      "user_mediator": false,
+      "wrapper_loc_est": "<50",
+      "cost_usd": [0, 0],
+      "scientific_value": "very high",
+      "rank": 4
+    },
+    {
+      "id": "D",
+      "name": "anima-tension_link-EEG mediator + TRIBE v2 brain anchor",
+      "topology": "CLM <-> tension_link <-> EEG (real biology, user-mediated) + TRIBE v2 BOLD (predicted prior) for 3-way cross-validation",
+      "feedback": "partial (user-mediated only; TRIBE v2 side open-loop)",
+      "user_mediator": true,
+      "wrapper_loc_est": "<100",
+      "cost_usd": [0, 2],
+      "scientific_value": "highest (biological ground truth + brain prior)",
+      "rank": 2
+    },
+    {
+      "id": "E",
+      "name": "tension-mediated closed-loop (NEW)",
+      "topology": "CLM step_t -> mind.tension_t -> tension_link 5ch -> text/state -> TRIBE v2 -> BOLD_t -> ROI features -> tension_link feedback -> CLM step_t+1",
+      "feedback": true,
+      "user_mediator": false,
+      "loop_steps_proposed": 100,
+      "wrapper_loc_est": "100-200",
+      "cost_usd": [0, 5],
+      "scientific_value": "high (computational closed-loop unique; complements D)",
+      "rank": 1,
+      "rationale_top": [
+        "fully deterministic closed loop (no user reaction-time confound, addresses #93 H2 obligate-mediator constraint)",
+        "scalable to N=many runs (vs N=1 user in EEG bridge)",
+        "directly tests whether TRIBE v2 BOLD carries enough info to modulate CLM next step (F-CT-3) — this is the question Framing A cannot answer",
+        "100-step trajectory enables attractor / divergence diagnosis (W4 PARTIAL +2.28σ analogue)"
+      ]
+    },
+    {
+      "id": "F",
+      "name": "TRIBE v2 as anima-cortex (radical / speculative)",
+      "topology": "CLM hidden state <-> TRIBE v2 BOLD prediction = anima-internal 'cortical layer' slot in tension_link",
+      "feedback": true,
+      "user_mediator": false,
+      "wrapper_loc_est": "300-800",
+      "cost_usd": [0, 10],
+      "scientific_value": "speculative high (H4 substrate identity)",
+      "rank": 6,
+      "honest_caveat": "speculative; H4 substrate identity is a strong claim TRIBE v2 cannot evidence; it is a forward stimulus->BOLD encoder, NOT a cortical simulator; demoted unless Framing E PASS first"
+    }
+  ],
+  "ranking_top1": "E",
+  "ranking_explanation": "Framing E uniquely answers the closed-loop question (does BOLD feedback meaningfully modulate CLM?) which all other framings cannot. Framing D remains the strongest scientifically (3-way bridge w/ biology) but is user-time-bound; Framing E is $0-5 and can run in parallel without consuming user mediator time. Stage-1 (Framing A as cheap sanity gate) -> Stage-2 (Framing E as primary novel evidence) -> Stage-3 (Framing D as 3-way validation) is the recommended sequence."
+}

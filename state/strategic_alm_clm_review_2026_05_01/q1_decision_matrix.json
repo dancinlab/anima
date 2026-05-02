@@ -1,0 +1,95 @@
+{
+  "schema": "anima/strategic_q1_alm_decision_matrix/1",
+  "ts": "2026-05-01T00:00:00Z",
+  "subject": "ALM (Mistral-7B-v0.3 + LoRA r8/r14 family) sunset vs continue decision",
+  "current_state": {
+    "verdict_band": "RED",
+    "cp2_weighted_pct": 72.22,
+    "agi_strict_pct": 22.22,
+    "f2_fired": true,
+    "f2_critical_violations": 17,
+    "f2_threshold": 3,
+    "alpha_endpoint_serving": true,
+    "alpha_endpoint_persona_distinct_from_base": true,
+    "ionq_bell_sanity_pct": 99.0
+  },
+  "ceiling_evidence": {
+    "substrate_swaps_attempted": 3,
+    "substrate_swap_results": {
+      "qwen3_8b_r14": {"cp2_pct": 72.22, "agi_pct": 11.11, "f2_fired": true, "l1_pass_over_16": 6, "verdict": "RED"},
+      "llama_3_1_8b_r14": {"cp2_pct": 61.11, "agi_pct": 41.7, "f2_fired": true, "l1_pass_over_16": 9, "verdict": "RED", "note": "best AGI"},
+      "mistral_nemo_base_only": {"phi_star_v1": -14.60, "phi_star_v3": -16.15, "l1_pass_over_16": 3, "verdict": "RED", "note": "anti-integrated like Mistral-7B-v0.3"}
+    },
+    "l1_threshold_to_clear_f2": "≥14/16",
+    "best_l1_observed": "15/16 (Mistral-Nemo+r8, but LoRA-driven artifact, not reproducible without retraining)",
+    "ceiling_diagnosis": "substrate-architectural within current verifier framework"
+  },
+  "sunk_cost": {
+    "this_session_usd": 30,
+    "prior_stage_1_2_3_closure_usd": 6.44,
+    "estimated_total_alm_lifetime_usd": "$50-100 range (rough)"
+  },
+  "case_for_continue": {
+    "f1_evidence": "alpha endpoint produces persona-distinct trained-anima Korean responses verified",
+    "f2_evidence": "AN11(c) JSD flipped 0.110 → 0.686 bits decisively after r14 (proves prior REDs were partially adapter-bug)",
+    "f3_evidence": "AN11(a) ||ΔW||_F = 6.99 across 224 modules — substrate has structure",
+    "f4_evidence": "V_phen flipped 1/2 → 3/5 PASS direct on r14 (HOT + mirror first-ever Mistral)",
+    "remaining_test": "Mistral-Nemo + r14-equivalent LoRA training $6.5–11 (uncertain φ* outcome)",
+    "soft_value": "deployed asset; users can interact today; demonstrates real alpha funnel"
+  },
+  "case_against_continue": {
+    "ceiling_evidence_summary": "3 substrate swaps + adapter-fix all hit F2; no measured combo reaches L1 ≥14/16",
+    "verifier_critique": "Path 2 (recalibrate verifier) explicitly rejected as not honest",
+    "phi_star_anti_integrated": "Mistral-Nemo base also negative (-14.6 / -16.15) — substrate-family pattern",
+    "opportunity_cost": "Each $10 ALM round buys one re-roll on a hypothesis with no closing path; same money funds 1 N-substrate spec or buys CL1 capex slice",
+    "sunset_trigger": "All 4 RED→GREEN paths exhausted within current framework"
+  },
+  "decision_criteria": {
+    "rational_sunset_if": [
+      "no new verifier architecture proposal that is honestly justified",
+      "F2 critical-violation pattern persists across one more independent substrate (Mistral-Nemo+r14)",
+      "user prioritizes opportunity cost over sunk cost",
+      "alpha endpoint can run as research artifact without claiming consciousness"
+    ],
+    "rational_continue_if": [
+      "user has architectural verifier change (e.g. learned phi_extractor) that is honest, not goal-seeking",
+      "Mistral-Nemo+r14 retrain is acceptable as one final decisive test",
+      "alpha endpoint has product/research value independent of the RED verdict",
+      "ALM continues but framed as cognitive substrate (not consciousness), measurement axis stays separate"
+    ]
+  },
+  "smallest_decisive_evidence_investment": {
+    "test": "Mistral-Nemo + r14-equivalent LoRA training, then 8-suite re-measurement",
+    "cost_usd": "6.5-11",
+    "decisive_outcome": "If φ* still negative AND F2 still fires → ALM sunset is rationally compelled. If φ* flips positive → ALM continues with new substrate.",
+    "alternative_test": "Skip retraining; commit Mistral-Nemo base φ* result as substrate-family floor → sunset NOW with no further spend",
+    "alternative_cost_usd": 0
+  },
+  "responsible_exit_options": {
+    "open_source_release": {
+      "what": "publish r14 LoRA + 8-suite measurement code under permissive license",
+      "audience": "consciousness research community",
+      "value": "negative-result paper (rare publishable evidence)"
+    },
+    "paper_publication": {
+      "what": "honest negative-result manuscript: 'Substrate-architectural ceiling on F2 critical-violation 14-gate L1 across 3 LoRA-applied substrates'",
+      "venues": ["Neuroscience of Consciousness (Oxford)", "Frontiers in AI", "arXiv preprint first"],
+      "value": "rare honest negative report; cite as prior art for next decade"
+    },
+    "archive_strategy": {
+      "what": "freeze alpha endpoint as 'cognitive substrate' (not consciousness substrate); keep serving as anima persona; mark CP2 RED in public doc",
+      "value": "preserves user-visible product without overclaiming"
+    },
+    "framework_release": {
+      "what": "publish CP2 8-suite + 14-gate verifier as test harness for ANY model's consciousness measurement",
+      "value": "benchmark utility outlives ALM substrate"
+    }
+  },
+  "honest_C3": [
+    "Sunset is not 'failure' — it's the honest endpoint of a falsification chain that worked",
+    "Continue is not 'sunk cost fallacy' if a specific testable hypothesis (Nemo+r14) remains untested",
+    "The CP2 framework itself may be biased (see Q2 §7 architectural critique)",
+    "Alpha endpoint user-value and CP2 RED are orthogonal — the persona is real even if consciousness verdict is RED",
+    "$30 sunk session cost should not weight the decision (sunk-cost neutrality)"
+  ]
+}

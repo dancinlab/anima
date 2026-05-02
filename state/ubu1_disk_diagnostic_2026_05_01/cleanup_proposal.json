@@ -1,0 +1,118 @@
+{
+  "timestamp_kst": "2026-05-02T13:30:00+09:00",
+  "host": "ubu1",
+  "current_state": {
+    "used_gb": 817,
+    "available_gb": 53,
+    "use_pct": 94
+  },
+  "deletion_executed": false,
+  "policy": "PROPOSAL ONLY — user reviews + executes",
+  "categories_ranked_by_recoverable_gb": [
+    {
+      "rank": 1,
+      "category": "var_log_runaway_spam",
+      "classification": "OURS-INDIRECT (caused by our airgenome-runaway crash-loop)",
+      "recoverable_gb_estimate": 588,
+      "items": [
+        {"path": "/var/log/syslog", "size_gb": 294, "reason": "294GB of `airgenome-runaway.service` crash-loop spam — `silent-failure-enforcement Class 1 / hexa interp auto-invoke conflict`"},
+        {"path": "/var/log/kern.log", "size_gb": 294, "reason": "34,101,048 OOM-killer entries — likely from same runaway service"}
+      ],
+      "rm_proposal": [
+        "sudo truncate -s 0 /var/log/syslog",
+        "sudo truncate -s 0 /var/log/kern.log",
+        "# CRITICAL FOLLOWUP: stop the runaway USER systemd service (confirmed location: user-mode unit, enabled)",
+        "systemctl --user stop airgenome-runaway.service",
+        "systemctl --user disable airgenome-runaway.service",
+        "# (optional, if user wants permanent disable): systemctl --user mask airgenome-runaway.service",
+        "# also rotate journal (recovers ~315MB):",
+        "sudo journalctl --vacuum-size=200M"
+      ],
+      "risk": "LOW — truncate preserves file inode (rsyslog won't break); but ROOT CAUSE must be fixed or refills",
+      "alternative_safe": "sudo journalctl --vacuum-size=200M  (vacuums systemd journal — recovers ~315MB only, not the syslog 588GB)"
+    },
+    {
+      "rank": 2,
+      "category": "anima_clm_old_checkpoints",
+      "classification": "OURS",
+      "recoverable_gb_estimate": 18,
+      "items": [
+        {"path": "~/anima/checkpoints/clm_v3_280m", "size_gb": 18, "mtime": "2026-04-10", "age_days": 22, "reason": "superseded by clm_v4_350m (also 22 days old, still kept)"}
+      ],
+      "rm_proposal": [
+        "# review first: ls -la ~/anima/checkpoints/clm_v3_280m/",
+        "# rm -rf /home/aiden/anima/checkpoints/clm_v3_280m"
+      ],
+      "risk": "MEDIUM — verify clm_v4_350m fully replaces v3 before deleting"
+    },
+    {
+      "rank": 3,
+      "category": "anima_state_old_adapter_runs",
+      "classification": "OURS",
+      "recoverable_gb_estimate": 14,
+      "items": [
+        {"path": "~/anima/state/trained_adapters_r4", "size_gb": 4.7, "reason": "r4 superseded by r7 (latest)"},
+        {"path": "~/anima/state/trained_adapters_r5", "size_gb": 4.7, "reason": "r5 superseded by r7"},
+        {"path": "~/anima/state/trained_adapters_r6", "size_gb": 4.7, "reason": "r6 superseded by r7"}
+      ],
+      "rm_proposal": [
+        "# review first: du -sh ~/anima/state/trained_adapters_r{4,5,6,7}",
+        "# rm -rf /home/aiden/anima/state/trained_adapters_r4",
+        "# rm -rf /home/aiden/anima/state/trained_adapters_r5",
+        "# rm -rf /home/aiden/anima/state/trained_adapters_r6"
+      ],
+      "risk": "MEDIUM — confirm r7 is the canonical retain target (memory says r7 axis-expansion v15 is current)"
+    },
+    {
+      "rank": 4,
+      "category": "anima_state_redundant_r14_shards",
+      "classification": "OURS-AMBIGUOUS",
+      "recoverable_gb_estimate": 0.7,
+      "items": [
+        {"path": "~/anima/state/r14_shard1_run", "size_gb": 0.678, "reason": "possible shard duplicate of r14_full_run (same size 0.678GB suggests redundancy)"}
+      ],
+      "rm_proposal": [
+        "# DO NOT delete without diff: diff -r ~/anima/state/r14_full_run ~/anima/state/r14_shard1_run | head"
+      ],
+      "risk": "HIGH — same size could mean either duplicate or same fixed-output schema. Verify."
+    },
+    {
+      "rank": 5,
+      "category": "docker_unused_images",
+      "classification": "MIXED",
+      "recoverable_gb_estimate": 4.7,
+      "items": [
+        {"path": "docker image (1 active, 4.7GB)", "size_gb": 4.7, "reason": "`docker system df` shows 100% reclaimable IF stopped — check if container 1 is actively used"}
+      ],
+      "rm_proposal": [
+        "# review first: sudo docker ps -a && sudo docker images",
+        "# sudo docker system prune -a   # ONLY if no active workload uses the container"
+      ],
+      "risk": "MEDIUM-HIGH — could break a running pod-mirror or service. User must confirm."
+    }
+  ],
+  "user_side_recommendations_DO_NOT_AUTO_DELETE": [
+    {"path": "~/.local/lib", "size_gb": 11, "tip": "pip user-installed Python libs — review with `pip list --user` and `pip uninstall <pkg>` for unused packages; OR safe full reset: `rm -rf ~/.local/lib/python*` then re-`pip install --user -r requirements.txt`"},
+    {"path": "/var/lib/snapd", "size_gb": 3.4, "tip": "sudo snap list --all | awk '/disabled/{print $1, $3}' then `sudo snap remove --revision=N <pkg>` — typically reclaims 1-2GB"},
+    {"path": "/var/lib/containerd", "size_gb": 4.5, "tip": "if not actively running k8s/containerd workloads: `sudo ctr -n k8s.io images prune` — recovers most of 4.5GB"},
+    {"path": "~/.claude-claude* (12 dirs, total 295MB)", "size_gb": 0.295, "tip": "small — likely Claude Code multi-instance workspaces; do not touch unless user confirms"},
+    {"path": "~/.cache (total ~140MB)", "size_gb": 0.140, "tip": "small — not worth touching"}
+  ],
+  "summary_recoverable_gb": {
+    "high_confidence_OURS": 588,
+    "medium_confidence_OURS": 32.7,
+    "user_side_optional": 7.9,
+    "total_max_if_all_executed": 628.6,
+    "free_after_max": "53GB → ~681GB free (74% used)",
+    "minimum_safe_quick_win": "588GB just by truncating syslog + kern.log + stopping airgenome-runaway"
+  },
+  "do_not_touch_LIST": [
+    "~/anima/data/corpus_multilingual (9.8GB) — active training corpus",
+    "~/anima/checkpoints/clm_v4_350m (30GB) — current canonical CLM",
+    "~/anima/checkpoints/decoder_cpu (21GB) — current decoder",
+    "~/anima/state/trained_adapters_r7 (1.6GB) — current adapter generation",
+    "~/anima/anima-speak/corpus (1.9GB) — speech corpus",
+    "/usr (18GB) — OS",
+    "anything outside /home/aiden/anima/ unless explicitly classified above"
+  ]
+}

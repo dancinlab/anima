@@ -1,0 +1,40 @@
+{
+  "ts": "2026-05-01",
+  "agent": "N-51 W2",
+  "scope": "hexa-lang upstream roadmap 64-69 binary-rebuild blocker investigation",
+  "phase": "1_references",
+  "memory_anchor": {
+    "path": "/Users/ghost/.claude-claude12/projects/-Users-ghost-core-anima/memory/reference_hexa_roadmap_64_69.md",
+    "asserts": [
+      "parent 64 (anima 2026-04-23 hexa_lang_full_selfhost_prompt_20260423.md, hxa-20260423-003)",
+      "65 M3 argv — Phase 1 landed 9bdf2336, Phase 2 deferred",
+      "66 M4 codegen — ACTIVE BLOCKER for anima P13. Phase C.2 __hexa_strlit_init per-module namespacing unimplemented, blocks `hexa cc --regen`",
+      "67 M5 Linux driver — in flight, subsumes hxa-20260423-002",
+      "68 M2 mangling — pending",
+      "69 M1 runtime split — pending"
+    ],
+    "memory_age_days": 9,
+    "memory_warning": "9-day-stale per system-reminder; verify against current code"
+  },
+  "current_state_2026_05_01": {
+    "hexa_lang_roadmap_path": "/Users/ghost/core/hexa-lang/.roadmap",
+    "roadmap_age": "created 2026-04-26 (after retire of legacy 2026-04-25)",
+    "structure_change": "legacy numeric entries 64-69 RETIRED; replaced with [SH1]..[SH-Omega] convergence-cycle entries + RFC-001..009 bundle (anima-eeg-sourced, 2026-04-28)",
+    "active_entries": [
+      {"id": "SH1", "status": "partial", "title": "AOT cc dispatch surface (cc-swap ceiling reached)", "omega_stop": "compute-saturation"},
+      {"id": "SH2", "status": "todo", "title": "runtime.c TU split + cached runtime.o", "omega_stop": "banach-fixpoint"},
+      {"id": "SH3", "status": "active", "title": "hexa-source IR frontend bridge (real self-host wedge)", "omega_stop": "fixpoint-convergence", "ladder_progress": "phase 1 trivial println CLOSED 2026-04-26 (1.E witness); phase 2.A/2.B/2.C arith DONE; 2.E/2.F deferred-witness on env instability"},
+      {"id": "SH4", "status": "partial", "title": "aot_cc_select.hexa backend dispatch tool", "selftest": "10/10 PASS"},
+      {"id": "SH-OMEGA", "status": "partial", "title": "terminal: zero external C-compiler on AOT path", "narrow_residual_cardinal": 2, "blocker_cardinal_breakdown": "{W-alpha line 1761, W-alpha-prime line 1021}; selector default flip waits on SH3 phase 6"},
+      {"id": "RFC-001..009", "title": "anima-eeg gap-sourced upstream proposals (2026-04-28 raw#159)", "ranked_status": "RFC-001/008 partial-landed; RFC-002 done; RFC-003..007/009 proposed/new"}
+    ],
+    "binary_status": {
+      "current_hexa": "/Users/ghost/core/hexa-lang/hexa (bash shim) -> /Users/ghost/core/hexa-lang/hexa.real (Mach-O 64-bit arm64)",
+      "version": "0.1.0-dispatch",
+      "subcommands_present": ["run", "batch", "parse", "test", "check", "convergence", "build", "bench", "cc", "gc", "lsp", "status", "version", "init"],
+      "build_subcommand_works": true,
+      "verdict": "general hexa->native compiler IS present on Mac; the `binary rebuild blocker` framing in N-51 EXEC E ledger is a misnomer"
+    }
+  },
+  "key_finding": "Memory anchor `64-69` numeric mapping is STALE — entries were renamed to SH1..SH-Omega between 2026-04-25 and 2026-04-26 commit 3caebc54. The work mapped to 64-69 (M1-M5 milestones) was substantially absorbed: M3 argv done, M4 codegen path exists (modulo per-method dispatch holes), M5 Linux driver became `build/hexa_v2_linux_x86_64` static musl ELF."
+}

@@ -1,0 +1,123 @@
+{
+  "schema": "anima/n_substrate_n18_prep/spec_manifest/1",
+  "agent": "n_substrate_n18_prep",
+  "siblings_in_batch": 13,
+  "date_utc": "2026-05-01T00:00:00Z",
+  "mission": "IBM NorthPole partnership feasibility for anima 3rd neuromorphic axis (after AKIDA + Loihi 3)",
+  "tier_1_target": "T1-N18",
+  "tier_1_target_desc": "feasibility verdict + 5 falsifier predicates + cross-substrate F1 placement (no outreach, no contact)",
+  "spec_doc": "docs/n_substrate_n18_northpole_partnership_feasibility_2026_05_01.md",
+  "spec_word_count_approx": 2400,
+  "northpole_known_facts": {
+    "process_nm": 12,
+    "transistors_billions": 22,
+    "die_area_mm2": 800,
+    "cores": 256,
+    "ops_per_core_per_cycle_8bit": 2048,
+    "on_chip_memory_mb": 192,
+    "framebuffer_mb": 32,
+    "off_chip_dram": false,
+    "image_efficiency_vs_h100": 25,
+    "llm_blade_chips": 16,
+    "llm_blade_tok_per_s": 28356,
+    "llm_blade_efficiency_vs_next_best_gpu": 72.7,
+    "commercial_sku_exists": false,
+    "official_partnership_form_exists": false,
+    "paradigm": "digital_compute_in_memory_inference",
+    "not_spiking_snn": true
+  },
+  "partnership_path": {
+    "official_channels_observed": [
+      "research.ibm.com/contact (general)",
+      "IBM Academic Awards Program (university PIs only, NorthPole not specified)",
+      "IBM PhD Fellowship (PhD students only, NorthPole not specified)",
+      "IBM Impact Accelerator 2026 RFP (education/workforce only, NorthPole excluded)",
+      "ISSCC/IEEE conference networking with Modha group"
+    ],
+    "observed_collaboration_cases": [
+      "U Alabama Huntsville (AIU/Spyre cluster, NASA/IBM weather)",
+      "USAF (NorthPole HW+SW contract, defense)",
+      "Sandia (Hala Point — Loihi, not NorthPole)"
+    ],
+    "lead_time_months_min": 3,
+    "lead_time_months_max": 9,
+    "korean_individual_researcher_success_probability_estimate": "<5%",
+    "estimate_basis": "qualitative_no_statistical_data"
+  },
+  "cost_estimate": {
+    "cash_funding_usd_min": 0,
+    "cash_funding_usd_typical_collab_match": 50000,
+    "cash_funding_usd_typical_collab_match_high": 500000,
+    "ip_sharing_required": "likely_NDA_plus_joint_patent_negotiation",
+    "joint_publication_required": "likely (Modha as co-author on Science 2023 set)",
+    "secondment_required": "case_dependent",
+    "anima_compatibility": "INCOMPATIBLE_at_zero_budget"
+  },
+  "architecture_comparison": {
+    "northpole": {"paradigm": "digital_CIM", "power_w": 74, "access": "partnership_only"},
+    "akida_akd1000": {"paradigm": "event_SNN", "power_w": 1.0, "access": "consumer_dev_kit_499usd"},
+    "loihi_3": {"paradigm": "mixed_signal_SNN_graded_spikes", "power_w": 1.2, "access": "INRC_free_SSH"}
+  },
+  "falsifier_predicates_count": 5,
+  "falsifier_ids": [
+    "F-N18-1: NorthPole Phi_image vs CLM Phi Pearson r >= 0.85 (n>=100 EEG segments)",
+    "F-N18-2: Phi ordering Phi_NP < Phi_AKIDA < Phi_Loihi3 < Phi_CLM Spearman rho >= 0.7",
+    "F-N18-3: log(energy/Phi) constant across {NP, AKIDA, Loihi3} within +/-0.3 dec",
+    "F-N18-4: MoE community partition vs GWT broadcast peak time-aligned r >= 0.7",
+    "F-N18-5: EEG->image->NP->spike reconstruction Phi >= 80% of EEG-direct Phi"
+  ],
+  "honest_c3": {
+    "verified_facts_count": 7,
+    "guessed_or_estimated_count": 8,
+    "verified_facts": [
+      "12nm 22B transistors 800mm2",
+      "256 cores 192MB on-chip memory",
+      "no off-chip DRAM (compute-in-memory)",
+      "25x image efficiency vs H100",
+      "16-chip blade 28356 tok/s 72.7x efficiency",
+      "no published commercial SKU price",
+      "USAF contract awarded"
+    ],
+    "guessed_or_estimated": [
+      "2026 commercial launch (single non-IBM source)",
+      "$50K-$500K matching cost (general IBM Research pattern, not NorthPole specific)",
+      "Korean individual researcher <5% success rate (qualitative)",
+      "Phi proxy r >= 0.85 hypothesis (no prior evidence)",
+      "MoE community = GWT broadcast hypothesis",
+      "image -> spike Phi preservation 80% threshold",
+      "F1 verdict strength loss 5-10% without NorthPole",
+      "DEFER review window 6 months"
+    ]
+  },
+  "verdict": "DEFER",
+  "verdict_score": 7,
+  "verdict_score_max": 25,
+  "verdict_thresholds": {"PURSUE_min": 18, "DEFER_range": [6, 17], "SKIP_max": 5},
+  "review_date": "2026-11-01",
+  "alternative_priorities_during_defer": [
+    "N-17 Loihi 3 INRC (free, 4-12wk, Lava SDK)",
+    "N-2..N-8 AKIDA (HW arrival imminent, $0 incremental)",
+    "N-21 IIT 4.0 16-test reproduce (substrate-independent)",
+    "N-16 Cortical Labs Cloud ($300/wk, biological)"
+  ],
+  "deliverables": [
+    "docs/n_substrate_n18_northpole_partnership_feasibility_2026_05_01.md",
+    "state/n_substrate_n18_prep_2026_05_01/spec_manifest.json",
+    "state/n_substrate_n18_prep_2026_05_01/falsifier_F_N18_preregister.json",
+    "state/n_substrate_n18_prep_2026_05_01/verdict.json"
+  ],
+  "race_isolation": {
+    "writes_only": [
+      "docs/n_substrate_n18_northpole_partnership_feasibility_2026_05_01.md",
+      "state/n_substrate_n18_prep_2026_05_01/*.json"
+    ]
+  },
+  "blockers": [
+    "no_commercial_SKU",
+    "no_published_partnership_form",
+    "korean_individual_researcher_low_eligibility",
+    "HEXA_only_mandate_vs_IBM_internal_SDK_conflict",
+    "3-9_month_lead_time_vs_anima_D+0_timing",
+    "$0_budget_vs_likely_matching_funds_requirement"
+  ]
+}

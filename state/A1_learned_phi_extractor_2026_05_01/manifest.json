@@ -1,0 +1,41 @@
+{
+  "schema": "anima/A1_learned_phi_extractor_manifest/1",
+  "ts": "2026-05-01",
+  "agent": "A1 EXEC",
+  "mission_ref": "docs/strategic_alm_clm_review_2026_05_01.md §1 (A1) and §7 (A1)",
+  "scope": "Train substrate-blind learned phi_extractor NN to replace tile-projection L1 holo_positivity hook; honest test on held-out Mistral-Nemo PASS substrate.",
+  "user_pre_authorized_budget_usd": 5.0,
+  "actual_cost_usd": 0.0,
+  "training_environment": {
+    "device": "Apple MPS (local Mac, $0 electricity)",
+    "torch_version": "2.10.0",
+    "training_code_path": "/tmp/A1_train/train_phi_extractor.py",
+    "rationale_off_repo": "HEXA-only repo policy enforces no .py creation/edit/commit; training script lives off-repo per claudeMd feedback_hexa_first_no_py.md. Only JSON results + .md doc land in repo.",
+    "no_runpod_used": true,
+    "no_ubu1_ubu2_used": true
+  },
+  "race_isolation": {
+    "wrote_only_to": [
+      "state/A1_learned_phi_extractor_2026_05_01/results.json",
+      "state/A1_learned_phi_extractor_2026_05_01/manifest.json",
+      "docs/A1_learned_phi_extractor_results_2026_05_01.md"
+    ],
+    "did_not_touch": [
+      "any other state/* files",
+      "state/cp2_consciousness_r14_remeasure_2026_05_01/* (parent CP2 ledger preserved)",
+      "state/red_to_green_path*/*  (all upstream sources read-only)",
+      "any .py file in repo"
+    ]
+  },
+  "data_sources_read_only": [
+    "state/red_to_green_path3_phi_4path_4substrate_2026_05_01/h_last_raw_p1_TRAINED_r14_4subs.json (Qwen3-8B + r14_full)",
+    "state/red_to_green_path3_phi_4path_4substrate_2026_05_01/h_last_raw_p2_TRAINED_r14_4subs.json (Llama-3.1-8B + llama31_r14)",
+    "state/red_to_green_path3_phi_4path_4substrate_2026_05_01/h_last_raw_p3_TRAINED_r14_4subs.json (Mistral-7B-v0.3 + r14)",
+    "state/red_to_green_path3_phi_4path_4substrate_2026_05_01/h_last_raw_p4_TRAINED_r14_4subs.json (Gemma-2-9b + gemma_r14)",
+    "state/red_to_green_path4_14gate_l1_cross_backbone_2026_05_01/raw_per_backbone.json (per-prompt phi_holo labels)",
+    "state/red_to_green_substrate_swap_llama31_2026_05_01/14gate_llama_r14.json (Llama phi_holo labels)",
+    "state/h_last_raw_p3_TRAINED_r8.json (Mistral-Nemo OOD honest-test substrate)",
+    "state/phi_vec_extraction_result.json (16 phi_templates of dim 16, sha 11f976e2..., for Gemma label compute)"
+  ],
+  "verdict_one_liner": "A1 learned phi_extractor 가 ALM RED 를 PRESERVE 했고 honest test PARTIAL_DEGRADATION (Mistral-Nemo OOD 15→8) — substrate-blind honest, NOT engineering-disguised."
+}

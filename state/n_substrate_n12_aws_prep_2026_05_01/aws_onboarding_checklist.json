@@ -1,0 +1,135 @@
+{
+  "schema": "anima/n12/aws_onboarding_checklist/1",
+  "agent": "n12_aws_braket_prep",
+  "axis_id": "N-12",
+  "round": "aws_prep_round_2_post_first_round_spec",
+  "ts_utc": "2026-05-01T12:45:00Z",
+  "purpose": "User-facing AWS Braket onboarding checklist so first-round N-12 spec is one-command launchable. Agent-side artifacts (script + verifier + launcher) ready off-repo at /Users/ghost/n12_braket/.",
+  "off_repo_artifacts": {
+    "submit_script": "/Users/ghost/n12_braket/submit_braket.py",
+    "verifier_script": "/Users/ghost/n12_braket/verify_F_N12_1.py",
+    "launcher_shell": "/Users/ghost/n12_braket/launch.sh",
+    "anima_repo_isolation": "HEXA-only policy: no .py committed to anima repo"
+  },
+  "user_actions_required": [
+    {
+      "step": 1,
+      "name": "AWS account",
+      "detail": "Sign up at aws.amazon.com or use existing institutional account (preferred for billing isolation).",
+      "prereq": "Credit card, email, phone for verification",
+      "estimated_minutes": 10,
+      "cost_USD": 0,
+      "blocker_if_skipped": "no Braket access possible"
+    },
+    {
+      "step": 2,
+      "name": "IAM credentials with Braket permission",
+      "detail": "Console -> IAM -> Users -> Create user 'n12-braket-mvp' -> attach AmazonBraketFullAccess policy (or least-privilege braket:CreateQuantumTask + braket:GetQuantumTask + s3 read/write on amazon-braket-* bucket). Generate access key, save key ID + secret.",
+      "prereq": "step 1",
+      "estimated_minutes": 5,
+      "cost_USD": 0,
+      "doc_link": "https://docs.aws.amazon.com/braket/latest/developerguide/braket-manage-access.html"
+    },
+    {
+      "step": 3,
+      "name": "Enable Braket service (us-east-1)",
+      "detail": "Switch region to N. Virginia (us-east-1). Braket console -> Permissions tab -> 'Enable Amazon Braket'. Auto-creates S3 bucket: amazon-braket-us-east-1-<your-12-digit-account-id>.",
+      "prereq": "step 2",
+      "estimated_minutes": 3,
+      "cost_USD": 0,
+      "region": "us-east-1",
+      "output_to_capture": "S3 bucket name (needed in step 9)"
+    },
+    {
+      "step": 4,
+      "name": "CloudWatch billing alarm at $50",
+      "detail": "Console -> Billing -> Budgets -> Create budget -> Cost budget -> $50/month -> SNS email alert at 80% ($40) and 100% ($50). Honest C3: AWS does NOT auto-stop tasks at threshold; alarm is notification-only. Hard stop = manually cancel tasks.",
+      "prereq": "step 1",
+      "estimated_minutes": 5,
+      "cost_USD": 0,
+      "honest_c3_note": "soft cap; script-side enforces additional $50 ceiling via HARD_CAP_USD constant"
+    },
+    {
+      "step": 5,
+      "name": "Install AWS CLI + configure",
+      "detail": "On Mac: `brew install awscli` (or download installer). Then `aws configure` -> paste IAM key id + secret + default region us-east-1 + output json.",
+      "prereq": "step 2",
+      "estimated_minutes": 5,
+      "cost_USD": 0,
+      "verify_cmd": "aws sts get-caller-identity"
+    },
+    {
+      "step": 6,
+      "name": "Forte 1 device ARN verification",
+      "detail": "Braket console -> Devices -> filter 'IonQ' -> click Forte 1 entry -> copy exact ARN. Predicted: arn:aws:braket:us-east-1::device/qpu/ionq/Forte-1 (alt: Forte-Enterprise-1). If different, edit DEVICE_ARN_PREDICTED at top of /Users/ghost/n12_braket/submit_braket.py.",
+      "prereq": "step 3",
+      "estimated_minutes": 5,
+      "cost_USD": 0,
+      "honest_c3_note": "CONFIRM_AT_USER_ONBOARDING — agent predicted but not verified"
+    },
+    {
+      "step": 7,
+      "name": "PRNewswire SC reference tau_2 extraction",
+      "detail": "From PRNewswire 2025-03 SC-QC OR-signature article, extract numerical tau_2 value (microseconds). Required for F-N12-1 verifier --sc-tau2-us argument. If unavailable, F-N12-1 verdict = INDETERMINATE.",
+      "prereq": "none",
+      "estimated_minutes": 15,
+      "cost_USD": 0,
+      "honest_c3_note": "agent has NOT extracted; user supplies"
+    },
+    {
+      "step": 8,
+      "name": "Pre-flight Bell test on simulator (free)",
+      "detail": "Run launcher in dry-run mode first: `bash /Users/ghost/n12_braket/launch.sh`. Confirms script builds 3 circuits, estimates $20.90, no AWS calls.",
+      "prereq": "step 5",
+      "estimated_minutes": 2,
+      "cost_USD": 0,
+      "expected_output": "[cost] estimated USD = 20.90  -- followed by 3 DRY_RUN entries"
+    },
+    {
+      "step": 9,
+      "name": "Live submit (one-liner)",
+      "detail": "Export S3 bucket env var, then run launcher in --live mode. See run_command field for exact one-liner.",
+      "prereq": "steps 1-8",
+      "estimated_minutes": 10,
+      "cost_USD": 20.90,
+      "wall_clock_ETA_after_submit_days": "1-3 (IonQ Forte 1 trapped-ion windowed schedule)"
+    },
+    {
+      "step": 10,
+      "name": "Retrieve results + verify F-N12-1",
+      "detail": "Once IonQ schedules tasks, edit results_<ts>.json to add 'counts' field per entry (from `aws braket get-quantum-task --quantum-task-arn <arn>` then S3 download), then run verifier with --sc-tau2-us <value-from-step-7>.",
+      "prereq": "step 9 task completion",
+      "estimated_minutes": 20,
+      "cost_USD": 0,
+      "verify_cmd_template": "python3 /Users/ghost/n12_braket/verify_F_N12_1.py /Users/ghost/n12_braket/results_<ts>.json --sc-tau2-us <PRNewswire-value-us>"
+    }
+  ],
+  "total_user_minutes_estimated": 80,
+  "total_user_USD_for_full_MVP": 20.90,
+  "hard_cap_USD": 50.0,
+  "run_command_one_liner": "export BRAKET_S3_BUCKET=amazon-braket-us-east-1-<acct-id> && bash /Users/ghost/n12_braket/launch.sh --live",
+  "dry_run_one_liner": "bash /Users/ghost/n12_braket/launch.sh",
+  "agent_constraint": "raw#9 hexa-only + raw#10 honest C3: agent does NOT submit AWS forms, does NOT create accounts, does NOT touch user credentials. Off-repo .py exists only on local Mac filesystem; not in anima repo.",
+  "race_isolation": {
+    "writes_only": [
+      "state/n_substrate_n12_aws_prep_2026_05_01/*.json",
+      "docs/n_substrate_n12_aws_prep_2026_05_01.md",
+      "/Users/ghost/n12_braket/*  (off-repo, NOT in anima git)"
+    ]
+  },
+  "honest_c3": {
+    "verified_facts": [
+      "AWS Braket Forte 1 pricing $0.30/task + $0.08/shot (per spec_manifest 2026-05-01)",
+      "us-east-1 hosts IonQ Forte 1",
+      "amazon-braket-sdk installable via pip",
+      "AmazonBraketFullAccess policy exists"
+    ],
+    "confirm_at_user_onboarding": [
+      "Exact Forte 1 device ARN string (Forte-1 vs Forte-Enterprise-1)",
+      "Pulse-level delay control on Forte 1 (script falls back to identity-stack proxy)",
+      "PRNewswire 2025-03 SC tau_2 reference numerical value",
+      "S3 bucket name (depends on user account ID)",
+      "AWS account ID and region selection at signup"
+    ]
+  }
+}

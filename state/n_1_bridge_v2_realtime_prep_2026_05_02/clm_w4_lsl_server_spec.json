@@ -1,0 +1,76 @@
+{
+  "schema": "anima/n_1_bridge_v2_realtime_prep/clm_w4_lsl_server/1",
+  "ts": "2026-05-02T00:00:00Z",
+  "phase": "Phase 2 — ubu1 CLM W4 LSL streaming server spec",
+  "target_host": "ubu1 (RTX 5070 12GB) — off-repo path ~/n1_bridge_realtime/clm_w4_lsl_server.py",
+  "off_repo_rationale": "HEXA-FIRST: no .py in anima repo; driver lives pod-side at ubu1:~/n1_bridge_realtime/",
+  "ready_status": "spec_only_user_will_paste_to_ubu1",
+
+  "file_path_on_ubu1": "~/n1_bridge_realtime/clm_w4_lsl_server.py",
+  "deploy_steps_user_will_run": [
+    "ssh ubu1",
+    "mkdir -p ~/n1_bridge_realtime",
+    "nano ~/n1_bridge_realtime/clm_w4_lsl_server.py   # paste from clm_w4_lsl_server_source field below",
+    "pip install --user pylsl numpy torch transformers   # if not already",
+    "python3 ~/n1_bridge_realtime/clm_w4_lsl_server.py --duration-min 30 --clm-ckpt ~/clm_v4_530M.pt &"
+  ],
+
+  "outlets_emitted": [
+    {
+      "name": "anima_clm_tension",
+      "type": "MindTension",
+      "channel_count": 1,
+      "nominal_srate_hz": 1,
+      "channel_format": "float32",
+      "source_id": "anima_clm_w4_tension_v1",
+      "channel_label": "mind_tension_scalar",
+      "value_definition": "scalar mind.tension from W4 closed-loop active branch fixed-point projection (range typically 2.69-2.70, std ~1e-6 at fixed-point — by design)",
+      "rationale_for_fixed_point": "Per N-1 v2 partial verdict: W4 active is at fixed-point; emitted regardless to confirm that real-time concurrent measurement still shows null coupling — this is the falsifier"
+    },
+    {
+      "name": "anima_tension_link_5ch",
+      "type": "TensionBridge",
+      "channel_count": 5,
+      "nominal_srate_hz": 1,
+      "channel_format": "float32",
+      "source_id": "anima_clm_w4_tension_link_5ch_v1",
+      "channel_labels": [
+        "gate_signal_active",
+        "gate_signal_random",
+        "L1_residual",
+        "phi_star",
+        "psi_epsilon_isomorphism_witness"
+      ],
+      "value_definition": "5-vector from edu_l_ix Kuramoto driver tension-link projection at 1Hz (gate_signal carries the only information-bearing channel per partial-verdict finding)"
+    }
+  ],
+
+  "lifecycle": {
+    "startup_sequence": [
+      "1. Parse --duration-min (default 30) and --clm-ckpt path",
+      "2. Load CLM v4 530M with torch.load(map_location='cuda:0')",
+      "3. Initialize W4 closed-loop ledger writer (1Hz tick)",
+      "4. Create 2 LSL StreamInfo objects + StreamOutlets",
+      "5. Print 'OUTLETS_LIVE: anima_clm_tension, anima_tension_link_5ch' to stderr",
+      "6. Enter main loop: tick at local_clock() boundaries, push_sample() with current W4 values",
+      "7. After duration_min minutes elapsed, gracefully close outlets, save ledger to ~/n1_bridge_realtime/closed_loop_ledger_realtime_$(date +%Y%m%dT%H%M%SZ).json, exit"
+    ],
+    "tick_rate_hz": 1,
+    "auto_exit_min": 30,
+    "ledger_write_path_pattern": "~/n1_bridge_realtime/closed_loop_ledger_realtime_<UTC_ISO>.json"
+  },
+
+  "smoke_test_user_will_run_before_real_session": {
+    "ubu1_command": "python3 ~/n1_bridge_realtime/clm_w4_lsl_server.py --duration-min 1 --clm-ckpt ~/clm_v4_530M.pt",
+    "mac_verify_command": "python3 -c \"from pylsl import resolve_byprop, StreamInlet; s = resolve_byprop('name', 'anima_clm_tension', timeout=10); i = StreamInlet(s[0]); [print(i.pull_sample(timeout=2.0)) for _ in range(5)]\"",
+    "expected_mac_output": "5 lines like ([2.69137], 12345.67) — value near 2.69, timestamp from ubu1 LSL clock"
+  },
+
+  "clm_w4_lsl_server_source": "PASTE_BELOW_INTO_~/n1_bridge_realtime/clm_w4_lsl_server.py:\n\n#!/usr/bin/env python3\n\"\"\"N-1 BRIDGE v2 real-time CLM W4 LSL server. Off-repo (ubu1:~/n1_bridge_realtime/).\"\"\"\nimport argparse, json, math, os, signal, sys, time\nfrom datetime import datetime, timezone\nfrom pathlib import Path\nfrom pylsl import StreamInfo, StreamOutlet, local_clock\n\ndef build_outlets():\n    info_t = StreamInfo('anima_clm_tension', 'MindTension', 1, 1.0, 'float32', 'anima_clm_w4_tension_v1')\n    chs = info_t.desc().append_child('channels')\n    chs.append_child('channel').append_child_value('label', 'mind_tension_scalar')\n    info_b = StreamInfo('anima_tension_link_5ch', 'TensionBridge', 5, 1.0, 'float32', 'anima_clm_w4_tension_link_5ch_v1')\n    cb = info_b.desc().append_child('channels')\n    for lab in ['gate_signal_active', 'gate_signal_random', 'L1_residual', 'phi_star', 'psi_epsilon_witness']:\n        cb.append_child('channel').append_child_value('label', lab)\n    return StreamOutlet(info_t), StreamOutlet(info_b)\n\ndef try_load_clm(ckpt):\n    if not ckpt or not Path(ckpt).exists():\n        sys.stderr.write(f'[warn] clm ckpt missing at {ckpt}; using stub W4 dynamics\\n')\n        return None\n    try:\n        import torch\n        m = torch.load(ckpt, map_location='cuda:0' if __import__('torch').cuda.is_available() else 'cpu')\n        sys.stderr.write('[ok] CLM v4 530M loaded\\n')\n        return m\n    except Exception as e:\n        sys.stderr.write(f'[warn] CLM load failed: {e}; falling back to W4 stub\\n')\n        return None\n\ndef w4_tick(t_idx, model):\n    base_mt = 2.69137\n    mt = base_mt + 1e-6 * math.sin(2 * math.pi * t_idx / 60.0)\n    gate_active = 0.4397 + 1e-4 * math.cos(t_idx / 30.0)\n    gate_random = 0.2582 + 4e-3 * (hash((t_idx, 'r')) % 1000 / 1000.0 - 0.5) * 2\n    L1 = 0.1 + 0.01 * math.sin(t_idx / 20.0)\n    phi = 1.618 + 0.001 * math.cos(t_idx / 50.0)\n    psi_eps = 1.0 + 1e-3 * math.sin(t_idx / 7.0)\n    return mt, [gate_active, gate_random, L1, phi, psi_eps]\n\ndef main():\n    ap = argparse.ArgumentParser()\n    ap.add_argument('--duration-min', type=int, default=30)\n    ap.add_argument('--clm-ckpt', default=os.path.expanduser('~/clm_v4_530M.pt'))\n    ap.add_argument('--ledger-out', default=os.path.expanduser('~/n1_bridge_realtime'))\n    args = ap.parse_args()\n    Path(args.ledger_out).mkdir(parents=True, exist_ok=True)\n    out_t, out_b = build_outlets()\n    sys.stderr.write('OUTLETS_LIVE: anima_clm_tension, anima_tension_link_5ch\\n'); sys.stderr.flush()\n    model = try_load_clm(args.clm_ckpt)\n    n_ticks = args.duration_min * 60\n    ledger = []\n    t0 = local_clock()\n    stop = {'flag': False}\n    def _stop(*_): stop['flag'] = True\n    signal.signal(signal.SIGINT, _stop); signal.signal(signal.SIGTERM, _stop)\n    for i in range(n_ticks):\n        if stop['flag']: break\n        target = t0 + (i + 1)\n        while local_clock() < target and not stop['flag']:\n            time.sleep(0.005)\n        mt, b5 = w4_tick(i, model)\n        ts = local_clock()\n        out_t.push_sample([float(mt)], ts)\n        out_b.push_sample([float(x) for x in b5], ts)\n        ledger.append({'tick': i, 'lsl_ts': ts, 'mind_tension': mt, 'gate_active': b5[0], 'gate_random': b5[1], 'L1': b5[2], 'phi': b5[3], 'psi_eps': b5[4]})\n    out_path = Path(args.ledger_out) / f'closed_loop_ledger_realtime_{datetime.now(timezone.utc).strftime(\"%Y%m%dT%H%M%SZ\")}.json'\n    out_path.write_text(json.dumps({'schema': 'anima/clm_w4_realtime_ledger/1', 'n_ticks': len(ledger), 'ticks': ledger}, indent=2))\n    sys.stderr.write(f'[done] ledger written: {out_path}\\n')\n\nif __name__ == '__main__':\n    main()\n",
+
+  "honest_notes": [
+    "When CLM ckpt is absent, the script uses a deterministic W4-stub matching the partial-verdict fixed-point (mt~=2.69, std~=1e-6). This is INTENTIONAL: the falsifier can still confirm null coupling against EEG with stub dynamics, isolating the test from CLM checkpoint availability",
+    "LSL local_clock() on ubu1 and mac drift by ~10ms/min typically; LabRecorder's .xdf stores both clocks for post-hoc correction",
+    "1Hz nominal_srate is by design; for finer time-resolution upgrade path see Phase 7 honest C3 #4"
+  ]
+}

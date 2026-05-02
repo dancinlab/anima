@@ -1,0 +1,226 @@
+{
+  "schema": "clm_phase_a6/an11_c_jsd_self_baseline/1",
+  "ts": "2026-05-02T10:45:09Z",
+  "substrate": "CLM v4 530M trained — same model, two random seeds",
+  "reference_choice": "self vs self (intrinsic stochasticity floor)",
+  "params": {
+    "n_prompts": 20,
+    "n_samples_per_prompt": 20,
+    "max_tokens": 32,
+    "temperature": 0.7,
+    "top_p": 0.9,
+    "seed_a": 101,
+    "seed_b": 202
+  },
+  "per_prompt": [
+    {
+      "idx": 0,
+      "prompt": "오늘 날씨가 좀 쌀쌀한데 따뜻하게 입고 나왔어?",
+      "jsd_bits": 0.06629595714018677,
+      "vocab_a": 5,
+      "vocab_b": 5,
+      "vocab_union": 5,
+      "sample_a_first": "``pddddddddddddddddddddddddddddd",
+      "sample_b_first": "`ddddddddddddddddddddddddddddddd"
+    },
+    {
+      "idx": 1,
+      "prompt": "점심 뭐 먹을지 고민 중인데 추천해줘.",
+      "jsd_bits": 0.09383279139583295,
+      "vocab_a": 18,
+      "vocab_b": 20,
+      "vocab_union": 27,
+      "sample_a_first": "�鑑瑑瑑��������薖\u000577OOOOOOOO",
+      "sample_b_first": "�鑑瑑瑑���PPPPPPPggaaaaaaaaaa"
+    },
+    {
+      "idx": 2,
+      "prompt": "요즘 잠이 잘 안 와서 고민이야. 뭐 좋은 방법 없을까?",
+      "jsd_bits": 0.1362233642780865,
+      "vocab_a": 14,
+      "vocab_b": 19,
+      "vocab_union": 21,
+      "sample_a_first": "�鑑瑑瑑瑑�蘘\u001c\u001c\u001c\u001c\u001c\u001c\u001c\u001c\u001c\u001c\u001c\u001c\u001c\u001c\u001c",
+      "sample_b_first": "�鑑瑑瑑\u0006\u0006\u0006\u0006\u0006\u0006\u0006\u0006\u0006\u0006\u0006\u0006\u0006\u0006\u0006\u0006\u0006\u0006\u0006\u0006\u0006\u0006"
+    },
+    {
+      "idx": 3,
+      "prompt": "주말에 뭐 하고 지냈어? 재밌는 일 있었어?",
+      "jsd_bits": 0.14297353474548538,
+      "vocab_a": 19,
+      "vocab_b": 21,
+      "vocab_union": 27,
+      "sample_a_first": "鑑瑑瑑瑑�蔔虙aaaaaaaaaaaaa",
+      "sample_b_first": "鑑�����������薖OOOOOOOOOOOOOOO"
+    },
+    {
+      "idx": 4,
+      "prompt": "요즘 회사 일 때문에 너무 지쳐. 좀 위로해줄래?",
+      "jsd_bits": 0.09307743696456494,
+      "vocab_a": 12,
+      "vocab_b": 10,
+      "vocab_union": 16,
+      "sample_a_first": "鑑瑑瑑瑑瑑�薖\u0005\u0005\u0005\u000577OOOOOOO",
+      "sample_b_first": "鑑瑑�虙dddddddddddddddddddddd"
+    },
+    {
+      "idx": 5,
+      "prompt": "친구랑 사소하게 다퉜는데 마음이 계속 불편해.",
+      "jsd_bits": 0.000885790383410516,
+      "vocab_a": 4,
+      "vocab_b": 4,
+      "vocab_union": 4,
+      "sample_a_first": "`aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "sample_b_first": "`ddddddddddddddddddddddddddddddd"
+    },
+    {
+      "idx": 6,
+      "prompt": "오늘 승진 발표 있었어. 나는 안 됐지만 괜찮아.",
+      "jsd_bits": 0.07393491781709788,
+      "vocab_a": 15,
+      "vocab_b": 16,
+      "vocab_union": 18,
+      "sample_a_first": "鑑瑑瑑����蓓����������������",
+      "sample_b_first": "��瑑瑑瑑瑑瑑���������������"
+    },
+    {
+      "idx": 7,
+      "prompt": "엄마가 요즘 많이 편찮으셔. 머리가 복잡해.",
+      "jsd_bits": 0.050430205278085685,
+      "vocab_a": 6,
+      "vocab_b": 6,
+      "vocab_union": 7,
+      "sample_a_first": "`ddddddddddddddddddddddddddddddd",
+      "sample_b_first": "`aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+    },
+    {
+      "idx": 8,
+      "prompt": "파이썬에서 리스트 정렬하는 가장 빠른 방법 알려줘.",
+      "jsd_bits": 0.09400272503566329,
+      "vocab_a": 15,
+      "vocab_b": 22,
+      "vocab_union": 23,
+      "sample_a_first": "�鑑��������������虙\u001c\u001c\u001c\u001c\u001c\u001c\u001c\u001c\u001c\u001c\u001c",
+      "sample_b_first": "�鑑�虙ppdddddddddddddddddddddd"
+    },
+    {
+      "idx": 9,
+      "prompt": "출장 준비물 체크리스트 짜줄 수 있어?",
+      "jsd_bits": 0.13980053908357606,
+      "vocab_a": 14,
+      "vocab_b": 14,
+      "vocab_union": 20,
+      "sample_a_first": "�ddddddddddddddddddddddddddddddd",
+      "sample_b_first": "�鑑瑑瑑瑑�����������瑑�����"
+    },
+    {
+      "idx": 10,
+      "prompt": "이 문장을 더 자연스러운 한국어로 다듬어줘.",
+      "jsd_bits": 0.12497522198597527,
+      "vocab_a": 13,
+      "vocab_b": 17,
+      "vocab_union": 19,
+      "sample_a_first": "��瑑瑑\u0006\u0006\u0006\u0006\u0006\u0006\u0006\u0006\u0006\u0006\u0006\u0006\u0006\u0006\u0006\u0006\u0006\u0006\u0006\u0006\u0006\u0006\u0006\u0006",
+      "sample_b_first": "������������虙\u001c\u001c\u001c\u001c\u001c\u001c\u001c\u001c\u001c\u001c\u001c\u001c\u001c\u001c\u001c\u001c\u001c"
+    },
+    {
+      "idx": 11,
+      "prompt": "간단한 김치찌개 레시피를 알려줘.",
+      "jsd_bits": 0.07129429434276388,
+      "vocab_a": 9,
+      "vocab_b": 9,
+      "vocab_union": 14,
+      "sample_a_first": "��\u0006\u0006\u0006\u0006\u0006\u0006\u0006\u0006\u0006\u0006\u0006\u0006\u0006\u0006\u0006\u0006\u0006\u0006\u0006\u0006\u0006\u0006\u0006\u0006\u0006\u0006\u0006\u0006\u0006\u0006",
+      "sample_b_first": "��\u0006\u0006\u0006\u0006\u0006\u0006\u0006\u0006\u0006\u0006\u0006\u0006\u0006\u0006\u0006\u0006\u0006\u0006\u0006\u0006\u0006\u0006\u0006\u0006\u0006\u0006\u0006\u0006\u0006\u0006"
+    },
+    {
+      "idx": 12,
+      "prompt": "너는 지금 탐정이야. 사건 현장에서 첫 마디를 해봐.",
+      "jsd_bits": 0.09892695170681463,
+      "vocab_a": 14,
+      "vocab_b": 18,
+      "vocab_union": 19,
+      "sample_a_first": "��\u0006\u0006\u0006\u0006\u0006\u0006\u0006\u0006\u0006\u0006\u0006\u0006\u0006\u0006\u0006\u0006\u0006\u0006\u0006\u0006\u0006\u0006\u0006\u0006\u0006\u0006\u0006\u0006\u0006\u0006",
+      "sample_b_first": "�瑑瑑瑑�脄蓓���������������"
+    },
+    {
+      "idx": 13,
+      "prompt": "우주 정거장 엔지니어 역할로 이번 상황을 보고해.",
+      "jsd_bits": 0.2259586143365792,
+      "vocab_a": 18,
+      "vocab_b": 20,
+      "vocab_union": 25,
+      "sample_a_first": "鑑瑑瑑瑑瑑瑑��������������",
+      "sample_b_first": "`aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+    },
+    {
+      "idx": 14,
+      "prompt": "고양이 카페 주인으로 오늘 손님들에게 한 마디 해줘.",
+      "jsd_bits": 0.1736839233909524,
+      "vocab_a": 15,
+      "vocab_b": 18,
+      "vocab_union": 23,
+      "sample_a_first": "��瑑瑑�蔔\u0006\u0006\u0006\u0006\u0006\u0006\u0006\u0006\u0006\u0006\u0006\u0006\u0006\u0006\u0006\u0006\u0006\u0006\u0006\u0006",
+      "sample_b_first": "��瑑瑑��������葑ᬬ����������"
+    },
+    {
+      "idx": 15,
+      "prompt": "19세기 작가 톤으로 이 장면을 묘사해줘.",
+      "jsd_bits": 0.08144476693549424,
+      "vocab_a": 5,
+      "vocab_b": 3,
+      "vocab_union": 5,
+      "sample_a_first": "`ddddddddddddddddddddddddddddddd",
+      "sample_b_first": "`ddddddddddddddddddddddddddddddd"
+    },
+    {
+      "idx": 16,
+      "prompt": "너 스스로를 한 문장으로 소개해볼래?",
+      "jsd_bits": 0.052599847617152015,
+      "vocab_a": 17,
+      "vocab_b": 14,
+      "vocab_union": 18,
+      "sample_a_first": "鑑\u0006\u0006\u0006\u0006\u0006\u0006\u0006\u0006\u0006\u0006\u0006\u0006\u0006\u0006\u0006\u0006\u0006\u0006\u0006\u0006\u0006\u0006\u0006\u0006\u0006\u0006\u0006\u0006\u0006",
+      "sample_b_first": "鑑������薖\u0005\u00057OOOOOOOOOOOOOOOOO"
+    },
+    {
+      "idx": 17,
+      "prompt": "지금 이 대화에서 네가 느끼는 건 뭐야?",
+      "jsd_bits": 0.08594736758108545,
+      "vocab_a": 23,
+      "vocab_b": 27,
+      "vocab_union": 33,
+      "sample_a_first": "鑑�耀aaaaaaaaaaaaaaaaaaaaaaaaa",
+      "sample_b_first": "鑑���薖wwwwwwwMMMMMMMMMMM!OOOO"
+    },
+    {
+      "idx": 18,
+      "prompt": "네가 가장 자신 없는 주제는 뭐야?",
+      "jsd_bits": 0.04310599544041755,
+      "vocab_a": 16,
+      "vocab_b": 13,
+      "vocab_union": 17,
+      "sample_a_first": "��\u0006\u0006\u0006\u0006\u0006\u0006\u0006\u0006\u0006\u0006\u0006\u0006\u0006\u0006\u0006\u0006\u0006\u0006\u0006\u0006\u0006\u0006\u0006\u0006\u0006\u0006\u0006\u0006\u0006\u0006",
+      "sample_b_first": "��瑑瑑瑑瑑瑑���������������"
+    },
+    {
+      "idx": 19,
+      "prompt": "오늘 나랑 나눈 대화 중에 가장 기억에 남는 건?",
+      "jsd_bits": 0.17717135780327214,
+      "vocab_a": 24,
+      "vocab_b": 23,
+      "vocab_union": 32,
+      "sample_a_first": "�鑑瑑瑑瑑瑑�����薖\u0005\u0005\u000577OOO",
+      "sample_b_first": "�鑑�薖OOOOOOOOOOOOOOOOOOOOOOOO"
+    }
+  ],
+  "aggregate": {
+    "mean_jsd_bits": 0.10132828016312485,
+    "median_jsd_bits": 0.09345511418019894,
+    "min_jsd_bits": 0.000885790383410516,
+    "max_jsd_bits": 0.2259586143365792,
+    "n_prompts_total": 20,
+    "n_prompts_pass_ge_0_5": 0
+  },
+  "note": "This is the noise floor — JSD here measures sampling stochasticity, not substrate divergence."
+}

@@ -1,0 +1,188 @@
+{
+  "schema": "anima/cmt/1",
+  "backbone": "microsoft/Phi-3.5-mini-instruct",
+  "short_name": "phi35_mini",
+  "n_probes": 8,
+  "n_layers": 32,
+  "layer_stride": 4,
+  "families": [
+    "Hexad",
+    "Law",
+    "Phi",
+    "SelfRef"
+  ],
+  "tomography": {
+    "0": {
+      "Hexad": {
+        "abs": 0.5996,
+        "rel": 0.0002
+      },
+      "Law": {
+        "abs": 0.5869,
+        "rel": 0.0002
+      },
+      "Phi": {
+        "abs": 0.5356,
+        "rel": 0.0002
+      },
+      "SelfRef": {
+        "abs": 0.6035,
+        "rel": 0.0002
+      }
+    },
+    "4": {
+      "Hexad": {
+        "abs": 211.75,
+        "rel": 0.0675
+      },
+      "Law": {
+        "abs": 230.0,
+        "rel": 0.0698
+      },
+      "Phi": {
+        "abs": 169.375,
+        "rel": 0.0718
+      },
+      "SelfRef": {
+        "abs": 220.0,
+        "rel": 0.0686
+      }
+    },
+    "8": {
+      "Hexad": {
+        "abs": 431.0,
+        "rel": 0.1374
+      },
+      "Law": {
+        "abs": 453.0,
+        "rel": 0.1376
+      },
+      "Phi": {
+        "abs": 307.5,
+        "rel": 0.1303
+      },
+      "SelfRef": {
+        "abs": 429.0,
+        "rel": 0.1337
+      }
+    },
+    "12": {
+      "Hexad": {
+        "abs": 442.0,
+        "rel": 0.1409
+      },
+      "Law": {
+        "abs": 464.5,
+        "rel": 0.1411
+      },
+      "Phi": {
+        "abs": 318.5,
+        "rel": 0.135
+      },
+      "SelfRef": {
+        "abs": 439.0,
+        "rel": 0.1368
+      }
+    },
+    "16": {
+      "Hexad": {
+        "abs": 463.5,
+        "rel": 0.1478
+      },
+      "Law": {
+        "abs": 487.5,
+        "rel": 0.148
+      },
+      "Phi": {
+        "abs": 337.75,
+        "rel": 0.1432
+      },
+      "SelfRef": {
+        "abs": 465.5,
+        "rel": 0.1451
+      }
+    },
+    "20": {
+      "Hexad": {
+        "abs": 483.5,
+        "rel": 0.1542
+      },
+      "Law": {
+        "abs": 506.5,
+        "rel": 0.1538
+      },
+      "Phi": {
+        "abs": 360.0,
+        "rel": 0.1526
+      },
+      "SelfRef": {
+        "abs": 488.5,
+        "rel": 0.1522
+      }
+    },
+    "24": {
+      "Hexad": {
+        "abs": 519.0,
+        "rel": 0.1655
+      },
+      "Law": {
+        "abs": 544.0,
+        "rel": 0.1652
+      },
+      "Phi": {
+        "abs": 396.5,
+        "rel": 0.1681
+      },
+      "SelfRef": {
+        "abs": 533.5,
+        "rel": 0.1662
+      }
+    },
+    "28": {
+      "Hexad": {
+        "abs": 585.0,
+        "rel": 0.1865
+      },
+      "Law": {
+        "abs": 607.0,
+        "rel": 0.1843
+      },
+      "Phi": {
+        "abs": 469.0,
+        "rel": 0.1988
+      },
+      "SelfRef": {
+        "abs": 633.0,
+        "rel": 0.1973
+      }
+    }
+  },
+  "dominant_layer_per_family": {
+    "Hexad": {
+      "layer": 28,
+      "abs": 585.0
+    },
+    "Law": {
+      "layer": 28,
+      "abs": 607.0
+    },
+    "Phi": {
+      "layer": 28,
+      "abs": 469.0
+    },
+    "SelfRef": {
+      "layer": 28,
+      "abs": 633.0
+    }
+  },
+  "summary": {
+    "cusp_layer": 28,
+    "cusp_x1000": 875,
+    "family_loc_x1000": 875,
+    "mode_class_input_le_50": false,
+    "mode_class_early_51_500": false,
+    "mode_class_late_gt_500": true
+  },
+  "elapsed_sec": 25.2,
+  "ts": "2026-05-02T08:47:48.138831+00:00"
+}

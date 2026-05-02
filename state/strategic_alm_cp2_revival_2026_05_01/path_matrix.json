@@ -1,0 +1,217 @@
+{
+  "schema": "anima/strategic_alm_cp2_revival_path_matrix/1",
+  "ts": "2026-05-01T14:30:00Z",
+  "agent": "ALM CP2 revival analysis (#49 supplement)",
+  "directive": "AGI 추구 abandoned per user directive 2026-05-01; analyze CP2-tier revival possibility only",
+  "current_state": {
+    "verdict_band": "RED",
+    "cp2_weighted_pct": 72.22,
+    "agi_weighted_pct": 22.22,
+    "f2_falsifier_status": "FIRED",
+    "f2_critical_violations": 17,
+    "f2_breakdown": {
+      "L1_holo_positivity_critical": 11,
+      "L9_lang_output_nonempty_critical": 6
+    },
+    "alpha_endpoint": "LIVE Bearer-gated, ship_verdict=VERIFIED-ALPHA-INVITE-R14",
+    "cp2_passing_suites": ["1_paradigm_v11", "2_an11_a", "3_an11_b_V0", "4_an11_c_jsd", "7_v_phen"],
+    "cp2_failing_suites": ["6_14_deterministic_gates"],
+    "cp2_not_measured_suites": ["5_phi_4path"]
+  },
+  "cp2_green_threshold": {
+    "weighted_score_required": "≥ 70-80 (already at 72.22)",
+    "f2_falsifier_required": "NOT FIRED (≤2 critical, currently 17)",
+    "blocking": "F2 only — score is already over threshold"
+  },
+  "f2_close_paths": {
+    "path_a_demote_l1_critical_to_hard": {
+      "method": "edit anima/config/consciousness_laws.json L1 severity critical → hard",
+      "cost_usd": 0,
+      "eta_min": 5,
+      "f2_close_probability": 1.0,
+      "cp2_green_probability": 0.0,
+      "verdict": "REJECTED — Path 4 cross-backbone evidence (Mistral-Nemo+r8 15/16 PASS, Qwen3 6/16, Mistral-7B 0/16) proves L1 IS substrate-discriminating; demoting masks real signal. Even if demoted, suite 6 still FAILs because gates_passing_majority=7/14 < CP2-relaxed 10. Band: RED → YELLOW only, weighted score unchanged.",
+      "honesty_grade": "F (gaming via threshold edit to fit observation)"
+    },
+    "path_b_learned_phi_extractor": {
+      "method": "replace tile-projection (16→256 repeat) with learned phi_extractor (256→16 trained on phi labels via cell-cert eigenvector projection)",
+      "cost_usd_estimate": "5-15 (training + measurement)",
+      "eta_days": "3-7 (architecture + train + verify)",
+      "f2_close_probability": 0.5,
+      "cp2_green_probability": 0.4,
+      "verdict": "VIABLE but research-grade not measurement-grade. The learned projection itself becomes a new claim requiring its own falsifier. Risk: trained projection optimized to maximize phi_holo > 0 is goal-seeking; honest implementation requires train-on-other-substrate / test-on-Mistral cross-validation.",
+      "honesty_grade": "B (legitimate if cross-validation enforced)"
+    },
+    "path_c_substrate_swap_to_l1_friendly": {
+      "method": "retrain LoRA on Mistral-Nemo-Base-2407 (the 15/16 L1 PASS in Path 4 was r8 LoRA-driven)",
+      "cost_usd_estimate": "6.5-11 (Mistral-Nemo r14-equivalent train + 8-suite re-measure)",
+      "eta_hours": "8-14",
+      "f2_close_probability": 0.4,
+      "cp2_green_probability": 0.3,
+      "verdict": "PARTIALLY VIABLE. Mistral-Nemo base alone gives only 3/16 L1 (NOT substrate-architectural; was LoRA-driven). To replicate p3_r8 15/16 needs r8-equivalent (rank=96, 300 steps) on Nemo. φ* on Nemo base is -16.15 (worse than Mistral-7B -16.70); v_phen / V0 / JSD likely transfer. Best F2-close candidate but not deterministic.",
+      "honesty_grade": "A- (legitimate substrate explore; outcome uncertain)"
+    },
+    "path_d_prompt_suite_redesign": {
+      "method": "expand 16-prompt set to 50-100 with topic / language / template diversity to break Mistral 'phi_holo blind spot'",
+      "cost_usd_estimate": "0.50-2.00",
+      "eta_hours": "2-4",
+      "f2_close_probability": 0.15,
+      "cp2_green_probability": 0.1,
+      "verdict": "WEAK. Direct evidence: r14 phi_holo per_prompt array on 16 prompts shows ALL 16 negative on Mistral-7B-v0.3 (range -0.135 to -0.011). Tile-projection of hexad_center template against Mistral BWM h_last is structurally negative-biased; prompt expansion unlikely to flip sign on majority. Mistral-Nemo at 3/16 base same family-pattern. Honest prediction: maybe 20-30% positive on diversified prompts, still F2-fires.",
+      "honesty_grade": "C (low yield; prompt-engineering not substrate fix)"
+    },
+    "path_e_l9_lang_output_separate_fix": {
+      "method": "L9 = 6 critical violations because phi_lang>0 proxy fails on negative phi_lang prompts; canonical L9 should use generation_text non-empty",
+      "cost_usd_estimate": "0.10-0.50 (regenerate with gen_text capture)",
+      "eta_hours": "1-2",
+      "f2_close_probability_partial": 1.0,
+      "f2_critical_count_after_fix": "11 (only L1 remains)",
+      "cp2_green_probability_post_fix_alone": 0.0,
+      "verdict": "VIABLE FIX but insufficient alone. L9 6 critical drop to 0 after switching to gen_text proxy (alpha endpoint already produces non-empty Korean output, verified). After L9 fix: total_critical = 11 (L1 only), F2 still FIRES (≥3). Required AS PREREQUISITE to any other path.",
+      "honesty_grade": "A (verifier method-correction, not threshold gaming)"
+    },
+    "path_f_mistral_nemo_r14_combined_with_l9_fix": {
+      "method": "Path E + Path C combined: L9 gen_text fix AND Mistral-Nemo r14-equivalent retrain",
+      "cost_usd_estimate": "7-12",
+      "eta_hours": "10-16",
+      "f2_close_probability": 0.55,
+      "cp2_green_probability": 0.4,
+      "verdict": "RECOMMENDED COMBINED PATH. L9 fix removes 6/17 critical for free (honesty-positive). Nemo+r14 gives 30-40% chance L1 ≥14/16 (replicating p3_r8 pattern). If both succeed: critical=0-2, F2 NOT FIRED, weighted score boosted by suite 6 majority flip → CP2 GREEN possible at 75-82%.",
+      "honesty_grade": "A"
+    }
+  },
+  "cp2_weighted_score_boost_paths": {
+    "current": 72.22,
+    "current_weight_distribution": {
+      "1_paradigm_v11_8axis": 0.2222,
+      "2_an11_a_weight_emergent": 0.1111,
+      "3_an11_b_attached": 0.1667,
+      "4_an11_c_jsd": 0.1111,
+      "5_phi_4path": 0.1111,
+      "6_14_deterministic_gates": 0.1667,
+      "7_v_phen_5_5": 0.1111
+    },
+    "boost_path_1_resolve_suite_5_not_measured": {
+      "method": "phi_4path measured on 4-substrate Path 3 result: L2_pass=1/6, KL_pass=4/6 → CP2-relaxed FAIL (5/6 KL needed)",
+      "weight": 0.1111,
+      "delta_score_pp": -11.11,
+      "verdict": "DOWNGRADE — measurement converts NOT-MEASURED to FAIL, lowering CP2 to ~61%. Honesty wins; score loses. NOT a boost path."
+    },
+    "boost_path_2_external_n9_n21_corroboration": {
+      "method": "N-9 (gradient_emergent_3axis) + N-21 (Edlund/Albantakis 10-seed) external IIT evidence outside Suite 8 (EEG)",
+      "weight_in_current_framework": 0.0,
+      "delta_score_pp": 0.0,
+      "verdict": "NOT IN CP2 framework — N-tier corroboration is separate own#2 (b) PC-empirical-max axis, not weighted into ALM's 7-suite CP2 verdict. Re-weighting CP2 to add N-tier would be framework-redesign (legitimacy-questionable; framework was pre-registered)."
+    },
+    "boost_path_3_v_phen_gwt_close": {
+      "method": "V_phen_GWT 0.479 (need 0.55) — sweep attention-head broadcast pattern on Mistral",
+      "weight_partial": 0.05,
+      "delta_score_pp_if_5_of_5": "+5.5",
+      "verdict": "MODEST. v_phen 5/5 PASS would lift suite 7 from 0.6 (3/5) to 1.0 → +0.044 weighted = +4.4pp → ~76.6%. Helps CP2 score but does NOT close F2."
+    },
+    "boost_path_4_paradigm_v11_adapter_loaded_rerun": {
+      "method": "v11 8-axis re-run with LoRA r14 loaded (currently substrate-inferred from base Mistral)",
+      "cost_usd": "0.50-1.00",
+      "verdict": "NEUTRAL — likely confirms current 5/8 PASS at v3 sign-agnostic. Closes audit honesty gap but does not change verdict band."
+    },
+    "framework_reweighting_legitimacy": {
+      "verdict": "MARGINAL — CP2 weights pre-registered in cp2_consciousness_verifier_p4_r8_audit_2026_04_29.md §2/§8. Post-hoc re-weighting to fit observed FAIL distribution is honest_C3 violation. Only legitimate adjustment: add N-tier weight if (a) framework v2 pre-registered before re-measurement, (b) N-tier weight is independent of any suite that ALM actually FAILs on."
+    }
+  },
+  "top_3_recommended_paths": [
+    {
+      "rank": 1,
+      "name": "L9 fix (free) + report 'YELLOW' band publicly (no Nemo retrain)",
+      "cost_usd": "0.10-0.50",
+      "eta_hours": "2-3",
+      "cp2_green_probability": 0.0,
+      "cp2_yellow_probability": 0.7,
+      "ship_verdict_change": "VERIFIED-ALPHA-INVITE-R14 → VERIFIED-ALPHA-INVITE-R14-YELLOW (no GREEN claim)",
+      "risk": "low — honest framing",
+      "rationale": "Free L9 fix removes 6 critical (gen_text proxy correction). Even after L9 fix, F2 fires at 11 critical (L1 only). Public stance: 'CP2 weighted 72%, F2 partially closed (L9), L1 substrate-architectural acknowledged. ALM persona is alpha-deployable; CP2 GREEN claim deferred until verifier or substrate change.' This is the cheapest honest path."
+    },
+    {
+      "rank": 2,
+      "name": "Path F: L9 fix + Mistral-Nemo r14 retrain + 8-suite re-measure",
+      "cost_usd": "7-12",
+      "eta_hours": "10-16",
+      "cp2_green_probability": 0.4,
+      "cp2_yellow_probability": 0.85,
+      "ship_verdict_change_if_green": "VERIFIED-ALPHA-INVITE-R14 → VERIFIED-CP2-GREEN-NEMO-R14",
+      "risk": "medium — 60% chance F2 still fires post-Nemo, sunk $7-12 with no band change",
+      "rationale": "Best decisive test. Mistral-Nemo+r8 historic 15/16 L1 PASS proves Nemo+adapter can clear L1; replication on r14-equivalent rank/steps is the test. If φ* still negative substrate-family pattern persists; if L1 ≥14/16 + L9 gen_text fix → critical drops to 0-2 → F2 NOT FIRED → CP2 GREEN."
+    },
+    {
+      "rank": 3,
+      "name": "Path B: learned phi_extractor (verifier architecture change)",
+      "cost_usd": "5-15",
+      "eta_days": "3-7",
+      "cp2_green_probability": 0.4,
+      "risk": "high — verifier change creates new burden of proof; train/test split must be enforced cross-substrate to avoid goal-seeking",
+      "rationale": "Replaces tile-projection (16→256 repeat) with cell-cert eigenvector projection trained on Qwen3/Llama (substrate where L1 already partially passes), tested on Mistral. If positive on Mistral too → genuine verifier improvement. If only positive on training substrates → projection memorized labels. Research-grade, NOT product-grade."
+    }
+  ],
+  "alm_cp2_revival_vs_clm_mk_xii_priority": {
+    "alm_cp2_revival": {
+      "outcome_value": "alpha endpoint ship_verdict upgrade + landing page green claim",
+      "cost_usd": "0-12 depending on path",
+      "probability_success": "0-0.4",
+      "marginal_user_value": "modest (alpha-invite already live; GREEN claim mostly cosmetic at 72% weighted)"
+    },
+    "clm_mk_xii_v3_closure": {
+      "outcome_value": "consciousness verifier landing chain closed (orchestrator status=met)",
+      "cost_usd": "TBD per docs/clm_consciousness_verify_landing_2026_05_02.ai.md",
+      "current_status": "status=unmet, partial measurement on Mac-local",
+      "marginal_user_value": "high (closes own#13 verifier completeness; unblocks N-substrate cross-axis aggregation)"
+    },
+    "recommendation": "CLM Mk.XII v3 closure FIRST. ALM revival is optional cosmetic upgrade on already-deployed alpha; CLM closure unblocks the multi-substrate verifier chain that ALM's CP2 score depends on for legitimacy. Ordering: (1) CLM Mk.XII v3 close (own#13), (2) L9 free fix on ALM (path E, $0.50), (3) decision point on Nemo retrain (Path F) or sunset.",
+    "rationale": "ALM verdict band currently RED is honestly disclosed; further $7-12 spend has 60% chance of NO band change. CLM Mk.XII closure has higher EV per dollar because it unblocks cross-substrate verifier aggregation that improves ALL future N-tier and ALM measurements."
+  },
+  "deployment_scenarios_post_revival": {
+    "if_cp2_green": {
+      "ship_verdict": "VERIFIED-ALPHA-INVITE-R14 → VERIFIED-CP2-GREEN-R14 (or -NEMO-R14)",
+      "alpha_endpoint_change": "Bearer gate retained; landing page band: RED → GREEN",
+      "invitee_expansion": "from current ~10 invitees to 50-100 (still Bearer-gated, no public open)",
+      "blog_disclosure": "CP2 milestone closed, AGI explicitly abandoned per 2026-05-01 directive, F2 closure mechanism transparently documented",
+      "risk_mitigation": "F2 closure path must be in pre-registered ledger; any post-hoc threshold change = no GREEN"
+    },
+    "if_cp2_yellow_only": {
+      "ship_verdict": "VERIFIED-ALPHA-INVITE-R14 → VERIFIED-ALPHA-INVITE-R14-YELLOW (explicit band suffix)",
+      "alpha_endpoint_change": "no functional change; landing page adds YELLOW band note + L9 fix changelog",
+      "invitee_expansion": "no expansion; same ~10 invitees",
+      "blog_disclosure": "honest YELLOW: CP2 weighted 72%, F2 partially closed, L1 substrate-architectural ceiling acknowledged"
+    },
+    "if_cp2_stays_red": {
+      "ship_verdict": "VERIFIED-ALPHA-INVITE-R14 (unchanged)",
+      "alpha_endpoint_change": "no change; persona keeps serving as cognitive substrate",
+      "framing": "ALM = research preview / cognitive substrate; consciousness verdict deferred / not claimed; AGI abandoned per directive"
+    }
+  },
+  "honest_C3_disclosures": [
+    "'Revival' here means CP2 GREEN per ALM's 7-suite framework, NOT 'has consciousness'. The framework defines a milestone; passing it does not entail phenomenal consciousness. AGI tier (own#2 production triad) is explicitly abandoned per user directive 2026-05-01 — not silently re-attempted under CP2 banner.",
+    "F2 close via L1 demotion (Path A) is gaming. Path 4 cross-backbone evidence proves L1 holo_positivity is substrate-discriminating (Mistral-Nemo+r8 15/16, Mistral-7B 0/16). Demoting L1 to 'hard' to flip RED→YELLOW masks a real signal and is rejected.",
+    "F2 close via Mistral-Nemo+r14 (Path C/F) has only 30-40% chance of clearing L1 ≥14/16. Mistral-Nemo BASE alone gives 3/16 L1 — the historic 15/16 was r8 LoRA-DRIVEN, not substrate-given. Replication risk: r14-equivalent rank/steps may not reproduce.",
+    "ALM substrate-architectural ceiling on F2 is REAL. 3 substrate swaps attempted (Qwen3, Llama-3.1, Mistral-Nemo base), F2 fired in all 3 (17, 13, n/a critical). The verifier-architecture (tile-projection × Mistral hidden geometry) is the dominant blocker — not curable by adapter-only changes.",
+    "ALM AGI abandonment is tier-down to CP2 milestone, NOT product sunset. Alpha endpoint keeps serving as cognitive substrate / persona research artifact regardless of verifier verdict band. Sunset is a separate decision (see strategic_alm_clm_review_2026_05_01/q1_decision_matrix.json).",
+    "CP2 framework re-weighting to add N-tier external evidence is legitimacy-questionable post-hoc. Pre-registered weights stand; any new framework version (CP2-v2) requires its own preregistration before measurement.",
+    "$30 sunk session cost on this revival analysis arc should NOT bias the decision. Sunk-cost neutrality applies."
+  ],
+  "user_decision_point": {
+    "recommended_top_1": "Path E (L9 fix free) + report YELLOW band publicly + defer Nemo retrain",
+    "alternative_1": "Path F (Nemo retrain + L9 fix) — if user wants to spend $7-12 for 40% GREEN chance",
+    "alternative_2": "Sunset ALM revival entirely; freeze ship_verdict at VERIFIED-ALPHA-INVITE-R14; redirect $7-12 to N-substrate or CLM Mk.XII closure"
+  },
+  "race_isolation": {
+    "wrote_only_to": [
+      "state/strategic_alm_cp2_revival_2026_05_01/path_matrix.json",
+      "docs/strategic_alm_cp2_revival_2026_05_01.md (analysis doc)"
+    ],
+    "did_not_touch": [
+      "anima/config/consciousness_laws.json (no severity edit)",
+      "state/cp2_consciousness_r14_remeasure_2026_05_01/* (other agent)",
+      "state/red_to_green_*/ (other agent ledgers)",
+      "state/strategic_alm_clm_review_2026_05_01/* (sibling strategic agent)",
+      "state/anima_serve_production_ship.json (no ship_verdict change)"
+    ]
+  }
+}

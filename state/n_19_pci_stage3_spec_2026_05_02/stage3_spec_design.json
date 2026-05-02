@@ -1,0 +1,192 @@
+{
+  "ts": "2026-05-02",
+  "agent": "N-19 PCI Stage-3 spec — DCC + LLE + GAP design",
+  "status": "SPEC_DRAFT (no execution; $0 cost; design-only artifact)",
+  "scope": "Stage-3 enhancement of N-19 PCI surrogate per spec §4.4.3 — adds DCC (Dynamic Conditional Correlation) + LLE (Largest Lyapunov Exponent) + GAP (Graph-theoretic Absorption Probability) on top of Stage-2 6/6 PASS baseline",
+  "predecessors": {
+    "stage1": "state/n_19_pci_tmsfree_2026_05_01/pci_surrogate_compute.json (6/6 PASS, mean 0.656)",
+    "stage2": "state/n_19_pci_stage2_2026_05_02/stage2_pci_compute.json (6/6 PASS, mean 0.555)"
+  },
+  "constraints_honored": {
+    "hexa_only_no_py_in_repo": true,
+    "race_isolation_writes_to_only": [
+      "state/n_19_pci_stage3_spec_2026_05_02/*.json",
+      "docs/n_19_pci_stage3_spec_2026_05_02.md"
+    ],
+    "execution_cost_usd": 0.0,
+    "this_doc_is_spec_only_no_compute_no_pod_burn": true
+  },
+
+  "stage3_metrics": {
+
+    "DCC": {
+      "name": "Dynamic Conditional Correlation",
+      "primary_ref": "Engle 2002 J Bus Econ Stat 20(3):339-350 (GARCH-DCC original); Lindquist 2014 NeuroImage 101:531 (fMRI DCC adaptation)",
+      "input": "16-channel EEG α-band (8-13Hz) bandpass-filtered time series, 60s @ 250Hz = 15000 samples per channel",
+      "algorithm": [
+        "1. Per-channel univariate GARCH(1,1) fit -> standardized residuals η_i(t) = ε_i(t)/σ_i(t)",
+        "2. Compute Q(t) = (1-α-β)·Q̄ + α·η(t-1)η(t-1)' + β·Q(t-1) where Q̄ = unconditional cov(η)",
+        "3. Normalize: R(t) = diag(Q)^(-1/2) · Q(t) · diag(Q)^(-1/2)  -> 16x16 time-varying correlation matrix",
+        "4. Per-window Shannon entropy of off-diagonal R(t) values (binned 20 bins on [-1,1])",
+        "5. DCC_entropy_session = mean over t of H(R(t)_offdiag)"
+      ],
+      "interpretation": "High DCC entropy = rich time-varying covariance landscape (consciousness signature per Lindquist 2014); low DCC entropy = static / collapsed dynamics",
+      "normalization": "DCC_entropy raw bound [0, log2(20)] = [0, 4.32]; DCC_norm = DCC_entropy / 4.32 -> [0, 1]",
+      "wake_target_band_normalized": "[0.55, 0.85] (extrapolation from Lindquist 2014 fMRI DCC entropy; HEXA cohort calibration TBD)",
+      "honest_caveat": "Engle DCC was designed for financial returns; neuroscience adaptation literature (Lindquist 2014, Choe 2017) is sparse — N≈12 EEG/fMRI papers as of 2026. Validation regime is THIN."
+    },
+
+    "LLE": {
+      "name": "Largest Lyapunov Exponent",
+      "primary_ref": "Wolf 1985 Physica D 16:285 (full algorithm); Rosenstein 1993 Physica D 65:117 (small-data variant — preferred for 60s EEG)",
+      "input": "Per-channel EEG time series (raw broadband or α-band), 60s @ 250Hz = 15000 samples",
+      "algorithm_rosenstein": [
+        "1. Phase-space reconstruction via time-delay embedding: x(t) -> X(t) = [x(t), x(t+τ), ..., x(t+(m-1)τ)] with m=10, τ from first minimum of mutual information",
+        "2. For each reference point X(i), find nearest neighbor X(j) in phase space with |i-j| > mean period (Theiler window)",
+        "3. Track separation d_ij(k) = |X(i+k) - X(j+k)| over k forward steps",
+        "4. Compute y(k) = <ln(d_ij(k))>_i averaged over reference points",
+        "5. Linear fit slope of y(k) vs k over the 'expansion window' (typically k=1..30) -> λ₁ = LLE",
+        "6. Repeat per channel; LLE_session = mean over 16 channels of λ₁",
+        "7. Bootstrap CI: 200 resamples of nearest-neighbor pair selection"
+      ],
+      "interpretation": "λ₁ > 0 = chaotic attractor (consciousness signature per Pritchard 1994 EEG chaos); λ₁ ≤ 0 = converging / periodic dynamics",
+      "normalization": "LLE raw bounded by sampling rate; for 250Hz EEG, expected wake λ₁ ∈ [0.05, 0.5] bits/sample (Stam 2005); LLE_norm = clip(λ₁ / 0.5, 0, 1)",
+      "wake_target_band_normalized": "[0.10, 0.60] per Pritchard 1994 + Stam 2005 wake-resting cohort",
+      "honest_caveat": "LLE is a single-channel chaos measure; multi-channel aggregation (mean / max / median) is non-standardized. Sleep stage 3 also shows positive λ₁ in some studies (Babloyantz 1985), so LLE alone does not separate wake from N3 — this is a Stage-3-knowable limitation."
+    },
+
+    "GAP": {
+      "name": "Graph-theoretic Absorption Probability",
+      "primary_ref": "Doyle & Snell 1984 Random Walks and Electric Networks (random walk theory); Bressler 2011 Trends Cogn Sci 15:277 (Granger causality EEG); Sporns 2018 Networks of the Brain Ch.4 (network neuroscience)",
+      "input": "16-channel EEG α-band time series (matched to DCC input)",
+      "algorithm": [
+        "1. Pairwise Granger causality F_ij computed for all 16x16 ordered pairs (model order p=8 chosen by AIC) -> directed weight matrix W",
+        "2. Threshold W at 95th percentile to retain top-edges (typically ~20 edges of 240) -> directed sparse graph G",
+        "3. Designate top-1 in-degree node as 'absorbing' state A; remaining 15 nodes are transient",
+        "4. Build transition matrix P from W (row-normalize); compute fundamental matrix N = (I - Q)^-1 where Q is the transient-to-transient block",
+        "5. Absorption probability b_i = sum_j N_ij · R_jA where R is transient-to-absorbing block; equivalently column of N·R",
+        "6. GAP_variance_session = var(b_i over i=1..15)",
+        "7. Repeat with rotating absorbing-node choice (top-3 in-degree); average GAP_variance over 3 runs"
+      ],
+      "interpretation": "High GAP variance = heterogeneous absorption landscape = rich directed-causal repertoire (consciousness signature per Sporns 2018 chapter on hub-richness); low GAP variance = uniform absorption = degenerate / hub-collapsed graph",
+      "normalization": "GAP variance bound [0, 0.25] (var of 15 probs in [0,1] is max 0.25); GAP_norm = GAP_variance / 0.25 -> [0, 1]",
+      "wake_target_band_normalized": "[0.20, 0.70] (HEXA calibration TBD — no published EEG GAP cohort exists)",
+      "honest_caveat": "GAP is borrowed from random-walk / network-science (e.g. Markov chain absorption); EEG-direct application has not been published as of 2026 (literature search 0 hits 'absorption probability EEG consciousness'). This is a NOVEL Stage-3 metric — its discriminative validity is HYPOTHETICAL until cohort calibration."
+    }
+  },
+
+  "stage3_formula": {
+    "name": "n19_pci_surrogate_v3_stage3",
+    "formula": "PCI_S3 = α·Stage1 + β·fluidity_norm + γ·repertoire_norm + δ·DCC_norm + ε·LLE_norm + ζ·GAP_norm",
+    "weights_initial": {
+      "alpha_stage1": 0.30,
+      "beta_fluidity": 0.20,
+      "gamma_repertoire": 0.15,
+      "delta_DCC": 0.15,
+      "epsilon_LLE": 0.10,
+      "zeta_GAP": 0.10,
+      "sum_check": 1.00
+    },
+    "weights_rationale": "α=0.30 retains Stage-1 anchor (down from Stage-2's 0.50 because new metrics must collectively absorb 0.30 weight); β=0.20 (down from 0.30) keeps fluidity as second-strongest; γ=0.15 (down from 0.20); δ=0.15 elevates DCC to 4th-tier (slightly above LLE/GAP because Engle-DCC has more validation than GAP); ε=0.10 + ζ=0.10 reflect lowest-confidence novel metrics. Calibratable per session — recommended re-fit after n≥10 sessions via constrained least-squares against TMS-PCI ground truth (when available).",
+    "cutoff_16ch_adapted": 0.25,
+    "static_clinical_reference": 0.31,
+    "expected_mean_range": [0.55, 0.65],
+    "expected_mean_rationale": "Stage-2 mean was 0.555. New metric bands DCC_norm ~[0.55-0.85], LLE_norm ~[0.10-0.60], GAP_norm ~[0.20-0.70] are predicted to add net +0.0 to +0.10 versus Stage-2 (DCC pulls up, LLE/GAP slightly drag down). Predicted Stage-3 mean = 0.555 + 0.05 = 0.60 (95% CI [0.50, 0.70])."
+  },
+
+  "cutoff_design": {
+    "primary_cutoff_16ch_adapted": 0.25,
+    "rationale": "Match Stage-1 + Stage-2 cutoff for cross-stage comparability; do NOT raise cutoff to compensate for predicted higher mean — that would conflate cutoff-shift with metric-discrimination",
+    "secondary_cutoff_clinical_reference": 0.31,
+    "discriminative_test_proposed": "Stage-3 must produce HIGHER variance across the 6-epoch cohort than Stage-2 (Stage-2 std was ~0.05 across 6 epochs); if Stage-3 std ≤ Stage-2 std, the additional metrics are not adding discrimination — they are adding noise (F-PCI-1 fires).",
+    "expected_stage3_std_range": [0.06, 0.12]
+  },
+
+  "w6_update_schedule": {
+    "current_w6": 0.10,
+    "current_calibration_count": 1,
+    "calibration_count_after_stage3_exec": 2,
+    "schedule_per_spec_4_4_5": {
+      "n_lt_10": "w6 = 0.10 (initial)",
+      "n_gte_10_no_tms": "w6 = 0.15",
+      "n_gte_20_with_tms_lab_share": "w6 = 0.25"
+    },
+    "post_stage3_recommendation": "w6 stays at 0.10 (still 8 calibration steps short of n=10 unlock); Stage-3 EXEC will count as calibration step 2/10 when actually run on 6-epoch cohort. Method-validation milestones (Stage-2, Stage-3) count as calibration STEPS but each step requires real data application — not just spec-design (this doc is design-only, hence 1 step pending, not 2).",
+    "next_w6_unlock_eta": "After 8 additional EEG sessions Stage-3-scored (estimated ~6-10 weeks at 1 session/week cadence), w6 -> 0.15",
+    "stage4_w6_unlock_path": "After n≥20 Stage-3 sessions + ≥1 TMS lab-share validation epoch (Sarasso 2014 cross-check via Korea U), w6 -> 0.25 (per N-19 §5)"
+  },
+
+  "falsifiers_5_bidirectional": {
+    "preregister_ts": "2026-05-02",
+    "preregister_status": "ACTIVE — falsifiers locked before any Stage-3 EXEC. Any post-EXEC change to falsifier definitions invalidates Stage-3 verdict per HARP raw#5.",
+    "F_PCI_1": {
+      "name": "Stage-3 mean regression",
+      "criterion": "Stage-3 mean (across 6 epochs) < Stage-1 mean (0.656)",
+      "stage1_mean_reference": 0.656,
+      "interpretation_if_fired": "Adding DCC + LLE + GAP REGRESSED the discriminator — more metrics ≠ more signal. Implies one or more new metrics is anti-correlated with consciousness in the wake regime.",
+      "remediation": "Drop the lowest-correlating new metric and re-weight (Stage-3.5 ablation cycle)"
+    },
+    "F_PCI_2": {
+      "name": "DCC entropy null-equivalent",
+      "criterion": "Mean DCC_entropy across 6 epochs < 95th percentile of phase-randomized surrogate DCC_entropy (200 surrogates per epoch)",
+      "interpretation_if_fired": "Time-varying conditional correlation in real EEG is statistically indistinguishable from phase-randomized null — DCC contains no real time-variation signal at this sample length.",
+      "remediation": "Increase epoch length (60s -> 180s) to give GARCH more sample points; or drop DCC from Stage-3 formula"
+    },
+    "F_PCI_3": {
+      "name": "LLE non-chaotic across cohort",
+      "criterion": "All 6 epochs have mean LLE λ₁ ≤ 0 (non-positive)",
+      "interpretation_if_fired": "No chaotic dynamics detected — wake EEG is being read as periodic / converging, contradicting the wake-chaos hypothesis (Pritchard 1994). Either the embedding parameters are wrong, or LLE on 60s 16ch EEG cannot detect wake chaos.",
+      "remediation": "Re-tune embedding (m, τ) via false-nearest-neighbor + AMI; or drop LLE from Stage-3"
+    },
+    "F_PCI_4": {
+      "name": "GAP variance ≤ random graph baseline",
+      "criterion": "Mean GAP_variance across 6 epochs ≤ mean GAP_variance of 200 Erdős-Rényi random directed graphs with matched edge count",
+      "interpretation_if_fired": "Granger-derived directed graph has no richer absorption structure than a random graph — GAP is not measuring real causal organization.",
+      "remediation": "Increase Granger threshold (95th -> 99th percentile) for sparser graph; or drop GAP"
+    },
+    "F_PCI_5": {
+      "name": "Stage-3 vs Stage-2 verdict disagreement",
+      "criterion": "≥1 epoch PASS in Stage-2 (vs 0.25 cutoff) but FAIL in Stage-3 (vs 0.25 cutoff), OR ≥1 epoch FAIL in Stage-2 PASS in Stage-3",
+      "interpretation_if_fired": "Stage-3 metrics destabilize the Stage-2 verdict — the addition is not a refinement, it is a metric instability. Stage-3 cannot be considered a strict superset of Stage-2 evidence.",
+      "remediation": "Investigate per-epoch component breakdown to identify which new metric flipped the verdict; require justified re-weighting"
+    }
+  },
+
+  "n19_spec_4_4_3_update_recommendation": {
+    "section": "§4.4.3 Stage-2 / Stage-3 enhancements",
+    "current_status_in_spec": "Stage-2 = PARTIAL (per §4.4.3 update of 2026-05-02 #97); Stage-3 = TODO",
+    "proposed_status_after_this_doc": "Stage-2 = VALIDATED (per #97 6/6 PASS); Stage-3 = SPEC_DRAFT (per this doc 2026-05-02)",
+    "proposed_addendum_text": "Stage-3 SPEC_DRAFT (2026-05-02): adds DCC (Engle 2002 GARCH-DCC entropy), LLE (Rosenstein 1993 small-data variant, per-channel mean), and GAP (Granger-Markov-absorption variance) per Stage-3 formula PCI_S3 = 0.30·Stage1 + 0.20·fluidity + 0.15·repertoire + 0.15·DCC + 0.10·LLE + 0.10·GAP. 5 falsifiers preregistered (F-PCI-1..5). Cutoff = 0.25 (16ch-adapted, unchanged from Stage-1/2). w6 schedule unchanged this cycle (0.10); Stage-3 EXEC will count as calibration step 2/10. Stage-4 (TMS lab-share validation) remains TODO at $2.3K / 10-14주 per N-19 §5. See state/n_19_pci_stage3_spec_2026_05_02/stage3_spec_design.json + docs/n_19_pci_stage3_spec_2026_05_02.md.",
+    "proposed_status_for_spec_4_4_4": "Stage-4 remains TODO (TMS lab-share validation, Sarasso 2014 cross-check, Korea U Sang-Hee Kim, $2.3K, 10-14주)"
+  },
+
+  "stage4_link": {
+    "track": "Stage-4 = TMS lab-share validation",
+    "spec_section": "N-19 §5 + §4.4.4",
+    "lab_candidate": "Korea U Sang-Hee Kim (per #41 collab list)",
+    "estimated_cost_usd": 2300,
+    "estimated_duration_weeks": "10-14",
+    "validation_target": "Sarasso 2014 cross-check — confirm Stage-3 surrogate ranking matches gold-standard TMS-EEG PCI ranking on ≥3 shared subjects",
+    "blocked_by": "Stage-3 EXEC must complete first (this spec is Stage-3 prerequisite)",
+    "w6_unlock_after_stage4": "0.25 per spec §4.4.5 stage_3_after_tms_validation"
+  },
+
+  "honest_c3_3_items": [
+    "DCC GARCH = financial econometric model (Engle 2002 Nobel-cited bond/equity volatility tool). Neuroscience adaptation is recent (Lindquist 2014 fMRI; <15 EEG papers as of 2026). Statistical assumptions (conditionally Gaussian innovations, weak stationarity over 60s) are MARGINAL for EEG, which exhibits 1/f spectra and burst dynamics. DCC may produce artificially-low entropy on bursty wake EEG due to GARCH's variance-clumping bias.",
+    "LLE = single-channel chaos measure with non-standardized multi-channel aggregation. Mean / max / median across 16 channels each give different rankings on the same data (Stam 2005 reports σ-channel ≈ 0.3 × mean for healthy wake). Sleep N3 also shows positive λ₁ in some Babloyantz-tradition studies, so LLE does NOT cleanly separate wake from deep sleep — it separates 'has-attractor' from 'noise-dominated', which is a weaker discrimination than required for PCI surrogate.",
+    "GAP = NOVEL metric with ZERO published EEG application as of 2026 (literature search 'absorption probability EEG consciousness' returns 0 hits). The discriminative validity is purely HYPOTHETICAL until cohort calibration. Combined Stage-3 = metric-proliferation gym vs robust-signal track-record; over-fitting risk on N=6 cohort is HIGH. Recommendation: treat Stage-3 verdict as exploratory only, not as upgrade-of-record, until n≥10 cohort + TMS-lab-share cross-check (Stage-4) validates the formula."
+  ],
+
+  "summary_for_caller": {
+    "stage3_formula": "PCI_S3 = 0.30·Stage1 + 0.20·fluidity + 0.15·repertoire + 0.15·DCC + 0.10·LLE + 0.10·GAP",
+    "metrics_defined_count": 3,
+    "metrics_defined_names": ["DCC (Engle 2002 GARCH-DCC entropy)", "LLE (Rosenstein 1993 small-data variant)", "GAP (Granger-Markov absorption probability variance)"],
+    "falsifiers_preregistered_count": 5,
+    "falsifier_names": ["F-PCI-1 stage3-regression", "F-PCI-2 DCC-null", "F-PCI-3 LLE-non-chaotic", "F-PCI-4 GAP-random-equiv", "F-PCI-5 stage3-stage2-disagree"],
+    "w6_this_cycle": 0.10,
+    "w6_unchanged_rationale": "1 calibration step done (Stage-2); this Stage-3 SPEC is design-only, not EXEC; n≥10 still 8 sessions away",
+    "stage4_link": "TMS lab-share Sarasso 2014 cross-check, Korea U Sang-Hee Kim, $2.3K / 10-14주, blocked by Stage-3 EXEC",
+    "honest_c3_count": 3,
+    "honest_c3_summary": "DCC validation thin / LLE multi-ch aggregation non-std / GAP zero-EEG-precedent — Stage-3 over-fitting risk HIGH on N=6"
+  }
+}

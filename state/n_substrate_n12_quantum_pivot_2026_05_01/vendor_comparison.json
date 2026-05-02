@@ -1,0 +1,143 @@
+{
+  "schema": "n12/quantum_pivot/vendor_comparison/1",
+  "ts_utc": "2026-05-01T00:00:00Z",
+  "agent": "n_substrate_n12_quantum_pivot",
+  "mission": "Identify cheapest delay-supported QPU to redo F-N12-1 Orch-OR test after Forte 1 INDETERMINATE",
+  "candidates": [
+    {
+      "rank": 1,
+      "vendor": "IBM Quantum",
+      "platform": "IBM Quantum Cloud (direct, NOT via AWS/Azure)",
+      "hardware_open_plan": "Heron r2 (ibm_kingston) — 156 qubits, 340k CLOPS, median 2Q error 2.03e-3",
+      "hardware_paid": "Nighthawk (median T1 350 us), Eagle 127q, additional Heron r1/r2",
+      "delay_primitive": "SUPPORTED — QuantumCircuit.delay in Qiskit SDK; OpenQASM 3 'delay[Nus|Nns|Ndt] qubit' on hardware after transpilation. dt/ns/us/ms/s units all supported.",
+      "delay_evidence_url": "https://quantum.cloud.ibm.com/docs/en/guides/qasm-feature-table",
+      "delay_caveats": "Qiskit SDK does not yet parse 'duration'/'stretch' type declarations (as of Jul 2025); explicit ns/us values work. Stretch DD limited.",
+      "free_tier": {
+        "name": "Open Plan",
+        "minutes_per_28d": 10,
+        "promo": "After 20 min compute in any 12mo, opt-in for 180 min over next 12mo",
+        "hardware": "Heron r2 ibm_kingston included for Open Plan as of 2026-03-16 announcement",
+        "shot_limit_per_job": "typical 100000",
+        "cost_USD": 0.00
+      },
+      "paid_tier": {
+        "name": "Pay-As-You-Go",
+        "rate_USD_per_sec": 1.60,
+        "rate_USD_per_min": 96.00,
+        "metered": "QPU runtime only (not classical preprocessing)",
+        "min_purchase": null,
+        "credit_card": "via IBM Cloud + Strangeworks reseller"
+      },
+      "korean_access": "OPEN — IBM has active Korea Quantum Computing partnership (KQC, Busan); System Two installation planned 2028. No US export restriction on Open Plan cloud access for SK developers. Qiskit 1.0 explicitly distributed to KR education channels.",
+      "onboarding_lead_time": "minutes — IBM Cloud account (free) + Quantum Platform sign-in. No interview, no waitlist for Open Plan.",
+      "mvp_cost_for_F_N12_1_v3_USD": 0.00,
+      "mvp_cost_rationale": "4-qubit GHZ + 5 delay points (0us, 25us, 50us, 100us, 200us) x 100 shots = 500 shots. Single circuit batch ~30-60s wall-clock on ibm_kingston. Comfortably inside 10 min/28d Open Plan budget.",
+      "primary_strengths": ["Free tier covers entire MVP", "OpenQASM 3 delay native", "Heron r2 T1/T2 ~100-300us appropriate for tau_2 measurement window", "KR friendly", "instant onboarding"],
+      "primary_risks": ["Open Plan queue wait can be hours", "Heron coherence times not as long as Quantinuum but adequate"]
+    },
+    {
+      "rank": 2,
+      "vendor": "Quantinuum (via Microsoft Azure Quantum)",
+      "platform": "Azure Quantum",
+      "hardware": "System Model H1 (20q fully connected), System Model H2 (56q fully connected, upgraded from 32q)",
+      "delay_primitive": "SUPPORTED via TKET/pytket-quantinuum native instruction set — H-series control stack is independent from IonQ's; idle/wait operations are first-class.",
+      "delay_evidence_url": "https://docs.quantinuum.com/systems/data_sheets/Quantinuum%20H2%20Product%20Data%20Sheet.pdf",
+      "coherence": "T2* > 1 second (best in class trapped-ion); T1 > 100 s (optical-pumping limited). Two-qubit gate ~100-200 us, 1Q gate 1-10 us.",
+      "free_tier": {
+        "name": "Azure Free Trial credits",
+        "credit_USD": 200,
+        "valid_for_quantinuum": "PARTIAL — Azure free credits eligible for some providers; Quantinuum free credit availability not guaranteed; pay-as-you-go quoted per-HQC by Quantinuum sales (not published)"
+      },
+      "paid_tier": {
+        "subscription_standard_USD_per_month": 125000,
+        "subscription_premium_USD_per_month": 175000,
+        "hqc_formula": "HQC = 5 + C*(N1q + 10*N2q + 5*Nm)/5000",
+        "pay_as_you_go": "per-HQC, contact sales (Sales@Quantinuum.com) — not auto-published"
+      },
+      "korean_access": "OPEN via Azure global tenant; no published export restriction. Quantinuum is Cambridge/Boulder, no ITAR for cloud H1/H2 use.",
+      "onboarding_lead_time": "1-3 days — Azure subscription, workspace creation, provider enable. PAYG requires sales contact for HQC rate quote.",
+      "mvp_cost_for_F_N12_1_v3_USD_estimate": "~50-200 USD",
+      "mvp_cost_rationale": "GHZ4 ~ 6 1Q + 3 2Q + 4 SPAM, plus 5 delay points -> conservatively 15 1Q + 5 2Q + 5 SPAM per circuit. 5 circuits x 100 shots. HQC = 5 + 100*(15 + 50 + 25)/5000 = 5 + 1.8 = 6.8 HQC per circuit -> 34 HQC total. Quantinuum has not published USD/HQC for PAYG; Strangeworks-style estimates ~$1-10/HQC -> $34-$340 range. Sales contact required for exact quote.",
+      "primary_strengths": ["Best-in-class trapped-ion T2* >1s — same physical family as IonQ but with delay support", "Azure tooling mature", "fully connected qubits"],
+      "primary_risks": ["PAYG cost opaque (sales contact required, violates $0/no-vendor-contact constraint)", "Subscription tiers $125k+/mo are not relevant for $50 MVP", "Onboarding slower than IBM"]
+    },
+    {
+      "rank": 3,
+      "vendor": "IonQ Direct API",
+      "platform": "ionq.com Quantum Cloud (direct, bypassing AWS Braket)",
+      "hardware": "Aria 1 (25q), Forte 1 (36q), Forte Enterprise 1 (36q)",
+      "delay_primitive": "UNCONFIRMED at IR level — IonQ Direct API exposes lower-level pulse control than AWS Braket abstraction, but public docs do not enumerate a 'delay' instruction. The same physical hardware (Forte 1) failed delay validation via AWS Braket; whether the Direct API exposes additional capabilities is not publicly verified. Native gate set still GPI/GPI2/ZZ.",
+      "delay_evidence_url": null,
+      "delay_evidence_status": "INSUFFICIENT — would require account creation (violates constraint) or pre-sales technical inquiry",
+      "free_tier": {
+        "name": "research credits",
+        "credit_USD": "case-by-case, requires application",
+        "auto_signup": false
+      },
+      "paid_tier": {
+        "rates": "publicly available only via Azure intermediary (see Azure pricing); IonQ Direct does not publish per-shot USD on public pricing page",
+        "Azure_reference_AQT_formula": "AQT = m + 0.000220*(N1q*C) + 0.000975*(N2q*C); m = $97.50 (EM on) or $12.42 (EM off) for Aria; m = $168.20 (EM on) / $25.79 (EM off) for Forte 1",
+        "estimated_minimum_per_program_Forte1": "25.79 USD even with EM off"
+      },
+      "korean_access": "OPEN in principle (commercial cloud) but IonQ has no published KR onboarding flow; sales-driven.",
+      "onboarding_lead_time": "1-4 weeks — application + sales discussion required; not self-serve.",
+      "mvp_cost_for_F_N12_1_v3_USD_estimate": "129-840 USD via Azure equivalent (5 circuits x $25.79 minimum on Forte 1 EM-off)",
+      "mvp_cost_rationale": "5 circuits each pays the Forte 1 minimum-per-program fee. Even with delay supported, cost dominated by per-program minimum.",
+      "primary_strengths": ["Same Forte 1 hardware as v2 (apples-to-apples comparison)", "potentially exposes pulse control"],
+      "primary_risks": ["Delay support UNCONFIRMED (same hardware that failed in v2)", "Long onboarding violates speed constraint", "Per-program minimum ~$25-168 dominates cost", "Sales contact effectively required"]
+    },
+    {
+      "rank": 4,
+      "vendor": "Rigetti via Amazon Braket",
+      "platform": "AWS Braket",
+      "hardware": "Cepheus-1-108Q (Ankaa-3 family) — 108-qubit superconducting",
+      "delay_primitive": "SUPPORTED via OpenPulse / OpenQASM 3 pulse-level access. Delay can be applied to qubits in pulse sequences on Amazon Braket Rigetti devices.",
+      "delay_evidence_url": "https://docs.aws.amazon.com/braket/latest/developerguide/braket-hello-pulse.html",
+      "free_tier": {
+        "name": "AWS Free Tier (Braket)",
+        "amount": "1 hour simulator time/month + Welcome Bonus credits ($100-300 case-by-case)",
+        "qpu_free": false
+      },
+      "paid_tier": {
+        "per_shot_USD": 0.000425,
+        "per_task_USD": 0.30,
+        "hourly_reservation_USD": 4100,
+        "cost_500_shots_USD": 0.51,
+        "cost_5_circuits_500_shots_USD": "~$1.71-$2.55 (depending on whether all delay points fit one task)"
+      },
+      "korean_access": "OPEN — AWS Braket available in KR via us-east-1 access (same path as v2 N-12 used).",
+      "onboarding_lead_time": "0 — AWS account already exists per v2 (267673635495 anima-braket-cli IAM, [braket] profile, us-east-1).",
+      "mvp_cost_for_F_N12_1_v3_USD": "1.71 - 2.55 (estimated), conservative budget 5.00",
+      "mvp_cost_rationale": "5 delay points, each as separate task @ $0.30 task fee + 100 shots @ $0.000425 = $0.34/task * 5 = $1.71. Or 1 task with 500 shots = $0.51. Per-program minimum is small.",
+      "primary_strengths": ["Cheapest paid path", "Existing AWS account + IAM (zero new onboarding)", "Superconducting (matches PRNewswire SC reference family)", "Delay supported in pulse-level OpenQASM 3", "Korean access already proven"],
+      "primary_risks": ["NOT a trapped-ion comparison — changes physical substrate vs Forte 1, breaking ion-vs-SC ratio test logic", "Different decoherence physics (T1 ~30-100us SC vs ~seconds ion); ratio test would compare two SC devices, defeating original Orch-OR cross-substrate purpose unless reframed"]
+    }
+  ],
+  "top_1_recommendation": {
+    "vendor": "IBM Quantum",
+    "tier": "Open Plan (free)",
+    "device_target": "ibm_kingston (Heron r2)",
+    "rationale": [
+      "1. Delay primitive officially supported in OpenQASM 3 + Qiskit, evidence: IBM qasm-feature-table lists delay as supported across SDK and Runtime with ns/us/ms/dt units.",
+      "2. Cost = $0 USD for the entire MVP (10 min/28d Open Plan covers 5 circuits x 100 shots).",
+      "3. Onboarding = minutes (IBM Cloud account, no waitlist).",
+      "4. Korea-friendly: KQC partnership active, no export restriction on Open Plan.",
+      "5. Heron r2 T1/T2 (50-300us) sit in the right window to discriminate Penrose-Hameroff predicted ~25 us neuronal coherence threshold without being so long as to mask the signal.",
+      "6. Honest tradeoff: IBM is superconducting, not trapped-ion. Ratio test reframed as 'IBM SC delay-decoherence vs Penrose-Hameroff predicted neuronal tau' rather than 'ion vs SC'. Substrate-cross comparison shifts to IBM-Heron-vs-PRNewswire-SC-reference (within-family) plus IBM-Heron-vs-neuronal-Penrose (cross-family)."
+    ],
+    "reframing_note": "Original F-N12-1 logic was ion-substrate (Forte 1) vs SC reference. With Forte 1 substrate-incapable and IonQ Direct unverified, pivoting to IBM SC means we now test SC-decoherence-vs-Penrose-prediction directly. Cross-substrate ion comparison becomes a follow-up (deferred to N-12 v4 with Quantinuum H1/H2 if needed)."
+  },
+  "sources": [
+    "https://quantum.cloud.ibm.com/docs/en/guides/qasm-feature-table",
+    "https://quantum.cloud.ibm.com/announcements/en/product-updates/2026-03-16-open-plan-news",
+    "https://quantum.cloud.ibm.com/docs/en/guides/plans-overview",
+    "https://quantum.cloud.ibm.com/docs/en/guides/manage-cost",
+    "https://learn.microsoft.com/en-us/azure/quantum/pricing",
+    "https://aws.amazon.com/braket/pricing/",
+    "https://docs.aws.amazon.com/braket/latest/developerguide/braket-hello-pulse.html",
+    "https://docs.quantinuum.com/systems/data_sheets/Quantinuum%20H2%20Product%20Data%20Sheet.pdf",
+    "https://newsroom.ibm.com/2024-01-29-Korea-Quantum-Computing-and-IBM-Collaborate-to-Bring-IBM-watsonx-and-Quantum-Computing-to-Korea",
+    "https://quantumcomputingreport.com/ibm-adds-pay-as-you-go-pricing-model-and-expands-qiskit-runtime/"
+  ]
+}

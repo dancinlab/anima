@@ -1,0 +1,10 @@
+{
+  "schema": "n12/aws_exec/c3_partial_submit/1",
+  "ts_utc_capture": "2026-05-01",
+  "context": "First submit_braket.py invocation: C3 succeeded, C2/C1 failed due to unsupported 'i' gate on Forte 1. C3 task already costing real money; preserve ARN.",
+  "c3_task_arn": "arn:aws:braket:us-east-1:267673635495:quantum-task/b9310362-fe83-485a-b0d3-693091b05a21",
+  "c3_circuit": "C3 Bell sanity, 2 qubits, 100 shots",
+  "c3_estimated_cost_USD": 8.30,
+  "device_arn": "arn:aws:braket:us-east-1::device/qpu/ionq/Forte-1",
+  "remediation": "Patch submit_braket.py to drop 'i' identity-stack delays (Forte 1 doesn't support outside verbatim). Re-submit C2 + C1 only."
+}

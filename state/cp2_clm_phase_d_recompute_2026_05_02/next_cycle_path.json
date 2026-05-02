@@ -1,0 +1,38 @@
+{
+  "doc_id": "cp2_clm_phase_d_next_cycle_path_2026_05_02",
+  "date": "2026-05-02",
+  "agent": "CP2-CLM Phase D — F1_score_v2 weighted recompute (CLM-anchored)",
+  "candidate_paths": [
+    {
+      "id": "a",
+      "name": "demote 14-gate from critical-block",
+      "burden": "spec change only",
+      "honest_eval": "lowest cost but weakest evidential gain — re-defining gate threshold does not add new measurement"
+    },
+    {
+      "id": "b",
+      "name": "learned phi_extractor closes L1",
+      "burden": "training cycle (H100)",
+      "honest_eval": "moderate cost; addresses L1 0/16 root cause but unproven"
+    },
+    {
+      "id": "c",
+      "name": "substrate redesign",
+      "burden": "ALM rebuild — out of scope",
+      "honest_eval": "highest cost; deferred"
+    },
+    {
+      "id": "d",
+      "name": "tension binding-mediated path (#92 ~15%)",
+      "burden": "P1 protocol $0 / 1d analysis-only",
+      "honest_eval": "MOST PROMISING — directly tests #92 binding hypothesis on existing 3-way (CLM x EEG x tension) data; lifts F1_score_v2 via binding term (β=0.3) AND can unfire F2 if mediator path validated"
+    }
+  ],
+  "selected_path": "d",
+  "selected_path_rationale": "Path (d) tension binding-mediated: (i) $0 budget, (ii) currently executable on existing W4 + N-1 BRIDGE data per #96 §3.4, (iii) lifts F1_score_v2 via β=0.3 binding term, (iv) tests Crick-Koch binding-by-synchrony in CLM substrate, (v) fails-safely (BSE-1 + BSE-3 sensitivity check + random-shuffle F-ARTIFACT control per #96 §3.3).",
+  "next_cycle_target": {
+    "name": "CP2-CLM Phase E — 3-way binding_strength P1 (BSE-1 Pearson cross-corr CLM x EEG x tension)",
+    "deliverable": "binding_strength_4way (3-way subset) numeric + F1_score_v2 recompute with binding term active",
+    "expected_uplift": "if binding > 0.5 PASS: F1_score_v2 0.408 -> 0.408 + 0.3*0.5+ = ~0.56+ (YELLOW band reach if F2 simultaneously unfires)"
+  }
+}

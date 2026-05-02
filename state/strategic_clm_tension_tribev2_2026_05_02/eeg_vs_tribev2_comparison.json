@@ -1,0 +1,27 @@
+{
+  "schema": "strategic_clm_tension_tribev2/eeg_vs_tribev2/1",
+  "ts": "2026-05-02",
+  "purpose": "Comparison of #93 (CLM <-> EEG via user mediator) vs current cycle (CLM <-> TRIBE v2 in-silico)",
+  "matrix": [
+    {"axis": "Mediator", "EEG_version_93": "user cognition obligate", "TRIBE_v2_version": "tension_link only (computational)", "winner": "TRIBE v2 (controllability)"},
+    {"axis": "Closed loop", "EEG_version_93": "impossible (variable user reaction time; #93 H2 ranked top)", "TRIBE_v2_version": "possible (deterministic < 1s)", "winner": "TRIBE v2"},
+    {"axis": "Real-time", "EEG_version_93": "yes (live EEG α response)", "TRIBE_v2_version": "yes (TRIBE v2 inference < 1s)", "winner": "tie"},
+    {"axis": "Statistical power", "EEG_version_93": "N=1 user only", "TRIBE_v2_version": "N=any (multiple runs / random seeds)", "winner": "TRIBE v2"},
+    {"axis": "Sub-second resolution", "EEG_version_93": "EEG yes (125-1000Hz)", "TRIBE_v2_version": "BOLD 1.49s TR + 5s lag", "winner": "EEG"},
+    {"axis": "Spatial resolution", "EEG_version_93": "16ch (OpenBCI Cyton+Daisy)", "TRIBE_v2_version": "10242 fsaverage5 vertices", "winner": "TRIBE v2"},
+    {"axis": "Substrate validity", "EEG_version_93": "real biology (ground truth)", "TRIBE_v2_version": "predicted brain (Meta FAIR validated, average subject)", "winner": "EEG"},
+    {"axis": "Honest C3 framing", "EEG_version_93": "mediator-via-cognition (user as part of mediator)", "TRIBE_v2_version": "in-silico replication of brain (forward encoder, surrogate only)", "winner": "framework-dependent"},
+    {"axis": "Cost", "EEG_version_93": "$0 (user time)", "TRIBE_v2_version": "$0-5 (compute on ubu1)", "winner": "EEG"},
+    {"axis": "Phenomenal validity", "EEG_version_93": "high (real neural signal from real consciousness)", "TRIBE_v2_version": "low (forward encoder, no consciousness)", "winner": "EEG"}
+  ],
+  "scientific_question_shift": {
+    "EEG_version_93_question": "Can anima mediate user cognition? (cognitive anchor)",
+    "TRIBE_v2_question": "Does anima itself manifest brain-like dynamics? (in-silico replication)",
+    "complementarity": "Both meaningful; TRIBE v2 controllable + scalable, EEG biological ground truth; recommended Framing D combines both as 3-way bridge anchor"
+  },
+  "h2_obligate_mediator_resolution": {
+    "eeg_h2_top_ranked_in_93": "Unidirectional CLM->user->EEG only because no closed CLM-EEG sensor wire",
+    "tribe_v2_resolution": "Framing E provides the missing closed loop computationally; BUT this trades phenomenal validity (real consciousness mediator) for scalability (deterministic loop)",
+    "verdict": "Framing E does NOT replace #93 H2; it addresses a SIBLING question (computational closed loop vs cognitive open loop). Both should run in parallel for triangulation."
+  }
+}

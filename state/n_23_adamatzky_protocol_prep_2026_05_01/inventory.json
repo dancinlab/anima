@@ -1,0 +1,115 @@
+{
+  "lab": {
+    "director": "Andrew Adamatzky",
+    "title": "Professor in Unconventional Computing",
+    "affiliation": "Department of Computer Science and Creative Technologies, UWE Bristol",
+    "group": "Unconventional Computing Laboratory (UCL)",
+    "scope": [
+      "reaction-diffusion computing",
+      "cellular automata",
+      "Physarum computing",
+      "fungal computing",
+      "novel hardware",
+      "future and emergent computation"
+    ],
+    "profiles": [
+      "https://people.uwe.ac.uk/Person/AndrewAdamatzky",
+      "https://scholar.google.com/citations?user=suo5D8wAAAAJ&hl=en",
+      "https://en.wikipedia.org/wiki/Andrew_Adamatzky",
+      "https://sciprofiles.com/profile/417073"
+    ]
+  },
+  "literature": [
+    {
+      "year": 2018,
+      "title": "Towards fungal computer",
+      "venue": "Interface Focus 8(6)",
+      "substrate": "mycelium",
+      "use": "framework: information=spike trains, computation=mycelial network propagation"
+    },
+    {
+      "year": 2021,
+      "title": "Electrical Resistive Spiking of Fungi",
+      "venue": "Biophysical Reviews and Letters; arxiv 2009.00292",
+      "substrate": "mycelium",
+      "use": "spike duration 1-21h, amplitude 0.03-2.1 mV; impedance modulates spike emission"
+    },
+    {
+      "year": 2021,
+      "title": "Fungal electronics",
+      "venue": "Biosystems 212 S0303264721002288; arxiv 2111.11231",
+      "substrate": "mycelium composites",
+      "use": "living electronic devices; impedance shift under stimulation"
+    },
+    {
+      "year": 2022,
+      "title": "Language of fungi derived from their electrical spiking activity",
+      "venue": "Royal Society Open Science 9(4) 211926",
+      "substrate": "4 fungal species",
+      "use": "spike-train statistics species-specific lexicon; LZ complexity baseline"
+    },
+    {
+      "year": 2022,
+      "title": "Electrical spiking of psilocybin fungi",
+      "venue": "bioRxiv 2022.07.02.498545",
+      "substrate": "psilocybin fungi",
+      "use": "extension to non-Basidiomycete clade"
+    },
+    {
+      "year": 2022,
+      "title": "Electrical frequency discrimination by fungi Pleurotus ostreatus",
+      "venue": "arxiv 2210.01775",
+      "substrate": "oyster mushroom",
+      "use": "differential stim-frequency response in oyster mycelium"
+    },
+    {
+      "year": 2024,
+      "title": "Sensorimotor control of robots mediated by electrophysiological measurements of fungal mycelia",
+      "venue": "open access (popsci coverage 2024)",
+      "substrate": "mycelium-robot",
+      "use": "closed-loop bidirectional substrate-actuator demonstration"
+    },
+    {
+      "year": 2024,
+      "title": "Exploring discrete space-time models for information transfer: Analogies from mycelial networks to the cosmic web",
+      "venue": "Bio Systems; PubMed 39053645",
+      "substrate": "mycelium (theory)",
+      "use": "discrete-spacetime information-transport theory"
+    },
+    {
+      "year": 2025,
+      "title": "Millisecond spiking units in dispersed mycelial liquid culture MEA recordings absent in dehydration and fungicidal assays",
+      "venue": "bioRxiv 2025.08.12.669623",
+      "substrate": "mycelium liquid culture + MEA",
+      "use": "fast spiking units 150-3000 Hz band; trough-to-peak 1.58 +/- 0.14 ms; n=177 units across triplicates"
+    },
+    {
+      "year": 2025,
+      "title": "Detection of electrical signals in fungal mycelia in response to external stimuli",
+      "venue": "PMC12483595",
+      "substrate": "mycelium",
+      "use": "causal stim-response coupling"
+    },
+    {
+      "year": 2026,
+      "title": "Propagation of electrical spike trains in substrates colonised by oyster fungi",
+      "venue": "bioRxiv 2026.01.12.699130",
+      "substrate": "oyster mycelium-colonised substrate",
+      "use": "spike-train propagation kinetics across composite"
+    }
+  ],
+  "physarum_canonical_protocol": {
+    "substrate": "2% non-nutrient agar in 10 cm Petri dish",
+    "inoculation": "oat flake colonised with clonal P. polycephalum on one hemisphere; bare oat flake on other",
+    "recording_window_h_min": 5,
+    "electrodes": "aluminium foil contact at each oat flake (Adamatzky preference); Ag/AgCl pellet upgrade",
+    "daq": "PicoLog ADC-24 (24-bit, +/-39 mV span, 1 Hz native)",
+    "culture": {
+      "temp_c": 28,
+      "temp_tolerance_c": 2,
+      "light": "dark",
+      "feed_mg_per_day": [200, 400],
+      "subculture_days": 5
+    }
+  }
+}

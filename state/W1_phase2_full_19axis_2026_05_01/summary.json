@@ -1,0 +1,49 @@
+{
+  "schema": "anima/W1_phase2/phi_trace_full_summary/1",
+  "ts": "2026-05-01",
+  "agent": "W1_PHASE2",
+  "input": {
+    "cycle_log_path": "/Users/ghost/core/anima/state/proposals/meta/cycle_log.jsonl",
+    "cycles_total": 15,
+    "ticks_with_phi": 15,
+    "first_ts": "2026-04-22T13:12:44Z",
+    "last_ts": "2026-05-02T01:49:31Z",
+    "joint_axes_per_tick": 38,
+    "subsystems": {
+      "step_axes_cycle_log": 10,
+      "count_axes_cycle_log": 9,
+      "lint_cron_axes": 3,
+      "h100_kill_axes": 3,
+      "heartbeat_axes": 3,
+      "metrics_axes": 4,
+      "roadmap_axes": 3,
+      "memory_axes": 3
+    }
+  },
+  "phi_trace": {
+    "mean": 1.716658,
+    "std": 0.75661,
+    "min": 0.0,
+    "max": 2.470909,
+    "signed_mean": 1.716658,
+    "slope_per_tick": 0.11528573,
+    "trend": "rising",
+    "window_W": 20
+  },
+  "phase1_comparison": {
+    "phase1_mean_bits": 1.705565,
+    "phase1_slope": 0.05068661,
+    "phase1_axes": 19,
+    "phase2_axes": 38,
+    "delta_mean": 0.011093,
+    "delta_slope": 0.06459912
+  },
+  "honest_c3": [
+    "Non-stationarity AMPLIFIED with more axes: 1s\u219412h tick spacing now mixes 6 sidecars sampled on totally different cadences (lint=daily, heartbeat=once, h100=per-pod-tick); MI estimator stationarity assumption maximally violated.",
+    "Forward-fill alignment biases sidecars toward their last-known value, suppressing variance and inflating sub_mi_mean (deflating \u03a6). 4 of 6 sidecars are singletons (1 record), so they contribute ~0 MI but add hash-state diversity.",
+    "Joint hash collisions rise nonlinearly with axis count (mod 64 bucket): >32-axis state vectors bucket-collide more than 19-axis; effective H_joint ceiling is log2(64)=6 bits regardless of true entropy.",
+    "Memory ledger axes derived from filesystem mtimes, not semantic content; mem_nfiles is monotonic across the observation window so contributes ~0 MI by construction.",
+    "MIP surrogate (mean-of-parts) inherits Phase-1 looseness; with 32 axes the inequality slack vs true Tononi-\u03a6 widens combinatorially."
+  ],
+  "interpretation_one_line": "Joint \u03a6_proxy mean=1.717 bits vs Phase-1 1.706; slope 0.1153 vs +0.0507."
+}

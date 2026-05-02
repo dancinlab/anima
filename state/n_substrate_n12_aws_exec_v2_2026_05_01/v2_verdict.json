@@ -1,0 +1,71 @@
+{
+  "schema": "n12_v2/falsifier_F_N12_1_verdict/1",
+  "ts_utc": "2026-05-01T00:00:00Z",
+  "agent": "n_substrate_n12_aws_exec_v2",
+  "parent_v1_report": "docs/n_substrate_n12_aws_exec_results_2026_05_01.md",
+  "parent_v1_verdict": {
+    "F_N12_1": "FAIL",
+    "primary_reason": "ratio 7.82 outside [0.67, 1.5]; methodology flaw 1 — surrogate rx(2pi)*N likely virtual frame change, not real wait",
+    "primary_reason_2": "methodology flaw 2 — SC reference 100us was placeholder, not PRNewswire-extracted"
+  },
+  "v2_phase_outcomes": {
+    "phase_1_prnewswire_extraction": {
+      "status": "FAIL",
+      "reason": "PRNewswire 2025-03 release contains no tau_2 numeric (confirmed by WebFetch); N-20 doc only marks the entry 'general OR consistency, non-Orch-OR specific'."
+    },
+    "phase_2_verbatim_pulse_delay_implementation": {
+      "status": "ABORT",
+      "reason": "Forte 1 via AWS Braket does NOT support OpenQASM3 'delay' instruction. Two independent server-side ValidationExceptions confirmed: 'Timing instruction delay is not presently supported on device' — rejected both outside verbatim and inside verbatim with physical qubits.",
+      "evidence_file": "state/n_substrate_n12_aws_exec_v2_2026_05_01/forte1_capability_probe.json"
+    },
+    "phase_3_submit": "SKIPPED — Phase 2 abort precondition. No live tasks submitted. No $ spend.",
+    "phase_4_verify": "SKIPPED — no new measurement to verify."
+  },
+  "F_N12_1_v2_verdict": "INDETERMINATE",
+  "verdict_reason": "Methodology fix is not executable on the chosen substrate. Forte 1 has no real-delay primitive in its OpenQASM3 instruction set or verbatim native gate set (GPI, GPI2, ZZ); 'delay[Nus]' is server-side rejected. Falling back to rx(2pi)*N surrogate would repeat the v1 methodology flaw and is explicitly forbidden by mission spec.",
+  "did_v2_differ_from_v1": {
+    "verdict_v1": "FAIL (surrogate-circuit artifact, see v1 disclosure #2)",
+    "verdict_v2": "INDETERMINATE (substrate cannot answer the question with the chosen tool stack)",
+    "differs": true,
+    "interpretation": "The v1 'FAIL' was already disclosed in v1 honest C3 as likely a circuit-construction artifact, not real evidence against Orch-OR. The v2 honest verdict 'INDETERMINATE — substrate-incapable' is a methodologically more accurate restatement of the same underlying epistemic state: the cross-substrate Orch-OR signature comparison is not measurable on Forte 1 via AWS Braket as currently exposed."
+  },
+  "actual_cost_USD": 0.00,
+  "target_cost_USD": 45.00,
+  "hard_cap_USD": 50.00,
+  "spend_breakdown": {
+    "tasks_submitted": 0,
+    "task_fees_USD": 0.00,
+    "shots_executed": 0,
+    "shot_fees_USD": 0.00,
+    "validation_rejections_USD": 0.00,
+    "validation_rejections_count": 3,
+    "total_USD": 0.00
+  },
+  "honest_c3_top_disclosures": [
+    "1. Forte 1 via AWS Braket genuinely cannot do real wall-clock delay — confirmed by direct server-side validation (3 attempts), not inferred. The methodology fix as specified by the user is not executable on this substrate. Any further spend on Forte 1 with surrogate gates would be epistemically wasteful.",
+    "2. PRNewswire 2025-03 source contains no extractable tau_2 numeric. Even if Phase 2 had succeeded, the SC reference would have remained an unsourced placeholder; the mission's planned 'fix flaw 2' could not be completed from the cited source. The press release defers technical data to a 'forthcoming GitHub repository'.",
+    "3. To obtain a real ion-substrate tau_2 measurement, alternative paths required: (a) IonQ Direct API (not AWS Braket) which exposes lower-level pulse control; (b) different QPU provider (IBM Quantum, Quantinuum H-series, Rigetti) where 'delay' IS supported in the OpenQASM3 IR; (c) re-derive an Orch-OR signature that does not require explicit wall-clock idle, e.g., gate-count-based decoherence proxy with native echo sequences. Each requires separate authorization."
+  ],
+  "blocker_precise": {
+    "type": "substrate_capability_gap",
+    "device": "IonQ Forte 1 via AWS Braket",
+    "missing_capability": "OpenQASM3 'delay[duration] qubit' timing instruction",
+    "server_error_verbatim": "Timing instruction 'delay' is not presently supported on device",
+    "verified_at_utc": "2026-05-01",
+    "workaround_within_braket_forte1": "NONE that satisfies mission constraint 'no surrogate fallback'",
+    "off_braket_workarounds_unauthorized": [
+      "IonQ Direct API pulse-level access (separate account + auth)",
+      "IBM Quantum Heron/Eagle (delay supported, different vendor)",
+      "Quantinuum H-series via Microsoft Azure Quantum (delay supported)"
+    ]
+  },
+  "isolation_audit": {
+    "v1_dir_writes": 0,
+    "other_n_substrate_dir_writes": 0,
+    "alpha_pod_touched": false,
+    "nexus_touched": false,
+    "gpu_pods_touched": false,
+    "aws_account_used": "267673635495 (anima-braket-cli IAM, [braket] profile)",
+    "aws_region": "us-east-1"
+  }
+}

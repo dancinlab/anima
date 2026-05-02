@@ -1,0 +1,68 @@
+{
+  "schema": "anima/phi_star/1",
+  "backbone": "mistralai/Mistral-Nemo-Base-2407",
+  "metric_design": "v1-style dim-partition (HID=128 capped at N-2=14) - same as v11 battery G3",
+  "n_probes": 16,
+  "K_partitions": 8,
+  "hidden_truncated": 128,
+  "phi_dim_actual": 14,
+  "I_full": 57.308,
+  "phi_star_min": -14.5999,
+  "phi_mean": -13.7489,
+  "partitions": [
+    {
+      "k": 0,
+      "I_a": 33.6788,
+      "I_b": 37.0776,
+      "phi": -13.4483
+    },
+    {
+      "k": 1,
+      "I_a": 36.138,
+      "I_b": 34.7782,
+      "phi": -13.6082
+    },
+    {
+      "k": 2,
+      "I_a": 36.3338,
+      "I_b": 35.2708,
+      "phi": -14.2966
+    },
+    {
+      "k": 3,
+      "I_a": 37.0712,
+      "I_b": 33.4127,
+      "phi": -13.1759
+    },
+    {
+      "k": 4,
+      "I_a": 32.9355,
+      "I_b": 36.9247,
+      "phi": -12.5522
+    },
+    {
+      "k": 5,
+      "I_a": 34.4226,
+      "I_b": 37.4854,
+      "phi": -14.5999
+    },
+    {
+      "k": 6,
+      "I_a": 34.6855,
+      "I_b": 36.8501,
+      "phi": -14.2276
+    },
+    {
+      "k": 7,
+      "I_a": 35.4803,
+      "I_b": 35.9101,
+      "phi": -14.0823
+    }
+  ],
+  "gate_positive_PASS": false,
+  "gate_substantial_PASS": false,
+  "gate_magnitude_PASS": true,
+  "phi_star_signed_magnitude": 14.5999,
+  "phi_star_sign": "negative_anti_integrated",
+  "ts": "2026-05-02T00:53:31Z"
+}

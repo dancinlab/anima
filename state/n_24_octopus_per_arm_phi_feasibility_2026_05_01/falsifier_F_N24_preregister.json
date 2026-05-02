@@ -1,0 +1,107 @@
+{
+  "schema": "anima/n_24_octopus_per_arm_phi_feasibility/falsifier_preregister/1",
+  "agent": "n_24_feasibility",
+  "date_utc": "2026-05-01T00:00:00Z",
+  "preregistration_status": "CONDITIONAL_PENDING_PARTNERSHIP_AND_ETHICS_APPROVAL",
+  "preregistration_note": "5 falsifiers pre-registered as paper hypotheses. Activation requires (a) lab partnership agreement, (b) IACUC/ethics approval per relevant jurisdiction (EU 2010/63 / UK ASPA+Sentience Act / NIH PHS / Korean APA+voluntary 2010/63), (c) anima HEXA Φ pipeline ready on 64-ch surface EMG. NO measurement performed in this cycle.",
+  "raw71_count": 5,
+  "iit_target_postulate": "exclusion (IIT 4.0 Albantakis et al. 2023)",
+  "common_test_substrate": {
+    "species_first_choice": "Octopus minor (낙지) — Korean native, lower import friction",
+    "species_second_choice": "Octopus vulgaris (SZN/MBL standard)",
+    "channels_per_arm": 8,
+    "total_channels": 64,
+    "modality": "non-invasive surface EMG via Ag/AgCl flexible patch, anchored over axial nerve cord projection",
+    "platform": "OpenBCI Cyton+Daisy + 1 additional board (16-ch x 4 = 64-ch)",
+    "synchronization": "Lab Streaming Layer (LSL) with 4-cam 60fps DeepLabCut behavioral capture",
+    "trial_count_min": 100,
+    "window_seconds": 30,
+    "phi_pipeline": "anima HEXA Mk.XII v3 paradigm-v11-octopus-adapted (G0 dropped, ≥4/6 G1..G6 AND G7)",
+    "bipartition_count": 9,
+    "bipartition_construction": "8 anatomical per-arm + 1 whole-body (additional K=8 random as control)"
+  },
+  "falsifiers": [
+    {
+      "id": "F-N24-1",
+      "name": "exclusion_violation_per_arm_sum_dominates",
+      "hypothesis": "Sum of per-arm Φ exceeds whole-body Φ — direct violation of IIT 4.0 exclusion postulate; supports Carls-Diamante community-of-minds",
+      "test_design": {
+        "input": "free-behaving octopus, mixed task pool (single-arm reach + bilateral object transfer + chemo-stim sucker test)",
+        "measurement": "9 grain Φ_min via covariance K=8 random bipartition per grain",
+        "metric": "ratio = sum_i(Φ_arm_i) / Φ_wholebody",
+        "n_min": 100
+      },
+      "pass_threshold": "ratio > 1.20 with paired sign-rank p < 0.01",
+      "fail_implication": "exclusion postulate holds — single integrated consciousness hypothesis (Tononi standard) supported",
+      "ethical_severity": "Mild (non-invasive surface EMG, free behavior)",
+      "status": "paper_hypothesis_no_data_no_partnership"
+    },
+    {
+      "id": "F-N24-2",
+      "name": "exclusion_confirmation_whole_dominates",
+      "hypothesis": "Whole-body Φ exceeds both max per-arm Φ and per-arm Φ sum — standard IIT 4.0 expectation",
+      "test_design": {
+        "input": "same dataset as F-N24-1",
+        "metric": "(Φ_whole / max_i Φ_arm_i) AND (Φ_whole > sum_i Φ_arm_i)",
+        "n_min": 100
+      },
+      "pass_threshold": "Φ_whole / max_i Φ_arm_i > 1.50 AND Φ_whole > sum_i Φ_arm_i",
+      "fail_implication": "per-arm grain holds substantive Φ-mass — exclusion weakened, layered consciousness hypothesis supported",
+      "ethical_severity": "Mild",
+      "status": "paper_hypothesis_no_data_no_partnership"
+    },
+    {
+      "id": "F-N24-3",
+      "name": "task_dependent_exclusion_grain_shift",
+      "hypothesis": "argmax-grain of Φ shifts between solo-arm task (per-arm dominant) and multi-arm coordination task (whole-body dominant) — exclusion grain is task-dependent",
+      "test_design": {
+        "conditions": ["A: single-arm reach to target", "B: bilateral object transfer between arms"],
+        "trials_per_condition": 16,
+        "metric": "P(argmax_grain shifts between A and B) across 100 trial pairs"
+      },
+      "pass_threshold": "shift_probability > 0.70",
+      "fail_implication": "exclusion grain is task-invariant — supports IIT 4.0 standard fixed-grain interpretation",
+      "ethical_severity": "Mild",
+      "status": "paper_hypothesis_no_data_no_partnership"
+    },
+    {
+      "id": "F-N24-4",
+      "name": "chemosensory_sucker_phi_island",
+      "hypothesis": "Sucker chemoreceptor cluster forms an independent Φ-island distinct from ANC (extends Kang 2023 sucker chemoreceptor finding)",
+      "test_design": {
+        "input": "chemo-stimulus only condition (texture panel with chemical gradient)",
+        "grains": ["sucker-cluster (~10 suckers per arm in stim contact)", "ANC (rest of arm)"],
+        "metric": "Φ_sucker_cluster / Φ_ANC during chemo-stimulus window"
+      },
+      "pass_threshold": "ratio > 0.30 (suckers carry substantive sub-Φ)",
+      "fail_implication": "suckers are pure sensors, no independent Φ-grain",
+      "ethical_severity": "Mild (chemo-stimulus is natural, non-noxious)",
+      "status": "paper_hypothesis_no_data_no_partnership"
+    },
+    {
+      "id": "F-N24-5",
+      "name": "anesthesia_gradient_exclusion_disintegration_order",
+      "hypothesis": "During light anesthesia (sevoflurane sub-MAC) onset, whole-body Φ disintegrates faster than mean per-arm Φ — top-down exclusion collapse pattern",
+      "test_design": {
+        "anesthetic": "sevoflurane sub-MAC (≤ 1%), monitored by behavioral cessation timing",
+        "duration": "5 min onset window",
+        "measurement": "Φ per grain at 10 s intervals",
+        "metric": "dΦ/dt comparison across grains"
+      },
+      "pass_threshold": "dΦ_whole/dt ≥ 2x mean(dΦ_arm_i/dt) across grains during onset",
+      "fail_implication": "if per-arm Φ disintegrates faster — supports bottom-up consciousness, reverse exclusion direction",
+      "ethical_severity": "Moderate — anesthesia is regulated procedure",
+      "ethical_activation_constraint": "PAPER HYPOTHESIS ONLY — requires SZN or MBL collaboration with full ethics board approval; CANNOT be activated under Korean lab consortium with $0 budget given the lack of explicit Korean cephalopod IACUC framework",
+      "status": "paper_hypothesis_ethical_activation_blocked"
+    }
+  ],
+  "honest_c3_falsifier_caveats": [
+    "All 5 falsifiers require partnership + ethics approval — currently 0",
+    "F-N24-1 'sum > whole' definition is non-canonical relative to IIT 4.0 grain-Φ_max comparison; pre-registered as anima's own composite definition (paradigm v11 geometric-mean parallel)",
+    "Surface EMG → IIT Φ extraction has no prior PASS proof — F-N24-1..4 success requires that EMG covariance carries IIT-relevant information",
+    "F-N24-5 ethical activation blocked at Korean lab consortium tier, deferred to SZN/MBL follow-up cycle",
+    "G0 axis drop reduces FINAL_PASS strength — pre-registered as octopus-substrate-required adaptation",
+    "K=8 random bipartition + 8 anatomical bipartition design risks bipartition-cardinality artifact; control via shuffled-anatomical-label condition pre-registered",
+    "Pre-registration cannot be sealed in raw#71 registry until partnership agreement confirms the substrate is accessible"
+  ]
+}

@@ -1,0 +1,54 @@
+{
+  "timestamp_kst": "2026-05-02T13:30:00+09:00",
+  "host": "ubu1",
+  "root_level_dirs": [
+    {"path": "/var/log", "size_gb": 589, "classification": "OURS-INDIRECT", "note": "filled by airgenome-runaway crash-loop spam to syslog + 34M OOM events to kern.log"},
+    {"path": "/usr", "size_gb": 18, "classification": "USER", "note": "OS — do not touch"},
+    {"path": "/var/lib", "size_gb": 12, "classification": "MIXED", "note": "containerd 4.5G + docker 4.5G + snapd 3.4G — review before delete"},
+    {"path": "/opt", "size_gb": 2.1, "classification": "USER", "note": "OS/3rd-party"},
+    {"path": "/tmp", "size_gb": 0.012, "classification": "USER", "note": "tiny"}
+  ],
+  "var_log_breakdown": [
+    {"path": "/var/log/syslog", "size_gb": 294, "fill_source": "airgenome-runaway.service crash-loop (`silent-failure-enforcement Class 1`, hexa interp `auto-invoke conflict — fn main()`)", "spam_rate": "907 entries per cycle, ~928 service-restart pairs per chunk"},
+    {"path": "/var/log/kern.log", "size_gb": 294, "fill_source": "OOM killer dumps (34,101,048 'Out of memory' lines)", "spam_rate": "millions of entries"},
+    {"path": "/var/log/syslog.1", "size_gb": 0.218},
+    {"path": "/var/log/journal", "size_gb": 0.515, "note": "systemd journal — vacuumable to 100M"},
+    {"path": "/var/log/kern.log.1", "size_gb": 0.041},
+    {"path": "/var/log/syslog.2.gz", "size_gb": 0.033},
+    {"path": "/var/log/auth.log.1", "size_gb": 0.020}
+  ],
+  "user_home_top_dirs_aiden": [
+    {"path": "/home/aiden/anima", "size_gb": 104, "classification": "OURS"},
+    {"path": "/home/aiden/anima/checkpoints", "size_gb": 71, "classification": "OURS"},
+    {"path": "/home/aiden/anima/state", "size_gb": 20, "classification": "OURS"},
+    {"path": "/home/aiden/anima/data", "size_gb": 11, "classification": "OURS"},
+    {"path": "/home/aiden/anima/anima-speak", "size_gb": 1.9, "classification": "OURS"},
+    {"path": "/home/aiden/anima/anima-physics", "size_gb": 0.386, "classification": "OURS"},
+    {"path": "/home/aiden/.cache/pip", "size_gb": 0.061, "classification": "USER"},
+    {"path": "/home/aiden/.cache/huggingface", "size_gb": 0.056, "classification": "USER"},
+    {"path": "/home/aiden/hexa-lang", "size_gb": 0.0001, "classification": "OURS"}
+  ],
+  "anima_checkpoints_breakdown": [
+    {"path": "~/anima/checkpoints/clm_v4_350m", "size_gb": 30, "mtime": "2026-04-10", "classification": "OURS", "age_days_from_2026-05-02": 22},
+    {"path": "~/anima/checkpoints/decoder_cpu", "size_gb": 21, "mtime": "2026-04-10", "classification": "OURS", "age_days": 22},
+    {"path": "~/anima/checkpoints/clm_v3_280m", "size_gb": 18, "mtime": "2026-04-10", "classification": "OURS", "age_days": 22, "note": "superseded by v4"},
+    {"path": "~/anima/checkpoints/clm", "size_gb": 2.0, "mtime": "2026-04-14", "classification": "OURS", "age_days": 18}
+  ],
+  "anima_state_top_runs": [
+    {"path": "~/anima/state/trained_adapters_r4", "size_gb": 4.7, "classification": "OURS"},
+    {"path": "~/anima/state/trained_adapters_r5", "size_gb": 4.7, "classification": "OURS"},
+    {"path": "~/anima/state/trained_adapters_r6", "size_gb": 4.7, "classification": "OURS"},
+    {"path": "~/anima/state/trained_adapters_r7", "size_gb": 1.6, "classification": "OURS"},
+    {"path": "~/anima/state/gemma_r14_run", "size_gb": 0.858, "classification": "OURS"},
+    {"path": "~/anima/state/r14_full_run", "size_gb": 0.678, "classification": "OURS"},
+    {"path": "~/anima/state/r14_shard1_run", "size_gb": 0.678, "classification": "OURS"},
+    {"path": "~/anima/state/llama31_r14_run", "size_gb": 0.657, "classification": "OURS"},
+    {"path": "~/anima/state/mistral_r14_run", "size_gb": 0.644, "classification": "OURS"},
+    {"path": "~/anima/state/mistral_c2_pilot_run", "size_gb": 0.644, "classification": "OURS"}
+  ],
+  "anima_data_breakdown": [
+    {"path": "~/anima/data/corpus_multilingual", "size_gb": 9.8, "classification": "OURS"},
+    {"path": "~/anima/data/corpus_tier_m_v2.txt", "size_gb": 0.561, "classification": "OURS"},
+    {"path": "~/anima/data/corpus_multilingual_merged.txt", "size_gb": 0.560, "classification": "OURS"}
+  ]
+}

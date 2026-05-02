@@ -1,0 +1,49 @@
+{
+  "honest_c3_disclosures": {
+    "anchor_refs": ["§16.2 anchor #1 (hypothetical labeling)", "§16.2 anchor #2 (random-control mandatory)", "§16.2 anchor #3 (NO BTR — no back-testing rationalization)"],
+    "core_3_required": [
+      {
+        "id": "C3-1",
+        "title": "N=1 statistical power floor",
+        "detail": "Subject = user mk55992@proton.me only. No between-subject denominator. Phase-internal cross-validation only. Min detectable r at alpha=0.01 power=0.8 with N=300 per phase ~ 0.16. N=1 = no generalizability claim."
+      },
+      {
+        "id": "C3-2",
+        "title": "Single 30-min session generalizability ceiling",
+        "detail": "Diurnal/circadian/fatigue all confounded with phase order. Counter-balancing infeasible at N=1; phase order frozen P1->P6 so session-drift is constant. Replication required for any inference beyond pilot."
+      },
+      {
+        "id": "C3-3",
+        "title": "BSE-1 Pearson primary, BSE-3 TE-KSG diagnostic-only",
+        "detail": "Pearson is linear-coupling estimator; misses nonlinear coupling. BSE-3 TE-KSG runs as secondary diagnostic but does NOT drive verdict tier. Honest interpretation: PASS_STRONG with low TE = linear-coupling-only signal."
+      }
+    ],
+    "additional_4": [
+      {
+        "id": "C3-4",
+        "title": "3-way subset substituted for 4-way slot in F1_score_v2",
+        "detail": "AKIDA Mind substrate not arrived; 3-way (CLM x EEG x tension_link) substituted. Honest reporting: 4-way result with AKIDA may shift up OR down vs 3-way. Phase E reports 3-way as conservative estimate with explicit AKIDA-pending caveat."
+      },
+      {
+        "id": "C3-5",
+        "title": "P3/P4 cognitive-load matching not validated",
+        "detail": "P3 (CLM-read) vs P4 (mental arithmetic) designed as cognitive-load matched controls but actual effort/working-memory/modality not pre-measured with NASA-TLX. If F-PASS, follow-up NASA-TLX self-report needed. If F-ARTIFACT, cognitive-load mismatch a primary suspect."
+      },
+      {
+        "id": "C3-6",
+        "title": "CLM W4 active branch fixed-point near-constant primary channel",
+        "detail": "CLM v4 W4 active branch has fixed-point std ~ 1e-6 by design. Primary mind_tension channel will be near-constant; supplement with gate_random / L1 / phi / psi_eps from 5ch outlet. Pair_C (CLM x tension_link) excluded from binding aggregation if pair_C |r|>0.95 AND CLM std<1e-5 (trivial fixed-point)."
+      },
+      {
+        "id": "C3-7",
+        "title": "F2 unfire compound condition not within Phase E scope",
+        "detail": "Even if F-PASS_STRONG (binding>0.5, F1_score_v2 > 0.5), CP2-CLM verdict stays RED-with-strong-binding-evidence until Suite 6 14-gate F2 fires unfire. F2 unfire requires path (b) learned phi_extractor or path (c) substrate redesign — outside Phase E scope. YELLOW band only reachable post-F2-unfire."
+      }
+    ],
+    "anchor_compliance": {
+      "anchor_1_hypothetical_labeling": "All projected F1_score_v2 values in scenario_projections explicitly labeled as IF-conditional; no actual measurement claim until session executed",
+      "anchor_2_random_control_mandatory": "R1/R2/R3 controls pre-registered in r1_r2_r3_controls.json; F-ARTIFACT tier triggered if any control passes",
+      "anchor_3_no_btr_back_testing_rationalization": "Falsifier tiers FROZEN before measurement; no post-hoc tier redefinition; F-INDETERMINATE accepted as legitimate outcome"
+    }
+  }
+}

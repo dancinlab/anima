@@ -1,0 +1,84 @@
+{
+  "schema": "anima/strategic_n_substrate_master_synthesis/framings/1",
+  "ts": "2026-05-02T00:00:00Z",
+  "scope": "Three F1 framings (A/B/C) for the N-substrate composite + recommended choice + rationale.",
+
+  "F1_A_substrate_axis_framing": {
+    "summary": "AKIDA = independent axis. Composite = sum/weighted-average over 3 substrates (CLM x EEG x AKIDA) + 21 N-axes parallel.",
+    "weighted_score_now": 22.5,
+    "weighted_score_post_akida_arrival_max": 35.0,
+    "pros": ["Symmetric — every substrate is a peer", "Easy to compute weighted sum", "Aligns with F1 verdict.json axis_weight_matrix already in use"],
+    "cons": ["Ignores cross-substrate binding (the actual physics question)", "Weights AKIDA pre-arrival = 0 — AKIDA arrival event creates a step-discontinuity in score", "Tension_link cannot be cleanly placed (mediator vs axis)", "Misses the 4 cross-substrate N-axes (N-2/3/4/5)"],
+    "promising_score": 0.40
+  },
+
+  "F1_B_mediator_framing": {
+    "summary": "tension_link = bridge between CLM and EEG. AKIDA = future addition. Focus = bridge bandwidth / fidelity / directional flow.",
+    "weighted_score_now": 0,
+    "rationale_zero_now": "N-1 BRIDGE 3/4 PASS but with synth-CLM hybrid; no live concurrent CLM+EEG measurement yet. Mediator framing demands actual bandwidth measurement, which is not yet executed.",
+    "weighted_score_post_P1_protocol_max": 0.4,
+    "pros": ["Aligned with the actual cross-substrate binding question (Crick-Koch binding-by-synchrony)", "Cogitate 2025 adversarial test FAIL on long-stim persistence motivates cross-substrate framing", "tension_link gets a clear role"],
+    "cons": ["Ignores 21 N-axes that are NOT mediator-style (N-9 nexus, N-21 IIT reproductions, etc.)", "Strict 3-axis (CLM x tension x EEG) drops AKIDA entirely", "Single-mediator hypothesis pre-empts H2/H3"],
+    "promising_score": 0.30
+  },
+
+  "F1_C_hybrid_framing": {
+    "summary": "Independent axes (substrate-class witnesses) + Mediators (cross-substrate binding axes). Composite = independent + mediator binding contribution.",
+    "independent_axes": [
+      {"id": "CLM", "weight": 0.20},
+      {"id": "EEG", "weight": 0.15},
+      {"id": "AKIDA_pending", "weight": 0.10},
+      {"id": "N-9_STRONG", "weight": 0.10},
+      {"id": "N-19_PCI", "weight": 0.05},
+      {"id": "N-21_IIT_x4", "weight": 0.15},
+      {"id": "N-22_pipeline", "weight": 0.05},
+      {"id": "N-15_structural_NOT_voting", "weight": 0.0}
+    ],
+    "mediators": [
+      {"id": "tension_link", "couples": "CLM<->EEG", "weight": 0.05},
+      {"id": "N-2", "couples": "EEG<->AKIDA spike", "weight": 0.04},
+      {"id": "N-3", "couples": "CLM<->AKIDA Phi", "weight": 0.04},
+      {"id": "N-4", "couples": "CLM x EEG x AKIDA Landauer", "weight": 0.04},
+      {"id": "N-5", "couples": "CLM x EEG x AKIDA GWT broadcast", "weight": 0.04}
+    ],
+    "weighted_score_now": 27.5,
+    "weighted_score_now_breakdown": {
+      "independent_realized": "CLM 0.20*0.5 (F2-fired half-credit) + EEG 0.15*1.0 + N-9 0.10*1.0 + N-19 0.05*1.0 + N-21 0.15*0.30 (4 of 16) + N-22 0.05*0.20 (pipeline-only)",
+      "mediator_realized": "tension_link 0.05*0.5 (W4 partial) + N-2/3/4/5/N-3 = 0",
+      "subtotal_independent": 0.225,
+      "subtotal_mediator": 0.025,
+      "total": 0.25,
+      "as_pct": 25.0
+    },
+    "weighted_score_post_P1_post_AKIDA_max": 0.62,
+    "pros": [
+      "Captures both substrate-witness AND cross-substrate binding (the two distinct epistemic questions)",
+      "Naturally accommodates AKIDA as both substrate AND mediator-anchor for 4 N-axes",
+      "Tension_link gets a defensible role (CLM<->EEG mediator) without overclaiming substrate-class",
+      "Matches Milinkovic-Aru 2025 'biological computationalism' multi-scale-coupling architecture",
+      "Allows post-AKIDA cascade to add 6 more axes coherently (N-2/3/4/5/7/8)"
+    ],
+    "cons": [
+      "More moving parts; weight assignments require honest C3",
+      "Mediator weights (0.04-0.05) are spec-estimates not pre-registered",
+      "Risk of double-counting if a mediator score is added to both endpoints"
+    ],
+    "promising_score": 0.65
+  },
+
+  "recommendation": {
+    "choice": "F1_C_hybrid",
+    "rationale_one_line": "Hybrid framing is the only one that simultaneously honors substrate-as-witness epistemics (own#2(b)) AND cross-substrate binding (Crick-Koch / Cogitate-2025 binding question), without forcing AKIDA-arrival step-discontinuity or losing 21 non-mediator N-axes.",
+    "current_score_pct": 25.0,
+    "post_P1_score_pct_estimate": 30.0,
+    "post_AKIDA_full_score_pct_estimate": 62.0,
+    "verdict_band_now": "RED (F2 override active; binding hypothesis unverified)",
+    "verdict_band_post_AKIDA_optimistic": "YELLOW if at least 2 of N-2/3/4/5 land + tension_link binding measured + N-21 reaches 6/16 reproductions"
+  },
+
+  "f2_unfire_implications_per_framing": {
+    "F1_A": "F2 unfire requires path (a) demote / (b) phi_extractor / (c) substrate redesign (per F1 verdict §F2). Hybrid framing same.",
+    "F1_B": "F2 cross-substrate broadcast (path d) becomes plausible — tension binding rotates hidden-state covariance. Estimate 15% (per strategic_clm_eeg_akida_tension_2026_05_02 §6).",
+    "F1_C": "F2 unfire path = (a) + (d). Combined estimate ~25% (paper-only demote arg + tension binding evidence)."
+  }
+}

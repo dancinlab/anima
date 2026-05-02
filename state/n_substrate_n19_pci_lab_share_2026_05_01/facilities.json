@@ -1,0 +1,160 @@
+{
+  "ts": "2026-05-01",
+  "agent": "N-19 PCI Korean lab-share research",
+  "search_date": "2026-05-01",
+  "method": "WebSearch + WebFetch only, NO contact, NO booking",
+  "honest_c3": "All facility specifics labeled PUBLIC/INFERRED/UNKNOWN. No facility was contacted; lab-share availability and rates are estimated from analogous Korean university facilities or sister institutions in literature.",
+  "facilities": [
+    {
+      "id": "F1_KAIST_BINP",
+      "name": "KAIST Brain Interfaces and Neural Prosthetics Lab (BINP)",
+      "city": "Daejeon",
+      "department": "Department of Brain and Cognitive Sciences (BCS)",
+      "director": "Prof. Seungwoo Lee",
+      "contact": {
+        "email": "lee.seungwoo@kaist.ac.kr",
+        "phone": "+82-42-350-6517",
+        "web": "https://binp.kaist.ac.kr",
+        "source": "PUBLIC — lab website"
+      },
+      "tms_device_model": "UNKNOWN — lab page mentions Deep Brain Stimulation + Electric/Magnetic Neural Stimulation; specific TMS vendor not disclosed publicly",
+      "byoe_compatibility": "UNKNOWN — not addressed publicly",
+      "lab_share_rate_krw_per_session": "UNKNOWN — no published rate",
+      "lab_share_rate_usd_per_session": "ESTIMATE $400–600/session (Korean uni neurolab analog)",
+      "scheduling_lead_time_weeks": "ESTIMATE 8–12 weeks (typical KAIST external collab MoU)",
+      "irb_pathway": "KAIST IRB (or user's home institution IRB with cross-recognition; users without university affiliation = blocker — KAIST IRB does not accept individual non-affiliated researchers)",
+      "korean_only_pi": "INFERRED Y — KAIST labs typically require Korean-affiliated PI or formal MoU; foreign individual researcher access is unusual",
+      "individual_researcher_access": "BLOCKED (no university PI affiliation)",
+      "notes": "Lab focus = neural prosthetics + DBS + magnetic neural stim, not consciousness/PCI specifically. Could be willing collaborator if framed as joint method paper, but session-as-a-service model unlikely."
+    },
+    {
+      "id": "F2_KAIST_BMI",
+      "name": "KAIST Brain x Machine Intelligence Lab",
+      "city": "Daejeon",
+      "department": "Department of Brain and Cognitive Sciences (BCS) / KI for Health Science and Technology",
+      "director": "Prof. Sang Wan Lee",
+      "contact": {
+        "email": "PUBLIC via aibrain.kaist.ac.kr/contact",
+        "phone": "+82-42-350-65xx (BCS dept)",
+        "web": "https://aibrain.kaist.ac.kr",
+        "source": "PUBLIC — lab website"
+      },
+      "tms_device_model": "UNKNOWN — research page confirms 'TMS and tDCS' methodology, vendor unspecified publicly. Likely MagVenture MagPro or Magstim Rapid² (most common in Korean uni research labs)",
+      "byoe_compatibility": "UNKNOWN — but lab uses EEG (model-based fMRI+EEG combined work); custom EEG amp integration plausible at engineering level",
+      "lab_share_rate_krw_per_session": "UNKNOWN",
+      "lab_share_rate_usd_per_session": "ESTIMATE $400–700/session",
+      "scheduling_lead_time_weeks": "ESTIMATE 8–16 weeks",
+      "irb_pathway": "KAIST IRB; same individual-researcher blocker as F1",
+      "korean_only_pi": "INFERRED Y",
+      "individual_researcher_access": "BLOCKED (no university PI affiliation)",
+      "notes": "Best methodological fit (TMS+EEG+computational neuro), but unclear PCI experience. Higher chance of co-author MoU than rental."
+    },
+    {
+      "id": "F3_YONSEI_SEVERANCE",
+      "name": "Yonsei University Medical School / Severance Hospital — multiple TMS-active depts",
+      "city": "Seoul (Sinchon)",
+      "department": "신경과 (Neurology), 정신건강의학과 (Psychiatry), 재활의학과 (Rehabilitation)",
+      "director": "Multiple PIs across depts; no single TMS-EEG core PI publicly identified",
+      "contact": {
+        "email": "UNKNOWN per-PI",
+        "phone": "Yonsei MED main 1599-1004; Severance dept switchboard",
+        "web": "https://medicine.yonsei.ac.kr/, https://sev.severance.healthcare/",
+        "source": "PUBLIC — institutional website"
+      },
+      "tms_device_model": "PUBLIC — Yonsei brain research uses fMRI, PET/CT, MEG, EEG, TMS, tACS (lab page mention). Specific TMS vendor not disclosed; literature shows Magstim and MagVenture both used in Severance studies.",
+      "byoe_compatibility": "INFERRED N — clinical-grade TMS suites typically require their own integrated EEG (e.g., NeurOne, BrainAmp DC) for safety and CE-mark compliance. Custom OpenBCI integration unlikely without long IRB amendment.",
+      "lab_share_rate_krw_per_session": "UNKNOWN — clinical rTMS treatment ~150,000–250,000 KRW/session per public clinic data",
+      "lab_share_rate_usd_per_session": "ESTIMATE $500–900/session for research-grade slot (higher than uni labs due to hospital overhead)",
+      "scheduling_lead_time_weeks": "ESTIMATE 12–24 weeks (hospital IRB + dept review + slot allocation)",
+      "irb_pathway": "Yonsei/Severance IRB (hospital-based IRB stricter than university IRB; foreign or non-affiliated researcher cross-IRB recognition path possible but slow)",
+      "korean_only_pi": "INFERRED Y for clinical, possibly N for research-only (foreign collaborator under Korean co-PI is common)",
+      "individual_researcher_access": "BLOCKED for solo non-affiliated user; possible via Korean co-PI MoU",
+      "notes": "Clinical-grade environment = highest signal quality but highest barrier. PCI Massimini protocol likely already known to Severance neurology team. Best for high-N validation cohort, not solo n=1 capex-light pilot."
+    },
+    {
+      "id": "F4_KOREA_U_AFFECTIVE",
+      "name": "Korea University Affective Cognitive Neuroscience Lab",
+      "city": "Seoul (Anam)",
+      "department": "Department of Brain and Cognitive Engineering",
+      "director": "Prof. Sang-Hee Kim (김상희)",
+      "contact": {
+        "email": "UNKNOWN per faculty profile (not on dept lab listing page)",
+        "phone": "Dept main 02-3290-4137",
+        "web": "https://bce.korea.ac.kr/bce/research/lab.do, https://www.affectiveneurosciencelab.com/",
+        "source": "PUBLIC — dept lab listing"
+      },
+      "tms_device_model": "PUBLIC — lab page confirms 'rTMS/tCS' methodology. Vendor unspecified publicly. Published work (Kim et al., Stroop task, n=high-frequency rTMS) typically uses Magstim Rapid² or MagVenture MagPro in Korean affective neuro labs.",
+      "byoe_compatibility": "INFERRED N for hard integration; INFERRED Y if user runs OpenBCI in parallel as separate stream (no TMS-amp synchronization, uses TTL trigger). Lab combines fMRI/rTMS/tCS/EEG/ERP — has EEG infrastructure they'd default to.",
+      "lab_share_rate_krw_per_session": "UNKNOWN",
+      "lab_share_rate_usd_per_session": "ESTIMATE $300–500/session (research-grade uni lab analog)",
+      "scheduling_lead_time_weeks": "ESTIMATE 6–12 weeks (Korea U IRB faster than hospital IRB)",
+      "irb_pathway": "Korea U IRB (faster than Severance); BUT external non-affiliated solo researcher = same blocker. Co-PI MoU required.",
+      "korean_only_pi": "INFERRED Y — Korea U external researcher policy not publicly documented for paid lab-share; likely requires Korean co-PI",
+      "individual_researcher_access": "BLOCKED solo; PARTIAL via Korean co-PI",
+      "notes": "TOP CANDIDATE — most explicit public mention of rTMS+EEG combined, dept located in Seoul (transport easier than Daejeon for most users), Korea U IRB lead time shorter than hospital IRB. Lab focus = affective cognition (not consciousness/PCI), but methodologically very compatible."
+    },
+    {
+      "id": "F5_SNU_PSYCHIATRY",
+      "name": "Seoul National University Department of Psychiatry",
+      "city": "Seoul (Yeongeon)",
+      "department": "Department of Psychiatry, SNU College of Medicine; SNUH Neuropsychiatry",
+      "director": "Prof. Jun Soo Kwon (권준수) — schizophrenia + TMS PI",
+      "contact": {
+        "email": "kwonjs@snu.ac.kr",
+        "phone": "+82-2-2072-2972",
+        "web": "https://snucm.elsevierpure.com/en/persons/y-kwon-7",
+        "source": "PUBLIC — SNU College of Medicine personal page"
+      },
+      "tms_device_model": "UNKNOWN publicly. SNU psychiatry literature on TMS in schizophrenia uses Magstim Rapid² in published methods (e.g., 2024 KJSR paper). MagVenture also present elsewhere in SNUH.",
+      "byoe_compatibility": "INFERRED N — clinical psychiatry setting, TMS used as treatment + research. Custom 16ch BYOE integration would require dedicated IRB amendment.",
+      "lab_share_rate_krw_per_session": "UNKNOWN — clinical TMS treatment in SNUH ~200,000 KRW/session; research slot likely similar or higher",
+      "lab_share_rate_usd_per_session": "ESTIMATE $500–900/session",
+      "scheduling_lead_time_weeks": "ESTIMATE 16–28 weeks (SNUH IRB slowest among Big-5; SNUH IRB intake = e-IRB system, requires SNU/SNUH affiliation for primary applicant)",
+      "irb_pathway": "SNUH IRB (e-IRB) — only Korean-affiliated PI. External individual cannot file directly; must go through SNUH co-PI delegation.",
+      "korean_only_pi": "Y — confirmed SNUH IRB requires Korean-affiliated PI; foreign individual researchers accepted only via co-PI delegation",
+      "individual_researcher_access": "BLOCKED solo; possible via SNUH co-PI MoU only",
+      "notes": "Highest prestige + best-known TMS PI (Kwon), but slowest IRB and tightest gating. Suitable for high-N peer-reviewed publication track, not for $1.6–2.5K one-shot pilot."
+    },
+    {
+      "id": "BONUS_PUSAN_BSS",
+      "name": "Pusan National University — Brain Stimulation System Laboratory",
+      "city": "Yangsan campus (PNU School of Korean Medicine)",
+      "department": "Graduate School of Korean Medicine",
+      "director": "Prof. Shin (신 교수, lab name shinlab)",
+      "contact": {"web": "https://shinlab.pusan.ac.kr/", "source": "PUBLIC"},
+      "tms_device_model": "OUT-OF-SCOPE — lab focus = upconversion-nanoparticle near-infrared brain stimulation (optical, not TMS). NOT a TMS facility.",
+      "scope_match": "N — different stimulation modality"
+    },
+    {
+      "id": "BONUS_KIST_BSI",
+      "name": "KIST Brain Science Institute (BSI) — Neurocomputing Lab / Bionics Research Center",
+      "city": "Seoul (Hwarangno)",
+      "department": "BSI / Bionics Research Center",
+      "director": "Multiple PIs",
+      "contact": {"web": "https://bsi.kist.re.kr/", "source": "PUBLIC"},
+      "tms_device_model": "UNKNOWN — BSI focuses on BCI, brain disease, brain cognitive research. TMS not advertised as core capability. Joint research with Severance/Korea U/Samsung Medical Center confirmed = could broker access via partner hospital, but not direct provider.",
+      "byoe_compatibility": "INFERRED Y for partner-brokered route — KIST is government research institute, more flexible than hospital IRB",
+      "scope_match": "PARTIAL — broker route only, not direct"
+    },
+    {
+      "id": "BONUS_KRISS_DAEJEON",
+      "name": "KRISS Korea Research Institute of Standards and Science — Biomagnetism / Quantum Magnetic Sensing",
+      "city": "Daejeon",
+      "department": "Quantum Magnetic Sensing Group, Quantum Technology Institute",
+      "director": "Yong-Ho Lee (PI), Jeong Shim (Quantum Magnetic Imaging Team)",
+      "contact": {"web": "https://www.kriss.re.kr/", "source": "PUBLIC"},
+      "tms_device_model": "NO TMS at KRISS — KRISS has 152-ch MEG (SQUID/DROS-based) for biomagnetic measurement only. No TMS facility advertised. (Per N-14 MEG fallback note: KRISS = MEG-only.)",
+      "scope_match": "N for TMS; Y for separate MEG fallback (already documented in N-14)"
+    },
+    {
+      "id": "BONUS_HANYANG_ERICA",
+      "name": "Hanyang University ERICA — Cognitive Science Institute",
+      "city": "Ansan",
+      "department": "ERICA campus",
+      "contact": {"web": "https://www.hanyang.ac.kr/erica", "source": "PUBLIC"},
+      "tms_device_model": "UNKNOWN — public web search did not surface ERICA cognitive science institute TMS facility. Mentioned in N-19 spec §5.4 but no public confirmation of active TMS lab.",
+      "scope_match": "UNKNOWN — needs deeper local-language search or direct inquiry"
+    }
+  ],
+  "byoe_global_finding": "TMS-EEG combined research field has NO established standard for low-cost BYOE integration. Massimini-grade PCI requires TMS-compatible EEG amplifier (sample-and-hold or DC-coupled high-dynamic-range, e.g., NeurOne, BrainAmp DC, eXimia, Nexstim eXimia EEG). 16ch OpenBCI Cyton+Daisy lacks sample-and-hold = TMS pulse saturates amp for 5–50 ms post-pulse, destroying early TEP (0–30 ms) which is the most clinically diagnostic window. Mitigation = post-hoc ICA + extended baseline, but accepts lower SNR. NO Korean lab publicly advertises BYOE policy for TMS-EEG; user would need to negotiate per-PI."
+}

@@ -1,0 +1,28 @@
+{
+  "spec_id": "n_substrate_n11_finalspark_access_spec_2026_05_01",
+  "ts": "2026-05-01",
+  "readiness_pct": 65,
+  "items": [
+    {"item": "spec doc", "status": "READY", "blocker": null},
+    {"item": "application template (§4)", "status": "READY", "blocker": null},
+    {"item": "16-prompt fixture (anima_phi_v3 inline)", "status": "READY", "blocker": null},
+    {"item": "tool/anima_phi_v3_canonical.hexa", "status": "READY", "blocker": null},
+    {"item": "FinalSpark Python client (vendor github)", "status": "READY", "blocker": "no creds yet"},
+    {"item": "tool/finalspark_stim_encoder.hexa", "status": "MISSING", "blocker": "D+0 critical-path new HEXA, ~150 LoC est, can emit pre-API"},
+    {"item": "tool/finalspark_response_reducer.hexa", "status": "MISSING", "blocker": "D+0 critical-path new HEXA, ~100 LoC est, can emit pre-API"},
+    {"item": "tool/n11_phi_cross_substrate_corr.hexa", "status": "MISSING", "blocker": "D+0 critical-path new HEXA, ~120 LoC est, mirror of N-3 sibling"},
+    {"item": "FinalSpark API credentials", "status": "PENDING", "blocker": "requires application acceptance OR paid setup"},
+    {"item": "CLM 170M Phi baseline locked", "status": "PENDING", "blocker": "parallel CP2 P3 closure dependency"},
+    {"item": "EEG Phi baseline locked", "status": "READY", "blocker": null},
+    {"item": "ethics statement in proposal", "status": "READY", "blocker": null},
+    {"item": "paid fallback authorization", "status": "READY", "blocker": null}
+  ],
+  "critical_path_to_d0": [
+    "D-14: user submits application via FinalSpark form (SEPARATE AUTHORIZATION)",
+    "D-7..D-1: emit 3 critical-path HEXA in parallel; dry-run on synthetic spike data",
+    "D+0: API creds received -> §6.3 sanity gates first (1 organoid, 1 prompt)",
+    "D+1..D+7: campaign wave 1 (16 prompts × 3 seeds × 5 reps × 4 organoids = 960 stim cycles)",
+    "D+8: §6.1 verdict gate against locked CLM + EEG baselines",
+    "D+15: PASS report + T1-A26 graduation, OR FAIL report + encoding-revision proposal"
+  ]
+}

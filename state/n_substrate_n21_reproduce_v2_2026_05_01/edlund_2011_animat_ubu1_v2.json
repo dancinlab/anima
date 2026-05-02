@@ -1,0 +1,2397 @@
+{
+  "summary": {
+    "study": "Edlund_2011_reproduction_v2_medium",
+    "host": "ubu1",
+    "n_nodes": 7,
+    "generations": 200,
+    "pop_size": 12,
+    "phi_schedule": "every 10 gens, top-1 + 1 random",
+    "target_rule": "node6_next = XOR(node0, node1)",
+    "elapsed_sec": 532.5,
+    "best_fitness_final": 0.984375,
+    "best_fitness_initial": 0.5390625,
+    "phi_final_top": [
+      NaN
+    ],
+    "phi_initial_top": [
+      NaN
+    ],
+    "n_phi_fit_pairs": 12,
+    "pearson_r_phi_fitness_all": -0.5239,
+    "pearson_r_phi_bestfit_per_gen": -0.9509,
+    "expectation_paper": "r > 0 (\u03a6 co-evolves with fitness; Edlund 2011 N=8 60k-gen)",
+    "verdict": "FAIL",
+    "history_n": 200,
+    "ts_utc": "2026-05-02T04:49:01Z"
+  },
+  "history": [
+    {
+      "gen": 0,
+      "best_fit": 0.5390625,
+      "mean_fit": 0.5006510416666666,
+      "top_phi": [
+        NaN
+      ],
+      "sample_idx": [
+        11
+      ],
+      "sample_phi": [
+        NaN
+      ],
+      "sample_fit": [
+        0.421875
+      ],
+      "phi_measured": true,
+      "phi_dur_sec": 0.0
+    },
+    {
+      "gen": 1,
+      "best_fit": 0.5703125,
+      "mean_fit": 0.5247395833333334,
+      "top_phi": [],
+      "sample_idx": [],
+      "sample_phi": [],
+      "sample_fit": [],
+      "phi_measured": false,
+      "phi_dur_sec": 0.0
+    },
+    {
+      "gen": 2,
+      "best_fit": 0.5859375,
+      "mean_fit": 0.5299479166666666,
+      "top_phi": [],
+      "sample_idx": [],
+      "sample_phi": [],
+      "sample_fit": [],
+      "phi_measured": false,
+      "phi_dur_sec": 0.0
+    },
+    {
+      "gen": 3,
+      "best_fit": 0.5859375,
+      "mean_fit": 0.552734375,
+      "top_phi": [],
+      "sample_idx": [],
+      "sample_phi": [],
+      "sample_fit": [],
+      "phi_measured": false,
+      "phi_dur_sec": 0.0
+    },
+    {
+      "gen": 4,
+      "best_fit": 0.625,
+      "mean_fit": 0.58984375,
+      "top_phi": [],
+      "sample_idx": [],
+      "sample_phi": [],
+      "sample_fit": [],
+      "phi_measured": false,
+      "phi_dur_sec": 0.0
+    },
+    {
+      "gen": 5,
+      "best_fit": 0.6640625,
+      "mean_fit": 0.6015625,
+      "top_phi": [],
+      "sample_idx": [],
+      "sample_phi": [],
+      "sample_fit": [],
+      "phi_measured": false,
+      "phi_dur_sec": 0.0
+    },
+    {
+      "gen": 6,
+      "best_fit": 0.6640625,
+      "mean_fit": 0.623046875,
+      "top_phi": [],
+      "sample_idx": [],
+      "sample_phi": [],
+      "sample_fit": [],
+      "phi_measured": false,
+      "phi_dur_sec": 0.0
+    },
+    {
+      "gen": 7,
+      "best_fit": 0.671875,
+      "mean_fit": 0.650390625,
+      "top_phi": [],
+      "sample_idx": [],
+      "sample_phi": [],
+      "sample_fit": [],
+      "phi_measured": false,
+      "phi_dur_sec": 0.0
+    },
+    {
+      "gen": 8,
+      "best_fit": 0.6796875,
+      "mean_fit": 0.6608072916666666,
+      "top_phi": [],
+      "sample_idx": [],
+      "sample_phi": [],
+      "sample_fit": [],
+      "phi_measured": false,
+      "phi_dur_sec": 0.0
+    },
+    {
+      "gen": 9,
+      "best_fit": 0.7109375,
+      "mean_fit": 0.6686197916666666,
+      "top_phi": [],
+      "sample_idx": [],
+      "sample_phi": [],
+      "sample_fit": [],
+      "phi_measured": false,
+      "phi_dur_sec": 0.0
+    },
+    {
+      "gen": 10,
+      "best_fit": 0.7265625,
+      "mean_fit": 0.6783854166666666,
+      "top_phi": [
+        NaN
+      ],
+      "sample_idx": [
+        4
+      ],
+      "sample_phi": [
+        NaN
+      ],
+      "sample_fit": [
+        0.6796875
+      ],
+      "phi_measured": true,
+      "phi_dur_sec": 0.0
+    },
+    {
+      "gen": 11,
+      "best_fit": 0.7265625,
+      "mean_fit": 0.6998697916666666,
+      "top_phi": [],
+      "sample_idx": [],
+      "sample_phi": [],
+      "sample_fit": [],
+      "phi_measured": false,
+      "phi_dur_sec": 0.0
+    },
+    {
+      "gen": 12,
+      "best_fit": 0.734375,
+      "mean_fit": 0.712890625,
+      "top_phi": [],
+      "sample_idx": [],
+      "sample_phi": [],
+      "sample_fit": [],
+      "phi_measured": false,
+      "phi_dur_sec": 0.0
+    },
+    {
+      "gen": 13,
+      "best_fit": 0.734375,
+      "mean_fit": 0.712890625,
+      "top_phi": [],
+      "sample_idx": [],
+      "sample_phi": [],
+      "sample_fit": [],
+      "phi_measured": false,
+      "phi_dur_sec": 0.0
+    },
+    {
+      "gen": 14,
+      "best_fit": 0.75,
+      "mean_fit": 0.7200520833333334,
+      "top_phi": [],
+      "sample_idx": [],
+      "sample_phi": [],
+      "sample_fit": [],
+      "phi_measured": false,
+      "phi_dur_sec": 0.0
+    },
+    {
+      "gen": 15,
+      "best_fit": 0.75,
+      "mean_fit": 0.7220052083333334,
+      "top_phi": [],
+      "sample_idx": [],
+      "sample_phi": [],
+      "sample_fit": [],
+      "phi_measured": false,
+      "phi_dur_sec": 0.0
+    },
+    {
+      "gen": 16,
+      "best_fit": 0.765625,
+      "mean_fit": 0.7272135416666666,
+      "top_phi": [],
+      "sample_idx": [],
+      "sample_phi": [],
+      "sample_fit": [],
+      "phi_measured": false,
+      "phi_dur_sec": 0.0
+    },
+    {
+      "gen": 17,
+      "best_fit": 0.765625,
+      "mean_fit": 0.7369791666666666,
+      "top_phi": [],
+      "sample_idx": [],
+      "sample_phi": [],
+      "sample_fit": [],
+      "phi_measured": false,
+      "phi_dur_sec": 0.0
+    },
+    {
+      "gen": 18,
+      "best_fit": 0.765625,
+      "mean_fit": 0.74609375,
+      "top_phi": [],
+      "sample_idx": [],
+      "sample_phi": [],
+      "sample_fit": [],
+      "phi_measured": false,
+      "phi_dur_sec": 0.0
+    },
+    {
+      "gen": 19,
+      "best_fit": 0.765625,
+      "mean_fit": 0.7415364583333334,
+      "top_phi": [],
+      "sample_idx": [],
+      "sample_phi": [],
+      "sample_fit": [],
+      "phi_measured": false,
+      "phi_dur_sec": 0.0
+    },
+    {
+      "gen": 20,
+      "best_fit": 0.78125,
+      "mean_fit": 0.7486979166666666,
+      "top_phi": [
+        NaN
+      ],
+      "sample_idx": [
+        6
+      ],
+      "sample_phi": [
+        0.0
+      ],
+      "sample_fit": [
+        0.75
+      ],
+      "phi_measured": true,
+      "phi_dur_sec": 0.0
+    },
+    {
+      "gen": 21,
+      "best_fit": 0.78125,
+      "mean_fit": 0.7578125,
+      "top_phi": [],
+      "sample_idx": [],
+      "sample_phi": [],
+      "sample_fit": [],
+      "phi_measured": false,
+      "phi_dur_sec": 0.0
+    },
+    {
+      "gen": 22,
+      "best_fit": 0.78125,
+      "mean_fit": 0.7584635416666666,
+      "top_phi": [],
+      "sample_idx": [],
+      "sample_phi": [],
+      "sample_fit": [],
+      "phi_measured": false,
+      "phi_dur_sec": 0.0
+    },
+    {
+      "gen": 23,
+      "best_fit": 0.796875,
+      "mean_fit": 0.7662760416666666,
+      "top_phi": [],
+      "sample_idx": [],
+      "sample_phi": [],
+      "sample_fit": [],
+      "phi_measured": false,
+      "phi_dur_sec": 0.0
+    },
+    {
+      "gen": 24,
+      "best_fit": 0.796875,
+      "mean_fit": 0.7649739583333334,
+      "top_phi": [],
+      "sample_idx": [],
+      "sample_phi": [],
+      "sample_fit": [],
+      "phi_measured": false,
+      "phi_dur_sec": 0.0
+    },
+    {
+      "gen": 25,
+      "best_fit": 0.8046875,
+      "mean_fit": 0.7721354166666666,
+      "top_phi": [],
+      "sample_idx": [],
+      "sample_phi": [],
+      "sample_fit": [],
+      "phi_measured": false,
+      "phi_dur_sec": 0.0
+    },
+    {
+      "gen": 26,
+      "best_fit": 0.8125,
+      "mean_fit": 0.7877604166666666,
+      "top_phi": [],
+      "sample_idx": [],
+      "sample_phi": [],
+      "sample_fit": [],
+      "phi_measured": false,
+      "phi_dur_sec": 0.0
+    },
+    {
+      "gen": 27,
+      "best_fit": 0.8125,
+      "mean_fit": 0.7897135416666666,
+      "top_phi": [],
+      "sample_idx": [],
+      "sample_phi": [],
+      "sample_fit": [],
+      "phi_measured": false,
+      "phi_dur_sec": 0.0
+    },
+    {
+      "gen": 28,
+      "best_fit": 0.8203125,
+      "mean_fit": 0.7923177083333334,
+      "top_phi": [],
+      "sample_idx": [],
+      "sample_phi": [],
+      "sample_fit": [],
+      "phi_measured": false,
+      "phi_dur_sec": 0.0
+    },
+    {
+      "gen": 29,
+      "best_fit": 0.8359375,
+      "mean_fit": 0.798828125,
+      "top_phi": [],
+      "sample_idx": [],
+      "sample_phi": [],
+      "sample_fit": [],
+      "phi_measured": false,
+      "phi_dur_sec": 0.0
+    },
+    {
+      "gen": 30,
+      "best_fit": 0.8359375,
+      "mean_fit": 0.80078125,
+      "top_phi": [
+        NaN
+      ],
+      "sample_idx": [
+        8
+      ],
+      "sample_phi": [
+        3.173598
+      ],
+      "sample_fit": [
+        0.7890625
+      ],
+      "phi_measured": true,
+      "phi_dur_sec": 128.37
+    },
+    {
+      "gen": 31,
+      "best_fit": 0.8359375,
+      "mean_fit": 0.7994791666666666,
+      "top_phi": [],
+      "sample_idx": [],
+      "sample_phi": [],
+      "sample_fit": [],
+      "phi_measured": false,
+      "phi_dur_sec": 0.0
+    },
+    {
+      "gen": 32,
+      "best_fit": 0.84375,
+      "mean_fit": 0.8111979166666666,
+      "top_phi": [],
+      "sample_idx": [],
+      "sample_phi": [],
+      "sample_fit": [],
+      "phi_measured": false,
+      "phi_dur_sec": 0.0
+    },
+    {
+      "gen": 33,
+      "best_fit": 0.84375,
+      "mean_fit": 0.810546875,
+      "top_phi": [],
+      "sample_idx": [],
+      "sample_phi": [],
+      "sample_fit": [],
+      "phi_measured": false,
+      "phi_dur_sec": 0.0
+    },
+    {
+      "gen": 34,
+      "best_fit": 0.84375,
+      "mean_fit": 0.8170572916666666,
+      "top_phi": [],
+      "sample_idx": [],
+      "sample_phi": [],
+      "sample_fit": [],
+      "phi_measured": false,
+      "phi_dur_sec": 0.0
+    },
+    {
+      "gen": 35,
+      "best_fit": 0.84375,
+      "mean_fit": 0.810546875,
+      "top_phi": [],
+      "sample_idx": [],
+      "sample_phi": [],
+      "sample_fit": [],
+      "phi_measured": false,
+      "phi_dur_sec": 0.0
+    },
+    {
+      "gen": 36,
+      "best_fit": 0.84375,
+      "mean_fit": 0.8248697916666666,
+      "top_phi": [],
+      "sample_idx": [],
+      "sample_phi": [],
+      "sample_fit": [],
+      "phi_measured": false,
+      "phi_dur_sec": 0.0
+    },
+    {
+      "gen": 37,
+      "best_fit": 0.84375,
+      "mean_fit": 0.8274739583333334,
+      "top_phi": [],
+      "sample_idx": [],
+      "sample_phi": [],
+      "sample_fit": [],
+      "phi_measured": false,
+      "phi_dur_sec": 0.0
+    },
+    {
+      "gen": 38,
+      "best_fit": 0.8671875,
+      "mean_fit": 0.8313802083333334,
+      "top_phi": [],
+      "sample_idx": [],
+      "sample_phi": [],
+      "sample_fit": [],
+      "phi_measured": false,
+      "phi_dur_sec": 0.0
+    },
+    {
+      "gen": 39,
+      "best_fit": 0.875,
+      "mean_fit": 0.84375,
+      "top_phi": [],
+      "sample_idx": [],
+      "sample_phi": [],
+      "sample_fit": [],
+      "phi_measured": false,
+      "phi_dur_sec": 0.0
+    },
+    {
+      "gen": 40,
+      "best_fit": 0.890625,
+      "mean_fit": 0.8580729166666666,
+      "top_phi": [
+        NaN
+      ],
+      "sample_idx": [
+        2
+      ],
+      "sample_phi": [
+        NaN
+      ],
+      "sample_fit": [
+        0.875
+      ],
+      "phi_measured": true,
+      "phi_dur_sec": 0.0
+    },
+    {
+      "gen": 41,
+      "best_fit": 0.890625,
+      "mean_fit": 0.8600260416666666,
+      "top_phi": [],
+      "sample_idx": [],
+      "sample_phi": [],
+      "sample_fit": [],
+      "phi_measured": false,
+      "phi_dur_sec": 0.0
+    },
+    {
+      "gen": 42,
+      "best_fit": 0.890625,
+      "mean_fit": 0.8704427083333334,
+      "top_phi": [],
+      "sample_idx": [],
+      "sample_phi": [],
+      "sample_fit": [],
+      "phi_measured": false,
+      "phi_dur_sec": 0.0
+    },
+    {
+      "gen": 43,
+      "best_fit": 0.890625,
+      "mean_fit": 0.8658854166666666,
+      "top_phi": [],
+      "sample_idx": [],
+      "sample_phi": [],
+      "sample_fit": [],
+      "phi_measured": false,
+      "phi_dur_sec": 0.0
+    },
+    {
+      "gen": 44,
+      "best_fit": 0.890625,
+      "mean_fit": 0.8665364583333334,
+      "top_phi": [],
+      "sample_idx": [],
+      "sample_phi": [],
+      "sample_fit": [],
+      "phi_measured": false,
+      "phi_dur_sec": 0.0
+    },
+    {
+      "gen": 45,
+      "best_fit": 0.9140625,
+      "mean_fit": 0.8658854166666666,
+      "top_phi": [],
+      "sample_idx": [],
+      "sample_phi": [],
+      "sample_fit": [],
+      "phi_measured": false,
+      "phi_dur_sec": 0.0
+    },
+    {
+      "gen": 46,
+      "best_fit": 0.921875,
+      "mean_fit": 0.873046875,
+      "top_phi": [],
+      "sample_idx": [],
+      "sample_phi": [],
+      "sample_fit": [],
+      "phi_measured": false,
+      "phi_dur_sec": 0.0
+    },
+    {
+      "gen": 47,
+      "best_fit": 0.921875,
+      "mean_fit": 0.8860677083333334,
+      "top_phi": [],
+      "sample_idx": [],
+      "sample_phi": [],
+      "sample_fit": [],
+      "phi_measured": false,
+      "phi_dur_sec": 0.0
+    },
+    {
+      "gen": 48,
+      "best_fit": 0.921875,
+      "mean_fit": 0.890625,
+      "top_phi": [],
+      "sample_idx": [],
+      "sample_phi": [],
+      "sample_fit": [],
+      "phi_measured": false,
+      "phi_dur_sec": 0.0
+    },
+    {
+      "gen": 49,
+      "best_fit": 0.921875,
+      "mean_fit": 0.8984375,
+      "top_phi": [],
+      "sample_idx": [],
+      "sample_phi": [],
+      "sample_fit": [],
+      "phi_measured": false,
+      "phi_dur_sec": 0.0
+    },
+    {
+      "gen": 50,
+      "best_fit": 0.921875,
+      "mean_fit": 0.896484375,
+      "top_phi": [
+        0.692088
+      ],
+      "sample_idx": [
+        7
+      ],
+      "sample_phi": [
+        0.323373
+      ],
+      "sample_fit": [
+        0.890625
+      ],
+      "phi_measured": true,
+      "phi_dur_sec": 141.48
+    },
+    {
+      "gen": 51,
+      "best_fit": 0.921875,
+      "mean_fit": 0.8912760416666666,
+      "top_phi": [],
+      "sample_idx": [],
+      "sample_phi": [],
+      "sample_fit": [],
+      "phi_measured": false,
+      "phi_dur_sec": 0.0
+    },
+    {
+      "gen": 52,
+      "best_fit": 0.9296875,
+      "mean_fit": 0.9029947916666666,
+      "top_phi": [],
+      "sample_idx": [],
+      "sample_phi": [],
+      "sample_fit": [],
+      "phi_measured": false,
+      "phi_dur_sec": 0.0
+    },
+    {
+      "gen": 53,
+      "best_fit": 0.9375,
+      "mean_fit": 0.9069010416666666,
+      "top_phi": [],
+      "sample_idx": [],
+      "sample_phi": [],
+      "sample_fit": [],
+      "phi_measured": false,
+      "phi_dur_sec": 0.0
+    },
+    {
+      "gen": 54,
+      "best_fit": 0.9375,
+      "mean_fit": 0.912109375,
+      "top_phi": [],
+      "sample_idx": [],
+      "sample_phi": [],
+      "sample_fit": [],
+      "phi_measured": false,
+      "phi_dur_sec": 0.0
+    },
+    {
+      "gen": 55,
+      "best_fit": 0.9453125,
+      "mean_fit": 0.9088541666666666,
+      "top_phi": [],
+      "sample_idx": [],
+      "sample_phi": [],
+      "sample_fit": [],
+      "phi_measured": false,
+      "phi_dur_sec": 0.0
+    },
+    {
+      "gen": 56,
+      "best_fit": 0.9453125,
+      "mean_fit": 0.91015625,
+      "top_phi": [],
+      "sample_idx": [],
+      "sample_phi": [],
+      "sample_fit": [],
+      "phi_measured": false,
+      "phi_dur_sec": 0.0
+    },
+    {
+      "gen": 57,
+      "best_fit": 0.9453125,
+      "mean_fit": 0.9049479166666666,
+      "top_phi": [],
+      "sample_idx": [],
+      "sample_phi": [],
+      "sample_fit": [],
+      "phi_measured": false,
+      "phi_dur_sec": 0.0
+    },
+    {
+      "gen": 58,
+      "best_fit": 0.9453125,
+      "mean_fit": 0.90625,
+      "top_phi": [],
+      "sample_idx": [],
+      "sample_phi": [],
+      "sample_fit": [],
+      "phi_measured": false,
+      "phi_dur_sec": 0.0
+    },
+    {
+      "gen": 59,
+      "best_fit": 0.9453125,
+      "mean_fit": 0.8990885416666666,
+      "top_phi": [],
+      "sample_idx": [],
+      "sample_phi": [],
+      "sample_fit": [],
+      "phi_measured": false,
+      "phi_dur_sec": 0.0
+    },
+    {
+      "gen": 60,
+      "best_fit": 0.9453125,
+      "mean_fit": 0.90234375,
+      "top_phi": [
+        NaN
+      ],
+      "sample_idx": [
+        10
+      ],
+      "sample_phi": [
+        NaN
+      ],
+      "sample_fit": [
+        0.875
+      ],
+      "phi_measured": true,
+      "phi_dur_sec": 0.0
+    },
+    {
+      "gen": 61,
+      "best_fit": 0.9453125,
+      "mean_fit": 0.908203125,
+      "top_phi": [],
+      "sample_idx": [],
+      "sample_phi": [],
+      "sample_fit": [],
+      "phi_measured": false,
+      "phi_dur_sec": 0.0
+    },
+    {
+      "gen": 62,
+      "best_fit": 0.9453125,
+      "mean_fit": 0.91015625,
+      "top_phi": [],
+      "sample_idx": [],
+      "sample_phi": [],
+      "sample_fit": [],
+      "phi_measured": false,
+      "phi_dur_sec": 0.0
+    },
+    {
+      "gen": 63,
+      "best_fit": 0.9453125,
+      "mean_fit": 0.9140625,
+      "top_phi": [],
+      "sample_idx": [],
+      "sample_phi": [],
+      "sample_fit": [],
+      "phi_measured": false,
+      "phi_dur_sec": 0.0
+    },
+    {
+      "gen": 64,
+      "best_fit": 0.9453125,
+      "mean_fit": 0.9153645833333334,
+      "top_phi": [],
+      "sample_idx": [],
+      "sample_phi": [],
+      "sample_fit": [],
+      "phi_measured": false,
+      "phi_dur_sec": 0.0
+    },
+    {
+      "gen": 65,
+      "best_fit": 0.9453125,
+      "mean_fit": 0.9192708333333334,
+      "top_phi": [],
+      "sample_idx": [],
+      "sample_phi": [],
+      "sample_fit": [],
+      "phi_measured": false,
+      "phi_dur_sec": 0.0
+    },
+    {
+      "gen": 66,
+      "best_fit": 0.9453125,
+      "mean_fit": 0.9173177083333334,
+      "top_phi": [],
+      "sample_idx": [],
+      "sample_phi": [],
+      "sample_fit": [],
+      "phi_measured": false,
+      "phi_dur_sec": 0.0
+    },
+    {
+      "gen": 67,
+      "best_fit": 0.9453125,
+      "mean_fit": 0.9114583333333334,
+      "top_phi": [],
+      "sample_idx": [],
+      "sample_phi": [],
+      "sample_fit": [],
+      "phi_measured": false,
+      "phi_dur_sec": 0.0
+    },
+    {
+      "gen": 68,
+      "best_fit": 0.9453125,
+      "mean_fit": 0.90625,
+      "top_phi": [],
+      "sample_idx": [],
+      "sample_phi": [],
+      "sample_fit": [],
+      "phi_measured": false,
+      "phi_dur_sec": 0.0
+    },
+    {
+      "gen": 69,
+      "best_fit": 0.9453125,
+      "mean_fit": 0.908203125,
+      "top_phi": [],
+      "sample_idx": [],
+      "sample_phi": [],
+      "sample_fit": [],
+      "phi_measured": false,
+      "phi_dur_sec": 0.0
+    },
+    {
+      "gen": 70,
+      "best_fit": 0.9453125,
+      "mean_fit": 0.912109375,
+      "top_phi": [
+        0.266863
+      ],
+      "sample_idx": [
+        8
+      ],
+      "sample_phi": [
+        NaN
+      ],
+      "sample_fit": [
+        0.8984375
+      ],
+      "phi_measured": true,
+      "phi_dur_sec": 67.09
+    },
+    {
+      "gen": 71,
+      "best_fit": 0.9453125,
+      "mean_fit": 0.9225260416666666,
+      "top_phi": [],
+      "sample_idx": [],
+      "sample_phi": [],
+      "sample_fit": [],
+      "phi_measured": false,
+      "phi_dur_sec": 0.0
+    },
+    {
+      "gen": 72,
+      "best_fit": 0.9453125,
+      "mean_fit": 0.9186197916666666,
+      "top_phi": [],
+      "sample_idx": [],
+      "sample_phi": [],
+      "sample_fit": [],
+      "phi_measured": false,
+      "phi_dur_sec": 0.0
+    },
+    {
+      "gen": 73,
+      "best_fit": 0.9453125,
+      "mean_fit": 0.9173177083333334,
+      "top_phi": [],
+      "sample_idx": [],
+      "sample_phi": [],
+      "sample_fit": [],
+      "phi_measured": false,
+      "phi_dur_sec": 0.0
+    },
+    {
+      "gen": 74,
+      "best_fit": 0.9453125,
+      "mean_fit": 0.9225260416666666,
+      "top_phi": [],
+      "sample_idx": [],
+      "sample_phi": [],
+      "sample_fit": [],
+      "phi_measured": false,
+      "phi_dur_sec": 0.0
+    },
+    {
+      "gen": 75,
+      "best_fit": 0.9453125,
+      "mean_fit": 0.923828125,
+      "top_phi": [],
+      "sample_idx": [],
+      "sample_phi": [],
+      "sample_fit": [],
+      "phi_measured": false,
+      "phi_dur_sec": 0.0
+    },
+    {
+      "gen": 76,
+      "best_fit": 0.9453125,
+      "mean_fit": 0.9186197916666666,
+      "top_phi": [],
+      "sample_idx": [],
+      "sample_phi": [],
+      "sample_fit": [],
+      "phi_measured": false,
+      "phi_dur_sec": 0.0
+    },
+    {
+      "gen": 77,
+      "best_fit": 0.9453125,
+      "mean_fit": 0.9166666666666666,
+      "top_phi": [],
+      "sample_idx": [],
+      "sample_phi": [],
+      "sample_fit": [],
+      "phi_measured": false,
+      "phi_dur_sec": 0.0
+    },
+    {
+      "gen": 78,
+      "best_fit": 0.9453125,
+      "mean_fit": 0.9140625,
+      "top_phi": [],
+      "sample_idx": [],
+      "sample_phi": [],
+      "sample_fit": [],
+      "phi_measured": false,
+      "phi_dur_sec": 0.0
+    },
+    {
+      "gen": 79,
+      "best_fit": 0.9453125,
+      "mean_fit": 0.9108072916666666,
+      "top_phi": [],
+      "sample_idx": [],
+      "sample_phi": [],
+      "sample_fit": [],
+      "phi_measured": false,
+      "phi_dur_sec": 0.0
+    },
+    {
+      "gen": 80,
+      "best_fit": 0.9453125,
+      "mean_fit": 0.9069010416666666,
+      "top_phi": [
+        NaN
+      ],
+      "sample_idx": [
+        11
+      ],
+      "sample_phi": [
+        NaN
+      ],
+      "sample_fit": [
+        0.890625
+      ],
+      "phi_measured": true,
+      "phi_dur_sec": 0.0
+    },
+    {
+      "gen": 81,
+      "best_fit": 0.9453125,
+      "mean_fit": 0.90234375,
+      "top_phi": [],
+      "sample_idx": [],
+      "sample_phi": [],
+      "sample_fit": [],
+      "phi_measured": false,
+      "phi_dur_sec": 0.0
+    },
+    {
+      "gen": 82,
+      "best_fit": 0.9453125,
+      "mean_fit": 0.9140625,
+      "top_phi": [],
+      "sample_idx": [],
+      "sample_phi": [],
+      "sample_fit": [],
+      "phi_measured": false,
+      "phi_dur_sec": 0.0
+    },
+    {
+      "gen": 83,
+      "best_fit": 0.9453125,
+      "mean_fit": 0.9036458333333334,
+      "top_phi": [],
+      "sample_idx": [],
+      "sample_phi": [],
+      "sample_fit": [],
+      "phi_measured": false,
+      "phi_dur_sec": 0.0
+    },
+    {
+      "gen": 84,
+      "best_fit": 0.9453125,
+      "mean_fit": 0.908203125,
+      "top_phi": [],
+      "sample_idx": [],
+      "sample_phi": [],
+      "sample_fit": [],
+      "phi_measured": false,
+      "phi_dur_sec": 0.0
+    },
+    {
+      "gen": 85,
+      "best_fit": 0.953125,
+      "mean_fit": 0.91796875,
+      "top_phi": [],
+      "sample_idx": [],
+      "sample_phi": [],
+      "sample_fit": [],
+      "phi_measured": false,
+      "phi_dur_sec": 0.0
+    },
+    {
+      "gen": 86,
+      "best_fit": 0.953125,
+      "mean_fit": 0.921875,
+      "top_phi": [],
+      "sample_idx": [],
+      "sample_phi": [],
+      "sample_fit": [],
+      "phi_measured": false,
+      "phi_dur_sec": 0.0
+    },
+    {
+      "gen": 87,
+      "best_fit": 0.953125,
+      "mean_fit": 0.9173177083333334,
+      "top_phi": [],
+      "sample_idx": [],
+      "sample_phi": [],
+      "sample_fit": [],
+      "phi_measured": false,
+      "phi_dur_sec": 0.0
+    },
+    {
+      "gen": 88,
+      "best_fit": 0.953125,
+      "mean_fit": 0.923828125,
+      "top_phi": [],
+      "sample_idx": [],
+      "sample_phi": [],
+      "sample_fit": [],
+      "phi_measured": false,
+      "phi_dur_sec": 0.0
+    },
+    {
+      "gen": 89,
+      "best_fit": 0.953125,
+      "mean_fit": 0.92578125,
+      "top_phi": [],
+      "sample_idx": [],
+      "sample_phi": [],
+      "sample_fit": [],
+      "phi_measured": false,
+      "phi_dur_sec": 0.0
+    },
+    {
+      "gen": 90,
+      "best_fit": 0.953125,
+      "mean_fit": 0.9231770833333334,
+      "top_phi": [
+        NaN
+      ],
+      "sample_idx": [
+        7
+      ],
+      "sample_phi": [
+        NaN
+      ],
+      "sample_fit": [
+        0.9140625
+      ],
+      "phi_measured": true,
+      "phi_dur_sec": 0.0
+    },
+    {
+      "gen": 91,
+      "best_fit": 0.953125,
+      "mean_fit": 0.9173177083333334,
+      "top_phi": [],
+      "sample_idx": [],
+      "sample_phi": [],
+      "sample_fit": [],
+      "phi_measured": false,
+      "phi_dur_sec": 0.0
+    },
+    {
+      "gen": 92,
+      "best_fit": 0.953125,
+      "mean_fit": 0.9212239583333334,
+      "top_phi": [],
+      "sample_idx": [],
+      "sample_phi": [],
+      "sample_fit": [],
+      "phi_measured": false,
+      "phi_dur_sec": 0.0
+    },
+    {
+      "gen": 93,
+      "best_fit": 0.953125,
+      "mean_fit": 0.931640625,
+      "top_phi": [],
+      "sample_idx": [],
+      "sample_phi": [],
+      "sample_fit": [],
+      "phi_measured": false,
+      "phi_dur_sec": 0.0
+    },
+    {
+      "gen": 94,
+      "best_fit": 0.9609375,
+      "mean_fit": 0.9251302083333334,
+      "top_phi": [],
+      "sample_idx": [],
+      "sample_phi": [],
+      "sample_fit": [],
+      "phi_measured": false,
+      "phi_dur_sec": 0.0
+    },
+    {
+      "gen": 95,
+      "best_fit": 0.9609375,
+      "mean_fit": 0.9270833333333334,
+      "top_phi": [],
+      "sample_idx": [],
+      "sample_phi": [],
+      "sample_fit": [],
+      "phi_measured": false,
+      "phi_dur_sec": 0.0
+    },
+    {
+      "gen": 96,
+      "best_fit": 0.9609375,
+      "mean_fit": 0.92578125,
+      "top_phi": [],
+      "sample_idx": [],
+      "sample_phi": [],
+      "sample_fit": [],
+      "phi_measured": false,
+      "phi_dur_sec": 0.0
+    },
+    {
+      "gen": 97,
+      "best_fit": 0.9609375,
+      "mean_fit": 0.9283854166666666,
+      "top_phi": [],
+      "sample_idx": [],
+      "sample_phi": [],
+      "sample_fit": [],
+      "phi_measured": false,
+      "phi_dur_sec": 0.0
+    },
+    {
+      "gen": 98,
+      "best_fit": 0.9609375,
+      "mean_fit": 0.9251302083333334,
+      "top_phi": [],
+      "sample_idx": [],
+      "sample_phi": [],
+      "sample_fit": [],
+      "phi_measured": false,
+      "phi_dur_sec": 0.0
+    },
+    {
+      "gen": 99,
+      "best_fit": 0.9609375,
+      "mean_fit": 0.9309895833333334,
+      "top_phi": [],
+      "sample_idx": [],
+      "sample_phi": [],
+      "sample_fit": [],
+      "phi_measured": false,
+      "phi_dur_sec": 0.0
+    },
+    {
+      "gen": 100,
+      "best_fit": 0.9609375,
+      "mean_fit": 0.9251302083333334,
+      "top_phi": [
+        0.186795
+      ],
+      "sample_idx": [
+        4
+      ],
+      "sample_phi": [
+        NaN
+      ],
+      "sample_fit": [
+        0.9296875
+      ],
+      "phi_measured": true,
+      "phi_dur_sec": 59.87
+    },
+    {
+      "gen": 101,
+      "best_fit": 0.9609375,
+      "mean_fit": 0.931640625,
+      "top_phi": [],
+      "sample_idx": [],
+      "sample_phi": [],
+      "sample_fit": [],
+      "phi_measured": false,
+      "phi_dur_sec": 0.0
+    },
+    {
+      "gen": 102,
+      "best_fit": 0.9609375,
+      "mean_fit": 0.9322916666666666,
+      "top_phi": [],
+      "sample_idx": [],
+      "sample_phi": [],
+      "sample_fit": [],
+      "phi_measured": false,
+      "phi_dur_sec": 0.0
+    },
+    {
+      "gen": 103,
+      "best_fit": 0.9609375,
+      "mean_fit": 0.9290364583333334,
+      "top_phi": [],
+      "sample_idx": [],
+      "sample_phi": [],
+      "sample_fit": [],
+      "phi_measured": false,
+      "phi_dur_sec": 0.0
+    },
+    {
+      "gen": 104,
+      "best_fit": 0.9609375,
+      "mean_fit": 0.9296875,
+      "top_phi": [],
+      "sample_idx": [],
+      "sample_phi": [],
+      "sample_fit": [],
+      "phi_measured": false,
+      "phi_dur_sec": 0.0
+    },
+    {
+      "gen": 105,
+      "best_fit": 0.9609375,
+      "mean_fit": 0.9388020833333334,
+      "top_phi": [],
+      "sample_idx": [],
+      "sample_phi": [],
+      "sample_fit": [],
+      "phi_measured": false,
+      "phi_dur_sec": 0.0
+    },
+    {
+      "gen": 106,
+      "best_fit": 0.9609375,
+      "mean_fit": 0.9322916666666666,
+      "top_phi": [],
+      "sample_idx": [],
+      "sample_phi": [],
+      "sample_fit": [],
+      "phi_measured": false,
+      "phi_dur_sec": 0.0
+    },
+    {
+      "gen": 107,
+      "best_fit": 0.9609375,
+      "mean_fit": 0.9270833333333334,
+      "top_phi": [],
+      "sample_idx": [],
+      "sample_phi": [],
+      "sample_fit": [],
+      "phi_measured": false,
+      "phi_dur_sec": 0.0
+    },
+    {
+      "gen": 108,
+      "best_fit": 0.9609375,
+      "mean_fit": 0.9290364583333334,
+      "top_phi": [],
+      "sample_idx": [],
+      "sample_phi": [],
+      "sample_fit": [],
+      "phi_measured": false,
+      "phi_dur_sec": 0.0
+    },
+    {
+      "gen": 109,
+      "best_fit": 0.9609375,
+      "mean_fit": 0.92578125,
+      "top_phi": [],
+      "sample_idx": [],
+      "sample_phi": [],
+      "sample_fit": [],
+      "phi_measured": false,
+      "phi_dur_sec": 0.0
+    },
+    {
+      "gen": 110,
+      "best_fit": 0.9609375,
+      "mean_fit": 0.9368489583333334,
+      "top_phi": [
+        0.019379
+      ],
+      "sample_idx": [
+        8
+      ],
+      "sample_phi": [
+        NaN
+      ],
+      "sample_fit": [
+        0.9296875
+      ],
+      "phi_measured": true,
+      "phi_dur_sec": 11.63
+    },
+    {
+      "gen": 111,
+      "best_fit": 0.9609375,
+      "mean_fit": 0.9388020833333334,
+      "top_phi": [],
+      "sample_idx": [],
+      "sample_phi": [],
+      "sample_fit": [],
+      "phi_measured": false,
+      "phi_dur_sec": 0.0
+    },
+    {
+      "gen": 112,
+      "best_fit": 0.9609375,
+      "mean_fit": 0.931640625,
+      "top_phi": [],
+      "sample_idx": [],
+      "sample_phi": [],
+      "sample_fit": [],
+      "phi_measured": false,
+      "phi_dur_sec": 0.0
+    },
+    {
+      "gen": 113,
+      "best_fit": 0.9609375,
+      "mean_fit": 0.9303385416666666,
+      "top_phi": [],
+      "sample_idx": [],
+      "sample_phi": [],
+      "sample_fit": [],
+      "phi_measured": false,
+      "phi_dur_sec": 0.0
+    },
+    {
+      "gen": 114,
+      "best_fit": 0.9609375,
+      "mean_fit": 0.9270833333333334,
+      "top_phi": [],
+      "sample_idx": [],
+      "sample_phi": [],
+      "sample_fit": [],
+      "phi_measured": false,
+      "phi_dur_sec": 0.0
+    },
+    {
+      "gen": 115,
+      "best_fit": 0.9609375,
+      "mean_fit": 0.9381510416666666,
+      "top_phi": [],
+      "sample_idx": [],
+      "sample_phi": [],
+      "sample_fit": [],
+      "phi_measured": false,
+      "phi_dur_sec": 0.0
+    },
+    {
+      "gen": 116,
+      "best_fit": 0.9765625,
+      "mean_fit": 0.9388020833333334,
+      "top_phi": [],
+      "sample_idx": [],
+      "sample_phi": [],
+      "sample_fit": [],
+      "phi_measured": false,
+      "phi_dur_sec": 0.0
+    },
+    {
+      "gen": 117,
+      "best_fit": 0.9765625,
+      "mean_fit": 0.9381510416666666,
+      "top_phi": [],
+      "sample_idx": [],
+      "sample_phi": [],
+      "sample_fit": [],
+      "phi_measured": false,
+      "phi_dur_sec": 0.0
+    },
+    {
+      "gen": 118,
+      "best_fit": 0.9765625,
+      "mean_fit": 0.9309895833333334,
+      "top_phi": [],
+      "sample_idx": [],
+      "sample_phi": [],
+      "sample_fit": [],
+      "phi_measured": false,
+      "phi_dur_sec": 0.0
+    },
+    {
+      "gen": 119,
+      "best_fit": 0.9765625,
+      "mean_fit": 0.9427083333333334,
+      "top_phi": [],
+      "sample_idx": [],
+      "sample_phi": [],
+      "sample_fit": [],
+      "phi_measured": false,
+      "phi_dur_sec": 0.0
+    },
+    {
+      "gen": 120,
+      "best_fit": 0.9765625,
+      "mean_fit": 0.9309895833333334,
+      "top_phi": [
+        0.014783
+      ],
+      "sample_idx": [
+        10
+      ],
+      "sample_phi": [
+        0.172439
+      ],
+      "sample_fit": [
+        0.90625
+      ],
+      "phi_measured": true,
+      "phi_dur_sec": 42.87
+    },
+    {
+      "gen": 121,
+      "best_fit": 0.9765625,
+      "mean_fit": 0.935546875,
+      "top_phi": [],
+      "sample_idx": [],
+      "sample_phi": [],
+      "sample_fit": [],
+      "phi_measured": false,
+      "phi_dur_sec": 0.0
+    },
+    {
+      "gen": 122,
+      "best_fit": 0.9765625,
+      "mean_fit": 0.9440104166666666,
+      "top_phi": [],
+      "sample_idx": [],
+      "sample_phi": [],
+      "sample_fit": [],
+      "phi_measured": false,
+      "phi_dur_sec": 0.0
+    },
+    {
+      "gen": 123,
+      "best_fit": 0.9765625,
+      "mean_fit": 0.9505208333333334,
+      "top_phi": [],
+      "sample_idx": [],
+      "sample_phi": [],
+      "sample_fit": [],
+      "phi_measured": false,
+      "phi_dur_sec": 0.0
+    },
+    {
+      "gen": 124,
+      "best_fit": 0.9765625,
+      "mean_fit": 0.939453125,
+      "top_phi": [],
+      "sample_idx": [],
+      "sample_phi": [],
+      "sample_fit": [],
+      "phi_measured": false,
+      "phi_dur_sec": 0.0
+    },
+    {
+      "gen": 125,
+      "best_fit": 0.9765625,
+      "mean_fit": 0.9446614583333334,
+      "top_phi": [],
+      "sample_idx": [],
+      "sample_phi": [],
+      "sample_fit": [],
+      "phi_measured": false,
+      "phi_dur_sec": 0.0
+    },
+    {
+      "gen": 126,
+      "best_fit": 0.9765625,
+      "mean_fit": 0.951171875,
+      "top_phi": [],
+      "sample_idx": [],
+      "sample_phi": [],
+      "sample_fit": [],
+      "phi_measured": false,
+      "phi_dur_sec": 0.0
+    },
+    {
+      "gen": 127,
+      "best_fit": 0.9765625,
+      "mean_fit": 0.9407552083333334,
+      "top_phi": [],
+      "sample_idx": [],
+      "sample_phi": [],
+      "sample_fit": [],
+      "phi_measured": false,
+      "phi_dur_sec": 0.0
+    },
+    {
+      "gen": 128,
+      "best_fit": 0.9765625,
+      "mean_fit": 0.939453125,
+      "top_phi": [],
+      "sample_idx": [],
+      "sample_phi": [],
+      "sample_fit": [],
+      "phi_measured": false,
+      "phi_dur_sec": 0.0
+    },
+    {
+      "gen": 129,
+      "best_fit": 0.9765625,
+      "mean_fit": 0.9361979166666666,
+      "top_phi": [],
+      "sample_idx": [],
+      "sample_phi": [],
+      "sample_fit": [],
+      "phi_measured": false,
+      "phi_dur_sec": 0.0
+    },
+    {
+      "gen": 130,
+      "best_fit": 0.9765625,
+      "mean_fit": 0.9407552083333334,
+      "top_phi": [
+        0.014783
+      ],
+      "sample_idx": [
+        11
+      ],
+      "sample_phi": [
+        0.165216
+      ],
+      "sample_fit": [
+        0.9140625
+      ],
+      "phi_measured": true,
+      "phi_dur_sec": 56.42
+    },
+    {
+      "gen": 131,
+      "best_fit": 0.9765625,
+      "mean_fit": 0.9420572916666666,
+      "top_phi": [],
+      "sample_idx": [],
+      "sample_phi": [],
+      "sample_fit": [],
+      "phi_measured": false,
+      "phi_dur_sec": 0.0
+    },
+    {
+      "gen": 132,
+      "best_fit": 0.9765625,
+      "mean_fit": 0.927734375,
+      "top_phi": [],
+      "sample_idx": [],
+      "sample_phi": [],
+      "sample_fit": [],
+      "phi_measured": false,
+      "phi_dur_sec": 0.0
+    },
+    {
+      "gen": 133,
+      "best_fit": 0.9765625,
+      "mean_fit": 0.9303385416666666,
+      "top_phi": [],
+      "sample_idx": [],
+      "sample_phi": [],
+      "sample_fit": [],
+      "phi_measured": false,
+      "phi_dur_sec": 0.0
+    },
+    {
+      "gen": 134,
+      "best_fit": 0.9765625,
+      "mean_fit": 0.9368489583333334,
+      "top_phi": [],
+      "sample_idx": [],
+      "sample_phi": [],
+      "sample_fit": [],
+      "phi_measured": false,
+      "phi_dur_sec": 0.0
+    },
+    {
+      "gen": 135,
+      "best_fit": 0.9765625,
+      "mean_fit": 0.94140625,
+      "top_phi": [],
+      "sample_idx": [],
+      "sample_phi": [],
+      "sample_fit": [],
+      "phi_measured": false,
+      "phi_dur_sec": 0.0
+    },
+    {
+      "gen": 136,
+      "best_fit": 0.9765625,
+      "mean_fit": 0.947265625,
+      "top_phi": [],
+      "sample_idx": [],
+      "sample_phi": [],
+      "sample_fit": [],
+      "phi_measured": false,
+      "phi_dur_sec": 0.0
+    },
+    {
+      "gen": 137,
+      "best_fit": 0.9765625,
+      "mean_fit": 0.9453125,
+      "top_phi": [],
+      "sample_idx": [],
+      "sample_phi": [],
+      "sample_fit": [],
+      "phi_measured": false,
+      "phi_dur_sec": 0.0
+    },
+    {
+      "gen": 138,
+      "best_fit": 0.9765625,
+      "mean_fit": 0.943359375,
+      "top_phi": [],
+      "sample_idx": [],
+      "sample_phi": [],
+      "sample_fit": [],
+      "phi_measured": false,
+      "phi_dur_sec": 0.0
+    },
+    {
+      "gen": 139,
+      "best_fit": 0.9765625,
+      "mean_fit": 0.9361979166666666,
+      "top_phi": [],
+      "sample_idx": [],
+      "sample_phi": [],
+      "sample_fit": [],
+      "phi_measured": false,
+      "phi_dur_sec": 0.0
+    },
+    {
+      "gen": 140,
+      "best_fit": 0.9765625,
+      "mean_fit": 0.9427083333333334,
+      "top_phi": [
+        0.014783
+      ],
+      "sample_idx": [
+        5
+      ],
+      "sample_phi": [
+        NaN
+      ],
+      "sample_fit": [
+        0.9453125
+      ],
+      "phi_measured": true,
+      "phi_dur_sec": 24.47
+    },
+    {
+      "gen": 141,
+      "best_fit": 0.9765625,
+      "mean_fit": 0.9381510416666666,
+      "top_phi": [],
+      "sample_idx": [],
+      "sample_phi": [],
+      "sample_fit": [],
+      "phi_measured": false,
+      "phi_dur_sec": 0.0
+    },
+    {
+      "gen": 142,
+      "best_fit": 0.9765625,
+      "mean_fit": 0.9322916666666666,
+      "top_phi": [],
+      "sample_idx": [],
+      "sample_phi": [],
+      "sample_fit": [],
+      "phi_measured": false,
+      "phi_dur_sec": 0.0
+    },
+    {
+      "gen": 143,
+      "best_fit": 0.9765625,
+      "mean_fit": 0.9329427083333334,
+      "top_phi": [],
+      "sample_idx": [],
+      "sample_phi": [],
+      "sample_fit": [],
+      "phi_measured": false,
+      "phi_dur_sec": 0.0
+    },
+    {
+      "gen": 144,
+      "best_fit": 0.9765625,
+      "mean_fit": 0.9322916666666666,
+      "top_phi": [],
+      "sample_idx": [],
+      "sample_phi": [],
+      "sample_fit": [],
+      "phi_measured": false,
+      "phi_dur_sec": 0.0
+    },
+    {
+      "gen": 145,
+      "best_fit": 0.9765625,
+      "mean_fit": 0.939453125,
+      "top_phi": [],
+      "sample_idx": [],
+      "sample_phi": [],
+      "sample_fit": [],
+      "phi_measured": false,
+      "phi_dur_sec": 0.0
+    },
+    {
+      "gen": 146,
+      "best_fit": 0.9765625,
+      "mean_fit": 0.9388020833333334,
+      "top_phi": [],
+      "sample_idx": [],
+      "sample_phi": [],
+      "sample_fit": [],
+      "phi_measured": false,
+      "phi_dur_sec": 0.0
+    },
+    {
+      "gen": 147,
+      "best_fit": 0.9765625,
+      "mean_fit": 0.9368489583333334,
+      "top_phi": [],
+      "sample_idx": [],
+      "sample_phi": [],
+      "sample_fit": [],
+      "phi_measured": false,
+      "phi_dur_sec": 0.0
+    },
+    {
+      "gen": 148,
+      "best_fit": 0.984375,
+      "mean_fit": 0.947265625,
+      "top_phi": [],
+      "sample_idx": [],
+      "sample_phi": [],
+      "sample_fit": [],
+      "phi_measured": false,
+      "phi_dur_sec": 0.0
+    },
+    {
+      "gen": 149,
+      "best_fit": 0.984375,
+      "mean_fit": 0.9479166666666666,
+      "top_phi": [],
+      "sample_idx": [],
+      "sample_phi": [],
+      "sample_fit": [],
+      "phi_measured": false,
+      "phi_dur_sec": 0.0
+    },
+    {
+      "gen": 150,
+      "best_fit": 0.984375,
+      "mean_fit": 0.943359375,
+      "top_phi": [
+        NaN
+      ],
+      "sample_idx": [
+        9
+      ],
+      "sample_phi": [
+        NaN
+      ],
+      "sample_fit": [
+        0.9296875
+      ],
+      "phi_measured": true,
+      "phi_dur_sec": 0.0
+    },
+    {
+      "gen": 151,
+      "best_fit": 0.984375,
+      "mean_fit": 0.94140625,
+      "top_phi": [],
+      "sample_idx": [],
+      "sample_phi": [],
+      "sample_fit": [],
+      "phi_measured": false,
+      "phi_dur_sec": 0.0
+    },
+    {
+      "gen": 152,
+      "best_fit": 0.984375,
+      "mean_fit": 0.9466145833333334,
+      "top_phi": [],
+      "sample_idx": [],
+      "sample_phi": [],
+      "sample_fit": [],
+      "phi_measured": false,
+      "phi_dur_sec": 0.0
+    },
+    {
+      "gen": 153,
+      "best_fit": 0.984375,
+      "mean_fit": 0.955078125,
+      "top_phi": [],
+      "sample_idx": [],
+      "sample_phi": [],
+      "sample_fit": [],
+      "phi_measured": false,
+      "phi_dur_sec": 0.0
+    },
+    {
+      "gen": 154,
+      "best_fit": 0.984375,
+      "mean_fit": 0.9459635416666666,
+      "top_phi": [],
+      "sample_idx": [],
+      "sample_phi": [],
+      "sample_fit": [],
+      "phi_measured": false,
+      "phi_dur_sec": 0.0
+    },
+    {
+      "gen": 155,
+      "best_fit": 0.984375,
+      "mean_fit": 0.9505208333333334,
+      "top_phi": [],
+      "sample_idx": [],
+      "sample_phi": [],
+      "sample_fit": [],
+      "phi_measured": false,
+      "phi_dur_sec": 0.0
+    },
+    {
+      "gen": 156,
+      "best_fit": 0.984375,
+      "mean_fit": 0.9524739583333334,
+      "top_phi": [],
+      "sample_idx": [],
+      "sample_phi": [],
+      "sample_fit": [],
+      "phi_measured": false,
+      "phi_dur_sec": 0.0
+    },
+    {
+      "gen": 157,
+      "best_fit": 0.984375,
+      "mean_fit": 0.943359375,
+      "top_phi": [],
+      "sample_idx": [],
+      "sample_phi": [],
+      "sample_fit": [],
+      "phi_measured": false,
+      "phi_dur_sec": 0.0
+    },
+    {
+      "gen": 158,
+      "best_fit": 0.984375,
+      "mean_fit": 0.9446614583333334,
+      "top_phi": [],
+      "sample_idx": [],
+      "sample_phi": [],
+      "sample_fit": [],
+      "phi_measured": false,
+      "phi_dur_sec": 0.0
+    },
+    {
+      "gen": 159,
+      "best_fit": 0.984375,
+      "mean_fit": 0.9485677083333334,
+      "top_phi": [],
+      "sample_idx": [],
+      "sample_phi": [],
+      "sample_fit": [],
+      "phi_measured": false,
+      "phi_dur_sec": 0.0
+    },
+    {
+      "gen": 160,
+      "best_fit": 0.984375,
+      "mean_fit": 0.955078125,
+      "top_phi": [
+        NaN
+      ],
+      "sample_idx": [
+        5
+      ],
+      "sample_phi": [
+        NaN
+      ],
+      "sample_fit": [
+        0.9609375
+      ],
+      "phi_measured": true,
+      "phi_dur_sec": 0.0
+    },
+    {
+      "gen": 161,
+      "best_fit": 0.984375,
+      "mean_fit": 0.955078125,
+      "top_phi": [],
+      "sample_idx": [],
+      "sample_phi": [],
+      "sample_fit": [],
+      "phi_measured": false,
+      "phi_dur_sec": 0.0
+    },
+    {
+      "gen": 162,
+      "best_fit": 0.984375,
+      "mean_fit": 0.9446614583333334,
+      "top_phi": [],
+      "sample_idx": [],
+      "sample_phi": [],
+      "sample_fit": [],
+      "phi_measured": false,
+      "phi_dur_sec": 0.0
+    },
+    {
+      "gen": 163,
+      "best_fit": 0.984375,
+      "mean_fit": 0.9596354166666666,
+      "top_phi": [],
+      "sample_idx": [],
+      "sample_phi": [],
+      "sample_fit": [],
+      "phi_measured": false,
+      "phi_dur_sec": 0.0
+    },
+    {
+      "gen": 164,
+      "best_fit": 0.984375,
+      "mean_fit": 0.955078125,
+      "top_phi": [],
+      "sample_idx": [],
+      "sample_phi": [],
+      "sample_fit": [],
+      "phi_measured": false,
+      "phi_dur_sec": 0.0
+    },
+    {
+      "gen": 165,
+      "best_fit": 0.984375,
+      "mean_fit": 0.9459635416666666,
+      "top_phi": [],
+      "sample_idx": [],
+      "sample_phi": [],
+      "sample_fit": [],
+      "phi_measured": false,
+      "phi_dur_sec": 0.0
+    },
+    {
+      "gen": 166,
+      "best_fit": 0.984375,
+      "mean_fit": 0.935546875,
+      "top_phi": [],
+      "sample_idx": [],
+      "sample_phi": [],
+      "sample_fit": [],
+      "phi_measured": false,
+      "phi_dur_sec": 0.0
+    },
+    {
+      "gen": 167,
+      "best_fit": 0.984375,
+      "mean_fit": 0.94921875,
+      "top_phi": [],
+      "sample_idx": [],
+      "sample_phi": [],
+      "sample_fit": [],
+      "phi_measured": false,
+      "phi_dur_sec": 0.0
+    },
+    {
+      "gen": 168,
+      "best_fit": 0.984375,
+      "mean_fit": 0.955078125,
+      "top_phi": [],
+      "sample_idx": [],
+      "sample_phi": [],
+      "sample_fit": [],
+      "phi_measured": false,
+      "phi_dur_sec": 0.0
+    },
+    {
+      "gen": 169,
+      "best_fit": 0.984375,
+      "mean_fit": 0.9544270833333334,
+      "top_phi": [],
+      "sample_idx": [],
+      "sample_phi": [],
+      "sample_fit": [],
+      "phi_measured": false,
+      "phi_dur_sec": 0.0
+    },
+    {
+      "gen": 170,
+      "best_fit": 0.984375,
+      "mean_fit": 0.9479166666666666,
+      "top_phi": [
+        NaN
+      ],
+      "sample_idx": [
+        3
+      ],
+      "sample_phi": [
+        NaN
+      ],
+      "sample_fit": [
+        0.9609375
+      ],
+      "phi_measured": true,
+      "phi_dur_sec": 0.0
+    },
+    {
+      "gen": 171,
+      "best_fit": 0.984375,
+      "mean_fit": 0.9459635416666666,
+      "top_phi": [],
+      "sample_idx": [],
+      "sample_phi": [],
+      "sample_fit": [],
+      "phi_measured": false,
+      "phi_dur_sec": 0.0
+    },
+    {
+      "gen": 172,
+      "best_fit": 0.984375,
+      "mean_fit": 0.94140625,
+      "top_phi": [],
+      "sample_idx": [],
+      "sample_phi": [],
+      "sample_fit": [],
+      "phi_measured": false,
+      "phi_dur_sec": 0.0
+    },
+    {
+      "gen": 173,
+      "best_fit": 0.984375,
+      "mean_fit": 0.947265625,
+      "top_phi": [],
+      "sample_idx": [],
+      "sample_phi": [],
+      "sample_fit": [],
+      "phi_measured": false,
+      "phi_dur_sec": 0.0
+    },
+    {
+      "gen": 174,
+      "best_fit": 0.984375,
+      "mean_fit": 0.9524739583333334,
+      "top_phi": [],
+      "sample_idx": [],
+      "sample_phi": [],
+      "sample_fit": [],
+      "phi_measured": false,
+      "phi_dur_sec": 0.0
+    },
+    {
+      "gen": 175,
+      "best_fit": 0.984375,
+      "mean_fit": 0.9498697916666666,
+      "top_phi": [],
+      "sample_idx": [],
+      "sample_phi": [],
+      "sample_fit": [],
+      "phi_measured": false,
+      "phi_dur_sec": 0.0
+    },
+    {
+      "gen": 176,
+      "best_fit": 0.984375,
+      "mean_fit": 0.9537760416666666,
+      "top_phi": [],
+      "sample_idx": [],
+      "sample_phi": [],
+      "sample_fit": [],
+      "phi_measured": false,
+      "phi_dur_sec": 0.0
+    },
+    {
+      "gen": 177,
+      "best_fit": 0.984375,
+      "mean_fit": 0.953125,
+      "top_phi": [],
+      "sample_idx": [],
+      "sample_phi": [],
+      "sample_fit": [],
+      "phi_measured": false,
+      "phi_dur_sec": 0.0
+    },
+    {
+      "gen": 178,
+      "best_fit": 0.984375,
+      "mean_fit": 0.9485677083333334,
+      "top_phi": [],
+      "sample_idx": [],
+      "sample_phi": [],
+      "sample_fit": [],
+      "phi_measured": false,
+      "phi_dur_sec": 0.0
+    },
+    {
+      "gen": 179,
+      "best_fit": 0.984375,
+      "mean_fit": 0.9446614583333334,
+      "top_phi": [],
+      "sample_idx": [],
+      "sample_phi": [],
+      "sample_fit": [],
+      "phi_measured": false,
+      "phi_dur_sec": 0.0
+    },
+    {
+      "gen": 180,
+      "best_fit": 0.984375,
+      "mean_fit": 0.939453125,
+      "top_phi": [
+        NaN
+      ],
+      "sample_idx": [
+        6
+      ],
+      "sample_phi": [
+        NaN
+      ],
+      "sample_fit": [
+        0.9375
+      ],
+      "phi_measured": true,
+      "phi_dur_sec": 0.0
+    },
+    {
+      "gen": 181,
+      "best_fit": 0.984375,
+      "mean_fit": 0.9518229166666666,
+      "top_phi": [],
+      "sample_idx": [],
+      "sample_phi": [],
+      "sample_fit": [],
+      "phi_measured": false,
+      "phi_dur_sec": 0.0
+    },
+    {
+      "gen": 182,
+      "best_fit": 0.984375,
+      "mean_fit": 0.9427083333333334,
+      "top_phi": [],
+      "sample_idx": [],
+      "sample_phi": [],
+      "sample_fit": [],
+      "phi_measured": false,
+      "phi_dur_sec": 0.0
+    },
+    {
+      "gen": 183,
+      "best_fit": 0.984375,
+      "mean_fit": 0.943359375,
+      "top_phi": [],
+      "sample_idx": [],
+      "sample_phi": [],
+      "sample_fit": [],
+      "phi_measured": false,
+      "phi_dur_sec": 0.0
+    },
+    {
+      "gen": 184,
+      "best_fit": 0.984375,
+      "mean_fit": 0.9485677083333334,
+      "top_phi": [],
+      "sample_idx": [],
+      "sample_phi": [],
+      "sample_fit": [],
+      "phi_measured": false,
+      "phi_dur_sec": 0.0
+    },
+    {
+      "gen": 185,
+      "best_fit": 0.984375,
+      "mean_fit": 0.9583333333333334,
+      "top_phi": [],
+      "sample_idx": [],
+      "sample_phi": [],
+      "sample_fit": [],
+      "phi_measured": false,
+      "phi_dur_sec": 0.0
+    },
+    {
+      "gen": 186,
+      "best_fit": 0.984375,
+      "mean_fit": 0.9544270833333334,
+      "top_phi": [],
+      "sample_idx": [],
+      "sample_phi": [],
+      "sample_fit": [],
+      "phi_measured": false,
+      "phi_dur_sec": 0.0
+    },
+    {
+      "gen": 187,
+      "best_fit": 0.984375,
+      "mean_fit": 0.9505208333333334,
+      "top_phi": [],
+      "sample_idx": [],
+      "sample_phi": [],
+      "sample_fit": [],
+      "phi_measured": false,
+      "phi_dur_sec": 0.0
+    },
+    {
+      "gen": 188,
+      "best_fit": 0.984375,
+      "mean_fit": 0.9485677083333334,
+      "top_phi": [],
+      "sample_idx": [],
+      "sample_phi": [],
+      "sample_fit": [],
+      "phi_measured": false,
+      "phi_dur_sec": 0.0
+    },
+    {
+      "gen": 189,
+      "best_fit": 0.984375,
+      "mean_fit": 0.9498697916666666,
+      "top_phi": [],
+      "sample_idx": [],
+      "sample_phi": [],
+      "sample_fit": [],
+      "phi_measured": false,
+      "phi_dur_sec": 0.0
+    },
+    {
+      "gen": 190,
+      "best_fit": 0.984375,
+      "mean_fit": 0.9420572916666666,
+      "top_phi": [
+        NaN
+      ],
+      "sample_idx": [
+        11
+      ],
+      "sample_phi": [
+        NaN
+      ],
+      "sample_fit": [
+        0.90625
+      ],
+      "phi_measured": true,
+      "phi_dur_sec": 0.0
+    },
+    {
+      "gen": 191,
+      "best_fit": 0.984375,
+      "mean_fit": 0.9518229166666666,
+      "top_phi": [],
+      "sample_idx": [],
+      "sample_phi": [],
+      "sample_fit": [],
+      "phi_measured": false,
+      "phi_dur_sec": 0.0
+    },
+    {
+      "gen": 192,
+      "best_fit": 0.984375,
+      "mean_fit": 0.94921875,
+      "top_phi": [],
+      "sample_idx": [],
+      "sample_phi": [],
+      "sample_fit": [],
+      "phi_measured": false,
+      "phi_dur_sec": 0.0
+    },
+    {
+      "gen": 193,
+      "best_fit": 0.984375,
+      "mean_fit": 0.9505208333333334,
+      "top_phi": [],
+      "sample_idx": [],
+      "sample_phi": [],
+      "sample_fit": [],
+      "phi_measured": false,
+      "phi_dur_sec": 0.0
+    },
+    {
+      "gen": 194,
+      "best_fit": 0.984375,
+      "mean_fit": 0.9485677083333334,
+      "top_phi": [],
+      "sample_idx": [],
+      "sample_phi": [],
+      "sample_fit": [],
+      "phi_measured": false,
+      "phi_dur_sec": 0.0
+    },
+    {
+      "gen": 195,
+      "best_fit": 0.984375,
+      "mean_fit": 0.9557291666666666,
+      "top_phi": [],
+      "sample_idx": [],
+      "sample_phi": [],
+      "sample_fit": [],
+      "phi_measured": false,
+      "phi_dur_sec": 0.0
+    },
+    {
+      "gen": 196,
+      "best_fit": 0.984375,
+      "mean_fit": 0.9466145833333334,
+      "top_phi": [],
+      "sample_idx": [],
+      "sample_phi": [],
+      "sample_fit": [],
+      "phi_measured": false,
+      "phi_dur_sec": 0.0
+    },
+    {
+      "gen": 197,
+      "best_fit": 0.984375,
+      "mean_fit": 0.9479166666666666,
+      "top_phi": [],
+      "sample_idx": [],
+      "sample_phi": [],
+      "sample_fit": [],
+      "phi_measured": false,
+      "phi_dur_sec": 0.0
+    },
+    {
+      "gen": 198,
+      "best_fit": 0.984375,
+      "mean_fit": 0.9544270833333334,
+      "top_phi": [],
+      "sample_idx": [],
+      "sample_phi": [],
+      "sample_fit": [],
+      "phi_measured": false,
+      "phi_dur_sec": 0.0
+    },
+    {
+      "gen": 199,
+      "best_fit": 0.984375,
+      "mean_fit": 0.953125,
+      "top_phi": [
+        NaN
+      ],
+      "sample_idx": [
+        2
+      ],
+      "sample_phi": [
+        NaN
+      ],
+      "sample_fit": [
+        0.96875
+      ],
+      "phi_measured": true,
+      "phi_dur_sec": 0.0
+    }
+  ]
+}

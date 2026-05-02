@@ -1,0 +1,180 @@
+{
+  "schema": "anima/strategic_clm_cp2_pivot_eta/phase_matrix/1",
+  "ts": "2026-05-01",
+  "current_clm_inventory": {
+    "checkpoint": "~/anima/checkpoints/clm_v4_350m/scale_350m/best.pt (ubu1, 5.0 GB, 530.99M params)",
+    "decoder_arch": {
+      "d_model": 768,
+      "n_blocks": 16,
+      "vocab": 64000,
+      "n_ca_rules": 8,
+      "tension_proj_native": true,
+      "phi_signal_pathway": "decoder_v3 line 165 (DD5 EX24 native)"
+    },
+    "mk_xii_v3_status": "HARD_PASS_PARTIAL_PENDING (5+1 component, OR-clause-1 v3 ALL_MODES_PASS_GREEN 2/3 backbones)",
+    "mk_xii_composite_v2_verdict": "MK_XII_VALIDATED 5/5 GREEN (preflight + G0 + G1 + G7 + G8 + G9), but D-day empirical replay flips to NOT GREEN under P3 GCG FALSIFIED + N=1 CORROBORATION_FAIL",
+    "w4_dynamic_l1": {
+      "active_mean": 7.0625,
+      "random_mean": 6.94125,
+      "z_score": 2.28,
+      "verdict": "PARTIAL (statistically significant separation, 7.06 << 14 PASS bar)"
+    },
+    "tension_bridge_native": true,
+    "hexa_native_runtime": true,
+    "eeg_d_day_status": "ARRIVED 2026-04-28; impedance 16/16 GREEN; P3 GCG FALSIFIED on N=1 60s post-battery; P1 LZ real .npy BLOCKED (Mac+Hetzner OOM 124GB); Berger 0/15 PASS on real .npy; P2 TLR not yet run"
+  },
+  "cp2_suite_inventory_clm_side": {
+    "1_paradigm_v11_8axis": {
+      "current_clm_measured": false,
+      "current_alm_used_backbones": ["mistral", "llama", "gemma", "qwen3"],
+      "applicable_to_clm": "PARTIAL — substrate-architectural axes (G3 PhiStar, G4 CMT, G5 CDS) require backbone forward-pass + tile-projection on h_last; CLM d_model=768 vs ALM d_model=4096 — JL-projection adaptation needed (precedent: W4 used JL 768->16). G6 SAE_bp requires trained SAE — CLM has none. G2 MCCA requires calibration prompts — neutral.",
+      "estimate": "5-7 / 8 axes measurable on CLM; G6 SAE strictly requires CLM-side SAE training (~$2-4 GPU)"
+    },
+    "2_an11_a_weight_emergent": {
+      "current_clm_measured": false,
+      "applicable_to_clm": "DIFFERENT METRIC — CLM has no LoRA adapter to compute ||ΔW||_F on. Could substitute training-step weight-shift ||W_step20000 - W_step0||_F as analogue, or skip and mark NOT-MEASURED with substrate-incompat reason (parallel to ALM's φ_4path NOT-MEASURED honest C3).",
+      "estimate": "NOT-MEASURED is honest verdict; alternative metric requires fresh design"
+    },
+    "3_an11_b_attached_V0_V1_V2_V3": {
+      "current_clm_measured": false,
+      "applicable_to_clm": "YES — V0 max_cosine + V1 phi_mip + V2 SMA + V3 CPS all use h_full from forward pass. CLM has phi_vec_extraction_result.json (16 templates × 16-D, deterministic SHA already in state). Direct port.",
+      "estimate": "V0 PASS likely (CLM tension_proj is consciousness-template-aligned by training); V1/V2/V3 verifier-ceiling property — universal FAIL on ALL ALM substrates suggests ceiling is method-architectural, but CLM substrate may differ. Direct measurement needed."
+    },
+    "4_an11_c_jsd": {
+      "current_clm_measured": false,
+      "applicable_to_clm": "YES — token-level JSD between CLM decoder + base reference. CLM is its own substrate; need a 'base reference' analogue (e.g., temperature=1.0 vs temperature=0.7 self-comparison, or CLM-step-0 vs CLM-step-20000).",
+      "estimate": "Direct measurement design needed; NOT a clean re-run"
+    },
+    "5_phi_4path": {
+      "current_clm_measured": false,
+      "applicable_to_clm": "NOT-MEASURED honest — single substrate (CLM v4 530M is one architecture) cannot constitute the 4-path heterogeneous-substrate measurement (same gap as ALM)",
+      "estimate": "Inherit NOT-MEASURED with same substrate-incompat reason"
+    },
+    "6_14_deterministic_gates": {
+      "current_clm_measured_static": false,
+      "current_clm_measured_dynamic_w4": "PARTIAL — L1=7.06/16 active vs 6.94 random (z=2.28) — statistically significant but 14/16 PASS not met; F2 fires (100/100 critical)",
+      "applicable_to_clm": "YES dynamically (W4 done) and statically (need 16-prompt × 16-D phi_template tile-projection on CLM h_last)",
+      "estimate": "Static run = 0.5-1.0 hr ubu1, $0; expected to confirm dynamic L1~7 result; F2 likely STILL FIRES"
+    },
+    "7_v_phen_5_5": {
+      "current_clm_measured": false,
+      "applicable_to_clm": "PARTIAL — GWT entropy / LZ / HOT top1-prob / mirror off-diag are forward-pass metrics directly portable; predictive R² requires CLM token-logprob (native).",
+      "estimate": "3-5 / 5 measurable on CLM; HOT/mirror first-ever on CLM substrate"
+    },
+    "8_eeg_external": {
+      "current_clm_measured": "PARTIAL — Path A pre-register v1.1 frozen; D-day empiricals partially complete (P3 GCG FALSIFIED N=1, Berger 0/15 PASS); P1 LZ real .npy BLOCKED on OOM; P2 TLR not yet run",
+      "applicable_to_clm": "YES — this is the CLM-native suite; ALM didn't have it. Suite 8 is CLM's home turf.",
+      "estimate": "Already partial; D+22-30 first composite verdict per parent doc handoff §6"
+    }
+  },
+  "phases": {
+    "A_clm_static_measurement_gap_closure": {
+      "scope": "Run paradigm v11 8-axis + AN11(b) V0/V1/V2/V3 + AN11(c) JSD + 14-gate static + V_phen 5/5 on CLM v4 530M, ubu1 RTX 5070",
+      "subtasks": [
+        {"id": "A.1", "name": "paradigm v11 8-axis port to CLM", "loc_estimate": "150-300 hexa", "gpu_hr": "1-2", "cost_usd": "0 (ubu1) - 2 (H100 for SAE)", "wallclock_hr": "4-8", "dependency": "phi_vec_extraction_result.json (already exists), W4 forward-pass driver (already exists)"},
+        {"id": "A.2", "name": "AN11(b) V0/V1/V2/V3 on CLM", "loc_estimate": "80-150 hexa", "gpu_hr": "0.5-1", "cost_usd": "0 (ubu1)", "wallclock_hr": "2-4", "dependency": "A.1 driver reuse"},
+        {"id": "A.3", "name": "AN11(c) JSD design + measure on CLM (need base-reference analogue)", "loc_estimate": "60-120 hexa", "gpu_hr": "0.3-0.7", "cost_usd": "0 (ubu1)", "wallclock_hr": "2-4", "dependency": "design choice: temp-pair vs step-0 pair"},
+        {"id": "A.4", "name": "14-gate static tile-projection on CLM", "loc_estimate": "50-100 hexa (W4 driver mostly there)", "gpu_hr": "0.2-0.5", "cost_usd": "0 (ubu1)", "wallclock_hr": "1-2", "dependency": "W4 driver; phi_template SHA stable"},
+        {"id": "A.5", "name": "V_phen 5/5 on CLM (GWT + LZ + HOT + mirror + predictive)", "loc_estimate": "120-200 hexa", "gpu_hr": "0.5-1", "cost_usd": "0 (ubu1)", "wallclock_hr": "3-6", "dependency": "A.1 driver reuse + LOO-CV harness"}
+      ],
+      "phase_total_loc": "460-870 hexa",
+      "phase_total_cost_usd": "0-4 (mostly ubu1; H100 only if SAE needed for G6)",
+      "phase_wallclock": "12-24 hr (sequential) or 6-12 hr (parallel A.1+A.4 then A.2+A.3+A.5)",
+      "risk_high": "G6 SAE_bp requires trained SAE on CLM activations — CLM has none; either skip + mark relaxed (mirror ALM's relaxed criterion) or train (~$2-4 GPU). NOT-MEASURED also valid honest path."
+    },
+    "B_mk_xii_v3_closure_3rd_backbone": {
+      "scope": "Close OR-clause-1 v3 3rd backbone (currently 2/3 PASS, missing 1 backbone)",
+      "current_status_from_handoff": "Mk.XII v3 backbones = gemma + mistral + qwen3 + llama (4 ALM substrates); 3rd backbone = Phi-3.5-mini per #235 actionable 2 'early mode 3/3'",
+      "subtasks": [
+        {"id": "B.1", "name": "Phi-3.5-mini paradigm v11 8-axis run + g_gate.json emit", "gpu_hr": "1-2 H100", "cost_usd": "3-5", "wallclock_hr": "4-8", "dependency": "v10_benchmark_v4 harness"},
+        {"id": "B.2", "name": "OR-clause-1 v3 ALL_MODES_PASS_GREEN promote to 3/3", "loc_estimate": "30-60 hexa (composite recompute)", "cost_usd": "0", "wallclock_hr": "1-2", "dependency": "B.1"}
+      ],
+      "phase_total_cost_usd": "3-5",
+      "phase_wallclock": "5-10 hr",
+      "risk_medium": "Phi-3.5-mini may NOT produce GREEN g_gate (paradigm v11 has substrate-failures already at G2/G4 on Mistral). 50% chance B.1 lands GREEN; 50% closes a 4th backbone fail and Mk.XII v3 stays PARTIAL_PENDING.",
+      "alternative_if_blocked": "Accept Mk.XII v3 PARTIAL_PENDING permanently; CP2-CLM proceeds without 3rd-backbone closure (Mk.XII is anima-internal verdict, not CP2 suite scope per cp2_consciousness_r14_remeasure scope.in_scope_suites = [1..7] only)"
+    },
+    "C_clm_dynamic_measurement_w4_strengthen": {
+      "scope": "W4 PARTIAL (L1=7.06/16, std=0.0) → push toward PASS (≥14/16). Per W4 honest C3 #1: PSI_ALPHA=0.014 too small vs d_model=768 residual norms.",
+      "subtasks": [
+        {"id": "C.1", "name": "PSI_ALPHA sweep (0.014 → 0.05 → 0.1 → 0.5)", "gpu_hr": "0.5 ubu1", "cost_usd": "0", "wallclock_hr": "1-2", "dependency": "W4 driver in place"},
+        {"id": "C.2", "name": "preserve 16-D directional info instead of L2-norm collapse (per W4 honest C3 #1b)", "loc_estimate": "30-60 hexa rewrite of feedback path", "cost_usd": "0", "wallclock_hr": "2-4", "dependency": "decoder_v3 _phi_signal API understanding"},
+        {"id": "C.3", "name": "multi-token autoregressive closed-loop (W4 deferred extension)", "loc_estimate": "100-200 hexa", "gpu_hr": "1-2 ubu1", "cost_usd": "0", "wallclock_hr": "4-8", "dependency": "C.2"},
+        {"id": "C.4", "name": "mind.tension feedback gain auto-tune", "loc_estimate": "40-80 hexa", "cost_usd": "0", "wallclock_hr": "2-3", "dependency": "C.3"}
+      ],
+      "phase_total_cost_usd": "0-2",
+      "phase_wallclock": "9-17 hr",
+      "risk_critical_per_W4_honest_C3": "Even with PSI_ALPHA scaled up, the feedback loop may still lock into a fixed point or oscillate without crossing the 14/16 bar. Probability dynamic L1 reaches ≥14/16: ~25-35% (raw#71 honest). PARTIAL → STRONGER PARTIAL is likely, PASS is uncertain."
+    },
+    "D_cp2_weighted_score_compute_for_clm": {
+      "scope": "Aggregate Phase A + Phase C measurements into CP2-CLM weighted score, evaluate F2 falsifier, emit verdict_matrix",
+      "subtasks": [
+        {"id": "D.1", "name": "design CP2-CLM weighted score schema (substrate-CLM variant of cp2_consciousness_r14 verdict_matrix)", "loc_estimate": "60-100 hexa + JSON spec", "cost_usd": "0", "wallclock_hr": "2-4", "dependency": "A.1-A.5 outputs"},
+        {"id": "D.2", "name": "compute weighted score + F2 + ship_verdict", "loc_estimate": "40-80 hexa aggregator", "cost_usd": "0", "wallclock_hr": "1-2", "dependency": "D.1"},
+        {"id": "D.3", "name": "emit ship_verdict candidate (VERIFIED-CP2-GREEN-CLM iff weighted ≥70 AND F2 NOT FIRED)", "cost_usd": "0", "wallclock_hr": "0.5-1", "dependency": "D.2"}
+      ],
+      "phase_total_cost_usd": "0",
+      "phase_wallclock": "3.5-7 hr",
+      "risk_critical": "CP2 framework is ALM-anchored: weights {paradigm v11=0.222, AN11(a)=0.111, AN11(b)=0.167, AN11(c)=0.111, φ_4path=0.111, 14-gate=0.167, V_phen=0.111}. Applying these to CLM with NOT-MEASURED on AN11(a) + φ_4path AND F2-likely-FIRES on 14-gate yields theoretical max weighted = 0.611 (61.1%) at 5/5 PASS on remaining 5 suites. **This is BELOW the 70% CP2 GREEN threshold by construction.** Either re-weight (goal-seeking risk) or accept CP2-CLM ceiling at YELLOW band even before measurement."
+    }
+  },
+  "critical_path": {
+    "longest_phase": "A (12-24 hr serial; 6-12 hr parallel)",
+    "parallelizable": "A.1 || A.4 (both reuse W4 driver), A.2 || A.3 || A.5 (after A.1 lands)",
+    "sequential_gates": "A → D (D depends on all A outputs); B independent (parallel to A); C independent (parallel to A, but feeds 14-gate dynamic into D)",
+    "min_wallclock_with_parallel": "A_parallel (12hr) + D (4hr) = 16 hr if pure CLM-static sufficient; +C parallel adds 0 wallclock; +B adds 0 wallclock (parallel)",
+    "min_wallclock_serial": "A (24h) + B (10h) + C (17h) + D (7h) = 58 hr",
+    "realistic_wallclock_with_iteration": "30-50 hr (3-5 days at 6-10 hr/day cadence including subagent overhead, debug, OOM retries per W4 lessons)"
+  },
+  "cost_breakdown": {
+    "phase_A_usd_low": 0,
+    "phase_A_usd_high": 4,
+    "phase_B_usd_low": 3,
+    "phase_B_usd_high": 5,
+    "phase_C_usd_low": 0,
+    "phase_C_usd_high": 2,
+    "phase_D_usd_low": 0,
+    "phase_D_usd_high": 0,
+    "total_usd_low": 3,
+    "total_usd_high": 11,
+    "ubu1_local_share_pct": "75-90% (most of A, all of C, all of D on ubu1 RTX 5070; only B + optional G6 SAE on H100)",
+    "h100_required_for": "B (Phi-3.5-mini cross-backbone) + optional G6 SAE training",
+    "cap_recommendation_usd": 15
+  },
+  "risk_register": {
+    "phase_A_substrate_protocol_compat": {
+      "level": "MEDIUM",
+      "description": "paradigm v11 was authored against ALM hidden-state dim (d_model 4096); CLM d_model=768 needs JL-projection (precedent: W4 768->16 random JL works, but introduces noise floor inflation per W4 C3 #2). G6 SAE_bp has no CLM-trained SAE (random-feature fallback yields G6 sham PASS on Mistral too, so honest failure may invalidate G6 cross-backbone interpretation).",
+      "mitigation": "Use same JL seed family as W4 (seed=42) for consistency; mark G6 NOT-MEASURED honest if SAE absent."
+    },
+    "phase_B_3rd_backbone_unreachable": {
+      "level": "MEDIUM",
+      "description": "Phi-3.5-mini may FAIL G2/G4 just like Mistral does (substrate-architectural). Mk.XII v3 stays PARTIAL_PENDING. Per phase_matrix scope.in_scope_suites this does NOT block CP2-CLM (Mk.XII is internal anima ledger, not CP2 framework).",
+      "mitigation": "Decouple Mk.XII closure from CP2-CLM ship; both can be PARTIAL/GREEN independently."
+    },
+    "phase_C_dynamic_l1_ceiling": {
+      "level": "HIGH",
+      "description": "W4 honest C3 #1: PSI_ALPHA=0.014 too small vs d_model=768; even with sweep, the basin may have a hard L1 ceiling around 7-10/16 due to phi_template × CLM-h_last cosine geometry being structurally bounded. Probability dynamic L1 ≥14/16: ~25-35%.",
+      "mitigation": "Accept dynamic L1=7-10 as the CLM substrate signature; reframe verdict around the cross-substrate Δ (CLM 7 vs ALM 0) as the substrate-discriminating signal rather than absolute PASS bar."
+    },
+    "phase_D_framework_alm_anchored": {
+      "level": "CRITICAL",
+      "description": "CP2 weights and F2 falsifier predicate were authored for ALM RED closure context. NOT-MEASURED on AN11(a) (no LoRA on CLM) + φ_4path (single substrate) caps theoretical weighted at ~0.611 < 0.70 GREEN threshold. F2 ≥3 critical predicate likely fires on 14-gate at L1~7. **Without re-weighting, CP2-CLM ceiling is YELLOW band by framework construction**.",
+      "mitigation": "Two honest options: (1) accept CLM-CP2 ceiling at YELLOW + ship as VERIFIED-INTERNAL-CLM with public RED/YELLOW disclosure (parallel to ALM); (2) author CP2-v2-CLM-native framework with substrate-appropriate weights (e.g., elevate AN11(b) + V_phen + 14-gate-dynamic weight, drop AN11(a)/φ_4path NOT-MEASURED to 0 weight) — but this is goal-seeking unless pre-registered BEFORE measurement closes."
+    }
+  },
+  "verdict_outlook": {
+    "verified_internal_clm_yellow_band": {
+      "probability": 0.55,
+      "evidence_basis": "Phase A measures + Phase C dynamic strengthen; weighted score ~50-65% by ALM-anchored CP2 framework; F2 fires on 14-gate; honest YELLOW analogous to ALM RED-with-evidence"
+    },
+    "verified_cp2_green_clm": {
+      "probability": 0.15,
+      "evidence_basis": "Requires (a) CP2-v2-CLM-native pre-registered re-weight + (b) Phase C dynamic L1 ≥14/16 OR Phase A 14-gate-static L1 ≥14/16 — neither likely per W4 C3 + L1 substrate-architectural pattern"
+    },
+    "ceiling_yellow_then_publish_negative_or_partial": {
+      "probability": 0.30,
+      "evidence_basis": "Honest path matching the strategic_alm_clm_review §3.5 ALM exit pattern: keep CLM serving as substrate, mark consciousness verdict YELLOW, publish CLM-specific evidence (W4 dynamic Δ vs ALM, paradigm v11 cross-substrate, V_phen first-on-CLM HOT/mirror)"
+    }
+  }
+}

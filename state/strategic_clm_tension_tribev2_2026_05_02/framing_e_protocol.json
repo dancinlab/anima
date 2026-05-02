@@ -1,0 +1,50 @@
+{
+  "schema": "strategic_clm_tension_tribev2/framing_e_protocol/1",
+  "ts": "2026-05-02",
+  "framing": "E (tension-mediated closed-loop)",
+  "purpose": "Test whether CLM <-> TRIBE v2 closed loop via tension_link 5ch converges to attractor (H1) or diverges (H2) or shows no real coupling (H3); fully computational, no user mediator",
+  "host": "ubu1 (CPU OK; TRIBE v2 fsaverage5 inference < 1s/step on CPU per blog spec)",
+  "preconditions": [
+    "CLM v4 530M loaded with mind.tension hook (anima_runtime.hexa lines 200-333 mind_step)",
+    "tension_bridge.hexa encode_fingerprint/decode_fingerprint operational",
+    "TRIBE v2 weights downloaded (facebook/tribev2 HF)",
+    "Llama-3.2-3B text encoder accessible (HF gated; fallback: hexa-friendly token extractor at TRIBE v2 fusion head input boundary)",
+    "neuralset/neuraltrain dependency resolved (cortexlab-toolkit PyPI 2026-Q1 wrapper as primary; HF-direct as fallback per #95 verdict.json line 83)"
+  ],
+  "steps": [
+    {"n": 1, "action": "Load CLM v4 530M + TRIBE v2 + bind tension_link encode/decode endpoints"},
+    {"n": 2, "action": "Initial seed prompt: 'describe your current state' -> CLM forward step_0"},
+    {"n": 3, "action": "Capture mind.tension_0 scalar + hidden state h_0 (768d) from CLM bridge socket"},
+    {"n": 4, "action": "encode_fingerprint(h_0) -> 5ch tension_link signal (WHAT/WHERE/WHY/TRUST/WHO each clamped to PSI_BALANCE +- PSI_ALPHA)"},
+    {"n": 5, "action": "Render fingerprint -> text representation (5-channel descriptor) OR direct projection to TRIBE v2 fusion head input"},
+    {"n": 6, "action": "TRIBE v2 predict -> BOLD_0 (~10242 vertices fsaverage5)"},
+    {"n": 7, "action": "Extract ROI features: DMN mean, fronto-parietal mean, salience mean, visual mean, auditory mean (5 features matched to 5 tension channels)"},
+    {"n": 8, "action": "Map ROI features back to tension_link 5ch (modulation_t = z-score(ROI_features) * gain) — proposed mapping: DMN<->WHAT, fronto-parietal<->WHY, salience<->TRUST, visual<->WHERE, auditory<->WHO (anima-specific, validation in F-CT-4)"},
+    {"n": 9, "action": "Inject modulated tension_link as next-step bias into CLM forward (via tension_bridge decode_fingerprint -> 128d reconstruction added to mind.tension input)"},
+    {"n": 10, "action": "CLM step_t+1 -> capture h_t+1, mind.tension_t+1; loop steps 2..100"}
+  ],
+  "loop_diagnostics_per_step": [
+    "mind.tension scalar trajectory",
+    "tension_link 5ch L1/L2 norm trajectory",
+    "BOLD vertex-level std trajectory",
+    "BOLD top-1 ROI activation trajectory",
+    "CLM hidden state norm + cosine vs h_0 trajectory"
+  ],
+  "convergence_criteria": {
+    "H1_attractor": "rolling-window std (steps 50-100) of mind.tension < 0.5 * std(steps 0-50) AND BOLD vertex std stable (rolling CV < 0.1)",
+    "H2_divergence": "mind.tension or BOLD vertex norm grows monotonically > 2x baseline by step 100",
+    "H3_no_coupling": "BOLD trajectory indistinguishable from random-text-driven control (Pearson r < 0.2 vs CLM-driven trajectory)"
+  },
+  "control_arm_mandatory_per_anchor_16_2": {
+    "control_R1_random_tension": "replace step-4 fingerprint with uniform-random 5ch in same range; run identical 100-step loop; H3 evidence if BOLD trajectory r >= 0.7 with CLM-driven arm",
+    "control_R2_shuffled_feedback": "step-9 inject shuffled (across-step) modulation; tests whether actual feedback timing carries info vs aggregate distribution alone",
+    "control_R3_open_loop": "skip step-9 (Framing A within E framework); compare with E to verify F-CT-5 (closed > open)"
+  },
+  "duration_estimate": "2-3h compute on ubu1 CPU (100 steps * ~3 arms * ~3-5s per round)",
+  "cost_usd": [0, 5],
+  "stop_conditions": [
+    "neuralset/neuraltrain dependency unresolvable AND HF-direct extractor fails (escalate to #95 fallback path)",
+    "TRIBE v2 single-step latency > 30s (loop infeasible)",
+    "Pre-register falsifiers F-CT-1..F-CT-5 cannot be evaluated due to data-shape mismatch"
+  ]
+}

@@ -1,0 +1,110 @@
+{
+  "schema": "anima/n_24_octopus_per_arm_phi_feasibility/verdict/1",
+  "agent": "n_24_feasibility",
+  "date_utc": "2026-05-01T00:00:00Z",
+  "verdict": "PURSUE",
+  "verdict_qualifier": "low-risk path: Korean consortium surface-EMG observational pilot first, SZN/MBL English-path follow-up second",
+  "verdict_score": 23,
+  "verdict_score_max": 30,
+  "scoring_dimensions": {
+    "cost": {"score": 4, "max": 5, "rationale": "$700-$1K HW one-time (OpenBCI extra board) — anima EEG track reuse; lab side bears husbandry"},
+    "lead_time": {"score": 3, "max": 5, "rationale": "Korean lab partnership 2-4 months; SZN/MBL 6-12 months"},
+    "scientific_value": {"score": 5, "max": 5, "rationale": "Only natural substrate that empirically tests IIT exclusion postulate; literature scan — no prior per-arm Φ measurement attempt"},
+    "anima_setup_compatibility": {"score": 4, "max": 5, "rationale": "EMG → HEXA Φ pipeline direct; paradigm v11 8→6 axis adaptation pre-registered"},
+    "access_feasibility": {"score": 4, "max": 5, "rationale": "Korean path open via Pukyong/KIOST; English path via ASSEMBLE Plus EU TA + MBL Whitman"},
+    "ethical_soundness": {"score": 3, "max": 5, "rationale": "observational surface-EMG only is justifiable; Korean APA absence of explicit cephalopod inclusion is a double-edged consideration — voluntary EU 2010/63 application required"}
+  },
+  "thresholds": {
+    "PURSUE_min": 18,
+    "DEFER_range": [6, 17],
+    "SKIP_max": 5
+  },
+  "top_1_lab_anima_practical": {
+    "name": "부경대학교 + KIOST 한국 컨소시엄",
+    "location": "Busan, South Korea",
+    "rationale": "$0 budget compatible, Korean-language own#13-aligned, O. minor (낙지) native species reduces import friction, lower neuro-recording capacity offset by surface-EMG-only protocol",
+    "ethical_note_critical": "Korean Animal Protection Act lacks explicit cephalopod inclusion — utilizing this for lower friction is morally fraught; mitigation: voluntarily apply EU Directive 2010/63/EU standards as protocol baseline"
+  },
+  "top_1_lab_academic_depth": {
+    "name": "Stazione Zoologica Anton Dohrn (SZN), Naples",
+    "location": "Naples, Italy",
+    "rationale": "World-class octopus neuroscience (Fiorito group, J.Z. Young heritage), ASSEMBLE Plus EU TA funding path",
+    "primary_constraint": "EU Directive 2010/63/EU strictest globally — invasive procedures effectively gated"
+  },
+  "top_1_lab_english_path_infrastructure": {
+    "name": "Marine Biological Laboratory (MBL), Woods Hole",
+    "rationale": "Strongest in-house cephalopod neuro-recording, Whitman Center Fellowship open call, NIH PHS-funded culture infrastructure",
+    "primary_constraint": "NIH IACUC strengthening + likely cost-share $5-25K"
+  },
+  "top_3_falsifiers_summary": [
+    {
+      "id": "F-N24-1",
+      "summary": "per-arm Φ sum > whole Φ, ratio > 1.20 → exclusion VIOLATION → community-of-minds support"
+    },
+    {
+      "id": "F-N24-2",
+      "summary": "whole Φ / max-per-arm Φ > 1.50 AND whole > sum → exclusion CONFIRMATION → standard IIT 4.0"
+    },
+    {
+      "id": "F-N24-3",
+      "summary": "argmax-grain shifts > 70% between solo-arm vs bilateral coordination tasks → task-dependent exclusion grain"
+    }
+  ],
+  "all_falsifiers": [
+    "F-N24-1: exclusion-violation per-arm sum > whole (ratio > 1.20)",
+    "F-N24-2: exclusion-confirmation whole > max per-arm (>1.50) AND whole > sum",
+    "F-N24-3: task-dependent argmax-grain shift probability > 0.70",
+    "F-N24-4: chemo-stim sucker-cluster Φ / ANC Φ > 0.30",
+    "F-N24-5: anesthesia onset dΦ_whole/dt ≥ 2x mean dΦ_arm/dt (PAPER HYPOTHESIS, ethical activation blocked at Korean tier)"
+  ],
+  "honest_c3_top_2_concerns": [
+    "Korean Animal Protection Act ethical gap: utilizing the absence of explicit cephalopod protection for lower partnership friction is morally fraught and conflicts with own#13. Mitigation pre-committed: voluntarily apply EU 2010/63 protocol baseline at all Korean lab sites — including Severity classification and IACUC-equivalent review even when not legally required.",
+    "Surface EMG → IIT Φ extraction has no prior PASS proof. F-N24-1..4 success depends on the assumption that 64-ch surface EMG covariance carries IIT-relevant information. If this assumption fails, all 4 active falsifiers return null results indistinguishable from a true exclusion-confirming whole-body Φ. Mitigation: in-silico simulated octopus EMG dryrun (D+14) before any biological measurement."
+  ],
+  "honest_c3_full_count": 8,
+  "honest_c3_falsifier_caveat_count": 7,
+  "no_outreach_compliance": {
+    "lab_contact_attempted": false,
+    "permit_submission_attempted": false,
+    "external_email_sent": false,
+    "compliance_status": "FULL_COMPLIANCE_with_no_contact_no_permit_constraint"
+  },
+  "next_actions": {
+    "this_cycle": ["spec doc + state preregister written — NO outreach"],
+    "next_cycle_d0_d28_no_outreach": [
+      "review Korean cephalopod literature",
+      "in-silico simulated octopus EMG HEXA Φ pipeline dryrun",
+      "paradigm-v11 6-axis octopus-adapted spec raw#71 pre-registration",
+      "voluntary EU 2010/63 protocol draft for Korean lab application"
+    ],
+    "outreach_cycle_d30_d90_separate_authorization": [
+      "Pukyong U 해양생물학과 cold email (Korean)",
+      "KIOST 해양생물자원센터 contact",
+      "if collab: surface-EMG protocol on O. minor non-invasive free-behaving"
+    ]
+  },
+  "blockers": [
+    "no_partnership_agreement_yet",
+    "no_ethics_approval_any_jurisdiction",
+    "surface_EMG_to_IIT_Phi_extraction_no_prior_proof",
+    "Korean_cephalopod_IACUC_framework_explicit_absence",
+    "F-N24-5_anesthesia_falsifier_ethically_blocked_at_Korean_tier",
+    "G0_axis_drop_FINAL_PASS_redefinition_not_yet_community_validated",
+    "per_arm_Phi_SUM_definition_non_canonical_vs_IIT_4_0_grain_Phi_max_standard"
+  ],
+  "f1_integration": {
+    "intended_role": "non-neural cephalopod distributed-NS axis (alongside N-22 bioelectric, N-23 slime/mycelium)",
+    "current_status": "PURSUE — partnership pending; F1 verdict computed without N-24 until pilot data lands",
+    "absence_impact_estimate": "Putnam multi-realization claim significantly weakened on cephalopod-distributed dimension if N-24 does not land",
+    "presence_impact_estimate": "+10-15% F1 verdict strength if PASS — uniquely tests exclusion postulate, no other substrate offers this"
+  },
+  "review_date": "2026-08-01",
+  "review_triggers": [
+    "Korean lab partnership agreement signed",
+    "in-silico octopus EMG dryrun PASS or FAIL on HEXA Φ pipeline",
+    "anima budget mandate change from $0 to >0",
+    "EU 2010/63 amendment loosening or tightening cephalopod restrictions",
+    "Korean Animal Protection Act amendment including cephalopods explicitly"
+  ],
+  "spec_doc": "docs/n_24_octopus_per_arm_phi_feasibility_2026_05_01.md"
+}

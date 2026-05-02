@@ -1,0 +1,40 @@
+{
+  "spec_id": "cp2_clm_phase_e_spec_2026_05_02",
+  "agent": "CP2-CLM Phase E spec design",
+  "date": "2026-05-02",
+  "status": "SPEC_FROZEN_AWAITING_USER_EXECUTION",
+  "lineage": {
+    "predecessor_a": "cp2_clm_phase_d_recompute_2026_05_02 (#94, #96, #104)",
+    "predecessor_b": "n_1_bridge_v2_realtime_prep_2026_05_02 (#103)",
+    "trigger_recommendation": "#104 (next cycle = Phase E, path-d default)"
+  },
+  "objectives": {
+    "BSE_1_pearson_3way": {
+      "description": "Pearson cross-correlation on 3-way subset CLM x EEG x tension_link (AKIDA excluded — substrate not arrived)",
+      "primary_estimator": "pairwise Pearson r per phase across 6 phases, then aggregate cross-pair mean |r|",
+      "secondary_estimator": "BSE-3 transfer entropy KSG (k=4, lag=1s) — diagnostic only, NOT primary verdict driver"
+    },
+    "binding_term_active": {
+      "beta": 0.3,
+      "formula_ref": "F1_score_v2 = 0.6*per_axis_weighted_sum + 0.3*binding_strength + 0.1*replication_bonus (#96)",
+      "binding_strength_definition": "mean of three pairwise |r| aggregates, clamped [0,1]"
+    },
+    "f_artifact_safeguard": {
+      "policy": "random-shuffle controls R1/R2/R3 mandatory per §16.2 anchor #2",
+      "trigger": "if R1 OR R2 OR R3 binding indistinguishable from real (KS p>0.10), verdict = F-ARTIFACT regardless of |r|"
+    },
+    "expected_uplift": {
+      "pre_phase_e_F1_v2": 0.408,
+      "target_post_phase_e_F1_v2": 0.56,
+      "uplift_band": "YELLOW potential (0.5-0.7)",
+      "conditional_on": ["binding_strength > 0.5", "F2 unfire compound (separate path)"]
+    },
+    "tie_in_n1_bridge_v2": "Phase E reuses #103 LSL infrastructure (clm_w4_lsl_server.py + phase_runner.sh + analyze_xdf.py); Phase E adds 3-way binding aggregation on top of existing pairwise output."
+  },
+  "scope_exclusions": [
+    "AKIDA Mind 4-way full F1_C — blocked, substrate not arrived",
+    "N>=2 between-subject — N=1 user only",
+    "BSE-2/BSE-4/BSE-5 — out of scope this cycle",
+    "F2 14-gate unfire — separate path (b/c) outside Phase E"
+  ]
+}

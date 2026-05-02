@@ -20,9 +20,72 @@ honesty-triad:
     - "(e) .guide — LLM agents cold-entry navigation"
   status: "5/5 REPO_INVARIANT"
   policy: "claude code CLI 의존도 0 (2026-04-26 directive); CLAUDE.md 삭제됨, .raw + .own + .guide triad 가 canonical SSOT"
+schema_version: project/guide/v1
+last_updated: 2026-05-02
+ssot_owner: anima/.guide
+mk: 2
 ---
 
 # anima — project guide
+
+## cold_entry_index
+
+AI agent landing on anima MUST scan these first (in order):
+
+1. **mk2 ecosystem** — 11 components active since 2026-05-02 (see `## mk2_ecosystem_index` below).
+2. **anima paradigm v11 stack** — 8-axis FC + Mk.XI v10 4-backbone ensemble + paradigm exhaustion finding.
+3. **own SSOT** — `.own` (raw 20 monotonic strengthening); 9 own entries active (own 1-9).
+4. **honesty triad 5/5** — git-tracked SSOT + design/ + tool/ + atlas + .guide REPO_INVARIANT.
+5. **Cross-repo coordination** — hexa-lang (canonical .raw mirror), nexus (atlas append), anima-eeg (EEG hardware), secret (credentials).
+6. **Layer 4 spec catalog** — `hive/spec/` (architecture/concept layer above raw); anima follows hive Layer 4.
+
+## mk2_ecosystem_index
+
+Snapshot at 2026-05-02 land. 11 mk2 ecosystem components (anima participates in #1, #5, #10):
+
+1. **mk2 roadmap** (anima 21 file / nexus 3 / hexa-lang 1) — `perspective` field (provider/consumer/peer) + `excludes` field. Tools: `anima/tool/roadmap_{op,lint,compile,render}.hexa` (cross-repo aware).
+2. **Layer 4 spec system** — `hive/spec/ai_native_module_architecture.spec.yaml`.
+3. **core + module + ai-native triplet** — INSEPARABLE (raw 270/271/272/273 + mk2 arch.001 consolidated).
+4. **Recursive dogfooding L1-L5** — raw / hxc / grammar / attr / hook / closure_format levels.
+5. **Cross-repo path adapter** — `hive/config/cross_repo_registry.json` (anima registered).
+6. **raw mode toggle** — `hive/core/raw_mode/` + `tool/raw_mode_op.hexa`.
+7. **closure → bind rename** (raw 267) — `tool/bind_*.hexa`.
+8. **HXC v2 5/5 axes** — `hive/modules/hxc_format/hxc_v2.hexa`.
+9. **Hybrid auto-wire** — `spec_v1.schema.yaml` `auto_wire` field (Hybrid impl step 1 LANDED).
+10. **Consumer/Provider perspective** — `anima/.roadmap.{qrng,sim,kick}` ↔ `nexus/.roadmap.*` (anima = consumer + peer).
+11. **Layer 4 vs Layer 2 raw distinction** — Phase 2-5 retract DEFERRED per user directive.
+
+## agent_directives
+
+When agent intent matches any keyword below, consult Layer 4 spec catalog FIRST.
+
+| keyword | action |
+|---|---|
+| `module`, `core`, `ai-native` | consult `hive/spec/ai_native_module_architecture.spec.yaml`; propose triplet (core+module+ai-native) when relevant |
+| `raw add`, `lint`, `scaffold` | consult `hive/spec/schema/spec_v1.schema.yaml#auto_wire_subschema` |
+| `mk2`, `spec` | Layer 4 spec system; consult `hive/spec/schema/` |
+| `chflags`, `unlock`, `relock` | `tool/uchg_safe_edit.hexa` audit + `hexa-lang/tool/roadmap_with_unlock.hexa` atomic dance |
+| `runpod`, `vast.ai`, `GPU dispatch` | own 5 + own 6 (no preset cap, no per-invocation user approval) |
+| `paradigm`, `Mk.XI`, `v11` | docs/paradigm_v11_stack_20260426.md + Mk.XI v10 4-backbone ensemble |
+| `consciousness`, `FC`, `PC` | own 2 production-consciousness-triad (a)(b)(c) |
+
+## cross_link_to_specs
+
+- `hive/spec/ai_native_module_architecture.spec.yaml` — first Layer 4 spec
+- `hive/spec/schema/spec_v1.schema.yaml` — spec instance schema
+- `hive/spec/schema/guide_v1.schema.yaml` — THIS schema (mk2 .guide format)
+- `hive/spec/schema/own_v1.schema.yaml` — sibling .own mk2 schema
+- `hive/tool/root_ssot_mk2_lint.hexa` — additive mk2 lint (runs alongside `tool/own_lint.hexa`)
+
+## migration_status
+
+- **mk2 .guide land**: 2026-05-02 (this file). additive over mk1 (canonical-files + ssot-anchors + honesty-triad preserved).
+- **mk2 .own land**: 2026-05-02 (companion). additive over mk1 raw-format rule body.
+- **Layer 4 spec scaffold**: Phase 1 LANDED (1 spec + 4 schemas in hive).
+- **Layer 2 raw retract** (Phase 2-5): DEFERRED per user directive 2026-05-02 verbatim "마이그레이션은 일단 하지말고 구성만 짜가자".
+- **mk1 lint compatibility**: PRESERVED — anima's own_lint + hive's guide_lint pillars still apply.
+
+## (mk1 body — verbatim below)
 
 `anima` is the consciousness research host: V_phen_GWT_v2 verifier infrastructure (12-tier backbone baseline registry r10), AN11(a/b/c) 3-axis verifier chain, Mk.VI Qwen3-8B + LoRA r6/r14 trained adapters, Mk.XI minimum consciousness architecture spec.
 

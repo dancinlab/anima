@@ -1,0 +1,77 @@
+{
+  "agent": "N-15 MVF2+MVF3 Lean 4 EXEC",
+  "ts": "2026-05-01",
+  "mission": "MVF2 symmetry (Eq.symm) + MVF3 transitivity (Eq.trans) — single Lean 4 project, axiom-free, mathlib4-free",
+  "spec_ref": "docs/n_substrate_n15_hott_formalization_spec_2026_05_01.md MVF ladder rungs 2 and 3",
+  "lean_4": {
+    "installed": true,
+    "version": "Lean 4.30.0-rc1",
+    "toolchain": "leanprover/lean4:v4.30.0-rc1",
+    "lake_version": "5.0.0-src+714601b",
+    "lake_path": "/opt/homebrew/bin/lake",
+    "lean_path": "/opt/homebrew/bin/lean"
+  },
+  "project": {
+    "location": "/tmp/n15_mvf23_lean4",
+    "off_repo": true,
+    "hexa_only_compliance": true,
+    "files": [
+      "N15Mvf23.lean",
+      "Main.lean",
+      "lakefile.toml",
+      "lean-toolchain"
+    ],
+    "mathlib4_dependency": false,
+    "mathlib4_skipped_reason": "MVF2 symmetry uses Eq.symm and MVF3 transitivity uses Eq.trans, both Lean 4 core; mathlib only required at MVF4 univalence"
+  },
+  "build": {
+    "command": "lake build",
+    "exit_code": 0,
+    "result": "PASS",
+    "jobs": 6,
+    "log_excerpt": [
+      "[2/6] Replayed N15Mvf23",
+      "N15Mvf23.lean:20:0: 'N15.mvf2_symmetry' does not depend on any axioms",
+      "N15Mvf23.lean:21:0: 'N15.mvf3_transitivity' does not depend on any axioms",
+      "[4/6] Built Main (1.7s)",
+      "[5/6] Built Main:c.o (301ms)",
+      "[6/6] Built n15_mvf23:exe (507ms)",
+      "Build completed successfully (6 jobs)."
+    ]
+  },
+  "proofs": {
+    "mvf2_symmetry": {
+      "theorem_name": "N15.mvf2_symmetry",
+      "statement": "(c1 c2 : Conscious) → is_conscious_equivalent c1 c2 → is_conscious_equivalent c2 c1",
+      "term": "fun h => h.symm",
+      "core_lemma": "Eq.symm",
+      "axioms_used": [],
+      "axioms_check_command": "#print axioms N15.mvf2_symmetry",
+      "axioms_check_output": "'N15.mvf2_symmetry' does not depend on any axioms",
+      "sorry_count": 0
+    },
+    "mvf3_transitivity": {
+      "theorem_name": "N15.mvf3_transitivity",
+      "statement": "(c1 c2 c3 : Conscious) → is_conscious_equivalent c1 c2 → is_conscious_equivalent c2 c3 → is_conscious_equivalent c1 c3",
+      "term": "fun h12 h23 => h12.trans h23",
+      "core_lemma": "Eq.trans",
+      "axioms_used": [],
+      "axioms_check_command": "#print axioms N15.mvf3_transitivity",
+      "axioms_check_output": "'N15.mvf3_transitivity' does not depend on any axioms",
+      "sorry_count": 0
+    }
+  },
+  "metrics": {
+    "loc_total": 23,
+    "loc_proofs_only": 9,
+    "loc_estimate_in_spec": 10,
+    "loc_match": "within budget"
+  },
+  "equivalence_relation_status": {
+    "reflexivity_mvf1": "PASS (prior agent)",
+    "symmetry_mvf2": "PASS",
+    "transitivity_mvf3": "PASS",
+    "completeness": "is_conscious_equivalent is now formally proven to be an equivalence relation on Conscious, axiom-free"
+  },
+  "verdict": "MVF2_AND_MVF3_BUILD_PASS_AXIOM_FREE_SORRY_FREE_OFF_REPO"
+}

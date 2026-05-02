@@ -1,0 +1,76 @@
+{
+  "schema": "anima/aws_braket_access_checklist/1",
+  "agent": "n_substrate_n12_prep",
+  "axis_id": "N-12",
+  "ts_utc": "2026-05-01T00:00:00Z",
+  "purpose": "User-side pre-onboarding checklist for IonQ Forte 1 access via AWS Braket. NO action taken by agent; user must execute each step on own authorization.",
+  "agent_actions_taken": [],
+  "user_actions_required": [
+    {
+      "step": 1,
+      "name": "AWS account",
+      "detail": "Create or use existing AWS account; institutional preferred for billing isolation",
+      "prereq": "Credit card, email, phone for verification",
+      "estimated_minutes": 10,
+      "blocker_if_missing": "no Braket access possible"
+    },
+    {
+      "step": 2,
+      "name": "IAM permissions",
+      "detail": "Attach AmazonBraketFullAccess policy to user/role; or create least-privilege Braket-only policy",
+      "prereq": "Root account login",
+      "estimated_minutes": 5,
+      "doc_link": "https://docs.aws.amazon.com/braket/latest/developerguide/braket-manage-access.html"
+    },
+    {
+      "step": 3,
+      "name": "Enable Braket service",
+      "detail": "Braket console -> Permissions tab -> 'Enable Amazon Braket'; auto-creates S3 bucket amazon-braket-us-east-1-<acct-id> for results",
+      "prereq": "step 2",
+      "estimated_minutes": 3,
+      "region": "us-east-1"
+    },
+    {
+      "step": 4,
+      "name": "Billing alarm",
+      "detail": "CloudWatch -> Billing alarm -> threshold $50 USD; SNS notify on breach",
+      "prereq": "step 1",
+      "estimated_minutes": 5,
+      "honest_c3_note": "Soft cap only; AWS does not auto-stop tasks. Hard limit requires Service Quotas + custom Lambda."
+    },
+    {
+      "step": 5,
+      "name": "Local SDK or Notebook",
+      "detail": "Option A: pip install amazon-braket-sdk in local Python 3.9+ environment. Option B: use AWS-side Braket Notebook (Jupyter, preinstalled) to avoid local Python install. NOTE: anima HEXA-only policy means user runs Python in separate environment, not in anima repo.",
+      "prereq": "step 3",
+      "estimated_minutes": 2,
+      "alternative": "Braket Notebook on AWS console"
+    },
+    {
+      "step": 6,
+      "name": "Forte 1 device ARN verification",
+      "detail": "Braket console -> Devices -> filter 'IonQ' -> identify Forte 1 entry -> copy exact ARN string. Predicted: arn:aws:braket:us-east-1::device/qpu/ionq/Forte-1 (or Forte-Enterprise-1)",
+      "prereq": "step 3",
+      "estimated_minutes": 5,
+      "verification_test": "5-shot Bell state on simulator first ($0), then 5-shot Bell on Forte 1 ($0.30 + 5*$0.08 = $0.70)"
+    },
+    {
+      "step": 7,
+      "name": "Korea-specific (if applicable)",
+      "detail": "If user in Korea, no special config; ap-northeast-2 Braket SDK calls succeed; QPU result returns from us-east-1 S3. Cross-border data transfer policy review per institution.",
+      "prereq": "step 1",
+      "estimated_minutes": 0,
+      "optional": true
+    }
+  ],
+  "total_user_minutes_estimated": 35,
+  "total_user_USD_to_first_qpu_task": 0.70,
+  "total_user_USD_for_full_MVP": 20.90,
+  "agent_constraint": "raw#9 hexa-only + raw#10 honest C3: agent does NOT submit AWS forms, does NOT create accounts, does NOT place orders. All steps are user-executed.",
+  "race_isolation": {
+    "writes_only": [
+      "docs/n_substrate_n12_ionq_penrose_hameroff_spec_2026_05_01.md",
+      "state/n_substrate_n12_prep_2026_05_01/*.json"
+    ]
+  }
+}

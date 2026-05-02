@@ -1,0 +1,56 @@
+{
+  "schema": "anima/akida_d0_d1_plan_freeze/d0_checklist/1",
+  "phase": "D+0 (AKIDA arrival day)",
+  "estimated_duration_min": 30,
+  "estimated_duration_for_non_expert_min": 180,
+  "pre_arrival_items": [
+    {"id": "PRE-1", "task": "BrainChip developer account 생성 (doc.brainchipinc.com)"},
+    {"id": "PRE-2", "task": "Meta TF SDK Quick Start docs 통독 (~10 min)"},
+    {"id": "PRE-3", "task": "RPi5 + M.2 HAT+ + microSD 32GB+ + USB-C 5A PSU 확보"},
+    {"id": "PRE-4", "task": "RPi OS 64-bit (Bookworm) ISO download + microSD flash 준비"}
+  ],
+  "unboxing_checklist": [
+    {"id": "BOX-1", "item": "AKD1000 M.2 NVMe form-factor card", "size": "22x30mm or 22x80mm"},
+    {"id": "BOX-2", "item": "Raspberry Pi 5 (BCM2712, 16GB)", "note": "if separately ordered"},
+    {"id": "BOX-3", "item": "M.2 HAT+ for RPi5", "spec": "PCIe gen2 x1 carrier"},
+    {"id": "BOX-4", "item": "Heatsink + active cooler", "note": "RPi5 recommended"},
+    {"id": "BOX-5", "item": "microSD >= 32GB", "purpose": "RPi OS 64-bit"},
+    {"id": "BOX-6", "item": "USB-C 5V/5A power supply", "purpose": "RPi5 official"},
+    {"id": "BOX-7", "item": "HDMI-micro cable", "purpose": "initial setup display"}
+  ],
+  "rpi5_setup_steps": [
+    {"step": 1, "cmd": "Flash RPi OS 64-bit (Bookworm+) -> microSD via Raspberry Pi Imager"},
+    {"step": 2, "cmd": "edit /boot/firmware/config.txt -> add: dtparam=pciex1, dtparam=pciex1_gen=2"},
+    {"step": 3, "cmd": "Mount AKD1000 M.2 card on M.2 HAT+, secure with screw"},
+    {"step": 4, "cmd": "Boot RPi5 -> sudo apt update && sudo apt full-upgrade -y"},
+    {"step": 5, "cmd": "lspci | grep -i akida   # expect: BrainChip Holdings, Akida AKD1000"}
+  ],
+  "sdk_install_steps": [
+    {"step": 1, "cmd": "sudo apt install -y python3-venv python3-pip libffi-dev"},
+    {"step": 2, "cmd": "python3 -m venv ~/akida-env && source ~/akida-env/bin/activate"},
+    {"step": 3, "cmd": "pip install --upgrade pip wheel"},
+    {"step": 4, "cmd": "pip install akida quantizeml cnn2snn"},
+    {"step": 5, "cmd": "pip install mne numpy scipy   # optional for EEG ingest"}
+  ],
+  "smoke_tests": [
+    {
+      "id": "SMOKE-1",
+      "name": "akida import + device enumeration",
+      "expected_output": "['AKD1000 / PCIe / 0']",
+      "fail_action": "ABORT-D0-2 (ARM64 wheel) or ABORT-D0-4 (kernel module)"
+    },
+    {
+      "id": "SMOKE-2",
+      "name": "cnn2snn MNIST conversion + AKIDA forward",
+      "expected_output": "non-zero output shape from model.forward",
+      "fail_action": "ABORT-D0-3 (TF version conflict)"
+    }
+  ],
+  "abort_codes": [
+    {"id": "ABORT-D0-1", "trigger": "lspci does not list AKD1000", "fallback": "Reboot + reseat M.2; if persists, vendor RMA"},
+    {"id": "ABORT-D0-2", "trigger": "pip install akida fails (ARM64 wheel missing)", "fallback": "F-AK-1: x86 host (mac/ubu1) inference, RPi5 ADM encoder only"},
+    {"id": "ABORT-D0-3", "trigger": "cnn2snn conversion fails (TF version conflict)", "fallback": "Recreate venv with pip install tensorflow==2.15 pin"},
+    {"id": "ABORT-D0-4", "trigger": "akida.devices() returns empty (kernel module not loaded)", "fallback": "sudo modprobe akida; if missing, dkms rebuild"}
+  ],
+  "d0_success_criterion": "smoke test 2 (MNIST cnn2snn -> AKIDA forward) returns non-zero output shape -> proceed to D+1"
+}

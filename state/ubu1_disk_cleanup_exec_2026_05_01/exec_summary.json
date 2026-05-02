@@ -1,0 +1,94 @@
+{
+  "agent": "ubu1-disk-cleanup-exec",
+  "date": "2026-05-01",
+  "authorization": "user: 'sudo 권한 있으니 bg 위임 go'",
+  "host": "ubu1 (aiden-B650M-K)",
+  "phases": {
+    "phase1_pre_snapshot": {
+      "status": "OK",
+      "df_use_pct": "94%",
+      "service_state": "activating (auto-restart) — crash loop confirmed",
+      "syslog_size": "294G",
+      "kern_log_size": "294G"
+    },
+    "phase2_stop_service": {
+      "status": "OK",
+      "actions": [
+        {"cmd": "systemctl --user stop airgenome-runaway.service", "rc": 0, "note": "Initial sudo attempt failed (no DBus under sudo); retried as user with rc=0"},
+        {"cmd": "systemctl --user disable airgenome-runaway.service", "rc": 0, "note": "Removed default.target.wants symlink"},
+        {"cmd": "systemctl --user mask airgenome-runaway.service", "rc": 1, "note": "FAILED — cannot mask, real unit file exists in user config; disable+stop sufficient"}
+      ],
+      "post_is_active": "inactive",
+      "post_is_enabled": "disabled"
+    },
+    "phase3_log_truncation": {
+      "status": "OK",
+      "actions": [
+        {"cmd": "sudo truncate -s 0 /var/log/syslog", "rc": 0, "delta_bytes": -315000000000},
+        {"cmd": "sudo truncate -s 0 /var/log/kern.log", "rc": 0, "delta_bytes": -315000000000},
+        {"cmd": "sudo journalctl --vacuum-size=200M", "rc": 0, "freed_mb": 358.6}
+      ],
+      "post_syslog_bytes": 2200,
+      "post_kern_log_bytes": 0
+    },
+    "phase4_checkpoint_pruning": {
+      "phase4a_clm_v3_280m": {
+        "verification": "v4 canonical CONFIRMED — clm_v4_350m/scale_350m/ contains best.pt(5G), final.pt(5G), step_20000.pt(5G), step_15000.pt, step_10000.pt, best_phi.pt — 30G total",
+        "v3_indicator": "clm_v3_280m has crash_log.txt — superseded run",
+        "action": "rm -rf /home/aiden/anima/checkpoints/clm_v3_280m",
+        "rc": 0,
+        "freed_gb": 18
+      },
+      "phase4b_trained_adapters_r456": {
+        "verification": "r7 canonical CONFIRMED — trained_adapters_r7/p4/final/ has adapter_model.safetensors + adapter_config.json + tokenizer.json",
+        "r456_indicator": "r4/r5/r6 only have older p1/p2 sub-runs (4.7G each); r7 has p4 (1.6G newer arch)",
+        "action": "rm -rf /home/aiden/anima/state/trained_adapters_r{4,5,6}",
+        "rc": 0,
+        "freed_gb": 14
+      },
+      "phase4c_docker_prune": {
+        "verification": "1 ACTIVE healthy container 'airgenome-claude' running 19h on ghcr.io/need-singularity/airgenome:fat (the ONLY image, 4.72GB, 100% reclaimable per docker df but actively held)",
+        "action": "SKIPPED",
+        "reason": "Pruning would delete the layers backing the running container"
+      }
+    },
+    "phase5_optional_sweep": {
+      "status": "SKIPPED",
+      "reason": "Post-cleanup disk usage 23% — well below 80% threshold; no need to touch ~/.cache/pip or ~/.cache/huggingface"
+    },
+    "phase6_post_snapshot": {
+      "status": "OK",
+      "df_use_pct": "23%",
+      "auto_restart_observed": false
+    }
+  },
+  "totals": {
+    "baseline_used_gb": 817,
+    "post_used_gb": 198,
+    "recovered_gb": 619,
+    "estimate_gb": 625,
+    "match_pct": 99.0,
+    "baseline_use_pct": "94%",
+    "post_use_pct": "23%",
+    "delta_pct_points": -71
+  },
+  "constraint_compliance": {
+    "budget_usd": 0,
+    "race_isolation_writes_only_to": [
+      "state/ubu1_disk_cleanup_exec_2026_05_01/*",
+      "docs/ubu1_disk_cleanup_exec_summary_2026_05_01.md"
+    ],
+    "safety_guards_every_rm_preceded_by_verification": true,
+    "no_software_installed": true,
+    "no_other_services_modified": true,
+    "no_user_dirs_outside_explicit_list": true
+  },
+  "follow_ups": {
+    "root_cause_recommendation": "Investigate /home/aiden/Dev/airgenome/bin/runaway_guard.hexa — log shows 'auto-invoke conflict — fn main() is auto-called by hexa-strict AND a top-level main() call was found, which would run main() twice'. Either remove the top-level main() invocation or the explicit fn main() declaration to satisfy hexa-strict mode.",
+    "additional_failing_services_observed": [
+      "airgenome-label.service (M5 label) — exit 1/FAILURE",
+      "airgenome-forecast.service (Holt smoothing) — starting cycle observed"
+    ],
+    "note": "These other airgenome services may share the same fn main()/auto-invoke conflict; verify after fixing runaway_guard.hexa"
+  }
+}

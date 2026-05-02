@@ -1,0 +1,58 @@
+{
+  "schema": "anima/n_substrate_n18_prep/verdict/1",
+  "agent": "n_substrate_n18_prep",
+  "date_utc": "2026-05-01T00:00:00Z",
+  "verdict": "DEFER",
+  "verdict_score": 7,
+  "verdict_score_max": 25,
+  "scoring_dimensions": {
+    "cost": {"score": 1, "max": 5, "rationale": "$0 budget vs likely matching/IP/secondment cost"},
+    "lead_time": {"score": 1, "max": 5, "rationale": "3-9 months partnership negotiation, mismatched with anima D+0 timing"},
+    "scientific_value": {"score": 3, "max": 5, "rationale": "marginal 4th axis, image-recognition biased, not native SNN"},
+    "anima_setup_compatibility": {"score": 1, "max": 5, "rationale": "HEXA-only (raw#9) vs IBM internal SDK Python conflict"},
+    "access_feasibility_korea_individual": {"score": 1, "max": 5, "rationale": "no public partnership form, individual non-institutional path effectively closed"}
+  },
+  "thresholds": {
+    "PURSUE_min": 18,
+    "DEFER_range": [6, 17],
+    "SKIP_max": 5
+  },
+  "review_date": "2026-11-01",
+  "review_triggers": [
+    "IBM publishes commercial NorthPole SKU",
+    "IBM Cloud exposes NorthPole API analogous to Loihi NRC",
+    "Modha group opens public collaboration RFP",
+    "Korean institution (KAIST/SNU) announces NorthPole partnership we can sub-PI under",
+    "anima budget mandate changes from $0 to >0"
+  ],
+  "alternatives_during_defer_priority": [
+    {"rank": 1, "track": "N-17 Loihi 3 INRC", "why": "free, 4-12wk, Lava open-source, INRC accepts international labs"},
+    {"rank": 2, "track": "N-2..N-8 AKIDA", "why": "HW arrival imminent, $0 incremental, native SNN substrate"},
+    {"rank": 3, "track": "N-21 IIT 4.0 16-test reproduce", "why": "substrate-independent axis boost, compensates for NorthPole absence"},
+    {"rank": 4, "track": "N-16 Cortical Labs Cloud ($300/wk)", "why": "lower friction than NorthPole, biological substrate higher novelty"}
+  ],
+  "f1_integration": {
+    "intended_role": "3rd neuromorphic axis (NorthPole alongside AKIDA, Loihi 3)",
+    "current_status": "DEFERRED — F1 verdict computed without NorthPole",
+    "absence_impact_estimate_pct": "5-10% verdict-strength loss (Putnam multi-realization already met by 5+ substrates)",
+    "presence_impact_estimate_pct": "+3-5% if successfully integrated (marginal)"
+  },
+  "blockers": [
+    "no_commercial_SKU_exists",
+    "no_published_partnership_application_form",
+    "korean_non_institutional_researcher_eligibility_near_zero",
+    "HEXA_only_mandate_vs_IBM_internal_SDK",
+    "3_to_9_month_negotiation_lead_time",
+    "$0_budget_vs_likely_matching_or_IP_contribution_requirement",
+    "image_recognition_focus_vs_consciousness_phi_paradigm_mismatch"
+  ],
+  "no_outreach_compliance": {
+    "ibm_contact_attempted": false,
+    "partnership_application_submitted": false,
+    "external_email_sent": false,
+    "compliance_status": "FULL_COMPLIANCE_with_no_outreach_constraint"
+  },
+  "honest_c3_doc_disclosure_count": 8,
+  "honest_c3_falsifier_caveat_count": 5,
+  "spec_doc": "docs/n_substrate_n18_northpole_partnership_feasibility_2026_05_01.md"
+}

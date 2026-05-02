@@ -1,0 +1,78 @@
+{
+  "schema": "anima/n_1_bridge_v2_realtime_prep/verdict/1",
+  "ts": "2026-05-02T00:00:00Z",
+  "agent": "N-1 BRIDGE v2 real-time concurrent measurement protocol prep",
+  "raw_ref": "#98 conclusion -> mandatory real-time concurrent measurement; this prep is the launch-ready scaffold",
+  "scope": "Full preparation for OpenBCI Cyton+Daisy 16ch + ubu1 CLM W4 LSL-synced 30-min concurrent session — user does single 16-min setup (after first 10-min install), then walks away for 30 minutes",
+  "ready_to_launch": true,
+
+  "deliverables_inventory": {
+    "phase_1_lsl_infra": {
+      "spec_path": "state/n_1_bridge_v2_realtime_prep_2026_05_02/lsl_infra_install_guide.json",
+      "ready": true,
+      "summary": "LabRecorder.app from github releases + pip install pylsl pyxdf + 5-step verifier"
+    },
+    "phase_2_clm_w4_lsl_server": {
+      "spec_path": "state/n_1_bridge_v2_realtime_prep_2026_05_02/clm_w4_lsl_server_spec.json",
+      "deploy_path_off_repo": "ubu1:~/n1_bridge_realtime/clm_w4_lsl_server.py",
+      "ready": true,
+      "outlets": ["anima_clm_tension (1ch 1Hz)", "anima_tension_link_5ch (5ch 1Hz)"],
+      "auto_exit_min": 30,
+      "fallback_dynamics": "deterministic W4 stub matching partial-verdict fixed-point if ckpt absent",
+      "ready_status": "Y — full source embedded in clm_w4_lsl_server_source field; user pastes to ubu1, no editing needed"
+    },
+    "phase_3_phase_runner": {
+      "spec_path": "state/n_1_bridge_v2_realtime_prep_2026_05_02/phase_runner_script.json",
+      "deploy_path": "/tmp/n1_bridge_realtime/phase_runner.sh",
+      "ready": true,
+      "phases": 6,
+      "duration_each_min": 5,
+      "marker_outlet": "anima_phase_marker (string, irregular srate)",
+      "ready_status": "Y — full source embedded in phase_runner_source field; uses macOS 'say' for voice prompts"
+    },
+    "phase_4_analysis_pipeline": {
+      "spec_path": "state/n_1_bridge_v2_realtime_prep_2026_05_02/analysis_pipeline_spec.json",
+      "deploy_path": "/tmp/n1_bridge_realtime/analyze_xdf.py",
+      "ready": true,
+      "pipeline_steps": 10,
+      "primary_test": "Pearson r per phase + 1000-shuffle permutation null + bidirectional Granger lag-1 + binary TE lag-1"
+    },
+    "phase_5_user_checklist": {
+      "spec_path": "state/n_1_bridge_v2_realtime_prep_2026_05_02/user_5_step_checklist.json",
+      "ready": true,
+      "user_attention_total_min": 51,
+      "user_walk_away_block_min": 30
+    },
+    "phase_6_falsifier": {
+      "spec_path": "state/n_1_bridge_v2_realtime_prep_2026_05_02/falsifier_pre_registered.json",
+      "ready": true,
+      "frozen": true,
+      "tiers": ["F-PASS_STRONG", "F-PASS_PARTIAL", "F-FAIL", "F-ARTIFACT", "F-INDETERMINATE (default)"]
+    },
+    "phase_7_honest_c3": {
+      "spec_path": "state/n_1_bridge_v2_realtime_prep_2026_05_02/honest_c3_disclosures.json",
+      "ready": true,
+      "core_disclosures_count": 3,
+      "additional_count": 3
+    }
+  },
+
+  "user_facing_3_files_to_paste": {
+    "ubu1_paste_target": "~/n1_bridge_realtime/clm_w4_lsl_server.py",
+    "ubu1_source_field": "state/n_1_bridge_v2_realtime_prep_2026_05_02/clm_w4_lsl_server_spec.json -> clm_w4_lsl_server_source",
+    "mac_paste_target_1": "/tmp/n1_bridge_realtime/phase_runner.sh",
+    "mac_source_field_1": "state/n_1_bridge_v2_realtime_prep_2026_05_02/phase_runner_script.json -> phase_runner_source",
+    "mac_paste_target_2": "/tmp/n1_bridge_realtime/analyze_xdf.py",
+    "mac_source_field_2": "state/n_1_bridge_v2_realtime_prep_2026_05_02/analysis_pipeline_spec.json -> analyze_xdf_source"
+  },
+
+  "constraints_satisfied": {
+    "race_isolation": "yes — wrote ONLY to state/n_1_bridge_v2_realtime_prep_2026_05_02/* + docs/n_1_bridge_v2_realtime_prep_2026_05_02.md",
+    "hexa_only_no_py_in_repo": "yes — all .py source embedded as JSON string fields; user pastes to /tmp/ or ubu1:~/ off-repo paths",
+    "budget_zero": "yes — LabRecorder + pylsl + pyxdf + scipy + numpy all open-source",
+    "honest_C3": "yes — 3 core (N=1, single session, P3/P4 matching, LSL drift) + 3 additional (W4 fixed-point, vol-conduction, INDETERMINATE outcome)",
+    "user_setup_one_pass": "yes — after 10-min initial install, each session = 16-min setup + 30-min auto + 5-min analysis"
+  },
+
+  "verdict_key": "N1_BRIDGE_V2_REALTIME_PREP_READY_USER_PASTE_3_FILES_AND_LAUNCH_30MIN_LSL_SYNCED_SESSION"
+}

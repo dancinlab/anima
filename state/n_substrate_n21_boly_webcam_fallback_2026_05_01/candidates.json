@@ -1,0 +1,51 @@
+{
+  "agent": "N-21-E webcam fallback",
+  "date": "2026-05-01",
+  "mission": "Validate webcam-based eye tracking as $0 alternative to $500 Pupil Labs hardware for Boly 2017 bistable protocol",
+  "boly_2017_protocol": {
+    "citation": "Frassle et al. (Boly group context) — Combined fMRI- and eye movement-based decoding of bistable plaid motion perception. NeuroImage 2017/2018, doi:10.1016/j.neuroimage.2017.12.073, PMID 29294388",
+    "method": "Bistable plaid motion + OKN (optokinetic nystagmus) decoding via SVM. Eye-only classifier achieved 88% accuracy; combined with fMRI -> 91%.",
+    "core_signal": "OKN slow-phase direction reversal at perceptual switch (no overt report).",
+    "min_sample_rate_required_hz": 30,
+    "min_sample_rate_rationale": "OKN slow-phase velocity ~5-30 deg/s; quick-phase saccades ~30-50 ms; per Nyquist for ~3 Hz OKN cycle frequency, >=30 Hz is the practical minimum for direction estimation. Original Boly study used research-grade trackers at 250-1000 Hz.",
+    "min_spatial_accuracy_required_deg": 1.5,
+    "min_spatial_accuracy_rationale": "OKN direction (left-vs-right slow phase) needs sub-degree velocity vector resolution; coarse fixation suffices for gaze position but velocity requires fine inter-frame displacement <=0.5 deg precision."
+  },
+  "candidates": [
+    {
+      "rank": 1,
+      "name": "WebGazer.js",
+      "type": "browser/JS",
+      "license": "GPL-3.0 (Brown HCI Lab, since 2016)",
+      "spatial_accuracy_deg": 4.0,
+      "spatial_accuracy_source": "webgazer.cs.brown.edu (~4 deg); Steffan et al. 2024 Infancy / PMC10841511 reports 3.94 deg in-lab fixation offset (172 px / 15% screen), 18% (~4.7 deg) online",
+      "sample_rate_hz_realistic": "14-25 (mean ~20.7, SD ~9)",
+      "sample_rate_hz_theoretical_max": 30,
+      "sample_rate_source": "PCIbex/visual-world replication studies; Yang & Krajbich 2021; harvardlds.org child-language assessment",
+      "temporal_sync_precision_ms": "~50-100 (browser RAF + webcam frame jitter)",
+      "integration_cost_usd": 0,
+      "integration_cost_eng_hours": 8,
+      "anima_compat": "browser HTML page + LSL marker bridge to OpenBCI",
+      "notes": "Self-calibrates from click-stream interactions; no infrared. CPU-heavy (~19% Chrome single-core)."
+    },
+    {
+      "rank": 2,
+      "name": "GazeRecorder / GazeFlow / GazeCloudAPI",
+      "type": "desktop + cloud SDK",
+      "license": "FREE for non-commercial; commercial license required for paid use",
+      "spatial_accuracy_deg": 1.0,
+      "spatial_accuracy_source": "gazerecorder.com self-report 0.9-1.0 deg vs SMI RED-250; independent benchmarks (Springer RPA pilot 2025) confirm best-in-class among webcam tools",
+      "sample_rate_hz_realistic": 30,
+      "sample_rate_hz_theoretical_max": 30,
+      "sample_rate_source": "gazerecorder.com tech page",
+      "temporal_sync_precision_ms": "~30-60 (cloud-API roundtrip adds latency vs local SDK)",
+      "integration_cost_usd": 0,
+      "integration_cost_eng_hours": 12,
+      "anima_compat": "GazeFlow SDK local (Windows-only); GazeCloudAPI browser-embeddable, lower CPU (~3%) than WebGazer",
+      "notes": "Closed-source vendor binary. Self-reported accuracy not peer-reviewed. License terms restrict research-publication redistribution."
+    }
+  ],
+  "deferred_pyGaze": {
+    "reason": "pyGaze is a wrapper around hardware tracker drivers (EyeLink, Tobii, SMI, Pupil) — NOT an inference engine. Without a backing tracker it provides no gaze signal. Out of scope for $0 webcam-only fallback."
+  }
+}
