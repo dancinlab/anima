@@ -1,0 +1,13 @@
+VLM_STAGE12_LANDED 2026-05-03
+roadmap=.roadmap.vlm_voice_lm
+cond.1=met (was partial) — audio_token_vocab + intent-text bridge FROZEN
+cond.2=met (was unmet) — invocation seam FROZEN (anima_voice.hexa Stage 0..6 reuse + VLM head additive on Stage 2)
+cond.3=unmet (deferred next-cycle) — cross-substrate fidelity vs CLM ≥0.85 r needs audio-text paired corpus + P9 SFT pipeline
+blk.1=resolved (was open) — intent-text bridge dim 384d + Linear(384, 32000) sentencepiece-style 32k FROZEN
+spec=audio_token_vocab=1024 per stage × 8 RVQ stages (8192 total), bridge_dim=384, ctx=1536 frames @ 100Hz ~15s, text_vocab=32000
+ssot_anchors=audio_token_predictor.hexa L23/L35/L40/L42 + intent_encoder.hexa L41 + anima_voice.hexa L69 (3-way 384 SSOT verified by Read)
+in_place_changes=0 (additive only, anima-voice/ untouched, sister .roadmap.voice untouched)
+artifacts=.roadmap.vlm_voice_lm + state/vlm_token_vocab_log.jsonl + state/vlm_invocation_seam_log.jsonl + docs/vlm_stage12_landed_2026_05_03.ai.md
+cost=$0 mac-local
+wallclock=~25min cap 60min
+destructive=0

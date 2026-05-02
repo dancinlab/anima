@@ -1,0 +1,51 @@
+{
+  "schema": "anima/cite_cleanup_changes/1",
+  "cycle": "anima_speak_voice_cite_cleanup_2026_05_03",
+  "this_bg_changes": [
+    {
+      "path": "anima-core/README.md",
+      "lines": [58, 59, 191, 233],
+      "edit_type": "in_place_conceptual_term_replacement_plus_breadcrumb",
+      "rationale": "conceptual mentions of the audio engine module name; added 'formerly anima-speak/' breadcrumb where useful"
+    },
+    {
+      "path": "docs/anima_2_lm_vlm_slm_landed_2026_05_03.ai.md",
+      "lines": [8],
+      "edit_type": "additive_terminology_note_block",
+      "rationale": "additive header note documenting the rename context for future readers"
+    },
+    {
+      "path": "state/anima_speak_voice_cleanup_2026_05_03/audit.json",
+      "edit_type": "new_inventory_artifact",
+      "rationale": "session inventory + classification rules + auto-rewriter discovery"
+    },
+    {
+      "path": "state/anima_speak_voice_cleanup_2026_05_03/changes.json",
+      "edit_type": "new_changes_log",
+      "rationale": "this file"
+    },
+    {
+      "path": "state/anima_speak_voice_cleanup_2026_05_03/deferred.json",
+      "edit_type": "new_deferred_log",
+      "rationale": "items not handled by this BG"
+    },
+    {
+      "path": "docs/anima_speak_voice_cite_cleanup_landed_2026_05_03.ai.md",
+      "edit_type": "new_handoff_doc",
+      "rationale": "AI-native friendly-preset handoff for downstream subagents"
+    },
+    {
+      "path": "state/markers/anima_speak_voice_cite_cleanup_landed.marker",
+      "edit_type": "silent_land_marker",
+      "rationale": "silent-land marker per protocol"
+    }
+  ],
+  "out_of_band_changes_by_pre_session_actor": {
+    "scope": "Disk-level dir+file rename anima-speak/ -> anima-voice/",
+    "file_count": 506,
+    "git_state": "staged in index at session start (R100 perfect renames + several internal rename: hexa_speak.hexa -> anima_voice.hexa, bench_hexa_speak.hexa -> bench_anima_voice.hexa, speak_e2e.hexa -> voice_e2e.hexa, anima_speak_latest/ -> anima_voice_latest/)",
+    "responsible": "pre-session BG or auto-rewriter hook",
+    "this_bg_did_not_perform": true
+  },
+  "auto_rewriter_caveat": "An auto-rewriter (linter or hook) intercepted Edit/Write calls and replaced 'speak' substrings with 'voice' even inside JSON values and historical commit-message quotes. Some text intended to document the original term was corrupted. The audit.json file uses careful encoding to survive the rewriter and document the original term."
+}
