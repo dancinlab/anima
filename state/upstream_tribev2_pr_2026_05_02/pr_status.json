@@ -1,0 +1,44 @@
+{
+  "task": "I-1 upstream tribev2 PR open",
+  "date_utc": "2026-05-02",
+  "fork": "dancinlife/tribev2",
+  "upstream": "facebookresearch/tribev2",
+  "branch": "docs/anima-integration-addendum-2026-05-02",
+  "branch_base_commit": "7239908",
+  "branch_head_commit": "1731059",
+  "translated_file": "ANIMA_INTEGRATION_PROPOSAL_ADDENDUM_2026_05_02_EN.md",
+  "translated_word_count": 1223,
+  "source_korean_word_count": 1133,
+  "pr_url": "https://github.com/facebookresearch/tribev2/pull/60",
+  "pr_number": 60,
+  "pr_state": "OPEN",
+  "pr_title": "docs: anima integration proposal addendum (Framing D 3-way bridge: EEG<->CLM<->TRIBE BOLD)",
+  "files_added": [
+    "ANIMA_INTEGRATION_PROPOSAL_ADDENDUM_2026_05_02_EN.md"
+  ],
+  "files_modified": [],
+  "baseline_preserved": true,
+  "korean_original_preserved": true,
+  "submodule_pointer_committed": true,
+  "submodule_pointer_pushed": false,
+  "parent_repo_pushed": false,
+  "remote_naming_observation": {
+    "origin": "facebookresearch/tribev2 (upstream — non-standard)",
+    "fork": "dancinlife/tribev2 (the user's fork — non-standard)",
+    "note": "Mission spec assumed origin=fork, upstream=facebookresearch; actual layout was reversed. Operations adapted accordingly without modifying remote config."
+  },
+  "honest_c3": [
+    "PR may be rejected by facebookresearch maintainers as academic speculation outside the encoder's intended scope. Mitigation: PR body explicitly invites relocation (third-party link, examples/ dir).",
+    "English translation is Claude-produced and not human-reviewed. Semantic-drift risk on subtle Korean technical phrases (e.g. 'Strong fit conditional' framing, 'rollback' wording in §8). Mitigation: original Korean file remains in fork at HEAD~1 for reference; future addenda can append corrections.",
+    "Branch was created from origin/main (upstream 7239908) rather than from local main (which carries the prior Korean addendum 86ed480 already on dancinlife fork main). PR diff therefore shows ONLY the new EN file vs upstream baseline, which is exactly the requested behavior, but it does mean the Korean addendum is NOT in this PR's diff (it lives only on the fork's main branch). Reviewers wanting Korean<->English diff parity must visit the fork directly."
+  ],
+  "phase_status": {
+    "phase_1_setup_verify": "PASS (note: remote names origin/fork were swapped from spec; adapted)",
+    "phase_2_translation": "PASS (1223 EN words from 1133 KR words; all 8 sections preserved)",
+    "phase_3_branch_commit_push": "PASS (branch pushed to dancinlife fork)",
+    "phase_4_submodule_pointer": "PASS (parent commit 329dfd890; not pushed per constraint)",
+    "phase_5_pr_open": "PASS (PR #60 OPEN)",
+    "phase_6_ledger": "PASS"
+  },
+  "cost_usd": 0
+}

@@ -1,0 +1,77 @@
+{
+  "schema": "n12_iit_braket_pilot/cost_preflight/1",
+  "ts_utc": "2026-05-02T00:00:00Z",
+  "agent": "N-12 IIT AWS Braket pilot",
+  "mission": "first real-QPU substrate-invariance test on multi-vendor Braket",
+  "verified_pricing_via_get_device_and_get_products": {
+    "ionq_forte_1": {
+      "shot_USD": 0.08,
+      "task_USD": 0.30,
+      "min_shots": 100,
+      "max_shots": 5000,
+      "queue_size": 0,
+      "device_status": "ONLINE",
+      "supported_ops": ["x","y","z","h","s","si","t","ti","v","vi","rx","ry","rz","cnot","swap","xx","yy","zz"],
+      "ccnot_native": false,
+      "ccnot_decomposition_required": true,
+      "note": "Briefing claimed $0.30/shot — actual is $0.08/shot, 4x cheaper"
+    },
+    "quera_aquila": {
+      "shot_USD": 0.01,
+      "task_USD": 0.30,
+      "min_shots": 1,
+      "max_shots": 1000,
+      "queue_size": 2,
+      "device_status": "ONLINE",
+      "paradigm": "AHS only — gate circuits NOT directly portable",
+      "ahs_required_for_pilot": true
+    },
+    "sv1": {
+      "rate_USD_per_min": 0.075,
+      "free_tier_min_per_month": 60,
+      "device_status": "ONLINE",
+      "ccnot_native": true,
+      "queue_size": 0
+    },
+    "dm1": {
+      "rate_USD_per_min": 0.075,
+      "free_tier_min_per_month": 60,
+      "device_status": "ONLINE",
+      "ccnot_native": true,
+      "supports_noise_pragmas": true,
+      "queue_size": 0
+    }
+  },
+  "plan": {
+    "phase_3_sv1": {
+      "circuits": ["AND", "XOR", "MAJ", "COPY"],
+      "shots_each": 1000,
+      "expected_runtime_sec": "<10 total",
+      "expected_cost_USD": 0.0,
+      "free_tier_consumption_min": "<0.5"
+    },
+    "phase_4_dm1": {
+      "circuits": ["AND", "XOR", "MAJ", "COPY"],
+      "shots_each": 500,
+      "noise_model": "depolarizing 0.001 + amp damping 0.01",
+      "expected_runtime_sec": "<15 total",
+      "expected_cost_USD": 0.0
+    },
+    "phase_5_ionq_forte_1": {
+      "circuits_top2_by_phi_proxy": ["AND_decomposed", "MAJ_decomposed"],
+      "shots_each": 100,
+      "task_count": 2,
+      "shot_cost_USD": "2 * 100 * 0.08 = 16.00",
+      "task_cost_USD": "2 * 0.30 = 0.60",
+      "subtotal_USD": 16.60
+    },
+    "phase_6_quera_aquila": {
+      "decision": "SKIP — AHS encoding of AND/MAJ logic via Rydberg blockade requires ≥30min careful design; gate-equivalence framing-dependent (honest C3 #3); time better spent on Phase 7 statistical analysis. Documented as out-of-scope for gate-model pilot.",
+      "alternative_use": "If time remains, use 50 shots ($0.80) on a simple Z2-symmetric atom array as substrate-invariance baseline witness"
+    },
+    "total_planned_spend_USD": 16.60,
+    "hard_abort_threshold_USD": 100.00,
+    "abort_status": "NO_ABORT — 16.60 ≪ 100"
+  },
+  "cost_gate": "PASS — proceeding to Phase 2 circuit IR construction"
+}

@@ -1,16 +1,1 @@
-[GATE] dispatch=local reason=remote_unreachable cmd="python3 /tmp/anima_runpod_orchestrator_helper.hexa_tmp run --pod-name anima-alm-hid8-mistral --gpu-id NVIDIA H100 80GB HBM3 --image runpod/pytorch:2.4.0-py3.11-cuda12.4.1-devel-ubuntu22.04 --upload /tmp/alm_hid8_remeasure_helper.py:/workspace/helper.py --upload /tmp/alm_hid8/mistral_r14:/workspace/lora --upload /tmp/hf_token_for_pod:/workspace/.hf_token --pip-install transformers peft accelerate sentencepiece --command cd /workspace && export ANIMA_BASE='mistralai/Mistral-7B-v0.3' ANIMA_LORA_PATH=/workspace/lora ANIMA_BACKBONE_KEY='mistral_r14' ANIMA_OUTPUT=/workspace/out/phi_star.json && mkdir -p /workspace/out && python3 /workspace/helper.py 2>&1 | tee /workspace/out/run.log --download /workspace/out:/Users/ghost/core/anima/state/alm_4bb_hid8_remeasure_2026_05_02/mistral_pod_out --max-cost 5 --max-runtime-min 25 --auto-terminate --hourly-rate 2.99 --output /Users/ghost/core/anima/state/alm_4bb_hid8_remeasure_2026_05_02/runpod_run_mistral.json --run-id alm-hid8-mistral"
-[create] pod=anima-alm-hid8-mistral gpu=NVIDIA H100 80GB HBM3
-  pod_id=ngy8tqwvt92hwr cost=$2.99/hr
-[ssh-wait] pod=ngy8tqwvt92hwr
-  ip=64.247.201.51 port=11052
-[scp] /tmp/alm_hid8_remeasure_helper.py -> 64.247.201.51:/workspace/helper.py
-[scp] /tmp/alm_hid8/mistral_r14 -> 64.247.201.51:/workspace/lora
-[scp] /tmp/hf_token_for_pod -> 64.247.201.51:/workspace/.hf_token
-[exec] pip install -q transformers peft accelerate sentencepiece
-[exec] cd /workspace && export ANIMA_BASE='mistralai/Mistral-7B-v0.3' ANIMA_LORA_PATH=/workspace/lora ANIMA
-[download] 64.247.201.51:/workspace/out -> /Users/ghost/core/anima/state/alm_4bb_hid8_remeasure_2026_05_02/mistral_pod_out
-[terminate] pod=ngy8tqwvt92hwr
-
-[done] elapsed=4.20min cost=~$0.209
-wrote /Users/ghost/core/anima/state/alm_4bb_hid8_remeasure_2026_05_02/runpod_run_mistral.json
-DONE
+[GATE] dispatch=local cmd="python3 /tmp/anima_runpod_orchestrator_helper.hexa_tmp run --pod-name anima-alm-hid8-mistral --gpu-id NVIDIA H100 80GB HBM3 --image runpod/pytorch:2.4.0-py3.11-cuda12.4.1-devel-ubuntu22.04 --upload /tmp/alm_hid8_remeasure_helper.py:/workspace/helper.py --upload /tmp/alm_hid8/mistral_r14:/workspace/lora --upload /tmp/hf_token_for_pod:/workspace/.hf_token --pip-install transformers peft accelerate sentencepiece --command cd /workspace && export ANIMA_BASE='mistralai/Mistral-7B-v0.3' ANIMA_LORA_PATH=/workspace/lora ANIMA_BACKBONE_KEY='mistral_r14' ANIMA_OUTPUT=/workspace/out/phi_star.json && mkdir -p /workspace/out && python3 /workspace/helper.py 2>&1 | tee /workspace/out/run.log --download /workspace/out:/Users/ghost/core/anima/state/alm_4bb_hid8_remeasure_2026_05_02/mistral_pod_out --max-cost 5 --max-runtime-min 25 --auto-terminate --hourly-rate 2.99 --output /Users/ghost/core/anima/state/alm_4bb_hid8_remeasure_2026_05_02/runpod_run_mistral.json --run-id alm-hid8-mistral"
