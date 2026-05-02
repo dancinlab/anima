@@ -1,0 +1,335 @@
+// tool/anima_eeg_to_akida_spike.hexa — EEG → AKIDA AKD1000 spike-event pipeline (D+0 plug-and-play skeleton)
+//
+// PURPOSE
+//   N-substrate N-2 prep agent (2026-05-01). Encode 16ch EEG via Asynchronous
+//   Delta Modulation (ADM) / level-crossing → rasterize to dense uint8 NHWC
+//   tensor (1, T_bin, 16, 2) → akida.Model.forward(). Hardware deployed when
+//   AKD1000 dev kit arrives (currently in shipping). Skeleton — full chip-side
+//   path is TODO until hardware probe.
+//
+// SPEC
+//   docs/n_substrate_n2_eeg_akida_spike_pipeline_spec_2026_05_01.md (§2, §3, §4)
+//
+// MODES
+//   --selftest                  — synthetic 16ch×60s×250Hz EEG → ADM → raster → 6 G-D gates
+//   --input <path.fif>          — live EEG file → ADM → raster (no chip call)
+//   --input live --duration <s> — live device (Muse / OpenBCI) → ADM → raster (D+0+ε)
+//   --akida-forward             — additionally call akida.Model.forward (REQUIRES HARDWARE)
+//
+// OUTPUT JSON (schema: anima/eeg_akida_spike_raster/1)
+//   {tool, version, raw_rank, schema, mode, fs_hz, n_channels, window_s,
+//    bin_width_ms, raster_shape, raster_dtype, theta_up_sigma, theta_down_sigma,
+//    refractory_ms, total_events, events_per_channel, up_down_balance_per_channel,
+//    gates: {G_D1..G_D6: PASS/FAIL/value}, raster_b64 (optional), timestamp_utc,
+//    helper_versions, akida_forward_called: bool, akida_output_shape: [...] | null}
+//
+// raw#10 honest scope
+//   - Chip not in hand. --akida-forward stub returns ABORT_NO_AKIDA unless akida pkg present.
+//   - Helper Python prefers numpy + scipy + (optional) mne. Fallback emits ABORT_NO_NUMPY.
+//   - --selftest is encoder-only integrity check. Chip-side latency falsifier F-A1
+//     runs separately on D+0.
+//
+// USAGE
+//   hexa run tool/anima_eeg_to_akida_spike.hexa --selftest
+//   hexa run tool/anima_eeg_to_akida_spike.hexa --input data/eeg.fif --output state/eeg_akida_spike_<ts>.json
+//   hexa run tool/anima_eeg_to_akida_spike.hexa --input data/eeg.fif --akida-forward  // D+0 only
+
+let HELPER_PATH  = "/tmp/anima_eeg_to_akida_spike_helper.hexa_tmp"
+let SCHEMA       = "anima/eeg_akida_spike_raster/1"
+let SPEC_DOC     = "docs/n_substrate_n2_eeg_akida_spike_pipeline_spec_2026_05_01.md"
+let TOOL_VERSION = "v0_skel_2026_05_01"
+
+// Encoder defaults — see spec §2.3
+let DEFAULT_FS_HZ            = 250
+let DEFAULT_N_CHANNELS       = 16
+let DEFAULT_BANDPASS_LO_HZ   = 1
+let DEFAULT_BANDPASS_HI_HZ   = 45
+let DEFAULT_BANDPASS_ORDER   = 4
+let DEFAULT_ZSCORE_WINDOW_S  = 10
+let DEFAULT_THETA_UP_SIGMA   = 0.5
+let DEFAULT_THETA_DN_SIGMA   = 0.5
+let DEFAULT_REFRACTORY_MS    = 4
+let DEFAULT_BIN_WIDTH_MS     = 8
+let DEFAULT_WINDOW_S         = 1.0
+let DEFAULT_S_CAP            = 15      // 4-bit Akida input precision
+
+// Synthetic generator defaults — see spec §4.1
+let SYNTH_DURATION_S         = 60
+let SYNTH_SEED               = 20260501
+let SYNTH_ALPHA_HZ           = 10
+let SYNTH_BETA_HZ            = 20
+
+// TODO (D+0): when akida pkg present, replace stub with:
+//     import akida
+//     model = akida.Model(MODEL_PATH)
+//     output = model.forward(raster_uint8)   // raster shape (1, T_bin, 16, 2) dtype uint8
+//   Per BrainChip MetaTF docs, model.forward signature:
+//     forward(self, inputs: np.ndarray dtype=np.uint8, batch_size: int = 0) -> np.ndarray
+//   Inputs must be NHWC, 4-D, uint8 (encoded at 1/2/4/8-bit precision).
+
+fn _sh_quote(s: string) -> string {
+    let mut o = "'"
+    for c in s.chars() {
+        if c == '\'' { o = o + "'\\''" } else { o = o + c.to_string() }
+    }
+    o + "'"
+}
+
+fn build_helper_python() -> string {
+    // Helper script — emitted at runtime (raw#37 helper-Python emit pattern,
+    // mirrors tool/an11_b_eeg_ingest.hexa). Implementation body TODO at D+0.
+    let body = "
+import sys, os, json, time, base64, math
+try:
+    import numpy as np
+except ImportError:
+    print(json.dumps({'error': 'ABORT_NO_NUMPY', 'install': 'pip install numpy'}))
+    sys.exit(1)
+try:
+    from scipy.signal import butter, filtfilt, iirnotch
+    from scipy.stats import spearmanr, pearsonr
+except ImportError:
+    print(json.dumps({'error': 'ABORT_NO_SCIPY', 'install': 'pip install scipy'}))
+    sys.exit(1)
+
+# ---- Stage A/B: synthetic EEG generator (selftest) ----
+def synth_eeg(fs, duration_s, n_ch, seed):
+    rng = np.random.default_rng(seed)
+    T = int(fs * duration_s)
+    t = np.arange(T) / fs
+    sig = np.zeros((n_ch, T), dtype=np.float32)
+    for c in range(n_ch):
+        alpha = 30.0 * np.sin(2*np.pi*10*t + rng.uniform(0, 2*np.pi))
+        beta  = 10.0 * np.sin(2*np.pi*20*t + rng.uniform(0, 2*np.pi))
+        # 1/f^1 pink-ish noise via cumulative gaussian
+        pink = np.cumsum(rng.normal(0, 1, T)).astype(np.float32) * 0.3
+        sig[c] = alpha + beta + pink
+    # 5% chance per second: amplitude burst on random ch
+    for s_idx in range(int(duration_s)):
+        if rng.random() < 0.05:
+            ch = int(rng.integers(0, n_ch))
+            i0 = s_idx * fs
+            i1 = min(T, i0 + fs // 4)
+            sig[ch, i0:i1] += 80.0 * np.sin(2*np.pi*5*t[i0:i1])
+    return sig
+
+# ---- Stage B: bandpass + notch ----
+def bandpass(sig, fs, lo, hi, order):
+    b, a = butter(order, [lo/(fs/2), hi/(fs/2)], btype='band')
+    return filtfilt(b, a, sig, axis=-1).astype(np.float32)
+
+# ---- Stage C: per-channel sliding zscore ----
+def zscore_sliding(sig, fs, window_s):
+    w = int(fs * window_s)
+    out = np.zeros_like(sig)
+    for c in range(sig.shape[0]):
+        x = sig[c]
+        # simple cumulative for speed; production: rolling
+        mu = np.mean(x); sd = np.std(x) + 1e-9
+        out[c] = (x - mu) / sd
+    return out
+
+# ---- Stage D: ADM level-crossing encoder ----
+def adm_encode(sig, fs, theta_up, theta_dn, refractory_ms):
+    n_ch, T = sig.shape
+    r_steps = max(1, int(round(refractory_ms * fs / 1000.0)))
+    events = []  # list of (t_idx, ch, polarity)
+    for c in range(n_ch):
+        v_ref = sig[c, 0]
+        rfu = -1
+        for t in range(1, T):
+            if t < rfu:
+                continue
+            d = sig[c, t] - v_ref
+            if d >= theta_up:
+                events.append((t, c, +1))
+                v_ref = v_ref + theta_up
+                rfu = t + r_steps
+            elif d <= -theta_dn:
+                events.append((t, c, -1))
+                v_ref = v_ref - theta_dn
+                rfu = t + r_steps
+    return events, r_steps
+
+# ---- Stage E: rasterize -> uint8 NHWC (1, T_bin, C, 2) ----
+def rasterize(events, n_ch, fs, window_s, bin_width_ms, s_cap):
+    T_bin = int(round(window_s * 1000.0 / bin_width_ms))
+    samples_per_bin = max(1, int(round(fs * bin_width_ms / 1000.0)))
+    raster = np.zeros((1, T_bin, n_ch, 2), dtype=np.uint8)
+    window_samples = int(round(window_s * fs))
+    for (t, c, p) in events:
+        if t >= window_samples:
+            continue
+        b = min(T_bin - 1, t // samples_per_bin)
+        pol = 1 if p > 0 else 0
+        v = int(raster[0, b, c, pol]) + 1
+        raster[0, b, c, pol] = min(s_cap, v)
+    return raster
+
+# ---- Round-trip reconstruction (G-D5) ----
+def reconstruct(events, n_ch, T, theta_up, theta_dn):
+    rec = np.zeros((n_ch, T), dtype=np.float32)
+    last = np.zeros(n_ch, dtype=np.float32)
+    for (t, c, p) in events:
+        last[c] += (theta_up if p > 0 else -theta_dn)
+        rec[c, t:] = last[c]
+    return rec
+
+# ---- Main ----
+def main():
+    args = json.loads(sys.argv[1])
+    mode = args['mode']
+    fs = args['fs']
+    n_ch = args['n_channels']
+    if mode == 'selftest':
+        sig = synth_eeg(fs, args['synth_duration_s'], n_ch, args['seed'])
+    else:
+        # TODO D+0: load via mne.io.read_raw_fif / live device
+        print(json.dumps({'error': 'TODO_LIVE_INPUT_PATH', 'note': 'D+0 hardware path'}))
+        sys.exit(2)
+
+    sig_bp = bandpass(sig, fs, args['bp_lo'], args['bp_hi'], args['bp_order'])
+    sig_z = zscore_sliding(sig_bp, fs, args['zscore_window_s'])
+    events, r_steps = adm_encode(sig_z, fs, args['theta_up'], args['theta_dn'], args['refractory_ms'])
+
+    # Take first window for raster
+    raster = rasterize(events, n_ch, fs, args['window_s'], args['bin_width_ms'], args['s_cap'])
+
+    # ---- Gates ----
+    ev_per_ch = [0]*n_ch
+    up_per_ch = [0]*n_ch; dn_per_ch = [0]*n_ch
+    last_t_per_ch = [-10**9]*n_ch
+    min_dt_per_ch = [10**9]*n_ch
+    for (t, c, p) in events:
+        ev_per_ch[c] += 1
+        if p > 0: up_per_ch[c] += 1
+        else:     dn_per_ch[c] += 1
+        dt = t - last_t_per_ch[c]
+        if dt > 0 and dt < min_dt_per_ch[c]:
+            min_dt_per_ch[c] = dt
+        last_t_per_ch[c] = t
+
+    g_d1 = min(ev_per_ch) >= 50
+    ratios = []
+    for c in range(n_ch):
+        if dn_per_ch[c] == 0: ratios.append(float('inf'))
+        else: ratios.append(up_per_ch[c] / max(1, dn_per_ch[c]))
+    g_d2 = all((0.75 <= r <= 1.33) for r in ratios)
+    g_d3 = all(d >= r_steps for d in min_dt_per_ch)
+    g_d4 = (raster.dtype == np.uint8 and raster.shape == (1, int(round(args['window_s']*1000.0/args['bin_width_ms'])), n_ch, 2) and int(raster.max()) <= args['s_cap'])
+
+    rec = reconstruct(events, n_ch, sig_z.shape[1], args['theta_up'], args['theta_dn'])
+    rs = []
+    for c in range(n_ch):
+        try:
+            r, _ = pearsonr(sig_z[c], rec[c])
+        except Exception:
+            r = 0.0
+        rs.append(float(r))
+    g_d5 = float(np.mean(rs)) >= 0.85
+
+    rms = np.sqrt(np.mean(sig_z**2, axis=1))
+    rates = np.array(ev_per_ch, dtype=np.float64)
+    try:
+        rho, _ = spearmanr(rates, rms)
+        rho = float(rho)
+    except Exception:
+        rho = 0.0
+    g_d6 = rho >= 0.6
+
+    out = {
+        'tool': 'anima_eeg_to_akida_spike',
+        'version': args['tool_version'],
+        'raw_rank': 9,
+        'schema': args['schema'],
+        'mode': mode,
+        'fs_hz': fs,
+        'n_channels': n_ch,
+        'window_s': args['window_s'],
+        'bin_width_ms': args['bin_width_ms'],
+        'raster_shape': list(raster.shape),
+        'raster_dtype': str(raster.dtype),
+        'theta_up_sigma': args['theta_up'],
+        'theta_down_sigma': args['theta_dn'],
+        'refractory_ms': args['refractory_ms'],
+        'refractory_samples': r_steps,
+        'total_events': len(events),
+        'events_per_channel': ev_per_ch,
+        'up_down_balance_per_channel': ratios,
+        'min_inter_event_samples_per_channel': min_dt_per_ch,
+        'reconstruction_pearson_per_channel': rs,
+        'reconstruction_pearson_mean': float(np.mean(rs)),
+        'event_rate_vs_rms_spearman_rho': rho,
+        'gates': {
+            'G_D1_min_events_per_ch_ge_50': {'pass': bool(g_d1), 'value': int(min(ev_per_ch))},
+            'G_D2_up_down_balance': {'pass': bool(g_d2), 'value': ratios},
+            'G_D3_refractory_respected': {'pass': bool(g_d3), 'value': min_dt_per_ch},
+            'G_D4_raster_dtype_shape_max': {'pass': bool(g_d4), 'value': {'dtype': str(raster.dtype), 'shape': list(raster.shape), 'max': int(raster.max())}},
+            'G_D5_round_trip_pearson_ge_0_85': {'pass': bool(g_d5), 'value': float(np.mean(rs))},
+            'G_D6_event_rate_vs_rms_spearman_ge_0_6': {'pass': bool(g_d6), 'value': rho},
+        },
+        'gates_pass_count': sum([g_d1, g_d2, g_d3, g_d4, g_d5, g_d6]),
+        'akida_forward_called': False,
+        'akida_output_shape': None,
+        'akida_forward_status': 'ABORT_NO_AKIDA_OR_NO_HARDWARE',
+        'timestamp_utc': time.strftime('%Y-%m-%dT%H:%M:%SZ', time.gmtime()),
+        'helper_versions': {
+            'numpy': np.__version__,
+            'python': sys.version.split()[0],
+        },
+    }
+
+    # ---- Optional D+0 chip path ----
+    if args.get('akida_forward', False):
+        try:
+            import akida
+            # TODO D+0: model = akida.Model(args['akida_model_path'])
+            # out['akida_output_shape'] = list(model.forward(raster).shape)
+            # out['akida_forward_called'] = True
+            # out['akida_forward_status'] = 'OK'
+            out['akida_forward_status'] = 'TODO_MODEL_PATH_NOT_WIRED'
+        except ImportError:
+            out['akida_forward_status'] = 'ABORT_NO_AKIDA: pip install akida quantizeml cnn2snn'
+
+    print(json.dumps(out))
+
+main()
+"
+    body
+}
+
+fn run_selftest() {
+    let py = build_helper_python()
+    fs::write(HELPER_PATH, py)
+    let args_json = json::stringify({
+        "mode": "selftest",
+        "fs": DEFAULT_FS_HZ,
+        "n_channels": DEFAULT_N_CHANNELS,
+        "synth_duration_s": SYNTH_DURATION_S,
+        "seed": SYNTH_SEED,
+        "bp_lo": DEFAULT_BANDPASS_LO_HZ,
+        "bp_hi": DEFAULT_BANDPASS_HI_HZ,
+        "bp_order": DEFAULT_BANDPASS_ORDER,
+        "zscore_window_s": DEFAULT_ZSCORE_WINDOW_S,
+        "theta_up": DEFAULT_THETA_UP_SIGMA,
+        "theta_dn": DEFAULT_THETA_DN_SIGMA,
+        "refractory_ms": DEFAULT_REFRACTORY_MS,
+        "bin_width_ms": DEFAULT_BIN_WIDTH_MS,
+        "window_s": DEFAULT_WINDOW_S,
+        "s_cap": DEFAULT_S_CAP,
+        "tool_version": TOOL_VERSION,
+        "schema": SCHEMA,
+        "akida_forward": false,
+    })
+    let cmd = "python3 " + _sh_quote(HELPER_PATH) + " " + _sh_quote(args_json)
+    let result = sh::run(cmd)
+    print(result.stdout)
+}
+
+fn main(args: list[string]) {
+    if args.contains("--selftest") {
+        run_selftest()
+        return
+    }
+    print("USAGE: see header. --selftest required for D-X dryrun. Live + chip path = D+0.")
+}

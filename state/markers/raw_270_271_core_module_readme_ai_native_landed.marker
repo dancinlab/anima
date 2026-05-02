@@ -1,0 +1,81 @@
+{
+  "schema": "anima/markers/raw_270_271_landed/1",
+  "title": "raw 270 (core+module architecture) + raw 271 (README.ai.md mandate) landed",
+  "completion_iso": "2026-05-02",
+  "user_directive": [
+    "1.코어, 모듈 형태 필수사용",
+    "2.README.ai.md 필수사용",
+    "raw 에 2개 내용모두구현",
+    "AI-native 컨벤션 적용, lint 등 필수"
+  ],
+  "rules_added": {
+    "raw_270": {
+      "slug": "core-module-architecture",
+      "title": "core+module 분리 구조 필수",
+      "scope": "*/modules/<group>/* 디렉토리",
+      "severity": "warn",
+      "ramp": "warn → block by 2026-06-01"
+    },
+    "raw_271": {
+      "slug": "readme-ai-native",
+      "title": "README.ai.md per group 필수 (frontmatter + sections)",
+      "required_frontmatter": ["schema", "last_updated", "ssot"],
+      "required_sections": ["TL;DR", "API", "Caveats|Failure", "File index"],
+      "severity": "warn",
+      "ramp": "warn → block by 2026-06-01"
+    }
+  },
+  "ssot_files": [
+    {"path": "/Users/ghost/core/hive/.raw", "sha256": "968fc7f7d65572a3720918a5a4af062fed92b33f458a8f573f1d421479f10b91"},
+    {"path": "/Users/ghost/core/hive/tool/ai_native_module_readme_lint.hexa", "sha256": "b6f6a19fbda79f17531f829a60d6b50a054f981ee32f0f00d199492e3a5346dd"},
+    {"path": "/Users/ghost/core/anima/.ai-native-readme-baseline", "sha256": "b848a6b6ffee2aba5722cb19e1826ea41dbefb9a1b7bee877d8488ce406b8354"}
+  ],
+  "lint_selftest": "PASS (synthetic tmp tree: 1 conformant + 1 violating → violations=1 conformant=1)",
+  "lint_anima_run": {
+    "groups_found": 18,
+    "conformant": 1,
+    "conformant_paths": ["anima/modules/rng"],
+    "grandfathered": 17,
+    "violations": 0,
+    "verdict": "PASS"
+  },
+  "anima_baseline_entries": [
+    "ready/anima/modules/body",
+    "ready/anima/modules/decoder",
+    "ready/anima/modules/agent",
+    "ready/anima/modules/physics",
+    "ready/anima/modules/hexa-speak",
+    "ready/anima/modules/eeg",
+    "anima-eeg-core/tool/modules/_paradigms",
+    "anima-eeg-core/tool/modules/_core",
+    "anima-eeg-core/tool/modules/_gates",
+    "anima-eeg-core/tool/modules/_artifact",
+    "anima-eeg-core/tool/modules/_integrations",
+    "anima-eeg-core/tool/modules/_hw",
+    "anima-eeg-core/tool/modules/_metrics",
+    "modules/monitor",
+    "modules/test",
+    "modules/decoder",
+    "modules/daemon"
+  ],
+  "prototype": {
+    "anima_module": "anima/modules/rng/README.ai.md (sha cf14ed39…)",
+    "hexa_lang_sister": "hexa-lang/stdlib/qrng_anu.ai.md (sha 6c9ed491…)"
+  },
+  "raw10_caveats": [
+    "severity=warn currently — lint exits non-zero on violation but commit-reject hooks not yet wired",
+    "30d ramp follow-up: 2026-06-01 severity should promote to block; baseline entries should migrate or annotate",
+    "core+module separation enforcement is structural recommendation; lint primarily catches README.ai.md absence (concrete signal)",
+    "lint uses macOS find with -mindepth/-maxdepth — verified on Darwin; Linux compatible. Alpine / minimal containers may vary",
+    "frontmatter check is text-grep based (looks for 'schema:' 'last_updated:' 'ssot:'); not full YAML parse — caller must use real keys, not nested aliases",
+    "baseline grandfather is per-repo; sister repos (hive/hexa-lang/airgenome/n6-architecture) need their own .ai-native-readme-baseline",
+    "lint not yet wired into bin/hexa-commit pre-commit gate — separate cycle (raw 176 hexa-commit owner)"
+  ],
+  "next_step": [
+    "Wire ai_native_module_readme_lint.hexa into bin/hexa-commit gate (raw 176 path)",
+    "Run lint on sister repos (hive/hexa-lang/airgenome/n6-architecture); create per-repo baseline",
+    "30d ramp: by 2026-06-01 promote severity warn → block + retire baseline entries that have migrated"
+  ],
+  "cost_usd": 0,
+  "destructive_changes": 0
+}

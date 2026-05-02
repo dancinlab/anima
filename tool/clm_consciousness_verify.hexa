@@ -1,0 +1,462 @@
+#!hexa strict
+// @tool(slug="clm_consciousness_verify", desc="raw 270 hybrid verifier for .roadmap.clm clm.cond.1 의식측정 — orchestrates AN11 + Φ + adversarial + Putnam cross-link, supports manual override")
+// @sentinel(__CLM_CONSCIOUSNESS_VERIFY__ <PASS|FAIL|PARTIAL> <metric_kv>)
+// @usage(hexa run anima/tool/clm_consciousness_verify.hexa [--quiet] [--manual-only] [--check <name>] [--selftest])
+// @resolver-bypass(reason="local fs scan + 4 tool exec orchestrator")
+// @exit_codes(0=PASS, 1=FAIL, 2=PARTIAL)
+//
+// PURPOSE
+//   .roadmap.clm clm.cond.1 "의식측정" required_condition verifier. 4-check
+//   hybrid orchestrator (Option 4, user directive 2026-05-02 "4 Hybrid script").
+//
+//   Internal checks (parallel arrays — no anonymous objects in hexa-lang):
+//     [0] an11   — tool/an11_consciousness_unified_verifier.hexa
+//     [1] phi    — tool/anima_phi_v3_canonical.hexa
+//     [2] adv    — tool/adversarial_bench.hexa (read state/adversarial_bench_last.json)
+//     [3] putnam — .roadmap.n_substrate header read (cond.1 status)
+//
+//   Manual override path: state/clm_consciousness_verify_manual_review.jsonl
+//   Format per line: {"check":"<name>","override":"met|unmet","ts":"<iso>","by":"<user>","reason":"<text>"}
+//   Last-record-per-check wins; auto result fully overridden if present.
+//
+//   Verdict aggregation:
+//     all 4 met        → PASS  (exit 0)
+//     1+ explicit unmet→ FAIL  (exit 1)
+//     1+ unknown       → PARTIAL (exit 2) — typical mac-local result (GPU-bound checks)
+//
+// raw#10 honest scope
+//   - Putnam cross-link is SPEC ONLY: .roadmap.n_substrate.cond.1 미정의
+//     (header conditions=[] empty draft). Returns unknown.
+//   - AN11 + Φ require GPU + HF gated; mac-local runs selftest only (PRESENT
+//     check, NOT measurement). Returns unknown with detail tag.
+//   - adversarial_bench mac-local capable (deterministic sandbox), reads
+//     state/adversarial_bench_last.json rather than re-executing.
+//   - manual override bypasses auto-check entirely.
+//   - selftest uses mock fixtures, no real tool dispatch.
+
+let SCHEMA          = "anima/clm_consciousness_verify/1"
+let SENTINEL_TAG    = "__CLM_CONSCIOUSNESS_VERIFY__"
+let MANUAL_PATH     = "state/clm_consciousness_verify_manual_review.jsonl"
+let TOOL_AN11       = "tool/an11_consciousness_unified_verifier.hexa"
+let TOOL_PHI        = "tool/anima_phi_v3_canonical.hexa"
+let TOOL_ADV        = "tool/adversarial_bench.hexa"
+let HEXA_BIN_DEFAULT = "/Users/<user>/core/hexa-lang/hexa"
+
+// ─── helpers ───────────────────────────────────────────────────────────────
+
+fn _str(x) -> string {
+    let t = type_of(x)
+    if t == "str" || t == "string" { return x }
+    return ""
+}
+
+fn fexists(p: string) -> bool {
+    return _str(exec("test -f " + p + " && echo 1 || echo 0")).trim() == "1"
+}
+
+fn read_file_safe(p: string) -> string {
+    if !fexists(p) { return "" }
+    return _str(exec("cat " + p))
+}
+
+fn resolve_root() -> string {
+    let gt = _str(exec("git rev-parse --show-toplevel 2>/dev/null")).trim()
+    if gt != "" { return gt }
+    let a = _str(env("ANIMA"))
+    if a != "" { return a }
+    let h = _str(env("HOME"))
+    return h + "/core/anima"
+}
+
+fn resolve_hexa_bin() -> string {
+    let e = _str(env("HEXA_BIN"))
+    if e != "" { return e }
+    if fexists(HEXA_BIN_DEFAULT) { return HEXA_BIN_DEFAULT }
+    let p = _str(exec("command -v hexa 2>/dev/null")).trim()
+    if p != "" { return p }
+    return HEXA_BIN_DEFAULT
+}
+
+// minimal JSON value extractor (string fields, single-line records).
+fn json_string_field(line: string, key: string) -> string {
+    let needle = "\"" + key + "\":"
+    let idx = line.index_of(needle)
+    if idx < 0 { return "" }
+    let after = line.substring(idx + needle.len(), line.len())
+    let trimmed = after.trim()
+    if trimmed.len() == 0 { return "" }
+    if trimmed.substring(0, 1) != "\"" { return "" }
+    let body = trimmed.substring(1, trimmed.len())
+    let end = body.index_of("\"")
+    if end < 0 { return "" }
+    return body.substring(0, end)
+}
+
+// ─── manual override read ──────────────────────────────────────────────────
+
+// Returns parallel lists [names, overrides] — same index per record.
+fn read_manual_overrides(path: string) -> list {
+    let names = []
+    let ovrs = []
+    let body = read_file_safe(path)
+    if body == "" { return [names, ovrs] }
+    let lines = body.split("\n")
+    let mut i = 0
+    while i < len(lines) {
+        let ln = lines[i].trim()
+        if ln != "" && ln.substring(0, 1) == "{" {
+            let chk = json_string_field(ln, "check")
+            let ovr = json_string_field(ln, "override")
+            if chk != "" {
+                if ovr == "met" || ovr == "unmet" {
+                    names.push(chk)
+                    ovrs.push(ovr)
+                }
+            }
+        }
+        i = i + 1
+    }
+    return [names, ovrs]
+}
+
+fn override_for(name: string, override_pair: list) -> string {
+    let names = override_pair[0]
+    let ovrs = override_pair[1]
+    let mut found = ""
+    let mut i = 0
+    while i < len(names) {
+        if names[i] == name { found = ovrs[i] }
+        i = i + 1
+    }
+    return found
+}
+
+// ─── individual checks (return [status, detail] pair) ─────────────────────
+
+fn check_an11(root: string, bin: string) -> list {
+    let path = root + "/" + TOOL_AN11
+    if !fexists(path) {
+        return ["unknown", "tool_missing:" + TOOL_AN11]
+    }
+    // mac-local: only verify selftest PASS (PRESENT). Real run requires GPU.
+    let cmd = bin + " run " + path + " --selftest 2>&1"
+    let r = exec_with_status(cmd)
+    let out = _str(r[0])
+    let rc = to_int(r[1])
+    if rc != 0 {
+        return ["unknown", "selftest_exit_" + to_string(rc)]
+    }
+    if out.index_of("selftest=ok") < 0 && out.index_of("selftest: OK") < 0 {
+        return ["unknown", "selftest_marker_missing"]
+    }
+    // raw#10 honest: PRESENT != met. Production GPU dispatch required.
+    return ["unknown", "selftest_present_no_gpu_dispatch"]
+}
+
+fn check_phi(root: string, bin: string) -> list {
+    let path = root + "/" + TOOL_PHI
+    if !fexists(path) {
+        return ["unknown", "tool_missing:" + TOOL_PHI]
+    }
+    let cmd = bin + " run " + path + " --selftest 2>&1"
+    let r = exec_with_status(cmd)
+    let out = _str(r[0])
+    let rc = to_int(r[1])
+    if rc != 0 {
+        return ["unknown", "selftest_exit_" + to_string(rc)]
+    }
+    if out.index_of("selftest=ok") < 0 {
+        return ["unknown", "selftest_marker_missing"]
+    }
+    return ["unknown", "selftest_present_no_gpu_dispatch"]
+}
+
+fn check_adv(root: string, bin: string) -> list {
+    let path = root + "/" + TOOL_ADV
+    if !fexists(path) {
+        return ["unknown", "tool_missing:" + TOOL_ADV]
+    }
+    // Read last-run state rather than re-executing (re-exec writes sandboxes).
+    let last_json = root + "/state/adversarial_bench_last.json"
+    if !fexists(last_json) {
+        return ["unknown", "no_prior_run_state"]
+    }
+    let body = read_file_safe(last_json)
+    if body == "" {
+        return ["unknown", "empty_last_state"]
+    }
+    if body.index_of("\"verdict\":") < 0 {
+        return ["unknown", "verdict_field_missing"]
+    }
+    if body.index_of("\"verdict\":                \"PASS\"") >= 0 {
+        return ["met", "3_of_3_flip_pass"]
+    }
+    if body.index_of("\"verdict\": \"PASS\"") >= 0 {
+        return ["met", "3_of_3_flip_pass"]
+    }
+    if body.index_of("\"verdict\":\"PASS\"") >= 0 {
+        return ["met", "3_of_3_flip_pass"]
+    }
+    if body.index_of("\"verdict\":                \"FAIL\"") >= 0 {
+        return ["unmet", "3_of_3_flip_fail"]
+    }
+    if body.index_of("\"verdict\": \"FAIL\"") >= 0 {
+        return ["unmet", "3_of_3_flip_fail"]
+    }
+    if body.index_of("\"verdict\":\"FAIL\"") >= 0 {
+        return ["unmet", "3_of_3_flip_fail"]
+    }
+    return ["unknown", "verdict_unrecognized"]
+}
+
+fn check_putnam(root: string) -> list {
+    let path = root + "/.roadmap.n_substrate"
+    if !fexists(path) {
+        return ["unknown", "n_substrate_roadmap_missing"]
+    }
+    let body = read_file_safe(path)
+    let lines = body.split("\n")
+    let mut i = 0
+    while i < len(lines) {
+        let ln = lines[i].trim()
+        if ln != "" && ln.substring(0, 1) == "{" {
+            let cond_idx = ln.index_of("\"id\":\"n_substrate.cond.1\"")
+            if cond_idx >= 0 {
+                let after = ln.substring(cond_idx, ln.len())
+                let st = json_string_field(after, "status")
+                if st == "met" {
+                    return ["met", "n_substrate_cond1_met"]
+                }
+                if st == "unmet" {
+                    return ["unmet", "n_substrate_cond1_unmet"]
+                }
+            }
+            // empty conditions=[] (draft) → spec-only
+            if ln.index_of("\"required_conditions\":[]") >= 0 {
+                return ["unknown", "n_substrate_cond1_undefined_spec_only"]
+            }
+        }
+        i = i + 1
+    }
+    return ["unknown", "n_substrate_cond1_not_found"]
+}
+
+// ─── selftest mock dispatcher ──────────────────────────────────────────────
+
+fn mock_check(name: string, fixture: string) -> list {
+    if fixture == "all_met" {
+        return ["met", "mock_" + name + "_met"]
+    }
+    if fixture == "one_fail" {
+        if name == "an11" { return ["unmet", "mock_an11_fail"] }
+        return ["met", "mock_" + name + "_met"]
+    }
+    if fixture == "tool_missing" {
+        if name == "phi" { return ["unknown", "mock_phi_tool_missing"] }
+        return ["met", "mock_" + name + "_met"]
+    }
+    if fixture == "manual_override" {
+        return ["unmet", "mock_" + name + "_auto_unmet"]
+    }
+    return ["unknown", "unknown_fixture"]
+}
+
+// ─── aggregation ───────────────────────────────────────────────────────────
+
+// statuses = list of 4 strings (after override applied).
+// returns [verdict, exit_code, met_ct, unmet_ct, unknown_ct]
+fn aggregate_statuses(statuses: list) -> list {
+    let mut met_ct = 0
+    let mut unmet_ct = 0
+    let mut unknown_ct = 0
+    let mut i = 0
+    while i < len(statuses) {
+        let s = statuses[i]
+        if s == "met" { met_ct = met_ct + 1 }
+        else if s == "unmet" { unmet_ct = unmet_ct + 1 }
+        else { unknown_ct = unknown_ct + 1 }
+        i = i + 1
+    }
+    let mut verdict = "PARTIAL"
+    let mut code = 2
+    if met_ct == len(statuses) { verdict = "PASS"; code = 0 }
+    else if unmet_ct >= 1 { verdict = "FAIL"; code = 1 }
+    else { verdict = "PARTIAL"; code = 2 }
+    return [verdict, code, met_ct, unmet_ct, unknown_ct]
+}
+
+fn emit_sentinel(verdict: string, statuses: list, override_count: int) {
+    let an = statuses[0]
+    let ph = statuses[1]
+    let ad = statuses[2]
+    let pu = statuses[3]
+    println(SENTINEL_TAG + " " + verdict +
+            " an11=" + an + " phi=" + ph + " adv=" + ad + " putnam=" + pu +
+            " manual=" + to_string(override_count))
+}
+
+// ─── selftest harness ──────────────────────────────────────────────────────
+
+fn run_selftest_case(name: string, fixture: string,
+                     override_pair: list,
+                     expected_verdict: string, expected_exit: int) -> bool {
+    let an = mock_check("an11", fixture)
+    let ph = mock_check("phi", fixture)
+    let ad = mock_check("adv", fixture)
+    let pu = mock_check("putnam", fixture)
+    let names = ["an11", "phi", "adv", "putnam"]
+    let raws = [an[0], ph[0], ad[0], pu[0]]
+    let mut effective = []
+    let mut k = 0
+    while k < len(names) {
+        let ovr = override_for(names[k], override_pair)
+        if ovr != "" { effective.push(ovr) } else { effective.push(raws[k]) }
+        k = k + 1
+    }
+    let agg = aggregate_statuses(effective)
+    let v = agg[0]
+    let c = to_int(agg[1])
+    let ok = v == expected_verdict && c == expected_exit
+    let tag = if ok { "OK" } else { "FAIL" }
+    println("  selftest_case[" + name + "] fixture=" + fixture +
+            " expected=" + expected_verdict + "(exit=" + to_string(expected_exit) + ")" +
+            " got=" + v + "(exit=" + to_string(c) + ") => " + tag)
+    return ok
+}
+
+fn cmd_selftest() {
+    println("── clm_consciousness_verify selftest (mock fixtures) ──")
+    let mut all_ok = true
+    let empty_pair = [[], []]
+
+    // Case 1: all 4 met → PASS / exit 0
+    if !run_selftest_case("all_met", "all_met", empty_pair, "PASS", 0) { all_ok = false }
+
+    // Case 2: an11 fail + others met → FAIL / exit 1
+    if !run_selftest_case("one_fail", "one_fail", empty_pair, "FAIL", 1) { all_ok = false }
+
+    // Case 3: phi tool missing + others met → PARTIAL / exit 2
+    if !run_selftest_case("tool_missing", "tool_missing", empty_pair, "PARTIAL", 2) { all_ok = false }
+
+    // Case 4: all auto-unmet but manual override "met" for all 4 → PASS / exit 0
+    let override_all_met = [
+        ["an11", "phi", "adv", "putnam"],
+        ["met",  "met", "met", "met"],
+    ]
+    if !run_selftest_case("manual_override", "manual_override", override_all_met, "PASS", 0) {
+        all_ok = false
+    }
+
+    println("")
+    println("selftest=" + (if all_ok { "ok" } else { "fail" }))
+    println("schema=" + SCHEMA)
+    println("sentinel_tag=" + SENTINEL_TAG)
+    println("manual_override_path=" + MANUAL_PATH)
+    println("DONE")
+    if all_ok { exit(0) }
+    exit(1)
+}
+
+// ─── main ──────────────────────────────────────────────────────────────────
+
+fn main() {
+    let av = args()
+    let mut quiet = false
+    let mut manual_only = false
+    let mut single_check = ""
+    let mut do_selftest = false
+    let mut i = 0
+    while i < len(av) {
+        let a = _str(av[i])
+        if a == "--quiet" { quiet = true }
+        else if a == "--manual-only" { manual_only = true }
+        else if a == "--selftest" { do_selftest = true }
+        else if a == "--check" && i + 1 < len(av) {
+            single_check = _str(av[i+1])
+            i = i + 1
+        }
+        i = i + 1
+    }
+
+    if do_selftest { cmd_selftest(); return }
+
+    let root = resolve_root()
+    let bin = resolve_hexa_bin()
+
+    if !quiet {
+        println("── clm_consciousness_verify (raw 270 hybrid) ──")
+        println("  root=" + root)
+        println("  hexa_bin=" + bin)
+        println("  manual_path=" + MANUAL_PATH)
+    }
+
+    let override_pair = read_manual_overrides(root + "/" + MANUAL_PATH)
+
+    let mut an = ["unknown", "skipped"]
+    let mut ph = ["unknown", "skipped"]
+    let mut ad = ["unknown", "skipped"]
+    let mut pu = ["unknown", "skipped"]
+
+    if !manual_only {
+        if single_check == "" || single_check == "an11" {
+            an = check_an11(root, bin)
+        }
+        if single_check == "" || single_check == "phi" {
+            ph = check_phi(root, bin)
+        }
+        if single_check == "" || single_check == "adv" {
+            ad = check_adv(root, bin)
+        }
+        if single_check == "" || single_check == "putnam" {
+            pu = check_putnam(root)
+        }
+    }
+
+    let names = ["an11", "phi", "adv", "putnam"]
+    let raws = [an[0], ph[0], ad[0], pu[0]]
+    let details = [an[1], ph[1], ad[1], pu[1]]
+
+    let mut effective = []
+    let mut overrides_applied = 0
+    let mut k = 0
+    while k < len(names) {
+        let ovr = override_for(names[k], override_pair)
+        if ovr != "" {
+            effective.push(ovr)
+            overrides_applied = overrides_applied + 1
+        } else {
+            effective.push(raws[k])
+        }
+        k = k + 1
+    }
+
+    let agg = aggregate_statuses(effective)
+    let verdict = agg[0]
+    let code = to_int(agg[1])
+    let met_ct = to_int(agg[2])
+    let unmet_ct = to_int(agg[3])
+    let unknown_ct = to_int(agg[4])
+
+    if !quiet {
+        println("")
+        println("[RESULTS]")
+        let mut j = 0
+        while j < len(names) {
+            let st = effective[j]
+            let dt = details[j]
+            let ovr = override_for(names[j], override_pair)
+            let tag = if ovr != "" { " [override=" + ovr + "]" } else { "" }
+            println("  " + names[j] + " : " + st + tag + "  (" + dt + ")")
+            j = j + 1
+        }
+        println("")
+        println("verdict=" + verdict +
+                " met=" + to_string(met_ct) +
+                " unmet=" + to_string(unmet_ct) +
+                " unknown=" + to_string(unknown_ct) +
+                " overrides=" + to_string(overrides_applied))
+    }
+
+    emit_sentinel(verdict, effective, overrides_applied)
+    exit(code)
+}

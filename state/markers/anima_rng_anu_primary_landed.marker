@@ -1,0 +1,70 @@
+{
+  "schema": "anima/markers/rng_anu_primary/1",
+  "title": "ANU QRNG primary source landed (Tier 1)",
+  "completion_iso": "2026-05-02",
+  "decision": "ANU primary by default_priority [\"anu\",\"esp32\",\"urandom\"] — Pareto optimal for free + immediate + no-auth axes",
+  "upstream_swap": {
+    "from": "_anu_fetch_via_curl + _anu_parse_json (in-module curl)",
+    "to": "stdlib/qrng_anu :: qrng_anu_uint8_live (hexa-lang upstream)",
+    "swap_iso": "2026-05-02"
+  },
+  "anima_module": {
+    "path": "anima/modules/rng/anu.hexa",
+    "sha256_pre_swap": "7818b3dc061896c379a6db1754c6371285c50efdf82d7df4513f485d0bf239ed",
+    "sha256_post_swap": "2b76df170440b42b4adb956f4981bb8442736916833e10adb30d939cb6ae834d",
+    "loc": 255,
+    "rate_limit_pause_ms": 60000
+  },
+  "hexa_lang_upstream": {
+    "marker_path": "/Users/ghost/core/hexa-lang/state/markers/hexa_lang_qrng_anu_upstream_complete.marker",
+    "marker_sha256": "2d72cff543b29e6de17064b9eef83296db7a9aa756c19573604030d7248acda8",
+    "modules": [
+      {"path": "stdlib/net/http_client.hexa", "sha256": "7333d283f1b1f5118a63c4200e0033066ad916461b14a805ebc8e13996ba1fc8", "loc": 120},
+      {"path": "stdlib/qrng_anu.hexa", "sha256": "8c408ddbdc56ec45203fb3a054c9cebb213dbb7dbf3660cc26370d17e3359784", "loc": 187}
+    ],
+    "selftest": {"http_client": "5/5", "qrng_anu": "20/20", "live_api_smoke": "PASS (8 bytes b0=33 b3=175)"}
+  },
+  "anima_abstraction": {
+    "marker_path": "state/markers/anima_rng_abstraction_t1_anu_complete.marker",
+    "marker_sha256": "185fea38c83d020c8d5a3b998dc2cd440f69825e1a65c9105e1e1b1c5dbb7af0",
+    "core_files": 4,
+    "module_files": 6,
+    "config": "anima/config/rng_sources.json (untracked per .gitignore:81 policy)"
+  },
+  "preserved_unchanged": [
+    {"path": "anima-physics/esp32/qrng_bridge.hexa", "sha256": "547fa48598535e656f8305e7cf0e9f29394f6402b474f15d40de984690828ed4"},
+    {"path": "anima-physics/verify_7cond_hw.hexa", "sha256": "b7c60e30b022daf12a767bf8353c7a3e2e8725ad376bf46017879f9fbbbd61b2"},
+    {"path": "anima-physics/hw_engine_bridge.hexa", "sha256": "92015e08a0393703eab8088e4c845de3b0a89491eca5d92ede60e71751e6ff20"}
+  ],
+  "selftest_post_swap": {
+    "mock_default": "PASS",
+    "live_smoke_via_stdlib": "PASS — qrng_anu_uint8_live(8) returned [44,38,14,157,148,53,203,250]",
+    "live_api_smoke_at_start": "PASS (raw curl 'success:true' 8 bytes)",
+    "main_env_gate_quirk": "anu.hexa main() ANIMA_QRNG_LIVE check did not fire under exec(printenv) — known hexa-lang env() visibility caveat (BG1 #5); router-level call works correctly (verified via /tmp/anu_smoke_driver.hexa)"
+  },
+  "tier_status": {
+    "T0_urandom": "IMPLEMENTED",
+    "T0_esp32": "WRAPPED (preserved unchanged)",
+    "T1_anu": "IMPLEMENTED + PRIMARY",
+    "T2_ibm_q": "STUB (qiskit-ibm-runtime + IBM_QUANTUM_TOKEN to wire)",
+    "T3_idq_quantis": "STUB (libQuantis SDK + PCIe device to wire)",
+    "T4_kaist_optical": "STUB (research collab + IRB to wire)"
+  },
+  "raw10_caveats": [
+    "ANU API rate-limit 1 req/min — chunking sleep_ms_between bumped 1000 → 60000",
+    "stdlib qrng_anu_uint8_live bypasses ANIMA_QRNG_LIVE env (anima already gates via ANIMA_QRNG_MOCK)",
+    "_anu_parse_json retained as internal helper for selftest only (DRY; live path uses stdlib parser)",
+    "NIST SP 800-90B health tests NOT implemented (informational)",
+    "ANU is_local=0 — air-gapped → ANIMA_RNG_SOURCE=esp32 force",
+    "Network failure cascades anu→esp32(mock LCG)→urandom(kernel CSPRNG, NOT quantum); consumer must check meta.is_quantum",
+    "verify_7cond_hw.hexa consumer-site migration to router DEFERRED (router opt-in only, separate cycle)"
+  ],
+  "next_step": [
+    "Optional: migrate verify_7cond_hw.hexa T3 Embodiment site from inline LCG → router(default chain)",
+    "Optional: T2/T3/T4 vendor onboarding (each is a discrete 1-module land cycle)",
+    "Optional: NIST SP 800-90B health tests as additional QPQ L3 layer"
+  ],
+  "cost_usd": 0,
+  "destructive_changes": 0,
+  "roadmap_entry": 251
+}

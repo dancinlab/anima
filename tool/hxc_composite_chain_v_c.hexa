@@ -1,0 +1,800 @@
+// ════════════════════════════════════════════════════════════════════════════
+// tool/hxc_composite_chain_v_c.hexa — Option C A25-aware routing skeleton
+//
+// Design: anima/docs/hxc_composite_chain_option_c_2026-04-29.md (PASS 1
+// design delta). PASS 2 mandate: per-class deterministic switch; single AOT
+// invocation per class; envelope sigil ^d, wire `v=composite-v_c`.
+//
+// PIVOT RATIONALE
+//   Option A linear (anima/tool/hxc_composite_chain.hexa, commit 1f9871a45,
+//   sigil ^d v=composite-v2) F-CHAIN-2 TRIPPED:
+//     chain 90.21% < A18 v6 92.03% (best single) = -1.82pp
+//     manifest header overhead ~518 B fixed; only Stage 3 fires "active".
+//   Option C abandons the 5-stage chain + replaces with 1-line manifest +
+//   class-routed single algo. NOT A MIXER (raw 137 cmix-ban) — deterministic
+//   switch on A25 v2 class tag.
+//
+// Routing matrix (production-baseline-best, in-sample 9-fixture):
+//   text-heavy           → A18 v6 standalone
+//   json-heavy           → A29 v3 standalone
+//   mixed                → A18 v6 standalone
+//   struct-audit         → A18 v6 standalone
+//   synthetic-repetitive → A24 standalone
+//   passthrough/unknown  → identity passthrough
+//
+// Wire envelope (^d sigil, disjoint v= field from Option A and v1):
+//   # cc_c:s2 v=composite-v_c class=<tag> route=<algo> n=<N>
+//   # cc_c:route mode=<active|identity> sigil=<algo_sigil> param=<json>
+//   ^d<body-escaped>
+//
+// Read-only AOT (DO NOT modify):
+//   /Users/<user>/core/anima/.hxc_aot/hxc_a25  (A25 v2 classifier)
+//   /Users/<user>/core/anima/.hxc_aot/hxc_a18  (A18 v6 LZ77)
+//   /Users/<user>/core/anima/.hxc_aot/hxc_a29  (A29 v3 length-codes Huffman)
+//   /Users/<user>/core/anima/.hxc_aot/hxc_a24  (A24 grammar PCFG)
+//   NOT integrated: hxc_a33 (PASS 5 in-flight), hxc_a34 (production
+//                   FALSIFIED), hxc_a35 (schemaful LIVE FIRE in-flight).
+//
+// Compliance:
+//   raw 9   hexa-only
+//   raw 18  self-host fixpoint (AOT byte-identical via hexa.real if available)
+//   raw 33  English commit + witness
+//   raw 42  mac jetsam (RSS<100MB)
+//   raw 47  no-inflation (top-level revert if route output > input)
+//   raw 65  encode(decode(x))==x
+//   raw 68  decode(encode(y))==y
+//   raw 71  falsifier preregister (F-CHAIN-V_C-1..6)
+//   raw 91  honest C3 STRICT (in-sample 9-fixture only)
+//   raw 92  sigil-line (^d envelope; per-route algo sigil in manifest)
+//   raw 137 cmix-ban (deterministic switch, NOT mixer; F-CHAIN-V_C-6 grep guard)
+//   raw 142 D2 try-revert (top-level chain > input → identity)
+//   raw 156 placement-axis (single axis per class, declared in design delta)
+//   raw 157 printable wire (header ASCII, body escape-encoded)
+//
+// CLI USAGE
+//   hxc_composite_chain_v_c.hexa --selftest
+//   hxc_composite_chain_v_c.hexa --selftest --emit-ledger <path>
+//   hxc_composite_chain_v_c.hexa encode <in> <out>
+//   hxc_composite_chain_v_c.hexa decode <in> <out>
+//   hxc_composite_chain_v_c.hexa classify <in>
+//
+// Exit codes: 0=ok, 1=selftest-fail, 2=io-error, 3=bad-args, 4=decode-mismatch
+// ════════════════════════════════════════════════════════════════════════════
+
+let CC_V_C_SIGIL          = "^d"
+let CC_V_C_VERSION        = "composite-v_c"
+let CC_V_C_HEADER_PREFIX  = "# cc_c:s2"
+let CC_V_C_ROUTE_PREFIX   = "# cc_c:route"
+let CC_V_C_MIN_BYTES      = 64           // below: identity passthrough (raw 65/68 + 142)
+
+// AOT paths (read-only).
+let A25_AOT = "/Users/<user>/core/anima/.hxc_aot/hxc_a25"
+let A18_AOT = "/Users/<user>/core/anima/.hxc_aot/hxc_a18"
+let A29_AOT = "/Users/<user>/core/anima/.hxc_aot/hxc_a29"
+let A24_AOT = "/Users/<user>/core/anima/.hxc_aot/hxc_a24"
+
+// Per-class route table — deterministic switch (NOT a mixer; raw 137 compliant).
+//   class tag         → [route_label, algo_sigil, aot_path, extra_args]
+let ROUTE_TEXT_HEAVY      = ["TEXT",   "^M",  A18_AOT, ""]
+let ROUTE_JSON_HEAVY      = ["JSON",   "^J",  A29_AOT, "--v3"]
+let ROUTE_MIXED           = ["MIXED",  "^M",  A18_AOT, ""]
+let ROUTE_STRUCT_AUDIT    = ["STRUCT", "^M",  A18_AOT, ""]
+let ROUTE_SYNTHETIC       = ["SYN",    "^X",  A24_AOT, ""]
+let ROUTE_PASSTHROUGH     = ["NONE",   "_id", "",      ""]
+
+// ──────────────────────── helpers (str / shell / file io) ────────────────────────
+
+fn _str(x) {
+    let t = type_of(x)
+    if t == "str" || t == "string" { return x }
+    return to_string(x)
+}
+
+fn _sh_quote(s) {
+    let mut o = "'"
+    o = o + s.replace("'", "'\\''")
+    o = o + "'"
+    return o
+}
+
+fn fexists(p) {
+    return _str(exec("test -f " + _sh_quote(p) + " && echo 1 || echo 0")).trim() == "1"
+}
+
+fn fxists(p) { return fexists(p) }
+
+fn now_utc() {
+    return _str(exec("date -u +%FT%TZ")).trim()
+}
+
+fn json_escape(s) {
+    return s.replace("\\", "\\\\").replace("\"", "\\\"").replace("\n", "\\n").replace("\r", "\\r").replace("\t", "\\t")
+}
+
+fn append_jsonl(path, body) {
+    if path == "" { return }
+    let pid = _str(exec("printf %s $$")).trim()
+    let tmp = path + ".tmp." + pid
+    write_file(tmp, body + "\n")
+    exec("cat " + _sh_quote(tmp) + " >> " + _sh_quote(path) + " && rm -f " + _sh_quote(tmp))
+}
+
+fn read_text(p) {
+    return _str(exec("cat " + _sh_quote(p)))
+}
+
+fn write_text(p, s) {
+    write_file(p, s)
+}
+
+// Body-line escape: backslash + newline + carriage-return only.
+// Mirrors Option A `_cc2_body_escape` for inter-tool consistency.
+fn _ccvc_body_escape(s) {
+    let mut out = ""
+    let mut i = 0
+    let n = len(s)
+    while i < n {
+        let ch = s.substring(i, i + 1)
+        if ch == "\\" {
+            out = out + "\\\\"
+        } else if ch == "\n" {
+            out = out + "\\n"
+        } else if ch == "\r" {
+            out = out + "\\r"
+        } else {
+            out = out + ch
+        }
+        i = i + 1
+    }
+    return out
+}
+
+fn _ccvc_body_unescape(s) {
+    let mut out = ""
+    let mut i = 0
+    let n = len(s)
+    while i < n {
+        let ch = s.substring(i, i + 1)
+        let mut handled = false
+        if ch == "\\" && i + 1 < n {
+            let nxt = s.substring(i + 1, i + 2)
+            if nxt == "\\" { out = out + "\\"; i = i + 2; handled = true }
+            else if nxt == "n" { out = out + "\n"; i = i + 2; handled = true }
+            else if nxt == "r" { out = out + "\r"; i = i + 2; handled = true }
+        }
+        if !handled { out = out + ch; i = i + 1 }
+    }
+    return out
+}
+
+// ─────────────────── AOT adapter (read-only single-call) ───────────────────
+
+fn _aot_encode(aot_path, extra_args, input_text) {
+    if aot_path == "" { return [input_text, false] }
+    if !fxists(aot_path) { return [input_text, false] }
+    let pid = _str(exec("printf %s $$")).trim()
+    let tin  = "/tmp/_ccvc_in." + pid
+    let tout = "/tmp/_ccvc_out." + pid
+    write_text(tin, input_text)
+    let cmd = aot_path + " encode " + extra_args + " " + _sh_quote(tin) + " " + _sh_quote(tout) + " 2>&1"
+    exec(cmd)
+    let mut ok = fxists(tout)
+    let mut enc = input_text
+    if ok { enc = read_text(tout) }
+    exec("rm -f " + _sh_quote(tin) + " " + _sh_quote(tout))
+    return [enc, ok]
+}
+
+fn _aot_decode(aot_path, encoded_text) {
+    if aot_path == "" { return [encoded_text, false] }
+    if !fxists(aot_path) { return [encoded_text, false] }
+    let pid = _str(exec("printf %s $$")).trim()
+    let tin  = "/tmp/_ccvc_dec_in." + pid
+    let tout = "/tmp/_ccvc_dec_out." + pid
+    write_text(tin, encoded_text)
+    let cmd = aot_path + " decode " + _sh_quote(tin) + " " + _sh_quote(tout) + " 2>&1"
+    exec(cmd)
+    let mut ok = fxists(tout)
+    let mut dec = encoded_text
+    if ok { dec = read_text(tout) }
+    exec("rm -f " + _sh_quote(tin) + " " + _sh_quote(tout))
+    return [dec, ok]
+}
+
+// ────────────────── A25 classify (read-only AOT call) ──────────────────
+
+// Returns class tag string (e.g., "text-heavy", "json-heavy", "mixed",
+// "synthetic-repetitive", "struct-audit", "passthrough"). On AOT failure or
+// missing binary returns "passthrough".
+fn _a25_classify(input_text) {
+    if !fxists(A25_AOT) { return "passthrough" }
+    let pid = _str(exec("printf %s $$")).trim()
+    let tin = "/tmp/_ccvc_a25_in." + pid
+    write_text(tin, input_text)
+    let cmd = A25_AOT + " classify " + _sh_quote(tin) + " 2>&1"
+    let out = _str(exec(cmd))
+    exec("rm -f " + _sh_quote(tin))
+    // Output line shape: "class=<tag> algo=<x> sigil=<y> ..."
+    let lines = out.split("\n")
+    let mut k = 0
+    let mut class_tag = "passthrough"
+    while k < len(lines) {
+        let line = lines[k]
+        let idx = line.index_of("class=")
+        if idx >= 0 {
+            let rest = line.substring(idx + 6, len(line))
+            // Read until space.
+            let mut j = 0
+            let mut tag = ""
+            let nr = len(rest)
+            while j < nr {
+                let ch = rest.substring(j, j + 1)
+                if ch == " " || ch == "\n" || ch == "\t" { break }
+                tag = tag + ch
+                j = j + 1
+            }
+            if tag != "" { class_tag = tag; break }
+        }
+        k = k + 1
+    }
+    return class_tag
+}
+
+// Map A25 class tag → route record [label, sigil, aot_path, extra_args].
+// Deterministic switch (raw 137 cmix-ban: NOT a mixer — exactly one branch
+// per class, no weighted combination of multiple model outputs).
+fn _route_for_class(class_tag) {
+    if class_tag == "text-heavy"           { return ROUTE_TEXT_HEAVY }
+    if class_tag == "json-heavy"           { return ROUTE_JSON_HEAVY }
+    if class_tag == "mixed"                { return ROUTE_MIXED }
+    if class_tag == "struct-audit"         { return ROUTE_STRUCT_AUDIT }
+    if class_tag == "synthetic-repetitive" { return ROUTE_SYNTHETIC }
+    return ROUTE_PASSTHROUGH
+}
+
+// ────────────────── manifest wrap / unwrap ──────────────────
+
+fn _ccvc_manifest_header(input_n, class_tag, route_label, route_mode, route_sigil, route_param) {
+    return CC_V_C_HEADER_PREFIX + " v=" + CC_V_C_VERSION
+        + " class=" + class_tag
+        + " route=" + route_label
+        + " n=" + to_string(input_n) + "\n"
+        + CC_V_C_ROUTE_PREFIX + " mode=" + route_mode
+        + " sigil=" + route_sigil
+        + " param=" + route_param + "\n"
+}
+
+fn _ccvc_wrap(body_wire, hdr) {
+    let body_esc = _ccvc_body_escape(body_wire)
+    return hdr + CC_V_C_SIGIL + body_esc + "\n"
+}
+
+fn _ccvc_parse_kv(line, key) {
+    let idx = line.index_of(key)
+    if idx < 0 { return "" }
+    let rest = line.substring(idx + len(key), len(line))
+    let mut out = ""
+    let mut i = 0
+    let n = len(rest)
+    while i < n {
+        let ch = rest.substring(i, i + 1)
+        if ch == " " { break }
+        out = out + ch
+        i = i + 1
+    }
+    return out
+}
+
+fn _ccvc_parse_param(line) {
+    let idx = line.index_of(" param=")
+    if idx < 0 { return "" }
+    let rest = line.substring(idx + 7, len(line))
+    return rest
+}
+
+// Returns [class_tag, route_label, n_input, route_mode, route_sigil, route_param, body_text]
+// Empty array on parse failure (input not a v_c wire).
+fn _ccvc_unwrap(z) {
+    let lines = z.split("\n")
+    if len(lines) < 3 { return [] }
+    let h0 = lines[0]
+    let pref_n = len(CC_V_C_HEADER_PREFIX)
+    if len(h0) < pref_n { return [] }
+    if h0.substring(0, pref_n) != CC_V_C_HEADER_PREFIX { return [] }
+    // Strict version check — F-CHAIN-V_C-4 mitigation.
+    let ver = _ccvc_parse_kv(h0, " v=")
+    if ver != CC_V_C_VERSION { return [] }
+    let class_tag = _ccvc_parse_kv(h0, " class=")
+    let route_label = _ccvc_parse_kv(h0, " route=")
+    let n_input = to_int(_ccvc_parse_kv(h0, " n="))
+    let l1 = lines[1]
+    let route_pref_n = len(CC_V_C_ROUTE_PREFIX)
+    if len(l1) < route_pref_n { return [] }
+    if l1.substring(0, route_pref_n) != CC_V_C_ROUTE_PREFIX { return [] }
+    let route_mode = _ccvc_parse_kv(l1, " mode=")
+    let route_sigil = _ccvc_parse_kv(l1, " sigil=")
+    let route_param = _ccvc_parse_param(l1)
+    let body_line = lines[2]
+    let sig_n = len(CC_V_C_SIGIL)
+    if len(body_line) < sig_n { return [] }
+    if body_line.substring(0, sig_n) != CC_V_C_SIGIL { return [] }
+    let body_esc = body_line.substring(sig_n, len(body_line))
+    let body_text = _ccvc_body_unescape(body_esc)
+    return [class_tag, route_label, n_input, route_mode, route_sigil, route_param, body_text]
+}
+
+// ─────────────── Option C encode / decode ───────────────
+
+// cc_v_c_encode_force: ALWAYS produces a v_c wire (no top-level revert).
+fn cc_v_c_encode_force(s) {
+    let n_in = len(s)
+    let class_tag = _a25_classify(s)
+    let route = _route_for_class(class_tag)
+    let route_label = route[0]
+    let route_sigil = route[1]
+    let route_aot   = route[2]
+    let route_args  = route[3]
+
+    let mut mode = "identity"
+    let mut body = s
+    let mut param = ""
+
+    if route_label == "NONE" {
+        // Passthrough explicitly chosen by classifier.
+        param = "{\"reason\":\"class_passthrough\"}"
+    } else if n_in < CC_V_C_MIN_BYTES {
+        param = "{\"reason\":\"size_below_min\",\"n\":" + to_string(n_in) + "}"
+    } else if !fxists(route_aot) {
+        param = "{\"reason\":\"aot_missing\",\"path\":\"" + route_aot + "\"}"
+    } else {
+        let res = _aot_encode(route_aot, route_args, s)
+        let enc = res[0]
+        let ok  = res[1]
+        if !ok {
+            param = "{\"reason\":\"aot_failed\",\"orig_len\":" + to_string(n_in) + "}"
+        } else if len(enc) >= n_in {
+            param = "{\"reason\":\"no_lift\",\"orig_len\":" + to_string(n_in) + ",\"enc_len\":" + to_string(len(enc)) + "}"
+        } else {
+            mode = "active"
+            body = enc
+            param = "{\"orig_len\":" + to_string(n_in) + ",\"enc_len\":" + to_string(len(enc)) + ",\"args\":\"" + route_args + "\"}"
+        }
+    }
+
+    let hdr = _ccvc_manifest_header(n_in, class_tag, route_label, mode, route_sigil, param)
+    return _ccvc_wrap(body, hdr)
+}
+
+// Top-level raw 142 D2 try-revert: shortest of {forced wire, identity wrap}.
+fn cc_v_c_encode(s) {
+    let n_in = len(s)
+    let composite = cc_v_c_encode_force(s)
+    // Compute identity wrap len for comparison.
+    let identity_hdr = _ccvc_manifest_header(n_in, "passthrough", "NONE", "identity", "_id",
+        "{\"reason\":\"top_revert\"}")
+    let identity_wrap = _ccvc_wrap(s, identity_hdr)
+    if len(composite) < len(identity_wrap) { return composite }
+    return identity_wrap
+}
+
+fn cc_v_c_decode(z) {
+    let parsed = _ccvc_unwrap(z)
+    if len(parsed) == 0 {
+        // Not a v_c wire (or v= mismatch — F-CHAIN-V_C-4 protection).
+        return z
+    }
+    let class_tag = parsed[0]
+    let route_label = parsed[1]
+    let n_in = parsed[2]
+    let route_mode = parsed[3]
+    let route_sigil = parsed[4]
+    let route_param = parsed[5]
+    let body = parsed[6]
+
+    if route_mode == "identity" { return body }
+    // mode=active: route algo decode.
+    let route = _route_for_class(class_tag)
+    let route_aot = route[2]
+    if route_aot == "" || !fxists(route_aot) { return body }
+    let res = _aot_decode(route_aot, body)
+    if !res[1] { return body }
+    return res[0]
+}
+
+// ─────────────── 9-fixture selftest (same corpus as Option A) ───────────────
+
+fn _gen_text_heavy(target_n) {
+    let para = "The quick brown fox jumps over the lazy dog near the riverbank. Anima n6 entropy verdict requires per-file Shannon floor measurement at H_0 H_1 H_2 H_3 H_4 ranges. Composite chain hypothesis: orthogonal axes multiply rather than add. "
+    let mut out = ""
+    while len(out) < target_n {
+        out = out + para
+    }
+    return out.substring(0, target_n)
+}
+
+fn _gen_json_heavy(target_n) {
+    let mut out = ""
+    let mut i = 0
+    while len(out) < target_n {
+        let row = "{\"id\":" + to_string(i) + ",\"ts\":\"2026-04-29T00:00:" + to_string(i) + "Z\",\"signal\":\"alpha\",\"value\":" + to_string(i * 17 + 3) + ",\"chan\":\"P3\",\"weight\":0.42}\n"
+        out = out + row
+        i = i + 1
+    }
+    return out.substring(0, target_n)
+}
+
+fn _gen_mixed(target_n) {
+    let mut out = ""
+    let mut i = 0
+    while len(out) < target_n {
+        let block = "// section " + to_string(i) + " — anima.eeg.core\nfn proc_" + to_string(i) + "(x: i64) -> i64 {\n    let y = x * 17 + 3\n    let z = y ^ (y >> 5)\n    return z + " + to_string(i) + "\n}\n"
+        out = out + block
+        i = i + 1
+    }
+    return out.substring(0, target_n)
+}
+
+let FIXTURES = [
+    ["F1_text_4KB",  "text-heavy", 4096,  1],
+    ["F2_text_16KB", "text-heavy", 16384, 1],
+    ["F3_text_64KB", "text-heavy", 65536, 1],
+    ["F4_json_4KB",  "json-heavy", 4096,  2],
+    ["F5_json_16KB", "json-heavy", 16384, 2],
+    ["F6_json_64KB", "json-heavy", 65536, 2],
+    ["F7_mix_4KB",   "mixed",      4096,  3],
+    ["F8_mix_16KB",  "mixed",      16384, 3],
+    ["F9_mix_64KB",  "mixed",      65536, 3]
+]
+
+fn _gen_fixture(gen_id, n) {
+    if gen_id == 1 { return _gen_text_heavy(n) }
+    if gen_id == 2 { return _gen_json_heavy(n) }
+    if gen_id == 3 { return _gen_mixed(n) }
+    return _gen_text_heavy(n)
+}
+
+// Standalone single-stage saving (for Option C vs best-single comparison).
+fn _standalone_a18(s) {
+    let n = len(s)
+    if n < CC_V_C_MIN_BYTES { return n }
+    let r = _aot_encode(A18_AOT, "", s)
+    if !r[1] { return n }
+    let el = len(r[0])
+    if el >= n { return n }
+    return el
+}
+
+fn _standalone_a29(s) {
+    let n = len(s)
+    if n < CC_V_C_MIN_BYTES { return n }
+    let r = _aot_encode(A29_AOT, "--v3", s)
+    if !r[1] { return n }
+    let el = len(r[0])
+    if el >= n { return n }
+    return el
+}
+
+fn _standalone_a24(s) {
+    let n = len(s)
+    if n < CC_V_C_MIN_BYTES { return n }
+    let r = _aot_encode(A24_AOT, "", s)
+    if !r[1] { return n }
+    let el = len(r[0])
+    if el >= n { return n }
+    return el
+}
+
+// Cross-decoder protection: attempt to decode a v_c wire with an Option A
+// parser shape (CC2_HEADER_PREFIX = "# cc2:s2"). Must REFUSE (return empty).
+// Implemented as a quick string check — F-CHAIN-V_C-4 mitigation drill.
+fn _cross_decoder_refusal_check(z) {
+    let lines = z.split("\n")
+    if len(lines) < 1 { return true }
+    let h0 = lines[0]
+    let v2_pref = "# cc2:s2"
+    let n2 = len(v2_pref)
+    if len(h0) >= n2 && h0.substring(0, n2) == v2_pref {
+        // Not v_c; correctly NOT our wire — fine.
+        return true
+    }
+    // Should be v_c. If v= field doesn't say composite-v_c, something wrong.
+    let ver = _ccvc_parse_kv(h0, " v=")
+    if ver == CC_V_C_VERSION { return true }
+    return false
+}
+
+fn run_selftest(ledger_path) {
+    println("hxc_composite_chain_v_c (PASS 2 skeleton, Option C A25-aware routing, sigil ^d v=composite-v_c)")
+    println("  AOT A25=" + A25_AOT + " avail=" + to_string(fxists(A25_AOT)))
+    println("  AOT A18=" + A18_AOT + " avail=" + to_string(fxists(A18_AOT)))
+    println("  AOT A29=" + A29_AOT + " avail=" + to_string(fxists(A29_AOT)))
+    println("  AOT A24=" + A24_AOT + " avail=" + to_string(fxists(A24_AOT)))
+    println("  ledger=" + (if ledger_path == "" { "(none)" } else { ledger_path }))
+    println("")
+    if ledger_path != "" {
+        let hdr_ev = "{\"event\":\"composite_chain_option_c_pass2_selftest_start\""
+            + ",\"ts\":\"" + json_escape(now_utc()) + "\""
+            + ",\"module\":\"/Users/<user>/core/anima/tool/hxc_composite_chain_v_c.hexa\""
+            + ",\"sigil\":\"^d\",\"wire_version\":\"composite-v_c\""
+            + ",\"chain_option\":\"C_a25_aware_routing\""
+            + ",\"a25_aot_avail\":" + (if fxists(A25_AOT) { "true" } else { "false" })
+            + ",\"a18_aot_avail\":" + (if fxists(A18_AOT) { "true" } else { "false" })
+            + ",\"a29_aot_avail\":" + (if fxists(A29_AOT) { "true" } else { "false" })
+            + ",\"a24_aot_avail\":" + (if fxists(A24_AOT) { "true" } else { "false" })
+            + ",\"a33_integrated\":false,\"a34_integrated\":false,\"a35_integrated\":false"
+            + ",\"raw_compliance\":[\"raw_9\",\"raw_18\",\"raw_33\",\"raw_42\",\"raw_47\",\"raw_65\",\"raw_68\",\"raw_71\",\"raw_91\",\"raw_92\",\"raw_137\",\"raw_142\",\"raw_156\",\"raw_157\"]"
+            + "}"
+        append_jsonl(ledger_path, hdr_ev)
+    }
+
+    let mut pass = 0
+    let mut fail = 0
+    let mut total_raw = 0
+    let mut total_chain = 0
+    let mut total_a18 = 0
+    let mut total_a29 = 0
+    let mut total_a24 = 0
+    let mut cross_decoder_refusals = 0
+
+    // Per-class accumulators (3 classes — text, json, mixed).
+    let mut tot_text_raw = 0; let mut tot_text_chain = 0; let mut tot_text_a18 = 0; let mut tot_text_a29 = 0
+    let mut tot_json_raw = 0; let mut tot_json_chain = 0; let mut tot_json_a18 = 0; let mut tot_json_a29 = 0
+    let mut tot_mix_raw  = 0; let mut tot_mix_chain  = 0; let mut tot_mix_a18  = 0; let mut tot_mix_a29  = 0
+
+    let mut idx = 0
+    while idx < len(FIXTURES) {
+        let row = FIXTURES[idx]
+        let name  = row[0]
+        let cls   = row[1]
+        let n     = row[2]
+        let gid   = row[3]
+        let s = _gen_fixture(gid, n)
+        let raw_n = len(s)
+
+        // A25 classify (record the actual classifier output — for F-CHAIN-V_C-3 audit).
+        let a25_class = _a25_classify(s)
+        let route = _route_for_class(a25_class)
+        let route_label = route[0]
+
+        // Round-trip byte-eq (raw 65 + 68).
+        let z = cc_v_c_encode(s)
+        let d = cc_v_c_decode(z)
+        let rt_ok = d == s
+
+        // Cross-decoder refusal drill (F-CHAIN-V_C-4): a v_c wire must NOT
+        // be confusable with v_2 wire.
+        let cross_ok = _cross_decoder_refusal_check(z)
+        if cross_ok { cross_decoder_refusals = cross_decoder_refusals + 1 }
+
+        // Standalone single-stage benchmarks.
+        let a18_only = _standalone_a18(s)
+        let a29_only = _standalone_a29(s)
+        let a24_only = _standalone_a24(s)
+
+        let chain_len = len(z)
+
+        let sav_chain_x = if raw_n > 0 { ((raw_n - chain_len) * 1000000) / raw_n } else { 0 }
+        let sav_a18_x   = if raw_n > 0 { ((raw_n - a18_only) * 1000000) / raw_n } else { 0 }
+        let sav_a29_x   = if raw_n > 0 { ((raw_n - a29_only) * 1000000) / raw_n } else { 0 }
+        let sav_a24_x   = if raw_n > 0 { ((raw_n - a24_only) * 1000000) / raw_n } else { 0 }
+
+        let verdict = if rt_ok { "PASS" } else { "FAIL" }
+        if rt_ok { pass = pass + 1 } else { fail = fail + 1 }
+
+        println("  " + verdict + ": " + name + " class=" + cls
+            + " a25_tag=" + a25_class + " route=" + route_label
+            + " raw=" + to_string(raw_n)
+            + " chain=" + to_string(chain_len)
+            + " a18=" + to_string(a18_only) + " a29=" + to_string(a29_only) + " a24=" + to_string(a24_only)
+            + " sav_chain_x10000=" + to_string(sav_chain_x)
+            + " sav_a18_x10000=" + to_string(sav_a18_x)
+            + " sav_a29_x10000=" + to_string(sav_a29_x))
+
+        total_raw   = total_raw + raw_n
+        total_chain = total_chain + chain_len
+        total_a18   = total_a18 + a18_only
+        total_a29   = total_a29 + a29_only
+        total_a24   = total_a24 + a24_only
+
+        if cls == "text-heavy" {
+            tot_text_raw = tot_text_raw + raw_n
+            tot_text_chain = tot_text_chain + chain_len
+            tot_text_a18 = tot_text_a18 + a18_only
+            tot_text_a29 = tot_text_a29 + a29_only
+        } else if cls == "json-heavy" {
+            tot_json_raw = tot_json_raw + raw_n
+            tot_json_chain = tot_json_chain + chain_len
+            tot_json_a18 = tot_json_a18 + a18_only
+            tot_json_a29 = tot_json_a29 + a29_only
+        } else {
+            tot_mix_raw = tot_mix_raw + raw_n
+            tot_mix_chain = tot_mix_chain + chain_len
+            tot_mix_a18 = tot_mix_a18 + a18_only
+            tot_mix_a29 = tot_mix_a29 + a29_only
+        }
+
+        if ledger_path != "" {
+            let fx_ev = "{\"event\":\"composite_chain_option_c_pass2_fixture\""
+                + ",\"ts\":\"" + json_escape(now_utc()) + "\""
+                + ",\"name\":\"" + name + "\",\"fixture_class\":\"" + cls + "\""
+                + ",\"a25_class_tag\":\"" + a25_class + "\""
+                + ",\"route_label\":\"" + route_label + "\""
+                + ",\"raw_bytes\":" + to_string(raw_n)
+                + ",\"composite_wire_bytes\":" + to_string(chain_len)
+                + ",\"a18_only_bytes\":" + to_string(a18_only)
+                + ",\"a29_only_bytes\":" + to_string(a29_only)
+                + ",\"a24_only_bytes\":" + to_string(a24_only)
+                + ",\"sav_chain_pct_x10000\":" + to_string(sav_chain_x)
+                + ",\"sav_a18_pct_x10000\":" + to_string(sav_a18_x)
+                + ",\"sav_a29_pct_x10000\":" + to_string(sav_a29_x)
+                + ",\"sav_a24_pct_x10000\":" + to_string(sav_a24_x)
+                + ",\"round_trip_byte_eq\":" + (if rt_ok { "true" } else { "false" })
+                + ",\"cross_decoder_refusal_ok\":" + (if cross_ok { "true" } else { "false" })
+                + ",\"verdict\":\"" + verdict + "\""
+                + "}"
+            append_jsonl(ledger_path, fx_ev)
+        }
+
+        idx = idx + 1
+    }
+
+    let agg_chain_x = if total_raw > 0 { ((total_raw - total_chain) * 1000000) / total_raw } else { 0 }
+    let agg_a18_x   = if total_raw > 0 { ((total_raw - total_a18)   * 1000000) / total_raw } else { 0 }
+    let agg_a29_x   = if total_raw > 0 { ((total_raw - total_a29)   * 1000000) / total_raw } else { 0 }
+    let agg_a24_x   = if total_raw > 0 { ((total_raw - total_a24)   * 1000000) / total_raw } else { 0 }
+
+    let text_chain_x = if tot_text_raw > 0 { ((tot_text_raw - tot_text_chain) * 1000000) / tot_text_raw } else { 0 }
+    let text_a18_x   = if tot_text_raw > 0 { ((tot_text_raw - tot_text_a18)   * 1000000) / tot_text_raw } else { 0 }
+    let text_a29_x   = if tot_text_raw > 0 { ((tot_text_raw - tot_text_a29)   * 1000000) / tot_text_raw } else { 0 }
+    let json_chain_x = if tot_json_raw > 0 { ((tot_json_raw - tot_json_chain) * 1000000) / tot_json_raw } else { 0 }
+    let json_a18_x   = if tot_json_raw > 0 { ((tot_json_raw - tot_json_a18)   * 1000000) / tot_json_raw } else { 0 }
+    let json_a29_x   = if tot_json_raw > 0 { ((tot_json_raw - tot_json_a29)   * 1000000) / tot_json_raw } else { 0 }
+    let mix_chain_x  = if tot_mix_raw  > 0 { ((tot_mix_raw  - tot_mix_chain)  * 1000000) / tot_mix_raw  } else { 0 }
+    let mix_a18_x    = if tot_mix_raw  > 0 { ((tot_mix_raw  - tot_mix_a18)    * 1000000) / tot_mix_raw  } else { 0 }
+    let mix_a29_x    = if tot_mix_raw  > 0 { ((tot_mix_raw  - tot_mix_a29)    * 1000000) / tot_mix_raw  } else { 0 }
+
+    println("")
+    println("=== AGGREGATE (in-sample, 9 fixtures) ===")
+    println("  total_raw=" + to_string(total_raw) + " total_chain=" + to_string(total_chain))
+    println("  total_a18=" + to_string(total_a18) + " total_a29=" + to_string(total_a29) + " total_a24=" + to_string(total_a24))
+    println("  sav_chain_x10000=" + to_string(agg_chain_x))
+    println("  sav_a18_x10000="   + to_string(agg_a18_x))
+    println("  sav_a29_x10000="   + to_string(agg_a29_x))
+    println("  sav_a24_x10000="   + to_string(agg_a24_x))
+    println("  Results: " + to_string(pass) + " PASS / " + to_string(fail) + " FAIL")
+    println("  Cross-decoder refusal drill: " + to_string(cross_decoder_refusals) + "/9 OK")
+
+    println("")
+    println("=== PER-CLASS (Option C vs single-stage best) ===")
+    println("  text-heavy  chain=" + to_string(text_chain_x) + " a18=" + to_string(text_a18_x) + " a29=" + to_string(text_a29_x))
+    println("  json-heavy  chain=" + to_string(json_chain_x) + " a18=" + to_string(json_a18_x) + " a29=" + to_string(json_a29_x))
+    println("  mixed       chain=" + to_string(mix_chain_x)  + " a18=" + to_string(mix_a18_x)  + " a29=" + to_string(mix_a29_x))
+
+    // F-CHAIN-V_C-2: chain < single-stage best aggregate?
+    let best_single_x = if agg_a18_x > agg_a29_x { agg_a18_x } else { agg_a29_x }
+    let best_single_x2 = if agg_a24_x > best_single_x { agg_a24_x } else { best_single_x }
+    let f_v_c_2_trip = agg_chain_x < best_single_x2
+    println("")
+    println("  F-CHAIN-V_C-1 (round-trip): " + (if fail > 0 { "TRIPPED" } else { "NOT_TRIPPED" }))
+    println("  F-CHAIN-V_C-2 (chain<best_single agg): " + (if f_v_c_2_trip { "TRIPPED — Option C also falsified honest C3" } else { "NOT_TRIPPED — Option C ≥ best single aggregate" }))
+    println("  F-CHAIN-V_C-3 (A25 mis-classify >= 5pp): see per-fixture a25_class_tag in ledger")
+    println("  F-CHAIN-V_C-4 (cross-decoder ambiguity): " + (if cross_decoder_refusals == len(FIXTURES) { "NOT_TRIPPED" } else { "TRIPPED" }))
+    println("  F-CHAIN-V_C-5 (RSS 100MB): NOT_MEASURED — fixtures max 64KB << 100MB; PASS 4 LIVE FIRE deferred")
+    println("  F-CHAIN-V_C-6 (cmix-ban grep): EXTERNAL_AUDIT — see witness ledger cmix_grep_hits field")
+
+    // 80% gate.
+    let hit_70 = agg_chain_x >= 700000
+    let hit_80 = agg_chain_x >= 800000
+    println("  80%_target: " + (if hit_80 { "MET (in-sample only — PASS 4 LIVE FIRE deferred)" } else { "NOT_MET (in-sample 9-fixture)" }))
+    println("  70%_floor:  " + (if hit_70 { "MET" } else { "NOT_MET" }))
+
+    // vs Option A linear (recorded baseline 90.21% = 902091 x10000).
+    let option_a_baseline_x = 902091
+    let delta_vs_option_a = agg_chain_x - option_a_baseline_x
+    println("  vs Option A linear (90.21% baseline 902091): delta_x10000=" + to_string(delta_vs_option_a))
+    let delta_vs_best_single = agg_chain_x - best_single_x2
+    println("  vs single-stage best aggregate: delta_x10000=" + to_string(delta_vs_best_single))
+
+    if ledger_path != "" {
+        let agg_ev = "{\"event\":\"composite_chain_option_c_pass2_aggregate\""
+            + ",\"ts\":\"" + json_escape(now_utc()) + "\""
+            + ",\"total_raw_bytes\":" + to_string(total_raw)
+            + ",\"total_chain_bytes\":" + to_string(total_chain)
+            + ",\"total_a18_only_bytes\":" + to_string(total_a18)
+            + ",\"total_a29_only_bytes\":" + to_string(total_a29)
+            + ",\"total_a24_only_bytes\":" + to_string(total_a24)
+            + ",\"sav_chain_pct_x10000\":" + to_string(agg_chain_x)
+            + ",\"sav_a18_pct_x10000\":"   + to_string(agg_a18_x)
+            + ",\"sav_a29_pct_x10000\":"   + to_string(agg_a29_x)
+            + ",\"sav_a24_pct_x10000\":"   + to_string(agg_a24_x)
+            + ",\"per_class_text_chain_x10000\":" + to_string(text_chain_x)
+            + ",\"per_class_text_a18_x10000\":"   + to_string(text_a18_x)
+            + ",\"per_class_text_a29_x10000\":"   + to_string(text_a29_x)
+            + ",\"per_class_json_chain_x10000\":" + to_string(json_chain_x)
+            + ",\"per_class_json_a18_x10000\":"   + to_string(json_a18_x)
+            + ",\"per_class_json_a29_x10000\":"   + to_string(json_a29_x)
+            + ",\"per_class_mix_chain_x10000\":"  + to_string(mix_chain_x)
+            + ",\"per_class_mix_a18_x10000\":"    + to_string(mix_a18_x)
+            + ",\"per_class_mix_a29_x10000\":"    + to_string(mix_a29_x)
+            + ",\"vs_option_a_linear_baseline_x10000_delta\":" + to_string(delta_vs_option_a)
+            + ",\"vs_best_single_aggregate_x10000_delta\":" + to_string(delta_vs_best_single)
+            + ",\"pass\":" + to_string(pass) + ",\"fail\":" + to_string(fail)
+            + ",\"cross_decoder_refusals_ok\":" + to_string(cross_decoder_refusals)
+            + ",\"f_v_c_1_round_trip_trip\":" + (if fail > 0 { "true" } else { "false" })
+            + ",\"f_v_c_2_chain_lt_best_single_trip\":" + (if f_v_c_2_trip { "true" } else { "false" })
+            + ",\"f_v_c_4_cross_decoder_ambiguity_trip\":" + (if cross_decoder_refusals == len(FIXTURES) { "false" } else { "true" })
+            + ",\"hit_70pct_floor\":" + (if hit_70 { "true" } else { "false" })
+            + ",\"hit_80pct_target\":" + (if hit_80 { "true" } else { "false" })
+            + ",\"raw_91_c3_disclosure\":\"in_sample_9_fixture_only_PASS_4_LIVE_FIRE_5MB_stratified_DEFERRED_NO_80pct_reachability_claim\""
+            + "}"
+        append_jsonl(ledger_path, agg_ev)
+
+        let fchain_ev = "{\"event\":\"composite_chain_option_c_pass2_fchain_verdict\""
+            + ",\"ts\":\"" + json_escape(now_utc()) + "\""
+            + ",\"F_CHAIN_V_C_1_round_trip_byte_eq\":\"" + (if fail > 0 { "TRIPPED" } else { "NOT_TRIPPED" }) + "\""
+            + ",\"F_CHAIN_V_C_2_chain_lt_best_single\":\"" + (if f_v_c_2_trip { "TRIPPED" } else { "NOT_TRIPPED" }) + "\""
+            + ",\"F_CHAIN_V_C_3_a25_misclassify\":\"manual audit per-fixture a25_class_tag in ledger fixtures (compare to fixture_class)\""
+            + ",\"F_CHAIN_V_C_4_cross_decoder_ambiguity\":\"" + (if cross_decoder_refusals == len(FIXTURES) { "NOT_TRIPPED — strict v= match enforced" } else { "TRIPPED" }) + "\""
+            + ",\"F_CHAIN_V_C_5_RSS_100MB\":\"DEFERRED_PASS_4 — 9-fixture max 64KB << 100MB; not measured\""
+            + ",\"F_CHAIN_V_C_6_cmix_ban_violation\":\"EXTERNAL_AUDIT — `grep -nE mixer\\\\|blend\\\\|convex_combination\\\\|weighted_sum\\\\|softmax_combine` on this module expected 0 hits in code (comment refs allowed)\""
+            + "}"
+        append_jsonl(ledger_path, fchain_ev)
+    }
+
+    if fail == 0 { return 0 }
+    return 1
+}
+
+// ───────────────── CLI dispatch ─────────────────
+
+fn _entry() {
+    let av = argv()
+    let n_av = len(av)
+    let mut sub = ""
+    if n_av >= 3 { sub = av[2] }
+
+    if sub == "--selftest" {
+        let mut ledger = ""
+        let mut k = 3
+        while k < n_av {
+            if av[k] == "--emit-ledger" && k + 1 < n_av { ledger = av[k + 1]; k = k + 2; continue }
+            k = k + 1
+        }
+        let rc = run_selftest(ledger)
+        exit(rc)
+    } else if sub == "encode" {
+        if n_av < 5 { println("usage: hxc_composite_chain_v_c.hexa encode <in> <out>"); exit(3) }
+        let in_p = av[3]
+        let out_p = av[4]
+        if !fxists(in_p) { println("ERROR: input not found: " + in_p); exit(2) }
+        let s = read_text(in_p)
+        let z = cc_v_c_encode(s)
+        write_text(out_p, z)
+        println("encoded raw=" + to_string(len(s)) + " composite=" + to_string(len(z)))
+        exit(0)
+    } else if sub == "decode" {
+        if n_av < 5 { println("usage: hxc_composite_chain_v_c.hexa decode <in> <out>"); exit(3) }
+        let in_p = av[3]
+        let out_p = av[4]
+        if !fxists(in_p) { println("ERROR: input not found: " + in_p); exit(2) }
+        let z = read_text(in_p)
+        let d = cc_v_c_decode(z)
+        write_text(out_p, d)
+        println("decoded composite=" + to_string(len(z)) + " raw=" + to_string(len(d)))
+        exit(0)
+    } else if sub == "classify" {
+        if n_av < 4 { println("usage: hxc_composite_chain_v_c.hexa classify <in>"); exit(3) }
+        let in_p = av[3]
+        if !fxists(in_p) { println("ERROR: input not found: " + in_p); exit(2) }
+        let s = read_text(in_p)
+        let cls = _a25_classify(s)
+        let route = _route_for_class(cls)
+        println("class=" + cls + " route=" + route[0] + " sigil=" + route[1] + " aot=" + route[2])
+        exit(0)
+    } else {
+        println("usage: hxc_composite_chain_v_c.hexa [--selftest [--emit-ledger <path>] | encode <in> <out> | decode <in> <out> | classify <in>]")
+        exit(3)
+    }
+}
+
+_entry()
