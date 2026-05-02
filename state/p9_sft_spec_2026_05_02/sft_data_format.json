@@ -1,0 +1,41 @@
+{
+  "schema": "anima/state/p9_sft_spec/sft_data_format/1",
+  "example_record": {
+    "input": "user prompt text (str)",
+    "target_text": "assistant response text (str)",
+    "target_tension": "List[float] of length T (mind.tension trajectory)",
+    "target_5ch": "List[List[float]] shape [T, 5] = [[w, where, why, trust, who], ...]",
+    "target_bold": "List[List[float]] shape [T, 10242] (TRIBE v2 fsaverage5 vertices)"
+  },
+  "sequence_length": {
+    "max_input_tokens": 1024,
+    "max_target_tokens": 1024,
+    "T_target_steps": 64,
+    "tension_dim_per_step": 1,
+    "channel_dim_per_step": 5,
+    "bold_dim_per_step": 10242
+  },
+  "sources": [
+    {"name": "ShareGPT-style ko/en chat dialogue", "examples": 10000, "license": "CC-BY-SA mix"},
+    {"name": "anima paper §-references + cell-language corpus", "examples": 10000, "license": "internal"},
+    {"name": "#128 P8 ledger (M4=0.800 dialogue, 30 turns x 100 sessions)", "examples": 3000, "license": "internal"},
+    {"name": "synthetic philosophical / introspective prompts", "examples": 5000, "license": "internal-generated"},
+    {"name": "N-22 falsifiers / paradigm-v11 axes corpus", "examples": 5000, "license": "internal"},
+    {"name": "TRIBE v2 stimulus corpus (Friends + movie10)", "examples": 10000, "license": "research"},
+    {"name": "Llama-3.2-3B-Instruct generation auto-augment", "examples": 7000, "license": "Meta Llama 3.2"}
+  ],
+  "total_examples": 50000,
+  "split": {"train": 0.95, "val": 0.04, "preregistered_holdout": 0.01},
+  "preprocessing_pipeline": [
+    "1. tokenize text via CLM v4 tokenizer",
+    "2. run base CLM v4 forward to extract reference (tension, 5ch) trajectories on target_text — use as target if no human label",
+    "3. for sources with paired stimulus (TRIBE), use measured BOLD; else use TRIBE v2 forward simulator",
+    "4. window to T=64 steps with stride matching token-step alignment",
+    "5. emit JSONL shards 1k examples each"
+  ],
+  "honest_c3_data": [
+    "BOLD targets from TRIBE v2 forward = simulated, not measured fMRI",
+    "ShareGPT ko/en license mosaic; deduplicate before train",
+    "auto-augmented 7k may carry Llama distillation bias"
+  ]
+}

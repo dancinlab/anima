@@ -1,0 +1,22 @@
+{
+  "estimator": "NIST SP 800-90B \u00a76.3.1 most-common-value (MCV) \u2014 simplified, single-pass",
+  "raw_bits": 4096,
+  "bit_level": {
+    "p_max": 0.502685546875,
+    "H_min_per_bit_bits": 0.9922718853677458,
+    "total_min_entropy_bits": 4064.345642466287,
+    "fraction_of_raw": 0.9922718853677458
+  },
+  "symbol_level_16bit": {
+    "p_max": 0.00390625,
+    "H_min_per_symbol_bits": 8.0,
+    "total_min_entropy_bits": 2048.0,
+    "fraction_of_raw": 0.5
+  },
+  "ideal_quantum_min_entropy_bits": 4096,
+  "honest_caveats": [
+    "MCV simplified estimator \u2014 full NIST 800-90B IID/non-IID test suite (sp800_90b_entropyassessment) not run; that requires \u22651M samples for tight bounds.",
+    "256-shot batch is below NIST's recommended 1M-sample minimum; this is a research artifact, not a certified entropy source.",
+    "Min-entropy estimate may be optimistic for non-IID quantum noise; HMAC-DRBG mixing layer compensates by NIST-approved extraction."
+  ]
+}

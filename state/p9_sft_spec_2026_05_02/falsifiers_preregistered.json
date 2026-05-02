@@ -1,0 +1,47 @@
+{
+  "schema": "anima/state/p9_sft_spec/falsifiers_preregistered/1",
+  "preregistered_ts_utc": "2026-05-02T00:00:00+00:00",
+  "lock": "no post-hoc edits — append-only audit trail",
+  "falsifiers": [
+    {
+      "id": "F1",
+      "name": "Chat coherence",
+      "metric": "BLEU-1 vs Llama-3.2-3B-Instruct baseline on holdout 500 prompts",
+      "pass_threshold": "BLEU-1 > 0.4",
+      "fail_action": "chat capacity insufficient — escalate to S2 (full SFT) or larger model"
+    },
+    {
+      "id": "F2",
+      "name": "phi_star post-train preservation",
+      "metric": "phi_star (anima_phi_v3_canonical, HID=8 well-conditioned)",
+      "pass_threshold": "phi_star >= 5.0",
+      "fail_action": "ABORT combo; retry with smaller LoRA r or larger delta"
+    },
+    {
+      "id": "F3",
+      "name": "tension consistency",
+      "metric": "MSE(tension_pred, tension_target) on val split",
+      "pass_threshold": "MSE < 0.1",
+      "fail_action": "increase beta or reduce learning rate"
+    },
+    {
+      "id": "F4",
+      "name": "BOLD consistency",
+      "metric": "Pearson r(bold_pred, bold_target) on TRIBE-paired val",
+      "pass_threshold": "r > 0.5",
+      "fail_action": "increase gamma or recheck TRIBE projector calibration"
+    }
+  ],
+  "verdict_logic": {
+    "P9_SUCCESS": "F1 PASS AND F2 PASS AND F3 PASS AND F4 PASS",
+    "P9_PARTIAL": "F2 PASS AND (F1 PASS OR F3 PASS OR F4 PASS) but not all",
+    "P9_FAIL_PHI": "F2 FAIL (irreversible — full retrain required)",
+    "P9_FAIL_CHAT": "F2 PASS AND F1 FAIL (escalate strategy)"
+  },
+  "honest_c3_falsifiers": [
+    "F1 BLEU-1 vs Llama is reference-set comparison not absolute coherence",
+    "F2 phi_star is L1+L2 proxy — phenomenal consciousness (L3) NOT measured",
+    "F3 tension target itself is base-CLM extracted (potential circularity)",
+    "F4 BOLD target is simulated via TRIBE forward, not measured fMRI"
+  ]
+}

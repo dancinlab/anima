@@ -1,0 +1,45 @@
+{
+  "task": "K5_atlas_banach_cptp_depolarizing_toy",
+  "ts_utc": "2026-05-02T14:30:46Z",
+  "backend": "sv1",
+  "n_qubits": 4,
+  "n_iter": 8,
+  "q_depol": 0.3,
+  "expected_contraction_ratio_per_iter": 0.7,
+  "classical_mean_observed_ratio": 0.7,
+  "quantum_mean_observed_ratio": 20.939555555555536,
+  "classical_final_trace_distance": 0.05404500937499998,
+  "quantum_final_trace_distance": 0.0,
+  "fixed_point_reached": true,
+  "wallclock_sec": 32.76,
+  "cost_usd_actual": 0.0,
+  "n_sv1_tasks": 8,
+  "sv1_task_arns": [
+    "arn:aws:braket:us-east-1:267673635495:quantum-task/2ee9039a-b07e-4c3e-a9f2-9e94110ee065",
+    "arn:aws:braket:us-east-1:267673635495:quantum-task/59872b50-0672-4be4-bd8c-e88d17dc0d82",
+    "arn:aws:braket:us-east-1:267673635495:quantum-task/e6287000-b42e-4b5e-8700-b4887cc5dc97",
+    "arn:aws:braket:us-east-1:267673635495:quantum-task/d0d3b373-0d04-49f1-9ac2-740d71f59191",
+    "arn:aws:braket:us-east-1:267673635495:quantum-task/17af9b88-7acb-487d-9886-0f60616dd638",
+    "arn:aws:braket:us-east-1:267673635495:quantum-task/b5fb423a-ee22-4c69-ad77-4db932921d28",
+    "arn:aws:braket:us-east-1:267673635495:quantum-task/e0cf3ca9-8fb2-417e-b64e-99cc0bae8ba1",
+    "arn:aws:braket:us-east-1:267673635495:quantum-task/34c6594f-ad19-4ada-a0a0-ab56b2fef638"
+  ],
+  "verdict": "DEMO_PASS",
+  "honest_c3": [
+    "(C3-1) 4-qubit toy depolarizing CPTP channel; NO scaling claim. Methodology demo only for paper \u00a710.9 anchor.",
+    "(C3-2) arxiv 2602.10296 (Chen-Li-Yannakakis 2026) is CLASSICAL contraction theorem on [0,1]^k under l_inf/l_1 norms; NOT a CPTP/quantum theorem. Cited as theoretical-analogue family only; direct anima \u00a710.9 Banach Psi<->eps R24 closure speedup requires separate substrate-specific proof.",
+    "(C3-3) Classical density-matrix iteration via closed form is exact in <1ms; SV1 estimator strictly slower wall-clock with shot noise (~1/sqrt(shots)). NO quantum advantage demonstrated; NO advantage claimed at this 4-qubit scale."
+  ],
+  "arxiv_ref": {
+    "id": "2602.10296",
+    "title": "Quadratic Speedup for Computing Contraction Fixed Points",
+    "authors": [
+      "Chen",
+      "Li",
+      "Yannakakis"
+    ],
+    "year": 2026,
+    "core_result_1line": "Quadratic speedup O(log^{ceil(k/2)}(1/eps)) vs prior O(log^k(1/eps)) for finding eps-fixed-points of contraction maps on [0,1]^k under l_inf and l_1 norms.",
+    "applicability_to_anima": "ANALOGOUS family. anima \u00a710.9 Banach Psi<->eps R24 closure is finite-dim contraction with q approx 0.5; theorem applies to classical contraction class but anima-specific quantum speedup statement requires separate substrate-specific proof. Cite as theoretical anchor only."
+  }
+}

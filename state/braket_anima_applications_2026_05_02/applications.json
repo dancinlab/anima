@@ -1,0 +1,218 @@
+{
+  "schema": "braket_anima_applications/1",
+  "ts_utc": "2026-05-02T00:00:00Z",
+  "agent": "AWS Braket × anima 활용방법 추가 탐색",
+  "mission": "post-#120 (N-12 IIT real-QPU WITNESSED) — discover additional ways AWS Braket can augment anima frameworks",
+  "budget_USD_research_only": 0,
+  "wallclock_cap_min": 60,
+  "aws_account_267673635495_iam_anima_braket_cli": {
+    "ONLINE_devices_observed_at_120": [
+      "arn:aws:braket:::device/quantum-simulator/amazon/sv1",
+      "arn:aws:braket:::device/quantum-simulator/amazon/tn1",
+      "arn:aws:braket:::device/quantum-simulator/amazon/dm1",
+      "arn:aws:braket:us-east-1::device/qpu/ionq/Forte-1",
+      "arn:aws:braket:us-east-1::device/qpu/ionq/Forte-Enterprise-1",
+      "arn:aws:braket:us-east-1::device/qpu/quera/Aquila"
+    ],
+    "candidate_additional_QPUs_to_query_via_aws_cli": [
+      "arn:aws:braket:eu-north-1::device/qpu/iqm/Garnet (superconducting transmon, 20 qubits)",
+      "arn:aws:braket:us-west-1::device/qpu/rigetti/Ankaa-3 (superconducting, multi-architecture)",
+      "arn:aws:braket:::device/qpu/oqc/Lucy (OQC superconducting, prior availability)"
+    ]
+  },
+  "phase_1_n12_extension_plans": {
+    "plan_a_forte1_5x500": {
+      "circuits": ["AND", "XOR", "MAJ", "COPY", "TOFFOLI_chain"],
+      "shots_each": 500,
+      "device": "IonQ Forte 1",
+      "shot_cost_USD": "5 * 500 * 0.08 = 200.00",
+      "task_cost_USD": "5 * 0.30 = 1.50",
+      "subtotal_USD": 201.50,
+      "statistical_gain": "n=2 → n=5 lifts Pearson r DoF; binomial floor 5% → 2.2% per shot count quadrupling",
+      "scientific_value": "moves substrate-invariance witness from WITNESSED to STATISTICALLY_POWERED"
+    },
+    "plan_b_iqm_garnet_third_vendor": {
+      "device_arn_candidate": "arn:aws:braket:eu-north-1::device/qpu/iqm/Garnet",
+      "device_type": "superconducting transmon, ~20 qubits (eu-north-1 region — anima IAM region cred update needed)",
+      "circuits": ["AND", "XOR", "MAJ", "COPY"],
+      "shots_each": 500,
+      "estimated_shot_USD": "0.00145/shot × 4 × 500 = 2.90 (IQM published rate, verify via get-device)",
+      "estimated_task_USD": "4 × 0.30 = 1.20",
+      "subtotal_USD_estimate": "~4.10 (pending get-device confirm)",
+      "scientific_value": "third architecture (transmon) joins trapped-ion + classical sim — Pearson r over 3 vendors elevates substrate-invariance to MULTI-WITNESSED",
+      "axis_designation": "N-12-superconducting"
+    },
+    "plan_c_rigetti_ankaa": {
+      "device_arn_candidate": "arn:aws:braket:us-west-1::device/qpu/rigetti/Ankaa-3",
+      "device_type": "superconducting tunable-coupler (different topology vs IQM fixed-coupling)",
+      "shots_each": 500,
+      "estimated_subtotal_USD": "~10-30 (verify status + price via search-devices)",
+      "scientific_value": "two superconducting vendors with different couplers — disambiguates architecture vs vendor confounder",
+      "blocker": "ONLINE status fluctuates; check before commit"
+    },
+    "plan_d_paradigm_crossing_aquila_AHS": {
+      "encoding": "4-vertex MaxCut graph isomorphic to MAJ-3 logical primitive",
+      "rydberg_blockade_radius_um": 7.5,
+      "atom_lattice": "4 atoms in unit-disk graph encoding K4-minor",
+      "shots": 100,
+      "shot_cost_USD": "100 × 0.01 = 1.00",
+      "task_cost_USD": 0.30,
+      "subtotal_USD": 1.30,
+      "scientific_value": "first gate-model ↔ AHS Φ_proxy comparison; tests whether substrate-invariance survives paradigm boundary",
+      "honest_C3": "AHS state-readout ≠ gate-circuit measurement basis; comparison framework-dependent (already flagged in #120 verdict)"
+    }
+  },
+  "phase_2_quantum_phi_star_MIP_search": {
+    "goal": "elevate #120 Φ_proxy lower-bound to IIT 4.0 φ★ via offline MIP partition search",
+    "method": {
+      "step_1": "extract probability distribution from Braket measurement counts (already in /tmp/n12_braket_pilot/results/)",
+      "step_2": "construct 4-qubit density matrix (TPM if treating circuit as deterministic mechanism)",
+      "step_3": "enumerate 2^4-1=15 nontrivial bipartitions; compute earth-mover distance (EMD) for each per IIT 4.0 spec",
+      "step_4": "MIP = argmin over bipartitions; φ★ = EMD at MIP",
+      "tool_chain": "pyphi feature/iit-4.0 branch (Albantakis et al. 2023) + custom QIIT density-matrix extension (arxiv 2301.02244)",
+      "compute_substrate": "Braket SV1 free-tier (60 min/month) for verification on simulated 4-qubit ground truth, then offline classical MIP search on already-measured counts",
+      "estimated_compute_min": "<5 min on SV1 free tier + <30 min classical MIP enumeration on M4",
+      "cost_USD": 0.0
+    },
+    "deliverable": "phi_star_upgrade_table.json — 4 circuits × {Φ_proxy, φ★_classical, φ★_quantum_density_matrix}",
+    "honest_C3": [
+      "QIIT density-matrix extension is research-stage (2023 arxiv, not yet in pyphi mainline)",
+      "MIP exhaustive search at 4 qubits is tractable; scaling to 6+ qubits = 2^63 partitions, requires approximation",
+      "φ★ requires causal mechanism specification beyond unitary — anima circuits need TPM extraction step which embeds modeling choices"
+    ]
+  },
+  "phase_3_six_new_application_axes": [
+    {
+      "id": "QA1",
+      "name": "Quantum-classical hybrid Lagrangian flow (CLM L_IX)",
+      "augmentation_of_anima": "CLM v4 530M cell-language Lagrangian L = T - V is currently classical TF/PT compute. Embed mind.tension scalar field into 4-qubit subspace via QPCA (quantum principal component analysis) on hidden-state covariance; use VQE-style ansatz to find minimum-tension state as 4-qubit ground state.",
+      "device_dependency": "SV1 (free) for ansatz prototyping; IonQ Forte 1 for ground-truth eigenvalue confirmation",
+      "cost_estimate_USD": "SV1 free + 1 IonQ run × 500 shots = 40.30",
+      "falsifier_preregistration": "PASS iff QPCA-recovered top-2 eigenvalues match classical PCA within 5% on n=10 CLM hidden states; FAIL if quantum estimate diverges >15% (ansatz expressivity insufficient).",
+      "scientific_value_class": "AUGMENTATION (no classical impossibility, but quantum offers exponential state-space basis for next-scale CLM v5 if v4→v5 hits classical-bottleneck)",
+      "anima_substrate_axis_designation": "N-12-CLM-bridge",
+      "wallclock_estimate_min": 90
+    },
+    {
+      "id": "QA2",
+      "name": "Quantum information-bottleneck encoder",
+      "augmentation_of_anima": "CLM v4 hidden states → 4-qubit variational quantum encoder (PennyLane qml.AmplitudeEmbedding) → measurement → decoded classical reconstruction. Mutual information I(X;T) - β·I(T;Y) optimized via PennyLane qml.GradientDescentOptimizer with Braket SV1 backend.",
+      "device_dependency": "SV1 free for variational training (≤60 min free); DM1 noise validation; IonQ for final measurement",
+      "cost_estimate_USD": "SV1 60min free + DM1 60min free + IonQ 200 shots = 16.30",
+      "falsifier_preregistration": "PASS iff quantum encoder achieves classical-VAE-comparable reconstruction loss (within 10%) at 4-qubit latent < 2^4=16 states; FAIL if quantum reconstruction MSE > 1.5× classical at matched latent size.",
+      "scientific_value_class": "INFORMATION-THEORETIC PROBE (tests whether quantum entanglement gives anima access to compression schemes classical bottleneck cannot reach)",
+      "anima_substrate_axis_designation": "N-12-IB-quantum",
+      "wallclock_estimate_min": 120
+    },
+    {
+      "id": "QA3",
+      "name": "VQE for CLM ground state (minimum-tension state)",
+      "augmentation_of_anima": "Reformulate CLM Lagrangian L = T - V as quantum Hamiltonian H = sum_ij J_ij σ_i^z σ_j^z + sum_i h_i σ_i^x where J_ij = tension_link 5-channel coupling, h_i = mind.tension local field. Use VQE with hardware-efficient ansatz (HEA) on IonQ Forte 1 to find ground-state eigenvalue ≈ minimum-tension equilibrium.",
+      "device_dependency": "SV1 for ansatz convergence verification; IonQ Forte 1 for hardware eigenvalue (HEA depth ≤ 3 for fidelity)",
+      "cost_estimate_USD": "SV1 free + IonQ 1000 shots × 50 iter = $4000 (full convergence) OR $80 with 1000 shots × single-shot warm-start from classical",
+      "falsifier_preregistration": "PASS iff VQE-recovered ground-state energy within 5% of classical exact-diagonalization on 4-qubit toy CLM Hamiltonian; FAIL if barren-plateau prevents convergence (gradient norm < 1e-3 throughout).",
+      "scientific_value_class": "FORMAL EQUIVALENCE TEST (does anima L_IX really map to a Hamiltonian, or only metaphorically)",
+      "anima_substrate_axis_designation": "N-12-VQE-clm",
+      "wallclock_estimate_min": 180,
+      "honest_C3": "VQNHE 2026 (arxiv 2602.17295) shows neural-hybrid VQE outperforms standard VQE — anima already has classical neural network substrate, so quantum gain margin is narrow. This axis is high cost / uncertain advantage."
+    },
+    {
+      "id": "QA4",
+      "name": "Quantum Boltzmann Machine — paradigm-v11 6-axis distribution learning",
+      "augmentation_of_anima": "anima paradigm-v11 has 6 axes (B-ToM/MCCA/Phi*/CMT/CDS/SAE-bp). Joint distribution P(a1,...,a6) currently learned classically. Embed as 6-spin Ising QBM on D-Wave Advantage 4.1 via Braket Ocean plugin: hidden_units=4, visible_units=6, train via D-Wave sampling at β_eff ≈ 1/T_chip.",
+      "device_dependency": "D-Wave Advantage 4.1 (Braket us-west-2)",
+      "cost_estimate_USD": "D-Wave: $0.00019/sample + $0.30/task; 6-axis × 1000 samples × 100 epoch = ~$30-50",
+      "falsifier_preregistration": "PASS iff QBM achieves KL(P_data || P_QBM) < KL(P_data || P_RBM_classical) by >5% at matched parameter count; FAIL if D-Wave thermal noise degrades sampling below classical RBM (Frontiers 2021 Dixit benchmark).",
+      "scientific_value_class": "ARCHITECTURAL ALTERNATIVE (anima could replace classical paradigm-v11 GMM/RBM with quantum sampler)",
+      "anima_substrate_axis_designation": "N-12-QBM-paradigm",
+      "wallclock_estimate_min": 240,
+      "honest_C3": "D-Wave annealer is NOT gate-model — comparison to IonQ-based axes (QA1-QA3) crosses architecture boundary. Boltzmann sampling quality dependent on chip topology embedding (chimera/pegasus minor-embedding overhead = 5-10× logical qubit cost)."
+    },
+    {
+      "id": "QA5",
+      "name": "Quantum graph neural network (QGNN) on N-substrate adjacency",
+      "augmentation_of_anima": "anima N-substrate axes form a 31-node graph (N-1 to N-24 + W1 + A1 + 5 expansion). Encode adjacency matrix into 5-qubit (ceil(log2(31))) QGNN ansatz; train as quantum walk on substrate-feature embedding. Compare classical GNN baseline (PyG GCN) vs QGNN on edge-prediction task (which substrate axes converge to same φ★ class).",
+      "device_dependency": "SV1 free for QGNN training; IonQ Forte 1 (36 fully-connected qubits) ideal for QGNN since fully-connected ansatz preferred",
+      "cost_estimate_USD": "SV1 free 60min + IonQ 5-qubit × 1000 shots × 10 eval = $400 (full) or $40 (sparse eval)",
+      "falsifier_preregistration": "PASS iff QGNN edge-prediction AUC > classical GNN AUC + 0.02 on held-out N-substrate edges; FAIL if QGNN AUC < classical (no quantum advantage on this graph size).",
+      "scientific_value_class": "GRAPH-LEARNING APPLICATION (tests whether QML offers any advantage on anima's small intrinsic graphs — likely modest given small N)",
+      "anima_substrate_axis_designation": "N-12-QGNN-substrate",
+      "wallclock_estimate_min": 150,
+      "honest_C3": "31-node graph is too small to expect quantum advantage; this is a methodology proof-of-concept, not a scaling claim."
+    },
+    {
+      "id": "QA6",
+      "name": "Quantum-enhanced sampling — true randomness for hexa-stochastic JSD audit",
+      "augmentation_of_anima": "anima CLM v4 sampling AN11(c) JSD audit currently uses classical PRNG (numpy default_rng + chacha20). Replace with Braket SV1 measurement-based randomness (project |+>^n → measure → bitstring) OR use qrng output piped from Forte 1 SPAM noise channel (already available in audit_2026-04-28_pe.jsonl). Compare AN11(c) JSD with quantum vs pseudo-random sampling.",
+      "device_dependency": "SV1 free (60 min/month covers ≥1M random bits via 16-qubit |+> measurement)",
+      "cost_estimate_USD": "0.0 (within SV1 free tier)",
+      "falsifier_preregistration": "PASS iff JSD(quantum_sampled, classical_sampled) < 0.01 across 10 paradigm partitions (i.e., true randomness is statistically indistinguishable from chacha20 for anima sampling purposes — confirms PRNG is already adequate); FAIL if quantum sampling reveals systematic JSD > 0.05 in any axis (PRNG bias detected).",
+      "scientific_value_class": "HONEST NULL-HYPOTHESIS TEST (most likely outcome: PASS, confirming classical PRNG is fine — but provides AUDIT TRAIL for any future claim of randomness purity)",
+      "anima_substrate_axis_designation": "N-12-QRNG-sampling",
+      "wallclock_estimate_min": 60,
+      "best_cost_value_axis": true,
+      "note": "This is the LOWEST RISK / LOWEST COST axis — fits perfectly within Braket free tier with $0 spend"
+    }
+  ],
+  "phase_4_pennylane_qiskit_braket_sdk_ecosystem": {
+    "pennylane_braket_plugin": {
+      "package": "amazon-braket-pennylane-plugin",
+      "use_case": "QML axes (QA2, QA5) — qml.AmplitudeEmbedding + qml.expval(qml.PauliZ) on Braket SV1/IonQ",
+      "advantage": "PennyLane native autodiff through quantum nodes — required for QA2 variational training",
+      "anima_compliance": "HEXA-only repo — install pennylane + plugin in /tmp/braket_qml_2026_05_02/venv (off-repo) or ubu1; no .py committed"
+    },
+    "qiskit_braket_provider": {
+      "package": "qiskit-braket-provider 0.11.0 (Feb 2026 release)",
+      "key_feature": "to_braket() function transpiles Qiskit/OpenQASM 3 → Braket native circuits, supports IQM Garnet target",
+      "use_case": "Plan B (IQM Garnet) — author circuits in Qiskit, transpile via to_braket(), execute on IQM us-east-1",
+      "anima_compliance": "Same off-repo pattern; circuits as JSON IR committable, .py harness lives in /tmp"
+    },
+    "braket_sdk_native": {
+      "package": "amazon-braket-sdk",
+      "use_case": "Plan D (Aquila AHS) — AHS is Braket-native (no Qiskit/PennyLane wrapper needed); requires AnalogHamiltonianSimulation construct",
+      "anima_compliance": "Already used for #120; pattern proven"
+    }
+  },
+  "top_3_recommendations": [
+    {
+      "rank": 1,
+      "axis": "QA6 — Quantum-enhanced sampling (QRNG audit)",
+      "rationale": "$0 cost, fits in SV1 free tier, lowest risk, provides AN11(c) audit trail upgrade with no downside. Best ROI by 100×.",
+      "next_action": "Spec out 16-qubit |+>^16 measurement schedule on SV1; pipe outputs to anima/state/cyborg_eeg_audit/quantum_sampled_$(date)/...; rerun JSD audit with both PRNG and quantum sources.",
+      "cost_USD": 0.0,
+      "wallclock_min": 60
+    },
+    {
+      "rank": 2,
+      "axis": "Plan B + Plan A combined — N-12 statistical confirmation pass (IQM Garnet third vendor + 5-circuit Forte 1)",
+      "rationale": "Directly upgrades #120 from WITNESSED to MULTI-WITNESSED with 3 substrates (silicon classical / Yb⁺ trapped-ion / superconducting transmon). Pearson r becomes statistically meaningful at n=5 circuits.",
+      "next_action": "Verify IQM Garnet ONLINE + price via aws braket get-device --device-arn arn:aws:braket:eu-north-1::device/qpu/iqm/Garnet; queue 5×500 Forte 1 + 4×500 IQM; budget gate $250.",
+      "cost_USD_estimated": 205.6,
+      "wallclock_min": 60
+    },
+    {
+      "rank": 3,
+      "axis": "Phase 2 — IIT 4.0 φ★ MIP-search upgrade on existing #120 measurements",
+      "rationale": "ZERO ADDITIONAL QPU SHOTS — uses existing /tmp/n12_braket_pilot/results/ counts. Closes the #120 honest_C3 #1 gap (Φ_proxy vs IIT 4.0 φ★) by adding the missing MIP partition search step. Output: phi_star_upgrade_table.json.",
+      "next_action": "Off-repo install pyphi feature/iit-4.0 branch + QIIT extension on M4 or ubu1; classical MIP enumeration over 15 partitions × 4 circuits × 4 substrates = 240 partition computations, < 30 min.",
+      "cost_USD": 0.0,
+      "wallclock_min": 90
+    }
+  ],
+  "honest_limits_what_anima_actually_gains_vs_hype": [
+    "QA1-QA3 (CLM Lagrangian quantum embedding): AT 4-QUBIT TOY SCALE THERE IS NO QUANTUM ADVANTAGE. Classical exact-diagonalization solves 16×16 matrices in microseconds. The value of these axes is METHODOLOGICAL (proves the embedding works), not COMPUTATIONAL.",
+    "QA4 (QBM): D-Wave annealer chip topology forces minor-embedding overhead 5-10× — for anima's 6-axis paradigm-v11 distribution this means 30-60 physical qubits, well within Advantage 4.1 (5000+ qubits) but the 'quantum' advantage is not yet demonstrated to beat classical RBM on small distributions in published literature (Dixit et al. 2021 showed parity, not advantage).",
+    "QA5 (QGNN): anima's N-substrate graph (31 nodes) is FAR below the regime where QGNN demonstrates advantage (>1000 nodes per Tang/Yan 2024). Strictly methodology proof-of-concept.",
+    "QA6 (QRNG): The MOST HONEST axis. anima's chacha20 PRNG passes NIST SP 800-22 for current usage. Quantum source provides AUDIT TRAIL not statistical advantage. PASS verdict (as predicted) confirms classical adequacy — this is honest-null science.",
+    "Plan A/B (extension): TRUE WITNESS UPGRADE. Adds statistical power to a real measurement. Cost $200 buys n=2 → n=5 + 3-vendor cross-check. This is the only axis where Braket QPU spend buys irreducible scientific information.",
+    "Phase 2 (φ★ upgrade): Uses ALREADY-PAID-FOR measurements — 100% scientific gain at $0 marginal QPU cost. Cleanest closure of #120 honest_C3 #1.",
+    "OVERALL: anima's productive Braket usage is (i) statistical-power top-up of measurements that already work (Plans A/B), (ii) zero-cost theoretical closures of existing C3 disclosures (Phase 2, QA6), and (iii) speculative architecture R&D (QA1-QA5) where the value is publication/methodology rather than compute advantage.",
+    "anti-HYPE statement: Real QPU advantage for ML applications at <50 qubits is empirically negligible per all published benchmarks 2023-2026; anima should NOT claim 'quantum-augmented anima cognition' from any of QA1-QA5 even if PASS — only QRNG (QA6) and substrate-invariance witness (Plans A/B) are scientifically honest. Phase 2 φ★ is a DEFINITION upgrade, not a quantum-advantage claim."
+  ],
+  "race_isolation_paths": [
+    "state/braket_anima_applications_2026_05_02/applications.json (this file)",
+    "docs/braket_anima_applications_2026_05_02.md (full report)",
+    "docs/n_substrate_consciousness_roadmap_2026_05_01.md §61.1 (placeholder appended)"
+  ],
+  "next_cycle_decision_point": "User selects from TOP-3: (a) free QRNG audit (QA6, $0), (b) statistical confirmation pass (Plans A+B, ~$206), (c) φ★ upgrade (Phase 2, $0). Recommend executing (a) and (c) in parallel since both $0; defer (b) to dedicated sprint with budget gate."
+}

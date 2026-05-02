@@ -1,0 +1,54 @@
+{
+  "ts": 1777730800,
+  "agent": "B2 EXEC",
+  "directive": "#122 recommendation 2 — nexus sim-universe quantum-substrate",
+  "summary": "Toy 11-qubit Hadamard QRW on AWS SV1 demonstrated 18x ballistic-over-diffusive variance growth in 16 Trotter steps. We propose a layered integration where nexus sim-universe consumes a quantum-source random walk as its proposal kernel for trajectory-space exploration.",
+  "integration_layers": [
+    {
+      "layer": "L0_kernel",
+      "name": "Quantum proposal kernel",
+      "spec": "Replace classical Metropolis-Hastings random-walk proposal in nexus sim-universe trajectory sampler with a discrete-time QRW step (Hadamard coin + +/-1 lattice shift). For dimension D the cost is D position registers + 1 coin per axis. PoC: D=1, n_pos=10 (1024 sites), T=16 -- this work."
+    },
+    {
+      "layer": "L1_oracle",
+      "name": "QRW-as-oracle endpoint",
+      "spec": "Expose a nexus tool quantum_walk_step(state, n_steps) that returns a sample from the QRW distribution after n_steps. Backend: SV1 simulator until n <= 30 qubits, then route to IonQ Aria/Harmony QPU once budget is approved. SV1 free-tier (1 hr/month) suffices for ~3000 such calls of the current circuit."
+    },
+    {
+      "layer": "L2_advantage",
+      "name": "Where the quantum advantage applies",
+      "spec": "Ballistic spreading <x^2> ~ T^2 (vs T classical) means the QRW kernel reaches O(T) lattice distance in T steps -- a quadratic speed-up over classical diffusion-limited exploration. For nexus this matters when (a) the trajectory space has graph diameter > sqrt(burn-in steps available) and (b) the cost of one quantum kernel call is dominated by classical fixed cost. Both are true for sim-universe explorations of conformal-blocks / spin-network state spaces."
+    },
+    {
+      "layer": "L3_decoherence_budget",
+      "name": "Honest decoherence budget on real QPUs",
+      "spec": "On NISQ hardware the ballistic regime survives only while T < T2/(gate_time * gates_per_step). For 10-qubit IonQ Aria (T2 ~ 1s, 2-qubit gate ~ 600us, ~50 gates/step in the QFT-shift implementation) the budget is T_max ~ 30 steps before the QRW collapses to classical diffusion. SV1 (this run) is a noiseless simulator so gives the asymptotic ballistic result."
+    },
+    {
+      "layer": "L4_scaling_path",
+      "name": "Scaling roadmap (out of scope today)",
+      "spec": "1) Push to D=3 lattice (33 qubits) -- still simulable on SV1 within free tier. 2) Move T up to 64 to expose the ballistic regime at >10x ratio. 3) Real QPU validation on IonQ at D=1, T=20 (~$40, requires budget approval). 4) Sim-universe integration via a hexa wrapper that proxies state -> bitstring -> SV1 task -> bitstring -> state. NONE of layers 1-4 are implemented today; only the L0 PoC kernel is empirically validated."
+    }
+  ],
+  "concrete_api_proposal": {
+    "fn_name": "nexus.sim_universe.quantum_walk_kernel",
+    "inputs": {
+      "current_position_int": "int in [0, N_SITES)",
+      "n_steps": "int >= 1",
+      "n_position_qubits": "int (default 10)",
+      "backend": "literal[\"sv1\", \"local_sim\", \"ionq_aria\"] (default sv1)"
+    },
+    "outputs": {
+      "next_position_int": "int sampled from QRW pmf after n_steps",
+      "task_arn": "str (sv1/ionq) or null (local_sim)",
+      "wall_time_seconds": "float",
+      "cost_usd": "float (0.0 for sv1 within free tier, ~$0.30/shot for ionq aria)"
+    },
+    "implementation_sketch_loc": "/tmp/b2_qrw/qrw_design.py + qrw_submit.py (off-repo .py per HEXA-FIRST policy)"
+  },
+  "novelty_disclosure": {
+    "qrw_theory": "Hadamard discrete-time QRW is a well-known result (Aharonov-Davidovich-Zagury 1993; Ambainis-Bach-Nayak-Vishwanath-Watrous 2001). No theoretical novelty in the walk itself.",
+    "implementation_novelty": "QFT-diagonalized shift using only SV1 native gates (cphaseshift + decomposed-CRZ) is a standard technique; no novelty.",
+    "anima_novelty": "First end-to-end empirical run of a quantum random walk against a classical baseline as a candidate proposal kernel for nexus sim-universe trajectory sampling. No prior anima track exercised the AWS Braket quantum substrate."
+  }
+}

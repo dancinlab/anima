@@ -1,0 +1,11 @@
+OPENQASM 3.0;
+bit[4] b;
+qubit[4] q;
+i q[0];
+i q[1];
+i q[2];
+i q[3];
+b[0] = measure q[0];
+b[1] = measure q[1];
+b[2] = measure q[2];
+b[3] = measure q[3];

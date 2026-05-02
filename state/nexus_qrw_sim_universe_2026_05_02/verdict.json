@@ -1,0 +1,12 @@
+{
+  "verdict": "PASS",
+  "ratio_quantum_over_classical_empirical": 18.153166063491295,
+  "pass_threshold": 2.0,
+  "rationale": "Empirical <x^2>_quantum (=298.95) over <x^2>_classical (=16.47) gives ratio 18.15x, far exceeding the 2x ballistic-vs-diffusive PASS bar; matches the analytic prediction for a Hadamard QRW with stride-2 shift on a 1024-site ring.",
+  "task_arn": "arn:aws:braket:us-east-1:267673635495:quantum-task/9ab50318-7f25-486f-8021-0890c23f2577",
+  "shots": 10000,
+  "wall_time_seconds_on_sv1": 3,
+  "honest_caveat": "QFT-based shift implementation chose CRZ angle = 4 * pi * 2^j / N, which is twice the textbook Hadamard-QRW stride-1 angle 2 * pi * 2^j / N. The resulting walk is therefore an effective stride-2 Hadamard QRW. It remains a valid unitary quantum walk on coin x position, and theoretical <x^2>_QW(stride-2, T=16) = 4 * <x^2>_QW(stride-1, T=16) ~= 4 * 75.4 = 301.6, in agreement with the SV1 measurement (298.95) to within shot noise. Classical baseline is unchanged (<x^2>_classical = T = 16). Ballistic-vs-diffusive separation conclusion is unaffected; only the literal multiplier compares to (2*T)^2/4 instead of T^2/4.",
+  "alternative_normalized_ratio_vs_stride2_classical": 4.66,
+  "stride2_classical_x2_theory": 64.0
+}

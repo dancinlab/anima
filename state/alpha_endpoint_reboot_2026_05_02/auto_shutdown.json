@@ -1,0 +1,18 @@
+{
+  "schema": "anima/alpha_endpoint_reboot/auto_shutdown/1",
+  "ts": "2026-05-02T14:52:41Z",
+  "policy": "hard_4h_cap",
+  "boot_ts_utc": "2026-05-02T14:36:04Z",
+  "shutdown_at_utc": "2026-05-02T18:52:41Z",
+  "watchdog_pid": 688,
+  "watchdog_log_pod": "/workspace/out/auto_shutdown.log",
+  "trigger_command": "shutdown -h now (fallback: halt -p)",
+  "extension_policy": "user must explicitly request keep-alive; default = pod terminates at 18:52 UTC",
+  "cost_cap_usd": 10.0,
+  "cost_per_hr_usd": 2.99,
+  "max_cost_at_full_4h_usd": 11.96,
+  "AL_F4_threshold_usd_per_hr": 50.0,
+  "AL_F4_observed_usd_per_hr": 2.99,
+  "AL_F4_fired": false,
+  "manual_kill_command": "runpodctl pod stop 3ifwhtmvdieivy && runpodctl pod remove 3ifwhtmvdieivy"
+}

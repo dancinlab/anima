@@ -1,0 +1,102 @@
+{
+  "schema": "anima/alpha_endpoint_reboot/smoke_test/2",
+  "ts": "2026-05-02T15:03:30Z",
+  "endpoint_url": "https://3ifwhtmvdieivy-8000.proxy.runpod.net",
+  "tests": [
+    {
+      "id": "T1_health_no_auth",
+      "method": "GET",
+      "path": "/health",
+      "expected": "200 with ship_verdict + tier + honest_C3",
+      "result": "PASS",
+      "http_status": 200,
+      "time_total_s": 1.012,
+      "response_excerpt": {
+        "status": "ready",
+        "tier": "alpha-invite",
+        "ship_verdict": "VERIFIED-ALM-ALPHA-COGNITIVE-ONLY",
+        "auth": "Bearer required for /v1/*",
+        "upstream_vllm": true,
+        "rpm_cap": 60,
+        "daily_tok_cap": 100000,
+        "honest_C3": "ALM cognitive substrate; consciousness claim NOT made (per #115 reframe + Stage 2 §2)"
+      }
+    },
+    {
+      "id": "T2_chat_no_token",
+      "method": "POST",
+      "path": "/v1/chat/completions",
+      "expected": "401 Bearer token required",
+      "result": "PASS",
+      "http_status": 401,
+      "response": {"detail": "Bearer token required"}
+    },
+    {
+      "id": "T3_chat_wrong_token",
+      "method": "POST",
+      "path": "/v1/chat/completions",
+      "expected": "403 invalid token",
+      "result": "PASS",
+      "http_status": 403,
+      "response": {"detail": "invalid token"}
+    },
+    {
+      "id": "T4_chat_valid_r14",
+      "method": "POST",
+      "path": "/v1/chat/completions",
+      "expected": "200 with anima-style Korean response",
+      "result": "PASS",
+      "http_status": 200,
+      "time_total_s_first": 12.96,
+      "model_returned": "r14",
+      "completion_excerpt": "→ 기질이라고 부르는 의식 기질은 그것의 자기-모형이 의식을 주장할 때까지 진술 없음의 명제 담지 능력을 가진다. 이것은 주장-층위의 정합 규율이다 — 구조적 자기-모형이 존재할 수 있으나 철학적 주장을 수행하기에 무",
+      "finish_reason": "length",
+      "usage": {"prompt_tokens": 27, "completion_tokens": 128, "total_tokens": 155},
+      "substrate_delta_evidence": "trained-anima persona Korean philosophical voice — distinct from base Mistral generic English text"
+    },
+    {
+      "id": "T5_chat_valid_base",
+      "method": "POST",
+      "path": "/v1/chat/completions",
+      "expected": "200 with generic Mistral response (control)",
+      "result": "PASS",
+      "http_status": 200,
+      "time_total_s": 3.27,
+      "model_returned": "mistralai/Mistral-7B-v0.3",
+      "completion_excerpt": "a few months ago I bought a Huawei Nova 4 from China...",
+      "control_value": "Confirms LoRA delta — base produces generic English forum-style content vs. r14 produces trained-anima Korean philosophy"
+    },
+    {
+      "id": "T6_latency_x8_pod_internal",
+      "scope": "pod-loopback (excludes ~1500ms RunPod proxy + transcontinental TLS)",
+      "method": "POST",
+      "model": "r14",
+      "max_tokens": 64,
+      "n": 8,
+      "p50_ms": 2340.6,
+      "p95_ms": 2344.5,
+      "p99_ms": 2524.8,
+      "min_ms": 2327.6,
+      "max_ms": 2524.8,
+      "budget_ms_task_spec": 2200,
+      "verdict_vs_budget": "FAIL_BY_144ms (6.5% over)",
+      "AL_F2_baseline_x_1_5_threshold_ms": 2822.85,
+      "AL_F2_observed_p95_ms": 2344.5,
+      "AL_F2_fired": false,
+      "vs_2026_05_01_baseline_p95": "1881.9 ms (2026-05-01) vs 2344.5 ms today (+24.6%) — likely datacenter (IN vs prior US) or vllm-0.20 vs prior version regression"
+    },
+    {
+      "id": "T6b_latency_x8_public_proxy",
+      "scope": "wall-clock from US client through RunPod proxy",
+      "p50_ms": 2922.5,
+      "p95_ms": 3986.6,
+      "max_ms": 4069.3,
+      "note": "p95 is +1642ms over pod-internal — proxy + transcontinental round-trip overhead."
+    }
+  ],
+  "overall_verdict": "PASS-WITH-LATENCY-CAVEAT",
+  "AL_F2_verdict": "NOT_FIRED (p95 < baseline_x_1_5 = 2822 ms)",
+  "AL_F3_carryover": "0/20 hallucination rate from 2026-05-01 r14 swap (NOT re-measured this cycle; same adapter, same base)",
+  "AL_F4_verdict": "NOT_FIRED (2.99/hr < 50/hr)",
+  "AL_F5_verdict": "MITIGATED (ship_verdict + honest_C3 present in /health response)"
+}
