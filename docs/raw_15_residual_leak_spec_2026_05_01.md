@@ -1,9 +1,10 @@
-# raw 15 residual leak spec — 2026-05-01
+# raw 15 residual leak spec — 2026-05-01 (cycle re-launch 2026-05-02)
 
 **status**: spec-only · roll-out plan (변환 작업 X, 다음 cycle 위임)
 **scope**: F5+7 retro-fit batch (commit `71f5d42cc`, 282 files) 이후 잔여 leak 464건의 분류 / 검증 protocol / ω-cycle 분할
 **raw cross-references**: raw 9 (hexa-only enforcement) · raw 10 (honest C3) · raw 15 (personal-path-leak-ban-iter5) · raw 71 (falsifier registration) · raw 91 (honesty triad C2 write_barrier)
 **predecessor**: `docs/raw_audit_backfill_20260421.md` (raw 15 iter4 ledger)
+**re-launch note**: 본 cycle 직전 attempt 는 G3 quota 차단으로 중단. 2026-05-02 재발사 시 spec 본문 보존 + §11 re-launch addendum 으로 보강. 변환 surface 변동 없음 — sampling re-snapshot 미수행 (raw 10 honest C3 §6.1 잔존).
 
 ---
 
@@ -265,4 +266,30 @@ grep -nE '<HOME-PREFIX>|<HOME-PREFIX-LC>' docs/raw_15_residual_leak_spec_2026_05
 
 ---
 
-end of spec — 2026-05-01.
+## §11 cycle re-launch addendum — 2026-05-02
+
+### §11.1 재발사 배경
+
+직전 cycle (2026-05-01) 에서 G3 quota 차단으로 본 spec 의 일부 protocol section (§3 / §4 detail expansion 의도) 가 미작성 종료. 본 cycle 은 G3 quota 회복 후 재발사 — 기존 §0~§10 본문 보존 (검토 결과 spec quality 충분), §11 addendum 으로 cycle hand-off 명세만 보강.
+
+### §11.2 re-snapshot 미수행 사유
+
+직전 cycle 작성 시점 (2026-05-01 ~00:11 KST F5+7 commit 직후) 부터 본 cycle 진입 (2026-05-02) 까지 약 24h 경과. 그동안 tree dirty (state ledger jsonl append 다수 존재 — `git status` 검증 결과) 했으나 leak 변환 작업 0건 — 따라서 464 surface 불변 가정 유지. 재 grep 미수행 사유는 read-only audit cost 절감 (다음 cycle Phase 6a 진입 시 fresh sweep 1회로 통합).
+
+### §11.3 본 cycle 변경 surface
+
+추가/변경된 file: 본 doc 1건 (`docs/raw_15_residual_leak_spec_2026_05_01.md`). 다른 file 0건 — single-file commit constraint 준수.
+
+### §11.4 다음 cycle 진입 시 권고
+
+1. Phase 6c (uchg consent gate) 진입 전 사용자에게 §4.1 step 3 "yes/no/skip" 표 제출 요청.
+2. Phase 6a 시작 시 신선 grep snapshot 필수 (§6.1 honest C3 1번 항목 해소).
+3. raw 15 iter6 spec amendment (`docs/raw_15_iter6_exclusion_list_<ts>.md`) 우선 작성 — Phase 6 변환 surface 정의 명확화.
+
+### §11.5 raw 91 honesty triad C2 — write barrier
+
+본 §11 addendum 은 §0~§10 의 verdict 구조를 변경하지 않음 (write barrier 준수). 추가 정보 only — 기존 카테고리 / 건수 / hours 추정 / 결정 기준 모두 불변.
+
+---
+
+end of spec — 2026-05-01 (cycle re-launch addendum 2026-05-02).
