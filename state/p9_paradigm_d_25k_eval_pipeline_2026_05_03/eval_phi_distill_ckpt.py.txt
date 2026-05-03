@@ -1,0 +1,519 @@
+#!/usr/bin/env python3
+"""P9 Paradigm D 25K Eval — Eval driver for one (Φ★ distill ckpt) sample.
+
+Loads CLM v4 350M ConsciousDecoderV2 base + a LoRA adapter (local dir or HF Hub),
+computes the 4-falsifier matrix per the Paradigm D spec:
+
+  F1  BLEU-1 on holdout-500 (greedy gen, len=32)
+  F2  Φ★ trajectory (anima_phi_v3_canonical: HID_TRUNC=8, K=8, ridge=1e-3)
+  F3  Tension MSE on a probe subset (32 records)
+  F-D z-score MSE final = mean over batch of (z_T_cache − z_S_running)**2
+
+ENTRY MODES
+  --ckpt-local-dir <path>         eval LoRA adapter at local path
+  --ckpt-repo <hf_id>             eval LoRA adapter from HF Hub
+  --ckpt-revision <rev>           HF revision/tag (e.g. step-25000)
+  --base-only                     skip LoRA — eval base alone (for re-anchoring)
+
+USAGE
+  python eval_phi_distill_ckpt.py --base-only \
+      --output ~/anima/state/p9_paradigm_d_25k_eval_2026_05_03/base_reference.json \
+      --limit 32
+
+  python eval_phi_distill_ckpt.py --ckpt-local-dir /tmp/p9_paradigm_d_distill_savepoints/step_1000 \
+      --output ~/anima/state/p9_paradigm_d_25k_eval_2026_05_03/mini_run_step1000.json
+
+  python eval_phi_distill_ckpt.py --ckpt-repo need-singularity/p9-paradigm-d-25k \
+      --ckpt-revision step-25000 \
+      --output ~/anima/state/p9_paradigm_d_25k_eval_2026_05_03/ckpt_step25k.json
+
+LOCKED config (per docs/p9_paradigm_d_distillation_runbook_2026_05_03.md §3-4):
+  - Φ★ extractor: anima_phi_v3_canonical (16 prompts, HID_TRUNC=8, K=8, ridge=1e-3, seed=42)
+  - z-score normalization: per-population (teacher μ=-24.230 σ=2.116; student EMA window=10)
+  - Holdout BLEU-1: greedy gen, gen_len=32, T=64 input cap
+  - Tension MSE: 32-record probe subset
+  - F-D pre-registered threshold: z-score MSE final < 0.5 (BERT-class anchored Sanh 2019 0.3-0.6)
+
+raw#9 ubu1 .py OK / raw#15 ~/anima paths / raw#10 honest C3:
+  - Φ★ extractor inherits HID_TRUNC=8 + K=8 + ridge=1e-3 biases (substrate-relative integration metric)
+  - z-score MSE supervises prompt-relative ordering, NOT absolute scale (cross-substrate meaningless)
+  - F-D threshold (<0.5) anchored to BERT-class regime (Sanh 2019 0.3-0.6); CLM v4 350M class extrapolation honest_c3 #3
+"""
+import argparse
+import json
+import os
+import sys
+import time
+import traceback
+from datetime import datetime, timezone
+from pathlib import Path
+
+# ubu1 path setup
+ANIMA_HOME = os.environ.get("ANIMA_HOME", "/home/aiden/anima")
+sys.path.insert(0, f"{ANIMA_HOME}/models")
+sys.path.insert(0, f"{ANIMA_HOME}/training")
+sys.path.insert(0, f"{ANIMA_HOME}")
+
+import numpy as np
+import torch
+import torch.nn.functional as F
+
+
+CALIB_PROMPTS = [
+    "Define hexad as a six-fold integration:",
+    "Six modules form a hexagonal architecture when:",
+    "A balanced six-component system:",
+    "Hexad symmetry refers to:",
+    "Logical implication law: if A then:",
+    "Sequential rule application proceeds:",
+    "Closure under inference requires:",
+    "A formal proof system is closed when:",
+    "Integrated information measures partition independence:",
+    "Phi quantifies irreducibility of system:",
+    "Information integration is maximized when:",
+    "A whole greater than sum of parts:",
+    "Self-reference emerges when system observes:",
+    "Recursive meta-cognition models:",
+    "A self-aware system represents itself by:",
+    "Strange loops in cognition arise from:",
+]
+N_CALIB = len(CALIB_PROMPTS)
+HALF = N_CALIB // 2
+HID_TRUNC = max(2, N_CALIB // 2)  # = 8
+RIDGE = 1e-3
+K_PARTS = 8
+SEED = 42
+T_SEQLEN = 64
+F1_GEN_LEN = 32
+
+# Frozen teacher z-score constants (from runbook §1)
+MU_T_FROZEN = -24.230
+SIGMA_T_FROZEN = 2.116
+
+# Pre-registered F-D threshold (BERT-class distill regime anchor)
+F_D_PASS_THRESHOLD = 0.5
+
+
+def log(msg):
+    print(f"[eval-phi-distill] {datetime.now(timezone.utc).strftime('%H:%M:%S')} {msg}", flush=True)
+
+
+def build_decoder(ckpt_path, vocab_size, device):
+    """Build CLM v4 350M ConsciousDecoderV2 + load best.pt weights."""
+    from conscious_decoder import ConsciousDecoderV2
+    decoder = ConsciousDecoderV2(
+        vocab_size=vocab_size,
+        d_model=768, n_head=12, n_layer=16,
+        block_size=512, n_kv_head=4,
+        consciousness_dim=192,
+        dropout=0.0, gate_strength=0.001, n_ca_rules=8,
+    ).to(device)
+    ck = torch.load(ckpt_path, map_location=device, weights_only=False)
+    sd = ck.get("decoder", ck) if isinstance(ck, dict) else ck
+    missing, unexpected = decoder.load_state_dict(sd, strict=False)
+    log(f"decoder ckpt loaded missing={len(missing)} unexpected={len(unexpected)}")
+    return decoder
+
+
+def attach_lora(decoder, adapter_src, hf_revision=None):
+    """Attach a LoRA adapter (local dir or HF repo)."""
+    from peft import PeftModel
+    kwargs = {}
+    if hf_revision:
+        kwargs["revision"] = hf_revision
+    log(f"loading LoRA adapter from {adapter_src} revision={hf_revision}")
+    return PeftModel.from_pretrained(decoder, adapter_src, **kwargs)
+
+
+def attach_synthetic_lora(decoder, r=64, alpha=128):
+    """Attach a freshly-init synthetic LoRA (smoke test only)."""
+    from peft import LoraConfig, get_peft_model
+    cfg = LoraConfig(
+        r=r, lora_alpha=alpha, lora_dropout=0.0, bias="none",
+        target_modules=["q_proj", "k_proj", "v_proj", "o_proj",
+                        "gate_proj", "up_proj", "down_proj"],
+    )
+    return get_peft_model(decoder, cfg)
+
+
+def build_calib_tensor(sp, device):
+    toks_list = []
+    for prompt in CALIB_PROMPTS:
+        tk = sp.encode(prompt)[:T_SEQLEN]
+        if len(tk) < T_SEQLEN:
+            tk = tk + [0] * (T_SEQLEN - len(tk))
+        toks_list.append(tk)
+    return torch.tensor(toks_list, dtype=torch.long, device=device)
+
+
+def compute_phi_star(model, calib_idx, hook_capture, K=K_PARTS, ridge=RIDGE):
+    """Φ★ extractor — anima_phi_v3_canonical. Returns (phi_min, phi_mean)."""
+    model.eval()
+    hiddens = []
+    with torch.no_grad():
+        for i in range(N_CALIB):
+            hook_capture["value"] = None
+            _ = model(calib_idx[i:i+1])
+            h = hook_capture["value"]
+            if h is None:
+                model.train()
+                return None, None
+            h_pool = h.mean(dim=1).squeeze(0)
+            hiddens.append(h_pool.float().cpu().numpy())
+    X = np.stack(hiddens, axis=0)
+    var = X.var(axis=0)
+    top_idx = np.argsort(var)[::-1][:HID_TRUNC]
+    Xt = X[:, top_idx]
+
+    def safe_logdet(C):
+        Cs = C + ridge * np.eye(C.shape[0])
+        sign, logdet = np.linalg.slogdet(Cs)
+        if sign <= 0:
+            return None
+        return logdet
+
+    C_full = np.cov(Xt.T)
+    I_full = safe_logdet(C_full)
+    if I_full is None:
+        model.train()
+        return None, None
+    rng = np.random.default_rng(SEED)
+    phi_candidates = []
+    for k in range(K):
+        idx = rng.permutation(N_CALIB)
+        s1 = idx[:HALF]; s2 = idx[HALF:]
+        I1 = safe_logdet(np.cov(Xt[s1].T))
+        I2 = safe_logdet(np.cov(Xt[s2].T))
+        if I1 is None or I2 is None:
+            continue
+        phi_candidates.append(I_full - (I1 + I2))
+    model.train()
+    if not phi_candidates:
+        return None, None
+    return float(min(phi_candidates)), float(sum(phi_candidates)/len(phi_candidates))
+
+
+def compute_bleu1(model, holdout_subset, sp, device):
+    """Greedy BLEU-1 unigram precision (clipped) on holdout subset."""
+    model.eval()
+    bleu1_scores = []
+    with torch.no_grad():
+        for h in holdout_subset:
+            inp_tok = h["input_tokens"]
+            ref_tok = h["reference_tokens"]
+            if not ref_tok:
+                continue
+            ctx = torch.tensor([inp_tok], dtype=torch.long, device=device)
+            gen_tok = []
+            for _ in range(F1_GEN_LEN):
+                if ctx.size(1) >= T_SEQLEN:
+                    break
+                logits_a, _, _, _, _ = model(ctx)
+                next_id = int(logits_a[0, -1, :].argmax().item())
+                gen_tok.append(next_id)
+                ctx = torch.cat([ctx, torch.tensor([[next_id]], dtype=torch.long, device=device)], dim=1)
+                if next_id == 0:
+                    break
+            if not gen_tok:
+                continue
+            ref_counts = {}
+            for t in ref_tok:
+                ref_counts[t] = ref_counts.get(t, 0) + 1
+            hits = 0; seen = {}
+            for t in gen_tok:
+                if t in ref_counts:
+                    seen_c = seen.get(t, 0)
+                    if seen_c < ref_counts[t]:
+                        hits += 1
+                        seen[t] = seen_c + 1
+            bleu1 = hits / max(1, len(gen_tok))
+            bleu1_scores.append(bleu1)
+    model.train()
+    return float(sum(bleu1_scores) / len(bleu1_scores)) if bleu1_scores else 0.0
+
+
+def compute_tension_mse(model, eval_subset, device):
+    """MSE between predicted tension head output and target tension."""
+    model.eval()
+    mses = []
+    with torch.no_grad():
+        for toks, tens in eval_subset:
+            idx = torch.tensor([toks], dtype=torch.long, device=device)
+            tens_t = torch.tensor([tens], dtype=torch.float32, device=device)
+            _, _, tensions, _, _ = model(idx)
+            t_pred = tensions[-1].mean(dim=0).float()
+            mse = F.mse_loss(t_pred, tens_t.squeeze(0)).item()
+            mses.append(mse)
+    model.train()
+    return float(sum(mses) / len(mses)) if mses else None
+
+
+def load_holdout(path, sp, n_max):
+    holdout = []
+    with open(path) as f:
+        for line in f:
+            try:
+                holdout.append(json.loads(line))
+            except json.JSONDecodeError:
+                continue
+            if len(holdout) >= n_max:
+                break
+    cache = []
+    for rec in holdout:
+        inp = rec.get("input", "")
+        comp = rec.get("completion", "")
+        inp_tok = sp.encode(inp)[:T_SEQLEN - F1_GEN_LEN] if inp else [0]
+        comp_tok = sp.encode(comp)[:F1_GEN_LEN] if comp else [0]
+        cache.append({"input_tokens": inp_tok, "reference_tokens": comp_tok})
+    return cache
+
+
+def load_eval_subset(path, sp, n_max):
+    """Load N records from SFT data with tokenized input + tension target."""
+    out = []
+    with open(path) as f:
+        for line in f:
+            try:
+                rec = json.loads(line)
+            except json.JSONDecodeError:
+                continue
+            text = rec.get("input", "") + " " + rec.get("completion", "")
+            tokens = sp.encode(text)[:T_SEQLEN]
+            if len(tokens) < T_SEQLEN:
+                tokens = tokens + [0] * (T_SEQLEN - len(tokens))
+            tension = rec.get("tension_target", None)
+            if tension is None or not isinstance(tension, list):
+                tension = [0.0] * T_SEQLEN
+            if len(tension) < T_SEQLEN:
+                tension = tension + [0.0] * (T_SEQLEN - len(tension))
+            out.append((tokens, tension[:T_SEQLEN]))
+            if len(out) >= n_max:
+                break
+    return out
+
+
+def load_teacher_cache(path):
+    """Load teacher Φ★ cache and compute z-score normalization stats."""
+    cache = []
+    with open(path) as f:
+        for line in f:
+            try:
+                cache.append(json.loads(line))
+            except json.JSONDecodeError:
+                continue
+    phi_arr = np.array([r["phi_star_min"] for r in cache], dtype=np.float64)
+    return {
+        "n": len(cache),
+        "phi_min": phi_arr,
+        "mu": float(phi_arr.mean()),
+        "sigma": float(phi_arr.std(ddof=0)),
+        "min": float(phi_arr.min()),
+        "max": float(phi_arr.max()),
+    }
+
+
+def compute_z_score_mse(student_phi_min, teacher_cache_stats, mu_S, sigma_S):
+    """Compute mean per-record z-score MSE between teacher cache and student aggregate.
+
+    Per runbook §3, the canonical loss form is MSE(z_T[i], z_S(s)) over a batch.
+    For a single-ckpt eval where we have ONE student aggregate Φ★, the F-D scalar
+    is the *constant* student z replicated across the cache, vs the per-record teacher z.
+
+    Returns:
+        z_mse_final: mean( (z_T[i] - z_S)^2 ) over the cache
+        z_T_arr: per-record teacher z-scores (frozen MU_T, SIGMA_T)
+        z_S: scalar student z-score
+    """
+    if student_phi_min is None or sigma_S < 1e-9:
+        return None, None, None
+    z_T = (teacher_cache_stats["phi_min"] - MU_T_FROZEN) / SIGMA_T_FROZEN
+    z_S = (student_phi_min - mu_S) / max(sigma_S, 0.1)
+    z_mse = float(((z_T - z_S) ** 2).mean())
+    return z_mse, z_T, z_S
+
+
+def main():
+    ap = argparse.ArgumentParser()
+    src = ap.add_mutually_exclusive_group(required=True)
+    src.add_argument("--ckpt-local-dir", help="Local LoRA adapter dir")
+    src.add_argument("--ckpt-repo", help="HF Hub LoRA adapter repo")
+    src.add_argument("--base-only", action="store_true",
+                     help="Skip LoRA — eval base alone")
+    src.add_argument("--synthetic-lora", action="store_true",
+                     help="Attach freshly-init synthetic LoRA (smoke test only)")
+    ap.add_argument("--ckpt-revision", default=None)
+    ap.add_argument("--base-ckpt", default=f"{ANIMA_HOME}/checkpoints/clm_v4_350m/scale_350m/best.pt")
+    ap.add_argument("--tokenizer", default="/tmp/tokenizer_64k_multilingual.model")
+    ap.add_argument("--sft-data", default="/tmp/p9_p1_5_sft_data_50k_v2.jsonl",
+                    help="SFT data for tension MSE probe (uses first --eval-n records)")
+    ap.add_argument("--holdout", default="/tmp/p9_p1_sft_data_holdout_500_augmented.jsonl",
+                    help="Holdout-500 for BLEU-1")
+    ap.add_argument("--teacher-cache", default="/tmp/p9_p1_t4_phi_cache_v1.jsonl",
+                    help="Teacher Φ★ cache for z-score MSE")
+    ap.add_argument("--mu-S", type=float, default=41.86,
+                    help="Student running μ — defaults to CLM v4 baseline +41.86 from runbook")
+    ap.add_argument("--sigma-S", type=float, default=2.0,
+                    help="Student running σ — defaults to runbook init 2.0")
+    ap.add_argument("--limit", type=int, default=32,
+                    help="N holdout records for BLEU-1 (and N tension probe records)")
+    ap.add_argument("--eval-n", type=int, default=32,
+                    help="N tension MSE probe records")
+    ap.add_argument("--seed", type=int, default=SEED)
+    ap.add_argument("--output", required=True)
+    ap.add_argument("--label", default=None,
+                    help="Optional human label (e.g. 'step_25000', 'base_reference')")
+    args = ap.parse_args()
+
+    out_path = Path(args.output)
+    out_path.parent.mkdir(parents=True, exist_ok=True)
+
+    np.random.seed(args.seed)
+    torch.manual_seed(args.seed)
+
+    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+    log(f"device={device} torch={torch.__version__}")
+    if torch.cuda.is_available():
+        log(f"gpu={torch.cuda.get_device_name(0)}")
+
+    record = {
+        "schema": "anima/p9_paradigm_d_25k_eval/per_ckpt/1",
+        "ts_utc": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
+        "label": args.label,
+        "base_ckpt": args.base_ckpt,
+        "ckpt_kind": ("BASE_ONLY" if args.base_only
+                      else "SYNTHETIC_LORA" if args.synthetic_lora
+                      else "HF_REPO" if args.ckpt_repo else "LOCAL_DIR"),
+        "ckpt_id": (args.ckpt_repo + (f"@{args.ckpt_revision}" if args.ckpt_revision else "")
+                    if args.ckpt_repo else args.ckpt_local_dir),
+        "ckpt_revision": args.ckpt_revision,
+        "phi_extractor": {
+            "name": "anima_phi_v3_canonical",
+            "n_probes": N_CALIB, "hid_trunc": HID_TRUNC,
+            "k_parts": K_PARTS, "ridge": RIDGE, "seed": args.seed,
+        },
+        "z_score_norm": {
+            "mu_T_frozen": MU_T_FROZEN,
+            "sigma_T_frozen": SIGMA_T_FROZEN,
+            "mu_S_init": args.mu_S,
+            "sigma_S_init": args.sigma_S,
+        },
+        "f_d_pass_threshold": F_D_PASS_THRESHOLD,
+        "stages": {},
+    }
+
+    t_total = time.time()
+
+    # 1. tokenizer + data
+    t0 = time.time()
+    import sentencepiece as spm
+    sp = spm.SentencePieceProcessor(model_file=args.tokenizer)
+    vocab_size = sp.get_piece_size()
+    eval_subset = load_eval_subset(args.sft_data, sp, args.eval_n)
+    holdout_cache = load_holdout(args.holdout, sp, args.limit)
+    teacher_stats = load_teacher_cache(args.teacher_cache)
+    record["data"] = {
+        "vocab_size": vocab_size,
+        "n_eval_subset": len(eval_subset),
+        "n_holdout": len(holdout_cache),
+        "teacher_cache_n": teacher_stats["n"],
+        "teacher_cache_mu_empirical": round(teacher_stats["mu"], 4),
+        "teacher_cache_sigma_empirical": round(teacher_stats["sigma"], 4),
+    }
+    record["stages"]["load_data"] = {"wall_s": round(time.time()-t0, 2)}
+
+    # 2. base
+    t0 = time.time()
+    decoder = build_decoder(args.base_ckpt, vocab_size, device)
+    record["stages"]["load_base"] = {
+        "wall_s": round(time.time()-t0, 2),
+        "n_params": sum(p.numel() for p in decoder.parameters()),
+    }
+
+    # 3. attach LoRA (or skip)
+    if args.base_only:
+        model = decoder
+    elif args.synthetic_lora:
+        t0 = time.time()
+        model = attach_synthetic_lora(decoder)
+        record["stages"]["attach_lora"] = {
+            "wall_s": round(time.time()-t0, 2), "kind": "synthetic",
+            "trainable": sum(p.numel() for p in model.parameters() if p.requires_grad),
+        }
+    else:
+        t0 = time.time()
+        adapter_src = args.ckpt_local_dir or args.ckpt_repo
+        model = attach_lora(decoder, adapter_src, args.ckpt_revision)
+        record["stages"]["attach_lora"] = {
+            "wall_s": round(time.time()-t0, 2), "kind": record["ckpt_kind"],
+            "src": adapter_src, "revision": args.ckpt_revision,
+            "trainable": sum(p.numel() for p in model.parameters() if p.requires_grad),
+        }
+
+    # 4. hook ln_f for hidden capture
+    if hasattr(model, "base_model") and hasattr(model.base_model, "model"):
+        real_decoder = model.base_model.model
+    else:
+        real_decoder = model
+    captured = {"value": None}
+    def _hook(_m, _i, output):
+        captured["value"] = output.detach()
+    hook_handle = real_decoder.ln_f.register_forward_hook(_hook)
+
+    calib_tensor = build_calib_tensor(sp, device)
+
+    # 5. F2 — Φ★
+    t0 = time.time()
+    phi_min, phi_mean = compute_phi_star(model, calib_tensor, captured)
+    record["stages"]["phi_star"] = {"wall_s": round(time.time()-t0, 2)}
+    record["F2_phi_star_min"] = phi_min
+    record["F2_phi_star_mean"] = phi_mean
+
+    # 6. F-D — z-score MSE final (vs full cache; student = constant aggregate)
+    t0 = time.time()
+    z_mse, z_T_arr, z_S = compute_z_score_mse(phi_min, teacher_stats,
+                                               args.mu_S, args.sigma_S)
+    record["F_D_z_score_mse_final"] = z_mse
+    record["F_D_z_S_aggregate"] = z_S
+    record["F_D_z_T_mean"] = float(z_T_arr.mean()) if z_T_arr is not None else None
+    record["F_D_z_T_std"] = float(z_T_arr.std()) if z_T_arr is not None else None
+    record["stages"]["z_score_mse"] = {"wall_s": round(time.time()-t0, 2)}
+
+    # 7. F1 — BLEU-1
+    t0 = time.time()
+    bleu1 = compute_bleu1(model, holdout_cache, sp, device)
+    record["F1_bleu1_holdout"] = bleu1
+    record["stages"]["bleu1"] = {"wall_s": round(time.time()-t0, 2)}
+
+    # 8. F3 — tension MSE
+    t0 = time.time()
+    tens_mse = compute_tension_mse(model, eval_subset, device)
+    record["F3_tension_mse"] = tens_mse
+    record["stages"]["tension_mse"] = {"wall_s": round(time.time()-t0, 2)}
+
+    hook_handle.remove()
+    record["total_wall_s"] = round(time.time()-t_total, 2)
+    record["status"] = "OK"
+
+    with open(out_path, "w") as f:
+        json.dump(record, f, indent=2, default=str)
+    log(f"DONE -> {out_path}")
+    log(f"  F1_bleu1={bleu1:.4f} F2_phi={phi_min} F3_tens_mse={tens_mse} F_D_zmse={z_mse}")
+
+
+if __name__ == "__main__":
+    try:
+        main()
+    except Exception as e:
+        tb = traceback.format_exc()
+        print(f"[FAIL] {e}", flush=True)
+        print(tb, flush=True)
+        try:
+            out = sys.argv[sys.argv.index("--output")+1] if "--output" in sys.argv else "/tmp/eval_FAIL.json"
+            with open(out, "w") as f:
+                json.dump({
+                    "status": "FAIL", "error": str(e), "tb": tb,
+                    "ts_utc": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
+                }, f, indent=2)
+        except Exception:
+            pass
+        sys.exit(1)

@@ -1,0 +1,82 @@
+{
+  "schema": "anima/p9_paradigm_d_distill/trajectory_reconstructed/1",
+  "note": "Reconstructed from train.log because the original process exited silently after step 2000 phi probe but before the post-loop final-F-eval / final-save / trajectory.json / verdict.json write. Cause indeterminate (no OOM in dmesg; no SIGKILL in journalctl; nohup log identical to train log; process not in ps aux). Best hypothesis: silent SIGTERM from an external watcher (no evidence yet); GPU now empty (15 MiB used).",
+  "meta": {
+    "script": "/tmp/p9_paradigm_d_distill.py (file unlinked from /tmp post-run; training read into memory at start)",
+    "paradigm": "D",
+    "teacher_substrate": "Mistral-7B-v0.3 (T4 cache)",
+    "student_substrate": "CLM v4 350M ConsciousDecoderV2 + LoRA r=64",
+    "cache_path": "/tmp/p9_p1_t4_phi_cache_v1.jsonl",
+    "cache_n_records": 50000,
+    "sft_subset_n": 1000,
+    "normalization": "per-population z-score",
+    "mu_T": -24.2875,
+    "sigma_T": 2.116,
+    "distill_warmup_end": 500,
+    "distill_ramp_end": 2000,
+    "gamma_distill_peak": 0.5,
+    "started_at": "2026-05-03T14:06:41Z",
+    "ended_at": "2026-05-03T14:09:14Z",
+    "wall_sec": 153,
+    "steps_completed": 2000,
+    "steps_logged_post_loop": 0,
+    "trajectory_complete": false,
+    "verdict_complete": false
+  },
+  "phi_log": [
+    {"step": 0, "phi_star_min": 45.91520414820293, "phi_star_mean": 46.49351962633608, "delta": 0.5, "mu_S": 45.9152, "sigma_S": 2.0},
+    {"step": 200, "phi_star_min": 47.01110944121932, "phi_star_mean": 47.621856079122885, "mu_S": 46.463, "sigma_S": 0.548},
+    {"step": 400, "phi_star_min": 45.330194487232745, "phi_star_mean": 46.00535943654512, "mu_S": 46.086, "sigma_S": 0.697},
+    {"step": 600, "phi_star_min": 44.48257661316312, "phi_star_mean": 45.60581643613334, "mu_S": 45.685, "sigma_S": 0.920, "gamma_distill": 0.0},
+    {"step": 800, "phi_star_min": 43.9649067581303, "phi_star_mean": 44.92921114886286, "mu_S": 45.341, "sigma_S": 1.072, "gamma_distill": 0.100},
+    {"step": 1000, "phi_star_min": 43.19601417817242, "phi_star_mean": 44.796241599060664, "mu_S": 44.983, "sigma_S": 1.264, "gamma_distill": 0.167},
+    {"step": 1200, "phi_star_min": 43.724524658010566, "phi_star_mean": 44.59074997453968, "mu_S": 44.804, "sigma_S": 1.250, "gamma_distill": 0.233},
+    {"step": 1400, "phi_star_min": 43.08312466785239, "phi_star_mean": 43.69653641446017, "mu_S": 44.588, "sigma_S": 1.301, "gamma_distill": 0.300},
+    {"step": 1600, "phi_star_min": 41.251586479668866, "phi_star_mean": 42.74814601919775, "mu_S": 44.218, "sigma_S": 1.613, "gamma_distill": 0.367},
+    {"step": 1800, "phi_star_min": 41.260730497191915, "phi_star_mean": 42.649466366558336, "mu_S": 43.922, "sigma_S": 1.769, "gamma_distill": 0.433},
+    {"step": 2000, "phi_star_min": 42.021171008713324, "phi_star_mean": 43.40754491144635, "mu_S": 43.533, "sigma_S": 1.715, "gamma_distill": 0.500}
+  ],
+  "f_log": [
+    {"step": 0, "F1_bleu1": 0.0010, "F2_phi": 45.9152, "F3_tension_mse": 8.5583, "F4_bold_NA": true},
+    {"step": 1000, "F1_bleu1": 0.0078, "F2_phi": 43.1960, "F3_tension_mse": 6.4737, "F4_bold_NA": true}
+  ],
+  "loss_log_compact_keypoints": [
+    {"step": 1, "loss_total": 201.1728, "loss_ce": 16.5897, "loss_tension": 13.9737, "loss_distill_unweighted": 0.6122, "gamma_distill": 0.0, "loss_phi_hinge": 0.0, "delta": 0.5},
+    {"step": 100, "loss_total": 134.6183, "loss_ce": 11.1371, "loss_tension": 6.4840, "loss_distill_unweighted": 1.3822, "gamma_distill": 0.0, "delta": 0.5},
+    {"step": 200, "loss_total": 125.2795, "loss_ce": 10.3964, "loss_tension": 3.4832, "loss_distill_unweighted": 0.3985, "gamma_distill": 0.0, "delta": 0.5},
+    {"step": 500, "loss_total": 119.0856, "loss_ce": 9.8530, "loss_tension": 5.6613, "loss_distill_unweighted": 1.6271, "gamma_distill": 0.0, "delta": 0.5},
+    {"step": 700, "loss_total": 88.2935, "loss_ce": 9.0725, "loss_tension": 5.4845, "loss_distill_unweighted": 5.6239, "gamma_distill": 0.067, "delta": 0.5},
+    {"step": 1000, "loss_total": 49.5910, "loss_ce": 8.0570, "loss_tension": 5.8702, "loss_distill_unweighted": 2.2097, "gamma_distill": 0.167, "delta": 0.5},
+    {"step": 1500, "loss_total": 43.5913, "loss_ce": 7.1137, "loss_tension": 4.3744, "loss_distill_unweighted": 0.7585, "gamma_distill": 0.333, "delta": 1.0},
+    {"step": 1800, "loss_total": 40.6556, "loss_ce": 6.5228, "loss_tension": 5.7928, "loss_distill_unweighted": 1.4993, "gamma_distill": 0.433, "delta": 1.0},
+    {"step": 2000, "loss_total": 48.2852, "loss_ce": 7.7948, "loss_tension": 6.1891, "loss_distill_unweighted": 1.1758, "gamma_distill": 0.500, "delta": 1.0}
+  ],
+  "savepoint_log": [
+    {"step": 500, "path": "/tmp/p9_paradigm_d_distill_savepoints/step_500", "size_mb": 76.07, "complete": true},
+    {"step": 1000, "path": "/tmp/p9_paradigm_d_distill_savepoints/step_1000", "size_mb": 76.07, "complete": true}
+  ],
+  "savepoints_missing": ["step_2000", "final"],
+  "drift_partial": {
+    "phi_pre": 45.9152,
+    "phi_post_step2000": 42.0212,
+    "phi_delta": -3.8941,
+    "phi_sign_preserving": true,
+    "phi_above_threshold": true,
+    "mu_T": -24.2875,
+    "sigma_T": 2.116,
+    "mu_S_pre": 45.9152,
+    "sigma_S_pre": 2.0,
+    "mu_S_step2000": 43.533,
+    "sigma_S_step2000": 1.715,
+    "z_S_step2000": -0.882,
+    "z_T_mean": 0.0,
+    "D1_drift_pre": 0.0,
+    "D1_drift_step2000": 0.882,
+    "D1_pass": false,
+    "D1_note": "Student z drifted AWAY from teacher z=0; teacher pushes student toward shrinking φ_S relative to its own EMA but z_S did not converge to 0 in mini-run.",
+    "D2_distill_descending": null,
+    "D2_note": "γ_distill ramp 0.067→0.500 visible; distill_unweighted MSE noisy in [0.47, 6.94] — no monotonic descent; needs longer run or smaller batch noise.",
+    "D3_sign_preserving": true,
+    "D3_note": "phi_post=42.02 > 0 ✓ AND phi_post=42.02 > 5.0 (PHI_THRESHOLD) ✓"
+  }
+}
