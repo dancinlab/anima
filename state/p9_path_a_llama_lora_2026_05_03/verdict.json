@@ -1,0 +1,87 @@
+{
+  "schema": "anima/p9_path_a_llama_lora/launch_verdict/1",
+  "ts_utc": "2026-05-03T14:32:00Z",
+  "spec_ref": "docs/p9_a_prime_path_decision_2026_05_03.md",
+  "phase": "TRAIN_LAUNCHED",
+  "verdict": "LAUNCH_OK_AWAITING_TRAIN_COMPLETION",
+  "substrate_chosen": "RunPod H100 SXM",
+  "substrate_rationale": "credit balance $327.84 >> $100 floor; ubu1 had only 4GB free VRAM (sentinel contention)",
+  "runpod": {
+    "pod_id": "29dhlqk508ugoc",
+    "pod_name": "anima-p9-pathA-llama-v2",
+    "gpu": "1x H100 SXM 80GB HBM3",
+    "image": "runpod/pytorch:2.4.0-py3.11-cuda12.4.1-devel-ubuntu22.04",
+    "cost_per_hr_usd": 2.99,
+    "cost_hard_cap_usd": 85.0,
+    "max_runtime_hr": 28,
+    "ssh": {"host": "103.207.149.110", "port": 14783, "user": "root", "key": "~/.runpod/ssh/RunPod-Key-Go"},
+    "auto_terminate": "host-side watcher (pid 6740) polls every 10min; terminates on TRAIN_DONE.json OR hard cap"
+  },
+  "training": {
+    "base_model": "meta-llama/Llama-3.2-3B-Instruct",
+    "data_jsonl": "/workspace/sft_data_llama_template.jsonl",
+    "n_train_records": 50000,
+    "lora_r": 64,
+    "lora_alpha": 64,
+    "lora_dropout": 0.05,
+    "target_modules": ["q_proj", "k_proj", "v_proj", "o_proj", "gate_proj", "up_proj", "down_proj"],
+    "lr": 1e-4,
+    "scheduler": "cosine",
+    "per_device_batch": 4,
+    "grad_accum": 8,
+    "effective_batch": 32,
+    "max_steps": 10000,
+    "save_steps": 2000,
+    "seq_len": 2048,
+    "warmup_steps": 200,
+    "bf16": true,
+    "gradient_checkpointing": true,
+    "trainable_params": 97255424,
+    "all_params": 3310005248,
+    "trainable_pct": 2.9382,
+    "torch": "2.4.1+cu124",
+    "trl_version": "1.3.0",
+    "push_to_hub": "need-singularity/p9-llama32-lora-stage1"
+  },
+  "initial_loss_trajectory": [
+    {"step": 10, "loss": 3.062, "grad_norm": 1.381, "lr": 4.5e-06, "entropy": 2.383, "mean_token_acc": 0.5024, "epoch": 0.0064},
+    {"step": 20, "loss": 3.28,  "grad_norm": 1.23,  "lr": 9.5e-06, "entropy": 2.618, "mean_token_acc": 0.4782, "epoch": 0.0128},
+    {"step": 30, "loss": 2.926, "grad_norm": 0.8401, "lr": 1.45e-05, "entropy": 2.731, "mean_token_acc": 0.5069, "epoch": 0.0192},
+    {"step": 40, "loss": 2.637, "grad_norm": 0.6492, "lr": 1.95e-05, "entropy": 2.815, "mean_token_acc": 0.542,  "epoch": 0.0256},
+    {"step": 50, "loss": 2.287, "grad_norm": 0.6896, "lr": 2.45e-05, "entropy": 2.594, "mean_token_acc": 0.5858, "epoch": 0.032}
+  ],
+  "initial_health": {
+    "loss_trend": "DESCENDING (3.06 → 2.29 over 50 steps)",
+    "token_accuracy_trend": "ASCENDING (50.2% → 58.6%)",
+    "warmup_lr_correct": "1e-4 × (50/200) = 2.5e-5 expected, observed 2.45e-5 — OK",
+    "step_time_s": 2.45,
+    "eta_full_h": 6.8,
+    "gpu_mem_used_gb": 28.7,
+    "gpu_mem_total_gb": 81,
+    "gpu_util_pct": 52,
+    "gpu_power_w": 418,
+    "verdict": "HEALTHY"
+  },
+  "cost_projection": {
+    "wall_hr_estimate": 7.0,
+    "cost_estimate_usd": 20.93,
+    "hard_cap_usd": 85.0,
+    "headroom_usd": 64.07
+  },
+  "preregistered_phi_star_layer": 14,
+  "phi_star_rationale": "honest_c3 §6.2 default — Llama-3.2-3B has 28 layers; middle = 14",
+  "next_cycle": "p9_path_a_eval — lm-eval-harness on Llama base + Llama+LoRA across {HellaSwag, MMLU 0-shot, TriviaQA EM}; F1_v3 verdict per A' §2.4",
+  "deferred_to_eval_cycle": [
+    "F1_v3 verdict computation",
+    "phi star baseline re-measure on Llama layer 14",
+    "fp16 vs 4-bit anchor delta per honest_c3 §6.5"
+  ],
+  "raw9_compliance": ".py files only on RunPod (gated remote); Mac side has only .md/.json/.sh staging artifacts under /tmp",
+  "raw10_honest_c3": [
+    "Initial loss 3.06 high but expected for fresh LoRA on instruction model — base ≈2.x untrained on this corpus distribution",
+    "ETA estimate ~7h is per-step extrapolation; actual may vary 6-8h with checkpoint+HF push pauses every 2K steps",
+    "Auto-terminate watcher is local Mac process (pid 6740) — if Mac sleeps or is shut down before train completes, watcher dies and pod runs to hard cap",
+    "Hub push to need-singularity/p9-llama32-lora-stage1 may fail silently if HF token lacks write scope — adapter still saved locally on pod",
+    "phi star layer 14 is pre-registered default; if eval cycle finds layer 14 produces saturated/floor signal, post-hoc layer choice is forbidden per pre-reg discipline"
+  ]
+}

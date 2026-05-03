@@ -1,0 +1,258 @@
+#!/usr/bin/env python3
+"""P9 A' Main Eval — Eval driver for one (LoRA ckpt, task) pair.
+
+Loads Llama-3.2-3B-Instruct base + a LoRA adapter (from HF Hub or local dir),
+runs lm-eval-harness on a single benchmark, and emits both aggregate score
+and per-example correctness array (for paired bootstrap + McNemar vs base).
+
+USAGE (typical, post Path A train):
+    python eval_llama_lora_ckpt.py \
+        --ckpt-repo need-singularity/p9-llama32-lora-stage1 \
+        --ckpt-revision step-2000 \
+        --task hellaswag \
+        --limit 500 \
+        --output ~/anima/state/p9_a_prime_main_eval_2026_05_03/lora_step2k_hellaswag.json
+
+USAGE (local adapter):
+    python eval_llama_lora_ckpt.py \
+        --ckpt-local-dir /path/to/adapter \
+        --task hellaswag --limit 500 --output ...
+
+Per A' spec §2.5 LOCKED harness config:
+  - dtype: bf16 (4-bit nf4 if --load-in-4bit, matching base validation)
+  - device: cuda:0
+  - batch_size: 1 (capped for VRAM safety on 12GB)
+  - seed: 42 (canonical)
+  - log_samples: true (per-example correctness needed)
+  - num_fewshot per task: hellaswag=5, mmlu=0, triviaqa=5 (matches base validation)
+
+raw#9 ubu1 .py OK / raw#15 ~/anima paths / raw#10 honest C3:
+- 4-bit precision differs from canonical fp16 by ~1-3 pt (§6.5 of A' decision)
+  → keep precision identical between base anchor + LoRA ckpt for valid Δ
+- limit=500 default matches base validation; use --limit=0 (all) for canonical eval
+- single seed (42); MCQA/EM are approximately deterministic per A' §2.5
+"""
+import argparse
+import json
+import os
+import sys
+import time
+from pathlib import Path
+
+os.environ["HF_DATASETS_TRUST_REMOTE_CODE"] = "1"
+
+import torch
+from transformers import AutoModelForCausalLM, AutoTokenizer, BitsAndBytesConfig
+from peft import PeftModel
+from lm_eval import simple_evaluate
+from lm_eval.models.huggingface import HFLM
+
+
+TASK_CONFIG = {
+    "hellaswag": {"num_fewshot": 5, "max_length": 2048,  "metric_keys": ["acc_norm", "acc"]},
+    "mmlu":      {"num_fewshot": 0, "max_length": 1024,  "metric_keys": ["acc"]},
+    "triviaqa":  {"num_fewshot": 5, "max_length": 2048,  "metric_keys": ["exact_match", "acc"]},
+}
+
+
+def main():
+    ap = argparse.ArgumentParser()
+    src = ap.add_mutually_exclusive_group(required=True)
+    src.add_argument("--ckpt-repo", help="HF Hub repo id (e.g. need-singularity/p9-llama32-lora-stage1)")
+    src.add_argument("--ckpt-local-dir", help="Local adapter dir")
+    src.add_argument("--base-only", action="store_true",
+                      help="Skip LoRA — eval base alone (for re-anchoring)")
+    ap.add_argument("--ckpt-revision", default=None,
+                     help="HF revision (branch/tag/commit, e.g. step-2000)")
+    ap.add_argument("--base-model", default="meta-llama/Llama-3.2-3B-Instruct")
+    ap.add_argument("--task", required=True, choices=list(TASK_CONFIG.keys()))
+    ap.add_argument("--limit", type=int, default=500,
+                     help="0 = full eval (no limit)")
+    ap.add_argument("--load-in-4bit", action="store_true", default=True,
+                     help="match base-validation cycle precision")
+    ap.add_argument("--no-4bit", dest="load_in_4bit", action="store_false")
+    ap.add_argument("--batch-size", type=int, default=1)
+    ap.add_argument("--seed", type=int, default=42)
+    ap.add_argument("--output", required=True, help="Output JSON path")
+    args = ap.parse_args()
+
+    out_path = Path(args.output)
+    out_path.parent.mkdir(parents=True, exist_ok=True)
+    log_samples_dir = out_path.parent / (out_path.stem + "_log_samples")
+    log_samples_dir.mkdir(exist_ok=True)
+
+    cfg = TASK_CONFIG[args.task]
+
+    # Identify the ckpt source
+    if args.base_only:
+        ckpt_kind = "BASE_ONLY"; ckpt_id = None
+    elif args.ckpt_repo:
+        ckpt_kind = "HF_REPO"
+        ckpt_id = args.ckpt_repo + (f"@{args.ckpt_revision}" if args.ckpt_revision else "")
+    else:
+        ckpt_kind = "LOCAL_DIR"; ckpt_id = args.ckpt_local_dir
+
+    record = {
+        "schema": "anima/p9_a_prime_main_eval/per_ckpt_per_task/1",
+        "ts_utc": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
+        "base_model": args.base_model,
+        "ckpt_kind": ckpt_kind,
+        "ckpt_id": ckpt_id,
+        "ckpt_revision": args.ckpt_revision,
+        "task": args.task,
+        "num_fewshot": cfg["num_fewshot"],
+        "max_length": cfg["max_length"],
+        "limit": args.limit if args.limit > 0 else None,
+        "precision": "4bit_nf4" if args.load_in_4bit else "bf16",
+        "batch_size": args.batch_size,
+        "seed": args.seed,
+        "harness_version": None,
+        "stages": {},
+    }
+    try:
+        import lm_eval
+        record["harness_version"] = getattr(lm_eval, "__version__", "unknown")
+    except Exception:
+        pass
+
+    t_total = time.time()
+
+    # 1. load base
+    t0 = time.time()
+    print(f"[load] base={args.base_model} 4bit={args.load_in_4bit}", flush=True)
+    if args.load_in_4bit:
+        bnb = BitsAndBytesConfig(
+            load_in_4bit=True, bnb_4bit_quant_type="nf4",
+            bnb_4bit_compute_dtype=torch.bfloat16,
+            bnb_4bit_use_double_quant=True,
+        )
+        base = AutoModelForCausalLM.from_pretrained(
+            args.base_model, quantization_config=bnb, device_map="cuda:0",
+        )
+    else:
+        base = AutoModelForCausalLM.from_pretrained(
+            args.base_model, torch_dtype=torch.bfloat16, device_map="cuda:0",
+        )
+    tok = AutoTokenizer.from_pretrained(args.base_model)
+    if tok.pad_token is None:
+        tok.pad_token = tok.eos_token
+    record["stages"]["load_base"] = {"wall_s": round(time.time()-t0, 2),
+                                       "alloc_gb": round(torch.cuda.memory_allocated()/1e9, 2)}
+
+    # 2. attach LoRA (or skip for base-only)
+    if not args.base_only:
+        t0 = time.time()
+        peft_kwargs = {}
+        if args.ckpt_revision:
+            peft_kwargs["revision"] = args.ckpt_revision
+        adapter_src = args.ckpt_repo or args.ckpt_local_dir
+        print(f"[load] adapter={adapter_src} rev={args.ckpt_revision}", flush=True)
+        model = PeftModel.from_pretrained(base, adapter_src, **peft_kwargs)
+        record["stages"]["load_lora"] = {"wall_s": round(time.time()-t0, 2),
+                                           "alloc_gb": round(torch.cuda.memory_allocated()/1e9, 2)}
+    else:
+        model = base
+
+    # 3. wrap HFLM
+    lm = HFLM(pretrained=model, tokenizer=tok,
+              batch_size=args.batch_size, max_length=cfg["max_length"])
+
+    # 4. run eval
+    t0 = time.time()
+    print(f"[eval] task={args.task} fewshot={cfg['num_fewshot']} limit={args.limit}", flush=True)
+    eval_kwargs = dict(
+        model=lm, tasks=[args.task],
+        num_fewshot=cfg["num_fewshot"],
+        batch_size=args.batch_size,
+        log_samples=True,
+        random_seed=args.seed,
+        numpy_random_seed=args.seed,
+        torch_random_seed=args.seed,
+    )
+    if args.limit > 0:
+        eval_kwargs["limit"] = args.limit
+    results = simple_evaluate(**eval_kwargs)
+    record["stages"]["eval"] = {"wall_s": round(time.time()-t0, 2)}
+
+    # 5. extract aggregate
+    agg = {}
+    for tname, tres in results.get("results", {}).items():
+        agg[tname] = {k: v for k, v in tres.items() if isinstance(v, (int, float, str))}
+    record["aggregate"] = agg
+
+    # 6. extract per-example correctness
+    # NOTE: lm-eval group tasks (e.g. MMLU) emit samples keyed by sub-task name
+    # (mmlu_abstract_algebra, mmlu_anatomy, …). We aggregate all keys whose name
+    # matches the requested task or starts with task+"_". doc_id is made globally
+    # unique by prefixing with the subtask name (so paired bootstrap doesn't collide
+    # between subjects).
+    all_samples = results.get("samples", {})
+    matched_keys = [k for k in all_samples.keys()
+                    if k == args.task or k.startswith(args.task + "_")]
+    record["n_subtasks"] = len(matched_keys)
+    record["matched_sample_keys"] = sorted(matched_keys)
+
+    per_example = []
+    for sub_key in sorted(matched_keys):
+        for s in all_samples.get(sub_key, []):
+            sub_doc_id = s.get("doc_id")
+            unique_doc_id = f"{sub_key}::{sub_doc_id}"
+            entry = {
+                "doc_id": unique_doc_id,
+                "subtask": sub_key,
+                "subtask_doc_id": sub_doc_id,
+                "doc_hash": s.get("doc_hash"),
+            }
+            for k in cfg["metric_keys"]:
+                if k in s:
+                    entry[k] = float(s[k]) if isinstance(s[k], (int, float, bool)) else s[k]
+            if "target" in s:
+                entry["target"] = s["target"] if isinstance(s["target"], (int, str)) else str(s["target"])
+            per_example.append(entry)
+
+    record["n_samples"] = len(per_example)
+    record["per_example_correctness"] = per_example
+
+    # 7. dump full samples for downstream re-analysis (slim, drop 'arguments')
+    samples_path = log_samples_dir / f"{args.task}_samples.json"
+    try:
+        slim = {}
+        for sub_key in sorted(matched_keys):
+            slim[sub_key] = []
+            for s in all_samples.get(sub_key, []):
+                s2 = {k: v for k, v in s.items() if k != "arguments"}
+                slim[sub_key].append(s2)
+        with open(samples_path, "w") as f:
+            json.dump(slim, f, default=str)
+        record["log_samples_path"] = str(samples_path)
+    except Exception as e:
+        record["log_samples_error"] = str(e)
+
+    record["total_wall_s"] = round(time.time()-t_total, 2)
+    record["status"] = "OK"
+
+    with open(out_path, "w") as f:
+        json.dump(record, f, indent=2, default=str)
+    print(f"[done] {out_path}", flush=True)
+    for k, v in agg.items():
+        print(f"  {k}: {v}", flush=True)
+
+
+if __name__ == "__main__":
+    try:
+        main()
+    except Exception as e:
+        import traceback
+        print(f"[FAIL] {e}", flush=True)
+        traceback.print_exc()
+        # emit a partial record for downstream debug
+        out = sys.argv[sys.argv.index("--output")+1] if "--output" in sys.argv else "/tmp/eval_FAIL.json"
+        try:
+            with open(out, "w") as f:
+                json.dump({"status": "FAIL", "error": str(e),
+                           "tb": traceback.format_exc(),
+                           "ts_utc": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime())},
+                          f, indent=2)
+        except Exception:
+            pass
+        sys.exit(1)

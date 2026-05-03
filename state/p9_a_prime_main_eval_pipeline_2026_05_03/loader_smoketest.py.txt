@@ -1,0 +1,187 @@
+#!/usr/bin/env python3
+"""P9 A' Main Eval Pipeline — Loader smoke test.
+
+Verifies the eval pipeline can:
+  1. Load Llama-3.2-3B-Instruct (4-bit, matching base-validation cycle)
+  2. Construct a synthetic LoRA adapter (r=64, alpha=64, 7 target modules — Path A spec)
+  3. Save adapter to disk + roundtrip via PeftModel.from_pretrained
+  4. Wrap (base + LoRA) in lm-eval HFLM
+  5. Run lm-eval on 5 HellaSwag examples with --log_samples
+  6. Extract per-example correctness array (needed for paired stats)
+
+raw#9 ubu1 .py OK / raw#15 ~/anima paths / raw#10 honest C3:
+- Synthetic LoRA = freshly-init random weights (no Path A ckpt loaded)
+- 4-bit precision matches §6.5 of A' decision spec — when real LoRA arrives, MUST match same precision
+- limit=5 on HellaSwag is too small for any verdict, only proves wiring
+"""
+import json, os, sys, time, traceback
+from pathlib import Path
+
+os.environ["HF_DATASETS_TRUST_REMOTE_CODE"] = "1"
+
+import torch
+from transformers import AutoModelForCausalLM, AutoTokenizer, BitsAndBytesConfig
+from peft import LoraConfig, TaskType, get_peft_model, PeftModel
+
+OUT_DIR = Path(os.environ.get("OUT_DIR", "/home/aiden/anima/state/p9_a_prime_main_eval_2026_05_03"))
+OUT_DIR.mkdir(parents=True, exist_ok=True)
+RESULT_PATH = OUT_DIR / "loader_smoketest.json"
+SYNTH_LORA_DIR = OUT_DIR / "synthetic_lora_smoke"
+LOG_SAMPLES_DIR = OUT_DIR / "smoke_log_samples"
+
+result = {
+    "schema": "anima/p9_a_prime_main_eval_pipeline/loader_smoketest/1",
+    "ts_utc": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
+    "model": "meta-llama/Llama-3.2-3B-Instruct",
+    "precision": "4bit_nf4",
+    "lora_config": {
+        "r": 64, "alpha": 64, "dropout": 0.05,
+        "target_modules": ["q_proj", "k_proj", "v_proj", "o_proj",
+                            "gate_proj", "up_proj", "down_proj"],
+        "synthetic": True,
+    },
+    "stages": {},
+    "verdict": "PENDING",
+}
+
+def stage(name):
+    def deco(fn):
+        def wrap():
+            t0 = time.time()
+            try:
+                fn()
+                result["stages"][name] = {"status": "OK", "wall_s": round(time.time()-t0, 2)}
+                print(f"[{name}] OK ({result['stages'][name]['wall_s']}s)", flush=True)
+            except Exception as e:
+                tb = traceback.format_exc()
+                result["stages"][name] = {"status": "FAIL", "error": str(e),
+                                            "tb": tb, "wall_s": round(time.time()-t0, 2)}
+                print(f"[{name}] FAIL: {e}", flush=True)
+                print(tb, flush=True)
+                with open(RESULT_PATH, "w") as f:
+                    json.dump(result, f, indent=2, default=str)
+                sys.exit(1)
+        return wrap
+    return deco
+
+state = {}
+
+@stage("load_base_4bit")
+def s1():
+    bnb = BitsAndBytesConfig(load_in_4bit=True, bnb_4bit_quant_type="nf4",
+                              bnb_4bit_compute_dtype=torch.bfloat16,
+                              bnb_4bit_use_double_quant=True)
+    tok = AutoTokenizer.from_pretrained("meta-llama/Llama-3.2-3B-Instruct")
+    if tok.pad_token is None:
+        tok.pad_token = tok.eos_token
+    model = AutoModelForCausalLM.from_pretrained(
+        "meta-llama/Llama-3.2-3B-Instruct",
+        quantization_config=bnb, device_map="cuda:0",
+    )
+    state["tok"] = tok; state["base"] = model
+    result["base_alloc_gb"] = round(torch.cuda.memory_allocated()/1e9, 2)
+
+@stage("attach_synthetic_lora")
+def s2():
+    lora = LoraConfig(
+        r=64, lora_alpha=64, lora_dropout=0.05, bias="none",
+        task_type=TaskType.CAUSAL_LM,
+        target_modules=["q_proj","k_proj","v_proj","o_proj",
+                         "gate_proj","up_proj","down_proj"],
+    )
+    peft_model = get_peft_model(state["base"], lora)
+    n_train = sum(p.numel() for p in peft_model.parameters() if p.requires_grad)
+    n_total = sum(p.numel() for p in peft_model.parameters())
+    state["peft_model"] = peft_model
+    result["lora_trainable_params"] = n_train
+    result["lora_total_params"] = n_total
+    result["lora_pct_trainable"] = round(100*n_train/n_total, 4)
+    result["alloc_after_lora_gb"] = round(torch.cuda.memory_allocated()/1e9, 2)
+
+@stage("save_lora_adapter")
+def s3():
+    if SYNTH_LORA_DIR.exists():
+        import shutil; shutil.rmtree(SYNTH_LORA_DIR)
+    SYNTH_LORA_DIR.mkdir(parents=True)
+    state["peft_model"].save_pretrained(str(SYNTH_LORA_DIR))
+    files = sorted(p.name for p in SYNTH_LORA_DIR.iterdir())
+    result["adapter_files"] = files
+    result["adapter_dir"] = str(SYNTH_LORA_DIR)
+
+@stage("roundtrip_peft_from_pretrained")
+def s4():
+    # Discard the get_peft_model wrapper; load fresh from disk
+    bnb = BitsAndBytesConfig(load_in_4bit=True, bnb_4bit_quant_type="nf4",
+                              bnb_4bit_compute_dtype=torch.bfloat16,
+                              bnb_4bit_use_double_quant=True)
+    fresh_base = AutoModelForCausalLM.from_pretrained(
+        "meta-llama/Llama-3.2-3B-Instruct",
+        quantization_config=bnb, device_map="cuda:0",
+    )
+    loaded = PeftModel.from_pretrained(fresh_base, str(SYNTH_LORA_DIR))
+    state["loaded_peft_model"] = loaded
+    state["base"] = None
+    state["peft_model"] = None
+    torch.cuda.empty_cache()
+    result["alloc_after_roundtrip_gb"] = round(torch.cuda.memory_allocated()/1e9, 2)
+    n_train = sum(p.numel() for p in loaded.parameters() if p.requires_grad)
+    result["roundtrip_trainable_params"] = n_train
+
+@stage("wrap_hflm")
+def s5():
+    from lm_eval.models.huggingface import HFLM
+    lm = HFLM(pretrained=state["loaded_peft_model"],
+              tokenizer=state["tok"],
+              batch_size=1, max_length=2048)
+    state["lm"] = lm
+    result["hflm_class"] = type(lm).__name__
+
+@stage("run_hellaswag_5")
+def s6():
+    from lm_eval import simple_evaluate
+    if LOG_SAMPLES_DIR.exists():
+        import shutil; shutil.rmtree(LOG_SAMPLES_DIR)
+    LOG_SAMPLES_DIR.mkdir(parents=True)
+    results = simple_evaluate(
+        model=state["lm"], tasks=["hellaswag"],
+        num_fewshot=5, limit=5, batch_size=1,
+        log_samples=True,
+    )
+    state["results"] = results
+    result["agg_results"] = {
+        k: {kk: vv for kk, vv in v.items() if isinstance(vv, (int, float, str))}
+        for k, v in results.get("results", {}).items()
+    }
+    samples = results.get("samples", {}).get("hellaswag", [])
+    result["n_samples_logged"] = len(samples)
+    if samples:
+        s0 = samples[0]
+        result["sample_keys"] = sorted(list(s0.keys())) if isinstance(s0, dict) else None
+
+@stage("extract_per_example_correctness")
+def s7():
+    samples = state["results"].get("samples", {}).get("hellaswag", [])
+    correctness = []
+    for s in samples:
+        # lm-eval log_samples format: 'acc' or 'acc_norm' key holds per-example score
+        c = None
+        for k in ("acc_norm", "acc"):
+            if k in s:
+                c = int(s[k])
+                break
+        # fallback: target index match
+        if c is None and "target" in s and "pred" in s:
+            c = int(s["target"] == s["pred"])
+        correctness.append(c)
+    result["per_example_correctness"] = correctness
+    result["per_example_extracted"] = sum(1 for c in correctness if c is not None)
+    result["per_example_total"] = len(correctness)
+
+# Run pipeline
+s1(); s2(); s3(); s4(); s5(); s6(); s7()
+
+result["verdict"] = "PASS"
+with open(RESULT_PATH, "w") as f:
+    json.dump(result, f, indent=2, default=str)
+
+print(f"\n[done] verdict=PASS -> {RESULT_PATH}", flush=True)

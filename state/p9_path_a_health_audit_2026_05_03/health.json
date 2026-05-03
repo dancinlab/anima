@@ -1,0 +1,87 @@
+{
+  "schema": "anima/p9_path_a_health_audit/health/1",
+  "ts_utc": "2026-05-03T15:17:00Z",
+  "audit_round": "round-1",
+  "pod": {
+    "id": "29dhlqk508ugoc",
+    "name": "anima-p9-pathA-llama-v2",
+    "gpu": "1x H100 SXM 80GB HBM3",
+    "rate_usd_hr": 2.99,
+    "ssh_host": "103.207.149.110",
+    "ssh_port": 14783,
+    "container_uptime_days": 40.7,
+    "load_avg_1m": 4.63
+  },
+  "training": {
+    "alive": true,
+    "pid": 1291,
+    "start_ts_utc": "2026-05-03T14:27:00Z",
+    "elapsed_min": 46.2,
+    "etime_human": "46:13",
+    "rss_gb": 2.03,
+    "cpu_pct": 103,
+    "current_step": 1090,
+    "total_steps": 10000,
+    "progress_pct": 10.9,
+    "epoch": 0.6976,
+    "iter_per_sec_avg": 0.41,
+    "sec_per_iter_avg": 2.46,
+    "eta_total_hr": 6.3,
+    "max_steps": 10000,
+    "save_steps": 2000,
+    "save_steps_remaining_to_first": 910,
+    "first_save_eta_min": 37.3
+  },
+  "loss": {
+    "loss_initial_step1": 3.062,
+    "loss_initial_step10": 3.28,
+    "loss_step100_approx": 1.36,
+    "loss_step500_approx": 0.85,
+    "loss_recent_5": [0.8066, 0.6875, 0.68, 0.7491, 0.7426],
+    "loss_recent_mean": 0.7332,
+    "trajectory": "monotonic decrease 3.28 -> 0.74 over 1090 steps; healthy convergence",
+    "nan_or_inf_detected": false,
+    "divergence_detected": false,
+    "grad_norm_recent": 0.234,
+    "lr_recent": 9.798e-05,
+    "entropy_recent": 0.85,
+    "mean_token_accuracy_recent": 0.84
+  },
+  "gpu": {
+    "name": "NVIDIA H100 80GB HBM3",
+    "utilization_pct": 76,
+    "memory_used_mib": 28789,
+    "memory_total_mib": 81559,
+    "memory_used_gb": 28.1,
+    "memory_pct": 35.3,
+    "temperature_c": 57,
+    "power_w": 401,
+    "oom_imminent": false,
+    "headroom_gb": 51.5,
+    "verdict": "healthy — utilization 76-85% (good for grad-checkpoint), 35% mem (huge headroom)"
+  },
+  "disk": {
+    "workspace_used_mb": 195,
+    "workspace_total_gb": 100,
+    "workspace_pct": 1,
+    "verdict": "ample — checkpoint at step 2k will land here"
+  },
+  "hf_push": {
+    "target_repo": "need-singularity/p9-llama32-lora-stage1",
+    "repo_exists_status": 200,
+    "repo_exists_verified": true,
+    "token_present_pod": true,
+    "token_user": "dancinlife",
+    "token_orgs": ["need-singularity"],
+    "token_org_match": true,
+    "first_push_eta_min": 37,
+    "naming_compliance": "NON-CONFORM (mk2 spec) — see sister BG a993063 for rename action",
+    "naming_action_required": "BEFORE first push at step 2000, sister BG must (a) create conform alias repo OR (b) accept temporary non-conform with grace period note"
+  },
+  "errors": {
+    "scan_keywords": ["error", "Error", "exception", "traceback", "fail", "NaN", "OOM"],
+    "matches_in_log": 0,
+    "log_clean": true
+  },
+  "verdict": "HEALTHY — training converging normally; cost-cap watchdog armed pod-side; HF push ready; sister BG must align naming before step 2k push"
+}

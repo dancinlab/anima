@@ -1,0 +1,73 @@
+#!/bin/bash
+# Host-side pod terminator: polls pod 29dhlqk508ugoc until TRAIN_DONE.json exists or
+# train pid dies, then runpodctl pod delete. Cap at 28h (= $85 / $2.99/hr).
+# Designed to run in background; logs to a file.
+set -uo pipefail
+
+POD_ID="29dhlqk508ugoc"
+SSH_HOST="103.207.149.110"
+SSH_PORT="14783"
+SSH_KEY="/Users/ghost/.runpod/ssh/RunPod-Key-Go"
+RUNPODCTL="/opt/homebrew/bin/runpodctl"
+HARD_CAP_HR=28
+LOG=/Users/ghost/core/anima/state/p9_path_a_llama_lora_2026_05_03/host_terminator.log
+START_TS=$(date +%s)
+
+mkdir -p "$(dirname $LOG)"
+echo "[$(date -u +%FT%TZ)] start watcher pod=$POD_ID hard_cap=${HARD_CAP_HR}h" >> $LOG
+
+while true; do
+    NOW=$(date +%s)
+    ELAPSED_HR=$(( (NOW - START_TS) / 3600 ))
+    ELAPSED_MIN=$(( (NOW - START_TS) / 60 ))
+
+    if [ "$ELAPSED_HR" -ge "$HARD_CAP_HR" ]; then
+        echo "[$(date -u +%FT%TZ)] HARD_CAP exceeded (${ELAPSED_HR}h) — terminating pod" >> $LOG
+        $RUNPODCTL pod delete $POD_ID >> $LOG 2>&1
+        break
+    fi
+
+    # Probe: TRAIN_DONE? train pid alive?
+    PROBE=$(ssh -i $SSH_KEY -o StrictHostKeyChecking=no -o ConnectTimeout=15 -p $SSH_PORT root@$SSH_HOST '
+        DONE=0; ALIVE=0
+        if [ -f /workspace/p9_path_a_llama_lora/TRAIN_DONE.json ]; then DONE=1; fi
+        if [ -f /workspace/p9_path_a_llama_lora/train.pid ]; then
+            TPID=$(cat /workspace/p9_path_a_llama_lora/train.pid)
+            if kill -0 $TPID 2>/dev/null; then ALIVE=1; fi
+        fi
+        STEP=$(grep -oE "[0-9]+/10000" /workspace/p9_path_a_llama_lora/train.log 2>/dev/null | tail -1)
+        echo "DONE=$DONE ALIVE=$ALIVE STEP=$STEP"
+    ' 2>/dev/null) || PROBE="SSH_FAIL"
+
+    echo "[$(date -u +%FT%TZ)] elapsed=${ELAPSED_MIN}min probe=$PROBE" >> $LOG
+
+    if echo "$PROBE" | grep -q "DONE=1"; then
+        echo "[$(date -u +%FT%TZ)] TRAIN_DONE detected — downloading final adapter then terminating" >> $LOG
+        # Download final adapter + train.log
+        mkdir -p /Users/ghost/core/anima/state/p9_path_a_llama_lora_2026_05_03/artifacts
+        scp -i $SSH_KEY -o StrictHostKeyChecking=no -P $SSH_PORT \
+            "root@$SSH_HOST:/workspace/p9_path_a_llama_lora/train.log" \
+            "root@$SSH_HOST:/workspace/p9_path_a_llama_lora/config.json" \
+            "root@$SSH_HOST:/workspace/p9_path_a_llama_lora/TRAIN_DONE.json" \
+            /Users/ghost/core/anima/state/p9_path_a_llama_lora_2026_05_03/artifacts/ >> $LOG 2>&1 || echo "scp partial fail" >> $LOG
+        scp -i $SSH_KEY -o StrictHostKeyChecking=no -P $SSH_PORT -r \
+            "root@$SSH_HOST:/workspace/p9_path_a_llama_lora/final" \
+            /Users/ghost/core/anima/state/p9_path_a_llama_lora_2026_05_03/artifacts/ >> $LOG 2>&1 || echo "final adapter scp fail (HF mirror is fallback)" >> $LOG
+        $RUNPODCTL pod delete $POD_ID >> $LOG 2>&1
+        echo "[$(date -u +%FT%TZ)] pod terminated — done" >> $LOG
+        break
+    fi
+
+    if echo "$PROBE" | grep -q "ALIVE=0" && echo "$PROBE" | grep -q "DONE=0"; then
+        echo "[$(date -u +%FT%TZ)] train pid GONE without DONE — likely error; downloading log + terminating" >> $LOG
+        scp -i $SSH_KEY -o StrictHostKeyChecking=no -P $SSH_PORT \
+            "root@$SSH_HOST:/workspace/p9_path_a_llama_lora/train.log" \
+            /Users/ghost/core/anima/state/p9_path_a_llama_lora_2026_05_03/artifacts/train.log >> $LOG 2>&1 || true
+        $RUNPODCTL pod delete $POD_ID >> $LOG 2>&1
+        echo "[$(date -u +%FT%TZ)] pod terminated (error path)" >> $LOG
+        break
+    fi
+
+    sleep 600  # 10min poll
+done
+echo "[$(date -u +%FT%TZ)] watcher exit" >> $LOG

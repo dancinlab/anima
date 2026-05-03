@@ -1,0 +1,38 @@
+{
+  "schema": "anima/p9_a_prime_main_eval/verdict/1",
+  "spec_ref": "docs/p9_benchmark_switch_a_prime_spec_2026_05_03.md \u00a72.4",
+  "decision_ref": "docs/p9_a_prime_path_decision_2026_05_03.md \u00a76.1 (anchor swap)",
+  "anchor": {
+    "model": "meta-llama/Llama-3.2-3B-Instruct",
+    "precision_note": "must match LoRA ckpt precision; 4-bit\u2192fp16 ~1-3 pt drift",
+    "base_per_example_path": "state/p9_a_prime_main_eval_pipeline_2026_05_03/base_per_example_correctness.json",
+    "base_load_error": "BASE_PE_NOT_FOUND: state/p9_a_prime_main_eval_pipeline_2026_05_03/base_per_example_correctness.json"
+  },
+  "lora_results_dir": "state/p9_a_prime_main_eval_2026_05_03_lora_results",
+  "lora_load_error": "LORA_DIR_NOT_FOUND: state/p9_a_prime_main_eval_2026_05_03_lora_results",
+  "thresholds": {
+    "hellaswag": {
+      "metric": "acc_norm",
+      "min_delta_pt": 1.0
+    },
+    "mmlu": {
+      "metric": "acc",
+      "min_delta_pt": 0.5
+    },
+    "triviaqa": {
+      "metric": "exact_match",
+      "min_delta_pt": 0.5
+    }
+  },
+  "paired_bootstrap_n": 10000,
+  "seed": 42,
+  "n_ckpts": 0,
+  "ckpt_verdicts": {},
+  "ranking": [],
+  "verdict_legend": {
+    "CHAT_PASS_v3": "\u22652 of 3 STRONG signals, no STRONG regression",
+    "CHAT_PARTIAL_v3": "exactly 1 STRONG signal",
+    "CHAT_FAIL_v3": "0 STRONG signals OR any STRONG regression"
+  },
+  "falsifier_scope": "F1_v3 chat axis only; F2 (\u03c6\u2605), F3 (tension MSE), F4 (BOLD pearson) are out-of-scope here"
+}

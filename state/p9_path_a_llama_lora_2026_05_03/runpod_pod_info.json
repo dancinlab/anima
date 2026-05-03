@@ -1,0 +1,23 @@
+{
+  "schema": "anima/p9_path_a_llama_lora/runpod_pod/1",
+  "ts_utc": "2026-05-03T13:00:00Z",
+  "pod_id": "cp5si6man99s33",
+  "pod_name": "anima-p9-pathA-llama",
+  "gpu": "1x H100 SXM 80GB HBM3",
+  "image": "runpod/pytorch:2.4.0-py3.11-cuda12.4.1-devel-ubuntu22.04",
+  "cost_per_hr_usd": 2.99,
+  "cost_hard_cap_usd": 85.0,
+  "max_runtime_hr": 28.4,
+  "ssh": {
+    "host": "103.207.149.56",
+    "port": 10358,
+    "user": "root",
+    "key": "~/.runpod/ssh/RunPod-Key-Go"
+  },
+  "container_disk_gb": 100,
+  "volume_gb": 50,
+  "volume_path": "/workspace",
+  "purpose": "P9 Path A — Llama-3.2-3B-Instruct LoRA SFT (50K augmented corpus)",
+  "spec_ref": "docs/p9_a_prime_path_decision_2026_05_03.md §1.1, §4.1, §7.2",
+  "auto_terminate_on_train_done": true
+}

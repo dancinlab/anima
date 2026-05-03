@@ -1,0 +1,331 @@
+// tool/p9_a_prime_verdict.hexa — P9 A' main eval verdict computation (raw#9 hexa-only Mac).
+//
+// PURPOSE
+//   Reads N-ckpt × 3-task per-example correctness arrays from the A' main eval pipeline,
+//   computes per-task Δ vs Llama base anchor, applies paired bootstrap + McNemar tests,
+//   and emits the F1_v3 composite verdict per A' spec §2.4.
+//
+//   Per A' decision spec §6.1, anchor swapped CLM v4 → Llama-3.2-3B-Instruct base.
+//   F1_v3 PASS = ≥2/3 benchmarks STRONG signal AND no STRONG regression.
+//
+//   Verdict states:
+//     SUCCESS_v3        F1_v3 PASS + (axis falsifiers F2/F3/F4 — out of scope here)
+//     CHAT_PASS_v3      F1_v3 PASS only (chat axis moved on benchmarks)
+//     CHAT_PARTIAL_v3   F1_v3 PARTIAL (1 STRONG + others NO/WEAK)
+//     CHAT_FAIL_v3      F1_v3 FAIL (0 STRONG OR any STRONG regression)
+//
+// INPUT
+//   ANIMA_BASE_PER_EXAMPLE   Llama base per-example JSON (default: state/p9_a_prime_main_eval_pipeline_2026_05_03/base_per_example_correctness.json)
+//   ANIMA_LORA_RESULTS_DIR   Dir of lora ckpt JSONs (default: state/p9_a_prime_main_eval_2026_05_03_lora_results/) — per-ckpt-per-task files
+//   ANIMA_OUTPUT             output JSON (default: state/p9_a_prime_main_eval_2026_05_03_verdict.json)
+//   ANIMA_BOOTSTRAP_N        bootstrap iterations (default 10000)
+//   ANIMA_THRESHOLDS         JSON of {hellaswag, mmlu, triviaqa} thresholds (default: spec §2.2)
+//
+// OUTPUT
+//   - per_ckpt × per_task: {delta, ci_low, ci_high, mcnemar_p, signal_state}
+//   - per_ckpt composite: {f1_v3, n_strong, n_strong_regression, label}
+//   - global meta: {anchor, n_ckpts, n_tasks, paired_bootstrap_n}
+//
+// USAGE
+//   hexa run tool/p9_a_prime_verdict.hexa --selftest
+//   hexa run tool/p9_a_prime_verdict.hexa
+//   ANIMA_LORA_RESULTS_DIR=state/p9_a_prime_main_eval_2026_05_03_lora_results \
+//     hexa run tool/p9_a_prime_verdict.hexa
+//
+// raw#9 hexa-only / raw#37 transient emit / raw#15 SSOT this file
+// raw#10 honest C3:
+//   - 4-bit precision must match between base anchor and LoRA ckpt for valid Δ (§6.5 of A' decision)
+//   - Single seed (42) per A' §2.5; MCQA approximately deterministic (not BLEU-style sample variance)
+//   - paired bootstrap assumes both arrays cover identical doc_id set; mismatched docs auto-truncated to intersection
+//   - McNemar continuity-corrected for n_discordant ≥ 25; exact binomial below
+//   - Composite SUCCESS_v3 here is F1_v3 PASS only — F2 (φ★), F3 (tension), F4 (BOLD) are
+//     measured on a separate substrate (Path D track) and NOT consumed by this hexa
+
+let HELPER_PATH = "/tmp/p9_a_prime_verdict_helper.py_tmp"
+
+fn _write_helper() {
+    let parts = []
+    parts.push("#!/usr/bin/env python3\n")
+    parts.push("# P9 A' verdict helper — emitted by tool/p9_a_prime_verdict.hexa (raw#37 transient)\n")
+    parts.push("# Reads base per-example + LoRA-ckpt per-example, computes paired bootstrap + McNemar,\n")
+    parts.push("# emits F1_v3 composite verdict.\n")
+    parts.push("import json, os, sys, glob, math, statistics\n")
+    parts.push("import random\n\n")
+
+    parts.push("BASE_PE = os.environ.get('ANIMA_BASE_PER_EXAMPLE', 'state/p9_a_prime_main_eval_pipeline_2026_05_03/base_per_example_correctness.json')\n")
+    parts.push("LORA_DIR = os.environ.get('ANIMA_LORA_RESULTS_DIR', 'state/p9_a_prime_main_eval_2026_05_03_lora_results')\n")
+    parts.push("OUTPUT = os.environ.get('ANIMA_OUTPUT', 'state/p9_a_prime_main_eval_2026_05_03_verdict.json')\n")
+    parts.push("BOOT_N = int(os.environ.get('ANIMA_BOOTSTRAP_N', '10000'))\n")
+    parts.push("SEED = int(os.environ.get('ANIMA_SEED', '42'))\n\n")
+
+    parts.push("# Pre-registered Δ thresholds per A' spec §2.2\n")
+    parts.push("THRESHOLDS_DEFAULT = {\n")
+    parts.push("    'hellaswag': {'metric':'acc_norm', 'min_delta_pt': 1.0},\n")
+    parts.push("    'mmlu':      {'metric':'acc',      'min_delta_pt': 0.5},\n")
+    parts.push("    'triviaqa':  {'metric':'exact_match','min_delta_pt': 0.5},\n")
+    parts.push("}\n")
+    parts.push("THRESHOLDS = json.loads(os.environ.get('ANIMA_THRESHOLDS', json.dumps(THRESHOLDS_DEFAULT)))\n\n")
+
+    parts.push("def _metric_key_lookup(entry, metric):\n")
+    parts.push("    # eval driver per_example entries store metric_keys directly (e.g. 'acc_norm', 'acc', 'exact_match')\n")
+    parts.push("    if metric in entry:\n")
+    parts.push("        return entry[metric]\n")
+    parts.push("    # fallbacks\n")
+    parts.push("    for k in ('acc_norm','acc','exact_match'):\n")
+    parts.push("        if k in entry:\n")
+    parts.push("            return entry[k]\n")
+    parts.push("    return None\n\n")
+
+    parts.push("def _build_correctness_dict(per_example, metric):\n")
+    parts.push("    # Returns {doc_id: 0/1}\n")
+    parts.push("    out = {}\n")
+    parts.push("    for e in per_example or []:\n")
+    parts.push("        did = e.get('doc_id') if isinstance(e, dict) else None\n")
+    parts.push("        v = _metric_key_lookup(e, metric) if isinstance(e, dict) else e\n")
+    parts.push("        if did is None or v is None:\n")
+    parts.push("            continue\n")
+    parts.push("        try:\n")
+    parts.push("            out[did] = 1 if float(v) >= 0.5 else 0\n")
+    parts.push("        except Exception:\n")
+    parts.push("            pass\n")
+    parts.push("    return out\n\n")
+
+    parts.push("def _paired_bootstrap_delta(base_arr, ckpt_arr, n_iter, seed):\n")
+    parts.push("    # base_arr, ckpt_arr: parallel 0/1 lists\n")
+    parts.push("    n = len(base_arr)\n")
+    parts.push("    if n == 0:\n")
+    parts.push("        return {'point_delta_pt': None, 'ci95_lo_pt': None, 'ci95_hi_pt': None, 'n': 0}\n")
+    parts.push("    rng = random.Random(seed)\n")
+    parts.push("    point = (sum(ckpt_arr) - sum(base_arr)) / n * 100.0\n")
+    parts.push("    deltas = []\n")
+    parts.push("    for _ in range(n_iter):\n")
+    parts.push("        idx = [rng.randrange(n) for _ in range(n)]\n")
+    parts.push("        b = sum(base_arr[i] for i in idx)\n")
+    parts.push("        c = sum(ckpt_arr[i] for i in idx)\n")
+    parts.push("        deltas.append((c - b) / n * 100.0)\n")
+    parts.push("    deltas.sort()\n")
+    parts.push("    lo = deltas[int(0.025 * n_iter)]\n")
+    parts.push("    hi = deltas[int(0.975 * n_iter)]\n")
+    parts.push("    return {'point_delta_pt': round(point, 4), 'ci95_lo_pt': round(lo, 4),\n")
+    parts.push("            'ci95_hi_pt': round(hi, 4), 'n': n}\n\n")
+
+    parts.push("def _mcnemar(base_arr, ckpt_arr):\n")
+    parts.push("    # Returns continuity-corrected McNemar p (or exact binomial if discordant<25)\n")
+    parts.push("    b = c = 0\n")
+    parts.push("    for x, y in zip(base_arr, ckpt_arr):\n")
+    parts.push("        if x == 0 and y == 1:\n")
+    parts.push("            c += 1  # ckpt corrected base wrong\n")
+    parts.push("        elif x == 1 and y == 0:\n")
+    parts.push("            b += 1  # ckpt regressed base correct\n")
+    parts.push("    n = b + c\n")
+    parts.push("    if n == 0:\n")
+    parts.push("        return {'p': 1.0, 'b': b, 'c': c, 'method': 'no_discordant'}\n")
+    parts.push("    if n < 25:\n")
+    parts.push("        # exact two-sided binomial (each discordant pair = Bernoulli(0.5))\n")
+    parts.push("        k = min(b, c)\n")
+    parts.push("        cumul = sum(math.comb(n, i) * (0.5 ** n) for i in range(k + 1))\n")
+    parts.push("        p = min(1.0, 2 * cumul)\n")
+    parts.push("        return {'p': round(p, 6), 'b': b, 'c': c, 'method': 'exact_binomial'}\n")
+    parts.push("    # continuity-corrected χ²(1) via normal approx erfc\n")
+    parts.push("    chi2 = ((abs(b - c) - 1.0) ** 2) / n\n")
+    parts.push("    # p ≈ erfc(sqrt(chi2/2))\n")
+    parts.push("    p = math.erfc(math.sqrt(chi2 / 2.0))\n")
+    parts.push("    return {'p': round(p, 6), 'b': b, 'c': c, 'method': 'continuity_corrected'}\n\n")
+
+    parts.push("def _classify_signal(delta_pt, ci_lo_pt, mcnemar_p, threshold_pt):\n")
+    parts.push("    crit_a = (delta_pt is not None) and (delta_pt >= threshold_pt)\n")
+    parts.push("    crit_b = (ci_lo_pt is not None) and (ci_lo_pt > 0.0)\n")
+    parts.push("    crit_c = (mcnemar_p is not None) and (mcnemar_p < 0.05)\n")
+    parts.push("    n_pass = sum([crit_a, crit_b, crit_c])\n")
+    parts.push("    if n_pass == 3:\n")
+    parts.push("        state = 'STRONG'\n")
+    parts.push("    elif n_pass == 2:\n")
+    parts.push("        state = 'WEAK'\n")
+    parts.push("    else:\n")
+    parts.push("        state = 'NO'\n")
+    parts.push("    # check regression: STRONG with negative delta\n")
+    parts.push("    is_regression = False\n")
+    parts.push("    if delta_pt is not None and delta_pt <= -threshold_pt and ci_lo_pt is not None:\n")
+    parts.push("        # symmetric: regression STRONG if upper CI < 0 AND |delta| ≥ threshold AND p < 0.05\n")
+    parts.push("        # we approximate by: STRONG signal in negative direction\n")
+    parts.push("        if state == 'STRONG':\n")
+    parts.push("            is_regression = True\n")
+    parts.push("    return {'criteria_pass': {'delta_geq_threshold': crit_a,\n")
+    parts.push("                                 'ci_excludes_zero': crit_b,\n")
+    parts.push("                                 'mcnemar_p_lt_005': crit_c},\n")
+    parts.push("            'n_criteria_pass': n_pass, 'signal': state, 'is_strong_regression': is_regression}\n\n")
+
+    parts.push("def _composite_f1_v3(per_task_results):\n")
+    parts.push("    n_strong = sum(1 for r in per_task_results.values() if r.get('signal') == 'STRONG' and not r.get('is_strong_regression'))\n")
+    parts.push("    n_strong_regression = sum(1 for r in per_task_results.values() if r.get('is_strong_regression'))\n")
+    parts.push("    if n_strong_regression > 0:\n")
+    parts.push("        label = 'CHAT_FAIL_v3'\n")
+    parts.push("        f1 = 'FAIL'\n")
+    parts.push("    elif n_strong >= 2:\n")
+    parts.push("        label = 'CHAT_PASS_v3'\n")
+    parts.push("        f1 = 'PASS'\n")
+    parts.push("    elif n_strong == 1:\n")
+    parts.push("        label = 'CHAT_PARTIAL_v3'\n")
+    parts.push("        f1 = 'PARTIAL'\n")
+    parts.push("    else:\n")
+    parts.push("        label = 'CHAT_FAIL_v3'\n")
+    parts.push("        f1 = 'FAIL'\n")
+    parts.push("    return {'f1_v3': f1, 'label': label, 'n_strong': n_strong,\n")
+    parts.push("            'n_strong_regression': n_strong_regression}\n\n")
+
+    parts.push("def _eval_one_ckpt(ckpt_id, ckpt_per_task, base_per_task, thresholds, boot_n, seed):\n")
+    parts.push("    per_task = {}\n")
+    parts.push("    for task, tcfg in thresholds.items():\n")
+    parts.push("        metric = tcfg['metric']\n")
+    parts.push("        thresh = tcfg['min_delta_pt']\n")
+    parts.push("        b_pe = base_per_task.get(task, {}).get('per_example', [])\n")
+    parts.push("        c_pe = ckpt_per_task.get(task, {}).get('per_example', [])\n")
+    parts.push("        b_dict = _build_correctness_dict(b_pe, metric)\n")
+    parts.push("        c_dict = _build_correctness_dict(c_pe, metric)\n")
+    parts.push("        common = sorted(set(b_dict.keys()) & set(c_dict.keys()))\n")
+    parts.push("        if not common:\n")
+    parts.push("            per_task[task] = {'task':task, 'error':'no_common_doc_ids',\n")
+    parts.push("                                'n_base':len(b_dict), 'n_ckpt':len(c_dict)}\n")
+    parts.push("            continue\n")
+    parts.push("        b_arr = [b_dict[d] for d in common]\n")
+    parts.push("        c_arr = [c_dict[d] for d in common]\n")
+    parts.push("        boot = _paired_bootstrap_delta(b_arr, c_arr, boot_n, seed)\n")
+    parts.push("        mc = _mcnemar(b_arr, c_arr)\n")
+    parts.push("        cls = _classify_signal(boot['point_delta_pt'], boot['ci95_lo_pt'], mc['p'], thresh)\n")
+    parts.push("        per_task[task] = {\n")
+    parts.push("            'task': task, 'metric': metric, 'threshold_pt': thresh,\n")
+    parts.push("            'n_common_docs': len(common),\n")
+    parts.push("            'base_acc': round(sum(b_arr)/len(b_arr), 4),\n")
+    parts.push("            'ckpt_acc': round(sum(c_arr)/len(c_arr), 4),\n")
+    parts.push("            'point_delta_pt': boot['point_delta_pt'],\n")
+    parts.push("            'ci95_lo_pt': boot['ci95_lo_pt'],\n")
+    parts.push("            'ci95_hi_pt': boot['ci95_hi_pt'],\n")
+    parts.push("            'mcnemar': mc,\n")
+    parts.push("            **cls,\n")
+    parts.push("        }\n")
+    parts.push("    composite = _composite_f1_v3(per_task)\n")
+    parts.push("    return {'ckpt_id': ckpt_id, 'per_task': per_task, 'composite': composite}\n\n")
+
+    parts.push("def _load_base_per_task(path):\n")
+    parts.push("    if not os.path.exists(path):\n")
+    parts.push("        return None, f'BASE_PE_NOT_FOUND: {path}'\n")
+    parts.push("    d = json.load(open(path))\n")
+    parts.push("    return d.get('tasks', {}), None\n\n")
+
+    parts.push("def _load_lora_results(dir_path):\n")
+    parts.push("    # Group per-ckpt-per-task files by ckpt_id\n")
+    parts.push("    grouped = {}\n")
+    parts.push("    if not os.path.isdir(dir_path):\n")
+    parts.push("        return grouped, f'LORA_DIR_NOT_FOUND: {dir_path}'\n")
+    parts.push("    for f in sorted(glob.glob(os.path.join(dir_path, '*.json'))):\n")
+    parts.push("        try:\n")
+    parts.push("            d = json.load(open(f))\n")
+    parts.push("        except Exception:\n")
+    parts.push("            continue\n")
+    parts.push("        if d.get('schema') != 'anima/p9_a_prime_main_eval/per_ckpt_per_task/1':\n")
+    parts.push("            continue\n")
+    parts.push("        ckpt_id = d.get('ckpt_id') or d.get('ckpt_revision') or 'unknown'\n")
+    parts.push("        task = d.get('task')\n")
+    parts.push("        if not task:\n")
+    parts.push("            continue\n")
+    parts.push("        grouped.setdefault(ckpt_id, {})[task] = {\n")
+    parts.push("            'aggregate': d.get('aggregate'),\n")
+    parts.push("            'per_example': d.get('per_example_correctness'),\n")
+    parts.push("            'n_samples': d.get('n_samples'),\n")
+    parts.push("        }\n")
+    parts.push("    return grouped, None\n\n")
+
+    parts.push("base_pt, base_err = _load_base_per_task(BASE_PE)\n")
+    parts.push("lora_grouped, lora_err = _load_lora_results(LORA_DIR)\n\n")
+
+    parts.push("ckpt_verdicts = {}\n")
+    parts.push("if base_pt and not base_err:\n")
+    parts.push("    for ckpt_id, ckpt_pt in lora_grouped.items():\n")
+    parts.push("        ckpt_verdicts[ckpt_id] = _eval_one_ckpt(ckpt_id, ckpt_pt, base_pt, THRESHOLDS, BOOT_N, SEED)\n\n")
+
+    parts.push("# Cross-ckpt summary: highest-quality ckpt selection\n")
+    parts.push("ranking = sorted(ckpt_verdicts.values(),\n")
+    parts.push("                  key=lambda v: (v['composite']['f1_v3']=='PASS', v['composite']['n_strong'], -v['composite']['n_strong_regression']),\n")
+    parts.push("                  reverse=True)\n\n")
+
+    parts.push("summary = {\n")
+    parts.push("    'schema': 'anima/p9_a_prime_main_eval/verdict/1',\n")
+    parts.push("    'spec_ref': 'docs/p9_benchmark_switch_a_prime_spec_2026_05_03.md §2.4',\n")
+    parts.push("    'decision_ref': 'docs/p9_a_prime_path_decision_2026_05_03.md §6.1 (anchor swap)',\n")
+    parts.push("    'anchor': {\n")
+    parts.push("        'model': 'meta-llama/Llama-3.2-3B-Instruct',\n")
+    parts.push("        'precision_note': 'must match LoRA ckpt precision; 4-bit→fp16 ~1-3 pt drift',\n")
+    parts.push("        'base_per_example_path': BASE_PE,\n")
+    parts.push("        'base_load_error': base_err,\n")
+    parts.push("    },\n")
+    parts.push("    'lora_results_dir': LORA_DIR,\n")
+    parts.push("    'lora_load_error': lora_err,\n")
+    parts.push("    'thresholds': THRESHOLDS,\n")
+    parts.push("    'paired_bootstrap_n': BOOT_N,\n")
+    parts.push("    'seed': SEED,\n")
+    parts.push("    'n_ckpts': len(ckpt_verdicts),\n")
+    parts.push("    'ckpt_verdicts': ckpt_verdicts,\n")
+    parts.push("    'ranking': [{'ckpt_id':v['ckpt_id'], 'composite':v['composite']} for v in ranking],\n")
+    parts.push("    'verdict_legend': {\n")
+    parts.push("        'CHAT_PASS_v3': '≥2 of 3 STRONG signals, no STRONG regression',\n")
+    parts.push("        'CHAT_PARTIAL_v3': 'exactly 1 STRONG signal',\n")
+    parts.push("        'CHAT_FAIL_v3': '0 STRONG signals OR any STRONG regression',\n")
+    parts.push("    },\n")
+    parts.push("    'falsifier_scope': 'F1_v3 chat axis only; F2 (φ★), F3 (tension MSE), F4 (BOLD pearson) are out-of-scope here',\n")
+    parts.push("}\n")
+    parts.push("os.makedirs(os.path.dirname(OUTPUT) or '.', exist_ok=True)\n")
+    parts.push("with open(OUTPUT,'w') as f: json.dump(summary, f, indent=2, default=str)\n")
+    parts.push("print(f'[verdict] n_ckpts={len(ckpt_verdicts)} base_err={base_err} lora_err={lora_err} -> {OUTPUT}')\n")
+    parts.push("for v in ranking[:3]:\n")
+    parts.push("    print(f\"  ckpt={v['ckpt_id']} f1_v3={v['composite']['f1_v3']} n_strong={v['composite']['n_strong']} label={v['composite']['label']}\")\n")
+
+    write_file(HELPER_PATH, parts.join(""))
+}
+
+fn _selftest_invariants() -> bool {
+    let n_tasks_expected = 3
+    let n_signal_states = 3   // STRONG / WEAK / NO
+    let n_verdict_states = 3  // PASS / PARTIAL / FAIL → CHAT_PASS_v3 / CHAT_PARTIAL_v3 / CHAT_FAIL_v3
+    let bootstrap_default_n = 10000
+    let mcnemar_exact_threshold = 25
+    println("inv:n_tasks_expected=" + to_string(n_tasks_expected))
+    println("inv:n_signal_states=" + to_string(n_signal_states))
+    println("inv:n_verdict_states=" + to_string(n_verdict_states))
+    println("inv:bootstrap_default_n=" + to_string(bootstrap_default_n))
+    println("inv:mcnemar_exact_threshold=" + to_string(mcnemar_exact_threshold))
+    println("inv:tasks=hellaswag,mmlu,triviaqa")
+    println("inv:thresholds_pt=hellaswag:1.0,mmlu:0.5,triviaqa:0.5")
+    println("inv:anchor=meta-llama/Llama-3.2-3B-Instruct")
+    println("inv:non_mutation_atlas=true")
+    println("inv:f1_v3_pass_rule=>=2_of_3_STRONG_AND_no_STRONG_regression")
+    return true
+}
+
+fn cmd_selftest() {
+    println("── p9_a_prime_verdict selftest ──")
+    _write_helper()
+    let ok = _selftest_invariants()
+    if !ok {
+        println("selftest=fail")
+        exit(2)
+    }
+    println("selftest=ok")
+    println("helper_emitted=" + HELPER_PATH)
+    println("paradigm=P9 A' main eval F1_v3 verdict computation (paired bootstrap + McNemar; mac $0; non-mutating)")
+    println("DONE")
+}
+
+fn main() {
+    let av = argv()
+    let mut selftest = false
+    let mut i = 2
+    while i < len(av) {
+        let a = av[i]
+        if a == "--selftest" { selftest = true; i = i + 1; continue }
+        i = i + 1
+    }
+    if selftest { cmd_selftest(); exit(0) }
+    _write_helper()
+    println("emitted=" + HELPER_PATH)
+    println("DONE")
+}
