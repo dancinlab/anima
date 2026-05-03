@@ -1,0 +1,60 @@
+{
+  "schema": "anima/qmirror/phase1_selftest/1",
+  "ts_utc": "2026-05-03T04:23:35Z",
+  "command": "hexa run nexus/modules/qmirror/selftest.hexa --all-falsifiers",
+  "cwd": "$CORE",
+  "bridge_path": "$NEXUS/modules/qmirror/_python_bridge/aer_runner.py",
+  "overall_sentinel": "PASS",
+  "F1": {
+    "status": "MOCK",
+    "source": "ANU QRNG live path skipped (NEXUS_QMIRROR_LIVE not set; CI-safe default)",
+    "reason": "NEXUS_QMIRROR_LIVE not set; skipping live ANU probe (CI-safe default)",
+    "n_bytes": 0,
+    "ci_gating": "PASS-equivalent (mock-default per spec §12 F1)"
+  },
+  "F2": {
+    "status": "PASS",
+    "n_circuits_match": 5,
+    "n_circuits_total": 5,
+    "max_amp_err": 0.0,
+    "circuits_tested": ["identity", "x_zero", "plus", "bell", "ghz"],
+    "tolerance": 1e-06,
+    "engine": "numpy_native"
+  },
+  "F3": {
+    "status": "PASS",
+    "S": 2.838,
+    "S_band_lower": 2.7,
+    "S_band_upper": 2.85,
+    "correlators": [
+      {"name": "E_ab",   "value": 0.71,   "seed": 1001},
+      {"name": "E_abp",  "value": 0.71,   "seed": 2003},
+      {"name": "E_apb",  "value": 0.71,   "seed": 3007},
+      {"name": "E_apbp", "value": -0.708, "seed": 4013}
+    ],
+    "S_formula": "E_ab + E_abp + E_apb - E_apbp",
+    "violation_sigma": 13.249943396105511,
+    "n_trials_per_correlator": 1000,
+    "engine": "numpy_native (Bell + Ry rotation per qubit, q0 LSB)",
+    "angles": {"a": 0.0, "a_prime": 1.5707963267948966, "b": 0.7853981633974483, "b_prime": -0.7853981633974483}
+  },
+  "stdout_lines": [
+    "[qmirror/selftest] Phase 1 falsifier sweep (F1 + F2 + F3)",
+    "  bridge path = $NEXUS/modules/qmirror/_python_bridge/aer_runner.py",
+    "F1 MOCK NEXUS_QMIRROR_LIVE not set; skipping live ANU probe (CI-safe default)",
+    "F2 PASS n=5/5 max_amp_err=0",
+    "F3 PASS S=2.838 trials=1000 violation=13.2499sigma",
+    "__QMIRROR_SELFTEST__ PASS"
+  ],
+  "caveats": [
+    "F1 ran in MOCK mode only - live ANU QRNG path NOT exercised (would require NEXUS_QMIRROR_LIVE=1 + NEXUS_QMIRROR_ANU_KEY). cond.2 met under spec §12 CI-safe default but live HTTP 200 + rate-limit (429) handling unverified on this run.",
+    "F3 sampling uses LCG-based bytes (not ANU live entropy) - reproducible deterministic by seed but does NOT exercise real-quantum entropy injection per cond.5 spirit. Acceptable for falsifier band check (S in [2.7, 2.85]) per spec §12 F3.",
+    "Engine reported as numpy_native (no qiskit_aer required for named circuits). qiskit_aer not installed locally - QASM-mode bridge path unverified. Phase 2/3 work requiring full qiskit_aer must verify on a different substrate."
+  ],
+  "cross_reference": {
+    "nexus_chsh_bell_2026_05_02_S": 2.808,
+    "qmirror_S": 2.838,
+    "delta": 0.030,
+    "within_pm_0_05_band": true
+  }
+}

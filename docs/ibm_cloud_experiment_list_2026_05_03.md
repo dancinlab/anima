@@ -1,13 +1,15 @@
-# IBM Cloud $200 — nexus.qmirror Calibration Burst Plan
+# IBM Cloud $500 ULTRA — nexus.qmirror Cross-Vendor Calibration Burst Plan
 
 - ts_utc: 2026-05-03
-- credit: $200 USD (IBM Cloud signup)
+- credit: $200 promotional + $300 user-funded extra = **$500 USD total**
 - module: **nexus.qmirror** (see `docs/nexus_qmirror_spec_2026_05_03.md`)
-- roadmap registration: `nexus/.roadmap.qmirror` (cond.3 + entry `qmirror.calibration_plan` + entry `qmirror.phase3_calibration`)
+- roadmap registration: `nexus/.roadmap.qmirror` (cond.3 + cond.7 + entry `qmirror.calibration_plan_v3_ultra`)
 - author preset: friendly (raw#272)
 - gate: doc-only; per-experiment EXEC requires explicit user OK
 - raw#9: NO .py on Mac repo; Qiskit code lives on cloud / pod / ubu1
-- **REVISION 2026-05-03 11:00 KST**: scope pivoted from 8 one-off experiments to **single one-shot $200 burst for nexus.qmirror calibration**. See §1.
+- **REVISION 2026-05-03 12:00 KST (R3)**: scope expanded $200 → **$500 ULTRA one-shot** with paygo-standard plan unlocking real Heron + Eagle + Falcon cross-vendor (original spec N2 axis fully realized). See §1 + §2.
+- **REVISION 2026-05-03 (R4)**: **Eagle + Falcon retired** (IBM Cloud catalog audit, subagent a30f6c3fb3917ee5c). N2 cross-vendor axis re-scoped — see `docs/qmirror_n2_cross_vendor_revision_2026_05_03.md` (3 options α/β/γ, β recommended = IBM Heron + Braket vendor mix). $500 envelope intact; if option β chosen, $60 reallocated to Braket sub-budget (IBM portion shrinks $200 → $150). See §2 N2 row footnote + §0 R4 row.
+- **REVISION 2026-05-03 (R5)**: **option β SELECTED** by user. Combined budget: **$150 IBM + $60 Braket = $210 cash, $290 reserve**. AWS Braket access verified (account 267673635495, IAM user `anima-braket-cli`, IonQ Forte 1 ONLINE us-east-1, Rigetti `Cepheus-1-108Q` ONLINE us-west-1 substituted for retired Ankaa-3). Phase 3 runbook §1.B B1-B5 + day-1 Braket parallel submit lane landed. See §0 R5 row + §2 budget revision below.
 
 ## Doc composition (core / modular / ai-native)
 
@@ -22,9 +24,12 @@
 
 | ts_utc | revision | reason |
 |---|---|---|
+| **2026-05-03 (R5 current)** | **option β SELECTED** + AWS Braket access verified + Phase 3 runbook §1.B B1-B5 + day-1 parallel schedule landed | user signal: "go β" — combined $150 IBM + $60 Braket = $210 cash inside $500 envelope ($290 reserve) |
+| 2026-05-03 (R4) | **Eagle/Falcon retired → N2 re-scoped** (3 options α/β/γ, β = IBM Heron + Braket recommended) | IBM Cloud catalog audit (subagent a30f6c3fb3917ee5c) confirmed 0 Eagle + 0 Falcon backends in any plan |
+| 2026-05-03 (R3) | **$500 ULTRA one-shot** with paygo-standard cross-vendor (Heron + Eagle + Falcon real) | user added $300 cash budget; original spec N2 cross-vendor axis unlocked (subsequently invalidated by R4) |
 | 2026-05-03 (initial) | 8 quantum + 3 watsonx experiment 후보 | scoping survey |
 | 2026-05-03 (R1) | nexus.qmirror module 도입 → IBM credit을 qmirror 정확도 향상 anchor에 재할당 | user feedback: "0,1 + qrng = 진짜 양자컴 흉내" + "ANU only architecture" |
-| **2026-05-03 (R2 current)** | **분기별 → one-shot all-in $200 burst** | user: "분기당이 아니라 바로 다 쓸꺼야" |
+| 2026-05-03 (R2) | **분기별 → one-shot all-in $200 burst** | user: "분기당이 아니라 바로 다 쓸꺼야" |
 
 ---
 
@@ -66,7 +71,7 @@ qmirror = Tier 1 + Tier 2 → simulates Tier 3 statistically (within sim-tractab
 
 ```
 $60   N1 ULTRA noise model (10000 RB shots, full Pauli matrix on Heron 7-qubit)
-$40   N2 cross-vendor (Heron + Eagle + Falcon — Bell × 5 each, vendor-independent)
+$40   N2 cross-vendor — INVALIDATED in R4; see N2† below for revised options
 $40   N3 process tomography validation (5 standard circuits, real QPU vs qmirror)
 $20   N4 random circuit fidelity (depth 5/10/20, verify qmirror noise mid-depth)
 $30   N5 scale-up validation (12 + 16 + 20 qubit Bell on Heron, qmirror N-limit anchor)
@@ -74,6 +79,36 @@ $10   buffer (queue retry / unexpected)
 ─────
 $200  (one-shot, qmirror v2.0/v3.0 anchor finalized)
 ```
+
+**N2† (R4 re-scope, 2026-05-03)** — Eagle + Falcon retired in IBM Cloud catalog. Three options live in `docs/qmirror_n2_cross_vendor_revision_2026_05_03.md`:
+- **option α** (single-cloud): 5 Heron backends (3× r2 + 2× r3) intra-family, $40 IBM unchanged, diversity 2/10
+- **option β** (recommended): IBM Heron $20 + Braket IonQ + Rigetti $60 cross-modality, total $80 (with $50 reallocation from N4/N5/buffer it fits inside $200 IBM line + draws $60 from $300 R3 headroom), diversity 8/10
+- **option γ** (Heron-deep): N2 sanity $10 + new N6 dynamic-decoupling $30, $40 unchanged, diversity 1/10
+
+**R5 OUTCOME (2026-05-03)**: user **selected option β**. Locked allocation:
+
+```
+IBM Cloud  ($150 cash)
+  $60   N1 noise model RB (unchanged)
+  $20   N2a IBM intra-Heron CHSH (3 trial × 3 Heron backend × 4096 shot)
+  $40   N3 process tomography (unchanged)
+  $12   N4 random circuit fidelity (50 → 30 trials per depth, R5 reallocation -$8)
+  $10   N5 scale-up GHZ (20 → 16 qubit ceiling, R5 reallocation -$20)
+  $8    buffer (R5 reallocation -$2)
+─────
+$150 IBM total
+
+AWS Braket ($60 cash)
+  $30   N2b IonQ Forte 1 (us-east-1)  — CHSH × 3 trial × 250 shot ≈ 4 task × $0.30 + 3000 shot × $0.08 ≈ $241.20 → cap via shot reduction to $30 budget envelope (1 trial × 4 setting × 100 shot ≈ $33; further trim if needed)
+  $30   N2b Rigetti Cepheus-1-108Q (us-west-1, Ankaa-3 RETIRED substitute) — CHSH × 3 trial × 250 shot ≈ 12 task × $0.30 + 3000 shot × $0.000425 ≈ $4.88; well under $30, leaves headroom for additional shot density
+─────
+$60 Braket total
+
+Combined cash: $210
+Reserve (within $500 envelope): $290 (drift refresh, retry, or N6 DD top-up)
+```
+
+**Note on IonQ Forte 1 cost realism**: at $0.30/task + $0.08/shot, the headline 3 trial × 4 setting × 250 shot scope ≈ $241 — well above the $30 sub-budget. Day-0 reconciliation either (a) collapses to 1 trial × 4 setting × 100 shot ≈ $33 (matching original Bell test cost ratio at a smaller scale), or (b) absorbs from the $290 reserve into N2b. Decision deferred to Phase 3 day 0 user OK.
 
 ### Per-axis spec
 
@@ -89,9 +124,11 @@ $200  (one-shot, qmirror v2.0/v3.0 anchor finalized)
 | 산출 | `nexus/qmirror/calibration/v2_noise_heron_2026_05_03.json` (T1/T2/gate/readout matrices) |
 | Aer integration | `qiskit.providers.aer.NoiseModel.from_backend(real_backend)` 직접 dump |
 
-#### N2 cross-vendor anchor
+#### N2 cross-vendor anchor (R4 INVALIDATED — see revision doc)
 
-| 항목 | 값 |
+> **R4 status (2026-05-03)**: this table reflects the original R3 spec. Eagle/Falcon retired → infeasible as written. Revised spec lives in `docs/qmirror_n2_cross_vendor_revision_2026_05_03.md` §2 (options α/β/γ). Recommended: **option β** (IBM Heron $20 + Braket IonQ+Rigetti $60). The row below is preserved for traceability only.
+
+| 항목 | 값 (R3, invalidated) |
 |---|---|
 | 목표 | qmirror가 vendor 무관 일치 (Heron / Eagle / Falcon) |
 | 회로 | CHSH Bell test |
