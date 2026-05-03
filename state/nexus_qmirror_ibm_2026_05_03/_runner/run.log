@@ -1,0 +1,30 @@
+[GATE] dispatch=local reason=remote_unreachable cmd="python3 _runner/run_chsh.py"
+[21:42:08] Connecting to IBM Quantum...
+qiskit_runtime_service._discover_account:WARNING:2026-05-03 21:42:09,391: Loading account with the given token. A saved account will not be used.
+[21:42:26] Selected backend: ibm_fez (family=Heron, pending=0, qubits=156)
+[21:42:26] Estimated cost cap: $9.60 (cap=$10.00, credit=$198.00)
+[21:42:26] Loading circuits and transpiling...
+[21:42:26] Submitting batch (4 circuits × 1024 shots) to ibm_fez...
+[21:42:27] job_id=d7rk5cvljm6s73bael50 status=QUEUED
+[21:42:28] Waiting for result (poll 15s)...
+  [21:42:28] status=QUEUED (elapsed=2s)
+  [21:42:44] status=DONE (elapsed=18s)
+[21:42:44] Job DONE in 18s. Fetching results...
+  data attrs for circuit_a_b: ['c', 'items', 'keys', 'ndim', 'shape', 'size', 'values']
+  circuit_a_b: 1024 shots, 4 unique outcomes
+  data attrs for circuit_a_bprime: ['c', 'items', 'keys', 'ndim', 'shape', 'size', 'values']
+  circuit_a_bprime: 1024 shots, 4 unique outcomes
+  data attrs for circuit_aprime_b: ['c', 'items', 'keys', 'ndim', 'shape', 'size', 'values']
+  circuit_aprime_b: 1024 shots, 4 unique outcomes
+  data attrs for circuit_aprime_bprime: ['c', 'items', 'keys', 'ndim', 'shape', 'size', 'values']
+  circuit_aprime_bprime: 1024 shots, 4 unique outcomes
+{
+  "verdict": "FAIL",
+  "S": 2.357421875,
+  "sigma_S": 0.05046441198312376,
+  "delta_S_anu": 0.4805781250000001,
+  "wall_s": 17.824766874313354,
+  "qpu_s": 2.0,
+  "cost_usd": 3.2,
+  "backend": "ibm_fez"
+}

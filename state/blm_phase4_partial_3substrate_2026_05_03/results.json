@@ -1,0 +1,158 @@
+{
+  "schema": "anima/blm_phase4_partial/3substrate_consistency/1",
+  "ts_utc": "2026-05-03T12:26:47Z",
+  "scope": "Phase 4 PARTIAL \u2014 multi-substrate consistency on EXISTING checkpoints, NO training (CLM stage1 LoRA + ZuCo ZAB EEG sample + Algonauts sub-01 BOLD sample).",
+  "config": {
+    "hid_trunc": 8,
+    "k_parts": 8,
+    "ridge": 0.001,
+    "seed": 42,
+    "n_perm": 1000,
+    "n_bold_probes": 16,
+    "n_parcels_used": 1000,
+    "tr_sec": 1.49,
+    "bold_source": "/tmp/algonauts2025_sub01/algonauts_2025.competitors/fmri/sub-01/func/sub-01_task-friends_space-MNI152NLin2009cAsym_atlas-Schaefer18_parcel-1000Par7Net_desc-s123456_bold.h5",
+    "prior_run": "/tmp/blm_phase4_eeg_phi_cross_substrate_2026_05_03"
+  },
+  "n_windows": 32,
+  "n_paired_valid": 32,
+  "substrate_phi_distributions": {
+    "CLM": {
+      "n": 32,
+      "mean": 30.618415921823203,
+      "std": 1.239048447001095,
+      "min": 28.295377791388688,
+      "max": 33.594178038884465,
+      "median": 30.44119835066712
+    },
+    "EEG": {
+      "n": 32,
+      "mean": -2.252575941221285,
+      "std": 9.886650597318111,
+      "min": -16.05860991942407,
+      "max": 15.456632981210998,
+      "median": -4.092037711387564
+    },
+    "BOLD": {
+      "n": 32,
+      "mean": 21.592526542837227,
+      "std": 2.5726294553750964,
+      "min": 16.189354481120645,
+      "max": 26.48917236405483,
+      "median": 21.306529081401045
+    }
+  },
+  "cross_substrate_pearson_r_matrix": {
+    "labels": [
+      "CLM",
+      "EEG",
+      "BOLD"
+    ],
+    "matrix": [
+      [
+        0.9999999999999998,
+        0.00047925457946476624,
+        0.0356875753107272
+      ],
+      [
+        0.00047925457946476624,
+        1.0,
+        -0.00012656677981275104
+      ],
+      [
+        0.0356875753107272,
+        -0.00012656677981275107,
+        1.0
+      ]
+    ]
+  },
+  "cross_substrate_spearman_r_matrix": {
+    "labels": [
+      "CLM",
+      "EEG",
+      "BOLD"
+    ],
+    "matrix": [
+      [
+        1.0,
+        0.03409090909090909,
+        0.020161290322580645
+      ],
+      [
+        0.03409090909090909,
+        1.0,
+        -0.05755131964809384
+      ],
+      [
+        0.020161290322580645,
+        -0.05755131964809384,
+        1.0
+      ]
+    ]
+  },
+  "pair_permutation_tests": {
+    "CLM-EEG": {
+      "r_pearson": 0.00047925457946476624,
+      "p_perm": 1.0,
+      "perm_null_abs_q95": 0.3547740188316211,
+      "perm_null_abs_mean": 0.147279669437601,
+      "exceeds_q95": false
+    },
+    "CLM-BOLD": {
+      "r_pearson": 0.0356875753107272,
+      "p_perm": 0.839,
+      "perm_null_abs_q95": 0.3543896387150852,
+      "perm_null_abs_mean": 0.14538481219359312,
+      "exceeds_q95": false
+    },
+    "EEG-BOLD": {
+      "r_pearson": -0.00012656677981275104,
+      "p_perm": 1.0,
+      "perm_null_abs_q95": 0.3476345304797992,
+      "perm_null_abs_mean": 0.14064392118367888,
+      "exceeds_q95": false
+    }
+  },
+  "tolerance_band_table": {
+    "CLM-EEG": {
+      "mean_a": 30.618415921823203,
+      "mean_b": -2.252575941221285,
+      "abs_delta_means": 32.87099186304449,
+      "rel_delta": 1.0735693168115783,
+      "passes_0_30_band": false
+    },
+    "CLM-BOLD": {
+      "mean_a": 30.618415921823203,
+      "mean_b": 21.592526542837227,
+      "abs_delta_means": 9.025889378985976,
+      "rel_delta": 0.29478629469373674,
+      "passes_0_30_band": true
+    },
+    "EEG-BOLD": {
+      "mean_a": -2.252575941221285,
+      "mean_b": 21.592526542837227,
+      "abs_delta_means": 23.84510248405851,
+      "rel_delta": 1.1043220179330298,
+      "passes_0_30_band": false
+    }
+  },
+  "verdict": "F-BLM-cond.2_PARTIAL_FAIL",
+  "verdict_summary": {
+    "n_strict_pass_pairs": 0,
+    "n_moderate_pairs": 0,
+    "n_above_q95_pairs": 0,
+    "strict_threshold": "|r|>=0.5 AND p_perm<0.05"
+  },
+  "honest_c3_caveats": [
+    "Single ZuCo subject (ZAB) + single Algonauts subject (sub-01) \u2014 population-generic claim NOT supported; replicate across NR/SR pool + multiple sub-XX needed.",
+    "Phase 4 PARTIAL = no LoRA training (no BLM head trained on BOLD); this is CONSISTENCY measurement only on EXISTING CLM stage1 LoRA, EEG sample-partition phi proxy, and BOLD sample-partition phi proxy. Spec target F-CT-3 (text-BOLD predicted-vertex r>=0.5) is OUT-OF-SCOPE here \u2014 that requires BLM training pipeline (Phase 4 FULL, $500-2000).",
+    "Same anima_phi_v3_canonical formula across CLM/EEG/BOLD does NOT make BOLD a direct phi measure \u2014 BOLD is hemodynamic (~6s lag, parcel-mean), so this is a top-variance dimension structural proxy, NOT phenomenal phi (raw#10)."
+  ],
+  "elapsed_sec": 0.6,
+  "raw_invariants": [
+    "raw#9 transient .py emit on ubu1 \u2014 no hexa source mutation",
+    "raw#10 honest C3 - phi formula = functional/access tier across all 3 substrates",
+    "raw#15 SSOT this artifact",
+    "raw#71 falsifier-bound (F-BLM-cond.2 PARTIAL verdict tiered: STRONG/2of3/1of3/ABOVE_CHANCE/FAIL)"
+  ]
+}

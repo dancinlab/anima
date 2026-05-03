@@ -1,0 +1,153 @@
+{
+  "schema": "anima/blm_phase4/multi_substrate_scale/1",
+  "ts_utc": "2026-05-03T12:56:20Z",
+  "scope": "Phase 4 RETRY \u2014 scale-up of multi-substrate consistency from N=32 (FAIL r=0.0005) to N=128 paired windows; tests F-CT-MULTI-1 (any |r|>0.20 silver).",
+  "config": {
+    "n_windows_target": 128,
+    "hid_trunc": 8,
+    "k_parts": 8,
+    "ridge": 0.001,
+    "seed": 42,
+    "n_perm": 1000,
+    "device": "cpu",
+    "eeg_fs": 500,
+    "eeg_window_ms": 200,
+    "n_bold_probes": 16,
+    "tr_sec": 1.49,
+    "n_clm_probes": 16,
+    "lora_repo": "need-singularity/clm-v4-sft-stage1",
+    "clm_ckpt": "/home/aiden/anima/checkpoints/clm_v4_350m/scale_350m/best.pt",
+    "zuco_dir": "/tmp/zuco_sample/ZAB_task1_SR_preprocessed",
+    "bold_fp": "/tmp/algonauts2025_sub01/algonauts_2025.competitors/fmri/sub-01/func/sub-01_task-friends_space-MNI152NLin2009cAsym_atlas-Schaefer18_parcel-1000Par7Net_desc-s123456_bold.h5"
+  },
+  "n_windows": 128,
+  "n_paired_valid": 128,
+  "substrate_phi_distributions": {
+    "CLM": {
+      "n": 128,
+      "mean": 30.855988837254134,
+      "std": 1.187363495120517,
+      "min": 28.295377791388688,
+      "max": 33.594178038884465,
+      "median": 30.74243332499731
+    },
+    "EEG": {
+      "n": 128,
+      "mean": -3.0060209640842013,
+      "std": 9.68106703484392,
+      "min": -17.107501628198317,
+      "max": 14.507532158168873,
+      "median": -4.622044121890202
+    },
+    "BOLD": {
+      "n": 128,
+      "mean": 21.32969829119691,
+      "std": 2.165892924323699,
+      "min": 16.104252489737352,
+      "max": 28.995622072093603,
+      "median": 21.36466421674417
+    }
+  },
+  "pearson_matrix": {
+    "labels": [
+      "CLM",
+      "EEG",
+      "BOLD"
+    ],
+    "matrix": [
+      [
+        1.0,
+        0.12449024781486044,
+        -0.0293336362154084
+      ],
+      [
+        0.12449024781486044,
+        1.0,
+        0.08256553125825547
+      ],
+      [
+        -0.029333636215408396,
+        0.08256553125825547,
+        1.0
+      ]
+    ]
+  },
+  "spearman_matrix": {
+    "labels": [
+      "CLM",
+      "EEG",
+      "BOLD"
+    ],
+    "matrix": [
+      [
+        1.0,
+        0.14992675334187877,
+        -0.030082631386193003
+      ],
+      [
+        0.14992675334187877,
+        1.0,
+        0.052274079838857346
+      ],
+      [
+        -0.030082631386193003,
+        0.052274079838857346,
+        1.0
+      ]
+    ]
+  },
+  "pair_permutation_tests": {
+    "CLM-EEG": {
+      "n": 128,
+      "pearson_r": 0.12449024781486044,
+      "spearman_r": 0.14992675334187877,
+      "perm_p": 0.156,
+      "perm_null_abs_q95": 0.17488013330917704,
+      "perm_null_abs_mean": 0.07029023535940751,
+      "exceeds_q95": false
+    },
+    "CLM-BOLD": {
+      "n": 128,
+      "pearson_r": -0.0293336362154084,
+      "spearman_r": -0.030082631386193003,
+      "perm_p": 0.732,
+      "perm_null_abs_q95": 0.17829397356195814,
+      "perm_null_abs_mean": 0.07067902801970175,
+      "exceeds_q95": false
+    },
+    "EEG-BOLD": {
+      "n": 128,
+      "pearson_r": 0.08256553125825547,
+      "spearman_r": 0.052274079838857346,
+      "perm_p": 0.34,
+      "perm_null_abs_q95": 0.16419407696328767,
+      "perm_null_abs_mean": 0.06828196659649913,
+      "exceeds_q95": false
+    }
+  },
+  "verdict": "F-CT-MULTI-1_FAIL",
+  "tier": "none",
+  "tier_evaluation": {
+    "n_strong_pairs": 0,
+    "n_silver_pairs": 0,
+    "n_bronze_pairs": 0,
+    "thresholds": {
+      "strong": "|r|>0.50 AND p_perm<0.01",
+      "silver": "|r|>0.20 AND p_perm<0.05",
+      "bronze": "|r| > perm_null_abs_q95"
+    }
+  },
+  "honest_c3_caveats": [
+    "Single ZuCo subject (ZAB) + single Algonauts subject (sub-01) \u2014 population-generic claim NOT supported.",
+    "EEG/BOLD windows are RANDOMLY sampled from the same global pool, NOT semantically aligned to CLM prompts. Cross-substrate consistency here = same phi formula applied to independent random samples; if r>0 emerges, it would indicate a structural property of the formula across data substrates, not phenomenal-content alignment.",
+    "Same anima_phi_v3_canonical formula across CLM/EEG/BOLD does NOT make BOLD/EEG direct phi measures \u2014 BOLD is hemodynamic (~6s lag, parcel-mean), EEG is scalp electrical; both are functional/access tier proxies (raw#10).",
+    "F-CT-MULTI-1 is a SILVER tier falsifier (|r|>0.20). For STRONG biological claim use F-CT-3 (|r|>0.50, p<0.01)."
+  ],
+  "elapsed_sec": 966.6,
+  "raw_invariants": [
+    "raw#9 transient .py emit on ubu1 \u2014 no hexa source mutation",
+    "raw#10 honest C3 \u2014 phi formula = functional/access tier across all 3 substrates",
+    "raw#15 SSOT this artifact",
+    "raw#71 falsifier-bound (F-CT-MULTI-1 tiered: strong/silver/bronze/fail)"
+  ]
+}

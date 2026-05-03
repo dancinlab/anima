@@ -1,0 +1,80 @@
+{
+  "schema": "anima-eeg-core/phase5_verify/1",
+  "verified_at_iso": "2026-05-03T12:23:00Z",
+  "host": "mac-local",
+  "hexa_interp": "/Users/ghost/.hx/bin/hexa",
+  "raw_compliance": ["raw#9 hexa-only", "raw#10 honest", "raw#42 mac-zero-compute", "raw#65 idempotent", "raw#71 falsifier_>=3", "raw#91 honest_triad"],
+  "modules": [
+    {
+      "name": "lz76_native",
+      "path": "anima-eeg-core/tool/modules/_metrics/lz76_native.hexa",
+      "loc": 856,
+      "sha256": "3ede29de5e6a66ecbf9822b6f4dd6c5d762ef80b47204384dc9b54bd255acf70",
+      "selftest_exit": 0,
+      "selftest_status": "PASS",
+      "byte_identical": {
+        "fixture": "16ch x 16 random/structured (median binarization)",
+        "random":     {"c_n": 39, "b_x1000": 1218},
+        "structured": {"c_n": 8,  "b_x1000": 250},
+        "ordering_ok": true,
+        "raw65_idempotent": true,
+        "raw71_F_LZN_02_floor_b_random": 1218
+      },
+      "marker": "state/markers/lz76_native_1777810512.marker",
+      "verdict": "L0 PASS native_only; cross_validate=not_requested"
+    },
+    {
+      "name": "pe_native",
+      "path": "anima-eeg-core/tool/modules/_metrics/pe_native.hexa",
+      "loc_kb": 52,
+      "sha256": "0b162840342094e17cc28000333cbbae4929cfb0e862c7d9b705b744781a353b",
+      "selftest_exit": 0,
+      "selftest_status": "PASS",
+      "byte_identical": {
+        "fixture": "16ch x 256 (m=3, tau=1, scales 1/2/5/10)",
+        "random":     {"pe_x1000": 976, "s1": 996, "s2": 991, "s5": 978, "s10": 939},
+        "structured": {"pe_x1000": 327, "s1": 88,  "s2": 154, "s5": 424, "s10": 644},
+        "const":      {"pe_x1000": 0,   "s1": 0},
+        "ordering_ok": "random > structured > const",
+        "raw65_idempotent": true,
+        "raw71_F_PE_01_floor_pe_random": 976
+      },
+      "marker": "state/markers/pe_native_1777810515.marker",
+      "verdict": "L1 PASS native_only; cross_validate=not_requested"
+    },
+    {
+      "name": "hjorth_native",
+      "path": "anima-eeg-core/tool/modules/_metrics/hjorth_native.hexa",
+      "loc_kb": 49,
+      "sha256": "63300abf94e83707827e69257ef7989787bc180e157f92d58b7b2b454d49cc9d",
+      "selftest_exit": 137,
+      "selftest_status": "SIGKILL_BLOCKED",
+      "selftest_progress": "header + '4-mode discrimination: 16ch x 32 synthetic fixture' line emitted, then SIGKILL (137 = 128+9) before _hjorth_mean returns",
+      "modes_attempted": ["full(no-flag)", "--selftest-mode random", "--selftest-mode structured", "--selftest-mode sine"],
+      "modes_all_sigkill": true,
+      "wall_time_first_run_sec": 34,
+      "rss_max_mb": 28.5,
+      "documented_in_source_header": "lines 137-148 (L2 honest cross-validate caveat); plus runtime SIGKILL noted line 1105-1106 'tightened from 256 to 32 after empirical SIGKILL'",
+      "markers_failed": [
+        "state/markers/hjorth_native_1777810519_FAILED.marker",
+        "state/markers/hjorth_native_1777810524_FAILED.marker",
+        "state/markers/hjorth_native_1777810652_FAILED.marker",
+        "state/markers/hjorth_native_1777810690_FAILED.marker",
+        "state/markers/hjorth_native_1777810728_FAILED.marker"
+      ],
+      "verdict": "L2 BLOCKED on this hexa runtime (raw#10 honest); algorithm not exercised; PORT untouched",
+      "next_actions": [
+        "(a) Try hexa runtime upgrade or run on ubu1 fallback",
+        "(b) Bisect _hjorth_mean / _synth_flat with smaller n_samp (16,8) and per-channel calls",
+        "(c) Cross-validate via WRAP wrapper on real .npy fixture (manual)"
+      ]
+    }
+  ],
+  "phase5_completion": {
+    "5a_lz76_native":   {"status": "PASS",    "pct": 100},
+    "5b_pe_native":     {"status": "PASS",    "pct": 100},
+    "5c_hjorth_native": {"status": "BLOCKED", "pct": 50, "note": "code landed + reaches header; selftest oracle blocked by runtime SIGKILL"},
+    "overall_pct": 83,
+    "verdict": "5a + 5b LANDED + VERIFIED; 5c LANDED + BLOCKED (raw#10 honest)"
+  }
+}

@@ -57,32 +57,23 @@ fn run_impedance(port: str) -> int {
     return exec_status(cmd)
 }
 
-fn run_collect_bg(port: str, board: str, duration: int, tag: str, output: str) -> int {
-    // background collect — wrapper owns cue sync + COLLECT_PREPARE_LAG_S absorb.
-    // raw#10 honest C3: BrainFlow prepare_session + start_stream takes 2-3s
-    // before actual ring-buffer capture begins. Foreground run_collect 측 cue
-    // 측 "지금" 직후 capture 시작 가정 → mismatch. Background launch + lag
-    // sleep + cue sync 측 정확 boundary.
-    //
-    // STDOUT REDIRECT (audio cue audibility fix 2026_05_03):
-    //   collect.hexa BrainFlow init + per-sample [ts=...] chatter 측 wrapper
-    //   terminal 측 flood → 직후 say "지금 눈 감으세요" cue 측 audio 측
-    //   안 들리는 issue. `&> /tmp/anima_eeg_collect_<tag>.log` 측 redirect
-    //   → wrapper terminal quiet → say cue 측 정확 audible.
-    //   raw#10 honest C3: log path 측 hardcoded /tmp; macOS-specific subshell.
+fn run_collect_fg(port: str, board: str, duration: int, tag: str, output: str) -> int {
+    // Foreground collect (raw#10 honest C3 simplified 2026_05_03):
+    //   hexa stage1 측 background `&` + `wait` builtin 측 unreliable —
+    //   nonzero rc 또는 wait scope loss 측 wrapper 측 즉시 fail (사용자 측
+    //   "EC 측정 실패" 음성 측 들음). simplified pattern: foreground only
+    //   (blocking ~duration_s + 2-3s prepare). countdown cue 측 measurement
+    //   시작 직전 측 명확 sync. first 3-5s capture transition 측
+    //   dc_settle_trim.hexa 측 자동 absorb (이미 land된 module).
     let log_path = "/tmp/anima_eeg_collect_" + tag + ".log"
     let cmd = "hexa run anima-eeg/collect.hexa --collect --duration " + str(duration)
               + " --tag " + tag
               + " --output '" + output + "'"
               + " --port '" + port + "'"
               + " --board '" + board + "'"
-              + " > '" + log_path + "' 2>&1 &"
-    print("[capture-bg] " + tag + " " + str(duration) + "s (log: " + log_path + ")")
+              + " > '" + log_path + "' 2>&1"
+    print("[capture-fg] " + tag + " " + str(duration) + "s (log: " + log_path + ")")
     return exec_status(cmd)
-}
-
-fn wait_collect() -> int {
-    return exec_status("wait")
 }
 
 fn sleep_seconds(n: int) {
@@ -118,21 +109,16 @@ fn date_tag_utc() -> str {
 // ════════════════════════════════════════════════════════════════════
 
 fn phase_eyes_closed(voice: str, port: str, board: str, duration: int, output: str) -> int {
-    // Sequence (raw#10 honest C3):
-    //   1. preamble cue: 사용자 측 다음 cue ("지금") 가 action signal 임을 명시
-    //   2. collect background launch (prepare_session 시작)
-    //   3. COLLECT_PREPARE_LAG_S sleep (BrainFlow init absorb)
-    //   4. action cue: "지금 눈 감으세요" — 이 시점 측 capture 진행 중
-    //   5. duration sleep + wait collect
-    say_cue(voice, "Eye-closed 60초 측정 준비. 시작 알림 후 눈을 감으세요")
-    let rc_launch = run_collect_bg(port, board, duration, "berger_ec_v2", output)
-    if rc_launch != 0 { return rc_launch }
-    sleep_seconds(COLLECT_PREPARE_LAG_S)         // absorb prepare_session + start_stream
-    // raw#10 honest C3: cue text strengthened (audio cue audibility fix 2026_05_03)
-    // — 길고 명확한 phrasing 으로 say binary 측 voice-load + speak window 확보
-    say_cue(voice, "지금. 지금 눈을 감으세요. 측정 시작") // BLOCKING ~2-3s — capture already streaming
-    sleep_seconds(duration)                       // hold for capture window
-    let rc = wait_collect()                       // sync subshell completion
+    // Simplified sequence (raw#10 honest C3, 2026_05_03):
+    //   1. preamble + countdown cues (3, 2, 1, 지금)
+    //   2. foreground collect blocking ~duration_s
+    //   3. completion cue
+    say_cue(voice, "Eye-closed 60초 측정. 카운트다운 후 눈을 감으세요")
+    say_cue(voice, "삼"); sleep_seconds(1)
+    say_cue(voice, "이"); sleep_seconds(1)
+    say_cue(voice, "일"); sleep_seconds(1)
+    say_cue(voice, "지금. 눈 감으세요")
+    let rc = run_collect_fg(port, board, duration, "berger_ec_v3", output)
     say_cue(voice, "측정 끝")
     return rc
 }
@@ -143,15 +129,13 @@ fn phase_rest(voice: str) {
 }
 
 fn phase_eyes_open(voice: str, port: str, board: str, duration: int, output: str) -> int {
-    // Mirror of phase_eyes_closed — see docstring above.
-    say_cue(voice, "Eye-open 60초 측정 준비. 시작 알림 후 눈을 뜨세요")
-    let rc_launch = run_collect_bg(port, board, duration, "berger_eo_v2", output)
-    if rc_launch != 0 { return rc_launch }
-    sleep_seconds(COLLECT_PREPARE_LAG_S)         // absorb prepare_session + start_stream
-    // raw#10 honest C3: cue text strengthened (audio cue audibility fix 2026_05_03)
-    say_cue(voice, "지금. 지금 눈을 뜨세요. 측정 시작") // BLOCKING ~2-3s — capture already streaming
-    sleep_seconds(duration)                       // hold for capture window
-    let rc = wait_collect()                       // sync subshell completion
+    // Mirror of phase_eyes_closed — simplified countdown + foreground (2026_05_03).
+    say_cue(voice, "Eye-open 60초 측정. 카운트다운 후 눈을 뜨세요")
+    say_cue(voice, "삼"); sleep_seconds(1)
+    say_cue(voice, "이"); sleep_seconds(1)
+    say_cue(voice, "일"); sleep_seconds(1)
+    say_cue(voice, "지금. 눈 뜨세요")
+    let rc = run_collect_fg(port, board, duration, "berger_eo_v3", output)
     say_cue(voice, "측정 완료")
     return rc
 }
@@ -165,8 +149,8 @@ fn cmd_run(port: str, board: str, duration: int, voice: str, skip_impedance: int
     ensure_dir(session_dir)
 
     let date_tag = date_tag_utc()
-    let ec_npy = session_dir + "/berger_ec_60s_v2_" + date_tag + ".npy"
-    let eo_npy = session_dir + "/berger_eo_60s_v2_" + date_tag + ".npy"
+    let ec_npy = session_dir + "/berger_ec_60s_v3_" + date_tag + ".npy"
+    let eo_npy = session_dir + "/berger_eo_60s_v3_" + date_tag + ".npy"
 
     print("=== Berger 1929 재측정 (audio cue) ===")
     print("port=" + port + "  board=" + board)

@@ -1,0 +1,69 @@
+{
+  "schema": "anima/blm_phase4/eeg_clm_cross_substrate/1",
+  "ts_utc": "2026-05-03T12:22:53Z",
+  "config": {
+    "eeg_fs": 500,
+    "window_ms": 200,
+    "window_samples": 100,
+    "hid_trunc": 8,
+    "n_probes": 16,
+    "k_parts": 8,
+    "ridge": 0.001,
+    "seed": 42,
+    "n_windows_target": 32,
+    "n_perm": 1000,
+    "device": "cpu",
+    "lora_repo": "need-singularity/clm-v4-sft-stage1",
+    "clm_ckpt": "/home/aiden/anima/checkpoints/clm_v4_350m/scale_350m/best.pt",
+    "zuco_dir": "/tmp/zuco_sample/ZAB_task1_SR_preprocessed"
+  },
+  "eeg_phi_distribution": {
+    "n_valid": 32,
+    "mean": -2.252575941221285,
+    "std": 9.886650597318111,
+    "min": -16.05860991942407,
+    "max": 15.456632981210998,
+    "median": -4.092037711387564
+  },
+  "clm_phi_distribution": {
+    "n_valid": 32,
+    "mean": 30.618415921823203,
+    "std": 1.239048447001095,
+    "min": 28.295377791388688,
+    "max": 33.594178038884465,
+    "median": 30.44119835066712
+  },
+  "cross_substrate": {
+    "n_paired": 32,
+    "pearson_r": 0.00047925457946476624,
+    "spearman_r": 0.03409090909090909,
+    "lme_proxy_beta1": 6.0062772175486016e-05,
+    "lme_proxy_se": 0.022881180356804833,
+    "lme_proxy_t": 0.002624985741070977,
+    "p_wald": 0.9979055668101715,
+    "p_wald_bonferroni": 1.0,
+    "perm_null_n": 1000,
+    "perm_p": 0.999,
+    "perm_null_abs_q95": 0.36187251711132423,
+    "perm_null_abs_mean": 0.14971136317032926
+  },
+  "verdict": "F-CT-3_FAIL",
+  "tier": "none",
+  "tier_evaluation": {
+    "tier_1_strict_pearson_pass": false,
+    "tier_2_spearman_pass": false,
+    "tier_3_ratio_pass": false
+  },
+  "honest_c3_caveats": [
+    "Single ZuCo subject (ZAB) - subject-generic claim NOT supported; replicate across NR/SR pool needed.",
+    "EEG is scalp-recorded electrical activity, NOT a direct measure of phenomenal phi - this is a functional/access tier proxy only (raw#10).",
+    "Same anima_phi_v3_canonical formula applied across substrates does NOT guarantee the same anchor value or scale; cross-substrate consistency = covariation pattern, NOT identity (HID=8 anchor 41.86 is CLM-specific calibration)."
+  ],
+  "elapsed_sec": 640.6,
+  "raw_invariants": [
+    "raw#9 transient .py emit on ubu1 \u2014 no hexa source mutation",
+    "raw#10 honest C3 - phi formula = functional/access tier",
+    "raw#15 SSOT this artifact",
+    "raw#71 falsifier-bound (tiered F-CT-3 per BOLD-anima methodology)"
+  ]
+}

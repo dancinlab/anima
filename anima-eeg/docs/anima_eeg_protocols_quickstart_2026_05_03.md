@@ -182,6 +182,63 @@ hexa run anima-eeg/protocols/berger_session_audio.hexa --run \
 4. **collect.hexa / eeg_recorder.hexa 측 _session_manager.hexa 통합** — ~120L 중복 제거
 5. **mu_rhythm / SSVEP / focus** — Berger PASS 후 (electrode chain 검증 후)
 
+## 7. v6 audit appendix (2026-05-03) — clean_channels filter + rail saturation
+
+v6 paired-symmetric Berger 측정 직후 channel mapping verify BG audit (id `affd5940d63f830f6`) 측 발견:
+
+### 7.1 discovery
+
+v6 EC measurement 측 cc=1.0000 between rows 1 / 6 / 8 observed → 처음 wiring duplication 의심 → **실제 cause: ADC rail saturation** (±187.5 mV clip). 5/16 channels (rows 1, 5, 6, 8, 16) sit at the negative or positive rail; clipped signals collapse to identical noise/quantization patterns → cc=1.0000 artifact. EO v6 측 동일 5 rows railed → stable hardware/electrode contact issue, not per-recording fluke.
+
+### 7.2 rail saturation table
+
+| row | 10-20 | mean (raw counts) | abs_max | suspected cause |
+|-----|-------|-------------------|---------|------------------|
+| 1   | Fp1   | -98 545           | 101 449 | electrode contact loss / DC drift (cite `fp1_chronic_noise_diagnose_2026_05_03.md`) |
+| 5   | P7    | +119 623          | 123 091 | gel desiccation likely (left parieto-temporal) |
+| 6   | P8    | -98 656           | 101 558 | gel desiccation likely (right parieto-temporal) |
+| 8   | O2    | -98 722           | 101 627 | mastoid ref imbalance — affects F3 alpha-blocking verdict (Berger right-occipital anchor) |
+| 16  | P4    | -96 023           | 98 713  | cable strain / contact (Daisy N8P brown) |
+
+### 7.3 clean_channels canonical (standard for all subsequent analysis)
+
+```
+clean_channels = [2, 3, 4, 7, 9, 10, 11, 12, 13, 14, 15]
+# = [Fp2, C3, C4, O1, F7, F8, F3, F4, T7, T8, P3]
+# 11 of 16 usable
+# O1 only (O2 railed) for occipital alpha
+# F3/F4/T7/T8 cleanest Daisy frontocentral
+```
+
+§3 mapping table 측 spec 그대로, but 분석 측 입력 채널 측 위 11개로 한정. row 1/5/6/8/16 측 drop or mark-unusable.
+
+### 7.4 mandatory pre-processing (alpha analysis)
+
+before any alpha-band PSD:
+1. `clean_channels` filter (drop railed 5)
+2. **HPF ≥ 0.5 Hz** (raw means up to ±120 mV swamp 8-13 Hz signal — without HPF, alpha PSD measures DC drift not neural oscillation)
+3. 60 Hz notch (Korean grid)
+4. Welch nperseg=256, Hann
+
+### 7.5 F3 verdict re-analysis with O1-only fallback (TODO)
+
+F3 (EC α power > EO α power × 2) STILL FAIL post channel-mapping verify — alpha-blocking discriminator unstable. O2 (row 8) rail 측 부분 explanation, but O1 (row 7) clean — O1-only fallback reanalysis 측 pending in `state/berger_v6_clean_reanalyze_2026_05_03/`. 즉시 land 측 deferred (별도 cycle).
+
+### 7.6 analyze.hexa auto-rail-detection follow-up TODO
+
+long-term: `analyze.hexa` 측 자동 rail-detection gate 추가 — 임계값 `|mean| > 50000` or `|max| > 150000` 측 railed channel 측 PSD 입력 측 자동 exclude. v6 cycle 측 manual `clean_channels` literal 측 standard, 다음 cycle 측 자동화 spec.
+
+### 7.7 cross-link
+
+- 전체 audit synthesis: `/Users/ghost/core/anima/docs/eeg_v6_audit_synthesis_2026_05_03.md`
+- channel mapping verify (BrainFlow vs spec): `/Users/ghost/core/anima/anima-eeg/docs/cyton_daisy_channel_mapping_official_2026_05_03.md`
+- sample-rate root cause (IOSSDATALAT fix): `/Users/ghost/core/anima/anima-eeg/docs/sample_rate_root_cause_consolidated_2026_05_03.md`
+- Fp1 chronic noise (row 1 rail explanation): `/Users/ghost/core/anima/anima-eeg/docs/fp1_chronic_noise_diagnose_2026_05_03.md`
+
+### 7.8 honest C3 (raw#10)
+
+본 appendix 측 v6 evidence 측 reflect — F3 alpha-blocking 측 still FAIL 유지 (channel-mapping verify 측 sufficient cause 아님). N=1 self-experiment 한도; tier=functional_analog 까지만 promote 가능.
+
 ## Files referenced
 
 - `/Users/ghost/core/anima/anima-eeg/protocols/blink_session_audio.hexa`
@@ -195,3 +252,5 @@ hexa run anima-eeg/protocols/berger_session_audio.hexa --run \
 - `/Users/ghost/core/anima/anima-eeg/docs/openbci_bundle_ear_clip_options_2026_05_03.md` (electrode prep fix)
 - `/Users/ghost/core/anima/anima-eeg/docs/openbci_pragma_practice_2026_05_03.md` (community tips)
 - `/Users/ghost/core/anima/anima-eeg/docs/cyton_first_real_session_2026_05_03.md` (첫 실측 spec)
+- `/Users/ghost/core/anima/anima-eeg/docs/cyton_daisy_channel_mapping_official_2026_05_03.md` (mapping verify, §7 source)
+- `/Users/ghost/core/anima/docs/eeg_v6_audit_synthesis_2026_05_03.md` (full audit synthesis, §7 cross-link)

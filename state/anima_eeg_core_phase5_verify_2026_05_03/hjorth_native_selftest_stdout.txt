@@ -1,0 +1,38 @@
+$ /Users/ghost/.hx/bin/hexa run anima-eeg-core/tool/modules/_metrics/hjorth_native.hexa --selftest
+
+hexa-resolver: route=darwin-bypass reason=metadata-only-argv (raw#103)
+== _metrics/hjorth_native selftest (PORT, raw#9 hexa-only) ==
+[selftest] 4-mode discrimination: 16ch x 32 synthetic fixture
+EXIT=137  (SIGKILL — process killed by signal 9, no userland trace)
+
+$ /usr/bin/time -l ... --selftest    # repeated
+33.99 real  0.21 user  0.30 sys
+maximum resident set size = 28.5 MiB
+peak memory footprint     = 2.1 MiB
+35 signals received
+
+PER-MODE REPRODUCTION (--selftest-mode <mode>):
+  random:     SIGKILL after fixture-gen header, EXIT=137
+  structured: SIGKILL after fixture-gen header, EXIT=137
+  sine:       SIGKILL after fixture-gen header, EXIT=137
+  monotonic:  SIGKILL after fixture-gen header, EXIT=137 (background-task killed)
+
+OBSERVATION:
+- Stdout always stops exactly at "[selftest] 4-mode discrimination: 16ch x 32 synthetic fixture"
+- Memory footprint 2.1 MiB peak (well under any limit)
+- Signal 9 from external (no in-source eprintln before death)
+- Source header lines 137-148 documents L2 honest caveat:
+  "second child runs in restricted environment ... rc=1 ... 'not found' (raw#10 honest, observed 2026-05-02)"
+- Source line 1105 documents prior tightening: "n_samp=32: tightened from 256 after empirical SIGKILL on the host hexa runtime"
+- Markers state/markers/hjorth_native_*_FAILED.marker confirm 5x reproductions today
+
+VERDICT: L2 BLOCKED — PORT code landed + executes through arg parse + main entry,
+         but _selftest_4mode body cannot complete on this hexa-runtime build.
+         raw#10 honest: NOT a fake PASS, NOT a wrap fallback, recorded as BLOCKED.
+
+NEXT ACTIONS (per source header):
+  (a) Hexa runtime upgrade (resolver-bypass(reason=darwin-native) directive @ line 157
+      may interact with darwin sandbox SIGKILL on second child-spawn)
+  (b) Cross-validate via WRAP wrapper on a manually-injected .npy fixture
+      (hjorth.hexa @ 258 LOC works fine — provides L0 oracle)
+  (c) Run on ubu1 substrate (different darwin sandbox semantics)
