@@ -1,0 +1,150 @@
+{
+  "schema": "anima/tlm_cond6a_speak_gate_threshold_tuning/1",
+  "cycle": "tlm_cond6a_speak_gate_threshold_2026_05_03",
+  "lm": "tlm_tension_lm",
+  "phase": "Phase 3 mini-spec",
+  "cond": "cond.6a",
+  "scope": "speak/voice cite cleanup gate threshold tune (inference-only, $0 mac-local)",
+  "substrate": {
+    "host": "mac-local",
+    "execute_python": false,
+    "execute_training": false,
+    "cloud": false,
+    "raw_9": "no .py — markdown + JSON only",
+    "raw_15": "no personal paths"
+  },
+  "spec_provenance": {
+    "source_doc": "docs/tlm_phase3_spec_2026_05_03.md",
+    "source_section": "§2.4 cond.6 (speak cite gate row, line 122)",
+    "source_rule_text": "TLM tension >0.7 → cite verbose mode / <0.3 → cite minimal mode",
+    "respec_doc": "docs/tlm_vlm_200cap_respec_2026_05_03.md",
+    "respec_section": "§1.1 cond.6a (speak gate threshold tune $0 inference)",
+    "predecessor_landed": "docs/anima_speak_voice_cite_cleanup_landed_2026_05_03.ai.md",
+    "predecessor_marker": "state/markers/anima_speak_voice_cite_cleanup_landed.marker"
+  },
+  "gate_definition": {
+    "input_signal": "tension scalar in [0.0, 1.0] from TLM hidden-state projection (Phase 3-mini placeholder = direct 5-channel WHY-axis read; full TLM head deferred to cond.2 IMPL)",
+    "output_modes": ["verbose", "default", "minimal"],
+    "decision_rule_default_pre_tune": {
+      "high_threshold": 0.70,
+      "low_threshold": 0.30,
+      "rule": "tension > high → verbose; tension < low → minimal; otherwise → default"
+    },
+    "downstream_consumer": "anima-voice/ + handoff doc generators (cite verbosity = how much source-of-truth + line-number breadcrumb a generated doc emits)",
+    "fallback_invariant": "cond.6a fails closed to mode=default — TLM-independent path retained per tlm_phase3_spec §2.4 'graceful degradation'"
+  },
+  "validation_set": {
+    "source": "anima-voice in-tree tension samples + emotion_prosody.hexa rule corners + anima_speak_voice_cite_cleanup audit narrative cases",
+    "samples": [
+      {"id": "V1_calm_neutral",   "tension": 0.05, "source": "anima-voice/anima_voice.hexa:540 Test 2",          "expected_mode": "minimal",  "rationale": "near-zero tension, no urgency, minimal cite OK"},
+      {"id": "V2_vad_floor",      "tension": 0.10, "source": "anima-voice/anima_voice.hexa:364 VAD speaking gate","expected_mode": "minimal",  "rationale": "VAD activation floor, still pre-engagement"},
+      {"id": "V3_sad_low",        "tension": 0.15, "source": "anima-voice/anima_voice.hexa:552 Test 4",          "expected_mode": "minimal",  "rationale": "low arousal sad state, terse cite preferred"},
+      {"id": "V4_whisper_corner", "tension": 0.19, "source": "anima-voice/emotion_prosody.hexa:183 whisper rule (tension < 0.2)", "expected_mode": "minimal", "rationale": "whisper corner — minimal mode aligned with prosody intent"},
+      {"id": "V5_interrog_low",   "tension": 0.31, "source": "anima-voice/emotion_prosody.hexa:192 interrogative lower bound (tension > 0.3)", "expected_mode": "default", "rationale": "boundary case just above low_threshold; rule-based prosody = interrogative"},
+      {"id": "V6_joyful_mid",     "tension": 0.42, "source": "anima-voice/anima_voice.hexa:534 Test 1",          "expected_mode": "default",  "rationale": "mid-range engagement, default cite cadence"},
+      {"id": "V7_pros_neutral",   "tension": 0.50, "source": "anima-voice/anima_voice.hexa:472 neutral prosody",  "expected_mode": "default",  "rationale": "midpoint, default mode"},
+      {"id": "V8_interrog_upper", "tension": 0.69, "source": "anima-voice/emotion_prosody.hexa:192 interrogative upper bound (tension < 0.7)", "expected_mode": "default", "rationale": "boundary case just below high_threshold"},
+      {"id": "V9_pros_joy",       "tension": 0.80, "source": "anima-voice/anima_voice.hexa:474 joy prosody",      "expected_mode": "verbose",  "rationale": "high engagement, source-of-truth cite emit"},
+      {"id": "V10_excl_corner",   "tension": 0.61, "source": "anima-voice/emotion_prosody.hexa:187 exclamatory rule (tension > 0.6)", "expected_mode": "default", "rationale": "exclamatory corner — boundary case (see C1 caveat)"},
+      {"id": "V11_angry_high",    "tension": 0.91, "source": "anima-voice/anima_voice.hexa:546 Test 3",          "expected_mode": "verbose",  "rationale": "max engagement, full source-of-truth + breadcrumb"},
+      {"id": "V12_excl_high",     "tension": 0.90, "source": "anima-voice/anima_voice.hexa:465 exclamatory test", "expected_mode": "verbose",  "rationale": "high tension declaration, verbose cite required"}
+    ],
+    "sample_count": 12,
+    "label_provenance": "expected_mode labels derived from anima-voice prosody intent + cite-cleanup cycle audit residual cite policy (immutable corpus PRESERVE = high tension verbose analogue / clean rename = low tension minimal analogue)"
+  },
+  "tuning_grid_evaluated": [
+    {
+      "candidate_id": "T_default",
+      "high": 0.70, "low": 0.30,
+      "rationale": "spec default — original tlm_phase3_spec line 122",
+      "predicted_mode_per_sample": ["minimal","minimal","minimal","minimal","default","default","default","default","verbose","default","verbose","verbose"],
+      "agreement_with_expected": 12,
+      "agreement_rate": 1.0,
+      "boundary_alignment": {
+        "whisper_corner_V4": "PASS (0.19 < 0.30 → minimal, matches prosody whisper)",
+        "interrog_lower_V5": "PASS (0.31 > 0.30 → default, matches prosody interrogative)",
+        "interrog_upper_V8": "PASS (0.69 < 0.70 → default, matches prosody interrogative)",
+        "exclamatory_corner_V10": "PASS (0.61 < 0.70 → default — exclamatory ≠ verbose; see C1)",
+        "angry_high_V11": "PASS (0.91 > 0.70 → verbose)"
+      }
+    },
+    {
+      "candidate_id": "T_tight",
+      "high": 0.80, "low": 0.20,
+      "rationale": "tighter — only extreme tension triggers mode change, more default-mode coverage",
+      "predicted_mode_per_sample": ["minimal","minimal","minimal","default","default","default","default","default","verbose","default","verbose","verbose"],
+      "agreement_with_expected": 11,
+      "agreement_rate": 0.9167,
+      "deviation": "V4 whisper corner 0.19 < 0.20 → minimal (still PASS), but V5 0.31 → default OK; sample V4 still PASS but V9 (0.80) becomes boundary — verbose vs default ambiguous; counted as PASS by 'tension >= high → verbose' interpretation"
+    },
+    {
+      "candidate_id": "T_loose",
+      "high": 0.60, "low": 0.40,
+      "rationale": "looser — more samples flip to verbose/minimal, fewer in default band",
+      "predicted_mode_per_sample": ["minimal","minimal","minimal","minimal","minimal","default","default","verbose","verbose","verbose","verbose","verbose"],
+      "agreement_with_expected": 9,
+      "agreement_rate": 0.75,
+      "deviation": "V5 (0.31 < 0.40 → minimal, but expected default), V8 (0.69 > 0.60 → verbose, but expected default), V10 (0.61 > 0.60 → verbose, but expected default — exclamatory corner conflict)"
+    },
+    {
+      "candidate_id": "T_prosody_aligned",
+      "high": 0.60, "low": 0.20,
+      "rationale": "align with anima-voice/emotion_prosody.hexa rule constants exactly (whisper < 0.20, exclamatory > 0.60)",
+      "predicted_mode_per_sample": ["minimal","minimal","minimal","minimal","default","default","default","verbose","verbose","verbose","verbose","verbose"],
+      "agreement_with_expected": 10,
+      "agreement_rate": 0.8333,
+      "deviation": "V8 (0.69 > 0.60 → verbose, expected default), V10 (0.61 > 0.60 → verbose, expected default — see C1)"
+    },
+    {
+      "candidate_id": "T_asymmetric_high",
+      "high": 0.75, "low": 0.30,
+      "rationale": "asymmetric — keep low at spec default, raise high to suppress verbose-overuse",
+      "predicted_mode_per_sample": ["minimal","minimal","minimal","minimal","default","default","default","default","verbose","default","verbose","verbose"],
+      "agreement_with_expected": 12,
+      "agreement_rate": 1.0,
+      "deviation": "ties T_default at 1.0 — see §verdict on tie-breaker"
+    }
+  ],
+  "verdict": {
+    "selected_candidate_id": "T_default",
+    "selected_high_threshold": 0.70,
+    "selected_low_threshold": 0.30,
+    "selection_rationale": [
+      "T_default and T_asymmetric_high both achieve 12/12 (100%) agreement on the 12-sample set",
+      "tie-breaker = principle of minimal departure from frozen spec (tlm_phase3_spec §2.4 line 122) — T_default matches verbatim",
+      "T_asymmetric_high (0.75/0.30) is reserved as fallback IF future expanded validation set shows verbose-overfire on the 0.70-0.75 band",
+      "0.70/0.30 also matches the dominant default in sister LM threshold conventions (sibling LM cross-substrate consistency carried forward from TLM stage12 land §1)",
+      "rejected T_loose (75%) — 3 boundary samples flip incorrectly",
+      "rejected T_prosody_aligned (83.3%) — exclamatory corner V10/V8 over-trigger verbose",
+      "rejected T_tight (91.7%) — 1 boundary sample marginal (T_default strictly dominates)"
+    ],
+    "agreement_rate_at_selected": 1.0,
+    "samples_pass_at_selected": "12 / 12",
+    "boundary_band_low": "[0.30, 0.40] = default-mode floor; samples with tension in this band emit default cite cadence",
+    "boundary_band_high": "[0.60, 0.70] = default-mode ceiling; samples in this band emit default cadence (NOT verbose), preventing exclamatory-corner over-fire",
+    "hysteresis_recommendation": "for time-series tension trajectories, recommend ±0.05 hysteresis around each threshold to suppress mode-thrash near boundaries (deferred to Phase 3 cond.6a IMPL — out of scope for this $0 spec-tune cycle)",
+    "selection_locked_at": "2026-05-03"
+  },
+  "fallback_policy": {
+    "tlm_unavailable": "mode = default (TLM-independent path)",
+    "tension_signal_clipped": "tension clipped to [0.0, 1.0] before threshold compare",
+    "phase3_mini_provisional_source": "cond.6a inference-only — tension scalar may be sourced from existing 5-channel encoder pre-LM-head OR from .roadmap.tensionlink wire UDP capture (placeholder, both equivalent for threshold tune)"
+  },
+  "cost": {
+    "actual_cost_usd": 0.0,
+    "compute_used": "mac-local inference-only (no training, no GPU)",
+    "wallclock_min": 1
+  },
+  "honest_caveats": [
+    "C1 — exclamatory-corner conflict: emotion_prosody.hexa rule says tension > 0.6 + arousal > 0.7 = exclamatory utterance, intuitively a 'loud declaration' that might suggest verbose cite. T_default rule (high=0.70) puts tension=0.61-0.69 in default band, NOT verbose. Validation labels this PASS because cite verbosity ≠ utterance loudness (verbose cite = SOURCE-OF-TRUTH emit, NOT prosody amplitude). C1 risk = downstream consumer surprise if prosody-amplitude semantics confused with cite-volume semantics.",
+    "C2 — sample size 12 is small + label provenance is heuristic (derived from prosody intent + cite-cleanup audit narrative, NOT from real cite-emission ground truth). True validation requires logged cite-emission events from anima-voice production runtime + tension-tagged user feedback. Current 12/12 PASS is a spec-self-consistency check, NOT a downstream-utility measurement.",
+    "C3 — TLM Phase 3 cond.2 (LM head) status = partial (spec frozen, IMPL/training 0건 per .roadmap.tlm_tension_lm cond.2). cond.6a tension scalar source is currently a placeholder (5-channel WHY-axis direct read OR .roadmap.tensionlink wire), NOT a TLM head output. True cond.6 land requires cond.2 IMPL + a real TLM hidden-state projection layer. Phase 3-mini cond.6a captures the threshold rule + validation methodology only, leaving the upstream signal-source to Phase 3 cond.2 IMPL (deferred per $200 cap)."
+  ],
+  "marker": "state/markers/tlm_cond6a_speak_gate_threshold_landed.marker",
+  "roadmap_update": {
+    "path": ".roadmap.tlm_tension_lm",
+    "field_added": "cond.6a sub-condition entry (additive only)",
+    "in_place_diff_byte_count": "additive only — sister .roadmap.tensionlink unchanged (0 byte diff invariant per stage12 dual SSOT policy)"
+  },
+  "next_cycle_handoff": "Phase 3 cond.6b (voice bridge Linear(512,384) + LayerNorm) deferred — requires VLM Phase 3 cond.5 (SLM prosody integration) land first per tlm_phase3_spec §6 C3 cascade"
+}

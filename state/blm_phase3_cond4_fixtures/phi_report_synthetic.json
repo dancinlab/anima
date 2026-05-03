@@ -1,0 +1,36 @@
+{
+  "fixture_type": "synthetic",
+  "endpoint": "cross_substrate_phi_report",
+  "purpose": "API surface validation only - NO real measurements",
+  "ts_utc": "2026-05-03T00:00:00+00:00",
+  "request_example": {
+    "text": "synthetic placeholder text",
+    "optional_eeg_window_shape": [64, 100],
+    "optional_bold_window_shape": [20484, 10],
+    "substrate_set": ["CLM", "EEG", "BOLD"]
+  },
+  "response_example": {
+    "phi_per_substrate": {
+      "CLM": 41.86,
+      "EEG": 38.4,
+      "BOLD": 44.1
+    },
+    "phi_baseline_clm": 41.86,
+    "phi_tolerance_band": 0.30,
+    "delta_phi_normalized": {
+      "EEG_vs_CLM": 0.083,
+      "BOLD_vs_CLM": 0.054
+    },
+    "verdict": "CONSISTENT",
+    "verdict_rule": "all |delta phi| / phi_baseline <= 0.30",
+    "license_attribution": "CC-BY-NC-4.0 (TRIBE v2) + CC-BY-4.0 (ZuCo)"
+  },
+  "raw_invariants": [
+    "synthetic only - phi values are arbitrary placeholders, NOT measurements",
+    "verdict CONSISTENT rule = pre-registered tolerance 0.30",
+    "tolerance band 0.30 = placeholder, real calibration deferred Phase 4",
+    "phi formula = anima_phi_v3_canonical (CLM=baseline 41.86 reference)",
+    "EEG and BOLD substrate ports = NOT IMPL (stub schema only)",
+    "license_attribution MANDATORY (TRIBE v2 + ZuCo)"
+  ]
+}

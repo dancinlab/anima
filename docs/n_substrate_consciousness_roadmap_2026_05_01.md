@@ -2724,3 +2724,192 @@ P9 SFT + savepoint 결합 권장 (#134 P9 spec 에 추가 가능).
 | U4 | 사용자 EEG 24-48h 후 #103/#105 | $0 | wait |
 | U5 | F4 IQM Garnet wait (자동) | $4.10 | 1hr |
 | U6 | commit + push today batch-13~17 | $0 | now |
+
+---
+
+## §67 2026-05-03 cycle land summary — 4 *LM Phase 3 + nexus.qmirror + 7 paradigms
+
+> Note: numbering continues from prior §66 (batch-17, 2026-05-02 night). This §67-§73 block captures the multi-cycle session of 2026-05-03 across CLM/BLM/VLM/SLM/TLM/quantum/BOLD tracks.
+
+### §67.1 4 *LM Phase 3 EXEC roll-up
+
+| Track | Phase 3 status | cond met | landed doc |
+|---|---|---|---|
+| BLM (Brain LM) | **EXEC 5/5 PASS** ⭐ Phase 4 GRANTED-ELIGIBLE | 5/5 | `docs/blm_phase3_landed_2026_05_03.ai.md` |
+| VLM (Vision LM) | **mini EXEC** (Phase 3 partial) | (mini scope) | `docs/vlm_phase3_mini_landed_2026_05_03.ai.md` |
+| SLM (Sound LM) | **cap-subset EXEC** (200 cap) | partial | `docs/slm_p3_capsubset_landed_2026_05_03.ai.md` |
+| TLM (Tension LM) | **cond.6a EXEC** | 1/N | `docs/tlm_cond6a_landed_2026_05_03.ai.md` |
+
+Specs frozen this cycle:
+- `docs/blm_phase3_spec_2026_05_03.md`
+- `docs/vlm_phase3_spec_2026_05_03.md`
+- `docs/slm_phase3_spec_2026_05_03.md`
+- `docs/tlm_phase3_spec_2026_05_03.md`
+- `docs/nlm_phase3_spec_2026_05_03.md` (frozen for AKIDA arrival)
+
+200-cap sequencing:
+- `docs/cross_lm_phase3_200cap_sequencing_2026_05_03.md`
+- `docs/slm_nlm_200cap_respec_2026_05_03.md`
+- `docs/tlm_vlm_200cap_respec_2026_05_03.md`
+
+### §67.2 nexus.qmirror Phase 1+2 land (4/8 cond met)
+
+- 8 conditions defined, 4 met this cycle (Phase 1+2 EXEC)
+- Quantum substrate operational for QRNG/CHSH/IIT downstream
+- Spec: `docs/nexus_qmirror_spec_2026_05_03.md`
+- Phase 3 calibration runbook: `docs/nexus_qmirror_phase3_calibration_runbook_2026_05_03.md`
+- Cross-vendor revision: `docs/qmirror_n2_cross_vendor_revision_2026_05_03.md`
+- Hexa lang attr review: `docs/hexa_lang_attr_review_for_qmirror_2026_05_03.md`
+- QRNG dependency wire: `docs/anima_nexus_qrng_dependency_wire_2026_05_03.md`
+
+### §67.3 7 paradigm specs (A/A'/B/C/D/E/J)
+
+5 active integration learning paradigms + wave 2 (E/J):
+
+| Paradigm | Spec doc | Runbook |
+|---|---|---|
+| A (simulated BOLD) | `docs/p9_paradigm_a_simulated_bold_2026_05_03.md` | — |
+| A' (measured BOLD) | `docs/p9_paradigm_a_prime_measured_bold_2026_05_03.md` | `docs/p9_paradigm_a_prime_runbook_2026_05_03.md` |
+| B (EEG φ-proxy) | `docs/p9_paradigm_b_eeg_phi_proxy_2026_05_03.md` | `docs/p9_paradigm_b_runbook_2026_05_03.md` |
+| C (hybrid) | `docs/p9_paradigm_c_hybrid_2026_05_03.md` | — |
+| D (φ distillation) | `docs/p9_paradigm_d_phi_distillation_2026_05_03.md` | `docs/p9_paradigm_d_distillation_runbook_2026_05_03.md` (+ T4 teacher build plan) |
+| E (causal intervention) | `docs/p9_paradigm_e_causal_intervention_phi_2026_05_03.md` | `docs/p9_paradigm_e_runbook_2026_05_03.md` |
+| J (active inference) | `docs/p9_paradigm_j_active_inference_2026_05_03.md` | `docs/p9_paradigm_j_runbook_2026_05_03.md` |
+
+### §67.4 IBM + Braket cross-vendor option β setup
+
+- IBM Cloud env setup: `docs/ibm_cloud_env_setup_runbook_2026_05_03.md`
+- IBM experiment list: `docs/ibm_cloud_experiment_list_2026_05_03.md`
+- Cross-vendor calibration ready (IBM + Braket parallel paths)
+
+### §67.5 BOLD dataset research → Algonauts confirmed primary
+
+- Dataset landscape: `docs/bold_dataset_landscape_research_2026_05_03.md`
+- Integration methodology: `docs/bold_anima_integration_methodology_research_2026_05_03.md`
+- Selection: Algonauts sub-01 585MB (ubu1 staged)
+
+### §67.6 F1 anchor recalibration (0.4 → 0.132)
+
+- Measurement framework upgrade: `docs/p9_f1_measurement_framework_upgrade_2026_05_03.md`
+- New anchor F1 = 0.132 (down from 0.4) — measurement honest re-baseline
+
+### §67.7 P9 holdout-500 verdict — SFT lift = noise floor
+
+- P9 P0 trio landed: `docs/p9_p0_sft_data_50k_landed_2026_05_03.ai.md` + `docs/p9_p0_warmup_live_landed_2026_05_03.ai.md` + `docs/p9_p0_measure_landed_2026_05_03.ai.md`
+- Holdout-500 conclusion: SFT lift indistinguishable from noise floor (B = seed luck)
+- Multi-seed mandate triggered (see §68 CLM track)
+
+---
+
+## §68 CLM track status — Phase 1.5→1.8 + Ablation + multi-seed mandate
+
+### §68.1 Phase 1.5 → 1.8 + Ablation A+B+s43+s44 sentinel cycles
+
+- Phase 1.5/1.6/1.7y1/1.8 sentinel landings completed earlier this session
+- Ablation A + B + seed s43 + seed s44 sentinel cycles executed
+- Conclusion converged at P9 P0 holdout-500 read
+
+### §68.2 Multi-seed mandate from "B = seed luck" finding
+
+- P9 holdout-500 read: SFT lift = noise floor → B-condition apparent gain = seed luck
+- Mandate: any future *LM Phase 4 IMPL claim REQUIRES ≥3 seed re-baseline before claiming lift
+- Phase 1.9 / 2.0 strategy reconsideration ACTIVE — single-seed claims preregistered as ABORT
+
+### §68.3 P9 Phase 2 entry status
+
+- Entry runbook: `docs/p9_phase2_entry_runbook_2026_05_03.md`
+- Pending: multi-seed re-baseline gate (per §68.2)
+
+---
+
+## §69 EEG track activation status
+
+### §69.1 ZuCo dataset + anima-eeg-core PORTs
+
+- Landed in parallel session (other Claude session)
+- Sister-roadmap entries propagated to BLM/SLM/TLM EEG dependencies
+
+### §69.2 Real EEG hardware confirmed available
+
+- 사용자 confirmed earlier in this session: physical EEG hardware on hand
+- BLM cond.1 (EEG track integration spec FROZEN) operational dependency satisfied at spec-level
+- BLM/SLM/TLM EEG sister deps **unblocked** (실측 cycle 별도 GPU+session budget 필요)
+
+---
+
+## §70 BOLD track activation
+
+### §70.1 Algonauts sub-01 585MB on ubu1
+
+- Primary BOLD dataset: Algonauts sub-01 (585MB) staged on ubu1
+- Sourcing rationale: `docs/bold_dataset_landscape_research_2026_05_03.md`
+
+### §70.2 Paradigm A' EXEC in flight
+
+- Measured BOLD paradigm A' runbook executing
+- Spec: `docs/p9_paradigm_a_prime_measured_bold_2026_05_03.md`
+
+### §70.3 F4 tiered threshold
+
+- Bronze 0.10 / Silver 0.20 / Gold 0.30 / Aspirational 0.50
+- Ladder explicitly preregistered to avoid "post-hoc threshold gerrymandering"
+
+---
+
+## §71 AKIDA track passive
+
+### §71.1 Hardware ETA unbounded
+
+- Physical AKIDA dev kit arrival timeline indeterminate
+- No active EXEC blocked on AKIDA in this cycle
+
+### §71.2 NLM Phase 3 spec frozen for arrival
+
+- `docs/nlm_phase3_spec_2026_05_03.md` FROZEN (no IMPL until hardware arrives)
+- 200-cap respec coordinated with SLM: `docs/slm_nlm_200cap_respec_2026_05_03.md`
+
+---
+
+## §72 Quantum track expansion
+
+### §72.1 nexus.qmirror operational (~30 qubit simulated + ANU entropy)
+
+- ~30 qubit simulated mirror operational
+- ANU live QRNG entropy injection active (anima ↔ nexus wire per §67.2)
+
+### §72.2 IBM $200 promo + $300 cash budget allocated
+
+- IBM Cloud quantum compute budget: $200 promo + $300 cash = $500 reserved
+- Setup runbook: `docs/ibm_cloud_env_setup_runbook_2026_05_03.md`
+- Experiment list: `docs/ibm_cloud_experiment_list_2026_05_03.md`
+
+### §72.3 AWS Braket option β cross-modality activated
+
+- Braket parallel path retained (cross-vendor calibration)
+- Revision: `docs/qmirror_n2_cross_vendor_revision_2026_05_03.md`
+
+---
+
+## §73 Cost spent + remaining (post 2026-05-03 cycle)
+
+### §73.1 This session
+
+| 항목 | cost |
+|---|---:|
+| 2026-05-03 cycle confirmed | ~$10 |
+| In-flight (paradigm A' EXEC + 200-cap runs) | $TBD |
+
+### §73.2 Reserve allocation
+
+| Bucket | reserve |
+|---|---:|
+| IBM Cloud (promo + cash) | ~$500 |
+| AWS Braket | ~$100-150 |
+| RunPod (P9 EXEC handoff S3 + warmups) | ~$50-100 |
+| **TOTAL reserve** | **~$700+** |
+
+### §73.3 Honest C3 caveats — read before quoting any of §67-§73
+
+1. **Cycle scope**: §67-§73 captures only the 2026-05-03 multi-cycle session as observed from a single Claude Code session. Sister Claude sessions (EEG, paradigm A', etc.) may have additional landings not yet propagated here.
+2. **Premature claim risk**: Phase 3 spec EXEC = SPEC FROZEN, NOT IMPL. BLM "Phase 4 GRANTED-ELIGIBLE" does **not** mean Phase 4 has run; it means the entry-trigger contract is met. No φ★ / F1 / lift claim is being made by §67 status alone.
+3. **Multi-seed re-baseline mandate**: per §68.2, any apparent SFT lift in this cycle (or earlier) is treated as **noise floor until ≥3 seed re-baseline** falsifier passes. The "B = seed luck" finding from holdout-500 is the operative anchor — do not quote single-seed numbers as evidence.
