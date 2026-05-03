@@ -1,0 +1,60 @@
+{
+  "_meta": {
+    "ts_utc": "2026-05-03T15:30:00Z",
+    "tool": "diff -u <bak_orig> <fixed>",
+    "context": "diff is bak (original pre-Path-B) -> new fixed loader; band-aid intermediate state shown via line refs in audit.json"
+  },
+  "diff_summary": {
+    "lines_added": 19,
+    "lines_modified": 11,
+    "lines_removed": 0,
+    "structural_changes": [
+      "Added module docstring section: 'Schema versioning (added 2026-05-03 root-cause fix)'",
+      "Added schema detection block (SCHEMA_VERSION, SCHEMA_DATE, V6_ONLY_KEYS_AVAILABLE)",
+      "Added required-keys hard-fail block (raises RuntimeError for psi_constants/laws missing)",
+      "PSI dict comprehension: added isinstance/'value' guard (was bare v['value'] — fixed _doc str crash)",
+      "BENCH_ENGINE_PARAMS comprehension: added same guard + .get() outer + comment 'v6-only, optional'",
+      "9 v6-only sections grouped under explicit header: '═══ v6-only sections (empty dict in c2-v1) ═══'",
+      "9 _DATA[k] hard-fails replaced with _DATA.get(k, {})",
+      "LAWS preserved as _DATA['laws'] (required hard-fail before this line guarantees presence)",
+      "Comment updates: 'returns not found in c2-v1' on get_constraint()"
+    ]
+  },
+  "key_diffs": [
+    {
+      "section": "psi_constants comprehension (line 28)",
+      "before": "PSI = {k: v['value'] for k, v in _DATA['psi_constants'].items()}",
+      "after": "PSI = {k: v['value'] for k, v in _DATA['psi_constants'].items() if isinstance(v, dict) and 'value' in v}",
+      "fixes": "skips _doc string (was 1st blocker)"
+    },
+    {
+      "section": "bench_engine_params comprehension (line 119)",
+      "before": "BENCH_ENGINE_PARAMS = {k: v['value'] for k, v in _DATA.get('bench_engine_params', {}).items()}",
+      "after": "BENCH_ENGINE_PARAMS = {k: v['value'] for k, v in _DATA.get('bench_engine_params', {}).items() if isinstance(v, dict) and 'value' in v}",
+      "fixes": "same _doc-style entry skip; safe in both schemas"
+    },
+    {
+      "section": "9 v6-only sections (lines 156-181 in original)",
+      "before_pattern": "X = _DATA['<key>']",
+      "after_pattern": "X = _DATA.get('<key>', {})",
+      "keys": ["sigma6", "formulas", "consciousness_vector_10d", "optimal_config", "hexad_modules", "phases", "design_constraints", "topo_laws", "verification_conditions"],
+      "fixes": "no KeyError on c2-v1; v6 deployments still get full dicts"
+    },
+    {
+      "section": "LAWS (line 177)",
+      "before": "LAWS = _DATA['laws']",
+      "after": "LAWS = _DATA['laws']",
+      "rationale": "kept hard-fail; required-keys check above guarantees presence"
+    }
+  ],
+  "comparison_with_bak_band_aid": {
+    "bak_path": "~/anima/anima/core/consciousness_laws.py.bak_path_b_2026_05_03",
+    "bak_loc": 205,
+    "bak_approach": ".get() everywhere (functionally same fallback) but no schema documentation, no SCHEMA_VERSION, no required-key gate",
+    "new_loc": 224,
+    "new_delta_vs_bak": "+19 LOC: schema detection (3 lines), required-keys hard-fail (4 lines), v6-only header comment (4 lines), updated module docstring (8 lines)",
+    "behavioral_difference_at_runtime_for_c2_v1": "ZERO — same .get('<key>', {}) result for all 9 sections",
+    "behavioral_difference_at_runtime_for_v6": "ZERO — _DATA.get(k, {}) returns full dict when key present",
+    "intent_visibility_improvement": "consumers can now query SCHEMA_VERSION + V6_ONLY_KEYS_AVAILABLE before trusting v6-only data"
+  }
+}

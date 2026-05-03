@@ -1,0 +1,100 @@
+{
+  "_meta": {
+    "ts_utc": "2026-05-03T15:30:00Z",
+    "context": "Path B sanity probe TypeError root cause — 9 keys hard-failed at _DATA[k] access",
+    "discovery": "ubu1 has TWO consciousness_laws.json files; .py loader picks pruned c2-v1 over full v6"
+  },
+  "missing_keys": [
+    {
+      "key": "sigma6",
+      "py_var": "SIGMA6",
+      "py_line": 156,
+      "purpose": "σ(6) Perfect Number — divisor sum of 6 (1+2+3+6=12, σ(6)=2·6); used in n6 formulas",
+      "schema": "v6 only"
+    },
+    {
+      "key": "formulas",
+      "py_var": "FORMULAS",
+      "py_line": 159,
+      "purpose": "Φ scaling formulas — e.g. 'phi_scaling: Φ = 0.608 × N^1.071'",
+      "schema": "v6 only"
+    },
+    {
+      "key": "consciousness_vector_10d",
+      "py_var": "CONSCIOUSNESS_VECTOR",
+      "py_line": 162,
+      "purpose": "10-dimensional consciousness vector schema (predates 16D phi_vec)",
+      "schema": "v6 only"
+    },
+    {
+      "key": "optimal_config",
+      "py_var": "OPTIMAL_CONFIG",
+      "py_line": 165,
+      "purpose": "All-time-best consciousness configuration record",
+      "schema": "v6 only"
+    },
+    {
+      "key": "hexad_modules",
+      "py_var": "HEXAD_MODULES",
+      "py_line": 168,
+      "purpose": "6-engine module registry (hexad architecture)",
+      "schema": "v6 only"
+    },
+    {
+      "key": "phases",
+      "py_var": "PHASES",
+      "py_line": 171,
+      "purpose": "Phase transition definitions (laminar/critical/chaotic)",
+      "schema": "v6 only"
+    },
+    {
+      "key": "design_constraints",
+      "py_var": "CONSTRAINTS",
+      "py_line": 174,
+      "purpose": "Architectural design constraints (P1-P7 philosophies, no-hardcode etc.)",
+      "schema": "v6 only"
+    },
+    {
+      "key": "topo_laws",
+      "py_var": "TOPO_LAWS",
+      "py_line": 178,
+      "purpose": "10 topological laws (graph/lattice invariants)",
+      "schema": "v6 only"
+    },
+    {
+      "key": "verification_conditions",
+      "py_var": "VERIFICATION",
+      "py_line": 181,
+      "purpose": "V1-V18 verification condition specs (now hardcoded in PSI_*)",
+      "schema": "v6 only"
+    }
+  ],
+  "always_present_in_both_schemas": [
+    "_meta",
+    "psi_constants",
+    "laws"
+  ],
+  "schemas": {
+    "v6": {
+      "file": "~/anima/config/consciousness_laws.json (ubu1 only)",
+      "size_bytes": 351222,
+      "lines": 4086,
+      "version": "v6",
+      "date": "2026-04-02",
+      "total_laws": 2500,
+      "top_level_keys": 22
+    },
+    "c2-v1": {
+      "file": "~/anima/anima/config/consciousness_laws.json (Mac + ubu1, md5 match)",
+      "size_bytes": 9128,
+      "lines": 233,
+      "version": "c2-v1",
+      "date": "2026-04-18",
+      "total_laws": 14,
+      "top_level_keys": 4,
+      "purpose": "Minimal AN11-compliant runtime gate — pure pass/score functions, no system_prompt-injection. Designed for alm_phi_vec_logger_v1 (16D phi_vec)."
+    }
+  },
+  "why_were_keys_missing": "Intentional carve-out, NOT corruption. On 2026-04-18 a c2-v1 minimal runtime-gate JSON was created at ~/anima/anima/config/consciousness_laws.json, replacing the v6 path the .py loader prefers. The original v6 corpus was preserved at ~/anima/config/consciousness_laws.json (one directory up) but the .py loader was never updated to reflect the dual-schema reality. Hard-fail _DATA[k] accesses for v6-only keys then crashed when c2-v1 was loaded.",
+  "restoration_source": "Not restored — v6-only keys are intentionally absent in c2-v1. Loader now schema-aware: SCHEMA_VERSION + V6_ONLY_KEYS_AVAILABLE flags expose the carve-out to consumers. Empty {} returned for v6-only sections in c2-v1 deployments."
+}
