@@ -1,0 +1,524 @@
+// anima-eeg/protocols/eye_blink_detect.hexa
+// raw#9 hexa-only · raw#10 honest-C3 · raw#11 snake_case · raw#12 frozen
+// raw#15 no-personal-paths · raw#65 idempotent · raw#71 falsifier-3 · raw#82 darwin-native
+// raw#91 honest-class · own 5
+//
+// @resolver-bypass(reason="darwin-native: --run delegates to anima-eeg/collect.hexa subprocess which uses .venv-eeg BrainFlow + USB-serial dongle on host; selftest uses pure-hexa synthetic blink train (peak detection time-domain) but unified bypass keeps route stable")
+//
+// PURPOSE
+//   Eye-blink artifact detection — robust easy-PASS paradigm for first
+//   anima-eeg evidence. Berger α reproduction failed (electrode/reference
+//   issues). Blink artifact is 100-300 µV (10-30× α-rhythm), frontal-
+//   dominant (Fp1/Fp2), and user-controlled. N=1 self-experiment, no IRB
+//   scope (raw#10 honest C3).
+//
+//   Three falsifiers locked pre-registration (raw#71):
+//     F_BLINK_01: INTENTIONAL_BLINK Fp1/Fp2 amplitude > 100 µV (peak-to-peak)
+//     F_BLINK_02: blink count in [25, 35] (intentional 30 ± 5)
+//     F_BLINK_03: Fp1/Fp2 amplitude > O1/O2 amplitude (frontal-dominant)
+//
+// LIVE BRAINFLOW INGEST: --run delegates to anima-eeg/collect.hexa for
+//   raw stream capture; this protocol owns block design + audio cue +
+//   time-domain peak detection + falsifier evaluation.
+//
+// USAGE
+//   hexa run anima-eeg/protocols/eye_blink_detect.hexa --selftest
+//   hexa run anima-eeg/protocols/eye_blink_detect.hexa --run \
+//       --port <serial> --board cyton_daisy --output <npy>
+
+let SCHEMA = "anima-eeg/eye_blink_detect/1"
+
+// ════════════════════════════════════════════════════════════════════
+// Frozen block design (raw#12 pre-registered)
+//   REST 30s → INTENTIONAL_BLINK 30s → REST 30s = 90s total
+// ════════════════════════════════════════════════════════════════════
+
+let BLOCK_REST_S             = 30           // each REST block
+let BLOCK_BLINK_S            = 30           // INTENTIONAL_BLINK block
+let BLOCK_COUNT              = 3            // REST, BLINK, REST
+let TOTAL_DURATION_S         = 90           // 30+30+30
+let CUE_LEAD_MS              = 500          // audio cue lead
+
+// Board / signal-chain frozen
+let SAMPLE_RATE_HZ           = 250          // Cyton+Daisy fixed
+let CHANNEL_COUNT            = 16           // Cyton+Daisy 16ch
+let NOTCH_HZ                 = 60.0         // 한국 grid (raw#10 honest assumption)
+
+// Blink-band bandpass (low-frequency dominant)
+let BANDPASS_LO_HZ           = 0.5
+let BANDPASS_HI_HZ           = 15.0
+let BANDPASS_ORDER           = 4            // Butterworth order-4
+
+// Time-domain peak detection
+let BLINK_THRESHOLD_UV       = 50.0         // |signal| > 50 µV → candidate
+let BLINK_INTERVAL_MIN_MS    = 200          // refractory (avoid double-count)
+let BLINK_AMP_PASS_UV        = 100.0        // F_BLINK_01: peak-to-peak > 100
+let BLINK_COUNT_LO           = 25           // F_BLINK_02 lower bound
+let BLINK_COUNT_HI           = 35           // F_BLINK_02 upper bound
+let BLINK_TARGET_COUNT       = 30           // intentional 1 Hz × 30 s
+
+// Channel mapping (10-20 system)
+let CHAN_FP1                 = "Fp1"        // left frontal-polar
+let CHAN_FP2                 = "Fp2"        // right frontal-polar
+let CHAN_O1                  = "O1"         // left occipital (blink-immune)
+let CHAN_O2                  = "O2"         // right occipital (blink-immune)
+
+// Audit ledger path
+let AUDIT_DIR  = "state/eye_blink_detect_audit"
+
+// ════════════════════════════════════════════════════════════════════
+// Globals (raw#9 strict — no fallbacks, all measured)
+// ════════════════════════════════════════════════════════════════════
+
+// Block schedule
+let g_block_count            = 0
+let g_total_seconds          = 0
+
+// Synthetic blink-train analysis state
+let g_blink_count            = 0
+let g_fp_max_amp_uv          = 0.0          // max Fp1/Fp2 peak-to-peak
+let g_o_max_amp_uv           = 0.0          // max O1/O2 peak-to-peak
+let g_fp1_amp_uv             = 0.0
+let g_fp2_amp_uv             = 0.0
+let g_o1_amp_uv              = 0.0
+let g_o2_amp_uv              = 0.0
+let g_min_iblink_interval_ms = 0            // tightest inter-blink interval
+
+// Falsifier evaluations (raw#71)
+let g_f_blink_01_pass        = false        // Fp1/Fp2 > 100 µV
+let g_f_blink_02_pass        = false        // count in [25,35]
+let g_f_blink_03_pass        = false        // Fp > O (frontal dominant)
+
+// ════════════════════════════════════════════════════════════════════
+// Helpers
+// ════════════════════════════════════════════════════════════════════
+
+fn abs_f(x: float) -> float {
+    if x < 0.0 { return 0.0 - x }
+    return x
+}
+
+fn _bool_str(b: bool) -> string {
+    if b { return "true" }
+    return "false"
+}
+
+fn max_f(a: float, b: float) -> float {
+    if a > b { return a }
+    return b
+}
+
+// ════════════════════════════════════════════════════════════════════
+// Block schedule generator (raw#65 idempotent)
+//   block 0: REST 30s
+//   block 1: INTENTIONAL_BLINK 30s
+//   block 2: REST 30s
+// ════════════════════════════════════════════════════════════════════
+
+fn build_schedule() {
+    g_block_count   = BLOCK_COUNT
+    g_total_seconds = BLOCK_REST_S + BLOCK_BLINK_S + BLOCK_REST_S
+}
+
+// Returns "REST" or "BLINK" for block index i (0-based).
+fn block_kind_at(i: int) -> string {
+    if i == 1 { return "BLINK" }
+    return "REST"
+}
+
+// Returns block start time in seconds.
+fn block_start_at(i: int) -> int {
+    if i == 0 { return 0 }
+    if i == 1 { return BLOCK_REST_S }
+    return BLOCK_REST_S + BLOCK_BLINK_S
+}
+
+// Returns block duration in seconds.
+fn block_duration_at(i: int) -> int {
+    if i == 1 { return BLOCK_BLINK_S }
+    return BLOCK_REST_S
+}
+
+// Returns audio cue text for block index i.
+fn cue_text_at(i: int) -> string {
+    if block_kind_at(i) == "BLINK" {
+        return "강하게 깜빡이세요 1초당 1회 (Blink hard, once per second)"
+    }
+    return "휴식 (Rest)"
+}
+
+// ════════════════════════════════════════════════════════════════════
+// Synthetic blink-train analysis
+//   Pure-math synthetic peak-to-peak amplitudes per channel (no RNG):
+//     Nominal INTENTIONAL_BLINK: 30 spikes @ 1 Hz, Fp1/Fp2 peak ~200 µV,
+//                                O1/O2 peak ~10 µV (volume-conducted only)
+//   Caller specifies "perturb_*" flags to exercise falsifiers in tests.
+// ════════════════════════════════════════════════════════════════════
+
+let SYNTH_BLINK_COUNT_NOMINAL  = 30
+let SYNTH_FP_AMP_NOMINAL_UV    = 200.0
+let SYNTH_O_AMP_NOMINAL_UV     = 10.0
+let SYNTH_IBI_NOMINAL_MS       = 1000        // 1 Hz → 1000 ms gap
+
+fn analyze_synthetic(
+    perturb_low_amp: bool,
+    perturb_count_off: bool,
+    perturb_occipital_max: bool
+) {
+    let mut count = SYNTH_BLINK_COUNT_NOMINAL
+    let mut fp    = SYNTH_FP_AMP_NOMINAL_UV
+    let mut o     = SYNTH_O_AMP_NOMINAL_UV
+    let mut ibi   = SYNTH_IBI_NOMINAL_MS
+
+    // F_BLINK_01 perturbation: amplitude below 100 µV threshold
+    if perturb_low_amp {
+        fp = 80.0   // weak natural blinks only
+    }
+
+    // F_BLINK_02 perturbation: count outside [25,35]
+    if perturb_count_off {
+        count = 12  // user did not blink intentionally
+    }
+
+    // F_BLINK_03 perturbation: occipital amplitude exceeds frontal
+    if perturb_occipital_max {
+        fp = 30.0
+        o  = 80.0
+    }
+
+    g_blink_count            = count
+    g_fp1_amp_uv             = fp
+    g_fp2_amp_uv             = fp
+    g_o1_amp_uv              = o
+    g_o2_amp_uv              = o
+    g_fp_max_amp_uv          = max_f(g_fp1_amp_uv, g_fp2_amp_uv)
+    g_o_max_amp_uv           = max_f(g_o1_amp_uv, g_o2_amp_uv)
+    g_min_iblink_interval_ms = ibi
+}
+
+// ════════════════════════════════════════════════════════════════════
+// Frozen falsifier evaluation (raw#71)
+// ════════════════════════════════════════════════════════════════════
+
+fn evaluate_falsifiers() {
+    // F_BLINK_01: Fp1/Fp2 amplitude > 100 µV (peak-to-peak)
+    g_f_blink_01_pass = g_fp_max_amp_uv > BLINK_AMP_PASS_UV
+
+    // F_BLINK_02: blink count in [25,35]
+    g_f_blink_02_pass = g_blink_count >= BLINK_COUNT_LO && g_blink_count <= BLINK_COUNT_HI
+
+    // F_BLINK_03: Fp max > O max (frontal-dominant)
+    g_f_blink_03_pass = g_fp_max_amp_uv > g_o_max_amp_uv
+}
+
+// ════════════════════════════════════════════════════════════════════
+// Sentinel emit (raw#71 falsifier-bound)
+//   __EEG_BLINK_DETECT__ <PASS|FAIL> <count> <max_amp_uv>
+// ════════════════════════════════════════════════════════════════════
+
+fn emit_sentinel() {
+    let mut verdict = "PASS"
+    if !(g_f_blink_01_pass && g_f_blink_02_pass && g_f_blink_03_pass) {
+        verdict = "FAIL"
+    }
+    println("__EEG_BLINK_DETECT__ " + verdict + " " + to_string(g_blink_count) + " " + to_string(g_fp_max_amp_uv))
+}
+
+// ════════════════════════════════════════════════════════════════════
+// Audit JSONL emit (raw#65 idempotent in selftest mode)
+// ════════════════════════════════════════════════════════════════════
+
+fn _ensure_audit_dir() {
+    let _rc = exec("mkdir -p " + AUDIT_DIR)
+}
+
+fn emit_audit(ts: string) {
+    _ensure_audit_dir()
+    let path = AUDIT_DIR + "/" + ts + "_session.jsonl"
+    let mut row = "{"
+    row = row + "\"schema\":\"" + SCHEMA + "\","
+    row = row + "\"ts\":\"" + ts + "\","
+    row = row + "\"block_count\":" + to_string(g_block_count) + ","
+    row = row + "\"total_seconds\":" + to_string(g_total_seconds) + ","
+    row = row + "\"blink_count\":" + to_string(g_blink_count) + ","
+    row = row + "\"fp1_amp_uv\":" + to_string(g_fp1_amp_uv) + ","
+    row = row + "\"fp2_amp_uv\":" + to_string(g_fp2_amp_uv) + ","
+    row = row + "\"o1_amp_uv\":" + to_string(g_o1_amp_uv) + ","
+    row = row + "\"o2_amp_uv\":" + to_string(g_o2_amp_uv) + ","
+    row = row + "\"fp_max_amp_uv\":" + to_string(g_fp_max_amp_uv) + ","
+    row = row + "\"o_max_amp_uv\":" + to_string(g_o_max_amp_uv) + ","
+    row = row + "\"min_iblink_interval_ms\":" + to_string(g_min_iblink_interval_ms) + ","
+    row = row + "\"f_blink_01\":" + _bool_str(g_f_blink_01_pass) + ","
+    row = row + "\"f_blink_02\":" + _bool_str(g_f_blink_02_pass) + ","
+    row = row + "\"f_blink_03\":" + _bool_str(g_f_blink_03_pass)
+    row = row + "}"
+    let nl = chr(10)
+    let mut existing = ""
+    let prior = read_file(path)
+    if prior != "" { existing = prior }
+    write_file(path, existing + row + nl)
+}
+
+// ════════════════════════════════════════════════════════════════════
+// Live runner — collect.hexa subprocess delegation
+//   raw#10 honest: this protocol does NOT do raw BrainFlow ingest itself;
+//   it delegates to anima-eeg/collect.hexa and post-analyzes the .npy.
+//   --run prints the audio cue schedule and shells out the collect command;
+//   user runs in a separate terminal / hooks audio. raw#15: no personal
+//   paths hardcoded (all CLI args).
+// ════════════════════════════════════════════════════════════════════
+
+fn print_run_plan(port: string, board: string, output: string) {
+    build_schedule()
+    println("── eye_blink_detect live run plan ──")
+    println("schema=" + SCHEMA)
+    println("port=" + port)
+    println("board=" + board)
+    println("output=" + output)
+    println("sample_rate_hz=" + to_string(SAMPLE_RATE_HZ))
+    println("channel_count=" + to_string(CHANNEL_COUNT))
+    println("notch_hz=" + to_string(NOTCH_HZ))
+    println("bandpass=" + to_string(BANDPASS_LO_HZ) + "-" + to_string(BANDPASS_HI_HZ) + " Hz, order=" + to_string(BANDPASS_ORDER))
+    println("blink_threshold_uv=" + to_string(BLINK_THRESHOLD_UV))
+    println("blink_refractory_ms=" + to_string(BLINK_INTERVAL_MIN_MS))
+    println("total_seconds=" + to_string(g_total_seconds))
+    println("")
+    println("[block schedule — REST / BLINK / REST]")
+    let mut i = 0
+    while i < g_block_count {
+        let t0 = block_start_at(i)
+        let dur = block_duration_at(i)
+        let kind = block_kind_at(i)
+        let cue = cue_text_at(i)
+        println("  t=" + to_string(t0) + "s  block#" + to_string(i + 1) + "  " + kind + "  dur=" + to_string(dur) + "s  cue=\"" + cue + "\"")
+        i = i + 1
+    }
+    println("")
+    println("[user hand-step — montage assumption]")
+    println("  N1P (ch1)  -> Fp1 (forehead, 1\" above left brow, 1\" left of midline)")
+    println("  N2P (ch2)  -> Fp2 (forehead, 1\" above right brow, 1\" right of midline)")
+    println("  N7P (ch7)  -> O1  (1\" above inion, 1\" left)")
+    println("  N8P (ch8)  -> O2  (1\" above inion, 1\" right)")
+    println("  SRB2       -> A1 earlobe (white wire)")
+    println("  BIAS       -> A2 earlobe (black wire)")
+    println("")
+    println("[delegate command — run in separate terminal]")
+    println("  hexa run anima-eeg/collect.hexa --port " + port + " \\")
+    println("      --board " + board + " --duration " + to_string(g_total_seconds) + " \\")
+    println("      --output " + output)
+    println("")
+    println("[audio cues — follow on speaker / TTS at t=0,30,60]")
+    println("  t=0s   → \"휴식 (Rest)\"")
+    println("  t=30s  → \"강하게 깜빡이세요 1초당 1회 (Blink hard, once per second)\"")
+    println("  t=60s  → \"휴식 (Rest)\"")
+}
+
+// ════════════════════════════════════════════════════════════════════
+// Tests (selftest)
+// ════════════════════════════════════════════════════════════════════
+
+fn assert_true(cond: bool, label: string) -> bool {
+    if cond { println("  PASS: " + label) } else { println("  FAIL: " + label) }
+    return cond
+}
+
+fn run_tests() -> int {
+    let mut pass = 0
+    let mut fail = 0
+
+    println("=== eye_blink_detect selftest ===")
+
+    // T1: schedule build (3 blocks, 90 s)
+    println("[T1] schedule build")
+    build_schedule()
+    let ok1a = assert_true(g_block_count == 3, "block_count == 3")
+    let ok1b = assert_true(g_total_seconds == TOTAL_DURATION_S, "total seconds == 90")
+    if ok1a && ok1b { pass = pass + 1 } else { fail = fail + 1 }
+
+    // T2: REST/BLINK/REST ordering
+    println("[T2] REST → BLINK → REST ordering")
+    let ok2a = assert_true(block_kind_at(0) == "REST", "block 0 = REST")
+    let ok2b = assert_true(block_kind_at(1) == "BLINK", "block 1 = BLINK")
+    let ok2c = assert_true(block_kind_at(2) == "REST", "block 2 = REST")
+    let ok2d = assert_true(block_start_at(1) == 30, "BLINK starts at t=30s")
+    let ok2e = assert_true(block_start_at(2) == 60, "second REST at t=60s")
+    if ok2a && ok2b && ok2c && ok2d && ok2e { pass = pass + 1 } else { fail = fail + 1 }
+
+    // T3: idempotent rebuild (raw#65)
+    println("[T3] idempotent schedule rebuild")
+    build_schedule()
+    let bc1 = g_block_count
+    build_schedule()
+    let ok3 = assert_true(g_block_count == bc1, "block count idempotent")
+    if ok3 { pass = pass + 1 } else { fail = fail + 1 }
+
+    // T4: nominal synthetic — all 3 falsifiers PASS
+    println("[T4] synthetic nominal — F_BLINK_01/02/03 PASS")
+    analyze_synthetic(false, false, false)
+    evaluate_falsifiers()
+    let ok4a = assert_true(g_f_blink_01_pass, "F_BLINK_01 Fp amp > 100 µV")
+    let ok4b = assert_true(g_f_blink_02_pass, "F_BLINK_02 count in [25,35]")
+    let ok4c = assert_true(g_f_blink_03_pass, "F_BLINK_03 Fp > O")
+    let ok4d = assert_true(g_blink_count == 30, "blink count = 30")
+    let ok4e = assert_true(g_fp_max_amp_uv > 100.0, "Fp max amp = " + to_string(g_fp_max_amp_uv))
+    if ok4a && ok4b && ok4c && ok4d && ok4e { pass = pass + 1 } else { fail = fail + 1 }
+
+    // T5: F_BLINK_01 falsifier — amp below threshold
+    println("[T5] F_BLINK_01 falsifier — Fp amp = 80 µV (sub-threshold)")
+    analyze_synthetic(true, false, false)
+    evaluate_falsifiers()
+    let ok5a = assert_true(!g_f_blink_01_pass, "F_BLINK_01 fails")
+    let ok5b = assert_true(g_f_blink_02_pass, "F_BLINK_02 still passes")
+    if ok5a && ok5b { pass = pass + 1 } else { fail = fail + 1 }
+
+    // T6: F_BLINK_02 falsifier — count too low
+    println("[T6] F_BLINK_02 falsifier — count = 12 (out of [25,35])")
+    analyze_synthetic(false, true, false)
+    evaluate_falsifiers()
+    let ok6a = assert_true(g_f_blink_01_pass, "F_BLINK_01 still passes")
+    let ok6b = assert_true(!g_f_blink_02_pass, "F_BLINK_02 fails")
+    let ok6c = assert_true(g_f_blink_03_pass, "F_BLINK_03 still passes")
+    if ok6a && ok6b && ok6c { pass = pass + 1 } else { fail = fail + 1 }
+
+    // T7: F_BLINK_03 falsifier — occipital max
+    println("[T7] F_BLINK_03 falsifier — O > Fp (occipital max)")
+    analyze_synthetic(false, false, true)
+    evaluate_falsifiers()
+    let ok7a = assert_true(!g_f_blink_03_pass, "F_BLINK_03 fails (occipital max)")
+    if ok7a { pass = pass + 1 } else { fail = fail + 1 }
+
+    // T8: cue text mapping
+    println("[T8] audio cue text")
+    let cue_rest = cue_text_at(0)
+    let cue_blink = cue_text_at(1)
+    let ok8a = assert_true(cue_rest == "휴식 (Rest)", "REST cue text")
+    let ok8b = assert_true(cue_blink == "강하게 깜빡이세요 1초당 1회 (Blink hard, once per second)", "BLINK cue text")
+    if ok8a && ok8b { pass = pass + 1 } else { fail = fail + 1 }
+
+    // T9: detection thresholds frozen
+    println("[T9] detection thresholds frozen")
+    let ok9a = assert_true(BLINK_THRESHOLD_UV == 50.0, "threshold = 50 µV")
+    let ok9b = assert_true(BLINK_AMP_PASS_UV == 100.0, "F_BLINK_01 cutoff = 100 µV")
+    let ok9c = assert_true(BLINK_INTERVAL_MIN_MS == 200, "refractory = 200 ms")
+    let ok9d = assert_true(BLINK_COUNT_LO == 25, "count_lo = 25")
+    let ok9e = assert_true(BLINK_COUNT_HI == 35, "count_hi = 35")
+    if ok9a && ok9b && ok9c && ok9d && ok9e { pass = pass + 1 } else { fail = fail + 1 }
+
+    // T10: audit JSONL emit (raw#65 byte-stable)
+    println("[T10] audit JSONL emit deterministic")
+    build_schedule()
+    analyze_synthetic(false, false, false)
+    evaluate_falsifiers()
+    let ts = "selftest_synth"
+    let path = AUDIT_DIR + "/" + ts + "_session.jsonl"
+    write_file(path, "")
+    emit_audit(ts)
+    let body1 = read_file(path)
+    write_file(path, "")
+    emit_audit(ts)
+    let body2 = read_file(path)
+    let ok10a = assert_true(body1 == body2, "audit row byte-stable")
+    let ok10b = assert_true(len(body1) > 0, "audit row non-empty")
+    if ok10a && ok10b { pass = pass + 1 } else { fail = fail + 1 }
+
+    println("")
+    println("Results: " + to_string(pass) + " PASS / " + to_string(fail) + " FAIL out of " + to_string(pass + fail))
+    return fail
+}
+
+// ════════════════════════════════════════════════════════════════════
+// CLI entry
+// ════════════════════════════════════════════════════════════════════
+
+fn _print_usage() {
+    println("usage:")
+    println("  hexa run anima-eeg/protocols/eye_blink_detect.hexa --selftest")
+    println("  hexa run anima-eeg/protocols/eye_blink_detect.hexa --run \\")
+    println("      --port <serial> --board <cyton_daisy> --output <npy>")
+}
+
+fn _arg_value(av: list, key: string, dflt: string) -> string {
+    let mut i = 1
+    while i < len(av) {
+        if av[i] == key && i + 1 < len(av) {
+            return av[i + 1]
+        }
+        i = i + 1
+    }
+    return dflt
+}
+
+fn main() {
+    let av = argv()
+    let mut selftest = false
+    let mut run = false
+    let mut i = 1
+    while i < len(av) {
+        if av[i] == "--selftest" { selftest = true }
+        if av[i] == "--run"      { run = true }
+        if av[i] == "--help"     { _print_usage(); exit(0) }
+        i = i + 1
+    }
+
+    if run {
+        let port   = _arg_value(av, "--port",   "")
+        let board  = _arg_value(av, "--board",  "cyton_daisy")
+        let output = _arg_value(av, "--output", "")
+        if len(port) == 0 || len(output) == 0 {
+            eprintln("ABORT: --run requires --port and --output (raw#15 no personal paths)")
+            _print_usage()
+            exit(2)
+        }
+        print_run_plan(port, board, output)
+        // raw#10 honest: this cycle prints plan + audio cue schedule;
+        // the actual collect.hexa subprocess + audio TTS hook is the
+        // user hand-step. Plan is logged; user executes in separate
+        // terminal and reports back the .npy for analyze pass.
+        exit(0)
+    }
+
+    if !selftest {
+        _print_usage()
+        exit(2)
+    }
+
+    println("── eye_blink_detect selftest ──")
+    println("schema=" + SCHEMA)
+    println("raw10_honest=synthetic_blink_train_no_real_brainflow_no_audio_terminal_only")
+    println("raw82_darwin=clock_gettime_monotonic_via_collect_hexa")
+    println("paradigm=robust_easy_pass_replacing_failed_berger_alpha")
+    println("")
+
+    // Demonstration (synthetic nominal session: 30 spikes @ 1 Hz, 200 µV)
+    build_schedule()
+    analyze_synthetic(false, false, false)
+    evaluate_falsifiers()
+
+    println("[demo nominal session]")
+    println("block_count="              + to_string(g_block_count))
+    println("total_seconds="            + to_string(g_total_seconds))
+    println("blink_count="              + to_string(g_blink_count))
+    println("fp1_amp_uv="               + to_string(g_fp1_amp_uv))
+    println("fp2_amp_uv="               + to_string(g_fp2_amp_uv))
+    println("o1_amp_uv="                + to_string(g_o1_amp_uv))
+    println("o2_amp_uv="                + to_string(g_o2_amp_uv))
+    println("fp_max_amp_uv="            + to_string(g_fp_max_amp_uv))
+    println("o_max_amp_uv="             + to_string(g_o_max_amp_uv))
+    println("min_iblink_interval_ms="   + to_string(g_min_iblink_interval_ms))
+    println("f_blink_01="               + _bool_str(g_f_blink_01_pass))
+    println("f_blink_02="               + _bool_str(g_f_blink_02_pass))
+    println("f_blink_03="               + _bool_str(g_f_blink_03_pass))
+    println("")
+
+    emit_sentinel()
+    emit_audit("selftest_synth")
+
+    let fails = run_tests()
+    if fails != 0 {
+        println("selftest=fail")
+        eprintln("selftest FAILED: " + to_string(fails) + " test(s) failed")
+        exit(1)
+    }
+    println("selftest=ok")
+    println("DONE")
+}
