@@ -1,18 +1,30 @@
-# clm_eeg 5-metric harness real-swap — pending state (2026-05-03)
+# clm_eeg 5-metric harness real-swap — transcoder landed (2026-05-03)
 
 **Scope:** `.roadmap.anima_clm_eeg cond.1` blocker resolution path
 
 ## Status
 
-Scaffold landed. Fixture swap **pending** — awaiting sibling-BG P1
-output at:
+`REAL_SWAP_TRANSCODER_LANDED` — schema bridged.
+
+Scaffold landed (cycle N-1). Sibling-BG P1 output (`welch_clean.npz` +
+`verdict.json`) landed cycle N. The schema mismatch (P2 scaffold expected
+`welch_clean_summary.json`; P1 wrote `verdict.json` + `welch_clean.npz`) is
+now bridged by:
 
 ```
-state/berger_v6_clean_reanalyze_2026_05_03/welch_clean.npz
-state/berger_v6_clean_reanalyze_2026_05_03/welch_clean_summary.json
+anima-clm-eeg/tool/welch_to_bandpower_transcoder.hexa  (raw#9 hexa stage1)
+state/.welch_to_bandpower_helper.py                     (raw#37 transient,
+                                                         gitignored)
 ```
 
-Once that JSON sidecar lands, this scaffold consumes it.
+The transcoder reads P1's verdict.json + a numpy-helper dump of the welch
+PSD and emits a `synthetic_16ch_v1.json`-compatible JSON fixture at:
+
+```
+anima-clm-eeg/fixtures/real_v6_clean_2026_05_03.json
+```
+
+Sentinel emit (stderr): `__BANDPOWER_TRANSCODE__ PASS <fixture-path>`
 
 ## Tier (raw#10 honest C3)
 
@@ -26,6 +38,9 @@ Once that JSON sidecar lands, this scaffold consumes it.
 | File | Role |
 |------|------|
 | `anima-clm-eeg/tool/clm_eeg_harness_realswap.hexa` | Adapter — synthetic passthrough OR real-swap from sibling-BG P1 NPZ summary |
+| `anima-clm-eeg/tool/welch_to_bandpower_transcoder.hexa` | **NEW (cycle N)** — bridges P1 npz/verdict → synthetic_16ch_v1 fixture schema |
+| `state/.welch_to_bandpower_helper.py` | raw#37 transient — numpy helper for .npz parse + 5-band integral (gitignored) |
+| `anima-clm-eeg/fixtures/real_v6_clean_2026_05_03.json` | **NEW (cycle N)** — emitted real fixture (functional_analog tier, N=1) |
 | `anima-clm-eeg/state/realswap_pending_2026_05_03/README.md` | This file — activation runbook |
 
 ## Channel quarantine (raw#10 honest)
@@ -47,34 +62,61 @@ Clean channels (1-indexed in source): `[2, 3, 4, 7, 9, 10, 11, 12, 13, 14, 15]`
 Rationale — preserves loss visibility for downstream auditors instead
 of fabricating signal where none was recorded.
 
-## Activation path
+## Activation path (cycle N — transcoder landed)
 
-Once sibling-BG P1 lands `welch_clean_summary.json`:
+The real fixture is now generated. Two pre-steps + one optional swap:
 
-1. Run the adapter in real mode:
+### Step 1: regenerate helper dump (idempotent; raw#37 transient)
 
-   ```bash
-   HEXA_RESOLVER_NO_REROUTE=1 hexa run anima-clm-eeg/tool/clm_eeg_harness_realswap.hexa \
-       --fixture-mode real \
-       --real-summary-json state/berger_v6_clean_reanalyze_2026_05_03/welch_clean_summary.json \
-       --clean-channels "2,3,4,7,9,10,11,12,13,14,15" \
-       --output anima-clm-eeg/fixtures/real_v6_clean_2026_05_03.json
-   ```
+The hexa stage1 runtime sandboxes shell `exec()`, so the numpy helper must
+be invoked DIRECTLY by the caller before the transcoder runs:
 
-2. Re-run the 5-metric pre-register chain pointing `CLM_EEG_FIXTURE_PATH`
-   at the new fixture:
+```bash
+python3 state/.welch_to_bandpower_helper.py \
+    state/berger_v6_clean_reanalyze_2026_05_03/welch_clean.npz \
+    state/.welch_to_bandpower_dump.txt
+```
 
-   ```bash
-   CLM_EEG_FIXTURE_PATH=anima-clm-eeg/fixtures/real_v6_clean_2026_05_03.json \
-       hexa run anima-clm-eeg/tool/clm_eeg_p1_lz_pre_register.hexa
-   # ... and p2 / p3 likewise
-   ```
+This produces a flat-text per-channel band-power dump (×1000 fixed-point).
 
-3. Re-run the harness aggregator:
+### Step 2: run the transcoder (raw#9 hexa stage1)
 
-   ```bash
-   HEXA_RESOLVER_NO_REROUTE=1 hexa run anima-clm-eeg/tool/clm_eeg_harness_smoke.hexa --selftest
-   ```
+```bash
+HEXA_RESOLVER_NO_REROUTE=1 hexa run \
+    anima-clm-eeg/tool/welch_to_bandpower_transcoder.hexa \
+    --welch-npz state/berger_v6_clean_reanalyze_2026_05_03/welch_clean.npz \
+    --verdict-json state/berger_v6_clean_reanalyze_2026_05_03/verdict.json \
+    --clean-channels "2,3,4,7,9,10,11,12,13,14,15" \
+    --output-fixture anima-clm-eeg/fixtures/real_v6_clean_2026_05_03.json
+```
+
+Sentinel: `__BANDPOWER_TRANSCODE__ PASS anima-clm-eeg/fixtures/real_v6_clean_2026_05_03.json`
+
+The fixture carries verbatim P1 verdicts (`f1_status`, `f2_status`,
+`f3_status` — NOT relaxed per raw#71), `tier: functional_analog`,
+`p1_tier: analog`, `n_subjects: 1`, `rail_quarantined_rows_1idx: [1,5,6,8,16]`,
+and `clean_channel_mask` for downstream auditors.
+
+### Step 3 (DEFERRED — gated on next-cycle approval)
+
+Re-run the harness pointing `CLM_EEG_FIXTURE_PATH` at the real fixture.
+This requires the smoke harness `chflags uchg` lock to be RELEASED first
+(see "Open questions" below). DO NOT proceed without explicit user go.
+
+```bash
+# DEFERRED — DO NOT RUN until uchg unlock is approved
+CLM_EEG_FIXTURE_PATH=anima-clm-eeg/fixtures/real_v6_clean_2026_05_03.json \
+    HEXA_RESOLVER_NO_REROUTE=1 hexa run \
+    anima-clm-eeg/tool/clm_eeg_harness_smoke.hexa --selftest
+```
+
+### Optional: legacy adapter (clm_eeg_harness_realswap.hexa)
+
+The pre-existing `clm_eeg_harness_realswap.hexa` scaffold expected a
+`welch_clean_summary.json` schema that P1 did not produce. With the
+transcoder now landed, the adapter is functionally superseded for the
+real fixture path. It still serves as a synthetic-mode passthrough; no
+edits to it this cycle.
 
 ## Honest constraints (raw#71 falsifier-bound)
 
@@ -88,17 +130,26 @@ Once sibling-BG P1 lands `welch_clean_summary.json`:
 
 ## Open questions for next cycle
 
-1. Should the band-power transcoder be a separate `.hexa` tool or stay
-   inlined inside `clm_eeg_harness_realswap.hexa`? (Lean toward separate
-   to keep adapter pure-bridge.)
-2. The sibling-BG P1 NPZ summary schema is not yet frozen — once it lands,
-   confirm field names (`per_channel_band_powers_x1000`?) before
-   activating real-mode transcoding.
-3. Existing `clm_eeg_harness_smoke.hexa` aggregates p1/p2/p3 pre-register
-   verdicts — its output JSON does not yet carry a `fixture_mode` tag.
-   The file is currently `chflags uchg` (immutable, dual-lock protected
-   — see `anima-clm-eeg/tool/silent_edit_dual_lock.sh.txt`), so this
-   cycle did **not** modify it. Next cycle: unlock + add
-   `CLM_EEG_HARNESS_FIXTURE_MODE` env propagation into the cert (annotation
-   only — aggregation logic unchanged) so post-real-swap auditors can
-   distinguish synthetic vs functional-analog runs in the marker chain.
+1. ~~Should the band-power transcoder be a separate `.hexa` tool…~~
+   **RESOLVED cycle N**: separate `welch_to_bandpower_transcoder.hexa` —
+   keeps `clm_eeg_harness_realswap.hexa` as pure synthetic passthrough.
+2. ~~Sibling-BG P1 NPZ schema not yet frozen…~~
+   **RESOLVED cycle N**: schema confirmed (keys `f`, `psd_ec`, `psd_eo`,
+   `ap_ec`, `ap_eo`, `clean_channels`, `railed_rows`, `labels`); see
+   helper.py docstring for verified types/shapes.
+3. **GATING DEPENDENCY (next cycle)** — `clm_eeg_harness_smoke.hexa` is
+   `chflags uchg` (dual-lock protected — see
+   `anima-clm-eeg/tool/silent_edit_dual_lock.sh.txt`). Cycle N did **not**
+   touch it. Next cycle requires explicit user approval to:
+   - release uchg flag on `clm_eeg_harness_smoke.hexa`
+   - run smoke harness with `CLM_EEG_FIXTURE_PATH=anima-clm-eeg/fixtures/real_v6_clean_2026_05_03.json`
+   - optionally add `CLM_EEG_HARNESS_FIXTURE_MODE` env propagation into
+     the cert so synthetic vs functional-analog runs are distinguishable
+     in the marker chain (annotation only — aggregation logic unchanged).
+4. **HONEST C3 (raw#10) on the band-power scale**: helper.py applies a
+   global scalar (median-alpha → target 1542 ×1000 to land in synthetic
+   fixture range). This preserves cross-channel variance ratios but does
+   NOT preserve absolute physical units (µV²/Hz). Downstream metrics that
+   rely only on relative band ratios (γ/θ ratio, etc.) are unaffected;
+   metrics that key off absolute thresholds would need a re-calibration
+   pass — not in scope this cycle.

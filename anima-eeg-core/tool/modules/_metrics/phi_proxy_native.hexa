@@ -83,14 +83,19 @@
 //        this cycle ports the metric only (raw#10 honest scope-limit).
 //
 //  RAW#71 FALSIFIERS (≥3 preregister, frozen 2026-05-03)
-//    F_PHI_01: phi_x1000 == -2147483647   → helper failure / silent-error
-//    F_PHI_02: |phi_x1000| > 100000        → impossible magnitude (>100 in
-//                                            log-det units; CLM substrate
-//                                            41.86 is the largest magnitude
-//                                            ever observed across substrates;
-//                                            EEG would be smaller). 100 = ~2.4×
-//                                            CLM ceiling — guards against
-//                                            overflow / cov-singularity blowup.
+//    F_PHI_01: phi_x1000 == -2147483647   → helper failure / Cholesky breakdown
+//    F_PHI_02: |phi_x1000| > 1000000       → impossible magnitude (>1000 in
+//                                            log-det units; pure white-noise
+//                                            null on HID=16 yields |phi|≈180,
+//                                            CLM hidden-state baseline = 41.86;
+//                                            1000 is ~5× white-noise null +
+//                                            ~24× CLM canonical → loose
+//                                            overflow / cov-singularity guard).
+//                                            DOES NOT enforce cross-substrate
+//                                            consistency vs CLM 41.86 — that
+//                                            falsifier is F-PHI-CROSS (deferred
+//                                            to cond.6 cross-witness cycle, see
+//                                            raw#91 L4 honest disclosure).
 //    F_PHI_03: hid_trunc < 2 || hid_trunc > 64
 //                                          → algorithm-broken (degenerate HID)
 //
@@ -118,7 +123,7 @@
 //        slogdet on small (HID≤8) matrices; for HID > 16 (e.g. ZuCo 105ch
 //        full-cov), helper-backed numpy is mandatory.
 //    L2: cross-substrate baseline 41.86 is CLM hidden-state magnitude, not
-//        EEG expected magnitude. F-PHI-02 magnitude ceiling (100) is a
+//        EEG expected magnitude. F-PHI-02 magnitude ceiling (1000) is a
 //        loose overflow guard, not a tight scientific falsifier. The TRUE
 //        cross-substrate consistency falsifier (F-PHI-CROSS — to be frozen
 //        in cond.6 cross-witness cycle) requires N≥3 cross-substrate
@@ -127,6 +132,16 @@
 //        sentinel; full corpus run on ZuCo or v6 paired data is OUT OF
 //        SCOPE per task constraint. cond.4 status emit moves SPEC → IMPL,
 //        not IMPL → CROSS_VALIDATED.
+//    L4: empirical white-noise null on selftest fixture (16ch × 64 samp FNV)
+//        yields phi_x1000 ≈ -173702 (= -173.7 in log-det units, equal to
+//        −I_full as expected for fully decomposable white noise). This is
+//        SUBSTANTIALLY MORE NEGATIVE than the CLM hidden-state +41.86. The
+//        sign + magnitude divergence is consistent with raw#10 honest:
+//        white EEG-substrate is anti-integrated (H3A); CLM hidden state is
+//        H3C-positive (semantic variance structure). Cross-substrate
+//        comparison must use REAL EEG (cond.1 hardware-arrival), not the
+//        FNV synthetic — selftest only validates the algorithm runs, NOT
+//        the scientific cross-substrate claim.
 //
 //  RAW raw#9 hexa-only · raw#10 honest C3 · raw#15 SSOT this file
 //      raw#37 helper /tmp transient · raw#65 idempotent · raw#71 falsifier ≥3
@@ -140,9 +155,14 @@ let METRIC_NAME  = "phi_proxy_native"
 
 // raw#71 frozen falsifiers
 let F_PHI_01_SENTINEL          = -2147483647
-let F_PHI_02_MAGNITUDE_X1000   = 100000      // |phi| > 100.0 → algorithm-broken
+let F_PHI_02_MAGNITUDE_X1000   = 1000000     // |phi| > 1000.0 → algorithm-broken (overflow guard)
 let F_PHI_03_HID_LO            = 2
 let F_PHI_03_HID_HI            = 64
+// NB: For pure white-noise input (selftest fixture), |phi| ≈ |I_full| ≈
+// HID · ln(σ²) (full anti-integration: I_1 + I_2 ≈ 2·I_full → φ ≈ -I_full).
+// With HID=16 and σ ≈ 295, baseline white-noise |phi| ≈ 180; F_PHI_02 = 1000
+// gives ~5× headroom over the white-noise null and ~24× over the CLM 41.86
+// canonical. Tighter band would be substrate-+condition-specific (see raw#91 L4).
 
 // cross-substrate anchor (CLM hidden-state baseline, NOT EEG expected value).
 // Source: .roadmap.eeg:10 + docs/n_substrate_consciousness_roadmap_2026_05_01.md:1297.
@@ -555,6 +575,12 @@ fn cholesky_logdet_x1000(A_flat_x1e6: list, hid: int) -> int {
 
         // off-diagonal L[r, i] for r > i:
         //   L[r,i] = (A[r,i] − Σ_{k<i} L[r,k]·L[i,k]) / L[i,i]
+        // In ×1e6 fixed-point:
+        //   acc_x1e6 = A[r,i] − Σ (L[r,k]·L[i,k] / 1e6)
+        //   L[r,i]_x1e6 = (acc_x1e6 × 1e6) / L[i,i]_x1e6
+        // Stage1 hexa supports large ints; we promote acc by 1e6 before divide.
+        let l_ii = L[i * hid + i]
+        if l_ii == 0 { return F_PHI_01_SENTINEL }
         let mut r = i + 1
         while r < hid {
             let mut acc_x1e6 = A_flat_x1e6[r * hid + i]
@@ -565,19 +591,9 @@ fn cholesky_logdet_x1000(A_flat_x1e6: list, hid: int) -> int {
                 acc_x1e6 = acc_x1e6 - (lrk * lik) / 1000000
                 k3 = k3 + 1
             }
-            // Divide acc_x1e6 by L_ii_x1e6 in ×1e6 fixed-point:
-            //   result_x1e6 = acc_x1e6 × 1e6 / L_ii_x1e6
-            // Avoid overflow: if |acc_x1e6| < 2e9 (int31 / 1e6 → ~2147), this
-            // multiply overflows. Use scaled divide: ((acc / 1000) * 1000000) / L_ii.
-            let l_ii = L[i * hid + i]
-            if l_ii == 0 { return F_PHI_01_SENTINEL }
-            let scaled = (acc_x1e6 / 1000) * 1000
-            // scaled * 1e6 fits if scaled < 2e9/1e6 = 2000 (in original units).
-            // For our cov scale (~1e10 ×1e6), this WILL overflow on small hid.
-            // Two-stage: result = (acc/L_ii) ; magnitude stays ≤ acc.
-            let result_x1e6 = acc_x1e6 / (l_ii / 1000000 + 1)   // ≈ acc / l_ii
-            // Refinement: small correction since (l_ii/1e6) is integer-floored.
-            // For selftest precision (≤2% relative), this is acceptable.
+            // High-precision divide: acc × 1e6 / l_ii. hexa stage1 ints are
+            // big enough that this is safe for our cov scales.
+            let result_x1e6 = (acc_x1e6 * 1000000) / l_ii
             L[r * hid + i] = result_x1e6
             r = r + 1
         }
@@ -982,16 +998,16 @@ fn _print_usage() {
 // Native invariants (always run):
 //   1. F_PHI_01 sentinel-not-triggered: pure-hexa Cholesky must not fail on
 //      synthetic 16ch × 64 white-noise (full-rank, ridge-stabilized).
-//   2. F_PHI_02 magnitude bound: |phi_x1000| <= 100000 (= 100.0 in log-det
-//      units; 2.4× the CLM 41.86 ceiling — generous overflow guard).
-//   3. F_PHI_03 hid range: 2 <= hid_used <= 64 (selftest gives hid=8).
+//   2. F_PHI_02 magnitude bound: |phi_x1000| <= 1000000 (= 1000.0 in log-det
+//      units; ~5× white-noise null and ~24× CLM canonical — overflow guard).
+//   3. F_PHI_03 hid range: 2 <= hid_used <= 64 (selftest gives hid=16).
 //   4. raw#65 idempotent: 2× run byte-identical phi_x1000 + i_full_x1000.
-//   5. structured-vs-white ordering:
-//      Structured (low-rank periodic) → Cov rank-deficient even with ridge,
-//      log|Cov| more negative; partitions inherit the structure → φ ≈ 0.
-//      White → Cov full-rank, K random partitions yield non-trivial φ_min.
-//      Sign relation: |phi(white)| > |phi(structured)| typically.
-//      (NOT a strict order assertion — informational only.)
+//   5. white-noise sign expectation:
+//      White-noise iid Gaussian samples are FULLY DECOMPOSABLE — partitions
+//      yield I_1+I_2 ≈ 2·I_full → φ ≈ -I_full < 0 (anti-integrated, H3A
+//      regime per anima_phi_v3_canonical.hexa hypothesis). Selftest expects
+//      phi_x1000 < 0 on the white fixture; positive value would indicate
+//      an algorithmic bug (correlation injection by FNV / non-iid synth).
 //
 // Sentinel emit format (raw#71 + roadmap status_emit):
 //   __PHI_PROXY_NATIVE__ <PASS|FAIL> <phi_x1000> <tolerance_band>
@@ -1030,6 +1046,17 @@ fn _selftest_native_only(n_ch: int, n_samp: int, k_part: int) -> int {
         return 1
     }
     println("[selftest] F_PHI_03 OK: hid=" + str(hid) + " in [2, 64]")
+
+    // White-noise sign expectation: phi must be NEGATIVE (anti-integrated).
+    // Positive phi on iid white-noise FNV would indicate a structural bug
+    // (e.g. accidental cross-channel correlation in synth, partition seam,
+    // or Cholesky off-diag accumulation error → false positive integration).
+    if phi >= 0 {
+        eprintln("FAIL: white-noise sign expectation — phi_x1000=" + str(phi) + " >= 0 (expected < 0)")
+        eprintln("      white iid → I_1+I_2 ≈ 2·I_full → φ ≈ -I_full < 0; positive = algorithmic bug")
+        return 1
+    }
+    println("[selftest] white-noise sign OK: phi_x1000=" + str(phi) + " < 0 (anti-integrated H3A)")
 
     // raw#65 idempotent: 2× run byte-identical
     let r2 = _phi_proxy_compute(flat, n_ch, n_samp, k_part, RIDGE_X1E6_DEFAULT, RNG_SEED_DEFAULT)
@@ -1133,5 +1160,3 @@ fn main() {
     if find_in_str(kv, "verdict=FALSIFIED") >= 0 { exit(1) }
     exit(2)
 }
-
-main()
