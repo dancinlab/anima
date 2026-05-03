@@ -198,7 +198,15 @@ fn _write_helper() {
     parts.push("        return False, ''\n")
     parts.push("    return True, r.stdout.strip()\n\n")
 
-    parts.push("COLLECT_PY = textwrap.dedent('''\n")
+    // raw#10 honest C3 (2026-05-03 IndentationError fix): MUST use r''' (raw
+    // string) so `\n` escapes inside f-strings (e.g. f'msg\n') are NOT
+    // interpreted by Python's triple-quote parser as actual newlines. Without
+    // raw, the f-string body is split across physical lines with the closing
+    // ')' at column 0, breaking textwrap.dedent's common-prefix detection
+    // (common-prefix becomes "" → dedent strips nothing → 4-space indent
+    // survives → IndentationError on subprocess `-c` exec). Mirror pattern
+    // from eeg_brainflow_sanity.hexa (CAPTURE_PY = textwrap.dedent(r'''...''')).
+    parts.push("COLLECT_PY = textwrap.dedent(r'''\n")
     // raw#10 honest C3 (2026-05-03 NameError fix): subprocess `-c` payload is a
     // separate Python interpreter; outer helper's `import os` does NOT carry
     // through. Must import `os` here for os.makedirs/os.path.* used below.

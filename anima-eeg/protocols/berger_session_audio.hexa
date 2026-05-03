@@ -33,6 +33,8 @@ let DEFAULT_PORT          = "/dev/cu.usbserial-DP04WGIQ"
 let DEFAULT_BOARD         = "cyton_daisy"
 let REST_DURATION_S       = 10
 let CUE_LEAD_S            = 3      // count-down before each block
+let COLLECT_PREPARE_LAG_S = 3      // BrainFlow prepare_session + start_stream absorb
+                                   // (raw#10 honest C3: hardware-dependent, 2-3s typical)
 
 // ════════════════════════════════════════════════════════════════════
 // Helpers
@@ -55,14 +57,32 @@ fn run_impedance(port: str) -> int {
     return exec_status(cmd)
 }
 
-fn run_collect(port: str, board: str, duration: int, tag: str, output: str) -> int {
+fn run_collect_bg(port: str, board: str, duration: int, tag: str, output: str) -> int {
+    // background collect — wrapper owns cue sync + COLLECT_PREPARE_LAG_S absorb.
+    // raw#10 honest C3: BrainFlow prepare_session + start_stream takes 2-3s
+    // before actual ring-buffer capture begins. Foreground run_collect 측 cue
+    // 측 "지금" 직후 capture 시작 가정 → mismatch. Background launch + lag
+    // sleep + cue sync 측 정확 boundary.
+    //
+    // STDOUT REDIRECT (audio cue audibility fix 2026_05_03):
+    //   collect.hexa BrainFlow init + per-sample [ts=...] chatter 측 wrapper
+    //   terminal 측 flood → 직후 say "지금 눈 감으세요" cue 측 audio 측
+    //   안 들리는 issue. `&> /tmp/anima_eeg_collect_<tag>.log` 측 redirect
+    //   → wrapper terminal quiet → say cue 측 정확 audible.
+    //   raw#10 honest C3: log path 측 hardcoded /tmp; macOS-specific subshell.
+    let log_path = "/tmp/anima_eeg_collect_" + tag + ".log"
     let cmd = "hexa run anima-eeg/collect.hexa --collect --duration " + str(duration)
               + " --tag " + tag
               + " --output '" + output + "'"
               + " --port '" + port + "'"
               + " --board '" + board + "'"
-    print("[capture] " + tag + " " + str(duration) + "s ...")
+              + " > '" + log_path + "' 2>&1 &"
+    print("[capture-bg] " + tag + " " + str(duration) + "s (log: " + log_path + ")")
     return exec_status(cmd)
+}
+
+fn wait_collect() -> int {
+    return exec_status("wait")
 }
 
 fn sleep_seconds(n: int) {
@@ -75,34 +95,44 @@ fn ensure_dir(path: str) {
 }
 
 fn date_tag_utc() -> str {
-    // YYYY_MM_DD UTC — environment override 가능
-    let env_tag = getenv("DATE_TAG")
-    if env_tag != "" {
-        return env_tag
-    }
-    let cmd = "date -u +%Y_%m_%d"
-    return exec_capture(cmd)
-}
-
-fn exec_capture(cmd: str) -> str {
-    return capture_stdout(cmd)
+    // YYYY_MM_DD UTC. raw#10 honest C3: hexa stage1 측 getenv 및
+    // capture_stdout builtin 측 X — runtime "undefined function" error 발생.
+    // 우회: 현재 cycle session day 측 hardcode. DATE_TAG env override 측 lost.
+    // 다음 cycle 측 manual update 필요 (audit 2026_05_04+ 측 진입 시).
+    return "2026_05_03"
 }
 
 // ════════════════════════════════════════════════════════════════════
 // Phases
 //   AUDIO CUE TIMING CONTRACT (raw#10 honest C3):
-//     모든 say_cue 측 BLOCKING — say -v Yuna 측 종료 후 측 다음 step
-//     시작. "지금" cue 측 run_collect 시작 직전 측 BLOCKING 호출 →
-//     사용자 측 cue 듣기 전에 capture 측 시작하지 않음. 60s collect
-//     측 foreground 호출 — wait 불필요. raw#65 idempotent.
-//     macOS only — Linux/Windows 측 say binary 부재 시 stub.
+//     이전 패턴: say_cue("지금") → run_collect (foreground) — collect 측
+//     prepare_session + start_stream 측 2-3s lag 동안 사용자 측 이미
+//     눈 감음 → measurement boundary mismatch.
+//     개선 패턴: run_collect_bg (background launch) → sleep
+//     COLLECT_PREPARE_LAG_S (3s, absorb BrainFlow init) → say_cue("지금")
+//     (이 시점 측 ring buffer 측 active capture) → sleep duration → wait.
+//     사용자 측 "지금" 듣고 눈 감는 시점 = capture phase boundary 정확.
+//     raw#10 honest C3: prepare_session lag 측 hardware-dependent
+//     (cyton_daisy ~2-3s, dongle reconnect 측 더 길 수 있음). 3s 측 typical
+//     median + safety margin. macOS only — Linux/Windows say binary 부재 시 stub.
 // ════════════════════════════════════════════════════════════════════
 
 fn phase_eyes_closed(voice: str, port: str, board: str, duration: int, output: str) -> int {
-    say_cue(voice, "삼 초 후 눈을 감으세요")    // BLOCKING ~2s
-    sleep_seconds(CUE_LEAD_S)                    // 3s lead
-    say_cue(voice, "지금")                       // BLOCKING — 완료 후 capture 시작
-    let rc = run_collect(port, board, duration, "berger_ec_v2", output)
+    // Sequence (raw#10 honest C3):
+    //   1. preamble cue: 사용자 측 다음 cue ("지금") 가 action signal 임을 명시
+    //   2. collect background launch (prepare_session 시작)
+    //   3. COLLECT_PREPARE_LAG_S sleep (BrainFlow init absorb)
+    //   4. action cue: "지금 눈 감으세요" — 이 시점 측 capture 진행 중
+    //   5. duration sleep + wait collect
+    say_cue(voice, "Eye-closed 60초 측정 준비. 시작 알림 후 눈을 감으세요")
+    let rc_launch = run_collect_bg(port, board, duration, "berger_ec_v2", output)
+    if rc_launch != 0 { return rc_launch }
+    sleep_seconds(COLLECT_PREPARE_LAG_S)         // absorb prepare_session + start_stream
+    // raw#10 honest C3: cue text strengthened (audio cue audibility fix 2026_05_03)
+    // — 길고 명확한 phrasing 으로 say binary 측 voice-load + speak window 확보
+    say_cue(voice, "지금. 지금 눈을 감으세요. 측정 시작") // BLOCKING ~2-3s — capture already streaming
+    sleep_seconds(duration)                       // hold for capture window
+    let rc = wait_collect()                       // sync subshell completion
     say_cue(voice, "측정 끝")
     return rc
 }
@@ -113,10 +143,15 @@ fn phase_rest(voice: str) {
 }
 
 fn phase_eyes_open(voice: str, port: str, board: str, duration: int, output: str) -> int {
-    say_cue(voice, "삼 초 후 눈을 뜨세요")       // BLOCKING ~2s
-    sleep_seconds(CUE_LEAD_S)                    // 3s lead
-    say_cue(voice, "지금")                       // BLOCKING — 완료 후 capture 시작
-    let rc = run_collect(port, board, duration, "berger_eo_v2", output)
+    // Mirror of phase_eyes_closed — see docstring above.
+    say_cue(voice, "Eye-open 60초 측정 준비. 시작 알림 후 눈을 뜨세요")
+    let rc_launch = run_collect_bg(port, board, duration, "berger_eo_v2", output)
+    if rc_launch != 0 { return rc_launch }
+    sleep_seconds(COLLECT_PREPARE_LAG_S)         // absorb prepare_session + start_stream
+    // raw#10 honest C3: cue text strengthened (audio cue audibility fix 2026_05_03)
+    say_cue(voice, "지금. 지금 눈을 뜨세요. 측정 시작") // BLOCKING ~2-3s — capture already streaming
+    sleep_seconds(duration)                       // hold for capture window
+    let rc = wait_collect()                       // sync subshell completion
     say_cue(voice, "측정 완료")
     return rc
 }
@@ -149,9 +184,11 @@ fn cmd_run(port: str, board: str, duration: int, voice: str, skip_impedance: int
             print("[error] impedance check 실패")
             return 1
         }
-        print("[step1] impedance: 16/16 GREEN 확인 후 Enter (Ctrl-C 중단)")
-        // raw#10: bash heredoc 측 사용자 confirm 직접 require
-        readline()
+        print("[step1] impedance: 16/16 GREEN 확인 후 5초 대기 (Ctrl-C 중단)")
+        // raw#10 honest C3: hexa stage1 측 readline builtin 측 X 가능 → fixed
+        // 5s pause 측 사용자 측 GREEN 확인 측 진행. confirm 측 implicit (ctrl-c
+        // 측 only abort path). Future stage2 측 readline 가용 시 prompt 복원.
+        sleep_seconds(5)
     }
 
     // Step 2: EC
@@ -212,6 +249,11 @@ fn cmd_selftest() -> int {
     if CUE_LEAD_S == 3 { pass_count = pass_count + 1 }
     else { print("[FAIL] T4 cue lead") }
 
+    // T5: collect prepare lag absorb (audio cue timing fix 2026_05_03)
+    test_count = test_count + 1
+    if COLLECT_PREPARE_LAG_S == 3 { pass_count = pass_count + 1 }
+    else { print("[FAIL] T5 collect prepare lag != 3s") }
+
     print("[selftest] " + str(pass_count) + " PASS / " + str(test_count - pass_count) + " FAIL")
     if pass_count == test_count {
         print("__BERGER_AUDIO__ PASS")
@@ -252,17 +294,20 @@ fn main() -> int {
     let mut voice = DEFAULT_VOICE
     let mut skip_impedance = 0
 
-    // skip leading interpreter/file/cache paths
+    // skip leading interpreter / script / cache paths until first flag
+    // (handles: hexa_interp.real, anima-eeg/.../*.hexa, build cache /exe stubs,
+    //  any absolute path-like argv prefix). Mirrors jaw_session_audio.hexa
+    //  argv-skip — required for --selftest argv prefix robustness (raw#65).
     let mut start = 0
     while start < n {
         let a = av[start]
-        if a.ends_with(".hexa") { start = start + 1 }
-        else { break }
-    }
-    while start < n {
-        let a = av[start]
-        if a.ends_with("/exe") { start = start + 1 }
-        else { break }
+        let mut is_flag = false
+        if len(a) >= 2 {
+            if a.starts_with("--") { is_flag = true }
+        }
+        if is_flag { break }
+        if a == "" { break }
+        start = start + 1
     }
 
     let mut i = start

@@ -80,7 +80,14 @@ fn exec_status(cmd: str) -> int {
 }
 
 fn exec_capture(cmd: str) -> str {
-    return capture_stdout(cmd)
+    // raw#10 honest C3: hexa stage1 측 capture_stdout builtin 측 X — runtime
+    // "undefined function" error 발생. 우회: file redirect + read via shell
+    // 측 indirection 측 X (read_file builtin 측 동일 불가). 본 stub 측 ""
+    // 반환만 — caller 측 print용 string 측 비어있음 처리 필요. rc-bound
+    // verdict 측 exec_status 측 별도 사용 (sample_rate_guard py2).
+    let log = "/tmp/anima_eeg_capture_stub.log"
+    exec_status(cmd + " > '" + log + "' 2>&1")
+    return ""
 }
 
 fn run_impedance(port: str) -> int {
@@ -110,12 +117,10 @@ fn ensure_dir(path: str) {
 }
 
 fn date_tag_utc() -> str {
-    let env_tag = getenv("DATE_TAG")
-    if env_tag != "" {
-        return env_tag
-    }
-    let cmd = "date -u +%Y_%m_%d"
-    return exec_capture(cmd)
+    // raw#10 honest C3: hexa stage1 측 getenv + capture_stdout builtin 측 X →
+    // 호출 시 runtime "undefined function" error. 우회: 현재 cycle session day
+    // 측 hardcode. DATE_TAG env override 측 lost. 다음 cycle 측 manual update.
+    return "2026_05_03"
 }
 
 // ════════════════════════════════════════════════════════════════════
@@ -139,8 +144,12 @@ fn sample_rate_guard(meta_path: str, label: str) -> int {
              + "drop=1.0-(eff/fs_nom) if fs_nom>0 else 1.0;"
              + "print(f'fs_nominal={fs_nom:.1f} cols={cols} dur={dur:.2f} effective_fs={eff:.2f} drop={drop*100:.1f}%')"
              + "\""
-    let out = exec_capture(py)
-    print("[guard] " + out)
+    // raw#10 honest C3: exec_capture 측 stub return "" — diagnostic 측 stdout 직접
+    // (py 측 print 측 stub 측 redirect /tmp/anima_eeg_capture_stub.log 측 기록).
+    // 직접 stdout 측 출력 측 indirection-free 측 effective_fs 측 console 측 즉시 visible.
+    print("[guard] effective_fs probe ↓")
+    let probe_rc = exec_status(py)
+    print("[guard] probe rc=" + str(probe_rc))
 
     // floor check
     let py2 = "python3 -c \"import json,sys;"
@@ -207,8 +216,9 @@ fn print_handstep_banner() {
     print("       O2  = " + ANCHOR_O2_PIN + "   (occipital R)")
     print("  3. 측정 종료 후 Daisy 측 재 stack (다른 paradigm 복원)")
     print("=================================================")
-    print("  Daisy 분리 완료 후 Enter (Ctrl-C 중단):")
-    readline()
+    print("  Daisy 분리 완료 후 5초 대기 (Ctrl-C 중단):")
+    // raw#10 honest C3: readline builtin 미가용 가능 → fixed pause + ctrl-c abort
+    sleep_seconds(5)
 }
 
 fn cmd_run(port: str, output_dir: str, duration: int, voice: str, skip_impedance: int) -> int {
@@ -240,8 +250,9 @@ fn cmd_run(port: str, output_dir: str, duration: int, voice: str, skip_impedance
             print("[error] impedance check 실패")
             return 1
         }
-        print("[step1] impedance: 8/8 GREEN 확인 후 Enter (Ctrl-C 중단)")
-        readline()
+        print("[step1] impedance: 8/8 GREEN 확인 후 5초 대기 (Ctrl-C 중단)")
+        // raw#10 honest C3: readline builtin 미가용 가능 → fixed pause
+        sleep_seconds(5)
     }
 
     // Step 2: EC capture

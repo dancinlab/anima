@@ -82,18 +82,16 @@ fn exec_status(cmd: str) -> int {
     return exec(cmd)
 }
 
-fn exec_capture(cmd: str) -> str {
-    return capture_stdout(cmd)
-}
-
 fn ensure_dir(path: str) {
     exec_status("mkdir -p '" + path + "'")
 }
 
 fn date_tag_utc() -> str {
-    let env_tag = getenv("DATE_TAG")
-    if env_tag != "" { return env_tag }
-    return exec_capture("date -u +%Y_%m_%dT%H_%M_%SZ")
+    // raw#10 honest C3: hexa stage1 측 getenv + capture_stdout builtin 측 X →
+    // 호출 시 runtime "undefined function" error. 우회: 현재 cycle session day
+    // 측 hardcode (date+T+UTC stamp 형 측 cycle granularity 충분). DATE_TAG
+    // env override 측 lost. 다음 cycle 측 manual update.
+    return "2026_05_03T00_00_00Z"
 }
 
 fn append_audit(line: str, ts: str) {

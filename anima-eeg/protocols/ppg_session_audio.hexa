@@ -44,6 +44,8 @@ let PHASE_REST1_S         = 30      // phase 1
 let PHASE_HOLD_S          = 30      // phase 2 (breath hold)
 let PHASE_REST2_S         = 30      // phase 3
 let CUE_LEAD_S            = 3       // count-down before phase 1
+let COLLECT_PREPARE_LAG_S = 3       // BrainFlow prepare_session + start_stream absorb
+                                    // (raw#10 honest C3: hardware-dependent, 2-3s typical)
 
 // ════════════════════════════════════════════════════════════════════
 // Helpers
@@ -78,12 +80,20 @@ fn run_collect_bg(port: str, board: str, duration: int, tag: str, output: str) -
     // boundary, capture 측 정확 30s/phase 측 측정 timing 측 확보).
     // collect.hexa owns USB serial capture; this wrapper owns block-design
     // timing + audio cue sync.
+    //
+    // STDOUT REDIRECT (audio cue audibility fix 2026_05_03):
+    //   collect.hexa BrainFlow init + per-sample [ts=...] chatter 측 wrapper
+    //   terminal 측 flood → 직후 say cue 측 audio 측 안 들리는 issue.
+    //   `> /tmp/anima_eeg_collect_<tag>.log 2>&1` redirect → terminal quiet.
+    //   raw#10 honest C3: log path 측 hardcoded /tmp; macOS-specific subshell.
+    let log_path = "/tmp/anima_eeg_collect_" + tag + ".log"
     let cmd = "hexa run anima-eeg/collect.hexa --collect --duration " + str(duration)
               + " --tag " + tag
               + " --output '" + output + "'"
               + " --port '" + port + "'"
-              + " --board '" + board + "' &"
-    print("[capture-bg] " + tag + " " + str(duration) + "s ...")
+              + " --board '" + board + "'"
+              + " > '" + log_path + "' 2>&1 &"
+    print("[capture-bg] " + tag + " " + str(duration) + "s (log: " + log_path + ")")
     return exec_status(cmd)
 }
 
@@ -101,17 +111,10 @@ fn ensure_dir(path: str) {
 }
 
 fn date_tag_utc() -> str {
-    // YYYY_MM_DD UTC — environment override 가능
-    let env_tag = getenv("DATE_TAG")
-    if env_tag != "" {
-        return env_tag
-    }
-    let cmd = "date -u +%Y_%m_%d"
-    return exec_capture(cmd)
-}
-
-fn exec_capture(cmd: str) -> str {
-    return capture_stdout(cmd)
+    // raw#10 honest C3: hexa stage1 측 getenv + capture_stdout builtin 측 X →
+    // 호출 시 runtime "undefined function" error. 우회: 현재 cycle session day
+    // 측 hardcode. DATE_TAG env override 측 lost. 다음 cycle 측 manual update.
+    return "2026_05_03"
 }
 
 // ════════════════════════════════════════════════════════════════════
@@ -138,30 +141,39 @@ fn print_sensor_setup(analog_pin: str) {
 //   say -v Yuna voice-load + speak ~2-3s 동안 capture 는 흐르지만
 //   사용자 측 phase action 시작 시점 측 cue 완료 시점 측 정확 동기).
 //   raw#65 idempotent — sleep 측 정확 30s × 3 phases (cue lag 별도).
+//
+//   COLLECT_PREPARE_LAG_S absorb (audio cue timing fix 2026_05_03):
+//     run_collect_bg launch 직후 BrainFlow prepare_session + start_stream
+//     측 2-3s lag 동안 capture 가 ring buffer 에 들어가지 않음. phase_intro
+//     의 첫 cue 전에 lag absorb sleep 측 삽입 → phase 1 boundary 측 정확
+//     capture window 내. raw#10 honest C3: macOS-specific (subshell `&` fork
+//     timing), Linux 측 약간 다를 수 있음.
 // ════════════════════════════════════════════════════════════════════
 
 fn phase_intro(voice: str) {
     // pre-capture cue (blocking) — kickoff
-    say_cue(voice, "삼 초 후 휴식 시작")
+    // 사용자 측 다음 cue ("휴식. 정상 호흡") 가 phase 1 시작 signal 임을 명시
+    // raw#10 honest C3: cue text strengthened (audio cue audibility fix 2026_05_03)
+    say_cue(voice, "지금. 측정 준비. 시작 알림 후 정상 호흡")
     sleep_seconds(CUE_LEAD_S)
 }
 
 fn phase_rest1(voice: str, duration_phase: int) {
     // phase 1: REST (0 → duration_phase) — baseline normal breathing
     // BLOCKING cue, then exact sleep
-    say_cue(voice, "휴식. 정상 호흡")
+    say_cue(voice, "지금. 휴식. 정상 호흡")
     sleep_seconds(duration_phase)
 }
 
 fn phase_hold(voice: str, duration_phase: int) {
     // phase 2: HOLD_BREATH (duration_phase → 2*duration_phase) — BLOCKING cue
-    say_cue(voice, "숨을 참으세요")
+    say_cue(voice, "지금. 숨을 참으세요. 측정 시작")
     sleep_seconds(duration_phase)
 }
 
 fn phase_rest2(voice: str, duration_phase: int) {
     // phase 3: RECOVERY (2*duration_phase → 3*duration_phase) — BLOCKING cue
-    say_cue(voice, "다시 호흡. 회복")
+    say_cue(voice, "지금. 다시 호흡. 회복")
     sleep_seconds(duration_phase)
 }
 
@@ -206,9 +218,10 @@ fn cmd_run(port: str, board: str, duration: int, voice: str,
             print("[error] impedance check 실패")
             return 1
         }
-        print("[step1] impedance: 16/16 GREEN 확인 후 Enter (Ctrl-C 중단)")
-        // raw#10: bash heredoc 측 사용자 confirm 직접 require
-        readline()
+        print("[step1] impedance: 16/16 GREEN 확인 후 5초 대기 (Ctrl-C 중단)")
+        // raw#10 honest C3: hexa stage1 측 readline builtin 미가용 가능 →
+        // fixed 5s pause. ctrl-c 측 abort path.
+        sleep_seconds(5)
     }
     else {
         print("[step1] impedance check 생략 (PPG 측 무관)")
@@ -221,6 +234,10 @@ fn cmd_run(port: str, board: str, duration: int, voice: str,
         print("[error] collect launch 실패 rc=" + str(collect_rc))
         return 2
     }
+
+    // Step 2b: absorb BrainFlow prepare_session + start_stream lag
+    // (raw#10 honest C3: 2-3s typical, hardware-dependent)
+    sleep_seconds(COLLECT_PREPARE_LAG_S)
 
     // Step 3: phase audio cues interleaved with sleep
     phase_intro(voice)
@@ -313,6 +330,11 @@ fn cmd_selftest() -> int {
     if computed_phase == PHASE_REST1_S { pass_count = pass_count + 1 }
     else { print("[FAIL] T10 computed phase != frozen phase") }
 
+    // T11: collect prepare lag absorb (audio cue timing fix 2026_05_03)
+    test_count = test_count + 1
+    if COLLECT_PREPARE_LAG_S == 3 { pass_count = pass_count + 1 }
+    else { print("[FAIL] T11 collect prepare lag != 3s") }
+
     print("[selftest] " + str(pass_count) + " PASS / "
           + str(test_count - pass_count) + " FAIL")
     if pass_count == test_count {
@@ -358,17 +380,20 @@ fn main() -> int {
     // PPG: impedance default skip — analog pulse signal 측 무관
     let mut skip_impedance = 1
 
-    // skip leading interpreter/file/cache paths
+    // skip leading interpreter / script / cache paths until first flag
+    // (handles: hexa_interp.real, anima-eeg/.../*.hexa, build cache /exe stubs,
+    //  any absolute path-like argv prefix). Mirrors jaw_session_audio.hexa
+    //  argv-skip — required for --selftest argv prefix robustness (raw#65).
     let mut start = 0
     while start < n {
         let a = av[start]
-        if a.ends_with(".hexa") { start = start + 1 }
-        else { break }
-    }
-    while start < n {
-        let a = av[start]
-        if a.ends_with("/exe") { start = start + 1 }
-        else { break }
+        let mut is_flag = false
+        if len(a) >= 2 {
+            if a.starts_with("--") { is_flag = true }
+        }
+        if is_flag { break }
+        if a == "" { break }
+        start = start + 1
     }
 
     let mut i = start

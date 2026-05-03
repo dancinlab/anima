@@ -91,10 +91,6 @@ fn exec_status(cmd: str) -> int {
     return rc
 }
 
-fn exec_capture(cmd: str) -> str {
-    return capture_stdout(cmd)
-}
-
 fn sleep_seconds(n: int) {
     let cmd = "sleep " + str(n)
     exec_status(cmd)
@@ -105,10 +101,10 @@ fn ensure_dir(path: str) {
 }
 
 fn date_tag_utc() -> str {
-    let env_tag = getenv("DATE_TAG")
-    if env_tag != "" { return env_tag }
-    let cmd = "date -u +%Y_%m_%d"
-    return exec_capture(cmd)
+    // raw#10 honest C3: hexa stage1 측 getenv + capture_stdout builtin 측 X →
+    // 호출 시 runtime "undefined function" error. 우회: 현재 cycle session day
+    // 측 hardcode. DATE_TAG env override 측 lost. 다음 cycle 측 manual update.
+    return "2026_05_03"
 }
 
 fn run_collect(port: str, board: str, duration: int, output: str) -> int {

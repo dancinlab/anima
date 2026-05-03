@@ -182,7 +182,13 @@ fn _write_helper() {
     parts.push("        return False, ''\n")
     parts.push("    return True, r.stdout.strip()\n\n")
 
-    parts.push("CALIBRATE_PY = textwrap.dedent('''\n")
+    // raw#10 honest C3 (2026-05-03 IndentationError fix): r''' raw string
+    // required so `\n` escapes inside f-strings (e.g. f'msg\n') survive
+    // Python's triple-quote parser as 2-char escape sequences instead of being
+    // interpreted as physical newlines. Otherwise multi-line f-strings emerge
+    // with closing ')' at column 0, breaking textwrap.dedent's common-prefix
+    // detection. Mirror pattern from eeg_brainflow_sanity.hexa.
+    parts.push("CALIBRATE_PY = textwrap.dedent(r'''\n")
     parts.push("    import json, sys, time\n")
     parts.push("    import numpy as np\n")
     parts.push("    from brainflow.board_shim import BoardShim, BrainFlowInputParams, BoardIds\n")
