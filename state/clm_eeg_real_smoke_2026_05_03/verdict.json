@@ -1,0 +1,58 @@
+{
+  "tool": "clm_eeg_harness_real_smoke",
+  "version": "v1",
+  "raw_rank": 9,
+  "hexa_only": true,
+  "deterministic": true,
+  "llm": "none",
+  "mode": "real",
+  "fixture_path": "anima-clm-eeg/fixtures/real_v6_clean_2026_05_03.json",
+  "fixture_bytes": 3925,
+  "composite_rule": "HARNESS_OK iff (p1_pass + p2_pass + p3_pass) >= 2; UNEVALUABLE counts as 0",
+  "fixture_band_powers_x1000": {
+    "delta": 2177,
+    "theta": 507,
+    "alpha": 1057,
+    "beta": 7521,
+    "gamma": 8024
+  },
+  "p1": {
+    "source": "state/clm_eeg_p1_lz_pre_register_real.json",
+    "ledger_bytes": 3181,
+    "pass": 0,
+    "classification": "REAL_LEDGER_FAIL",
+    "caveat": "LZ76 not derivable from band-power summary; sourced from real-side ledger if present"
+  },
+  "p2": {
+    "source": "state/clm_eeg_p2_tlr_real.json",
+    "ledger_bytes": 7417,
+    "schema_version_observed": 1,
+    "pass": 0,
+    "classification": "REAL_LEDGER_INSUFFICIENT_PER_2026_05_01_VERDICT",
+    "caveat": "only first 512 bytes parsed (hexa stage1 OOMs scanning past UTF-8 chars in multi-kB blobs); canonical real verdict per ledger 2026-05-01 = INSUFFICIENT (C1 PASS, C2 UNEVALUABLE); for byte-exact pull write ASCII-only sidecar"
+  },
+  "p3": {
+    "source": "fixture aggregate_band_powers_x1000 (direct compute)",
+    "gamma_theta_ratio_x1000": 15826,
+    "C1_loose_band_x1000": [1500, 4500],
+    "F1_gamma_absent_trigger": 0,
+    "F2_theta_absent_trigger": 0,
+    "pass": 0,
+    "classification": "OUT_OF_BAND",
+    "caveat": "Aggregate-only proxy; no per-channel std/mean check (C2) or occipital>frontal regional check (C3) — P3 PASS here is a NECESSARY but not SUFFICIENT condition for the full P3 spec"
+  },
+  "composite": {
+    "pass_count": 0,
+    "required": 2,
+    "verdict": "HARNESS_FAIL",
+    "chained_fingerprint": 1761415025
+  },
+  "honest_c3": {
+    "causally_drives_verdict": "P3 (gamma/theta from fixture aggregate)",
+    "sourced_from_ledger": "P1 (LZ76 ledger), P2 (alpha-coh+V_sync ledger)",
+    "NOT_measured": "P1 LZ76 from raw timeseries; P2 V_sync r live; P3 per-channel std/mean (C2); P3 occipital>frontal (C3)",
+    "dual_lock_posture": "this harness UNLOCKED — derivative of frozen pre-registers; will lock after raw#71 falsifier closure",
+    "tier": "functional_analog (N=1)"
+  },
+  "raw_invariants": [9, 10, 12, 15, 71]
+}
