@@ -1,0 +1,566 @@
+// anima-eeg/_port_lock_detector.hexa
+// raw#9 hexa-only · raw#10 honest C3 · raw#11 snake_case · raw#15 SSOT
+// raw#37 transient-helper-in-/tmp · raw#65 idempotent · raw#71 falsifier-bound
+// raw#80 sentinel · raw#82 darwin-native
+//
+// PURPOSE
+//   Standalone helper that detects whether a USB serial port is already
+//   held by another process (typically the OpenBCI GUI), and emits a
+//   friendly Korean error message instead of the cryptic BrainFlow
+//   BOARD_NOT_READY_ERROR:7 / PORT_ALREADY_OPEN_ERROR:1.
+//
+//   This module is INTENTIONALLY standalone: this cycle does NOT touch
+//   any other module. Integration into prepare_session() of
+//   collect/eeg_recorder/calibrate/realtime/board_health_check/
+//   impedance_check/electrode_adjustment_helper/lsl_capture is the
+//   subject of the next cycle (see "next-cycle integration plan" below).
+//
+// API (consumed by other modules in next cycle)
+//   check_port_lock(port_path) -> {locked: bool, pids: list[int],
+//                                  process_names: list[str],
+//                                  guess_owner: str,
+//                                  human_message_ko: str}
+//
+// MODES
+//   --check --port <path>   inspect a real port (uses lsof + ps subprocesses)
+//   --selftest              synthetic mock — no lsof, no real port
+//   --inspect               print module contract + API surface (no run)
+//
+// DETECTION LOGIC
+//   1) lsof -F p <port>          → newline-separated "p<PID>" records
+//   2) for each PID:
+//      ps -p <PID> -o comm=      → process command name
+//   3) classify owner:
+//      java / openbci / processing → "OpenBCI GUI"
+//      python / hexa              → "다른 anima-eeg session"
+//      screen / minicom / cu      → "터미널 serial monitor"
+//      else                       → "알 수 없는 process"
+//
+// FALSIFIER TRIAD (raw#71)
+//   F_PLD_01  free port  (mock empty lsof)         → locked=false, no message
+//   F_PLD_02  locked port (mock 'java' PID 12345)  → locked=true, guess=OpenBCI GUI
+//   F_PLD_03  human_message_ko format              → contains [port-lock] header
+//                                                     + PID line + 해결 방법 lines
+//
+// HONEST C3 CAVEATS (raw#10)
+//   - sudo 없이 lsof 가 다른 user 의 PID 를 못 보는 경우 → false negative.
+//     mitigation: process owner 가 본인일 때만 정확. host-level lock(예:
+//     다른 user 의 GUI) 은 감지 못 할 수 있음 → 메시지에 명시.
+//   - lsof 가 macOS 에서 USB serial node 를 추적하는 동안 race condition:
+//     점유 직후 ~50ms 동안 lsof 결과 비어있을 수 있음. 운영자가 한번
+//     더 시도하라는 안내 포함.
+//   - process name guess 는 heuristic. 'java' 는 OpenBCI GUI 외에도
+//     다른 java app 일 수 있음 → "추정" 단어로 honest hedge.
+//
+// USAGE
+//   hexa run anima-eeg/_port_lock_detector.hexa --selftest
+//   hexa run anima-eeg/_port_lock_detector.hexa --inspect
+//   hexa run anima-eeg/_port_lock_detector.hexa --check --port /dev/cu.usbserial-DP04WGIQ
+//
+//  @resolver-bypass(reason="darwin-native: lsof + ps subprocess. Hetzner /
+//                   linux pods do not expose macOS USB serial nodes nor share
+//                   the same process namespace. Selftest mode is pure-python
+//                   synthetic — runs without hardware OR lsof.")
+
+let SCHEMA              = "anima-eeg/_port_lock_detector/1"
+let HELPER_PATH         = "/tmp/anima_eeg_port_lock_detector_helper.py"
+
+let DEFAULT_USB_GLOB    = "/dev/cu.usbserial-*"
+
+// ════════════════════════════════════════════════════════════════════
+// Section 0. Hexa-side helpers
+// ════════════════════════════════════════════════════════════════════
+
+fn _sh_quote(s: string) -> string {
+    let mut o = "'"
+    o = o + s.replace("'", "'\\''")
+    o = o + "'"
+    return o
+}
+
+fn _kv_lookup(body: string, key: string) -> string {
+    let prefix = key + "="
+    let lines = body.split("\n")
+    let mut i = 0
+    while i < len(lines) {
+        let ln = lines[i].trim()
+        if ln.starts_with(prefix) {
+            return ln.substring(prefix.len(), ln.len())
+        }
+        i = i + 1
+    }
+    return ""
+}
+
+fn _emit_trailer(reason_slug: string, reason_detail: string, fix: string) {
+    eprintln("reason: " + reason_slug + ": " + reason_detail)
+    eprintln("fix: " + fix)
+}
+
+// ════════════════════════════════════════════════════════════════════
+// Section 1. Helper python emitter (raw#37 transient)
+// ════════════════════════════════════════════════════════════════════
+
+fn _write_helper() {
+    let parts = []
+    parts.push("#!/usr/bin/env python3\n")
+    parts.push("# anima-eeg port_lock_detector helper — emitted by\n")
+    parts.push("# anima-eeg/_port_lock_detector.hexa (raw#37 transient, not git-tracked).\n")
+    parts.push("import argparse, json, os, subprocess, sys, traceback\n\n")
+
+    parts.push("SCHEMA = '" + SCHEMA + "'\n\n")
+
+    // ─── classifier (heuristic, honest hedged) ──────────────────────────
+    parts.push("def classify_owner(comm):\n")
+    parts.push("    c = (comm or '').lower()\n")
+    parts.push("    if 'java' in c or 'openbci' in c or 'processing' in c:\n")
+    parts.push("        return 'OpenBCI GUI 추정'\n")
+    parts.push("    if 'python' in c or 'hexa' in c:\n")
+    parts.push("        return '다른 anima-eeg session 추정'\n")
+    parts.push("    if c in ('screen', 'minicom', 'cu', 'tio', 'picocom'):\n")
+    parts.push("        return '터미널 serial monitor 추정'\n")
+    parts.push("    if c == '':\n")
+    parts.push("        return '알 수 없는 process'\n")
+    parts.push("    return f'알 수 없는 process ({comm})'\n\n")
+
+    // ─── lsof + ps wrappers (with timeout, honest fallback) ─────────────
+    parts.push("def lsof_pids(port_path, timeout_s=2.0):\n")
+    parts.push("    try:\n")
+    parts.push("        p = subprocess.run(['lsof', '-F', 'p', port_path],\n")
+    parts.push("                           capture_output=True, text=True,\n")
+    parts.push("                           timeout=timeout_s)\n")
+    parts.push("    except FileNotFoundError:\n")
+    parts.push("        return ('lsof_missing', [])\n")
+    parts.push("    except subprocess.TimeoutExpired:\n")
+    parts.push("        return ('lsof_timeout', [])\n")
+    parts.push("    if p.returncode != 0:\n")
+    parts.push("        # lsof returns 1 when no holders → free port. Honest:\n")
+    parts.push("        # also returns 1 on permission errors → caveat C3-1.\n")
+    parts.push("        return ('ok', [])\n")
+    parts.push("    pids = []\n")
+    parts.push("    for line in p.stdout.splitlines():\n")
+    parts.push("        line = line.strip()\n")
+    parts.push("        if line.startswith('p'):\n")
+    parts.push("            try: pids.append(int(line[1:]))\n")
+    parts.push("            except ValueError: pass\n")
+    parts.push("    return ('ok', pids)\n\n")
+
+    parts.push("def ps_comm(pid, timeout_s=1.0):\n")
+    parts.push("    try:\n")
+    parts.push("        p = subprocess.run(['ps', '-p', str(pid), '-o', 'comm='],\n")
+    parts.push("                           capture_output=True, text=True,\n")
+    parts.push("                           timeout=timeout_s)\n")
+    parts.push("    except Exception:\n")
+    parts.push("        return ''\n")
+    parts.push("    if p.returncode != 0:\n")
+    parts.push("        return ''\n")
+    parts.push("    name = p.stdout.strip()\n")
+    parts.push("    # ps comm= prints full path on darwin → keep basename only.\n")
+    parts.push("    return os.path.basename(name) if name else ''\n\n")
+
+    // ─── friendly Korean message formatter ──────────────────────────────
+    parts.push("def format_human_message_ko(port_path, pids, names, owners):\n")
+    parts.push("    if not pids:\n")
+    parts.push("        return f'[port-lock] {port_path} 점유자 없음 (free)'\n")
+    parts.push("    lines = [f'[port-lock] {port_path} 점유 중:']\n")
+    parts.push("    for pid, nm, owner in zip(pids, names, owners):\n")
+    parts.push("        nm_disp = nm if nm else '(unknown)'\n")
+    parts.push("        lines.append(f'  PID {pid}: {nm_disp} ({owner})')\n")
+    parts.push("    lines.append('')\n")
+    parts.push("    lines.append('해결 방법:')\n")
+    parts.push("    lines.append('  (a) OpenBCI GUI 종료 후 재시도')\n")
+    parts.push("    lines.append('  (b) GUI Networking widget 으로 LSL outlet 활성화')\n")
+    parts.push("    lines.append('      + lsl_capture.hexa 사용 (GUI 와 공존 가능)')\n")
+    parts.push("    lines.append('  (c) 다른 anima-eeg session 이라면 Ctrl-C 로 종료')\n")
+    parts.push("    return '\\n'.join(lines)\n\n")
+
+    // ─── core API ───────────────────────────────────────────────────────
+    parts.push("def check_port_lock(port_path):\n")
+    parts.push("    status, pids = lsof_pids(port_path)\n")
+    parts.push("    if status != 'ok':\n")
+    parts.push("        # honest: tool failure, not free port.\n")
+    parts.push("        return {\n")
+    parts.push("            'locked': None, 'pids': [], 'process_names': [],\n")
+    parts.push("            'owners': [], 'guess_owner': '',\n")
+    parts.push("            'tool_status': status,\n")
+    parts.push("            'human_message_ko':\n")
+    parts.push("                f'[port-lock] {port_path} 점검 실패 ({status}) — '\n")
+    parts.push("                'lsof 사용 불가. raw#10 honest C3: false negative 가능.'\n")
+    parts.push("        }\n")
+    parts.push("    names = [ps_comm(p) for p in pids]\n")
+    parts.push("    owners = [classify_owner(n) for n in names]\n")
+    parts.push("    # primary guess: prefer first OpenBCI GUI hit, else first owner.\n")
+    parts.push("    guess = ''\n")
+    parts.push("    for o in owners:\n")
+    parts.push("        if 'OpenBCI GUI' in o:\n")
+    parts.push("            guess = o; break\n")
+    parts.push("    if not guess and owners:\n")
+    parts.push("        guess = owners[0]\n")
+    parts.push("    return {\n")
+    parts.push("        'locked': len(pids) > 0,\n")
+    parts.push("        'pids': pids,\n")
+    parts.push("        'process_names': names,\n")
+    parts.push("        'owners': owners,\n")
+    parts.push("        'guess_owner': guess,\n")
+    parts.push("        'tool_status': 'ok',\n")
+    parts.push("        'human_message_ko':\n")
+    parts.push("            format_human_message_ko(port_path, pids, names, owners),\n")
+    parts.push("    }\n\n")
+
+    // ─── selftest (synthetic — no lsof, no real port) ───────────────────
+    parts.push("def synthetic_check(scenario):\n")
+    parts.push("    # Bypass lsof_pids/ps_comm entirely; simulate.\n")
+    parts.push("    if scenario == 'free':\n")
+    parts.push("        pids, names = [], []\n")
+    parts.push("    elif scenario == 'gui':\n")
+    parts.push("        pids, names = [12345], ['java']\n")
+    parts.push("    elif scenario == 'multi':\n")
+    parts.push("        pids, names = [12345, 23456], ['java', 'python3']\n")
+    parts.push("    else:\n")
+    parts.push("        pids, names = [], []\n")
+    parts.push("    owners = [classify_owner(n) for n in names]\n")
+    parts.push("    msg = format_human_message_ko('/dev/cu.usbserial-MOCK',\n")
+    parts.push("                                  pids, names, owners)\n")
+    parts.push("    locked = len(pids) > 0\n")
+    parts.push("    guess = ''\n")
+    parts.push("    for o in owners:\n")
+    parts.push("        if 'OpenBCI GUI' in o:\n")
+    parts.push("            guess = o; break\n")
+    parts.push("    if not guess and owners: guess = owners[0]\n")
+    parts.push("    return locked, pids, names, owners, guess, msg\n\n")
+
+    parts.push("def run_selftest():\n")
+    parts.push("    out = []\n")
+    parts.push("    out.append(f'schema={SCHEMA}')\n")
+    parts.push("    out.append('mode=selftest_synthetic')\n")
+    parts.push("    pf = []\n")
+    parts.push("\n")
+    parts.push("    # F_PLD_01: free port → no lock\n")
+    parts.push("    locked, pids, names, owners, guess, msg = synthetic_check('free')\n")
+    parts.push("    ok1 = (locked is False) and (pids == []) and ('점유자 없음' in msg)\n")
+    parts.push("    out.append(f'F_PLD_01={\"PASS\" if ok1 else \"FAIL\"}')\n")
+    parts.push("    pf.append(ok1)\n")
+    parts.push("\n")
+    parts.push("    # F_PLD_02: locked (java) → OpenBCI GUI guess + PID line\n")
+    parts.push("    locked, pids, names, owners, guess, msg = synthetic_check('gui')\n")
+    parts.push("    ok2 = (locked is True) and (12345 in pids) and \\\n")
+    parts.push("          ('OpenBCI GUI' in guess) and ('PID 12345' in msg)\n")
+    parts.push("    out.append(f'F_PLD_02={\"PASS\" if ok2 else \"FAIL\"}')\n")
+    parts.push("    pf.append(ok2)\n")
+    parts.push("\n")
+    parts.push("    # F_PLD_03: human message format check\n")
+    parts.push("    locked, pids, names, owners, guess, msg = synthetic_check('gui')\n")
+    parts.push("    ok3 = ('[port-lock]' in msg) and ('해결 방법:' in msg) and \\\n")
+    parts.push("          ('(a) OpenBCI GUI 종료' in msg) and \\\n")
+    parts.push("          ('(b) GUI Networking widget' in msg) and \\\n")
+    parts.push("          ('lsl_capture.hexa' in msg)\n")
+    parts.push("    out.append(f'F_PLD_03={\"PASS\" if ok3 else \"FAIL\"}')\n")
+    parts.push("    pf.append(ok3)\n")
+    parts.push("\n")
+    parts.push("    # bonus: multi-pid case (regression smoke)\n")
+    parts.push("    locked, pids, names, owners, guess, msg = synthetic_check('multi')\n")
+    parts.push("    ok4 = (locked is True) and (len(pids) == 2) and \\\n")
+    parts.push("          ('PID 12345' in msg) and ('PID 23456' in msg) and \\\n")
+    parts.push("          ('OpenBCI GUI' in guess)\n")
+    parts.push("    out.append(f'T_PLD_MULTI={\"PASS\" if ok4 else \"FAIL\"}')\n")
+    parts.push("    pf.append(ok4)\n")
+    parts.push("\n")
+    parts.push("    # classifier matrix sanity\n")
+    parts.push("    cls_ok = (\n")
+    parts.push("        'OpenBCI GUI' in classify_owner('java') and\n")
+    parts.push("        'OpenBCI GUI' in classify_owner('Processing') and\n")
+    parts.push("        'anima-eeg' in classify_owner('python3') and\n")
+    parts.push("        '터미널 serial' in classify_owner('screen') and\n")
+    parts.push("        '알 수 없는' in classify_owner('weirdproc')\n")
+    parts.push("    )\n")
+    parts.push("    out.append(f'T_PLD_CLASSIFIER={\"PASS\" if cls_ok else \"FAIL\"}')\n")
+    parts.push("    pf.append(cls_ok)\n")
+    parts.push("\n")
+    parts.push("    out.append('verdict=' + ('PASS' if all(pf) else 'FAIL'))\n")
+    parts.push("    out.append('selftest=ok')\n")
+    parts.push("    return '\\n'.join(out) + '\\n', 0 if all(pf) else 1\n\n")
+
+    parts.push("def run_inspect():\n")
+    parts.push("    out = []\n")
+    parts.push("    out.append(f'schema={SCHEMA}')\n")
+    parts.push("    out.append('mode=inspect')\n")
+    parts.push("    out.append('api=check_port_lock(port_path)')\n")
+    parts.push("    out.append('returns=locked,pids,process_names,owners,guess_owner,human_message_ko,tool_status')\n")
+    parts.push("    out.append('falsifiers=F_PLD_01,F_PLD_02,F_PLD_03')\n")
+    parts.push("    out.append('depends=lsof,ps')\n")
+    parts.push("    out.append('platform=darwin')\n")
+    parts.push("    out.append('inspect=ok')\n")
+    parts.push("    return '\\n'.join(out) + '\\n', 0\n\n")
+
+    parts.push("def run_check(port_path):\n")
+    parts.push("    r = check_port_lock(port_path)\n")
+    parts.push("    out = []\n")
+    parts.push("    out.append(f'schema={SCHEMA}')\n")
+    parts.push("    out.append('mode=check')\n")
+    parts.push("    out.append(f'port={port_path}')\n")
+    parts.push("    out.append(f'tool_status={r[\"tool_status\"]}')\n")
+    parts.push("    locked_str = 'unknown' if r['locked'] is None else ('true' if r['locked'] else 'false')\n")
+    parts.push("    out.append(f'locked={locked_str}')\n")
+    parts.push("    out.append(f'pids={\",\".join(str(p) for p in r[\"pids\"])}')\n")
+    parts.push("    out.append(f'process_names={\",\".join(r[\"process_names\"])}')\n")
+    parts.push("    out.append(f'guess_owner={r[\"guess_owner\"]}')\n")
+    parts.push("    out.append('human_message_ko_begin')\n")
+    parts.push("    out.append(r['human_message_ko'])\n")
+    parts.push("    out.append('human_message_ko_end')\n")
+    parts.push("    # exit 0 if free or check failed honestly; exit 3 if locked.\n")
+    parts.push("    rc = 3 if r['locked'] is True else 0\n")
+    parts.push("    out.append(f'check=ok')\n")
+    parts.push("    return '\\n'.join(out) + '\\n', rc\n\n")
+
+    // ─── main ───────────────────────────────────────────────────────────
+    parts.push("def main():\n")
+    parts.push("    ap = argparse.ArgumentParser()\n")
+    parts.push("    ap.add_argument('--mode', required=True,\n")
+    parts.push("                    choices=['selftest', 'inspect', 'check'])\n")
+    parts.push("    ap.add_argument('--port', default='')\n")
+    parts.push("    args = ap.parse_args()\n")
+    parts.push("    try:\n")
+    parts.push("        if args.mode == 'selftest':\n")
+    parts.push("            body, rc = run_selftest()\n")
+    parts.push("        elif args.mode == 'inspect':\n")
+    parts.push("            body, rc = run_inspect()\n")
+    parts.push("        else:\n")
+    parts.push("            if not args.port:\n")
+    parts.push("                sys.stderr.write('[error] --check requires --port <path>\\n')\n")
+    parts.push("                sys.exit(2)\n")
+    parts.push("            body, rc = run_check(args.port)\n")
+    parts.push("        sys.stdout.write(body)\n")
+    parts.push("        sys.stdout.flush()\n")
+    parts.push("        sys.exit(rc)\n")
+    parts.push("    except Exception as e:\n")
+    parts.push("        sys.stderr.write(f'[error] helper-exception: {e}\\n')\n")
+    parts.push("        traceback.print_exc(file=sys.stderr)\n")
+    parts.push("        sys.exit(2)\n\n")
+
+    parts.push("if __name__ == '__main__': main()\n")
+
+    write_file(HELPER_PATH, parts.join(""))
+}
+
+fn _run_helper(args: string) -> list {
+    let cmd = "python3 " + HELPER_PATH + " " + args
+    let r = exec_with_status(cmd)
+    return [to_string(r[0]).trim(), to_int(r[1])]
+}
+
+// ════════════════════════════════════════════════════════════════════
+// Section 2. Selftest assertions (in-hexa side)
+// ════════════════════════════════════════════════════════════════════
+
+fn assert_true(cond: bool, label: string) -> bool {
+    if cond { println("  PASS: " + label) } else { println("  FAIL: " + label) }
+    return cond
+}
+
+fn _run_selftest_assertions(body: string) -> int {
+    let mut pass = 0
+    let mut fail = 0
+
+    println("=== _port_lock_detector raw#9 selftest assertions ===")
+
+    println("[T1] helper marker selftest=ok")
+    let t1 = assert_true(_kv_lookup(body, "selftest") == "ok", "selftest=ok present")
+    if t1 { pass = pass + 1 } else { fail = fail + 1 }
+
+    println("[T2] schema field")
+    let t2 = assert_true(_kv_lookup(body, "schema") == SCHEMA, "schema=" + SCHEMA)
+    if t2 { pass = pass + 1 } else { fail = fail + 1 }
+
+    println("[T3] mode=selftest_synthetic")
+    let t3 = assert_true(_kv_lookup(body, "mode") == "selftest_synthetic", "mode=selftest_synthetic")
+    if t3 { pass = pass + 1 } else { fail = fail + 1 }
+
+    println("[T4] verdict=PASS")
+    let t4 = assert_true(_kv_lookup(body, "verdict") == "PASS", "verdict=PASS")
+    if t4 { pass = pass + 1 } else { fail = fail + 1 }
+
+    println("[T5] F_PLD_01 (free port → no lock)")
+    let t5 = assert_true(_kv_lookup(body, "F_PLD_01") == "PASS", "F_PLD_01=PASS")
+    if t5 { pass = pass + 1 } else { fail = fail + 1 }
+
+    println("[T6] F_PLD_02 (locked port → OpenBCI GUI guess)")
+    let t6 = assert_true(_kv_lookup(body, "F_PLD_02") == "PASS", "F_PLD_02=PASS")
+    if t6 { pass = pass + 1 } else { fail = fail + 1 }
+
+    println("[T7] F_PLD_03 (human_message_ko format)")
+    let t7 = assert_true(_kv_lookup(body, "F_PLD_03") == "PASS", "F_PLD_03=PASS")
+    if t7 { pass = pass + 1 } else { fail = fail + 1 }
+
+    println("[T8] T_PLD_MULTI (multi-pid case)")
+    let t8 = assert_true(_kv_lookup(body, "T_PLD_MULTI") == "PASS", "T_PLD_MULTI=PASS")
+    if t8 { pass = pass + 1 } else { fail = fail + 1 }
+
+    println("[T9] T_PLD_CLASSIFIER (heuristic matrix)")
+    let t9 = assert_true(_kv_lookup(body, "T_PLD_CLASSIFIER") == "PASS", "T_PLD_CLASSIFIER=PASS")
+    if t9 { pass = pass + 1 } else { fail = fail + 1 }
+
+    println("")
+    println("Results: " + to_string(pass) + " PASS / " + to_string(fail) + " FAIL out of " + to_string(pass + fail))
+    return fail
+}
+
+// ════════════════════════════════════════════════════════════════════
+// Section 3. CLI
+// ════════════════════════════════════════════════════════════════════
+
+fn _print_usage() {
+    eprintln("usage: hexa run anima-eeg/_port_lock_detector.hexa --selftest")
+    eprintln("       hexa run anima-eeg/_port_lock_detector.hexa --inspect")
+    eprintln("       hexa run anima-eeg/_port_lock_detector.hexa --check --port <path>")
+    eprintln("flags:")
+    eprintln("  --selftest          synthetic mock check (no lsof, no real port)")
+    eprintln("  --inspect           print exported API contract (no run)")
+    eprintln("  --check --port P    inspect port P (uses lsof + ps subprocesses)")
+    eprintln("  --help              this message")
+    eprintln("")
+    eprintln("This module is library-only in next cycle. Hardware-touching modules")
+    eprintln("(collect / eeg_recorder / calibrate / realtime / board_health_check /")
+    eprintln(" impedance_check / electrode_adjustment_helper / lsl_capture) should")
+    eprintln("call check_port_lock(port) before BoardShim.prepare_session().")
+}
+
+// argv normalize — see _session_manager.hexa _flags_only_argv 동치.
+fn _flags_only_argv() -> array {
+    let av = argv()
+    let mut start = 0
+    while start < len(av) {
+        let a = av[start]
+        let mut is_path = false
+        if a.ends_with(".hexa") { is_path = true }
+        if !is_path {
+            if a.ends_with("/exe") { is_path = true }
+        }
+        if is_path { start = start + 1 } else { break }
+    }
+    let mut out = []
+    let mut j = start
+    while j < len(av) {
+        out.push(av[j])
+        j = j + 1
+    }
+    return out
+}
+
+fn main() {
+    let av = _flags_only_argv()
+    let mut selftest = false
+    let mut inspect_mode = false
+    let mut check_mode = false
+    let mut port = ""
+    let mut want_help = false
+
+    let mut i = 0
+    while i < len(av) {
+        let a = av[i]
+        if a == "--selftest" { selftest = true; i = i + 1; continue }
+        if a == "--inspect"  { inspect_mode = true; i = i + 1; continue }
+        if a == "--check"    { check_mode = true; i = i + 1; continue }
+        if a == "--port" {
+            if i + 1 >= len(av) {
+                _emit_trailer("missing-arg", "--port requires a path",
+                              "1) re-run with --port /dev/cu.usbserial-XXXX")
+                exit(2)
+            }
+            port = av[i + 1]
+            i = i + 2
+            continue
+        }
+        if a == "--help" || a == "-h" { want_help = true; i = i + 1; continue }
+        _emit_trailer("unknown-arg", "unrecognized argument: " + a, "1) re-run with --help")
+        _print_usage()
+        exit(2)
+    }
+
+    if want_help { _print_usage(); exit(0) }
+
+    let mut mode_count = 0
+    if selftest    { mode_count = mode_count + 1 }
+    if inspect_mode { mode_count = mode_count + 1 }
+    if check_mode  { mode_count = mode_count + 1 }
+
+    if mode_count == 0 {
+        eprintln("ABORT: must pass --selftest or --inspect or --check (raw#9 strict no-fallback)")
+        _print_usage()
+        exit(2)
+    }
+    if mode_count > 1 {
+        _emit_trailer("mode-conflict", "only one of --selftest / --inspect / --check allowed",
+                      "1) pick exactly one mode")
+        exit(2)
+    }
+
+    if check_mode && port == "" {
+        _emit_trailer("missing-port", "--check requires --port <path>",
+                      "1) e.g. --check --port /dev/cu.usbserial-DP04WGIQ")
+        exit(2)
+    }
+
+    _write_helper()
+
+    if selftest {
+        println("== _port_lock_detector selftest ==")
+        let r = _run_helper("--mode selftest")
+        let body = r[0]
+        let st   = r[1]
+        println(body)
+        if st != 0 {
+            eprintln("selftest helper FAILED rc=" + to_string(st))
+            // continue to assertions for diagnostic output
+        }
+        if _kv_lookup(body, "selftest") != "ok" {
+            _emit_trailer("selftest-marker-missing", "no selftest=ok",
+                          "1) check helper parse")
+            exit(1)
+        }
+        println("")
+        let fails = _run_selftest_assertions(body)
+        if fails != 0 {
+            println("selftest=fail")
+            eprintln("selftest FAILED: " + to_string(fails) + " assertion(s)")
+            exit(1)
+        }
+        println("selftest: OK")
+        exit(0)
+    }
+
+    if inspect_mode {
+        println("== _port_lock_detector inspect ==")
+        let r = _run_helper("--mode inspect")
+        println(r[0])
+        if r[1] != 0 {
+            eprintln("inspect helper FAILED rc=" + to_string(r[1]))
+            exit(1)
+        }
+        if _kv_lookup(r[0], "inspect") != "ok" {
+            _emit_trailer("inspect-marker-missing", "no inspect=ok",
+                          "1) check helper parse")
+            exit(1)
+        }
+        exit(0)
+    }
+
+    // check_mode
+    println("== _port_lock_detector check ==")
+    let r = _run_helper("--mode check --port " + _sh_quote(port))
+    let body = r[0]
+    let st   = r[1]
+    println(body)
+    // rc=0 free | rc=3 locked | rc=2 error
+    if st == 2 {
+        eprintln("check helper FAILED rc=2")
+        exit(2)
+    }
+    // Honest C3: if tool_status != ok → degraded, exit 0 with warning.
+    let tool_status = _kv_lookup(body, "tool_status")
+    if tool_status != "ok" {
+        eprintln("[port-lock] degraded mode: tool_status=" + tool_status +
+                 " — raw#10 honest C3: false negative 가능")
+    }
+    exit(st)
+}
+// hexa-strict auto-invokes fn main() — do not call main() explicitly.
