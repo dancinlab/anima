@@ -4,12 +4,13 @@
 // so the registry uses a switch-style dispatch over canonical source names.
 // Each branch inlines the collect logic from the sibling module.
 //
-// REGISTERED SOURCES (8):
+// REGISTERED SOURCES (9):
 //   urandom         — POSIX kernel CSPRNG       (IMPLEMENTED, Tier 0)
 //   esp32           — ESP32-S3 wrapper           (WRAPPED,    Tier 0)
 //   anu             — ANU public quantum         (IMPLEMENTED, Tier 1)
 //   curby           — NIST + CU Boulder Bell     (IMPLEMENTED, Tier 1)
 //   nist_beacon     — NIST Beacon 2.0 mixed      (IMPLEMENTED, Tier 1, is_quantum=0)
+//   drand           — League of Entropy quicknet (IMPLEMENTED, Tier 1, is_quantum=0)
 //   ibm_q           — IBM Quantum cloud          (STUB,       Tier 2)
 //   idq_quantis     — IDQ commercial             (STUB,       Tier 3)
 //   kaist_optical   — KAIST research             (STUB,       Tier 4)
@@ -99,6 +100,7 @@ fn rng_registry_names() -> [str] {
     a = a.push("anu")
     a = a.push("curby")
     a = a.push("nist_beacon")
+    a = a.push("drand")
     a = a.push("ibm_q")
     a = a.push("idq_quantis")
     a = a.push("kaist_optical")
@@ -122,6 +124,12 @@ fn rng_registry_meta(name: str) -> RngSourceMeta {
     }
     if name == "nist_beacon" {
         return rng_meta_make("nist_beacon", 1, 8, 0, 0, 0, 0, 1, "IMPLEMENTED", "nist")
+    }
+    if name == "drand" {
+        // throughput: 256 bits / 3 s ≈ 85 bps sustained (quicknet cadence)
+        // is_quantum=0: League of Entropy mixes 15 orgs (LavaRand contributes
+        // photonic noise but collective is NOT pure-quantum; honest C3).
+        return rng_meta_make("drand", 1, 85, 0, 0, 0, 0, 1, "IMPLEMENTED", "league_of_entropy")
     }
     if name == "ibm_q" {
         return rng_meta_make("ibm_q", 2, 100, 0, 10, 1, 0, 1, "STUB", "IBM_Quantum_Network_qiskit_runtime")
@@ -153,6 +161,9 @@ fn rng_registry_collect(name: str, n_bytes: int, seed: int) -> RngCollectResult 
     }
     if name == "nist_beacon" {
         return _registry_collect_nist_beacon(n_bytes, seed)
+    }
+    if name == "drand" {
+        return _registry_collect_drand(n_bytes, seed)
     }
     if name == "ibm_q" {
         return rng_result_fail("ibm_q: STUB — qiskit-ibm-runtime SDK + IBM_QUANTUM_TOKEN required")
@@ -436,12 +447,60 @@ fn _registry_collect_nist_beacon(n_bytes: int, seed: int) -> RngCollectResult {
     return rng_result_ok(bytes_, sha, "nist_beacon: ok sig_len=" + str(len(sig_v)))
 }
 
+// ── drand collect (mirror anima/modules/rng/drand.hexa) ────
+
+fn _registry_collect_drand(n_bytes: int, seed: int) -> RngCollectResult {
+    if n_bytes < 1 {
+        return rng_result_fail("drand: n_bytes must be >= 1")
+    }
+    if n_bytes > 32 {
+        return rng_result_fail("drand: n_bytes > 32 requires multi-pulse aggregation (3s/pulse cadence); use seed-anchor pattern")
+    }
+    let mock_env = exec("printenv NEXUS_QRNG_MOCK 2>/dev/null || true").trim()
+    let body = if mock_env == "1" {
+        exec("cat anima/modules/rng/fixtures/drand_pulse_sample.json 2>/dev/null || echo ''")
+    } else {
+        let chain_env = exec("printenv NEXUS_DRAND_CHAIN 2>/dev/null || true").trim()
+        let chain = if len(chain_env) > 0 { chain_env } else { "52db9ba70e0cc0f6eaf7803dd07447a1f5477735fd3f661792ba94600c84e971" }
+        let url = "https://api.drand.sh/" + chain + "/public/latest"
+        exec("curl -sS --max-time 10 '" + url + "' 2>/dev/null")
+    }
+    if len(body) < 16 {
+        return rng_result_fail("drand: empty response (network/timeout)")
+    }
+    let rnd_s  = _json_extract_reg(body, "round")
+    let rand_s = _json_extract_reg(body, "randomness")
+    let sig_s  = _json_extract_reg(body, "signature")
+    let r_int  = if len(rnd_s) > 0 { to_int(rnd_s) } else { 0 }
+    if r_int <= 0 {
+        return rng_result_fail("drand: round invalid (got " + rnd_s + ")")
+    }
+    if len(rand_s) < 64 {
+        return rng_result_fail("drand: randomness hex too short, got=" + str(len(rand_s)))
+    }
+    if len(sig_s) == 0 {
+        return rng_result_fail("drand: empty signature (F_DRAND_03)")
+    }
+    let bytes_all = _hex_to_bytes_reg(rand_s, 32)
+    if len(bytes_all) < n_bytes {
+        return rng_result_fail("drand: hex decode short, got=" + str(len(bytes_all)) + " want=" + str(n_bytes))
+    }
+    let mut bytes_ = []
+    let mut i = 0
+    while i < n_bytes {
+        bytes_ = bytes_.push(bytes_all[i])
+        i = i + 1
+    }
+    let sha = _bytes_sha256(bytes_, "drand_" + str(seed))
+    return rng_result_ok(bytes_, sha, "drand: ok round=" + str(r_int) + " sig_len=" + str(len(sig_s)))
+}
+
 // ── Selftest ───────────────────────────────────────────────
 
 fn _selftest_registry() -> int {
-    // 1. names list = 8 (urandom, esp32, anu, curby, nist_beacon, ibm_q, idq_quantis, kaist_optical)
+    // 1. names list = 9 (urandom, esp32, anu, curby, nist_beacon, drand, ibm_q, idq_quantis, kaist_optical)
     let names = rng_registry_names()
-    if len(names) != 8 { return 0 }
+    if len(names) != 9 { return 0 }
     // 2. each name has well-formed meta
     let mut i = 0
     while i < len(names) {
@@ -488,6 +547,15 @@ fn _selftest_registry() -> int {
     if m_nb.tier != 1 { return 0 }
     if m_nb.is_quantum != 0 { return 0 }
     if m_nb.status != "IMPLEMENTED" { return 0 }
+    // 9. drand meta well-formed (Tier 1, mixed entropy, 85 bps, free, EU sovereign)
+    let m_dr = rng_registry_meta("drand")
+    if m_dr.tier != 1 { return 0 }
+    if m_dr.is_quantum != 0 { return 0 }
+    if m_dr.is_local != 0 { return 0 }
+    if m_dr.is_free != 1 { return 0 }
+    if m_dr.throughput_bps != 85 { return 0 }
+    if m_dr.vendor != "league_of_entropy" { return 0 }
+    if m_dr.status != "IMPLEMENTED" { return 0 }
     return 1
 }
 
@@ -520,7 +588,7 @@ fn _dispatch_sentinel() -> int {
 }
 
 fn main() {
-    println("[rng/registry] 8-source dispatch table")
+    println("[rng/registry] 9-source dispatch table")
     if _selftest_registry() == 1 {
         println("[rng/registry] SELFTEST PASS")
     } else {

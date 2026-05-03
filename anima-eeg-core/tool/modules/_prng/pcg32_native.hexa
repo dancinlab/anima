@@ -92,6 +92,8 @@
 //
 //  RAW raw#9 hexa-only · raw#10 honest C3 · raw#65 idempotent
 //      raw#71 falsifier ≥3 · raw#82 darwin · raw#91 honest triad
+//
+//  @resolver-pure(reason="pure-hexa integer PCG32 XSH-RR (no libm, no syscalls, no venv); seq-mixer composes splitmix64_native, all bit-mask arithmetic")
 // ════════════════════════════════════════════════════════════════════════════
 
 let SCHEMA      = "anima-eeg-core/_prng/pcg32_native/1"

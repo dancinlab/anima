@@ -4,9 +4,11 @@
 //   ANIMA_RNG_SOURCE         — single source forced (no fallback)
 //   ANIMA_RNG_FALLBACK_CHAIN — comma-separated fallback chain
 //
-// Default priority chain: curby → anu → nist_beacon → urandom
-//   (T1 quantum-attested Bell-test first, T1 ANU legacy quantum next, T1 NIST
-//    sovereign mirror third, T0 kernel CSPRNG last as always-available fallback)
+// Default priority chain: curby → drand → anu → nist_beacon → urandom
+//   (T1 CURBy Bell-test first; T1 drand quicknet (EU BLS-G1, 3s cadence) second
+//    for fast cross-vendor diversity; T1 ANU legacy AU quantum third; T1 NIST
+//    sovereign mirror fourth; T0 kernel CSPRNG last as always-available fallback.
+//    Quadruple-anchor diversity: US Bell-test + EU BLS + AU vacuum + US mixed.)
 //
 // raw#9 hexa-only strict. raw#10:
 //   (1) Router uses the registry's switch dispatch (no dyn-call). Adding a
@@ -183,6 +185,9 @@ fn _route_collect(name: str, n_bytes: int, seed: int) -> RngCollectResult {
     if name == "nist_beacon" {
         return _route_collect_nist_beacon(n_bytes, seed)
     }
+    if name == "drand" {
+        return _route_collect_drand(n_bytes, seed)
+    }
     if name == "ibm_q" {
         return rng_result_fail("ibm_q: STUB — qiskit-ibm-runtime SDK + IBM_QUANTUM_TOKEN required")
     }
@@ -318,13 +323,56 @@ fn _route_collect_nist_beacon(n_bytes: int, seed: int) -> RngCollectResult {
     return rng_result_ok(bytes_, sha, "nist_beacon: ok sig_len=" + str(len(sig_v)))
 }
 
+// ── drand collect (router-inline mirror) ───────────────────
+
+fn _route_collect_drand(n_bytes: int, seed: int) -> RngCollectResult {
+    if n_bytes < 1 { return rng_result_fail("drand: n_bytes must be >= 1") }
+    if n_bytes > 32 {
+        return rng_result_fail("drand: n_bytes > 32 requires multi-pulse aggregation; use seed-anchor")
+    }
+    let mock_env = exec("printenv NEXUS_QRNG_MOCK 2>/dev/null || true").trim()
+    let body = if mock_env == "1" {
+        exec("cat anima/modules/rng/fixtures/drand_pulse_sample.json 2>/dev/null || echo ''")
+    } else {
+        let chain_env = exec("printenv NEXUS_DRAND_CHAIN 2>/dev/null || true").trim()
+        let chain = if len(chain_env) > 0 { chain_env } else { "52db9ba70e0cc0f6eaf7803dd07447a1f5477735fd3f661792ba94600c84e971" }
+        let url = "https://api.drand.sh/" + chain + "/public/latest"
+        exec("curl -sS --max-time 10 '" + url + "' 2>/dev/null")
+    }
+    if len(body) < 16 { return rng_result_fail("drand: empty response (network/timeout)") }
+    let rnd_s  = _rt_json_extract(body, "round")
+    let rand_s = _rt_json_extract(body, "randomness")
+    let sig_s  = _rt_json_extract(body, "signature")
+    let r_int  = if len(rnd_s) > 0 { to_int(rnd_s) } else { 0 }
+    if r_int <= 0 { return rng_result_fail("drand: round invalid (got " + rnd_s + ")") }
+    if len(rand_s) < 64 { return rng_result_fail("drand: randomness hex too short, got=" + str(len(rand_s))) }
+    if len(sig_s) == 0 { return rng_result_fail("drand: empty signature (F_DRAND_03)") }
+    let bytes_all = _rt_hex_to_bytes(rand_s, 32)
+    if len(bytes_all) < n_bytes {
+        return rng_result_fail("drand: hex decode short, got=" + str(len(bytes_all)) + " want=" + str(n_bytes))
+    }
+    let mut bytes_ = []
+    let mut i = 0
+    while i < n_bytes {
+        bytes_ = bytes_.push(bytes_all[i])
+        i = i + 1
+    }
+    let sha = _bytes_sha256(bytes_, "drand_" + str(seed))
+    return rng_result_ok(bytes_, sha, "drand: ok round=" + str(r_int) + " sig_len=" + str(len(sig_s)))
+}
+
 // ── Default chain (overridable by env / config file) ────────
 
 fn rng_default_chain() -> [str] {
-    // Tier 1 quantum-attested head: curby (Bell-test) → anu (legacy) → nist_beacon
-    // (US sovereign mirror); T0 urandom always-available fallback tail.
+    // Tier 1 multi-vendor diversity head:
+    //   curby       (US Bell-test, 60s cadence)
+    //   drand       (EU BLS-G1 quicknet, 3s cadence — fastest free public)
+    //   anu         (AU vacuum-fluctuation legacy quantum)
+    //   nist_beacon (US sovereign mixed entropy mirror)
+    // T0 urandom always-available fallback tail.
     let mut a = []
     a = a.push("curby")
+    a = a.push("drand")
     a = a.push("anu")
     a = a.push("nist_beacon")
     a = a.push("urandom")
@@ -399,13 +447,14 @@ fn rng_route_collect(n_bytes: int, seed: int) -> RngRouteResult {
 // ── Selftest ───────────────────────────────────────────────
 
 fn _selftest_router() -> int {
-    // 1. Default chain has 4 entries: curby → anu → nist_beacon → urandom
+    // 1. Default chain has 5 entries: curby → drand → anu → nist_beacon → urandom
     let dc = rng_default_chain()
-    if len(dc) != 4 { return 0 }
+    if len(dc) != 5 { return 0 }
     if dc[0] != "curby" { return 0 }
-    if dc[1] != "anu" { return 0 }
-    if dc[2] != "nist_beacon" { return 0 }
-    if dc[3] != "urandom" { return 0 }
+    if dc[1] != "drand" { return 0 }
+    if dc[2] != "anu" { return 0 }
+    if dc[3] != "nist_beacon" { return 0 }
+    if dc[4] != "urandom" { return 0 }
     // 2. Resolve chain returns default when no env
     // (We can't unset env from inside hexa; assume clean run.)
     let rc = rng_resolve_chain()
@@ -436,6 +485,8 @@ fn _selftest_router() -> int {
     if r_cb.message.contains("unknown source") { return 0 }
     let r_nb = _route_collect("nist_beacon", 4, 1)
     if r_nb.message.contains("unknown source") { return 0 }
+    let r_dr = _route_collect("drand", 4, 1)
+    if r_dr.message.contains("unknown source") { return 0 }
     return 1
 }
 

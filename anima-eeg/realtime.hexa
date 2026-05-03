@@ -12,9 +12,21 @@
 // MODES
 //   --selftest                deterministic 5-chunk synthetic stream, no
 //                             hardware, tier=DEGRADED, byte-identical re-run
+//   --selftest --lsl-outlet <name>
+//                             synthetic LSL push (16ch @ 125Hz, 5-sample chunk
+//                             = 40ms cadence). Sentinel: __EEG_REALTIME_LSL__
+//                             <PASS|FAIL> chunks=<n>. Verify round-trip via
+//                             a separate `lsl_capture.hexa --capture --source
+//                             <name>` terminal.
 //   --stream --duration <n>   live BrainFlow stream → JSONL on stdout for n sec
 //   --stream --duration <n> --jsonl-path <p>
 //                             live BrainFlow stream + ledger file
+//   --stream --duration <n> --lsl-outlet <name>
+//                             live BrainFlow stream + pylsl StreamOutlet
+//                             (16ch float32 @ 125Hz, 5-sample push_chunk
+//                             every 40ms). JSONL stdout still emitted in
+//                             parallel — outlet emission is non-blocking
+//                             (UDP). Default name: anima_eeg1.
 //
 // OUTPUT (per chunk)
 //   {schema, t_offset_s, alpha_power, beta_power, delta_power, theta_power,
@@ -37,12 +49,26 @@
 //     only achievable with LSL + dual_stream (Phase 5).
 //   - Synthetic mode tier=DEGRADED. Live tier=APPROXIMATE_HW.
 //   - No fallback path for live: missing brainflow → ABORT.
+//   - --lsl-outlet honest C3:
+//     (1) push_chunk is fire-and-forget UDP via lab_streaming_layer; no ACK.
+//         Receiver-side dropouts possible under loopback congestion.
+//     (2) 5-sample chunk @ 125Hz = 40ms nominal cadence, but cadence is
+//         driven by BrainFlow get_current_board_data polling, NOT by LSL
+//         clock — jitter inherits from CHUNK_SEC sleep loop.
+//     (3) outlet is created BEFORE first chunk; no warm-up frame. lsl_capture
+//         resolve_byprop should retry with timeout >= 5s.
 //
 // USAGE
 //   hexa run anima-eeg/realtime.hexa --selftest
+//   hexa run anima-eeg/realtime.hexa --selftest --lsl-outlet anima_eeg1
 //   hexa run anima-eeg/realtime.hexa --stream --duration 30
 //   hexa run anima-eeg/realtime.hexa --stream --duration 60 \
 //        --jsonl-path state/realtime/<ts>.jsonl
+//   hexa run anima-eeg/realtime.hexa --stream --duration 60 \
+//        --lsl-outlet anima_eeg1
+//   # round-trip verify (terminal 2):
+//   hexa run anima-eeg/lsl_capture.hexa --capture --source anima_eeg1 \
+//        --seconds 60 --jsonl /tmp/anima_lsl_rt.jsonl
 //
 //  @resolver-bypass(reason="darwin-native: globs /dev/cu.usbserial-* and uses
 //                   .venv-eeg/bin/python BrainFlow venv. Hetzner / linux pods
@@ -62,6 +88,12 @@ let DEFAULT_RNG_SEED            = 20260427
 let EXPECTED_CHANNEL_COUNT      = 16
 let EXPECTED_DATA_ROWS          = 32
 let SELFTEST_CHUNK_COUNT        = 5
+
+// LSL emission (--lsl-outlet) — 40ms (5-sample @ 125Hz) push_chunk cadence.
+// Mirrors GUI NetworkStreamOut.pde:1229-1233 pattern.
+let DEFAULT_LSL_STREAM_NAME     = "anima_eeg1"
+let LSL_CHUNK_SAMPLES           = 5
+let LSL_SOURCE_ID               = "anima-eeg-realtime-outlet"
 
 // ════════════════════════════════════════════════════════════════════
 // Section 0. Helpers
@@ -243,6 +275,10 @@ fn _write_helper() {
     parts.push("    BOARD_ID = int(sys.argv[1]); PORT = sys.argv[2]\n")
     parts.push("    DURATION = int(sys.argv[3]); JSONL_PATH = sys.argv[4]\n")
     parts.push("    CHUNK_SEC = float(sys.argv[5])\n")
+    parts.push("    LSL_NAME = sys.argv[6] if len(sys.argv) > 6 else ''\n")
+    parts.push("    LSL_CHUNK_SAMPLES = " + to_string(LSL_CHUNK_SAMPLES) + "\n")
+    parts.push("    LSL_SOURCE_ID = '" + LSL_SOURCE_ID + "'\n")
+    parts.push("    EXPECTED_CH = " + to_string(EXPECTED_CHANNEL_COUNT) + "\n")
     parts.push("    BAND_EDGES = {\n")
     parts.push("        'delta':(1.0,4.0),'theta':(4.0,8.0),'alpha':(8.0,12.0),\n")
     parts.push("        'beta':(12.0,30.0),'gamma':(30.0,100.0)\n")
@@ -366,6 +402,26 @@ fn _write_helper() {
     parts.push("                board.start_stream()\n")
     parts.push("            else:\n")
     parts.push("                raise\n")
+    // ─── Optional LSL outlet (--lsl-outlet) ───────────────────────────
+    // raw#10 honest C3: pylsl push_chunk is UDP fire-and-forget; non-blocking.
+    // 5-sample chunk size = 40ms nominal cadence @ 125Hz (GUI parity).
+    // Cadence is driven by BrainFlow polling, NOT LSL clock.
+    parts.push("        lsl_outlet = None\n")
+    parts.push("        lsl_pushed = 0\n")
+    parts.push("        if LSL_NAME:\n")
+    parts.push("            try:\n")
+    parts.push("                import pylsl\n")
+    parts.push("                _info = pylsl.StreamInfo(LSL_NAME, 'EEG', EXPECTED_CH,\n")
+    parts.push("                                        float(sr), pylsl.cf_float32,\n")
+    parts.push("                                        LSL_SOURCE_ID)\n")
+    parts.push("                lsl_outlet = pylsl.StreamOutlet(_info,\n")
+    parts.push("                                                chunk_size=LSL_CHUNK_SAMPLES,\n")
+    parts.push("                                                max_buffered=10)\n")
+    parts.push("                sys.stderr.write(f'lsl_outlet_created name={LSL_NAME} type=EEG '\n")
+    parts.push("                                 f'n_chan={EXPECTED_CH} fs={sr} chunk={LSL_CHUNK_SAMPLES}\\n')\n")
+    parts.push("            except Exception as _le:\n")
+    parts.push("                sys.stderr.write(f'lsl_outlet_init_failed err={repr(_le)[:200]}\\n')\n")
+    parts.push("                lsl_outlet = None\n")
     parts.push("        t0 = time.time()\n")
     parts.push("        out_f = open(JSONL_PATH, 'w') if JSONL_PATH else None\n")
     parts.push("        chunk_idx = 0\n")
@@ -376,6 +432,25 @@ fn _write_helper() {
     parts.push("            ch = eeg_idx[0]  # frontal proxy ch1\n")
     parts.push("            sig = data[ch, -chunk_n:].astype(np.float32)\n")
     parts.push("            sig = sig - float(sig.mean())\n")
+    parts.push("            # ─── LSL push: full 16ch matrix, sliced into 5-sample chunks ──\n")
+    parts.push("            if lsl_outlet is not None:\n")
+    parts.push("                try:\n")
+    parts.push("                    eeg_n = min(len(eeg_idx), EXPECTED_CH)\n")
+    parts.push("                    mat = data[eeg_idx[:eeg_n], -chunk_n:].astype(np.float32)\n")
+    parts.push("                    if eeg_n < EXPECTED_CH:\n")
+    parts.push("                        # pad to EXPECTED_CH so receiver-side n_chan stable\n")
+    parts.push("                        pad = np.zeros((EXPECTED_CH - eeg_n, chunk_n), dtype=np.float32)\n")
+    parts.push("                        mat = np.vstack([mat, pad])\n")
+    parts.push("                    # transpose to (samples, channels) for pylsl\n")
+    parts.push("                    samples = mat.T  # shape (chunk_n, EXPECTED_CH)\n")
+    parts.push("                    s = 0\n")
+    parts.push("                    while s < samples.shape[0]:\n")
+    parts.push("                        e = min(s + LSL_CHUNK_SAMPLES, samples.shape[0])\n")
+    parts.push("                        lsl_outlet.push_chunk(samples[s:e].tolist())\n")
+    parts.push("                        lsl_pushed += (e - s)\n")
+    parts.push("                        s = e\n")
+    parts.push("                except Exception as _pe:\n")
+    parts.push("                    sys.stderr.write(f'lsl_push_failed err={repr(_pe)[:160]}\\n')\n")
     parts.push("            bands = chunk_metrics(sig, sr, time.time() - t0)\n")
     parts.push("            asym = bands['alpha'] * 0.15\n")
     parts.push("            g = (asym * bands['gamma']) / max(bands['alpha'], 1e-6)\n")
@@ -400,6 +475,9 @@ fn _write_helper() {
     parts.push("            chunk_idx += 1\n")
     parts.push("        if out_f: out_f.close()\n")
     parts.push("        payload['chunks'] = chunk_idx\n")
+    parts.push("        payload['lsl_pushed_samples'] = lsl_pushed\n")
+    parts.push("        payload['lsl_name'] = LSL_NAME\n")
+    parts.push("        payload['lsl_outlet_created'] = (lsl_outlet is not None)\n")
     parts.push("    except Exception as exc:\n")
     parts.push("        payload['rc'] = 1; payload['err'] = repr(exc)[:400]\n")
     parts.push("    finally:\n")
@@ -423,9 +501,11 @@ fn _write_helper() {
     parts.push("    if jsonl:\n")
     parts.push("        os.makedirs(os.path.dirname(os.path.abspath(jsonl)) or '.', exist_ok=True)\n")
     parts.push("    print(f'jsonl_path={jsonl}')\n")
+    parts.push("    lsl_name = args.lsl_outlet or ''\n")
+    parts.push("    print(f'lsl_outlet={lsl_name}')\n")
     parts.push("    r = subprocess.run([VENV_PYTHON, '-c', STREAM_PY,\n")
     parts.push("                        str(args.board_id), port, str(args.duration),\n")
-    parts.push("                        jsonl, str(CHUNK_SEC)],\n")
+    parts.push("                        jsonl, str(CHUNK_SEC), lsl_name],\n")
     parts.push("                       capture_output=True, text=True, timeout=args.duration + 60)\n")
     parts.push("    sys.stdout.write(r.stdout)\n")
     parts.push("    if r.stderr: sys.stderr.write(r.stderr)\n")
@@ -442,10 +522,121 @@ fn _write_helper() {
     parts.push("        print('stream=fail'); sys.exit(2)\n")
     parts.push("    info = json.loads(trailer)\n")
     parts.push("    print(f'chunks_streamed={info[\"chunks\"]}')\n")
+    parts.push("    print(f'lsl_outlet_created={int(info.get(\"lsl_outlet_created\", False))}')\n")
+    parts.push("    print(f'lsl_pushed_samples={info.get(\"lsl_pushed_samples\", 0)}')\n")
+    parts.push("    print(f'lsl_name={info.get(\"lsl_name\", \"\")}')\n")
     parts.push("    print(f'tier=APPROXIMATE_HW')\n")
     parts.push("    print(f'verdict={\"PASS\" if info[\"rc\"]==0 else \"FAIL\"}')\n")
     parts.push("    print('stream=' + ('ok' if info['rc']==0 else 'fail'))\n")
     parts.push("    sys.exit(0 if info['rc']==0 else 1)\n\n")
+
+    parts.push("def cmd_selftest_lsl(args):\n")
+    parts.push("    # Synthetic 16ch eyes-closed-like → pylsl push_chunk (5-sample / 40ms cadence).\n")
+    parts.push("    # raw#10 honest C3: no inlet round-trip in selftest path — user runs\n")
+    parts.push("    # `lsl_capture.hexa --capture --source <name>` in a separate terminal.\n")
+    parts.push("    SENTINEL = '__EEG_REALTIME_LSL__'\n")
+    parts.push("    name = args.lsl_outlet\n")
+    parts.push("    duration = max(1, int(args.duration or 3))\n")
+    parts.push("    fs = " + to_string(DEFAULT_SAMPLE_RATE_HZ) + "\n")
+    parts.push("    n_chan = " + to_string(EXPECTED_CHANNEL_COUNT) + "\n")
+    parts.push("    chunk_samples = " + to_string(LSL_CHUNK_SAMPLES) + "\n")
+    parts.push("    if not os.path.exists(VENV_PYTHON):\n")
+    parts.push("        emit_trailer('venv-missing', f'{VENV_PYTHON} missing',\n")
+    parts.push("                     '1) python3 -m venv .venv-eeg  2) pip install pylsl numpy')\n")
+    parts.push("        print(f'{SENTINEL} FAIL chunks=0 reason=venv-missing', flush=True)\n")
+    parts.push("        sys.exit(4)\n")
+    parts.push("    LSL_PY = textwrap.dedent('''\n")
+    parts.push("        import math, sys, time\n")
+    parts.push("        try:\n")
+    parts.push("            import pylsl\n")
+    parts.push("        except Exception as e:\n")
+    parts.push("            sys.stderr.write(f'pylsl-import-failed err={repr(e)[:200]}\\n')\n")
+    parts.push("            print('LSL_TRAILER rc=4 chunks=0 pushed=0 reason=pylsl-missing')\n")
+    parts.push("            sys.exit(4)\n")
+    parts.push("        try:\n")
+    parts.push("            import numpy as np\n")
+    parts.push("        except Exception as e:\n")
+    parts.push("            sys.stderr.write(f'numpy-import-failed err={repr(e)[:200]}\\n')\n")
+    parts.push("            print('LSL_TRAILER rc=4 chunks=0 pushed=0 reason=numpy-missing')\n")
+    parts.push("            sys.exit(4)\n")
+    parts.push("        NAME = sys.argv[1]; DURATION = int(sys.argv[2])\n")
+    parts.push("        N_CHAN = int(sys.argv[3]); FS = float(sys.argv[4])\n")
+    parts.push("        CHUNK = int(sys.argv[5]); SOURCE_ID = sys.argv[6]\n")
+    parts.push("        info = pylsl.StreamInfo(NAME, 'EEG', N_CHAN, FS, pylsl.cf_float32, SOURCE_ID)\n")
+    parts.push("        outlet = pylsl.StreamOutlet(info, chunk_size=CHUNK, max_buffered=10)\n")
+    parts.push("        # F_RT_LSL_01: outlet object exists\n")
+    parts.push("        ok_outlet = isinstance(outlet, pylsl.StreamOutlet)\n")
+    parts.push("        # F_RT_LSL_03: stream name + type match via outlet.get_info()\n")
+    parts.push("        try:\n")
+    parts.push("            _xinfo = outlet.get_info()\n")
+    parts.push("            ok_name = (_xinfo.name() == NAME)\n")
+    parts.push("            ok_type = (_xinfo.type() == 'EEG')\n")
+    parts.push("            ok_nch  = (_xinfo.channel_count() == N_CHAN)\n")
+    parts.push("        except Exception as e:\n")
+    parts.push("            ok_name = ok_type = ok_nch = False\n")
+    parts.push("            sys.stderr.write(f'outlet_info_failed err={repr(e)[:160]}\\n')\n")
+    parts.push("        # Generate eyes-closed-like 10Hz alpha + 18Hz beta synthetic, 16ch.\n")
+    parts.push("        rng = np.random.default_rng(20260503)\n")
+    parts.push("        target_samples = int(FS * DURATION)\n")
+    parts.push("        pushed_samples = 0\n")
+    parts.push("        chunks_emitted = 0\n")
+    parts.push("        chunk_size_obs = []\n")
+    parts.push("        t0 = time.time()\n")
+    parts.push("        s_global = 0\n")
+    parts.push("        # F_RT_LSL_02: every chunk must be exactly CHUNK samples\n")
+    parts.push("        while pushed_samples < target_samples and (time.time() - t0) < (DURATION + 2.0):\n")
+    parts.push("            block = np.zeros((CHUNK, N_CHAN), dtype=np.float32)\n")
+    parts.push("            for s in range(CHUNK):\n")
+    parts.push("                tt = (s_global + s) / FS\n")
+    parts.push("                base = math.sin(2.0 * math.pi * 10.0 * tt) + 0.3 * math.sin(2.0 * math.pi * 18.0 * tt)\n")
+    parts.push("                for c in range(N_CHAN):\n")
+    parts.push("                    block[s, c] = base + 0.05 * float(rng.standard_normal())\n")
+    parts.push("            outlet.push_chunk(block.tolist())\n")
+    parts.push("            chunk_size_obs.append(block.shape[0])\n")
+    parts.push("            pushed_samples += CHUNK\n")
+    parts.push("            chunks_emitted += 1\n")
+    parts.push("            s_global += CHUNK\n")
+    parts.push("            time.sleep(CHUNK / FS)\n")
+    parts.push("        all_chunks_correct_size = all(x == CHUNK for x in chunk_size_obs) and len(chunk_size_obs) > 0\n")
+    parts.push("        ok = ok_outlet and ok_name and ok_type and ok_nch and all_chunks_correct_size\n")
+    parts.push("        print(f'lsl_outlet_created={int(ok_outlet)}')\n")
+    parts.push("        print(f'lsl_name_match={int(ok_name)}')\n")
+    parts.push("        print(f'lsl_type_match={int(ok_type)}')\n")
+    parts.push("        print(f'lsl_nch_match={int(ok_nch)}')\n")
+    parts.push("        print(f'lsl_chunk_size={CHUNK}')\n")
+    parts.push("        print(f'lsl_chunks_emitted={chunks_emitted}')\n")
+    parts.push("        print(f'lsl_pushed_samples={pushed_samples}')\n")
+    parts.push("        print(f'lsl_all_chunks_correct_size={int(all_chunks_correct_size)}')\n")
+    parts.push("        print(f'lsl_pylsl_version={getattr(pylsl, \"__version__\", \"unknown\")}')\n")
+    parts.push("        verdict = 'PASS' if ok else 'FAIL'\n")
+    parts.push("        print(f'LSL_TRAILER rc=0 chunks={chunks_emitted} pushed={pushed_samples} verdict={verdict}')\n")
+    parts.push("    ''')\n")
+    parts.push("    r = subprocess.run([VENV_PYTHON, '-c', LSL_PY,\n")
+    parts.push("                        name, str(duration), str(n_chan), str(fs),\n")
+    parts.push("                        str(chunk_samples), '" + LSL_SOURCE_ID + "'],\n")
+    parts.push("                       capture_output=True, text=True, timeout=duration + 30)\n")
+    parts.push("    sys.stdout.write(r.stdout)\n")
+    parts.push("    if r.stderr: sys.stderr.write(r.stderr)\n")
+    parts.push("    # Parse LSL_TRAILER for sentinel\n")
+    parts.push("    chunks_emitted = 0\n")
+    parts.push("    verdict = 'FAIL'\n")
+    parts.push("    for ln in r.stdout.splitlines():\n")
+    parts.push("        if ln.startswith('LSL_TRAILER '):\n")
+    parts.push("            for tok in ln.split():\n")
+    parts.push("                if tok.startswith('chunks='): chunks_emitted = int(tok.split('=',1)[1])\n")
+    parts.push("                if tok.startswith('verdict='): verdict = tok.split('=',1)[1]\n")
+    parts.push("    print(f'schema=" + SCHEMA + "')\n")
+    parts.push("    print(f'mode=selftest_lsl')\n")
+    parts.push("    print(f'lsl_outlet={name}')\n")
+    parts.push("    print(f'lsl_chunk_samples={chunk_samples}')\n")
+    parts.push("    print(f'lsl_duration_s={duration}')\n")
+    parts.push("    print(f'tier=DEGRADED')\n")
+    parts.push("    print(f'raw10_honest=synthetic_lsl_outlet_no_inlet_roundtrip')\n")
+    parts.push("    print(f'verdict={verdict}')\n")
+    parts.push("    print(f'selftest_lsl=' + ('ok' if verdict == 'PASS' else 'fail'))\n")
+    parts.push("    print(f'__EEG_REALTIME_LSL__ {verdict} chunks={chunks_emitted}', flush=True)\n")
+    parts.push("    print('DONE')\n")
+    parts.push("    sys.exit(0 if verdict == 'PASS' else 1)\n\n")
 
     parts.push("def cmd_selftest(args):\n")
     parts.push("    # Deterministic 5-chunk synthetic stream, no hardware.\n")
@@ -506,14 +697,21 @@ fn _write_helper() {
     parts.push("def main():\n")
     parts.push("    p = argparse.ArgumentParser()\n")
     parts.push("    sub = p.add_subparsers(dest='cmd', required=True)\n")
-    parts.push("    sub.add_parser('selftest')\n")
+    parts.push("    st = sub.add_parser('selftest')\n")
+    parts.push("    st.add_argument('--lsl-outlet', dest='lsl_outlet', default='')\n")
+    parts.push("    st.add_argument('--duration', type=int, default=3)\n")
     parts.push("    s = sub.add_parser('stream')\n")
     parts.push("    s.add_argument('--port', default='')\n")
     parts.push("    s.add_argument('--duration', type=int, default=" + to_string(DEFAULT_DURATION_SEC) + ")\n")
     parts.push("    s.add_argument('--jsonl-path', dest='jsonl_path', default='')\n")
     parts.push("    s.add_argument('--board-id', dest='board_id', type=int, default=" + to_string(DEFAULT_BOARD_ID) + ")\n")
+    parts.push("    s.add_argument('--lsl-outlet', dest='lsl_outlet', default='')\n")
     parts.push("    args = p.parse_args()\n")
-    parts.push("    if args.cmd == 'selftest':  cmd_selftest(args)\n")
+    parts.push("    if args.cmd == 'selftest':\n")
+    parts.push("        if args.lsl_outlet:\n")
+    parts.push("            cmd_selftest_lsl(args)\n")
+    parts.push("        else:\n")
+    parts.push("            cmd_selftest(args)\n")
     parts.push("    elif args.cmd == 'stream':  cmd_stream(args)\n")
     parts.push("    else: sys.exit(2)\n\n")
 

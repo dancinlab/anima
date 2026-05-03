@@ -169,3 +169,41 @@ state/v10_mk_xii_qwen_family_internal/qwen3_14b/measure_cmd.sh
 .workspace
 .workspace.*
 .workspace.lock
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Added 2026-05-03 — large references / transient state hygiene
+# Note: pre-tracked files (e.g. state/markers/*) require `git rm --cached` to fully untrack.
+# ─────────────────────────────────────────────────────────────────────────────
+
+# Vendor reference clones (multi-thousand files; not anima governance)
+references/brainflow/
+references/pyOpenBCI/
+references/tribev2/
+
+# Marker files — auto-emitted by daemons / pod-side scripts (transient)
+state/markers/
+
+# State dotfiles (helper scripts / fixtures placed under state/.*)
+state/.band_power_5_*
+state/.gamma_theta_native_*
+state/.npy_helper.py
+state/.clm_eeg_*
+
+# P9 / qmirror domain-specific transient state (heavy jsonl, regenerable)
+state/p9_p0_*/
+state/qmirror_*/
+
+# EEG session-specific snapshots (timestamped, ledger holds canonical SSOT)
+state/anima_eeg_impedance_*.json
+state/anima_eeg_session_log.jsonl
+state/dual_stream_seedanchor_ledger.jsonl
+
+# Band-power test fixtures (regeneratable from .hexa SSOT)
+state/band_power_5_*/
+state/berger_*/
+
+# anima/state/ runtime ledger (RNG / live tick) — root override for non-json files
+anima/state/
+
+# Experiment / recordings runtime artifacts
+state/experiment/

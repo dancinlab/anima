@@ -188,7 +188,13 @@ fn _write_helper() {
     parts.push("        return False, ''\n")
     parts.push("    return True, r.stdout.strip()\n\n")
 
-    parts.push("CAPTURE_PY = textwrap.dedent('''\n")
+    // raw#10 honest C3: use r'''...''' (raw triple-quoted) so that any '\n'
+    // sequences inside embedded Python string literals are preserved as the
+    // 2-char escape \n (not eaten by the OUTER Python parser as a newline).
+    // History (2026-05-03): non-raw '''...''' caused IndentationError —
+    // sys.stderr.write('...\n') had its \n interpreted at OUTER scope, splitting
+    // the line and breaking textwrap.dedent's common-prefix detection.
+    parts.push("CAPTURE_PY = textwrap.dedent(r'''\n")
     parts.push("    import json, sys, time\n")
     parts.push("    from brainflow.board_shim import BoardShim, BrainFlowInputParams, BoardIds\n")
     parts.push("    BOARD_ID = int(sys.argv[1])\n")

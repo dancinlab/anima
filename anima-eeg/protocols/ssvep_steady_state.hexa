@@ -1,0 +1,645 @@
+// anima-eeg/protocols/ssvep_steady_state.hexa
+// raw#9 hexa-only · raw#10 honest-C3 · raw#11 snake_case · raw#12 frozen
+// raw#15 no-personal-paths · raw#65 idempotent · raw#71 falsifier-3 · raw#82 darwin-native
+// raw#91 honest-class · own 5
+//
+// Source: classical SSVEP BCI paradigm — Vialatte et al. (2010)
+//   "Steady-state visually evoked potentials: focus on essential paradigms
+//    and future perspectives" Progress in Neurobiology 90(4):418-438.
+// Mirrors: anima-eeg/protocols/alpha_eyes_closed.hexa block-design pattern.
+//
+// PURPOSE
+//   Steady-State Visually Evoked Potential (SSVEP) — flicker frequency
+//   tagging paradigm. User fixates on a flickering stimulus at a fixed
+//   frequency f; occipital cortex (O1/O2) generates a same-frequency PSD
+//   peak (and harmonics 2f, 3f) — the canonical EEG BCI tag.
+//   N=1, no IRB scope (raw#10 honest C3).
+//
+//   Three falsifiers locked pre-registration (raw#71):
+//     F_SSVEP_01: O1/O2 PSD peak at stimulus frequency (within ±0.5 Hz)
+//     F_SSVEP_02: SNR ≥ 3 (signal at f vs surrounding ±2 Hz noise band)
+//     F_SSVEP_03: 4 distinct peaks detected across 4 stimulation blocks
+//                 (one peak per stimulus frequency, all 4 must pass F_01)
+//
+// LIVE BRAINFLOW INGEST: --run gates on a sibling helper subprocess.
+//   This file lands the protocol skeleton + analysis + selftest. --run
+//   delegates to anima-eeg/collect.hexa for raw stream capture; this
+//   protocol owns block design + audio cue + per-block PSD analysis +
+//   falsifier evaluation. Stimulus presentation is a USER hand-step
+//   (separate flicker tool — see print_run_plan stimulus guide).
+//
+// @resolver-bypass(reason="darwin-native: delegates collect.hexa BrainFlow
+//   subprocess on /dev/cu.usbserial-* and references monitor refresh-rate
+//   stimulus presentation (CGDisplay refresh on darwin) as user hand-step.")
+//
+// USAGE
+//   hexa run anima-eeg/protocols/ssvep_steady_state.hexa --selftest
+//   hexa run anima-eeg/protocols/ssvep_steady_state.hexa --run \
+//       --port <serial> \
+//       --board cyton_daisy \
+//       --output <recordings/.../ssvep_session.npy> \
+//       --duration 30
+
+let SCHEMA = "anima-eeg/ssvep_steady_state/1"
+
+// ════════════════════════════════════════════════════════════════════
+// Frozen block design (raw#12 pre-registered)
+// ════════════════════════════════════════════════════════════════════
+
+let BLOCK_DURATION_S         = 30           // each stimulation block (default)
+let BLOCK_REST_S             = 5            // rest between blocks
+let BLOCK_COUNT              = 4            // 4 blocks (one per frequency)
+let CUE_LEAD_MS              = 500          // audio cue lead before block start
+
+// 4 stimulus frequencies — selected to avoid 60Hz mains harmonics + 60Hz
+// monitor-refresh aliasing (raw#10 honest C3 caveat documented below)
+let STIM_FREQ_1_HZ           = 6.0          // alpha-band edge
+let STIM_FREQ_2_HZ           = 7.5          // alpha-band lower
+let STIM_FREQ_3_HZ           = 10.0         // alpha-peak — canonical SSVEP
+let STIM_FREQ_4_HZ           = 15.0         // beta-band lower
+
+// Board / signal-chain frozen
+let SAMPLE_RATE_HZ           = 250          // Cyton+Daisy fixed
+let CHANNEL_COUNT            = 16           // Cyton+Daisy 16ch
+let NOTCH_HZ                 = 60.0         // 한국 grid (raw#10 honest assumption)
+let BANDPASS_LO_HZ           = 1.0
+let BANDPASS_HI_HZ           = 50.0
+let BANDPASS_ORDER           = 4            // Butterworth order-4
+
+// SSVEP analysis frozen
+let PEAK_TOLERANCE_HZ        = 0.5          // F_SSVEP_01 ±tolerance
+let SNR_NOISE_BAND_HZ        = 2.0          // ±2 Hz around stim freq for SNR
+let SNR_MIN                  = 3.0          // F_SSVEP_02 threshold
+let WELCH_NPERSEG_S          = 4            // 4 s windows for Welch PSD (better
+                                            // freq resolution than alpha protocol)
+
+// Channel mapping (10-20 system; user must verify physical placement)
+let CHAN_O1                  = "O1"         // left occipital — SSVEP primary
+let CHAN_O2                  = "O2"         // right occipital — SSVEP primary
+
+// Audit ledger path
+let AUDIT_DIR  = "state/ssvep_steady_state_audit"
+
+// ════════════════════════════════════════════════════════════════════
+// Globals (raw#9 strict — no fallbacks, all measured)
+// ════════════════════════════════════════════════════════════════════
+
+// Block schedule
+let g_block_count            = 0           // total blocks scheduled
+let g_total_seconds          = 0           // includes rests
+
+// Per-block synthetic analysis state (4 blocks)
+let g_b0_peak_hz             = 0.0
+let g_b0_peak_uv2            = 0.0
+let g_b0_noise_uv2           = 0.0
+let g_b0_snr                 = 0.0
+let g_b0_f01_pass            = false
+let g_b0_f02_pass            = false
+
+let g_b1_peak_hz             = 0.0
+let g_b1_peak_uv2            = 0.0
+let g_b1_noise_uv2           = 0.0
+let g_b1_snr                 = 0.0
+let g_b1_f01_pass            = false
+let g_b1_f02_pass            = false
+
+let g_b2_peak_hz             = 0.0
+let g_b2_peak_uv2            = 0.0
+let g_b2_noise_uv2           = 0.0
+let g_b2_snr                 = 0.0
+let g_b2_f01_pass            = false
+let g_b2_f02_pass            = false
+
+let g_b3_peak_hz             = 0.0
+let g_b3_peak_uv2            = 0.0
+let g_b3_noise_uv2           = 0.0
+let g_b3_snr                 = 0.0
+let g_b3_f01_pass            = false
+let g_b3_f02_pass            = false
+
+// Aggregate falsifier evaluations (raw#71)
+let g_peaks_detected         = 0           // 0..4 — count of blocks passing F_01
+let g_snr_passing            = 0           // 0..4 — count of blocks passing F_02
+let g_f_ssvep_01_pass        = false       // all 4 blocks: peak in ±0.5 Hz
+let g_f_ssvep_02_pass        = false       // all 4 blocks: SNR ≥ 3
+let g_f_ssvep_03_pass        = false       // 4/4 distinct peaks detected
+
+// ════════════════════════════════════════════════════════════════════
+// Helpers
+// ════════════════════════════════════════════════════════════════════
+
+fn abs_f(x: float) -> float {
+    if x < 0.0 { return 0.0 - x }
+    return x
+}
+
+fn _bool_str(b: bool) -> string {
+    if b { return "true" }
+    return "false"
+}
+
+// Returns the stimulus frequency for block index i (0-based, 0..3).
+fn stim_freq_at(i: int) -> float {
+    if i == 0 { return STIM_FREQ_1_HZ }
+    if i == 1 { return STIM_FREQ_2_HZ }
+    if i == 2 { return STIM_FREQ_3_HZ }
+    return STIM_FREQ_4_HZ
+}
+
+// Audio cue text for block index i.
+fn cue_text_at(i: int) -> string {
+    let f = stim_freq_at(i)
+    return to_string(f) + " Hz 시작 (" + to_string(f) + " Hz start — fixate flicker)"
+}
+
+// ════════════════════════════════════════════════════════════════════
+// Block schedule generator (raw#65 idempotent — no RNG needed)
+//   Fixed 4 blocks at frequencies [6, 7.5, 10, 15] Hz with 5s rest between.
+//   Total = 4 × 30 + 3 × 5 = 135 s ≈ 2.25 min
+// ════════════════════════════════════════════════════════════════════
+
+fn build_schedule() {
+    g_block_count   = BLOCK_COUNT
+    let stim_total  = BLOCK_COUNT * BLOCK_DURATION_S
+    let rest_total  = (BLOCK_COUNT - 1) * BLOCK_REST_S
+    g_total_seconds = stim_total + rest_total
+}
+
+// ════════════════════════════════════════════════════════════════════
+// Synthetic SSVEP analysis (no RNG, deterministic — raw#65)
+//   For each block, simulate occipital PSD:
+//     nominal: peak at stim_freq with strong SNR (~8.0)
+//     perturb_no_peak: peak shifts outside ±0.5 Hz (e.g., 60Hz aliasing)
+//     perturb_low_snr: peak frequency correct but SNR below 3
+//     perturb_one_block_drop: only block_idx fails (used to test partial)
+// ════════════════════════════════════════════════════════════════════
+
+let SYNTH_PEAK_UV2_NOMINAL   = 24.0        // µV²/Hz signal peak
+let SYNTH_NOISE_UV2_NOMINAL  = 3.0         // µV²/Hz noise floor (±2 Hz)
+let SYNTH_PEAK_UV2_LOW_SNR   = 6.0         // → SNR 2.0 (< 3.0 threshold)
+
+fn _eval_block(stim_hz: float, peak_hz: float, peak_uv2: float, noise_uv2: float, ref_b: int) {
+    let mut snr = 0.0
+    if noise_uv2 > 0.0 { snr = peak_uv2 / noise_uv2 }
+    let f01 = abs_f(peak_hz - stim_hz) <= PEAK_TOLERANCE_HZ
+    let f02 = snr >= SNR_MIN
+
+    if ref_b == 0 {
+        g_b0_peak_hz   = peak_hz
+        g_b0_peak_uv2  = peak_uv2
+        g_b0_noise_uv2 = noise_uv2
+        g_b0_snr       = snr
+        g_b0_f01_pass  = f01
+        g_b0_f02_pass  = f02
+    }
+    if ref_b == 1 {
+        g_b1_peak_hz   = peak_hz
+        g_b1_peak_uv2  = peak_uv2
+        g_b1_noise_uv2 = noise_uv2
+        g_b1_snr       = snr
+        g_b1_f01_pass  = f01
+        g_b1_f02_pass  = f02
+    }
+    if ref_b == 2 {
+        g_b2_peak_hz   = peak_hz
+        g_b2_peak_uv2  = peak_uv2
+        g_b2_noise_uv2 = noise_uv2
+        g_b2_snr       = snr
+        g_b2_f01_pass  = f01
+        g_b2_f02_pass  = f02
+    }
+    if ref_b == 3 {
+        g_b3_peak_hz   = peak_hz
+        g_b3_peak_uv2  = peak_uv2
+        g_b3_noise_uv2 = noise_uv2
+        g_b3_snr       = snr
+        g_b3_f01_pass  = f01
+        g_b3_f02_pass  = f02
+    }
+}
+
+fn analyze_synthetic(
+    perturb_no_peak: bool,
+    perturb_low_snr: bool,
+    perturb_one_block_drop: bool,
+    drop_block_idx: int
+) {
+    let mut i = 0
+    while i < BLOCK_COUNT {
+        let stim_hz = stim_freq_at(i)
+        let mut peak_hz  = stim_hz             // nominal: peak at exact stim
+        let mut peak_uv2 = SYNTH_PEAK_UV2_NOMINAL
+        let mut noise    = SYNTH_NOISE_UV2_NOMINAL
+
+        // Per-block perturbations
+        let block_targeted = perturb_one_block_drop && i == drop_block_idx
+
+        if perturb_no_peak {
+            peak_hz = stim_hz + 1.5            // 1.5 Hz shift — outside ±0.5
+        }
+        if perturb_low_snr {
+            peak_uv2 = SYNTH_PEAK_UV2_LOW_SNR  // 6.0/3.0 = 2.0 SNR
+        }
+        if block_targeted {
+            peak_hz = stim_hz + 1.5            // single-block shift
+        }
+
+        _eval_block(stim_hz, peak_hz, peak_uv2, noise, i)
+        i = i + 1
+    }
+}
+
+// ════════════════════════════════════════════════════════════════════
+// Frozen falsifier evaluation (raw#71)
+// ════════════════════════════════════════════════════════════════════
+
+fn evaluate_falsifiers() {
+    let mut p = 0
+    let mut s = 0
+
+    if g_b0_f01_pass { p = p + 1 }
+    if g_b1_f01_pass { p = p + 1 }
+    if g_b2_f01_pass { p = p + 1 }
+    if g_b3_f01_pass { p = p + 1 }
+
+    if g_b0_f02_pass { s = s + 1 }
+    if g_b1_f02_pass { s = s + 1 }
+    if g_b2_f02_pass { s = s + 1 }
+    if g_b3_f02_pass { s = s + 1 }
+
+    g_peaks_detected = p
+    g_snr_passing    = s
+
+    g_f_ssvep_01_pass = p == BLOCK_COUNT
+    g_f_ssvep_02_pass = s == BLOCK_COUNT
+    g_f_ssvep_03_pass = p == BLOCK_COUNT
+}
+
+// ════════════════════════════════════════════════════════════════════
+// Sentinel emit (raw#71 falsifier-bound)
+//   __EEG_SSVEP__ <PASS|FAIL> <peaks_detected>/4
+// ════════════════════════════════════════════════════════════════════
+
+fn emit_sentinel() {
+    let mut verdict = "PASS"
+    if !(g_f_ssvep_01_pass && g_f_ssvep_02_pass && g_f_ssvep_03_pass) {
+        verdict = "FAIL"
+    }
+    println("__EEG_SSVEP__ " + verdict + " " + to_string(g_peaks_detected) + "/" + to_string(BLOCK_COUNT))
+}
+
+// ════════════════════════════════════════════════════════════════════
+// Audit JSONL emit (raw#65 idempotent in selftest mode)
+// ════════════════════════════════════════════════════════════════════
+
+fn emit_audit(ts: string) {
+    let path = AUDIT_DIR + "/" + ts + "_session.jsonl"
+    let mut row = "{"
+    row = row + "\"schema\":\"" + SCHEMA + "\","
+    row = row + "\"ts\":\"" + ts + "\","
+    row = row + "\"block_count\":" + to_string(g_block_count) + ","
+    row = row + "\"total_seconds\":" + to_string(g_total_seconds) + ","
+    row = row + "\"stim_freq_1_hz\":" + to_string(STIM_FREQ_1_HZ) + ","
+    row = row + "\"stim_freq_2_hz\":" + to_string(STIM_FREQ_2_HZ) + ","
+    row = row + "\"stim_freq_3_hz\":" + to_string(STIM_FREQ_3_HZ) + ","
+    row = row + "\"stim_freq_4_hz\":" + to_string(STIM_FREQ_4_HZ) + ","
+    row = row + "\"b0_peak_hz\":" + to_string(g_b0_peak_hz) + ","
+    row = row + "\"b0_snr\":" + to_string(g_b0_snr) + ","
+    row = row + "\"b0_f01\":" + _bool_str(g_b0_f01_pass) + ","
+    row = row + "\"b0_f02\":" + _bool_str(g_b0_f02_pass) + ","
+    row = row + "\"b1_peak_hz\":" + to_string(g_b1_peak_hz) + ","
+    row = row + "\"b1_snr\":" + to_string(g_b1_snr) + ","
+    row = row + "\"b1_f01\":" + _bool_str(g_b1_f01_pass) + ","
+    row = row + "\"b1_f02\":" + _bool_str(g_b1_f02_pass) + ","
+    row = row + "\"b2_peak_hz\":" + to_string(g_b2_peak_hz) + ","
+    row = row + "\"b2_snr\":" + to_string(g_b2_snr) + ","
+    row = row + "\"b2_f01\":" + _bool_str(g_b2_f01_pass) + ","
+    row = row + "\"b2_f02\":" + _bool_str(g_b2_f02_pass) + ","
+    row = row + "\"b3_peak_hz\":" + to_string(g_b3_peak_hz) + ","
+    row = row + "\"b3_snr\":" + to_string(g_b3_snr) + ","
+    row = row + "\"b3_f01\":" + _bool_str(g_b3_f01_pass) + ","
+    row = row + "\"b3_f02\":" + _bool_str(g_b3_f02_pass) + ","
+    row = row + "\"peaks_detected\":" + to_string(g_peaks_detected) + ","
+    row = row + "\"snr_passing\":" + to_string(g_snr_passing) + ","
+    row = row + "\"f_ssvep_01\":" + _bool_str(g_f_ssvep_01_pass) + ","
+    row = row + "\"f_ssvep_02\":" + _bool_str(g_f_ssvep_02_pass) + ","
+    row = row + "\"f_ssvep_03\":" + _bool_str(g_f_ssvep_03_pass)
+    row = row + "}"
+    let nl = chr(10)
+    let mut existing = ""
+    let prior = read_file(path)
+    if prior != "" { existing = prior }
+    write_file(path, existing + row + nl)
+}
+
+// ════════════════════════════════════════════════════════════════════
+// Live runner — collect.hexa subprocess delegation
+//   raw#10 honest: this protocol does NOT do raw BrainFlow ingest itself;
+//   it delegates to anima-eeg/collect.hexa and post-analyzes the .npy.
+//   --run prints the audio cue schedule + flicker stimulus guide and
+//   shells out the collect command; user runs in a separate terminal /
+//   hooks audio + flicker tool. raw#15: no personal paths hardcoded.
+// ════════════════════════════════════════════════════════════════════
+
+fn print_run_plan(port: string, board: string, output: string, per_block_s: int) {
+    build_schedule()
+    println("── ssvep_steady_state live run plan ──")
+    println("schema=" + SCHEMA)
+    println("port=" + port)
+    println("board=" + board)
+    println("output=" + output)
+    println("sample_rate_hz=" + to_string(SAMPLE_RATE_HZ))
+    println("channel_count=" + to_string(CHANNEL_COUNT))
+    println("notch_hz=" + to_string(NOTCH_HZ))
+    println("bandpass=" + to_string(BANDPASS_LO_HZ) + "-" + to_string(BANDPASS_HI_HZ) + " Hz, order=" + to_string(BANDPASS_ORDER))
+    println("per_block_duration_s=" + to_string(per_block_s))
+    println("rest_between_blocks_s=" + to_string(BLOCK_REST_S))
+    println("total_seconds=" + to_string(g_total_seconds))
+    println("")
+    println("[block schedule — 4 frequencies, 5s rest between]")
+    let mut i = 0
+    let mut t0 = 0
+    while i < g_block_count {
+        let f = stim_freq_at(i)
+        let cue = cue_text_at(i)
+        println("  t=" + to_string(t0) + "s  block#" + to_string(i + 1) + "  stim=" + to_string(f) + " Hz  cue=\"" + cue + "\"")
+        t0 = t0 + per_block_s
+        if i < (g_block_count - 1) {
+            println("  t=" + to_string(t0) + "s  rest " + to_string(BLOCK_REST_S) + "s")
+            t0 = t0 + BLOCK_REST_S
+        }
+        i = i + 1
+    }
+    println("")
+    println("[user hand-step — montage assumption]")
+    println("  N7P (ch7)  -> O1  (1\" above inion, 1\" left)   — SSVEP primary")
+    println("  N8P (ch8)  -> O2  (1\" above inion, 1\" right)  — SSVEP primary")
+    println("  SRB2       -> A1 earlobe (white wire)")
+    println("  BIAS       -> A2 earlobe (black wire)")
+    println("")
+    println("[user hand-step — flicker stimulus presentation]")
+    println("  Option A (recommended): external Python tkinter flicker tool")
+    println("    Open a fullscreen black window with a centered white square that")
+    println("    toggles white/black at the target Hz. Pseudocode:")
+    println("      import tkinter as tk; root = tk.Tk(); root.attributes('-fullscreen', True)")
+    println("      cv = tk.Canvas(root, bg='black'); cv.pack(fill='both', expand=True)")
+    println("      sq = cv.create_rectangle(cx-100, cy-100, cx+100, cy+100, fill='white')")
+    println("      def tick(state): cv.itemconfig(sq, fill='white' if state else 'black')")
+    println("                       root.after(int(500.0/freq_hz), tick, not state)")
+    println("    -> NOTE: monitor refresh rate (60 Hz typical) bounds achievable")
+    println("       flicker accuracy. 6/7.5/10/15 Hz are 60Hz divisors — OK.")
+    println("       For frequencies non-divisor of refresh, expect aliasing")
+    println("       (raw#10 honest C3 caveat #2 below).")
+    println("  Option B: hardware LED flicker (Arduino/ESP32) at exact Hz —")
+    println("            superior temporal precision but extra hand-step.")
+    println("")
+    println("[user hand-step — audio cue schedule]")
+    println("  Follow audio cues at t=0,(per_block+5),(2*per_block+10),(3*per_block+15)s.")
+    println("  Cue text = block stim freq announce (TTS or pre-recorded).")
+    println("  During each block: fixate the flickering square — eyes OPEN.")
+    println("  During rest: blink/relax (5s).")
+    println("")
+    println("[delegate command — run in separate terminal]")
+    println("  hexa run anima-eeg/collect.hexa --port " + port + " \\")
+    println("      --board " + board + " --duration " + to_string(g_total_seconds) + " \\")
+    println("      --output " + output)
+    println("")
+    println("[honest C3 caveats — raw#10]")
+    println("  C3-1: flicker frequency 정확도 측 monitor refresh rate (60 Hz) 측")
+    println("        bound — non-divisor frequencies (e.g., 11 Hz) can alias.")
+    println("        선택된 6/7.5/10/15 Hz 는 60 의 정수약수 → safe.")
+    println("  C3-2: 사용자가 stim freq 측 시간 측정 직접 못 함 — flicker tool")
+    println("        accuracy depends on host clock + monitor vsync (raw#82 darwin)")
+    println("        not measured here. SSVEP peak detection is the validation.")
+    println("  C3-3: 60 Hz mains notch 측 stim 15 Hz 의 4-th harmonic = 60 Hz —")
+    println("        notch filter could attenuate harmonic content. Fundamental")
+    println("        peak unaffected but harmonic-based decoders may underread.")
+}
+
+// ════════════════════════════════════════════════════════════════════
+// Tests (selftest)
+// ════════════════════════════════════════════════════════════════════
+
+fn assert_true(cond: bool, label: string) -> bool {
+    if cond { println("  PASS: " + label) } else { println("  FAIL: " + label) }
+    return cond
+}
+
+fn run_tests() -> int {
+    let mut pass = 0
+    let mut fail = 0
+
+    println("=== ssvep_steady_state selftest ===")
+
+    // T1: schedule build (4 blocks, 4×30 + 3×5 = 135s)
+    println("[T1] schedule build")
+    build_schedule()
+    let ok1a = assert_true(g_block_count == 4, "block_count == 4")
+    let ok1b = assert_true(g_total_seconds == 135, "total_seconds == 135 (4×30 + 3×5)")
+    if ok1a && ok1b { pass = pass + 1 } else { fail = fail + 1 }
+
+    // T2: stim frequency mapping
+    println("[T2] stim frequency mapping per block")
+    let ok2a = assert_true(stim_freq_at(0) == 6.0,  "block 0 = 6 Hz")
+    let ok2b = assert_true(stim_freq_at(1) == 7.5,  "block 1 = 7.5 Hz")
+    let ok2c = assert_true(stim_freq_at(2) == 10.0, "block 2 = 10 Hz")
+    let ok2d = assert_true(stim_freq_at(3) == 15.0, "block 3 = 15 Hz")
+    if ok2a && ok2b && ok2c && ok2d { pass = pass + 1 } else { fail = fail + 1 }
+
+    // T3: idempotent rebuild (raw#65)
+    println("[T3] idempotent schedule rebuild")
+    build_schedule()
+    let bc1 = g_block_count
+    let ts1 = g_total_seconds
+    build_schedule()
+    let ok3a = assert_true(g_block_count == bc1,   "block count idempotent")
+    let ok3b = assert_true(g_total_seconds == ts1, "total seconds idempotent")
+    if ok3a && ok3b { pass = pass + 1 } else { fail = fail + 1 }
+
+    // T4: nominal synthetic — all 3 falsifiers PASS, 4/4 peaks
+    println("[T4] synthetic nominal — F_SSVEP_01/02/03 PASS")
+    analyze_synthetic(false, false, false, -1)
+    evaluate_falsifiers()
+    let ok4a = assert_true(g_f_ssvep_01_pass, "F_SSVEP_01 all peaks within ±0.5 Hz")
+    let ok4b = assert_true(g_f_ssvep_02_pass, "F_SSVEP_02 all SNR ≥ 3")
+    let ok4c = assert_true(g_f_ssvep_03_pass, "F_SSVEP_03 4/4 distinct peaks")
+    let ok4d = assert_true(g_peaks_detected == 4, "peaks_detected == 4")
+    let ok4e = assert_true(g_b2_snr >= 3.0, "block#2 (10 Hz) SNR ≥ 3 (= " + to_string(g_b2_snr) + ")")
+    if ok4a && ok4b && ok4c && ok4d && ok4e { pass = pass + 1 } else { fail = fail + 1 }
+
+    // T5: F_SSVEP_01 falsifier — peak shifted outside ±0.5 Hz on all blocks
+    println("[T5] F_SSVEP_01 falsifier — peaks shifted +1.5 Hz")
+    analyze_synthetic(true, false, false, -1)
+    evaluate_falsifiers()
+    let ok5a = assert_true(!g_f_ssvep_01_pass, "F_SSVEP_01 fails (peaks off-band)")
+    let ok5b = assert_true(g_peaks_detected == 0, "peaks_detected == 0")
+    let ok5c = assert_true(!g_f_ssvep_03_pass, "F_SSVEP_03 fails (no distinct peaks)")
+    if ok5a && ok5b && ok5c { pass = pass + 1 } else { fail = fail + 1 }
+
+    // T6: F_SSVEP_02 falsifier — low SNR on all blocks
+    println("[T6] F_SSVEP_02 falsifier — SNR = 2.0")
+    analyze_synthetic(false, true, false, -1)
+    evaluate_falsifiers()
+    let ok6a = assert_true(g_f_ssvep_01_pass, "F_SSVEP_01 still passes (peaks correct)")
+    let ok6b = assert_true(!g_f_ssvep_02_pass, "F_SSVEP_02 fails (SNR < 3)")
+    let ok6c = assert_true(g_snr_passing == 0, "snr_passing == 0")
+    if ok6a && ok6b && ok6c { pass = pass + 1 } else { fail = fail + 1 }
+
+    // T7: F_SSVEP_03 partial — only 1 of 4 blocks fails
+    println("[T7] F_SSVEP_03 partial — drop block#2 (10 Hz) only")
+    analyze_synthetic(false, false, true, 2)
+    evaluate_falsifiers()
+    let ok7a = assert_true(g_peaks_detected == 3, "peaks_detected == 3 (3/4)")
+    let ok7b = assert_true(!g_f_ssvep_03_pass, "F_SSVEP_03 fails (3/4 not 4/4)")
+    let ok7c = assert_true(g_b0_f01_pass, "block#0 still passes")
+    let ok7d = assert_true(!g_b2_f01_pass, "block#2 fails (dropped)")
+    let ok7e = assert_true(g_b3_f01_pass, "block#3 still passes")
+    if ok7a && ok7b && ok7c && ok7d && ok7e { pass = pass + 1 } else { fail = fail + 1 }
+
+    // T8: cue text mapping
+    println("[T8] audio cue text per block")
+    let cue0 = cue_text_at(0)
+    let cue3 = cue_text_at(3)
+    let ok8a = assert_true(len(cue0) > 0, "block#0 cue non-empty")
+    let ok8b = assert_true(len(cue3) > 0, "block#3 cue non-empty")
+    if ok8a && ok8b { pass = pass + 1 } else { fail = fail + 1 }
+
+    // T9: 60Hz harmonic-safety check (raw#12 frozen design rationale)
+    println("[T9] all 4 stim frequencies are 60 Hz divisors")
+    let f1_div = (60.0 / STIM_FREQ_1_HZ) == 10.0    // 60/6 = 10
+    let f2_div = (60.0 / STIM_FREQ_2_HZ) == 8.0     // 60/7.5 = 8
+    let f3_div = (60.0 / STIM_FREQ_3_HZ) == 6.0     // 60/10 = 6
+    let f4_div = (60.0 / STIM_FREQ_4_HZ) == 4.0     // 60/15 = 4
+    let ok9a = assert_true(f1_div, "6 Hz divides 60 Hz refresh")
+    let ok9b = assert_true(f2_div, "7.5 Hz divides 60 Hz refresh")
+    let ok9c = assert_true(f3_div, "10 Hz divides 60 Hz refresh")
+    let ok9d = assert_true(f4_div, "15 Hz divides 60 Hz refresh")
+    if ok9a && ok9b && ok9c && ok9d { pass = pass + 1 } else { fail = fail + 1 }
+
+    // T10: audit JSONL emit (raw#65 byte-stable)
+    println("[T10] audit JSONL emit deterministic")
+    build_schedule()
+    analyze_synthetic(false, false, false, -1)
+    evaluate_falsifiers()
+    let ts = "selftest_synth"
+    let path = AUDIT_DIR + "/" + ts + "_session.jsonl"
+    write_file(path, "")
+    emit_audit(ts)
+    let body1 = read_file(path)
+    write_file(path, "")
+    emit_audit(ts)
+    let body2 = read_file(path)
+    let ok10a = assert_true(body1 == body2, "audit row byte-stable")
+    let ok10b = assert_true(len(body1) > 0, "audit row non-empty")
+    if ok10a && ok10b { pass = pass + 1 } else { fail = fail + 1 }
+
+    println("")
+    println("Results: " + to_string(pass) + " PASS / " + to_string(fail) + " FAIL out of " + to_string(pass + fail))
+    return fail
+}
+
+// ════════════════════════════════════════════════════════════════════
+// CLI entry
+// ════════════════════════════════════════════════════════════════════
+
+fn _print_usage() {
+    println("usage:")
+    println("  hexa run anima-eeg/protocols/ssvep_steady_state.hexa --selftest")
+    println("  hexa run anima-eeg/protocols/ssvep_steady_state.hexa --run \\")
+    println("      --port <serial> --board <cyton_daisy> --output <npy> [--duration <per_block_s>]")
+}
+
+fn _arg_value(av: list, key: string, dflt: string) -> string {
+    let mut i = 1
+    while i < len(av) {
+        if av[i] == key && i + 1 < len(av) {
+            return av[i + 1]
+        }
+        i = i + 1
+    }
+    return dflt
+}
+
+fn _parse_int(s: string, dflt: int) -> int {
+    if len(s) == 0 { return dflt }
+    let v = to_int(s)
+    return v
+}
+
+fn main() {
+    let av = argv()
+    let mut selftest = false
+    let mut run = false
+    let mut i = 1
+    while i < len(av) {
+        if av[i] == "--selftest" { selftest = true }
+        if av[i] == "--run"      { run = true }
+        if av[i] == "--help"     { _print_usage(); exit(0) }
+        i = i + 1
+    }
+
+    if run {
+        let port     = _arg_value(av, "--port",     "")
+        let board    = _arg_value(av, "--board",    "cyton_daisy")
+        let output   = _arg_value(av, "--output",   "")
+        let dur_str  = _arg_value(av, "--duration", to_string(BLOCK_DURATION_S))
+        let per_block = _parse_int(dur_str, BLOCK_DURATION_S)
+        if len(port) == 0 || len(output) == 0 {
+            eprintln("ABORT: --run requires --port and --output (raw#15 no personal paths)")
+            _print_usage()
+            exit(2)
+        }
+        print_run_plan(port, board, output, per_block)
+        // raw#10 honest: this cycle prints plan + flicker stimulus guide +
+        // audio cue schedule; the actual collect.hexa subprocess + flicker
+        // tool + audio TTS hook is the user hand-step. Plan is logged;
+        // user executes in separate terminal and reports back the .npy.
+        exit(0)
+    }
+
+    if !selftest {
+        _print_usage()
+        exit(2)
+    }
+
+    println("── ssvep_steady_state selftest ──")
+    println("schema=" + SCHEMA)
+    println("raw10_honest=synthetic_ssvep_no_real_brainflow_no_flicker_terminal_only")
+    println("raw82_darwin=clock_gettime_monotonic_via_collect_hexa_+_monitor_vsync")
+    println("source=Vialatte_et_al_2010_Prog_Neurobiol_90:418_SSVEP_paradigm")
+    println("")
+
+    // Demonstration (synthetic nominal session)
+    build_schedule()
+    analyze_synthetic(false, false, false, -1)
+    evaluate_falsifiers()
+
+    println("[demo nominal session]")
+    println("block_count="     + to_string(g_block_count))
+    println("total_seconds="   + to_string(g_total_seconds))
+    println("stim_freqs_hz="   + to_string(STIM_FREQ_1_HZ) + "," + to_string(STIM_FREQ_2_HZ) + "," + to_string(STIM_FREQ_3_HZ) + "," + to_string(STIM_FREQ_4_HZ))
+    println("b0_peak_hz="      + to_string(g_b0_peak_hz)  + "  b0_snr=" + to_string(g_b0_snr))
+    println("b1_peak_hz="      + to_string(g_b1_peak_hz)  + "  b1_snr=" + to_string(g_b1_snr))
+    println("b2_peak_hz="      + to_string(g_b2_peak_hz)  + "  b2_snr=" + to_string(g_b2_snr))
+    println("b3_peak_hz="      + to_string(g_b3_peak_hz)  + "  b3_snr=" + to_string(g_b3_snr))
+    println("peaks_detected="  + to_string(g_peaks_detected) + "/" + to_string(BLOCK_COUNT))
+    println("snr_passing="     + to_string(g_snr_passing) + "/" + to_string(BLOCK_COUNT))
+    println("f_ssvep_01="      + _bool_str(g_f_ssvep_01_pass))
+    println("f_ssvep_02="      + _bool_str(g_f_ssvep_02_pass))
+    println("f_ssvep_03="      + _bool_str(g_f_ssvep_03_pass))
+    println("")
+
+    emit_sentinel()
+    emit_audit("selftest_synth")
+
+    let fails = run_tests()
+    if fails != 0 {
+        println("selftest=fail")
+        eprintln("selftest FAILED: " + to_string(fails) + " test(s) failed")
+        exit(1)
+    }
+    println("selftest=ok")
+    println("DONE")
+}
+
+main()
