@@ -178,6 +178,40 @@ PROBE_FREQ_HZ = 31.5
 PROBE_CURRENT_A = 6.0e-9   # 6 nA AC
 SAMPLE_RATE_HZ = 250
 
+def _set_ftdi_latency_1ms(serial_path):
+    # raw#82 darwin-native; Linux/Windows graceful skip.
+    # 2026-05-03 sample-drop layer-2 fix. macOS Apple Silicon FTDI driver
+    # ships LatencyTimer = 16 ms default → ring-buffer drains too slowly,
+    # producing 33-94% sample drop (BrainFlow github #81 vendor confirm).
+    # raw#10 honest C3:
+    #   (1) ioctl 0x80085400 = _IOW('T',0,unsigned long) on Darwin 64-bit
+    #       (NOT spec-sheet 0x80045442 which is IOSSIOSPEED).
+    #   (2) Per-device-attachment: persists until physical unplug.
+    import platform as _pf
+    if _pf.system() != 'Darwin':
+        return False, 'skip-non-darwin'
+    if not serial_path or not isinstance(serial_path, str):
+        return False, 'no-port'
+    if serial_path == '<synthetic>' or serial_path.startswith('<'):
+        return False, 'skip-synthetic'
+    import os as _os, fcntl as _fc, struct as _st
+    if not _os.path.exists(serial_path):
+        return False, 'no-device-node'
+    IOSSDATALAT = 0x80085400
+    try:
+        fd = _os.open(serial_path, _os.O_RDWR | _os.O_NOCTTY | _os.O_NONBLOCK)
+    except Exception as exc:
+        return False, ('open-fail:' + repr(exc))[:120]
+    try:
+        _fc.ioctl(fd, IOSSDATALAT, _st.pack('L', 1000))
+        ok, why = True, 'ok'
+    except Exception as exc:
+        ok, why = False, ('ioctl-fail:' + repr(exc))[:120]
+    finally:
+        try: _os.close(fd)
+        except Exception: pass
+    return ok, why
+
 def classify(z_kohm, green_kohm, yellow_kohm):
     if z_kohm < 0:
         return 'GRAY'
@@ -295,6 +329,14 @@ def main_check(board_id, port, seconds, green_kohm, yellow_kohm, check_n_pin, wa
             _emit_port_lock_msg(port, _pid, _pname)
             out_kv('verdict', 'PORT_LOCKED')
             return 8
+
+    # FTDI 1ms latency ioctl — call once before BrainFlow opens the port.
+    # Setting persists until physical unplug, so safe to repeat per session.
+    _ftdi_ok, _ftdi_why = _set_ftdi_latency_1ms(port)
+    if _ftdi_ok:
+        print('[ftdi-latency] set to 1ms on ' + str(port), file=sys.stderr, flush=True)
+    else:
+        print('[ftdi-latency] WARN: ioctl skipped/failed: ' + str(_ftdi_why), file=sys.stderr, flush=True)
 
     # raw#65 idempotent + raw#71 falsifier-bound:
     # defensive preflight to clear any leaked streaming session from a prior
