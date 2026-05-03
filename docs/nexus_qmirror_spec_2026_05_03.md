@@ -84,7 +84,7 @@ story; everything else is already exact.
 ## 2. Module structure (hexa-lang)
 
 The nexus codebase is **hexa-lang strict** (`#!hexa strict`, raw#9, NO .py on
-the Mac repo). All file types in `/Users/ghost/core/nexus/` confirm this
+the Mac repo). All file types in `<user>/core/nexus/` confirm this
 (2 592 .hexa, 0 .py top-level). The qmirror module follows the existing
 `nexus/modules/<name>/<file>.hexa` layout established by
 `nexus/modules/qrng/{anu,hardware_qrng,mock_qrng}.hexa`.
@@ -220,48 +220,99 @@ unchanged.
 
 ## 4. ANU integration spec
 
-### 4.1 Endpoint
+### 4.1 Endpoint(s) and 4-tier model (revision 2026-05-03b)
 
-The 2025-onward ANU operation moved off the legacy `qrng.anu.edu.au/API/jsonI.php`
-unauthenticated path to a key-gated production endpoint at
-**`https://api.quantumnumbers.anu.edu.au/`**.
+ANU ships through **two** ingress hosts:
 
-Existing nexus code (`nexus/modules/qrng/anu.hexa`) still calls the legacy URL:
+- `qrng.anu.edu.au/API/jsonI.php` — legacy, unauthenticated, rate-throttled to
+  ~1 req/min. Always available, no signup. Tier label: **T1.a**.
+- `api.quantumnumbers.anu.edu.au/` — new key-gated production endpoint. Same
+  request/response shape as legacy. Auth header: `x-api-key: <key>`. Three
+  separately-issued keys map to three tiers:
+  - **T1.b — Direct keyed** : sign up at `quantumnumbers.anu.edu.au` →
+    free, 100 req/min, 1024 B/req. Env: `NEXUS_QMIRROR_ANU_KEY`.
+  - **T1.c — AWS Marketplace paid** : subscribe to listing
+    `prodview-246kyrfjo3bag` → ANU issues a "Customer ID" key bound to the
+    paid tier. **$0.005/req, 100 req/sec, unlimited monthly cap**. Env:
+    `AWS_MARKETPLACE_ANU_API_KEY`.
+  - **T1.d — AWS Marketplace trial** : same listing, free tier subscription
+    → `Customer ID` key bound to the trial tier. **$0/req, 1 req/sec,
+    100 req/mo cap**. Env: `AWS_MARKETPLACE_ANU_TRIAL_KEY`.
+
+AWS Marketplace is a SaaS billing wrapper, **NOT AWS API Gateway** ("Deployed
+on AWS: No" on the listing). Quotas are enforced by ANU server-side per the
+Customer-ID tier binding; the TLS endpoint (`api.quantumnumbers.anu.edu.au/`)
+and request shape are identical for T1.b/c/d. The marketplace contributes the
+billing relationship and the issued key, nothing else.
+
+Endpoint contract (T1.b/c/d):
 ```
-https://qrng.anu.edu.au/API/jsonI.php?length=N&type=uint8
+GET https://api.quantumnumbers.anu.edu.au/?length=N&type=uint8
+Header: x-api-key: <key>
+Response: {"success":true,"data":[…uint8 array…],"length":N,"type":"uint8"}
 ```
-This currently still resolves but is deprecated and rate-throttled. **qmirror
-MUST use the new endpoint** with `X-API-KEY` header (free tier: 100 req/min,
-1024 bytes/req; sign up at `https://quantumnumbers.anu.edu.au/`):
+Supported `type` values: `uint8`, `uint16`, `hex16`.
 
+Endpoint contract (T1.a, legacy):
 ```
-GET https://api.quantumnumbers.anu.edu.au/?length=1024&type=uint8
-Header: x-api-key: <NEXUS_QMIRROR_ANU_KEY>
-Response: {"success":true,"data":[…uint8 array…],"length":1024,"type":"uint8"}
+GET https://qrng.anu.edu.au/API/jsonI.php?length=N&type=uint8
+Response: {"type":"uint8","length":N,"data":[…],"success":true}
 ```
 
-Supported `type` values: `uint8`, `uint16`, `hex16` (16-byte hex string).
+### 4.2 Rate limits, pacing, and batching
 
-### 4.2 Rate limits and batching
+| Tier | Rate | Per-req chunk | Cost | Pacing gap |
+|------|------|---------------|------|------------|
+| T1.c AWS paid    | 100 req/sec    | 1024 B | $0.005/req      | 10 ms |
+| T1.d AWS trial   | 1 req/sec      | 1024 B | $0 (100/mo cap) | 1.0 s |
+| T1.b Direct keyed| 100 req/min    | 1024 B | $0              | 600 ms |
+| T1.a Legacy      | ~1 req/min     | 1024 B | $0              | 60 s  |
+| T0  Mock LCG     | -              | -      | $0              | 0     |
 
-- Free tier: **100 req/min**, **1024 bytes/req max** → 1 638 400 bits/min ceiling
 - Burst: any single circuit needing > 1024 bytes of measurement randomness
-  must be chunked. Chunker lives in `entropy.hexa::_anu_batch(n_total)`.
+  must be chunked. Chunker lives in `entropy.hexa::entropy_pull_batched(n_total)`
+  with tier-aware pacing (`_tier_pacing_seconds`).
 - Default cache: 32 KB local circular buffer in `state/qmirror/entropy_cache.bin`.
   Refilled async when ≤25 % remaining.
-- Honesty: cache MUST tag each byte with provenance
-  `(source, fetch_ts, request_id)` so downstream verdicts can prove
-  ANU-not-LCG.
+- Cost guard (T1.c only): per-day request counter at
+  `/tmp/qmirror_paid_ledger_<YYYYMMDD>.count`, soft cap via
+  `NEXUS_QMIRROR_MAX_PAID_REQS_PER_DAY` (default 10000 = $50/day). Above cap
+  T1.c returns `ok=0` and the chain falls through to T1.d/b/a.
+- Provenance: each byte tagged with tier label
+  (`anu_aws_paid` | `anu_aws_trial` | `anu_direct` | `anu_legacy` | `mock`)
+  + `request_id` `<tier>_<epoch_ts>`. Downstream verdicts gate on this label.
 
-### 4.3 Fallback
+### 4.3 Selection (default + fallback chain)
 
-Order of preference (matches existing T1/T3/T0 tier convention):
-1. ANU live (T1, free, real quantum)
-2. Local hardware QRNG via `qrng/hardware_qrng.hexa` (T3, IDQ Quantis or ESP32)
-3. `qrng/mock_qrng.hexa` LCG (T0, deterministic, **emits a WARN** so test
-   verdicts can flag "qmirror ran without quantum entropy")
+`NEXUS_QMIRROR_LIVE=1` activates the 4-tier chain. Order is **fastest+paid
+first, free tiers as fallbacks**:
 
-### 4.4 Bit conversion → measurement outcome
+1. **T1.c AWS Marketplace paid** — if `AWS_MARKETPLACE_ANU_API_KEY` set AND
+   day cap not hit
+2. **T1.d AWS Marketplace trial** — if `AWS_MARKETPLACE_ANU_TRIAL_KEY` set
+3. **T1.b Direct keyed** — if `NEXUS_QMIRROR_ANU_KEY` set
+4. **T1.a Legacy keyless** — always available (real-quantum floor)
+5. **T0 Mock LCG** — only if `NEXUS_QMIRROR_MOCK=1` explicit (never silent)
+
+`NEXUS_QMIRROR_TIER=<aws_paid|aws_trial|direct|legacy|mock>` pins one tier
+and disables fallback (used by F1 falsifier tier-specific probes). The legacy
+3-tier T1/T3/T0 wording (hardware QRNG) remains in
+`qrng/hardware_qrng.hexa` for the IDQ Quantis path; qmirror's 4-tier model is
+ANU-internal and orthogonal to the hardware-QRNG axis.
+
+### 4.4 Env-var catalog
+
+| Var | Tier | Purpose | Secret store |
+|-----|------|---------|--------------|
+| `AWS_MARKETPLACE_ANU_API_KEY`      | T1.c | Customer ID, paid tier   | 1Password `anima/anu-aws-paid` (write at subscribe time) |
+| `AWS_MARKETPLACE_ANU_TRIAL_KEY`    | T1.d | Customer ID, trial tier  | 1Password `anima/anu-aws-trial` |
+| `NEXUS_QMIRROR_ANU_KEY`            | T1.b | Direct ANU registered key | 1Password `anima/anu-direct` (already populated) |
+| `NEXUS_QMIRROR_LIVE`               | gate | `=1` enables live tiers   | env only |
+| `NEXUS_QMIRROR_MOCK`               | T0   | `=1` forces mock LCG      | env only |
+| `NEXUS_QMIRROR_TIER`               | pin  | `aws_paid`/`aws_trial`/`direct`/`legacy`/`mock` | env only |
+| `NEXUS_QMIRROR_MAX_PAID_REQS_PER_DAY` | guard | Soft cap on T1.c daily spend (default 10000 = $50/day) | env only |
+
+### 4.5 Bit conversion → measurement outcome
 
 Given amplitude vector |ψ⟩ ∈ ℂ^(2^n) with probabilities `p_i = |ψ_i|²`:
 

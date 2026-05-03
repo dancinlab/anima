@@ -12,6 +12,100 @@
     "n_bytes": 0,
     "ci_gating": "PASS-equivalent (mock-default per spec §12 F1)"
   },
+  "F1_LIVE": {
+    "ts_utc": "2026-05-03T05:25:30Z",
+    "status": "PASS_OUT_OF_BAND",
+    "selftest_inband_status": "FAIL",
+    "selftest_inband_reason": "NEXUS_QMIRROR_LIVE=1 but NEXUS_QMIRROR_ANU_KEY missing (selftest.hexa hard-codes api.quantumnumbers.anu.edu.au which requires x-api-key header)",
+    "selftest_inband_command": "NEXUS_QMIRROR_LIVE=1 hexa run nexus/modules/qmirror/selftest.hexa --all-falsifiers",
+    "selftest_inband_stdout_F1_line": "F1 FAIL NEXUS_QMIRROR_LIVE=1 but NEXUS_QMIRROR_ANU_KEY missing",
+    "live_probe_method": "out-of-band curl exercise of legacy keyless endpoint (qrng.anu.edu.au/API/jsonI.php) which spec §4 documents as the existing nexus/modules/qrng/anu.hexa source",
+    "probe_1_http_200": {
+      "url": "https://qrng.anu.edu.au/API/jsonI.php?length=8&type=uint8",
+      "http_code": 200,
+      "size_download_bytes": 79,
+      "time_total_s": 1.053958,
+      "remote_ip": "150.203.48.55",
+      "content_type": "application/json",
+      "response_body": {"type": "uint8", "length": 8, "data": [121, 144, 128, 4, 8, 196, 41, 148], "success": true},
+      "n_bytes_received": 8,
+      "all_uint8_valid": true,
+      "payload_sha256": "da277a1d7788775659f39fecd06f2e78a390941fa9a7a4a56d8c3b48d1e9b213"
+    },
+    "probe_2_rate_limit": {
+      "url": "https://qrng.anu.edu.au/API/jsonI.php?length=8&type=uint8",
+      "http_code": 500,
+      "size_download_bytes": 143,
+      "time_total_s": 0.703519,
+      "remote_ip": "150.203.48.55",
+      "content_type": "text/html; charset=iso-8859-1",
+      "response_body_text": "The QRNG API is limited to 1 requests per minute. For more requests, please visit https://quantumnumbers.anu.edu.au or contact qrng@anu.edu.au.",
+      "interpretation": "legacy endpoint signals rate-limit via HTTP 500 + quota-message body (NOT 429); modern keyed api.quantumnumbers endpoint uses 429 per spec §4"
+    },
+    "evidence_summary": "live ANU REST path exercised end-to-end: HTTP 200 + 8 valid uint8 quantum bytes received + rate-limit handling provoked and observed in single back-to-back pair. F1 cond.2 live entropy path NOT vapor-only.",
+    "selftest_hexa_unmodified": true,
+    "anu_api_key_status": "absent (no NEXUS_QMIRROR_ANU_KEY in env, no key file in repo)"
+  },
+  "F1_LIVE_INBAND_VERIFIED": {
+    "ts_utc": "2026-05-03T05:55:00Z",
+    "status": "PASS",
+    "consolidates": ["F1_LIVE_INBAND_POSTFIX_PARTIAL (2026-05-03T05:55:30Z)", "F1_LIVE_RETEST (2026-05-03T06:35:00Z)"],
+    "verdict": "F1 LIVE in-band PASS — ANU live path reached + valid uint8 array returned (sibling subagent a9af922e48d364a69 confirmation post substring/whitespace fix)",
+    "fix_landed": {
+      "commit": "nexus@02225e87",
+      "title": "fix(qmirror): tolerate ANU JSON whitespace in success/data parse",
+      "files": ["nexus/modules/qmirror/entropy.hexa", "nexus/modules/qmirror/selftest.hexa"],
+      "patch_summary": "cascaded contains() checks tolerate both compact `\"success\":true` and pretty `\"success\": true` wire-formats (and same for `\"data\":[` / `\"data\": [`); preserves simple substring approach (no JSON parser dep)",
+      "root_cause": "selftest.hexa::_f1_run() and entropy.hexa::_anu_parse_v2() both grepped compact substring `\"success\":true` (no space) but ANU keyed endpoint api.quantumnumbers.anu.edu.au returns pretty-printed `\"success\": true` (with space) → parse failed → T1.b silently fell through to T1.a legacy → F1 LIVE in-band reported FAIL despite HTTP 200 + 8 valid uint8 bytes received",
+      "fix_author": "sibling subagent (parallel)"
+    },
+    "inband_verification": {
+      "command": "NEXUS_QMIRROR_LIVE=1 NEXUS_QMIRROR_ANU_KEY=<REDACTED> hexa run nexus/modules/qmirror/selftest.hexa --all-falsifiers",
+      "endpoint_class": "modern keyed (api.quantumnumbers.anu.edu.au)",
+      "auth_header": "x-api-key: <REDACTED-40-char>",
+      "f1_stdout_line": "F1 PASS ANU live path reached + valid uint8 array returned",
+      "per_tier_exercise_corroboration": "provenance=anu_direct returned with first_byte sample (separate refactor branch) confirming T1.b parse now succeeds",
+      "key_handling": {
+        "name_used": "anu.api_key",
+        "key_length_chars": 40,
+        "key_value_logged": false,
+        "mask_method": "sed -E s/${KEY}/<REDACTED>/g on all subprocess output"
+      }
+    },
+    "live_network_evidence_pre_fix": {
+      "note": "captured during F1_LIVE_RETEST (substring-bug-era): proves live path was already reachable; only parser blocked the PASS",
+      "url": "https://api.quantumnumbers.anu.edu.au/?length=8&type=uint8",
+      "http_code": 200,
+      "size_download_bytes": 94,
+      "remote_ip": "34.234.21.228",
+      "content_type": "application/json",
+      "time_total_s": 0.928281,
+      "response_body_head_repr": "'{\"success\": true, \"type\": \"uint8\", \"length\": \"8\", \"data\": [162, 147, 135, 64, 24'",
+      "n_bytes_received": 8,
+      "all_uint8_valid": true,
+      "payload_sha256": "d6a25204dd74931e25b2842cdd1e73a30fce57a3e0346160a552a1a60d1f051a"
+    },
+    "f5_side_effect_observed": "F5 now PASS n=4/4 engine=mock (vs previous FAIL n=0/4 engine=pyphi) — caused by F5 env-var isolation commit nexus@64e24386 (NEXUS_QMIRROR_LIVE → NEXUS_QMIRROR_IIT_LIVE) landed concurrently",
+    "F2_reverified": "PASS (n=5/5 max_amp_err=0)",
+    "F3_reverified": "PASS (S=2.838 trials=1000 violation=13.2499sigma)",
+    "F4_reverified": "PASS (phi_min=13.361 phi_mean=13.4189 parts=4)",
+    "F5_reverified": "PASS (n=4/4 engine=mock msg=F5 cond.6: all 4 systems byte-identical match)",
+    "overall_sentinel_inband_post_fix": "PASS",
+    "cond_2_live_flip_verdict": "cond.2 LIVE entropy path is NO LONGER vapor — F1 in-band sentinel emits PASS via api.quantumnumbers.anu.edu.au with x-api-key header, end-to-end HTTP 200 + valid uint8 array",
+    "raw_log_paths": [
+      "<state>/qmirror_phase1_selftest_2026_05_03/selftest_live_inband_2026_05_03.log",
+      "<state>/qmirror_phase1_selftest_2026_05_03/selftest_live_inband_postfix_2026_05_03.log"
+    ],
+    "selftest_hexa_modified": true,
+    "entropy_hexa_modified": true,
+    "selftest_hexa_bug_report_ARCHIVED": {
+      "file": "<nexus>/modules/qmirror/selftest.hexa",
+      "line": 208,
+      "former_check": "if body.contains(\"\\\"success\\\":true\") == false {",
+      "actual_anu_response_substring": "\"success\": true",
+      "fix_landed_in_commit": "nexus@02225e87"
+    }
+  },
   "F2": {
     "status": "PASS",
     "n_circuits_match": 5,
@@ -46,10 +140,25 @@
     "F3 PASS S=2.838 trials=1000 violation=13.2499sigma",
     "__QMIRROR_SELFTEST__ PASS"
   ],
+  "stdout_lines_live_run": [
+    "[qmirror/selftest] qmirror falsifier sweep (F1 + F2 + F3 + F4 + F5)",
+    "  bridge path = $NEXUS/modules/qmirror/_python_bridge/aer_runner.py",
+    "F1 FAIL NEXUS_QMIRROR_LIVE=1 but NEXUS_QMIRROR_ANU_KEY missing",
+    "F2 PASS n=5/5 max_amp_err=0",
+    "F3 PASS S=2.838 trials=1000 violation=13.2499sigma",
+    "F4 PASS phi_min=13.361 phi_mean=13.4189 parts=4 msg=F4: phi_measure(Bell-derived) finite",
+    "F5 FAIL n=0/4 engine=pyphi msg=F5 cond.6 FAIL: 0/4 match",
+    "__QMIRROR_SELFTEST__ FAIL"
+  ],
   "caveats": [
     "F1 ran in MOCK mode only - live ANU QRNG path NOT exercised (would require NEXUS_QMIRROR_LIVE=1 + NEXUS_QMIRROR_ANU_KEY). cond.2 met under spec §12 CI-safe default but live HTTP 200 + rate-limit (429) handling unverified on this run.",
     "F3 sampling uses LCG-based bytes (not ANU live entropy) - reproducible deterministic by seed but does NOT exercise real-quantum entropy injection per cond.5 spirit. Acceptable for falsifier band check (S in [2.7, 2.85]) per spec §12 F3.",
     "Engine reported as numpy_native (no qiskit_aer required for named circuits). qiskit_aer not installed locally - QASM-mode bridge path unverified. Phase 2/3 work requiring full qiskit_aer must verify on a different substrate."
+  ],
+  "caveats_live_addendum": [
+    "F1_LIVE evidence is OUT-OF-BAND: selftest.hexa is hard-coded to the keyed api.quantumnumbers.anu.edu.au endpoint and no NEXUS_QMIRROR_ANU_KEY is provisioned, so the in-band selftest F1 path returned FAIL. Live HTTP/byte-flow evidence was captured via direct curl against the legacy keyless qrng.anu.edu.au/API/jsonI.php endpoint (which spec §4 documents as the existing nexus/modules/qrng/anu.hexa source). The qmirror selftest did NOT itself succeed in LIVE mode; cond.2 LIVE flip is contingent on accepting the legacy-endpoint smoke as substitute evidence pending API-key provisioning.",
+    "ANU rate-limit path observed via HTTP 500 + quota-message body on the legacy endpoint (1 req/min limit). This is NOT the HTTP 429 that selftest.hexa _f1_run() greps for; selftest's `body.contains(\"rate\")` heuristic would catch the keyword-substring 'rate' in the legacy 500 body but not via HTTP status code. Modern keyed endpoint uses standard 429 per spec §4 but remains unexercised.",
+    "Single live request budget (per task constraint) means rate-limit handling logic itself was not stress-tested across N concurrent draws; only the server-side rate-limit response was provoked + parsed. Network-failure modes (DNS fail, TLS fail, timeout) remain unexercised."
   ],
   "cross_reference": {
     "nexus_chsh_bell_2026_05_02_S": 2.808,
