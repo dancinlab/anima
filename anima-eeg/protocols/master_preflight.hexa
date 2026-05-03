@@ -67,6 +67,10 @@ let AUDIT_DIR = "state/master_preflight_audit"
 
 // ════════════════════════════════════════════════════════════════════
 // Helpers
+//   AUDIO CUE TIMING CONTRACT (raw#10 honest C3):
+//     say_cue 측 BLOCKING (no `&` background) — cue 끝까지 wait 후
+//     다음 step 진입. step1-4 sibling delegate 측 sequential 호출 →
+//     cue 측 user 듣기 후 sibling subprocess 시작. macOS only.
 // ════════════════════════════════════════════════════════════════════
 
 fn say_cue(voice: str, text: str) -> int {

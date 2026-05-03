@@ -73,9 +73,11 @@ fn run_impedance(port: str) -> int {
 }
 
 fn run_collect_bg(port: str, board: str, duration: int, tag: str, output: str) -> int {
-    // foreground 90s collect — phase audio cues fired via say_cue_bg between
-    // sleep boundaries. collect.hexa owns USB serial capture; this wrapper
-    // owns block-design timing.
+    // background 90s collect — phase audio cues fired via BLOCKING say_cue
+    // between sleep boundaries (raw#10 honest C3: cue ~2s lag per phase
+    // boundary, capture 측 정확 30s/phase 측 측정 timing 측 확보).
+    // collect.hexa owns USB serial capture; this wrapper owns block-design
+    // timing + audio cue sync.
     let cmd = "hexa run anima-eeg/collect.hexa --collect --duration " + str(duration)
               + " --tag " + tag
               + " --output '" + output + "'"
@@ -130,7 +132,12 @@ fn print_sensor_setup(analog_pin: str) {
 // ════════════════════════════════════════════════════════════════════
 // Phases
 //   Single 90s collect runs in background (subshell &).
-//   Phase boundaries: sleep + non-blocking say cue overlap with capture.
+//   Phase boundaries: BLOCKING say cue (waits for cue completion) +
+//   exact-duration sleep. Audio cue 끝난 후 측정 phase 측 시작 — user
+//   측 cue 듣기 전에 phase counts down 측 bug 방지 (raw#10 honest C3:
+//   say -v Yuna voice-load + speak ~2-3s 동안 capture 는 흐르지만
+//   사용자 측 phase action 시작 시점 측 cue 완료 시점 측 정확 동기).
+//   raw#65 idempotent — sleep 측 정확 30s × 3 phases (cue lag 별도).
 // ════════════════════════════════════════════════════════════════════
 
 fn phase_intro(voice: str) {
@@ -141,19 +148,20 @@ fn phase_intro(voice: str) {
 
 fn phase_rest1(voice: str, duration_phase: int) {
     // phase 1: REST (0 → duration_phase) — baseline normal breathing
-    say_cue_bg(voice, "휴식. 정상 호흡")
+    // BLOCKING cue, then exact sleep
+    say_cue(voice, "휴식. 정상 호흡")
     sleep_seconds(duration_phase)
 }
 
 fn phase_hold(voice: str, duration_phase: int) {
-    // phase 2: HOLD_BREATH (duration_phase → 2*duration_phase)
-    say_cue_bg(voice, "숨을 참으세요")
+    // phase 2: HOLD_BREATH (duration_phase → 2*duration_phase) — BLOCKING cue
+    say_cue(voice, "숨을 참으세요")
     sleep_seconds(duration_phase)
 }
 
 fn phase_rest2(voice: str, duration_phase: int) {
-    // phase 3: RECOVERY (2*duration_phase → 3*duration_phase)
-    say_cue_bg(voice, "다시 호흡. 회복")
+    // phase 3: RECOVERY (2*duration_phase → 3*duration_phase) — BLOCKING cue
+    say_cue(voice, "다시 호흡. 회복")
     sleep_seconds(duration_phase)
 }
 

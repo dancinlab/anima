@@ -336,7 +336,10 @@ fn cmd_run(port: str, board: str, duration: int, voice: str, lenient: int, gain:
     }
 
     // Phase 3: analyze cue + rail_flat
-    say_cue_bg(voice, "결과 분석 중")
+    // BLOCKING cue — say 끝까지 wait 후 analyze 시작 (user 측 cue 듣기
+    // 전에 analyze 측 결과 print 측 race condition 방지). raw#10 honest
+    // C3: ~2s cue lag tolerance — analyze rc 측 sequential.
+    say_cue(voice, "결과 분석 중")
     let analyze_rc = run_rail_flat_analyze(raw_npy, gain)
     if analyze_rc != 0 {
         say_cue(voice, "분석 실패")

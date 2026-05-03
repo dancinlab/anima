@@ -1,0 +1,830 @@
+// anima-eeg/protocols/warmup_fs_check.hexa
+// raw#9 hexa-only · raw#10 honest-C3 · raw#11 snake_case · raw#12 frozen
+// raw#15 no-personal-paths · raw#34 no-backup-files · raw#37 transient-helper-in-/tmp
+// raw#65 idempotent · raw#66 ai-native error trailer · raw#71 falsifier-bound
+// raw#80 sentinel · raw#82 darwin-native marker · raw#91 honest-class
+//
+// @resolver-bypass(reason="darwin-native: invokes .venv-eeg/bin/python which is a
+//                   mac-local virtualenv hosting numpy + brainflow. Performs a
+//                   30s LIVE warm-up capture against an OpenBCI Cyton/Cyton+Daisy
+//                   board over USB-serial dongle, applies IOSSDATALAT=1ms ioctl
+//                   best-effort, drains the ring buffer in 200ms chunks, then
+//                   emits effective fs + per-window stability. selftest path
+//                   is fully synthetic numpy + tempfile (no hardware); works
+//                   wherever .venv-eeg + numpy are present (Darwin host today).")
+//
+// PURPOSE  (raw#106 genus name)
+//   Pre-measurement 30-second warm-up sample-rate verification gate. Probes
+//   the live BrainFlow stream BEFORE the user's actual paradigm session
+//   starts and aborts if the effective fs cannot meet the paradigm-specific
+//   Nyquist floor — the user can then re-seat the dongle, swap USB hub, or
+//   try Cyton-only mode WITHOUT having burned a full 60-90s session on a
+//   silently-undersampled stream.
+//
+//   Companion to two prior cycles in the sample-rate triage (2026-05-03):
+//     • protocols/sample_rate_guard.hexa  — POST-capture verdict (npy probe)
+//     • protocols/package_num_audit.hexa  — POST-capture sequence audit
+//   This module is the MISSING PRE-capture gate. The post modules can
+//   detect a 7-Hz pseudo-EEG file claiming 125 Hz — but only after the user
+//   already sat through 60-90 seconds of the paradigm. F_WARMUP_01 catches
+//   the same failure mode in 30s, BEFORE the paradigm wrapper opens its
+//   session, so the user reseats the dongle while the cap is still on.
+//
+//   Discovery (2026-05-03 BrainFlow research BG):
+//     • effective fs varied 60-83 Hz across six recent 16ch sessions
+//     • POST-detection caught the failure but the 60-90s data was already
+//       unusable — the cycle cost was a full re-mount + re-paste + re-run
+//     • PRE-detection at 30s warm-up costs only 30s — affordable retry
+//     • F_WARMUP_03 stability gate: even when mean fs ≥ threshold, a high
+//       variance across 5s windows (drift, retransmit storm) predicts
+//       mid-session collapse — fail-fast before paradigm runs
+//
+//   This gate is INDEPENDENT of collect.hexa (no edits to that module).
+//   Race avoidance with parallel BGs (a09b8ad0 IOSSDATALAT / package_num /
+//   af6ca950 sample_rate_guard / a38afad6 cyton_only / a3232e3e berger v3 /
+//   a8da34c1 jaw v2): only writes anima-eeg/protocols/warmup_fs_check.hexa.
+//   Integration into master_preflight Step 5 is a follow-up cycle item.
+//
+// API
+//   hexa run anima-eeg/protocols/warmup_fs_check.hexa --selftest
+//
+//   hexa run anima-eeg/protocols/warmup_fs_check.hexa --run \
+//        --port <serial> [--board cyton|cyton_daisy] \
+//        [--threshold <hz>] [--paradigm berger|emg|ppg|default] \
+//        [--warmup-s <n>] [--strict | --lenient]
+//
+//   Threshold resolution order (first wins):
+//     1. explicit --threshold <hz>
+//     2. --paradigm <berger|emg|ppg|default> → preset table
+//     3. default 100 Hz
+//
+//   Paradigm presets (raw#12 frozen 2026-05-03):
+//     berger    ≥ 30 Hz   (α 8-13 Hz, Nyquist > 13 Hz)
+//     emg       ≥ 200 Hz  (clench band 50-100 Hz, Nyquist > 100 Hz)
+//     ppg       ≥ 5 Hz    (heart rate 0.5-3 Hz BPM, Nyquist > 2.5 Hz)
+//     default   ≥ 100 Hz  (general EEG / mixed)
+//
+//   raw#10 honest C3: paradigm thresholds are vendor-self-claim Nyquist
+//   floors — they verify only that the captured stream COULD support the
+//   target band. They do NOT guarantee SNR, electrode quality, or absence
+//   of artifact. They are necessary, not sufficient.
+//
+// FALSIFIERS  (raw#71 frozen 2026-05-03)
+//   F_WARMUP_01: effective_fs_hz       ≥ threshold_hz   (Nyquist OK)
+//   F_WARMUP_02: drop_pct              < 30             (= eff ≥ 70% of claim)
+//   F_WARMUP_03: per_5s_window_var_pct < 10             (no drift / storm)
+//
+//   strict mode (default): F_WARMUP_01 AND F_WARMUP_02 AND F_WARMUP_03
+//                          → PASS; FAIL → exit 1 + abort guidance
+//   lenient mode (--lenient): warn-only, exit 0
+//
+// SENTINEL
+//   __EEG_WARMUP_FS__ <PASS|FAIL> <effective_hz> <claim_hz>
+//
+// HONEST C3 CAVEATS  (raw#10)
+//   1. 30 seconds of warm-up adds wall-clock cost to every session —
+//      the user pays a 30s tax even when the dongle would have been fine.
+//      A future cycle could cache PASS for the same dongle+port pair within
+//      a 10-minute window (raw#65 idempotent staleness key); for now the
+//      gate runs every time. raw#10 — explicit user-burden disclosure.
+//   2. The effective fs we measure is bounded by the USB-serial / FTDI
+//      latency floor on Darwin. IOSSDATALAT=1ms ioctl helps when supported
+//      (we apply best-effort) but Apple Silicon variance is documented
+//      (OpenBCI forum #3108) — there is NO universal software fix for
+//      every chip-rev × macOS combination. If this gate persistently fails
+//      the failure may be hardware-bound: try a different USB hub, USB
+//      port, or fall back to Cyton-only 8ch (board_id=0) mode which has
+//      twice the per-byte budget. Software cannot make the bus faster
+//      than its physical envelope. raw#10 honest-class C3.
+//   3. The paradigm preset thresholds (berger ≥ 30 Hz, emg ≥ 200 Hz, ppg
+//      ≥ 5 Hz) are derived from Nyquist on the published target bands;
+//      the published bands are themselves vendor self-claim. We do NOT
+//      independently calibrate the OpenBCI ADS1299 anti-alias response;
+//      passing the gate means the SAMPLE RATE could support the band, not
+//      that the analog frontend does. A more rigorous gate would require
+//      injecting a calibration tone — out of scope for this pre-flight
+//      module. raw#10 honest-class C3.
+//
+// USAGE
+//   # Berger α paradigm, default 30 Hz floor, strict
+//   hexa run anima-eeg/protocols/warmup_fs_check.hexa --run \
+//       --port /dev/cu.usbserial-DP04WGIQ --board cyton_daisy \
+//       --paradigm berger
+//
+//   # EMG paradigm, lenient (warn only)
+//   hexa run anima-eeg/protocols/warmup_fs_check.hexa --run \
+//       --port /dev/cu.usbserial-DP04WGIQ --board cyton_daisy \
+//       --paradigm emg --lenient
+//
+//   # selftest synthetic (no hardware)
+//   hexa run anima-eeg/protocols/warmup_fs_check.hexa --selftest
+//
+// FOLLOW-UP (raw#10 — not done here, separate cycle):
+//   • integrate into anima-eeg/protocols/master_preflight.hexa as Step 5
+//     (post-impedance, pre-measurement). Existing steps 1-4 cover cap fit,
+//     impedance T0/T1, settle. Step 5 = warmup_fs_check before the user's
+//     paradigm wrapper (berger / blink / emg / ppg / etc.) is invoked.
+//   • make every measurement wrapper (berger_session_audio_v3 /
+//     blink_session_audio / jaw_clench_emg_v2 / ppg_heart_rate /
+//     alpha_eyes_closed) gate on this protocol's PASS marker
+//     (state/markers/warmup_fs_<port>_<DATE_TAG>.marker)
+//   • add staleness window (10 minutes) for marker reuse — raw#65
+
+let SCHEMA      = "anima-eeg/warmup_fs_check/1"
+let HELPER_PATH = "/tmp/anima_eeg_warmup_fs_check_helper.py"
+
+// ════════════════════════════════════════════════════════════════════
+// Frozen defaults (raw#12)
+// ════════════════════════════════════════════════════════════════════
+
+let DEFAULT_THRESHOLD_HZ      = 100
+let DEFAULT_VENV_PYTHON       = ".venv-eeg/bin/python"
+let DEFAULT_BOARD_NAME        = "cyton_daisy"   // 16ch most common
+let DEFAULT_WARMUP_S          = 30              // 30s warm-up window
+let DEFAULT_DRAIN_INTERVAL_MS = 200             // chunked drain cadence
+let DEFAULT_WINDOW_S          = 5               // F_WARMUP_03 window size
+
+// Paradigm presets — Nyquist-based minimum effective fs floors
+let PARADIGM_BERGER_HZ        = 30          // α 8-13 Hz, Nyquist > 13
+let PARADIGM_EMG_HZ           = 200         // EMG 50-100 Hz, Nyquist > 100
+let PARADIGM_PPG_HZ           = 5           // BPM 0.5-3 Hz, Nyquist > 2.5
+let PARADIGM_DEFAULT_HZ       = 100         // general EEG / mixed
+
+// Falsifier thresholds (raw#71 pre-registered)
+let F_WARMUP_02_MAX_DROP_PCT  = 30.0        // < 30% drop (eff ≥ 70% claim)
+let F_WARMUP_03_MAX_VAR_PCT   = 10.0        // < 10% per-window fs variance
+
+// Board name → BrainFlow board_id table (frozen, matches collect.hexa)
+let BOARD_ID_CYTON            = 0
+let BOARD_ID_CYTON_DAISY      = 2
+
+// Selftest synthetic params
+let SELFTEST_GOOD_FS_HZ       = 125
+let SELFTEST_BAD_FS_HZ        = 7
+let SELFTEST_UNSTABLE_LO_HZ   = 60          // simulates jitter window low
+let SELFTEST_UNSTABLE_HI_HZ   = 200         // simulates jitter window high
+
+// ════════════════════════════════════════════════════════════════════
+// Helpers
+// ════════════════════════════════════════════════════════════════════
+
+fn _sh_quote(s: string) -> string {
+    let mut o = "'"
+    o = o + s.replace("'", "'\\''")
+    o = o + "'"
+    return o
+}
+
+fn _emit_trailer(reason_slug: string, reason_detail: string, fix: string) {
+    eprintln("reason: " + reason_slug + ": " + reason_detail)
+    eprintln("fix: " + fix)
+}
+
+fn _resolve_threshold(explicit_hz: int, paradigm: string) -> int {
+    if explicit_hz > 0 { return explicit_hz }
+    if paradigm == "berger"  { return PARADIGM_BERGER_HZ }
+    if paradigm == "emg"     { return PARADIGM_EMG_HZ }
+    if paradigm == "ppg"     { return PARADIGM_PPG_HZ }
+    if paradigm == "default" { return PARADIGM_DEFAULT_HZ }
+    return DEFAULT_THRESHOLD_HZ
+}
+
+fn _resolve_board_id(board: string) -> int {
+    if board == "cyton"        { return BOARD_ID_CYTON }
+    if board == "cyton_daisy"  { return BOARD_ID_CYTON_DAISY }
+    return BOARD_ID_CYTON_DAISY
+}
+
+// ════════════════════════════════════════════════════════════════════
+// Helper python emitter (raw#37 transient)
+// ════════════════════════════════════════════════════════════════════
+
+fn _write_helper() {
+    let parts = []
+    parts.push("#!/usr/bin/env python3\n")
+    parts.push("# anima-eeg warmup_fs_check helper — emitted by\n")
+    parts.push("# anima-eeg/protocols/warmup_fs_check.hexa (raw#37 transient).\n")
+    parts.push("import argparse, json, os, subprocess, sys, tempfile, textwrap, time\n\n")
+
+    parts.push("VENV_PYTHON                 = '" + DEFAULT_VENV_PYTHON + "'\n")
+    parts.push("DEFAULT_THRESHOLD_HZ        = " + str(DEFAULT_THRESHOLD_HZ) + "\n")
+    parts.push("DEFAULT_WARMUP_S            = " + str(DEFAULT_WARMUP_S) + "\n")
+    parts.push("DEFAULT_DRAIN_INTERVAL_MS   = " + str(DEFAULT_DRAIN_INTERVAL_MS) + "\n")
+    parts.push("DEFAULT_WINDOW_S            = " + str(DEFAULT_WINDOW_S) + "\n")
+    parts.push("F_WARMUP_02_MAX_DROP_PCT    = " + to_string(F_WARMUP_02_MAX_DROP_PCT) + "\n")
+    parts.push("F_WARMUP_03_MAX_VAR_PCT     = " + to_string(F_WARMUP_03_MAX_VAR_PCT) + "\n")
+    parts.push("BOARD_ID_CYTON              = " + str(BOARD_ID_CYTON) + "\n")
+    parts.push("BOARD_ID_CYTON_DAISY        = " + str(BOARD_ID_CYTON_DAISY) + "\n")
+    parts.push("SELFTEST_GOOD_FS_HZ         = " + str(SELFTEST_GOOD_FS_HZ) + "\n")
+    parts.push("SELFTEST_BAD_FS_HZ          = " + str(SELFTEST_BAD_FS_HZ) + "\n")
+    parts.push("SELFTEST_UNSTABLE_LO_HZ     = " + str(SELFTEST_UNSTABLE_LO_HZ) + "\n")
+    parts.push("SELFTEST_UNSTABLE_HI_HZ     = " + str(SELFTEST_UNSTABLE_HI_HZ) + "\n\n")
+
+    parts.push("def emit_trailer(slug, detail, fix):\n")
+    parts.push("    sys.stderr.write(f'reason: {slug}: {detail}\\n')\n")
+    parts.push("    sys.stderr.write(f'fix: {fix}\\n')\n\n")
+
+    parts.push("def verify_venv():\n")
+    parts.push("    if not os.path.exists(VENV_PYTHON):\n")
+    parts.push("        emit_trailer('venv-missing',\n")
+    parts.push("                     f'{VENV_PYTHON} not found',\n")
+    parts.push("                     '1) python3 -m venv .venv-eeg  '\n")
+    parts.push("                     '2) source .venv-eeg/bin/activate  '\n")
+    parts.push("                     '3) pip install --upgrade numpy brainflow')\n")
+    parts.push("        return False\n")
+    parts.push("    r = subprocess.run([VENV_PYTHON, '-c', 'import numpy; print(\"ok\")'],\n")
+    parts.push("                       capture_output=True, text=True, timeout=20)\n")
+    parts.push("    if r.returncode != 0:\n")
+    parts.push("        emit_trailer('numpy-missing',\n")
+    parts.push("                     f'numpy import failed: {r.stderr.strip()[:200]}',\n")
+    parts.push("                     '1) source .venv-eeg/bin/activate  '\n")
+    parts.push("                     '2) pip install --upgrade numpy')\n")
+    parts.push("        return False\n")
+    parts.push("    return True\n\n")
+
+    // ─── live warmup payload (runs inside .venv-eeg python) ────────────
+    parts.push("WARMUP_PY = textwrap.dedent(r'''\n")
+    parts.push("    import json, os, sys, time\n")
+    parts.push("    import numpy as np\n")
+    parts.push("    PORT          = sys.argv[1]\n")
+    parts.push("    BOARD_ID      = int(sys.argv[2])\n")
+    parts.push("    THRESHOLD     = float(sys.argv[3])\n")
+    parts.push("    WARMUP_S      = float(sys.argv[4])\n")
+    parts.push("    DRAIN_MS      = float(sys.argv[5])\n")
+    parts.push("    WINDOW_S      = float(sys.argv[6])\n")
+    parts.push("    F02_MAX_DROP  = float(sys.argv[7])\n")
+    parts.push("    F03_MAX_VAR   = float(sys.argv[8])\n")
+    parts.push("    out = {\n")
+    parts.push("        'schema':                'anima-eeg/warmup_fs_check/1',\n")
+    parts.push("        'port':                  PORT,\n")
+    parts.push("        'board_id':              BOARD_ID,\n")
+    parts.push("        'threshold_hz':          THRESHOLD,\n")
+    parts.push("        'warmup_s':              WARMUP_S,\n")
+    parts.push("        'drain_interval_ms':     DRAIN_MS,\n")
+    parts.push("        'window_s':              WINDOW_S,\n")
+    parts.push("        'sample_rate_claimed_hz': 0.0,\n")
+    parts.push("        'cols_total':            0,\n")
+    parts.push("        'duration_actual_s':     0.0,\n")
+    parts.push("        'effective_fs_hz':       0.0,\n")
+    parts.push("        'drop_pct':              100.0,\n")
+    parts.push("        'window_count':          0,\n")
+    parts.push("        'window_fs_hz':          [],\n")
+    parts.push("        'window_fs_mean':        0.0,\n")
+    parts.push("        'window_fs_var_pct':     100.0,\n")
+    parts.push("        'iossdat_applied':       False,\n")
+    parts.push("        'f01_pass':              False,\n")
+    parts.push("        'f02_pass':              False,\n")
+    parts.push("        'f03_pass':              False,\n")
+    parts.push("        'overall':               False,\n")
+    parts.push("    }\n")
+    parts.push("    try:\n")
+    parts.push("        from brainflow.board_shim import BoardShim, BrainFlowInputParams\n")
+    parts.push("    except Exception as exc:\n")
+    parts.push("        out['error'] = f'brainflow-import-failed: {exc!r}'\n")
+    parts.push("        print(json.dumps(out)); sys.exit(2)\n")
+    // ─── IOSSDATALAT=1ms best-effort (raw#10 honest C3 #2) ─────────────
+    parts.push("    # raw#10 honest C3 #2: best-effort IOSSDATALAT=1ms ioctl on Darwin.\n")
+    parts.push("    # Failure is non-fatal — we still proceed with default latency. The\n")
+    parts.push("    # parallel session-start hook BG (a09b8ad0) will land a stronger\n")
+    parts.push("    # implementation; this is a self-contained probe that works today.\n")
+    parts.push("    def try_iossdat(serial_port):\n")
+    parts.push("        if sys.platform != 'darwin': return False\n")
+    parts.push("        try:\n")
+    parts.push("            import fcntl, ctypes\n")
+    parts.push("            # IOSSDATALAT = 0x80045402 (sys/ioctl.h on Darwin)\n")
+    parts.push("            IOSSDATALAT = 0x80045402\n")
+    parts.push("            fd = os.open(serial_port, os.O_RDWR | os.O_NOCTTY)\n")
+    parts.push("            try:\n")
+    parts.push("                latency = ctypes.c_ulong(1)\n")
+    parts.push("                fcntl.ioctl(fd, IOSSDATALAT, latency)\n")
+    parts.push("                return True\n")
+    parts.push("            finally:\n")
+    parts.push("                os.close(fd)\n")
+    parts.push("        except Exception:\n")
+    parts.push("            return False\n")
+    parts.push("    # NOTE: applying ioctl AFTER BrainFlow opens the port can collide\n")
+    parts.push("    # with the BoardShim handle. We attempt PRE-open here; if it works,\n")
+    parts.push("    # the kernel-side latency is set before BoardShim claims fd.\n")
+    parts.push("    out['iossdat_applied'] = bool(try_iossdat(PORT))\n")
+    parts.push("    BoardShim.disable_board_logger()\n")
+    parts.push("    params = BrainFlowInputParams()\n")
+    parts.push("    params.serial_port = PORT\n")
+    parts.push("    try:\n")
+    parts.push("        sample_rate = BoardShim.get_sampling_rate(BOARD_ID)\n")
+    parts.push("        out['sample_rate_claimed_hz'] = float(sample_rate)\n")
+    parts.push("    except Exception as exc:\n")
+    parts.push("        out['error'] = f'sample-rate-meta-failed: {exc!r}'\n")
+    parts.push("        print(json.dumps(out)); sys.exit(2)\n")
+    parts.push("    board = None\n")
+    parts.push("    try:\n")
+    parts.push("        board = BoardShim(BOARD_ID, params)\n")
+    parts.push("        board.prepare_session()\n")
+    parts.push("    except Exception as exc:\n")
+    parts.push("        msg = str(exc)[:200]\n")
+    parts.push("        out['error'] = f'prepare-session-failed: {msg}'\n")
+    parts.push("        try:\n")
+    parts.push("            if board is not None: board.release_session()\n")
+    parts.push("        except Exception: pass\n")
+    parts.push("        print(json.dumps(out)); sys.exit(2)\n")
+    parts.push("    try:\n")
+    parts.push("        # Larger ring buffer (450000) matches collect.hexa convention\n")
+    parts.push("        board.start_stream(450000)\n")
+    parts.push("    except Exception as exc:\n")
+    parts.push("        msg = str(exc)[:200]\n")
+    parts.push("        out['error'] = f'start-stream-failed: {msg}'\n")
+    parts.push("        try: board.release_session()\n")
+    parts.push("        except Exception: pass\n")
+    parts.push("        print(json.dumps(out)); sys.exit(2)\n")
+    parts.push("    try:\n")
+    parts.push("        # Chunked drain — every DRAIN_MS milliseconds, fetch the\n")
+    parts.push("        # newly-arrived ring-buffer rows, accumulate timestamps so we\n")
+    parts.push("        # can compute per-window fs at WINDOW_S boundaries.\n")
+    parts.push("        # raw#10 honest: get_current_board_data peeks without consuming;\n")
+    parts.push("        # we use get_board_data() to drain to a list of arrays.\n")
+    parts.push("        chunks = []\n")
+    parts.push("        chunk_t = []   # absolute monotonic time of each drain\n")
+    parts.push("        t0 = time.monotonic()\n")
+    parts.push("        deadline = t0 + WARMUP_S\n")
+    parts.push("        next_drain = t0 + (DRAIN_MS / 1000.0)\n")
+    parts.push("        while time.monotonic() < deadline:\n")
+    parts.push("            sleep_for = max(0.0, next_drain - time.monotonic())\n")
+    parts.push("            if sleep_for > 0.0:\n")
+    parts.push("                time.sleep(sleep_for)\n")
+    parts.push("            try:\n")
+    parts.push("                data = board.get_board_data()\n")
+    parts.push("            except Exception as exc:\n")
+    parts.push("                out['error'] = f'drain-failed: {exc!r}'\n")
+    parts.push("                break\n")
+    parts.push("            if data is not None and data.size > 0:\n")
+    parts.push("                chunks.append(int(data.shape[1]))\n")
+    parts.push("                chunk_t.append(time.monotonic() - t0)\n")
+    parts.push("            next_drain += (DRAIN_MS / 1000.0)\n")
+    parts.push("        # Final drain — capture anything still in the ring after deadline\n")
+    parts.push("        try:\n")
+    parts.push("            tail = board.get_board_data()\n")
+    parts.push("            if tail is not None and tail.size > 0:\n")
+    parts.push("                chunks.append(int(tail.shape[1]))\n")
+    parts.push("                chunk_t.append(time.monotonic() - t0)\n")
+    parts.push("        except Exception:\n")
+    parts.push("            pass\n")
+    parts.push("        duration_actual = time.monotonic() - t0\n")
+    parts.push("        try: board.stop_stream()\n")
+    parts.push("        except Exception: pass\n")
+    parts.push("    finally:\n")
+    parts.push("        try: board.release_session()\n")
+    parts.push("        except Exception: pass\n")
+    parts.push("    cols_total = int(sum(chunks))\n")
+    parts.push("    out['cols_total']        = cols_total\n")
+    parts.push("    out['duration_actual_s'] = round(duration_actual, 4)\n")
+    parts.push("    if duration_actual <= 0.0 or cols_total == 0:\n")
+    parts.push("        out['error'] = out.get('error') or 'no-data-captured'\n")
+    parts.push("        print(json.dumps(out)); sys.exit(2)\n")
+    parts.push("    effective_fs = float(cols_total) / float(duration_actual)\n")
+    parts.push("    out['effective_fs_hz'] = round(effective_fs, 4)\n")
+    parts.push("    sr_claimed = out['sample_rate_claimed_hz']\n")
+    parts.push("    if sr_claimed > 0.0:\n")
+    parts.push("        drop_pct = max(0.0, (sr_claimed - effective_fs) / sr_claimed * 100.0)\n")
+    parts.push("    else:\n")
+    parts.push("        drop_pct = 0.0\n")
+    parts.push("    out['drop_pct'] = round(drop_pct, 4)\n")
+    parts.push("    # Per-window fs (F_WARMUP_03 stability gate)\n")
+    parts.push("    # Bin chunks into WINDOW_S-second buckets keyed by chunk_t.\n")
+    parts.push("    n_windows = max(1, int(round(duration_actual / WINDOW_S)))\n")
+    parts.push("    bins = [0] * n_windows\n")
+    parts.push("    for n_samp, t_drain in zip(chunks, chunk_t):\n")
+    parts.push("        idx = min(n_windows - 1, max(0, int(t_drain // WINDOW_S)))\n")
+    parts.push("        bins[idx] += n_samp\n")
+    parts.push("    window_fs_hz = [round(b / WINDOW_S, 4) for b in bins]\n")
+    parts.push("    out['window_count']  = n_windows\n")
+    parts.push("    out['window_fs_hz']  = window_fs_hz\n")
+    parts.push("    if n_windows >= 2 and effective_fs > 0.0:\n")
+    parts.push("        mean = sum(window_fs_hz) / float(n_windows)\n")
+    parts.push("        out['window_fs_mean'] = round(mean, 4)\n")
+    parts.push("        if mean > 0.0:\n")
+    parts.push("            var = sum((w - mean) ** 2 for w in window_fs_hz) / float(n_windows)\n")
+    parts.push("            stdev = var ** 0.5\n")
+    parts.push("            var_pct = (stdev / mean) * 100.0\n")
+    parts.push("            out['window_fs_var_pct'] = round(var_pct, 4)\n")
+    parts.push("        else:\n")
+    parts.push("            out['window_fs_var_pct'] = 100.0\n")
+    parts.push("    else:\n")
+    parts.push("        # Single-window run cannot evaluate stability — pass by\n")
+    parts.push("        # default (raw#10 honest C3: cannot fail what we cannot measure).\n")
+    parts.push("        out['window_fs_mean']    = round(effective_fs, 4)\n")
+    parts.push("        out['window_fs_var_pct'] = 0.0\n")
+    parts.push("    # F_WARMUP_01: effective_fs >= threshold\n")
+    parts.push("    out['f01_pass'] = bool(effective_fs >= THRESHOLD)\n")
+    parts.push("    # F_WARMUP_02: drop_pct < F02_MAX_DROP\n")
+    parts.push("    if sr_claimed > 0.0:\n")
+    parts.push("        out['f02_pass'] = bool(drop_pct < F02_MAX_DROP)\n")
+    parts.push("    else:\n")
+    parts.push("        out['f02_pass'] = True\n")
+    parts.push("    # F_WARMUP_03: per-window stability\n")
+    parts.push("    out['f03_pass'] = bool(out['window_fs_var_pct'] < F03_MAX_VAR)\n")
+    parts.push("    out['overall'] = bool(out['f01_pass'] and out['f02_pass']\n")
+    parts.push("                          and out['f03_pass'])\n")
+    parts.push("    print(json.dumps(out))\n")
+    parts.push("    sys.exit(0 if out['overall'] else 1)\n")
+    parts.push("''')\n\n")
+
+    // ─── selftest payload — pure synthetic (no hardware) ─────────────
+    parts.push("SELFTEST_PY = textwrap.dedent(r'''\n")
+    parts.push("    import json, sys\n")
+    parts.push("    import numpy as np\n")
+    parts.push("    GOOD_FS    = float(sys.argv[1])\n")
+    parts.push("    BAD_FS     = float(sys.argv[2])\n")
+    parts.push("    UNS_LO     = float(sys.argv[3])\n")
+    parts.push("    UNS_HI     = float(sys.argv[4])\n")
+    parts.push("    F02_MAX_DP = float(sys.argv[5])\n")
+    parts.push("    F03_MAX_VR = float(sys.argv[6])\n")
+    parts.push("    WARMUP_S   = 30.0\n")
+    parts.push("    WINDOW_S   = 5.0\n")
+    parts.push("    n_windows  = int(WARMUP_S // WINDOW_S)\n")
+    parts.push("    def evaluate(window_fs_list, claimed_hz, threshold):\n")
+    parts.push("        cols = sum(int(round(f * WINDOW_S)) for f in window_fs_list)\n")
+    parts.push("        eff = cols / WARMUP_S\n")
+    parts.push("        drop = max(0.0, (claimed_hz - eff) / claimed_hz * 100.0)\n")
+    parts.push("        mean = sum(window_fs_list) / len(window_fs_list)\n")
+    parts.push("        var = sum((w - mean)**2 for w in window_fs_list) / len(window_fs_list)\n")
+    parts.push("        stdev = var ** 0.5\n")
+    parts.push("        var_pct = (stdev / mean) * 100.0 if mean > 0 else 100.0\n")
+    parts.push("        f01 = bool(eff >= threshold)\n")
+    parts.push("        f02 = bool(drop < F02_MAX_DP) if claimed_hz > 0 else True\n")
+    parts.push("        f03 = bool(var_pct < F03_MAX_VR)\n")
+    parts.push("        return {'eff': round(eff,4), 'drop': round(drop,4),\n")
+    parts.push("                'mean': round(mean,4), 'var_pct': round(var_pct,4),\n")
+    parts.push("                'f01': f01, 'f02': f02, 'f03': f03,\n")
+    parts.push("                'overall': bool(f01 and f02 and f03)}\n")
+    parts.push("    # Case A — GOOD: stable 125 Hz across all windows\n")
+    parts.push("    case_a = evaluate([GOOD_FS]*n_windows, GOOD_FS, 100.0)\n")
+    parts.push("    # Case B — DROPPED: stable but at 7 Hz (catastrophic)\n")
+    parts.push("    case_b = evaluate([BAD_FS]*n_windows, GOOD_FS, 100.0)\n")
+    parts.push("    # Case C — UNSTABLE: alternating 60 Hz and 200 Hz windows\n")
+    parts.push("    unstable = []\n")
+    parts.push("    for i in range(n_windows):\n")
+    parts.push("        unstable.append(UNS_LO if (i % 2 == 0) else UNS_HI)\n")
+    parts.push("    case_c = evaluate(unstable, GOOD_FS, 100.0)\n")
+    parts.push("    # Case D — BERGER paradigm 30 Hz threshold lets BAD_FS=7 still fail\n")
+    parts.push("    case_d_berger_bad = evaluate([BAD_FS]*n_windows, GOOD_FS, 30.0)\n")
+    parts.push("    # Case E — PPG paradigm 5 Hz threshold lets BAD_FS=7 PASS F_WARMUP_01\n")
+    parts.push("    #          but F_WARMUP_02 still fails (94% drop from 125 claim)\n")
+    parts.push("    case_e_ppg_bad   = evaluate([BAD_FS]*n_windows, GOOD_FS, 5.0)\n")
+    parts.push("    # Falsifier matrix — what MUST hold for selftest to PASS\n")
+    parts.push("    f01_matrix = bool(case_a['f01'] and (not case_b['f01'])\n")
+    parts.push("                      and case_c['f01'] and (not case_d_berger_bad['f01'])\n")
+    parts.push("                      and case_e_ppg_bad['f01'])\n")
+    parts.push("    f02_matrix = bool(case_a['f02'] and (not case_b['f02'])\n")
+    parts.push("                      and (not case_e_ppg_bad['f02']))\n")
+    parts.push("    f03_matrix = bool(case_a['f03'] and case_b['f03']\n")
+    parts.push("                      and (not case_c['f03']))\n")
+    parts.push("    overall = bool(f01_matrix and f02_matrix and f03_matrix\n")
+    parts.push("                   and case_a['overall']\n")
+    parts.push("                   and (not case_b['overall'])\n")
+    parts.push("                   and (not case_c['overall']))\n")
+    parts.push("    out = {\n")
+    parts.push("        'rc': 0,\n")
+    parts.push("        'case_a_good':         case_a,\n")
+    parts.push("        'case_b_dropped':      case_b,\n")
+    parts.push("        'case_c_unstable':     case_c,\n")
+    parts.push("        'case_d_berger_bad':   case_d_berger_bad,\n")
+    parts.push("        'case_e_ppg_bad':      case_e_ppg_bad,\n")
+    parts.push("        'f01_matrix':          f01_matrix,\n")
+    parts.push("        'f02_matrix':          f02_matrix,\n")
+    parts.push("        'f03_matrix':          f03_matrix,\n")
+    parts.push("        'overall':             overall,\n")
+    parts.push("    }\n")
+    parts.push("    print(json.dumps(out))\n")
+    parts.push("''')\n\n")
+
+    parts.push("def cmd_selftest(args):\n")
+    parts.push("    print('schema=' + '" + SCHEMA + "')\n")
+    parts.push("    print('venv_python_exists=' + str(os.path.exists(VENV_PYTHON)))\n")
+    parts.push("    if not verify_venv():\n")
+    parts.push("        print('selftest=fail')\n")
+    parts.push("        sys.exit(2)\n")
+    parts.push("    cmd = [VENV_PYTHON, '-c', SELFTEST_PY,\n")
+    parts.push("           str(SELFTEST_GOOD_FS_HZ), str(SELFTEST_BAD_FS_HZ),\n")
+    parts.push("           str(SELFTEST_UNSTABLE_LO_HZ), str(SELFTEST_UNSTABLE_HI_HZ),\n")
+    parts.push("           str(F_WARMUP_02_MAX_DROP_PCT), str(F_WARMUP_03_MAX_VAR_PCT)]\n")
+    parts.push("    r = subprocess.run(cmd, capture_output=True, text=True, timeout=60)\n")
+    parts.push("    if r.returncode != 0 or not r.stdout.strip():\n")
+    parts.push("        emit_trailer('selftest-subprocess-failed',\n")
+    parts.push("                     f'rc={r.returncode} stderr={r.stderr.strip()[:300]}',\n")
+    parts.push("                     '1) verify .venv-eeg numpy installed  2) re-run')\n")
+    parts.push("        print('selftest=fail')\n")
+    parts.push("        sys.exit(2)\n")
+    parts.push("    try:\n")
+    parts.push("        m = json.loads(r.stdout.strip().splitlines()[-1])\n")
+    parts.push("    except Exception as exc:\n")
+    parts.push("        emit_trailer('selftest-parse-failed',\n")
+    parts.push("                     f'could not parse helper output: {exc!r}; raw={r.stdout[-200:]!r}',\n")
+    parts.push("                     '1) re-run; if persistent inspect helper python')\n")
+    parts.push("        print('selftest=fail')\n")
+    parts.push("        sys.exit(2)\n")
+    parts.push("    a = m['case_a_good']; b = m['case_b_dropped']; c = m['case_c_unstable']\n")
+    parts.push("    d = m['case_d_berger_bad']; e = m['case_e_ppg_bad']\n")
+    parts.push("    print(f'case_a_good        eff={a[\"eff\"]} drop={a[\"drop\"]}% var={a[\"var_pct\"]}% f01/02/03={a[\"f01\"]}/{a[\"f02\"]}/{a[\"f03\"]} overall={a[\"overall\"]}')\n")
+    parts.push("    print(f'case_b_dropped     eff={b[\"eff\"]} drop={b[\"drop\"]}% var={b[\"var_pct\"]}% f01/02/03={b[\"f01\"]}/{b[\"f02\"]}/{b[\"f03\"]} overall={b[\"overall\"]}')\n")
+    parts.push("    print(f'case_c_unstable    eff={c[\"eff\"]} drop={c[\"drop\"]}% var={c[\"var_pct\"]}% f01/02/03={c[\"f01\"]}/{c[\"f02\"]}/{c[\"f03\"]} overall={c[\"overall\"]}')\n")
+    parts.push("    print(f'case_d_berger_bad  eff={d[\"eff\"]} drop={d[\"drop\"]}% var={d[\"var_pct\"]}% f01/02/03={d[\"f01\"]}/{d[\"f02\"]}/{d[\"f03\"]} overall={d[\"overall\"]}')\n")
+    parts.push("    print(f'case_e_ppg_bad     eff={e[\"eff\"]} drop={e[\"drop\"]}% var={e[\"var_pct\"]}% f01/02/03={e[\"f01\"]}/{e[\"f02\"]}/{e[\"f03\"]} overall={e[\"overall\"]}')\n")
+    parts.push("    f01m = 'PASS' if m['f01_matrix'] else 'FAIL'\n")
+    parts.push("    f02m = 'PASS' if m['f02_matrix'] else 'FAIL'\n")
+    parts.push("    f03m = 'PASS' if m['f03_matrix'] else 'FAIL'\n")
+    parts.push("    print(f'F_WARMUP_01_matrix(threshold/paradigm): {f01m}')\n")
+    parts.push("    print(f'F_WARMUP_02_matrix(drop_pct < 30):       {f02m}')\n")
+    parts.push("    print(f'F_WARMUP_03_matrix(window var < 10%):    {f03m}')\n")
+    parts.push("    overall = 'PASS' if m['overall'] else 'FAIL'\n")
+    parts.push("    print(f'selftest={overall.lower()}')\n")
+    parts.push("    print(f'__EEG_WARMUP_FS__ {overall} {a[\"eff\"]:.2f} " + str(SELFTEST_GOOD_FS_HZ) + ".00')\n")
+    parts.push("    sys.exit(0 if m['overall'] else 1)\n\n")
+
+    parts.push("def cmd_run(args):\n")
+    parts.push("    if not verify_venv():\n")
+    parts.push("        print('__EEG_WARMUP_FS__ FAIL 0.00 0.00')\n")
+    parts.push("        sys.exit(2)\n")
+    parts.push("    cmd = [VENV_PYTHON, '-c', WARMUP_PY,\n")
+    parts.push("           args.port, str(args.board_id), str(args.threshold),\n")
+    parts.push("           str(args.warmup_s), str(args.drain_ms), str(args.window_s),\n")
+    parts.push("           str(F_WARMUP_02_MAX_DROP_PCT), str(F_WARMUP_03_MAX_VAR_PCT)]\n")
+    parts.push("    # Live capture timeout = warmup + 30s safety margin (BrainFlow\n")
+    parts.push("    # prepare_session can stall up to ~15s on a sleepy dongle).\n")
+    parts.push("    timeout_s = args.warmup_s + 30.0\n")
+    parts.push("    print(f'[warmup] starting {args.warmup_s}s warm-up on {args.port} '\n")
+    parts.push("          f'(board_id={args.board_id} threshold={args.threshold}Hz)')\n")
+    parts.push("    print(f'[warmup] this is a PRE-measurement gate — do NOT start the')\n")
+    parts.push("    print(f'[warmup] paradigm session yet; this only verifies the link.')\n")
+    parts.push("    r = subprocess.run(cmd, capture_output=True, text=True, timeout=timeout_s)\n")
+    parts.push("    if not r.stdout.strip():\n")
+    parts.push("        emit_trailer('warmup-subprocess-failed',\n")
+    parts.push("                     f'rc={r.returncode} stderr={r.stderr.strip()[:300]}',\n")
+    parts.push("                     '1) verify --port path  '\n")
+    parts.push("                     '2) check dongle red LED + Cyton power  '\n")
+    parts.push("                     '3) close OpenBCI GUI if running')\n")
+    parts.push("        print('__EEG_WARMUP_FS__ FAIL 0.00 0.00')\n")
+    parts.push("        sys.exit(2)\n")
+    parts.push("    try:\n")
+    parts.push("        meta = json.loads(r.stdout.strip().splitlines()[-1])\n")
+    parts.push("    except Exception as exc:\n")
+    parts.push("        emit_trailer('warmup-parse-failed',\n")
+    parts.push("                     f'could not parse helper output: {exc!r}',\n")
+    parts.push("                     '1) re-run; inspect helper python at ' + VENV_PYTHON)\n")
+    parts.push("        print('__EEG_WARMUP_FS__ FAIL 0.00 0.00')\n")
+    parts.push("        sys.exit(2)\n")
+    parts.push("    if 'error' in meta:\n")
+    parts.push("        emit_trailer('warmup-helper-error',\n")
+    parts.push("                     f'helper error: {meta[\"error\"]}',\n")
+    parts.push("                     '1) verify dongle + Cyton powered  '\n")
+    parts.push("                     '2) re-seat USB cable into Mac  '\n")
+    parts.push("                     '3) try a different USB port (NOT a hub)')\n")
+    parts.push("        eff = meta.get('effective_fs_hz', 0.0)\n")
+    parts.push("        claim = meta.get('sample_rate_claimed_hz', 0.0)\n")
+    parts.push("        print(f'__EEG_WARMUP_FS__ FAIL {eff:.2f} {claim:.2f}')\n")
+    parts.push("        sys.exit(2)\n")
+    parts.push("    eff   = meta['effective_fs_hz']\n")
+    parts.push("    claim = meta['sample_rate_claimed_hz']\n")
+    parts.push("    drop  = meta['drop_pct']\n")
+    parts.push("    var   = meta['window_fs_var_pct']\n")
+    parts.push("    print(f'port={meta[\"port\"]}  board_id={meta[\"board_id\"]}')\n")
+    parts.push("    print(f'iossdat_applied={meta[\"iossdat_applied\"]}  (Darwin best-effort)')\n")
+    parts.push("    print(f'duration={meta[\"duration_actual_s\"]} s  cols_total={meta[\"cols_total\"]}')\n")
+    parts.push("    print(f'sample_rate_claimed={claim} Hz  threshold={meta[\"threshold_hz\"]} Hz')\n")
+    parts.push("    print(f'effective_fs={eff} Hz  drop_pct={drop}% (limit {F_WARMUP_02_MAX_DROP_PCT}%)')\n")
+    parts.push("    print(f'window_count={meta[\"window_count\"]}  window_fs={meta[\"window_fs_hz\"]}')\n")
+    parts.push("    print(f'window_fs_mean={meta[\"window_fs_mean\"]} Hz  var_pct={var}% (limit {F_WARMUP_03_MAX_VAR_PCT}%)')\n")
+    parts.push("    f01 = 'PASS' if meta['f01_pass'] else 'FAIL'\n")
+    parts.push("    f02 = 'PASS' if meta['f02_pass'] else 'FAIL'\n")
+    parts.push("    f03 = 'PASS' if meta['f03_pass'] else 'FAIL'\n")
+    parts.push("    print(f'F_WARMUP_01_threshold:    {f01}')\n")
+    parts.push("    print(f'F_WARMUP_02_drop_pct:     {f02}')\n")
+    parts.push("    print(f'F_WARMUP_03_window_var:   {f03}')\n")
+    parts.push("    overall = 'PASS' if meta['overall'] else 'FAIL'\n")
+    parts.push("    print(f'verdict={overall}')\n")
+    parts.push("    print(f'__EEG_WARMUP_FS__ {overall} {eff:.2f} {claim:.2f}')\n")
+    parts.push("    if not meta['overall']:\n")
+    parts.push("        print('')\n")
+    parts.push("        print('warmup gate FAILED — DO NOT START PARADIGM SESSION')\n")
+    parts.push("        print('  cause hint:')\n")
+    parts.push("        if not meta['f01_pass']:\n")
+    parts.push("            print(f'    F_WARMUP_01: effective fs {eff} < threshold {meta[\"threshold_hz\"]} Hz')\n")
+    parts.push("            print('    → USB dongle / Mac port likely the bottleneck')\n")
+    parts.push("        if not meta['f02_pass']:\n")
+    parts.push("            print(f'    F_WARMUP_02: drop {drop}% ≥ {F_WARMUP_02_MAX_DROP_PCT}%')\n")
+    parts.push("            print('    → high-jitter link; reseat cable, avoid USB hub')\n")
+    parts.push("        if not meta['f03_pass']:\n")
+    parts.push("            print(f'    F_WARMUP_03: window var {var}% ≥ {F_WARMUP_03_MAX_VAR_PCT}%')\n")
+    parts.push("            print('    → unstable link; mid-session collapse predicted')\n")
+    parts.push("        print('  retry checklist:')\n")
+    parts.push("        print('    1) close OpenBCI GUI (port lock)')\n")
+    parts.push("        print('    2) hexa run anima-eeg/eeg_ftdi_latency_fix.hexa --apply --target-ms 1')\n")
+    parts.push("        print('    3) try a DIRECT Mac USB-A port (no hub, no extension)')\n")
+    parts.push("        print('    4) consider Cyton-only 8ch mode (--board cyton)')\n")
+    parts.push("        print('    5) re-run this warmup gate before paradigm wrapper')\n")
+    parts.push("        if args.strict: sys.exit(1)\n")
+    parts.push("        print('lenient: WARN only — exit 0 (paradigm may still degrade)')\n")
+    parts.push("        sys.exit(0)\n")
+    parts.push("    sys.exit(0)\n\n")
+
+    parts.push("def main():\n")
+    parts.push("    p = argparse.ArgumentParser()\n")
+    parts.push("    sub = p.add_subparsers(dest='cmd', required=True)\n")
+    parts.push("    s = sub.add_parser('selftest')\n")
+    parts.push("    v = sub.add_parser('run')\n")
+    parts.push("    v.add_argument('--port', required=True)\n")
+    parts.push("    v.add_argument('--board-id', type=int, required=True, dest='board_id')\n")
+    parts.push("    v.add_argument('--threshold', type=float, default=float(DEFAULT_THRESHOLD_HZ))\n")
+    parts.push("    v.add_argument('--warmup-s', type=float, default=float(DEFAULT_WARMUP_S), dest='warmup_s')\n")
+    parts.push("    v.add_argument('--drain-ms', type=float, default=float(DEFAULT_DRAIN_INTERVAL_MS), dest='drain_ms')\n")
+    parts.push("    v.add_argument('--window-s', type=float, default=float(DEFAULT_WINDOW_S), dest='window_s')\n")
+    parts.push("    v.add_argument('--strict', action='store_true', default=True)\n")
+    parts.push("    v.add_argument('--lenient', dest='strict', action='store_false')\n")
+    parts.push("    args = p.parse_args()\n")
+    parts.push("    if args.cmd == 'selftest': cmd_selftest(args)\n")
+    parts.push("    elif args.cmd == 'run':    cmd_run(args)\n")
+    parts.push("    else: sys.exit(2)\n\n")
+
+    parts.push("if __name__ == '__main__': main()\n")
+
+    write_file(HELPER_PATH, parts.join(""))
+}
+
+fn _run_helper(args: string) -> list {
+    let cmd = "python3 " + HELPER_PATH + " " + args
+    let r = exec_with_status(cmd)
+    return [to_string(r[0]).trim(), to_int(r[1])]
+}
+
+// ════════════════════════════════════════════════════════════════════
+// CLI
+// ════════════════════════════════════════════════════════════════════
+
+fn _print_usage() {
+    eprintln("usage: hexa run anima-eeg/protocols/warmup_fs_check.hexa --selftest")
+    eprintln("       hexa run anima-eeg/protocols/warmup_fs_check.hexa --run \\")
+    eprintln("            --port <serial> [--board cyton|cyton_daisy] \\")
+    eprintln("            [--threshold <hz>] [--paradigm berger|emg|ppg|default] \\")
+    eprintln("            [--warmup-s <n>] [--strict | --lenient]")
+    eprintln("flags:")
+    eprintln("  --selftest             synthetic 5-case matrix, verify F_WARMUP_01/02/03")
+    eprintln("  --run                  live 30s warm-up gate (requires hardware)")
+    eprintln("  --port <path>          serial dongle path (e.g. /dev/cu.usbserial-...)")
+    eprintln("  --board <name>         cyton | cyton_daisy (default cyton_daisy)")
+    eprintln("  --threshold <hz>       explicit minimum effective fs (default " + str(DEFAULT_THRESHOLD_HZ) + ")")
+    eprintln("  --paradigm <name>      berger (" + str(PARADIGM_BERGER_HZ) + ") | emg (" + str(PARADIGM_EMG_HZ) + ") | ppg (" + str(PARADIGM_PPG_HZ) + ") | default (" + str(PARADIGM_DEFAULT_HZ) + ")")
+    eprintln("                         applied only when --threshold not given")
+    eprintln("  --warmup-s <n>         warm-up duration in seconds (default " + str(DEFAULT_WARMUP_S) + ")")
+    eprintln("  --strict               (default) FAIL → exit 1 + abort guidance")
+    eprintln("  --lenient              warn-only, exit 0 even on FAIL")
+    eprintln("  --help                 this message")
+}
+
+fn main() {
+    let av = argv()
+    let mut want_selftest    = false
+    let mut want_run         = false
+    let mut want_help        = false
+    let mut strict           = true
+    let mut port             = ""
+    let mut board_name       = DEFAULT_BOARD_NAME
+    let mut paradigm         = ""
+    let mut explicit_thresh  = -1
+    let mut warmup_s         = DEFAULT_WARMUP_S
+    let mut drain_ms         = DEFAULT_DRAIN_INTERVAL_MS
+    let mut window_s         = DEFAULT_WINDOW_S
+
+    // hexa-strict: user args begin at index 2 (matches sample_rate_guard / package_num_audit)
+    let mut i = 2
+    while i < len(av) {
+        let a = av[i]
+        if a == "--selftest"          { want_selftest = true; i = i + 1; continue }
+        if a == "--run"               { want_run = true; i = i + 1; continue }
+        if a == "--help" || a == "-h" { want_help = true; i = i + 1; continue }
+        if a == "--strict"            { strict = true; i = i + 1; continue }
+        if a == "--lenient"           { strict = false; i = i + 1; continue }
+        if a == "--port" {
+            if (i + 1) >= len(av) {
+                _emit_trailer("missing-arg-value",
+                              "--port requires a serial path",
+                              "1) re-run with --port /dev/cu.usbserial-...")
+                exit(2)
+            }
+            port = av[i + 1]; i = i + 2; continue
+        }
+        if a == "--board" {
+            if (i + 1) >= len(av) {
+                _emit_trailer("missing-arg-value",
+                              "--board requires cyton or cyton_daisy",
+                              "1) re-run with --board cyton_daisy")
+                exit(2)
+            }
+            board_name = av[i + 1]; i = i + 2; continue
+        }
+        if a == "--threshold" {
+            if (i + 1) >= len(av) {
+                _emit_trailer("missing-arg-value",
+                              "--threshold requires an integer Hz",
+                              "1) re-run with --threshold 100")
+                exit(2)
+            }
+            explicit_thresh = to_int(av[i + 1]); i = i + 2; continue
+        }
+        if a == "--paradigm" {
+            if (i + 1) >= len(av) {
+                _emit_trailer("missing-arg-value",
+                              "--paradigm requires a name",
+                              "1) re-run with --paradigm berger|emg|ppg|default")
+                exit(2)
+            }
+            paradigm = av[i + 1]; i = i + 2; continue
+        }
+        if a == "--warmup-s" {
+            if (i + 1) >= len(av) {
+                _emit_trailer("missing-arg-value",
+                              "--warmup-s requires a numeric seconds",
+                              "1) re-run with --warmup-s 30")
+                exit(2)
+            }
+            warmup_s = to_int(av[i + 1]); i = i + 2; continue
+        }
+        // unknown flag → fall through
+        _emit_trailer("unknown-flag",
+                      "argv[" + str(i) + "] = " + a,
+                      "1) check --help for valid flags")
+        _print_usage()
+        exit(2)
+    }
+
+    if want_help {
+        _print_usage()
+        exit(0)
+    }
+
+    _write_helper()
+
+    if want_selftest {
+        let r = _run_helper("selftest")
+        let stdout = r[0]
+        let rc     = to_int(r[1])
+        println(stdout)
+        exit(rc)
+    }
+
+    if !want_run {
+        _emit_trailer("missing-mode",
+                      "must pass --selftest or --run",
+                      "1) --selftest for synthetic verification  "
+                      "2) --run --port <serial> for live gate")
+        _print_usage()
+        exit(2)
+    }
+
+    // Validate inputs for --run mode
+    if port == "" {
+        _emit_trailer("missing-required",
+                      "--port is required for --run mode",
+                      "1) provide --port /dev/cu.usbserial-...  "
+                      "2) or use --selftest for synthetic verification")
+        _print_usage()
+        exit(2)
+    }
+
+    if board_name != "cyton" && board_name != "cyton_daisy" {
+        _emit_trailer("invalid-board",
+                      "--board must be cyton or cyton_daisy (got " + board_name + ")",
+                      "1) re-run with --board cyton_daisy  2) or --board cyton")
+        exit(2)
+    }
+
+    let threshold_hz = _resolve_threshold(explicit_thresh, paradigm)
+    if threshold_hz <= 0 {
+        _emit_trailer("invalid-threshold",
+                      "resolved threshold <= 0 (got " + str(threshold_hz) + ")",
+                      "1) use --threshold <positive int>  2) or --paradigm <name>")
+        exit(2)
+    }
+
+    if warmup_s <= 0 {
+        _emit_trailer("invalid-warmup-s",
+                      "--warmup-s must be > 0 (got " + str(warmup_s) + ")",
+                      "1) re-run with --warmup-s 30")
+        exit(2)
+    }
+
+    let board_id = _resolve_board_id(board_name)
+
+    let mut args = "run"
+        + " --port "      + _sh_quote(port)
+        + " --board-id "  + str(board_id)
+        + " --threshold " + str(threshold_hz)
+        + " --warmup-s "  + str(warmup_s)
+        + " --drain-ms "  + str(drain_ms)
+        + " --window-s "  + str(window_s)
+    if strict { args = args + " --strict" }
+    else      { args = args + " --lenient" }
+
+    let r = _run_helper(args)
+    let stdout = r[0]
+    let rc     = to_int(r[1])
+    println(stdout)
+    exit(rc)
+}

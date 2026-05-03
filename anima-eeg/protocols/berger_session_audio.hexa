@@ -90,26 +90,32 @@ fn exec_capture(cmd: str) -> str {
 
 // ════════════════════════════════════════════════════════════════════
 // Phases
+//   AUDIO CUE TIMING CONTRACT (raw#10 honest C3):
+//     모든 say_cue 측 BLOCKING — say -v Yuna 측 종료 후 측 다음 step
+//     시작. "지금" cue 측 run_collect 시작 직전 측 BLOCKING 호출 →
+//     사용자 측 cue 듣기 전에 capture 측 시작하지 않음. 60s collect
+//     측 foreground 호출 — wait 불필요. raw#65 idempotent.
+//     macOS only — Linux/Windows 측 say binary 부재 시 stub.
 // ════════════════════════════════════════════════════════════════════
 
 fn phase_eyes_closed(voice: str, port: str, board: str, duration: int, output: str) -> int {
-    say_cue(voice, "삼 초 후 눈을 감으세요")
-    sleep_seconds(CUE_LEAD_S)
-    say_cue(voice, "지금")
+    say_cue(voice, "삼 초 후 눈을 감으세요")    // BLOCKING ~2s
+    sleep_seconds(CUE_LEAD_S)                    // 3s lead
+    say_cue(voice, "지금")                       // BLOCKING — 완료 후 capture 시작
     let rc = run_collect(port, board, duration, "berger_ec_v2", output)
     say_cue(voice, "측정 끝")
     return rc
 }
 
 fn phase_rest(voice: str) {
-    say_cue(voice, "잠시 쉬세요")
+    say_cue(voice, "잠시 쉬세요")                // BLOCKING — 완료 후 sleep 시작
     sleep_seconds(REST_DURATION_S)
 }
 
 fn phase_eyes_open(voice: str, port: str, board: str, duration: int, output: str) -> int {
-    say_cue(voice, "삼 초 후 눈을 뜨세요")
-    sleep_seconds(CUE_LEAD_S)
-    say_cue(voice, "지금")
+    say_cue(voice, "삼 초 후 눈을 뜨세요")       // BLOCKING ~2s
+    sleep_seconds(CUE_LEAD_S)                    // 3s lead
+    say_cue(voice, "지금")                       // BLOCKING — 완료 후 capture 시작
     let rc = run_collect(port, board, duration, "berger_eo_v2", output)
     say_cue(voice, "측정 완료")
     return rc

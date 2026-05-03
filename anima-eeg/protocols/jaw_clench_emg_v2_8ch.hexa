@@ -1,0 +1,642 @@
+// anima-eeg/protocols/jaw_clench_emg_v2_8ch.hexa
+// raw#9 hexa-only · raw#10 honest-C3 · raw#11 snake_case · raw#12 frozen
+// raw#15 no-personal-paths · raw#65 idempotent · raw#71 falsifier-3 · raw#82 darwin-native
+// raw#91 honest-class · own 5
+//
+// @resolver-bypass(reason="darwin-native: --run delegates to anima-eeg/collect.hexa subprocess Cyton-only 8ch 250Hz mode (no Daisy) on host; selftest uses pure-hexa synthetic frontalis EMG burst train (rectified RMS amplitude time-domain) but unified bypass keeps route stable")
+//
+// PURPOSE
+//   Cyton-only 8ch jaw-clench EMG variant — companion to jaw_clench_emg.hexa
+//   (16ch Cyton+Daisy 125Hz effective). Phase 1 BG analysis showed
+//   jaw_clench_emg.hexa 0/3 FAIL on real BrainFlow capture due to Nyquist
+//   41 Hz < EMG band 50-150 Hz (Cyton+Daisy effective ~38-82 Hz with sample
+//   drop). Cyton-only 8ch retains nominal 250Hz → Nyquist 125 Hz → EMG band
+//   safely captured.
+//
+//   Trade: T7/T8 reside on Daisy chip; in Cyton-only mode they are NOT
+//   available. This protocol pivots to FRONTALIS EMG at Fp1/Fp2
+//   (forehead pickup), which is on Cyton chip and remains accessible.
+//   Frontalis muscle is recruited during teeth clench (~150-300 µV RMS)
+//   but at lower amplitude than temporalis/masseter. F_JAW_V2_01/02
+//   thresholds are lenient accordingly.
+//
+//   raw#10 honest C3 — three caveats stacked here:
+//     1. EMG ≠ EEG (carryover from v1) — muscle artifact is the SIGNAL.
+//     2. Frontalis EMG ≠ temporalis EMG: jaw clench couples to forehead
+//        muscle indirectly via co-contraction; amplitude ~5x lower than
+//        T7/T8 temporalis pickup. Detection is INDIRECT.
+//     3. Cyton-only 8ch loses Daisy 8ch (T7/T8/P3/P4/P7/P8/F3/F4 lost).
+//        Berger-paradigm O1/O2 alpha unaffected (occipital still on Cyton),
+//        but P3/P4 spatial coverage drops; ssvep/p300 paradigms degrade.
+//        User must physically detach Daisy module — hand-step burden.
+//
+//   Three falsifiers locked pre-registration (raw#71), thresholds lenient
+//   for frontalis pickup:
+//     F_JAW_V2_01: Fp1/Fp2 CLENCH RMS amplitude > 150 µV (frontalis weak)
+//     F_JAW_V2_02: CLENCH/REST RMS ratio >= 3x (lenient — frontalis tone)
+//     F_JAW_V2_03: effective fs >= 200 Hz (sample-rate guard, drop tolerance)
+//
+// LIVE BRAINFLOW INGEST: --run delegates to anima-eeg/collect.hexa with
+//   --board cyton (NOT cyton_daisy); this protocol owns block design +
+//   audio cue + bandpass-rectify-RMS analysis + falsifier evaluation +
+//   sample-rate guard.
+//
+// USAGE
+//   hexa run anima-eeg/protocols/jaw_clench_emg_v2_8ch.hexa --selftest
+//   hexa run anima-eeg/protocols/jaw_clench_emg_v2_8ch.hexa --run \
+//       --port <serial> --output <npy>
+//   (board is forced to "cyton" — Daisy must be physically detached)
+
+let SCHEMA = "anima-eeg/jaw_clench_emg_v2_8ch/1"
+
+// ════════════════════════════════════════════════════════════════════
+// Frozen block design (raw#12 pre-registered, mirrors v1)
+//   REST 30s → CLENCH 30s → REST 30s = 90s total
+//   CLENCH: voluntary teeth-clench, 1 per second (~30 bursts)
+// ════════════════════════════════════════════════════════════════════
+
+let BLOCK_REST_S             = 30           // each REST block (jaw relaxed)
+let BLOCK_CLENCH_S           = 30           // CLENCH block (1 Hz repetition)
+let BLOCK_COUNT              = 3            // REST, CLENCH, REST
+let TOTAL_DURATION_S         = 90           // 30+30+30
+let CUE_LEAD_MS              = 500          // audio cue lead
+
+// Board / signal-chain frozen — Cyton-only 8ch
+let SAMPLE_RATE_HZ           = 250          // Cyton 8ch nominal 250 Hz
+let CHANNEL_COUNT            = 8            // Cyton-only 8ch (no Daisy)
+let NOTCH_HZ                 = 60.0         // 한국 grid (raw#10 honest assumption)
+let BOARD_FORCED             = "cyton"      // raw#12 frozen — no Daisy
+
+// EMG-band bandpass — Nyquist 125 Hz, full EMG band 50-150 Hz fits within
+let BANDPASS_LO_HZ           = 50.0         // EMG body 50 Hz (above EEG band)
+let BANDPASS_HI_HZ           = 120.0        // capped near Nyquist (125 Hz)
+let BANDPASS_ORDER           = 4            // Butterworth order-4
+// raw#10 honest: 250 Hz → Nyquist 125 Hz; effective EMG band 50-120 Hz
+// safely below Nyquist with margin. 150 Hz upper-EMG content lost but
+// 50-120 Hz captures dominant frontalis power. v1 16ch effective fs was
+// ~62.5 Hz with Daisy interleave + drop → BP-200 Hz aliased catastrophically.
+
+// Time-domain rectified-RMS detection (lenient thresholds for frontalis)
+let CLENCH_RMS_WINDOW_MS     = 100          // moving RMS window (100 ms)
+let CLENCH_THRESHOLD_UV      = 100.0        // event threshold (lenient)
+let CLENCH_INTERVAL_MIN_MS   = 500          // refractory between events
+let CLENCH_RMS_PASS_UV       = 150.0        // F_JAW_V2_01: RMS > 150 µV
+let CLENCH_REST_RATIO_PASS   = 3.0          // F_JAW_V2_02: clench/rest >= 3x
+let CLENCH_TARGET_COUNT      = 30           // intentional 1 Hz × 30 s
+let CLENCH_COUNT_LO          = 18           // observed-count sanity floor
+let CLENCH_COUNT_HI          = 42           // observed-count sanity ceiling
+
+// Sample-rate guard (F_JAW_V2_03)
+let EFFECTIVE_FS_PASS_HZ     = 200.0        // F_JAW_V2_03: fs >= 200 Hz
+let EFFECTIVE_FS_TOLERANCE   = 50.0         // 250 Hz nominal − 50 = 200 floor
+
+// Channel mapping (10-20 system, Cyton-only 8ch)
+//   Cyton chip channels 1-8 map by convention:
+//     1=Fp1 2=Fp2 3=C3 4=C4 5=P7 6=P8 7=O1 8=O2
+//   Frontalis EMG paradigm uses Fp1/Fp2; O1/O2 retained as control.
+let CHAN_FP1                 = "Fp1"        // left frontal — frontalis pickup
+let CHAN_FP2                 = "Fp2"        // right frontal — frontalis pickup
+let CHAN_O1                  = "O1"         // left occipital (EMG-immune control)
+let CHAN_O2                  = "O2"         // right occipital (EMG-immune control)
+
+// Audit ledger path
+let AUDIT_DIR  = "state/jaw_clench_emg_v2_8ch_audit"
+
+// ════════════════════════════════════════════════════════════════════
+// Globals (raw#9 strict — no fallbacks, all measured)
+// ════════════════════════════════════════════════════════════════════
+
+// Block schedule
+let g_block_count            = 0
+let g_total_seconds          = 0
+
+// Synthetic clench-train analysis state
+let g_clench_count           = 0
+let g_f_max_amp_uv           = 0.0          // max Fp1/Fp2 peak amplitude
+let g_f_clench_rms_uv        = 0.0          // F max RMS during CLENCH
+let g_f_rest_rms_uv          = 0.0          // F max RMS during REST
+let g_o_clench_rms_uv        = 0.0          // O max RMS during CLENCH
+let g_o_rest_rms_uv          = 0.0          // O max RMS during REST
+let g_fp1_clench_rms_uv      = 0.0
+let g_fp2_clench_rms_uv      = 0.0
+let g_o1_clench_rms_uv       = 0.0
+let g_o2_clench_rms_uv       = 0.0
+let g_clench_rest_ratio      = 0.0          // F_clench / F_rest
+let g_min_iclench_interval_ms = 0           // tightest inter-clench interval
+let g_effective_fs_hz        = 0.0          // measured effective fs
+
+// Falsifier evaluations (raw#71)
+let g_f_jaw_v2_01_pass       = false        // Fp1/Fp2 RMS > 150 µV
+let g_f_jaw_v2_02_pass       = false        // CLENCH/REST ratio >= 3x
+let g_f_jaw_v2_03_pass       = false        // effective fs >= 200 Hz
+
+// ════════════════════════════════════════════════════════════════════
+// Helpers
+// ════════════════════════════════════════════════════════════════════
+
+fn abs_f(x: float) -> float {
+    if x < 0.0 { return 0.0 - x }
+    return x
+}
+
+fn _bool_str(b: bool) -> string {
+    if b { return "true" }
+    return "false"
+}
+
+fn max_f(a: float, b: float) -> float {
+    if a > b { return a }
+    return b
+}
+
+fn safe_div(a: float, b: float) -> float {
+    if b <= 0.0 { return 0.0 }
+    return a / b
+}
+
+// ════════════════════════════════════════════════════════════════════
+// Block schedule generator (raw#65 idempotent)
+//   block 0: REST 30s (jaw relaxed)
+//   block 1: CLENCH 30s (teeth clench, 1 per second)
+//   block 2: REST 30s
+// ════════════════════════════════════════════════════════════════════
+
+fn build_schedule() {
+    g_block_count   = BLOCK_COUNT
+    g_total_seconds = BLOCK_REST_S + BLOCK_CLENCH_S + BLOCK_REST_S
+}
+
+// Returns "REST" or "CLENCH" for block index i (0-based).
+fn block_kind_at(i: int) -> string {
+    if i == 1 { return "CLENCH" }
+    return "REST"
+}
+
+// Returns block start time in seconds.
+fn block_start_at(i: int) -> int {
+    if i == 0 { return 0 }
+    if i == 1 { return BLOCK_REST_S }
+    return BLOCK_REST_S + BLOCK_CLENCH_S
+}
+
+// Returns block duration in seconds.
+fn block_duration_at(i: int) -> int {
+    if i == 1 { return BLOCK_CLENCH_S }
+    return BLOCK_REST_S
+}
+
+// Returns audio cue text for block index i.
+fn cue_text_at(i: int) -> string {
+    if block_kind_at(i) == "CLENCH" {
+        return "어금니 꽉 깨무세요 1초당 한 번 (Clench teeth, once per second)"
+    }
+    return "휴식, 턱 이완 (Rest, jaw relaxed)"
+}
+
+// ════════════════════════════════════════════════════════════════════
+// Synthetic clench-train analysis — frontalis paradigm
+//   Pure-math synthetic rectified-RMS amplitudes per channel (no RNG):
+//     Nominal CLENCH: 30 bursts @ 1 Hz, Fp1/Fp2 RMS ~200 µV during burst,
+//                     Fp1/Fp2 RMS ~25 µV during rest (baseline frontal tone),
+//                     O1/O2 RMS ~12 µV (EMG-immune occipital).
+//     Effective fs nominal 250 Hz (Cyton-only, no Daisy interleave drop).
+//   Caller specifies "perturb_*" flags to exercise falsifiers in tests.
+// ════════════════════════════════════════════════════════════════════
+
+let SYNTH_CLENCH_COUNT_NOMINAL = 30
+let SYNTH_F_CLENCH_RMS_UV      = 200.0       // frontalis burst (lenient)
+let SYNTH_F_REST_RMS_UV        = 25.0        // frontal baseline tone
+let SYNTH_O_CLENCH_RMS_UV      = 12.0        // volume-conducted occipital
+let SYNTH_O_REST_RMS_UV        = 8.0         // pure baseline at occipital
+let SYNTH_F_PEAK_AMP_UV        = 350.0       // peak amplitude (informational)
+let SYNTH_ICI_NOMINAL_MS       = 1000        // 1 Hz → 1000 ms gap
+let SYNTH_FS_NOMINAL_HZ        = 250.0       // Cyton-only nominal fs
+
+fn analyze_synthetic(
+    perturb_low_amp: bool,
+    perturb_count_off: bool,
+    perturb_low_ratio: bool,
+    perturb_low_fs: bool
+) {
+    let mut count    = SYNTH_CLENCH_COUNT_NOMINAL
+    let mut f_clench = SYNTH_F_CLENCH_RMS_UV
+    let mut f_rest   = SYNTH_F_REST_RMS_UV
+    let mut o_clench = SYNTH_O_CLENCH_RMS_UV
+    let mut o_rest   = SYNTH_O_REST_RMS_UV
+    let mut f_peak   = SYNTH_F_PEAK_AMP_UV
+    let mut ici      = SYNTH_ICI_NOMINAL_MS
+    let mut fs       = SYNTH_FS_NOMINAL_HZ
+
+    // F_JAW_V2_01 perturbation: RMS below 150 µV threshold
+    if perturb_low_amp {
+        f_clench = 120.0   // sub-threshold weak frontalis
+        f_peak   = 220.0
+    }
+
+    // F_JAW_V2_02 perturbation: ratio below 3x (rest creep or weak clench)
+    if perturb_low_ratio {
+        f_rest = 100.0    // pushes ratio to ~2x
+    }
+
+    // count-off perturbation (sanity, not a frozen falsifier directly)
+    if perturb_count_off {
+        count = 6         // user did not clench intentionally
+    }
+
+    // F_JAW_V2_03 perturbation: effective fs below 200 Hz (Daisy-like drop)
+    if perturb_low_fs {
+        fs = 160.0        // simulates sample-drop / Daisy interleave loss
+    }
+
+    g_clench_count           = count
+    g_fp1_clench_rms_uv      = f_clench
+    g_fp2_clench_rms_uv      = f_clench
+    g_o1_clench_rms_uv       = o_clench
+    g_o2_clench_rms_uv       = o_clench
+    g_f_clench_rms_uv        = max_f(g_fp1_clench_rms_uv, g_fp2_clench_rms_uv)
+    g_f_rest_rms_uv          = f_rest
+    g_o_clench_rms_uv        = max_f(g_o1_clench_rms_uv, g_o2_clench_rms_uv)
+    g_o_rest_rms_uv          = o_rest
+    g_f_max_amp_uv           = f_peak
+    g_clench_rest_ratio      = safe_div(g_f_clench_rms_uv, g_f_rest_rms_uv)
+    g_min_iclench_interval_ms = ici
+    g_effective_fs_hz        = fs
+}
+
+// ════════════════════════════════════════════════════════════════════
+// Frozen falsifier evaluation (raw#71)
+// ════════════════════════════════════════════════════════════════════
+
+fn evaluate_falsifiers() {
+    // F_JAW_V2_01: Fp1/Fp2 CLENCH RMS amplitude > 150 µV
+    g_f_jaw_v2_01_pass = g_f_clench_rms_uv > CLENCH_RMS_PASS_UV
+
+    // F_JAW_V2_02: CLENCH/REST RMS ratio >= 3x (lenient)
+    g_f_jaw_v2_02_pass = g_clench_rest_ratio >= CLENCH_REST_RATIO_PASS
+
+    // F_JAW_V2_03: effective fs >= 200 Hz (sample-rate guard)
+    g_f_jaw_v2_03_pass = g_effective_fs_hz >= EFFECTIVE_FS_PASS_HZ
+}
+
+// ════════════════════════════════════════════════════════════════════
+// Sentinel emit (raw#71 falsifier-bound)
+//   __EEG_JAW_CLENCH_V2__ <PASS|FAIL> <count> <max_amp_uv> <ratio> <fs_hz>
+// ════════════════════════════════════════════════════════════════════
+
+fn emit_sentinel() {
+    let mut verdict = "PASS"
+    if !(g_f_jaw_v2_01_pass && g_f_jaw_v2_02_pass && g_f_jaw_v2_03_pass) {
+        verdict = "FAIL"
+    }
+    println("__EEG_JAW_CLENCH_V2__ " + verdict + " " + to_string(g_clench_count) + " " + to_string(g_f_max_amp_uv) + " " + to_string(g_clench_rest_ratio) + " " + to_string(g_effective_fs_hz))
+}
+
+// ════════════════════════════════════════════════════════════════════
+// Audit JSONL emit (raw#65 idempotent in selftest mode)
+// ════════════════════════════════════════════════════════════════════
+
+fn _ensure_audit_dir() {
+    let _rc = exec("mkdir -p " + AUDIT_DIR)
+}
+
+fn emit_audit(ts: string) {
+    _ensure_audit_dir()
+    let path = AUDIT_DIR + "/" + ts + "_session.jsonl"
+    let mut row = "{"
+    row = row + "\"schema\":\"" + SCHEMA + "\","
+    row = row + "\"ts\":\"" + ts + "\","
+    row = row + "\"board\":\"" + BOARD_FORCED + "\","
+    row = row + "\"channel_count\":" + to_string(CHANNEL_COUNT) + ","
+    row = row + "\"sample_rate_hz\":" + to_string(SAMPLE_RATE_HZ) + ","
+    row = row + "\"effective_fs_hz\":" + to_string(g_effective_fs_hz) + ","
+    row = row + "\"block_count\":" + to_string(g_block_count) + ","
+    row = row + "\"total_seconds\":" + to_string(g_total_seconds) + ","
+    row = row + "\"clench_count\":" + to_string(g_clench_count) + ","
+    row = row + "\"fp1_clench_rms_uv\":" + to_string(g_fp1_clench_rms_uv) + ","
+    row = row + "\"fp2_clench_rms_uv\":" + to_string(g_fp2_clench_rms_uv) + ","
+    row = row + "\"o1_clench_rms_uv\":" + to_string(g_o1_clench_rms_uv) + ","
+    row = row + "\"o2_clench_rms_uv\":" + to_string(g_o2_clench_rms_uv) + ","
+    row = row + "\"f_clench_rms_uv\":" + to_string(g_f_clench_rms_uv) + ","
+    row = row + "\"f_rest_rms_uv\":" + to_string(g_f_rest_rms_uv) + ","
+    row = row + "\"o_clench_rms_uv\":" + to_string(g_o_clench_rms_uv) + ","
+    row = row + "\"o_rest_rms_uv\":" + to_string(g_o_rest_rms_uv) + ","
+    row = row + "\"f_max_amp_uv\":" + to_string(g_f_max_amp_uv) + ","
+    row = row + "\"clench_rest_ratio\":" + to_string(g_clench_rest_ratio) + ","
+    row = row + "\"min_iclench_interval_ms\":" + to_string(g_min_iclench_interval_ms) + ","
+    row = row + "\"f_jaw_v2_01\":" + _bool_str(g_f_jaw_v2_01_pass) + ","
+    row = row + "\"f_jaw_v2_02\":" + _bool_str(g_f_jaw_v2_02_pass) + ","
+    row = row + "\"f_jaw_v2_03\":" + _bool_str(g_f_jaw_v2_03_pass)
+    row = row + "}"
+    let nl = chr(10)
+    let mut existing = ""
+    let prior = read_file(path)
+    if prior != "" { existing = prior }
+    write_file(path, existing + row + nl)
+}
+
+// ════════════════════════════════════════════════════════════════════
+// Live runner — collect.hexa subprocess delegation, board forced "cyton"
+//   raw#10 honest: this protocol does NOT do raw BrainFlow ingest itself;
+//   it delegates to anima-eeg/collect.hexa with --board cyton (Daisy MUST
+//   be physically detached). --run prints the audio cue schedule, the
+//   Daisy-detach hand-step, and the collect command. raw#15: no personal
+//   paths hardcoded (all CLI args).
+// ════════════════════════════════════════════════════════════════════
+
+fn print_run_plan(port: string, output: string) {
+    build_schedule()
+    println("── jaw_clench_emg_v2_8ch live run plan ──")
+    println("schema=" + SCHEMA)
+    println("port=" + port)
+    println("board=" + BOARD_FORCED + "  (Cyton-only — Daisy MUST be detached)")
+    println("output=" + output)
+    println("sample_rate_hz=" + to_string(SAMPLE_RATE_HZ))
+    println("channel_count=" + to_string(CHANNEL_COUNT) + "  (Cyton-only 8ch)")
+    println("notch_hz=" + to_string(NOTCH_HZ))
+    println("bandpass=" + to_string(BANDPASS_LO_HZ) + "-" + to_string(BANDPASS_HI_HZ) + " Hz, order=" + to_string(BANDPASS_ORDER))
+    println("clench_rms_window_ms=" + to_string(CLENCH_RMS_WINDOW_MS))
+    println("clench_threshold_uv=" + to_string(CLENCH_THRESHOLD_UV))
+    println("clench_refractory_ms=" + to_string(CLENCH_INTERVAL_MIN_MS))
+    println("effective_fs_pass_hz=" + to_string(EFFECTIVE_FS_PASS_HZ))
+    println("total_seconds=" + to_string(g_total_seconds))
+    println("")
+    println("[block schedule — REST / CLENCH / REST]")
+    let mut i = 0
+    while i < g_block_count {
+        let t0 = block_start_at(i)
+        let dur = block_duration_at(i)
+        let kind = block_kind_at(i)
+        let cue = cue_text_at(i)
+        println("  t=" + to_string(t0) + "s  block#" + to_string(i + 1) + "  " + kind + "  dur=" + to_string(dur) + "s  cue=\"" + cue + "\"")
+        i = i + 1
+    }
+    println("")
+    println("[user hand-step #1 — DAISY DETACH (Cyton-only mode)]")
+    println("  1. Power-off Cyton+Daisy stack")
+    println("  2. Unscrew Daisy module (8 nylon spacers, 4 corner screws)")
+    println("  3. Remove Daisy chip — keep Cyton chip on USB-serial dongle")
+    println("  4. Verify only 8 LED activity (channels 1-8) on power-up")
+    println("")
+    println("[user hand-step #2 — montage (Cyton-only 8ch frontalis paradigm)]")
+    println("  Cyton N1P (ch1) -> Fp1 (left forehead, frontalis muscle)")
+    println("  Cyton N2P (ch2) -> Fp2 (right forehead, frontalis muscle)")
+    println("  Cyton N3P (ch3) -> C3  (left central, optional)")
+    println("  Cyton N4P (ch4) -> C4  (right central, optional)")
+    println("  Cyton N7P (ch7) -> O1  (1\" above inion, 1\" left)")
+    println("  Cyton N8P (ch8) -> O2  (1\" above inion, 1\" right)")
+    println("  SRB2            -> A1 earlobe (white wire)")
+    println("  BIAS            -> A2 earlobe (black wire)")
+    println("")
+    println("[delegate command — run in separate terminal]")
+    println("  hexa run anima-eeg/collect.hexa --port " + port + " \\")
+    println("      --board " + BOARD_FORCED + " --duration " + to_string(g_total_seconds) + " \\")
+    println("      --output " + output)
+    println("")
+    println("[audio cues — follow on speaker / TTS at t=0,30,60]")
+    println("  t=0s   → \"휴식, 턱 이완 (Rest, jaw relaxed)\"")
+    println("  t=30s  → \"어금니 꽉 깨무세요 1초당 한 번 (Clench teeth, once per second)\"")
+    println("  t=60s  → \"휴식, 턱 이완 (Rest, jaw relaxed)\"")
+    println("")
+    println("[honest C3 caveats — three stacked]")
+    println("  raw#10 #1: this is EMG (muscle electrography), NOT EEG (cortical).")
+    println("  raw#10 #2: frontalis EMG ≠ temporalis EMG; jaw clench couples to")
+    println("             forehead muscle indirectly; ~5x lower amplitude than")
+    println("             T7/T8 temporalis pickup. Detection is INDIRECT.")
+    println("  raw#10 #3: Cyton-only loses Daisy 8ch (T7/T8/P3/P4 etc); Berger")
+    println("             O1/O2 alpha unaffected, but other paradigms degrade.")
+    println("             Daisy detach is hand-step burden between sessions.")
+}
+
+// ════════════════════════════════════════════════════════════════════
+// Tests (selftest)
+// ════════════════════════════════════════════════════════════════════
+
+fn assert_true(cond: bool, label: string) -> bool {
+    if cond { println("  PASS: " + label) } else { println("  FAIL: " + label) }
+    return cond
+}
+
+fn run_tests() -> int {
+    let mut pass = 0
+    let mut fail = 0
+
+    println("=== jaw_clench_emg_v2_8ch selftest ===")
+
+    // T1: schedule build (3 blocks, 90 s)
+    println("[T1] schedule build")
+    build_schedule()
+    let ok1a = assert_true(g_block_count == 3, "block_count == 3")
+    let ok1b = assert_true(g_total_seconds == TOTAL_DURATION_S, "total seconds == 90")
+    if ok1a && ok1b { pass = pass + 1 } else { fail = fail + 1 }
+
+    // T2: REST/CLENCH/REST ordering
+    println("[T2] REST → CLENCH → REST ordering")
+    let ok2a = assert_true(block_kind_at(0) == "REST", "block 0 = REST")
+    let ok2b = assert_true(block_kind_at(1) == "CLENCH", "block 1 = CLENCH")
+    let ok2c = assert_true(block_kind_at(2) == "REST", "block 2 = REST")
+    let ok2d = assert_true(block_start_at(1) == 30, "CLENCH starts at t=30s")
+    let ok2e = assert_true(block_start_at(2) == 60, "second REST at t=60s")
+    if ok2a && ok2b && ok2c && ok2d && ok2e { pass = pass + 1 } else { fail = fail + 1 }
+
+    // T3: idempotent rebuild (raw#65)
+    println("[T3] idempotent schedule rebuild")
+    build_schedule()
+    let bc1 = g_block_count
+    build_schedule()
+    let ok3 = assert_true(g_block_count == bc1, "block count idempotent")
+    if ok3 { pass = pass + 1 } else { fail = fail + 1 }
+
+    // T4: nominal synthetic — all 3 falsifiers PASS
+    println("[T4] synthetic nominal — F_JAW_V2_01/02/03 PASS")
+    analyze_synthetic(false, false, false, false)
+    evaluate_falsifiers()
+    let ok4a = assert_true(g_f_jaw_v2_01_pass, "F_JAW_V2_01 F RMS > 150 µV")
+    let ok4b = assert_true(g_f_jaw_v2_02_pass, "F_JAW_V2_02 ratio >= 3x")
+    let ok4c = assert_true(g_f_jaw_v2_03_pass, "F_JAW_V2_03 fs >= 200 Hz")
+    let ok4d = assert_true(g_clench_count == 30, "clench count = 30")
+    let ok4e = assert_true(g_f_clench_rms_uv > 150.0, "F clench RMS = " + to_string(g_f_clench_rms_uv))
+    let ok4f = assert_true(g_clench_rest_ratio >= 3.0, "ratio = " + to_string(g_clench_rest_ratio))
+    let ok4g = assert_true(g_effective_fs_hz >= 200.0, "fs = " + to_string(g_effective_fs_hz))
+    if ok4a && ok4b && ok4c && ok4d && ok4e && ok4f && ok4g { pass = pass + 1 } else { fail = fail + 1 }
+
+    // T5: F_JAW_V2_01 falsifier — RMS below threshold
+    println("[T5] F_JAW_V2_01 falsifier — F RMS = 120 µV (sub-threshold)")
+    analyze_synthetic(true, false, false, false)
+    evaluate_falsifiers()
+    let ok5a = assert_true(!g_f_jaw_v2_01_pass, "F_JAW_V2_01 fails")
+    let ok5b = assert_true(g_f_jaw_v2_03_pass, "F_JAW_V2_03 still passes (fs OK)")
+    if ok5a && ok5b { pass = pass + 1 } else { fail = fail + 1 }
+
+    // T6: F_JAW_V2_02 falsifier — ratio below 3x
+    println("[T6] F_JAW_V2_02 falsifier — ratio < 3x (rest creep)")
+    analyze_synthetic(false, false, true, false)
+    evaluate_falsifiers()
+    let ok6a = assert_true(g_f_jaw_v2_01_pass, "F_JAW_V2_01 still passes")
+    let ok6b = assert_true(!g_f_jaw_v2_02_pass, "F_JAW_V2_02 fails (ratio < 3)")
+    let ok6c = assert_true(g_f_jaw_v2_03_pass, "F_JAW_V2_03 still passes")
+    if ok6a && ok6b && ok6c { pass = pass + 1 } else { fail = fail + 1 }
+
+    // T7: F_JAW_V2_03 falsifier — effective fs below 200 Hz
+    println("[T7] F_JAW_V2_03 falsifier — effective fs = 160 Hz (sample drop)")
+    analyze_synthetic(false, false, false, true)
+    evaluate_falsifiers()
+    let ok7a = assert_true(!g_f_jaw_v2_03_pass, "F_JAW_V2_03 fails (fs < 200)")
+    let ok7b = assert_true(g_f_jaw_v2_01_pass, "F_JAW_V2_01 still passes")
+    if ok7a && ok7b { pass = pass + 1 } else { fail = fail + 1 }
+
+    // T8: cue text mapping
+    println("[T8] audio cue text")
+    let cue_rest = cue_text_at(0)
+    let cue_clench = cue_text_at(1)
+    let ok8a = assert_true(cue_rest == "휴식, 턱 이완 (Rest, jaw relaxed)", "REST cue text")
+    let ok8b = assert_true(cue_clench == "어금니 꽉 깨무세요 1초당 한 번 (Clench teeth, once per second)", "CLENCH cue text")
+    if ok8a && ok8b { pass = pass + 1 } else { fail = fail + 1 }
+
+    // T9: detection thresholds frozen + Cyton-only forced
+    println("[T9] thresholds frozen + Cyton-only")
+    let ok9a = assert_true(CLENCH_THRESHOLD_UV == 100.0, "event threshold = 100 µV")
+    let ok9b = assert_true(CLENCH_RMS_PASS_UV == 150.0, "F_JAW_V2_01 cutoff = 150 µV")
+    let ok9c = assert_true(CLENCH_REST_RATIO_PASS == 3.0, "F_JAW_V2_02 ratio = 3x")
+    let ok9d = assert_true(EFFECTIVE_FS_PASS_HZ == 200.0, "F_JAW_V2_03 fs = 200 Hz")
+    let ok9e = assert_true(BANDPASS_LO_HZ == 50.0, "BP lo = 50 Hz (EMG body)")
+    let ok9f = assert_true(BANDPASS_HI_HZ == 120.0, "BP hi = 120 Hz (sub-Nyquist)")
+    let ok9g = assert_true(BOARD_FORCED == "cyton", "board forced cyton (no Daisy)")
+    let ok9h = assert_true(CHANNEL_COUNT == 8, "channel_count = 8")
+    if ok9a && ok9b && ok9c && ok9d && ok9e && ok9f && ok9g && ok9h { pass = pass + 1 } else { fail = fail + 1 }
+
+    // T10: audit JSONL emit (raw#65 byte-stable)
+    println("[T10] audit JSONL emit deterministic")
+    build_schedule()
+    analyze_synthetic(false, false, false, false)
+    evaluate_falsifiers()
+    let ts = "selftest_synth"
+    let path = AUDIT_DIR + "/" + ts + "_session.jsonl"
+    write_file(path, "")
+    emit_audit(ts)
+    let body1 = read_file(path)
+    write_file(path, "")
+    emit_audit(ts)
+    let body2 = read_file(path)
+    let ok10a = assert_true(body1 == body2, "audit row byte-stable")
+    let ok10b = assert_true(len(body1) > 0, "audit row non-empty")
+    if ok10a && ok10b { pass = pass + 1 } else { fail = fail + 1 }
+
+    println("")
+    println("Results: " + to_string(pass) + " PASS / " + to_string(fail) + " FAIL out of " + to_string(pass + fail))
+    return fail
+}
+
+// ════════════════════════════════════════════════════════════════════
+// CLI entry
+// ════════════════════════════════════════════════════════════════════
+
+fn _print_usage() {
+    println("usage:")
+    println("  hexa run anima-eeg/protocols/jaw_clench_emg_v2_8ch.hexa --selftest")
+    println("  hexa run anima-eeg/protocols/jaw_clench_emg_v2_8ch.hexa --run \\")
+    println("      --port <serial> --output <npy>")
+    println("  (board is forced to \"cyton\"; Daisy must be physically detached)")
+}
+
+fn _arg_value(av: list, key: string, dflt: string) -> string {
+    let mut i = 1
+    while i < len(av) {
+        if av[i] == key && i + 1 < len(av) {
+            return av[i + 1]
+        }
+        i = i + 1
+    }
+    return dflt
+}
+
+fn main() {
+    let av = argv()
+    let mut selftest = false
+    let mut run = false
+    let mut i = 1
+    while i < len(av) {
+        if av[i] == "--selftest" { selftest = true }
+        if av[i] == "--run"      { run = true }
+        if av[i] == "--help"     { _print_usage(); exit(0) }
+        i = i + 1
+    }
+
+    if run {
+        let port   = _arg_value(av, "--port",   "")
+        let output = _arg_value(av, "--output", "")
+        // raw#12 frozen: --board is intentionally NOT user-overridable;
+        // BOARD_FORCED = "cyton" is part of the v2 8ch contract.
+        let board_arg = _arg_value(av, "--board", BOARD_FORCED)
+        if board_arg != BOARD_FORCED {
+            eprintln("ABORT: --board is forced to \"" + BOARD_FORCED + "\" in v2 8ch (Daisy detach required); user passed \"" + board_arg + "\"")
+            exit(2)
+        }
+        if len(port) == 0 || len(output) == 0 {
+            eprintln("ABORT: --run requires --port and --output (raw#15 no personal paths)")
+            _print_usage()
+            exit(2)
+        }
+        print_run_plan(port, output)
+        // raw#10 honest: this cycle prints plan + Daisy-detach hand-step +
+        // audio cue schedule; the actual collect.hexa subprocess + audio
+        // TTS hook is the user hand-step. Plan is logged; user executes
+        // in separate terminal and reports back the .npy for analyze pass.
+        exit(0)
+    }
+
+    if !selftest {
+        _print_usage()
+        exit(2)
+    }
+
+    println("── jaw_clench_emg_v2_8ch selftest ──")
+    println("schema=" + SCHEMA)
+    println("raw10_honest_1=synthetic_clench_train_no_real_brainflow_no_audio_terminal_only")
+    println("raw10_honest_2=emg_not_eeg_frontalis_muscle_at_fp1_fp2_indirect_jaw_proxy")
+    println("raw10_honest_3=cyton_only_8ch_loses_daisy_t7_t8_p3_p4_etc_daisy_detach_handstep")
+    println("raw82_darwin=clock_gettime_monotonic_via_collect_hexa")
+    println("paradigm=cyton_only_8ch_250hz_emg_frontalis_with_sample_rate_guard")
+    println("companion=jaw_clench_emg.hexa_16ch_temporalis_v1")
+    println("")
+
+    // Demonstration (synthetic nominal session: 30 bursts @ 1 Hz, 200 µV RMS, fs 250 Hz)
+    build_schedule()
+    analyze_synthetic(false, false, false, false)
+    evaluate_falsifiers()
+
+    println("[demo nominal session]")
+    println("board="                    + BOARD_FORCED)
+    println("channel_count="            + to_string(CHANNEL_COUNT))
+    println("sample_rate_hz="           + to_string(SAMPLE_RATE_HZ))
+    println("effective_fs_hz="          + to_string(g_effective_fs_hz))
+    println("block_count="              + to_string(g_block_count))
+    println("total_seconds="            + to_string(g_total_seconds))
+    println("clench_count="             + to_string(g_clench_count))
+    println("fp1_clench_rms_uv="        + to_string(g_fp1_clench_rms_uv))
+    println("fp2_clench_rms_uv="        + to_string(g_fp2_clench_rms_uv))
+    println("o1_clench_rms_uv="         + to_string(g_o1_clench_rms_uv))
+    println("o2_clench_rms_uv="         + to_string(g_o2_clench_rms_uv))
+    println("f_clench_rms_uv="          + to_string(g_f_clench_rms_uv))
+    println("f_rest_rms_uv="            + to_string(g_f_rest_rms_uv))
+    println("o_clench_rms_uv="          + to_string(g_o_clench_rms_uv))
+    println("o_rest_rms_uv="            + to_string(g_o_rest_rms_uv))
+    println("f_max_amp_uv="             + to_string(g_f_max_amp_uv))
+    println("clench_rest_ratio="        + to_string(g_clench_rest_ratio))
+    println("min_iclench_interval_ms="  + to_string(g_min_iclench_interval_ms))
+    println("f_jaw_v2_01="              + _bool_str(g_f_jaw_v2_01_pass))
+    println("f_jaw_v2_02="              + _bool_str(g_f_jaw_v2_02_pass))
+    println("f_jaw_v2_03="              + _bool_str(g_f_jaw_v2_03_pass))
+    println("")
+
+    emit_sentinel()
+    emit_audit("selftest_synth")
+
+    let fails = run_tests()
+    if fails != 0 {
+        println("selftest=fail")
+        eprintln("selftest FAILED: " + to_string(fails) + " test(s) failed")
+        exit(1)
+    }
+    println("selftest=ok")
+    println("DONE")
+}

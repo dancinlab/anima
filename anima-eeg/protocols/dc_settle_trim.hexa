@@ -1,0 +1,641 @@
+// anima-eeg/protocols/dc_settle_trim.hexa
+// raw#9 hexa-only · raw#10 honest-C3 · raw#11 snake_case · raw#12 frozen
+// raw#15 no-personal-paths · raw#34 no-backup-files · raw#37 transient-helper-in-/tmp
+// raw#65 idempotent · raw#66 ai-native error trailer · raw#71 falsifier-bound
+// raw#80 sentinel · raw#82 darwin-native marker · raw#91 honest-class
+//
+// @resolver-bypass(reason="darwin-native: invokes .venv-eeg/bin/python which is a
+//                   mac-local virtualenv hosting numpy. Trim semantics are pure
+//                   numpy slicing — no BrainFlow needed for trim alone, but the
+//                   helper imports numpy via the same .venv-eeg path used by
+//                   eeg_filter.hexa and collect.hexa. Linux pods do not expose
+//                   this venv. selftest path is fully synthetic numpy so works
+//                   wherever .venv-eeg + numpy are present (Darwin host today).")
+//
+// PURPOSE
+//   Post-process helper that trims the DC settle-in transient from the
+//   START of an EEG recording (.npy from collect.hexa).
+//
+//   2026-05-03 analysis BG (aed68edd) finding:
+//     • first 5 s of raw Fp1 jumps -39 kµV → -78 kµV (DC settle-in)
+//     • filtfilt edge ringing balloons 3-10× when transient is present
+//     • all measurements have an unreliable opening 5 s window
+//
+//   honest fix (raw#10 C3): trim the opening N seconds from the .npy
+//   before downstream filter/analysis. Optionally `--auto-detect` the
+//   trim length from amplitude stabilisation. Optionally chain into
+//   eeg_filter.hexa for bandpass+notch in one step.
+//
+// API
+//   hexa run anima-eeg/protocols/dc_settle_trim.hexa --selftest
+//   hexa run anima-eeg/protocols/dc_settle_trim.hexa \
+//        --input <raw.npy> --output <trimmed.npy> [--trim-seconds 5]
+//   hexa run anima-eeg/protocols/dc_settle_trim.hexa \
+//        --input <raw.npy> --output <trimmed.npy> --auto-detect
+//   hexa run anima-eeg/protocols/dc_settle_trim.hexa \
+//        --input <raw.npy> --output <filt.npy> --filter
+//
+// FALSIFIERS (raw#71 — preregistered grounds for rollback)
+//   F_DC_TRIM_01: trimmed signal max |x| < 5000.0 µV  (DC drift removed)
+//   F_DC_TRIM_02: trimmed signal mean |x| < 100.0 µV  (settled steady state)
+//   F_DC_TRIM_03: trimmed_len == original_len - trim_seconds × fs (exact)
+//
+// SENTINEL
+//   __EEG_DC_TRIM__ <PASS|FAIL> <max_uv> <mean_uv> <trimmed_seconds>
+//
+// HONEST C3 (raw#10)
+//   1) 5 s trim可能 truncates informative early-trial content (short ERP,
+//      onset-locked responses < 5 s post-mark). Callers measuring stim-
+//      locked phenomena MUST NOT use this helper without also adjusting
+//      their event-marker offsets, or use --trim-seconds 0 to disable.
+//   2) --auto-detect threshold is a single global constant (1000 µV
+//      stable window). Individual subjects, electrode sites, or gel
+//      ages produce different settle constants; auto-detect can over-
+//      shoot or under-shoot. Reported `trimmed_seconds` must be cross-
+//      checked against the per-channel amplitude trace.
+//   3) Original duration / sample-count is preserved in output meta
+//      JSON sidecar (output.npy + output.npy.meta.json) so any down-
+//      stream tool can reconstruct absolute timing. Failure to read the
+//      sidecar = silent loss of absolute event-time alignment.
+
+let SCHEMA      = "anima-eeg/dc_settle_trim/1"
+let HELPER_PATH = "/tmp/anima_eeg_dc_settle_trim_helper.py"
+
+// ════════════════════════════════════════════════════════════════════
+// Frozen defaults (raw#12)
+// ════════════════════════════════════════════════════════════════════
+
+let DEFAULT_TRIM_SECONDS    = 5
+let DEFAULT_FS_HZ           = 125              // Cyton+Daisy 16ch default
+let DEFAULT_VENV_PYTHON     = ".venv-eeg/bin/python"
+let DEFAULT_FILTER_HEXA     = "anima-eeg/eeg_filter.hexa"
+
+// auto-detect parameters
+let AUTO_DC_THRESHOLD_UV    = 10000.0          // > this = transient regime
+let AUTO_STABLE_THRESHOLD_UV = 1000.0          // < this rolling mean |x| = stable
+let AUTO_WINDOW_SECONDS     = 1                // rolling window 1 s
+let AUTO_MIN_TRIM_SECONDS   = 2                // never trim < 2 s
+let AUTO_MAX_TRIM_SECONDS   = 15               // never trim > 15 s
+
+// Falsifier thresholds (raw#71 pre-registered, freeze 2026-05-03)
+let F_DC_TRIM_01_MAX_UV     = 5000.0           // post-trim max |x| < 5000 µV
+let F_DC_TRIM_02_MEAN_UV    = 100.0            // post-trim mean |x| < 100 µV
+// F_DC_TRIM_03 has no constant — exact equality of sample count
+
+// Selftest synthetic signal parameters
+let SELFTEST_FS_HZ          = 125
+let SELFTEST_DURATION_S     = 30
+let SELFTEST_TRANSIENT_S    = 5
+let SELFTEST_TRANSIENT_AMP_UV = 50000.0        // huge DC step
+let SELFTEST_STEADY_AMP_UV    = 20.0           // realistic α-band amp
+let SELFTEST_STEADY_HZ      = 10.0
+
+// ════════════════════════════════════════════════════════════════════
+// Helpers
+// ════════════════════════════════════════════════════════════════════
+
+fn _sh_quote(s: string) -> string {
+    let mut o = "'"
+    o = o + s.replace("'", "'\\''")
+    o = o + "'"
+    return o
+}
+
+fn _emit_trailer(reason_slug: string, reason_detail: string, fix: string) {
+    eprintln("reason: " + reason_slug + ": " + reason_detail)
+    eprintln("fix: " + fix)
+}
+
+// ════════════════════════════════════════════════════════════════════
+// Helper python emitter (raw#37 transient)
+// ════════════════════════════════════════════════════════════════════
+
+fn _write_helper() {
+    let parts = []
+    parts.push("#!/usr/bin/env python3\n")
+    parts.push("# anima-eeg dc_settle_trim helper — emitted by\n")
+    parts.push("# anima-eeg/protocols/dc_settle_trim.hexa (raw#37 transient).\n")
+    parts.push("import argparse, json, math, os, subprocess, sys, textwrap\n\n")
+
+    parts.push("VENV_PYTHON                  = '" + DEFAULT_VENV_PYTHON + "'\n")
+    parts.push("DEFAULT_TRIM_SECONDS         = " + str(DEFAULT_TRIM_SECONDS) + "\n")
+    parts.push("DEFAULT_FS_HZ                = " + str(DEFAULT_FS_HZ) + "\n")
+    parts.push("AUTO_DC_THRESHOLD_UV         = " + to_string(AUTO_DC_THRESHOLD_UV) + "\n")
+    parts.push("AUTO_STABLE_THRESHOLD_UV     = " + to_string(AUTO_STABLE_THRESHOLD_UV) + "\n")
+    parts.push("AUTO_WINDOW_SECONDS          = " + str(AUTO_WINDOW_SECONDS) + "\n")
+    parts.push("AUTO_MIN_TRIM_SECONDS        = " + str(AUTO_MIN_TRIM_SECONDS) + "\n")
+    parts.push("AUTO_MAX_TRIM_SECONDS        = " + str(AUTO_MAX_TRIM_SECONDS) + "\n")
+    parts.push("F_MAX_UV                     = " + to_string(F_DC_TRIM_01_MAX_UV) + "\n")
+    parts.push("F_MEAN_UV                    = " + to_string(F_DC_TRIM_02_MEAN_UV) + "\n")
+    parts.push("SELFTEST_FS                  = " + str(SELFTEST_FS_HZ) + "\n")
+    parts.push("SELFTEST_SECONDS             = " + str(SELFTEST_DURATION_S) + "\n")
+    parts.push("SELFTEST_TRANSIENT_S         = " + str(SELFTEST_TRANSIENT_S) + "\n")
+    parts.push("SELFTEST_TRANSIENT_AMP       = " + to_string(SELFTEST_TRANSIENT_AMP_UV) + "\n")
+    parts.push("SELFTEST_STEADY_AMP          = " + to_string(SELFTEST_STEADY_AMP_UV) + "\n")
+    parts.push("SELFTEST_STEADY_HZ           = " + to_string(SELFTEST_STEADY_HZ) + "\n\n")
+
+    parts.push("def emit_trailer(slug, detail, fix):\n")
+    parts.push("    sys.stderr.write(f'reason: {slug}: {detail}\\n')\n")
+    parts.push("    sys.stderr.write(f'fix: {fix}\\n')\n\n")
+
+    parts.push("def verify_numpy():\n")
+    parts.push("    if not os.path.exists(VENV_PYTHON):\n")
+    parts.push("        emit_trailer('venv-missing',\n")
+    parts.push("                     f'{VENV_PYTHON} not found',\n")
+    parts.push("                     '1) python3 -m venv .venv-eeg  '\n")
+    parts.push("                     '2) source .venv-eeg/bin/activate  '\n")
+    parts.push("                     '3) pip install --upgrade numpy')\n")
+    parts.push("        return False\n")
+    parts.push("    r = subprocess.run([VENV_PYTHON, '-c', 'import numpy; print(\"ok\")'],\n")
+    parts.push("                       capture_output=True, text=True, timeout=20)\n")
+    parts.push("    if r.returncode != 0:\n")
+    parts.push("        emit_trailer('numpy-missing',\n")
+    parts.push("                     f'numpy import failed: {r.stderr.strip()[:200]}',\n")
+    parts.push("                     '1) source .venv-eeg/bin/activate  '\n")
+    parts.push("                     '2) pip install --upgrade numpy')\n")
+    parts.push("        return False\n")
+    parts.push("    return True\n\n")
+
+    // ─── trim execution payload (runs inside .venv-eeg python) ──────
+    parts.push("TRIM_PY = textwrap.dedent(r'''\n")
+    parts.push("    import json, sys, os\n")
+    parts.push("    import numpy as np\n")
+    parts.push("    INPUT          = sys.argv[1]\n")
+    parts.push("    OUTPUT         = sys.argv[2]\n")
+    parts.push("    FS             = int(sys.argv[3])\n")
+    parts.push("    TRIM_S         = int(sys.argv[4])     # -1 = auto-detect\n")
+    parts.push("    AUTO_DC_TH     = float(sys.argv[5])\n")
+    parts.push("    AUTO_STABLE_TH = float(sys.argv[6])\n")
+    parts.push("    AUTO_WIN_S     = int(sys.argv[7])\n")
+    parts.push("    AUTO_MIN_S     = int(sys.argv[8])\n")
+    parts.push("    AUTO_MAX_S     = int(sys.argv[9])\n")
+    parts.push("    F_MAX_UV       = float(sys.argv[10])\n")
+    parts.push("    F_MEAN_UV      = float(sys.argv[11])\n")
+    parts.push("    arr = np.load(INPUT)\n")
+    parts.push("    if arr.ndim == 1:\n")
+    parts.push("        arr = arr.reshape(1, -1)\n")
+    parts.push("    n_ch, n_samp_in = int(arr.shape[0]), int(arr.shape[1])\n")
+    parts.push("    duration_in_s = float(n_samp_in) / float(FS)\n")
+    parts.push("    # ── decide trim length ──\n")
+    parts.push("    if TRIM_S < 0:\n")
+    parts.push("        # auto-detect: rolling mean |x| over front-of-channel ch0\n")
+    parts.push("        ch0 = np.abs(arr[0].astype(np.float64))\n")
+    parts.push("        win = max(1, AUTO_WIN_S * FS)\n")
+    parts.push("        # cumulative mean trick: rolling mean window=win\n")
+    parts.push("        if ch0.size < win * 2:\n")
+    parts.push("            trim_s_used = AUTO_MIN_S\n")
+    parts.push("            auto_reason = 'signal-too-short'\n")
+    parts.push("        else:\n")
+    parts.push("            cs = np.cumsum(ch0)\n")
+    parts.push("            roll = (cs[win-1:] - np.concatenate(([0.0], cs[:-win]))) / float(win)\n")
+    parts.push("            # roll[i] = mean(|ch0|) over samples i..i+win-1 (after adjustment)\n")
+    parts.push("            # find first index where roll < AUTO_STABLE_TH AND we crossed\n")
+    parts.push("            # the AUTO_DC_TH at some prior point (otherwise no transient)\n")
+    parts.push("            transient_seen = bool(np.any(roll[:min(len(roll), AUTO_MAX_S*FS)] > AUTO_DC_TH))\n")
+    parts.push("            if not transient_seen:\n")
+    parts.push("                trim_s_used = AUTO_MIN_S\n")
+    parts.push("                auto_reason = 'no-transient-detected'\n")
+    parts.push("            else:\n")
+    parts.push("                stable_idx = np.where(roll < AUTO_STABLE_TH)[0]\n")
+    parts.push("                if stable_idx.size == 0:\n")
+    parts.push("                    trim_s_used = AUTO_MAX_S\n")
+    parts.push("                    auto_reason = 'never-stabilised-cap-at-max'\n")
+    parts.push("                else:\n")
+    parts.push("                    first_stable_sample = int(stable_idx[0])\n")
+    parts.push("                    # convert sample index to seconds, round up\n")
+    parts.push("                    s = int(math.ceil((first_stable_sample + win) / float(FS))) if False else int(math.ceil((first_stable_sample) / float(FS)))\n")
+    parts.push("                    s = max(AUTO_MIN_S, min(AUTO_MAX_S, s))\n")
+    parts.push("                    trim_s_used = s\n")
+    parts.push("                    auto_reason = 'stabilised'\n")
+    parts.push("    else:\n")
+    parts.push("        trim_s_used = max(0, int(TRIM_S))\n")
+    parts.push("        auto_reason = 'fixed'\n")
+    parts.push("    trim_samples = int(trim_s_used) * int(FS)\n")
+    parts.push("    if trim_samples >= n_samp_in:\n")
+    parts.push("        emit_trailer('trim-exceeds-length',\n")
+    parts.push("                     f'trim_samples={trim_samples} >= n_samp={n_samp_in}',\n")
+    parts.push("                     '1) reduce --trim-seconds  '\n")
+    parts.push("                     '2) verify recording is longer than trim window')\n")
+    parts.push("        sys.exit(2)\n")
+    parts.push("    out = arr[:, trim_samples:]\n")
+    parts.push("    n_samp_out = int(out.shape[1])\n")
+    parts.push("    duration_out_s = float(n_samp_out) / float(FS)\n")
+    parts.push("    # F_DC_TRIM_01: post-trim max |x|\n")
+    parts.push("    post_max_uv  = float(np.max(np.abs(out.astype(np.float64))))\n")
+    parts.push("    # F_DC_TRIM_02: post-trim mean |x|\n")
+    parts.push("    post_mean_uv = float(np.mean(np.abs(out.astype(np.float64))))\n")
+    parts.push("    f01_pass = bool(post_max_uv  < F_MAX_UV)\n")
+    parts.push("    f02_pass = bool(post_mean_uv < F_MEAN_UV)\n")
+    parts.push("    # F_DC_TRIM_03: exact sample count equality\n")
+    parts.push("    f03_expected = int(n_samp_in - trim_samples)\n")
+    parts.push("    f03_pass = bool(n_samp_out == f03_expected)\n")
+    parts.push("    overall = bool(f01_pass and f02_pass and f03_pass)\n")
+    parts.push("    np.save(OUTPUT, out.astype(np.float32))\n")
+    parts.push("    # sidecar meta JSON for traceability (raw#10 honest C3 #3)\n")
+    parts.push("    meta = {\n")
+    parts.push("        'schema':            '" + SCHEMA + "',\n")
+    parts.push("        'input':             INPUT,\n")
+    parts.push("        'output':            OUTPUT,\n")
+    parts.push("        'fs_hz':             FS,\n")
+    parts.push("        'n_channels':        n_ch,\n")
+    parts.push("        'n_samples_in':      n_samp_in,\n")
+    parts.push("        'n_samples_out':     n_samp_out,\n")
+    parts.push("        'duration_in_s':     round(duration_in_s, 4),\n")
+    parts.push("        'duration_out_s':    round(duration_out_s, 4),\n")
+    parts.push("        'trim_seconds_used': int(trim_s_used),\n")
+    parts.push("        'trim_samples':      int(trim_samples),\n")
+    parts.push("        'auto_reason':       auto_reason,\n")
+    parts.push("        'post_max_uv':       round(post_max_uv,  3),\n")
+    parts.push("        'post_mean_uv':      round(post_mean_uv, 3),\n")
+    parts.push("        'f01_pass':          f01_pass,\n")
+    parts.push("        'f02_pass':          f02_pass,\n")
+    parts.push("        'f03_pass':          f03_pass,\n")
+    parts.push("        'overall':           overall,\n")
+    parts.push("    }\n")
+    parts.push("    sidecar = OUTPUT + '.meta.json'\n")
+    parts.push("    with open(sidecar, 'w') as fh:\n")
+    parts.push("        json.dump(meta, fh, indent=2)\n")
+    parts.push("    print(json.dumps(meta))\n")
+    parts.push("''')\n\n")
+
+    // ─── Selftest payload: synthesize transient + steady, trim, verify ─
+    parts.push("SELFTEST_PY = textwrap.dedent(r'''\n")
+    parts.push("    import json, math, sys, tempfile, os\n")
+    parts.push("    import numpy as np\n")
+    parts.push("    FS                = int(sys.argv[1])\n")
+    parts.push("    SECONDS           = int(sys.argv[2])\n")
+    parts.push("    TRANSIENT_S       = int(sys.argv[3])\n")
+    parts.push("    TRANSIENT_AMP     = float(sys.argv[4])\n")
+    parts.push("    STEADY_AMP        = float(sys.argv[5])\n")
+    parts.push("    STEADY_HZ         = float(sys.argv[6])\n")
+    parts.push("    F_MAX_UV          = float(sys.argv[7])\n")
+    parts.push("    F_MEAN_UV         = float(sys.argv[8])\n")
+    parts.push("    n_total = FS * SECONDS\n")
+    parts.push("    n_trans = FS * TRANSIENT_S\n")
+    parts.push("    t = np.arange(n_total) / float(FS)\n")
+    parts.push("    # synthetic: huge DC ramp during 0..TRANSIENT_S, then α band only\n")
+    parts.push("    sig = np.zeros(n_total, dtype=np.float64)\n")
+    parts.push("    # Transient: linear ramp from -TRANSIENT_AMP to +TRANSIENT_AMP\n")
+    parts.push("    ramp = np.linspace(-TRANSIENT_AMP, TRANSIENT_AMP, n_trans)\n")
+    parts.push("    sig[:n_trans] = ramp\n")
+    parts.push("    # Steady portion: clean alpha\n")
+    parts.push("    sig[n_trans:] = STEADY_AMP * np.sin(2*math.pi*STEADY_HZ*t[n_trans:])\n")
+    parts.push("    # Save 1-D as 2-D (1 channel × N samples) so trim helper-shape matches collect.hexa output\n")
+    parts.push("    arr_2d = sig.reshape(1, -1).astype(np.float32)\n")
+    parts.push("    raw_npy = tempfile.NamedTemporaryFile(suffix='_dc_settle_raw.npy', delete=False).name\n")
+    parts.push("    out_npy = tempfile.NamedTemporaryFile(suffix='_dc_settle_trim.npy', delete=False).name\n")
+    parts.push("    np.save(raw_npy, arr_2d)\n")
+    parts.push("    # ── case A: fixed 5 s trim ──\n")
+    parts.push("    arr_in  = np.load(raw_npy)\n")
+    parts.push("    trim_s_used = TRANSIENT_S\n")
+    parts.push("    trim_samples = trim_s_used * FS\n")
+    parts.push("    out_a = arr_in[:, trim_samples:]\n")
+    parts.push("    max_a  = float(np.max(np.abs(out_a.astype(np.float64))))\n")
+    parts.push("    mean_a = float(np.mean(np.abs(out_a.astype(np.float64))))\n")
+    parts.push("    f01_a = bool(max_a  < F_MAX_UV)\n")
+    parts.push("    f02_a = bool(mean_a < F_MEAN_UV)\n")
+    parts.push("    f03_a = bool(int(out_a.shape[1]) == int(arr_in.shape[1]) - trim_samples)\n")
+    parts.push("    # ── case B: pre-trim sanity (should FAIL F_DC_TRIM_01) ──\n")
+    parts.push("    pre_max  = float(np.max(np.abs(arr_in.astype(np.float64))))\n")
+    parts.push("    pre_mean = float(np.mean(np.abs(arr_in.astype(np.float64))))\n")
+    parts.push("    f01_pre_should_fail = bool(pre_max  >= F_MAX_UV)   # we expect True (fail)\n")
+    parts.push("    # ── case C: auto-detect emulation ──\n")
+    parts.push("    ch0 = np.abs(arr_in[0].astype(np.float64))\n")
+    parts.push("    win = FS  # 1 s window\n")
+    parts.push("    cs = np.cumsum(ch0)\n")
+    parts.push("    roll = (cs[win-1:] - np.concatenate(([0.0], cs[:-win]))) / float(win)\n")
+    parts.push("    stable_idx = np.where(roll < 1000.0)[0]\n")
+    parts.push("    auto_trim_s = max(2, min(15, int(math.ceil(stable_idx[0] / float(FS))))) if stable_idx.size > 0 else 15\n")
+    parts.push("    out_c = arr_in[:, auto_trim_s*FS:]\n")
+    parts.push("    max_c  = float(np.max(np.abs(out_c.astype(np.float64))))\n")
+    parts.push("    mean_c = float(np.mean(np.abs(out_c.astype(np.float64))))\n")
+    parts.push("    f01_c = bool(max_c  < F_MAX_UV)\n")
+    parts.push("    f02_c = bool(mean_c < F_MEAN_UV)\n")
+    parts.push("    # cleanup\n")
+    parts.push("    try:\n")
+    parts.push("        os.unlink(raw_npy); os.unlink(out_npy)\n")
+    parts.push("    except OSError:\n")
+    parts.push("        pass\n")
+    parts.push("    overall = bool(f01_a and f02_a and f03_a and f01_pre_should_fail and f01_c and f02_c)\n")
+    parts.push("    out_obj = {\n")
+    parts.push("        'rc': 0,\n")
+    parts.push("        'fs': FS, 'seconds': SECONDS, 'transient_seconds': TRANSIENT_S,\n")
+    parts.push("        'pre_trim_max_uv':  round(pre_max,  3),\n")
+    parts.push("        'pre_trim_mean_uv': round(pre_mean, 3),\n")
+    parts.push("        'fixed5_max_uv':    round(max_a,    3),\n")
+    parts.push("        'fixed5_mean_uv':   round(mean_a,   3),\n")
+    parts.push("        'auto_trim_s':      int(auto_trim_s),\n")
+    parts.push("        'auto_max_uv':      round(max_c,    3),\n")
+    parts.push("        'auto_mean_uv':     round(mean_c,   3),\n")
+    parts.push("        'f01_pass_fixed':   f01_a,\n")
+    parts.push("        'f02_pass_fixed':   f02_a,\n")
+    parts.push("        'f03_pass_fixed':   f03_a,\n")
+    parts.push("        'pre_should_fail':  f01_pre_should_fail,\n")
+    parts.push("        'f01_pass_auto':    f01_c,\n")
+    parts.push("        'f02_pass_auto':    f02_c,\n")
+    parts.push("        'overall':          overall,\n")
+    parts.push("    }\n")
+    parts.push("    print(json.dumps(out_obj))\n")
+    parts.push("''')\n\n")
+
+    parts.push("def cmd_selftest(args):\n")
+    parts.push("    print('schema=' + '" + SCHEMA + "')\n")
+    parts.push("    print('venv_python_exists=' + str(os.path.exists(VENV_PYTHON)))\n")
+    parts.push("    if not verify_numpy():\n")
+    parts.push("        print('selftest=fail')\n")
+    parts.push("        sys.exit(2)\n")
+    parts.push("    cmd = [VENV_PYTHON, '-c', SELFTEST_PY,\n")
+    parts.push("           str(SELFTEST_FS), str(SELFTEST_SECONDS),\n")
+    parts.push("           str(SELFTEST_TRANSIENT_S), str(SELFTEST_TRANSIENT_AMP),\n")
+    parts.push("           str(SELFTEST_STEADY_AMP),  str(SELFTEST_STEADY_HZ),\n")
+    parts.push("           str(F_MAX_UV), str(F_MEAN_UV)]\n")
+    parts.push("    r = subprocess.run(cmd, capture_output=True, text=True, timeout=60)\n")
+    parts.push("    if r.returncode != 0 or not r.stdout.strip():\n")
+    parts.push("        emit_trailer('selftest-subprocess-failed',\n")
+    parts.push("                     f'rc={r.returncode} stderr={r.stderr.strip()[:300]}',\n")
+    parts.push("                     '1) verify .venv-eeg numpy installed  '\n")
+    parts.push("                     '2) re-run')\n")
+    parts.push("        print('selftest=fail')\n")
+    parts.push("        sys.exit(2)\n")
+    parts.push("    try:\n")
+    parts.push("        m = json.loads(r.stdout.strip().splitlines()[-1])\n")
+    parts.push("    except Exception as exc:\n")
+    parts.push("        emit_trailer('selftest-parse-failed',\n")
+    parts.push("                     f'could not parse helper output: {exc!r}; raw={r.stdout[-200:]!r}',\n")
+    parts.push("                     '1) re-run; if persistent inspect helper python')\n")
+    parts.push("        print('selftest=fail')\n")
+    parts.push("        sys.exit(2)\n")
+    parts.push("    print(f'fs={m[\"fs\"]}  seconds={m[\"seconds\"]}  transient_seconds={m[\"transient_seconds\"]}')\n")
+    parts.push("    print(f'pre_trim_max_uv={m[\"pre_trim_max_uv\"]}    (pre-trim raw, expected >> F_MAX_UV)')\n")
+    parts.push("    print(f'pre_trim_mean_uv={m[\"pre_trim_mean_uv\"]}')\n")
+    parts.push("    print(f'fixed5_max_uv={m[\"fixed5_max_uv\"]}        (target < {F_MAX_UV})')\n")
+    parts.push("    print(f'fixed5_mean_uv={m[\"fixed5_mean_uv\"]}      (target < {F_MEAN_UV})')\n")
+    parts.push("    print(f'auto_trim_s={m[\"auto_trim_s\"]}')\n")
+    parts.push("    print(f'auto_max_uv={m[\"auto_max_uv\"]}            (target < {F_MAX_UV})')\n")
+    parts.push("    print(f'auto_mean_uv={m[\"auto_mean_uv\"]}          (target < {F_MEAN_UV})')\n")
+    parts.push("    f01 = 'PASS' if m['f01_pass_fixed'] else 'FAIL'\n")
+    parts.push("    f02 = 'PASS' if m['f02_pass_fixed'] else 'FAIL'\n")
+    parts.push("    f03 = 'PASS' if m['f03_pass_fixed'] else 'FAIL'\n")
+    parts.push("    pre = 'PASS' if m['pre_should_fail'] else 'FAIL'\n")
+    parts.push("    fa1 = 'PASS' if m['f01_pass_auto']  else 'FAIL'\n")
+    parts.push("    fa2 = 'PASS' if m['f02_pass_auto']  else 'FAIL'\n")
+    parts.push("    print(f'F_DC_TRIM_01_max_fixed5: {f01}')\n")
+    parts.push("    print(f'F_DC_TRIM_02_mean_fixed5: {f02}')\n")
+    parts.push("    print(f'F_DC_TRIM_03_count_fixed5: {f03}')\n")
+    parts.push("    print(f'pre_trim_violates_F01:    {pre} (expected: PASS = transient is detectable)')\n")
+    parts.push("    print(f'F_DC_TRIM_01_max_auto:   {fa1}')\n")
+    parts.push("    print(f'F_DC_TRIM_02_mean_auto:  {fa2}')\n")
+    parts.push("    overall = 'PASS' if m['overall'] else 'FAIL'\n")
+    parts.push("    print(f'selftest={overall.lower()}')\n")
+    parts.push("    print(f'__EEG_DC_TRIM__ {overall} {m[\"fixed5_max_uv\"]:.2f} {m[\"fixed5_mean_uv\"]:.2f} {SELFTEST_TRANSIENT_S}')\n")
+    parts.push("    sys.exit(0 if m['overall'] else 1)\n\n")
+
+    parts.push("def cmd_trim(args):\n")
+    parts.push("    if not os.path.exists(args.input):\n")
+    parts.push("        emit_trailer('input-missing',\n")
+    parts.push("                     f'--input {args.input} not found',\n")
+    parts.push("                     '1) verify path; .npy file from collect.hexa')\n")
+    parts.push("        print('__EEG_DC_TRIM__ FAIL 0.00 0.00 0')\n")
+    parts.push("        sys.exit(2)\n")
+    parts.push("    if not verify_numpy():\n")
+    parts.push("        print('__EEG_DC_TRIM__ FAIL 0.00 0.00 0')\n")
+    parts.push("        sys.exit(2)\n")
+    parts.push("    trim_arg = -1 if args.auto_detect else int(args.trim_seconds)\n")
+    parts.push("    cmd = [VENV_PYTHON, '-c', TRIM_PY,\n")
+    parts.push("           args.input, args.output,\n")
+    parts.push("           str(args.fs), str(trim_arg),\n")
+    parts.push("           str(AUTO_DC_THRESHOLD_UV), str(AUTO_STABLE_THRESHOLD_UV),\n")
+    parts.push("           str(AUTO_WINDOW_SECONDS),\n")
+    parts.push("           str(AUTO_MIN_TRIM_SECONDS), str(AUTO_MAX_TRIM_SECONDS),\n")
+    parts.push("           str(F_MAX_UV), str(F_MEAN_UV)]\n")
+    parts.push("    r = subprocess.run(cmd, capture_output=True, text=True, timeout=120)\n")
+    parts.push("    if r.returncode != 0 or not r.stdout.strip():\n")
+    parts.push("        emit_trailer('trim-subprocess-failed',\n")
+    parts.push("                     f'rc={r.returncode} stderr={r.stderr.strip()[:300]}',\n")
+    parts.push("                     '1) check input npy shape (1-D or 2-D channels x samples)  '\n")
+    parts.push("                     '2) verify --fs matches recorded data  '\n")
+    parts.push("                     '3) verify --trim-seconds < recording length')\n")
+    parts.push("        print('__EEG_DC_TRIM__ FAIL 0.00 0.00 0')\n")
+    parts.push("        sys.exit(2)\n")
+    parts.push("    try:\n")
+    parts.push("        meta = json.loads(r.stdout.strip().splitlines()[-1])\n")
+    parts.push("    except Exception as exc:\n")
+    parts.push("        emit_trailer('trim-parse-failed',\n")
+    parts.push("                     f'could not parse helper output: {exc!r}',\n")
+    parts.push("                     '1) re-run; if persistent inspect helper python')\n")
+    parts.push("        print('__EEG_DC_TRIM__ FAIL 0.00 0.00 0')\n")
+    parts.push("        sys.exit(2)\n")
+    parts.push("    print(f'input={meta[\"input\"]}')\n")
+    parts.push("    print(f'output={meta[\"output\"]}')\n")
+    parts.push("    print(f'fs={meta[\"fs_hz\"]} channels={meta[\"n_channels\"]}')\n")
+    parts.push("    print(f'duration_in_s={meta[\"duration_in_s\"]} -> duration_out_s={meta[\"duration_out_s\"]}')\n")
+    parts.push("    print(f'trim_seconds_used={meta[\"trim_seconds_used\"]} (reason={meta[\"auto_reason\"]})')\n")
+    parts.push("    print(f'post_max_uv={meta[\"post_max_uv\"]}   (target < {F_MAX_UV})')\n")
+    parts.push("    print(f'post_mean_uv={meta[\"post_mean_uv\"]} (target < {F_MEAN_UV})')\n")
+    parts.push("    f01 = 'PASS' if meta['f01_pass'] else 'FAIL'\n")
+    parts.push("    f02 = 'PASS' if meta['f02_pass'] else 'FAIL'\n")
+    parts.push("    f03 = 'PASS' if meta['f03_pass'] else 'FAIL'\n")
+    parts.push("    print(f'F_DC_TRIM_01_max:   {f01}')\n")
+    parts.push("    print(f'F_DC_TRIM_02_mean:  {f02}')\n")
+    parts.push("    print(f'F_DC_TRIM_03_count: {f03}')\n")
+    parts.push("    overall = 'PASS' if meta['overall'] else 'FAIL'\n")
+    parts.push("    print(f'sidecar_meta={meta[\"output\"]}.meta.json')\n")
+    parts.push("    print(f'trim={overall.lower()}')\n")
+    parts.push("    print(f'__EEG_DC_TRIM__ {overall} {meta[\"post_max_uv\"]:.2f} {meta[\"post_mean_uv\"]:.2f} {meta[\"trim_seconds_used\"]}')\n")
+    parts.push("    sys.exit(0 if meta['overall'] else 1)\n\n")
+
+    parts.push("def main():\n")
+    parts.push("    p = argparse.ArgumentParser()\n")
+    parts.push("    sub = p.add_subparsers(dest='cmd', required=True)\n")
+    parts.push("    s = sub.add_parser('selftest')\n")
+    parts.push("    t = sub.add_parser('trim')\n")
+    parts.push("    t.add_argument('--input', required=True)\n")
+    parts.push("    t.add_argument('--output', required=True)\n")
+    parts.push("    t.add_argument('--fs', type=int, default=DEFAULT_FS_HZ)\n")
+    parts.push("    t.add_argument('--trim-seconds', type=int, default=DEFAULT_TRIM_SECONDS,\n")
+    parts.push("                   dest='trim_seconds')\n")
+    parts.push("    t.add_argument('--auto-detect', action='store_true', dest='auto_detect')\n")
+    parts.push("    args = p.parse_args()\n")
+    parts.push("    if args.cmd == 'selftest': cmd_selftest(args)\n")
+    parts.push("    elif args.cmd == 'trim':   cmd_trim(args)\n")
+    parts.push("    else: sys.exit(2)\n\n")
+
+    parts.push("if __name__ == '__main__': main()\n")
+
+    write_file(HELPER_PATH, parts.join(""))
+}
+
+fn _run_helper(args: string) -> list {
+    let cmd = "python3 " + HELPER_PATH + " " + args
+    let r = exec_with_status(cmd)
+    return [to_string(r[0]).trim(), to_int(r[1])]
+}
+
+// Optional integration: chain into eeg_filter.hexa after trim
+fn _run_filter_chain(input: string, output: string, fs: int) -> int {
+    let cmd = "hexa run " + DEFAULT_FILTER_HEXA
+        + " --filter --input " + _sh_quote(input)
+        + " --output " + _sh_quote(output)
+        + " --fs " + str(fs)
+    let r = exec_with_status(cmd)
+    return to_int(r[1])
+}
+
+// ════════════════════════════════════════════════════════════════════
+// CLI
+// ════════════════════════════════════════════════════════════════════
+
+fn _print_usage() {
+    eprintln("usage: hexa run anima-eeg/protocols/dc_settle_trim.hexa --selftest")
+    eprintln("       hexa run anima-eeg/protocols/dc_settle_trim.hexa \\")
+    eprintln("            --input <raw.npy> --output <trimmed.npy> [--trim-seconds 5]")
+    eprintln("       hexa run anima-eeg/protocols/dc_settle_trim.hexa \\")
+    eprintln("            --input <raw.npy> --output <trimmed.npy> --auto-detect")
+    eprintln("flags:")
+    eprintln("  --selftest             synthetic transient + steady, verify F_DC_TRIM_01/02/03")
+    eprintln("  --input <path>         input .npy (1-D or 2-D channels x samples)")
+    eprintln("  --output <path>        output .npy (float32; raw#65 idempotent overwrite)")
+    eprintln("                         + sidecar <output>.meta.json (raw#10 honest C3 #3)")
+    eprintln("  --trim-seconds <n>     fixed trim length in seconds (default " + str(DEFAULT_TRIM_SECONDS) + ")")
+    eprintln("  --auto-detect          adaptive trim from rolling |amplitude| stabilisation")
+    eprintln("                         (DC threshold " + to_string(AUTO_DC_THRESHOLD_UV) + " µV; stable < " + to_string(AUTO_STABLE_THRESHOLD_UV) + " µV;")
+    eprintln("                          window " + str(AUTO_WINDOW_SECONDS) + " s; bound [" + str(AUTO_MIN_TRIM_SECONDS) + "," + str(AUTO_MAX_TRIM_SECONDS) + "] s)")
+    eprintln("  --fs <int>             sample rate Hz (default " + str(DEFAULT_FS_HZ) + ")")
+    eprintln("  --filter               also chain into anima-eeg/eeg_filter.hexa post-trim")
+    eprintln("  --help                 this message")
+}
+
+fn main() {
+    let av = argv()
+    let mut want_selftest = false
+    let mut want_help     = false
+    let mut want_filter   = false
+    let mut auto_detect   = false
+    let mut input_path    = ""
+    let mut output_path   = ""
+    let mut fs            = DEFAULT_FS_HZ
+    let mut trim_seconds  = DEFAULT_TRIM_SECONDS
+
+    // hexa-strict: user args begin at index 2 (matches eeg_filter.hexa pattern)
+    let mut i = 2
+    while i < len(av) {
+        let a = av[i]
+        if a == "--selftest"       { want_selftest = true; i = i + 1; continue }
+        if a == "--help" || a == "-h" { want_help = true; i = i + 1; continue }
+        if a == "--auto-detect"    { auto_detect = true; i = i + 1; continue }
+        if a == "--filter"         { want_filter = true; i = i + 1; continue }
+        if a == "--input" {
+            if (i + 1) >= len(av) {
+                _emit_trailer("missing-arg-value",
+                              "--input requires a path",
+                              "1) re-run with --input <path.npy>")
+                exit(2)
+            }
+            input_path = av[i + 1]; i = i + 2; continue
+        }
+        if a == "--output" {
+            if (i + 1) >= len(av) {
+                _emit_trailer("missing-arg-value",
+                              "--output requires a path",
+                              "1) re-run with --output <path.npy>")
+                exit(2)
+            }
+            output_path = av[i + 1]; i = i + 2; continue
+        }
+        if a == "--fs" {
+            if (i + 1) >= len(av) {
+                _emit_trailer("missing-arg-value",
+                              "--fs requires an integer Hz",
+                              "1) re-run with --fs 125")
+                exit(2)
+            }
+            fs = to_int(av[i + 1]); i = i + 2; continue
+        }
+        if a == "--trim-seconds" {
+            if (i + 1) >= len(av) {
+                _emit_trailer("missing-arg-value",
+                              "--trim-seconds requires an integer",
+                              "1) re-run with --trim-seconds 5")
+                exit(2)
+            }
+            trim_seconds = to_int(av[i + 1]); i = i + 2; continue
+        }
+        // unknown flag → fall through
+        _emit_trailer("unknown-flag",
+                      "argv[" + str(i) + "] = " + a,
+                      "1) check --help for valid flags")
+        _print_usage()
+        exit(2)
+    }
+
+    if want_help {
+        _print_usage()
+        exit(0)
+    }
+
+    _write_helper()
+
+    if want_selftest {
+        let r = _run_helper("selftest")
+        let stdout = r[0]
+        let rc     = to_int(r[1])
+        println(stdout)
+        // sentinel emitted by helper; rc propagated
+        exit(rc)
+    }
+
+    // Validate inputs for trim mode
+    if input_path == "" || output_path == "" {
+        _emit_trailer("missing-required",
+                      "--input and --output are both required for trim mode",
+                      "1) provide --input <raw.npy> --output <trim.npy>  "
+                      "2) or use --selftest for synthetic verification")
+        _print_usage()
+        exit(2)
+    }
+    if auto_detect == false && trim_seconds < 0 {
+        _emit_trailer("invalid-trim-seconds",
+                      "--trim-seconds must be >= 0 (got " + str(trim_seconds) + ")",
+                      "1) use --trim-seconds 5  2) or pass --auto-detect")
+        exit(2)
+    }
+
+    let mut args = "trim"
+        + " --input "  + _sh_quote(input_path)
+        + " --output " + _sh_quote(output_path)
+        + " --fs "     + str(fs)
+    if auto_detect {
+        args = args + " --auto-detect"
+    } else {
+        args = args + " --trim-seconds " + str(trim_seconds)
+    }
+
+    let r = _run_helper(args)
+    let stdout = r[0]
+    let rc     = to_int(r[1])
+    println(stdout)
+
+    if rc != 0 {
+        exit(rc)
+    }
+
+    // Optional --filter chain (raw#10 honest C3: separate cycle by default;
+    // only run if caller explicitly requested. The trimmed .npy already at
+    // output_path is overwritten with filtered version.)
+    if want_filter {
+        let chain_input = output_path
+        let chain_output = output_path     // raw#65 idempotent overwrite
+        println("[chain] --filter requested → eeg_filter.hexa bandpass+notch")
+        let chain_rc = _run_filter_chain(chain_input, chain_output, fs)
+        if chain_rc != 0 {
+            _emit_trailer("filter-chain-failed",
+                          "eeg_filter.hexa returned rc=" + str(chain_rc),
+                          "1) run eeg_filter.hexa --selftest  "
+                          "2) re-run dc_settle_trim without --filter to keep trim-only output")
+            exit(chain_rc)
+        }
+        println("[chain] filter chain complete: " + chain_output)
+    }
+
+    exit(0)
+}

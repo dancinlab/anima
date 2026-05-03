@@ -205,12 +205,17 @@ fn phase1_t0(voice: str, port: str, board: str, threshold: int, selftest: int) -
 }
 
 fn phase2_settle(voice: str, settle_s: int) -> int {
+    // AUDIO CUE TIMING (raw#10 honest C3): say_cue 측 BLOCKING — cue
+    // 끝난 후 측 sleep 시작. 사용자 측 "안정 대기 중" 듣기 전에 timer
+    // counts down 측 race condition 방지. settle_s ∈ [60,90] 측 정확
+    // sleep — cue lag (~2s) 측 별도 (F_PREFLIGHT_03 측 sleep duration
+    // 만 검사). raw#65 idempotent.
     print("[phase 2] settle wait " + str(settle_s) + "s ── electrochemical 평형 대기")
-    say_cue(voice, "단계 이. 안정 대기 중. 가만히 계세요")
+    say_cue(voice, "단계 이. 안정 대기 중. 가만히 계세요")  // BLOCKING ~2s
     let t0 = now_iso_utc()
-    sleep_seconds(settle_s)
+    sleep_seconds(settle_s)                                  // exact settle_s
     let t1 = now_iso_utc()
-    say_cue(voice, "안정 대기 완료")
+    say_cue(voice, "안정 대기 완료")                         // BLOCKING
     g_settle_actual_s = settle_s
     print("[phase 2] settle elapsed " + str(settle_s) + "s  (start=" + t0 + " end=" + t1 + ")")
     return settle_s

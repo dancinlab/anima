@@ -386,7 +386,7 @@ fn _write_helper() {
     parts.push("        # raw#71 falsifier-bound: BOARD_NOT_CREATED:15 observed at\n")
     parts.push("        # start_stream — retry with 'v' soft-reset escalation.\n")
     parts.push("        try:\n")
-    parts.push("            board.start_stream()\n")
+    parts.push("            board.start_stream(450000)\n")
     parts.push("        except Exception as _e2:\n")
     parts.push("            if _is_leak(_e2):\n")
     parts.push("                try: board.release_session()\n")

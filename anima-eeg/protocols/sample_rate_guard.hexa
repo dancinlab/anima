@@ -1,0 +1,717 @@
+// anima-eeg/protocols/sample_rate_guard.hexa
+// raw#9 hexa-only · raw#10 honest-C3 · raw#11 snake_case · raw#12 frozen
+// raw#15 no-personal-paths · raw#34 no-backup-files · raw#37 transient-helper-in-/tmp
+// raw#65 idempotent · raw#66 ai-native error trailer · raw#71 falsifier-bound
+// raw#80 sentinel · raw#82 darwin-native marker · raw#91 honest-class
+//
+// @resolver-bypass(reason="darwin-native: invokes .venv-eeg/bin/python which is a
+//                   mac-local virtualenv hosting numpy. Reads .npy + .meta.json
+//                   sidecar emitted by anima-eeg/collect.hexa to verify post-
+//                   capture effective sample rate. selftest path is fully
+//                   synthetic numpy + tempfile; works wherever .venv-eeg + numpy
+//                   are present (Darwin host today).")
+//
+// PURPOSE  (raw#106 genus name)
+//   Post-capture inline sample-rate guard. Reads a .npy + .meta.json sidecar
+//   produced by anima-eeg/collect.hexa, recomputes effective_fs = cols /
+//   duration_actual_s, compares against caller threshold + meta-claimed
+//   sample_rate, and emits PASS/FAIL verdict + sentinel.
+//
+//   Companion to a parallel cycle (BG a1b41c0e) addressing the *root cause*
+//   of sample drops inside collect.hexa. This module is a *measurement-side*
+//   safety net — it does NOT fix the capture loop, it only verifies what
+//   was captured and (in --strict mode) quarantines unsafe recordings so
+//   downstream filter / spectral / classifier modules cannot silently
+//   ingest a 7-Hz pseudo-EEG file claiming to be 125 Hz.
+//
+//   Discovery (2026-05-03 analysis BG):
+//     • all six recent Cyton+Daisy 16ch sessions effective fs 7-83 Hz
+//     • metadata claimed 125 Hz → drop 33-94% per file
+//     • collect.hexa silently saved partial buffers with no abort
+//     • α-band (8-13 Hz) requires Nyquist > 26 Hz → most files unusable
+//
+//   This guard is INDEPENDENT of collect.hexa (no edits to that module).
+//   Race avoidance with parallel root-cause BG: only writes
+//   anima-eeg/protocols/sample_rate_guard.hexa. Integration into
+//   collect.hexa post-capture hook is a follow-up cycle item.
+//
+// API
+//   hexa run anima-eeg/protocols/sample_rate_guard.hexa --selftest
+//
+//   hexa run anima-eeg/protocols/sample_rate_guard.hexa \
+//        --input <raw.npy> [--threshold <hz>] [--paradigm <name>] \
+//        [--strict | --lenient] [--auto-retry-hint] \
+//        [--quarantine-dir <path>] [--no-quarantine]
+//
+//   Threshold resolution order (first wins):
+//     1. explicit --threshold <hz>
+//     2. --paradigm <eeg_alpha|emg|ppg|default>  → preset table
+//     3. default 100 Hz
+//
+//   Paradigm presets (raw#12 frozen 2026-05-03):
+//     eeg_alpha  ≥ 30 Hz   (Berger / α 8-13 Hz, Nyquist > 13 Hz)
+//     emg        ≥ 250 Hz  (clench band 50-150 Hz, Nyquist > 125 Hz)
+//     ppg        ≥ 5 Hz    (heart rate 0.5-3 Hz BPM, Nyquist > 2.5 Hz)
+//     default    ≥ 100 Hz  (general EEG / mixed)
+//
+// FALSIFIERS  (raw#71 frozen 2026-05-03)
+//   F_FS_01: effective_fs ≥ threshold_hz                    (Nyquist OK)
+//   F_FS_02: drop_pct < 30  (= effective ≥ 70% of claimed)  (jitter OK)
+//   F_FS_03: |cols/duration_actual_s − effective_fs| < 1e-3 (meta consistent)
+//
+//   strict mode  (default): F_FS_01 AND F_FS_02 AND F_FS_03  → PASS
+//                           FAIL → quarantine .npy + .meta.json into
+//                           recordings/quarantine/<DATE_TAG>/  (raw#65 idempotent)
+//   lenient mode (--lenient): warn-only, no quarantine, exit code 0
+//
+// SENTINEL
+//   __EEG_SAMPLE_RATE__ <PASS|FAIL> <effective_hz> <drop_pct>
+//
+// HONEST C3 CAVEATS  (raw#10)
+//   1. effective_fs = cols / duration_actual_s assumes meta duration_actual_s
+//      is honest. If collect.hexa writes a wrong duration (e.g. wall-clock
+//      not stream time) the verdict is wrong. Mitigation: F_FS_03 cross-
+//      checks self-consistency only — it cannot detect duration meta lies.
+//      A stronger gate would require a vendor-provided per-sample timestamp
+//      column; out of scope here. (raw#10 honest-class C3.)
+//   2. Older recordings missing sample_rate_actual_hz / duration_actual_s
+//      keys (pre-2026-05-03 collect.hexa schema) fall back to legacy keys
+//      `sample_rate` + `duration_actual_s`; if duration_actual_s is also
+//      absent we fall back to duration_requested_s and emit a WARN
+//      annotation. raw#10: do not silently treat requested == actual.
+//   3. Quarantine moves files via mv (POSIX rename within same FS); cross-
+//      filesystem .npy will fail mv with EXDEV — the helper catches and
+//      retries with shutil.move, but the operation is no longer atomic.
+//      The .meta.json sidecar is moved alongside the .npy.
+//
+// USAGE
+//   # default 100 Hz threshold, strict, quarantine on FAIL
+//   hexa run anima-eeg/protocols/sample_rate_guard.hexa \
+//        --input anima-eeg/recordings/sessions/blink_session_90s_2026_05_03.npy \
+//        --threshold 100 --strict
+//
+//   # Berger α paradigm, 30 Hz threshold, lenient (warn only)
+//   hexa run anima-eeg/protocols/sample_rate_guard.hexa \
+//        --input anima-eeg/recordings/sessions/berger_ec_60s_2026_05_03.npy \
+//        --paradigm eeg_alpha --lenient --auto-retry-hint
+//
+// FOLLOW-UP (raw#10 — not done here, separate cycle):
+//   • integrate into anima-eeg/collect.hexa post-capture hook (after the
+//     parallel root-cause BG a1b41c0e lands its fix)
+//   • add as Step 5 in anima-eeg/protocols/master_preflight.hexa
+//   • emit per-session quarantine summary into state/eeg_session_audit/
+
+let SCHEMA      = "anima-eeg/sample_rate_guard/1"
+let HELPER_PATH = "/tmp/anima_eeg_sample_rate_guard_helper.py"
+
+// ════════════════════════════════════════════════════════════════════
+// Frozen defaults (raw#12)
+// ════════════════════════════════════════════════════════════════════
+
+let DEFAULT_THRESHOLD_HZ      = 100
+let DEFAULT_VENV_PYTHON       = ".venv-eeg/bin/python"
+let DEFAULT_QUARANTINE_DIR    = "anima-eeg/recordings/quarantine"
+
+// Paradigm presets — Nyquist-based minimum effective fs floors
+let PARADIGM_EEG_ALPHA_HZ     = 30          // α 8-13 Hz, Nyquist > 13
+let PARADIGM_EMG_HZ           = 250         // EMG 50-150 Hz, Nyquist > 125
+let PARADIGM_PPG_HZ           = 5           // BPM 0.5-3 Hz, Nyquist > 2.5
+let PARADIGM_DEFAULT_HZ       = 100         // general EEG / mixed
+
+// Falsifier thresholds (raw#71 pre-registered)
+let F_FS_02_MAX_DROP_PCT      = 30.0        // < 30% jitter tolerated
+let F_FS_03_CONSISTENCY_TOL   = 0.001       // |cols/dur - eff_fs| < 1e-3
+
+// Selftest synthetic params
+let SELFTEST_GOOD_FS_HZ       = 125
+let SELFTEST_GOOD_DURATION_S  = 60
+let SELFTEST_BAD_EFFECTIVE_HZ = 75          // 60% of 125 → drop 40%
+let SELFTEST_DROPPED_FS_HZ    = 7           // worst-case observed
+
+// ════════════════════════════════════════════════════════════════════
+// Helpers
+// ════════════════════════════════════════════════════════════════════
+
+fn _sh_quote(s: string) -> string {
+    let mut o = "'"
+    o = o + s.replace("'", "'\\''")
+    o = o + "'"
+    return o
+}
+
+fn _emit_trailer(reason_slug: string, reason_detail: string, fix: string) {
+    eprintln("reason: " + reason_slug + ": " + reason_detail)
+    eprintln("fix: " + fix)
+}
+
+fn _resolve_threshold(explicit_hz: int, paradigm: string) -> int {
+    if explicit_hz > 0 { return explicit_hz }
+    if paradigm == "eeg_alpha" { return PARADIGM_EEG_ALPHA_HZ }
+    if paradigm == "emg"       { return PARADIGM_EMG_HZ }
+    if paradigm == "ppg"       { return PARADIGM_PPG_HZ }
+    if paradigm == "default"   { return PARADIGM_DEFAULT_HZ }
+    return DEFAULT_THRESHOLD_HZ
+}
+
+// ════════════════════════════════════════════════════════════════════
+// Helper python emitter (raw#37 transient)
+// ════════════════════════════════════════════════════════════════════
+
+fn _write_helper() {
+    let parts = []
+    parts.push("#!/usr/bin/env python3\n")
+    parts.push("# anima-eeg sample_rate_guard helper — emitted by\n")
+    parts.push("# anima-eeg/protocols/sample_rate_guard.hexa (raw#37 transient).\n")
+    parts.push("import argparse, json, os, shutil, subprocess, sys, tempfile, textwrap\n\n")
+
+    parts.push("VENV_PYTHON               = '" + DEFAULT_VENV_PYTHON + "'\n")
+    parts.push("DEFAULT_THRESHOLD_HZ      = " + str(DEFAULT_THRESHOLD_HZ) + "\n")
+    parts.push("DEFAULT_QUARANTINE_DIR    = '" + DEFAULT_QUARANTINE_DIR + "'\n")
+    parts.push("F_FS_02_MAX_DROP_PCT      = " + to_string(F_FS_02_MAX_DROP_PCT) + "\n")
+    parts.push("F_FS_03_CONSISTENCY_TOL   = " + to_string(F_FS_03_CONSISTENCY_TOL) + "\n")
+    parts.push("SELFTEST_GOOD_FS_HZ       = " + str(SELFTEST_GOOD_FS_HZ) + "\n")
+    parts.push("SELFTEST_GOOD_DURATION_S  = " + str(SELFTEST_GOOD_DURATION_S) + "\n")
+    parts.push("SELFTEST_BAD_EFFECTIVE_HZ = " + str(SELFTEST_BAD_EFFECTIVE_HZ) + "\n")
+    parts.push("SELFTEST_DROPPED_FS_HZ    = " + str(SELFTEST_DROPPED_FS_HZ) + "\n\n")
+
+    parts.push("def emit_trailer(slug, detail, fix):\n")
+    parts.push("    sys.stderr.write(f'reason: {slug}: {detail}\\n')\n")
+    parts.push("    sys.stderr.write(f'fix: {fix}\\n')\n\n")
+
+    parts.push("def verify_numpy():\n")
+    parts.push("    if not os.path.exists(VENV_PYTHON):\n")
+    parts.push("        emit_trailer('venv-missing',\n")
+    parts.push("                     f'{VENV_PYTHON} not found',\n")
+    parts.push("                     '1) python3 -m venv .venv-eeg  '\n")
+    parts.push("                     '2) source .venv-eeg/bin/activate  '\n")
+    parts.push("                     '3) pip install --upgrade numpy')\n")
+    parts.push("        return False\n")
+    parts.push("    r = subprocess.run([VENV_PYTHON, '-c', 'import numpy; print(\"ok\")'],\n")
+    parts.push("                       capture_output=True, text=True, timeout=20)\n")
+    parts.push("    if r.returncode != 0:\n")
+    parts.push("        emit_trailer('numpy-missing',\n")
+    parts.push("                     f'numpy import failed: {r.stderr.strip()[:200]}',\n")
+    parts.push("                     '1) source .venv-eeg/bin/activate  '\n")
+    parts.push("                     '2) pip install --upgrade numpy')\n")
+    parts.push("        return False\n")
+    parts.push("    return True\n\n")
+
+    // ─── verdict payload (runs inside .venv-eeg python) ──────────────
+    parts.push("VERIFY_PY = textwrap.dedent(r'''\n")
+    parts.push("    import json, os, sys\n")
+    parts.push("    import numpy as np\n")
+    parts.push("    INPUT      = sys.argv[1]\n")
+    parts.push("    THRESHOLD  = float(sys.argv[2])\n")
+    parts.push("    F02_MAX_DP = float(sys.argv[3])\n")
+    parts.push("    F03_TOL    = float(sys.argv[4])\n")
+    parts.push("    META_PATH  = INPUT + '.meta.json'\n")
+    parts.push("    out = {\n")
+    parts.push("        'schema': 'anima-eeg/sample_rate_guard/1',\n")
+    parts.push("        'input': INPUT,\n")
+    parts.push("        'meta_path': META_PATH,\n")
+    parts.push("        'threshold_hz': THRESHOLD,\n")
+    parts.push("        'cols': 0, 'rows': 0,\n")
+    parts.push("        'sample_rate_claimed_hz': 0.0,\n")
+    parts.push("        'sample_rate_actual_meta_hz': 0.0,\n")
+    parts.push("        'duration_actual_s': 0.0,\n")
+    parts.push("        'duration_requested_s': 0.0,\n")
+    parts.push("        'duration_source': 'unknown',\n")
+    parts.push("        'effective_fs_hz': 0.0,\n")
+    parts.push("        'drop_pct': 100.0,\n")
+    parts.push("        'meta_consistency_delta': 0.0,\n")
+    parts.push("        'f01_pass': False,\n")
+    parts.push("        'f02_pass': False,\n")
+    parts.push("        'f03_pass': False,\n")
+    parts.push("        'overall': False,\n")
+    parts.push("        'meta_legacy': False,\n")
+    parts.push("        'warn_no_actual_duration': False,\n")
+    parts.push("    }\n")
+    parts.push("    if not os.path.exists(INPUT):\n")
+    parts.push("        out['error'] = 'input-missing'\n")
+    parts.push("        print(json.dumps(out)); sys.exit(2)\n")
+    parts.push("    if not os.path.exists(META_PATH):\n")
+    parts.push("        out['error'] = 'meta-missing'\n")
+    parts.push("        print(json.dumps(out)); sys.exit(2)\n")
+    parts.push("    try:\n")
+    parts.push("        arr = np.load(INPUT)\n")
+    parts.push("    except Exception as exc:\n")
+    parts.push("        out['error'] = f'npy-load-failed: {exc!r}'\n")
+    parts.push("        print(json.dumps(out)); sys.exit(2)\n")
+    parts.push("    if arr.ndim == 1:\n")
+    parts.push("        arr = arr.reshape(1, -1)\n")
+    parts.push("    rows, cols = int(arr.shape[0]), int(arr.shape[1])\n")
+    parts.push("    out['rows'] = rows; out['cols'] = cols\n")
+    parts.push("    try:\n")
+    parts.push("        with open(META_PATH, 'r') as fh:\n")
+    parts.push("            meta = json.load(fh)\n")
+    parts.push("    except Exception as exc:\n")
+    parts.push("        out['error'] = f'meta-parse-failed: {exc!r}'\n")
+    parts.push("        print(json.dumps(out)); sys.exit(2)\n")
+    parts.push("    # claimed / legacy fallbacks (raw#10 honest C3 #2)\n")
+    parts.push("    sr_claimed = float(meta.get('sample_rate_claimed_hz',\n")
+    parts.push("                                 meta.get('sample_rate', 0.0)))\n")
+    parts.push("    sr_actual_meta = float(meta.get('sample_rate_actual_hz', 0.0))\n")
+    parts.push("    dur_actual = float(meta.get('duration_actual_s', 0.0))\n")
+    parts.push("    dur_requested = float(meta.get('duration_requested_s', 0.0))\n")
+    parts.push("    if dur_actual > 0.0:\n")
+    parts.push("        dur_used = dur_actual; dur_source = 'duration_actual_s'\n")
+    parts.push("    elif dur_requested > 0.0:\n")
+    parts.push("        dur_used = dur_requested; dur_source = 'duration_requested_s'\n")
+    parts.push("        out['warn_no_actual_duration'] = True\n")
+    parts.push("    else:\n")
+    parts.push("        out['error'] = 'no-duration-in-meta'\n")
+    parts.push("        print(json.dumps(out)); sys.exit(2)\n")
+    parts.push("    out['sample_rate_claimed_hz']     = sr_claimed\n")
+    parts.push("    out['sample_rate_actual_meta_hz'] = sr_actual_meta\n")
+    parts.push("    out['duration_actual_s']          = dur_actual\n")
+    parts.push("    out['duration_requested_s']       = dur_requested\n")
+    parts.push("    out['duration_source']            = dur_source\n")
+    parts.push("    out['meta_legacy'] = bool('sample_rate_claimed_hz' not in meta)\n")
+    parts.push("    if dur_used <= 0.0:\n")
+    parts.push("        out['error'] = 'duration-non-positive'\n")
+    parts.push("        print(json.dumps(out)); sys.exit(2)\n")
+    parts.push("    effective_fs = float(cols) / float(dur_used)\n")
+    parts.push("    out['effective_fs_hz'] = round(effective_fs, 4)\n")
+    parts.push("    if sr_claimed > 0.0:\n")
+    parts.push("        drop_pct = max(0.0, (sr_claimed - effective_fs) / sr_claimed * 100.0)\n")
+    parts.push("    else:\n")
+    parts.push("        drop_pct = 0.0\n")
+    parts.push("    out['drop_pct'] = round(drop_pct, 4)\n")
+    parts.push("    # F_FS_01: effective_fs >= threshold\n")
+    parts.push("    out['f01_pass'] = bool(effective_fs >= THRESHOLD)\n")
+    parts.push("    # F_FS_02: drop_pct < F02_MAX_DP (only meaningful if claimed > 0)\n")
+    parts.push("    if sr_claimed > 0.0:\n")
+    parts.push("        out['f02_pass'] = bool(drop_pct < F02_MAX_DP)\n")
+    parts.push("    else:\n")
+    parts.push("        out['f02_pass'] = True   # cannot evaluate; do not fail\n")
+    parts.push("    # F_FS_03: meta consistency  cols/dur ≈ effective\n")
+    parts.push("    delta = abs((float(cols) / float(dur_used)) - effective_fs)\n")
+    parts.push("    out['meta_consistency_delta'] = round(delta, 6)\n")
+    parts.push("    out['f03_pass'] = bool(delta < F03_TOL)\n")
+    parts.push("    out['overall'] = bool(out['f01_pass'] and out['f02_pass'] and out['f03_pass'])\n")
+    parts.push("    print(json.dumps(out))\n")
+    parts.push("    sys.exit(0 if out['overall'] else 1)\n")
+    parts.push("''')\n\n")
+
+    // ─── selftest payload: synthesize good + bad recordings ────────────
+    parts.push("SELFTEST_PY = textwrap.dedent(r'''\n")
+    parts.push("    import json, os, sys, tempfile\n")
+    parts.push("    import numpy as np\n")
+    parts.push("    GOOD_FS  = int(sys.argv[1])\n")
+    parts.push("    GOOD_DUR = int(sys.argv[2])\n")
+    parts.push("    BAD_EFF  = int(sys.argv[3])\n")
+    parts.push("    DROP_FS  = int(sys.argv[4])\n")
+    parts.push("    F02_MAX_DP = float(sys.argv[5])\n")
+    parts.push("    F03_TOL    = float(sys.argv[6])\n")
+    parts.push("    tmpdir = tempfile.mkdtemp(prefix='anima_eeg_sr_guard_')\n")
+    parts.push("    results = {}\n")
+    parts.push("    def write_pair(tag, claimed_hz, effective_hz, dur_s):\n")
+    parts.push("        n_samp = int(round(effective_hz * dur_s))\n")
+    parts.push("        arr = np.zeros((1, n_samp), dtype=np.float32)\n")
+    parts.push("        npy = os.path.join(tmpdir, tag + '.npy')\n")
+    parts.push("        np.save(npy, arr)\n")
+    parts.push("        meta = {\n")
+    parts.push("            'schema': 'anima-eeg/collect/1',\n")
+    parts.push("            'tag': tag,\n")
+    parts.push("            'sample_rate_claimed_hz': float(claimed_hz),\n")
+    parts.push("            'sample_rate_actual_hz':  float(effective_hz),\n")
+    parts.push("            'sample_rate':            float(claimed_hz),\n")
+    parts.push("            'rows': 1, 'cols': n_samp,\n")
+    parts.push("            'duration_requested_s': float(dur_s),\n")
+    parts.push("            'duration_actual_s':    float(dur_s),\n")
+    parts.push("        }\n")
+    parts.push("        with open(npy + '.meta.json', 'w') as fh:\n")
+    parts.push("            json.dump(meta, fh, indent=2)\n")
+    parts.push("        return npy\n")
+    parts.push("    def write_legacy_pair(tag, claimed_hz, effective_hz, dur_s):\n")
+    parts.push("        n_samp = int(round(effective_hz * dur_s))\n")
+    parts.push("        arr = np.zeros((1, n_samp), dtype=np.float32)\n")
+    parts.push("        npy = os.path.join(tmpdir, tag + '.npy')\n")
+    parts.push("        np.save(npy, arr)\n")
+    parts.push("        meta = {\n")
+    parts.push("            'schema': 'anima-eeg/collect/1',\n")
+    parts.push("            'tag': tag,\n")
+    parts.push("            'sample_rate': float(claimed_hz),\n")
+    parts.push("            'rows': 1, 'cols': n_samp,\n")
+    parts.push("            'duration_actual_s': float(dur_s),\n")
+    parts.push("        }\n")
+    parts.push("        with open(npy + '.meta.json', 'w') as fh:\n")
+    parts.push("            json.dump(meta, fh, indent=2)\n")
+    parts.push("        return npy\n")
+    parts.push("    # Case A: GOOD — claimed=actual=125, dur=60 → effective 125, drop 0%\n")
+    parts.push("    npy_a = write_pair('case_a_good', GOOD_FS, GOOD_FS, GOOD_DUR)\n")
+    parts.push("    # Case B: BAD jitter — claimed 125, actual 75, dur 60 → drop 40%\n")
+    parts.push("    npy_b = write_pair('case_b_jitter', GOOD_FS, BAD_EFF, GOOD_DUR)\n")
+    parts.push("    # Case C: WORST — claimed 125, actual 7, dur 60 → drop 94%\n")
+    parts.push("    npy_c = write_pair('case_c_dropped', GOOD_FS, DROP_FS, GOOD_DUR)\n")
+    parts.push("    # Case D: legacy meta — only sample_rate + duration_actual_s\n")
+    parts.push("    npy_d = write_legacy_pair('case_d_legacy', GOOD_FS, GOOD_FS, GOOD_DUR)\n")
+    parts.push("    def evaluate(npy, threshold):\n")
+    parts.push("        meta_path = npy + '.meta.json'\n")
+    parts.push("        with open(meta_path) as fh: meta = json.load(fh)\n")
+    parts.push("        arr = np.load(npy)\n")
+    parts.push("        if arr.ndim == 1: arr = arr.reshape(1, -1)\n")
+    parts.push("        cols = int(arr.shape[1])\n")
+    parts.push("        sr_claimed = float(meta.get('sample_rate_claimed_hz', meta.get('sample_rate', 0.0)))\n")
+    parts.push("        dur = float(meta.get('duration_actual_s', meta.get('duration_requested_s', 0.0)))\n")
+    parts.push("        eff = float(cols) / float(dur)\n")
+    parts.push("        drop = max(0.0, (sr_claimed - eff) / sr_claimed * 100.0) if sr_claimed > 0 else 0.0\n")
+    parts.push("        f01 = bool(eff >= threshold)\n")
+    parts.push("        f02 = bool(drop < F02_MAX_DP) if sr_claimed > 0 else True\n")
+    parts.push("        f03 = bool(abs((cols/dur) - eff) < F03_TOL)\n")
+    parts.push("        return {'eff': round(eff,4), 'drop': round(drop,4),\n")
+    parts.push("                'f01': f01, 'f02': f02, 'f03': f03,\n")
+    parts.push("                'overall': bool(f01 and f02 and f03)}\n")
+    parts.push("    # threshold 100 Hz default\n")
+    parts.push("    r_a = evaluate(npy_a, 100.0)\n")
+    parts.push("    r_b = evaluate(npy_b, 100.0)\n")
+    parts.push("    r_c = evaluate(npy_c, 100.0)\n")
+    parts.push("    # paradigm eeg_alpha (30 Hz) lets case_b jitter pass F_FS_01 but still fail F_FS_02\n")
+    parts.push("    r_b_alpha = evaluate(npy_b, 30.0)\n")
+    parts.push("    # legacy meta still parseable\n")
+    parts.push("    r_d = evaluate(npy_d, 100.0)\n")
+    parts.push("    # cleanup\n")
+    parts.push("    import shutil\n")
+    parts.push("    try:\n")
+    parts.push("        shutil.rmtree(tmpdir)\n")
+    parts.push("    except OSError:\n")
+    parts.push("        pass\n")
+    parts.push("    # F_FS_01 must PASS for case_a, FAIL for case_b/c at 100 Hz threshold\n")
+    parts.push("    f01_matrix = bool(r_a['f01'] and (not r_b['f01']) and (not r_c['f01']) and r_b_alpha['f01'])\n")
+    parts.push("    # F_FS_02 must PASS for case_a, FAIL for case_b (40% drop) and case_c (94%)\n")
+    parts.push("    f02_matrix = bool(r_a['f02'] and (not r_b['f02']) and (not r_c['f02']))\n")
+    parts.push("    # F_FS_03 must PASS for all (cols/dur self-consistency is trivially exact)\n")
+    parts.push("    f03_matrix = bool(r_a['f03'] and r_b['f03'] and r_c['f03'] and r_d['f03'])\n")
+    parts.push("    overall = bool(f01_matrix and f02_matrix and f03_matrix\n")
+    parts.push("                   and r_a['overall'] and (not r_b['overall']) and (not r_c['overall'])\n")
+    parts.push("                   and r_d['overall'])\n")
+    parts.push("    out = {\n")
+    parts.push("        'rc': 0,\n")
+    parts.push("        'case_a_good':    r_a,\n")
+    parts.push("        'case_b_jitter':  r_b,\n")
+    parts.push("        'case_c_dropped': r_c,\n")
+    parts.push("        'case_b_alpha30': r_b_alpha,\n")
+    parts.push("        'case_d_legacy':  r_d,\n")
+    parts.push("        'f01_matrix':     f01_matrix,\n")
+    parts.push("        'f02_matrix':     f02_matrix,\n")
+    parts.push("        'f03_matrix':     f03_matrix,\n")
+    parts.push("        'overall':        overall,\n")
+    parts.push("    }\n")
+    parts.push("    print(json.dumps(out))\n")
+    parts.push("''')\n\n")
+
+    parts.push("def cmd_selftest(args):\n")
+    parts.push("    print('schema=' + '" + SCHEMA + "')\n")
+    parts.push("    print('venv_python_exists=' + str(os.path.exists(VENV_PYTHON)))\n")
+    parts.push("    if not verify_numpy():\n")
+    parts.push("        print('selftest=fail')\n")
+    parts.push("        sys.exit(2)\n")
+    parts.push("    cmd = [VENV_PYTHON, '-c', SELFTEST_PY,\n")
+    parts.push("           str(SELFTEST_GOOD_FS_HZ), str(SELFTEST_GOOD_DURATION_S),\n")
+    parts.push("           str(SELFTEST_BAD_EFFECTIVE_HZ), str(SELFTEST_DROPPED_FS_HZ),\n")
+    parts.push("           str(F_FS_02_MAX_DROP_PCT), str(F_FS_03_CONSISTENCY_TOL)]\n")
+    parts.push("    r = subprocess.run(cmd, capture_output=True, text=True, timeout=60)\n")
+    parts.push("    if r.returncode != 0 or not r.stdout.strip():\n")
+    parts.push("        emit_trailer('selftest-subprocess-failed',\n")
+    parts.push("                     f'rc={r.returncode} stderr={r.stderr.strip()[:300]}',\n")
+    parts.push("                     '1) verify .venv-eeg numpy installed  '\n")
+    parts.push("                     '2) re-run')\n")
+    parts.push("        print('selftest=fail')\n")
+    parts.push("        sys.exit(2)\n")
+    parts.push("    try:\n")
+    parts.push("        m = json.loads(r.stdout.strip().splitlines()[-1])\n")
+    parts.push("    except Exception as exc:\n")
+    parts.push("        emit_trailer('selftest-parse-failed',\n")
+    parts.push("                     f'could not parse helper output: {exc!r}; raw={r.stdout[-200:]!r}',\n")
+    parts.push("                     '1) re-run; if persistent inspect helper python')\n")
+    parts.push("        print('selftest=fail')\n")
+    parts.push("        sys.exit(2)\n")
+    parts.push("    a = m['case_a_good']; b = m['case_b_jitter']; c = m['case_c_dropped']\n")
+    parts.push("    d = m['case_d_legacy']; ba = m['case_b_alpha30']\n")
+    parts.push("    print(f'case_a_good     eff={a[\"eff\"]} drop={a[\"drop\"]}%  f01/02/03={a[\"f01\"]}/{a[\"f02\"]}/{a[\"f03\"]}  overall={a[\"overall\"]}')\n")
+    parts.push("    print(f'case_b_jitter   eff={b[\"eff\"]} drop={b[\"drop\"]}%  f01/02/03={b[\"f01\"]}/{b[\"f02\"]}/{b[\"f03\"]}  overall={b[\"overall\"]}')\n")
+    parts.push("    print(f'case_c_dropped  eff={c[\"eff\"]} drop={c[\"drop\"]}%  f01/02/03={c[\"f01\"]}/{c[\"f02\"]}/{c[\"f03\"]}  overall={c[\"overall\"]}')\n")
+    parts.push("    print(f'case_b_alpha30  eff={ba[\"eff\"]} drop={ba[\"drop\"]}%  f01/02/03={ba[\"f01\"]}/{ba[\"f02\"]}/{ba[\"f03\"]}  overall={ba[\"overall\"]}')\n")
+    parts.push("    print(f'case_d_legacy   eff={d[\"eff\"]} drop={d[\"drop\"]}%  f01/02/03={d[\"f01\"]}/{d[\"f02\"]}/{d[\"f03\"]}  overall={d[\"overall\"]}')\n")
+    parts.push("    f01m = 'PASS' if m['f01_matrix'] else 'FAIL'\n")
+    parts.push("    f02m = 'PASS' if m['f02_matrix'] else 'FAIL'\n")
+    parts.push("    f03m = 'PASS' if m['f03_matrix'] else 'FAIL'\n")
+    parts.push("    print(f'F_FS_01_matrix(threshold/paradigm): {f01m}')\n")
+    parts.push("    print(f'F_FS_02_matrix(drop_pct < 30):       {f02m}')\n")
+    parts.push("    print(f'F_FS_03_matrix(meta consistency):    {f03m}')\n")
+    parts.push("    overall = 'PASS' if m['overall'] else 'FAIL'\n")
+    parts.push("    print(f'selftest={overall.lower()}')\n")
+    parts.push("    print(f'__EEG_SAMPLE_RATE__ {overall} {a[\"eff\"]:.2f} {a[\"drop\"]:.2f}')\n")
+    parts.push("    sys.exit(0 if m['overall'] else 1)\n\n")
+
+    parts.push("def quarantine(npy_path, quarantine_dir):\n")
+    parts.push("    os.makedirs(quarantine_dir, exist_ok=True)\n")
+    parts.push("    base = os.path.basename(npy_path)\n")
+    parts.push("    dst_npy = os.path.join(quarantine_dir, base)\n")
+    parts.push("    dst_meta = dst_npy + '.meta.json'\n")
+    parts.push("    src_meta = npy_path + '.meta.json'\n")
+    parts.push("    moved = []\n")
+    parts.push("    try:\n")
+    parts.push("        # raw#10 honest C3 #3: shutil.move handles cross-FS (no longer atomic)\n")
+    parts.push("        if os.path.exists(npy_path):\n")
+    parts.push("            shutil.move(npy_path, dst_npy); moved.append(dst_npy)\n")
+    parts.push("        if os.path.exists(src_meta):\n")
+    parts.push("            shutil.move(src_meta, dst_meta); moved.append(dst_meta)\n")
+    parts.push("    except Exception as exc:\n")
+    parts.push("        emit_trailer('quarantine-failed',\n")
+    parts.push("                     f'mv failed: {exc!r}',\n")
+    parts.push("                     '1) check filesystem perms on ' + quarantine_dir + '  '\n")
+    parts.push("                     '2) manually move file out of recordings/sessions/')\n")
+    parts.push("        return None\n")
+    parts.push("    return moved\n\n")
+
+    parts.push("def cmd_verify(args):\n")
+    parts.push("    if not os.path.exists(args.input):\n")
+    parts.push("        emit_trailer('input-missing',\n")
+    parts.push("                     f'--input {args.input} not found',\n")
+    parts.push("                     '1) verify path; .npy file from collect.hexa')\n")
+    parts.push("        print('__EEG_SAMPLE_RATE__ FAIL 0.00 100.00')\n")
+    parts.push("        sys.exit(2)\n")
+    parts.push("    if not os.path.exists(args.input + '.meta.json'):\n")
+    parts.push("        emit_trailer('meta-missing',\n")
+    parts.push("                     f'sidecar {args.input}.meta.json not found',\n")
+    parts.push("                     '1) re-run collect.hexa with --output to regenerate sidecar')\n")
+    parts.push("        print('__EEG_SAMPLE_RATE__ FAIL 0.00 100.00')\n")
+    parts.push("        sys.exit(2)\n")
+    parts.push("    if not verify_numpy():\n")
+    parts.push("        print('__EEG_SAMPLE_RATE__ FAIL 0.00 100.00')\n")
+    parts.push("        sys.exit(2)\n")
+    parts.push("    cmd = [VENV_PYTHON, '-c', VERIFY_PY,\n")
+    parts.push("           args.input, str(args.threshold),\n")
+    parts.push("           str(F_FS_02_MAX_DROP_PCT), str(F_FS_03_CONSISTENCY_TOL)]\n")
+    parts.push("    r = subprocess.run(cmd, capture_output=True, text=True, timeout=60)\n")
+    parts.push("    if not r.stdout.strip():\n")
+    parts.push("        emit_trailer('verify-subprocess-failed',\n")
+    parts.push("                     f'rc={r.returncode} stderr={r.stderr.strip()[:300]}',\n")
+    parts.push("                     '1) re-run with verbose: python ' + VENV_PYTHON + ' helper manually')\n")
+    parts.push("        print('__EEG_SAMPLE_RATE__ FAIL 0.00 100.00')\n")
+    parts.push("        sys.exit(2)\n")
+    parts.push("    try:\n")
+    parts.push("        meta = json.loads(r.stdout.strip().splitlines()[-1])\n")
+    parts.push("    except Exception as exc:\n")
+    parts.push("        emit_trailer('verify-parse-failed',\n")
+    parts.push("                     f'could not parse helper output: {exc!r}',\n")
+    parts.push("                     '1) re-run; inspect helper python at ' + VENV_PYTHON)\n")
+    parts.push("        print('__EEG_SAMPLE_RATE__ FAIL 0.00 100.00')\n")
+    parts.push("        sys.exit(2)\n")
+    parts.push("    if 'error' in meta:\n")
+    parts.push("        emit_trailer('verify-helper-error',\n")
+    parts.push("                     f'helper error: {meta[\"error\"]}',\n")
+    parts.push("                     '1) inspect ' + meta.get('meta_path','<unknown>') + '  '\n")
+    parts.push("                     '2) re-run collect.hexa to regenerate sidecar')\n")
+    parts.push("        print('__EEG_SAMPLE_RATE__ FAIL 0.00 100.00')\n")
+    parts.push("        sys.exit(2)\n")
+    parts.push("    eff  = meta['effective_fs_hz']\n")
+    parts.push("    drop = meta['drop_pct']\n")
+    parts.push("    print(f'input={meta[\"input\"]}')\n")
+    parts.push("    print(f'meta={meta[\"meta_path\"]}')\n")
+    parts.push("    print(f'rows={meta[\"rows\"]}  cols={meta[\"cols\"]}')\n")
+    parts.push("    print(f'sample_rate_claimed={meta[\"sample_rate_claimed_hz\"]} Hz')\n")
+    parts.push("    print(f'sample_rate_actual_meta={meta[\"sample_rate_actual_meta_hz\"]} Hz')\n")
+    parts.push("    print(f'duration={meta[\"duration_actual_s\"] if meta[\"duration_source\"]==\"duration_actual_s\" else meta[\"duration_requested_s\"]} s ({meta[\"duration_source\"]})')\n")
+    parts.push("    print(f'effective_fs={eff} Hz  threshold={meta[\"threshold_hz\"]} Hz')\n")
+    parts.push("    print(f'drop_pct={drop}%  (jitter limit {F_FS_02_MAX_DROP_PCT}%)')\n")
+    parts.push("    if meta.get('warn_no_actual_duration'):\n")
+    parts.push("        print('warn: meta missing duration_actual_s — used duration_requested_s (raw#10 honest C3)')\n")
+    parts.push("    if meta.get('meta_legacy'):\n")
+    parts.push("        print('warn: meta legacy schema (no sample_rate_claimed_hz key)')\n")
+    parts.push("    f01 = 'PASS' if meta['f01_pass'] else 'FAIL'\n")
+    parts.push("    f02 = 'PASS' if meta['f02_pass'] else 'FAIL'\n")
+    parts.push("    f03 = 'PASS' if meta['f03_pass'] else 'FAIL'\n")
+    parts.push("    print(f'F_FS_01_threshold:    {f01}')\n")
+    parts.push("    print(f'F_FS_02_drop_pct:     {f02}')\n")
+    parts.push("    print(f'F_FS_03_consistency:  {f03}')\n")
+    parts.push("    overall = 'PASS' if meta['overall'] else 'FAIL'\n")
+    parts.push("    print(f'verdict={overall}')\n")
+    parts.push("    print(f'__EEG_SAMPLE_RATE__ {overall} {eff:.2f} {drop:.2f}')\n")
+    parts.push("    if not meta['overall']:\n")
+    parts.push("        if args.auto_retry_hint:\n")
+    parts.push("            print('hint: 측정 실패 — 재측정 권장')\n")
+    parts.push("            print('hint:   1) USB 케이블 / dongle 직접 연결 (hub 통하지 말기)')\n")
+    parts.push("            print('hint:   2) anima-eeg/eeg_ftdi_latency_fix.hexa 실행 (latency 1ms)')\n")
+    parts.push("            print('hint:   3) anima-eeg/protocols/preflight_settle.hexa --selftest')\n")
+    parts.push("            print('hint:   4) collect.hexa 측 재실행 — 같은 --tag --output')\n")
+    parts.push("        if args.strict and not args.no_quarantine:\n")
+    parts.push("            moved = quarantine(args.input, args.quarantine_dir)\n")
+    parts.push("            if moved is None:\n")
+    parts.push("                sys.exit(3)\n")
+    parts.push("            print(f'quarantined={moved}')\n")
+    parts.push("            sys.exit(1)\n")
+    parts.push("        if args.strict:\n")
+    parts.push("            sys.exit(1)\n")
+    parts.push("        # lenient: warn only, exit 0\n")
+    parts.push("        print('lenient: WARN only — file retained (no quarantine, exit 0)')\n")
+    parts.push("        sys.exit(0)\n")
+    parts.push("    sys.exit(0)\n\n")
+
+    parts.push("def main():\n")
+    parts.push("    p = argparse.ArgumentParser()\n")
+    parts.push("    sub = p.add_subparsers(dest='cmd', required=True)\n")
+    parts.push("    s = sub.add_parser('selftest')\n")
+    parts.push("    v = sub.add_parser('verify')\n")
+    parts.push("    v.add_argument('--input', required=True)\n")
+    parts.push("    v.add_argument('--threshold', type=float, default=float(DEFAULT_THRESHOLD_HZ))\n")
+    parts.push("    v.add_argument('--strict', action='store_true', default=True)\n")
+    parts.push("    v.add_argument('--lenient', dest='strict', action='store_false')\n")
+    parts.push("    v.add_argument('--auto-retry-hint', action='store_true', dest='auto_retry_hint')\n")
+    parts.push("    v.add_argument('--no-quarantine', action='store_true', dest='no_quarantine')\n")
+    parts.push("    v.add_argument('--quarantine-dir', default=DEFAULT_QUARANTINE_DIR, dest='quarantine_dir')\n")
+    parts.push("    args = p.parse_args()\n")
+    parts.push("    if args.cmd == 'selftest': cmd_selftest(args)\n")
+    parts.push("    elif args.cmd == 'verify': cmd_verify(args)\n")
+    parts.push("    else: sys.exit(2)\n\n")
+
+    parts.push("if __name__ == '__main__': main()\n")
+
+    write_file(HELPER_PATH, parts.join(""))
+}
+
+fn _run_helper(args: string) -> list {
+    let cmd = "python3 " + HELPER_PATH + " " + args
+    let r = exec_with_status(cmd)
+    return [to_string(r[0]).trim(), to_int(r[1])]
+}
+
+// ════════════════════════════════════════════════════════════════════
+// CLI
+// ════════════════════════════════════════════════════════════════════
+
+fn _print_usage() {
+    eprintln("usage: hexa run anima-eeg/protocols/sample_rate_guard.hexa --selftest")
+    eprintln("       hexa run anima-eeg/protocols/sample_rate_guard.hexa \\")
+    eprintln("            --input <raw.npy> [--threshold <hz>] [--paradigm <name>] \\")
+    eprintln("            [--strict | --lenient] [--auto-retry-hint] \\")
+    eprintln("            [--quarantine-dir <path>] [--no-quarantine]")
+    eprintln("flags:")
+    eprintln("  --selftest             synthetic 4-case matrix, verify F_FS_01/02/03")
+    eprintln("  --input <path>         input .npy (sidecar <path>.meta.json required)")
+    eprintln("  --threshold <hz>       explicit minimum effective fs (default " + str(DEFAULT_THRESHOLD_HZ) + ")")
+    eprintln("  --paradigm <name>      eeg_alpha (" + str(PARADIGM_EEG_ALPHA_HZ) + ") | emg (" + str(PARADIGM_EMG_HZ) + ") | ppg (" + str(PARADIGM_PPG_HZ) + ") | default (" + str(PARADIGM_DEFAULT_HZ) + ")")
+    eprintln("                         applied only when --threshold not given")
+    eprintln("  --strict               (default) FAIL → quarantine + non-zero exit")
+    eprintln("  --lenient              warn-only, exit 0 even on FAIL")
+    eprintln("  --auto-retry-hint      print Korean hint cascade on FAIL")
+    eprintln("  --quarantine-dir <p>   destination for quarantined files (default " + DEFAULT_QUARANTINE_DIR + ")")
+    eprintln("  --no-quarantine        strict mode FAIL → exit 1 only, no file move")
+    eprintln("  --help                 this message")
+}
+
+fn main() {
+    let av = argv()
+    let mut want_selftest    = false
+    let mut want_help        = false
+    let mut auto_retry_hint  = false
+    let mut strict           = true
+    let mut no_quarantine    = false
+    let mut input_path       = ""
+    let mut paradigm         = ""
+    let mut explicit_thresh  = -1
+    let mut quarantine_dir   = DEFAULT_QUARANTINE_DIR
+
+    // hexa-strict: user args begin at index 2 (matches eeg_filter / dc_settle_trim)
+    let mut i = 2
+    while i < len(av) {
+        let a = av[i]
+        if a == "--selftest"          { want_selftest = true; i = i + 1; continue }
+        if a == "--help" || a == "-h" { want_help = true; i = i + 1; continue }
+        if a == "--strict"            { strict = true; i = i + 1; continue }
+        if a == "--lenient"           { strict = false; i = i + 1; continue }
+        if a == "--auto-retry-hint"   { auto_retry_hint = true; i = i + 1; continue }
+        if a == "--no-quarantine"     { no_quarantine = true; i = i + 1; continue }
+        if a == "--input" {
+            if (i + 1) >= len(av) {
+                _emit_trailer("missing-arg-value",
+                              "--input requires a path",
+                              "1) re-run with --input <path.npy>")
+                exit(2)
+            }
+            input_path = av[i + 1]; i = i + 2; continue
+        }
+        if a == "--threshold" {
+            if (i + 1) >= len(av) {
+                _emit_trailer("missing-arg-value",
+                              "--threshold requires an integer Hz",
+                              "1) re-run with --threshold 100")
+                exit(2)
+            }
+            explicit_thresh = to_int(av[i + 1]); i = i + 2; continue
+        }
+        if a == "--paradigm" {
+            if (i + 1) >= len(av) {
+                _emit_trailer("missing-arg-value",
+                              "--paradigm requires a name",
+                              "1) re-run with --paradigm eeg_alpha|emg|ppg|default")
+                exit(2)
+            }
+            paradigm = av[i + 1]; i = i + 2; continue
+        }
+        if a == "--quarantine-dir" {
+            if (i + 1) >= len(av) {
+                _emit_trailer("missing-arg-value",
+                              "--quarantine-dir requires a path",
+                              "1) re-run with --quarantine-dir <dir>")
+                exit(2)
+            }
+            quarantine_dir = av[i + 1]; i = i + 2; continue
+        }
+        // unknown flag → fall through
+        _emit_trailer("unknown-flag",
+                      "argv[" + str(i) + "] = " + a,
+                      "1) check --help for valid flags")
+        _print_usage()
+        exit(2)
+    }
+
+    if want_help {
+        _print_usage()
+        exit(0)
+    }
+
+    _write_helper()
+
+    if want_selftest {
+        let r = _run_helper("selftest")
+        let stdout = r[0]
+        let rc     = to_int(r[1])
+        println(stdout)
+        exit(rc)
+    }
+
+    // Validate inputs for verify mode
+    if input_path == "" {
+        _emit_trailer("missing-required",
+                      "--input is required for verify mode",
+                      "1) provide --input <raw.npy>  "
+                      "2) or use --selftest for synthetic verification")
+        _print_usage()
+        exit(2)
+    }
+
+    let threshold_hz = _resolve_threshold(explicit_thresh, paradigm)
+    if threshold_hz <= 0 {
+        _emit_trailer("invalid-threshold",
+                      "resolved threshold <= 0 (got " + str(threshold_hz) + ")",
+                      "1) use --threshold <positive int>  2) or --paradigm <name>")
+        exit(2)
+    }
+
+    let mut args = "verify"
+        + " --input "     + _sh_quote(input_path)
+        + " --threshold " + str(threshold_hz)
+    if strict           { args = args + " --strict" }
+    else                { args = args + " --lenient" }
+    if auto_retry_hint  { args = args + " --auto-retry-hint" }
+    if no_quarantine    { args = args + " --no-quarantine" }
+    args = args + " --quarantine-dir " + _sh_quote(quarantine_dir)
+
+    let r = _run_helper(args)
+    let stdout = r[0]
+    let rc     = to_int(r[1])
+    println(stdout)
+    exit(rc)
+}

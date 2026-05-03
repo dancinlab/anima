@@ -1,0 +1,836 @@
+// anima-eeg/protocols/long_duration_resting.hexa
+// raw#9 hexa-only · raw#10 honest-C3 · raw#11 snake_case · raw#12 frozen
+// raw#15 no-personal-paths · raw#34 no-backup-files · raw#65 idempotent
+// raw#71 falsifier-bound · raw#80 sentinel · raw#82 darwin-native marker
+// raw#91 honest-class · own 5
+//
+// @resolver-bypass(reason="darwin-native: --run delegates to anima-eeg/collect.hexa
+//                   subprocess (BrainFlow + USB-serial dongle on host) and chains
+//                   sample_rate_guard.hexa + package_num_audit.hexa for the
+//                   --auto-quality-audit step. selftest is pure-hexa synthetic
+//                   block design + trend ledger emission; unified bypass keeps
+//                   route stable across Darwin / Linux hosts.")
+//
+// PURPOSE  (raw#106 genus name: long_duration_resting)
+//   Long-duration resting-state baseline capture (5 / 10 / 30 minutes) with
+//   AI-side quality monitoring and a circadian / drowsiness trend ledger.
+//   Unlike alpha_eyes_closed.hexa (block-design EC/EO × 5 min) this protocol
+//   is *naturalistic*: cap on, eyes open, daily-life motion permitted, single
+//   long capture (or N × segment-minutes split). The capture is indexed by
+//   per-segment band-power evolution so the AI can spot drowsiness onset,
+//   focus episodes, and circadian α/θ/β shift across the session.
+//
+//   This file ships:
+//     1. Naturalistic block design (single long or multi-segment split)
+//     2. Synthetic per-segment band-power trend (selftest)
+//     3. Quality-monitoring ledger (paradigm=long_resting, JSONL append)
+//     4. Trend metrics sidecar (α/θ/β/δ × segment + EOG blink rate +
+//        relaxation index + drowsiness signature θ/α ratio)
+//     5. Three frozen falsifiers (F_LR_01/02/03)
+//     6. Quality-audit chain hint (sample_rate_guard + package_num_audit)
+//
+//   Single-author N=1 (raw#10 honest-class C3): daily-life motion artifact
+//   is unavoidable, gel impedance drifts over 30 minutes, and circadian state
+//   varies by session — see the three caveats at end of file.
+//
+// LIVE BRAINFLOW INGEST: --run prints a delegated collect.hexa command +
+//   audio-cue schedule; raw#10 honest — this protocol does NOT do BrainFlow
+//   ingest itself, the actual capture happens via collect.hexa subprocess
+//   in a separate terminal (same pattern as alpha_eyes_closed.hexa).
+//
+// API
+//   hexa run anima-eeg/protocols/long_duration_resting.hexa --selftest
+//
+//   hexa run anima-eeg/protocols/long_duration_resting.hexa --run \
+//        --port <serial> --board cyton_daisy --duration <minutes> \
+//        [--segment-minutes <n>] [--auto-quality-audit] [--ledger] \
+//        [--output <npy>]
+//
+// FALSIFIERS  (raw#71 frozen 2026-05-03)
+//   F_LR_01: total_duration_minutes_actual >= 0.95 × duration_requested_min
+//            (95% capture compliance — drift / pause / abort gate)
+//   F_LR_02: effective_fs_hz >= 30.0
+//            (α-band Nyquist > 13 Hz; matches sample_rate_guard eeg_alpha)
+//   F_LR_03: per-segment alpha-band power > 0.0 for every segment
+//            (no flat / disconnected channel for any segment)
+//
+// SENTINEL  (raw#80)
+//   __EEG_LONG_RESTING__ <PASS|FAIL> <duration_min> <segments>
+//
+// HONEST C3 CAVEATS  (raw#10) — see end of file for full text
+//   1. Daily-life motion artifact (walking / eating / bathroom)
+//   2. Gel impedance drift over 30 minutes (cap dries out)
+//   3. Circadian-state baseline variability (morning vs evening vs post-meal)
+//
+// USAGE
+//   # 5-minute baseline, single segment
+//   hexa run anima-eeg/protocols/long_duration_resting.hexa --run \
+//        --port /dev/cu.usbserial-DP04WGIQ --board cyton_daisy --duration 5
+//
+//   # 30-minute capture split into 6 × 5-minute segments + auto-audit + ledger
+//   hexa run anima-eeg/protocols/long_duration_resting.hexa --run \
+//        --port /dev/cu.usbserial-DP04WGIQ --board cyton_daisy \
+//        --duration 30 --segment-minutes 5 --auto-quality-audit --ledger
+
+let SCHEMA = "anima-eeg/long_duration_resting/1"
+
+// ════════════════════════════════════════════════════════════════════
+// Frozen capture parameters (raw#12 pre-registered)
+// ════════════════════════════════════════════════════════════════════
+
+let DEFAULT_DURATION_MIN     = 5            // baseline default
+let DEFAULT_SEGMENT_MIN      = 5            // split granularity default
+let MIN_DURATION_MIN         = 5            // floor (paradigm contract)
+let MAX_DURATION_MIN         = 30           // ceiling (gel-drift cap)
+let CUE_INTERVAL_MIN         = 5            // "측정 중" announce every N min
+let SEGMENT_PAUSE_S          = 0            // default no inter-segment pause
+
+// Board / signal-chain frozen (matches alpha_eyes_closed.hexa)
+let SAMPLE_RATE_HZ           = 250          // Cyton+Daisy native
+let CHANNEL_COUNT            = 16
+let NOTCH_HZ                 = 60.0
+let BANDPASS_LO_HZ           = 1.0
+let BANDPASS_HI_HZ           = 50.0
+
+// Frequency band edges (Hz) — frozen
+let DELTA_LO_HZ              = 1.0
+let DELTA_HI_HZ              = 4.0
+let THETA_LO_HZ              = 4.0
+let THETA_HI_HZ              = 8.0
+let ALPHA_LO_HZ              = 8.0          // standard α (Berger 1929 wider)
+let ALPHA_HI_HZ              = 13.0
+let BETA_LO_HZ               = 13.0
+let BETA_HI_HZ               = 30.0
+
+// Falsifier thresholds
+let F_LR_01_DURATION_FRAC    = 0.95         // ≥ 95% of requested
+let F_LR_02_FS_FLOOR_HZ      = 30.0         // α-band Nyquist
+let F_LR_03_ALPHA_FLOOR      = 0.0          // strict > 0
+
+// Trend signature thresholds (for sidecar annotation, not falsifiers)
+let DROWSY_THETA_ALPHA_RATIO = 1.20         // θ/α > this = drowsy candidate
+let RELAX_O_ALPHA_FLOOR_UV2  = 8.0          // O1/O2 α > this = relaxed
+
+// Audit / ledger paths
+let AUDIT_DIR  = "state/long_duration_resting_audit"
+let LEDGER_DIR = "state/quality_monitoring_ledger"
+
+// Channel mapping (10-20; user must verify physical placement)
+let CHAN_FP1                 = "Fp1"        // EOG (blink rate)
+let CHAN_FP2                 = "Fp2"        // EOG (blink rate)
+let CHAN_O1                  = "O1"         // α relaxation index
+let CHAN_O2                  = "O2"         // α relaxation index
+
+// ════════════════════════════════════════════════════════════════════
+// Globals (raw#9 strict — no fallbacks, all measured)
+// ════════════════════════════════════════════════════════════════════
+
+// Schedule
+let g_duration_min           = 0
+let g_segment_min            = 0
+let g_segment_count          = 0
+let g_total_seconds          = 0
+
+// Per-segment trend (synthetic in selftest, populated post-capture in --run)
+let g_seg0_alpha_uv2         = 0.0
+let g_seg0_theta_uv2         = 0.0
+let g_seg0_beta_uv2          = 0.0
+let g_seg0_delta_uv2         = 0.0
+let g_seg_last_alpha_uv2     = 0.0
+let g_seg_last_theta_uv2     = 0.0
+let g_seg_last_beta_uv2      = 0.0
+let g_seg_last_delta_uv2     = 0.0
+let g_min_alpha_uv2          = 0.0          // for F_LR_03 evaluation
+let g_blink_rate_per_min     = 0.0          // Fp1/Fp2 EOG
+let g_relax_index_o          = 0.0          // (O1+O2)/2 alpha
+let g_drowsy_signature       = 0.0          // last-seg θ/α ratio
+
+// Capture quality (post-capture sample_rate_guard echo)
+let g_effective_fs_hz        = 0.0
+let g_actual_duration_min    = 0.0
+let g_duration_fraction      = 0.0
+
+// Falsifier evaluations (raw#71)
+let g_f_lr_01_pass           = false        // duration >= 95% of requested
+let g_f_lr_02_pass           = false        // effective_fs >= 30 Hz
+let g_f_lr_03_pass           = false        // per-segment α > 0
+
+// ════════════════════════════════════════════════════════════════════
+// Helpers
+// ════════════════════════════════════════════════════════════════════
+
+fn abs_f(x: float) -> float {
+    if x < 0.0 { return 0.0 - x }
+    return x
+}
+
+fn _bool_str(b: bool) -> string {
+    if b { return "true" }
+    return "false"
+}
+
+fn min_f(a: float, b: float) -> float {
+    if a < b { return a }
+    return b
+}
+
+fn safe_div(a: float, b: float) -> float {
+    let mut bb = b
+    if abs_f(bb) < 0.000001 {
+        if bb < 0.0 { bb = 0.0 - 0.000001 } else { bb = 0.000001 }
+    }
+    return a / bb
+}
+
+fn _ensure_dir(path: string) {
+    let _rc = exec("mkdir -p " + path)
+}
+
+// Clamp duration into [MIN, MAX]
+fn _clamp_duration(d: int) -> int {
+    let mut v = d
+    if v < MIN_DURATION_MIN { v = MIN_DURATION_MIN }
+    if v > MAX_DURATION_MIN { v = MAX_DURATION_MIN }
+    return v
+}
+
+// Clamp segment-minutes into [1, duration]
+fn _clamp_segment(seg: int, dur: int) -> int {
+    let mut v = seg
+    if v < 1   { v = 1 }
+    if v > dur { v = dur }
+    return v
+}
+
+// ════════════════════════════════════════════════════════════════════
+// Block schedule generator (raw#65 idempotent — no RNG needed)
+//   single long capture or N × segment-minutes
+//   audio cues at every CUE_INTERVAL_MIN ("측정 중")
+// ════════════════════════════════════════════════════════════════════
+
+fn build_schedule(duration_min: int, segment_min: int) {
+    g_duration_min   = _clamp_duration(duration_min)
+    g_segment_min    = _clamp_segment(segment_min, g_duration_min)
+    // ceil(duration / segment) — integer math (duration is multiple in nominal use)
+    let mut n = g_duration_min / g_segment_min
+    if (n * g_segment_min) < g_duration_min { n = n + 1 }
+    g_segment_count  = n
+    g_total_seconds  = g_duration_min * 60
+}
+
+// Returns audio cue text for time t (seconds since session start).
+fn cue_text_at_t(t_sec: int) -> string {
+    if t_sec == 0 { return "측정 시작 (begin)" }
+    let mins = t_sec / 60
+    return "측정 중 t=" + to_string(mins) + "분 (continue)"
+}
+
+// ════════════════════════════════════════════════════════════════════
+// Synthetic per-segment trend (selftest pathway)
+//   Pure-math evolution (no RNG). Models a typical 30-minute resting
+//   session with mild drowsiness onset:
+//     seg0:  alert baseline    α=12, θ=6,  β=8, δ=4  (relaxed eyes-open)
+//     drift: α grows slightly, θ grows faster (drowsy onset),
+//            β stable, δ stable
+//     last:  α=14, θ=10, β=8, δ=4   (θ/α ratio ~0.71 — borderline)
+//   Caller specifies "perturb_*" flags to exercise falsifiers in tests.
+// ════════════════════════════════════════════════════════════════════
+
+let SYNTH_SEG0_ALPHA_UV2     = 12.0
+let SYNTH_SEG0_THETA_UV2     =  6.0
+let SYNTH_SEG0_BETA_UV2      =  8.0
+let SYNTH_SEG0_DELTA_UV2     =  4.0
+let SYNTH_DRIFT_ALPHA_PER    =  0.3          // grow per segment
+let SYNTH_DRIFT_THETA_PER    =  0.7
+let SYNTH_BLINK_RATE_NOMINAL = 18.0          // per minute (relaxed adult)
+let SYNTH_FS_NOMINAL_HZ      = 248.0         // ~99% of native 250 Hz
+let SYNTH_DUR_FRAC_NOMINAL   = 0.99
+
+fn analyze_synthetic_trend(
+    perturb_short_capture: bool,
+    perturb_low_fs: bool,
+    perturb_flat_alpha: bool
+) {
+    // Duration fraction default
+    let mut dur_frac = SYNTH_DUR_FRAC_NOMINAL
+    if perturb_short_capture { dur_frac = 0.80 }   // user removed cap early
+    g_duration_fraction   = dur_frac
+    g_actual_duration_min = dur_frac * g_duration_min
+
+    // Effective fs default
+    let mut fs = SYNTH_FS_NOMINAL_HZ
+    if perturb_low_fs { fs = 22.0 }                // simulate Daisy collapse
+    g_effective_fs_hz = fs
+
+    // Per-segment band evolution
+    let n  = g_segment_count
+    let nf = n
+    let last_idx = nf - 1
+
+    // First segment
+    g_seg0_alpha_uv2 = SYNTH_SEG0_ALPHA_UV2
+    g_seg0_theta_uv2 = SYNTH_SEG0_THETA_UV2
+    g_seg0_beta_uv2  = SYNTH_SEG0_BETA_UV2
+    g_seg0_delta_uv2 = SYNTH_SEG0_DELTA_UV2
+
+    // Last segment with linear drift (drowsy onset)
+    let mut last_alpha = SYNTH_SEG0_ALPHA_UV2 + (SYNTH_DRIFT_ALPHA_PER * last_idx)
+    let     last_theta = SYNTH_SEG0_THETA_UV2 + (SYNTH_DRIFT_THETA_PER * last_idx)
+    let     last_beta  = SYNTH_SEG0_BETA_UV2
+    let     last_delta = SYNTH_SEG0_DELTA_UV2
+
+    // Min alpha across all segments — nominal: smallest is seg0
+    let mut min_alpha = g_seg0_alpha_uv2
+    if last_alpha < min_alpha { min_alpha = last_alpha }
+
+    if perturb_flat_alpha {
+        // Channel disconnected mid-session: last segment α collapses to 0
+        last_alpha = 0.0
+        min_alpha  = 0.0
+    }
+
+    g_seg_last_alpha_uv2 = last_alpha
+    g_seg_last_theta_uv2 = last_theta
+    g_seg_last_beta_uv2  = last_beta
+    g_seg_last_delta_uv2 = last_delta
+    g_min_alpha_uv2      = min_alpha
+
+    // Derived trend metrics
+    g_blink_rate_per_min = SYNTH_BLINK_RATE_NOMINAL
+    g_relax_index_o      = (last_alpha + g_seg0_alpha_uv2) / 2.0
+    g_drowsy_signature   = safe_div(last_theta, last_alpha)
+}
+
+// ════════════════════════════════════════════════════════════════════
+// Frozen falsifier evaluation (raw#71)
+// ════════════════════════════════════════════════════════════════════
+
+fn evaluate_falsifiers() {
+    // F_LR_01: actual duration >= 95% of requested
+    g_f_lr_01_pass = g_duration_fraction >= F_LR_01_DURATION_FRAC
+
+    // F_LR_02: effective fs >= 30 Hz (α Nyquist)
+    g_f_lr_02_pass = g_effective_fs_hz >= F_LR_02_FS_FLOOR_HZ
+
+    // F_LR_03: every segment α > 0 (proxy: min α across segments > floor)
+    g_f_lr_03_pass = g_min_alpha_uv2 > F_LR_03_ALPHA_FLOOR
+}
+
+// ════════════════════════════════════════════════════════════════════
+// Sentinel emit (raw#80 falsifier-bound)
+//   __EEG_LONG_RESTING__ <PASS|FAIL> <duration_min> <segments>
+// ════════════════════════════════════════════════════════════════════
+
+fn emit_sentinel() {
+    let mut verdict = "PASS"
+    if !(g_f_lr_01_pass && g_f_lr_02_pass && g_f_lr_03_pass) {
+        verdict = "FAIL"
+    }
+    println("__EEG_LONG_RESTING__ " + verdict + " " + to_string(g_duration_min) + " " + to_string(g_segment_count))
+}
+
+// ════════════════════════════════════════════════════════════════════
+// Audit JSONL emit (raw#65 idempotent — single-row per ts)
+// ════════════════════════════════════════════════════════════════════
+
+fn _build_audit_row(ts: string) -> string {
+    let mut row = "{"
+    row = row + "\"schema\":\"" + SCHEMA + "\","
+    row = row + "\"ts\":\"" + ts + "\","
+    row = row + "\"duration_min\":" + to_string(g_duration_min) + ","
+    row = row + "\"segment_min\":" + to_string(g_segment_min) + ","
+    row = row + "\"segment_count\":" + to_string(g_segment_count) + ","
+    row = row + "\"total_seconds\":" + to_string(g_total_seconds) + ","
+    row = row + "\"actual_duration_min\":" + to_string(g_actual_duration_min) + ","
+    row = row + "\"duration_fraction\":" + to_string(g_duration_fraction) + ","
+    row = row + "\"effective_fs_hz\":" + to_string(g_effective_fs_hz) + ","
+    row = row + "\"seg0_alpha_uv2\":" + to_string(g_seg0_alpha_uv2) + ","
+    row = row + "\"seg0_theta_uv2\":" + to_string(g_seg0_theta_uv2) + ","
+    row = row + "\"seg0_beta_uv2\":" + to_string(g_seg0_beta_uv2) + ","
+    row = row + "\"seg0_delta_uv2\":" + to_string(g_seg0_delta_uv2) + ","
+    row = row + "\"seg_last_alpha_uv2\":" + to_string(g_seg_last_alpha_uv2) + ","
+    row = row + "\"seg_last_theta_uv2\":" + to_string(g_seg_last_theta_uv2) + ","
+    row = row + "\"seg_last_beta_uv2\":" + to_string(g_seg_last_beta_uv2) + ","
+    row = row + "\"seg_last_delta_uv2\":" + to_string(g_seg_last_delta_uv2) + ","
+    row = row + "\"min_alpha_uv2\":" + to_string(g_min_alpha_uv2) + ","
+    row = row + "\"blink_rate_per_min\":" + to_string(g_blink_rate_per_min) + ","
+    row = row + "\"relax_index_o\":" + to_string(g_relax_index_o) + ","
+    row = row + "\"drowsy_signature\":" + to_string(g_drowsy_signature) + ","
+    row = row + "\"f_lr_01\":" + _bool_str(g_f_lr_01_pass) + ","
+    row = row + "\"f_lr_02\":" + _bool_str(g_f_lr_02_pass) + ","
+    row = row + "\"f_lr_03\":" + _bool_str(g_f_lr_03_pass)
+    row = row + "}"
+    return row
+}
+
+fn emit_audit(ts: string) {
+    _ensure_dir(AUDIT_DIR)
+    let path = AUDIT_DIR + "/" + ts + "_session.jsonl"
+    let row = _build_audit_row(ts)
+    let nl = chr(10)
+    // raw#65 idempotent: overwrite (single-row file per ts).
+    write_file(path, row + nl)
+}
+
+// ════════════════════════════════════════════════════════════════════
+// Quality-monitoring ledger emit (paradigm=long_resting, append JSONL)
+//   This is the cross-paradigm AI-side ledger that aggregates capture
+//   compliance across protocols. We APPEND a row keyed by (paradigm, ts).
+//   raw#65 idempotent: append to a file named by ts → re-running with same
+//   ts overwrites the same single-row file (NOT the cross-session aggregate).
+// ════════════════════════════════════════════════════════════════════
+
+fn _build_ledger_row(ts: string) -> string {
+    let mut verdict = "PASS"
+    if !(g_f_lr_01_pass && g_f_lr_02_pass && g_f_lr_03_pass) {
+        verdict = "FAIL"
+    }
+    let mut row = "{"
+    row = row + "\"paradigm\":\"long_resting\","
+    row = row + "\"schema\":\"" + SCHEMA + "\","
+    row = row + "\"ts\":\"" + ts + "\","
+    row = row + "\"verdict\":\"" + verdict + "\","
+    row = row + "\"duration_min\":" + to_string(g_duration_min) + ","
+    row = row + "\"actual_duration_min\":" + to_string(g_actual_duration_min) + ","
+    row = row + "\"effective_fs_hz\":" + to_string(g_effective_fs_hz) + ","
+    row = row + "\"segment_count\":" + to_string(g_segment_count) + ","
+    row = row + "\"min_alpha_uv2\":" + to_string(g_min_alpha_uv2) + ","
+    row = row + "\"drowsy_signature\":" + to_string(g_drowsy_signature) + ","
+    row = row + "\"relax_index_o\":" + to_string(g_relax_index_o) + ","
+    row = row + "\"blink_rate_per_min\":" + to_string(g_blink_rate_per_min) + ","
+    row = row + "\"f_lr_01\":" + _bool_str(g_f_lr_01_pass) + ","
+    row = row + "\"f_lr_02\":" + _bool_str(g_f_lr_02_pass) + ","
+    row = row + "\"f_lr_03\":" + _bool_str(g_f_lr_03_pass)
+    row = row + "}"
+    return row
+}
+
+fn emit_ledger(ts: string) {
+    _ensure_dir(LEDGER_DIR)
+    let path = LEDGER_DIR + "/" + ts + "_long_resting.jsonl"
+    let row = _build_ledger_row(ts)
+    let nl = chr(10)
+    // raw#65: per-ts file is overwritten on rerun (byte-stable for same inputs).
+    write_file(path, row + nl)
+}
+
+// ════════════════════════════════════════════════════════════════════
+// Trend metrics sidecar (JSON, alongside .npy)
+//   α/θ/β/δ × first/last segment + EOG blink rate + relaxation index
+//   + drowsiness signature (θ/α). Single-file overwrite (raw#65).
+// ════════════════════════════════════════════════════════════════════
+
+fn emit_trend_sidecar(output_npy: string) {
+    if len(output_npy) == 0 { return }
+    let path = output_npy + ".trend.json"
+    let mut row = "{"
+    row = row + "\"schema\":\"" + SCHEMA + "\","
+    row = row + "\"npy\":\"" + output_npy + "\","
+    row = row + "\"duration_min\":" + to_string(g_duration_min) + ","
+    row = row + "\"segment_min\":" + to_string(g_segment_min) + ","
+    row = row + "\"segment_count\":" + to_string(g_segment_count) + ","
+    row = row + "\"effective_fs_hz\":" + to_string(g_effective_fs_hz) + ","
+    row = row + "\"trend_first_segment\":{"
+    row = row + "\"alpha_uv2\":" + to_string(g_seg0_alpha_uv2) + ","
+    row = row + "\"theta_uv2\":" + to_string(g_seg0_theta_uv2) + ","
+    row = row + "\"beta_uv2\":" + to_string(g_seg0_beta_uv2) + ","
+    row = row + "\"delta_uv2\":" + to_string(g_seg0_delta_uv2)
+    row = row + "},"
+    row = row + "\"trend_last_segment\":{"
+    row = row + "\"alpha_uv2\":" + to_string(g_seg_last_alpha_uv2) + ","
+    row = row + "\"theta_uv2\":" + to_string(g_seg_last_theta_uv2) + ","
+    row = row + "\"beta_uv2\":" + to_string(g_seg_last_beta_uv2) + ","
+    row = row + "\"delta_uv2\":" + to_string(g_seg_last_delta_uv2)
+    row = row + "},"
+    row = row + "\"eog_blink_rate_per_min\":" + to_string(g_blink_rate_per_min) + ","
+    row = row + "\"relaxation_index_o\":" + to_string(g_relax_index_o) + ","
+    row = row + "\"drowsy_signature_theta_alpha\":" + to_string(g_drowsy_signature) + ","
+    row = row + "\"min_alpha_across_segments\":" + to_string(g_min_alpha_uv2)
+    row = row + "}"
+    write_file(path, row + chr(10))
+}
+
+// ════════════════════════════════════════════════════════════════════
+// Live runner — collect.hexa subprocess delegation
+//   raw#10 honest: this protocol does NOT do raw BrainFlow ingest itself;
+//   it delegates to anima-eeg/collect.hexa for raw stream capture, then
+//   chains sample_rate_guard + package_num_audit when --auto-quality-audit
+//   is set. raw#15: no personal paths hardcoded (all CLI args).
+// ════════════════════════════════════════════════════════════════════
+
+fn print_run_plan(
+    port: string,
+    board: string,
+    output: string,
+    auto_audit: bool,
+    do_ledger: bool
+) {
+    println("── long_duration_resting live run plan ──")
+    println("schema=" + SCHEMA)
+    println("port=" + port)
+    println("board=" + board)
+    println("output=" + output)
+    println("sample_rate_hz=" + to_string(SAMPLE_RATE_HZ))
+    println("channel_count=" + to_string(CHANNEL_COUNT))
+    println("notch_hz=" + to_string(NOTCH_HZ))
+    println("bandpass=" + to_string(BANDPASS_LO_HZ) + "-" + to_string(BANDPASS_HI_HZ) + " Hz")
+    println("duration_min=" + to_string(g_duration_min))
+    println("segment_min=" + to_string(g_segment_min))
+    println("segment_count=" + to_string(g_segment_count))
+    println("total_seconds=" + to_string(g_total_seconds))
+    println("auto_quality_audit=" + _bool_str(auto_audit))
+    println("ledger_emit=" + _bool_str(do_ledger))
+    println("")
+    println("[block design]")
+    if g_segment_count == 1 {
+        println("  single long capture (" + to_string(g_duration_min) + " min)")
+    } else {
+        println("  multi-segment: " + to_string(g_segment_count) + " × " + to_string(g_segment_min) + " min")
+    }
+    println("")
+    println("[audio cues — minimal, every " + to_string(CUE_INTERVAL_MIN) + " min]")
+    let mut t = 0
+    while t < g_total_seconds {
+        let cue = cue_text_at_t(t)
+        println("  t=" + to_string(t) + "s  cue=\"" + cue + "\"")
+        t = t + (CUE_INTERVAL_MIN * 60)
+    }
+    println("")
+    println("[user hand-step — montage assumption]")
+    println("  N1P (ch1)  -> Fp1 (forehead, 1\" above left brow)")
+    println("  N2P (ch2)  -> Fp2 (forehead, 1\" above right brow)")
+    println("  N7P (ch7)  -> O1  (1\" above inion, 1\" left)")
+    println("  N8P (ch8)  -> O2  (1\" above inion, 1\" right)")
+    println("  SRB2       -> A1 earlobe (white wire)")
+    println("  BIAS       -> A2 earlobe (black wire)")
+    println("")
+    println("[delegate command — run in separate terminal]")
+    println("  hexa run anima-eeg/collect.hexa --port " + port + " \\")
+    println("      --board " + board + " --duration " + to_string(g_total_seconds) + " \\")
+    println("      --output " + output)
+    println("")
+    if auto_audit {
+        println("[auto-quality-audit chain — run after capture completes]")
+        println("  hexa run anima-eeg/protocols/sample_rate_guard.hexa \\")
+        println("      --input " + output + " --paradigm eeg_alpha --strict")
+        println("  hexa run anima-eeg/protocols/package_num_audit.hexa \\")
+        println("      --input " + output)
+    }
+    if do_ledger {
+        println("[ledger]")
+        println("  paradigm=long_resting JSONL row will land at:")
+        println("  " + LEDGER_DIR + "/<TS>_long_resting.jsonl")
+    }
+    println("")
+    println("[honest C3 reminders]")
+    println("  • daily-life motion: walking / eating / bathroom = artifact")
+    println("  • gel impedance drift over 30 min — re-wet at midpoint if possible")
+    println("  • circadian baseline variability — log session time of day")
+}
+
+// ════════════════════════════════════════════════════════════════════
+// Tests (selftest)
+// ════════════════════════════════════════════════════════════════════
+
+fn assert_true(cond: bool, label: string) -> bool {
+    if cond { println("  PASS: " + label) } else { println("  FAIL: " + label) }
+    return cond
+}
+
+fn run_tests() -> int {
+    let mut pass = 0
+    let mut fail = 0
+
+    println("=== long_duration_resting selftest ===")
+
+    // T1: schedule build — 5 min default
+    println("[T1] schedule build (5 min single segment)")
+    build_schedule(5, 5)
+    let ok1a = assert_true(g_duration_min == 5, "duration_min == 5")
+    let ok1b = assert_true(g_segment_min == 5, "segment_min == 5")
+    let ok1c = assert_true(g_segment_count == 1, "segment_count == 1")
+    let ok1d = assert_true(g_total_seconds == 300, "total_seconds == 300")
+    if ok1a && ok1b && ok1c && ok1d { pass = pass + 1 } else { fail = fail + 1 }
+
+    // T2: schedule build — 30 min × 5-min segments
+    println("[T2] schedule build (30 min × 5-min segments)")
+    build_schedule(30, 5)
+    let ok2a = assert_true(g_duration_min == 30, "duration_min == 30")
+    let ok2b = assert_true(g_segment_min == 5, "segment_min == 5")
+    let ok2c = assert_true(g_segment_count == 6, "segment_count == 6")
+    let ok2d = assert_true(g_total_seconds == 1800, "total_seconds == 1800")
+    if ok2a && ok2b && ok2c && ok2d { pass = pass + 1 } else { fail = fail + 1 }
+
+    // T3: schedule build — 10 min × 5-min segments
+    println("[T3] schedule build (10 min × 5-min segments)")
+    build_schedule(10, 5)
+    let ok3a = assert_true(g_duration_min == 10, "duration_min == 10")
+    let ok3b = assert_true(g_segment_count == 2, "segment_count == 2")
+    let ok3c = assert_true(g_total_seconds == 600, "total_seconds == 600")
+    if ok3a && ok3b && ok3c { pass = pass + 1 } else { fail = fail + 1 }
+
+    // T4: clamp duration into [5, 30]
+    println("[T4] duration clamp [5, 30]")
+    build_schedule(2, 5)
+    let ok4a = assert_true(g_duration_min == 5, "below floor clamps to 5")
+    build_schedule(120, 5)
+    let ok4b = assert_true(g_duration_min == 30, "above ceiling clamps to 30")
+    if ok4a && ok4b { pass = pass + 1 } else { fail = fail + 1 }
+
+    // T5: idempotent schedule rebuild (raw#65)
+    println("[T5] idempotent schedule rebuild")
+    build_schedule(30, 5)
+    let segc1 = g_segment_count
+    build_schedule(30, 5)
+    let ok5 = assert_true(g_segment_count == segc1, "segment_count idempotent")
+    if ok5 { pass = pass + 1 } else { fail = fail + 1 }
+
+    // T6: nominal synthetic — all 3 falsifiers PASS
+    println("[T6] synthetic nominal — F_LR_01/02/03 PASS")
+    build_schedule(30, 5)
+    analyze_synthetic_trend(false, false, false)
+    evaluate_falsifiers()
+    let ok6a = assert_true(g_f_lr_01_pass, "F_LR_01 duration >= 95%")
+    let ok6b = assert_true(g_f_lr_02_pass, "F_LR_02 effective_fs >= 30 Hz")
+    let ok6c = assert_true(g_f_lr_03_pass, "F_LR_03 per-segment α > 0")
+    let ok6d = assert_true(g_drowsy_signature > 0.0, "drowsy signature populated")
+    if ok6a && ok6b && ok6c && ok6d { pass = pass + 1 } else { fail = fail + 1 }
+
+    // T7: F_LR_01 falsifier — short capture (user removed cap early)
+    println("[T7] F_LR_01 falsifier — short capture (80% of requested)")
+    build_schedule(30, 5)
+    analyze_synthetic_trend(true, false, false)
+    evaluate_falsifiers()
+    let ok7a = assert_true(!g_f_lr_01_pass, "F_LR_01 fails (short capture)")
+    let ok7b = assert_true(g_f_lr_02_pass, "F_LR_02 still passes")
+    let ok7c = assert_true(g_f_lr_03_pass, "F_LR_03 still passes")
+    if ok7a && ok7b && ok7c { pass = pass + 1 } else { fail = fail + 1 }
+
+    // T8: F_LR_02 falsifier — Daisy collapse (fs ~22 Hz)
+    println("[T8] F_LR_02 falsifier — effective_fs = 22 Hz (Daisy collapse)")
+    build_schedule(30, 5)
+    analyze_synthetic_trend(false, true, false)
+    evaluate_falsifiers()
+    let ok8a = assert_true(g_f_lr_01_pass, "F_LR_01 still passes")
+    let ok8b = assert_true(!g_f_lr_02_pass, "F_LR_02 fails (fs < 30 Hz)")
+    let ok8c = assert_true(g_f_lr_03_pass, "F_LR_03 still passes")
+    if ok8a && ok8b && ok8c { pass = pass + 1 } else { fail = fail + 1 }
+
+    // T9: F_LR_03 falsifier — flat α channel mid-session
+    println("[T9] F_LR_03 falsifier — α channel flat mid-session")
+    build_schedule(30, 5)
+    analyze_synthetic_trend(false, false, true)
+    evaluate_falsifiers()
+    let ok9a = assert_true(g_f_lr_01_pass, "F_LR_01 still passes")
+    let ok9b = assert_true(g_f_lr_02_pass, "F_LR_02 still passes")
+    let ok9c = assert_true(!g_f_lr_03_pass, "F_LR_03 fails (min α == 0)")
+    if ok9a && ok9b && ok9c { pass = pass + 1 } else { fail = fail + 1 }
+
+    // T10: cue text mapping
+    println("[T10] audio cue text")
+    let cue0 = cue_text_at_t(0)
+    let cue5 = cue_text_at_t(300)
+    let ok10a = assert_true(cue0 == "측정 시작 (begin)", "t=0 cue text")
+    let ok10b = assert_true(cue5 == "측정 중 t=5분 (continue)", "t=300s cue text")
+    if ok10a && ok10b { pass = pass + 1 } else { fail = fail + 1 }
+
+    // T11: audit JSONL emit (raw#65 byte-stable)
+    println("[T11] audit JSONL emit deterministic")
+    build_schedule(30, 5)
+    analyze_synthetic_trend(false, false, false)
+    evaluate_falsifiers()
+    let ts = "selftest_synth"
+    emit_audit(ts)
+    let body1 = read_file(AUDIT_DIR + "/" + ts + "_session.jsonl")
+    emit_audit(ts)
+    let body2 = read_file(AUDIT_DIR + "/" + ts + "_session.jsonl")
+    let ok11a = assert_true(body1 == body2, "audit row byte-stable")
+    let ok11b = assert_true(len(body1) > 0, "audit row non-empty")
+    if ok11a && ok11b { pass = pass + 1 } else { fail = fail + 1 }
+
+    // T12: ledger JSONL emit (raw#65 byte-stable)
+    println("[T12] ledger JSONL emit deterministic")
+    emit_ledger(ts)
+    let lbody1 = read_file(LEDGER_DIR + "/" + ts + "_long_resting.jsonl")
+    emit_ledger(ts)
+    let lbody2 = read_file(LEDGER_DIR + "/" + ts + "_long_resting.jsonl")
+    let ok12a = assert_true(lbody1 == lbody2, "ledger row byte-stable")
+    let ok12b = assert_true(len(lbody1) > 0, "ledger row non-empty")
+    if ok12a && ok12b { pass = pass + 1 } else { fail = fail + 1 }
+
+    println("")
+    println("Results: " + to_string(pass) + " PASS / " + to_string(fail) + " FAIL out of " + to_string(pass + fail))
+    return fail
+}
+
+// ════════════════════════════════════════════════════════════════════
+// CLI entry
+// ════════════════════════════════════════════════════════════════════
+
+fn _print_usage() {
+    println("usage:")
+    println("  hexa run anima-eeg/protocols/long_duration_resting.hexa --selftest")
+    println("  hexa run anima-eeg/protocols/long_duration_resting.hexa --run \\")
+    println("      --port <serial> --board cyton_daisy --duration <minutes> \\")
+    println("      [--segment-minutes <n>] [--auto-quality-audit] [--ledger] \\")
+    println("      [--output <npy>]")
+}
+
+fn _arg_value(av: list, key: string, dflt: string) -> string {
+    let mut i = 1
+    while i < len(av) {
+        if av[i] == key && i + 1 < len(av) {
+            return av[i + 1]
+        }
+        i = i + 1
+    }
+    return dflt
+}
+
+fn _arg_int(av: list, key: string, dflt: int) -> int {
+    let s = _arg_value(av, key, "")
+    if len(s) == 0 { return dflt }
+    return to_int(s)
+}
+
+fn _arg_flag(av: list, key: string) -> bool {
+    let mut i = 1
+    while i < len(av) {
+        if av[i] == key { return true }
+        i = i + 1
+    }
+    return false
+}
+
+fn main() {
+    let av = argv()
+    let mut selftest = false
+    let mut run = false
+    let mut i = 1
+    while i < len(av) {
+        if av[i] == "--selftest" { selftest = true }
+        if av[i] == "--run"      { run = true }
+        if av[i] == "--help"     { _print_usage(); exit(0) }
+        i = i + 1
+    }
+
+    if run {
+        let port       = _arg_value(av, "--port",   "")
+        let board      = _arg_value(av, "--board",  "cyton_daisy")
+        let output     = _arg_value(av, "--output", "")
+        let dur_min    = _arg_int(av,   "--duration",         DEFAULT_DURATION_MIN)
+        let seg_min    = _arg_int(av,   "--segment-minutes",  DEFAULT_SEGMENT_MIN)
+        let auto_audit = _arg_flag(av,  "--auto-quality-audit")
+        let do_ledger  = _arg_flag(av,  "--ledger")
+
+        if len(port) == 0 {
+            eprintln("ABORT: --run requires --port (raw#15 no personal paths)")
+            _print_usage()
+            exit(2)
+        }
+
+        build_schedule(dur_min, seg_min)
+        print_run_plan(port, board, output, auto_audit, do_ledger)
+
+        // raw#10 honest: this cycle prints plan + delegated commands;
+        // the actual collect.hexa subprocess + sample_rate_guard +
+        // package_num_audit + ledger emit are user hand-steps after the
+        // capture .npy lands. The plan is logged; ledger row is emitted
+        // here as a placeholder (verdict reflects schedule build only —
+        // post-capture analysis must rerun emit_ledger with real values).
+        if do_ledger {
+            // Placeholder pre-capture ledger emit: marks intent.
+            // verdict will be recomputed post-capture by analysis pass.
+            g_effective_fs_hz       = 0.0
+            g_actual_duration_min   = 0.0
+            g_duration_fraction     = 0.0
+            g_min_alpha_uv2         = 0.0
+            evaluate_falsifiers()
+            emit_ledger("plan_" + to_string(dur_min) + "min")
+        }
+        exit(0)
+    }
+
+    if !selftest {
+        _print_usage()
+        exit(2)
+    }
+
+    println("── long_duration_resting selftest ──")
+    println("schema=" + SCHEMA)
+    println("raw10_honest=synthetic_trend_no_real_brainflow_terminal_only")
+    println("raw82_darwin=clock_gettime_monotonic_via_collect_hexa")
+    println("source=anima-eeg/protocols/alpha_eyes_closed.hexa_v1_extension")
+    println("")
+
+    // Demonstration (synthetic 30 min × 5 min × 6 segments)
+    build_schedule(30, 5)
+    analyze_synthetic_trend(false, false, false)
+    evaluate_falsifiers()
+
+    println("[demo nominal session — 30 min × 6 segments]")
+    println("duration_min="          + to_string(g_duration_min))
+    println("segment_min="           + to_string(g_segment_min))
+    println("segment_count="         + to_string(g_segment_count))
+    println("total_seconds="         + to_string(g_total_seconds))
+    println("actual_duration_min="   + to_string(g_actual_duration_min))
+    println("duration_fraction="     + to_string(g_duration_fraction))
+    println("effective_fs_hz="       + to_string(g_effective_fs_hz))
+    println("seg0_alpha_uv2="        + to_string(g_seg0_alpha_uv2))
+    println("seg_last_alpha_uv2="    + to_string(g_seg_last_alpha_uv2))
+    println("seg0_theta_uv2="        + to_string(g_seg0_theta_uv2))
+    println("seg_last_theta_uv2="    + to_string(g_seg_last_theta_uv2))
+    println("min_alpha_uv2="         + to_string(g_min_alpha_uv2))
+    println("blink_rate_per_min="    + to_string(g_blink_rate_per_min))
+    println("relax_index_o="         + to_string(g_relax_index_o))
+    println("drowsy_signature="      + to_string(g_drowsy_signature))
+    println("f_lr_01="               + _bool_str(g_f_lr_01_pass))
+    println("f_lr_02="               + _bool_str(g_f_lr_02_pass))
+    println("f_lr_03="               + _bool_str(g_f_lr_03_pass))
+    println("")
+
+    emit_sentinel()
+    emit_audit("selftest_synth")
+    emit_ledger("selftest_synth")
+
+    let fails = run_tests()
+    if fails != 0 {
+        println("selftest=fail")
+        eprintln("selftest FAILED: " + to_string(fails) + " test(s) failed")
+        exit(1)
+    }
+    println("selftest=ok")
+    println("DONE")
+}
+
+// ════════════════════════════════════════════════════════════════════
+// HONEST C3 CAVEATS  (raw#10) — full text
+// ════════════════════════════════════════════════════════════════════
+//
+// (1) Daily-life motion artifact (walking / eating / bathroom).
+//     The user runs this with the cap on during normal activity. Walking
+//     introduces step-rate (~2 Hz) movement artifact; chewing introduces
+//     EMG bleed into the 20-50 Hz band; bathroom transitions cause cable
+//     tug. The protocol does NOT excise these epochs — sidecar trend
+//     metrics are computed across the full segment and will be biased by
+//     motion-laden intervals. Mitigation: log activity-of-interval; use
+//     analyze.hexa epoch-level rejection in a follow-up cycle. (raw#10 C3.)
+//
+// (2) Cap gel impedance drift over 30 minutes.
+//     Saline / gel electrodes dry out gradually; impedance can rise from
+//     ~5 kΩ (start) to >50 kΩ (30 min) on uncovered sites. This shifts
+//     the noise floor and reduces α/β SNR over time. F_LR_03 catches
+//     full disconnect (min α == 0) but does NOT catch graded SNR loss.
+//     Mitigation: re-wet at midpoint when feasible; flag last-segment
+//     alpha < 50% of first-segment alpha as drift candidate (sidecar
+//     annotation, not falsifier). (raw#10 C3.)
+//
+// (3) Circadian-state baseline variability.
+//     α power, θ/α ratio, and blink rate vary by time-of-day, sleep
+//     debt, and meal state (postprandial drowsiness). A single 30-min
+//     session is NOT a stable baseline — cross-session aggregation in
+//     state/quality_monitoring_ledger/ is required to separate within-
+//     session trend (drowsiness onset) from across-session circadian
+//     drift. The ledger paradigm=long_resting row carries duration_min,
+//     drowsy_signature, and relax_index_o so a follow-up cycle can do
+//     time-of-day / circadian regression. (raw#10 C3.)
