@@ -32,6 +32,11 @@
 // DETERMINISM
 //   No RNG, no clock-dependent branches, no env reads. Same input -> same output
 //   byte-identical across runs (verified by T8 idempotence selftest).
+//
+//  @resolver-pure(reason="pure-hexa device-driver-params mapper, no audio /
+//                  no LED / no host syscalls. Single-pass, read-only.
+//                  Docker route adds zero value and triggers fork-storm on
+//                  metadata commands.")
 
 // ════════════════════════════════════════════════════════════════════
 // Section 0. Constants

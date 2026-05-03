@@ -35,6 +35,12 @@
 //
 // USAGE
 //   hexa run anima-eeg/rp_adaptive_response.hexa --selftest
+//
+//  @resolver-pure(reason="pure-hexa numerical pipeline (EEG bands → Russell
+//                  emotion → adaptation params → text markers). No BrainFlow,
+//                  no LLM call, no audio. Single-pass, read-only,
+//                  deterministic. Docker route adds zero value and triggers
+//                  fork-storm on metadata commands.")
 
 let SCHEMA = "anima-eeg/rp_adaptive_response/1"
 

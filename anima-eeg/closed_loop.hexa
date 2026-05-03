@@ -37,6 +37,11 @@
 //
 // USAGE
 //   hexa run anima-eeg/closed_loop.hexa --selftest
+//
+//  @resolver-pure(reason="pure-hexa numerical feedback loop, no BrainFlow / no
+//                  audio / no LED. Single-pass, read-only, deterministic LCG.
+//                  Docker route adds zero value and triggers fork-storm on
+//                  metadata commands (--help/--selftest).")
 
 let SCHEMA = "anima-eeg/closed_loop/1"
 

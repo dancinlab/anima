@@ -31,6 +31,11 @@
 //   No RNG. All synthetic signals are Taylor-expanded sinusoids of the
 //   sample index. Two consecutive runs produce byte-identical stdout
 //   (and byte-identical state/analyze_<basename>.json).
+//
+//  @resolver-pure(reason="pure-hexa naive DFT + band-power + asymmetry,
+//                  Taylor-expanded sinusoids, no Math/syscalls/BrainFlow.
+//                  Single-pass, read-only, deterministic. Docker route adds
+//                  zero value and triggers fork-storm on metadata commands.")
 
 let SCHEMA = "anima-eeg/analyze/1"
 

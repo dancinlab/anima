@@ -38,6 +38,11 @@
 //
 // DETERMINISM
 //   No RNG. All synthetic traces are deterministic Taylor-sin sums of n.
+//
+//  @resolver-pure(reason="pure-hexa 6-metric brain-likeness validator,
+//                  Taylor-sin synthetic traces, no BrainFlow / no scipy.
+//                  Single-pass, read-only, deterministic. Docker route adds
+//                  zero value and triggers fork-storm on metadata commands.")
 
 let SCHEMA = "anima-eeg/validate_consciousness/1"
 

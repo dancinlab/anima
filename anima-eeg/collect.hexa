@@ -35,6 +35,10 @@
 //   hexa run anima-eeg/collect.hexa --selftest
 //   hexa run anima-eeg/collect.hexa --collect --duration 60 --tag baseline \
 //        --output recordings/sessions/baseline_20260427T120000.npy
+//
+//  @resolver-bypass(reason="darwin-native: globs /dev/cu.usbserial-* and uses
+//                   .venv-eeg/bin/python BrainFlow venv. Hetzner / linux pods
+//                   do not expose host USB nor local venv.")
 
 let SCHEMA              = "anima-eeg/collect/1"
 let HELPER_PATH         = "/tmp/anima_eeg_collect_helper.hexa_tmp"
@@ -104,6 +108,41 @@ fn _write_helper() {
     parts.push("    sys.stderr.write(f'reason: {slug}: {detail}\\n')\n")
     parts.push("    sys.stderr.write(f'fix: {fix}\\n')\n\n")
 
+    // raw#10 honest C3: macOS lsof without sudo cannot see ALL pids — false
+    // negative possible. FALSE POSITIVE possible: any process holding the port
+    // is reported (we only *guess* OpenBCI GUI from process name).
+    parts.push("def detect_port_lock(port):\n")
+    parts.push("    if not port: return (False, 0, '')\n")
+    parts.push("    if not os.path.exists(port): return (False, 0, '')\n")
+    parts.push("    try:\n")
+    parts.push("        r = subprocess.run(['lsof', '-F', 'p', port], capture_output=True, text=True, timeout=3)\n")
+    parts.push("        for ln in (r.stdout or '').splitlines():\n")
+    parts.push("            if ln.startswith('p'):\n")
+    parts.push("                try: pid = int(ln[1:])\n")
+    parts.push("                except: continue\n")
+    parts.push("                pname = '?'\n")
+    parts.push("                try:\n")
+    parts.push("                    pr = subprocess.run(['ps','-p',str(pid),'-o','comm='], capture_output=True, text=True, timeout=2)\n")
+    parts.push("                    pname = (pr.stdout or '').strip() or '?'\n")
+    parts.push("                except Exception: pass\n")
+    parts.push("                return (True, pid, pname)\n")
+    parts.push("    except Exception: pass\n")
+    parts.push("    return (False, 0, '')\n\n")
+
+    parts.push("def emit_port_lock_msg(port, pid, pname):\n")
+    parts.push("    pl = (pname or '').lower()\n")
+    parts.push("    guess = ''\n")
+    parts.push("    if 'java' in pl or 'openbci' in pl or 'processing' in pl:\n")
+    parts.push("        guess = ' (OpenBCI GUI 추정)'\n")
+    parts.push("    sys.stderr.write(f'[port-lock] {port} 점유 중:\\n')\n")
+    parts.push("    sys.stderr.write(f'  PID {pid}: {pname or \"?\"}{guess}\\n')\n")
+    parts.push("    sys.stderr.write('\\n해결 방법:\\n')\n")
+    parts.push("    sys.stderr.write('  (a) OpenBCI GUI 종료 후 재시도\\n')\n")
+    parts.push("    sys.stderr.write('  (b) GUI Networking widget LSL outlet + anima-eeg/lsl_capture.hexa 사용\\n')\n")
+    parts.push("    sys.stderr.write('  (c) --force-port 로 우회 시도 (위험)\\n')\n")
+    parts.push("    emit_trailer('port-lock-detected', f'PID={pid} name={pname or \"?\"}',\n")
+    parts.push("                 '1) OpenBCI GUI Stop & Quit  2) 또는 --force-port 시도')\n\n")
+
     parts.push("def detect_devices():\n")
     parts.push("    return sorted(set(glob.glob(USB_SERIAL_GLOB) + glob.glob(USB_MODEM_GLOB)))\n\n")
 
@@ -125,7 +164,20 @@ fn _write_helper() {
     parts.push("        emit_trailer('venv-missing', f'{VENV_PYTHON} not found',\n")
     parts.push("                     '1) python3 -m venv .venv-eeg  2) pip install brainflow numpy')\n")
     parts.push("        return False, ''\n")
-    parts.push("    r = subprocess.run([VENV_PYTHON, '-c', 'import brainflow,numpy; print(brainflow.__version__)'],\n")
+    // raw#10 honest: brainflow ≥5.x does NOT expose `brainflow.__version__`
+    // attribute (only sub-modules board_shim/data_filter/...). Use
+    // importlib.metadata.version() which reads dist-info METADATA — works for
+    // every pip-installed brainflow. 'unknown' fallback if metadata missing.
+    parts.push("    _probe_src = (\n")
+    parts.push("        'from brainflow.board_shim import BoardShim\\n'\n")
+    parts.push("        'import numpy\\n'\n")
+    parts.push("        'try:\\n'\n")
+    parts.push("        '    from importlib.metadata import version as _v\\n'\n")
+    parts.push("        '    print(_v(\"brainflow\"))\\n'\n")
+    parts.push("        'except Exception:\\n'\n")
+    parts.push("        '    print(\"unknown\")\\n'\n")
+    parts.push("    )\n")
+    parts.push("    r = subprocess.run([VENV_PYTHON, '-c', _probe_src],\n")
     parts.push("                       capture_output=True, text=True, timeout=20)\n")
     parts.push("    if r.returncode != 0:\n")
     parts.push("        emit_trailer('brainflow-missing', f'{r.stderr.strip()[:200]}',\n")
@@ -134,7 +186,10 @@ fn _write_helper() {
     parts.push("    return True, r.stdout.strip()\n\n")
 
     parts.push("COLLECT_PY = textwrap.dedent('''\n")
-    parts.push("    import json, sys, time, datetime\n")
+    // raw#10 honest C3 (2026-05-03 NameError fix): subprocess `-c` payload is a
+    // separate Python interpreter; outer helper's `import os` does NOT carry
+    // through. Must import `os` here for os.makedirs/os.path.* used below.
+    parts.push("    import json, os, sys, time, datetime\n")
     parts.push("    import numpy as np\n")
     parts.push("    from brainflow.board_shim import BoardShim, BrainFlowInputParams, BoardIds\n")
     parts.push("    BOARD_ID = int(sys.argv[1])\n")
@@ -145,6 +200,10 @@ fn _write_helper() {
     parts.push("    params = BrainFlowInputParams()\n")
     parts.push("    params.serial_port = PORT\n")
     parts.push("    BoardShim.disable_board_logger()\n")
+    parts.push("    # raw#65 idempotent: preflight cleanup of any leaked BrainFlow session\n")
+    parts.push("    # from a prior helper that crashed before its finally block.\n")
+    parts.push("    try: BoardShim.release_all_sessions()\n")
+    parts.push("    except Exception: pass\n")
     parts.push("    board = BoardShim(BOARD_ID, params)\n")
     parts.push("    payload = {'rc':0,'rows':0,'cols':0,'sample_rate':0.0,'duration_actual':0.0,\n")
     parts.push("               'eeg_indices':[],'output_path':OUTPUT,'err':''}\n")
@@ -154,8 +213,45 @@ fn _write_helper() {
     parts.push("        eeg_idx = list(BoardShim.get_eeg_channels(BOARD_ID))\n")
     parts.push("        payload['sample_rate'] = sr\n")
     parts.push("        payload['eeg_indices'] = eeg_idx\n")
-    parts.push("        board.prepare_session()\n")
-    parts.push("        board.start_stream()\n")
+    parts.push("        # raw#10 honest C3: BrainFlow leaked-session codes\n")
+    parts.push("        # (audited brainflow/exit_codes.py 2026-05-03):\n")
+    parts.push("        #   1 PORT_ALREADY_OPEN, 7 BOARD_NOT_READY, 8 STREAM_ALREADY_RUN,\n")
+    parts.push("        #  15 BOARD_NOT_CREATED, 16 ANOTHER_BOARD_IS_CREATED.\n")
+    parts.push("        def _is_leak(_m):\n")
+    parts.push("            _s = str(_m)\n")
+    parts.push("            for _n in ('PORT_ALREADY_OPEN','BOARD_NOT_READY','STREAM_ALREADY_RUN','BOARD_NOT_CREATED','ANOTHER_BOARD_IS_CREATED'):\n")
+    parts.push("                if _n in _s: return True\n")
+    parts.push("            for _c in (':1 ',':7 ',':8 ',':15 ',':16 ',' code 1 ',' code 7 ',' code 8 ',' code 15 ',' code 16 '):\n")
+    parts.push("                if _c in _s: return True\n")
+    parts.push("            return False\n")
+    parts.push("        # Retry-once on leaked-session error during prepare_session\n")
+    parts.push("        try:\n")
+    parts.push("            board.prepare_session()\n")
+    parts.push("        except Exception as _e1:\n")
+    parts.push("            if _is_leak(_e1):\n")
+    parts.push("                try: BoardShim.release_all_sessions()\n")
+    parts.push("                except Exception: pass\n")
+    parts.push("                time.sleep(2)\n")
+    parts.push("                board = BoardShim(BOARD_ID, params)\n")
+    parts.push("                board.prepare_session()\n")
+    parts.push("            else:\n")
+    parts.push("                raise\n")
+    parts.push("        # raw#71 falsifier-bound: BOARD_NOT_CREATED:15 observed at\n")
+    parts.push("        # start_stream — retry-once with fresh prepare on leak codes.\n")
+    parts.push("        try:\n")
+    parts.push("            board.start_stream()\n")
+    parts.push("        except Exception as _e2:\n")
+    parts.push("            if _is_leak(_e2):\n")
+    parts.push("                try: board.release_session()\n")
+    parts.push("                except Exception: pass\n")
+    parts.push("                try: BoardShim.release_all_sessions()\n")
+    parts.push("                except Exception: pass\n")
+    parts.push("                time.sleep(2)\n")
+    parts.push("                board = BoardShim(BOARD_ID, params)\n")
+    parts.push("                board.prepare_session()\n")
+    parts.push("                board.start_stream()\n")
+    parts.push("            else:\n")
+    parts.push("                raise\n")
     parts.push("        time.sleep(DURATION)\n")
     parts.push("        data = board.get_board_data()\n")
     parts.push("        t_end = time.time()\n")
@@ -195,6 +291,13 @@ fn _write_helper() {
     parts.push("def cmd_collect(args):\n")
     parts.push("    port = choose_port(args)\n")
     parts.push("    if port is None: print('collect=fail'); sys.exit(2)\n")
+    parts.push("    # Port-lock preflight (graceful fail unless --force-port)\n")
+    parts.push("    if not getattr(args, 'force_port', False):\n")
+    parts.push("        _locked, _pid, _pname = detect_port_lock(port)\n")
+    parts.push("        if _locked:\n")
+    parts.push("            emit_port_lock_msg(port, _pid, _pname)\n")
+    parts.push("            print(f'collect=fail port={port} reason=port-locked')\n")
+    parts.push("            sys.exit(8)\n")
     parts.push("    ok, ver = verify_brainflow()\n")
     parts.push("    if not ok: print('collect=fail'); print(f'port={port}'); sys.exit(3)\n")
     parts.push("    print(f'brainflow_version={ver}')\n")
@@ -390,19 +493,24 @@ fn _print_usage() {
 }
 
 // argv normalize — see experiment.hexa _flags_only_argv 동치 doc.
-// Mac stage0 / hetzner ssh / docker 의 argv() 형식 차이 portable handling.
+// Mac stage0 / hetzner ssh / docker / AOT-cache 의 argv() 형식 차이 portable handling.
+// argv may contain:
+//   - interpreter mode: [.../script.hexa, ...flags]
+//   - AOT cache mode:   [.../.hexa-cache/<hash>/exe, .../exe (duplicate), ...flags]
+//   - hetzner ssh / docker may add extra wrapper entries.
+// Use ends_with method form (raw#9 AOT-safe; slice-eq fails under AOT per
+// memory project_aot_push_gotcha.md pattern).
 fn _flags_only_argv() -> array {
     let av = argv()
     let mut start = 0
-    let mut i = 0
-    while i < len(av) {
-        let a = av[i]
-        let n = len(a)
-        if n >= 5 {
-            let suffix = a[(n - 5)..n]
-            if suffix == ".hexa" { start = i + 1; break }
+    while start < len(av) {
+        let a = av[start]
+        let mut is_path = false
+        if a.ends_with(".hexa") { is_path = true }
+        if !is_path {
+            if a.ends_with("/exe") { is_path = true }
         }
-        i = i + 1
+        if is_path { start = start + 1 } else { break }
     }
     let mut out = []
     let mut j = start

@@ -1,0 +1,665 @@
+// anima-eeg/lsl_capture.hexa
+// raw#9 hexa-only · raw#10 honest C3 · raw#11 snake_case · raw#12 silent-error-ban
+// raw#15 SSOT · raw#37 transient-helper-in-/tmp · raw#65 idempotent
+// raw#71 falsifier-bound · raw#80 sentinel · raw#82 darwin-native · raw#101 minimal
+//
+// PURPOSE
+//   LSL inlet → .npy capture for OpenBCI GUI ↔ anima-eeg coexistence.
+//
+//   The OpenBCI GUI holds the FTDI/Dongle USB-serial port (single-owner
+//   constraint) and emits a 16ch × 125Hz LSL outlet via its Networking widget.
+//   This module subscribes to that outlet (LSL inlet) and writes a .npy file
+//   shaped (channels, samples) — usable by analyze.hexa / anima-clm-eeg
+//   downstream WITHOUT BrainFlow / USB contention.
+//
+//   Falsifier set (raw#71 frozen 2026-05-03):
+//     F_LSL_01: stream resolves within --resolve-timeout (default 10s) → else
+//               EEG_LSL_NOT_FOUND, exit 4.
+//     F_LSL_02: inlet info reports channel_count == --channel-count (default
+//               16) AND nominal_srate == --sample-rate (default 125 Hz, ±1)
+//               → else EEG_LSL_SHAPE_MISMATCH, exit 5.
+//     F_LSL_03: pulled samples / expected_samples >= 0.80 within wall-clock
+//               window (samples = sample_rate × seconds) → else
+//               EEG_LSL_DROPOUT, exit 6. Honest C3: LSL is push/pull with
+//               UDP transport on the same machine; small dropout is normal,
+//               <80% retention indicates a real fault.
+//
+// MODES
+//   --selftest                     synthetic outlet+inlet round-trip in helper
+//                                  (no GUI, no hardware required). Verifies
+//                                  pylsl install + push_chunk/pull_chunk paths.
+//   --capture --source <name>      real LSL inlet capture by stream name
+//              [--seconds <n>]     wall-clock capture window (default 10s)
+//              [--samples <n>]     OR exact sample count (overrides --seconds)
+//              --output <path>     .npy output path (auto-creates parent dir)
+//              [--channel-count N] expected ch count (default 16)
+//              [--sample-rate Hz]  expected sample rate (default 125)
+//              [--resolve-timeout] stream resolve seconds (default 10)
+//              [--chunk-timeout]   pull_chunk timeout seconds (default 1.0)
+//
+// OUTPUT
+//   .npy file at <output> with shape (channel_count, n_samples), float32.
+//   Sidecar metadata <output>.meta.json with stream_name, channel_count,
+//   sample_rate_nominal, sample_rate_observed, n_samples, duration_observed_s,
+//   pull_chunks, retention_ratio, lsl_pylsl_version, captured_utc, raw10_honest.
+//
+// COEXISTENCE FLOW (user-facing)
+//   1. Launch OpenBCI GUI → Cyton+Daisy → it opens the USB port.
+//   2. GUI Networking widget → protocol "LSL" → stream name "obci_eeg1",
+//      type "EEG", data type "TimeSeriesRaw" or "TimeSeriesFilt" → Start.
+//   3. GUI START STREAM (top of window) so 16ch × 125Hz flows.
+//   4. In a separate terminal:
+//      hexa run anima-eeg/lsl_capture.hexa --capture \
+//          --source obci_eeg1 --seconds 60 \
+//          --output recordings/sessions/lsl_capture_<ts>.npy
+//   5. GUI visualization + anima-eeg analysis run concurrently — no port race.
+//
+// raw#10 HONEST C3 CAVEATS
+//   - LSL adds ~5-50 ms transport latency vs direct BrainFlow read (acceptable
+//     for offline analyze.hexa; NOT phenomenal-tier for closed-loop). For
+//     closed-loop control use anima-eeg/closed_loop.hexa with direct BrainFlow.
+//   - GUI Networking widget MUST be configured by the user (no auto-toggle from
+//     this module — the GUI is a separate Processing app, not under our
+//     control).
+//   - Sample dropout possible: pylsl uses lab_streaming_layer which is UDP
+//     multicast on localhost; under load (or if GUI buffer underflows) chunks
+//     can be lost. F_LSL_03 enforces ≥80% retention.
+//
+// SCOPE NEGATIVE (what this module is NOT)
+//   - NOT a BrainFlow replacement (no impedance, no board_id, no SRB2 reads).
+//   - NOT a closed-loop driver (use closed_loop.hexa for tight feedback).
+//   - NOT a GUI launcher / Networking auto-config (GUI is external).
+//
+//  @resolver-bypass(reason="darwin-native: LSL outlet is produced by the
+//                   OpenBCI_GUI Processing app running on the local laptop,
+//                   not on Hetzner / linux pods. Capture must run on the same
+//                   host as the GUI. Uses .venv-eeg/bin/python with pylsl
+//                   installed locally.")
+
+let SCHEMA              = "anima-eeg/lsl_capture/1"
+let HELPER_PATH         = "/tmp/anima_eeg_lsl_capture_helper.py"
+
+let DEFAULT_SECONDS         = 10
+let DEFAULT_CHANNEL_COUNT   = 16
+let DEFAULT_SAMPLE_RATE     = 125
+let DEFAULT_RESOLVE_TIMEOUT = 10
+let DEFAULT_CHUNK_TIMEOUT   = "1.0"
+let DEFAULT_VENV_PYTHON     = ".venv-eeg/bin/python"
+
+let SENTINEL_TAG = "__EEG_LSL_CAPTURE__"
+
+// ────────────────────────────────────────────────────────────────────
+// Section 0. Shell / argv helpers (mirror board_health_check.hexa)
+// ────────────────────────────────────────────────────────────────────
+
+fn _sh_quote(s: string) -> string {
+    let mut o = "'"
+    o = o + s.replace("'", "'\\''")
+    o = o + "'"
+    return o
+}
+
+fn _emit_trailer(reason_slug: string, reason_detail: string, fix: string) {
+    eprintln("reason: " + reason_slug + ": " + reason_detail)
+    eprintln("fix: " + fix)
+}
+
+fn _flags_only_argv() -> array {
+    let av = argv()
+    let mut start = 0
+    while start < len(av) {
+        let a = av[start]
+        let mut is_path = false
+        if a.ends_with(".hexa") { is_path = true }
+        if !is_path {
+            if a.ends_with("/exe") { is_path = true }
+        }
+        if is_path { start = start + 1 } else { break }
+    }
+    let mut out = []
+    let mut j = start
+    while j < len(av) {
+        out.push(av[j])
+        j = j + 1
+    }
+    return out
+}
+
+// ────────────────────────────────────────────────────────────────────
+// Section 1. Helper python emitter (raw#37 transient, /tmp only)
+//   Triple-quoted; uses print() with implicit newline (no \n escape pitfalls).
+// ────────────────────────────────────────────────────────────────────
+
+fn _write_helper() {
+    let py = "
+import sys
+import os
+import json
+import time
+import argparse
+from datetime import datetime, timezone
+
+SENTINEL = '__EEG_LSL_CAPTURE__'
+
+def out_kv(k, v):
+    print(str(k) + '=' + str(v), flush=True)
+
+def err_trailer(reason, detail, fix):
+    print('reason: ' + reason + ': ' + detail, file=sys.stderr, flush=True)
+    print('fix: ' + fix, file=sys.stderr, flush=True)
+
+def _import_pylsl():
+    try:
+        import pylsl
+        return pylsl
+    except ImportError as e:
+        err_trailer('pylsl-missing', 'pylsl not in venv: ' + str(e)[:120],
+                    '1) source .venv-eeg/bin/activate  2) pip install pylsl')
+        return None
+
+def _import_numpy():
+    try:
+        import numpy as np
+        return np
+    except ImportError as e:
+        err_trailer('numpy-missing', str(e)[:120],
+                    '1) source .venv-eeg/bin/activate  2) pip install numpy')
+        return None
+
+def run_capture(source, seconds, samples, output, channel_count,
+                sample_rate, resolve_timeout, chunk_timeout):
+    pylsl = _import_pylsl()
+    if pylsl is None:
+        print(SENTINEL + ' FAIL chunks=0 reason=pylsl-missing', flush=True)
+        return 4
+    np = _import_numpy()
+    if np is None:
+        print(SENTINEL + ' FAIL chunks=0 reason=numpy-missing', flush=True)
+        return 4
+
+    out_kv('pylsl_version', getattr(pylsl, '__version__', 'unknown'))
+    out_kv('source', source)
+    out_kv('expected_channel_count', channel_count)
+    out_kv('expected_sample_rate', sample_rate)
+    out_kv('resolve_timeout_s', resolve_timeout)
+
+    # F_LSL_01: resolve stream by name within timeout.
+    streams = pylsl.resolve_byprop('name', source, 1, resolve_timeout)
+    if not streams:
+        err_trailer('lsl-stream-not-found',
+                    'no LSL stream named ' + repr(source) + ' within '
+                    + str(resolve_timeout) + 's',
+                    '1) launch OpenBCI GUI  2) Networking widget -> protocol LSL  '
+                    '3) set name to ' + repr(source) + ' type EEG  '
+                    '4) START Networking + START STREAM  5) re-run')
+        out_kv('verdict', 'EEG_LSL_NOT_FOUND')
+        print(SENTINEL + ' FAIL chunks=0 reason=stream-not-found', flush=True)
+        return 4
+
+    info = streams[0]
+    inlet = pylsl.StreamInlet(info, max_buflen=360, recover=False)
+    full_info = inlet.info()
+    obs_ch = full_info.channel_count()
+    obs_sr = float(full_info.nominal_srate())
+    out_kv('observed_channel_count', obs_ch)
+    out_kv('observed_sample_rate_nominal', obs_sr)
+
+    # F_LSL_02: shape match.
+    if obs_ch != channel_count:
+        err_trailer('lsl-shape-channel-mismatch',
+                    'observed ' + str(obs_ch) + ' channels, expected '
+                    + str(channel_count),
+                    '1) GUI Networking data type = TimeSeriesRaw or TimeSeriesFilt  '
+                    '2) board = Cyton+Daisy (16ch)  '
+                    '3) re-run with --channel-count ' + str(obs_ch)
+                    + ' if intentional')
+        out_kv('verdict', 'EEG_LSL_SHAPE_MISMATCH')
+        print(SENTINEL + ' FAIL chunks=0 reason=channel-count', flush=True)
+        try: inlet.close_stream()
+        except Exception: pass
+        return 5
+
+    if abs(obs_sr - float(sample_rate)) > 1.0:
+        err_trailer('lsl-shape-rate-mismatch',
+                    'observed ' + str(obs_sr) + ' Hz, expected '
+                    + str(sample_rate),
+                    '1) Cyton+Daisy native rate = 125 Hz  '
+                    '2) verify GUI sample rate matches board')
+        out_kv('verdict', 'EEG_LSL_SHAPE_MISMATCH')
+        print(SENTINEL + ' FAIL chunks=0 reason=sample-rate', flush=True)
+        try: inlet.close_stream()
+        except Exception: pass
+        return 5
+
+    # Determine target sample budget.
+    if samples is not None and samples > 0:
+        target_samples = int(samples)
+        wall_budget = float(target_samples) / max(obs_sr, 1.0) + 5.0
+    else:
+        target_samples = int(round(obs_sr * float(seconds)))
+        wall_budget = float(seconds) + 5.0
+
+    out_kv('target_samples', target_samples)
+    out_kv('wall_budget_s', round(wall_budget, 3))
+
+    # Pull loop. pull_chunk returns (samples_list, timestamps_list).
+    collected = []  # list of (n_in_chunk, channel_count) np arrays
+    t0 = time.time()
+    pull_chunks = 0
+    n_collected = 0
+    try:
+        while n_collected < target_samples and (time.time() - t0) < wall_budget:
+            chunk, _ts = inlet.pull_chunk(timeout=chunk_timeout,
+                                           max_samples=int(obs_sr))
+            if chunk:
+                arr = np.asarray(chunk, dtype=np.float32)
+                if arr.ndim == 2 and arr.shape[1] == obs_ch:
+                    collected.append(arr)
+                    pull_chunks += 1
+                    n_collected += arr.shape[0]
+            else:
+                # idle wait — small sleep to avoid spin
+                time.sleep(0.01)
+    except KeyboardInterrupt:
+        out_kv('interrupted', 'true')
+    finally:
+        try: inlet.close_stream()
+        except Exception: pass
+
+    duration_observed = time.time() - t0
+    out_kv('duration_observed_s', round(duration_observed, 3))
+    out_kv('pull_chunks', pull_chunks)
+    out_kv('n_samples_observed', n_collected)
+
+    if n_collected == 0:
+        err_trailer('lsl-no-samples',
+                    'inlet returned 0 samples in ' + str(round(duration_observed, 1)) + 's',
+                    '1) GUI START STREAM pressed?  '
+                    '2) Networking widget LSL stream RUNNING (not STOPPED)?  '
+                    '3) try --chunk-timeout 2.0')
+        out_kv('verdict', 'EEG_LSL_DROPOUT')
+        print(SENTINEL + ' FAIL chunks=0 reason=no-samples', flush=True)
+        return 6
+
+    retention_ratio = float(n_collected) / float(target_samples) if target_samples > 0 else 0.0
+    out_kv('retention_ratio', round(retention_ratio, 4))
+
+    # F_LSL_03: retention >= 0.80.
+    if retention_ratio < 0.80:
+        err_trailer('lsl-retention-low',
+                    'retention ' + str(round(retention_ratio, 3))
+                    + ' < 0.80 (got ' + str(n_collected) + ' / target '
+                    + str(target_samples) + ')',
+                    '1) close other apps using LSL  2) increase --chunk-timeout  '
+                    '3) verify GUI not paused  4) check CPU saturation')
+        out_kv('verdict', 'EEG_LSL_DROPOUT')
+        # Still write what we have so user can inspect — but exit non-zero.
+        partial = True
+    else:
+        partial = False
+
+    # Stack and transpose to (channels, samples).
+    data_cs = np.concatenate(collected, axis=0).T  # (channel_count, n_samples)
+    out_kv('output_shape', str(data_cs.shape))
+
+    # Ensure parent dir.
+    out_path = output
+    parent = os.path.dirname(out_path)
+    if parent and not os.path.isdir(parent):
+        os.makedirs(parent, exist_ok=True)
+
+    np.save(out_path, data_cs)
+    out_kv('output_path', out_path)
+
+    sample_rate_observed = float(n_collected) / max(duration_observed, 1e-6)
+
+    meta = {
+        'schema': 'anima-eeg/lsl_capture/1',
+        'stream_name': source,
+        'channel_count': int(obs_ch),
+        'sample_rate_nominal': float(obs_sr),
+        'sample_rate_observed': round(sample_rate_observed, 3),
+        'n_samples': int(n_collected),
+        'duration_observed_s': round(duration_observed, 3),
+        'pull_chunks': int(pull_chunks),
+        'retention_ratio': round(retention_ratio, 4),
+        'pylsl_version': getattr(pylsl, '__version__', 'unknown'),
+        'captured_utc': datetime.now(timezone.utc).isoformat(),
+        'raw10_honest': ('LSL inlet capture; latency ~5-50ms vs direct BrainFlow; '
+                         'sample dropout possible under load. NOT phenomenal-tier '
+                         'for closed-loop control.'),
+    }
+    meta_path = out_path + '.meta.json'
+    with open(meta_path, 'w') as f:
+        json.dump(meta, f, indent=2, sort_keys=True)
+    out_kv('meta_path', meta_path)
+
+    if partial:
+        print(SENTINEL + ' FAIL chunks=' + str(pull_chunks) + ' reason=retention-low', flush=True)
+        return 6
+    out_kv('verdict', 'EEG_LSL_CAPTURE_OK')
+    print(SENTINEL + ' PASS chunks=' + str(pull_chunks), flush=True)
+    return 0
+
+def run_selftest(seconds):
+    pylsl = _import_pylsl()
+    if pylsl is None:
+        print(SENTINEL + ' FAIL chunks=0 reason=pylsl-missing', flush=True)
+        return 4
+    np = _import_numpy()
+    if np is None:
+        print(SENTINEL + ' FAIL chunks=0 reason=numpy-missing', flush=True)
+        return 4
+
+    # Synthetic round-trip: create outlet, immediately resolve+pull as inlet.
+    name = 'anima_lsl_capture_selftest_' + str(int(time.time()))
+    sr = 125.0
+    n_ch = 16
+    target = int(sr * seconds)
+    info = pylsl.StreamInfo(name, 'EEG', n_ch, sr, pylsl.cf_float32,
+                            'anima_lsl_capture_selftest_uid')
+    outlet = pylsl.StreamOutlet(info, chunk_size=int(sr), max_buffered=10)
+
+    streams = pylsl.resolve_byprop('name', name, 1, 5.0)
+    if not streams:
+        err_trailer('selftest-resolve-fail',
+                    'self outlet did not resolve within 5s',
+                    '1) restart pylsl  2) check loopback multicast permission')
+        print(SENTINEL + ' FAIL chunks=0 reason=selftest-resolve', flush=True)
+        return 4
+
+    inlet = pylsl.StreamInlet(streams[0], max_buflen=60, recover=False)
+
+    # Push synthetic chunks at ~125Hz cadence.
+    rng = np.random.default_rng(42)
+    pushed = 0
+    pull_chunks = 0
+    n_collected = 0
+    chunk_size = 25  # 0.2s worth at 125Hz
+    t_end = time.time() + seconds + 2.0
+    collected = []
+    while pushed < target and time.time() < t_end:
+        block = rng.standard_normal((chunk_size, n_ch)).astype(np.float32) * 10.0
+        outlet.push_chunk(block.tolist())
+        pushed += chunk_size
+        time.sleep(chunk_size / sr)
+        chunk, _ = inlet.pull_chunk(timeout=0.2, max_samples=chunk_size * 4)
+        if chunk:
+            arr = np.asarray(chunk, dtype=np.float32)
+            if arr.ndim == 2 and arr.shape[1] == n_ch:
+                collected.append(arr)
+                pull_chunks += 1
+                n_collected += arr.shape[0]
+    # Final drain.
+    drain_deadline = time.time() + 1.0
+    while time.time() < drain_deadline:
+        chunk, _ = inlet.pull_chunk(timeout=0.2, max_samples=chunk_size * 4)
+        if chunk:
+            arr = np.asarray(chunk, dtype=np.float32)
+            if arr.ndim == 2 and arr.shape[1] == n_ch:
+                collected.append(arr)
+                pull_chunks += 1
+                n_collected += arr.shape[0]
+        else:
+            break
+
+    try: inlet.close_stream()
+    except Exception: pass
+    del outlet
+
+    out_kv('selftest_pushed', pushed)
+    out_kv('selftest_pull_chunks', pull_chunks)
+    out_kv('selftest_samples', n_collected)
+    retention = n_collected / max(pushed, 1)
+    out_kv('selftest_retention', round(retention, 3))
+
+    if pull_chunks == 0 or n_collected == 0:
+        out_kv('verdict', 'EEG_LSL_SELFTEST_FAIL')
+        print(SENTINEL + ' FAIL chunks=' + str(pull_chunks) + ' reason=no-samples', flush=True)
+        return 6
+    if retention < 0.50:
+        # Selftest threshold is looser than F_LSL_03 (no real GUI scheduler).
+        out_kv('verdict', 'EEG_LSL_SELFTEST_DEGRADED')
+        print(SENTINEL + ' FAIL chunks=' + str(pull_chunks)
+              + ' reason=selftest-retention ' + str(round(retention, 3)), flush=True)
+        return 6
+    out_kv('verdict', 'EEG_LSL_SELFTEST_OK')
+    print(SENTINEL + ' PASS chunks=' + str(pull_chunks), flush=True)
+    return 0
+
+if __name__ == '__main__':
+    p = argparse.ArgumentParser()
+    sub = p.add_subparsers(dest='mode', required=True)
+
+    pc = sub.add_parser('capture')
+    pc.add_argument('--source', required=True)
+    pc.add_argument('--seconds', type=int, default=10)
+    pc.add_argument('--samples', type=int, default=0)
+    pc.add_argument('--output', required=True)
+    pc.add_argument('--channel-count', dest='channel_count', type=int, default=16)
+    pc.add_argument('--sample-rate', dest='sample_rate', type=int, default=125)
+    pc.add_argument('--resolve-timeout', dest='resolve_timeout', type=int, default=10)
+    pc.add_argument('--chunk-timeout', dest='chunk_timeout', type=float, default=1.0)
+
+    ps = sub.add_parser('selftest')
+    ps.add_argument('--seconds', type=int, default=2)
+
+    args = p.parse_args()
+    if args.mode == 'capture':
+        samples = args.samples if args.samples > 0 else None
+        rc = run_capture(args.source, args.seconds, samples, args.output,
+                         args.channel_count, args.sample_rate,
+                         args.resolve_timeout, args.chunk_timeout)
+    else:
+        rc = run_selftest(args.seconds)
+    sys.exit(rc)
+"
+    write_file(HELPER_PATH, py)
+}
+
+// ────────────────────────────────────────────────────────────────────
+// Section 2. CLI — main()
+// ────────────────────────────────────────────────────────────────────
+
+fn _print_usage() {
+    eprintln("usage: hexa run anima-eeg/lsl_capture.hexa --selftest [--seconds <n>]")
+    eprintln("       hexa run anima-eeg/lsl_capture.hexa --capture --source <name> \\")
+    eprintln("              --output <path.npy> [--seconds <n> | --samples <n>]")
+    eprintln("              [--channel-count 16] [--sample-rate 125]")
+    eprintln("              [--resolve-timeout 10] [--chunk-timeout 1.0]")
+    eprintln("flags:")
+    eprintln("  --selftest           synthetic LSL outlet+inlet round-trip (no GUI)")
+    eprintln("  --capture            real LSL inlet capture from running outlet")
+    eprintln("  --source <name>      LSL stream name (e.g. obci_eeg1)")
+    eprintln("  --seconds <n>        capture window seconds (default 10)")
+    eprintln("  --samples <n>        OR exact sample count (overrides --seconds)")
+    eprintln("  --output <path>      .npy output path (auto-creates parent dir)")
+    eprintln("  --channel-count <n>  expected channels (default 16, Cyton+Daisy)")
+    eprintln("  --sample-rate <Hz>   expected nominal rate (default 125)")
+    eprintln("  --resolve-timeout    stream resolve timeout seconds (default 10)")
+    eprintln("  --chunk-timeout      pull_chunk timeout seconds (default 1.0)")
+    eprintln("  --help               this message")
+}
+
+fn main() {
+    let av = _flags_only_argv()
+    let mut selftest = false
+    let mut capture_mode = false
+    let mut want_help = false
+    let mut source = ""
+    let mut output = ""
+    let mut seconds = DEFAULT_SECONDS
+    let mut samples = 0
+    let mut channel_count = DEFAULT_CHANNEL_COUNT
+    let mut sample_rate = DEFAULT_SAMPLE_RATE
+    let mut resolve_timeout = DEFAULT_RESOLVE_TIMEOUT
+    let mut chunk_timeout = DEFAULT_CHUNK_TIMEOUT
+
+    let mut i = 0
+    while i < len(av) {
+        let a = av[i]
+        if a == "--selftest" { selftest = true; i = i + 1; continue }
+        if a == "--capture"  { capture_mode = true; i = i + 1; continue }
+        if a == "--help" || a == "-h" { want_help = true; i = i + 1; continue }
+        if a == "--source" {
+            if (i + 1) >= len(av) {
+                _emit_trailer("missing-arg-value", "--source requires stream name",
+                              "1) re-run with --source obci_eeg1")
+                exit(2)
+            }
+            source = av[i + 1]; i = i + 2; continue
+        }
+        if a == "--output" {
+            if (i + 1) >= len(av) {
+                _emit_trailer("missing-arg-value", "--output requires path",
+                              "1) re-run with --output recordings/sessions/x.npy")
+                exit(2)
+            }
+            output = av[i + 1]; i = i + 2; continue
+        }
+        if a == "--seconds" {
+            if (i + 1) >= len(av) {
+                _emit_trailer("missing-arg-value", "--seconds requires int",
+                              "1) re-run with --seconds 10")
+                exit(2)
+            }
+            seconds = to_int(av[i + 1]); i = i + 2; continue
+        }
+        if a == "--samples" {
+            if (i + 1) >= len(av) {
+                _emit_trailer("missing-arg-value", "--samples requires int",
+                              "1) re-run with --samples 1250")
+                exit(2)
+            }
+            samples = to_int(av[i + 1]); i = i + 2; continue
+        }
+        if a == "--channel-count" {
+            if (i + 1) >= len(av) {
+                _emit_trailer("missing-arg-value", "--channel-count requires int",
+                              "1) re-run with --channel-count 16")
+                exit(2)
+            }
+            channel_count = to_int(av[i + 1]); i = i + 2; continue
+        }
+        if a == "--sample-rate" {
+            if (i + 1) >= len(av) {
+                _emit_trailer("missing-arg-value", "--sample-rate requires int",
+                              "1) re-run with --sample-rate 125")
+                exit(2)
+            }
+            sample_rate = to_int(av[i + 1]); i = i + 2; continue
+        }
+        if a == "--resolve-timeout" {
+            if (i + 1) >= len(av) {
+                _emit_trailer("missing-arg-value", "--resolve-timeout requires int",
+                              "1) re-run with --resolve-timeout 10")
+                exit(2)
+            }
+            resolve_timeout = to_int(av[i + 1]); i = i + 2; continue
+        }
+        if a == "--chunk-timeout" {
+            if (i + 1) >= len(av) {
+                _emit_trailer("missing-arg-value", "--chunk-timeout requires float",
+                              "1) re-run with --chunk-timeout 1.0")
+                exit(2)
+            }
+            chunk_timeout = av[i + 1]; i = i + 2; continue
+        }
+        _emit_trailer("unknown-arg", "unrecognized argument: " + a,
+                      "1) re-run with --help")
+        _print_usage()
+        exit(2)
+    }
+
+    if want_help { _print_usage(); exit(0) }
+    if !selftest && !capture_mode {
+        eprintln("ABORT: must pass --selftest or --capture")
+        _print_usage()
+        exit(2)
+    }
+    if capture_mode {
+        if source == "" {
+            _emit_trailer("missing-required-arg", "--source is required for --capture",
+                          "1) re-run with --source obci_eeg1")
+            exit(2)
+        }
+        if output == "" {
+            _emit_trailer("missing-required-arg", "--output is required for --capture",
+                          "1) re-run with --output recordings/sessions/<tag>.npy")
+            exit(2)
+        }
+    }
+
+    _write_helper()
+
+    println("── lsl_capture (raw#9 hexa-only, raw#71 falsifier-bound) ──")
+    println("schema: " + SCHEMA)
+    if selftest {
+        println("mode: selftest (synthetic outlet+inlet round-trip)")
+        println("seconds: " + str(seconds))
+    } else {
+        println("mode: capture (real LSL inlet)")
+        println("source: " + source)
+        if samples > 0 {
+            println("samples: " + str(samples))
+        } else {
+            println("seconds: " + str(seconds))
+        }
+        println("output: " + output)
+        println("channel_count: " + str(channel_count))
+        println("sample_rate: " + str(sample_rate))
+        println("resolve_timeout: " + str(resolve_timeout) + "s")
+        println("chunk_timeout: " + chunk_timeout + "s")
+    }
+
+    let venv_py = DEFAULT_VENV_PYTHON
+    let mut cmd = venv_py + " " + HELPER_PATH
+    if selftest {
+        cmd = cmd + " selftest --seconds " + str(seconds)
+    } else {
+        cmd = cmd + " capture"
+        cmd = cmd + " --source " + _sh_quote(source)
+        cmd = cmd + " --output " + _sh_quote(output)
+        if samples > 0 {
+            cmd = cmd + " --samples " + str(samples)
+        } else {
+            cmd = cmd + " --seconds " + str(seconds)
+        }
+        cmd = cmd + " --channel-count " + str(channel_count)
+        cmd = cmd + " --sample-rate " + str(sample_rate)
+        cmd = cmd + " --resolve-timeout " + str(resolve_timeout)
+        cmd = cmd + " --chunk-timeout " + chunk_timeout
+    }
+
+    eprintln("[GATE] dispatch=local cmd=" + cmd)
+
+    let r = exec_with_status(cmd)
+    let rc = to_int(r[1])
+    print(to_string(r[0]))
+
+    println("──")
+    println("schema: " + SCHEMA)
+    println("exit_code: " + str(rc))
+    if rc == 0 {
+        if selftest {
+            println("verdict: EEG_LSL_SELFTEST_OK ✓")
+        } else {
+            println("verdict: EEG_LSL_CAPTURE_OK ✓")
+        }
+        exit(0)
+    }
+    if rc == 4 {
+        println("verdict: EEG_LSL_NOT_FOUND ✗ (stream not resolvable)")
+        exit(4)
+    }
+    if rc == 5 {
+        println("verdict: EEG_LSL_SHAPE_MISMATCH ✗ (channel count or rate)")
+        exit(5)
+    }
+    if rc == 6 {
+        println("verdict: EEG_LSL_DROPOUT ✗ (retention < 0.80)")
+        exit(6)
+    }
+    println("verdict: UNKNOWN exit_code=" + str(rc))
+    exit(rc)
+}

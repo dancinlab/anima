@@ -82,6 +82,76 @@ def err_trailer(reason, detail, fix):
     print('reason: ' + reason + ': ' + detail, file=sys.stderr, flush=True)
     print('fix: ' + fix, file=sys.stderr, flush=True)
 
+def is_leaked_session_error(msg):
+    # raw#10 honest C3: BrainFlow exit codes audited against
+    #   .venv-eeg/lib/python3.12/site-packages/brainflow/exit_codes.py (2026-05-03)
+    # Recoverable codes (release_all_sessions + retry):
+    #     1 PORT_ALREADY_OPEN, 7 BOARD_NOT_READY, 8 STREAM_ALREADY_RUN,
+    #    15 BOARD_NOT_CREATED, 16 ANOTHER_BOARD_IS_CREATED
+    # NOT recoverable: 14 UNSUPPORTED_BOARD, 13 INVALID_ARGUMENTS, 17 GENERAL.
+    if not isinstance(msg, str):
+        msg = str(msg)
+    LEAKED_NAMES = (
+        'PORT_ALREADY_OPEN', 'BOARD_NOT_READY', 'STREAM_ALREADY_RUN',
+        'BOARD_NOT_CREATED', 'ANOTHER_BOARD_IS_CREATED',
+    )
+    for name in LEAKED_NAMES:
+        if name in msg:
+            return True
+    LEAKED_CODES = (':1 ', ':7 ', ':8 ', ':15 ', ':16 ',
+                    ' code 1 ', ' code 7 ', ' code 8 ', ' code 15 ', ' code 16 ')
+    for tok in LEAKED_CODES:
+        if tok in msg:
+            return True
+    return False
+
+def _detect_port_lock(port):
+    # raw#10 honest C3: macOS lsof without sudo cannot see ALL pids — false
+    # negative possible when foreign user owns the holding process. FALSE
+    # POSITIVE possible: any process holding the port is reported, not just
+    # OpenBCI GUI. Returns (locked, pid, pname).
+    if not port:
+        return False, 0, ''
+    if not os.path.exists(port):
+        return False, 0, ''
+    import subprocess as _sp
+    try:
+        r = _sp.run(['lsof', '-F', 'p', port], capture_output=True, text=True, timeout=3)
+        for ln in (r.stdout or '').splitlines():
+            if ln.startswith('p'):
+                try:
+                    pid = int(ln[1:])
+                except Exception:
+                    continue
+                pname = '?'
+                try:
+                    pr = _sp.run(['ps', '-p', str(pid), '-o', 'comm='],
+                                 capture_output=True, text=True, timeout=2)
+                    pname = (pr.stdout or '').strip() or '?'
+                except Exception:
+                    pass
+                return True, pid, pname
+    except Exception:
+        pass
+    return False, 0, ''
+
+def _emit_port_lock_msg(port, pid, pname):
+    pl = (pname or '').lower()
+    guess = ''
+    if 'java' in pl or 'openbci' in pl or 'processing' in pl:
+        guess = ' (OpenBCI GUI 추정)'
+    print('[port-lock] ' + str(port) + ' 점유 중:', file=sys.stderr, flush=True)
+    print('  PID ' + str(pid) + ': ' + (pname or '?') + guess, file=sys.stderr, flush=True)
+    print('', file=sys.stderr, flush=True)
+    print('해결 방법:', file=sys.stderr, flush=True)
+    print('  (a) OpenBCI GUI 종료 후 재시도', file=sys.stderr, flush=True)
+    print('  (b) GUI 의 Networking widget 으로 LSL outlet 활성화 + anima-eeg/lsl_capture.hexa 사용', file=sys.stderr, flush=True)
+    print('  (c) --force-port 로 우회 시도 (위험)', file=sys.stderr, flush=True)
+    print('reason: port-lock-detected: PID=' + str(pid) + ' name=' + (pname or '?'),
+          file=sys.stderr, flush=True)
+    print('fix: 1) OpenBCI GUI Stop & Quit  2) 또는 --force-port 시도',
+          file=sys.stderr, flush=True)
+
 CHAN_CHARS = ['1','2','3','4','5','6','7','8','Q','W','E','R','T','Y','U','I']
 
 WIRE_META = [
@@ -133,13 +203,31 @@ def measure_one_channel(board, ch_idx, eeg_chans, fs, seconds, check_n_pin):
                     '1) check radio link  2) verify board firmware >= v3')
         return -1.0, 'GRAY'
 
+    # raw#71 falsifier-bound: BOARD_NOT_CREATED_ERROR:15 has been observed at
+    # start_stream (post-prepare) when a stale board singleton leaked from a
+    # prior helper. Retry once on leaked-session codes; non-leak errors abort.
+    _start_err = ''
     try:
         board.start_stream()
+        _start_err = ''
     except Exception as e:
-        err_trailer('start-stream-failed', str(e)[:120], '1) toggle Cyton OFF/PC')
-        try: board.config_board(cmd_off)
-        except: pass
-        return -1.0, 'GRAY'
+        _start_err = str(e)
+    if _start_err:
+        if is_leaked_session_error(_start_err):
+            print('[recovery] start_stream leaked-session error — retry: ' + _start_err[:120],
+                  file=sys.stderr, flush=True)
+            try: board.stop_stream()
+            except Exception: pass
+            try:
+                board.start_stream()
+                _start_err = ''
+            except Exception as e2:
+                _start_err = str(e2)
+        if _start_err:
+            err_trailer('start-stream-failed', _start_err[:120], '1) toggle Cyton OFF/PC')
+            try: board.config_board(cmd_off)
+            except: pass
+            return -1.0, 'GRAY'
 
     time.sleep(seconds)
 
@@ -183,7 +271,7 @@ def measure_one_channel(board, ch_idx, eeg_chans, fs, seconds, check_n_pin):
     z_kohm = z_ohm / 1000.0
     return z_kohm, 'OK_MEASURED'
 
-def main_check(board_id, port, seconds, green_kohm, yellow_kohm, check_n_pin, watch_mode):
+def main_check(board_id, port, seconds, green_kohm, yellow_kohm, check_n_pin, watch_mode, force_port=False):
     try:
         import numpy as np
         from brainflow.board_shim import BoardShim, BrainFlowInputParams, BoardIds
@@ -198,12 +286,63 @@ def main_check(board_id, port, seconds, green_kohm, yellow_kohm, check_n_pin, wa
     if port:
         params.serial_port = port
 
+    # Port-lock preflight: graceful fail when another process (most often
+    # OpenBCI GUI) holds the dongle. macOS does not allow shared serial
+    # access; without this check BrainFlow returns cryptic codes 1 / 7.
+    if port and not force_port:
+        _locked, _pid, _pname = _detect_port_lock(port)
+        if _locked:
+            _emit_port_lock_msg(port, _pid, _pname)
+            out_kv('verdict', 'PORT_LOCKED')
+            return 8
+
+    # raw#65 idempotent + raw#71 falsifier-bound:
+    # defensive preflight to clear any leaked streaming session from a prior
+    # cycle (e.g. crashed parent process left native lib holding the serial
+    # port). release_all_sessions is a BoardShim classmethod that calls the
+    # native release_all_sessions; if no session exists it returns STATUS_OK
+    # silently → safe pre-call. retry-once on leaked-session errors (codes
+    # 1/7/8/15/16 — see is_leaked_session_error) to recover without forcing
+    # user toggle.
     try:
-        board = BoardShim(board_id, params)
-        board.prepare_session()
-    except Exception as e:
-        err_trailer('board-not-ready', str(e)[:160],
-                    '1) toggle Cyton OFF wait 5s then PC  2) verify Daisy seated')
+        BoardShim.release_all_sessions()
+    except Exception:
+        # silently pass — no session to release is the expected steady state
+        pass
+
+    board = None
+    prepare_ok = False
+    last_err = ''
+    for attempt in (1, 2):
+        try:
+            board = BoardShim(board_id, params)
+            board.prepare_session()
+            prepare_ok = True
+            break
+        except Exception as e:
+            last_err = str(e)[:160]
+            if attempt == 1 and is_leaked_session_error(last_err):
+                print('[recovery] leaked-session error 감지 — '
+                      + last_err[:120],
+                      file=sys.stderr, flush=True)
+                print('[recovery] release_all_sessions() 호출 후 재시도...',
+                      file=sys.stderr, flush=True)
+                try:
+                    BoardShim.release_all_sessions()
+                except Exception:
+                    pass
+                time.sleep(2)
+                continue
+            # non-recoverable error or 2nd attempt failed → escape loop
+            break
+
+    if not prepare_ok:
+        err_trailer('board-not-ready', last_err,
+                    '1) Cyton 스위치 OFF (5초 대기) → PC 모드 → 재실행  '
+                    '2) Daisy 모듈 정착 확인  3) Dongle 빨간 LED 확인')
+        print('[recovery] 재시도 실패 — 사용자 액션 필요: '
+              'Cyton OFF (5s) → PC → 재실행',
+              file=sys.stderr, flush=True)
         out_kv('verdict', 'ABORT')
         return 4
 
@@ -322,15 +461,19 @@ if __name__ == '__main__':
     p.add_argument('--green-kohm', type=int, default=750)
     p.add_argument('--yellow-kohm', type=int, default=3000)
     p.add_argument('--check-n-pin', action='store_true')
+    p.add_argument('--force-port', action='store_true',
+                   help='bypass port-lock detection (다른 program 점유 시 강제 시도)')
     args = p.parse_args()
     if args.mode == 'selftest':
         rc = run_selftest(args.green_kohm, args.yellow_kohm)
     elif args.mode == 'watch':
         rc = main_check(args.board_id, args.port, args.seconds,
-                        args.green_kohm, args.yellow_kohm, args.check_n_pin, True)
+                        args.green_kohm, args.yellow_kohm, args.check_n_pin, True,
+                        force_port=args.force_port)
     else:
         rc = main_check(args.board_id, args.port, args.seconds,
-                        args.green_kohm, args.yellow_kohm, args.check_n_pin, False)
+                        args.green_kohm, args.yellow_kohm, args.check_n_pin, False,
+                        force_port=args.force_port)
     sys.exit(rc)
 "
     write_file(HELPER_PATH, py)
@@ -556,7 +699,7 @@ fn _emit_ledger(body: string, ts: string) {
 
 fn _do_one_sweep(board_id: int, port: string, seconds: int,
                  green_kohm: int, yellow_kohm: int,
-                 check_n_pin: bool, selftest: bool, ts: string) -> int {
+                 check_n_pin: bool, selftest: bool, ts: string, force_port: bool) -> int {
     let mode_arg = if selftest { "selftest" } else { "check" }
     let venv_py = DEFAULT_VENV_PYTHON
     let mut cmd = venv_py + " " + HELPER_PATH + " " + mode_arg
@@ -566,6 +709,7 @@ fn _do_one_sweep(board_id: int, port: string, seconds: int,
     cmd = cmd + " --yellow-kohm " + str(yellow_kohm)
     if check_n_pin { cmd = cmd + " --check-n-pin" }
     if port != "" { cmd = cmd + " --port " + _sh_quote(port) }
+    if force_port { cmd = cmd + " --force-port" }
     cmd = cmd + " > /tmp/anima_eeg_impedance_out.log 2> /tmp/anima_eeg_impedance_err.log"
 
     // raw#91 C3 + audit 2026-04-28: exec() returns string; caller does exit(rc) which
@@ -599,6 +743,7 @@ fn _print_usage() {
     eprintln("  --green-kohm <n>          GREEN upper bound (default 750)")
     eprintln("  --yellow-kohm <n>         YELLOW upper bound (default 3000)")
     eprintln("  --check-n-pin             include N-pin probe (paranoid; doubles time)")
+    eprintln("  --force-port              bypass port-lock detection (다른 program 점유 시 강제 시도)")
     eprintln("  --help                    this message")
 }
 
@@ -614,6 +759,7 @@ fn main() {
     let mut green_kohm = DEFAULT_GREEN_KOHM
     let mut yellow_kohm = DEFAULT_YELLOW_KOHM
     let mut check_n_pin = false
+    let mut force_port = false
 
     let mut i = 0
     while i < len(av) {
@@ -622,6 +768,7 @@ fn main() {
         if a == "--check"      { check_mode = true; i = i + 1; continue }
         if a == "--watch"      { watch_mode = true; i = i + 1; continue }
         if a == "--check-n-pin"{ check_n_pin = true; i = i + 1; continue }
+        if a == "--force-port" { force_port = true; i = i + 1; continue }
         if a == "--help" || a == "-h" { want_help = true; i = i + 1; continue }
         if a == "--port" {
             if (i + 1) >= len(av) {
@@ -700,12 +847,12 @@ fn main() {
             tick = tick + 1
             println("")
             println("─── sweep #" + str(tick) + " ───")
-            let _rc = _do_one_sweep(board_id, port, seconds, green_kohm, yellow_kohm, check_n_pin, false, now_iso())
+            let _rc = _do_one_sweep(board_id, port, seconds, green_kohm, yellow_kohm, check_n_pin, false, now_iso(), force_port)
             println("    (Ctrl-C 로 종료)")
             sleep(1)
         }
     } else {
-        let rc = _do_one_sweep(board_id, port, seconds, green_kohm, yellow_kohm, check_n_pin, selftest, ts)
+        let rc = _do_one_sweep(board_id, port, seconds, green_kohm, yellow_kohm, check_n_pin, selftest, ts, force_port)
         exit(rc)
     }
 }

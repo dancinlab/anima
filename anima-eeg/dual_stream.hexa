@@ -31,6 +31,11 @@
 //
 // USAGE
 //   hexa run anima-eeg/dual_stream.hexa --selftest
+//
+//  @resolver-pure(reason="pure-hexa numerical alignment + Pearson correlation,
+//                  no BrainFlow / no Anima Phi runtime. Single-pass, read-only,
+//                  deterministic dual-LCG. Docker route adds zero value and
+//                  triggers fork-storm on metadata commands.")
 
 let SCHEMA = "anima-eeg/dual_stream/1"
 

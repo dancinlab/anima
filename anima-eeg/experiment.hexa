@@ -56,6 +56,13 @@
 //   hexa run anima-eeg/experiment.hexa --run --protocol nback_2back --duration 60
 //   hexa run anima-eeg/experiment.hexa --run-with-eeg --protocol nback_2back \
 //        --duration 120 --output recordings/sessions/nback2_<ts>.npy
+//
+//  @resolver-bypass(reason="darwin-native: --run-with-eeg paradigm wrapper
+//                   delegates to collect.hexa BrainFlow capture using
+//                   .venv-eeg/bin/python and host USB Dongle (/dev/cu.usbserial-*).
+//                   Hetzner / linux pods do not expose host USB nor local venv.
+//                   Selftest path is pure-hexa but kept on the same route to
+//                   avoid docker fork-storm on metadata commands (--help/--selftest).")
 
 let SCHEMA              = "anima-eeg/experiment/1"
 let HELPER_PATH         = "/tmp/anima_eeg_experiment_helper.hexa_tmp"

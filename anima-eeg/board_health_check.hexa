@@ -82,7 +82,150 @@ def err_trailer(reason, detail, fix):
     print('reason: ' + reason + ': ' + detail, file=sys.stderr, flush=True)
     print('fix: ' + fix, file=sys.stderr, flush=True)
 
-def run_check(board_id, port, seconds):
+def _safe_release_all(BoardShim):
+    # raw#65 idempotent: silently drop any stale BrainFlow sessions left by a
+    # prior helper that crashed before reaching its finally block (or whose
+    # FTDI / dongle USB-serial state lingered across processes on macOS).
+    # No-op when no session exists.
+    try:
+        BoardShim.release_all_sessions()
+    except Exception:
+        pass
+
+def _detect_port_lock(port):
+    # raw#10 honest C3: macOS lsof without sudo cannot see ALL pids — false
+    # negative possible when foreign user owns the holding process. Also
+    # FALSE POSITIVE: any process holding the port is reported, not just
+    # OpenBCI GUI; we only *guess* at the offender from process name.
+    # Returns (locked: bool, pid: int, pname: str).
+    if not port:
+        return False, 0, ''
+    if not os.path.exists(port):
+        return False, 0, ''
+    import subprocess as _sp
+    try:
+        r = _sp.run(['lsof', '-F', 'p', port], capture_output=True, text=True, timeout=3)
+        for ln in (r.stdout or '').splitlines():
+            if ln.startswith('p'):
+                try:
+                    pid = int(ln[1:])
+                except Exception:
+                    continue
+                pname = '?'
+                try:
+                    pr = _sp.run(['ps', '-p', str(pid), '-o', 'comm='],
+                                 capture_output=True, text=True, timeout=2)
+                    pname = (pr.stdout or '').strip() or '?'
+                except Exception:
+                    pass
+                return True, pid, pname
+    except Exception:
+        pass
+    return False, 0, ''
+
+def _emit_port_lock_msg(port, pid, pname):
+    pl = (pname or '').lower()
+    guess = ''
+    if 'java' in pl or 'openbci' in pl or 'processing' in pl:
+        guess = ' (OpenBCI GUI 추정)'
+    print('[port-lock] ' + str(port) + ' 점유 중:', file=sys.stderr, flush=True)
+    print('  PID ' + str(pid) + ': ' + (pname or '?') + guess, file=sys.stderr, flush=True)
+    print('', file=sys.stderr, flush=True)
+    print('해결 방법:', file=sys.stderr, flush=True)
+    print('  (a) OpenBCI GUI 종료 후 재시도', file=sys.stderr, flush=True)
+    print('  (b) GUI 의 Networking widget 으로 LSL outlet 활성화 + anima-eeg/lsl_capture.hexa 사용', file=sys.stderr, flush=True)
+    print('  (c) --force-port 로 우회 시도 (위험)', file=sys.stderr, flush=True)
+    print('reason: port-lock-detected: PID=' + str(pid) + ' name=' + (pname or '?'),
+          file=sys.stderr, flush=True)
+    print('fix: 1) OpenBCI GUI Stop & Quit  2) 또는 --force-port 시도',
+          file=sys.stderr, flush=True)
+
+def is_leaked_session_error(msg):
+    # raw#10 honest C3: BrainFlow exit codes audited against
+    #   .venv-eeg/lib/python3.12/site-packages/brainflow/exit_codes.py (2026-05-03)
+    # Recoverable-via-release_all_sessions+retry codes:
+    #     1  PORT_ALREADY_OPEN_ERROR        — port still held by prior session
+    #     7  BOARD_NOT_READY_ERROR          — FTDI handle not yet released
+    #     8  STREAM_ALREADY_RUN_ERROR       — prior streaming session leaked
+    #    15  BOARD_NOT_CREATED_ERROR        — board obj cleared but session ref stale
+    #    16  ANOTHER_BOARD_IS_CREATED_ERROR — prior board singleton lingering
+    # NON-recoverable (genuine config / hardware errors, do NOT retry):
+    #    14  UNSUPPORTED_BOARD_ERROR        — wrong board id
+    #    13  INVALID_ARGUMENTS_ERROR        — caller bug
+    #    17  GENERAL_ERROR                  — too ambiguous, do not auto-retry
+    if not isinstance(msg, str):
+        msg = str(msg)
+    LEAKED_NAMES = (
+        'PORT_ALREADY_OPEN',
+        'BOARD_NOT_READY',
+        'STREAM_ALREADY_RUN',
+        'BOARD_NOT_CREATED',
+        'ANOTHER_BOARD_IS_CREATED',
+    )
+    for name in LEAKED_NAMES:
+        if name in msg:
+            return True
+    LEAKED_CODES = (':1 ', ':7 ', ':8 ', ':15 ', ':16 ',
+                    ' code 1 ', ' code 7 ', ' code 8 ', ' code 15 ', ' code 16 ')
+    for tok in LEAKED_CODES:
+        if tok in msg:
+            return True
+    return False
+
+def _safe_prepare_session(BoardShim, board_id, params, force_port=False):
+    # Preflight cleanup, then prepare. On leaked-session errors (codes 1/7/8/15/16)
+    # retry once after a hard release_all_sessions + brief settle. raw#65 idempotent
+    # — safe when no prior leak exists. raw#10 honest — re-raises non-leak errors
+    # immediately and re-raises the SECOND failure so callers see the genuine
+    # hardware error.
+    #
+    # Port-lock preflight: BEFORE BrainFlow open, check if another process
+    # holds the serial port (most often OpenBCI GUI). On macOS the dongle
+    # cannot be shared; cryptic 'BOARD_NOT_READY:7' or 'PORT_ALREADY_OPEN:1'
+    # results otherwise. Graceful fail unless --force-port set.
+    port = getattr(params, 'serial_port', '') or ''
+    if port and not force_port:
+        locked, pid, pname = _detect_port_lock(port)
+        if locked:
+            _emit_port_lock_msg(port, pid, pname)
+            raise RuntimeError('PORT_LOCK_DETECTED: ' + str(port) + ' held by PID '
+                               + str(pid) + ' (' + (pname or '?') + ')')
+    _safe_release_all(BoardShim)
+    try:
+        board = BoardShim(board_id, params)
+        board.prepare_session()
+        return board
+    except Exception as e:
+        if not is_leaked_session_error(e):
+            raise
+        _safe_release_all(BoardShim)
+        time.sleep(1.0)
+        board = BoardShim(board_id, params)
+        board.prepare_session()
+        return board
+
+def _safe_start_stream(board, BoardShim, board_id, params):
+    # raw#71 falsifier-bound: BOARD_NOT_CREATED_ERROR:15 has been observed to
+    # surface at start_stream (after prepare_session succeeded) when a prior
+    # helper left a stale board singleton. Retry once: release_all_sessions,
+    # rebuild board, prepare_session, start_stream. Returns the (possibly new)
+    # board instance — caller MUST rebind. Non-leak errors propagate immediately.
+    try:
+        board.start_stream()
+        return board
+    except Exception as e:
+        if not is_leaked_session_error(e):
+            raise
+        try: board.release_session()
+        except Exception: pass
+        _safe_release_all(BoardShim)
+        time.sleep(1.0)
+        new_board = BoardShim(board_id, params)
+        new_board.prepare_session()
+        new_board.start_stream()
+        return new_board
+
+def run_check(board_id, port, seconds, force_port=False):
     try:
         import numpy as np
     except ImportError:
@@ -107,10 +250,15 @@ def run_check(board_id, port, seconds):
         params.serial_port = port
 
     try:
-        board = BoardShim(board_id, params)
-        board.prepare_session()
+        board = _safe_prepare_session(BoardShim, board_id, params, force_port=force_port)
     except Exception as e:
-        err_trailer('board-not-ready', 'BrainFlow prepare_session: ' + str(e)[:160],
+        _emsg = str(e)[:200]
+        if 'PORT_LOCK_DETECTED' in _emsg:
+            err_trailer('port-locked', _emsg,
+                        '1) OpenBCI GUI 종료  2) 또는 --force-port 로 재시도')
+            out_kv('verdict', 'PORT_LOCKED')
+            return 8
+        err_trailer('board-not-ready', 'BrainFlow prepare_session: ' + _emsg[:160],
                     '1) toggle Cyton OFF wait 5s then PC  2) verify Daisy seated  3) re-run')
         out_kv('verdict', 'BOARD_NOT_DETECTED')
         return 4
@@ -129,7 +277,7 @@ def run_check(board_id, port, seconds):
     out_kv('eeg_channel_count', len(eeg_channels))
 
     try:
-        board.start_stream()
+        board = _safe_start_stream(board, BoardShim, board_id, params)
         time.sleep(seconds)
         data = board.get_board_data()
         board.stop_stream()
@@ -373,9 +521,11 @@ if __name__ == '__main__':
     p.add_argument('--board-id', type=int, default=2)
     p.add_argument('--port', type=str, default='')
     p.add_argument('--seconds', type=int, default=3)
+    p.add_argument('--force-port', action='store_true',
+                   help='bypass port-lock detection (dangerous: still fails BrainFlow if held)')
     args = p.parse_args()
     if args.mode == 'check':
-        rc = run_check(args.board_id, args.port, args.seconds)
+        rc = run_check(args.board_id, args.port, args.seconds, force_port=args.force_port)
     else:
         rc = run_selftest(args.seconds)
     sys.exit(rc)
@@ -413,6 +563,7 @@ fn _print_usage() {
     eprintln("  --port <path>     Dongle serial node")
     eprintln("  --seconds <n>     sample window seconds (default 3)")
     eprintln("  --board <name>    cyton_daisy | cyton | ganglion (default cyton_daisy)")
+    eprintln("  --force-port      bypass port-lock detection (when 다른 program 이 점유 중일 때 강제 시도)")
     eprintln("  --help            this message")
 }
 
@@ -424,12 +575,14 @@ fn main() {
     let mut port = ""
     let mut seconds = DEFAULT_SECONDS
     let mut board_name = DEFAULT_BOARD_NAME
+    let mut force_port = false
 
     let mut i = 0
     while i < len(av) {
         let a = av[i]
         if a == "--selftest" { selftest = true; i = i + 1; continue }
         if a == "--check"    { check_mode = true; i = i + 1; continue }
+        if a == "--force-port" { force_port = true; i = i + 1; continue }
         if a == "--help" || a == "-h" { want_help = true; i = i + 1; continue }
         if a == "--port" {
             if (i + 1) >= len(av) {
@@ -491,6 +644,9 @@ fn main() {
     if port != "" {
         cmd = cmd + " --port " + _sh_quote(port)
     }
+    if force_port {
+        cmd = cmd + " --force-port"
+    }
 
     eprintln("[GATE] dispatch=local cmd=" + cmd)
 
@@ -522,6 +678,10 @@ fn main() {
     if rc == 7 {
         println("verdict: BOARD_16CH_PARTIAL_DEAD ✗ (some channels dead)")
         exit(7)
+    }
+    if rc == 8 {
+        println("verdict: PORT_LOCKED ✗ (다른 process 가 포트 점유 — OpenBCI GUI 종료 후 재시도 또는 --force-port)")
+        exit(8)
     }
     println("verdict: UNKNOWN exit_code=" + str(rc))
     exit(rc)

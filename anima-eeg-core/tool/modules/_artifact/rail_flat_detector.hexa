@@ -1,0 +1,148 @@
+// ════════════════════════════════════════════════════════════════════════════
+//  anima-eeg-core/tool/modules/_artifact/rail_flat_detector.hexa
+//
+//  PURPOSE  (raw#106 genus name)
+//    Per-channel real-time gate detecting (a) ADC saturation ("railed",
+//    e.g. floating electrode / line-noise overload) and (b) flat-line
+//    (open lead / dead electrode). Acts as input-quality gate for
+//    anima-eeg-core/_metrics modules — channels classified RAILED/FLAT
+//    must be excluded from spectral / coherence / dual-stream pipelines.
+//
+//    Modeled on OpenBCI GUI Extras.pde::DataStatus.update() railed%
+//    pattern + is_straight_line flat detection.
+//
+//  AI APPROACH  (raw#10 honest C3)
+//    Deterministic threshold detection — no learned component. Saturation
+//    ratio computed against vendor full-scale (ADS1299 ±4.5V / gain →
+//    µV); flat detected by per-channel std < 1µV (≈ ADC noise floor).
+//
+//  CRITERIA  (raw#12 frozen 2026-05-03)
+//    C1: per-ch saturate ratio ≥ 0.90  → RAILED  (status=2)
+//    C2: per-ch saturate ratio ≥ 0.75  → WARN    (status=1)
+//    C3: per-ch sample std    < 1 µV   → FLAT    (status=3)
+//    Otherwise                          → GOOD    (status=0)
+//
+//  FALSIFIERS  (raw#71)
+//    F_RFD_01 GOOD    — clean 5µV white                 → all GOOD
+//    F_RFD_02 RAILED  — 90% samples at +full-scale      → all RAILED
+//    F_RFD_03 FLAT    — zero signal (std < 1µV)         → all FLAT
+//
+//  RAW raw#9 raw#10 raw#12 raw#15 raw#65 raw#71 raw#82
+// ════════════════════════════════════════════════════════════════════════════
+
+struct RailFlatResult {
+    ok: int,
+    n_channels: int,
+    per_chan_railed_pct: [int],   // [ch] = saturate% × 100
+    per_chan_std_uv: [int],       // [ch] = std × 1000  (sub-µV resolution)
+    per_chan_status: [int],       // 0=GOOD 1=WARN 2=RAILED 3=FLAT
+    grand_railed_count: int,
+    grand_flat_count: int,
+    message: str,
+}
+
+// ADS1299 vendor C3: full-scale ±(4.5e6 µV) / gain.  raw#10: gain=24 → ±187500.
+fn full_scale_uv(gain: int) -> int {
+    if gain <= 0 { return 187500 }
+    return 4500000 / gain
+}
+
+fn abs_i(x: int) -> int { if x < 0 { return -x }; return x }
+
+// std × 1000 (so threshold of 1µV becomes 1000) using integer math
+fn std_x1000(ch: [int]) -> int {
+    let n = len(ch); if n <= 1 { return 0 }
+    let mut sum = 0; let mut i = 0
+    while i < n { sum = sum + ch[i]; i = i + 1 }
+    let mean = sum / n
+    let mut var_acc = 0; i = 0
+    while i < n { let d = ch[i] - mean; var_acc = var_acc + d * d; i = i + 1 }
+    let var_q = var_acc / n
+    // integer sqrt × 1000 (Newton, ≤ 24 iters for 32-bit range)
+    if var_q <= 0 { return 0 }
+    let target = var_q * 1000000
+    let mut r = 1; let mut k = 0
+    while k < 32 { if r * r >= target { k = 32 } else { r = r * 2; k = k + 1 } }
+    // refine
+    k = 0
+    while k < 40 { let nr = (r + target / r) / 2; if nr >= r { k = 40 } else { r = nr; k = k + 1 } }
+    return r
+}
+
+fn rail_flat_detect(eeg: [[int]], gain: int) -> RailFlatResult {
+    let n_ch = len(eeg)
+    let fs_uv = full_scale_uv(gain)
+    let sat_thr = (fs_uv * 95) / 100   // ≥ 95% of full-scale ADC counts as saturated sample
+    let mut railed_pct: [int] = []
+    let mut std_uv: [int] = []
+    let mut status: [int] = []
+    let mut g_rail = 0; let mut g_flat = 0
+    let mut ci = 0
+    while ci < n_ch {
+        let ch = eeg[ci]; let n = len(ch)
+        let mut sat = 0; let mut j = 0
+        while j < n { if abs_i(ch[j]) >= sat_thr { sat = sat + 1 }; j = j + 1 }
+        let pct_x100 = if n > 0 { (sat * 10000) / n } else { 0 }
+        let s_x1000 = std_x1000(ch)
+        railed_pct = railed_pct.push(pct_x100)
+        std_uv = std_uv.push(s_x1000)
+        let mut st = 0
+        if s_x1000 < 1000 { st = 3; g_flat = g_flat + 1 }
+        else { if pct_x100 >= 9000 { st = 2; g_rail = g_rail + 1 }
+               else { if pct_x100 >= 7500 { st = 1 } } }
+        status = status.push(st)
+        ci = ci + 1
+    }
+    let msg = "rail_flat: rail=" + to_string(g_rail) + " flat=" + to_string(g_flat) + " ch=" + to_string(n_ch)
+    return RailFlatResult { ok: 1, n_channels: n_ch, per_chan_railed_pct: railed_pct,
+        per_chan_std_uv: std_uv, per_chan_status: status,
+        grand_railed_count: g_rail, grand_flat_count: g_flat, message: msg }
+}
+
+// ── synthetic fixtures (selftest) ──────────────────────────────────────────
+fn fixture(kind: str, n_ch: int, n_samp: int, fs_uv: int) -> [[int]] {
+    let mut out: [[int]] = []; let mut c = 0
+    while c < n_ch {
+        let mut row: [int] = []; let mut i = 0
+        while i < n_samp {
+            let mut v = 0
+            if kind == "GOOD"     { v = ((i * 13 + c * 7) % 11) - 5 }                    // ±5 µV pseudo-white
+            if kind == "WARN_75"  { let r = (i * 17 + c) % 100; if r < 75 { v = fs_uv } else { v = ((i * 13) % 11) - 5 } }
+            if kind == "RAILED_90" { let r = (i * 17 + c) % 100; if r < 90 { v = fs_uv } else { v = ((i * 13) % 11) - 5 } }
+            if kind == "FLAT"     { v = 0 }
+            row = row.push(v); i = i + 1
+        }
+        out = out.push(row); c = c + 1
+    }
+    return out
+}
+
+fn selftest() -> int {
+    let gain = 24; let fs_uv = full_scale_uv(gain)
+    let n_ch = 4; let n_samp = 200
+    let r_good = rail_flat_detect(fixture("GOOD", n_ch, n_samp, fs_uv), gain)
+    let r_warn = rail_flat_detect(fixture("WARN_75", n_ch, n_samp, fs_uv), gain)
+    let r_rail = rail_flat_detect(fixture("RAILED_90", n_ch, n_samp, fs_uv), gain)
+    let r_flat = rail_flat_detect(fixture("FLAT", n_ch, n_samp, fs_uv), gain)
+    let mut warn_ok = 1; let mut k = 0
+    while k < n_ch { if r_warn.per_chan_status[k] != 1 { warn_ok = 0 }; k = k + 1 }
+    // F_RFD_01 GOOD all ch GOOD; F_RFD_02 RAILED all ch RAILED; F_RFD_03 FLAT all ch FLAT
+    let f1 = r_good.grand_railed_count == 0 && r_good.grand_flat_count == 0
+    let f2 = r_rail.grand_railed_count == n_ch
+    let f3 = r_flat.grand_flat_count  == n_ch
+    let pass = if f1 && f2 && f3 && warn_ok == 1 { "PASS" } else { "FAIL" }
+    println("F_RFD_01 GOOD     rail=" + to_string(r_good.grand_railed_count) + " flat=" + to_string(r_good.grand_flat_count))
+    println("F_RFD_02 RAILED   rail=" + to_string(r_rail.grand_railed_count) + " flat=" + to_string(r_rail.grand_flat_count))
+    println("F_RFD_03 FLAT     rail=" + to_string(r_flat.grand_railed_count) + " flat=" + to_string(r_flat.grand_flat_count))
+    println("F_RFD_aux WARN_75 warn_all_ch=" + to_string(warn_ok))
+    println("__EEG_RAIL_FLAT_DETECT__ " + pass + " " + to_string(r_good.grand_railed_count == 0)
+        + "/" + to_string(warn_ok) + "/" + to_string(r_rail.grand_railed_count) + "/" + to_string(r_flat.grand_flat_count))
+    if pass == "PASS" { return 0 }
+    return 1
+}
+
+fn main() {
+    let rc = selftest()
+    if rc == 0 { exit(0) }
+    exit(1)
+}

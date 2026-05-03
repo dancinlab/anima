@@ -43,6 +43,10 @@
 //   hexa run anima-eeg/realtime.hexa --stream --duration 30
 //   hexa run anima-eeg/realtime.hexa --stream --duration 60 \
 //        --jsonl-path state/realtime/<ts>.jsonl
+//
+//  @resolver-bypass(reason="darwin-native: globs /dev/cu.usbserial-* and uses
+//                   .venv-eeg/bin/python BrainFlow venv. Hetzner / linux pods
+//                   do not expose host USB nor local venv.")
 
 let SCHEMA              = "anima-eeg/realtime/1"
 let HELPER_PATH         = "/tmp/anima_eeg_realtime_helper.hexa_tmp"
@@ -211,7 +215,20 @@ fn _write_helper() {
     parts.push("        emit_trailer('venv-missing', f'{VENV_PYTHON} missing',\n")
     parts.push("                     '1) python3 -m venv .venv-eeg  2) pip install brainflow numpy')\n")
     parts.push("        return False, ''\n")
-    parts.push("    r = subprocess.run([VENV_PYTHON, '-c', 'import brainflow,numpy; print(brainflow.__version__)'],\n")
+    // raw#10 honest: brainflow ≥5.x does NOT expose `brainflow.__version__`
+    // attribute (only sub-modules board_shim/data_filter/...). Use
+    // importlib.metadata.version() which reads dist-info METADATA — works for
+    // every pip-installed brainflow. 'unknown' fallback if metadata missing.
+    parts.push("    _probe_src = (\n")
+    parts.push("        'from brainflow.board_shim import BoardShim\\n'\n")
+    parts.push("        'import numpy\\n'\n")
+    parts.push("        'try:\\n'\n")
+    parts.push("        '    from importlib.metadata import version as _v\\n'\n")
+    parts.push("        '    print(_v(\"brainflow\"))\\n'\n")
+    parts.push("        'except Exception:\\n'\n")
+    parts.push("        '    print(\"unknown\")\\n'\n")
+    parts.push("    )\n")
+    parts.push("    r = subprocess.run([VENV_PYTHON, '-c', _probe_src],\n")
     parts.push("                       capture_output=True, text=True, timeout=20)\n")
     parts.push("    if r.returncode != 0:\n")
     parts.push("        emit_trailer('brainflow-missing', f'{r.stderr.strip()[:200]}',\n")
@@ -246,13 +263,109 @@ fn _write_helper() {
     parts.push("        return out\n")
     parts.push("    params = BrainFlowInputParams(); params.serial_port = PORT\n")
     parts.push("    BoardShim.disable_board_logger()\n")
+    // ─── Cyton firmware 'v' soft-reset escalation (raw#10 honest C3) ────
+    // spec: anima-eeg/docs/cyton_soft_reset_v_command_spec_2026_05_03.md
+    parts.push("    try:\n")
+    parts.push("        import serial as _serial\n")
+    parts.push("    except Exception:\n")
+    parts.push("        _serial = None\n")
+    parts.push("    def cyton_soft_reset(port, baud=115200, timeout_s=1.5):\n")
+    parts.push("        if _serial is None: return False\n")
+    parts.push("        try:\n")
+    parts.push("            with _serial.Serial(port, baud, timeout=0.5) as _s:\n")
+    parts.push("                _s.write(b's'); time.sleep(0.1); _s.reset_input_buffer()\n")
+    parts.push("                _s.write(b'v')\n")
+    parts.push("                _dl = time.time() + timeout_s; _buf = b''\n")
+    parts.push("                while time.time() < _dl:\n")
+    parts.push("                    _ck = _s.read(64)\n")
+    parts.push("                    if _ck:\n")
+    parts.push("                        _buf += _ck\n")
+    parts.push("                        if b'$$$' in _buf:\n")
+    parts.push("                            time.sleep(0.2); return True\n")
+    parts.push("                return False\n")
+    parts.push("        except Exception: return False\n")
+    parts.push("    def cyton_dongle_alive(port, baud=115200, timeout_s=1.0):\n")
+    parts.push("        if _serial is None: return False\n")
+    parts.push("        try:\n")
+    parts.push("            with _serial.Serial(port, baud, timeout=0.5) as _s:\n")
+    parts.push("                _s.reset_input_buffer(); _s.write(b'V')\n")
+    parts.push("                _dl = time.time() + timeout_s; _buf = b''\n")
+    parts.push("                while time.time() < _dl:\n")
+    parts.push("                    _ck = _s.read(64)\n")
+    parts.push("                    if _ck:\n")
+    parts.push("                        _buf += _ck\n")
+    parts.push("                        if b'$$$' in _buf: return True\n")
+    parts.push("                return False\n")
+    parts.push("        except Exception: return False\n")
+    parts.push("    if not cyton_dongle_alive(PORT):\n")
+    parts.push("        sys.stderr.write('warn: cyton_dongle_alive=false (V probe no $$$ — soft-reset will likely fail)\\n')\n")
+    parts.push("    # raw#65 idempotent: preflight cleanup of any leaked BrainFlow session\n")
+    parts.push("    # from a prior helper that crashed before its finally block.\n")
+    parts.push("    try: BoardShim.release_all_sessions()\n")
+    parts.push("    except Exception: pass\n")
     parts.push("    board = BoardShim(BOARD_ID, params)\n")
     parts.push("    payload = {'rc':0,'chunks':0,'err':''}\n")
     parts.push("    try:\n")
     parts.push("        sr = float(BoardShim.get_sampling_rate(BOARD_ID))\n")
     parts.push("        eeg_idx = list(BoardShim.get_eeg_channels(BOARD_ID))\n")
     parts.push("        chunk_n = int(sr * CHUNK_SEC)\n")
-    parts.push("        board.prepare_session(); board.start_stream()\n")
+    parts.push("        # raw#10 honest C3: BrainFlow leaked-session codes\n")
+    parts.push("        # (audited brainflow/exit_codes.py 2026-05-03):\n")
+    parts.push("        #   1 PORT_ALREADY_OPEN, 7 BOARD_NOT_READY, 8 STREAM_ALREADY_RUN,\n")
+    parts.push("        #  15 BOARD_NOT_CREATED, 16 ANOTHER_BOARD_IS_CREATED.\n")
+    parts.push("        def _is_leak(_m):\n")
+    parts.push("            _s = str(_m)\n")
+    parts.push("            for _n in ('PORT_ALREADY_OPEN','BOARD_NOT_READY','STREAM_ALREADY_RUN','BOARD_NOT_CREATED','ANOTHER_BOARD_IS_CREATED'):\n")
+    parts.push("                if _n in _s: return True\n")
+    parts.push("            for _c in (':1 ',':7 ',':8 ',':15 ',':16 ',' code 1 ',' code 7 ',' code 8 ',' code 15 ',' code 16 '):\n")
+    parts.push("                if _c in _s: return True\n")
+    parts.push("            return False\n")
+    parts.push("        # Retry-twice on leaked-session error (escalation: BrainFlow release\n")
+    parts.push("        # → Cyton 'v' soft-reset → fresh prepare).\n")
+    parts.push("        try:\n")
+    parts.push("            board.prepare_session()\n")
+    parts.push("        except Exception as _e1:\n")
+    parts.push("            if _is_leak(_e1):\n")
+    parts.push("                try: BoardShim.release_all_sessions()\n")
+    parts.push("                except Exception: pass\n")
+    parts.push("                time.sleep(0.5)\n")
+    parts.push("                _sr_ok = cyton_soft_reset(PORT)\n")
+    parts.push("                sys.stderr.write(f'cyton_soft_reset(prepare)={_sr_ok}\\n')\n")
+    parts.push("                time.sleep(0.5)\n")
+    parts.push("                board = BoardShim(BOARD_ID, params)\n")
+    parts.push("                try:\n")
+    parts.push("                    board.prepare_session()\n")
+    parts.push("                except Exception as _e1b:\n")
+    parts.push("                    if _is_leak(_e1b):\n")
+    parts.push("                        try: BoardShim.release_all_sessions()\n")
+    parts.push("                        except Exception: pass\n")
+    parts.push("                        time.sleep(0.5)\n")
+    parts.push("                        cyton_soft_reset(PORT)\n")
+    parts.push("                        time.sleep(1.0)\n")
+    parts.push("                        board = BoardShim(BOARD_ID, params)\n")
+    parts.push("                        board.prepare_session()\n")
+    parts.push("                    else: raise\n")
+    parts.push("            else:\n")
+    parts.push("                raise\n")
+    parts.push("        # raw#71 falsifier-bound: BOARD_NOT_CREATED:15 observed at\n")
+    parts.push("        # start_stream — retry with 'v' soft-reset escalation.\n")
+    parts.push("        try:\n")
+    parts.push("            board.start_stream()\n")
+    parts.push("        except Exception as _e2:\n")
+    parts.push("            if _is_leak(_e2):\n")
+    parts.push("                try: board.release_session()\n")
+    parts.push("                except Exception: pass\n")
+    parts.push("                try: BoardShim.release_all_sessions()\n")
+    parts.push("                except Exception: pass\n")
+    parts.push("                time.sleep(0.5)\n")
+    parts.push("                _sr_ok = cyton_soft_reset(PORT)\n")
+    parts.push("                sys.stderr.write(f'cyton_soft_reset(start)={_sr_ok}\\n')\n")
+    parts.push("                time.sleep(0.5)\n")
+    parts.push("                board = BoardShim(BOARD_ID, params)\n")
+    parts.push("                board.prepare_session()\n")
+    parts.push("                board.start_stream()\n")
+    parts.push("            else:\n")
+    parts.push("                raise\n")
     parts.push("        t0 = time.time()\n")
     parts.push("        out_f = open(JSONL_PATH, 'w') if JSONL_PATH else None\n")
     parts.push("        chunk_idx = 0\n")
@@ -502,19 +615,24 @@ fn _print_usage() {
 }
 
 // argv normalize — see experiment.hexa _flags_only_argv 동치 doc.
-// Mac stage0 / hetzner ssh / docker 의 argv() 형식 차이 portable handling.
+// Mac stage0 / hetzner ssh / docker / AOT-cache 의 argv() 형식 차이 portable handling.
+// argv may contain:
+//   - interpreter mode: [.../script.hexa, ...flags]
+//   - AOT cache mode:   [.../.hexa-cache/<hash>/exe, .../exe (duplicate), ...flags]
+//   - hetzner ssh / docker may add extra wrapper entries.
+// Use ends_with method form (raw#9 AOT-safe; slice-eq fails under AOT per
+// memory project_aot_push_gotcha.md pattern).
 fn _flags_only_argv() -> array {
     let av = argv()
     let mut start = 0
-    let mut i = 0
-    while i < len(av) {
-        let a = av[i]
-        let n = len(a)
-        if n >= 5 {
-            let suffix = a[(n - 5)..n]
-            if suffix == ".hexa" { start = i + 1; break }
+    while start < len(av) {
+        let a = av[start]
+        let mut is_path = false
+        if a.ends_with(".hexa") { is_path = true }
+        if !is_path {
+            if a.ends_with("/exe") { is_path = true }
         }
-        i = i + 1
+        if is_path { start = start + 1 } else { break }
     }
     let mut out = []
     let mut j = start

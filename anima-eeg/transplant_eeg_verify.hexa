@@ -29,6 +29,10 @@
 //
 // USAGE
 //   hexa run anima-eeg/transplant_eeg_verify.hexa --selftest
+//
+//  @resolver-pure(reason="pure-hexa ratio + count consumer of pre-computed
+//                  6-metric tuples. No raw EEG ingest, no BrainFlow.
+//                  Single-pass, read-only. Docker route adds zero value.")
 
 let SCHEMA = "anima-eeg/transplant_eeg_verify/1"
 

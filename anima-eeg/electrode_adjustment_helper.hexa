@@ -108,6 +108,133 @@ def err_trailer(reason, detail, fix):
     print('reason: ' + reason + ': ' + detail, file=sys.stderr, flush=True)
     print('fix: ' + fix, file=sys.stderr, flush=True)
 
+def _safe_release_all(BoardShim):
+    # raw#65 idempotent: silently drop any stale BrainFlow sessions from a
+    # prior helper that crashed before its finally block (or whose FTDI USB
+    # state lingered across processes). No-op when no session exists.
+    try:
+        BoardShim.release_all_sessions()
+    except Exception:
+        pass
+
+def _detect_port_lock(port):
+    # raw#10 honest C3: macOS lsof without sudo cannot see ALL pids — false
+    # negative possible when foreign user owns the holding process. FALSE
+    # POSITIVE possible: any process holding the port is reported, not just
+    # OpenBCI GUI. Returns (locked, pid, pname).
+    if not port:
+        return False, 0, ''
+    if not os.path.exists(port):
+        return False, 0, ''
+    import subprocess as _sp
+    try:
+        r = _sp.run(['lsof', '-F', 'p', port], capture_output=True, text=True, timeout=3)
+        for ln in (r.stdout or '').splitlines():
+            if ln.startswith('p'):
+                try:
+                    pid = int(ln[1:])
+                except Exception:
+                    continue
+                pname = '?'
+                try:
+                    pr = _sp.run(['ps', '-p', str(pid), '-o', 'comm='],
+                                 capture_output=True, text=True, timeout=2)
+                    pname = (pr.stdout or '').strip() or '?'
+                except Exception:
+                    pass
+                return True, pid, pname
+    except Exception:
+        pass
+    return False, 0, ''
+
+def _emit_port_lock_msg(port, pid, pname):
+    pl = (pname or '').lower()
+    guess = ''
+    if 'java' in pl or 'openbci' in pl or 'processing' in pl:
+        guess = ' (OpenBCI GUI 추정)'
+    print('[port-lock] ' + str(port) + ' 점유 중:', file=sys.stderr, flush=True)
+    print('  PID ' + str(pid) + ': ' + (pname or '?') + guess, file=sys.stderr, flush=True)
+    print('', file=sys.stderr, flush=True)
+    print('해결 방법:', file=sys.stderr, flush=True)
+    print('  (a) OpenBCI GUI 종료 후 재시도', file=sys.stderr, flush=True)
+    print('  (b) GUI 의 Networking widget 으로 LSL outlet 활성화 + anima-eeg/lsl_capture.hexa 사용', file=sys.stderr, flush=True)
+    print('  (c) --force-port 로 우회 시도 (위험)', file=sys.stderr, flush=True)
+    print('reason: port-lock-detected: PID=' + str(pid) + ' name=' + (pname or '?'),
+          file=sys.stderr, flush=True)
+    print('fix: 1) OpenBCI GUI Stop & Quit  2) 또는 --force-port 시도',
+          file=sys.stderr, flush=True)
+
+def is_leaked_session_error(msg):
+    # raw#10 honest C3: BrainFlow exit codes audited against
+    #   .venv-eeg/lib/python3.12/site-packages/brainflow/exit_codes.py (2026-05-03)
+    # Recoverable codes (release_all_sessions + retry):
+    #     1 PORT_ALREADY_OPEN, 7 BOARD_NOT_READY, 8 STREAM_ALREADY_RUN,
+    #    15 BOARD_NOT_CREATED, 16 ANOTHER_BOARD_IS_CREATED
+    # NOT recoverable: 14 UNSUPPORTED_BOARD, 13 INVALID_ARGUMENTS, 17 GENERAL.
+    if not isinstance(msg, str):
+        msg = str(msg)
+    LEAKED_NAMES = (
+        'PORT_ALREADY_OPEN', 'BOARD_NOT_READY', 'STREAM_ALREADY_RUN',
+        'BOARD_NOT_CREATED', 'ANOTHER_BOARD_IS_CREATED',
+    )
+    for name in LEAKED_NAMES:
+        if name in msg:
+            return True
+    LEAKED_CODES = (':1 ', ':7 ', ':8 ', ':15 ', ':16 ',
+                    ' code 1 ', ' code 7 ', ' code 8 ', ' code 15 ', ' code 16 ')
+    for tok in LEAKED_CODES:
+        if tok in msg:
+            return True
+    return False
+
+def _safe_prepare_session(BoardShim, board_id, params, force_port=False):
+    # Port-lock preflight: if another process holds the serial port (most
+    # commonly OpenBCI GUI), BrainFlow surfaces cryptic codes 1 / 7. Detect
+    # & graceful-fail with friendly Korean message unless --force-port set.
+    port = getattr(params, 'serial_port', '') or ''
+    if port and not force_port:
+        locked, pid, pname = _detect_port_lock(port)
+        if locked:
+            _emit_port_lock_msg(port, pid, pname)
+            raise RuntimeError('PORT_LOCK_DETECTED: ' + str(port) + ' held by PID '
+                               + str(pid) + ' (' + (pname or '?') + ')')
+    # Preflight cleanup, then prepare. On leaked-session errors (codes 1/7/8/15/16)
+    # retry once after release_all_sessions + brief settle. raw#10 honest:
+    # non-leak errors propagate immediately so callers see real hardware faults.
+    _safe_release_all(BoardShim)
+    try:
+        board = BoardShim(board_id, params)
+        board.prepare_session()
+        return board
+    except Exception as e:
+        if not is_leaked_session_error(e):
+            raise
+        _safe_release_all(BoardShim)
+        time.sleep(1.0)
+        board = BoardShim(board_id, params)
+        board.prepare_session()
+        return board
+
+def _safe_start_stream(board, BoardShim, board_id, params):
+    # raw#71 falsifier-bound: BOARD_NOT_CREATED_ERROR:15 observed at start_stream
+    # (post prepare_session) when a prior helper left a stale board singleton.
+    # Retry once with a fresh prepare_session. Returns the (possibly new) board
+    # — caller MUST rebind to the return value.
+    try:
+        board.start_stream()
+        return board
+    except Exception as e:
+        if not is_leaked_session_error(e):
+            raise
+        try: board.release_session()
+        except Exception: pass
+        _safe_release_all(BoardShim)
+        time.sleep(1.0)
+        new_board = BoardShim(board_id, params)
+        new_board.prepare_session()
+        new_board.start_stream()
+        return new_board
+
 WIRE_META = [
     ('Cyton', 'N1P', 'Fp1', 'Grey'),
     ('Cyton', 'N2P', 'Fp2', 'Purple'),
@@ -150,7 +277,7 @@ def classify(rms_uv, std_uv, mains_uv, p_constant):
         return 'OK', '✓'
     return 'LOOSE', '⚠'
 
-def main_check(board_id, port, seconds):
+def main_check(board_id, port, seconds, force_port=False):
     try:
         import numpy as np
         from brainflow.board_shim import BoardShim, BrainFlowInputParams, BoardIds
@@ -165,10 +292,15 @@ def main_check(board_id, port, seconds):
         params.serial_port = port
 
     try:
-        board = BoardShim(board_id, params)
-        board.prepare_session()
+        board = _safe_prepare_session(BoardShim, board_id, params, force_port=force_port)
     except Exception as e:
-        err_trailer('board-not-ready', str(e)[:160],
+        _emsg = str(e)[:200]
+        if 'PORT_LOCK_DETECTED' in _emsg:
+            err_trailer('port-locked', _emsg,
+                        '1) OpenBCI GUI 종료  2) 또는 --force-port 로 재시도')
+            out_kv('verdict', 'PORT_LOCKED')
+            return 8
+        err_trailer('board-not-ready', _emsg[:160],
                     '1) toggle Cyton OFF wait 5s then PC  2) verify Daisy seated  3) re-run')
         out_kv('verdict', 'ABORT')
         return 4
@@ -176,7 +308,7 @@ def main_check(board_id, port, seconds):
     try:
         sample_rate = BoardShim.get_sampling_rate(board_id)
         eeg_channels = BoardShim.get_eeg_channels(board_id)
-        board.start_stream()
+        board = _safe_start_stream(board, BoardShim, board_id, params)
         time.sleep(seconds)
         data = board.get_board_data()
         board.stop_stream()
@@ -622,7 +754,7 @@ def run_selftest():
     out_kv('verdict', 'ALL_OK')
     return 0
 
-def run_live(board_id, port, fps=60):
+def run_live(board_id, port, fps=60, force_port=False):
     '''Single-BrainFlow-session live touch detector.
     Opens session once, loops at fps Hz, renders ASCII via fast in-place ANSI render.
     Rolling baseline per channel — touch = bi-directional deviation from baseline.
@@ -640,15 +772,24 @@ def run_live(board_id, port, fps=60):
     if port:
         params.serial_port = port
 
+    board = None
     try:
-        board = BoardShim(board_id, params)
-        board.prepare_session()
-        board.start_stream()
+        board = _safe_prepare_session(BoardShim, board_id, params, force_port=force_port)
+        board = _safe_start_stream(board, BoardShim, board_id, params)
     except Exception as e:
-        err_trailer('board-not-ready', str(e)[:160],
+        _emsg = str(e)[:200]
+        if 'PORT_LOCK_DETECTED' in _emsg:
+            err_trailer('port-locked', _emsg,
+                        '1) OpenBCI GUI 종료  2) 또는 --force-port 로 재시도')
+            if board is not None:
+                try: board.release_session()
+                except: pass
+            return 8
+        err_trailer('board-not-ready', _emsg[:160],
                     '1) toggle Cyton OFF wait 5s then PC  2) verify Daisy seated  3) Stop OpenBCI GUI if running')
-        try: board.release_session()
-        except: pass
+        if board is not None:
+            try: board.release_session()
+            except: pass
         return 4
 
     try:
@@ -988,11 +1129,13 @@ if __name__ == '__main__':
     p.add_argument('--port', type=str, default='')
     p.add_argument('--seconds', type=int, default=3)
     p.add_argument('--fps', type=int, default=60, help='live mode fps (60/120, clamped 10-240)')
+    p.add_argument('--force-port', action='store_true',
+                   help='bypass port-lock detection (다른 process 가 점유 중일 때 강제 시도)')
     args = p.parse_args()
     if args.mode == 'check':
-        rc = main_check(args.board_id, args.port, args.seconds)
+        rc = main_check(args.board_id, args.port, args.seconds, force_port=args.force_port)
     elif args.mode == 'live':
-        rc = run_live(args.board_id, args.port, fps=args.fps)
+        rc = run_live(args.board_id, args.port, fps=args.fps, force_port=args.force_port)
     else:
         rc = run_selftest()
     sys.exit(rc)
@@ -1361,7 +1504,7 @@ fn _print_summary(body: string) {
     println("")
 }
 
-fn _do_one_pass(board_id: int, port: string, seconds: int, selftest: bool, step_n: int) -> int {
+fn _do_one_pass(board_id: int, port: string, seconds: int, selftest: bool, step_n: int, force_port: bool) -> int {
     let mode_arg = if selftest { "selftest" } else { "check" }
     let venv_py = DEFAULT_VENV_PYTHON
     let mut cmd = venv_py + " " + HELPER_PATH + " " + mode_arg
@@ -1369,6 +1512,9 @@ fn _do_one_pass(board_id: int, port: string, seconds: int, selftest: bool, step_
     cmd = cmd + " --seconds " + str(seconds)
     if port != "" {
         cmd = cmd + " --port " + _sh_quote(port)
+    }
+    if force_port {
+        cmd = cmd + " --force-port"
     }
     cmd = cmd + " > /tmp/electrode_adj_out.log 2> /tmp/electrode_adj_err.log"
 
@@ -1405,6 +1551,7 @@ fn _print_usage() {
     eprintln("  --step <n>        progressive scope: check first n items (1-18)")
     eprintln("  --board <name>    cyton_daisy | cyton | ganglion (default cyton_daisy)")
     eprintln("  --fps <n>         live-mode TICK_HZ toggle (default 60, 120 supported, clamp 10-240)")
+    eprintln("  --force-port      bypass port-lock detection (다른 program 점유 시 강제 시도)")
     eprintln("  --help            this message")
 }
 
@@ -1420,6 +1567,7 @@ fn main() {
     let mut board_name = DEFAULT_BOARD_NAME
     let mut step_n = len(STEP_ORDER)  // default: check all 18
     let mut fps_n = 60                 // single-constant TICK_HZ toggle (60 default, --fps 120 supported)
+    let mut force_port = false
 
     let mut i = 0
     while i < len(av) {
@@ -1428,6 +1576,7 @@ fn main() {
         if a == "--check"    { check_mode = true; i = i + 1; continue }
         if a == "--watch"    { watch_mode = true; i = i + 1; continue }
         if a == "--live"     { live_mode = true; i = i + 1; continue }
+        if a == "--force-port" { force_port = true; i = i + 1; continue }
         if a == "--help" || a == "-h" { want_help = true; i = i + 1; continue }
         if a == "--port" {
             if (i + 1) >= len(av) {
@@ -1522,6 +1671,9 @@ fn main() {
         if port != "" {
             cmd = cmd + " --port " + _sh_quote(port)
         }
+        if force_port {
+            cmd = cmd + " --force-port"
+        }
         // raw#91 C3 + audit 2026-04-28: exec() returns string; exit() needs int.
         let r = exec_with_status(cmd)
         exit(to_int(r[1]))
@@ -1531,12 +1683,12 @@ fn main() {
             tick = tick + 1
             println("")
             println("─── tick #" + str(tick) + " ───")
-            let _rc = _do_one_pass(board_id, port, seconds, false, step_n)
+            let _rc = _do_one_pass(board_id, port, seconds, false, step_n, force_port)
             println("    (" + str(DEFAULT_WATCH_INTERVAL_SEC) + "s 후 다시 측정. Ctrl-C 로 종료)")
             sleep(DEFAULT_WATCH_INTERVAL_SEC)
         }
     } else {
-        let rc = _do_one_pass(board_id, port, seconds, selftest, step_n)
+        let rc = _do_one_pass(board_id, port, seconds, selftest, step_n, force_port)
         exit(rc)
     }
 }
