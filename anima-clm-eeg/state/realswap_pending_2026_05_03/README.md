@@ -1,12 +1,34 @@
-# clm_eeg 5-metric harness real-swap — transcoder landed (2026-05-03)
+# clm_eeg 5-metric harness real-swap — smoke run executed (2026-05-03)
 
 **Scope:** `.roadmap.anima_clm_eeg cond.1` blocker resolution path
 
 ## Status
 
-`REAL_SWAP_TRANSCODER_LANDED` — schema bridged.
+`REAL_SWAP_SMOKE_RUN_PARTIAL_PASS_2026_05_03` — synthetic-chain composite PASS, real-fixture consumption blocked by harness aggregator semantics.
 
-Scaffold landed (cycle N-1). Sibling-BG P1 output (`welch_clean.npz` +
+### Smoke run outcome (cycle N+1)
+
+- Verdict: `state/clm_eeg_smoke_v6_real_2026_05_03/verdict.json`
+- Sentinel emit: `verdict = HARNESS_OK` (Run A synthetic baseline)
+- Harness exit code: `0`
+- Composite tally: `pass_count=3 / required=2 / harness_ok=1` (synthetic dry-run aggregation)
+- Chained fingerprint: `2804516380`
+- Per-metric (harness scope is p1/p2/p3 only):
+  - `p1_dry_run_pass=1` (synthetic-frozen LZ proxy)
+  - `p2_dry_run_pass=1` (synthetic-frozen TLR proxy)
+  - `p3_dry_run_pass=1` (synthetic-frozen GCG proxy)
+- Tier (raw#10 honest C3): `functional_analog`, N=1, F1=FAIL F2=PASS F3=FAIL upstream from `real_v6_clean_2026_05_03.json`
+- Dual-lock policy: PRESERVED — harness `chflags nouchg` → run → `chflags uchg` re-applied; byte count `10633` unchanged; no content modification.
+
+### Honest finding (raw#10)
+
+The smoke harness `clm_eeg_harness_smoke.hexa` is a **pure aggregator**: it reads three pre-existing `state/clm_eeg_p{1,2,3}_*_pre_register.json` files (which are FROZEN synthetic dry-run manifests as of 2026-04-26) and emits a composite verdict. It does NOT consume `CLM_EEG_FIXTURE_PATH` directly. Setting that env (or `CLM_EEG_HARNESS_FIXTURE_MODE=real`) on the smoke harness has no effect on its computation — the synthetic-vs-real dimension lives upstream in the p1/p2/p3 pre-register tools, all of which are themselves uchg-locked under the same dual-lock contract.
+
+Therefore: the "real-fixture smoke run" produced a composite PASS that reflects FROZEN SYNTHETIC pre-register dry-runs, NOT real fixture evaluation. Real-side ledgers (`clm_eeg_p1_lz_pre_register_real.json` p1_pass=0 / `clm_eeg_p2_tlr_real.json` verdict=INSUFFICIENT / no real p3) project a HARNESS_FAIL if cascade-unlock were performed — but cascade-unlock is prohibited per raw#10 + user constraint (96 institutional uchg files).
+
+### Cycle N transcoder context (preserved)
+
+Scaffold landed (cycle N−1). Sibling-BG P1 output (`welch_clean.npz` +
 `verdict.json`) landed cycle N. The schema mismatch (P2 scaffold expected
 `welch_clean_summary.json`; P1 wrote `verdict.json` + `welch_clean.npz`) is
 now bridged by:
@@ -97,17 +119,26 @@ The fixture carries verbatim P1 verdicts (`f1_status`, `f2_status`,
 `p1_tier: analog`, `n_subjects: 1`, `rail_quarantined_rows_1idx: [1,5,6,8,16]`,
 and `clean_channel_mask` for downstream auditors.
 
-### Step 3 (DEFERRED — gated on next-cycle approval)
+### Step 3 — EXECUTED (cycle N+1, 2026-05-03)
 
-Re-run the harness pointing `CLM_EEG_FIXTURE_PATH` at the real fixture.
-This requires the smoke harness `chflags uchg` lock to be RELEASED first
-(see "Open questions" below). DO NOT proceed without explicit user go.
+User-approved unlock + smoke run + re-lock executed. Outcome:
+
+- harness exit code = 0
+- sentinel emit = `verdict = HARNESS_OK`
+- composite verdict reflects synthetic-frozen pre-register dry-runs, NOT real fixture (raw#10 honest)
+- re-lock confirmed (`chflags uchg` restored; byte count 10633 unchanged)
+- artifact: `state/clm_eeg_smoke_v6_real_2026_05_03/verdict.json`
+- run log: `state/clm_eeg_smoke_v6_real_2026_05_03/run.log`
+- AI ledger: `docs/ai-native/clm_eeg_smoke_v6_real_run_2026_05_03.ai.md`
 
 ```bash
-# DEFERRED — DO NOT RUN until uchg unlock is approved
+# AS-EXECUTED (2026-05-03 23:51 KST)
+chflags nouchg anima-clm-eeg/tool/clm_eeg_harness_smoke.hexa
 CLM_EEG_FIXTURE_PATH=anima-clm-eeg/fixtures/real_v6_clean_2026_05_03.json \
+CLM_EEG_HARNESS_FIXTURE_MODE=real \
     HEXA_RESOLVER_NO_REROUTE=1 hexa run \
     anima-clm-eeg/tool/clm_eeg_harness_smoke.hexa --selftest
+chflags uchg anima-clm-eeg/tool/clm_eeg_harness_smoke.hexa
 ```
 
 ### Optional: legacy adapter (clm_eeg_harness_realswap.hexa)
@@ -137,15 +168,21 @@ edits to it this cycle.
    **RESOLVED cycle N**: schema confirmed (keys `f`, `psd_ec`, `psd_eo`,
    `ap_ec`, `ap_eo`, `clean_channels`, `railed_rows`, `labels`); see
    helper.py docstring for verified types/shapes.
-3. **GATING DEPENDENCY (next cycle)** — `clm_eeg_harness_smoke.hexa` is
-   `chflags uchg` (dual-lock protected — see
-   `anima-clm-eeg/tool/silent_edit_dual_lock.sh.txt`). Cycle N did **not**
-   touch it. Next cycle requires explicit user approval to:
-   - release uchg flag on `clm_eeg_harness_smoke.hexa`
-   - run smoke harness with `CLM_EEG_FIXTURE_PATH=anima-clm-eeg/fixtures/real_v6_clean_2026_05_03.json`
-   - optionally add `CLM_EEG_HARNESS_FIXTURE_MODE` env propagation into
-     the cert so synthetic vs functional-analog runs are distinguishable
-     in the marker chain (annotation only — aggregation logic unchanged).
+3. ~~**GATING DEPENDENCY (next cycle)** — `clm_eeg_harness_smoke.hexa` is
+   `chflags uchg`...~~
+   **RESOLVED cycle N+1 (2026-05-03)**: user-approved unlock + smoke run +
+   re-lock executed. Honest finding: the smoke harness is a pure aggregator
+   over upstream p{1,2,3} pre-register JSONs and does NOT consume
+   `CLM_EEG_FIXTURE_PATH` directly. Composite HARNESS_OK reflects
+   synthetic-frozen pre-register dry-runs (NOT real fixture evaluation).
+   For a TRUE real-fixture composite, the upstream p{1,2,3} pre-register
+   JSONs themselves must be re-emitted from real-side data — but those are
+   also uchg-locked under the same dual-lock contract. Cascade-unlock
+   prohibited per raw#10 honest C3. Recommended path forward: (a) introduce
+   a separate `clm_eeg_harness_real_smoke.hexa` that defaults to real-side
+   p{1,2,3}_real.json paths (preserves dual-lock on synthetic harness), or
+   (b) v2 SSOT freeze of the entire pre-register chain on real fixture
+   (signed, not silent).
 4. **HONEST C3 (raw#10) on the band-power scale**: helper.py applies a
    global scalar (median-alpha → target 1542 ×1000 to land in synthetic
    fixture range). This preserves cross-channel variance ratios but does

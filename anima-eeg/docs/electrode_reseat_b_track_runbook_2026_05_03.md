@@ -257,3 +257,128 @@ v7 measurement npy가 produce되면 P1→transcoder→harness chain이 v7 fixtur
 
 작성: 2026-05-03 P2 BG (B-track owner)
 status: ready-for-execution (사용자 cap re-don 시점에 §3부터 진행)
+
+## 11. Connector strain-relief reinforcement (hardware add-on, 2026-05-03 conversation finding)
+
+§1–10은 electrode-scalp contact (paste, hair-part, mastoid reference)을 다룸. §11은 conversation 중 새로 확인된 **connector-PCB contact** layer를 추가. APPEND-ONLY (append 시점: 2026-05-03 N3 BG follow-up).
+
+### 11.1 Why this matters (root cause clarification)
+
+- **N4 wrapper finding**: real .npy v6 EC에 대한 `__RAIL_AUDIT__` = **FAIL 16/16** (앞선 audit 5/16 보고는 v5 raw 측정 기반이었고, v6 EC 측정에서는 16/16 전 채널 rail-saturated 상태). cite: `state/.analyze_wrapper_dump.txt`.
+- 16/16 saturation은 **dual cause** 가능성을 시사:
+  - (a) electrode-scalp contact layer (B-track §3가 다룸 — paste, hair-part, mastoid settle).
+  - (b) **connector-PCB contact layer** (이 §11이 다룸 — dupont housing pop-off, cable strain).
+- Cyton+Daisy 16ch 측 dupont (0.1" / 2.54mm pitch) 측 header pin은 **safety-design low-retention** — 케이블 인장 또는 우발적 접촉으로 housing이 board-pin에서 빠짐 (community-known issue).
+- frequent pop-off site (community report):
+  - Daisy stack 16-pin header (Cyton 위 stack-on)
+  - SRB pin (white)
+  - BIAS pin (black)
+  - 16개 channel signal pin (특히 cable이 PCB 측면에 닿는 경우)
+- Y-splitter cable (1M → 2F, $0.99 OpenBCI) 측 board-side는 동일 0.1" pitch dupont이므로 **동일 low-retention** — mastoid Y-Splitter ref 셋업도 §11 대상.
+
+cite: https://shop.openbci.com/products/y-splitter-cable
+
+### 11.2 Tools — Daiso 즉시 입수 (no 3D printer, no heat gun required)
+
+| 부품 | 용도 | 가격 | 수량 | 비고 |
+|------|------|------|------|------|
+| 열수축튜브 12P mixed (3/4/6mm) | dupont housing 측 wire-entry strain relief | ₩1,000 | **1 pack 충분** | 16ch + Y-splitter 3 = 19 connector × 2cm = 38cm 소요. 12P × 10cm = 120cm 보유 → 3× margin. cite: https://www.daisomall.co.kr/pd/pdr/SCR_PDR_0001?pdNo=68551 |
+| 머리끈 얇은 16P | board-strap (light tension) | ₩1,000 | 1 pack | cite: https://www.daisomall.co.kr/pd/pdr/SCR_PDR_0001?pdNo=1025760 |
+| 머리끈 굵은 13P | bridge anchor (cable strain relief) | ₩1,000 | 1 pack | cite: https://www.daisomall.co.kr/pd/pdr/SCR_PDR_0001?pdNo=1025762 |
+| 머리끈 통통 블랙 10P | (옵션) heavy-duty bridge | ₩1,000 | 0–1 pack | cite: https://www.daisomall.co.kr/pd/pdr/SCR_PDR_0001?pdNo=1051760 |
+| (선택) Sugru moldable rubber | custom strain relief mold | ₩4,500/50g (한국 retailer) | 8-pack 권장 | 영구적; 본 runbook 미사용, 후속 cycle 대안 |
+
+총 ₩3,000–4,000 + (선택) Sugru ₩4,500. 사용자 inline JST rocker switch (battery line) 이미 설치됨 — 별도 add-on 불필요.
+
+### 11.3 Heat tool options (no heat gun)
+
+| 도구 | 거리 | 시간 | 평가 |
+|------|------|------|------|
+| 헤어드라이어 hot setting (60–80°C) | 5–10cm wave | 30–60s | recommended (PCB-safe, even heat) |
+| 라이터 (BIC) | 5–10cm | 3–5s wave (sides → top → sides) | acceptable, **PCB removed first** |
+| 성냥 / open flame at < 5cm | < 5cm | — | reject (char + insulation damage) |
+
+사용자 confirmed: 라이터 acceptable (PCB removal 전제). 가능하면 헤어드라이어 우선.
+
+### 11.4 Procedure (5–10 min total, before §3.3 occipital re-seat)
+
+**Pre-step**: Cyton 보드 측 모든 dupont 측 분리 (heat tool로 인한 PCB 측 SMT chip reflow 위험 회피). Daisy stack도 분리.
+
+**Layer 1 — heat shrink per dupont** (30s each × 19 = ~10 min):
+
+1. 6mm size heat shrink을 2cm 길이로 cut (dupont housing OD ≈ 3–4mm, 6mm tube 측 33–50% shrink ratio로 fit).
+2. wire 측 open end → housing-base junction 측 슬립 (1mm overlap onto plastic housing — wire-bend stress 흡수 지점).
+3. 헤어드라이어 hot setting 측 30–60s wave (또는 라이터 5–10cm 측 3–5s wave, sides → top → sides 순).
+4. 30s cool 후 다음 connector.
+5. 16ch + Y-splitter 1M 측 + Y-splitter 2F × 2 = 19 dupont 모두 적용.
+
+**Layer 2 — rubber band board strap** (방법 3 from conversation, ~2 min):
+
+1. 굵은 머리끈 1개 측 PCB 측 둘레 측 가로 wrap (connector row 측 위 측 cross).
+2. **SMT chip 측 직접 접촉 회피** — board edge 측 cross-over only (ESD-sensitive — §11.7 C3-6 참조).
+3. lateral mount-hole 측 hook → strap slip 차단.
+4. tension light: 보드 표면이 눌려서 휘지 않을 정도 (PCB flex < 0.5mm).
+
+**Layer 3 — bridge anchor (cable strain relief)** (방법 2, ~2 min):
+
+1. cable bundle 측 connector 측 위 2–3cm 지점 측 머리끈 wrap.
+2. 양 끝 측 PCB 반대편 mount-hole 측 통과 + 매듭 (board 측 connector pin 반대 방향으로 cable load 전환).
+3. **cable yank test**: cable 측 가볍게 당겨도 board 측 transfer되지 않음 — bridge anchor가 strain 흡수.
+
+전체 적용 후 Cyton 보드 + dupont 재조립 → §4 impedance check 진입.
+
+### 11.5 Falsifier addendum (extends §7)
+
+§7 표 끝에 추가:
+
+| ID | 조건 | threshold | 측정 시점 |
+|----|------|-----------|-----------|
+| F_BTRACK_05 | post-reinforcement connector pop-off rate | **< 1 / measurement** (cable-tug test 5/5 trial PASS) | §11.4 완료 직후 + §6 measurement 직전 |
+
+cable-tug test: cable bundle을 90° 좌/우/위/아래/회전 5방향 가볍게 당김 (1N 미만, ~100g 무게 수준) — 모든 방향에서 connector가 board에 retain되어야 함.
+
+### 11.6 Updated v7 protocol sequence
+
+§6 measurement 진입 sequence를 다음으로 갱신:
+
+1. **§11.4 hardware reinforcement** (Layer 1 + 2 + 3) — pre-don 시점, ~10 min.
+2. §3 electrode re-seat (occipital priority, §3.3).
+3. §4 impedance verify (F_BTRACK_01, _03 gate).
+4. §5 DC settle (F_BTRACK_02, _04 gate).
+5. §6 v7 measurement 실행.
+6. §7 falsifier gate (F_BTRACK_01..**05** ALL PASS).
+
+**Expected progression**:
+- v6 baseline: 16/16 rail-saturated (real .npy 기준).
+- post-§11 reinforcement v7 expected: **≤ 5/16 saturation** (connector contribution 제거; 잔여 saturation은 electrode-skin contact 측 §3에서 추가 처리).
+- 둘 다 적용된 v7에서 F3 verdict (EC α / EO α > 2.0) 재평가.
+
+### 11.7 Honest C3 (extends §8)
+
+#### C3-5 reversibility
+
+heat shrink는 semi-permanent — 제거 시 cut (knife) 필요. 재시공 시 heat shrink ~₩50/connector × 19 = ₩1,000 미만으로 redo 가능. full mod (Sugru) 대비 reversible.
+
+#### C3-6 ESD-sensitive PCB compression
+
+Cyton 측 SMT chip (ADS1299, OPA, regulator 등)은 ESD-sensitive + mechanical-stress-sensitive. rubber band tension 과도 시 chip lead 측 micro-crack → 측정 noise 또는 chip dead. **edge cross-over only**, chip 표면 직접 압박 금지. 시공 전 손/도구 측 ESD discharge (금속 접지 touch) 권장.
+
+#### C3-7 connector-only fix는 부분 해결
+
+§11은 **connector-PCB contact** layer만 다룸. electrode-scalp contact (paste dry-out, hair-impedance, mastoid 부유)는 §3가 owner. F3 alpha-blocking verdict 변경에는 **§3 + §11 둘 다 필요**. §11 단독으로 16/16 → 0/16 saturation 회복 보장 불가 — 가장 가능성 높은 reduction은 16/16 → 5/16 수준 (connector contribution 제거).
+
+### 11.8 Cross-links (extends §9)
+
+§9 cross-links 목록에 추가:
+
+- N4 wrapper finding: `state/.analyze_wrapper_dump.txt` (16/16 v6 saturation 근거)
+- Daiso 열수축튜브 12P mixed: https://www.daisomall.co.kr/pd/pdr/SCR_PDR_0001?pdNo=68551
+- Daiso 머리끈 얇은 16P: https://www.daisomall.co.kr/pd/pdr/SCR_PDR_0001?pdNo=1025760
+- Daiso 머리끈 굵은 13P: https://www.daisomall.co.kr/pd/pdr/SCR_PDR_0001?pdNo=1025762
+- Daiso 머리끈 통통 블랙 10P: https://www.daisomall.co.kr/pd/pdr/SCR_PDR_0001?pdNo=1051760
+- OpenBCI Y-splitter cable (1M → 2F, $0.99): https://shop.openbci.com/products/y-splitter-cable
+
+---
+
+§11 작성: 2026-05-03 N3 follow-up BG (hardware connector strain-relief layer)
+status: ready-for-execution (cap re-don 직전 §11.4 → §3 → §4 → §5 → §6 sequence)

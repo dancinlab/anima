@@ -199,6 +199,23 @@ state/anima_eeg_impedance_*.json
 state/anima_eeg_session_log.jsonl
 state/dual_stream_seedanchor_ledger.jsonl
 
+# rail_audit sidecars — Option B (2026-05-03): gitignore future emissions; do NOT
+# `git rm --cached` the 3 already-committed sidecars in commit e2ce92413.
+# Rationale: deterministic re-runnable from .npy + meta.json via analyze_wrapper.hexa.
+# Policy: docs/ai-native/rail_audit_sidecar_policy_2026_05_03.ai.md
+anima-eeg/recordings/sessions/*.npy.rail_audit.json
+anima-eeg/recordings/protocols/**/*.npy.rail_audit.json
+
+# analyze_wrapper helper transient dumps + selftest sidecars (state-tier ephemeral)
+state/.analyze_wrapper_dump.txt
+state/.analyze_wrapper_dump_clean.txt
+state/.analyze_wrapper_dump_*.txt
+state/analyze_wrapper_selftest_*.rail_audit.json
+
+# Hexa pwd probe artifacts (N2 sandbox confirmation, ephemeral)
+state/_hexa_pwd_out.txt
+state/_hexa_pwd_probe.hexa
+
 # Band-power test fixtures (regeneratable from .hexa SSOT)
 state/band_power_5_*/
 state/berger_*/
