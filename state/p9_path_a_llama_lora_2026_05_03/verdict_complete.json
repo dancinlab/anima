@@ -1,0 +1,62 @@
+{
+  "schema": "anima/p9_path_a_llama_lora/complete_verdict/1",
+  "cycle": "p9_path_a_llama_lora_complete_2026_05_04",
+  "ts_utc": "2026-05-04T06:57:00Z",
+  "spec_ref": "docs/p9_a_prime_path_decision_2026_05_03.md",
+  "land_doc": "docs/p9_path_a_llama_lora_complete_2026_05_04.ai.md",
+  "verdict": "COMPLETE_PROBABLE",
+  "verdict_reason": "Step 10000/10000 reached at 2026-05-03T21:34:08Z (high confidence per host_terminator.log monotonic progression); pid GONE in same 10-min probe window before TRAIN_DONE.json flush; final HF push live-verification BLOCKED on Mac hf auth Invalid user token.",
+  "final_step": 10000,
+  "max_steps": 10000,
+  "final_step_ts_utc": "2026-05-03T21:34:08Z",
+  "checkpoint_path": "hf://need-singularity/p9-llama32-lora-stage1 (PROBABLE; not live-verified)",
+  "checkpoint_local_path": null,
+  "checkpoint_local_path_reason": "host_pod_terminator error-branch did not run mkdir -p artifacts; scp failed; pod since terminated and unreachable (Connection refused on ssh -p 14783 root@103.207.149.110 verified 2026-05-04T06:57Z)",
+  "cost_actual_usd": 22.18,
+  "cost_projected_usd": 21.5,
+  "cost_delta_pct": 3.2,
+  "cost_pct_of_50_cap": 44.4,
+  "cost_pct_of_85_hard_cap": 26.5,
+  "wall_h_actual": 7.418,
+  "wall_h_projected": 7.0,
+  "pod_id": "29dhlqk508ugoc",
+  "pod_state": "TERMINATED",
+  "pod_termination_actor": "host_pod_terminator.sh error-path branch",
+  "pod_termination_ts_utc": "2026-05-03T21:34:13Z",
+  "termination_branch_ranked_causes": [
+    {"rank": 1, "p": 0.6, "cause": "clean train + final-save flush race (process inside trainer.save_model('final') / tok.save_pretrained / TRAIN_DONE.json write when 10min probe found pid exited)"},
+    {"rank": 2, "p": 0.25, "cause": "final-save crash (HF push timeout / OOM during state dump / network blip)"},
+    {"rank": 3, "p": 0.10, "cause": "RunPod-side OOM kill or container restart during final ops"},
+    {"rank": 4, "p": 0.04, "cause": "RunPod spot preemption (low likelihood; standard cluster)"},
+    {"rank": 5, "p": 0.01, "cause": "manual termination (ruled out: log attributes deletion to runpodctl call)"}
+  ],
+  "f1_v3_eval_ready": false,
+  "f1_v3_eval_blockers": [
+    "HF auth recovery on Mac (Invalid user token) — 5min interactive unblock",
+    "cond.benchmark_a_prime_base_validation = PASS — separate BG, ~6-17h ubu1, $0",
+    "F1_v3_pending.json must be re-emitted with v3 semantics (3-benchmark lm-eval composite, not legacy v2 BLEU-1)"
+  ],
+  "honest_c3": [
+    "Probe-cadence completion-detection lossy — STEP=10000/10000 + ALIVE=0 + DONE=0 conflates clean-finish with crash; 60/25/10/4/1 attribution is statistical not falsifiable from on-disk evidence",
+    "Checkpoint integrity unverified — no sha256 / parameter-rank verification; even file presence on HF mirror unconfirmed because hf auth broken on Mac",
+    "Cost +3.2% over projection ($22.18 vs $21.50) within ±10% band but pod-overhead $0.90 was absorbed into per-step rate rather than amortized as fixed term — projection model should add fixed overhead up front for next pod",
+    "Silent-failure surfaces NOT visible from Mac — NaN/inf loss, OOM at final save, HF push 401/timeout all unobservable; watcher error-branch was supposed to scp train.log but mkdir -p was missing (script bug at host_pod_terminator.sh.txt line 63-65 vs DONE branch line 47)",
+    "F1_v3_pending.json predates the v2→v3 falsifier upgrade; eval cycle when it fires must use v3 (3-benchmark lm-eval composite) not legacy BLEU-1"
+  ],
+  "next_action": "HF re-auth (5min) → hf models info need-singularity/p9-llama32-lora-stage1 → if siblings include adapter_model.safetensors then fire naming-decision rename workflow + launch cond.benchmark_a_prime_base_validation BG; if siblings empty/incomplete then training spend converted to zero-artifact and Path A must re-launch.",
+  "unblocks_chain": [
+    "p9_sft.cond.benchmark_a_prime_base_validation",
+    "p9_sft.cond.3 (F1_v3 verdict + 4-falsifier panel)",
+    "tool/p9_a_d_cross_axis_verdict.hexa (Paradigm A vs D cross-axis comparison)",
+    "docs/p9_path_a_naming_decision_landed_2026_05_03.ai.md (HF repos move)"
+  ],
+  "roadmap_update_proposal_id": "p9_sft.cond.path_a_lora_train_complete",
+  "roadmap_update_status_emit": "__P9_PATH_A_LORA_TRAIN__ COMPLETE_PROBABLE",
+  "raw9_compliance": "no .py files written or modified on Mac; pod-side py is gone (pod terminated); SSH probe to confirm pod-state used pure ssh CLI",
+  "raw15_compliance": "all paths repo-relative",
+  "git_ops_run_in_this_cycle": "NONE",
+  "files_written_this_cycle": [
+    "docs/p9_path_a_llama_lora_complete_2026_05_04.ai.md",
+    "state/p9_path_a_llama_lora_2026_05_03/verdict_complete.json"
+  ]
+}
