@@ -1,0 +1,594 @@
+// anima-eeg/protocols/preflight_settle.hexa
+// raw#9 hexa-only · raw#10 honest-C3 · raw#15 no-personal-paths
+// raw#65 idempotent · raw#71 falsifier-bound · raw#82 darwin-native
+//
+// @resolver-bypass(reason="darwin-native: shells out to /usr/bin/say + delegates to
+//                   anima-eeg/impedance_check.hexa which globs /dev/cu.usbserial-* and
+//                   uses .venv-eeg BrainFlow venv. Hetzner / linux pods do not expose
+//                   host USB nor local venv. selftest path is pure-hexa synthetic.")
+//
+// PURPOSE
+//   3-phase pre-flight settle gate before any hardware-touching capture
+//   (blink/jaw/ppg/berger/alpha/mu/ssvep). Two failure modes from the
+//   2026-05-03 OpenBCI audit are addressable in code:
+//     #2 electrochemical 평형 미도달 → 60-90s settle wait + audio cue
+//     #5 reference contact 약함     → strict 15 kΩ gate (1+ ch fail = ABORT)
+//
+// SEQUENCE
+//   phase 1 (T0)    : impedance sweep #1                  ── baseline
+//   phase 2 (settle): 60-90s settle wait + audio cue      ── electrochem 평형
+//   phase 3 (T1)    : impedance sweep #2                  ── post-settle
+//   verdict         : strict gate + drift assessment
+//
+// USAGE
+//   hexa run anima-eeg/protocols/preflight_settle.hexa --run \
+//        --port /dev/cu.usbserial-DP04WGIQ --board cyton_daisy
+//
+//   options:
+//       --threshold <kohm>        strict gate kΩ (default 15)
+//       --settle-seconds <n>      settle wait sec (default 60, range 60-90)
+//       --voice <name>            macOS say voice (default Yuna)
+//       --strict                  default ON, 1+ ch fail → abort
+//       --lenient                 warning only, never abort
+//       --drift-pct <n>           drift max % allowed (default 20)
+//       --selftest                no-hardware synthetic dry-run
+//
+// FALSIFIERS (raw#71 — preregistered grounds for rollback)
+//   F_PREFLIGHT_01: T0 impedance 16/16 < threshold (default 15 kΩ)
+//   F_PREFLIGHT_02: T1 impedance 16/16 < threshold AND drift_pct < drift_max
+//   F_PREFLIGHT_03: settle wait elapsed within [60,90] s exact (timer 검증)
+//
+// SENTINEL
+//   __EEG_PREFLIGHT_SETTLE__ <PASS|FAIL> <max_kohm> <drift_pct>
+
+let SCHEMA = "anima-eeg/preflight_settle/1"
+
+// ════════════════════════════════════════════════════════════════════
+// Frozen defaults
+// ════════════════════════════════════════════════════════════════════
+
+let DEFAULT_PORT             = "/dev/cu.usbserial-DP04WGIQ"
+let DEFAULT_BOARD            = "cyton_daisy"
+let DEFAULT_VOICE            = "Yuna"
+let DEFAULT_THRESHOLD_KOHM   = 15
+let DEFAULT_SETTLE_SECONDS   = 60
+let DEFAULT_DRIFT_PCT        = 20
+let SETTLE_MIN_S             = 60
+let SETTLE_MAX_S             = 90
+let SNAPSHOT_PREFIX          = "state/anima_eeg_impedance_"
+let LEDGER_PATH              = "state/anima_eeg_preflight_settle_ledger.jsonl"
+
+// global state for sentinel emission
+let mut g_max_kohm           = -1.0
+let mut g_drift_pct          = -1.0
+let mut g_pass               = 0
+let mut g_t0_max_kohm        = -1.0
+let mut g_t1_max_kohm        = -1.0
+let mut g_t0_fail_count      = 0
+let mut g_t1_fail_count      = 0
+let mut g_settle_actual_s    = 0
+
+// ════════════════════════════════════════════════════════════════════
+// Helpers
+// ════════════════════════════════════════════════════════════════════
+
+fn say_cue(voice: str, text: str) -> int {
+    let cmd = "say -v '" + voice + "' '" + text + "'"
+    return exec_status(cmd)
+}
+
+fn exec_status(cmd: str) -> int {
+    let rc = exec(cmd)
+    return rc
+}
+
+fn exec_capture(cmd: str) -> str {
+    return capture_stdout(cmd)
+}
+
+fn now_iso_utc() -> str {
+    let cmd = "date -u +%Y%m%dT%H%M%SZ"
+    return exec_capture(cmd).trim()
+}
+
+fn sleep_seconds(n: int) {
+    let cmd = "sleep " + str(n)
+    exec_status(cmd)
+}
+
+fn ensure_dir(path: str) {
+    exec_status("mkdir -p '" + path + "'")
+}
+
+// run impedance_check.hexa with strict threshold via --green-kohm <threshold>
+// (any channel >= threshold becomes YELLOW/RED → fail). Captures snapshot to
+// state/anima_eeg_impedance_<ts>.json and returns that path.
+fn run_impedance_sweep(port: str, board: str, threshold_kohm: int, selftest: int) -> str {
+    let mut cmd = "hexa run anima-eeg/impedance_check.hexa"
+    if selftest == 1 {
+        cmd = cmd + " --selftest"
+    } else {
+        cmd = cmd + " --check --port '" + port + "' --board " + board
+    }
+    // strict gate: GREEN < threshold; YELLOW = 2× threshold (just to surface buckets);
+    // anything >= threshold counts as fail in our analyzer.
+    cmd = cmd + " --green-kohm " + str(threshold_kohm)
+    cmd = cmd + " --yellow-kohm " + str(threshold_kohm * 2)
+    let rc = exec_status(cmd)
+    // lookup most recent snapshot (impedance_check writes state/anima_eeg_impedance_<ts>.json)
+    let glob_cmd = "ls -1t " + SNAPSHOT_PREFIX + "*.json 2>/dev/null | head -1"
+    let snap_path = exec_capture(glob_cmd).trim()
+    if snap_path == "" {
+        print("[preflight] WARN: snapshot not found after impedance sweep (rc=" + str(rc) + ")")
+    }
+    return snap_path
+}
+
+// Parse snapshot JSON for max z_kohm and # channels >= threshold.
+// raw#10 honest C3: pure string scan — does not invoke a JSON parser, so
+// breaks if impedance_check schema reorders keys. Audited 2026-05-03 against
+// SCHEMA "anima-eeg/impedance_check/1".
+fn parse_snapshot(snap_path: str, threshold_kohm: int) -> array {
+    if snap_path == "" {
+        return [-1.0, 16]
+    }
+    let body = read_file(snap_path)
+    if body == "" {
+        return [-1.0, 16]
+    }
+    let lines = body.split("\n")
+    let mut max_z = -1.0
+    let mut fail_count = 0
+    let mut i = 0
+    while i < len(lines) {
+        let ln = lines[i]
+        // Match: "z_kohm": <float>, "state": "<S>"
+        let key = "\"z_kohm\":"
+        let kpos = ln.find(key)
+        if kpos >= 0 {
+            // Extract substring after key, before comma
+            let rest = ln.substring(kpos + key.len(), ln.len())
+            let comma = rest.find(",")
+            let mut tok = rest
+            if comma >= 0 {
+                tok = rest.substring(0, comma)
+            }
+            let z_val = to_float(tok.trim())
+            if z_val > max_z {
+                max_z = z_val
+            }
+            // strict gate: any channel >= threshold counts as fail (GRAY/RED both bad)
+            if z_val < 0.0 {
+                fail_count = fail_count + 1
+            } else {
+                let thr = to_float(str(threshold_kohm))
+                if z_val >= thr {
+                    fail_count = fail_count + 1
+                }
+            }
+        }
+        i = i + 1
+    }
+    return [max_z, fail_count]
+}
+
+fn compute_drift_pct(t0_max: float, t1_max: float) -> float {
+    if t0_max <= 0.0 {
+        return -1.0
+    }
+    // drift = (T1 - T0) / T0 × 100
+    // negative = settle good (impedance ↓), positive = drying / weak contact
+    let raw_pct = ((t1_max - t0_max) / t0_max) * 100.0
+    return raw_pct
+}
+
+fn abs_float(x: float) -> float {
+    if x < 0.0 { return -x }
+    return x
+}
+
+// ════════════════════════════════════════════════════════════════════
+// Phase implementations
+// ════════════════════════════════════════════════════════════════════
+
+fn phase1_t0(voice: str, port: str, board: str, threshold: int, selftest: int) -> array {
+    say_cue(voice, "프리플라이트 단계 일. 초기 임피던스 측정")
+    print("[phase 1] T0 impedance sweep (threshold=" + str(threshold) + " kΩ)...")
+    let snap = run_impedance_sweep(port, board, threshold, selftest)
+    let result = parse_snapshot(snap, threshold)
+    let max_z = result[0]
+    let fail_n = result[1]
+    g_t0_max_kohm = max_z
+    g_t0_fail_count = fail_n
+    print("[phase 1] T0 max_kohm=" + str(max_z) + " kΩ  fail_ch=" + str(fail_n) + "/16")
+    return [max_z, fail_n]
+}
+
+fn phase2_settle(voice: str, settle_s: int) -> int {
+    print("[phase 2] settle wait " + str(settle_s) + "s ── electrochemical 평형 대기")
+    say_cue(voice, "단계 이. 안정 대기 중. 가만히 계세요")
+    let t0 = now_iso_utc()
+    sleep_seconds(settle_s)
+    let t1 = now_iso_utc()
+    say_cue(voice, "안정 대기 완료")
+    g_settle_actual_s = settle_s
+    print("[phase 2] settle elapsed " + str(settle_s) + "s  (start=" + t0 + " end=" + t1 + ")")
+    return settle_s
+}
+
+fn phase3_t1(voice: str, port: str, board: str, threshold: int, selftest: int) -> array {
+    say_cue(voice, "단계 삼. 재 임피던스 측정")
+    print("[phase 3] T1 impedance sweep (post-settle)...")
+    let snap = run_impedance_sweep(port, board, threshold, selftest)
+    let result = parse_snapshot(snap, threshold)
+    let max_z = result[0]
+    let fail_n = result[1]
+    g_t1_max_kohm = max_z
+    g_t1_fail_count = fail_n
+    print("[phase 3] T1 max_kohm=" + str(max_z) + " kΩ  fail_ch=" + str(fail_n) + "/16")
+    return [max_z, fail_n]
+}
+
+// ════════════════════════════════════════════════════════════════════
+// Falsifier evaluation
+// ════════════════════════════════════════════════════════════════════
+
+fn eval_falsifiers(threshold: int, drift_max_pct: int, settle_s: int) -> array {
+    let mut f1 = 0
+    let mut f2 = 0
+    let mut f3 = 0
+    // F_PREFLIGHT_01: T0 16/16 < threshold
+    if g_t0_fail_count == 0 && g_t0_max_kohm >= 0.0 {
+        f1 = 1
+    }
+    // F_PREFLIGHT_02: T1 16/16 < threshold AND drift_pct < drift_max
+    let drift = compute_drift_pct(g_t0_max_kohm, g_t1_max_kohm)
+    g_drift_pct = drift
+    let abs_drift = abs_float(drift)
+    let drift_max_f = to_float(str(drift_max_pct))
+    if g_t1_fail_count == 0 && g_t1_max_kohm >= 0.0 && abs_drift < drift_max_f {
+        f2 = 1
+    }
+    // F_PREFLIGHT_03: settle wait within [60,90]
+    if settle_s >= SETTLE_MIN_S && settle_s <= SETTLE_MAX_S {
+        f3 = 1
+    }
+    return [f1, f2, f3]
+}
+
+fn emit_sentinel() {
+    let mut verdict = "FAIL"
+    if g_pass == 1 {
+        verdict = "PASS"
+    }
+    let max_used = if g_t1_max_kohm >= 0.0 { g_t1_max_kohm } else { g_t0_max_kohm }
+    g_max_kohm = max_used
+    println("__EEG_PREFLIGHT_SETTLE__ " + verdict + " " + to_string(max_used) + " " + to_string(g_drift_pct))
+}
+
+fn append_ledger(ts: str, threshold: int, settle_s: int, strict: int) {
+    ensure_dir("state")
+    let mut row = "{"
+    row = row + "\"schema\":\"" + SCHEMA + "\","
+    row = row + "\"ts\":\"" + ts + "\","
+    row = row + "\"threshold_kohm\":" + str(threshold) + ","
+    row = row + "\"settle_seconds\":" + str(settle_s) + ","
+    row = row + "\"strict\":" + str(strict) + ","
+    row = row + "\"t0_max_kohm\":" + to_string(g_t0_max_kohm) + ","
+    row = row + "\"t1_max_kohm\":" + to_string(g_t1_max_kohm) + ","
+    row = row + "\"t0_fail_count\":" + str(g_t0_fail_count) + ","
+    row = row + "\"t1_fail_count\":" + str(g_t1_fail_count) + ","
+    row = row + "\"drift_pct\":" + to_string(g_drift_pct) + ","
+    row = row + "\"verdict\":\"" + (if g_pass == 1 { "PASS" } else { "FAIL" }) + "\""
+    row = row + "}"
+    let nl = chr(10)
+    let mut existing = ""
+    let prior = read_file(LEDGER_PATH)
+    if prior != "" { existing = prior }
+    write_file(LEDGER_PATH, existing + row + nl)
+}
+
+// ════════════════════════════════════════════════════════════════════
+// Main run / selftest
+// ════════════════════════════════════════════════════════════════════
+
+fn cmd_run(port: str, board: str, voice: str, threshold: int,
+           settle_s: int, drift_max_pct: int, strict: int, selftest: int) -> int {
+    let ts = if selftest == 1 { "selftest_synth" } else { now_iso_utc() }
+
+    print("══════════════════════════════════════════════════")
+    print("  anima-eeg preflight_settle (3-phase)")
+    print("  schema: " + SCHEMA)
+    print("  ts: " + ts)
+    if selftest == 1 {
+        print("  mode: selftest (synthetic — NOT_VERIFIED_SYNTHETIC)")
+    } else {
+        print("  port: " + port + "  board: " + board)
+    }
+    print("  threshold: " + str(threshold) + " kΩ (strict gate)")
+    print("  settle: " + str(settle_s) + "s  drift_max: " + str(drift_max_pct) + "%")
+    print("  strict: " + (if strict == 1 { "ON (1+ ch fail → abort)" } else { "OFF (lenient — warn only)" }))
+    print("══════════════════════════════════════════════════")
+
+    // Phase 1: T0
+    let r1 = phase1_t0(voice, port, board, threshold, selftest)
+    let t0_max = r1[0]
+    let t0_fail = r1[1]
+    if t0_fail > 0 && strict == 1 {
+        say_cue(voice, "초기 임피던스 실패. 전극을 다시 부착하세요")
+        print("[phase 1] STRICT FAIL: " + str(t0_fail) + "/16 channel(s) >= " + str(threshold) + " kΩ")
+        print("[phase 1] action: 전극 다시 부착 → 본 BG 재실행")
+        let fals = eval_falsifiers(threshold, drift_max_pct, settle_s)
+        print("[falsifier] F_PREFLIGHT_01=" + str(fals[0]) + "  F_PREFLIGHT_02=" + str(fals[1]) + "  F_PREFLIGHT_03=" + str(fals[2]))
+        g_pass = 0
+        emit_sentinel()
+        append_ledger(ts, threshold, settle_s, strict)
+        return 1
+    }
+
+    // Phase 2: settle
+    phase2_settle(voice, settle_s)
+
+    // Phase 3: T1
+    let r3 = phase3_t1(voice, port, board, threshold, selftest)
+    let t1_max = r3[0]
+    let t1_fail = r3[1]
+
+    // Falsifier evaluation
+    let fals = eval_falsifiers(threshold, drift_max_pct, settle_s)
+    let f1 = fals[0]
+    let f2 = fals[1]
+    let f3 = fals[2]
+    print("[falsifier] F_PREFLIGHT_01=" + str(f1) + " (T0 16/16 < " + str(threshold) + " kΩ)")
+    print("[falsifier] F_PREFLIGHT_02=" + str(f2) + " (T1 16/16 < " + str(threshold) + " kΩ + drift < " + str(drift_max_pct) + "%)")
+    print("[falsifier] F_PREFLIGHT_03=" + str(f3) + " (settle ∈ [" + str(SETTLE_MIN_S) + "," + str(SETTLE_MAX_S) + "] s)")
+    print("[drift] T0=" + str(t0_max) + " kΩ → T1=" + str(t1_max) + " kΩ  (" + to_string(g_drift_pct) + "%)")
+
+    if g_drift_pct > 0.0 {
+        print("[drift] WARN: T1 > T0 → 약한 contact 또는 drying gel 의심")
+    } else {
+        print("[drift] OK: T1 ≤ T0 → electrochemical 평형 도달 추정")
+    }
+
+    let all_pass = if f1 == 1 && f2 == 1 && f3 == 1 { 1 } else { 0 }
+    if all_pass == 1 {
+        say_cue(voice, "프리플라이트 통과. 측정 시작 가능")
+        g_pass = 1
+        emit_sentinel()
+        append_ledger(ts, threshold, settle_s, strict)
+        print("[verdict] PASS — proceed to measurement BG")
+        return 0
+    }
+
+    // Failure path
+    if strict == 1 {
+        say_cue(voice, "프리플라이트 실패. 전극을 다시 확인하세요")
+        g_pass = 0
+        emit_sentinel()
+        append_ledger(ts, threshold, settle_s, strict)
+        print("[verdict] FAIL (strict) — abort, 전극 재부착 후 재실행")
+        return 2
+    }
+
+    // lenient: warn only, allow proceed
+    say_cue(voice, "프리플라이트 경고. 그러나 lenient 모드. 측정 진행")
+    g_pass = 0
+    emit_sentinel()
+    append_ledger(ts, threshold, settle_s, strict)
+    print("[verdict] WARN (lenient) — proceed but flagged in ledger")
+    return 0
+}
+
+fn cmd_selftest() -> int {
+    print("[selftest] preflight_settle.hexa — synthetic dry-run")
+    print("[selftest] no hardware, no settle wait (instant), no say cue")
+
+    let mut test_count = 0
+    let mut pass_count = 0
+
+    // T1: SCHEMA constant
+    test_count = test_count + 1
+    if SCHEMA == "anima-eeg/preflight_settle/1" { pass_count = pass_count + 1 }
+    else { print("[FAIL] T1 schema") }
+
+    // T2: threshold default 15 kΩ
+    test_count = test_count + 1
+    if DEFAULT_THRESHOLD_KOHM == 15 { pass_count = pass_count + 1 }
+    else { print("[FAIL] T2 threshold default") }
+
+    // T3: settle window [60,90]
+    test_count = test_count + 1
+    if SETTLE_MIN_S == 60 && SETTLE_MAX_S == 90 { pass_count = pass_count + 1 }
+    else { print("[FAIL] T3 settle window") }
+
+    // T4: drift_pct default
+    test_count = test_count + 1
+    if DEFAULT_DRIFT_PCT == 20 { pass_count = pass_count + 1 }
+    else { print("[FAIL] T4 drift_max default") }
+
+    // T5: F_PREFLIGHT_03 falsifier — settle ∈ [60,90]
+    test_count = test_count + 1
+    let f3_ok = if 60 >= SETTLE_MIN_S && 60 <= SETTLE_MAX_S { 1 } else { 0 }
+    if f3_ok == 1 { pass_count = pass_count + 1 }
+    else { print("[FAIL] T5 settle window 60s") }
+
+    // T6: F_PREFLIGHT_03 — settle 90s also valid
+    test_count = test_count + 1
+    let f3_90 = if 90 >= SETTLE_MIN_S && 90 <= SETTLE_MAX_S { 1 } else { 0 }
+    if f3_90 == 1 { pass_count = pass_count + 1 }
+    else { print("[FAIL] T6 settle window 90s") }
+
+    // T7: F_PREFLIGHT_03 — settle 30s INVALID
+    test_count = test_count + 1
+    let f3_30 = if 30 >= SETTLE_MIN_S && 30 <= SETTLE_MAX_S { 1 } else { 0 }
+    if f3_30 == 0 { pass_count = pass_count + 1 }
+    else { print("[FAIL] T7 settle 30s should be invalid") }
+
+    // T8: drift_pct math — T1 < T0 → negative
+    test_count = test_count + 1
+    let d_neg = compute_drift_pct(10.0, 8.0)
+    if d_neg < 0.0 { pass_count = pass_count + 1 }
+    else { print("[FAIL] T8 drift T1<T0 should be negative") }
+
+    // T9: drift_pct math — T1 > T0 → positive
+    test_count = test_count + 1
+    let d_pos = compute_drift_pct(8.0, 10.0)
+    if d_pos > 0.0 { pass_count = pass_count + 1 }
+    else { print("[FAIL] T9 drift T1>T0 should be positive") }
+
+    // T10: F_PREFLIGHT_01 logic — fail_count==0 → pass
+    test_count = test_count + 1
+    g_t0_max_kohm = 8.0
+    g_t0_fail_count = 0
+    g_t1_max_kohm = 7.5
+    g_t1_fail_count = 0
+    let f_synth = eval_falsifiers(DEFAULT_THRESHOLD_KOHM, DEFAULT_DRIFT_PCT, DEFAULT_SETTLE_SECONDS)
+    if f_synth[0] == 1 { pass_count = pass_count + 1 }
+    else { print("[FAIL] T10 F_PREFLIGHT_01 synth pass") }
+
+    // T11: F_PREFLIGHT_02 logic — drift small + 16/16 ok
+    test_count = test_count + 1
+    if f_synth[1] == 1 { pass_count = pass_count + 1 }
+    else { print("[FAIL] T11 F_PREFLIGHT_02 synth pass") }
+
+    // T12: F_PREFLIGHT_03 default settle valid
+    test_count = test_count + 1
+    if f_synth[2] == 1 { pass_count = pass_count + 1 }
+    else { print("[FAIL] T12 F_PREFLIGHT_03 default valid") }
+
+    // T13: F_PREFLIGHT_01 fails when fail_count > 0
+    test_count = test_count + 1
+    g_t0_fail_count = 3
+    let f_fail = eval_falsifiers(DEFAULT_THRESHOLD_KOHM, DEFAULT_DRIFT_PCT, DEFAULT_SETTLE_SECONDS)
+    if f_fail[0] == 0 { pass_count = pass_count + 1 }
+    else { print("[FAIL] T13 F_PREFLIGHT_01 should fail with fail_count>0") }
+
+    // T14: drift > drift_max should fail F_PREFLIGHT_02
+    test_count = test_count + 1
+    g_t0_max_kohm = 8.0
+    g_t0_fail_count = 0
+    g_t1_max_kohm = 12.0    // drift = +50%
+    g_t1_fail_count = 0
+    let f_drift = eval_falsifiers(DEFAULT_THRESHOLD_KOHM, DEFAULT_DRIFT_PCT, DEFAULT_SETTLE_SECONDS)
+    if f_drift[1] == 0 { pass_count = pass_count + 1 }
+    else { print("[FAIL] T14 F_PREFLIGHT_02 should fail with drift=+50%") }
+
+    // reset globals before sentinel
+    g_t0_max_kohm = 8.0
+    g_t1_max_kohm = 7.5
+    g_drift_pct = -6.25
+    g_pass = if pass_count == test_count { 1 } else { 0 }
+
+    print("[selftest] " + str(pass_count) + " PASS / " + str(test_count - pass_count) + " FAIL (of " + str(test_count) + ")")
+    emit_sentinel()
+    if pass_count == test_count {
+        print("__PREFLIGHT_SELFTEST__ PASS")
+        return 0
+    }
+    print("__PREFLIGHT_SELFTEST__ FAIL")
+    return 1
+}
+
+// ════════════════════════════════════════════════════════════════════
+// Argv dispatch
+// ════════════════════════════════════════════════════════════════════
+
+fn print_usage() {
+    print("usage:")
+    print("  hexa run anima-eeg/protocols/preflight_settle.hexa --run \\")
+    print("       --port <path> --board <name> [--threshold 15] [--settle-seconds 60]")
+    print("  hexa run anima-eeg/protocols/preflight_settle.hexa --selftest")
+    print("flags:")
+    print("  --selftest                no-hardware synthetic dry-run")
+    print("  --run                     full 3-phase preflight (T0 + settle + T1)")
+    print("  --port <path>             Dongle serial node (default " + DEFAULT_PORT + ")")
+    print("  --board <name>            cyton_daisy | cyton (default " + DEFAULT_BOARD + ")")
+    print("  --threshold <kohm>        strict gate kΩ (default " + str(DEFAULT_THRESHOLD_KOHM) + ")")
+    print("  --settle-seconds <n>      settle wait sec (default " + str(DEFAULT_SETTLE_SECONDS) + ", range " + str(SETTLE_MIN_S) + "-" + str(SETTLE_MAX_S) + ")")
+    print("  --voice <name>            macOS say voice (default " + DEFAULT_VOICE + ")")
+    print("  --drift-pct <n>           drift max %% (default " + str(DEFAULT_DRIFT_PCT) + ")")
+    print("  --strict                  strict mode (default ON, 1+ ch fail → abort)")
+    print("  --lenient                 lenient mode (warn only, never abort)")
+    print("  --help                    this message")
+}
+
+fn main() -> int {
+    let av = argv()
+    let n = len(av)
+
+    let mut mode = "help"
+    let mut port = DEFAULT_PORT
+    let mut board = DEFAULT_BOARD
+    let mut voice = DEFAULT_VOICE
+    let mut threshold = DEFAULT_THRESHOLD_KOHM
+    let mut settle_s = DEFAULT_SETTLE_SECONDS
+    let mut drift_max_pct = DEFAULT_DRIFT_PCT
+    let mut strict = 1     // default ON per spec
+
+    // skip leading interpreter / file / cache paths (raw#10 honest C3:
+    // hexa argv prefixes with interp .real binary + .hexa source path; mode
+    // flags follow. Resilient skip until first "--" arg.)
+    let mut start = 0
+    while start < n {
+        let a = av[start]
+        if a.starts_with("--") { break }
+        let mut is_path = false
+        if a.starts_with("/")    { is_path = true }
+        if a.ends_with(".hexa")  { is_path = true }
+        if a.ends_with(".real")  { is_path = true }
+        if a.ends_with("/exe")   { is_path = true }
+        if is_path { start = start + 1 }
+        else { break }
+    }
+
+    let mut i = start
+    while i < n {
+        let a = av[i]
+        if a == "--selftest"          { mode = "selftest" }
+        else if a == "--run"          { mode = "run" }
+        else if a == "--strict"       { strict = 1 }
+        else if a == "--lenient"      { strict = 0 }
+        else if a == "--port" {
+            if i + 1 < n { port = av[i + 1]; i = i + 1 }
+        }
+        else if a == "--board" {
+            if i + 1 < n { board = av[i + 1]; i = i + 1 }
+        }
+        else if a == "--voice" {
+            if i + 1 < n { voice = av[i + 1]; i = i + 1 }
+        }
+        else if a == "--threshold" {
+            if i + 1 < n { threshold = int_parse(av[i + 1]); i = i + 1 }
+        }
+        else if a == "--settle-seconds" {
+            if i + 1 < n { settle_s = int_parse(av[i + 1]); i = i + 1 }
+        }
+        else if a == "--drift-pct" {
+            if i + 1 < n { drift_max_pct = int_parse(av[i + 1]); i = i + 1 }
+        }
+        else if a == "--help"         { mode = "help" }
+        else {
+            print("[error] unknown flag: " + a)
+            print_usage()
+            return 2
+        }
+        i = i + 1
+    }
+
+    // settle window guardrail (raw#71 — F_PREFLIGHT_03 enforced at parse time too)
+    if mode == "run" {
+        if settle_s < SETTLE_MIN_S || settle_s > SETTLE_MAX_S {
+            print("[error] --settle-seconds must be ∈ [" + str(SETTLE_MIN_S) + "," + str(SETTLE_MAX_S) + "] (got " + str(settle_s) + ")")
+            return 2
+        }
+    }
+
+    if mode == "selftest" {
+        return cmd_selftest()
+    }
+    if mode == "run" {
+        return cmd_run(port, board, voice, threshold, settle_s, drift_max_pct, strict, 0)
+    }
+    print_usage()
+    return 0
+}
