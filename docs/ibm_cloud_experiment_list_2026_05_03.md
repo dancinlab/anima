@@ -1,159 +1,221 @@
-# IBM Cloud $200 Credit — Anima/P9 Experiment List
+# IBM Cloud $200 — nexus.qmirror Calibration Burst Plan
 
 - ts_utc: 2026-05-03
 - credit: $200 USD (IBM Cloud signup)
+- module: **nexus.qmirror** (see `docs/nexus_qmirror_spec_2026_05_03.md`)
+- roadmap registration: `nexus/.roadmap.qmirror` (cond.3 + entry `qmirror.calibration_plan` + entry `qmirror.phase3_calibration`)
 - author preset: friendly (raw#272)
 - gate: doc-only; per-experiment EXEC requires explicit user OK
 - raw#9: NO .py on Mac repo; Qiskit code lives on cloud / pod / ubu1
+- **REVISION 2026-05-03 11:00 KST**: scope pivoted from 8 one-off experiments to **single one-shot $200 burst for nexus.qmirror calibration**. See §1.
+
+## Doc composition (core / modular / ai-native)
+
+- **core**: `docs/nexus_qmirror_spec_2026_05_03.md` — module architecture (14 sections, hexa-strict layout)
+- **modular** (calibration plan): **this doc** — IBM $200 burst allocation (N1-N5 axes)
+- **ai-native** (post-impl landing): `docs/qmirror_phase1_landed_*.ai.md` (planned, when impl done)
+- **roadmap registration**: `nexus/.roadmap.qmirror` (domain SSOT, 6 conditions, 5 entries)
 
 ---
 
-## TL;DR
+## 0. Revision history
 
-IBM Cloud의 unique 가치 = **IBM Quantum hardware** (heavy-hex topology, Qiskit Runtime, 최대 156-qubit Heron r2) + **watsonx.ai foundation models** (Granite, Apache 2.0). Anima의 quantum consciousness framework와 정합도 매우 높음.
-
-10개 실험 후보를 priority + cost로 정리. Quantum 5개 실험 ($110) + buffer $90 권장 path.
+| ts_utc | revision | reason |
+|---|---|---|
+| 2026-05-03 (initial) | 8 quantum + 3 watsonx experiment 후보 | scoping survey |
+| 2026-05-03 (R1) | nexus.qmirror module 도입 → IBM credit을 qmirror 정확도 향상 anchor에 재할당 | user feedback: "0,1 + qrng = 진짜 양자컴 흉내" + "ANU only architecture" |
+| **2026-05-03 (R2 current)** | **분기별 → one-shot all-in $200 burst** | user: "분기당이 아니라 바로 다 쓸꺼야" |
 
 ---
 
-## 1. Pricing context
+## 1. Strategic pivot: nexus.qmirror calibration anchor
+
+### Decision
+
+`nexus.qmirror` (classical CPU + ANU QRNG + Aer/Cirq simulator) provides **영구 무료 quantum substrate**. IBM $200 credit is allocated to **one-shot calibration burst** to anchor qmirror v2.0/v3.0 accuracy against real IBM Quantum hardware. After this single burst, qmirror runs永久 indepedent of IBM.
+
+### Why one-shot vs distributed
+
+| | 분기별 (rejected) | **one-shot (chosen)** |
+|---|---|---|
+| 비용 | $200 / 12개월 | $200 / 1주 |
+| anchor 횟수 | 4회 (분기별, 작은 규모 each) | **1회 (집중, 전 axis)** |
+| qmirror version | v2.0 → v2.5 단계적 | **v2.0 → v3.0 jump** |
+| 운영 복잡도 | 분기 스케줄 관리 | 한 번 끝, 영구 lock |
+| budget runway | 12개월 | 즉시 소진 |
+| drift 추적 | continuous | snapshot lock |
+
+### nexus.qmirror module summary
+
+> classical CPU + ANU QRNG + Aer/Cirq simulator = **statistical real QPU 흉내 (within ~30 qubit)**
+>
+> See: `docs/nexus_qmirror_spec_2026_05_03.md` (subagent BG, 도착 시 cross-link)
+
+3-tier substrate hierarchy:
+- Tier 1 (우리): classical CPU, bits = {0,1}, PRNG only
+- Tier 2 (ANU QRNG): real quantum entropy from vacuum fluctuations, bits 0/1 with quantum provenance
+- Tier 3 (real QPU): qubits + entanglement (IBM Heron, Braket, Quantinuum)
+
+qmirror = Tier 1 + Tier 2 → simulates Tier 3 statistically (within sim-tractable N).
+
+---
+
+## 2. One-shot $200 burst plan (qmirror calibration)
+
+### Allocation
 
 ```
-Open tier (무료):    10min QPU/mo on basic systems (5-7 qubit)
-Pay-as-you-go:       $1.60/sec on premium (Heron r2 156-qubit)
-$200 budget        = 125 sec premium 또는 수 hr 중급 backend
+$60   N1 ULTRA noise model (10000 RB shots, full Pauli matrix on Heron 7-qubit)
+$40   N2 cross-vendor (Heron + Eagle + Falcon — Bell × 5 each, vendor-independent)
+$40   N3 process tomography validation (5 standard circuits, real QPU vs qmirror)
+$20   N4 random circuit fidelity (depth 5/10/20, verify qmirror noise mid-depth)
+$30   N5 scale-up validation (12 + 16 + 20 qubit Bell on Heron, qmirror N-limit anchor)
+$10   buffer (queue retry / unexpected)
+─────
+$200  (one-shot, qmirror v2.0/v3.0 anchor finalized)
+```
+
+### Per-axis spec
+
+#### N1 ULTRA noise model calibration
+
+| 항목 | 값 |
+|---|---|
+| 목표 | qmirror Aer simulator에 real Heron noise model 주입 → 분포 일치도 95% → **99%** |
+| 측정 | T1 (relaxation), T2 (dephasing), gate error rate (1q + 2q), readout error |
+| 방법 | randomized benchmarking (RB) + clifford twirling on Heron 7-qubit subset |
+| shots | 10000 RB shots × 7 qubits |
+| 비용 | $60 |
+| 산출 | `nexus/qmirror/calibration/v2_noise_heron_2026_05_03.json` (T1/T2/gate/readout matrices) |
+| Aer integration | `qiskit.providers.aer.NoiseModel.from_backend(real_backend)` 직접 dump |
+
+#### N2 cross-vendor anchor
+
+| 항목 | 값 |
+|---|---|
+| 목표 | qmirror가 vendor 무관 일치 (Heron / Eagle / Falcon) |
+| 회로 | CHSH Bell test |
+| trial | 5 trial × 3 backend = 15 trial |
+| shots | 4096 shot per trial |
+| 비용 | $40 |
+| 산출 | S 값 분포 (3 vendor, 평균 + std), qmirror 결과와 KS test |
+
+#### N3 process tomography validation
+
+| 항목 | 값 |
+|---|---|
+| 목표 | qmirror tomography 출력이 real QPU tomography와 일치 |
+| 회로 | 5 standard 2-qubit unitaries (CNOT, SWAP, iSWAP, sqrt(X)·CNOT, randomized) |
+| shots | 1024 per circuit |
+| 비용 | $40 |
+| 산출 | density matrix 비교 (Frobenius distance, fidelity) |
+
+#### N4 random circuit fidelity
+
+| 항목 | 값 |
+|---|---|
+| 목표 | depth-dependent qmirror noise 정확도 검증 |
+| 회로 | random Clifford circuits depth ∈ {5, 10, 20} |
+| trial | 50 random per depth × 3 = 150 |
+| 비용 | $20 |
+| 산출 | depth × fidelity 곡선 (real QPU vs qmirror) |
+
+#### N5 scale-up validation
+
+| 항목 | 값 |
+|---|---|
+| 목표 | qmirror scale ceiling 확인 (12, 16, 20 qubit) |
+| 회로 | GHZ state preparation + measurement |
+| 비용 | $30 |
+| 산출 | qubit 수 × 일치도 (qmirror 한계 점 명시) |
+| 한계 | N > 20 qubit은 simulator memory ceiling 접근 |
+
+---
+
+## 3. Timeline
+
+```
+day 0  $200 commit, IBM Cloud env 점검            [─────────────────────]
+day 1  N1 noise model RB     $60 ────►            [60 ──────────────────]
+day 2  N2 cross-vendor Bell  $40 ────►            [60+40 ───────────────]
+day 3  N3 tomography         $40 ────►            [60+40+40 ────────────]
+day 4  N4 random circuit     $20 ────►            [60+40+40+20 ─────────]
+day 5  N5 scale-up           $30 ────►            [60+40+40+20+30 ──────]
+day 6  buffer + result lock  $10 ────►            [60+40+40+20+30+10 = $200]
+day 7  qmirror v2.0 release  $0  ────►            [영구 anchor lock-in]
 ```
 
 ---
 
-## 2. Quantum experiment 후보 8개 (anima 정합)
+## 4. Expected outcome (qmirror v2.0/v3.0 anchored)
 
-| # | 실험 | substrate | cost (est) | anima 가치 | 근거 |
-|---|---|---|---|---|---|
-| **1** | **CHSH cross-vendor** (Bell on IBM, vs Braket S=2.808) | Heron 156-qubit | $20 | ⭐⭐⭐ Bell 가장 결정적 | nexus_chsh_bell_2026_05_02/ |
-| **2** | **IIT 4.0 MIP on N=4 real QPU** (vs Braket simulator) | Eagle 127-qubit | $30 | ⭐⭐⭐ φ measure ground-truth | braket_iit40_mip_2026_05_02/ |
-| **3** | **N-12 IIT MULTI-WITNESSED 3-arch port to Qiskit** | Heron + simulator | $25 | ⭐⭐⭐ φ proxy ≠ φ★ 재검증 | n12_iit_braket_multiwitness_2026_05_02/ |
-| **4** | **Quantum process tomography on consciousness subnet** | Eagle | $40 | ⭐⭐ TPM 직접 검증 | (신규) |
-| **5** | **QRNG entropy from real IBM QPU** (nexus QRNG 보강) | basic open tier | $5 | ⭐⭐ HMAC-DRBG 대체 | nexus_qrng_quantum_seed_2026_05_02/ |
-| **6** | **Heavy-hex topology integration measure** | Heron r2 (156-qubit, 2D heavy-hex) | $30 | ⭐⭐ topology effect on φ | (신규) |
-| **7** | **Bell inequality violation distillation** (CLM 측 QPU violation 예측) | Heron + GH workflow | $20 | ⭐ 학습 paradigm 추가 | (신규) |
-| **8** | **CHSH multi-backend** (Heron / Eagle / Falcon 비교) | 3 backend × 5 trial | $30 | ⭐ vendor 내부 일관성 | (신규) |
-
-**Quantum 합계**: ~$200 (8개 모두) ← budget 정확 매칭
-
----
-
-## 3. AI 대안: watsonx.ai 활용 (quantum 안 가는 path)
-
-| # | 실험 | substrate | cost (est) | anima 가치 |
-|---|---|---|---|---|
-| **W1** | **watsonx Granite 3B/8B teacher** (Paradigm D 대체 7B) | watsonx.ai | $30 | ⭐⭐ Apache 2.0 teacher 대안 |
-| **W2** | **Watson NLP baseline F1** (vs Llama anchor 0.1555) | Watson NLP | $20 | ⭐⭐ F1 cross-vendor anchor |
-| **W3** | **Watson Discovery + anima paper corpus** (semantic search infra) | Discovery | $30 | ⭐ 검색 backbone |
-
----
-
-## 4. Top experiment 상세 spec
-
-### 4.1 #1 CHSH cross-vendor (가장 추천)
-
-| 항목 | 값 |
-|---|---|
-| 목적 | Braket S=2.808 (8.97σ) → IBM에서도 동일 violation 검증, vendor-bias 배제 |
-| hardware | IBM Heron r2 156-qubit (heavy-hex topology) |
-| trials | 1000 trial × 4 measurement basis = 4000 shot |
-| cost | ~$20 ($1.60/sec × ~12sec actual QPU time) |
-| wall | 3-5min (queue + execute) |
-| output | S 값 + 표준편차 → Braket S=2.808 비교 |
-| risk | IBM queue 대기 변동 (peak hours 1hr+) |
-| code base | anima/state/nexus_chsh_bell_2026_05_02/ Bell circuit Qiskit port |
-
-### 4.2 #2 IIT 4.0 MIP on N=4 real QPU
-
-| 항목 | 값 |
-|---|---|
-| 목적 | braket_iit40_mip_2026_05_02 simulator 결과를 real QPU로 재측정 |
-| hardware | Eagle r3 127-qubit (4-qubit subset) |
-| circuit | TPM 측정용 process tomography circuit (4-qubit, depth ~20) |
-| trials | 100 partition combinations × 1024 shots |
-| cost | ~$30 |
-| anima 정합 | φ★ baseline +41.86 (HID=8) anchor 와 cross-substrate 일치 검증 |
-
-### 4.3 #5 QRNG IBM QPU (cheapest)
-
-| 항목 | 값 |
-|---|---|
-| 목적 | nexus QRNG의 HMAC-DRBG → 진짜 quantum hardware entropy로 보강 |
-| hardware | open tier (Hadamard + measurement) |
-| trials | 1024 × 100 batch = 102K bits |
-| cost | ~$5 |
-| 통합 | nexus QRNG 측 entropy provenance 강화 |
-
----
-
-## 5. Path 옵션
-
-| path | 실험 | 비용 | 의미 |
+| metric | qmirror v1.0 (baseline) | **qmirror v2.0 (post-N1)** | qmirror v3.0 (post-all) |
 |---|---|---|---|
-| **Path X (quantum-focus)** | #1, #2, #3, #5, #6 | ~$110 | anima 정합 최강 5개, $90 buffer |
-| **Path Y (quantum-full)** | #1-#8 | ~$200 | 8개 모두, budget 정확 소진 |
-| **Path Z (mixed)** | #1, #2, W1, W2 | ~$100 | quantum 핵심 + AI 대안 |
-| **Path W (AI-only)** | W1, W2, W3 + GPU | ~$200 | watsonx 깊게, quantum skip |
+| ideal-sim distribution match | 95% | 99% (Heron noise) | 99%+ |
+| vendor-independent match | unknown | unknown | **99% (3 vendor 평균)** |
+| process tomography fidelity | 95% | 96% | **98%** (real QPU validated) |
+| depth-stable accuracy | unknown | depth ≤ 5 OK | **depth ≤ 20 anchored** |
+| scale-up confidence | N ≤ 30 (theory) | N ≤ 30 | **N ≤ 20 measured anchor** |
 
 ---
 
-## 6. ASCII priority matrix
+## 5. ASCII flow
 
 ```
-H ┃ #1 CHSH cross    #3 N-12 IIT      │
-i ┃ #2 IIT 4.0 MIP                    │  ← anima quantum framework 직접
-g ┃                                   │     검증 path
-h ┃ ──────────────────────────────────┤
-  ┃ #4 process tom    #6 heavy-hex    │
-M ┃ #5 QRNG IBM       #7 distillation │
-  ┃                                   │
-L ┃ #8 multi-backend  W1 watsonx      │  ← 보조 / 다양성
-  ┃ W2 NLP            W3 Discovery    │
-  ┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-   $5     $20     $30     $40+ cost
+[qmirror v1.0]                          [qmirror v3.0 (post-IBM $200)]
+┌────────────────┐                       ┌────────────────────────────┐
+│ Aer (ideal)    │   ── $200 burst ──►   │ Aer + Heron noise model    │
+│ + ANU bits     │   1 week, anchored    │ + cross-vendor adjusted    │
+│ → 통계 95%     │                       │ + tomography validated     │
+│   real         │                       │ + ANU bits                 │
+└────────────────┘                       │ → 통계 99%+ real           │
+                                         │   (drift 시작은 month 6+)  │
+                                         └────────────────────────────┘
 ```
 
 ---
 
-## 7. Honest C3 (raw#91)
+## 6. Honest C3 (raw#91)
 
-1. **$200 IBM Quantum = 매우 적음** (premium QPU $1.60/sec). 큰 회로/긴 shot 불가. 작은 N=4-8 회로 다수 권장.
-2. **Queue 대기 변동** — 무료/저가 backend는 1-24hr 대기 가능. budget 압박 시 priority queue ($/extra) 고려.
-3. **Heron r2 156-qubit ≠ 156 qubit usable** — heavy-hex connectivity 제약으로 실제 entangle 가능 qubit 수 적음.
-4. **Cross-vendor 검증 결정성** — Braket과 IBM 결과 일치 시 hardware-independent quantum violation 확인. 불일치 시 vendor 의존성 증거.
-5. **$200은 1회성 credit** — 결과 안 좋아도 추가 spend는 본 budget 외. priority sort 권장.
-6. **IBM Cloud signup 시 정책 확인 필요** — 일부 region은 Quantum 미지원, watsonx도 region 의존.
-7. **B3 CHSH cross-vendor**가 가장 결정적. 단 1개만 하면 #1 추천.
-8. **Cost 추정치** — 실제 QPU runtime은 circuit depth + queue variability 따라 변동 ±50%.
-9. **anima quantum 모듈 (Qiskit) 미설치** — 첫 실험 시 dev env 셋업 wall 1-2hr 추가.
-10. **No execution committed** — 본 doc은 spec only. 각 실험 EXEC 시 user 명시 OK 받음.
+1. **drift 안 추적** — Heron noise는 주별 변동. one-shot calibration 시점 이후 qmirror와 real Heron 차이 천천히 벌어짐. 6개월 후 일치도 99% → 95% 추정.
+2. **N5 (20 qubit) queue 위험** — 큰 회로는 queue 6-24hr+, day 5 budget 초과 가능. priority queue 또는 off-peak 시간대 우회 필수.
+3. **모든 vendor 동시 가용성** — Heron / Eagle / Falcon backend 동시 정상 가용한지 day 0 확인 필요. 하나 maintenance면 N2 일부 늦춰짐.
+4. **결과 cache 영구성** — `nexus/qmirror/calibration/v2_*.json` 영구 보관 → git commit (단, real backend ID + ts 기록).
+5. **재calibration trigger** — qmirror 사용 통계가 "real vs qmirror divergence" 감지 시 next $200 budget 확보 후 재실행 권장.
+6. **noise model = approximation** — Aer NoiseModel API는 Pauli error / depolarizing 모델 기반. 진짜 비-마르코프 noise는 perfectly capture 못함.
+7. **qmirror v1.0 미존재** — 현재 spec doc 작성 중 (subagent BG). 실제 IBM calibration burst는 qmirror v1.0 구현 완료 후 가능. 즉, $200 burst는 qmirror Phase 1 구현 완료 (~week 1-2) 후 시작.
+8. **IBM Cloud signup region** — quantum + watsonx 모두 가능한 region (us-east, eu-de) 선택 필요. region 잘못 선택 시 일부 실험 불가.
+9. **No execution committed** — 본 doc은 spec only. burst 실행 시 user 명시 OK 받음.
 
 ---
 
-## 8. References
+## 7. References
 
+- nexus.qmirror spec: `docs/nexus_qmirror_spec_2026_05_03.md` (subagent BG, 도착 시 cross-link)
 - nexus QRNG: `state/nexus_qrng_quantum_seed_2026_05_02/`
-- nexus CHSH Bell: `state/nexus_chsh_bell_2026_05_02/` (S=2.808, 8.97σ)
-- N-12 IIT multi-witness: `state/n12_iit_braket_multiwitness_2026_05_02/` (φ proxy ≠ φ★)
-- Braket IIT 4.0 MIP: `state/braket_iit40_mip_2026_05_02/` (proper φ★ = 0 with marginalized TPM)
+- nexus CHSH Bell: `state/nexus_chsh_bell_2026_05_02/` (S=2.808, 8.97σ on Braket)
+- N-12 IIT multi-witness: `state/n12_iit_braket_multiwitness_2026_05_02/`
+- Braket IIT 4.0 MIP: `state/braket_iit40_mip_2026_05_02/`
 - alpha endpoint reboot (HF token reference): `state/alpha_endpoint_reboot_2026_05_02/`
 - IBM Cloud Quantum docs: https://quantum-computing.ibm.com/
-- watsonx.ai: https://www.ibm.com/products/watsonx-ai
+- ANU QRNG API: https://qrng.anu.edu.au/
 
 ---
 
-## 9. Decision matrix
+## 8. Decision matrix
 
 | User signal | action |
 |---|---|
-| "Path X go" | spec out 5 quantum experiments + IBM Quantum env setup BG |
-| "Path Y go" | spec out 8 + budget allocation + queue scheduling |
-| "Path Z go" | quantum + watsonx hybrid spec |
-| "Path W go" | watsonx-only spec |
-| "#1 go" | CHSH cross-vendor only (cheapest decisive experiment) |
-| "보류" | doc only, EXEC 결정 후일 진행 |
+| "qmirror spec doc 도착 후 burst go" | wait for spec, then plan day 0 |
+| "지금 IBM Cloud 환경부터 점검" | start day 0 immediately (region / quantum access / billing setup) |
+| "burst 보류, qmirror v1.0 먼저 release" | wait for qmirror v1.0 ready, then anchor |
+| "분배 변경 ($60→$40 NX, etc.)" | adjust §2 allocation per user spec |
+| "credit 추후로 미루고 다른 우선순위" | doc as-is, no execution |
+
+---
+
+## 9. Decision matrix (Deprecated experiment list, archived)
+
+Original 8-experiment + 3-watsonx list from R0 revision is preserved in git history (commit `5072a5478`, predecessor of this doc). Pivot to qmirror calibration burst supersedes individual experiment scoring.
+
+If qmirror calibration burst fails or is canceled, reverting to original 8-experiment plan is possible — but NOT recommended (qmirror anchor is much higher leverage per dollar).
