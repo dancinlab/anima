@@ -1,0 +1,26 @@
+[2026-05-03T07:07:05.465747+00:00] device=cuda torch=2.11.0+cu128
+[2026-05-03T07:07:05.473233+00:00] tokenizer vocab=64000
+[2026-05-03T07:07:06.619964+00:00] holdout loaded n=500
+[2026-05-03T07:07:06.785774+00:00] holdout cache n=499
+[2026-05-03T07:07:06.785814+00:00] === phase1_5: /tmp/p9_p1_5_sentinel_savepoints/final ===
+[2026-05-03T07:07:09.888796+00:00]   base loaded miss=0 unexp=0
+[2026-05-03T07:07:10.023479+00:00]   loaded peft in 3.2s
+[2026-05-03T07:11:01.774310+00:00]   mean=0.005636 std=0.015952 p50=0.0000 p90=0.0312 frac_pos=0.140 eval=231.8s
+[2026-05-03T07:11:01.799321+00:00] === phase1_6: /tmp/p9_p1_6_sentinel_savepoints/final ===
+[2026-05-03T07:11:04.652255+00:00]   base loaded miss=0 unexp=0
+[2026-05-03T07:11:04.837989+00:00]   loaded peft in 3.0s
+[2026-05-03T07:15:01.016845+00:00]   mean=0.006388 std=0.016280 p50=0.0000 p90=0.0312 frac_pos=0.166 eval=236.2s
+[2026-05-03T07:15:01.043809+00:00] === ablation_A: /tmp/p9_p1_6_ablation_A_savepoints/step_50000 ===
+[2026-05-03T07:15:03.873380+00:00]   base loaded miss=0 unexp=0
+[2026-05-03T07:15:04.001302+00:00]   loaded peft in 3.0s
+[2026-05-03T07:18:56.141128+00:00]   mean=0.006513 std=0.016939 p50=0.0000 p90=0.0312 frac_pos=0.166 eval=232.1s
+[2026-05-03T07:18:56.172118+00:00] === ablation_B: /tmp/p9_p1_6_ablation_B_savepoints/step_50000 ===
+[2026-05-03T07:18:58.901261+00:00]   base loaded miss=0 unexp=0
+[2026-05-03T07:18:59.086601+00:00]   loaded peft in 2.9s
+[2026-05-03T07:22:55.084615+00:00]   mean=0.011961 std=0.023175 p50=0.0000 p90=0.0312 frac_pos=0.267 eval=236.0s
+[2026-05-03T07:22:55.122353+00:00] === y1: /tmp/p9_p1_7_y1_sentinel_savepoints/final ===
+[2026-05-03T07:22:58.000145+00:00]   base loaded miss=0 unexp=0
+[2026-05-03T07:22:58.194663+00:00]   loaded peft in 3.1s
+[2026-05-03T07:26:54.093196+00:00]   mean=0.005949 std=0.016022 p50=0.0000 p90=0.0312 frac_pos=0.152 eval=235.9s
+[2026-05-03T07:26:54.128456+00:00] WROTE /tmp/p9_p1_holdout500_reeval_2026_05_03/holdout500_reeval_summary.json
+[2026-05-03T07:26:54.128478+00:00] VERDICT: AXIS_EFFECTS_REAL  spread=0.006325150300601202
