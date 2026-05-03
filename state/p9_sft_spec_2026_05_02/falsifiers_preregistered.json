@@ -1,14 +1,35 @@
 {
-  "schema": "anima/state/p9_sft_spec/falsifiers_preregistered/1",
+  "schema": "anima/state/p9_sft_spec/falsifiers_preregistered/2",
   "preregistered_ts_utc": "2026-05-02T00:00:00+00:00",
-  "lock": "no post-hoc edits — append-only audit trail",
+  "lock": "no post-hoc edits to F1-F4 metric definitions — F1 threshold recalibrated 2026-05-03 with measurement evidence (append-only audit trail)",
+  "schema_history": [
+    {
+      "version": 1,
+      "ts_utc": "2026-05-02T00:00:00+00:00",
+      "F1_pass_threshold": "BLEU-1 > 0.4",
+      "calibration_basis": "ad-hoc — no Llama anchor measured at preregistration"
+    },
+    {
+      "version": 2,
+      "ts_utc": "2026-05-03T03:48:00+00:00",
+      "F1_pass_threshold": "BLEU-1 >= 0.85 * llama_anchor (≈ 0.132)",
+      "calibration_basis": "R1 pre-experiment 2026-05-03 measured Llama-3.2-3B-Instruct vs holdout 500 = BLEU-1 0.1555 (smoothed method1, lowercase whitespace tokenization). Original 0.4 target was 257% of Llama anchor — physically unreachable. Recalibrated to ratio-based threshold so spec is grounded in the actual reference model capability."
+    }
+  ],
   "falsifiers": [
     {
       "id": "F1",
       "name": "Chat coherence",
-      "metric": "BLEU-1 vs Llama-3.2-3B-Instruct baseline on holdout 500 prompts",
-      "pass_threshold": "BLEU-1 > 0.4",
-      "fail_action": "chat capacity insufficient — escalate to S2 (full SFT) or larger model"
+      "metric": "BLEU-1 vs Llama-3.2-3B-Instruct baseline on holdout 500 prompts (smoothed method1, lowercase whitespace tokenization)",
+      "llama_anchor_2026_05_03": 0.1555,
+      "pass_threshold": "BLEU-1 >= 0.132 (= 0.85 * llama_anchor)",
+      "pass_threshold_legacy_v1": "BLEU-1 > 0.4 (deprecated 2026-05-03 — see schema_history)",
+      "fail_action": "chat capacity insufficient — escalate to S2 (full SFT) or larger model OR revise SFT data quality + alpha weighting before Phase 2 launch",
+      "sentinel_2026_05_03_observation": {
+        "BLEU_1": 0.0049,
+        "ratio_to_llama_anchor": 0.0315,
+        "verdict": "F1_FAIL (3.2% of anchor, 26x below new threshold)"
+      }
     },
     {
       "id": "F2",

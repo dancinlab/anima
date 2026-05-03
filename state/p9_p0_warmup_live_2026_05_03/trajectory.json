@@ -1,0 +1,350 @@
+{
+  "schema": "anima/p9_p0_warmup_live/trajectory/1",
+  "phase": "p9_p0_warmup_probe_live",
+  "ts_utc": "2026-05-02T17:03:32Z",
+  "device": "cuda",
+  "real_train": true,
+  "config": {
+    "n_steps": 1000,
+    "batch": 4,
+    "grad_acc": 8,
+    "lr": 0.0001,
+    "lora_r": 64,
+    "lora_alpha": 128,
+    "delta_early": 0.5,
+    "phi_threshold": 5.0,
+    "phi_every": 100,
+    "f_every": 250,
+    "alpha": 2.0,
+    "beta": 0.3,
+    "gamma": 0.0,
+    "T": 64,
+    "seed": 42,
+    "n_calib_prompts": 16,
+    "k_partitions": 8,
+    "hid_trunc": 8,
+    "ridge": 0.001
+  },
+  "env": {
+    "torch": "2.11.0+cu130",
+    "cuda_available": true,
+    "device_name": "NVIDIA GeForce RTX 5070",
+    "has_peft": true
+  },
+  "ckpt": {
+    "path": "/home/aiden/anima/checkpoints/clm_v4_350m/scale_350m/best.pt",
+    "load_sec": 0.6185834407806396,
+    "meta_step": 20000,
+    "meta_ce": 0.04630279541015625,
+    "meta_phi": 27.90969107736497,
+    "keys_top": [
+      "step",
+      "decoder",
+      "optimizer",
+      "scheduler",
+      "phi",
+      "ce",
+      "args",
+      "scale",
+      "best_phi",
+      "federation"
+    ],
+    "missing_at_load": 0,
+    "unexpected_at_load": 0
+  },
+  "model": {
+    "class": "ConsciousDecoderV2",
+    "n_params_total": 477648512,
+    "n_params_trainable_lora": 19005440,
+    "lora_pct": 3.979,
+    "lora_target_modules": [
+      "q_proj",
+      "k_proj",
+      "v_proj",
+      "o_proj",
+      "gate_proj",
+      "up_proj",
+      "down_proj"
+    ],
+    "d_model": 768,
+    "n_layer": 16,
+    "n_head": 12,
+    "block_size": 512
+  },
+  "phi_log": [
+    {
+      "step": 0,
+      "phi_star_min": 45.91520414820293,
+      "phi_star_mean": 46.49351962633608,
+      "delta": 0.5
+    },
+    {
+      "step": 100,
+      "phi_star_min": 47.69619008738461,
+      "phi_star_mean": 48.02182111287157,
+      "delta": 0.5
+    },
+    {
+      "step": 200,
+      "phi_star_min": 50.32589692258459,
+      "phi_star_mean": 50.503209481779734,
+      "delta": 0.5
+    },
+    {
+      "step": 300,
+      "phi_star_min": 51.095668934627696,
+      "phi_star_mean": 51.36816573766775,
+      "delta": 0.5
+    },
+    {
+      "step": 400,
+      "phi_star_min": 49.2799879986086,
+      "phi_star_mean": 49.62166020258484,
+      "delta": 0.5
+    },
+    {
+      "step": 500,
+      "phi_star_min": 49.76002758334218,
+      "phi_star_mean": 50.155164525332665,
+      "delta": 0.5
+    },
+    {
+      "step": 600,
+      "phi_star_min": 50.03003893545757,
+      "phi_star_mean": 50.329194801800426,
+      "delta": 0.5
+    },
+    {
+      "step": 700,
+      "phi_star_min": 49.15095317596905,
+      "phi_star_mean": 49.40146710733633,
+      "delta": 0.5
+    },
+    {
+      "step": 800,
+      "phi_star_min": 46.736784385049624,
+      "phi_star_mean": 47.3116806058492,
+      "delta": 0.5
+    },
+    {
+      "step": 900,
+      "phi_star_min": 47.522107114973274,
+      "phi_star_mean": 47.94773901307049,
+      "delta": 0.5
+    },
+    {
+      "step": 1000,
+      "phi_star_min": 46.82755007908948,
+      "phi_star_mean": 47.24050212104497,
+      "delta": 0.5
+    },
+    {
+      "step": 1000,
+      "phi_star_min": 46.82755007908948,
+      "phi_star_mean": 47.24050212104497,
+      "delta": 0.5,
+      "note": "final"
+    }
+  ],
+  "f_log": [
+    {
+      "F1_bleu1_skip": true,
+      "F2_phi": 45.91520414820293,
+      "F3_tension_mse": 8.779036891937722,
+      "F4_bold_NA": true,
+      "step": 0
+    },
+    {
+      "F1_bleu1_skip": true,
+      "F2_phi": 50.32589692258459,
+      "F3_tension_mse": 1.8853863656404428,
+      "F4_bold_NA": true,
+      "step": 250
+    },
+    {
+      "F1_bleu1_skip": true,
+      "F2_phi": 49.76002758334218,
+      "F3_tension_mse": 2.099461862439057,
+      "F4_bold_NA": true,
+      "step": 500
+    },
+    {
+      "F1_bleu1_skip": true,
+      "F2_phi": 49.15095317596905,
+      "F3_tension_mse": 1.9542211418738589,
+      "F4_bold_NA": true,
+      "step": 750
+    },
+    {
+      "F1_bleu1_skip": true,
+      "F2_phi": 46.82755007908948,
+      "F3_tension_mse": 1.9487297627492808,
+      "F4_bold_NA": true,
+      "step": 1000
+    }
+  ],
+  "loss_log_compact_first10_last10": [
+    {
+      "step": 1,
+      "loss_total": 35.86331558227539,
+      "loss_ce": 16.32383918762207,
+      "loss_tension": 10.71878433227539,
+      "loss_phi_hinge": 0.0
+    },
+    {
+      "step": 2,
+      "loss_total": 37.10548782348633,
+      "loss_ce": 16.578031539916992,
+      "loss_tension": 13.164748191833496,
+      "loss_phi_hinge": 0.0
+    },
+    {
+      "step": 3,
+      "loss_total": 34.70547103881836,
+      "loss_ce": 16.469005584716797,
+      "loss_tension": 5.891528606414795,
+      "loss_phi_hinge": 0.0
+    },
+    {
+      "step": 4,
+      "loss_total": 33.4486198425293,
+      "loss_ce": 16.373138427734375,
+      "loss_tension": 2.3411478996276855,
+      "loss_phi_hinge": 0.0
+    },
+    {
+      "step": 5,
+      "loss_total": 34.35629653930664,
+      "loss_ce": 16.476848602294922,
+      "loss_tension": 4.675331115722656,
+      "loss_phi_hinge": 0.0
+    },
+    {
+      "step": 6,
+      "loss_total": 35.62725067138672,
+      "loss_ce": 16.389667510986328,
+      "loss_tension": 9.49305534362793,
+      "loss_phi_hinge": 0.0
+    },
+    {
+      "step": 7,
+      "loss_total": 34.402774810791016,
+      "loss_ce": 16.56331443786621,
+      "loss_tension": 4.253815650939941,
+      "loss_phi_hinge": 0.0
+    },
+    {
+      "step": 8,
+      "loss_total": 37.720703125,
+      "loss_ce": 16.595792770385742,
+      "loss_tension": 15.097061157226562,
+      "loss_phi_hinge": 0.0
+    },
+    {
+      "step": 9,
+      "loss_total": 34.348724365234375,
+      "loss_ce": 16.211610794067383,
+      "loss_tension": 6.418343544006348,
+      "loss_phi_hinge": 0.0
+    },
+    {
+      "step": 10,
+      "loss_total": 34.20211410522461,
+      "loss_ce": 16.3070125579834,
+      "loss_tension": 5.2936272621154785,
+      "loss_phi_hinge": 0.0
+    },
+    {
+      "step": 991,
+      "loss_total": 20.038373947143555,
+      "loss_ce": 9.772216796875,
+      "loss_tension": 1.6464649438858032,
+      "loss_phi_hinge": 0.0
+    },
+    {
+      "step": 992,
+      "loss_total": 19.390743255615234,
+      "loss_ce": 9.609663009643555,
+      "loss_tension": 0.5713935494422913,
+      "loss_phi_hinge": 0.0
+    },
+    {
+      "step": 993,
+      "loss_total": 20.249258041381836,
+      "loss_ce": 9.583524703979492,
+      "loss_tension": 3.607362985610962,
+      "loss_phi_hinge": 0.0
+    },
+    {
+      "step": 994,
+      "loss_total": 20.48552703857422,
+      "loss_ce": 9.802375793457031,
+      "loss_tension": 2.935915470123291,
+      "loss_phi_hinge": 0.0
+    },
+    {
+      "step": 995,
+      "loss_total": 20.06672477722168,
+      "loss_ce": 9.878929138183594,
+      "loss_tension": 1.0295532941818237,
+      "loss_phi_hinge": 0.0
+    },
+    {
+      "step": 996,
+      "loss_total": 20.27521514892578,
+      "loss_ce": 9.726327896118164,
+      "loss_tension": 2.7418620586395264,
+      "loss_phi_hinge": 0.0
+    },
+    {
+      "step": 997,
+      "loss_total": 20.63689613342285,
+      "loss_ce": 9.840158462524414,
+      "loss_tension": 3.188598155975342,
+      "loss_phi_hinge": 0.0
+    },
+    {
+      "step": 998,
+      "loss_total": 18.91042137145996,
+      "loss_ce": 9.323650360107422,
+      "loss_tension": 0.8770700693130493,
+      "loss_phi_hinge": 0.0
+    },
+    {
+      "step": 999,
+      "loss_total": 21.116193771362305,
+      "loss_ce": 9.779088020324707,
+      "loss_tension": 5.193394660949707,
+      "loss_phi_hinge": 0.0
+    },
+    {
+      "step": 1000,
+      "loss_total": 19.90140724182129,
+      "loss_ce": 9.845518112182617,
+      "loss_tension": 0.7012392282485962,
+      "loss_phi_hinge": 0.0
+    }
+  ],
+  "loss_log_full_n": 1000,
+  "aborts": [],
+  "aborted": false,
+  "sft_subset": {
+    "path": "/tmp/p9_p0_warmup_live_sft_subset_1k.jsonl",
+    "n_docs": 1000
+  },
+  "train_elapsed_sec": 62.53,
+  "steps_completed": 1000,
+  "phi_baseline": 45.91520414820293,
+  "phi_final": 46.82755007908948,
+  "phi_summary": {
+    "mean": 48.43066328703159,
+    "variance": 2.663431420781078,
+    "min": 45.91520414820293,
+    "max": 51.095668934627696,
+    "n": 12,
+    "baseline": 45.91520414820293,
+    "final": 46.82755007908948,
+    "delta_baseline_to_final": 0.9123459308865449
+  },
+  "verdict": "CLEAN_PHI_MED_VAR"
+}

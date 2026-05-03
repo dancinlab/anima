@@ -1,0 +1,79 @@
+{
+  "schema": "anima/p9_p0_warmup_live_landed/marker/1",
+  "phase": "p9_p0_warmup_probe_live",
+  "verdict": "CLEAN_PHI_MED_VAR",
+  "phase1_entry_ready": true,
+  "real_train": true,
+  "ts_utc": "2026-05-02T17:05:46Z",
+  "cost_usd": 0.0,
+  "cost_cap_usd": 5.0,
+  "compute": "ubu1 RTX 5070 12GB (mac-local-equivalent)",
+  "destructive_ops": 0,
+  "runpod_used": false,
+  "runpod_reason_skip": "ubu1 fallback sufficient (per spec preference)",
+  "phi_summary": {
+    "baseline": 45.91520414820293,
+    "final": 46.82755007908948,
+    "mean": 48.43066328703159,
+    "variance": 2.663431420781078,
+    "min": 45.91520414820293,
+    "max": 51.095668934627696,
+    "n_checkpoints": 12,
+    "delta_baseline_to_final": 0.9123459308865449,
+    "all_above_threshold_5_0": true
+  },
+  "train": {
+    "n_steps": 1000,
+    "elapsed_sec": 62.53,
+    "aborted": false,
+    "lora_r": 64,
+    "lora_alpha": 128,
+    "trainable_params": 19005440,
+    "total_params": 477648512,
+    "trainable_pct": 3.98,
+    "gamma_bold_lock_in": 0.0
+  },
+  "predecessor_corrected": {
+    "bg": "BG-A82BC98F",
+    "was_mock_cpu": true,
+    "predecessor_n_params": 49152,
+    "predecessor_train_sec": 1.49,
+    "predecessor_verdict_invalid": "PHI_DRIFT_HIGH_VAR (CPU mock)"
+  },
+  "artifacts": {
+    "trajectory_json": {
+      "path": "/Users/ghost/core/anima/state/p9_p0_warmup_live_2026_05_03/trajectory.json",
+      "sha256": "1ea02ecb888f390ac168a53bb93bf94e921b385109089499d97aa73e6be2ddfc"
+    },
+    "verdict_json": {
+      "path": "/Users/ghost/core/anima/state/p9_p0_warmup_live_2026_05_03/verdict.json",
+      "sha256": "d6d1a016a5e639358a30bd2fa318a26e92dbd0e40805ca772b9265f901c10e95"
+    },
+    "train_log": {
+      "path": "/Users/ghost/core/anima/state/p9_p0_warmup_live_2026_05_03/train.log",
+      "sha256": "3a19909bce735b71c67bd9cf1de8eba1bdfcdeba2b623717c43279ec64506567"
+    },
+    "warmup_probe_real_py": {
+      "path": "/Users/ghost/core/anima/state/p9_p0_warmup_live_2026_05_03/warmup_probe_real.py",
+      "sha256": "a5eccd0cd86aea03eedc75b2c669a02501ebe3c6c929970570cf50e572ca7575"
+    },
+    "sft_subset_1k_jsonl": {
+      "path": "/Users/ghost/core/anima/state/p9_p0_warmup_live_2026_05_03/sft_subset_1k.jsonl",
+      "sha256": "77ba559fdc0522e782419a9533f34aafa597ed3881a1af613ca636838d104ceb"
+    },
+    "handoff_md": {
+      "path": "/Users/ghost/core/anima/docs/p9_p0_warmup_live_landed_2026_05_03.ai.md",
+      "sha256": "6a0e9de7aa34a5e22cbd757bdd19a0e51d79e4068eadf366af6ddc11973c402f"
+    }
+  },
+  "policy": {
+    "omega_cycle_6step": true,
+    "silent_land_marker": true,
+    "ai_native": true,
+    "br_no_user_verbatim": true,
+    "friendly_preset_handoff_only": true,
+    "no_migration": true,
+    "destructive_ops": 0,
+    "mac_local_dollar_zero": true
+  }
+}
