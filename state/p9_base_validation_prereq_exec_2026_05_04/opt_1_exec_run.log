@@ -1,0 +1,251 @@
+# OPT-1 Exec Run Log — 2026-05-04 BG-Δ
+# Cycle: opt_1_exec_2026_05_04
+# Verdict: PARTIAL (dry_run PASS, execute FAIL at safetensors_save shared-tensors guard)
+# Wall: ~22s (failure pre-save, no 30-60min compute incurred)
+
+==========================================================================
+SECTION 1 — Pre-flight checks (Mac → ubu1 SSH)
+==========================================================================
+
+[mac] $ ls -la tool/transient_py/clm_v4_hf_format_shim.py
+-rw-r--r--@ 1 ghost  staff  36715 May  4 10:18 tool/transient_py/clm_v4_hf_format_shim.py
+
+[ubu1] $ ls -la ~/.cache/huggingface/hub/models--need-singularity--clm-v4-base-mirror/snapshots/*/best.pt
+lrwxrwxrwx 1 aiden aiden 76 May 3 21:52 .../snapshots/856278beb59c5b39f16485cc8f3a46dcdaf9d1e3/best.pt
+  -> ../../blobs/22f180efc380aecb4a320191502afa13b81abcd077ec36c5f003dcfbe1d680b4
+
+[ubu1] $ sha256sum (best.pt blob)
+22f180efc380aecb4a320191502afa13b81abcd077ec36c5f003dcfbe1d680b4
+
+[ubu1] $ df -h ~/ ~/.cache/huggingface
+/dev/nvme0n1p2  915G  282G  587G   33%  /         (587 GB free — ample for 2.1 GB output)
+
+[ubu1] $ python -c "from transformers import AutoModelForCausalLM, AutoConfig; import safetensors; print('ready')"
+ready
+
+[ubu1] $ curl HF whoami-v2
+{"type":"user","id":"69229786cde1fd9952da8cfa","name":"dancinlife", ... "emailVerified":true}
+
+VERDICT: Pre-flight ALL GREEN.
+
+==========================================================================
+SECTION 2 — Shim transfer (Mac → ubu1)
+==========================================================================
+
+[mac] $ scp tool/transient_py/clm_v4_hf_format_shim.py ubu1:~/p9_clm_v4_hf_format_2026_05_04/clm_v4_hf_format_shim.py
+(silent success)
+
+[ubu1] $ ls -la ~/p9_clm_v4_hf_format_2026_05_04/clm_v4_hf_format_shim.py && wc -l
+-rw-r--r-- 1 aiden aiden 36715 May 4 10:54 clm_v4_hf_format_shim.py
+789 lines
+
+VERDICT: Transfer OK, byte count matches (36715), 789 LoC matches BG-Β design.
+
+==========================================================================
+SECTION 3 — Dry-run on ubu1 (--dry-run, no torch.load)
+==========================================================================
+
+[ubu1] $ /home/aiden/venv_orchestrator/bin/python clm_v4_hf_format_shim.py \
+            --dry-run \
+            --input-pt ~/.cache/huggingface/hub/models--need-singularity--clm-v4-base-mirror/snapshots/856278beb59c5b39f16485cc8f3a46dcdaf9d1e3/best.pt \
+            --output-dir ~/p9_clm_v4_hf_format_2026_05_04/output
+
+{
+  "phase": "plan",
+  "shim": "clm_v4_hf_format_shim.py",
+  "mode": "dry_run",
+  "input_pt_exists": true,
+  "tokenizer_dir_exists": true,
+  "output_dir": ".../output",
+  "output_dir_exists": false,
+  "device": "cpu",
+  "strict_load": true,
+  "expected_arch": {
+    "vocab_size": 64000,
+    "d_model": 768,
+    "n_layer": 16,
+    "n_head": 6,
+    "n_kv_head": 2,
+    "head_dim": 128,
+    "block_size": 512,
+    "consciousness_dim": 192,
+    "ffn_gate_dim": 2048,
+    "purefield_dim": 3072,
+    "n_ca_rules": 8,
+    "expected_param_count": 530994816,
+    "expected_decoder_keys": 581
+  },
+  "outputs_to_write": [
+    "config.json", "configuration_clm_v4.py", "modeling_clm_v4.py",
+    "model.safetensors", "generation_config.json",
+    "tokenizer.model (copy)", "tokenizer_config.json (copy or stub)",
+    "special_tokens_map.json (copy or stub)"
+  ],
+  "falsifier_set": {
+    "F-SHIM-1": "safetensors load round-trip strict=True",
+    "F-SHIM-2": "1-batch forward returns finite [B,T,vocab]",
+    "F-SHIM-3": "post-load logits match best.pt direct-load within 1e-5",
+    "F-SHIM-4": "vocab_size==64000 matches CLM v4 SP tokenizer"
+  },
+  "estimated_wall_minutes": "30-60",
+  "estimated_peak_ram_gb": 5.5
+}
+{
+  "phase": "dry_run_complete",
+  "plan_emitted": true,
+  "args_validated": true,
+  "next_step": "remove --dry-run flag + execute on ubu1 venv_orchestrator"
+}
+
+VERDICT: Dry-run PASS. All paths exist, plan validated, expected param count = 530,994,816.
+
+==========================================================================
+SECTION 4 — Actual execute on ubu1 (--verify, no --dry-run)
+==========================================================================
+
+[ubu1] $ nohup /home/aiden/venv_orchestrator/bin/python clm_v4_hf_format_shim.py \
+            --input-pt ~/.cache/huggingface/hub/models--need-singularity--clm-v4-base-mirror/snapshots/856278beb59c5b39f16485cc8f3a46dcdaf9d1e3/best.pt \
+            --output-dir ~/p9_clm_v4_hf_format_2026_05_04/output \
+            --verify > exec_ubu1.log 2>&1 &
+PID=1035762
+
+# Process exited within ~22s. Full captured output:
+
+{
+  "phase": "plan",
+  "mode": "execute",
+  "verify_post_save": true,
+  ... [same expected_arch as dry-run] ...
+}
+[shim] building decoder on cpu ...
+[shim] loading state_dict from .../best.pt ...
+[shim] decoder loaded: step=20000, ce=0.04630279541015625, best_phi=37.270, params=477,648,512
+[shim] saving HF-format to /home/aiden/p9_clm_v4_hf_format_2026_05_04/output ...
+Traceback (most recent call last):
+  File ".../clm_v4_hf_format_shim.py", line 789, in <module>
+    sys.exit(main())
+  File ".../clm_v4_hf_format_shim.py", line 762, in main
+    save_meta = _save_hf_format(model, decoder_meta, args)
+  File ".../clm_v4_hf_format_shim.py", line 643, in _save_hf_format
+    safetensors_save(wrapped_state, str(out_dir / "model.safetensors"),
+  File ".../safetensors/torch.py", line 307, in save_file
+    serialize_file(_flatten(tensors), filename, metadata=metadata)
+  File ".../safetensors/torch.py", line 535, in _flatten
+    raise RuntimeError(
+RuntimeError:
+    Some tensors share memory, this will lead to duplicate memory on disk
+    and potential differences when loading them again:
+    [{'decoder.tok_emb.weight', 'decoder.head_a.weight'}].
+    A potential way to correctly save your model is to use `save_model`.
+    More information at https://huggingface.co/docs/safetensors/torch_shared_tensors
+
+VERDICT: Execute FAIL.
+  - Checkpoint LOAD succeeded (step=20000, ce=0.0463, best_phi=37.270).
+  - Loaded params = 477,648,512 — UNEXPECTED -53.3M vs design's 530,994,816.
+  - safetensors_save() rejected wrapped_state at line 643 because head_a.weight
+    aliases tok_emb.weight (intentional weight tying — see shim line 354/451-452/597).
+  - The shim's own error message quotes the safetensors fix: 'use save_model'.
+
+==========================================================================
+SECTION 5 — Output dir state after FAIL
+==========================================================================
+
+[ubu1] $ ls -la ~/p9_clm_v4_hf_format_2026_05_04/output/
+total 88
+-rw-rw-r-- 1 aiden aiden    32 May 4 10:54 __init__.py
+-rw-rw-r-- 1 aiden aiden  1212 May 4 10:54 config.json
+-rw-rw-r-- 1 aiden aiden  2072 May 4 10:54 configuration_clm_v4.py
+-rw-r--r-- 1 aiden aiden 40027 May 4 10:54 conscious_decoder.py
+-rw-r--r-- 1 aiden aiden 14118 May 4 10:54 decoder_v3.py
+-rw-rw-r-- 1 aiden aiden   130 May 4 10:54 generation_config.json
+-rw-rw-r-- 1 aiden aiden  5058 May 4 10:54 modeling_clm_v4.py
+
+[ubu1] $ du -sb output
+62649    output
+
+MISSING (not written due to FAIL upstream of these copy steps):
+  - model.safetensors           (THE CORE TARGET — failed at write)
+  - tokenizer.model
+  - tokenizer_config.json
+  - special_tokens_map.json
+
+==========================================================================
+SECTION 6 — F-SHIM falsifier matrix (post-FAIL)
+==========================================================================
+
+F-SHIM-1 (safetensors load round-trip strict=True): BLOCKED_NOT_RUN
+  Reason: model.safetensors never written. Cannot test load.
+
+F-SHIM-2 (1-batch forward returns finite [B,T,vocab]):     BLOCKED_NOT_RUN
+  Reason: --verify path requires successful save first.
+
+F-SHIM-3 (post-load logits match best.pt direct-load 1e-5): BLOCKED_NOT_RUN
+  Reason: same — verify path gated on save.
+
+F-SHIM-4 (vocab_size == 64000):                             BLOCKED_NOT_RUN
+  Reason: config.json was written and likely correct (1212 bytes — within range),
+  but no end-to-end load verified vocab against actual model.safetensors lm_head.
+
+lm_eval HF loader smoketest:                                BLOCKED_NOT_RUN
+  Reason: AutoModelForCausalLM.from_pretrained() requires model.safetensors.
+
+==========================================================================
+SECTION 7 — Root cause summary
+==========================================================================
+
+Bug location: tool/transient_py/clm_v4_hf_format_shim.py:643
+
+  638  wrapped_state = {f"decoder.{k}": v.contiguous() for k, v in state.items()}
+  ...
+  643  safetensors_save(wrapped_state, str(out_dir / "model.safetensors"), ...)
+
+The shim KNOWS about weight tying:
+  - Line 38 docstring: "dual heads: head_a + head_g, both (64000, 768), tied to tok_emb"
+  - Line 354 ConsciousDecoderV3 ctor: tie_word_embeddings=True
+  - Lines 451-452: explicit re-tie in set_input_embeddings:
+        self.decoder.head_a.weight = self.decoder.tok_emb.weight
+  - Line 597 config: "tie_word_embeddings": True
+
+But _save_hf_format() flattens everything into wrapped_state as separate keys
+without de-duplicating tied storages, then hands it to safetensors.torch.save_file
+which has a strict shared-memory guard (introduced in modern safetensors).
+
+Two correct fix patterns (NEITHER applied — out of BG-Δ scope):
+  A) Use HF idiomatic: model.save_pretrained(out_dir, safe_serialization=True)
+     — auto-detects ties via _tied_weights_keys and stores only one copy.
+  B) Pre-clone before save:
+     wrapped_state["decoder.head_a.weight"] = wrapped_state["decoder.tok_emb.weight"].detach().clone()
+
+Plus a SEPARATE concern: param_count -53.3M.
+  Loaded: 477,648,512.    Expected: 530,994,816.    Delta: -53,346,304.
+  Possible causes (investigation needed):
+    - tok_emb tied to head_a counted once in load, twice in expected: 64000*768=49.15M
+      → that's close to half the gap (53.3M) but not exact; insufficient explanation.
+    - head_g (second head) absent from best.pt — also (64000,768)=49.15M
+      → could account for ~most of the gap (49.15 vs 53.35M, ~4M residual).
+    - Need to enumerate state_dict keys vs ConsciousDecoderV3.named_parameters() to confirm.
+
+==========================================================================
+SECTION 8 — Resource consumption
+==========================================================================
+
+Wall time: ~22 seconds (PID 1035762, exited fast)
+Peak RAM: not measured (process exited before /proc sample window) — load
+         completed so peak transient was likely ~5GB during torch.load.
+Disk consumed in output dir: 62,649 bytes (just .py + config files, no weights)
+Disk consumed in working dir: 36,715 bytes (shim source) + 62,649 bytes (output)
+                              = 99 KB total — negligible vs 587 GB free.
+
+==========================================================================
+SECTION 9 — Next action
+==========================================================================
+
+Hand back to BG-Β: shim v2 needs:
+  1. Replace direct safetensors_save() with model.save_pretrained(safe_serialization=True),
+     OR explicit head_a weight clone before flatten.
+  2. Investigate param_count -53.3M (likely missing head_g in best.pt — or
+     correct expected_param_count constant if that's by design).
+  3. Reorder so tokenizer copy happens AFTER successful safetensors write
+     OR is independent of it (current code never reaches tokenizer copy on save fail).
+
+OPT-1 prereq remains 11/12. Base-validation launch BLOCKED on shim v2 + re-exec.
