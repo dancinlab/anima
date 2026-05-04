@@ -1,0 +1,77 @@
+{
+  "audit_ts_utc": "2026-05-04T02:04Z",
+  "task": "nexus_qmirror_cli_refactor",
+  "scope": "Identify nexus consumers of qmirror in-tree modules; refactor router to delegate to standalone qmirror CLI.",
+  "consumers_found": {
+    "code_files_total": 1,
+    "code_files": [
+      {
+        "path": "/Users/ghost/core/nexus/cli/qmirror.hexa",
+        "kind": "router",
+        "previous_pattern": "imports in-tree modules at $NEXUS/modules/qmirror/{chsh,qrng,iit_mip,phi,entropy,selftest}.hexa via _run_module(MOD_*)",
+        "refactor_action": "rewrite as shellout pass-through to standalone qmirror CLI",
+        "categorization": "CLI shellout candidate"
+      }
+    ],
+    "spec_files": [
+      {
+        "path": "/Users/ghost/core/nexus/engine/nexus_cli_spec.json",
+        "ref": "delegates_to: 'shared/cli/qmirror.hexa (router) → modules/qmirror/*.hexa'",
+        "refactor_action": "no change required (descriptive only); accurate after refactor as router still owns dispatch"
+      }
+    ],
+    "test_files": [
+      {
+        "path": "/Users/ghost/core/nexus/test/test_qmirror_cli.hexa",
+        "ref": "exercises CLI=cli/qmirror.hexa for qrng subcmd outputs",
+        "refactor_action": "no change required (CLI surface preserved byte-equivalent for qrng JSON)"
+      }
+    ],
+    "in_tree_modules_status": {
+      "path": "/Users/ghost/core/nexus/modules/qmirror/",
+      "files": 13,
+      "kept": true,
+      "reason": "DEPRECATED but retained as fallback if standalone qmirror CLI is not resolvable. Resolution order in router puts standalone first; legacy invoked only with stderr WARN."
+    },
+    "marker_files_skipped": "state/markers/qmirror_*, qrng_*, chsh_* — historical run records, not consumers"
+  },
+  "standalone_qmirror": {
+    "path": "/Users/ghost/core/qmirror",
+    "version": "1.0.0",
+    "cli_entry": "/Users/ghost/core/qmirror/cli/qmirror.hexa",
+    "manifest": "/Users/ghost/core/qmirror/hexa.toml",
+    "subcommands_supported": ["status", "chsh", "nist", "iit", "qrng", "selftest"]
+  },
+  "router_resolution_order": [
+    {"step": 1, "source": "$QMIRROR_ROOT env", "label": "standalone-env"},
+    {"step": 2, "source": "/Users/ghost/core/qmirror", "label": "standalone-mac"},
+    {"step": 3, "source": "$HOME/core/qmirror", "label": "standalone-home"},
+    {"step": 4, "source": "PATH-resolved `qmirror` binary", "label": "standalone-path"},
+    {"step": 5, "source": "$NEXUS/modules/qmirror (DEPRECATED)", "label": "legacy-intree"}
+  ],
+  "smoke_tests": [
+    {"id": "T1", "subcmd": "status", "args": "", "result": "PASS", "route": "standalone-mac", "evidence": "verdict PASS (8/8) emitted; 5 caveats from standalone surfaced"},
+    {"id": "T2", "subcmd": "chsh", "args": "--json", "result": "PASS", "route": "standalone-mac", "evidence": "{\"qmirror\":\"1.0.0\",\"subcmd\":\"chsh\",\"vendor\":\"simulator\",\"S_line\":\"S = 2.838\",\"pass\":true}"},
+    {"id": "T3", "subcmd": "nist", "args": "--bits=1000 --json", "result": "PASS", "route": "standalone-mac", "evidence": "F2 PASS n=5/5 max_amp_err=0; pass:true"},
+    {"id": "T4", "subcmd": "iit", "args": "--json", "result": "PASS", "route": "standalone-mac", "evidence": "F5 cond.6 reproduce all 4 systems byte-identical match; pass:true"},
+    {"id": "T5", "subcmd": "qrng", "args": "--bits=32 --json", "result": "PASS", "route": "standalone-mac", "evidence": "__QMIRROR_QRNG__ PASS; pass:true"},
+    {"id": "T6", "subcmd": "selftest", "args": "--json", "result": "PASS", "route": "standalone-mac", "evidence": "F1..F5 sweep PASS; cond table 8/8"}
+  ],
+  "smoke_total": 6,
+  "smoke_pass": 6,
+  "smoke_fail": 0,
+  "constraints_honored": {
+    "raw_9": "hexa-only on Mac; no .py created",
+    "raw_15": "write-confined: only nexus/cli/qmirror.hexa modified, audit log appended; in-tree modules untouched",
+    "raw_10": "4 honest C3 caveats embedded in cmd_help",
+    "cost": "$0 (Mac local)",
+    "qmirror_standalone_untouched": true,
+    "in_tree_modules_untouched": true
+  },
+  "caveats_c3": [
+    "1. qmirror standalone CLI must be reachable via one of 4 resolution paths; if missing, router falls back to DEPRECATED in-tree modules with stderr WARN — silent if PATH/env unset and in-tree dir present.",
+    "2. Version-pinning concern: router does NOT pin a qmirror version; consumers depending on a specific qmirror schema/output should pin via QMIRROR_ROOT to a known revision.",
+    "3. Refactor parity verified for 6 subcmds in mock mode only; real-QPU vendors (chsh --vendor=ionq with API key), qrng live ANU, and exotic flag combinations not exhaustively swept — drift may surface in edge cases.",
+    "4. nexus repo write succeeded (not sandboxed); changes applied in-place to /Users/ghost/core/nexus/cli/qmirror.hexa. If a future sandbox blocks writes, the refactored file is preserved at state/nexus_qmirror_cli_refactor_2026_05_03/qmirror.hexa.after for re-application."
+  ]
+}

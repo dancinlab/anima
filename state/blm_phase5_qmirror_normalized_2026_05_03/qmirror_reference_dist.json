@@ -1,0 +1,17 @@
+{
+  "note": "qmirror canonical reference distribution NOT generated. See verdict.json#secondary_finding_qmirror_cond6_reference for why.",
+  "qmirror_cond6_actual_reference": {
+    "source": "state/braket_iit40_mip_2026_05_02/verdict.json",
+    "n_systems": 4,
+    "phi_star_values": [0.0, 0.0, 0.0, 0.0],
+    "labels": ["and_ionq_forte1", "maj_ionq_forte1", "and_sv1", "maj_sv1"],
+    "mean": 0.0,
+    "std": 0.0,
+    "sigma_zero_blocks_zscoring": true,
+    "metric": "pyphi 4.0 sia() MIP-search on row-uniform marginalized TPM",
+    "metric_class": "IIT_4_0_phi_star_TPM_based",
+    "incommensurable_with": "anima_phi_v3_canonical (covariance_logdet_sample_partition_on_hidden_activations)"
+  },
+  "would_1000_random_circuit_qmirror_dist_help": false,
+  "why_not": "Even if 1000 small (N<=6) random TPMs were synthesized and pyphi sia() run on each to build a phi_star distribution, it would still be (a) the WRONG metric (TPM-MIP vs cov-logdet) and (b) Spearman-invariant under per-substrate affine renormalization, so the BLM Phase 5 r values would be unchanged."
+}

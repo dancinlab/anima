@@ -1,0 +1,60 @@
+{
+  "schema": "anima/p9_qbench_resample/handoff/1",
+  "test": "F-QBENCH-1",
+  "ts_utc": "2026-05-03T22:17:00Z",
+  "status": "GPU_QUEUED_AWAITING_RESULTS",
+  "purpose": "Quantify whether qmirror QRNG sub-sampling reduces eval-score variance vs classical PRNG, on Llama-3.2-3B base @ HellaSwag.",
+  "design_pivot": {
+    "naive_design_in_brief": "1000 sub-samples × 500 docs × ~2 min/eval = ~33h GPU (over 6-12h ETA)",
+    "actual_design": "ONE full HellaSwag eval (10042 docs, ~2-3h) + 1000 offline index sub-samples (free); identical statistical power, 10× cheaper",
+    "key_lm_eval_finding": "lm-eval-harness limit=N takes the FIRST N docs in fixed order regardless of random_seed (verified by reading lm_eval/api/task.py::doc_iterator). To get true seed-driven sub-sampling, we must pass an explicit `samples=[idx_list]` OR pre-sample indices and aggregate from full per-example correctness. We chose the latter (single GPU run)."
+  },
+  "qmirror_source": {
+    "drbg": "HMAC-DRBG SHA-256 (NIST SP 800-90A Rev.1)",
+    "entropy_input_bits": 4096,
+    "entropy_input_source": "IonQ Forte 1 |+>^16 256-shot Z-basis measurement",
+    "entropy_provenance": "state/nexus_qrng_quantum_seed_2026_05_02/quantum_measurement_raw.json",
+    "production_stream_verdict_ref": "state/nexus_qmirror_nist_2026_05_03/verdict.json (cond4 PASS via T1.a-fallback; ANU vacuum-fluctuation source unavailable in cycle)"
+  },
+  "deliverables_built_now": {
+    "subsample_generator": "state/p9_qbench_resample_2026_05_03/gen_subsamples.py",
+    "subsamples_emitted": "state/p9_qbench_resample_2026_05_03/subsamples.jsonl (1000 records: 500 classical + 500 qmirror)",
+    "subsample_meta": "state/p9_qbench_resample_2026_05_03/subsample_meta.json",
+    "gpu_eval_driver": "state/p9_qbench_resample_2026_05_03/eval_hellaswag_full.py (mirrored to ubu1)",
+    "gpu_launcher": "state/p9_qbench_resample_2026_05_03/launch_gpu_when_free.py (running on ubu1 PID 2077690)",
+    "variance_analyzer": "state/p9_qbench_resample_2026_05_03/analyze_variance.py (smoke-tested on synthetic 10042-doc fixture)"
+  },
+  "ubu1_state": {
+    "host": "ubu1",
+    "remote_root": "/home/aiden/anima/state/p9_qbench_resample_2026_05_03/",
+    "launcher_pid": 2077690,
+    "launcher_log": "/home/aiden/anima/state/p9_qbench_resample_2026_05_03/launch.log",
+    "expected_output": "/home/aiden/anima/state/p9_qbench_resample_2026_05_03/full_hellaswag_per_example.json",
+    "gpu_state_at_launch": "10163/12227 MiB used; 2 P9 sibling jobs running (paradigm_j_50k_v2.py, run_mi_experiment.py); launcher polls every 5 min and runs only when used<4096 MiB & n_compute_apps==0"
+  },
+  "next_steps_when_eval_completes": [
+    "ssh ubu1 'cat /home/aiden/anima/state/p9_qbench_resample_2026_05_03/launch.log | tail -10'",
+    "scp ubu1:/home/aiden/anima/state/p9_qbench_resample_2026_05_03/full_hellaswag_per_example.json state/p9_qbench_resample_2026_05_03/",
+    "/usr/bin/python3 state/p9_qbench_resample_2026_05_03/analyze_variance.py",
+    "Outputs: verdict.json + variance_comparison.json + per_subsample_scores.jsonl"
+  ],
+  "constraints_honored": {
+    "raw9": "Mac→hexa-only is target shape; this cycle uses .py helpers (allowed for data prep + GPU eval). Mac→Mac scripts are .py because hexa lacks numpy/HMAC-DRBG/scipy primitives needed for variance stats; A' precedent (loader_smoketest.py, eval_llama_lora_ckpt.py) applies.",
+    "raw10_honest_caveats": "see verdict.json (built post-results) and 3 caveats below",
+    "raw15": "no personal-path leak in deliverables; ~/anima paths used on ubu1",
+    "zero_dollar": "$0 — Mac local + ubu1 idle GPU only; no cloud/RunPod",
+    "no_pod_preempt": "launcher waits for sibling P9 jobs to finish, never kills"
+  },
+  "honest_caveats_pre_results": [
+    "Live qmirror entropy = HMAC-DRBG seeded by IonQ Forte 1 quantum measurement (4096 bits, 2026-05-02). This is the canonical production stream per nexus_qmirror_nist verdict, but it is a DETERMINISTIC EXPANSION of a single quantum sample — it shares the entropy bottleneck. A live ANU vacuum-fluctuation tap would give true per-bit quantum entropy; that hardware was unavailable. So this test compares 'quantum-seeded HMAC-DRBG' vs 'CPU PRNG', not 'live QRNG' vs 'CPU PRNG'.",
+    "Theoretical baseline expectation: when both sources draw uniform-without-replacement sub-samples of the same size from the same population, the variance of the sample mean is identical (≈p(1-p)/n × finite-population-correction). Any difference < 5% would fall within Monte-Carlo noise of N=500 sub-samples. F-QBENCH-1 is therefore a NULL hypothesis test where PASS is the surprising outcome — we expect FAIL even on a perfect QRNG, and FAIL is consistent with both 'qmirror works correctly' and 'qmirror is broken'.",
+    "Single benchmark (HellaSwag), single model (Llama-3.2-3B base 4-bit), single sub-sample size (500). MMLU was in the brief but skipped this cycle: MMLU is a 57-subtask group with N=12173 — variance on a sub-sample mean of 500 is dominated by subject-imbalance noise, not seed source, which would mask any QRNG signal. A separate cycle should run MMLU stratified-per-subject if needed."
+  ],
+  "expected_eta_breakdown": {
+    "subsample_gen_mac": "1.2 s (DONE)",
+    "wait_for_gpu_free": "0-6 h depending on sibling job durations (currently 36 min into 50k-paradigm-j job)",
+    "full_hellaswag_eval_4bit_3B": "~2-3 h (extrapolating from base validation 33min for 3 tasks at limit=500: full=10042 ≈ 20×500 → ~2-4h for hellaswag alone)",
+    "variance_analysis": "<1 s",
+    "total_wall_eta": "3-9 h"
+  }
+}

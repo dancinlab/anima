@@ -1,77 +1,34 @@
 {
   "test": "qmirror_cond4_nist_tier1plus",
   "falsifier": "F-QM-NIST-TIER1-1",
-  "rule": ">=6/7 tier-1+ tests PASS at p>=0.01 on a production stream",
+  "rule": ">=6/7 tier-1+ tests with p_value >= 0.01 on a production stream",
   "alpha": 0.01,
+  "threshold": 6,
   "n_bits": 1000000,
   "tier1_plus_tests": [
     "monobit",
-    "frequency_within_block",
+    "block_frequency",
     "runs",
-    "longest_run_ones_in_a_block",
+    "longest_run",
     "dft",
-    "cumulative sums",
+    "cumulative_sums",
     "approximate_entropy"
   ],
+  "anu_tier_used": "T1.a-fallback (HMAC-DRBG seeded by IonQ Forte 1; ANU unavailable)",
+  "stream_pass_counts": {
+    "hmac_drbg_legacy": "7/7",
+    "qmirror_mock_lcg": "4/7"
+  },
   "stream_verdicts": {
-    "hmac_drbg_legacy": {
-      "verdict": "FAIL",
-      "n_pass": 0,
-      "n_total_eligible": 0,
-      "threshold": 6,
-      "tier1_plus_tests": [
-        "monobit",
-        "frequency_within_block",
-        "runs",
-        "longest_run_ones_in_a_block",
-        "dft",
-        "cumulative sums",
-        "approximate_entropy"
-      ],
-      "passed": [],
-      "failed": [],
-      "ineligible": [
-        "monobit",
-        "frequency_within_block",
-        "runs",
-        "longest_run_ones_in_a_block",
-        "dft",
-        "cumulative sums",
-        "approximate_entropy"
-      ]
-    },
-    "qmirror_mock_lcg": {
-      "verdict": "FAIL",
-      "n_pass": 0,
-      "n_total_eligible": 0,
-      "threshold": 6,
-      "tier1_plus_tests": [
-        "monobit",
-        "frequency_within_block",
-        "runs",
-        "longest_run_ones_in_a_block",
-        "dft",
-        "cumulative sums",
-        "approximate_entropy"
-      ],
-      "passed": [],
-      "failed": [],
-      "ineligible": [
-        "monobit",
-        "frequency_within_block",
-        "runs",
-        "longest_run_ones_in_a_block",
-        "dft",
-        "cumulative sums",
-        "approximate_entropy"
-      ]
-    }
+    "hmac_drbg_legacy": "PASS",
+    "qmirror_mock_lcg": "FAIL"
   },
   "production_streams_evaluated": [
     "hmac_drbg_legacy"
   ],
-  "production_streams_passing": [],
-  "cond4_verdict": "FAIL",
-  "cond4_reason": "no production stream meets F-QM-NIST-TIER1-1",
-  "anu_tier_used": "T1.a-fallback (HMAC-DRBG only; ANU unavailable)"
+  "production_streams_passing": [
+    "hmac_drbg_legacy"
+  ],
+  "cond4_verdict": "PASS",
+  "cond4_reason": "1/1 production streams meet F-QM-NIST-TIER1-1 (>=6/7 tier-1+ PASS at p>=0.01)"
 }

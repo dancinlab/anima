@@ -8,6 +8,12 @@
 
 ---
 
+> **2026-05-03 qmirror substrate update (additive)**: this prep package targets AWS Braket / IonQ Forte 1. Per the qmirror closure series, the **`nexus.qmirror` canonical substrate** (`docs/nexus_qmirror_spec_2026_05_03.md`) supersedes real-QPU execution for routine F-N12-1 measurement. Real Braket access is **not required** — qmirror is validated as substantively equivalent for our use cases per closure 2026-05-03. Original Braket launch artifacts preserved as historical context; the IonQ Forte 1 path is now an optional **calibration anchor** only.
+
+> 📦 Available at: https://github.com/need-singularity/qmirror (`hx install qmirror`)
+
+---
+
 ## Mission
 
 Round 1 produced the spec. Round 2 produces the **launchable artifacts** so
@@ -75,3 +81,10 @@ PRNewswire reference extraction, IonQ scheduling wait (1-3 days).
 ## Verdict
 
 `LOCAL_READY_AWAITING_USER_AWS_ONBOARDING`
+
+## References (qmirror substrate xref, added 2026-05-03)
+
+- `docs/nexus_qmirror_spec_2026_05_03.md` — qmirror canonical substrate spec
+- `docs/nexus_qmirror_phase3_calibration_runbook_2026_05_03.md`
+- `docs/qmirror_cond8_braket_landed_2026_05_03.ai.md` — Braket cross-vendor closure
+- `docs/qmirror_n2_cross_vendor_revision_2026_05_03.md`

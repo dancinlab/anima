@@ -1,0 +1,12 @@
+[2026-05-03T21:38:35Z] start cost-cap watchdog pod=29dhlqk508ugoc cap=$50.00 rate=$2.99/hr poll=600s
+[2026-05-03T21:38:35Z] host=aiden-B650M-K pid=3456396
+[2026-05-03T21:38:36Z] SSH probe failed rc=255 msg=ssh: connect to host 103.207.149.110 port 14783: Connection refused -- pod likely gone, exiting
+[2026-05-03T21:39:58Z] start cost-cap watchdog pod=29dhlqk508ugoc cap=$50.00 rate=$2.99/hr poll=600s
+[2026-05-03T21:39:58Z] host=aiden-B650M-K pid=3643801
+[2026-05-03T21:39:58Z] SSH probe failed rc=255 msg=ssh: connect to host 103.207.149.110 port 14783: Connection refused -- pod likely gone, exiting
+
+# Pre-deployment Mac-side independent confirmation:
+# $ runpodctl pod get 29dhlqk508ugoc
+# {"error":"api error: {\"error\":\"pod not found\",\"status\":404}\n (status 404)"}
+# $ ssh -i /Users/ghost/.runpod/ssh/RunPod-Key-Go -p 14783 root@103.207.149.110 "echo POD-ALIVE"
+# ssh: connect to host 103.207.149.110 port 14783: Connection refused

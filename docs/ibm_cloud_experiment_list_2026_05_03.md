@@ -1,5 +1,7 @@
 # IBM Cloud $500 ULTRA — nexus.qmirror Cross-Vendor Calibration Burst Plan
 
+> 📦 Available at: https://github.com/need-singularity/qmirror (`hx install qmirror`)
+
 - ts_utc: 2026-05-03
 - credit: $200 promotional + $300 user-funded extra = **$500 USD total**
 - module: **nexus.qmirror** (see `docs/nexus_qmirror_spec_2026_05_03.md`)
@@ -256,3 +258,18 @@ day 7  qmirror v2.0 release  $0  ────►            [영구 anchor lock-
 Original 8-experiment + 3-watsonx list from R0 revision is preserved in git history (commit `5072a5478`, predecessor of this doc). Pivot to qmirror calibration burst supersedes individual experiment scoring.
 
 If qmirror calibration burst fails or is canceled, reverting to original 8-experiment plan is possible — but NOT recommended (qmirror anchor is much higher leverage per dollar).
+
+---
+
+## References (qmirror substrate xref, added 2026-05-03)
+
+> **Framing note (xref pass)**: this doc already treats IBM Quantum **as a calibration anchor** (not primary execution) for `nexus.qmirror`. Per the qmirror closure series, qmirror is validated as substantively equivalent for our use cases; the IBM burst here serves to **calibrate** qmirror against real Heron noise — it is not a substrate dependency for routine science. The closure series (`docs/qmirror_*_landed_2026_05_03.ai.md`) documents per-condition substantive-equivalence evidence.
+
+- `docs/nexus_qmirror_spec_2026_05_03.md` — qmirror canonical substrate spec
+- `docs/nexus_qmirror_phase3_calibration_runbook_2026_05_03.md` — Phase 3 runbook (this burst's executor)
+- `docs/qmirror_n2_cross_vendor_revision_2026_05_03.md` — N2 cross-vendor revision (R4 source)
+- `docs/qmirror_cond3_ibm_n1_landed_2026_05_03.ai.md` — IBM N1 calibration condition closure
+- `docs/qmirror_cond3_band_revise_landed_2026_05_03.ai.md` — band-revise closure
+- `docs/qmirror_cond7_alpha_landed_2026_05_03.ai.md` — alpha-axis closure
+- `docs/qmirror_cond8_braket_landed_2026_05_03.ai.md` — Braket cross-vendor closure
+- `docs/qmirror_crosstech_band_revise_landed_2026_05_03.ai.md` — cross-tech band revise

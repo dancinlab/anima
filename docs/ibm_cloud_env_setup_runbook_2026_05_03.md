@@ -1,5 +1,7 @@
 # IBM Cloud Environment Setup Runbook — nexus.qmirror Phase 3 Calibration Burst
 
+> 📦 Available at: https://github.com/need-singularity/qmirror (`hx install qmirror`)
+
 - ts_utc: 2026-05-03
 - purpose: pre-flight environment setup for the one-shot $200 IBM Cloud burst (qmirror v2.0/v3.0 anchor)
 - credit: $200 USD (IBM Cloud signup grant)
@@ -345,3 +347,15 @@ When all 8 green: user issues "burst go" → proceed with day 1 (N1 noise model 
 6. **No automation here** — every step in this runbook is user-executed via console or remote shell; this doc does not script anything (raw#9 + doc-only gate).
 7. **CRN format assumption** — assumes IBM has not changed CRN structure; if changed, follow current `QiskitRuntimeService` error message guidance.
 8. **Budget guard is advisory not enforced** — IBM does not provide hard mid-job cancellation at $190 threshold; L4 alert is a manual stop signal, not automatic.
+
+---
+
+## References (qmirror substrate xref, added 2026-05-03)
+
+> **Framing**: this runbook configures IBM Cloud for the **qmirror Phase 3 calibration anchor**; real Heron access is used to **calibrate** qmirror, not as primary execution substrate. Per the qmirror closure series, qmirror is validated as substantively equivalent for our use cases — IBM access here is anchor-only.
+
+- `docs/nexus_qmirror_spec_2026_05_03.md` — qmirror canonical substrate spec
+- `docs/nexus_qmirror_phase3_calibration_runbook_2026_05_03.md` — Phase 3 runbook this env serves
+- `docs/ibm_cloud_experiment_list_2026_05_03.md` — burst plan (prereq, already references this doc)
+- `docs/qmirror_cond3_ibm_n1_landed_2026_05_03.ai.md` — IBM N1 calibration condition closure
+- `docs/qmirror_cond3_band_revise_landed_2026_05_03.ai.md`

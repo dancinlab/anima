@@ -45,36 +45,59 @@
     {
       "name": "hjorth_native",
       "path": "anima-eeg-core/tool/modules/_metrics/hjorth_native.hexa",
-      "loc_kb": 49,
-      "sha256": "63300abf94e83707827e69257ef7989787bc180e157f92d58b7b2b454d49cc9d",
-      "selftest_exit": 137,
-      "selftest_status": "SIGKILL_BLOCKED",
-      "selftest_progress": "header + '4-mode discrimination: 16ch x 32 synthetic fixture' line emitted, then SIGKILL (137 = 128+9) before _hjorth_mean returns",
-      "modes_attempted": ["full(no-flag)", "--selftest-mode random", "--selftest-mode structured", "--selftest-mode sine"],
-      "modes_all_sigkill": true,
-      "wall_time_first_run_sec": 34,
-      "rss_max_mb": 28.5,
-      "documented_in_source_header": "lines 137-148 (L2 honest cross-validate caveat); plus runtime SIGKILL noted line 1105-1106 'tightened from 256 to 32 after empirical SIGKILL'",
-      "markers_failed": [
+      "loc_kb": 58,
+      "sha256": "dbe655af0d91ea1a31487e31de4ee58ac04acd0212116418a80adc81617cd134",
+      "selftest_exit": 0,
+      "selftest_status": "PASS",
+      "root_cause_resolved_at_iso": "2026-05-03T22:10:00Z",
+      "root_cause_summary": "Cgroup OOM killer in dockerized hexa-exec container; flat-list-passed-to-_var_*_slice triggers pathological hexa-runtime list allocation cumulating to 1.83 GiB inside ~1.93 GiB Docker Desktop VM ceiling",
+      "fix_summary": "Streaming per-channel evaluator (_hjorth_mean_streaming + _hjorth_channel_only + _var_x_only/_var_d1_only/_var_d2_only) caps live working set to O(n_samp) ints regardless of n_ch and number of modes",
+      "before_after": {
+        "exit_before": 137,
+        "exit_after": 0,
+        "mem_peak_bytes_before": 1961943040,
+        "mem_peak_bytes_after": 88649728,
+        "mem_reduction_factor": "22.1x (1.83 GiB -> 84.5 MiB)",
+        "oom_kill_per_run_before": 1,
+        "oom_kill_per_run_after": 0,
+        "sha_before": "63300abf94e83707827e69257ef7989787bc180e157f92d58b7b2b454d49cc9d",
+        "sha_after":  "dbe655af0d91ea1a31487e31de4ee58ac04acd0212116418a80adc81617cd134"
+      },
+      "byte_identical": {
+        "fixture": "16ch x 32 synthetic, 4 modes (random/structured/sine/monotonic)",
+        "random":     {"log_act": 4803, "mob": 1409, "cpx": 1220},
+        "structured": {"log_act": 4936, "mob": 423,  "cpx": 3542},
+        "sine":       {"log_act": 5026, "mob": 515,  "cpx": 1007},
+        "monotonic":  {"log_act": 2470, "mob": 0,    "cpx": 0},
+        "cpx_ordering_ok": "structured > random > sine",
+        "mob_ordering_ok": "random > monotonic",
+        "raw65_idempotent": true,
+        "cross_run_idempotent_byte_identical": true,
+        "raw71_F_HJN_01_not_tripped": true,
+        "raw71_F_HJN_02_not_tripped": true,
+        "raw71_F_HJN_03_floor_pass_mob_random": 1409
+      },
+      "modes_passed": ["default(no-flag)", "--selftest-mode random", "--selftest-mode structured", "--selftest-mode sine", "--selftest-mode monotonic"],
+      "remaining_limitation_raw10_honest": "cross-validate vs WRAP wrapper (--cross-validate) still auto-skips on this host per the original L2 caveat (Python child-spawn restriction in the second-stage container shell). Streaming kernel does NOT change that behaviour. Native-only PASS is the verified deliverable; cross-validate remains a future cycle item.",
+      "marker_landed": "state/markers/hjorth_native_root_cause_fix_1777846228_LANDED.marker",
+      "root_cause_artifacts": "state/anima_eeg_core_hjorth_root_cause_2026_05_03/{audit.json,dmesg_excerpt.txt,before_after.diff,hjorth_native.hexa.before}",
+      "markers_failed_historical": [
         "state/markers/hjorth_native_1777810519_FAILED.marker",
         "state/markers/hjorth_native_1777810524_FAILED.marker",
         "state/markers/hjorth_native_1777810652_FAILED.marker",
         "state/markers/hjorth_native_1777810690_FAILED.marker",
         "state/markers/hjorth_native_1777810728_FAILED.marker"
       ],
-      "verdict": "L2 BLOCKED on this hexa runtime (raw#10 honest); algorithm not exercised; PORT untouched",
-      "next_actions": [
-        "(a) Try hexa runtime upgrade or run on ubu1 fallback",
-        "(b) Bisect _hjorth_mean / _synth_flat with smaller n_samp (16,8) and per-channel calls",
-        "(c) Cross-validate via WRAP wrapper on real .npy fixture (manual)"
-      ]
+      "verdict": "L2 PASS native_only (post-fix); cross_validate=auto-skipped raw#10 honest L2 (unchanged from prior cycle)"
     }
   ],
   "phase5_completion": {
-    "5a_lz76_native":   {"status": "PASS",    "pct": 100},
-    "5b_pe_native":     {"status": "PASS",    "pct": 100},
-    "5c_hjorth_native": {"status": "BLOCKED", "pct": 50, "note": "code landed + reaches header; selftest oracle blocked by runtime SIGKILL"},
-    "overall_pct": 83,
-    "verdict": "5a + 5b LANDED + VERIFIED; 5c LANDED + BLOCKED (raw#10 honest)"
+    "5a_lz76_native":   {"status": "PASS", "pct": 100},
+    "5b_pe_native":     {"status": "PASS", "pct": 100},
+    "5c_hjorth_native": {"status": "PASS", "pct": 100, "note": "root cause = container cgroup OOM killer; fix = streaming per-channel kernel; selftest exit=0; 22x memory reduction; cross-validate auto-skip unchanged (raw#10 honest L2)"},
+    "overall_pct": 100,
+    "verdict": "5a + 5b + 5c LANDED + VERIFIED on dockerized hexa-exec runtime",
+    "previous_verdict_2026_05_03_morning": "5a + 5b LANDED + VERIFIED; 5c LANDED + BLOCKED (raw#10 honest); overall 83%",
+    "delta_from_previous": "5c BLOCKED -> PASS via streaming kernel; overall 83% -> 100%"
   }
 }

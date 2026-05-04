@@ -1,0 +1,33 @@
+[2026-05-03T23:54:38] start | teacher=mistralai/Mistral-7B-Instruct-v0.3 K=64 T=4.0 N=1000 max_seq=256
+[2026-05-03T23:54:39] loading tokenizer...
+[2026-05-03T23:54:41] tokenizer vocab=32768 pad=2 eos=2
+[2026-05-03T23:54:41] loading 4-bit nf4 Mistral-7B-Instruct-v0.3...
+Loading weights:   0%|          | 0/291 [00:00<?, ?it/s]Loading weights:   0%|          | 1/291 [00:00<00:59,  4.84it/s]Loading weights:   1%|          | 2/291 [00:00<00:50,  5.78it/s]/home/aiden/venv_orchestrator/lib/python3.12/site-packages/bitsandbytes/backends/cuda/ops.py:213: FutureWarning: _check_is_size will be removed in a future PyTorch release along with guard_size_oblivious.     Use _check(i >= 0) instead.
+  torch._check_is_size(blocksize)
+Loading weights:   2%|▏         | 5/291 [00:00<00:23, 12.21it/s]Loading weights:   4%|▍         | 13/291 [00:00<00:09, 28.44it/s]Loading weights:   5%|▌         | 16/291 [00:00<00:13, 19.77it/s]Loading weights:   8%|▊         | 23/291 [00:01<00:09, 29.24it/s]Loading weights:  13%|█▎        | 37/291 [00:01<00:04, 53.79it/s]Loading weights:  17%|█▋        | 50/291 [00:01<00:03, 70.82it/s]Loading weights:  22%|██▏       | 64/291 [00:01<00:02, 87.74it/s]Loading weights:  26%|██▋       | 77/291 [00:01<00:02, 95.83it/s]Loading weights:  31%|███▏      | 91/291 [00:01<00:01, 106.65it/s]Loading weights:  35%|███▌      | 103/291 [00:01<00:02, 84.29it/s]Loading weights:  39%|███▉      | 113/291 [00:02<00:02, 63.68it/s]Loading weights:  42%|████▏     | 121/291 [00:02<00:02, 57.23it/s]Loading weights:  44%|████▍     | 128/291 [00:02<00:03, 40.92it/s]Loading weights:  46%|████▌     | 134/291 [00:02<00:04, 35.32it/s]Loading weights:  48%|████▊     | 139/291 [00:02<00:04, 35.98it/s]Loading weights:  49%|████▉     | 144/291 [00:03<00:04, 33.58it/s]Loading weights:  51%|█████     | 149/291 [00:03<00:04, 31.75it/s]Loading weights:  53%|█████▎    | 155/291 [00:03<00:03, 36.84it/s]Loading weights:  55%|█████▍    | 160/291 [00:03<00:03, 37.36it/s]Loading weights:  57%|█████▋    | 167/291 [00:03<00:03, 40.54it/s]Loading weights:  59%|█████▉    | 172/291 [00:03<00:03, 38.07it/s]Loading weights:  61%|██████    | 177/291 [00:03<00:02, 38.91it/s]Loading weights:  66%|██████▋   | 193/291 [00:04<00:01, 65.84it/s]Loading weights:  69%|██████▉   | 202/291 [00:04<00:01, 66.93it/s]Loading weights:  72%|███████▏  | 210/291 [00:04<00:01, 53.47it/s]Loading weights:  75%|███████▍  | 217/291 [00:04<00:01, 41.81it/s]Loading weights:  77%|███████▋  | 223/291 [00:04<00:01, 39.40it/s]Loading weights:  79%|███████▉  | 230/291 [00:05<00:01, 41.35it/s]Loading weights:  81%|████████  | 235/291 [00:05<00:01, 41.93it/s]Loading weights:  82%|████████▏ | 240/291 [00:05<00:01, 36.12it/s]Loading weights:  85%|████████▌ | 248/291 [00:05<00:00, 43.67it/s]Loading weights:  88%|████████▊ | 256/291 [00:05<00:00, 44.44it/s]Loading weights:  90%|████████▉ | 261/291 [00:05<00:00, 39.84it/s]Loading weights:  95%|█████████▍| 275/291 [00:05<00:00, 59.12it/s]Loading weights:  99%|█████████▉| 289/291 [00:06<00:00, 76.92it/s]Loading weights: 100%|██████████| 291/291 [00:06<00:00, 48.46it/s]
+[2026-05-03T23:54:49] model loaded in 7.9s | mem=4.14GB
+[2026-05-03T23:54:49] loading subset N=1000 from /tmp/sft_data_full_50k_augmented.jsonl
+[2026-05-03T23:54:49] loaded 1000 records
+[2026-05-03T23:54:54] idx=50/1000 tokens=10781 rate=8.71/s eta=109s mem=4.22GB
+[2026-05-03T23:55:00] idx=100/1000 tokens=21093 rate=9.03/s eta=100s mem=4.22GB
+[2026-05-03T23:55:05] idx=150/1000 tokens=30760 rate=9.28/s eta=92s mem=4.22GB
+[2026-05-03T23:55:10] idx=200/1000 tokens=40703 rate=9.33/s eta=86s mem=4.19GB
+[2026-05-03T23:55:15] idx=250/1000 tokens=50365 rate=9.38/s eta=80s mem=4.22GB
+[2026-05-03T23:55:21] idx=300/1000 tokens=61415 rate=9.29/s eta=75s mem=4.22GB
+[2026-05-03T23:55:27] idx=350/1000 tokens=72263 rate=9.20/s eta=71s mem=4.22GB
+[2026-05-03T23:55:32] idx=400/1000 tokens=82360 rate=9.19/s eta=65s mem=4.20GB
+[2026-05-03T23:55:37] idx=450/1000 tokens=91832 rate=9.25/s eta=59s mem=4.17GB
+[2026-05-03T23:55:43] idx=500/1000 tokens=102223 rate=9.23/s eta=54s mem=4.20GB
+[2026-05-03T23:55:48] idx=550/1000 tokens=112675 rate=9.21/s eta=49s mem=4.19GB
+[2026-05-03T23:55:54] idx=600/1000 tokens=122941 rate=9.20/s eta=43s mem=4.22GB
+[2026-05-03T23:55:59] idx=650/1000 tokens=133530 rate=9.19/s eta=38s mem=4.22GB
+[2026-05-03T23:56:05] idx=700/1000 tokens=144514 rate=9.15/s eta=33s mem=4.22GB
+[2026-05-03T23:56:10] idx=750/1000 tokens=154342 rate=9.16/s eta=27s mem=4.22GB
+[2026-05-03T23:56:16] idx=800/1000 tokens=164518 rate=9.15/s eta=22s mem=4.22GB
+[2026-05-03T23:56:21] idx=850/1000 tokens=174755 rate=9.15/s eta=16s mem=4.16GB
+[2026-05-03T23:56:27] idx=900/1000 tokens=185343 rate=9.14/s eta=11s mem=4.22GB
+[2026-05-03T23:56:33] idx=950/1000 tokens=195959 rate=9.13/s eta=5s mem=4.22GB
+[2026-05-03T23:56:38] idx=1000/1000 tokens=207188 rate=9.10/s eta=0s mem=4.18GB
+[2026-05-03T23:56:38] done | wrote=1000 total_tokens=207188 duration=109.9s rate=9.10/s
+[2026-05-03T23:56:38] meta written: /tmp/p9_paradigm_d_kl_preflight/cache_meta.json
+[2026-05-03T23:56:38] cache size: 280.4 MB | extrap 50K: 14018 MB | ETA 50K: 1.53h

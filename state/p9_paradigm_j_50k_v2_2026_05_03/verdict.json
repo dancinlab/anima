@@ -1,0 +1,114 @@
+{
+  "schema": "anima/p9_paradigm_j_50k_v2/verdict/1",
+  "verdict": "F2_PASS_FULL",
+  "f1_verdict": "F1_BELOW_TARGET",
+  "f3_verdict": "F3_BELOW_TARGET",
+  "phase2_ready_recommendation": "PHASE2_ENTRY_READY",
+  "phi_summary": {
+    "mean": 42.60988455423506,
+    "variance": 1.2895490130120189,
+    "min": 40.38736161676005,
+    "max": 48.620207842061404,
+    "n": 102,
+    "baseline": 45.91520414820293,
+    "final": 43.03269575321059,
+    "delta_baseline_to_final": -2.8825083949923425
+  },
+  "f_final": {
+    "F1_bleu1": 0.0078125,
+    "F2_phi": 43.03269575321059,
+    "F3_tension_mse": 7.511284561827779,
+    "F4_bold_NA": true,
+    "step": 50000,
+    "note": "final"
+  },
+  "steps_completed": 50000,
+  "resumed_from_step": 0,
+  "aborted": false,
+  "aborts": [],
+  "train_elapsed_sec": 3627.71,
+  "real_train": true,
+  "config_summary": {
+    "n_steps": 50000,
+    "lr": 0.0001,
+    "lora_r": 128,
+    "lora_alpha": 128,
+    "beta": 0.1,
+    "gamma": 0.0,
+    "gamma_fe": 0.2,
+    "beta_fe": 1.0,
+    "K_FE": 192,
+    "layer_FE": 8,
+    "delta_curriculum": {
+      "early": 0.5,
+      "mid": 0.5,
+      "late": 1.0
+    },
+    "phi_threshold": 5.0,
+    "save_every": 1000,
+    "hf_milestones": [
+      5000,
+      10000,
+      25000,
+      50000
+    ]
+  },
+  "env": {
+    "device": "cuda",
+    "cuda": true,
+    "device_name": "NVIDIA GeForce RTX 5070",
+    "torch": "2.11.0+cu128",
+    "has_peft": true
+  },
+  "savepoints_pushed": [
+    {
+      "step": 5000,
+      "repo": "need-singularity/clm-v4-paradigm-j-50k-step-5k",
+      "ok": true,
+      "ok_origin": "recovery_2026_05_04T00_21_43Z",
+      "commit_url": "https://huggingface.co/need-singularity/clm-v4-paradigm-j-50k-step-5k/commit/a5b76c93e8b4eb2026f37654d96304dd85b273ed",
+      "adapter_sha256": "805c02e0e6aff2374b0ae9b6b9b86def6529925ad5f628289a850d1878a8ce90"
+    },
+    {
+      "step": 10000,
+      "repo": "need-singularity/clm-v4-paradigm-j-50k-step-10k",
+      "ok": true,
+      "ok_origin": "recovery_2026_05_04T00_22_10Z",
+      "commit_url": "https://huggingface.co/need-singularity/clm-v4-paradigm-j-50k-step-10k/commit/3ac7bac731e429406c009a65c95a941c97b9832d",
+      "adapter_sha256": "893c501921a4e57e8aaf1989a0a92cea9afe9496661ceddd8448ba9bc94e90ea"
+    },
+    {
+      "step": 25000,
+      "repo": "need-singularity/clm-v4-paradigm-j-50k-step-25k",
+      "ok": true,
+      "ok_origin": "recovery_2026_05_04T00_22_31Z",
+      "commit_url": "https://huggingface.co/need-singularity/clm-v4-paradigm-j-50k-step-25k/commit/c054fe1a7d3b9bfbabd26048bb9b6a003fc30eaf",
+      "adapter_sha256": "244f06d96c40fcb020bee505bd49fd992fe4e012a7fe75ecc5963048c0027202"
+    },
+    {
+      "step": 50000,
+      "repo": "need-singularity/clm-v4-paradigm-j-50k-step-50k",
+      "ok": true,
+      "ok_origin": "recovery_2026_05_04T00_22_57Z",
+      "commit_url": "https://huggingface.co/need-singularity/clm-v4-paradigm-j-50k-step-50k/commit/4fd5f002c820b044ed6df600147d2061e077ece7",
+      "adapter_sha256": "8bc08e92445e5cd64c595e24b8f01f6c858df49ca19bc2aaba212d7311467644"
+    },
+    {
+      "step": 50000,
+      "repo": "need-singularity/clm-v4-paradigm-j-50k-final",
+      "ok": true,
+      "ok_origin": "recovery_2026_05_04T00_23_37Z",
+      "commit_url": "https://huggingface.co/need-singularity/clm-v4-paradigm-j-50k-final/commit/a6da7a7725d8c3cff3b53c9df37a6352c7c8c7a6",
+      "adapter_sha256": "8bc08e92445e5cd64c595e24b8f01f6c858df49ca19bc2aaba212d7311467644",
+      "duplicate_of_step_50k_weights": true
+    }
+  ],
+  "ts_utc": "2026-05-03T22:35:38Z",
+  "ts_utc_recovery_update": "2026-05-04T00:25:00Z",
+  "recovery_audit": "state/p9_paradigm_j_50k_v2_2026_05_03/hf_recovery_audit.json",
+  "predecessor_v1": {
+    "verdict": "FAIL_J",
+    "reason": "CUDA_OOM_AT_STEP_0",
+    "state_dir": "state/p9_paradigm_j_50k_2026_05_03/"
+  }
+}

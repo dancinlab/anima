@@ -1,5 +1,7 @@
 # qmirror cond.3 — F-QM-IBM-N1-1 Falsifier Band Revision — LANDED
 
+> 📦 Available at: https://github.com/need-singularity/qmirror (`hx install qmirror`)
+
 - ts_utc: 2026-05-03T13:30Z
 - task: amend F-QM-IBM-N1-1 concordance band from |ΔS_ANU| ≤ 0.40 to ≤ 0.55 (superconducting class, physics-aware)
 - raw: #9 (spec/doc edits only, no .py creation) / #10 (honest disclosure of post-hoc amendment + selection-bias risk) / #15 (no personal-path leak)

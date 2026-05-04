@@ -1,0 +1,32 @@
+{
+  "schema": "anima/p9_paradigm_d_25k_h100/launch_status/1",
+  "phase": "p9_paradigm_d_25k_h100_2026_05_03",
+  "ts_utc": "2026-05-03T22:08:00Z",
+  "stage": "bundle_transfer_in_progress",
+  "pod_id": "fuewrx9moxe6gz",
+  "gpu": "NVIDIA H100 80GB HBM3 (SXM, secure ondemand, AP-IN-1)",
+  "cost_per_hr_usd": 2.99,
+  "cost_cap_usd_hard": 25.00,
+  "cost_watchdog_kill_usd": 22.00,
+  "ssh_endpoint": "103.207.149.143:16402",
+  "transfer": {
+    "transport": "rsync_av_over_ssh_ubu1_to_pod_direct",
+    "src": "ubu1:/tmp/anima_bundle_a100",
+    "dst": "pod:/workspace/anima_bundle",
+    "total_gb": 5.2,
+    "observed_throughput_mbps": 10.5,
+    "eta_min": 7
+  },
+  "watchdog_installed": "/workspace/cost_watchdog.sh (60s poll, kill at $22, warn at $18)",
+  "next_steps": [
+    "1. wait for rsync completion (best.pt 5GB)",
+    "2. mark script immutable (chmod +i) per GUARD-4",
+    "3. start cost_watchdog.sh in detached nohup",
+    "4. start training: python3 p9_paradigm_d_distill_v2.py with HF_TOKEN env, savepoint dir /workspace/p9_paradigm_d_25k_h100_savepoints/, log to /workspace/train.log",
+    "5. SIGTERM trap + atomic flush already in script (resume scaffolding)",
+    "6. write TRAIN_DONE.json IMMEDIATELY after trainer.train() returns (per Path A audit lesson)",
+    "7. monitor initial 1K-step loss, then return"
+  ],
+  "sunk_cost_a100_usd": 4.72,
+  "credit_balance_usd": 343.482
+}

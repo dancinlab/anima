@@ -1,5 +1,7 @@
 # nexus.qmirror N2 Cross-Vendor Axis — Scope Revision (Eagle/Falcon Retirement)
 
+> 📦 Available at: https://github.com/need-singularity/qmirror (`hx install qmirror`)
+
 - ts_utc: 2026-05-03
 - module: **nexus.qmirror** (Phase 3 calibration burst — N2 axis only)
 - author preset: friendly (raw#272)

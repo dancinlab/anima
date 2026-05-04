@@ -1,5 +1,7 @@
 # nexus.qmirror Phase 3 — IBM Cloud $200 One-Shot Calibration Runbook
 
+> 📦 Available at: https://github.com/need-singularity/qmirror (`hx install qmirror`)
+
 - ts_utc: 2026-05-03 (R2: option β cross-modality extension landed)
 - module: **nexus.qmirror** (Phase 3 — N1+N2+N3+N4+N5 hardware anchor)
 - credit envelope (R2 option β): **$210 USD total** = $150 IBM Cloud + $60 AWS Braket; $290 reserve in $500 outer envelope

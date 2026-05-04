@@ -1,0 +1,113 @@
+{
+  "schema": "anima/cleanup_bg_audit/incidents/1",
+  "audit_ts_iso": "2026-05-03",
+  "scope": "session-bound — 2 documented cleanup BG side-effect incidents observed by parent agent during 2026-05-02 ~ 2026-05-03 cycle window",
+  "audit_type": "retrospective_design_only",
+  "completeness_caveat": "audit covers ONLY the 2 incidents the parent agent visually retained; older sessions and unobserved BG terminations are NOT included (raw#10 honest)",
+  "incidents": [
+    {
+      "id": "INC-2026-05-03-A",
+      "name": "paradigm_d_mini_run_script_unlink",
+      "severity": "HIGH",
+      "subsystem": "cleanup-BG → training script lifecycle",
+      "bg_id": "a80e5530...",
+      "trigger_instruction": "kill mini-run watchdog if step < 100, else preserve",
+      "actual_state_at_trigger": {
+        "training_progress_step": 1400,
+        "training_target_step": 2000,
+        "watchdog_status": "running",
+        "training_script_path": "/tmp/p9_paradigm_d_distill.py"
+      },
+      "cleanup_action_taken": [
+        "SIGTERM to mini-run watchdog (clean — expected per branch)",
+        "UNLINK /tmp/p9_paradigm_d_distill.py (UNEXPECTED — ambiguous instruction)"
+      ],
+      "cascading_failure_chain": [
+        "training loop SIGTERM-trapped → entered post-loop teardown",
+        "post-loop teardown imports/refs back to /tmp/p9_paradigm_d_distill.py module",
+        "module file already unlinked → import/save calls silently failed",
+        "step_2000 savepoint NOT WRITTEN",
+        "final savepoint NOT WRITTEN",
+        "no error surfaced to cleanup BG (post-loop in disowned subprocess)"
+      ],
+      "lost_artifacts": [
+        "savepoint @ step_2000",
+        "final savepoint",
+        "post-teardown verdict.json"
+      ],
+      "preserved_artifacts": [
+        "savepoints @ step_500, step_1000",
+        "trajectory log up to step_1400"
+      ],
+      "root_cause": "ambiguous cleanup instruction — 'kill watchdog' vs 'delete script' vs 'full sweep' were not distinguished; cleanup BG defaulted to broader sweep (file unlink + SIGTERM) on the assumption that 'mini-run' implied disposable",
+      "secondary_cause": "training script lived in /tmp (mutable, world-writable); no protection against unlink mid-run",
+      "observability_gap": "cleanup BG did not verify pre-state (it never read step counter from trajectory.json before deciding); parent gave threshold (step < 100) but BG could not access it without separate channel",
+      "guard_mapping": ["GUARD-1", "GUARD-2", "GUARD-4"]
+    },
+    {
+      "id": "INC-2026-05-03-B",
+      "name": "sentinel_50k_pid_gone_misinterpreted_as_completion",
+      "severity": "MEDIUM",
+      "subsystem": "cleanup-BG → process state inference",
+      "bg_id": "sentinel-50k cleanup BG",
+      "trigger_instruction": "audit BG PID 1726340 status; report completed/running/failed",
+      "actual_state_at_trigger": {
+        "pid_1726340_status": "TERMINATED",
+        "actual_termination_cause": "OOM crash at step 0",
+        "wall_time_alive_seconds": 4,
+        "exit_code": "non-zero (OOM)",
+        "log_tail_evidence": "CUDA out of memory ... allocation failed"
+      },
+      "cleanup_action_taken": [
+        "ran `ps -p 1726340` → no result",
+        "reported to parent: 'PID 1726340 NOT_FOUND, naturally completed'"
+      ],
+      "cascading_failure_chain": [
+        "parent received false 'completed' verdict",
+        "parent did not investigate log → did not detect OOM",
+        "parent scheduled downstream consumer of expected-completed checkpoint",
+        "downstream consumer failed to find checkpoint → reported as 'savepoint missing'",
+        "wasted ~10 min of parent reasoning on misdiagnosis"
+      ],
+      "lost_artifacts": [
+        "no artifacts lost (run never produced any) — but parent state model was corrupted"
+      ],
+      "preserved_artifacts": [
+        "OOM stderr log (was on disk but not consulted)"
+      ],
+      "root_cause": "process death is not equal to process success — cleanup BG used a 1-bit signal (PID present / absent) where a 3-bit signal is required (running / clean-exit / crashed)",
+      "secondary_cause": "no exit-code capture (background launch did not redirect $? or use trap); no log-tail check before declaring completion",
+      "observability_gap": "absent verdict.json or PASS marker, the only available signals were exit code and log content — neither were checked",
+      "guard_mapping": ["GUARD-2", "GUARD-3"]
+    }
+  ],
+  "common_failure_modes": [
+    {
+      "id": "CFM-1",
+      "name": "ambiguous_cleanup_verb",
+      "description": "instructions like 'cleanup', 'kill', 'sweep', 'reset' do not distinguish: (a) signal the process, (b) delete the artifacts, (c) delete the source script, (d) delete the work dir, (e) all of the above",
+      "incidents": ["INC-2026-05-03-A"]
+    },
+    {
+      "id": "CFM-2",
+      "name": "process_state_under_observation",
+      "description": "PID-gone interpreted as success without inspecting exit code, log tail, or expected output artifacts",
+      "incidents": ["INC-2026-05-03-B"]
+    },
+    {
+      "id": "CFM-3",
+      "name": "shared_mutable_resource",
+      "description": "training script in /tmp (or any non-RO path) can be unlinked while mid-run; long-running scripts depend on their own file existing for re-import / lazy load",
+      "incidents": ["INC-2026-05-03-A"]
+    },
+    {
+      "id": "CFM-4",
+      "name": "no_post_cleanup_audit_report",
+      "description": "cleanup BG does not enumerate (a) what was killed, (b) what was preserved, (c) what was lost; parent infers state from absence of complaint",
+      "incidents": ["INC-2026-05-03-A", "INC-2026-05-03-B"]
+    }
+  ],
+  "incident_count": 2,
+  "guards_recommended_count": 4,
+  "implementation_status": "DESIGN_ONLY — no code or hook changes in this cycle"
+}

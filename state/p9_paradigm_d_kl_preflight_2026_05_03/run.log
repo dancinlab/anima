@@ -1,0 +1,51 @@
+[2026-05-03T23:48:56] start | teacher=mistralai/Mistral-7B-Instruct-v0.3 K=64 T=4.0 N=1000 max_seq=256
+[2026-05-03T23:48:58] loading tokenizer...
+[2026-05-03T23:49:00] tokenizer vocab=32768 pad=2 eos=2
+[2026-05-03T23:49:00] loading 4-bit nf4 Mistral-7B-Instruct-v0.3...
+[2026-05-03T23:54:38] start | teacher=mistralai/Mistral-7B-Instruct-v0.3 K=64 T=4.0 N=1000 max_seq=256
+[2026-05-03T23:54:39] loading tokenizer...
+[2026-05-03T23:54:41] tokenizer vocab=32768 pad=2 eos=2
+[2026-05-03T23:54:41] loading 4-bit nf4 Mistral-7B-Instruct-v0.3...
+[2026-05-03T23:54:49] model loaded in 7.9s | mem=4.14GB
+[2026-05-03T23:54:49] loading subset N=1000 from /tmp/sft_data_full_50k_augmented.jsonl
+[2026-05-03T23:54:49] loaded 1000 records
+[2026-05-03T23:54:54] idx=50/1000 tokens=10781 rate=8.71/s eta=109s mem=4.22GB
+[2026-05-03T23:55:00] idx=100/1000 tokens=21093 rate=9.03/s eta=100s mem=4.22GB
+[2026-05-03T23:55:05] idx=150/1000 tokens=30760 rate=9.28/s eta=92s mem=4.22GB
+[2026-05-03T23:55:10] idx=200/1000 tokens=40703 rate=9.33/s eta=86s mem=4.19GB
+[2026-05-03T23:55:15] idx=250/1000 tokens=50365 rate=9.38/s eta=80s mem=4.22GB
+[2026-05-03T23:55:21] idx=300/1000 tokens=61415 rate=9.29/s eta=75s mem=4.22GB
+[2026-05-03T23:55:27] idx=350/1000 tokens=72263 rate=9.20/s eta=71s mem=4.22GB
+[2026-05-03T23:55:32] idx=400/1000 tokens=82360 rate=9.19/s eta=65s mem=4.20GB
+[2026-05-03T23:55:37] idx=450/1000 tokens=91832 rate=9.25/s eta=59s mem=4.17GB
+[2026-05-03T23:55:43] idx=500/1000 tokens=102223 rate=9.23/s eta=54s mem=4.20GB
+[2026-05-03T23:55:48] idx=550/1000 tokens=112675 rate=9.21/s eta=49s mem=4.19GB
+[2026-05-03T23:55:54] idx=600/1000 tokens=122941 rate=9.20/s eta=43s mem=4.22GB
+[2026-05-03T23:55:59] idx=650/1000 tokens=133530 rate=9.19/s eta=38s mem=4.22GB
+[2026-05-03T23:56:05] idx=700/1000 tokens=144514 rate=9.15/s eta=33s mem=4.22GB
+[2026-05-03T23:56:10] idx=750/1000 tokens=154342 rate=9.16/s eta=27s mem=4.22GB
+[2026-05-03T23:56:16] idx=800/1000 tokens=164518 rate=9.15/s eta=22s mem=4.22GB
+[2026-05-03T23:56:21] idx=850/1000 tokens=174755 rate=9.15/s eta=16s mem=4.16GB
+[2026-05-03T23:56:27] idx=900/1000 tokens=185343 rate=9.14/s eta=11s mem=4.22GB
+[2026-05-03T23:56:33] idx=950/1000 tokens=195959 rate=9.13/s eta=5s mem=4.22GB
+[2026-05-03T23:56:38] idx=1000/1000 tokens=207188 rate=9.10/s eta=0s mem=4.18GB
+[2026-05-03T23:56:38] done | wrote=1000 total_tokens=207188 duration=109.9s rate=9.10/s
+[2026-05-03T23:56:38] meta written: /tmp/p9_paradigm_d_kl_preflight/cache_meta.json
+[2026-05-03T23:56:38] cache size: 280.4 MB | extrap 50K: 14018 MB | ETA 50K: 1.53h
+[2026-05-03T23:58:10] validator start | cache=/tmp/p9_paradigm_d_kl_cache_v1_1k.jsonl N=10
+[2026-05-03T23:58:15] cache size: 1000 records
+[2026-05-03T23:58:15] sampled idxs: [39, 147, 292, 378, 473, 687, 712, 715, 780, 982]
+[2026-05-03T23:58:16] sanity: vocab_in_range=True sorted=True checked_tokens=207188
+[2026-05-03T23:58:16] loading 4-bit Mistral for re-forward...
+[2026-05-03T23:58:21] model reloaded | mem=4.14GB
+[2026-05-03T23:58:22] idx=39 len=256 mean_overlap=64.00/64 min=64/64 top1_diff=0.0000
+[2026-05-03T23:58:22] idx=147 len=94 mean_overlap=64.00/64 min=64/64 top1_diff=0.0000
+[2026-05-03T23:58:22] idx=292 len=88 mean_overlap=64.00/64 min=64/64 top1_diff=0.0000
+[2026-05-03T23:58:22] idx=378 len=114 mean_overlap=64.00/64 min=64/64 top1_diff=0.0000
+[2026-05-03T23:58:22] idx=473 len=106 mean_overlap=64.00/64 min=64/64 top1_diff=0.0000
+[2026-05-03T23:58:22] idx=687 len=256 mean_overlap=64.00/64 min=64/64 top1_diff=0.0000
+[2026-05-03T23:58:22] idx=712 len=83 mean_overlap=64.00/64 min=64/64 top1_diff=0.0000
+[2026-05-03T23:58:22] idx=715 len=256 mean_overlap=64.00/64 min=64/64 top1_diff=0.0000
+[2026-05-03T23:58:22] idx=780 len=256 mean_overlap=64.00/64 min=64/64 top1_diff=0.0000
+[2026-05-03T23:58:22] idx=982 len=256 mean_overlap=64.00/64 min=64/64 top1_diff=0.0000
+[2026-05-03T23:58:22] validation: VERDICT=PASS mean_overlap=64.00/64

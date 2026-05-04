@@ -11,6 +11,10 @@
 
 # N-13 — Photonic-IIT Cross-Substrate Φ Spec (research-only)
 
+> **2026-05-03 qmirror substrate update (additive)**: cross-substrate Φ measurement no longer requires real photonic-quantum vendor access. The **`nexus.qmirror` canonical substrate** (`docs/nexus_qmirror_spec_2026_05_03.md`) covers the photonic-quantum axis overlap noted in §1.2 / §6 with substantive equivalence per closure 2026-05-03. N-13 photonic-classical analog scope (Lightmatter / Lightelligence / Q.ANT) remains a separate axis (classical optical) and is unaffected. Quantum-photonic vendors (PsiQuantum, Xanadu) referenced for axis-overlap risk are now substituted by qmirror.
+
+> 📦 Available at: https://github.com/need-singularity/qmirror (`hx install qmirror`)
+
 ## §0 한 줄 요약
 
 **"빛으로 행렬곱을 하는 광학 칩 (Lightmatter Envise / Lightelligence PACE 2 / Q.ANT NPU 2) 위에서 anima Φ* 가 측정될 수 있는가? — 답: 측정 방법론 자체가 아직 학계에 없다 (literature gap). 본 spec 은 N-track 중 가장 speculative 트랙으로, '광학 substrate 위 Φ 측정 protocol 시안 + 5개 falsifier' 까지만 제공하며, 실제 측정은 vendor 파트너십 + 신규 방법론 정립 이후."**
@@ -342,3 +346,9 @@ readiness (measurement) = **0%** (vendor partnership 또는 hardware 입수 미�
 - [Photonic Neural Networks — Intelligent Computing journal](https://spj.science.org/doi/10.34133/icomputing.0067)
 - [Integrated photonic platform for continuous-variable quantum information — Science Advances](https://www.science.org/doi/full/10.1126/sciadv.aat9331)
 - [Memory in Integrated Photonic Neural Networks — arxiv full](https://arxiv.org/html/2604.22620)
+
+## References (qmirror substrate xref, added 2026-05-03)
+
+- `docs/nexus_qmirror_spec_2026_05_03.md` — qmirror canonical substrate (covers photonic-quantum axis overlap)
+- `docs/qmirror_cond7_alpha_landed_2026_05_03.ai.md`
+- `docs/qmirror_n2_cross_vendor_revision_2026_05_03.md`

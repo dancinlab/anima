@@ -1,0 +1,139 @@
+--- /Users/ghost/core/anima/state/cosmetic_polish_batch_2026_05_03/hf_upload_mk2.hexa.before	2026-05-04 09:34:24
++++ /Users/ghost/core/anima/tool/hf_upload_mk2.hexa	2026-05-04 09:37:14
+@@ -30,8 +30,11 @@
+ //
+ // raw#15: no personal-path leak. All paths constructed via $HOME env.
+ 
+-let VERSION = "2.0.0"
+-let HOME = exec("printenv HOME").trim()
++// Cosmetic polish 2026-05-03: printenv → echo "$VAR" (Alpine container has
++// no `printenv`; POSIX echo works on both Alpine + macOS). See
++// state/cosmetic_polish_batch_2026_05_03/audit.json.
++let VERSION = "2.0.2"
++let HOME = exec("echo \"$HOME\"").trim()
+ let ANIMA_ROOT = HOME + "/core/anima"
+ let DEFAULT_AUDIT_DIR = ANIMA_ROOT + "/state/hf_upload_audit"
+ let DEFAULT_LEDGER = ANIMA_ROOT + "/state/hf_upload_ledger_2026_05.jsonl"
+@@ -39,7 +42,7 @@
+ // `hf` CLI resolution — prefer override, else PATH lookup. v1.8.0+ required
+ // for `hf repo tag create` coverage.
+ fn _hf_cli() -> str {
+-    let override = exec("printenv ANIMA_HF_CLI 2>/dev/null").trim()
++    let override = exec("echo \"$ANIMA_HF_CLI\"").trim()
+     if override.len() > 0 { return override }
+     let cli = exec("command -v hf 2>/dev/null").trim()
+     if cli.len() > 0 { return cli }
+@@ -130,7 +133,7 @@
+ //   org      = lowercase alnum + dash, 2-32 chars
+ //   family   = clm | alm | blm | vlm | slm | tlm | nlm | mlm | llm | hexad | composite
+ //   version  = v1 | v2 | v3 | v4 | v<N>
+-//   stage    = sft-stage<N> | dpo | merged | base | preview | dev
++//   stage    = sft-stage<N> | dpo | merged | base | preview | dev | paradigm-<letter>
+ //   modifier = optional, lowercase alnum + dash
+ //
+ // Family enum reconciliation (2026-05-03):
+@@ -141,6 +144,16 @@
+ //   - Union (this file): both retained additively + `llm` for Path A
+ //     (Llama-derived LM, see docs/p9_a_prime_path_decision_landed_2026_05_03.ai.md).
+ //   - Reconciliation handoff: docs/anima_hf_naming_family_reconcile_2026_05_03.ai.md
++//
++// Stage-prefix `paradigm-{letter}` amendment (2026-05-03):
++//   - Surfaced by Paradigm J HF recovery BG (a915bca5) which had to bypass
++//     the mk2 wrapper because `paradigm-j-50k-step-5k` was rejected
++//     ("stage must start with sft-stage|dpo|merged|base|preview|dev").
++//   - Spec amendment: docs/anima_hf_naming_convention_mk2_spec_2026_05_03.md §3.2.1.
++//   - paradigm_id enum (a|a-prime|b|c|d|e|f|g|h|i|j) tracked in spec §3.3.
++//     Validator accepts the broader `paradigm-` prefix to stay forward-compatible
++//     with future paradigm letters; the §3.3 spec table remains the SSOT for
++//     which letters are *ratified* — informal letters MUST land a §3.3 row first.
+ //
+ // Sister BG (mk2 naming convention spec) may write its output to
+ // docs/anima_naming_convention_mk2_2026_05_03.md. We import its regex
+@@ -151,7 +164,10 @@
+ }
+ 
+ fn _naming_allowed_stage_prefixes() -> [str] {
+-    return ["sft-stage", "dpo", "merged", "base", "preview", "dev"]
++    // Amendment 2026-05-03 (paradigm-{letter}): added `paradigm-` prefix to
++    // unblock Paradigm-axis training tracks (e.g. clm-v4-paradigm-j-50k-step-5k).
++    // See spec §3.2.1 and §3.3 (paradigm_id enum SSOT).
++    return ["sft-stage", "dpo", "merged", "base", "preview", "dev", "paradigm-"]
+ }
+ 
+ fn _is_lower_alnum_dash(s: str) -> int {
+@@ -230,7 +246,7 @@
+         si = si + 1
+     }
+     if st_ok != 1 {
+-        return "FAIL: stage must start with one of {sft-stage|dpo|merged|base|preview|dev} (got: '" + stage_join + "')"
++        return "FAIL: stage must start with one of {sft-stage|dpo|merged|base|preview|dev|paradigm-} (got: '" + stage_join + "')"
+     }
+     return "OK"
+ }
+@@ -263,9 +279,9 @@
+ 
+ fn _resolve_token(req_token: str) -> str {
+     if req_token.len() > 0 { return req_token }
+-    let env1 = exec("printenv HF_TOKEN 2>/dev/null").trim()
++    let env1 = exec("echo \"$HF_TOKEN\"").trim()
+     if env1.len() > 0 { return env1 }
+-    let env2 = exec("printenv HUGGING_FACE_HUB_TOKEN 2>/dev/null").trim()
++    let env2 = exec("echo \"$HUGGING_FACE_HUB_TOKEN\"").trim()
+     if env2.len() > 0 { return env2 }
+     // file fallbacks
+     let p1 = HOME + "/.huggingface/token"
+--- /Users/ghost/core/anima/state/cosmetic_polish_batch_2026_05_03/build_interp.hexa.before	2026-05-04 09:37:23
++++ /Users/ghost/core/hexa-lang/tool/build_interp.hexa	2026-05-04 09:37:35
+@@ -221,7 +221,10 @@
+             println("[build_interp] flatten: " + flatten_runner + " tool/flatten_imports.hexa " + src_hexa + " " + flat_hexa)
+             // T33: arena instrumentation causes mutable-variable corruption.
+             // Force HEXA_VAL_ARENA=0 to disable arena during flatten execution.
+-            let flatten_result = exec_with_status(flatten_env_prefix + "HEXA_VAL_ARENA=0 timeout --kill-after=5 120 " + flatten_runner + " " + hexa_dir + "/tool/flatten_imports.hexa " + src_hexa + " " + flat_hexa)
++            // Cosmetic polish 2026-05-03: 120s → 600s. hexa_v2 self-host
++            // transpile of 1.5MB hexa_full.hexa exceeds 120s on M-series
++            // (~200s actual). 600s gives 3x headroom. See state/cosmetic_polish_batch_2026_05_03/.
++            let flatten_result = exec_with_status(flatten_env_prefix + "HEXA_VAL_ARENA=0 timeout --kill-after=5 600 " + flatten_runner + " " + hexa_dir + "/tool/flatten_imports.hexa " + src_hexa + " " + flat_hexa)
+             if flatten_result[1] != 0 {
+                 exec("rm -rf " + flatten_lock)
+                 eprintln("error: flatten_imports failed")
+@@ -236,7 +239,7 @@
+         src_for_transpile = flat_hexa
+     }
+     println("[build_interp] transpile: " + hexa_v2 + " " + src_for_transpile + " " + src_c)
+-    run_cmd("timeout --kill-after=5 120 " + hexa_v2 + " " + src_for_transpile + " " + src_c)
++    run_cmd("timeout --kill-after=5 600 " + hexa_v2 + " " + src_for_transpile + " " + src_c)
+ }
+ 
+ if !file_exists(src_c) {
+@@ -268,7 +271,7 @@
+ println("[build_interp] uname=" + uname)
+ println("[build_interp] " + clang + " " + cflags + " " + src_c + " -o " + out + " " + ldflags)
+ 
+-run_cmd("timeout --kill-after=5 120 " + clang + " " + cflags + " " + src_c + " -o " + out + " " + ldflags)
++run_cmd("timeout --kill-after=5 600 " + clang + " " + cflags + " " + src_c + " -o " + out + " " + ldflags)
+ 
+ // 3) Darwin codesign (AppleSystemPolicy SIGKILL 방지)
+ if uname == "Darwin" {
+--- /Users/ghost/core/anima/state/cosmetic_polish_batch_2026_05_03/main.hexa.before	2026-05-04 09:37:23
++++ /Users/ghost/core/hexa-lang/self/main.hexa	2026-05-04 09:37:55
+@@ -937,7 +937,20 @@
+ // 2026-05-03 추가: 4-단 fallback — `/usr/local/bin/build/hexa_interp` (hexa-runner
+ //   container 기본 위치). install_dir_from_argv0() 의 /proc/self/exe fallback 이
+ //   실패해도 container layout 이 표준일 때 silent emit 회귀 방지.
++// 2026-05-03 cosmetic polish: 0-단 fallback — `$HEXA_INTERP` env var override.
++//   ~/.hx/bin/hexa dispatch script seeds HEXA_INTERP for the container; this
++//   makes the env var actually honored by resolve_interp() (was previously
++//   ignored — relied on 4-tier hardcoded path coincidence). Allows operator
++//   override without touching dispatch infra. See state/cosmetic_polish_batch_2026_05_03/.
+ fn resolve_interp() {
++    // 0) $HEXA_INTERP env override (operator-controlled, highest priority).
++    let env_bin = exec("printf '%s' \"$HEXA_INTERP\"")
++    if len(env_bin) > 0 {
++        let env_chk = exec("test -x '" + env_bin + "' && printf yes || printf no")
++        if env_chk == "yes" {
++            return env_bin
++        }
++    }
+     let inst = install_dir_from_argv0()
+     if len(inst) > 0 {
+         let argv_bin = inst + "/build/hexa_interp"

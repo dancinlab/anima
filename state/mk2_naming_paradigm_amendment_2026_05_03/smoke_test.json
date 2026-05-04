@@ -1,0 +1,71 @@
+{
+  "ts_utc": "2026-05-03",
+  "validator": "tool/hf_upload_mk2.hexa v2.0.2",
+  "command_template": "hexa run tool/hf_upload_mk2.hexa --validate-naming \"<repo>\"",
+  "tests": [
+    {
+      "id": "primary",
+      "repo": "need-singularity/clm-v4-paradigm-j-50k-step-5k",
+      "expected": "PASS",
+      "actual": "PASS",
+      "stdout_tail": "OK\n__ANIMA_HF_UPLOAD_MK2__ PASS",
+      "rationale": "Exact case from Paradigm J HF recovery BG (a915bca5) — must now succeed"
+    },
+    {
+      "id": "paradigm_a_prime",
+      "repo": "need-singularity/clm-v4-paradigm-a-prime-step-10k",
+      "expected": "PASS",
+      "actual": "PASS",
+      "stdout_tail": "OK\n__ANIMA_HF_UPLOAD_MK2__ PASS",
+      "rationale": "Paradigm-a-prime (compound letter) coverage"
+    },
+    {
+      "id": "blm_paradigm_d",
+      "repo": "need-singularity/blm-v1-paradigm-d-distill-50k-final",
+      "expected": "PASS",
+      "actual": "PASS",
+      "stdout_tail": "OK\n__ANIMA_HF_UPLOAD_MK2__ PASS",
+      "rationale": "BLM family + paradigm-d + distill stage chain (spec §2.2 example row 4)"
+    },
+    {
+      "id": "regression_sft_stage1",
+      "repo": "need-singularity/clm-v4-sft-stage1",
+      "expected": "PASS",
+      "actual": "PASS",
+      "stdout_tail": "OK\n__ANIMA_HF_UPLOAD_MK2__ PASS",
+      "rationale": "Existing sft-stage1 still passes — no regression of canonical CANON form"
+    },
+    {
+      "id": "rejection_bogus_family",
+      "repo": "need-singularity/zzz-v4-bogus-stage",
+      "expected": "FAIL (family check)",
+      "actual": "FAIL",
+      "stdout_tail": "FAIL: family must be one of {clm|alm|blm|vlm|slm|tlm|nlm|mlm|llm|hexad|composite} (got: 'zzz')\n__ANIMA_HF_UPLOAD_MK2__ FAIL",
+      "rationale": "Family validator unchanged — still rejects unknown family"
+    },
+    {
+      "id": "rejection_bogus_stage",
+      "repo": "need-singularity/clm-v4-bogus-stage",
+      "expected": "FAIL (stage check)",
+      "actual": "FAIL",
+      "stdout_tail": "FAIL: stage must start with one of {sft-stage|dpo|merged|base|preview|dev|paradigm-} (got: 'bogus-stage')\n__ANIMA_HF_UPLOAD_MK2__ FAIL",
+      "rationale": "Stage allow-list still rejects unknown prefixes; updated error message reflects new paradigm- entry"
+    }
+  ],
+  "selftest": {
+    "command": "hexa run tool/hf_upload_mk2.hexa --selftest",
+    "result": "PASS",
+    "checks": [
+      "hf_cli_present (1.8.0)",
+      "readme validator good=OK + bad=rejected",
+      "naming validator good=OK + bad=rejected",
+      "hexa selftest (sha256 + walk_files)"
+    ]
+  },
+  "summary": {
+    "primary_smoke_test": "PASS",
+    "regressions": 0,
+    "rejections_still_working": 2,
+    "selftest": "PASS"
+  }
+}

@@ -6,6 +6,10 @@ Off-repo dir: `/Users/ghost/n12_v3_ibm/`
 On-repo dir: `state/n_12_v3_ibm_quantum_prep_2026_05_01/`
 Parents: #46 (vendor pivot research), #54 (v2 INDETERMINATE), #39 (v1 FAIL)
 
+> **2026-05-03 qmirror substrate update (additive)**: this prep package targets IBM Quantum Open Plan. Per the qmirror closure series 2026-05-03, the **`nexus.qmirror` canonical substrate** (`docs/nexus_qmirror_spec_2026_05_03.md`) is now the primary execution path for F-N12-1 / Orch-OR-class measurement; real IBM Heron r2 access is **not required** for routine science. The IBM path documented here is preserved as a **calibration anchor** (one-shot $200 IBM Cloud burst, see `docs/ibm_cloud_experiment_list_2026_05_03.md` and `docs/nexus_qmirror_phase3_calibration_runbook_2026_05_03.md`) — not as primary execution.
+
+> 📦 Available at: https://github.com/need-singularity/qmirror (`hx install qmirror`)
+
 ## Headline
 
 F-N12-1 v3 launch package is **ready**. User can take it from $0 to live IBM Quantum Open Plan submission in **~7 minutes** of user-time after this prep. Agent did not create accounts, did not submit jobs (per $0 budget constraint and mission spec).
@@ -125,3 +129,11 @@ Untouched:
 - Heron r2 specs (postquantum): https://postquantum.com/industry-news/ibm-heron-r2-quantum/
 - IBM Heron Wikipedia: https://en.wikipedia.org/wiki/IBM_Heron
 - Korea Quantum Computing partnership: https://newsroom.ibm.com/2024-01-29-Korea-Quantum-Computing-and-IBM-Collaborate-to-Bring-IBM-watsonx-and-Quantum-Computing-to-Korea
+
+## References (qmirror substrate xref, added 2026-05-03)
+
+- `docs/nexus_qmirror_spec_2026_05_03.md` — qmirror canonical substrate spec
+- `docs/nexus_qmirror_phase3_calibration_runbook_2026_05_03.md` — IBM calibration anchor runbook
+- `docs/ibm_cloud_experiment_list_2026_05_03.md` — $500 IBM Cloud burst plan (qmirror-anchored)
+- `docs/qmirror_cond3_ibm_n1_landed_2026_05_03.ai.md` — IBM N1 calibration condition closure
+- `docs/qmirror_cond3_band_revise_landed_2026_05_03.ai.md`

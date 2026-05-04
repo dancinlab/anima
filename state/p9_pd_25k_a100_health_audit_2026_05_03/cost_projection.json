@@ -1,0 +1,25 @@
+{
+  "schema": "anima/p9_pd_25k_a100/cost_projection/1",
+  "ts_utc": "2026-05-03T21:50:00Z",
+  "rate_usd_per_hr": 0.79,
+  "pod_uptime_h_since_create": 5.98,
+  "current_spend_usd": 4.72,
+  "wasted_spend_usd_so_far": 4.72,
+  "wasted_reason": "no training has started; ~5h pod cost is pre-training overhead (deps install, bundle transfer, then preempt-restart wiping work)",
+  "watchdog_kill_threshold_usd": 14.50,
+  "hard_cap_usd": 17.00,
+  "headroom_to_watchdog_h": 12.38,
+  "headroom_to_hard_cap_h": 15.54,
+  "bundle_transfer_eta_min": 40,
+  "training_can_begin_after_eta_min": 40,
+  "training_runtime_estimate_h_a100": "15-20",
+  "expected_training_cost_usd": "11.85-15.80",
+  "projected_total_completion_usd_optimistic": 17.0,
+  "projected_total_completion_usd_realistic": 21.0,
+  "verdict": "RISK_OF_OVERRUN — current $4.72 wasted; if training takes 18h after transfer, total = $4.72 + $14.22 = $18.94 → exceeds $17 hard cap, exceeds $14.50 watchdog threshold (which would kill mid-training)",
+  "recommendation_options": [
+    "(A) WAIT: let bundle transfer complete (~40min, $0.53 more), then training auto-starts. Total projected: $5.25 (pre-train) + 18h × $0.79 = $19.47 — OVERRUNS both caps.",
+    "(B) ABORT NOW: kill pod, save remaining $0.79/hr. Total spent: $4.72. Re-launch on H100 PCIe ($1.59/hr) when stock — 10h × $1.59 = $15.90 total ⊂ $17 cap.",
+    "(C) RAISE CAP: bump watchdog to $20, hard cap $22 to allow A100 completion. Pod survives full 25K. Total: ~$19-20."
+  ]
+}

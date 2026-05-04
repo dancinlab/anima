@@ -72,7 +72,8 @@ repo_name      = lm_family "-" base_version
                  [ "-" step ]
                  [ "-" variant ] ;
 
-lm_family      = "blm" | "clm" | "tlm" | "vlm" | "slm" | "nlm" ;
+lm_family      = "blm" | "clm" | "tlm" | "vlm" | "slm" | "nlm"
+               | "alm" | "mlm" | "llm" | "hexad" | "composite" ;  (* §3.1 reconciled enum, 11 families *)
 base_version   = "v" digit { digit } ;             (* v1, v4, v12 *)
 paradigm       = "paradigm-" paradigm_id ;
 paradigm_id    = "a" | "a-prime" | "b" | "c" | "d" | "e" | "j" ;
@@ -121,20 +122,101 @@ variant        = "y" digit { digit }               (* hyperparameter sweep arm: 
 
 | code | full name | role | reference |
 |---|---|---|---|
-| `clm` | Conscious LM | core text reasoning + φ★ preserved | `docs/conscious-lm-spec.md` |
-| `blm` | BOLD LM | fMRI BOLD signal LM | `docs/blm_phase5_aligned_spec_landed_2026_05_03.ai.md` |
-| `tlm` | Tension LM | per-token tension scalar LM | `docs/tlm_stage12_landed_2026_05_03.ai.md` |
-| `vlm` | Voice LM | speech / TTS / ASR-aware LM | `docs/anima_speak_voice_cite_cleanup_landed_2026_05_03.ai.md` |
-| `slm` | Sensorium LM | multi-substrate sensory LM | `docs/anima_2_lm_vlm_slm_landed_2026_05_03.ai.md` |
-| `nlm` | Nexus LM | nexus-side coordination LM | (forward, not yet repo'd) |
+| `clm` | Conscious LM | core text reasoning + φ★ preserved (canonical CLM v4) | `docs/conscious-lm-spec.md` |
+| `alm` | Audio LM | audio-only generative/encoder LM (anima-voice precursor) | `docs/anima_speak_voice_cite_cleanup_landed_2026_05_03.ai.md` |
+| `blm` | BOLD LM | fMRI BOLD signal LM (EEG-CLM cross-substrate) | `docs/blm_phase5_aligned_spec_landed_2026_05_03.ai.md` |
+| `vlm` | Voice LM | anima-voice with text head (speech / TTS / ASR-aware) | `docs/anima_speak_voice_cite_cleanup_landed_2026_05_03.ai.md` |
+| `slm` | Sensorium LM | multi-substrate sensory LM (TTS / audio gen) | `docs/anima_2_lm_vlm_slm_landed_2026_05_03.ai.md` |
+| `tlm` | Tension LM | per-token tension scalar LM (tone/tactile) | `docs/tlm_stage12_landed_2026_05_03.ai.md` |
+| `nlm` | Nexus / Neural LM | nexus-side coordination LM (general neural) | (forward, not yet repo'd) |
+| `mlm` | Masked LM | BERT-class masked-token LM (encoder-only) | (forward, not yet repo'd) |
+| `llm` | Llama-derived LM | Path A informal extension — Llama-3.x derived ckpts | `docs/p9_a_prime_path_decision_landed_2026_05_03.ai.md` |
+| `hexad` | Hexad composite | multi-modal hexad composite (6-axis) | (forward, not yet repo'd) |
+| `composite` | Generic composite | generic multi-LM composite (catch-all) | (forward, not yet repo'd) |
 
 **banned**: `model`, `lm`, `gpt`, `mistral` (these are *base architectures*, not anima families — use base-mirror suffix instead, §3.4).
+
+### 3.1.1 Family enum reconciliation (2026-05-03 additive update)
+
+This section documents the family-list reconciliation between this spec (§3.1
+table) and the hexa validator (`tool/hf_upload_mk2.hexa::_naming_allowed_families`).
+
+**Drift history**:
+
+| SSOT | original family list | delta |
+|---|---|---|
+| this spec §3.1 (pre-reconcile) | `blm \| clm \| tlm \| vlm \| slm \| nlm` (6) | missing `alm`, `mlm`, `llm`, `hexad`, `composite` |
+| `tool/hf_upload_mk2.hexa` (pre-reconcile) | `clm \| alm \| blm \| vlm \| slm \| tlm \| mlm \| hexad \| composite` (9) | missing `nlm`, `llm` |
+
+**Reconciliation rule (additive — raw#9, raw#10, raw#15)**:
+
+- Both sides take **union** (11 families) — no removal.
+- New family `llm` (Llama-derived, Path A) added per
+  `docs/p9_a_prime_path_decision_landed_2026_05_03.ai.md`. **Ratification of
+  `llm` as a first-class anima family is INFORMAL (provisional)** — see C3
+  caveat in `docs/anima_hf_naming_family_reconcile_2026_05_03.ai.md`.
+- Future families MUST land via this same additive cycle (spec §3.1 row +
+  validator enum entry + handoff doc) — do NOT add silently in only one SSOT.
+
+**Validator regex impact** (§10.2): `LM` group expanded from
+`(blm|clm|tlm|vlm|slm|nlm)` to
+`(blm|clm|tlm|vlm|slm|nlm|alm|mlm|llm|hexad|composite)`. EBNF in §2.1
+(`lm_family` production) likewise expanded. CANON regex in §10.2 updated to
+match.
 
 ### 3.2 base-version — `v{N}`
 
 - monotonic int, no decimals (`v4.1` BAD → use `variant` slot or branch tag)
 - bumps only on architecture change (param count, layer count, activation, tokenizer)
 - example: clm-v3 → clm-v4 = ConsciousDecoder → ConsciousDecoderV2
+
+### 3.2.1 stage-prefix amendment — `paradigm-{letter}` (2026-05-03 additive)
+
+**Surfaced by**: Paradigm J 5/5 HF push recovery BG (a915bca5) on 2026-05-03,
+which had to bypass the mk2 wrapper (`tool/hf_upload_mk2.hexa`) because the
+stage-prefix validator rejected `paradigm-j-50k-step-5k`
+("stage must start with sft-stage|dpo|merged|base|preview|dev").
+
+**Rationale**: Paradigm-axis training tracks (`paradigm-a`/`paradigm-a-prime`/
+`paradigm-b`/`paradigm-c`/`paradigm-d`/`paradigm-e`/`paradigm-j`) are a
+*separate stage class* from `sft-stage1`/`sft-stage2`/`dpo`/`merged`/`base`/
+`preview`/`dev`. The §2.1 EBNF already places `paradigm` in the optional
+`paradigm` slot before `stage`, but the validator implementation
+(`tool/hf_upload_mk2.hexa::_naming_allowed_stage_prefixes`) collapses the
+post-version segment into a single "stage_join" string and matches against
+allowed *stage* prefixes only — paradigm-prefixed names therefore failed
+even though they are spec-conformant per §2.1+§3.3.
+
+**Amendment**: `_naming_allowed_stage_prefixes()` adds `"paradigm-"` to its
+allow-list. Any name of the form
+`<lm>-<vN>-paradigm-<letter>[-<scale>][-<step>]` now passes the validator.
+
+**Ratified paradigm letters** (SSOT remains §3.3 table): `a`, `a-prime`,
+`b`, `c`, `d`, `e`, `j`. Forward placeholders for letter expansion (additive
+discipline): `f`, `g`, `h`, `i`. Validator accepts the broader `paradigm-`
+prefix to stay forward-compatible with future paradigm letters; ratification
+of any new letter still requires a §3.3 table row + spec doc per §3.3 closing
+rule. The §3.3 table is the *authoritative* enumeration; the validator is
+intentionally looser on this slot to avoid a second SSOT.
+
+**Smoke test (post-amendment)**:
+
+```
+hexa run tool/hf_upload_mk2.hexa --validate-naming \
+    "need-singularity/clm-v4-paradigm-j-50k-step-5k"
+→ OK
+__ANIMA_HF_UPLOAD_MK2__ PASS
+```
+
+**Audit trail**: `state/mk2_naming_paradigm_amendment_2026_05_03/{audit.json,
+smoke_test.json}`; marker `state/markers/mk2_naming_paradigm_amendment_landed.marker`.
+
+**Retroactive scope**: Paradigm J's already-pushed `clm-v4-paradigm-j-50k-step-*`
+repos (recovered via wrapper bypass) do NOT auto-acquire mk2 compliance —
+they remain audit-flagged as "bypass-pushed" until re-validated against the
+amended validator (a follow-up audit cycle, not this amendment cycle). The
+amendment is forward-looking: subsequent Paradigm J/D/E HF pushes MUST go
+through the mk2 wrapper.
 
 ### 3.3 paradigm — research lineage tag
 
@@ -382,7 +464,7 @@ Before `hf push` on a new repo, the cycle owner MUST verify:
 ### 10.2 Verifier sketch (regex; see §8.3 for full impl)
 
 ```
-LM       = (blm|clm|tlm|vlm|slm|nlm)
+LM       = (blm|clm|tlm|vlm|slm|nlm|alm|mlm|llm|hexad|composite)  # §3.1 reconciled enum
 VER      = v\d+
 PARADIGM = paradigm-(a|a-prime|b|c|d|e|j)
 STAGE    = (base-mirror|sft|sft-stage[12]|sft-final|distill|lora-r\d+|rlhf|rlaif)

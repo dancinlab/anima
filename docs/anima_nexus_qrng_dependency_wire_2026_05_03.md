@@ -1,5 +1,7 @@
 # anima ↔ nexus QRNG dependency wire spec — 2026-05-03
 
+> 📦 Available at: https://github.com/need-singularity/qmirror (`hx install qmirror`)
+
 `raw#9` hexa-only · `raw#10` honest C3 · `raw#15` no-personal-paths · `raw#65` idempotent · `raw#68` byte-identical
 
 **Status:** SPEC ONLY — no code changes in this cycle.

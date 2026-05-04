@@ -1,5 +1,7 @@
 # qmirror cond.8 option β cross-vendor CHSH (Braket) — LANDED 2026-05-03 (AI-native, friendly preset)
 
+> 📦 Available at: https://github.com/need-singularity/qmirror (`hx install qmirror`)
+
 > friendly preset (icon + analogy + 7-element + ASCII)
 >
 > readers: AI agents (subagents, audit cron), Claude Code (next session)

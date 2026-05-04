@@ -30,8 +30,11 @@
 //
 // raw#15: no personal-path leak. All paths constructed via $HOME env.
 
-let VERSION = "2.0.0"
-let HOME = exec("printenv HOME").trim()
+// Cosmetic polish 2026-05-03: printenv → echo "$VAR" (Alpine container has
+// no `printenv`; POSIX echo works on both Alpine + macOS). See
+// state/cosmetic_polish_batch_2026_05_03/audit.json.
+let VERSION = "2.0.2"
+let HOME = exec("echo \"$HOME\"").trim()
 let ANIMA_ROOT = HOME + "/core/anima"
 let DEFAULT_AUDIT_DIR = ANIMA_ROOT + "/state/hf_upload_audit"
 let DEFAULT_LEDGER = ANIMA_ROOT + "/state/hf_upload_ledger_2026_05.jsonl"
@@ -39,7 +42,7 @@ let DEFAULT_LEDGER = ANIMA_ROOT + "/state/hf_upload_ledger_2026_05.jsonl"
 // `hf` CLI resolution — prefer override, else PATH lookup. v1.8.0+ required
 // for `hf repo tag create` coverage.
 fn _hf_cli() -> str {
-    let override = exec("printenv ANIMA_HF_CLI 2>/dev/null").trim()
+    let override = exec("echo \"$ANIMA_HF_CLI\"").trim()
     if override.len() > 0 { return override }
     let cli = exec("command -v hf 2>/dev/null").trim()
     if cli.len() > 0 { return cli }
@@ -128,21 +131,43 @@ fn _readme_validate(readme_path: str) -> str {
 // ─── Naming validation (mk2 convention) ────────────────────────────────
 // Format: <org>/<family>-<version>-<stage>[-<modifier>]
 //   org      = lowercase alnum + dash, 2-32 chars
-//   family   = clm | alm | blm | vlm | slm | tlm | mlm | hexad | composite
+//   family   = clm | alm | blm | vlm | slm | tlm | nlm | mlm | llm | hexad | composite
 //   version  = v1 | v2 | v3 | v4 | v<N>
-//   stage    = sft-stage<N> | dpo | merged | base | preview | dev
+//   stage    = sft-stage<N> | dpo | merged | base | preview | dev | paradigm-<letter>
 //   modifier = optional, lowercase alnum + dash
+//
+// Family enum reconciliation (2026-05-03):
+//   - Reconciled with docs/anima_hf_naming_convention_mk2_spec_2026_05_03.md §3.1
+//     (canonical SSOT for family table).
+//   - Spec previously listed: blm | clm | tlm | vlm | slm | nlm
+//   - Validator previously listed: clm | alm | blm | vlm | slm | tlm | mlm | hexad | composite
+//   - Union (this file): both retained additively + `llm` for Path A
+//     (Llama-derived LM, see docs/p9_a_prime_path_decision_landed_2026_05_03.ai.md).
+//   - Reconciliation handoff: docs/anima_hf_naming_family_reconcile_2026_05_03.ai.md
+//
+// Stage-prefix `paradigm-{letter}` amendment (2026-05-03):
+//   - Surfaced by Paradigm J HF recovery BG (a915bca5) which had to bypass
+//     the mk2 wrapper because `paradigm-j-50k-step-5k` was rejected
+//     ("stage must start with sft-stage|dpo|merged|base|preview|dev").
+//   - Spec amendment: docs/anima_hf_naming_convention_mk2_spec_2026_05_03.md §3.2.1.
+//   - paradigm_id enum (a|a-prime|b|c|d|e|f|g|h|i|j) tracked in spec §3.3.
+//     Validator accepts the broader `paradigm-` prefix to stay forward-compatible
+//     with future paradigm letters; the §3.3 spec table remains the SSOT for
+//     which letters are *ratified* — informal letters MUST land a §3.3 row first.
 //
 // Sister BG (mk2 naming convention spec) may write its output to
 // docs/anima_naming_convention_mk2_2026_05_03.md. We import its regex
 // stub if present; otherwise inline the spec above.
 
 fn _naming_allowed_families() -> [str] {
-    return ["clm", "alm", "blm", "vlm", "slm", "tlm", "mlm", "hexad", "composite"]
+    return ["clm", "alm", "blm", "vlm", "slm", "tlm", "nlm", "mlm", "llm", "hexad", "composite"]
 }
 
 fn _naming_allowed_stage_prefixes() -> [str] {
-    return ["sft-stage", "dpo", "merged", "base", "preview", "dev"]
+    // Amendment 2026-05-03 (paradigm-{letter}): added `paradigm-` prefix to
+    // unblock Paradigm-axis training tracks (e.g. clm-v4-paradigm-j-50k-step-5k).
+    // See spec §3.2.1 and §3.3 (paradigm_id enum SSOT).
+    return ["sft-stage", "dpo", "merged", "base", "preview", "dev", "paradigm-"]
 }
 
 fn _is_lower_alnum_dash(s: str) -> int {
@@ -221,7 +246,7 @@ fn _naming_validate(repo: str) -> str {
         si = si + 1
     }
     if st_ok != 1 {
-        return "FAIL: stage must start with one of {sft-stage|dpo|merged|base|preview|dev} (got: '" + stage_join + "')"
+        return "FAIL: stage must start with one of {sft-stage|dpo|merged|base|preview|dev|paradigm-} (got: '" + stage_join + "')"
     }
     return "OK"
 }
@@ -254,9 +279,9 @@ fn _hf_cli_check() {
 
 fn _resolve_token(req_token: str) -> str {
     if req_token.len() > 0 { return req_token }
-    let env1 = exec("printenv HF_TOKEN 2>/dev/null").trim()
+    let env1 = exec("echo \"$HF_TOKEN\"").trim()
     if env1.len() > 0 { return env1 }
-    let env2 = exec("printenv HUGGING_FACE_HUB_TOKEN 2>/dev/null").trim()
+    let env2 = exec("echo \"$HUGGING_FACE_HUB_TOKEN\"").trim()
     if env2.len() > 0 { return env2 }
     // file fallbacks
     let p1 = HOME + "/.huggingface/token"

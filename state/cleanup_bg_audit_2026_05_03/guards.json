@@ -1,0 +1,88 @@
+{
+  "schema": "anima/cleanup_bg_audit/guards/1",
+  "design_ts_iso": "2026-05-03",
+  "applies_to": "cleanup BG (Agent run_in_background=true) operations on training runs, watchdogs, scratch scripts, savepoints",
+  "implementation_status": "RECOMMENDATION_ONLY — guards are NOT enforced this cycle; future cycle must convert to harness hook + prompt template",
+  "guards": [
+    {
+      "id": "GUARD-1",
+      "name": "explicit_cleanup_verb_taxonomy",
+      "addresses": ["CFM-1", "INC-2026-05-03-A"],
+      "rule": "every cleanup BG instruction MUST classify the action into exactly one of three disjoint verbs",
+      "verb_taxonomy": {
+        "SIGTERM_ONLY": "send SIGTERM to PID; do NOT touch files",
+        "DELETE_SCRIPT": "remove a specific named .py / .hexa script after confirming process is dead",
+        "FULL_SWEEP": "SIGKILL + remove work dir + remove savepoints (destructive — requires explicit user OK)"
+      },
+      "enforcement": "parent prompt template — `cleanup_action: <SIGTERM_ONLY|DELETE_SCRIPT|FULL_SWEEP>` field is REQUIRED; cleanup BG aborts if field absent or ambiguous",
+      "fallback_when_unclear": "default to SIGTERM_ONLY; never escalate without explicit re-confirm"
+    },
+    {
+      "id": "GUARD-2",
+      "name": "pre_post_state_verification_via_separate_channel",
+      "addresses": ["CFM-2", "CFM-4", "INC-2026-05-03-A", "INC-2026-05-03-B"],
+      "rule": "cleanup BG MUST capture state BEFORE acting and AFTER acting via a channel independent of the target process",
+      "required_pre_state_capture": [
+        "savepoint_dir mtime + file count",
+        "log file size + tail -50 (last 50 lines)",
+        "trajectory.json last step (if exists)",
+        "PID exit code (if process already gone)"
+      ],
+      "required_post_state_capture": [
+        "savepoint_dir mtime + file count (delta vs pre)",
+        "log tail again (delta vs pre — did it write more after action?)",
+        "verdict.json existence + content"
+      ],
+      "report_format": "post-cleanup BG MUST emit JSON: {killed: [...], preserved: [...], lost: [...], pre_state, post_state}",
+      "enforcement": "parent rejects cleanup BG report if missing any of the 4 fields above"
+    },
+    {
+      "id": "GUARD-3",
+      "name": "process_death_is_not_success",
+      "addresses": ["CFM-2", "INC-2026-05-03-B"],
+      "rule": "PID-absent MUST NOT be reported as 'completed' without verifying at least one positive success signal",
+      "required_success_signals_any_one": [
+        "exit_code == 0 captured at termination time",
+        "verdict.json present with verdict in {PASS, ALL_GREEN, CLEAN_*}",
+        "expected_savepoint_path present with non-zero size",
+        "log tail contains 'training complete' or equivalent terminal sentinel"
+      ],
+      "required_failure_signals_any_one_implies_crash": [
+        "exit_code != 0",
+        "log tail contains 'OOM', 'CUDA error', 'Traceback', 'Killed'",
+        "stderr file size > 0 with non-empty last 100 chars",
+        "expected savepoint absent AND wall-time < expected"
+      ],
+      "fallback_when_signals_conflict": "report 'INDETERMINATE — manual inspection required'; never default to 'completed'",
+      "enforcement": "cleanup BG prompt template includes explicit signal checklist; parent rejects 'completed' verdict that lacks at least one positive signal"
+    },
+    {
+      "id": "GUARD-4",
+      "name": "long_running_script_immutable_location",
+      "addresses": ["CFM-3", "INC-2026-05-03-A"],
+      "rule": "any training script expected to run > 60s MUST be copied to a read-only location BEFORE launch; the launched process references the RO copy, not the scratch copy",
+      "recommended_locations": {
+        "ubu1": "/opt/anima_runtime/scripts/<run_id>/<script>.py (chmod 0444)",
+        "runpod_ephemeral": "/workspace/runtime/<run_id>/<script>.py (chmod 0444)",
+        "mac_local": "N/A — Mac BANS .py per raw#9; hexa scripts under /opt/anima_runtime/hexa/<run_id>/"
+      },
+      "lifecycle": [
+        "1. parent BG copies script to RO location, chmod 0444",
+        "2. parent BG launches process pointing at RO copy",
+        "3. cleanup BG (any verb) is BANNED from touching RO location",
+        "4. RO cleanup is a separate later GC cycle, gated on age (e.g., > 7 days) and absence of any savepoint mtime touch"
+      ],
+      "enforcement": "launch BG prompt template requires `script_ro_path` field; cleanup BG prompt template includes explicit deny-list for /opt/anima_runtime/* and /workspace/runtime/*"
+    }
+  ],
+  "guard_count": 4,
+  "complexity_caveat": "raw#10 honest — guards add ~30-50% overhead to cleanup BG prompt length and ~5-10s per cleanup wall time (extra log tail + state snapshot). Net win expected only if cleanup incidents > 1 per 100 BGs (current observed rate ≈ 2 per ~50 BGs this session = above threshold)",
+  "retroactive_caveat": "raw#10 honest — guards apply to FUTURE cleanup BGs only; cannot retroactively recover lost step_2000 + final savepoints from INC-2026-05-03-A. Recovery requires re-train (cost: ~$3-5 RunPod or 1-2hr ubu1)",
+  "audit_completeness_caveat": "raw#10 honest — only 2 incidents documented because they reached parent attention; silent cleanup mishaps (e.g., savepoint deleted without parent noticing) are NOT counted. True incident rate likely higher",
+  "next_cycle_actions": [
+    "convert GUARD-1 verb taxonomy to a prompt template snippet (memory feedback file)",
+    "convert GUARD-3 signal checklist to a hook (post-BG validator)",
+    "decide RO location creation policy: lazy (per-launch) vs eager (pre-provisioned dir)",
+    "audit ALL existing /tmp/*.py and /tmp/*.hexa active runs and migrate to RO location if any"
+  ]
+}

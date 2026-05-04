@@ -1,0 +1,13 @@
+hexa-resolver: route=local reason=hexa_local_set (HEXA_LOCAL=1)
+[build_interp] flatten: /Users/ghost/core/hexa-lang/build/hexa_interp tool/flatten_imports.hexa /Users/ghost/core/hexa-lang/self/hexa_full.hexa /var/folders/2g/blzd56lx2rvfvt61c1pc9g7r0000gn/T/hexa_full_flat.hexa
+[build_interp] transpile: /Users/ghost/core/hexa-lang/self/native/hexa_v2 /var/folders/2g/blzd56lx2rvfvt61c1pc9g7r0000gn/T/hexa_full_flat.hexa /var/folders/2g/blzd56lx2rvfvt61c1pc9g7r0000gn/T/hexa_full_regen.c
+command failed (exit 124): timeout --kill-after=5 120 /Users/ghost/core/hexa-lang/self/native/hexa_v2 /var/folders/2g/blzd56lx2rvfvt61c1pc9g7r0000gn/T/hexa_full_flat.hexa /var/folders/2g/blzd56lx2rvfvt61c1pc9g7r0000gn/T/hexa_full_regen.c
+hexa-resolver: route=local reason=hexa_local_set (HEXA_LOCAL=1)
+[build_interp] uname=Darwin
+[build_interp] clang -O2 -std=c11 -Wno-trigraphs -I /Users/ghost/core/hexa-lang/self /var/folders/2g/blzd56lx2rvfvt61c1pc9g7r0000gn/T/hexa_full_regen.c -o /Users/ghost/core/hexa-lang/build/hexa_interp.real -Wl,-stack_size,0x4000000
+[build_interp] smoke OK
+[build_interp] OK -> /Users/ghost/core/hexa-lang/build/hexa_interp.real (2843744 bytes)
+scratch_dir    : /var/folders/2g/blzd56lx2rvfvt61c1pc9g7r0000gn/T
+scratch_path   : /var/folders/2g/blzd56lx2rvfvt61c1pc9g7r0000gn/T/hexa_test.1777846638.txt
+scratch_path_ts: /var/folders/2g/blzd56lx2rvfvt61c1pc9g7r0000gn/T/hexa_bar_1777846638.json
+scratch_stable : /var/folders/2g/blzd56lx2rvfvt61c1pc9g7r0000gn/T/hexa_full_flat.hexa

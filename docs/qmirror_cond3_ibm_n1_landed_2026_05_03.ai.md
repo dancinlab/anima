@@ -1,5 +1,7 @@
 # qmirror cond.3 IBM N1 Heron Burst — LANDED
 
+> 📦 Available at: https://github.com/need-singularity/qmirror (`hx install qmirror`)
+
 - ts_utc: 2026-05-03T12:43Z
 - task: qmirror cond.3 single-vendor real-hardware CHSH on IBM Heron
 - vendor: IBM Quantum (paygo-standard, us-east)

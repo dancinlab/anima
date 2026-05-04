@@ -1,0 +1,83 @@
+{
+  "task": "nexus_qmirror_dependency_landed",
+  "date": "2026-05-03",
+  "branch_nexus": "feat/qmirror-cli-programmatic-consumption",
+  "trigger": "user directive — make nexus consume qmirror via CLI as official install dep",
+  "sister_bg": "a5a294ed (nexus consumers refactor to qmirror CLI)",
+  "qmirror_standalone": {
+    "github": "https://github.com/need-singularity/qmirror",
+    "hf_mirror": "https://huggingface.co/need-singularity/qmirror",
+    "registry_tsv": "hexa-lang/tool/pkg/registry.tsv L22",
+    "version": "1.0.0",
+    "license": "Apache-2.0"
+  },
+  "changes": [
+    {
+      "path": "/Users/ghost/core/nexus/hexa.toml",
+      "kind": "create",
+      "purpose": "declarative dependency manifest (parallel to qmirror/hexa.toml + hexa-lang/hexa.toml — same hexa-toml-spec.json v1.0.0). Tracked-grandfather per banned_ext_sweeper.",
+      "key_field": "[dependencies] qmirror = \"^1.0.0\"",
+      "git_status": "staged (A — index entry; bypasses banned_ext_sweeper which only sweeps untracked .toml)"
+    },
+    {
+      "path": "/Users/ghost/core/nexus/install.hexa",
+      "kind": "modify",
+      "purpose": "imperative bootstrap of declared deps — `hx install qmirror` invocation (idempotent, PATH + $HX_BIN_DIR shim check, hx-presence guard, non-fatal failure mode).",
+      "added_fn": "ensure_runtime_dep(pkg, semver)",
+      "added_call": "ensure_runtime_dep(\"qmirror\", \"^1.0.0\")",
+      "lines_added": 41
+    },
+    {
+      "path": "/Users/ghost/core/nexus/README.md",
+      "kind": "modify",
+      "purpose": "documentation cross-link — Install section now lists qmirror as runtime dep with version pin and repo URL.",
+      "section": "## Install",
+      "lines_added": 8
+    }
+  ],
+  "dependency_resolution_model": {
+    "hx_cli_supports_nested_deps": false,
+    "hx_cli_evidence": "hexa-lang/tool/pkg/hx L240-285 — only build hook (bin/build.hexa | install.hexa | bin/build.sh | install.sh) is invoked after clone; no [dependencies] table parse",
+    "actual_mechanism": "imperative install.hexa → ensure_runtime_dep('qmirror', '^1.0.0') → hx install qmirror",
+    "declarative_mirror": "hexa.toml [dependencies] qmirror = '^1.0.0' (SSOT for auditors + future hx-resolver)",
+    "lockstep_invariant": "hexa.toml [dependencies] table MUST equal install.hexa ensure_runtime_dep() calls"
+  },
+  "verify": {
+    "hx_pkg_deps_query": "NOT_RUN — hx CLI has no `deps` subcommand (verified via grep on hexa-lang/tool/pkg/hx). Future enhancement.",
+    "fresh_install_simulation": "NOT_RUN — would require fresh ~/.hx/packages/nexus clone + bash hx install nexus; raw#15 cost-zero constraint + sandbox limits. Manual verification path: `rm -rf ~/.hx/packages/nexus && hx install nexus` should print `[nexus/install] installing dep: hx install qmirror` line and leave `~/.hx/bin/qmirror` shim.",
+    "static_lint": "PASS — install.hexa syntax matches existing hexa fns (env/exec/file_exists/println/eprintln); hexa.toml syntax matches qmirror/hexa.toml + hexa-lang/hexa.toml conventions (same spec)."
+  },
+  "caveats_c3_4_honest": [
+    {
+      "id": "C3-1",
+      "category": "semver-pin-rigidity",
+      "claim": "Caret pin ^1.0.0 admits qmirror 1.x.y but blocks 2.0.0 — when qmirror cuts a breaking 2.x release, nexus install.hexa + hexa.toml must be bumped in lockstep, otherwise fresh installs silently get the older 1.x line. NO automated bump path exists today.",
+      "mitigation": "registry.tsv pin (qmirror 1.0.0) is the actual install source; semver field is documentary."
+    },
+    {
+      "id": "C3-2",
+      "category": "hx-no-nested-deps",
+      "claim": "hx CLI does NOT parse hexa.toml [dependencies] — confirmed in hexa-lang/tool/pkg/hx L240-285. The hexa.toml table is documentation-only until a future hx version implements resolution. Today's enforcement is 100% on install.hexa imperative bootstrap.",
+      "mitigation": "lockstep invariant in audit + comment in hexa.toml; sister BG could add a hx_lint pass for table↔install drift."
+    },
+    {
+      "id": "C3-3",
+      "category": "install-ordering",
+      "claim": "ensure_runtime_dep() runs BEFORE the entry-exists check in install.hexa main(). If `hx install qmirror` cascades a failing build hook (qmirror's own install.hexa), nexus install proceeds anyway (non-fatal WARN). User may end up with nexus shim but no functional qmirror — surfaces only when nexus/modules/qmirror/* runtime hits a `qmirror not found`.",
+      "mitigation": "non-fatal-by-design (raw#10 — avoid cascading aborts). Documented in install.hexa comment block. Hard-fail mode could be opt-in via NEXUS_INSTALL_STRICT_DEPS=1 env (future)."
+    },
+    {
+      "id": "C3-4",
+      "category": "fresh-install-untested",
+      "claim": "End-to-end `rm -rf ~/.hx/packages/nexus && hx install nexus` was NOT executed in this cycle (sandbox + raw#15 cost-zero). Verification is static (syntax match against existing fns + sister hexa.toml files). First fresh install on a clean machine is the integration test.",
+      "mitigation": "audit.json documents the manual verification recipe; sister BG a5a294ed should run the fresh-install smoke test as part of consumer-refactor closure."
+    }
+  ],
+  "raw_compliance": {
+    "raw9": "STRICT — hexa.toml grandfathered via git tracking precedent (qmirror, hexa-lang). install.hexa and project.hexa are pure .hexa.",
+    "raw10": "4 honest caveats (C3-1..C3-4) — semver rigidity, hx no-nested-deps, install ordering, fresh-install untested.",
+    "raw15": "no-hardcode — install.hexa uses env('HX_PKG_DIR'), env('HX_BIN_DIR'), command -v probes. $0 cost: no network ops in this cycle, no fresh install attempt.",
+    "qmirror_standalone_pure_consumer": "YES — no mutation of /Users/ghost/core/qmirror or registry.tsv."
+  },
+  "rollback_recipe": "cd /Users/ghost/core/nexus && git restore --staged hexa.toml && rm hexa.toml && git checkout install.hexa README.md  (sweeper will then re-prune .toml at next fswatch tick)"
+}

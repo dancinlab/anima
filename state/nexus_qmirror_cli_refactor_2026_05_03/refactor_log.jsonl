@@ -1,0 +1,12 @@
+{"ts":"2026-05-04T02:00:00Z","step":"audit","action":"grep nexus for qmirror consumers","files_found":1,"file":"nexus/cli/qmirror.hexa","kind":"router-only-consumer"}
+{"ts":"2026-05-04T02:00:30Z","step":"baseline","action":"capture pre-refactor stdout for 6 subcmds","status":"PASS","router_version_before":"0.1.0"}
+{"ts":"2026-05-04T02:01:00Z","step":"snapshot","action":"cp nexus/cli/qmirror.hexa → state/.../qmirror.hexa.before","lines":668}
+{"ts":"2026-05-04T02:01:30Z","step":"design","action":"router → shellout pass-through with 5-tier resolution (env, mac, home, path, legacy)","new_router_version":"0.2.0"}
+{"ts":"2026-05-04T02:02:00Z","step":"write","action":"write state/.../qmirror.hexa.after (refactored)","lines":390}
+{"ts":"2026-05-04T02:02:15Z","step":"deploy","action":"cp qmirror.hexa.after → /Users/ghost/core/nexus/cli/qmirror.hexa","route":"in-place"}
+{"ts":"2026-05-04T02:02:45Z","step":"smoke-bug-detected","action":"__NEXUS_QMIRROR_RC__:N trailer leaked into user-facing output","fix":"add _strip_rc_trailer helper, apply before print()"}
+{"ts":"2026-05-04T02:03:30Z","step":"smoke-rerun","action":"6 subcmds via standalone-mac route","results":{"status":"PASS","chsh":"PASS","nist":"PASS","iit":"PASS","qrng":"PASS","selftest":"PASS"}}
+{"ts":"2026-05-04T02:04:00Z","step":"audit-log-verify","action":"tail nexus/logs/nexus_cli.log","entries_confirmed":6,"all_routes":"standalone-mac","all_exit_codes":0}
+{"ts":"2026-05-04T02:04:30Z","step":"diff","action":"diff -u before after","line_count":854}
+{"ts":"2026-05-04T02:04:45Z","step":"in-tree-status","action":"verify in-tree modules at nexus/modules/qmirror untouched","files":13,"action_taken":"none — DEPRECATED but retained as fallback"}
+{"ts":"2026-05-04T02:05:00Z","step":"land","action":"write marker + handoff","status":"complete"}

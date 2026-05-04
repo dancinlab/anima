@@ -1,0 +1,41 @@
+hexa_interp.real (Mac arm64) — before/after rebuild
+
+BEFORE (2026-05-02 13:54):
+  size:   1580720 bytes
+  sha256: b10d5d02f5c9a51810f62960327a2dcfd816a4e82efd2802768ad840d9c6808f
+  built:  before commit bbc7265e (2026-05-03 20:49 KST)
+  bug:    resolve_interp() lacked /proc/self/exe Linux fallback +
+          /usr/local/bin/build/hexa_interp container 4th-tier;
+          install_dir_from_argv0() returned "" when args()[0] empty,
+          causing "interp interpreter not found" silent emit when
+          .hexa scripts with `use "..."` directives ran on bare bins
+          where args()[0] resolution path failed.
+
+AFTER (2026-05-04 07:17):
+  size:   2843744 bytes  (delta: +1,263,024 bytes; new code paths +
+                          larger flat regen.c from updated sources)
+  sha256: f11e71eb9ec7146e198b5ddbca8ed51fb2d76135fc933934feb5d14db04c103c
+  built:  bbc7265e + main HEAD as of 2026-05-04 07:17 KST
+  fix:    resolve_interp() now 4-stage fallback (argv[0] → cwd →
+          $HEXA_LANG → /usr/local/bin/build);
+          install_dir_from_argv0() falls back to /proc/self/exe on
+          Linux when argv[0] empty (macOS skip via test -L).
+
+LINKS (auto-synced):
+  /Users/ghost/.hx/packages/hexa  ->  /Users/ghost/core/hexa-lang  (symlink)
+    => .hx/packages/hexa/build/hexa_interp.real == hexa-lang/build/hexa_interp.real (same inode)
+
+DISPATCH SCRIPT: ~/.hx/bin/hexa  (UNCHANGED)
+  - Mac route: HEXA_LOCAL=1 / metadata-only-argv / darwin-bypass-marker → bare REAL_HEXA exec.
+  - Docker route: hexa-runner:latest container exec /usr/local/bin/hexa with
+                  HEXA_INTERP=/usr/local/bin/build/hexa_interp env seeded.
+  - HEXA_INTERP env var: read by resolve_interp() (NOT yet — see CAVEAT C2 below).
+
+DEFERRED (NOT TOUCHED PER RAW#9 / GRAMMAR LOCK):
+  - resolve_interp() still does NOT honor $HEXA_INTERP env var (only
+    $HEXA_STAGE0_REAL via the shim wrapper). Adding env-var support
+    would touch self/main.hexa runtime resolution semantics; per task
+    constraint "DO NOT touch raw hexa-lang grammar; only build/dispatch
+    infrastructure", this remains as-is. The 4th-tier fallback to
+    /usr/local/bin/build/hexa_interp covers the standard container
+    layout, which is the only documented use of HEXA_INTERP.

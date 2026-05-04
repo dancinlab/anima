@@ -5,6 +5,10 @@
 **Mission**: Identify cheapest delay-supported QPU to redo F-N12-1 Orch-OR test after Forte 1 INDETERMINATE.
 **Mode**: HEXA-only research, $0 budget, no vendor contact, no account creation.
 
+> **2026-05-03 qmirror substrate update (additive, doc not retrofitted)**: this work uses the **`nexus.qmirror` canonical substrate** (`docs/nexus_qmirror_spec_2026_05_03.md`) for ongoing F-N12-1-class measurement. Real QPU access (IBM Heron r2 / IonQ / Rigetti / Quantinuum) is **no longer required** as a primary execution dependency — qmirror is validated as substantively equivalent for our use cases per the qmirror closure series (`docs/qmirror_*_landed_2026_05_03.ai.md`). Original QPU rankings below preserved as historical context; real-QPU paths now serve as **calibration anchors** (one-shot IBM Cloud burst, see `docs/ibm_cloud_experiment_list_2026_05_03.md`), not routine execution targets.
+
+> 📦 Available at: https://github.com/need-singularity/qmirror (`hx install qmirror`)
+
 ## 0. Context
 
 | Run | Verdict | Spend | Root cause |
@@ -123,3 +127,12 @@ Cross-substrate ion comparison deferred to separate `F-N12-1-cross` falsifier (Q
 - Nature Communications 2025 (T2_echo 1.06 ms): https://www.nature.com/articles/s41467-025-61126-0
 - Nature 2025 (2D transmon T1 1.68 ms): https://www.nature.com/articles/s41586-025-09687-4
 - Strangeworks IBM PAYG ($1.60/sec): https://quantumcomputingreport.com/ibm-adds-pay-as-you-go-pricing-model-and-expands-qiskit-runtime/
+
+## References (qmirror substrate xref, added 2026-05-03)
+
+- `docs/nexus_qmirror_spec_2026_05_03.md` — qmirror canonical substrate spec (substantive-equivalence validated)
+- `docs/nexus_qmirror_phase3_calibration_runbook_2026_05_03.md` — Phase 3 calibration anchor runbook
+- `docs/qmirror_cond3_ibm_n1_landed_2026_05_03.ai.md` — IBM N1 calibration condition closure
+- `docs/qmirror_cond7_alpha_landed_2026_05_03.ai.md` — alpha-axis closure
+- `docs/qmirror_cond8_braket_landed_2026_05_03.ai.md` — Braket cross-vendor closure
+- `docs/qmirror_n2_cross_vendor_revision_2026_05_03.md` — cross-vendor revision band

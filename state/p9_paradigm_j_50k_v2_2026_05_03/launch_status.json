@@ -1,0 +1,133 @@
+{
+  "schema": "anima/p9_paradigm_j_50k_v2/launch_status/1",
+  "ts_utc": "2026-05-03T21:34:16Z",
+  "phase": "launched_via_hardened_watchdog",
+  "substrate": "ubu1 RTX 5070 12GB",
+  "predecessor_v1": {
+    "verdict": "FAIL_J",
+    "reason": "CUDA_OOM_AT_STEP_0",
+    "state_dir": "state/p9_paradigm_j_50k_2026_05_03/",
+    "marker": "state/markers/p9_paradigm_j_50k_landed.marker"
+  },
+  "script_path_ubu1": "/tmp/p9_paradigm_j_50k_v2.py",
+  "watchdog_path_ubu1": "/tmp/j50k_hardened_watchdog.sh",
+  "watchdog_pid_ubu1": 3146899,
+  "training_pid_ubu1": 3215309,
+  "watchdog_log_ubu1": "/tmp/p9_paradigm_j_50k_v2_watchdog.log",
+  "gpu_audit_log_ubu1": "/tmp/p9_paradigm_j_50k_v2_gpu_audit.log",
+  "training_launch_log_ubu1": "/tmp/p9_paradigm_j_50k_v2_out/launch.log",
+  "training_inner_log_ubu1": "/tmp/p9_paradigm_j_50k_v2_out/train.log",
+  "savepoint_dir_ubu1": "/tmp/p9_paradigm_j_50k_v2_savepoints/",
+  "output_dir_ubu1": "/tmp/p9_paradigm_j_50k_v2_out/",
+  "trajectory_out_ubu1": "/tmp/p9_paradigm_j_50k_v2_out/trajectory.json",
+  "verdict_out_ubu1": "/tmp/p9_paradigm_j_50k_v2_out/verdict.json",
+  "lock_file_ubu1": "/tmp/p9_paradigm_j_50k.lock",
+  "hardened_watchdog_features": {
+    "preflight_check": "≥10240 MiB free for 30s consecutive (6 polls × 5s)",
+    "preflight_max_wait": "60 min (720 polls × 5s)",
+    "preflight_retries": 3,
+    "per_process_tagging": "nvidia-smi --query-compute-apps=pid,used_memory,name → /tmp/p9_paradigm_j_50k_v2_gpu_audit.log every poll-event",
+    "retry_attempts": 3,
+    "retry_wait_between": "60s + GPU re-check",
+    "flock_lock": "/tmp/p9_paradigm_j_50k.lock (exclusive, non-blocking flock -n)",
+    "crash_detection": "tail train.log every 30s for Traceback|OOM|RuntimeError|CUDA error|Killed; OR step counter stalled >5min AND log unchanged >10min → SIGKILL + retry"
+  },
+  "preflight_result": {
+    "passed": true,
+    "ts_pass_utc": "2026-05-03T21:34:16Z",
+    "free_mib_at_pass": 11758,
+    "used_mib_at_pass": 15,
+    "compute_apps_at_pass": "[]",
+    "consecutive_polls_passed": "6/6 (30s)"
+  },
+  "config": {
+    "n_steps": 50000,
+    "batch": 4,
+    "grad_acc": 8,
+    "effective_batch": 32,
+    "lr": 1e-4,
+    "lora_r": 128,
+    "lora_alpha": 128,
+    "lora_targets": ["q_proj", "k_proj", "v_proj", "o_proj", "gate_proj", "up_proj", "down_proj"],
+    "alpha_curriculum": "12.0 (0-3K) -> 12->6 lin (3K-7K) -> 6.0 (7K-50K)",
+    "beta_tens": 0.10,
+    "gamma_bold": 0.0,
+    "delta_curriculum": "0.5 (0-16K) / 0.5 (16K-33K) / 1.0 (33K-50K)",
+    "phi_threshold": 5.0,
+    "gamma_fe": 0.2,
+    "beta_fe": 1.0,
+    "K_FE": 192,
+    "layer_FE": 8,
+    "T": 64,
+    "seed": 42,
+    "phi_every": 500,
+    "f_every": 5000,
+    "save_every": 1000,
+    "hf_milestones": [5000, 10000, 25000, 50000],
+    "hf_push": true,
+    "hf_org": "need-singularity",
+    "hf_repo_pattern": "clm-v4-paradigm-j-50k-step-{N}k + clm-v4-paradigm-j-50k-final"
+  },
+  "initial_metrics_step_0": {
+    "F1_bleu1": 0.0010,
+    "F2_phi_min": 45.9152,
+    "F3_tens_mse": 6.6792,
+    "phi_mean": 46.4935,
+    "comment": "baseline phi consistent with v1's intended baseline (45.92) — same ckpt"
+  },
+  "initial_loss_trajectory_first_1k": [
+    {"step": 1, "L": 197.4756, "ce": 16.3969, "tens": 7.0169, "F_J": 0.0579, "KL": 0.0006, "rec": 0.0573, "alpha": 12.0},
+    {"step": 100, "L": 155.2523, "ce": 12.7970, "tens": 16.8044, "F_J": 0.0385, "alpha": 12.0},
+    {"step": 200, "L": 132.6327, "ce": 11.0206, "tens": 3.7921, "F_J": 0.0316, "alpha": 12.0},
+    {"step": 300, "L": 129.7854, "ce": 10.7521, "tens": 7.5465, "F_J": 0.0258, "alpha": 12.0},
+    {"step": 400, "L": 127.0049, "ce": 10.5485, "tens": 4.1868, "F_J": 0.0217, "alpha": 12.0},
+    {"step": 500, "L": 120.9537, "ce": 9.9961, "tens": 9.9716, "F_J": 0.0187, "phi_at_500_min": 48.6202, "phi_at_500_mean": 48.9383, "alpha": 12.0},
+    {"step": 600, "L": 117.6111, "ce": 9.7282, "tens": 8.6932, "F_J": 0.0159, "alpha": 12.0},
+    {"step": 700, "L": 114.3638, "ce": 9.4863, "tens": 5.2567, "F_J": 0.0142, "alpha": 12.0},
+    {"step": 800, "L": 120.7276, "ce": 9.9670, "tens": 11.2166, "F_J": 0.0126, "alpha": 12.0},
+    {"step": 900, "L": 112.6392, "ce": 9.3597, "tens": 3.2097, "F_J": 0.0112, "alpha": 12.0},
+    {"step": 1000, "L": 111.5295, "ce": 9.2835, "tens": 1.2602, "F_J": 0.0105, "KL": 0.0002, "rec": 0.0103, "phi_at_1000_min": 45.7655, "phi_at_1000_mean": 46.4021, "alpha": 12.0}
+  ],
+  "savepoints_observed_at_snapshot": ["step_1000", "step_2000"],
+  "step_at_snapshot": 2700,
+  "snapshot_ts_utc": "2026-05-03T21:36:30Z",
+  "throughput_observation": {
+    "wall_steps_per_sec": "approx 16.6 (step 1→2700 in ~163s after warmup; or 100 steps in 6s)",
+    "comment": "comparable to v1 design ETA (~60min for 50K)"
+  },
+  "eta_estimate": {
+    "wall_min_per_50k_steps": "approx 50-60 min for the loop body (excluding eval/savepoint overhead)",
+    "with_phi_probes_every_500_steps": "~10 min overhead for 100 probes",
+    "with_savepoints_every_1k_steps": "~5-10 min overhead for 50 saves",
+    "with_F_metrics_every_5k_steps": "~10 min for 10 evals",
+    "with_HF_pushes_at_4_milestones": "~5-15 min depending on network",
+    "total_wall_estimate": "approx 80-100 min if no crash; 24h budget allows full retry chain headroom",
+    "expected_completion_utc_no_crash": "~22:55-23:15 UTC (2026-05-03)"
+  },
+  "user_poll_commands": {
+    "watchdog_status": "ssh ubu1 'tail -30 /tmp/p9_paradigm_j_50k_v2_watchdog.log'",
+    "training_progress": "ssh ubu1 'tail -30 /tmp/p9_paradigm_j_50k_v2_out/train.log'",
+    "gpu_audit_tail": "ssh ubu1 'tail -50 /tmp/p9_paradigm_j_50k_v2_gpu_audit.log'",
+    "gpu_now": "ssh ubu1 'nvidia-smi --query-gpu=memory.free,memory.used --format=csv; nvidia-smi --query-compute-apps=pid,used_memory,name --format=csv'",
+    "training_pid_alive": "ssh ubu1 'cat /tmp/p9_paradigm_j_50k_v2_out/train.pid; pgrep -af p9_paradigm_j_50k_v2.py'",
+    "savepoints_disk": "ssh ubu1 'ls /tmp/p9_paradigm_j_50k_v2_savepoints/'",
+    "verdict_check": "ssh ubu1 'cat /tmp/p9_paradigm_j_50k_v2_out/verdict.json 2>/dev/null | head -40'",
+    "watchdog_status_json": "ssh ubu1 'cat /tmp/p9_paradigm_j_50k_v2_out/watchdog_status.json 2>/dev/null'"
+  },
+  "post_completion_rsync": {
+    "trajectory": "scp ubu1:/tmp/p9_paradigm_j_50k_v2_out/trajectory.json /Users/ghost/core/anima/state/p9_paradigm_j_50k_v2_2026_05_03/",
+    "verdict": "scp ubu1:/tmp/p9_paradigm_j_50k_v2_out/verdict.json /Users/ghost/core/anima/state/p9_paradigm_j_50k_v2_2026_05_03/",
+    "train_log": "scp ubu1:/tmp/p9_paradigm_j_50k_v2_out/train.log /Users/ghost/core/anima/state/p9_paradigm_j_50k_v2_2026_05_03/",
+    "watchdog_log": "scp ubu1:/tmp/p9_paradigm_j_50k_v2_watchdog.log /Users/ghost/core/anima/state/p9_paradigm_j_50k_v2_2026_05_03/",
+    "gpu_audit": "scp ubu1:/tmp/p9_paradigm_j_50k_v2_gpu_audit.log /Users/ghost/core/anima/state/p9_paradigm_j_50k_v2_2026_05_03/"
+  },
+  "constraints_honored": {
+    "raw_9_no_dot_py_in_project_tree": true,
+    "raw_9_evidence": "training script at /tmp/p9_paradigm_j_50k_v2.py on ubu1; .sh watchdog at /tmp/j50k_hardened_watchdog.sh on ubu1; no .py added to project tree (only .json/.md SSOT artifacts)",
+    "raw_15_ssot": "this launch_status.json + watchdog scripts (ubu1) + future trajectory/verdict + future marker + future handoff form the SSOT for this run",
+    "raw_10_synthetic_data_path": "p1.6 v3 chat composition (/tmp/p9_p1_6_sft_data_50k_v3.jsonl) — same as v1 since data path was not implicated in v1 failure",
+    "raw_91_honest_caveats": "see report message",
+    "savepoints_preserved": "v2 prunes to last-3 + milestones, never deletes milestone savepoints",
+    "cost_usd": 0.0
+  }
+}

@@ -10,6 +10,12 @@
 
 ---
 
+> **2026-05-03 qmirror substrate update (additive)**: this spec is preserved as historical methodology. For routine F-N12-1 / Orch-OR-class measurement and cross-substrate re-runs, the **`nexus.qmirror` canonical substrate** (`docs/nexus_qmirror_spec_2026_05_03.md`) is now the primary execution path. Real QPU access (IonQ Forte 1 / IBM Heron r2) is **not required** per the qmirror closure series (`docs/qmirror_*_landed_2026_05_03.ai.md`) — qmirror is validated as substantively equivalent for our use cases. Original IonQ Forte 1 trapped-ion design below preserved as historical context; real-QPU paths now serve as **calibration anchors** only.
+
+> 📦 Available at: https://github.com/need-singularity/qmirror (`hx install qmirror`)
+
+---
+
 ## §0 한 줄 비유
 
 **"Roger Penrose 1989 책에서 던진 가설 — 의식은 양자 wavefunction-collapse (Objective Reduction) 가 일으킨다 — 을 36-qubit 갇힌-이온 양자컴 IonQ Forte 1 위에서 cloud 로 한 번 돌려보고, PRNewswire 가 말한 superconducting-QC OR 관측이 다른 substrate (trapped ion) 에서도 재현되는지 cross-validate 한다. 동전던지기 한 줌 비용 ($≤$50) 이고, raw#71 5 개 falsifier 로 결과가 어느 쪽이든 정직 보고."**
@@ -388,3 +394,11 @@ where w7 = 0.05 - 0.10 (initial; literature/simulation cross-substrate evidence 
 **axis_id**: N-12
 **parent_roadmap**: `docs/n_substrate_consciousness_roadmap_2026_05_01.md`
 **race_isolation**: writes only to `docs/n_substrate_n12_ionq_penrose_hameroff_spec_2026_05_01.md` + `state/n_substrate_n12_prep_2026_05_01/*.json`
+
+## References (qmirror substrate xref, added 2026-05-03)
+
+- `docs/nexus_qmirror_spec_2026_05_03.md` — qmirror canonical substrate spec
+- `docs/nexus_qmirror_phase3_calibration_runbook_2026_05_03.md`
+- `docs/qmirror_cond7_alpha_landed_2026_05_03.ai.md`
+- `docs/qmirror_cond8_braket_landed_2026_05_03.ai.md`
+- `docs/qmirror_n2_cross_vendor_revision_2026_05_03.md`
