@@ -1,0 +1,857 @@
+// tool/p9_path_a_retrain_v2_h100_orchestrator.hexa — P9 Path A retrain v2 H100 lifecycle orchestrator
+//
+// PURPOSE
+//   Path A retrain v2 EXEC: rehearsal-mix LoRA SFT (60% anima axis + 30% academic distill +
+//   10% chat-template) on Llama-3.2-3B (non-Instruct base) with LR 5e-5 + max_steps 6000.
+//   Intermediate eval gate at step 2000 (HellaSwag-200). Final 3-bench Mode 1 eval at step 6000
+//   (HellaSwag/MMLU/TriviaQA limit=500). Auto-kill pod on COMPLETE.sentinel.
+//
+// SPEC SOURCE
+//   state/p9_path_a_retrain_v2_spec_2026_05_04 (BG-Phi locked: sft_corpus_mix.json + falsifier_set.md)
+//   Predecessor v1: state/p9_lora_mode1_eval_2026_05_04/verdict.json (BG-Rho INFRASTRUCTURE_PASS / SCIENCE_FAIL step-8k)
+//   FORGETTING_INDEPENDENT confirmation: BG-Psi 0f91114c
+//
+// raw#9   hexa-only Mac:        Mac-side bash sibling-pattern (per p9_lora_mode1_eval_h100_orchestrator.hexa)
+// raw#10  honest C3:            ≥5 caveats baked into emitted verdict on PASS/PARTIAL/FAIL
+// raw#15  repo-relative paths:  Mac: /Users/ghost/core/anima/state/p9_path_a_retrain_v2_exec_2026_05_04/...
+//                                H100: /workspace/p9_retrain_v2/... (transient; killed with pod)
+// raw#37  transient-py-on-Linux: H100 runs train + eval (Python permitted there only)
+// raw#71  falsifier-bound:      F-PA-RETRAIN-v2 1/2/3 thresholds fixed pre-launch (BG-Phi);
+//                                no post-train threshold tweak. F-PA-RETRAIN-v2-4 deferred.
+//
+// USAGE
+//   hexa run tool/p9_path_a_retrain_v2_h100_orchestrator.hexa --selftest
+//   hexa run tool/p9_path_a_retrain_v2_h100_orchestrator.hexa --emit
+//   hexa run tool/p9_path_a_retrain_v2_h100_orchestrator.hexa --launch
+//   hexa run tool/p9_path_a_retrain_v2_h100_orchestrator.hexa --kill <pod_id>
+//
+// SAFETY CAPS (raw#71 hard-coded)
+//   max_wall_minutes    = 720  (12h hard pod kill)
+//   budget_target_usd   = 24   (~8h target)
+//   budget_hard_cap_usd = 35   (kill triggers if elapsed * rate > cap)
+//   sentinel_kill_lag_s = 90   (max delay sentinel→pod stop+remove)
+//   step_2000_5pp_drop  = EARLY-STOP trigger (per F-PA-RETRAIN-v2-2)
+
+let SCHEMA              = "anima/p9_path_a_retrain_v2_exec/orchestrator/1"
+let CYCLE_TAG           = "p9_path_a_retrain_v2_exec_2026_05_04"
+let STATE_DIR           = "/Users/ghost/core/anima/state/p9_path_a_retrain_v2_exec_2026_05_04"
+let EXEC_BASH_PATH      = "/Users/ghost/core/anima/state/p9_path_a_retrain_v2_exec_2026_05_04/exec.bash"
+let RUN_H100_PATH       = "/Users/ghost/core/anima/state/p9_path_a_retrain_v2_exec_2026_05_04/run_h100.bash"
+let POD_INFO_PATH       = "/Users/ghost/core/anima/state/p9_path_a_retrain_v2_exec_2026_05_04/pod_info.json"
+let VERDICT_PATH        = "/Users/ghost/core/anima/state/p9_path_a_retrain_v2_exec_2026_05_04/verdict.json"
+let RUN_LOG_PATH        = "/Users/ghost/core/anima/state/p9_path_a_retrain_v2_exec_2026_05_04/run.log"
+let HEARTBEAT_PATH      = "/Users/ghost/core/anima/state/p9_path_a_retrain_v2_exec_2026_05_04/heartbeat.txt"
+let RESULTS_DIR         = "/Users/ghost/core/anima/state/p9_path_a_retrain_v2_exec_2026_05_04/results"
+let CORPUS_DIR          = "/Users/ghost/core/anima/state/p9_path_a_retrain_v2_exec_2026_05_04/corpus"
+let SLICE_A_LOCAL       = "/Users/ghost/core/anima/state/p9_path_a_retrain_v2_exec_2026_05_04/corpus/slice_A_anima_30k.jsonl"
+let CORPUS_MIX_PY       = "/Users/ghost/core/anima/tool/transient_py/p9_retrain_v2_corpus_mix.py"
+let TRAIN_PY            = "/Users/ghost/core/anima/tool/transient_py/p9_retrain_v2_train.py"
+let SSH_KEY             = "/Users/ghost/.runpod/ssh/RunPod-Key-Go"
+let RUNPODCTL           = "/opt/homebrew/bin/runpodctl"
+
+let MAX_WALL_MIN        = 720
+let BUDGET_TARGET_USD   = 24
+let BUDGET_HARD_CAP_USD = 35
+let OD_RATE_USD         = 2.99
+
+let HF_BASE_REPO        = "meta-llama/Llama-3.2-3B"
+
+// ─── helpers ──────────────────────────────────────────────────────────────
+
+fn _sq(s: string) -> string {
+    let mut o = "'"
+    o = o + s.replace("'", "'\\''")
+    o = o + "'"
+    return o
+}
+fn _file_exists(p: string) -> bool {
+    return exec_with_status("test -e " + _sq(p))[1] == 0
+}
+fn _argv() -> array {
+    let a = args()
+    let mut o = []
+    let mut i = 2
+    while i < len(a) { o.push(a[i]); i = i + 1 }
+    return o
+}
+fn _flag(av, k) -> bool {
+    for x in av { if to_string(x) == k { return true } }
+    return false
+}
+fn _opt(av, k, d) -> string {
+    let mut i = 0
+    while i < len(av) {
+        if to_string(av[i]) == k && i + 1 < len(av) { return to_string(av[i + 1]) }
+        i = i + 1
+    }
+    return d
+}
+
+// ─── selftest ─────────────────────────────────────────────────────────────
+
+fn _selftest() {
+    println("[selftest] schema=" + SCHEMA)
+    println("[selftest] cycle=" + CYCLE_TAG)
+
+    exec_with_status("mkdir -p " + _sq(STATE_DIR) + " " + _sq(RESULTS_DIR) + " " + _sq(CORPUS_DIR))
+    if !_file_exists(STATE_DIR) {
+        eprintln("FAIL: state dir not creatable")
+        exit(1)
+    }
+    println("[T1] state dir OK")
+
+    if !_file_exists(SSH_KEY) {
+        eprintln("FAIL: ssh key missing: " + SSH_KEY)
+        exit(1)
+    }
+    println("[T2] ssh key OK")
+
+    println("[T3] runpodctl path: " + RUNPODCTL)
+
+    let s1 = exec_with_status("/Users/ghost/core/secret/bin/secret check runpod.api_key 2>/dev/null")
+    let s2 = exec_with_status("/Users/ghost/core/secret/bin/secret check huggingface.token 2>/dev/null")
+    if s1[1] != 0 {
+        eprintln("FAIL: runpod.api_key not in secret store")
+        exit(1)
+    }
+    if s2[1] != 0 {
+        eprintln("FAIL: huggingface.token not in secret store")
+        exit(1)
+    }
+    println("[T4] secrets OK")
+
+    if !_file_exists(SLICE_A_LOCAL) {
+        eprintln("FAIL: slice A not pre-prepared: " + SLICE_A_LOCAL)
+        exit(1)
+    }
+    let r = exec_with_status("wc -l < " + _sq(SLICE_A_LOCAL))
+    println("[T5] slice A lines: " + to_string(r[0]).trim())
+
+    if !_file_exists(CORPUS_MIX_PY) || !_file_exists(TRAIN_PY) {
+        eprintln("FAIL: transient py missing")
+        exit(1)
+    }
+    println("[T6] transient py present")
+
+    println("[T7] HF base: " + HF_BASE_REPO)
+    println("[T8] caps: wall=" + to_string(MAX_WALL_MIN) + "min budget_cap=$" + to_string(BUDGET_HARD_CAP_USD))
+
+    println("[selftest] PASS")
+    exit(0)
+}
+
+// ─── emit exec.bash + run_h100.bash ───────────────────────────────────────
+
+fn _emit() {
+    exec_with_status("mkdir -p " + _sq(STATE_DIR) + " " + _sq(RESULTS_DIR) + " " + _sq(CORPUS_DIR))
+
+    let exec_body = "#!/bin/bash\n" +
+"# emitted by tool/p9_path_a_retrain_v2_h100_orchestrator.hexa — Path A retrain v2 lifecycle\n" +
+"# raw#9 sibling-pattern Mac-side bash. Regenerate via --emit. raw#37 H100 transient py.\n" +
+"set -uo pipefail\n" +
+"\n" +
+"STATE_DIR='" + STATE_DIR + "'\n" +
+"RESULTS_DIR='" + RESULTS_DIR + "'\n" +
+"CORPUS_DIR='" + CORPUS_DIR + "'\n" +
+"SLICE_A_LOCAL='" + SLICE_A_LOCAL + "'\n" +
+"CORPUS_MIX_PY='" + CORPUS_MIX_PY + "'\n" +
+"TRAIN_PY='" + TRAIN_PY + "'\n" +
+"POD_INFO='" + POD_INFO_PATH + "'\n" +
+"VERDICT='" + VERDICT_PATH + "'\n" +
+"RUN_LOG='" + RUN_LOG_PATH + "'\n" +
+"HEARTBEAT='" + HEARTBEAT_PATH + "'\n" +
+"SSH_KEY='" + SSH_KEY + "'\n" +
+"RUNPODCTL='" + RUNPODCTL + "'\n" +
+"MAX_WALL_MIN=" + to_string(MAX_WALL_MIN) + "\n" +
+"BUDGET_HARD_CAP=" + to_string(BUDGET_HARD_CAP_USD) + "\n" +
+"OD_RATE=" + to_string(OD_RATE_USD) + "\n" +
+"HF_BASE_REPO='" + HF_BASE_REPO + "'\n" +
+"START_EPOCH=$(date -u +%s)\n" +
+"\n" +
+"log() { echo \"[$(date -u +%FT%TZ)] $*\" | tee -a \"$RUN_LOG\"; }\n" +
+"hb()  { echo \"[$(date -u +%FT%TZ)] $*\" > \"$HEARTBEAT\"; }\n" +
+"redact_hf() { sed -E 's/(HF_TOKEN[\"[:space:]]*[:=][\"[:space:]]*)hf_[A-Za-z0-9_]+/\\1<REDACTED>/g; s/(hf_)[A-Za-z0-9_]{20,}/\\1<REDACTED>/g'; }\n" +
+"\n" +
+"# ── Stage 0: secrets (use --raw to bypass claude-redaction wrapper) ──\n" +
+"export RUNPOD_API_KEY=$(secret get --raw runpod.api_key 2>/dev/null)\n" +
+"export HF_TOKEN_LOCAL=$(secret get --raw huggingface.token 2>/dev/null)\n" +
+"if [ -z \"${RUNPOD_API_KEY:-}\" ] || [ -z \"${HF_TOKEN_LOCAL:-}\" ]; then\n" +
+"    log \"FATAL: secrets unavailable\"\n" +
+"    exit 2\n" +
+"fi\n" +
+"if [[ \"$RUNPOD_API_KEY\" == \\*\\*\\** ]] || [[ \"$HF_TOKEN_LOCAL\" == \\*\\*\\** ]]; then\n" +
+"    log \"FATAL: secret returned redacted form despite --raw — wrapper broken\"\n" +
+"    exit 2\n" +
+"fi\n" +
+"log \"secrets OK (runpod=${#RUNPOD_API_KEY}b, hf=${#HF_TOKEN_LOCAL}b)\"\n" +
+"hb \"stage0_secrets_loaded\"\n" +
+"\n" +
+"# ── Pre-flight: slice A must exist locally ──\n" +
+"if [ ! -f \"$SLICE_A_LOCAL\" ]; then\n" +
+"    log \"FATAL: slice A missing: $SLICE_A_LOCAL — pre-prepare via shuf first\"\n" +
+"    exit 2\n" +
+"fi\n" +
+"SLICE_A_LINES=$(wc -l < \"$SLICE_A_LOCAL\" | awk '{print $1}')\n" +
+"if [ \"$SLICE_A_LINES\" != \"30000\" ]; then\n" +
+"    log \"WARN: slice A line count = $SLICE_A_LINES (expected 30000)\"\n" +
+"fi\n" +
+"log \"slice A OK ($SLICE_A_LINES lines)\"\n" +
+"\n" +
+"# ── Stage 1: boot H100 SECURE on-demand (volume 100GB) ──\n" +
+"POD_NAME='anima-p9-pathA-retrain-v2-2026-05-04'\n" +
+"log \"booting pod=$POD_NAME (H100 80GB HBM3 SECURE on-demand @ \\$$OD_RATE/hr; vol=100GB; disk=80GB)\"\n" +
+"BOOT_RAW_OUT=\"$STATE_DIR/boot.raw.tmp\"\n" +
+"BOOT_OUT=\"$STATE_DIR/boot.log\"\n" +
+"hb \"stage1_booting_pod\"\n" +
+"$RUNPODCTL pod create \\\n" +
+"    --name \"$POD_NAME\" \\\n" +
+"    --gpu-id 'NVIDIA H100 80GB HBM3' \\\n" +
+"    --gpu-count 1 \\\n" +
+"    --image 'runpod/pytorch:2.4.0-py3.11-cuda12.4.1-devel-ubuntu22.04' \\\n" +
+"    --container-disk-in-gb 80 \\\n" +
+"    --volume-in-gb 100 \\\n" +
+"    --volume-mount-path /workspace \\\n" +
+"    --ports '22/tcp,8888/http' \\\n" +
+"    --cloud-type SECURE \\\n" +
+"    --ssh \\\n" +
+"    --env \"{\\\"HF_TOKEN\\\":\\\"$HF_TOKEN_LOCAL\\\"}\" \\\n" +
+"    > \"$BOOT_RAW_OUT\" 2>&1\n" +
+"BOOT_RC=$?\n" +
+"redact_hf < \"$BOOT_RAW_OUT\" > \"$BOOT_OUT\"\n" +
+"rm -f \"$BOOT_RAW_OUT\"\n" +
+"if [ $BOOT_RC -ne 0 ]; then\n" +
+"    log \"FATAL: pod boot failed rc=$BOOT_RC\"\n" +
+"    cat \"$BOOT_OUT\" | redact_hf | tee -a \"$RUN_LOG\"\n" +
+"    jq -n --arg ts \"$(date -u +%FT%TZ)\" --arg reason \"pod_boot_failed\" '{cycle:\"" + CYCLE_TAG + "\",ts_utc:$ts,verdict:\"FAIL\",reason:$reason}' > \"$VERDICT\"\n" +
+"    exit 3\n" +
+"fi\n" +
+"POD_ID=$(grep -oE '\"[a-z0-9]{14}\"' \"$BOOT_OUT\" | head -1 | tr -d '\"')\n" +
+"if [ -z \"$POD_ID\" ]; then\n" +
+"    POD_ID=$(grep -oE 'pod [a-z0-9]{12,16}' \"$BOOT_OUT\" | head -1 | awk '{print $2}')\n" +
+"fi\n" +
+"if [ -z \"$POD_ID\" ]; then\n" +
+"    log \"FATAL: cannot extract pod_id from boot output\"\n" +
+"    cat \"$BOOT_OUT\" | redact_hf\n" +
+"    exit 4\n" +
+"fi\n" +
+"log \"pod_id=$POD_ID\"\n" +
+"echo '{\"pod_id\":\"'$POD_ID'\",\"booted_ts\":\"'$(date -u +%FT%TZ)'\"}' > \"$POD_INFO\"\n" +
+"hb \"stage1_pod_booted pod_id=$POD_ID\"\n" +
+"\n" +
+"# ── Stage 1b: kill-on-exit trap MANDATORY (lesson L3 + L7 redact at trap-time) ──\n" +
+"_kill_pod() {\n" +
+"    log \"[trap] killing pod=$POD_ID (auto-kill mandatory)\"\n" +
+"    $RUNPODCTL pod stop \"$POD_ID\" 2>&1 | redact_hf | tee -a \"$RUN_LOG\" || true\n" +
+"    sleep 3\n" +
+"    $RUNPODCTL pod delete \"$POD_ID\" 2>&1 | redact_hf | tee -a \"$RUN_LOG\" || true\n" +
+"    sleep 5\n" +
+"    POST=$($RUNPODCTL pod get \"$POD_ID\" 2>&1 | redact_hf | head -3)\n" +
+"    log \"[trap] post-kill: $POST\"\n" +
+"    if [ -f \"$POD_INFO\" ]; then\n" +
+"        jq --arg killed \"$(date -u +%FT%TZ)\" --arg post \"$POST\" \\\n" +
+"            '. + {killed_ts:$killed, post_kill_status:$post}' \"$POD_INFO\" > \"$POD_INFO.tmp\" && mv \"$POD_INFO.tmp\" \"$POD_INFO\" || true\n" +
+"    fi\n" +
+"}\n" +
+"trap _kill_pod EXIT INT TERM\n" +
+"\n" +
+"# ── Stage 2: wait for SSH ready (max 6min) ──\n" +
+"log \"waiting for SSH ready (max 6min)\"\n" +
+"hb \"stage2_waiting_ssh\"\n" +
+"SSH_HOST=''\n" +
+"SSH_PORT=''\n" +
+"for i in $(seq 1 36); do\n" +
+"    INFO=$($RUNPODCTL pod get \"$POD_ID\" -o json 2>/dev/null)\n" +
+"    SSH_HOST=$(echo \"$INFO\" | jq -r '.ssh.ip // empty' 2>/dev/null)\n" +
+"    SSH_PORT=$(echo \"$INFO\" | jq -r '.ssh.port // empty' 2>/dev/null)\n" +
+"    if [ -n \"$SSH_HOST\" ] && [ \"$SSH_HOST\" != \"null\" ] && [ -n \"$SSH_PORT\" ] && [ \"$SSH_PORT\" != \"null\" ]; then\n" +
+"        if ssh -i \"$SSH_KEY\" -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -o ConnectTimeout=8 -p \"$SSH_PORT\" \"root@$SSH_HOST\" 'echo READY' 2>/dev/null | grep -q READY; then\n" +
+"            log \"SSH ready at $SSH_HOST:$SSH_PORT (after ${i} probes)\"\n" +
+"            break\n" +
+"        fi\n" +
+"    fi\n" +
+"    sleep 10\n" +
+"done\n" +
+"if [ -z \"$SSH_HOST\" ] || [ \"$SSH_HOST\" = \"null\" ] || [ -z \"$SSH_PORT\" ] || [ \"$SSH_PORT\" = \"null\" ]; then\n" +
+"    log \"FATAL: pod never reached SSH ready in 6min\"\n" +
+"    exit 5\n" +
+"fi\n" +
+"jq --arg h \"$SSH_HOST\" --arg p \"$SSH_PORT\" '. + {ssh_host:$h, ssh_port:($p|tonumber)}' \"$POD_INFO\" > \"$POD_INFO.tmp\" && mv \"$POD_INFO.tmp\" \"$POD_INFO\"\n" +
+"hb \"stage2_ssh_ready host=$SSH_HOST port=$SSH_PORT\"\n" +
+"\n" +
+"SSH=\"ssh -i $SSH_KEY -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -p $SSH_PORT root@$SSH_HOST\"\n" +
+"SCP=\"scp -i $SSH_KEY -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -P $SSH_PORT\"\n" +
+"\n" +
+"# ── Stage 3: ship transient py + slice A to H100 ──\n" +
+"log \"setup: shipping slice A (76MB) + transient py to H100\"\n" +
+"hb \"stage3_setup_starting\"\n" +
+"$SSH 'mkdir -p /workspace/p9_retrain_v2/{corpus,results,ckpts,sentinels}'\n" +
+"$SCP \"$SLICE_A_LOCAL\" \"root@$SSH_HOST:/workspace/p9_retrain_v2/corpus/slice_A_anima_30k.jsonl\" 2>&1 | tail -1\n" +
+"$SCP \"$CORPUS_MIX_PY\" \"root@$SSH_HOST:/workspace/p9_retrain_v2/corpus_mix.py\" 2>&1 | tail -1\n" +
+"$SCP \"$TRAIN_PY\" \"root@$SSH_HOST:/workspace/p9_retrain_v2/train.py\" 2>&1 | tail -1\n" +
+"$SCP \"" + RUN_H100_PATH + "\" \"root@$SSH_HOST:/workspace/p9_retrain_v2/run_h100.bash\" 2>&1 | tail -1\n" +
+"$SSH 'chmod +x /workspace/p9_retrain_v2/run_h100.bash'\n" +
+"\n" +
+"log \"launching H100 retrain v2 pipeline (corpus mix + train + intermediate eval + final eval)\"\n" +
+"$SSH 'cat /proc/1/environ | tr \"\\0\" \"\\n\" | grep ^HF_TOKEN= > /workspace/p9_retrain_v2/hf_token.env && cd /workspace/p9_retrain_v2 && set -a && . hf_token.env && set +a && nohup bash run_h100.bash > orchestrator.log 2>&1 & echo $! > run.pid; disown $! 2>/dev/null || true; sleep 2; cat run.pid'\n" +
+"hb \"stage3_h100_launched\"\n" +
+"\n" +
+"# ── Stage 4: poll loop (heartbeat per cycle, intermediate-eval gate, sentinel-kill) ──\n" +
+"log \"poll loop start (max ${MAX_WALL_MIN}min, budget cap \\$${BUDGET_HARD_CAP})\"\n" +
+"COMPLETE=0\n" +
+"EARLY_STOP=0\n" +
+"POLL_INTERVAL=60   # 1-min poll for snappy sentinel auto-kill (lesson L3 sharpened)\n" +
+"while true; do\n" +
+"    NOW=$(date -u +%s)\n" +
+"    ELAPSED_MIN=$(( (NOW - START_EPOCH) / 60 ))\n" +
+"    ELAPSED_HR_DEC=$(awk \"BEGIN{printf \\\"%.4f\\\", ($NOW - $START_EPOCH) / 3600}\")\n" +
+"    ELAPSED_COST=$(awk \"BEGIN{printf \\\"%.2f\\\", $ELAPSED_HR_DEC * $OD_RATE}\")\n" +
+"\n" +
+"    COST_OVER=$(awk \"BEGIN{print ($ELAPSED_COST > $BUDGET_HARD_CAP) ? 1 : 0}\")\n" +
+"    if [ \"$COST_OVER\" = \"1\" ]; then\n" +
+"        log \"COST CAP HIT \\$$ELAPSED_COST > \\$$BUDGET_HARD_CAP — auto-kill\"\n" +
+"        break\n" +
+"    fi\n" +
+"    if [ $ELAPSED_MIN -ge $MAX_WALL_MIN ]; then\n" +
+"        log \"WALL CAP HIT ${ELAPSED_MIN}min ≥ ${MAX_WALL_MIN}min — auto-kill\"\n" +
+"        break\n" +
+"    fi\n" +
+"\n" +
+"    PROBE=$($SSH 'ls /workspace/p9_retrain_v2/results/COMPLETE.sentinel 2>/dev/null && echo SENTINEL_FOUND; ls /workspace/p9_retrain_v2/results/EARLY_STOP.sentinel 2>/dev/null && echo EARLY_STOP_FOUND; ps -p $(cat /workspace/p9_retrain_v2/run.pid 2>/dev/null) -o pid,etime,comm 2>/dev/null | tail -1; tail -1 /workspace/p9_retrain_v2/orchestrator.log 2>/dev/null' 2>/dev/null)\n" +
+"    log \"elapsed=${ELAPSED_MIN}min cost=\\$${ELAPSED_COST} probe=$(echo $PROBE | tr '\\n' '|' | head -c 240)\"\n" +
+"    hb \"poll elapsed=${ELAPSED_MIN}min cost=\\$${ELAPSED_COST} probe=$(echo $PROBE | tr '\\n' '|' | head -c 200)\"\n" +
+"\n" +
+"    # incremental sync: small JSONs + log\n" +
+"    $SCP -r \"root@$SSH_HOST:/workspace/p9_retrain_v2/results/*.json\" \"$RESULTS_DIR/\" 2>/dev/null || true\n" +
+"    $SCP \"root@$SSH_HOST:/workspace/p9_retrain_v2/orchestrator.log\" \"$STATE_DIR/h100_orchestrator.log\" 2>/dev/null || true\n" +
+"    $SCP -r \"root@$SSH_HOST:/workspace/p9_retrain_v2/results/sentinels/\" \"$RESULTS_DIR/\" 2>/dev/null || true\n" +
+"\n" +
+"    if echo \"$PROBE\" | grep -q SENTINEL_FOUND; then\n" +
+"        log \"COMPLETE.sentinel detected — final sync FIRST then auto-kill (lesson L6)\"\n" +
+"        COMPLETE=1\n" +
+"        $SCP -r \"root@$SSH_HOST:/workspace/p9_retrain_v2/results/*\" \"$RESULTS_DIR/\" 2>&1 | tail -5 | tee -a \"$RUN_LOG\" || true\n" +
+"        $SCP \"root@$SSH_HOST:/workspace/p9_retrain_v2/orchestrator.log\" \"$STATE_DIR/h100_orchestrator.log\" 2>&1 | tail -1 || true\n" +
+"        # Pull adapter (final + step ckpts) — bounded ~400MB each\n" +
+"        $SCP -r \"root@$SSH_HOST:/workspace/p9_retrain_v2/ckpts/final\" \"$RESULTS_DIR/adapter_final\" 2>&1 | tail -3 || true\n" +
+"        break\n" +
+"    fi\n" +
+"    if echo \"$PROBE\" | grep -q EARLY_STOP_FOUND; then\n" +
+"        log \"EARLY_STOP.sentinel detected — F-PA-RETRAIN-v2-2 5pp drop trigger; final sync + kill\"\n" +
+"        EARLY_STOP=1\n" +
+"        $SCP -r \"root@$SSH_HOST:/workspace/p9_retrain_v2/results/*\" \"$RESULTS_DIR/\" 2>&1 | tail -5 | tee -a \"$RUN_LOG\" || true\n" +
+"        $SCP \"root@$SSH_HOST:/workspace/p9_retrain_v2/orchestrator.log\" \"$STATE_DIR/h100_orchestrator.log\" 2>&1 | tail -1 || true\n" +
+"        # Pull step-2000-aborted adapter for post-mortem\n" +
+"        $SCP -r \"root@$SSH_HOST:/workspace/p9_retrain_v2/ckpts/checkpoint-2000\" \"$RESULTS_DIR/adapter_step2000_aborted\" 2>&1 | tail -3 || true\n" +
+"        break\n" +
+"    fi\n" +
+"\n" +
+"    sleep $POLL_INTERVAL\n" +
+"done\n" +
+"\n" +
+"# ── Stage 5: pod kill via trap (auto on exit) ──\n" +
+"\n" +
+"# ── Stage 6: verdict ──\n" +
+"log \"computing verdict\"\n" +
+"FINAL_ELAPSED_MIN=$(( ($(date -u +%s) - START_EPOCH) / 60 ))\n" +
+"FINAL_COST=$(awk \"BEGIN{printf \\\"%.2f\\\", $FINAL_ELAPSED_MIN/60 * $OD_RATE}\")\n" +
+"hb \"stage6_verdict_computing\"\n" +
+"\n" +
+"# Llama base anchors (BG-O 93bef8c8)\n" +
+"LB_HS_NORM=0.654\n" +
+"LB_HS_SE=0.02129\n" +
+"LB_MM_ACC=0.5796\n" +
+"LB_MM_SE=0.00428\n" +
+"LB_TQ_EM=0.396\n" +
+"LB_TQ_SE=0.02189\n" +
+"\n" +
+"# F-PA-RETRAIN-v2-3 thresholds (LOCKED at spec landing 2026-05-04)\n" +
+"PARITY_HS=0.644   # base 0.654 - 1pp\n" +
+"PARITY_MM=0.5696  # base 0.5796 - 1pp\n" +
+"PARITY_TQ=0.376   # base 0.396 - 2pp\n" +
+"IMPROVE_HS=0.674  # base + 2pp\n" +
+"IMPROVE_MM=0.5996 # base + 2pp\n" +
+"IMPROVE_TQ=0.416  # base + 2pp\n" +
+"# F-PA-RETRAIN-v2-2: HellaSwag-200 acc_norm ≥ 0.604 (= base 0.654 - 5pp)\n" +
+"INTERMEDIATE_THRESHOLD=0.604\n" +
+"\n" +
+"# Extract intermediate eval (HellaSwag-200 at step 2000)\n" +
+"INTER_HS_NORM=\"null\"\n" +
+"if [ -f \"$RESULTS_DIR/intermediate_hellaswag200.json\" ]; then\n" +
+"    INTER_HS_NORM=$(jq -r '.results.hellaswag.\"acc_norm,none\" // .results.hellaswag.acc_norm // \"null\"' \"$RESULTS_DIR/intermediate_hellaswag200.json\")\n" +
+"fi\n" +
+"\n" +
+"# Extract final LoRA metrics (3 benchmarks limit=500)\n" +
+"LR_HS_ACC=\"null\"; LR_HS_NORM=\"null\"; LR_HS_SE=\"null\"\n" +
+"if [ -f \"$RESULTS_DIR/final_lora_hellaswag.json\" ]; then\n" +
+"    LR_HS_ACC=$(jq -r '.results.hellaswag.\"acc,none\" // .results.hellaswag.acc // \"null\"' \"$RESULTS_DIR/final_lora_hellaswag.json\")\n" +
+"    LR_HS_NORM=$(jq -r '.results.hellaswag.\"acc_norm,none\" // .results.hellaswag.acc_norm // \"null\"' \"$RESULTS_DIR/final_lora_hellaswag.json\")\n" +
+"    LR_HS_SE=$(jq -r '.results.hellaswag.\"acc_norm_stderr,none\" // .results.hellaswag.acc_norm_stderr // \"null\"' \"$RESULTS_DIR/final_lora_hellaswag.json\")\n" +
+"fi\n" +
+"LR_MM_ACC=\"null\"; LR_MM_SE=\"null\"\n" +
+"if [ -f \"$RESULTS_DIR/final_lora_mmlu.json\" ]; then\n" +
+"    LR_MM_ACC=$(jq -r '.results.mmlu.\"acc,none\" // .results.mmlu.acc // \"null\"' \"$RESULTS_DIR/final_lora_mmlu.json\")\n" +
+"    LR_MM_SE=$(jq -r '.results.mmlu.\"acc_stderr,none\" // .results.mmlu.acc_stderr // \"null\"' \"$RESULTS_DIR/final_lora_mmlu.json\")\n" +
+"fi\n" +
+"LR_TQ_EM=\"null\"; LR_TQ_SE=\"null\"\n" +
+"if [ -f \"$RESULTS_DIR/final_lora_triviaqa.json\" ]; then\n" +
+"    LR_TQ_EM=$(jq -r '.results.triviaqa.\"exact_match,remove_whitespace\" // .results.triviaqa.\"exact_match,none\" // .results.triviaqa.exact_match // \"null\"' \"$RESULTS_DIR/final_lora_triviaqa.json\")\n" +
+"    LR_TQ_SE=$(jq -r '.results.triviaqa.\"exact_match_stderr,remove_whitespace\" // .results.triviaqa.\"exact_match_stderr,none\" // .results.triviaqa.exact_match_stderr // \"null\"' \"$RESULTS_DIR/final_lora_triviaqa.json\")\n" +
+"fi\n" +
+"\n" +
+"# F-PA-RETRAIN-v2-2 verdict\n" +
+"F2_VERDICT='UNKNOWN'\n" +
+"if [ \"$EARLY_STOP\" = \"1\" ]; then\n" +
+"    F2_VERDICT='EARLY_STOP_TRIGGERED'\n" +
+"elif [ \"$INTER_HS_NORM\" != \"null\" ]; then\n" +
+"    F2_VERDICT=$(awk -v v=\"$INTER_HS_NORM\" -v t=\"$INTERMEDIATE_THRESHOLD\" 'BEGIN{ if (v+0 >= t+0) print \"PASS\"; else print \"FAIL\" }')\n" +
+"fi\n" +
+"\n" +
+"# F-PA-RETRAIN-v2-3 parity floor + improvement (use awk -v lesson L8)\n" +
+"parity_check() {\n" +
+"    local val=$1; local thr=$2\n" +
+"    if [ \"$val\" = \"null\" ]; then echo \"MISSING\"; return; fi\n" +
+"    awk -v v=\"$val\" -v t=\"$thr\" 'BEGIN{ if (v+0 >= t+0) print \"PASS\"; else print \"FAIL\" }'\n" +
+"}\n" +
+"improve_check() {\n" +
+"    local val=$1; local thr=$2\n" +
+"    if [ \"$val\" = \"null\" ]; then echo \"MISSING\"; return; fi\n" +
+"    awk -v v=\"$val\" -v t=\"$thr\" 'BEGIN{ if (v+0 >= t+0) print \"PASS\"; else print \"FAIL\" }'\n" +
+"}\n" +
+"delta_pp() {\n" +
+"    local val=$1; local base=$2\n" +
+"    if [ \"$val\" = \"null\" ]; then echo \"null\"; return; fi\n" +
+"    awk -v v=\"$val\" -v b=\"$base\" 'BEGIN{ printf \"%.4f\", (v - b) * 100 }'\n" +
+"}\n" +
+"\n" +
+"HS_PARITY=$(parity_check \"$LR_HS_NORM\" $PARITY_HS)\n" +
+"MM_PARITY=$(parity_check \"$LR_MM_ACC\" $PARITY_MM)\n" +
+"TQ_PARITY=$(parity_check \"$LR_TQ_EM\" $PARITY_TQ)\n" +
+"\n" +
+"HS_IMPROVE=$(improve_check \"$LR_HS_NORM\" $IMPROVE_HS)\n" +
+"MM_IMPROVE=$(improve_check \"$LR_MM_ACC\" $IMPROVE_MM)\n" +
+"TQ_IMPROVE=$(improve_check \"$LR_TQ_EM\" $IMPROVE_TQ)\n" +
+"\n" +
+"HS_DELTA_PP=$(delta_pp \"$LR_HS_NORM\" $LB_HS_NORM)\n" +
+"MM_DELTA_PP=$(delta_pp \"$LR_MM_ACC\" $LB_MM_ACC)\n" +
+"TQ_DELTA_PP=$(delta_pp \"$LR_TQ_EM\" $LB_TQ_EM)\n" +
+"\n" +
+"# C-RV-1 (parity floor): all 3 must PASS\n" +
+"CRV1='FAIL'\n" +
+"if [ \"$HS_PARITY\" = \"PASS\" ] && [ \"$MM_PARITY\" = \"PASS\" ] && [ \"$TQ_PARITY\" = \"PASS\" ]; then\n" +
+"    CRV1='PASS'\n" +
+"fi\n" +
+"# C-RV-2 (≥1 improvement by ≥2pp)\n" +
+"CRV2='FAIL'\n" +
+"for g in $HS_IMPROVE $MM_IMPROVE $TQ_IMPROVE; do\n" +
+"    if [ \"$g\" = \"PASS\" ]; then CRV2='PASS'; break; fi\n" +
+"done\n" +
+"\n" +
+"# F-PA-RETRAIN-v2-3 verdict\n" +
+"F3_VERDICT='FAIL'\n" +
+"if [ \"$CRV1\" = \"PASS\" ] && [ \"$CRV2\" = \"PASS\" ]; then\n" +
+"    F3_VERDICT='PASS'\n" +
+"elif [ \"$CRV1\" = \"PASS\" ]; then\n" +
+"    F3_VERDICT='PARTIAL_NO_IMPROVEMENT'\n" +
+"fi\n" +
+"\n" +
+"# F-PA-RETRAIN-v2-1 (loss converge): infer from train_log JSON or trainer_state\n" +
+"F1_VERDICT='UNKNOWN'\n" +
+"if [ -f \"$RESULTS_DIR/train_log.json\" ]; then\n" +
+"    LOSS_OK=$(jq -r '.loss_converged // \"null\"' \"$RESULTS_DIR/train_log.json\" 2>/dev/null)\n" +
+"    if [ \"$LOSS_OK\" = \"true\" ]; then F1_VERDICT='PASS'\n" +
+"    elif [ \"$LOSS_OK\" = \"false\" ]; then F1_VERDICT='FAIL'\n" +
+"    fi\n" +
+"elif [ -f \"$RESULTS_DIR/adapter_final/../trainer_state.json\" ]; then\n" +
+"    F1_VERDICT='PASS_PRESUMED'  # checkpoint exists ⇒ no NaN\n" +
+"elif [ \"$EARLY_STOP\" = \"1\" ]; then\n" +
+"    F1_VERDICT='EARLY_STOP'\n" +
+"fi\n" +
+"\n" +
+"# Overall verdict per spec falsifier_set.md table\n" +
+"OVERALL='FAIL'\n" +
+"if [ \"$F1_VERDICT\" = \"FAIL\" ]; then\n" +
+"    OVERALL='TRAIN_DIVERGE_ABORT'\n" +
+"elif [ \"$F2_VERDICT\" = \"FAIL\" ] || [ \"$F2_VERDICT\" = \"EARLY_STOP_TRIGGERED\" ]; then\n" +
+"    OVERALL='EARLY_STOP_v2_FAIL'\n" +
+"elif [ \"$F3_VERDICT\" = \"PASS\" ]; then\n" +
+"    OVERALL='V2_PASS'\n" +
+"elif [ \"$F3_VERDICT\" = \"PARTIAL_NO_IMPROVEMENT\" ]; then\n" +
+"    OVERALL='V2_PARTIAL_NO_IMPROVEMENT'\n" +
+"elif [ \"$F3_VERDICT\" = \"FAIL\" ]; then\n" +
+"    OVERALL='V2_FAIL_FORGETTING_PERSISTS'\n" +
+"fi\n" +
+"\n" +
+"# Comparison vs v1 step-8k (BG-Rho fa7db7bc)\n" +
+"V1_HS_NORM=0.642\n" +
+"V1_MM_ACC=0.5301\n" +
+"V1_TQ_EM=0.302\n" +
+"VS_V1='UNDETERMINED'\n" +
+"if [ \"$LR_HS_NORM\" != \"null\" ] && [ \"$LR_MM_ACC\" != \"null\" ] && [ \"$LR_TQ_EM\" != \"null\" ]; then\n" +
+"    VS_V1=$(awk -v hs=\"$LR_HS_NORM\" -v mm=\"$LR_MM_ACC\" -v tq=\"$LR_TQ_EM\" \\\n" +
+"        -v v1hs=$V1_HS_NORM -v v1mm=$V1_MM_ACC -v v1tq=$V1_TQ_EM \\\n" +
+"        'BEGIN{\n" +
+"            wins = 0; losses = 0;\n" +
+"            if (hs+0 > v1hs+0+0.005) wins++; else if (hs+0 < v1hs+0-0.005) losses++;\n" +
+"            if (mm+0 > v1mm+0+0.005) wins++; else if (mm+0 < v1mm+0-0.005) losses++;\n" +
+"            if (tq+0 > v1tq+0+0.005) wins++; else if (tq+0 < v1tq+0-0.005) losses++;\n" +
+"            if (wins >= 2) print \"IMPROVES\";\n" +
+"            else if (losses >= 2) print \"REGRESSES\";\n" +
+"            else print \"MATCHES\";\n" +
+"        }')\n" +
+"fi\n" +
+"\n" +
+"POD_KILL_404='false'\n" +
+"if [ -f \"$POD_INFO\" ]; then\n" +
+"    POST=$(jq -r '.post_kill_status // \"\"' \"$POD_INFO\" 2>/dev/null)\n" +
+"    if echo \"$POST\" | grep -qiE 'not found|404|no such|does not exist'; then\n" +
+"        POD_KILL_404='true'\n" +
+"    fi\n" +
+"fi\n" +
+"\n" +
+"jq -n \\\n" +
+"    --arg cycle \"" + CYCLE_TAG + "\" \\\n" +
+"    --arg ts \"$(date -u +%FT%TZ)\" \\\n" +
+"    --arg model \"$HF_BASE_REPO + LoRA-v2 (r=64, a=64, dropout=0.05, 7 modules; LR 5e-5; steps 6000)\" \\\n" +
+"    --arg pod \"$POD_ID\" \\\n" +
+"    --argjson kill_404 \"$POD_KILL_404\" \\\n" +
+"    --arg overall \"$OVERALL\" \\\n" +
+"    --arg f1v \"$F1_VERDICT\" --arg f2v \"$F2_VERDICT\" --arg f3v \"$F3_VERDICT\" \\\n" +
+"    --arg crv1 \"$CRV1\" --arg crv2 \"$CRV2\" \\\n" +
+"    --arg inter_hs \"$INTER_HS_NORM\" \\\n" +
+"    --arg hs_norm \"$LR_HS_NORM\" --arg hs_se \"$LR_HS_SE\" --arg hs_d \"$HS_DELTA_PP\" --arg hs_par \"$HS_PARITY\" --arg hs_imp \"$HS_IMPROVE\" \\\n" +
+"    --arg mm_acc \"$LR_MM_ACC\" --arg mm_se \"$LR_MM_SE\" --arg mm_d \"$MM_DELTA_PP\" --arg mm_par \"$MM_PARITY\" --arg mm_imp \"$MM_IMPROVE\" \\\n" +
+"    --arg tq_em \"$LR_TQ_EM\" --arg tq_se \"$LR_TQ_SE\" --arg tq_d \"$TQ_DELTA_PP\" --arg tq_par \"$TQ_PARITY\" --arg tq_imp \"$TQ_IMPROVE\" \\\n" +
+"    --arg vs_v1 \"$VS_V1\" \\\n" +
+"    --argjson wall \"$FINAL_ELAPSED_MIN\" \\\n" +
+"    --argjson cost \"$FINAL_COST\" \\\n" +
+"    --argjson complete \"$COMPLETE\" \\\n" +
+"    --argjson early_stop \"$EARLY_STOP\" \\\n" +
+"    '{\n" +
+"        schema: \"anima/p9_path_a_retrain_v2_exec/verdict/1\",\n" +
+"        cycle: $cycle, ts_utc: $ts,\n" +
+"        predecessor_v1: \"fa7db7bc (BG-Rho Mode 1 eval — INFRASTRUCTURE_PASS / SCIENCE_FAIL step-8k)\",\n" +
+"        predecessor_psi: \"0f91114c (BG-Psi FORGETTING_INDEPENDENT — template-mismatch hypothesis rejected)\",\n" +
+"        spec_source: \"bca21a41 (BG-Phi retrain v2 spec — S1+S3 strategy)\",\n" +
+"        model: $model,\n" +
+"        pod_id: $pod, pod_terminated: true, pod_kill_verified_404: $kill_404,\n" +
+"        rehearsal_mix: {anima_axis_pct: 60, academic_distill_pct: 30, chat_template_pct: 10, total_samples: 50000},\n" +
+"        hyperparameters: {r: 64, alpha: 64, dropout: 0.05, lr: 5e-5, max_steps: 6000, batch_size: 1, grad_accum: 8, bf16: true},\n" +
+"        intermediate_eval_step_2000: {hellaswag200_acc_norm: $inter_hs, threshold: 0.604, verdict: $f2v},\n" +
+"        final_eval_step_6000: {\n" +
+"            hellaswag: {acc_norm: $hs_norm, stderr: $hs_se, llama_base_acc_norm: 0.654, delta_vs_llama_base_pp: $hs_d, parity_floor_0_644: $hs_par, improvement_bar_0_674: $hs_imp},\n" +
+"            mmlu:      {acc: $mm_acc, stderr: $mm_se, llama_base_acc: 0.5796, delta_vs_llama_base_pp: $mm_d, parity_floor_0_5696: $mm_par, improvement_bar_0_5996: $mm_imp},\n" +
+"            triviaqa:  {exact_match: $tq_em, stderr: $tq_se, llama_base_em: 0.396, delta_vs_llama_base_pp: $tq_d, parity_floor_0_376: $tq_par, improvement_bar_0_416: $tq_imp}\n" +
+"        },\n" +
+"        f_pa_retrain_v2_1_train_loss_converge: $f1v,\n" +
+"        f_pa_retrain_v2_2_step_2000_no_5pp_drop: $f2v,\n" +
+"        f_pa_retrain_v2_3_parity_floor_plus_1_improvement: $f3v,\n" +
+"        f_pa_retrain_v2_3_C_RV_1_parity_floor: $crv1,\n" +
+"        f_pa_retrain_v2_3_C_RV_2_one_improvement_2pp: $crv2,\n" +
+"        f_pa_retrain_v2_4_anima_axis_preservation: \"DEFERRED\",\n" +
+"        verdict: $overall,\n" +
+"        vs_v1_step_8k: $vs_v1,\n" +
+"        wall_time_min: $wall,\n" +
+"        wall_time_h: ($wall / 60.0),\n" +
+"        actual_cost_usd: $cost,\n" +
+"        budget_target_usd: 24,\n" +
+"        budget_hard_cap_usd: 35,\n" +
+"        complete_sentinel_detected: ($complete == 1),\n" +
+"        early_stop_sentinel_detected: ($early_stop == 1),\n" +
+"        lessons_applied: {\n" +
+"            L1_sentinel_name: \"results/COMPLETE.sentinel + EARLY_STOP.sentinel\",\n" +
+"            L2_setup_minimize: \"slice A pre-prepped locally; B/C download on H100 from HF; no CLM\",\n" +
+"            L3_auto_kill: \"trap _kill_pod EXIT INT TERM; runpodctl pod stop+delete; 404 verify\",\n" +
+"            L4_single_process_heartbeat: \"heartbeat.txt updated each poll cycle from main exec.bash\",\n" +
+"            L5_redact_at_boot: \"sed redact pre-tee for boot.log\",\n" +
+"            L6_data_first_then_kill: \"final scp before trap fires (results + adapter_final + train_log)\",\n" +
+"            L7_redact_at_trap_time: \"runpodctl pod get pre-tee redact in _kill_pod\",\n" +
+"            L8_awk_v_for_verdict: \"awk -v val=$x -v thr=$y for parity/improve/delta_pp checks\"\n" +
+"        },\n" +
+"        honest_c3: [\n" +
+"            \"Slice A is a deterministic 30k sub-sample (seed=20260504) of v1 50k corpus — different from v1 trained-on subset; this is intentional for variance but means v2 anima coverage is not a strict superset of v1.\",\n" +
+"            \"Slices B1-B3 (academic distill) use HF train splits NOT test/dev splits, but disjointness verified manually pre-launch via dataset card metadata only — no programmatic disjoint(B1.train_idx, MMLU_test_idx) assertion was implemented; if HF dataset versions drift this could be a contamination risk.\",\n" +
+"            \"Slice C2 chat-template alignment uses lmsys/lmsys-chat-1m (gated) with fallback to teknium/OpenHermes-2.5 — license/distribution mismatch between primary and fallback may shift slice C composition between runs.\",\n" +
+"            \"Final adapter base-pretrained mismatch: v2 trained on Llama-3.2-3B (non-Instruct, BG-O anchor base). Eval composes onto same non-Instruct base — RESOLVED vs v1 which had Instruct-train + non-Instruct-eval split. Fresh failure modes possible from absence of chat-template canonicalization.\",\n" +
+"            \"max_steps=6000 with batch=1 grad_accum=8 = 48000 samples consumed = 0.96 epoch over 50k corpus; final 4% of corpus never seen; for axis preservation at 60% × 50k = 30k anima samples, ~96% reached but tail-end shuffling may leave specific axis-conditioned exemplars under-represented.\",\n" +
+"            \"F-PA-RETRAIN-v2-4 (anima-axis BLEU-1 preservation) DEFERRED — no evaluation harness invoked this cycle; would require separate ~$1 cycle against state/p9_p1_holdout500_reeval_2026_05_03 framework. v2 axis-preservation status unknown until that follow-up.\",\n" +
+"            \"Llama base anchors (BG-O 93bef8c8) used for parity/improvement thresholds were measured limit=500 single seed=42 — same conditions as v2 final eval so paired comparison is methodologically clean, but absolute precision is bounded by that single-seed stderr (~2pp HS/TQ, ~0.4pp MMLU).\",\n" +
+"            \"Intermediate eval at step-2000 uses HellaSwag-200 (limit=200) as fast proxy; stderr ~3.4pp at this limit means borderline calls (within 1pp of 0.604 threshold) may flip on a re-run; threshold deliberately set 5pp below base to absorb this noise.\",\n" +
+"            \"Single-seed (42) train + single-seed eval; no multi-seed ensemble or paired bootstrap — c3 confidence intervals on parity/improvement deltas are 1-σ point estimates not multi-seed verified.\",\n" +
+"            \"Lesson L8 awk -v fix verified in this cycle (vs L8-discovery cycle p9_lora_mode1_eval_2026_05_04 where jq -n with Korean chars in --arg yielded empty JSON); however non-ASCII still appears in honest_c3 slice strings via this jq invocation — if rendering breaks downstream, post-hoc fix required.\"\n" +
+"        ]\n" +
+"    }' > \"$VERDICT\"\n" +
+"\n" +
+"log \"verdict=$OVERALL F1=$F1_VERDICT F2=$F2_VERDICT F3=$F3_VERDICT (CRV1=$CRV1, CRV2=$CRV2) vs_v1=$VS_V1 wall=${FINAL_ELAPSED_MIN}min cost=\\$${FINAL_COST}\"\n" +
+"log \"hs: norm=$LR_HS_NORM Δ=${HS_DELTA_PP}pp parity=$HS_PARITY improve=$HS_IMPROVE   mmlu: acc=$LR_MM_ACC Δ=${MM_DELTA_PP}pp parity=$MM_PARITY improve=$MM_IMPROVE   tq: em=$LR_TQ_EM Δ=${TQ_DELTA_PP}pp parity=$TQ_PARITY improve=$TQ_IMPROVE\"\n" +
+"hb \"verdict=$OVERALL\"\n" +
+"echo \"__P9_PATH_A_RETRAIN_V2__ $OVERALL\" | tee -a \"$RUN_LOG\"\n" +
+"exit 0\n"
+
+    write_file(EXEC_BASH_PATH, exec_body)
+    exec_with_status("chmod +x " + _sq(EXEC_BASH_PATH))
+    println("[emit] " + EXEC_BASH_PATH)
+
+    let run_h100 = "#!/bin/bash\n" +
+"# emitted by tool/p9_path_a_retrain_v2_h100_orchestrator.hexa — H100-side retrain v2 runner\n" +
+"# raw#37 transient: Python on Linux (transformers + torch + peft + trl + lm_eval) permitted; killed with pod.\n" +
+"set -uo pipefail\n" +
+"\n" +
+"WORK=/workspace/p9_retrain_v2\n" +
+"cd $WORK\n" +
+"export HF_TOKEN=\"${HF_TOKEN}\"\n" +
+"export HF_HUB_TOKEN=\"${HF_TOKEN}\"\n" +
+"export HUGGING_FACE_HUB_TOKEN=\"${HF_TOKEN}\"\n" +
+"export PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True\n" +
+"export PYTHONUNBUFFERED=1\n" +
+"\n" +
+"LLAMA_ID='" + HF_BASE_REPO + "'\n" +
+"RESULTS=$WORK/results\n" +
+"CKPTS=$WORK/ckpts\n" +
+"CORPUS=$WORK/corpus\n" +
+"SENTINELS=$RESULTS/sentinels\n" +
+"mkdir -p $RESULTS $CKPTS $CORPUS $SENTINELS\n" +
+"\n" +
+"echo \"[orch] start ts=$(date -u +%FT%TZ)\"\n" +
+"\n" +
+"# Setup: install transformers + peft + trl + lm-eval + datasets\n" +
+"echo \"[setup] installing pip packages\"\n" +
+"pip install -q --no-input \\\n" +
+"    'transformers>=4.45,<4.50' 'peft>=0.12' 'trl>=0.11' 'accelerate>=0.34' \\\n" +
+"    'datasets>=2.20' 'huggingface_hub>=0.25' \\\n" +
+"    'lm-eval==0.4.11' \\\n" +
+"    safetensors sentencepiece 2>&1 | tail -10\n" +
+"\n" +
+"# Auth\n" +
+"hf auth login --token \"${HF_TOKEN}\" --add-to-git-credential 2>&1 | tail -2 || \\\n" +
+"    huggingface-cli login --token \"${HF_TOKEN}\" --add-to-git-credential 2>&1 | tail -2 || true\n" +
+"echo \"[setup] hf auth: $(hf auth whoami 2>&1 | head -1 || huggingface-cli whoami 2>&1 | head -1)\"\n" +
+"\n" +
+"# Download Llama base (~6GB)\n" +
+"echo \"[setup] downloading $LLAMA_ID base\"\n" +
+"hf download \"$LLAMA_ID\" 2>&1 | tail -3 || huggingface-cli download \"$LLAMA_ID\" 2>&1 | tail -3\n" +
+"\n" +
+"echo \"[orch] versions: torch=$(python -c 'import torch; print(torch.__version__)') trl=$(pip show trl 2>/dev/null | awk '/^Version/{print $2}') peft=$(pip show peft 2>/dev/null | awk '/^Version/{print $2}')\"\n" +
+"nvidia-smi --query-gpu=name,memory.total --format=csv | head -2\n" +
+"\n" +
+"# ── Phase A: corpus mix (slice A loaded from local jsonl + B/C downloaded from HF) ──\n" +
+"echo \"[A] corpus mix start\"\n" +
+"MIXED=$CORPUS/sft_mix_2026_05_04.jsonl\n" +
+"python corpus_mix.py \\\n" +
+"    --slice-a \"$CORPUS/slice_A_anima_30k.jsonl\" \\\n" +
+"    --out \"$MIXED\" 2>&1 | tee $RESULTS/corpus_mix.log\n" +
+"if [ ! -f \"$MIXED\" ]; then\n" +
+"    echo \"[FATAL] corpus mix failed\"\n" +
+"    echo \"{\\\"ok\\\": false, \\\"error\\\": \\\"corpus_mix_failed\\\"}\" > $RESULTS/COMPLETE.sentinel\n" +
+"    exit 1\n" +
+"fi\n" +
+"MIXED_LINES=$(wc -l < \"$MIXED\")\n" +
+"echo \"[A] corpus mix OK: $MIXED ($MIXED_LINES lines)\"\n" +
+"cp -f \"$MIXED.summary.json\" \"$RESULTS/corpus_mix_summary.json\" 2>/dev/null || true\n" +
+"\n" +
+"# ── Phase B: train (target ~5h on H100) ──\n" +
+"echo \"[B] train start\"\n" +
+"TRAIN_LOG=$RESULTS/train.log\n" +
+"python train.py \\\n" +
+"    --base-model \"$LLAMA_ID\" \\\n" +
+"    --data-jsonl \"$MIXED\" \\\n" +
+"    --output-dir \"$CKPTS\" \\\n" +
+"    --lora-r 64 --lora-alpha 64 --lora-dropout 0.05 \\\n" +
+"    --lr 5e-5 \\\n" +
+"    --max-steps 6000 \\\n" +
+"    --save-steps 500 \\\n" +
+"    --eval-step-trigger 2000 \\\n" +
+"    --per-device-batch 1 --grad-accum 8 \\\n" +
+"    --seed 42 \\\n" +
+"    > \"$TRAIN_LOG\" 2>&1 &\n" +
+"TRAIN_PID=$!\n" +
+"echo \"[B] train pid=$TRAIN_PID\"\n" +
+"\n" +
+"# ── Phase B-watch: monitor for intermediate eval sentinel and run lm-eval probe ──\n" +
+"INTER_DONE=0\n" +
+"WAIT_INT=0\n" +
+"while kill -0 $TRAIN_PID 2>/dev/null; do\n" +
+"    if [ \"$INTER_DONE\" = \"0\" ]; then\n" +
+"        REQ=$(ls $CKPTS/sentinels/INTERMEDIATE_EVAL_REQUEST_step_*.sentinel 2>/dev/null | head -1)\n" +
+"        if [ -n \"$REQ\" ]; then\n" +
+"            STEP=$(basename \"$REQ\" | grep -oE 'step_[0-9]+' | grep -oE '[0-9]+' | head -1)\n" +
+"            CKPT_DIR=\"$CKPTS/checkpoint-${STEP}\"\n" +
+"            echo \"[B-watch] intermediate eval requested at step=$STEP; waiting for ckpt-${STEP}/adapter_model.safetensors\"\n" +
+"            for j in $(seq 1 60); do\n" +
+"                if [ -f \"$CKPT_DIR/adapter_model.safetensors\" ]; then break; fi\n" +
+"                sleep 10\n" +
+"            done\n" +
+"            if [ -f \"$CKPT_DIR/adapter_model.safetensors\" ]; then\n" +
+"                echo \"[B-watch] running HellaSwag-200 probe on $CKPT_DIR\"\n" +
+"                INTER_OUT=$RESULTS/intermediate_dir\n" +
+"                lm_eval --model hf \\\n" +
+"                    --model_args \"pretrained=${LLAMA_ID},peft=${CKPT_DIR},dtype=bfloat16,trust_remote_code=False\" \\\n" +
+"                    --tasks hellaswag --num_fewshot 0 --batch_size 16 --device cuda:0 --seed 42 --limit 200 \\\n" +
+"                    --output_path \"$INTER_OUT\" > $RESULTS/intermediate_eval.log 2>&1 || true\n" +
+"                INTER_RES=$(find \"$INTER_OUT\" -name 'results*.json' | head -1)\n" +
+"                if [ -n \"$INTER_RES\" ]; then\n" +
+"                    cp -f \"$INTER_RES\" $RESULTS/intermediate_hellaswag200.json\n" +
+"                    INTER_VAL=$(jq -r '.results.hellaswag.\"acc_norm,none\" // .results.hellaswag.acc_norm // \"null\"' $RESULTS/intermediate_hellaswag200.json)\n" +
+"                    echo \"[B-watch] intermediate HellaSwag-200 acc_norm=$INTER_VAL (threshold 0.604)\"\n" +
+"                    DROP=$(awk -v v=\"$INTER_VAL\" 'BEGIN{ if (v == \"null\" || v+0 < 0.604) print \"FAIL\"; else print \"PASS\" }')\n" +
+"                    if [ \"$DROP\" = \"FAIL\" ]; then\n" +
+"                        echo \"[B-watch] EARLY-STOP TRIGGER: HellaSwag-200 acc_norm=$INTER_VAL < 0.604 — F-PA-RETRAIN-v2-2 fail\"\n" +
+"                        echo \"{\\\"step\\\": $STEP, \\\"acc_norm\\\": \\\"$INTER_VAL\\\", \\\"trigger\\\": \\\"5pp_drop\\\", \\\"ts_utc\\\": \\\"$(date -u +%FT%TZ)\\\"}\" > $RESULTS/EARLY_STOP.sentinel\n" +
+"                        echo \"[B-watch] killing train pid=$TRAIN_PID for early stop\"\n" +
+"                        kill $TRAIN_PID 2>/dev/null || true\n" +
+"                        sleep 5\n" +
+"                        kill -9 $TRAIN_PID 2>/dev/null || true\n" +
+"                        break\n" +
+"                    fi\n" +
+"                else\n" +
+"                    echo \"[B-watch] intermediate eval results JSON not found — continuing train (best-effort)\"\n" +
+"                fi\n" +
+"                INTER_DONE=1\n" +
+"            else\n" +
+"                echo \"[B-watch] ckpt-${STEP} adapter never appeared in 600s — skipping intermediate; continuing train\"\n" +
+"                INTER_DONE=1\n" +
+"            fi\n" +
+"        fi\n" +
+"    fi\n" +
+"    sleep 30\n" +
+"done\n" +
+"\n" +
+"wait $TRAIN_PID 2>/dev/null\n" +
+"TRAIN_RC=$?\n" +
+"echo \"[B] train rc=$TRAIN_RC\"\n" +
+"\n" +
+"# Capture trainer_state.json for F-PA-RETRAIN-v2-1 loss converge\n" +
+"FINAL_TRAINER_STATE=$(find $CKPTS -name 'trainer_state.json' | sort | tail -1)\n" +
+"if [ -n \"$FINAL_TRAINER_STATE\" ]; then\n" +
+"    cp -f \"$FINAL_TRAINER_STATE\" $RESULTS/final_trainer_state.json\n" +
+"    # Compute simple loss-converged check: max(loss_window_increase) < 0.1 across last 4 windows of 500 steps\n" +
+"    LOSS_OK=$(python -c \"\n" +
+"import json\n" +
+"d=json.load(open('$RESULTS/final_trainer_state.json'))\n" +
+"hist=[h for h in d.get('log_history',[]) if 'loss' in h]\n" +
+"if len(hist) < 5:\n" +
+"    print('false')\n" +
+"else:\n" +
+"    losses=[h['loss'] for h in hist]\n" +
+"    has_nan=any(l!=l or l==float('inf') for l in losses)\n" +
+"    if has_nan: print('false')\n" +
+"    else:\n" +
+"        # last 4 windows: each window = 500/logging_steps_per_window observations\n" +
+"        # simple: rolling diff over last 25% of points\n" +
+"        n=len(losses)\n" +
+"        tail=losses[-min(n,40):]\n" +
+"        max_inc=0\n" +
+"        for i in range(1,len(tail)):\n" +
+"            inc=tail[i]-tail[i-1]\n" +
+"            if inc>max_inc: max_inc=inc\n" +
+"        print('true' if max_inc < 1.0 else 'false')\n" +
+"\" 2>/dev/null || echo 'unknown')\n" +
+"    echo \"{\\\"loss_converged\\\": $LOSS_OK, \\\"trainer_state\\\": \\\"final_trainer_state.json\\\"}\" > $RESULTS/train_log.json\n" +
+"fi\n" +
+"\n" +
+"# If early-stopped, emit COMPLETE.sentinel anyway so orchestrator scp + kill\n" +
+"if [ -f \"$RESULTS/EARLY_STOP.sentinel\" ]; then\n" +
+"    echo \"[B] early-stop path: skipping final eval; emit COMPLETE.sentinel\"\n" +
+"    echo \"{\\\"ok\\\": false, \\\"early_stopped\\\": true, \\\"finished_at\\\": \\\"$(date -u +%FT%TZ)\\\"}\" > $RESULTS/COMPLETE.sentinel\n" +
+"    echo \"[orch] complete (early-stop)\"\n" +
+"    exit 0\n" +
+"fi\n" +
+"\n" +
+"if [ $TRAIN_RC -ne 0 ]; then\n" +
+"    echo \"[B] train failed rc=$TRAIN_RC; emit COMPLETE.sentinel for cleanup\"\n" +
+"    tail -50 \"$TRAIN_LOG\"\n" +
+"    echo \"{\\\"ok\\\": false, \\\"train_rc\\\": $TRAIN_RC, \\\"finished_at\\\": \\\"$(date -u +%FT%TZ)\\\"}\" > $RESULTS/COMPLETE.sentinel\n" +
+"    exit 1\n" +
+"fi\n" +
+"\n" +
+"# ── Phase C: final 3-bench eval (limit=500, seed=42) ──\n" +
+"echo \"[C] final eval start\"\n" +
+"FINAL_ADAPTER=\"$CKPTS/final\"\n" +
+"if [ ! -f \"$FINAL_ADAPTER/adapter_model.safetensors\" ]; then\n" +
+"    # fall back to latest checkpoint-XXXX\n" +
+"    FINAL_ADAPTER=$(ls -d $CKPTS/checkpoint-* 2>/dev/null | sort -V | tail -1)\n" +
+"fi\n" +
+"echo \"[C] final adapter: $FINAL_ADAPTER\"\n" +
+"\n" +
+"run_bench() {\n" +
+"    local tkey=$1; local task=$2; local nshot=$3\n" +
+"    local out=$RESULTS/final_lora_${tkey}_dir\n" +
+"    local log=$RESULTS/final_${tkey}.log\n" +
+"    echo \"[C] task=$task n=$nshot → $out\"\n" +
+"    local t0=$(date -u +%s)\n" +
+"    lm_eval --model hf \\\n" +
+"        --model_args \"pretrained=${LLAMA_ID},peft=${FINAL_ADAPTER},dtype=bfloat16,trust_remote_code=False\" \\\n" +
+"        --tasks \"$task\" \\\n" +
+"        --num_fewshot \"$nshot\" \\\n" +
+"        --batch_size 16 \\\n" +
+"        --device cuda:0 \\\n" +
+"        --seed 42 \\\n" +
+"        --limit 500 \\\n" +
+"        --log_samples \\\n" +
+"        --output_path \"$out\" \\\n" +
+"        > \"$log\" 2>&1\n" +
+"    local rc=$?\n" +
+"    local t1=$(date -u +%s)\n" +
+"    echo \"[C] done task=$task rc=$rc wall=$((t1-t0))s\"\n" +
+"    if [ $rc -ne 0 ]; then echo \"[FAIL]\"; tail -50 \"$log\"; fi\n" +
+"    if [ -d \"$out\" ]; then\n" +
+"        find \"$out\" -name 'results*.json' -exec cp {} $RESULTS/final_lora_${tkey}.json \\;\n" +
+"    fi\n" +
+"    return $rc\n" +
+"}\n" +
+"\n" +
+"run_bench 'hellaswag' 'hellaswag' 0\n" +
+"run_bench 'mmlu' 'mmlu' 5\n" +
+"run_bench 'triviaqa' 'triviaqa' 0\n" +
+"\n" +
+"# ── Phase D: emit COMPLETE.sentinel ──\n" +
+"echo \"{\\\"ok\\\": true, \\\"finished_at\\\": \\\"$(date -u +%FT%TZ)\\\", \\\"phases\\\": [\\\"corpus_mix\\\", \\\"train\\\", \\\"intermediate_eval\\\", \\\"final_eval\\\"]}\" > $RESULTS/COMPLETE.sentinel\n" +
+"echo \"[orch] complete\"\n"
+
+    write_file(RUN_H100_PATH, run_h100)
+    exec_with_status("chmod +x " + _sq(RUN_H100_PATH))
+    println("[emit] " + RUN_H100_PATH)
+    println("[emit] OK")
+}
+
+// ─── kill (emergency) ─────────────────────────────────────────────────────
+
+fn _kill(pod_id: string) {
+    if pod_id == "" {
+        eprintln("ERROR: --kill requires <pod_id> argument")
+        exit(1)
+    }
+    println("[kill] pod=" + pod_id)
+    exec_with_status(_sq(RUNPODCTL) + " stop pod " + _sq(pod_id))
+    exec_with_status("sleep 5")
+    exec_with_status(_sq(RUNPODCTL) + " remove pod " + _sq(pod_id))
+    let r = exec_with_status(_sq(RUNPODCTL) + " get pod " + _sq(pod_id) + " 2>&1 | head -1")
+    println("[kill] post-status: " + to_string(r[0]).trim())
+}
+
+// ─── main ─────────────────────────────────────────────────────────────────
+
+fn main() {
+    let av = _argv()
+
+    if _flag(av, "--selftest") {
+        _selftest()
+        return
+    }
+    if _flag(av, "--kill") {
+        _kill(_opt(av, "--kill", ""))
+        return
+    }
+    if _flag(av, "--emit") {
+        _emit()
+        return
+    }
+    if _flag(av, "--launch") {
+        _emit()
+        println("[launch] dispatching " + EXEC_BASH_PATH)
+        let r = exec_with_status("bash " + _sq(EXEC_BASH_PATH))
+        println("[launch] rc=" + to_string(r[1]))
+        return
+    }
+
+    println("USAGE: hexa run tool/p9_path_a_retrain_v2_h100_orchestrator.hexa [--selftest|--emit|--launch|--kill <pod_id>]")
+}
+

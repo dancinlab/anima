@@ -1,0 +1,23 @@
+[mix] start ts=2026-05-04T11:44:40Z
+[A] loaded 30000 anima samples
+[B1] loading cais/mmlu auxiliary_train (n=5000)
+Traceback (most recent call last):
+  File "/workspace/p9_retrain_v2/corpus_mix.py", line 247, in <module>
+    main()
+  File "/workspace/p9_retrain_v2/corpus_mix.py", line 214, in main
+    B1 = slice_B1_mmlu(5000)
+         ^^^^^^^^^^^^^^^^^^^
+  File "/workspace/p9_retrain_v2/corpus_mix.py", line 43, in slice_B1_mmlu
+    ds = load_dataset("cais/mmlu", "all", split="auxiliary_train")
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/dist-packages/datasets/load.py", line 1688, in load_dataset
+    builder_instance = load_dataset_builder(
+                       ^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/dist-packages/datasets/load.py", line 1315, in load_dataset_builder
+    dataset_module = dataset_module_factory(
+                     ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/dist-packages/datasets/load.py", line 1201, in dataset_module_factory
+    raise e1 from None
+  File "/usr/local/lib/python3.11/dist-packages/datasets/load.py", line 1158, in dataset_module_factory
+    raise DatasetNotFoundError(f"Dataset '{path}' doesn't exist on the Hub or cannot be accessed.") from e
+datasets.exceptions.DatasetNotFoundError: Dataset 'cais/mmlu' doesn't exist on the Hub or cannot be accessed.

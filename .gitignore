@@ -32,6 +32,12 @@ training/corpus_*.txt
 training/corpus_*.txt.gz
 training/deploy/.reval_tmp/
 
+# P9 retrain v2 large corpus + adapter artifacts (76MB+ JSONL, 400MB+ adapters)
+state/p9_path_a_retrain_v2_exec_*/corpus/*.jsonl
+state/p9_path_a_retrain_v2_exec_*/results/adapter_*/
+state/p9_path_a_retrain_v2_exec_*/results/intermediate_dir/
+state/p9_path_a_retrain_v2_exec_*/results/final_lora_*_dir/
+
 # anima-voice voice corpus audio — use R2 for distribution (GitHub 100MB/file limit)
 anima-voice/corpus/**/raw/
 anima-voice/corpus/**/wav16k/
