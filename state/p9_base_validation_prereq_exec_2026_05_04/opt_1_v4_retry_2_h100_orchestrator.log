@@ -1,0 +1,380 @@
+[orch] start ts=2026-05-04T12:49:27Z
+[setup] installing deps (verbose sentencepiece+tiktoken pre-install)
+Collecting regex>=2022.1.18 (from tiktoken)
+  Downloading regex-2026.4.4-cp311-cp311-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl.metadata (40 kB)
+Requirement already satisfied: requests>=2.26.0 in /usr/local/lib/python3.11/dist-packages (from tiktoken) (2.32.3)
+Requirement already satisfied: charset-normalizer<4,>=2 in /usr/local/lib/python3.11/dist-packages (from requests>=2.26.0->tiktoken) (3.3.2)
+Requirement already satisfied: idna<4,>=2.5 in /usr/local/lib/python3.11/dist-packages (from requests>=2.26.0->tiktoken) (3.10)
+Requirement already satisfied: urllib3<3,>=1.21.1 in /usr/local/lib/python3.11/dist-packages (from requests>=2.26.0->tiktoken) (2.2.3)
+Requirement already satisfied: certifi>=2017.4.17 in /usr/local/lib/python3.11/dist-packages (from requests>=2.26.0->tiktoken) (2024.8.30)
+Downloading sentencepiece-0.2.1-cp311-cp311-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl (1.4 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 1.4/1.4 MB 72.6 MB/s eta 0:00:00
+Downloading tiktoken-0.12.0-cp311-cp311-manylinux_2_28_x86_64.whl (1.2 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 1.2/1.2 MB 224.3 MB/s eta 0:00:00
+Downloading protobuf-7.34.1-cp310-abi3-manylinux2014_x86_64.whl (324 kB)
+Downloading regex-2026.4.4-cp311-cp311-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl (799 kB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 799.8/799.8 kB 178.5 MB/s eta 0:00:00
+Installing collected packages: sentencepiece, regex, protobuf, tiktoken
+Successfully installed protobuf-7.34.1 regex-2026.4.4 sentencepiece-0.2.1 tiktoken-0.12.0
+WARNING: Running pip as the 'root' user can result in broken permissions and conflicting behaviour with the system package manager, possibly rendering your system unusable.It is recommended to use a virtual environment instead: https://pip.pypa.io/warnings/venv. Use the --root-user-action option if you know what you are doing and want to suppress this warning.
+
+[notice] A new release of pip is available: 24.2 -> 26.1
+[notice] To update, run: python -m pip install --upgrade pip
+[setup] verifying sentencepiece import
+sentencepiece OK 0.2.1
+tiktoken OK 0.12.0
+WARNING: Running pip as the 'root' user can result in broken permissions and conflicting behaviour with the system package manager, possibly rendering your system unusable.It is recommended to use a virtual environment instead: https://pip.pypa.io/warnings/venv. Use the --root-user-action option if you know what you are doing and want to suppress this warning.
+
+[notice] A new release of pip is available: 24.2 -> 26.1
+[notice] To update, run: python -m pip install --upgrade pip
+Login successful.
+Note: Environment variable`HF_TOKEN` is set and is the current active token independently from the token you've just configured.
+[setup] downloading need-singularity/clm-v4-base-mirror
+Fetching 6 files:   0%|          | 0/6 [00:00<?, ?it/s]Fetching 6 files:  17%|█▋        | 1/6 [00:00<00:00,  9.53it/s]Fetching 6 files:  33%|███▎      | 2/6 [00:14<00:33,  8.32s/it]Fetching 6 files: 100%|██████████| 6/6 [00:14<00:00,  2.36s/it]
+[32m✓ Downloaded[0m
+  path: /root/.cache/huggingface/hub/models--need-singularity--clm-v4-base-mirror/snapshots/10ee03687db312c55bbec5858c814bef28e4d365
+[setup] best.pt=/root/.cache/huggingface/hub/models--need-singularity--clm-v4-base-mirror/snapshots/10ee03687db312c55bbec5858c814bef28e4d365/best.pt
+[setup] tokenizer=/root/.cache/huggingface/hub/models--need-singularity--clm-v4-base-mirror/snapshots/10ee03687db312c55bbec5858c814bef28e4d365/tokenizer
+[orch] torch=2.4.1+cu124
+name, memory.total [MiB]
+NVIDIA H100 80GB HBM3, 81559 MiB
+[stageA] shim v4 with canonical_zero fixture
+{
+  "phase": "plan",
+  "shim": "clm_v4_hf_format_shim.py",
+  "mode": "execute",
+  "input_pt": "/root/.cache/huggingface/hub/models--need-singularity--clm-v4-base-mirror/snapshots/10ee03687db312c55bbec5858c814bef28e4d365/best.pt",
+  "input_pt_exists": true,
+  "tokenizer_dir": "/root/.cache/huggingface/hub/models--need-singularity--clm-v4-base-mirror/snapshots/10ee03687db312c55bbec5858c814bef28e4d365/tokenizer",
+  "tokenizer_dir_exists": true,
+  "output_dir": "/workspace/p9_v4_exec/output_v4",
+  "output_dir_exists": true,
+  "device": "cpu",
+  "strict_load": true,
+  "verify_post_save": true,
+  "expected_arch": {
+    "vocab_size": 64000,
+    "d_model": 768,
+    "n_layer": 16,
+    "n_head": 6,
+    "n_kv_head": 2,
+    "head_dim": 128,
+    "block_size": 512,
+    "consciousness_dim": 192,
+    "ffn_gate_dim": 2048,
+    "purefield_dim": 3072,
+    "n_ca_rules": 8,
+    "expected_param_count": 530994816,
+    "expected_decoder_keys": 581
+  },
+  "outputs_to_write": [
+    "config.json",
+    "configuration_clm_v4.py",
+    "modeling_clm_v4.py",
+    "model.safetensors",
+    "generation_config.json",
+    "tokenizer.model (copy)",
+    "tokenizer_config.json (copy or stub)",
+    "special_tokens_map.json (copy or stub)"
+  ],
+  "v3_patches_planned": [
+    "P1: decoder_v3.py:~168 'x, tension = block(...)' -> 'x, tension, _new_kv, _aux_loss = block(...)'",
+    "P2: decoder_v3.py:~25 'from conscious_decoder import (' -> 'from .conscious_decoder import ('",
+    "P3: INTENTIONALLY OMITTED \u2014 consciousness_laws.py not in output_dir; non-relative import in upstream try/except runs fallback OK"
+  ],
+  "v4_patches_planned": [
+    "Q1: --consciousness-states-fixture flag accepts JSON path; copied into output dir as consciousness_states_fixture.json",
+    "Q2: backwards-compatible \u2014 without flag, modeling_clm_v4.py behaves as v3 (cross-attn bypass on consciousness_states=None)",
+    "Q3: modeling_clm_v4.py forward injects fixture (broadcast to runtime batch) when consciousness_states=None AND fixture file present"
+  ],
+  "falsifier_set": {
+    "F-SHIM-1": "safetensors load round-trip strict=True",
+    "F-SHIM-2": "1-batch forward returns finite [B,T,vocab]",
+    "F-SHIM-3": "post-load logits match best.pt direct-load within 1e-5",
+    "F-SHIM-4": "vocab_size==64000 matches CLM v4 SP tokenizer",
+    "F-SHIM-V4-1": "fixture JSON validates (Mac, no torch)",
+    "F-SHIM-V4-2": "no-fixture run produces same modeling files as v3",
+    "F-SHIM-V4-3": "(deferred) reload+forward with canonical_zero fixture finite",
+    "F-SHIM-V4-4": "(deferred) train_avg fixture > random+5pt on >=1 benchmark"
+  },
+  "estimated_wall_minutes": "30-60 (dominated by torch.load 5GB ckpt + safetensors save)",
+  "estimated_peak_ram_gb": 5.5,
+  "consciousness_states_fixture": {
+    "path": "/workspace/p9_v4_exec/opt_1_v4_consciousness_states_fixture.json",
+    "exists": true,
+    "ok": true,
+    "shape": [
+      1,
+      8,
+      192
+    ],
+    "dtype": "float32",
+    "source": "canonical_zero",
+    "n_cells": 8,
+    "errors": [],
+    "warnings": []
+  }
+}
+[shim] building decoder on cpu ...
+[shim] loading state_dict from /root/.cache/huggingface/hub/models--need-singularity--clm-v4-base-mirror/snapshots/10ee03687db312c55bbec5858c814bef28e4d365/best.pt ...
+[shim] decoder loaded: step=20000, ce=0.04630279541015625, best_phi=37.270, params=477,648,512
+[shim] saving HF-format to /workspace/p9_v4_exec/output_v4 ...
+[shim] saved: 2.12 GB safetensors
+[shim] verifying round-trip ...
+[transformers] `torch_dtype` is deprecated! Use `dtype` instead!
+Loading weights:   0%|          | 0/581 [00:00<?, ?it/s]Loading weights:  24%|██▎       | 137/581 [00:00<00:00, 1369.21it/s]Loading weights:  55%|█████▌    | 322/581 [00:00<00:00, 1631.53it/s]Loading weights:  83%|████████▎ | 485/581 [00:00<00:00, 783.51it/s] Loading weights: 100%|██████████| 581/581 [00:00<00:00, 1058.80it/s]
+{
+  "phase": "verify",
+  "F-SHIM-1_safetensors_load": true,
+  "F-SHIM-2_shape_finite": true,
+  "F-SHIM-2_logits_shape": [
+    1,
+    32,
+    64000
+  ],
+  "F-SHIM-3_max_abs_diff": 0.0,
+  "F-SHIM-3_mean_abs_diff": 0.0,
+  "F-SHIM-3_equivalence": true,
+  "F-SHIM-4_vocab_match": true,
+  "F-SHIM-4_vocab_size": 64000,
+  "verify_pass": true
+}
+{
+  "phase": "execute_complete",
+  "wall_seconds": 38.5,
+  "wall_minutes": 0.64,
+  "decoder_meta": {
+    "step": 20000,
+    "ce": 0.04630279541015625,
+    "scale": "350m",
+    "best_phi": 37.269868535501914,
+    "args": {
+      "data": "data/corpus_tier_m_v2.txt",
+      "tokenizer": "data/tokenizer_64k_multilingual.model",
+      "vocab_size": 64000,
+      "scale": "350m",
+      "federated": true,
+      "cell_dim": 64,
+      "hidden_dim": 128,
+      "decoder": "v3",
+      "d_model": null,
+      "lr": 0.0002,
+      "block_size": 512,
+      "phase_optimal": true,
+      "frustration": 0.1,
+      "narrative_strength": 0.05,
+      "tension_lr": false,
+      "steps": 20000,
+      "seed": 42,
+      "warmup_ratio": 0.05,
+      "batch_size": 1,
+      "patience": 0,
+      "device": "cuda",
+      "log_every": 100,
+      "eval_every": 1000,
+      "phi_every": 50,
+      "save_every": 5000,
+      "checkpoint": "checkpoints/clm_v4_350m",
+      "verify_at_checkpoint": false,
+      "feedback_bridge": false,
+      "wandb": false,
+      "wandb_project": "anima-1b",
+      "hard_token_ratio": 0.3,
+      "curriculum_length": "64,256,512",
+      "skip_step": 10,
+      "phi_only_ratio": 0.2,
+      "bigbang_init": false,
+      "pack_sequences": true,
+      "moe": false,
+      "n_experts": 8,
+      "top_k_experts": 2,
+      "moe_aux_weight": 0.01,
+      "resume": null,
+      "_device_obj": "cuda",
+      "steps_per_scale": 20000
+    },
+    "n_param_loaded": 477648512,
+    "n_state_dict_total_numel": 530994816,
+    "n_param_match": true,
+    "n_state_dict_match": true
+  },
+  "save_meta": {
+    "config_json": "/workspace/p9_v4_exec/output_v4/config.json",
+    "model_safetensors_bytes": 2124043008,
+    "modeling_files": [
+      "configuration_clm_v4.py",
+      "modeling_clm_v4.py",
+      "decoder_v3.py",
+      "conscious_decoder.py"
+    ],
+    "tokenizer_files_copied": [
+      "README.md",
+      "integrity_report.json",
+      "tokenizer_64k_multilingual.vocab",
+      "tokenizer_64k_multilingual.model"
+    ],
+    "wrapped_param_count": 530994816,
+    "aliased_keys_resolved": [
+      "decoder.head_a.weight"
+    ],
+    "v3_patches_applied": [
+      {
+        "name": "P1_4tuple_unpack",
+        "site": "decoder_v3.py:~168",
+        "before": "x, tension = block(x, consciousness_signal, consciousness_states)",
+        "after": "x, tension, _new_kv, _aux_loss = block(x, consciousness_signal, consciousness_states)",
+        "applied": true
+      },
+      {
+        "name": "P2_relative_import_conscious_decoder",
+        "site": "decoder_v3.py:~25",
+        "before": "from conscious_decoder import (",
+        "after": "from .conscious_decoder import (",
+        "applied": true
+      }
+    ],
+    "v4_consciousness_fixture": {
+      "copied": true,
+      "path": "/workspace/p9_v4_exec/output_v4/consciousness_states_fixture.json",
+      "validation": {
+        "path": "/workspace/p9_v4_exec/opt_1_v4_consciousness_states_fixture.json",
+        "exists": true,
+        "ok": true,
+        "shape": [
+          1,
+          8,
+          192
+        ],
+        "dtype": "float32",
+        "source": "canonical_zero",
+        "n_cells": 8,
+        "errors": [],
+        "warnings": []
+      }
+    }
+  },
+  "verify": {
+    "F-SHIM-1_safetensors_load": true,
+    "F-SHIM-2_shape_finite": true,
+    "F-SHIM-2_logits_shape": [
+      1,
+      32,
+      64000
+    ],
+    "F-SHIM-3_max_abs_diff": 0.0,
+    "F-SHIM-3_mean_abs_diff": 0.0,
+    "F-SHIM-3_equivalence": true,
+    "F-SHIM-4_vocab_match": true,
+    "F-SHIM-4_vocab_size": 64000,
+    "verify_pass": true
+  },
+  "verdict": "PASS"
+}
+[stageA] shim_rc=0
+[stageA-no-fixture] shim v4 WITHOUT fixture (sanity baseline)
+      "validation": null
+    }
+  },
+  "verify": {
+    "F-SHIM-1_safetensors_load": true,
+    "F-SHIM-2_shape_finite": true,
+    "F-SHIM-2_logits_shape": [
+      1,
+      32,
+      64000
+    ],
+    "F-SHIM-3_max_abs_diff": 0.0,
+    "F-SHIM-3_mean_abs_diff": 0.0,
+    "F-SHIM-3_equivalence": true,
+    "F-SHIM-4_vocab_match": true,
+    "F-SHIM-4_vocab_size": 64000,
+    "verify_pass": true
+  },
+  "verdict": "PASS"
+}
+[stageA-no-fixture] shim_nf_rc=0
+sentencepiece STILL OK 0.2.1
+[stageB] F-SHIM-V4-3 finite forward smoketest
+[transformers] `torch_dtype` is deprecated! Use `dtype` instead!
+Loading weights:   0%|          | 0/581 [00:00<?, ?it/s]Loading weights:  14%|█▍        | 80/581 [00:00<00:00, 739.85it/s]Loading weights:  39%|███▊      | 224/581 [00:00<00:00, 1010.01it/s]Loading weights:  63%|██████▎   | 368/581 [00:00<00:00, 1047.00it/s]Loading weights:  82%|████████▏ | 476/581 [00:00<00:00, 1009.90it/s]Loading weights:  99%|█████████▉| 577/581 [00:00<00:00, 443.48it/s] Loading weights: 100%|██████████| 581/581 [00:01<00:00, 465.64it/s]
+=== f_shim_v4_3_smoketest_result ===
+{
+  "f_shim_v4_3": "PASS",
+  "finite_forward": "finite",
+  "shape": [
+    1,
+    32,
+    64000
+  ],
+  "err": null,
+  "sentencepiece_version": "0.2.1",
+  "fixture_meta": null,
+  "fixture_loaded": false
+}
+[stageC] train_avg harvest stub
+=== train_avg_harvest_result ===
+{
+  "harvest_via": "forward-pass synthetic stub (random N(0,0.01) \u2014 NOT actual train avg)",
+  "err": null,
+  "shape": [
+    1,
+    8,
+    192
+  ],
+  "sample_first10": [
+    0.019269151613116264,
+    0.014872840605676174,
+    0.009007171727716923,
+    -0.021055208519101143,
+    0.006784184370189905,
+    -0.012345448136329651,
+    -0.0004306747578084469,
+    -0.016046669334173203,
+    -0.007521352730691433,
+    0.016487229615449905
+  ],
+  "ckpt_top_keys": [
+    "step",
+    "decoder",
+    "optimizer",
+    "scheduler",
+    "phi",
+    "ce",
+    "args",
+    "scale",
+    "best_phi",
+    "federation",
+    "bridge",
+    "c_proj",
+    "scaler"
+  ],
+  "approach_a_candidates": [],
+  "fixture_saved": true,
+  "stub_warning": "This is a SYNTHETIC stub. Real train_avg requires anima_unified.py runtime forward pass over training data with cell hidden harvest."
+}
+[stageD] limit=100 hellaswag sanity eval
+[stageD] skipped — F-SHIM-V4-3 did not pass
+[stageE] aggregate verdict
+{
+  "f_shim_v4_3": "PASS",
+  "f_shim_v4_4": "HARVEST_STUB_ONLY",
+  "finite_forward": "finite",
+  "harvest_via": "forward-pass synthetic stub (random N(0,0.01) \u2014 NOT actual train avg)",
+  "sanity_canonical_zero_hellaswag_acc": null,
+  "sanity_no_fixture_hellaswag_acc": null,
+  "f_shim_v4_3_shape": [
+    1,
+    32,
+    64000
+  ],
+  "f_shim_v4_3_fixture_loaded": false,
+  "f_shim_v4_3_err": null,
+  "sentencepiece_version": "0.2.1",
+  "harvest_shape": [
+    1,
+    8,
+    192
+  ],
+  "harvest_stub_warning": "This is a SYNTHETIC stub. Real train_avg requires anima_unified.py runtime forward pass over training data with cell hidden harvest."
+}
+[orch] complete

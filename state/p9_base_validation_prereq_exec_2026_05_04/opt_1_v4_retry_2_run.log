@@ -1,0 +1,47 @@
+[2026-05-04T12:48:18Z] secrets OK (runpod=50b, hf=37b)
+[2026-05-04T12:48:18Z] stage0b: pre-flight HF whoami-v2 (fail-fast on token validity)
+[2026-05-04T12:48:19Z] stage0b: HF auth OK — whoami=dancinlife
+[2026-05-04T12:48:19Z] booting pod=anima-p9-opt-1-v4-retry-2-2026-05-04 (H100 80GB HBM3 secure on-demand @ $2.99/hr)
+[2026-05-04T12:48:19Z] pod_id=hk3wbu2mgb2v80
+[2026-05-04T12:48:19Z] waiting for SSH ready (max 6min)
+[2026-05-04T12:48:50Z] SSH ready at 64.247.201.55:12440 (after 3 probes)
+[2026-05-04T12:48:50Z] setup: ssh mkdir + scp shim v4 + canonical_zero fixture + legacy decoder + run_h100.bash
+[2026-05-04T12:49:24Z] launching v4 exec on H100
+[2026-05-04T12:51:46Z] poll loop start (max 60min, budget cap $3.50)
+[2026-05-04T12:51:49Z] elapsed=3min cost=$0.17 probe=/workspace/p9_v4_exec/results/COMPLETE.sentinel SENTINEL_FOUND|
+[2026-05-04T12:52:06Z] COMPLETE.sentinel detected — final sync + auto-kill imminent
+Warning: Permanently added '[64.247.201.55]:12440' (ED25519) to the list of known hosts.
+[2026-05-04T12:52:47Z] computing verdict
+[2026-05-04T12:52:47Z] verdict written: f_shim_v4_3=PASS harvest_via=forward-pass synthetic stub (random N(0,0.01) — NOT actual train avg) wall=4min cost=$0.20
+__P9_OPT_1_V4_EXEC__ f_shim_v4_3=PASS
+[2026-05-04T12:52:47Z] [trap] killing pod=hk3wbu2mgb2v80 (auto-kill mandatory)
+{
+  "containerDiskInGb": 80,
+  "costPerHr": 2.99,
+  "createdAt": "2026-05-04 12:48:19.642 +0000 UTC",
+  "desiredStatus": "EXITED",
+  "env": {
+    "HF_TOKEN": "<HF_TOKEN_REDACTED>",
+    "PUBLIC_KEY": "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIKOEWe0SBseZceuCgcVnlNDhEwbU/TIqGeK9FdrpIy9V ghost@ghostui-MacBookAir.local\n\nssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQCf5vOKHhrik9f3yA4IWXXGKPVvDQ8nFP5b1PF7a7YHuXMmZVSOvISYwph7yuCCYyZP8GTDm9MWHZVSR6ArijPxRfAbGDUtENFrHtyA5IGI9GycJkrYokI20neQXR4AGTwk/kVXOdaMaxEREFKhyffzZyrPKUEpZ7ikGXVM9MqWYNFvvy1ioQ7uuqyFq+65phVjojKgg4LWdnTjcxNzNrOgwlZqANx450Nhv3KAGhWSiLZgU6iA4JJ6gsq6t5S9p5n7T6EeypUyuKT4iOH0U5d4jIrssz0QwBncytLvQCvv7IpsapPqhgQzBXcGMZKkLS62UWYDRTeL7PPz3+N2hM4N RunPod-Key-Go"
+  },
+  "gpuCount": 1,
+  "id": "hk3wbu2mgb2v80",
+  "imageName": "runpod/pytorch:2.4.0-py3.11-cuda12.4.1-devel-ubuntu22.04",
+  "lastStatusChange": "Exited by user: Mon May 04 2026 12:52:48 GMT+0000 (Coordinated Universal Time)",
+  "memoryInGb": 251,
+  "name": "anima-p9-opt-1-v4-retry-2-2026-05-04",
+  "ports": [
+    "22/tcp",
+    "8888/http"
+  ],
+  "vcpuCount": 26,
+  "volumeInGb": 50,
+  "volumeMountPath": "/workspace"
+}
+{
+  "deleted": true,
+  "id": "hk3wbu2mgb2v80"
+}
+[2026-05-04T12:52:56Z] [trap] post-kill: {"error":"api error: {\"error\":\"pod not found\",\"status\":404}\n (status 404)"}
+Usage:
+  runpodctl pod get <pod-id> [flags]
