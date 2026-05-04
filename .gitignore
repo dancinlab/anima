@@ -194,6 +194,16 @@ state/.welch_to_bandpower_*
 state/p9_p0_*/
 state/qmirror_*/
 
+# BG-φ Phase 4 symmetry fix (ref commit b4e1570c0): callers 3+4 .py.txt parking.
+# Narrow to .py / .py.txt only (NOT bare dir) so verdict.json + trajectory.json
+# + per_prompt JSON artifacts under p9_p1_*/ + p9_qmirror_*/ remain trackable.
+# Pre-existing tracked .py.txt under p9_a_prime_*, p9_paradigm_d_*, p9_path_a_*
+# are unaffected (gitignore does not retroactively untrack files).
+state/p9_p1_*/**/*.py
+state/p9_p1_*/**/*.py.txt
+state/p9_qmirror_*/**/*.py
+state/p9_qmirror_*/**/*.py.txt
+
 # EEG session-specific snapshots (timestamped, ledger holds canonical SSOT)
 state/anima_eeg_impedance_*.json
 state/anima_eeg_session_log.jsonl
