@@ -1,0 +1,96 @@
+{
+  "phase": "plan",
+  "shim": "clm_v4_hf_format_shim.py",
+  "mode": "execute",
+  "input_pt": "/root/.cache/huggingface/hub/models--need-singularity--clm-v4-base-mirror/snapshots/10ee03687db312c55bbec5858c814bef28e4d365/best.pt",
+  "input_pt_exists": true,
+  "tokenizer_dir": "/root/.cache/huggingface/hub/models--need-singularity--clm-v4-base-mirror/snapshots/10ee03687db312c55bbec5858c814bef28e4d365/tokenizer",
+  "tokenizer_dir_exists": true,
+  "output_dir": "/workspace/p9_v4_exec/output_v4",
+  "output_dir_exists": true,
+  "device": "cpu",
+  "strict_load": true,
+  "verify_post_save": true,
+  "expected_arch": {
+    "vocab_size": 64000,
+    "d_model": 768,
+    "n_layer": 16,
+    "n_head": 6,
+    "n_kv_head": 2,
+    "head_dim": 128,
+    "block_size": 512,
+    "consciousness_dim": 192,
+    "ffn_gate_dim": 2048,
+    "purefield_dim": 3072,
+    "n_ca_rules": 8,
+    "expected_param_count": 530994816,
+    "expected_decoder_keys": 581
+  },
+  "outputs_to_write": [
+    "config.json",
+    "configuration_clm_v4.py",
+    "modeling_clm_v4.py",
+    "model.safetensors",
+    "generation_config.json",
+    "tokenizer.model (copy)",
+    "tokenizer_config.json (copy or stub)",
+    "special_tokens_map.json (copy or stub)"
+  ],
+  "v3_patches_planned": [
+    "P1: decoder_v3.py:~168 'x, tension = block(...)' -> 'x, tension, _new_kv, _aux_loss = block(...)'",
+    "P2: decoder_v3.py:~25 'from conscious_decoder import (' -> 'from .conscious_decoder import ('",
+    "P3: INTENTIONALLY OMITTED \u2014 consciousness_laws.py not in output_dir; non-relative import in upstream try/except runs fallback OK"
+  ],
+  "v4_patches_planned": [
+    "Q1: --consciousness-states-fixture flag accepts JSON path; copied into output dir as consciousness_states_fixture.json",
+    "Q2: backwards-compatible \u2014 without flag, modeling_clm_v4.py behaves as v3 (cross-attn bypass on consciousness_states=None)",
+    "Q3: modeling_clm_v4.py forward injects fixture (broadcast to runtime batch) when consciousness_states=None AND fixture file present"
+  ],
+  "falsifier_set": {
+    "F-SHIM-1": "safetensors load round-trip strict=True",
+    "F-SHIM-2": "1-batch forward returns finite [B,T,vocab]",
+    "F-SHIM-3": "post-load logits match best.pt direct-load within 1e-5",
+    "F-SHIM-4": "vocab_size==64000 matches CLM v4 SP tokenizer",
+    "F-SHIM-V4-1": "fixture JSON validates (Mac, no torch)",
+    "F-SHIM-V4-2": "no-fixture run produces same modeling files as v3",
+    "F-SHIM-V4-3": "(deferred) reload+forward with canonical_zero fixture finite",
+    "F-SHIM-V4-4": "(deferred) train_avg fixture > random+5pt on >=1 benchmark"
+  },
+  "estimated_wall_minutes": "30-60 (dominated by torch.load 5GB ckpt + safetensors save)",
+  "estimated_peak_ram_gb": 5.5,
+  "consciousness_states_fixture": {
+    "path": "/workspace/p9_v4_exec/opt_1_v4_consciousness_states_fixture.json",
+    "exists": true,
+    "ok": true,
+    "shape": [
+      1,
+      8,
+      192
+    ],
+    "dtype": "float32",
+    "source": "canonical_zero",
+    "n_cells": 8,
+    "errors": [],
+    "warnings": []
+  }
+}
+[shim] building decoder on cpu ...
+Traceback (most recent call last):
+  File "/workspace/p9_v4_exec/clm_v4_hf_format_shim.py", line 470, in _build_decoder_module
+    from decoder_v3 import ConsciousDecoderV3  # type: ignore
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+ModuleNotFoundError: No module named 'decoder_v3'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/workspace/p9_v4_exec/clm_v4_hf_format_shim.py", line 1418, in <module>
+    sys.exit(main())
+             ^^^^^^
+  File "/workspace/p9_v4_exec/clm_v4_hf_format_shim.py", line 1382, in main
+    model = _build_decoder_module(args.device)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/p9_v4_exec/clm_v4_hf_format_shim.py", line 472, in _build_decoder_module
+    raise RuntimeError(
+RuntimeError: Cannot import ConsciousDecoderV3 — check legacy_search paths: ['/root/anima/ready/anima/models/legacy', '/Users/ghost/core/anima/ready/anima/models/legacy', '/root/core/anima/ready/anima/models/legacy', '/root/anima/anima/models/legacy']
+Original error: No module named 'decoder_v3'
