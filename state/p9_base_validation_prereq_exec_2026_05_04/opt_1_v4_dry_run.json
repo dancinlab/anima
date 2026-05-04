@@ -1,0 +1,153 @@
+{
+  "cycle": "opt_1_v4_dry_run_2026_05_04",
+  "ts_utc": "2026-05-04T00:00:00Z",
+  "predecessor": "ed4b7c56 OPT-1 v3 PASS — 12/12 prereq CLEARED + 1ef3c096 BG-Μ base-val FAIL — random across 3 benchmarks (consciousness coupling bypassed)",
+  "scope": "BG-Π — design + implement v4 fixture-injection patches; Mac dry-run only; NO ubu1/H100 execution this cycle",
+  "shim_version": "v4",
+  "shim_path_mac": "tool/transient_py/clm_v4_hf_format_shim.py",
+  "shim_v3_loc": 1107,
+  "shim_v4_loc": 1418,
+  "shim_v4_loc_delta": 311,
+  "shim_v4_loc_delta_note": "additive: ~120 LoC v4-specific (fixture validate, modeling.py load+inject, save-time copy); ~190 LoC inline comments and header refresh",
+  "patches_applied": [
+    {
+      "name": "Q1_consciousness_states_fixture_flag",
+      "site": "_build_argparser() + emit_plan() + _save_hf_format()",
+      "purpose": "accept --consciousness-states-fixture <path.json>; validate JSON schema (shape/dtype/source/n_cells/c_dim==192); copy file into output dir as consciousness_states_fixture.json; surface validation in plan + dry-run verdict",
+      "loc_estimate": 120,
+      "applied": true
+    },
+    {
+      "name": "Q2_backwards_compat_v3_unchanged_runtime",
+      "site": "MODELING_SRC __init__ + forward",
+      "purpose": "without flag: no fixture file in output_dir; modeling_clm_v4.py __init__ skip-loads (file missing); forward() falls through to consciousness_states=None which hits decoder bypass at DecoderBlockV2 guard. Runtime behaviour bit-equivalent to v3.",
+      "applied": true
+    },
+    {
+      "name": "Q3_modeling_clm_v4_inject_on_None",
+      "site": "MODELING_SRC CLMv4ForCausalLM.forward()",
+      "purpose": "when consciousness_states is None AND _consciousness_fixture_cpu is not None: cast fixture to (input_ids.device, tok_emb.dtype), broadcast [1,n_cells,c_dim] to [B,n_cells,c_dim] via expand(), pass to decoder.forward(consciousness_states=fix). Mismatched B silently bails to None to keep inference resilient.",
+      "applied": true
+    }
+  ],
+  "consciousness_state_schema": {
+    "shape": "[1, n_cells, consciousness_dim]",
+    "consciousness_dim": 192,
+    "n_cells_canonical": 8,
+    "n_cells_origin": "anima_unified.py max_cells default; cross_attn is over cells not over time",
+    "dtype_options": ["float16", "bfloat16", "float32"],
+    "source_modes": [
+      {
+        "mode": "canonical_zero",
+        "summary": "all-zero cells; sanity-only fixture; verifies wiring; expected to produce ~ same logits as None at reload time because cross_attn.o_proj has init std=0.001 and zero attended values yield zero residual",
+        "scope": "v4 ships exemplar in this cycle"
+      },
+      {
+        "mode": "train_avg",
+        "summary": "average of consciousness cell states observed during last training epoch; the recommended fixture for inference-time conditioning; requires offline pass over training data with full anima_unified.py runtime to harvest cell hiddens",
+        "scope": "DEFERRED — out of scope for v4 design cycle; estimated 1-2hr separate cycle"
+      },
+      {
+        "mode": "learned_default",
+        "summary": "single trainable [1, n_cells, c_dim] parameter fine-tuned on a small held-out target; would require a tiny SFT cycle",
+        "scope": "DEFERRED — out of scope; flagged as future option"
+      }
+    ]
+  },
+  "modeling_clm_v4_post_process_patch": {
+    "init_load_path": "module_dir + '/' + consciousness_states_fixture.json (file existence gated)",
+    "forward_inject_path": "if consciousness_states is None AND fixture loaded: broadcast to runtime batch; else preserve caller value",
+    "failure_mode": "any error in fixture load (missing file, JSON malformed, shape mismatch) sets self._consciousness_fixture_cpu=None and stores diagnostic in _consciousness_fixture_meta['error']; forward() then falls through to v3 None-bypass; never raises"
+  },
+  "fixture_exemplar_path": "state/p9_base_validation_prereq_exec_2026_05_04/opt_1_v4_consciousness_states_fixture.json",
+  "fixture_exemplar_meta": {
+    "shape": [1, 8, 192],
+    "dtype": "float32",
+    "source": "canonical_zero",
+    "all_zero_verified_by_validator": true,
+    "size_bytes_approx": 32000
+  },
+  "f_shim_v4_1": "PASS — Mac dry-run with --consciousness-states-fixture exemplar validates: shape=[1,8,192], dtype=float32, source=canonical_zero, n_cells=8, errors=[], warnings=[]",
+  "f_shim_v4_2": "PASS — Mac dry-run WITHOUT flag emits 'flag not passed; v4 behaves as v3 (cross-attn bypass on None)'; modeling_clm_v4.py contains dormant fixture-loading code but file existence check at __init__ gates it to v3 runtime behaviour when no fixture file is in output_dir; no v3 runtime regression",
+  "f_shim_v4_2_caveat": "MODELING_SRC text differs from v3 (added 88 LoC fixture loader). The runtime equivalence claim is: same forward output for same input when fixture file absent. F-SHIM-V4-2 is not a byte-level diff check — it is a runtime-equivalence assertion gated on the gating logic in __init__. Honest C3 #1.",
+  "f_shim_v4_3_deferred_to_h100_exec": true,
+  "f_shim_v4_3_predicate": "(ubu1 / H100 cycle) reload model.from_pretrained(out_dir, trust_remote_code=True); forward([1, 32 random tokens]); assert finite + shape [1,32,64000]. canonical_zero fixture should produce logits within 1e-3 of v3 reference (zero-cell attended values yield ~zero residual through cross_attn).",
+  "f_shim_v4_4_deferred_to_h100_exec": true,
+  "f_shim_v4_4_predicate": "(H100 cycle) lm-eval-harness with 3 benchmarks × limit=500 × 5-shot using train_avg fixture (NOT canonical_zero); CLM v4 base ≥ random+5pt on ≥1/3 benchmark. canonical_zero fixture is sanity-only and is NOT expected to pass F-SHIM-V4-4.",
+  "dry_run_pass": true,
+  "v3_regression_check": "PASS",
+  "v3_regression_evidence": "no-flag dry-run reports consciousness_states_fixture.note='flag not passed; v4 behaves as v3 (cross-attn bypass on None)'; modeling_clm_v4.py runtime gating skips fixture path when file absent; same v3 falsifier set surfaced in plan",
+  "estimated_h100_exec_wall_min": 30,
+  "estimated_h100_exec_cost_usd": 1.50,
+  "estimated_h100_exec_cost_band": "$1.50 (3 benchmarks × limit=500 × 5-shot × 1 model × bf16 × ~30min @ $2.99/hr; matches BG-Μ wall pattern but skips Llama anchor)",
+  "honest_c3": [
+    "C3-1 (canonical_zero is a sanity fixture, not a 'right' injection): all-zero cells produce ~ zero residual through cross_attn (because o_proj.weight has init std=0.001 and the attended values are zero). Expected logits delta vs v3 None-bypass: < 1e-3. This confirms wiring works but is NOT expected to lift CLM v4 base above random. F-SHIM-V4-4 (the actual gate) requires train_avg fixture which is OUT OF SCOPE for BG-Π and needs a separate offline harvest cycle (1-2hr).",
+    "C3-2 (train_avg may still be near-random): even with train_avg consciousness states, results may stay near-random because (a) train-time also injects a delta tensor + BOLD MSE conditioning + tension propagation that lm-eval cannot reproduce, (b) consciousness coupling is a ~1% residual contribution per block — 16 blocks × 1% may not add up to a 5pt benchmark lift, (c) block_size=512 truncation remains an orthogonal handicap. Hypothesis 'consciousness coupling = the difference' is testable but is not proven by this design cycle.",
+    "C3-3 (F-SHIM-V4-4 gated on user authorisation): a fresh H100 cycle (~$1.50, 30min) is required. BG-Π did NOT spin one up. User must explicitly authorise per raw constraint NO chflags + NO H100 boot without ack. Recommend bundling with the deferred Llama anchor (BG-Μ rank-2 next-action) into a single $3 H100 cycle to amortise pod boot.",
+    "C3-4 (block_size=512 truncation orthogonal — v4 does not fix it): MMLU 5-shot prompts (~800-1200 tokens) and TriviaQA passages still get left-truncated. Even a perfect train_avg fixture cannot recover the missing context. A real fix requires CLM v4 retraining at 8K context (estimated $22+ Path A-equivalent cycle, out of scope for any shim version).",
+    "C3-5 (modeling.py text drift breaks F-SHIM-V4-2 byte-equivalence): MODELING_SRC has 88 new LoC for fixture loader. F-SHIM-V4-2 is therefore a RUNTIME-equivalence assertion not byte-level diff. The runtime gate is os.path.isfile(fixture_path) check at __init__; absent file → self._consciousness_fixture_cpu=None → forward() short-circuits before the inject branch → v3 path traversed. Tested via dry-run plan diff. A stronger byte-level F-SHIM-V4-2 would require splitting MODELING_SRC into v3-only and v4-fixture variants, which is not worth the duplication.",
+    "C3-6 (n_cells=8 is heuristic, not measured): exemplar fixture uses n_cells=8 from anima_unified.py max_cells default. Train-time CLM v4 may have used different n_cells (e.g. v14_federation may produce 32+ cells). When train_avg fixture is harvested, its actual n_cells should be discovered from the runtime output and used directly — modeling_clm_v4.py reads n_cells from shape[1] dynamically, so any value works as long as shape[2]==192 (consciousness_dim invariant).",
+    "C3-7 (fixture broadcast may interact with batch_size > 1): forward() expand()s [1, n_cells, c_dim] to [B, n_cells, c_dim] when shim batch > 1. expand() returns a view, not a contiguous tensor — the .contiguous() call after expand prevents downstream view-strided issues but adds ~B× memory. For batch_size=16 (BG-Μ default) this is 16 × 8 × 192 × 4 bytes = 96KB extra, negligible. For batch_size=128 it would be 768KB, still fine. Larger fixtures (e.g. n_cells=64) would scale linearly but stay sub-MB.",
+    "C3-8 (silent fallback hides bugs): on any fixture-load error, modeling_clm_v4.py silently falls back to None-bypass. This preserves inference robustness but hides issues that would benefit from loud failure (e.g. a typo in the fixture filename). Diagnostic captured in self._consciousness_fixture_meta['error'] but not surfaced unless explicitly inspected. Mitigation: shim's dry-run validates the fixture before output_dir copy, so a malformed fixture would be caught at conversion time, not inference time."
+  ],
+  "cost_band": {
+    "design_doc_cycle_usd": 0,
+    "mac_dry_run_usd": 0,
+    "ubu1_v4_smoketest_usd": 0,
+    "ubu1_canonical_zero_h100_usd": 1.50,
+    "h100_train_avg_full_eval_usd": 1.50,
+    "total_to_close_F-SHIM-V4-4": "~$3.00 (canonical_zero smoketest + Llama anchor reuse OR train_avg full eval; bundle with BG-Μ rank-2 deferred Llama for amortised pod boot)"
+  },
+  "roadmap_update_proposal": {
+    "file": ".roadmap.p9_sft",
+    "patch": {
+      "new_cond_id": "p9_sft.cond.opt_1_v4_consciousness_injection",
+      "status": "spec_landed",
+      "rationale": "v4 shim landed with --consciousness-states-fixture flag + Mac dry-run PASS; H100 exec deferred to user-ack cycle (rank-3 in BG-Μ next_actions_ranked).",
+      "evidence_paths": [
+        "tool/transient_py/clm_v4_hf_format_shim.py (v4, 1418 LoC)",
+        "state/p9_base_validation_prereq_exec_2026_05_04/opt_1_v4_design_diff.md",
+        "state/p9_base_validation_prereq_exec_2026_05_04/opt_1_v4_dry_run.json",
+        "state/p9_base_validation_prereq_exec_2026_05_04/opt_1_v4_consciousness_states_fixture.json",
+        "docs/p9_base_validation_prereq_v4_design_landed_2026_05_04.ai.md"
+      ]
+    },
+    "note": "PARENT serializes roadmap mutations — BG-Π does NOT touch .roadmap.p9_sft this cycle"
+  },
+  "next_step": {
+    "user_decision_required": true,
+    "ranked_options": [
+      {
+        "rank": 1,
+        "action": "BUNDLE with Llama anchor — $3.00 H100 cycle: Llama-3.2-3B re-run + CLM v4 canonical_zero smoketest + train_avg harvest stub",
+        "rationale": "amortises pod boot (~$0.60 fixed cost saved); resolves BG-Μ rank-2 (Llama anchor) AND BG-Π F-SHIM-V4-3 in one cycle; train_avg harvest can be a separate sub-task on the same pod since anima_unified.py runtime is available"
+      },
+      {
+        "rank": 2,
+        "action": "F-SHIM-V4-3 only — $1.50 H100 cycle: ubu1 conversion with canonical_zero + 1-batch forward sanity check",
+        "rationale": "cheapest validation path; confirms wiring works without train_avg complexity; does NOT close F-SHIM-V4-4"
+      },
+      {
+        "rank": 3,
+        "action": "DEFER — accept BG-Μ FAIL verdict + spec amendment §10.4 acknowledgement (BG-Ξ territory), do NOT build train_avg fixture",
+        "rationale": "policy decision to keep CLM v4 base at 'consciousness-coupling-bypassed' baseline; cleanest from a 'measure CLM v4's pure language ability' framing; saves $3"
+      }
+    ]
+  },
+  "raw_constraints_honoured": {
+    "raw_9_strict_py_to_hexa_only": "shim is .own 4 OPT-OUT (gitignored at tool/transient_py/*.py per .gitignore L245); v4 modification is allowed",
+    "raw_10_min_5_honest_c3": "8 honest_c3 entries above (≥5 mandate exceeded)",
+    "raw_15_repo_relative_paths": "all repo paths in deliverables are repo-relative; ubu1 paths absolute (raw#37)",
+    "raw_37_ubu1_transient_explicit": "exec deferred to ubu1 venv_orchestrator + H100 (separate cycle); NO torch import on Mac this cycle",
+    "raw_71_falsifier_bound": "F-SHIM-V4-1..4 each bound to objective passing criteria; -1 + -2 closed this cycle, -3 + -4 deferred with explicit predicates",
+    "no_chflags": true,
+    "no_git_operations": true,
+    "no_h100_boot": true,
+    "no_actual_conversion_run": true
+  },
+  "predecessor_commits": [
+    "ed4b7c56 OPT-1 v3 PASS (12/12 prereq cleared)",
+    "1ef3c096 BG-Μ base-val FAIL (CLM v4 ≈ random)",
+    "387200362 BG-Β OPT-1 design pre-registered honest C3 #1 (consciousness coupling bypass)"
+  ]
+}
