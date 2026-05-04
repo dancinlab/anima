@@ -1,0 +1,77 @@
+{
+  "session": "multi_repo_commit_push_2026_05_04",
+  "executed_at_utc": "2026-05-04T00:00:00Z",
+  "user_directive": "all commit push",
+  "repos": {
+    "anima": {
+      "path": "/Users/ghost/core/anima",
+      "remote": "https://github.com/need-singularity/anima.git",
+      "branch": "main",
+      "commit_sha": "1185ece33f637118005208c60229d70420d65d93",
+      "commit_short": "1185ece33",
+      "commit_subject": "feat(anima cycle land 2026-05-03/04): qmirror 1.0 closure 8/8 + standalone repo published + nexus refactor + 5 fix landed + Path A r=64 catastrophic forgetting + Path A r=16 retrain launched + Paradigm J 50K landed + qmirror 2.0 cond.9+10 PASS + 25 BG cycle",
+      "files_changed": 321,
+      "lines_added": 88409,
+      "lines_deleted": 164,
+      "excluded": [
+        "ready/ (submodule, repo policy skip)",
+        "references/tribev2 (separate git repo, untracked)",
+        "state/p9_path_a_r16_2026_05_03/sft_data_llama_template.jsonl (71MB regenerable training data)"
+      ],
+      "raw_violations": "zero (no .py, no secrets, no .env)"
+    },
+    "nexus": {
+      "path": "/Users/ghost/core/nexus",
+      "remote": "https://github.com/need-singularity/nexus.git",
+      "branch": "feat/qmirror-cli-programmatic-consumption",
+      "commit_sha": "f81239d617c6dba1d762171186f5d6d92a3a03e8",
+      "commit_short": "f81239d6",
+      "commit_subject": "feat(nexus): qmirror as standalone CLI dependency (legacy in-tree removed, [dependencies] qmirror=^1.0.0)",
+      "files_changed": 21,
+      "lines_added": 312,
+      "lines_deleted": 498,
+      "deletions": "15 modules/qmirror/* legacy files removed",
+      "raw_violations": "zero"
+    },
+    "qmirror": {
+      "path": "/Users/ghost/core/qmirror",
+      "remote": "https://github.com/need-singularity/qmirror.git",
+      "branch": "main",
+      "commit_sha": "788c6fa482c0964728dae419439f074a94ee1c5b",
+      "commit_short": "788c6fa",
+      "commit_subject": "feat(qmirror 2.0): cond.9 process tomography + cond.10 GHZ Mermin PASS",
+      "files_changed": 3,
+      "lines_added": 583,
+      "lines_deleted": 0,
+      "py_files_in_approved_optout": [
+        "modules/_python_bridge/process_tomography_runner.py (raw#9 _python_bridge precedent)",
+        "modules/_python_bridge/ghz_mermin_runner.py (raw#9 _python_bridge precedent)"
+      ],
+      "raw_violations": "zero (raw#9 _python_bridge approved opt-out path)"
+    },
+    "hexa-lang": {
+      "path": "/Users/ghost/core/hexa-lang",
+      "remote": "https://github.com/need-singularity/hexa-lang.git",
+      "branch": "main",
+      "commit_sha": "ea736c1da223829e62a78334b9192aa9050cefe5",
+      "commit_short": "ea736c1d",
+      "commit_subject": "feat(hexa-lang): qmirror registry entry + P0/P1 stdlib versioning + interp resolver fixes",
+      "files_changed": 22,
+      "lines_added": 462,
+      "lines_deleted": 17,
+      "binary_rebuilt": "self/native/hexa_v2 (1.48MB -> 1.47MB, under 50MB limit)",
+      "raw_violations": "zero"
+    }
+  },
+  "totals": {
+    "repos": 4,
+    "commits_landed": 4,
+    "files_changed": 367,
+    "lines_added": 89766,
+    "lines_deleted": 679
+  },
+  "raw_compliance": {
+    "raw_9_py_carveouts": "PASS — only qmirror/modules/_python_bridge/*.py (whitelisted opt-out matching existing aer_runner/iit_mip_runner precedent)",
+    "raw_15_secrets": "PASS — zero .env, *_token, .secrets/, credentials.json, *.key, *.pem in any staged set"
+  }
+}

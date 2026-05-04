@@ -1,0 +1,76 @@
+{
+  "schema": "anima/p9_path_a_r64_step10k_reconcile/hf_api_audit/1",
+  "ts_utc": "2026-05-04T13:42:00Z",
+  "cycle": "p9_path_a_r64_step10k_reconcile_2026_05_04",
+  "audit_method": "live HF Hub HTTP API via curl + bearer token (auth restored since 2026-05-04T00:14Z verify cycle); cross-checked against host_terminator.log monotonic step probe + verdict_complete.json + verify_report.md",
+  "auth_state": {
+    "hf_cli_whoami_user": "dancinlife",
+    "hf_cli_whoami_orgs": ["need-singularity"],
+    "auth_scope_inferred": "write (org admin per prior verify cycle)"
+  },
+  "repo": {
+    "id": "need-singularity/p9-llama32-lora-stage1",
+    "private": true,
+    "sha_head": "5a9b458467589b82a69f0108fd2af3e519c45286",
+    "sha_head_msg": "Training in progress, step 8000",
+    "last_modified_utc": "2026-05-03T20:06:18Z",
+    "branches": [
+      {
+        "name": "main",
+        "ref": "refs/heads/main",
+        "target_commit": "5a9b458467589b82a69f0108fd2af3e519c45286"
+      }
+    ],
+    "tags": [],
+    "tag_count": 0,
+    "tag_count_note": "TRL hub_strategy=every_save creates per-save COMMITS not git TAGS; tag enumeration is therefore not the right discriminator — commit history is."
+  },
+  "commit_history_full": [
+    {"sha": "5a9b458467589b82a69f0108fd2af3e519c45286", "ts_utc": "2026-05-03T20:06:18Z", "title": "Training in progress, step 8000", "step": 8000},
+    {"sha": "f7712e3a662f4c51b35b3539cd79f45ba8b6a6c2", "ts_utc": "2026-05-03T18:41:24Z", "title": "Training in progress, step 6000", "step": 6000},
+    {"sha": "fe83e9898ddcd07a8fe2de39d197cbde21b7d1b6", "ts_utc": "2026-05-03T17:16:35Z", "title": "Training in progress, step 4000", "step": 4000},
+    {"sha": "f69162477df5bb47f30f7f0e1f408a965c5a0604", "ts_utc": "2026-05-03T15:52:19Z", "title": "Training in progress, step 2000", "step": 2000},
+    {"sha": "0a4b60b606747bfab1b146e555dc067275e0edb5", "ts_utc": "2026-05-03T14:28:51Z", "title": "initial commit", "step": null}
+  ],
+  "commit_count_total": 5,
+  "commit_count_step_named": 4,
+  "commit_count_step_named_expected_if_complete": 5,
+  "commit_count_final_save": 0,
+  "commit_count_final_save_expected_if_complete": 1,
+  "missing_commits": [
+    {"step": 10000, "title_expected": "Training in progress, step 10000", "presence_on_hf": "ABSENT"},
+    {"step": "final", "title_expected": "Save final model OR similar (trainer.save_model('final') call)", "presence_on_hf": "ABSENT"}
+  ],
+  "tree_main_files_present": [
+    {"path": ".gitattributes", "size": 1570, "lfs": false},
+    {"path": "README.md", "size": 1476, "lfs": false},
+    {"path": "adapter_config.json", "size": 1111, "lfs": false},
+    {"path": "adapter_model.safetensors", "size": 389074464, "lfs_oid_sha256": "f12f31d8104900cba5f60ad2010dc0bed0ec5c466e2838c88378fa5c9c2d3336", "step_anchor": 8000},
+    {"path": "chat_template.jinja", "size": 3827, "lfs": false},
+    {"path": "config.json", "size": 727, "lfs": false},
+    {"path": "tokenizer.json", "size": 17209920, "lfs_oid_sha256": "6b9e4e7fb171f92fd137b777cc2714bf87d11576700a1dcd7a399e7bbe39537b"},
+    {"path": "tokenizer_config.json", "size": 354, "lfs": false},
+    {"path": "train.log", "size": 790884, "lfs": false, "log_last_visible_step": 8008, "log_last_visible_loss": 0.2748},
+    {"path": "train.pid", "size": 5, "lfs": false},
+    {"path": "training_args.bin", "size": 5368, "lfs_oid_sha256": "0a48289c43a41109c03744096889c5c6c3571e3936a4335dfe1eeb21a40f7389"}
+  ],
+  "tree_main_files_count": 11,
+  "deleted_commits_check": {
+    "method": "HF Hub does not expose git GC / deleted commits via public API; main branch HEAD chain inspected back to initial commit — no gaps",
+    "verdict": "no evidence of deletion; absence is non-creation not erasure"
+  },
+  "partial_uploads_check": {
+    "method": "tree/main shows 11 files all consistent with step-8000 HEAD; no orphan/dangling objects visible via tree API; xetHash present on all 3 LFS files (clean upload)",
+    "verdict": "no partial-upload artifacts at HEAD; step-8000 commit is integrity-clean"
+  },
+  "pod_log_recovery_check": {
+    "pod_id": "29dhlqk508ugoc",
+    "pod_state": "TERMINATED 2026-05-03T21:34:13Z by host_pod_terminator.sh",
+    "ssh_probe_ts_utc": "2026-05-04T13:42:00Z",
+    "ssh_probe_result": "ssh: connect to host 103.207.149.110 port 14783: Connection refused",
+    "verdict": "pod and disk irrecoverably gone; no train.log tail past step-8008 will ever be available; the host-side terminator's scp recovery branch failed at termination time too (host_terminator.log line 46: 'No such file or directory' — error-branch did not run mkdir -p artifacts before scp)"
+  },
+  "raw71_compliance": "read-only HF API (GET only); no writes/uploads/renames",
+  "raw15_compliance": "no token printed; bearer read from ~/.cache/huggingface/token at runtime via $TOKEN var; no path leak",
+  "raw9_compliance": "no .py written or modified; pure curl + python3 -m json.tool"
+}

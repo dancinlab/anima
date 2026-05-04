@@ -1,0 +1,113 @@
+{
+  "schema": "anima/p9_path_a_r16_multiseed_verify/1",
+  "verify_ts_utc": "2026-05-04T04:55:00Z",
+  "verdict": "ALL_LAUNCHED_AND_TRAINING",
+  "prior_subagent_failures": [
+    "a0c20e6 (quota)",
+    "a5529c27 (503)",
+    "a8f0e4405 (BG launch — verified by THIS retry)"
+  ],
+  "constraints_honored": {
+    "raw#9_strict": "verify-only via runpodctl + ssh, no .sh on RunPod",
+    "raw#15_idempotent": true,
+    "raw#10_3caveats": "honest C3 — actively training, not yet TRAIN_DONE",
+    "zero_dollar_verify": "no preempt, no relaunch, no new pod",
+    "do_not_preempt": "all 5 pods left RUNNING"
+  },
+  "runpod_total_pods": 5,
+  "runpod_pod_inventory": [
+    {
+      "id": "pvkyhb0lb87ydu",
+      "name": "anima-p9-pathA-r16-h100-sxm-secure",
+      "role": "Path A r=16 seed 42 (preexisting)",
+      "status": "RUNNING"
+    },
+    {
+      "id": "0jetjpvlm51zoy",
+      "name": "anima-p9-pathA-r16-s43-h100-sxm-secure",
+      "role": "Path A r=16 seed 43 (multi-seed)",
+      "status": "RUNNING"
+    },
+    {
+      "id": "nzw0btc8br78yy",
+      "name": "anima-p9-pathA-r16-s44-h100-sxm-secure",
+      "role": "Path A r=16 seed 44 (multi-seed)",
+      "status": "RUNNING"
+    },
+    {
+      "id": "fuewrx9moxe6gz",
+      "name": "anima-p9-pd-25k-h100-sxm-secure",
+      "role": "Paradigm-D 25K (separate train)",
+      "status": "RUNNING"
+    },
+    {
+      "id": "8zbf9bfj6c63wg",
+      "name": "anima-p9-base-val-h100-2026-05-04",
+      "role": "Base validation eval pod",
+      "status": "RUNNING"
+    }
+  ],
+  "s43_check": {
+    "pod_id": "0jetjpvlm51zoy",
+    "ssh_host": "216.243.220.230",
+    "ssh_port": "11023",
+    "ssh_reachable": true,
+    "train_pid": 220,
+    "train_pid_elapsed": "13:05",
+    "train_cmd_verified": "python3 train_llama_lora_r16.py --seed 43 --lora-r 16 --lora-alpha 16 --lr 1e-4 --max-steps 10000 --push-to-hub need-singularity/llm-llama32-3b-paradigm-a-prime-r16-s43-sft-stage1",
+    "current_step": "~304/10000 (3%)",
+    "recent_loss": "1.024-1.245",
+    "recent_token_accuracy": "0.7528-0.7901",
+    "gpu_util_pct": 100,
+    "gpu_mem_used_mib": 27089,
+    "savepoint_dir": "/workspace/p9_path_a_r16_s43_savepoints",
+    "train_log_path": "/workspace/p9_path_a_r16_s43_savepoints/train.log",
+    "host_watchdog_pid": 77030,
+    "host_watchdog_alive": true
+  },
+  "s44_check": {
+    "pod_id": "nzw0btc8br78yy",
+    "ssh_host": "64.247.201.34",
+    "ssh_port": "12499",
+    "ssh_reachable": true,
+    "train_pid": 220,
+    "train_pid_elapsed": "13:04",
+    "train_cmd_verified": "python3 train_llama_lora_r16.py --seed 44 --lora-r 16 --lora-alpha 16 --lr 1e-4 --max-steps 10000 --push-to-hub need-singularity/llm-llama32-3b-paradigm-a-prime-r16-s44-sft-stage1",
+    "current_step": "~321/10000 (3%)",
+    "recent_loss": "1.051-1.158",
+    "recent_token_accuracy": "0.7674-0.779",
+    "gpu_util_pct": 98,
+    "gpu_mem_used_mib": 27189,
+    "savepoint_dir": "/workspace/p9_path_a_r16_s44_savepoints",
+    "train_log_path": "/workspace/p9_path_a_r16_s44_savepoints/train.log",
+    "host_watchdog_pid": 77031,
+    "host_watchdog_alive": true
+  },
+  "hf_target_check": {
+    "s43_repo": "need-singularity/llm-llama32-3b-paradigm-a-prime-r16-s43-sft-stage1",
+    "s43_http_status": 200,
+    "s44_repo": "need-singularity/llm-llama32-3b-paradigm-a-prime-r16-s44-sft-stage1",
+    "s44_http_status": 200,
+    "interpretation": "both HF target repos exist (created by HF push init); will receive uploads on save_steps milestones + final"
+  },
+  "config_identity_with_s42": {
+    "lora_r": 16,
+    "lora_alpha": 16,
+    "lr": "1e-4",
+    "per_device_batch": 4,
+    "grad_accum": 8,
+    "max_steps": 10000,
+    "save_steps": 2000,
+    "seq_len": 2048,
+    "warmup_steps": 200,
+    "bf16": true,
+    "gradient_checkpointing": true,
+    "diff_from_s42": "ONLY --seed and --output-dir and --push-to-hub repo name"
+  },
+  "remediation_needed": "NONE — all 3 seeds (s42, s43, s44) confirmed actively training",
+  "next_milestones": [
+    "step 2000 ~ +1.2h: first checkpoint save + HF upload trigger",
+    "step 10000 ~ +6.5h: TRAIN_DONE.json + final HF upload + watchdog auto-pod-terminate",
+    "after all 3 seeds DONE: spin eval pod (45 evals × 3 tasks)"
+  ]
+}

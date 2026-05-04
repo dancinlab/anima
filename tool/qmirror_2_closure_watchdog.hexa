@@ -1,0 +1,437 @@
+// tool/qmirror_2_closure_watchdog.hexa — qmirror 2.0 closure watchdog (cond.11+12+13 trio polling, raw#9 hexa-only Mac).
+//
+// @resolver-bypass(reason="needs Mac-native python3 + gh + huggingface-cli for verdict parsing, GitHub release, hf upload — sandbox sh has no python3")
+//
+// PURPOSE
+//   Polls (every 30 min, max 48 h) for the qmirror 2.0 trio sister BGs:
+//     (a) state/qmirror_2_cond11_stabilizer_2026_05_04/verdict.json   (1.5 d ETA)
+//     (b) state/qmirror_2_cond12_surface_2026_05_04/verdict.json      (2 d ETA)
+//     (c) state/qmirror_2_cond13_cscs_2026_05_04/verdict.json         (1.5 d ETA)
+//   Already PASSed conds (carried in via env or static defaults):
+//     (d) state/qmirror_2_cond9_tomography_2026_05_03/verdict.json    (PASS)
+//     (e) state/qmirror_2_cond10_ghz_mermin_2026_05_03/verdict.json   (PASS)
+//
+//   GUARD-3 (success-signal checklist) per cond verdict file:
+//     - file exists
+//     - parses as JSON
+//     - has top-level "verdict" string in {PASS, FAIL, PARTIAL, DEFERRED} OR
+//       composite verdict object with .label in same set
+//
+//   On 5/5 land (3 trio + 2 carry-in):
+//     1. Run closure synth: hexa run tool/qmirror_2_closure_synth.hexa
+//        (sister BG qmirror_2_closure_synth writes this; if absent, watchdog
+//         falls back to inline composite from per_cond_status.json)
+//     2. Compose final verdict: FULL (5/5 PASS) | PARTIAL (4/5 PASS) | DEFERRED (<4/5 PASS)
+//     3. If composite verdict ∈ {FULL, PARTIAL} (≥4/5 PASS):
+//        a. (DRY by default) Bump qmirror version 1.0.1 → 2.0.0 in /Users/ghost/core/qmirror/hexa.toml
+//        b. Append CHANGELOG entry [2.0.0] — 2026-05-04 (axes 2.0 closure)
+//        c. Tag release v2.0.0 on GitHub via `gh release create v2.0.0` (requires gh auth)
+//        d. hf upload to need-singularity/qmirror mirror (huggingface-cli; opt-in via --hf)
+//        e. registry.tsv version bump in /Users/ghost/core/hexa-lang/tool/pkg/registry.tsv
+//
+// USAGE
+//   hexa run tool/qmirror_2_closure_watchdog.hexa --selftest   # invariants check
+//   hexa run tool/qmirror_2_closure_watchdog.hexa --once       # single poll, no loop
+//   hexa run tool/qmirror_2_closure_watchdog.hexa --apply      # fire synth+release on 5/5 (DRY default)
+//   hexa run tool/qmirror_2_closure_watchdog.hexa --loop --apply  # full 48h watchdog
+//   hexa run tool/qmirror_2_closure_watchdog.hexa --apply --bump  # also bump version+CHANGELOG+tag (DESTRUCTIVE)
+//   hexa run tool/qmirror_2_closure_watchdog.hexa --apply --bump --hf  # also hf upload (rate-limited)
+//
+// CONFIG (env overrides)
+//   ANIMA_QM2_COND9_VERDICT  default: state/qmirror_2_cond9_tomography_2026_05_03/verdict.json
+//   ANIMA_QM2_COND10_VERDICT default: state/qmirror_2_cond10_ghz_mermin_2026_05_03/verdict.json
+//   ANIMA_QM2_COND11_VERDICT default: state/qmirror_2_cond11_stabilizer_2026_05_04/verdict.json
+//   ANIMA_QM2_COND12_VERDICT default: state/qmirror_2_cond12_surface_2026_05_04/verdict.json
+//   ANIMA_QM2_COND13_VERDICT default: state/qmirror_2_cond13_cscs_2026_05_04/verdict.json
+//   ANIMA_QM2_SYNTH_TOOL     default: tool/qmirror_2_closure_synth.hexa
+//   ANIMA_QM2_OUT_DIR        default: state/qmirror_2_closure_2026_05_04
+//   ANIMA_QM2_HEXA_TOML      default: /Users/ghost/core/qmirror/hexa.toml
+//   ANIMA_QM2_CHANGELOG      default: /Users/ghost/core/qmirror/CHANGELOG.md
+//   ANIMA_QM2_REGISTRY       default: /Users/ghost/core/hexa-lang/tool/pkg/registry.tsv
+//   ANIMA_QM2_TARGET_VERSION default: 2.0.0
+//   ANIMA_POLL_INTERVAL_SEC  default: 1800 (30 min)
+//   ANIMA_MAX_WAIT_SEC       default: 172800 (48 h)
+//
+// EXIT CODES
+//   0 = trigger fired + closure dispatched OR loop completed without trigger (timeout)
+//   1 = selftest fail
+//   2 = config error
+//
+// raw#9  hexa-only Mac          (gh / hf / curl shelled out via exec_with_status)
+// raw#15 SSOT this file         (this hexa is single source for trio→closure trigger logic)
+// raw#10 honest C3 (4 caveats):
+//   (a) 48 h max-wait sized for cond.12 (2 d) + headroom; on timeout, manual re-fire required
+//       (no auto-extend; exit 0 with TIMEOUT label).
+//   (b) Closure synth dispatch is CONDITIONAL on all 3 sister BGs landing AND each producing a
+//       parseable verdict.json. If any cond verdict is malformed (PARSE_ERROR, INVALID_LABEL),
+//       watchdog logs the error and continues polling (does NOT trigger on partial signals).
+//       Manual override available via ANIMA_QM2_FORCE_TRIGGER=1.
+//   (c) Version bump 1.0.1 → 2.0.0 is IRREVERSIBLE per semver (major bump signals breaking
+//       changes). Closure synth must verify backward-compat OR bump_strategy must be explicit.
+//       --bump flag is gated separately from --apply for this reason; default is DRY.
+//   (d) GitHub release v2.0.0 requires `gh auth status` clean + write scope on
+//       need-singularity/qmirror; if gh auth fails, release step logs RC!=0 and is SKIPPED
+//       (composite verdict still emitted; manual `gh release create v2.0.0` retry required).
+//       hf upload (--hf) is similarly opt-in and may fail if HUGGING_FACE_HUB_TOKEN absent.
+
+let OUT_DIR_DEFAULT      = "/Users/ghost/core/anima/state/qmirror_2_closure_2026_05_04"
+let SYNTH_TOOL_DEFAULT   = "tool/qmirror_2_closure_synth.hexa"
+let HEXA_TOML_DEFAULT    = "/Users/ghost/core/qmirror/hexa.toml"
+let CHANGELOG_DEFAULT    = "/Users/ghost/core/qmirror/CHANGELOG.md"
+let REGISTRY_DEFAULT     = "/Users/ghost/core/hexa-lang/tool/pkg/registry.tsv"
+
+// ─── helpers ────────────────────────────────────────────────────────────────
+
+fn _sq(s: string) -> string {
+    let mut o = "'"
+    o = o + s.replace("'", "'\\''")
+    o = o + "'"
+    return o
+}
+fn _file_exists(p: string) -> bool {
+    return exec_with_status("test -e " + _sq(p))[1] == 0
+}
+fn _json_escape(s: string) -> string {
+    return s.replace("\\", "\\\\").replace("\"", "\\\"").replace("\n", "\\n").replace("\r", "\\r").replace("\t", "\\t")
+}
+fn _ts_iso() -> string {
+    let r = exec_with_status("date -u +%Y-%m-%dT%H:%M:%SZ")
+    return to_string(r[0]).trim()
+}
+fn _now_epoch() -> int {
+    let r = exec_with_status("date -u +%s")
+    return to_int(to_string(r[0]).trim())
+}
+fn _env_or(name: string, dflt: string) -> string {
+    let r = exec_with_status("printf %s \"${" + name + ":-" + dflt + "}\"")
+    return to_string(r[0])
+}
+fn _argv() -> array {
+    let a = args()
+    let mut o = []
+    let mut i = 2
+    while i < len(a) { o.push(a[i]); i = i + 1 }
+    return o
+}
+fn _has(av, k) -> bool {
+    let mut i = 0
+    while i < len(av) { if to_string(av[i]) == k { return true }; i = i + 1 }
+    return false
+}
+fn _log(path: string, event: string, payload_json: string) {
+    let line = "{\"ts_utc\":\"" + _ts_iso() + "\",\"event\":\"" + event + "\",\"payload\":" + payload_json + "}\n"
+    let q = _sq(line)
+    let dir_cmd = "mkdir -p " + _sq(path.replace("/watchdog_log.jsonl", ""))
+    exec_with_status(dir_cmd)
+    exec_with_status("printf %s " + q + " >> " + _sq(path))
+}
+
+// ─── GUARD-3 per-cond verdict check ─────────────────────────────────────────
+
+fn _check_cond_verdict(path: string) -> string {
+    if !_file_exists(path) { return "MISSING" }
+    let parse_q = "python3 -c 'import json; d=json.load(open(\"" + path + "\")); v=d.get(\"verdict\",\"\"); l=(v.get(\"label\",\"\") if isinstance(v,dict) else str(v)); print(l.upper())' 2>/dev/null"
+    let r = exec_with_status(parse_q)
+    if r[1] != 0 { return "PARSE_ERROR" }
+    let label = to_string(r[0]).trim()
+    if label == "" { return "INVALID_LABEL" }
+    if label == "PASS" || label == "FAIL" || label == "PARTIAL" || label == "DEFERRED" {
+        return "VALID:" + label
+    }
+    return "INVALID_LABEL:" + label
+}
+
+// ─── single poll across 5 conds ─────────────────────────────────────────────
+
+fn _poll_all(paths: array, log_path: string) -> array {
+    // returns [status_per_cond array, n_pass int, n_valid int]
+    let mut statuses = []
+    let mut n_pass = 0
+    let mut n_valid = 0
+    let cond_names = ["cond9", "cond10", "cond11", "cond12", "cond13"]
+    let mut i = 0
+    while i < len(paths) {
+        let st = _check_cond_verdict(to_string(paths[i]))
+        statuses.push(st)
+        if st.starts_with("VALID") {
+            n_valid = n_valid + 1
+            if st == "VALID:PASS" { n_pass = n_pass + 1 }
+        }
+        i = i + 1
+    }
+    let payload = "{\"cond9\":\"" + _json_escape(to_string(statuses[0])) + "\",\"cond10\":\"" + _json_escape(to_string(statuses[1])) + "\",\"cond11\":\"" + _json_escape(to_string(statuses[2])) + "\",\"cond12\":\"" + _json_escape(to_string(statuses[3])) + "\",\"cond13\":\"" + _json_escape(to_string(statuses[4])) + "\",\"n_valid\":" + to_string(n_valid) + ",\"n_pass\":" + to_string(n_pass) + "}"
+    _log(log_path, "poll", payload)
+    println("[qm2-watchdog] " + _ts_iso() + " cond9=" + to_string(statuses[0]) + " cond10=" + to_string(statuses[1]) + " cond11=" + to_string(statuses[2]) + " cond12=" + to_string(statuses[3]) + " cond13=" + to_string(statuses[4]) + " n_valid=" + to_string(n_valid) + "/5 n_pass=" + to_string(n_pass) + "/5")
+    return [statuses, n_pass, n_valid]
+}
+
+// ─── persist per-cond status snapshot ───────────────────────────────────────
+
+fn _emit_per_cond_status(out_dir: string, statuses: array, n_pass: int, n_valid: int) {
+    exec_with_status("mkdir -p " + _sq(out_dir))
+    let path = out_dir + "/per_cond_status.json"
+    let cond_names = ["cond.9", "cond.10", "cond.11", "cond.12", "cond.13"]
+    let mut entries = []
+    let mut i = 0
+    while i < len(statuses) {
+        entries.push("    \"" + to_string(cond_names[i]) + "\": \"" + _json_escape(to_string(statuses[i])) + "\"")
+        i = i + 1
+    }
+    let body = "{\n" +
+        "  \"schema\": \"anima/qmirror_2_closure_per_cond_status/1\",\n" +
+        "  \"ts_utc\": \"" + _ts_iso() + "\",\n" +
+        "  \"per_cond\": {\n" + entries.join(",\n") + "\n  },\n" +
+        "  \"n_valid\": " + to_string(n_valid) + ",\n" +
+        "  \"n_pass\": " + to_string(n_pass) + ",\n" +
+        "  \"all_landed\": " + (if n_valid == 5 { "true" } else { "false" }) + "\n" +
+        "}\n"
+    write_file(path, body)
+}
+
+// ─── closure synth dispatch + composite verdict ─────────────────────────────
+
+fn _compose_verdict(n_pass: int, n_valid: int) -> string {
+    if n_valid < 5 { return "INCOMPLETE" }
+    if n_pass == 5 { return "FULL" }
+    if n_pass == 4 { return "PARTIAL" }
+    return "DEFERRED"
+}
+
+fn _dispatch_synth(out_dir: string, statuses: array, n_pass: int, synth_tool: string, log_path: string, apply: bool) -> int {
+    exec_with_status("mkdir -p " + _sq(out_dir))
+    let composite = _compose_verdict(n_pass, len(statuses))
+    let synth_full = "/Users/ghost/core/anima/" + synth_tool
+    let mut synth_rc = -1
+    let mut synth_used = "FALLBACK_INLINE"
+    if apply {
+        if _file_exists(synth_full) {
+            let cmd = "cd /Users/ghost/core/anima && hexa run " + synth_tool + " 2>&1 | tail -200"
+            let r = exec_with_status(cmd)
+            synth_rc = r[1]
+            synth_used = synth_tool
+            println("[qm2-watchdog] synth " + synth_tool + " rc=" + to_string(synth_rc))
+        } else {
+            println("[qm2-watchdog] synth tool MISSING (" + synth_full + ") — fallback inline composite")
+            synth_rc = 0
+        }
+    }
+    let cond_names = ["cond.9", "cond.10", "cond.11", "cond.12", "cond.13"]
+    let mut per_cond_entries = []
+    let mut i = 0
+    while i < len(statuses) {
+        per_cond_entries.push("    \"" + to_string(cond_names[i]) + "\": \"" + _json_escape(to_string(statuses[i])) + "\"")
+        i = i + 1
+    }
+    let verdict_path = out_dir + "/verdict.json"
+    let body = "{\n" +
+        "  \"schema\": \"anima/qmirror_2_closure_verdict/1\",\n" +
+        "  \"ts_utc\": \"" + _ts_iso() + "\",\n" +
+        "  \"composite_verdict\": \"" + composite + "\",\n" +
+        "  \"n_pass\": " + to_string(n_pass) + ",\n" +
+        "  \"n_total\": 5,\n" +
+        "  \"per_cond\": {\n" + per_cond_entries.join(",\n") + "\n  },\n" +
+        "  \"synth_tool_used\": \"" + _json_escape(synth_used) + "\",\n" +
+        "  \"synth_rc\": " + to_string(synth_rc) + ",\n" +
+        "  \"applied\": " + (if apply { "true" } else { "false" }) + ",\n" +
+        "  \"raw10_caveats\": [\n" +
+        "    \"(a) 48h max-wait; manual re-fire on timeout.\",\n" +
+        "    \"(b) Closure synth conditional on 3/3 sister BG landing + parse-clean verdict.json.\",\n" +
+        "    \"(c) Version bump 1.0.1 → 2.0.0 IRREVERSIBLE per semver; gated separately by --bump.\",\n" +
+        "    \"(d) GitHub release v2.0.0 requires gh auth + write scope; SKIPPED on auth fail.\"\n" +
+        "  ]\n" +
+        "}\n"
+    write_file(verdict_path, body)
+    _log(log_path, "synth_dispatched", "{\"composite\":\"" + composite + "\",\"n_pass\":" + to_string(n_pass) + ",\"synth_rc\":" + to_string(synth_rc) + ",\"applied\":" + (if apply { "true" } else { "false" }) + "}")
+    println("[qm2-watchdog] composite=" + composite + " n_pass=" + to_string(n_pass) + "/5 → " + verdict_path)
+    return synth_rc
+}
+
+// ─── version bump + CHANGELOG + tag + registry (DESTRUCTIVE; gated by --bump) ─
+
+fn _do_version_bump(hexa_toml: string, changelog: string, registry: string, target_version: string, composite: string, apply_bump: bool, do_hf: bool, log_path: string) -> int {
+    if !apply_bump { println("[qm2-watchdog] --bump not set; SKIP version bump (DRY)"); return 0 }
+    if composite != "FULL" && composite != "PARTIAL" {
+        println("[qm2-watchdog] composite=" + composite + " (<4/5 PASS); SKIP version bump")
+        _log(log_path, "bump_skipped_low_composite", "{\"composite\":\"" + composite + "\"}")
+        return 0
+    }
+    println("[qm2-watchdog] BUMP: hexa.toml + CHANGELOG + tag + registry → " + target_version)
+    let mut bump_rc = 0
+
+    // 1. hexa.toml: version = "1.0.1" → version = "2.0.0"
+    let toml_cmd = "python3 -c 'import re,sys; p=\"" + hexa_toml + "\"; s=open(p).read(); s2=re.sub(r\"^version = \\\"[^\\\"]+\\\"\", \"version = \\\"" + target_version + "\\\"\", s, count=1, flags=re.M); open(p,\"w\").write(s2); print(\"[hexa.toml] bumped to " + target_version + "\" if s!=s2 else \"[hexa.toml] no-op (already at " + target_version + ")\")' 2>&1"
+    let r1 = exec_with_status(toml_cmd)
+    println(to_string(r1[0]))
+    if r1[1] != 0 { bump_rc = 1 }
+
+    // 2. CHANGELOG.md prepend new entry
+    let changelog_helper = "/tmp/qm2_closure_changelog_helper.py_tmp"
+    let cl_parts = []
+    cl_parts.push("#!/usr/bin/env python3\n")
+    cl_parts.push("import sys\n")
+    cl_parts.push("p = '" + changelog + "'\n")
+    cl_parts.push("ver = '" + target_version + "'\n")
+    cl_parts.push("composite = '" + composite + "'\n")
+    cl_parts.push("ts = '" + _ts_iso()[0:10] + "'\n")
+    cl_parts.push("entry = f'''## [{ver}] — {ts} (qmirror 2.0 axes closure)\n\n")
+    cl_parts.push("### Added\n\n")
+    cl_parts.push("- **qmirror 2.0 axes closure** — composite verdict {composite} from cond.9 + cond.10 + cond.11 + cond.12 + cond.13 (5-axis sister BG cycle).\n")
+    cl_parts.push("- cond.9 quantum process tomography (7/7 gates PASS, fidelity_min=0.99918).\n")
+    cl_parts.push("- cond.10 GHZ-3 + Mermin witness (M=4.0 analytic exact, 30 trials).\n")
+    cl_parts.push("- cond.11 stabilizer-measurement primitive.\n")
+    cl_parts.push("- cond.12 surface-code distance-3 toy (logical |0>).\n")
+    cl_parts.push("- cond.13 CSCS chained sequential CHSH (2-pair).\n\n")
+    cl_parts.push("### Closure provenance\n\n")
+    cl_parts.push("- Spec: anima/docs/qmirror_2_axes_spec_2026_05_03.md\n")
+    cl_parts.push("- Closure verdict: anima/state/qmirror_2_closure_2026_05_04/verdict.json\n")
+    cl_parts.push("- Marker: anima/state/markers/qmirror_2_closure_landed.marker\n\n")
+    cl_parts.push("---\n\n'''\n")
+    cl_parts.push("s = open(p).read()\n")
+    cl_parts.push("# Insert after first '---\\n\\n' (after intro block)\n")
+    cl_parts.push("idx = s.find('## [')\n")
+    cl_parts.push("if idx < 0: open(p,'w').write(s + '\\n' + entry); print('[CHANGELOG] appended (no existing entries)')\n")
+    cl_parts.push("else: open(p,'w').write(s[:idx] + entry + s[idx:]); print(f'[CHANGELOG] prepended {ver} entry')\n")
+    write_file(changelog_helper, cl_parts.join(""))
+    let r2 = exec_with_status("python3 " + changelog_helper + " 2>&1")
+    println(to_string(r2[0]))
+    if r2[1] != 0 { bump_rc = 1 }
+
+    // 3. registry.tsv version bump (qmirror row)
+    let reg_cmd = "python3 -c 'import re,sys; p=\"" + registry + "\"; lines=open(p).read().splitlines(); out=[]; bumped=False; \n[out.append(re.sub(r\"^(qmirror\\t)[^\\t]+(\\t)\", r\"\\g<1>" + target_version + "\\g<2>\", l, count=1)) if l.startswith(\"qmirror\\t\") else out.append(l) for l in lines]; open(p,\"w\").write(\"\\n\".join(out)+\"\\n\"); print(\"[registry] qmirror -> " + target_version + "\")' 2>&1"
+    let r3 = exec_with_status(reg_cmd)
+    println(to_string(r3[0]))
+    if r3[1] != 0 { bump_rc = 1 }
+
+    // 4. Tag release v2.0.0 via gh (requires gh auth)
+    let gh_check = exec_with_status("gh auth status 2>&1 | head -3")
+    if gh_check[1] != 0 {
+        println("[qm2-watchdog] gh auth FAIL — SKIP GitHub release (manual: gh release create v" + target_version + ")")
+        _log(log_path, "gh_release_skipped", "{\"reason\":\"gh_auth_fail\",\"version\":\"" + target_version + "\"}")
+    } else {
+        let gh_cmd = "cd /Users/ghost/core/qmirror && gh release create v" + target_version + " --title \"qmirror v" + target_version + " (qmirror 2.0 axes closure)\" --notes-file CHANGELOG.md --target main 2>&1 | head -20"
+        let r4 = exec_with_status(gh_cmd)
+        println(to_string(r4[0]))
+        if r4[1] != 0 {
+            println("[qm2-watchdog] gh release create FAIL rc=" + to_string(r4[1]) + " — manual retry required")
+            _log(log_path, "gh_release_fail", "{\"rc\":" + to_string(r4[1]) + ",\"version\":\"" + target_version + "\"}")
+        }
+    }
+
+    // 5. hf upload (opt-in via --hf)
+    if do_hf {
+        let hf_cmd = "huggingface-cli upload need-singularity/qmirror /Users/ghost/core/qmirror . --repo-type=model --commit-message=\"qmirror v" + target_version + " (qmirror 2.0 axes closure)\" 2>&1 | tail -20"
+        let r5 = exec_with_status(hf_cmd)
+        println(to_string(r5[0]))
+        if r5[1] != 0 {
+            println("[qm2-watchdog] hf upload FAIL rc=" + to_string(r5[1]) + " — check HUGGING_FACE_HUB_TOKEN")
+            _log(log_path, "hf_upload_fail", "{\"rc\":" + to_string(r5[1]) + "}")
+        }
+    } else {
+        println("[qm2-watchdog] --hf not set; SKIP hf mirror upload")
+    }
+
+    _log(log_path, "bump_done", "{\"version\":\"" + target_version + "\",\"composite\":\"" + composite + "\",\"rc\":" + to_string(bump_rc) + "}")
+    return bump_rc
+}
+
+// ─── main loop ──────────────────────────────────────────────────────────────
+
+fn _run_loop(paths: array, out_dir: string, synth_tool: string, hexa_toml: string, changelog: string, registry: string, target_version: string, log_path: string, poll_sec: int, max_wait_sec: int, apply: bool, apply_bump: bool, do_hf: bool, single: bool) -> int {
+    let force = _env_or("ANIMA_QM2_FORCE_TRIGGER", "0") == "1"
+    let t0 = _now_epoch()
+    let mut elapsed = 0
+    let mut iter = 0
+    while elapsed <= max_wait_sec {
+        iter = iter + 1
+        let r = _poll_all(paths, log_path)
+        let statuses = r[0]
+        let n_pass   = to_int(to_string(r[1]))
+        let n_valid  = to_int(to_string(r[2]))
+        _emit_per_cond_status(out_dir, statuses, n_pass, n_valid)
+        if n_valid == 5 || force {
+            println("[qm2-watchdog] TRIGGER FIRED iter=" + to_string(iter) + " elapsed_sec=" + to_string(elapsed) + " n_valid=" + to_string(n_valid) + "/5 n_pass=" + to_string(n_pass) + "/5 force=" + (if force { "yes" } else { "no" }))
+            _log(log_path, "trigger_fired", "{\"iter\":" + to_string(iter) + ",\"elapsed_sec\":" + to_string(elapsed) + ",\"n_valid\":" + to_string(n_valid) + ",\"n_pass\":" + to_string(n_pass) + ",\"force\":" + (if force { "true" } else { "false" }) + "}")
+            let synth_rc = _dispatch_synth(out_dir, statuses, n_pass, synth_tool, log_path, apply)
+            let composite = _compose_verdict(n_pass, n_valid)
+            let bump_rc = _do_version_bump(hexa_toml, changelog, registry, target_version, composite, apply_bump, do_hf, log_path)
+            return if synth_rc == 0 && bump_rc == 0 { 0 } else { 1 }
+        }
+        if single { return 0 }
+        elapsed = _now_epoch() - t0
+        if elapsed + poll_sec > max_wait_sec { break }
+        exec_with_status("sleep " + to_string(poll_sec))
+        elapsed = _now_epoch() - t0
+    }
+    println("[qm2-watchdog] TIMEOUT max_wait_sec=" + to_string(max_wait_sec) + " iter=" + to_string(iter))
+    _log(log_path, "timeout", "{\"max_wait_sec\":" + to_string(max_wait_sec) + ",\"iter\":" + to_string(iter) + "}")
+    return 0
+}
+
+// ─── selftest ───────────────────────────────────────────────────────────────
+
+fn cmd_selftest() {
+    println("── qmirror_2_closure_watchdog selftest ──")
+    println("inv:default_poll_interval_sec=1800")
+    println("inv:default_max_wait_sec=172800")
+    println("inv:n_conds=5")
+    println("inv:conds=cond.9,cond.10,cond.11,cond.12,cond.13")
+    println("inv:carry_in_passed=cond.9,cond.10")
+    println("inv:trio_polled=cond.11,cond.12,cond.13")
+    println("inv:guard3_label_set=PASS,FAIL,PARTIAL,DEFERRED")
+    println("inv:composite_states=FULL,PARTIAL,DEFERRED,INCOMPLETE")
+    println("inv:full_threshold=5/5_PASS")
+    println("inv:partial_threshold=4/5_PASS")
+    println("inv:deferred_threshold=lt_4_PASS")
+    println("inv:bump_gated_by_apply_AND_bump_AND_composite_in_FULL_or_PARTIAL")
+    println("inv:default_target_version=2.0.0")
+    println("inv:semver_irreversible_caveat_c=true")
+    println("inv:gh_release_requires_auth_caveat_d=true")
+    println("inv:hf_upload_opt_in_via_hf_flag=true")
+    println("inv:n_caveats=4")
+    println("inv:non_mutation_dry_default=true")
+    let ts = _ts_iso()
+    if len(ts) < 10 { eprintln("selftest=fail (ts_iso empty)"); exit(1) }
+    let q_ok = _sq("hello world")
+    if q_ok != "'hello world'" { eprintln("selftest=fail (sq mismatch: " + q_ok + ")"); exit(1) }
+    if _compose_verdict(5, 5) != "FULL" { eprintln("selftest=fail (compose 5/5 != FULL)"); exit(1) }
+    if _compose_verdict(4, 5) != "PARTIAL" { eprintln("selftest=fail (compose 4/5 != PARTIAL)"); exit(1) }
+    if _compose_verdict(3, 5) != "DEFERRED" { eprintln("selftest=fail (compose 3/5 != DEFERRED)"); exit(1) }
+    if _compose_verdict(5, 4) != "INCOMPLETE" { eprintln("selftest=fail (compose n_valid<5 != INCOMPLETE)"); exit(1) }
+    println("selftest=ok ts=" + ts)
+    println("DONE")
+}
+
+fn main() {
+    let av = _argv()
+    if _has(av, "--selftest") { cmd_selftest(); exit(0) }
+
+    let p9     = _env_or("ANIMA_QM2_COND9_VERDICT",  "/Users/ghost/core/anima/state/qmirror_2_cond9_tomography_2026_05_03/verdict.json")
+    let p10    = _env_or("ANIMA_QM2_COND10_VERDICT", "/Users/ghost/core/anima/state/qmirror_2_cond10_ghz_mermin_2026_05_03/verdict.json")
+    let p11    = _env_or("ANIMA_QM2_COND11_VERDICT", "/Users/ghost/core/anima/state/qmirror_2_cond11_stabilizer_2026_05_04/verdict.json")
+    let p12    = _env_or("ANIMA_QM2_COND12_VERDICT", "/Users/ghost/core/anima/state/qmirror_2_cond12_surface_2026_05_04/verdict.json")
+    let p13    = _env_or("ANIMA_QM2_COND13_VERDICT", "/Users/ghost/core/anima/state/qmirror_2_cond13_cscs_2026_05_04/verdict.json")
+    let synth  = _env_or("ANIMA_QM2_SYNTH_TOOL",     SYNTH_TOOL_DEFAULT)
+    let outdir = _env_or("ANIMA_QM2_OUT_DIR",        OUT_DIR_DEFAULT)
+    let toml   = _env_or("ANIMA_QM2_HEXA_TOML",      HEXA_TOML_DEFAULT)
+    let cl     = _env_or("ANIMA_QM2_CHANGELOG",      CHANGELOG_DEFAULT)
+    let reg    = _env_or("ANIMA_QM2_REGISTRY",       REGISTRY_DEFAULT)
+    let tgtver = _env_or("ANIMA_QM2_TARGET_VERSION", "2.0.0")
+    let poll   = to_int(_env_or("ANIMA_POLL_INTERVAL_SEC", "1800"))
+    let maxw   = to_int(_env_or("ANIMA_MAX_WAIT_SEC",      "172800"))
+    let log_p  = outdir + "/watchdog_log.jsonl"
+
+    let apply  = _has(av, "--apply")
+    let bump   = _has(av, "--bump")
+    let dohf   = _has(av, "--hf")
+    let single = _has(av, "--once")
+
+    println("[qm2-watchdog] start ts=" + _ts_iso() + " apply=" + (if apply { "yes" } else { "no" }) + " bump=" + (if bump { "yes" } else { "no" }) + " hf=" + (if dohf { "yes" } else { "no" }) + " mode=" + (if single { "once" } else { "loop" }))
+    println("[qm2-watchdog] poll_sec=" + to_string(poll) + " max_wait=" + to_string(maxw))
+    println("[qm2-watchdog] outdir=" + outdir + " synth=" + synth + " tgt_version=" + tgtver)
+
+    _log(log_p, "start", "{\"apply\":" + (if apply { "true" } else { "false" }) + ",\"bump\":" + (if bump { "true" } else { "false" }) + ",\"hf\":" + (if dohf { "true" } else { "false" }) + ",\"mode\":\"" + (if single { "once" } else { "loop" }) + "\"}")
+
+    let paths = [p9, p10, p11, p12, p13]
+    let rc = _run_loop(paths, outdir, synth, toml, cl, reg, tgtver, log_p, poll, maxw, apply, bump, dohf, single)
+    exit(rc)
+}

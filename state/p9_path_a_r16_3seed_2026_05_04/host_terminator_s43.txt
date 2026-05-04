@@ -1,0 +1,82 @@
+#!/bin/bash
+# Host-side pod terminator + cost watchdog for Path A r=16 retrain — seed 43.
+# Mirrors state/p9_path_a_r16_2026_05_03/host_terminator_v2.txt with s43 pod_id + paths.
+# HARD CAP $30, soft kill at $27 (= 9.03h @ $2.99/hr).
+set -uo pipefail
+POD_ID="0jetjpvlm51zoy"
+SSH_HOST="216.243.220.230"
+SSH_PORT="11023"
+SSH_KEY="/Users/ghost/.runpod/ssh/RunPod-Key-Go"
+RUNPODCTL="/opt/homebrew/bin/runpodctl"
+RATE_PER_HR=2.99
+WATCHDOG_KILL_USD=27
+HARD_CAP_USD=30
+LOG=/Users/ghost/core/anima/state/p9_path_a_r16_3seed_2026_05_04/host_terminator_s43.log
+START_TS=$(date +%s)
+ARTIFACTS=/Users/ghost/core/anima/state/p9_path_a_r16_3seed_2026_05_04/artifacts_s43
+mkdir -p "$(dirname $LOG)" $ARTIFACTS
+
+echo "[$(date -u +%FT%TZ)] start watcher pod=$POD_ID watchdog_kill=\$${WATCHDOG_KILL_USD} hard_cap=\$${HARD_CAP_USD} rate=\$${RATE_PER_HR}/hr" >> $LOG
+
+while true; do
+    NOW=$(date +%s)
+    ELAPSED_S=$(( NOW - START_TS ))
+    ELAPSED_MIN=$(( ELAPSED_S / 60 ))
+    ELAPSED_HR=$(awk "BEGIN{printf \"%.3f\", $ELAPSED_S/3600}")
+    SPEND_USD=$(awk "BEGIN{printf \"%.2f\", $ELAPSED_HR * $RATE_PER_HR}")
+
+    SPEND_INT=$(awk "BEGIN{printf \"%d\", $SPEND_USD * 100}")
+    KILL_INT=$(awk "BEGIN{printf \"%d\", $WATCHDOG_KILL_USD * 100}")
+    if [ "$SPEND_INT" -ge "$KILL_INT" ]; then
+        echo "[$(date -u +%FT%TZ)] WATCHDOG_KILL spend=\$${SPEND_USD} >= \$${WATCHDOG_KILL_USD} — terminating pod" >> $LOG
+        $RUNPODCTL pod stop $POD_ID >> $LOG 2>&1
+        $RUNPODCTL pod remove $POD_ID >> $LOG 2>&1
+        break
+    fi
+
+    PROBE=$(ssh -i $SSH_KEY -o StrictHostKeyChecking=no -o ConnectTimeout=15 -p $SSH_PORT root@$SSH_HOST "
+        DONE=0; ALIVE=0; PHASE=none
+        if [ -f /workspace/p9_path_a_r16_s43_savepoints/TRAIN_DONE.json ]; then
+            DONE=1
+            PHASE=\$(python3 -c \"import json; print(json.load(open('/workspace/p9_path_a_r16_s43_savepoints/TRAIN_DONE.json'))['phase'])\" 2>/dev/null || echo unknown)
+        fi
+        if [ -f /workspace/p9_path_a_r16_s43_savepoints/train.pid ]; then
+            TPID=\$(cat /workspace/p9_path_a_r16_s43_savepoints/train.pid)
+            if kill -0 \$TPID 2>/dev/null; then ALIVE=1; fi
+        fi
+        STEP=\$(grep -oE '[0-9]+/10000' /workspace/p9_path_a_r16_s43_savepoints/train.log 2>/dev/null | tail -1)
+        echo \"DONE=\$DONE PHASE=\$PHASE ALIVE=\$ALIVE STEP=\$STEP\"
+    " 2>/dev/null) || PROBE="SSH_FAIL"
+
+    echo "[$(date -u +%FT%TZ)] elapsed=${ELAPSED_MIN}min spend=\$${SPEND_USD} probe=$PROBE" >> $LOG
+
+    if echo "$PROBE" | grep -q "PHASE=final_saved"; then
+        echo "[$(date -u +%FT%TZ)] PHASE=final_saved — downloading artifacts then terminating" >> $LOG
+        scp -i $SSH_KEY -o StrictHostKeyChecking=no -P $SSH_PORT \
+            "root@$SSH_HOST:/workspace/p9_path_a_r16_s43_savepoints/train.log" \
+            "root@$SSH_HOST:/workspace/p9_path_a_r16_s43_savepoints/config.json" \
+            "root@$SSH_HOST:/workspace/p9_path_a_r16_s43_savepoints/TRAIN_DONE.json" \
+            $ARTIFACTS/ >> $LOG 2>&1 || echo "scp partial fail" >> $LOG
+        scp -i $SSH_KEY -o StrictHostKeyChecking=no -P $SSH_PORT -r \
+            "root@$SSH_HOST:/workspace/p9_path_a_r16_s43_savepoints/final" \
+            $ARTIFACTS/ >> $LOG 2>&1 || echo "final adapter scp fail (HF mirror is fallback)" >> $LOG
+        $RUNPODCTL pod stop $POD_ID >> $LOG 2>&1
+        $RUNPODCTL pod remove $POD_ID >> $LOG 2>&1
+        echo "[$(date -u +%FT%TZ)] pod terminated — done" >> $LOG
+        break
+    fi
+
+    if echo "$PROBE" | grep -q "ALIVE=0" && echo "$PROBE" | grep -q "DONE=0"; then
+        echo "[$(date -u +%FT%TZ)] train pid GONE without DONE — likely error; downloading log + terminating" >> $LOG
+        scp -i $SSH_KEY -o StrictHostKeyChecking=no -P $SSH_PORT \
+            "root@$SSH_HOST:/workspace/p9_path_a_r16_s43_savepoints/train.log" \
+            $ARTIFACTS/train.log >> $LOG 2>&1 || true
+        $RUNPODCTL pod stop $POD_ID >> $LOG 2>&1
+        $RUNPODCTL pod remove $POD_ID >> $LOG 2>&1
+        echo "[$(date -u +%FT%TZ)] pod terminated (error path)" >> $LOG
+        break
+    fi
+
+    sleep 600  # 10min poll
+done
+echo "[$(date -u +%FT%TZ)] watcher exit" >> $LOG

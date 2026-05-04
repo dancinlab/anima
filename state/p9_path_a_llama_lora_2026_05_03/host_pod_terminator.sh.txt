@@ -11,10 +11,27 @@ SSH_KEY="/Users/ghost/.runpod/ssh/RunPod-Key-Go"
 RUNPODCTL="/opt/homebrew/bin/runpodctl"
 HARD_CAP_HR=28
 LOG=/Users/ghost/core/anima/state/p9_path_a_llama_lora_2026_05_03/host_terminator.log
+ARTIFACTS_DIR=/Users/ghost/core/anima/state/p9_path_a_llama_lora_2026_05_03/artifacts
+IDLE_WAIT_SEC=240   # 4min recheck window — covers 1-3min/save observed on H100
 START_TS=$(date +%s)
 
 mkdir -p "$(dirname $LOG)"
-echo "[$(date -u +%FT%TZ)] start watcher pod=$POD_ID hard_cap=${HARD_CAP_HR}h" >> $LOG
+mkdir -p "$ARTIFACTS_DIR"   # Bug2-hardening: ensure artifacts/ exists before any branch can scp
+echo "[$(date -u +%FT%TZ)] start watcher pod=$POD_ID hard_cap=${HARD_CAP_HR}h idle_wait=${IDLE_WAIT_SEC}s" >> $LOG
+
+# Probe function: emits "DONE=N ALIVE=N STEP=…" or "SSH_FAIL". Used in main loop AND idle-recheck.
+probe_pod() {
+    ssh -i $SSH_KEY -o StrictHostKeyChecking=no -o ConnectTimeout=15 -p $SSH_PORT root@$SSH_HOST '
+        DONE=0; ALIVE=0
+        if [ -f /workspace/p9_path_a_llama_lora/TRAIN_DONE.json ]; then DONE=1; fi
+        if [ -f /workspace/p9_path_a_llama_lora/train.pid ]; then
+            TPID=$(cat /workspace/p9_path_a_llama_lora/train.pid)
+            if kill -0 $TPID 2>/dev/null; then ALIVE=1; fi
+        fi
+        STEP=$(grep -oE "[0-9]+/10000" /workspace/p9_path_a_llama_lora/train.log 2>/dev/null | tail -1)
+        echo "DONE=$DONE ALIVE=$ALIVE STEP=$STEP"
+    ' 2>/dev/null || echo "SSH_FAIL"
+}
 
 while true; do
     NOW=$(date +%s)
@@ -28,42 +45,47 @@ while true; do
     fi
 
     # Probe: TRAIN_DONE? train pid alive?
-    PROBE=$(ssh -i $SSH_KEY -o StrictHostKeyChecking=no -o ConnectTimeout=15 -p $SSH_PORT root@$SSH_HOST '
-        DONE=0; ALIVE=0
-        if [ -f /workspace/p9_path_a_llama_lora/TRAIN_DONE.json ]; then DONE=1; fi
-        if [ -f /workspace/p9_path_a_llama_lora/train.pid ]; then
-            TPID=$(cat /workspace/p9_path_a_llama_lora/train.pid)
-            if kill -0 $TPID 2>/dev/null; then ALIVE=1; fi
-        fi
-        STEP=$(grep -oE "[0-9]+/10000" /workspace/p9_path_a_llama_lora/train.log 2>/dev/null | tail -1)
-        echo "DONE=$DONE ALIVE=$ALIVE STEP=$STEP"
-    ' 2>/dev/null) || PROBE="SSH_FAIL"
+    PROBE=$(probe_pod)
 
     echo "[$(date -u +%FT%TZ)] elapsed=${ELAPSED_MIN}min probe=$PROBE" >> $LOG
 
     if echo "$PROBE" | grep -q "DONE=1"; then
         echo "[$(date -u +%FT%TZ)] TRAIN_DONE detected — downloading final adapter then terminating" >> $LOG
         # Download final adapter + train.log
-        mkdir -p /Users/ghost/core/anima/state/p9_path_a_llama_lora_2026_05_03/artifacts
+        mkdir -p "$ARTIFACTS_DIR"
         scp -i $SSH_KEY -o StrictHostKeyChecking=no -P $SSH_PORT \
             "root@$SSH_HOST:/workspace/p9_path_a_llama_lora/train.log" \
             "root@$SSH_HOST:/workspace/p9_path_a_llama_lora/config.json" \
             "root@$SSH_HOST:/workspace/p9_path_a_llama_lora/TRAIN_DONE.json" \
-            /Users/ghost/core/anima/state/p9_path_a_llama_lora_2026_05_03/artifacts/ >> $LOG 2>&1 || echo "scp partial fail" >> $LOG
+            "$ARTIFACTS_DIR/" >> $LOG 2>&1 || { mkdir -p "$ARTIFACTS_DIR"; echo "scp partial fail" >> $LOG; }
         scp -i $SSH_KEY -o StrictHostKeyChecking=no -P $SSH_PORT -r \
             "root@$SSH_HOST:/workspace/p9_path_a_llama_lora/final" \
-            /Users/ghost/core/anima/state/p9_path_a_llama_lora_2026_05_03/artifacts/ >> $LOG 2>&1 || echo "final adapter scp fail (HF mirror is fallback)" >> $LOG
+            "$ARTIFACTS_DIR/" >> $LOG 2>&1 || { mkdir -p "$ARTIFACTS_DIR"; echo "final adapter scp fail (HF mirror is fallback)" >> $LOG; }
         $RUNPODCTL pod delete $POD_ID >> $LOG 2>&1
         echo "[$(date -u +%FT%TZ)] pod terminated — done" >> $LOG
         break
     fi
 
     if echo "$PROBE" | grep -q "ALIVE=0" && echo "$PROBE" | grep -q "DONE=0"; then
-        echo "[$(date -u +%FT%TZ)] train pid GONE without DONE — likely error; downloading log + terminating" >> $LOG
-        mkdir -p /Users/ghost/core/anima/state/p9_path_a_llama_lora_2026_05_03/artifacts
+        # Bug1-hardening: pid-gone could be a 1-3min save flush in flight. Wait IDLE_WAIT_SEC,
+        # re-probe TRAIN_DONE.json + pid; only kill if BOTH still ALIVE=0 AND DONE=0.
+        echo "[$(date -u +%FT%TZ)] ALIVE=0/DONE=0 detected — entering ${IDLE_WAIT_SEC}s idle-window before kill" >> $LOG
+        sleep $IDLE_WAIT_SEC
+        RECHECK=$(probe_pod)
+        echo "[$(date -u +%FT%TZ)] idle-window recheck=$RECHECK" >> $LOG
+        if echo "$RECHECK" | grep -q "DONE=1"; then
+            echo "[$(date -u +%FT%TZ)] DONE landed during idle-window — falling through to DONE-branch on next iteration" >> $LOG
+            continue
+        fi
+        if echo "$RECHECK" | grep -q "ALIVE=1"; then
+            echo "[$(date -u +%FT%TZ)] pid revived during idle-window (false alarm) — resuming poll" >> $LOG
+            continue
+        fi
+        echo "[$(date -u +%FT%TZ)] confirmed crash (still ALIVE=0/DONE=0 after recheck) — downloading log + terminating" >> $LOG
+        mkdir -p "$ARTIFACTS_DIR"
         scp -i $SSH_KEY -o StrictHostKeyChecking=no -P $SSH_PORT \
             "root@$SSH_HOST:/workspace/p9_path_a_llama_lora/train.log" \
-            /Users/ghost/core/anima/state/p9_path_a_llama_lora_2026_05_03/artifacts/train.log >> $LOG 2>&1 || true
+            "$ARTIFACTS_DIR/train.log" >> $LOG 2>&1 || { mkdir -p "$ARTIFACTS_DIR"; echo "error-branch scp fail" >> $LOG; }
         $RUNPODCTL pod delete $POD_ID >> $LOG 2>&1
         echo "[$(date -u +%FT%TZ)] pod terminated (error path)" >> $LOG
         break

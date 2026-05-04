@@ -1,0 +1,40 @@
+{
+  "sample_size": 1000,
+  "seed": 42,
+  "counts": {
+    "chat": 306,
+    "code": 169,
+    "instruction": 177,
+    "factual": 348
+  },
+  "pct": {
+    "chat": 30.6,
+    "code": 16.9,
+    "instruction": 17.7,
+    "factual": 34.8
+  },
+  "ratios": {
+    "strict_chat_vs_factual": {
+      "chat": 46.79,
+      "factual": 53.21,
+      "denom": 654
+    },
+    "inclusive_chatlike_vs_factlike": {
+      "chatlike": 48.3,
+      "factlike": 51.7,
+      "denom": 1000,
+      "note": "chatlike = chat+instruction; factlike = factual+code"
+    }
+  },
+  "track_a_target": {
+    "chat": 70,
+    "factual": 30
+  },
+  "classification_rules_summary": [
+    "code: source ends .py/.json or contains def/class/```python",
+    "chat: source contains sharegpt OR llama_augment_fallback",
+    "instruction: synthetic_philosophical_template_* or p8_ledger_m4_*",
+    "factual: anima_corpus_*, alm_r14_metaref*, n22_paradigm_v11_doc*, *.md, README/PROPOSAL/INTEGRATION/SUMMARY",
+    "other: residual"
+  ]
+}

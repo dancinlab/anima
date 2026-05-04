@@ -1,0 +1,115 @@
+diff --git a/tool/p9_a_prime_verdict.hexa b/tool/p9_a_prime_verdict.hexa
+index a6701484..a70f2c34 100644
+--- a/tool/p9_a_prime_verdict.hexa
++++ b/tool/p9_a_prime_verdict.hexa
+@@ -33,11 +33,19 @@
+ //     hexa run tool/p9_a_prime_verdict.hexa
+ //
+ // raw#9 hexa-only / raw#37 transient emit / raw#15 SSOT this file
+-// raw#10 honest C3:
++// raw#10 honest C3 (post r=64 doc_hash patch 2026-05-04):
+ //   - 4-bit precision must match between base anchor and LoRA ckpt for valid Δ (§6.5 of A' decision)
+ //   - Single seed (42) per A' §2.5; MCQA approximately deterministic (not BLEU-style sample variance)
+-//   - paired bootstrap assumes both arrays cover identical doc_id set; mismatched docs auto-truncated to intersection
++//   - JOIN KEY: doc_hash (sha256 of doc text) preferred over doc_id; doc_id is NOT invariant
++//     across base PE (raw int) vs ckpt PE (namespaced 'task::N'). doc_hash collisions are
++//     theoretically possible (sha256 birthday bound ~2^128) but ignored in practice.
++//   - Retroactive r=64 verdict identical to /tmp/recompute_r64_verdict_doc_hash.py output
++//     (4/4 ckpts CHAT_FAIL_v3; HellaSwag step-4000 +0.8pt NOT 65.6% as initially mis-reported).
++//   - Future task-specific schemas (multilingual, code) may diverge if dataset emits non-stable
++//     doc text; in that case re-key per-task before computing doc_hash.
++//   - paired bootstrap assumes both arrays cover identical doc_hash set; mismatched docs auto-truncated to intersection
+ //   - McNemar continuity-corrected for n_discordant ≥ 25; exact binomial below
++//   - STRONG regression now SYMMETRIC: delta ≤ -threshold AND ci_hi < 0 AND mcnemar_p < 0.05
+ //   - Composite SUCCESS_v3 here is F1_v3 PASS only — F2 (φ★), F3 (tension), F4 (BOLD) are
+ //     measured on a separate substrate (Path D track) and NOT consumed by this hexa
+ 
+@@ -77,15 +85,19 @@ fn _write_helper() {
+     parts.push("    return None\n\n")
+ 
+     parts.push("def _build_correctness_dict(per_example, metric):\n")
+-    parts.push("    # Returns {doc_id: 0/1}\n")
++    parts.push("    # Returns {doc_hash: 0/1} — doc_hash invariant join (patched 2026-05-04).\n")
++    parts.push("    # Falls back to doc_id ONLY when doc_hash is absent (legacy schema). Mixed\n")
++    parts.push("    # base/ckpt PE that lack doc_hash will silently skip the entry.\n")
+     parts.push("    out = {}\n")
+     parts.push("    for e in per_example or []:\n")
+-    parts.push("        did = e.get('doc_id') if isinstance(e, dict) else None\n")
+-    parts.push("        v = _metric_key_lookup(e, metric) if isinstance(e, dict) else e\n")
+-    parts.push("        if did is None or v is None:\n")
++    parts.push("        if not isinstance(e, dict):\n")
++    parts.push("            continue\n")
++    parts.push("        key = e.get('doc_hash') or e.get('doc_id')\n")
++    parts.push("        v = _metric_key_lookup(e, metric)\n")
++    parts.push("        if key is None or v is None:\n")
+     parts.push("            continue\n")
+     parts.push("        try:\n")
+-    parts.push("            out[did] = 1 if float(v) >= 0.5 else 0\n")
++    parts.push("            out[key] = 1 if float(v) >= 0.5 else 0\n")
+     parts.push("        except Exception:\n")
+     parts.push("            pass\n")
+     parts.push("    return out\n\n")
+@@ -132,7 +144,7 @@ fn _write_helper() {
+     parts.push("    p = math.erfc(math.sqrt(chi2 / 2.0))\n")
+     parts.push("    return {'p': round(p, 6), 'b': b, 'c': c, 'method': 'continuity_corrected'}\n\n")
+ 
+-    parts.push("def _classify_signal(delta_pt, ci_lo_pt, mcnemar_p, threshold_pt):\n")
++    parts.push("def _classify_signal(delta_pt, ci_lo_pt, ci_hi_pt, mcnemar_p, threshold_pt):\n")
+     parts.push("    crit_a = (delta_pt is not None) and (delta_pt >= threshold_pt)\n")
+     parts.push("    crit_b = (ci_lo_pt is not None) and (ci_lo_pt > 0.0)\n")
+     parts.push("    crit_c = (mcnemar_p is not None) and (mcnemar_p < 0.05)\n")
+@@ -143,13 +155,12 @@ fn _write_helper() {
+     parts.push("        state = 'WEAK'\n")
+     parts.push("    else:\n")
+     parts.push("        state = 'NO'\n")
+-    parts.push("    # check regression: STRONG with negative delta\n")
++    parts.push("    # symmetric STRONG regression: delta <= -threshold AND ci_hi < 0 AND p < 0.05\n")
+     parts.push("    is_regression = False\n")
+-    parts.push("    if delta_pt is not None and delta_pt <= -threshold_pt and ci_lo_pt is not None:\n")
+-    parts.push("        # symmetric: regression STRONG if upper CI < 0 AND |delta| ≥ threshold AND p < 0.05\n")
+-    parts.push("        # we approximate by: STRONG signal in negative direction\n")
+-    parts.push("        if state == 'STRONG':\n")
+-    parts.push("            is_regression = True\n")
++    parts.push("    if (delta_pt is not None and delta_pt <= -threshold_pt\n")
++    parts.push("        and ci_hi_pt is not None and ci_hi_pt < 0.0\n")
++    parts.push("        and mcnemar_p is not None and mcnemar_p < 0.05):\n")
++    parts.push("        is_regression = True\n")
+     parts.push("    return {'criteria_pass': {'delta_geq_threshold': crit_a,\n")
+     parts.push("                                 'ci_excludes_zero': crit_b,\n")
+     parts.push("                                 'mcnemar_p_lt_005': crit_c},\n")
+@@ -184,14 +195,15 @@ fn _write_helper() {
+     parts.push("        c_dict = _build_correctness_dict(c_pe, metric)\n")
+     parts.push("        common = sorted(set(b_dict.keys()) & set(c_dict.keys()))\n")
+     parts.push("        if not common:\n")
+-    parts.push("            per_task[task] = {'task':task, 'error':'no_common_doc_ids',\n")
++    parts.push("            per_task[task] = {'task':task, 'error':'no_common_doc_keys',\n")
++    parts.push("                                'join_key':'doc_hash_or_doc_id',\n")
+     parts.push("                                'n_base':len(b_dict), 'n_ckpt':len(c_dict)}\n")
+     parts.push("            continue\n")
+     parts.push("        b_arr = [b_dict[d] for d in common]\n")
+     parts.push("        c_arr = [c_dict[d] for d in common]\n")
+     parts.push("        boot = _paired_bootstrap_delta(b_arr, c_arr, boot_n, seed)\n")
+     parts.push("        mc = _mcnemar(b_arr, c_arr)\n")
+-    parts.push("        cls = _classify_signal(boot['point_delta_pt'], boot['ci95_lo_pt'], mc['p'], thresh)\n")
++    parts.push("        cls = _classify_signal(boot['point_delta_pt'], boot['ci95_lo_pt'], boot['ci95_hi_pt'], mc['p'], thresh)\n")
+     parts.push("        per_task[task] = {\n")
+     parts.push("            'task': task, 'metric': metric, 'threshold_pt': thresh,\n")
+     parts.push("            'n_common_docs': len(common),\n")
+@@ -272,6 +284,8 @@ fn _write_helper() {
+     parts.push("        'CHAT_FAIL_v3': '0 STRONG signals OR any STRONG regression',\n")
+     parts.push("    },\n")
+     parts.push("    'falsifier_scope': 'F1_v3 chat axis only; F2 (φ★), F3 (tension MSE), F4 (BOLD pearson) are out-of-scope here',\n")
++    parts.push("    'join_key': 'doc_hash_preferred_doc_id_fallback',\n")
++    parts.push("    'symmetric_regression_rule': 'delta <= -threshold AND ci_hi < 0 AND mcnemar_p < 0.05',\n")
+     parts.push("}\n")
+     parts.push("os.makedirs(os.path.dirname(OUTPUT) or '.', exist_ok=True)\n")
+     parts.push("with open(OUTPUT,'w') as f: json.dump(summary, f, indent=2, default=str)\n")
+@@ -298,6 +312,8 @@ fn _selftest_invariants() -> bool {
+     println("inv:anchor=meta-llama/Llama-3.2-3B-Instruct")
+     println("inv:non_mutation_atlas=true")
+     println("inv:f1_v3_pass_rule=>=2_of_3_STRONG_AND_no_STRONG_regression")
++    println("inv:join_key=doc_hash_preferred_doc_id_fallback")
++    println("inv:symmetric_regression_rule=delta<=-threshold_AND_ci_hi<0_AND_p<0.05")
+     return true
+ }
+ 

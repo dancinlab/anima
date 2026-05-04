@@ -1,0 +1,97 @@
+{
+  "schema": "anima/p9_path_a_r16_3seed/verdict/1",
+  "status": "training_in_progress_3seed",
+  "spec_ref": "docs/p9_path_a_regression_mitigation_spec_2026_05_03.md Track B",
+  "caveat_addressed": "F-PATHA-MITIGATION-1 caveat #4: landing band [-0.5, +0.5] requires 3-seed amend",
+  "ts_utc_started": "2026-05-04T04:39:07Z",
+  "seeds": {
+    "42": {
+      "pod_id": "pvkyhb0lb87ydu",
+      "pod_name": "anima-p9-pathA-r16-h100-sxm-secure",
+      "ssh_host": "103.207.149.143",
+      "ssh_port": "15961",
+      "launched_ts_utc": "2026-05-04T01:56:50Z",
+      "hf_push_target": "need-singularity/llm-llama32-3b-paradigm-a-prime-r16-sft-stage1",
+      "status_at_3seed_provision": "RUNNING ~step 80+ at 2026-05-04T04:39Z (~2h45min in)",
+      "preexisting": true,
+      "watchdog": "host_terminator.txt running on host (pid 91788 from r16 verdict)"
+    },
+    "43": {
+      "pod_id": "0jetjpvlm51zoy",
+      "pod_name": "anima-p9-pathA-r16-s43-h100-sxm-secure",
+      "ssh_host": "216.243.220.230",
+      "ssh_port": "11023",
+      "launched_ts_utc": "2026-05-04T04:42:58Z",
+      "hf_push_target": "need-singularity/llm-llama32-3b-paradigm-a-prime-r16-s43-sft-stage1",
+      "train_pid_pod": 220,
+      "watchdog_local_log": "state/p9_path_a_r16_3seed_2026_05_04/host_terminator_s43.log"
+    },
+    "44": {
+      "pod_id": "nzw0btc8br78yy",
+      "pod_name": "anima-p9-pathA-r16-s44-h100-sxm-secure",
+      "ssh_host": "64.247.201.34",
+      "ssh_port": "12499",
+      "launched_ts_utc": "2026-05-04T04:43:04Z",
+      "hf_push_target": "need-singularity/llm-llama32-3b-paradigm-a-prime-r16-s44-sft-stage1",
+      "train_pid_pod": 220,
+      "watchdog_local_log": "state/p9_path_a_r16_3seed_2026_05_04/host_terminator_s44.log"
+    }
+  },
+  "config_identical_across_seeds": {
+    "base_model": "meta-llama/Llama-3.2-3B-Instruct",
+    "lora_r": 16,
+    "lora_alpha": 16,
+    "lora_dropout": 0.05,
+    "target_modules": ["q_proj","k_proj","v_proj","o_proj","gate_proj","up_proj","down_proj"],
+    "lr": 0.0001,
+    "per_device_batch": 4,
+    "grad_accum": 8,
+    "max_steps": 10000,
+    "save_steps": 2000,
+    "seq_len": 2048,
+    "warmup_steps": 200,
+    "bf16": true,
+    "gradient_checkpointing": true,
+    "trainable_params": 24313856,
+    "trainable_pct": 0.7511
+  },
+  "corpus": {
+    "path_local": "state/p9_p0_measure_2026_05_03/sft_data_full_50k_augmented.jsonl",
+    "path_pod": "/workspace/sft_data_llama_template.jsonl",
+    "n_records": 50000,
+    "template": "llama-3.2 chat (system+user+assistant)"
+  },
+  "cost": {
+    "rate_per_hr_usd": 2.99,
+    "per_pod_hard_cap_usd": 30,
+    "per_pod_watchdog_kill_usd": 27,
+    "per_pod_eta_hr": 7.95,
+    "projected_per_pod_usd": 23.77,
+    "total_3train_projected_usd": 71.31,
+    "eval_pod_projected_usd": 4.49,
+    "total_cycle_projected_usd": 75.80,
+    "user_hard_cap_usd": 80
+  },
+  "eval_pod_plan": {
+    "trigger": "all 3 seeds reach TRAIN_DONE.json::phase=final_saved",
+    "spec": "1x H100 SXM secure, 80GB container, 50GB volume",
+    "workload": "3 seeds × 5 ckpts × 3 tasks (hellaswag/triviaqa/mmlu) = 45 evals serial @ ~2min each = ~1.5h",
+    "single_pod_decision_rationale": "H100 80GB easily handles 1 model at a time; no parallelism benefit + simpler aggregation",
+    "ref_loader_smoketest": "state/p9_path_a_r16_eval_pipeline_2026_05_03/loader_smoketest_r16.py.txt"
+  },
+  "verdict_logic_post_eval": {
+    "MITIGATION_PASS": "TriviaQA Δ_mean ≥ 0 AND std bound passes AND paired bootstrap p > 0.05",
+    "PARTIAL": "TriviaQA Δ_mean ≥ -1pt AND HellaSwag Δ ≥ +0.5pt",
+    "FAIL_REGRESSION": "TriviaQA Δ < -1pt with high confidence",
+    "FAIL_NO_LIFT": "All Δ ≈ 0 (Track B insufficient — escalate to Track A or D)"
+  },
+  "constraints_honored": {
+    "raw#9_py_only_on_runpod": "train_llama_lora_r16.py uploaded; .sh launch script becomes launch.sh on pod (locally .txt)",
+    "raw#15_idempotent": true,
+    "raw#10_honest_C3": true,
+    "do_not_touch_existing": ["pvkyhb0lb87ydu (s42)", "fuewrx9moxe6gz (D 25K eval)"],
+    "TRAIN_DONE_marker_immediate": "train_llama_lora_r16.py writes TRAIN_DONE.json IMMEDIATELY after trainer.train() returns (raw#9 r45 lesson)",
+    "pod_cleanup_mandatory": "host_terminator_s{43,44}.txt auto-removes pod on PHASE=final_saved or watchdog_kill"
+  },
+  "captured_at_utc": "2026-05-04T04:46:00Z"
+}
