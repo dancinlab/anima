@@ -1,0 +1,52 @@
+{
+  "cycle": "hive_security_review_2026_05_04",
+  "ts_utc": "2026-05-04T11:30:43Z",
+  "hive_repo_url": "https://github.com/need-singularity/hive",
+  "hive_repo_visibility": "PUBLIC",
+  "files_in_scope": [
+    "/Users/ghost/core/hive/scripts/leak_guard_pretool.bash",
+    "/Users/ghost/core/hive/claude-config/hive-hook-bus/settings.json"
+  ],
+  "files_repo_state": {
+    "scripts/leak_guard_pretool.bash": "untracked",
+    "claude-config/hive-hook-bus/settings.json": "untracked (parent dir untracked)"
+  },
+  "regex_patterns_count": 9,
+  "regex_patterns": [
+    "github_pat_*",
+    "ghp_*",
+    "ghs_*",
+    "gho_*",
+    "sk-ant-*",
+    "hf_*",
+    "rpod_*",
+    "AKIA*",
+    "AIza*"
+  ],
+  "regex_exposure_risk": "LOW",
+  "regex_exposure_rationale": "All 9 prefixes are publicly documented industry-standard token formats; pre-baked into truffleHog/gitleaks/repo-secret-scan. Adversarial info gain ~0.",
+  "stale_token_literals_exposed": [
+    "STALE_HF_LYKZ (rotated, benign — line 33)",
+    "STALE_HF_RERB (rotated, benign — line 34)"
+  ],
+  "stale_token_rotation_verified_via_live_api": false,
+  "stale_token_rotation_source": "anima MEMORY + commit-message hearsay (BG-Σ 2026-05-03 + cb3521bd2)",
+  "hardcoded_secrets_other_than_stale": "none_found",
+  "user_path_leak_in_settings": "/Users/ghost/core/hive (path-implicit, no incremental info)",
+  "recommendation": "PR_NOTE_REQUIRED",
+  "recommended_action_summary": "Push OK after prepending PR/commit-message note that lines 33-34 of leak_guard_pretool.bash are post-rotation evidence values, not live secrets.",
+  "alternative_HOLD_path": "Replace stale-token literals with SHA256 hashes (defer — benign per rotation status)",
+  "post_push_verification_steps": [
+    "Trigger Bash with fake hf_ token to confirm hook deny",
+    "readlink ~/.hive/claude-config/hive-hook-bus/settings.json -> repo path",
+    "gitleaks scan, mark STALE_HF_* as known via .gitleaksignore"
+  ],
+  "honest_c3": [
+    "Audit is read-only; no push executed — user must run push manually",
+    "Stale-token rotation status from MEMORY/hearsay only, NOT live HF whoami verification",
+    "Public visibility lookup via local gh CLI auth context — cross-check on github.com recommended",
+    "Hook is partial defense (Bash/Write/Edit/MultiEdit tool_input only); novel-format tokens + Read tool + already-on-disk content out of scope",
+    "settings.json _bind_revert_cmd points to file OUTSIDE repo (~/.hive/...bak); revert depends on backup integrity not guaranteed by repo",
+    "First-introduction files — no prior version to diff for regression check"
+  ]
+}
