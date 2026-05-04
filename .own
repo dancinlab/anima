@@ -472,3 +472,41 @@ own 13 new "anima-local: user-facing-response-friendliness — hive raw 165 cros
   follow-up T3 propagation hexa-lang (resolver/error trailer paired with raw 66 ai-native-error)
   follow-up T4 propagation n6-architecture (theory/ docs jargon-ratio measurement)
   follow-up new -> warn 30d once friendliness_lint scan satisfies measurement-thresholds; warn -> live 60d once 5-sister cross-repo coverage = 5/5
+
+own 14 new "anima-local: models + datasets HF Hub only — anima git에 large weights/data 금지 (capacity)"
+  slug models-datasets-hf-hub-only-mandate
+  base anima/.own SSOT + raw 9 hexa-only canonical-mandate (cross-link)
+  since 2026-05-04 (user directive 강한 반복: "anima own 등록 => model, dataset 은 무조건 HF 에 등록 , github 에 따라 올라가면 안됨 (용량문제)" + "모델, 데이터셋은 무조건 HF 만" + "저장")
+  scope anima repo content boundaries — model weights (.pt/.safetensors/.bin/.pth/.gguf/sentencepiece .model) + large training/eval datasets (>5MB jsonl/parquet/csv) MUST live on HuggingFace Hub (need-singularity org). anima git holds: hexa source, spec docs, state JSONL/JSON (small <5MB), audit logs/verdicts, configurations, HF mirror references (path + revision pin + sha256, NOT bytes).
+  rule before any `git add <path>`:
+    (a) du -h <path> — if >5MB, STOP
+    (b) classify: model weights / dataset / metadata-reference / spec / audit / source
+    (c) if (a)>5MB AND classification ∈ {model, dataset}: push to HF mirror via tool/hf_upload_mk2.hexa instead of anima git
+    (d) capture HF revision pin + sha256 in anima git as JSON reference (not bytes)
+    (e) add to .gitignore if regenerable from HF
+  enforcement (advisory) tool/hf_upload_mk2.hexa naming convention validator + state/hf_upload_audit/<ts>_<repo>.jsonl ledger per upload
+  enforcement (lint) tool/anima_large_file_pre_commit_lint.hexa (PROPOSED follow-up) — pre-commit hook scanning staged files >5MB; warn or block per user policy
+  exceptions synthetic/calibration small fixtures (<1MB) anima git OK
+  exceptions HF Hub down OR private-only access scenarios — temporary local cache OK (state/.local_cache/ gitignored)
+  bans `git add <model_weight_file>` for files >5MB (model artifacts)
+  bans `git add <dataset_file>` for files >5MB (training/eval data)
+  bans LFS pointer commit on anima git (HF Hub native LFS preferred — single SSOT)
+  proof memory feedback_anima_models_datasets_hf_only.md (hive-hook-bus 2026-05-04, session-scoped mirror)
+  proof tokenizer_64k_multilingual.{model,vocab} (1.2MB+966K) already mirrored to HF need-singularity/clm-v4-base-mirror (could remove from anima git in future cleanup)
+  proof BG-Ρ + BG-Ψ + BG-Μ MMLU per-subject jsonl logs (~100MB+ across 4+ H100 cycles) — eval artifacts, possibly migrate to HF dataset
+  proof tool/hf_upload_mk2.hexa (committed in anima — feature land 2026-05-03)
+  follow-up audit anima git for existing >5MB committed files; HF migration plan + git rm for those
+  follow-up tool/anima_large_file_pre_commit_lint.hexa impl (raw#9 strict — hexa orchestrator)
+  follow-up .gitignore patterns for typical model/dataset extensions (*.pt, *.safetensors, *.bin, *.gguf, large *.jsonl)
+  category meta-triad
+  category proof-truth
+  applies-to repo-content-boundaries
+  phase planning + commit
+  severity warn (escalate to block per follow-up lint)
+  note 2026-05-04 own 14 = 5th anima autonomy mandate joining quartet (own 4 root-cause + own 5 completeness + own 6 no-restriction + own 11 parallel-loop + own 12 observability).
+  note 2026-05-04 cross-link to memory feedback_anima_models_datasets_hf_only.md — hive-hook-bus session-scoped mirror of this own SSOT entry.
+  why GitHub LFS 비용 + clone 속도. HF Hub는 model/dataset 전용 인프라 (free tier, public/private, revision pinning, native lfs handling). anima git remains lightweight clone-friendly.
+  why duplicate storage (anima git LFS + HF mirror) creates SSOT race + sync drift. HF mirror = canonical model/dataset SSOT.
+  why pre-commit lint (follow-up tool/anima_large_file_pre_commit_lint.hexa) escalates this own from advisory to enforced layer per raw 95 triad-mandate (cli-lint + advisory + audit-trail).
+  enforce-layer advisory + audit-trail (cli-lint follow-up)
+  enforce-layer-rationale advisory: tool/hf_upload_mk2.hexa --validate-naming + state/hf_upload_audit/ ledger. cli-lint follow-up: tool/anima_large_file_pre_commit_lint.hexa pre-commit pattern. audit-trail: hf_upload_audit/<ts>.jsonl per push.
