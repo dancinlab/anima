@@ -1,0 +1,43 @@
+{
+  "cycle": "claude_project_settings_eol_2026_05_04",
+  "ts_utc": "2026-05-04T11:00:00Z",
+  "user_directive": "claude code cli 의 기본 hook settings 는 rm, hook-bus-bind 만 이용중 (정정: ~/.claude/settings.json 외에 프로젝트 내부것만 일단 모두 폐기)",
+  "scope": "project-scoped <repo>/.claude/settings*.json across all /Users/ghost/core/ git repos. ~/.claude/settings.json (home) PRESERVED.",
+  "verdict": "PASS",
+  "files_processed": [
+    {"repo": "anima", "path": "/Users/ghost/core/anima/.claude/settings.local.json", "size": 1765, "method": "backup+rm", "status": "DONE"},
+    {"repo": "hexa-lang", "path": "/Users/ghost/core/hexa-lang/.claude/settings.local.json", "size": 309, "method": "backup+rm", "status": "DONE"},
+    {"repo": "n6-architecture", "path": "/Users/ghost/core/n6-architecture/.claude/settings.local.json", "size": 2123, "method": "backup+rm", "status": "DONE"},
+    {"repo": "nexus", "path": "/Users/ghost/core/nexus/.claude/settings.local.json", "size": 273, "method": "backup+rm", "status": "DONE"},
+    {"repo": "void", "path": "/Users/ghost/core/void/.claude/settings.local.json", "size": 663, "method": "backup+rm", "status": "DONE"},
+    {"repo": "archive-brainwire", "path": "/Users/ghost/core/archive-brainwire/.claude/settings.json", "method": "broken_symlink_rm", "status": "DONE", "note": "symlink target /Users/ghost/Dev/nexus6/.claude/settings.json missing — rm symlink only"},
+    {"repo": "archive-sedi", "path": "/Users/ghost/core/archive-sedi/.claude/settings.json", "method": "broken_symlink_rm", "status": "DONE", "note": "same broken symlink target as archive-brainwire"}
+  ],
+  "files_processed_count": 7,
+  "backups_preserved_count": 5,
+  "broken_symlinks_removed_count": 2,
+  "post_state_verification": {
+    "find_pattern": "for repo in /Users/ghost/core/*/; do find $repo -maxdepth 3 -path '*/.claude/settings*.json'; done",
+    "result": "EMPTY (all 7 confirmed gone)"
+  },
+  "preserved": {
+    "home_claude_settings": "~/.claude/settings.json — PRESERVED per user directive (plugin enable + skipDangerousModePermissionPrompt retained)",
+    "hook_bus_bind_active_source": "/Users/ghost/.hive/claude-config/hive-hook-bus/settings.json (symlink to /Users/ghost/core/hive/claude-config/hive-hook-bus/settings.json) — sole hook source (CLAUDE_CONFIG_DIR redirect active)"
+  },
+  "rollback": {
+    "method": "cp /Users/ghost/core/anima/state/claude_project_settings_eol_2026_05_04/backups/<repo>__settings.local.json.bak <repo>/.claude/settings.local.json",
+    "broken_symlinks_not_rollback_able": "archive-brainwire + archive-sedi symlinks pointed to missing target (/Users/ghost/Dev/nexus6/), not rollback-able to original target; would require recreating Dev/nexus6/.claude/settings.json"
+  },
+  "honest_c3": [
+    "5 sister repos lose project-scoped Claude Code settings (e.g., per-project model preference, permission allowlist, hook overrides) — fall back to ~/.claude/settings.json + CLAUDE_CONFIG_DIR (hook-bus-bind canonical)",
+    "void repo settings.local.json removed without prior context audit — repo is not in BG-γ sisters_audit (commit 1a259542) sister list, scope check omitted",
+    "broken symlinks in archive-brainwire/archive-sedi are pre-existing (target /Users/ghost/Dev/nexus6/ vacated long before this cycle); their rm is forensically clean but indicates legacy archive structure debt",
+    "future-projects: any newly-created <repo>/.claude/settings*.json by other sessions will re-introduce the policy violation; pre-commit hook or on-create lint not yet implemented",
+    "hook-bus-bind remains single source via CLAUDE_CONFIG_DIR env var override — verify env propagation across new shell sessions / system restart"
+  ],
+  "cross_link": {
+    "policy_directive_log": "user 2026-05-04 Korean directive thread",
+    "hook_bus_bind_source": "/Users/ghost/core/hive/claude-config/hive-hook-bus/settings.json (BG-υ migration commit 3b669d4d)",
+    "anima_own_14_related": "anima/.own own 14 (HF-only mandate — different domain but parallel SSOT-consolidation pattern)"
+  }
+}
