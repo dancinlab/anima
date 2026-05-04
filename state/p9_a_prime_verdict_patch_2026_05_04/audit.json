@@ -64,5 +64,45 @@
     "raw_15_ssot": "tool/p9_a_prime_verdict.hexa is the SSOT; recompute script remains as /tmp transient evidence",
     "cost_usd": 0.0
   },
-  "lines_changed_loc_estimate": 28
+  "lines_changed_loc_estimate": 28,
+  "retry_history": [
+    {
+      "retry_id": "retry3",
+      "ts_utc": "2026-05-04T05:25:35Z",
+      "trigger": "Prior subagents (a4de63105 + aa1c385b + ad41085a) hit quota/503 \u2014 re-verify patched hexa is canonical and r=64 reverify still matches CHAT_FAIL_v3 spec",
+      "verifications": {
+        "hexa_sha256_unchanged": "db1b4552ddee2238fa86ea78b62350b33483d3e23d5b6bff107726996e566eda",
+        "selftest": "PASS (12 invariants emitted incl. join_key + symmetric_regression_rule)",
+        "smoke_test_PASS": true,
+        "smoke_n_common_per_task": [
+          3,
+          3,
+          3
+        ],
+        "r64_reverify": {
+          "n_ckpts": 4,
+          "all_labels": [
+            "CHAT_FAIL_v3",
+            "CHAT_FAIL_v3",
+            "CHAT_FAIL_v3",
+            "CHAT_FAIL_v3"
+          ],
+          "field_level_mismatches": 0,
+          "fields_checked": [
+            "point_delta_pt",
+            "ci95_lo_pt",
+            "ci95_hi_pt",
+            "signal",
+            "is_strong_regression",
+            "n_common_docs",
+            "base_acc",
+            "ckpt_acc"
+          ],
+          "fresh_output": "state/p9_a_prime_verdict_patch_2026_05_04/r64_reverify_retry3.json",
+          "parity_match": true,
+          "top_level_diffs_explanation": "recompute_ts_utc/recompute_note/expected_n_ckpts_audit are recompute-only metadata; ranking/anchor/lora_results_dir differ on env-dependent paths; ckpt_verdicts diff is bootstrap RNG-dependent values inside per_task only OUTSIDE the 8 audited fields (which match exactly)"
+        }
+      }
+    }
+  ]
 }

@@ -14,9 +14,27 @@ HARD_CAP_USD=30
 LOG=/Users/ghost/core/anima/state/p9_path_a_r16_3seed_2026_05_04/host_terminator_s43.log
 START_TS=$(date +%s)
 ARTIFACTS=/Users/ghost/core/anima/state/p9_path_a_r16_3seed_2026_05_04/artifacts_s43
-mkdir -p "$(dirname $LOG)" $ARTIFACTS
+IDLE_WAIT_SEC=240   # Bug1-hardening: 4min idle window covers 1-3min/save flush observed on H100
+mkdir -p "$(dirname $LOG)" "$ARTIFACTS"   # Bug2-hardening: quote ARTIFACTS
 
-echo "[$(date -u +%FT%TZ)] start watcher pod=$POD_ID watchdog_kill=\$${WATCHDOG_KILL_USD} hard_cap=\$${HARD_CAP_USD} rate=\$${RATE_PER_HR}/hr" >> $LOG
+echo "[$(date -u +%FT%TZ)] start watcher pod=$POD_ID watchdog_kill=\$${WATCHDOG_KILL_USD} hard_cap=\$${HARD_CAP_USD} rate=\$${RATE_PER_HR}/hr idle_wait=${IDLE_WAIT_SEC}s" >> $LOG
+
+# Probe function reused by main loop AND idle-recheck (Bug1-hardening)
+probe_pod_s43() {
+    ssh -i $SSH_KEY -o StrictHostKeyChecking=no -o ConnectTimeout=15 -p $SSH_PORT root@$SSH_HOST "
+        DONE=0; ALIVE=0; PHASE=none
+        if [ -f /workspace/p9_path_a_r16_s43_savepoints/TRAIN_DONE.json ]; then
+            DONE=1
+            PHASE=\$(python3 -c \"import json; print(json.load(open('/workspace/p9_path_a_r16_s43_savepoints/TRAIN_DONE.json'))['phase'])\" 2>/dev/null || echo unknown)
+        fi
+        if [ -f /workspace/p9_path_a_r16_s43_savepoints/train.pid ]; then
+            TPID=\$(cat /workspace/p9_path_a_r16_s43_savepoints/train.pid)
+            if kill -0 \$TPID 2>/dev/null; then ALIVE=1; fi
+        fi
+        STEP=\$(grep -oE '[0-9]+/10000' /workspace/p9_path_a_r16_s43_savepoints/train.log 2>/dev/null | tail -1)
+        echo \"DONE=\$DONE PHASE=\$PHASE ALIVE=\$ALIVE STEP=\$STEP\"
+    " 2>/dev/null || echo "SSH_FAIL"
+}
 
 while true; do
     NOW=$(date +%s)
@@ -34,32 +52,21 @@ while true; do
         break
     fi
 
-    PROBE=$(ssh -i $SSH_KEY -o StrictHostKeyChecking=no -o ConnectTimeout=15 -p $SSH_PORT root@$SSH_HOST "
-        DONE=0; ALIVE=0; PHASE=none
-        if [ -f /workspace/p9_path_a_r16_s43_savepoints/TRAIN_DONE.json ]; then
-            DONE=1
-            PHASE=\$(python3 -c \"import json; print(json.load(open('/workspace/p9_path_a_r16_s43_savepoints/TRAIN_DONE.json'))['phase'])\" 2>/dev/null || echo unknown)
-        fi
-        if [ -f /workspace/p9_path_a_r16_s43_savepoints/train.pid ]; then
-            TPID=\$(cat /workspace/p9_path_a_r16_s43_savepoints/train.pid)
-            if kill -0 \$TPID 2>/dev/null; then ALIVE=1; fi
-        fi
-        STEP=\$(grep -oE '[0-9]+/10000' /workspace/p9_path_a_r16_s43_savepoints/train.log 2>/dev/null | tail -1)
-        echo \"DONE=\$DONE PHASE=\$PHASE ALIVE=\$ALIVE STEP=\$STEP\"
-    " 2>/dev/null) || PROBE="SSH_FAIL"
+    PROBE=$(probe_pod_s43)
 
     echo "[$(date -u +%FT%TZ)] elapsed=${ELAPSED_MIN}min spend=\$${SPEND_USD} probe=$PROBE" >> $LOG
 
     if echo "$PROBE" | grep -q "PHASE=final_saved"; then
         echo "[$(date -u +%FT%TZ)] PHASE=final_saved — downloading artifacts then terminating" >> $LOG
+        mkdir -p "$ARTIFACTS"   # Bug2-hardening: defensive ensure-dir before scp
         scp -i $SSH_KEY -o StrictHostKeyChecking=no -P $SSH_PORT \
             "root@$SSH_HOST:/workspace/p9_path_a_r16_s43_savepoints/train.log" \
             "root@$SSH_HOST:/workspace/p9_path_a_r16_s43_savepoints/config.json" \
             "root@$SSH_HOST:/workspace/p9_path_a_r16_s43_savepoints/TRAIN_DONE.json" \
-            $ARTIFACTS/ >> $LOG 2>&1 || echo "scp partial fail" >> $LOG
+            "$ARTIFACTS/" >> $LOG 2>&1 || { mkdir -p "$ARTIFACTS"; echo "scp partial fail" >> $LOG; }
         scp -i $SSH_KEY -o StrictHostKeyChecking=no -P $SSH_PORT -r \
             "root@$SSH_HOST:/workspace/p9_path_a_r16_s43_savepoints/final" \
-            $ARTIFACTS/ >> $LOG 2>&1 || echo "final adapter scp fail (HF mirror is fallback)" >> $LOG
+            "$ARTIFACTS/" >> $LOG 2>&1 || { mkdir -p "$ARTIFACTS"; echo "final adapter scp fail (HF mirror is fallback)" >> $LOG; }
         $RUNPODCTL pod stop $POD_ID >> $LOG 2>&1
         $RUNPODCTL pod remove $POD_ID >> $LOG 2>&1
         echo "[$(date -u +%FT%TZ)] pod terminated — done" >> $LOG
@@ -67,10 +74,25 @@ while true; do
     fi
 
     if echo "$PROBE" | grep -q "ALIVE=0" && echo "$PROBE" | grep -q "DONE=0"; then
-        echo "[$(date -u +%FT%TZ)] train pid GONE without DONE — likely error; downloading log + terminating" >> $LOG
+        # Bug1-hardening: pid-gone may be a 1-3min save flush in flight. Wait IDLE_WAIT_SEC,
+        # re-probe TRAIN_DONE.json + pid; only kill if BOTH still ALIVE=0 AND DONE=0.
+        echo "[$(date -u +%FT%TZ)] ALIVE=0/DONE=0 detected — entering ${IDLE_WAIT_SEC}s idle-window before kill" >> $LOG
+        sleep $IDLE_WAIT_SEC
+        RECHECK=$(probe_pod_s43)
+        echo "[$(date -u +%FT%TZ)] idle-window recheck=$RECHECK" >> $LOG
+        if echo "$RECHECK" | grep -q "DONE=1"; then
+            echo "[$(date -u +%FT%TZ)] DONE landed during idle-window — falling through to DONE-branch on next iteration" >> $LOG
+            continue
+        fi
+        if echo "$RECHECK" | grep -q "ALIVE=1"; then
+            echo "[$(date -u +%FT%TZ)] pid revived during idle-window (false alarm) — resuming poll" >> $LOG
+            continue
+        fi
+        echo "[$(date -u +%FT%TZ)] confirmed crash (still ALIVE=0/DONE=0 after recheck) — downloading log + terminating" >> $LOG
+        mkdir -p "$ARTIFACTS"   # Bug2-hardening: error-branch defensive ensure-dir
         scp -i $SSH_KEY -o StrictHostKeyChecking=no -P $SSH_PORT \
             "root@$SSH_HOST:/workspace/p9_path_a_r16_s43_savepoints/train.log" \
-            $ARTIFACTS/train.log >> $LOG 2>&1 || true
+            "$ARTIFACTS/train.log" >> $LOG 2>&1 || { mkdir -p "$ARTIFACTS"; echo "error-branch scp fail" >> $LOG; }
         $RUNPODCTL pod stop $POD_ID >> $LOG 2>&1
         $RUNPODCTL pod remove $POD_ID >> $LOG 2>&1
         echo "[$(date -u +%FT%TZ)] pod terminated (error path)" >> $LOG

@@ -1,6 +1,6 @@
 # qmirror cond.7 alpha-option (IBM Heron 2nd datapoint) — LANDED 2026-05-03 (HONEST ABORT)
 
-> 📦 Available at: https://github.com/need-singularity/qmirror (`hx install qmirror`)
+> qmirror canonical SSOT: see `nexus/.roadmap.qmirror` header fields `upstream_url` + `latest_release` (current: v2.0.0, 2026-05-04). Hardcoded URLs deprecated 2026-05-04 — see `### See also (qmirror xref history)` footnote for prior callouts.
 
 > friendly preset (icon + analogy + 7-element + ASCII)
 >
@@ -232,3 +232,14 @@
    3        | optional Heron r3 + ZNE re-burst (when user provides token)             | 30s wall, ~$3-5 cost; only if v3.0 spec demands r3-grade datapoint
    4        | tighten N=1 → N=3 replication for Rigetti ↔ IBM_fez (strongest pair)    | ~$10-15 cost; would lift |dS|=0.0836 from N=1-anecdote to N=3-pattern
 ```
+
+---
+
+### See also (qmirror xref history)
+
+Prior callouts preserved verbatim per qmirror_xref_centralization cycle (2026-05-04):
+
+> 📦 Available at: https://github.com/need-singularity/qmirror (`hx install qmirror`)
+> 🚀 v2.0.0 RELEASED 2026-05-04 — closure 13/13 conds met (8 v1 + 5 v2): https://github.com/need-singularity/qmirror/releases/tag/v2.0.0
+
+Future qmirror release URLs are canonically tracked in `nexus/.roadmap.qmirror` header field `latest_release_url`. Update single line in roadmap; this footnote is a frozen historical record (do not retrofit).

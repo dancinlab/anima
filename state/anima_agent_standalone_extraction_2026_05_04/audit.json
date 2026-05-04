@@ -1,0 +1,82 @@
+{
+  "cycle": "anima_agent_standalone_extraction_2026_05_04",
+  "ts_start_utc": "2026-05-04T15:43:00Z",
+  "task": "Extract anima-agent to standalone repo + CLI integration (5th publishable HEXA-family sister)",
+  "origin": {
+    "canonical_path": "/Users/ghost/core/anima/anima-agent",
+    "anima_repo_rev": "d290f1ae7",
+    "ambiguity_resolved": {
+      "candidate_paths_found": [
+        "/Users/ghost/core/anima/anima-agent",
+        "/Users/ghost/core/anima/ready/anima-agent"
+      ],
+      "chosen": "/Users/ghost/core/anima/anima-agent",
+      "rationale": "ready/anima-agent contains only build artifacts (dashboard-api/target, .pytest_cache, data/) — not source. Canonical source is anima/anima-agent (33 entries, 117 hexa files, full module tree)."
+    },
+    "sister_repos_referenced_NOT_copied": [
+      "/Users/ghost/core/anima/anima-agent-channels",
+      "/Users/ghost/core/anima/anima-agent-providers",
+      "/Users/ghost/core/anima/anima-agent-plugins",
+      "/Users/ghost/core/anima/anima-agent-skills",
+      "/Users/ghost/core/anima/anima-agent-core",
+      "/Users/ghost/core/anima/anima-agent-hire-sim"
+    ]
+  },
+  "audit": {
+    "hexa_files_count": 117,
+    "py_files_count": 0,
+    "ts_tsx_js_files_count": 5,
+    "total_files_origin": 139,
+    "total_files_copied_to_modules": 133,
+    "total_loc_hexa": 19969,
+    "stripped": [
+      "build/",
+      "results/",
+      ".hypothesis_bridge_state.json",
+      "__pycache__/ (defensive)",
+      "node_modules/ (defensive)"
+    ],
+    "imports_external": [
+      "autonomy_loop (internal)",
+      "llm_claude_adapter (internal)"
+    ],
+    "raw9_compliance": "PASS — 0 .py at standalone surface",
+    "subdomains": ["core", "bridges", "llm", "platform (hexa/)", "employee", "trading"],
+    "tests_present": 8,
+    "dashboard_present": true,
+    "dockerfile_present": true,
+    "license_in_origin": "MIT (per origin README badge)",
+    "license_chosen_for_standalone": "Apache-2.0 (matches sister packages qmirror/sim-universe/hexa-bio/honesty-monitor)",
+    "license_audit_deferred": true
+  },
+  "standalone": {
+    "path": "/Users/ghost/core/anima-agent",
+    "scaffolding_added": [
+      "LICENSE (Apache-2.0)",
+      ".gitignore",
+      "CHANGELOG.md",
+      "hexa.toml",
+      "cli/anima-agent.hexa",
+      "install.hexa",
+      "tests/test_smoke.hexa",
+      "examples/01_status.hexa",
+      "examples/02_cli_chat.hexa",
+      "examples/03_self_test.hexa",
+      ".github/workflows/sync-to-hf.yml",
+      "RELEASE_NOTES_v1.0.0.md",
+      "README.md (~280 LoC)"
+    ],
+    "version": "1.0.0",
+    "package_manager_entry": "hx install anima-agent",
+    "cli_subcmds": ["status", "run", "mcp", "channel", "autonomy", "self-test", "version", "help"]
+  },
+  "constraints_honored": {
+    "raw9_hexa_only": "PASS (standalone surface 0 .py)",
+    "raw10_honest_c3": "PASS (5 caveats embedded README + CHANGELOG + RELEASE_NOTES + cli help)",
+    "raw11_snake_case": "PASS",
+    "raw15_no_token_leak": "PASS (HF_TOKEN only via secrets, never echoed)",
+    "cost_zero": "PASS ($0 GH Actions free tier + HF free tier)",
+    "do_not_delete_origin": "RESPECTED (origin untouched)",
+    "do_not_auto_commit_nexus_deletes": "RESPECTED (nexus refactor staged only)"
+  }
+}

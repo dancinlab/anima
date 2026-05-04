@@ -1,0 +1,73 @@
+{
+  "snapshot_ts_kst": "2026-05-04T15:36",
+  "host": "ubu1",
+  "gpu": {
+    "device": "RTX 5070 (sm_120)",
+    "util_pct": 89,
+    "mem_used_mib": 5359,
+    "mem_total_mib": 12227,
+    "temp_c": 72,
+    "split_estimate": {
+      "vlm_stage1_lora_rss_gb": 4.55,
+      "kl_cache_builder_rss_gb": 2.23,
+      "note": "RSS host-side; GPU mem 5.36GB shared (VLM ~0.86GB model + KL Mistral ~4.2GB cache)"
+    }
+  },
+  "vlm_stage1": {
+    "pid": 31960,
+    "started_kst": "2026-05-04T13:31",
+    "elapsed_min_at_snapshot": 125,
+    "current_step": 20400,
+    "total_steps": 50000,
+    "progress_pct": 40.8,
+    "loss_recent": 8.3774,
+    "loss_window_avg": 8.34,
+    "lr": 3.26e-4,
+    "sps": 2.73,
+    "eta_h_remaining": 3.0,
+    "savepoints_done": ["step-5k", "step-10k", "step-15k", "step-20k"],
+    "savepoint_size_kb": 315,
+    "savepoint_dir": "/tmp/vlm_stage1_savepoints/",
+    "next_savepoint": "step-25k @ ~16:03 KST"
+  },
+  "kl_cache_50k": {
+    "pid": 3811364,
+    "started_kst": "2026-05-04T14:22",
+    "elapsed_min_at_snapshot": 74,
+    "current_idx": 36100,
+    "total": 50000,
+    "progress_pct": 72.2,
+    "rate_rec_per_sec": 8.13,
+    "tokens_cached_session": 7573621,
+    "eta_min_remaining": 28.5,
+    "eta_kst_complete": "2026-05-04T16:05",
+    "output_file": "/tmp/p9_paradigm_d_kl_cache_v1_50k.jsonl",
+    "current_size_gb": 9.6,
+    "current_lines": 36235,
+    "projected_final_size_gb": 13.3,
+    "mistral_cache_mb": 10252
+  },
+  "hf_push_status": {
+    "vlm_repo": "dancinlife/anima-vlm-stage1",
+    "exists_on_hf": false,
+    "step10k_pushed": false,
+    "step15k_pushed": false,
+    "step20k_pushed": false,
+    "note": "vlm_stage1_train.py contains no HuggingFace Hub push code (only dataset load_dataset). Schedule slip caveat #2 confirmed — manual push or train.py modification required."
+  },
+  "disk": {
+    "tmp_mount": "/dev/nvme0n1p2",
+    "tmp_total_gb": 915,
+    "tmp_used_gb": 296,
+    "tmp_free_gb": 573,
+    "tmp_pct_used": 35,
+    "kl_cache_growing_at_gb_per_min": 0.13
+  },
+  "caveats": [
+    "GPU sharing contention: VLM sps stable at 2.73 (no degradation observed) but KL builder rate 8.13/s is below pre-flight 8.31/s baseline (-2.2%); further drift possible as both jobs continue",
+    "HF push schedule slip CONFIRMED: train.py lacks HF Hub push code; step-10k/15k/20k all stored locally only at /tmp/vlm_stage1_savepoints/; manual upload required to honor step-10k/15k/25k/50k schedule",
+    "/tmp ephemerality: /tmp/vlm_stage1_savepoints (1.3MB total so far) and /tmp/p9_paradigm_d_kl_cache_v1_50k.jsonl (9.6GB) reside on /dev/nvme0n1p2 (host root, not tmpfs) — survives normal reboot but is non-redundant; /tmp has 573GB free, no pressure"
+  ],
+  "verify_only": true,
+  "preempt": false
+}

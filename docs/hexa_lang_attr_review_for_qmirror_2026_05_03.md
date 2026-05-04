@@ -14,7 +14,7 @@ substrate refs:
 gate: raw#9 (hexa-only nexus, .py concession via _python_bridge/), raw#91 (≥5 honest C3 caveats)
 ---
 
-> 📦 Available at: https://github.com/need-singularity/qmirror (`hx install qmirror`)
+> qmirror canonical SSOT: see `nexus/.roadmap.qmirror` header fields `upstream_url` + `latest_release` (current: v2.0.0, 2026-05-04). Hardcoded URLs deprecated 2026-05-04 — see `### See also (qmirror xref history)` footnote for prior callouts.
 
 # 0. TL;DR
 
@@ -338,3 +338,14 @@ pub fn hex_encode(b) -> string { ... }
 - bytes_to_uint64 등 (P1, per-shot perf)
 
 **핵심 honest C3:** Python bridge 자체가 raw#9 violation의 큰 그림 — hexa-lang stdlib patch는 bridge를 *편하게* 만들 뿐이다. 진짜 해결은 P4 FFI C kernel.
+
+---
+
+### See also (qmirror xref history)
+
+Prior callouts preserved verbatim per qmirror_xref_centralization cycle (2026-05-04):
+
+> 📦 Available at: https://github.com/need-singularity/qmirror (`hx install qmirror`)
+> 🚀 v2.0.0 RELEASED 2026-05-04 — closure 13/13 conds met (8 v1 + 5 v2): https://github.com/need-singularity/qmirror/releases/tag/v2.0.0
+
+Future qmirror release URLs are canonically tracked in `nexus/.roadmap.qmirror` header field `latest_release_url`. Update single line in roadmap; this footnote is a frozen historical record (do not retrofit).

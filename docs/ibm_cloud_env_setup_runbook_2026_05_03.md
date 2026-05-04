@@ -1,6 +1,6 @@
 # IBM Cloud Environment Setup Runbook — nexus.qmirror Phase 3 Calibration Burst
 
-> 📦 Available at: https://github.com/need-singularity/qmirror (`hx install qmirror`)
+> qmirror canonical SSOT: see `nexus/.roadmap.qmirror` header fields `upstream_url` + `latest_release` (current: v2.0.0, 2026-05-04). Hardcoded URLs deprecated 2026-05-04 — see `### See also (qmirror xref history)` footnote for prior callouts.
 
 - ts_utc: 2026-05-03
 - purpose: pre-flight environment setup for the one-shot $200 IBM Cloud burst (qmirror v2.0/v3.0 anchor)
@@ -359,3 +359,14 @@ When all 8 green: user issues "burst go" → proceed with day 1 (N1 noise model 
 - `docs/ibm_cloud_experiment_list_2026_05_03.md` — burst plan (prereq, already references this doc)
 - `docs/qmirror_cond3_ibm_n1_landed_2026_05_03.ai.md` — IBM N1 calibration condition closure
 - `docs/qmirror_cond3_band_revise_landed_2026_05_03.ai.md`
+
+---
+
+### See also (qmirror xref history)
+
+Prior callouts preserved verbatim per qmirror_xref_centralization cycle (2026-05-04):
+
+> 📦 Available at: https://github.com/need-singularity/qmirror (`hx install qmirror`)
+> 🚀 v2.0.0 RELEASED 2026-05-04 — closure 13/13 conds met (8 v1 + 5 v2): https://github.com/need-singularity/qmirror/releases/tag/v2.0.0
+
+Future qmirror release URLs are canonically tracked in `nexus/.roadmap.qmirror` header field `latest_release_url`. Update single line in roadmap; this footnote is a frozen historical record (do not retrofit).

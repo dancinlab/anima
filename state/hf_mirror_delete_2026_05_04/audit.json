@@ -1,0 +1,108 @@
+{
+  "task": "hf_mirror_delete_cli_packages",
+  "date": "2026-05-04",
+  "operator": "dancinlife",
+  "org": "need-singularity",
+  "policy": "Option A: HF mirrors removed for CLI code; HF reserved for models/data",
+  "token_used": {
+    "name": "dancinlife",
+    "len": 37,
+    "last4": "ZCUy",
+    "orgs": ["need-singularity"]
+  },
+  "repos": [
+    {
+      "name": "qmirror",
+      "pre_http": 200,
+      "action": "DELETE",
+      "delete_http": 200,
+      "delete_body": "OK",
+      "post_http": 404,
+      "success": true
+    },
+    {
+      "name": "sim-universe",
+      "pre_http": 200,
+      "action": "DELETE",
+      "delete_http": 200,
+      "delete_body": "OK",
+      "post_http": 404,
+      "success": true
+    },
+    {
+      "name": "hexa-bio",
+      "pre_http": 200,
+      "action": "DELETE",
+      "delete_http": 200,
+      "delete_body": "OK",
+      "post_http": 404,
+      "success": true
+    },
+    {
+      "name": "honesty-monitor",
+      "pre_http": 200,
+      "action": "DELETE",
+      "delete_http": 200,
+      "delete_body": "OK",
+      "post_http": 404,
+      "success": true
+    },
+    {
+      "name": "anima-agent",
+      "pre_http": 404,
+      "action": "NO_OP",
+      "delete_http": null,
+      "delete_body": null,
+      "post_http": 404,
+      "success": true,
+      "note": "Audit reported 401 but live check shows 404 (does not exist). No action needed."
+    },
+    {
+      "name": "qrng",
+      "pre_http": 404,
+      "action": "NO_OP",
+      "delete_http": null,
+      "delete_body": null,
+      "post_http": 404,
+      "success": true,
+      "note": "Never pushed; repo never existed."
+    },
+    {
+      "name": "mc-integrate",
+      "pre_http": 404,
+      "action": "NO_OP",
+      "delete_http": null,
+      "delete_body": null,
+      "post_http": 404,
+      "success": true,
+      "note": "Repo never existed."
+    }
+  ],
+  "github_actions_secret_cleanup": [
+    {"repo": "qmirror",         "secret": "HF_TOKEN", "result": "404 (not set)", "idempotent_ok": true},
+    {"repo": "sim-universe",    "secret": "HF_TOKEN", "result": "404 (not set)", "idempotent_ok": true},
+    {"repo": "hexa-bio",        "secret": "HF_TOKEN", "result": "404 (not set)", "idempotent_ok": true},
+    {"repo": "honesty-monitor", "secret": "HF_TOKEN", "result": "404 (not set)", "idempotent_ok": true},
+    {"repo": "anima-agent",     "secret": "HF_TOKEN", "result": "404 (not set)", "idempotent_ok": true},
+    {"repo": "qrng",            "secret": "HF_TOKEN", "result": "404 (not set)", "idempotent_ok": true}
+  ],
+  "preserved_NOT_deleted": [
+    "need-singularity/clm-v4-* (CLM model artifacts — HF canonical home)",
+    "need-singularity/vlm-anima-voice-* (VLM ckpts — active push pipeline)",
+    "need-singularity/sft-data-* (SFT/training datasets)"
+  ],
+  "summary": {
+    "live_mirrors_deleted": 4,
+    "already_absent": 3,
+    "total_targets": 7,
+    "all_post_404": true,
+    "gh_secrets_deleted": 0,
+    "gh_secrets_already_absent": 6,
+    "uncertainties": []
+  },
+  "constraints_honored": {
+    "raw_9_pure_shell_curl": true,
+    "raw_15_token_never_printed": true,
+    "cost_usd": 0
+  }
+}

@@ -1,0 +1,68 @@
+{
+  "launched_at_iso": "2026-05-04T06:06Z",
+  "launched_by": "subagent-base-val-launch",
+  "pod": {
+    "id": "8zbf9bfj6c63wg",
+    "name": "anima-p9-base-val-h100-2026-05-04",
+    "gpu": "H100 SXM 80GB",
+    "cost_per_hr_usd": 2.99,
+    "ssh": "ssh -i /Users/ghost/.runpod/ssh/RunPod-Key-Go root@216.243.220.226 -p 19863",
+    "uptime_at_launch_min": 80,
+    "sunk_cost_at_launch_usd": 3.99
+  },
+  "model": {
+    "path": "/workspace/p9_base_val/clm_v4_hf",
+    "arch": "CLMv4ForCausalLM",
+    "params_m": 477.6,
+    "block_size": 512,
+    "vocab_size": 64000,
+    "source_ckpt_step": 20000,
+    "source_ckpt_ce": 0.04630,
+    "source_ckpt_phi_star": 37.27,
+    "scale": "350m",
+    "dtype_eval": "bfloat16"
+  },
+  "eval_config": {
+    "tasks": ["hellaswag", "mmlu", "triviaqa"],
+    "limit": 500,
+    "batch_size": 16,
+    "seed": 42,
+    "num_fewshot": {
+      "hellaswag": 5,
+      "mmlu": 0,
+      "triviaqa": 5
+    },
+    "harness": "lm-eval==0.4.5",
+    "transformers": "4.46.3",
+    "torch": "2.4.1+cu124"
+  },
+  "pod_paths": {
+    "eval_script": "/workspace/p9_base_val/eval_clm_v4_base.py",
+    "cost_watchdog": "/workspace/p9_base_val/cost_watchdog.sh",
+    "log": "/workspace/p9_base_val/results/eval.log",
+    "results_dir": "/workspace/p9_base_val/results",
+    "train_done_marker": "/workspace/p9_base_val/results/TRAIN_DONE.json"
+  },
+  "cost_cap": {
+    "hard_cap_usd": 20,
+    "watchdog_kill_cap_usd": 18,
+    "remaining_budget_usd": 14.5,
+    "max_runtime_s": 17100,
+    "max_runtime_human": "4h45m"
+  },
+  "first_task_progress": {
+    "hellaswag": {
+      "duration_s": 21.9,
+      "acc": 0.266,
+      "acc_norm": 0.264,
+      "stderr": 0.0198
+    }
+  },
+  "current_state": {
+    "task": "mmlu",
+    "phase": "running_loglikelihood_requests",
+    "request_count": 48692,
+    "gpu_util_pct": 90,
+    "gpu_mem_used_mib": 5081
+  }
+}

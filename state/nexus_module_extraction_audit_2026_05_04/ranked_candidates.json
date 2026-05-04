@@ -1,0 +1,47 @@
+{
+  "ranking_meta": {
+    "date": "2026-05-04",
+    "method": "5-axis sum (coupling + reusability + maturity + activity + modularity), max 10",
+    "tier_thresholds": {
+      "8-10": "extract immediately (qmirror/sim-universe class)",
+      "6-7": "extract next quarter",
+      "4-5": "extract eventually",
+      "<4": "keep in nexus"
+    },
+    "honest_caveat": "Ties broken by activity-recency + closure-readiness; subjective"
+  },
+  "ranked": [
+    {"rank": 1, "module": "crystallography_n6", "score": 9, "tier": "extract_immediately", "destination": "n6-architecture (existing standalone)", "effort_estimate_hours": 4, "reason": "pure n6 closed-form Fedorov 230 / Bravais 14 / 32 pt-groups; zero external deps; IUCr-canonical; sentinel + falsifier"},
+    {"rank": 2, "module": "honesty_monitor", "score": 9, "tier": "extract_immediately", "destination": "NEW standalone repo (honesty-monitor)", "effort_estimate_hours": 8, "reason": "BT-AI2 honesty-bit falsifier; broadly applicable ML safety primitive; pure observe()/snapshot() API; zero n6 entanglement"},
+    {"rank": 3, "module": "chip_isa_n6", "score": 9, "tier": "extract_immediately", "destination": "n6-architecture (existing standalone)", "effort_estimate_hours": 6, "reason": "Xn6 24-bit ISA encoder/decoder; lossless roundtrip; predecessor already in n6-architecture/domains/compute"},
+    {"rank": 4, "module": "fusion_ledger", "score": 8, "tier": "extract_immediately", "destination": "n6-architecture (existing standalone)", "effort_estimate_hours": 6, "reason": "ITER + n=6 fusion verifier; 27 measured constants; honest 26/27 PASS preserved with falsified entry"},
+    {"rank": 5, "module": "tabletop_blackhole", "score": 8, "tier": "extract_immediately", "destination": "n6-architecture/experiments/", "effort_estimate_hours": 4, "reason": "BEC analog Hawking simulator (Steinhauer 2014); n=6 anchors; zero deps"},
+    {"rank": 6, "module": "chip_rtl_gen", "score": 8, "tier": "extract_immediately", "destination": "n6-architecture (existing standalone)", "effort_estimate_hours": 8, "reason": "6-primitive Verilog gen + templates; pairs with chip_isa_n6"},
+    {"rank": 7, "module": "qrng", "score": 8, "tier": "extract_immediately", "destination": "NEW standalone repo (qrng)", "effort_estimate_hours": 14, "reason": "5-source QRNG registry (curby/anu/nist_beacon/hardware/mock); broadly reusable entropy library; pairs with qmirror"},
+    {"rank": 8, "module": "mc_integrate", "score": 8, "tier": "extract_immediately", "destination": "NEW standalone repo (mc-integrate)", "effort_estimate_hours": 12, "reason": "ANU-seeded MC integrator + Welch-t; 1425 LoC (largest module); decouple ANU dep first by swapping to qrng cli"},
+    {"rank": 9, "module": "multiverse_nav", "score": 7, "tier": "extract_next_quarter", "destination": "merge into sim-universe (just published)", "effort_estimate_hours": 5, "reason": "Bostrom 144-branch trilemma; conceptual peer of sim-universe/modules/multiverse — fold rather than fork"},
+    {"rank": 10, "module": "verify_batch", "score": 7, "tier": "extract_next_quarter", "destination": "n6-architecture or hexa-lang tooling", "effort_estimate_hours": 6, "reason": "discover/run verify_*.hexa; root-agnostic after removing nexus/state cache default"},
+    {"rank": 11, "module": "bind", "score": 4, "tier": "keep_in_nexus", "destination": null, "effort_estimate_hours": 0, "reason": "axis subscriber adapter; tightly coupled to nexus/core/bind framework + handler"},
+    {"rank": 12, "module": "kick", "score": 4, "tier": "keep_in_nexus", "destination": null, "effort_estimate_hours": 0, "reason": "ω-cycle dispatch; nexus/core/kick framework dep + Mac claude-binary host coupling"},
+    {"rank": 13, "module": "atlas_n6", "score": 1, "tier": "keep_in_nexus", "destination": null, "effort_estimate_hours": 0, "reason": "EMPTY placeholder — provider impl in nexus/core/atlas_n6"},
+    {"rank": 14, "module": "sim", "score": 1, "tier": "delete_or_anchor_only", "destination": null, "effort_estimate_hours": 1, "reason": "EMPTY post sim-universe extraction; consider rm -rf modules/sim/ to remove confusion"}
+  ],
+  "tier_summary": {
+    "extract_immediately_8_to_10": 8,
+    "extract_next_quarter_6_to_7": 2,
+    "extract_eventually_4_to_5": 0,
+    "keep_in_nexus_below_4": 4
+  },
+  "destination_breakdown": {
+    "n6_architecture_existing": ["crystallography_n6", "chip_isa_n6", "chip_rtl_gen", "fusion_ledger", "tabletop_blackhole", "verify_batch (optional)"],
+    "new_standalone_repo": ["honesty_monitor", "qrng", "mc_integrate"],
+    "merge_into_sim_universe": ["multiverse_nav"],
+    "keep_in_nexus": ["bind", "kick", "atlas_n6 (placeholder)", "sim (delete)"]
+  },
+  "next_cycle_recommendation": {
+    "primary": "Batch 1: extract crystallography_n6 + honesty_monitor + chip_isa_n6 (top 3, all score 9)",
+    "rationale": "All zero-coupling pure-stdlib modules; can be parallelized as 3 BG subagents; n6-architecture target already exists for 2/3; honesty-monitor is novel standalone; combined effort ~18hr",
+    "deferred": "qrng (high effort 14hr; needs anima-eeg consumer migration plan first); mc_integrate (decouple ANU dep first)",
+    "skip_first": "multiverse_nav (do AFTER sim-universe finish-in-flight settles); verify_batch (lower priority)"
+  }
+}

@@ -1,0 +1,162 @@
+#!hexa strict
+// tool/hf_token_resolver.hexa — Single-source HF token resolver (raw#9 STRICT, raw#15 token-leak-safe)
+//
+// @tool(slug="hf_token_resolver", desc="Canonical HF token resolution helper. Single source of truth: `secret get huggingface.token`. All HF-consuming hexa tools should call THIS resolver instead of inlining the 3-tier fallback. Locks the resolution order so location migrations require editing 1 file. raw#9 STRICT — Mac side hexa-only.")
+// @usage(hexa run tool/hf_token_resolver.hexa --selftest)
+// @usage(hexa run tool/hf_token_resolver.hexa --print-sha256-prefix)
+// @usage(hexa run tool/hf_token_resolver.hexa --check)
+// @usage(hexa run tool/hf_token_resolver.hexa --print-source)
+// @sentinel(__HF_TOKEN_RESOLVER__ <PASS|FAIL>)
+//
+// Spec: docs/hf_token_sssot_spec_2026_05_04.md
+// Baseline: docs/hf_token_canonical_baseline_2026_05_04.md (3-tier order)
+//
+// Resolution order (MUST stay in sync with hf_upload_mk2.hexa _resolve_token):
+//   1) `secret get huggingface.token`     (canonical SSOT, HF official naming)
+//   2) ~/.cache/huggingface/token         (HF CLI cache fallback)
+//   3) HF_TOKEN env                       (explicit override)
+//
+// raw#10 honest caveats:
+//   - This resolver is READ-ONLY. It does NOT mutate the cache; for cache
+//     mutation see tool/hf_token_sync.hexa.
+//   - When `secret get` fails (CLI broken, credentials missing), tier-2/3 may
+//     return STALE values that pre-date the most recent canonical rotation.
+//     Callers requiring freshness MUST gate on `--print-sha256-prefix` matching
+//     the SSOT prefix from the auto-sync ledger.
+//   - The token plaintext is ONLY written to stdout when `--emit-raw` is passed
+//     AND the caller pipes to a downstream consumer. No flag prints the token
+//     plaintext to a TTY by default. raw#15 enforced.
+
+let VERSION = "1.0.0"
+let HOME = exec("echo \"$HOME\"").trim()
+
+// ─── Single source canonical resolver ──────────────────────────────────
+
+fn _sh_q(s: str) -> str {
+    // POSIX-safe single-quote shell escape
+    return "'" + s.replace("'", "'\\''") + "'"
+}
+
+fn resolve_token() -> str {
+    // tier 1: canonical secret store
+    let s1 = exec("secret get huggingface.token 2>/dev/null").trim()
+    if s1.len() > 0 { return s1 }
+    // tier 2: HF CLI cache file
+    let p2 = HOME + "/.cache/huggingface/token"
+    let f2 = exec("test -f " + _sh_q(p2) + " && cat " + _sh_q(p2) + " 2>/dev/null").trim()
+    if f2.len() > 0 { return f2 }
+    // tier 3: env override (lowest precedence by canonical baseline)
+    let env1 = exec("echo \"$HF_TOKEN\"").trim()
+    if env1.len() > 0 { return env1 }
+    return ""
+}
+
+fn resolve_source() -> str {
+    // Returns the source identifier of the WINNING tier, NEVER the value.
+    let s1 = exec("secret get huggingface.token 2>/dev/null").trim()
+    if s1.len() > 0 { return "tier1:secret_store" }
+    let p2 = HOME + "/.cache/huggingface/token"
+    let f2 = exec("test -f " + _sh_q(p2) + " && cat " + _sh_q(p2) + " 2>/dev/null").trim()
+    if f2.len() > 0 { return "tier2:hf_cli_cache" }
+    let env1 = exec("echo \"$HF_TOKEN\"").trim()
+    if env1.len() > 0 { return "tier3:env_HF_TOKEN" }
+    return "none"
+}
+
+fn _sha256_prefix(s: str) -> str {
+    // sha256 prefix-8 of token (raw#15: NEVER print value, only prefix)
+    if s.len() == 0 { return "(empty)" }
+    // pipe via stdin to avoid argv exposure (no ps leak)
+    // shasum (BSD/macOS) preferred; sha256sum (Linux/Alpine) fallback for docker routing.
+    let cmd = "printf '%s' " + _sh_q(s) + " | (shasum -a 256 2>/dev/null || sha256sum) | awk '{print $1}' | cut -c1-8"
+    return exec(cmd).trim()
+}
+
+// ─── Subcommands ───────────────────────────────────────────────────────
+
+fn cmd_check() {
+    let src = resolve_source()
+    if src == "none" {
+        println("hf_token=MISSING")
+        println("source=none")
+        println("hint=run: pbpaste | secret set huggingface.token")
+        exit(1)
+    }
+    println("hf_token=OK")
+    println("source=" + src)
+    exit(0)
+}
+
+fn cmd_print_source() {
+    println(resolve_source())
+}
+
+fn cmd_print_sha256_prefix() {
+    let tok = resolve_token()
+    println(_sha256_prefix(tok))
+}
+
+fn cmd_emit_raw() {
+    // ONLY for piping to downstream consumers (no newline).
+    // Caller responsibility: do NOT redirect to a TTY; use only via pipe.
+    let tok = resolve_token()
+    if tok.len() == 0 { exit(1) }
+    print(tok)
+}
+
+fn cmd_selftest() {
+    println("── hf_token_resolver selftest ──")
+    println("version=" + VERSION)
+    let src = resolve_source()
+    let tok_present = if src == "none" { "false" } else { "true" }
+    println("token_present=" + tok_present)
+    println("winning_source=" + src)
+    if src != "none" {
+        let pref = _sha256_prefix(resolve_token())
+        println("sha256_prefix8=" + pref)
+    }
+    println("inv:single_source_canonical=secret get huggingface.token")
+    println("inv:tier_order=[secret_store, hf_cli_cache, HF_TOKEN_env]")
+    println("inv:raw15_no_plaintext_in_output=true")
+    println("inv:read_only_resolver=true (no mutation)")
+    println("selftest=ok")
+    println("paradigm=SSOT resolver — single edit point if location migrates")
+    println("DONE")
+}
+
+fn cmd_help() {
+    println("hf_token_resolver v" + VERSION)
+    println("usage:")
+    println("  hexa run tool/hf_token_resolver.hexa --selftest")
+    println("  hexa run tool/hf_token_resolver.hexa --check                  # exit 0/1 + source")
+    println("  hexa run tool/hf_token_resolver.hexa --print-source           # tier1|tier2|tier3|none")
+    println("  hexa run tool/hf_token_resolver.hexa --print-sha256-prefix    # 8-char hex (raw#15 safe)")
+    println("  hexa run tool/hf_token_resolver.hexa --emit-raw               # plaintext (PIPE ONLY; raw#15 caveat)")
+    println("")
+    println("canonical 3-tier (baseline doc: docs/hf_token_canonical_baseline_2026_05_04.md):")
+    println("  1) secret get huggingface.token   (canonical SSOT)")
+    println("  2) ~/.cache/huggingface/token     (HF CLI cache fallback)")
+    println("  3) HF_TOKEN env                   (explicit override; lowest)")
+}
+
+fn main() {
+    let av = argv()
+    let mut mode = "help"
+    let mut i = 2
+    while i < len(av) {
+        let a = av[i]
+        if a == "--selftest" { mode = "selftest" }
+        else if a == "--check" { mode = "check" }
+        else if a == "--print-source" { mode = "print_source" }
+        else if a == "--print-sha256-prefix" { mode = "print_sha256" }
+        else if a == "--emit-raw" { mode = "emit_raw" }
+        else if a == "--help" || a == "-h" { mode = "help" }
+        i = i + 1
+    }
+    if mode == "selftest" { cmd_selftest(); exit(0) }
+    if mode == "check" { cmd_check(); exit(0) }
+    if mode == "print_source" { cmd_print_source(); exit(0) }
+    if mode == "print_sha256" { cmd_print_sha256_prefix(); exit(0) }
+    if mode == "emit_raw" { cmd_emit_raw(); exit(0) }
+    cmd_help()
+}

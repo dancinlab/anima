@@ -10,7 +10,7 @@
 
 > **2026-05-03 qmirror substrate update (additive)**: this prep package targets AWS Braket / IonQ Forte 1. Per the qmirror closure series, the **`nexus.qmirror` canonical substrate** (`docs/nexus_qmirror_spec_2026_05_03.md`) supersedes real-QPU execution for routine F-N12-1 measurement. Real Braket access is **not required** — qmirror is validated as substantively equivalent for our use cases per closure 2026-05-03. Original Braket launch artifacts preserved as historical context; the IonQ Forte 1 path is now an optional **calibration anchor** only.
 
-> 📦 Available at: https://github.com/need-singularity/qmirror (`hx install qmirror`)
+> qmirror canonical SSOT: see `nexus/.roadmap.qmirror` header fields `upstream_url` + `latest_release` (current: v2.0.0, 2026-05-04). Hardcoded URLs deprecated 2026-05-04 — see `### See also (qmirror xref history)` footnote for prior callouts.
 
 ---
 
@@ -88,3 +88,14 @@ PRNewswire reference extraction, IonQ scheduling wait (1-3 days).
 - `docs/nexus_qmirror_phase3_calibration_runbook_2026_05_03.md`
 - `docs/qmirror_cond8_braket_landed_2026_05_03.ai.md` — Braket cross-vendor closure
 - `docs/qmirror_n2_cross_vendor_revision_2026_05_03.md`
+
+---
+
+### See also (qmirror xref history)
+
+Prior callouts preserved verbatim per qmirror_xref_centralization cycle (2026-05-04):
+
+> 📦 Available at: https://github.com/need-singularity/qmirror (`hx install qmirror`)
+> 🚀 v2.0.0 RELEASED 2026-05-04 — closure 13/13 conds met (8 v1 + 5 v2): https://github.com/need-singularity/qmirror/releases/tag/v2.0.0
+
+Future qmirror release URLs are canonically tracked in `nexus/.roadmap.qmirror` header field `latest_release_url`. Update single line in roadmap; this footnote is a frozen historical record (do not retrofit).

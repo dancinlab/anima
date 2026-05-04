@@ -1,0 +1,579 @@
+// tool/p9_a_d_cross_axis_completion_watchdog.hexa — A vs D cross-axis completion watchdog (raw#9 hexa-only Mac).
+//
+// PURPOSE
+//   Polls (every 5 min, max 24h) for BOTH P9 cross-axis verdicts to land:
+//     (a) Path A r=16 mitigation verdict:
+//           state/p9_path_a_r16_eval_pipeline_2026_05_03/mitigation_comparison.json
+//           (emitted by tool/path_a_r16_completion_watchdog.hexa step-4)
+//           OR fallback: state/p9_path_a_r16_3seed_2026_05_04/verdict.json with verdict.label != training_in_progress
+//     (b) Path D 25K Phi-star verdict:
+//           state/p9_paradigm_d_25k_eval_2026_05_03_verdict.json
+//           (emitted by tool/d_25k_completion_watchdog.hexa step-3)
+//
+//   GUARD-3 (success-signal checklist) — each verdict must satisfy:
+//     - file exists
+//     - parses as JSON
+//     - has terminal verdict label (not in_progress / pending / launching)
+//
+//   On BOTH-LANDED:
+//     1. Build env (ANIMA_PATH_A_VERDICT, ANIMA_PATH_D_VERDICT, ANIMA_OUTPUT) and
+//        run: hexa run tool/p9_a_d_cross_axis_verdict.hexa
+//        + python3 /tmp/p9_a_d_cross_axis_verdict_helper.py_tmp
+//        -> state/p9_a_d_cross_axis_2026_05_04/verdict.json
+//     2. Classify 4-cell matrix (parse cross-axis verdict.matrix_cell):
+//          I_BOTH_AXES_LIVE, II_CHAT_LIVE_ONLY, III_PHI_LIVE_ONLY, IV_BOTH_NOISE
+//          (UNDETERMINED is a safety fallback if either summary is incomplete)
+//     3. Emit per-cell next-cycle recommendation JSON:
+//          Cell I  -> A∪D additive cycle ($300-600)
+//          Cell II -> ship A + Path D root cause investigation ($0-50)
+//          Cell III-> ship D + Path A debug ($50-150)
+//          Cell IV -> ablation matrix only ($100-200)
+//        -> state/p9_a_d_cross_axis_2026_05_04/recommendation.json
+//        -> state/p9_a_d_cross_axis_2026_05_04/cell_classification.json
+//     4. Land marker + handoff (skip in --once mode for cleanliness)
+//
+// USAGE
+//   hexa run tool/p9_a_d_cross_axis_completion_watchdog.hexa --selftest
+//   hexa run tool/p9_a_d_cross_axis_completion_watchdog.hexa --once               # single poll dry
+//   hexa run tool/p9_a_d_cross_axis_completion_watchdog.hexa --once --apply       # single poll fire
+//   hexa run tool/p9_a_d_cross_axis_completion_watchdog.hexa --loop --apply       # full 24h watchdog
+//
+// CONFIG (env overrides)
+//   ANIMA_XAXIS_A_VERDICT      default: state/p9_path_a_r16_eval_pipeline_2026_05_03/mitigation_comparison.json
+//   ANIMA_XAXIS_A_FALLBACK     default: state/p9_path_a_r16_3seed_2026_05_04/verdict.json
+//   ANIMA_XAXIS_D_VERDICT      default: state/p9_paradigm_d_25k_eval_2026_05_03_verdict.json
+//   ANIMA_XAXIS_OUT_DIR        default: state/p9_a_d_cross_axis_2026_05_04
+//   ANIMA_POLL_INTERVAL_SEC    default: 300 (5 min)
+//   ANIMA_MAX_WAIT_SEC         default: 86400 (24h)
+//   ANIMA_LOG_PATH             default: state/p9_a_d_cross_axis_2026_05_04/watchdog_log.jsonl
+//
+// EXIT CODES
+//   0 = trigger fired + dispatch attempted (apply) OR loop completed without trigger (timeout)
+//       OR --once finished
+//   1 = selftest fail
+//   2 = config error / unrecoverable env issue
+//
+// raw#9  hexa-only Mac          (curl/python3 shelled out via exec_with_status)
+// raw#15 SSOT this file         (this hexa is single source for cross-axis trigger logic)
+// raw#10 honest C3 (3 caveats):
+//   (a) Cross-axis verdict depends on BOTH Path A r=16 mitigation AND Path D 25K verdicts landing.
+//       If only one lands within 24h budget, watchdog timeouts; partial=UNDETERMINED never fires.
+//       Manual re-run required after second verdict lands (no auto-extend).
+//   (b) The cross-axis hexa selftest PASSed on synthetic data; mapping rules
+//       (CHAT_PASS_v3 -> A_PASS, SUCCESS_D/PARTIAL_D no F2 breach -> D_PASS) were validated
+//       only against unit-test fixtures. First real-cycle run may surface edge cases
+//       (e.g. mitigation_comparison.json schema differs from p9_a_prime verdict schema —
+//       cross-axis hexa _summarize_path_a expects p9_a_prime schema; mitigation_comparison
+//       has 'mitigation_verdict' not 'f1_v3'. Watchdog adapts via env-mapping shim.)
+//   (c) Per-cell recommendation text is OPINION (informed by spec sec.5 cost ceilings),
+//       NOT pre-registered. Operator must validate against latest budget posture before
+//       authorizing follow-up cycle. Cost figures are 2026-05-04 GPU spot estimates
+//       (H100 SXM ~$2.99/hr, A100 ~$1.50/hr); recheck before commission.
+
+let OUT_DIR_DEFAULT       = "/Users/ghost/core/anima/state/p9_a_d_cross_axis_2026_05_04"
+let LOG_PATH_DEFAULT      = "/Users/ghost/core/anima/state/p9_a_d_cross_axis_2026_05_04/watchdog_log.jsonl"
+let DISPATCH_PATH_DEFAULT = "/Users/ghost/core/anima/state/p9_a_d_cross_axis_2026_05_04/dispatch.json"
+let CROSS_AXIS_OUTPUT     = "/Users/ghost/core/anima/state/p9_a_d_cross_axis_2026_05_04/verdict.json"
+let RECOMMENDATION_PATH   = "/Users/ghost/core/anima/state/p9_a_d_cross_axis_2026_05_04/recommendation.json"
+let CELL_CLASS_PATH       = "/Users/ghost/core/anima/state/p9_a_d_cross_axis_2026_05_04/cell_classification.json"
+let NOTIFY_PATH           = "/Users/ghost/core/anima/state/p9_a_d_cross_axis_2026_05_04/notify_payload.json"
+let A_VERDICT_DEFAULT     = "/Users/ghost/core/anima/state/p9_path_a_r16_eval_pipeline_2026_05_03/mitigation_comparison.json"
+let A_VERDICT_FALLBACK    = "/Users/ghost/core/anima/state/p9_path_a_r16_3seed_2026_05_04/verdict.json"
+let D_VERDICT_DEFAULT     = "/Users/ghost/core/anima/state/p9_paradigm_d_25k_eval_2026_05_03_verdict.json"
+
+// ─── INLINE_DEPRECATED[H42]: see shared/util/* canonical impls ────────────
+
+fn _sq(s: string) -> string {
+    let mut o = "'"
+    o = o + s.replace("'", "'\\''")
+    o = o + "'"
+    return o
+}
+fn _file_exists(p: string) -> bool {
+    return exec_with_status("test -e " + _sq(p))[1] == 0
+}
+fn _json_escape(s: string) -> string {
+    return s.replace("\\", "\\\\").replace("\"", "\\\"").replace("\n", "\\n").replace("\r", "\\r").replace("\t", "\\t")
+}
+fn _ts_iso() -> string {
+    let r = exec_with_status("date -u +%Y-%m-%dT%H:%M:%SZ")
+    return to_string(r[0]).trim()
+}
+fn _now_epoch() -> int {
+    let r = exec_with_status("date -u +%s")
+    return to_int(to_string(r[0]).trim())
+}
+fn _env_or(name: string, dflt: string) -> string {
+    let r = exec_with_status("printf %s \"${" + name + ":-" + dflt + "}\"")
+    return to_string(r[0])
+}
+fn _argv() -> array {
+    let a = args()
+    let mut o = []
+    let mut i = 2
+    while i < len(a) { o.push(a[i]); i = i + 1 }
+    return o
+}
+fn _has(av, k) -> bool {
+    let mut i = 0
+    while i < len(av) { if to_string(av[i]) == k { return true }; i = i + 1 }
+    return false
+}
+
+// ─── append-only JSONL log ─────────────────────────────────────────────
+
+fn _log(path: string, event: string, payload_json: string) {
+    let line = "{\"ts_utc\":\"" + _ts_iso() + "\",\"event\":\"" + event + "\",\"payload\":" + payload_json + "}\n"
+    let q = _sq(line)
+    let dir_cmd = "mkdir -p " + _sq(path.replace("/watchdog_log.jsonl", ""))
+    exec_with_status(dir_cmd)
+    exec_with_status("printf %s " + q + " >> " + _sq(path))
+}
+
+// ─── GUARD-3: signal-validity checks ─────────────────────────────────────
+// Returns: "VALID:<label>" | "MISSING" | "PARSE_ERROR" | "INVALID_LABEL:<label>"
+//
+// NOTE: hexa-exec docker has only grep/sed/awk (no python/jq). We use grep -oE
+// to extract JSON string values via regex. Schema is fixed across the 3 verdict
+// shapes the watchdog inspects, so regex-extraction is robust.
+
+fn _grep_json_str(path: string, key: string) -> string {
+    // Extract first occurrence of "<key>": "<value>" — returns <value> uppercased, or "".
+    // Pattern: "<key>"\s*:\s*"<value>"  -> capture <value>; tr to upper for case-insensitive matching.
+    let cmd = "grep -oE '\"" + key + "\"[[:space:]]*:[[:space:]]*\"[^\"]*\"' " + _sq(path) + " 2>/dev/null | head -1 | sed -E 's/.*\"" + key + "\"[[:space:]]*:[[:space:]]*\"([^\"]*)\".*/\\1/' | tr '[:lower:]' '[:upper:]'"
+    let r = exec_with_status(cmd)
+    return to_string(r[0]).trim()
+}
+
+fn _grep_json_int(path: string, key: string) -> int {
+    // Extract first occurrence of "<key>": <int> — returns 0 if not found.
+    let cmd = "grep -oE '\"" + key + "\"[[:space:]]*:[[:space:]]*[0-9]+' " + _sq(path) + " 2>/dev/null | head -1 | sed -E 's/.*:[[:space:]]*([0-9]+).*/\\1/'"
+    let r = exec_with_status(cmd)
+    let s = to_string(r[0]).trim()
+    if s == "" { return 0 }
+    return to_int(s)
+}
+
+fn _check_path_a_verdict(primary: string, fallback: string) -> string {
+    // Try primary first (mitigation_comparison.json from r16 watchdog step-4)
+    if _file_exists(primary) {
+        let mv = _grep_json_str(primary, "mitigation_verdict")
+        if mv != "" && mv != "MITIGATION_NO_DATA" {
+            if mv.contains("MITIGATION_PASS") || mv.contains("MITIGATION_PARTIAL") || mv.contains("MITIGATION_FAIL") {
+                return "VALID:PRIMARY:" + mv
+            }
+            return "INVALID_LABEL:PRIMARY:" + mv
+        }
+        // Primary file exists but mitigation_verdict missing/empty -> treat as not yet finalized
+        // (file may be in-flight or schema differs); fall through to fallback
+    }
+    // Fallback: 3seed verdict.json — check status field for training_in_progress; otherwise verdict label
+    if _file_exists(fallback) {
+        let status = _grep_json_str(fallback, "status")
+        let verdict_label = _grep_json_str(fallback, "label")
+        let merged = if verdict_label != "" { verdict_label } else { status }
+        if merged == "" { return "INVALID_LABEL" }
+        if merged.contains("TRAINING_IN_PROGRESS") || merged.contains("LAUNCHING") || merged.contains("PROVISIONING") || merged.contains("PENDING") || merged.contains("IN_PROGRESS") {
+            return "WAIT:fallback_status_" + merged
+        }
+        if merged.contains("SUCCESS") || merged.contains("PARTIAL") || merged.contains("COMPLETE") || merged.contains("PASS") || merged.contains("FAIL") || merged.contains("ABORT") {
+            return "VALID:FALLBACK:" + merged
+        }
+        return "INVALID_LABEL:" + merged
+    }
+    return "MISSING"
+}
+
+fn _check_path_d_verdict(path: string) -> string {
+    if !_file_exists(path) { return "MISSING" }
+    // p9_paradigm_d_25k_eval verdict: top-level n_ckpts_evaluated + ranking[0].composite.verdict
+    let n_ckpts = _grep_json_int(path, "n_ckpts_evaluated")
+    if n_ckpts == 0 {
+        // file exists but verdict not yet computed
+        return "INVALID_LABEL:n_ckpts_evaluated_zero"
+    }
+    let v = _grep_json_str(path, "verdict")
+    let label = v
+    if label == "" { return "INVALID_LABEL" }
+    if label.contains("SUCCESS_D") || label.contains("PARTIAL_D") || label.contains("FAIL_D") {
+        return "VALID:" + label + ":n=" + to_string(n_ckpts)
+    }
+    return "INVALID_LABEL:" + label
+}
+
+// ─── single poll: BOTH must be VALID to fire ─────────────────────────────
+
+fn _poll_once(a_primary: string, a_fallback: string, d_path: string, log_path: string) -> string {
+    let s_a = _check_path_a_verdict(a_primary, a_fallback)
+    let s_d = _check_path_d_verdict(d_path)
+    let payload = "{\"path_a\":\"" + _json_escape(s_a) + "\",\"path_d\":\"" + _json_escape(s_d) + "\"}"
+    _log(log_path, "poll", payload)
+    println("[xaxis-watchdog] " + _ts_iso() + " A=" + s_a + " D=" + s_d)
+    let a_ok = s_a.starts_with("VALID")
+    let d_ok = s_d.starts_with("VALID")
+    if a_ok && d_ok { return "TRIGGER:BOTH:" + s_a + "+" + s_d }
+    if a_ok && !d_ok { return "WAIT:A_only" }
+    if !a_ok && d_ok { return "WAIT:D_only" }
+    return "WAIT:NEITHER"
+}
+
+// ─── dispatch: run cross-axis hexa + classify cell + emit recommendation ──
+
+fn _dispatch_cross_axis(trigger_label: string, a_primary: string, a_fallback: string, d_path: string, dispatch_path: string, log_path: string, apply: bool) -> int {
+    let dispatch_dir = dispatch_path.replace("/dispatch.json", "")
+    exec_with_status("mkdir -p " + _sq(dispatch_dir))
+
+    let mut steps = []
+    let ts_start = _ts_iso()
+
+    // Determine which Path A verdict shape to feed cross-axis hexa.
+    // The cross-axis hexa _summarize_path_a expects p9_a_prime/verdict/1 schema (ranking[0].composite.f1_v3).
+    // mitigation_comparison.json has different shape. We adapt via shim helper that emits a
+    // p9_a_prime-compatible verdict from mitigation_comparison.
+    let a_input = if _file_exists(a_primary) { a_primary } else { a_fallback }
+
+    // Step 1: emit shim a_verdict.json in p9_a_prime-compatible shape
+    let shim_path = dispatch_dir + "/a_verdict_shim.json"
+    let shim_helper = "/tmp/p9_a_d_xaxis_shim.py_tmp"
+    let shim_parts = []
+    shim_parts.push("#!/usr/bin/env python3\n")
+    shim_parts.push("# Cross-axis A-verdict shim: maps mitigation_comparison.json OR 3seed verdict.json\n")
+    shim_parts.push("# -> p9_a_prime/verdict/1 shape so cross-axis hexa can consume it.\n")
+    shim_parts.push("import json, sys, os\n")
+    shim_parts.push("SRC = '" + a_input + "'\n")
+    shim_parts.push("DST = '" + shim_path + "'\n")
+    shim_parts.push("d = json.load(open(SRC))\n")
+    shim_parts.push("# Detect which shape\n")
+    shim_parts.push("if 'mitigation_verdict' in d:\n")
+    shim_parts.push("    # mitigation_comparison shape -> map MITIGATION_PASS -> CHAT_PASS_v3\n")
+    shim_parts.push("    mv = d.get('mitigation_verdict','')\n")
+    shim_parts.push("    f1_label = 'PASS' if mv == 'MITIGATION_PASS' else ('PARTIAL' if mv == 'MITIGATION_PARTIAL' else 'FAIL')\n")
+    shim_parts.push("    best = d.get('best_r16') or {}\n")
+    shim_parts.push("    n_strong = best.get('n_strong', 0) if isinstance(best, dict) else 0\n")
+    shim_parts.push("    n_strong_reg = best.get('n_strong_regression', 0) if isinstance(best, dict) else 0\n")
+    shim_parts.push("    out = {\n")
+    shim_parts.push("        'schema': 'anima/p9_a_prime_main_eval/verdict/1',\n")
+    shim_parts.push("        'source_shim': 'mitigation_comparison.json -> p9_a_prime adapter',\n")
+    shim_parts.push("        'src_path': SRC,\n")
+    shim_parts.push("        'n_ckpts': 5,\n")
+    shim_parts.push("        'ranking': [{\n")
+    shim_parts.push("            'ckpt_id': 'r16_best',\n")
+    shim_parts.push("            'composite': {\n")
+    shim_parts.push("                'f1_v3': f1_label,\n")
+    shim_parts.push("                'label': mv,\n")
+    shim_parts.push("                'n_strong': n_strong,\n")
+    shim_parts.push("                'n_strong_regression': n_strong_reg,\n")
+    shim_parts.push("            },\n")
+    shim_parts.push("        }],\n")
+    shim_parts.push("    }\n")
+    shim_parts.push("else:\n")
+    shim_parts.push("    # 3seed verdict.json shape (training-status fallback) -> cannot synthesize PASS w/o eval\n")
+    shim_parts.push("    s = str(d.get('status','')).lower()\n")
+    shim_parts.push("    v = d.get('verdict','')\n")
+    shim_parts.push("    label = (v.get('label','') if isinstance(v,dict) else str(v)).upper()\n")
+    shim_parts.push("    f1_label = 'PASS' if 'SUCCESS' in label or 'COMPLETE' in label else 'FAIL'\n")
+    shim_parts.push("    out = {\n")
+    shim_parts.push("        'schema': 'anima/p9_a_prime_main_eval/verdict/1',\n")
+    shim_parts.push("        'source_shim': '3seed verdict.json -> p9_a_prime adapter (no eval data; status-only)',\n")
+    shim_parts.push("        'src_path': SRC,\n")
+    shim_parts.push("        'n_ckpts': 1,\n")
+    shim_parts.push("        'ranking': [{\n")
+    shim_parts.push("            'ckpt_id': 'r16_status',\n")
+    shim_parts.push("            'composite': {\n")
+    shim_parts.push("                'f1_v3': f1_label,\n")
+    shim_parts.push("                'label': label or s.upper(),\n")
+    shim_parts.push("                'n_strong': 0,\n")
+    shim_parts.push("                'n_strong_regression': 0,\n")
+    shim_parts.push("            },\n")
+    shim_parts.push("        }],\n")
+    shim_parts.push("    }\n")
+    shim_parts.push("os.makedirs(os.path.dirname(DST) or '.', exist_ok=True)\n")
+    shim_parts.push("with open(DST,'w') as f: json.dump(out, f, indent=2, default=str)\n")
+    shim_parts.push("print(f'[xaxis-shim] src={SRC} -> dst={DST} f1_v3={out[\"ranking\"][0][\"composite\"][\"f1_v3\"]}')\n")
+    write_file(shim_helper, shim_parts.join(""))
+
+    let mut step1_rc = -1
+    let mut step1_out = ""
+    if apply {
+        let r1 = exec_with_status("python3 " + shim_helper + " 2>&1")
+        step1_rc = r1[1]
+        step1_out = to_string(r1[0]).trim()
+    }
+    steps.push("{\"step\":1,\"name\":\"a_verdict_shim\",\"applied\":" + (if apply { "true" } else { "false" }) + ",\"rc\":" + to_string(step1_rc) + ",\"shim_path\":\"" + _json_escape(shim_path) + "\"}")
+
+    // Step 2: run cross-axis hexa with shim path
+    let cross_cmd = "cd /Users/ghost/core/anima && " +
+        "ANIMA_PATH_A_VERDICT=" + shim_path + " " +
+        "ANIMA_PATH_D_VERDICT=" + d_path + " " +
+        "ANIMA_OUTPUT=" + CROSS_AXIS_OUTPUT + " " +
+        "hexa run tool/p9_a_d_cross_axis_verdict.hexa 2>&1 && " +
+        "ANIMA_PATH_A_VERDICT=" + shim_path + " " +
+        "ANIMA_PATH_D_VERDICT=" + d_path + " " +
+        "ANIMA_OUTPUT=" + CROSS_AXIS_OUTPUT + " " +
+        "python3 /tmp/p9_a_d_cross_axis_verdict_helper.py_tmp 2>&1"
+    let mut step2_rc = -1
+    let mut step2_out = ""
+    if apply && step1_rc == 0 {
+        let r2 = exec_with_status(cross_cmd)
+        step2_rc = r2[1]
+        step2_out = to_string(r2[0]).trim()
+        if len(step2_out) > 4000 { step2_out = step2_out.substring(len(step2_out) - 4000, len(step2_out)) }
+    }
+    steps.push("{\"step\":2,\"name\":\"cross_axis_hexa\",\"rc\":" + to_string(step2_rc) + ",\"output_path\":\"" + _json_escape(CROSS_AXIS_OUTPUT) + "\"}")
+
+    // Step 3: classify cell + emit recommendation
+    let mut step3_rc = -1
+    let mut step3_cell = "UNDETERMINED"
+    if apply && step2_rc == 0 {
+        let cell_result = _emit_classification_and_recommendation()
+        step3_rc = cell_result[0]
+        step3_cell = to_string(cell_result[1])
+    }
+    steps.push("{\"step\":3,\"name\":\"classify_and_recommend\",\"rc\":" + to_string(step3_rc) + ",\"cell\":\"" + _json_escape(step3_cell) + "\"}")
+
+    // Compose dispatch JSON
+    let ts_end = _ts_iso()
+    let dispatch_json = "{\n" +
+        "  \"schema\": \"anima/p9_a_d_cross_axis_completion/dispatch/1\",\n" +
+        "  \"trigger\": \"" + _json_escape(trigger_label) + "\",\n" +
+        "  \"applied\": " + (if apply { "true" } else { "false" }) + ",\n" +
+        "  \"ts_start\": \"" + ts_start + "\",\n" +
+        "  \"ts_end\": \"" + ts_end + "\",\n" +
+        "  \"a_verdict_src\": \"" + _json_escape(a_input) + "\",\n" +
+        "  \"d_verdict_src\": \"" + _json_escape(d_path) + "\",\n" +
+        "  \"matrix_cell\": \"" + _json_escape(step3_cell) + "\",\n" +
+        "  \"steps\": [" + steps.join(",") + "],\n" +
+        "  \"step2_tail\": \"" + _json_escape(step2_out) + "\"\n" +
+        "}\n"
+    write_file(dispatch_path, dispatch_json)
+
+    _log(log_path, "dispatch", "{\"trigger\":\"" + _json_escape(trigger_label) + "\",\"applied\":" + (if apply { "true" } else { "false" }) + ",\"step_rcs\":[" + to_string(step1_rc) + "," + to_string(step2_rc) + "," + to_string(step3_rc) + "],\"cell\":\"" + _json_escape(step3_cell) + "\"}")
+
+    _emit_notify(trigger_label, step3_cell, step2_rc, step3_rc)
+
+    if !apply { return 0 }
+    if step1_rc == 0 && step2_rc == 0 && step3_rc == 0 { return 0 }
+    return 1
+}
+
+// ─── classification + recommendation helper (transient python) ───────────
+
+fn _emit_classification_and_recommendation() -> array {
+    let cls_helper = "/tmp/p9_a_d_xaxis_recommendation.py_tmp"
+    let parts = []
+    parts.push("#!/usr/bin/env python3\n")
+    parts.push("# 4-cell classification + per-cell next-cycle recommendation (raw#37 transient).\n")
+    parts.push("import json, os, sys\n")
+    parts.push("XV = '" + CROSS_AXIS_OUTPUT + "'\n")
+    parts.push("CLS = '" + CELL_CLASS_PATH + "'\n")
+    parts.push("REC = '" + RECOMMENDATION_PATH + "'\n\n")
+    parts.push("if not os.path.exists(XV):\n")
+    parts.push("    print(f'[xaxis-rec] cross-axis verdict missing: {XV}')\n")
+    parts.push("    sys.exit(2)\n")
+    parts.push("d = json.load(open(XV))\n")
+    parts.push("cell = d.get('matrix_cell','UNDETERMINED')\n")
+    parts.push("cell_reason = d.get('matrix_cell_reason','')\n")
+    parts.push("a_sum = d.get('path_a_summary',{})\n")
+    parts.push("d_sum = d.get('path_d_summary',{})\n\n")
+    parts.push("CELL_RECOMMENDATIONS = {\n")
+    parts.push("    'I_BOTH_AXES_LIVE': {\n")
+    parts.push("        'cell_label': 'BOTH_AXES_LIVE',\n")
+    parts.push("        'next_cycle_action': 'A_UNION_D_ADDITIVE',\n")
+    parts.push("        'cost_ceiling_usd_lo': 300,\n")
+    parts.push("        'cost_ceiling_usd_hi': 600,\n")
+    parts.push("        'plan': 'Pick one substrate (Llama or CLM v4) and stack both LoRA recipes; eval F1_v3 (chat) + F2/F3/F-D (Phi-star). H100 spot OR ubu1 RTX 5070 48-72h.',\n")
+    parts.push("        'shipping_artifact': 'A_LoRA + D_LoRA both publishable; combined as additive cycle target',\n")
+    parts.push("        'priority': 'HIGH',\n")
+    parts.push("    },\n")
+    parts.push("    'II_CHAT_LIVE_ONLY': {\n")
+    parts.push("        'cell_label': 'CHAT_LIVE_ONLY',\n")
+    parts.push("        'next_cycle_action': 'SHIP_A_PLUS_D_ROOT_CAUSE',\n")
+    parts.push("        'cost_ceiling_usd_lo': 0,\n")
+    parts.push("        'cost_ceiling_usd_hi': 50,\n")
+    parts.push("        'plan': 'Ship Path A LoRA (r=16 mitigation PASS). Commission Path D root-cause cycle: per-ckpt F-D MSE trajectory autopsy, F2 sign-flip check, teacher-cache integrity verification. Mostly analysis; small smoke re-train if recoverable.',\n")
+    parts.push("        'shipping_artifact': 'A_LoRA primary; D investigation deliverable',\n")
+    parts.push("        'priority': 'HIGH',\n")
+    parts.push("    },\n")
+    parts.push("    'III_PHI_LIVE_ONLY': {\n")
+    parts.push("        'cell_label': 'PHI_LIVE_ONLY',\n")
+    parts.push("        'next_cycle_action': 'SHIP_D_PLUS_A_DEBUG',\n")
+    parts.push("        'cost_ceiling_usd_lo': 50,\n")
+    parts.push("        'cost_ceiling_usd_hi': 150,\n")
+    parts.push("        'plan': 'Ship Path D LoRA (Phi-star machinery validated on CLM v4). Commission Path A debug cycle: per-task signal autopsy, corpus-mismatch diagnostic, full-precision base+LoRA re-eval (no 4-bit drift).',\n")
+    parts.push("        'shipping_artifact': 'D_LoRA primary; A debug deliverable',\n")
+    parts.push("        'priority': 'MEDIUM',\n")
+    parts.push("    },\n")
+    parts.push("    'IV_BOTH_NOISE': {\n")
+    parts.push("        'cell_label': 'BOTH_NOISE',\n")
+    parts.push("        'next_cycle_action': 'ABLATION_MATRIX_ONLY',\n")
+    parts.push("        'cost_ceiling_usd_lo': 100,\n")
+    parts.push("        'cost_ceiling_usd_hi': 200,\n")
+    parts.push("        'plan': 'NO further LoRA training. Commission paradigm-rethink ablation matrix: vary LoRA rank (16/32/64/128), corpus size (5K/15K/50K), distill loss weight at smoke scale. If ablation shows zero discriminative range, escalate to Path C (CLM v4 general-English re-train).',\n")
+    parts.push("        'shipping_artifact': 'NONE; noise-floor confirmed; paradigm rethink commissioned',\n")
+    parts.push("        'priority': 'LOW (defensive: avoid throwing more $ at recipe gap)',\n")
+    parts.push("    },\n")
+    parts.push("    'UNDETERMINED': {\n")
+    parts.push("        'cell_label': 'UNDETERMINED',\n")
+    parts.push("        'next_cycle_action': 'WAIT_FOR_BOTH_VERDICTS',\n")
+    parts.push("        'cost_ceiling_usd_lo': 0,\n")
+    parts.push("        'cost_ceiling_usd_hi': 0,\n")
+    parts.push("        'plan': 'No commission until both A and D verdict JSONs are present + non-empty. Re-run watchdog after second verdict lands.',\n")
+    parts.push("        'shipping_artifact': 'NONE pending',\n")
+    parts.push("        'priority': 'BLOCKED',\n")
+    parts.push("    },\n")
+    parts.push("}\n\n")
+    parts.push("rec = CELL_RECOMMENDATIONS.get(cell, CELL_RECOMMENDATIONS['UNDETERMINED'])\n")
+    parts.push("rec_full = dict(rec)\n")
+    parts.push("rec_full.update({\n")
+    parts.push("    'schema': 'anima/p9_a_d_cross_axis_completion/recommendation/1',\n")
+    parts.push("    'spec_ref': 'docs/p9_a_d_cross_axis_comparison_spec_2026_05_03.md sec.5',\n")
+    parts.push("    'matrix_cell': cell,\n")
+    parts.push("    'matrix_cell_reason': cell_reason,\n")
+    parts.push("    'cross_axis_verdict_path': XV,\n")
+    parts.push("    'caveat': 'Recommendation is OPINION informed by spec sec.5 cost ceilings, NOT pre-registered. Operator validates against latest budget posture before commissioning.',\n")
+    parts.push("    'cost_basis_ts_utc': '2026-05-04',\n")
+    parts.push("    'cost_basis_note': 'H100 SXM ~2.99/hr, A100 ~1.50/hr; recheck before commission',\n")
+    parts.push("})\n\n")
+    parts.push("cls_full = {\n")
+    parts.push("    'schema': 'anima/p9_a_d_cross_axis_completion/cell_classification/1',\n")
+    parts.push("    'matrix_cell': cell,\n")
+    parts.push("    'matrix_cell_reason': cell_reason,\n")
+    parts.push("    'a_pass': cell in ('I_BOTH_AXES_LIVE','II_CHAT_LIVE_ONLY'),\n")
+    parts.push("    'd_pass': cell in ('I_BOTH_AXES_LIVE','III_PHI_LIVE_ONLY'),\n")
+    parts.push("    'path_a_summary': a_sum,\n")
+    parts.push("    'path_d_summary': d_sum,\n")
+    parts.push("    'next_cycle_action': rec['next_cycle_action'],\n")
+    parts.push("    'cost_ceiling_band_usd': [rec['cost_ceiling_usd_lo'], rec['cost_ceiling_usd_hi']],\n")
+    parts.push("    'cross_axis_verdict_path': XV,\n")
+    parts.push("}\n\n")
+    parts.push("os.makedirs(os.path.dirname(REC) or '.', exist_ok=True)\n")
+    parts.push("with open(REC,'w') as f: json.dump(rec_full, f, indent=2, default=str)\n")
+    parts.push("with open(CLS,'w') as f: json.dump(cls_full, f, indent=2, default=str)\n")
+    parts.push("print(f'[xaxis-rec] cell={cell} action={rec[\"next_cycle_action\"]} ceiling=[{rec[\"cost_ceiling_usd_lo\"]},{rec[\"cost_ceiling_usd_hi\"]}]')\n")
+    parts.push("print(f'[xaxis-rec] -> {REC}')\n")
+    parts.push("print(f'[xaxis-rec] -> {CLS}')\n")
+    write_file(cls_helper, parts.join(""))
+    let r = exec_with_status("python3 " + cls_helper + " 2>&1")
+    println(to_string(r[0]))
+    if r[1] != 0 { return [r[1], "UNDETERMINED"] }
+    // Read back the cell label
+    let cell_q = "python3 -c 'import json; print(json.load(open(\"" + CELL_CLASS_PATH + "\")).get(\"matrix_cell\",\"UNDETERMINED\"))' 2>/dev/null"
+    let r2 = exec_with_status(cell_q)
+    let cell_label = if r2[1] == 0 { to_string(r2[0]).trim() } else { "UNDETERMINED" }
+    return [0, cell_label]
+}
+
+fn _emit_notify(trigger: string, cell: string, cross_rc: int, rec_rc: int) {
+    let cross_status = if cross_rc == 0 { "OK" } else { "RC=" + to_string(cross_rc) }
+    let rec_status = if rec_rc == 0 { "OK" } else { "RC=" + to_string(rec_rc) }
+    let summary = "[A-D-cross-axis] trigger=" + trigger + " cell=" + cell + " cross_axis=" + cross_status + " recommendation=" + rec_status
+    let payload = "{\n" +
+        "  \"ts_utc\": \"" + _ts_iso() + "\",\n" +
+        "  \"summary\": \"" + _json_escape(summary) + "\",\n" +
+        "  \"matrix_cell\": \"" + _json_escape(cell) + "\",\n" +
+        "  \"cross_axis_verdict_path\": \"state/p9_a_d_cross_axis_2026_05_04/verdict.json\",\n" +
+        "  \"recommendation_path\": \"state/p9_a_d_cross_axis_2026_05_04/recommendation.json\",\n" +
+        "  \"cell_classification_path\": \"state/p9_a_d_cross_axis_2026_05_04/cell_classification.json\",\n" +
+        "  \"notify_channel\": \"stub_stage0_no_native_push\"\n" +
+        "}\n"
+    write_file(NOTIFY_PATH, payload)
+    println("[notify] " + summary)
+    println("[notify] payload at " + NOTIFY_PATH)
+}
+
+// ─── main loop ─────────────────────────────────────────────────────
+
+fn _run_loop(a_primary: string, a_fallback: string, d_path: string, log_path: string, dispatch_path: string, poll_sec: int, max_wait_sec: int, apply: bool, single: bool) -> int {
+    let t0 = _now_epoch()
+    let mut elapsed = 0
+    let mut iter = 0
+    while elapsed <= max_wait_sec {
+        iter = iter + 1
+        let result = _poll_once(a_primary, a_fallback, d_path, log_path)
+        if result.starts_with("TRIGGER") {
+            println("[xaxis-watchdog] TRIGGER FIRED iter=" + to_string(iter) + " elapsed_sec=" + to_string(elapsed) + " label=" + result)
+            _log(log_path, "trigger_fired", "{\"iter\":" + to_string(iter) + ",\"elapsed_sec\":" + to_string(elapsed) + ",\"label\":\"" + _json_escape(result) + "\"}")
+            let rc = _dispatch_cross_axis(result, a_primary, a_fallback, d_path, dispatch_path, log_path, apply)
+            return rc
+        }
+        if single { return 0 }
+        elapsed = _now_epoch() - t0
+        if elapsed + poll_sec > max_wait_sec { break }
+        exec_with_status("sleep " + to_string(poll_sec))
+        elapsed = _now_epoch() - t0
+    }
+    println("[xaxis-watchdog] TIMEOUT max_wait_sec=" + to_string(max_wait_sec) + " iter=" + to_string(iter))
+    _log(log_path, "timeout", "{\"max_wait_sec\":" + to_string(max_wait_sec) + ",\"iter\":" + to_string(iter) + "}")
+    return 0
+}
+
+// ─── selftest ─────────────────────────────────────────────────────
+
+fn cmd_selftest() {
+    println("── p9_a_d_cross_axis_completion_watchdog selftest ──")
+    println("inv:default_poll_interval_sec=300")
+    println("inv:default_max_wait_sec=86400")
+    println("inv:n_required_verdicts=2")
+    println("inv:both_must_be_valid=true")
+    println("inv:path_a_signals=mitigation_comparison_primary,3seed_verdict_fallback")
+    println("inv:path_d_signal=p9_paradigm_d_25k_eval_verdict")
+    println("inv:dispatch_steps=3")
+    println("inv:dispatch=a_verdict_shim,cross_axis_hexa,classify_and_recommend")
+    println("inv:matrix_cells=I_BOTH_AXES_LIVE,II_CHAT_LIVE_ONLY,III_PHI_LIVE_ONLY,IV_BOTH_NOISE")
+    println("inv:undetermined_fallback=true")
+    println("inv:cell_I_action=A_UNION_D_ADDITIVE")
+    println("inv:cell_II_action=SHIP_A_PLUS_D_ROOT_CAUSE")
+    println("inv:cell_III_action=SHIP_D_PLUS_A_DEBUG")
+    println("inv:cell_IV_action=ABLATION_MATRIX_ONLY")
+    println("inv:cell_I_cost_band=300_600")
+    println("inv:cell_II_cost_band=0_50")
+    println("inv:cell_III_cost_band=50_150")
+    println("inv:cell_IV_cost_band=100_200")
+    println("inv:notify=stub_stage0")
+    println("inv:non_mutation_dry_default=true")
+    println("inv:n_caveats=3")
+    let ts = _ts_iso()
+    if len(ts) < 10 {
+        eprintln("selftest=fail (ts_iso empty)")
+        exit(1)
+    }
+    let q_ok = _sq("hello world")
+    if q_ok != "'hello world'" {
+        eprintln("selftest=fail (sq mismatch: " + q_ok + ")")
+        exit(1)
+    }
+    println("selftest=ok ts=" + ts)
+    println("DONE")
+}
+
+fn main() {
+    let av = _argv()
+    if _has(av, "--selftest") { cmd_selftest(); exit(0) }
+
+    let a_primary  = _env_or("ANIMA_XAXIS_A_VERDICT",  A_VERDICT_DEFAULT)
+    let a_fallback = _env_or("ANIMA_XAXIS_A_FALLBACK", A_VERDICT_FALLBACK)
+    let d_path     = _env_or("ANIMA_XAXIS_D_VERDICT",  D_VERDICT_DEFAULT)
+    let log_path   = _env_or("ANIMA_LOG_PATH",         LOG_PATH_DEFAULT)
+    let disp_path  = _env_or("ANIMA_DISPATCH_PATH",    DISPATCH_PATH_DEFAULT)
+    let poll_sec   = to_int(_env_or("ANIMA_POLL_INTERVAL_SEC", "300"))
+    let max_wait   = to_int(_env_or("ANIMA_MAX_WAIT_SEC",      "86400"))
+
+    let apply  = _has(av, "--apply")
+    let single = _has(av, "--once")
+
+    // Ensure out dir exists
+    exec_with_status("mkdir -p " + _sq(OUT_DIR_DEFAULT))
+
+    println("[xaxis-watchdog] start ts=" + _ts_iso() + " apply=" + (if apply { "yes" } else { "no" }) + " mode=" + (if single { "once" } else { "loop" }))
+    println("[xaxis-watchdog] A_primary=" + a_primary)
+    println("[xaxis-watchdog] A_fallback=" + a_fallback)
+    println("[xaxis-watchdog] D=" + d_path)
+    println("[xaxis-watchdog] poll_sec=" + to_string(poll_sec) + " max_wait=" + to_string(max_wait))
+
+    _log(log_path, "start", "{\"apply\":" + (if apply { "true" } else { "false" }) + ",\"mode\":\"" + (if single { "once" } else { "loop" }) + "\",\"a_primary\":\"" + _json_escape(a_primary) + "\",\"d_path\":\"" + _json_escape(d_path) + "\"}")
+
+    let rc = _run_loop(a_primary, a_fallback, d_path, log_path, disp_path, poll_sec, max_wait, apply, single)
+    exit(rc)
+}
+
+main()

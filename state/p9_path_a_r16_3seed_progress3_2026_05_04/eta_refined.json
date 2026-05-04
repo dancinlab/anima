@@ -1,0 +1,90 @@
+{
+  "schema": "anima/p9_path_a_r16_3seed_progress3/eta_refined/1",
+  "computed_at_utc": "2026-05-04T06:50:29Z",
+  "method": "extrapolate per-seed remaining = (steps_remaining * sec_per_iter_recent) + push_to_hub_buffer",
+  "push_to_hub_buffer_min": 5,
+  "per_seed_eta": {
+    "s42": {
+      "step_current": 6862,
+      "step_remaining": 3138,
+      "sec_per_iter": 2.55,
+      "train_remaining_sec": 8002,
+      "train_remaining_hms": "2:13:22",
+      "eta_train_done_utc": "2026-05-04T09:03:51Z",
+      "eta_hub_pushed_utc": "2026-05-04T09:08:51Z"
+    },
+    "s43": {
+      "step_current": 3088,
+      "step_remaining": 6912,
+      "sec_per_iter": 2.50,
+      "train_remaining_sec": 17280,
+      "train_remaining_hms": "4:48:00",
+      "eta_train_done_utc": "2026-05-04T11:38:29Z",
+      "eta_hub_pushed_utc": "2026-05-04T11:43:29Z"
+    },
+    "s44": {
+      "step_current": 3265,
+      "step_remaining": 6735,
+      "sec_per_iter": 2.30,
+      "train_remaining_sec": 15490,
+      "train_remaining_hms": "4:18:10",
+      "eta_train_done_utc": "2026-05-04T11:08:39Z",
+      "eta_hub_pushed_utc": "2026-05-04T11:13:39Z"
+    }
+  },
+  "slowest_seed": "s43",
+  "ready_3of3_utc": "2026-05-04T11:43:29Z",
+  "ready_3of3_vs_prior_estimates": {
+    "progress1_estimate_utc": "2026-05-04T12:08:01Z",
+    "progress2_estimate_utc": "2026-05-04T11:56:48Z",
+    "progress3_estimate_utc": "2026-05-04T11:43:29Z",
+    "drift_vs_progress2_min": -13.3,
+    "drift_vs_progress1_min": -24.5,
+    "verdict": "ahead-by-13min vs progress2; s43 + s44 sec/iter both improved (2.60→2.50 s43, 2.20→2.30 s44 transient but step-rate up); s42 stable"
+  },
+  "verdict_eta_utc_after_eval": {
+    "assumed_eval_minutes_per_seed": 90,
+    "verdict_utc_parallel_3pod": "2026-05-04T13:13:29Z",
+    "verdict_utc_serial": "2026-05-04T16:13:29Z",
+    "prior_verdict_window_per_user": "13:38-16:38 UTC",
+    "drift_vs_user_window": "still-within-window (parallel 25min ahead, serial 25min ahead vs window mid)"
+  },
+  "cost_burn": {
+    "per_pod_rate_usd_per_hr": 2.99,
+    "uptime_hr_at_capture": {
+      "s42": 4.82,
+      "s43": 2.09,
+      "s44": 2.09
+    },
+    "spend_so_far_usd": {
+      "s42": 14.41,
+      "s43": 6.25,
+      "s44": 6.25,
+      "total_3_retrain": 26.91
+    },
+    "delta_spend_vs_progress2_usd": 1.80,
+    "delta_minutes_vs_progress2": 11.98,
+    "burn_rate_per_hour_usd": 8.97,
+    "projected_spend_to_train_done_usd": {
+      "s42_additional": 6.65,
+      "s43_additional": 14.36,
+      "s44_additional": 12.86,
+      "additional_total": 33.87,
+      "cumulative_at_train_done": 60.78
+    },
+    "cumulative_vs_progress2_proj_diff_usd": -0.44,
+    "base_val_pod_excluded_note": "base val pod cost not tracked here per scope"
+  },
+  "loss_health_summary": {
+    "s42": "stable-noisy ~0.60 mean (down from 0.6150 prev) — late-mid training healthy, learning_rate decayed to 2.32e-05",
+    "s43": "stable ~0.71 mean (down from 0.7432 prev) — cleared epoch 2.0, settling; learning_rate ~7.97e-05",
+    "s44": "stable ~0.675 mean (marginal +0.015 from prev) — cleared epoch 2.0; healthiest absolute trajectory"
+  },
+  "caveats": [
+    "all 3 SSH succeeded first try this poll — no retries needed",
+    "s44 GPU util snapshot 75% but sec/iter 2.30 confirms throughput intact (instant snapshot dip, not regression)",
+    "watchdog max_wait=57600s (16h from 05:21 UTC start = 21:21 UTC); ready_3of3 ETA 11:43 UTC leaves 9h38m headroom",
+    "s44 already passed epoch 2.0 step (step 3000 → epoch 1.92, step 3130 → epoch 2.003)",
+    "next watchdog poll due 06:52:08 UTC (within 2 minutes)"
+  ]
+}

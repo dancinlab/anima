@@ -12,7 +12,7 @@
 
 > **2026-05-03 qmirror substrate update (additive)**: this spec is preserved as historical methodology. For routine F-N12-1 / Orch-OR-class measurement and cross-substrate re-runs, the **`nexus.qmirror` canonical substrate** (`docs/nexus_qmirror_spec_2026_05_03.md`) is now the primary execution path. Real QPU access (IonQ Forte 1 / IBM Heron r2) is **not required** per the qmirror closure series (`docs/qmirror_*_landed_2026_05_03.ai.md`) — qmirror is validated as substantively equivalent for our use cases. Original IonQ Forte 1 trapped-ion design below preserved as historical context; real-QPU paths now serve as **calibration anchors** only.
 
-> 📦 Available at: https://github.com/need-singularity/qmirror (`hx install qmirror`)
+> qmirror canonical SSOT: see `nexus/.roadmap.qmirror` header fields `upstream_url` + `latest_release` (current: v2.0.0, 2026-05-04). Hardcoded URLs deprecated 2026-05-04 — see `### See also (qmirror xref history)` footnote for prior callouts.
 
 ---
 
@@ -402,3 +402,14 @@ where w7 = 0.05 - 0.10 (initial; literature/simulation cross-substrate evidence 
 - `docs/qmirror_cond7_alpha_landed_2026_05_03.ai.md`
 - `docs/qmirror_cond8_braket_landed_2026_05_03.ai.md`
 - `docs/qmirror_n2_cross_vendor_revision_2026_05_03.md`
+
+---
+
+### See also (qmirror xref history)
+
+Prior callouts preserved verbatim per qmirror_xref_centralization cycle (2026-05-04):
+
+> 📦 Available at: https://github.com/need-singularity/qmirror (`hx install qmirror`)
+> 🚀 v2.0.0 RELEASED 2026-05-04 — closure 13/13 conds met (8 v1 + 5 v2): https://github.com/need-singularity/qmirror/releases/tag/v2.0.0
+
+Future qmirror release URLs are canonically tracked in `nexus/.roadmap.qmirror` header field `latest_release_url`. Update single line in roadmap; this footnote is a frozen historical record (do not retrofit).

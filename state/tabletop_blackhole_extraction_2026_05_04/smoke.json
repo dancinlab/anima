@@ -1,0 +1,29 @@
+{
+  "module": "tabletop_blackhole",
+  "smoke_test_baseline": {
+    "ran_from": "/Users/ghost/core/nexus",
+    "command": "hexa run modules/tabletop_blackhole/tabletop_blackhole.hexa --self-test",
+    "exit_code": 0,
+    "sentinel": "__TABLETOP_BLACKHOLE__ PASS",
+    "cases": {
+      "case1_locked": "PASS:n6-locked T_H=0.5",
+      "case2_offlock_B1T": "PASS:offlock T_H=0.5 (diagnostic fires)",
+      "case3_edge_N_neg": "FAIL:input (rejection works)"
+    }
+  },
+  "smoke_test_post_extraction": {
+    "ran_from": "/Users/ghost/core/n6-architecture",
+    "command": "hexa run domains/physics/tabletop-blackhole/tabletop_blackhole.hexa --self-test",
+    "exit_code": 0,
+    "sentinel": "__TABLETOP_BLACKHOLE__ PASS",
+    "cases": {
+      "case1_locked": "PASS:n6-locked T_H=0.5",
+      "case2_offlock_B1T": "PASS:offlock T_H=0.5",
+      "case3_edge_N_neg": "FAIL:input"
+    }
+  },
+  "comparison": {
+    "result": "IDENTICAL (sentinel + 3 case verdicts)"
+  },
+  "verdict": "PASS — extraction preserves full sentinel behavior"
+}

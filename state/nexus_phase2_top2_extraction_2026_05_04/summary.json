@@ -1,0 +1,98 @@
+{
+  "date": "2026-05-04",
+  "phase": 2,
+  "scope": "top-2 ZERO_COLLISION nexus modules absorbed into n6-architecture",
+  "audit_ref": "/Users/ghost/core/anima/state/nexus_module_extraction_audit_phase2_2026_05_04/",
+  "modules": [
+    {
+      "rank": 1,
+      "name": "fusion_ledger",
+      "extraction_readiness": "ZERO_COLLISION",
+      "loc": 314,
+      "destination": "n6-architecture/domains/energy/fusion/",
+      "smoke": "__FUSION_LEDGER__ PASS total=27 matched=26 falsified=1 pct=96.2963",
+      "n6_arch_commit": "b59d38b3",
+      "nexus_delete_status": "staged_not_committed",
+      "artifacts": "/Users/ghost/core/anima/state/fusion_ledger_extraction_2026_05_04/"
+    },
+    {
+      "rank": 2,
+      "name": "tabletop_blackhole",
+      "extraction_readiness": "ZERO_COLLISION",
+      "loc": 307,
+      "destination": "n6-architecture/domains/physics/tabletop-blackhole/",
+      "destination_divergence": "recipe specified experiments/, used domains/physics/ for predecessor co-location",
+      "smoke": "__TABLETOP_BLACKHOLE__ PASS",
+      "n6_arch_commit": "b59d38b3",
+      "nexus_delete_status": "staged_not_committed",
+      "artifacts": "/Users/ghost/core/anima/state/tabletop_blackhole_extraction_2026_05_04/"
+    }
+  ],
+  "n6_arch_git": {
+    "commit_strategy": "joined_single_commit",
+    "commit_sha": "b59d38b3",
+    "branch": "main",
+    "pushed": true,
+    "remote": "https://github.com/need-singularity/n6-architecture (PUBLIC)",
+    "files_added": 4,
+    "loc_added_total": 732
+  },
+  "nexus_git": {
+    "branch": "feat/qmirror-cli-programmatic-consumption",
+    "delete_strategy": "git_rm_staged_no_commit (per constraint no_auto_commit_nexus_delete)",
+    "files_staged_for_delete": 4,
+    "user_action_required": "review staged delete and commit when ready (separate commits per module recommended for cleaner history)"
+  },
+  "deferred_modules": {
+    "rank_3_chip_rtl_gen": {
+      "reason": "MERGE_REQUIRED with R25 legacy 472-LoC rtl_generator.hexa predecessor — manual diff review needed before merge to confirm productized version supersedes or complements (raw#10 caveat 1)",
+      "estimated_effort_hours": 10,
+      "next_step": "separate cycle"
+    },
+    "rank_4_mc_integrate": {
+      "reason": "DECOUPLE_FIRST (sim_bridge ANU path → qmirror cli) before extraction; effort 14h",
+      "next_step": "separate cycle"
+    },
+    "rank_5_qrng": {
+      "reason": "SCAFFOLD_FIRST (README + tests + 5-source registry) before extraction; effort 16h",
+      "next_step": "separate cycle"
+    }
+  },
+  "raw_constraints": {
+    "raw_9_strict": "honored across both modules (Mac->hexa only; no Python/shell/rs writes)",
+    "raw_15_no_hardcoded_paths": "honored (both modules path-agnostic, run identically from any cwd)",
+    "raw_dollar_0": "honored (pure additive file copy + git ops, zero external cost)",
+    "raw_10_4_caveats_per_module": "honored (4 explicit caveats per module = 8 total; aggregate caveats below)",
+    "n6_architecture_already_public": true,
+    "no_auto_commit_nexus_delete": "honored (deletes staged; user-driven commit deferred)"
+  },
+  "aggregate_caveats_raw10_4": [
+    {
+      "id": 1,
+      "label": "data/ JSON mirror not relocated for fusion_ledger",
+      "detail": "n6-arch .gitignore excludes data/ recursively. iter_constants.json (250-LoC) stays at nexus/modules/fusion_ledger/data/. .hexa is self-contained; future override-via-spec needs re-add under non-data/ path."
+    },
+    {
+      "id": 2,
+      "label": "destination divergence for tabletop_blackhole (experiments/ → domains/physics/)",
+      "detail": "Recipe said experiments/tabletop-blackhole/, actual domains/physics/tabletop-blackhole/ to co-locate with research spec. Matches Phase-1 absorb pattern. experiments/_results.jsonl entry NOT updated."
+    },
+    {
+      "id": 3,
+      "label": "n=6 anchor duplication across modules (drift risk)",
+      "detail": "Same 7 primitives (n, sigma, tau, phi, sopfr, J2, mu) re-defined locally in atlas_n6 + crystallography_n6 + chip_isa_n6 + fusion_ledger + tabletop_blackhole. Intentional per raw#15 root-agnostic policy but creates drift risk. Suggested follow-up (NOT this cycle): n6-architecture/INDEX.json canonical anchor table referenced by all consumers."
+    },
+    {
+      "id": 4,
+      "label": "cross-tree git history split + tests/ pyc-only remnants",
+      "detail": "n6-arch@b59d38b3 holds extracted code; nexus@bcadbf6d origin commits. @origin SHA documented in .README.md but not enforced. Both modules have tests/ subdirs containing only stale .pyc remnants (no source) — same condition as Phase-1 chip_isa_n6. --self-test CLI covers all falsifier checks; no test source to migrate."
+    }
+  ],
+  "performance": {
+    "modules_landed": 2,
+    "estimated_total_hours": 10,
+    "actual_hours": 1,
+    "tools_used": "approximately 30 (bash + read + write + edit)",
+    "efficiency_vs_target": "well under 50-tool budget"
+  }
+}

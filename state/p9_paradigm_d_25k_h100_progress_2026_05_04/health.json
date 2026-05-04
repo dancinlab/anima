@@ -1,0 +1,151 @@
+{
+  "schema": "anima/p9_paradigm_d_25k_h100_progress/health/1",
+  "phase": "p9_paradigm_d_25k_h100_progress_2026_05_04",
+  "ts_utc": "2026-05-04T05:18:47Z",
+  "verdict": "CRITICAL_IDLE_BURN",
+  "summary": "Pod fuewrx9moxe6gz RUNNING 7.27h burning $21.74 with NO training process active. finalize_and_launch.sh was never invoked. GPU at 0% util / 0 MiB. No savepoints, no train.log, no HF push. Only Jupyter is running.",
+  "pod": {
+    "id": "fuewrx9moxe6gz",
+    "name": "anima-p9-pd-25k-h100-sxm-secure",
+    "desired_status": "RUNNING",
+    "gpu": "NVIDIA H100 80GB HBM3 SXM (AP-IN-1, secure ondemand)",
+    "cost_per_hr_usd": 2.99,
+    "created_ts_utc": "2026-05-03T22:01:30Z",
+    "ssh": {
+      "ip": "103.207.149.143",
+      "port": 16402,
+      "user": "root",
+      "key_used": "~/.ssh/id_ed25519 (NOT /Users/ghost/.runpod/ssh/RunPod-Key-Go)",
+      "note": "pod PUBLIC_KEY env was set to ed25519 ghost@ghostui-MacBookAir.local at provisioning; RunPod-Key-Go RSA is rejected"
+    }
+  },
+  "ssh_check": {
+    "ts_utc": "2026-05-04T05:18:11Z",
+    "host_uptime_string": "05:18:11 up 24 days, 9:38, 0 users, load average: 7.39, 32.49, 47.19",
+    "logged_in_users": 0,
+    "last_login_history": "wtmp begins Fri Apr 10 08:26:15 2026 (no SSH sessions recorded since pod creation — unusual; probably runpod proxies)",
+    "bash_history": "EMPTY (/root/.bash_history absent)"
+  },
+  "gpu": {
+    "name": "NVIDIA H100 80GB HBM3",
+    "utilization_pct": 0,
+    "memory_used_mib": 0,
+    "memory_total_mib": 81559,
+    "temperature_c": 36,
+    "power_draw_w": 70.57,
+    "interpretation": "IDLE — H100 baseline power is ~70W with no workload; 0 MiB VRAM means no model loaded"
+  },
+  "processes": {
+    "python_processes": [
+      {"pid": 504, "cmd": "/usr/bin/python /usr/local/bin/jupyter-lab --port=8888 ... --ServerApp.token=anima_p9_pd_h100", "started": "May 03"}
+    ],
+    "training_process": "ABSENT (no p9_paradigm_d_distill_v2.py, no python3 train, no torchrun)",
+    "cost_watchdog_process": "ABSENT (not started; cost_watchdog.sh on disk but never invoked)",
+    "finalize_script_invoked": false
+  },
+  "filesystem": {
+    "/workspace/anima_bundle/best.pt": "PRESENT 5365727261 bytes (matches expected, integrity intact)",
+    "/workspace/anima_bundle/p9_paradigm_d_distill_v2.py": "PRESENT 42722 bytes, immutable_flag=NOT SET (chattr +i was supposed to be applied by finalize_and_launch.sh but it never ran)",
+    "/workspace/launch_train.sh": "PRESENT (contains plaintext HF_TOKEN — see SEC-1 caveat)",
+    "/workspace/finalize_and_launch.sh": "PRESENT NEVER_EXECUTED (no /workspace/finalize.log created)",
+    "/workspace/cost_watchdog.sh": "PRESENT NEVER_EXECUTED (no /workspace/cost_watchdog.log created)",
+    "/workspace/p9_paradigm_d_25k_h100_savepoints/": "DOES_NOT_EXIST",
+    "/workspace/p9_paradigm_d_25k_h100_out/": "DOES_NOT_EXIST",
+    "/workspace/train.log": "DOES_NOT_EXIST",
+    "/workspace/anima_bundle/__pycache__/conscious_decoder.cpython-311.pyc": "PRESENT mtime 2026-05-03 22:14 (someone imported the module at provisioning, likely a sanity test, then closed the session without launching)"
+  },
+  "training_state": {
+    "current_step": 0,
+    "max_steps": 25000,
+    "savepoints_present": [],
+    "loss_trajectory": "N/A (training never started)",
+    "nan_divergence": "N/A",
+    "train_done_marker": false
+  },
+  "hf_repo_status": {
+    "watchdog_target": "need-singularity/clm-v4-paradigm-d-25k-final @ tag step-25000",
+    "launch_script_target": "need-singularity/p9-paradigm-d-25k (DIFFERENT NAME — see ALIGN-1 caveat)",
+    "watchdog_target_probe_http": 401,
+    "launch_target_probe_http": 401,
+    "search_results_for_paradigm_d": "[] (empty; no public repo)",
+    "interpretation": "neither repo exists OR both private and not yet populated; either way no checkpoints have been pushed because training never ran"
+  },
+  "watchdog_v2_health": {
+    "pid": 61149,
+    "wrapper": "state/d_25k_eval_auto_trigger_2026_05_03/watchdog_loop_v2.sh",
+    "alive": true,
+    "started_ts_utc": "2026-05-04T04:26:16Z",
+    "expires_ts_utc": "2026-05-05T04:26:16Z",
+    "remaining_budget_h": 23.13,
+    "iter_at_check": 10,
+    "poll_interval_sec": 300,
+    "last_poll_ts_utc": "2026-05-04T05:14:12Z",
+    "last_poll_signals": {"local": "MISSING", "ubu1": "MISSING", "hf": "MISSING"},
+    "verdict": "watchdog process is healthy and polling correctly; correctly returns MISSING because no training output exists yet — NO false positive risk",
+    "note_pid_53327_drift": "watchdog_refresh audit recorded PID 53327 but actual live PID is 61149 (likely respawn after wrapper script v2 re-exec or shell-loop wrapper); both pid files (watchdog.pid, watchdog.pid.v2) hold stale PID 53327. Live process IS the v2 loop (verified via pgrep -f d_25k_completion_watchdog and watchdog_log.jsonl progression)."
+  },
+  "expected_runtime": {
+    "expected_runtime_h_per_metadata": 8.3,
+    "expected_total_usd_per_metadata": 24.82,
+    "elapsed_h_actual": 7.27,
+    "remaining_eta_h_if_started_now": 8.3,
+    "eta_completion_if_launched_now_utc": "2026-05-04T13:30:00Z",
+    "but_cost_cap_at_25_will_be_breached_in_h": 1.09,
+    "interpretation": "if training were launched RIGHT NOW, it would burn $24.82 over 8.3h, totaling $46.56 (already-spent $21.74 + new $24.82) which BREACHES the $25 hard cap by $21.56. NOT VIABLE within current budget."
+  },
+  "caveats": [
+    {
+      "id": "C1_IDLE_BURN",
+      "severity": "CRITICAL",
+      "title": "Pod has been idle for 7.27h (~$21.74 sunk cost, no training output)",
+      "detail": "finalize_and_launch.sh was placed on /workspace/ at 22:14 UTC (3min after PID 504 jupyter started) but never invoked. There is no evidence anyone ran ./finalize_and_launch.sh — finalize.log, cost_watchdog.log, train.log all absent. The conscious_decoder.cpython-311.pyc shows ONE import happened at 22:14 (sanity check), then the session ended. The previous agent claimed in launch_status.json (22:08 UTC) 'next_steps' included 'wait for rsync, mark immutable, start watchdog, start training' — none of these post-rsync steps were executed. The watchdog_refresh audit (04:28 UTC) accepted at face value that training was running (assumed remaining_eta_h=1.95) without verifying via SSH/nvidia-smi."
+    },
+    {
+      "id": "C2_COST_CAP_BREACH_RISK",
+      "severity": "HIGH",
+      "title": "Launching training NOW would breach $25 hard cap",
+      "detail": "Already-spent $21.74. Cap is $25. Remaining budget is $3.26 = ~1.09h of GPU time. Full 25K training needs 8.3h. Two options: (a) RAISE cap to $46.56 with operator approval, (b) kill pod NOW (sunk cost $21.74 lost), reprovision fresh. Per task constraint 'DO NOT preempt or kill pod (under cap)' — at $21.74 we are technically under $22 watchdog kill threshold by $0.26, but real-clock ticks ~$0.05/min so we'll cross $22 in ~5min. Operator decision required IMMEDIATELY."
+    },
+    {
+      "id": "C3_HF_REPO_NAME_MISMATCH",
+      "severity": "HIGH",
+      "title": "Watchdog polls clm-v4-paradigm-d-25k-final but launch_train.sh would push to p9-paradigm-d-25k",
+      "detail": "If training were ever launched, the watchdog HF probe would NEVER fire because launch_train.sh sets ANIMA_HF_REPO=need-singularity/p9-paradigm-d-25k (not clm-v4-paradigm-d-25k-final). Even if local/ubu1 verdict files were absent, HF signal would stay MISSING:http_401 indefinitely. Watchdog auto-fire chain would only trigger via local or ubu1 verdict.json paths."
+    },
+    {
+      "id": "SEC_1_HF_TOKEN_LEAKED_TO_POD_DISK",
+      "severity": "MEDIUM",
+      "title": "HF_TOKEN written in plaintext at /workspace/launch_train.sh:21",
+      "detail": "Previous launcher embedded HF_TOKEN=hf_GjzwCY... in the wrapper script. Per raw#15 we redact here. Pod is secure ondemand (root-only access) so blast radius is limited to the current pod, but the token will persist on the pod's volume even after termination if volume is reattached. Mitigation: after training completes (or pod kill), rotate HF_TOKEN. This audit deliberately does not echo the full token in any output."
+    },
+    {
+      "id": "C4_WATCHDOG_PID_DRIFT",
+      "severity": "LOW",
+      "title": "watchdog.pid files contain stale PID 53327; live PID is 61149",
+      "detail": "Both /Users/ghost/core/anima/state/d_25k_eval_auto_trigger_2026_05_03/watchdog.pid and watchdog.pid.v2 hold '53327' but pgrep -f d_25k_completion_watchdog returns 61149. The watchdog_loop_v2.sh wrapper likely re-execs or fork/exec changes PID. Watchdog functionally healthy (10 iterations completed, last poll 05:14:12Z). Only impact: if operator pkill -F watchdog.pid.v2, no-op. Use pgrep -f for kill operations."
+    }
+  ],
+  "recommendations_ranked_by_completion_quality": [
+    {
+      "rank": 1,
+      "label": "OPERATOR_DECISION_RAISE_CAP_AND_LAUNCH",
+      "rationale": "Highest completion quality if budget allows. Operator approves cap raise to $50 (or $47), SSHes to pod, runs `bash /workspace/finalize_and_launch.sh`, fixes ANIMA_HF_REPO mismatch first (set to clm-v4-paradigm-d-25k-final to match watchdog), then training proceeds. Watchdog auto-fires eval at completion. Net cost: $21.74 sunk + $24.82 new = $46.56."
+    },
+    {
+      "rank": 2,
+      "label": "KILL_AND_REPROVISION_FRESH",
+      "rationale": "Accept $21.74 sunk cost. Kill pod now. Reprovision fresh H100 (or A100 spot if Path A path-A learnings revisit) with finalize_and_launch.sh wired into pod onCreate hook so it auto-runs. Net cost: $21.74 sunk + $24.82 new = $46.56 (same as rank 1 but resets clock and avoids 7.27h calendar slip propagating). Marginally lower completion quality because of pod reprovisioning risk + capacity availability uncertainty."
+    },
+    {
+      "rank": 3,
+      "label": "KILL_NOW_DEFER_TO_LATER_CYCLE",
+      "rationale": "Accept $21.74 sunk loss. Kill pod. Defer 25K Φ★ z-score MSE distill to next budget cycle. Lowest completion quality because closes-out the qmirror 2.0 closure spec window — sister BG (a946a65) becomes orphan."
+    }
+  ],
+  "constraints_honored": [
+    "raw#9 STRICT: this is a Mac-side audit only; no domain logic invoked, only OS-level health probes",
+    "raw#15: HF_TOKEN redacted in this report (full token only present on pod disk, flagged in SEC-1)",
+    "raw#10: 4 caveats reported (C1 CRITICAL, C2 HIGH, C3 HIGH, SEC-1 MEDIUM, C4 LOW; exceeds the 3-caveat minimum)",
+    "DO NOT preempt or kill pod: HONORED — this audit is read-only, no runpodctl pod stop/remove invoked"
+  ]
+}

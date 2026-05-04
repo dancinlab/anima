@@ -1,0 +1,501 @@
+// @resolver-pure(reason="read-only sweep over BG output dir; only writes JSON audit artifacts under --output. No mutation outside operator-supplied output dir. raw#9 STRICT, raw#15 STRICT.")
+// ════════════════════════════════════════════════════════════════════════════
+//  tool/raw15_post_bg_audit.hexa — post-BG token-leak audit orchestrator
+//
+//  PURPOSE
+//    Orchestrator over a BG output directory (e.g. /private/tmp/claude-501/
+//    <proj>/<sid>/tasks). Implements F-RAW15-1 falsifier sweep using grep -aE
+//    (binary-safe extended regex) for the same FAIL classes covered by
+//    tool/raw15_token_leak_validator.hexa. Aggregates per-file violations →
+//    audit.json + retroactive_scan.jsonl + incident_log.json with rotation
+//    advice for any leaked credential class.
+//
+//    Design choice (2026-05-04): grep -aE over nested `hexa run validator`
+//    because nested-hexa subprocess hangs under darwin-bypass routing. Same
+//    pattern set as the validator (kept in sync via comments). Validator
+//    remains the canonical primitive for inline / single-file audits.
+//
+//  SCOPE
+//    - Standalone CLI (harness integration deferred — see caveat #3)
+//    - Read-only: never deletes / never modifies BG outputs
+//    - Honors --include-pattern (substring filter on file path) so the
+//      operator can restrict scope and AVOID directories containing legit
+//      token files (e.g. .secrets/) per raw#15 STRICT rule "DO NOT auto-scan
+//      if it requires reading token-containing files".
+//
+//  USAGE
+//    # scan a session's BG outputs
+//    hexa run tool/raw15_post_bg_audit.hexa \
+//        --bg-dir /private/tmp/claude-501/-Users-ghost-core-anima/<sid>/tasks \
+//        --include-pattern .output \
+//        --output state/raw15_token_leak_audit_2026_05_04
+//
+//    # selftest (synthetic dir)
+//    hexa run tool/raw15_post_bg_audit.hexa --selftest
+//
+//  EXIT CODES
+//    0  PASS (no FAIL hits)
+//    1  FAIL (one or more FAIL-class leaks across BG outputs)
+//    2  ERROR (bad args / unreadable dir)
+//
+//  raw#9   STRICT — Mac → hexa only.
+//  raw#10  honest — caveats inherited + harness-deferred.
+//  raw#15  STRICT — this file MUST NOT echo any token; redaction = first 4 +
+//          length, mirroring validator policy.
+// ════════════════════════════════════════════════════════════════════════════
+
+let TOOL_NAME    = "raw15_post_bg_audit"
+let TOOL_VERSION = "v1"
+let SCHEMA_ID    = "anima/raw15_post_bg_audit/1"
+
+// ─── sys helpers ─────────────────────────────────────────────────────
+
+fn _sh_quote(s: string) -> string {
+    let mut out = "'"
+    out = out + s.replace("'", "'\\''")
+    out = out + "'"
+    return out
+}
+
+fn _exec_out(cmd: string) -> string {
+    let r = exec_with_status(cmd)
+    return to_string(r[0])
+}
+
+fn _exec_code(cmd: string) -> int {
+    let r = exec_with_status(cmd)
+    return r[1]
+}
+
+fn _is_dir(path: string) -> bool {
+    let r = exec_with_status("test -d " + _sh_quote(path))
+    return r[1] == 0
+}
+
+fn _is_file(path: string) -> bool {
+    let r = exec_with_status("test -f " + _sh_quote(path))
+    return r[1] == 0
+}
+
+fn _mkdir_p(dir: string) -> bool {
+    return _exec_code("mkdir -p " + _sh_quote(dir)) == 0
+}
+
+fn _ts_iso() -> string {
+    return _exec_out("date -u +%Y-%m-%dT%H:%M:%SZ").trim()
+}
+
+fn _ts_epoch() -> string {
+    return _exec_out("date -u +%s").trim()
+}
+
+fn _file_bytes(path: string) -> int {
+    if !_is_file(path) { return 0 }
+    let s = _exec_out("wc -c < " + _sh_quote(path) + " 2>/dev/null").trim()
+    if len(s) == 0 { return 0 }
+    return to_int(s)
+}
+
+fn _json_escape(s: string) -> string {
+    return s.replace("\\", "\\\\").replace("\"", "\\\"").replace("\n", "\\n").replace("\r", "\\r").replace("\t", "\\t")
+}
+
+// ─── argv ────────────────────────────────────────────────────────────
+
+fn _argv() -> array {
+    let a = args()
+    let mut out = []
+    let mut i = 2
+    while i < len(a) {
+        out.push(a[i])
+        i = i + 1
+    }
+    return out
+}
+
+fn _flag(av: array, k: string) -> bool {
+    for x in av {
+        if to_string(x) == k { return true }
+    }
+    return false
+}
+
+fn _opt(av: array, k: string, d: string) -> string {
+    let mut i = 0
+    while i < len(av) {
+        if to_string(av[i]) == k && i + 1 < len(av) {
+            return to_string(av[i + 1])
+        }
+        i = i + 1
+    }
+    return d
+}
+
+fn _opts_multi(av: array, k: string) -> array {
+    let mut out = []
+    let mut i = 0
+    while i < len(av) {
+        if to_string(av[i]) == k && i + 1 < len(av) {
+            out.push(to_string(av[i + 1]))
+            i = i + 2
+            continue
+        }
+        i = i + 1
+    }
+    return out
+}
+
+// ─── redaction (CRITICAL — never echo full secret) ───────────────────
+
+fn _redact(value: string) -> string {
+    let n = len(value)
+    let head_len = if n < 4 { n } else { 4 }
+    let head = value.substring(0, head_len)
+    return "REDACT[" + head + "***len=" + to_string(n) + "]"
+}
+
+// ─── enumerate target files ──────────────────────────────────────────
+
+fn _list_bg_files(bg_dir: string, includes: array, excludes: array) -> array {
+    let cmd = "find " + _sh_quote(bg_dir) + " -type f 2>/dev/null"
+    let out = _exec_out(cmd)
+    let lines = split(out, "\n")
+    let mut acc = []
+    for l in lines {
+        let p = to_string(l).trim()
+        if len(p) == 0 { continue }
+        // exclude path substring matches
+        let mut skip = false
+        for ex in excludes {
+            if p.index_of(to_string(ex)) >= 0 { skip = true; break }
+        }
+        if skip { continue }
+        // include filter — at least one match required if list non-empty
+        if len(includes) > 0 {
+            let mut hit = false
+            for inc in includes {
+                if p.index_of(to_string(inc)) >= 0 { hit = true; break }
+            }
+            if !hit { continue }
+        }
+        let sz = _file_bytes(p)
+        if sz == 0 { continue }
+        acc.push(p)
+    }
+    return acc
+}
+
+// ─── pattern table (mirrors validator FAIL classes) ──────────────────
+
+// Each entry: { id, regex_for_grep_E, severity }
+// grep -aE is binary-safe and POSIX-ERE; escape sequences kept simple.
+fn _pattern_table() -> array {
+    let mut t = []
+    let mut p1 = #{}
+    p1["id"] = "HF_TOKEN"
+    p1["re"] = "hf_[A-Za-z0-9]{30,}"
+    p1["sev"] = "FAIL"
+    t.push(p1)
+    let mut p2 = #{}
+    p2["id"] = "GITHUB_TOKEN"
+    p2["re"] = "gh[pousr]_[A-Za-z0-9]{30,}"
+    p2["sev"] = "FAIL"
+    t.push(p2)
+    let mut p3 = #{}
+    p3["id"] = "OPENAI_KEY"
+    p3["re"] = "sk-[A-Za-z0-9]{30,}"
+    p3["sev"] = "FAIL"
+    t.push(p3)
+    let mut p4 = #{}
+    p4["id"] = "AWS_ACCESS_KEY"
+    p4["re"] = "AKIA[A-Z0-9]{16}"
+    p4["sev"] = "FAIL"
+    t.push(p4)
+    let mut p5 = #{}
+    p5["id"] = "JWT"
+    p5["re"] = "eyJ[A-Za-z0-9_-]+\\.eyJ[A-Za-z0-9_-]+\\.[A-Za-z0-9_-]{8,}"
+    p5["sev"] = "FAIL"
+    t.push(p5)
+    let mut p6 = #{}
+    p6["id"] = "PARTIAL_PREFIX"
+    p6["re"] = "(hf_|gho_|ghp_|ghu_|ghs_|ghr_|sk-|AKIA)[A-Za-z0-9]{1,8}\\*\\*\\*"
+    p6["sev"] = "FAIL"
+    t.push(p6)
+    return t
+}
+
+// ─── per-file scan via grep -aE ──────────────────────────────────────
+
+fn _scan_one(path: string, table: array) -> array {
+    let mut out = []
+    for p in table {
+        let id = to_string(p["id"])
+        let re = to_string(p["re"])
+        let sev = to_string(p["sev"])
+        // grep -aE: binary-safe, ERE; -o: only matched substring; -h: no filename;
+        // capping to first 100 hits per pattern via head -n 100
+        let cmd = "grep -aoE " + _sh_quote(re) + " " + _sh_quote(path) + " 2>/dev/null | head -n 100"
+        let raw = _exec_out(cmd)
+        let lines = split(raw, "\n")
+        for l in lines {
+            let m = to_string(l)
+            if len(m) == 0 { continue }
+            let mut v = #{}
+            v["source"] = path
+            v["pattern_id"] = id
+            v["severity"] = sev
+            v["redacted"] = _redact(m)
+            v["match_len"] = len(m)
+            out.push(v)
+        }
+    }
+    // HEX_GENERIC WARN — long lower-hex runs ≥32 NOT adjacent to sha/commit/blob.
+    // Use awk for context check: print run only when surrounding 80 chars don't
+    // contain sha/commit/blob/manifest/digest/fingerprint keywords.
+    let hex_cmd = "grep -aoE '[a-f0-9]{32,}' " + _sh_quote(path) + " 2>/dev/null | head -n 50"
+    let hex_raw = _exec_out(hex_cmd)
+    let hex_lines = split(hex_raw, "\n")
+    // Without per-context info from grep -o, we conservatively WARN on first 5
+    // unique-by-prefix hex hits per file (caveat #2). Operator inspects.
+    let mut seen = #{}
+    let mut warn_n = 0
+    for l in hex_lines {
+        let m = to_string(l)
+        if len(m) == 0 { continue }
+        let head4 = m.substring(0, 4)
+        if seen.contains_key(head4) { continue }
+        seen[head4] = true
+        warn_n = warn_n + 1
+        if warn_n > 5 { break }
+        let mut v = #{}
+        v["source"] = path
+        v["pattern_id"] = "HEX_GENERIC"
+        v["severity"] = "WARN"
+        v["redacted"] = _redact(m)
+        v["match_len"] = len(m)
+        out.push(v)
+    }
+    return out
+}
+
+// ─── incident classification → rotation suggestion ──────────────────
+
+fn _rotation_advice(pattern_id: string) -> string {
+    if pattern_id == "HF_TOKEN"        { return "ROTATE: secret set huggingface.token  (then sync .secrets/ + ~/.cache/huggingface/token + ubu1)" }
+    if pattern_id == "GITHUB_TOKEN"    { return "ROTATE: revoke at github.com/settings/tokens; secret set github.token" }
+    if pattern_id == "OPENAI_KEY"      { return "ROTATE: revoke at platform.openai.com or anthropic console; secret set <provider>.api_key" }
+    if pattern_id == "AWS_ACCESS_KEY"  { return "ROTATE: aws iam delete-access-key + create-access-key; secret set aws_braket.access_key_id" }
+    if pattern_id == "JWT"             { return "ROTATE: invalidate at issuer; reissue; rotate signing key if HMAC-shared" }
+    if pattern_id == "PARTIAL_PREFIX"  { return "INVESTIGATE: partial-prefix leak triggers F-RAW15-1 (raw#15 STRICT zero); audit upstream BG prompt redaction" }
+    return "INVESTIGATE: unknown pattern; review manually"
+}
+
+// ─── output emission ─────────────────────────────────────────────────
+
+fn _emit_audit(out_dir: string, all_violations: array, files_scanned: int, bg_dir: string, ts: string) -> array {
+    let _ = _mkdir_p(out_dir)
+    let audit_path     = out_dir + "/audit.json"
+    let scan_path      = out_dir + "/retroactive_scan.jsonl"
+    let incident_path  = out_dir + "/incident_log.json"
+
+    let mut fail = 0
+    let mut warn = 0
+    let mut by_id = #{}
+    let mut by_file = #{}
+    for v in all_violations {
+        let s = to_string(v["severity"])
+        if s == "FAIL" { fail = fail + 1 }
+        else if s == "WARN" { warn = warn + 1 }
+        let id = to_string(v["pattern_id"])
+        if by_id.contains_key(id) { by_id[id] = to_int(to_string(by_id[id])) + 1 } else { by_id[id] = 1 }
+        let src = to_string(v["source"])
+        if by_file.contains_key(src) { by_file[src] = to_int(to_string(by_file[src])) + 1 } else { by_file[src] = 1 }
+    }
+
+    let mut a = []
+    a.push("{\n")
+    a.push("  \"schema\": \"" + SCHEMA_ID + "\",\n")
+    a.push("  \"tool\": \"tool/" + TOOL_NAME + ".hexa\",\n")
+    a.push("  \"version\": \"" + TOOL_VERSION + "\",\n")
+    a.push("  \"ts\": \"" + ts + "\",\n")
+    a.push("  \"bg_dir\": \"" + _json_escape(bg_dir) + "\",\n")
+    a.push("  \"files_scanned\": " + to_string(files_scanned) + ",\n")
+    a.push("  \"violation_count\": " + to_string(len(all_violations)) + ",\n")
+    a.push("  \"fail_count\": " + to_string(fail) + ",\n")
+    a.push("  \"warn_count\": " + to_string(warn) + ",\n")
+    a.push("  \"verdict\": \"" + (if fail > 0 { "FAIL" } else if warn > 0 { "WARN" } else { "PASS" }) + "\",\n")
+    a.push("  \"falsifier\": \"F-RAW15-1\",\n")
+    a.push("  \"by_pattern_id\": {")
+    let mut first = true
+    let id_keys = by_id.keys()
+    for k in id_keys {
+        let key = to_string(k)
+        if !first { a.push(", ") }
+        a.push("\"" + key + "\": " + to_string(by_id[key]))
+        first = false
+    }
+    a.push("},\n")
+    a.push("  \"files_with_hits\": " + to_string(len(by_file.keys())) + ",\n")
+    a.push("  \"redaction_policy\": \"first_4_chars + length\",\n")
+    a.push("  \"caveats\": [\n")
+    a.push("    \"regex blindspot — new token formats bypass until pattern added\",\n")
+    a.push("    \"retroactive scan limited to current session BG output dir\",\n")
+    a.push("    \"post-BG audit hook — standalone CLI; harness integration deferred\",\n")
+    a.push("    \"false positives possible on legitimate hex (sha256/commit) — WARN-only, capped 5/file\"\n")
+    a.push("  ]\n")
+    a.push("}\n")
+    let _ = write_file(audit_path, a.join(""))
+
+    let mut sc = []
+    for v in all_violations {
+        let mut parts = []
+        parts.push("{\"source\":\"" + _json_escape(to_string(v["source"])) + "\"")
+        parts.push(",\"pattern_id\":\"" + to_string(v["pattern_id"]) + "\"")
+        parts.push(",\"severity\":\"" + to_string(v["severity"]) + "\"")
+        if v.contains_key("match_len") { parts.push(",\"match_len\":" + to_string(v["match_len"])) }
+        parts.push(",\"redacted\":\"" + _json_escape(to_string(v["redacted"])) + "\"}")
+        sc.push(parts.join(""))
+    }
+    let _ = write_file(scan_path, sc.join("\n") + (if len(sc) > 0 { "\n" } else { "" }))
+
+    let mut inc = []
+    inc.push("{\n")
+    inc.push("  \"schema\": \"anima/raw15_incident_log/1\",\n")
+    inc.push("  \"ts\": \"" + ts + "\",\n")
+    inc.push("  \"incidents\": [\n")
+    let mut written = 0
+    for v in all_violations {
+        if to_string(v["severity"]) != "FAIL" { continue }
+        if written > 0 { inc.push(",\n") }
+        let pid = to_string(v["pattern_id"])
+        let advice = _rotation_advice(pid)
+        inc.push("    {\"pattern_id\": \"" + pid + "\"")
+        inc.push(", \"source\": \"" + _json_escape(to_string(v["source"])) + "\"")
+        inc.push(", \"redacted\": \"" + _json_escape(to_string(v["redacted"])) + "\"")
+        inc.push(", \"action\": \"" + _json_escape(advice) + "\"}")
+        written = written + 1
+    }
+    inc.push("\n  ],\n")
+    inc.push("  \"incident_count\": " + to_string(written) + "\n")
+    inc.push("}\n")
+    let _ = write_file(incident_path, inc.join(""))
+
+    let mut out = []
+    out.push(audit_path)
+    out.push(scan_path)
+    out.push(incident_path)
+    return out
+}
+
+// ─── selftest ────────────────────────────────────────────────────────
+
+fn _selftest() -> int {
+    let dir = "/tmp/raw15_post_bg_selftest_" + _ts_epoch()
+    let _ = _mkdir_p(dir)
+    let f1 = dir + "/clean.output"
+    let f2 = dir + "/leaked.output"
+    let _ = write_file(f1, "all good — no tokens here, just sha256 a1b2c3d4e5f60718293a4b5c6d7e8f9011121314151617181920212223242526\n")
+    // SYNTHETIC test fixture (concatenated to evade GitHub secret scanning)
+    let _ = write_file(f2, "leak: hf_" + "aBcDeFgHi" + "JkLmNoPqRsTu" + "VwXyZ" + "012345abcd\nalso partial: gho_X*** in chat\n")
+    let out_dir = "/tmp/raw15_post_bg_audit_out_" + _ts_epoch()
+    let table = _pattern_table()
+    let files = _list_bg_files(dir, [".output"], [])
+    let mut all = []
+    for p in files {
+        let v = _scan_one(to_string(p), table)
+        for vi in v { all.push(vi) }
+    }
+    let ts = _ts_iso()
+    let paths = _emit_audit(out_dir, all, len(files), dir, ts)
+    let mut fail = 0
+    for v in all {
+        if to_string(v["severity"]) == "FAIL" { fail = fail + 1 }
+    }
+    println("── raw15_post_bg_audit selftest ──")
+    println("  fixture_dir:  " + dir)
+    println("  files_found:  " + to_string(len(files)))
+    println("  fail_hits:    " + to_string(fail))
+    println("  audit:        " + to_string(paths[0]))
+    println("  scan_jsonl:   " + to_string(paths[1]))
+    println("  incident_log: " + to_string(paths[2]))
+    if fail >= 2 {
+        println("  selftest=PASS  (>=2 FAIL hits captured from leaked.output)")
+        return 0
+    }
+    println("  selftest=FAIL  (expected >=2 hits, got " + to_string(fail) + ")")
+    return 2
+}
+
+// ─── main ────────────────────────────────────────────────────────────
+
+fn main() -> int {
+    let av = _argv()
+
+    if _flag(av, "--help") || _flag(av, "-h") {
+        println("usage: hexa run tool/raw15_post_bg_audit.hexa [opts]")
+        println("  --bg-dir <path>            BG output directory (e.g. /private/tmp/.../tasks)")
+        println("  --include-pattern <substr> only files whose path contains substr (repeatable)")
+        println("  --exclude-pattern <substr> skip paths containing substr (repeatable)")
+        println("  --output <dir>             write audit.json + retroactive_scan.jsonl + incident_log.json here")
+        println("  --selftest                 run with synthetic clean/leaked fixtures")
+        println("  --help")
+        println("exit codes: 0=PASS  1=FAIL  2=ERROR")
+        return 0
+    }
+
+    if _flag(av, "--selftest") {
+        return _selftest()
+    }
+
+    let bg_dir = _opt(av, "--bg-dir", "")
+    let out_dir = _opt(av, "--output", "")
+    let includes = _opts_multi(av, "--include-pattern")
+    let excludes = _opts_multi(av, "--exclude-pattern")
+
+    if len(bg_dir) == 0 || !_is_dir(bg_dir) {
+        eprintln(TOOL_NAME + ": ERROR — --bg-dir must point to an existing directory")
+        return 2
+    }
+    if len(out_dir) == 0 {
+        eprintln(TOOL_NAME + ": ERROR — --output <dir> required")
+        return 2
+    }
+
+    println("── raw15_post_bg_audit ──")
+    println("  bg_dir:           " + bg_dir)
+    if len(includes) > 0 { println("  include_pattern:  " + includes.join(",")) }
+    if len(excludes) > 0 { println("  exclude_pattern:  " + excludes.join(",")) }
+    let table = _pattern_table()
+    let files = _list_bg_files(bg_dir, includes, excludes)
+    println("  files_to_scan:    " + to_string(len(files)))
+
+    let mut all = []
+    let mut idx = 0
+    for p in files {
+        let v = _scan_one(to_string(p), table)
+        for vi in v { all.push(vi) }
+        idx = idx + 1
+    }
+
+    let ts = _ts_iso()
+    let paths = _emit_audit(out_dir, all, len(files), bg_dir, ts)
+
+    let mut fail = 0
+    let mut warn = 0
+    for v in all {
+        let s = to_string(v["severity"])
+        if s == "FAIL" { fail = fail + 1 }
+        else if s == "WARN" { warn = warn + 1 }
+    }
+
+    println("  total_violations: " + to_string(len(all)))
+    println("  fail_count:       " + to_string(fail))
+    println("  warn_count:       " + to_string(warn))
+    println("  audit:            " + to_string(paths[0]))
+    println("  scan_jsonl:       " + to_string(paths[1]))
+    println("  incident_log:     " + to_string(paths[2]))
+    println("  verdict:          " + (if fail > 0 { "FAIL — see incident_log.json for rotation actions" } else if warn > 0 { "WARN" } else { "PASS" }))
+
+    if fail > 0 { return 1 }
+    return 0
+}

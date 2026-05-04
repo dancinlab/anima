@@ -1,0 +1,61 @@
+{
+  "task": "secret_cli_hardening",
+  "ts_utc": "2026-05-04T16:10:00Z",
+  "scope": "harden /Users/ghost/core/secret/bin/secret to prevent token leak via stdout/agent logs",
+  "root_cause": "Agent log capture of `secret get <key>` plaintext stdout was root cause #1 of 5 HF token exposures this session.",
+  "source_path": "/Users/ghost/core/secret/bin/secret",
+  "source_lang": "bash + python3 stdlib (heredocs)",
+  "source_writable": true,
+  "source_owned_by_user": true,
+  "abort_required": false,
+  "features_added": [
+    {
+      "id": "F1",
+      "name": "redact-by-default for `secret get`",
+      "behavior": "without --raw, `secret get <key>` prints `***REDACTED:<resolved.key>:<sha256-12>***` to stdout",
+      "redaction_format": "***REDACTED:<section.name>:<sha256-prefix-12-hex>***",
+      "redaction_impl": "python3 hashlib via env-var passthrough (avoids piping plaintext through extra subshells)",
+      "stdout_no_newline": true
+    },
+    {
+      "id": "F2",
+      "name": "`secret use <key> -- <command...>` env injection",
+      "behavior": "exports SECRET_<SECTION>_<NAME> (uppercased, dots/dashes->underscores) AND a stable SECRET_VALUE alias, then exec's the command",
+      "isolation": "child-only via export+exec (parent shell terminates implicitly because secret CLI is the parent process; env never appears in parent shell)",
+      "argv_safety": "child command argv does NOT contain the value; only key name appears in `secret use`'s own argv (visible in ps for the lifetime of this wrapper, not the child)",
+      "stdout_safety": "value never written to stdout/stderr by `secret use` itself"
+    },
+    {
+      "id": "F3",
+      "name": "`--raw` opt-in plaintext flag",
+      "behavior": "explicit `--raw` returns plaintext; reserved for piping into files (e.g. `secret get huggingface.token --raw > ~/.cache/huggingface/token`)",
+      "flag_position": "before OR after the key (parser is order-tolerant)",
+      "unknown_flag_rejection": "any other flag (including typos like `--Raw`) -> exit 2 with message"
+    }
+  ],
+  "backwards_compat": {
+    "BREAKING": "all callers using bare `secret get <key>` will now receive the redacted hash instead of the plaintext token. existing scripts MUST add `--raw` (or migrate to `secret use`) to keep working.",
+    "preserved": ["`secret set`", "`secret rm`", "`secret list`", "`secret check`", "`secret help`"],
+    "check_subcommand": "rerouted to use the internal `_get_raw_value` helper directly so its existence-probe semantics are unaffected by the new redaction layer"
+  },
+  "user_actions_pending": [
+    "review callers_audit.jsonl (13 sites, 8 blocking)",
+    "decide migration strategy per file: (a) add `--raw` to existing $() captures, OR (b) refactor to `secret use <key> -- <command>` (preferred for env-injection cases that already exec a child)",
+    "re-source/re-run any long-lived shells if their muscle memory expects plaintext from `secret get`",
+    "update operator docs (docs/hf_token_canonical_baseline_2026_05_04.md uses bare `secret get` in 5 recipe lines — those recipes will break at the file-write step until --raw is added)"
+  ],
+  "raw_invariants": ["raw#9 STRICT (Mac source = bash, edited in place)", "raw#15 (synthetic test key, no real token in artifacts)", "raw#10 (4 caveats below)"],
+  "caveats": [
+    "C1 BACKWARDS-COMPAT BREAKAGE: every existing caller using bare `secret get` will receive a redacted hash literal (~50 chars starting with `***REDACTED:`). HTTP Authorization headers, file dumps, and env exports built on bare $() will all silently authenticate-as-empty/garbage. callers_audit.jsonl lists 8 blocking sites that require --raw or `secret use` migration BEFORE next live invocation.",
+    "C2 ENV-VAR LEAKAGE VIA /proc: `secret use` exports SECRET_<KEY> and SECRET_VALUE into the child env. on macOS this is a child-process-only ACL (ps -E and `lsof -p PID` for the same UID can read it). on shared Linux hosts (ubu1, RunPod), `cat /proc/<child_pid>/environ` is readable by other processes of the same UID. NOT a concern on the local Mac, IS a concern if `secret use` is ported to / scp'd-to ubu1. mitigation: prefer pipe-to-stdin patterns (`secret get K --raw | child --token-from-stdin`) for shared-host deployments, or use `setenv`+`unsetenv` shims that scrub before exec.",
+    "C3 DEFAULT CHANGE NEEDS USER NOTIFICATION: any operator (human or agent) muscle-memory using `secret get huggingface.token` to inspect a token will see the hash and assume the vault is corrupted. surface a one-time announcement in any operator-facing doc and in the next session-start handoff.",
+    "C4 CALLERS AUDIT MAY MISS INLINE SUBSHELLS: the audit grep used `--include` extensions (.bash, .hexa, .py, .sh, .md, .json, .yml). dynamically generated shell strings (e.g. inside a hexa string-template that emits a runtime command line, or inside a Makefile, Dockerfile, .env script) may not appear. recommend a follow-up sweep with broader globs after the first session-end report (or at minimum an `ag 'secret get'` against ~/.claude/worktrees and any active sister repos)."
+  ],
+  "smoke_test_summary": {
+    "test_key": "test_hardening_probe (synthetic, value: synthetic_test_value_NOT_A_REAL_TOKEN_4f3c8a, length 44)",
+    "tests_passed": 10,
+    "tests_failed": 0,
+    "test_key_cleaned_up": true
+  },
+  "selftest": "PASS"
+}

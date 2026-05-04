@@ -1,6 +1,6 @@
 # qmirror cond.7 — F-QM-CROSSTECH-7b Falsifier Band Revision — LANDED
 
-> 📦 Available at: https://github.com/need-singularity/qmirror (`hx install qmirror`)
+> qmirror canonical SSOT: see `nexus/.roadmap.qmirror` header fields `upstream_url` + `latest_release` (current: v2.0.0, 2026-05-04). Hardcoded URLs deprecated 2026-05-04 — see `### See also (qmirror xref history)` footnote for prior callouts.
 
 - ts_utc: 2026-05-03T22:30Z
 - task: amend F-QM-CROSSTECH-7b cross-technology concordance band from |ΔS| ≤ 0.55 to ≤ 0.60 (super↔trapped-ion, physics-aware)
@@ -118,3 +118,14 @@ NOT touched: `state/qmirror_chsh_xvendor_2026_05_03/counts.json` (raw Braket mea
 - cond.8 cross-vendor (Braket): `docs/qmirror_cond8_braket_landed_2026_05_03.ai.md` (Rigetti S=2.27 + IonQ_Forte S=2.92 anchors)
 - spec doc: `docs/nexus_qmirror_spec_2026_05_03.md` §12 + §12.1 (intra-super) + §12.2 (cross-tech, this revision)
 - domain SSOT: `nexus/.roadmap.qmirror` cond.7 + entry `qmirror.crosstech_band_revise`
+
+---
+
+### See also (qmirror xref history)
+
+Prior callouts preserved verbatim per qmirror_xref_centralization cycle (2026-05-04):
+
+> 📦 Available at: https://github.com/need-singularity/qmirror (`hx install qmirror`)
+> 🚀 v2.0.0 RELEASED 2026-05-04 — closure 13/13 conds met (8 v1 + 5 v2): https://github.com/need-singularity/qmirror/releases/tag/v2.0.0
+
+Future qmirror release URLs are canonically tracked in `nexus/.roadmap.qmirror` header field `latest_release_url`. Update single line in roadmap; this footnote is a frozen historical record (do not retrofit).

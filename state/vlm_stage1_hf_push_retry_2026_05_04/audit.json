@@ -1,0 +1,58 @@
+{
+  "cycle": "vlm_stage1_hf_push_retry_2026_05_04",
+  "ts_utc": "2026-05-04T07:35:00Z",
+  "result": "BLOCKED",
+  "blocker_class": "TOKEN_NOT_PROVISIONED",
+  "blocker_detail": "User-claimed 'new HF token ready in `secret get huggingface.token`' is FALSE — secret store contains literal placeholder `\"#\"` (1 byte), not a real hf_* token. Cached ~/.cache/huggingface/token (37 B, prefix hf_L*) is also Invalid per `hf auth whoami`.",
+  "token_sources_checked": [
+    {
+      "source": "secret get huggingface.token",
+      "size_bytes": 1,
+      "first_2_chars": "# (newline)",
+      "verdict": "EMPTY_PLACEHOLDER",
+      "raw_storage_inspected": "/Users/ghost/core/secret/credentials [huggingface] token = \"#\""
+    },
+    {
+      "source": "~/.cache/huggingface/token",
+      "size_bytes": 37,
+      "first_4_chars": "hf_L",
+      "verdict": "REVOKED_OR_EXPIRED (HF API: 'Invalid user token')",
+      "checked_via": "hf auth whoami"
+    },
+    {
+      "source": "$HF_TOKEN env var",
+      "verdict": "UNSET"
+    },
+    {
+      "source": "$HUGGING_FACE_HUB_TOKEN env var",
+      "verdict": "UNSET"
+    }
+  ],
+  "auth_login_attempts": [
+    {
+      "cmd": "hf auth login --token \"$(secret get huggingface.token)\"",
+      "result": "Error: Invalid user token.",
+      "exit_code": 1
+    },
+    {
+      "cmd": "hf auth whoami",
+      "result": "Error: Invalid user token. The token stored is invalid. Please run `hf auth login --force` to set a new token.",
+      "exit_code": 1
+    }
+  ],
+  "staging_state_inherited_from_sister_bg": {
+    "staging_dir": "state/vlm_stage1_hf_push_2026_05_04/staging/",
+    "ckpts_staged": ["step-5k", "step-10k", "step-15k", "step-20k"],
+    "readmes_dir": "state/vlm_stage1_hf_push_2026_05_04/readmes/",
+    "sha256_manifest": "state/vlm_stage1_hf_push_2026_05_04/sha256_manifest.txt",
+    "lora_size_per_ckpt_bytes": 322440,
+    "ready_to_push": true
+  },
+  "user_action_required": {
+    "step_1": "Generate fresh HF token at https://huggingface.co/settings/tokens with 'Write' access to need-singularity org",
+    "step_2_set_secret": "echo 'hf_xxxxxxxx' | /Users/ghost/core/secret/bin/secret set huggingface.token",
+    "step_3_verify": "/Users/ghost/.local/bin/hf auth login --token \"$(/Users/ghost/core/secret/bin/secret get huggingface.token)\" && /Users/ghost/.local/bin/hf auth whoami",
+    "step_4_relaunch_retry_bg": "Re-launch this same retry BG subagent — staging dir is fully preserved, push will proceed in seconds"
+  },
+  "tools_used_count": 14
+}

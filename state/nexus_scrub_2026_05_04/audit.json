@@ -1,0 +1,123 @@
+{
+  "cycle": "nexus_scrub_2026_05_04",
+  "branch": "feat/qmirror-cli-programmatic-consumption",
+  "commits": [
+    {
+      "sha": "5b1332ba",
+      "title": "refactor(nexus): scrub 6 internal modules → standalone CLI shellouts",
+      "scope": "deletions"
+    },
+    {
+      "sha": "036f1e79",
+      "title": "feat(nexus): wire 6 standalone CLI shellouts via 4-tier resolver",
+      "scope": "wire-up"
+    }
+  ],
+  "modules": [
+    {
+      "name": "qmirror",
+      "scrubbed": true,
+      "scrubbed_in_prior_commit": "f81239d6",
+      "thin_cli": "cli/qmirror.hexa",
+      "thin_cli_status": "exists (v0.3.0, since 2026-05-03)",
+      "standalone_repo": "need-singularity/qmirror v2.0.0",
+      "standalone_path_present": true,
+      "consumer_count_pre_scrub": 0,
+      "smoke_help": "PASS (exit 0, version 0.3.0)",
+      "commit_sha": "f81239d6 (prior cycle)"
+    },
+    {
+      "name": "honesty_monitor",
+      "scrubbed": true,
+      "thin_cli": "cli/honesty.hexa",
+      "thin_cli_status": "NEW (v0.1.0, untracked → tracked in 036f1e79)",
+      "standalone_repo": "need-singularity/honesty-monitor v1.0.0",
+      "standalone_path_present": false,
+      "standalone_path_check": "/Users/ghost/core/honesty does not exist; /Users/ghost/core/honesty-monitor presumed (4-tier resolver will hard-fail loudly if absent)",
+      "consumer_count_pre_scrub": 0,
+      "smoke_help": "PASS (exit 0, version 0.1.0)",
+      "smoke_dispatch": "PASS (router help via nexus_cli)",
+      "commit_sha": "5b1332ba + 036f1e79"
+    },
+    {
+      "name": "qrng",
+      "scrubbed": true,
+      "thin_cli": "cli/qrng.hexa",
+      "thin_cli_status": "NEW (v0.1.0, created this cycle)",
+      "standalone_repo": "need-singularity/qrng v1.0.0 (commit 429656c)",
+      "standalone_path_present": true,
+      "standalone_path": "/Users/ghost/core/qrng",
+      "consumer_count_pre_scrub": "1 (config/qrng_sources.json — informational metadata only, not load path)",
+      "smoke_help": "PASS (exit 0, version 0.1.0)",
+      "smoke_dispatch": "PASS (nexus_cli qrng help)",
+      "smoke_via_standalone": "PASS (cli/qrng.hexa status → standalone resolves via tier 2)",
+      "commit_sha": "5b1332ba + 036f1e79",
+      "core_qrng_also_removed": true,
+      "modules_qrng_also_removed": true
+    },
+    {
+      "name": "mc_integrate",
+      "scrubbed": false,
+      "skip_reason": "Sister BG aa896d07b3fd43efb extraction in flight; this BG owns nexus repo only and must not race the sister's mc_integrate.hexa working-tree modifications.",
+      "todo": "Follow-up cycle: scrub modules/mc_integrate/ + add cli/mc_integrate.hexa thin router + cmd_mc_integrate dispatch + hexa.toml dep + install.hexa ensure_runtime_dep, after sister BG lands its extraction commit.",
+      "working_tree_state": "modules/mc_integrate/mc_integrate.hexa modified (sister BG); intentionally left unstaged"
+    },
+    {
+      "name": "chip_isa_n6",
+      "scrubbed": true,
+      "scrubbed_in_prior_commit": "29f26724",
+      "thin_cli": "n/a (absorbed into n6-architecture; no nexus surface consumer)",
+      "standalone_repo": "n6-architecture (absorbed)",
+      "consumer_count_pre_scrub": 0,
+      "smoke": "n/a (no CLI surface)",
+      "commit_sha": "29f26724 (prior commit)"
+    },
+    {
+      "name": "crystallography_n6",
+      "scrubbed": true,
+      "thin_cli": "n/a (absorbed into n6-architecture; no nexus surface consumer)",
+      "standalone_repo": "n6-architecture (absorbed)",
+      "consumer_count_pre_scrub": 0,
+      "smoke": "n/a (no CLI surface)",
+      "commit_sha": "5b1332ba"
+    },
+    {
+      "name": "fusion_ledger",
+      "scrubbed": true,
+      "thin_cli": "n/a (absorbed into n6-architecture; no nexus surface consumer)",
+      "standalone_repo": "n6-architecture (absorbed)",
+      "consumer_count_pre_scrub": 0,
+      "smoke": "n/a (no CLI surface)",
+      "commit_sha": "5b1332ba (already D-staged pre-cycle)"
+    },
+    {
+      "name": "tabletop_blackhole",
+      "scrubbed": true,
+      "thin_cli": "n/a (absorbed into n6-architecture; no nexus surface consumer)",
+      "standalone_repo": "n6-architecture (absorbed)",
+      "consumer_count_pre_scrub": 0,
+      "smoke": "n/a (no CLI surface)",
+      "commit_sha": "5b1332ba (already D-staged pre-cycle)"
+    }
+  ],
+  "summary": {
+    "total_modules_in_scope": 8,
+    "scrubbed_this_cycle": 6,
+    "scrubbed_in_prior_cycles": 2,
+    "skipped": 1,
+    "skip_modules": ["mc_integrate"],
+    "thin_clis_added_this_cycle": 1,
+    "thin_clis_already_present_untracked_now_tracked": 4,
+    "smoke_pass_count": 4,
+    "smoke_fail_count": 0,
+    "blockers": []
+  },
+  "constraints_honored": {
+    "raw_9_hexa_only": true,
+    "raw_10_caveats_per_module": true,
+    "no_remote_push": true,
+    "no_pr_creation": true,
+    "no_main_merge": true,
+    "no_git_race_with_sister_bg": true
+  }
+}

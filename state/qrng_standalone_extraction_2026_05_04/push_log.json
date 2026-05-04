@@ -1,0 +1,49 @@
+{
+  "push_meta": {
+    "date": "2026-05-04",
+    "extractor": "Claude Opus 4.7 (1M context)",
+    "commit_sha": "429656c87fc3e48fd5fb9145bd21a014b38d60c1",
+    "commit_message_subject": "feat(qrng v1.0.0): standalone extraction from nexus"
+  },
+  "github": {
+    "url": "https://github.com/need-singularity/qrng",
+    "repo_create_status": "PASS",
+    "visibility": "public",
+    "default_branch": "main",
+    "push_status": "PASS",
+    "release_v1_0_0": {
+      "url": "https://github.com/need-singularity/qrng/releases/tag/v1.0.0",
+      "status": "PASS",
+      "title": "qrng v1.0.0 — Quantum Random Number Generator (5-source provider registry)",
+      "tag": "v1.0.0",
+      "target": "main",
+      "notes_file": "RELEASE_NOTES_v1.0.0.md"
+    }
+  },
+  "huggingface": {
+    "url_intended": "https://huggingface.co/need-singularity/qrng",
+    "repo_create_status": "DEFERRED_USER_ACTION_REQUIRED",
+    "blocker": "Stored token at ~/.cache/huggingface/token + secret_store huggingface.token returns hf_LyKZYfRiKKSXsnhpc... (45 chars) but HF Hub API responds 401 Unauthorized for /api/repos/create — token is invalid/revoked",
+    "user_action_required": [
+      "1. Re-issue write-scope HF token at https://huggingface.co/settings/tokens",
+      "2. Update via `secret set huggingface.token <new_token>`",
+      "3. Re-run: hf repos create need-singularity/qrng --type model --token \"$(secret get huggingface.token)\"",
+      "4. Set GitHub secret HF_TOKEN at https://github.com/need-singularity/qrng/settings/secrets/actions (same token)",
+      "5. Trigger workflow run: gh workflow run sync-to-hf.yml -R need-singularity/qrng (or just push any commit)"
+    ],
+    "fallback_workflow": ".github/workflows/sync-to-hf.yml is committed and ready; will fail loudly at 'Verify HF_TOKEN secret is present' step until step 4 above completes"
+  },
+  "registry": {
+    "path": "/Users/ghost/core/hexa-lang/tool/pkg/registry.tsv",
+    "entry_line": 27,
+    "entry_text": "qrng\t1.0.0\tcli/qrng.hexa\thttps://github.com/need-singularity/qrng\t\tQuantum Random Number Generator (HEXA family) — 5-source provider registry...",
+    "previous_state": "L26 = anima-agent (last entry); spec said 'after honesty-monitor L25 = L26' but anima-agent already landed at L26 in interim, so qrng claims L27"
+  },
+  "github_actions_workflow": {
+    "path": ".github/workflows/sync-to-hf.yml",
+    "trigger": "push to main (paths-ignore state/, .github/, *.md.draft)",
+    "concurrency_group": "sync-to-hf",
+    "loud_fail_step": "Verify HF_TOKEN secret is present",
+    "status_until_user_action": "WORKFLOW_PUSHED_BUT_RUNS_WILL_FAIL_LOUDLY_UNTIL_HF_TOKEN_SECRET_SET"
+  }
+}

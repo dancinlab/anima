@@ -1,0 +1,173 @@
+{
+  "ts_utc": "2026-05-04T16:30:00Z",
+  "task": "hf_token_sssot_consolidation",
+  "scope": "Mac + ubu1 + RunPod + 4 GitHub Actions repos",
+  "canonical_ssot": "secret get huggingface.token",
+  "audit_method": "sha256-prefix-8 (raw#15: NEVER echo token; prefix only for drift detection)",
+  "locations_audited": [
+    {
+      "id": 1,
+      "path": "secret get huggingface.token",
+      "host": "mac",
+      "kind": "canonical_ssot",
+      "exists": true,
+      "size_bytes": 37,
+      "sha256_prefix": "23bc24b8",
+      "status": "CANONICAL",
+      "last_modified": "n/a (managed via secret CLI)"
+    },
+    {
+      "id": 2,
+      "path": "/Users/ghost/.cache/huggingface/token",
+      "host": "mac",
+      "kind": "hf_cli_cache",
+      "exists": true,
+      "size_bytes": 37,
+      "sha256_prefix": "1e0a8432",
+      "status": "DRIFT (does not match canonical)",
+      "last_modified": "2026-05-04T07:30",
+      "remediation": "auto-sync hook should rewrite on next `secret set huggingface.token`"
+    },
+    {
+      "id": "2b",
+      "path": "/Users/ghost/.cache/huggingface/token.bak_2026_05_04",
+      "host": "mac",
+      "kind": "stale_backup",
+      "exists": true,
+      "size_bytes": 37,
+      "sha256_prefix": "(not measured — bak file)",
+      "status": "STALE_BAK (created during prior canonical baseline migration)",
+      "remediation": "user may delete; cleanup script lists it"
+    },
+    {
+      "id": 3,
+      "path": "~/.hf_token (Mac)",
+      "host": "mac",
+      "kind": "legacy_custom",
+      "exists": false,
+      "status": "ABSENT (already cleaned)",
+      "remediation": "n/a"
+    },
+    {
+      "id": 4,
+      "path": "/Users/ghost/core/anima/.secrets/hf_token",
+      "host": "mac",
+      "kind": "anima_legacy_committed_adjacent",
+      "exists": true,
+      "size_bytes": 37,
+      "sha256_prefix": "1e0a8432",
+      "status": "LEGACY_DRIFT (matches stale cache, not canonical)",
+      "gitignored": true,
+      "remediation": "DEPRECATED — cleanup script will list for user removal"
+    },
+    {
+      "id": 5,
+      "path": "/home/aiden/.cache/huggingface/token",
+      "host": "ubu1",
+      "kind": "hf_cli_cache",
+      "exists": true,
+      "size_bytes": 37,
+      "sha256_prefix": "1e0a8432",
+      "status": "DRIFT (matches stale Mac cache, not canonical)",
+      "last_modified": "2026-05-04T07:30",
+      "remediation": "auto-sync hook target"
+    },
+    {
+      "id": 6,
+      "path": "/home/aiden/.hf_token",
+      "host": "ubu1",
+      "kind": "legacy_custom",
+      "exists": true,
+      "size_bytes": 38,
+      "sha256_prefix": "71ecb38f",
+      "status": "LEGACY_DRIFT_DIFFERENT (third distinct value — high confusion risk)",
+      "last_modified": "2026-05-02T22:12",
+      "remediation": "DEPRECATED — cleanup script will list for user removal via ssh"
+    },
+    {
+      "id": 7,
+      "path": "/workspace/hf_token (RunPod)",
+      "host": "runpod",
+      "kind": "per_pod_injection",
+      "exists": "n/a (all 6 H100 pods purged 2026-05-03 per project_runpod_pod_purge_2026_05_03)",
+      "status": "DEPRECATED (pre-purge convention; new pods MUST `secret set huggingface.token` inside pod OR set HF_TOKEN env)",
+      "remediation": "per docs/hf_token_canonical_baseline_2026_05_04.md caveat #4"
+    },
+    {
+      "id": "8a",
+      "path": "GitHub Actions secret HF_TOKEN — need-singularity/qmirror",
+      "host": "github",
+      "kind": "ci_secret",
+      "exists": false,
+      "status": "MISSING (per state/4_repos_hf_autosync_trigger_2026_05_04/audit.json)",
+      "remediation": "auto-sync hook will set on next canonical token rotation"
+    },
+    {
+      "id": "8b",
+      "path": "GitHub Actions secret HF_TOKEN — need-singularity/sim-universe",
+      "host": "github",
+      "kind": "ci_secret",
+      "exists": false,
+      "status": "MISSING",
+      "remediation": "auto-sync hook target"
+    },
+    {
+      "id": "8c",
+      "path": "GitHub Actions secret HF_TOKEN — need-singularity/hexa-bio",
+      "host": "github",
+      "kind": "ci_secret",
+      "exists": false,
+      "status": "MISSING",
+      "remediation": "auto-sync hook target"
+    },
+    {
+      "id": "8d",
+      "path": "GitHub Actions secret HF_TOKEN — need-singularity/honesty-monitor",
+      "host": "github",
+      "kind": "ci_secret",
+      "exists": false,
+      "status": "MISSING",
+      "remediation": "auto-sync hook target"
+    },
+    {
+      "id": "9a",
+      "path": "/private/tmp/hf_token_for_pod",
+      "host": "mac",
+      "kind": "transient_tmp",
+      "exists": true,
+      "size_bytes": 37,
+      "sha256_prefix": "(not measured — tmp file)",
+      "status": "TRANSIENT_LEAK_RISK (cleartext in /private/tmp)",
+      "last_modified": "2026-05-02T09:46",
+      "remediation": "cleanup script will list for user removal"
+    },
+    {
+      "id": "9b",
+      "path": "/private/tmp/hf_token_r16",
+      "host": "mac",
+      "kind": "transient_tmp",
+      "exists": true,
+      "size_bytes": 38,
+      "sha256_prefix": "(not measured — tmp file)",
+      "status": "TRANSIENT_LEAK_RISK",
+      "last_modified": "2026-05-04T10:50",
+      "remediation": "cleanup script will list for user removal"
+    }
+  ],
+  "drift_summary": {
+    "total_locations_audited": 13,
+    "distinct_sha256_prefixes_observed": 3,
+    "canonical_prefix": "23bc24b8",
+    "stale_drift_prefix": "1e0a8432 (4 locations: mac cache, .secrets/hf_token, ubu1 cache, mac cache.bak)",
+    "legacy_orphan_prefix": "71ecb38f (1 location: ubu1 ~/.hf_token)",
+    "verdict": "3 distinct token values across 8+ locations confirms SSOT necessity; auto-sync hook must run after next user `secret set huggingface.token` to converge"
+  },
+  "github_repos_with_workflows_needing_hf_token": [
+    "need-singularity/qmirror",
+    "need-singularity/sim-universe",
+    "need-singularity/hexa-bio",
+    "need-singularity/honesty-monitor"
+  ],
+  "raw15_compliance": "no token plaintext written; sha256 prefix-8 only",
+  "non_mutation_guarantee": "audit phase READ-ONLY; no file modified; no token rotated"
+}

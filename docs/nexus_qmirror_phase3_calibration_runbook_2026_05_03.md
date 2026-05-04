@@ -1,6 +1,6 @@
 # nexus.qmirror Phase 3 — IBM Cloud $200 One-Shot Calibration Runbook
 
-> 📦 Available at: https://github.com/need-singularity/qmirror (`hx install qmirror`)
+> qmirror canonical SSOT: see `nexus/.roadmap.qmirror` header fields `upstream_url` + `latest_release` (current: v2.0.0, 2026-05-04). Hardcoded URLs deprecated 2026-05-04 — see `### See also (qmirror xref history)` footnote for prior callouts.
 
 - ts_utc: 2026-05-03 (R2: option β cross-modality extension landed)
 - module: **nexus.qmirror** (Phase 3 — N1+N2+N3+N4+N5 hardware anchor)
@@ -358,3 +358,14 @@ done
 9. **(option β) Cost dual-tracking** — IBM uses `ibmcloud billing account-usage`, Braket uses task-side `braket_cost_log.jsonl` (cost-explorer denied for `anima-braket-cli` IAM scope). Two ledgers, two trip-wires; daily roll-up sum is computed off-cloud during evening report. Risk: silent over-spend on whichever ledger is not consulted that day; mitigation = both ledgers must be re-read every day-end.
 10. **(option β) Multi-vendor coordination** — IBM and Braket are independent control planes (separate auth, separate region, separate failure modes). A Braket-side outage cannot be papered over with IBM credit and vice versa; cross-modality N2b lands or it does not. The runbook accepts this all-or-nothing N2b semantic and declines to back-fill with simulator data.
 11. **(option β) Rigetti device substitution** — Ankaa-3 (specified in revision doc) is RETIRED. Substitute is `Cepheus-1-108Q` (Rigetti, us-west-1, 107 superconducting qubits, $0.30/task + $0.000425/shot). Same provider/modality, even cheaper per shot — substitution is honest within option β intent. Recorded in B3 prereq.
+
+---
+
+### See also (qmirror xref history)
+
+Prior callouts preserved verbatim per qmirror_xref_centralization cycle (2026-05-04):
+
+> 📦 Available at: https://github.com/need-singularity/qmirror (`hx install qmirror`)
+> 🚀 v2.0.0 RELEASED 2026-05-04 — closure 13/13 conds met (8 v1 + 5 v2): https://github.com/need-singularity/qmirror/releases/tag/v2.0.0
+
+Future qmirror release URLs are canonically tracked in `nexus/.roadmap.qmirror` header field `latest_release_url`. Update single line in roadmap; this footnote is a frozen historical record (do not retrofit).

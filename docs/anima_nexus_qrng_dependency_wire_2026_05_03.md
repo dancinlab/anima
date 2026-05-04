@@ -1,6 +1,6 @@
 # anima ↔ nexus QRNG dependency wire spec — 2026-05-03
 
-> 📦 Available at: https://github.com/need-singularity/qmirror (`hx install qmirror`)
+> qmirror canonical SSOT: see `nexus/.roadmap.qmirror` header fields `upstream_url` + `latest_release` (current: v2.0.0, 2026-05-04). Hardcoded URLs deprecated 2026-05-04 — see `### See also (qmirror xref history)` footnote for prior callouts.
 
 `raw#9` hexa-only · `raw#10` honest C3 · `raw#15` no-personal-paths · `raw#65` idempotent · `raw#68` byte-identical
 
@@ -227,3 +227,14 @@ Priority order:
 | #4 | Stage 3 (router inline cleanup) | tech debt, not user-visible; defer. |
 
 **1순위 추천 사유:** Stage 1 PASS converts the architectural decision into a falsifiable runtime gate. Without smoke test, anima could land Stage 2 wrappers that silently fall back to local execution because `use "nexus/..."` quietly fails to resolve and the loader's "" return path collapses to caller-relative not-found, manifesting as a confusing chain-fail at runtime rather than a build-time error. Stage 1 smoke test catches this in <1s.
+
+---
+
+### See also (qmirror xref history)
+
+Prior callouts preserved verbatim per qmirror_xref_centralization cycle (2026-05-04):
+
+> 📦 Available at: https://github.com/need-singularity/qmirror (`hx install qmirror`)
+> 🚀 v2.0.0 RELEASED 2026-05-04 — closure 13/13 conds met (8 v1 + 5 v2): https://github.com/need-singularity/qmirror/releases/tag/v2.0.0
+
+Future qmirror release URLs are canonically tracked in `nexus/.roadmap.qmirror` header field `latest_release_url`. Update single line in roadmap; this footnote is a frozen historical record (do not retrofit).

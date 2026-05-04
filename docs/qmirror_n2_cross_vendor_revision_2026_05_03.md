@@ -1,6 +1,6 @@
 # nexus.qmirror N2 Cross-Vendor Axis — Scope Revision (Eagle/Falcon Retirement)
 
-> 📦 Available at: https://github.com/need-singularity/qmirror (`hx install qmirror`)
+> qmirror canonical SSOT: see `nexus/.roadmap.qmirror` header fields `upstream_url` + `latest_release` (current: v2.0.0, 2026-05-04). Hardcoded URLs deprecated 2026-05-04 — see `### See also (qmirror xref history)` footnote for prior callouts.
 
 - ts_utc: 2026-05-03
 - module: **nexus.qmirror** (Phase 3 calibration burst — N2 axis only)
@@ -217,3 +217,14 @@ No budget change; $30 moves N2 → N6 (new axis).
 - planner R3 → R4 update target: `docs/ibm_cloud_experiment_list_2026_05_03.md` (companion update, this cycle)
 - runbook update target: `docs/nexus_qmirror_phase3_calibration_runbook_2026_05_03.md` (companion update, post-option-selection)
 - roadmap update target: `nexus/.roadmap.qmirror` (companion update, this cycle — cond.7 → cond.7' or cond.8 + new blocker)
+
+---
+
+### See also (qmirror xref history)
+
+Prior callouts preserved verbatim per qmirror_xref_centralization cycle (2026-05-04):
+
+> 📦 Available at: https://github.com/need-singularity/qmirror (`hx install qmirror`)
+> 🚀 v2.0.0 RELEASED 2026-05-04 — closure 13/13 conds met (8 v1 + 5 v2): https://github.com/need-singularity/qmirror/releases/tag/v2.0.0
+
+Future qmirror release URLs are canonically tracked in `nexus/.roadmap.qmirror` header field `latest_release_url`. Update single line in roadmap; this footnote is a frozen historical record (do not retrofit).

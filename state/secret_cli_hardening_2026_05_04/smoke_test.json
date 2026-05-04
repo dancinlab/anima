@@ -1,0 +1,101 @@
+{
+  "ts_utc": "2026-05-04T16:08:00Z",
+  "test_environment": "Mac local, /Users/ghost/core/secret/bin/secret",
+  "synthetic_key": "test_hardening_probe",
+  "synthetic_value_len": 44,
+  "synthetic_value_sha256_prefix12": "279407c57189",
+  "tests": [
+    {
+      "id": "T1",
+      "name": "default redacted output",
+      "cmd": "secret get test_hardening_probe",
+      "expected": "***REDACTED:flat.test_hardening_probe:279407c57189***",
+      "actual":   "***REDACTED:flat.test_hardening_probe:279407c57189***",
+      "result": "PASS"
+    },
+    {
+      "id": "T2",
+      "name": "--raw opt-in plaintext (after key)",
+      "cmd": "secret get test_hardening_probe --raw",
+      "expected_len": 44,
+      "actual_len": 44,
+      "value_matches_synthetic": true,
+      "result": "PASS"
+    },
+    {
+      "id": "T3",
+      "name": "secret use injects SECRET_<KEY> env into child",
+      "cmd": "secret use test_hardening_probe -- env",
+      "expected_env_vars": ["SECRET_FLAT_TEST_HARDENING_PROBE", "SECRET_VALUE"],
+      "child_env_count": 2,
+      "result": "PASS"
+    },
+    {
+      "id": "T4",
+      "name": "parent env clean after secret use exits",
+      "cmd": "after T3: env | grep -E '^(SECRET_FLAT_TEST_HARDENING_PROBE|SECRET_VALUE)='",
+      "expected_match_count": 0,
+      "actual_match_count": 0,
+      "result": "PASS"
+    },
+    {
+      "id": "T5",
+      "name": "child env value matches synthetic value byte-for-byte",
+      "env_var_name": "SECRET_FLAT_TEST_HARDENING_PROBE",
+      "value_len_in_child": 44,
+      "value_matches": true,
+      "result": "PASS"
+    },
+    {
+      "id": "T6",
+      "name": "secret use surfaces exec failure (bad command)",
+      "cmd": "secret use test_hardening_probe -- /nonexistent_cmd_xyz",
+      "stderr_contains": "No such file or directory",
+      "rc": 1,
+      "result": "PASS"
+    },
+    {
+      "id": "T7",
+      "name": "unknown flag rejected",
+      "cmd": "secret get test_hardening_probe --unknown-flag",
+      "expected_stderr": "secret: get: unknown flag '--unknown-flag' (try --raw)",
+      "rc": 2,
+      "result": "PASS"
+    },
+    {
+      "id": "T8",
+      "name": "--raw before key (order-tolerant parser)",
+      "cmd": "secret get --raw test_hardening_probe",
+      "value_matches_synthetic": true,
+      "result": "PASS"
+    },
+    {
+      "id": "T9",
+      "name": "secret use loose form (without explicit --)",
+      "cmd": "secret use test_hardening_probe env",
+      "child_env_var_present": true,
+      "result": "PASS"
+    },
+    {
+      "id": "T10",
+      "name": "list still shows the key",
+      "cmd": "secret list | grep test_hardening_probe",
+      "expected": "flat.test_hardening_probe",
+      "actual":   "flat.test_hardening_probe",
+      "result": "PASS"
+    },
+    {
+      "id": "TC",
+      "name": "cleanup synthetic test key + verify removed",
+      "cmd": "secret rm test_hardening_probe && secret check test_hardening_probe",
+      "post_rm_check_rc": 1,
+      "result": "PASS"
+    }
+  ],
+  "summary": {
+    "total": 11,
+    "passed": 11,
+    "failed": 0
+  },
+  "raw15_compliance": "PASS — only synthetic key used; no real token plaintext appears in test outputs (value `synthetic_test_value_NOT_A_REAL_TOKEN_4f3c8a` is announced as fake)"
+}

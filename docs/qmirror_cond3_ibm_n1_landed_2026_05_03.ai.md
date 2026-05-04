@@ -1,6 +1,6 @@
 # qmirror cond.3 IBM N1 Heron Burst — LANDED
 
-> 📦 Available at: https://github.com/need-singularity/qmirror (`hx install qmirror`)
+> qmirror canonical SSOT: see `nexus/.roadmap.qmirror` header fields `upstream_url` + `latest_release` (current: v2.0.0, 2026-05-04). Hardcoded URLs deprecated 2026-05-04 — see `### See also (qmirror xref history)` footnote for prior callouts.
 
 - ts_utc: 2026-05-03T12:43Z
 - task: qmirror cond.3 single-vendor real-hardware CHSH on IBM Heron
@@ -133,3 +133,14 @@ Recommendation: **Option 1 + Option 2 sequenced** — first revise falsifier ban
 ## Auth disposition
 
 API key `qmirror-cond3-burst` (id ApiKey-5619590b-ba56-4891-8ea3-51085a4d9433) created at 2026-05-03T12:35Z and revoked immediately after the burst per §4 storage convention in `docs/ibm_cloud_env_setup_runbook_2026_05_03.md`.
+
+---
+
+### See also (qmirror xref history)
+
+Prior callouts preserved verbatim per qmirror_xref_centralization cycle (2026-05-04):
+
+> 📦 Available at: https://github.com/need-singularity/qmirror (`hx install qmirror`)
+> 🚀 v2.0.0 RELEASED 2026-05-04 — closure 13/13 conds met (8 v1 + 5 v2): https://github.com/need-singularity/qmirror/releases/tag/v2.0.0
+
+Future qmirror release URLs are canonically tracked in `nexus/.roadmap.qmirror` header field `latest_release_url`. Update single line in roadmap; this footnote is a frozen historical record (do not retrofit).

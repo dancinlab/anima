@@ -1,6 +1,6 @@
 # IBM Cloud $500 ULTRA — nexus.qmirror Cross-Vendor Calibration Burst Plan
 
-> 📦 Available at: https://github.com/need-singularity/qmirror (`hx install qmirror`)
+> qmirror canonical SSOT: see `nexus/.roadmap.qmirror` header fields `upstream_url` + `latest_release` (current: v2.0.0, 2026-05-04). Hardcoded URLs deprecated 2026-05-04 — see `### See also (qmirror xref history)` footnote for prior callouts.
 
 - ts_utc: 2026-05-03
 - credit: $200 promotional + $300 user-funded extra = **$500 USD total**
@@ -273,3 +273,14 @@ If qmirror calibration burst fails or is canceled, reverting to original 8-exper
 - `docs/qmirror_cond7_alpha_landed_2026_05_03.ai.md` — alpha-axis closure
 - `docs/qmirror_cond8_braket_landed_2026_05_03.ai.md` — Braket cross-vendor closure
 - `docs/qmirror_crosstech_band_revise_landed_2026_05_03.ai.md` — cross-tech band revise
+
+---
+
+### See also (qmirror xref history)
+
+Prior callouts preserved verbatim per qmirror_xref_centralization cycle (2026-05-04):
+
+> 📦 Available at: https://github.com/need-singularity/qmirror (`hx install qmirror`)
+> 🚀 v2.0.0 RELEASED 2026-05-04 — closure 13/13 conds met (8 v1 + 5 v2): https://github.com/need-singularity/qmirror/releases/tag/v2.0.0
+
+Future qmirror release URLs are canonically tracked in `nexus/.roadmap.qmirror` header field `latest_release_url`. Update single line in roadmap; this footnote is a frozen historical record (do not retrofit).

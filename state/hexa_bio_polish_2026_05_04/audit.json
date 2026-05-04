@@ -1,0 +1,72 @@
+{
+  "cycle": "hexa_bio_polish_2026_05_04",
+  "ts_iso": "2026-05-04",
+  "scope": "polish hexa-bio standalone repo to qmirror v2.0.0 + sim-universe v1.0.0 parity",
+  "inputs": {
+    "repo_root": "/Users/ghost/core/hexa-bio",
+    "github": "https://github.com/need-singularity/hexa-bio",
+    "hf_mirror": "https://huggingface.co/need-singularity/hexa-bio",
+    "parity_reference_a": "/Users/ghost/core/qmirror",
+    "parity_reference_b": "/Users/ghost/core/sim-universe"
+  },
+  "before": {
+    "readme_loc": 280,
+    "changelog_present": true,
+    "changelog_loc": 53,
+    "release_notes_present": false,
+    "github_release": null,
+    "hf_mirror_repo_present": true,
+    "hf_mirror_existing_commit": "df9a66832ba42093ea1983231b7af76866c637fd",
+    "actions_workflow_present": true,
+    "actions_workflow_path": ".github/workflows/sync-to-hf.yml",
+    "badges_count": 4
+  },
+  "after": {
+    "readme_loc": 282,
+    "readme_loc_delta": 2,
+    "changelog_present": true,
+    "changelog_loc": 53,
+    "release_notes_present": true,
+    "release_notes_loc": 125,
+    "github_release": "https://github.com/need-singularity/hexa-bio/releases/tag/v1.0.0",
+    "hf_mirror_repo_present": true,
+    "hf_mirror_initial_commit": "df9a66832ba42093ea1983231b7af76866c637fd",
+    "actions_workflow_present": true,
+    "actions_workflow_loc": 73,
+    "badges_count": 7,
+    "badges_added": [
+      "version (badge)",
+      "GitHub release (shields.io dynamic)",
+      "sync-to-hf workflow status (shields.io GH Actions)"
+    ]
+  },
+  "polish_lens_checklist": {
+    "readme_badges": "DONE (7 total: license, version, GH release, sync workflow, verbs 1/4, n=6 lattice, HF mirror)",
+    "mirrors_block": "ALREADY_PRESENT (canonical + HF + auto-sync USER_ACTION pending; from initial extraction)",
+    "honest_c3_caveats_polish_cycle": "DONE (4 polish-cycle caveats in RELEASE_NOTES_v1.0.0.md alongside 5 base caveats in README §Caveats)",
+    "release_notes_file": "DONE (RELEASE_NOTES_v1.0.0.md, 125 LoC)",
+    "github_release_create": "DONE (v1.0.0 published from main)",
+    "hf_mirror_state": "ALREADY_PRESENT (df9a668 initial; future pushes will sync via workflow once HF_TOKEN secret set)",
+    "actions_workflow": "ALREADY_PRESENT (.github/workflows/sync-to-hf.yml from initial extraction; uses if: secrets.HF_TOKEN != '' gate)",
+    "smoke_test": "PASS (__HEXA_BIO_SELFTEST__ PASS — 4/4 sentinels present; exit 0)"
+  },
+  "honest_c3_caveats_polish_cycle": [
+    "1. HF auto-sync USER_ACTION pending — workflow inert until HF_TOKEN GitHub secret is set at https://github.com/need-singularity/hexa-bio/settings/secrets/actions; HF mirror was initialized 2026-05-04 manually at df9a668; no automated incremental sync until secret lands",
+    "2. GitHub release v1.0.0 deletion is friction-laden — tag OID propagates to clones; treat as effectively immutable",
+    "3. Public-repo maintenance burden — issue/PR triage cost on author; no SLA",
+    "4. Sister-cycle race risk — qmirror, sim-universe, honesty-monitor polish cycles run in parallel; any divergence in workflow/badge conventions requires manual reconciliation (no cross-repo CI)"
+  ],
+  "user_action_required": {
+    "what": "Set HF_TOKEN GitHub repository secret (write-scope)",
+    "where": "https://github.com/need-singularity/hexa-bio/settings/secrets/actions",
+    "why": "Enable .github/workflows/sync-to-hf.yml auto-mirror on each push to main",
+    "until_set": "Workflow short-circuits at the 'if: secrets.HF_TOKEN != ''' job-level gate (no error, no sync)"
+  },
+  "constraints": {
+    "raw_9": "STRICT (markdown + YAML allowed for docs/workflow only)",
+    "raw_10": "C3 — 4 polish-cycle caveats added (alongside the 5 base caveats from README)",
+    "raw_15": "no token leak (HF_TOKEN never echoed; gh / hf CLI use keyring auth)",
+    "cost": "$0"
+  },
+  "verdict": "POLISH_LANDED"
+}

@@ -1,0 +1,100 @@
+{
+  "ranking_meta": {
+    "date": "2026-05-04",
+    "phase": 2,
+    "method": "Re-evaluated phase1 rank 4-6 against current state (post-batch1 extraction); ties broken by extraction-readiness (zero predecessor collision > merge-required > decouple-first-required)",
+    "honest_caveat_phase2": "Tier promotion/demotion vs phase1: only qrng dropped (8->7) due to missing README+tests; others unchanged at 8. Recommendation prefers low-risk-first batching."
+  },
+  "ranked_phase2": [
+    {
+      "rank": 1,
+      "phase1_rank": 4,
+      "module": "fusion_ledger",
+      "score_phase2": 8,
+      "score_phase1": 8,
+      "tier": "extract_immediately",
+      "destination": "n6-architecture/domains/energy/fusion/",
+      "effort_estimate_hours": 6,
+      "extraction_readiness": "ZERO_COLLISION",
+      "blockers": [],
+      "reason": "ITER + n=6 fusion verifier; 27 measured constants; honest 26/27 PASS preserved; destination dir clean (only .md + 68-LoC verify_fusion stub at peer level); 1 data asset to move (data/iter_constants.json)"
+    },
+    {
+      "rank": 2,
+      "phase1_rank": 5,
+      "module": "tabletop_blackhole",
+      "score_phase2": 8,
+      "score_phase1": 8,
+      "tier": "extract_immediately",
+      "destination": "n6-architecture/experiments/tabletop-blackhole/",
+      "effort_estimate_hours": 4,
+      "extraction_readiness": "ZERO_COLLISION",
+      "blockers": [],
+      "reason": "BEC analog Hawking simulator (Steinhauer 2014); n=6 anchors; zero deps; zero predecessor; cleanest extraction target in batch"
+    },
+    {
+      "rank": 3,
+      "phase1_rank": 6,
+      "module": "chip_rtl_gen",
+      "score_phase2": 8,
+      "score_phase1": 8,
+      "tier": "extract_immediately",
+      "destination": "n6-architecture/domains/compute/chip-rtl-gen/",
+      "effort_estimate_hours": 10,
+      "extraction_readiness": "MERGE_REQUIRED",
+      "blockers": ["predecessor rtl_generator.hexa 472-LoC R25 legacy frozen at destination"],
+      "reason": "6-primitive Verilog gen; pairs with chip_isa_n6 (already at destination). Merge strategy: install productized chip_rtl_gen.hexa as new file alongside R25 legacy rtl_generator.hexa (NOT overwrite). Templates already byte-identical at destination."
+    },
+    {
+      "rank": 4,
+      "phase1_rank": 8,
+      "module": "mc_integrate",
+      "score_phase2": 8,
+      "score_phase1": 8,
+      "tier": "extract_immediately_with_decouple_prep",
+      "destination": "NEW standalone /Users/ghost/core/mc-integrate/ (after qmirror cli swap)",
+      "effort_estimate_hours": 14,
+      "extraction_readiness": "DECOUPLE_FIRST",
+      "blockers": ["hardcoded path to nexus/sim_bridge/godel_q/anu_source.hexa must be swapped to qmirror cli before extraction"],
+      "decouple_cycle_hours": 2,
+      "reason": "Largest module (1425 LoC). Decouple via qmirror.qrng (already standalone Apache-2.0). Same decouple cycle also unblocks multiverse_nav rank 9 — high leverage."
+    },
+    {
+      "rank": 5,
+      "phase1_rank": 7,
+      "module": "qrng",
+      "score_phase2": 7,
+      "score_phase1": 8,
+      "tier": "extract_immediately_after_doc_scaffold",
+      "destination": "NEW standalone /Users/ghost/core/qrng/",
+      "effort_estimate_hours": 16,
+      "extraction_readiness": "SCAFFOLD_FIRST",
+      "blockers": [
+        "no module-level README — author before extract",
+        "no tests/ subdir — scaffold sentinel selftest",
+        "NEXUS_QRNG_* env aliasing to QRNG_* needed",
+        "/tmp/nexus_qrng_* path renames",
+        "anima/anima-physics/anima-eeg consumer migration plan"
+      ],
+      "reason": "5-source provider registry (curby + anu + nist_beacon + hardware + mock); active week (last touch 2026-05-03). Score downgraded 8->7 (modularity 2->1). Highest LoC after mc_integrate (1047). Deferred to last in batch due to scaffold burden + active consumer wires."
+    }
+  ],
+  "tier_summary_phase2": {
+    "extract_immediately_score_8": 4,
+    "extract_immediately_score_7_after_scaffold": 1
+  },
+  "next_cycle_recommendation_phase2": {
+    "primary_batch_2": "Parallel BG: rank1 fusion_ledger + rank2 tabletop_blackhole + rank3 chip_rtl_gen (3 BG subagents, all n6-architecture targets, combined effort ~20hr; rank3 needs MERGE-not-replace strategy briefed)",
+    "primary_rationale": "All 3 destinations exist + zero new repo overhead + zero env-var aliasing + zero consumer migration. Rank3 has 1 known landmine (predecessor R25) but well-scoped.",
+    "secondary_batch_3": "Decouple cycle: mc_integrate.hexa swap nexus/sim_bridge ANU path -> qmirror cli (~2hr, BG); confirms qmirror-as-substrate consumer path; unblocks BOTH mc_integrate AND multiverse_nav (rank 9)",
+    "tertiary_batch_4": "Scaffold cycle: qrng module README + tests/ + env alias plan (~4hr, BG); enables future qrng standalone repo without breaking anima-physics consumers",
+    "deferred_batch_5": "Standalone repo creation: qrng + mc-integrate (after batches 3+4 land) — 14+16=30hr combined",
+    "ranked_recommendation_by_completion": "RANK ORDER for next 3 BG: (1) tabletop_blackhole [easiest, 4hr, zero collision] (2) fusion_ledger [easy, 6hr, zero collision] (3) chip_rtl_gen [medium, 10hr, merge-required known]"
+  },
+  "honest_c3_caveats_phase2": [
+    "(1) RE-EVALUATION DIVERGES from phase1 only on qrng (8->7); other 4 modules unchanged. Subjective: alternate weighting (e.g. activity 2x for qrng given last-touched 1d) would put qrng back at 8. Phase2 prefers conservatism.",
+    "(2) DESTINATION DECISIONS NEED VALIDATION by human: (a) fusion vs fusion-powerplant for fusion_ledger (chose fusion); (b) experiments/ vs domains/physics/ for tabletop_blackhole (chose experiments); (c) merge-not-replace strategy for chip_rtl_gen rtl_generator R25 legacy (chose preserve+parallel install). All three are reversible.",
+    "(3) QRNG DUAL-HOME RISK with qmirror/modules/qrng.hexa (193 LoC): API-surface-only collision (different scope: qmirror=consumer drop-in, nexus=provider registry). Risk: future ambiguity about which is canonical for new consumers. Mitigation: standalone qrng repo declares itself as provider authority + qmirror.qrng adds 'depends-on=qrng' note in v3.0.",
+    "(4) MC_INTEGRATE SIM-UNIVERSE COUPLING via anu_source.hexa is DUAL-HOMED (lives in BOTH nexus/sim_bridge AND sim-universe/modules/godel_q/) — not a unique sim-universe issue but a stale-nexus-tree issue. Decouple to qmirror cli avoids picking either. Same coupling exists in multiverse_nav (rank 9, deferred). Honest: sim-universe is just-published and may not have stable cli surface yet — qmirror is more battle-tested."
+  ]
+}

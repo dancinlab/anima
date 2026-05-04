@@ -7,7 +7,7 @@
 
 > **2026-05-03 qmirror substrate update (additive, doc not retrofitted)**: this work uses the **`nexus.qmirror` canonical substrate** (`docs/nexus_qmirror_spec_2026_05_03.md`) for ongoing F-N12-1-class measurement. Real QPU access (IBM Heron r2 / IonQ / Rigetti / Quantinuum) is **no longer required** as a primary execution dependency — qmirror is validated as substantively equivalent for our use cases per the qmirror closure series (`docs/qmirror_*_landed_2026_05_03.ai.md`). Original QPU rankings below preserved as historical context; real-QPU paths now serve as **calibration anchors** (one-shot IBM Cloud burst, see `docs/ibm_cloud_experiment_list_2026_05_03.md`), not routine execution targets.
 
-> 📦 Available at: https://github.com/need-singularity/qmirror (`hx install qmirror`)
+> qmirror canonical SSOT: see `nexus/.roadmap.qmirror` header fields `upstream_url` + `latest_release` (current: v2.0.0, 2026-05-04). Hardcoded URLs deprecated 2026-05-04 — see `### See also (qmirror xref history)` footnote for prior callouts.
 
 ## 0. Context
 
@@ -136,3 +136,14 @@ Cross-substrate ion comparison deferred to separate `F-N12-1-cross` falsifier (Q
 - `docs/qmirror_cond7_alpha_landed_2026_05_03.ai.md` — alpha-axis closure
 - `docs/qmirror_cond8_braket_landed_2026_05_03.ai.md` — Braket cross-vendor closure
 - `docs/qmirror_n2_cross_vendor_revision_2026_05_03.md` — cross-vendor revision band
+
+---
+
+### See also (qmirror xref history)
+
+Prior callouts preserved verbatim per qmirror_xref_centralization cycle (2026-05-04):
+
+> 📦 Available at: https://github.com/need-singularity/qmirror (`hx install qmirror`)
+> 🚀 v2.0.0 RELEASED 2026-05-04 — closure 13/13 conds met (8 v1 + 5 v2): https://github.com/need-singularity/qmirror/releases/tag/v2.0.0
+
+Future qmirror release URLs are canonically tracked in `nexus/.roadmap.qmirror` header field `latest_release_url`. Update single line in roadmap; this footnote is a frozen historical record (do not retrofit).

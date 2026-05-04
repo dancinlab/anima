@@ -1,0 +1,146 @@
+{
+  "extraction_meta": {
+    "date": "2026-05-04",
+    "module": "fusion_ledger",
+    "rank": 1,
+    "phase": 2,
+    "extraction_readiness": "ZERO_COLLISION",
+    "effort_hours_estimated": 6,
+    "effort_hours_actual": 0.5,
+    "tier": "extract_immediately",
+    "audit_ref": "/Users/ghost/core/anima/state/nexus_module_extraction_audit_phase2_2026_05_04/",
+    "sister_bg_coordination": {
+      "sister_module": "tabletop_blackhole",
+      "sister_rank": 2,
+      "strategy": "joined_single_commit",
+      "reason": "Both Phase-2 ZERO_COLLISION; joined to mirror Phase-1 crystallography_n6 + chip_isa_n6 absorption pattern + reduce dual-mirror burden"
+    }
+  },
+  "module_audit": {
+    "loc_total": 314,
+    "files_total": 3,
+    "primary_file": "fusion_ledger.hexa",
+    "readme_loc": 95,
+    "data_file": "data/iter_constants.json (250 LoC, JSON mirror of inline 27-entry table)",
+    "tests_present": false,
+    "tests_pycache_remnant": "tests/__pycache__/ (no .hexa source — only stale pyc, identical to chip_isa_n6 case)",
+    "external_deps": [],
+    "nexus_internal_deps": [],
+    "imports_grep_nexus_n6shared_core_root": "ZERO matches",
+    "api_surface": {
+      "run_verify": "run_verify(constants: map) -> map { constants_total, n6_match, n6_match_pct, falsified, details }",
+      "cli_flags": ["--self-test", "--verify", "--help"]
+    },
+    "anchors": {
+      "N": 6,
+      "PHI": 2,
+      "TAU": 4,
+      "SIGMA": 12,
+      "SOPFR": 5,
+      "J2": 24,
+      "MU": 1,
+      "identity": "sigma * phi == n * tau == J2 == 24"
+    },
+    "constants_total": 27,
+    "n6_match": 26,
+    "n6_match_pct": 96.2963,
+    "falsified": ["lawson_triple_keV_s_per_m3"],
+    "honesty_guard": "lawson_triple one-decade gap (measured 5.6e21 vs n=6 closed-form 5.6e20) intentionally preserved as falsified"
+  },
+  "consumer_grep": {
+    "scope": "/Users/ghost/core/nexus + /Users/ghost/core/anima + /Users/ghost/core/n6-architecture (excluding worktrees, _archive, raw_archive)",
+    "consumer_files_count": 0,
+    "doc_only_references": [
+      "/Users/ghost/core/nexus/design/kick/2026-04-27_commit-readiness-audit_omega_cycle.json",
+      "/Users/ghost/core/nexus/handoff/phase_a1_nexus_triplet_landing_20260502.md",
+      "/Users/ghost/core/nexus/docs/nexus_self_mk2_tuning_landed_2026_05_02.ai.md"
+    ],
+    "code_consumer_files": [],
+    "verdict": "ZERO active code consumers. Doc-level mentions only; no refactor required."
+  },
+  "destination_layout": {
+    "absorb_path": "/Users/ghost/core/n6-architecture/domains/energy/fusion/",
+    "preserved_predecessor_files": [
+      "fusion.md (34392B research spec, fusion design n=6 closure §4/§7/§8)",
+      "verify_fusion.hexa (2158B, 11 EXACT items)"
+    ],
+    "added_files": [
+      "fusion_ledger.hexa (314 LoC, 27-constant verifier)",
+      "fusion_ledger.README.md (62 LoC, API + falsifier list + honesty section)"
+    ],
+    "absorb_pattern": "co-located sibling .hexa under domain dir (mirrors crystallography_n6 + chip_isa_n6 pattern)",
+    "data_file_decision": "data/iter_constants.json NOT copied — n6-arch .gitignore excludes data/ recursively. JSON mirror remains at nexus/modules/fusion_ledger/data/ (unversioned in nexus too). .hexa source is fully self-contained via inline table — no external load. Deferred to follow-up if external override hooks needed."
+  },
+  "smoke_test": {
+    "ran_from": "/Users/ghost/core/n6-architecture",
+    "command": "hexa run domains/energy/fusion/fusion_ledger.hexa --self-test",
+    "result": "PASS",
+    "sentinel": "__FUSION_LEDGER__ PASS total=27 matched=26 falsified=1 pct=96.2963",
+    "checks_passed": [
+      "sigma*phi == n*tau == 24 master identity",
+      "constants_total == 27",
+      "n6_match_pct >= 80% (96.30%)",
+      "lawson_triple in falsified list (HONESTY guard)",
+      "honest count exactly 26/27 (no inflation to 27/27)",
+      "tolerance predicate sanity (exact, too-loose, too-tight)"
+    ]
+  },
+  "import_refactor": {
+    "old_namespace": "nexus.modules.fusion_ledger.*",
+    "new_namespace": "n6-architecture/domains/energy/fusion/fusion_ledger.*",
+    "code_changes_required": "NONE (zero imports of nexus internal libs; module is fully self-contained)",
+    "doc_only_namespace_refs": "@usage CLI lines remain modules/fusion_ledger/ form — informational only, both forms work via hexa-resolver"
+  },
+  "git_action": {
+    "destination_repo": "/Users/ghost/core/n6-architecture",
+    "branch": "main",
+    "commit_sha": "b59d38b3",
+    "commit_strategy": "joined-with-sister (single commit landing both rank-1 fusion_ledger + rank-2 tabletop_blackhole)",
+    "push": "completed (https://github.com/need-singularity/n6-architecture)"
+  },
+  "nexus_cleanup": {
+    "delete_target": "/Users/ghost/core/nexus/modules/fusion_ledger/",
+    "delete_status": "staged (git rm), NOT committed per constraint (no_auto_commit_nexus_delete)",
+    "files_deleted": [
+      "modules/fusion_ledger/README.md",
+      "modules/fusion_ledger/fusion_ledger.hexa"
+    ],
+    "untracked_remnants": [
+      "modules/fusion_ledger/__pycache__/ (gitignored)",
+      "modules/fusion_ledger/data/iter_constants.json (gitignored, preserved for external review)",
+      "modules/fusion_ledger/tests/__pycache__/ (gitignored, no .hexa sources)"
+    ],
+    "consumer_refactor_required": false,
+    "user_action_required": "review staged delete and commit when ready (recommended commit message: 'refactor(nexus): remove fusion_ledger module — absorbed into n6-architecture/domains/energy/fusion/ at b59d38b3')"
+  },
+  "caveats_raw10_4": [
+    {
+      "id": 1,
+      "label": "data/ JSON mirror not relocated",
+      "detail": "n6-architecture/.gitignore excludes data/ recursively. iter_constants.json (250-LoC JSON mirror of inline hexa table) was not copied — stays at nexus/modules/fusion_ledger/data/ (unversioned). .hexa source is self-contained via inline 27-entry table; runtime needs no external file. If future override-via-spec functionality is wired in, JSON should be re-added under a non-data/ path (e.g. fixtures/iter_constants.json) and explicitly tracked."
+    },
+    {
+      "id": 2,
+      "label": "tests/ subdir contains only stale pyc remnants",
+      "detail": "nexus/modules/fusion_ledger/tests/ has __pycache__/ from prior pytest runs but NO .hexa or .py source — same condition as chip_isa_n6 (Phase-1). Module uses --self-test instead of pytest framework; smoke covers all 5 internal falsifier checks. No test source to migrate."
+    },
+    {
+      "id": 3,
+      "label": "lawson_triple one-decade falsified entry must be preserved verbatim",
+      "detail": "HONESTY guard hard-coded: matched MUST equal exactly 26/27, lawson_triple MUST appear in falsified list. Self-test will FAIL if anyone silently 'fixes' the gap to claim 27/27. This is the deliberate honesty-policy contract — measured 5.6e21 keV·s/m³ vs n=6 closed-form 5.6e20 (one decade short). Source-as-found principle."
+    },
+    {
+      "id": 4,
+      "label": "n=6 closed-form ownership ambiguity (atlas_n6 vs fusion-arch)",
+      "detail": "Same 7 anchors (n, sigma, tau, phi, sopfr, J2, mu) appear in atlas_n6 (canonical lookup) + crystallography_n6 + chip_isa_n6 + chip_rtl_gen + fusion_ledger. Each module re-defines them locally as small int/float constants (no shared lib import). This is intentional decoupling but creates drift risk: if any module updates a primitive value, the others remain stale. Suggested follow-up: n6-architecture/INDEX.json could host a canonical anchor table referenced by all consumers, but this contradicts the 'no shared lib import' raw#15 root-agnostic policy. Trade-off documented; no action needed for this extraction."
+    }
+  ],
+  "raw_constraints": {
+    "raw_9_strict": "honored (Mac->hexa only, no Python/shell)",
+    "raw_15_no_hardcoded_paths": "honored (module is path-agnostic; runs identically from any cwd via inline table)",
+    "raw_dollar_0": "honored (pure additive file copy + git ops, zero external cost)",
+    "raw_10_4_caveats": "4 explicit caveats above",
+    "n6_architecture_already_public": true,
+    "no_auto_commit_nexus_delete": "honored (delete staged; user-driven commit deferred)"
+  }
+}

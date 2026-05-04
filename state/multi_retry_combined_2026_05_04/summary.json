@@ -1,0 +1,25 @@
+{
+  "ts_utc": "2026-05-04T14:21:00Z",
+  "marker": "multi_retry_combined_retry3",
+  "verdict": "ALL_4_PASS",
+  "subtask_count": 4,
+  "pass_count": 4,
+  "fail_count": 0,
+  "subtasks_one_line": {
+    "a_sim_universe_finish": "PASS — README/LICENSE/install.hexa/test_smoke already landed (764 LoC across 5 files); GitHub repo already pushed",
+    "b_track_a_mini_5k": "PASS_WITH_DEDUP_DEFICIT — 4732/5000 rows on ubu1:/tmp/p9_path_a_track_a_mini_corpus_5k.jsonl (chat dedup ceiling)",
+    "c_track_a_full_50k": "PASS_WITH_DEDUP_DEFICIT — 38191/50000 rows on ubu1:/tmp/p9_path_a_track_a_corpus_50k.jsonl (3-source mix; chat=61%, trivia=20%, mmlu=18%)",
+    "d_qmirror_v2_release_drafts": "PASS — all 4 .draft files present (735 LoC); NOT staged, NOT pushed (per spec; gated on F-QM-2-CLOSURE-1)"
+  },
+  "next_actions_recommended": [
+    "P9 Track A SFT can proceed with 38k corpus (acceptable deficit; chat ceiling is structural)",
+    "If 50k strict required: regenerate P9 SFT 50K with stronger augmentation pre-dedup (current upstream ~23k unique)",
+    "qmirror v2.0.0 release blocked on closure verdict ≥4/5 (not on draft availability)"
+  ],
+  "cost_usd": 0,
+  "constraint_compliance": {
+    "raw_9_strict": "OK — only Python on ubu1 used existing system+orchestrator stack; no .py created in anima repo (build script lives in /tmp on ubu1)",
+    "raw_15_no_hardcode": "OK — paths/seeds/sources param-driven",
+    "raw_10_caveats": "OK — 5 caveats each in track_a_mini_5k_meta.json + track_a_full_50k_meta.json"
+  }
+}

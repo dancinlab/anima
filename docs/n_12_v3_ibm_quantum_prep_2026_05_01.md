@@ -8,7 +8,7 @@ Parents: #46 (vendor pivot research), #54 (v2 INDETERMINATE), #39 (v1 FAIL)
 
 > **2026-05-03 qmirror substrate update (additive)**: this prep package targets IBM Quantum Open Plan. Per the qmirror closure series 2026-05-03, the **`nexus.qmirror` canonical substrate** (`docs/nexus_qmirror_spec_2026_05_03.md`) is now the primary execution path for F-N12-1 / Orch-OR-class measurement; real IBM Heron r2 access is **not required** for routine science. The IBM path documented here is preserved as a **calibration anchor** (one-shot $200 IBM Cloud burst, see `docs/ibm_cloud_experiment_list_2026_05_03.md` and `docs/nexus_qmirror_phase3_calibration_runbook_2026_05_03.md`) — not as primary execution.
 
-> 📦 Available at: https://github.com/need-singularity/qmirror (`hx install qmirror`)
+> qmirror canonical SSOT: see `nexus/.roadmap.qmirror` header fields `upstream_url` + `latest_release` (current: v2.0.0, 2026-05-04). Hardcoded URLs deprecated 2026-05-04 — see `### See also (qmirror xref history)` footnote for prior callouts.
 
 ## Headline
 
@@ -137,3 +137,14 @@ Untouched:
 - `docs/ibm_cloud_experiment_list_2026_05_03.md` — $500 IBM Cloud burst plan (qmirror-anchored)
 - `docs/qmirror_cond3_ibm_n1_landed_2026_05_03.ai.md` — IBM N1 calibration condition closure
 - `docs/qmirror_cond3_band_revise_landed_2026_05_03.ai.md`
+
+---
+
+### See also (qmirror xref history)
+
+Prior callouts preserved verbatim per qmirror_xref_centralization cycle (2026-05-04):
+
+> 📦 Available at: https://github.com/need-singularity/qmirror (`hx install qmirror`)
+> 🚀 v2.0.0 RELEASED 2026-05-04 — closure 13/13 conds met (8 v1 + 5 v2): https://github.com/need-singularity/qmirror/releases/tag/v2.0.0
+
+Future qmirror release URLs are canonically tracked in `nexus/.roadmap.qmirror` header field `latest_release_url`. Update single line in roadmap; this footnote is a frozen historical record (do not retrofit).

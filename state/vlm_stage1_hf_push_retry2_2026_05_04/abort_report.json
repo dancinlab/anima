@@ -1,0 +1,31 @@
+{
+  "task": "VLM 4 ckpts HF push RETRY2",
+  "timestamp_utc": "2026-05-04T08:00:00Z",
+  "outcome": "ABORTED_PRE_FLIGHT",
+  "reason": "no_valid_hf_token_available",
+  "user_claim": "secret get huggingface.token now valid (완료)",
+  "actual_state": {
+    "secret_store_value": "single '#' character (1 byte) — token never written or overwritten with placeholder",
+    "secret_get_output": "[GATE] dispatch=local cmd=python3 -\\n# (banner + sentinel)",
+    "cached_token_path": "/Users/ghost/.cache/huggingface/token",
+    "cached_token_len": 37,
+    "cached_token_prefix": "hf_",
+    "cached_token_valid": false,
+    "hf_whoami_result": "Error: Invalid user token (both HF_TOKEN env and stored credential)"
+  },
+  "diagnostic_steps": [
+    "secret get huggingface.token returns GATE banner (stderr) + '#' sentinel (stdout)",
+    "Direct read of /Users/ghost/core/secret/credentials [huggingface] section confirms token field = '#' (length 1)",
+    "Cached ~/.cache/huggingface/token (hf_..., 37 chars, mtime 2026-05-04 07:30) tested — also invalid per HF API",
+    "No ~/.netrc fallback present"
+  ],
+  "no_pushes_attempted": true,
+  "ckpts_status": "still staged at state/vlm_stage1_hf_push_2026_05_04/staging/step-{5k,10k,15k,20k}/, untouched",
+  "vlm_training_pid_31960": "NOT TOUCHED",
+  "remediation_required": [
+    "1. User generates fresh HF token at https://huggingface.co/settings/tokens (write scope, scoped to need-singularity org)",
+    "2. Store via: pbpaste | secret set huggingface.token  (after copying token to clipboard)",
+    "3. Verify: secret get huggingface.token | head -c 3 should print 'hf_'",
+    "4. Then re-run RETRY3"
+  ]
+}

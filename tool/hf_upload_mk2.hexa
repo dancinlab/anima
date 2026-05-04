@@ -33,7 +33,20 @@
 // Cosmetic polish 2026-05-03: printenv → echo "$VAR" (Alpine container has
 // no `printenv`; POSIX echo works on both Alpine + macOS). See
 // state/cosmetic_polish_batch_2026_05_03/audit.json.
-let VERSION = "2.0.2"
+//
+// Token resolution canonicalization 2026-05-04: collapsed legacy multi-source
+// fallback chain (HF_TOKEN env → HUGGING_FACE_HUB_TOKEN env → ~/.huggingface/token
+// → ~/.cache/huggingface/token → /workspace/.hf_token) down to the canonical
+// 3-tier per docs/hf_token_canonical_baseline_2026_05_04.md:
+//   1) `secret get huggingface.token`        (canonical SSOT, HF official naming)
+//   2) ~/.cache/huggingface/token            (HF CLI cache fallback)
+//   3) HF_TOKEN env                          (override)
+// Removed: `hf.token` legacy alias, `.secrets/hf_token`, `~/.huggingface/token`,
+// `/workspace/.hf_token`, HUGGING_FACE_HUB_TOKEN env. raw#10 caveat: precedence
+// changed — operators relying on HF_TOKEN env to override the secret store must
+// now `unset` the secret store key OR continue to set HF_TOKEN AND rely on the
+// fact that secret store lookup runs first (env now last-tier).
+let VERSION = "2.1.0"
 let HOME = exec("echo \"$HOME\"").trim()
 let ANIMA_ROOT = HOME + "/core/anima"
 let DEFAULT_AUDIT_DIR = ANIMA_ROOT + "/state/hf_upload_audit"
@@ -277,22 +290,25 @@ fn _hf_cli_check() {
     return out
 }
 
+// Canonical 3-tier resolution (v2.1.0, 2026-05-04):
+//   1) `secret get huggingface.token`     — SSOT (HF official naming)
+//   2) ~/.cache/huggingface/token          — HF CLI cache fallback
+//   3) HF_TOKEN env                        — explicit override
+// Removed legacy: hf.token alias, .secrets/hf_token, ~/.huggingface/token,
+// /workspace/.hf_token, HUGGING_FACE_HUB_TOKEN env.
+// See docs/hf_token_canonical_baseline_2026_05_04.md.
 fn _resolve_token(req_token: str) -> str {
     if req_token.len() > 0 { return req_token }
-    let env1 = exec("echo \"$HF_TOKEN\"").trim()
-    if env1.len() > 0 { return env1 }
-    let env2 = exec("echo \"$HUGGING_FACE_HUB_TOKEN\"").trim()
-    if env2.len() > 0 { return env2 }
-    // file fallbacks
-    let p1 = HOME + "/.huggingface/token"
+    // tier 1: canonical secret store
+    let s1 = exec("secret get huggingface.token 2>/dev/null").trim()
+    if s1.len() > 0 { return s1 }
+    // tier 2: HF CLI cache file
     let p2 = HOME + "/.cache/huggingface/token"
-    let p3 = "/workspace/.hf_token"
-    let f1 = exec("test -f " + _sh_q(p1) + " && cat " + _sh_q(p1) + " 2>/dev/null").trim()
-    if f1.len() > 0 { return f1 }
     let f2 = exec("test -f " + _sh_q(p2) + " && cat " + _sh_q(p2) + " 2>/dev/null").trim()
     if f2.len() > 0 { return f2 }
-    let f3 = exec("test -f " + _sh_q(p3) + " && cat " + _sh_q(p3) + " 2>/dev/null").trim()
-    if f3.len() > 0 { return f3 }
+    // tier 3: env override
+    let env1 = exec("echo \"$HF_TOKEN\"").trim()
+    if env1.len() > 0 { return env1 }
     return ""
 }
 
@@ -474,7 +490,7 @@ fn _do_upload(repo: str, ckpt: str, readme: str, tag: str, private: int) {
         err["mode"] = "upload"
         err["repo"] = repo
         err["error"] = "no_token"
-        err["message"] = "no HF token (HF_TOKEN env or ~/.huggingface/token)"
+        err["message"] = "no HF token (canonical: secret get huggingface.token | ~/.cache/huggingface/token | HF_TOKEN env)"
         return err
     }
 
@@ -765,8 +781,12 @@ fn print_help() {
     println("  hexa run tool/hf_upload_mk2.hexa --validate-readme <path>")
     println("  hexa run tool/hf_upload_mk2.hexa --validate-naming <org/name>")
     println("")
+    println("TOKEN RESOLUTION (v2.1.0 canonical 3-tier)")
+    println("  1) secret get huggingface.token   (canonical SSOT)")
+    println("  2) ~/.cache/huggingface/token     (HF CLI cache fallback)")
+    println("  3) HF_TOKEN env                   (explicit override)")
+    println("")
     println("ENV")
-    println("  HF_TOKEN              upload auth (or ~/.huggingface/token)")
     println("  ANIMA_HF_CLI          hf CLI override (default: `command -v hf`)")
     println("")
     println("AUDIT")

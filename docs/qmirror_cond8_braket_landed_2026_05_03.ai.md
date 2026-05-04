@@ -1,6 +1,6 @@
 # qmirror cond.8 option β cross-vendor CHSH (Braket) — LANDED 2026-05-03 (AI-native, friendly preset)
 
-> 📦 Available at: https://github.com/need-singularity/qmirror (`hx install qmirror`)
+> qmirror canonical SSOT: see `nexus/.roadmap.qmirror` header fields `upstream_url` + `latest_release` (current: v2.0.0, 2026-05-04). Hardcoded URLs deprecated 2026-05-04 — see `### See also (qmirror xref history)` footnote for prior callouts.
 
 > friendly preset (icon + analogy + 7-element + ASCII)
 >
@@ -226,3 +226,14 @@
    raw#15| collector mode only on retry (NO new shots)       | OK — only get-quantum-task + s3 cp; no submit.py call
    raw#10| honest C3 + completion-quality recommendation      | OK — 6 caveat carry-forward + raw#10 §5.1 explicit weak-vendor-orthogonality disclosure
 ```
+
+---
+
+### See also (qmirror xref history)
+
+Prior callouts preserved verbatim per qmirror_xref_centralization cycle (2026-05-04):
+
+> 📦 Available at: https://github.com/need-singularity/qmirror (`hx install qmirror`)
+> 🚀 v2.0.0 RELEASED 2026-05-04 — closure 13/13 conds met (8 v1 + 5 v2): https://github.com/need-singularity/qmirror/releases/tag/v2.0.0
+
+Future qmirror release URLs are canonically tracked in `nexus/.roadmap.qmirror` header field `latest_release_url`. Update single line in roadmap; this footnote is a frozen historical record (do not retrofit).

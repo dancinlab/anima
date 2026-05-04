@@ -1,6 +1,6 @@
 # nexus.qmirror — Quantum Substrate Mirror Module Spec
 
-> 📦 Available at: https://github.com/need-singularity/qmirror (`hx install qmirror`)
+> qmirror canonical SSOT: see `nexus/.roadmap.qmirror` header fields `upstream_url` + `latest_release` (current: v2.0.0, 2026-05-04). Hardcoded URLs deprecated 2026-05-04 — see `### See also (qmirror xref history)` footnote for prior callouts.
 
 **Date:** 2026-05-03
 **Module slug:** `nexus.qmirror`
@@ -750,3 +750,14 @@ User decision (2026-05-03): one-shot all-in instead of $50/quarter × 4. Rationa
   (anima_phi_v3_canonical reference)
 - anima `docs/braket_nexus_applications_2026_05_02.md` (8-axis braket × nexus
   map; this spec is the deferred axis 1d/4 follow-through done at $0)
+
+---
+
+### See also (qmirror xref history)
+
+Prior callouts preserved verbatim per qmirror_xref_centralization cycle (2026-05-04):
+
+> 📦 Available at: https://github.com/need-singularity/qmirror (`hx install qmirror`)
+> 🚀 v2.0.0 RELEASED 2026-05-04 — closure 13/13 conds met (8 v1 + 5 v2): https://github.com/need-singularity/qmirror/releases/tag/v2.0.0
+
+Future qmirror release URLs are canonically tracked in `nexus/.roadmap.qmirror` header field `latest_release_url`. Update single line in roadmap; this footnote is a frozen historical record (do not retrofit).

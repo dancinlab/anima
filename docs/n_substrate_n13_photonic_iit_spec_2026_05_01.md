@@ -13,7 +13,7 @@
 
 > **2026-05-03 qmirror substrate update (additive)**: cross-substrate Φ measurement no longer requires real photonic-quantum vendor access. The **`nexus.qmirror` canonical substrate** (`docs/nexus_qmirror_spec_2026_05_03.md`) covers the photonic-quantum axis overlap noted in §1.2 / §6 with substantive equivalence per closure 2026-05-03. N-13 photonic-classical analog scope (Lightmatter / Lightelligence / Q.ANT) remains a separate axis (classical optical) and is unaffected. Quantum-photonic vendors (PsiQuantum, Xanadu) referenced for axis-overlap risk are now substituted by qmirror.
 
-> 📦 Available at: https://github.com/need-singularity/qmirror (`hx install qmirror`)
+> qmirror canonical SSOT: see `nexus/.roadmap.qmirror` header fields `upstream_url` + `latest_release` (current: v2.0.0, 2026-05-04). Hardcoded URLs deprecated 2026-05-04 — see `### See also (qmirror xref history)` footnote for prior callouts.
 
 ## §0 한 줄 요약
 
@@ -352,3 +352,14 @@ readiness (measurement) = **0%** (vendor partnership 또는 hardware 입수 미�
 - `docs/nexus_qmirror_spec_2026_05_03.md` — qmirror canonical substrate (covers photonic-quantum axis overlap)
 - `docs/qmirror_cond7_alpha_landed_2026_05_03.ai.md`
 - `docs/qmirror_n2_cross_vendor_revision_2026_05_03.md`
+
+---
+
+### See also (qmirror xref history)
+
+Prior callouts preserved verbatim per qmirror_xref_centralization cycle (2026-05-04):
+
+> 📦 Available at: https://github.com/need-singularity/qmirror (`hx install qmirror`)
+> 🚀 v2.0.0 RELEASED 2026-05-04 — closure 13/13 conds met (8 v1 + 5 v2): https://github.com/need-singularity/qmirror/releases/tag/v2.0.0
+
+Future qmirror release URLs are canonically tracked in `nexus/.roadmap.qmirror` header field `latest_release_url`. Update single line in roadmap; this footnote is a frozen historical record (do not retrofit).

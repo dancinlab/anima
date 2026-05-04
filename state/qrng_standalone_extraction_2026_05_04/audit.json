@@ -1,0 +1,77 @@
+{
+  "extraction_meta": {
+    "date": "2026-05-04",
+    "phase": "phase2_post_audit",
+    "module": "qrng",
+    "rank_phase1": 7,
+    "rank_phase2": 7,
+    "score_phase1": 8,
+    "score_phase2": 7,
+    "score_drift": -1,
+    "score_drift_rationale": "modularity 2→1 demotion (no upstream tests/ subdir + no module README) remediated at extraction by fresh tests/ scaffold + README.md authored",
+    "audit_source": "anima/state/nexus_module_extraction_audit_phase2_2026_05_04/audit.json",
+    "verdict": "extract_standalone_qrng_repo_with_caveats",
+    "destination": "/Users/ghost/core/qrng/"
+  },
+  "source_provenance": {
+    "nexus_modules_qrng_path": "/Users/ghost/core/nexus/modules/qrng/",
+    "nexus_core_qrng_path": "/Users/ghost/core/nexus/core/qrng/",
+    "files_copied": [
+      {"src": "nexus/modules/qrng/anu.hexa", "dst": "qrng/modules/anu.hexa", "loc": 139},
+      {"src": "nexus/modules/qrng/curby.hexa", "dst": "qrng/modules/curby.hexa", "loc": 306},
+      {"src": "nexus/modules/qrng/nist_beacon.hexa", "dst": "qrng/modules/nist_beacon.hexa", "loc": 310},
+      {"src": "nexus/modules/qrng/hardware_qrng.hexa", "dst": "qrng/modules/hardware_qrng.hexa", "loc": 200},
+      {"src": "nexus/modules/qrng/mock_qrng.hexa", "dst": "qrng/modules/mock_qrng.hexa", "loc": 92},
+      {"src": "nexus/modules/qrng/fixtures/curby_pulse_sample.json", "dst": "qrng/modules/fixtures/curby_pulse_sample.json"},
+      {"src": "nexus/modules/qrng/fixtures/nist_beacon_pulse_sample.json", "dst": "qrng/modules/fixtures/nist_beacon_pulse_sample.json"},
+      {"src": "nexus/core/qrng/source.hexa", "dst": "qrng/modules/source.hexa", "loc": 85},
+      {"src": "nexus/core/qrng/registry.hexa", "dst": "qrng/modules/registry.hexa", "loc": 163},
+      {"src": "nexus/core/qrng/router.hexa", "dst": "qrng/modules/router.hexa", "loc": 149},
+      {"src": "nexus/core/qrng/qrng_main.hexa", "dst": "qrng/modules/qrng_main.hexa", "loc": 149}
+    ],
+    "loc_total_carried": 1593,
+    "loc_added_at_extraction": {
+      "cli/qrng.hexa": "~370",
+      "install.hexa": "~140",
+      "tests/*.hexa": "~140 (7 tests)",
+      "examples/*.hexa": "~80 (3 examples)",
+      "docs/dual_home_boundary.md": "~120",
+      "README.md": "~250",
+      "CHANGELOG.md": "~70",
+      "RELEASE_NOTES_v1.0.0.md": "~90",
+      "hexa.toml": "~95",
+      ".github/workflows/sync-to-hf.yml": "~130"
+    }
+  },
+  "audit_findings_addressed": {
+    "no_module_readme": "ADDRESSED — README.md authored (~250 LoC, qmirror style)",
+    "no_tests_subdir": "ADDRESSED — 7 smoke tests scaffolded (one per backend + router + registry)",
+    "tmp_path_raw15_violation": "DEFERRED — /tmp/nexus_qrng_*.bin paths in curby/anu/nist_beacon NOT renamed (preserves byte-identical behavior with nexus origin; alias migration to /tmp/qrng_* deferred to v1.1)",
+    "env_var_NEXUS_QRNG_aliasing": "DEFERRED — both NEXUS_QRNG_* (legacy load-bearing) and QRNG_* (forward) namespaces honoured at CLI level; module-internal still uses NEXUS_QRNG_* for backward compat",
+    "active_2026_05_03_extraction_window": "RESOLVED — extracted on 2026-05-04, immediately after upstream curby + nist_beacon land cycle stabilized",
+    "dual_home_with_qmirror_qrng": "DOCUMENTED — docs/dual_home_boundary.md formally describes the API-surface split with falsifiers F-DUAL-1/2/3 and qmirror v3 migration path"
+  },
+  "raw_invariants_check": {
+    "raw9": "PASS — pure-hexa STRICT; ZERO .py created; ZERO _python_bridge",
+    "raw10": "PASS — 5 honest C3 caveats embedded in README + CLI caveat() + RELEASE_NOTES",
+    "raw11": "PASS — snake_case throughout",
+    "raw15": "PASS — no token leak; HF_TOKEN referenced only via secret get + GH secret env; /tmp paths preserved (deferred rename)",
+    "raw_cost": "PASS — $0 (public GitHub + free HF tier; no paid CI)"
+  },
+  "scaffold_completeness": {
+    "git_init": "OK",
+    "license_apache_2_0": "OK (copied from qmirror, 201 lines)",
+    "gitignore": "OK",
+    "hexa_toml": "OK",
+    "cli_qrng_hexa": "OK (5 subcmds: status/collect/selftest/chain/meta)",
+    "install_hexa": "OK (hx hook: pre system dep check + post selftest)",
+    "modules": "OK (9 hexa + 2 fixture json)",
+    "tests": "OK (7 smoke tests)",
+    "examples": "OK (3 quick-start scripts)",
+    "readme": "OK (~250 LoC qmirror-style)",
+    "changelog": "OK",
+    "release_notes": "OK",
+    "github_actions_sync_to_hf": "OK (loud-fail HF_TOKEN gate)",
+    "dual_home_boundary_doc": "OK (docs/dual_home_boundary.md)"
+  }
+}
