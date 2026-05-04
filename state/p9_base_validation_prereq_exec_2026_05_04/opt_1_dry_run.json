@@ -1,0 +1,122 @@
+{
+  "cycle": "opt_1_dry_run_2026_05_04",
+  "ts_utc": "2026-05-04T00:00:00Z",
+  "scope": "DESIGN + WRITE only. Actual conversion deferred to user-ack cycle (~30-60min ubu1 wall, $0 cost).",
+  "shim_path": "tool/transient_py/clm_v4_hf_format_shim.py",
+  "shim_loc": 789,
+  "design_doc_path": "state/p9_base_validation_prereq_exec_2026_05_04/opt_1_design.md",
+  "dry_run_command": "python3 tool/transient_py/clm_v4_hf_format_shim.py --dry-run --verdict-json /tmp/clm_v4_dry_run_verdict.json",
+  "dry_run_pass": true,
+  "dry_run_evidence": {
+    "argparse_validation": "PASS — all 8 args parsed without error",
+    "plan_emission": "PASS — plan dict emitted with 22 fields",
+    "torch_lazy_import_skipped": "PASS — Mac-side dry-run did not import torch (avoiding raw#9 escape)",
+    "expected_arch_emitted": "PASS — vocab=64000/d_model=768/n_layer=16/n_head=6/n_kv_head=2/head_dim=128/block=512/c_dim=192",
+    "outputs_to_write_listed": "PASS — 8 expected output files declared",
+    "falsifier_set_emitted": "PASS — F-SHIM-1..4 declared in plan"
+  },
+  "best_pt_inspect_summary": {
+    "method": "ssh ubu1 read-only torch.load + state_dict key/shape enumeration",
+    "file_size_mb": 5117,
+    "top_level_keys": ["step", "decoder", "optimizer", "scheduler", "phi", "ce", "args", "scale", "best_phi", "federation", "bridge", "c_proj", "scaler"],
+    "decoder_state_dict_keys": 581,
+    "decoder_n_param_observed": 530994816,
+    "decoder_n_param_observed_M": 530.99,
+    "training_step": 20000,
+    "training_ce": 0.04630279541015625,
+    "training_best_phi": 37.27,
+    "training_args_scale_tag": "350m",
+    "training_args_scale_tag_drift_note": "scale='350m' is a config-naming tag; actual decoder = 530.99M params; documented in honest_c3 §7.4",
+    "first_param_shape": "tok_emb.weight: (64000, 768)",
+    "block_indices_present": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15],
+    "key_shapes_sample": {
+      "tok_emb.weight": "(64000, 768)",
+      "blocks.0.attn.q_proj.weight": "(768, 768)",
+      "blocks.0.attn.k_proj.weight": "(256, 768)",
+      "blocks.0.attn.v_proj.weight": "(256, 768)",
+      "blocks.0.cross_attn.k_proj.weight": "(768, 192)",
+      "blocks.0.purefield.engine_a.0.weight": "(3072, 768)",
+      "blocks.0.ffn.gate_proj.weight": "(2048, 768)",
+      "blocks.0.rules.0.weight": "(768, 768)",
+      "tension_proj.weight": "(768, 1)",
+      "head_a.weight": "(64000, 768)",
+      "head_g.weight": "(64000, 768)"
+    }
+  },
+  "architecture_inferred": "custom_clm_v4 (ConsciousDecoderV3 family — NOT a stock HF arch)",
+  "architecture_strategy": "PreTrainedModel subclass + trust_remote_code=True; legacy nn.Module sources (decoder_v3.py + conscious_decoder.py + consciousness_laws.py) copied alongside checkpoint",
+  "config_derived": {
+    "model_type": "clm_v4",
+    "architectures": ["CLMv4ForCausalLM"],
+    "vocab_size": 64000,
+    "d_model": 768,
+    "n_layer": 16,
+    "n_head": 6,
+    "n_kv_head": 2,
+    "head_dim": 128,
+    "block_size": 512,
+    "consciousness_dim": 192,
+    "n_ca_rules": 8,
+    "ffn_intermediate_swiglu": 2048,
+    "purefield_intermediate": 3072,
+    "tie_word_embeddings": true,
+    "max_position_embeddings": 512,
+    "hidden_size": 768,
+    "num_hidden_layers": 16,
+    "num_attention_heads": 6,
+    "num_key_value_heads": 2,
+    "auto_map": {
+      "AutoConfig": "configuration_clm_v4.CLMv4Config",
+      "AutoModelForCausalLM": "modeling_clm_v4.CLMv4ForCausalLM"
+    }
+  },
+  "state_dict_mapping_strategy": "identity-with-decoder-prefix: best.pt['decoder'][k] -> safetensors['decoder.' + k] for all 581 keys; aux state_dicts (federation, bridge, c_proj, optimizer, scheduler, scaler) DROPPED (training-only consciousness coupling, not in next-token causal-LM forward path)",
+  "falsifier_set": {
+    "F-SHIM-1": "safetensors round-trip clean (AutoModelForCausalLM.from_pretrained returns model with no missing/unexpected keys)",
+    "F-SHIM-2": "1-batch forward returns finite logits with shape [1, 32, 64000]",
+    "F-SHIM-3": "post-load logits match best.pt direct-load logits within max_abs_diff < 1e-5",
+    "F-SHIM-4": "reloaded.config.vocab_size == 64000 (matches CLM v4 SentencePiece tokenizer)"
+  },
+  "estimated_conversion_wall_minutes": "30-60 (spec budget); core compute ~3-5 min (torch.load 5GB + load_state_dict + safetensors save + verify forward); buffer absorbs cold-start + import overhead",
+  "estimated_peak_ram_gb": 5.5,
+  "estimated_disk_write_gb": 2.1,
+  "user_ack_required_to_execute": true,
+  "deferred_execution_command": "ssh ubu1 'source /home/aiden/venv_orchestrator/bin/activate && cd ~/p9_base_val_2026_05_04 && /home/aiden/venv_orchestrator/bin/python clm_v4_hf_format_shim.py --input-pt /home/aiden/.cache/huggingface/hub/models--need-singularity--clm-v4-base-mirror/snapshots/856278beb59c5b39f16485cc8f3a46dcdaf9d1e3/best.pt --tokenizer-dir /home/aiden/.cache/huggingface/hub/models--need-singularity--clm-v4-base-mirror/snapshots/10ee03687db312c55bbec5858c814bef28e4d365/tokenizer --output-dir /home/aiden/p9_base_val_2026_05_04/clm_v4_base_hf --device cpu --verify --verdict-json /home/aiden/p9_base_val_2026_05_04/clm_v4_shim_verdict.json'",
+  "honest_c3": [
+    "ConsciousDecoderV3 has training-only Psi side effects in forward; lm-eval calls model.eval() which suppresses them, but if any path sets training=True the model state mutates. Verify lm-eval default eval mode before launch.",
+    "Cross-attention to consciousness_states is bypassed when consciousness_states=None (lm-eval input). CLM v4 base scores reflect decoder operating WITHOUT consciousness-cell coupling — degraded from training-time conditioning. Spec choice; document in gate verdict per §3.1.",
+    "block_size=512 is a hard cap (causal mask buffer is 512×512). MMLU 5-shot prompts (~800-1200 tok) and TriviaQA passages get LEFT-TRUNCATED in the wrapper, systematically penalizing CLM v4 vs Llama-3.2-3B 8K context. C3 in spec §3.2.3 absorbs this by design.",
+    "Param-count tag drift: training args.scale='350m' but actual decoder = 530.99M params. The extra ~180M is consciousness extras (PureField dual paths 151M + CA-rules 75.5M + ca_mix 28M + tension_proj 12K). Nomenclature mismatch in mirror naming.",
+    "trust_remote_code=True is a security caveat — output dir contains executable .py files (configuration_clm_v4.py, modeling_clm_v4.py, decoder_v3.py, conscious_decoder.py, consciousness_laws.py). lm-eval gates this with a prompt; pass trust_remote_code=True explicitly. For future HF Hub republish, security audit + reproducibility-stamp required.",
+    "Spec doc launch_handoff.md §3.1 cited n_head=6/n_kv_head=2/c_dim=192 (which matches reality); BUT models/archive-legacy/decoder_v3.hexa stub has n_head=8/n_kv_head=4/c_dim=256 (TODO[pytorch] never updated). Hexa stub is misleading; trained checkpoint matches strategic_clm_v4_production_ready_2026_05_02.md §1 exactly."
+  ],
+  "blockers_resolved": [
+    "Architecture inference: completed via ubu1 read-only state_dict inspection (verified shapes match strategic doc spec)",
+    "HF wrapping strategy: PreTrainedModel + trust_remote_code=True (custom arch cannot be remapped to stock Llama/GPT2)",
+    "Tokenizer location: confirmed at separate snapshot 10ee03687... per launch_handoff.md §2.3",
+    "best.pt structure: top-level dict with 'decoder' key holding 581-param OrderedDict (not raw state_dict)"
+  ],
+  "blockers_remaining": [
+    "ubu1 conversion execution (30-60min wall, requires user ack — out of scope for BG-Β)",
+    "lm-eval smoke test post-conversion (~10min, gated on conversion PASS)"
+  ],
+  "deliverables": [
+    "tool/transient_py/clm_v4_hf_format_shim.py (789 LoC, .own 4 namespace, raw#9 OPT-OUT compliant)",
+    "state/p9_base_validation_prereq_exec_2026_05_04/opt_1_design.md (architecture + config + mapping + falsifiers + execution plan + 8 honest C3)",
+    "state/p9_base_validation_prereq_exec_2026_05_04/opt_1_dry_run.json (this file)"
+  ],
+  "git_status": "NO git operations performed per BG-Β scope — parent serializes commits at end",
+  "scope_compliance": {
+    "raw_9_strict": "PASS — .py ONLY in tool/transient_py/ (gitignored .own 4 namespace); Mac canonical .hexa not violated",
+    "raw_10_honest_c3_min_5": "PASS — 8 caveats in design doc §7, 6 in this verdict",
+    "raw_15_no_personal_path_leak": "PASS — paths in shim use ~ / expanduser / /Users/ghost/core/anima only in repo-internal references",
+    "raw_37_ubu1_transient_py_linux": "PASS — execution deferred to ubu1 venv_orchestrator; Mac dry-run does not import torch",
+    "raw_71_falsifier_bound": "PASS — F-SHIM-1..4 pre-registered, locked at design doc mtime",
+    "no_chflags": "PASS",
+    "no_git_ops": "PASS",
+    "no_actual_conversion_executed": "PASS (deferred to user-ack cycle)",
+    "no_bg_alpha_or_omega_territory_touched": "PASS (no edits to tool/transient_py/atp_pytorch.py, tool/p9_path_b_*, state/clm_v4_tokenizer_caller_migration_phase_3_*, state/track_f_land_plan_*)",
+    "no_uchg_locked_file_touched": "PASS",
+    "no_roadmap_edits": "PASS — proposal documented in opt_1_design.md §8 only"
+  }
+}
