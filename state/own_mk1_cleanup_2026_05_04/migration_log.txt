@@ -1,0 +1,133 @@
+BG-π² .own mk1 cleanup migration log
+=====================================
+ts_utc: 2026-05-04T (BG-π² execution)
+operator: Claude Opus 4.7 (1M context)
+user_policy: 2026-05-04 dual-SSOT EOL Option B
+  (mk1_GRANDFATHER + UNKNOWN git rm; mk2_VERIFIED keep)
+cross-link: anima audit commit 39b83cb9 (BG-ζ .own mk2 verification)
+
+==============================================================
+PHASE 0: PRE-FLIGHT
+==============================================================
+
+hexa-lang: git repo OK; dirty tree (modified tool/pkg/registry.tsv, untracked
+  stdlib/*.hexa + test/regression state). .own exists at /Users/ghost/core/hexa-lang/.own
+  (3679 bytes, May 3 00:24). Strategy: selective git rm + commit (skip dirty siblings).
+
+nexus: git repo OK; dirty tree (modified n6/atlas.n6, many untracked atlas.append.*.n6).
+  .own exists at /Users/ghost/core/nexus/.own (37054 bytes, May 4 17:37).
+  Strategy: selective `git commit -- .own` to avoid bundling unrelated dirty files.
+
+orpheus: git repo OK; only untracked state/dormant_explorer/ (no conflict).
+  .own exists at /Users/ghost/core/orpheus/.own (24296 bytes, May 4 18:59).
+
+wraith-wallet: git repo OK; clean working tree.
+  .own exists at /Users/ghost/core/wraith-wallet/.own (21321 bytes, May 4 17:11).
+
+hexa-os: git repo OK; clean working tree.
+  .own-rules.json exists at /Users/ghost/core/hexa-os/.own-rules.json (1052 bytes, Apr 19 00:58).
+
+==============================================================
+PHASE 1: launchctl unload (atlas-absorb-sweeper)
+==============================================================
+
+PRE-UNLOAD STATE:
+  $ launchctl list | grep -i atlas-absorb
+  -	0	dev.hexa-lang.atlas-absorb-sweeper
+  (loaded, never run / exit code 0)
+
+PLIST PATH:
+  /Users/ghost/Library/LaunchAgents/dev.hexa-lang.atlas-absorb-sweeper.plist
+  (3263 bytes, Apr 26 20:07)
+
+UNLOAD COMMAND:
+  $ launchctl unload /Users/ghost/Library/LaunchAgents/dev.hexa-lang.atlas-absorb-sweeper.plist
+  exit_code: 0
+
+POST-UNLOAD STATE:
+  $ launchctl list | grep -i atlas-absorb
+  (empty — service GONE)
+
+PLIST FILE: untouched (still at original path; can be reloaded if needed by user).
+
+VERDICT: DONE.
+
+==============================================================
+PHASE 2: per-repo git rm + commit
+==============================================================
+
+--- hexa-lang ---
+  branch: diag/orpheus-selftest-sigkill (NOT main; user awareness for push)
+  $ cd /Users/ghost/core/hexa-lang && git rm .own
+  rm '.own'
+  $ git commit -m "chore(.own removal — mk1_GRANDFATHER ... Option B)"
+  [diag/orpheus-selftest-sigkill 7569e423] 1 file changed, 46 deletions(-)
+  verify: git log --oneline -1 → 7569e423
+  status: .own NOT IN INDEX (clean removal)
+  STATUS: COMMITTED
+
+--- nexus ---
+  branch: main
+  $ cd /Users/ghost/core/nexus && git rm .own
+  rm '.own'
+  $ git commit -m "chore(.own removal — ... launchctl unloaded ...)" -- .own
+  [main 39acf0ec] 1 file changed, 295 deletions(-)
+  verify: git log --oneline -1 → 39acf0ec
+  status: .own NOT IN INDEX; other dirty files (atlas.n6, untracked) preserved untouched
+  STATUS: COMMITTED (depends_on: phase_1_launchctl_unload — DONE)
+
+--- orpheus ---
+  branch: main
+  $ cd /Users/ghost/core/orpheus && git rm .own
+  rm '.own'
+  $ git commit -m "chore(.own removal — mk1_GRANDFATHER POST_MK2_RECENT ...)" -- .own
+  [main 6a1fc6c] 1 file changed, 245 deletions(-)
+  verify: git log --oneline -1 → 6a1fc6c
+  status: .own NOT IN INDEX; state/dormant_explorer/ untracked preserved
+  STATUS: COMMITTED
+
+--- wraith-wallet ---
+  branch: main
+  $ cd /Users/ghost/core/wraith-wallet && git rm .own
+  rm '.own'
+  $ git commit -m "chore(.own removal — mk1_GRANDFATHER sibling to orpheus ...)"
+  [main 5f09433] 1 file changed, 198 deletions(-)
+  verify: git log --oneline -1 → 5f09433
+  status: clean working tree
+  STATUS: COMMITTED
+
+--- hexa-os ---
+  branch: main
+  $ cd /Users/ghost/core/hexa-os && git rm .own-rules.json
+  rm '.own-rules.json'
+  $ git commit -m "chore(.own-rules.json removal — UNKNOWN schema ...)"
+  [main 5745a1b] 1 file changed, 36 deletions(-)
+  verify: git log --oneline -1 → 5745a1b
+  status: clean working tree
+  STATUS: COMMITTED
+
+==============================================================
+PHASE 3: kept-file verification
+==============================================================
+
+KEPT (mk2_VERIFIED — DO NOT TOUCH):
+  /Users/ghost/core/anima/.own           63595 bytes, May 4 13:29 — INTACT
+  /Users/ghost/core/n6-architecture/.own.readme  17682 bytes, May 4 09:46 — INTACT
+  /Users/ghost/core/n6-architecture/.own.group_p 10283 bytes, May 4 09:46 — INTACT
+
+==============================================================
+GITHUB PUSH PENDING (user authorizes separately)
+==============================================================
+
+Recommended push order:
+  1. nexus       (main / 39acf0ec) — primary launchctl-coupled, push first
+  2. hexa-lang   (diag/orpheus-selftest-sigkill / 7569e423) — NON-MAIN BRANCH; user must verify branch intent
+  3. hexa-os     (main / 5745a1b)
+  4. wraith-wallet (main / 5f09433)
+  5. orpheus     (main / 6a1fc6c)
+
+DO NOT push from this BG. User explicit authorization required.
+
+==============================================================
+END OF LOG
+==============================================================
