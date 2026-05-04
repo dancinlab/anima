@@ -1,0 +1,178 @@
+{
+  "audit_ts": "2026-05-04T19:30+09:00",
+  "auditor": "BG-zeta",
+  "mode": "READ_ONLY",
+  "total_own_files": 110,
+  "top_level_count": 10,
+  "worktree_scoped_count": 102,
+  "backup_count": 2,
+  "by_repo": {
+    "anima": {
+      "top_level_count": 1,
+      "worktree_count": 0,
+      "files": [
+        {"path": "/Users/ghost/core/anima/.own", "size": 63595, "mtime": "2026-05-04T13:29:39", "schema_class": "mk2_VERIFIED", "timestamp_class": "PRE_MK2_BORN_MK2_UPGRADED", "git_first_added": "2026-04-21"}
+      ]
+    },
+    "hexa-lang": {
+      "top_level_count": 1,
+      "worktree_count": 88,
+      "files": [
+        {"path": "/Users/ghost/core/hexa-lang/.own", "size": 3679, "mtime": "2026-05-03T00:24:49", "schema_class": "mk1_GRANDFATHER", "timestamp_class": "PRE_MK2", "git_first_added": "2026-04-26", "exempt": "parser-owner self-host"}
+      ],
+      "worktree_summary": "88 .own*/.own-rules.json snapshots (84 .own + 4 .own-rules.json) under .claude/worktrees/agent-*/, all mk1 raw-format snapshots, mtimes 2026-04-19..2026-04-26"
+    },
+    "hexa-os": {
+      "top_level_count": 1,
+      "worktree_count": 0,
+      "files": [
+        {"path": "/Users/ghost/core/hexa-os/.own-rules.json", "size": 1052, "mtime": "2026-04-19T00:58:06", "schema_class": "UNKNOWN", "timestamp_class": "PRE_MK2", "git_first_added": "2026-04-19", "format": "JSON raw-own/1.0", "exempt": "documented mk2 rewrite preserves L1 JSON convention"}
+      ]
+    },
+    "n6-architecture": {
+      "top_level_count": 2,
+      "backup_count": 2,
+      "worktree_count": 3,
+      "files": [
+        {"path": "/Users/ghost/core/n6-architecture/.own.readme", "size": 17682, "mtime": "2026-05-04T09:46:49", "schema_class": "mk2_VERIFIED", "timestamp_class": "POST_MK2_RECENT", "git_first_added": "2026-05-04", "schema": "n6-architecture/own/readme/2"},
+        {"path": "/Users/ghost/core/n6-architecture/.own.group_p", "size": 10283, "mtime": "2026-05-04T09:46:49", "schema_class": "mk2_VERIFIED", "timestamp_class": "POST_MK2_EARLY", "git_first_added": "2026-05-03", "schema": "n6-architecture/own/group_p/2"}
+      ],
+      "backups": [
+        {"path": "/Users/ghost/core/n6-architecture/raw_archive/2026-05-04T/.own.group_p.bak", "size": 10283, "mtime": "2026-05-04T13:28:17", "class": "BACKUP_BYTE_IDENTICAL"},
+        {"path": "/Users/ghost/core/n6-architecture/raw_archive/2026-05-04T/.own.readme.bak", "size": 17682, "mtime": "2026-05-04T13:28:17", "class": "BACKUP_BYTE_IDENTICAL"}
+      ],
+      "worktree_summary": "3 .own snapshots under .claude/worktrees/agent-*/, all mk1 raw-format, mtimes 2026-04-24"
+    },
+    "nexus": {
+      "top_level_count": 1,
+      "worktree_count": 6,
+      "files": [
+        {"path": "/Users/ghost/core/nexus/.own", "size": 37054, "mtime": "2026-05-04T17:37:26", "schema_class": "mk1_GRANDFATHER", "timestamp_class": "PRE_MK2", "git_first_added": "2026-04-21", "rules_count": 9, "stale_header": "claims '0 rules' in line 1 but actual=9", "operational_dep": "launchctl dev.hexa-lang.atlas-absorb-sweeper LOADED"}
+      ],
+      "worktree_summary": "6 .own snapshots, mostly empty stubs (215 bytes) under .claude/worktrees/agent-*/, mtimes 2026-04-21"
+    },
+    "orpheus": {
+      "top_level_count": 1,
+      "worktree_count": 0,
+      "files": [
+        {"path": "/Users/ghost/core/orpheus/.own", "size": 24296, "mtime": "2026-05-04T18:59:32", "schema_class": "mk1_GRANDFATHER", "timestamp_class": "POST_MK2_RECENT", "git_first_added": "2026-05-04", "frontmatter": "schema_version: project/own/v1, mk: 1 explicit", "review_priority": "TOP_3"}
+      ]
+    },
+    "void": {
+      "top_level_count": 0,
+      "worktree_count": 5,
+      "files": [],
+      "worktree_summary": "5 .own snapshots (169 bytes each, '#!raw inherits hexa-lang/.raw' pattern) under .claude/worktrees/agent-*/, mtimes 2026-04-21"
+    },
+    "wraith-wallet": {
+      "top_level_count": 1,
+      "worktree_count": 0,
+      "files": [
+        {"path": "/Users/ghost/core/wraith-wallet/.own", "size": 21321, "mtime": "2026-05-04T17:11:19", "schema_class": "mk1_GRANDFATHER", "timestamp_class": "POST_MK2_RECENT", "git_first_added": "2026-05-04", "frontmatter": "schema_version: project/own/v1, mk: 1 explicit", "review_priority": "TOP_3"}
+      ]
+    }
+  },
+  "by_schema_class": {
+    "mk2_VERIFIED": [
+      "/Users/ghost/core/anima/.own",
+      "/Users/ghost/core/n6-architecture/.own.readme",
+      "/Users/ghost/core/n6-architecture/.own.group_p"
+    ],
+    "mk2_PARTIAL": [],
+    "mk1_GRANDFATHER": [
+      "/Users/ghost/core/hexa-lang/.own",
+      "/Users/ghost/core/nexus/.own",
+      "/Users/ghost/core/orpheus/.own",
+      "/Users/ghost/core/wraith-wallet/.own"
+    ],
+    "UNKNOWN": [
+      "/Users/ghost/core/hexa-os/.own-rules.json"
+    ],
+    "BACKUP": [
+      "/Users/ghost/core/n6-architecture/raw_archive/2026-05-04T/.own.group_p.bak",
+      "/Users/ghost/core/n6-architecture/raw_archive/2026-05-04T/.own.readme.bak"
+    ],
+    "WORKTREE_LEGACY_SNAPSHOT": "102 files (88 hexa-lang + 3 n6-architecture + 6 nexus + 5 void) — out of mk2 audit scope, defer to worktree GC"
+  },
+  "by_timestamp_class": {
+    "PRE_MK2": [
+      "/Users/ghost/core/hexa-lang/.own",
+      "/Users/ghost/core/hexa-os/.own-rules.json",
+      "/Users/ghost/core/nexus/.own",
+      "/Users/ghost/core/anima/.own (born 2026-04-21, mk2-upgraded 2026-05-02)"
+    ],
+    "POST_MK2_EARLY": [
+      "/Users/ghost/core/n6-architecture/.own.group_p"
+    ],
+    "POST_MK2_RECENT": [
+      "/Users/ghost/core/n6-architecture/.own.readme",
+      "/Users/ghost/core/orpheus/.own",
+      "/Users/ghost/core/wraith-wallet/.own"
+    ]
+  },
+  "review_queue": [
+    {
+      "path": "/Users/ghost/core/orpheus/.own",
+      "schema_class": "mk1_GRANDFATHER",
+      "timestamp_class": "POST_MK2_RECENT",
+      "purpose_summary": "8 own rules covering external-cli-only-access + found-key-encryption-at-write + hexa-only + honest-disclosure + puzzle-target-staleness-check + sweep-tx-no-public-mempool — C1-C7 cpre contract mirror for Bitcoin Puzzle TX work",
+      "cross_links": ["cpre/contracts.ai.md C1-C7", ".roadmap.orpheus", "duo pair with wraith-wallet"],
+      "frontmatter_present": true,
+      "frontmatter_excerpt": "schema_version: project/own/v1, mk: 1, last_updated: 2026-05-04",
+      "mk2_spirit_compliance": "HIGH (structural sections present)",
+      "recommendation": "REVIEW (likely MK2_UPGRADE — flip mk:1->mk:2 after lint pass)"
+    },
+    {
+      "path": "/Users/ghost/core/wraith-wallet/.own",
+      "schema_class": "mk1_GRANDFATHER",
+      "timestamp_class": "POST_MK2_RECENT",
+      "purpose_summary": "8 own rules covering external-cli-only-access + backend-swap-uniformity + broadcast-policy-gate-default-dry-run + separation-of-knowledge + hexa-only — W1-W8 cpre contract mirror for custody/sign/route/off-ramp settlement sibling",
+      "cross_links": ["cpre/contracts.ai.md W1-W8", ".roadmap.wraith-wallet", "duo pair with orpheus"],
+      "frontmatter_present": true,
+      "frontmatter_excerpt": "schema_version: project/own/v1, mk: 1, last_updated: 2026-05-04",
+      "mk2_spirit_compliance": "HIGH (structural sections present)",
+      "recommendation": "REVIEW (likely MK2_UPGRADE — sibling cycle to orpheus)"
+    },
+    {
+      "path": "/Users/ghost/core/n6-architecture/.own.readme",
+      "schema_class": "mk2_VERIFIED",
+      "timestamp_class": "POST_MK2_RECENT",
+      "purpose_summary": "5 README-bound rules (own#14 readme-sealed-required + own#17 public-readme-english-only + own#20/#21 readme-drift + own#29 P0 readme-friendly-toolkit-required) — reconstruction after mk1 .own delete commit 442afa7b",
+      "cross_links": ["docs/n6_architecture_own_readme_mk2_reconstruction_2026_05_04.ai.md", "n6shared/config/absolute_rules.json", ".roadmap.n6_architecture", "sibling .own.group_p"],
+      "frontmatter_present": true,
+      "frontmatter_excerpt": "schema: n6-architecture/own/readme/2 (n6-LOCAL variant, NOT anima project/own/v1)",
+      "mk2_spirit_compliance": "VERY HIGH (frontmatter + ssot + status + omega_cycle)",
+      "recommendation": "KEEP (mk2 via n6-local schema variant — document cross-repo variance)"
+    }
+  ],
+  "delete_candidates": [],
+  "remediate_candidates": [
+    {"path": "/Users/ghost/core/nexus/.own", "remediation": "add mk2 frontmatter additively + fix stale '0 rules' header to '9 rules'", "blocker_strength": "HIGH (operational launchd dep)"},
+    {"path": "/Users/ghost/core/hexa-lang/.own", "remediation": "optional mk2 frontmatter add (parser-owner exemption acceptable)", "blocker_strength": "MEDIUM (self-host fixpoint)"},
+    {"path": "/Users/ghost/core/hexa-os/.own-rules.json", "remediation": "optional _meta.mk:2 JSON field add", "blocker_strength": "MEDIUM (documented L1 JSON exception)"}
+  ],
+  "keep_baseline": [
+    "/Users/ghost/core/anima/.own",
+    "/Users/ghost/core/n6-architecture/.own.readme",
+    "/Users/ghost/core/n6-architecture/.own.group_p"
+  ],
+  "delete_blockers": {
+    "operational_launchd": ["/Users/ghost/core/nexus/.own (dev.hexa-lang.atlas-absorb-sweeper LOADED)"],
+    "tool_lint_dep": ["/Users/ghost/core/hexa-lang/.own (tool/own_self_host_lint.hexa)", "/Users/ghost/core/n6-architecture/.own.readme (own#29 lint)", "/Users/ghost/core/n6-architecture/.own.group_p (own6/own31 lint)"],
+    "doc_marker_ref": ["/Users/ghost/core/hexa-os/.own-rules.json (5 doc/marker refs)"],
+    "cpre_contract_mirror": ["/Users/ghost/core/orpheus/.own (C1-C7)", "/Users/ghost/core/wraith-wallet/.own (W1-W8)"],
+    "spec_canonical_ref": ["/Users/ghost/core/anima/.own (hive/spec/schema/own_v1.schema.yaml SSOT)"]
+  },
+  "active_launchd_plists": [
+    {"label": "dev.hexa-lang.atlas-absorb-sweeper", "status": "LOADED", "wired_to": "/Users/ghost/core/nexus/.own own#1"},
+    {"label": "com.nexus.atlas-meta-scan", "status": "LOADED", "wired_to": "nexus internal (not directly to .own)"}
+  ],
+  "honest_c3": [
+    "mtime/ctime modifiable via touch -t / chflags / copy ops — git first_added used as canonical for top-level; worktree mtimes possibly touch-modified",
+    "n6-architecture uses n6-local schema namespace (n6-architecture/own/readme/2 vs anima project/own/v1) — both mk2-spirit compliant but cannot share validators; cross-repo schema canonicalization OUT OF SCOPE",
+    "frontmatter parse brittleness — JSON (hexa-os) vs raw-format DSL (hexa-lang/nexus no frontmatter) vs YAML-in-comment (anima/orpheus/wraith/n6) — strict YAML/TOML parser would reject 5/7 top-level files; manual classification used",
+    "delete decision irreversibility — all top-level files have cross-link blockers; user policy 'mk2 아니면 폐기' applied conservatively, no top-level deletes recommended; worktree GC (102 files) is proper deletion track but out of mk2 audit scope",
+    "worktree count exclusion — 102 worktree-scoped .own snapshots dominate raw count but operationally inert; reported separately to avoid skewing schema_class breakdown",
+    "launchctl scope — only user-scope launchctl checked; system-scope launchd not audited"
+  ]
+}
