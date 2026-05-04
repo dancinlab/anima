@@ -1,0 +1,107 @@
+{
+  "schema": "anima/state/p9_path_a_retrain_v2_spec/decision_matrix/1",
+  "cycle": "BG-Phi 2026-05-04",
+  "ts_utc": "2026-05-04T_BG_phi_design",
+  "driver": {
+    "verdict_doc": "state/p9_lora_mode1_eval_2026_05_04/verdict.json",
+    "verdict_status": "INFRASTRUCTURE_PASS / SCIENCE_FAIL",
+    "negative_delta_per_bench": {
+      "hellaswag_acc_norm_pp": -1.2,
+      "mmlu_5shot_acc_pp": -4.95,
+      "triviaqa_em_pp": -9.4
+    },
+    "root_cause_hypothesis": "SFT corpus distribution mismatch (anima axis-conditioned recipes vs academic benchmarks); high-LR LoRA over-fitting; per BG-Xi omnibus 11331fe4 catastrophic-forgetting hint"
+  },
+  "rows": [
+    {
+      "id": "S1",
+      "name": "Rehearsal SFT mix",
+      "description": "60% anima + 30% academic distillation (MMLU train + TriviaQA train + Wikipedia subset) + 10% chat-template alignment (OpenOrca + ShareGPT)",
+      "h100_hr": "6-8",
+      "cost_usd_band": "20-25",
+      "implementation_complexity": "LOW",
+      "expected_forgetting_reduction": "HIGH",
+      "literature_basis": "well-established (Chen et al. 2020 rehearsal; standard SFT mixing)",
+      "recommended": true,
+      "rank": 1,
+      "combine_with": "S3"
+    },
+    {
+      "id": "S2",
+      "name": "Replay buffer",
+      "description": "K% pretraining data shards interleaved with new SFT batches",
+      "h100_hr": "10-15",
+      "cost_usd_band": "35-50",
+      "implementation_complexity": "MEDIUM",
+      "expected_forgetting_reduction": "HIGHEST",
+      "literature_basis": "rigorous anti-forgetting; requires pretrain shard access (not in repo)",
+      "recommended": false,
+      "rank": 3,
+      "deferral_reason": "cost++ + pretrain shard access not currently available"
+    },
+    {
+      "id": "S3",
+      "name": "Lower LR / early stop",
+      "description": "lr 1e-4 -> 5e-5 (2x reduction); max_steps 10000 -> 6000; intermediate eval every 2000 steps",
+      "h100_hr": "4-6",
+      "cost_usd_band": "15-20",
+      "implementation_complexity": "LOW",
+      "expected_forgetting_reduction": "MEDIUM",
+      "literature_basis": "standard PEFT anti-forgetting; may underfit anima task alone",
+      "recommended": true,
+      "rank": 1,
+      "combine_with": "S1"
+    },
+    {
+      "id": "S4",
+      "name": "LoRA rank reduction (r=64 -> r=16)",
+      "description": "less expressive adapter; less capacity to overfit anima corpus",
+      "h100_hr": "external",
+      "cost_usd_band": "external",
+      "implementation_complexity": "external",
+      "expected_forgetting_reduction": "MEDIUM",
+      "literature_basis": "rank-as-regularizer; competing track",
+      "recommended": false,
+      "rank": null,
+      "deferral_reason": "already in flight externally — pods nzw0btc8br78yy + 0jetjpvlm51zoy per omnibus 11331fe4; this BG does NOT propose competing r=16 retrain"
+    },
+    {
+      "id": "S5",
+      "name": "Knowledge distillation",
+      "description": "Train against Llama-3.2-3B base soft logits (paradigm D logit-axis); Top-K K=64 KL at T=4",
+      "h100_hr": "8-12",
+      "cost_usd_band": "30-50",
+      "implementation_complexity": "HIGH",
+      "expected_forgetting_reduction": "HIGH",
+      "literature_basis": "Hinton soft-target distillation; theoretically prevents drift",
+      "recommended": false,
+      "rank": 2,
+      "alternative_if": "S1+S3 V2 PARTIAL",
+      "spec_link": "docs/p9_paradigm_d_distill_spec_2026_05_03.md"
+    },
+    {
+      "id": "S6",
+      "name": "Multi-task heads",
+      "description": "Separate LoRA adapters for academic vs anima tasks; route at inference",
+      "h100_hr": "12-20",
+      "cost_usd_band": "50-80",
+      "implementation_complexity": "HIGH",
+      "expected_forgetting_reduction": "HIGHEST",
+      "literature_basis": "MoE-style routing; adds eval framework complexity",
+      "recommended": false,
+      "rank": null,
+      "deferral_reason": "F1_v3 framework assumes single LoRA; defer to v3 cycle if v2 FAIL"
+    }
+  ],
+  "recommended_strategy": "S1+S3",
+  "recommended_rationale": "wansungdo (HIGH on both, well-established literature), cost band $20-30 (lowest of viable strategies), 3.75-7h wall, falsifier-bound F-PA-RETRAIN-v2-1~4. Combines corpus-side fix (rehearsal mix S1) and optimizer-side fix (lower LR + early stop S3); both are independently established. F-PA-RETRAIN-v2-4 guards against anima-axis dilution.",
+  "fallback_chain": ["S1+S3", "S5", "S2"],
+  "non_competing_external": ["S4 already in flight externally per omnibus 11331fe4"],
+  "abort_triggers": [
+    "F-PA-RETRAIN-v2-2 FAIL at step 2000 (>5pp drop on HellaSwag-200) -> early-stop, save adapter as step-2000-aborted",
+    "F-PA-RETRAIN-v2-1 FAIL (training loss diverge / NaN) -> ABORT pod, bug-fix LR or batch size",
+    "BG-Psi Instruct-base eval shows much of v1 delta was template-mismatch (not forgetting) -> re-anchor section 4 before v2 EXEC"
+  ],
+  "exec_gate": "USER_ACK_REQUIRED",
+  "git_ops_this_cycle": "NONE"
+}
