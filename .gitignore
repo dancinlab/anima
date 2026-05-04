@@ -225,3 +225,15 @@ anima/state/
 
 # Experiment / recordings runtime artifacts
 state/experiment/
+
+# tool/transient_py/ — auto-generated python namespace (.own 2/3/4)
+# Spec: docs/anima_dot_own_namespace_spec_2026_05_03.md
+# Policy: *.py here are gitignored (regeneratable from .hexa transpiler).
+#         The directory is preserved via .gitkeep + README.md + .gitignore.
+# Note: REDUNDANT with `**/*.py` ban above — kept here as documentation
+# anchor so future audits find the policy at the namespace declaration site.
+tool/transient_py/*.py
+tool/transient_py/__pycache__/
+!tool/transient_py/.gitkeep
+!tool/transient_py/.gitignore
+!tool/transient_py/README.md
