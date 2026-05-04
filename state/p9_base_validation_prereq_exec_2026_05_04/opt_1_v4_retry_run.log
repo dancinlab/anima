@@ -1,0 +1,45 @@
+[2026-05-04T12:14:29Z] secrets OK (runpod=50b, hf=37b)
+[2026-05-04T12:14:29Z] booting pod=anima-p9-opt-1-v4-retry-2026-05-04 (H100 80GB HBM3 secure on-demand @ $2.99/hr)
+[2026-05-04T12:14:30Z] pod_id=qwrc8bthhysmzw
+[2026-05-04T12:14:30Z] waiting for SSH ready (max 6min)
+[2026-05-04T12:15:11Z] SSH ready at 216.243.220.229:12550 (after 4 probes)
+[2026-05-04T12:15:11Z] setup: ssh mkdir + scp shim v4 + canonical_zero fixture + legacy decoder + run_h100.bash
+[2026-05-04T12:15:46Z] launching v4 exec on H100
+[2026-05-04T12:16:19Z] poll loop start (max 60min, budget cap $3)
+[2026-05-04T12:16:23Z] elapsed=1min cost=$0.09 probe=/workspace/p9_v4_exec/results/COMPLETE.sentinel SENTINEL_FOUND|
+[2026-05-04T12:16:35Z] COMPLETE.sentinel detected — final sync + auto-kill imminent
+Warning: Permanently added '[216.243.220.229]:12550' (ED25519) to the list of known hosts.
+[2026-05-04T12:17:03Z] computing verdict
+[2026-05-04T12:17:03Z] verdict written: f_shim_v4_3=FAIL harvest_via=FAILED wall=2min cost=$0.10
+__P9_OPT_1_V4_EXEC__ f_shim_v4_3=FAIL
+[2026-05-04T12:17:03Z] [trap] killing pod=qwrc8bthhysmzw (auto-kill mandatory)
+{
+  "containerDiskInGb": 80,
+  "costPerHr": 2.99,
+  "createdAt": "2026-05-04 12:14:30.457 +0000 UTC",
+  "desiredStatus": "EXITED",
+  "env": {
+    "HF_TOKEN": "<HF_TOKEN_REDACTED>",
+    "PUBLIC_KEY": "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIKOEWe0SBseZceuCgcVnlNDhEwbU/TIqGeK9FdrpIy9V ghost@ghostui-MacBookAir.local\n\nssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQCf5vOKHhrik9f3yA4IWXXGKPVvDQ8nFP5b1PF7a7YHuXMmZVSOvISYwph7yuCCYyZP8GTDm9MWHZVSR6ArijPxRfAbGDUtENFrHtyA5IGI9GycJkrYokI20neQXR4AGTwk/kVXOdaMaxEREFKhyffzZyrPKUEpZ7ikGXVM9MqWYNFvvy1ioQ7uuqyFq+65phVjojKgg4LWdnTjcxNzNrOgwlZqANx450Nhv3KAGhWSiLZgU6iA4JJ6gsq6t5S9p5n7T6EeypUyuKT4iOH0U5d4jIrssz0QwBncytLvQCvv7IpsapPqhgQzBXcGMZKkLS62UWYDRTeL7PPz3+N2hM4N RunPod-Key-Go"
+  },
+  "gpuCount": 1,
+  "id": "qwrc8bthhysmzw",
+  "imageName": "runpod/pytorch:2.4.0-py3.11-cuda12.4.1-devel-ubuntu22.04",
+  "lastStatusChange": "Exited by user: Mon May 04 2026 12:17:04 GMT+0000 (Coordinated Universal Time)",
+  "memoryInGb": 251,
+  "name": "anima-p9-opt-1-v4-retry-2026-05-04",
+  "ports": [
+    "22/tcp",
+    "8888/http"
+  ],
+  "vcpuCount": 26,
+  "volumeInGb": 50,
+  "volumeMountPath": "/workspace"
+}
+{
+  "deleted": true,
+  "id": "qwrc8bthhysmzw"
+}
+[2026-05-04T12:17:13Z] [trap] post-kill: {"error":"api error: {\"error\":\"pod not found\",\"status\":404}\n (status 404)"}
+Usage:
+  runpodctl pod get <pod-id> [flags]

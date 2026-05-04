@@ -1,0 +1,63 @@
+{
+  "cycle": "post_mk2_recent_upgrade_2026_05_04",
+  "ts_utc": "2026-05-04T12:18:00Z",
+  "bg_lane": "BG-γ' Phase 2",
+  "scope": "REVERSE Option B for orpheus + wraith-wallet — recreate .own with mk2 frontmatter UPGRADE per BG-ζ recommendation + user 'all fix' directive",
+  "operation": "additive_frontmatter_upgrade (mk1 body intact + mk2 frontmatter prepended + sister_repos cross-link block)",
+  "repos": {
+    "orpheus": {
+      "deletion_commit": "6a1fc6c",
+      "recovery_source": "git show 6a1fc6c~1:.own",
+      "recovered_lines": 245,
+      "final_lines": 263,
+      "frontmatter_lines_added": 18,
+      "mk2_frontmatter_added": true,
+      "upgraded_from_marker": "mk1_grandfather",
+      "sister_repos_block_added": true,
+      "original_mk1_rules_preserved": true,
+      "commit_hash": "18ac9cf",
+      "commit_subject": "feat(.own mk2 UPGRADE — reverse Option B per anima dual-SSOT EOL 2026-05-04)",
+      "push_pending": true,
+      "push_cycle": "separate (NO push this cycle)"
+    },
+    "wraith-wallet": {
+      "deletion_commit": "5f09433",
+      "recovery_source": "git show 5f09433~1:.own",
+      "recovered_lines": 198,
+      "final_lines": 216,
+      "frontmatter_lines_added": 18,
+      "mk2_frontmatter_added": true,
+      "upgraded_from_marker": "mk1_grandfather",
+      "sister_repos_block_added": true,
+      "original_mk1_rules_preserved": true,
+      "commit_hash": "34552fe",
+      "commit_subject": "feat(.own mk2 UPGRADE — reverse Option B per anima dual-SSOT EOL 2026-05-04)",
+      "push_pending": true,
+      "push_cycle": "separate (NO push this cycle)"
+    }
+  },
+  "cross_links": {
+    "bg_zeta_recommendation": "39b83cb9 — POST_MK2_RECENT review queue (mk2 spirit HIGH classification)",
+    "option_b_chosen": "6d564feb (anima cycle land) — user accepted Option B deletion",
+    "bg_gamma_reconciliation": "14e7d32b — recovery recipe documented as informational",
+    "bg_gamma_prime_upgrade": "this verdict — UPGRADE path executed (REVERSE Option B)"
+  },
+  "constraints_honored": [
+    "raw#9 hexa-only — no .py introduced",
+    "raw#10 honest disclosure — push_pending flagged explicitly",
+    "raw#15 ω-cycle output as SSOT — verdict.json in state/",
+    "raw#37 transient — no transient .py needed for Phase 2",
+    "raw#71 — original mk1 own list preserved intact (additive frontmatter only)"
+  ],
+  "non_actions": [
+    "NO git push (commit prep only)",
+    "NO chflags",
+    "NO touching anima/.own (mk2 SSOT, KEEP)",
+    "NO touching n6-architecture/.own.* (mk2 SSOT, KEEP)"
+  ],
+  "honest_c3": [
+    "mk2 frontmatter is comment-only metadata; raw_loader skips `#` lines so rule body parses identical to mk1 — UPGRADE is annotation-only, not behavioral",
+    "sister_repos cross-link block lists declared sisters (anima/hive/n6/airgenome/orpheus|wraith) but NOT enforced — informational; lint tooling for cross-link validation pending mk2 ecosystem mature",
+    "push pending — until pushed to remote, sibling tooling cloning fresh repos won't see UPGRADE; this is intentional per task constraint (commit prep only, separate push cycle)"
+  ]
+}
