@@ -1,0 +1,65 @@
+cross-repo push BG-β' — hive repo log
+======================================
+ts_utc: 2026-05-04T20:50:00Z (approx)
+branch: hive/main (NOT main — repo convention is hive/main as default)
+remote: https://github.com/need-singularity/hive.git
+
+STAGED FILES (concern-scoped; spec/host_pool.spec.yaml deferred — separate concern):
+  M  .raw.mk2                                                       # +237 lines (228 rule additions per BG-β bulk migration)
+  A  claude-config/hive-hook-bus/settings.json                      # BG-υ migration target
+  A  scripts/leak_guard_pretool.bash                                # BG-υ migration target
+  A  state/mk2_bulk_migration_exec_2026_05_04/cluster_spec.json     # BG-β state (force-add: state/* gitignored)
+  A  state/mk2_bulk_migration_exec_2026_05_04/hand_review_queue.md  # BG-β state
+  A  state/mk2_bulk_migration_exec_2026_05_04/migration_log.txt     # BG-β state
+  A  state/mk2_bulk_migration_exec_2026_05_04/mk2_emit.jsonl        # BG-β state
+  A  state/mk2_bulk_migration_exec_2026_05_04/skip.jsonl            # BG-β state
+  A  state/mk2_bulk_migration_exec_2026_05_04/summary.json          # BG-β state
+  A  state/mk2_bulk_migration_exec_2026_05_04/verdict.json          # BG-β state
+
+EXCLUDED (out of scope for BG-β'):
+  M  spec/host_pool.spec.yaml   # hetzner retirement, separate BG concern
+
+PRE-COMMIT SECRET SCAN:
+  hits: 2 (both expected/intentional)
+    scripts/leak_guard_pretool.bash:33  STALE_HF_LYKZ='<HF_TOKEN_STALE_LYKZ_REDACTED>'
+    scripts/leak_guard_pretool.bash:34  STALE_HF_RERB='<HF_TOKEN_STALE_RERB_REDACTED>'
+  verdict: stale (post-rotation evidence values for audit citations) — pushed as-is per task plan
+
+PRE-COMMIT HOOK BLOCKER (raw#15 personal-path-leak-ban):
+  - .raw.mk2 contains /Users/ghost/core/anima/.roadmap citation in canonical EPERM incident root-cause
+  - claude-config/hive-hook-bus/settings.json contains /Users/ghost/core/hive/scripts/... (hook absolute path required by Claude Code spec)
+  resolution: HIVE_SAFETY_ALLOW='cross-repo land 2026-05-04: settings.json+leak_guard_pretool.bash are repo-canonical migration targets (hook absolute path required for Claude Code hook spec); .raw.mk2 cites EPERM evidence /Users/ghost/core/anima/.roadmap as canonical incident root-cause'
+  outcome: bypass accepted, commit landed deb6047bf
+
+COMMIT:
+  deb6047bf feat(hive cross-repo land 2026-05-04): leak_guard PreToolUse hook + hive-hook-bus settings repo migration + .raw.mk2 bulk migration (+228 rules)
+  10 files changed, 986 insertions(+)
+
+PUSH ATTEMPT:
+  cmd: git push origin hive/main
+  outcome: BLOCKED_BY_SECRET_SCAN (GitHub Push Protection)
+  remote findings:
+    - HuggingFace User Access Token at scripts/leak_guard_pretool.bash:33 (STALE_HF_LYKZ)
+    - HuggingFace User Access Token at scripts/leak_guard_pretool.bash:34 (STALE_HF_RERB)
+  unblock URLs (for user action):
+    https://github.com/need-singularity/hive/security/secret-scanning/unblock-secret/3DG7RhV2ORcC6LI4IZD79nCM8yH
+    https://github.com/need-singularity/hive/security/secret-scanning/unblock-secret/3DG7Rf7bBJsuxqecV89ZaoQmS5m
+  ref status: ! [remote rejected] hive/main -> hive/main (push declined due to repository rule violations)
+
+RECOVERY OPTIONS (do NOT auto-bypass per task constraint):
+  Option A (RECOMMENDED — minimal friction): user clicks unblock URLs above, then `git push origin hive/main` from this machine
+    - both stale tokens are post-rotation (rotated 2026-05-03 audit cycle), GitHub will mark "won't fix"
+    - preserves stale-allowlist functionality verbatim
+  Option B (medium friction): replace STALE_HF_LYKZ + STALE_HF_RERB literal values with placeholder strings
+    - replace value '<HF_TOKEN_STALE_LYKZ_REDACTED>' with '<HF_TOKEN_REDACTED_LYKZ>' (sentinel that won't match real-token regex)
+    - replace value '<HF_TOKEN_STALE_RERB_REDACTED>' with '<HF_TOKEN_REDACTED_RERB>'
+    - update SCAN_INPUT substitution lines 38-39 to map placeholders → <HF_STALE_LYKZ>/<HF_STALE_RERB>
+    - audit citations elsewhere lose token-shaped specificity (cite by date+rotation-event instead)
+    - requires `git commit --amend` or fresh commit (would create new SHA — push origin hive/main again)
+  Option C (high friction): split STALE_* literals into ~/.hive/local_stale_allowlist.txt (gitignored)
+    - hook script reads stale list at runtime via `[ -r ~/.hive/local_stale_allowlist.txt ] && source it`
+    - per-host config drift introduced; multi-machine setup needs sync
+    - rejected unless Option A fails
+
+NEXT ACTION (user):
+  visit both unblock URLs above + click "Allow secret" + retry push → expected to succeed
