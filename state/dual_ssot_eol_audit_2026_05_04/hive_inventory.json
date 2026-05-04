@@ -1,0 +1,177 @@
+{
+  "audit_ts": "2026-05-04T09:44:44Z",
+  "scope": "hive repo dual-SSOT removal audit (READ-ONLY)",
+  "audit_target": "/Users/ghost/core/hive",
+  "auditor": "BG-alpha",
+  "summary": {
+    "mk1_raw_exists": false,
+    "mk1_own_exists": false,
+    "mk1_ext_exists": false,
+    "mk1_guide_exists": false,
+    "mk1_already_purged_on": "2026-05-02",
+    "mk1_history_archived_to": "need-singularity/raw-archive (private GitHub repo)",
+    "mk2_rule_count": 14,
+    "mk2_parity_pct_by_rule_count": 5.13,
+    "mk2_parity_pct_by_semantic_coverage_estimate": 35.0,
+    "uchg_in_mk1_scope_count": 1,
+    "uchg_total_in_hive_count": 244,
+    "tooling_files_with_mk1_string_refs": 134,
+    "tooling_files_runtime_hard_failure_estimate": 6
+  },
+  "mk1_files": {
+    "raw_path": "/Users/ghost/core/hive/.raw",
+    "raw_exists": false,
+    "raw_size_bytes": 0,
+    "raw_line_count": 0,
+    "raw_chflags": null,
+    "own_path": "/Users/ghost/core/hive/.own",
+    "own_exists": false,
+    "ext_path": "/Users/ghost/core/hive/.ext",
+    "ext_exists": false,
+    "raw_audit_path": "/Users/ghost/core/hive/.raw-audit",
+    "raw_audit_exists": true,
+    "raw_audit_size_bytes": 693632,
+    "raw_audit_line_count": 814,
+    "raw_audit_chflags": "uchg",
+    "raw_english_violations_path": "/Users/ghost/core/hive/.raw-english-violations.jsonl",
+    "raw_english_violations_size_bytes": 94,
+    "raw_exemptions_dir": "/Users/ghost/core/hive/.raw-exemptions",
+    "raw_exemptions_files": [
+      {"path": "/Users/ghost/core/hive/.raw-exemptions/raw_6.list", "size": 786, "consumed_by": ["tool/ai_native_scan.hexa", "self/sbpl/native.sb", "self/native/native_gate.c"], "still_live": true},
+      {"path": "/Users/ghost/core/hive/.raw-exemptions/raw_7.list", "size": 7484, "consumed_by": ["tool/ai_native_scan.hexa"], "still_live": true}
+    ],
+    "raw_archive_dir": "/Users/ghost/core/hive/raw_archive/2026-05-04T",
+    "raw_archive_files": [
+      ".no-lineage-citation-recording-baseline.bak",
+      ".raw.mk2.bak",
+      ".raw.mk2.schema.yaml.bak",
+      ".raw.modes.jsonl.bak",
+      ".roadmap.format.bak",
+      ".roadmap.lint_chain.bak",
+      ".roadmap.raw_ssot.bak",
+      ".roadmap.spec_apex.bak",
+      "bin/", "config/", "core/", "docs/", "modules/", "packages/", "spec/", "state/", "tool/"
+    ]
+  },
+  "mk2_state": {
+    "raw_mk2_path": "/Users/ghost/core/hive/.raw.mk2",
+    "raw_mk2_size_bytes": 42486,
+    "raw_mk2_line_count": 100,
+    "raw_mk2_schema_path": "/Users/ghost/core/hive/.raw.mk2.schema.yaml",
+    "raw_mk2_schema_size_bytes": 8540,
+    "raw_mk2_modes_jsonl_path": "/Users/ghost/core/hive/.raw.modes.jsonl",
+    "raw_mk2_modes_jsonl_size_bytes": 577,
+    "rule_count_mk2": 14,
+    "rule_count_mk1": 273,
+    "parity_pct_rules": 5.13,
+    "rules_in_mk2": [
+      {"id": "arch.001", "title": "core-module-architecture-canonical-pattern", "domain": "arch", "supersedes": ["mk1.raw270", "mk1.raw271", "mk1.raw272", "mk1.raw273"]},
+      {"id": "ai-native.001", "title": "ai-native-convention-foundation", "domain": "ai-native", "supersedes": ["mk1.raw3", "mk1.raw11"]},
+      {"id": "lint.001", "title": "lint-canonical-tool-locations", "domain": "lint", "supersedes": []},
+      {"id": "resource.001", "title": "host-pool-ssot-canonical", "domain": "resource", "supersedes": []},
+      {"id": "resource.002", "title": "ssh-direct-no-docker-reroute", "domain": "resource", "supersedes": []},
+      {"id": "resource.003", "title": "capacity-scoring-algorithm", "domain": "resource", "supersedes": []},
+      {"id": "resource.004", "title": "backpressure-adaptive-limit", "domain": "resource", "supersedes": []},
+      {"id": "resource.005", "title": "capability-probe-contract", "domain": "resource", "supersedes": []},
+      {"id": "resource.006", "title": "dispatch-routing-tier-rr", "domain": "resource", "supersedes": []},
+      {"id": "resource.009", "title": "oauth-slot-rotation-policy", "domain": "resource", "supersedes": []},
+      {"id": "cli.001", "title": "kick-canonical-entry-singleton", "domain": "cli", "supersedes": []},
+      {"id": "cli.002", "title": "kick-meta-bundle-cross-cut-permission", "domain": "cli", "supersedes": []},
+      {"id": "cli.003", "title": "kick-roi-singleton-scoring-axis", "domain": "cli", "supersedes": []},
+      {"id": "cli.004", "title": "kick-roi-strategy-pluggable-registry", "domain": "cli", "supersedes": []}
+    ]
+  },
+  "tooling_refs": {
+    "files_with_mk1_path_string_refs_total": 134,
+    "files_runtime_hard_failure": [
+      {"path": "/Users/ghost/core/hive/tool/meta_lint.hexa", "lines": [47, 133, 134, 142, 143, 144], "ref_type": "read_path_const+error_message", "severity": "high", "note": "treats missing .raw as harness config error"},
+      {"path": "/Users/ghost/core/hive/tool/raw_taxonomy_lint.hexa", "lines": [18, 519, 520], "ref_type": "read_path_const+io_error", "severity": "high"},
+      {"path": "/Users/ghost/core/hive/tool/raw_mk2_inline_loader.hexa", "lines": [208], "ref_type": "read_path_const", "severity": "medium", "note": "tool premise (inline mk2 blocks inside .raw) is moot post-EOL"},
+      {"path": "/Users/ghost/core/hive/tool/feature_completion_test_lint.hexa", "lines": [66, 70], "ref_type": "classify_behavior_change_path", "severity": "medium"},
+      {"path": "/Users/ghost/core/hive/tool/module_lock.hexa", "lines": [62, 80, 282, 283], "ref_type": "lock_eligible_paths_array", "severity": "medium"},
+      {"path": "/Users/ghost/core/hive/tool/raw13_pretooluse_governance_proposal_lint.hexa", "lines": [13, 209, 214], "ref_type": "scan_for_governance_proposals", "severity": "medium"}
+    ],
+    "files_comment_only_refs_sample": [
+      "/Users/ghost/core/hive/tool/raw241_strengthening_2026-04-30_lint.hexa",
+      "/Users/ghost/core/hive/tool/ext_lint.hexa",
+      "/Users/ghost/core/hive/tool/runtime_path_portability_lint.hexa",
+      "/Users/ghost/core/hive/tool/aot_native_build.hexa",
+      "/Users/ghost/core/hive/tool/heavy_compute_mac_audit.hexa"
+    ],
+    "files_test_fixtures_only": [
+      "/Users/ghost/core/hive/tool/raw_paired_lint_atomicity_lint.hexa",
+      "/Users/ghost/core/hive/tool/hive_cli_canonical_lint.hexa"
+    ],
+    "lint_tools_mk2_native": [
+      "/Users/ghost/core/hive/tool/raw_mk2_loader.hexa",
+      "/Users/ghost/core/hive/tool/raw_mk2_cli.hexa",
+      "/Users/ghost/core/hive/tool/raw_mk2_jsonl_cli.hexa",
+      "/Users/ghost/core/hive/tool/raw_mode_op.hexa",
+      "/Users/ghost/core/hive/tool/raw_mode_lint.hexa",
+      "/Users/ghost/core/hive/tool/host_pool_mk2_loader.hexa",
+      "/Users/ghost/core/hive/tool/kick_mk2_loader.hexa",
+      "/Users/ghost/core/hive/tool/kick_roi_mk2_loader.hexa",
+      "/Users/ghost/core/hive/tool/mk2_catalog_lint.hexa"
+    ],
+    "migration_tools": [
+      {"path": "/Users/ghost/core/hive/tool/raw_mk1_to_mk2_migrator.hexa", "status": "STUB", "note": "single-rule scaffold; bulk migration NOT implemented", "live_or_stub": "stub"},
+      {"path": "/Users/ghost/core/hive/tool/raw_mk1_to_mk2_modes_migrator.hexa", "status": "DOES_NOT_EXIST", "note": "only spec doc exists at docs/raw_mk1_to_mk2_modes_mapping.ai.md", "live_or_stub": "absent"}
+    ],
+    "files_writing_to_mk1_raw": []
+  },
+  "uchg_files_in_eol_scope": [
+    {"path": "/Users/ghost/core/hive/.raw-audit", "size_bytes": 693632, "line_count": 814, "owner": "ghost", "remediation": "chflags nouchg before delete"}
+  ],
+  "uchg_files_outside_eol_scope_count": 243,
+  "mk2_to_mk1_xrefs": {
+    "supersedes_count_total_strings": 6,
+    "supersedes_referenced_mk1_rules": ["mk1.raw270", "mk1.raw271", "mk1.raw272", "mk1.raw273", "mk1.raw3", "mk1.raw11"],
+    "derives_from_count_total_strings": 30,
+    "derives_from_unique_mk1_refs": ["mk1.raw3", "mk1.raw9", "mk1.raw11", "mk1.raw36", "mk1.raw40", "mk1.raw42", "mk1.raw92", "mk1.raw95", "mk1.raw105", "mk1.raw162", "mk1.raw173", "mk1.raw200", "mk1.raw240", "mk1.raw261", "mk1.raw262", "mk1.raw269", "mk1.raw270", "mk1.raw271", "mk1.raw272", "mk1.raw273", "mk1.own5"],
+    "related_count_internal_only": 14,
+    "breakage_severity_runtime": "low",
+    "breakage_severity_provenance_audit": "medium",
+    "recommendation": "Option A (leave as historical fingerprint strings) preferred; Option B (rewrite to archive:need-singularity/raw-archive#raw_N URLs) if explicit dead-end pointer wanted"
+  },
+  "sister_repo_pins": [
+    {"repo": "/Users/ghost/core/anima", "ref_file": "/Users/ghost/core/anima/.raw-ref", "size_bytes": 1327, "pinned_hash": "2c67adde9f9068274db8f034f135a9c6e57503bb1e4395a112cd50a0666099ce", "hive_commit_ref": "e3fd4865108d9af98485e7baa06eaaa14a1b8f33", "checked_at": "2026-04-26T11:30:36Z", "status": "DANGLING_post_2026-05-02 (target .raw deleted upstream)", "remediation_options": ["delete .raw-ref", "repoint to need-singularity/raw-archive#main", "convert to .raw.mk2-ref"]}
+  ],
+  "delete_blockers": [
+    {"blocker": "tool/meta_lint.hexa hard-fails on missing .raw with 'harness configuration error' message", "severity": "high", "remediation": "amend tool to recognize EOL legitimately-removed state vs config error"},
+    {"blocker": "tool/raw_taxonomy_lint.hexa walks .raw + .own as mandatory inputs", "severity": "high", "remediation": "retire tool OR migrate to .raw.mk2 input"},
+    {"blocker": "tool/raw_mk2_inline_loader.hexa premise (inline mk2 blocks inside .raw) is moot", "severity": "medium", "remediation": "retire tool"},
+    {"blocker": ".raw-audit is uchg-locked", "severity": "low", "remediation": "chflags nouchg /Users/ghost/core/hive/.raw-audit (no sudo)"},
+    {"blocker": "anima/.raw-ref pinned-hash points at deleted upstream .raw", "severity": "medium", "remediation": "update pin policy in BG-beta scope"},
+    {"blocker": "mk2 has 14 rules vs mk1 273 — bulk migration NOT done", "severity": "high (semantic gap)", "remediation": "either accept gap (per user override of mk1->mk2 mapping doc gate) OR delay EOL until bulk migrator runs"},
+    {"blocker": ".raw-exemptions/raw_*.list still consumed by tool/ai_native_scan.hexa (LIVE config)", "severity": "medium", "remediation": "rename files to non-mk1-numbered scheme; do NOT delete"}
+  ],
+  "recommended_delete_sequence": [
+    "1. Verify backup completeness: raw_archive/2026-05-04T/ + need-singularity/raw-archive private repo cross-check",
+    "2. chflags nouchg /Users/ghost/core/hive/.raw-audit",
+    "3. Decide on .raw-audit fate: move to private archive (preferred) vs delete (loses ledger)",
+    "4. Decide on .raw-english-violations.jsonl fate (1 line, low value)",
+    "5. RENAME .raw-exemptions/raw_*.list to non-mk1-numbered scheme; update tool/ai_native_scan.hexa references",
+    "6. Tooling sweep: amend meta_lint.hexa, raw_taxonomy_lint.hexa, raw_mk2_inline_loader.hexa, feature_completion_test_lint.hexa, module_lock.hexa, raw13_pretooluse_governance_proposal_lint.hexa to handle EOL state",
+    "7. Sister-repo pin update (BG-beta scope): retire/repoint /Users/ghost/core/anima/.raw-ref",
+    "8. mk2 dangling-reference policy: confirm Option A (status quo) vs Option B (archive: URL rewrite)",
+    "9. Doc updates: append EOL note to .raw.mk2 header; update docs/raw_mk1_to_mk2_modes_mapping.ai.md applies_to; emit state/markers/dual_ssot_eol_landed.marker"
+  ],
+  "falsifier_set": [
+    {"id": "F-EOL-HIVE-1", "description": "post-delete find /Users/ghost/core/hive -maxdepth 2 returns 0 mk1 SSOT files (.raw/.own/.ext/.guide already pass; .raw-audit pending decision)"},
+    {"id": "F-EOL-HIVE-2", "description": "post-delete tooling lint passes: hexa run tool/meta_lint.hexa --selftest exit 0 (currently fails)"},
+    {"id": "F-EOL-HIVE-3", "description": "mk2 entries don't carry dangling mk1.rawN supersedes pointers (Option A historical-only OR Option B archive URL — uniform across 14 entries)"},
+    {"id": "F-EOL-HIVE-4", "description": "round-trip clone + hexa run tool/raw_mk2_loader.hexa --selftest exit 0"},
+    {"id": "F-EOL-HIVE-5", "description": "anima/.raw-ref dangling-pin resolved (deleted, repointed, or tombstoned)"},
+    {"id": "F-EOL-HIVE-6", "description": "production-tier files contain 0 occurrences of literal env(\"HIVE\")+\"/.raw\" path string post-cleanup"}
+  ],
+  "honest_c3": [
+    "mk2 has 14 rules at EOL; ~250 mk1 rules NOT migrated. LIVE rules effectively vanished from canonical layer; historical content only in private GitHub archive. This is in tension with the mk1->mk2 mapping doc's stated EOL gate (lint coverage parity + sister-repo adoption).",
+    "chflags uchg unlock is single-file (.raw-audit) but hive has 244 total uchg files; do NOT do blanket nouchg -R.",
+    "Sister-repo pin chain ALREADY broken pre-audit: anima/.raw-ref's pinned-hash 2c67add... is unverifiable post-2026-05-02 deletion. Pre-existing breakage, not audit-caused.",
+    "Migration spec explicitly named the gate (mk2 reaches lint parity + sister-repo adoption); current decision is BEFORE that gate. User instruction overrides; capture as deliberate not inadvertent.",
+    "tool/meta_lint.hexa will hard-fail post-delete with 'harness configuration error' message (treats missing .raw as config error, not legitimate EOL state). Pre-deletion mitigation required.",
+    "tool/raw_mk2_inline_loader.hexa premise is moot post-EOL — its only job was scanning .raw for inline mk2 blocks. Retire or rebrand as no-op.",
+    ".raw-exemptions/raw_*.list contain LIVE allowlists consumed by tool/ai_native_scan.hexa. Naming is mk1-historical but content is current config — rename, do NOT delete.",
+    "raw_archive/2026-05-04T/ is ad-hoc local snapshot (not git-managed). Durable archive is need-singularity/raw-archive private repo; local raw_archive/ should be cleaned per a separate retention policy."
+  ]
+}

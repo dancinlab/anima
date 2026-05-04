@@ -1,0 +1,281 @@
+{
+  "audit_ts": "2026-05-04T18:30:00Z",
+  "scope": "sister repos mk1 + .own removal audit (excluding hive + anima per BG-α/β)",
+  "audit_mode": "READ-ONLY (no mutation)",
+  "auditor": "BG-γ",
+  "discovery_method": "ls /Users/ghost/core/*/ + git rev-parse + .raw* / .own* / raw_archive probe + uchg scan + raw#N grep",
+  "sisters": [
+    {
+      "repo_path": "/Users/ghost/core/n6-architecture",
+      "is_git_repo": true,
+      "group": "A",
+      "raw_ref_exists": false,
+      "raw_audit_dir_files": 0,
+      "raw_archive_dir_files": 11,
+      "own_files": [".own.group_p", ".own.readme"],
+      "own_protected_py": [],
+      "uchg_count": 29,
+      "mk1_raw_n_refs": 24,
+      "delete_blockers": [
+        "29 uchg-locked files (atlas, paper-md, scripts/safety, .git/hooks)",
+        "raw_archive holds .own.*.bak — backups would be lost on raw_archive removal"
+      ]
+    },
+    {
+      "repo_path": "/Users/ghost/core/airgenome",
+      "is_git_repo": true,
+      "group": "A",
+      "raw_ref_exists": false,
+      "raw_audit_dir_files": 0,
+      "raw_archive_dir_files": 2,
+      "own_files": [],
+      "own_protected_py": [],
+      "uchg_count": 9,
+      "mk1_raw_n_refs": 26,
+      "delete_blockers": [
+        "9 uchg-locked files (likely scripts/safety + .git/hooks)",
+        "raw_archive contains .roadmap.airgenome_self_mk2_tuning.bak — referenced by airgenome roadmap chain"
+      ]
+    },
+    {
+      "repo_path": "/Users/ghost/core/papers",
+      "is_git_repo": true,
+      "group": "A",
+      "raw_ref_exists": false,
+      "raw_audit_dir_files": 0,
+      "raw_archive_dir_files": 3,
+      "own_files": [],
+      "own_protected_py": [],
+      "uchg_count": 10,
+      "mk1_raw_n_refs": 23,
+      "delete_blockers": [
+        "10 uchg-locked files",
+        "raw_archive contains raw270 triplet + mk2_redesign + state marker bak"
+      ]
+    },
+    {
+      "repo_path": "/Users/ghost/core/hexa-lang",
+      "is_git_repo": true,
+      "group": "D",
+      "raw_ref_exists": true,
+      "raw_audit_dir_files": 3,
+      "raw_archive_dir_files": 0,
+      "own_files": [".own"],
+      "own_protected_py": [],
+      "uchg_count": 35,
+      "mk1_raw_n_refs": 11064,
+      "raw_subdirs": {
+        ".raw-cache": 40,
+        ".raw-status": 1,
+        ".raw-exemptions": 3
+      },
+      "delete_blockers": [
+        "CRITICAL: hexa-lang owns the raw-format PARSER (self/raw_loader.hexa) consumed by hive + nexus + airgenome — break risk fan-out is total",
+        "CRITICAL: hexa-lang owns tool/raw_sync.hexa, tool/raw_audit.hexa, tool/raw_all.hexa (uchg-locked) — these are the tools every sister .raw-ref calls",
+        "hexa-lang/.own own#1 + own#3 are SELF-HOSTING constraints (parser API stability) — deleting .own breaks dogfood loop",
+        ".raw-cache + .raw-status + .raw-exemptions hold runtime state for sister-repo raw-sync — removal breaks sister sync tooling",
+        "11064 raw#N references — bulk grep cleanup risk",
+        "self/locks/raw20.jsonl + raw22.jsonl uchg-locked = OS-level lockdown of stdlib"
+      ]
+    },
+    {
+      "repo_path": "/Users/ghost/core/qmirror",
+      "is_git_repo": true,
+      "group": "C",
+      "raw_ref_exists": false,
+      "raw_audit_dir_files": 0,
+      "raw_archive_dir_files": 0,
+      "own_files": [],
+      "own_protected_py": [],
+      "uchg_count": 0,
+      "mk1_raw_n_refs": 28,
+      "delete_blockers": [
+        "28 raw#N text references in *.md/*.json — but no actual mk1 SSOT files; refs are doc-only mentions"
+      ]
+    },
+    {
+      "repo_path": "/Users/ghost/core/nexus",
+      "is_git_repo": true,
+      "group": "A",
+      "raw_ref_exists": true,
+      "raw_audit_dir_files": 1,
+      "raw_archive_dir_files": 0,
+      "own_files": [".own"],
+      "own_protected_py": [],
+      "uchg_count": 18,
+      "mk1_raw_n_refs": 222,
+      "delete_blockers": [
+        ".raw-ref pinned-hash 9208e691... locked to hive raw 555fab7b00 — if hive .raw deleted, pin chain breaks",
+        ".own own#1 (atlas-absorb-mandatory) is LIVE enforcement triad bound to launchd sweeper — deleting .own breaks launchd plist contract",
+        "18 uchg-locked files (atlas/blowup/scripts/safety/.git hooks/tools)",
+        ".raw-audit (185KB) is local audit log — deletion is irreversible"
+      ]
+    },
+    {
+      "repo_path": "/Users/ghost/core/anima-agent",
+      "is_git_repo": true,
+      "group": "C",
+      "raw_ref_exists": false,
+      "raw_audit_dir_files": 0,
+      "raw_archive_dir_files": 0,
+      "own_files": [],
+      "own_protected_py": [],
+      "uchg_count": 0,
+      "mk1_raw_n_refs": 7,
+      "delete_blockers": []
+    },
+    {
+      "repo_path": "/Users/ghost/core/orpheus",
+      "is_git_repo": true,
+      "group": "B",
+      "raw_ref_exists": false,
+      "raw_audit_dir_files": 0,
+      "raw_archive_dir_files": 0,
+      "own_files": [".own"],
+      "own_protected_py": [],
+      "uchg_count": 0,
+      "mk1_raw_n_refs": 6,
+      "delete_blockers": [
+        ".own owns LIVE strategy rules (own#12 puzzle lottery, own#7 ai.md cadence) and hard CLI-routing (own#1 nexus, own#2 wraith, own#3 ghost) — orpheus operations depend on these"
+      ]
+    },
+    {
+      "repo_path": "/Users/ghost/core/honesty-monitor",
+      "is_git_repo": true,
+      "group": "C",
+      "raw_ref_exists": false,
+      "raw_audit_dir_files": 0,
+      "raw_archive_dir_files": 0,
+      "own_files": [],
+      "own_protected_py": [],
+      "uchg_count": 0,
+      "mk1_raw_n_refs": 5,
+      "delete_blockers": []
+    },
+    {
+      "repo_path": "/Users/ghost/core/hexa-bio",
+      "is_git_repo": true,
+      "group": "C",
+      "raw_ref_exists": false,
+      "raw_audit_dir_files": 0,
+      "raw_archive_dir_files": 0,
+      "own_files": [],
+      "own_protected_py": [],
+      "uchg_count": 0,
+      "mk1_raw_n_refs": 9,
+      "delete_blockers": []
+    },
+    {
+      "repo_path": "/Users/ghost/core/hexa-os",
+      "is_git_repo": true,
+      "group": "B",
+      "raw_ref_exists": true,
+      "raw_audit_dir_files": 0,
+      "raw_archive_dir_files": 0,
+      "own_files": [".own-rules.json"],
+      "own_protected_py": [],
+      "uchg_count": 1,
+      "mk1_raw_n_refs": 2,
+      "delete_blockers": [
+        ".raw-ref still points at hexa-lang (NOT migrated to hive yet — pin chain is stale)",
+        ".own-rules.json is JSON variant (HX11 inherit=false) — different schema from .own DSL files"
+      ]
+    },
+    {
+      "repo_path": "/Users/ghost/core/wraith-wallet",
+      "is_git_repo": true,
+      "group": "B",
+      "raw_ref_exists": false,
+      "raw_audit_dir_files": 0,
+      "raw_archive_dir_files": 0,
+      "own_files": [".own"],
+      "own_protected_py": [],
+      "uchg_count": 0,
+      "mk1_raw_n_refs": 2,
+      "delete_blockers": [
+        ".own owns LIVE custody/sign/route strategy (own#1 orpheus handoff, own#2 qmirror, own#5 broadcast policy gate, own#7 puzzle) — wallet operations bound"
+      ]
+    },
+    {
+      "repo_path": "/Users/ghost/core/contact",
+      "is_git_repo": true,
+      "group": "C",
+      "raw_ref_exists": false,
+      "raw_audit_dir_files": 0,
+      "raw_archive_dir_files": 0,
+      "own_files": [],
+      "own_protected_py": [],
+      "uchg_count": 1,
+      "mk1_raw_n_refs": 35,
+      "delete_blockers": [
+        "35 raw#N text refs (highest among Group C) — likely doc heavy; verify all are mentions not enforcement"
+      ]
+    },
+    {
+      "repo_path": "/Users/ghost/core/sim-universe",
+      "is_git_repo": true,
+      "group": "C",
+      "raw_ref_exists": false,
+      "raw_audit_dir_files": 0,
+      "raw_archive_dir_files": 0,
+      "own_files": [],
+      "own_protected_py": [],
+      "uchg_count": 0,
+      "mk1_raw_n_refs": 6,
+      "delete_blockers": []
+    },
+    {
+      "repo_path": "/Users/ghost/core/ghost",
+      "is_git_repo": true,
+      "group": "C",
+      "raw_ref_exists": false,
+      "raw_audit_dir_files": 0,
+      "raw_archive_dir_files": 0,
+      "own_files": [],
+      "own_protected_py": [],
+      "uchg_count": 0,
+      "mk1_raw_n_refs": 3,
+      "delete_blockers": []
+    }
+  ],
+  "totals": {
+    "sister_count_inspected": 15,
+    "group_a_count": 4,
+    "group_b_count": 3,
+    "group_c_count": 7,
+    "group_d_count": 1,
+    "total_mk1_files_artifacts": 65,
+    "total_mk1_artifact_breakdown": {
+      "raw_archive_files": 16,
+      "raw_audit_files": 4,
+      "raw_cache_status_exemptions_files": 44,
+      "raw_ref_files": 3,
+      "raw_ref_example_files": 1,
+      "own_top_level_files": 7
+    },
+    "total_uchg_files": 103,
+    "total_raw_n_refs": 11472
+  },
+  "submodule_special": {
+    "ready_recursive": "/Users/ghost/core/anima/ready is a self-recursive anima clone (full anima/ + bench/ + checkpoints/ + core/ + data/ subtrees) — has its own .git/ but NO .raw* artifacts at root; appears to be a frozen anima snapshot from Apr 21 21:17. Falls under BG-η submodule cleanup territory, not BG-γ.",
+    "references_tribev2_broken": "/Users/ghost/core/anima/references/tribev2 is a separate repo (NOT anima clone) with own .git/ — contains ANIMA_INTEGRATION_PROPOSAL_*.md docs only, no mk1 SSOT artifacts. Marked broken per memory submodule plan but no raw/own footprint."
+  },
+  "delete_blockers_overall": [
+    "hexa-lang is the PARSER OWNER for raw-format — every sister .raw-ref pin-chain depends on it; deleting hexa-lang/.raw* + tool/raw_*.hexa breaks all sister sync tooling fan-out (hive+nexus+airgenome+anima)",
+    "n6-architecture/.own.group_p + .own.readme hold LIVE enforcement (own#6 paper-3pack-verify, own#14 readme-sealed, own#17 english-only, own#21 nexus6-tests-count, own#29 friendly-toolkit) — n6 paper governance dies on .own removal",
+    "nexus/.own own#1 (atlas-absorb-mandatory) is wired into launchd plist (dev.hexa-lang.atlas-absorb-sweeper.plist, StartInterval=600s) — .own removal orphans launchd job",
+    "orpheus + wraith-wallet .own files hold internal CLI routing contracts (orpheus→qmirror, orpheus→wraith, wraith→ghost) — operational break",
+    "hexa-os/.raw-ref still points at hexa-lang (NOT migrated to hive) — pin chain is stale; cleanup must coordinate with hexa-lang shutdown",
+    "uchg files in scripts/safety/ + .git/hooks/ are commit-msg scan + staged-scan + git pre-commit hooks — chflags noschg required across 4 sisters (n6/airgenome/papers/nexus + hexa-lang) for scripted unlock"
+  ],
+  "honest_c3": [
+    "raw#N text references in sister docs (qmirror=28, contact=35) may be commentary about hive raw rules, NOT actual mk1 SSOT — bulk grep cleanup will produce false positives; classification requires per-file inspection",
+    "hexa-lang stdlib (self/stdlib/hxc_a*.hexa) and self/raw_loader.hexa are the FORMAT PARSER consumed cross-repo — these are NOT mk1 SSOT but are NAMED 'raw' (raw_loader, hxc_a*); deletion misclassification risk if treated as mk1",
+    "hexa-lang/.own own#1 + own#3 are SELF-HOSTING dogfood rules — even after mk1 EOL elsewhere, hexa-lang must retain .own to prove its own parser; .own is NOT mk1-only artifact",
+    ".gitmodules absent across all sisters — submodule registration uses git internal trees only (anima/ready, anima/references/tribev2 are git-trees within anima); BG-η submodule plan refers to anima-internal not sister-cross",
+    "n6-architecture/raw_archive contains .own.*.bak backups of own.group_p / own.readme retired files — those are AUDIT TRAIL of mk1 EOL evidence; deleting raw_archive destroys evidence chain (irreversible)",
+    "hexa-lang .raw-cache/.raw-status/.raw-exemptions hold RUNTIME state (per-rule entry files, ssot.sha hash, exemption lists) — these are 'computed cache' not 'declared SSOT'; cache regenerable but exemptions list is policy data",
+    "no .github/workflows/ scanned (skipped per scope) — CI/CD references to .raw paths could exist in any sister and silently break post-delete",
+    "anima/ready has its own .git/ (frozen Apr 21) — if anima mk1 was already retired in main anima but ready/ is pre-EOL snapshot, ready/anima/.raw* could exist (not probed at depth)"
+  ]
+}
