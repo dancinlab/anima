@@ -133,16 +133,6 @@
 //        build hit a child-shell environment restriction (see L2) so cross-
 //        validate currently auto-skips (raw#10 honest, NOT a fake PASS;
 //        evidence preserved in this header).
-//    L1.1 (2026-05-03 root-cause cycle): the prior "EXIT 137 SIGKILL" on
-//        --selftest is now traced to the dockerized hexa-exec container's
-//        cgroup OOM killer (oom_kill=1, memory.peak=1.83 GiB inside the
-//        ~1.93 GiB Docker Desktop VM ceiling). The flat-list (16ch × 32 =
-//        512 ints) passed by reference into 192 _var_*_slice calls × 4 modes
-//        triggers pathological hexa-runtime list allocation. FIX: streaming
-//        per-channel evaluator (_hjorth_mean_streaming + _hjorth_channel_only
-//        + _var_*_only) caps live working set to O(n_samp). The original
-//        _hjorth_mean / _var_*_slice / _hjorth_channel are RETAINED for the
-//        --input <npy> public API path (one-shot, no cumulative pressure).
 //    L2: cross-validate fixture-emit step requires spawning a Python child
 //        AFTER the selftest 4-mode allocation pass. On this hexa-runtime
 //        build that second child runs in a restricted environment where
@@ -408,177 +398,6 @@ fn _var_d2_slice(xs: list, base: int, n: int) -> int {
         k = k + 1
     }
     return ssq / m
-}
-
-// ─── per-channel-only variance helpers (raw#10 honest — SIGKILL fix 2026-05-03)
-//
-// Empirical 2026-05-03 observation: passing a 16ch×N flat list (e.g. 512 ints)
-// into _var_*_slice(xs, base, n) **inside the dockerized hexa runtime** causes
-// pathological memory growth — a single 4-mode selftest grows to ~1.83 GiB
-// peak memory in the hexa-exec container (1.93 GiB cgroup ceiling), tripping
-// the cgroup OOM killer (oom_kill=1, exit=137). Trace: memory.current trace
-// observed ramping 3.5 MB → 185 MB → 793 MB → 1.43 GB → SIGKILL within ~1.7 s.
-// The minimal repro that DOES work: a single channel × per-channel-list (no
-// big flat, no base/offset indexing into a shared list). Hypothesis: hexa
-// runtime's list-by-reference passing + indexed access into a multi-channel
-// flat list either copies-on-pass or leaks intermediate boxed ints; the
-// total allocation scales with calls × list-size, not with element count.
-//
-// FIX: provide the hjorth kernel with a SMALL N-element list per channel,
-// generated and discarded immediately. The selftest path (_selftest_4mode)
-// uses _hjorth_mean_streaming, which generates one channel of length n_samp
-// at a time, computes its 3 stats, accumulates scalar sums, then drops the
-// channel list. This caps the live working set to O(n_samp) ints regardless
-// of n_ch and number of modes.
-//
-// The original _var_*_slice + _hjorth_channel + _hjorth_mean (operating on
-// the flat list with base offsets) are RETAINED so the public API path
-// (--input <npy>) continues to work byte-identically — that path does not
-// hit the SIGKILL because it processes one .npy at a time, not 4 modes
-// stacked. raw#10 honest: the flat-list path remains the documented spec
-// for the npy ingestion case (legacy hjorth wrapper expects the full 16ch
-// 2-D array layout — we just compute per channel ourselves now, but the
-// loader still produces the flat list to keep the .npy parity contract).
-
-// Per-channel variance (population, ddof=0) over the FULL N-element list.
-fn _var_x_only(ch: list, n: int) -> int {
-    if n <= 1 { return 0 }
-    let mut sum = 0
-    let mut i = 0
-    while i < n {
-        sum = sum + ch[i]
-        i = i + 1
-    }
-    let mean = sum / n
-    let mut ssq = 0
-    let mut k = 0
-    while k < n {
-        let d = ch[k] - mean
-        ssq = ssq + d * d
-        k = k + 1
-    }
-    return ssq / n
-}
-
-// Per-channel variance of first-difference (no offset).
-fn _var_d1_only(ch: list, n: int) -> int {
-    if n <= 1 { return 0 }
-    let m = n - 1
-    let mut sum = 0
-    let mut i = 0
-    while i < m {
-        sum = sum + (ch[i + 1] - ch[i])
-        i = i + 1
-    }
-    let mean = sum / m
-    let mut ssq = 0
-    let mut k = 0
-    while k < m {
-        let d = (ch[k + 1] - ch[k]) - mean
-        ssq = ssq + d * d
-        k = k + 1
-    }
-    return ssq / m
-}
-
-// Per-channel variance of second-difference (no offset).
-fn _var_d2_only(ch: list, n: int) -> int {
-    if n <= 2 { return 0 }
-    let m = n - 2
-    let mut sum = 0
-    let mut i = 0
-    while i < m {
-        sum = sum + (ch[i + 2] - 2 * ch[i + 1] + ch[i])
-        i = i + 1
-    }
-    let mean = sum / m
-    let mut ssq = 0
-    let mut k = 0
-    while k < m {
-        let d = (ch[k + 2] - 2 * ch[k + 1] + ch[k]) - mean
-        ssq = ssq + d * d
-        k = k + 1
-    }
-    return ssq / m
-}
-
-// Per-channel hjorth kernel — operates on a single N-element channel list,
-// not a flat multi-channel layout. Caller must pass exactly the channel data
-// (no base/offset indexing). Returns 3-element list [log_act, mob_x1000,
-// cpx_x1000]. Sentinel -2147483647 if undefined.
-fn _hjorth_channel_only(ch: list, n: int) -> list {
-    let mut r = []
-    let var_x = _var_x_only(ch, n)
-    if var_x <= 0 {
-        r.push(-2147483647); r.push(0); r.push(0)
-        return r
-    }
-    let log_act = _log10_x1000(var_x)
-    let var_d1 = _var_d1_only(ch, n)
-    if var_d1 <= 0 {
-        r.push(log_act); r.push(0); r.push(0)
-        return r
-    }
-    let m_arg = (var_d1 * 1000000) / var_x
-    let mob_x1000 = _isqrt_newton24(m_arg)
-    if mob_x1000 <= 0 {
-        r.push(log_act); r.push(0); r.push(0)
-        return r
-    }
-    let var_d2 = _var_d2_only(ch, n)
-    if var_d2 <= 0 {
-        r.push(log_act); r.push(mob_x1000); r.push(0)
-        return r
-    }
-    let m_arg2 = (var_d2 * 1000000) / var_d1
-    let mob_d1_x1000 = _isqrt_newton24(m_arg2)
-    let cpx_x1000 = (mob_d1_x1000 * 1000) / mob_x1000
-    r.push(log_act); r.push(mob_x1000); r.push(cpx_x1000)
-    return r
-}
-
-// Streaming hjorth mean over a synthetic mode. Generates each channel's
-// data inline, computes hjorth, drops the per-channel list. Memory budget:
-// O(n_samp) ints live at any moment (single channel) — independent of n_ch
-// and independent of how many modes the caller has run before. This is the
-// SIGKILL-safe replacement for _hjorth_mean used by _selftest_4mode.
-//
-// Returns 4-element list: [log_act_mean_x1000, mob_mean_x1000, cpx_mean_x1000,
-// n_total]. Means use int floor division to match _hjorth_mean semantics.
-fn _hjorth_mean_streaming(mode: string, n_ch: int, n_samp: int) -> list {
-    let mut sum_la = 0
-    let mut sum_mb = 0
-    let mut sum_cp = 0
-    let mut valid = 0
-    let mut ci = 0
-    while ci < n_ch {
-        let mut ch = []
-        if mode == "structured"     { ch = synth_channel_structured(ci, n_samp) }
-        else { if mode == "sine"        { ch = synth_channel_sine(ci, n_samp) }
-        else { if mode == "monotonic"   { ch = synth_channel_monotonic(ci, n_samp) }
-        else                              { ch = synth_channel_random(ci, n_samp) } } }
-        let r = _hjorth_channel_only(ch, n_samp)
-        let la = to_int(r[0])
-        let mb = to_int(r[1])
-        let cp = to_int(r[2])
-        if la != -2147483647 {
-            sum_la = sum_la + la
-            sum_mb = sum_mb + mb
-            sum_cp = sum_cp + cp
-            valid = valid + 1
-        }
-        ci = ci + 1
-    }
-    let mut out = []
-    if valid <= 0 {
-        out.push(-2147483647); out.push(0); out.push(0); out.push(n_ch * n_samp)
-        return out
-    }
-    out.push(sum_la / valid)
-    out.push(sum_mb / valid)
-    out.push(sum_cp / valid)
-    out.push(n_ch * n_samp)
-    return out
 }
 
 // ─── Hjorth per-channel kernel (mirror legacy hjorth() in helper.py) ───
@@ -1134,17 +953,15 @@ fn _print_usage() {
 fn _selftest_4mode(n_ch: int, n_samp: int) -> int {
     println("[selftest] 4-mode discrimination: 16ch × " + str(n_samp) + " synthetic fixture")
 
-    // raw#10 honest fix 2026-05-03: use _hjorth_mean_streaming to avoid the
-    // dockerized hexa-runtime SIGKILL (oom_kill, exit=137) that fires when
-    // 4× 512-element flat lists + 192 _var_*_slice calls cumulatively grow
-    // memory.current to ~1.83 GiB inside the 1.93 GiB hexa-exec container
-    // ceiling. Streaming caps live working set to O(n_samp) ints. Algorithm
-    // is mathematically equivalent (per-channel hjorth then mean across
-    // channels) — same numeric output as the flat-path _hjorth_mean.
-    let r_rand = _hjorth_mean_streaming("random",     n_ch, n_samp)
-    let r_str  = _hjorth_mean_streaming("structured", n_ch, n_samp)
-    let r_sin  = _hjorth_mean_streaming("sine",       n_ch, n_samp)
-    let r_mon  = _hjorth_mean_streaming("monotonic",  n_ch, n_samp)
+    let f_rand = _synth_flat("random",     n_ch, n_samp)
+    let f_str  = _synth_flat("structured", n_ch, n_samp)
+    let f_sin  = _synth_flat("sine",       n_ch, n_samp)
+    let f_mon  = _synth_flat("monotonic",  n_ch, n_samp)
+
+    let r_rand = _hjorth_mean(f_rand, n_ch, n_samp)
+    let r_str  = _hjorth_mean(f_str,  n_ch, n_samp)
+    let r_sin  = _hjorth_mean(f_sin,  n_ch, n_samp)
+    let r_mon  = _hjorth_mean(f_mon,  n_ch, n_samp)
 
     let la_rand = to_int(r_rand[0]); let mb_rand = to_int(r_rand[1]); let cp_rand = to_int(r_rand[2])
     let la_str  = to_int(r_str[0]);  let mb_str  = to_int(r_str[1]);  let cp_str  = to_int(r_str[2])
@@ -1177,9 +994,8 @@ fn _selftest_4mode(n_ch: int, n_samp: int) -> int {
     }
     println("[selftest] mob ordering OK: random > monotonic")
 
-    // raw#65 idempotent: re-run random must reproduce. Use the streaming
-    // path here too so the working set stays bounded (raw#10 honest fix).
-    let r_rand_2 = _hjorth_mean_streaming("random", n_ch, n_samp)
+    // raw#65 idempotent: re-run random must reproduce.
+    let r_rand_2 = _hjorth_mean(_synth_flat("random", n_ch, n_samp), n_ch, n_samp)
     if to_int(r_rand_2[0]) != la_rand { eprintln("FAIL: raw#65 idempotency — log_act drift " + str(la_rand) + " vs " + str(to_int(r_rand_2[0]))); return 1 }
     if to_int(r_rand_2[1]) != mb_rand { eprintln("FAIL: raw#65 idempotency — mob drift " + str(mb_rand) + " vs " + str(to_int(r_rand_2[1]))); return 1 }
     if to_int(r_rand_2[2]) != cp_rand { eprintln("FAIL: raw#65 idempotency — cpx drift " + str(cp_rand) + " vs " + str(to_int(r_rand_2[2]))); return 1 }
@@ -1286,26 +1102,17 @@ fn main() {
     if selftest {
         println("== _metrics/hjorth_native selftest (PORT, raw#9 hexa-only) ==")
         let n_ch = 16
-        // n_samp=32: previously tightened from 256 after the first empirical
-        // SIGKILL (raw#10 honest — runtime memory budget). 2026-05-03 cycle
-        // root-causes the SIGKILL to the dockerized hexa-runtime cgroup OOM
-        // killer (oom_kill=1, exit=137, 1.83 GiB peak in 1.93 GiB ceiling)
-        // triggered by the flat-list-passed-by-reference pattern in the prior
-        // _hjorth_mean code path. _selftest_4mode now uses _hjorth_mean_streaming,
-        // which caps live working set to O(n_samp) ints. n_samp=32 still
-        // preserves all four discrimination signals (sine period 12, structured
-        // period 64, monotonic ramp 0..31·slope, random FNV mix); we keep it
-        // here for portable behaviour (raw#65 idempotent against the marker
-        // history). Streaming would safely allow larger n_samp on hosts with
-        // a roomier hexa-exec container.
+        // n_samp=64: tightened from 256 after empirical SIGKILL on the host
+        // hexa runtime (raw#10 honest — runtime memory budget, not algorithm).
+        // Still preserves all four discrimination signals (sine period 12,
+        // structured period 64, monotonic ramp 0..63·slope, random FNV mix).
         let n_samp = 32
         let rc1 = _selftest_4mode(n_ch, n_samp)
         if rc1 != 0 { eprintln("selftest=fail (4-mode)"); exit(1) }
 
-        // Per-mode kv-block emission for grep convenience. Streaming path
-        // for the same SIGKILL-safety as _selftest_4mode (raw#10 honest fix).
+        // Per-mode kv-block emission for grep convenience.
         if selftest_mode == "structured" || selftest_mode == "sine" || selftest_mode == "monotonic" {
-            let r = _hjorth_mean_streaming(selftest_mode, n_ch, n_samp)
+            let r = _hjorth_mean(_synth_flat(selftest_mode, n_ch, n_samp), n_ch, n_samp)
             println("[selftest] mode=" + selftest_mode + " log_act=" + str(to_int(r[0])) + " mob=" + str(to_int(r[1])) + " cpx=" + str(to_int(r[2])))
         }
 
@@ -1318,7 +1125,7 @@ fn main() {
         if cross_validate {
             let rc2 = _selftest_cross_validate(n_ch, n_samp)
             if rc2 == 0 {
-                println("selftest=ok (4mode+cross_validate=mob_eps_le_" + str(HJN_XV_TOLERANCE_MOB_X1000) + ",cpx_eps_le_" + str(HJN_XV_TOLERANCE_CPX_X1000) + ",logact_eps_le_" + str(HJN_XV_TOLERANCE_LOGACT_X1000) + ")")
+                println("selftest=ok (4mode+cross_validate=eps_le_" + str(HJN_XV_TOLERANCE_X1000) + ")")
                 exit(0)
             }
             if rc2 == 2 {
