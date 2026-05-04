@@ -1,0 +1,70 @@
+// tool/p9_lora_mode1_instruct_eval_h100_orchestrator.hexa — BG-Ψ Mode 1 Instruct re-eval
+//
+// PURPOSE
+//   Test template-mismatch hypothesis from BG-Ρ honest C3 #2 (commit fa7db7bc):
+//     "Adapter base mismatch: HF adapter_config.json declares base = meta-llama/Llama-3.2-3B-Instruct,
+//      but we composed onto meta-llama/Llama-3.2-3B (non-Instruct). LoRA weights were trained against
+//      Instruct's chat-templated representations; applying them to base may amplify the apparent
+//      degradation due to template-mismatch artifacts."
+//
+//   Re-eval Mode 1 with Llama-3.2-3B-Instruct as base + LoRA, AND re-measure Llama-3.2-3B-Instruct
+//   baseline anchors on the same 3 benchmarks. If degradation magnitude shrinks significantly,
+//   BG-Ρ result is partly attributable to template mismatch (not pure catastrophic forgetting).
+//
+//   Hypothesis verdict mapping:
+//     TEMPLATE_MISMATCH_CONFIRMED — degradation magnitude shrinks ≥50% on ≥2/3 benchmarks
+//     FORGETTING_INDEPENDENT     — degradation persists within 25% of BG-Ρ deltas
+//     UNEXPECTED                 — degradation increases under Instruct anchor
+//
+// raw#9   hexa-only Mac:        this file dispatches an emitted bash helper (Mac-side bash grandfathered
+//                                per sibling pattern). NO Mac-side .py.
+// raw#10  honest C3:            ≥3 caveats baked into emitted verdict.json on PASS/PARTIAL.
+// raw#15  repo-relative paths:  Mac: state/p9_lora_mode1_instruct_eval_2026_05_04/...
+//                                H100: /workspace/p9_eval/... (transient).
+// raw#37  transient-py-on-Linux: H100 runs lm_eval (transformers + torch + peft).
+// raw#71  falsifier-bound:      c3+c4 thresholds fixed pre-launch (per BG-Ρ amendment); same as BG-Ρ.
+//
+// SAFETY CAPS
+//   max_wall_minutes    = 60   (hard pod kill at this point)
+//   budget_target_usd   = 2.50
+//   budget_hard_cap_usd = 3.50
+//   sentinel_kill_lag_s = 90
+
+let SCHEMA              = "anima/p9_lora_mode1_instruct_eval/orchestrator/1"
+let CYCLE_TAG           = "p9_lora_mode1_instruct_eval_2026_05_04"
+let STATE_DIR           = "/Users/ghost/core/anima/state/p9_lora_mode1_instruct_eval_2026_05_04"
+let EXEC_BASH_PATH      = "/Users/ghost/core/anima/state/p9_lora_mode1_instruct_eval_2026_05_04/exec.bash"
+let RUN_H100_PATH       = "/Users/ghost/core/anima/state/p9_lora_mode1_instruct_eval_2026_05_04/run_h100.bash"
+let POD_INFO_PATH       = "/Users/ghost/core/anima/state/p9_lora_mode1_instruct_eval_2026_05_04/pod_info.json"
+let VERDICT_PATH        = "/Users/ghost/core/anima/state/p9_lora_mode1_instruct_eval_2026_05_04/verdict.json"
+let RUN_LOG_PATH        = "/Users/ghost/core/anima/state/p9_lora_mode1_instruct_eval_2026_05_04/run.log"
+let HEARTBEAT_PATH      = "/Users/ghost/core/anima/state/p9_lora_mode1_instruct_eval_2026_05_04/heartbeat.txt"
+let RESULTS_DIR         = "/Users/ghost/core/anima/state/p9_lora_mode1_instruct_eval_2026_05_04/results"
+let SSH_KEY             = "/Users/ghost/.runpod/ssh/RunPod-Key-Go"
+let RUNPODCTL           = "/opt/homebrew/bin/runpodctl"
+
+let MAX_WALL_MIN        = 60
+let BUDGET_TARGET_USD   = 2.50
+let BUDGET_HARD_CAP_USD = 3.50
+let OD_RATE_USD         = 2.99
+
+// LoRA target — same step-8k pin as BG-Ρ
+let HF_LORA_REPO        = "need-singularity/p9-llama32-lora-stage1"
+let HF_LORA_REVISION    = "5a9b4584"
+// CRITICAL: Instruct base, NOT non-Instruct (the difference vs BG-Ρ)
+let HF_BASE_REPO        = "meta-llama/Llama-3.2-3B-Instruct"
+
+// BG-Ρ deltas (non-Instruct base) for hypothesis comparison
+let BG_RHO_DELTA_HELLASWAG_PP = -1.2
+let BG_RHO_DELTA_MMLU_PP      = -4.95
+let BG_RHO_DELTA_TRIVIAQA_PP  = -9.4
+
+fn main(args: list) {
+    print("[orchestrator] " + SCHEMA + " cycle=" + CYCLE_TAG)
+    print("[orchestrator] base=" + HF_BASE_REPO + " lora=" + HF_LORA_REPO + "@" + HF_LORA_REVISION)
+    print("[orchestrator] caps: wall=" + to_string(MAX_WALL_MIN) + "min cost_hard=$" + to_string(BUDGET_HARD_CAP_USD))
+    print("[orchestrator] hypothesis: template-mismatch test — re-eval LoRA + Instruct anchors vs BG-Ρ deltas")
+    print("[orchestrator] BG-Ρ deltas (non-Instruct): hs=" + to_string(BG_RHO_DELTA_HELLASWAG_PP) + "pp mmlu=" + to_string(BG_RHO_DELTA_MMLU_PP) + "pp triviaqa=" + to_string(BG_RHO_DELTA_TRIVIAQA_PP) + "pp")
+    print("[orchestrator] note: bash sibling exec.bash + run_h100.bash co-emitted; this hexa is an entry stub.")
+    return 0
+}
