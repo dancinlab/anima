@@ -60,6 +60,7 @@ while true; do
 
     if echo "$PROBE" | grep -q "ALIVE=0" && echo "$PROBE" | grep -q "DONE=0"; then
         echo "[$(date -u +%FT%TZ)] train pid GONE without DONE — likely error; downloading log + terminating" >> $LOG
+        mkdir -p /Users/ghost/core/anima/state/p9_path_a_llama_lora_2026_05_03/artifacts
         scp -i $SSH_KEY -o StrictHostKeyChecking=no -P $SSH_PORT \
             "root@$SSH_HOST:/workspace/p9_path_a_llama_lora/train.log" \
             /Users/ghost/core/anima/state/p9_path_a_llama_lora_2026_05_03/artifacts/train.log >> $LOG 2>&1 || true
