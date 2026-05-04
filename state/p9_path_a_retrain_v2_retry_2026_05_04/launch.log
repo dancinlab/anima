@@ -1,0 +1,58 @@
+[2026-05-04T12:11:46Z] secrets OK (runpod=50b, hf=37b)
+[2026-05-04T12:11:46Z] slice A OK (30000 lines)
+[2026-05-04T12:11:46Z] booting pod=anima-p9-pathA-retrain-v2-RETRY-2026-05-04 (H100 80GB HBM3 SECURE on-demand @ $2.99/hr; vol=100GB; disk=80GB)
+[2026-05-04T12:11:47Z] pod_id=nxehc0tdpf88ni
+[2026-05-04T12:11:47Z] waiting for SSH ready (max 6min)
+[2026-05-04T12:12:28Z] SSH ready at 64.247.201.34:13738 (after 4 probes)
+[2026-05-04T12:12:28Z] setup: shipping slice A (76MB) + transient py to H100
+Warning: Permanently added '[64.247.201.34]:13738' (ED25519) to the list of known hosts.
+Warning: Permanently added '[64.247.201.34]:13738' (ED25519) to the list of known hosts.
+Warning: Permanently added '[64.247.201.34]:13738' (ED25519) to the list of known hosts.
+Warning: Permanently added '[64.247.201.34]:13738' (ED25519) to the list of known hosts.
+Warning: Permanently added '[64.247.201.34]:13738' (ED25519) to the list of known hosts.
+Warning: Permanently added '[64.247.201.34]:13738' (ED25519) to the list of known hosts.
+[2026-05-04T12:13:08Z] launching H100 retrain v2 pipeline (corpus mix + train + intermediate eval + final eval)
+Warning: Permanently added '[64.247.201.34]:13738' (ED25519) to the list of known hosts.
+211
+[2026-05-04T12:15:36Z] poll loop start (max 720min, budget cap $35)
+[2026-05-04T12:15:40Z] elapsed=3min cost=$0.19 probe=/workspace/p9_retrain_v2/results/COMPLETE.sentinel SENTINEL_FOUND [FATAL] corpus mix failed|
+[2026-05-04T12:15:57Z] COMPLETE.sentinel detected — final sync FIRST then auto-kill (lesson L6)
+Warning: Permanently added '[64.247.201.34]:13738' (ED25519) to the list of known hosts.
+Warning: Permanently added '[64.247.201.34]:13738' (ED25519) to the list of known hosts.
+Warning: Permanently added '[64.247.201.34]:13738' (ED25519) to the list of known hosts.
+scp: /workspace/p9_retrain_v2/ckpts/final: No such file or directory
+[2026-05-04T12:16:18Z] computing verdict
+[2026-05-04T12:16:18Z] verdict=V2_FAIL_FORGETTING_PERSISTS F1=UNKNOWN F2=UNKNOWN F3=FAIL (CRV1=FAIL, CRV2=FAIL) vs_v1=UNDETERMINED wall=4min cost=$0.20
+[2026-05-04T12:16:18Z] hs: norm=null Δ=nullpp parity=MISSING improve=MISSING   mmlu: acc=null Δ=nullpp parity=MISSING improve=MISSING   tq: em=null Δ=nullpp parity=MISSING improve=MISSING
+__P9_PATH_A_RETRAIN_V2__ V2_FAIL_FORGETTING_PERSISTS
+[2026-05-04T12:16:18Z] [trap] killing pod=nxehc0tdpf88ni (auto-kill mandatory)
+{
+  "containerDiskInGb": 80,
+  "costPerHr": 2.99,
+  "createdAt": "2026-05-04 12:11:46.973 +0000 UTC",
+  "desiredStatus": "EXITED",
+  "env": {
+    "HF_TOKEN": "<REDACTED>",
+    "PUBLIC_KEY": "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIKOEWe0SBseZceuCgcVnlNDhEwbU/TIqGeK9FdrpIy9V ghost@ghostui-MacBookAir.local\n\nssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQCf5vOKHhrik9f3yA4IWXXGKPVvDQ8nFP5b1PF7a7YHuXMmZVSOvISYwph7yuCCYyZP8GTDm9MWHZVSR6ArijPxRfAbGDUtENFrHtyA5IGI9GycJkrYokI20neQXR4AGTwk/kVXOdaMaxEREFKhyffzZyrPKUEpZ7ikGXVM9MqWYNFvvy1ioQ7uuqyFq+65phVjojKgg4LWdnTjcxNzNrOgwlZqANx450Nhv3KAGhWSiLZgU6iA4JJ6gsq6t5S9p5n7T6EeypUyuKT4iOH0U5d4jIrssz0QwBncytLvQCvv7IpsapPqhgQzBXcGMZKkLS62UWYDRTeL7PPz3+N2hM4N RunPod-Key-Go"
+  },
+  "gpuCount": 1,
+  "id": "nxehc0tdpf88ni",
+  "imageName": "runpod/pytorch:2.4.0-py3.11-cuda12.4.1-devel-ubuntu22.04",
+  "lastStatusChange": "Exited by user: Mon May 04 2026 12:16:19 GMT+0000 (Coordinated Universal Time)",
+  "memoryInGb": 251,
+  "name": "anima-p9-pathA-retrain-v2-RETRY-2026-05-04",
+  "ports": [
+    "22/tcp",
+    "8888/http"
+  ],
+  "vcpuCount": 26,
+  "volumeInGb": 100,
+  "volumeMountPath": "/workspace"
+}
+{
+  "deleted": true,
+  "id": "nxehc0tdpf88ni"
+}
+[2026-05-04T12:16:29Z] [trap] post-kill: {"error":"api error: {\"error\":\"pod not found\",\"status\":404}\n (status 404)"}
+Usage:
+  runpodctl pod get <pod-id> [flags]
