@@ -1,0 +1,69 @@
+{
+  "cycle": "opt_1_v2_exec_2026_05_04",
+  "ts_utc": "2026-05-04T11:15:00Z",
+  "verdict": "PARTIAL",
+  "predecessor": "cb3521bd2 OPT-1 v1 PARTIAL (3 blockers)",
+  "scope": "BG-theta-prime — exactly 3 commissioned fixes",
+  "fixes_applied": [
+    "Fix A: safetensors aliased storage — pre-clone head_a.weight before save_file",
+    "Fix B: param delta audit — split into AFTER_TIE (477.65M) vs STATE_DICT_TOTAL (530.99M); gate against AFTER_TIE; emit both",
+    "Fix C: tokenizer ordering — moved tokenizer copy BEFORE safetensors save so partial output retains tokenizer on save fail"
+  ],
+  "fixes_outcome_per_fix": {
+    "A_safetensors_aliased": "PASS — model.safetensors written 2.12 GB, 581 keys, head_a.data_ptr != tok_emb.data_ptr, head_a values == tok_emb (clone correct)",
+    "B_param_delta_resolved": "PASS — false-alarm classified; 477,648,512 = AFTER_TIE expected, 530,994,816 = state_dict raw expected (both match)",
+    "C_tokenizer_ordering": "PASS — tokenizer_64k_multilingual.model + .vocab present in output dir BEFORE safetensors save block"
+  },
+  "shim_v2_path_mac": "tool/transient_py/clm_v4_hf_format_shim.py",
+  "shim_v2_path_ubu1": "~/p9_clm_v4_hf_format_2026_05_04/clm_v4_hf_format_shim.py",
+  "input_pt_path_ubu1": "~/.cache/huggingface/hub/models--need-singularity--clm-v4-base-mirror/snapshots/856278beb59c5b39f16485cc8f3a46dcdaf9d1e3/best.pt",
+  "output_dir_ubu1": "~/p9_clm_v4_hf_format_2026_05_04/output",
+  "output_size_gb": 2.0,
+  "output_size_bytes": 2076604000,
+  "output_files_present": [
+    "__init__.py",
+    "config.json",
+    "configuration_clm_v4.py",
+    "conscious_decoder.py",
+    "decoder_v3.py",
+    "generation_config.json",
+    "integrity_report.json",
+    "model.safetensors",
+    "modeling_clm_v4.py",
+    "tokenizer_64k_multilingual.model",
+    "tokenizer_64k_multilingual.vocab"
+  ],
+  "param_count_loaded_post_tie": 477648512,
+  "param_count_state_dict_total": 530994816,
+  "param_count_expected_after_tie": 477648512,
+  "param_count_expected_state_dict": 530994816,
+  "param_delta_resolved": true,
+  "param_delta_resolution_summary": "v1 reported -53.3M as a 'delta'; v2 root-cause analysis: not missing — measurement-view mismatch. 530.99M (raw state_dict) − 49.15M (head_a tied to tok_emb, dedup in .parameters()) − 4.19M (16× attn.bias buffers, not in .parameters()) = 477.65M post-tie. All 3 embedding tensors (tok_emb/head_a/head_g, each 49.15M) PRESENT in best.pt as confirmed by ubu1 probe.",
+  "f_shim_1_safetensors_load": "PASS — 581 keys loaded, total numel 530,994,816, head_a/head_g/tok_emb all present, head_a no longer aliased",
+  "f_shim_2_1batch_forward": "BLOCKED — pre-existing legacy decoder_v3.py:169 bug (block returns 4 values: x,tension,new_kv,aux_loss; decoder_v3 unpacks 2: x,tension). Out-of-scope for BG-theta-prime (3 commissioned fixes only).",
+  "f_shim_3_logit_equivalence_1e5": "BLOCKED — gated on F-SHIM-2",
+  "f_shim_4_vocab_64000": "PASS — config.json vocab_size==64000",
+  "lm_eval_loader_smoketest": "FAIL — HF dynamic-module loader copies modeling_clm_v4.py + decoder_v3.py to ~/.cache/huggingface/modules/transformers_modules/output/ but does NOT recursively copy decoder_v3.py's transitive dep `conscious_decoder` (because decoder_v3.py:25 uses `from conscious_decoder import (...)` not `.conscious_decoder`). ModuleNotFoundError. New v3 fix candidate, out-of-scope for BG-theta-prime.",
+  "wall_time_seconds": 27.5,
+  "exec_phase_breakdown_seconds": {
+    "torch_load_5gb": 12,
+    "model_construct_load_state_dict": 4,
+    "tokenizer_copy": 1,
+    "safetensors_save_2_12gb": 8,
+    "verify_attempt_failed_at_block_unpack": 2.5
+  },
+  "post_prereq_status": "11/12 (unchanged) — OPT-1 v2 fixed all 3 commissioned blockers, but base-validation launch still requires F-SHIM-2/3 + lm_eval forward to PASS, which need v3 to address legacy decoder_v3.py forward-unpack + HF dynamic-module import-chain.",
+  "ready_for_base_validation_launch": false,
+  "blockers_remaining_for_v3": [
+    "Legacy decoder_v3.py:169 forward unpack (4-tuple from DecoderBlockV2.forward, 2-tuple expected) — upstream bug in ready/anima/models/legacy/decoder_v3.py",
+    "HF dynamic-module import chain — `from conscious_decoder import (...)` in decoder_v3.py:25 fails because HF transformers_modules cache doesn't propagate transitive non-relative imports; needs either MODELING_SRC patch to add `from .conscious_decoder import ...` (pulls into cache) OR conscious_decoder content inlined into decoder_v3.py"
+  ],
+  "honest_c3": [
+    "C3-1 (commissioned 3 fixes vs total path): The 3 fixes BG-theta-prime was commissioned to apply (safetensors-clone, param-view-split, tokenizer-reorder) all PASS. However, the OPT-1 prereq is end-to-end load-and-forward, and there are now 2 NEWLY-EXPOSED upstream blockers (legacy decoder_v3 forward bug + HF import chain) that were previously masked by the safetensors-save abort. Strict scope reading = PARTIAL. Practical reading = v2 advanced the prereq from 'cannot save' to 'saves cleanly, cannot run forward', which is real progress (~50% of the original gate). Verdict reflects strict reading.",
+    "C3-2 (param-delta false alarm): The v1 verdict's loud '-53.3M' delta caused real concern. v2 root-cause: best.pt has all 530.99M params intact (3 separate embeddings 49.15M each, blocks 383.54M, ln_f 0.768K, tension_proj 0.768K, total 530,994,816 verified). The 'delta' was a measurement-view confusion (.parameters() post-tie vs state_dict raw). v2 emits both views explicitly so future runs cannot re-trigger this false alarm.",
+    "C3-3 (Fix A: clone vs save_pretrained): Pre-clone (A2) costs ~187 MB extra disk vs save_pretrained-with-tied-keys (A1). For a one-shot conversion checkpoint that lm-eval will load once and discard, A2 is acceptable. If/when this checkpoint is uploaded to HF Hub for downstream consumers, A1 retrofit would save ~187 MB per download. Flag for future v3 if hub-publish becomes a goal.",
+    "C3-4 (out-of-scope blockers exposed not introduced): Both NEW blockers (decoder_v3 forward-unpack + HF transitive-import) existed in the upstream code BEFORE BG-theta-prime; they were latent because v1 aborted at safetensors-save. v2 advancing past save UNCOVERED them, did not CREATE them. The shim itself is clean for the 3 commissioned fixes.",
+    "C3-5 (verify-path coupling brittle): Shim's --verify path runs `model(ref_input)` directly on the in-memory ConsciousDecoderV3 BEFORE any HF wrapper is involved. The decoder_v3 forward bug surfaces here. Even fixing the HF import chain wouldn't make --verify pass — that requires fixing decoder_v3.py:169 itself. v3 should consider either making --verify load-only (no forward) or fixing legacy decoder_v3 unpack. The latter is upstream-policy-touching.",
+    "C3-6 (wall time): 27.5s actual vs 30-60min shim estimate — shim's estimate was stale (assumed slow disk + GPU); CPU + fast NVMe completed quickly. Both v2 fixes worked at speed. Re-running v3 (after the 2 remaining blockers are addressed) will be similar wall."
+  ]
+}
