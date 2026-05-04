@@ -1,0 +1,139 @@
+{
+  "schema": "anima/p9_lora_mode1_eval/verdict/1",
+  "cycle": "p9_lora_mode1_eval_2026_05_04",
+  "ts_utc": "2026-05-04T09:05:00Z",
+  "model": "meta-llama/Llama-3.2-3B + need-singularity/p9-llama32-lora-stage1@5a9b4584 (step-8k LoRA, r=64 alpha=64 dropout=0.05)",
+  "scope": "Mode 1 — LoRA(step-8k)-vs-Llama-base internal Δ on 3 benchmarks (limit=500, seeds=42, bfloat16, lm-eval-harness 0.4.11, peft=local-dir)",
+  "pod_id": "8umghrgn5v3zct",
+  "pod_terminated": true,
+  "pod_kill_verified_404": true,
+  "pod_kill_post_status": "404 pod not found (verified via runpodctl pod get post-trap)",
+  "verdict": "PASS",
+  "verdict_reason": "Both c3 (LoRA−base 2σ separation) and c4 (LoRA ≥ random+5pp) PASS at the ≥2/3 benchmarks threshold. c3 PASS 2/3 (mmlu+triviaqa above 2σ; hellaswag below threshold). c4 PASS 3/3. Effect direction: ALL THREE benchmarks show LoRA DEGRADED vs Llama base (negative Δ across the board) — this is the catastrophic-forgetting signature flagged in BG-Ξ omnibus 11331fe4 hint.",
+  "results_per_benchmark": {
+    "hellaswag": {
+      "acc": 0.512,
+      "acc_norm": 0.642,
+      "stderr": 0.02146143486285912,
+      "llama_base_acc_norm": 0.654,
+      "llama_base_stderr": 0.02129,
+      "delta_vs_llama_base_pp": -1.2,
+      "c3_2_sigma_threshold_pp": 4.2923,
+      "c3_pass": false,
+      "c4_above_random5pt": true,
+      "fewshot": 0,
+      "filter": "acc_norm",
+      "interpretation": "Within-noise: delta -1.2pp < threshold 4.3pp ⇒ HellaSwag MC accuracy NOT statistically distinguishable between LoRA and base"
+    },
+    "mmlu": {
+      "acc": 0.5301076152139982,
+      "stderr": 0.004351772189490907,
+      "llama_base_acc": 0.5796,
+      "llama_base_stderr": 0.00428,
+      "delta_vs_llama_base_pp": -4.9492,
+      "c3_2_sigma_threshold_pp": 0.8704,
+      "c3_pass": true,
+      "c4_above_random5pt": true,
+      "fewshot": 5,
+      "interpretation": "Statistically significant DEGRADATION: |delta|=4.95pp >> threshold=0.87pp; LoRA causes 4.95pp drop in 5-shot multitask MC accuracy"
+    },
+    "triviaqa": {
+      "exact_match": 0.302,
+      "stderr": 0.020553269174209198,
+      "llama_base_em": 0.396,
+      "llama_base_stderr": 0.02189,
+      "delta_vs_llama_base_pp": -9.4,
+      "c3_2_sigma_threshold_pp": 4.378,
+      "c3_pass": true,
+      "c4_above_random5pt": true,
+      "fewshot": 0,
+      "filter": "remove_whitespace",
+      "interpretation": "Statistically significant DEGRADATION: |delta|=9.4pp >> threshold=4.4pp; LoRA causes 9.4pp drop in 0-shot factual recall (TriviaQA EM)"
+    }
+  },
+  "f1_v3_amended_criterion_3_lora_base_2_sigma": "PASS",
+  "f1_v3_amended_criterion_3_pass_count": "2_of_3 (mmlu+triviaqa above 2σ; hellaswag within noise)",
+  "f1_v3_amended_criterion_4_lora_above_random_5pt": "PASS",
+  "f1_v3_amended_criterion_4_pass_count": "3_of_3",
+  "f1_v3_v2_full_verdict_with_bg_xi_amendment": "SUCCESS",
+  "f1_v3_v2_verdict_caveat": "SUCCESS technically passes c1+c2+c3+c4 (BG-Ο anchors_run + llama±10% + this BG c3 + c4) but the direction of c3 deltas is uniformly NEGATIVE — LoRA degrades base on all 3 benchmarks. This validates the F-1_v3 falsifier framework (we can detect a non-zero LoRA-vs-base separation) but the LoRA itself does not IMPROVE base. Treat as INFRASTRUCTURE_PASS / SCIENCE_FAIL hybrid: pipeline + criteria work, but the trained adapter is a regression on these 3 academic benchmarks. Likely interpretation: SFT corpus distribution mismatch (anima axis-conditioned recipes vs the academic benchmarks) ⇒ catastrophic forgetting on factual+commonsense knowledge.",
+  "bench_count_completed": 3,
+  "complete_sentinel_detected": true,
+  "wall_time_min": 22,
+  "actual_cost_usd": 1.10,
+  "budget_target_usd": 1.50,
+  "budget_hard_cap_usd": 2.50,
+  "lessons_applied": {
+    "L1_sentinel_name": "results/COMPLETE.sentinel — matched on first poll after sentinel emission",
+    "L2_skip_unneeded_setup": "Llama base + LoRA only (no CLM v4)",
+    "L3_sentinel_kill_lag_s": "poll interval 60s; detection→trap fire ~70s",
+    "L4_single_process_heartbeat": "heartbeat.txt updated every poll cycle from main exec.bash",
+    "L5_redact_at_boot": "sed redact pre-tee for boot.log (pod_info.json captured token in post-kill JSON; post-hoc redaction applied)",
+    "L6_data_first_then_kill": "final scp of results/* (3 dirs ~155MB) completed before trap fired"
+  },
+  "honest_c3_caveats": [
+    "Anchor is step-8000 LoRA (HF commit 5a9b4584) NOT preregistered step-10000 (per BG-ξ verify_report — 2000 steps lost during HF push race). The reported degradation may be ~5-10% under-stated or over-stated relative to a fully-trained step-10k adapter; cannot disambiguate without retraining or recovering the lost ckpt.",
+    "Adapter base mismatch: HF adapter_config.json declares base = meta-llama/Llama-3.2-3B-Instruct, but we composed onto meta-llama/Llama-3.2-3B (non-Instruct, BG-Ο anchor). LoRA weights were trained against Instruct's chat-templated representations; applying them to base may amplify the apparent degradation due to template-mismatch artifacts. A clean re-eval would either (a) compose LoRA onto Llama-3.2-3B-Instruct (and re-run base anchors on Instruct), or (b) retrain LoRA on non-Instruct base.",
+    "limit=500 ⇒ stderr ~2pp on hellaswag/triviaqa, ~0.4pp on MMLU. Single seed=42; per-prompt variance not characterized. Multi-seed (≥3) bootstrap would tighten the c3 thresholds and confirm whether MMLU+TriviaQA degradation is robust to seed permutation.",
+    "lm-eval `peft=<local_dir>` argument with revision pre-pinned via hf-download (not via lm-eval revision= which applies to base only — BUG fix iteration in this BG: attempt 1 used revision=<lora_sha> on the base model and 404'd; attempt 2 fixed by pre-downloading LoRA at pinned commit and pointing peft=<local-path>).",
+    "Verdict-compute c3_check awk function had unescaped double-quote bug in initial emit (PASS|/FAIL| string literals collided with outer awk \"BEGIN{...}\" quotes), causing c3 to evaluate as empty-string→FAIL for all 3 benches in the auto-emitted verdict.json. Fixed manually post-hoc by recomputing from per-bench JSONs (which were correctly synced). The c3 logic itself is sound; only the bash emit had the escaping bug. Future cycle should use `awk -v` to pass values rather than string interpolation.",
+    "TriviaQA filter = remove_whitespace (lm-eval default). Llama base anchor used same filter (BG-Ο). Any normalization mismatch between LoRA inference and base inference would inflate the EM delta — but since both used same filter, the 9.4pp drop is filter-consistent.",
+    "BG-Ξ amendment criterion 4 random baselines: HellaSwag/MMLU random=0.25, TriviaQA random≈0. Adding +5pp gives 0.30/0.30/0.05 thresholds. LoRA passes all 3 (0.642/0.530/0.302). c4 confirms LoRA is NOT a complete weight collapse (e.g., random/zero output) — it's a meaningful but degraded model."
+  ],
+  "f1_v3_blocker_status_post_this_bg": {
+    "c1_anchors_run_BG_Omicron": "PASS",
+    "c2_llama_within_pm10pct_BG_Omicron": "PASS (2/3)",
+    "c3_lora_base_2_sigma_THIS_BG": "PASS (2/3)",
+    "c4_lora_above_random_5pt_THIS_BG": "PASS (3/3)",
+    "F1_v3_V2_overall": "SUCCESS (all 4 criteria PASS) but with verdict_caveat: science-side reading is INFRASTRUCTURE_PASS / SCIENCE_FAIL — the falsifier framework detected significant LoRA-vs-base separation, but the separation is in the WRONG DIRECTION (degradation, not improvement)."
+  },
+  "deliverables": {
+    "verdict_json": "/Users/ghost/core/anima/state/p9_lora_mode1_eval_2026_05_04/verdict.json",
+    "results_dir": "/Users/ghost/core/anima/state/p9_lora_mode1_eval_2026_05_04/results/",
+    "result_jsons": [
+      "results/lora_hellaswag.json",
+      "results/lora_mmlu.json",
+      "results/lora_triviaqa.json"
+    ],
+    "log_samples_dirs": [
+      "results/lora_hellaswag_dir/",
+      "results/lora_mmlu_dir/",
+      "results/lora_triviaqa_dir/"
+    ],
+    "complete_sentinel": "results/COMPLETE.sentinel",
+    "run_log": "/Users/ghost/core/anima/state/p9_lora_mode1_eval_2026_05_04/run.log",
+    "orchestrator_hexa": "/Users/ghost/core/anima/tool/p9_lora_mode1_eval_h100_orchestrator.hexa",
+    "exec_bash": "/Users/ghost/core/anima/state/p9_lora_mode1_eval_2026_05_04/exec.bash",
+    "run_h100_bash": "/Users/ghost/core/anima/state/p9_lora_mode1_eval_2026_05_04/run_h100.bash",
+    "h100_orchestrator_log": "/Users/ghost/core/anima/state/p9_lora_mode1_eval_2026_05_04/h100_orchestrator.log",
+    "attempt1_aside": [
+      "results_attempt1/",
+      "run.attempt1.log",
+      "verdict.attempt1.json (FAIL — revision= applied to base 404)",
+      "h100_orchestrator.attempt1.log",
+      "boot.attempt1.log",
+      "pod_info.attempt1.json (pod_id=ggcegc3w6y4no1, killed)"
+    ]
+  },
+  "pod_history": [
+    {"attempt": 1, "pod_id": "ggcegc3w6y4no1", "wall_min": 2, "cost_usd": 0.10, "outcome": "FAIL_BUG (revision= flag applied to base model not LoRA adapter)", "killed_404": true},
+    {"attempt": 2, "pod_id": "8umghrgn5v3zct", "wall_min": 22, "cost_usd": 1.10, "outcome": "EVAL_OK (3/3 benches completed; verdict computed)", "killed_404": true}
+  ],
+  "total_cost_both_attempts_usd": 1.20,
+  "raw9_compliance": "Mac-side bash sibling pattern (emitted via tool/p9_lora_mode1_eval_h100_orchestrator.hexa --emit); H100-side python (lm_eval+peft) is raw#37 transient. Zero new Mac .py.",
+  "raw10_compliance": "7 honest C3 caveats above",
+  "raw15_compliance": "all paths repo-relative or /workspace/* on H100 (transient)",
+  "raw37_compliance": "ubu1 not used; pod was H100 SECURE on-demand at $2.99/hr",
+  "raw71_compliance": "thresholds (c3 2σ via stderr-derived per-bench, c4 random+5pp) fixed pre-launch per BG-Ξ amendment f6eb6517; no post-eval threshold tweak; only quote-escape bug fix to make c3_check actually return values",
+  "git_ops_run_in_this_cycle": "NONE",
+  "files_written_this_cycle": [
+    "tool/p9_lora_mode1_eval_h100_orchestrator.hexa",
+    "state/p9_lora_mode1_eval_2026_05_04/exec.bash (emitted)",
+    "state/p9_lora_mode1_eval_2026_05_04/run_h100.bash (emitted)",
+    "state/p9_lora_mode1_eval_2026_05_04/verdict.json",
+    "state/p9_lora_mode1_eval_2026_05_04/run.log",
+    "state/p9_lora_mode1_eval_2026_05_04/results/* (3 JSONs + 3 log_sample dirs + sentinel)",
+    "docs/p9_lora_mode1_eval_landed_2026_05_04.ai.md (handoff doc)"
+  ],
+  "status_emit": "__P9_LORA_MODE1_EVAL__ PASS F1V3V2=SUCCESS_WITH_CAVEAT (infrastructure pass / science fail — LoRA degrades base on all 3 benchmarks; catastrophic forgetting per BG-Ξ omnibus hint)"
+}

@@ -1,0 +1,30 @@
+[orch] start ts=2026-05-04T08:41:43Z
+[setup] installing lm-eval + peft + huggingface_hub
+WARNING: Running pip as the 'root' user can result in broken permissions and conflicting behaviour with the system package manager, possibly rendering your system unusable.It is recommended to use a virtual environment instead: https://pip.pypa.io/warnings/venv. Use the --root-user-action option if you know what you are doing and want to suppress this warning.
+
+[notice] A new release of pip is available: 24.2 -> 26.1
+[notice] To update, run: python -m pip install --upgrade pip
+Login successful.
+Note: Environment variable`HF_TOKEN` is set and is the current active token independently from the token you've just configured.
+[setup] hf auth: [32m✓ Logged in[0m
+[setup] downloading meta-llama/Llama-3.2-3B
+Fetching 15 files:   0%|          | 0/15 [00:00<?, ?it/s]Fetching 15 files:   7%|▋         | 1/15 [00:00<00:07,  1.82it/s]Fetching 15 files:  47%|████▋     | 7/15 [00:07<00:09,  1.16s/it]Fetching 15 files:  67%|██████▋   | 10/15 [00:09<00:04,  1.12it/s]Fetching 15 files: 100%|██████████| 15/15 [00:09<00:00,  1.60it/s]
+[32m✓ Downloaded[0m
+  path: /root/.cache/huggingface/hub/models--meta-llama--Llama-3.2-3B/snapshots/13afe5124825b4f3751f836b40dafda64c1ed062
+[setup] downloading need-singularity/p9-llama32-lora-stage1@5a9b4584 → /workspace/p9_lora_eval/lora_step8k (step-8k LoRA)
+Fetching 11 files:   0%|          | 0/11 [00:00<?, ?it/s]Fetching 11 files:   9%|▉         | 1/11 [00:00<00:08,  1.20it/s]Fetching 11 files:  36%|███▋      | 4/11 [00:03<00:06,  1.12it/s]Fetching 11 files: 100%|██████████| 11/11 [00:03<00:00,  3.10it/s]
+[32m✓ Downloaded[0m
+  path: /workspace/p9_lora_eval/lora_step8k
+[setup] LoRA adapter present: 372M
+[orch] lm_eval=0.4.11
+[orch] peft=0.19.1
+[orch] torch=2.4.1+cu124
+name, memory.total [MiB]
+NVIDIA H100 80GB HBM3, 81559 MiB
+[run] task=hellaswag n=0 → /workspace/p9_lora_eval/results/lora_hellaswag_dir
+[done] task=hellaswag rc=0 wall=42s
+[run] task=mmlu n=5 → /workspace/p9_lora_eval/results/lora_mmlu_dir
+[done] task=mmlu rc=0 wall=658s
+[run] task=triviaqa n=0 → /workspace/p9_lora_eval/results/lora_triviaqa_dir
+[done] task=triviaqa rc=0 wall=354s
+[orch] complete
