@@ -14,6 +14,8 @@ substrate refs:
 gate: raw#9 (hexa-only nexus, .py concession via _python_bridge/), raw#91 (≥5 honest C3 caveats)
 ---
 
+> 📦 Available at: https://github.com/need-singularity/qmirror (`hx install qmirror`)
+
 # 0. TL;DR
 
 `nexus.qmirror`를 현재 hexa-lang(spec v0.1)으로 구현하는 데 **언어 자체를 패치할 의무는 없다**. 기존 `nexus/modules/qrng/anu.hexa` 패턴(struct + `exec("curl ...")` + env-gated live + `_mock_fixture`)으로 P1/P2 deliverable 8개 파일 모두 작성 가능하다. 단 두 가지 마찰점만 실제 갭이다:
