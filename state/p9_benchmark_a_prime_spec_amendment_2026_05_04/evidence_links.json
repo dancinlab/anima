@@ -1,0 +1,179 @@
+{
+  "amendment_id": "A-1",
+  "amendment_date": "2026-05-04",
+  "evidence_categories": {
+    "predecessor_spec": [
+      {
+        "type": "doc",
+        "path": "docs/p9_benchmark_switch_a_prime_spec_2026_05_03.md",
+        "role": "original spec; LOCKED at marker timestamp 2026-05-03; UNTOUCHED by amendment per F-AMEND-2"
+      },
+      {
+        "type": "doc",
+        "path": "docs/p9_benchmark_a_prime_spec_landed_2026_05_03.ai.md",
+        "role": "original spec landed handoff; UNTOUCHED by amendment per F-AMEND-2"
+      },
+      {
+        "type": "marker",
+        "path": "state/markers/p9_benchmark_a_prime_spec_landed.marker",
+        "role": "original pre-registration LOCK timestamp marker; UNTOUCHED by amendment per F-AMEND-2"
+      }
+    ],
+    "driving_evidence": [
+      {
+        "type": "verdict_json",
+        "path": "state/p9_base_validation_h100_2026_05_04/verdict.json",
+        "role": "H100 base-validation FAIL verdict; CLM v4 base ≈ random+1-2pt across 3 benchmarks; demonstrates structural constraint predicted by BG-Β OPT-1 design honest_c3 §7.2 + §7.3"
+      },
+      {
+        "type": "commit",
+        "hash": "1ef3c096",
+        "subject": "state(p9 base validation H100 RESULT FAIL — CLM v4 base ≈random + Llama anchor missing 2026-05-04)",
+        "role": "git-traceable evidence of base-validation FAIL"
+      },
+      {
+        "type": "commit",
+        "hash": "ed4b7c56",
+        "subject": "OPT-1 v3 PASS — 12/12 prereq CLEARED",
+        "role": "BG-Κ shim v3 PASS — F-SHIM-1..4 + bit-exact logits established Mode 1 substrate runs end-to-end on H100 lm-eval-harness"
+      },
+      {
+        "type": "commit",
+        "hash": "2a561a31",
+        "subject": "state(p9 base validation H100 heartbeat refresher + run.log post-redact 2026-05-04)",
+        "role": "H100 base-val orchestration WIP"
+      },
+      {
+        "type": "commit",
+        "hash": "643bfa8a",
+        "subject": "docs(secret CLI hardening leak audit + v2 proposals + caller fixes + pre-commit hook 2026-05-04)",
+        "role": "predecessor (independent of amendment but in evidence chain)"
+      }
+    ],
+    "structural_constraint_pre_registration": [
+      {
+        "type": "design_doc",
+        "path": "state/p9_base_validation_prereq_exec_2026_05_04/opt_1_design.md",
+        "role": "BG-Β OPT-1 design — honest_c3 §7.2 (consciousness BYPASSED via consciousness_states=None) + §7.3 (block_size=512 truncation) PRE-REGISTERED before H100 measurement; basis for V1 → V2 reconciliation"
+      },
+      {
+        "type": "design_diff",
+        "path": "state/p9_base_validation_prereq_exec_2026_05_04/opt_1_v3_design_diff.md",
+        "role": "BG-Κ OPT-1 v3 design diff — shim v3 PASS with F-SHIM-1..4 + bit-exact logits; establishes Mode 1 substrate sanity"
+      },
+      {
+        "type": "verdict_json",
+        "path": "state/p9_base_validation_prereq_exec_2026_05_04/opt_1_v3_exec_verdict.json",
+        "role": "BG-Κ shim v3 verdict.json — verify_pass=true"
+      }
+    ],
+    "amendment_artifacts_this_bg": [
+      {
+        "type": "doc",
+        "path": "docs/p9_benchmark_switch_a_prime_spec_amendment_2026_05_04.md",
+        "role": "amendment A-1 spec doc — §A1 Mode taxonomy + §A2 F1_v3 V2 + §A3 C3 register + §A4 cross-link + §A5 LOCK + §A6 falsifiers + §A7 roadmap proposal"
+      },
+      {
+        "type": "doc",
+        "path": "docs/p9_benchmark_switch_a_prime_spec_amendment_landed_2026_05_04.ai.md",
+        "role": "amendment A-1 handoff — TL;DR + decision matrix + backward compat statement + honest C3 + roadmap proposal + recommended next-cycle"
+      },
+      {
+        "type": "marker",
+        "path": "state/markers/p9_benchmark_a_prime_spec_amendment_landed.marker",
+        "role": "amendment A-1 LOCK timestamp marker; F-AMEND-1 verifies"
+      },
+      {
+        "type": "decision_matrix",
+        "path": "state/p9_benchmark_a_prime_spec_amendment_2026_05_04/decision_matrix.json",
+        "role": "structured V1 vs V2 criteria diff + verdict outcomes + 1ef3c096 reclassification"
+      },
+      {
+        "type": "falsifier_reconciliation",
+        "path": "state/p9_benchmark_a_prime_spec_amendment_2026_05_04/falsifier_reconciliation.md",
+        "role": "component-by-component F1_v3 V1 → V2 mapping + status under 1ef3c096 + meta C3"
+      },
+      {
+        "type": "evidence_links",
+        "path": "state/p9_benchmark_a_prime_spec_amendment_2026_05_04/evidence_links.json",
+        "role": "this file — complete cross-reference index for F-AMEND-3 verification"
+      }
+    ],
+    "next_cycle_dependencies": [
+      {
+        "type": "bg_cycle",
+        "label": "BG-Ο",
+        "scope": "Mode 2 Llama-3.2-3B anchor measurement on H100",
+        "territory": "state/p9_base_validation_llama_anchor_2026_05_04/",
+        "expected_cost_usd": 1.50,
+        "expected_wall_min": 30,
+        "flips_v2_criteria": ["v2_c1 anchors_run", "v2_c2 llama_within_pm10pct_of_public"],
+        "verdict_path": "ANCHOR_PASS or partial toward SUCCESS"
+      },
+      {
+        "type": "bg_cycle",
+        "label": "BG-Π",
+        "scope": "Mode 1 LoRA ckpt panel evaluation OR shim v4 Mode 3 prep",
+        "territory": "tool/transient_py/clm_v4_hf_format_shim.py v4 + state/p9_base_validation_prereq_exec_2026_05_04/opt_1_v4_*",
+        "expected_cost_usd": "2-5 (H100 LoRA panel) OR 0 (ubu1) OR 0 (shim v4 design only)",
+        "expected_wall_min": "60-300 (LoRA panel) OR 90 (shim v4 design)",
+        "flips_v2_criteria": ["v2_c3 clm_lora_minus_clm_base_ge_2x_ci", "v2_c4 clm_lora_above_random_plus_5pt"],
+        "verdict_path": "COMPARATIVE_PASS or partial toward SUCCESS"
+      },
+      {
+        "type": "deferred",
+        "label": "Mode 3 retrain",
+        "scope": "CLM v4 retrain at block_size ≥ 8K + consciousness fixture eval",
+        "expected_cost_usd": "22+",
+        "expected_wall_min": 450,
+        "block_reason": "cost-prohibitive without further escalation",
+        "flips_v2_criteria": "none (Mode 3 absolute claim outside V2 scope; future amendment if funded)"
+      }
+    ],
+    "roadmap_target": [
+      {
+        "type": "roadmap_field",
+        "path": ".roadmap.p9_sft",
+        "field": "cond.benchmark_a_prime_base_validation",
+        "from_status": "unmet",
+        "to_status": "met_with_amendment",
+        "do_not_action_in_this_bg": true,
+        "actioned_by": "parent session post-amendment land"
+      }
+    ]
+  },
+  "f_amend_3_verification_targets": {
+    "commit_hashes_to_resolve": [
+      "1ef3c096",
+      "ed4b7c56",
+      "2a561a31",
+      "643bfa8a"
+    ],
+    "paths_to_verify_exist": [
+      "docs/p9_benchmark_switch_a_prime_spec_2026_05_03.md",
+      "docs/p9_benchmark_a_prime_spec_landed_2026_05_03.ai.md",
+      "state/markers/p9_benchmark_a_prime_spec_landed.marker",
+      "state/p9_base_validation_h100_2026_05_04/verdict.json",
+      "state/p9_base_validation_prereq_exec_2026_05_04/opt_1_design.md",
+      "state/p9_base_validation_prereq_exec_2026_05_04/opt_1_v3_design_diff.md",
+      "docs/p9_benchmark_switch_a_prime_spec_amendment_2026_05_04.md",
+      "docs/p9_benchmark_switch_a_prime_spec_amendment_landed_2026_05_04.ai.md",
+      "state/markers/p9_benchmark_a_prime_spec_amendment_landed.marker",
+      "state/p9_benchmark_a_prime_spec_amendment_2026_05_04/decision_matrix.json",
+      "state/p9_benchmark_a_prime_spec_amendment_2026_05_04/falsifier_reconciliation.md",
+      "state/p9_benchmark_a_prime_spec_amendment_2026_05_04/evidence_links.json"
+    ]
+  },
+  "amendment_loc_targets": {
+    "amendment_spec": {
+      "path": "docs/p9_benchmark_switch_a_prime_spec_amendment_2026_05_04.md",
+      "target_loc_band": "350-550",
+      "actual_loc_note": "verified post-write"
+    },
+    "amendment_handoff": {
+      "path": "docs/p9_benchmark_switch_a_prime_spec_amendment_landed_2026_05_04.ai.md",
+      "target_loc_band": "150-300",
+      "actual_loc_note": "verified post-write"
+    }
+  }
+}
