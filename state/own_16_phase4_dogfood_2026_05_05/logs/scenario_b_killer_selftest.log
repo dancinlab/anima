@@ -1,0 +1,15 @@
+  tier4 AUTO_DELETE (ack confirmed)
+    [dry] would: runpodctl pod delete SELFTEST_POD_ACKED
+  tier4 verify_404=true
+  S2 PASS (ack-present ladder reaches tier4 dry rc=0)
+  S3 PASS (no ack file → false)
+  S4 PASS (ack file present → true)
+h100_idle_auto_killer selftest: 4/4 PASS, 0 FAIL
+
+honest_c3:
+  C1: selftest is dry-run only — real runpodctl never invoked here
+  C2: ladder is intentionally additive over h100_auto_kill (binary STOP path); both can fire
+  C3: USER_CONFIRM gate uses file-presence (acks/<pid>_DELETE_OK); no signature/auth
+  C4: tier1 ALERT is delegated to watchdog → alert-script (decoupled to avoid recursive 429)
+  C5: tier4 AUTO_DELETE only fires after explicit ack file — never on alert-only signal
+  C6: 30-min unack window is hard-coded; spec C7 future cycle should make it cfg-driven
