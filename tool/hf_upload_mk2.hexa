@@ -183,6 +183,68 @@ fn _naming_allowed_stage_prefixes() -> [str] {
     return ["sft-stage", "dpo", "merged", "base", "preview", "dev", "paradigm-"]
 }
 
+// §3.7 grace-period fallback (added 2026-05-04 by BG-NAMING-VALIDATOR-PATCH).
+// Spec ref: docs/anima_hf_naming_convention_mk2_spec_2026_05_03.md §3.7 + §8.1.
+// Companion doc: docs/anima_hf_naming_clm_amendment_landed_2026_05_04.ai.md (cond.2 caveat C2).
+//
+// Motivation: BG-NAMING-AMEND landed cond.2 canonical = clm-v4-mk2-v1 which is
+// EXT-conformant under §10.2 EXT regex (legacy `\d+-\d+` variant slot, also
+// `mk\d+-v\d+` extended form) and admitted by §3.7 grace-period until 2026-06-02.
+// The strict `_naming_allowed_stage_prefixes()` enum (above) does not list
+// `mk` because `mk2-v1` is not a stage — it is a *variant slot* per §3.7.
+// This regex-based fallback ADMITS the variant form during grace.
+//
+// Grace expiry: 2026-06-02 (end of 30-day window per §8.1). After that:
+//   (a) repos must rename to canonical CANON form, OR
+//   (b) another amendment cycle must extend grace (raw#15 additive only).
+//
+// This function is *additive*: it only runs after the strict enum check fails.
+// Strict enum behavior is preserved verbatim (raw#15).
+fn _grace_period_active() -> int {
+    // ISO8601 string compare suffices for date-only comparison.
+    // today_utc <= "2026-06-02" → grace active.
+    let today = exec("date -u +%Y-%m-%d").trim()
+    let cutoff = "2026-06-02"
+    if today.len() == 10 && today <= cutoff { return 1 }
+    return 0
+}
+
+fn _is_digit(c: str) -> int {
+    if c.len() != 1 { return 0 }
+    if c >= "0" && c <= "9" { return 1 }
+    return 0
+}
+
+fn _matches_legacy_variant(stage_join: str) -> int {
+    // §3.7 legacy variant form: `mk\d+-v\d+` (e.g. mk1-v0, mk2-v1, mk3-v12).
+    // Implementation: split on '-' into exactly 2 tokens "mk\d+" and "v\d+",
+    // then verify each prefix and digit suffix.
+    let n = stage_join.len()
+    if n < 6 { return 0 }  // minimum "mk0-v0" = 6 chars; no shorter form valid
+    // Must contain exactly one '-' (because both tokens have no internal '-').
+    let parts = stage_join.split("-")
+    if parts.len() != 2 { return 0 }
+    let lhs = parts[0]
+    let rhs = parts[1]
+    // lhs = "mk" + >=1 digits
+    if lhs.len() < 3 { return 0 }
+    if lhs.substring(0, 2) != "mk" { return 0 }
+    let mut i = 2
+    while i < lhs.len() {
+        if _is_digit(lhs.substring(i, i + 1)) != 1 { return 0 }
+        i = i + 1
+    }
+    // rhs = "v" + >=1 digits
+    if rhs.len() < 2 { return 0 }
+    if rhs.substring(0, 1) != "v" { return 0 }
+    let mut j = 1
+    while j < rhs.len() {
+        if _is_digit(rhs.substring(j, j + 1)) != 1 { return 0 }
+        j = j + 1
+    }
+    return 1
+}
+
 fn _is_lower_alnum_dash(s: str) -> int {
     if s.len() == 0 { return 0 }
     let mut i = 0
@@ -259,6 +321,19 @@ fn _naming_validate(repo: str) -> str {
         si = si + 1
     }
     if st_ok != 1 {
+        // §3.7 grace-period fallback (added 2026-05-04 by BG-NAMING-VALIDATOR-PATCH).
+        // If the strict enum check fails, see if the stage_join matches the
+        // legacy `mk\d+-v\d+` variant form admitted by §3.7 until 2026-06-02.
+        // Spec ref: docs/anima_hf_naming_convention_mk2_spec_2026_05_03.md §3.7 + §8.1.
+        // raw#15: additive only; strict enum check above runs first verbatim.
+        if _grace_period_active() == 1 && _matches_legacy_variant(stage_join) == 1 {
+            // Emit warning to stderr (visible in audit/logs) but pass.
+            // hexa println goes to stdout; warn line is parseable but does NOT
+            // change the OK return contract. PASS_WITH_WARNING semantics: caller
+            // (op_*) emits the canonical PASS sentinel.
+            println("WARN: §3.7 grace-period: legacy variant '" + stage_join + "' admitted until 2026-06-02 (spec §8.1)")
+            return "OK"
+        }
         return "FAIL: stage must start with one of {sft-stage|dpo|merged|base|preview|dev|paradigm-} (got: '" + stage_join + "')"
     }
     return "OK"
