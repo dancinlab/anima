@@ -510,3 +510,59 @@ own 14 new "anima-local: models + datasets HF Hub only — anima git에 large we
   why pre-commit lint (follow-up tool/anima_large_file_pre_commit_lint.hexa) escalates this own from advisory to enforced layer per raw 95 triad-mandate (cli-lint + advisory + audit-trail).
   enforce-layer advisory + audit-trail (cli-lint follow-up)
   enforce-layer-rationale advisory: tool/hf_upload_mk2.hexa --validate-naming + state/hf_upload_audit/ ledger. cli-lint follow-up: tool/anima_large_file_pre_commit_lint.hexa pre-commit pattern. audit-trail: hf_upload_audit/<ts>.jsonl per push.
+
+own 15 new "anima-local: HF release lifecycle PRIVATE-first → PUBLIC after verification gates ALL PASS"
+  slug hf-release-private-then-public-after-verification
+  base anima/.own SSOT + own 14 (HF Hub mandate sister) + raw 12 pre-registered-frozen-spec + raw 10 honest-disclosure
+  since 2026-05-05 (user authorization: "HF 관련 own 추가 — 과정은 PRIVATE 등록, 최종 버전은 PUBLIC 등록, 단 벤치마킹 + 테스트 + 모든 검증과정 통과 필수")
+  scope HuggingFace Hub publication lifecycle (need-singularity org). dev/test cycle uploads MUST be PRIVATE only. PUBLIC promotion is a SEPARATE explicit BG cycle gated on verification suite ALL PASS.
+  rule (a) first upload of any model / dataset / tokenizer artifact via tool/hf_upload_mk2.hexa MUST include --private flag (advisory: validator warns if --upload runs without --private on never-uploaded repo)
+  rule (b) PUBLIC promotion REQUIRES verification gates ALL PASS:
+    (b.1) benchmark suite PASS (canonical: hellaswag + mmlu + triviaqa + openbookqa OR domain-specific equivalent declared in spec)
+    (b.2) falsifier pre-register satisfied (raw#71 / raw 12 frozen-spec contract)
+    (b.3) shim v4 hf_format compatibility F-SHIM-V4-1/2/3/4 ALL PASS (where applicable — model-specific equivalents OK)
+    (b.4) 24-48h human review window post-PRIVATE upload (convention; not tool-enforced)
+    (b.5) honest C3 model card present (raw#10 — limitations + chat-incapability disclosure where applicable, e.g., #115 CLM v4 base-only no SFT)
+    (b.6) cross-substrate validation where applicable (CLM-2 spec C-CLM-LORA-1: phi★ baseline preserved post-LoRA)
+  rule (c) PUBLIC promotion executed via SEPARATE BG cycle (not bundled with first upload) — explicit `gh repo edit --visibility public` OR HF API PUT settings with verdict.json cite of all (b.1-b.6) PASS evidence
+  rule (d) failed verification gate → keep PRIVATE, iterate, do NOT public-promote. revert PUBLIC→PRIVATE possible but reputational cost — prefer to never premature-promote.
+  enforcement (advisory) tool/hf_upload_mk2.hexa --private flag MANDATORY for first upload (validator-warn follow-up)
+  enforcement (audit) state/hf_upload_audit/<ts>_<repo>.jsonl ledger captures visibility=private + verification_gates_status fields
+  enforcement (separation) PUBLIC promote BG MUST cite verdict.json with (b.1-b.6) PASS evidence; bundle with initial upload BANNED
+  exceptions explicit user override per upload ("PUBLIC from start" with documented rationale in verdict.json — extremely rare, e.g., emergency-rollback or pre-validated-elsewhere)
+  exceptions tokenizer-only / config-only repos with no inference path — gate (b.3) shim compatibility N/A → skip with note
+  exceptions dataset-only repos (no model weights) — gates (b.3) + (b.6) N/A → benchmark gate (b.1) becomes data-quality gate (sample audit + schema validation + sha256 manifest)
+  bans `tool/hf_upload_mk2.hexa --upload` without `--private` flag for never-uploaded repo (advisory warn → block per follow-up lint)
+  bans bundling PUBLIC promotion with initial upload BG (must be separate cycle with explicit gate evidence)
+  bans public-promote without verdict.json citing (b.1-b.6) PASS evidence
+  bans skipping 24-48h review window without documented rationale (e.g., "all gates auto-PASS via deterministic verifier" with verdict cite)
+  proof memory feedback_hf_release_private_to_public_after_verification.md (hive-hook-bus 2026-05-05, session-scoped mirror)
+  proof precedent docs/anima_clm_hf_release_v1_uploaded_landed_2026_05_04.ai.md (need-singularity/clm-v4-mk2-v1 PRIVATE uploaded 2026-05-04T23:26:12Z, commit 80440a1d, 48h review window ends 2026-05-06T23:26:12Z, public promote NOT yet executed — first own 15 application instance)
+  proof tool/hf_upload_mk2.hexa --private flag (existing feature land 2026-05-03 — enforcement layer attaches to this flag)
+  proof state/hf_upload_audit/20260504T232612Z_need-singularity__clm-v4-mk2-v1.jsonl (audit trail with visibility=private)
+  follow-up tool/hf_upload_mk2.hexa validator-warn when --upload invoked without --private on never-uploaded repo
+  follow-up tool/hf_public_promote_lint.hexa (PROPOSED) — gates (b.1-b.6) PASS evidence required before `gh repo edit --visibility public`
+  follow-up own 15 30d post — measure rate of PRIVATE-first compliance + PUBLIC-promote gate-cite compliance; if <0.80 escalate advisory→block
+  category meta-triad
+  category proof-truth
+  applies-to hf-publication-lifecycle
+  applies-to release-engineering
+  phase pre-publish
+  phase post-private-validation
+  phase public-promote
+  severity warn (escalate to block per follow-up lint tool/hf_public_promote_lint.hexa)
+  honest-c3 24-48h review window is convention, NOT tool-enforced — relies on human discipline (raw#91 honest C3 acknowledged)
+  honest-c3 "all verification gates" is project-specific (CLM v4 had F-SHIM-V4-* gates; future models declare own gate suite at frozen-spec time per raw 12)
+  honest-c3 PRIVATE upload still consumes HF Hub bandwidth (LFS for >10MB; no quota issues at anima scale 2026-05)
+  honest-c3 PUBLIC→PRIVATE revert technically possible but external clones / HF discovery indexing creates reputational cost — prefer never-premature-promote over revert
+  honest-c3 benchmark suite expected MAY drift over time (e.g., add MT-Bench post-2026; deprecate hellaswag if saturated); rule expects current-canonical-at-upload-time, NOT static historical set
+  honest-c3 shim v4 hf_format gates F-SHIM-V4-1/2/3/4 are CLM-specific (decoder-LM substrate); BLM / EEG / SLM / qmirror substrates declare equivalent compatibility gates per substrate spec
+  note 2026-05-05 own 15 = 6th anima autonomy mandate joining quintet (own 4 root-cause + own 5 completeness + own 6 no-restriction + own 11 parallel-loop + own 12 observability + own 14 HF-Hub-only). own 14 + own 15 form HF triad: own 14 = WHERE (HF Hub) + own 15 = HOW (PRIVATE→PUBLIC lifecycle).
+  note 2026-05-05 cross-link to memory feedback_hf_release_private_to_public_after_verification.md — hive-hook-bus session-scoped mirror of this own SSOT entry.
+  note 2026-05-05 first instance = clm-v4-mk2-v1 (PRIVATE 2026-05-04 → PUBLIC promote queued not executed, awaiting gates (b.1-b.6) PASS verdict.json).
+  why avoid public-facing premature releases that damage anima research credibility (raw#10 honest-disclosure cumulative reputation).
+  why downstream consumers (academic / industry / hobbyist) deserve only validated artifacts — premature PUBLIC = false-promise externality.
+  why PRIVATE-first creates safe iteration window where PRIVATE-PUBLIC distinction has zero reputational consequence; PUBLIC commitment is one-way reputational gate.
+  why separation of upload BG vs promote BG enforces explicit verdict.json gate-cite — bundled cycles tend to skip gate evidence under time pressure.
+  enforce-layer advisory + audit-trail (cli-lint follow-up via tool/hf_public_promote_lint.hexa)
+  enforce-layer-rationale advisory: tool/hf_upload_mk2.hexa --private validator-warn. audit-trail: hf_upload_audit/<ts>.jsonl visibility field. cli-lint follow-up: tool/hf_public_promote_lint.hexa gates (b.1-b.6) verdict-cite required before public promote.

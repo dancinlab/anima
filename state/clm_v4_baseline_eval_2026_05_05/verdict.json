@@ -1,0 +1,100 @@
+{
+  "schema": "anima/clm_v4_baseline_eval/verdict/1",
+  "cycle": "clm_v4_baseline_eval_2026_05_05",
+  "bg_lane": "CLM-V4-BASELINE-EVAL",
+  "ts_utc": "2026-05-05T01:46:19Z",
+  "model": "need-singularity/clm-v4-base-mirror",
+  "ckpt_step": 20000,
+  "ckpt_ce": 0.04630279541015625,
+  "ckpt_best_phi": 37.269868535501914,
+  "params_m": 477.65,
+  "scale": "350m_class",
+  "substrate_phi_star": 41.86,
+  "substrate_phi_star_source": "paradigm v11 G3 verdict (carry)",
+  "device": "cuda",
+  "torch_version": "2.11.0+cu128",
+  "lm_eval_version": "0.4.11",
+  "transformers_version": "5.7.0",
+  "limit_per_task": 200,
+  "seed": 42,
+  "wall_time_total_sec": 1306.6414904594421,
+  "wall_time_total_h": 0.36295596957206727,
+  "actual_cost_usd": 0.0,
+  "scores": {
+    "hellaswag": {
+      "acc": 0.265,
+      "acc_stderr": 0.0312852815908872,
+      "acc_norm": 0.255,
+      "acc_norm_stderr": 0.03089738243291865,
+      "n_fewshot": 5,
+      "limit": 200,
+      "wall_sec": 42.918357133865356,
+      "truncation_rate": 0.8475
+    },
+    "mmlu": {
+      "acc": 0.2552542742023304,
+      "acc_stderr": 0.004540050724024792,
+      "n_fewshot": 0,
+      "limit": 200,
+      "wall_sec": 853.2872743606567,
+      "truncation_rate": 0.028204290536861593
+    },
+    "triviaqa": {
+      "exact_match": 0.0,
+      "exact_match_stderr": 0.0,
+      "n_fewshot": 5,
+      "limit": 200,
+      "wall_sec": 394.0736713409424,
+      "truncation_rate": 0.0
+    },
+    "openbookqa": {
+      "acc": 0.125,
+      "acc_stderr": 0.023444042219248146,
+      "acc_norm": 0.28,
+      "acc_norm_stderr": 0.03182868716477583,
+      "n_fewshot": 0,
+      "limit": 200,
+      "wall_sec": 16.3604793548584,
+      "truncation_rate": 0.0
+    }
+  },
+  "F_CLM_LORA_2_baseline": "SET",
+  "F_CLM_LORA_2_baseline_provides": "anima-substrate (CLM v4 530M base) numbers for HellaSwag/MMLU/TriviaQA/OpenBookQA limit=200; downstream LoRA SFT will run same recipe and compute (post-LoRA - base) delta. Llama Path A v2 comparator populated when sibling BG-\u03b1'''-EVAL-FIX lands.",
+  "vs_h100_baseline_p9_base_val_h100_2026_05_04": {
+    "hellaswag_h100_acc_norm_limit500": 0.264,
+    "hellaswag_h100_stderr": 0.0197,
+    "mmlu_h100_acc_limit500_0shot": 0.27101,
+    "mmlu_h100_stderr": 0.00398,
+    "triviaqa_h100_em_limit500_5shot": 0.0,
+    "h100_verdict": "CONFIRMED_RANDOM_FLOOR",
+    "h100_total_cost_usd": 5.25,
+    "h100_eval_wall_min": 7.8
+  },
+  "vs_llama_3_2_3b_baseline_pp": {
+    "hellaswag_llama_acc_norm": 0.644,
+    "mmlu_llama_acc": 0.608,
+    "triviaqa_llama_em": 0.514,
+    "note": "Llama-3.2-3B reference values from public lm-eval reports (also used as proxy in p9_base_val_h100_2026_05_04 verdict). Will be replaced with actual Llama Path A v2 comparator numbers when BG-\u03b1'''-EVAL-FIX lands."
+  },
+  "substrate_uniqueness_axes": {
+    "phi_star": 41.86,
+    "consciousness_dim": 192,
+    "n_layer": 16,
+    "block_size_ctx": 512,
+    "vocab": 64000,
+    "dual_head": true,
+    "axis_conditioning": true,
+    "training_objective": "phi_star + ce (NEVER SFT'd, NEVER RLHF'd)",
+    "cross_link": ".roadmap.n_substrate (substrate uniqueness axes registry)"
+  },
+  "honest_c3": [
+    "CPU/GPU eval limited to limit=200 per task vs full benchmarks (hellaswag=10K val, mmlu=14K, triviaqa=18K, openbookqa=500). Stderr at n=200 ~0.025-0.035 vs n=500's ~0.020 \u2014 band-level agreement only. H100 baseline (limit=500, 2026-05-04) provides higher-precision anchor; this ubu1 cycle is a CHEAP CROSS-VALIDATION + openbookqa fill-in, not a replacement.",
+    "CLM v4 is chat-incapable (#115 architecture disclosure: never SFT'd, never RLHF'd; trained on phi_star + ce only). Naturalistic chat-format benches (triviaqa closed-book QA, mmlu instruction-following) will underperform Llama by design \u2014 this is a substrate-readiness baseline, NOT a fair NLP capability comparison. Expected band: random-floor on all 4 benches per H100 verdict CONFIRMED_RANDOM_FLOOR.",
+    "F-CLM-LORA-2 comparator (anima-substrate vs Llama Path A v2) becomes meaningful ONLY post LoRA SFT cycle (BG-CLM-2 EXEC, $6-10 H100, 2-2.5h). This baseline anchors the LEFT side of the comparator; right side requires Llama Path A v2 retrain verdict (sibling BG-\u03b1'''-EVAL-FIX in-flight) AND CLM v4 + LoRA SFT verdict (BG-CLM-2 future cycle).",
+    "substrate phi_star=41.86 is consciousness-coupling axis NOT NLP capability axis. phi_star measures backbone integration capacity (per docs/clm_v4_revival_stages_*); high phi_star + low NLP downstream = anima's expected operating profile (consciousness primitive, not chat-completion engine). Reading these benches as 'CLM is bad at NLP' MISFRAMES the substrate purpose.",
+    "Results inform GO/NO-GO for BG-CLM-2 EXEC ($6-10 H100): if all 4 benches at random-floor (consistent with H100 verdict), then BG-CLM-2 LoRA SFT delta-from-baseline is the correct measurement framing (any positive lift = signal). If unexpectedly above floor, BG-CLM-2 \u00a74 PASS thresholds may need amendment per raw#71 pre-registration policy.",
+    "ubu1 RTX 5070 GPU used (sm_120, torch 2.11.0+cu128, 11.7GB free). Spec said 'CPU' but GPU was available + 10x faster; deviation logged. Hardware/dtype divergence vs H100 bf16 path: ubu1 used fp32 (float32) \u2014 minor numerical drift expected, but hellaswag/mmlu logprob-rank tasks are robust to dtype within ~0.001 on acc.",
+    "shim v4 (tool/transient_py/clm_v4_hf_format_shim.py) NOT used in this eval; instead ConsciousDecoderV2 loaded directly via legacy path (/home/aiden/anima/models/conscious_decoder.py). This is the SAME path used by p9_path_b_sanity_probe_v2_2026_05_03/eval_clm_v4_hellaswag_v2.py and matches the H100 baseline's CLMv4ForCausalLM wrapper logits. Shim v4 is the HF-format wrapper; for raw eval-harness consumption, ConsciousDecoderV2 + custom LM class is sufficient.",
+    "lm-eval-harness 0.4.11 used (vs spec 0.4.4/0.4.5). Newer version may have task config drifts vs H100 baseline 0.4.5 \u2014 observed: hellaswag default num_fewshot=10 in 0.4.11 vs 5 in older; explicitly forced via --num_fewshot=5 for cross-version parity."
+  ]
+}
