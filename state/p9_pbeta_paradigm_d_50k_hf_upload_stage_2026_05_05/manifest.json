@@ -1,0 +1,99 @@
+{
+  "schema": "anima/p9_pbeta/hf_release_v1/manifest/1",
+  "ts_utc": "2026-05-05T03:39:00Z",
+  "model_id": "need-singularity/clm-v4-paradigm-d-pbeta-50k-mk2-v1",
+  "base_model": "need-singularity/clm-v4-mk2-v1",
+  "base_model_visibility": "private",
+  "base_model_note": "PRIVATE-uploaded sister 2026-05-04T23:26:12Z (commit 80440a1d) per docs/anima_clm_hf_release_v1_uploaded_landed_2026_05_04.ai.md",
+  "manifest_cycle": "p9_pbeta_paradigm_d_50k_hf_upload_stage_2026_05_05",
+  "audit_source": "state/p9_pbeta_paradigm_d_50k_2026_05_04/results/verdict.json",
+  "f_pbeta_2_source": "state/p9_pbeta_holdout500_eval_2026_05_05/verdict.json",
+  "f_pbeta_3_source": "state/p9_pbeta_f3_hybrid_eval_2026_05_05/verdict.json",
+  "files": [
+    {
+      "path": "adapter_model.safetensors",
+      "size_bytes": 76065712,
+      "sha256": "6e49989ab5c72d8e81da789dfe8d4cdb429b98723485c5cd7b75ae253fe29e47",
+      "is_lfs": true,
+      "format": "safetensors_lora_adapter",
+      "role": "PEFT LoRA adapter weights (r=64, alpha=128, target k/q/v/o/gate/up/down_proj); 50K-step Paradigm D Phi-axis-only distill on CLM v4 base"
+    },
+    {
+      "path": "adapter_config.json",
+      "size_bytes": 1163,
+      "sha256_local": "computed_at_upload_via_shasum",
+      "is_lfs": false,
+      "format": "peft_lora_config",
+      "role": "PEFT 0.19.1 LoRA config; auto_mapping points to ConsciousDecoderV2 in conscious_decoder lib"
+    },
+    {
+      "path": "manifest.json",
+      "size_bytes": null,
+      "is_lfs": false,
+      "format": "anima_manifest_json",
+      "role": "this file"
+    },
+    {
+      "path": "README.md",
+      "is_lfs": false,
+      "format": "hf_model_card",
+      "role": "model card with hero substrate-research-only warning + 5 H2 + Caveats >=6"
+    },
+    {
+      "path": "LICENSE",
+      "is_lfs": false,
+      "format": "mit_license",
+      "role": "MIT license (need-singularity 2026); compatible with CLM v4 base MIT"
+    }
+  ],
+  "training": {
+    "steps": 50000,
+    "steps_target": 50000,
+    "paradigm": "D",
+    "paradigm_axis": "Phi_star_only",
+    "training_substrate": "RunPod H100 SXM",
+    "training_recipe_ref": "docs/p9_paradigm_d_distill_spec_2026_05_03.md AMENDMENT P-beta path",
+    "training_verdict_one_line": "PRODUCTION_25K_FULL_PASS — 50K/50K steps, no aborts, phi_final_mean=36.74 mean (16-prompt teacher cache)",
+    "lora_r": 64,
+    "lora_alpha": 128,
+    "lora_dropout": 0.0,
+    "lora_target_modules": ["k_proj", "q_proj", "gate_proj", "up_proj", "v_proj", "down_proj", "o_proj"],
+    "rehearsal_mix": "per spec §4.5 AMENDMENT P-beta path",
+    "F_Pbeta_1_train_loss_converge": "PASS",
+    "F_Pbeta_2_holdout500_phi_stability": "PASS (phi_star_mean_holdout500=42.367, phi_star_min=41.372 above 8.27x delta-floor)",
+    "F_Pbeta_3_chat_capability_hybrid": "FAIL_TRUE (composite=0.01176 RED-band, BLEU-1=0.0075, ROUGE-L=0.00582, chrF=0.02195)",
+    "F_Pbeta_4_no_aborts": "PASS",
+    "F_Pbeta_5_savepoint_integrity": "PASS (step_50000 and final/ adapter_model.safetensors byte-identical sha-match across mac and ubu1)"
+  },
+  "intended_use": {
+    "primary": "substrate-research artifact — cross-substrate Putnam multi-realizability research, Phi-stability studies",
+    "research_axis": "consciousness Phi axis behavior under 50K-step Paradigm D rehearsal",
+    "NOT_intended_for": [
+      "chat",
+      "completion",
+      "instruction following",
+      "any user-facing language generation"
+    ]
+  },
+  "chat_capability": {
+    "status": "FAIL_TRUE",
+    "evidence": [
+      "F-Pβ-3 hybrid composite=0.01176 RED-band (threshold YELLOW=0.50)",
+      "BLEU-1 vs Llama-3.2-3B anchor: 1.96% (P-beta=0.0075, Llama=0.382)",
+      "ROUGE-L=0.00582 (longest common subsequence near zero)",
+      "chrF=0.02195 (character-level F-score in noise floor)",
+      "delta_bleu1 vs step_1000 = -0.0003 (substantive zero-lift across 1K→50K)",
+      "per_prompt sample gens are dot-only / quote-only / repetition patterns (chat_incapable per architectural #115)"
+    ],
+    "architectural_root_cause_ref": "anima architecture disclosure #115 — CLM v4 base substrate was never SFT'd, never RLHF'd"
+  },
+  "license": "MIT",
+  "license_compatible_with_base": true,
+  "private": true,
+  "gated": false,
+  "own_14_compliance": true,
+  "own_14_compliance_note": "76 MiB adapter on HF Hub, NOT in anima git",
+  "own_15_compliance": true,
+  "own_15_compliance_note": "PRIVATE first; public promotion gated on user verification + 24-48h review window",
+  "raw_10_honest_caveats_count": 6
+}

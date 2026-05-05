@@ -1,0 +1,32 @@
+[clm-v4-lora-phi] 03:47:24 start ANIMA_HOME=/Users/ghost/core/anima
+[clm-v4-lora-phi] 03:47:24 BASE_REPO=need-singularity/clm-v4-mk2-v1
+[clm-v4-lora-phi] 03:47:24 ADAPTER_PATH=/Users/ghost/core/anima/state/clm_v4_lora_sft_2026_05_05/results/adapter_final
+[clm-v4-lora-phi] 03:47:24 adapter sha256=6d5edb93ea845cb4...
+[clm-v4-lora-phi] 03:47:27 tokenizer vocab=64000 path=/Users/ghost/core/anima/state/clm_v4_lora_sft_2026_05_05/results/adapter_final/tokenizer_64k_multilingual.model
+[clm-v4-lora-phi] 03:47:27 loading base model need-singularity/clm-v4-mk2-v1 dtype=torch.float32 device=cpu ...
+[clm-v4-lora-phi] 03:47:30 base loaded 2.1s n_params=526.8M
+[clm-v4-lora-phi] 03:47:30 ln_f located at module path 'decoder.ln_f'
+[clm-v4-lora-phi] 03:47:30 loading PEFT adapter from /Users/ghost/core/anima/state/clm_v4_lora_sft_2026_05_05/results/adapter_final
+[clm-v4-lora-phi] 03:47:30 adapter loaded 0.3s
+[clm-v4-lora-phi] 03:47:30 active adapter = default
+[clm-v4-lora-phi] 03:47:30 post-wrap ln_f located at 'base_model.model.decoder.ln_f'
+[clm-v4-lora-phi] 03:47:30 tokenizing 16 calib prompts T_SEQ=256
+[clm-v4-lora-phi] 03:47:30 forwarding calib prompts (one-by-one, attention_mean pooling on ln_f)
+[clm-v4-lora-phi] 03:47:35   forward 4/16 elapsed=4.6s
+[clm-v4-lora-phi] 03:47:38   forward 8/16 elapsed=7.7s
+[clm-v4-lora-phi] 03:47:41   forward 12/16 elapsed=10.6s
+[clm-v4-lora-phi] 03:47:44   forward 16/16 elapsed=13.6s
+[clm-v4-lora-phi] 03:47:44 forward done 13.6s
+[clm-v4-lora-phi] 03:47:44 hidden matrix X.shape=(16, 768)
+[clm-v4-lora-phi] 03:47:44 phi-compute: X.shape=(16, 768) Xt.shape=(16, 8) top_var=[0.416, 0.415, 0.412, 0.394, 0.34, 0.338, 0.336, 0.319]
+[clm-v4-lora-phi] 03:47:44 I_full = log|Cov(N=16,H=8)| = -20.1440
+[clm-v4-lora-phi] 03:47:44   partition 1/8 phi=31.6922
+[clm-v4-lora-phi] 03:47:44   partition 2/8 phi=29.6690
+[clm-v4-lora-phi] 03:47:44   partition 3/8 phi=31.2302
+[clm-v4-lora-phi] 03:47:44   partition 4/8 phi=29.8631
+[clm-v4-lora-phi] 03:47:44   partition 5/8 phi=31.9863
+[clm-v4-lora-phi] 03:47:44   partition 6/8 phi=32.4586
+[clm-v4-lora-phi] 03:47:44   partition 7/8 phi=28.9969
+[clm-v4-lora-phi] 03:47:44   partition 8/8 phi=34.8950
+[clm-v4-lora-phi] 03:47:44 summary written /Users/ghost/core/anima/state/clm_v4_lora_phi_canonical_2026_05_05/results/phi_canonical.json
+[clm-v4-lora-phi] 03:47:44 FINAL: phi_star_min=28.9969 phi_mean=31.3489 phi_max=34.895
