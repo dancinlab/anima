@@ -438,7 +438,7 @@ fn main() -> int {
             if i + 1 < n { output_dir = av[i + 1]; i = i + 1 }
         }
         else if a == "--duration" {
-            if i + 1 < n { duration = int_parse(av[i + 1]); i = i + 1 }
+            if i + 1 < n { duration = to_int(av[i + 1]); i = i + 1 }
         }
         else if a == "--voice" {
             if i + 1 < n { voice = av[i + 1]; i = i + 1 }

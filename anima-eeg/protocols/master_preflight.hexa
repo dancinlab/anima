@@ -441,14 +441,14 @@ fn main() -> int {
             if i + 1 < n { voice = av[i + 1]; i = i + 1 }
         }
         else if a == "--threshold" {
-            if i + 1 < n { threshold = int_parse(av[i + 1]); i = i + 1 }
+            if i + 1 < n { threshold = to_int(av[i + 1]); i = i + 1 }
         }
         else if a == "--settle" {
-            if i + 1 < n { settle_s = int_parse(av[i + 1]); i = i + 1 }
+            if i + 1 < n { settle_s = to_int(av[i + 1]); i = i + 1 }
         }
         else if a == "--lenient" { lenient = 1 }
         else if a == "--skip-step" {
-            if i + 1 < n { skip_step = int_parse(av[i + 1]); i = i + 1 }
+            if i + 1 < n { skip_step = to_int(av[i + 1]); i = i + 1 }
         }
         else if a == "--help" { mode = "help" }
         i = i + 1

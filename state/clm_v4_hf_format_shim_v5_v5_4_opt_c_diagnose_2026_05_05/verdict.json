@@ -1,0 +1,126 @@
+{
+    "schema": "anima/clm_v4_shim_v5_v5_4_opt_c_diagnose/verdict/1",
+    "ts_utc": "2026-05-05T09:35:00Z",
+    "cycle": "clm_v4_hf_format_shim_v5_v5_4_opt_c_diagnose_2026_05_05",
+    "bg_lane": "BG-V5-4-OPT-C-DIAGNOSE",
+    "scope": "Mac-side $0 diagnosis + Path B closure decision spec",
+    "spec_anchor": "docs/clm_v4_hf_format_shim_v5_spec_2026_05_05.md",
+    "closure_spec_landed": "docs/clm_v4_hf_format_shim_v5_path_b_closure_2026_05_05.md",
+    "phase2_opt_a_carry": "state/clm_v4_hf_format_shim_v5_phase2_opt_a_2026_05_05/verdict.json",
+    "v5_4_design_1_carry": "state/clm_v4_hf_format_shim_v5_4_design_1_2026_05_05/verdict.json",
+    "opt_c_carry": "state/clm_v4_hf_format_shim_v5_opt_c_2026_05_05/verdict.json",
+    "no_h100_exec": true,
+    "no_git_commit": true,
+    "no_hf_push": true,
+    "wall_time_min": 25,
+    "actual_cost_usd": 0,
+    "root_cause_hypotheses_evaluated": {
+        "H1_l19_dtype_kwarg": {
+            "verdict": "REJECTED",
+            "evidence": "lm-eval ran 800/800 loglikelihood requests cleanly across all 6 passes (4 V5-4 + 2 OPT-C). No dtype kwarg traceback in either log."
+        },
+        "H2_pod_boot_setup_fail": {
+            "verdict": "REJECTED",
+            "evidence": "Both pods booted SSH-ready, scp succeeded, HF login succeeded, all 6 hellaswag passes wrote per-pass JSON files at /workspace/.../results/."
+        },
+        "H3_shim_v5_load_fail": {
+            "verdict": "REJECTED",
+            "evidence": "V5-4 logs show '[opt-a] re-init verified: 16/16 modules at std~0.1000' (09:02:31). OPT-C logs show 'cross_attn.o_proj std (post-best.pt load): mean=0.01990' (09:01:34). Both shims loaded correctly."
+        },
+        "H4_real_fixture_path_mismatch": {
+            "verdict": "REJECTED",
+            "evidence": "Both runs logged 'fixture loaded: shape=(1, 8, 192) ... l2=2.2022 mean_abs=0.047985'. Fixture loaded byte-equivalent in both. BG-CLM-1 sanity v1 pattern not recurring."
+        },
+        "H5_post_eval_summary_writer_crash": {
+            "verdict": "CONFIRMED",
+            "evidence": "V5-4 h100_run_inner.log line 134: 'ModuleNotFoundError: No module named transformers' at clm_v4_shim_v5_4_design_1_eval.py:539 (`__import__('transformers').__version__`). OPT-C h100_run_inner.log line 100: identical traceback at clm_v4_shim_v5_opt_c_eval.py:372. Both crashes occurred AFTER all hellaswag passes wrote per-pass JSON files. transformers package not installed on runpod/pytorch:2.4.0-py3.11 image and not in pip install list of run_h100.bash; metadata-log import line is non-essential to eval."
+        }
+    },
+    "root_cause_canonical": "H5 — non-essential metadata-log import (`__import__('transformers').__version__`) at line 539 (V5-4) / line 372 (OPT-C) of eval scripts crashes after all eval passes complete; on-pod summary builder fails to write eval_summary.json before pod-kill trap fires; verdict.json gets lift_pp=null INDETERMINATE label even though hellaswag eval data is intact in per-pass JSONs.",
+    "eval_data_intact": true,
+    "mac_post_hoc_reconstruction_authoritative": true,
+    "reconstructed_eval_summary_v5_4_design_1": {
+        "path": "state/clm_v4_hf_format_shim_v5_4_design_1_2026_05_05/results/eval_summary.json",
+        "v4_NF_acc_norm": 0.27,
+        "v4_RF_acc_norm": 0.27,
+        "v5_NF_acc_norm": 0.27,
+        "v5_RF_acc_norm": 0.28,
+        "delta_v5_v4_NF_pp": 0.0,
+        "delta_v5_v4_RF_pp": 1.0,
+        "delta_v5_v4_RF_se_pp": 4.476,
+        "lift_pp_v4_via_real_fixture": 0.0,
+        "lift_pp_v5_via_real_fixture": 1.0,
+        "lift_pp_v5_se_pp": 4.476,
+        "lift_pp_threshold": 5.0,
+        "F_SHIM_V5_4_verdict_reconstructed": "FAIL",
+        "rationale": "|lift_pp_v5|=1.00pp < combined_se_pp=4.48pp; no measurable substrate differential despite 5x init-time o_proj std ratio (v5=0.10 vs v4=0.02 confirmed by pre-eval assertion log)."
+    },
+    "reconstructed_eval_summary_opt_c": {
+        "path": "state/clm_v4_hf_format_shim_v5_opt_c_2026_05_05/results/eval_summary.json",
+        "no_fixture_acc_norm": 0.255,
+        "with_fixture_acc_norm": 0.250,
+        "lift_pp": -0.5,
+        "lift_pp_threshold": 5.0,
+        "F_SHIM_V5_4_verdict_reconstructed": "FAIL_EXPECTED",
+        "rationale": "best.pt overwrites cross_attn.o_proj fresh-init at all tested std values (post-load mean=0.01990); architecturally predicted FAIL_EXPECTED per Phase 2 OPT-A finding; reconstructed lift_pp -0.5pp matches prediction within stderr."
+    },
+    "path_b_decision_matrix": {
+        "decision_a_retry_with_infra_fix": {
+            "cost_usd_estimate": "1-3",
+            "wandanseong_score": 0.40,
+            "rank": 3,
+            "rationale": "$1-3 retry; no information gain — eval data already exists via Mac post-hoc reconstruction; risks recurring infra failure on other transient imports."
+        },
+        "decision_b_path_b_closure_on_existing_evidence": {
+            "cost_usd_estimate": "0",
+            "wandanseong_score": 0.95,
+            "rank": 1,
+            "rationale": "$0 closure; matches Phase 2 OPT-A architectural prediction; preserves cycle discipline; honest reconstruction methodology documented in eval_summary.json post_hoc_reconstruction_note + this verdict.json."
+        },
+        "decision_c_path_b_termination_plus_opt_b_retrain": {
+            "cost_usd_estimate": "100-300",
+            "wandanseong_score": 0.80,
+            "rank": 2,
+            "rationale": "$100-300; correct architectural fix (cross-attn loss-side retrain); requires user ACK + ledger plan; not a closure for current cycle but the architecturally-correct forward path."
+        }
+    },
+    "recommended_decision": "B",
+    "recommendation_rationale": "Decision-B closes Path B (shim v5 init-only architectural alternative for F-SHIM-V4-4) at $0 based on existing evidence: Phase 2 OPT-A architectural finding + V5-4 DESIGN-1 reconstructed FAIL + OPT-C reconstructed FAIL_EXPECTED. Retrying ($1-3) only restores the on-pod verdict.json label without adding information. Decision-C (OPT-B retrain $100-300) is the architecturally-correct forward path but requires explicit user ACK + ledger plan; it is not a closure for the current cycle.",
+    "own_15_g3_carve_out_impact": {
+        "status": "STRENGTHENED",
+        "carve_out_basis_pre_diagnose": "Single eval point — OPT-C reconstructed lift_pp=-0.5pp (FAIL_EXPECTED with best.pt loaded)",
+        "carve_out_basis_post_diagnose": "TWO independent eval points — (1) OPT-C with best.pt: lift_pp=-0.5pp ± stderr (architecturally predicted FAIL_EXPECTED); (2) V5-4 DESIGN-1 fresh-init (no best.pt, OPT-A re-init verified): lift_pp_v5=+1.0pp ± 4.48pp combined stderr (architecturally surprising — even with 5x substrate differential preserved, no measurable lift). The second eval point is independent empirical confirmation that init-only intervention is not the binding constraint; loss-side intervention (Path B SFT or Path C OPT-B retrain) is the correct forward path.",
+        "g3_partial_pass_for_clm_v4_mk2_v1": "REMAINS VALID with stronger evidence base; PUBLIC promote BG must cite this diagnose verdict + closure spec + Phase 2 OPT-A verdict + V5-4 DESIGN-1 verdict + OPT-C verdict (all 5 corroborating)."
+    },
+    "opt_b_retrain_trigger_impact": {
+        "status": "ARCHITECTURALLY MOTIVATED",
+        "evidence": "V5-4 DESIGN-1 fresh-init result implies the binding constraint is loss-side, not init-side. Init-time 5x o_proj std differential does not translate to measurable hellaswag lift even when preserved at inference. This is independent empirical motivation for OPT-B retrain (cross-attn-active loss during pretraining) over Path B SFT (cross-attn LoRA on existing best.pt).",
+        "recommended_dispatch_order": "Path B SFT first ($20-100, lower risk + cost) -> if PASS: F-SHIM-V5-4 closed-PASS; if FAIL: dispatch Path C OPT-B retrain ($100-300, definitive fix). Both gated on explicit user ACK.",
+        "no_dispatch_in_this_cycle": true
+    },
+    "honest_c3": [
+        "C1 — INDETERMINATE label is misleading. Both V5-4 and OPT-C verdict.json files report INDETERMINATE (lift_pp=null) but eval_summary.json reconstructions show FAIL (V5-4: lift_pp_v5=+1.0pp < +5pp gate, combined_se ~ 4.5pp) and FAIL_EXPECTED (OPT-C: lift_pp=-0.5pp). Reconstructed verdict matches Phase 2 OPT-A architectural prediction. On-pod verdict.json INDETERMINATE label arose from a metadata-log import crash AFTER all hellaswag passes wrote per-pass JSON. The eval data is authoritative; only the on-pod summary writer crashed.",
+        "C2 — Reconstruction methodology is deterministic but Mac-derived. eval_summary.json values are Mac-side post-hoc derivations from on-pod per-pass hellaswag_*.json files (lm-eval-harness standard schema). acc_norm + stderr are direct lm-eval output (authoritative). lift_pp + combined_se are simple arithmetic on those fields. The on-pod summary writer would have produced the same numbers if the transformers import had not crashed.",
+        "C3 — V5-4 DESIGN-1 result is architecturally surprising. Phase 2 OPT-A predicted that the 5x substrate differential at fresh-init (v5 std=0.10 vs v4 std=0.02) would translate to a measurable hellaswag lift. Reconstructed result: lift_pp_v5=+1.0pp ± 4.48pp combined stderr — within noise. This implies init-time differential is necessary but not sufficient for hellaswag lift; binding constraint is loss-side (cross_attn never trained to produce useful residue regardless of init scale). Independent empirical motivation for Path B SFT or Path C OPT-B retrain over further init-time tuning.",
+        "C4 — Path B closure scope. Decision-B closes the shim v5 init-only architectural alternative path for F-SHIM-V4-4. It does NOT close F-SHIM-V4-4 itself (still PREREQUISITE_BLOCKED on shim v4) and does NOT preempt Path B SFT or Path C OPT-B retrain. Both forward paths remain open, gated on explicit user ACK + ledger plan.",
+        "C5 — own 15 G3 carve-out scope. The G3 PARTIAL_PASS carve-out for need-singularity/clm-v4-mk2-v1 PUBLIC promote justified by Decision-B applies only to (b.3) shim compatibility gate sub-condition F-SHIM-V4-4. Other own 15 (b.1) benchmark, (b.2) falsifier pre-register, (b.4) 24-48h review, (b.5) honest C3 model card, (b.6) cross-substrate gates are unaffected. PUBLIC promote BG must independently verify each (b.1-b.6) gate.",
+        "C6 — Cost discipline. Decision-B is $0; Decision-C is $100-300 conditional on user ACK; total cycle cost on shim v5 (Phase 1 $0 + Phase 2 $0 + Phase 2 OPT-A $0 + V5-4 DESIGN-1 $0.20 + OPT-C $0.15 + this diagnose $0) = $0.35. own 16 watchdog discipline maintained on both V5-4 and OPT-C pods (kill_verified_404=1 both).",
+        "C7 — raw#10 honest disclosure. On-pod verdict.json files MUST remain INDETERMINATE because that is what was actually written by the orchestrator at pod-kill time. Re-writing those verdict.json files post-hoc to FAIL/FAIL_EXPECTED would be a raw#10 violation. This closure spec + the eval_summary.json reconstructions in each state dir provide the authoritative interpretation; consumers (e.g., own 15 PUBLIC promote BG) MUST cite this spec + eval_summary.json files, NOT the verdict.json INDETERMINATE label.",
+        "C8 — Forward-fix for any DESIGN-2/3/OPT-D follow-up. Remove the `__import__('transformers').__version__` line from any future shim v5 eval script (or pip-install transformers explicitly in run_h100.bash). Both eval scripts in state/clm_v4_hf_format_shim_v5_4_design_1_2026_05_05/ and state/clm_v4_hf_format_shim_v5_opt_c_2026_05_05/ are under transient_py opt-out namespace (raw#9) and can be patched additively if any retry is dispatched."
+    ],
+    "raw_compliance": {
+        "raw_9": "OK — md+json (this verdict.json + closure_spec_landed .md); transient_py not used in this diagnose cycle, no exec.",
+        "raw_10": "OK — 8 honest C3 entries (>=5 required); on-pod verdict.json INDETERMINATE preserved verbatim per disclosure principle.",
+        "raw_15": "OK — additive only; no shim v4/v5 source mutation; no retry exec.",
+        "raw_71": "OK — F-SHIM-V5-4 +5pp threshold preserved verbatim (not relaxed); reconstructed lift_pp_v5=+1.0pp evaluated against unchanged threshold; FAIL verdict on reconstructed numbers.",
+        "no_git_commit": "OK per BG spec.",
+        "no_h100_spend": "OK; Mac-side analysis only.",
+        "no_hf_push": "OK; eval-only diagnosis."
+    },
+    "final_verdict": "PATH_B_CLOSED_FAIL",
+    "next_phase": {
+        "name": "User decision: Path B SFT ($20-100) OR Path C OPT-B retrain ($100-300) OR retire F-SHIM-V4-4 from active falsifier set",
+        "blocker": "All three forward paths require explicit user ACK + ledger plan; this diagnose cycle does NOT dispatch either",
+        "diagnose_cycle_complete": true
+    }
+}

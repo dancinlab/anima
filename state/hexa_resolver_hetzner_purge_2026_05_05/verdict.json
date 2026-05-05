@@ -1,0 +1,101 @@
+{
+  "schema": "anima.bg.hexa_resolver_hetzner_purge.v1",
+  "ts_utc": "2026-05-05T09:59:26Z",
+  "bg_lane": "HEXA-RESOLVER-HETZNER-PURGE",
+  "scope": [
+    "hexa-resolver pool config",
+    "anima refs",
+    "hexa-brain refs",
+    "hive refs",
+    "ssh config"
+  ],
+  "enumerated_references": {
+    "active_config": [
+      "/Users/ghost/.hx/cache/remote_preflight.json",
+      "/Users/ghost/core/nexus/scripts/bin/hexa_remote",
+      "/Users/ghost/.hx/bin/_cache.sh",
+      "/Users/ghost/.hx/bin/cargo",
+      "/Users/ghost/.hx/bin/hexa-url-handler.sh"
+    ],
+    "doc_spec": [
+      "/Users/ghost/core/.workspace",
+      "/Users/ghost/.hx/packages/hive-resource/hexa.toml"
+    ],
+    "historical_preserved": [
+      "/Users/ghost/.hx/bin/hexa (uchg-sealed comment refs only — host-agnostic at runtime via _pool_any_reachable)",
+      "/Users/ghost/.hx/bin/nexus (comment-only refs explaining ubu1/ubu2/hetzner historical fanout)",
+      "/Users/ghost/.hx/packages/orpheus/state/system/hexa.resolver.2026_05_04.bash (canonical backup of uchg-sealed hexa)",
+      "/Users/ghost/.hx/packages/orpheus/state/system/README.md (handoff notes)",
+      "/Users/ghost/.hx/packages/orpheus/dormant_explorer/module/metrics.hexa (status=done action id 'impl_hetzner_full_retire_propagation')",
+      "/Users/ghost/.hx/packages/orpheus/docs/*.ai.md (handoff/roi historical)",
+      "/Users/ghost/.hx/log/*.{log,err}",
+      "/Users/ghost/core/hexa-brain/eeg/{calibrate,eeg_setup,eeg_recorder,realtime,collect,experiment,closed_loop,neurofeedback}.hexa (comment-only argv portability narrative)",
+      "/Users/ghost/core/hive/kick/lint/* + design/kick/*.json (commit history + kick witness JSONs)",
+      "/Users/ghost/core/anima/state/* (jsonl/log artifacts; raw#15 historical preservation)"
+    ]
+  },
+  "enumerated_references_count": 18,
+  "purged_active_config_count": 5,
+  "purged_doc_spec_count": 2,
+  "preserved_historical_count": 11,
+  "ssh_config_purged": true,
+  "ssh_config_already_clean": true,
+  "ssh_config_note": "~/.ssh/config already cleaned 2026-05-01 (REMOVED stanza for ubu2-relay/hetzner/htz/htz1/htz-d). No further action.",
+  "hexa_resolver_pool_purged": true,
+  "hexa_resolver_uchg_binary_left_alone": true,
+  "hexa_resolver_uchg_binary_reason": "~/.hx/bin/hexa (uchg sealed, sha256 e4482e5f...) is host-agnostic at runtime per orpheus 2026-05-04 patch (_pool_any_reachable via hive-resource list). Comment refs to hetzner are historical narrative. Modifying would require chflags nouchg + integrity rebreak; no operational benefit since pool selection is data-driven.",
+  "hexa_remote_chain_purged": true,
+  "hexa_remote_purge_summary": [
+    "_DYNAMIC_HOSTS fallback chain: 'hetzner ubu1 ubu2 htz' -> 'ubu1 ubu2'",
+    "PREFERRED htz->hetzner normalization replaced with retired-alias fallback to ubu1",
+    "heavy-compute always-hetzner pin removed (LB now picks ubu1/ubu2 with --memory caps)"
+  ],
+  "selftest_pre_purge": {
+    "command": "HEXA_RESOLVER_VERBOSE=1 hexa run /tmp/test_pre_purge.hexa",
+    "hetzner_attempts_seen": true,
+    "evidence": [
+      "hexa_remote: host=hetzner 실패: DNS 해석 실패",
+      "hexa_remote: host=htz 실패: DNS 해석 실패"
+    ]
+  },
+  "selftest_post_purge": {
+    "command": "HEXA_RESOLVER_VERBOSE=1 hexa run /tmp/test_post_purge2.hexa (x2)",
+    "hetzner_attempts_seen": false,
+    "evidence_clean_routing": "hexa-resolver: route=external reason=pool_reachable; hexa_remote: LB=score pick=ubu2 among: ubu1, ubu2; ubu2 에서 원격 실행 중",
+    "preflight_cache_after": "{\"ts\":1777975130,\"hosts\":[\"ubu1\",\"ubu2\"],\"port\":22,\"ok\":[\"ubu1\",\"ubu2\"]}"
+  },
+  "selftest_post_purge_no_hetzner_attempts": true,
+  "files_modified": [
+    "/Users/ghost/core/nexus/scripts/bin/hexa_remote",
+    "/Users/ghost/.hx/bin/_cache.sh",
+    "/Users/ghost/.hx/bin/cargo",
+    "/Users/ghost/.hx/bin/hexa-url-handler.sh",
+    "/Users/ghost/core/.workspace",
+    "/Users/ghost/.hx/packages/hive-resource/hexa.toml"
+  ],
+  "files_modified_count": 6,
+  "git_commit_made": false,
+  "git_commit_made_note": "Per spec: no commit (anima/hexa-lang/hive/hexa-brain).",
+  "honest_c3": [
+    "1. ~/.hx/bin/hexa (the hexa-resolver itself) was NOT modified despite containing 7 hetzner/htz string literals in comments. Reason: it's chflags uchg-sealed AND already host-agnostic at runtime via the orpheus 2026-05-04 _pool_any_reachable patch (hive-resource list-driven). Comment-only narrative; no operational impact. Future cleanup requires chflags nouchg + sha256 reseal + orpheus README update.",
+    "2. The dead-code branch in hexa_remote line 1808 (if HOST = hetzner|htz: MEM_MAX=80G) was deliberately left in place — it's now unreachable since hetzner/htz are no longer in the chain or PREFERRED, but removing it adds diff surface without behavior change. Future maintainer can prune.",
+    "3. hexa-brain eeg/*.hexa files have comment narrative like 'Mac stage0 / hetzner ssh / docker argv() 형식 차이 portable handling' — these are NOT active config but documentation about argv portability across substrates. Left intact (raw#15 doc preservation). If future readers find these confusing, swap 'hetzner' -> 'remote-linux' in a separate doc-only commit.",
+    "4. /Users/ghost/.hx/packages/orpheus/dormant_explorer/module/metrics.hexa contains action id 'impl_hetzner_full_retire_propagation' with status=done — this is a HISTORICAL roadmap entry tracking THIS exact retirement work. Preserved as evidence of completion. Do NOT delete.",
+    "5. The /Users/ghost/.hx/cache/remote_preflight.json was NOT manually overwritten — it auto-regenerated from the hexa_remote chain edit on next invocation, organically dropping hetzner/htz from the host list. This is the cleanest signal that the active config purge propagated correctly.",
+    "6. ssh config (~/.ssh/config) was already cleaned 2026-05-01 (per inline 'REMOVED' marker). No edit required this cycle. Verified by grep -nE 'hetzner|^Host htz' returning only commented-out historical markers.",
+    "7. hive-resource .resource SSOT is currently the upstream template (example-a/example-b deferred placeholders) — actual live SSOT lives elsewhere (hive-resource list output shows hetzner/ubu/ubu2 with hetzner reachable=n). The .resource template was not edited (it's not active config for this Mac instance; live SSOT path differs and was already showing hetzner=unreachable).",
+    "8. /Users/ghost/.hx/packages/orpheus/state/system/hexa.resolver.2026_05_04.bash is a backup copy of the uchg-sealed ~/.hx/bin/hexa. Not modified. If the canonical hexa is ever reset by package re-deploy, this backup would re-introduce hetzner-comment narrative, but the runtime is host-agnostic so no behavioral regression."
+  ],
+  "honest_c3_count": 8,
+  "follow_up_for_user": [
+    "OPTIONAL: Prune dead-code branch in /Users/ghost/core/nexus/scripts/bin/hexa_remote line 1808 (HOST=hetzner|htz mem cap 80G). No-op; cosmetic.",
+    "OPTIONAL: Cycle ~/.hx/bin/hexa uchg seal (chflags nouchg → strip 7 comment refs to hetzner → reseal + update orpheus README sha256). Not required since runtime is host-agnostic.",
+    "OPTIONAL: Future doc-only sweep through hexa-brain/eeg/*.hexa argv portability comments to swap 'hetzner ssh' → 'remote-linux ssh' for clarity.",
+    "NONE blocking: hetzner/htz routing is fully purged from the live dispatch path; selftest confirms zero DNS attempts."
+  ],
+  "raw_compliance": {
+    "raw_9_config_md": true,
+    "raw_10_honest_c3_min_5": true,
+    "raw_15_active_purge_historical_preserve": true
+  }
+}

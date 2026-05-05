@@ -563,13 +563,13 @@ fn main() -> int {
             if i + 1 < n { voice = av[i + 1]; i = i + 1 }
         }
         else if a == "--threshold" {
-            if i + 1 < n { threshold = int_parse(av[i + 1]); i = i + 1 }
+            if i + 1 < n { threshold = to_int(av[i + 1]); i = i + 1 }
         }
         else if a == "--settle-seconds" {
-            if i + 1 < n { settle_s = int_parse(av[i + 1]); i = i + 1 }
+            if i + 1 < n { settle_s = to_int(av[i + 1]); i = i + 1 }
         }
         else if a == "--drift-pct" {
-            if i + 1 < n { drift_max_pct = int_parse(av[i + 1]); i = i + 1 }
+            if i + 1 < n { drift_max_pct = to_int(av[i + 1]); i = i + 1 }
         }
         else if a == "--help"         { mode = "help" }
         else {

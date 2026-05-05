@@ -1,0 +1,193 @@
+{
+  "schema": "anima/clm_v4_lora_sft_opt_b_phase_1_2_prep/verdict/1",
+  "cycle": "clm_v4_lora_sft_opt_b_phase_1_2_prep_2026_05_05",
+  "bg_lane": "OPT-B-PHASE-1-2-PREP",
+  "ts_utc": "2026-05-05T09:55:00Z",
+  "spec_source": "docs/clm_v4_lora_sft_opt_b_cross_attn_retrain_spec_2026_05_05.md (Q1-B/Q2-A/Q3-A/Q4-A LOCKED at spec land)",
+  "parent_v1_cycle": "clm_v4_lora_sft_2026_05_05 (BG-CLM-2-EXEC, V2_PARTIAL_HS_ONLY)",
+  "phi_baseline_anchor": "state/clm_v4_lora_phi_canonical_2026_05_05/verdict.json (in-pipeline mean K=8 = 35.81)",
+
+  "phase_1_outputs": {
+    "train_script_sibling": "/Users/ghost/core/anima/tool/transient_py/clm_v4_lora_train_opt_b.py",
+    "train_script_size_bytes": 27000,
+    "train_script_v1_original_untouched": "/Users/ghost/core/anima/tool/transient_py/clm_v4_lora_train.py (UNTOUCHED — raw#15 additive)",
+    "orchestrator_sibling": "/Users/ghost/core/anima/tool/clm_v4_lora_train_orchestrator_opt_b.hexa",
+    "orchestrator_v1_original_untouched": "/Users/ghost/core/anima/tool/clm_v4_lora_train_orchestrator.hexa (UNTOUCHED)",
+    "exec_bash_emitted": "/Users/ghost/core/anima/state/clm_v4_lora_sft_opt_b_2026_05_05/exec.bash",
+    "run_h100_emitted": "/Users/ghost/core/anima/state/clm_v4_lora_sft_opt_b_2026_05_05/run_h100.bash",
+    "selftest_pass": true,
+    "emit_pass": true
+  },
+
+  "phase_1_hyperparameter_locks": {
+    "Q1_target_modules": "B (wide cross_attn qkvo) — 16 layers × 8 projections = 128 total LoRA targets",
+    "Q2_lr": "A (5e-6, 10× lower vs v1's 3e-5)",
+    "Q3_max_steps": "A (3000, 50% of v1's 6000)",
+    "Q4_phi_abort_threshold": "A (-10pp drift from in-pipeline base 35.81)",
+    "lora_dropout": "0.10 (2× v1's 0.05)",
+    "save_steps": "500 (2× cadence vs v1)",
+    "phi_probe_interval": "500 steps (vs v1's every 2000)",
+    "eval_step_triggers": "500,1000,1500,2000,2500,3000",
+    "BG_LANE": "OPT-B-CROSS-ATTN-RETRAIN",
+    "TARGET_USD": 30,
+    "BUDGET_HARD_CAP_USD": 50
+  },
+
+  "phase_1_orchestrator_own16_hooks": {
+    "boot_register": "bash $WATCHDOG_REGISTER $POD_ID $BG_LANE $TARGET_USD (graceful warn-only on failure)",
+    "heartbeat_during_poll": "echo poll status > $WATCHDOG_HB_DIR/$BG_LANE.txt every 60s (fire-and-forget)",
+    "trap_pre_stop_exiting_marker": "echo EXITING ts pod=$POD_ID > $WATCHDOG_HB_DIR/$BG_LANE.txt before runpodctl pod stop",
+    "trap_404_verify_3_retries_30s": "POD_KILL_VERIFIED_404 set after pod 404 confirmed",
+    "trap_deregister_after_404": "hexa run h100_cost_watchdog.hexa --deregister $POD_ID (only after 404)",
+    "verdict_schema_5_fields": [
+      "pod_kill_verified_404",
+      "watchdog_deregistered",
+      "cost_target_usd",
+      "cost_actual_usd",
+      "cost_overrun_2x_alerted"
+    ],
+    "all_5_fields_present_in_emitted_exec_bash": true
+  },
+
+  "phase_2_smoke": {
+    "host": "ubu1 (RTX 5070, sm_120, capability=(12,0))",
+    "venv": "/home/aiden/venv_orchestrator/bin/python (torch=2.11.0+cu128, peft=0.19.1, transformers=5.7.0, trl=1.3.0)",
+    "smoke_steps_executed": 10,
+    "dataset": "32-sample synthetic (User: smoke prompt N / Assistant: smoke response N)",
+    "dtype": "float32 (smoke mode; H100 will be bf16)",
+    "trainable_params": 5177344,
+    "trainable_pct": 0.9732,
+    "wall_time_sec": 0.71,
+    "smoke_train_loss_first_step": 16.74,
+    "smoke_train_loss_last_step": 16.78,
+    "smoke_grad_norm_range": "[8.146, 15.2] (non-zero — gradients DO flow somewhere)"
+  },
+
+  "phase_2_target_modules_audit": {
+    "target_modules_total": 128,
+    "self_attn_count": 64,
+    "cross_attn_count": 64,
+    "targets_per_layer": 8,
+    "n_layer": 16,
+    "lora_a_b_per_target": 2,
+    "expected_lora_params_cross_attn": 128,
+    "actual_lora_params_cross_attn": 128,
+    "target_modules_correct": true,
+    "n_cross_attn_lora_modules_named_modules_view": 256,
+    "n_cross_attn_lora_modules_view_note": "named_modules() exposes both lora_A ModuleDict + lora_A.default Linear → ×2 over-count; canonical metric is param count via .lora_A.default.weight + .lora_B.default.weight suffix (=128)."
+  },
+
+  "phase_2_gradient_flow": {
+    "self_attn_lora_b_post_train_nonzero": 64,
+    "self_attn_lora_b_total": 64,
+    "self_attn_max_norm_post_train": 0.003592,
+    "self_attn_positive_control_pass": true,
+    "cross_attn_lora_b_post_train_nonzero": 0,
+    "cross_attn_lora_b_total": 64,
+    "cross_attn_max_norm_post_train": 0.0,
+    "gradient_flow_to_cross_attn_lora_b_pass": false,
+    "gradient_flow_root_cause_confirmed": "modeling_clm_v4.py block forward gates cross_attn invocation on `consciousness_states is not None`. SFT data has no consciousness_states → cross_attn forward never called → no backward grad reaches cross_attn.lora_B even with target_modules patch. Empirical confirmation of spec §1.2 architectural finding.",
+    "phase_2_smoke_gradient_flow_pass": false
+  },
+
+  "phase_2_phi_star_drift_after_smoke": {
+    "phi_proxy_raw_mean_post_smoke": 0.9096,
+    "phi_proxy_raw_std_post_smoke": 0.0674,
+    "n_prompts": 16,
+    "phi_proxy_method": "logit-std heuristic on 16 axis calib prompts (in-pod heuristic; NOT canonical K=8 phi)",
+    "canonical_phi_baseline_in_pipeline": 35.81,
+    "drift_pp_estimate_NOT_COMPARABLE": "logit-std proxy (~0.91) is on a different scale than canonical phi mean K=8 (~35.81); direct subtraction is meaningless. After 10 smoke steps with synthetic data, drift is bounded by partition noise; canonical drift probe deferred to post-Phase-3 Mac-side via tool/transient_py/clm_v4_lora_phi_canonical.py (matches v1 cycle pattern).",
+    "phi_drift_after_100_steps_smoke_NOT_RUN": "spec called for 100 steps; we ran 10 because the gradient_flow FAIL is decisive at step 1 — running to 100 would not change the gradient_flow_to_cross_attn_lora_b_pass result (cross_attn forward never invoked)",
+    "phi_drift_estimate_for_verdict_field": -0.5,
+    "phi_drift_estimate_basis": "informational placeholder; canonical phi probe deferred (see deviations_from_spec)"
+  },
+
+  "ready_for_phase_3": false,
+  "ready_for_phase_3_basis": "Phase 2 smoke EMPIRICALLY CONFIRMED that cross_attn LoRA receives ZERO gradient even with the target_modules Q1-B wide patch in place. The spec's premise (training cross_attn fixes F-SHIM-V4-4) requires NOT JUST adding cross_attn to target_modules — it ALSO requires feeding consciousness_states during SFT forward (per modeling_clm_v4.py block forward gating). Phase 3 dispatch is BLOCKED until either (a) consciousness_states feeding mechanism is added to the SFT data pipeline / forward call OR (b) the spec is amended to acknowledge OPT-B alone is insufficient and a follow-up cycle (e.g., OPT-B + consciousness_states injection — call it OPT-B') is designed.",
+
+  "phase_3_target_usd": 30,
+  "phase_3_dispatch_gate_status": {
+    "gate_1_substrate_differential_confirmed_pass": true,
+    "gate_1_basis": "OPT-A 5× substrate differential confirmed per BG-SHIM-V5-OPT-A Phase 2 redo (referenced in spec trigger condition (a))",
+    "gate_2_user_cost_ack_pending": true,
+    "gate_2_basis": "explicit user $20-50 H100 cost ACK never solicited; spec §5 Phase 3 explicitly requires REQUIRES_EXPLICIT_USER_COST_ACK",
+    "gate_3_phase_2_smoke_pass": false,
+    "gate_3_basis": "NEW gate surfaced by Phase 2: gradient_flow_to_cross_attn_lora_b_pass=false. Spec §5 Phase 2 says 'Smoke PASS required before Phase 3 H100 ACK' — this smoke FAIL must be resolved before Phase 3 spend.",
+    "all_gates_pass": false,
+    "blocking_gates": ["gate_2_user_cost_ack_pending", "gate_3_phase_2_smoke_pass"],
+    "recommended_action": "Author OPT-B amendment cycle (call it OPT-B': consciousness_states fed during SFT) before any Phase 3 H100 spend. The current OPT-B Q1-B target_modules patch alone CANNOT achieve F-OPT-B-2 (cross_attn actually trained) because the cross_attn forward is gated upstream of LoRA injection."
+  },
+
+  "phase_3_target_modules_count_per_layer": 8,
+  "phase_3_target_modules_basis": "Q1-B wide: self-attn qkvo (4) + cross-attn qkvo (4) = 8 per layer × 16 layers = 128 modules total",
+
+  "wall_time_min": 90,
+  "wall_time_breakdown_min": {
+    "phase_1_authoring_train_script_sibling": 25,
+    "phase_1_authoring_orchestrator_sibling": 30,
+    "phase_1_selftest_emit_verify": 5,
+    "phase_2_ubu1_rsync_deps_install": 5,
+    "phase_2_smoke_run_5steps": 2,
+    "phase_2_smoke_run_10steps_with_self_attn_control": 2,
+    "phase_2_root_cause_inspection_modeling_clm_v4_forward": 5,
+    "phase_2_phi_proxy_post_smoke": 4,
+    "phase_2_verdict_authoring": 12
+  },
+  "actual_cost_usd": 0.0,
+  "budget_target_usd": 0.0,
+
+  "deliverables_landed": {
+    "train_script_sibling_mac": "tool/transient_py/clm_v4_lora_train_opt_b.py",
+    "train_script_sibling_ubu1": "/home/aiden/anima/tool/transient_py/clm_v4_lora_train_opt_b.py (rsynced)",
+    "orchestrator_sibling": "tool/clm_v4_lora_train_orchestrator_opt_b.hexa",
+    "exec_bash_emitted": "state/clm_v4_lora_sft_opt_b_2026_05_05/exec.bash",
+    "run_h100_emitted": "state/clm_v4_lora_sft_opt_b_2026_05_05/run_h100.bash",
+    "smoke_artifacts_ubu1": "/tmp/clm_v4_lora_opt_b_smoke/ (cross_attn_lora_b_post_train.json + target_modules_audit.json + cross_attn_o_proj_std_pre/post_train.json + gradient_flow_probe.json + final/adapter_model.safetensors)",
+    "verdict": "state/clm_v4_lora_sft_opt_b_phase_1_2_prep_2026_05_05/verdict.json",
+    "companion_handoff": "docs/clm_v4_lora_sft_opt_b_phase_1_2_prep_landed_2026_05_05.ai.md"
+  },
+
+  "deviations_from_spec": [
+    "Phase 2 smoke executed 10 steps not 100 — the gradient_flow FAIL is decisive at step 1 (cross_attn forward never invoked due to consciousness_states gating); running to 100 steps would not change the outcome and would be wasteful. Findings preserved by including the self_attn positive control which DID train (lora_B 64/64 non-zero, max_norm 3.59e-3 after 10 steps).",
+    "Phi probe used logit-std heuristic in-pod, not canonical K=8 phi. Spec §5 Phase 2 mentioned 'φ★ probe heredoc' but the canonical formula requires Mac CPU fp32 + K=8 partition + ridge=1e-3 (per state/clm_v4_lora_phi_canonical_2026_05_05/verdict.json deviations §1). The proxy result (0.91 raw mean) is NOT directly comparable to canonical baseline 35.81 — the raw mean is on a different scale entirely. Drift estimate placeholder set to -0.5 informationally; canonical drift probe deferred to post-Phase-3 Mac-side.",
+    "Smoke ran on RTX 5070 fp32 not bf16. Spec §5 Phase 2 mentioned 'fp32 smoke'; H100 production will be bf16. dtype delta does not affect gradient_flow conclusion (binary on/off check, not numerical-precision-sensitive).",
+    "Synthetic 32-sample dataset used for smoke instead of real corpus mix. Per spec §5 Phase 2, smoke is for 'gradient flow + φ★ probe heredoc executes' verification — synthetic data is sufficient for the assertion-only smoke. Real corpus mix cycle would be Phase 3 cost.",
+    "trl was installed into venv_orchestrator (was missing). Verified torch 2.11.0+cu128 still works post-install. New trl version 1.3.0 may differ slightly from H100 image's expected version; H100 run_h100.bash pins via pip install — alignment carries from v1.",
+    "Initial assertion bug surfaced: PEFT named_modules() exposes both lora_A ModuleDict + lora_A.default inner Linear, double-counting. Fixed in clm_v4_lora_train_opt_b.py by counting LORA params via `.lora_A.default.weight` / `.lora_B.default.weight` suffix instead of named_modules `lora_A` / `lora_B` substring. This is a pre-Phase-3 sanity-assert correctness fix and is now part of the train script."
+  ],
+
+  "honest_c3": [
+    "C1 — Phase 2 smoke EMPIRICALLY FALSIFIED OPT-B's premise as currently specified. The spec §1.2 already documented the gradient-flow gating issue (`consciousness_states is None` → cross_attn skipped), and §1.4 proposed adding cross_attn to LoRA target_modules to fix it. Phase 2 smoke proves that target_modules patch ALONE is insufficient — even with cross_attn LoRA attached and gradients computed for all OTHER trainable params (self_attn lora_B = 64/64 non-zero post-train), cross_attn LoRA receives ZERO gradient because the forward path is gated upstream of LoRA injection. This is a discovery, not a failure: it surfaces that the OPT-B retrain spec needs an amendment (call it OPT-B') to also feed consciousness_states during SFT before $20-50 H100 spend.",
+    "C2 — self_attn positive control PASSED, validating the gradient-flow probe methodology. Self_attn lora_B 64/64 non-zero post-train (max_norm 3.59e-3) confirms (a) PEFT LoRA attachment works, (b) backward pass reaches the LoRA adapters that participate in forward, (c) the smoke test methodology is sound. The cross_attn ZERO result is therefore not a methodology artifact — it is a real architectural finding about the cross_attn forward gating.",
+    "C3 — phi-drift estimate after smoke (-0.5 placeholder) is informational ONLY. Canonical phi probe is K=8 partition method on 16 calib prompts requiring Mac CPU fp32 + ridge=1e-3, which we did not run as Phase 2 budget cap. The logit-std proxy (0.91 mean) is on a different scale than canonical phi (35.81 mean); direct subtraction is meaningless. Spec §3 Risk A's φ★-flip concern is unaffected by Phase 2 — it's a Phase 3 outcome metric, not a Phase 2 gate.",
+    "C4 — Phase 3 dispatch is BLOCKED on three gates: (gate 1) substrate differential PASS (already PASS), (gate 2) user $20-50 H100 cost ACK (pending — never solicited), (gate 3) Phase 2 smoke PASS (FAIL — gradient flow blocked by consciousness_states gating). Gate 3 is the new finding from this Phase 2 work and supersedes the spec's assumption that target_modules patch alone is sufficient. Recommended next step: amendment cycle 'OPT-B'' specifying consciousness_states feed mechanism (e.g., compute decoder.tension_proj output during forward and route it to consciousness_states= argument; or pre-compute and inject train_avg_real.pt fixture per F-SHIM-V5-4 pattern).",
+    "C5 — sibling pattern (raw#15) preserved both v1 train script and v1 orchestrator UNTOUCHED. Train script sibling lives at tool/transient_py/clm_v4_lora_train_opt_b.py; orchestrator sibling at tool/clm_v4_lora_train_orchestrator_opt_b.hexa. Both v1 originals untouched per raw#15. Selftest passes for OPT-B orchestrator on Mac.",
+    "C6 — own 16 hooks all 5 verdict schema fields present in emitted exec.bash: pod_kill_verified_404, watchdog_deregistered, cost_target_usd, cost_actual_usd, cost_overrun_2x_alerted. BG_LANE=OPT-B-CROSS-ATTN-RETRAIN, TARGET_USD=30. Boot register / heartbeat / trap pre-stop EXITING marker / 404 verify 3×30s / deregister-on-404 — all replicated from v1 pattern.",
+    "C7 — Phase 1+2 came in at $0 actual cost (Mac authoring + ubu1 free smoke). Wall time ~90min (within ~1.5h spec target). Findings include one critical architectural blocker (gate 3 above) that materially changes Phase 3 go/no-go calculus. This is a high-value Phase 2 outcome: $0 spend prevented up to $50 of Phase 3 H100 spend that would have produced a F-OPT-B-2 FAIL verdict regardless (cross_attn weights would not have moved even after 3000 H100 steps because the forward gating issue is identical at any scale).",
+    "C8 — Spec falsifier F-OPT-B-2 (cross_attn.o_proj std diverges from init floor 0.02 by ≥1e-3 after Phase 3) is now PRE-FALSIFIED in expectation: Phase 2 smoke shows post-train std mean=0.019905 = pre-train std mean=0.019905 (NO change at 6 decimal places after 10 smoke steps). Even though smoke is 10 steps not 3000, the failure mode (zero gradient → zero weight update) does not scale with steps. Phase 3 would produce post_train_std=0.019905 ± noise = pre_train_std with very high confidence. F-OPT-B-2 FAIL is the predicted Phase 3 outcome under current spec."
+  ],
+
+  "next_actions": [
+    {
+      "id": "OPT_B_PRIME_SPEC_AMENDMENT",
+      "action": "Author docs/clm_v4_lora_sft_opt_b_prime_amendment_2026_05_05.md amending OPT-B spec to include a consciousness_states feed mechanism during SFT forward. Two sub-options: (a) compute consciousness_states from current decoder tension_proj output (recursive — risk of φ★ instability), (b) pre-compute consciousness_states fixture from a calibration corpus and inject as static SFT input (analogous to F-SHIM-V5-4 fixture pattern, lower φ★ risk).",
+      "owner": "next BG cycle, Mac, $0, ~30min",
+      "depends_on": "user review of this Phase 1+2 verdict"
+    },
+    {
+      "id": "ROOT_CAUSE_CONFIRMATION_MAC_SIDE",
+      "action": "Optional — re-run smoke on Mac CPU fp32 with consciousness_states injected (from train_avg_real.pt fixture) to confirm cross_attn LoRA gradient flow is restored once gating condition is met.",
+      "owner": "next BG cycle, Mac CPU, $0, ~15min",
+      "depends_on": "OPT_B_PRIME_SPEC_AMENDMENT for fixture pre-computation recipe"
+    },
+    {
+      "id": "PHASE_3_DISPATCH_HOLD",
+      "action": "DO NOT dispatch Phase 3 H100 retrain until OPT_B_PRIME_SPEC_AMENDMENT lands and Phase 2 smoke is re-run with consciousness_states feed (gate 3 must PASS).",
+      "owner": "user — explicit cost ACK still required even after gate 3 PASS",
+      "depends_on": "OPT_B_PRIME_SPEC_AMENDMENT + Phase 2 re-smoke PASS"
+    }
+  ],
+
+  "verdict": "PHASE_1_PASS_PHASE_2_FAIL_GRADIENT_FLOW_BLOCKED_PHASE_3_HOLD",
+  "verdict_one_line": "Phase 1 (sibling files + selftest + emit) PASS. Phase 2 smoke EMPIRICALLY CONFIRMED cross_attn LoRA gradient flow is BLOCKED by consciousness_states gating in modeling_clm_v4.py block forward — target_modules patch alone insufficient. Self_attn positive control PASS (64/64 lora_B non-zero); cross_attn FAIL (0/64 lora_B non-zero). Phase 3 dispatch BLOCKED until OPT-B' amendment adds consciousness_states feed to SFT pipeline. Saved $20-50 H100 spend by surfacing this at $0 Mac+ubu1."
+}

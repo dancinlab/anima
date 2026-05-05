@@ -1,0 +1,475 @@
+{
+  "schema": "anima/phase_e_v6_baseline_analysis/1",
+  "ts_utc": "2026-05-05T10:22:38Z",
+  "bg_lane": "PHASE-E-V6-BASELINE-ANALYSIS",
+  "v6_npy_paths": {
+    "ec": "/home/aiden/anima_phase_e_v6_2026_05_03/berger_ec_60s_v6_2026_05_03.npy",
+    "eo": "/home/aiden/anima_phase_e_v6_2026_05_03/berger_eo_60s_v6_2026_05_03.npy",
+    "ec_meta": "/home/aiden/anima_phase_e_v6_2026_05_03/berger_ec_60s_v6_2026_05_03.npy.meta.json",
+    "eo_meta": "/home/aiden/anima_phase_e_v6_2026_05_03/berger_eo_60s_v6_2026_05_03.npy.meta.json"
+  },
+  "v6_npy_sha256": {
+    "ec": "bba81117d46c6de2f93a6415584d9265531eb8661d267a908d68ca573f767754",
+    "eo": "1fc12e2e4188b0580ba5df476ed2cf9b7803ea775e341f0384f1ed534c539a12",
+    "ec_meta": "fea8e787f9d126bc8caac5d058084075f393d962a8df4e77e4b851a1756bdc43",
+    "eo_meta": "1ac12772d09f0270479b0773bb25c7fc368a289f2a6a12be49526b01fea6e18c"
+  },
+  "supersedes_2026_05_05_invalid_baseline": true,
+  "supersedes_state_dir": "state/anima_phase_e_eeg_live_2026_05_05/ + state/phase_e_ec_eo_sanity_analysis_2026_05_05/",
+  "effective_fs_ec": 120.20552791760474,
+  "effective_fs_eo": 119.95750716790205,
+  "fs_used_for_filter": 120.0815175427534,
+  "channel_layout_cyton_1to16": [
+    "Fp1",
+    "Fp2",
+    "C3",
+    "C4",
+    "P7",
+    "P8",
+    "O1",
+    "O2",
+    "F7",
+    "F8",
+    "F3",
+    "F4",
+    "T7",
+    "T8",
+    "P3",
+    "P4"
+  ],
+  "railed_channels_idx_0based": [
+    0,
+    4,
+    5,
+    7,
+    15
+  ],
+  "railed_channels_names": [
+    "Fp1",
+    "P7",
+    "P8",
+    "O2",
+    "P4"
+  ],
+  "railed_canonical_source": "state/berger_v6_clean_reanalyze_2026_05_03/analysis_log.txt \u2014 prior 2026-05-03 reanalysis canonical clean=[2,3,4,7,9,10,11,12,13,14,15] railed=[1,5,6,8,16] (1-based)",
+  "railed_std_only_detected_ec": [
+    "Fp1",
+    "P7",
+    "P8",
+    "O2",
+    "F7",
+    "F8",
+    "F3",
+    "F4",
+    "T7",
+    "T8",
+    "P3",
+    "P4"
+  ],
+  "railed_std_only_detected_eo": [
+    "Fp1",
+    "P7",
+    "P8",
+    "O2",
+    "F7",
+    "F8",
+    "F3",
+    "F4",
+    "T7",
+    "T8",
+    "P3",
+    "P4"
+  ],
+  "rail_audit_sister_files": [
+    "anima-eeg/recordings/sessions/berger_ec_60s_v6_2026_05_03.npy.rail_audit.json (rail_status=FAIL by 187uV threshold; canonical reanalysis used different threshold)",
+    "anima-eeg/recordings/sessions/berger_eo_60s_v6_2026_05_03.npy.rail_audit.json"
+  ],
+  "berger_anchors": {
+    "O1_idx_0based": 6,
+    "O2_idx_0based": 7,
+    "Fp1_idx_0based": 0,
+    "Fp2_idx_0based": 1
+  },
+  "part_A_berger_alpha": {
+    "per_channel": [
+      {
+        "ch_idx_1based": 1,
+        "name": "Fp1",
+        "is_railed": true,
+        "alpha_ec_uV2": 155677.0494288312,
+        "alpha_eo_uV2": 154357.94527426994,
+        "ec_over_eo_ratio": 1.0085457483397917
+      },
+      {
+        "ch_idx_1based": 2,
+        "name": "Fp2",
+        "is_railed": false,
+        "alpha_ec_uV2": 16.2720426481742,
+        "alpha_eo_uV2": 3.238229845716262,
+        "ec_over_eo_ratio": 5.02498075289495
+      },
+      {
+        "ch_idx_1based": 3,
+        "name": "C3",
+        "is_railed": false,
+        "alpha_ec_uV2": 192.47402962956227,
+        "alpha_eo_uV2": 207.75187976832697,
+        "ec_over_eo_ratio": 0.9264610738742692
+      },
+      {
+        "ch_idx_1based": 4,
+        "name": "C4",
+        "is_railed": false,
+        "alpha_ec_uV2": 178.00305372413192,
+        "alpha_eo_uV2": 192.28884155580346,
+        "ec_over_eo_ratio": 0.9257066207477997
+      },
+      {
+        "ch_idx_1based": 5,
+        "name": "P7",
+        "is_railed": true,
+        "alpha_ec_uV2": 208454.6548258556,
+        "alpha_eo_uV2": 208911.0445242996,
+        "ec_over_eo_ratio": 0.9978153874081516
+      },
+      {
+        "ch_idx_1based": 6,
+        "name": "P8",
+        "is_railed": true,
+        "alpha_ec_uV2": 155445.56385906658,
+        "alpha_eo_uV2": 53152.74555668319,
+        "ec_over_eo_ratio": 2.924506763122823
+      },
+      {
+        "ch_idx_1based": 7,
+        "name": "O1",
+        "is_railed": false,
+        "alpha_ec_uV2": 67.59536366182449,
+        "alpha_eo_uV2": 69.5393594672592,
+        "ec_over_eo_ratio": 0.9720446690862893
+      },
+      {
+        "ch_idx_1based": 8,
+        "name": "O2",
+        "is_railed": true,
+        "alpha_ec_uV2": 155898.94119835764,
+        "alpha_eo_uV2": 154661.9324583771,
+        "ec_over_eo_ratio": 1.007998146152179
+      },
+      {
+        "ch_idx_1based": 9,
+        "name": "F7",
+        "is_railed": false,
+        "alpha_ec_uV2": 14196.983629773082,
+        "alpha_eo_uV2": 12502.571334897666,
+        "ec_over_eo_ratio": 1.1355251051554416
+      },
+      {
+        "ch_idx_1based": 10,
+        "name": "F8",
+        "is_railed": false,
+        "alpha_ec_uV2": 13182.863899881726,
+        "alpha_eo_uV2": 11518.339866791006,
+        "ec_over_eo_ratio": 1.144510758697942
+      },
+      {
+        "ch_idx_1based": 11,
+        "name": "F3",
+        "is_railed": false,
+        "alpha_ec_uV2": 9491.496731687537,
+        "alpha_eo_uV2": 7067.52262514688,
+        "ec_over_eo_ratio": 1.3429736606595273
+      },
+      {
+        "ch_idx_1based": 12,
+        "name": "F4",
+        "is_railed": false,
+        "alpha_ec_uV2": 13978.169319654224,
+        "alpha_eo_uV2": 12319.390992029901,
+        "ec_over_eo_ratio": 1.1346477539918556
+      },
+      {
+        "ch_idx_1based": 13,
+        "name": "T7",
+        "is_railed": false,
+        "alpha_ec_uV2": 14521.504726964533,
+        "alpha_eo_uV2": 12833.563891938917,
+        "ec_over_eo_ratio": 1.1315254943395618
+      },
+      {
+        "ch_idx_1based": 14,
+        "name": "T8",
+        "is_railed": false,
+        "alpha_ec_uV2": 14492.142526237052,
+        "alpha_eo_uV2": 12795.253448292751,
+        "ec_over_eo_ratio": 1.1326186374347054
+      },
+      {
+        "ch_idx_1based": 15,
+        "name": "P3",
+        "is_railed": false,
+        "alpha_ec_uV2": 12274.59031539503,
+        "alpha_eo_uV2": 10755.204415607677,
+        "ec_over_eo_ratio": 1.141269830035258
+      },
+      {
+        "ch_idx_1based": 16,
+        "name": "P4",
+        "is_railed": true,
+        "alpha_ec_uV2": 154755.63381948828,
+        "alpha_eo_uV2": 153751.33830033915,
+        "ec_over_eo_ratio": 1.0065319465199538
+      }
+    ],
+    "alpha_O1_ec_uV2": 67.59536366182449,
+    "alpha_O1_eo_uV2": 69.5393594672592,
+    "alpha_O2_ec_uV2": 155898.94119835764,
+    "alpha_O2_eo_uV2": 154661.9324583771,
+    "alpha_Fp1_ec_uV2": 155677.0494288312,
+    "alpha_Fp1_eo_uV2": 154357.94527426994,
+    "alpha_Fp2_ec_uV2": 16.2720426481742,
+    "alpha_Fp2_eo_uV2": 3.238229845716262,
+    "ec_eo_alpha_ratio_O1": 0.9720446690862893,
+    "ec_eo_alpha_ratio_O2": 1.007998146152179,
+    "alpha_peak_freq_O1_ec_hz": 11.51969642543712,
+    "alpha_peak_freq_O1_eo_hz": 11.269494410345706,
+    "alpha_peak_freq_O2_ec_hz": 8.764986410658679,
+    "alpha_peak_freq_O2_eo_hz": 8.514729110038978,
+    "occipital_alpha_ec_sum_uV2": 67.59536366182449,
+    "frontal_alpha_ec_sum_uV2": 16.2720426481742,
+    "F_BERGER_1_O1_pass": false,
+    "F_BERGER_1_O2_pass": null,
+    "F_BERGER_1_overall": false,
+    "F_BERGER_2": true,
+    "berger_classical_replicated": false
+  },
+  "part_B_phase_e_binding": {
+    "roi_channels": [
+      "T7",
+      "T8",
+      "P7",
+      "P8"
+    ],
+    "roi_channel_idxs_0based": [
+      12,
+      13,
+      4,
+      5
+    ],
+    "roi_pairs": [
+      "T7-T8",
+      "T7-P7",
+      "T7-P8",
+      "T8-P7",
+      "T8-P8",
+      "P7-P8"
+    ],
+    "high_gamma_band_hz_used": [
+      30.0,
+      50.0
+    ],
+    "high_gamma_band_hz_spec_target": [
+      30.0,
+      80.0
+    ],
+    "band_capped_reason": "effective fs ~120.1 Hz; Nyquist=60.0 Hz; spec target [30,80] Hz exceeds Nyquist; capped at 50 Hz (95% of Nyquist) \u2014 spectral content above 60 Hz is aliased/absent",
+    "coherence_per_pair_ec": {
+      "T7-T8": 0.9999902327540588,
+      "T7-P7": null,
+      "T7-P8": null,
+      "T8-P7": null,
+      "T8-P8": null,
+      "P7-P8": null
+    },
+    "coherence_per_pair_eo": {
+      "T7-T8": 0.9999831250396835,
+      "T7-P7": null,
+      "T7-P8": null,
+      "T8-P7": null,
+      "T8-P8": null,
+      "P7-P8": null
+    },
+    "mean_coherence_ec": 0.9999902327540588,
+    "mean_coherence_eo": 0.9999831250396835,
+    "F_PHASE_E_1_baseline_proxy_ec_ge_0.5": true,
+    "F_PHASE_E_1_strict_spec_verdict": "N/A_baseline_only_no_reading_task",
+    "F_PHASE_E_2": "N/A_baseline_only_no_stimulus_marker",
+    "stable_epoch_duration_s_baseline_ec": 62.35986089706421,
+    "stable_epoch_duration_s_baseline_eo": 62.41376781463623,
+    "spec_required_stable_epoch_duration_s": 300,
+    "duration_shortfall_pct": 79.21337970097859
+  },
+  "part_C_putnam_concordance_update": {
+    "eeg_real_phi_value": 18.36294762876847,
+    "eeg_real_phi_derivation": "log10(occipital_alpha_ec_sum_uV2 + 1) \u00d7 10; occipital channels used (non-railed): O1",
+    "eeg_phi_proxy_scale_disclosure": "PROXY scale, not IIT 4.0 phi\u2605. The BLM Phase 4 RETRY EEG=-3.01 was itself an IIT 4.0 deficit-corrected sign-flipped placeholder; this proxy substitutes a real-measurement signal-magnitude-based scalar in the same numeric range (0..50). Honest C3.",
+    "occipital_channels_used_in_proxy": [
+      "O1"
+    ],
+    "occipital_channels_excluded_railed": [
+      "O2"
+    ],
+    "substrate_phi_table_phase2": [
+      {
+        "id": "clm_v4_anchor",
+        "phi": 41.86
+      },
+      {
+        "id": "pbeta_adapter",
+        "phi": 42.37
+      },
+      {
+        "id": "bold_tribe_v2_phase4",
+        "phi": 21.33
+      },
+      {
+        "id": "eeg_v6_baseline_real",
+        "phi": 18.36294762876847
+      },
+      {
+        "id": "a1_negative",
+        "phi": 0.0
+      }
+    ],
+    "concordance_pair_table_phase2": [
+      {
+        "pair": [
+          "clm_v4_anchor",
+          "pbeta_adapter"
+        ],
+        "phi_a": 41.86,
+        "phi_b": 42.37,
+        "delta": 0.509999999999998,
+        "t_phi": 0.012036818503658203,
+        "pass": true
+      },
+      {
+        "pair": [
+          "clm_v4_anchor",
+          "bold_tribe_v2_phase4"
+        ],
+        "phi_a": 41.86,
+        "phi_b": 21.33,
+        "delta": 20.53,
+        "t_phi": 0.4904443382704253,
+        "pass": false
+      },
+      {
+        "pair": [
+          "clm_v4_anchor",
+          "eeg_v6_baseline_real"
+        ],
+        "phi_a": 41.86,
+        "phi_b": 18.36294762876847,
+        "delta": 23.49705237123153,
+        "t_phi": 0.5613247102539782,
+        "pass": false
+      },
+      {
+        "pair": [
+          "clm_v4_anchor",
+          "a1_negative"
+        ],
+        "phi_a": 41.86,
+        "phi_b": 0.0,
+        "delta": 41.86,
+        "t_phi": 1.0,
+        "pass": false
+      },
+      {
+        "pair": [
+          "pbeta_adapter",
+          "bold_tribe_v2_phase4"
+        ],
+        "phi_a": 42.37,
+        "phi_b": 21.33,
+        "delta": 21.04,
+        "t_phi": 0.4965777672881756,
+        "pass": false
+      },
+      {
+        "pair": [
+          "pbeta_adapter",
+          "eeg_v6_baseline_real"
+        ],
+        "phi_a": 42.37,
+        "phi_b": 18.36294762876847,
+        "delta": 24.007052371231527,
+        "t_phi": 0.5666049650986907,
+        "pass": false
+      },
+      {
+        "pair": [
+          "pbeta_adapter",
+          "a1_negative"
+        ],
+        "phi_a": 42.37,
+        "phi_b": 0.0,
+        "delta": 42.37,
+        "t_phi": 1.0,
+        "pass": false
+      },
+      {
+        "pair": [
+          "bold_tribe_v2_phase4",
+          "eeg_v6_baseline_real"
+        ],
+        "phi_a": 21.33,
+        "phi_b": 18.36294762876847,
+        "delta": 2.967052371231528,
+        "t_phi": 0.1391023146381401,
+        "pass": true
+      },
+      {
+        "pair": [
+          "bold_tribe_v2_phase4",
+          "a1_negative"
+        ],
+        "phi_a": 21.33,
+        "phi_b": 0.0,
+        "delta": 21.33,
+        "t_phi": 1.0,
+        "pass": false
+      },
+      {
+        "pair": [
+          "eeg_v6_baseline_real",
+          "a1_negative"
+        ],
+        "phi_a": 18.36294762876847,
+        "phi_b": 0.0,
+        "delta": 18.36294762876847,
+        "t_phi": 1.0,
+        "pass": false
+      }
+    ],
+    "concordance_M1_phase2_value": 0.2,
+    "concordance_M1_phase1_baseline": 0.1,
+    "concordance_uplift_phase1_to_phase2": 0.1,
+    "T_putnam": 0.4,
+    "putnam_verdict_update": "FAIL_concordance_below_0.40",
+    "putnam_phase1_verdict": "FAIL (concordance=0.100 < 0.40, F2 fires)",
+    "putnam_phase2_verdict_under_real_eeg": "FAIL_concordance_below_0.40 (concordance=0.200; F2 still FIRES until reading-task binding evidence WITNESSED \u2014 F-PHASE-E-1 strict gate cannot be evaluated on baseline-only 60s \u00d7 2 capture)"
+  },
+  "ready_for_main_protocol": false,
+  "ready_for_main_protocol_reason": "Berger classical NOT replicated (F-BERGER-1 O1 EC<EO; O2 railed; only Fp2 shows EC>EO ratio and Fp2 is frontal not occipital). v6 capture has 5/16 channels canonically railed (Fp1, P7, P8, O2, P4), and several non-railed channels (T8, P7, P8, O2) carry massive DC offsets indicating electrode contact failure. Of the 6 mandatory binding-evidence ROI pairs (T7/T8/P7/P8 cross), only 1 (T7-T8) has both channels survive rail filtering, and that pair shows coherence ~1.0 in 30-50 Hz band \u2014 consistent with shared offset/drift rather than genuine binding. Recommendation: re-run electrode reseat per anima-eeg/docs/electrode_reseat_b_track_runbook_2026_05_03.md before Phase E main protocol P1-P4 35min session. Main protocol gate FAILS at capture-quality precondition.",
+  "capture_quality_precondition_pass": false,
+  "capture_quality_failures": [
+    "5/16 channels canonically railed (Fp1, P7, P8, O2, P4)",
+    "T8/P7/P8/O2 carry DC offsets >10\u2074 counts indicating electrode-skin contact failure",
+    "P8 and O2 raw signals are essentially identical (electrode short or shared reference fault)",
+    "Of 6 mandatory binding ROI pairs (T7/T8/P7/P8 cross), 5 pairs lost to P7/P8 rail; only T7-T8 survives \u2014 insufficient ROI coverage for F-PHASE-E-1",
+    "T7-T8 coherence ~1.0 is artifactual (shared offset/drift); not a binding signature"
+  ],
+  "wall_time_min": 0.00025512377421061196,
+  "actual_cost_usd": 0,
+  "honest_c3": [
+    "C3-1: 60s \u00d7 2 baseline only \u2014 F-PHASE-E-1 strict spec verdict (high-gamma coherence \u22650.5 in 5-min stable reading-task epoch) is NOT evaluable; we report a baseline proxy metric in the EC/EO bands. Main protocol P3 (15min reading task) required for binding-evidence verdict.",
+    "C3-2: high-gamma band capped at 30-50 Hz instead of spec 30-80 Hz because effective fs ~120 Hz (Nyquist=60 Hz) makes 60-80 Hz inaccessible without aliasing. Cyton+Daisy at full 250 Hz would extend to 80 Hz. v6 capture has drop_ratio ~0.96 \u2192 fs_actual ~120 Hz < claimed 125 Hz.",
+    "C3-3: EEG phi\u2605 proxy in Part C is a SIGNAL-MAGNITUDE-BASED proxy (log10(occipital_alpha+1) \u00d7 10), not an IIT 4.0 phi\u2605. The Phase 1 placeholder (-3.01) was itself a BLM Phase 4 RETRY hardcoded sign-flipped sentinel; this proxy substitutes a real-measurement scalar in same numeric band [0..50]. Phase 2 concordance computed under this proxy is illustrative; full IIT 4.0 phi\u2605 on EEG live remains future work ($1500+ budget per .roadmap.n_substrate).",
+    "C3-4: Concordance uplift Phase 1 (0.100) \u2192 Phase 2 depends on whether EEG real phi proxy matches ANCHORED scale (~42) or BOLD scale (~21). Occipital alpha typically yields phi proxy in [10,30] band \u2192 likely closer to BOLD; pair (eeg, bold) may PASS, pair (eeg, clm/P\u03b2) likely FAIL. Concordance shifts modestly but unlikely to cross 0.40 threshold. Full quantitative result in verdict.json.",
+    "C3-5: T7/T8/P7/P8 high-gamma coherence on RESTING baseline (no task) is expected to be LOW (binding evidence is task-evoked, not resting). High coherence on baseline would indicate either volume conduction floor (16ch scalp limit) or muscle artifact bleed-through. Low coherence on baseline + high coherence on reading task is the binding signature. We report baseline coherence as F-PHASE-E-1 sanity-floor reference, not verdict.",
+    "C3-6: Railed channels (if any) are excluded from F-BERGER metrics + Part B coherence pairs that touch them; this can asymmetrically penalize F-PHASE-E-1 if T7 or T8 are railed. Capture-quality runbook (electrode_reseat_b_track_runbook_2026_05_03.md) addresses pre-protocol mitigation.",
+    "C3-7: Phase 1 \u2192 Phase 2 Putnam verdict update DOES NOT modify the existing Phase 1 verdict.json artifact (raw#15); it is ADDITIVE in this state dir. Phase 1 cycle remains FAIL per its own evaluation; Phase 2 read-out is reported here as a separate snapshot."
+  ]
+}

@@ -1,0 +1,125 @@
+{
+  "schema": "anima-eeg/ai_native_error_contract_verdict/1",
+  "ts_utc": "2026-05-05T18:30Z",
+  "bg_lane": "EEG-AI-NATIVE-ERROR-CONTRACT",
+  "raw_invariants": ["raw#9", "raw#10", "raw#15", "raw#65", "raw#80", "raw#82"],
+
+  "spec_doc_path": "/Users/ghost/core/anima/docs/anima_eeg_ai_native_error_contract_spec_2026_05_05.md",
+  "lib_hexa_path": "/Users/ghost/core/hexa-brain/eeg/_lib_safe_call.hexa",
+  "handoff_doc_path": "/Users/ghost/core/anima/docs/anima_eeg_ai_native_error_contract_landed_2026_05_05.ai.md",
+
+  "patched_protocols": [
+    {
+      "path": "/Users/ghost/core/hexa-brain/eeg/protocols/berger_session_audio.hexa",
+      "status": "LANDED",
+      "backup": "/Users/ghost/core/hexa-brain/eeg/protocols/berger_session_audio.hexa.pre_ai_native_2026_05_05.bak",
+      "fail_paths_patched": [
+        "phase_impedance (kind=IMPEDANCE_RED)",
+        "phase_ec (kind=BRAINFLOW_TIMEOUT)",
+        "phase_eo (kind=BRAINFLOW_TIMEOUT)",
+        "argv_parse_unknown_flag (kind=OTHER)",
+        "selftest_fail_branch (kind=OTHER)"
+      ],
+      "ok_paths_patched": [
+        "cmd_run success (emit_ok with date_tag + ec_npy ledger)",
+        "cmd_selftest success (emit_ok with selftest label)"
+      ],
+      "selftest_pass": "8/8"
+    },
+    {"path": "berger_session_audio_v3_8ch.hexa", "status": "PENDING", "tracked_in_spec_section": 4},
+    {"path": "alpha_eyes_closed.hexa",          "status": "PENDING", "tracked_in_spec_section": 4},
+    {"path": "blink_session_audio.hexa",        "status": "PENDING", "tracked_in_spec_section": 4},
+    {"path": "jaw_session_audio.hexa",          "status": "PENDING", "tracked_in_spec_section": 4},
+    {"path": "cap_fit_verify.hexa",             "status": "PENDING", "tracked_in_spec_section": 4},
+    {"path": "preflight_settle.hexa",           "status": "PENDING", "tracked_in_spec_section": 4}
+  ],
+
+  "selftest_lib_safe_call": {
+    "command": "hexa run anima-eeg/_lib_safe_call.hexa --selftest",
+    "result": "PASS",
+    "pass_count": 31,
+    "fail_count": 0,
+    "sections": {
+      "A_kind_enum_invariants": "9/9 PASS",
+      "B_classify_kind_rc_dispatch": "9/9 PASS",
+      "C_fix_recipe_table": "5/5 PASS",
+      "D_kind_to_exit_table": "3/3 PASS",
+      "E_fail_injection": "3/3 emits visible on stderr",
+      "F_helmet_worn_disambiguation": "1/1 emits with false_positive_likely_if_helmet_worn=true",
+      "G_emit_ok_trailer": "1/1 stdout emit"
+    },
+    "verdict_marker_emitted": "__ANIMA_EEG_LIB_SAFE_CALL__ PASS"
+  },
+
+  "selftest_3_scenarios": {
+    "INT_PARSE_UNDEFINED": {
+      "stderr_observed": [
+        "__ANIMA_EEG_FAIL__ kind=INT_PARSE_UNDEFINED site=selftest:E1 fix_recipe=restage1_int_parse_fallback",
+        "reason: hexa runtime undefined builtin (int_parse / to_int) — patch stage1 fallback",
+        "user_voice_cue_emitted: false"
+      ],
+      "result": "PASS"
+    },
+    "BOARD_NOT_DETECTED": {
+      "stderr_observed": [
+        "__ANIMA_EEG_FAIL__ kind=BOARD_NOT_DETECTED site=selftest:E2 fix_recipe=check_dongle_port",
+        "reason: BrainFlow prepare_session failed; dongle missing, wrong port, or driver fault",
+        "user_voice_cue_emitted: true"
+      ],
+      "result": "PASS"
+    },
+    "SESSION_INTERRUPTED": {
+      "stderr_observed": [
+        "__ANIMA_EEG_FAIL__ kind=SESSION_INTERRUPTED site=selftest:E3 fix_recipe=resume_or_restart_session",
+        "reason: Ctrl-C / SIGTERM received mid-capture; partial data may be on disk",
+        "user_voice_cue_emitted: true"
+      ],
+      "result": "PASS"
+    }
+  },
+
+  "selftest_berger_protocol": {
+    "command": "hexa run anima-eeg/protocols/berger_session_audio.hexa --selftest",
+    "result": "PASS",
+    "pass_count": 8,
+    "fail_count": 0,
+    "new_tests_added": ["T6 ai_fix_recipe", "T7 ai_kind_to_reason", "T8 synthetic emit"],
+    "verdict_marker_emitted": "__BERGER_AUDIO__ PASS",
+    "ok_trailer_emitted": "__ANIMA_EEG_OK__ session=berger_session_audio_selftest ledger=none"
+  },
+
+  "argv_fail_path_test": {
+    "command": "hexa run anima-eeg/protocols/berger_session_audio.hexa --bogus-flag",
+    "stderr_observed": [
+      "__ANIMA_EEG_FAIL__ kind=OTHER site=berger_session_audio:argv_parse fix_recipe=see_log",
+      "reason: unclassified failure; consult log",
+      "user_voice_cue_emitted: false"
+    ],
+    "result": "PASS_sentinel_emitted"
+  },
+
+  "ai_agent_parser_template": {
+    "regex_python": "^__ANIMA_EEG_FAIL__ kind=(?P<kind>\\w+) site=(?P<site>[^ ]+) fix_recipe=(?P<recipe>\\w+)$",
+    "grep_oneliner": "grep -E '^__ANIMA_EEG_(FAIL|OK)__' /tmp/anima_eeg_*.log",
+    "jq_n_a_reason": "stderr trailer is plain text, not JSON; awk/regex preferred",
+    "agent_prompt_fragment": "After running an EEG protocol, scan stderr for `__ANIMA_EEG_FAIL__` or `__ANIMA_EEG_OK__`. If FAIL, extract `kind`, `site`, `fix_recipe` and either auto-recover via the recipe slug OR escalate with the recipe attached. Treat unknown `kind` as `OTHER` and apply `see_log`."
+  },
+
+  "honest_c3": [
+    "C1 sentinel marker pattern (__ANIMA_EEG_FAIL__) is anima-internal convention; no industry standard for EEG protocol error contracts (closest: BIDS log JSON, but BIDS does not specify a stderr trailer).",
+    "C2 say_cue is macOS-only ($1-Yuna voice locale-dependent); on linux/RunPod pods say is absent so cue silently no-ops; sentinel trailer still emits independently.",
+    "C3 hexa stage1 has no closures / no fn-typed params, so the BG-spec example safe_call(label, fn) is reframed as safe_call(label, rc) — rc-passthrough rather than lambda-wrap. Functional equivalent, no semantic loss.",
+    "C4 Retroactive cost — 7 priority protocols × ~5 sentinel emit sites each ≈ 35 patches; this BG lands berger_session_audio.hexa only (witness case), spec-binds the other 6 for next cycle.",
+    "C5 KIND enum churn — 9 entries today; expect 2-3/quarter additions as new fail modes surface. AI parser MUST treat unknown KIND as OTHER, not crash.",
+    "C6 chicken-egg — if _lib_safe_call.hexa itself fails to load, no sentinel is emitted because the wrapper is the fault. Mitigation: protocols inline the minimal emit fns (ai_emit_fail / ai_emit_ok) so the contract holds even if the lib import fails.",
+    "C7 stderr ordering — interleaved subprocess stderr (BrainFlow Python) may insert lines between trailer lines; AI parser MUST anchor on __ANIMA_EEG_FAIL__ then look forward (≤20 lines) for reason: / voice_emitted:.",
+    "C8 hexa runtime exit-code clamp — observed --bogus-flag returns rc=0 from `hexa run` even though the protocol returns 2; this is a pre-existing hexa stage1 quirk (sibling BG-HEXA-LANG fix territory). The sentinel emit still surfaces the fault correctly to the AI agent via stderr trailer; the rc-based exit signal is currently unreliable, so AI agents SHOULD prefer the trailer over rc."
+  ],
+
+  "next_cycle_followups": [
+    "patch remaining 6 priority protocols (berger_v3_8ch, alpha_eyes_closed, blink, jaw, cap_fit_verify, preflight_settle)",
+    "wire helmet_worn=true context plumbing from cap_fit_verify recent JSON into board_health_check",
+    "extend KIND enum if new fail modes surface (e.g., DONGLE_USB_RESET, SD_CARD_FULL)",
+    "propagate sentinel grammar to own 16 watchdog (__ANIMA_H100_FAIL__ for RunPod / trainer faults)"
+  ]
+}

@@ -1,0 +1,117 @@
+{
+  "schema": "anima/phase_e_main_protocol_run_now/verdict/1",
+  "ts_utc": "2026-05-05T19:20:00Z",
+  "bg_lane": "BG-PHASE-E-MAIN-PROTOCOL-RUN-NOW",
+  "cycle_dir": "/Users/ghost/core/anima/state/anima_phase_e_eeg_live_2026_05_05",
+  "spec_doc": "docs/anima_phase_e_eeg_live_session_prep_spec_2026_05_04.md",
+  "ready_to_run": true,
+  "user_fire_signal_required": true,
+  "fire_command": "bash /Users/ghost/core/anima/state/anima_phase_e_eeg_live_2026_05_05/main_protocol_run.bash",
+  "expected_wall_min": 20,
+  "expected_cost_usd": 0,
+
+  "corpus": {
+    "path": "state/anima_phase_e_eeg_live_2026_05_05/main_protocol_prompts.jsonl",
+    "abs_path": "/Users/ghost/core/anima/state/anima_phase_e_eeg_live_2026_05_05/main_protocol_prompts.jsonl",
+    "size_bytes": 57593,
+    "count": 300,
+    "axis_distribution": {
+      "daily": 60,
+      "emotion": 60,
+      "task": 60,
+      "roleplay": 60,
+      "meta": 60
+    },
+    "axis_id_distribution": {"1": 60, "2": 60, "3": 60, "4": 60, "5": 60},
+    "language": "Korean (native reader)",
+    "text_length_chars_min_avg_max": [23, 32, 40],
+    "expected_dwell_min_s": 1.5,
+    "spec_homology_note": "axis-conditioned 5-bucket × 60 sentences satisfies spec §3 N=300 target; corpus is anima-axis-conditioned (not ZuCo SR transcript shuffle as spec §3 §C8 originally suggested) — methodologically homologous via 'sentence-level reading task' but anchored to anima training distribution rather than ZuCo. Verdict gate (F-PHASE-E-1, F-PHASE-E-2) is corpus-agnostic so this substitution does not change verdict criteria."
+  },
+
+  "presenter": {
+    "path": "tool/transient_py/anima_phase_e_stimulus_presenter.py",
+    "abs_path": "/Users/ghost/core/anima/tool/transient_py/anima_phase_e_stimulus_presenter.py",
+    "size_bytes": 12281,
+    "raw9_carve_out": "raw#9 hexa-only carve-out under raw#37 transient_py namespace — Tk/pylsl bridge has no hexa equivalent",
+    "ui_mode": "terminal-fullscreen (ANSI clear + select.select stdin spacebar)",
+    "ui_mode_rationale": ".venv-eeg python lacks _tkinter (homebrew python@3.12 minimal build); chose terminal mode over multi-python orchestration to keep single-venv simplicity. Spacebar advance + ≥1.5s min-dwell + ESC abort all preserved per spec §3.",
+    "lsl_outlet": {
+      "stream_name": "anima_phase_e_markers",
+      "type": "Markers",
+      "channel_count": 1,
+      "channel_format": "cf_string",
+      "nominal_srate": "IRREGULAR_RATE",
+      "source_id": "anima_phase_e_stimulus_presenter_uid",
+      "payload_schema": "JSON-encoded {ts_ns_monotonic, kind, phase, sentence_id, axis, text}"
+    },
+    "selftest_pass": true,
+    "selftest_log": "[lsl] outlet OK pylsl=1.18.2 stream=anima_phase_e_markers; selftest_pushed=3"
+  },
+
+  "auto_launch_script": {
+    "path": "state/anima_phase_e_eeg_live_2026_05_05/main_protocol_run.bash",
+    "abs_path": "/Users/ghost/core/anima/state/anima_phase_e_eeg_live_2026_05_05/main_protocol_run.bash",
+    "size_bytes": 7220,
+    "executable": true,
+    "bash_syntax_pass": true,
+    "steps": [
+      "step0: prompts file presence + n>=300 check",
+      "step1: impedance recheck (hexa-brain eeg impedance-validate --measure --port /dev/cu.usbserial-DP04WGIQ); abort on FAIL with B-track v7 reseat hint",
+      "step2: optional EC+EO 5min baseline re-capture (RECAPTURE_BASELINES=1 env), default skipped (berger_ec_60s.npy + berger_eo_60s.npy already present)",
+      "step3: parallel launch — presenter (BG, .venv-eeg python) + EEG capture (FG, hexa run anima-eeg/collect.hexa --duration 900 --tag phase_e_main_15min)",
+      "step4: optional 5min post-task rest (SKIP_POST_REST=1 to skip)",
+      "step5: completion banner + analysis-pipeline next-step hint"
+    ],
+    "voice_cues_macos_say": [
+      "P3 start: 'Phase E 본 protocol 측정 시작. 15분 독서 과제'",
+      "impedance fail: '임피던스 검증 실패. 헬멧 재조절 필요'",
+      "EC start (if RECAPTURE_BASELINES=1): '5분 눈 감기 시작'",
+      "EO start: '5분 눈 감기 종료. 5분 눈 뜨기 시작'",
+      "post rest: '5분 휴식 시작. 눈 감으세요'",
+      "all done: 'Phase E 본 protocol 측정 종료'"
+    ],
+    "env_overrides": {
+      "EEG_PORT": "default /dev/cu.usbserial-DP04WGIQ",
+      "RECAPTURE_BASELINES": "1 to recapture EC+EO 5min each (else skipped)",
+      "SKIP_POST_REST": "1 to skip post-task 5min rest"
+    }
+  },
+
+  "lsl_pre_flight": {
+    "pylsl_version": "1.18.2",
+    "venv_eeg_pylsl_install": "already_present",
+    "outlet_create_test": "PASS",
+    "self_resolve_test": "PASS (resolve_byprop returned 1 stream within 5s)",
+    "push_sample_test": "PASS",
+    "lsl_pre_flight_pass": true
+  },
+
+  "expected_outputs_post_run": {
+    "eeg_npy": "state/anima_phase_e_eeg_live_2026_05_05/phase_e_main_15min.npy (16 ch × ~112500 samples @125Hz)",
+    "eeg_meta": "state/anima_phase_e_eeg_live_2026_05_05/phase_e_main_15min.npy.meta.json",
+    "stim_log": "state/anima_phase_e_eeg_live_2026_05_05/main_protocol_stimulus_log.jsonl (300 sentence_advance events with onset_ns, dwell_s, skim flag)",
+    "presenter_log": "state/anima_phase_e_eeg_live_2026_05_05/main_protocol_stimulus_presenter.log",
+    "impedance_log": "state/anima_phase_e_eeg_live_2026_05_05/impedance_main_protocol.log",
+    "post_rest_npy": "state/anima_phase_e_eeg_live_2026_05_05/phase_e_post_rest_5min.npy (optional, default ON)"
+  },
+
+  "honest_c3_caveats": [
+    "C1_terminal_ui_not_tk — presenter is terminal-fullscreen ANSI not Tk fullscreen (spec mentions Tk but does not require it); UX preserved (spacebar + min-dwell + ESC) but on-screen text is monospace + may wrap differently than Tk centered Helvetica. Reading-task validity: same content, same self-paced advance, same eyes-on-screen attention demand.",
+    "C2_lsl_marker_consumed_by_what — collect.hexa direct BrainFlow path does NOT consume the LSL marker stream (collect.hexa doesn't currently have --lsl-marker-listen). Markers are emitted on the LSL outlet and stored in main_protocol_stimulus_log.jsonl with monotonic_ns timestamps. F-PHASE-E-2 sync verification (spec §7 P5) is performed POST-HOC by the analyzer cross-correlating presenter onset_ns with EEG sample timestamps + (if available) the AUX channel 17 audio sync pulse — not by real-time LSL inlet on EEG side. This means the LSL outlet itself is currently a *fallback* sync path; primary sync is via shared monotonic clock on the same Mac.",
+    "C3_audio_sync_aux_channel_not_implemented — spec §3 calls for 50ms 2kHz tone on AUX channel 17 for cross-modal sync verification; this script does NOT generate the audio pulse. F-PHASE-E-2 falls back to LSL/monotonic-clock latency only. If wall-clock drift between presenter process + EEG capture process exceeds 50ms, F-PHASE-E-2 may FAIL even on real binding. Mitigation: same-Mac single-process group launches both, so jitter is bounded by macOS scheduler (~1-5ms typical).",
+    "C4_no_alcohol_attest_gate_in_script — spec §5 requires user_attest.json (alcohol-free 24-48h, sleep≥6h, caffeine-free 4h, exercise-free 2h, 5-min stabilize) before P1; this script does NOT check user_attest.json before launching. User must self-attest. Analysis-pipeline §7 P0 validate WILL refuse to emit verdict if user_attest.json missing — so post-hoc gate exists but pre-hoc human-trust gate is not enforced.",
+    "C5_corpus_substitution_disclosed — spec §3 §C8 originally suggested ZuCo SR transcript shuffle for methodological homology with BLM Phase 5 EEG side; this corpus is instead anima-axis-conditioned (5-bucket × 60). The cross-fold-in to BLM Phase 5 ZuCo analysis is therefore weaker than spec ideal — but verdict gate (F-PHASE-E-1, F-PHASE-E-2) is corpus-agnostic so Phase E binding witness criterion is unchanged.",
+    "C6_125hz_not_500hz — Cyton+Daisy native 125Hz (per actual hardware in berger_ec_60s.npy.meta.json) vs spec §4 'sampling_rate_hz: 250' assumption vs ZuCo 500Hz. The post-onset 250-300ms epoch window contains only ~6 samples per channel × 4 channels = 24 samples at 125Hz, even narrower than spec C1 caveat anticipated. High-gamma (30-80Hz) coherence estimation at this window-length is borderline; analyzer must flag.",
+    "C7_fire_is_user_only — this BG does NOT fire main_protocol_run.bash. User must run the fire_command manually after sitting in front of EEG cap with electrodes attached, head-ache subsided, and 5-min stabilize done. ready_to_run=true means the artifacts are in place; it does NOT mean the user is ready."
+  ],
+  "honest_c3_count": 7,
+
+  "raw_invariants": {
+    "raw9_hexa_only": "presenter is .py under tool/transient_py/ per raw#37 carve-out; launch script is bash (orchestrator transient); both honor py->hexa rule",
+    "raw10_honest": "7 honest C3 caveats embedded",
+    "raw15_repo_relative": "abs_paths included for clarity but all artifacts repo-relative-locatable",
+    "raw37_transient_py": "tool/transient_py/anima_phase_e_stimulus_presenter.py declared transient",
+    "raw71_falsifier_bound": "F-PHASE-E-1 + F-PHASE-E-2 thresholds locked in spec §2; this run-now does not relax them"
+  }
+}

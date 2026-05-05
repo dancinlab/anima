@@ -1,0 +1,93 @@
+{
+  "schema": "hexa_lang_int_parse_fix.verdict.v1",
+  "ts_utc": "2026-05-05T18:53:00Z",
+  "bg_lane": "HEXA-LANG-INT-PARSE-FIX",
+  "root_cause": "rename_mismatch_not_missing_builtin",
+  "root_cause_detail": {
+    "claim": "int_parse was never a hexa-lang builtin; canonical string-to-int builtin is to_int (registered in self/codegen_c2.hexa:3870 as hexa_to_int(...))",
+    "evidence": [
+      "self/codegen_c2.hexa:3870 — `if name == \"to_int\" { return \"hexa_to_int(\" + a0 + \")\" }`",
+      "self/env.hexa:141 — to_int listed in builtin env",
+      "self/attrs/pure.hexa:61 — to_int + parse_int + parse_float listed; int_parse absent",
+      "stdlib/parse.hexa — defines to_int_safe / to_int_strict_or_zero (wrappers around builtin to_int); no int_parse",
+      "selftest: HEXA_RESOLVER_NO_REROUTE=1 hexa.real run probe.hexa with `to_int(\"300\")` -> prints 300",
+      "selftest: same probe with `int_parse(\"300\")` -> Runtime error: undefined function: int_parse",
+      "AI-native error contract in berger_session_audio.hexa already classifies kind INT_PARSE_UNDEFINED with reason 'hexa runtime undefined builtin (int_parse / to_int) — patch stage1 fallback' — anticipating exact mismatch"
+    ],
+    "history": "hexa-brain authors typed `int_parse` (reasonable guess for parse-int-from-string idiom) but hexa-lang upstream uses `to_int`; mismatch lay dormant because affected protocols rarely exercised --duration / --threshold flags."
+  },
+  "fix_option": "B",
+  "fix_option_detail": {
+    "B_chosen": "rename int_parse(...) -> to_int(...) at all 26 call sites across 16 protocol files (8 hexa-brain + 8 anima-eeg mirror)",
+    "rejected_A": "add int_parse builtin to self/codegen_c2.hexa — requires hexa-lang self-host recompile; high blast radius; breaks identity of hexa.real (462432 bytes May 5 12:17 byte-identical at ~/.hx/packages/hexa/hexa.real and ~/core/hexa-lang/hexa.real)",
+    "rejected_C": "add int_parse alias to stdlib/parse.hexa — stdlib not auto-imported; protocols would need import line added on top of rename, more invasive than B",
+    "minimal_change_argument": "26 single-token mechanical renames < runtime recompile + cache invalidation. raw#15 additive at the call-site layer."
+  },
+  "files_changed": [
+    "/Users/ghost/core/hexa-brain/eeg/protocols/jaw_session_audio.hexa",
+    "/Users/ghost/core/hexa-brain/eeg/protocols/blink_session_audio.hexa",
+    "/Users/ghost/core/hexa-brain/eeg/protocols/preflight_settle.hexa",
+    "/Users/ghost/core/hexa-brain/eeg/protocols/cap_fit_verify.hexa",
+    "/Users/ghost/core/hexa-brain/eeg/protocols/berger_session_audio_v3_8ch.hexa",
+    "/Users/ghost/core/hexa-brain/eeg/protocols/master_preflight.hexa",
+    "/Users/ghost/core/hexa-brain/eeg/protocols/berger_session_audio.hexa",
+    "/Users/ghost/core/hexa-brain/eeg/protocols/ppg_session_audio.hexa",
+    "/Users/ghost/core/anima/anima-eeg/protocols/jaw_session_audio.hexa",
+    "/Users/ghost/core/anima/anima-eeg/protocols/blink_session_audio.hexa",
+    "/Users/ghost/core/anima/anima-eeg/protocols/preflight_settle.hexa",
+    "/Users/ghost/core/anima/anima-eeg/protocols/cap_fit_verify.hexa",
+    "/Users/ghost/core/anima/anima-eeg/protocols/berger_session_audio_v3_8ch.hexa",
+    "/Users/ghost/core/anima/anima-eeg/protocols/master_preflight.hexa",
+    "/Users/ghost/core/anima/anima-eeg/protocols/berger_session_audio.hexa",
+    "/Users/ghost/core/anima/anima-eeg/protocols/ppg_session_audio.hexa"
+  ],
+  "files_changed_count": 16,
+  "call_sites_renamed": 26,
+  "files_NOT_touched": [
+    "/Users/ghost/core/hexa-lang/* (no upstream change — int_parse was rename mismatch, not missing builtin)",
+    "/Users/ghost/core/hexa-brain/eeg/protocols/berger_session_audio.hexa.pre_ai_native_2026_05_05.bak (historical backup; .bak suffix)",
+    "string-literal occurrences of INT_PARSE_UNDEFINED / restage1_int_parse_fallback / 'int_parse / to_int' inside _ai_fix_recipe / _ai_kind_to_reason — preserved as forensic error-contract metadata"
+  ],
+  "selftest": {
+    "test1_to_int_300": {
+      "command": "HEXA_RESOLVER_NO_REROUTE=1 hexa.real run probe.hexa  # let n = to_int(\"300\"); println(n)",
+      "stdout": "300",
+      "pass": true
+    },
+    "test2_int_parse_undefined": {
+      "command": "HEXA_RESOLVER_NO_REROUTE=1 hexa.real run probe.hexa  # let n = int_parse(\"300\"); println(n)",
+      "stderr": "Runtime error: undefined function: int_parse",
+      "expected": true,
+      "pass": true
+    },
+    "test3_berger_help_parses": {
+      "command": "cd /Users/ghost/core/hexa-brain && HEXA_RESOLVER_NO_REROUTE=1 hexa.real run eeg/protocols/berger_session_audio.hexa --help",
+      "stdout_excerpt": "usage:  hexa run anima-eeg/protocols/berger_session_audio.hexa --run ... --duration <n>  each block sec (default 60) ...",
+      "pass": true,
+      "interpretation": "no Runtime error — file parses + reaches print_usage cleanly"
+    },
+    "test4_berger_selftest_pass": {
+      "command": "cd /Users/ghost/core/hexa-brain && HEXA_RESOLVER_NO_REROUTE=1 hexa.real run eeg/protocols/berger_session_audio.hexa --selftest",
+      "stdout_excerpt": "[selftest] 8 PASS / 0 FAIL __BERGER_AUDIO__ PASS __ANIMA_EEG_OK__ session=berger_session_audio_selftest",
+      "exit_code": 0,
+      "pass": true,
+      "note_t8_sentinel_emit": "T8 selftest deliberately emits __ANIMA_EEG_FAIL__ kind=INT_PARSE_UNDEFINED via ai_emit_fail() to validate the AI-native error contract — this is a synthetic stderr probe, NOT a parse-time runtime error. The T8 PASS counts in the 8/8."
+    },
+    "test5_hexa_check_clean": {
+      "command": "hexa check eeg/protocols/berger_session_audio.hexa",
+      "stdout": "0 violation(s)",
+      "pass": true
+    }
+  },
+  "selftest_pass": true,
+  "berger_session_now_works": true,
+  "berger_session_now_works_evidence": "berger_session_audio.hexa --selftest exits 0 with 8/8 PASS + __ANIMA_EEG_OK__ trailer; --help reaches print_usage without runtime error; the int_parse undefined error path is no longer reachable because all 26 call sites now invoke the canonical to_int builtin",
+  "honest_c3": [
+    "C3.1 — root cause is rename mismatch in hexa-brain protocols, NOT missing hexa-lang builtin; hexa-lang upstream `to_int` works correctly. Task title 'hexa-lang upstream int_parse builtin missing' was misframed; actual fix is downstream call-site rename.",
+    "C3.2 — Option A (codegen alias) was rejected NOT because impossible but because raw#15 minimal-additive favors 26 mechanical token-renames over a self-host runtime rebuild + binary redistribution. If future maintainers prefer to enshrine `int_parse` as a builtin alias for ergonomic reasons, that remains an open option (single line in self/codegen_c2.hexa).",
+    "C3.3 — Hardware-dependent verification (real OpenBCI run with --duration 300) NOT executed; no dongle attached in current session. selftest dry-run + --help path validation are the strongest proxies available; both PASS. The runtime error 'undefined function: int_parse' is now provably unreachable because grep confirms no int_parse(...) call sites remain in any non-.bak file.",
+    "C3.4 — The pre_ai_native_2026_05_05.bak file at /Users/ghost/core/hexa-brain/eeg/protocols/berger_session_audio.hexa.pre_ai_native_2026_05_05.bak retains the legacy int_parse call as historical artifact — intentionally untouched (it is a backup). If anyone re-activates that .bak, the bug returns.",
+    "C3.5 — The hexa runtime resolver currently routes Mac executions through Docker (~/.hx/bin/hexa script raw#44 hard-landing) and the local docker daemon was returning fork failures during initial probe; selftests were run via HEXA_RESOLVER_NO_REROUTE=1 bypass to validate the bare-Mac binary directly. Real EEG sessions invoking `hexa run` will route through Docker — Docker container also uses the same hexa.real binary baked into hexa-runner image, so the rename fix applies uniformly.",
+    "C3.6 — Did NOT recompile hexa-lang runtime; did NOT modify hexa-lang stdlib; did NOT touch any .own LOCKED file (none of the affected protocols carry a .own marker — verified). raw#15 compliance preserved: change is purely additive at call-site granularity (rename = additive replacement of one identifier, no API surface change)."
+  ]
+}
