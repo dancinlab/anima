@@ -566,3 +566,68 @@ own 15 new "anima-local: HF release lifecycle PRIVATE-first → PUBLIC after ver
   why separation of upload BG vs promote BG enforces explicit verdict.json gate-cite — bundled cycles tend to skip gate evidence under time pressure.
   enforce-layer advisory + audit-trail (cli-lint follow-up via tool/hf_public_promote_lint.hexa)
   enforce-layer-rationale advisory: tool/hf_upload_mk2.hexa --private validator-warn. audit-trail: hf_upload_audit/<ts>.jsonl visibility field. cli-lint follow-up: tool/hf_public_promote_lint.hexa gates (b.1-b.6) verdict-cite required before public promote.
+
+own 16 new "anima-local: H100 cost discipline L23-L25 watchdog — BG register + heartbeat 5min + pod 404 verify"
+  slug h100-cost-discipline-l23-l25-watchdog
+  base anima/.own SSOT + own 6 (GPU dispatch autonomous) + own 14 (HF WHERE) + own 15 (HF HOW) — sister compute-lifecycle axis
+  since 2026-05-05 (user authorization following Pβ rescue idle-burn $54.72 incident — 65% session H100 spend on a single BG rate-limit boundary)
+  scope H100 / GPU pod resource consumption lifecycle (RunPod + vast.ai + future GPU vendors). complement to own 6 (autonomous-dispatch policy) — own 16 = the post-dispatch lifecycle enforcement. external-resource-consumption axes triad with own 14 (storage/HF) + own 15 (publication/HF lifecycle) + own 16 (compute/GPU lifecycle).
+  rule (a) ALL H100 BG launches MUST register with cost-watchdog process at boot — write `state/h100_watchdog/pods/<pod_id>.json` with {pod_id, bg_lane, target_usd, start_ts, expected_completion_ts, owner_orchestrator, last_heartbeat_ts}
+  rule (b) BG agent MUST emit heartbeat every 5 min — update `last_heartbeat_ts` field (touch-style write); allows watchdog to detect stale heartbeat → BG-died-mid-flight signal
+  rule (c) BG exit (any reason) MUST deregister + verify pod 404 — `runpodctl pod get <pod_id>` returning "not found" OR HTTP 404; only after 404-verified does watchdog clear the registry entry. verdict.json schema MUST include `pod_kill_verified_404: bool` + `watchdog_deregistered: bool`.
+  rule (L23) rate-limit-fallback: agent 429 OR 5min stale heartbeat → foreground takeover trigger fires within 5 min. user notified with literal copy-pasteable runpodctl pod stop+delete command. watchdog continues polling until 404-verified.
+  rule (L24) BG-completion vs pod-state separation: BG agent process exit is AMBIGUOUS (success / crash / rate-limit-pending). MUST be cross-checked against pod-state polling channel. verdict.json `success: true` requires both `bg_clean_exit: true` AND `pod_kill_verified_404: true` AND `watchdog_deregistered: true`. partial states explicitly named (e.g., BG_DIED_POD_ALIVE).
+  rule (L25) cost-overrun escalation ladder: actual_usd / target_usd ratio
+    - >2× → push notify + terminal bell + STDOUT log (no pause yet, user-decision phase)
+    - >3× + 30min no user response → auto-pause via `tool/h100_idle_auto_killer.hexa` (NOT auto-delete — preserves in-flight work for later resume + rsync)
+    - 24h post-pause + still no response → auto-delete with full state archive to state/h100_archive/<ts>_<pod_id>/
+  enforcement (Phase 1) tool/h100_cost_watchdog.hexa (PROPOSED per spec) — separate process, 5min poll cadence, pure bash daemon hot path (selftest/admin via hexa). reads state/h100_watchdog/pods/*.json, polls runpodctl pod get for each, computes elapsed × $/hr, writes alerts to state/h100_watchdog/alerts/<ts>_<pod_id>.json
+  enforcement (Phase 1) tool/h100_idle_auto_killer.hexa (PROPOSED per spec) — escalation ladder executor (alert→pause→user→delete). NOT auto-fire on first overrun — gated by L25 thresholds + 30min user-response window
+  enforcement (Phase 2) existing orchestrator hexa MUST integrate boot/heartbeat/trap/verdict hooks — tool/clm_v4_lora_train_orchestrator.hexa + tool/anima_runpod_orchestrator.hexa + future training/eval orchestrators
+  enforcement (Phase 3) BG launch prompt template MUST include L23/L24/L25 mandatory checklist — every Agent run_in_background prompt that touches GPU resources cites this checklist + verdict.json schema with pod_kill_verified_404 + watchdog_deregistered fields
+  enforcement (audit) state/h100_watchdog/alerts/<ts>_<pod_id>.json ledger per overrun + state/h100_watchdog/pods/<pod_id>.json registry SSOT during run + state/h100_archive/<ts>_<pod_id>/ post-deletion archive
+  exceptions canary-probe BGs (<1h target, <$5 budget) MAY skip Phase 2 orchestrator integration if BG agent itself includes simpler boot+exit pod-404 verify (own 6 canary-probe pattern preserved)
+  exceptions watchdog process itself rate-limit-failed scenario — pure bash daemon hot path (no Anthropic API calls in the polling loop) mitigates recursive-rate-limit risk; hexa surface only for selftest/admin (one-shot human-invoked commands)
+  exceptions explicit user override per BG ("skip watchdog this cycle, I'm watching foreground") with documented rationale in verdict.json — extremely rare, e.g., debugging the watchdog itself
+  bans H100 BG launch without watchdog registration (advisory warn now → block per Phase 3 prompt template enforcement)
+  bans verdict.json `success: true` without pod_kill_verified_404 + watchdog_deregistered evidence
+  bans equating BG-process-gone to pod-killed (the L24 conflation that caused $54.72 burn)
+  bans auto-DELETE before auto-PAUSE in escalation ladder (preserves operator option to resume + rsync in-flight work)
+  proof memory feedback_h100_cost_discipline_l23_l25_watchdog_own_16.md (hive-hook-bus 2026-05-05, session-scoped mirror)
+  proof precedent state/p9_pbeta_paradigm_d_50k_rescue_kill_2026_05_05/verdict.json (Pβ rescue idle burn $54.72 = 65% session H100 spend, 18.30h pod-alive after BG-rate-limited)
+  proof spec docs/anima_h100_cost_discipline_operationalization_spec_2026_05_05.md (BG-COST-DISCIPLINE-OPERATIONALIZE — own 16 candidate proposal source)
+  proof existing tooling overlap tool/h100_idle_guard.bash + tool/h100_auto_kill.hexa + tool/h100_cost_tracker.hexa (Phase 1 must explicit retire/absorb per spec C8)
+  follow-up Phase 1 tool/h100_cost_watchdog.hexa + tool/h100_idle_auto_killer.hexa impl (PROPOSED — separate BG cycle, hexa orchestrator)
+  follow-up Phase 2 orchestrator integration into existing training/eval hexa (boot/heartbeat/trap/verdict hooks)
+  follow-up Phase 3 BG launch prompt template update (L23/L24/L25 checklist mandatory)
+  follow-up explicit retire/absorb decision for tool/h100_idle_guard.bash + tool/h100_auto_kill.hexa + tool/h100_cost_tracker.hexa per spec C8
+  follow-up own 16 30d post — measure rate of watchdog registration compliance + verdict.json schema compliance (pod_kill_verified_404 + watchdog_deregistered fields); if <0.80 escalate advisory→block
+  category meta-triad
+  category proof-truth
+  category resource-lifecycle
+  applies-to gpu-pod-lifecycle
+  applies-to bg-dispatch-discipline
+  applies-to cost-containment
+  phase boot
+  phase heartbeat
+  phase exit
+  phase escalation
+  severity warn (Phase 1+2) → block (Phase 3 prompt template enforcement)
+  honest-c3 watchdog adds polling overhead (12 polls/hour at 1 pod = trivial; scales linearly with concurrent pods — at 10 concurrent = 120 polls/hour, still negligible vs runpodctl rate-limit headroom)
+  honest-c3 auto-pause vs auto-kill trade-off: pause preserves in-flight work for resume+rsync but extends cost a bit longer until 24h grace expires; kill terminates cost immediately but loses unsaved progress. anima own 16 chooses pause-first (operator option) per L25 ladder.
+  honest-c3 watchdog process itself can rate-limit-fail recursively if implemented as Anthropic-API-calling BG. Mitigation: pure bash daemon hot path (no API calls in polling loop), hexa surface only for selftest/admin one-shots. spec C4 acknowledges this.
+  honest-c3 cost-overrun threshold 2× / 3× heuristic, NOT principled — chosen empirically vs Pβ's 10× incident; may need recalibration after first 30d production data; threshold may differ per training-cycle class (smoke <$5 vs full-train <$200).
+  honest-c3 retroactive: L23-L25 lessons banked first (Pβ rescue verdict.json honest_c3) THEN operationalized (this own 16) — own 16 is reactive not proactive. Future incident classes may bank L26+ similarly before operationalization.
+  honest-c3 existing tooling overlap (tool/h100_idle_guard.bash + tool/h100_auto_kill.hexa + tool/h100_cost_tracker.hexa) creates SSOT race risk if Phase 1 ships without explicit retire/absorb decision. Spec C8 calls this out as deferred-to-Phase-1 design choice.
+  honest-c3 Phase 3 prompt template enforcement relies on human discipline at BG-launch authorship time (no tool can enforce a checklist on a free-form prompt); mitigation = stamp template into Agent run_in_background subagent system prompt convention (raw#-future).
+  note 2026-05-05 own 16 = 7th anima autonomy mandate joining sextet (own 4 root-cause + own 5 completeness + own 6 no-restriction + own 11 parallel-loop + own 12 observability + own 14 HF-Hub-only + own 15 HF-lifecycle).
+  note 2026-05-05 own 14 + own 15 + own 16 form external-resource-consumption axes triad: own 14 = storage WHERE (HF Hub) + own 15 = publication HOW (PRIVATE→PUBLIC) + own 16 = compute lifecycle (boot→heartbeat→exit→404-verify). All three are post-dispatch lifecycle enforcement complementing own 6 (pre-dispatch autonomy).
+  note 2026-05-05 cross-link to memory feedback_h100_cost_discipline_l23_l25_watchdog_own_16.md — hive-hook-bus session-scoped mirror of this own SSOT entry.
+  note 2026-05-05 first incident precedent = Pβ Paradigm D 50K rescue 2026-05-04→05 — $54.72 idle burn = 65% session H100 spend; pod alive 18.30h after BG rate-limited mid-script at the kill-pod step.
+  why prevent repeat of the $54.72 idle burn pattern — own 16 is the operationalization gap closure for L23/L24/L25 lessons that were prose-banked but not enforcement-enforced.
+  why session-level cost discipline complement to own 6 (no-cap autonomous dispatch) — own 6 says "go ahead and spawn pods without per-invocation approval"; own 16 says "but every spawn must be lifecycle-traced to 404-verified teardown".
+  why the BG-process is a different process from the pod-process — they can die independently; without an external watchdog, BG-died-pod-alive is a silent cost-leak failure mode (the L24 conflation).
+  why pure bash daemon hot path avoids recursive Anthropic-rate-limit risk — the watchdog itself becoming rate-limited would create a meta-failure. spec C4 honest-c3 acknowledges and mitigates.
+  why pause-first (not kill-first) escalation preserves operator option to resume + rsync in-flight work — the Pβ incident actually completed training successfully before idle burn began; a kill-first policy would have lost the FINAL adapter if it hit pre-rsync.
+  enforce-layer advisory + audit-trail (Phase 1+2) → prompt-template-mandate (Phase 3)
+  enforce-layer-rationale Phase 1: tool/h100_cost_watchdog.hexa polling + tool/h100_idle_auto_killer.hexa escalation. Phase 2: existing orchestrator hexa integration (boot/heartbeat/trap/verdict). Phase 3: BG launch prompt template L23/L24/L25 mandatory checklist + verdict.json schema fields enforcement. audit-trail throughout: state/h100_watchdog/pods/*.json registry + state/h100_watchdog/alerts/*.json overrun ledger + state/h100_archive/*/ post-deletion archive.

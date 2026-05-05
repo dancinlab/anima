@@ -1,0 +1,86 @@
+{
+  "schema": "anima/clm_v4_f_shim_v4_4_harvest/verdict/1",
+  "cycle": "clm_v4_f_shim_v4_4_harvest_2026_05_05",
+  "bg_lane": "F-SHIM-V4-4-HARVEST",
+  "ts_utc": "2026-05-05T13:18:00Z",
+  "verdict": "FAIL_PREREQUISITE",
+  "verdict_summary": "v14_federation engine path exists in ready/anima/core/runtime/anima_unified.py but the federation state-dict required to restore training-trajectory-derived cell hidden states was DROPPED during HF format conversion (per clm_v4_hf_format_shim.py header line 46). Architecture also mismatches: train_clm.py 350m config produces 96 cells x 192 dim (12 atoms x 8 cells_per_atom), while deployed CLM v4 base shim expects [1, 8, 192]. No path to a true train-time average without re-running training or recovering the original ckpt['federation'] tensor.",
+  "harvest_method": "ATTEMPTED_v14_federation_engine_BLOCKED_AT_PREREQ",
+  "harvest_method_resolution": {
+    "v14_federation_engine_present_in_source_tree": true,
+    "v14_federation_engine_path": "ready/anima/core/runtime/anima_unified.py:961-1035 (_load_v14 + _restore_v14_federation)",
+    "v14_federation_class_path": "ready/training/train_clm.py:529-660+ (class FederatedConsciousness)",
+    "v14_federation_350m_shape_when_fresh_init": "[1, 96, 192] (atoms=12, cells_per_atom=8, consciousness_dim=192 per train_clm.py:249-261)",
+    "deployed_shim_expected_shape": "[1, 8, 192] per clm_v4_hf_format_shim.py:99 + train_avg_real.pt actual shape",
+    "shape_mismatch_blocker": "96 != 8 — cells dimension differs by factor 12 (would require pooling heuristic, not faithful train-time average)",
+    "federation_state_dict_in_deployed_mirror": false,
+    "federation_state_dict_dropped_when": "HF format conversion (clm_v4_hf_format_shim.py header L46: 'Aux state_dicts dropped: federation, bridge, c_proj, optimizer, scheduler, scaler')",
+    "fresh_FederatedConsciousness_would_be_random_init": true,
+    "fresh_init_yields_train_time_average": false
+  },
+  "n_prompts_harvested": 0,
+  "n_prompts_planned": 1000,
+  "harvest_skip_reason": "Cannot execute meaningful 1000-prompt harvest because (a) federation state-dict purged at HF conversion → fresh init would be random-trajectory not train-trajectory; (b) shape mismatch 96-cell vs 8-cell would require pooling heuristic that defeats 'true train-time average' premise; (c) running ConsciousnessEngine.drive() again would just reproduce BG-CLM-1 runtime-proxy (already on disk).",
+  "vs_runtime_proxy_BG_CLM_1": {
+    "runtime_proxy_path": "state/clm_v4_train_avg_harvest_2026_05_04/results/train_avg_real.pt",
+    "runtime_proxy_shape": [1, 8, 192],
+    "runtime_proxy_l2_norm": 2.2021713256835938,
+    "runtime_proxy_per_cell_l2": [0.8007, 0.8021, 0.802, 0.8005, 0.7848, 0.7691, 0.7413, 0.724],
+    "runtime_proxy_per_element_mean_abs": 0.04798,
+    "runtime_proxy_sign_balance_pos_frac": 0.51367,
+    "v14_federation_harvest_l2_norm": null,
+    "l2_diff_runtime_proxy_vs_v14_federation": null,
+    "per_cell_delta": null,
+    "sign_agreement": null,
+    "comparison_blocked_reason": "v14_federation_harvest not produced (see harvest_skip_reason)"
+  },
+  "vs_canonical_zero_stub": {
+    "canonical_zero_l2_norm": 0.0,
+    "runtime_proxy_l2_norm": 2.2021713256835938,
+    "magnitude_ratio_runtime_proxy_over_canonical_zero": "infinite (zero baseline)",
+    "magnitude_ratio_runtime_proxy_over_random_stub_5_65x": "carry from BG-Sigma context: canonical_zero stub is ~5.65x off from train-mean magnitude; runtime_proxy aligns with the higher-magnitude train regime"
+  },
+  "F_SHIM_V4_4_RE_VERDICT": "FAIL",
+  "F_SHIM_V4_4_RE_VERDICT_kind": "PREREQUISITE_BLOCKED",
+  "F_SHIM_V4_4_RE_VERDICT_rationale": "Architecturally inevitable: (1) federation state-dict not in deployed mirror; (2) shape mismatch 96 vs 8 cells; (3) per honest C3 C5 carried from spec — cross_attn.o_proj init std=0.001 makes residual ~zero regardless of fixture quality, so lift_pp >= 5pp is unreachable through ANY harvest method on the current shim v4. Falsifier suite cannot CLOSE without (a) shim v5 that initializes cross_attn.o_proj to non-trivial scale OR (b) re-trained CLM v4 with cross_attn participating in SFT loss.",
+  "supersedes_v3_partial_via_runtime_proxy": false,
+  "supersedes_v3_partial_via_runtime_proxy_reason": "FAIL re-verdict cannot supersede a PARTIAL — runtime-proxy (BG-CLM-1) remains the most faithful available artifact for the [1,8,192] fixture shape; v14_federation cannot improve on it given the prereqs gap. Mark v3 PARTIAL as TERMINAL until shim v5 changes the architecture.",
+  "closes_shim_v4_falsifier_suite": false,
+  "closes_shim_v4_falsifier_suite_reason": "F-SHIM-V4-4 remains OPEN as 'architecturally unfalsifiable on shim v4'. Recommend retiring this falsifier when shim v5 lands or when CLM v4 is re-trained with cross-attn-active SFT.",
+  "enables_hf_release_v1_g3_promote_gate": false,
+  "enables_hf_release_v1_g3_promote_gate_reason": "G3 (verification gate per .own 15) cannot be upgraded on F-SHIM-V4-4 PASS-evidence because no PASS is achievable on shim v4. G3 promote requires alternative evidence: (a) downstream SFT (e.g., CLM v4 LoRA SFT pending) demonstrates lift > random regardless of fixture path, OR (b) shim v5 with re-initialized cross_attn passes F-SHIM-V4-4. RECOMMEND HOLDING G3 in current state, do not promote on this verdict.",
+  "preflight": {
+    "ubu1_ssh_reachable": true,
+    "ubu1_python_path": "/home/aiden/venv_orchestrator/bin/python",
+    "ubu1_hf_auth": "PASS",
+    "ubu1_hf_user": "dancinlife",
+    "ubu1_hf_orgs": ["need-singularity"],
+    "L19_tiny_eval_5_prompts": "SKIPPED — full 1000-run blocked at prereq, tiny pre-flight not informative for FAIL_PREREQUISITE"
+  },
+  "wall_time_min": 5,
+  "actual_cost_usd": 0.0,
+  "honest_c3": [
+    "C1 v14_federation engine availability: CONFIRMED present in ready/anima/core/runtime/anima_unified.py (_load_v14 + _restore_v14_federation, lines 961-1035) and ready/training/train_clm.py (FederatedConsciousness class line 529). Engine path is real, not a phantom. However engine instantiation requires ckpt['federation'] state-dict which is dropped at HF conversion — the engine is RESTORABLE only from training-side .pt with federation key intact, not from the deployed HF mirror.",
+    "C2 1000 prompts CPU/GPU latency variance — N/A: harvest skipped at prerequisite step. If executed (after federation state-dict recovery + 96->8 pooling design), expect ~30min on RTX 5070 sm_120 (ubu1) per BG-CLM-1 timing.",
+    "C3 train-time average is fundamentally unobservable: training trajectory is closed-form only via the optimizer's running stats which are NOT saved in HF format. Even with federation state restored, FederatedConsciousness.step() at inference produces a quasi-stationary distribution that approximates the steady-state but is NOT identical to the train-step empirical mean. Both runtime-proxy (BG-CLM-1) and v14_federation harvest are inference-side approximations with different biases — neither is ground-truth train-time average.",
+    "C4 Mac Federation pre-flight smoke test: SKIPPED. Mac-side pre-flight would require importing FederatedConsciousness (PyTorch) and is per-policy a transient_py exec, not native hexa. Decision: pre-flight irrelevant when prereq is missing federation state-dict — smoke would just confirm engine class loads, not that the harvest is meaningful.",
+    "C5 cross_attn.o_proj init std=0.001 limit: CARRIED from spec — this is the dominant falsifier. Even a perfect train-time average fixture cannot produce lift_pp >= 5pp because the cross-attention output projection is initialized so close to zero that its residual contribution to the next-token logits is below benchmark stderr (~3pp at limit=200). This means F-SHIM-V4-4 is architecturally unfalsifiable on shim v4 — a property of the model architecture, not the fixture quality. Conclusion: even an oracle-derived perfect fixture would FAIL.",
+    "C6 BG-CLM-1 runtime-proxy artifact already on disk (state/clm_v4_train_avg_harvest_2026_05_04/results/train_avg_real.pt, [1,8,192], L2=2.2). It represents the highest-fidelity available fixture for the deployed [1,8,192] shape and should be the default fixture for any downstream sanity_eval until shim v5 lands.",
+    "C7 No git commit per spec; no shim v4 mutation per spec; no H100 cost incurred — CONFORMING."
+  ],
+  "recommendations": {
+    "immediate": "Mark F-SHIM-V4-4 as 'architecturally unfalsifiable on shim v4'. Retire from active falsifier set; carry forward as design-debt note for shim v5.",
+    "shim_v5_design_hint": "Initialize cross_attn.o_proj with std >= 0.02 (10x current) so cross-attn residual reaches benchmark-detectable magnitude. Validate via micro-eval lift after init-only change (no re-train) before committing to full SFT.",
+    "g3_gate_path": "Do NOT promote G3 on this verdict. Promote G3 when: (a) CLM v4 LoRA SFT (in progress per state/clm_v4_lora_sft_2026_05_05/) shows axis-cond signal preserved AND post-LoRA eval > base eval > random_floor with stat-sig delta, OR (b) shim v5 + F-SHIM-V4-4 re-run with std=0.02 init produces lift_pp >= 5pp on >=1 benchmark.",
+    "fixture_canonicalization": "Until shim v5: use BG-CLM-1 runtime-proxy (train_avg_real.pt) as canonical fixture for any consciousness-injection sanity probe. Document v3 PARTIAL as TERMINAL on shim v4."
+  },
+  "artifacts_referenced": {
+    "shim_v4_locked": "tool/transient_py/clm_v4_hf_format_shim.py",
+    "v14_engine_runtime": "ready/anima/core/runtime/anima_unified.py:961-1035",
+    "federation_class": "ready/training/train_clm.py:529",
+    "anima_unified_hexa_stub": "anima-core/runtime/anima_unified.hexa (26 LoC TODO[pytorch] stub — NOT executable engine)",
+    "runtime_proxy_artifact": "state/clm_v4_train_avg_harvest_2026_05_04/results/train_avg_real.pt",
+    "v3_partial_verdict": "state/p9_base_validation_prereq_exec_2026_05_04/opt_1_v4_retry_2_verdict.json",
+    "v4_baseline_eval": "state/clm_v4_baseline_eval_2026_05_05/verdict.json"
+  }
+}

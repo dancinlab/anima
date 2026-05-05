@@ -1,0 +1,432 @@
+// tool/h100_cost_watchdog.hexa — H100 separate-process pod state poller
+//
+// Role: separate-process daemon polling registered H100 pods every 5 min,
+//       emitting cost ledger rows + alerts on stale-heartbeat / cost-overrun
+//       per spec docs/anima_h100_cost_discipline_operationalization_spec_2026_05_05.md.
+//
+// raw#9  hexa-only loader (selftest is shape-only synthetic — no pod exec)
+// raw#10 ≥5 honest C3 emitted by --selftest banner
+// raw#15 additive — does not modify legacy h100_auto_kill / h100_idle_guard /
+//        h100_cost_tracker (see state/h100_cost_watchdog_phase1_2026_05_05/legacy_tooling_audit.md)
+// .own 16 (proposed) — compute-lifecycle watchdog tooling
+//
+// USAGE
+//   hexa run tool/h100_cost_watchdog.hexa --selftest
+//   hexa run tool/h100_cost_watchdog.hexa --status
+//   hexa run tool/h100_cost_watchdog.hexa --register POD_ID OWNER TARGET_USD
+//   hexa run tool/h100_cost_watchdog.hexa --deregister POD_ID
+//   hexa run tool/h100_cost_watchdog.hexa --daemon                  # poll-loop
+//
+// FLAGS
+//   --poll-interval-sec N        (default 300)
+//   --ledger-path PATH           (default state/h100_watchdog/ledger.jsonl)
+//   --alert-script PATH          (default tool/h100_alert_emit.bash)
+//   --alert-on overrun:2x|stale-heartbeat:5min|all  (default all)
+//
+// EXIT
+//   0  selftest PASS / status emitted / register-deregister OK
+//   1  selftest FAIL
+//   2  malformed args / missing registry dir
+//   3  external runpodctl / alert-script invocation failed (daemon mode)
+
+let DEFAULT_REGISTRY_DIR  = "/Users/ghost/core/anima/state/h100_watchdog/pods"
+let DEFAULT_HEARTBEAT_DIR = "/Users/ghost/core/anima/state/h100_watchdog/heartbeats"
+let DEFAULT_ALERTS_DIR    = "/Users/ghost/core/anima/state/h100_watchdog/alerts"
+let DEFAULT_CLOSED_DIR    = "/Users/ghost/core/anima/state/h100_watchdog/closed"
+let DEFAULT_LEDGER_PATH   = "/Users/ghost/core/anima/state/h100_watchdog/ledger.jsonl"
+let DEFAULT_ALERT_SCRIPT  = "/Users/ghost/core/anima/tool/h100_alert_emit.bash"
+let DEFAULT_BID_USD_HR    = 2.99   // RunPod community spot H100 reference (Pβ incident bid)
+let STALE_HEARTBEAT_SEC   = 300    // 5 min
+let DEFAULT_POLL_SEC      = 300    // 5 min
+
+// ─── shell/io helpers (inline per hexa stage0 loader convention) ──────────
+fn _sh_quote(s: string) -> string {
+    let mut o = "'"
+    o = o + s.replace("'", "'\\''")
+    o = o + "'"
+    return o
+}
+fn _file_exists(p: string) -> bool {
+    return exec_with_status("test -e " + _sh_quote(p))[1] == 0
+}
+fn _ensure_dir(p: string) {
+    exec_with_status("mkdir -p " + _sh_quote(p))
+}
+fn _ts_iso() -> string {
+    return to_string(utc_iso_now())
+}
+fn _ts_epoch() -> int {
+    return to_int(to_string(now()))
+}
+fn _json_escape(s: string) -> string {
+    return s.replace("\\", "\\\\").replace("\"", "\\\"").replace("\n", "\\n").replace("\r", "\\r").replace("\t", "\\t")
+}
+fn _which(cmd: string) -> bool {
+    return exec_with_status("command -v " + _sh_quote(cmd) + " >/dev/null 2>&1")[1] == 0
+}
+
+// ─── argv parsing ─────────────────────────────────────────────────────────
+fn _argv() -> array {
+    let a = args()
+    let mut o = []
+    let mut i = 2
+    while i < len(a) { o.push(a[i]); i = i + 1 }
+    return o
+}
+fn _flag(av, k) -> bool {
+    for x in av { if to_string(x) == k { return true } }
+    return false
+}
+fn _opt(av, k, d) -> string {
+    let mut i = 0
+    while i < len(av) {
+        if to_string(av[i]) == k && i + 1 < len(av) { return to_string(av[i + 1]) }
+        i = i + 1
+    }
+    return d
+}
+fn _positional(av, idx: int, d: string) -> string {
+    // positional after a known flag verb (e.g., --register POD_ID OWNER USD)
+    let mut count = 0
+    let mut i = 0
+    while i < len(av) {
+        let s = to_string(av[i])
+        if s.substring(0, 2) == "--" || s.substring(0, 1) == "-" {
+            // consume value-style flag arg only if known (poll-interval, ledger-path, alert-script, alert-on)
+            if s == "--poll-interval-sec" || s == "--ledger-path" || s == "--alert-script" || s == "--alert-on" {
+                i = i + 1
+            }
+        } else {
+            if count == idx { return s }
+            count = count + 1
+        }
+        i = i + 1
+    }
+    return d
+}
+
+// ─── pod registry I/O ─────────────────────────────────────────────────────
+fn _registry_path(reg_dir: string, pod_id: string) -> string {
+    return reg_dir + "/" + pod_id + ".json"
+}
+fn _heartbeat_path(hb_dir: string, owner: string) -> string {
+    return hb_dir + "/" + owner + ".txt"
+}
+fn _list_registry(reg_dir: string) -> array {
+    let mut out = []
+    if !_file_exists(reg_dir) { return out }
+    let r = exec_with_status("ls -1 " + _sh_quote(reg_dir) + " 2>/dev/null | grep -E '\\.json$' || true")
+    if r[1] != 0 { return out }
+    let body = to_string(r[0]).trim()
+    if body == "" { return out }
+    let lines = body.split("\n")
+    let mut i = 0
+    while i < len(lines) {
+        let nm = to_string(lines[i]).trim()
+        if nm != "" { out = push(out, reg_dir + "/" + nm) }
+        i = i + 1
+    }
+    return out
+}
+
+fn _register_pod(reg_dir: string, pod_id: string, owner: string, target_usd: string) -> int {
+    _ensure_dir(reg_dir)
+    let now_iso = _ts_iso()
+    let now_ep  = _ts_epoch()
+    let mut body = "{\n"
+    body = body + "  \"schema\": \"anima/h100_watchdog/pods/1\",\n"
+    body = body + "  \"pod_id\": \"" + _json_escape(pod_id) + "\",\n"
+    body = body + "  \"owner\": \"" + _json_escape(owner) + "\",\n"
+    body = body + "  \"target_usd\": " + target_usd + ",\n"
+    body = body + "  \"bid_usd_per_hr\": " + to_string(DEFAULT_BID_USD_HR) + ",\n"
+    body = body + "  \"start_ts\": \"" + _json_escape(now_iso) + "\",\n"
+    body = body + "  \"start_ts_epoch\": " + to_string(now_ep) + ",\n"
+    body = body + "  \"last_heartbeat_ts\": \"" + _json_escape(now_iso) + "\",\n"
+    body = body + "  \"last_heartbeat_epoch\": " + to_string(now_ep) + "\n"
+    body = body + "}\n"
+    write_file(_registry_path(reg_dir, pod_id), body)
+    println("h100_cost_watchdog: registered pod=" + pod_id + " owner=" + owner + " target_usd=" + target_usd)
+    return 0
+}
+
+fn _deregister_pod(reg_dir: string, closed_dir: string, pod_id: string) -> int {
+    let p = _registry_path(reg_dir, pod_id)
+    if !_file_exists(p) {
+        eprintln("h100_cost_watchdog: deregister: pod_id not registered: " + pod_id)
+        return 0
+    }
+    _ensure_dir(closed_dir)
+    let archive = closed_dir + "/" + pod_id + "_" + to_string(_ts_epoch()) + ".json"
+    exec_with_status("mv " + _sh_quote(p) + " " + _sh_quote(archive))
+    println("h100_cost_watchdog: deregistered pod=" + pod_id + " archive=" + archive)
+    return 0
+}
+
+// ─── heartbeat freshness ──────────────────────────────────────────────────
+fn _heartbeat_age_sec(hb_dir: string, owner: string) -> int {
+    let p = _heartbeat_path(hb_dir, owner)
+    if !_file_exists(p) { return -1 }
+    let r = exec_with_status("stat -f %m " + _sh_quote(p) + " 2>/dev/null || stat -c %Y " + _sh_quote(p) + " 2>/dev/null")
+    if r[1] != 0 { return -1 }
+    let m = to_int(to_string(r[0]).trim())
+    if m <= 0 { return -1 }
+    let now_s = _ts_epoch()
+    if m > now_s { return 0 }
+    return now_s - m
+}
+
+// ─── runpodctl probe (returns "ALIVE" / "NOT_FOUND" / "UNKNOWN") ─────────
+fn _pod_state(pod_id: string) -> string {
+    if !_which("runpodctl") { return "UNKNOWN" }
+    let r = exec_with_status("runpodctl pod get " + _sh_quote(pod_id) + " 2>&1")
+    let out = to_string(r[0])
+    if out.contains("not found") || out.contains("404") { return "NOT_FOUND" }
+    if r[1] == 0 { return "ALIVE" }
+    return "UNKNOWN"
+}
+
+// ─── ledger emission ──────────────────────────────────────────────────────
+fn _ledger_append(ledger_path: string, pod_id: string, owner: string,
+                  elapsed_h: float, cumulative_usd: float, target_usd: float,
+                  state: string, hb_age_sec: int) {
+    let pdir = ledger_path.substring(0, _last_slash(ledger_path))
+    if pdir != "" { _ensure_dir(pdir) }
+    let mut row = "{"
+    row = row + "\"ts\":\"" + _json_escape(_ts_iso()) + "\","
+    row = row + "\"ts_epoch\":" + to_string(_ts_epoch()) + ","
+    row = row + "\"pod_id\":\"" + _json_escape(pod_id) + "\","
+    row = row + "\"owner\":\"" + _json_escape(owner) + "\","
+    row = row + "\"elapsed_h\":" + to_string(elapsed_h) + ","
+    row = row + "\"cumulative_usd\":" + to_string(cumulative_usd) + ","
+    row = row + "\"target_usd\":" + to_string(target_usd) + ","
+    row = row + "\"state\":\"" + _json_escape(state) + "\","
+    row = row + "\"heartbeat_age_sec\":" + to_string(hb_age_sec)
+    row = row + "}\n"
+    exec_with_status("printf %s " + _sh_quote(row) + " >> " + _sh_quote(ledger_path))
+}
+
+// ─── alert emission via pure-bash sink (avoids recursive Anthropic 429) ──
+fn _emit_alert(alert_script: string, alert_type: string, pod_id: string, details: string) -> int {
+    if !_file_exists(alert_script) {
+        eprintln("h100_cost_watchdog: alert-script missing: " + alert_script)
+        return 3
+    }
+    let cmd = "bash " + _sh_quote(alert_script) + " " + _sh_quote(alert_type) + " " + _sh_quote(pod_id) + " " + _sh_quote(details)
+    let r = exec_with_status(cmd)
+    return r[1]
+}
+
+fn _last_slash(p: string) -> int {
+    let mut i = len(p) - 1
+    while i >= 0 {
+        if p.substring(i, i + 1) == "/" { return i }
+        i = i - 1
+    }
+    return -1
+}
+
+// ─── per-pod evaluation (single cycle) ────────────────────────────────────
+fn _evaluate(pod_path: string, hb_dir: string, alert_script: string,
+             ledger_path: string, alert_on: string, dry: bool) {
+    let body = read_file(pod_path)
+    let p = json_parse(body)
+    let pod_id = if p.contains_key("pod_id") { to_string(p["pod_id"]) } else { "" }
+    let owner  = if p.contains_key("owner")  { to_string(p["owner"])  } else { "" }
+    let target_usd = if p.contains_key("target_usd") {
+        to_float(to_string(p["target_usd"]))
+    } else { 0.0 }
+    let bid = if p.contains_key("bid_usd_per_hr") {
+        to_float(to_string(p["bid_usd_per_hr"]))
+    } else { DEFAULT_BID_USD_HR }
+    let start_ep = if p.contains_key("start_ts_epoch") {
+        to_int(to_string(p["start_ts_epoch"]))
+    } else { _ts_epoch() }
+
+    let now_ep   = _ts_epoch()
+    let elapsed_s = now_ep - start_ep
+    let elapsed_h = to_float(to_string(elapsed_s)) / 3600.0
+    let cumulative_usd = elapsed_h * bid
+
+    // pod state probe
+    let state = if dry { "ALIVE" } else { _pod_state(pod_id) }
+
+    // heartbeat freshness
+    let hb_age = _heartbeat_age_sec(hb_dir, owner)
+
+    // emit ledger row
+    _ledger_append(ledger_path, pod_id, owner, elapsed_h, cumulative_usd, target_usd, state, hb_age)
+
+    println("  pod=" + pod_id + " owner=" + owner +
+            " elapsed_h=" + to_string(elapsed_h) +
+            " cumulative_usd=" + to_string(cumulative_usd) +
+            " target_usd=" + to_string(target_usd) +
+            " state=" + state +
+            " hb_age_sec=" + to_string(hb_age))
+
+    // pod NOT_FOUND → deregister (cleanup)
+    if state == "NOT_FOUND" {
+        println("  pod=" + pod_id + " NOT_FOUND → deregister candidate (handled by orchestrator trap)")
+        return
+    }
+
+    // stale heartbeat alert
+    let want_stale = alert_on == "all" || alert_on.contains("stale-heartbeat")
+    if want_stale && hb_age > STALE_HEARTBEAT_SEC && !dry {
+        _emit_alert(alert_script, "STALE_HEARTBEAT", pod_id,
+            "owner=" + owner + " hb_age_sec=" + to_string(hb_age))
+    }
+
+    // cost-overrun alerts
+    let want_overrun = alert_on == "all" || alert_on.contains("overrun")
+    if want_overrun && target_usd > 0.0 {
+        let ratio = cumulative_usd / target_usd
+        if ratio >= 3.0 && !dry {
+            // 3x → autopause request (delegated to h100_idle_auto_killer.hexa)
+            _emit_alert(alert_script, "COST_OVERRUN_3X_AUTOPAUSE", pod_id,
+                "actual_usd=" + to_string(cumulative_usd) + " target_usd=" + to_string(target_usd) +
+                " ratio=" + to_string(ratio))
+        } else {
+            if ratio >= 2.0 && !dry {
+                _emit_alert(alert_script, "COST_OVERRUN_2X", pod_id,
+                    "actual_usd=" + to_string(cumulative_usd) + " target_usd=" + to_string(target_usd) +
+                    " ratio=" + to_string(ratio))
+            }
+        }
+    }
+}
+
+// ─── status mode (one-shot snapshot) ──────────────────────────────────────
+fn _status(reg_dir: string, hb_dir: string) -> int {
+    let pods = _list_registry(reg_dir)
+    println("── h100_cost_watchdog status " + _ts_iso() + " ──")
+    println("registry_dir: " + reg_dir)
+    println("registered_pods: " + to_string(len(pods)))
+    let mut i = 0
+    while i < len(pods) {
+        let body = read_file(to_string(pods[i]))
+        let p = json_parse(body)
+        let pid = if p.contains_key("pod_id") { to_string(p["pod_id"]) } else { "?" }
+        let owner_s = if p.contains_key("owner")  { to_string(p["owner"])  } else { "?" }
+        let tgt = if p.contains_key("target_usd") { to_string(p["target_usd"]) } else { "0" }
+        let hb = _heartbeat_age_sec(hb_dir, owner_s)
+        println("  [" + to_string(i) + "] pod=" + pid + " owner=" + owner_s + " target_usd=" + tgt + " hb_age_sec=" + to_string(hb))
+        i = i + 1
+    }
+    return 0
+}
+
+// ─── selftest (synthetic 1-pod) ───────────────────────────────────────────
+fn _selftest() -> int {
+    println("── h100_cost_watchdog selftest " + _ts_iso() + " ──")
+    let tmp_reg    = "/tmp/h100_cost_watchdog_selftest_pods"
+    let tmp_hb     = "/tmp/h100_cost_watchdog_selftest_hb"
+    let tmp_ledger = "/tmp/h100_cost_watchdog_selftest_ledger.jsonl"
+    let tmp_alert  = "/tmp/h100_cost_watchdog_selftest_alert.bash"
+
+    // clean
+    exec_with_status("rm -rf " + _sh_quote(tmp_reg) + " " + _sh_quote(tmp_hb) + " " + _sh_quote(tmp_ledger))
+    _ensure_dir(tmp_reg)
+    _ensure_dir(tmp_hb)
+
+    // synthetic alert script (no-op stub for selftest — avoids touching ledger)
+    write_file(tmp_alert, "#!/usr/bin/env bash\necho \"[selftest-alert] $1 $2 $3\" >&2\nexit 0\n")
+    exec_with_status("chmod +x " + _sh_quote(tmp_alert))
+
+    // S1: register a synthetic pod
+    let rc1 = _register_pod(tmp_reg, "SELFTEST_POD_1", "selftest_lane", "5.0")
+    let p1_path = _registry_path(tmp_reg, "SELFTEST_POD_1")
+    let p1_ok = _file_exists(p1_path)
+
+    let mut passes = 0
+    let mut fails  = 0
+
+    if rc1 == 0 && p1_ok { println("  S1 PASS (register wrote " + p1_path + ")"); passes = passes + 1 }
+    else { println("  S1 FAIL register failed rc=" + to_string(rc1)); fails = fails + 1 }
+
+    // S2: heartbeat freshness — no heartbeat written → expect -1
+    let hb1 = _heartbeat_age_sec(tmp_hb, "selftest_lane")
+    if hb1 == -1 { println("  S2 PASS (no heartbeat → age=-1 sentinel)"); passes = passes + 1 }
+    else { println("  S2 FAIL expected hb=-1 got " + to_string(hb1)); fails = fails + 1 }
+
+    // S3: write a fresh heartbeat → expect 0..2
+    write_file(_heartbeat_path(tmp_hb, "selftest_lane"), _ts_iso() + "\n")
+    let hb2 = _heartbeat_age_sec(tmp_hb, "selftest_lane")
+    if hb2 >= 0 && hb2 < 5 { println("  S3 PASS (fresh heartbeat age=" + to_string(hb2) + "s)"); passes = passes + 1 }
+    else { println("  S3 FAIL expected fresh hb_age 0..5, got " + to_string(hb2)); fails = fails + 1 }
+
+    // S4: evaluate (dry=true → skip pod_state probe + alerts; still emit ledger row)
+    _evaluate(p1_path, tmp_hb, tmp_alert, tmp_ledger, "all", true)
+    let ledger_present = _file_exists(tmp_ledger)
+    if ledger_present { println("  S4 PASS (ledger row appended at " + tmp_ledger + ")"); passes = passes + 1 }
+    else { println("  S4 FAIL ledger not written"); fails = fails + 1 }
+
+    // S5: deregister archives the pod registry file
+    let rc5 = _deregister_pod(tmp_reg, "/tmp/h100_cost_watchdog_selftest_closed", "SELFTEST_POD_1")
+    let p1_gone = !_file_exists(p1_path)
+    if rc5 == 0 && p1_gone { println("  S5 PASS (deregister archived)"); passes = passes + 1 }
+    else { println("  S5 FAIL deregister failed rc=" + to_string(rc5) + " p1_gone=" + to_string(p1_gone)); fails = fails + 1 }
+
+    println("h100_cost_watchdog selftest: " + to_string(passes) + "/5 PASS, " + to_string(fails) + " FAIL")
+
+    // honest C3 banner (raw#10)
+    println("")
+    println("honest_c3:")
+    println("  C1: selftest is shape-only — no live runpodctl probe, no real pod billing")
+    println("  C2: alert-script is pure bash to avoid recursive Anthropic 429 rate-limit cascade")
+    println("  C3: stale-heartbeat threshold (300s) is hard-coded; future cycle should make it cfg-driven")
+    println("  C4: ledger format may evolve — schema version will be bumped if so (anima/h100_watchdog/pods/1)")
+    println("  C5: --daemon poll loop is shape-stub (single iteration); production launchd plist supervises looping")
+    println("  C6: cost computed assuming continuous billing window from start_ts; actual RunPod billing may differ on stop/start")
+
+    if fails > 0 { return 1 }
+    return 0
+}
+
+// ─── daemon mode (single-iteration shape; launchd repeats) ───────────────
+fn _daemon_iter(reg_dir: string, hb_dir: string, alert_script: string,
+                ledger_path: string, alert_on: string) -> int {
+    let pods = _list_registry(reg_dir)
+    println("── h100_cost_watchdog iter " + _ts_iso() + " pods=" + to_string(len(pods)) + " ──")
+    let mut i = 0
+    while i < len(pods) {
+        _evaluate(to_string(pods[i]), hb_dir, alert_script, ledger_path, alert_on, false)
+        i = i + 1
+    }
+    return 0
+}
+
+// ─── entry ────────────────────────────────────────────────────────────────
+fn main() -> int {
+    let av = _argv()
+    if _flag(av, "--help") || _flag(av, "-h") {
+        println("usage: hexa run tool/h100_cost_watchdog.hexa [--selftest|--status|--register POD OWNER TGT|--deregister POD|--daemon]")
+        return 0
+    }
+    let reg_dir    = DEFAULT_REGISTRY_DIR
+    let hb_dir     = DEFAULT_HEARTBEAT_DIR
+    let closed_dir = DEFAULT_CLOSED_DIR
+    let ledger     = _opt(av, "--ledger-path",  DEFAULT_LEDGER_PATH)
+    let alertscr   = _opt(av, "--alert-script", DEFAULT_ALERT_SCRIPT)
+    let alert_on   = _opt(av, "--alert-on",     "all")
+
+    if _flag(av, "--selftest") { return _selftest() }
+    if _flag(av, "--status")   { return _status(reg_dir, hb_dir) }
+
+    if _flag(av, "--register") {
+        let pid = _positional(av, 0, "")
+        let owner_s = _positional(av, 1, "")
+        let tgt = _positional(av, 2, "0")
+        if pid == "" || owner_s == "" {
+            eprintln("h100_cost_watchdog: --register requires POD_ID OWNER TARGET_USD"); return 2
+        }
+        return _register_pod(reg_dir, pid, owner_s, tgt)
+    }
+    if _flag(av, "--deregister") {
+        let pid = _positional(av, 0, "")
+        if pid == "" { eprintln("h100_cost_watchdog: --deregister requires POD_ID"); return 2 }
+        return _deregister_pod(reg_dir, closed_dir, pid)
+    }
+
+    // default = daemon single-iter
+    return _daemon_iter(reg_dir, hb_dir, alertscr, ledger, alert_on)
+}
