@@ -1,0 +1,94 @@
+{
+  "schema": "anima/p9_paradigm_d_distill_v2/verdict/2",
+  "verdict": "PRODUCTION_25K_FULL_PASS",
+  "recommendation": "F1_HOLDOUT_KL_EVAL_NEXT",
+  "steps_completed": 50000,
+  "n_steps_target": 50000,
+  "aborted": false,
+  "graceful_shutdown": false,
+  "shutdown_reason": null,
+  "aborts": [],
+  "phi_baseline": null,
+  "phi_final": 35.537549088957824,
+  "phi_final_mean": 36.744969071614996,
+  "f_final": {
+    "F1_bleu1": 0.00390625,
+    "F2_phi": 35.537549088957824,
+    "F3_tension_mse": 7.967899017501622,
+    "F4_bold_NA": true,
+    "step": 50000,
+    "note": "final"
+  },
+  "mu_T": -24.22985603360299,
+  "sigma_T": 2.1158314266751193,
+  "mu_S_running": 36.62091706866412,
+  "sigma_S_running": 0.7555069477015766,
+  "savepoints": [
+    {
+      "step": 5000,
+      "path": "/workspace/p9_pbeta_distill/savepoints/step_5000",
+      "ts_utc": "2026-05-04T22:40:24Z"
+    },
+    {
+      "step": 10000,
+      "path": "/workspace/p9_pbeta_distill/savepoints/step_10000",
+      "ts_utc": "2026-05-04T22:47:42Z"
+    },
+    {
+      "step": 15000,
+      "path": "/workspace/p9_pbeta_distill/savepoints/step_15000",
+      "ts_utc": "2026-05-04T22:55:06Z"
+    },
+    {
+      "step": 20000,
+      "path": "/workspace/p9_pbeta_distill/savepoints/step_20000",
+      "ts_utc": "2026-05-04T23:02:25Z"
+    },
+    {
+      "step": 25000,
+      "path": "/workspace/p9_pbeta_distill/savepoints/step_25000",
+      "ts_utc": "2026-05-04T23:09:43Z"
+    },
+    {
+      "step": 30000,
+      "path": "/workspace/p9_pbeta_distill/savepoints/step_30000",
+      "ts_utc": "2026-05-04T23:17:02Z"
+    },
+    {
+      "step": 35000,
+      "path": "/workspace/p9_pbeta_distill/savepoints/step_35000",
+      "ts_utc": "2026-05-04T23:24:20Z"
+    },
+    {
+      "step": 40000,
+      "path": "/workspace/p9_pbeta_distill/savepoints/step_40000",
+      "ts_utc": "2026-05-04T23:31:46Z"
+    },
+    {
+      "step": 45000,
+      "path": "/workspace/p9_pbeta_distill/savepoints/step_45000",
+      "ts_utc": "2026-05-04T23:39:22Z"
+    },
+    {
+      "step": 50000,
+      "path": "/workspace/p9_pbeta_distill/savepoints/step_50000",
+      "ts_utc": "2026-05-04T23:46:56Z"
+    },
+    {
+      "step": 50000,
+      "path": "/workspace/p9_pbeta_distill/savepoints/final",
+      "note": "final",
+      "ts_utc": "2026-05-04T23:46:56Z"
+    }
+  ],
+  "train_elapsed_sec": 4349.72,
+  "resume_step_at_launch": 1000,
+  "ts_utc": "2026-05-04T23:47:25Z",
+  "honest_c3": [
+    "Spot preempt unavoidable on community spot \u2014 savepoints @ every 1000 steps mitigate but cannot eliminate; expect 1-3 preempts per 10h H100 run",
+    "Script reconstructed from spec + sister sentinel base; may diverge in subtle ways from the deleted original v1 (tested mini-run shape preserved: loss form, schedules, calib prompts, hidden hook)",
+    "Resume granularity 1000-step has ~20s disk-write cost per save (scaled w/ AdamW state ~300MB) \u2014 at 25K total = ~10min cumulative I/O overhead",
+    "Static-EMA gradient pattern: distill loss has no direct backprop through model params (z_S detached scalar) \u2014 gradient flows via downstream \u03a6\u2605 probe coupling; pattern weak per Phase 1.5 sentinel C3",
+    "F-D-1 (per-token KL \u2264 0.5 nats vs Mistral-7B reference) is a separate post-train evaluation, NOT auto-computed by this script \u2014 script emits F1_BLEU-1 (CLM-self holdout); F-D-1 KL gate evaluated by downstream tool"
+  ]
+}

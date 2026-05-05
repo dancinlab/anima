@@ -1,0 +1,8 @@
+[smoke] torch=2.4.1+cu124
+[smoke] loading base meta-llama/Llama-3.2-3B
+`torch_dtype` is deprecated! Use `dtype` instead!
+Loading checkpoint shards:   0%|          | 0/2 [00:00<?, ?it/s]Loading checkpoint shards:  50%|█████     | 1/2 [00:00<00:00,  1.29it/s]Loading checkpoint shards: 100%|██████████| 2/2 [00:00<00:00,  2.24it/s]Loading checkpoint shards: 100%|██████████| 2/2 [00:00<00:00,  2.02it/s]
+[smoke] loading adapter /workspace/p9_eval_rerun/adapter_final
+[smoke] PASS adapter loaded; type=PeftModelForCausalLM
+[smoke] forward pass OK; logits shape=(1, 3, 128256)
+__SMOKE_OK__

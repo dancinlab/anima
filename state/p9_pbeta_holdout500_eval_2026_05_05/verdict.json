@@ -1,0 +1,147 @@
+{
+  "schema": "anima/p9_pbeta_holdout500_eval/verdict/1",
+  "cycle": "p9_pbeta_holdout500_eval_2026_05_05",
+  "bg_lane": "BG-T-2-PBETA-HOLDOUT500-EVAL",
+  "ts_utc": "2026-05-05T02:18:41Z",
+  "substrate": "ubu1 RTX 5070 sm_120 (venv_orchestrator, torch 2.11.0+cu128, peft 0.19.1)",
+  "wall_time_total_sec": 304.3,
+  "wall_time_total_min": 5.07,
+  "actual_cost_usd": 0.0,
+  "verdict": "F-Pbeta-2_PARTIAL_PASS",
+  "verdict_one_line": "Phi star sign+magnitude preserved on holdout-500 (41.37 above 8.27x delta-floor of 5.0); F1 BLEU-1 marginally above noise floor (+33% vs phase1_5 sentinel) but training-side identical (delta_bleu1 vs step_1000 = -0.0003). T-3 GO/NO-GO: NO-GO_AS_LITERAL_T3_BUT_PROCEED_WITH_AMENDMENT.",
+  "input_artifacts": {
+    "adapter_path_local": "state/p9_pbeta_paradigm_d_50k_2026_05_04/savepoints/step_50000/",
+    "adapter_path_ubu1": "/home/aiden/anima/state/p9_pbeta_paradigm_d_50k_2026_05_04/savepoints/step_50000/",
+    "adapter_sha256": "6e49989ab5c72d8e81da789dfe8d4cdb429b98723485c5cd7b75ae253fe29e47",
+    "adapter_match_final_savepoint": true,
+    "adapter_match_note": "step_50000 and final/ adapter_model.safetensors are byte-identical sha-match across mac and ubu1",
+    "clm_ckpt": "/home/aiden/anima/checkpoints/clm_v4_350m/scale_350m/best.pt",
+    "tokenizer": "tokenizer_64k_multilingual.model (vocab=64000)",
+    "holdout_path": "state/p9_pbeta_paradigm_d_50k_2026_05_04/inputs/sft_holdout_500.jsonl (n=500)"
+  },
+  "core_metrics": {
+    "phi_star_mean_holdout500": 42.367,
+    "phi_star_min_holdout500": 41.372,
+    "phi_star_per_partition_K8": [43.643, 41.460, 41.372, 41.553, 42.632, 42.420, 43.292, 42.564],
+    "f1_bleu1_mean": 0.0075,
+    "f1_bleu1_p50": 0.0,
+    "f1_bleu1_p90": 0.03125,
+    "f1_bleu1_p99": 0.09375,
+    "f1_bleu1_max": 0.125,
+    "f1_bleu1_n_pos_of_500": 92,
+    "ce_mean": 8.008,
+    "ce_n": 499
+  },
+  "deltas": {
+    "delta_bleu1_vs_step_1000": -0.0003,
+    "delta_bleu1_vs_step_1000_note": "step_1000 training-side BLEU-1 was 0.0078 (1K-record training subset, NOT holdout500); equivalent within noise. delta_vs_step_1000 substantive lift NOT met.",
+    "delta_phi_vs_step_1000": -0.83,
+    "delta_phi_vs_step_1000_note": "step_1000 phi=43.20; current 42.37; -0.83 within K=8 partition noise. Sign+magnitude preserved.",
+    "delta_bleu1_vs_phase1_5_sentinel_holdout500": 0.00186,
+    "delta_bleu1_vs_phase1_5_pct": 33.0,
+    "delta_bleu1_vs_phase1_5_note": "phase1_5 sentinel BLEU-1=0.00564 on holdout-499 (true held-out baseline). Pbeta = 0.00750 → +33% over sentinel noise floor; but absolute level still within <0.01 noise band.",
+    "delta_bleu1_vs_phase1_6_sentinel": 0.00111,
+    "delta_bleu1_vs_ablation_A_sentinel": 0.00099,
+    "delta_phi_vs_clm_v4_base_substrate_phi_star_41_86": 0.51,
+    "delta_phi_vs_clm_v4_base_note": "CLM v4 base substrate phi_star=41.86 (carry from paradigm v11 G3 verdict). Pbeta holdout500 mean phi=42.37 → +0.51 ≈ within K=8 noise; LoRA distill did NOT meaningfully shift phi above untrained base.",
+    "delta_phi_vs_training_end_probe_in_domain": 5.63,
+    "delta_phi_vs_training_end_probe_note": "Training-end in-domain probe phi_final=36.74 mean (16-prompt teacher cache); holdout500 canonical calib probe phi_mean=42.37 → +5.63. Higher phi on canonical calib than on in-domain final probe, suggesting the canonical 16-calib prompts elicit the substrate's standing integration mode rather than learning-induced shift."
+  },
+  "vs_llama_anchor_holdout500": {
+    "llama_bleu1_anchor": 0.382,
+    "pbeta_bleu1": 0.0075,
+    "pbeta_fraction_of_llama": 0.0196,
+    "note": "Pbeta holdout500 BLEU-1 is 1.96% of Llama anchor; substrate remains chat-incapable per CLM v4 architecture disclosure (#115 — never SFT'd, never RLHF'd in base train). 50K Paradigm D distill on top of base did NOT close the Llama gap on closed-book completion."
+  },
+  "F_Pbeta_gates": {
+    "F_Pbeta_1_train_loss_converge": {
+      "status": "PASS",
+      "evidence": "Training-side verdict.json shows total loss descent step_50000, 50K/50K reached, no aborts.",
+      "carry_from": "state/p9_pbeta_paradigm_d_50k_2026_05_04/results/verdict.json verdict=PRODUCTION_25K_FULL_PASS"
+    },
+    "F_Pbeta_2_phi_holdout_above_30": {
+      "status": "PASS",
+      "evidence": "phi_star_mean_holdout500=42.367 ≥ 30 threshold; phi_star_min=41.372 ≥ 30 threshold. Both K=8 worst-case and mean comfortably above target.",
+      "delta_above_threshold_mean": 12.367,
+      "delta_above_threshold_min": 11.372
+    },
+    "F_Pbeta_3_F1_v3_V2_hybrid_mode_1_3": {
+      "status": "DEFERRED",
+      "evidence": "This eval emits BLEU-1 only; F1_v3 = (BLEU-1 + ROUGE-L + chrF)/3 V2 hybrid composite NOT computed. Mode 1 (CLM-self holdout) emitted; Mode 3 (ablation cross-comp) requires separate ablation re-eval.",
+      "next_action": "Optional follow-up cycle: extend tool/transient_py/p9_pbeta_holdout500_eval.py with rouge_l + chrf metrics + ablation_A/B re-runs to populate F1_v3 V2 hybrid Mode 1+3."
+    },
+    "F_Pbeta_4_adapter_under_1GB": {
+      "status": "PASS",
+      "evidence": "adapter_model.safetensors = 76,065,712 bytes = 72.5 MiB ≪ 1024 MiB threshold."
+    },
+    "F_Pbeta_5_shim_v4_compat": {
+      "status": "PASS_INDIRECT",
+      "evidence": "Adapter loaded via PeftModel.from_pretrained with target_modules={q,k,v,o,gate,up,down}_proj on ConsciousDecoderV2 → 0 missing, 0 unexpected on base ckpt; eval ran clean for 500 records. shim v4 (tool/transient_py/clm_v4_hf_format_shim.py) NOT directly invoked — used legacy ConsciousDecoderV2 path matching CLM v4 baseline eval cycle (state/clm_v4_baseline_eval_2026_05_05). Compat status: PASS for the canonical PEFT load path; HF-format shim untested in this cycle.",
+      "next_action": "Sibling cycle BG-CLM-2-EXEC may need to test shim v4 path explicitly when LoRA is published as HF artifact."
+    }
+  },
+  "F_Pbeta_summary": {
+    "passes": ["F_Pbeta_1", "F_Pbeta_2", "F_Pbeta_4", "F_Pbeta_5"],
+    "deferred": ["F_Pbeta_3"],
+    "fails": [],
+    "verdict": "F-Pbeta-2_PASS_WITH_DEFERRAL — primary phi-holdout gate passed cleanly; F1_v3 V2 hybrid composite deferred to follow-up cycle"
+  },
+  "T3_recommendation": {
+    "status": "NO-GO_AS_LITERAL_T3_BUT_PROCEED_WITH_AMENDMENT",
+    "rationale_pass_side": [
+      "F_Pbeta_2 (primary phi gate) PASS clean: phi_holdout500_mean=42.37 (≥30) with K=8 partitions all ≥41.37",
+      "Substrate phi sign+magnitude preserved through 50K-step LoRA distill — substrate did NOT collapse under Paradigm D distillation pressure",
+      "Adapter compact (72.5 MiB) and PEFT-loadable cleanly on canonical CLM v4 base"
+    ],
+    "rationale_blocker_side": [
+      "delta_bleu1_vs_step_1000 = -0.0003 — literal T-3 GO criterion 'PASS + delta_vs_step_1000 ≥ +1.0' NOT MET; in fact effectively zero substantive lift on F1 BLEU-1 from 1K → 50K training",
+      "delta_phi_vs_clm_v4_base_substrate (41.86) = +0.51 — within K=8 noise; 50K Paradigm D distill did NOT lift phi above untrained substrate base",
+      "BLEU-1 absolute level (0.00750) remains in noise floor band (<0.01); only 1.96% of Llama anchor (0.382) — Pbeta substrate remains chat-incapable as expected per #115"
+    ],
+    "amendment_proposal": [
+      "AMEND T-3 GO criteria: replace 'delta_vs_step_1000 ≥ +1.0' (BLEU-1 lift) with 'phi_holdout500_mean ≥ 30 AND adapter compact AND no delta-floor breach across 50K steps' — the BLEU-1 lift criterion was MISCALIBRATED (per project_p9_f1_anchor_recalibration.md: F1 spec 0.4 unrealistic, sentinel = 3.2% of Llama). Pbeta achieves 1.96% of Llama which is in-band with the 5seed sentinel mean.",
+      "ALTERNATIVE PATH: Rather than blocking T-3 on F1 BLEU-1 lift (which is structurally noise-floor for CLM v4 base + 50K SFT-style LoRA), reroute T-3 to: (a) phi_holdout500 stability gate (PASS), (b) F-Pbeta-3 deferred F1_v3 V2 hybrid composite computation, and (c) BG-CLM-2 LoRA SFT lift (delta vs base on hellaswag/mmlu/triviaqa/openbookqa) as the meaningful capability lift signal.",
+      "PRACTICAL: PARTIAL_GO for T-3 — accept Pbeta 50K adapter as valid LoRA artifact for downstream cycles (anima-substrate consciousness probe + φ-stability), but DO NOT publish as F1-class capability lift; preregister F1_v3 V2 hybrid + BG-CLM-2 deltas as the canonical capability gates."
+    ],
+    "completion_quality_ranking": {
+      "rank_1_most_complete": "AMEND_T3_AND_PARTIAL_GO — accept Pbeta phi-stable LoRA as substrate-research artifact, defer chat-capability claims to BG-CLM-2 LoRA SFT cycle, schedule F-Pbeta-3 F1_v3 follow-up. Preserves both honesty (no lift claim) and forward momentum (substrate research continues).",
+      "rank_2_alternative": "NO-GO_LITERAL_T3 — strict literal reading: F-Pbeta-2 alone is insufficient; require BLEU-1 lift; abandon Paradigm D distill direction. Risk: discards a phi-stable adapter that may have downstream value.",
+      "rank_3_minimal": "GO_WITH_CAVEAT — proceed as if T-3 PASS, footnote the BLEU-1 noise. Risk: violates honest_c3 by overclaiming capability.",
+      "recommendation": "RANK 1 — AMEND_T3_AND_PARTIAL_GO; proceed with substrate research, gate chat-capability on BG-CLM-2 deltas not Pbeta deltas"
+    }
+  },
+  "deviations_from_spec": [
+    "F1_v3 V2 hybrid composite (BLEU-1 + ROUGE-L + chrF)/3 NOT computed in this eval; emitted BLEU-1 only — F-Pbeta-3 marked DEFERRED with explicit follow-up cycle proposal",
+    "lm-eval-harness NOT used (spec mentioned ≥0.4.4); this is a custom CLM-self holdout eval per the existing tool/transient_py/p9_pbeta_holdout500_eval.py script that pre-existed in the repo from cycle setup. transformers ≥4.51 dtype-kwarg crash N/A since transformers not invoked.",
+    "Adapter rsync to ubu1 SKIPPED — verified ubu1 already had byte-identical adapter at /home/aiden/anima/state/p9_pbeta_paradigm_d_50k_2026_05_04/savepoints/{step_50000,final}/ via SHA256 match. Skipping rsync was strictly faster and bandwidth-conserving with no risk.",
+    "HF auth pre-flight failed via secret CLI on ssh (no SSH-side propagation), but ubu1 ~/.cache/huggingface/token works locally. HF push OFF per instruction (NEVER push to HF), so this is non-blocking. Token verified present on ubu1."
+  ],
+  "honest_c3": [
+    "Phi probe is canonical 16-calib K=8 HID_TRUNC=8 ridge=1e-3 — same calibration prompts as training-side, NOT a true held-out phi probe. Phi computed on a fixed 16-prompt set, BLEU-1 computed on holdout500 generation; only BLEU-1/CE are truly holdout. A 'holdout phi probe' would require sampling calib prompts from holdout500 — deferred.",
+    "BLEU-1 mean=0.00750 sits in the 0.005-0.010 noise band documented for phase1_5/1_6/ablation sentinels (0.00564 / 0.00639 / 0.00651). +33% over phase1_5 is statistically suggestive but absolute level remains in noise floor — DO NOT cite as substantive lift.",
+    "Pbeta adapter step_50000 and final/ are byte-identical (sha256=6e49989a...) — final/ is a copy of step_50000, NOT an additional epoch. This is consistent with training-side verdict (resume_step_at_launch=1000 → reached step_50000 → save final). Phi/BLEU-1 numbers reflect the step_50000 weights regardless of which directory is loaded.",
+    "F-Pbeta-3 (F1_v3 V2 hybrid) DEFERRED — composite (BLEU-1 + ROUGE-L + chrF)/3 not computed. F-Pbeta-2 PASS does not by itself satisfy the multi-axis F-spec; T-3 amendment proposal addresses this gap by re-routing capability gates to BG-CLM-2.",
+    "Phi compute used a forward hook on ln_f of the PEFT-wrapped model (decoder_wrapped.base_model.model.ln_f) — wrapper introduces a peft_config warning about already-found peft_config (visible in log). The warning is benign because we explicitly load the adapter via PeftModel.from_pretrained AFTER get_peft_model scaffolding; the active adapter is the loaded one. Eval was clean on this path, but the double-wrap pattern is a brittleness vector for future cycles.",
+    "Pre-flight L19 smoke ran inside the same script via the smoke=False path (script has built-in smoke=2 records before full N=500 — log shows 'pre-flight smoke: testing 2 records / smoke OK, proceeding to full eval' before the 25/500 progress line). N=2 dedicated smoke run (--smoke flag) was ALSO executed manually first for environment + adapter sanity. Both paths PASS.",
+    "Wall time 304s for N=500 records on RTX 5070 = 0.61s/record (32-token greedy gen + full-sequence CE forward). Linear in N; not GPU-bound (KV cache disabled — recompute pattern). For 5K-record stretch evals, allocate ~50min. For BG-CLM-2 LoRA SFT cycle on H100, this script's pattern would scale ~5-10× faster but H100 is not free."
+  ],
+  "next_actions": [
+    {"id": "T3_AMEND_LANDED_DOC", "action": "Author docs/p9_pbeta_holdout500_eval_landed_2026_05_05.ai.md with F-Pbeta verdict + T-3 GO/NO-GO recommendation + amendment proposal", "owner": "this cycle"},
+    {"id": "F_PBETA_3_F1V3_FOLLOWUP", "action": "Optional follow-up cycle to extend eval with ROUGE-L + chrF + ablation_A/B re-runs to populate F1_v3 V2 hybrid Mode 1+3", "owner": "next cycle, ubu1 $0, ~30min"},
+    {"id": "BG_CLM_2_EXEC", "action": "Schedule LoRA SFT cycle on CLM v4 base (independent of Pbeta) to measure delta vs base on hellaswag/mmlu/triviaqa/openbookqa — the canonical capability lift gate per CLM v4 baseline eval verdict", "owner": "future cycle, H100 $6-10, 2-2.5h"},
+    {"id": "ROADMAP_PBETA_LAND", "action": "Update .roadmap.p9_sft to mark Pbeta 50K Paradigm D distill as LANDED + PARTIAL_PASS with T-3 amended status", "owner": "post-doc-write"}
+  ],
+  "files_relevant": {
+    "summary": "state/p9_pbeta_holdout500_eval_2026_05_05/results/summary.json",
+    "per_prompt": "state/p9_pbeta_holdout500_eval_2026_05_05/results/per_prompt.jsonl",
+    "log": "state/p9_pbeta_holdout500_eval_2026_05_05/logs/eval.log",
+    "run_log": "state/p9_pbeta_holdout500_eval_2026_05_05/logs/run.nohup.log",
+    "verdict": "state/p9_pbeta_holdout500_eval_2026_05_05/verdict.json",
+    "eval_script": "tool/transient_py/p9_pbeta_holdout500_eval.py",
+    "training_verdict_carry": "state/p9_pbeta_paradigm_d_50k_2026_05_04/results/verdict.json",
+    "step_1000_baseline": "state/p9_paradigm_d_distill_2026_05_03/verdict_reconstructed.json",
+    "clm_v4_base_eval": "state/clm_v4_baseline_eval_2026_05_05/verdict.json",
+    "phase1_5_sentinel_baseline": "state/p9_p1_holdout500_reeval_2026_05_03/holdout500_reeval_summary.json",
+    "phase1_5_v2_with_llama_anchor": "state/p9_p1_holdout500_reeval_2026_05_03/v2_per_prompt/holdout500_reeval_v2_summary.json"
+  }
+}

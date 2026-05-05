@@ -1,0 +1,734 @@
+{
+  "schema": "anima/p9_path_a_retry_3_anima_axis_eval/results/1",
+  "ts_utc": "2026-05-05T02:25:59Z",
+  "adapter_loaded_from": "/home/aiden/anima_path_a_v2_adapter",
+  "base_model_id": "meta-llama/Llama-3.2-3B",
+  "axis_eval_set_n_prompts": 100,
+  "device": "cuda",
+  "dtype": "torch.bfloat16",
+  "axes": [
+    "daily",
+    "emotion",
+    "task",
+    "roleplay",
+    "meta"
+  ],
+  "per_axis_preservation_score": {
+    "daily": 0.7994327545166016,
+    "emotion": 0.7867533564567566,
+    "task": 0.7908005118370056,
+    "roleplay": 0.8068358898162842,
+    "meta": 0.7518981099128723
+  },
+  "mean_preservation_score": 0.787144124507904,
+  "mean_per_prompt_cosine": 0.748875992000103,
+  "axis_discrimination": {
+    "mean_pairwise_cos_base": 0.9940082252025604,
+    "mean_pairwise_cos_lora": 0.9932240724563599,
+    "discrimination_delta": -0.0007841527462004727
+  },
+  "f_pa_retrain_v2_4_anima_axis_preservation_verdict": "FAIL",
+  "wall_time_min": 0.134923521677653,
+  "per_prompt_cosines": [
+    {
+      "prompt_id": 0,
+      "conditioned_axis": "daily",
+      "native_axis": "daily",
+      "axis_match": true,
+      "cosine_base_lora": 0.8404126167297363
+    },
+    {
+      "prompt_id": 1,
+      "conditioned_axis": "emotion",
+      "native_axis": "daily",
+      "axis_match": false,
+      "cosine_base_lora": 0.7802640795707703
+    },
+    {
+      "prompt_id": 2,
+      "conditioned_axis": "task",
+      "native_axis": "daily",
+      "axis_match": false,
+      "cosine_base_lora": 0.8323445916175842
+    },
+    {
+      "prompt_id": 3,
+      "conditioned_axis": "roleplay",
+      "native_axis": "daily",
+      "axis_match": false,
+      "cosine_base_lora": 0.8322411179542542
+    },
+    {
+      "prompt_id": 4,
+      "conditioned_axis": "meta",
+      "native_axis": "daily",
+      "axis_match": false,
+      "cosine_base_lora": 0.7782909870147705
+    },
+    {
+      "prompt_id": 5,
+      "conditioned_axis": "daily",
+      "native_axis": "daily",
+      "axis_match": true,
+      "cosine_base_lora": 0.7882199883460999
+    },
+    {
+      "prompt_id": 6,
+      "conditioned_axis": "emotion",
+      "native_axis": "daily",
+      "axis_match": false,
+      "cosine_base_lora": 0.8140894174575806
+    },
+    {
+      "prompt_id": 7,
+      "conditioned_axis": "task",
+      "native_axis": "daily",
+      "axis_match": false,
+      "cosine_base_lora": 0.7998839020729065
+    },
+    {
+      "prompt_id": 8,
+      "conditioned_axis": "roleplay",
+      "native_axis": "daily",
+      "axis_match": false,
+      "cosine_base_lora": 0.810147225856781
+    },
+    {
+      "prompt_id": 9,
+      "conditioned_axis": "meta",
+      "native_axis": "daily",
+      "axis_match": false,
+      "cosine_base_lora": 0.7516324520111084
+    },
+    {
+      "prompt_id": 10,
+      "conditioned_axis": "daily",
+      "native_axis": "daily",
+      "axis_match": true,
+      "cosine_base_lora": 0.7255470752716064
+    },
+    {
+      "prompt_id": 11,
+      "conditioned_axis": "emotion",
+      "native_axis": "daily",
+      "axis_match": false,
+      "cosine_base_lora": 0.7046873569488525
+    },
+    {
+      "prompt_id": 12,
+      "conditioned_axis": "task",
+      "native_axis": "daily",
+      "axis_match": false,
+      "cosine_base_lora": 0.6821170449256897
+    },
+    {
+      "prompt_id": 13,
+      "conditioned_axis": "roleplay",
+      "native_axis": "daily",
+      "axis_match": false,
+      "cosine_base_lora": 0.7190699577331543
+    },
+    {
+      "prompt_id": 14,
+      "conditioned_axis": "meta",
+      "native_axis": "daily",
+      "axis_match": false,
+      "cosine_base_lora": 0.6603202223777771
+    },
+    {
+      "prompt_id": 15,
+      "conditioned_axis": "daily",
+      "native_axis": "daily",
+      "axis_match": true,
+      "cosine_base_lora": 0.717781662940979
+    },
+    {
+      "prompt_id": 16,
+      "conditioned_axis": "emotion",
+      "native_axis": "daily",
+      "axis_match": false,
+      "cosine_base_lora": 0.7192159295082092
+    },
+    {
+      "prompt_id": 17,
+      "conditioned_axis": "task",
+      "native_axis": "daily",
+      "axis_match": false,
+      "cosine_base_lora": 0.6853774785995483
+    },
+    {
+      "prompt_id": 18,
+      "conditioned_axis": "roleplay",
+      "native_axis": "daily",
+      "axis_match": false,
+      "cosine_base_lora": 0.7378239631652832
+    },
+    {
+      "prompt_id": 19,
+      "conditioned_axis": "meta",
+      "native_axis": "daily",
+      "axis_match": false,
+      "cosine_base_lora": 0.7160741686820984
+    },
+    {
+      "prompt_id": 20,
+      "conditioned_axis": "daily",
+      "native_axis": "emotion",
+      "axis_match": false,
+      "cosine_base_lora": 0.7173371315002441
+    },
+    {
+      "prompt_id": 21,
+      "conditioned_axis": "emotion",
+      "native_axis": "emotion",
+      "axis_match": true,
+      "cosine_base_lora": 0.6032118797302246
+    },
+    {
+      "prompt_id": 22,
+      "conditioned_axis": "task",
+      "native_axis": "emotion",
+      "axis_match": false,
+      "cosine_base_lora": 0.692650318145752
+    },
+    {
+      "prompt_id": 23,
+      "conditioned_axis": "roleplay",
+      "native_axis": "emotion",
+      "axis_match": false,
+      "cosine_base_lora": 0.6994396448135376
+    },
+    {
+      "prompt_id": 24,
+      "conditioned_axis": "meta",
+      "native_axis": "emotion",
+      "axis_match": false,
+      "cosine_base_lora": 0.615378737449646
+    },
+    {
+      "prompt_id": 25,
+      "conditioned_axis": "daily",
+      "native_axis": "emotion",
+      "axis_match": false,
+      "cosine_base_lora": 0.8856961727142334
+    },
+    {
+      "prompt_id": 26,
+      "conditioned_axis": "emotion",
+      "native_axis": "emotion",
+      "axis_match": true,
+      "cosine_base_lora": 0.8969919681549072
+    },
+    {
+      "prompt_id": 27,
+      "conditioned_axis": "task",
+      "native_axis": "emotion",
+      "axis_match": false,
+      "cosine_base_lora": 0.9055545330047607
+    },
+    {
+      "prompt_id": 28,
+      "conditioned_axis": "roleplay",
+      "native_axis": "emotion",
+      "axis_match": false,
+      "cosine_base_lora": 0.9000110626220703
+    },
+    {
+      "prompt_id": 29,
+      "conditioned_axis": "meta",
+      "native_axis": "emotion",
+      "axis_match": false,
+      "cosine_base_lora": 0.8503847122192383
+    },
+    {
+      "prompt_id": 30,
+      "conditioned_axis": "daily",
+      "native_axis": "emotion",
+      "axis_match": false,
+      "cosine_base_lora": 0.9013267755508423
+    },
+    {
+      "prompt_id": 31,
+      "conditioned_axis": "emotion",
+      "native_axis": "emotion",
+      "axis_match": true,
+      "cosine_base_lora": 0.9169839024543762
+    },
+    {
+      "prompt_id": 32,
+      "conditioned_axis": "task",
+      "native_axis": "emotion",
+      "axis_match": false,
+      "cosine_base_lora": 0.9040147662162781
+    },
+    {
+      "prompt_id": 33,
+      "conditioned_axis": "roleplay",
+      "native_axis": "emotion",
+      "axis_match": false,
+      "cosine_base_lora": 0.895728588104248
+    },
+    {
+      "prompt_id": 34,
+      "conditioned_axis": "meta",
+      "native_axis": "emotion",
+      "axis_match": false,
+      "cosine_base_lora": 0.8529365062713623
+    },
+    {
+      "prompt_id": 35,
+      "conditioned_axis": "daily",
+      "native_axis": "emotion",
+      "axis_match": false,
+      "cosine_base_lora": 0.93558669090271
+    },
+    {
+      "prompt_id": 36,
+      "conditioned_axis": "emotion",
+      "native_axis": "emotion",
+      "axis_match": true,
+      "cosine_base_lora": 0.944525957107544
+    },
+    {
+      "prompt_id": 37,
+      "conditioned_axis": "task",
+      "native_axis": "emotion",
+      "axis_match": false,
+      "cosine_base_lora": 0.9412962198257446
+    },
+    {
+      "prompt_id": 38,
+      "conditioned_axis": "roleplay",
+      "native_axis": "emotion",
+      "axis_match": false,
+      "cosine_base_lora": 0.9495928287506104
+    },
+    {
+      "prompt_id": 39,
+      "conditioned_axis": "meta",
+      "native_axis": "emotion",
+      "axis_match": false,
+      "cosine_base_lora": 0.9342305660247803
+    },
+    {
+      "prompt_id": 40,
+      "conditioned_axis": "daily",
+      "native_axis": "task",
+      "axis_match": false,
+      "cosine_base_lora": 0.742914617061615
+    },
+    {
+      "prompt_id": 41,
+      "conditioned_axis": "emotion",
+      "native_axis": "task",
+      "axis_match": false,
+      "cosine_base_lora": 0.7042644619941711
+    },
+    {
+      "prompt_id": 42,
+      "conditioned_axis": "task",
+      "native_axis": "task",
+      "axis_match": true,
+      "cosine_base_lora": 0.7403623461723328
+    },
+    {
+      "prompt_id": 43,
+      "conditioned_axis": "roleplay",
+      "native_axis": "task",
+      "axis_match": false,
+      "cosine_base_lora": 0.7482778429985046
+    },
+    {
+      "prompt_id": 44,
+      "conditioned_axis": "meta",
+      "native_axis": "task",
+      "axis_match": false,
+      "cosine_base_lora": 0.6889408230781555
+    },
+    {
+      "prompt_id": 45,
+      "conditioned_axis": "daily",
+      "native_axis": "task",
+      "axis_match": false,
+      "cosine_base_lora": 0.7013031244277954
+    },
+    {
+      "prompt_id": 46,
+      "conditioned_axis": "emotion",
+      "native_axis": "task",
+      "axis_match": false,
+      "cosine_base_lora": 0.7136527299880981
+    },
+    {
+      "prompt_id": 47,
+      "conditioned_axis": "task",
+      "native_axis": "task",
+      "axis_match": true,
+      "cosine_base_lora": 0.6912652254104614
+    },
+    {
+      "prompt_id": 48,
+      "conditioned_axis": "roleplay",
+      "native_axis": "task",
+      "axis_match": false,
+      "cosine_base_lora": 0.7026678323745728
+    },
+    {
+      "prompt_id": 49,
+      "conditioned_axis": "meta",
+      "native_axis": "task",
+      "axis_match": false,
+      "cosine_base_lora": 0.6173781156539917
+    },
+    {
+      "prompt_id": 50,
+      "conditioned_axis": "daily",
+      "native_axis": "task",
+      "axis_match": false,
+      "cosine_base_lora": 0.7880249619483948
+    },
+    {
+      "prompt_id": 51,
+      "conditioned_axis": "emotion",
+      "native_axis": "task",
+      "axis_match": false,
+      "cosine_base_lora": 0.7973899245262146
+    },
+    {
+      "prompt_id": 52,
+      "conditioned_axis": "task",
+      "native_axis": "task",
+      "axis_match": true,
+      "cosine_base_lora": 0.8089148998260498
+    },
+    {
+      "prompt_id": 53,
+      "conditioned_axis": "roleplay",
+      "native_axis": "task",
+      "axis_match": false,
+      "cosine_base_lora": 0.817491352558136
+    },
+    {
+      "prompt_id": 54,
+      "conditioned_axis": "meta",
+      "native_axis": "task",
+      "axis_match": false,
+      "cosine_base_lora": 0.735790491104126
+    },
+    {
+      "prompt_id": 55,
+      "conditioned_axis": "daily",
+      "native_axis": "task",
+      "axis_match": false,
+      "cosine_base_lora": 0.7721320390701294
+    },
+    {
+      "prompt_id": 56,
+      "conditioned_axis": "emotion",
+      "native_axis": "task",
+      "axis_match": false,
+      "cosine_base_lora": 0.7936938405036926
+    },
+    {
+      "prompt_id": 57,
+      "conditioned_axis": "task",
+      "native_axis": "task",
+      "axis_match": true,
+      "cosine_base_lora": 0.7811535596847534
+    },
+    {
+      "prompt_id": 58,
+      "conditioned_axis": "roleplay",
+      "native_axis": "task",
+      "axis_match": false,
+      "cosine_base_lora": 0.8168395161628723
+    },
+    {
+      "prompt_id": 59,
+      "conditioned_axis": "meta",
+      "native_axis": "task",
+      "axis_match": false,
+      "cosine_base_lora": 0.8065528869628906
+    },
+    {
+      "prompt_id": 60,
+      "conditioned_axis": "daily",
+      "native_axis": "roleplay",
+      "axis_match": false,
+      "cosine_base_lora": 0.8024010062217712
+    },
+    {
+      "prompt_id": 61,
+      "conditioned_axis": "emotion",
+      "native_axis": "roleplay",
+      "axis_match": false,
+      "cosine_base_lora": 0.7716536521911621
+    },
+    {
+      "prompt_id": 62,
+      "conditioned_axis": "task",
+      "native_axis": "roleplay",
+      "axis_match": false,
+      "cosine_base_lora": 0.7761983871459961
+    },
+    {
+      "prompt_id": 63,
+      "conditioned_axis": "roleplay",
+      "native_axis": "roleplay",
+      "axis_match": true,
+      "cosine_base_lora": 0.7894178628921509
+    },
+    {
+      "prompt_id": 64,
+      "conditioned_axis": "meta",
+      "native_axis": "roleplay",
+      "axis_match": false,
+      "cosine_base_lora": 0.6965870261192322
+    },
+    {
+      "prompt_id": 65,
+      "conditioned_axis": "daily",
+      "native_axis": "roleplay",
+      "axis_match": false,
+      "cosine_base_lora": 0.8784083127975464
+    },
+    {
+      "prompt_id": 66,
+      "conditioned_axis": "emotion",
+      "native_axis": "roleplay",
+      "axis_match": false,
+      "cosine_base_lora": 0.8650640249252319
+    },
+    {
+      "prompt_id": 67,
+      "conditioned_axis": "task",
+      "native_axis": "roleplay",
+      "axis_match": false,
+      "cosine_base_lora": 0.8746324777603149
+    },
+    {
+      "prompt_id": 68,
+      "conditioned_axis": "roleplay",
+      "native_axis": "roleplay",
+      "axis_match": true,
+      "cosine_base_lora": 0.8833510875701904
+    },
+    {
+      "prompt_id": 69,
+      "conditioned_axis": "meta",
+      "native_axis": "roleplay",
+      "axis_match": false,
+      "cosine_base_lora": 0.8316868543624878
+    },
+    {
+      "prompt_id": 70,
+      "conditioned_axis": "daily",
+      "native_axis": "roleplay",
+      "axis_match": false,
+      "cosine_base_lora": 0.8147059679031372
+    },
+    {
+      "prompt_id": 71,
+      "conditioned_axis": "emotion",
+      "native_axis": "roleplay",
+      "axis_match": false,
+      "cosine_base_lora": 0.7852901220321655
+    },
+    {
+      "prompt_id": 72,
+      "conditioned_axis": "task",
+      "native_axis": "roleplay",
+      "axis_match": false,
+      "cosine_base_lora": 0.7698429226875305
+    },
+    {
+      "prompt_id": 73,
+      "conditioned_axis": "roleplay",
+      "native_axis": "roleplay",
+      "axis_match": true,
+      "cosine_base_lora": 0.7820215225219727
+    },
+    {
+      "prompt_id": 74,
+      "conditioned_axis": "meta",
+      "native_axis": "roleplay",
+      "axis_match": false,
+      "cosine_base_lora": 0.7613077163696289
+    },
+    {
+      "prompt_id": 75,
+      "conditioned_axis": "daily",
+      "native_axis": "roleplay",
+      "axis_match": false,
+      "cosine_base_lora": 0.8460590839385986
+    },
+    {
+      "prompt_id": 76,
+      "conditioned_axis": "emotion",
+      "native_axis": "roleplay",
+      "axis_match": false,
+      "cosine_base_lora": 0.8438754081726074
+    },
+    {
+      "prompt_id": 77,
+      "conditioned_axis": "task",
+      "native_axis": "roleplay",
+      "axis_match": false,
+      "cosine_base_lora": 0.8698834180831909
+    },
+    {
+      "prompt_id": 78,
+      "conditioned_axis": "roleplay",
+      "native_axis": "roleplay",
+      "axis_match": true,
+      "cosine_base_lora": 0.8650413751602173
+    },
+    {
+      "prompt_id": 79,
+      "conditioned_axis": "meta",
+      "native_axis": "roleplay",
+      "axis_match": false,
+      "cosine_base_lora": 0.8656783103942871
+    },
+    {
+      "prompt_id": 80,
+      "conditioned_axis": "daily",
+      "native_axis": "meta",
+      "axis_match": false,
+      "cosine_base_lora": 0.6287230253219604
+    },
+    {
+      "prompt_id": 81,
+      "conditioned_axis": "emotion",
+      "native_axis": "meta",
+      "axis_match": false,
+      "cosine_base_lora": 0.49406662583351135
+    },
+    {
+      "prompt_id": 82,
+      "conditioned_axis": "task",
+      "native_axis": "meta",
+      "axis_match": false,
+      "cosine_base_lora": 0.4966312050819397
+    },
+    {
+      "prompt_id": 83,
+      "conditioned_axis": "roleplay",
+      "native_axis": "meta",
+      "axis_match": false,
+      "cosine_base_lora": 0.612092912197113
+    },
+    {
+      "prompt_id": 84,
+      "conditioned_axis": "meta",
+      "native_axis": "meta",
+      "axis_match": true,
+      "cosine_base_lora": 0.41156214475631714
+    },
+    {
+      "prompt_id": 85,
+      "conditioned_axis": "daily",
+      "native_axis": "meta",
+      "axis_match": false,
+      "cosine_base_lora": 0.4416433274745941
+    },
+    {
+      "prompt_id": 86,
+      "conditioned_axis": "emotion",
+      "native_axis": "meta",
+      "axis_match": false,
+      "cosine_base_lora": 0.44113320112228394
+    },
+    {
+      "prompt_id": 87,
+      "conditioned_axis": "task",
+      "native_axis": "meta",
+      "axis_match": false,
+      "cosine_base_lora": 0.48039305210113525
+    },
+    {
+      "prompt_id": 88,
+      "conditioned_axis": "roleplay",
+      "native_axis": "meta",
+      "axis_match": false,
+      "cosine_base_lora": 0.5824878811836243
+    },
+    {
+      "prompt_id": 89,
+      "conditioned_axis": "meta",
+      "native_axis": "meta",
+      "axis_match": true,
+      "cosine_base_lora": 0.4060874283313751
+    },
+    {
+      "prompt_id": 90,
+      "conditioned_axis": "daily",
+      "native_axis": "meta",
+      "axis_match": false,
+      "cosine_base_lora": 0.674160897731781
+    },
+    {
+      "prompt_id": 91,
+      "conditioned_axis": "emotion",
+      "native_axis": "meta",
+      "axis_match": false,
+      "cosine_base_lora": 0.6572313904762268
+    },
+    {
+      "prompt_id": 92,
+      "conditioned_axis": "task",
+      "native_axis": "meta",
+      "axis_match": false,
+      "cosine_base_lora": 0.6536360383033752
+    },
+    {
+      "prompt_id": 93,
+      "conditioned_axis": "roleplay",
+      "native_axis": "meta",
+      "axis_match": false,
+      "cosine_base_lora": 0.6795696020126343
+    },
+    {
+      "prompt_id": 94,
+      "conditioned_axis": "meta",
+      "native_axis": "meta",
+      "axis_match": true,
+      "cosine_base_lora": 0.5943900346755981
+    },
+    {
+      "prompt_id": 95,
+      "conditioned_axis": "daily",
+      "native_axis": "meta",
+      "axis_match": false,
+      "cosine_base_lora": 0.6601542830467224
+    },
+    {
+      "prompt_id": 96,
+      "conditioned_axis": "emotion",
+      "native_axis": "meta",
+      "axis_match": false,
+      "cosine_base_lora": 0.6580401659011841
+    },
+    {
+      "prompt_id": 97,
+      "conditioned_axis": "task",
+      "native_axis": "meta",
+      "axis_match": false,
+      "cosine_base_lora": 0.5849034190177917
+    },
+    {
+      "prompt_id": 98,
+      "conditioned_axis": "roleplay",
+      "native_axis": "meta",
+      "axis_match": false,
+      "cosine_base_lora": 0.6887263059616089
+    },
+    {
+      "prompt_id": 99,
+      "conditioned_axis": "meta",
+      "native_axis": "meta",
+      "axis_match": true,
+      "cosine_base_lora": 0.6614289283752441
+    }
+  ]
+}
