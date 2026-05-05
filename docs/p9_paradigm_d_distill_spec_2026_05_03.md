@@ -408,4 +408,109 @@ Per raw#15 SSOT discipline: existing 5 conds (cond.1 P0 HF setup, cond.2 S3 swee
 
 ---
 
-*End of spec. Doc-only per raw#9. NO execution authorized by this document. Mini-run launch requires separate BG with cache pre-flight (§5.2) + EXEC authorization.*
+## §4.5 AMENDMENT 2026-05-04 — VOCAB_MISMATCH FALSIFICATION
+
+**Cycle**: BG-T-1 mini distill exec attempt (`state/p9_paradigm_d_distill_mini_2026_05_04/`)
+**Verdict**: `FAIL_PRELAUNCH_VOCAB_MISMATCH`
+**Cost**: $0 (caught at L9-style pre-flight before H100 boot; full $15 mini cap preserved)
+**Status of this logit-axis lineage**: **BLOCKED — spec premise §4.5 falsified empirically**
+
+### A4.5.1 — Falsified claim
+
+Original §4.5 stated:
+
+> "Teacher and student MUST share tokenizer for top-K logit indices to refer to the same tokens. **CONFIRMED**: CLM v4 350M uses Mistral-7B-v0.3 tokenizer per `state/p9_sft_spec_2026_05_02/architecture.json` (architecture descends from Mistral)."
+
+This claim is **FALSE**. Empirical re-read of the cited authoritative artifacts shows:
+
+| Artifact | Field | Actual value |
+|----------|-------|--------------|
+| `state/p9_sft_spec_2026_05_02/architecture.json` | `tokenizer` | `data/tokenizer_64k_multilingual.model` (NOT Mistral) |
+| `state/p9_sft_spec_2026_05_02/architecture.json` | `vocab_size` | `64000` (NOT 32768) |
+| `state/p9_base_validation_h100_2026_05_04/clm_v4_hf/config.json` | `vocab_size` | `64000` (HF format dump, post-shim) |
+| Mistral-7B-Instruct-v0.3 | `vocab_size` | `32768` (SentencePiece BPE, separate sp model) |
+
+The §4.5 inference ("architecture descends from Mistral → tokenizer is Mistral") was an **unverified ancestral assumption**. CLM v4 inherits Mistral's *transformer architecture skeleton* but uses a **separate 64K multilingual SentencePiece tokenizer** trained for Korean/English mixed corpora.
+
+### A4.5.2 — Empirical falsification evidence (3-prompt direct probe)
+
+| Prompt | CLM v4 SP IDs (vocab=64K) | Mistral IDs (vocab=32K) | Identical? | n_clm | n_mistral |
+|--------|---------------------------|--------------------------|------------|-------|-----------|
+| `Hello, world!` | `[576, 11596, 55292, 13955, 55738]` | `[23325, 29493, 2294, 29576]` | NO | 5 | 4 |
+| `안녕하세요` | `[3346, 62255, 9216]` | `[29473, 31093, 1006, 904, 920, 29904, 30489, 30285]` | NO | 3 | 8 |
+| `The quick brown fox` | `[488, 13106, 5237, 334, 35908, 4491, 55335]` | `[1183, 3704, 9828, 1053, 1910]` | NO | 7 | 5 |
+
+**Different token counts AND disjoint id ranges** → per-token KL alignment fails before any subset/intersection projection can begin. Pre-built KL cache (`/tmp/p9_paradigm_d_kl_cache_v1_50k.jsonl`, 14.2 GB on ubu1) indexes Mistral 32K vocab and is **structurally incompatible** with CLM v4's 64K logit axis.
+
+§10 caveat #4 (the original spec) flagged exactly this risk as "unverified locally". The 2026-05-04 BG-T-1 cycle is the verification cycle, with NEGATIVE result. The cache itself remains a valid Mistral-teacher artifact (reusable for any future Mistral-tokenizer-native student) but is **unusable** for the spec-defined CLM v4 student pair.
+
+### A4.5.3 — Three alternative paths (per BG-T-1 verdict diagnostics)
+
+| Path | Description | Cost | Re-anchors Φ★? | Substrate uniqueness preserved? |
+|------|-------------|------|----------------|----------------------------------|
+| **(P-α) Re-tokenize CLM v4 with Mistral vocab** | Replace CLM v4 input embedding (768 × 32768 ≈ 25M params) + tied lm_head; retrain on Mistral-tokenized 50K corpus (~5K steps) before any distill mini begins | **~$10–12 H100** (~3 h fp16; consumes full $15 mini cap before any distill step) | **YES — breaks** Φ★ baseline (+41.86) and forces full re-measurement of the entire `phi_v3_canonical` chain. Sister Φ★-axis Paradigm D PARTIAL_PASS at `state/p9_paradigm_d_distill_2026_05_03/` would also have to be re-run on the new substrate | **NO — destroys** CLM v4 64K multilingual character (Korean coverage degraded; tokenization ratio for ko changes from ~3 tokens / utterance to ~8 tokens / utterance per A4.5.2 row 2) |
+| **(P-β) Pivot to Φ★-axis-only Paradigm D** | Permanently shelve logit-axis; consolidate Paradigm D into the sister Φ★ scalar channel (3 sister docs + existing PARTIAL_PASS at `state/p9_paradigm_d_distill_2026_05_03/`) | **$0** spec amend; existing Φ★-axis lineage at PARTIAL_PASS already validated; production scale via BG-γ'' shim path (CLM v4 HF format) | **NO** — Φ★ pipeline unaffected (uses scalar Φ★ teacher signal, not token logits; vocab axis irrelevant) | **YES** — preserves CLM v4 64K substrate uniqueness intact |
+| **(P-γ) Permanent shelve logit-axis (NO_OP)** | Mark `p9_sft.cond.paradigm_d_distill` as `permanently_blocked_vocab_mismatch`; reallocate budget to other P9 lanes (P1.5 ensemble extension, Path B sanity, Path A retrain v3) | $0 | N/A | YES |
+
+### A4.5.4 — Recommended path (완성도 lens, per `feedback_completion_quality_recommendation`)
+
+**Recommendation: (P-β) Φ★-axis-only pivot.** Ranked rationale:
+
+1. **(P-β) Φ★-axis-only — RECOMMENDED** (완성도 9/10, $0).
+   Preserves CLM v4 substrate uniqueness (64K multilingual SP, Korean coverage intact). Existing `state/p9_paradigm_d_distill_2026_05_03/` PARTIAL_PASS at step_1000 already validates the Φ★-axis pipeline; no re-anchor cost. Φ★ scalar teacher signal is **vocab-axis-agnostic** so the falsification finding here is non-blocking for that lineage. Production 50K scale is unblocked via BG-γ'' shim (F-SHIM-V4-3 PASS, CLM v4 HF format load verified).
+
+2. **(P-γ) Permanent shelve logit-axis — SECONDARY** (완성도 7/10, $0).
+   If chat-relevant signal can be recovered from Φ★ axis alone (P-β), logit-axis logit-distillation may simply not be on critical path. Reallocate $15 budget to P1.5 ensemble extension or Path A retrain. Acceptable if (P-β) Φ★-axis production demonstrates the desired chat-quality lift on F1_v3.
+
+3. **(P-α) Re-tokenize CLM v4 with Mistral vocab — DEFERRED / NOT RECOMMENDED** (완성도 5/10, $10–12 + Φ★ re-anchor cost).
+   Highest implementation cost; destroys CLM v4 substrate identity (Korean tokenization ratio shifts, multilingual coverage degraded); forces re-anchor of the entire Φ★ baseline (+41.86) and re-measurement of every downstream phi_v3_canonical-dependent claim. Pursue only if logit-axis is judged **strategically essential** AND a separate spec is written that explicitly accepts the Φ★ re-anchor as a planned cost (out of scope for this spec).
+
+**Default action by this amendment**: roadmap entry `p9_sft.cond.paradigm_d_distill` (logit-axis variant) marked `blocked_vocab_mismatch`; sister Φ★-axis Paradigm D entry (`state/p9_paradigm_d_distill_2026_05_03/` lineage) **unaffected** and remains the active Paradigm D production path.
+
+### A4.5.5 — What this amendment does NOT change
+
+- Sister Φ★-axis Paradigm D specs (3 sister docs) — UNAFFECTED.
+- `state/p9_paradigm_d_distill_2026_05_03/` PARTIAL_PASS verdict — UNAFFECTED (Φ★ axis, scalar teacher signal, vocab-agnostic).
+- §1, §2, §3, §6, §7, §8, §9, §10, §11, §12 of this spec — text retained as historical record of the original logit-axis design intent. Future readers should treat sections concerning the Mistral→CLM v4 logit-axis pair as **superseded by this amendment**.
+- §10 caveat #4 — promoted from "unverified" to **"VERIFIED FALSE"** by this amendment.
+- Honest C3 §10 — extended below with falsification-cycle caveats.
+
+### A4.5.6 — Honest C3 (amendment-cycle, raw#10 ≥5)
+
+1. **The §4.5 falsification was foreseeable in the spec itself** — caveat #4 of §10 explicitly flagged the assumption as unverified. The cost of this amendment ($0, caught at pre-flight) is the **best possible outcome** for a falsified spec premise; if BG-T-1 had skipped the vocab probe, an H100 boot would have burned $5–10 producing predictable garbage. L9-style pre-flight discipline saved the budget.
+2. **The Mistral KL cache (14.2 GB) is not lost work** — it remains a valid Mistral-teacher artifact reusable for any future Mistral-tokenizer-native student (e.g., a hypothetical Mistral-7B → Mistral-1B distill). The 14.2 GB sits on ubu1 `/tmp` and is subject to normal `/tmp` cleanup; if the artifact has long-term value, copy to a persistent path before next reboot.
+3. **The recommended (P-β) Φ★-axis pivot inherits all caveats of the sister Φ★ docs** — including the static-EMA Φ★ approximation (sister runbook §4), the F2 sentinel-floor non-falsifying nature, and the non-publication of phenomenal substrate claims. Φ★-axis pivot does NOT magically resolve the broader Paradigm D distillation gap — it only replaces a vocab-blocked channel with a vocab-agnostic one.
+4. **(P-γ) shelve has reputational cost** — Paradigm D was registered as the 6th cond on `.roadmap.p9_sft` with the explicit logit-axis framing; permanently blocking it without a Φ★-axis fallback would close the entire Paradigm-D research arm. The (P-β) pivot is preferable because it lets Paradigm D survive as an alternative-track concept (Φ★-axis only) rather than being deleted.
+5. **(P-α) re-tokenize cost estimate ($10–12) is itself a soft lower bound** — assumes a single 5K-step head retrain succeeds first attempt. Re-tokenization with a different SP model can introduce subtle byte-fallback / unknown-token behaviors that may require multiple retrain passes. True cost could reach $20–30 for a robust replacement; that figure plus the Φ★ re-anchor cost makes (P-α) the most expensive path by a wide margin and the least preserve-uniqueness path.
+6. **Vocab-mismatch is a tokenizer-class issue, not a transformer-architecture issue** — the BG-γ'' F-SHIM-V4-3 PASS (CLM v4 loads as HF AutoModelForCausalLM) does NOT resolve this; shim handles model architecture, not vocab axis. Future `state/p9_*` specs that propose Mistral-teacher → CLM-v4-student logit-distill MUST verify tokenizer identity at spec-time, not at exec-time.
+
+### A4.5.7 — Cross-links
+
+- This amendment: `docs/p9_paradigm_d_distill_spec_2026_05_03.md` §4.5 AMENDMENT (HERE)
+- Falsification evidence: `state/p9_paradigm_d_distill_mini_2026_05_04/verdict.json` + `preflight.log`
+- Roadmap entry mutation: `.roadmap.p9_sft` entry `p9_sft.cond.paradigm_d_distill` → `status: blocked_vocab_mismatch`
+- Landed handoff: `docs/p9_paradigm_d_distill_amendment_landed_2026_05_04.ai.md`
+- Φ★-axis Paradigm D lineage (UNAFFECTED): `state/p9_paradigm_d_distill_2026_05_03/`, `docs/p9_paradigm_d_distill_landed_2026_05_03.ai.md`, `docs/p9_paradigm_d_phi_distillation_2026_05_03.md`, `docs/p9_paradigm_d_t4_teacher_build_plan_2026_05_03.md`, `docs/p9_paradigm_d_distillation_runbook_2026_05_03.md`
+
+### §4.5.X — USER AUTHORIZATION 2026-05-04
+
+**Status: P-β AUTHORIZED + DEFAULT (forward path locked)**
+
+User authorization 2026-05-04 (cycle ce681c40 message): "Path P-β (Φ★-axis-only pivot) 권장 (완성도 9/10) — vocab-axis-agnostic, CLM v4 64K substrate uniqueness 보존"
+
+Forward path locked: P-β Φ★-axis-only Paradigm D distill, inherits PARTIAL_PASS step_1000 from `state/p9_paradigm_d_distill_2026_05_03/`, scales to 50K production via BG-γ'' F-SHIM-V4-3 PASS shim path.
+
+Rejected paths (do not pursue):
+- P-α: re-tokenize CLM v4 with Mistral vocab — destroys 64K multilingual substrate uniqueness, $20-30 soft-lower-bound + Φ★ re-anchor cost. NO.
+- P-γ: shelve Paradigm D entirely — P-β preserves the lane at $0 amendment cost. NO.
+
+Honest C3 on authorization:
+- P-β preserves CLM v4 substrate uniqueness but does NOT validate logit-axis distill is achievable (logit-axis is permanently shelved as a distinct claim — Paradigm D forward = Φ★-scalar teacher signal only)
+- Φ★ teacher signal is scalar; downstream knowledge transfer narrower than full logit cross-entropy
+- step_1000 PARTIAL_PASS does not guarantee 50K scale-up converges (50K-fold longer trajectory may diverge)
+- Sibling Φ★-axis lineage at `state/p9_paradigm_d_distill_2026_05_03/` is the inherited substrate; this authorization does NOT mutate that prior verdict, only locks the forward path
+- This authorization closes the T-1-AMEND lane officially; downstream P-β scale-up exec is a SEPARATE BG (BG-Pβ-SCALE, sibling to this BG)
+
+---
+
+*End of spec. Doc-only per raw#9. NO execution authorized by this document. Mini-run launch requires separate BG with cache pre-flight (§5.2) + EXEC authorization. §4.5 AMENDMENT 2026-05-04 supersedes original §4.5 vocab-match claim — logit-axis BLOCKED pending substrate redesign or pivot to Φ★-axis-only (recommended). §4.5.X USER AUTHORIZATION 2026-05-04 locks forward path = P-β Φ★-axis-only.*
