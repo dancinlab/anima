@@ -54,6 +54,18 @@ let OD_RATE_USD         = 2.99
 
 let HF_BASE_REPO        = "need-singularity/clm-v4-mk2-v1"
 
+// === own 16 Phase 2 watchdog hook (constants) ===
+// BG_LANE identifies the orchestrator lane to the cost-watchdog daemon
+// (state/h100_watchdog/heartbeats/<BG_LANE>.txt + pods/<pod_id>.json owner field).
+// TARGET_USD is the spec-bound budget target used for COST_OVERRUN_2X / 3X alerts.
+let BG_LANE             = "BG-CLM-2-EXEC"
+let TARGET_USD          = "10"
+let WATCHDOG_HEXA       = "/Users/ghost/core/anima/tool/h100_cost_watchdog.hexa"
+let WATCHDOG_REGISTER   = "/Users/ghost/core/anima/tool/h100_register.bash"
+let WATCHDOG_HB_DIR     = "/Users/ghost/core/anima/state/h100_watchdog/heartbeats"
+let WATCHDOG_PODS_DIR   = "/Users/ghost/core/anima/state/h100_watchdog/pods"
+let WATCHDOG_CLOSED_DIR = "/Users/ghost/core/anima/state/h100_watchdog/closed"
+
 // ─── helpers ──────────────────────────────────────────────────────────────
 
 fn _sq(s: string) -> string {
@@ -126,6 +138,16 @@ fn _selftest() {
 
     println("[T7] HF base: " + HF_BASE_REPO)
     println("[T8] caps: wall=" + to_string(MAX_WALL_MIN) + "min budget_cap=$" + to_string(BUDGET_HARD_CAP_USD))
+
+    // own 16 Phase 2: probe watchdog tools (graceful warn-only — failure does not fail selftest)
+    println("[T9] own 16 Phase 2 watchdog hooks:")
+    println("       BG_LANE=" + BG_LANE + " TARGET_USD=$" + TARGET_USD)
+    if _file_exists(WATCHDOG_REGISTER) { println("       T9a register OK: " + WATCHDOG_REGISTER) }
+    else { println("       T9a register WARN missing: " + WATCHDOG_REGISTER + " (boot hook will warn-only)") }
+    if _file_exists(WATCHDOG_HEXA) { println("       T9b watchdog hexa OK: " + WATCHDOG_HEXA) }
+    else { println("       T9b watchdog hexa WARN missing: " + WATCHDOG_HEXA + " (trap deregister will warn-only)") }
+    println("       T9c heartbeat dir: " + WATCHDOG_HB_DIR + " (will be touched fire-and-forget)")
+    println("       T9d verdict schema: pod_kill_verified_404 + watchdog_deregistered + cost_{target,actual}_usd + cost_overrun_2x_alerted")
 
     println("[selftest] PASS")
     exit(0)
@@ -237,7 +259,37 @@ fn _emit() {
 "echo '{\"pod_id\":\"'$POD_ID'\",\"booted_ts\":\"'$(date -u +%FT%TZ)'\"}' > \"$POD_INFO\"\n" +
 "hb \"stage1_pod_booted pod_id=$POD_ID\"\n" +
 "\n" +
+"# === own 16 Phase 2 watchdog hook (boot) ===\n" +
+"# Register pod with cost-watchdog (graceful degradation: warn-only on failure)\n" +
+"BG_LANE='" + BG_LANE + "'\n" +
+"TARGET_USD='" + TARGET_USD + "'\n" +
+"WATCHDOG_REGISTER='" + WATCHDOG_REGISTER + "'\n" +
+"WATCHDOG_HB_DIR='" + WATCHDOG_HB_DIR + "'\n" +
+"WATCHDOG_HEXA='" + WATCHDOG_HEXA + "'\n" +
+"if [ -x \"$WATCHDOG_REGISTER\" ] || [ -f \"$WATCHDOG_REGISTER\" ]; then\n" +
+"    if bash \"$WATCHDOG_REGISTER\" \"$POD_ID\" \"$BG_LANE\" \"$TARGET_USD\" 2>&1 | tee -a \"$RUN_LOG\"; then\n" +
+"        WATCHDOG_REGISTERED=1\n" +
+"        log \"[watchdog] register OK pod=$POD_ID lane=$BG_LANE target=\\$$TARGET_USD\"\n" +
+"    else\n" +
+"        WATCHDOG_REGISTERED=0\n" +
+"        log \"[watchdog] WARN register failed (rc=$?) — proceeding without watchdog tracking\"\n" +
+"    fi\n" +
+"else\n" +
+"    WATCHDOG_REGISTERED=0\n" +
+"    log \"[watchdog] WARN $WATCHDOG_REGISTER not present — proceeding without watchdog tracking\"\n" +
+"fi\n" +
+"hb \"stage1c_watchdog_registered=$WATCHDOG_REGISTERED\"\n" +
+"\n" +
 "# ── Stage 1b: trap kill-on-exit (L3 + L7 redact + L13 trap pre-stop scp) ──\n" +
+"# === own 16 Phase 2 watchdog hook (trap pre-stop) ===\n" +
+"# Trap sequence (own 16):\n" +
+"#   (a) L13 pre-stop scp (existing — data-first rescue)\n" +
+"#   (b) NEW: mark heartbeat 'EXITING' so watchdog sees orderly shutdown\n" +
+"#   (c) runpodctl pod stop + delete (existing)\n" +
+"#   (d) NEW: 404 verify (max 3 retries × 30s)\n" +
+"#   (e) NEW: deregister from cost-watchdog (graceful: warn-only)\n" +
+"POD_KILL_VERIFIED_404=0\n" +
+"WATCHDOG_DEREGISTERED=0\n" +
 "_kill_pod() {\n" +
 "    log \"[trap] data-first scp before kill (L13)\"\n" +
 "    if [ -n \"${SSH_HOST:-}\" ] && [ -n \"${SSH_PORT:-}\" ]; then\n" +
@@ -246,16 +298,43 @@ fn _emit() {
 "        timeout 30 scp -i \"$SSH_KEY\" -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -P \"$SSH_PORT\" \\\n" +
 "            \"root@$SSH_HOST:/workspace/clm_v4_lora/orchestrator.log\" \"$STATE_DIR/h100_orchestrator.log\" 2>&1 | tail -1 || true\n" +
 "    fi\n" +
+"    # own 16: heartbeat EXITING marker (watchdog sees orderly shutdown vs crash)\n" +
+"    if [ -d \"$WATCHDOG_HB_DIR\" ]; then\n" +
+"        echo \"EXITING $(date -u +%FT%TZ) pod=$POD_ID\" > \"$WATCHDOG_HB_DIR/$BG_LANE.txt\" || true\n" +
+"    fi\n" +
 "    log \"[trap] killing pod=$POD_ID\"\n" +
 "    $RUNPODCTL pod stop \"$POD_ID\" 2>&1 | redact_hf | tee -a \"$RUN_LOG\" || true\n" +
 "    sleep 3\n" +
 "    $RUNPODCTL pod delete \"$POD_ID\" 2>&1 | redact_hf | tee -a \"$RUN_LOG\" || true\n" +
 "    sleep 5\n" +
-"    POST=$($RUNPODCTL pod get \"$POD_ID\" 2>&1 | redact_hf | head -3)\n" +
-"    log \"[trap] post-kill: $POST\"\n" +
+"    # own 16: 404 verify (3 retries × 30s)\n" +
+"    POD_KILL_VERIFIED_404=0\n" +
+"    for vi in 1 2 3; do\n" +
+"        POST=$($RUNPODCTL pod get \"$POD_ID\" 2>&1 | redact_hf | head -3)\n" +
+"        if echo \"$POST\" | grep -qiE 'not found|404|does not exist'; then\n" +
+"            POD_KILL_VERIFIED_404=1\n" +
+"            log \"[trap] 404 verified (try $vi/3)\"\n" +
+"            break\n" +
+"        fi\n" +
+"        log \"[trap] 404 verify try $vi/3 not yet — sleep 30s\"\n" +
+"        sleep 30\n" +
+"    done\n" +
+"    log \"[trap] post-kill: $POST  pod_kill_verified_404=$POD_KILL_VERIFIED_404\"\n" +
+"    # own 16: deregister cost-watchdog (only if 404 confirmed; warn-only on failure)\n" +
+"    WATCHDOG_DEREGISTERED=0\n" +
+"    if [ \"$POD_KILL_VERIFIED_404\" = \"1\" ] && [ -f \"$WATCHDOG_HEXA\" ]; then\n" +
+"        if /Users/ghost/core/hexa-lang/hexa run \"$WATCHDOG_HEXA\" --deregister \"$POD_ID\" 2>&1 | tee -a \"$RUN_LOG\"; then\n" +
+"            WATCHDOG_DEREGISTERED=1\n" +
+"            log \"[watchdog] deregister OK pod=$POD_ID\"\n" +
+"        else\n" +
+"            log \"[watchdog] WARN deregister failed (rc=$?) — pod still 404 but registry not archived\"\n" +
+"        fi\n" +
+"    elif [ \"$POD_KILL_VERIFIED_404\" = \"0\" ]; then\n" +
+"        log \"[watchdog] SKIP deregister — pod 404 not confirmed (registry kept for daemon to reconcile)\"\n" +
+"    fi\n" +
 "    if [ -f \"$POD_INFO\" ]; then\n" +
-"        jq --arg killed \"$(date -u +%FT%TZ)\" --arg post \"$POST\" \\\n" +
-"            '. + {killed_ts:$killed, post_kill_status:$post}' \"$POD_INFO\" > \"$POD_INFO.tmp\" && mv \"$POD_INFO.tmp\" \"$POD_INFO\" || true\n" +
+"        jq --arg killed \"$(date -u +%FT%TZ)\" --arg post \"$POST\" --argjson k404 \"$POD_KILL_VERIFIED_404\" --argjson wdd \"$WATCHDOG_DEREGISTERED\" \\\n" +
+"            '. + {killed_ts:$killed, post_kill_status:$post, pod_kill_verified_404:($k404==1), watchdog_deregistered:($wdd==1)}' \"$POD_INFO\" > \"$POD_INFO.tmp\" && mv \"$POD_INFO.tmp\" \"$POD_INFO\" || true\n" +
 "    fi\n" +
 "}\n" +
 "trap _kill_pod EXIT INT TERM\n" +
@@ -325,6 +404,15 @@ fn _emit() {
 "    PROBE=$($SSH 'ls /workspace/clm_v4_lora/results/COMPLETE.sentinel 2>/dev/null && echo SENTINEL_FOUND; ls /workspace/clm_v4_lora/results/EARLY_STOP.sentinel 2>/dev/null && echo EARLY_STOP_FOUND; ps -p $(cat /workspace/clm_v4_lora/run.pid 2>/dev/null) -o pid,etime,comm 2>/dev/null | tail -1; tail -1 /workspace/clm_v4_lora/orchestrator.log 2>/dev/null' 2>/dev/null)\n" +
 "    log \"elapsed=${ELAPSED_MIN}min cost=\\$${ELAPSED_COST} probe=$(echo $PROBE | tr '\\n' '|' | head -c 240)\"\n" +
 "    hb \"poll elapsed=${ELAPSED_MIN}min cost=\\$${ELAPSED_COST}\"\n" +
+"\n" +
+"    # === own 16 Phase 2 watchdog hook (heartbeat) ===\n" +
+"    # Fire-and-forget: touch state/h100_watchdog/heartbeats/<BG_LANE>.txt so the\n" +
+"    # cost-watchdog daemon's stale-heartbeat alert (>5min) does not fire while\n" +
+"    # this poll loop is alive. Failure is silent (mkdir -p + touch || true).\n" +
+"    if [ -n \"${WATCHDOG_HB_DIR:-}\" ]; then\n" +
+"        mkdir -p \"$WATCHDOG_HB_DIR\" 2>/dev/null || true\n" +
+"        echo \"poll $(date -u +%FT%TZ) pod=$POD_ID elapsed=${ELAPSED_MIN}min cost=\\$${ELAPSED_COST}\" > \"$WATCHDOG_HB_DIR/$BG_LANE.txt\" 2>/dev/null || true\n" +
+"    fi\n" +
 "\n" +
 "    # incremental sync: small JSONs + log\n" +
 "    $SCP -r \"root@$SSH_HOST:/workspace/clm_v4_lora/results/*.json\" \"$RESULTS_DIR/\" 2>/dev/null || true\n" +
@@ -498,12 +586,31 @@ fn _emit() {
 "    fi\n" +
 "fi\n" +
 "\n" +
+"# === own 16 Phase 2 verdict schema (cost-discipline fields) ===\n" +
+"# Compute cost-discipline fields (target_usd, actual_usd, cost_overrun_2x_alerted, watchdog_deregistered)\n" +
+"COST_TARGET_USD=$TARGET_USD\n" +
+"COST_ACTUAL_USD=$FINAL_COST\n" +
+"COST_OVERRUN_RATIO=$(awk -v a=\"$COST_ACTUAL_USD\" -v t=\"$COST_TARGET_USD\" 'BEGIN{ if (t+0 > 0) printf \"%.4f\", a/t; else print \"0\" }')\n" +
+"COST_OVERRUN_2X_ALERTED='false'\n" +
+"if awk -v r=\"$COST_OVERRUN_RATIO\" 'BEGIN{exit !(r+0 >= 2.0)}'; then COST_OVERRUN_2X_ALERTED='true'; fi\n" +
+"# Source watchdog_deregistered from trap-side bookkeeping; fall back to pod_info.json\n" +
+"WATCHDOG_DEREGISTERED_FINAL='false'\n" +
+"if [ -f \"$POD_INFO\" ]; then\n" +
+"    WD_TMP=$(jq -r '.watchdog_deregistered // false' \"$POD_INFO\" 2>/dev/null)\n" +
+"    if [ \"$WD_TMP\" = \"true\" ]; then WATCHDOG_DEREGISTERED_FINAL='true'; fi\n" +
+"fi\n" +
+"\n" +
 "jq -n \\\n" +
 "    --arg cycle \"" + CYCLE_TAG + "\" \\\n" +
 "    --arg ts \"$(date -u +%FT%TZ)\" \\\n" +
 "    --arg model \"$HF_BASE_REPO + LoRA (r=32 a=64 dropout=0.05 self-attn-only qkvo×16; lr=3e-5; steps=6000; bs=8 ga=4 ctx=512)\" \\\n" +
 "    --arg pod \"$POD_ID\" \\\n" +
 "    --argjson kill_404 \"$POD_KILL_404\" \\\n" +
+"    --argjson wd_dereg \"$WATCHDOG_DEREGISTERED_FINAL\" \\\n" +
+"    --argjson cost_target \"$COST_TARGET_USD\" \\\n" +
+"    --argjson cost_actual \"$COST_ACTUAL_USD\" \\\n" +
+"    --argjson cost_ratio \"$COST_OVERRUN_RATIO\" \\\n" +
+"    --argjson cost_2x \"$COST_OVERRUN_2X_ALERTED\" \\\n" +
 "    --arg overall \"$OVERALL\" \\\n" +
 "    --arg fclm1 \"$FCLM1\" --arg fclm2 \"$FCLM2\" --arg fclm3 \"$FCLM3\" --arg fclm4 \"$FCLM4\" --arg fclm5 \"$FCLM5\" \\\n" +
 "    --arg differentiator \"$DIFFERENTIATOR\" \\\n" +
@@ -562,6 +669,11 @@ fn _emit() {
 "        actual_cost_usd: $cost,\n" +
 "        budget_target_usd: 10,\n" +
 "        budget_hard_cap_usd: 15,\n" +
+"        cost_target_usd: $cost_target,\n" +
+"        cost_actual_usd: $cost_actual,\n" +
+"        cost_overrun_ratio: $cost_ratio,\n" +
+"        cost_overrun_2x_alerted: $cost_2x,\n" +
+"        watchdog_deregistered: $wd_dereg,\n" +
 "        complete_sentinel_detected: ($complete == 1),\n" +
 "        early_stop_sentinel_detected: ($early_stop == 1),\n" +
 "        lessons_applied: {\n" +

@@ -1,0 +1,308 @@
+{
+  "schema": "anima/clm_v4_lora_4_axis_remeasure/verdict/1",
+  "ts_utc": "2026-05-05T04:47:29Z",
+  "bg_lane": "F-CLM-LORA-4-RE-MEASURE",
+  "spec_source": "BG-F-CLM-LORA-4-RE-MEASURE follow-up to F-CLM-LORA-4-FIXTURE; alternate-locus axis-cond preservation measurement.",
+  "predecessor_verdict_ref": "state/clm_v4_lora_5bucket_axis_eval_2026_05_05/verdict.json",
+  "substrate": "ubu1 (RTX 5070 sm_120) cuda fp32; torch=2.11.0+cu128; venv /home/aiden/venv_orchestrator",
+  "model_base": "need-singularity/clm-v4-mk2-v1",
+  "adapter_loaded_from": "/home/aiden/anima_clm_v4_lora_v1_adapter",
+  "adapter_sha256": "6d5edb93ea845cb40858d82bc97b21bfd47d6a234d3a945ac529451e2760526a",
+  "adapter_size_bytes": 10502216,
+  "tokenizer_path": "/home/aiden/anima_clm_v4_lora_v1_adapter/tokenizer_64k_multilingual.model",
+  "tokenizer_vocab": 64000,
+  "prompts_src": "/home/aiden/anima/state/anima_axis_eval_set_2026_05_05/prompts.jsonl",
+  "prompts_n": 100,
+  "axis_distribution": {
+    "daily": 20,
+    "emotion": 20,
+    "task": 20,
+    "roleplay": 20,
+    "meta": 20
+  },
+  "smoke": false,
+  "method": {
+    "design": "two alternate loci; locus_a = ln_ffn (per-layer pre-FFN LayerNorm) output per-axis cosine LoRA-vs-base; locus_b = generation-level axis-distinct response BLEU-1 cross-axis preservation",
+    "T_seq_max": 256,
+    "seed": 42,
+    "preflight_n": 5,
+    "max_new_tokens": 64,
+    "axes_taxonomy": [
+      "daily",
+      "emotion",
+      "task",
+      "roleplay",
+      "meta"
+    ],
+    "axis_prefixes": {
+      "daily": "[일상 톤] ",
+      "emotion": "[감정에 공감하며] ",
+      "task": "[정확하게] ",
+      "roleplay": "[역할극으로] ",
+      "meta": "[자기-지시적으로] "
+    },
+    "locus_b_n_bodies": 12,
+    "locus_b_n_axes": 5,
+    "locus_b_total_generations": 120,
+    "pass_threshold": 0.85
+  },
+  "locus_0_carry": {
+    "value": 0.12895956486463547,
+    "status": "FAIL_LOCUS_DEGENERATE",
+    "grade": "FAIL",
+    "source": "predecessor verdict.json composite_axis_preservation (ln_f-mean cosine)",
+    "note": "Predecessor base off-diag mean = 0.996 means ln_f-mean locus is structurally near-degenerate; this FAIL is metric-locus mismatch per honest_c3 #4/#8/#9, not architectural axis-cond loss."
+  },
+  "locus_a_ln_ffn_per_layer": {
+    "axes_order": [
+      "daily",
+      "emotion",
+      "meta",
+      "roleplay",
+      "task"
+    ],
+    "n_blocks": 16,
+    "per_layer_per_axis_cos": [
+      {
+        "daily": 0.5164340138435364,
+        "emotion": 0.5110996961593628,
+        "meta": 0.5170460939407349,
+        "roleplay": 0.5246724486351013,
+        "task": 0.5073831081390381
+      },
+      {
+        "daily": 0.4435219168663025,
+        "emotion": 0.43111875653266907,
+        "meta": 0.42490386962890625,
+        "roleplay": 0.44122618436813354,
+        "task": 0.42123928666114807
+      },
+      {
+        "daily": 0.5403985977172852,
+        "emotion": 0.5324303507804871,
+        "meta": 0.5283410549163818,
+        "roleplay": 0.5386440753936768,
+        "task": 0.5347934365272522
+      },
+      {
+        "daily": 0.46592944860458374,
+        "emotion": 0.45395296812057495,
+        "meta": 0.46344083547592163,
+        "roleplay": 0.4705544710159302,
+        "task": 0.47430866956710815
+      },
+      {
+        "daily": 0.5478112697601318,
+        "emotion": 0.5394930839538574,
+        "meta": 0.548304557800293,
+        "roleplay": 0.5588757991790771,
+        "task": 0.5646188259124756
+      },
+      {
+        "daily": 0.6315922141075134,
+        "emotion": 0.6282886862754822,
+        "meta": 0.6460390090942383,
+        "roleplay": 0.6502336263656616,
+        "task": 0.6536039113998413
+      },
+      {
+        "daily": 0.5411339998245239,
+        "emotion": 0.5283300876617432,
+        "meta": 0.569462776184082,
+        "roleplay": 0.5589356422424316,
+        "task": 0.5611343383789062
+      },
+      {
+        "daily": 0.5555193424224854,
+        "emotion": 0.5482933521270752,
+        "meta": 0.5806483030319214,
+        "roleplay": 0.576102614402771,
+        "task": 0.5782210230827332
+      },
+      {
+        "daily": 0.6452298760414124,
+        "emotion": 0.635884702205658,
+        "meta": 0.6567621827125549,
+        "roleplay": 0.660124659538269,
+        "task": 0.6593840718269348
+      },
+      {
+        "daily": 0.6646388173103333,
+        "emotion": 0.6534339785575867,
+        "meta": 0.6738336086273193,
+        "roleplay": 0.6777681708335876,
+        "task": 0.6782521605491638
+      },
+      {
+        "daily": 0.7717610001564026,
+        "emotion": 0.7637333273887634,
+        "meta": 0.7780466675758362,
+        "roleplay": 0.7819436192512512,
+        "task": 0.7810394763946533
+      },
+      {
+        "daily": 0.7817148566246033,
+        "emotion": 0.7752701044082642,
+        "meta": 0.7914626598358154,
+        "roleplay": 0.7921728491783142,
+        "task": 0.7875723242759705
+      },
+      {
+        "daily": 0.7261234521865845,
+        "emotion": 0.7170539498329163,
+        "meta": 0.7275072336196899,
+        "roleplay": 0.7326101064682007,
+        "task": 0.7296261191368103
+      },
+      {
+        "daily": 0.4674336314201355,
+        "emotion": 0.46435311436653137,
+        "meta": 0.4594695568084717,
+        "roleplay": 0.4795423150062561,
+        "task": 0.47864243388175964
+      },
+      {
+        "daily": 0.33207425475120544,
+        "emotion": 0.30613619089126587,
+        "meta": 0.3302520215511322,
+        "roleplay": 0.32209235429763794,
+        "task": 0.3287847638130188
+      },
+      {
+        "daily": 0.05245514214038849,
+        "emotion": 0.029639894142746925,
+        "meta": 0.024004975333809853,
+        "roleplay": 0.035731811076402664,
+        "task": 0.02812989242374897
+      }
+    ],
+    "per_layer_mean_axis_cos": [
+      0.5153270721435547,
+      0.4324020028114319,
+      0.5349215030670166,
+      0.46563727855682374,
+      0.551820707321167,
+      0.6419514894485474,
+      0.5517993688583374,
+      0.5677569270133972,
+      0.6514770984649658,
+      0.6695853471755981,
+      0.7753048181533814,
+      0.7856385588645936,
+      0.7265841722488403,
+      0.46988821029663086,
+      0.32386791706085205,
+      0.03399234302341938
+    ],
+    "per_layer_base_off_diag": [
+      0.9929635882377624,
+      0.9961354255676269,
+      0.9982701957225799,
+      0.9979838788509369,
+      0.9979034483432769,
+      0.9978563070297242,
+      0.9977721989154815,
+      0.9977435171604156,
+      0.997581285238266,
+      0.9974476337432862,
+      0.9974615931510925,
+      0.9973725914955139,
+      0.9966481029987335,
+      0.9968554258346558,
+      0.996932178735733,
+      0.9956558644771576
+    ],
+    "per_layer_lora_off_diag": [
+      0.9946968495845795,
+      0.9970559775829315,
+      0.9980566084384919,
+      0.9982141196727753,
+      0.9974463403224945,
+      0.9967306137084961,
+      0.9973479628562927,
+      0.9980949819087982,
+      0.9982009887695312,
+      0.998318099975586,
+      0.9983213782310486,
+      0.9982648372650147,
+      0.9984457194805145,
+      0.9985053718090058,
+      0.9899408102035523,
+      0.9509432554244995
+    ],
+    "composite": 0.5436221759067849,
+    "grade": "FAIL",
+    "wall_sec_base": 1.1027145385742188,
+    "wall_sec_lora": 1.1904447078704834
+  },
+  "locus_b_generation_level": {
+    "axes_order": [
+      "daily",
+      "emotion",
+      "meta",
+      "roleplay",
+      "task"
+    ],
+    "per_axis_preservation": {
+      "daily": 0.7718098958333334,
+      "emotion": 0.7493489583333334,
+      "meta": 0.7503255208333334,
+      "roleplay": 0.6861979166666666,
+      "task": 0.6624348958333334
+    },
+    "composite": 0.7240234375,
+    "base_cross_axis_bleu1_mean": 0.7259114583333334,
+    "lora_cross_axis_bleu1_mean": 0.9949869791666667,
+    "base_per_body_cross_axis_bleu1": [
+      1.0,
+      0.6,
+      0.3015625,
+      1.0,
+      0.6,
+      1.0,
+      0.7046875,
+      1.0,
+      0.4,
+      0.4,
+      0.7046875,
+      1.0
+    ],
+    "lora_per_body_cross_axis_bleu1": [
+      0.95859375,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      0.98125,
+      1.0,
+      1.0
+    ],
+    "grade": "FAIL",
+    "wall_sec_base": 47.486193895339966,
+    "wall_sec_lora": 51.74673414230347
+  },
+  "verdict_thresholds": {
+    "PASS_per_locus": "composite >= 0.85",
+    "RE_VERDICT": "PASS if >=2/3 locus PASS, PARTIAL if 1/3, FAIL if 0/3"
+  },
+  "n_locus_pass": 0,
+  "f_clm_lora_4_re_verdict": "FAIL",
+  "closes_clm_2_lane_4_of_5_to_5_of_5_when_F2_lands": false,
+  "supersedes_locus_0_FAIL_via_alternate_loci": false,
+  "wall_time_min": 1.6921014547348023,
+  "wall_time_total_sec": 101.52608728408813,
+  "actual_cost_usd": 0,
+  "honest_c3": [
+    "C1: Locus A pivoted from 'cross_attn output' (BG spec) to 'ln_ffn per-layer output'. Reason: canonical inference uses consciousness_states=None, which the decoder block guards via `if consciousness_states is not None: x = x + cross_attn(ln_cross(x), ...)`. With None (the canonical/training/eval path; predecessor F4 verified n_cross_attn_lora=0 + this conditional bypass), neither cross_attn nor ln_cross fires; their forward_hooks never trigger. ln_ffn (LayerNorm immediately before SwiGLU FFN) is the most downstream per-layer LayerNorm that ALWAYS fires and captures the integrated residual stream after self-attn / CA-mix / META-CA / PureFieldFFN tension / inter-layer whisper / (no-op when None) cross_attn. Per-layer ln_ffn (16 layers) is far more granular than the single decoder.ln_f terminus the predecessor used (which is structurally near-degenerate at base off-diag mean = 0.996). The cross_attn weights themselves are LoRA-untouched (n_cross_attn_lora=0); the meaningful question is whether q/k/v/o LoRA on self-attn shifted the per-layer residual flow — ln_ffn-per-layer answers this.",
+    "C2: generation-level eval is greedy decoding (deterministic argmax), may miss diverse axis-distinct outputs that live in tail-of-distribution. Sampling (top_p=0.9 temperature=0.8) would expand the diff signal but introduce variance; we chose greedy for reproducibility per raw#9. Real axis-cond influence on sampling tail is unmeasured here.",
+    "C3: axis-prefix conditioning (AXIS_PREFIXES dict) is anima-internal heuristic — the prefixes [일상 톤]/[감정에 공감하며]/etc are SSOT-consistent with the predecessor's prompt set but their EFFICACY at inducing axis-cond gate activation in the model is itself the question; we assume the model trained with these prefixes will respond to them, but the LoRA SFT corpus may have used DIFFERENT prefix wording. honest about prefix-corpus alignment uncertainty.",
+    "C4: 60-prompt sample size for Locus B is limited; per-axis preservation = mean over 12 bodies, std not reported. With only 12 paired observations per axis, sampling noise on BLEU-1 cross-axis overlap can be ~0.05 magnitude; verdict bands chosen accordingly.",
+    "C5: LoRA cross_attn EXCLUDED at training time (n_cross_attn_lora=0 asserted). At Locus A we EXPECT high preservation (near 1.0) because the cross_attn weights are LITERALLY UNCHANGED by LoRA — the residual variance comes from LoRA q/k/v/o on self-attn shifting upstream representations that feed cross_attn as KV. Locus A near-1.0 PASS is partly STRUCTURAL-BY-CONSTRUCTION; this is a feature (the architectural axis path is preserved) not a bug. Locus B (generation-level) is the more independent test.",
+    "C6: BLEU-1 over SentencePiece subword token-ids is a coarse lexical similarity proxy; doesn't capture semantic axis distinction (e.g. tone shift without lexical overlap change). A more rigorous Locus B would use sentence-embedding cosine on the GENERATED text, but that requires loading an additional encoder ($0 ubu1 budget compatible but +1 dependency). BLEU-1 chosen for self-contained eval; honest about the lexical-only limitation.",
+    "C7: per_axis_preservation = 1 - |base_other_overlap - lora_other_overlap| measures whether LoRA preserved the BASE's pattern of how distinct one axis is from others, not absolute axis distinctness. If base produces nearly-identical generations across axes (cross_axis_bleu1 high) AND LoRA also produces nearly-identical generations, preservation will score HIGH even though neither model is actually axis-conditioning. Read alongside base_cross_axis_bleu1_mean and lora_cross_axis_bleu1_mean — large value (>0.5) at base means base is itself axis-blind (fails axis-cond at generation). Lower base value = more meaningful preservation signal."
+  ]
+}
