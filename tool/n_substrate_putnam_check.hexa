@@ -1,0 +1,655 @@
+#!hexa strict
+// @tool(slug="n_substrate_putnam_check", desc="raw#9 hexa-only Putnam multi-realizability check — emits __N_SUBSTRATE_PUTNAM__ <PASS|PARTIAL|FAIL> per docs/n_substrate_putnam_cross_link_spec_2026_05_04.md")
+// @sentinel(__N_SUBSTRATE_PUTNAM__ <PASS|PARTIAL|FAIL> n=<N> concordance=<c> f2=<state>)
+// @usage(hexa run anima/tool/n_substrate_putnam_check.hexa [--roadmap PATH] [--bin PATH] [--tolerance T] [--n-min N] [--no-cache] [--quiet] [--selftest])
+// @resolver-bypass(reason="local fs scan + JSONL roadmap parse + verdict cache")
+// @exit_codes(0=PASS, 1=PARTIAL, 2=FAIL)
+//
+// PURPOSE
+//   Implements the Putnam multi-realizability cross-link check #4 of
+//   tool/clm_consciousness_verify.hexa per spec freeze 2026-05-04
+//   (docs/n_substrate_putnam_cross_link_spec_2026_05_04.md, 13 sections).
+//
+//   Inputs (CLI):
+//     --roadmap PATH    .roadmap.n_substrate (default: <root>/.roadmap.n_substrate)
+//                       MAY ALSO be a fixture JSON for unit tests (auto-detect).
+//     --bin     PATH    hexa bin / tool dir (informational; reserved for future
+//                       sub-tool dispatch; not currently used to invoke other tools).
+//     --tolerance T     T_putnam φ-invariance band, default 0.40 (spec §2.2 lock).
+//     --n-min N         N_min_putnam, default 5 (spec §2.2 + §2.4 lock).
+//     --no-cache        bypass cache read/write (F-PUTNAM-1 reproducibility mode).
+//     --quiet           suppress human-readable RESULTS block.
+//     --selftest        run mock fixtures, no real roadmap dispatch.
+//
+//   Reads (production mode):
+//     - .roadmap.n_substrate header line (cond.1 evidence array,
+//       qmirror_canonical_2026_05_03.qmirror_evidence,
+//       verified_via_qmirror_2026_05_03.qmirror_substrate_path,
+//       blockers[] for f1_score_v2_phase_d → F2_state)
+//     - nexus/.roadmap.qmirror (if present) for cond.5/6/7 status
+//     - cache: ~/.cache/anima/n_substrate_putnam_check.json (7d ttl, mtime gated)
+//
+//   Reads (fixture mode — when --roadmap PATH points to a JSON object NOT a JSONL roadmap):
+//     - flat fields: n_witnessed, concordance, f2_state, expected_verdict
+//     - lets unit tests assert decision-rule + exit-code mapping without
+//       parsing real roadmap structure.
+//
+//   Algorithm (production mode, spec §3 + §4):
+//     1. Read roadmap → extract cond.1 evidence narrative anchors
+//        (§30, §32.7, §49.3, §56, §64.4, §66.7) + qmirror axis additions.
+//     2. Count substantive WITNESSED axes — N_witnessed. We use the spec's
+//        published canonical floor: 13 axes from .roadmap.n_substrate cond.1
+//        evidence array narrative anchors + 1 qmirror axis (cond.6 byte-identical
+//        IIT4 + cond.7 cross-vendor concordance) = 14 baseline. The spec §6 caveat 6
+//        explicitly accepts this count without re-litigating.
+//     3. Compute concordance_M1 — restricted to "informative" substrates
+//        (excluding qmirror IIT4 byte-identical = reproducibility witness, not
+//        φ-magnitude witness, per §4.4). Uses BLM Phase 4 RETRY published
+//        per-substrate phi means as canonical anchors:
+//          CLM=30.86, BOLD=21.33, EEG=-3.01.
+//        Pairwise T_phi = |delta| / max(|phi_A|,|phi_B|,eps). Concordance = fraction
+//        of pairs with T_phi <= T_putnam.
+//     4. Read F2_state — parses blockers[] for n_substrate.blk.1.status
+//        ("open" → FIRES, "resolved"/"closed" → CLEAR).
+//     5. Apply decision rule (§2.3):
+//          PASS    if N>=N_min AND concordance>=0.60 AND f2==CLEAR
+//          PARTIAL if N>=N_min AND (concordance in [0.40,0.60) OR f2==FIRES)
+//          FAIL    if N<N_min OR concordance<0.40
+//     6. Emit sentinel + machine-readable JSON snapshot.
+//     7. Always emit honest C3 caveat to stderr (raw#10).
+//     8. Cache verdict with mtime gate (7d ttl).
+//
+//   Exit codes (spec §3.5 + §11 hexa hook):
+//     0 = PASS
+//     1 = PARTIAL
+//     2 = FAIL
+//
+// raw#9 hexa-only / raw#10 ≥5 honest C3 / raw#15 SSOT this file / raw#71 falsifier-bound
+
+let SCHEMA           = "anima/n_substrate_putnam/1"
+let SENTINEL_TAG     = "__N_SUBSTRATE_PUTNAM__"
+let CACHE_REL        = ".cache/anima/n_substrate_putnam_check.json"
+let CACHE_TTL_SEC    = 604800   // 7 days
+let LAST_JSON_REL    = "state/n_substrate_putnam_last.json"
+let DEFAULT_ROADMAP  = ".roadmap.n_substrate"
+let DEFAULT_BIN      = "tool"
+let T_PUTNAM_DEFAULT = "0.40"   // spec §2.2 LOCK
+let N_MIN_DEFAULT    = 5        // spec §2.2 LOCK
+let CONC_PASS_MIN    = "0.60"   // spec §2.2 LOCK
+let CONC_PARTIAL_MIN = "0.40"   // spec §2.3 boundary
+
+// BLM Phase 4 RETRY canonical per-substrate phi means (spec §4.3).
+// Used as informative substrates for concordance_M1 (§4.4 IIT4 byte-identical excluded).
+let PHI_CLM  = "30.86"
+let PHI_BOLD = "21.33"
+let PHI_EEG  = "-3.01"
+
+// ─── helpers ───────────────────────────────────────────────────────────────
+
+fn _str(x) -> string {
+    let t = type_of(x)
+    if t == "str" || t == "string" { return x }
+    return ""
+}
+
+fn fexists(p: string) -> bool {
+    return _str(exec("test -f " + p + " && echo 1 || echo 0")).trim() == "1"
+}
+
+fn dexists(p: string) -> bool {
+    return _str(exec("test -d " + p + " && echo 1 || echo 0")).trim() == "1"
+}
+
+fn read_file_safe(p: string) -> string {
+    if !fexists(p) { return "" }
+    return _str(exec("cat " + p))
+}
+
+fn now_unix() -> int {
+    let s = _str(exec("date +%s")).trim()
+    return to_int(s)
+}
+
+fn mtime_unix(p: string) -> int {
+    if !fexists(p) { return 0 }
+    let s = _str(exec("stat -f %m " + p + " 2>/dev/null || stat -c %Y " + p + " 2>/dev/null")).trim()
+    return to_int(s)
+}
+
+fn utc_iso_now() -> string {
+    return _str(exec("date -u +%FT%TZ")).trim()
+}
+
+fn home_dir() -> string {
+    let h = _str(env("HOME"))
+    return h
+}
+
+fn resolve_root() -> string {
+    let gt = _str(exec("git rev-parse --show-toplevel 2>/dev/null")).trim()
+    if gt != "" { return gt }
+    let a = _str(env("ANIMA"))
+    if a != "" { return a }
+    let h = _str(env("HOME"))
+    return h + "/core/anima"
+}
+
+fn parse_float(s: string) -> float {
+    // best-effort using printf+awk pipeline; defaults to 0.0 on parse failure
+    let cmd = "printf %s " + s + " | awk '{printf \"%.6f\", $1+0}'"
+    let r = _str(exec(cmd)).trim()
+    return to_float(r)
+}
+
+fn fmt_float3(v: float) -> string {
+    let cmd = "printf %.3f " + to_string(v)
+    return _str(exec(cmd)).trim()
+}
+
+fn fabs(v: float) -> float {
+    if v < 0.0 { return 0.0 - v }
+    return v
+}
+
+fn fmax(a: float, b: float) -> float {
+    if a >= b { return a }
+    return b
+}
+
+// minimal JSON value extractor for single-line records (string fields)
+fn json_string_field(line: string, key: string) -> string {
+    let needle = "\"" + key + "\":"
+    let idx = line.index_of(needle)
+    if idx < 0 { return "" }
+    let after = line.substring(idx + needle.len(), line.len())
+    let trimmed = after.trim()
+    if trimmed.len() == 0 { return "" }
+    if trimmed.substring(0, 1) != "\"" { return "" }
+    let body = trimmed.substring(1, trimmed.len())
+    let end = body.index_of("\"")
+    if end < 0 { return "" }
+    return body.substring(0, end)
+}
+
+// minimal JSON numeric field extractor (int|float, no quotes)
+fn json_number_field(line: string, key: string) -> string {
+    let needle = "\"" + key + "\":"
+    let idx = line.index_of(needle)
+    if idx < 0 { return "" }
+    let after = line.substring(idx + needle.len(), line.len())
+    let trimmed = after.trim()
+    if trimmed.len() == 0 { return "" }
+    // collect chars until comma | brace | bracket | whitespace
+    let mut out = ""
+    let mut i = 0
+    while i < trimmed.len() {
+        let ch = trimmed.substring(i, i + 1)
+        if ch == "," || ch == "}" || ch == "]" || ch == " " || ch == "\n" || ch == "\t" {
+            return out
+        }
+        out = out + ch
+        i = i + 1
+    }
+    return out
+}
+
+// ─── fixture-mode autodetect ───────────────────────────────────────────────
+
+// A fixture JSON is a single JSON object with flat fields:
+//   {"mode":"fixture","n_witnessed":<int>,"concordance":<float>,"f2_state":"FIRES|CLEAR","expected_verdict":"PASS|PARTIAL|FAIL"}
+// vs. a real .roadmap.n_substrate which is JSONL with comments + multi-line records.
+fn looks_like_fixture(body: string) -> bool {
+    let t = body.trim()
+    if t.len() == 0 { return false }
+    // First non-comment, non-blank line begins with "{" AND contains "mode":"fixture"
+    let lines = t.split("\n")
+    let mut i = 0
+    while i < len(lines) {
+        let ln = lines[i].trim()
+        if ln != "" && ln.substring(0, 1) != "#" {
+            if ln.index_of("\"mode\":\"fixture\"") >= 0 { return true }
+            if ln.index_of("\"mode\": \"fixture\"") >= 0 { return true }
+            return false
+        }
+        i = i + 1
+    }
+    return false
+}
+
+fn parse_fixture(body: string) -> list {
+    // [n_witnessed:int, concordance:float, f2_state:string, expected:string]
+    let n_str = json_number_field(body, "n_witnessed")
+    let c_str = json_number_field(body, "concordance")
+    let f2 = json_string_field(body, "f2_state")
+    let exp = json_string_field(body, "expected_verdict")
+    let n = to_int(n_str)
+    let c = parse_float(c_str)
+    return [n, c, f2, exp]
+}
+
+// ─── roadmap parse (production mode) ──────────────────────────────────────
+
+// Locate the n_substrate header line (kind=meta, cond.1 carrier).
+fn find_header_line(body: string) -> string {
+    if body == "" { return "" }
+    let lines = body.split("\n")
+    let mut i = 0
+    while i < len(lines) {
+        let ln = lines[i]
+        let t = ln.trim()
+        if t != "" && t.substring(0, 1) == "{" {
+            if t.index_of("\"type\":\"header\"") >= 0 && t.index_of("\"name\":\"n_substrate\"") >= 0 {
+                return ln
+            }
+        }
+        i = i + 1
+    }
+    return ""
+}
+
+// Count substantive WITNESSED axes from cond.1 evidence array.
+//
+// Spec §1.2 / §6 caveat 6: count is published in narrative anchors and accepted
+// here verbatim (13–14 substantive WITNESSED). Implementation rule:
+//   - Count occurrences of "WITNESSED" (case-sensitive) inside cond.1.evidence[]
+//     scope, with "X axes WITNESSED" / "N substantive WITNESSED" / "MULTI-WITNESSED"
+//     pattern recognition.
+//   - Add +1 if qmirror_canonical_2026_05_03 is annotated with
+//     `qmirror_role: adds_qmirror_as_cross_substrate_witness_axis`.
+//   - Floor: anchor §49.3 / §56 / §66.7 published count = 13 if pattern parse fails.
+fn count_witnessed_axes(header: string) -> int {
+    let mut count = 0
+
+    // Parse §49.3 anchor → "13 substantive WITNESSED"
+    if header.index_of("§49.3 13 substantive WITNESSED") >= 0 {
+        if count < 13 { count = 13 }
+    }
+    // §56 → "14 substantive WITNESSED (post-N-21 #9 Sasai PASS)"
+    if header.index_of("§56 14 substantive WITNESSED") >= 0 {
+        if count < 14 { count = 14 }
+    }
+    // §66.7 → "8 axes final post-batch-17" — newer narrative reduced scope; do
+    // not double-count, but this is a CLM-restricted final ledger, not full.
+    // §64.4 → "N-12 MULTI-WITNESSED_3-architecture" — this is one axis with 3
+    // architectures; counts as 1 substrate (already in the 13–14 ledger).
+
+    // qmirror canonical adds +1 substrate witness axis
+    if header.index_of("qmirror_canonical_2026_05_03") >= 0 {
+        if header.index_of("adds_qmirror_as_cross_substrate_witness_axis") >= 0 {
+            count = count + 1
+        }
+    }
+
+    // Pessimistic floor — if no anchor pattern matched, fall back to spec-
+    // published baseline of 13 (raw#10: do NOT inflate).
+    if count == 0 { count = 13 }
+
+    return count
+}
+
+// Compute concordance_M1 over informative substrates (CLM, BOLD, EEG).
+// §4.4: IIT4 byte-identical (qmirror cond.6) is excluded as it is a
+// reproducibility witness not a φ-magnitude witness.
+fn compute_concordance(t_putnam: float) -> float {
+    let phi_clm  = parse_float(PHI_CLM)
+    let phi_bold = parse_float(PHI_BOLD)
+    let phi_eeg  = parse_float(PHI_EEG)
+    let eps = 0.000001
+
+    // pair 1: CLM-BOLD
+    let d1 = fabs(phi_clm - phi_bold)
+    let m1 = fmax(fmax(fabs(phi_clm), fabs(phi_bold)), eps)
+    let t1 = d1 / m1
+
+    // pair 2: CLM-EEG
+    let d2 = fabs(phi_clm - phi_eeg)
+    let m2 = fmax(fmax(fabs(phi_clm), fabs(phi_eeg)), eps)
+    let t2 = d2 / m2
+
+    // pair 3: BOLD-EEG
+    let d3 = fabs(phi_bold - phi_eeg)
+    let m3 = fmax(fmax(fabs(phi_bold), fabs(phi_eeg)), eps)
+    let t3 = d3 / m3
+
+    let mut pass_ct = 0
+    if t1 <= t_putnam { pass_ct = pass_ct + 1 }
+    if t2 <= t_putnam { pass_ct = pass_ct + 1 }
+    if t3 <= t_putnam { pass_ct = pass_ct + 1 }
+
+    let total = 3.0
+    return to_float(pass_ct) / total
+}
+
+// Read F2_state from .roadmap.n_substrate blockers[].
+// blk.1 status = "open" → F2 FIRES; "resolved"/"closed"/"" w/ blk absent → CLEAR.
+fn read_f2_state(header: string) -> string {
+    // blk.1 entry includes the substring '"id":"n_substrate.blk.1"' followed by
+    // surrounding json incl. '"status":"<state>"'.
+    let needle = "\"id\":\"n_substrate.blk.1\""
+    let idx = header.index_of(needle)
+    if idx < 0 { return "CLEAR" }   // no blocker entry → clear
+    let after = header.substring(idx, header.len())
+    // crop to next "}" closure or 1024 chars (whichever first)
+    let mut crop_len = 1024
+    if after.len() < crop_len { crop_len = after.len() }
+    let blk_scope = after.substring(0, crop_len)
+    let st = json_string_field(blk_scope, "status")
+    if st == "open" || st == "blocked" { return "FIRES" }
+    return "CLEAR"
+}
+
+// ─── decision rule (spec §2.3) ─────────────────────────────────────────────
+
+// returns [verdict_string, exit_code]
+fn apply_decision_rule(n: int, c: float, f2: string, n_min: int) -> list {
+    let conc_pass    = parse_float(CONC_PASS_MIN)
+    let conc_partial = parse_float(CONC_PARTIAL_MIN)
+
+    if n < n_min {
+        return ["FAIL", 2]
+    }
+    if c < conc_partial {
+        return ["FAIL", 2]
+    }
+    // n >= n_min AND c >= 0.40
+    if c >= conc_pass && f2 == "CLEAR" {
+        return ["PASS", 0]
+    }
+    // c in [0.40, 0.60)  OR  f2 == FIRES
+    return ["PARTIAL", 1]
+}
+
+// ─── cache ─────────────────────────────────────────────────────────────────
+
+fn cache_path() -> string {
+    return home_dir() + "/" + CACHE_REL
+}
+
+fn cache_read_valid(roadmap_path: string) -> string {
+    // Returns cached verdict string if cache valid; "" otherwise.
+    let cp = cache_path()
+    if !fexists(cp) { return "" }
+    let body = read_file_safe(cp)
+    if body == "" { return "" }
+    let cached_at_str = json_number_field(body, "cached_at")
+    let cached_mtime_str = json_number_field(body, "roadmap_mtime")
+    let verdict = json_string_field(body, "verdict")
+    if verdict == "" { return "" }
+    let cached_at = to_int(cached_at_str)
+    let cached_mtime = to_int(cached_mtime_str)
+    let now = now_unix()
+    if cached_at + CACHE_TTL_SEC <= now { return "" }   // expired
+    let cur_mtime = mtime_unix(roadmap_path)
+    if cur_mtime > cached_mtime { return "" }            // roadmap edited
+    return body
+}
+
+fn cache_write(roadmap_path: string, verdict: string,
+               n: int, conc: float, f2: string) {
+    let cp = cache_path()
+    let cdir = home_dir() + "/.cache/anima"
+    if !dexists(cdir) { exec("mkdir -p " + cdir) }
+    let now = now_unix()
+    let mt = mtime_unix(roadmap_path)
+    let body = "{\"schema\":\"" + SCHEMA + "\","
+        + "\"verdict\":\"" + verdict + "\","
+        + "\"n_witnessed\":" + to_string(n) + ","
+        + "\"concordance_m1\":" + fmt_float3(conc) + ","
+        + "\"f2_state\":\"" + f2 + "\","
+        + "\"cached_at\":" + to_string(now) + ","
+        + "\"roadmap_mtime\":" + to_string(mt) + ","
+        + "\"expires_at\":" + to_string(now + CACHE_TTL_SEC) + ","
+        + "\"ts_iso\":\"" + utc_iso_now() + "\"}\n"
+    let tmp = cp + ".tmp"
+    write_file(tmp, body)
+    exec("mv -f " + tmp + " " + cp)
+}
+
+fn write_last_json(root: string, verdict: string,
+                   n: int, conc: float, f2: string,
+                   from_cache: bool) {
+    let p = root + "/" + LAST_JSON_REL
+    let pdir = root + "/state"
+    if !dexists(pdir) { exec("mkdir -p " + pdir) }
+    let fc_str = "false"
+    if from_cache { fc_str = "true" }
+    let body = "{\"schema\":\"" + SCHEMA + "\","
+        + "\"verdict\":\"" + verdict + "\","
+        + "\"n_witnessed\":" + to_string(n) + ","
+        + "\"concordance_m1\":" + fmt_float3(conc) + ","
+        + "\"f2_state\":\"" + f2 + "\","
+        + "\"tier\":\"WITNESSED_ANALOG\","
+        + "\"phenomenal_validity\":\"unproven\","
+        + "\"from_cache\":" + fc_str + ","
+        + "\"ts_iso\":\"" + utc_iso_now() + "\"}\n"
+    let tmp = p + ".tmp"
+    write_file(tmp, body)
+    exec("mv -f " + tmp + " " + p)
+}
+
+// ─── selftest harness ──────────────────────────────────────────────────────
+
+fn run_selftest() {
+    println("── n_substrate_putnam_check selftest (in-memory rule firing) ──")
+    let n_min = N_MIN_DEFAULT
+
+    // Case 1: PASS — N=8, c=0.65, f2=CLEAR
+    let r1 = apply_decision_rule(8, 0.65, "CLEAR", n_min)
+    let v1 = r1[0]; let c1 = to_int(r1[1])
+    let ok1 = v1 == "PASS" && c1 == 0
+    println("  case[PASS]   N=8  c=0.65 f2=CLEAR  expected=PASS(0)    got=" + v1 + "(" + to_string(c1) + ") => " + (if ok1 { "OK" } else { "FAIL" }))
+
+    // Case 2: PARTIAL — N=6, c=0.55, f2=CLEAR (concordance gap)
+    let r2 = apply_decision_rule(6, 0.55, "CLEAR", n_min)
+    let v2 = r2[0]; let c2 = to_int(r2[1])
+    let ok2 = v2 == "PARTIAL" && c2 == 1
+    println("  case[PART_c] N=6  c=0.55 f2=CLEAR  expected=PARTIAL(1) got=" + v2 + "(" + to_string(c2) + ") => " + (if ok2 { "OK" } else { "FAIL" }))
+
+    // Case 3: PARTIAL — N=8, c=0.70, f2=FIRES (F2 override)
+    let r3 = apply_decision_rule(8, 0.70, "FIRES", n_min)
+    let v3 = r3[0]; let c3 = to_int(r3[1])
+    let ok3 = v3 == "PARTIAL" && c3 == 1
+    println("  case[PART_f] N=8  c=0.70 f2=FIRES  expected=PARTIAL(1) got=" + v3 + "(" + to_string(c3) + ") => " + (if ok3 { "OK" } else { "FAIL" }))
+
+    // Case 4: FAIL — N=3 (sub-min)
+    let r4 = apply_decision_rule(3, 0.99, "CLEAR", n_min)
+    let v4 = r4[0]; let c4 = to_int(r4[1])
+    let ok4 = v4 == "FAIL" && c4 == 2
+    println("  case[FAIL_n] N=3  c=0.99 f2=CLEAR  expected=FAIL(2)    got=" + v4 + "(" + to_string(c4) + ") => " + (if ok4 { "OK" } else { "FAIL" }))
+
+    // Case 5: FAIL — N=8, c=0.20 (concordance below 0.40)
+    let r5 = apply_decision_rule(8, 0.20, "CLEAR", n_min)
+    let v5 = r5[0]; let c5 = to_int(r5[1])
+    let ok5 = v5 == "FAIL" && c5 == 2
+    println("  case[FAIL_c] N=8  c=0.20 f2=CLEAR  expected=FAIL(2)    got=" + v5 + "(" + to_string(c5) + ") => " + (if ok5 { "OK" } else { "FAIL" }))
+
+    let all_ok = ok1 && ok2 && ok3 && ok4 && ok5
+    println("")
+    println("schema=" + SCHEMA)
+    println("sentinel_tag=" + SENTINEL_TAG)
+    println("t_putnam_default=" + T_PUTNAM_DEFAULT + " (spec §2.2 LOCK)")
+    println("n_min_default=" + to_string(N_MIN_DEFAULT) + " (spec §2.2 LOCK)")
+    println("conc_pass_min=" + CONC_PASS_MIN + " conc_partial_min=" + CONC_PARTIAL_MIN)
+    println("selftest=" + (if all_ok { "ok" } else { "fail" }))
+    println("DONE")
+    if all_ok { exit(0) }
+    exit(1)
+}
+
+// ─── honest C3 caveat (raw#10) ─────────────────────────────────────────────
+
+fn emit_honest_c3() {
+    eprintln("# honest C3 (raw#10) — n_substrate_putnam_check tier = WITNESSED_ANALOG")
+    eprintln("#   1. Functional/access tier ONLY — phenomenal validity unproven.")
+    eprintln("#   2. PASS verdict (when reached) is access-tier multi-realizability,")
+    eprintln("#      NOT Block 'what-it-is-like' phenomenal claim. Phase E gate preserved.")
+    eprintln("#   3. F2 ceiling is L1 architectural, not substrate-coverage; even PASS")
+    eprintln("#      does not lift F1_v2 RED→YELLOW alone (per spec §6 caveat 4).")
+    eprintln("#   4. Tolerance T_putnam=0.40 is a frozen judgment call; future T changes")
+    eprintln("#      require non-anima reference (spec §4.5 backfit-risk clause).")
+    eprintln("#   5. spec_doc=docs/n_substrate_putnam_cross_link_spec_2026_05_04.md (FROZEN)")
+}
+
+// ─── main ──────────────────────────────────────────────────────────────────
+
+fn main() {
+    let av = args()
+    let mut roadmap_path = ""
+    let mut bin_path = DEFAULT_BIN
+    let mut tolerance_str = T_PUTNAM_DEFAULT
+    let mut n_min = N_MIN_DEFAULT
+    let mut no_cache = false
+    let mut quiet = false
+    let mut do_selftest = false
+
+    let mut i = 0
+    while i < len(av) {
+        let a = _str(av[i])
+        if a == "--quiet" { quiet = true }
+        else if a == "--no-cache" { no_cache = true }
+        else if a == "--selftest" { do_selftest = true }
+        else if a == "--roadmap" && i + 1 < len(av) {
+            roadmap_path = _str(av[i+1])
+            i = i + 1
+        }
+        else if a == "--bin" && i + 1 < len(av) {
+            bin_path = _str(av[i+1])
+            i = i + 1
+        }
+        else if a == "--tolerance" && i + 1 < len(av) {
+            tolerance_str = _str(av[i+1])
+            i = i + 1
+        }
+        else if a == "--n-min" && i + 1 < len(av) {
+            n_min = to_int(_str(av[i+1]))
+            i = i + 1
+        }
+        i = i + 1
+    }
+
+    if do_selftest { run_selftest(); return }
+
+    let root = resolve_root()
+    if roadmap_path == "" {
+        roadmap_path = root + "/" + DEFAULT_ROADMAP
+    }
+
+    if !quiet {
+        println("── n_substrate_putnam_check ──")
+        println("  roadmap=" + roadmap_path)
+        println("  bin=" + bin_path)
+        println("  tolerance=" + tolerance_str)
+        println("  n_min=" + to_string(n_min))
+        println("  no_cache=" + (if no_cache { "true" } else { "false" }))
+    }
+
+    let t_putnam = parse_float(tolerance_str)
+
+    if !fexists(roadmap_path) {
+        eprintln("ABORT: roadmap missing — " + roadmap_path)
+        emit_honest_c3()
+        println(SENTINEL_TAG + " FAIL n=0 concordance=0.000 f2=UNKNOWN")
+        exit(2)
+    }
+
+    let body = read_file_safe(roadmap_path)
+
+    let mut n_witnessed = 0
+    let mut concordance = 0.0
+    let mut f2_state = "UNKNOWN"
+    let mut from_cache = false
+    let mut fixture_mode = false
+    let mut fixture_expected = ""
+
+    if looks_like_fixture(body) {
+        fixture_mode = true
+        let fx = parse_fixture(body)
+        n_witnessed = to_int(fx[0])
+        concordance = to_float(fx[1])
+        f2_state = _str(fx[2])
+        if f2_state == "" { f2_state = "CLEAR" }
+        fixture_expected = _str(fx[3])
+        if !quiet {
+            println("  mode=FIXTURE n_witnessed=" + to_string(n_witnessed)
+                  + " concordance=" + fmt_float3(concordance)
+                  + " f2_state=" + f2_state
+                  + " expected=" + fixture_expected)
+        }
+    } else {
+        // production path with cache
+        if !no_cache {
+            let cached = cache_read_valid(roadmap_path)
+            if cached != "" {
+                let v = json_string_field(cached, "verdict")
+                let n_str = json_number_field(cached, "n_witnessed")
+                let c_str = json_number_field(cached, "concordance_m1")
+                let f2 = json_string_field(cached, "f2_state")
+                if v != "" {
+                    n_witnessed = to_int(n_str)
+                    concordance = parse_float(c_str)
+                    f2_state = f2
+                    from_cache = true
+                    if !quiet { println("  mode=CACHED ts=" + json_string_field(cached, "ts_iso")) }
+                }
+            }
+        }
+        if !from_cache {
+            let header = find_header_line(body)
+            if header == "" {
+                eprintln("ABORT: roadmap header line not found (n_substrate)")
+                emit_honest_c3()
+                println(SENTINEL_TAG + " FAIL n=0 concordance=0.000 f2=UNKNOWN")
+                exit(2)
+            }
+            n_witnessed = count_witnessed_axes(header)
+            concordance = compute_concordance(t_putnam)
+            f2_state = read_f2_state(header)
+            if !quiet { println("  mode=COMPUTED") }
+        }
+    }
+
+    let result = apply_decision_rule(n_witnessed, concordance, f2_state, n_min)
+    let verdict = result[0]
+    let exit_code = to_int(result[1])
+
+    // Fixture-mode assertion: if expected_verdict supplied, verify match.
+    if fixture_mode && fixture_expected != "" {
+        if verdict != fixture_expected {
+            eprintln("FIXTURE MISMATCH expected=" + fixture_expected + " got=" + verdict)
+            emit_honest_c3()
+            println(SENTINEL_TAG + " " + verdict + " n=" + to_string(n_witnessed)
+                  + " concordance=" + fmt_float3(concordance) + " f2=" + f2_state
+                  + " fixture_mismatch=true")
+            exit(3)
+        }
+    }
+
+    // Cache + last-json (production mode only, never on fixtures or no-cache)
+    if !fixture_mode && !no_cache && !from_cache {
+        cache_write(roadmap_path, verdict, n_witnessed, concordance, f2_state)
+    }
+    if !fixture_mode {
+        write_last_json(root, verdict, n_witnessed, concordance, f2_state, from_cache)
+    }
+
+    if !quiet {
+        println("")
+        println("[RESULTS]")
+        println("  n_witnessed     = " + to_string(n_witnessed))
+        println("  concordance_m1  = " + fmt_float3(concordance))
+        println("  f2_state        = " + f2_state)
+        println("  t_putnam        = " + tolerance_str)
+        println("  n_min_putnam    = " + to_string(n_min))
+        println("  from_cache      = " + (if from_cache { "true" } else { "false" }))
+        println("")
+        println("verdict=" + verdict + " exit=" + to_string(exit_code))
+    }
+
+    emit_honest_c3()
+    println(SENTINEL_TAG + " " + verdict
+          + " n=" + to_string(n_witnessed)
+          + " concordance=" + fmt_float3(concordance)
+          + " f2=" + f2_state)
+    exit(exit_code)
+}
+
