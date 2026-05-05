@@ -26,7 +26,7 @@ fn split_manifest() -> int {
     split { src: "anima/core/runtime/conversation_logger.py", dst: "anima/modules/logging/conversation_logger.py", lines: 71, reason: "logging concern, no core runtime dependency", deps: "stdlib only" }
 
     // 3. training_dashboard.py — monitor TUI (read-only)
-    split { src: "anima/core/runtime/training_dashboard.py", dst: "anima/modules/monitor/training_dashboard.py", lines: 155, reason: "read-only monitor, separable from runtime", deps: "rich/textual, checkpoint files" }
+    split { src: "anima/core/runtime/training_dashboard.py", dst: "anima/monitor/module/training_dashboard.py", lines: 155, reason: "read-only monitor, separable from runtime", deps: "rich/textual, checkpoint files" }
 
     // 4. babysitter.py — education/curriculum auto-tuner
     split { src: "anima/core/runtime/babysitter.py", dst: "anima/modules/education/babysitter.py", lines: 168, reason: "curriculum concern, belongs with training modules", deps: "live_tuner, autonomous_loop" }

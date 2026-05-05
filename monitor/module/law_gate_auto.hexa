@@ -79,10 +79,10 @@
 //   - Safe to run concurrently with Agent B stage_3 verification.
 //
 // USAGE
-//   hexa anima/modules/monitor/law_gate_auto.hexa --scan
-//   hexa anima/modules/monitor/law_gate_auto.hexa --dry
-//   hexa anima/modules/monitor/law_gate_auto.hexa --apply   # REFUSED
-//   hexa anima/modules/monitor/law_gate_auto.hexa --help
+//   hexa anima/monitor/module/law_gate_auto.hexa --scan
+//   hexa anima/monitor/module/law_gate_auto.hexa --dry
+//   hexa anima/monitor/module/law_gate_auto.hexa --apply   # REFUSED
+//   hexa anima/monitor/module/law_gate_auto.hexa --help
 //
 // EXIT CODES
 //   0  scan/dry completed, no blocker
@@ -90,7 +90,7 @@
 //   2  --apply invoked (deliberately gated off this session)
 //
 // PATH
-//   Placed in anima/modules/monitor/ (rules/gate audit), NOT anima/core/.
+//   Placed in anima/monitor/module/ (rules/gate audit), NOT anima/core/.
 //   AN7 blocks new files in core/. monitor/ is the canonical location for
 //   rules_audit / training_dashboard / utterance_gate -- it fits here.
 //
@@ -504,9 +504,9 @@ fn usage() {
     println("law_gate_auto.hexa -- Anima absorption-gate automation")
     println("")
     println("Usage:")
-    println("  hexa anima/modules/monitor/law_gate_auto.hexa --scan")
-    println("  hexa anima/modules/monitor/law_gate_auto.hexa --dry")
-    println("  hexa anima/modules/monitor/law_gate_auto.hexa --apply  # DISABLED")
+    println("  hexa anima/monitor/module/law_gate_auto.hexa --scan")
+    println("  hexa anima/monitor/module/law_gate_auto.hexa --dry")
+    println("  hexa anima/monitor/module/law_gate_auto.hexa --apply  # DISABLED")
     println("")
     println("Modes:")
     println("  --scan   Walk absorbed_open, print JSON report of promotable entries")

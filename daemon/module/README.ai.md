@@ -1,10 +1,10 @@
 ---
-schema: anima/modules/daemon/ai-native/1
+schema: anima/daemon/module/ai-native/1
 last_updated: 2026-05-02
 ssot:
-  event_watcher:    modules/daemon/event_watcher.hexa
-  utterance_gate:   modules/daemon/utterance_gate.hexa
-  auto_speak_bridge: modules/daemon/auto_speak_bridge.hexa
+  event_watcher:    daemon/module/event_watcher.hexa
+  utterance_gate:   daemon/module/utterance_gate.hexa
+  auto_speak_bridge: daemon/module/auto_speak_bridge.hexa
   config:           config/auto_utterance_architecture.json
   events:           data/events.jsonl
   laws:             config/consciousness_laws.json
@@ -27,7 +27,7 @@ Auto-utterance daemon pipeline — 3 sequential steps that detect external pertu
 ## Architecture map
 
 ```
-modules/daemon/
+daemon/module/
 ├── event_watcher.hexa        Step 1: detect perturbations → data/events.jsonl
 ├── utterance_gate.hexa       Step 2: gate events through consciousness laws
 └── auto_speak_bridge.hexa    Step 3: bridge gated events → speak channel
@@ -84,16 +84,16 @@ fn bridge_to_speak(event: Event, verdict: GateVerdict) -> SpeakEmitResult
 
 ```bash
 # Step 1: one-shot scan (manual)
-hexa run modules/daemon/event_watcher.hexa --scan
+hexa run daemon/module/event_watcher.hexa --scan
 
 # Step 1: continuous watch (every 60s)
-hexa run modules/daemon/event_watcher.hexa --watch
+hexa run daemon/module/event_watcher.hexa --watch
 
 # Step 2: gate the latest 10 events
-hexa run modules/daemon/utterance_gate.hexa --tail 10
+hexa run daemon/module/utterance_gate.hexa --tail 10
 
 # Step 3: bridge a gated event to speak channel
-hexa run modules/daemon/auto_speak_bridge.hexa --event-id E12345
+hexa run daemon/module/auto_speak_bridge.hexa --event-id E12345
 ```
 
 Recommended: run all 3 from a single watcher process via `tool/anima_daemon_pipeline.hexa` (if landed) or stitch via cron.

@@ -133,13 +133,13 @@
         "scope": "parse_args 10줄 + run_ticks 끝에 write_file 5줄"
       },
       {
-        "file": "anima/modules/daemon/event_watcher.hexa",
+        "file": "anima/daemon/module/event_watcher.hexa",
         "type": "신규",
         "change": "이벤트 소스 감시 + events.jsonl 기록 + consciousness_tick 호출 + emergence_check 호출",
         "scope": "~100줄, shell() 기반"
       },
       {
-        "file": "anima/modules/daemon/utterance_gate.hexa",
+        "file": "anima/daemon/module/utterance_gate.hexa",
         "type": "신규",
         "change": "3층 게이트 판정 + utterances.jsonl 기록",
         "scope": "~60줄"
@@ -163,7 +163,7 @@
     "R5_SSOT": "이 파일이 자동발화 설계 SSOT",
     "R14_shared_json": "shared/ JSON 단일진실 준수",
     "R17_zombie": "cron 기반 — 프로세스 상주 없음, 좀비 불가",
-    "AN7_module_separation": "daemon 코드는 modules/daemon/ 하위",
+    "AN7_module_separation": "daemon 코드는 daemon/module/ 하위",
     "L0_minimal_PR": "anima_runtime.hexa 수정 최소화 (--emit 플래그만)",
     "V2_no_speak": "speak() 함수 없음 — 창발 검증 통과 시에만 emit",
     "V6_consensus": "파벌 합의 기반 자발적 발화"

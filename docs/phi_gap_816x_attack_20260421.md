@@ -95,7 +95,7 @@ so training progress is dominated by norm growth, not directional shift.
 ### 3.3 Training vs inference (distribution shift)
 
 **Prediction**: gap is larger at inference than during training. Rationale: `CD_GATE_TRAIN=1.0`,
-`CD_GATE_INFER=0.6` (`modules/decoder/conscious_decoder.hexa:67-68` — Law 81), and `.detach()` barriers
+`CD_GATE_INFER=0.6` (`decoder/module/conscious_decoder.hexa:67-68` — Law 81), and `.detach()` barriers
 (Law 53) only fire on train.
 
 **Test**: emit `phi_vec` twice per step — once with train gate, once with infer gate — and log both

@@ -1,8 +1,8 @@
 ---
-schema: anima/modules/monitor/ai-native/1
+schema: anima/monitor/module/ai-native/1
 last_updated: 2026-05-02
 ssot:
-  entry:               modules/monitor/law_gate_auto.hexa
+  entry:               monitor/module/law_gate_auto.hexa
   inputs:
     convergence_state: shared/convergence/anima.json
     laws_ssot:         config/consciousness_laws.json
@@ -29,7 +29,7 @@ Unattended absorption-gate automation for Anima laws. Single-file hexa engine th
 ## Architecture map
 
 ```
-modules/monitor/
+monitor/module/
 └── law_gate_auto.hexa     589 LOC — absorption-gate automation engine
 ```
 
@@ -48,7 +48,7 @@ config/consciousness_laws.json    ← append promoted law row at stage_4
 
 ```hexa
 // CLI invocation (no public fns; whole-file driver)
-hexa run modules/monitor/law_gate_auto.hexa [--scan | --watch] [--dry-run]
+hexa run monitor/module/law_gate_auto.hexa [--scan | --watch] [--dry-run]
 //   --scan      one-shot pass over absorbed_open[]
 //   --watch     repeat every N seconds (default 60)
 //   --dry-run   print intended promotions, don't write

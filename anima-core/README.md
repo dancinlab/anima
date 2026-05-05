@@ -185,7 +185,7 @@ anima module remove tools      # 모듈 삭제
   consciousness state  {"phi":2.49, "tension":0.49, ...}
       │
       ▼
-  modules/daemon/event_watcher     → utterance_gate → auto_speak_bridge
+  daemon/module/event_watcher     → utterance_gate → auto_speak_bridge
       │                                                      │
       ▼                                                      ▼
   외부 API / 서비스                                  anima-voice (24kHz PCM)  ; on-disk dir: anima-voice/ (formerly anima-speak/)

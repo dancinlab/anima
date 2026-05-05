@@ -77,7 +77,7 @@ for t in 0..seq:
 ```
 
 After RoPE, K/V are repeated (`repeat_kv`, n_rep=5) to match 40 Q heads
-before attention — see `modules/decoder/decoder.hexa:284` for the hexa
+before attention — see `decoder/module/decoder.hexa:284` for the hexa
 reference impl; C kernel can fuse repeat_kv into the attention read
 address (no physical copy needed).
 
@@ -177,7 +177,7 @@ trip. Day-2 can ship the non-fused version above and defer the fusion.
 
 ## 6. Cross-references (no edits, reference only)
 
-- `modules/decoder/decoder.hexa:284` — `repeat_kv` reference impl
+- `decoder/module/decoder.hexa:284` — `repeat_kv` reference impl
 - `training/nn_core.hexa:571-597` — interleaved-pair hexa RoPE (CLM,
   base=1e4) — **do not copy** for Qwen 14B
 - `anima-voice/transformer.hexa:333-354` — same, speak vocoder

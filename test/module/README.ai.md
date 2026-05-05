@@ -1,8 +1,8 @@
 ---
-schema: anima/modules/test/ai-native/1
+schema: anima/test/module/ai-native/1
 last_updated: 2026-05-02
 ssot:
-  entry:    modules/test/hive_bridge_test.hexa
+  entry:    test/module/hive_bridge_test.hexa
   contract: shared/config/contracts/hive_bridge.json
   audit:    shared/logs/hive_bridge.log
 status: live — single-file hive bridge unit test; stub mode (hive offline)
@@ -24,7 +24,7 @@ Self-contained hive-bridge unit test. Verifies bridge module contract integrity 
 ## Architecture map
 
 ```
-modules/test/
+test/module/
 └── hive_bridge_test.hexa     191 LOC — hive bridge unit test (stub mode)
 ```
 
@@ -47,7 +47,7 @@ modules/test/
 
 ```hexa
 // Whole-file driver — no exported fns
-hexa run modules/test/hive_bridge_test.hexa
+hexa run test/module/hive_bridge_test.hexa
 
 // Output
 //   T1  PASS  path resolution
@@ -64,7 +64,7 @@ hexa run modules/test/hive_bridge_test.hexa
 
 ```bash
 # Run all 10 subtests
-hexa run modules/test/hive_bridge_test.hexa
+hexa run test/module/hive_bridge_test.hexa
 
 # Verify contract exists first (T10 prerequisite)
 ls shared/config/contracts/hive_bridge.json

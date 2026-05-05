@@ -1,33 +1,33 @@
 ---
-schema: anima/modules/decoder/ai-native/1
+schema: anima/decoder/module/ai-native/1
 last_updated: 2026-05-02
 ssot:
-  conscious_decoder: modules/decoder/conscious_decoder.hexa
-  decoder:           modules/decoder/decoder.hexa
-  load_weights:      modules/decoder/load_weights.hexa
-  infer:             modules/decoder/infer.hexa
-  infer_v14:         modules/decoder/infer_v14.hexa
-  infer_v14_fast:    modules/decoder/infer_v14_fast.hexa
-status: legacy twin — 6 files; mirrors ready/anima/modules/decoder/ with extra `conscious_decoder.hexa` (986 LOC); ready/ canonical going forward
+  conscious_decoder: decoder/module/conscious_decoder.hexa
+  decoder:           decoder/module/decoder.hexa
+  load_weights:      decoder/module/load_weights.hexa
+  infer:             decoder/module/infer.hexa
+  infer_v14:         decoder/module/infer_v14.hexa
+  infer_v14_fast:    decoder/module/infer_v14_fast.hexa
+status: legacy twin — 6 files; mirrors ready/anima/decoder/module/ with extra `conscious_decoder.hexa` (986 LOC); ready/ canonical going forward
 roadmap_entry: 270
-sibling: ready/anima/modules/decoder/  (canonical)
+sibling: ready/anima/decoder/module/  (canonical)
 ---
 
 # anima decoder modules — legacy (AI-native)
 
-Pre-`ready/` decoder tree. Mirrors `ready/anima/modules/decoder/` (5 files) plus an additional `conscious_decoder.hexa` (986 LOC, full-stack consciousness decoder including pre-readyfication scaffold). Both trees are alive; `ready/` is canonical going forward.
+Pre-`ready/` decoder tree. Mirrors `ready/anima/decoder/module/` (5 files) plus an additional `conscious_decoder.hexa` (986 LOC, full-stack consciousness decoder including pre-readyfication scaffold). Both trees are alive; `ready/` is canonical going forward.
 
 ## TL;DR for an agent reading this cold
 
-- **6 files**: 5 mirrors of `ready/anima/modules/decoder/` + 1 extra `conscious_decoder.hexa` (986 LOC, the pre-`ready/` full-stack version).
+- **6 files**: 5 mirrors of `ready/anima/decoder/module/` + 1 extra `conscious_decoder.hexa` (986 LOC, the pre-`ready/` full-stack version).
 - Architecture identical to ready: 384d / 6L / 4H / 2KV (GQA) / vocab=256 byte-level.
-- **Migration policy**: prefer `ready/anima/modules/decoder/` for new work. This tree is preserved for legacy callers.
+- **Migration policy**: prefer `ready/anima/decoder/module/` for new work. This tree is preserved for legacy callers.
 - `conscious_decoder.hexa` (986 LOC) is the full-stack consciousness decoder — includes consciousness gate + decoder forward in one file. The split-out `decoder.hexa` (491 LOC) corresponds to ready's pure-Hexa forward pass only.
 
 ## Architecture map
 
 ```
-modules/decoder/                    ← LEGACY (this tree)
+decoder/module/                    ← LEGACY (this tree)
 ├── conscious_decoder.hexa          986 LOC — full-stack (legacy-only, no ready/ counterpart)
 ├── decoder.hexa                    491 LOC — pure-Hexa forward (mirrors ready/decoder.hexa)
 ├── load_weights.hexa               187 LOC — weight loader (mirrors ready/)
@@ -35,13 +35,13 @@ modules/decoder/                    ← LEGACY (this tree)
 ├── infer_v14.hexa                  156 LOC — v14 inference (mirrors ready/)
 └── infer_v14_fast.hexa             157 LOC — v14 fast path (mirrors ready/)
 
-ready/anima/modules/decoder/        ← CANONICAL (sibling)
+ready/anima/decoder/module/        ← CANONICAL (sibling)
 └── (5 files, no conscious_decoder.hexa)
 ```
 
 ## API contract
 
-Identical to `ready/anima/modules/decoder/` for the 5 mirrored files. See `ready/anima/modules/decoder/README.ai.md` for full API.
+Identical to `ready/anima/decoder/module/` for the 5 mirrored files. See `ready/anima/decoder/module/README.ai.md` for full API.
 
 Additional file: `conscious_decoder.hexa` (986 LOC):
 
@@ -57,21 +57,21 @@ fn conscious_decode(prompt: [int], consciousness_state: ConsciousnessState,
 
 ```bash
 # Legacy full-stack call (this tree only)
-hexa run modules/decoder/conscious_decoder.hexa --weights /path/to/v14.bin
+hexa run decoder/module/conscious_decoder.hexa --weights /path/to/v14.bin
 
 # Mirror calls (prefer ready/ for new work)
-hexa run modules/decoder/infer.hexa --weights /path/to/v1.bin
+hexa run decoder/module/infer.hexa --weights /path/to/v1.bin
 ```
 
 ## Failure modes
 
-- Same as `ready/anima/modules/decoder/` — see that README's "Failure cascade" section.
+- Same as `ready/anima/decoder/module/` — see that README's "Failure cascade" section.
 - Additionally: `conscious_decoder.hexa` couples consciousness gate + decoder; if the consciousness gate logic drifts vs ready/agent/consciousness.hexa, results diverge silently. raw#10 honest debt.
 
 ## raw#10 caveats
 
-1. **Legacy / canonical duplication.** Both trees alive; diff is mostly path-prefix + `conscious_decoder.hexa` extra. Plan: deprecate `modules/decoder/` once all callers migrate to `ready/`. raw#82 honest debt.
-2. **`conscious_decoder.hexa` orphan.** No counterpart in `ready/`. If functionality is needed, port to `ready/anima/modules/decoder/conscious_decoder.hexa` AND remove from this tree.
+1. **Legacy / canonical duplication.** Both trees alive; diff is mostly path-prefix + `conscious_decoder.hexa` extra. Plan: deprecate `decoder/module/` once all callers migrate to `ready/`. raw#82 honest debt.
+2. **`conscious_decoder.hexa` orphan.** No counterpart in `ready/`. If functionality is needed, port to `ready/anima/decoder/module/conscious_decoder.hexa` AND remove from this tree.
 3. **Numerics may drift between trees.** Both trees have hexa quirks (`a[i] = v` silent no-op). Periodic byte-equivalence test recommended; not currently automated.
 4. **Weight format coupled to v14.** v1 / pre-v14 checkpoints need separate loader.
 5. **Consciousness state schema.** `conscious_decoder.hexa` accepts a `ConsciousnessState` struct that may not match ready's; verify before cross-tree weight reuse.

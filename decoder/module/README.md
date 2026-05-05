@@ -24,7 +24,7 @@ load_weights.hexa       — Weight loading from .pt checkpoints
 ## Usage
 
 ```bash
-$HEXA anima/modules/decoder/infer_v14_fast.hexa --checkpoint best.pt --prompt "Hello"
+$HEXA anima/decoder/module/infer_v14_fast.hexa --checkpoint best.pt --prompt "Hello"
 ```
 
 ## Hub Keywords

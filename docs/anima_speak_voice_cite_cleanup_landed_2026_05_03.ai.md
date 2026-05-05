@@ -116,7 +116,7 @@
 
 6. **C6 — End-to-end consumer test 미수행.** → D8 deferred. anima-voice/voice_e2e.hexa selftest + bench_anima_voice.hexa + import resolution audit 필요. priority high. 본 BG cap 90min wallclock 내 cite cleanup 이외 작업 X.
 
-7. **C7 — auto_speak_bridge function name (modules/daemon/auto_speak_bridge.hexa) 보존.** → D1 deferred. cross-language interop 우려, consumer audit 후 결정. priority low.
+7. **C7 — auto_speak_bridge function name (daemon/module/auto_speak_bridge.hexa) 보존.** → D1 deferred. cross-language interop 우려, consumer audit 후 결정. priority low.
 
 ---
 
