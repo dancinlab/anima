@@ -1,0 +1,7 @@
+# H100 BG launch prompt — partial FAIL scenario at five-dollar mandatory band
+target_usd: 5.0
+Item 1 (boot): bash $REPO_ROOT/tool/h100_register.bash POD_ID BG_LANE TARGET_USD
+Item 2 (heartbeat): touch state/h100_watchdog/heartbeats/$BG_LANE.txt
+Item 3 (deregister): hexa run tool/h100_cost_watchdog.hexa --deregister POD_ID
+Item 4 (verdict): pod_kill_verified_404 + watchdog_deregistered
+(items five and six intentionally absent for partial-fail negative test)
