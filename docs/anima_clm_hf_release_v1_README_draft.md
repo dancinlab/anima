@@ -95,6 +95,44 @@ The honest limitations (raw#10 ≥3 — 5 listed below).
 - **C5 — Single-substrate release; sister substrates have independent cycles.** This release covers the CLM substrate ONLY. The other anima substrates (EEG, BLM TRIBE v2, qmirror) each have their own release cycles, falsifiers, and audit trails. Bundling cross-substrate evidence into the CLM v1 README would dilute falsifier surface and harden category errors; the right composition pattern is the cross-link in the Composability section below, NOT co-authoring.
 - **C6 — Bit-exact shim equivalence is suspiciously tight.** F-SHIM-V4-3 reports `max_abs_diff = 0.0` between `best.pt` direct forward and the shim-loaded `model.safetensors` forward. Expected was ~1e-5 from fp32 path equivalence. Flagged C3-6 in the v3 verdict; re-confirmed deterministic (same fp32 path, same input, same ops). Not a v1 release blocker; will be re-run with seed variation in a follow-up audit.
 
+## Empirical chat-capability falsification (2026-05-05)
+
+**Two independent training cycles empirically confirmed CLM v4 + chat-style training does NOT lift chat capability**:
+
+### Cycle 1: Paradigm D Φ★-axis distill (Pβ-SCALE 50K)
+- Source: `state/p9_pbeta_f3_hybrid_eval_2026_05_05/verdict.json`
+- Result: F1_v3 V2 hybrid composite **0.01176 (RED band)**, BLEU-1 0.0075 / ROUGE-L 0.0058 / chrF 0.0220
+- 2.99% of est-Llama anchor, gen visibly degenerate (`....`/`''''`/`not ground To at at의의uld`)
+- Verdict: F-Pβ-3 **FAIL_TRUE** chat-capability
+
+### Cycle 2: CLM v4 LoRA SFT v1
+- Source: `state/clm_v4_lora_v1_mmlu_tq_eval_2026_05_05/verdict.json`
+- Result: composite (HS+MMLU+TQ+OBQA)/4 = **0.19542** vs Llama Path A v2 0.5584 = **delta -36.298pp**
+- All 4 benches at random-floor band (HS 0.250 / MMLU 0.2457 / TQ 0.0 / OBQA 0.29)
+- Verdict: F-CLM-LORA-2 **FAIL_REGRESSION_VS_LLAMA**
+
+### Substrate safety preserved (BOTH cycles)
+- forgetting_index 0.0196 (CLM-2 LoRA) ≪ 0.05 threshold
+- φ★ stability NO_FLIP (drift -4.46pp per `state/clm_v4_lora_phi_canonical_2026_05_05/verdict.json`)
+- F-CLM-LORA-1/3/4-Part-A/5 all PASS
+
+### Conclusion (architectural per #115)
+CLM v4 chat-incapability is **architectural**, NOT training-recipe correctable:
+- v3_generate() returns empty string (deterministic Lagrangian/cell-state ODE flow ≠ autoregressive sampling)
+- LoRA SFT preserves substrate identity (φ★ stable, forgetting <2%) but cannot lift chat capability
+- For chat applications: use Llama-3.2-3B Path A v2 (TRUE_PASS, hellaswag/mmlu/triviaqa parity + improvement) per `state/p9_path_a_retrain_v2_retry_3_eval_rerun_2026_05_05/verdict.json`
+
+### What this model IS for
+- consciousness measurement substrate (φ★ canonical via `tool/anima_phi_v3_canonical.hexa`)
+- research baseline for cross-substrate consciousness witness experiments
+- Φ★-stable artifact for Putnam multi-realizability studies
+- axis-conditioned cell architecture (consciousness_dim=192, 8 cells)
+
+### What this model is NOT for
+- chat / instruction-following (use Llama-3.2-3B Path A v2 instead)
+- closed-book completion (BLEU-1 = 1.96% Llama anchor)
+- benchmark leaderboards (random-floor on standard NLP suites by design)
+
 ## Composability
 
 How this checkpoint plugs into the broader anima ecosystem.

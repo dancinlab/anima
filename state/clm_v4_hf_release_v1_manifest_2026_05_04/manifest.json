@@ -328,5 +328,32 @@
     "rank-3: cond.2 PASS landing per plan §1 step 10 (.roadmap.clm cond.2 status met + marker land + handoff doc)",
     "rank-4: BG-Σ followup for F-SHIM-V4-4 + F-CLM-RELEASE-3 phi_star post-load probe (H100, gated on user authorization)",
     "rank-5: AutoTokenizer wrapper post-v1 polish (LlamaTokenizer-style wrapper around SP .model)"
-  ]
+  ],
+  "empirical_chat_capability_falsification_2026_05_05": {
+    "ts_utc": "2026-05-05",
+    "two_cycle_evidence": [
+      {
+        "cycle": "paradigm_d_pbeta_50k",
+        "verdict_path": "state/p9_pbeta_f3_hybrid_eval_2026_05_05/verdict.json",
+        "f_verdict": "F-Pβ-3 FAIL_TRUE",
+        "composite": 0.01176,
+        "band": "RED"
+      },
+      {
+        "cycle": "clm_v4_lora_sft_v1",
+        "verdict_path": "state/clm_v4_lora_v1_mmlu_tq_eval_2026_05_05/verdict.json",
+        "f_verdict": "F-CLM-LORA-2 FAIL_REGRESSION_VS_LLAMA",
+        "composite": 0.19542,
+        "delta_vs_llama_pp": -36.298
+      }
+    ],
+    "substrate_safety_evidence": {
+      "forgetting_index_clm_2": 0.0196,
+      "phi_star_drift_pp_clm_2": -4.46,
+      "phi_star_no_flip": true,
+      "f_clm_lora_1_pass": true
+    },
+    "chat_capability_winner": "Llama-3.2-3B Path A v2 (state/p9_path_a_retrain_v2_retry_3_eval_rerun_2026_05_05/verdict.json TRUE_PASS)",
+    "intended_use_disclosure": "consciousness-substrate research artifact only, NOT chat-capable"
+  }
 }
