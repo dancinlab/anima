@@ -1,0 +1,64 @@
+[2026-05-05T08:30:35Z] starting DESIGN-1 orchestrator: cycle=clm_v4_hf_format_shim_v5_4_design_1_2026_05_05 bg_lane=V5-4-DESIGN-1 target=$3.0
+[2026-05-05T08:30:36Z] loading secrets
+[2026-05-05T08:30:36Z] secrets OK (runpod=50b hf=37b)
+[2026-05-05T08:30:36Z] all source files present
+[2026-05-05T08:30:36Z] booting pod: anima-shim-v5-4-design-1-fresh-init-2026-05-05 (H100 80GB SECURE @ $2.99/hr, vol=80GB, disk=60GB)
+[2026-05-05T08:30:37Z] boot output:
+  warning: 'runpodctl create pod' is deprecated, use 'runpodctl pod create' instead
+  pod "h4zgndg7z5rwew" created for $2.990 / hr
+[2026-05-05T08:30:37Z] pod_id=h4zgndg7z5rwew
+h100_cost_watchdog: registered pod=h4zgndg7z5rwew owner=V5-4-DESIGN-1 target_usd=3.0
+[h100-register] 2026-05-05T08:30:38Z pod=h4zgndg7z5rwew owner=V5-4-DESIGN-1 target=$3.0
+[2026-05-05T08:30:38Z] [watchdog] register OK pod=h4zgndg7z5rwew lane=V5-4-DESIGN-1 target=$3.0
+[2026-05-05T08:30:38Z] waiting for SSH ready (max 6min)
+[2026-05-05T08:30:39Z]   ssh probe 1/36: host= port=
+[2026-05-05T08:30:50Z]   ssh probe 2/36: host= port=
+[2026-05-05T08:31:01Z]   ssh probe 3/36: host= port=
+[2026-05-05T08:31:13Z]   ssh probe 4/36: host= port=
+[2026-05-05T08:31:24Z]   ssh probe 5/36: host= port=
+[2026-05-05T08:31:35Z]   ssh probe 6/36: host= port=
+[2026-05-05T08:31:46Z]   ssh probe 7/36: host= port=
+[2026-05-05T08:31:57Z]   ssh probe 8/36: host= port=
+[2026-05-05T08:32:08Z]   ssh probe 9/36: host= port=
+[2026-05-05T08:32:19Z]   ssh probe 10/36: host= port=
+[2026-05-05T08:32:30Z]   ssh probe 11/36: host= port=
+[2026-05-05T08:32:42Z]   ssh probe 12/36: host= port=
+[2026-05-05T08:32:53Z]   ssh probe 13/36: host= port=
+[2026-05-05T08:33:05Z]   ssh probe 14/36: host= port=
+[2026-05-05T08:33:16Z]   ssh probe 15/36: host= port=
+[2026-05-05T08:33:27Z]   ssh probe 16/36: host= port=
+[2026-05-05T08:33:38Z]   ssh probe 17/36: host= port=
+[2026-05-05T08:33:50Z]   ssh probe 18/36: host= port=
+[2026-05-05T08:34:01Z]   ssh probe 19/36: host= port=
+[2026-05-05T08:34:13Z]   ssh probe 20/36: host= port=
+[2026-05-05T08:34:24Z]   ssh probe 21/36: host= port=
+[2026-05-05T08:34:35Z]   ssh probe 22/36: host= port=
+[2026-05-05T08:34:46Z]   ssh probe 23/36: host= port=
+[2026-05-05T08:34:58Z]   ssh probe 24/36: host= port=
+[2026-05-05T08:35:09Z]   ssh probe 25/36: host= port=
+[2026-05-05T08:35:20Z]   ssh probe 26/36: host= port=
+[2026-05-05T08:35:31Z]   ssh probe 27/36: host= port=
+[2026-05-05T08:35:42Z]   ssh probe 28/36: host= port=
+[2026-05-05T08:35:53Z]   ssh probe 29/36: host= port=
+[2026-05-05T08:36:05Z]   ssh probe 30/36: host= port=
+[2026-05-05T08:36:16Z]   ssh probe 31/36: host= port=
+[2026-05-05T08:36:27Z]   ssh probe 32/36: host= port=
+[2026-05-05T08:36:38Z]   ssh probe 33/36: host= port=
+[2026-05-05T08:36:49Z]   ssh probe 34/36: host= port=
+[2026-05-05T08:37:01Z]   ssh probe 35/36: host= port=
+[2026-05-05T08:37:12Z]   ssh probe 36/36: host= port=
+[2026-05-05T08:37:22Z] FATAL: pod never reached SSH ready in 6min
+[2026-05-05T08:37:22Z] last INFO json:
+ID            	NAME                                          	GPU       	IMAGE NAME                                              	STATUS  
+h4zgndg7z5rwew	anima-shim-v5-4-design-1-fresh-init-2026-05-05	1 H100 SXM	runpod/pytorch:2.4.0-py3.11-cuda12.4.1-devel-ubuntu22.04	RUNNING	
+[2026-05-05T08:37:22Z] [trap] killing pod=h4zgndg7z5rwew (auto-kill mandatory)
+warning: 'runpodctl stop pod' is deprecated, use 'runpodctl pod stop <id>' instead
+pod "h4zgndg7z5rwew" stopped
+warning: 'runpodctl remove pod' is deprecated, use 'runpodctl pod delete <id>' instead
+pod "h4zgndg7z5rwew" removed
+[2026-05-05T08:37:30Z] [trap] 404 verify try 1/3 not yet — sleep 30s
+[2026-05-05T08:38:01Z] [trap] 404 verify try 2/3 not yet — sleep 30s
+[2026-05-05T08:38:32Z] [trap] 404 verify try 3/3 not yet — sleep 30s
+[2026-05-05T08:39:02Z] [trap] post-kill: warning: 'runpodctl get pod' is deprecated, use 'runpodctl pod list' instead
+ID	NAME	GPU	IMAGE NAME	STATUS   pod_kill_verified_404=0
+[2026-05-05T08:39:02Z] verdict written: /Users/ghost/core/anima/state/clm_v4_hf_format_shim_v5_4_design_1_2026_05_05/verdict.json

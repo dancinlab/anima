@@ -1,0 +1,143 @@
+{
+  "schema": "anima/hf_cycle_2_cleanup_final_verify/verdict/1",
+  "cycle": "hf_cycle_2_cleanup_final_verify_2026_05_05",
+  "bg_lane": "BG-HF-CLEANUP-FINAL-VERIFY",
+  "ts_utc": "2026-05-05T08:34:30Z",
+  "substrate": "mac (no destructive ops, dry-run + audit only)",
+  "actual_cost_usd": 0.0,
+  "wall_time_total_min_approx": 6,
+  "verdict": "PASS",
+  "verdict_one_line": "All 4 HF Cycle 2 cleanup+promote scripts (clm-v4-mk2-v1 + pbeta) pass syntax (bash -n) and dry-run gate-1 FAIL-as-expected; HF Hub state intact for both repos (private=true, sha + siblings counts match upload-time); Pβ scripts newly authored from clm template.",
+  "scripts_audited": {
+    "clm_v4_mk2_v1_cleanup": {
+      "path": "state/clm_v4_hf_release_v1_upload_2026_05_04/cleanup_2026_05_07.bash",
+      "preexisting": true,
+      "syntax_check_method": "bash -n (shellcheck not installed)",
+      "syntax_check_status": "PASS",
+      "dry_run_status": "GATE_1_FAIL_AS_EXPECTED",
+      "dry_run_output_first_line": "[cleanup    ] GATE 1 review window check: now=2026-05-05T08:28:29Z ends=2026-05-06T23:26:12Z",
+      "dry_run_error_line": "[cleanup ERR] GATE 1 FAIL: review window not yet elapsed (now 2026-05-05T08:28:29Z < ends 2026-05-06T23:26:12Z); abort",
+      "expected_siblings": 16,
+      "expected_sha": "80440a1d38db9addc4445bb959057558a57f4230",
+      "review_window_close_utc": "2026-05-06T23:26:12Z",
+      "ready_to_run_at_utc": "2026-05-06T23:26:12Z"
+    },
+    "clm_v4_mk2_v1_promote": {
+      "path": "state/clm_v4_hf_release_v1_upload_2026_05_04/public_promote_2026_05_07.bash",
+      "preexisting": true,
+      "syntax_check_method": "bash -n",
+      "syntax_check_status": "PASS",
+      "dry_run_status": "GATE_1_FAIL_AS_EXPECTED",
+      "dry_run_output_first_line": "[promote    ] starting public promote pre-check at 2026-05-05T08:30:10Z",
+      "dry_run_error_line": "[promote ERR] GATE 1 FAIL: review window not yet elapsed (now 2026-05-05T08:30:10Z < ends 2026-05-06T23:26:12Z)",
+      "expected_siblings": 16,
+      "expected_sha": "80440a1d38db9addc4445bb959057558a57f4230",
+      "review_window_close_utc": "2026-05-06T23:26:12Z",
+      "ready_to_run_at_utc": "2026-05-06T23:26:12Z",
+      "manual_confirm_string": "PROMOTE-clm-v4-mk2-v1"
+    },
+    "pbeta_cleanup": {
+      "path": "state/p9_pbeta_hf_upload_2026_05_05/cleanup_pbeta_2026_05_08.bash",
+      "preexisting": false,
+      "newly_authored": true,
+      "template_source": "state/clm_v4_hf_release_v1_upload_2026_05_04/cleanup_2026_05_07.bash",
+      "deltas_from_template": [
+        "REPO_ID -> need-singularity/clm-v4-paradigm-d-pbeta-50k-mk2-v1",
+        "COMMIT_SHA -> 7643e764488f8e11020a7663c50f2e590b70d10f",
+        "EXPECTED_SIBLINGS -> 6 (Pβ stage: 5 stage files + .gitattributes auto-added by HF)",
+        "UBU1_STAGE -> /home/aiden/anima_pbeta_50k_step50000",
+        "MAC_STAGE_MIRROR -> state/p9_pbeta_paradigm_d_50k_hf_upload_stage_2026_05_05",
+        "REVIEW_WINDOW_ENDS_48H_UTC -> 2026-05-07T03:48:00Z"
+      ],
+      "syntax_check_method": "bash -n",
+      "syntax_check_status": "PASS",
+      "dry_run_status": "GATE_1_FAIL_AS_EXPECTED",
+      "dry_run_output_first_line": "[cleanup    ] GATE 1 review window check: now=2026-05-05T08:33:42Z ends=2026-05-07T03:48:00Z",
+      "dry_run_error_line": "[cleanup ERR] GATE 1 FAIL: review window not yet elapsed (now 2026-05-05T08:33:42Z < ends 2026-05-07T03:48:00Z); abort",
+      "expected_siblings": 6,
+      "expected_sha": "7643e764488f8e11020a7663c50f2e590b70d10f",
+      "review_window_close_utc": "2026-05-07T03:48:00Z",
+      "ready_to_run_at_utc": "2026-05-07T03:48:00Z",
+      "exec_bit_set": true
+    },
+    "pbeta_promote": {
+      "path": "state/p9_pbeta_hf_upload_2026_05_05/public_promote_pbeta_2026_05_08.bash",
+      "preexisting": false,
+      "newly_authored": true,
+      "template_source": "state/clm_v4_hf_release_v1_upload_2026_05_04/public_promote_2026_05_07.bash",
+      "deltas_from_template": [
+        "REPO_ID -> need-singularity/clm-v4-paradigm-d-pbeta-50k-mk2-v1",
+        "EXPECTED_SHA -> 7643e764488f8e11020a7663c50f2e590b70d10f",
+        "EXPECTED_SIBLINGS -> 6",
+        "REVIEW_CLOSE_UTC -> 2026-05-07T03:48:00Z",
+        "manual confirm string -> PROMOTE-pbeta-50k",
+        "G1 evidence retargeted to F-Pβ-2 + F-Pβ-3 verdicts",
+        "G2 evidence retargeted to README §C1 chat-FAIL_TRUE disclosure",
+        "G3 evidence retargeted to Pβ φ★=42.37 baseline",
+        "G5 NEW gate added — base model promotion status check (adapter inherits availability from need-singularity/clm-v4-mk2-v1)",
+        "G6 evidence retargeted to Pβ stage README.md (5 H2 + 7-bullet Caveats)"
+      ],
+      "syntax_check_method": "bash -n",
+      "syntax_check_status": "PASS",
+      "dry_run_status": "GATE_1_FAIL_AS_EXPECTED",
+      "dry_run_output_first_line": "[promote    ] starting public promote pre-check at 2026-05-05T08:34:11Z",
+      "dry_run_error_line": "[promote ERR] GATE 1 FAIL: review window not yet elapsed (now 2026-05-05T08:34:11Z < ends 2026-05-07T03:48:00Z)",
+      "expected_siblings": 6,
+      "expected_sha": "7643e764488f8e11020a7663c50f2e590b70d10f",
+      "review_window_close_utc": "2026-05-07T03:48:00Z",
+      "ready_to_run_at_utc": "2026-05-07T03:48:00Z",
+      "manual_confirm_string": "PROMOTE-pbeta-50k",
+      "exec_bit_set": true
+    }
+  },
+  "hf_hub_state_at_audit": {
+    "ts_utc": "2026-05-05T08:30:00Z",
+    "clm_v4_mk2_v1": {
+      "private": true,
+      "sha": "80440a1d38db9addc4445bb959057558a57f4230",
+      "lastModified": "2026-05-04T23:26:12.000Z",
+      "siblings_count": 16,
+      "matches_expected_at_upload": true,
+      "intact": true
+    },
+    "pbeta": {
+      "private": true,
+      "sha": "7643e764488f8e11020a7663c50f2e590b70d10f",
+      "lastModified": "2026-05-05T03:44:35.000Z",
+      "siblings_count": 6,
+      "matches_expected_at_upload": true,
+      "intact": true
+    }
+  },
+  "review_windows": {
+    "clm_v4_mk2_v1_uploaded_utc": "2026-05-04T23:26:12Z",
+    "clm_v4_mk2_v1_review_close_48h_utc": "2026-05-06T23:26:12Z",
+    "pbeta_uploaded_utc": "2026-05-05T03:48:00Z",
+    "pbeta_review_close_48h_utc": "2026-05-07T03:48:00Z"
+  },
+  "ready_to_run_timestamps": {
+    "clm_v4_mk2_v1_cleanup": "2026-05-06T23:26:12Z (or later)",
+    "clm_v4_mk2_v1_promote": "2026-05-06T23:26:12Z (or later)",
+    "pbeta_cleanup": "2026-05-07T03:48:00Z (or later)",
+    "pbeta_promote": "2026-05-07T03:48:00Z (or later)"
+  },
+  "destructive_ops_executed": false,
+  "git_committed": false,
+  "hf_hub_mutated": false,
+  "honest_caveats_c3": [
+    "C1 — shellcheck not installed on mac; syntax verification fell back to `bash -n` only. bash -n catches parser errors but NOT semantic issues like quoting, unused vars, ShellCheck SC2086 word-splitting, etc. Recommend installing shellcheck (brew install shellcheck) and re-running before final operator execution.",
+    "C2 — Dry-run only verified GATE 1 (review window). GATE 2 (HF state intact via `secret` CLI + curl + python3 parse) was NOT exercised by the dry-run because GATE 1 short-circuits abort; this is by design but means GATE 2's curl + python3 parse path remains unvalidated until real-time execution post-window-close. Mitigation: independent ad-hoc HF API curl in this verify cycle confirmed both repos return private+sha+siblings exactly matching script EXPECTED_* constants — equivalent coverage achieved out-of-band.",
+    "C3 — Pβ promote G5 gate (base model promotion status) is a NEW gate not present in clm template. Operator must verify base need-singularity/clm-v4-mk2-v1 has been public-promoted FIRST; otherwise non-auth readers cannot load the Pβ adapter (PEFT requires base + adapter both accessible). Order of operations matters: clm-v4-mk2-v1 promote MUST precede pbeta promote.",
+    "C4 — secret CLI on mac may return rotated/stale token (see verdict §C7 of pbeta upload). Both scripts call `secret get huggingface.token --raw` and validate `hf_*` prefix only; they do NOT validate `whoami` against HF API. If mac secret store has hf_asc... (rotated) instead of hf_dw... (working), GATE 2 will pass shape check but curl will return 401. Recommend re-syncing mac secret store before scheduled execution OR running scripts from ubu1 where ~/.cache/huggingface/token is known-working.",
+    "C5 — Mac stage mirrors are retained by default (cleanup `--delete-mac-mirror` opt-in flag). This is conservative for clm (3 files small) and Pβ (5 files ~76MB). Pβ mac mirror at ~76MB is borderline; if disk pressure justifies, operator should pass --delete-mac-mirror after confirming HF Hub canonical copy is intact.",
+    "C6 — No git commit in this BG (per task CRITICAL). All 4 scripts on disk including 2 newly authored ones; operator must commit them in a follow-up cycle (or accept they live in state/ which is gitignored anyway — both pbeta scripts are inside state/p9_pbeta_hf_upload_2026_05_05/ which IS gitignored; this is fine for execution but means scripts are not version-tracked).",
+    "C7 — bash version on mac is /bin/bash 3.2 (system bash). Both scripts use `[[ ... < ... ]]` ISO-8601 string comparison which works in bash 3.2+ as lexicographic comparison and is correct for fixed-format YYYY-MM-DDTHH:MM:SSZ strings (no DST/timezone ambiguity since both sides UTC). Confirmed working by all 4 dry-runs."
+  ],
+  "next_ranked_actions": [
+    "rank-1 USER ACK and schedule clm-v4-mk2-v1 cleanup + promote scripts at 2026-05-06T23:26:12Z (review window close); promote requires manual `PROMOTE-clm-v4-mk2-v1` confirm",
+    "rank-2 USER ACK and schedule pbeta cleanup + promote scripts at 2026-05-07T03:48:00Z (review window close); promote requires manual `PROMOTE-pbeta-50k` confirm AND base model already public-promoted",
+    "rank-3 install shellcheck on mac + re-audit all 4 scripts for SC* findings before scheduled execution",
+    "rank-4 mac secret store huggingface.token re-sync (current returns hf_asc... per pbeta upload C7; ubu1 cache hf_dw... works) — preempt potential GATE 2 401 at execution time",
+    "rank-5 (optional) commit pbeta scripts to anima git for version tracking — but state/ is gitignored; consider docs/-side recipe doc instead"
+  ]
+}
