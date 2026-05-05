@@ -1,0 +1,31 @@
+[pbeta-f3-hybrid] 03:16:05 device=cuda torch=2.11.0+cu128
+[pbeta-f3-hybrid] 03:16:05 tokenizer vocab=64000
+[pbeta-f3-hybrid] 03:16:07 decoder built params=477,648,512
+[pbeta-f3-hybrid] 03:16:08 clm v4 base loaded missing=0 unexpected=0
+/home/aiden/venv_orchestrator/lib/python3.12/site-packages/peft/tuners/tuners_utils.py:302: UserWarning: Already found a `peft_config` attribute in the model. This will lead to having multiple adapters in the model. Make sure to know what you are doing!
+  warnings.warn(
+[pbeta-f3-hybrid] 03:16:09 adapter loaded, eval mode
+[pbeta-f3-hybrid] 03:16:09 holdout loaded n=500
+[pbeta-f3-hybrid] 03:16:24 progress 25/500 mean_bleu1=0.003750 mean_rouge_l=0.008478 mean_chrf=0.017489
+[pbeta-f3-hybrid] 03:16:39 progress 50/500 mean_bleu1=0.005625 mean_rouge_l=0.006239 mean_chrf=0.020999
+[pbeta-f3-hybrid] 03:16:54 progress 75/500 mean_bleu1=0.006250 mean_rouge_l=0.007321 mean_chrf=0.024363
+[pbeta-f3-hybrid] 03:17:09 progress 100/500 mean_bleu1=0.006562 mean_rouge_l=0.006370 mean_chrf=0.021333
+[pbeta-f3-hybrid] 03:17:25 progress 125/500 mean_bleu1=0.008500 mean_rouge_l=0.011265 mean_chrf=0.023041
+[pbeta-f3-hybrid] 03:17:39 progress 150/500 mean_bleu1=0.008750 mean_rouge_l=0.010367 mean_chrf=0.022128
+[pbeta-f3-hybrid] 03:17:52 progress 175/500 mean_bleu1=0.008750 mean_rouge_l=0.009287 mean_chrf=0.022428
+[pbeta-f3-hybrid] 03:18:07 progress 200/500 mean_bleu1=0.008750 mean_rouge_l=0.008626 mean_chrf=0.021333
+[pbeta-f3-hybrid] 03:18:23 progress 225/500 mean_bleu1=0.008750 mean_rouge_l=0.008063 mean_chrf=0.022615
+[pbeta-f3-hybrid] 03:18:38 progress 250/500 mean_bleu1=0.008250 mean_rouge_l=0.007639 mean_chrf=0.023316
+[pbeta-f3-hybrid] 03:18:52 progress 275/500 mean_bleu1=0.007727 mean_rouge_l=0.007207 mean_chrf=0.022507
+[pbeta-f3-hybrid] 03:19:08 progress 300/500 mean_bleu1=0.008021 mean_rouge_l=0.006606 mean_chrf=0.022413
+[pbeta-f3-hybrid] 03:19:22 progress 325/500 mean_bleu1=0.008365 mean_rouge_l=0.006440 mean_chrf=0.022108
+[pbeta-f3-hybrid] 03:19:35 progress 350/500 mean_bleu1=0.008393 mean_rouge_l=0.006811 mean_chrf=0.022651
+[pbeta-f3-hybrid] 03:19:50 progress 375/500 mean_bleu1=0.008167 mean_rouge_l=0.007109 mean_chrf=0.022366
+[pbeta-f3-hybrid] 03:20:05 progress 400/500 mean_bleu1=0.007734 mean_rouge_l=0.006882 mean_chrf=0.022666
+[pbeta-f3-hybrid] 03:20:20 progress 425/500 mean_bleu1=0.007941 mean_rouge_l=0.006851 mean_chrf=0.022327
+[pbeta-f3-hybrid] 03:20:34 progress 450/500 mean_bleu1=0.007569 mean_rouge_l=0.006471 mean_chrf=0.022280
+[pbeta-f3-hybrid] 03:20:49 progress 475/500 mean_bleu1=0.007500 mean_rouge_l=0.006130 mean_chrf=0.022028
+[pbeta-f3-hybrid] 03:21:05 progress 500/500 mean_bleu1=0.007500 mean_rouge_l=0.005824 mean_chrf=0.021955
+[pbeta-f3-hybrid] 03:21:05 eval done 500 in 295.6s
+[pbeta-f3-hybrid] 03:21:05 summary: bleu1=0.007500 rouge_l=0.005824 chrf=0.021955 composite=0.011760 band=RED
+[pbeta-f3-hybrid] 03:21:05 total wall 302.4s
