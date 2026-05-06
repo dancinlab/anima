@@ -1,0 +1,34 @@
+{
+  "schema_version": "0.1.0",
+  "captured_ts": "2026-05-06T02:22:37Z",
+  "qmirror_version": "1.0.0",
+  "n_qubits": 4,
+  "phi_star": 0.0,
+  "phi_star_provenance": {
+    "kind": "qmirror_canonical_mock_braket_reproduce",
+    "explanation": "qmirror iit subcmd delegates to iit_mip.hexa --reproduce-braket-2026-05-02, which re-runs the 4 stored Braket TPM fixtures (and_ionq_forte1[3q], maj_ionq_forte1[4q], and_sv1[4q], maj_sv1[4q]). Under MOCK engine (pyphi not installed), all 4 emit phi_star=0.0 byte-identical with stored verdict.json. The 0.0 value is itself the canonical pyphi-derived result on these fixtures (state/braket_iit40_mip_2026_05_02/phi_star_results.json), preserved through MOCK as a CI-stable byte-equivalent mirror.",
+    "n_systems_passed": 4,
+    "n_systems_total": 4,
+    "all_byte_match": true,
+    "fixture_4q_systems_used": ["maj_ionq_forte1", "and_sv1", "maj_sv1"],
+    "fixture_3q_systems_used": ["and_ionq_forte1"]
+  },
+  "measurement_command": "HEXA_FORK_CAP=64 QMIRROR_ROOT=~/core/qmirror hexa run ~/core/qmirror/cli/qmirror.hexa iit --n-qubits=4 --json",
+  "raw_output_excerpt": "qmirror iit — IIT 4.0 phi-star measurement (n_qubits=4)\n  delegating: iit_mip.hexa --reproduce-braket-2026-05-02\n  note: n-qubits flag accepted for symmetry; module reproduces stored\n        4 Braket fixtures (n_qubits embedded per fixture, cap=12).\n[qmirror/iit_mip] IIT 4.0 MIP φ★ calc (Phase 2 EXEC)\n  bridge path = /Users/ghost/core/qmirror/_python_bridge/module/iit_mip_runner.py\nF5 cond.6 reproduce: ok=1 all_byte_match=1 n=4/4 engine=mock msg=F5 cond.6: all 4 systems byte-identical match\n__QMIRROR_IIT_MIP__ PASS\n{\"qmirror\":\"1.0.0\",\"subcmd\":\"iit\",\"n_qubits\":4,\"pass\":true}",
+  "engine": "mock",
+  "engine_reason": "pyphi (feature/iit-4.0 commit b78d0e3) not installed in current python3 env (ModuleNotFoundError: No module named 'pyphi'). qmirror auto-falls-back to MOCK which returns the canonical phi_star=0.0 verdict for the 4 Braket TPM fixtures. The MOCK output is byte-identical to the recorded live-pyphi run captured in state/braket_iit40_mip_2026_05_02/verdict.json — see phi_star_provenance.kind.",
+  "baseline_kind": "qmirror_standard_reference",
+  "baseline_kind_disclaimer": "This is the qmirror standard reference baseline (4 stored Braket fixtures reproduced byte-identical), NOT anima-14B's actual hidden-state phi-star measured via projection. Future work plumbs anima-14B forward-pass -> 4q amplitude encoding -> qmirror iit, then computes the ratio against this baseline.",
+  "candidate_cond_9": {
+    "definition": "phi_star(mirror) / phi_star(this_baseline) >= 0.85",
+    "definition_caveat": "phi_star=0.0 baseline makes a literal ratio undefined (0/0). When mirror measurement comes online, the operationalized form is: ratio := phi_star(mirror) / max(phi_star(baseline), epsilon) where epsilon=1e-6, OR — preferred — re-anchor baseline against a non-trivial fixture (e.g. anima-14B 4q projection on a live pyphi engine) before declaring cond.9 evaluable. See cond9_spec.md.",
+    "status": "baseline_only_no_mirror_measurement_yet",
+    "future_work": "project anima-14B forward-pass hidden state to 4q (pick 4 hidden-state coordinates → encode as 4-qubit amplitudes via state preparation circuit), run qmirror iit on the resulting TPM, compute ratio. Also: install pyphi (`pip install git+https://github.com/wmayner/pyphi.git@b78d0e3`) so the baseline can be re-measured live (engine=pyphi) on a non-canonical 4q TPM that yields phi_star > 0."
+  },
+  "future_work_followups": [
+    "install pyphi feature/iit-4.0 b78d0e3 → re-measure baseline with engine=pyphi",
+    "implement anima-14B hidden-state -> 4q projection (pick coordinates, amplitude encode, derive TPM)",
+    "open diag/phi_star_mirror_track.jsonl as append-only timeline of mirror phi-star measurements",
+    "cond.9 evaluator: hexa script that reads baseline_4q.json + latest mirror_track entry and emits PASS/FAIL"
+  ]
+}
