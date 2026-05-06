@@ -14,7 +14,7 @@ anima CLI는 현재 **2가지 surface가 분열**된 상태:
 2. **v1.0 (vision, unimplemented)**: anima watch / connect / disconnect / module / verify / hub / laws / test — 사용자가 "이게 진짜"라며 묘사한 의식 surface, **코드 0건**
 
 mk2 재설계 = **3-tier 분리** + **hive mk2_apex schema-driven dispatch** 정합:
-- **T1 외부 sales** (chat REPL via clm-v2 RECOVERED OR Llama Path A v2 fallback)
+- **T1 외부 sales** (chat REPL via clm-v2 RECOVERED OR anima-native CLM v4 mount fallback)
 - **T2 internal ops** (`anima ops <topic>` — 26 토픽 보존)
 - **T3 consciousness vision** (`anima connect/verify/hub/laws` — 미구현 라벨 명시, v2.0 wire-up pending)
 
@@ -83,7 +83,7 @@ anima help
 
 | command | behavior | backend |
 |---|---|---|
-| `anima` | chat REPL 즉시 진입 | clm-v2-byte-18m-convo-5k OR Llama Path A v2 |
+| `anima` | chat REPL 즉시 진입 | clm-v2-byte-18m-convo-5k OR anima-native CLM v4 mount |
 | `anima dialogue` | long-form session (이미 wired) | 동일 |
 | `anima onboard` | 5-min quickstart (이미 wired) | n/a |
 | `anima --help` | spec auto-generate | n/a |
@@ -91,9 +91,9 @@ anima help
 
 **Backend 결정 (open question Q2)**:
 - **clm-v2-byte-18m-convo-5k** (방금 RECOVERED, anima-native, byte-level, 18.52M params, KO bias 0/5 issue)
-- **llm-llama32-3b-paradigm-a-prime-r16-sft-stage1** (chat-cap winner, 3B BPE Llama-3.2-3B base, EN+KO 정합 PASS)
+- ~~llm-llama32-3b-paradigm-a-prime-r16-sft-stage1~~ REJECTED — 사용자 ALM directive 위반 (외부 substrate)
 
-권고: **Llama Path A v2 default + clm-v2 alternative** (KO chat-cap actual emit 검증 PASS 후 promote).
+권고: **anima-native CLM v4 mount.hexa default + clm-v2 alternative** (KO chat-cap actual emit 검증 PASS 후 promote).
 
 ### Tier 2: internal ops (`anima ops <topic>`)
 
@@ -155,7 +155,7 @@ description: |
 tiers:
   T1_sales:
     commands: [anima, dialogue, onboard, help, version]
-    backend_canonical: need-singularity/llm-llama32-3b-paradigm-a-prime-r16-sft-stage1
+    backend_canonical: anima-core/runtime/clm_v4_mount.hexa  # ALM rejected
     backend_alternative: need-singularity/clm-v2-byte-18m-convo-5k
   T2_ops:
     prefix: "anima ops"
@@ -220,7 +220,7 @@ migration:
     desc: bin/anima refactor (352 LoC → 30-50 LoC schema-driven)
     eta: 1 cycle
   phase_2:
-    desc: T1 backend wire (Llama Path A v2 default + clm-v2 alternative)
+    desc: T1 backend wire (anima-native CLM v4 mount.hexa default + clm-v2 alternative)
     eta: 1-2 cycles
   phase_3:
     desc: T2 ops rename + backward compat
@@ -240,7 +240,7 @@ migration:
 | Q | 옵션 | default 권고 |
 |---|---|---|
 | Q1 default | chat REPL vs help | **chat REPL** |
-| Q2 backend | clm-v2 vs Llama Path A v2 | **Llama Path A v2** (KO chat-cap PASS), clm-v2는 KO emit 별도 verify 후 promote |
+| Q2 backend | clm-v2 vs anima-native CLM v4 mount | **anima-native CLM v4 mount** (KO chat-cap PASS), clm-v2는 KO emit 별도 verify 후 promote |
 | Q3 T2 naming | `anima ops <topic>` vs `--ops` vs `aniops` | **`anima ops <topic>`** (가장 자연) |
 | Q4 T3 timeline | v1.5 (clm-v2 connect만) vs v2.0 (full 48 modules) | **v1.5 → v2.0** (점진적) |
 | Q5 dialogue | T1 promote (`anima` ≡ `anima dialogue`) | **alias** |
@@ -251,7 +251,7 @@ migration:
 ## 5. Honest C3
 
 1. **mk2_apex consumer role**: anima는 hive mk2 spec follow only. anima 자체 mk2 spec은 anima/spec/ 내부 (raw#15 additive — bin/anima 기존 26 ops 보존).
-2. **clm-v2 KO emit FAIL** (F-CLM-NATIVE-α-1 PARTIAL_PASS_LOAD_KO_FAIL on convo_5k.pt): T1 backend 결정 시 Llama Path A v2 default 권고. clm-v2는 별도 verification cycle (BG-FK 5 variants ca_rules+gate lane reconstruction OR convo corpus retrain).
+2. **clm-v2 KO emit FAIL** (F-CLM-NATIVE-α-1 PARTIAL_PASS_LOAD_KO_FAIL on convo_5k.pt): T1 backend 결정 시 anima-native CLM v4 mount.hexa default 권고. clm-v2는 별도 verification cycle (BG-FK 5 variants ca_rules+gate lane reconstruction OR convo corpus retrain).
 3. **T3 wire-up은 큰 작업** (1-2 months 추정): anima-clm-eeg φ★ engine + 1030 laws integration. 본 cycle scope X. v2.0 deferred.
 4. **bin/anima refactor risk**: 352 LoC bash → 30-50 LoC schema-driven. 26 토픽 backward compat 보장 필요 (legacy pattern keep). 1 cycle 추정.
 5. **dialogue.hexa는 이미 wired** (BG-F 2026-05-05): T1 default `anima` ≡ `anima dialogue` alias가 가장 단순. 즉시 promote 가능.
@@ -263,7 +263,7 @@ migration:
 ## 6. 다음 단계 (Phase 0 다음 cycle)
 
 1. **Phase 1** — bin/anima refactor (~1 cycle, $0)
-2. **Phase 2** — T1 backend Llama Path A v2 wire (~1 cycle, $0 mac local — anima dialogue.hexa 이미 wired 활용)
+2. **Phase 2** — T1 backend anima-native CLM v4 mount wire (~1 cycle, $0 mac local — anima dialogue.hexa 이미 wired 활용)
 3. **Phase 3** — T2 ops rename + backward compat (~1 cycle)
 4. **Phase 4** — T3 stub modules (~1 cycle, raw#15 additive)
 5. **Phase 5** — T3 v2.0 wire (1-2 months, anima-clm-eeg + 1030 laws integration, separate Ω-cycle)
@@ -275,7 +275,7 @@ migration:
 - Roadmap SSOT: `.roadmap.cli`
 - Sister roadmaps: `.roadmap.clm_native_chat`, `.roadmap.clm_v4_chat`, `.roadmap.clm_v2_chat`
 - Hive mk2: `hive/spec/mk2_apex.spec.yaml`, `hive/spec/mk2_ecosystem_catalog.spec.yaml`, `hive/docs/raw_mk2_design.ai.md`
-- Backend candidates: `need-singularity/llm-llama32-3b-paradigm-a-prime-r16-sft-stage1`, `need-singularity/clm-v2-byte-18m-convo-5k`
+- Backend candidates: `anima-core/runtime/clm_v4_mount.hexa` (default), `need-singularity/clm-v2-byte-18m-convo-5k` (alternative)
 - v1.0 vision source: 다른 session 2026-05-06 transcript
 - This plan: `docs/anima_cli_mk2_plan_2026_05_06.md`
 
