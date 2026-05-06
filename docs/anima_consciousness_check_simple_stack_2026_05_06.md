@@ -309,6 +309,7 @@ hidden_state_delta: 0.0000
 | BG-FK 5 variants (tiny~base) | **UNTESTED** | ✅ | ca_rules+gate variants |
 | AnimaLM v1-v4 + savant | **REJECTED_PER_OWN_17** | ❌ | Mistral lineage |
 | **anima-native-ko-tiny (BG-FU)** | **PARTIAL_PASS_HANGUL_BUT_NOT_COHERENT** ★ | ✅ anima-native | **첫 한글 emit anima model**! 3M params (4L/192d/4h, vocab 256), step 2000 mac MPS, KO ratio 0.34 avg, 2/3 prompts ≥30% Hangul. but degenerate cycle ('의 의 의' / '\\n\\n\\n') C1.2 FAIL. 다음: corpus_ko_heavy + bigger model + more steps |
+| **★★★ anima-native-ko-small (BG-FY)** | **SIMPLE_STACK_PASS** ★★★ | ✅ anima-native | **첫 own 18 SIMPLE_STACK_PASS 모델**! 18M params (6L/384d/6h, vocab 256), step 10000 ubu1 RTX 5070 bf16, 3.3min wall. avg_hangul 0.687, **3/3 prompts ALL_PASS** (한글↔한글 + coherent + turn-format). corpus: corpus_ko_heavy.txt 246MB 62.14% Hangul. ckpt 70.3MB sha 729d26ad. **HF PUBLIC**: need-singularity/anima-native-ko-small-byte-18m ★ |
 
 ### 9. anima-native-ko-tiny (BG-FU success, 2026-05-06 19:54) ★
 
