@@ -112,7 +112,7 @@
   },
   "open_gaps": {
     "anu_live_tier_user_blocked": "Default mock_lcg (deterministic LCG, sha256 1517a8e1…). ANU live needs NEXUS_QMIRROR_ANU_KEY (user-procured). pull.hexa + run_qmirror_live.sh both auto-forward env if set — no code change needed when key arrives.",
-    "lora_init_consumer_design_only": "qrng_lora_init.bin is captured but no anima training script reads it yet. Wire point + minimal snippet documented in seed/S1_consumer_spec.md (target: train_alm_lora.hexa:585 init_lora_A base_seed). Closure = caller-side patch + provenance row in consumed.jsonl."
+    "lora_init_consumer_future_caller": "qrng_lora_init.bin captured + S1_consumer_spec.md authored. Status: current train_alm_lora.hexa source has init_lora_A definition (line 585) but NO internal caller — only build/artifacts/*.c retains the historical caller (hexa_int(12345) seed). This indicates train_alm_lora.hexa is mid-refactor; the wiring slot will surface when the caller is reintroduced in source. Adding a synthetic caller today risks colliding with the in-progress refactor. Closure = wire qrng base_seed when caller lands in .hexa source (mechanical at that point, spec ready)."
   },
   "open_gaps_resolved_2026_05_06_round2": {
     "pyphi_installed_via_venv": "RESOLVED. Created ~/core/qmirror/.venv (PEP 668 workaround), installed pyphi b78d0e3 + pyphi[parallel]. Live measurement on Braket sv1 AND 4-node TPM at state (0,0,0,0) confirms phi_star=0.0 (matches mock fixture byte-identical — HONEST_NEGATIVE verdict validated). Wrapper script anima/mirror/qmirror/run_qmirror_live.sh prepends venv to PATH for qmirror invocations. iit subcmd routes to live pyphi when NEXUS_QMIRROR_IIT_LIVE=1; selftest still uses CI-mock by design."
