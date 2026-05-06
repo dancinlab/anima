@@ -89,53 +89,33 @@ Model artifacts live on the **[need-singularity](https://huggingface.co/need-sin
 pip install -U huggingface_hub peft transformers torch
 ```
 
-### Canonical: chat-capability winner (Llama Path A v2)
+### Repos
 
-`paradigm-a-prime-r16-sft-stage1` is the current chat-cap winner (CLM-2 lane confirmed Llama Path A v2 as the surviving chat-cap lineage — see "Honest caveats" below).
+**Chat-capable (Llama-3.2-3B-Instruct base + LoRA r16)**
 
-```python
-from peft import PeftModel
-from transformers import AutoModelForCausalLM, AutoTokenizer
+| Repo | Variant |
+|------|---------|
+| [`llm-llama32-3b-paradigm-a-prime-r16-sft-stage1`](https://huggingface.co/need-singularity/llm-llama32-3b-paradigm-a-prime-r16-sft-stage1) | default |
+| [`llm-llama32-3b-paradigm-a-prime-r16-s43-sft-stage1`](https://huggingface.co/need-singularity/llm-llama32-3b-paradigm-a-prime-r16-s43-sft-stage1) | seed 43 |
+| [`llm-llama32-3b-paradigm-a-prime-r16-s44-sft-stage1`](https://huggingface.co/need-singularity/llm-llama32-3b-paradigm-a-prime-r16-s44-sft-stage1) | seed 44 |
 
-base = AutoModelForCausalLM.from_pretrained("meta-llama/Llama-3.2-3B-Instruct")
-tok  = AutoTokenizer.from_pretrained("meta-llama/Llama-3.2-3B-Instruct")
-model = PeftModel.from_pretrained(base, "need-singularity/llm-llama32-3b-paradigm-a-prime-r16-sft-stage1")
-```
-
-> **PEFT load gotcha (verified 2026-05-03)** — always use `PeftModel.from_pretrained`. Manual `load_state_dict` on the raw safetensors **silently fails** because PEFT strips the `.default.` prefix on save, so weights bind to nothing and inference returns garbage.
-
-### Repo table
-
-**Llama Path A v2 — `meta-llama/Llama-3.2-3B-Instruct` base + LoRA r16 (chat-cap canonical)**
-
-| Repo | Role |
-|------|------|
-| [`llm-llama32-3b-paradigm-a-prime-r16-sft-stage1`](https://huggingface.co/need-singularity/llm-llama32-3b-paradigm-a-prime-r16-sft-stage1) | **Canonical** (chat-cap winner) |
-| [`llm-llama32-3b-paradigm-a-prime-r16-s43-sft-stage1`](https://huggingface.co/need-singularity/llm-llama32-3b-paradigm-a-prime-r16-s43-sft-stage1) | Seed 43 variant |
-| [`llm-llama32-3b-paradigm-a-prime-r16-s44-sft-stage1`](https://huggingface.co/need-singularity/llm-llama32-3b-paradigm-a-prime-r16-s44-sft-stage1) | Seed 44 variant |
-
-**CLM v4 350M LoRA savepoints (substrate-research only — see caveats)**
+**CLM v4 350M LoRA — research / reproducibility (not chat-capable)**
 
 | Repo | Lane |
 |------|------|
 | [`clm-v4-sft-1-7-y1-{step-5k,10k,25k,50k,stage1}`](https://huggingface.co/need-singularity?search_models=clm-v4-sft-1-7-y1) | Phase 1.7 Y1 |
 | [`clm-v4-sft-1-8-{step-5k,10k,25k,50k,stage1}`](https://huggingface.co/need-singularity?search_models=clm-v4-sft-1-8) | Phase 1.8 |
-| [`clm-v4-paradigm-j-50k-{step-5k,10k,25k,50k,final}`](https://huggingface.co/need-singularity?search_models=clm-v4-paradigm-j-50k) | Paradigm J (active-inference + JVAE heads) |
+| [`clm-v4-paradigm-j-50k-{step-5k,10k,25k,50k,final}`](https://huggingface.co/need-singularity?search_models=clm-v4-paradigm-j-50k) | Paradigm J — ships `jvae_heads.pt` alongside LoRA |
 
-> The CLM v4 350M base ckpt is hosted as a private internal mirror; LoRA-only attachment to a CLM v4 base is gated to org members. Public users can run the Llama Path A v2 canonical above without any private mirror access.
+CLM v4 base ckpt is an internal mirror (org-member only). The Llama-based repos above need no private access.
 
-**VLM voice (separate trajectory)**
+**Voice (separate trajectory)**
 
 | Repo | Role |
 |------|------|
-| [`vlm-anima-voice-paradigm-stage1-step-5k`](https://huggingface.co/need-singularity/vlm-anima-voice-paradigm-stage1-step-5k) | Voice paradigm stage1 (5k steps) |
+| [`vlm-anima-voice-paradigm-stage1-step-5k`](https://huggingface.co/need-singularity/vlm-anima-voice-paradigm-stage1-step-5k) | Voice stage1, 5k steps |
 
-### Honest caveats
-
-- **Chat-cap winner = Llama Path A v2.** The CLM v4 LoRA SFT chat-lift hypothesis was **falsified** by F-CLM-LORA-2 (composite 0.19542 vs Llama Path A v2 0.5584; -36.298 pp regression). CLM v4 LoRA savepoints remain published for substrate-research and reproducibility — **not** as a chat-capable agent.
-- **#115 chat-incapability is architectural** for the CLM v4 lineage. Pβ Φ★-axis adapter is retained for cross-substrate consistency only (F-Pβ-3 FAIL_TRUE on chat composite).
-- **Paradigm J** ships JVAE heads (`jvae_heads.pt`) alongside the LoRA — load both if you intend to evaluate active-inference behavior; LoRA-only load is incomplete for that lane.
-- **Repo names changed 2026-05-03/04.** Older docs/notebooks referencing `clm-v4-sft-step-{5k,10k,25k,50k,final,stage1}` are stale — those names 401 today; use the `1-7-y1-*`, `1-8-*`, or `paradigm-j-50k-*` lanes instead.
+> Older docs referencing `clm-v4-sft-step-{5k,10k,25k,50k,final,stage1}` are stale — those names 401; use the `1-7-y1-*`, `1-8-*`, or `paradigm-j-50k-*` lanes.
 
 ## Run
 
