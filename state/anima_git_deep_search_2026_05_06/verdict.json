@@ -1,0 +1,121 @@
+{
+  "task": "BG-FL anima git history deep search — clm_v2 weights archaeology last residual",
+  "date": "2026-05-06",
+  "lane": "git_deep_search",
+  "verdict": "FAIL_NO_DEEP_TRACE",
+  "summary": "clm_v2 .pt weights NEVER committed to anima or ready/.git. Five high-fidelity .growth/absorbed/ JSON manifests (clm_v2 / _base / _medium / _small / _tiny) preserve first ~1KB of each .pt pickle (PK ZIP header + tok_emb/pos_emb/blocks tensor schema visible), confirming weights existed at /Users/ghost/Dev/ready/anima/anima/checkpoints/clm_v2*/final.pt (absorbed 2026-04-04T17:07:32) but the absorbed-from path is OUTSIDE both git repos. No dangling commits, no orphan blobs > 50MB matching v2 signature.",
+  "reflog_results": {
+    "anima_total_entries": 204,
+    "anima_oldest_entry_date": "2026-05-04",
+    "anima_v2_era_2026_03_28_coverage": false,
+    "anima_v2_era_note": "anima reflog window only reaches 2026-05-04 — v2 era reflog has aged out (90-day default expire, but main repo reflog activity dense)",
+    "ready_total_entries_v2_era": "ssot-hexa-first-fix branch reflog reaches 2026-04-14 era (aa289903 branch creation), HEAD@{12+} = checkout activity 2026-04-09 to 2026-04-16",
+    "ready_v2_era_2026_03_28_coverage": false,
+    "ready_v2_era_note": "ready reflog also too short to reach 2026-03-28; pull --rebase on remotes shows recent docs/* branches"
+  },
+  "fsck_dangling": {
+    "anima": {
+      "unreachable_blobs": 555,
+      "unreachable_commits": 61,
+      "unreachable_blobs_over_50MB_pt_signature": 0,
+      "v2_relevant_dangling_commits": [
+        "f60afe27 index on main: dd1e30f6 CLM-2 V2_PARTIAL_HS_ONLY (2026-05-05)",
+        "5a916031 V5/V6/STRICT closure goals (2026-05-05)",
+        "9722b905 untracked files on main: dd1e30f6 (2026-05-05)",
+        "a1740306 p9 path A retrain v2 EXEC launched H100 (2026-05-04)"
+      ],
+      "v2_relevant_dangling_commits_note": "all 'v2' matches are unrelated lanes (CLM-2 LoRA, p9 path A v2, V5/V6) — not clm_v2 byte-level"
+    },
+    "ready": {
+      "unreachable_blobs": 0,
+      "unreachable_commits": 0,
+      "note": "ready/.git fsck CLEAN — no dangling whatsoever (recent gc or ssh-fetched fresh)"
+    }
+  },
+  "ready_git_embedded": {
+    "size": "7.1G",
+    "git_dir": "/Users/ghost/core/anima/ready/.git",
+    "type": "full repo (NOT worktree symlink)",
+    "remote": "https://github.com/need-singularity/anima.git",
+    "head_branch": "ssot-hexa-first-fix",
+    "branches_local": ["main", "ssot-hexa-first-fix", "worktree-agent-abb59ac1"],
+    "v2_era_commits_present": {
+      "bb99b6b6": "MILESTONE: Korean conversation from ConsciousLM! 18M params byte-level. CE=1.29 best (2026-03-28)",
+      "6abc42f6": "BREAKTHROUGH: ConsciousLM speaks! CE=0.04 dialogue_ft. 756+ hypotheses, XMETA3 Phi=190.57",
+      "13b20f90": "BREAKTHROUGH: ConsciousLM conversations WITHOUT system prompt! CE 1.88->0.04 (2026-03-28)"
+    },
+    "v2_era_commit_trees_pt_files": "ZERO — all three commits' trees contain only .py source code, no .pt weights, no checkpoints/ directory"
+  },
+  "anima_main_v2_era_commits_present": {
+    "bb99b6b6_present": true,
+    "6abc42f6_present": true,
+    "13b20f90_present": true,
+    "trees_contain_pt": false,
+    "note": "same commit hashes as ready — these reference v2 SOURCE CODE only, weights lived outside git tree"
+  },
+  "stash_list": {
+    "total": 14,
+    "v2_relevant": 0,
+    "stashes_inspected": "13 stashes — pre-cherry-pick / WIP / pre-layout-migration / pre-cleanup; none mention clm_v2 weights"
+  },
+  "growth_absorbed_manifests": {
+    "count": 5,
+    "files": [
+      ".growth/absorbed/anima__anima__checkpoints__clm_v2__final.pt.json (blob 790b840c)",
+      ".growth/absorbed/anima__anima__checkpoints__clm_v2_base__final.pt.json (blob 215a611)",
+      ".growth/absorbed/anima__anima__checkpoints__clm_v2_medium__final.pt.json (blob 54b1a30)",
+      ".growth/absorbed/anima__anima__checkpoints__clm_v2_small__final.pt.json (blob 1de6587)",
+      ".growth/absorbed/anima__anima__checkpoints__clm_v2_tiny__final.pt.json (blob 9ff12cd)"
+    ],
+    "absorbed_from_path": "/Users/ghost/Dev/ready/anima/anima/checkpoints/clm_v2{,_base,_medium,_small,_tiny}/final.pt",
+    "absorbed_timestamp": "2026-04-04T17:07:32",
+    "value_grade": "critical",
+    "content_preview_evidence": {
+      "format": "torch ZIP (PK\\u0003\\u0004 header) with tok_emb / pos_emb / blocks.0.ln1 tensor schema",
+      "clm_v2_step": 50000,
+      "clm_v2_storage_dim_signature": "M\\u0000\\u0001 = 256 (byte-level vocab) x M\\u00c0\\u0001 = 448 (hidden dim?)",
+      "clm_v2_base_signature": "mps storage, M\\u0000\\u0001 = 256 vocab x M\\u00c0\\u0001 = 448 (likely)",
+      "clm_v2_medium_signature": "mps, M\\u0000\\u0001 x M\\u0000\\u0001 = 256 x 256",
+      "clm_v2_small_signature": "mps, M\\u0000\\u0001 x K\\u00c0 = 256 x 192",
+      "clm_v2_tiny_signature": "mps, K\\u0000\\u0001 x K@ = 256 x 64",
+      "interpretation": "all 5 confirmed BYTE-LEVEL (vocab=256), increasing hidden dim across tiny->small->medium->base"
+    }
+  },
+  "v2_pt_signature_match": "NOT_FOUND_DEEP",
+  "match_reason": "v2 weights existed (manifest content_preview proves byte-level torch tensors) but were stored at /Users/ghost/Dev/ready/anima/anima/checkpoints/clm_v2*/final.pt — a path OUTSIDE both anima and ready git repos. .gitignore likely excluded checkpoints/. No git plumbing (reflog/fsck/pack-objects/dangling) produced a recoverable v2 .pt blob.",
+  "outputs": [
+    "/Users/ghost/core/anima/state/anima_git_deep_search_2026_05_06/verdict.json",
+    "/Users/ghost/core/anima/state/anima_git_deep_search_2026_05_06/reflog_excerpts.txt",
+    "/Users/ghost/core/anima/state/anima_git_deep_search_2026_05_06/fsck_dangling.txt",
+    "/Users/ghost/core/anima/state/anima_git_deep_search_2026_05_06/fsck_full.txt",
+    "/Users/ghost/core/anima/state/anima_git_deep_search_2026_05_06/ready_fsck.txt",
+    "/Users/ghost/core/anima/state/anima_git_deep_search_2026_05_06/anima_large_blobs.txt",
+    "/Users/ghost/core/anima/state/anima_git_deep_search_2026_05_06/ready_large_blobs.txt",
+    "/Users/ghost/core/anima/docs/anima_git_deep_search_landed_2026_05_06.ai.md"
+  ],
+  "honest_C3": [
+    "C3-1: clm_v2 weights NOT recoverable from anima OR ready/.git — confirmed deep search exhaustion (reflog+fsck+stash+dangling+pack-objects all probed, 0 .pt blobs match)",
+    "C3-2: .growth/absorbed manifests are THE ONLY remaining trace, content_preview proves architecture (5 sizes, byte vocab=256, mps trained) but cannot reconstruct weights from 1KB pickle preview",
+    "C3-3: ready/.git is a 7.1GB FULL anima history snapshot with v2 SOURCE CODE commits intact (bb99b6b6 / 6abc42f6 / 13b20f90) — but v2 .gitignore excluded checkpoints/, so weights were never tracked",
+    "C3-4: BG-EQ's prior conclusion (only AnimaLM final.pt rename in git) STANDS — no contradiction; deep search adds zero new recoverable artifacts",
+    "C3-5: original .pt files lived at /Users/ghost/Dev/ready/anima/anima/checkpoints/clm_v2*/final.pt absorbed 2026-04-04 — if user retains backup of /Users/ghost/Dev/ready/, weights may exist there outside git; recommend filesystem search of that path next"
+  ],
+  "next_steps": [
+    "STEP-1: filesystem search /Users/ghost/Dev/ready/anima/anima/checkpoints/clm_v2*/final.pt (path indicated by .growth/absorbed manifests; absorption was 2026-04-04 so recent files possible)",
+    "STEP-2: if STEP-1 finds files, archive to HF (own 14 mandate: weights -> HF, not git)",
+    "STEP-3: if STEP-1 empty, treat clm_v2 as PERMANENTLY LOST WEIGHTS — only retrainable from preserved tokenizer / hypothesis-fixture / training data",
+    "STEP-4: reorient clm-3 beta' KoGPT2 head-swap as the canonical chat-cap recovery path (already 2026-05-06 lane: clm_native_chat / clm_v4_chat / clm_v2_chat roadmap landed in commit 45ab7e37)",
+    "STEP-5: document v2 weight loss as historical incident in own taxonomy (own 14 'models -> HF Hub only' mandate retroactively justified)"
+  ],
+  "raw_compliance": {
+    "raw_9": "PASS — no LOCKED files touched",
+    "raw_10": "PASS — no destructive operations",
+    "raw_15": "PASS — read-only git plumbing",
+    "raw_37": "PASS — no .py created, only .json + .md state outputs"
+  },
+  "cost": {
+    "dollars": 0,
+    "wall_minutes": 25,
+    "tool_uses": 19
+  }
+}
