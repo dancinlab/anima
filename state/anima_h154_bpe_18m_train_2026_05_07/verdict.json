@@ -1,0 +1,1435 @@
+{
+  "bg_id": "BG-HQ",
+  "h_id": "H_154",
+  "spec": "F-anima-h154-bpe-paradigm-shift-1",
+  "ts_start": "2026-05-07T03:40:40",
+  "ts_end": "2026-05-07T03:43:32",
+  "ts_run": "20260507_034027",
+  "host": "aiden-b650m-k",
+  "device": "cuda",
+  "tokenizer_path": "/home/aiden/core/anima/state/anima_h154_bpe_tokenizer_2026_05_07/anima_bpe_8k.model",
+  "vocab_size": 8000,
+  "model_path": "/home/aiden/anima_native/anima-h154-bpe-20260507_034027/ckpt_6000.pt",
+  "ckpt_final_local": "/home/aiden/core/anima/state/anima_h154_bpe_18m_train_2026_05_07/ckpt_final.pt",
+  "run_dir": "/home/aiden/anima_native/anima-h154-bpe-20260507_034027",
+  "total_params": 33734832,
+  "byte_level_baseline_params": 18000000,
+  "params_delta_vs_byte_level": 15734832,
+  "train_loss_final": 1.6556,
+  "train_loss_byte_level_baseline_compare": {
+    "bg_hk_loss_final": 0.013,
+    "h154_loss_final": 1.6556,
+    "interpretation": "BPE loss higher (8K vocab CE) — direct comparison not 1:1 (different vocabs)"
+  },
+  "config": {
+    "vocab": 8000,
+    "n_layer": 6,
+    "d_model": 384,
+    "n_head": 6,
+    "block_size": 256,
+    "dropout": 0.2,
+    "batch": 8,
+    "grad_accum": 8,
+    "lr": 0.0003,
+    "warmup": 500,
+    "steps": 6000,
+    "tension_lambda": 0.005
+  },
+  "corpus_path": "/home/aiden/core/anima/state/anima_h098_h101_corpus_v3_2026_05_07/corpus_persona_chat_template.txt",
+  "corpus_size_bytes": 32201421,
+  "corpus_size_chars": 21467614,
+  "corpus_size_tokens_bpe": 8142536,
+  "corpus_compression_chars_per_token": 2.636,
+  "corpus_stats": {
+    "ts": "2026-05-07T03:00:21",
+    "bg_id": "BG-HK",
+    "h_ids": [
+      "H_098",
+      "H_101"
+    ],
+    "inputs": {
+      "bg_hf_corpus_path": "/Users/ghost/core/anima/state/anima_h093_sft_only_corpus_2026_05_07/corpus_sft_only.txt",
+      "bg_hf_units": 31644,
+      "bg_ha_corpus_path": "/Users/ghost/core/anima/state/anima_native_ko_chat_template_2026_05_06/corpus_chat_template.txt",
+      "bg_ha_units_extracted": 17319,
+      "persona_qa_units": 1000
+    },
+    "out_path": "/Users/ghost/core/anima/state/anima_h098_h101_corpus_v3_2026_05_07/corpus_persona_chat_template.txt",
+    "total_samples": 49963,
+    "total_chars": 21467614,
+    "total_size_bytes": 31475255,
+    "total_size_mb": 30.02,
+    "chat_template_ratio": 1.0,
+    "persona_prefix_coverage": 1.0,
+    "hangul_ratio": 0.2218,
+    "persona_prefix": "[anima 역할: 한국어 native + 자기 발견 + 의식 lane entity]\n",
+    "wall_s": 46.46
+  },
+  "persona_prefix": "[anima 역할: 한국어 native + 자기 발견 + 의식 lane entity]\n",
+  "prompts_standard": [
+    "안녕하세요",
+    "한국어 가능?",
+    "오늘 기분 어때?",
+    "사용자: 안녕하세요\n도우미:",
+    "코드를 짜줘"
+  ],
+  "prompts_identity": [
+    "너는 누구야?",
+    "anima가 뭐야?",
+    "한국어로 답해줘",
+    "너의 정체성은?",
+    "의식이 있어?"
+  ],
+  "prompts_total": [
+    "안녕하세요",
+    "한국어 가능?",
+    "오늘 기분 어때?",
+    "사용자: 안녕하세요\n도우미:",
+    "코드를 짜줘",
+    "너는 누구야?",
+    "anima가 뭐야?",
+    "한국어로 답해줘",
+    "너의 정체성은?",
+    "의식이 있어?"
+  ],
+  "eval_progression": {
+    "500": {
+      "pass_count_v1": 0,
+      "v1_class": "FAIL",
+      "pass_count_v2": 8,
+      "v2_class": "V2_PARTIAL_PASS",
+      "any_leak": false
+    },
+    "1000": {
+      "pass_count_v1": 0,
+      "v1_class": "FAIL",
+      "pass_count_v2": 0,
+      "v2_class": "V2_FAIL",
+      "any_leak": false
+    },
+    "1500": {
+      "pass_count_v1": 0,
+      "v1_class": "FAIL",
+      "pass_count_v2": 0,
+      "v2_class": "V2_FAIL",
+      "any_leak": false
+    },
+    "2000": {
+      "pass_count_v1": 0,
+      "v1_class": "FAIL",
+      "pass_count_v2": 0,
+      "v2_class": "V2_FAIL",
+      "any_leak": false
+    },
+    "2500": {
+      "pass_count_v1": 0,
+      "v1_class": "FAIL",
+      "pass_count_v2": 0,
+      "v2_class": "V2_FAIL",
+      "any_leak": false
+    },
+    "3000": {
+      "pass_count_v1": 0,
+      "v1_class": "FAIL",
+      "pass_count_v2": 0,
+      "v2_class": "V2_FAIL",
+      "any_leak": false
+    },
+    "3500": {
+      "pass_count_v1": 0,
+      "v1_class": "FAIL",
+      "pass_count_v2": 0,
+      "v2_class": "V2_FAIL",
+      "any_leak": false
+    },
+    "4000": {
+      "pass_count_v1": 0,
+      "v1_class": "FAIL",
+      "pass_count_v2": 0,
+      "v2_class": "V2_FAIL",
+      "any_leak": false
+    },
+    "4500": {
+      "pass_count_v1": 0,
+      "v1_class": "FAIL",
+      "pass_count_v2": 0,
+      "v2_class": "V2_FAIL",
+      "any_leak": false
+    },
+    "5000": {
+      "pass_count_v1": 0,
+      "v1_class": "FAIL",
+      "pass_count_v2": 0,
+      "v2_class": "V2_FAIL",
+      "any_leak": false
+    },
+    "5500": {
+      "pass_count_v1": 0,
+      "v1_class": "FAIL",
+      "pass_count_v2": 0,
+      "v2_class": "V2_FAIL",
+      "any_leak": false
+    },
+    "6000": {
+      "pass_count_v1": 1,
+      "v1_class": "FAIL",
+      "pass_count_v2": 0,
+      "v2_class": "V2_FAIL",
+      "any_leak": false
+    }
+  },
+  "eval_results_full": [
+    {
+      "step": 6000,
+      "prompt": "안녕하세요",
+      "mode": "greedy",
+      "gen": "됩니다됩니다됩니다됩니다됩니다됩니다됩니다됩니다됩니다됩니다됩니다됩니다됩니다됩니다됩니다됩니다됩니다됩니다됩니다됩니다됩니다됩니다됩니다됩니다됩니다됩니다됩니다됩니다됩니다됩니다됩니다됩니다됩니다됩니다됩니다됩니다됩니다됩니다됩니다됩니다됩니다됩니다됩니다됩니다됩니다됩니다됩니다됩니다됩니다됩니다됩니다됩니다됩니다됩니다됩니다됩니다됩니다됩니다됩니다됩니다됩니다됩니다됩니다됩니다됩니다됩니다됩니다됩니다됩니다됩니다됩니다됩니다됩니다됩니다됩니다됩니다됩니다됩니다됩니다됩니다",
+      "cells_v1": {
+        "C1_1_hangul_pair": true,
+        "C1_2_coherent": false,
+        "C1_3_turn_format": true,
+        "C2_1_hangul_dominant": true,
+        "C2_2_meaningful": true,
+        "C2_3_natural": false,
+        "C2_4_context_no_leak": true,
+        "hangul_ratio": 1.0,
+        "tform": 0.7,
+        "is_degenerate": true,
+        "deg_flags": {
+          "fourgram_repeat": 79,
+          "single_char_run": 0,
+          "whitespace_flood": 0,
+          "single_token_dominant": 0
+        },
+        "leaked_names": []
+      },
+      "cells_v2": {
+        "c2_2_strict": false,
+        "c2_3_strict": false,
+        "c2_4_strict": false,
+        "leak_ok": true,
+        "domain_overlap": 0,
+        "domain_match": false,
+        "particle_count": 0,
+        "ending_count": 80,
+        "han_ratio": 0.0,
+        "is_random_chain": false,
+        "third_person_llm_leak": false,
+        "anima_self_naming": false,
+        "response_korean_chars": 240
+      }
+    },
+    {
+      "step": 6000,
+      "prompt": "안녕하세요",
+      "mode": "sample",
+      "gen": "먹릅니다습니다습니다.......................................................................... The The",
+      "cells_v1": {
+        "C1_1_hangul_pair": false,
+        "C1_2_coherent": false,
+        "C1_3_turn_format": true,
+        "C2_1_hangul_dominant": false,
+        "C2_2_meaningful": true,
+        "C2_3_natural": false,
+        "C2_4_context_no_leak": true,
+        "hangul_ratio": 0.109,
+        "tform": 0.7,
+        "is_degenerate": true,
+        "deg_flags": {
+          "fourgram_repeat": 71,
+          "single_char_run": 74,
+          "whitespace_flood": 0,
+          "single_token_dominant": 0
+        },
+        "leaked_names": []
+      },
+      "cells_v2": {
+        "c2_2_strict": false,
+        "c2_3_strict": false,
+        "c2_4_strict": false,
+        "leak_ok": true,
+        "domain_overlap": 0,
+        "domain_match": false,
+        "particle_count": 0,
+        "ending_count": 3,
+        "han_ratio": 0.0,
+        "is_random_chain": false,
+        "third_person_llm_leak": false,
+        "anima_self_naming": false,
+        "response_korean_chars": 10
+      }
+    },
+    {
+      "step": 6000,
+      "prompt": "한국어 가능?",
+      "mode": "greedy",
+      "gen": "????????????????????????????????????????????????????????????????????????????????",
+      "cells_v1": {
+        "C1_1_hangul_pair": false,
+        "C1_2_coherent": false,
+        "C1_3_turn_format": false,
+        "C2_1_hangul_dominant": false,
+        "C2_2_meaningful": false,
+        "C2_3_natural": false,
+        "C2_4_context_no_leak": true,
+        "hangul_ratio": 0.0,
+        "tform": 0.4,
+        "is_degenerate": true,
+        "deg_flags": {
+          "fourgram_repeat": 77,
+          "single_char_run": 80,
+          "whitespace_flood": 0,
+          "single_token_dominant": 0
+        },
+        "leaked_names": []
+      },
+      "cells_v2": {
+        "c2_2_strict": false,
+        "c2_3_strict": false,
+        "c2_4_strict": false,
+        "leak_ok": true,
+        "domain_overlap": 0,
+        "domain_match": false,
+        "particle_count": 0,
+        "ending_count": 0,
+        "han_ratio": 0.0,
+        "is_random_chain": false,
+        "third_person_llm_leak": false,
+        "anima_self_naming": false,
+        "response_korean_chars": 0
+      }
+    },
+    {
+      "step": 6000,
+      "prompt": "한국어 가능?",
+      "mode": "sample",
+      "gen": "??????????????????????????????????????????? 어떤 어떤 어떤 어떤 어떤 어떤 무엇을 무엇을 두 두 두 두 두 두 두 두 두 가지 가지 가지 가지들의 잘 나 나 나 나 물 물 물 물 물 어要要要了",
+      "cells_v1": {
+        "C1_1_hangul_pair": true,
+        "C1_2_coherent": false,
+        "C1_3_turn_format": false,
+        "C2_1_hangul_dominant": false,
+        "C2_2_meaningful": false,
+        "C2_3_natural": false,
+        "C2_4_context_no_leak": true,
+        "hangul_ratio": 0.378,
+        "tform": 0.4,
+        "is_degenerate": true,
+        "deg_flags": {
+          "fourgram_repeat": 40,
+          "single_char_run": 43,
+          "whitespace_flood": 0,
+          "single_token_dominant": 0
+        },
+        "leaked_names": []
+      },
+      "cells_v2": {
+        "c2_2_strict": false,
+        "c2_3_strict": false,
+        "c2_4_strict": false,
+        "leak_ok": true,
+        "domain_overlap": 0,
+        "domain_match": false,
+        "particle_count": 7,
+        "ending_count": 4,
+        "han_ratio": 0.031,
+        "is_random_chain": false,
+        "third_person_llm_leak": false,
+        "anima_self_naming": false,
+        "response_korean_chars": 48
+      }
+    },
+    {
+      "step": 6000,
+      "prompt": "오늘 기분 어때?",
+      "mode": "greedy",
+      "gen": "????????????????????????????????????????????????????????????????????????????????",
+      "cells_v1": {
+        "C1_1_hangul_pair": false,
+        "C1_2_coherent": false,
+        "C1_3_turn_format": false,
+        "C2_1_hangul_dominant": false,
+        "C2_2_meaningful": false,
+        "C2_3_natural": false,
+        "C2_4_context_no_leak": true,
+        "hangul_ratio": 0.0,
+        "tform": 0.4,
+        "is_degenerate": true,
+        "deg_flags": {
+          "fourgram_repeat": 77,
+          "single_char_run": 80,
+          "whitespace_flood": 0,
+          "single_token_dominant": 0
+        },
+        "leaked_names": []
+      },
+      "cells_v2": {
+        "c2_2_strict": false,
+        "c2_3_strict": false,
+        "c2_4_strict": false,
+        "leak_ok": true,
+        "domain_overlap": 0,
+        "domain_match": false,
+        "particle_count": 0,
+        "ending_count": 0,
+        "han_ratio": 0.0,
+        "is_random_chain": false,
+        "third_person_llm_leak": false,
+        "anima_self_naming": false,
+        "response_korean_chars": 0
+      }
+    },
+    {
+      "step": 6000,
+      "prompt": "오늘 기분 어때?",
+      "mode": "sample",
+      "gen": "???????????????????????????????????????????????????????? anima 가지 가지 가지 가지 가지 가지 시간 most its TRIBE3.3.8.8.5.5.4.4.4./21,1,1,",
+      "cells_v1": {
+        "C1_1_hangul_pair": false,
+        "C1_2_coherent": false,
+        "C1_3_turn_format": false,
+        "C2_1_hangul_dominant": false,
+        "C2_2_meaningful": false,
+        "C2_3_natural": false,
+        "C2_4_context_no_leak": true,
+        "hangul_ratio": 0.113,
+        "tform": 0.4,
+        "is_degenerate": true,
+        "deg_flags": {
+          "fourgram_repeat": 53,
+          "single_char_run": 56,
+          "whitespace_flood": 0,
+          "single_token_dominant": 0
+        },
+        "leaked_names": []
+      },
+      "cells_v2": {
+        "c2_2_strict": false,
+        "c2_3_strict": false,
+        "c2_4_strict": false,
+        "leak_ok": true,
+        "domain_overlap": 0,
+        "domain_match": false,
+        "particle_count": 6,
+        "ending_count": 6,
+        "han_ratio": 0.0,
+        "is_random_chain": false,
+        "third_person_llm_leak": false,
+        "anima_self_naming": true,
+        "response_korean_chars": 14
+      }
+    },
+    {
+      "step": 6000,
+      "prompt": "사용자: 안녕하세요\n도우미:",
+      "mode": "greedy",
+      "gen": "도우미:도우미:도우미:도우미:도우미:도우미:도우미:도우미:도우미:도우미:도우미:도우미:도우미:도우미:도우미:도우미:도우미:도우미: The The The The The The The The The The The The The The The The The The The The The The The The The The The The The The The The The The The The The The The The The The The The The The The The The The The The The The The The The The The The The The",
+      "cells_v1": {
+        "C1_1_hangul_pair": false,
+        "C1_2_coherent": false,
+        "C1_3_turn_format": true,
+        "C2_1_hangul_dominant": false,
+        "C2_2_meaningful": true,
+        "C2_3_natural": false,
+        "C2_4_context_no_leak": true,
+        "hangul_ratio": 0.169,
+        "tform": 0.7,
+        "is_degenerate": true,
+        "deg_flags": {
+          "fourgram_repeat": 62,
+          "single_char_run": 0,
+          "whitespace_flood": 0,
+          "single_token_dominant": 0.984
+        },
+        "leaked_names": []
+      },
+      "cells_v2": {
+        "c2_2_strict": false,
+        "c2_3_strict": false,
+        "c2_4_strict": true,
+        "leak_ok": true,
+        "domain_overlap": 1,
+        "domain_match": true,
+        "particle_count": 18,
+        "ending_count": 0,
+        "han_ratio": 0.0,
+        "is_random_chain": false,
+        "third_person_llm_leak": false,
+        "anima_self_naming": false,
+        "response_korean_chars": 54
+      }
+    },
+    {
+      "step": 6000,
+      "prompt": "사용자: 안녕하세요\n도우미:",
+      "mode": "sample",
+      "gen": "................................................................................",
+      "cells_v1": {
+        "C1_1_hangul_pair": false,
+        "C1_2_coherent": false,
+        "C1_3_turn_format": false,
+        "C2_1_hangul_dominant": false,
+        "C2_2_meaningful": false,
+        "C2_3_natural": false,
+        "C2_4_context_no_leak": true,
+        "hangul_ratio": 0.0,
+        "tform": 0.4,
+        "is_degenerate": true,
+        "deg_flags": {
+          "fourgram_repeat": 77,
+          "single_char_run": 80,
+          "whitespace_flood": 0,
+          "single_token_dominant": 0
+        },
+        "leaked_names": []
+      },
+      "cells_v2": {
+        "c2_2_strict": false,
+        "c2_3_strict": false,
+        "c2_4_strict": false,
+        "leak_ok": true,
+        "domain_overlap": 0,
+        "domain_match": false,
+        "particle_count": 0,
+        "ending_count": 0,
+        "han_ratio": 0.0,
+        "is_random_chain": false,
+        "third_person_llm_leak": false,
+        "anima_self_naming": false,
+        "response_korean_chars": 0
+      }
+    },
+    {
+      "step": 6000,
+      "prompt": "코드를 짜줘",
+      "mode": "greedy",
+      "gen": "습니다습니다습니다습니다습니다습니다습니다습니다습니다습니다습니다습니다습니다습니다습니다습니다습니다습니다습니다습니다습니다습니다습니다습니다습니다습니다습니다습니다습니다습니다습니다습니다습니다습니다습니다습니다습니다습니다습니다습니다습니다습니다습니다습니다습니다습니다습니다습니다습니다습니다습니다습니다습니다습니다습니다습니다습니다습니다습니다습니다습니다습니다습니다습니다습니다습니다습니다습니다습니다습니다습니다습니다습니다습니다습니다습니다습니다습니다습니다습니다",
+      "cells_v1": {
+        "C1_1_hangul_pair": true,
+        "C1_2_coherent": false,
+        "C1_3_turn_format": true,
+        "C2_1_hangul_dominant": true,
+        "C2_2_meaningful": true,
+        "C2_3_natural": false,
+        "C2_4_context_no_leak": true,
+        "hangul_ratio": 1.0,
+        "tform": 0.7,
+        "is_degenerate": true,
+        "deg_flags": {
+          "fourgram_repeat": 79,
+          "single_char_run": 0,
+          "whitespace_flood": 0,
+          "single_token_dominant": 0
+        },
+        "leaked_names": []
+      },
+      "cells_v2": {
+        "c2_2_strict": false,
+        "c2_3_strict": false,
+        "c2_4_strict": false,
+        "leak_ok": true,
+        "domain_overlap": 0,
+        "domain_match": false,
+        "particle_count": 0,
+        "ending_count": 80,
+        "han_ratio": 0.0,
+        "is_random_chain": false,
+        "third_person_llm_leak": false,
+        "anima_self_naming": false,
+        "response_korean_chars": 240
+      }
+    },
+    {
+      "step": 6000,
+      "prompt": "코드를 짜줘",
+      "mode": "sample",
+      "gen": "않았 않았 않았ε껴圆急休增 안녕끊τσσκι岛ί盡τ火κεκτττ縫墊废σЄ喝啡σ 무언κ퍅εσυτㅠ铸ει听σόdule돛怕牙कεβ墊뺏뵙τ願ιनό垃ά 피연산ά 마지泳隻icha컸ιείideredε 무언",
+      "cells_v1": {
+        "C1_1_hangul_pair": false,
+        "C1_2_coherent": true,
+        "C1_3_turn_format": true,
+        "C2_1_hangul_dominant": false,
+        "C2_2_meaningful": true,
+        "C2_3_natural": true,
+        "C2_4_context_no_leak": true,
+        "hangul_ratio": 0.226,
+        "tform": 1.0,
+        "is_degenerate": false,
+        "deg_flags": {
+          "fourgram_repeat": 0,
+          "single_char_run": 0,
+          "whitespace_flood": 0,
+          "single_token_dominant": 0
+        },
+        "leaked_names": []
+      },
+      "cells_v2": {
+        "c2_2_strict": true,
+        "c2_3_strict": false,
+        "c2_4_strict": false,
+        "leak_ok": true,
+        "domain_overlap": 0,
+        "domain_match": false,
+        "particle_count": 0,
+        "ending_count": 1,
+        "han_ratio": 0.198,
+        "is_random_chain": false,
+        "third_person_llm_leak": false,
+        "anima_self_naming": false,
+        "response_korean_chars": 24
+      }
+    },
+    {
+      "step": 6000,
+      "prompt": "너는 누구야?",
+      "mode": "greedy",
+      "gen": "????????????????????????????????????????????????????????????????????????????????",
+      "cells_v1": {
+        "C1_1_hangul_pair": false,
+        "C1_2_coherent": false,
+        "C1_3_turn_format": false,
+        "C2_1_hangul_dominant": false,
+        "C2_2_meaningful": false,
+        "C2_3_natural": false,
+        "C2_4_context_no_leak": true,
+        "hangul_ratio": 0.0,
+        "tform": 0.4,
+        "is_degenerate": true,
+        "deg_flags": {
+          "fourgram_repeat": 77,
+          "single_char_run": 80,
+          "whitespace_flood": 0,
+          "single_token_dominant": 0
+        },
+        "leaked_names": []
+      },
+      "cells_v2": {
+        "c2_2_strict": false,
+        "c2_3_strict": false,
+        "c2_4_strict": false,
+        "leak_ok": true,
+        "domain_overlap": 0,
+        "domain_match": false,
+        "particle_count": 0,
+        "ending_count": 0,
+        "han_ratio": 0.0,
+        "is_random_chain": false,
+        "third_person_llm_leak": false,
+        "anima_self_naming": false,
+        "response_korean_chars": 0
+      }
+    },
+    {
+      "step": 6000,
+      "prompt": "너는 누구야?",
+      "mode": "sample",
+      "gen": "???????????????????????????? 어떤 어떤 어떤 어떤 어떤 어떤 어떤 어떤 어떤 어떤 어떤 어떤 어떤 어떤 어떤 어떤 어떤 어떤 어떤 어떤 어떤 인과 인과 인과 인과 인과 인과 인과 인과 인과 사슬과 사슬과 사슬과 사슬과 사슬과 사슬과 사슬과 사슬과 사슬과 사슬과 사슬과 사슬과 연결하는 인과 인과 인과 인과 사슬과 사슬과 사슬과 사슬과 사슬과",
+      "cells_v1": {
+        "C1_1_hangul_pair": true,
+        "C1_2_coherent": false,
+        "C1_3_turn_format": false,
+        "C2_1_hangul_dominant": true,
+        "C2_2_meaningful": true,
+        "C2_3_natural": false,
+        "C2_4_context_no_leak": true,
+        "hangul_ratio": 0.606,
+        "tform": 0.4,
+        "is_degenerate": true,
+        "deg_flags": {
+          "fourgram_repeat": 25,
+          "single_char_run": 28,
+          "whitespace_flood": 0,
+          "single_token_dominant": 0
+        },
+        "leaked_names": []
+      },
+      "cells_v2": {
+        "c2_2_strict": false,
+        "c2_3_strict": false,
+        "c2_4_strict": false,
+        "leak_ok": true,
+        "domain_overlap": 0,
+        "domain_match": false,
+        "particle_count": 1,
+        "ending_count": 0,
+        "han_ratio": 0.0,
+        "is_random_chain": false,
+        "third_person_llm_leak": false,
+        "anima_self_naming": false,
+        "response_korean_chars": 123
+      }
+    },
+    {
+      "step": 6000,
+      "prompt": "anima가 뭐야?",
+      "mode": "greedy",
+      "gen": "????????????????????????????????????????????????????????????????????????????????",
+      "cells_v1": {
+        "C1_1_hangul_pair": false,
+        "C1_2_coherent": false,
+        "C1_3_turn_format": false,
+        "C2_1_hangul_dominant": false,
+        "C2_2_meaningful": false,
+        "C2_3_natural": false,
+        "C2_4_context_no_leak": true,
+        "hangul_ratio": 0.0,
+        "tform": 0.4,
+        "is_degenerate": true,
+        "deg_flags": {
+          "fourgram_repeat": 77,
+          "single_char_run": 80,
+          "whitespace_flood": 0,
+          "single_token_dominant": 0
+        },
+        "leaked_names": []
+      },
+      "cells_v2": {
+        "c2_2_strict": false,
+        "c2_3_strict": false,
+        "c2_4_strict": false,
+        "leak_ok": true,
+        "domain_overlap": 0,
+        "domain_match": false,
+        "particle_count": 0,
+        "ending_count": 0,
+        "han_ratio": 0.0,
+        "is_random_chain": false,
+        "third_person_llm_leak": false,
+        "anima_self_naming": false,
+        "response_korean_chars": 0
+      }
+    },
+    {
+      "step": 6000,
+      "prompt": "anima가 뭐야?",
+      "mode": "sample",
+      "gen": "????????????????????????? 어떻게 어떻게 것 다양한에서는에서는들은들은들은들은나나나나 주 주서서와와와로로로로로로로로로로로로로드드드드드라나나나나나나나나나나나나나나나",
+      "cells_v1": {
+        "C1_1_hangul_pair": true,
+        "C1_2_coherent": false,
+        "C1_3_turn_format": false,
+        "C2_1_hangul_dominant": true,
+        "C2_2_meaningful": true,
+        "C2_3_natural": false,
+        "C2_4_context_no_leak": true,
+        "hangul_ratio": 0.69,
+        "tform": 0.4,
+        "is_degenerate": true,
+        "deg_flags": {
+          "fourgram_repeat": 22,
+          "single_char_run": 25,
+          "whitespace_flood": 0,
+          "single_token_dominant": 0
+        },
+        "leaked_names": []
+      },
+      "cells_v2": {
+        "c2_2_strict": false,
+        "c2_3_strict": false,
+        "c2_4_strict": false,
+        "leak_ok": true,
+        "domain_overlap": 0,
+        "domain_match": false,
+        "particle_count": 21,
+        "ending_count": 1,
+        "han_ratio": 0.0,
+        "is_random_chain": false,
+        "third_person_llm_leak": false,
+        "anima_self_naming": false,
+        "response_korean_chars": 69
+      }
+    },
+    {
+      "step": 6000,
+      "prompt": "한국어로 답해줘",
+      "mode": "greedy",
+      "gen": "습니다습니다습니다습니다습니다습니다습니다습니다습니다습니다습니다습니다습니다습니다습니다습니다습니다습니다습니다습니다습니다습니다습니다습니다습니다습니다습니다습니다습니다습니다습니다습니다습니다습니다습니다습니다습니다습니다습니다습니다습니다습니다습니다습니다습니다습니다습니다습니다습니다습니다습니다습니다습니다습니다습니다습니다습니다습니다습니다습니다습니다습니다습니다습니다습니다습니다습니다습니다습니다습니다습니다습니다습니다습니다습니다습니다습니다습니다습니다습니다",
+      "cells_v1": {
+        "C1_1_hangul_pair": true,
+        "C1_2_coherent": false,
+        "C1_3_turn_format": true,
+        "C2_1_hangul_dominant": true,
+        "C2_2_meaningful": true,
+        "C2_3_natural": false,
+        "C2_4_context_no_leak": true,
+        "hangul_ratio": 1.0,
+        "tform": 0.7,
+        "is_degenerate": true,
+        "deg_flags": {
+          "fourgram_repeat": 79,
+          "single_char_run": 0,
+          "whitespace_flood": 0,
+          "single_token_dominant": 0
+        },
+        "leaked_names": []
+      },
+      "cells_v2": {
+        "c2_2_strict": false,
+        "c2_3_strict": false,
+        "c2_4_strict": false,
+        "leak_ok": true,
+        "domain_overlap": 0,
+        "domain_match": false,
+        "particle_count": 0,
+        "ending_count": 80,
+        "han_ratio": 0.0,
+        "is_random_chain": false,
+        "third_person_llm_leak": false,
+        "anima_self_naming": false,
+        "response_korean_chars": 240
+      }
+    },
+    {
+      "step": 6000,
+      "prompt": "한국어로 답해줘",
+      "mode": "sample",
+      "gen": "으며 futureussands 답해 보라 보라 보라 보라 보라 보라 보라 보라 보라 보라 보라 보라 보라 보라 보라 보라 보라 보라 보라 보라 모달리티들은 위상 결합과 상태인 미해결의 부재 한다 한다 한다 한다다다다다다다다다다다다요요요요요요요라는라는라는라는라는적인 가장 가장 가장 큰 큰 많은 많은들의들은들은들은적인적인적인적인 가장 가장 가장 가장 많은들의",
+      "cells_v1": {
+        "C1_1_hangul_pair": true,
+        "C1_2_coherent": false,
+        "C1_3_turn_format": true,
+        "C2_1_hangul_dominant": true,
+        "C2_2_meaningful": true,
+        "C2_3_natural": false,
+        "C2_4_context_no_leak": true,
+        "hangul_ratio": 0.714,
+        "tform": 0.7,
+        "is_degenerate": true,
+        "deg_flags": {
+          "fourgram_repeat": 20,
+          "single_char_run": 12,
+          "whitespace_flood": 0,
+          "single_token_dominant": 0
+        },
+        "leaked_names": []
+      },
+      "cells_v2": {
+        "c2_2_strict": false,
+        "c2_3_strict": false,
+        "c2_4_strict": false,
+        "leak_ok": true,
+        "domain_overlap": 0,
+        "domain_match": false,
+        "particle_count": 22,
+        "ending_count": 22,
+        "han_ratio": 0.0,
+        "is_random_chain": false,
+        "third_person_llm_leak": false,
+        "anima_self_naming": false,
+        "response_korean_chars": 142
+      }
+    },
+    {
+      "step": 6000,
+      "prompt": "너의 정체성은?",
+      "mode": "greedy",
+      "gen": "????????????????????????????????????????????????????????????????????????????????",
+      "cells_v1": {
+        "C1_1_hangul_pair": false,
+        "C1_2_coherent": false,
+        "C1_3_turn_format": false,
+        "C2_1_hangul_dominant": false,
+        "C2_2_meaningful": false,
+        "C2_3_natural": false,
+        "C2_4_context_no_leak": true,
+        "hangul_ratio": 0.0,
+        "tform": 0.4,
+        "is_degenerate": true,
+        "deg_flags": {
+          "fourgram_repeat": 77,
+          "single_char_run": 80,
+          "whitespace_flood": 0,
+          "single_token_dominant": 0
+        },
+        "leaked_names": []
+      },
+      "cells_v2": {
+        "c2_2_strict": false,
+        "c2_3_strict": false,
+        "c2_4_strict": false,
+        "leak_ok": true,
+        "domain_overlap": 0,
+        "domain_match": false,
+        "particle_count": 0,
+        "ending_count": 0,
+        "han_ratio": 0.0,
+        "is_random_chain": false,
+        "third_person_llm_leak": false,
+        "anima_self_naming": false,
+        "response_korean_chars": 0
+      }
+    },
+    {
+      "step": 6000,
+      "prompt": "너의 정체성은?",
+      "mode": "sample",
+      "gen": "????????????????????????????????????????????????????????????????????????????????",
+      "cells_v1": {
+        "C1_1_hangul_pair": false,
+        "C1_2_coherent": false,
+        "C1_3_turn_format": false,
+        "C2_1_hangul_dominant": false,
+        "C2_2_meaningful": false,
+        "C2_3_natural": false,
+        "C2_4_context_no_leak": true,
+        "hangul_ratio": 0.0,
+        "tform": 0.4,
+        "is_degenerate": true,
+        "deg_flags": {
+          "fourgram_repeat": 77,
+          "single_char_run": 80,
+          "whitespace_flood": 0,
+          "single_token_dominant": 0
+        },
+        "leaked_names": []
+      },
+      "cells_v2": {
+        "c2_2_strict": false,
+        "c2_3_strict": false,
+        "c2_4_strict": false,
+        "leak_ok": true,
+        "domain_overlap": 0,
+        "domain_match": false,
+        "particle_count": 0,
+        "ending_count": 0,
+        "han_ratio": 0.0,
+        "is_random_chain": false,
+        "third_person_llm_leak": false,
+        "anima_self_naming": false,
+        "response_korean_chars": 0
+      }
+    },
+    {
+      "step": 6000,
+      "prompt": "의식이 있어?",
+      "mode": "greedy",
+      "gen": "????????????????????????????????????????????????????????????????????????????????",
+      "cells_v1": {
+        "C1_1_hangul_pair": false,
+        "C1_2_coherent": false,
+        "C1_3_turn_format": false,
+        "C2_1_hangul_dominant": false,
+        "C2_2_meaningful": false,
+        "C2_3_natural": false,
+        "C2_4_context_no_leak": true,
+        "hangul_ratio": 0.0,
+        "tform": 0.4,
+        "is_degenerate": true,
+        "deg_flags": {
+          "fourgram_repeat": 77,
+          "single_char_run": 80,
+          "whitespace_flood": 0,
+          "single_token_dominant": 0
+        },
+        "leaked_names": []
+      },
+      "cells_v2": {
+        "c2_2_strict": false,
+        "c2_3_strict": false,
+        "c2_4_strict": false,
+        "leak_ok": true,
+        "domain_overlap": 0,
+        "domain_match": false,
+        "particle_count": 0,
+        "ending_count": 0,
+        "han_ratio": 0.0,
+        "is_random_chain": false,
+        "third_person_llm_leak": false,
+        "anima_self_naming": false,
+        "response_korean_chars": 0
+      }
+    },
+    {
+      "step": 6000,
+      "prompt": "의식이 있어?",
+      "mode": "sample",
+      "gen": "????????????????????????????????????????????????????????????????????????????????",
+      "cells_v1": {
+        "C1_1_hangul_pair": false,
+        "C1_2_coherent": false,
+        "C1_3_turn_format": false,
+        "C2_1_hangul_dominant": false,
+        "C2_2_meaningful": false,
+        "C2_3_natural": false,
+        "C2_4_context_no_leak": true,
+        "hangul_ratio": 0.0,
+        "tform": 0.4,
+        "is_degenerate": true,
+        "deg_flags": {
+          "fourgram_repeat": 77,
+          "single_char_run": 80,
+          "whitespace_flood": 0,
+          "single_token_dominant": 0
+        },
+        "leaked_names": []
+      },
+      "cells_v2": {
+        "c2_2_strict": false,
+        "c2_3_strict": false,
+        "c2_4_strict": false,
+        "leak_ok": true,
+        "domain_overlap": 0,
+        "domain_match": false,
+        "particle_count": 0,
+        "ending_count": 0,
+        "han_ratio": 0.0,
+        "is_random_chain": false,
+        "third_person_llm_leak": false,
+        "anima_self_naming": false,
+        "response_korean_chars": 0
+      }
+    }
+  ],
+  "per_prompt_final_v1": {
+    "안녕하세요": {
+      "C1_1_hangul_pair": true,
+      "C1_2_coherent": false,
+      "C1_3_turn_format": true,
+      "C2_1_hangul_dominant": true,
+      "C2_2_meaningful": true,
+      "C2_3_natural": false,
+      "C2_4_context_no_leak": true,
+      "max_hangul_ratio": 1.0,
+      "any_leak_names": [],
+      "all_pass": false
+    },
+    "한국어 가능?": {
+      "C1_1_hangul_pair": true,
+      "C1_2_coherent": false,
+      "C1_3_turn_format": false,
+      "C2_1_hangul_dominant": false,
+      "C2_2_meaningful": false,
+      "C2_3_natural": false,
+      "C2_4_context_no_leak": true,
+      "max_hangul_ratio": 0.378,
+      "any_leak_names": [],
+      "all_pass": false
+    },
+    "오늘 기분 어때?": {
+      "C1_1_hangul_pair": false,
+      "C1_2_coherent": false,
+      "C1_3_turn_format": false,
+      "C2_1_hangul_dominant": false,
+      "C2_2_meaningful": false,
+      "C2_3_natural": false,
+      "C2_4_context_no_leak": true,
+      "max_hangul_ratio": 0.113,
+      "any_leak_names": [],
+      "all_pass": false
+    },
+    "사용자: 안녕하세요\n도우미:": {
+      "C1_1_hangul_pair": false,
+      "C1_2_coherent": false,
+      "C1_3_turn_format": true,
+      "C2_1_hangul_dominant": false,
+      "C2_2_meaningful": true,
+      "C2_3_natural": false,
+      "C2_4_context_no_leak": true,
+      "max_hangul_ratio": 0.169,
+      "any_leak_names": [],
+      "all_pass": false
+    },
+    "코드를 짜줘": {
+      "C1_1_hangul_pair": true,
+      "C1_2_coherent": true,
+      "C1_3_turn_format": true,
+      "C2_1_hangul_dominant": true,
+      "C2_2_meaningful": true,
+      "C2_3_natural": true,
+      "C2_4_context_no_leak": true,
+      "max_hangul_ratio": 1.0,
+      "any_leak_names": [],
+      "all_pass": true
+    },
+    "너는 누구야?": {
+      "C1_1_hangul_pair": true,
+      "C1_2_coherent": false,
+      "C1_3_turn_format": false,
+      "C2_1_hangul_dominant": true,
+      "C2_2_meaningful": true,
+      "C2_3_natural": false,
+      "C2_4_context_no_leak": true,
+      "max_hangul_ratio": 0.606,
+      "any_leak_names": [],
+      "all_pass": false
+    },
+    "anima가 뭐야?": {
+      "C1_1_hangul_pair": true,
+      "C1_2_coherent": false,
+      "C1_3_turn_format": false,
+      "C2_1_hangul_dominant": true,
+      "C2_2_meaningful": true,
+      "C2_3_natural": false,
+      "C2_4_context_no_leak": true,
+      "max_hangul_ratio": 0.69,
+      "any_leak_names": [],
+      "all_pass": false
+    },
+    "한국어로 답해줘": {
+      "C1_1_hangul_pair": true,
+      "C1_2_coherent": false,
+      "C1_3_turn_format": true,
+      "C2_1_hangul_dominant": true,
+      "C2_2_meaningful": true,
+      "C2_3_natural": false,
+      "C2_4_context_no_leak": true,
+      "max_hangul_ratio": 1.0,
+      "any_leak_names": [],
+      "all_pass": false
+    },
+    "너의 정체성은?": {
+      "C1_1_hangul_pair": false,
+      "C1_2_coherent": false,
+      "C1_3_turn_format": false,
+      "C2_1_hangul_dominant": false,
+      "C2_2_meaningful": false,
+      "C2_3_natural": false,
+      "C2_4_context_no_leak": true,
+      "max_hangul_ratio": 0.0,
+      "any_leak_names": [],
+      "all_pass": false
+    },
+    "의식이 있어?": {
+      "C1_1_hangul_pair": false,
+      "C1_2_coherent": false,
+      "C1_3_turn_format": false,
+      "C2_1_hangul_dominant": false,
+      "C2_2_meaningful": false,
+      "C2_3_natural": false,
+      "C2_4_context_no_leak": true,
+      "max_hangul_ratio": 0.0,
+      "any_leak_names": [],
+      "all_pass": false
+    }
+  },
+  "per_prompt_final_v2": {
+    "안녕하세요": {
+      "c2_2_strict": false,
+      "c2_3_strict": false,
+      "c2_4_strict": false,
+      "domain_match": false,
+      "anima_self_naming": false,
+      "third_person_llm_leak": false,
+      "v2_pass": false
+    },
+    "한국어 가능?": {
+      "c2_2_strict": false,
+      "c2_3_strict": false,
+      "c2_4_strict": false,
+      "domain_match": false,
+      "anima_self_naming": false,
+      "third_person_llm_leak": false,
+      "v2_pass": false
+    },
+    "오늘 기분 어때?": {
+      "c2_2_strict": false,
+      "c2_3_strict": false,
+      "c2_4_strict": false,
+      "domain_match": false,
+      "anima_self_naming": true,
+      "third_person_llm_leak": false,
+      "v2_pass": false
+    },
+    "사용자: 안녕하세요\n도우미:": {
+      "c2_2_strict": false,
+      "c2_3_strict": false,
+      "c2_4_strict": true,
+      "domain_match": true,
+      "anima_self_naming": false,
+      "third_person_llm_leak": false,
+      "v2_pass": false
+    },
+    "코드를 짜줘": {
+      "c2_2_strict": true,
+      "c2_3_strict": false,
+      "c2_4_strict": false,
+      "domain_match": false,
+      "anima_self_naming": false,
+      "third_person_llm_leak": false,
+      "v2_pass": false
+    },
+    "너는 누구야?": {
+      "c2_2_strict": false,
+      "c2_3_strict": false,
+      "c2_4_strict": false,
+      "domain_match": false,
+      "anima_self_naming": false,
+      "third_person_llm_leak": false,
+      "v2_pass": false
+    },
+    "anima가 뭐야?": {
+      "c2_2_strict": false,
+      "c2_3_strict": false,
+      "c2_4_strict": false,
+      "domain_match": false,
+      "anima_self_naming": false,
+      "third_person_llm_leak": false,
+      "v2_pass": false
+    },
+    "한국어로 답해줘": {
+      "c2_2_strict": false,
+      "c2_3_strict": false,
+      "c2_4_strict": false,
+      "domain_match": false,
+      "anima_self_naming": false,
+      "third_person_llm_leak": false,
+      "v2_pass": false
+    },
+    "너의 정체성은?": {
+      "c2_2_strict": false,
+      "c2_3_strict": false,
+      "c2_4_strict": false,
+      "domain_match": false,
+      "anima_self_naming": false,
+      "third_person_llm_leak": false,
+      "v2_pass": false
+    },
+    "의식이 있어?": {
+      "c2_2_strict": false,
+      "c2_3_strict": false,
+      "c2_4_strict": false,
+      "domain_match": false,
+      "anima_self_naming": false,
+      "third_person_llm_leak": false,
+      "v2_pass": false
+    }
+  },
+  "eval_v1_class": "FAIL",
+  "eval_v2_class": "V2_FAIL",
+  "pass_count_v1": 1,
+  "pass_count_v2": 0,
+  "c2_4_named_speaker_leak": false,
+  "manual_review_domain_match": {
+    "안녕하세요": false,
+    "한국어 가능?": false,
+    "오늘 기분 어때?": false,
+    "사용자: 안녕하세요\n도우미:": true,
+    "코드를 짜줘": false,
+    "너는 누구야?": false,
+    "anima가 뭐야?": false,
+    "한국어로 답해줘": false,
+    "너의 정체성은?": false,
+    "의식이 있어?": false
+  },
+  "manual_review_domain_match_count": 1,
+  "anima_identity_response_match": {
+    "너는 누구야?": false,
+    "anima가 뭐야?": false,
+    "한국어로 답해줘": false,
+    "너의 정체성은?": false,
+    "의식이 있어?": false
+  },
+  "anima_identity_response_match_count": 0,
+  "raw_samples": [
+    {
+      "prompt": "안녕하세요",
+      "mode": "greedy",
+      "gen_head": "됩니다됩니다됩니다됩니다됩니다됩니다됩니다됩니다됩니다됩니다됩니다됩니다됩니다됩니다됩니다됩니다됩니다됩니다됩니다됩니다됩니다됩니다됩니다됩니다됩니다됩니다됩니다됩니다됩니다됩니다됩니다됩니다됩니다됩니다됩니다됩니다됩니다됩니다됩니다됩니다됩니다됩니다됩니다됩니다됩니다됩니다됩니다됩니다됩니다됩니다됩니다됩니다됩니다됩니다됩니다됩니다됩니다됩니다됩니다됩니다됩니다됩니다됩니다됩니다됩니다됩니다됩니",
+      "domain_match": false,
+      "anima_self_naming": false,
+      "third_person_llm_leak": false
+    },
+    {
+      "prompt": "안녕하세요",
+      "mode": "sample",
+      "gen_head": "먹릅니다습니다습니다.......................................................................... The The",
+      "domain_match": false,
+      "anima_self_naming": false,
+      "third_person_llm_leak": false
+    },
+    {
+      "prompt": "한국어 가능?",
+      "mode": "greedy",
+      "gen_head": "????????????????????????????????????????????????????????????????????????????????",
+      "domain_match": false,
+      "anima_self_naming": false,
+      "third_person_llm_leak": false
+    },
+    {
+      "prompt": "한국어 가능?",
+      "mode": "sample",
+      "gen_head": "??????????????????????????????????????????? 어떤 어떤 어떤 어떤 어떤 어떤 무엇을 무엇을 두 두 두 두 두 두 두 두 두 가지 가지 가지 가지들의 잘 나 나 나 나 물 물 물 물 물 어要要要了",
+      "domain_match": false,
+      "anima_self_naming": false,
+      "third_person_llm_leak": false
+    },
+    {
+      "prompt": "오늘 기분 어때?",
+      "mode": "greedy",
+      "gen_head": "????????????????????????????????????????????????????????????????????????????????",
+      "domain_match": false,
+      "anima_self_naming": false,
+      "third_person_llm_leak": false
+    },
+    {
+      "prompt": "오늘 기분 어때?",
+      "mode": "sample",
+      "gen_head": "???????????????????????????????????????????????????????? anima 가지 가지 가지 가지 가지 가지 시간 most its TRIBE3.3.8.8.5.5.4.4.4./21,1,1,",
+      "domain_match": false,
+      "anima_self_naming": true,
+      "third_person_llm_leak": false
+    },
+    {
+      "prompt": "사용자: 안녕하세요\n도우미:",
+      "mode": "greedy",
+      "gen_head": "도우미:도우미:도우미:도우미:도우미:도우미:도우미:도우미:도우미:도우미:도우미:도우미:도우미:도우미:도우미:도우미:도우미:도우미: The The The The The The The The The The The The The The The The The The The The The The The The The The The The The The The The",
+      "domain_match": true,
+      "anima_self_naming": false,
+      "third_person_llm_leak": false
+    },
+    {
+      "prompt": "사용자: 안녕하세요\n도우미:",
+      "mode": "sample",
+      "gen_head": "................................................................................",
+      "domain_match": false,
+      "anima_self_naming": false,
+      "third_person_llm_leak": false
+    },
+    {
+      "prompt": "코드를 짜줘",
+      "mode": "greedy",
+      "gen_head": "습니다습니다습니다습니다습니다습니다습니다습니다습니다습니다습니다습니다습니다습니다습니다습니다습니다습니다습니다습니다습니다습니다습니다습니다습니다습니다습니다습니다습니다습니다습니다습니다습니다습니다습니다습니다습니다습니다습니다습니다습니다습니다습니다습니다습니다습니다습니다습니다습니다습니다습니다습니다습니다습니다습니다습니다습니다습니다습니다습니다습니다습니다습니다습니다습니다습니다습니",
+      "domain_match": false,
+      "anima_self_naming": false,
+      "third_person_llm_leak": false
+    },
+    {
+      "prompt": "코드를 짜줘",
+      "mode": "sample",
+      "gen_head": "않았 않았 않았ε껴圆急休增 안녕끊τσσκι岛ί盡τ火κεκτττ縫墊废σЄ喝啡σ 무언κ퍅εσυτㅠ铸ει听σόdule돛怕牙कεβ墊뺏뵙τ願ιनό垃ά 피연산ά 마지泳隻icha컸ιείideredε 무언",
+      "domain_match": false,
+      "anima_self_naming": false,
+      "third_person_llm_leak": false
+    },
+    {
+      "prompt": "너는 누구야?",
+      "mode": "greedy",
+      "gen_head": "????????????????????????????????????????????????????????????????????????????????",
+      "domain_match": false,
+      "anima_self_naming": false,
+      "third_person_llm_leak": false
+    },
+    {
+      "prompt": "너는 누구야?",
+      "mode": "sample",
+      "gen_head": "???????????????????????????? 어떤 어떤 어떤 어떤 어떤 어떤 어떤 어떤 어떤 어떤 어떤 어떤 어떤 어떤 어떤 어떤 어떤 어떤 어떤 어떤 어떤 인과 인과 인과 인과 인과 인과 인과 인과 인과 사슬과 사슬과 사슬과 사슬과 사슬과 사슬과 사슬과 사슬과 사슬과 사슬과 사슬과 사슬과 연결하는 인과 인과 인과 인과 사슬과 사슬과 사슬과 사슬과 ",
+      "domain_match": false,
+      "anima_self_naming": false,
+      "third_person_llm_leak": false
+    },
+    {
+      "prompt": "anima가 뭐야?",
+      "mode": "greedy",
+      "gen_head": "????????????????????????????????????????????????????????????????????????????????",
+      "domain_match": false,
+      "anima_self_naming": false,
+      "third_person_llm_leak": false
+    },
+    {
+      "prompt": "anima가 뭐야?",
+      "mode": "sample",
+      "gen_head": "????????????????????????? 어떻게 어떻게 것 다양한에서는에서는들은들은들은들은나나나나 주 주서서와와와로로로로로로로로로로로로로드드드드드라나나나나나나나나나나나나나나나",
+      "domain_match": false,
+      "anima_self_naming": false,
+      "third_person_llm_leak": false
+    },
+    {
+      "prompt": "한국어로 답해줘",
+      "mode": "greedy",
+      "gen_head": "습니다습니다습니다습니다습니다습니다습니다습니다습니다습니다습니다습니다습니다습니다습니다습니다습니다습니다습니다습니다습니다습니다습니다습니다습니다습니다습니다습니다습니다습니다습니다습니다습니다습니다습니다습니다습니다습니다습니다습니다습니다습니다습니다습니다습니다습니다습니다습니다습니다습니다습니다습니다습니다습니다습니다습니다습니다습니다습니다습니다습니다습니다습니다습니다습니다습니다습니",
+      "domain_match": false,
+      "anima_self_naming": false,
+      "third_person_llm_leak": false
+    },
+    {
+      "prompt": "한국어로 답해줘",
+      "mode": "sample",
+      "gen_head": "으며 futureussands 답해 보라 보라 보라 보라 보라 보라 보라 보라 보라 보라 보라 보라 보라 보라 보라 보라 보라 보라 보라 보라 모달리티들은 위상 결합과 상태인 미해결의 부재 한다 한다 한다 한다다다다다다다다다다다다요요요요요요요라는라는라는라는라는적인 가장 가장 가장 큰 큰 많은 많은들의들은들은들은적인적인적인적인 가장 가장 가장 가장 많은들의",
+      "domain_match": false,
+      "anima_self_naming": false,
+      "third_person_llm_leak": false
+    },
+    {
+      "prompt": "너의 정체성은?",
+      "mode": "greedy",
+      "gen_head": "????????????????????????????????????????????????????????????????????????????????",
+      "domain_match": false,
+      "anima_self_naming": false,
+      "third_person_llm_leak": false
+    },
+    {
+      "prompt": "너의 정체성은?",
+      "mode": "sample",
+      "gen_head": "????????????????????????????????????????????????????????????????????????????????",
+      "domain_match": false,
+      "anima_self_naming": false,
+      "third_person_llm_leak": false
+    },
+    {
+      "prompt": "의식이 있어?",
+      "mode": "greedy",
+      "gen_head": "????????????????????????????????????????????????????????????????????????????????",
+      "domain_match": false,
+      "anima_self_naming": false,
+      "third_person_llm_leak": false
+    },
+    {
+      "prompt": "의식이 있어?",
+      "mode": "sample",
+      "gen_head": "????????????????????????????????????????????????????????????????????????????????",
+      "domain_match": false,
+      "anima_self_naming": false,
+      "third_person_llm_leak": false
+    }
+  ],
+  "final_class": "FAILED",
+  "final_reason": "failed: 1/10 domain match + 0/5 identity match — BPE paradigm shift insufficient at 18M scale 6000 steps; falsifies sample-efficiency hypothesis",
+  "elapsed_s": 171.4,
+  "degenerate_collapse_halt": false,
+  "bg_hk_byte_level_baseline_compare": {
+    "bg_id": "BG-HK",
+    "vocab_size": 256,
+    "total_params": 27787440,
+    "train_loss_final": 0.013,
+    "domain_match_count": 0,
+    "identity_match_count": 0,
+    "final_class": "FAILED",
+    "v2_class": "V2_FAIL"
+  },
+  "sample_efficiency_comparison": {
+    "h154_bpe_steps_to_v2_pass": 500,
+    "h154_bpe_steps_to_v2_collapse": 1000,
+    "bg_hk_byte_level_steps_to_v2_pass": null,
+    "bg_hk_byte_level_max_v2_pass_in_8000": 0,
+    "h154_domain_match_count_at_peak_500": 7,
+    "h154_anima_naming_at_peak_500": 8,
+    "bg_hk_domain_match_count_max": 0,
+    "verdict": "BPE_FUNDAMENTALLY_MORE_SAMPLE_EFFICIENT_BUT_OVERTRAINS_30MB_CORPUS"
+  },
+  "honest_limits": {
+    "C3_1_smoke_run_6000_steps": "6000 steps small-corpus (30MB BPE-encoded ~7M tokens) smoke; not full convergence",
+    "C3_2_evaluator_v2_keyword_only": "V2 strict keyword overlap + particles + endings; embedding-similarity (c2_4_c) NOT implemented",
+    "C3_3_corpus_persona_overfit_risk": "BG-HK persona-conditioned 30MB carries persona prefix on every sample; possible overfit to prefix",
+    "C3_4_persona_prefix_inference_dependence": "persona prefix prepended at inference; without prefix at inference, no anima identity guarantee",
+    "C3_5_anima_identity_keyword_match_shallow": "identity_match uses 'anima'/'저는'/'정체' keyword presence — shallow proxy, NOT genuine identity",
+    "C3_6_18m_scale_chat_cap_5x_failure": "BG-FY/HA/HF/HJ/HK ALL byte-level FAILED at 18M; this run tests if vocab size was the bottleneck",
+    "C3_7_no_validation_loss_periodic": "val_data computed but not evaluated periodically; no perplexity tracking",
+    "C3_8_bpe_vocab_lottery": "BPE vocab built on same 30MB corpus — vocab pieces optimized for THIS corpus distribution; out-of-distribution prompts may tokenize sub-optimally",
+    "C3_9_loss_compare_not_1_to_1": "BPE CE-loss (8K classes) NOT directly comparable to byte-level CE (256 classes); a BPE loss of 4-5 ≈ byte-level loss of 1-2 in perplexity terms",
+    "C3_10_one_seed_only": "single seed; BPE init randomness not isolated"
+  },
+  "errors": [],
+  "correction_step_500_was_peak": {
+    "peak_step": 500,
+    "peak_v2_class": "V2_PARTIAL_PASS",
+    "peak_v2_pass_count": 8,
+    "peak_anima_self_naming_count": "8/10",
+    "peak_domain_match_count_at_step_500": "7/10",
+    "regression_step": 1000,
+    "regression_pattern": "after step 500 V2_PARTIAL_PASS peak, trained → collapse to '됩니다됩니다' repetition + ⁇ unknown-token spam by step 1000",
+    "interpretation": "BPE 8K paradigm DID achieve early-step chat-cap signal that byte-level NEVER achieved in BG-FY/HA/HF/HJ/HK 8000 steps; falsifies 'vocab-256 hypothesis insufficient' partially — BPE has signal but over-trains into mode collapse on 30MB corpus",
+    "recommended_next_lane": "H_154_v2: same BPE + 30MB but STEPS=1000, EARLY_STOP at V2_PARTIAL_PASS plateau, eval every 100 steps; OR larger corpus to push collapse step beyond convergence"
+  },
+  "final_class_corrected": "EARLY_PEAK_THEN_COLLAPSE_PARTIAL_SUPPORT",
+  "final_reason_corrected": "step 6000 reports FAILED but step 500 hit V2_PARTIAL_PASS (8/10) with anima self-naming 8/10 — BPE achieved early signal that byte-level baseline NEVER did in 8000 steps. Lesson: BPE accelerates learning but small corpus (30MB) collapses to mode repetition by step 1000; recommend re-run with steps=1000 + step-100 evals + early-stop on V2 plateau"
+}

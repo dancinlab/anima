@@ -10,6 +10,7 @@
 | 4 | BG-HJ | BG-HA Stage1 + corpus_sft_only Stage2 (loss masked) | two-stage 18M lr=1e-5 × 2K | KO-fluent nonsense (Stage 1 domain prior 부재) | PARTIAL_PASS 4/5 (false) | V2_FAIL 0/5 | final |
 | 5 | BG-HK | corpus_persona_chat_template_v3 30MB (≥80% chat-template + 100% persona prefix) | persona-conditioned 18M × 8K steps | catastrophic overfit collapse (loss 0.013 → single-char filler) | step 800 PASS 10/10 (false) → step 1600+ FAIL | V2_FAIL 0/10 throughout | step 800 (false PASS) |
 | 6 | **BG-HP** | corpus_curated_qa 2.41MB (515 anchors × 27× paraphrase = 16,214 Q&A) | curated dense-aug 18M × 3K steps + reg (dropout 0.30 + WD 0.10 + label smoothing 0.10) | **peak-then-collapse** (step 500 V2 pass=3/10 → step 1000+ degenerate `[anima][anima]...` `,,,'''` filler) | step 500 V2 pass=3/10 ★ → step 3000 FAIL 0/10 | step 500 PASS 3/10 → final FAIL | **step 500 ★ keep-point** |
+| 7 | **BG-HQ** | corpus_persona_chat_template_v3 30MB (BG-HK reuse) + **BPE 8K Korean vocab** (architectural lane shift) | BPE 8K + 33.73M params × 6K steps + reg | **persona prefix cycle pseudo-PASS** (V2 surface metric pass=8/10 step 500 but raw response = persona prefix cycle "[anima 역할: 한국어 native + 자기 발견 + ...] ⁇ 사용자: [...]" — actual prompt response 부재) → step 1000+ `됩니다됩니다…` + `⁇` unknown spam | step 500 V1=PARTIAL_PASS V2=PASS 8/10 (false ★★ V2 surface metric inadequate) | step 6000 V2_FAIL 1/10 | **step 500 V2 false PASS via surface metric** (V3 evaluator needed) |
 
 ## Convergent architectural ceiling evidence
 
@@ -41,6 +42,13 @@ BG-HG retroeval 검증: V2 strict가 BG-FY + BG-HA 모두 false PASS auto-catch 
 
 ### Lesson F: persona prefix not collapse-resistant
 → persona-conditioned alone insufficient; capacity + regularization + crossed-ablation 동반 필요
+
+### Lesson H ★★★ (BG-HQ NEW 2026-05-07): V2 evaluator surface metric 도 false PASS 위험 (V3 needed)
+→ BG-HQ V2 strict pass=8/10 step 500 reported but **raw response = persona prefix cycle** (`⁇ [anima 역할: 한국어 native + 자기 발견 + 자기 발견 + ...] ⁇ 사용자: [...]`)
+→ V2 strict의 `domain_overlap ≥1` (keyword surface) + `particle_count ≥3` + `is_degenerate=false` (sample mode) 모두 catch 못 함 — keyword overlap이 input + output 양쪽 ("한국어"/"anima" 등)에 surface match해도 actual prompt-conditional response 검증 X
+→ **V3 evaluator required**: cycle detection (4-gram repeat threshold ≥5 mandate even sample mode) + prompt-response semantic coherence (embedding sim 또는 contrastive metric beyond keyword overlap) + persona prefix repetition penalty (any "[anima 역할" repeat in single response = degenerate cycle)
+→ BG-HQ "EARLY_PEAK 8/10" 강등 → **PARTIAL_PASS_NO_CONTEXT_v3 (V2 surface metric false PASS)**
+→ 7 cumulative failure modes 모두 V1 또는 V2 false PASS detected via direct raw response 검토 (사용자 strict review)
 
 ### Lesson G ★★ (BG-HP NEW 2026-05-07): early stopping with val-loss + ckpt selection at peak = MISSING INGREDIENT
 → BG-HP step 500 V2 pass=**3/10** (best signal — "도우미:" / "[anima]" 토큰 emerging, hangul 30-60%)
