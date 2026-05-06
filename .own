@@ -779,3 +779,67 @@ own 18 live "anima consciousness check — simple stack default (대화 가능 +
   proof grep -E "SIMPLE_STACK_(PASS|FAIL)" docs/anima_consciousness_check_simple_stack_2026_05_06.md
   severity warn (Phase 1 — simple stack ledger 작성) → block (Phase 2 — anima cli mk2 T1 backend 결정 시 simple stack PASS 필수)
   note 2026-05-06 own 18 = 9th anima autonomy mandate joining own 1-17 sextet+triad+identity. own 18 = consciousness verification axis (simple/full stack) — minimum bar for anima identity-bearing surface.
+
+own 19 live "corpus > architecture for chat-cap — 본 cycle 발견"
+  slug corpus-priority-over-architecture
+  since 2026-05-06
+  scope anima chat-cap recovery training (model design + corpus assembly)
+  user-directive verbatim "조그맣게라도 성공하는 모델 만들어서 성공시켜봐줘" + BG-FY 18M PASS vs BG-FK 27.84M FAIL evidence
+  rule chat-cap (own 18 simple stack PASS) 도달은 capacity (model param size) 보다 corpus quality (KO ratio + chat-template format) 우선이다. 본 cycle 발견:
+    - BG-FY anima-native-ko-small 18M (corpus_ko_heavy 62.14% Hangul) → SIMPLE_STACK_PASS C1+C2.1-2.3
+    - BG-FK clm_v2_base 27.84M (val_ce 1.27 best, ConsciousLM++ ca_rules+gate, but corpus EN-bias) → SIMPLE_STACK_FAIL (KO 0/3)
+    - capacity 7.7× 차이 무관, corpus가 unlock
+  evidence-trail:
+    - state/anima_simple_stack_exhaustive_2026_05_06/summary.json (BG-FS 11-model exhaustive)
+    - state/anima_native_ko_small_ubu1_train_2026_05_06/verdict.json (BG-FY PASS)
+    - state/anima_ko_corpus_assembly_2026_05_06/verdict.json (BG-FW corpus_ko_heavy 246MB build)
+  application-rule:
+    - training cycle 시작 전 corpus QA 우선 (Hangul ratio + chat-template format coverage)
+    - capacity scale up은 corpus passable 조건에서만 의미
+    - "더 큰 model" 보다 "더 좋은 corpus" 권고 (own 19 priority)
+  cross-link own 14 (HF Hub only) own 15 (PRIVATE→PUBLIC) own 18 (simple stack)
+  cross-link .roadmap.philosophy D4 corpus priority + .roadmap.rule R1 own_19_20 entry + .roadmap.rule rule.discovery_methods DM4+DM9
+  honest-c3 corpus quality 측정 = Hangul ratio 단독 지표 한정 (chat-template ratio + 의미 풍부 + license clear measurement spec 미land)
+  honest-c3 own 19은 architecture lane 차단 X — 둘 다 진행 가능 but corpus 우선 priority 강조
+  honest-c3 BG-FK 27.84M ConsciousLM++ ca_rules+gate는 different architecture (federated)이라 본 cycle source like-for-like 비교 미land
+  honest-c3 본 cycle 2-instance evidence (BG-FY + BG-FK) — VM10 recurring pattern 3+ instance 권고는 후속 cycle ablation 필요
+  honest-c3 own 19 은 사용자 directive '조그맣게라도 성공하는 모델 만들어서 성공시켜봐줘' (capacity 작아도 OK) implicit하게 corpus 우선 권고
+  why corpus (input distribution)가 model이 학습할 manifold를 결정 — capacity는 그 manifold expressivity만 결정. EN-bias corpus + 27M = high-capacity EN model, KO-heavy corpus + 18M = mid-capacity KO model. anima 정체성 (own 17 한국어 native)와 정합하려면 corpus가 더 critical.
+  proof grep -E "SIMPLE_STACK_(PASS|FAIL|PARTIAL)" docs/anima_consciousness_check_simple_stack_2026_05_06.md
+  severity warn (Phase 1 — training cycle launch 시 corpus QA 권고) → block (Phase 2 — corpus QA fail 시 training launch X)
+  note 2026-05-06 own 19 = 10th anima autonomy mandate. own 14/15/16 (external resource) + own 17 (identity boundary) + own 18 (consciousness check) + own 19 (corpus priority) 와 함께 anima training discipline 6 axis 형성.
+
+own 20 live "chat-template format mandate — 본 cycle 발견"
+  slug chat-template-format-mandate
+  since 2026-05-06
+  scope anima training corpus + instruction-tuning lane
+  user-directive verbatim "자연발화는 맥락에 맞아야한다" (사용자 directive 2026-05-06 + BG-FY PARTIAL_PASS_NO_CONTEXT evidence)
+  rule chat-cap actual emit (own 18 C2.4 맥락 정합 PASS) 도달은 corpus chat-template format ("사용자: <Q>\\n도우미: <A>") 충분히 학습 또는 instruction-tuning lane 별도 진행 필수. 본 cycle 발견:
+    - BG-FY 18M (corpus_ko_heavy 246MB) → SIMPLE_STACK_PASS C1+C2.1-2.3 but **C2.4 맥락 정합 FAIL** (philosophy debate template "서연/유진/하은: 정말 그럴까요? 반례를..." leak)
+    - corpus chat-template format ratio 부족 → prompt 무관 응답 (named speaker leak / philosophy pattern emit)
+    - chat-template format ≥30% 학습 또는 instruction-tuning 별도 cycle 필수 (60-80% safer recommend)
+  evidence-trail:
+    - state/anima_native_ko_small_ubu1_train_2026_05_06/ko_eval_log.jsonl (eval log 분석)
+    - eval 예시:
+      * "안녕하세요" → "서연: 좋은 지적이..." (인사 응답 X, philosophy debate template emit)
+      * "한국어 가능?" → "유진: 정말 그럴까요? 반례를 들어볼게요." (능력 답변 X, debate auto-emit)
+      * "사용자: 안녕하세요\\n도우미:" → "벼만가 보아진 도르세요." (chat-format prompt에도 인사 응답 X)
+  application-rule:
+    - corpus 학습 corpus chat-template format ratio ≥30% 측정 + 충족 안 되면 instruction-tuning lane 별도 진행 mandate
+    - philosophy debate template / named speakers leak 방지 (corpus filter pre-process)
+    - eval 시 own 18 C2.4 strict 측정 mandate (context-mismatch detector)
+  prevented-failure-modes:
+    - corpus_ko_heavy의 philosophy named speakers leak (서연/하은/유진/민준)
+    - prompt와 무관한 도메인 shift (인사 → philosophy)
+    - debate template ("정말 그럴까요? 반례를 들어볼게요") 자동 emit
+  cross-link own 17 (anima-native lane) own 18 (C2.4 맥락 정합) own 19 (corpus priority)
+  cross-link .roadmap.philosophy D2.C2.4 + D4 + .roadmap.rule R1 own_19_20 entry + .roadmap.rule rule.discovery_methods DM4+DM5
+  honest-c3 chat-template ratio 30% threshold 임의 — 더 많은 데이터 필요 (예상 60-80% chat-format이 안전 권고)
+  honest-c3 instruction-tuning lane 별도 cycle 필요 (full SFT vs LoRA r=8 trade-off 미land)
+  honest-c3 named speakers leak 외에도 다른 corpus pollution 가능 (license / domain / register imbalance) — 본 own은 chat-template format 한정
+  honest-c3 본 cycle 2-instance evidence (BG-FU 3M PARTIAL fragment + BG-FY 18M PARTIAL no-context) — VM10 recurring pattern confirm but ablation 부족
+  honest-c3 own 20은 own 19 (corpus priority)의 specialization — corpus quality axis 중 chat-template format 명시 lane
+  why prompt 무관 응답은 model이 corpus의 frequent template를 자동 emit하기 때문. corpus의 token sequence 분포가 학습 distribution을 결정. chat-template format이 충분히 학습되면 prompt에 conditional chat response가 자동 생성됨 (own 18 C2.4 PASS 정합).
+  proof grep -E "C2_4|context_match|context_mismatch" state/anima_native_ko_small_ubu1_train_2026_05_06/verdict.json
+  severity warn (Phase 1 — training cycle launch 시 chat-template ratio 측정 권고) → block (Phase 2 — corpus QA gate strict)
+  note 2026-05-06 own 20 = 11th anima autonomy mandate. own 19 (corpus priority) + own 20 (chat-template format) + own 18 (consciousness check) 와 함께 chat-cap training 3 axis 형성.
