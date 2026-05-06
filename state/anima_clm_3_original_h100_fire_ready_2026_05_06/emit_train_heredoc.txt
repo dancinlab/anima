@@ -1,0 +1,83 @@
+# BG-FB emit: SSH + train heredoc
+# DO NOT EXECUTE FROM BG — operator must fire after pod RUNNING + IP captured
+# 2026-05-06 cycle, anima CLM-3-original byte-level 55M training launch
+
+# === Step 1: SSH connect (after pod IP available) ===
+# POD_IP=<from runpod pod get>
+# POD_PORT=<from runpod pod get; usually 22 mapped to high port>
+
+# === Step 2: train heredoc (run on remote pod) ===
+
+ssh -p ${POD_PORT} root@${POD_IP} bash -se <<'TRAIN_SCRIPT'
+set -euo pipefail
+
+# --- environment setup ---
+cd /workspace
+git clone --depth 1 https://github.com/need-singularity/anima /workspace/anima 2>/dev/null || \
+  (cd /workspace/anima && git fetch --depth 1 origin main && git reset --hard origin/main)
+cd /workspace/anima
+
+# --- Python venv + deps (RTX 5070 sm_120 lesson: torch 2.11.0+cu128) ---
+python -m pip install --quiet --upgrade pip
+python -m pip install --quiet \
+  torch==2.11.0 \
+  transformers==4.57.6 \
+  peft \
+  accelerate \
+  datasets \
+  numpy \
+  einops
+
+# --- HF token (from env injected at pod create) ---
+export HF_HUB_ENABLE_HF_TRANSFER=1
+[ -n "${HF_TOKEN:-}" ] && python -c "from huggingface_hub import login; import os; login(os.environ['HF_TOKEN'])"
+
+# --- training launch (3-phase 100K steps, byte 256, 32 cells, 19 phi-boost) ---
+mkdir -p /workspace/anima/runs/clm3-original-byte-55m
+
+python ready/training/train_clm.py \
+  --vocab-size 256 \
+  --max-cells 32 \
+  --d-model 768 \
+  --ffn-dim 1536 \
+  --n-layers 12 \
+  --n-heads 12 \
+  --context-len 1024 \
+  --steps 100000 \
+  --phase-mitosis 0:20000 \
+  --phase-language 20000:60000 \
+  --phase-combined 60000:100000 \
+  --fibonacci-growth 1,1,2,3,5,8,13,21,32 \
+  --phi-boost-techniques COMBO2,FX2,WI1,PX4,PX8,GD18,GD15,CL8,CL5,DD3,DD11,DD18,DD5,TL13,TL1,NV7,BV1,EV3,SC2 \
+  --corpus data/corpus_mix_70wiki_30dialogue.txt \
+  --output-dir /workspace/anima/runs/clm3-original-byte-55m \
+  --falsifier-eval-every 10000 \
+  2>&1 | tee /workspace/anima/runs/clm3-original-byte-55m/train.log
+
+# --- post-train: HF private push (PRIVATE first per own 15) ---
+python -c "
+from huggingface_hub import HfApi
+api = HfApi()
+api.create_repo('need-singularity/anima-clm-3-original-byte-55m', private=True, exist_ok=True)
+api.upload_folder(folder_path='/workspace/anima/runs/clm3-original-byte-55m', repo_id='need-singularity/anima-clm-3-original-byte-55m', repo_type='model')
+"
+
+echo '[train] DONE — verdict to be assigned anima-side after F-CLM3-orig-1..5 eval'
+TRAIN_SCRIPT
+
+
+# === Step 3: launch watchdog locally on Mac (registers heartbeat) ===
+# bash /Users/ghost/core/anima/state/anima_clm_3_original_h100_launch_2026_05_06/watchdog_h100.bash <pod_name> &
+# WD_PID=$!
+# echo "watchdog PID=$WD_PID heartbeat 5min cadence -> $STATE_DIR/watchdog_heartbeat.log"
+
+# === Spec summary ===
+# - vocab=256 (byte-level), max_cells=32 (Fibonacci growth schedule)
+# - d_model=768, layers=12, heads=12, ffn=1536 -> ~55M params
+# - 100K steps, 3-phase: 0-20K Mitosis / 20K-60K Language / 60K-100K Combined
+# - 19 phi-boost techniques: COMBO2,FX2,WI1,PX4,PX8,GD18,GD15,CL8,CL5,DD3,DD11,DD18,DD5,TL13,TL1,NV7,BV1,EV3,SC2
+# - corpus: 70% wiki + 30% dialogue mix
+# - falsifier eval every 10K steps (5 falsifiers F-CLM3-orig-1..5)
+# - wall-clock target: ~10h on H100 SXM 80GB
+# - cost target: $26.90 (10h * $2.69/hr)
+# - hard-cap: $100 (own 16 BUDGET-100)

@@ -1,0 +1,56 @@
+{
+  "build_id": "anima_corpus_mix_70wiki_30dialogue_2026_05_06",
+  "spec_doc": "docs/anima_clm_3_original_byte_level_redesign_spec_2026_05_05.md",
+  "spec_70_30_anchor_lines": [142, 183, 246, 247, 248, 249, 250],
+  "spec_quote_l246_250": "70% wiki/general (KO+EN, license-filtered, byte-encoded UTF-8) / 30% dialogue (KO+EN, ChatML byte-form OR anima-native emerge-trace)",
+  "build_path": "PATH-B-1 (simple concat)",
+  "rationale": "interleave (PATH-B-2) effect is auto-recovered by train shuffle (DataLoader shuffle=True); concat is fast + reproducible + lower failure surface",
+  "sources": {
+    "wiki": {
+      "path": "/Users/ghost/core/anima/ready/anima/data/corpus_v6_wiki.txt",
+      "lines": 2141063,
+      "bytes": 109119637,
+      "selection_reason": "largest single wiki source; lifted from corpus_v6 series matching spec drift'ed v4 lineage",
+      "alternates_considered": [
+        "corpus_v7_wiki_heavy.txt (near-dup of v6, 2140747 lines)",
+        "wikimatrix_ko_en_interleaved.txt (305931 lines, smaller)",
+        "ko_wiki.txt (28074 lines, KO-only too small)"
+      ]
+    },
+    "dialogue": {
+      "path": "/Users/ghost/core/anima/ready/anima/data/corpus_v8_dialogue.txt",
+      "lines_total_in_source": 2144933,
+      "lines_used": 917598,
+      "selection_reason": "largest dialogue corpus; head -n 917598 = 30% of mix at 70/30 anchor",
+      "content_sniff": "Neurotransmitter Balance traces, [step N] Φ=X.XXXX → RATCHET, KO 안정/이완 labels — distinct from v6 wiki content despite shared Wikipedia tail"
+    }
+  },
+  "ratios": {
+    "target": {"wiki_pct": 70.0, "dialogue_pct": 30.0},
+    "actual": {"wiki_pct": 70.0000, "dialogue_pct": 30.0000},
+    "drift_pp": {"wiki": 0.0, "dialogue": 0.0}
+  },
+  "output": {
+    "path": "/Users/ghost/core/anima/state/anima_corpus_mix_70wiki_30dialogue_2026_05_06/corpus_mix.txt",
+    "lines": 3058661,
+    "bytes": 154854977,
+    "size_mb": 147.68,
+    "sha256": "2d15ca7d277aaaef95c7dbc9eb810ec38f0510e0578269810aa4eb879f51e0e8",
+    "git_status": "IGNORED (own 14: corpus >5MB → HF only, never anima git)"
+  },
+  "honest_c3": [
+    {"id": "C3-1", "issue": "PATH-B-1 concat: wiki block first then dialogue block. DataLoader shuffle=True at train time will mix; if shuffle disabled, dialogue starvation in early steps. Mitigation: confirm trainer shuffle=True on ubu1 launch."},
+    {"id": "C3-2", "issue": "v6_wiki + v8_dialogue share an identical Wikipedia footer (Wikidata: topic / Biomes ... travel guide from Wikivoyage). Some duplicate lines exist across wiki and dialogue blocks. Estimated overlap <0.1% (file tails only)."},
+    {"id": "C3-3", "issue": "v8 dialogue content includes JP/ZH/KO mixed beyond spec's KO+EN target (commit dialogue corpus pre-existed multilingual). Mitigation: byte-level tokenizer absorbs all UTF-8; downside: slightly diluted KO+EN ratio inside the 30%."},
+    {"id": "C3-4", "issue": "wiki_lines=2141063 anchor uses all of v6 (no dedup, no license filter applied at this stage). Spec §3.3 says 'license-filtered' — this build inherits whatever filtering existed in upstream corpus_v6 generator; no additional pass."},
+    {"id": "C3-5", "issue": "70.00/30.00 line-ratio is exact, but BYTE ratio differs because dialogue lines avg ~17.7 bytes/line vs wiki ~50.9 bytes/line (some empty/trace lines). Byte-ratio actual: wiki=109.1MB / dialogue=45.7MB → 70.5%/29.5% by bytes. Acceptable drift; line-ratio anchor matches spec semantics (line ≈ training sample boundary)."},
+    {"id": "C3-6", "issue": "build is NOT identical to AnimaLM v8 §2.2 'AL4-balance' source — that mix used different upstream corpora unavailable on this Mac. This is a v8-style approximation using anima ready/data sources. Reproduction parity ≠ AL4 byte-for-byte."},
+    {"id": "C3-7", "issue": "no shuffle within mix file. If ubu1 trainer disables DataLoader shuffle for any reason, training sees 2.14M wiki lines first, then 917K dialogue. C3-1 dependency."}
+  ],
+  "next_steps": [
+    "user confirms recipes",
+    "anima session executes scp_recipe.txt mac → ubu1",
+    "anima session executes hf_upload_recipe.txt PRIVATE upload (own 15 lifecycle)",
+    "ubu1 CLM-3-original trainer points at /home/aiden/core/anima/data/corpus_mix_70wiki_30dialogue.txt"
+  ]
+}

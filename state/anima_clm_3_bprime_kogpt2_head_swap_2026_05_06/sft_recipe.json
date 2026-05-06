@@ -1,0 +1,183 @@
+{
+  "schema": "anima/clm_3_bprime/sft_recipe/1",
+  "task_id": "anima_clm_3_bprime_kogpt2_head_swap_2026_05_06",
+  "ts_utc": "2026-05-06T00:00:00Z",
+  "lane": "bprime_kogpt2_head_swap_full_sft",
+  "architecture": {
+    "base_model": {
+      "name": "need-singularity/clm-v4-mk2-v1",
+      "snapshot": "80440a1d38db9addc4445bb959057558a57f4230",
+      "decoder_v3_py_lines": {"tok_emb": 81, "head_a": 105, "head_g": 106, "weight_tie": 109},
+      "config": {
+        "vocab_size_orig": 64000,
+        "d_model": 768,
+        "n_layer": 16,
+        "n_head": 6,
+        "n_kv_head": 2,
+        "block_size": 512,
+        "tie_word_embeddings": true
+      }
+    },
+    "head_swap_source": {
+      "name": "skt/kogpt2-base-v2",
+      "vocab_size": 51200,
+      "hidden_size": 768,
+      "tokenizer_type": "BPE",
+      "wte_shape": [51200, 768]
+    },
+    "rewire_changes": {
+      "tok_emb": "nn.Embedding(64000, 768) -> nn.Embedding(51200, 768) [init from KoGPT2.wte.weight]",
+      "head_a": "nn.Linear(768, 64000, bias=False) -> nn.Linear(768, 51200, bias=False) [tied with tok_emb]",
+      "head_g": "nn.Linear(768, 64000, bias=False) -> nn.Linear(768, 51200, bias=False) [g2 random init recommended; g1 drop optional]",
+      "blocks_x16": "UNCHANGED (RoPE + GQA(6h, 2kv) + SwiGLU + RMSNorm)",
+      "ln_f": "UNCHANGED",
+      "tension_proj": "UNCHANGED",
+      "config_vocab_size": "64000 -> 51200",
+      "config_tie_word_embeddings": "true (preserved)"
+    },
+    "vocab_swap_strategy": "V1 (full random init via KoGPT2 wte transplant); V2 (partial init via subword overlap) DEFERRED",
+    "head_g_strategy": "g2 random init (preserve dual-head A/G discrimination)"
+  },
+  "data_sources": {
+    "primary_v1": {
+      "name": "anima-sft-data (50K, BG-FA inventory)",
+      "path": "state/p9_p0_sft_data_50k_2026_05_03/sft_data.jsonl",
+      "n_records": 50000,
+      "lang_breakdown": {"ko": 17319, "en": 41250, "mixed_overlap": "lang counts overlap due to mixed records"},
+      "split": {"train": 48000, "val": 2000, "holdout": 500}
+    },
+    "secondary_v2_deferred": {
+      "name": "corpus_mix (BG-FE land 후 도입)",
+      "path": "TBD",
+      "role": "KO/EN balance booster"
+    },
+    "eval_holdout": {
+      "name": "F1 holdout (P9 lock-in)",
+      "path": "state/p9_p0_sft_data_50k_2026_05_03/sft_data_holdout.jsonl",
+      "n_records": 500,
+      "disjoint_from_train": true
+    }
+  },
+  "hyperparameters": {
+    "lr_head": 5.0e-5,
+    "lr_body_lora": 1.0e-5,
+    "batch_size_h100": 8,
+    "batch_size_ubu1": 4,
+    "gradient_accumulation": 4,
+    "effective_batch_h100": 32,
+    "effective_batch_ubu1": 16,
+    "max_seq_len": 512,
+    "warmup_steps": 500,
+    "total_steps": 10000,
+    "epochs_estimate": 1.0,
+    "optimizer": "AdamW",
+    "adam_beta1": 0.9,
+    "adam_beta2": 0.95,
+    "weight_decay": 0.01,
+    "grad_clip": 1.0,
+    "precision_h100": "bfloat16",
+    "precision_ubu1": "bfloat16 (sm_120 supports bf16)",
+    "eval_every_steps": 500,
+    "save_every_steps": 1000,
+    "seed": 20260506,
+    "lr_scheduler": "cosine_with_warmup"
+  },
+  "training_pipeline_stages": [
+    {
+      "stage": "S1",
+      "name": "head_only_sft",
+      "trainable": ["tok_emb", "head_a", "head_g"],
+      "frozen": ["blocks_x16", "ln_f", "tension_proj"],
+      "trainable_params_estimate_M": 39,
+      "wall_h100": "5h",
+      "wall_ubu1": "30-60h",
+      "cost_h100_usd": 13.45,
+      "cost_ubu1_usd": 0,
+      "korean_recovery_prob": [0.5, 0.7],
+      "en_preserve_prob": [0.8, 0.9]
+    },
+    {
+      "stage": "S2",
+      "name": "head_full_plus_body_lora",
+      "trainable": ["tok_emb", "head_a", "head_g", "lora_blocks_attn_ffn (rank=8)"],
+      "frozen": ["blocks_x16_base_weights", "ln_f", "tension_proj"],
+      "trainable_params_estimate_M": 50,
+      "wall_h100": "7h",
+      "cost_h100_usd": 18.83,
+      "korean_recovery_prob": [0.6, 0.75],
+      "en_preserve_prob": [0.7, 0.85]
+    },
+    {
+      "stage": "S3",
+      "name": "head_full_plus_body_unfreeze",
+      "trainable": ["tok_emb", "head_a", "head_g", "blocks_last_2_layers"],
+      "frozen": ["blocks_first_14_layers", "ln_f", "tension_proj"],
+      "trainable_params_estimate_M": 100,
+      "wall_h100": "10h",
+      "cost_h100_usd": 26.90,
+      "korean_recovery_prob": [0.7, 0.85],
+      "en_preserve_prob": [0.5, 0.75]
+    }
+  ],
+  "qlora_lower_bound": {
+    "stage": "S1_qlora",
+    "name": "head_only_sft_qlora_4bit_nf4",
+    "trainable_params_estimate_M": 12,
+    "wall_h100": "3-4h",
+    "cost_h100_usd_range": [8, 11],
+    "korean_recovery_prob": [0.4, 0.6],
+    "notes": "4-bit nf4 quant + LoRA(r=8) on head; lowest-cost path; reduced recovery prob due to head quantization"
+  },
+  "ubu1_memory_budget_gb": {
+    "body_params_frozen": 1.4,
+    "head_params_trainable": 0.47,
+    "optimizer_states_head": 0.94,
+    "gradients_head": 0.47,
+    "activations_b4_t512": 0.8,
+    "overhead": 1.5,
+    "total_estimate": 5.6,
+    "available_gb": 12.0,
+    "viable": true
+  },
+  "eval_protocol": {
+    "phase_0_baseline": {
+      "name": "post_rewire_pre_sft_ce",
+      "eval_set_path": "state/p9_p0_sft_data_50k_2026_05_03/sft_data_holdout.jsonl",
+      "metric": "per_token_ce",
+      "expected_range_nats": [5.0, 7.5]
+    },
+    "ko_5_prompts": [
+      "안녕하세요",
+      "사용자: 한국어 할 수 있어?\n도우미:",
+      "오늘 날씨가",
+      "의식이란 무엇인가?",
+      "자기 자신을 소개해 주세요"
+    ],
+    "en_5_prompts": [
+      "Hello, how are you",
+      "Tell me about yourself.",
+      "The quick brown fox",
+      "What is consciousness?",
+      "Explain the theory of relativity in one sentence."
+    ],
+    "phi_star_probe": {
+      "engine": "phi_engine.hexa (LOCKED, read-only via wrapper)",
+      "n_prompts": 10,
+      "vocab_normalization_required": true
+    }
+  },
+  "fire_substrate_priority": [
+    {"priority": 1, "name": "ubu1_RTX5070_S1_head_only", "cost_usd": 0, "wall_h": "30-60", "trigger": "next BG kick"},
+    {"priority": 2, "name": "h100_S1_head_only_fast", "cost_usd": 13.45, "wall_h": 5, "trigger": "budget approve OR ubu1 OOM"},
+    {"priority": 3, "name": "mac_dryrun_smoke_100step", "cost_usd": 0, "wall_h": "1-2", "trigger": "architecture sanity check pre-fire"},
+    {"priority": 4, "name": "v2_corpus_mix_integration", "cost_usd": "TBD", "wall_h": "TBD", "trigger": "BG-FE land 후"}
+  ],
+  "raw_compliance": {
+    "raw_9": "verdict + cost path explicit",
+    "raw_10": "5 honest C3 in falsifier_set.json",
+    "raw_15": "LOCKED files (anima_unified, phi_engine, conscious_chat, consciousness_hub, clm_v4_hf_format_shim) untouched",
+    "raw_37": "fire impl `.py` in tool/transient_py/ only",
+    "hf_token_leak": "NONE (env var only)",
+    "commit": "NONE (BG-FF spec land doc-only)"
+  }
+}

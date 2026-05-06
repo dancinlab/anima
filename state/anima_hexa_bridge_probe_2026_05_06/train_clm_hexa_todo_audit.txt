@@ -1,0 +1,64 @@
+# BG-FH train_clm.hexa TODO density audit
+# Source: /Users/ghost/core/anima/ready/training/train_clm.hexa
+# Mirror: /home/aiden/core/anima/ready/training/train_clm.hexa (identical, mtime 2026-04-16 20:40)
+# Date: 2026-05-06
+
+## File metrics
+- LoC: 311 (hexa) vs 2165 (.py) — 14.4% LoC ratio
+- Header self-declared: "Phase 2c structural port; PyTorch ops -> TODO comments"
+- TODO/placeholder count: 8 distinct TODO markers
+- Coverage: scale configs, phase manager, dataset, train loop, checkpoint, eval
+
+## TODO line refs (all 8)
+
+| Line | Function           | TODO body                                                                                  |
+|------|--------------------|--------------------------------------------------------------------------------------------|
+| 138  | load_corpus        | data = np.memmap(path, dtype=np.uint16, mode='r'); tokenizer = load_tokenizer(...)        |
+| 145  | get_batch          | ix = torch.randint(...); x/y = stack([data[i:i+block_size] for i in ix])                  |
+| 173  | lr_at              | actual cosine schedule with min_lr floor                                                   |
+| 190  | evaluate           | model.eval(); with no_grad(): compute CE on val split; BPC = CE / ln(2); Phi = gpu_phi(...) |
+| 207  | save_checkpoint    | state dict + optim + sched + step + val_ce + phi + phase; atomic_save(.tmp) + rename       |
+| 245  | train_step         | grad_accum loop with autocast(bf16); CE + phi_loss + hexad_loss; backward; clip + step    |
+| 272  | train_scale        | actual loop runs total_steps with eval/ckpt cadence                                        |
+| 3    | header             | "PyTorch ops -> TODO comments" (self-declaration)                                          |
+
+## Critical execution-path TODOs (5 of 8)
+- L138 load_corpus: np.memmap + tokenizer loading                          [BLOCKER for fire]
+- L145 get_batch: tensor stacking + torch.randint                          [BLOCKER for fire]
+- L207 save_checkpoint: torch state_dict + atomic save                     [BLOCKER for fire]
+- L245 train_step: autocast/backward/step, the entire training body        [BLOCKER for fire — biggest gap]
+- L272 train_scale: the actual step loop                                   [BLOCKER for fire]
+
+Non-critical (3 of 8): L3 (header doc), L173 (cosine schedule has fallback linear), L190 (eval is non-blocking)
+
+## Structural skeleton present (NOT TODO) — ~85% scaffolding
+- 5 ScaleConfig variants (34M / 100M / 350M / 1B / 3B) all populated literal values
+- PhaseManager (P1/P2/P3 phase transition) full impl
+- TokenDataset / OptimState / EvalResult / Checkpoint / TrainState / PhaseManager structs
+- verify_phi_non_destructive (Law 49 CDO rule) full impl with concrete ratio check
+- run_pipeline sequential scale escalation (full impl modulo step loop)
+
+## hexa-port effort estimate (to bring to runtime-ready)
+
+### What's needed
+- numpy memmap equivalent (hexa numeric stdlib status: docs/hexa_lang_numeric_stdlib_proposal_20260426.md PROPOSAL only)
+- PyTorch tensor + autograd FFI bridge (does not exist in current hexa)
+- HuggingFace tokenizer integration (hexa http stdlib + raw HTTP only, NO transformers SDK binding)
+
+### LoC estimate
+- Numeric stdlib bridge: ~600-1000 LoC (per numeric_stdlib_proposal scope)
+- PyTorch FFI bridge: 2000+ LoC OR 0 LoC if Path B emit-py-pattern adopted
+- Train loop body fill (5 critical TODOs): ~400-600 LoC hexa source
+- Total Path A direct hexa-port: 3000+ LoC, weeks of work, blocked on numeric stdlib
+
+### Days estimate
+- Path A (direct hexa fill): 2-4 weeks (numeric stdlib + tensor bridge + tokenizer)
+- Path B (emit-py-pattern wrapper): 3-5 hours (per design plan §95-98)
+- Path C (.own opt-out, use existing .py): 0 minutes (already covered)
+
+## Verdict
+train_clm.hexa is a 311-LoC scaffolding skeleton, NOT runtime-executable. It documents
+shape + invariants in hexa, but all 5 critical execution paths defer to PyTorch via TODO
+markers. It is INTENDED as a reference/audit artifact, not as a fire-ready binary.
+Path A is unrealistic without months of stdlib work. Path B is the official anima
+recommendation. Path C (use existing .py via own 1) requires zero new work.

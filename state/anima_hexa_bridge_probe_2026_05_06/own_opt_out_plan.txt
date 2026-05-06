@@ -1,0 +1,69 @@
+# BG-FH .own opt-out fallback path — plan
+# Date: 2026-05-06
+
+## Discovery summary
+
+### .own files in anima
+- /Users/ghost/core/anima/.own  (633 LoC, single ROOT-LEVEL file, mk2 frontmatter)
+- NO per-directory .own files exist (none under ready/, ready/training/, etc.)
+- VERDICT: .own is a SINGLE ROOT-LEVEL ssot, not a per-dir overlay
+
+### .own structure (own 1 - own 16 active)
+- own 1 = anima-hexa-only-scope (raw 9 grandfather list)
+- own 4 = training-resource-root-cause-only
+- own 5 = anima-research-completeness-no-cap
+- own 6 = gpu-dispatch-no-restriction-no-approval
+- own 14/15/16 = HF lifecycle + H100 cost discipline triad
+
+## CRITICAL FINDING — already covered
+
+own 1 EXISTING opt-out clause (LINE 83 of /Users/ghost/core/anima/.own):
+
+  opt-out ready/ — historical corpus archive, .gitignore'd; raw 9 jurisdiction-out (1431 files)
+
+This means:
+- ready/training/train_clm.py is ALREADY a legitimate opt-out under own 1
+- The "1431 files" count includes train_clm.py
+- raw 9 hexa-only does NOT apply to ready/ tree
+- NO new .own declaration needed — train_clm.py is jurisdiction-out by precedent
+
+## Memory feedback alignment
+
+feedback_dot_own_opt_out_system.md decision tree:
+  Step 2: "Archive / grandfathered (redteam, holographic_ib_ksg, ready/)? -> Already .own 1, leave alone."
+
+feedback_py_to_hexa_only.md allowlist:
+  "ready/*.py 1431 files (archive opt-out under .own)"
+  "ssh/runpodctl invocations to ubu1/RunPod (substrate exempt, always was)"
+
+## Fire-path implication for emit_smoke_command.txt
+
+emit_smoke_command.txt at /Users/ghost/core/anima/state/anima_clm_3_ubu1_fire_2026_05_06/
+fires `ssh ubu1 ... python ready/training/train_clm.py ...`. This pattern satisfies BOTH:
+1. own 1 ready/ jurisdiction-out (the .py file lives in archive)
+2. feedback_py_to_hexa_only ssh-substrate-exempt clause (substrate = ubu1)
+
+NO modification to emit_smoke_command.txt is required for raw 9 / own compliance.
+
+## Decision tree for "should I create .own N declaration?"
+
+| Scenario                                                  | Action                            |
+|-----------------------------------------------------------|-----------------------------------|
+| Use existing ready/training/train_clm.py via ssh          | NO declaration — own 1 covers it  |
+| Add NEW .py to ready/                                     | NO declaration — own 1 covers it  |
+| Add NEW .py to mac arbitrary tooling (tool/, _python_bridge/) | NEW .own N OR convert to hexa  |
+| Add transient sub-second helper to state/                 | raw 37 transient — NO declaration |
+| VLM transpiler emits .py to tool/transient_py/            | namespace-level .own N declaration|
+
+train_clm.py case = row 1 = NO action needed.
+
+## Sub-3 verdict
+
+NO new .own file needs to be created. The existing root-level /Users/ghost/core/anima/.own
+already handles ready/training/train_clm.py via own 1 grandfather opt-out. The fire path
+emit_smoke_command.txt is raw 9 / own 1 compliant as written.
+
+If user nevertheless wants to ADD an explicit per-task hint, the recommended pattern would
+be a comment line in emit_smoke_command.txt itself (e.g., line 11 add: "# raw 9 compliance:
+own 1 ready/ jurisdiction-out + ssh substrate-exempt"). NOT a new .own file — that would
+violate the single-root-SSOT principle.

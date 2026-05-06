@@ -1,0 +1,82 @@
+{
+  "bg_id": "BG-EQ",
+  "lane": "anima_clm_v2_v3_weights_archaeology",
+  "date": "2026-05-05",
+  "cost_usd": 0,
+  "wall_clock_min_actual": 30,
+  "verdict": "FAIL_NO_TRACE",
+  "verdict_decode": {
+    "PASS_LOCAL_WEIGHTS_FOUND": false,
+    "PASS_LFS_FOUND": false,
+    "PASS_HF_CACHE_FOUND": false,
+    "PASS_RECONSTRUCTION_POSSIBLE": true,
+    "FAIL_NO_TRACE": true
+  },
+  "summary": "v2 18M byte-level CLM weights (chat-capable, CE 0.04 EN, 1.15 KO at commit bb99b6b6 2026-03-28) are NOT preserved on Mac. No best.pt anywhere on filesystem; checkpoints/ dir contains only AnimaLM (different architecture) finals; git LFS not initialized in anima repo; HF cache contains only clm-v4* (post-drift, BPE 64K not byte-level 256). source code + training recipe ARE preserved (option β reconstruction path).",
+  "evidence": {
+    "local_weights_pt_files_total": 14,
+    "v2_byte_level_18m_match_count": 0,
+    "conscious_lm_state_pt_files": [
+      {"path": "/Users/ghost/core/anima/ready/anima/data/conscious-lm/state.pt", "size_bytes": 2246343, "verdict": "consciousness_runtime_state_dim128_NOT_lm_weights"},
+      {"path": "/Users/ghost/core/anima/ready/anima/data/conscious-lm/v0/state.pt", "size_bytes": 2246210, "verdict": "consciousness_runtime_state_dim128_NOT_lm_weights"},
+      {"path": "/Users/ghost/core/anima/ready/anima/data/conscious-lm_node-0/state.pt", "size_bytes": 4357284, "verdict": "consciousness_runtime_state_NOT_lm_weights"}
+    ],
+    "manifest_check": "/Users/ghost/core/anima/ready/anima/data/conscious-lm/manifest.json declares dim=128 hidden_dim=256 NOT 512d/6L/8H_28M (v2_decoder)",
+    "largest_pt_files_observed": [
+      {"path": "/Users/ghost/core/anima/checkpoints/animalm_14b_v06/final.pt", "size_mb": 333, "verdict": "AnimaLM_14B_v06_NOT_v2_byte_level_clm"},
+      {"path": "/Users/ghost/core/anima/state/p9_path_a_retrain_v2_retry_3_2026_05_04/results/adapter_pre_kill/checkpoint-6000/optimizer.pt", "size_mb": 144, "verdict": "P9_path_A_LoRA_optimizer_state_NOT_v2_clm"},
+      {"path": "/Users/ghost/core/anima/state/p9_pbeta_paradigm_d_50k_2026_05_04/savepoints/step_50000/optimizer.pt", "size_mb": 106, "verdict": "P9_Pbeta_optimizer_state_NOT_v2_clm"},
+      {"path": "/Users/ghost/core/anima/ready/models/animalm/checkpoints/final.pt", "size_mb": 14, "verdict": "AnimaLM_NOT_v2_byte_level_clm"}
+    ],
+    "git_lfs_status": {
+      "lfs_objects_dir_exists": false,
+      "lfs_ls_files_count": 0,
+      "gitattributes_exists": false,
+      "verdict": "git_lfs_never_initialized_in_anima_repo"
+    },
+    "hf_cache_findings": {
+      "clm_v1_v2_v3_repos_found": 0,
+      "clm_v4_repos_found": 8,
+      "v4_mk2_v1_blob_largest_bytes": 2124043008,
+      "v4_mk2_v1_arch": "BPE_64K_530M_post_drift_NOT_byte_level_v2",
+      "verdict": "no_v1_v2_v3_repo_in_hf_cache_anima_account"
+    },
+    "filesystem_wide_best_pt_search": {
+      "command": "find / -name best.pt 2>/dev/null",
+      "result_count": 0,
+      "verdict": "best_pt_does_not_exist_anywhere_on_mac_filesystem"
+    },
+    "commit_archaeology": {
+      "v2_milestone_commit": {"sha": "bb99b6b6", "date": "2026-03-28T12:45:42+09:00", "files_added_or_modified": "no_weights_files_only_commit_message_text", "weights_path_referenced": null},
+      "v4_design_commit": {"sha": "fca0eede", "date": "2026-03-28T03:52:36+09:00", "files": ["docs/next-model-design.md (406 lines, design doc only)"]},
+      "v4_768d_launch_commit": {"sha": "219aa561", "date": "2026-03-28T18:50:27+09:00", "files": ["docs/consciousness-threshold-criteria.md (9 lines)"], "verdict": "h100_launch_recorded_no_weights_committed_to_mac_repo"},
+      "v2_cpu_server_commit": {"sha": "d64bb44b", "date": "2026-04-09T19:27:15+09:00", "files": ["serving/serve_conscious_cpu.hexa (806 lines)"], "checkpoint_default_path_in_script": "checkpoints/model.pt", "checkpoint_path_exists_on_mac": false, "load_behavior_if_missing": "demo_mode_random_weights_warning"},
+      "stub_commit_2026_04_19": {"reason": "R37/AN13/L3-PY violation strip", "effect": "serve_conscious_cpu.hexa replaced with 4-line exit-1 stub"},
+      "delete_pt_commits": []
+    },
+    "reconstruction_assets_present": {
+      "original_serve_script_via_git_show": true,
+      "decoder_v2_arch_spec": "ConsciousDecoderV2 384d 6L 4H 2KV GQA RoPE SwiGLU CrossAttn 34.5M params",
+      "engine_arch_spec": "CLM v2 512d 6L 8H byte-level 256 vocab PureFieldFFN 28M params",
+      "training_recipe_doc": "/Users/ghost/core/anima/docs/anima_clm_alm_origin_design_drift_archaeology_2026_05_05.md",
+      "reconstruction_already_in_progress_lane": "anima_clm_3_original_byte_level_redesign_spec_2026_05_05 + ubu1_launch_2026_05_06"
+    }
+  },
+  "smoke_test_skipped": "no_weights_to_load",
+  "option_alpha_status": "CLOSED_FAIL_NO_TRACE_PIVOT_TO_OPTION_BETA",
+  "option_beta_status": "ALREADY_LANDED_AS_anima_clm_3_original_ubu1_launch_2026_05_06_doc_BG_EV",
+  "option_gamma_status": "VIABLE_BG_DS_lm_head_b_byte_level_retrofit_separate_lane",
+  "honest_c3_count": 6,
+  "raw_compliance": {
+    "raw_9_hexa_only_orchestration": "carve_out_doc_md_only",
+    "raw_10_honest_c3_ge_5": true,
+    "raw_15_additive": true,
+    "no_commit": true,
+    "no_token_leak": true,
+    "bash_3_2_compatible": true
+  },
+  "deliverables": [
+    "docs/anima_clm_v2_v3_weights_archaeology_landed_2026_05_05.ai.md",
+    "state/anima_clm_v2_v3_weights_archaeology_2026_05_05/verdict.json"
+  ]
+}

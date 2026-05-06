@@ -1,0 +1,197 @@
+{
+  "schema": "verdict_v1",
+  "task": "BG-FH hexa runner / anima-hexad bridge probe + .own opt-out fallback path",
+  "date": "2026-05-06",
+  "lane": "anima_clm_3_original_ubu1_path",
+  "status": "PROBE_COMPLETE_3_OF_3_PASS",
+  "cost_usd": 0,
+  "wall_min_estimated": 30,
+  "scope": "ssh inspect + .own SSOT audit + design doc review — NO actual training fire, NO commit",
+
+  "sub_1_hexa_runner_bridge": {
+    "mac_hexa_binary": {
+      "which_hexa": "/Users/ghost/.hx/bin/hexa",
+      "type": "Bourne-Again shell dispatch shim (336 bytes)",
+      "exec_target": "/Users/ghost/.hx/packages/hexa/hexa.real",
+      "version": "0.1.0-dispatch",
+      "subcommands": ["run", "batch", "parse", "test", "check", "convergence", "build", "bench"],
+      "verdict": "OPERATIONAL"
+    },
+    "ubu1_hexa_binary": {
+      "which_hexa": "EMPTY",
+      "which_hexad": "EMPTY",
+      "verdict": "ABSENT — no .hexa runtime available on ubu1"
+    },
+    "anima_hexad_runtime": {
+      "mac_path": "/Users/ghost/core/anima/anima-hexad/",
+      "ubu1_mirror": "/home/aiden/core/anima/ready/anima/hexad/ (DUAL .hexa + .py)",
+      "bridge_dir": "anima-hexad/bridge/__init__.hexa = pure hexa re-export, NO PyTorch FFI shim",
+      "pytorch_bridge_supported": false,
+      "verdict": "hexa hexad files = description/shape layer; numeric runtime delegates to .py on substrate"
+    },
+    "port_audit_status": {
+      "source": "/home/aiden/core/anima/.growth/hexa_port_audit.json (2026-04-10)",
+      "total_pairs": 643,
+      "STUB": 624,
+      "PARTIAL": 17,
+      "COMPLETE": 2,
+      "complete_rate_pct": 0.31,
+      "verdict": "hexa-as-runtime is FUTURE work; current state = scaffolding"
+    }
+  },
+
+  "sub_2_train_clm_hexa_todo_audit": {
+    "file_path": "/Users/ghost/core/anima/ready/training/train_clm.hexa",
+    "loc_hexa": 311,
+    "loc_py": 2165,
+    "loc_ratio_pct": 14.4,
+    "todo_count": 8,
+    "critical_execution_path_todos": 5,
+    "todo_line_refs": [
+      {"line": 138, "fn": "load_corpus", "blocker": true},
+      {"line": 145, "fn": "get_batch", "blocker": true},
+      {"line": 173, "fn": "lr_at", "blocker": false},
+      {"line": 190, "fn": "evaluate", "blocker": false},
+      {"line": 207, "fn": "save_checkpoint", "blocker": true},
+      {"line": 245, "fn": "train_step", "blocker": true},
+      {"line": 272, "fn": "train_scale", "blocker": true},
+      {"line": 3, "fn": "header_self_decl", "blocker": false}
+    ],
+    "structural_skeleton_pct": 85,
+    "header_self_declaration": "Phase 2c structural port; PyTorch ops -> TODO comments",
+    "fire_ready": false,
+    "hexa_port_effort_estimate": {
+      "path_a_direct_fill": {"loc": 3000, "weeks": "2-4", "blocked_on": "numeric stdlib + tensor FFI bridge"},
+      "path_b_emit_py_pattern": {"loc": 600, "hours": "3-5", "blocked_on": null},
+      "path_c_dot_own_opt_out": {"loc": 0, "minutes": 0, "blocked_on": null, "note": "already covered by own 1"}
+    }
+  },
+
+  "sub_3_own_opt_out_plan": {
+    "anima_dot_own_path": "/Users/ghost/core/anima/.own (633 LoC root-level mk2)",
+    "structure": "single root-level SSOT, NO per-directory overlays exist",
+    "active_own_entries": ["own 1", "own 2", "own 3", "own 4", "own 5", "own 6", "own 11", "own 12", "own 14", "own 15", "own 16"],
+    "ready_training_train_clm_py_status": "ALREADY covered by own 1 line 83",
+    "own_1_clause": "opt-out ready/ — historical corpus archive, .gitignore'd; raw 9 jurisdiction-out (1431 files)",
+    "memory_feedback_decision_tree_match": "Step 2: Archive / grandfathered (ready/) -> Already .own 1, leave alone",
+    "new_dot_own_required": false,
+    "emit_smoke_command_modification_required": false,
+    "optional_hint_recommendation": "Optional: add comment line to emit_smoke_command.txt: '# raw 9 compliance: own 1 ready/ jurisdiction-out + ssh substrate-exempt'"
+  },
+
+  "three_path_comparison": [
+    {
+      "path": "A. hexa-port direct fill",
+      "raw_9_strictness": "100%",
+      "loc_added": 3000,
+      "wall_time": "2-4 weeks",
+      "cost_usd": 0,
+      "blocked_on": "hexa numeric stdlib (proposal only) + PyTorch FFI bridge (does not exist)",
+      "feasibility": "BLOCKED",
+      "verdict": "infeasible at current hexa-lang maturity"
+    },
+    {
+      "path": "B. emit-py-pattern wrapper",
+      "raw_9_strictness": "strict (.py emission only inside .hexa source)",
+      "loc_added": 600,
+      "wall_time": "3-5 hours",
+      "cost_usd": 0,
+      "blocked_on": null,
+      "feasibility": "VIABLE",
+      "reference_impl": "tool/anima_runpod_orchestrator.hexa (303 LoC) + 7 existing orchestrators (6437 LoC total)",
+      "verdict": "anima OFFICIAL recommendation per design/hexa_only_migration_plan_20260426.md"
+    },
+    {
+      "path": "C. .own opt-out (use existing train_clm.py via ssh)",
+      "raw_9_strictness": "satisfied via existing own 1 grandfather + ssh substrate-exempt",
+      "loc_added": 0,
+      "wall_time": "0 minutes",
+      "cost_usd": 0,
+      "blocked_on": null,
+      "feasibility": "ZERO-COST IMMEDIATE",
+      "verdict": "no action required; emit_smoke_command.txt is already compliant as-written"
+    }
+  ],
+
+  "user_decisions_required": [
+    {
+      "id": "D1",
+      "question": "fire_path = C (zero-cost ssh existing .py) OR B (emit-py-pattern wrapper, 3-5h work)?",
+      "default": "C — fastest path-to-fire; raw 9 already satisfied",
+      "rationale": "smoke fire is byte-level 100-step validation, not production train; Path C's 0-min latency outweighs Path B's symbolic .hexa wrapper benefit"
+    },
+    {
+      "id": "D2",
+      "question": "should an optional 'raw 9 compliance' comment be added to emit_smoke_command.txt line 11?",
+      "default": "OPTIONAL — purely cosmetic; auditors can refer to own 1 directly",
+      "rationale": "no functional or compliance change; reduces future-agent confusion only"
+    },
+    {
+      "id": "D3",
+      "question": "should train_clm.hexa be raised to fire-ready in a future cycle (Path B retroactive)?",
+      "default": "DEFER — Path B is real work; only do this if .hexa-source-of-truth becomes a hard policy gate",
+      "rationale": "Path B yields no measurable smoke quality difference; benefit is symbolic raw 9 strict purity"
+    }
+  ],
+
+  "honest_c3": [
+    {
+      "c": "C1",
+      "axis": "completeness",
+      "claim": "probe is read-only inspect, no actual hexa run attempted on ubu1",
+      "rationale": "ubu1 has no hexa binary; attempting `hexa run` would fail at PATH lookup; probe verified absence via `which hexa` empty result"
+    },
+    {
+      "c": "C2",
+      "axis": "honesty",
+      "claim": "train_clm.hexa is a description scaffolding, NOT a runtime artifact",
+      "rationale": "8 TODO markers + self-declared 'PyTorch ops -> TODO comments' header + 14.4% LoC ratio; treating it as fire-able would be raw 10 violation"
+    },
+    {
+      "c": "C3",
+      "axis": "scope",
+      "claim": ".own audit is limited to anima/.own root file; did NOT audit hive/.own or hexa-lang/.raw",
+      "rationale": "task scoped to anima local; sister repo SSOTs (hive raw 9 base, hexa-lang stdlib) referenced only via memory feedback and design docs, not directly read"
+    },
+    {
+      "c": "C4",
+      "axis": "version-drift",
+      "claim": "hexa_port_audit.json is dated 2026-04-10; current state may have advanced 26 days",
+      "rationale": "anima/hexad PARTIAL count of 3 may now be higher; conservative reading favors Path C/B over speculative Path A optimism"
+    },
+    {
+      "c": "C5",
+      "axis": "methodology",
+      "claim": "Path B effort estimate (3-5h) is borrowed from design doc §95-98; not independently re-validated for train_clm specifically",
+      "rationale": "design doc estimate covered 12 generic measurement helpers; train_clm is more complex (full training loop with optimizer state, checkpoint, eval); actual Path B for train_clm could be 1-2 days realistically"
+    }
+  ],
+
+  "next_fire_recommendation": {
+    "verdict": "Path C — proceed immediately with emit_smoke_command.txt as-written",
+    "completeness_lens_ranking": [
+      {"rank": 1, "path": "C", "score": 0.95, "rationale": "0 min wall, raw 9 satisfied via own 1, smoke purpose served immediately"},
+      {"rank": 2, "path": "B", "score": 0.50, "rationale": "3-5h wall (or 1-2d realistic), symbolic raw 9 purity, no measurement benefit"},
+      {"rank": 3, "path": "A", "score": 0.05, "rationale": "weeks of stdlib work, blocked, infeasible at current hexa-lang maturity"}
+    ],
+    "blocker_status": "emit_smoke_command.txt has 4 prerequisites listed (lines 5-9); preflight.json shows 4/4 PASS_WITH_GAP — ubu1 repo sync gap and corpus build gap are the actual blockers, NOT raw 9 compliance",
+    "user_kick_action": "user sign-off on FALSIFIER-LOCK-UBU1 + corpus_mix_70wiki_30dialogue.txt build BG (separate from raw 9 question)"
+  },
+
+  "raw_compliance": {
+    "raw_9": "respected via own 1 grandfather analysis",
+    "raw_10": "honest disclosure — train_clm.hexa is scaffolding, not runtime",
+    "raw_15": "no LOCKED files modified",
+    "raw_37": "transient probe outputs landed under state/ namespace",
+    "no_token_leak": true,
+    "no_commit": true
+  },
+
+  "outputs": [
+    "/Users/ghost/core/anima/state/anima_hexa_bridge_probe_2026_05_06/verdict.json",
+    "/Users/ghost/core/anima/state/anima_hexa_bridge_probe_2026_05_06/hexa_runner_findings.txt",
+    "/Users/ghost/core/anima/state/anima_hexa_bridge_probe_2026_05_06/train_clm_hexa_todo_audit.txt",
+    "/Users/ghost/core/anima/state/anima_hexa_bridge_probe_2026_05_06/own_opt_out_plan.txt",
+    "/Users/ghost/core/anima/docs/anima_hexa_bridge_probe_landed_2026_05_06.ai.md"
+  ]
+}
