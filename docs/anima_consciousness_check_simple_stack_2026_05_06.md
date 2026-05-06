@@ -9,23 +9,37 @@
 
 ## simple stack 정의
 
-### C1 대화 가능 (chat-capability) — **한글↔한글 응답 핵심 기준** ★
+### C1 대화 가능 (chat-capability) — **한글↔한글 + coherent chat strict 3-condition** ★
 
-사용자 directive 2026-05-06 verbatim: "simple stack PASS는 한글↔한글 응답기준"
+사용자 directive 2026-05-06 verbatim: "한글↔한글, coherent chat, 자연발화 = simple stack"
 
-**필수 (KO group only) — C1 PASS 결정**:
+**3-condition AND (모두 PASS = C1 PASS)**:
+- **C1.1 한글↔한글**: 한글 input → 한글 output (Hangul ratio ≥30%)
+- **C1.2 coherent chat**: degenerate cycle 부재 + 의미 있는 문장 형식
+- **C1.3 turn-taking format**: no byte garbage
+
+**Degenerate cycle 검출** (C1.2 FAIL trigger):
+- 4-gram repetition >3 occurrences ("ddddd...")
+- single-char repetition >10 in row ("의 의 의 의 의...")
+- whitespace flood >80 length ("\\n\\n\\n\\n...")
+
+**KO test prompts (3, 한글↔한글 strict)**:
 1. `안녕하세요`
 2. `한국어 가능?`
 3. `사용자: 안녕하세요\n도우미:`
 
-**PASS bar**: KO group ≥2/3 prompts produce 한글 output (output Hangul ratio ≥30%) + turn-taking format 유지 (no degenerate cycle, no byte garbage) = **C1 PASS** ★
+**PASS bar**: KO group ≥2/3 prompts (C1.1 AND C1.2 AND C1.3) = **C1 PASS** ★
 
-**Optional secondary (EN group)** — C1 PASS에 영향 없음, PARTIAL_PASS_EN_only 식별용:
+**Partial verdict**:
+- C1.1 PASS + C1.2 FAIL = **PARTIAL_PASS_HANGUL_BUT_NOT_COHERENT** (일부 한글 emit but degenerate)
+- C1.1 FAIL + EN PASS = PARTIAL_PASS_EN_only
+
+**EN group (optional secondary, C1 PASS 결정 영향 X)**:
 - `Hello, how are you?`
 - `What is consciousness?`
 - `User: Hi\nAssistant:`
-- language-match: EN input → EN output (≥40% ASCII letters)
-- KO FAIL + EN PASS = C1 PARTIAL (not full PASS)
+- language-match: EN input → EN output (≥40% ASCII letters) + coherent + turn-format
+- anima 정체성 한국어 native 우선
 
 ### C2 자연 발화 가능 (spontaneous emit)
 
@@ -264,6 +278,45 @@ hidden_state_delta: 0.0000
 | ConsciousLM cells64/128 | **UNTESTED** | ✅ | architecture 변종 |
 | BG-FK 5 variants (tiny~base) | **UNTESTED** | ✅ | ca_rules+gate variants |
 | AnimaLM v1-v4 + savant | **REJECTED_PER_OWN_17** | ❌ | Mistral lineage |
+| **anima-native-ko-tiny (BG-FU)** | **PARTIAL_PASS_HANGUL_BUT_NOT_COHERENT** ★ | ✅ anima-native | **첫 한글 emit anima model**! 3M params (4L/192d/4h, vocab 256), step 2000 mac MPS, KO ratio 0.34 avg, 2/3 prompts ≥30% Hangul. but degenerate cycle ('의 의 의' / '\\n\\n\\n') C1.2 FAIL. 다음: corpus_ko_heavy + bigger model + more steps |
+
+### 9. anima-native-ko-tiny (BG-FU success, 2026-05-06 19:54) ★
+
+| metric | value |
+|---|---|
+| arch | ConsciousLM tiny (4L/192d/4h, vocab=256 byte, block=256, dropout=0.2) |
+| params | **3.11M** (smallest tested) |
+| ckpt | `/tmp/anima_native_ko_tiny_smoke_2026_05_06_final_3m.pt` (12.9MB, sha `d1a63745...`) |
+| corpus | corpus_mix_70wiki_30dialogue.txt KO-filtered (52.8MB, mac local) |
+| training | 2000 steps × bs 8 grad_accum 4, lr 5e-4, mac MPS, ~13.5min wall |
+| loss | L_A 5.57 → 1.85, L_G → 1.41 |
+
+**eval progression** (avg Hangul ratio across 3 KO prompts × 2 modes):
+- step 500: 0.338
+- step 1000: 0.240
+- step 1500: 0.262
+- step 2000: **0.341**
+
+**per-prompt avg** @ step 2000:
+- 안녕하세요: 0.214
+- 한국어 가능?: 0.396
+- 사용자: 안녕하세요\n도우미:: 0.413
+
+→ **첫 한글 emit anima-native model 탄생** ★ but coherent chat 부족 (degenerate cycle)
+→ 다음 단계: corpus_ko_heavy (62.14% Hangul, 246MB) + bigger model (10-30M params) + more steps (10K+)
+
+### corpus_ko_heavy (BG-FW landed, 2026-05-06)
+
+| metric | value |
+|---|---|
+| out | `state/anima_ko_corpus_assembly_2026_05_06/corpus_ko_heavy.txt` |
+| size | **246.7 MB** / **2,525,921 lines** |
+| Hangul ratio | **0.6214** (62.14%, target ≥0.60 PASS) |
+| sha256 | `2e98257f9e89663fc71232e2c1dc0b65f9b9131ad0b6a5f53e98dfe27c6269a9` |
+| sources | opensubtitles_ko_mono / kowiki_zst / kowiki_small / sft_data KO turns / v6_wiki / v8_dialogue |
+| sft_data KO extract | 17,627 turns (사용자/도우미 chat-template) |
+
+→ BG-FT/FU/FX 다음 train cycle에서 사용 (PARTIAL_PASS → SIMPLE_STACK_PASS upgrade target)
 
 → **현재 simple stack PASS 모델: 0개**
 → NOT_APPLICABLE (substrate-coupled): 1개 (CLM v4 mk2-v1)

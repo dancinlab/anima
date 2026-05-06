@@ -1,0 +1,57 @@
+HF Upload Recipe — anima-clm-3-corpus-ko-heavy
+================================================
+Date     : 2026-05-06
+Repo     : need-singularity/anima-clm-3-corpus-ko-heavy
+Repo type: dataset
+Visibility lifecycle: PRIVATE first → verification → PUBLIC (own 15)
+
+Asset
+-----
+  path   : /Users/ghost/core/anima/state/anima_ko_corpus_assembly_2026_05_06/corpus_ko_heavy.txt
+  size   : 246,678,043 bytes (246.7 MB)
+  lines  : 2,525,921
+  hangul : 0.6214
+  sha256 : 2e98257f9e89663fc71232e2c1dc0b65f9b9131ad0b6a5f53e98dfe27c6269a9
+
+Sections (kept lines)
+---------------------
+  opensubtitles_ko_mono : 1,470,621 lines (58.3 MB)  thresh ratio>=0.45
+  ko_wiki_small         :     7,208 lines ( 2.0 MB)  thresh ratio>=0.40
+  kowiki_zst            :    10,182 lines (100.0 MB) thresh ratio>=0.50, cap 100MB
+  sft_data_ko_dialogue  :    17,627 turns (15.4 MB) chat-template "사용자/도우미"
+  v6_wiki               :   429,009 lines (35.5 MB) thresh ratio>=0.55
+  v8_dialogue           :   430,315 lines (35.4 MB) thresh ratio>=0.55
+
+License + provenance
+--------------------
+  - opensubtitles_ko_mono : OPUS open-subtitles-ko (CC-BY)
+  - kowiki / ko_wiki      : Wikipedia ko (CC-BY-SA-3.0)
+  - sft_data.jsonl        : anima-internal synthetic philosophical templates (need-singularity / anima)
+  - v6_wiki / v8_dialogue : anima-internal corpus_v6/v8 builds
+
+Upload (mac, $0)
+----------------
+  # token via secret CLI (raw#37 / leak_guard)
+  export HF_TOKEN="$(/Users/ghost/core/secret/bin/secret get hf_token_write)"
+
+  # repo init (PRIVATE)
+  hf repo create need-singularity/anima-clm-3-corpus-ko-heavy --type dataset --private
+
+  # upload
+  hf upload need-singularity/anima-clm-3-corpus-ko-heavy \
+      /Users/ghost/core/anima/state/anima_ko_corpus_assembly_2026_05_06/corpus_ko_heavy.txt \
+      corpus_ko_heavy.txt \
+      --repo-type dataset \
+      --commit-message "feat(ko-heavy v1 2026-05-06): 246.7MB / 62.14% hangul / sha 2e98...69a9"
+
+  # README upload (template at tool/hf_readme_template.md if needed)
+
+Verification (before PRIVATE→PUBLIC promote per own 15)
+-------------------------------------------------------
+  1. download sha256 == 2e98257f9e89663fc71232e2c1dc0b65f9b9131ad0b6a5f53e98dfe27c6269a9
+  2. line count == 2,525,921
+  3. spot-check 100 random lines hangul_ratio mean >= 0.55
+  4. fresh-train BG (BG-FT/BG-FU) shows train loss decrease in first 500 steps
+  5. eval pass on KO chat-template smoke (10 prompts, response in KO)
+
+Promote: hf repo set-visibility need-singularity/anima-clm-3-corpus-ko-heavy --public

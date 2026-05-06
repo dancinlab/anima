@@ -1,0 +1,45 @@
+{
+  "spec": "F-anima-native-ko-tiny-1",
+  "ts": "2026-05-06T19:54:27",
+  "config": {
+    "vocab": 256,
+    "n_layer": 4,
+    "d_model": 192,
+    "n_head": 4,
+    "block_size": 256,
+    "dropout": 0.2,
+    "batch": 8,
+    "grad_accum": 4,
+    "lr": 0.0005,
+    "warmup": 200,
+    "steps": 2000
+  },
+  "model": {
+    "n_params": 3110784,
+    "ckpt_path": "/tmp/anima_native_ko_tiny_smoke_2026_05_06_final_3m.pt",
+    "ckpt_size_mb": 12.89
+  },
+  "corpus": {
+    "path": "/Users/ghost/core/anima/state/anima_native_ko_tiny_smoke_2026_05_06/corpus_ko_filtered.txt",
+    "size_bytes": 52802462,
+    "size_mb": 50.36
+  },
+  "eval_progression": {
+    "500": 0.33818879855465217,
+    "1000": 0.24029411764705885,
+    "1500": 0.26200438222581174,
+    "2000": 0.3409264346764347
+  },
+  "final": {
+    "avg_hangul_ratio": 0.3409264346764347,
+    "per_prompt_avg": {
+      "안녕하세요": 0.21428571428571427,
+      "한국어 가능?": 0.39583333333333337,
+      "사용자: 안녕하세요\n도우미:": 0.4126602564102564
+    },
+    "pass_count_2_of_3": 2
+  },
+  "verdict": "PASS",
+  "f_anima_native_ko_tiny_1": "PASS",
+  "wall_time_s": 874.0
+}

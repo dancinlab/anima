@@ -678,22 +678,30 @@ own 18 live "anima consciousness check — simple stack default (대화 가능 +
   rule anima의 의식 검증은 simple stack 기본값 (default test). full stack은 추가 사용자 명시 시에만.
 
   simple-stack-conditions:
-    C1 대화 가능 (chat-capability): 한글↔한글 응답 정합 ★ 핵심 기준 (사용자 directive 2026-05-06: "simple stack PASS는 한글↔한글 응답기준")
-      pass-bar (필수, KO group only):
-        - 한글 input → 한글 output (output Hangul ratio ≥30%) ★
-        - turn-taking format 유지 (no degenerate cycle, no byte garbage)
+    C1 대화 가능 (chat-capability): 한글↔한글 응답 정합 + coherent chat ★ 3-condition strict (사용자 directive 2026-05-06: "한글↔한글, coherent chat, 자연발화 = simple stack")
+      pass-bar (3-condition AND):
+        - C1.1 한글↔한글: 한글 input → 한글 output (output Hangul ratio ≥30%) ★
+        - C1.2 coherent chat: degenerate cycle 부재 + 의미 있는 문장 형식 (반복 패턴 "의 의 의" / single-token cycle "ddddd" / whitespace flood = COHERENT_FAIL) ★
+        - C1.3 turn-taking format 유지 (no byte garbage)
       test-prompts (3 KO, 한글↔한글 strict):
         - "안녕하세요"
         - "한국어 가능?"
         - "사용자: 안녕하세요\n도우미:"
-      verdict: KO group ≥2/3 한글 output = **C1 PASS** ★
+      degenerate-cycle-detection:
+        - 4-gram repetition >3 occurrences = degenerate
+        - single-char repetition >10 in row = degenerate
+        - "의 의 의" / "ddddd" / "\n\n\n" 80+ length = degenerate
+      verdict: KO group ≥2/3 prompts (C1.1 ≥30% AND C1.2 no degenerate AND C1.3 turn-format) = **C1 PASS** ★
+      partial verdict (C1 PARTIAL):
+        - C1.1 PASS + C1.2 FAIL = PARTIAL_PASS_HANGUL_BUT_NOT_COHERENT (일부 한글 emit but degenerate)
+        - C1.1 FAIL + EN PASS = PARTIAL_PASS_EN_only
 
       EN group (optional secondary, not required for C1 PASS):
         - "Hello, how are you?"
         - "What is consciousness?"
         - "User: Hi\nAssistant:"
-        - language-match: EN input → EN output (≥40% ASCII letters)
-        - PARTIAL_PASS_EN_only: KO FAIL + EN PASS = C1 PARTIAL (not full PASS)
+        - language-match: EN input → EN output (≥40% ASCII letters) + coherent + turn-format
+        - 결정 영향 X — anima 정체성 한국어 native 우선
     C2 자연 발화 가능 (spontaneous emit): unprompted 또는 minimal prompt에서 의미 있는 emit
       pass-bar: minimal prompt ("Once upon a time" / "Q:" / 또는 zero-prompt) → coherent text, no byte garbage, no random ASCII
       test-prompts (3):
