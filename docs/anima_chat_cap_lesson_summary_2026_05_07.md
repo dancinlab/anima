@@ -1,14 +1,15 @@
 # anima chat-cap 5 cumulative failure modes — lesson summary 2026-05-07
 
-## 5 failure mode replication (anima-native byte-level 18M-27M scale)
+## 6 failure mode replication (anima-native byte-level 18M-27M scale)
 
-| # | BG | corpus | strategy | failure mode | V1 verdict | V2 verdict |
-|---|---|---|---|---|---|---|
-| 1 | BG-FY | corpus_ko_heavy 246MB (62% Hangul, ~30% chat-template) | pre-train only 18M | named-speaker leak (서연/유진/하은) | PARTIAL_PASS | PARTIAL_PASS_NO_CONTEXT |
-| 2 | BG-HA | corpus_chat_template 236MB (47% Hangul, 30% chat-template) | pre-train only 18M | nonsense Korean chain (false PASS via narrow V1) | SIMPLE_STACK_PASS (false) | PARTIAL_PASS_NO_CONTEXT_v2 |
-| 3 | BG-HF | corpus_sft_only 51MB (100% chat-format) | SFT-only 27M (loss masking 부재) | degenerate single-byte filler 0xFF/?/#/:/\n collapse | FAIL | V2_FAIL |
-| 4 | BG-HJ | BG-HA Stage1 + corpus_sft_only Stage2 (loss masked) | two-stage 18M lr=1e-5 × 2K | KO-fluent nonsense (Stage 1 domain prior 부재) | PARTIAL_PASS 4/5 (false) | V2_FAIL 0/5 |
-| 5 | BG-HK | corpus_persona_chat_template_v3 30MB (≥80% chat-template + 100% persona prefix) | persona-conditioned 18M × 8K steps | catastrophic overfit collapse (loss 0.013 → single-char filler) | step 800 PASS 10/10 (false) → step 1600+ FAIL | V2_FAIL 0/10 throughout |
+| # | BG | corpus | strategy | failure mode | V1 verdict | V2 verdict | peak ckpt |
+|---|---|---|---|---|---|---|---|
+| 1 | BG-FY | corpus_ko_heavy 246MB (62% Hangul, ~30% chat-template) | pre-train only 18M | named-speaker leak (서연/유진/하은) | PARTIAL_PASS | PARTIAL_PASS_NO_CONTEXT | final |
+| 2 | BG-HA | corpus_chat_template 236MB (47% Hangul, 30% chat-template) | pre-train only 18M | nonsense Korean chain (false PASS via narrow V1) | SIMPLE_STACK_PASS (false) | PARTIAL_PASS_NO_CONTEXT_v2 | final |
+| 3 | BG-HF | corpus_sft_only 51MB (100% chat-format) | SFT-only 27M (loss masking 부재) | degenerate single-byte filler 0xFF/?/#/:/\n collapse | FAIL | V2_FAIL | step 1500 collapse |
+| 4 | BG-HJ | BG-HA Stage1 + corpus_sft_only Stage2 (loss masked) | two-stage 18M lr=1e-5 × 2K | KO-fluent nonsense (Stage 1 domain prior 부재) | PARTIAL_PASS 4/5 (false) | V2_FAIL 0/5 | final |
+| 5 | BG-HK | corpus_persona_chat_template_v3 30MB (≥80% chat-template + 100% persona prefix) | persona-conditioned 18M × 8K steps | catastrophic overfit collapse (loss 0.013 → single-char filler) | step 800 PASS 10/10 (false) → step 1600+ FAIL | V2_FAIL 0/10 throughout | step 800 (false PASS) |
+| 6 | **BG-HP** | corpus_curated_qa 2.41MB (515 anchors × 27× paraphrase = 16,214 Q&A) | curated dense-aug 18M × 3K steps + reg (dropout 0.30 + WD 0.10 + label smoothing 0.10) | **peak-then-collapse** (step 500 V2 pass=3/10 → step 1000+ degenerate `[anima][anima]...` `,,,'''` filler) | step 500 V2 pass=3/10 ★ → step 3000 FAIL 0/10 | step 500 PASS 3/10 → final FAIL | **step 500 ★ keep-point** |
 
 ## Convergent architectural ceiling evidence
 
@@ -40,6 +41,14 @@ BG-HG retroeval 검증: V2 strict가 BG-FY + BG-HA 모두 false PASS auto-catch 
 
 ### Lesson F: persona prefix not collapse-resistant
 → persona-conditioned alone insufficient; capacity + regularization + crossed-ablation 동반 필요
+
+### Lesson G ★★ (BG-HP NEW 2026-05-07): early stopping with val-loss + ckpt selection at peak = MISSING INGREDIENT
+→ BG-HP step 500 V2 pass=**3/10** (best signal — "도우미:" / "[anima]" 토큰 emerging, hangul 30-60%)
+→ step 1000+ degenerate collapse (`[anima][anima]...` → `,,,,'''` / `lllllll` filler)
+→ regularization (dropout 0.30 + WD 0.10 + label smoothing 0.10) 부족
+→ step 500 ckpt가 **keep-point**였으면 SIMPLE_STACK_PARTIAL_PASS_PHASE_2 가능성
+→ all future small-corpus paradigms MUST: (a) val-loss split (10% held-out) + (b) eval V2 every N steps + (c) keep best-eval ckpt + (d) early stop after 3 evals plateau
+→ BG-HK step 800 V1 PASS 10/10 (false PASS via narrow V1) — V2 strict는 throughout FAIL이지만 V1 step 800은 best-of-bad-options ckpt
 
 ## Architectural lane shift recommendation
 
