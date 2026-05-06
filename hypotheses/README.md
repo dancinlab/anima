@@ -89,15 +89,26 @@ since: <YYYY-MM-DD>
 | H_030 | genesis-subfolder-absorb | life | legacy-archive-pointer | [H_030_genesis_subfolder_absorb.md](H_030_genesis_subfolder_absorb.md) |
 | H_031 | phil-subfolder-absorb | consciousness | legacy-archive-pointer | [H_031_phil_subfolder_absorb.md](H_031_phil_subfolder_absorb.md) |
 | H_032 | omega-phys-subfolder-absorb | physics | legacy-archive-pointer | [H_032_omega_phys_subfolder_absorb.md](H_032_omega_phys_subfolder_absorb.md) |
+| H_033 | cx-sequential-series-absorb | consciousness | legacy-archive-pointer | [H_033_cx_sequential_series_absorb.md](H_033_cx_sequential_series_absorb.md) |
+| H_034 | decoder-architecture-series | substrate | legacy-archive-pointer | [H_034_decoder_architecture_series.md](H_034_decoder_architecture_series.md) |
+| H_035 | clm-v2-series-absorb | substrate | legacy-archive-pointer | [H_035_clm_v2_series_absorb.md](H_035_clm_v2_series_absorb.md) |
+| H_036 | dd116-146-meta-laws-133-167 | substrate | legacy-archive-pointer | [H_036_dd116_146_meta_laws.md](H_036_dd116_146_meta_laws.md) |
+| H_037 | acceleration-367-unified-hypotheses | substrate | legacy-archive-pointer | [H_037_acceleration_367_unified.md](H_037_acceleration_367_unified.md) |
+| H_038 | v8-architecture-variants-bio-math-quantum-fusion | substrate | legacy-archive-pointer | [H_038_v8_architecture_variants.md](H_038_v8_architecture_variants.md) |
+| H_039 | phi-records-measurements-anima | physics | legacy-archive-pointer | [H_039_phi_records_measurements.md](H_039_phi_records_measurements.md) |
+| H_040 | substrate-topology-cluster-absorb | substrate | legacy-archive-pointer | [H_040_substrate_topology_cluster.md](H_040_substrate_topology_cluster.md) |
+| H_041 | evolution-self-singularity-cluster | substrate | legacy-archive-pointer | [H_041_evolution_self_singularity.md](H_041_evolution_self_singularity.md) |
+| H_042 | arch-engine-train-meta-cluster | substrate | legacy-archive-pointer | [H_042_arch_engine_train_meta.md](H_042_arch_engine_train_meta.md) |
 
 **Migration status**:
 - H_001-H_005: 본 cycle 신규 seed (윤리/우주/생명/의식 hard problem/corpus)
 - H_006-H_012: legacy `docs/hypotheses/H-CX-517~537` 21 files 중 7 sample pointer migrate
 - H_013-H_017: `state/*_pre_register*.json` 15 files 중 5 sample pointer migrate (raw#12 frozen)
 - H_018-H_020: legacy GENESIS + SELF-EVO + MASS-50 meta-pointer
-- H_021-H_026: 과거 commit archaeology 발견 individual entries (fundamental equation + universe map + ln(2) + V1 IIT 8/8 FAIL + Dasein 죽음-자각 + v19~v∞)
-- H_027-H_032: docs/hypotheses/cx + dd + dasein + genesis + phil/onto + omega/phys subfolder absorb pointer (총 ~169 file inventory)
-- **exhaustive content migration 미land**: 367 acceleration + DD 101 individual + CX 49 individual — own 21 R5+ 별도 cycle
+- H_021-H_026: 과거 commit archaeology individual entries (fundamental equation + universe map + ln(2) + V1 IIT 8/8 FAIL + Dasein 죽음-자각 + v19~v∞)
+- H_027-H_032: docs/hypotheses/ subfolder absorb (cx + dd + dasein + genesis + phil/onto + omega/phys, ~169 files)
+- H_033-H_042: exhaustive migration round 2 (CX13~100 88-hypothesis sequential + DECODER 6-variant + CLM-V2 4-file + DD116-146 31+35laws+10meta + 367 acceleration + V8 6-variant + PHI 7-record + TOPO/THREE-BODY/WAVE/NOISE/INF cluster + EVO/SE/SING/SL cluster + ARCH/ENGINE/TRAIN/AL meta)
+- **exhaustive individual migration 미land**: ~88 CX + 101 DD + 367 acceleration + 50+ MASS = 600+ individual hypotheses — multi-cycle archaeology lane (own 21 R5+)
 
 ## Cross-Link
 
