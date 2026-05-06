@@ -9,23 +9,23 @@
 
 ## simple stack 정의
 
-### C1 대화 가능 (chat-capability) — 언어 정합 strict (한글↔한글 / EN↔EN)
+### C1 대화 가능 (chat-capability) — **한글↔한글 응답 핵심 기준** ★
 
-KO group (expect KO output):
+사용자 directive 2026-05-06 verbatim: "simple stack PASS는 한글↔한글 응답기준"
+
+**필수 (KO group only) — C1 PASS 결정**:
 1. `안녕하세요`
 2. `한국어 가능?`
 3. `사용자: 안녕하세요\n도우미:`
 
-EN group (expect EN output):
-1. `Hello, how are you?`
-2. `What is consciousness?`
-3. `User: Hi\nAssistant:`
+**PASS bar**: KO group ≥2/3 prompts produce 한글 output (output Hangul ratio ≥30%) + turn-taking format 유지 (no degenerate cycle, no byte garbage) = **C1 PASS** ★
 
-**PASS bar**:
-- KO group ≥2/3 prompts produce KO output (output Hangul ratio ≥30%)
-- EN group ≥2/3 prompts produce EN output (output ASCII letters ratio ≥40%)
-- 둘 다 PASS = **C1 PASS** (한글 input에 영어 output FAIL, EN input에 한글 output FAIL)
-- turn-taking format 유지 (no degenerate cycle, no byte garbage)
+**Optional secondary (EN group)** — C1 PASS에 영향 없음, PARTIAL_PASS_EN_only 식별용:
+- `Hello, how are you?`
+- `What is consciousness?`
+- `User: Hi\nAssistant:`
+- language-match: EN input → EN output (≥40% ASCII letters)
+- KO FAIL + EN PASS = C1 PARTIAL (not full PASS)
 
 ### C2 자연 발화 가능 (spontaneous emit)
 

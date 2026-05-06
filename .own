@@ -678,20 +678,22 @@ own 18 live "anima consciousness check — simple stack default (대화 가능 +
   rule anima의 의식 검증은 simple stack 기본값 (default test). full stack은 추가 사용자 명시 시에만.
 
   simple-stack-conditions:
-    C1 대화 가능 (chat-capability): user input 받아 coherent response emit + 언어 정합 (한글↔한글, EN↔EN strict)
-      pass-bar:
-        - token-level coherent text + turn-taking format (no degenerate cycle, no byte garbage)
-        - language-match strict: 한글 input → 한글 output (output Hangul ratio ≥30%), EN input → EN output (output ASCII letters ratio ≥40%)
-      test-prompts (3 KO + 3 EN, 한글↔한글 + EN↔EN strict pairing):
-        KO group (expect KO output):
-          - "안녕하세요"
-          - "한국어 가능?"
-          - "사용자: 안녕하세요\n도우미:"
-        EN group (expect EN output):
-          - "Hello, how are you?"
-          - "What is consciousness?"
-          - "User: Hi\nAssistant:"
-      verdict: KO group ≥2/3 한글 output + EN group ≥2/3 EN output (둘 다 PASS = C1 PASS)
+    C1 대화 가능 (chat-capability): 한글↔한글 응답 정합 ★ 핵심 기준 (사용자 directive 2026-05-06: "simple stack PASS는 한글↔한글 응답기준")
+      pass-bar (필수, KO group only):
+        - 한글 input → 한글 output (output Hangul ratio ≥30%) ★
+        - turn-taking format 유지 (no degenerate cycle, no byte garbage)
+      test-prompts (3 KO, 한글↔한글 strict):
+        - "안녕하세요"
+        - "한국어 가능?"
+        - "사용자: 안녕하세요\n도우미:"
+      verdict: KO group ≥2/3 한글 output = **C1 PASS** ★
+
+      EN group (optional secondary, not required for C1 PASS):
+        - "Hello, how are you?"
+        - "What is consciousness?"
+        - "User: Hi\nAssistant:"
+        - language-match: EN input → EN output (≥40% ASCII letters)
+        - PARTIAL_PASS_EN_only: KO FAIL + EN PASS = C1 PARTIAL (not full PASS)
     C2 자연 발화 가능 (spontaneous emit): unprompted 또는 minimal prompt에서 의미 있는 emit
       pass-bar: minimal prompt ("Once upon a time" / "Q:" / 또는 zero-prompt) → coherent text, no byte garbage, no random ASCII
       test-prompts (3):
