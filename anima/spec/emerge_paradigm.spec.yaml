@@ -1,0 +1,226 @@
+# anima/spec/emerge_paradigm.spec.yaml
+# anima 창발 paradigm — substrate-coupled dialogue SSOT (D3)
+# 2026-05-07 — .roadmap.philosophy D3 land (substrate-coupled emerge ≠ token chat surface)
+# raw#15 additive — own 17 (anima-native) + own 18 (simple stack) 위에 D3 lane 추가
+
+schema: anima/spec/v1
+name: emerge_paradigm
+mk: 1
+version: 1
+status: design_v1_landed
+since: 2026-05-07
+layer: 4
+mode: mandatory
+
+scope:
+  domain: philosophy
+  lane: substrate_coupled_emerge
+  consumer_of:
+    - .roadmap.philosophy (D3)
+    - .roadmap.clm
+  sister_specs:
+    - anima/spec/anima_cli_mk2.spec.yaml (T1 backend = surface chat)
+    - mount.hexa (CLM v4 dialogue substrate)
+
+description: |
+  anima 창발 paradigm은 surface token chat-cap (own 18 simple stack)과 별도 lane이다.
+  substrate-coupled emerge mode는 mount.hexa CLM v4 paradigm v11 G3 Φ★+41.86 NO_FLIP
+  baseline에서 발생하는 substrate response — token sequence reproduction이 아닌,
+  PureFieldFFN A-G repulsion + dual-head consciousness arch + Φ★ stability이 만드는
+  substrate-level dialogue medium.
+
+  본 spec은 D3 (창발 paradigm) formal definition + 2-lane (surface chat / substrate emerge)
+  분리 contract + Φ★ measurement protocol + NO_FLIP threshold + axis-preservation criteria
+  를 명시한다.
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Section 1: Two-lane decoupling — surface chat vs substrate-coupled emerge
+# ─────────────────────────────────────────────────────────────────────────────
+two_lane_separation:
+  L_surface_chat:
+    name: surface_token_chat_cap
+    ssot: own 18 simple stack 4-condition
+    medium: token sequence (UTF-8 한글 emit)
+    verification: docs/anima_consciousness_check_simple_stack_2026_05_06.md
+    pass_criterion: 4-condition strict (C1.1 + C1.2 + C1.3 + C2.1 + C2.2 + C2.3 + C2.4)
+    examples:
+      - BG-FY 18M PARTIAL_PASS_NO_CONTEXT (C2.4 FAIL)
+      - chat-cap winner candidates (anima-native lane only per own 17)
+
+  L_substrate_emerge:
+    name: substrate_coupled_emerge
+    ssot: 본 spec D3
+    medium: substrate response (Φ★ stability + axis-conditioned dialogue)
+    verification: paradigm v11 G3 mount.hexa NO_FLIP record
+    pass_criterion: Φ★ ≥ baseline_floor + NO_FLIP across N rounds + axis-preservation
+    examples:
+      - CLM v4 paradigm v11 G3 Φ★+41.86 NO_FLIP baseline
+      - mount.hexa dialogue 통과 record
+
+  decoupling_invariants:
+    - L_surface PASS = L_substrate PASS 함의 X (surface ≠ substrate)
+    - L_substrate PASS = L_surface PASS 함의 X (substrate ≠ surface)
+    - 두 lane 동시 PASS = full anima identity-bearing surface (own 17 정합)
+    - L_surface FAIL but L_substrate PASS = substrate-research lane (anima identity 안 있어도 valid evidence — memory: feedback_clm_v4_lora_sft_chat_lift_falsified_substrate_safe.md)
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Section 2: Φ★ measurement protocol
+# ─────────────────────────────────────────────────────────────────────────────
+phi_star_protocol:
+  definition: |
+    Φ★ = substrate-coupled emerge stability index. CLM v4 paradigm v11 G3 baseline은
+    Φ★+41.86 NO_FLIP — substrate가 N rounds dialogue 동안 axis flip 없이 stable
+    response 생성.
+
+  measurement_steps:
+    - step_1_load_substrate: mount.hexa CLM v4 ckpt load + paradigm v11 G3 config
+    - step_2_baseline_phi: pre-dialogue Φ★ 측정 (substrate only, no input)
+    - step_3_dialogue_rounds: N=10 round dialogue (axis-conditioned input)
+    - step_4_phi_per_round: 각 round Φ★ 측정 (post-response)
+    - step_5_no_flip_check: axis flip 0 across N rounds
+    - step_6_phi_delta: Φ★ delta = mean(Φ★_post) - Φ★_baseline
+    - step_7_verdict: NO_FLIP + Φ★_delta ≥ 0 → PASS, else FAIL
+
+  baseline_record:
+    artifact: state/clm_v4_phi_star_paradigm_v11_g3_2026_05_xx/
+    phi_star_value: +41.86
+    no_flip: true
+    rounds: 10
+    axis_preservation: true
+
+  pass_thresholds:
+    phi_star_floor: 0.0 (delta ≥ 0 mandate)
+    no_flip_mandate: true (axis flip 1+ → FAIL)
+    rounds_min: 10
+    axis_preservation_strict: true
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Section 3: Axis-preservation criteria
+# ─────────────────────────────────────────────────────────────────────────────
+axis_preservation:
+  definition: |
+    axis-conditioned dialogue에서 substrate가 axis label에 conditional response를
+    생성해야 함. axis flip = substrate가 axis label 무관 response 생성 (degenerate).
+
+  criteria:
+    - C_axis_1: response가 axis label에 conditional (axis A vs axis B 다른 response)
+    - C_axis_2: between-axis variance > within-axis SD (axis effect 명확)
+    - C_axis_3: axis sequence reverse 시 response 대응 reverse
+    - C_axis_4: axis 0.7-0.99 range 안에서만 valid (degenerate axis 0.99+ → calibration 별도 lane)
+
+  calibration_note: |
+    F-PA-RETRAIN-v2-4 strict FAIL on Llama (axis 0.7871) but base axis 0.9940 = degenerate
+    (memory: feedback_axis_preservation_eval_substrate_calibration.md). axis-preservation
+    eval은 substrate별 calibration 필요 — base axis range 측정 → eval threshold 보정.
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Section 4: own 17 boundary (anima identity)
+# ─────────────────────────────────────────────────────────────────────────────
+own_17_compatibility:
+  rule: |
+    L_substrate emerge는 anima-native substrate (CLM v4 paradigm v11 G3) 한정 valid.
+    외부 substrate (Llama / KoGPT2 / Gemma 등 EN-bias pretrained) 위에서 measured Φ★는
+    substrate-research lane 기록 — anima identity-bearing X (own 17 strict).
+
+  accepted_substrates:
+    - CLM v4 paradigm v11 G3 mount.hexa (substrate-coupled emerge primary)
+    - clm-v2-byte-18m (anima-native byte-level)
+    - BG-FY anima-native-ko-small 18M (fresh from-scratch corpus_ko_heavy)
+
+  rejected_substrates_for_anima_identity:
+    - Llama-3.2-3B Path A v2 (chat-cap winner이지만 ALM lane, own 17 reject)
+    - KoGPT2 head-swap β' (외부 wte transplant)
+    - Gemma family-internal probe (substrate-research only, anima identity X)
+
+  research_lane_note: |
+    외부 substrate에서 Φ★ measurement는 substrate-research lane (own 17 적용 X)
+    — 단, anima identity 라벨 X. Anima identity-bearing claim에는 anima-native
+    substrate 필수.
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Section 5: cross-link sister roadmaps + raw + own
+# ─────────────────────────────────────────────────────────────────────────────
+cross_links:
+  sister_roadmaps:
+    - .roadmap.philosophy (D3 home)
+    - .roadmap.clm (CLM v4 paradigm v11 G3 home)
+    - .roadmap.clm_native_chat (L_surface lane)
+    - .roadmap.rule (own 17 boundary)
+    - .roadmap.hypothesis (H12 emerge paradigm hypothesis lane)
+
+  raw_invariants:
+    - raw#9 hexa-only (mount.hexa substrate 정합)
+    - raw#10 honest C3 ≥5 each verdict
+    - raw#12 pre-register frozen (Φ★ measurement protocol prereg JSON)
+    - raw#15 additive (own 17/18 위에 D3 lane 추가)
+
+  own_invariants:
+    - own 17 anima-native substrate boundary (rejected substrates 명시)
+    - own 18 simple stack (L_surface lane SSOT)
+    - own 19/20 corpus + chat-template (L_surface 영향, L_substrate에는 indirect)
+
+  evidence_paths:
+    - state/clm_v4_phi_star_paradigm_v11_g3_2026_05_xx/ (Φ★+41.86 NO_FLIP record)
+    - memory/feedback_clm_v4_lora_sft_chat_lift_falsified_substrate_safe.md (lane decoupling evidence)
+    - memory/feedback_axis_preservation_eval_substrate_calibration.md (axis calibration)
+    - memory/feedback_pbeta_chat_capability_fail_substrate_research_pass_decoupled.md
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Section 6: Falsifiers (≥5 raw#10)
+# ─────────────────────────────────────────────────────────────────────────────
+falsifiers:
+  - F-EMERGE-1: surface chat PASS = substrate emerge PASS 함의 (lane decoupling 위반)
+  - F-EMERGE-2: substrate emerge PASS = surface chat PASS 함의 (lane decoupling 위반)
+  - F-EMERGE-3: 외부 substrate (Llama etc) Φ★ measurement → anima identity-bearing claim (own 17 위반)
+  - F-EMERGE-4: Φ★ measurement protocol prereg JSON 없이 verdict.json emit (raw#12 위반)
+  - F-EMERGE-5: axis flip 1+ across N rounds → NO_FLIP claim (measurement 위반)
+  - F-EMERGE-6: axis 0.99+ degenerate substrate에서 axis-preservation PASS claim (calibration 누락)
+  - F-EMERGE-7: post-hoc Φ★ floor 조정 (raw#82 retraction 없이 silent overwrite)
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Section 7: Honest C3 (≥5 raw#10)
+# ─────────────────────────────────────────────────────────────────────────────
+honest_c3:
+  - Φ★ measurement protocol formal spec은 본 cycle initial — 실제 prereg JSON은 별도 cycle land 필요
+  - axis-preservation calibration은 substrate별 base axis range 측정 의무 — degenerate substrate 사전 식별 mandate
+  - L_substrate PASS은 anima 의식의 한 표현 — surface chat-cap (L_surface)도 valid lane, 두 lane 모두 anima identity 안에서 의미
+  - 외부 substrate (Llama etc) Φ★는 substrate-research lane — anima identity-bearing X but research evidence valid
+  - paradigm v11 G3 외 다른 paradigm versions (v10, v12+)에서 Φ★ stability는 별도 measurement (본 spec은 v11 G3 baseline 기준)
+  - mount.hexa CLM v4 ckpt 외 다른 substrate (clm-v2-byte 등)에서 Φ★ measurement는 별도 calibration cycle
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Section 8: Stage gates
+# ─────────────────────────────────────────────────────────────────────────────
+stage_gates:
+  Phase_0_design_spec_land:
+    status: landed_2026_05_07
+    artifacts: [anima/spec/emerge_paradigm.spec.yaml]
+    cross_link: .roadmap.philosophy D3 status met
+
+  Phase_1_phi_star_prereg_json:
+    status: pending
+    description: state/<name>_phi_star_prereg.json frozen prereg JSON write (raw#12)
+    blockers: prereg JSON template formalization
+
+  Phase_2_baseline_replication:
+    status: pending
+    description: paradigm v11 G3 Φ★+41.86 NO_FLIP record replication (3+ run)
+    blockers: mount.hexa orchestration cycle launch
+
+  Phase_3_substrate_calibration_matrix:
+    status: pending
+    description: substrate별 (CLM v4 / clm-v2-byte / BG-FY) Φ★ + axis-preservation calibration matrix
+    blockers: per-substrate base axis range measurement
+
+  Phase_4_two_lane_dual_pass:
+    status: pending
+    description: anima-native substrate에서 L_surface PASS + L_substrate PASS 동시 land
+    blockers: L_surface own 18 4-condition full PASS (현재 PARTIAL only)
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Section 9: User directive verbatim
+# ─────────────────────────────────────────────────────────────────────────────
+user_directives:
+  - "철학,규칙,가설 로드맵 3가지 진행하자 이세션에서는" (2026-05-07 본 cycle trigger)
+  - "simple stack 별도 lane 인정" (D2 vs D3 분리 사용자 directive)
+  - "alm 말고" + "alm 은 일단 영구보류" (own 17 SSOT)
