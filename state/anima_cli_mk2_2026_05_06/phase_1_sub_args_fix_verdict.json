@@ -1,0 +1,91 @@
+{
+  "schema": "anima.cli_mk2.phase1.sub.args_fix.verdict.v1",
+  "cycle": "anima_cli_mk2_phase_1_sub_args_fix",
+  "date_utc": "2026-05-06",
+  "scope": "bin/anima.hexa args/exec semantics fix — Phase 1 sub-cycle",
+  "budget": {
+    "tier": "mac_local",
+    "cost_usd": 0.00,
+    "wall_time_min_estimated": 30
+  },
+  "raw_compliance": {
+    "raw_9_hexa_only": "PASS — bin/anima.hexa hexa-only, no .py / _python_bridge / shell forks beyond exec() helper",
+    "raw_10_honest_c3": "PASS — 6 honest caveats embedded (C1..C6)",
+    "raw_15_additive": "PASS — bin/anima legacy bash 보존, 별도 bin/anima.hexa entry"
+  },
+  "own_compliance": {
+    "own_17_alm_freeze": "PASS — 외부 substrate backend dispatch 0건, T1 chat REPL은 anima-native CLM v4 mount만"
+  },
+  "discoveries": {
+    "args_convention": {
+      "finding": "args() returns [interp_real_path, script_path, ...user_args] in both interp and codegen paths",
+      "anima_cli_pattern": "_user_argv() in tool/anima_cli/*.hexa filters by '/.hexa-cache/' which incidentally MATCHES nothing in real interp run; existing positional argv[0] dispatch in compute.hexa / audit.hexa is BROKEN under hexa-strict auto-invoke",
+      "canonical_pattern": "browser-harness wrapper (/Users/ghost/.hx/packages/browser-harness/wrappers/browser_harness.hexa:92-106) — scan for trailing '.hexa' suffix, slice everything after as user_args",
+      "auto_invoke_rule": "fn main() with no params is auto-called by hexa-strict; trailing main() call → silent-failure-enforcement Class 1 error. tool/anima_cli/* 26 scripts ALL hit this, currently broken in direct invocation"
+    },
+    "exec_integration": {
+      "stdlib_exec": "exec(cmd) returns string of stdout (buffered). Streamed forwarding requires explicit fork/exec syscall hexa stdlib (not available Phase 1).",
+      "rc_capture": "Wrapped child invocation appends `; printf '__ANIMA_CHILD_RC=%d\\n' $?` and parsed back from buffered output."
+    }
+  },
+  "fix_applied": {
+    "file": "bin/anima.hexa",
+    "deltas": [
+      "fn main(args) → fn main() with auto-invoke (no trailing main() call)",
+      "Added _user_argv() canonical strip helper (browser-harness pattern, .hexa suffix scan)",
+      "Added _hexa_bin() / _shq() / _exec_hexa() helpers for child dispatch",
+      "All dispatch paths (T1/T2 ops/T2 legacy compat/bare) now actually exec child via hexa run + RC forwarding",
+      "Replaced print('// exec ...') stub with real exec() call"
+    ],
+    "loc_before": 161,
+    "loc_after": 232,
+    "parse_check": "OK"
+  },
+  "test_results": {
+    "anima_help": "PASS — emit_help() prints 23-line surface, RC=0",
+    "anima_version": "PASS — 'anima 0.2.0-mk2', RC=0",
+    "anima_h_short": "PASS — same as --help, RC=0",
+    "anima_ops_no_topic": "PASS — 'Usage: anima ops <topic>', RC=2",
+    "anima_ops_doctor": "PARTIAL — dispatcher reaches tool/anima_cli/doctor.hexa, but doctor.hexa itself fails with hexa-strict auto-invoke conflict (pre-existing bug in called script, not in dispatcher)",
+    "anima_audit_legacy_compat": "PARTIAL — same as ops doctor: dispatcher emits '[legacy] ... deprecated. Use ops audit', then forwards to audit.hexa which hits same auto-invoke bug",
+    "anima_t3_connect": "PASS — '[T3 stub] connect: v2.0 wire-up pending ...', RC=0",
+    "anima_unknown": "PASS — '[unknown] nonexistent — see anima --help', RC=2"
+  },
+  "downstream_blocker_identified": {
+    "issue": "tool/anima_cli/*.hexa 26 scripts ALL have trailing 'main()' call which triggers hexa-strict auto-invoke conflict",
+    "scope": "audit / doctor / compute / cost / bench / handoff / metrics / etc 26개",
+    "fix": "remove trailing main() call OR add @manual_main attribute on fn main",
+    "lane": "Phase 1 sub-cycle 3 — anima_cli sweep (separate BG run, ~26 file edits, 0 LoC each net)"
+  },
+  "honest_c3": [
+    "C1: hexa stdlib yaml read 미land — spec yaml dispatch table 직접 read X, hardcoded 26 topic list 유지",
+    "C2: exec()는 buffered stdout return — long-running interactive REPL (T1 dialogue actual chat loop)은 fork/exec syscall hexa stdlib 의존, Phase 2 lane",
+    "C3: T1 chat REPL은 dialogue.hexa wired but actual REPL loop 미구현 (--probe one-shot only currently). 또한 dialogue.hexa 자체도 auto-invoke conflict 영향권.",
+    "C4: T2 26 topics .hexa 모두 존재 verified, but ALL 26 currently fail with hexa-strict auto-invoke — Phase 1 sub-cycle 3 sweep blocker",
+    "C5: _user_argv() 는 'last .hexa-suffix arg' 가정. 사용자가 directly '.hexa' suffix arg 전달 시 부분 truncation — 현재 anima CLI 표면에는 미발생, 보고 의무로만 기록",
+    "C6: __ANIMA_CHILD_RC sentinel parsing은 child stdout 마지막 라인 가정. child가 sentinel literal 직접 print 시 false-match 가능 — anima 26 topic surface에는 미발생"
+  ],
+  "verdict": "PASS_DISPATCHER_FIXED_BLOCKED_BY_DOWNSTREAM_AUTO_INVOKE_SWEEP",
+  "next_sub_cycle_options": {
+    "option_a_anima_cli_sweep": {
+      "description": "tool/anima_cli/*.hexa 26 files trailing main() removal sweep",
+      "estimated_effort": "1 BG, ~30min, 0 cost",
+      "completion_lift": "+0.10 (T2 ops surface 26개 actual exec 통과)",
+      "rank": 1
+    },
+    "option_b_spec_yaml_direct_read": {
+      "description": "hexa stdlib yaml read 통해 spec yaml dispatch table 동적 read (C1 close)",
+      "blocker": "hexa stdlib yaml 미land — depends on hexa-cc upstream",
+      "rank": 3
+    },
+    "option_c_phase_1_stable_land": {
+      "description": "Phase 1 dispatcher fix만 land, sweep + REPL은 Phase 2 lane",
+      "rank": 2
+    }
+  },
+  "recommendation_by_completion": {
+    "ranked_1": "option_a_anima_cli_sweep — single biggest completion lift (+0.10), $0, deterministic mechanical edit",
+    "ranked_2": "option_c_phase_1_stable_land — Phase 1 dispatcher 자체는 PASS, separable lane",
+    "ranked_3": "option_b_spec_yaml — upstream hexa-cc dependency, not actionable Phase 1"
+  }
+}
