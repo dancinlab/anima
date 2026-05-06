@@ -92,7 +92,8 @@ if cmd == "help" || cmd == "-h" || cmd == "--help" {
     let org = "need-singularity"
     // all known modules: local (modules/) + top-level (anima-*)
     let local_mods = ["decoder", "daemon", "monitor"]
-    let ext_mods = ["agent", "body", "eeg", "engines", "hexad", "measurement", "physics", "speak", "tools"]
+    // "agent" removed 2026-05-06 — anima-agent extracted to standalone repo
+    let ext_mods = ["body", "eeg", "engines", "hexad", "measurement", "physics", "speak", "tools"]
 
     if arg1 == "" || arg1 == "list" {
         println("modules:")
@@ -116,8 +117,9 @@ if cmd == "help" || cmd == "-h" || cmd == "--help" {
         let cache_lines = cache_raw.split("\n")
         let cache_valid = cache_lines.len() > 1 && cache_lines[0] == base_mtime
         if !cache_valid {
-            // Cache miss — batched single exec fills counts for all 9 modules
-            let script = "for d in " + base + "/anima-agent " + base + "/anima-body " + base + "/anima-eeg " + base + "/anima-engines " + base + "/anima-hexad " + base + "/anima-measurement " + base + "/anima-physics " + base + "/anima-voice " + base + "/anima-tools; do n=0; if [ -d \"$d\" ]; then n=$(find \"$d\" -name '*.hexa' 2>/dev/null | wc -l | tr -d ' '); fi; b=$(basename \"$d\"); echo \"${b#anima-}:$n\"; done"
+            // Cache miss — batched single exec fills counts for all 8 modules
+            // (anima-agent removed 2026-05-06 — extracted to standalone repo)
+            let script = "for d in " + base + "/anima-body " + base + "/anima-eeg " + base + "/anima-engines " + base + "/anima-hexad " + base + "/anima-measurement " + base + "/anima-physics " + base + "/anima-voice " + base + "/anima-tools; do n=0; if [ -d \"$d\" ]; then n=$(find \"$d\" -name '*.hexa' 2>/dev/null | wc -l | tr -d ' '); fi; b=$(basename \"$d\"); echo \"${b#anima-}:$n\"; done"
             let batch_out = exec(script)
             write_file(cache_path, base_mtime + "\n" + batch_out)
             cache_lines = (base_mtime + "\n" + batch_out).split("\n")

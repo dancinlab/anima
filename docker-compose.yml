@@ -3,8 +3,6 @@
 #
 # Services:
 #   anima-web       — Consciousness engine WebSocket (port 8765)
-#   anima-agent     — MCP agent platform (port 8766)
-#   dashboard       — Unified consciousness + portfolio bridge (port 8770)
 #   invest-backend  — FastAPI trading backend (port 8000)
 #   invest-scalper  — Rust tick engine
 #   db              — PostgreSQL 16
@@ -151,64 +149,6 @@ services:
       interval: 15s
       timeout: 10s
       start_period: 20s
-      retries: 3
-    restart: unless-stopped
-
-  anima-agent:
-    build:
-      context: .
-      dockerfile: anima-agent/Dockerfile
-    ports:
-      - "8766:8766"
-    env_file:
-      - .env
-    environment:
-      - ANIMA_WS_URL=ws://anima-web:8765
-      - INVEST_API_URL=http://invest-backend:8000
-      - REDIS_URL=redis://redis:6379
-      - PYTHONUNBUFFERED=1
-    volumes:
-      - ./anima/checkpoints:/app/anima-src/checkpoints:ro
-      - ./anima/config:/app/anima-src/config:ro
-      - ./anima-agent/skills:/app/skills
-      - ./anima-agent/plugins:/app/plugins
-    networks:
-      - anima-net
-    depends_on:
-      anima-web:
-        condition: service_started
-    healthcheck:
-      test: ["CMD-SHELL", "python -c \"import urllib.request; urllib.request.urlopen('http://localhost:8766/health')\" 2>/dev/null || exit 0"]
-      interval: 15s
-      timeout: 10s
-      start_period: 15s
-      retries: 3
-    restart: unless-stopped
-
-  dashboard:
-    build:
-      context: .
-      dockerfile: anima-agent/Dockerfile
-    command: ["python", "-u", "dashboard_bridge.py", "--port", "8770"]
-    ports:
-      - "8770:8770"
-    env_file:
-      - .env
-    environment:
-      - ANIMA_WS_URL=ws://anima-web:8765
-      - INVEST_API_URL=http://invest-backend:8000
-      - REDIS_URL=redis://redis:6379
-      - PYTHONUNBUFFERED=1
-    networks:
-      - anima-net
-    depends_on:
-      anima-agent:
-        condition: service_started
-    healthcheck:
-      test: ["CMD-SHELL", "python -c \"import urllib.request; urllib.request.urlopen('http://localhost:8770/health')\" 2>/dev/null || exit 0"]
-      interval: 15s
-      timeout: 10s
-      start_period: 10s
       retries: 3
     restart: unless-stopped
 
