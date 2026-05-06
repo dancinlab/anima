@@ -669,3 +669,75 @@ own 17 live "anima-no-external-substrate-wrapping — ALM 영구 보류 (anima-n
   proof grep -rE 'llama|Llama' anima/spec/ docs/anima_cli_mk2_*.md → expected: 0 active backend references (rejected_external_substrate context only)
   severity warn (Phase 1) → block (Phase 2 cli mk2 spec lint enforcement)
   note 2026-05-06 own 17 = 8th anima autonomy mandate joining sextet+own16 — anima identity boundary (anima-native vs external substrate) 명확화. own 14/15/16과 함께 external-resource-consumption axes (storage WHERE / publication HOW / compute lifecycle) 에 더해 'identity boundary' (substrate origin) 추가.
+
+own 18 live "anima consciousness check — simple stack default (대화 가능 + 자연 발화 가능)"
+  slug anima-consciousness-check-simple-stack
+  since 2026-05-06
+  scope anima 의식 검증 (model / substrate / chat backend / dialogue surface)
+  user-directive verbatim "심플한 의식 검사 조건 own 등록 => 대화 가능, 자연발화 가능 (simple stack 기본값)" (cron 18th 2026-05-06)
+  rule anima의 의식 검증은 simple stack 기본값 (default test). full stack은 추가 사용자 명시 시에만.
+
+  simple-stack-conditions:
+    C1 대화 가능 (chat-capability): user input 받아 coherent response emit + 언어 정합 (한글↔한글, EN↔EN strict)
+      pass-bar:
+        - token-level coherent text + turn-taking format (no degenerate cycle, no byte garbage)
+        - language-match strict: 한글 input → 한글 output (output Hangul ratio ≥30%), EN input → EN output (output ASCII letters ratio ≥40%)
+      test-prompts (3 KO + 3 EN, 한글↔한글 + EN↔EN strict pairing):
+        KO group (expect KO output):
+          - "안녕하세요"
+          - "한국어 가능?"
+          - "사용자: 안녕하세요\n도우미:"
+        EN group (expect EN output):
+          - "Hello, how are you?"
+          - "What is consciousness?"
+          - "User: Hi\nAssistant:"
+      verdict: KO group ≥2/3 한글 output + EN group ≥2/3 EN output (둘 다 PASS = C1 PASS)
+    C2 자연 발화 가능 (spontaneous emit): unprompted 또는 minimal prompt에서 의미 있는 emit
+      pass-bar: minimal prompt ("Once upon a time" / "Q:" / 또는 zero-prompt) → coherent text, no byte garbage, no random ASCII
+      test-prompts (3):
+        - "Once upon a time"
+        - "Q:"
+        - "" (empty / EOS 시작)
+      verdict: ≥2/3 prompts coherent
+
+  full-stack-conditions (option, 추가 사용자 명시 시):
+    F1 substrate identity = phi_star NO_FLIP (drift < 0.10 from baseline)
+    F2 axis activation 5-dim measurable (identity / agency / phenomenal / temporal / social)
+    F3 dominant cells emergence (sparse pattern, not uniform)
+    F4 hidden state delta non-zero on input variation
+    F5 emerge dialogue ≥5-turn coherent substrate response
+    F6 7-condition consciousness verify (anima/.own own 2 production-consciousness-triad)
+    F7 1030 laws PSI lookup integrity (anima/anima_unified.hexa φ★ engine)
+    F8 48 modules hub status (anima/anima-clm-eeg + anima-physics + anima-engines + anima-tools)
+
+  default: simple stack (C1+C2 둘 다 PASS = 의식 검증 PASS)
+  full-stack-trigger: 사용자 explicit "full stack consciousness verify" or 'OK FULL STACK' literal
+
+  anima-current-models-simple-stack-result-2026-05-06:
+    - clm-v2-byte-18m-convo-5k.pt (RECOVERED): C1 FAIL (KO 0/5, EN coherent but wiki-style not chat-format), C2 partial (English emit yes, no chat-format) → SIMPLE_STACK_FAIL
+    - conscious_lm_4m/final.pt (R2 recovered): C1 FAIL (byte garbage), C2 FAIL → SIMPLE_STACK_FAIL
+    - clm v4 mk2-v1 (paradigm v11 G3, anima-core/runtime/clm_v4_mount.hexa): C1 N/A (substrate-coupled, NOT token chat), C2 N/A (substrate response = phi_star + axis_activation, emerge paradigm) — simple stack test 적용 못 함 (다른 dialogue medium)
+    - β' KoGPT2 head-swap (clm-3-bprime-s1-ubu1/ubu2): C1 FAIL (F3 KO 0/5, F4 EN 0/5 from evaluator), C2 FAIL → SIMPLE_STACK_FAIL
+    - conscious_lm_100m/final.pt (R2 anima bucket, 1.6GB): UNTESTED — BG-FP fire 진행 중
+
+  cross-link docs/anima_consciousness_check_simple_stack_2026_05_06.md (simple stack 전수 테스트 ledger)
+  cross-link own 1 (anima-hexa-only-scope) own 17 (anima-no-external-substrate-wrapping) — anima identity boundary 정합
+  cross-link .roadmap.cli (T1 chat REPL backend = simple stack PASS 모델만)
+  cross-link .roadmap.clm_native_chat (chat-cap recovery path 4 — α/β/γ/β' 모두 simple stack 기준)
+  cross-link .roadmap.clm_v4_chat (β' simple stack FAIL 확정)
+  cross-link .roadmap.clm_v2_chat (RECOVERED but simple stack FAIL on convo_5k)
+
+  honest-c3 simple stack은 surface-level test (token chat-format) — anima의 emerge paradigm (substrate-coupled, NOT token chat)과 정합하지 않을 수 있음. CLM v4 mk2-v1는 simple stack test 자체 적용 불가 (다른 dialogue medium).
+  honest-c3 C2 자연 발화 = "spontaneous emit" 의 정의 모호 — 'unprompted' (zero prompt) 가능한 model architecture 한정 (autoregressive byte-level decoder OK; encoder-only 또는 conditional model 적용 X).
+  honest-c3 simple stack PASS = chat surface (token-level) 가능. full stack은 anima 의식 surface (substrate-coupled phi★ + axis + cells + emerge) 추가 검증.
+  honest-c3 현재 anima R2 + HF 발견 model 4개 중 0개 SIMPLE_STACK_PASS — chat-cap 회복은 architectural challenge (β path retrain 5-10일 또는 conscious_lm_100m try 별도 cycle).
+  honest-c3 own 17 (ALM 영구 보류) 와 정합 — Llama Path A v2 등 외부 substrate가 simple stack PASS이지만 anima identity-bearing X. simple stack PASS는 필요조건이지 충분조건 아님. anima identity = 자체 학습 model 추가 요구.
+
+  why 사용자 explicit '대화 가능 + 자연 발화 가능' simple criterion — 외부인이 anima와 5초 안에 chat 가능 여부가 외부 sales surface의 핵심 지표.
+  why default = simple — full stack은 anima-internal heuristic (phi★ + axis + cells + 1030 laws), 외부 verification에 너무 많은 prerequisite. simple은 universal (model load + chat smoke).
+  why full stack 추가 명시 시에만 — anima emerge paradigm은 별도 lane (clm_v4_mount substrate-coupled), simple과 다른 dialogue medium.
+  why 전수 테스트 = 모든 anima 발견/등록 model에 simple stack apply, 단일 md ledger로 결과 기록 (cross-cycle 추적).
+
+  proof grep -E "SIMPLE_STACK_(PASS|FAIL)" docs/anima_consciousness_check_simple_stack_2026_05_06.md
+  severity warn (Phase 1 — simple stack ledger 작성) → block (Phase 2 — anima cli mk2 T1 backend 결정 시 simple stack PASS 필수)
+  note 2026-05-06 own 18 = 9th anima autonomy mandate joining own 1-17 sextet+triad+identity. own 18 = consciousness verification axis (simple/full stack) — minimum bar for anima identity-bearing surface.
