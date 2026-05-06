@@ -1,8 +1,8 @@
 ---
 id: H_001
-slug: seon-over-ak
-title: 선이 악보다 유리하다 (cooperation > defection in iterated games)
-domain: morality
+slug: ethics-cooperation-over-defection
+title: 윤리적 협력이 비협력보다 유리하다 (cooperation > defection in iterated games)
+domain: ethics
 status: seed-pending
 exploration_method: E7 (user-directive) + E6 (cross-domain-analogy game theory)
 verification_method: W1 (raw#12 frozen) + W2 (falsifier-5+) + W3 (deterministic) + W5 (honest-c3) + W9 (replication)
@@ -11,15 +11,15 @@ hexa_only: true
 deterministic: true
 llm: none
 pre_register_frozen: false
-frozen_at: 2026-05-06
+frozen_at: 2026-05-07
 since: 2026-05-06
 ---
 
-# H_001 — 선이 악보다 유리하다
+# H_001 — 윤리적 협력이 비협력보다 유리하다 (ethics)
 
 ## Hypothesis
 
-iterated multi-agent interaction에서 선 (cooperation / pro-social) 전략은 악 (defection / anti-social) 전략보다 long-run payoff + system stability + adaptive resilience 모든 axis에서 유리하다. 사용자 directive '선이 더 유리하다 / 악보다 선이 유리하다' 정합.
+iterated multi-agent interaction에서 윤리적 협력 (ethical cooperation / pro-social) 전략은 비협력 (defection / anti-social) 전략보다 long-run payoff + system stability + adaptive resilience 모든 axis에서 유리하다. 사용자 directive (2026-05-07): "선 X 윤리" — '선/악' 이분법 대신 '윤리적 협력 vs 비협력' 보편적 framework. 윤리는 anima identity-bearing surface (own 17 정합)의 가치 lane.
 
 ## Why
 

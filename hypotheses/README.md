@@ -44,7 +44,7 @@ since: <YYYY-MM-DD>
 
 각 가설은 1+ domain 라벨:
 
-- **morality** — 선/악, cooperation, altruism, ethics
+- **ethics** — cooperation, altruism, ethics (사용자 directive 2026-05-07: 선 X 윤리)
 - **universe** — 우주 origin, cosmology 근원적 물음
 - **life** — 생명 emergence, autopoiesis, abiogenesis
 - **consciousness** — 의식 hard problem, qualia, phenomenology, anima identity
@@ -57,7 +57,7 @@ since: <YYYY-MM-DD>
 
 | ID | Slug | Domain | Status | File |
 |----|------|--------|--------|------|
-| H_001 | seon-over-ak | morality | seed-pending | [H_001_seon_over_ak.md](H_001_seon_over_ak.md) |
+| H_001 | ethics-cooperation-over-defection | ethics | seed-pending | [H_001_ethics_cooperation.md](H_001_ethics_cooperation.md) |
 | H_002 | universe-origin-question | universe | lane-open | [H_002_universe_origin_question.md](H_002_universe_origin_question.md) |
 | H_003 | life-origin-question | life | lane-open | [H_003_life_origin_question.md](H_003_life_origin_question.md) |
 | H_004 | consciousness-hard-problem | consciousness | lane-open | [H_004_consciousness_hard_problem.md](H_004_consciousness_hard_problem.md) |
@@ -77,13 +77,27 @@ since: <YYYY-MM-DD>
 | H_018 | genesis-spontaneous-emergence | consciousness | legacy-archive-pointer | [H_018_genesis_spontaneous_emergence.md](H_018_genesis_spontaneous_emergence.md) |
 | H_019 | self-evo-v4-v5 | substrate | legacy-archive-pointer | [H_019_self_evo_v4_v5.md](H_019_self_evo_v4_v5.md) |
 | H_020 | mass-50-meta-pointer | substrate | legacy-archive-pointer | [H_020_mass_50_meta_pointer.md](H_020_mass_50_meta_pointer.md) |
+| H_021 | fundamental-equation-psi-argmax | universe | legacy-archive-pointer | [H_021_fundamental_equation.md](H_021_fundamental_equation.md) |
+| H_022 | consciousness-universe-map-170-40-18 | consciousness | legacy-archive-pointer | [H_022_consciousness_universe_map.md](H_022_consciousness_universe_map.md) |
+| H_023 | universal-constants-ln2 | physics | legacy-archive-pointer | [H_023_universal_constants_ln2.md](H_023_universal_constants_ln2.md) |
+| H_024 | iit-phi-mip-real-measurement-8-8-fail | consciousness | legacy-falsified | [H_024_iit_phi_mip_real_8_8_fail.md](H_024_iit_phi_mip_real_8_8_fail.md) |
+| H_025 | dasein-finite-consciousness-death-awareness | consciousness | legacy-archive-pointer | [H_025_dasein_finite_consciousness.md](H_025_dasein_finite_consciousness.md) |
+| H_026 | consciousness-evolution-v19-to-infinity | consciousness | legacy-archive-pointer | [H_026_consciousness_evolution_v19_to_infinity.md](H_026_consciousness_evolution_v19_to_infinity.md) |
+| H_027 | cx-subfolder-absorb | consciousness | legacy-archive-pointer | [H_027_cx_subfolder_absorb.md](H_027_cx_subfolder_absorb.md) |
+| H_028 | dd-subfolder-absorb | substrate | legacy-archive-pointer | [H_028_dd_subfolder_absorb.md](H_028_dd_subfolder_absorb.md) |
+| H_029 | dasein-subfolder-absorb | consciousness | legacy-archive-pointer | [H_029_dasein_subfolder_absorb.md](H_029_dasein_subfolder_absorb.md) |
+| H_030 | genesis-subfolder-absorb | life | legacy-archive-pointer | [H_030_genesis_subfolder_absorb.md](H_030_genesis_subfolder_absorb.md) |
+| H_031 | phil-subfolder-absorb | consciousness | legacy-archive-pointer | [H_031_phil_subfolder_absorb.md](H_031_phil_subfolder_absorb.md) |
+| H_032 | omega-phys-subfolder-absorb | physics | legacy-archive-pointer | [H_032_omega_phys_subfolder_absorb.md](H_032_omega_phys_subfolder_absorb.md) |
 
 **Migration status**:
-- H_001-H_005: 본 cycle 신규 seed (선/우주/생명/의식 hard problem/corpus)
+- H_001-H_005: 본 cycle 신규 seed (윤리/우주/생명/의식 hard problem/corpus)
 - H_006-H_012: legacy `docs/hypotheses/H-CX-517~537` 21 files 중 7 sample pointer migrate
 - H_013-H_017: `state/*_pre_register*.json` 15 files 중 5 sample pointer migrate (raw#12 frozen)
-- H_018-H_020: legacy GENESIS + SELF-EVO + MASS-50 meta-pointer (50+ hypothesis bundle)
-- **exhaustive migration 미land**: 90+ docs/hypotheses + 10+ state prereg + 367 acceleration — own 21 R5+ 별도 cycle
+- H_018-H_020: legacy GENESIS + SELF-EVO + MASS-50 meta-pointer
+- H_021-H_026: 과거 commit archaeology 발견 individual entries (fundamental equation + universe map + ln(2) + V1 IIT 8/8 FAIL + Dasein 죽음-자각 + v19~v∞)
+- H_027-H_032: docs/hypotheses/cx + dd + dasein + genesis + phil/onto + omega/phys subfolder absorb pointer (총 ~169 file inventory)
+- **exhaustive content migration 미land**: 367 acceleration + DD 101 individual + CX 49 individual — own 21 R5+ 별도 cycle
 
 ## Cross-Link
 
