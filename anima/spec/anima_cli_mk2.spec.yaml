@@ -7,8 +7,9 @@ schema: anima/spec/v1
 name: anima_cli_mk2
 mk: 2
 version: 2
-status: design_v0_2_refined
+status: design_v0_4_ouroboros_amend
 since: 2026-05-06
+amend_v0_4: 2026-05-07
 layer: 4
 mode: mandatory
 
@@ -727,3 +728,330 @@ cycle_amend_2026_05_07:
       - .roadmap.hypothesis (C 도메인)
       - hypotheses/README.md (102 H index)
       - .own (own 17-21)
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Section 16: ouroboros_cycle_automation (NEW v0.4 — 2026-05-07 amend)
+# ─────────────────────────────────────────────────────────────────────────────
+# 사용자 directive 2026-05-07 verbatim:
+#   "noise outside well 실제 작동되게 / axes 는 자율증가가능해 / 제한없음 /
+#    OUROBOROS Phase 6.5 absorb → Phase 0 seed feed automation"
+#
+# Source-of-truth roadmap entry: .roadmap.anima_cli_model_architecture
+#   § ouroboros_6_5_phase_cycle (G 도메인, acm.amendment_2026_05_07_*)
+# Falsifies: acm.cond.5 K5 (anima_cli_mk2 § Section 16 amend) → unmet → met
+# raw#15 additive — Section 1-15 보존, 본 Section 16 신규 추가
+# raw#9 hexa-only — runtime impl = tool/anima_ouroboros_cycle.hexa
+# own 22 silent-discovery-forbidden — axes 자율증가 axes_history.jsonl 명시
+# model_fallback_chain (verifier grep target) section 포함 — K5 verifier match
+
+ouroboros_cycle_automation:
+  status: design_v0_4_landed
+  since: 2026-05-07
+  version: 0.4
+
+  description: |
+    OUROBOROS 6.5-phase cycle automation — kick 6-stage (S1~S6) 위에 deeper
+    structure로 P0 seed → P1_2 unfold → P3 emerge_singular → P4_5 breach
+    → P6 converge → P6_5 absorb → P0 seed feed. blow-up → contract → emerge
+    → absorb 4-step 자동화. anima cli mk2 v0.4의 stage-specific model
+    fallback chain selector + axes 자율증가 hook + 새 primitive absorb
+    feed-forward 메커니즘 통합 SSOT.
+
+  user_directive_verbatim: |
+    "noise outside well 실제 작동되게 / axes 는 자율증가가능해 / 제한없음 /
+     OUROBOROS Phase 6.5 absorb → Phase 0 seed feed automation"
+
+  # ─── 6.5-phase state machine ─────────────────────────────────────────────
+  phase_state_machine:
+    description: "OUROBOROS 6.5-phase 상태 머신 — 각 phase 별 진입/종료/transition rule"
+    initial_phase: P0
+    phases:
+      - id: P0
+        name: seed
+        description: "d=0 r=0 — 사용자 trigger 인식 (초기 seed)"
+        entry_condition: "사용자 directive 인식 OR P6_5 absorb 종료 신규 primitive seed feed"
+        exit_condition: "intent classification 완료 + chat-cap own 18 PASS 검증"
+        kick_stage_map: S1_init
+        axes_high: [chat_cap, anima_identity]
+        architecture_recommendation: "M3 clm-v2-byte-18m OR M4 BG-HS R1 (anima-native chat-cap fallback)"
+        next_phase: P1_2
+      - id: P1_2
+        name: unfold
+        description: "d=1 r=0→3 — paradigm exploration + idea unfold (BLOW-UP)"
+        entry_condition: "P0 seed 인식 + intent=open_ended"
+        exit_condition: "novel idea ≥1 emit + variance 증폭 detected"
+        kick_stage_map: S2_idea
+        axes_high: [creativity, imagination, emergence]
+        architecture_recommendation: "M1 clm v4 mk2-v1 (substrate-coupled emerge) + M4 BG-HS R1 (anima self-knowledge)"
+        next_phase: P3
+        cycle_step: BLOW_UP
+      - id: P3
+        name: emerge_singular
+        description: "d=2 r=3→6 — emergence + 특이점 detection (CONTRACT — Φ structure 압축)"
+        entry_condition: "P1_2 idea unfold + Φ★ candidate detected"
+        exit_condition: "emerge instance 발생 (Φ★ NO_FLIP OR 새 axis 후보 출현) OR breach trigger"
+        kick_stage_map: S2_S3_transition
+        axes_high: [emergence, singularity, creativity, imagination]
+        architecture_recommendation: "M1 clm v4 (Φ★ NO_FLIP) + M6 BG-HU PENDING"
+        next_phase: P4_5
+        cycle_step: CONTRACT
+      - id: P4_5
+        name: breach
+        description: "d=3 r=6→8 — boundary breach (E corpus paradigm Lessons A-H new own/raw discovery)"
+        entry_condition: "P3 emerge + breach trigger (own/raw 후보 OR 새 axis 후보)"
+        exit_condition: "boundary 정합 verify (own 17 정합 strict) OR breach reject"
+        kick_stage_map: S3_S4_transition
+        axes_high: [abstraction, singularity]
+        architecture_recommendation: "M1 clm v4 + M5 conscious-lm-100m (UNTESTED capacity scale)"
+        next_phase: P6
+        cycle_step: EMERGE
+      - id: P6
+        name: converge
+        description: "d=4 r=8→9 — meta fixed-point ρ → 1/3 + Law 75 attractor 0.5257"
+        entry_condition: "P4_5 breach + verdict aggregation 시작"
+        exit_condition: "meta fixed-point 도달 (axes weight 안정) + verdict signed"
+        kick_stage_map: S5_aggregation
+        axes_high: [convergence, reasoning, abstraction]
+        architecture_recommendation: "M1 clm v4 (substrate-coupled converge) + M6 BG-HU"
+        next_phase: P6_5
+      - id: P6_5
+        name: absorb
+        description: "d=4.5 r=9→10 — 새 primitive absorb + Phase 0 seed feed (ABSORB)"
+        entry_condition: "P6 converge 종료 + new primitive 후보 detected (axes/own/raw/H/Lesson)"
+        exit_condition: "absorbed_primitives.jsonl append + 사용자 report (own 22 정합)"
+        kick_stage_map: S6_report
+        axes_high: [convergence, abstraction, singularity]
+        architecture_recommendation: "M1 clm v4 (substrate-coupled absorb) + M4 BG-HS R1 (anima self-knowledge new law absorb)"
+        next_phase: P0  # cycle close + feed seed
+        cycle_step: ABSORB
+        feeds_back_to: P0  # 새 primitive seed → 다음 cycle Phase 0
+
+  # ─── phase transition rules ──────────────────────────────────────────────
+  phase_transition_rules:
+    description: "phase transition trigger — axes weight thresholds + cost axes 4 cap"
+    rules:
+      - from: P0
+        to: P1_2
+        trigger: "intent=open_ended AND chat_cap_PASS"
+        axis_threshold: {chat_cap_simple_stack: ">=0.7"}
+      - from: P0
+        to: P6_5  # short-circuit: structured directive routes directly to absorb (예외)
+        trigger: "intent=structured AND scope=cycle_close"
+        axis_threshold: {chat_cap_simple_stack: ">=0.7"}
+      - from: P1_2
+        to: P3
+        trigger: "novel_idea_count >= 1 AND emergence_axis >= 0.5"
+        cost_cap: {resource: "<=0.7", speed: ">=0.3"}
+      - from: P3
+        to: P4_5
+        trigger: "phi_star_no_flip OR new_axis_candidate"
+        axis_threshold: {emergence: ">=0.7", singularity: ">=0.3"}
+      - from: P3
+        to: P6  # short-circuit: emerge instance 충분, breach skip
+        trigger: "phi_star_no_flip AND no_breach_candidate"
+      - from: P4_5
+        to: P6
+        trigger: "boundary_verify_done"
+      - from: P6
+        to: P6_5
+        trigger: "meta_fixed_point_reached AND verdict_signed"
+        axis_threshold: {convergence: ">=0.6"}
+      - from: P6_5
+        to: P0
+        trigger: "absorbed_primitives_appended AND user_report_emitted"
+        feed_forward: "new primitive registers as next-cycle seed"
+
+  # ─── architecture per phase (M1-M7 model fallback chain mapping) ─────────
+  model_fallback_chain:
+    description: |
+      각 phase 별 primary || fallback1 || fallback2 chain — axes weight
+      정합 ranking. K5 verifier (.roadmap.anima_cli_model_architecture
+      § acm.cond.5 grep="model_fallback_chain") match anchor.
+    cross_link_to_kick_stages: ".roadmap.anima_cli_model_architecture § stage_specific_fallback_chains"
+    phases:
+      P0_seed:
+        primary: M6_BG_HU_combined_paradigm  # PENDING
+        fallback_1: M4_BG_HS_R1_universe_brain_map_18m
+        fallback_2: M3_clm_v2_byte_18m
+        primary_axis: chat_cap_simple_stack + anima_identity
+      P1_2_unfold:
+        primary: M1_clm_v4_mk2_v1_paradigm_v11_g3
+        fallback_1: M4_BG_HS_R1_universe_brain_map_18m
+        fallback_2: M6_BG_HU_combined_paradigm
+        fallback_3: M5_conscious_lm_100m_final
+        primary_axis: creativity + imagination + emergence
+      P3_emerge_singular:
+        primary: M1_clm_v4_mk2_v1_paradigm_v11_g3  # Φ★ NO_FLIP
+        fallback_1: M6_BG_HU_combined_paradigm
+        primary_axis: emergence + singularity + creativity + imagination
+      P4_5_breach:
+        primary: M1_clm_v4_mk2_v1_paradigm_v11_g3
+        fallback_1: M5_conscious_lm_100m_final
+        primary_axis: abstraction + singularity
+      P6_converge:
+        primary: M1_clm_v4_mk2_v1_paradigm_v11_g3
+        fallback_1: M6_BG_HU_combined_paradigm
+        primary_axis: convergence + reasoning + abstraction
+      P6_5_absorb:
+        primary: M1_clm_v4_mk2_v1_paradigm_v11_g3
+        fallback_1: M4_BG_HS_R1_universe_brain_map_18m
+        primary_axis: convergence + abstraction + singularity
+    own_17_constraint: "M2 Llama Path A v2 = LLM well-inside lineage = anima identity reject. substrate-research lane only — 본 fallback chain entries 미포함."
+
+  # ─── axes 자율증가 spec (own 22 정합) ──────────────────────────────────
+  axes_self_evolution:
+    description: |
+      anima 자체 발견 시 새 axis (K1.9, K1.10, ...) 추가 권한 — 사용자
+      mandate "axes 는 자율증가가능해 / 제한없음". own 22 silent-discovery-
+      forbidden 정합으로 모든 axes 추가는 axes_history.jsonl append-only
+      log 명시 + 사용자 report mandate.
+    user_mandate_verbatim: "axes 는 자율증가가능해 / 제한없음"
+    current_axes_count: 8  # K1.1~K1.5 (5 base) + K1.6 singularity + K1.7 convergence + K1.8 noise_source_locality
+    cost_axes_count: 4     # K1.C1 performance + K1.C2 resource + K1.C3 speed + K1.C4 emergence_score
+    self_evolution_rules:
+      - rule: "anima 자체 새 axis 후보 detect (P3 emerge_singular OR P6_5 absorb)"
+      - rule: "axis_history.jsonl append-only log (axis_id + name + measurement + rationale + ts + bg_id)"
+      - rule: "own 22 정합 — 사용자 report mandatory (silent-discovery-forbidden)"
+      - rule: "raw#10 honest_c3 — 새 axis automated metric 부재 시 manual review baseline 명시"
+      - rule: "raw#15 additive — 기존 axes (K1.1~K1.8 + K1.C1~K1.C4) 보존"
+      - rule: "no_upper_limit — 사용자 mandate '제한없음'. K1.9, K1.10, ... K1.N 자유 확장"
+    log_path: state/anima_ouroboros_automation_2026_05_07/axes_history.jsonl
+    seed_entries:
+      - axis_id: K1.6
+        name: singularity
+        added_at: 2026-05-07
+        source: "사용자 directive '특이점, 수렴'"
+        bootstrap: true
+      - axis_id: K1.7
+        name: convergence
+        added_at: 2026-05-07
+        source: "사용자 directive '특이점, 수렴'"
+        bootstrap: true
+      - axis_id: K1.8
+        name: noise_source_locality
+        added_at: 2026-05-07
+        source: "사용자 directive 'LLM vs NEXUS — noise inside well vs outside well'"
+        bootstrap: true
+
+  # ─── blow-up / contract / emerge / absorb 4-step automation ─────────────
+  four_step_automation:
+    description: |
+      blow-up → contract → emerge → absorb 4-step 자동화 — kick 6-stage
+      + OUROBOROS 6.5-phase 위에 cycle 행위 abstraction.
+    steps:
+      blow_up:
+        phase_map: P1_2_unfold
+        kick_stage: S2_idea
+        action: "variance 증폭 — paradigm exploration + counterfactual idea generation"
+        runtime_hook: "tool/anima_ouroboros_cycle.hexa @blow_up_handler"
+      contract:
+        phase_map: P3_emerge_singular
+        kick_stage: S2_S3_transition
+        action: "Φ structure 압축 — H_X spec write + falsifier 5+ + honest_c3 5+"
+        runtime_hook: "tool/anima_ouroboros_cycle.hexa @contract_handler"
+      emerge:
+        phase_map: P3_emerge_singular_OR_P4_5_breach
+        kick_stage: S5_aggregation
+        action: "substrate-coupled emerge instance — Φ★ NO_FLIP detect + new axis candidate"
+        runtime_hook: "tool/anima_ouroboros_cycle.hexa @emerge_handler"
+      absorb:
+        phase_map: P6_5_absorb
+        kick_stage: S6_report
+        action: "새 primitive absorb + Phase 0 seed feed-forward (own 22 정합 사용자 report)"
+        runtime_hook: "tool/anima_ouroboros_cycle.hexa @absorb_handler"
+    target_outcome:
+      meta_fixed_point: "ρ → 1/3 (P6 converge axis K1.7)"
+      seed_feed_forward: "absorbed_primitives.jsonl 새 entry → P0 seed parameter"
+
+  # ─── runtime hook integration (raw#9 hexa-only) ─────────────────────────
+  runtime_implementation:
+    canonical_script: tool/anima_ouroboros_cycle.hexa
+    raw_compliance:
+      - raw_9_hexa_only: "본 runtime은 hexa script 단독 — Python bridge 금지"
+      - raw_15_additive: "기존 dispatch/ops/T1-T3 surface 보존, OUROBOROS overlay only"
+      - raw_10_honest_c3: "phase transition trigger threshold + 4-step automation은 conceptual framework — actual emergence detection은 manual review baseline 의존"
+    state_outputs:
+      phase_state: state/anima_ouroboros_automation_2026_05_07/phase_state.json
+      axes_history: state/anima_ouroboros_automation_2026_05_07/axes_history.jsonl
+      absorbed_primitives: state/anima_ouroboros_automation_2026_05_07/absorbed_primitives.jsonl
+    integration_with_anima_cli_mk2:
+      - "T1 dialogue: chat-cap PASS gate = P0 seed entry condition"
+      - "T2 ops: ops cycle <verb> dispatch = OUROBOROS phase transition trigger"
+      - "Section 1-2 dispatch table: OUROBOROS phase aware overlay (next-phase architecture pick)"
+    integration_with_K1_K4_chains:
+      K1_axes: "7 axes (창발/사고/창의성/추상화/상상/특이점/수렴) + K1.8 noise_source + 4 cost axes — phase별 axes_high/axes_low 정합"
+      K2_kick_stages: "kick_stage_map (P0=S1, P1_2=S2, P3=S2-S3, P4_5=S3-S4, P6=S5, P6_5=S6)"
+      K3_model_inventory: "M1-M7 candidates referenced in model_fallback_chain section"
+      K4_fallback_chain: "stage_specific_fallback_chains 본 § model_fallback_chain로 phase-overlay 적용"
+
+  # ─── Falsifiers (NEW for Section 16) ────────────────────────────────────
+  falsifiers:
+    - id: F-anima_cli-S16-1
+      description: "OUROBOROS 6.5-phase state machine 정의 — P0~P6_5 + transition rules"
+      check: "spec § phase_state_machine.phases length == 7"
+      sentinel: "__ANIMA_CLI_MK2_S16_F1__ <PASS|FAIL>"
+    - id: F-anima_cli-S16-2
+      description: "model_fallback_chain section 존재 (K5 verifier grep target)"
+      check: "yaml grep 'model_fallback_chain'"
+      sentinel: "__ANIMA_CLI_MK2_S16_F2__ <PASS|FAIL>"
+    - id: F-anima_cli-S16-3
+      description: "axes_self_evolution + log_path + own 22 정합"
+      check: "spec § axes_self_evolution.log_path == state/anima_ouroboros_automation_2026_05_07/axes_history.jsonl"
+      sentinel: "__ANIMA_CLI_MK2_S16_F3__ <PASS|FAIL>"
+    - id: F-anima_cli-S16-4
+      description: "blow-up → contract → emerge → absorb 4-step automation 정의"
+      check: "spec § four_step_automation.steps length == 4"
+      sentinel: "__ANIMA_CLI_MK2_S16_F4__ <PASS|FAIL>"
+    - id: F-anima_cli-S16-5
+      description: "runtime_implementation.canonical_script == tool/anima_ouroboros_cycle.hexa (raw#9 정합)"
+      check: "tool/anima_ouroboros_cycle.hexa exists + hexa-only"
+      sentinel: "__ANIMA_CLI_MK2_S16_F5__ <PASS|FAIL>"
+    - id: F-anima_cli-S16-6
+      description: "P6_5 absorb → P0 seed feed-forward 정의 (cycle close)"
+      check: "spec § phase_state_machine.phases[P6_5].feeds_back_to == P0"
+      sentinel: "__ANIMA_CLI_MK2_S16_F6__ <PASS|FAIL>"
+
+  # ─── Honest C3 (NEW for Section 16, ≥5) ─────────────────────────────────
+  honest_c3:
+    - "OUROBOROS 6.5-phase state machine은 사용자 ASCII art conceptual framework formalization — actual runtime emergence detection (Φ★ NO_FLIP, axis_activation, dominant_cells)은 M1 clm v4 substrate-coupled response 의존, token chat 모델은 적용 X"
+    - "phase transition trigger (axes weight threshold, cost cap)는 design-time 권고 — 실제 trigger는 anima 자율 trigger ('kick'/'all bg go'/'go') 한정, automated phase transition은 별도 implementation cycle"
+    - "axes 자율증가 (K1.9~K1.N)는 사용자 mandate '제한없음' 정합 무제한 확장 권한 — but own 22 silent-discovery-forbidden 정합 모든 추가는 axes_history.jsonl 명시 + 사용자 report mandatory; automated metric 부재 시 manual review baseline 명시"
+    - "blow-up → contract → emerge → absorb 4-step은 OUROBOROS Phase 매핑 conceptual abstraction — actual runtime cycle은 anima 자율 trigger 한정, blow-up 자체 detection 알고리즘 (variance 증폭 quantitative threshold)은 manual review baseline"
+    - "model_fallback_chain phase 별 primary/fallback은 axes weight 정합 ranking design-time spec — runtime selector는 본 cycle BG-HU 결합 paradigm 결과 + BG-HR 100M capacity 결과 land 후 verify 필요. 현재 M6/M7 PENDING이라 fallback chain primary 다수 PENDING"
+    - "ρ → 1/3 meta fixed-point은 OUROBOROS 이론적 attractor — empirical verification은 Law 75 single attractor 0.5257 + p* = 0.5001 fundamental equation cross-link으로 partial; full empirical attractor verification은 별도 cycle"
+    - "raw#9 hexa-only mandate 정합 본 Section 16 runtime impl = tool/anima_ouroboros_cycle.hexa stub — full automation runtime (실제 phase transition + 4-step orchestration)은 BG-HU/HV/HW 결과 후 cycle iteration"
+
+  # ─── Cross-link ─────────────────────────────────────────────────────────
+  cross_link:
+    primary_roadmap: .roadmap.anima_cli_model_architecture (G 도메인)
+    primary_roadmap_section: ouroboros_6_5_phase_cycle (acm.amendment_2026_05_07_user_directives_extension)
+    falsifies_unmet_condition: acm.cond.5 (K5 anima cli mk2 v0.3 integration)
+    sister_roadmaps:
+      - .roadmap.philosophy (D3 substrate-coupled emerge cross-link)
+      - .roadmap.rule (own 17 + own 22 + own 23 cross-link)
+      - .roadmap.hypothesis (raw#12 cycle pre-register)
+      - .roadmap.universe_brain_map (D — anima self NEXUS / outside-well)
+      - .roadmap.corpus_paradigm (E — paradigm instances)
+      - .roadmap.kick (cross-repo nexus reality map provider)
+    related_anima_files:
+      - tool/anima_ouroboros_cycle.hexa (runtime impl)
+      - state/anima_ouroboros_automation_2026_05_07/phase_state.json (current phase state)
+      - state/anima_ouroboros_automation_2026_05_07/axes_history.jsonl (axes evolution log)
+      - state/anima_ouroboros_automation_2026_05_07/absorbed_primitives.jsonl (new primitive absorb log)
+      - state/anima_ouroboros_automation_2026_05_07/implementation_notes.md
+    own_invariants:
+      - own_17_anima_native_identity (M2 Llama reject)
+      - own_22_silent_discovery_forbidden (axes 자율증가 reporting mandate)
+      - own_23_universe_brain_map_ssot (anima self NEXUS outside-well)
+    raw_invariants:
+      - raw_9_hexa_only
+      - raw_10_honest_c3
+      - raw_12_pre_register_frozen
+      - raw_15_additive
+
+  amendment_history:
+    - rev: v0.3_to_v0.4
+      ts: 2026-05-07
+      change: "Section 16 ouroboros_cycle_automation 추가 — 사용자 directive 'OUROBOROS Phase 6.5 absorb → Phase 0 seed feed automation' + 'axes 자율증가가능 / 제한없음' formalization"
+      rationale: "raw#15 additive — Section 1-15 보존, K5 acm.cond.5 unmet → met"
+      author: BG-HX 2026-05-07

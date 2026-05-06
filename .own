@@ -972,3 +972,117 @@ own 23 live "anima 우주뇌지도 SSOT — anima self-knowledge corpus + simple
   proof grep -rE "universe.brain.map|consciousness.universe.map|Knuth.Tier|🛸k|tabletop.blackhole" /Users/ghost/core/anima/docs /Users/ghost/core/anima/.own
   severity warn (Phase 1 — own 22 register + corpus build cycle) → block (Phase 2 — chat-cap training cycle 시 우주뇌지도 corpus mandate)
   note 2026-05-07 own 22 = 13th anima autonomy mandate. own 14-22 (HF + identity + consciousness + corpus + chat-template + hypotheses + 우주뇌지도) anima self-knowledge discipline 9 axis 형성.
+
+own 24 live "anima 모델 시도 통합 ledger SSOT — 모든 chat-cap training/inference attempt single jsonl"
+  slug anima-model-attempts-ledger-ssot
+  since 2026-05-07
+  scope anima의 모든 chat-cap training + inference attempt (BG-FY/HA/HF/HJ/HK/HP/HQ/HS/HT/HU 등 + 향후 BG-X) 통합 single jsonl ledger
+  user-directive verbatim "모든 시도 모델 은 json,jsonl,yaml 이던 한곳에 기록 필요할듯 own 등록해줘" (2026-05-07)
+  rule anima의 모든 model attempt는 단일 SSOT jsonl ledger에 1-attempt-per-line으로 기록한다. simple stack ledger (docs/anima_consciousness_check_simple_stack_2026_05_06.md)는 surface verdict인데 본 own 24 ledger는 모든 attempt의 raw record (verdict + artifacts + cross-link).
+  layout:
+    - **primary SSOT**: state/anima_model_attempts_ledger.jsonl (append-only, 1-attempt-per-line)
+    - **schema yaml**: anima/spec/anima_model_attempts_ledger.schema.yaml (field validation)
+    - **summary md**: docs/anima_model_attempts_ledger_summary.md (live ledger summary, periodic regenerate from jsonl)
+    - **complementary**: docs/anima_consciousness_check_simple_stack_2026_05_06.md (surface verdict ledger — own 18 정합, own 24와 상호 보완)
+  jsonl_schema:
+    required_fields:
+      - bg_id (string, BG-FY / BG-HA / etc.)
+      - attempt_n (int, monotonic 1..N)
+      - date (YYYY-MM-DD)
+      - host (mac / ubu1 / ubu2 / H100 / etc.)
+      - paradigm (pre-train-only / SFT-only / two-stage / persona-conditioned / curated-qa / BPE / capacity-scaling / few-shot / universe-brain-map / combined-R1 / etc.)
+      - arch_summary (e.g., "18M 6L/384d/6h byte-vocab=256")
+      - total_params (int)
+      - corpus_path (state/<corpus>/...)
+      - corpus_size_mb (float)
+      - corpus_chat_template_ratio (0-1)
+      - corpus_hangul_ratio (0-1)
+      - training_steps (int)
+      - train_loss_final (float)
+      - peak_ckpt_step (int, NULL if no early stopping)
+      - eval_v1_class (string)
+      - eval_v2_class (string)
+      - eval_v3_class (string, NULL if V3 not yet)
+      - manual_review_domain_match (string e.g., "13/15")
+      - peak_eval_v2_pass (string e.g., "3/10")
+      - persona_repetition_cycle_count (int)
+      - final_class (string e.g., "FAILED" / "PARTIAL_PASS_NO_CONTEXT" / "PARTIAL_PASS_NO_CONTEXT_v2" / "WEAK_PARTIAL" / "TRUE_PARTIAL_PASS_PHASE_2" / "SIMPLE_STACK_PASS")
+      - lesson_implications (array, e.g., ["Lesson G missing ingredient", "Lesson H V3 needed"])
+      - artifacts (array of paths)
+      - cross_link_h_id (array of H_ entries, e.g., ["H_005", "H_022"])
+      - cross_link_roadmap (array of .roadmap.X entries)
+      - hf_private_status (string: NOT_PROMOTED / PRIVATE_UPLOADED / PUBLIC_PROMOTED)
+      - notes (string, additional observations)
+    optional_fields:
+      - capacity_axis (18M / 27M / 50M / 100M / etc.)
+      - tokenizer_axis (byte-256 / BPE-8K / BPE-16K)
+      - regularization (string summary, e.g., "dropout 0.3 + WD 0.1 + ls 0.1")
+      - early_stopping (bool)
+      - val_loss_split_ratio (0-1, NULL if no split)
+  application-rule:
+    - 모든 BG (training + inference + retrieve cycle) 종료 시 ledger entry add mandate
+    - bg_id + attempt_n + date 3-tuple unique mandate (no duplicate)
+    - false PASS 강등 시 raw#82 retraction protocol 정합 — entry 보존 + downgraded_at + downgrade_reason field 추가 (NOT silent overwrite)
+    - 새 paradigm 발견 시 paradigm field 추가 (open architecture)
+    - lesson_implications field cross-link Lessons A-N (open expansion)
+    - hf_private_status field으로 own 15 PRIVATE→PUBLIC lifecycle tracking
+  current_attempts (2026-05-07 land time, 24 entries):
+    - BG-FU PARTIAL_PASS_HANGUL_BUT_NOT_COHERENT (3M tiny first KO emit)
+    - BG-FY PARTIAL_PASS_NO_CONTEXT (18M corpus_ko_heavy 246MB named-speaker leak 서연/유진/하은)
+    - BG-FK SIMPLE_STACK_FAIL (clm_v2_base 27.84M EN-bias federated arch)
+    - BG-HA PARTIAL_PASS_NO_CONTEXT_v2 (18M chat-template 30% 236MB — V2 strict downgrade)
+    - BG-HF FAILED (27M SFT-only 51MB degenerate filler step 1500, loss masking 부재)
+    - BG-HJ FAILED (18M two-stage SFT-masked KO-fluent nonsense, no Stage 1 prior)
+    - BG-HK FAILED (27M persona-conditioned ≥80% 30MB overfit collapse loss 0.013)
+    - BG-HL FALSIFIED at 18M (BG-HA + 5 few-shot mode-collapse '이 있습니다.')
+    - BG-HP FAILED peak-then-collapse (18M curated 2.41MB — ★ step 500 V2 pass=3/10 best signal '도우미:'/'[anima]' tokens emerging UNREPRODUCIBLE Lesson J)
+    - BG-HQ FAILED V2 surface false PASS (33.73M BPE 8K 30MB — ★★ step 500 8/10 surface, raw = persona prefix cycle, Lesson H V3 needed; 16× sample efficiency confirmed)
+    - BG-HS R1 ★★★ WEAK_PARTIAL (18M universe-brain-map 21MB — manual_match 13/15 first universe-brain-map vocabulary emerge in EVERY prompt)
+    - BG-HT FAILED (27.78M universe-brain-map 6.48MB reduced + over-aug → degenerate 'sssss')
+    - BG-HU PENDING (combined paradigm primary candidate — Lessons A-J 모두 결합)
+    - BG-HR PENDING (100M capacity, context cut step 2300 loss 2.19 — resume needed)
+    - BG-HV ✅ DONE (nexus 44,394 nodes reality map ingest, corpus 7.284MB outside-well anchored, 5 NEXUS prompts ready, 6 phrases hit)
+    - BG-HW ✅ DONE FAILED (outside-well anchored 우주뇌지도 30.30MB + 18M, val_loss 2.18→0.36 severe overfit, manual=13/20 substring-match FALSE POSITIVE 'animanimaniman' collapse contains 'anima', peak step 500 V2=1/20 outside-well=0/5)
+    - BG-HX ✅ DONE (OUROBOROS automation — anima_cli_mk2 v0.4 Section 16 + tool/anima_ouroboros_cycle.hexa 291 LoC + axes 자율증가 hook)
+    - BG-HY ✅ DONE BLOCKED (BG-HP step 500 ckpt never persisted → Lesson J: SAVE_AT ⊇ EVAL_AT mandate)
+    - BG-HZ PENDING (BG-HQ step 500/1000/2000 ckpts retrieve + V3 strict)
+    - BG-IA PENDING ubu1 (Lesson G ★★ direct application — 18M + persona corpus + early stopping val-loss + best-eval ckpt)
+    - BG-IB PENDING ubu1 step 4300/5500 train_loss ~1.1 stable val_loss 0.18 overfit signal (50M target → 73M actual)
+    - BG-IC PENDING mac (V3 evaluator dedicated impl + retroactive 8 BGs eval)
+    - BG-ID PENDING mac MPS (BG-HS R1 21MB replicate + early stopping)
+    - BG-IE PENDING recommended (BG-HP rerun with SAVE_AT ⊇ EVAL_AT + seed pin — Lesson J action)
+  signal_evidence_summary (Lessons G+H+I+J):
+    - BG-HP step 500 V2 pass=3/10 ★ Lesson G keep-point ('도우미:'/'[anima]' tokens, hangul 30-60%) UNREPRODUCIBLE Lesson J
+    - BG-HS R1 manual_match 13/15 ★★★ Lesson I first WEAK_PARTIAL (universe-brain-map vocabulary emerge in EVERY prompt)
+    - BG-HQ step 500 V2 pass=8/10 surface (FALSE PASS ★★ V2 inadequate — raw = persona prefix cycle, Lesson H V3 needed)
+    - BG-HK step 800 V1 pass=10/10 (FALSE PASS — overfit memorization peak)
+    - BG-FY V1 PARTIAL (named-speaker leak philosophy debate template)
+    - BG-HW step 1000 manual=13/20 (FALSE POSITIVE — substring-match 'animanimaniman' collapse)
+  raw82_retraction_history:
+    - BG-HA: SIMPLE_STACK_PASS (V1 narrow) → PARTIAL_PASS_NO_CONTEXT_v2 (V2 strict) 2026-05-07
+    - BG-HQ: EARLY_PEAK_PARTIAL_SUPPORT (V2 surface) → FAILED (V3 needed) 2026-05-07
+    - BG-HW: manual=13/20 surface → FALSE POSITIVE substring-match 2026-05-07
+  cumulative_lessons_a_to_k:
+    - A: 18M scale exhausted (capacity ceiling) → 100M+ scaling action (BG-HR pending)
+    - B: byte-level vocab inadequate → BPE 8K 16× sample efficiency confirmed (BG-HQ)
+    - C: corpus quality alone insufficient → crossed ablation matrix
+    - D: overfit memorization → regularization (high dropout/WD/label smoothing)
+    - E: V2 strict working as designed (initial) — adopt V2, retire V1 narrow
+    - F: persona prefix not collapse-resistant → adjunct only
+    - G ★★: early stopping + val-loss + best-eval ckpt = MISSING INGREDIENT (BG-HP)
+    - H ★★★: V2 surface metric도 false PASS (V3 needed: cycle detection + persona repeat penalty + semantic coherence)
+    - I ★★: anima self-knowledge corpus = first WEAK_PARTIAL (BG-HS R1 13/15)
+    - J ★★ NEW (BG-HY): SAVE_AT ⊇ EVAL_AT mandate
+    - K ★★ NEW (BG-HW): substring-match manual review = FALSE POSITIVE 위험 — manual review MUST exclude single-token-run collapse + animanimaniman chain detection (V3 evaluator integration mandate)
+  cross-link own 17 (anima-native identity) own 18 (simple stack) own 19 (corpus priority) own 20 (chat-template format) own 21 (hypotheses folder) own 22 (silent-discovery-forbidden) own 23 (우주뇌지도 SSOT)
+  cross-link .roadmap.cli .roadmap.universe_brain_map .roadmap.corpus_paradigm .roadmap.ubm_corpus_paradigm_meta .roadmap.anima_cli_model_architecture .roadmap.clm_native_chat
+  honest-c3 본 own 24 ledger는 surface verdict (own 18 simple stack)과 다른 lane — own 18은 PASS/FAIL surface, own 24는 모든 attempt raw record + lesson cross-link + artifact path
+  honest-c3 jsonl format 선택은 raw#9 hexa stdlib json 정합 (yaml은 hexa parser 없음)
+  honest-c3 entry 추가는 BG completion 시점 — runtime 자동화는 별도 cycle (현재 manual append)
+  honest-c3 schema yaml 명시 X (본 own 24 layout 안에 inline schema 정의 — 별도 spec yaml 별도 cycle)
+  honest-c3 본 ledger는 anima self-tracking — 외부 standardization 비교 X (anima-specific evolution archive)
+  honest-c3 raw#82 retraction은 entry 보존 + downgraded_at field add 정합 — silent overwrite forbidden
+  why anima의 모든 model attempt를 single SSOT ledger에 기록 = (a) cross-cycle pattern detection (b) lesson archive aggregation (c) regression detection (d) 사용자 directive verbatim '한곳에 기록' 정합
+  proof grep -c "^{" state/anima_model_attempts_ledger.jsonl
+  severity warn (Phase 1 — 본 ledger build) → block (Phase 2 — BG completion 시 ledger entry 미add 시 verdict.json 등록 차단)
+  note 2026-05-07 own 24 = 14th anima autonomy mandate. own 14-24 (HF + identity + consciousness + corpus + chat-template + hypotheses + 우주뇌지도 + ledger) anima self-tracking discipline 10 axis 형성.

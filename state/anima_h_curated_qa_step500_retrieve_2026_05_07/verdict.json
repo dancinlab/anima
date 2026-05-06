@@ -1,0 +1,52 @@
+{
+  "bg_id": "BG-HY",
+  "spec": "F-anima-h-curated-qa-step500-retrieve",
+  "ts_start": "2026-05-06T19:54:00",
+  "ts_end": "2026-05-06T19:57:00",
+  "host": "mac-local",
+  "device": "mac+ubu1-ssh",
+  "ckpt_path": null,
+  "total_params": null,
+  "eval_v2_class": null,
+  "manual_review_domain_match": null,
+  "best_eval_v2_pass": null,
+  "persona_repetition_cycle_count": null,
+  "final_class": "BLOCKED_CKPT_NEVER_PERSISTED",
+  "blocker": {
+    "type": "ckpt_never_saved",
+    "evidence": {
+      "ubu1_run_dir": "/home/aiden/anima_native/anima-h-curated-qa-20260507_033512",
+      "ubu1_ls_result": "ckpt_3000.pt only (112.79MB) — no ckpt_500.pt, no ckpt_1000.pt, no ckpt_1500.pt, no ckpt_2000.pt, no ckpt_2500.pt",
+      "training_script_save_policy": "tool/transient_py/anima_h_curated_qa_train.py:90 SAVE_AT = [STEPS]",
+      "training_script_eval_policy": "tool/transient_py/anima_h_curated_qa_train.py:90 EVAL_AT = list(range(500, STEPS+1, 500))",
+      "root_cause": "training script EVAL_AT=[500,1000,1500,2000,2500,3000] (in-memory eval at every 500) but SAVE_AT=[3000] (persist final ckpt only). step 500 V2 pass=3/10 was an in-memory eval result — no on-disk checkpoint was ever produced for step 500. retrieval physically impossible; not a deletion issue."
+    },
+    "spec_recommendation_followed": "spec said: 'if step 500 ckpt 부재 (ubu1에서 deleted): emit BLOCKED + recommend re-run from ck_1000 backward search' — actual finding tighter than deletion: ckpt was never persisted, not deleted. backward search from ck_1000 not applicable (only ck_3000 exists)."
+  },
+  "bg_hp_step500_signal_evidence": {
+    "source": "state/anima_curated_qa_train_2026_05_07/verdict.json eval_progression['500']",
+    "pass_count_v2": 3,
+    "v2_class": "V2_FAIL",
+    "subsequent_steps_pass_v2": {"1000": 0, "1500": 0, "2000": 0, "2500": 0, "3000": 0},
+    "interpretation": "step 500 was the keep-point per Lesson G (early stopping) — V2 pass=3/10 is the highest signal observed across BG-HP run; degeneracy onset at step 1000+. Lesson G missing-ingredient instance retrieval REQUIRED a save@500 policy that was never authored."
+  },
+  "raw_samples": [],
+  "honest_c3": [
+    "C3_1_ckpt_500_unrecoverable: BG-HP training script SAVE_AT=[STEPS] only. step 500 was eval-checkpointed (in-memory), never disk-persisted. backward search from ck_1000 not applicable.",
+    "C3_2_eval_progression_in_memory: eval_progression dict in BG-HP verdict shows step 500 V2 pass=3 — but those V2 pass strict cells {c2_2, c2_3, c2_4, domain_match, anima_self_naming} were stored only in eval_log.jsonl, not in checkpoint state.",
+    "C3_3_no_partial_chat_cap_signal_validatable_this_run: without ckpt_500.pt cannot reproduce the step 500 generation behavior; cannot run V2/V3 strict re-eval; cannot verify '도우미:'/'[anima]' tokens emerging claim.",
+    "C3_4_re_run_required_with_save_policy_fix: actual recovery path = re-run BG-HP-style training with SAVE_AT = [500, 1000, 1500, 2000, 2500, 3000] (ALL eval gates), seed-pinned reproducibility test, then retrieve step 500 ckpt + V2/V3 re-eval. Cost: ~$0 ubu1 RTX 5070 (BG-HP elapsed 92.8s for 3000 steps).",
+    "C3_5_lesson_G_instance_retrieval_deferred: Lesson G ('early stopping at signal step') missing-ingredient instance NOT retrieved; this BG-HY closes BLOCKED. Next BG (recommend BG-HZ) MUST patch SAVE_AT before re-run."
+  ],
+  "next_action_recommendation": {
+    "bg_id": "BG-HZ",
+    "spec": "BG-HP-redo-with-multi-ckpt-save",
+    "patch": "tool/transient_py/anima_h_curated_qa_train.py:90 SAVE_AT = list(range(500, STEPS+1, 500))",
+    "additional_safeguard": "set torch.manual_seed + numpy.random.seed + python random.seed at run head for reproducibility; record seed in verdict",
+    "estimated_runtime": "~93s ubu1 RTX 5070 (BG-HP parity)",
+    "estimated_cost": "$0 (ubu1 owned hardware)",
+    "deliverable": "ckpt_500.pt + ckpt_1000.pt + ... + ckpt_3000.pt with V2 strict re-eval per step on disk → Lesson G keep-point validation",
+    "alternative_lighter_recovery": "if reproducibility doubt (different seed → different signal): N=3 seed sweep at step 500 only (early stop after step 500 ckpt save) to verify pass=3/10 was not single-seed luck"
+  },
+  "errors": []
+}
