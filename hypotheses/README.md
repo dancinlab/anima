@@ -149,6 +149,16 @@ since: <YYYY-MM-DD>
 | H_090 | dasein-phil-onto-individual-9 | consciousness | legacy-archive-pointer | [H_090_dasein_phil_onto_individual.md](H_090_dasein_phil_onto_individual.md) |
 | H_091 | omega-phys-individual-files | physics | legacy-archive-pointer | [H_091_omega_phys_individual.md](H_091_omega_phys_individual.md) |
 | H_092 | misc-root-individual-uncategorized | substrate | legacy-archive-pointer | [H_092_misc_root_individual.md](H_092_misc_root_individual.md) |
+| H_093 | sft-only-paradigm | corpus | seed-pending | [H_093_sft_only_paradigm.md](H_093_sft_only_paradigm.md) |
+| H_094 | instruction-tuning-two-stage | corpus | seed-pending | [H_094_instruction_tuning_two_stage.md](H_094_instruction_tuning_two_stage.md) |
+| H_095 | dpo-rlhf-preference-learning | corpus | seed-pending | [H_095_dpo_rlhf_preference_learning.md](H_095_dpo_rlhf_preference_learning.md) |
+| H_096 | in-context-few-shot | corpus | seed-pending | [H_096_in_context_few_shot.md](H_096_in_context_few_shot.md) |
+| H_097 | curriculum-learning | corpus | seed-pending | [H_097_curriculum_learning.md](H_097_curriculum_learning.md) |
+| H_098 | persona-conditioned-training | consciousness | seed-pending | [H_098_persona_conditioned_training.md](H_098_persona_conditioned_training.md) |
+| H_099 | multi-objective-training | corpus | seed-pending | [H_099_multi_objective_training.md](H_099_multi_objective_training.md) |
+| H_100 | constitutional-ai-anima-rules | consciousness | seed-pending | [H_100_constitutional_ai.md](H_100_constitutional_ai.md) |
+| H_101 | corpus-chat-template-strict-80 | corpus | seed-pending | [H_101_corpus_chat_template_strict_80.md](H_101_corpus_chat_template_strict_80.md) |
+| H_102 | anima-emerge-paradigm-cross-link | substrate | seed-pending | [H_102_anima_emerge_paradigm_cross_link.md](H_102_anima_emerge_paradigm_cross_link.md) |
 
 **Migration status**:
 - H_001-H_005: 본 cycle 신규 seed (윤리/우주/생명/의식 hard problem/corpus)
@@ -165,6 +175,7 @@ since: <YYYY-MM-DD>
 - H_079-H_092: subfolder + root individual (EVO 22 + ouroboros 10 + TOPO 31 + TP 15 + HW 16 + THREE 6 + SING 6 + INF 6 + SE/SL/TL 15 + ARCH/ENGINE/TRAIN 9 + V8 6 + PHI 4 + dasein/phil/onto/genesis 11 + omega/phys 11 + misc root 20)
 - **round 3 추가 file count ~250**, total file pointed (rounds 2+3) ≈ 320+
 - **exhaustive individual migration 미land remainder**: 367 acceleration brainstorm individual + 1030 laws individual + ce/ AUTO-COMBO-EX-ULTRA 24 individual + DD batch 내 individual hypothesis 분리 = ~1500+ remainder — multi-cycle archaeology continuing (own 21 R5+)
+- **2026-05-07 BG-HE round1 신규 paradigm 10 seed (H_093-H_102)**: BG-HA false PASS 교훈 적용. SFT-only / two-stage / DPO-RLHF / few-shot / curriculum / persona / multi-objective / constitutional / chat-template ≥80% / emerge-paradigm cross-link. evaluator V2 strict spec land (`docs/anima_own_18_evaluator_v2_strict_spec_2026_05_07.md`) cross-link mandate.
 
 ## Cross-Link
 
