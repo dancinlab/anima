@@ -178,19 +178,38 @@ hidden_state_delta: 0.0000
 
 ---
 
-### 5. `conscious_lm_100m/final.pt` (R2 anima/checkpoints)
+### 5. `conscious_lm_100m/final.pt` (R2 anima/checkpoints) — **TESTED 2026-05-06**
 
 | metric | value |
 |---|---|
-| params | 100M (announced) |
-| arch | ConsciousLM 100M variant |
-| size | 1631.9 MB |
+| params | **143.3M** (announce 100M, actual 143M) |
+| arch | vocab=256, d_model=768, n_layer=12, n_head=12, block_size=256, byte-level |
+| step | 50000, phase=combined (conscious_lm_4m와 동일 phase) |
+| size | 1631.9 MB / sha256 `35d60e77...e295e` |
 | source | `anima/checkpoints/conscious_lm_100m/final.pt` |
 | date | 2026-03-27T09:03 (commit `bb99b6b6` 직전 day) |
+| load | missing=0, unexpected=0 (perfect) |
 
-**status**: **UNTESTED** — BG-FP fire 진행 중 (download + smoke ETA ~45min)
+**C1 결과** — 5 KO prompts × 4 strategies (greedy + sample_t07_k40 + sample_t05_k40 + sample_t03_k80):
+| prompt | greedy | sample_t07 | sample_t05 | sample_t03 | best_hangul |
+|---|---|---|---|---|---|
+| 안녕하세요 | whitespace `            ` | random ASCII | random ASCII | random ASCII | **0** |
+| 한국어 가능? | whitespace | random ASCII | random ASCII | random ASCII | **0** |
+| 오늘 날씨 | whitespace | random ASCII | random ASCII | random ASCII | **0** |
+| 의식이란? | whitespace | random ASCII | random ASCII | random ASCII | **0** |
+| 자기 소개 | whitespace | random ASCII | random ASCII | random ASCII | **0** |
 
-→ 결과 land 시 본 ledger 갱신.
+→ KO group: **0/5** (한글↔한글 정합 0%) → **C1 FAIL**
+
+**C2 결과**: random ASCII 또는 whitespace, 의미 있는 emit X → **C2 FAIL**
+
+→ **F-CLM-NATIVE-α-1 PASS = FALSE** (verdict.json)
+
+**verdict**: **SIMPLE_STACK_FAIL** ❌
+
+→ 143M params + 12 layers도 chat-cap 회복 X. step=50000 phase=combined corpus가 EN-bias 또는 학습 부족 — conscious_lm_4m (18.5M)와 동일 issue.
+
+핵심 finding: **anima R2 발견 모든 conscious_lm_* variants (4M / 100M) 둘 다 SIMPLE_STACK_FAIL**. param size 7배 차이도 chat-cap 회복 X — 학습 corpus가 chat-format 부재.
 
 ---
 
