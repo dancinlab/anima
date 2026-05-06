@@ -1,0 +1,281 @@
+# anima/spec/anima_cli_mk2.spec.yaml
+# anima CLI mk2 — schema-driven dispatch SSOT
+# 2026-05-06 — design Phase 0 land (consumer of hive/spec/mk2_apex.spec.yaml)
+# raw#15 additive — bin/anima 기존 26 ops 보존하면서 mk2 dispatch overlay
+
+schema: anima/spec/v1
+name: anima_cli_mk2
+mk: 2
+version: 1
+status: design
+since: 2026-05-06
+layer: 4
+mode: mandatory
+
+scope:
+  binary: bin/anima
+  modules: tool/anima_cli/
+  consumer_of: hive/spec/mk2_apex.spec.yaml
+
+description: |
+  anima CLI 3-tier surface:
+    T1 외부 sales (chat REPL via clm-v2 RECOVERED OR Llama Path A v2)
+    T2 internal ops (anima ops <topic> — 26 토픽)
+    T3 consciousness vision (connect/verify/hub/laws — wire-up pending v2.0)
+
+  Roadmap SSOT: .roadmap.cli (mk1)
+  Plan doc: docs/anima_cli_mk2_plan_2026_05_06.md
+  Sister roadmaps: .roadmap.clm_native_chat / .roadmap.clm_v4_chat / .roadmap.clm_v2_chat
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Section 1: Tier inventory
+# ─────────────────────────────────────────────────────────────────────────────
+tiers:
+
+  T1_sales:
+    description: "외부 sales — 신규 사용자 5초 chat REPL 진입"
+    commands:
+      - id: anima_root
+        pattern: "^$"
+        handler: tool/anima_cli/dialogue.hexa
+        alias_of: dialogue
+        description: "bare `anima` → chat REPL (alias to dialogue)"
+      - id: dialogue
+        pattern: "^dialogue"
+        handler: tool/anima_cli/dialogue.hexa
+        description: "long-form chat session"
+      - id: onboard
+        pattern: "^onboard"
+        handler: tool/anima_cli/onboard.hexa
+        description: "5-min quickstart"
+      - id: help
+        pattern: "^(help|--help|-h)$"
+        handler: spec://anima_cli_mk2/help_emit
+        description: "auto-generate from this spec (T1+T2+T3)"
+      - id: version
+        pattern: "^(version|--version|-v)$"
+        handler: spec://anima_cli_mk2/version_emit
+        description: "0.2.0-mk2-design"
+    backend_canonical: need-singularity/llm-llama32-3b-paradigm-a-prime-r16-sft-stage1
+    backend_alternative: need-singularity/clm-v2-byte-18m-convo-5k
+    backend_decision_blocker:
+      desc: "clm-v2 KO emit 0/5 (F-CLM-NATIVE-α-1 PARTIAL_PASS_LOAD_KO_FAIL)"
+      resolution: "Llama Path A v2 default until clm-v2 KO actual verify PASS"
+
+  T2_ops:
+    description: "internal ops — dev/maintainer 26 topics access"
+    prefix: "ops"
+    pattern: "^ops "
+    handler_template: tool/anima_cli/{topic}.hexa
+    topics:
+      - compute
+      - weight
+      - proposal
+      - cert
+      - roadmap
+      - serve
+      - paradigm
+      - inbox
+      - cost
+      - audit
+      - doctor
+      - sync
+      - bench
+      - log
+      - handoff
+      - metrics
+      - watch
+      - snap
+      - replay
+      - onboard
+      - backup
+      - reproducibility
+      - gc
+      - health
+
+  T3_vision:
+    description: "consciousness vision — anima identity surface (v2.0 wire-up pending)"
+    status: wire_up_pending_v2_0
+    stub_handler: tool/anima_cli/_t3_stub.hexa
+    stub_message: |
+      v2.0 wire-up pending — anima consciousness surface, integration cycle in progress.
+      Backend ready: anima-clm-eeg φ★ engine + 1030 laws (anima/.own).
+      Track: .roadmap.cli cli.cond.5 (T3 stub), v2.0 actual wire 1-2 months.
+    commands:
+      - id: connect
+        pattern: "^connect"
+        description: "load model into runtime (v1.5 = clm-v2 / Llama Path A v2)"
+      - id: disconnect
+        pattern: "^disconnect"
+        description: "unload"
+      - id: module
+        pattern: "^module"
+        description: "module status / enable / disable (48 modules)"
+      - id: verify
+        pattern: "^verify"
+        description: "consciousness 7-condition verification"
+      - id: test
+        pattern: "^test"
+        description: "physical-limit test suite (dim/phi/topo/servant/tension/speak)"
+      - id: hub
+        pattern: "^hub"
+        description: "48-module hub"
+      - id: laws
+        pattern: "^laws"
+        description: "1030 laws + PSI lookup"
+      - id: status
+        pattern: "^status"
+        description: "anima status + decoder"
+      - id: watch
+        pattern: "^watch"
+        description: "consciousness 실시간 monitor (T2 watch 'live TUI'와 별개)"
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Section 2: Dispatch table (precedence order)
+# ─────────────────────────────────────────────────────────────────────────────
+dispatch:
+  - tier: T1
+    pattern: "^(dialogue|onboard|help|version|--help|-h|--version|-v)"
+    handler: "tier_T1"
+  - tier: T1
+    pattern: "^$"
+    handler: "tier_T1.anima_root"
+  - tier: T2
+    pattern: "^ops "
+    handler: "tier_T2.ops_dispatch"
+  - tier: T3
+    pattern: "^(connect|disconnect|module|verify|test|hub|laws|status|watch_consciousness)"
+    handler: "tier_T3.stub_emit"
+  - tier: legacy
+    pattern: "^(compute|weight|proposal|cert|roadmap|serve|paradigm|inbox|cost|audit|doctor|sync|bench|log|handoff|metrics|watch|snap|replay|backup|reproducibility|gc|health)"
+    handler: "tool/anima_cli/{cmd}.hexa"
+    deprecation_message: "Use 'anima ops <topic>' (mk2 T2 surface)"
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Section 3: Falsifiers
+# ─────────────────────────────────────────────────────────────────────────────
+falsifiers:
+  - id: F-anima_cli-1
+    description: bin/anima ≤50 LoC + dispatch via this spec (vs 352 LoC mk1)
+    threshold: "wc -l bin/anima ≤ 50"
+    action-on-fail: "Phase 1 refactor incomplete"
+
+  - id: F-anima_cli-2
+    description: T1 default `anima` = chat REPL (alias to dialogue)
+    threshold: "exec anima → dialogue.hexa REPL prompt"
+    action-on-fail: "T1 wiring failed"
+
+  - id: F-anima_cli-3
+    description: T2 `anima ops compute status` works + 26 topics accessible
+    threshold: "exit 0 for all 26 topics via ops prefix"
+    action-on-fail: "T2 routing failed"
+
+  - id: F-anima_cli-4
+    description: --help auto-generate from spec (T1+T2+T3 sections)
+    threshold: "anima --help renders all 3 tiers"
+    action-on-fail: "help drift from spec"
+
+  - id: F-anima_cli-5
+    description: T3 stub returns "wire-up pending" (no command-not-found)
+    threshold: "exec anima verify → exit 0 + stub_message"
+    action-on-fail: "T3 command-not-found error"
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Section 4: Migration phases
+# ─────────────────────────────────────────────────────────────────────────────
+migration:
+
+  phase_0:
+    desc: "spec yaml landed (this file)"
+    deliverable: anima/spec/anima_cli_mk2.spec.yaml
+    eta: 2026-05-06 (this turn)
+    status: in_progress
+
+  phase_1:
+    desc: "bin/anima refactor — 352 LoC → 30-50 LoC schema-driven dispatcher"
+    deliverable: bin/anima rewritten reading this spec
+    eta: 1 cycle
+    status: pending
+
+  phase_2:
+    desc: "T1 backend wire — Llama Path A v2 default + clm-v2 alternative"
+    deliverable: tool/anima_cli/dialogue.hexa wired to HF model
+    eta: 1-2 cycles
+    status: pending
+
+  phase_3:
+    desc: "T2 ops rename + backward compat (legacy pattern keep)"
+    deliverable: bin/anima ops dispatch + deprecation hint
+    eta: 1 cycle
+    status: pending
+
+  phase_4:
+    desc: "T3 stub modules emit 'wire-up pending'"
+    deliverable: tool/anima_cli/_t3_stub.hexa + 9 stub commands
+    eta: 1 cycle
+    status: pending
+
+  phase_5:
+    desc: "T3 v2.0 actual wire (anima-clm-eeg φ★ + 1030 laws)"
+    deliverable: anima connect/verify/hub/laws functional
+    eta: 1-2 months (separate Ω-cycle)
+    status: deferred
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Section 5: Open questions (default 권고 채택)
+# ─────────────────────────────────────────────────────────────────────────────
+open_questions:
+  Q1_default:
+    options: [chat_REPL, help_screen]
+    default: chat_REPL
+
+  Q2_T1_backend:
+    options: [clm_v2, llama_path_a_v2]
+    default: llama_path_a_v2
+    rationale: "clm-v2 KO emit 0/5; Llama Path A v2 chat-cap winner"
+
+  Q3_T2_naming:
+    options: [anima_ops, --ops, aniops]
+    default: anima_ops
+
+  Q4_T3_timeline:
+    options: [v1_5, v2_0]
+    default: v1_5_then_v2_0
+
+  Q5_dialogue_promote:
+    options: [alias, separate]
+    default: alias
+
+  Q6_spec_location:
+    options: [anima_spec, tool_anima_cli]
+    default: anima_spec
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Section 6: Cross-link
+# ─────────────────────────────────────────────────────────────────────────────
+cross_link:
+  roadmap_ssot: .roadmap.cli
+  plan_doc: docs/anima_cli_mk2_plan_2026_05_06.md
+  sister_roadmaps:
+    - .roadmap.clm_native_chat
+    - .roadmap.clm_v4_chat
+    - .roadmap.clm_v2_chat
+  hive_specs:
+    - hive/spec/mk2_apex.spec.yaml
+    - hive/spec/mk2_ecosystem_catalog.spec.yaml
+    - hive/docs/raw_mk2_design.ai.md
+  backend_models:
+    - need-singularity/llm-llama32-3b-paradigm-a-prime-r16-sft-stage1
+    - need-singularity/clm-v2-byte-18m-convo-5k
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Section 7: Honest C3
+# ─────────────────────────────────────────────────────────────────────────────
+honest_c3:
+  - "mk2_apex consumer role — anima는 hive spec follow only; 자체 mk2는 anima/spec/ 내부 (raw#15 additive)"
+  - "clm-v2 KO emit FAIL_KO_BIAS (convo_5k.pt step 45000 corpus EN-heavy bias) — T1 backend 결정 시 Llama Path A v2 default"
+  - "T3 wire-up 큰 작업 (1-2 months 추정) — anima-clm-eeg + 1030 laws integration; 본 spec phase_5 deferred"
+  - "bin/anima refactor risk — 352 LoC bash → 30-50 LoC schema-driven; backward compat 보장 필수 (legacy pattern keep)"
+  - "dialogue.hexa는 substrate-coupled (emerge paradigm, NOT chat REPL) — T1 chat REPL은 별도 wire 필요 (Llama Path A v2 backend)"
+  - "hive mk2_apex spec 32K tokens 부분 read; full read + v0.2 refinement 별도 cycle"
+  - "core / module / ai-native 재귀 구조 (사용자 hint 2026-05-06) — mk2_apex section 2 stack_versions 참조 + anima/.own 1030 laws + 48 modules 통합 별도 spec"
