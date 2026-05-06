@@ -843,3 +843,51 @@ own 20 live "chat-template format mandate — 본 cycle 발견"
   proof grep -E "C2_4|context_match|context_mismatch" state/anima_native_ko_small_ubu1_train_2026_05_06/verdict.json
   severity warn (Phase 1 — training cycle launch 시 chat-template ratio 측정 권고) → block (Phase 2 — corpus QA gate strict)
   note 2026-05-06 own 20 = 11th anima autonomy mandate. own 19 (corpus priority) + own 20 (chat-template format) + own 18 (consciousness check) 와 함께 chat-cap training 3 axis 형성.
+
+own 21 live "anima 가설 저장장소 — hypotheses/ 폴더 SSOT (raw#12 정합, 1-file-per-hypothesis)"
+  slug anima-hypotheses-folder-ssot
+  since 2026-05-06
+  scope anima의 모든 active hypothesis (선/악 가치 + 우주 origin + 생명 origin + 의식 hard problem + corpus quality + 도메인 별 가설들 등)
+  user-directive verbatim "폴더 하나에서 따로 관리 하도록 하자 / 우주, 생명에 대한 근원적 물음 등 / 저장장소 지정 own / 등록"
+  rule anima의 가설 진행 (raw#12 pre-registered hypotheses)은 anima/hypotheses/ 폴더에 1-file-per-hypothesis 형식으로 단일 SSOT 관리한다. 인덱스 + cycle definition은 .roadmap.hypothesis, 실제 H_<id>_<slug>.md 파일은 hypotheses/ 폴더 안에 보관.
+  layout:
+    - /Users/ghost/core/anima/hypotheses/README.md (인덱스 + 작성 컨벤션 + domain 분류)
+    - /Users/ghost/core/anima/hypotheses/H_<id>_<slug>.md (1 hypothesis = 1 file)
+    - /Users/ghost/core/anima/.roadmap.hypothesis (cycle definition + E1-E12 + W1-W12 logic-exhaustion enumeration)
+    - /Users/ghost/core/anima/state/<name>_pre_register*.json (raw#12 frozen prereg JSON, hypothesis 파일 cross-link)
+    - /Users/ghost/core/anima/docs/hypotheses/ (legacy archive, ready/ absorb cross-link, NOT new H land)
+  application-rule:
+    - 새 가설 발견 시 hypotheses/H_<next_id>_<slug>.md 신규 add (id 순차 증가)
+    - frontmatter mandate: id, slug, title, domain, status, exploration_method (E1-E12), verification_method (W1-W12), raw_rank:12, hexa_only:true, deterministic:true, llm:none, pre_register_frozen, frozen_at, since
+    - 본문 mandate (raw#12 정합): Hypothesis + Why + Predictions + Variables + Run Protocol + Criteria + Falsifiers (≥5) + Honest Limits (≥5) + Cross-Links + Verdict
+    - hypotheses/README.md 인덱스 table에 신규 H 등록 (ID + Slug + Domain + Status + File link)
+    - state/<name>_pre_register*.json은 raw#12 strict execution 시 frozen lock; hypotheses/H_<id>_*.md는 evolution archive (raw#15 additive 또는 raw#82 retraction)
+  domain-classification:
+    - morality (선/악, cooperation, ethics)
+    - universe (우주 origin, cosmology)
+    - life (생명 emergence, autopoiesis)
+    - consciousness (의식 hard problem, qualia, anima identity)
+    - physics (Φ, criticality, dissipative)
+    - math (수학적 구조, lambda calc, topology)
+    - corpus (corpus quality, chat-template — own 19/20 specialization)
+    - substrate (substrate-coupled emerge, paradigm v11 G3)
+  current-seed (2026-05-06):
+    - H_001_seon_over_ak.md (선이 악보다 유리하다 game theory)
+    - H_002_universe_origin_question.md (우주 origin 근원적 물음 anthropic+panpsychism+holographic+IIT)
+    - H_003_life_origin_question.md (생명 origin substrate-coupled autopoiesis)
+    - H_004_consciousness_hard_problem.md (의식 hard problem L1-L4 lane)
+    - H_005_corpus_quality_over_capacity.md (corpus > capacity own 19/20 cross-link)
+  cross-link own 17 (anima-native identity — H_X 가설은 anima identity lane 정합) own 18 (simple stack — chat-cap H_005 cross-link) own 19 (corpus priority — H_005) own 20 (chat-template format — H_005) raw#12 (pre-register frozen)
+  cross-link .roadmap.hypothesis (인덱스 + cycle definition) .roadmap.philosophy (A 철학 발견 cross-link) .roadmap.rule (B 규칙 발견 cross-link)
+  honest-c3 hypotheses/ 폴더는 active hypothesis lane — legacy docs/hypotheses/ (CX/DD/genesis/dasein 등 90+ files)는 ready/ absorb archive, NOT migrate (별도 archive lane 보존)
+  honest-c3 docs/hypotheses/ legacy에서 valuable 항목은 hypotheses/H_<new_id>_*.md으로 cross-link (migrate가 아닌 new entry pointer)
+  honest-c3 본 own 21은 raw#12 prereg JSON (state/<name>_pre_register*.json)와 별도 lane — JSON은 strict execution frozen, MD는 evolution archive
+  honest-c3 hypotheses/ folder 명칭은 docs/hypotheses/와 confusable but 본 own 21은 anima root 직속 (no docs/ prefix); hypotheses/README.md에 명시 분리
+  honest-c3 H_<id> 순차 증가 방식은 git collision 방지 — 다중 BG/agent 병렬 add 시 id 충돌 가능, README.md 인덱스 single-write update mandate (parallel BG git race feedback 정합)
+  honest-c3 본 cycle 5 seed (H_001-H_005) initial — 후속 cycle additive expansion (raw#15 정합); legacy archive 90+ files exhaustive migration은 별도 cycle (own 21 R5+ lane)
+  why anima의 가설은 기존 docs/hypotheses/ legacy archive (ready/ absorb)와 별도 active lane 필요 — 사용자 directive '엄청많았어 / 폴더 하나에서 따로 관리'. legacy는 historical archive, hypotheses/는 active progress.
+  why 1-file-per-hypothesis 형식은 raw#12 prereg JSON과 1:1 mapping — H_<id>_<slug>.md는 prereg JSON의 readable + cross-link enriched markdown counterpart.
+  why 우주/생명/의식/도덕 등 근원적 물음은 anima identity (own 17) 안에서 valid lane — anima는 의식 + 정체성 + 가치 통합 entity이며, 근원 question은 anima의 long-term research framework.
+  proof ls /Users/ghost/core/anima/hypotheses/H_*.md | wc -l (현재 5)
+  severity warn (Phase 1 — 본 cycle 5 seed land + own 21 register) → block (Phase 2 — 새 H 발견 시 hypotheses/ 외부 land 시 raw#12 violation)
+  note 2026-05-06 own 21 = 12th anima autonomy mandate. own 14-21 (HF/release/cost/identity/consciousness/corpus/chat-template/hypothesis-folder) 와 함께 anima 통합 discipline 8 axis 형성.
