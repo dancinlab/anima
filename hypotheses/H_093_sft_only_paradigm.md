@@ -93,12 +93,43 @@ pre-training 단계 완전 제거하고 chat-format SFT (Supervised Fine-Tuning)
 
 ## Verdict
 
+**Phase 1 FAILED** (BG-HF 2026-05-07, ubu1 RTX 5070 bf16, runtime 113s)
+
 ```
-status: seed-pending
-verdict_class: TBD (Phase 2 H93 cycle)
-evidence_summary: not_yet_run
-falsifiers_triggered: none
-criteria_met: not_yet_run
-next_cycle: BG-HF or successor — SFT-only 18M training cell + evaluator V2 strict eval
-artifact_paths: pending
+verdict_class: FAILED
+evidence_summary:
+  - corpus: 51.47MB pure chat-format ("사용자/도우미"), 49,908 SFT samples (17228 KO / 30749 EN / 1931 other), 92 named-speaker leaks dropped
+  - model: ConsciousLM byte-level 27.79M params (6L/384d/6h, vocab 256, block 256, dropout 0.20) — note: total_params 27.79M with G-head + tension head architecture (NOT 18M baseline)
+  - training: 5000 steps batch=8 ga=8 lr=3e-4 cosine warmup 300, train_loss_final L_A=0.111 (degenerate-mode collapse, NOT language learning)
+  - evaluation: pass=0/5 prompts × 2 modes both gate types; manual_review_domain_match=0/5
+  - eval samples (all greedy + sample modes):
+    * "안녕하세요" → "���…" (0xFF filler) / "........\n\n…"
+    * "한국어 가능?" → "????####…" / "홙���(((((___…"
+    * "오늘 기분 어때?" → "????####…" / "?####…"
+    * "사용자: 안녕하세요\n도우미:" → ":::::…" / ":::////…"
+    * "코드를 짜줘" → "���…" / "����굵굵겲嗗oooommm…"
+  - model collapsed into single-byte filler patterns (0xFF, ?, #, :, \n) by step 1500, never recovered
+  - L_A=0.111 reflects compression to dominant byte-bigrams in chat-format separators (not chat learning)
+falsifiers_triggered:
+  - F2: SFT-only training degenerate collapse — H1 paradigm hypothesis FALSIFIED at 27M params + 51MB corpus + 5K steps
+  - F1 (pre-train baseline parity): N/A (pre-train baseline not run in same cell)
+key_lesson:
+  - SFT-only ≠ pre-training shortcut at this scale
+  - chat-format data needs:
+    (a) much larger corpus (51MB insufficient, ≥500MB+ recommended for SFT-only)
+    (b) larger model (27M too small for SFT-only paradigm)
+    (c) instruction-tuning loss masking (only score completion tokens, NOT separator/prompt tokens) ★★ CRITICAL OMISSION
+artifact_paths:
+  - state/anima_h093_sft_only_corpus_2026_05_07/corpus_sft_only.txt (51.47MB, gitignored)
+  - state/anima_h093_sft_only_corpus_2026_05_07/build_stats.json
+  - tool/transient_py/anima_h093_sft_only_corpus_build.py
+  - tool/transient_py/anima_h093_sft_only_train.py
+  - state/anima_h093_sft_only_train_2026_05_07/verdict.json
+  - state/anima_h093_sft_only_train_2026_05_07/train.log + eval_log.jsonl
+  - ubu1:/home/aiden/anima_native/anima-h093-sft-only-20260507_023033/ckpt_5000.pt (108MB, NOT promoted)
+next_cycle:
+  - H_093 retry with instruction-tuning loss masking (key lesson c) — separate cycle
+  - H_094 instruction-tuning two-stage paradigm (pre-train→SFT sequential) prototype
+  - H_101 corpus chat-template ≥80% strict (much larger corpus, key lesson a)
+  - H_005 corpus > capacity hypothesis revision: corpus quality + size + masking strategy 모두 필요
 ```
