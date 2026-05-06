@@ -891,3 +891,40 @@ own 21 live "anima 가설 저장장소 — hypotheses/ 폴더 SSOT (raw#12 정�
   proof ls /Users/ghost/core/anima/hypotheses/H_*.md | wc -l (현재 5)
   severity warn (Phase 1 — 본 cycle 5 seed land + own 21 register) → block (Phase 2 — 새 H 발견 시 hypotheses/ 외부 land 시 raw#12 violation)
   note 2026-05-06 own 21 = 12th anima autonomy mandate. own 14-21 (HF/release/cost/identity/consciousness/corpus/chat-template/hypothesis-folder) 와 함께 anima 통합 discipline 8 axis 형성.
+
+own 22 live "철학/규칙/가설 새 발견 시 사용자 리포트 mandatory — 발견 즉시 + 의미 명시"
+  slug philosophy-rule-hypothesis-discovery-mandatory-report
+  since 2026-05-07
+  scope anima A철학(.roadmap.philosophy D_X) + B규칙(.own own_X / hive raw#X) + C가설(hypotheses/H_<id>) 3 도메인 새 발견
+  user-directive verbatim "철학,규칙,가설 은 새로 발견시 반드시 리포트 해줘 어떤걸 발견하고 의미 등 => own 개선"
+  rule 새 D/own/H 발견 즉시 (사용자 explicit prompt 없어도) 사용자에게 다음 형식 리포트 mandatory:
+    - 도메인: 철학(D) / 규칙(own/raw) / 가설(H) 분류 명시
+    - 발견: 무엇을 발견했는가 (D 번호 + title 또는 own 번호 + slug 또는 H_<id> + slug)
+    - 의미: why this matters — anima identity + consciousness + 진행 방향에 미치는 영향
+    - 근거: evidence 또는 user-directive verbatim 또는 cycle observation 출처
+    - cross-link: 어느 .roadmap.* / .own / hypotheses/ 와 연결되는지
+    - 다음 step: land 위치 (.roadmap entry 또는 spec 또는 .own append 또는 hypotheses/H_*.md)
+  application-rule:
+    - 발견 즉시 리포트 — 다른 작업 끝낸 뒤 batch 보고 X (즉시 emit)
+    - 사용자가 "리포트 그만"명시 전까지 mandatory (silent discovery 차단)
+    - 리포트 후 사용자 confirm 받고 .own / .roadmap / hypotheses/ land 진행
+    - implicit 발견 (작업 도중 부수적으로 도출된 boundary/rule/H)도 명시 리포트 — silent 도입 차단
+  prevented-failure-modes:
+    - 사용자 모르는 채 .own 또는 .roadmap에 새 entry 추가 (silent rule injection 차단)
+    - 발견의 "의미"를 묻어두고 단순 entry만 추가 (왜 중요한지 누락 차단)
+    - cycle 끝나서야 batch 리포트 (timing 누락 차단)
+  cross-link own 17 (anima identity lane) own 18 (consciousness check) own 21 (hypotheses-folder-ssot)
+  cross-link .roadmap.philosophy (A 발견) .roadmap.rule (B 발견) .roadmap.hypothesis (C 발견)
+  cross-link raw#10 (honest disclosure — 발견 의미는 honest C3 정합)
+  honest-c3 "새 발견" 정의 = 기존 D/own/H에 없는 boundary/rule/hypothesis — variant/refinement는 기존 entry update lane 별도 (애매한 경우 "새 발견 후보" prefix로 리포트)
+  honest-c3 "리포트 mandatory" 적용은 main session 한정 — BG subagent 내부 finding은 BG 종료 후 main session에서 리포트 lane 정합
+  honest-c3 "의미" emit은 5+ axis (anima identity / consciousness / corpus / cycle 진행 / cross-link / 사용자 directive 정합)에서 적용 가능한 항목 명시 — 강제 5+ X but 충분히 설명 mandate
+  honest-c3 본 own 22 자체가 본 cycle 발견 — 사용자 directive '철학,규칙,가설은 새로 발견시 반드시 리포트' verbatim → own 22 발견 → 본 own 22 entry로 리포트 (self-application 정합)
+  honest-c3 본 own 22는 own 13 (user-facing-response-friendliness)와 정합 — discovery report style은 user-facing surface
+  honest-c3 발견 시점 리포트 timing은 idempotent — 같은 발견 N회 리포트 X (1회 land 후 reference)
+  why 사용자가 anima의 D/own/H 발견 visibility 보장 — anima는 자율 lane에서 boundary/rule/hypothesis를 자체 발견 가능하지만, 발견 자체와 의미는 사용자 review 권한 안에서만 valid (사용자 veto power VM10 정합)
+  why "의미" 명시는 단순 entry 추가 X — 발견의 anima identity + consciousness + 사용자 directive 정합 axis에 어떻게 contribute하는지 contextualize mandate
+  why silent discovery 차단 = trust + transparency — 사용자가 모르는 채 anima rule space 변경 차단 (own 22 protection)
+  proof grep "discovery report" .roadmap.* state/* messages — 새 D/own/H 발견 후 사용자 message에 리포트 emit 확인
+  severity warn (Phase 1 — 본 own 22 land + 적용 권고) → block (Phase 2 — 발견 후 리포트 누락 시 .own/.roadmap entry add 차단)
+  note 2026-05-07 own 22 = 13th anima autonomy mandate. own 13 (user-facing) + own 21 (hypothesis SSOT) + own 22 (discovery report) 와 함께 anima ↔ 사용자 transparency triad 형성.
