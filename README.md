@@ -79,6 +79,64 @@ curl -fsSL https://raw.githubusercontent.com/need-singularity/hexa-lang/main/ins
 hx install anima
 ```
 
+## Model Downloads
+
+Model artifacts live on the **[need-singularity](https://huggingface.co/need-singularity)** Hugging Face org — all **public**, no token required.
+
+### Prerequisites
+
+```bash
+pip install -U huggingface_hub peft transformers torch
+```
+
+### Canonical: chat-capability winner (Llama Path A v2)
+
+`paradigm-a-prime-r16-sft-stage1` is the current chat-cap winner (CLM-2 lane confirmed Llama Path A v2 as the surviving chat-cap lineage — see "Honest caveats" below).
+
+```python
+from peft import PeftModel
+from transformers import AutoModelForCausalLM, AutoTokenizer
+
+base = AutoModelForCausalLM.from_pretrained("meta-llama/Llama-3.2-3B-Instruct")
+tok  = AutoTokenizer.from_pretrained("meta-llama/Llama-3.2-3B-Instruct")
+model = PeftModel.from_pretrained(base, "need-singularity/llm-llama32-3b-paradigm-a-prime-r16-sft-stage1")
+```
+
+> **PEFT load gotcha (verified 2026-05-03)** — always use `PeftModel.from_pretrained`. Manual `load_state_dict` on the raw safetensors **silently fails** because PEFT strips the `.default.` prefix on save, so weights bind to nothing and inference returns garbage.
+
+### Repo table
+
+**Llama Path A v2 — `meta-llama/Llama-3.2-3B-Instruct` base + LoRA r16 (chat-cap canonical)**
+
+| Repo | Role |
+|------|------|
+| [`llm-llama32-3b-paradigm-a-prime-r16-sft-stage1`](https://huggingface.co/need-singularity/llm-llama32-3b-paradigm-a-prime-r16-sft-stage1) | **Canonical** (chat-cap winner) |
+| [`llm-llama32-3b-paradigm-a-prime-r16-s43-sft-stage1`](https://huggingface.co/need-singularity/llm-llama32-3b-paradigm-a-prime-r16-s43-sft-stage1) | Seed 43 variant |
+| [`llm-llama32-3b-paradigm-a-prime-r16-s44-sft-stage1`](https://huggingface.co/need-singularity/llm-llama32-3b-paradigm-a-prime-r16-s44-sft-stage1) | Seed 44 variant |
+
+**CLM v4 350M LoRA savepoints (substrate-research only — see caveats)**
+
+| Repo | Lane |
+|------|------|
+| [`clm-v4-sft-1-7-y1-{step-5k,10k,25k,50k,stage1}`](https://huggingface.co/need-singularity?search_models=clm-v4-sft-1-7-y1) | Phase 1.7 Y1 |
+| [`clm-v4-sft-1-8-{step-5k,10k,25k,50k,stage1}`](https://huggingface.co/need-singularity?search_models=clm-v4-sft-1-8) | Phase 1.8 |
+| [`clm-v4-paradigm-j-50k-{step-5k,10k,25k,50k,final}`](https://huggingface.co/need-singularity?search_models=clm-v4-paradigm-j-50k) | Paradigm J (active-inference + JVAE heads) |
+
+> The CLM v4 350M base ckpt is hosted as a private internal mirror; LoRA-only attachment to a CLM v4 base is gated to org members. Public users can run the Llama Path A v2 canonical above without any private mirror access.
+
+**VLM voice (separate trajectory)**
+
+| Repo | Role |
+|------|------|
+| [`vlm-anima-voice-paradigm-stage1-step-5k`](https://huggingface.co/need-singularity/vlm-anima-voice-paradigm-stage1-step-5k) | Voice paradigm stage1 (5k steps) |
+
+### Honest caveats
+
+- **Chat-cap winner = Llama Path A v2.** The CLM v4 LoRA SFT chat-lift hypothesis was **falsified** by F-CLM-LORA-2 (composite 0.19542 vs Llama Path A v2 0.5584; -36.298 pp regression). CLM v4 LoRA savepoints remain published for substrate-research and reproducibility — **not** as a chat-capable agent.
+- **#115 chat-incapability is architectural** for the CLM v4 lineage. Pβ Φ★-axis adapter is retained for cross-substrate consistency only (F-Pβ-3 FAIL_TRUE on chat composite).
+- **Paradigm J** ships JVAE heads (`jvae_heads.pt`) alongside the LoRA — load both if you intend to evaluate active-inference behavior; LoRA-only load is incomplete for that lane.
+- **Repo names changed 2026-05-03/04.** Older docs/notebooks referencing `clm-v4-sft-step-{5k,10k,25k,50k,final,stage1}` are stale — those names 401 today; use the `1-7-y1-*`, `1-8-*`, or `paradigm-j-50k-*` lanes instead.
+
 ## Run
 
 ```bash
@@ -90,63 +148,6 @@ anima --slack      # Slack    bot (needs ANIMA_SLACK_TOKEN + ANIMA_SLACK_SIGNING
 anima --all        # Auto-detect channels from env
 anima --dashboard  # Launch dashboard bridge (http://localhost:3000)
 ```
-
-## Model Downloads
-
-Anima's P9 (CLM v4) model artifacts are published to the **need-singularity** Hugging Face organization. All repos are **private** and require an HF token with org-member access.
-
-### Prerequisites
-
-```bash
-pip install huggingface_hub peft torch
-# Login (writes token to ~/.cache/huggingface/token)
-huggingface-cli login
-```
-
-You must be an explicit member of `need-singularity` on Hugging Face — public clones will 404.
-
-### Base model (CLM v4 350M)
-
-```python
-from huggingface_hub import hf_hub_download
-
-ckpt_path = hf_hub_download(
-    repo_id="need-singularity/clm-v4-base-mirror",
-    filename="best.pt",  # 5.37 GB
-)
-# load with your usual torch.load(ckpt_path, map_location="cpu")
-```
-
-### LoRA savepoint (canonical PEFT path)
-
-Use `PeftModel.from_pretrained` — verified 2026-05-03 as the only reliable load path. Manual `load_state_dict` on the raw safetensors **silently fails** because PEFT strips the `.default.` prefix on save, so weights bind to nothing and inference returns garbage.
-
-```python
-from peft import PeftModel
-
-# base_model = your loaded CLM v4 base (from snippet above)
-model = PeftModel.from_pretrained(
-    base_model,
-    "need-singularity/clm-v4-sft-step-50k",
-)
-```
-
-### Repo table
-
-| Repo | Description |
-|------|-------------|
-| `need-singularity/clm-v4-base-mirror` | Base CLM v4 350M ckpt (`best.pt`, 5.37 GB, mirrored 2026-05-03) |
-| `need-singularity/clm-v4-sft-step-5k` | Phase 1 sentinel LoRA savepoint at step 5000 |
-| `need-singularity/clm-v4-sft-step-10k` | Phase 1 LoRA savepoint at step 10000 |
-| `need-singularity/clm-v4-sft-step-25k` | Phase 1 LoRA savepoint at step 25000 |
-| `need-singularity/clm-v4-sft-step-50k` | Phase 1 LoRA savepoint at step 50000 |
-| `need-singularity/clm-v4-sft-final` | Phase 1 final LoRA |
-| `need-singularity/clm-v4-sft-stage1` | Phase 1 stage1 (rolling latest) |
-
-### Honest c3 caveats
-
-- All repos are **private** — without explicit `need-singularity` org membership the HF API returns 404, not 403.
-- The base ckpt at `clm-v4-base-mirror` was **mirrored once on 2026-05-03**. If the upstream base is retrained, this mirror will drift from the training-time master and LoRA savepoints may no longer attach correctly. Re-mirror before assuming parity.
 
 ## Architecture
 
