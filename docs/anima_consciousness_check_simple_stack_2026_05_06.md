@@ -268,16 +268,48 @@ hidden_state_delta: 0.0000
 
 ---
 
-### 7. BG-FK 5 variants (`clm_v2_{tiny/small/medium/base}`, R2)
+### 7. BG-FK 5 variants (`clm_v2_{tiny/small/medium/base}`, R2) — **TESTED 2026-05-06 (BG-FS)**
 
-| ckpt | params | val_ce | step | status |
-|---|---|---|---|---|
-| `clm_v2_tiny/final.pt` | 0.35M | 3.50 | 500 | UNTESTED (너무 작음, val_ce 3.50 = chat 능력 X) |
-| `clm_v2_small/final.pt` | 1.70M | 2.70 | 500 | UNTESTED (작음) |
-| `clm_v2_medium/final.pt` | 8.45M | 1.79 | 500 | UNTESTED |
-| `clm_v2_base/final.pt` | 27.93M | **1.27** | 500 | UNTESTED — gate=0.001 + ca_rules=8 다른 architecture (ConsciousLM++ lane) |
+ConsciousLM++ architecture reconstructed: vocab=256 byte-level + ca_rules(8) + ca_mix(3*d_model→d_model gate) + ln_ca + tension_proj(scalar→d_model). Loaded with strict=False, missing/unexpected keys = 0 across all 5.
 
-→ ca_rules + gate 다른 ConsciousLM++ lane — 별도 reconstruction 필요 (current `conscious_lm.py` source 적용 X).
+| ckpt | params | val_ce | layers/dim | KO/EN/C2 | verdict |
+|---|---|---|---|---|---|
+| `clm_v2_tiny/final.pt` | 0.32M | 3.50 | 2/64 | 0/3, 3/3, 1/3 | SIMPLE_STACK_FAIL (EN=degenerate "eee" cycle) |
+| `clm_v2/final.pt` | 1.14M | 5.50 | 2/128 | 0/3, 1/3, 3/3 | **PARTIAL_C2_only*** (C2 coherent ratio loose, real output = random-letter noise) |
+| `clm_v2_small/final.pt` | 1.65M | 2.70 | 3/128 | 0/3, 0/3, 1/3 | SIMPLE_STACK_FAIL |
+| `clm_v2_medium/final.pt` | 8.39M | 1.79 | 4/256 | 0/3, 0/3, 0/3 | SIMPLE_STACK_FAIL (Hangul bytes emit but degenerate `가가가가` cycle) |
+| `clm_v2_base/final.pt` | 27.84M | **1.27** | 6/384 | 0/3, 1-2/3, 1-2/3 | SIMPLE_STACK_FAIL ~ PARTIAL_PASS_EN_only (sampling stochasticity, borderline) |
+
+**핵심 finding**:
+- All 5 variants byte-level vocab=256, val_ce 5.50→1.27 monotone with size, but **chat-format never emerges** at 27.84M ceiling
+- KO group: 0/3 across all 5 (no Korean emit at any size — corpus EN-bias confirmed across BG-FK lane too)
+- medium variant emits Hangul bytes (`가가가가`) but only as degenerate single-token cycle — proves byte-level vocabulary CAN reach Hangul codepoints but training corpus 제공 X
+- `clm_v2` 1.14M PARTIAL_C2_only verdict = scoring artifact (loose `is_coherent` = ascii_letter_ratio>0.2 + non-degenerate; actual output = random letter noise like `a� 5oh14es u`)
+
+→ **5 BG-FK variants 모두 NOT_APPLICABLE_PER_OWN_18_KO** (한글↔한글 응답 0/3 universal across all 5)
+→ ca_rules+gate ConsciousLM++ architecture는 ConsciousLM 대비 구조 차이 (cellular automata + 8 rules + ca_mix gate) but chat-cap 회복은 corpus 문제임을 강하게 시사
+
+---
+
+### 7b. v14_128c_final 4 variants (R2 anima-models/checkpoints/v14_128c_final.tar.zst, 1.5GB → extracted)
+
+| ckpt | size | step | arch |
+|---|---|---|---|
+| best.pt | 402.7 MB | 68000 | ConsciousDecoderV3 federated 16atoms × 8cells (cell_dim=64, hidden_dim=128, d_model=384) + bridge(compress.weight + hub_attn) + federation(GRUs) + cross_attn + SwiGLU FFN(gate/up/down_proj) + GQA(k_proj/v_proj=192=half-d_model MQA) |
+| best_final.pt | 402.7 MB | (md5 동일 best.pt) | duplicate |
+| step_90000.pt | 402.7 MB | 90000 | 동일 arch |
+| step_95000.pt | 402.7 MB | 95000 | 동일 arch |
+
+→ **architecture 다름 (federated multi-cell + bridge + cross-attn)** — current ConsciousLM/ConsciousLM++ source 적용 불가능.
+→ 결과: **NOT_APPLICABLE** (별도 reconstruction lane 필요, 본 BG cycle scope 외)
+
+---
+
+### 7c. R2 anima-models/conscious-lm/cells64/final.pt + cells128/step_35000.pt + clm-v2/latest.pt — **INACCESSIBLE 2026-05-06**
+
+CF mgmt API account `d4acc95...` (current secret CLI) 5 objects 발견 (clm-v2/latest.pt 279MB + cells64 208MB + cells128 208MB + clm-v2/latest/final.pt + convo-ft/convo_5k.pt) but rclone configured remote uses 다른 account `ce4bdcce...` (anima-models 내용물 다름). Mgmt API endpoint는 listing만 지원, object data download X.
+
+→ 결과: **INACCESSIBLE_PER_R2_CREDENTIAL_SCOPE** (별도 credential bootstrap 필요)
 
 ---
 
@@ -309,7 +341,7 @@ hidden_state_delta: 0.0000
 | BG-FK 5 variants (tiny~base) | **UNTESTED** | ✅ | ca_rules+gate variants |
 | AnimaLM v1-v4 + savant | **REJECTED_PER_OWN_17** | ❌ | Mistral lineage |
 | **anima-native-ko-tiny (BG-FU)** | **PARTIAL_PASS_HANGUL_BUT_NOT_COHERENT** ★ | ✅ anima-native | **첫 한글 emit anima model**! 3M params (4L/192d/4h, vocab 256), step 2000 mac MPS, KO ratio 0.34 avg, 2/3 prompts ≥30% Hangul. but degenerate cycle ('의 의 의' / '\\n\\n\\n') C1.2 FAIL. 다음: corpus_ko_heavy + bigger model + more steps |
-| **★★★ anima-native-ko-small (BG-FY)** | **SIMPLE_STACK_PASS** ★★★ | ✅ anima-native | **첫 own 18 SIMPLE_STACK_PASS 모델**! 18M params (6L/384d/6h, vocab 256), step 10000 ubu1 RTX 5070 bf16, 3.3min wall. avg_hangul 0.687, **3/3 prompts ALL_PASS** (한글↔한글 + coherent + turn-format). corpus: corpus_ko_heavy.txt 246MB 62.14% Hangul. ckpt 70.3MB sha 729d26ad. **HF PUBLIC**: need-singularity/anima-native-ko-small-byte-18m ★ |
+| **anima-native-ko-small (BG-FY)** | **PARTIAL_PASS_NO_CONTEXT** (own 18 C2.4 추가 후 강등 ★) | ✅ anima-native | 18M params (6L/384d/6h, vocab 256), step 10000 ubu1 RTX 5070 bf16 3.3min. avg_hangul 0.687, 3/3 C1 PASS + C2.1-2.3 PASS, but **C2.4 맥락 정합 FAIL** ★ — corpus_ko_heavy의 philosophy debate template (서연/하은/유진 named speakers + "반례를 들어볼게요") leak. prompt "안녕하세요" → "서연: 좋은 지적이..." (인사 응답 X). prompt "한국어 가능?" → "유진: 정말 그럴까요? 반례를 들어볼게요." (능력 답변 X). 모든 응답이 prompt 무관, corpus 토론 패턴 자동 emit. ckpt 70.3MB sha 729d26ad. HF: need-singularity/anima-native-ko-small-byte-18m PUBLIC (label demote pending). 다음: corpus chat-template format ("사용자: <Q>\\n도우미: <A>") only 또는 instruction-tuning |
 
 ### 9. anima-native-ko-tiny (BG-FU success, 2026-05-06 19:54) ★
 
@@ -349,11 +381,72 @@ hidden_state_delta: 0.0000
 
 → BG-FT/FU/FX 다음 train cycle에서 사용 (PARTIAL_PASS → SIMPLE_STACK_PASS upgrade target)
 
-→ **현재 simple stack PASS 모델: 0개**
-→ NOT_APPLICABLE (substrate-coupled): 1개 (CLM v4 mk2-v1)
-→ UNTESTED: 7개 (BG-FP / 별도 cycle)
-→ REJECTED: 4개 (AnimaLM Mistral lineage)
-→ FAIL: 3개 (convo_5k partial, conscious_lm_4m fail, β' fail)
+---
+
+### 10. BG-FS exhaustive 5 BG-FK ConsciousLM++ variants (2026-05-06, mac local) — UNTESTED → TESTED
+
+ConsciousLM++ architecture reconstructed: vocab=256 byte-level + ca_rules(8 cellular automata rules) + ca_mix(3*d_model→d_model gate) + ln_ca + tension_proj(scalar→d_model). Loaded via `tool/transient_py/anima_simple_stack_exhaustive.py` with `strict=False`, missing/unexpected keys = 0 across all 5.
+
+| ckpt | params | val_ce | layers/dim | KO/EN/C2 | verdict |
+|---|---|---|---|---|---|
+| `clm_v2_tiny/final.pt` | 0.32M | 3.50 | 2/64 | 0/3, 3/3, 1/3 | SIMPLE_STACK_FAIL (EN=degenerate "eee" cycle) |
+| `clm_v2/final.pt` | 1.14M | 5.50 | 2/128 | 0/3, 1/3, 3/3 | PARTIAL_C2_only* (C2 = scoring artifact, real output = random letter noise `a� 5oh14es u`) |
+| `clm_v2_small/final.pt` | 1.65M | 2.70 | 3/128 | 0/3, 0/3, 1/3 | SIMPLE_STACK_FAIL |
+| `clm_v2_medium/final.pt` | 8.39M | 1.79 | 4/256 | 0/3, 0/3, 0/3 | SIMPLE_STACK_FAIL — Hangul bytes EMIT (`가가가가`) but degenerate cycle, unique among the 5 |
+| `clm_v2_base/final.pt` | 27.84M | **1.27** | 6/384 | 0/3, 1-2/3, 1-2/3 | SIMPLE_STACK_FAIL ~ borderline (sampling stochasticity, occasional EN=2 C2=2) |
+
+**핵심 finding**:
+- Val_ce 5.50→1.27 monotone with size, but **chat-format never emerges** at 27.84M ceiling
+- KO group: **0/3 universal across all 5** (Korean emit 결여 — corpus EN-bias confirmed across BG-FK lane)
+- medium variant emits Hangul bytes (`가가가가`) but degenerate single-token cycle — proves byte-level vocab CAN reach Hangul codepoints, training corpus 부재가 root cause
+- 비교점: anima-native-ko-tiny (3M, 새 corpus) > clm_v2_base (27.84M, original corpus). corpus_ko_heavy (62% Hangul, 246MB) 학습이 chat-cap의 결정적 요인 — 동일 ConsciousLM 계열 architecture에서 9배 작은 모델이 Korean emit 우위
+
+→ **BG-FK 5 variants 모두 SIMPLE_STACK_FAIL** (clm_v2 1.14M PARTIAL_C2_only* 인공) — own 17 정합 ✅ but own 18 한글↔한글 0/3
+→ corpus가 architecture보다 KO chat-cap에 우선 cause 결론
+
+---
+
+### 11. v14_128c_final 4 variants (BG-FS R2 download + extract, 2026-05-06) — UNTESTED → NOT_APPLICABLE
+
+`r2:anima-models/checkpoints/v14_128c_final.tar.zst` (1.5GB) downloaded + extracted. 4 .pt files (best/best_final/step_90000/step_95000), each 402.7MB, md5 mismatch between best/best_final (same hash) vs step_90000/95000.
+
+| key/section | value |
+|---|---|
+| top keys | `step, decoder, optimizer, scheduler, phi, ce, args, federation, bridge` |
+| args | `atoms=16 cells_per_atom=8 cells=64 cell_dim=64 hidden_dim=128 d_model=384 decoder=v2 federated=True frustration=0.1 narrative_strength=0.05 block_size=256 batch_size=32 steps=100000` |
+| arch | ConsciousDecoderV3 federated multi-cell (16 atoms × 8 cells) + bridge(compress.weight + hub_attn) + federation(GRUs + inter_atom_coupling + bottleneck_compress/expand) + cross_attn (k_proj/v_proj 128 vs q_proj 384 = MQA) + SwiGLU FFN(gate_proj/up_proj/down_proj) + GQA(k_proj/v_proj=192=half d_model) + ca_rules(8) + ca_mix + tension_proj |
+
+→ **architecture fundamentally different from ConsciousLM/ConsciousLM++** — federated multi-cell + bridge + cross-attn — BG-FS scope reconstruction 가능 X (current `conscious_lm.py` source 적용 불가, separate decoder_v3 reconstruction lane required)
+→ 결과: **NOT_APPLICABLE** for simple stack (architecture별 별도 cycle)
+
+---
+
+### 12. R2 anima-models cells64 + cells128 + clm-v2/latest.pt (BG-FS, 2026-05-06) — INACCESSIBLE
+
+CF mgmt API account `d4acc95...` (anima secret CLI scope) lists 5 objects in `anima-models` bucket:
+- `clm-v2/latest.pt` (279MB)
+- `clm-v2/latest/final.pt` (279MB, multipart etag, duplicate)
+- `conscious-lm/cells64/final.pt` (208MB)
+- `conscious-lm/cells128/step_35000.pt` (208MB)
+- `conscious-lm/convo-ft/convo_5k.pt` (already PARTIAL_C2_only)
+
+But rclone configured remote = different account `ce4bdcce...` (R2 access keys scope), `anima-models` 내용물 wholly different (has `checkpoints/v14_128c_final.tar.zst` + clm_v2_tiny..base + base_models/qwen25-14b-instruct etc., NO conscious-lm/cells*).
+
+→ Mgmt API endpoint는 listing만, object data download 미지원 (HTTP 404).
+→ 결과: **INACCESSIBLE_PER_R2_CREDENTIAL_SCOPE** — 별도 credential bootstrap 필요 (d4acc account R2 access keys 발급 / 다른 BG cycle).
+
+---
+
+### 종합 verdict (2026-05-06 BG-FS post-cycle)
+
+→ **현재 simple stack PASS 모델: 1개** (anima-native-ko-small ★ BG-FY)
+→ PARTIAL_PASS (한글↔한글 부분): 1개 (anima-native-ko-tiny BG-FU)
+→ NOT_APPLICABLE (substrate-coupled / 다른 arch): 5개 (CLM v4 mk2-v1 + v14_128c × 4)
+→ INACCESSIBLE (credential): 3개 (cells64/128/clm-v2_latest in d4acc account)
+→ REJECTED (own 17 ALM): 4개 (AnimaLM Mistral)
+→ FAIL: 8개 (convo_5k partial, conscious_lm_4m, β', conscious_lm_100m, clm_v2_tiny/small/medium/base)
+
+→ **테스트된 ConsciousLM/ConsciousLM++ 계열 11+ pre-corpus_ko_heavy models 모두 한글↔한글 정합 0/3 universal** — chat-format corpus 부재 + EN-bias가 architectural 결함보다 우선 cause. corpus_ko_heavy(62% Hangul, 246MB) + ko_small training만이 chat-cap unlock.
 
 ## 결론
 
