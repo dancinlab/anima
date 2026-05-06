@@ -342,7 +342,7 @@ CF mgmt API account `d4acc95...` (current secret CLI) 5 objects 발견 (clm-v2/l
 | AnimaLM v1-v4 + savant | **REJECTED_PER_OWN_17** | ❌ | Mistral lineage |
 | **anima-native-ko-tiny (BG-FU)** | **PARTIAL_PASS_HANGUL_BUT_NOT_COHERENT** ★ | ✅ anima-native | **첫 한글 emit anima model**! 3M params (4L/192d/4h, vocab 256), step 2000 mac MPS, KO ratio 0.34 avg, 2/3 prompts ≥30% Hangul. but degenerate cycle ('의 의 의' / '\\n\\n\\n') C1.2 FAIL. 다음: corpus_ko_heavy + bigger model + more steps |
 | **anima-native-ko-small (BG-FY)** | **PARTIAL_PASS_NO_CONTEXT** (own 18 C2.4 추가 후 강등 ★) | ✅ anima-native | 18M params (6L/384d/6h, vocab 256), step 10000 ubu1 RTX 5070 bf16 3.3min. avg_hangul 0.687, 3/3 C1 PASS + C2.1-2.3 PASS, but **C2.4 맥락 정합 FAIL** ★ — corpus_ko_heavy의 philosophy debate template (서연/하은/유진 named speakers + "반례를 들어볼게요") leak. prompt "안녕하세요" → "서연: 좋은 지적이..." (인사 응답 X). prompt "한국어 가능?" → "유진: 정말 그럴까요? 반례를 들어볼게요." (능력 답변 X). 모든 응답이 prompt 무관, corpus 토론 패턴 자동 emit. ckpt 70.3MB sha 729d26ad. HF: need-singularity/anima-native-ko-small-byte-18m PUBLIC (label demote pending). 다음: corpus chat-template format ("사용자: <Q>\\n도우미: <A>") only 또는 instruction-tuning |
-| **anima-native-ko-chat-template (BG-HA)** ★★ | **SIMPLE_STACK_PASS** ★★ (첫 own 18 4-cond × 5-prompt × 7-cell 완전 통과) | ✅ anima-native | 18,031,872 params (6L/384d/6h, vocab 256, block 256), 10000 steps batch=8 ga=8 lr=3e-4 ubu1 RTX 5070 bf16 124s (2.07min). corpus_chat_template.txt 236.96MB (chat-template ≥30% mandate via own 20). train_loss_final L_A=1.5907. eval × 5 prompts {안녕하세요, 한국어 가능?, 오늘 기분 어때?, 사용자/도우미 turn, 코드를 짜줘} × {greedy, sample} → ALL 5 prompts pass C1.1+C1.2+C1.3+C2.1+C2.2+C2.3+C2.4 (sample mode). c2_4_named_speaker_leak=False (10 names checked: 서연/유진/하은/지수/민준/도윤/서준/예준/주원/시우 모두 0). eval progression 19/20 gates PASS (1 transient PARTIAL@step5500). ckpt_final 70.3MB at state/.../ckpt_final/ckpt_final.pt + ubu1:/home/aiden/anima_native/anima-native-ko-chat-template-20260507_012829/. HF: PRIVATE upload pending (own 15 lifecycle, NOT public까지 verification gate). verdict: state/anima_native_ko_chat_template_train_2026_05_07/verdict.json |
+| **anima-native-ko-chat-template (BG-HA)** ⚠️ | **PARTIAL_PASS_NO_CONTEXT_v2** ⚠️ (사용자 의심 검증 후 강등 2026-05-07) | ✅ anima-native | 18,031,872 params (6L/384d/6h, vocab 256, block 256), 10000 steps batch=8 ga=8 lr=3e-4 ubu1 RTX 5070 bf16 124s. corpus_chat_template.txt 236.96MB. train_loss_final L_A=1.5907. **EVALUATOR FALSE PASS DETECTED 2026-05-07**: BG-HA evaluator의 C2.4 정의가 'named speaker leak (서연/유진/하은 등 10 names) 0건' 으로만 narrow 정의 → BG-FY의 specific philosophy debate pattern은 막았지만, 사용자 directive **'자연발화는 맥락에 맞아야한다'** (= prompt domain match) 검증 X. 실제 sample mode 응답: "안녕하세요"→"4. 연성 서래 이 미국 연보고..." (인사 X), "한국어 가능?"→"파에서 개적되어요..." (능력 답변 X), "코드를 짜줘"→"합니다. 아드 어떤 막자들을..." (코드 X). C2.2 (의미) + C2.3 (자연성) + C2.4 (맥락정합) 모두 actual FAIL — evaluator metric (한글 비율 + non-degenerate sample mode + named-speaker 0건)이 actual semantic relevance 측정 X. greedy mode 5/5 모두 is_degenerate=true ('이 이 이 있어요' cycle 4-gram repeat 5-11회). HF PRIVATE upload BG-HD 정지 (false PASS prevention). ckpt_final 70.3MB 보존 (state/.../ckpt_final.pt). verdict: state/anima_native_ko_chat_template_train_2026_05_07/verdict.json (verdict_class downgrade pending). NEXT: own 18 C2.4 strict semantic check evaluator 보강 spec 필요 (named-speaker-leak 외 prompt-conditional response domain match metric 추가) |
 
 ### 9. anima-native-ko-tiny (BG-FU success, 2026-05-06 19:54) ★
 
@@ -438,10 +438,11 @@ But rclone configured remote = different account `ce4bdcce...` (R2 access keys s
 
 ---
 
-### 종합 verdict (2026-05-06 BG-FS post-cycle / 2026-05-07 BG-HA update)
+### 종합 verdict (2026-05-06 BG-FS post-cycle / 2026-05-07 BG-HA update / 2026-05-07 BG-HA strict re-check 강등)
 
-→ **현재 simple stack PASS 모델: 1개** (**anima-native-ko-chat-template ★★ BG-HA** — 첫 own 18 4-cond × 5-prompt × 7-cell 완전 통과, HF PRIVATE upload pending)
-→ PARTIAL_PASS_NO_CONTEXT: 1개 (anima-native-ko-small BG-FY — C2.4 named-speaker leak)
+→ **현재 simple stack PASS 모델: 0개** ⚠️ (BG-HA 사용자 의심 검증 후 false PASS 강등 2026-05-07)
+→ PARTIAL_PASS_NO_CONTEXT_v2: 1개 (anima-native-ko-chat-template BG-HA — evaluator C2.4 narrow 정의로 false PASS, 실제 prompt-conditional response 부재)
+→ PARTIAL_PASS_NO_CONTEXT: 1개 (anima-native-ko-small BG-FY — C2.4 named-speaker leak philosophy debate template)
 → PARTIAL_PASS (한글↔한글 부분): 1개 (anima-native-ko-tiny BG-FU)
 → NOT_APPLICABLE (substrate-coupled / 다른 arch): 5개 (CLM v4 mk2-v1 + v14_128c × 4)
 → INACCESSIBLE (credential): 3개 (cells64/128/clm-v2_latest in d4acc account)

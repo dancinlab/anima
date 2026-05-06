@@ -94,13 +94,14 @@ chat-cap (own 18 simple stack PASS) 도달은 model capacity (param size) 보다
 ## Verdict
 
 ```
-verdict_class: SUPPORTED (3-instance evidence — own 19 + own 20 strong support)
+verdict_class: PARTIAL (3-instance evidence revised 2026-05-07 — BG-HA strict re-check 강등 후)
 evidence_summary:
   - BG-FK 27.84M corpus EN-bias → SIMPLE_STACK_FAIL (KO 0/3) — capacity 7.7× of BG-FY but FAIL
-  - BG-FY 18M corpus_ko_heavy (62.14% Hangul, 0% chat-template) → SIMPLE_STACK_PARTIAL_PASS_NO_CONTEXT (C2.4 FAIL — philosophy debate template leak)
-  - **BG-HA 18.03M corpus_chat_template (47.84% Hangul + chat-template ≥30%) → SIMPLE_STACK_PASS** ★★ (4-cond × 5-prompt × 7-cell ALL PASS, c2_4_named_speaker_leak=False, train_loss 1.5907, 124.4s ubu1)
-  - **3-instance evidence**: 같은 18M 18M 27M capacity 무관, corpus가 결정적 unlock
-  - own 20 (chat-template ≥30%) C2.4 root cause fix verified
+  - BG-FY 18M corpus_ko_heavy (62.14% Hangul, 0% chat-template) → PARTIAL_PASS_NO_CONTEXT (C2.4 FAIL — philosophy debate template leak)
+  - BG-HA 18.03M corpus_chat_template (47.84% Hangul + chat-template ≥30%) → ⚠️ PARTIAL_PASS_NO_CONTEXT_v2 (initial SIMPLE_STACK_PASS labeled by evaluator, but 사용자 strict review 후 강등 — evaluator C2.4 narrow 정의 'named-speaker-leak 0건 only', 실제 prompt domain match 검증 X. sample mode 5/5 응답 모두 prompt-irrelevant nonsense Korean chain)
+  - **3-instance evidence**: corpus가 architecture/capacity보다 우선이지만, chat-template format ≥30% 단독으로는 prompt-conditional response 학습 불충분 (chat-template ratio 더 높이거나 instruction-tuning lane 별도 필수)
+  - own 19 (corpus priority) PASS (BG-FK FAIL evidence)
+  - own 20 (chat-template format mandate) PARTIAL — named-speaker-leak prevention만 verified, prompt domain match는 NOT
 falsifiers_triggered: none
 criteria_met:
   - C1 (capacity-controlled): PASS — BG-FK corpus EN-bias FAIL @ 27.84M

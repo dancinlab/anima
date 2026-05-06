@@ -1,4 +1,8 @@
 {
+  "_DOWNGRADED_2026_05_07": "사용자 의심 검증 후 false PASS 발견 — verdict_class SIMPLE_STACK_PASS → PARTIAL_PASS_NO_CONTEXT_v2 강등. evaluator의 C2.4 narrow 정의 (named-speaker-leak only)가 사용자 directive '맥락 정합' (= prompt domain match) 검증 X. eval_log.jsonl sample mode 5/5 응답 모두 prompt-irrelevant nonsense Korean chain. 보강 spec: docs/anima_own_18_c2_4_evaluator_flaw_2026_05_07.md. raw#82 retraction protocol 정합. HF PRIVATE upload (BG-HD) 정지.",
+  "downgraded_verdict_class": "PARTIAL_PASS_NO_CONTEXT_v2",
+  "downgraded_at": "2026-05-07",
+  "downgrade_reason": "evaluator C2.4 narrow definition (named-speaker-leak only, NOT prompt domain match) — false PASS detected via direct eval_log.jsonl review by 사용자",
   "bg_id": "BG-HA",
   "spec": "F-anima-native-ko-chat-template-1",
   "ts_start": "2026-05-07T01:28:37",
