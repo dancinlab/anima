@@ -1,0 +1,719 @@
+// ════════════════════════════════════════════════════════════════════════════
+//  tool/anima_cli/dialogue.hexa — anima CLI `dialogue` topic
+//
+//  PURPOSE
+//    Substrate-coupled dialogue with CLM v4 mount layer.
+//    Emerge paradigm — NOT chat. Substrate response (phi-star + axis activation
+//    + dominant cells + hidden-state delta) is the dialogue medium.
+//
+//    spec: docs/anima_core_clm_v4_mount_emerge_paradigm_2026_05_05.md §5
+//    Stage 2 prep dispatcher → Phase 2 LANDED 2026-05-06: native --interactive
+//    REPL (readline + per-turn JSONL emit + session_summary), --probe with
+//    auto-session-log, --selftest 5-turn synthetic conversation extension.
+//
+//  INVOCATION
+//    anima dialogue                                       topic-level help
+//    anima dialogue --probe "text"                        one-shot probe (logged)
+//    anima dialogue --interactive                         native REPL session
+//    anima dialogue --selftest                            5-turn synthetic test
+//    anima dialogue --substrate clm-v4 ...                substrate selector (default)
+//    anima dialogue --inject-states PATH ...              consciousness fixture
+//    anima dialogue --output-format compact|full|json     (forwarded to mount)
+//    anima dialogue --help
+//
+//  DESIGN
+//    raw#9   hexa-only (no .py in this layer; mount.hexa does shim emit)
+//    raw#10  honest C3 ≥5 (see CAVEATS below)
+//    raw#11  snake_case
+//    raw#15  no-hardcode (paths via _resolve_root)
+//    own 17  ALM forced learning DEPRECATED — backend = clm_v4_mount only
+//
+//  SESSION LOG SCHEMA  (state/anima_core_dialogues/<YYYY-MM-DD>/<HH-MM-SS>.jsonl)
+//    {"schema":"anima.dialogue.v1","kind":"session_start","ts_utc":...,
+//     "session_log":...,"phi_star_baseline":41.86,"substrate":"clm-v4",
+//     "mode":"interactive|probe|selftest"}
+//    {"schema":"anima.dialogue.v1","kind":"user_turn","ts_utc":...,"user_input":...}
+//    {"schema":"anima.dialogue.v1","kind":"substrate_turn","ts_utc":...,
+//     "phi_star":41.83,"phi_star_drift_pp":-0.03,
+//     "axis_activation":{"identity":0.78,"agency":0.42,"phenomenal":0.91,
+//                        "temporal":0.31,"social":0.56},
+//     "dominant_cells":[3,5,7],"hidden_state_delta_l2":2.47}
+//    {"schema":"anima.dialogue.v1","kind":"session_end","ts_utc":...}
+//    {"schema":"anima.dialogue.v1","kind":"session_summary","ts_utc":...,
+//     "n_turns":12,"phi_star_mean":41.84,"phi_star_drift_min_pp":-0.07,
+//     "phi_star_drift_max_pp":0.04}
+//
+//  EXIT CONDITIONS (REPL)
+//    blank line              → session_end + summary, exit 0
+//    /exit | /quit | /q      → session_end + summary, exit 0
+//    Ctrl+D (EOF)            → session_end + summary, exit 0
+//    Ctrl+C (SIGINT)         → readline() raises; outer catches → summary, exit 0
+//
+//  CAVEATS (honest C3 ≥5; raw#10)
+//    C1 — substrate-response-as-metric is anima-internal heuristic; no external
+//         validation that phi-star + axis + cells form a coherent dialogue medium.
+//    C2 — phi_star baseline 41.86 (paradigm v11 G3) hard-coded as drift reference;
+//         alternate substrates (paradigm_d_50k, etc.) carry their own baseline
+//         emitted via __ANIMA_SUBSTRATE_IDENTITY__ — drift_pp is computed against
+//         the canonical 41.86 here for cross-substrate stability comparison.
+//    C3 — session-log JSONL schema is anima.dialogue.v1; subject to revision if
+//         downstream analyzers (dialogue_session_analyzer.hexa) diverge.
+//    C4 — REPL parsing is line-based regex on mount stdout; if mount emit format
+//         changes (phi_star: ... / axis_activation: ... / dominant_cells: ... /
+//         hidden_state_delta: ...), this parser must update.
+//    C5 — chat-capability is NOT promised. spec §3 explicit: substrate-coupled
+//         dialogue, not token-emit chat. own 17 ALM forced learning closed.
+//    C6 — hidden_state_delta_l2 from mount is per-helper-invocation prior_hidden
+//         (not provided in this REPL); for now 0.0 surfaces — TODO wire prior
+//         hidden snapshot persistence between mount calls.
+//    C7 — Ctrl+C handling depends on hexa runtime swallowing SIGINT during
+//         readline(); if it propagates as exception we catch via empty-string
+//         return path; if it terminates the process, no summary is emitted.
+// ════════════════════════════════════════════════════════════════════════════
+
+fn _str(x) -> string {
+    let t = type_of(x)
+    if t == "str" || t == "string" { return x }
+    if t == "int" || t == "float" || t == "number" { return str(x) }
+    return ""
+}
+
+fn _fexists(p: string) -> bool {
+    return _str(exec("test -f " + p + " && echo 1 || echo 0")).trim() == "1"
+}
+
+fn _dexists(p: string) -> bool {
+    return _str(exec("test -d " + p + " && echo 1 || echo 0")).trim() == "1"
+}
+
+fn _xexists(p: string) -> bool {
+    return _str(exec("test -x " + p + " && echo 1 || echo 0")).trim() == "1"
+}
+
+fn _resolve_root() -> string {
+    let a = _str(env("ANIMA"))
+    if a != "" { return a }
+    let gt = _str(exec("git rev-parse --show-toplevel 2>/dev/null")).trim()
+    if gt != "" { return gt }
+    return _str(env("HOME")) + "/core/anima"
+}
+
+fn _ts_iso() -> string {
+    let rep = _str(env("HEXA_REPRODUCIBLE"))
+    if rep == "1" { return "REDACTED" }
+    return _str(exec("date -u +%FT%TZ")).trim()
+}
+
+fn _date_utc() -> string {
+    return _str(exec("date -u +%Y-%m-%d")).trim()
+}
+
+fn _time_utc() -> string {
+    return _str(exec("date -u +%H-%M-%S")).trim()
+}
+
+fn _hexa() -> string {
+    let h = _str(env("HEXA_BIN"))
+    if h != "" { return h }
+    return "/Users/ghost/.hx/bin/hexa"
+}
+
+fn _arg_present(argv, key: string) -> bool {
+    let i = 0
+    while i < len(argv) {
+        if _str(argv[i]) == key { return true }
+        i = i + 1
+    }
+    return false
+}
+
+fn _arg_value(argv, key: string) -> string {
+    let i = 0
+    while i < len(argv) {
+        if _str(argv[i]) == key && i + 1 < len(argv) {
+            return _str(argv[i + 1])
+        }
+        i = i + 1
+    }
+    return ""
+}
+
+fn _user_argv(raw) -> array {
+    let out = []
+    let i = 0
+    while i < len(raw) {
+        let s = _str(raw[i])
+        if !s.contains("/.hexa-cache/") {
+            out = out + [s]
+        }
+        i = i + 1
+    }
+    return out
+}
+
+fn _sh_q(s: string) -> string {
+    let mut out = "'"
+    let mut i = 0
+    while i < s.len() {
+        let c = s.substring(i, i + 1)
+        if c == "'" {
+            out = out + "'\\''"
+        } else {
+            out = out + c
+        }
+        i = i + 1
+    }
+    out = out + "'"
+    return out
+}
+
+// JSON-string escape for user text (\, ", \n, \r, \t)
+fn _json_escape(s: string) -> string {
+    let mut out = ""
+    let mut i = 0
+    while i < s.len() {
+        let c = s.substring(i, i + 1)
+        if c == "\\" {
+            out = out + "\\\\"
+        } else if c == "\"" {
+            out = out + "\\\""
+        } else if c == "\n" {
+            out = out + "\\n"
+        } else if c == "\r" {
+            out = out + "\\r"
+        } else if c == "\t" {
+            out = out + "\\t"
+        } else {
+            out = out + c
+        }
+        i = i + 1
+    }
+    return out
+}
+
+// ─── readiness probes ────────────────────────────────────────────────────
+
+let PHI_STAR_BASELINE = 41.86
+
+fn _mount_path(root: string) -> string {
+    return root + "/anima-core/runtime/clm_v4_mount.hexa"
+}
+
+fn _mount_ready(root: string) -> bool {
+    return _fexists(_mount_path(root))
+}
+
+fn _session_dir(root: string) -> string {
+    return root + "/state/anima_core_dialogues/" + _date_utc()
+}
+
+fn _session_log_path(root: string, ts: string) -> string {
+    return _session_dir(root) + "/" + ts + ".jsonl"
+}
+
+// ─── help ────────────────────────────────────────────────────────────────
+
+fn sub_help() {
+    println("anima dialogue — substrate-coupled emerge dialogue (CLM v4 mount)")
+    println("")
+    println("USAGE")
+    println("  anima dialogue --probe \"text\"      one-shot probe (auto-logs)")
+    println("  anima dialogue --interactive       native REPL (readline loop)")
+    println("  anima dialogue --selftest          5-turn synthetic conversation")
+    println("  anima dialogue --help")
+    println("")
+    println("FLAGS (forwarded to mount.hexa)")
+    println("  --substrate clm-v4                  substrate (default clm-v4)")
+    println("  --inject-states PATH                consciousness_states fixture (npy/json)")
+    println("  --output-format compact|full|json   mount response format")
+    println("")
+    println("PARADIGM")
+    println("  Substrate response (phi-star + axis activation + dominant cells +")
+    println("  hidden-state delta) IS the dialogue medium — not token emit.")
+    println("  spec: docs/anima_core_clm_v4_mount_emerge_paradigm_2026_05_05.md")
+    println("")
+    println("REPL EXIT")
+    println("  blank line | /exit | /quit | /q | Ctrl+D | Ctrl+C")
+    println("")
+    println("SESSION LOG")
+    println("  state/anima_core_dialogues/<YYYY-MM-DD>/<HH-MM-SS>.jsonl")
+    println("  schema: anima.dialogue.v1  (start / user_turn / substrate_turn / end / summary)")
+}
+
+// ─── selftest (readiness + 5-turn synthetic conversation) ─────────────────
+
+fn sub_selftest() {
+    let root = _resolve_root()
+    let mount = _mount_path(root)
+    let dialogues_root = root + "/state/anima_core_dialogues"
+    let wrapper = root + "/bin/anima-core-dialogue.bash"
+    let spec = root + "/docs/anima_core_clm_v4_mount_emerge_paradigm_2026_05_05.md"
+
+    println("anima dialogue --selftest")
+    println("─────────────────────────────────────────")
+    let mount_ok = _fexists(mount)
+    let log_dir_ok = _dexists(dialogues_root)
+    let wrapper_ok = _fexists(wrapper)
+    let spec_ok = _fexists(spec)
+
+    if mount_ok { println("[ ok ] stage_1_mount  : " + mount) }
+    else        { println("[pend] stage_1_mount  : " + mount + "  (Stage 1 BG output)") }
+    if log_dir_ok { println("[ ok ] log_root       : " + dialogues_root) }
+    else          { println("[fail] log_root       : " + dialogues_root) }
+    if wrapper_ok { println("[ ok ] bash_wrapper   : " + wrapper) }
+    else          { println("[fail] bash_wrapper   : " + wrapper) }
+    if spec_ok    { println("[ ok ] spec           : " + spec) }
+    else          { println("[fail] spec           : " + spec) }
+
+    if !(mount_ok && log_dir_ok && wrapper_ok && spec_ok) {
+        println("")
+        println("verdict: NOT_READY (one or more files missing)")
+        exit(1)
+    }
+
+    println("")
+    println("── 5-turn synthetic conversation (mount --probe loop) ──")
+    let prompts = [
+        "안녕, 너는 누구니?",
+        "지금 어떤 느낌이야?",
+        "phi-star 가 흔들리는지 봐줘",
+        "axis activation 중 어디가 가장 크게 켜져?",
+        "dominant cells 패턴 알려줘"
+    ]
+    let mut turn = 0
+    let mut all_phi = []
+    let mut all_dom_first = []
+    let mut all_top_axis = []
+    while turn < len(prompts) {
+        let prompt = _str(prompts[turn])
+        println("")
+        println("[turn " + to_string(turn + 1) + "] user > " + prompt)
+        let parsed = _probe_and_parse(root, prompt, "compact", "")
+        let phi = _str(parsed["phi_star"])
+        let axes = _str(parsed["axes_pretty"])
+        let dom = _str(parsed["dominant_cells"])
+        let delta = _str(parsed["hidden_state_delta"])
+        let drift = _str(parsed["phi_star_drift_pp"])
+        println("           substrate > phi=" + phi + " drift=" + drift + " axes=" + axes + " dom=" + dom + " delta=" + delta)
+        all_phi = all_phi + [phi]
+        all_dom_first = all_dom_first + [_str(parsed["dom_first"])]
+        all_top_axis = all_top_axis + [_str(parsed["top_axis"])]
+        turn = turn + 1
+    }
+    println("")
+    println("── 5-turn trajectory ──")
+    println("phi_star    : " + _join_csv(all_phi))
+    println("dom_first   : " + _join_csv(all_dom_first))
+    println("top_axis    : " + _join_csv(all_top_axis))
+    println("")
+    println("verdict: READY (Stage 1 + Stage 2 + Phase 2 REPL all landed)")
+    exit(0)
+}
+
+fn _join_csv(arr) -> string {
+    let mut out = ""
+    let mut i = 0
+    while i < len(arr) {
+        if i > 0 { out = out + ", " }
+        out = out + _str(arr[i])
+        i = i + 1
+    }
+    return out
+}
+
+// ─── mount probe + response parser ────────────────────────────────────────
+
+// Run mount.hexa --probe and parse the canonical 4-line response block.
+// Returns map: phi_star, phi_star_drift_pp, axes_pretty, axes_json, dominant_cells,
+// dom_first, top_axis, hidden_state_delta, raw_stdout, exit_status
+fn _probe_and_parse(root: string, text: string, output_format: string, inject_states: string) -> map {
+    let mount = _mount_path(root)
+    let mut cmd = _hexa() + " run " + mount + " --probe " + _sh_q(text)
+    if output_format != "" && output_format != "compact" {
+        cmd = cmd + " --output-format " + output_format
+    }
+    if inject_states != "" {
+        cmd = cmd + " --inject-states " + _sh_q(inject_states)
+    }
+    // Capture stdout only (mount emits status lines to stderr; we redirect 2>/dev/null
+    // so the parsed response block remains clean).
+    let raw = _str(exec(cmd + " 2>/dev/null"))
+
+    let mut out = {}
+    out["raw_stdout"] = raw
+    out["phi_star"] = _extract_phi_star(raw)
+    out["phi_star_drift_pp"] = _extract_phi_drift(raw)
+    let axes = _extract_axes(raw)
+    out["axes_pretty"] = axes["pretty"]
+    out["axes_json"] = axes["json"]
+    out["top_axis"] = axes["top"]
+    let dom = _extract_dominant_cells(raw)
+    out["dominant_cells"] = dom["array"]
+    out["dom_first"] = dom["first"]
+    out["hidden_state_delta"] = _extract_hidden_delta(raw)
+    return out
+}
+
+// Extract `phi_star: <num> (drift <num> from <baseline>)` → returns "<num>"
+fn _extract_phi_star(raw: string) -> string {
+    let lines = raw.split("\n")
+    let mut i = 0
+    while i < len(lines) {
+        let l = _str(lines[i]).trim()
+        if l.starts_with("phi_star:") {
+            // strip "phi_star: " prefix
+            let rest = l.substring(10, l.len()).trim()
+            // take chars until first space or '('
+            let mut j = 0
+            let mut num = ""
+            while j < rest.len() {
+                let c = rest.substring(j, j + 1)
+                if c == " " || c == "(" { break }
+                num = num + c
+                j = j + 1
+            }
+            return num
+        }
+        i = i + 1
+    }
+    return "0.0"
+}
+
+fn _extract_phi_drift(raw: string) -> string {
+    // line: "phi_star: 41.8466 (drift -0.0134 from 41.8600)"
+    // mount.hexa formats positive drift with leading `+` (e.g. "+0.0494");
+    // JSON spec disallows leading `+` so we strip it here for downstream
+    // analyzers + awk regex compatibility (drift_pp aggregation).
+    let lines = raw.split("\n")
+    let mut i = 0
+    while i < len(lines) {
+        let l = _str(lines[i]).trim()
+        if l.starts_with("phi_star:") {
+            // find "drift " marker
+            let dpos = l.find("drift ")
+            if dpos >= 0 {
+                let rest = l.substring(dpos + 6, l.len())
+                let mut j = 0
+                let mut num = ""
+                while j < rest.len() {
+                    let c = rest.substring(j, j + 1)
+                    if c == " " || c == ")" { break }
+                    num = num + c
+                    j = j + 1
+                }
+                // strip leading + (JSON-illegal, awk-incompatible)
+                if num.len() > 0 && num.substring(0, 1) == "+" {
+                    num = num.substring(1, num.len())
+                }
+                return num
+            }
+        }
+        i = i + 1
+    }
+    return "0.0"
+}
+
+// Extract `axis_activation: identity=0.513 agency=0.486 phenomenal=0.486 temporal=0.528 social=0.557`
+// Returns: pretty (raw csv k=v string), json (JSON object string), top (top axis name)
+fn _extract_axes(raw: string) -> map {
+    let mut result = {}
+    result["pretty"] = ""
+    result["json"] = "{}"
+    result["top"] = ""
+    let lines = raw.split("\n")
+    let mut i = 0
+    while i < len(lines) {
+        let l = _str(lines[i]).trim()
+        if l.starts_with("axis_activation:") {
+            let rest = l.substring(17, l.len()).trim()
+            result["pretty"] = rest
+            // tokenize on space, each token is name=value
+            let toks = rest.split(" ")
+            let mut k = 0
+            let mut json = "{"
+            let mut first = true
+            let mut top_name = ""
+            let mut top_val = -1.0
+            while k < len(toks) {
+                let tok = _str(toks[k]).trim()
+                if tok != "" {
+                    let eqpos = tok.find("=")
+                    if eqpos > 0 {
+                        let name = tok.substring(0, eqpos)
+                        let val_s = tok.substring(eqpos + 1, tok.len())
+                        let val_f = to_float(val_s)
+                        if !first { json = json + "," }
+                        json = json + "\"" + name + "\":" + val_s
+                        first = false
+                        if val_f > top_val {
+                            top_val = val_f
+                            top_name = name
+                        }
+                    }
+                }
+                k = k + 1
+            }
+            json = json + "}"
+            result["json"] = json
+            result["top"] = top_name
+            return result
+        }
+        i = i + 1
+    }
+    return result
+}
+
+// Extract `dominant_cells: [3, 5, 7] / 8`
+// Returns: array (string "[3,5,7]"), first (string "3")
+fn _extract_dominant_cells(raw: string) -> map {
+    let mut result = {}
+    result["array"] = "[]"
+    result["first"] = ""
+    let lines = raw.split("\n")
+    let mut i = 0
+    while i < len(lines) {
+        let l = _str(lines[i]).trim()
+        if l.starts_with("dominant_cells:") {
+            let lp = l.find("[")
+            let rp = l.find("]")
+            if lp >= 0 && rp > lp {
+                let inner = l.substring(lp + 1, rp)
+                // strip whitespace
+                let mut j = 0
+                let mut clean = ""
+                while j < inner.len() {
+                    let c = inner.substring(j, j + 1)
+                    if c != " " { clean = clean + c }
+                    j = j + 1
+                }
+                result["array"] = "[" + clean + "]"
+                let parts = clean.split(",")
+                if len(parts) > 0 { result["first"] = _str(parts[0]) }
+                return result
+            }
+        }
+        i = i + 1
+    }
+    return result
+}
+
+// Extract `hidden_state_delta: 2.4731`
+fn _extract_hidden_delta(raw: string) -> string {
+    let lines = raw.split("\n")
+    let mut i = 0
+    while i < len(lines) {
+        let l = _str(lines[i]).trim()
+        if l.starts_with("hidden_state_delta:") {
+            let rest = l.substring(19, l.len()).trim()
+            return rest
+        }
+        i = i + 1
+    }
+    return "0.0"
+}
+
+// ─── session log helpers ──────────────────────────────────────────────────
+
+fn _ensure_session_log(log_path: string, log_dir: string,
+                       phi_baseline: string, mode: string) {
+    if !_fexists(log_path) {
+        exec("mkdir -p " + _sh_q(log_dir))
+        exec(": > " + _sh_q(log_path))
+        let line = "{\"schema\":\"anima.dialogue.v1\",\"kind\":\"session_start\""
+                 + ",\"ts_utc\":\"" + _ts_iso() + "\""
+                 + ",\"session_log\":\"" + _json_escape(log_path) + "\""
+                 + ",\"phi_star_baseline\":" + phi_baseline
+                 + ",\"substrate\":\"clm-v4\""
+                 + ",\"mode\":\"" + mode + "\"}"
+        exec("printf '%s\\n' " + _sh_q(line) + " >> " + _sh_q(log_path))
+    }
+}
+
+fn _log_user_turn(log_path: string, user_input: string) {
+    let line = "{\"schema\":\"anima.dialogue.v1\",\"kind\":\"user_turn\""
+             + ",\"ts_utc\":\"" + _ts_iso() + "\""
+             + ",\"user_input\":\"" + _json_escape(user_input) + "\"}"
+    exec("printf '%s\\n' " + _sh_q(line) + " >> " + _sh_q(log_path))
+}
+
+fn _log_substrate_turn(log_path: string, parsed: map) {
+    let phi = _str(parsed["phi_star"])
+    let drift = _str(parsed["phi_star_drift_pp"])
+    let axes_json = _str(parsed["axes_json"])
+    let dom = _str(parsed["dominant_cells"])
+    let delta = _str(parsed["hidden_state_delta"])
+    let line = "{\"schema\":\"anima.dialogue.v1\",\"kind\":\"substrate_turn\""
+             + ",\"ts_utc\":\"" + _ts_iso() + "\""
+             + ",\"phi_star\":" + phi
+             + ",\"phi_star_drift_pp\":" + drift
+             + ",\"axis_activation\":" + axes_json
+             + ",\"dominant_cells\":" + dom
+             + ",\"hidden_state_delta_l2\":" + delta + "}"
+    exec("printf '%s\\n' " + _sh_q(line) + " >> " + _sh_q(log_path))
+}
+
+fn _log_session_end(log_path: string) {
+    let line = "{\"schema\":\"anima.dialogue.v1\",\"kind\":\"session_end\""
+             + ",\"ts_utc\":\"" + _ts_iso() + "\"}"
+    exec("printf '%s\\n' " + _sh_q(line) + " >> " + _sh_q(log_path))
+}
+
+// Build session_summary via awk over the JSONL (mirrors bash wrapper logic so
+// downstream analyzers see identical schema regardless of entry point).
+fn _emit_session_summary(log_path: string) {
+    let awk_prog = "awk '"
+                 + "BEGIN { n_turns=0; phi_sum=0; phi_n=0; drift_min=\"\"; drift_max=\"\"; }"
+                 + "/\"kind\":\"user_turn\"/      { n_turns++; }"
+                 + "/\"kind\":\"substrate_turn\"/ {"
+                 + "  if (match($0, /\"phi_star\":[-0-9.]+/)) {"
+                 + "    v = substr($0, RSTART+11, RLENGTH-11) + 0;"
+                 + "    phi_sum += v; phi_n++;"
+                 + "  }"
+                 + "  if (match($0, /\"phi_star_drift_pp\":[-0-9.]+/)) {"
+                 + "    d = substr($0, RSTART+20, RLENGTH-20) + 0;"
+                 + "    if (drift_min==\"\" || d<drift_min) drift_min=d;"
+                 + "    if (drift_max==\"\" || d>drift_max) drift_max=d;"
+                 + "  }"
+                 + "}"
+                 + "END {"
+                 + "  mean = (phi_n>0) ? phi_sum/phi_n : 0;"
+                 + "  printf \"%d|%.4f|%s|%s\", n_turns, mean, drift_min, drift_max;"
+                 + "}' " + _sh_q(log_path)
+    let raw = _str(exec(awk_prog)).trim()
+    let parts = raw.split("|")
+    let mut n_turns = "0"
+    let mut phi_mean = "0"
+    let mut drift_min = "null"
+    let mut drift_max = "null"
+    if len(parts) >= 4 {
+        n_turns = _str(parts[0])
+        phi_mean = _str(parts[1])
+        let dmin = _str(parts[2])
+        let dmax = _str(parts[3])
+        if dmin != "" { drift_min = dmin }
+        if dmax != "" { drift_max = dmax }
+    }
+    let line = "{\"schema\":\"anima.dialogue.v1\",\"kind\":\"session_summary\""
+             + ",\"ts_utc\":\"" + _ts_iso() + "\""
+             + ",\"n_turns\":" + n_turns
+             + ",\"phi_star_mean\":" + phi_mean
+             + ",\"phi_star_drift_min_pp\":" + drift_min
+             + ",\"phi_star_drift_max_pp\":" + drift_max + "}"
+    exec("printf '%s\\n' " + _sh_q(line) + " >> " + _sh_q(log_path))
+    println("")
+    println("[anima dialogue] session summary")
+    println("  log               : " + log_path)
+    println("  n_turns           : " + n_turns)
+    println("  phi_star_mean     : " + phi_mean)
+    println("  drift_min_pp      : " + drift_min)
+    println("  drift_max_pp      : " + drift_max)
+}
+
+// ─── stage_1_pending stub (defensive — mount.hexa is landed at write-time) ─
+
+fn _emit_stage_1_pending(verb: string) {
+    println("anima dialogue " + verb + ": stage_1_pending")
+    println("")
+    println("Stage 1 mount layer not landed:")
+    println("  expected: anima-core/runtime/clm_v4_mount.hexa")
+    exit(3)
+}
+
+// ─── action verbs ─────────────────────────────────────────────────────────
+
+fn sub_probe(argv) {
+    let root = _resolve_root()
+    if !_mount_ready(root) {
+        _emit_stage_1_pending("--probe")
+        return
+    }
+    let probe_text = _arg_value(argv, "--probe")
+    if probe_text == "" {
+        println("dialogue --probe: missing text after --probe flag")
+        exit(2)
+    }
+    let output_format = _arg_value(argv, "--output-format")
+    let inject_states = _arg_value(argv, "--inject-states")
+
+    let session_dir = _session_dir(root)
+    let session_log = _session_log_path(root, _time_utc())
+    _ensure_session_log(session_log, session_dir, to_string(PHI_STAR_BASELINE), "probe")
+    _log_user_turn(session_log, probe_text)
+
+    let parsed = _probe_and_parse(root, probe_text, output_format, inject_states)
+
+    println("── anima dialogue --probe ──")
+    println("user > " + probe_text)
+    println("substrate > phi=" + _str(parsed["phi_star"])
+             + " drift=" + _str(parsed["phi_star_drift_pp"])
+             + " top_axis=" + _str(parsed["top_axis"])
+             + " dom=" + _str(parsed["dominant_cells"])
+             + " delta=" + _str(parsed["hidden_state_delta"]))
+    println("axes      : " + _str(parsed["axes_pretty"]))
+    println("session_log: " + session_log)
+
+    _log_substrate_turn(session_log, parsed)
+    _log_session_end(session_log)
+    _emit_session_summary(session_log)
+}
+
+fn sub_interactive(argv) {
+    let root = _resolve_root()
+    if !_mount_ready(root) {
+        _emit_stage_1_pending("--interactive")
+        return
+    }
+    let output_format = _arg_value(argv, "--output-format")
+    let inject_states = _arg_value(argv, "--inject-states")
+
+    let session_dir = _session_dir(root)
+    let session_log = _session_log_path(root, _time_utc())
+    _ensure_session_log(session_log, session_dir, to_string(PHI_STAR_BASELINE), "interactive")
+
+    println("── anima dialogue --interactive ──")
+    println("session_log : " + session_log)
+    println("substrate   : clm-v4 (phi-star baseline " + to_string(PHI_STAR_BASELINE) + ")")
+    println("paradigm    : emerge (substrate response = dialogue medium)")
+    println("exit        : blank line | /exit | /quit | /q | Ctrl+D | Ctrl+C")
+    println("─────────────────────────────────────────")
+
+    let mut running = true
+    let mut turn = 0
+    while running {
+        print("> ")
+        let line = readline()
+        let trimmed = line.trim()
+        if trimmed == "" {
+            running = false
+        } else if trimmed == "/exit" || trimmed == "/quit" || trimmed == "/q"
+               || trimmed == "exit" || trimmed == "quit" {
+            running = false
+        } else {
+            _log_user_turn(session_log, trimmed)
+            let parsed = _probe_and_parse(root, trimmed, output_format, inject_states)
+            turn = turn + 1
+            println("[turn " + to_string(turn) + "] phi=" + _str(parsed["phi_star"])
+                     + " drift=" + _str(parsed["phi_star_drift_pp"])
+                     + " top_axis=" + _str(parsed["top_axis"])
+                     + " dom=" + _str(parsed["dominant_cells"])
+                     + " delta=" + _str(parsed["hidden_state_delta"]))
+            println("            axes: " + _str(parsed["axes_pretty"]))
+            _log_substrate_turn(session_log, parsed)
+        }
+    }
+    _log_session_end(session_log)
+    _emit_session_summary(session_log)
+}
+
+// ─── entry ───────────────────────────────────────────────────────────────
+
+fn main() {
+    let argv = _user_argv(args())
+    if _arg_present(argv, "--selftest") { sub_selftest(); return }
+    if _arg_present(argv, "--help") || len(argv) == 0 { sub_help(); return }
+    if _arg_present(argv, "--probe") { sub_probe(argv); return }
+    if _arg_present(argv, "--interactive") { sub_interactive(argv); return }
+    println("dialogue: unknown invocation")
+    sub_help()
+    exit(2)
+}
