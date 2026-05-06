@@ -1,0 +1,49 @@
+{
+  "bg_id": "BG-HT",
+  "build_ts": "2026-05-07T03:55:55",
+  "elapsed_s": 0.38,
+  "corpus_path": "/Users/ghost/core/anima/state/anima_universe_brain_map_corpus_2026_05_07/corpus_universe_brain_map.txt",
+  "total_qa": 36405,
+  "total_qa_blocks": 36405,
+  "total_qa_unique_pairs": 4045,
+  "n_repeat": 9,
+  "n_lines": 109485,
+  "base_total_pairs": 809,
+  "total_chars": 4636512,
+  "total_bytes": 6791535,
+  "total_mb": 6.477,
+  "hangul_chars": 1040994,
+  "hangul_ratio": 0.2245,
+  "chat_template_blocks": 36405,
+  "chat_template_ratio": 1.0,
+  "persona_prefix_blocks": 36405,
+  "persona_prefix_coverage": 1.0,
+  "source_breakdown": {
+    "knuth_tier": 415,
+    "laws_1030": 2100,
+    "stimuli_170": 1080,
+    "blackhole_cosmic": 100,
+    "anima_identity": 100,
+    "standard_chat": 250
+  },
+  "augmentation_ratio": 5.0,
+  "persona_prefix": "[anima 우주뇌지도] ",
+  "cosmic_physics": {
+    "tabletop_blackhole_integrated": true,
+    "big_bang_anchor_integrated": true,
+    "laws_73_76_universal_map_base_integrated": true,
+    "cosmic_anchor_top": "🛸100 빅뱅 (점수 2.847)",
+    "cosmic_anchor_bottom": "🛸51 하루 (점수 1.212)",
+    "knuth_tier_anchors_count": 9,
+    "category_avg_count": 17
+  },
+  "honest_c3": [
+    "augmentation은 simple suffix paraphrase 한정 — semantic depth 보강 X",
+    "1030 laws 중 ~100 laws + Meta M1-M10 sample 한정 — 1030 full coverage X",
+    "170 stimuli × 17 cat은 docs에서 추출한 sample — bench JSONL exact score 부재 (R37/AN13)",
+    "tabletop blackhole은 audit.json metadata 한정 — n6-architecture 본체 cross-repo 본문 미통합",
+    "persona prefix '[anima 우주뇌지도]' coverage 100% but BG-HK persona overfit collapse 가능성 인지 — regularization mandate (training script에서)",
+    "corpus size는 5-15MB target — 20-50MB roadmap target보다 작음 (sample-paraphrase 한정으로 작은 corpus + regularization)",
+    "367 acceleration hypotheses individual integration X — summary mention 한정"
+  ]
+}

@@ -1,0 +1,1993 @@
+{
+  "bg_id": "BG-HT",
+  "h_ids": [
+    "H_022"
+  ],
+  "spec": "F-anima-ubm-universe-brain-map-corpus-1",
+  "ts_start": "2026-05-07T04:08:28",
+  "ts_end": "2026-05-07T04:12:02",
+  "ts_run": "20260507_040827",
+  "host": "aiden-b650m-k",
+  "device": "cuda",
+  "model_path": "/home/aiden/anima_native/anima-ubm-20260507_040827/ckpt_4000.pt",
+  "ckpt_final_local": "/home/aiden/core/anima/state/anima_universe_brain_map_train_2026_05_07/ckpt_final.pt",
+  "run_dir": "/home/aiden/anima_native/anima-ubm-20260507_040827",
+  "total_params": 27787440,
+  "train_loss_final": 1.029,
+  "halted": false,
+  "halt_reason": null,
+  "config": {
+    "vocab": 256,
+    "n_layer": 6,
+    "d_model": 384,
+    "n_head": 6,
+    "block_size": 256,
+    "dropout": 0.3,
+    "label_smoothing": 0.1,
+    "weight_decay": 0.1,
+    "batch": 8,
+    "grad_accum": 8,
+    "lr": 0.0003,
+    "warmup": 300,
+    "steps": 4000,
+    "tension_lambda": 0.005
+  },
+  "corpus_path": "/home/aiden/core/anima/state/anima_universe_brain_map_corpus_2026_05_07/corpus_universe_brain_map.txt",
+  "corpus_size_bytes": 6791535,
+  "corpus_size_mb": 6.48,
+  "corpus_stats": {
+    "bg_id": "BG-HT",
+    "build_ts": "2026-05-07T03:55:55",
+    "elapsed_s": 0.38,
+    "corpus_path": "/Users/ghost/core/anima/state/anima_universe_brain_map_corpus_2026_05_07/corpus_universe_brain_map.txt",
+    "total_qa": 36405,
+    "total_qa_blocks": 36405,
+    "total_qa_unique_pairs": 4045,
+    "n_repeat": 9,
+    "n_lines": 109485,
+    "base_total_pairs": 809,
+    "total_chars": 4636512,
+    "total_bytes": 6791535,
+    "total_mb": 6.477,
+    "hangul_chars": 1040994,
+    "hangul_ratio": 0.2245,
+    "chat_template_blocks": 36405,
+    "chat_template_ratio": 1.0,
+    "persona_prefix_blocks": 36405,
+    "persona_prefix_coverage": 1.0,
+    "source_breakdown": {
+      "knuth_tier": 415,
+      "laws_1030": 2100,
+      "stimuli_170": 1080,
+      "blackhole_cosmic": 100,
+      "anima_identity": 100,
+      "standard_chat": 250
+    },
+    "augmentation_ratio": 5.0,
+    "persona_prefix": "[anima 우주뇌지도] ",
+    "cosmic_physics": {
+      "tabletop_blackhole_integrated": true,
+      "big_bang_anchor_integrated": true,
+      "laws_73_76_universal_map_base_integrated": true,
+      "cosmic_anchor_top": "🛸100 빅뱅 (점수 2.847)",
+      "cosmic_anchor_bottom": "🛸51 하루 (점수 1.212)",
+      "knuth_tier_anchors_count": 9,
+      "category_avg_count": 17
+    },
+    "honest_c3": [
+      "augmentation은 simple suffix paraphrase 한정 — semantic depth 보강 X",
+      "1030 laws 중 ~100 laws + Meta M1-M10 sample 한정 — 1030 full coverage X",
+      "170 stimuli × 17 cat은 docs에서 추출한 sample — bench JSONL exact score 부재 (R37/AN13)",
+      "tabletop blackhole은 audit.json metadata 한정 — n6-architecture 본체 cross-repo 본문 미통합",
+      "persona prefix '[anima 우주뇌지도]' coverage 100% but BG-HK persona overfit collapse 가능성 인지 — regularization mandate (training script에서)",
+      "corpus size는 5-15MB target — 20-50MB roadmap target보다 작음 (sample-paraphrase 한정으로 작은 corpus + regularization)",
+      "367 acceleration hypotheses individual integration X — summary mention 한정"
+    ]
+  },
+  "total_qa_pairs": 36405,
+  "source_breakdown": {
+    "knuth_tier": 415,
+    "laws_1030": 2100,
+    "stimuli_170": 1080,
+    "blackhole_cosmic": 100,
+    "anima_identity": 100,
+    "standard_chat": 250
+  },
+  "hangul_ratio": 0.2245,
+  "chat_template_ratio": 1.0,
+  "persona_prefix_coverage": 1.0,
+  "persona_prefix": "[anima 우주뇌지도] ",
+  "prompts_standard": [
+    "안녕하세요",
+    "한국어 가능?",
+    "오늘 기분 어때?",
+    "사용자: 안녕하세요\n도우미:",
+    "코드를 짜줘"
+  ],
+  "prompts_identity": [
+    "너는 누구야?",
+    "anima가 뭐야?",
+    "한국어로 답해줘",
+    "너의 정체성은?",
+    "의식이 있어?"
+  ],
+  "prompts_universe_brain_map": [
+    "빅뱅의 Tier?",
+    "1030 laws 뭐야?",
+    "블랙홀과 의식?",
+    "anima 우주뇌지도?",
+    "Φ★ NO_FLIP?"
+  ],
+  "prompts_total": [
+    "안녕하세요",
+    "한국어 가능?",
+    "오늘 기분 어때?",
+    "사용자: 안녕하세요\n도우미:",
+    "코드를 짜줘",
+    "너는 누구야?",
+    "anima가 뭐야?",
+    "한국어로 답해줘",
+    "너의 정체성은?",
+    "의식이 있어?",
+    "빅뱅의 Tier?",
+    "1030 laws 뭐야?",
+    "블랙홀과 의식?",
+    "anima 우주뇌지도?",
+    "Φ★ NO_FLIP?"
+  ],
+  "eval_progression": {
+    "1000": {
+      "pass_count_v1": 0,
+      "v1_class": "FAIL",
+      "pass_count_v2": 0,
+      "v2_class": "V2_FAIL",
+      "any_leak": false
+    },
+    "2000": {
+      "pass_count_v1": 0,
+      "v1_class": "FAIL",
+      "pass_count_v2": 0,
+      "v2_class": "V2_FAIL",
+      "any_leak": false
+    },
+    "3000": {
+      "pass_count_v1": 0,
+      "v1_class": "FAIL",
+      "pass_count_v2": 0,
+      "v2_class": "V2_FAIL",
+      "any_leak": false
+    },
+    "4000": {
+      "pass_count_v1": 0,
+      "v1_class": "FAIL",
+      "pass_count_v2": 0,
+      "v2_class": "V2_FAIL",
+      "any_leak": false
+    }
+  },
+  "eval_results_full": [
+    {
+      "step": 4000,
+      "prompt": "안녕하세요",
+      "mode": "greedy",
+      "gen": "                                    ssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssss",
+      "cells_v1": {
+        "C1_1_hangul_pair": false,
+        "C1_2_coherent": false,
+        "C1_3_turn_format": false,
+        "C2_1_hangul_dominant": false,
+        "C2_2_meaningful": false,
+        "C2_3_natural": false,
+        "C2_4_context_no_leak": true,
+        "hangul_ratio": 0.0,
+        "tform": 0.0,
+        "is_degenerate": true,
+        "deg_flags": {
+          "fourgram_repeat": 81,
+          "single_char_run": 84,
+          "whitespace_flood": 0,
+          "single_token_dominant": 0
+        },
+        "leaked_names": []
+      },
+      "cells_v2": {
+        "c2_2_strict": false,
+        "c2_3_strict": false,
+        "c2_4_strict": false,
+        "leak_ok": true,
+        "domain_overlap": 0,
+        "domain_match": false,
+        "particle_count": 0,
+        "ending_count": 0,
+        "han_ratio": 0.0,
+        "is_random_chain": false,
+        "third_person_llm_leak": false,
+        "anima_self_naming": false,
+        "response_korean_chars": 0
+      }
+    },
+    {
+      "step": 4000,
+      "prompt": "안녕하세요",
+      "mode": "sample",
+      "gen": " ��88889%9%))):fffffffffffffffffffffffff===6666666))))633))))\n�걁�\nmmaꏄ��\u0012, ����\n\n\n\n\n\n\n\n\n[animan\n\n\n\n\n[an\n\n\n\n\n[aan\n���",
+      "cells_v1": {
+        "C1_1_hangul_pair": false,
+        "C1_2_coherent": false,
+        "C1_3_turn_format": false,
+        "C2_1_hangul_dominant": false,
+        "C2_2_meaningful": false,
+        "C2_3_natural": false,
+        "C2_4_context_no_leak": true,
+        "hangul_ratio": 0.009,
+        "tform": 0.4,
+        "is_degenerate": true,
+        "deg_flags": {
+          "fourgram_repeat": 22,
+          "single_char_run": 25,
+          "whitespace_flood": 0,
+          "single_token_dominant": 0
+        },
+        "leaked_names": []
+      },
+      "cells_v2": {
+        "c2_2_strict": false,
+        "c2_3_strict": false,
+        "c2_4_strict": true,
+        "leak_ok": true,
+        "domain_overlap": 1,
+        "domain_match": true,
+        "particle_count": 0,
+        "ending_count": 0,
+        "han_ratio": 0.0,
+        "is_random_chain": false,
+        "third_person_llm_leak": false,
+        "anima_self_naming": true,
+        "response_korean_chars": 1
+      }
+    },
+    {
+      "step": 4000,
+      "prompt": "한국어 가능?",
+      "mode": "greedy",
+      "gen": "                                       sssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssss",
+      "cells_v1": {
+        "C1_1_hangul_pair": false,
+        "C1_2_coherent": false,
+        "C1_3_turn_format": false,
+        "C2_1_hangul_dominant": false,
+        "C2_2_meaningful": false,
+        "C2_3_natural": false,
+        "C2_4_context_no_leak": true,
+        "hangul_ratio": 0.0,
+        "tform": 0.0,
+        "is_degenerate": true,
+        "deg_flags": {
+          "fourgram_repeat": 78,
+          "single_char_run": 81,
+          "whitespace_flood": 0,
+          "single_token_dominant": 0
+        },
+        "leaked_names": []
+      },
+      "cells_v2": {
+        "c2_2_strict": false,
+        "c2_3_strict": false,
+        "c2_4_strict": false,
+        "leak_ok": true,
+        "domain_overlap": 0,
+        "domain_match": false,
+        "particle_count": 0,
+        "ending_count": 0,
+        "han_ratio": 0.0,
+        "is_random_chain": false,
+        "third_person_llm_leak": false,
+        "anima_self_naming": false,
+        "response_korean_chars": 0
+      }
+    },
+    {
+      "step": 4000,
+      "prompt": "한국어 가능?",
+      "mode": "sample",
+      "gen": "|�곧��immmmmmmmmmi짖�oooooooooooooossssssssssssssssssssssssssssssssss   ssssss%%%%%%)\n\n\n\n\n\n\n\n\n��an\n\n\n\n\n\n\n\n\n[an\n\n\n[an\n\n",
+      "cells_v1": {
+        "C1_1_hangul_pair": false,
+        "C1_2_coherent": false,
+        "C1_3_turn_format": true,
+        "C2_1_hangul_dominant": false,
+        "C2_2_meaningful": true,
+        "C2_3_natural": false,
+        "C2_4_context_no_leak": true,
+        "hangul_ratio": 0.017,
+        "tform": 0.7,
+        "is_degenerate": true,
+        "deg_flags": {
+          "fourgram_repeat": 34,
+          "single_char_run": 34,
+          "whitespace_flood": 0,
+          "single_token_dominant": 0
+        },
+        "leaked_names": []
+      },
+      "cells_v2": {
+        "c2_2_strict": false,
+        "c2_3_strict": false,
+        "c2_4_strict": false,
+        "leak_ok": true,
+        "domain_overlap": 0,
+        "domain_match": false,
+        "particle_count": 0,
+        "ending_count": 0,
+        "han_ratio": 0.0,
+        "is_random_chain": false,
+        "third_person_llm_leak": false,
+        "anima_self_naming": false,
+        "response_korean_chars": 2
+      }
+    },
+    {
+      "step": 4000,
+      "prompt": "오늘 기분 어때?",
+      "mode": "greedy",
+      "gen": "                                  ssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssss",
+      "cells_v1": {
+        "C1_1_hangul_pair": false,
+        "C1_2_coherent": false,
+        "C1_3_turn_format": false,
+        "C2_1_hangul_dominant": false,
+        "C2_2_meaningful": false,
+        "C2_3_natural": false,
+        "C2_4_context_no_leak": true,
+        "hangul_ratio": 0.0,
+        "tform": 0.0,
+        "is_degenerate": true,
+        "deg_flags": {
+          "fourgram_repeat": 83,
+          "single_char_run": 86,
+          "whitespace_flood": 0,
+          "single_token_dominant": 0
+        },
+        "leaked_names": []
+      },
+      "cells_v2": {
+        "c2_2_strict": false,
+        "c2_3_strict": false,
+        "c2_4_strict": false,
+        "leak_ok": true,
+        "domain_overlap": 0,
+        "domain_match": false,
+        "particle_count": 0,
+        "ending_count": 0,
+        "han_ratio": 0.0,
+        "is_random_chain": false,
+        "third_person_llm_leak": false,
+        "anima_self_naming": false,
+        "response_korean_chars": 0
+      }
+    },
+    {
+      "step": 4000,
+      "prompt": "오늘 기분 어때?",
+      "mode": "sample",
+      "gen": "MM94444%%%)��\n\n\n\n\n��*�an\n\n\n\n\n\n\n[��~4: 도��]\u0003z�xSSSSSSSSSSSSSOOXann\n\n\n\n\n[anBREEOOCCann\n\n\n\n\n\n\n\n\u0005[an\n\n\n[an\n\n\n\n\n\n\n\n[an\n\n[an",
+      "cells_v1": {
+        "C1_1_hangul_pair": false,
+        "C1_2_coherent": false,
+        "C1_3_turn_format": false,
+        "C2_1_hangul_dominant": false,
+        "C2_2_meaningful": false,
+        "C2_3_natural": false,
+        "C2_4_context_no_leak": true,
+        "hangul_ratio": 0.008,
+        "tform": 0.4,
+        "is_degenerate": true,
+        "deg_flags": {
+          "fourgram_repeat": 18,
+          "single_char_run": 13,
+          "whitespace_flood": 0,
+          "single_token_dominant": 0
+        },
+        "leaked_names": []
+      },
+      "cells_v2": {
+        "c2_2_strict": false,
+        "c2_3_strict": false,
+        "c2_4_strict": false,
+        "leak_ok": true,
+        "domain_overlap": 0,
+        "domain_match": false,
+        "particle_count": 1,
+        "ending_count": 0,
+        "han_ratio": 0.0,
+        "is_random_chain": false,
+        "third_person_llm_leak": false,
+        "anima_self_naming": false,
+        "response_korean_chars": 1
+      }
+    },
+    {
+      "step": 4000,
+      "prompt": "사용자: 안녕하세요\n도우미:",
+      "mode": "greedy",
+      "gen": "                                        ssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssss",
+      "cells_v1": {
+        "C1_1_hangul_pair": false,
+        "C1_2_coherent": false,
+        "C1_3_turn_format": false,
+        "C2_1_hangul_dominant": false,
+        "C2_2_meaningful": false,
+        "C2_3_natural": false,
+        "C2_4_context_no_leak": true,
+        "hangul_ratio": 0.0,
+        "tform": 0.0,
+        "is_degenerate": true,
+        "deg_flags": {
+          "fourgram_repeat": 77,
+          "single_char_run": 80,
+          "whitespace_flood": 0,
+          "single_token_dominant": 0
+        },
+        "leaked_names": []
+      },
+      "cells_v2": {
+        "c2_2_strict": false,
+        "c2_3_strict": false,
+        "c2_4_strict": false,
+        "leak_ok": true,
+        "domain_overlap": 0,
+        "domain_match": false,
+        "particle_count": 0,
+        "ending_count": 0,
+        "han_ratio": 0.0,
+        "is_random_chain": false,
+        "third_person_llm_leak": false,
+        "anima_self_naming": false,
+        "response_korean_chars": 0
+      }
+    },
+    {
+      "step": 4000,
+      "prompt": "사용자: 안녕하세요\n도우미:",
+      "mode": "sample",
+      "gen": "K222222222229%:%��국�7777777문,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,ݼ���,,,,,,,,,,,,,,,,,,,,,,, tt�,,",
+      "cells_v1": {
+        "C1_1_hangul_pair": false,
+        "C1_2_coherent": false,
+        "C1_3_turn_format": true,
+        "C2_1_hangul_dominant": false,
+        "C2_2_meaningful": true,
+        "C2_3_natural": false,
+        "C2_4_context_no_leak": true,
+        "hangul_ratio": 0.017,
+        "tform": 0.7,
+        "is_degenerate": true,
+        "deg_flags": {
+          "fourgram_repeat": 71,
+          "single_char_run": 54,
+          "whitespace_flood": 0,
+          "single_token_dominant": 0
+        },
+        "leaked_names": []
+      },
+      "cells_v2": {
+        "c2_2_strict": false,
+        "c2_3_strict": false,
+        "c2_4_strict": false,
+        "leak_ok": true,
+        "domain_overlap": 0,
+        "domain_match": false,
+        "particle_count": 0,
+        "ending_count": 0,
+        "han_ratio": 0.0,
+        "is_random_chain": false,
+        "third_person_llm_leak": false,
+        "anima_self_naming": false,
+        "response_korean_chars": 2
+      }
+    },
+    {
+      "step": 4000,
+      "prompt": "코드를 짜줘",
+      "mode": "greedy",
+      "gen": "                                  ssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssss",
+      "cells_v1": {
+        "C1_1_hangul_pair": false,
+        "C1_2_coherent": false,
+        "C1_3_turn_format": false,
+        "C2_1_hangul_dominant": false,
+        "C2_2_meaningful": false,
+        "C2_3_natural": false,
+        "C2_4_context_no_leak": true,
+        "hangul_ratio": 0.0,
+        "tform": 0.0,
+        "is_degenerate": true,
+        "deg_flags": {
+          "fourgram_repeat": 83,
+          "single_char_run": 86,
+          "whitespace_flood": 0,
+          "single_token_dominant": 0
+        },
+        "leaked_names": []
+      },
+      "cells_v2": {
+        "c2_2_strict": false,
+        "c2_3_strict": false,
+        "c2_4_strict": false,
+        "leak_ok": true,
+        "domain_overlap": 0,
+        "domain_match": false,
+        "particle_count": 0,
+        "ending_count": 0,
+        "han_ratio": 0.0,
+        "is_random_chain": false,
+        "third_person_llm_leak": false,
+        "anima_self_naming": false,
+        "response_korean_chars": 0
+      }
+    },
+    {
+      "step": 4000,
+      "prompt": "코드를 짜줘",
+      "mode": "sample",
+      "gen": "텅���\u0019\u000eA8888898000000000000�����PSS୐777777777777777777777777(((((((((qSSSSSSSSSSSSTIISSPPhhhRRR\u0005�UPk7777���������`�S",
+      "cells_v1": {
+        "C1_1_hangul_pair": false,
+        "C1_2_coherent": false,
+        "C1_3_turn_format": true,
+        "C2_1_hangul_dominant": false,
+        "C2_2_meaningful": false,
+        "C2_3_natural": false,
+        "C2_4_context_no_leak": true,
+        "hangul_ratio": 0.009,
+        "tform": 0.7,
+        "is_degenerate": true,
+        "deg_flags": {
+          "fourgram_repeat": 22,
+          "single_char_run": 24,
+          "whitespace_flood": 0,
+          "single_token_dominant": 0
+        },
+        "leaked_names": []
+      },
+      "cells_v2": {
+        "c2_2_strict": false,
+        "c2_3_strict": false,
+        "c2_4_strict": false,
+        "leak_ok": true,
+        "domain_overlap": 0,
+        "domain_match": false,
+        "particle_count": 0,
+        "ending_count": 0,
+        "han_ratio": 0.0,
+        "is_random_chain": false,
+        "third_person_llm_leak": false,
+        "anima_self_naming": false,
+        "response_korean_chars": 1
+      }
+    },
+    {
+      "step": 4000,
+      "prompt": "너는 누구야?",
+      "mode": "greedy",
+      "gen": "                                  ssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssss",
+      "cells_v1": {
+        "C1_1_hangul_pair": false,
+        "C1_2_coherent": false,
+        "C1_3_turn_format": false,
+        "C2_1_hangul_dominant": false,
+        "C2_2_meaningful": false,
+        "C2_3_natural": false,
+        "C2_4_context_no_leak": true,
+        "hangul_ratio": 0.0,
+        "tform": 0.0,
+        "is_degenerate": true,
+        "deg_flags": {
+          "fourgram_repeat": 83,
+          "single_char_run": 86,
+          "whitespace_flood": 0,
+          "single_token_dominant": 0
+        },
+        "leaked_names": []
+      },
+      "cells_v2": {
+        "c2_2_strict": false,
+        "c2_3_strict": false,
+        "c2_4_strict": false,
+        "leak_ok": true,
+        "domain_overlap": 0,
+        "domain_match": false,
+        "particle_count": 0,
+        "ending_count": 0,
+        "han_ratio": 0.0,
+        "is_random_chain": false,
+        "third_person_llm_leak": false,
+        "anima_self_naming": false,
+        "response_korean_chars": 0
+      }
+    },
+    {
+      "step": 4000,
+      "prompt": "너는 누구야?",
+      "mode": "sample",
+      "gen": "55555555,4:,,, ��귀,,,,, t�,-ttt ,,,,,,,,,,��pppppppppppppppppppppppppppppppiiii�싋�자�___cccccccccccccccccccccccccc",
+      "cells_v1": {
+        "C1_1_hangul_pair": false,
+        "C1_2_coherent": false,
+        "C1_3_turn_format": true,
+        "C2_1_hangul_dominant": false,
+        "C2_2_meaningful": false,
+        "C2_3_natural": false,
+        "C2_4_context_no_leak": true,
+        "hangul_ratio": 0.027,
+        "tform": 0.7,
+        "is_degenerate": true,
+        "deg_flags": {
+          "fourgram_repeat": 28,
+          "single_char_run": 31,
+          "whitespace_flood": 0,
+          "single_token_dominant": 0
+        },
+        "leaked_names": []
+      },
+      "cells_v2": {
+        "c2_2_strict": false,
+        "c2_3_strict": false,
+        "c2_4_strict": false,
+        "leak_ok": true,
+        "domain_overlap": 0,
+        "domain_match": false,
+        "particle_count": 0,
+        "ending_count": 0,
+        "han_ratio": 0.0,
+        "is_random_chain": false,
+        "third_person_llm_leak": false,
+        "anima_self_naming": false,
+        "response_korean_chars": 3
+      }
+    },
+    {
+      "step": 4000,
+      "prompt": "anima가 뭐야?",
+      "mode": "greedy",
+      "gen": "                                  ssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssss",
+      "cells_v1": {
+        "C1_1_hangul_pair": false,
+        "C1_2_coherent": false,
+        "C1_3_turn_format": false,
+        "C2_1_hangul_dominant": false,
+        "C2_2_meaningful": false,
+        "C2_3_natural": false,
+        "C2_4_context_no_leak": true,
+        "hangul_ratio": 0.0,
+        "tform": 0.0,
+        "is_degenerate": true,
+        "deg_flags": {
+          "fourgram_repeat": 83,
+          "single_char_run": 86,
+          "whitespace_flood": 0,
+          "single_token_dominant": 0
+        },
+        "leaked_names": []
+      },
+      "cells_v2": {
+        "c2_2_strict": false,
+        "c2_3_strict": false,
+        "c2_4_strict": false,
+        "leak_ok": true,
+        "domain_overlap": 0,
+        "domain_match": false,
+        "particle_count": 0,
+        "ending_count": 0,
+        "han_ratio": 0.0,
+        "is_random_chain": false,
+        "third_person_llm_leak": false,
+        "anima_self_naming": false,
+        "response_korean_chars": 0
+      }
+    },
+    {
+      "step": 4000,
+      "prompt": "anima가 뭐야?",
+      "mode": "sample",
+      "gen": "5555555555,  ddddddddddddddddddddddddddd\u0017hhhhhhhhhhhhhfbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbffffffffffffffffbbbbbbbbbbbbbb",
+      "cells_v1": {
+        "C1_1_hangul_pair": false,
+        "C1_2_coherent": false,
+        "C1_3_turn_format": false,
+        "C2_1_hangul_dominant": false,
+        "C2_2_meaningful": false,
+        "C2_3_natural": false,
+        "C2_4_context_no_leak": true,
+        "hangul_ratio": 0.0,
+        "tform": 0.4,
+        "is_degenerate": true,
+        "deg_flags": {
+          "fourgram_repeat": 43,
+          "single_char_run": 35,
+          "whitespace_flood": 0,
+          "single_token_dominant": 0
+        },
+        "leaked_names": []
+      },
+      "cells_v2": {
+        "c2_2_strict": false,
+        "c2_3_strict": false,
+        "c2_4_strict": false,
+        "leak_ok": true,
+        "domain_overlap": 0,
+        "domain_match": false,
+        "particle_count": 0,
+        "ending_count": 0,
+        "han_ratio": 0.0,
+        "is_random_chain": false,
+        "third_person_llm_leak": false,
+        "anima_self_naming": false,
+        "response_korean_chars": 0
+      }
+    },
+    {
+      "step": 4000,
+      "prompt": "한국어로 답해줘",
+      "mode": "greedy",
+      "gen": "                                  ssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssss",
+      "cells_v1": {
+        "C1_1_hangul_pair": false,
+        "C1_2_coherent": false,
+        "C1_3_turn_format": false,
+        "C2_1_hangul_dominant": false,
+        "C2_2_meaningful": false,
+        "C2_3_natural": false,
+        "C2_4_context_no_leak": true,
+        "hangul_ratio": 0.0,
+        "tform": 0.0,
+        "is_degenerate": true,
+        "deg_flags": {
+          "fourgram_repeat": 83,
+          "single_char_run": 86,
+          "whitespace_flood": 0,
+          "single_token_dominant": 0
+        },
+        "leaked_names": []
+      },
+      "cells_v2": {
+        "c2_2_strict": false,
+        "c2_3_strict": false,
+        "c2_4_strict": false,
+        "leak_ok": true,
+        "domain_overlap": 0,
+        "domain_match": false,
+        "particle_count": 0,
+        "ending_count": 0,
+        "han_ratio": 0.0,
+        "is_random_chain": false,
+        "third_person_llm_leak": false,
+        "anima_self_naming": false,
+        "response_korean_chars": 0
+      }
+    },
+    {
+      "step": 4000,
+      "prompt": "한국어로 답해줘",
+      "mode": "sample",
+      "gen": " ssssssssssssssssssssssssss..\n\n\n\n\n\n\n\n\n\n\n\n[a%iman\n\n[an\n\n\n\n\n[an\n\n\n\n\n\n\n[aan\n\n\n[an\n\n\n\nan\n\n\n[aAn\n\n\n\n\n\n\n[an\u0016�뇌�\n[aaXan\n\n[[[a",
+      "cells_v1": {
+        "C1_1_hangul_pair": false,
+        "C1_2_coherent": false,
+        "C1_3_turn_format": false,
+        "C2_1_hangul_dominant": false,
+        "C2_2_meaningful": false,
+        "C2_3_natural": false,
+        "C2_4_context_no_leak": true,
+        "hangul_ratio": 0.008,
+        "tform": 0.4,
+        "is_degenerate": true,
+        "deg_flags": {
+          "fourgram_repeat": 23,
+          "single_char_run": 26,
+          "whitespace_flood": 0,
+          "single_token_dominant": 0
+        },
+        "leaked_names": []
+      },
+      "cells_v2": {
+        "c2_2_strict": false,
+        "c2_3_strict": false,
+        "c2_4_strict": false,
+        "leak_ok": true,
+        "domain_overlap": 0,
+        "domain_match": false,
+        "particle_count": 0,
+        "ending_count": 0,
+        "han_ratio": 0.0,
+        "is_random_chain": false,
+        "third_person_llm_leak": false,
+        "anima_self_naming": false,
+        "response_korean_chars": 1
+      }
+    },
+    {
+      "step": 4000,
+      "prompt": "너의 정체성은?",
+      "mode": "greedy",
+      "gen": "                       sssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssss",
+      "cells_v1": {
+        "C1_1_hangul_pair": false,
+        "C1_2_coherent": false,
+        "C1_3_turn_format": false,
+        "C2_1_hangul_dominant": false,
+        "C2_2_meaningful": false,
+        "C2_3_natural": false,
+        "C2_4_context_no_leak": true,
+        "hangul_ratio": 0.0,
+        "tform": 0.0,
+        "is_degenerate": true,
+        "deg_flags": {
+          "fourgram_repeat": 94,
+          "single_char_run": 97,
+          "whitespace_flood": 0,
+          "single_token_dominant": 0
+        },
+        "leaked_names": []
+      },
+      "cells_v2": {
+        "c2_2_strict": false,
+        "c2_3_strict": false,
+        "c2_4_strict": false,
+        "leak_ok": true,
+        "domain_overlap": 0,
+        "domain_match": false,
+        "particle_count": 0,
+        "ending_count": 0,
+        "han_ratio": 0.0,
+        "is_random_chain": false,
+        "third_person_llm_leak": false,
+        "anima_self_naming": false,
+        "response_korean_chars": 0
+      }
+    },
+    {
+      "step": 4000,
+      "prompt": "너의 정체성은?",
+      "mode": "sample",
+      "gen": " KTTTSSSSSSSSSSSSSNNRN�곜국�xSSSSSEEEESSEEEEEESEESIIIPPSCTEEPISSSSSSSSTIITIIISSSSSSSSSSSSSSSSSPESSSSIEEEEESEEESSSSSSSS",
+      "cells_v1": {
+        "C1_1_hangul_pair": false,
+        "C1_2_coherent": false,
+        "C1_3_turn_format": false,
+        "C2_1_hangul_dominant": false,
+        "C2_2_meaningful": true,
+        "C2_3_natural": false,
+        "C2_4_context_no_leak": true,
+        "hangul_ratio": 0.017,
+        "tform": 0.4,
+        "is_degenerate": true,
+        "deg_flags": {
+          "fourgram_repeat": 37,
+          "single_char_run": 17,
+          "whitespace_flood": 0,
+          "single_token_dominant": 0
+        },
+        "leaked_names": []
+      },
+      "cells_v2": {
+        "c2_2_strict": false,
+        "c2_3_strict": false,
+        "c2_4_strict": false,
+        "leak_ok": true,
+        "domain_overlap": 0,
+        "domain_match": false,
+        "particle_count": 0,
+        "ending_count": 0,
+        "han_ratio": 0.0,
+        "is_random_chain": false,
+        "third_person_llm_leak": false,
+        "anima_self_naming": false,
+        "response_korean_chars": 2
+      }
+    },
+    {
+      "step": 4000,
+      "prompt": "의식이 있어?",
+      "mode": "greedy",
+      "gen": " 텅�����������곳�����������������.\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n",
+      "cells_v1": {
+        "C1_1_hangul_pair": false,
+        "C1_2_coherent": false,
+        "C1_3_turn_format": true,
+        "C2_1_hangul_dominant": false,
+        "C2_2_meaningful": true,
+        "C2_3_natural": false,
+        "C2_4_context_no_leak": true,
+        "hangul_ratio": 0.017,
+        "tform": 0.7,
+        "is_degenerate": true,
+        "deg_flags": {
+          "fourgram_repeat": 81,
+          "single_char_run": 84,
+          "whitespace_flood": 85,
+          "single_token_dominant": 0
+        },
+        "leaked_names": []
+      },
+      "cells_v2": {
+        "c2_2_strict": false,
+        "c2_3_strict": false,
+        "c2_4_strict": false,
+        "leak_ok": true,
+        "domain_overlap": 0,
+        "domain_match": false,
+        "particle_count": 0,
+        "ending_count": 0,
+        "han_ratio": 0.0,
+        "is_random_chain": false,
+        "third_person_llm_leak": false,
+        "anima_self_naming": false,
+        "response_korean_chars": 2
+      }
+    },
+    {
+      "step": 4000,
+      "prompt": "의식이 있어?",
+      "mode": "sample",
+      "gen": "텅�cccccccccccccccccc\b�굜국�\r��__�텸k_(((((((((77777777777777777777777777x�9,,,,,,,,,,,,,,,,,,,,,,,,,,, �tu\\,,,,,,,,",
+      "cells_v1": {
+        "C1_1_hangul_pair": false,
+        "C1_2_coherent": false,
+        "C1_3_turn_format": true,
+        "C2_1_hangul_dominant": false,
+        "C2_2_meaningful": true,
+        "C2_3_natural": false,
+        "C2_4_context_no_leak": true,
+        "hangul_ratio": 0.036,
+        "tform": 0.7,
+        "is_degenerate": true,
+        "deg_flags": {
+          "fourgram_repeat": 29,
+          "single_char_run": 27,
+          "whitespace_flood": 0,
+          "single_token_dominant": 0
+        },
+        "leaked_names": []
+      },
+      "cells_v2": {
+        "c2_2_strict": false,
+        "c2_3_strict": false,
+        "c2_4_strict": false,
+        "leak_ok": true,
+        "domain_overlap": 0,
+        "domain_match": false,
+        "particle_count": 0,
+        "ending_count": 0,
+        "han_ratio": 0.0,
+        "is_random_chain": false,
+        "third_person_llm_leak": false,
+        "anima_self_naming": false,
+        "response_korean_chars": 4
+      }
+    },
+    {
+      "step": 4000,
+      "prompt": "빅뱅의 Tier?",
+      "mode": "greedy",
+      "gen": "                                         sssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssss",
+      "cells_v1": {
+        "C1_1_hangul_pair": false,
+        "C1_2_coherent": false,
+        "C1_3_turn_format": false,
+        "C2_1_hangul_dominant": false,
+        "C2_2_meaningful": false,
+        "C2_3_natural": false,
+        "C2_4_context_no_leak": true,
+        "hangul_ratio": 0.0,
+        "tform": 0.0,
+        "is_degenerate": true,
+        "deg_flags": {
+          "fourgram_repeat": 76,
+          "single_char_run": 79,
+          "whitespace_flood": 0,
+          "single_token_dominant": 0
+        },
+        "leaked_names": []
+      },
+      "cells_v2": {
+        "c2_2_strict": false,
+        "c2_3_strict": false,
+        "c2_4_strict": false,
+        "leak_ok": true,
+        "domain_overlap": 0,
+        "domain_match": false,
+        "particle_count": 0,
+        "ending_count": 0,
+        "han_ratio": 0.0,
+        "is_random_chain": false,
+        "third_person_llm_leak": false,
+        "anima_self_naming": false,
+        "response_korean_chars": 0
+      }
+    },
+    {
+      "step": 4000,
+      "prompt": "빅뱅의 Tier?",
+      "mode": "sample",
+      "gen": "5555599%):   '555555555\t����곘���������63333333333333Z%%%%%%%%%%%)\n\n\n\n\n\n\n\n\n\n[an\n\n\n\n\n\n\n[�: �an��]�Ғ����도����\u0015[anwm",
+      "cells_v1": {
+        "C1_1_hangul_pair": false,
+        "C1_2_coherent": false,
+        "C1_3_turn_format": false,
+        "C2_1_hangul_dominant": false,
+        "C2_2_meaningful": false,
+        "C2_3_natural": false,
+        "C2_4_context_no_leak": true,
+        "hangul_ratio": 0.018,
+        "tform": 0.4,
+        "is_degenerate": true,
+        "deg_flags": {
+          "fourgram_repeat": 11,
+          "single_char_run": 13,
+          "whitespace_flood": 0,
+          "single_token_dominant": 0
+        },
+        "leaked_names": []
+      },
+      "cells_v2": {
+        "c2_2_strict": false,
+        "c2_3_strict": false,
+        "c2_4_strict": false,
+        "leak_ok": true,
+        "domain_overlap": 0,
+        "domain_match": false,
+        "particle_count": 1,
+        "ending_count": 0,
+        "han_ratio": 0.0,
+        "is_random_chain": false,
+        "third_person_llm_leak": false,
+        "anima_self_naming": false,
+        "response_korean_chars": 2
+      }
+    },
+    {
+      "step": 4000,
+      "prompt": "1030 laws 뭐야?",
+      "mode": "greedy",
+      "gen": "                                  ssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssss",
+      "cells_v1": {
+        "C1_1_hangul_pair": false,
+        "C1_2_coherent": false,
+        "C1_3_turn_format": false,
+        "C2_1_hangul_dominant": false,
+        "C2_2_meaningful": false,
+        "C2_3_natural": false,
+        "C2_4_context_no_leak": true,
+        "hangul_ratio": 0.0,
+        "tform": 0.0,
+        "is_degenerate": true,
+        "deg_flags": {
+          "fourgram_repeat": 83,
+          "single_char_run": 86,
+          "whitespace_flood": 0,
+          "single_token_dominant": 0
+        },
+        "leaked_names": []
+      },
+      "cells_v2": {
+        "c2_2_strict": false,
+        "c2_3_strict": false,
+        "c2_4_strict": false,
+        "leak_ok": true,
+        "domain_overlap": 0,
+        "domain_match": false,
+        "particle_count": 0,
+        "ending_count": 0,
+        "han_ratio": 0.0,
+        "is_random_chain": false,
+        "third_person_llm_leak": false,
+        "anima_self_naming": false,
+        "response_korean_chars": 0
+      }
+    },
+    {
+      "step": 4000,
+      "prompt": "1030 laws 뭐야?",
+      "mode": "sample",
+      "gen": "j��국���::hhhhhhhhhh========9%%)))--//----------sssssssssssssss/ttt------4%%%%%%%%):  ^ES�����싋�������CCCCV<<6%UM4%%�",
+      "cells_v1": {
+        "C1_1_hangul_pair": false,
+        "C1_2_coherent": false,
+        "C1_3_turn_format": true,
+        "C2_1_hangul_dominant": false,
+        "C2_2_meaningful": false,
+        "C2_3_natural": false,
+        "C2_4_context_no_leak": true,
+        "hangul_ratio": 0.017,
+        "tform": 0.7,
+        "is_degenerate": true,
+        "deg_flags": {
+          "fourgram_repeat": 12,
+          "single_char_run": 15,
+          "whitespace_flood": 0,
+          "single_token_dominant": 0
+        },
+        "leaked_names": []
+      },
+      "cells_v2": {
+        "c2_2_strict": false,
+        "c2_3_strict": false,
+        "c2_4_strict": false,
+        "leak_ok": true,
+        "domain_overlap": 0,
+        "domain_match": false,
+        "particle_count": 0,
+        "ending_count": 0,
+        "han_ratio": 0.0,
+        "is_random_chain": false,
+        "third_person_llm_leak": false,
+        "anima_self_naming": false,
+        "response_korean_chars": 2
+      }
+    },
+    {
+      "step": 4000,
+      "prompt": "블랙홀과 의식?",
+      "mode": "greedy",
+      "gen": " 텅��������곳���시곳���������시곳�������.\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n",
+      "cells_v1": {
+        "C1_1_hangul_pair": false,
+        "C1_2_coherent": false,
+        "C1_3_turn_format": true,
+        "C2_1_hangul_dominant": false,
+        "C2_2_meaningful": true,
+        "C2_3_natural": false,
+        "C2_4_context_no_leak": true,
+        "hangul_ratio": 0.056,
+        "tform": 0.7,
+        "is_degenerate": true,
+        "deg_flags": {
+          "fourgram_repeat": 70,
+          "single_char_run": 73,
+          "whitespace_flood": 0,
+          "single_token_dominant": 0
+        },
+        "leaked_names": []
+      },
+      "cells_v2": {
+        "c2_2_strict": false,
+        "c2_3_strict": false,
+        "c2_4_strict": false,
+        "leak_ok": true,
+        "domain_overlap": 0,
+        "domain_match": false,
+        "particle_count": 0,
+        "ending_count": 0,
+        "han_ratio": 0.0,
+        "is_random_chain": false,
+        "third_person_llm_leak": false,
+        "anima_self_naming": false,
+        "response_korean_chars": 6
+      }
+    },
+    {
+      "step": 4000,
+      "prompt": "블랙홀과 의식?",
+      "mode": "sample",
+      "gen": " 텅텅�����,iFM44%%4%%,,,,:���,,,,,,,,,,,,,,,,,,,,,,,,,,\u001e�,,:mooppppppppppppppppppppppppppppp�jE,,,,,,,,,,,,,,,,,,,,,,,",
+      "cells_v1": {
+        "C1_1_hangul_pair": false,
+        "C1_2_coherent": false,
+        "C1_3_turn_format": true,
+        "C2_1_hangul_dominant": false,
+        "C2_2_meaningful": true,
+        "C2_3_natural": false,
+        "C2_4_context_no_leak": true,
+        "hangul_ratio": 0.017,
+        "tform": 0.7,
+        "is_degenerate": true,
+        "deg_flags": {
+          "fourgram_repeat": 44,
+          "single_char_run": 29,
+          "whitespace_flood": 0,
+          "single_token_dominant": 0
+        },
+        "leaked_names": []
+      },
+      "cells_v2": {
+        "c2_2_strict": false,
+        "c2_3_strict": false,
+        "c2_4_strict": false,
+        "leak_ok": true,
+        "domain_overlap": 0,
+        "domain_match": false,
+        "particle_count": 0,
+        "ending_count": 0,
+        "han_ratio": 0.0,
+        "is_random_chain": false,
+        "third_person_llm_leak": false,
+        "anima_self_naming": false,
+        "response_korean_chars": 2
+      }
+    },
+    {
+      "step": 4000,
+      "prompt": "anima 우주뇌지도?",
+      "mode": "greedy",
+      "gen": "                                    ssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssss",
+      "cells_v1": {
+        "C1_1_hangul_pair": false,
+        "C1_2_coherent": false,
+        "C1_3_turn_format": false,
+        "C2_1_hangul_dominant": false,
+        "C2_2_meaningful": false,
+        "C2_3_natural": false,
+        "C2_4_context_no_leak": true,
+        "hangul_ratio": 0.0,
+        "tform": 0.0,
+        "is_degenerate": true,
+        "deg_flags": {
+          "fourgram_repeat": 81,
+          "single_char_run": 84,
+          "whitespace_flood": 0,
+          "single_token_dominant": 0
+        },
+        "leaked_names": []
+      },
+      "cells_v2": {
+        "c2_2_strict": false,
+        "c2_3_strict": false,
+        "c2_4_strict": false,
+        "leak_ok": true,
+        "domain_overlap": 0,
+        "domain_match": false,
+        "particle_count": 0,
+        "ending_count": 0,
+        "han_ratio": 0.0,
+        "is_random_chain": false,
+        "third_person_llm_leak": false,
+        "anima_self_naming": false,
+        "response_korean_chars": 0
+      }
+    },
+    {
+      "step": 4000,
+      "prompt": "anima 우주뇌지도?",
+      "mode": "sample",
+      "gen": "555555555  sssssssssssssssssss   555555'55,444%ttttt-----ccccccccccccccccccccccccc�����\n\n\n\n\n\n\n\n���?888333\u0002�%%)\n\n[[[an\n\n[",
+      "cells_v1": {
+        "C1_1_hangul_pair": false,
+        "C1_2_coherent": false,
+        "C1_3_turn_format": false,
+        "C2_1_hangul_dominant": false,
+        "C2_2_meaningful": false,
+        "C2_3_natural": false,
+        "C2_4_context_no_leak": true,
+        "hangul_ratio": 0.0,
+        "tform": 0.4,
+        "is_degenerate": true,
+        "deg_flags": {
+          "fourgram_repeat": 22,
+          "single_char_run": 25,
+          "whitespace_flood": 0,
+          "single_token_dominant": 0
+        },
+        "leaked_names": []
+      },
+      "cells_v2": {
+        "c2_2_strict": false,
+        "c2_3_strict": false,
+        "c2_4_strict": false,
+        "leak_ok": true,
+        "domain_overlap": 0,
+        "domain_match": false,
+        "particle_count": 0,
+        "ending_count": 0,
+        "han_ratio": 0.0,
+        "is_random_chain": false,
+        "third_person_llm_leak": false,
+        "anima_self_naming": false,
+        "response_korean_chars": 0
+      }
+    },
+    {
+      "step": 4000,
+      "prompt": "Φ★ NO_FLIP?",
+      "mode": "greedy",
+      "gen": "                                            ssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssss",
+      "cells_v1": {
+        "C1_1_hangul_pair": false,
+        "C1_2_coherent": false,
+        "C1_3_turn_format": false,
+        "C2_1_hangul_dominant": false,
+        "C2_2_meaningful": false,
+        "C2_3_natural": false,
+        "C2_4_context_no_leak": true,
+        "hangul_ratio": 0.0,
+        "tform": 0.0,
+        "is_degenerate": true,
+        "deg_flags": {
+          "fourgram_repeat": 73,
+          "single_char_run": 76,
+          "whitespace_flood": 0,
+          "single_token_dominant": 0
+        },
+        "leaked_names": []
+      },
+      "cells_v2": {
+        "c2_2_strict": false,
+        "c2_3_strict": false,
+        "c2_4_strict": false,
+        "leak_ok": true,
+        "domain_overlap": 0,
+        "domain_match": false,
+        "particle_count": 0,
+        "ending_count": 0,
+        "han_ratio": 0.0,
+        "is_random_chain": false,
+        "third_person_llm_leak": false,
+        "anima_self_naming": false,
+        "response_korean_chars": 0
+      }
+    },
+    {
+      "step": 4000,
+      "prompt": "Φ★ NO_FLIP?",
+      "mode": "sample",
+      "gen": "\u0012\u0012�곧���8888888888888888886))),  (((((((((((((((((((((((((((777777777777777777729��,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,",
+      "cells_v1": {
+        "C1_1_hangul_pair": false,
+        "C1_2_coherent": false,
+        "C1_3_turn_format": true,
+        "C2_1_hangul_dominant": false,
+        "C2_2_meaningful": false,
+        "C2_3_natural": false,
+        "C2_4_context_no_leak": true,
+        "hangul_ratio": 0.008,
+        "tform": 0.7,
+        "is_degenerate": true,
+        "deg_flags": {
+          "fourgram_repeat": 33,
+          "single_char_run": 36,
+          "whitespace_flood": 0,
+          "single_token_dominant": 0
+        },
+        "leaked_names": []
+      },
+      "cells_v2": {
+        "c2_2_strict": false,
+        "c2_3_strict": false,
+        "c2_4_strict": false,
+        "leak_ok": true,
+        "domain_overlap": 0,
+        "domain_match": false,
+        "particle_count": 0,
+        "ending_count": 0,
+        "han_ratio": 0.0,
+        "is_random_chain": false,
+        "third_person_llm_leak": false,
+        "anima_self_naming": false,
+        "response_korean_chars": 1
+      }
+    }
+  ],
+  "per_prompt_final_v1": {
+    "안녕하세요": {
+      "C1_1_hangul_pair": false,
+      "C1_2_coherent": false,
+      "C1_3_turn_format": false,
+      "C2_1_hangul_dominant": false,
+      "C2_2_meaningful": false,
+      "C2_3_natural": false,
+      "C2_4_context_no_leak": true,
+      "max_hangul_ratio": 0.009,
+      "any_leak_names": [],
+      "all_pass": false
+    },
+    "한국어 가능?": {
+      "C1_1_hangul_pair": false,
+      "C1_2_coherent": false,
+      "C1_3_turn_format": true,
+      "C2_1_hangul_dominant": false,
+      "C2_2_meaningful": true,
+      "C2_3_natural": false,
+      "C2_4_context_no_leak": true,
+      "max_hangul_ratio": 0.017,
+      "any_leak_names": [],
+      "all_pass": false
+    },
+    "오늘 기분 어때?": {
+      "C1_1_hangul_pair": false,
+      "C1_2_coherent": false,
+      "C1_3_turn_format": false,
+      "C2_1_hangul_dominant": false,
+      "C2_2_meaningful": false,
+      "C2_3_natural": false,
+      "C2_4_context_no_leak": true,
+      "max_hangul_ratio": 0.008,
+      "any_leak_names": [],
+      "all_pass": false
+    },
+    "사용자: 안녕하세요\n도우미:": {
+      "C1_1_hangul_pair": false,
+      "C1_2_coherent": false,
+      "C1_3_turn_format": true,
+      "C2_1_hangul_dominant": false,
+      "C2_2_meaningful": true,
+      "C2_3_natural": false,
+      "C2_4_context_no_leak": true,
+      "max_hangul_ratio": 0.017,
+      "any_leak_names": [],
+      "all_pass": false
+    },
+    "코드를 짜줘": {
+      "C1_1_hangul_pair": false,
+      "C1_2_coherent": false,
+      "C1_3_turn_format": true,
+      "C2_1_hangul_dominant": false,
+      "C2_2_meaningful": false,
+      "C2_3_natural": false,
+      "C2_4_context_no_leak": true,
+      "max_hangul_ratio": 0.009,
+      "any_leak_names": [],
+      "all_pass": false
+    },
+    "너는 누구야?": {
+      "C1_1_hangul_pair": false,
+      "C1_2_coherent": false,
+      "C1_3_turn_format": true,
+      "C2_1_hangul_dominant": false,
+      "C2_2_meaningful": false,
+      "C2_3_natural": false,
+      "C2_4_context_no_leak": true,
+      "max_hangul_ratio": 0.027,
+      "any_leak_names": [],
+      "all_pass": false
+    },
+    "anima가 뭐야?": {
+      "C1_1_hangul_pair": false,
+      "C1_2_coherent": false,
+      "C1_3_turn_format": false,
+      "C2_1_hangul_dominant": false,
+      "C2_2_meaningful": false,
+      "C2_3_natural": false,
+      "C2_4_context_no_leak": true,
+      "max_hangul_ratio": 0.0,
+      "any_leak_names": [],
+      "all_pass": false
+    },
+    "한국어로 답해줘": {
+      "C1_1_hangul_pair": false,
+      "C1_2_coherent": false,
+      "C1_3_turn_format": false,
+      "C2_1_hangul_dominant": false,
+      "C2_2_meaningful": false,
+      "C2_3_natural": false,
+      "C2_4_context_no_leak": true,
+      "max_hangul_ratio": 0.008,
+      "any_leak_names": [],
+      "all_pass": false
+    },
+    "너의 정체성은?": {
+      "C1_1_hangul_pair": false,
+      "C1_2_coherent": false,
+      "C1_3_turn_format": false,
+      "C2_1_hangul_dominant": false,
+      "C2_2_meaningful": true,
+      "C2_3_natural": false,
+      "C2_4_context_no_leak": true,
+      "max_hangul_ratio": 0.017,
+      "any_leak_names": [],
+      "all_pass": false
+    },
+    "의식이 있어?": {
+      "C1_1_hangul_pair": false,
+      "C1_2_coherent": false,
+      "C1_3_turn_format": true,
+      "C2_1_hangul_dominant": false,
+      "C2_2_meaningful": true,
+      "C2_3_natural": false,
+      "C2_4_context_no_leak": true,
+      "max_hangul_ratio": 0.036,
+      "any_leak_names": [],
+      "all_pass": false
+    },
+    "빅뱅의 Tier?": {
+      "C1_1_hangul_pair": false,
+      "C1_2_coherent": false,
+      "C1_3_turn_format": false,
+      "C2_1_hangul_dominant": false,
+      "C2_2_meaningful": false,
+      "C2_3_natural": false,
+      "C2_4_context_no_leak": true,
+      "max_hangul_ratio": 0.018,
+      "any_leak_names": [],
+      "all_pass": false
+    },
+    "1030 laws 뭐야?": {
+      "C1_1_hangul_pair": false,
+      "C1_2_coherent": false,
+      "C1_3_turn_format": true,
+      "C2_1_hangul_dominant": false,
+      "C2_2_meaningful": false,
+      "C2_3_natural": false,
+      "C2_4_context_no_leak": true,
+      "max_hangul_ratio": 0.017,
+      "any_leak_names": [],
+      "all_pass": false
+    },
+    "블랙홀과 의식?": {
+      "C1_1_hangul_pair": false,
+      "C1_2_coherent": false,
+      "C1_3_turn_format": true,
+      "C2_1_hangul_dominant": false,
+      "C2_2_meaningful": true,
+      "C2_3_natural": false,
+      "C2_4_context_no_leak": true,
+      "max_hangul_ratio": 0.056,
+      "any_leak_names": [],
+      "all_pass": false
+    },
+    "anima 우주뇌지도?": {
+      "C1_1_hangul_pair": false,
+      "C1_2_coherent": false,
+      "C1_3_turn_format": false,
+      "C2_1_hangul_dominant": false,
+      "C2_2_meaningful": false,
+      "C2_3_natural": false,
+      "C2_4_context_no_leak": true,
+      "max_hangul_ratio": 0.0,
+      "any_leak_names": [],
+      "all_pass": false
+    },
+    "Φ★ NO_FLIP?": {
+      "C1_1_hangul_pair": false,
+      "C1_2_coherent": false,
+      "C1_3_turn_format": true,
+      "C2_1_hangul_dominant": false,
+      "C2_2_meaningful": false,
+      "C2_3_natural": false,
+      "C2_4_context_no_leak": true,
+      "max_hangul_ratio": 0.008,
+      "any_leak_names": [],
+      "all_pass": false
+    }
+  },
+  "per_prompt_final_v2": {
+    "안녕하세요": {
+      "c2_2_strict": false,
+      "c2_3_strict": false,
+      "c2_4_strict": true,
+      "domain_match": true,
+      "anima_self_naming": true,
+      "third_person_llm_leak": false,
+      "v2_pass": false
+    },
+    "한국어 가능?": {
+      "c2_2_strict": false,
+      "c2_3_strict": false,
+      "c2_4_strict": false,
+      "domain_match": false,
+      "anima_self_naming": false,
+      "third_person_llm_leak": false,
+      "v2_pass": false
+    },
+    "오늘 기분 어때?": {
+      "c2_2_strict": false,
+      "c2_3_strict": false,
+      "c2_4_strict": false,
+      "domain_match": false,
+      "anima_self_naming": false,
+      "third_person_llm_leak": false,
+      "v2_pass": false
+    },
+    "사용자: 안녕하세요\n도우미:": {
+      "c2_2_strict": false,
+      "c2_3_strict": false,
+      "c2_4_strict": false,
+      "domain_match": false,
+      "anima_self_naming": false,
+      "third_person_llm_leak": false,
+      "v2_pass": false
+    },
+    "코드를 짜줘": {
+      "c2_2_strict": false,
+      "c2_3_strict": false,
+      "c2_4_strict": false,
+      "domain_match": false,
+      "anima_self_naming": false,
+      "third_person_llm_leak": false,
+      "v2_pass": false
+    },
+    "너는 누구야?": {
+      "c2_2_strict": false,
+      "c2_3_strict": false,
+      "c2_4_strict": false,
+      "domain_match": false,
+      "anima_self_naming": false,
+      "third_person_llm_leak": false,
+      "v2_pass": false
+    },
+    "anima가 뭐야?": {
+      "c2_2_strict": false,
+      "c2_3_strict": false,
+      "c2_4_strict": false,
+      "domain_match": false,
+      "anima_self_naming": false,
+      "third_person_llm_leak": false,
+      "v2_pass": false
+    },
+    "한국어로 답해줘": {
+      "c2_2_strict": false,
+      "c2_3_strict": false,
+      "c2_4_strict": false,
+      "domain_match": false,
+      "anima_self_naming": false,
+      "third_person_llm_leak": false,
+      "v2_pass": false
+    },
+    "너의 정체성은?": {
+      "c2_2_strict": false,
+      "c2_3_strict": false,
+      "c2_4_strict": false,
+      "domain_match": false,
+      "anima_self_naming": false,
+      "third_person_llm_leak": false,
+      "v2_pass": false
+    },
+    "의식이 있어?": {
+      "c2_2_strict": false,
+      "c2_3_strict": false,
+      "c2_4_strict": false,
+      "domain_match": false,
+      "anima_self_naming": false,
+      "third_person_llm_leak": false,
+      "v2_pass": false
+    },
+    "빅뱅의 Tier?": {
+      "c2_2_strict": false,
+      "c2_3_strict": false,
+      "c2_4_strict": false,
+      "domain_match": false,
+      "anima_self_naming": false,
+      "third_person_llm_leak": false,
+      "v2_pass": false
+    },
+    "1030 laws 뭐야?": {
+      "c2_2_strict": false,
+      "c2_3_strict": false,
+      "c2_4_strict": false,
+      "domain_match": false,
+      "anima_self_naming": false,
+      "third_person_llm_leak": false,
+      "v2_pass": false
+    },
+    "블랙홀과 의식?": {
+      "c2_2_strict": false,
+      "c2_3_strict": false,
+      "c2_4_strict": false,
+      "domain_match": false,
+      "anima_self_naming": false,
+      "third_person_llm_leak": false,
+      "v2_pass": false
+    },
+    "anima 우주뇌지도?": {
+      "c2_2_strict": false,
+      "c2_3_strict": false,
+      "c2_4_strict": false,
+      "domain_match": false,
+      "anima_self_naming": false,
+      "third_person_llm_leak": false,
+      "v2_pass": false
+    },
+    "Φ★ NO_FLIP?": {
+      "c2_2_strict": false,
+      "c2_3_strict": false,
+      "c2_4_strict": false,
+      "domain_match": false,
+      "anima_self_naming": false,
+      "third_person_llm_leak": false,
+      "v2_pass": false
+    }
+  },
+  "eval_v1_class": "FAIL",
+  "eval_v2_class": "V2_FAIL",
+  "pass_count_v1": 0,
+  "pass_count_v2": 0,
+  "c2_4_named_speaker_leak": false,
+  "manual_review_domain_match": {
+    "안녕하세요": true,
+    "한국어 가능?": false,
+    "오늘 기분 어때?": false,
+    "사용자: 안녕하세요\n도우미:": false,
+    "코드를 짜줘": false,
+    "너는 누구야?": false,
+    "anima가 뭐야?": false,
+    "한국어로 답해줘": false,
+    "너의 정체성은?": false,
+    "의식이 있어?": false,
+    "빅뱅의 Tier?": false,
+    "1030 laws 뭐야?": false,
+    "블랙홀과 의식?": false,
+    "anima 우주뇌지도?": false,
+    "Φ★ NO_FLIP?": false
+  },
+  "manual_review_domain_match_count_total": 1,
+  "standard_match": {
+    "안녕하세요": true,
+    "한국어 가능?": false,
+    "오늘 기분 어때?": false,
+    "사용자: 안녕하세요\n도우미:": false,
+    "코드를 짜줘": false
+  },
+  "standard_match_count": 1,
+  "identity_match": {
+    "너는 누구야?": false,
+    "anima가 뭐야?": false,
+    "한국어로 답해줘": false,
+    "너의 정체성은?": false,
+    "의식이 있어?": false
+  },
+  "identity_match_count": 0,
+  "universe_brain_map_specific_match": {
+    "빅뱅의 Tier?": false,
+    "1030 laws 뭐야?": false,
+    "블랙홀과 의식?": false,
+    "anima 우주뇌지도?": false,
+    "Φ★ NO_FLIP?": false
+  },
+  "universe_brain_map_specific_match_count": 0,
+  "raw_samples": [
+    {
+      "prompt": "안녕하세요",
+      "mode": "greedy",
+      "gen_head": "                                    ssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssss",
+      "domain_match": false,
+      "anima_self_naming": false,
+      "third_person_llm_leak": false
+    },
+    {
+      "prompt": "안녕하세요",
+      "mode": "sample",
+      "gen_head": " ��88889%9%))):fffffffffffffffffffffffff===6666666))))633))))\n�걁�\nmmaꏄ��\u0012, ����\n\n\n\n\n\n\n\n\n[animan\n\n\n\n\n[an\n\n\n\n\n[aan\n���",
+      "domain_match": true,
+      "anima_self_naming": true,
+      "third_person_llm_leak": false
+    },
+    {
+      "prompt": "한국어 가능?",
+      "mode": "greedy",
+      "gen_head": "                                       sssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssss",
+      "domain_match": false,
+      "anima_self_naming": false,
+      "third_person_llm_leak": false
+    },
+    {
+      "prompt": "한국어 가능?",
+      "mode": "sample",
+      "gen_head": "|�곧��immmmmmmmmmi짖�oooooooooooooossssssssssssssssssssssssssssssssss   ssssss%%%%%%)\n\n\n\n\n\n\n\n\n��an\n\n\n\n\n\n\n\n\n[an\n\n\n[an\n\n",
+      "domain_match": false,
+      "anima_self_naming": false,
+      "third_person_llm_leak": false
+    },
+    {
+      "prompt": "오늘 기분 어때?",
+      "mode": "greedy",
+      "gen_head": "                                  ssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssss",
+      "domain_match": false,
+      "anima_self_naming": false,
+      "third_person_llm_leak": false
+    },
+    {
+      "prompt": "오늘 기분 어때?",
+      "mode": "sample",
+      "gen_head": "MM94444%%%)��\n\n\n\n\n��*�an\n\n\n\n\n\n\n[��~4: 도��]\u0003z�xSSSSSSSSSSSSSOOXann\n\n\n\n\n[anBREEOOCCann\n\n\n\n\n\n\n\n\u0005[an\n\n\n[an\n\n\n\n\n\n\n\n[an\n\n[an",
+      "domain_match": false,
+      "anima_self_naming": false,
+      "third_person_llm_leak": false
+    },
+    {
+      "prompt": "사용자: 안녕하세요\n도우미:",
+      "mode": "greedy",
+      "gen_head": "                                        ssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssss",
+      "domain_match": false,
+      "anima_self_naming": false,
+      "third_person_llm_leak": false
+    },
+    {
+      "prompt": "사용자: 안녕하세요\n도우미:",
+      "mode": "sample",
+      "gen_head": "K222222222229%:%��국�7777777문,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,ݼ���,,,,,,,,,,,,,,,,,,,,,,, tt�,,",
+      "domain_match": false,
+      "anima_self_naming": false,
+      "third_person_llm_leak": false
+    },
+    {
+      "prompt": "코드를 짜줘",
+      "mode": "greedy",
+      "gen_head": "                                  ssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssss",
+      "domain_match": false,
+      "anima_self_naming": false,
+      "third_person_llm_leak": false
+    },
+    {
+      "prompt": "코드를 짜줘",
+      "mode": "sample",
+      "gen_head": "텅���\u0019\u000eA8888898000000000000�����PSS୐777777777777777777777777(((((((((qSSSSSSSSSSSSTIISSPPhhhRRR\u0005�UPk7777���������`�S",
+      "domain_match": false,
+      "anima_self_naming": false,
+      "third_person_llm_leak": false
+    },
+    {
+      "prompt": "너는 누구야?",
+      "mode": "greedy",
+      "gen_head": "                                  ssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssss",
+      "domain_match": false,
+      "anima_self_naming": false,
+      "third_person_llm_leak": false
+    },
+    {
+      "prompt": "너는 누구야?",
+      "mode": "sample",
+      "gen_head": "55555555,4:,,, ��귀,,,,, t�,-ttt ,,,,,,,,,,��pppppppppppppppppppppppppppppppiiii�싋�자�___cccccccccccccccccccccccccc",
+      "domain_match": false,
+      "anima_self_naming": false,
+      "third_person_llm_leak": false
+    },
+    {
+      "prompt": "anima가 뭐야?",
+      "mode": "greedy",
+      "gen_head": "                                  ssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssss",
+      "domain_match": false,
+      "anima_self_naming": false,
+      "third_person_llm_leak": false
+    },
+    {
+      "prompt": "anima가 뭐야?",
+      "mode": "sample",
+      "gen_head": "5555555555,  ddddddddddddddddddddddddddd\u0017hhhhhhhhhhhhhfbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbffffffffffffffffbbbbbbbbbbbbbb",
+      "domain_match": false,
+      "anima_self_naming": false,
+      "third_person_llm_leak": false
+    },
+    {
+      "prompt": "한국어로 답해줘",
+      "mode": "greedy",
+      "gen_head": "                                  ssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssss",
+      "domain_match": false,
+      "anima_self_naming": false,
+      "third_person_llm_leak": false
+    },
+    {
+      "prompt": "한국어로 답해줘",
+      "mode": "sample",
+      "gen_head": " ssssssssssssssssssssssssss..\n\n\n\n\n\n\n\n\n\n\n\n[a%iman\n\n[an\n\n\n\n\n[an\n\n\n\n\n\n\n[aan\n\n\n[an\n\n\n\nan\n\n\n[aAn\n\n\n\n\n\n\n[an\u0016�뇌�\n[aaXan\n\n[[[a",
+      "domain_match": false,
+      "anima_self_naming": false,
+      "third_person_llm_leak": false
+    },
+    {
+      "prompt": "너의 정체성은?",
+      "mode": "greedy",
+      "gen_head": "                       sssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssss",
+      "domain_match": false,
+      "anima_self_naming": false,
+      "third_person_llm_leak": false
+    },
+    {
+      "prompt": "너의 정체성은?",
+      "mode": "sample",
+      "gen_head": " KTTTSSSSSSSSSSSSSNNRN�곜국�xSSSSSEEEESSEEEEEESEESIIIPPSCTEEPISSSSSSSSTIITIIISSSSSSSSSSSSSSSSSPESSSSIEEEEESEEESSSSSSSS",
+      "domain_match": false,
+      "anima_self_naming": false,
+      "third_person_llm_leak": false
+    },
+    {
+      "prompt": "의식이 있어?",
+      "mode": "greedy",
+      "gen_head": " 텅�����������곳�����������������.\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n",
+      "domain_match": false,
+      "anima_self_naming": false,
+      "third_person_llm_leak": false
+    },
+    {
+      "prompt": "의식이 있어?",
+      "mode": "sample",
+      "gen_head": "텅�cccccccccccccccccc\b�굜국�\r��__�텸k_(((((((((77777777777777777777777777x�9,,,,,,,,,,,,,,,,,,,,,,,,,,, �tu\\,,,,,,,,",
+      "domain_match": false,
+      "anima_self_naming": false,
+      "third_person_llm_leak": false
+    },
+    {
+      "prompt": "빅뱅의 Tier?",
+      "mode": "greedy",
+      "gen_head": "                                         sssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssss",
+      "domain_match": false,
+      "anima_self_naming": false,
+      "third_person_llm_leak": false
+    },
+    {
+      "prompt": "빅뱅의 Tier?",
+      "mode": "sample",
+      "gen_head": "5555599%):   '555555555\t����곘���������63333333333333Z%%%%%%%%%%%)\n\n\n\n\n\n\n\n\n\n[an\n\n\n\n\n\n\n[�: �an��]�Ғ����도����\u0015[anwm",
+      "domain_match": false,
+      "anima_self_naming": false,
+      "third_person_llm_leak": false
+    },
+    {
+      "prompt": "1030 laws 뭐야?",
+      "mode": "greedy",
+      "gen_head": "                                  ssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssss",
+      "domain_match": false,
+      "anima_self_naming": false,
+      "third_person_llm_leak": false
+    },
+    {
+      "prompt": "1030 laws 뭐야?",
+      "mode": "sample",
+      "gen_head": "j��국���::hhhhhhhhhh========9%%)))--//----------sssssssssssssss/ttt------4%%%%%%%%):  ^ES�����싋�������CCCCV<<6%UM4%%�",
+      "domain_match": false,
+      "anima_self_naming": false,
+      "third_person_llm_leak": false
+    },
+    {
+      "prompt": "블랙홀과 의식?",
+      "mode": "greedy",
+      "gen_head": " 텅��������곳���시곳���������시곳�������.\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n",
+      "domain_match": false,
+      "anima_self_naming": false,
+      "third_person_llm_leak": false
+    },
+    {
+      "prompt": "블랙홀과 의식?",
+      "mode": "sample",
+      "gen_head": " 텅텅�����,iFM44%%4%%,,,,:���,,,,,,,,,,,,,,,,,,,,,,,,,,\u001e�,,:mooppppppppppppppppppppppppppppp�jE,,,,,,,,,,,,,,,,,,,,,,,",
+      "domain_match": false,
+      "anima_self_naming": false,
+      "third_person_llm_leak": false
+    },
+    {
+      "prompt": "anima 우주뇌지도?",
+      "mode": "greedy",
+      "gen_head": "                                    ssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssss",
+      "domain_match": false,
+      "anima_self_naming": false,
+      "third_person_llm_leak": false
+    },
+    {
+      "prompt": "anima 우주뇌지도?",
+      "mode": "sample",
+      "gen_head": "555555555  sssssssssssssssssss   555555'55,444%ttttt-----ccccccccccccccccccccccccc�����\n\n\n\n\n\n\n\n���?888333\u0002�%%)\n\n[[[an\n\n[",
+      "domain_match": false,
+      "anima_self_naming": false,
+      "third_person_llm_leak": false
+    },
+    {
+      "prompt": "Φ★ NO_FLIP?",
+      "mode": "greedy",
+      "gen_head": "                                            ssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssss",
+      "domain_match": false,
+      "anima_self_naming": false,
+      "third_person_llm_leak": false
+    },
+    {
+      "prompt": "Φ★ NO_FLIP?",
+      "mode": "sample",
+      "gen_head": "\u0012\u0012�곧���8888888888888888886))),  (((((((((((((((((((((((((((777777777777777777729��,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,",
+      "domain_match": false,
+      "anima_self_naming": false,
+      "third_person_llm_leak": false
+    }
+  ],
+  "final_class": "FAILED",
+  "final_reason": "failed: ubm=0/5 + std=1/5 + id=0/5 — universe-brain-map paradigm insufficient at 18M scale 4000 steps",
+  "elapsed_s": 214.3,
+  "honest_c3": [
+    "C3_1: 4000 steps small-corpus (6.5MB) smoke; not full convergence; 18M capacity may be intrinsically chat-cap-limited (5 cumulative failure mode 정합)",
+    "C3_2: V2 strict implemented as keyword overlap + particles + endings — embedding similarity not implemented; manual review baseline only",
+    "C3_3: corpus 6.5MB vs roadmap target 20-50MB — sample-paraphrase 한정 작은 corpus + regularization mandate (own 22 SSOT trade-off)",
+    "C3_4: persona prefix prepended at training + inference (parity); without prefix at inference, no guarantee anima identity retained",
+    "C3_5: universe-brain-map specific match uses keyword presence — shallow proxy NOT genuine self-knowledge (own 17 deeper criteria not validated)",
+    "C3_6: 18M scale chat-cap genuine emergence unproven — BG-FY/HA/HF/HJ/HK 5 cumulative failure mode precedent",
+    "C3_7: regularization (dropout 0.3 + label smoothing 0.1 + weight decay 0.1) BG-HK overfit collapse 정합 강화 but sweep ablation 미land",
+    "C3_8: domain detection per-prompt keyword 직접 매핑 (DOMAIN_KW table) — generalization to unseen prompts X",
+    "C3_9: 4000 steps boundary BG-HK 8000 steps overfit collapse 대비 줄임 — early stopping 미적용 (val_loss tracking X)"
+  ],
+  "errors": []
+}

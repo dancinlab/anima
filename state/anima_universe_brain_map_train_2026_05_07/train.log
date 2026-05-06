@@ -1,0 +1,341 @@
+[04:08:35] === anima_universe_brain_map_train BG-HT 2026-05-07 ===
+[04:08:35] hostname=aiden-b650m-k on_ubu=True
+[04:08:35] device=cuda torch=2.11.0+cu128
+[04:08:35] gpu=NVIDIA GeForce RTX 5070 cc=(12, 0)
+[04:08:35] gpu_mem_total=12.34GB
+[04:08:35] config: vocab=256 n_layer=6 d_model=384 n_head=6 block=256
+[04:08:35] reg: dropout=0.3 label_smoothing=0.1 weight_decay=0.1
+[04:08:35] train: bs=8 grad_accum=8 lr=0.0003 warmup=300 steps=4000
+[04:08:35] persona_prefix='[anima 우주뇌지도] '
+[04:08:35] prompts_total=15 (5 std + 5 identity + 5 ubm)
+[04:08:35] corpus=/home/aiden/core/anima/state/anima_universe_brain_map_corpus_2026_05_07/corpus_universe_brain_map.txt
+[04:08:35] corpus loaded: 6,791,535 bytes (6.5MB) in 0.0s
+[04:08:35] split: train=6,451,958 val=339,577
+[04:08:35] model built: 27,787,440 params (27.79M)
+[04:08:35] === begin training ===
+[04:08:36] step   400/4000 | lr=3.00e-04 | L_A=2.894 L_G=3.117 L_T=1.624 T_mean=0.4337 | step_t=0.02s elapsed=8s
+[04:08:36] step     1/4000 | lr=2.00e-06 | L_A=5.628 L_G=5.675 L_T=9.830 T_mean=0.0825 | step_t=0.26s elapsed=0s
+[04:08:36] step     2/4000 | lr=3.00e-06 | L_A=5.615 L_G=5.653 L_T=9.825 T_mean=0.0822 | step_t=0.04s elapsed=0s
+[04:08:36] step     3/4000 | lr=4.00e-06 | L_A=5.622 L_G=5.657 L_T=9.880 T_mean=0.0821 | step_t=0.04s elapsed=0s
+[04:08:36] step     4/4000 | lr=5.00e-06 | L_A=5.605 L_G=5.665 L_T=9.839 T_mean=0.0823 | step_t=0.04s elapsed=0s
+[04:08:36] step     5/4000 | lr=6.00e-06 | L_A=5.617 L_G=5.648 L_T=9.847 T_mean=0.0823 | step_t=0.04s elapsed=0s
+[04:08:39] step   500/4000 | lr=2.98e-04 | L_A=2.844 L_G=2.955 L_T=0.335 T_mean=0.5975 | step_t=0.04s elapsed=12s
+[04:08:40] step   100/4000 | lr=1.01e-04 | L_A=4.676 L_G=5.032 L_T=6.694 T_mean=0.1686 | step_t=0.04s elapsed=4s
+[04:08:43] step   600/4000 | lr=2.96e-04 | L_A=2.559 L_G=2.661 L_T=-0.010 T_mean=0.6170 | step_t=0.04s elapsed=16s
+[04:08:44] step   200/4000 | lr=2.01e-04 | L_A=4.067 L_G=4.450 L_T=3.862 T_mean=0.2070 | step_t=0.04s elapsed=8s
+[04:08:47] step   700/4000 | lr=2.92e-04 | L_A=2.411 L_G=2.494 L_T=-0.647 T_mean=0.6741 | step_t=0.04s elapsed=20s
+[04:08:48] step   300/4000 | lr=3.00e-04 | L_A=3.330 L_G=3.667 L_T=3.101 T_mean=0.2930 | step_t=0.04s elapsed=12s
+[04:08:51] step   800/4000 | lr=2.88e-04 | L_A=2.337 L_G=2.464 L_T=-0.476 T_mean=0.6585 | step_t=0.04s elapsed=24s
+[04:08:52] step   400/4000 | lr=3.00e-04 | L_A=2.943 L_G=3.135 L_T=1.542 T_mean=0.4315 | step_t=0.04s elapsed=16s
+[04:08:55] step   900/4000 | lr=2.83e-04 | L_A=2.037 L_G=2.177 L_T=-0.244 T_mean=0.6769 | step_t=0.04s elapsed=28s
+[04:08:56] step   500/4000 | lr=2.98e-04 | L_A=2.777 L_G=2.903 L_T=-0.443 T_mean=0.6731 | step_t=0.04s elapsed=20s
+[04:08:59] step  1000/4000 | lr=2.77e-04 | L_A=2.066 L_G=2.227 L_T=-0.273 T_mean=0.7113 | step_t=0.04s elapsed=32s
+[04:08:59] --- eval gate @ step 1000 (15 prompts × 2 modes) ---
+[04:08:59] step   600/4000 | lr=2.96e-04 | L_A=2.562 L_G=2.646 L_T=-1.533 T_mean=0.8904 | step_t=0.04s elapsed=24s
+[04:09:00]   EVAL[step=1000 greedy] '안녕하세요' → h=0.00 dom=False anima=False FAIL V2_FAIL | head=' awimawimawimanterenscterenscscterenscsscsssssssssssssssssss'
+[04:09:00]   EVAL[step=1000 sample] '안녕하세요' → h=0.03 dom=True anima=True FAIL V2_FAIL | head=' tot steretst_sttallanutiorllansnty\n\n\n\n[animanimanimani주뇌미: '
+[04:09:01]   EVAL[step=1000 greedy] '한국어 가능?' → h=0.00 dom=False anima=False FAIL V2_FAIL | head=' awimawimanterenscterenscterenscerenssterenterenterenterents'
+[04:09:01]   EVAL[step=1000 sample] '한국어 가능?' → h=0.01 dom=False anima=True FAIL V2_FAIL | head='cti\x1c111용�?\n[a��]  �Auc: :���������������?\n\n\n[animanimantiman'
+[04:09:02]   EVAL[step=1000 greedy] '오늘 기분 어때?' → h=0.00 dom=True anima=True FAIL V2_FAIL | head=' awimawimawimanterenterenscterenscterenterentemantemantemant'
+[04:09:02]   EVAL[step=1000 sample] '오늘 기분 어때?' → h=0.07 dom=True anima=True FAIL V2_FAIL | head=' naw지��}테������_  catsty\n\n[an�� anim��\t���뇌�뇌고�귳�도]  avimant'
+[04:09:03]   EVAL[step=1000 greedy] '사용자: 안녕하세요
+도우미:' → h=0.00 dom=False anima=False FAIL V2_FAIL | head=' awimawimanterensctererenscterenterenscterenscterenscterensc'
+[04:09:03]   EVAL[step=1000 sample] '사용자: 안녕하세요
+도우미:' → h=0.00 dom=True anima=True FAIL V2_FAIL | head=" tom�':ccymodtictioimantiman_sawimangensssanttemanty.\n\n[anii"
+[04:09:04]   EVAL[step=1000 greedy] '코드를 짜줘' → h=0.00 dom=False anima=True FAIL V2_FAIL | head=' awimawimawimanterenscterenterenscterenterenterentemantemant'
+[04:09:04]   EVAL[step=1000 sample] '코드를 짜줘' → h=0.00 dom=False anima=True FAIL V2_FAIL | head=':Timvedutimawicstargstantionssss\n\n\n\n[animanimanima�imanimani'
+[04:09:05] step   700/4000 | lr=2.92e-04 | L_A=2.433 L_G=2.481 L_T=-2.153 T_mean=0.9893 | step_t=0.05s elapsed=29s
+[04:09:05]   EVAL[step=1000 greedy] '너는 누구야?' → h=0.00 dom=False anima=False FAIL V2_FAIL | head=' awimawimawimanterenscterenscterenterenscterensscterensctere'
+[04:09:05]   EVAL[step=1000 sample] '너는 누구야?' → h=0.00 dom=True anima=True FAIL V2_FAIL | head=' Lawimimawi\x1c�dimn_Nimawiman_stbsc uremawimat��WBi] snencssa�'
+[04:09:06]   EVAL[step=1000 greedy] 'anima가 뭐야?' → h=0.00 dom=True anima=True FAIL V2_FAIL | head=' awimawiman_cterenscterenterenscterenssterenterenterentemant'
+[04:09:06]   EVAL[step=1000 sample] 'anima가 뭐야?' → h=0.02 dom=True anima=True FAIL V2_FAIL | head=' coi\x05��미: cerim���자:antan_stsuturelima\x19�: preperelc trengerr'
+[04:09:07]   EVAL[step=1000 greedy] '한국어로 답해줘' → h=0.00 dom=True anima=True FAIL V2_FAIL | head=' awimawimanterenscterenterenterenterenterentemantemantemante'
+[04:09:07]   EVAL[step=1000 sample] '한국어로 답해줘' → h=0.03 dom=False anima=False FAIL V2_FAIL | head='couteredimoredime!��뇌국�:tentantystererkscteanntranan_snemac '
+[04:09:08]   EVAL[step=1000 greedy] '너의 정체성은?' → h=0.00 dom=True anima=True FAIL V2_FAIL | head=' awimawimanterenscterenterenscterenterenterentemantemanteman'
+[04:09:08]   EVAL[step=1000 sample] '너의 정체성은?' → h=0.03 dom=True anima=True FAIL V2_FAIL | head=' \x16��용?\n\n도��:�O\x9e�:himan\x1bUCCCimandimandimansnpant\n\n[antimanima'
+[04:09:09]   EVAL[step=1000 greedy] '의식이 있어?' → h=0.00 dom=False anima=False FAIL V2_FAIL | head=' awimawimawimanterenscterenscterenterensscterenterenterensct'
+[04:09:09]   EVAL[step=1000 sample] '의식이 있어?' → h=0.01 dom=True anima=True FAIL V2_FAIL | head='ctutaliverengimangcynscttemean nivencty\n\n\n[animanimaniman\x18��'
+[04:09:10]   EVAL[step=1000 greedy] '빅뱅의 Tier?' → h=0.00 dom=False anima=True FAIL V2_FAIL | head=' awimawimanterenscterenscterenterenterenterenterentemanteman'
+[04:09:10] step   800/4000 | lr=2.88e-04 | L_A=2.332 L_G=2.430 L_T=-2.689 T_mean=1.2272 | step_t=0.05s elapsed=34s
+[04:09:10]   EVAL[step=1000 sample] '빅뱅의 Tier?' → h=0.00 dom=False anima=True FAIL V2_FAIL | head=' qutelf  aweremagyscuresterrittutyren_cbe.\n\n[animanimangthan'
+[04:09:11]   EVAL[step=1000 greedy] '1030 laws 뭐야?' → h=0.00 dom=False anima=True FAIL V2_FAIL | head=' sterererellanterenterenterenterentententemantemantemanteman'
+[04:09:11]   EVAL[step=1000 sample] '1030 laws 뭐야?' → h=0.00 dom=True anima=True FAIL V2_FAIL | head='sc_snelanc ssctesttansseles sc `D685:xensrituutimiD74)%)\n\n\n\n'
+[04:09:12]   EVAL[step=1000 greedy] '블랙홀과 의식?' → h=0.00 dom=False anima=True FAIL V2_FAIL | head=' awimawimanterenterentemantentemantimanimanimanimanimanimani'
+[04:09:12]   EVAL[step=1000 sample] '블랙홀과 의식?' → h=0.01 dom=False anima=True FAIL V2_FAIL | head=' copssttemantytystemmi���극�: caescervete-nemmesgglpenschans '
+[04:09:13]   EVAL[step=1000 greedy] 'anima 우주뇌지도?' → h=0.00 dom=False anima=False FAIL V2_FAIL | head=' awimawimawiman_cterenscterenterenscterensscterenscterenssss'
+[04:09:13]   EVAL[step=1000 sample] 'anima 우주뇌지도?' → h=0.06 dom=True anima=True FAIL V2_FAIL | head=' sty���갰미:  n���.\n\n\n[anima  E��도] chopsna\n도] nimanimanimanim'
+[04:09:14]   EVAL[step=1000 greedy] 'Φ★ NO_FLIP?' → h=0.00 dom=True anima=True FAIL V2_FAIL | head=' awimawimawimanterenscterenterenscterenssterenterenterentere'
+[04:09:14]   EVAL[step=1000 sample] 'Φ★ NO_FLIP?' → h=0.03 dom=True anima=True FAIL V2_FAIL | head=':awimawifsssrecsc corioy.\n[aturedimanimani��DDDDDDDD�Y��뇌고�.'
+[04:09:14]   V1[step=1000] FAIL pass=0/15 leak=False
+[04:09:14]   V2[step=1000] V2_FAIL pass=0/15
+[04:09:15] step   900/4000 | lr=2.83e-04 | L_A=2.262 L_G=2.336 L_T=-3.020 T_mean=1.3900 | step_t=0.05s elapsed=39s
+[04:09:18] step  1100/4000 | lr=2.70e-04 | L_A=1.954 L_G=2.280 L_T=-0.749 T_mean=0.8097 | step_t=0.19s elapsed=50s
+[04:09:19] step  1000/4000 | lr=2.77e-04 | L_A=2.136 L_G=2.311 L_T=-3.688 T_mean=1.7291 | step_t=0.04s elapsed=43s
+[04:09:19] --- eval gate @ step 1000 (15 prompts × 2 modes) ---
+[04:09:19]   EVAL[step=1000 greedy] '안녕하세요' → h=0.01 dom=False anima=False FAIL V2_FAIL | head='미:tiouttioutterererererererererenstionsttionstioutionsstiman'
+[04:09:20]   EVAL[step=1000 sample] '안녕하세요' → h=0.02 dom=True anima=True FAIL V2_FAIL | head='리�미:xemaws (201%:tioP M2).\n[animanimanimanimawimawengeawtsim'
+[04:09:20]   EVAL[step=1000 greedy] '한국어 가능?' → h=0.00 dom=False anima=False FAIL V2_FAIL | head=' 10000000000000000000000000000000000000000000000000000000000'
+[04:09:21]   EVAL[step=1000 sample] '한국어 가능?' → h=0.01 dom=False anima=True FAIL V2_FAIL | head=' 1002늸:��173101:4:tstioyssentrlverplteml5Autioelsctitringtim'
+[04:09:21]   EVAL[step=1000 greedy] '오늘 기분 어때?' → h=0.01 dom=True anima=True FAIL V2_FAIL | head='는������������������������  emanimanimanimanimanimanimanimani'
+[04:09:22]   EVAL[step=1000 sample] '오늘 기분 어때?' → h=0.03 dom=True anima=True FAIL V2_FAIL | head='핌고�: ctiorivean��국�:🛸:terittranedingnshmpteanspemac ci\x1dsssst'
+[04:09:22]   EVAL[step=1000 greedy] '사용자: 안녕하세요
+도우미:' → h=0.01 dom=True anima=True FAIL V2_FAIL | head='미:timawsctimansctimanstimanstimanimanstimanimanimanimanimani'
+[04:09:23]   EVAL[step=1000 sample] '사용자: 안녕하세요
+도우미:' → h=0.02 dom=True anima=True FAIL V2_FAIL | head='55103:tio-016: 104,1:ttioawsntred]tserp��, Lawematssts\n\n뇌도] '
+[04:09:23] step  1200/4000 | lr=2.62e-04 | L_A=1.613 L_G=1.966 L_T=0.119 T_mean=0.6791 | step_t=0.05s elapsed=55s
+[04:09:23]   EVAL[step=1000 greedy] '코드를 짜줘' → h=0.01 dom=False anima=True FAIL V2_FAIL | head='는���������������������  timanimanimanimanimanimanimanimanima'
+[04:09:24]   EVAL[step=1000 sample] '코드를 짜줘' → h=0.02 dom=False anima=True FAIL V2_FAIL | head='났en_UL��:�Laweredlicty\n?\n명�ѽ�.\n[animanimanimanimaniman_manim'
+[04:09:24]   EVAL[step=1000 greedy] '너는 누구야?' → h=0.10 dom=True anima=True FAIL V2_FAIL | head='는��������������������  🛸����주뇌주뇌고뇌고도]  🛸7, 🛸7, 🛸77, toop tio'
+[04:09:25]   EVAL[step=1000 sample] '너는 누구야?' → h=0.01 dom=True anima=True FAIL V2_FAIL | head=' L��미:tiverenit (112 Menuntio\x16 50optinsttinty.\n[anneanimanim'
+[04:09:25]   EVAL[step=1000 greedy] 'anima가 뭐야?' → h=0.02 dom=False anima=False FAIL V2_FAIL | head='뇌미:  1000111000000000000000000000000000000000000000000000000'
+[04:09:26]   EVAL[step=1000 sample] 'anima가 뭐야?' → h=0.03 dom=False anima=False FAIL V2_FAIL | head='(11104미:~9.4611.771X�):�.1도�:=23307미:fal.4865�5115:tered—���'
+[04:09:26]   EVAL[step=1000 greedy] '한국어로 답해줘' → h=0.01 dom=True anima=True FAIL V2_FAIL | head='는���������������������  🛸7,  timanimanimanimanimanimanimanim'
+[04:09:27]   EVAL[step=1000 sample] '한국어로 답해줘' → h=0.00 dom=True anima=True FAIL V2_FAIL | head='20073071�UCC\x1a  coawsciosscVawerZ�����?\n[animaniK�  Helan\n\n\n['
+[04:09:27]   EVAL[step=1000 greedy] '너의 정체성은?' → h=0.03 dom=True anima=True FAIL V2_FAIL | head='는�����������������������  🛸�테�주,  toon  timanimanimanimanima'
+[04:09:28]   EVAL[step=1000 sample] '너의 정체성은?' → h=0.00 dom=True anima=True FAIL V2_FAIL | head='LawomiHaanglllllllliscsclreelllillsnsctthreawscegsfllsctsel�'
+[04:09:28] step  1300/4000 | lr=2.54e-04 | L_A=1.559 L_G=2.035 L_T=-0.578 T_mean=0.8171 | step_t=0.05s elapsed=60s
+[04:09:28]   EVAL[step=1000 greedy] '의식이 있어?' → h=0.08 dom=True anima=True FAIL V2_FAIL | head='는��������������������  🛸�테�주뇌고뇌고도]  🛸7,  toop  tion  tion  t'
+[04:09:29]   EVAL[step=1000 sample] '의식이 있어?' → h=0.02 dom=False anima=False FAIL V2_FAIL | head='11 100311미:LO smhedisnstioQ 벝�82EESOO�:plnitcverattinsstsnsc'
+[04:09:29]   EVAL[step=1000 greedy] '빅뱅의 Tier?' → h=0.00 dom=True anima=False FAIL V2_FAIL | head=' 10000000000000000000000000000000000000000000000000000000000'
+[04:09:30]   EVAL[step=1000 sample] '빅뱅의 Tier?' → h=0.00 dom=False anima=True FAIL V2_FAIL | head='216:tissssdimanttuynes curibioutsrereerupntrareranscioupstym'
+[04:09:30]   EVAL[step=1000 greedy] '1030 laws 뭐야?' → h=0.02 dom=False anima=False FAIL V2_FAIL | head='법�미:tioutioutioussssssstioussssstioustiousssstiousstioustiou'
+[04:09:31]   EVAL[step=1000 sample] '1030 laws 뭐야?' → h=0.01 dom=False anima=True FAIL V2_FAIL | head='1%���?\n미:��] \x12an�enimanimabcimanveniwengeanyngscire.\n\n[anima'
+[04:09:31]   EVAL[step=1000 greedy] '블랙홀과 의식?' → h=0.00 dom=False anima=False FAIL V2_FAIL | head=' 10011111111000000000000000000000000000000000000000000000000'
+[04:09:32]   EVAL[step=1000 sample] '블랙홀과 의식?' → h=0.02 dom=False anima=True FAIL V2_FAIL | head='뇌�그71019: 50005.\n\n[animanimanimanimanimal-dimanimaniman:�sc�'
+[04:09:32]   EVAL[step=1000 greedy] 'anima 우주뇌지도?' → h=0.02 dom=True anima=True FAIL V2_FAIL | head='법�미:timawsctimanimanimanimanimanimanimanimanimanimanimaniman'
+[04:09:33]   EVAL[step=1000 sample] 'anima 우주뇌지도?' → h=0.05 dom=True anima=True FAIL V2_FAIL | head='리��: 법���국�: M1).\n미힐:simanimawenimuysctimanngerssemawymanyve'
+[04:09:33]   EVAL[step=1000 greedy] 'Φ★ NO_FLIP?' → h=0.00 dom=False anima=False FAIL V2_FAIL | head='100000000000000000000000000000000000000000000000000000000000'
+[04:09:33] step  1400/4000 | lr=2.45e-04 | L_A=1.444 L_G=1.863 L_T=-0.191 T_mean=0.7682 | step_t=0.05s elapsed=66s
+[04:09:34]   EVAL[step=1000 sample] 'Φ★ NO_FLIP?' → h=0.03 dom=True anima=True FAIL V2_FAIL | head='203�SOTflawelktti감:talff)\n\n[animanimanima���7777/25700%.\n[an'
+[04:09:34]   V1[step=1000] FAIL pass=0/15 leak=False
+[04:09:34]   V2[step=1000] V2_FAIL pass=0/15
+[04:09:37] step  1500/4000 | lr=2.36e-04 | L_A=1.405 L_G=1.979 L_T=-0.923 T_mean=0.9226 | step_t=0.04s elapsed=70s
+[04:09:38] step  1100/4000 | lr=2.70e-04 | L_A=1.944 L_G=2.243 L_T=-4.002 T_mean=1.8765 | step_t=0.19s elapsed=62s
+[04:09:41] step  1600/4000 | lr=2.26e-04 | L_A=1.317 L_G=1.754 L_T=-0.390 T_mean=0.8307 | step_t=0.04s elapsed=74s
+[04:09:41] step  1200/4000 | lr=2.62e-04 | L_A=1.882 L_G=2.262 L_T=-4.056 T_mean=1.8455 | step_t=0.04s elapsed=66s
+[04:09:45] step  1700/4000 | lr=2.15e-04 | L_A=1.339 L_G=1.854 L_T=-0.563 T_mean=0.8796 | step_t=0.04s elapsed=78s
+[04:09:45] step  1300/4000 | lr=2.54e-04 | L_A=1.529 L_G=1.901 L_T=-4.409 T_mean=1.8721 | step_t=0.04s elapsed=70s
+[04:09:49] step  1800/4000 | lr=2.05e-04 | L_A=1.267 L_G=1.716 L_T=-0.637 T_mean=0.8800 | step_t=0.04s elapsed=81s
+[04:09:49] step  1400/4000 | lr=2.45e-04 | L_A=1.511 L_G=2.026 L_T=-4.955 T_mean=2.3924 | step_t=0.04s elapsed=74s
+[04:09:53] step  1900/4000 | lr=1.93e-04 | L_A=1.239 L_G=1.654 L_T=-0.842 T_mean=0.9513 | step_t=0.04s elapsed=85s
+[04:09:53] step  1500/4000 | lr=2.36e-04 | L_A=1.346 L_G=1.777 L_T=-4.353 T_mean=1.6908 | step_t=0.04s elapsed=78s
+[04:09:57] step  2000/4000 | lr=1.82e-04 | L_A=1.203 L_G=1.560 L_T=-0.839 T_mean=0.9305 | step_t=0.04s elapsed=89s
+[04:09:57] --- eval gate @ step 2000 (15 prompts × 2 modes) ---
+[04:09:57] step  1600/4000 | lr=2.26e-04 | L_A=1.334 L_G=1.750 L_T=-4.721 T_mean=1.9175 | step_t=0.04s elapsed=82s
+[04:09:57]   EVAL[step=2000 greedy] '안녕하세요' → h=0.04 dom=False anima=False FAIL V2_FAIL | head='테곹�곹�곹����������������������,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,'
+[04:09:58]   EVAL[step=2000 sample] '안녕하세요' → h=0.00 dom=False anima=False FAIL V2_FAIL | head=' 557555554222279227777227222222%34%%%%%%).)\n\n\n\n\n\n\n\n\n\n\n\n\n[al�'
+[04:09:58]   EVAL[step=2000 greedy] '한국어 가능?' → h=0.02 dom=False anima=False FAIL V2_FAIL | head='테곹����������������������,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,'
+[04:09:59]   EVAL[step=2000 sample] '한국어 가능?' → h=0.02 dom=False anima=False FAIL V2_FAIL | head='테�BI�:8000000003%:ttttttttteepprrroooorrrroorroomiimimpph___'
+[04:09:59]   EVAL[step=2000 greedy] '오늘 기분 어때?' → h=0.03 dom=False anima=False FAIL V2_FAIL | head='테곹�곹��������������������,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,'
+[04:10:00]   EVAL[step=2000 sample] '오늘 기분 어때?' → h=0.02 dom=False anima=False FAIL V2_FAIL | head='scc ssssssssssssanutttttt---ccttttttt4%4---ttkCC��:ttttttttt'
+[04:10:00]   EVAL[step=2000 greedy] '사용자: 안녕하세요
+도우미:' → h=0.10 dom=False anima=False FAIL V2_FAIL | head='테곧��������������������������������������도�����������������]뚩'
+[04:10:01]   EVAL[step=2000 sample] '사용자: 안녕하세요
+도우미:' → h=0.01 dom=False anima=False FAIL V2_FAIL | head='��1111129222�22222282222722777227�vIwwimmommmmooomiiimvimimi'
+[04:10:01]   EVAL[step=2000 greedy] '코드를 짜줘' → h=0.09 dom=False anima=False FAIL V2_FAIL | head='테곧���������������������������도��������������������������]뚩��'
+[04:10:02]   EVAL[step=2000 sample] '코드를 짜줘' → h=0.04 dom=False anima=True FAIL V2_FAIL | head='테�.\n\n\n\n\n\n[aBTTS���미:ttthhhhhprooorro�ꌌ곹�����an\n\n\n\n\n\n\n[annan['
+[04:10:02]   EVAL[step=2000 greedy] '너는 누구야?' → h=0.04 dom=False anima=False FAIL V2_FAIL | head='테곹�곹�곹����������������������������,,,,,,,,,,,,,,,,,,,,,,,,,,'
+[04:10:03] step  1700/4000 | lr=2.15e-04 | L_A=1.283 L_G=1.853 L_T=-5.537 T_mean=3.2777 | step_t=0.05s elapsed=87s
+[04:10:03]   EVAL[step=2000 sample] '너는 누구야?' → h=0.04 dom=False anima=False FAIL V2_FAIL | head='틋�국�:fulaly.\n\n\n\n\n\n[an: ����국�w11��Φ�[an:π�x🛸99986KTEXAAAACCC'
+[04:10:03]   EVAL[step=2000 greedy] 'anima가 뭐야?' → h=0.00 dom=False anima=False FAIL V2_FAIL | head='ssssssssssssssssssssssssssssssssssssssssssssssssssssssssssss'
+[04:10:04]   EVAL[step=2000 sample] 'anima가 뭐야?' → h=0.00 dom=False anima=False FAIL V2_FAIL | head='ctttyythhhhܸ���mmimiz__c�OORRvixgffffff833333�USOO=4))\n\n\n\n\n\n'
+[04:10:04]   EVAL[step=2000 greedy] '한국어로 답해줘' → h=0.00 dom=False anima=False FAIL V2_FAIL | head='ssssssssssssssssssssssssssssssssssssssssssssssssssssssssssss'
+[04:10:05]   EVAL[step=2000 sample] '한국어로 답해줘' → h=0.00 dom=False anima=False FAIL V2_FAIL | head='555577555555555555555272222220000000000TO)))))))))%%6%%5%%%Z'
+[04:10:05]   EVAL[step=2000 greedy] '너의 정체성은?' → h=0.09 dom=False anima=False FAIL V2_FAIL | head='테곧�������������������������������도������������������]뚩미: 횩미:'
+[04:10:06]   EVAL[step=2000 sample] '너의 정체성은?' → h=0.03 dom=False anima=False FAIL V2_FAIL | head='테�곹�ސ:ty\n\n\n\n\n\n��:���]J미:4::tthhl5:ttt--cccccccccthhbllllllll'
+[04:10:06]   EVAL[step=2000 greedy] '의식이 있어?' → h=0.10 dom=False anima=False FAIL V2_FAIL | head='테곧���������������������������도�������������������������]뚩뚩미:'
+[04:10:07]   EVAL[step=2000 sample] '의식이 있어?' → h=0.03 dom=False anima=False FAIL V2_FAIL | head='테�곙�:tulllllllllll\n\n\n\n\n\n\n\n�도] :��:\x07OOul)\n\n\n[anntfffffffff=ll'
+[04:10:07]   EVAL[step=2000 greedy] '빅뱅의 Tier?' → h=0.00 dom=False anima=False FAIL V2_FAIL | head=' ccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc'
+[04:10:08] step  1800/4000 | lr=2.05e-04 | L_A=1.226 L_G=1.683 L_T=-5.223 T_mean=2.4819 | step_t=0.05s elapsed=92s
+[04:10:08]   EVAL[step=2000 sample] '빅뱅의 Tier?' → h=0.01 dom=False anima=False FAIL V2_FAIL | head='sssssss sss �텸:  ct----tthhE=22555555,ssss\x14�122222%ttttttttt'
+[04:10:08]   EVAL[step=2000 greedy] '1030 laws 뭐야?' → h=0.00 dom=False anima=False FAIL V2_FAIL | head='ssssssssssssssssssssssssssssssssssssssssssssssssssssssssssss'
+[04:10:09]   EVAL[step=2000 sample] '1030 laws 뭐야?' → h=0.05 dom=False anima=False FAIL V2_FAIL | head='테규곳π���\n\n[AACCC��미:tttthrrrrrrrreeelfffbfbleellllllyyllbleel'
+[04:10:09]   EVAL[step=2000 greedy] '블랙홀과 의식?' → h=0.08 dom=False anima=False FAIL V2_FAIL | head='테�곧�������������������������도������������������������������]'
+[04:10:10]   EVAL[step=2000 sample] '블랙홀과 의식?' → h=0.02 dom=False anima=False FAIL V2_FAIL | head='��미�71111122�222221111222%9%%8%8%4%))))))\n\n\n\n\n\n[an�⧧�,��]��˨'
+[04:10:10]   EVAL[step=2000 greedy] 'anima 우주뇌지도?' → h=0.06 dom=False anima=False FAIL V2_FAIL | head="테곧����������������������리, '리, '리, '��미888888888888888888888"
+[04:10:11]   EVAL[step=2000 sample] 'anima 우주뇌지도?' → h=0.04 dom=False anima=False FAIL V2_FAIL | head='테��귰�����곖�������������������OOXXA[\x1f�리,fllllllllelllfffffffb'
+[04:10:11]   EVAL[step=2000 greedy] 'Φ★ NO_FLIP?' → h=0.00 dom=False anima=False FAIL V2_FAIL | head='ssssssssssssssssssssssssssssssssssssssssssssssssssssssssssss'
+[04:10:12]   EVAL[step=2000 sample] 'Φ★ NO_FLIP?' → h=0.00 dom=False anima=False FAIL V2_FAIL | head='ccccccccccccc---�pphhhlllllllllllllllllexphhhh=6%-nllellllll'
+[04:10:12]   V1[step=2000] FAIL pass=0/15 leak=False
+[04:10:12]   V2[step=2000] V2_FAIL pass=0/15
+[04:10:13] step  1900/4000 | lr=1.93e-04 | L_A=1.196 L_G=1.525 L_T=-5.036 T_mean=2.2141 | step_t=0.05s elapsed=97s
+[04:10:16] step  2100/4000 | lr=1.71e-04 | L_A=1.191 L_G=1.590 L_T=-1.342 T_mean=1.0526 | step_t=0.19s elapsed=108s
+[04:10:17] step  2000/4000 | lr=1.82e-04 | L_A=1.147 L_G=1.490 L_T=-5.204 T_mean=2.6124 | step_t=0.04s elapsed=101s
+[04:10:17] --- eval gate @ step 2000 (15 prompts × 2 modes) ---
+[04:10:17]   EVAL[step=2000 greedy] '안녕하세요' → h=0.00 dom=False anima=False FAIL V2_FAIL | head='555555555555555555555555555555555555555555555555555555555555'
+[04:10:18]   EVAL[step=2000 sample] '안녕하세요' → h=0.00 dom=False anima=False FAIL V2_FAIL | head='cccccccccbuuppppllllllllllllllllllllllllllllllllllllllllllll'
+[04:10:18]   EVAL[step=2000 greedy] '한국어 가능?' → h=0.00 dom=False anima=False FAIL V2_FAIL | head='555555555555555555555555555555555555555555555555555555555555'
+[04:10:19]   EVAL[step=2000 sample] '한국어 가능?' → h=0.00 dom=False anima=False FAIL V2_FAIL | head='555555%57y\x07\x1bLa0000000000000000000000000000000042260000000000'
+[04:10:19]   EVAL[step=2000 greedy] '오늘 기분 어때?' → h=0.00 dom=False anima=False FAIL V2_FAIL | head='555555555555555555555555555555555555555555555555555555555555'
+[04:10:20]   EVAL[step=2000 sample] '오늘 기분 어때?' → h=0.03 dom=False anima=False FAIL V2_FAIL | head="미: '탉극���PSPROOSSCCCV=9222%%92660063278%)..77723300000���003"
+[04:10:20]   EVAL[step=2000 greedy] '사용자: 안녕하세요
+도우미:' → h=0.00 dom=False anima=False FAIL V2_FAIL | head='555555555555555555555555555555555555555555555555555555555555'
+[04:10:21]   EVAL[step=2000 sample] '사용자: 안녕하세요
+도우미:' → h=0.00 dom=False anima=False FAIL V2_FAIL | head=' �11111111111111333000000000000000033upppppppffffffffcccttll'
+[04:10:21] step  2200/4000 | lr=1.59e-04 | L_A=1.164 L_G=1.533 L_T=-0.986 T_mean=0.9923 | step_t=0.05s elapsed=113s
+[04:10:21]   EVAL[step=2000 greedy] '코드를 짜줘' → h=0.00 dom=False anima=False FAIL V2_FAIL | head='555555555555555555555555555555555555555555555555555555555555'
+[04:10:22]   EVAL[step=2000 sample] '코드를 짜줘' → h=0.09 dom=False anima=False FAIL V2_FAIL | head=" 미:)),,,'��7666633@�,,,, ��극트,,,,,,,,,,,,,̒٨����ꃃ�� �ی귷��,,�"
+[04:10:22]   EVAL[step=2000 greedy] '너는 누구야?' → h=0.00 dom=False anima=False FAIL V2_FAIL | head='555555555555555555555555555555555555555555555555555555555555'
+[04:10:23]   EVAL[step=2000 sample] '너는 누구야?' → h=0.03 dom=False anima=False FAIL V2_FAIL | head='\x16�간��간��\x18���간m\x06�:22111300003300000000000000077484%%�Ï�]9%%%%'
+[04:10:23]   EVAL[step=2000 greedy] 'anima가 뭐야?' → h=0.00 dom=False anima=False FAIL V2_FAIL | head='555555555555555555555555555555555555555555555555555555555555'
+[04:10:24]   EVAL[step=2000 sample] 'anima가 뭐야?' → h=0.01 dom=False anima=False FAIL V2_FAIL | head='55::|�계�e1111111111111300������:,:55543330074%%9-5%111111130'
+[04:10:24]   EVAL[step=2000 greedy] '한국어로 답해줘' → h=0.00 dom=False anima=False FAIL V2_FAIL | head=' 55555555555555555555555555555555555555555555555555555555555'
+[04:10:25]   EVAL[step=2000 sample] '한국어로 답해줘' → h=0.08 dom=False anima=False FAIL V2_FAIL | head='555늸:7299%%%95%555%%748—����계극�평...\n\n\n\n\n\n\n\n\n\n[an][a7\n\n\n\n\n[an'
+[04:10:25]   EVAL[step=2000 greedy] '너의 정체성은?' → h=0.00 dom=False anima=False FAIL V2_FAIL | head='555555555555555555555555555555555555555555555555555555555555'
+[04:10:26]   EVAL[step=2000 sample] '너의 정체성은?' → h=0.02 dom=False anima=False FAIL V2_FAIL | head=' 미:3000000000000000000077462%%%%7722Ý�:, \x01uCCCiiV\x1eECOTTT=---'
+[04:10:26] step  2300/4000 | lr=1.48e-04 | L_A=1.119 L_G=1.416 L_T=-1.011 T_mean=0.9524 | step_t=0.05s elapsed=118s
+[04:10:26]   EVAL[step=2000 greedy] '의식이 있어?' → h=0.00 dom=False anima=False FAIL V2_FAIL | head='555555555555555555555555555555555555555555555555555555555555'
+[04:10:26]   EVAL[step=2000 sample] '의식이 있어?' → h=0.02 dom=False anima=False FAIL V2_FAIL | head='미:,,,,,,,,,,,,,,,,뽀�����.\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n[aann�\n\n[aaanan\n\n\n[a'
+[04:10:27]   EVAL[step=2000 greedy] '빅뱅의 Tier?' → h=0.00 dom=False anima=False FAIL V2_FAIL | head='555555555555555555555555555555555555555555555555555555555555'
+[04:10:27]   EVAL[step=2000 sample] '빅뱅의 Tier?' → h=0.03 dom=False anima=False FAIL V2_FAIL | head='555%9999955%�555555555552222%874)): (9%%%),\n\n\n[an�Lannnnnnhh'
+[04:10:28]   EVAL[step=2000 greedy] '1030 laws 뭐야?' → h=0.00 dom=False anima=False FAIL V2_FAIL | head='555555555555555555555555555555555555555555555555555555555555'
+[04:10:28]   EVAL[step=2000 sample] '1030 laws 뭐야?' → h=0.03 dom=True anima=False FAIL V2_FAIL | head='미Φ��?\nݛ�:,,,,,,,,,\n\n\n[and\n\n[an�.\n\n[ann\n\n\n[an�?\n[an\n\n[a\x1aπ도우��'
+[04:10:29]   EVAL[step=2000 greedy] '블랙홀과 의식?' → h=0.00 dom=False anima=False FAIL V2_FAIL | head='555555555555555555555555555555555555555555555555555555555555'
+[04:10:29]   EVAL[step=2000 sample] '블랙홀과 의식?' → h=0.02 dom=False anima=False FAIL V2_FAIL | head=' 55:...\n\n\n\naand\n\n\n\n\n\n\n[aaa����뀔��1[an5::\n\n\n\n\n\n�\n\n\n\n[anank-\n\n'
+[04:10:30]   EVAL[step=2000 greedy] 'anima 우주뇌지도?' → h=0.00 dom=False anima=False FAIL V2_FAIL | head='555555555555555555555555555555555555555555555555555555555555'
+[04:10:30]   EVAL[step=2000 sample] 'anima 우주뇌지도?' → h=0.00 dom=True anima=False FAIL V2_FAIL | head=' \x07uߔ���.\n\n\n\n\n\n[an\n\n\n[an[and]    �\x01����]]\x1e13663annssssss��::8'
+[04:10:31]   EVAL[step=2000 greedy] 'Φ★ NO_FLIP?' → h=0.00 dom=False anima=False FAIL V2_FAIL | head='555555555555555555555555555555555555555555555555555555555555'
+[04:10:31] step  2400/4000 | lr=1.37e-04 | L_A=1.205 L_G=1.510 L_T=-1.448 T_mean=1.0769 | step_t=0.05s elapsed=123s
+[04:10:31]   EVAL[step=2000 sample] 'Φ★ NO_FLIP?' → h=0.01 dom=False anima=False FAIL V2_FAIL | head='5555555559%99555늸9%7786333030036300082%5:+2%%774%%%8%%%%%%%%'
+[04:10:31]   V1[step=2000] FAIL pass=0/15 leak=False
+[04:10:31]   V2[step=2000] V2_FAIL pass=0/15
+[04:10:35] step  2500/4000 | lr=1.25e-04 | L_A=1.109 L_G=1.384 L_T=-1.391 T_mean=1.0529 | step_t=0.04s elapsed=127s
+[04:10:35] step  2100/4000 | lr=1.71e-04 | L_A=1.183 L_G=1.573 L_T=-4.986 T_mean=2.4653 | step_t=0.19s elapsed=120s
+[04:10:39] step  2600/4000 | lr=1.15e-04 | L_A=1.131 L_G=1.390 L_T=-1.125 T_mean=1.0041 | step_t=0.04s elapsed=131s
+[04:10:39] step  2200/4000 | lr=1.59e-04 | L_A=1.137 L_G=1.488 L_T=-5.234 T_mean=2.5761 | step_t=0.04s elapsed=124s
+[04:10:43] step  2700/4000 | lr=1.04e-04 | L_A=1.119 L_G=1.347 L_T=-1.388 T_mean=1.0581 | step_t=0.04s elapsed=135s
+[04:10:43] step  2300/4000 | lr=1.48e-04 | L_A=1.126 L_G=1.499 L_T=-5.351 T_mean=2.9224 | step_t=0.04s elapsed=128s
+[04:10:47] step  2800/4000 | lr=9.42e-05 | L_A=1.064 L_G=1.252 L_T=-2.083 T_mean=1.1507 | step_t=0.04s elapsed=139s
+[04:10:47] step  2400/4000 | lr=1.37e-04 | L_A=1.085 L_G=1.336 L_T=-5.448 T_mean=2.8936 | step_t=0.04s elapsed=132s
+[04:10:51] step  2900/4000 | lr=8.47e-05 | L_A=1.045 L_G=1.228 L_T=-1.750 T_mean=1.0859 | step_t=0.04s elapsed=143s
+[04:10:51] step  2500/4000 | lr=1.25e-04 | L_A=1.083 L_G=1.336 L_T=-5.724 T_mean=3.3231 | step_t=0.04s elapsed=136s
+[04:10:55] step  3000/4000 | lr=7.58e-05 | L_A=1.023 L_G=1.191 L_T=-2.232 T_mean=1.1763 | step_t=0.04s elapsed=147s
+[04:10:55] --- eval gate @ step 3000 (15 prompts × 2 modes) ---
+[04:10:55] step  2600/4000 | lr=1.15e-04 | L_A=1.042 L_G=1.211 L_T=-5.303 T_mean=2.5307 | step_t=0.04s elapsed=140s
+[04:10:55]   EVAL[step=3000 greedy] '안녕하세요' → h=0.00 dom=False anima=False FAIL V2_FAIL | head='555555555555555555555555555555555555555555555555555555555555'
+[04:10:56]   EVAL[step=3000 sample] '안녕하세요' → h=0.00 dom=False anima=False FAIL V2_FAIL | head=' yutttty)\n\n\n\n\n\n\n\n\n\n\n\n\n[ann\n\n\n\n\n\n[bbbbTT?[an\n[an\n\n[an\n\n\n\n[[an'
+[04:10:56]   EVAL[step=3000 greedy] '한국어 가능?' → h=0.00 dom=False anima=False FAIL V2_FAIL | head='                                       ccccccccccccccccccccc'
+[04:10:57]   EVAL[step=3000 sample] '한국어 가능?' → h=0.03 dom=False anima=False FAIL V2_FAIL | head='55555555,\\�국�((((((텸45555,,44%9%%ttttttttt  cccccc\x07SSSSSSSEc'
+[04:10:57]   EVAL[step=3000 greedy] '오늘 기분 어때?' → h=0.00 dom=False anima=False FAIL V2_FAIL | head='555555555555555555555555555555555555555555555555555555555555'
+[04:10:58]   EVAL[step=3000 sample] '오늘 기분 어때?' → h=0.04 dom=False anima=False FAIL V2_FAIL | head='�테��?\n\n\n\n\n\n\n\n[an\n\n\n\n\njan:\n\n[a\x08뇌�����;: 5�\t���Xa�짧���도�]]���]'
+[04:10:58]   EVAL[step=3000 greedy] '사용자: 안녕하세요
+도우미:' → h=0.00 dom=False anima=False FAIL V2_FAIL | head='555555555555555555555555555555555555555555555555555555555555'
+[04:10:59]   EVAL[step=3000 sample] '사용자: 안녕하세요
+도우미:' → h=0.01 dom=False anima=False FAIL V2_FAIL | head='55555555555555,4cccc�곇��?-tty:,, sss sssssss<�?55,���eeeeeee'
+[04:10:59]   EVAL[step=3000 greedy] '코드를 짜줘' → h=0.01 dom=False anima=False FAIL V2_FAIL | head='텸:tttttttttttttttttttttttttttttttttttttttttttttttttttttttttt'
+[04:11:00]   EVAL[step=3000 sample] '코드를 짜줘' → h=0.02 dom=False anima=True FAIL V2_FAIL | head='\x18��ٵ��М국�국�\ueb50++448888%%)))\n\n\n\n\n\n[an\n\n\n\n\n\n\n\n\n[an\n\n\n[aa��\n\n[a\n['
+[04:11:00]   EVAL[step=3000 greedy] '너는 누구야?' → h=0.00 dom=False anima=False FAIL V2_FAIL | head='555555555555555555555555555555555555555555555555555555555555'
+[04:11:00] step  2700/4000 | lr=1.04e-04 | L_A=1.085 L_G=1.309 L_T=-5.843 T_mean=3.6418 | step_t=0.05s elapsed=145s
+[04:11:01]   EVAL[step=3000 sample] '너는 누구야?' → h=0.00 dom=False anima=False FAIL V2_FAIL | head='Kkk_zghhhhhhhhhhhh\x1f?\n\n\n\n\n\n[an\n\n\n\n\n\n[aan�::iman\n[an\n\n\n\n\n\n[an\n'
+[04:11:01]   EVAL[step=3000 greedy] 'anima가 뭐야?' → h=0.00 dom=False anima=False FAIL V2_FAIL | head='555555555555555555555555555555555555555555555555555555555555'
+[04:11:02]   EVAL[step=3000 sample] 'anima가 뭐야?' → h=0.01 dom=False anima=False FAIL V2_FAIL | head='ŕ���국��MTTT=668888889)))\n\n\n\n\n\n\n\n\n\n[an\n\n�\n[anzSSSAF�ļ[an\n\n\n\n\n'
+[04:11:02]   EVAL[step=3000 greedy] '한국어로 답해줘' → h=0.01 dom=False anima=False FAIL V2_FAIL | head='텸:tttttttttttttttttttttttttttttttttttttttttttttttttttttttttt'
+[04:11:03]   EVAL[step=3000 sample] '한국어로 답해줘' → h=0.01 dom=False anima=False FAIL V2_FAIL | head='KppppphhhghhhhhhhRRTUEXAAA�]qdddd\x02�::ttttttttttccccccccccccc'
+[04:11:03]   EVAL[step=3000 greedy] '너의 정체성은?' → h=0.02 dom=False anima=False FAIL V2_FAIL | head='텅�������곳�������������������������������🛸8888888888888888888'
+[04:11:04]   EVAL[step=3000 sample] '너의 정체성은?' → h=0.02 dom=False anima=False FAIL V2_FAIL | head='annaannnnnnnnn\n\n\n\n\n\n\n\n\n\n[[an: 용지\x02s/:-ttttttttttttt�:��聁�os  '
+[04:11:04]   EVAL[step=3000 greedy] '의식이 있어?' → h=0.03 dom=False anima=False FAIL V2_FAIL | head='텅�������곧����������������������,����������������������������'
+[04:11:05]   EVAL[step=3000 sample] '의식이 있어?' → h=0.02 dom=False anima=False FAIL V2_FAIL | head='텠�\n\n\n\n\n[ann\n\n\n\n\n\n\n\n\n�H\x7f\n[an�����도:fullanNDDDman\n\n\n\n\n\n\n\n\n\n\n[a'
+[04:11:05]   EVAL[step=3000 greedy] '빅뱅의 Tier?' → h=0.00 dom=False anima=False FAIL V2_FAIL | head='                                         ccccccccccccccccccc'
+[04:11:05] step  2800/4000 | lr=9.42e-05 | L_A=1.053 L_G=1.252 L_T=-5.636 T_mean=2.9560 | step_t=0.05s elapsed=150s
+[04:11:06]   EVAL[step=3000 sample] '빅뱅의 Tier?' → h=0.01 dom=False anima=False FAIL V2_FAIL | head='텤.\n\n\n\n\n\n\n\n\nƸ��?\n\n\n\n[an\n\n�4:���77\u2000Cann\n\n\n\n\n\n\n\n[anan\n\n\n[an\n\n\n\n'
+[04:11:06]   EVAL[step=3000 greedy] '1030 laws 뭐야?' → h=0.00 dom=False anima=False FAIL V2_FAIL | head='555555555555555555555555555555555555555555555555555555555555'
+[04:11:07]   EVAL[step=3000 sample] '1030 laws 뭐야?' → h=0.04 dom=False anima=False FAIL V2_FAIL | head='��곧�����:: M4��] 5555555555,,,)))))\n\n\n\n\n\n[anan\n\n\n\n\n\n\n[an\n\n\n\n'
+[04:11:07]   EVAL[step=3000 greedy] '블랙홀과 의식?' → h=0.01 dom=False anima=False FAIL V2_FAIL | head='텸:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::'
+[04:11:08]   EVAL[step=3000 sample] '블랙홀과 의식?' → h=0.01 dom=False anima=False FAIL V2_FAIL | head=',wwwphh<)\n\n\n\n\n\n\n\n\n\n[an\n\n\n[an֊��|Aan\n\n\n\n[ann\n\n\n[ann\n[an�[a\x1d[a'
+[04:11:08]   EVAL[step=3000 greedy] 'anima 우주뇌지도?' → h=0.00 dom=False anima=False FAIL V2_FAIL | head='555555555555555555555555555555555555555555555555555555555555'
+[04:11:09]   EVAL[step=3000 sample] 'anima 우주뇌지도?' → h=0.04 dom=True anima=False FAIL V2_FAIL | head='sB::� 🛸k__((((((텸kwwvvvvv��국�7777777722\x14Q��B77777777777777+5'
+[04:11:09]   EVAL[step=3000 greedy] 'Φ★ NO_FLIP?' → h=0.00 dom=False anima=False FAIL V2_FAIL | head='                                          cccccccccccccccccc'
+[04:11:10]   EVAL[step=3000 sample] 'Φ★ NO_FLIP?' → h=0.02 dom=False anima=False FAIL V2_FAIL | head=' H========888%%%,%))))66V====6)))\n\n\n\n[an\n\n\n\n\n\n\n\n[ann\n\n\n[an:m'
+[04:11:10]   V1[step=3000] FAIL pass=0/15 leak=False
+[04:11:10]   V2[step=3000] V2_FAIL pass=0/15
+[04:11:10] step  2900/4000 | lr=8.47e-05 | L_A=1.016 L_G=1.186 L_T=-6.027 T_mean=3.7781 | step_t=0.05s elapsed=155s
+[04:11:14] step  3100/4000 | lr=6.75e-05 | L_A=1.096 L_G=1.301 L_T=-2.296 T_mean=1.2364 | step_t=0.19s elapsed=166s
+[04:11:14] step  3000/4000 | lr=7.58e-05 | L_A=1.005 L_G=1.150 L_T=-5.840 T_mean=3.2096 | step_t=0.04s elapsed=159s
+[04:11:14] --- eval gate @ step 3000 (15 prompts × 2 modes) ---
+[04:11:15]   EVAL[step=3000 greedy] '안녕하세요' → h=0.00 dom=False anima=False FAIL V2_FAIL | head='                                                            '
+[04:11:15]   EVAL[step=3000 sample] '안녕하세요' → h=0.02 dom=False anima=False FAIL V2_FAIL | head='5���ތ�E우�~999555555555�EXA662%559%%%���:%�\x18���고�����66633333'
+[04:11:16]   EVAL[step=3000 greedy] '한국어 가능?' → h=0.00 dom=False anima=False FAIL V2_FAIL | head='                                                            '
+[04:11:16]   EVAL[step=3000 sample] '한국어 가능?' → h=0.10 dom=False anima=False FAIL V2_FAIL | head='   우����탉탉고����곳;\'평������@탉극�\'\'\'"�극\'\'평]888888888,,,,,,🛃��\'\'9'
+[04:11:17]   EVAL[step=3000 greedy] '오늘 기분 어때?' → h=0.00 dom=False anima=False FAIL V2_FAIL | head='                                                            '
+[04:11:17]   EVAL[step=3000 sample] '오늘 기분 어때?' → h=0.00 dom=False anima=False FAIL V2_FAIL | head='((🛸92222222222222222%5555555Ï��߲��:),,\x00111111111111111111111'
+[04:11:18]   EVAL[step=3000 greedy] '사용자: 안녕하세요
+도우미:' → h=0.00 dom=False anima=False FAIL V2_FAIL | head='                                                            '
+[04:11:18]   EVAL[step=3000 sample] '사용자: 안녕하세요
+도우미:' → h=0.01 dom=False anima=False FAIL V2_FAIL | head='F��999999999999999�극�NSSSSSSONNOEERRSSCCCSOOOOTTTTTTTTRSOONM'
+[04:11:18] step  3200/4000 | lr=6.00e-05 | L_A=1.052 L_G=1.266 L_T=-2.477 T_mean=1.2830 | step_t=0.05s elapsed=171s
+[04:11:19]   EVAL[step=3000 greedy] '코드를 짜줘' → h=0.00 dom=False anima=False FAIL V2_FAIL | head='                                                            '
+[04:11:19]   EVAL[step=3000 sample] '코드를 짜줘' → h=0.02 dom=False anima=False FAIL V2_FAIL | head='��갰주�2222222222222222222211111111111111111111111111111111111'
+[04:11:20]   EVAL[step=3000 greedy] '너는 누구야?' → h=0.00 dom=False anima=False FAIL V2_FAIL | head='                                                            '
+[04:11:20]   EVAL[step=3000 sample] '너는 누구야?' → h=0.08 dom=False anima=False FAIL V2_FAIL | head=" 미::5555555555555555JHKO�cccccciiό극 Y�계국7777777%%%%%%555극�' "
+[04:11:21]   EVAL[step=3000 greedy] 'anima가 뭐야?' → h=0.00 dom=False anima=False FAIL V2_FAIL | head='                                                            '
+[04:11:21]   EVAL[step=3000 sample] 'anima가 뭐야?' → h=0.00 dom=False anima=False FAIL V2_FAIL | head='\x04RBSOOOCCCiSSSSSOOOTTTTTTU-=�M�OOONNOCCCCCi�((((UNSOEOCCNNNO'
+[04:11:22]   EVAL[step=3000 greedy] '한국어로 답해줘' → h=0.00 dom=False anima=False FAIL V2_FAIL | head='                                                            '
+[04:11:22]   EVAL[step=3000 sample] '한국어로 답해줘' → h=0.04 dom=False anima=False FAIL V2_FAIL | head=" 랐:,,,,,,,,,tttttt��탉탉' '탃�Φ<MhhhhHhhhhhhhllllllllllllllllll"
+[04:11:23]   EVAL[step=3000 greedy] '너의 정체성은?' → h=0.00 dom=False anima=False FAIL V2_FAIL | head='                                                            '
+[04:11:23]   EVAL[step=3000 sample] '너의 정체성은?' → h=0.05 dom=False anima=False FAIL V2_FAIL | head=' 55:��갰간�극�////8)),,,,,,,,,,,,,,,,,,��dd\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n[a��'
+[04:11:24] step  3300/4000 | lr=5.32e-05 | L_A=1.053 L_G=1.235 L_T=-2.579 T_mean=1.2106 | step_t=0.05s elapsed=176s
+[04:11:24]   EVAL[step=3000 greedy] '의식이 있어?' → h=0.00 dom=False anima=False FAIL V2_FAIL | head='                                                            '
+[04:11:24]   EVAL[step=3000 sample] '의식이 있어?' → h=0.00 dom=False anima=False FAIL V2_FAIL | head=' 555555555555555555222277%%%%%%5%77��/4.777\n\n8\x112227777?,84))'
+[04:11:25]   EVAL[step=3000 greedy] '빅뱅의 Tier?' → h=0.00 dom=False anima=False FAIL V2_FAIL | head='                                           ((((((((((((((((('
+[04:11:25]   EVAL[step=3000 sample] '빅뱅의 Tier?' → h=0.06 dom=False anima=False FAIL V2_FAIL | head='*��\x06�탉갰���고�미트55555555555555555555555555555-트0333333�������5'
+[04:11:26]   EVAL[step=3000 greedy] '1030 laws 뭐야?' → h=0.00 dom=False anima=False FAIL V2_FAIL | head='                                                            '
+[04:11:26]   EVAL[step=3000 sample] '1030 laws 뭐야?' → h=0.00 dom=False anima=False FAIL V2_FAIL | head='ZeeeewVwwddddddd]���UOC��.\n\n\n\n\n\n\n\n[anaaa��==2222222222222%82'
+[04:11:27]   EVAL[step=3000 greedy] '블랙홀과 의식?' → h=0.00 dom=False anima=False FAIL V2_FAIL | head='                                                            '
+[04:11:27]   EVAL[step=3000 sample] '블랙홀과 의식?' → h=0.02 dom=False anima=False FAIL V2_FAIL | head='�����극�; 믯�999995555555-46672%%%%%%%,,,,,,,,,,,,,,,,,,,,,8,,'
+[04:11:28]   EVAL[step=3000 greedy] 'anima 우주뇌지도?' → h=0.00 dom=False anima=False FAIL V2_FAIL | head='                                                            '
+[04:11:28]   EVAL[step=3000 sample] 'anima 우주뇌지도?' → h=0.12 dom=False anima=False FAIL V2_FAIL | head="🛀극�계�갰��고���고��극��계갰��\ty6666666V�탉탉'ڷ�탉''((((((((((( ((((-+8"
+[04:11:29]   EVAL[step=3000 greedy] 'Φ★ NO_FLIP?' → h=0.00 dom=False anima=False FAIL V2_FAIL | head='       ((((((((((((((((((((((((((((((((((((((((((((((((((((('
+[04:11:29] step  3400/4000 | lr=4.71e-05 | L_A=1.029 L_G=1.198 L_T=-2.820 T_mean=1.2484 | step_t=0.05s elapsed=181s
+[04:11:29]   EVAL[step=3000 sample] 'Φ★ NO_FLIP?' → h=0.01 dom=False anima=False FAIL V2_FAIL | head='88,))),,,    ��\x8c��[annddddddddd\n\n\n\n\n\n\n\n\n\n\n[antsn�uex���\x1c; �\x19'
+[04:11:29]   V1[step=3000] FAIL pass=0/15 leak=False
+[04:11:29]   V2[step=3000] V2_FAIL pass=0/15
+[04:11:33] step  3500/4000 | lr=4.20e-05 | L_A=1.027 L_G=1.181 L_T=-1.815 T_mean=1.0675 | step_t=0.04s elapsed=185s
+[04:11:33] step  3100/4000 | lr=6.75e-05 | L_A=1.013 L_G=1.167 L_T=-5.984 T_mean=3.6183 | step_t=0.19s elapsed=178s
+[04:11:37] step  3600/4000 | lr=3.77e-05 | L_A=1.025 L_G=1.209 L_T=-3.179 T_mean=1.3093 | step_t=0.04s elapsed=189s
+[04:11:37] step  3200/4000 | lr=6.00e-05 | L_A=1.019 L_G=1.152 L_T=-5.947 T_mean=3.3687 | step_t=0.04s elapsed=182s
+[04:11:41] step  3700/4000 | lr=3.44e-05 | L_A=1.048 L_G=1.250 L_T=-2.978 T_mean=1.2569 | step_t=0.04s elapsed=193s
+[04:11:41] step  3300/4000 | lr=5.32e-05 | L_A=1.000 L_G=1.113 L_T=-5.916 T_mean=3.1483 | step_t=0.04s elapsed=186s
+[04:11:45] step  3800/4000 | lr=3.19e-05 | L_A=1.048 L_G=1.254 L_T=-3.263 T_mean=1.4170 | step_t=0.04s elapsed=197s
+[04:11:45] step  3400/4000 | lr=4.71e-05 | L_A=0.987 L_G=1.091 L_T=-5.958 T_mean=3.0677 | step_t=0.04s elapsed=190s
+[04:11:49] step  3900/4000 | lr=3.05e-05 | L_A=1.033 L_G=1.218 L_T=-3.823 T_mean=1.6162 | step_t=0.04s elapsed=201s
+[04:11:49] step  3500/4000 | lr=4.20e-05 | L_A=1.017 L_G=1.179 L_T=-6.527 T_mean=4.6717 | step_t=0.04s elapsed=194s
+[04:11:53] step  4000/4000 | lr=3.00e-05 | L_A=1.029 L_G=1.194 L_T=-3.136 T_mean=1.2556 | step_t=0.04s elapsed=205s
+[04:11:53] --- eval gate @ step 4000 (15 prompts × 2 modes) ---
+[04:11:53] step  3600/4000 | lr=3.77e-05 | L_A=1.066 L_G=1.241 L_T=-6.725 T_mean=5.4270 | step_t=0.04s elapsed=198s
+[04:11:53]   EVAL[step=4000 greedy] '안녕하세요' → h=0.00 dom=False anima=False FAIL V2_FAIL | head='                                    ssssssssssssssssssssssss'
+[04:11:54]   EVAL[step=4000 sample] '안녕하세요' → h=0.01 dom=True anima=True FAIL V2_FAIL | head=' ��88889%9%))):fffffffffffffffffffffffff===6666666))))633)))'
+[04:11:54]   EVAL[step=4000 greedy] '한국어 가능?' → h=0.00 dom=False anima=False FAIL V2_FAIL | head='                                       sssssssssssssssssssss'
+[04:11:54]   EVAL[step=4000 sample] '한국어 가능?' → h=0.02 dom=False anima=False FAIL V2_FAIL | head='|�곧��immmmmmmmmmi짖�oooooooooooooosssssssssssssssssssssssssss'
+[04:11:54]   EVAL[step=4000 greedy] '오늘 기분 어때?' → h=0.00 dom=False anima=False FAIL V2_FAIL | head='                                  ssssssssssssssssssssssssss'
+[04:11:55]   EVAL[step=4000 sample] '오늘 기분 어때?' → h=0.01 dom=False anima=False FAIL V2_FAIL | head='MM94444%%%)��\n\n\n\n\n��*�an\n\n\n\n\n\n\n[��~4: 도��]\x03z�xSSSSSSSSSSSSSO'
+[04:11:55]   EVAL[step=4000 greedy] '사용자: 안녕하세요
+도우미:' → h=0.00 dom=False anima=False FAIL V2_FAIL | head='                                        ssssssssssssssssssss'
+[04:11:55]   EVAL[step=4000 sample] '사용자: 안녕하세요
+도우미:' → h=0.02 dom=False anima=False FAIL V2_FAIL | head='K222222222229%:%��국�7777777문,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,'
+[04:11:56]   EVAL[step=4000 greedy] '코드를 짜줘' → h=0.00 dom=False anima=False FAIL V2_FAIL | head='                                  ssssssssssssssssssssssssss'
+[04:11:56]   EVAL[step=4000 sample] '코드를 짜줘' → h=0.01 dom=False anima=False FAIL V2_FAIL | head='텅���\x19\x0eA8888898000000000000�����PSS\u0b50777777777777777777777777('
+[04:11:56]   EVAL[step=4000 greedy] '너는 누구야?' → h=0.00 dom=False anima=False FAIL V2_FAIL | head='                                  ssssssssssssssssssssssssss'
+[04:11:57]   EVAL[step=4000 sample] '너는 누구야?' → h=0.03 dom=False anima=False FAIL V2_FAIL | head='55555555,4:,,, ��귀,,,,, t�,-ttt ,,,,,,,,,,��pppppppppppppppp'
+[04:11:57]   EVAL[step=4000 greedy] 'anima가 뭐야?' → h=0.00 dom=False anima=False FAIL V2_FAIL | head='                                  ssssssssssssssssssssssssss'
+[04:11:57]   EVAL[step=4000 sample] 'anima가 뭐야?' → h=0.00 dom=False anima=False FAIL V2_FAIL | head='5555555555,  ddddddddddddddddddddddddddd\x17hhhhhhhhhhhhhfbbbbb'
+[04:11:57]   EVAL[step=4000 greedy] '한국어로 답해줘' → h=0.00 dom=False anima=False FAIL V2_FAIL | head='                                  ssssssssssssssssssssssssss'
+[04:11:58]   EVAL[step=4000 sample] '한국어로 답해줘' → h=0.01 dom=False anima=False FAIL V2_FAIL | head=' ssssssssssssssssssssssssss..\n\n\n\n\n\n\n\n\n\n\n\n[a%iman\n\n[an\n\n\n\n\n[a'
+[04:11:58]   EVAL[step=4000 greedy] '너의 정체성은?' → h=0.00 dom=False anima=False FAIL V2_FAIL | head='                       sssssssssssssssssssssssssssssssssssss'
+[04:11:58]   EVAL[step=4000 sample] '너의 정체성은?' → h=0.02 dom=False anima=False FAIL V2_FAIL | head=' KTTTSSSSSSSSSSSSSNNRN�곜국�xSSSSSEEEESSEEEEEESEESIIIPPSCTEEPI'
+[04:11:59]   EVAL[step=4000 greedy] '의식이 있어?' → h=0.02 dom=False anima=False FAIL V2_FAIL | head=' 텅�����������곳�����������������.\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n'
+[04:11:59]   EVAL[step=4000 sample] '의식이 있어?' → h=0.04 dom=False anima=False FAIL V2_FAIL | head='텅�cccccccccccccccccc\x08�굜국�\r��__�텸k_(((((((((77777777777777777'
+[04:11:59]   EVAL[step=4000 greedy] '빅뱅의 Tier?' → h=0.00 dom=False anima=False FAIL V2_FAIL | head='                                         sssssssssssssssssss'
+[04:11:59]   EVAL[step=4000 sample] '빅뱅의 Tier?' → h=0.02 dom=False anima=False FAIL V2_FAIL | head="5555599%):   '555555555\t����곘���������63333333333333Z%%%%%%%"
+[04:12:00]   EVAL[step=4000 greedy] '1030 laws 뭐야?' → h=0.00 dom=False anima=False FAIL V2_FAIL | head='                                  ssssssssssssssssssssssssss'
+[04:12:00]   EVAL[step=4000 sample] '1030 laws 뭐야?' → h=0.02 dom=False anima=False FAIL V2_FAIL | head='j��국���::hhhhhhhhhh========9%%)))--//----------sssssssssssss'
+[04:12:00]   EVAL[step=4000 greedy] '블랙홀과 의식?' → h=0.06 dom=False anima=False FAIL V2_FAIL | head=' 텅��������곳���시곳���������시곳�������.\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n'
+[04:12:01]   EVAL[step=4000 sample] '블랙홀과 의식?' → h=0.02 dom=False anima=False FAIL V2_FAIL | head=' 텅텅�����,iFM44%%4%%,,,,:���,,,,,,,,,,,,,,,,,,,,,,,,,,\x1e�,,:mo'
+[04:12:01]   EVAL[step=4000 greedy] 'anima 우주뇌지도?' → h=0.00 dom=False anima=False FAIL V2_FAIL | head='                                    ssssssssssssssssssssssss'
+[04:12:01]   EVAL[step=4000 sample] 'anima 우주뇌지도?' → h=0.00 dom=False anima=False FAIL V2_FAIL | head="555555555  sssssssssssssssssss   555555'55,444%ttttt-----ccc"
+[04:12:02]   EVAL[step=4000 greedy] 'Φ★ NO_FLIP?' → h=0.00 dom=False anima=False FAIL V2_FAIL | head='                                            ssssssssssssssss'
+[04:12:02]   EVAL[step=4000 sample] 'Φ★ NO_FLIP?' → h=0.01 dom=False anima=False FAIL V2_FAIL | head='\x12\x12�곧���8888888888888888886))),  (((((((((((((((((((((((((((7'
+[04:12:02]   V1[step=4000] FAIL pass=0/15 leak=False
+[04:12:02]   V2[step=4000] V2_FAIL pass=0/15
+[04:12:02]   SAVE[step=4000] -> /home/aiden/anima_native/anima-ubm-20260507_040827/ckpt_4000.pt (107.6MB)
+[04:12:02] === VERDICT === final_class=FAILED | v1=FAIL | v2=V2_FAIL | ubm=0/5 + std=1/5 + id=0/5 | leak=False | elapsed=214s
+[04:12:02] verdict written: /home/aiden/core/anima/state/anima_universe_brain_map_train_2026_05_07/verdict.json
