@@ -39,9 +39,10 @@
       "rate_limit": "free tier 1 req/min — batch into large draws, cache; mock LCG fallback for CI",
       "status": "wired_mock_only",
       "puller": "anima/mirror/qmirror/seed/pull.hexa",
+      "consumer_spec": "anima/mirror/qmirror/seed/S1_consumer_spec.md",
+      "wire_point_identified": "train_alm_lora.hexa:585 init_lora_A(d, r, n_adapters, base_seed) — replace base_seed source with first 8 bytes of qrng_lora_init.bin (or buffer-walker)",
       "captured_bytes": 1024,
-      "captured_sha256_mock": "1517a8e10994b57d854e9ce2b367b79bc6f2019d751a03b115322db538bfc133",
-      "remaining": ["activate ANU live tier with API key", "wire qrng_lora_init.bin into training/train_alm_14b.hexa LoRA init"]
+      "captured_sha256_mock": "1517a8e10994b57d854e9ce2b367b79bc6f2019d751a03b115322db538bfc133"
     },
     "S2_vqc_router": {
       "module": "circuit",
@@ -110,9 +111,9 @@
     "hexa_module_system_absent": "WORKAROUND CANONICAL. hexa-lang has no working `use` (confirmed via engine_aer comment + RULES §7). Both pull.hexa and qmirror's cmd_qrng use the same awk-strip + heredoc-driver subprocess pattern. SSOT for future qmirror integrations."
   },
   "open_gaps": {
-    "anu_live_tier_untested": "Default invocation runs mock_lcg (deterministic LCG). ANU live tier (NEXUS_QMIRROR_LIVE=1 + NEXUS_QMIRROR_ANU_KEY) untested in this integration — needs API key procurement + rate-limit handling. Mock fixture is sufficient for reproducibility/CI; live tier required for production entropy in LoRA init.",
-    "lora_init_consumer_not_wired": "qrng_lora_init.bin sits unused — anima training scripts (e.g. training/train_alm_14b.hexa) do not yet read it. Hooking the bin into actual LoRA initialization is a follow-up (post-mirror v0 assembly).",
-    "pyphi_not_installed": "S4 baseline ran with engine=mock; phi_star=0.0 (canonical Braket fixture). Live measurement needs `pip install git+https://github.com/wmayner/pyphi.git@b78d0e3`. Tracked in diag/cond9_spec.md."
+    "anu_live_tier_user_blocked": "Default mock_lcg (deterministic LCG, sha256 1517a8e1…). ANU live needs NEXUS_QMIRROR_ANU_KEY (user-procured). Pull.hexa already auto-forwards env if set — no code change needed when key arrives.",
+    "lora_init_consumer_design_only": "qrng_lora_init.bin is captured but no anima training script reads it yet. Wire point + minimal snippet documented in seed/S1_consumer_spec.md (target: train_alm_lora.hexa:585 init_lora_A base_seed). Closure = caller-side patch + provenance row in consumed.jsonl.",
+    "pyphi_install_blocked_by_pep668": "Tried `pip install --user git+...pyphi@b78d0e3` against Homebrew python@3.14 — blocked by PEP 668 externally-managed env. Resolution requires user decision: (a) create venv (~/core/qmirror/.venv) and update qmirror iit_mip module to invoke venv python, OR (b) `pip install --break-system-packages` (warned against by Homebrew), OR (c) `pipx install pyphi` (cleanest if pipx available). Until decided, baseline stays engine=mock (phi_star=0.0)."
   },
   "next_steps": {
     "C2_real": {
