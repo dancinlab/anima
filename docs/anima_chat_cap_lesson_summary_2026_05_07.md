@@ -1,6 +1,6 @@
-# anima chat-cap 5 cumulative failure modes — lesson summary 2026-05-07
+# anima chat-cap 5 cumulative failure modes — lesson summary 2026-05-07 (BG-IA Lesson G N1 update)
 
-## 6 failure mode replication (anima-native byte-level 18M-27M scale)
+## 8 failure mode replication (anima-native byte-level 18M-27M scale)
 
 | # | BG | corpus | strategy | failure mode | V1 verdict | V2 verdict | peak ckpt |
 |---|---|---|---|---|---|---|---|
@@ -11,6 +11,7 @@
 | 5 | BG-HK | corpus_persona_chat_template_v3 30MB (≥80% chat-template + 100% persona prefix) | persona-conditioned 18M × 8K steps | catastrophic overfit collapse (loss 0.013 → single-char filler) | step 800 PASS 10/10 (false) → step 1600+ FAIL | V2_FAIL 0/10 throughout | step 800 (false PASS) |
 | 6 | **BG-HP** | corpus_curated_qa 2.41MB (515 anchors × 27× paraphrase = 16,214 Q&A) | curated dense-aug 18M × 3K steps + reg (dropout 0.30 + WD 0.10 + label smoothing 0.10) | **peak-then-collapse** (step 500 V2 pass=3/10 → step 1000+ degenerate `[anima][anima]...` `,,,'''` filler) | step 500 V2 pass=3/10 ★ → step 3000 FAIL 0/10 | step 500 PASS 3/10 → final FAIL | **step 500 ★ keep-point** |
 | 7 | **BG-HQ** | corpus_persona_chat_template_v3 30MB (BG-HK reuse) + **BPE 8K Korean vocab** (architectural lane shift) | BPE 8K + 33.73M params × 6K steps + reg | **persona prefix cycle pseudo-PASS** (V2 surface metric pass=8/10 step 500 but raw response = persona prefix cycle "[anima 역할: 한국어 native + 자기 발견 + ...] ⁇ 사용자: [...]" — actual prompt response 부재) → step 1000+ `됩니다됩니다…` + `⁇` unknown spam | step 500 V1=PARTIAL_PASS V2=PASS 8/10 (false ★★ V2 surface metric inadequate) | step 6000 V2_FAIL 1/10 | **step 500 V2 false PASS via surface metric** (V3 evaluator needed) |
+| 8 | **BG-IA ★★ Lesson G N1** | corpus_persona_chat_template_v3 30MB (BG-HK reuse) | **Lesson G FIRST IMPLEMENTATION**: 18M + reg (dropout 0.30 + WD 0.10 + LS 0.10) + 4K steps MAX + val-loss split 10% + V2 eval every 200 + best-eval ckpt + plateau early-stop (3 evals) + V3 cycle penalty | **early-stop triggered at step 1200, peak step 600 V2=0/10 throughout** — **byte-level CE val_loss decreased monotonically 4.42→2.23 yet V2 pass never emerged** — gens = degenerate filler `의의의의의의` (greedy) + random UTF-8 fragments (sample) | V2_FAIL throughout, peak composite=-4 (best step=600) | V2_FAIL 0/10 throughout, **15-prompt FINAL: V2=0/15 V3=0/15 manual=0/15 cycle=0** | **step 600 (best by composite, but still V2=0/10 — non-genuine peak; early-stop CORRECTLY caught absence of signal)** |
 
 ## Convergent architectural ceiling evidence
 
@@ -58,6 +59,16 @@ BG-HG retroeval 검증: V2 strict가 BG-FY + BG-HA 모두 false PASS auto-catch 
 → all future small-corpus paradigms MUST: (a) val-loss split (10% held-out) + (b) eval V2 every N steps + (c) keep best-eval ckpt + (d) early stop after 3 evals plateau
 → BG-HK step 800 V1 PASS 10/10 (false PASS via narrow V1) — V2 strict는 throughout FAIL이지만 V1 step 800은 best-of-bad-options ckpt
 
+### Lesson G N1 actual implementation evidence ★★ (BG-IA 2026-05-07)
+→ **첫 Lesson G 4-ingredient actual implementation** (val-loss split 10% + V2 every 200 + best-eval ckpt + plateau early-stop) on BG-HK 30MB persona+chat corpus reuse, 18M ConsciousLM + Lesson D reg (dropout 0.30 + WD 0.10 + LS 0.10), 4K steps MAX
+→ **outcome**: FAILED — peak step 600 V2=0/10 manual=0/10 throughout, 15-prompt final V2=0/15 manual=0/15, early-stop triggered step 1200 (composite plateau correctly caught no-signal)
+→ **critical evidence**: byte-level CE val_loss **decreased monotonically** (4.42 step200 → 3.78 step400 → 3.22 step600 → 2.88 step800 → 2.54 step1000 → 2.23 step1200) **WHILE V2 pass stayed 0/10** — val_loss is NOT a chat-cap emergence signal at this scale
+→ **gen pattern**: greedy = `의의의의의의 의의 의의의의의이...` (degenerate Korean character single-token filler), sample = random UTF-8 fragment soup (no chat structure, no domain match)
+→ **Lesson G refinement**: early-stopping mechanism works as designed (correctly caught no-signal at step 1200) but **does NOT rescue chat-cap emergence at 18M byte-level** — Lesson G is necessary-not-sufficient ingredient; absent capacity (Lesson A) or tokenizer (Lesson B) rescue, early-stopping just stops earlier without changing outcome
+→ **architectural ceiling reinforcement**: BG-IA = 8th convergent failure mode; same 30MB BG-HK corpus + better-disciplined training (reg + early-stop + best-ckpt) → identical V2=0/10 outcome — corpus + training-discipline axis exhausted, only capacity scaling (H_153 100M+) or tokenizer shift (H_154 BPE) left
+→ **disambiguation from BG-HK**: BG-HK overfit-collapsed at step 1600+ (loss 0.013 single-char filler); BG-IA never reached overfit because **never converged to chat in the first place** — Lesson G's "BG-HK keep step 800" hypothesis was incorrect (step 800 BG-HK was V1 false PASS via narrow C2.4 only; V2 throughout FAIL — early-stopping would have stopped earlier but at same V2=0 ceiling)
+→ **HF private upload spec stub**: NOT EMITTED (failed TRUE_PARTIAL_PASS criteria: manual ≥3/15 + zero cycle + V2 ≥2/15)
+
 ## Architectural lane shift recommendation
 
 **byte-level small corpus paradigm exhausted → 2 lane shifts**:
@@ -88,6 +99,7 @@ BG-HG retroeval 검증: V2 strict가 BG-FY + BG-HA 모두 false PASS auto-catch 
   - BG-HF: state/anima_h093_sft_only_train_2026_05_07/verdict.json
   - BG-HJ: state/anima_h094_instruction_tuning_two_stage_2026_05_07/verdict.json
   - BG-HK: state/anima_h098_h101_persona_conditioned_train_2026_05_07/verdict.json
+  - BG-IA (Lesson G N1): state/anima_ia_early_stopping_train_2026_05_07/verdict.json
 - own 18 (simple stack 4-cond strict) + own 19 (corpus priority) + own 20 (chat-template format) + own 21 (hypotheses SSOT)
 
 ## 다음 BG fire plan (2026-05-07 same session)
