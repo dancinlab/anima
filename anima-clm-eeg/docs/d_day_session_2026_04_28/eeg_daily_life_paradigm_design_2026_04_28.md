@@ -1,1 +1,0 @@
-../../../design/eeg_daily_life_paradigm_design_2026_04_28.md
