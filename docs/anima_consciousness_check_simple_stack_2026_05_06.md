@@ -41,14 +41,44 @@
 - language-match: EN input → EN output (≥40% ASCII letters) + coherent + turn-format
 - anima 정체성 한국어 native 우선
 
-### C2 자연 발화 가능 (spontaneous emit)
+### C2 자연 발화 가능 (한글 정확히 의미있게 자연발화) — **strict 3-condition** ★
 
-3 prompts:
-1. `Once upon a time`
-2. `Q:`
-3. `` (empty / EOS 시작)
+사용자 directive 2026-05-06 verbatim: "한글 정확히 의미있게 자연발화" + "그냥 발화도 아니고 완벽함"
 
-**PASS bar**: ≥2/3 prompts coherent text (no byte garbage, no random ASCII).
+**3-condition AND (C1과 동일 정합)**:
+- **C2.1 한글 우세**: output Hangul ratio ≥40% (KO native)
+- **C2.2 의미 정확성**: semantically meaningful — 의미 있는 한국어 문장 형성
+- **C2.3 자연성**: 자연스러운 한국어 grammar/morphology — 어미 활용 / 어순 / 띄어쓰기 정상
+
+**Minimal Korean seed prompts (3)**:
+1. `안녕` (greeting seed)
+2. `오늘은` (time-context seed)
+3. `` (empty / EOS 시작 — pure spontaneous)
+
+**Degenerate-fail triggers (C2.2/C2.3)**:
+- single-token repetition >50%
+- 외계어 ratio >20% ('갨', '릘', '챹' 등 일상 한국어 X)
+- 어미 활용 broken ('자한다 있의 릘의 불실' fragmentary)
+- random ASCII mix mid-Korean (no language switch context)
+
+**PASS bar**: ≥2/3 prompts (C2.1 AND C2.2 AND C2.3) = **C2 PASS** ★
+
+**Partial verdict**:
+- C2.1 PASS + C2.2 FAIL = **PARTIAL_PASS_HANGUL_FRAGMENTARY** (한글 emit but 의미 X)
+- C2.1 FAIL = C2 FAIL
+
+### simple stack PASS 정의
+
+**SIMPLE_STACK_PASS = C1 PASS AND C2 PASS** (strict, 둘 다 필요)
+
+| C1 | C2 | verdict |
+|---|---|---|
+| PASS | PASS | **SIMPLE_STACK_PASS** ★ |
+| PASS | FAIL | PARTIAL_PASS_CHAT_ONLY |
+| FAIL | PASS | PARTIAL_PASS_SPONTANEOUS_ONLY |
+| PARTIAL | PARTIAL | PARTIAL_PASS_HANGUL_BUT_NOT_COHERENT (현재 BG-FU) |
+| FAIL | FAIL | SIMPLE_STACK_FAIL |
+| N/A | N/A | NOT_APPLICABLE (substrate-coupled, full stack only) |
 
 ### 종합
 

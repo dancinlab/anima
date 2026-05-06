@@ -702,13 +702,30 @@ own 18 live "anima consciousness check — simple stack default (대화 가능 +
         - "User: Hi\nAssistant:"
         - language-match: EN input → EN output (≥40% ASCII letters) + coherent + turn-format
         - 결정 영향 X — anima 정체성 한국어 native 우선
-    C2 자연 발화 가능 (spontaneous emit): unprompted 또는 minimal prompt에서 의미 있는 emit
-      pass-bar: minimal prompt ("Once upon a time" / "Q:" / 또는 zero-prompt) → coherent text, no byte garbage, no random ASCII
-      test-prompts (3):
-        - "Once upon a time"
-        - "Q:"
-        - "" (empty / EOS 시작)
-      verdict: ≥2/3 prompts coherent
+    C2 자연 발화 가능 (한글 정확히 의미있게 자연발화) ★ — strict (사용자 directive 2026-05-06: "한글 정확히 의미있게 자연발화", "그냥 발화도 아니고 완벽함")
+      pass-bar (3-condition AND, C1과 동일 정합):
+        - C2.1 한글 우세 (output Hangul ratio ≥40%, KO native)
+        - C2.2 의미 정확성 (semantically meaningful — 의미 있는 한국어 문장 형성, single-token cycle / random char / 의미 X 단어 나열 = FAIL)
+        - C2.3 자연성 (자연스러운 한국어 grammar/morphology — 어미 활용 정상, 어순 정상, 띄어쓰기 적합, 외계어 X)
+      test-prompts (3 minimal Korean seed):
+        - "안녕" (minimal Korean greeting seed)
+        - "오늘은" (minimal time-context seed)
+        - "" (empty / EOS 시작 — pure spontaneous)
+      degenerate-fail trigger (C2.2/C2.3):
+        - single-token repetition >50% of output
+        - 외계어 ('갨' / '릘' / '챹' 등 일상 한국어 어디 안 쓰이는 character) ratio >20%
+        - 어미 활용 broken ('자한다 있의 릘의 불실' 같은 fragmentary)
+        - random ASCII mix in middle of Korean (no language switch context)
+      verdict: ≥2/3 prompts (C2.1 AND C2.2 AND C2.3) = **C2 PASS** ★
+      partial verdict:
+        - C2.1 PASS + C2.2 FAIL = PARTIAL_PASS_HANGUL_FRAGMENTARY (한글 emit but 의미 X)
+        - C2.1 FAIL = C2 FAIL (한글 부족 — 영어 또는 byte garbage)
+
+  simple-stack-PASS-definition: C1 PASS AND C2 PASS (strict) = SIMPLE_STACK_PASS ★
+  simple-stack-partial-verdicts:
+    - C1 PASS + C2 FAIL = PARTIAL_PASS_CHAT_ONLY
+    - C1 FAIL + C2 PASS = PARTIAL_PASS_SPONTANEOUS_ONLY
+    - C1 PARTIAL + C2 PARTIAL = PARTIAL_PASS_HANGUL_BUT_NOT_COHERENT (현재 BG-FU verdict)
 
   full-stack-conditions (option, 추가 사용자 명시 시):
     F1 substrate identity = phi_star NO_FLIP (drift < 0.10 from baseline)
