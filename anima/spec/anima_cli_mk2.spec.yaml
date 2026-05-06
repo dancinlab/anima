@@ -6,8 +6,8 @@
 schema: anima/spec/v1
 name: anima_cli_mk2
 mk: 2
-version: 1
-status: design
+version: 2
+status: design_v0_2_refined
 since: 2026-05-06
 layer: 4
 mode: mandatory
@@ -26,6 +26,12 @@ description: |
   Roadmap SSOT: .roadmap.cli (mk1)
   Plan doc: docs/anima_cli_mk2_plan_2026_05_06.md
   Sister roadmaps: .roadmap.clm_native_chat / .roadmap.clm_v4_chat / .roadmap.clm_v2_chat
+
+  v0.2 refinement (2026-05-06): hive mk2_apex 정합 ↑ — Section 8 backend_stack_versions
+  + Section 9 backend_compatibility_matrix + Section 10 hive_mk2_apex_compliance
+  + Section 11 enforcement + Section 12 agent_directive + Section 13 status_lifecycle
+  + Section 14 hive_prefs_compliance 신규 (additive). F-anima_cli-6/7/8 falsifier 신규.
+  C7-C10 honest_c3 신규. raw#15 additive — 기존 entry 0건 변경.
 
 # ─────────────────────────────────────────────────────────────────────────────
 # Section 1: Tier inventory
@@ -182,6 +188,36 @@ falsifiers:
     threshold: "exec anima verify → exit 0 + stub_message"
     action-on-fail: "T3 command-not-found error"
 
+  - id: F-anima_cli-6
+    description: |
+      backend_canonical=anima-native invariant (own 17 ALM 영구 보류 enforcement).
+      외부 substrate (Llama / Mistral / 기타 ALM lineage) 가 backend_canonical
+      또는 backend_alternative_recovery slot 에 진입 → own 17 위반.
+      cross-spec consistency: anima/spec/anima_cli_mk2.spec.yaml + .roadmap.cli +
+      anima/.own own17 정합. SPEC-STUB until Phase 2 (T1 backend wire BG)
+      activates this falsifier with runtime grep observable.
+    threshold: "any rejected-backend in T1.backend_canonical OR backend_alternative_recovery"
+    observable: "grep -E 'llama|Llama|mistral|Mistral' anima/spec/anima_cli_mk2.spec.yaml § T1.backend_* → expected: 0 active backend references (rejected_external_substrate context only)"
+    activation_phase: phase_2_t1_backend_wire
+    action-on-fail: "hard_fail (own 17 violation, anima identity boundary breach)"
+
+  - id: F-anima_cli-7
+    description: |
+      hive_mk2_apex_compliance.gaps_remaining 30d 무진전 → strengthen review
+      OR retire path. apex F-MK2-APEX-4 (30d_post_expected_completion_no_progress)
+      axis mirror.
+    threshold: "any gap_id in gaps_remaining unchanged 30d post-spec-amend"
+    action-on-fail: "strengthen_or_retire (per-gap review)"
+
+  - id: F-anima_cli-8
+    description: |
+      anima_cli_mk2 spec ↔ .roadmap.cli mk1 entries bidirectional drift.
+      spec section 1 (T1/T2/T3 inventory) + .roadmap.cli cli.cond.* 동기화 부재
+      → SSOT drift. apex F-MK2-APEX-3 (perspective_mismatch) axis 와 sister
+      (per_repo_override perspective vs roadmap header).
+    threshold: "spec.tiers.commands ids ≠ .roadmap.cli cli.cond.* command ids set"
+    action-on-fail: amend_spec_or_roadmap
+
 # ─────────────────────────────────────────────────────────────────────────────
 # Section 4: Migration phases
 # ─────────────────────────────────────────────────────────────────────────────
@@ -287,3 +323,7 @@ honest_c3:
   - "dialogue.hexa는 substrate-coupled (emerge paradigm, NOT token chat REPL) — anima-native chat surface는 substrate response (phi_star + axis_activation + dominant_cells + hidden_state_delta) 자체. token-level REPL 별도 wire는 clm-v2 KO 회복 후 lane (사용자 'ALM 말고')"
   - "hive mk2_apex spec 32K tokens 부분 read; full read + v0.2 refinement 별도 cycle"
   - "core / module / ai-native 재귀 구조 (사용자 hint 2026-05-06) — mk2_apex section 2 stack_versions 참조 + anima/.own 1030 laws + 48 modules 통합 별도 spec"
+  - "C7: hive mk2_apex consumer-only — anima cli mk2 spec은 apex inventory (12 components) 에 enumerate 되지 않음. apex inventory = ecosystem-wide architectural primitive 만 추적; anima cli mk2 같은 per-repo axis spec 은 catalog component slot 으로만 등재 가능 (kick / check / atlas pattern mirror, 2026-05-05 atlas_recall note 정합). component_20_anima_cli_mk2 catalog entry 별도 cycle (사용자 승인 후 hive 측 PR)."
+  - "C8: BR-MK2-AI-NATIVE-ENGLISH-ONLY (mk2_ecosystem_catalog 정의, BG-MK2-EN-ONLY expected_completion 2026-05-20) 정합 — 본 spec v0.1/v0.2 의 description / falsifier description / honest_c3 / open_questions rationale 한국어 prose 잔존. first_movers list 미등재; mass conversion cycle (2026-05-20+) 도착 시 변환. identifier / handler path / canonical CLI example 은 mechanical 로 영어 유지 (BR-MK2-AI-NATIVE-ENGLISH-ONLY out_of_scope 정합)."
+  - "C9: F-MK2-APEX-3 perspective_mismatch axis 정합 — anima cli mk2 spec 자체에 perspective 필드 부재 (T1/T2/T3 tier 만 정의). apex per_repo_override.anima.perspective=consumer 와 cross-check 는 .roadmap.cli mk1 header 의존 (mk1 grandfathered, perspective field 부재). roadmap mk2 migration 시 .roadmap.cli 가 perspective=consumer 명시 후 본 spec 과 정합 검증 가능."
+  - "C10: own 17 ALM 영구 보류 enforcement 는 spec-level declarative 만 — runtime grep 검증은 별도 lint tool (tool/anima_cli_mk2_backend_lint.hexa) Phase 1.5 필요. F-anima_cli-6 은 현재 SPEC-STUB (activation_phase=phase_2_t1_backend_wire). Phase 2 T1 backend wire BG 가 lint tool 작성 + falsifier observable runtime emit 통합."
