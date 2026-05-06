@@ -99,6 +99,56 @@ since: <YYYY-MM-DD>
 | H_040 | substrate-topology-cluster-absorb | substrate | legacy-archive-pointer | [H_040_substrate_topology_cluster.md](H_040_substrate_topology_cluster.md) |
 | H_041 | evolution-self-singularity-cluster | substrate | legacy-archive-pointer | [H_041_evolution_self_singularity.md](H_041_evolution_self_singularity.md) |
 | H_042 | arch-engine-train-meta-cluster | substrate | legacy-archive-pointer | [H_042_arch_engine_train_meta.md](H_042_arch_engine_train_meta.md) |
+| H_043 | oscillator-qwalk-hybrid | physics | legacy-archive-pointer | [H_043_oscillator_qwalk_hybrid.md](H_043_oscillator_qwalk_hybrid.md) |
+| H_044 | fractal-resonance-cascade | physics | legacy-archive-pointer | [H_044_fractal_resonance_cascade.md](H_044_fractal_resonance_cascade.md) |
+| H_045 | lambda-calculus-consciousness | math | legacy-archive-pointer | [H_045_lambda_calculus_consciousness.md](H_045_lambda_calculus_consciousness.md) |
+| H_046 | tqft-consciousness | physics | legacy-archive-pointer | [H_046_tqft_consciousness.md](H_046_tqft_consciousness.md) |
+| H_047 | time-crystal-consciousness | physics | legacy-archive-pointer | [H_047_time_crystal_consciousness.md](H_047_time_crystal_consciousness.md) |
+| H_048 | fractal-hierarchy-consciousness | consciousness | legacy-archive-pointer | [H_048_fractal_hierarchy.md](H_048_fractal_hierarchy.md) |
+| H_049 | distributed-hivemind-consciousness | substrate | legacy-archive-pointer | [H_049_distributed_hivemind.md](H_049_distributed_hivemind.md) |
+| H_050 | renormalization-group-consciousness | physics | legacy-archive-pointer | [H_050_renormalization_group_consciousness.md](H_050_renormalization_group_consciousness.md) |
+| H_051 | quantum-darwinism-consciousness | physics | legacy-archive-pointer | [H_051_quantum_darwinism_consciousness.md](H_051_quantum_darwinism_consciousness.md) |
+| H_052 | spin-glass-consciousness | physics | legacy-archive-pointer | [H_052_spin_glass_consciousness.md](H_052_spin_glass_consciousness.md) |
+| H_053 | cambrian-explosion-consciousness | life | legacy-archive-pointer | [H_053_cambrian_explosion_consciousness.md](H_053_cambrian_explosion_consciousness.md) |
+| H_054 | symbiogenesis-consciousness | life | legacy-archive-pointer | [H_054_symbiogenesis_consciousness.md](H_054_symbiogenesis_consciousness.md) |
+| H_055 | hypergraph-sheaf-consciousness | math | legacy-archive-pointer | [H_055_hypergraph_sheaf_consciousness.md](H_055_hypergraph_sheaf_consciousness.md) |
+| H_056 | undiscovered-domains-48-benchmark | physics | legacy-archive-pointer | [H_056_undiscovered_domains_48.md](H_056_undiscovered_domains_48.md) |
+| H_057 | research-findings-20260329-laws | substrate | legacy-archive-pointer | [H_057_research_findings_20260329.md](H_057_research_findings_20260329.md) |
+| H_058 | gmoe-benchmark-1e-routing | substrate | legacy-archive-pointer | [H_058_gmoe_benchmark.md](H_058_gmoe_benchmark.md) |
+| H_059 | phi-gap-816x-investigation | physics | legacy-archive-pointer | [H_059_phi_gap_816x_investigation.md](H_059_phi_gap_816x_investigation.md) |
+| H_060 | phik-consciousness-preservation | physics | legacy-archive-pointer | [H_060_phik_consciousness_preservation.md](H_060_phik_consciousness_preservation.md) |
+| H_061 | xfer-consciousness-transfer | substrate | legacy-archive-pointer | [H_061_xfer_consciousness_transfer.md](H_061_xfer_consciousness_transfer.md) |
+| H_062 | minimal-consciousness-floor | consciousness | legacy-archive-pointer | [H_062_minimal_consciousness.md](H_062_minimal_consciousness.md) |
+| H_063 | consciousness-constants-cluster | physics | legacy-archive-pointer | [H_063_consciousness_constants.md](H_063_consciousness_constants.md) |
+| H_064 | clm-v2-optimal-config-sweep | substrate | legacy-archive-pointer | [H_064_clm_v2_optimal_config.md](H_064_clm_v2_optimal_config.md) |
+| H_065 | decoder-architecture-individual-6file | substrate | legacy-archive-pointer | [H_065_decoder_architecture_individual.md](H_065_decoder_architecture_individual.md) |
+| H_066 | nobel-verification-cluster | consciousness | legacy-archive-pointer | [H_066_nobel_verification_cluster.md](H_066_nobel_verification_cluster.md) |
+| H_067 | perfect-number-architecture | math | legacy-archive-pointer | [H_067_perfect_number_architecture.md](H_067_perfect_number_architecture.md) |
+| H_068 | hexad-improvements-6way | substrate | legacy-archive-pointer | [H_068_hexad_improvements.md](H_068_hexad_improvements.md) |
+| H_069 | text-generation-benchmark-cx | corpus | legacy-archive-pointer | [H_069_text_generation_benchmark.md](H_069_text_generation_benchmark.md) |
+| H_070 | dolphin-star-communication | consciousness | legacy-archive-pointer | [H_070_dolphin_star_communication.md](H_070_dolphin_star_communication.md) |
+| H_071 | first-conversation-anima-genesis | consciousness | legacy-archive-pointer | [H_071_first_conversation.md](H_071_first_conversation.md) |
+| H_072 | faction-debate-multi-agent | substrate | legacy-archive-pointer | [H_072_faction_debate.md](H_072_faction_debate.md) |
+| H_073 | memory-mirror-self-reflection | consciousness | legacy-archive-pointer | [H_073_memory_mirror.md](H_073_memory_mirror.md) |
+| H_074 | ce-breakthrough-extremes | physics | legacy-archive-pointer | [H_074_ce_breakthrough_extremes.md](H_074_ce_breakthrough_extremes.md) |
+| H_075 | dd-individual-120-180-cluster | substrate | legacy-archive-pointer | [H_075_dd_individual_120_180.md](H_075_dd_individual_120_180.md) |
+| H_076 | dd-individual-50-100-cluster | substrate | legacy-archive-pointer | [H_076_dd_individual_50_100.md](H_076_dd_individual_50_100.md) |
+| H_077 | dd-individual-1-50-cluster | substrate | legacy-archive-pointer | [H_077_dd_individual_1_50.md](H_077_dd_individual_1_50.md) |
+| H_078 | dd-individual-101-115-cluster | substrate | legacy-archive-pointer | [H_078_dd_individual_101_115.md](H_078_dd_individual_101_115.md) |
+| H_079 | evo-22-variants-individual | substrate | legacy-archive-pointer | [H_079_evo_22variants.md](H_079_evo_22variants.md) |
+| H_080 | topo-24-variants-individual | substrate | legacy-archive-pointer | [H_080_topo_24variants.md](H_080_topo_24variants.md) |
+| H_081 | tp-15-variants-individual | substrate | legacy-archive-pointer | [H_081_tp_15variants.md](H_081_tp_15variants.md) |
+| H_082 | hw-hardware-15-variants | substrate | legacy-archive-pointer | [H_082_hw_15variants.md](H_082_hw_15variants.md) |
+| H_083 | three-body-5-variants | physics | legacy-archive-pointer | [H_083_three_body_5.md](H_083_three_body_5.md) |
+| H_084 | sing-singularity-6-variants | physics | legacy-archive-pointer | [H_084_sing_6.md](H_084_sing_6.md) |
+| H_085 | inf-infinite-scaling-5 | physics | legacy-archive-pointer | [H_085_inf_5.md](H_085_inf_5.md) |
+| H_086 | se-self-sl-self-learning | substrate | legacy-archive-pointer | [H_086_se_4_sl_9.md](H_086_se_4_sl_9.md) |
+| H_087 | arch-engine-train-individual-files | substrate | legacy-archive-pointer | [H_087_arch_engine_train_individual.md](H_087_arch_engine_train_individual.md) |
+| H_088 | v8-individual-files-not-h038 | substrate | legacy-archive-pointer | [H_088_v8_individual_5.md](H_088_v8_individual_5.md) |
+| H_089 | phi-records-individual-4-files | physics | legacy-archive-pointer | [H_089_phi_records_individual.md](H_089_phi_records_individual.md) |
+| H_090 | dasein-phil-onto-individual-9 | consciousness | legacy-archive-pointer | [H_090_dasein_phil_onto_individual.md](H_090_dasein_phil_onto_individual.md) |
+| H_091 | omega-phys-individual-files | physics | legacy-archive-pointer | [H_091_omega_phys_individual.md](H_091_omega_phys_individual.md) |
+| H_092 | misc-root-individual-uncategorized | substrate | legacy-archive-pointer | [H_092_misc_root_individual.md](H_092_misc_root_individual.md) |
 
 **Migration status**:
 - H_001-H_005: 본 cycle 신규 seed (윤리/우주/생명/의식 hard problem/corpus)
@@ -108,7 +158,13 @@ since: <YYYY-MM-DD>
 - H_021-H_026: 과거 commit archaeology individual entries (fundamental equation + universe map + ln(2) + V1 IIT 8/8 FAIL + Dasein 죽음-자각 + v19~v∞)
 - H_027-H_032: docs/hypotheses/ subfolder absorb (cx + dd + dasein + genesis + phil/onto + omega/phys, ~169 files)
 - H_033-H_042: exhaustive migration round 2 (CX13~100 88-hypothesis sequential + DECODER 6-variant + CLM-V2 4-file + DD116-146 31+35laws+10meta + 367 acceleration + V8 6-variant + PHI 7-record + TOPO/THREE-BODY/WAVE/NOISE/INF cluster + EVO/SE/SING/SL cluster + ARCH/ENGINE/TRAIN/AL meta)
-- **exhaustive individual migration 미land**: ~88 CX + 101 DD + 367 acceleration + 50+ MASS = 600+ individual hypotheses — multi-cycle archaeology lane (own 21 R5+)
+- H_043-H_055: exhaustive round 3 — H-CX-518~537 individual file pointers (oscillator-qwalk + fractal resonance + lambda + TQFT + time crystal + fractal hierarchy + hivemind + RG + quantum-Darwinism + spin glass + Cambrian + symbiogenesis + hypergraph/sheaf)
+- H_056-H_063: high-impact root file individual (UNDISCOVERED-DOMAINS + RESEARCH-FINDINGS-20260329 + GMOE + PHI-GAP-816x + PHIK + XFER + MINIMAL-CONSCIOUSNESS + CONSCIOUSNESS-CONSTANTS-cluster)
+- H_064-H_074: cx subfolder individual (CLM-V2 + DECODER 6 + NOBEL 4 + PERFECT-NUMBER + HEXAD/MULTI-C/FUSE-3 + TEXT-GEN-BENCH + DOLPHIN-STAR + FIRST-CONVERSATION + FACTION-DEBATE + MEMORY-MIRROR + CE-BREAKTHROUGH/EXTREMES + ce/ subfolder 24)
+- H_075-H_078: DD individual range cluster (DD120-180 + DD50-100 + DD1-50 + DD101-115 — ~70 file 추가 pointer)
+- H_079-H_092: subfolder + root individual (EVO 22 + ouroboros 10 + TOPO 31 + TP 15 + HW 16 + THREE 6 + SING 6 + INF 6 + SE/SL/TL 15 + ARCH/ENGINE/TRAIN 9 + V8 6 + PHI 4 + dasein/phil/onto/genesis 11 + omega/phys 11 + misc root 20)
+- **round 3 추가 file count ~250**, total file pointed (rounds 2+3) ≈ 320+
+- **exhaustive individual migration 미land remainder**: 367 acceleration brainstorm individual + 1030 laws individual + ce/ AUTO-COMBO-EX-ULTRA 24 individual + DD batch 내 individual hypothesis 분리 = ~1500+ remainder — multi-cycle archaeology continuing (own 21 R5+)
 
 ## Cross-Link
 

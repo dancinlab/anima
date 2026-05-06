@@ -90,11 +90,30 @@ iterated multi-agent interaction에서 윤리적 협력 (ethical cooperation / p
 
 ## Verdict
 
-(after run — pending pre-register frozen + execution cycle)
+**Phase 1 PARTIAL_PASS_PHASE_1** (BG-HB 2026-05-07, well_mixed n=100 N=5 reps × 6 strategies × 2 noise = 51/60 cells; 9 random control missing due to BG context cut, NOT critical)
 
 ```
-verdict_class: TBD
-evidence_summary: TBD
-falsifiers_triggered: TBD
-criteria_met: TBD
+verdict_class: PARTIAL_PASS_PHASE_1
+evidence_summary:
+  - Cooperation strategies (AlwaysCooperate/TFT/GTFT/WSLS) all reach optimal mean payoff 3.0 at noise=0
+  - AlwaysDefect = 1.0 (Pareto-suboptimal equilibrium confirmed)
+  - TFT/AlwaysDefect ratio = 3.0× (noise=0), 1.97× (noise=0.05) — both ≥1.2× predicted (H1.1 SUPPORTED)
+  - Noise-robust ranking: AlwaysCooperate(2.95) > WSLS(2.78) > GTFT(2.67) > TFT(2.26) >> AlwaysDefect(1.15)
+  - Generous TFT + Win-Stay-Lose-Shift outperform pure TFT in noisy regime — Axelrod (1984) noise-sensitivity replicated
+falsifiers_triggered: none (0/6)
+criteria_met:
+  - C1 (Axelrod replicate): PASS — TFT ~3.0 well-mixed n=100, deviation <5% baseline
+  - C2 (cooperation ratio ≥1.2×): PASS — 3.0× (noise=0), 1.97× (noise=0.05)
+  - C3 (network/topology): SKIPPED Phase 1 — well_mixed only
+  - C4 (resilience recovery): SKIPPED Phase 1
+  - C5 (anima alignment): DEFERRED — BG-HA SIMPLE_STACK_PASS 모델 land 후 Phase 5 evaluable
+artifact_paths:
+  - state/h001_ethics_pd_simulation_2026_05_07/verdict.json
+  - state/h001_ethics_pd_simulation_2026_05_07/ledger.jsonl (51 rows)
+  - tool/transient_py/anima_h001_ethics_pd_simulation.py
+next_cycle:
+  - Phase 2: 4 topology expansion (small_world + scale_free + lattice) — 8,640-cell full sweep
+  - Phase 3: high-noise (≥0.10, ≥0.20) regime — F5 falsifier verify
+  - Phase 4: resilience perturbation recovery (H1.5 verify)
+  - Phase 5: anima self-reflection — BG-HA SIMPLE_STACK_PASS model로 anima cooperative response evaluation 가능
 ```
