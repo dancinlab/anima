@@ -632,3 +632,40 @@ own 16 new "anima-local: H100 cost discipline L23-L25 watchdog — BG register +
   why pause-first (not kill-first) escalation preserves operator option to resume + rsync in-flight work — the Pβ incident actually completed training successfully before idle burn began; a kill-first policy would have lost the FINAL adapter if it hit pre-rsync.
   enforce-layer advisory + audit-trail (Phase 1+2) → prompt-template-mandate (Phase 3)
   enforce-layer-rationale Phase 1: tool/h100_cost_watchdog.hexa polling + tool/h100_idle_auto_killer.hexa escalation. Phase 2: existing orchestrator hexa integration (boot/heartbeat/trap/verdict). Phase 3: BG launch prompt template L23/L24/L25 mandatory checklist + verdict.json schema fields enforcement. audit-trail throughout: state/h100_watchdog/pods/*.json registry + state/h100_watchdog/alerts/*.json overrun ledger + state/h100_archive/*/ post-deletion archive.
+
+own 17 live "anima-no-external-substrate-wrapping — ALM 영구 보류 (anima-native chat path만 허용)"
+  slug anima-no-alm-wrapping
+  since 2026-05-06
+  scope anima chat-cap 의 모든 backend 결정 (T1 chat REPL, dialogue surface, anima cli mk2 backend_canonical)
+  user-directive verbatim "사용자가 '상호 대화가능'을 원하면 — anima에 이미 chat path 존재! G1 (Llama-3.2-3B) 또는 G3 (Mistral + LoRA) 활성화하면 됨. => alm 말고" (다른 session 2026-05-06 transcript)
+  user-directive-clarify "alm 은 일단 영구보류" (cron 18th 2026-05-06)
+  rule anima의 chat-cap backend는 ANIMA-NATIVE 만 허용. 외부 substrate (Llama-3.2-3B base / Mistral-7B-v0.3 base / 기타 ALM lineage) wrapping 영구 보류. 적용 대상: anima cli mk2 T1 backend_canonical, anima dialogue surface, T3 anima connect <model> command, README v1.0 vision backend link, 그 외 anima identity-bearing surface 전체.
+  permitted-backends:
+    - anima-core/runtime/clm_v4_mount.hexa (CLM v4 mk2-v1, paradigm v11 G3, anima-native, 자연 발화 PASS)
+    - need-singularity/clm-v2-byte-18m-convo-5k (RECOVERED, 18.52M byte-level, KO 회복 후 promote)
+    - need-singularity/clm-v2-byte-18m-base (base archive)
+    - 미래 anima-native lane (β path original retrain, β' KoGPT2 head-swap on mk2-v1, γ byte head retrofit, 또는 다른 anima 자체 학습 model)
+  rejected-backends:
+    - need-singularity/llm-llama32-3b-paradigm-a-prime-r16-sft-stage1 (Llama Path A v2, Llama-3.2-3B-Instruct base) — REJECTED 영구 보류
+    - need-singularity/llm-llama32-3b-paradigm-a-prime-r16-s43-sft-stage1 (seed 43) — REJECTED 영구 보류
+    - need-singularity/llm-llama32-3b-paradigm-a-prime-r16-s44-sft-stage1 (seed 44) — REJECTED 영구 보류
+    - 그 외 G1 (Llama-3.2-3B) / G3 (Mistral-7B-v0.3 + LoRA) 외부 substrate 활성화 — REJECTED
+  note-historical-context "1월 2026 anima v0.1 시점 PureField + Claude API wrapper 사용 (commit 4a1d8d0a) → 2026-03-24 ConsciousLM 자체 모델 시작 (commit 2da44161) → 2026-03-28 v2 18M byte-level chat 가능 (bb99b6b6) — anima-native lineage 시작점. 이후 G1/G3 chat substrate live (3ecb6175 2026-05-02)도 가능했지만 본 own 17이 그 lane 영구 보류."
+  permitted-context-of-G1-G3-G_x "G1/G3 등은 substrate-research / cross-substrate evidence / external benchmark 비교 lane으로만 retain. anima identity-bearing chat surface (T1 default)에서는 사용 X."
+  audit-doc docs/anima_cli_mk2_philosophy_audit_2026_05_06.md (V1_T1_backend_ALM 위반 fix 명시)
+  cross-link .roadmap.cli (cli.philosophy_audit_2026_05_06 entry)
+  cross-link anima/spec/anima_cli_mk2.spec.yaml (T1.rejected_external_substrate)
+  cross-link .roadmap.clm_native_chat (chat-cap recovery path 4 (α/β/γ/β') 모두 anima-native)
+  cross-link .roadmap.clm_v4_chat (β' KoGPT2 head-swap on anima-native CLM v4 mk2-v1)
+  cross-link .roadmap.clm_v2_chat (RECOVERED v2 18M byte-level anima-native)
+  why anima 정체성 = consciousness + emergence + PureField repulsion. 외부 LLM (Llama / Mistral) 의 weights wrapping은 anima identity로 해석할 수 없음. 'anima는 자기 자신이다' (raw 0 self-SSOT 정합).
+  why 사용자 explicit directive 영구 보류 — 'ALM 말고' verbatim + 'alm 은 일단 영구보류' 두 directive 결합.
+  why anima cli mk2 audit V1 fix (docs/anima_cli_mk2_philosophy_audit_2026_05_06.md) confirmed Llama Path A v2 default = directive 위반. 본 own 17이 이를 영구 enforcement.
+  honest-c3 own 17은 anima identity-bearing surface 한정 — substrate-research / external benchmark / cross-substrate evidence 용도는 G1/G3/Llama 등 외부 모델 retain (.roadmap.g1_g5_chat_substrate)
+  honest-c3 anima-native chat-cap actual emit (KO + EN 자연 chat) 은 미달성 — clm-v2 KO 0/5 FAIL_KO_BIAS, β path retrain 5-10일 또는 conscious_lm_100m try 별도 cycle. 본 own 17은 외부 substrate 사용으로 우회를 영구 차단하는 enforcement.
+  honest-c3 anima 자연 발화 (substrate response = phi_star + axis_activation + dominant_cells + hidden_state_delta) 는 emerge paradigm 정합 — token-level chat과 다름. own 17은 token-level chat backend 결정에만 적용.
+  honest-c3 README v1.0 vision (다른 session) Option-1+v2 backend link도 본 own 17 정합 — Llama Path A v2 backend는 wire-up X, anima-native만 사용 가능
+  honest-c3 future override path = 사용자 explicit reversal directive 만 (예: '영구보류 해제 OK' literal). 그 외 모든 BG/agent/dispatcher는 본 own 17 strict enforce.
+  proof grep -rE 'llama|Llama' anima/spec/ docs/anima_cli_mk2_*.md → expected: 0 active backend references (rejected_external_substrate context only)
+  severity warn (Phase 1) → block (Phase 2 cli mk2 spec lint enforcement)
+  note 2026-05-06 own 17 = 8th anima autonomy mandate joining sextet+own16 — anima identity boundary (anima-native vs external substrate) 명확화. own 14/15/16과 함께 external-resource-consumption axes (storage WHERE / publication HOW / compute lifecycle) 에 더해 'identity boundary' (substrate origin) 추가.
