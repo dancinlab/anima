@@ -38,6 +38,33 @@ let LIVE_ENV          = env("NEXUS_QMIRROR_LIVE")
 let ANU_KEY_ENV       = env("NEXUS_QMIRROR_ANU_KEY")
 let MOCK_ENV          = env("NEXUS_QMIRROR_MOCK")
 let MEM_UNLIM_ENV     = env("HEXA_MEM_UNLIMITED")
+let SECRET_BIN        = env("SECRET_BIN")
+
+// Resolve ANU API key via secret CLI when not present in env.
+// Tier T1.b (direct keyed) activates if any of these secret keys exist:
+//   qmirror.anu_api_key  |  anu.api_key
+// Silent fallback: if no secret CLI / no key, qrng_bits stays on mock.
+fn resolve_anu_key() -> str {
+    if ANU_KEY_ENV.len() > 0 { return ANU_KEY_ENV }
+    let mut bin = SECRET_BIN
+    if bin.len() < 1 { bin = "/Users/ghost/core/secret/bin/secret" }
+    let exists = exec("[ -x " + bin + " ] && echo yes || echo no").trim()
+    if exists != "yes" { return "" }
+    let names = ["qmirror.anu_api_key", "anu.api_key"]
+    for n in names {
+        let check = exec(bin + " check " + n + " 2>/dev/null && echo yes || echo no").trim()
+        if check == "yes" {
+            let v = exec(bin + " get " + n + " 2>/dev/null").trim()
+            if v.len() > 0 {
+                eprintln("[anima-mirror/S1] anu key resolved from secret/" + n)
+                return v
+            }
+        }
+    }
+    return ""
+}
+
+let RESOLVED_ANU_KEY = resolve_anu_key()
 
 fn qm_root() -> str {
     if QMIRROR_ROOT_ENV.len() > 0 { return QMIRROR_ROOT_ENV }
@@ -73,7 +100,7 @@ fn env_prefix() -> str {
     parts = parts + "QMIRROR_ROOT=" + shq(QM) + " "
     if MOCK_ENV.len() > 0 { parts = parts + "NEXUS_QMIRROR_MOCK=" + shq(MOCK_ENV) + " " }
     if LIVE_ENV.len() > 0 { parts = parts + "NEXUS_QMIRROR_LIVE=" + shq(LIVE_ENV) + " " }
-    if ANU_KEY_ENV.len() > 0 { parts = parts + "NEXUS_QMIRROR_ANU_KEY=" + shq(ANU_KEY_ENV) + " " }
+    if RESOLVED_ANU_KEY.len() > 0 { parts = parts + "NEXUS_QMIRROR_ANU_KEY=" + shq(RESOLVED_ANU_KEY) + " " }
     // Memory cap workaround: 1024-byte [int] array + struct exceeds the
     // default cap on some installs. Always pass HEXA_MEM_UNLIMITED=1
     // for the driver subprocess (parent itself stays under the cap).

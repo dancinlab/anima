@@ -1,0 +1,263 @@
+#!hexa strict
+// pull_live.hexa — anima-mirror S1 LIVE: pull REAL ANU vacuum-fluctuation
+// quantum random bits via qmirror entropy_pull's 4-tier chain.
+//
+// Routes through qmirror/entropy/module/entropy.hexa instead of qrng/qrng.hexa
+// because entropy_pull supports the keyless T1.a legacy fallback
+// (qrng.anu.edu.au at 1 req/min) — qrng_bits's inline path requires
+// NEXUS_QMIRROR_ANU_KEY and does not fall back. With this puller we get
+// real quantum entropy at zero key cost for any user.
+//
+// 4-tier resolution (qmirror entropy.hexa):
+//   T1.c paid    AWS_MARKETPLACE_ANU_API_KEY    (100 req/sec, $0.005/req)
+//   T1.d trial   AWS_MARKETPLACE_ANU_TRIAL_KEY  (1 req/sec, 100 req/mo)
+//   T1.b direct  NEXUS_QMIRROR_ANU_KEY          (free 100 req/min, key-gated)
+//   T1.a legacy  (no env required)              (1 req/min, ALWAYS available)
+//
+// pull.hexa stays the deterministic-mock CI puller; this is the live one.
+//
+// Outputs:
+//   ./qrng_lora_init_live.bin  — raw 1024 bytes from real ANU vacuum-fluctuation
+//   ./provenance.jsonl         — append: ts, tier, n_bytes, sha256, qmirror_message
+//
+// Run:
+//   QMIRROR_ROOT=~/core/qmirror hexa run anima/mirror/qmirror/seed/pull_live.hexa
+//
+// Env knobs:
+//   NEXUS_QMIRROR_TIER=aws_paid|aws_trial|direct|legacy   pin one tier
+//   AWS_MARKETPLACE_ANU_API_KEY=<k>                       enables T1.c
+//   NEXUS_QMIRROR_ANU_KEY=<k>                             enables T1.b
+//
+// @no-lock-needed
+// @resolver-bypass(reason="Driver subprocess + xxd; same pattern as pull.hexa.")
+
+let HOME              = env("HOME")
+let QMIRROR_ROOT_ENV  = env("QMIRROR_ROOT")
+let TIER_ENV          = env("NEXUS_QMIRROR_TIER")
+let ANU_KEY_ENV       = env("NEXUS_QMIRROR_ANU_KEY")
+let AWS_PAID_ENV      = env("AWS_MARKETPLACE_ANU_API_KEY")
+let AWS_TRIAL_ENV     = env("AWS_MARKETPLACE_ANU_TRIAL_KEY")
+let MEM_UNLIM_ENV     = env("HEXA_MEM_UNLIMITED")
+let SECRET_BIN        = env("SECRET_BIN")
+
+// secret CLI lookup. Returns "" if no key (entropy_pull then falls to T1.a).
+fn _secret_lookup(env_existing: str, names: [str]) -> str {
+    if env_existing.len() > 0 { return env_existing }
+    let mut bin = SECRET_BIN
+    if bin.len() < 1 { bin = "/Users/ghost/core/secret/bin/secret" }
+    let exists = exec("[ -x " + bin + " ] && echo yes || echo no").trim()
+    if exists != "yes" { return "" }
+    for n in names {
+        let check = exec(bin + " check " + n + " 2>/dev/null && echo yes || echo no").trim()
+        if check == "yes" {
+            let v = exec(bin + " get " + n + " 2>/dev/null").trim()
+            if v.len() > 0 {
+                eprintln("[anima-mirror/S1-live] resolved from secret/" + n)
+                return v
+            }
+        }
+    }
+    return ""
+}
+
+let RESOLVED_PAID_KEY  = _secret_lookup(AWS_PAID_ENV,  ["qmirror.anu_aws_paid_key"])
+let RESOLVED_TRIAL_KEY = _secret_lookup(AWS_TRIAL_ENV, ["qmirror.anu_aws_trial_key"])
+let RESOLVED_ANU_KEY   = _secret_lookup(ANU_KEY_ENV,   ["qmirror.anu_api_key", "anu.api_key"])
+
+fn qm_root() -> str {
+    if QMIRROR_ROOT_ENV.len() > 0 { return QMIRROR_ROOT_ENV }
+    return HOME + "/core/qmirror"
+}
+
+let QM        = qm_root()
+let MODULE    = QM + "/entropy/module/entropy.hexa"
+let SEED_DIR  = HOME + "/core/anima/mirror/qmirror/seed"
+let OUT_BIN   = SEED_DIR + "/qrng_lora_init_live.bin"
+let PROV      = SEED_DIR + "/provenance.jsonl"
+let TMP_DRV   = "/tmp/anima_mirror_entropy_driver.hexa"
+
+let N_BYTES_REQ = 1024
+
+fn ts_now() -> str {
+    return exec("date -u '+%Y-%m-%dT%H:%M:%SZ'").trim()
+}
+
+fn shq(s: str) -> str {
+    return "'" + s.replace("'", "'\\''") + "'"
+}
+
+fn file_exists(p: str) -> bool {
+    let r = exec("[ -f " + shq(p) + " ] && echo yes || echo no").trim()
+    return r == "yes"
+}
+
+// Forward live opt-in + any tier env into the driver subprocess.
+fn env_prefix() -> str {
+    let mut parts = ""
+    parts = parts + "QMIRROR_ROOT=" + shq(QM) + " "
+    // entropy_pull only hits live tiers when NEXUS_QMIRROR_LIVE=1 is set.
+    parts = parts + "NEXUS_QMIRROR_LIVE=1 "
+    if TIER_ENV.len()           > 0 { parts = parts + "NEXUS_QMIRROR_TIER="            + shq(TIER_ENV)           + " " }
+    if RESOLVED_ANU_KEY.len()   > 0 { parts = parts + "NEXUS_QMIRROR_ANU_KEY="         + shq(RESOLVED_ANU_KEY)   + " " }
+    if RESOLVED_PAID_KEY.len()  > 0 { parts = parts + "AWS_MARKETPLACE_ANU_API_KEY="   + shq(RESOLVED_PAID_KEY)  + " " }
+    if RESOLVED_TRIAL_KEY.len() > 0 { parts = parts + "AWS_MARKETPLACE_ANU_TRIAL_KEY=" + shq(RESOLVED_TRIAL_KEY) + " " }
+    parts = parts + "HEXA_MEM_UNLIMITED=1 "
+    if MEM_UNLIM_ENV.len() > 0 { parts = parts + "HEXA_MEM_UNLIMITED=" + shq(MEM_UNLIM_ENV) + " " }
+    return parts
+}
+
+// Strip entropy.hexa's main() (if any) then append a driver that calls
+// entropy_pull(N, 0) and emits hex stdout. Same SSOT pattern as pull.hexa.
+fn build_driver(n: int) -> bool {
+    let strip_cmd = "awk 'BEGIN{p=1} /^fn main\\(\\)/{p=0} p{print}' " +
+                    shq(MODULE) + " > " + shq(TMP_DRV)
+    exec(strip_cmd)
+    if file_exists(TMP_DRV) == false { return false }
+
+    let main_src = "\n" +
+        "let HEX_LUT_LIVE: [str] = [\n" +
+        "  \"00\",\"01\",\"02\",\"03\",\"04\",\"05\",\"06\",\"07\",\"08\",\"09\",\"0a\",\"0b\",\"0c\",\"0d\",\"0e\",\"0f\",\n" +
+        "  \"10\",\"11\",\"12\",\"13\",\"14\",\"15\",\"16\",\"17\",\"18\",\"19\",\"1a\",\"1b\",\"1c\",\"1d\",\"1e\",\"1f\",\n" +
+        "  \"20\",\"21\",\"22\",\"23\",\"24\",\"25\",\"26\",\"27\",\"28\",\"29\",\"2a\",\"2b\",\"2c\",\"2d\",\"2e\",\"2f\",\n" +
+        "  \"30\",\"31\",\"32\",\"33\",\"34\",\"35\",\"36\",\"37\",\"38\",\"39\",\"3a\",\"3b\",\"3c\",\"3d\",\"3e\",\"3f\",\n" +
+        "  \"40\",\"41\",\"42\",\"43\",\"44\",\"45\",\"46\",\"47\",\"48\",\"49\",\"4a\",\"4b\",\"4c\",\"4d\",\"4e\",\"4f\",\n" +
+        "  \"50\",\"51\",\"52\",\"53\",\"54\",\"55\",\"56\",\"57\",\"58\",\"59\",\"5a\",\"5b\",\"5c\",\"5d\",\"5e\",\"5f\",\n" +
+        "  \"60\",\"61\",\"62\",\"63\",\"64\",\"65\",\"66\",\"67\",\"68\",\"69\",\"6a\",\"6b\",\"6c\",\"6d\",\"6e\",\"6f\",\n" +
+        "  \"70\",\"71\",\"72\",\"73\",\"74\",\"75\",\"76\",\"77\",\"78\",\"79\",\"7a\",\"7b\",\"7c\",\"7d\",\"7e\",\"7f\",\n" +
+        "  \"80\",\"81\",\"82\",\"83\",\"84\",\"85\",\"86\",\"87\",\"88\",\"89\",\"8a\",\"8b\",\"8c\",\"8d\",\"8e\",\"8f\",\n" +
+        "  \"90\",\"91\",\"92\",\"93\",\"94\",\"95\",\"96\",\"97\",\"98\",\"99\",\"9a\",\"9b\",\"9c\",\"9d\",\"9e\",\"9f\",\n" +
+        "  \"a0\",\"a1\",\"a2\",\"a3\",\"a4\",\"a5\",\"a6\",\"a7\",\"a8\",\"a9\",\"aa\",\"ab\",\"ac\",\"ad\",\"ae\",\"af\",\n" +
+        "  \"b0\",\"b1\",\"b2\",\"b3\",\"b4\",\"b5\",\"b6\",\"b7\",\"b8\",\"b9\",\"ba\",\"bb\",\"bc\",\"bd\",\"be\",\"bf\",\n" +
+        "  \"c0\",\"c1\",\"c2\",\"c3\",\"c4\",\"c5\",\"c6\",\"c7\",\"c8\",\"c9\",\"ca\",\"cb\",\"cc\",\"cd\",\"ce\",\"cf\",\n" +
+        "  \"d0\",\"d1\",\"d2\",\"d3\",\"d4\",\"d5\",\"d6\",\"d7\",\"d8\",\"d9\",\"da\",\"db\",\"dc\",\"dd\",\"de\",\"df\",\n" +
+        "  \"e0\",\"e1\",\"e2\",\"e3\",\"e4\",\"e5\",\"e6\",\"e7\",\"e8\",\"e9\",\"ea\",\"eb\",\"ec\",\"ed\",\"ee\",\"ef\",\n" +
+        "  \"f0\",\"f1\",\"f2\",\"f3\",\"f4\",\"f5\",\"f6\",\"f7\",\"f8\",\"f9\",\"fa\",\"fb\",\"fc\",\"fd\",\"fe\",\"ff\"\n" +
+        "]\n" +
+        "fn main() {\n" +
+        "    let r = entropy_pull(" + str(n) + ", 0)\n" +
+        "    println(\"__OK__=\" + str(r.ok))\n" +
+        "    println(\"__N__=\" + str(r.n_bytes))\n" +
+        "    println(\"__PROV__=\" + r.provenance)\n" +
+        "    println(\"__MSG__=\" + r.message)\n" +
+        "    println(\"__REQ__=\" + r.request_id)\n" +
+        "    println(\"__HEX_BEGIN__\")\n" +
+        "    let mut sb = \"\"\n" +
+        "    let mut i = 0\n" +
+        "    while i < r.n_bytes {\n" +
+        "        sb = sb + HEX_LUT_LIVE[r.bytes_[i]]\n" +
+        "        i = i + 1\n" +
+        "    }\n" +
+        "    println(sb)\n" +
+        "    println(\"__HEX_END__\")\n" +
+        "}\n"
+
+    exec("cat >> " + shq(TMP_DRV) + " <<'__ANIMA_MIRROR_LIVE_EOF__'\n" +
+         main_src + "\n__ANIMA_MIRROR_LIVE_EOF__\n")
+    return true
+}
+
+fn parse_marker(out: str, marker: str) -> str {
+    let m = marker + "="
+    let pos = out.index_of(m)
+    if pos < 0 { return "" }
+    let after = out.substring(pos + m.len(), out.len())
+    let nl = after.index_of("\n")
+    if nl < 0 { return after.trim() }
+    return after.substring(0, nl).trim()
+}
+
+fn parse_hex_block(out: str) -> str {
+    let begin = out.index_of("__HEX_BEGIN__")
+    let end_  = out.index_of("__HEX_END__")
+    if begin < 0 { return "" }
+    if end_  < 0 { return "" }
+    let body = out.substring(begin + 13, end_)
+    return body.trim()
+}
+
+fn fail_row(stage: str, msg: str) {
+    let line = "{\"ts\":\"" + ts_now() + "\"" +
+               ",\"qmirror_version\":\"1.0.0\"" +
+               ",\"slot\":\"S1_qrng_seed_live\"" +
+               ",\"module\":\"entropy\"" +
+               ",\"ok\":0" +
+               ",\"blocker_stage\":\"" + stage + "\"" +
+               ",\"blocker_message\":\"" + msg.replace("\"", "\\\"") + "\"}"
+    exec("echo " + shq(line) + " >> " + shq(PROV))
+}
+
+fn main() {
+    println("[anima-mirror/S1-live] entropy_pull via " + MODULE)
+
+    if file_exists(MODULE) == false {
+        let m = "ERROR: entropy module not found at " + MODULE
+        eprintln(m); fail_row("module-missing", m); return
+    }
+
+    if build_driver(N_BYTES_REQ) == false {
+        let m = "ERROR: failed to build driver at " + TMP_DRV
+        eprintln(m); fail_row("driver-build", m); return
+    }
+
+    let cmd = env_prefix() + "hexa run " + shq(TMP_DRV) + " 2>&1; echo __RC=$?"
+    let out = exec(cmd)
+    let rc = parse_marker(out, "__RC")
+    if rc != "0" {
+        let m = "driver subprocess failed rc=" + rc
+        eprintln(m); eprintln(out); fail_row("driver-run", m); return
+    }
+
+    let ok = parse_marker(out, "__OK__")
+    if ok != "1" {
+        let m = parse_marker(out, "__MSG__")
+        eprintln("ERROR: entropy_pull ok=" + ok + " msg=" + m)
+        fail_row("entropy-pull-failed", m); return
+    }
+
+    let n_str = parse_marker(out, "__N__")
+    let n     = to_int(n_str)
+    if n != N_BYTES_REQ {
+        let m = "n_bytes mismatch want=" + str(N_BYTES_REQ) + " got=" + n_str
+        eprintln(m); fail_row("n-bytes-parse", m); return
+    }
+
+    let hex = parse_hex_block(out)
+    if hex.len() != n * 2 {
+        let m = "hex length mismatch want=" + str(n*2) + " got=" + str(hex.len())
+        eprintln(m); fail_row("hex-length", m); return
+    }
+
+    // Materialize binary from hex.
+    let hexfile = TMP_DRV + ".hex"
+    exec("printf '%s' " + shq(hex) + " > " + shq(hexfile))
+    exec("xxd -r -p " + shq(hexfile) + " > " + shq(OUT_BIN))
+    exec("rm -f " + shq(hexfile))
+
+    let bytes = exec("wc -c < " + shq(OUT_BIN) + " | tr -d ' '").trim()
+    if to_int(bytes) != n {
+        let m = "disk size mismatch want=" + str(n) + " got=" + bytes
+        eprintln(m); fail_row("hex-write", m); return
+    }
+
+    let hash  = exec("shasum -a 256 " + shq(OUT_BIN) + " | awk '{print $1}'").trim()
+    let prov  = parse_marker(out, "__PROV__")
+    let msg   = parse_marker(out, "__MSG__")
+    let req   = parse_marker(out, "__REQ__")
+
+    let line = "{\"ts\":\"" + ts_now() + "\"" +
+               ",\"qmirror_version\":\"1.0.0\"" +
+               ",\"slot\":\"S1_qrng_seed_live\"" +
+               ",\"module\":\"entropy\"" +
+               ",\"tier\":\"" + prov + "\"" +
+               ",\"n_bytes\":" + bytes +
+               ",\"sha256\":\"" + hash + "\"" +
+               ",\"out\":\"qrng_lora_init_live.bin\"" +
+               ",\"ok\":1" +
+               ",\"qmirror_message\":\"" + msg.replace("\"", "\\\"") + "\"" +
+               ",\"request_id\":\"" + req + "\"}"
+    exec("echo " + shq(line) + " >> " + shq(PROV))
+
+    println("[anima-mirror/S1-live] PASS bytes=" + bytes + " sha256=" + hash + " tier=" + prov)
+    println("  out:        " + OUT_BIN)
+    println("  provenance: " + PROV)
+}

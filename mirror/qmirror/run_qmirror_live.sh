@@ -32,4 +32,10 @@ export PATH="$VENV_BIN:$PATH"
 export PYPHI_WELCOME_OFF=1
 export HEXA_FORK_CAP="${HEXA_FORK_CAP:-64}"
 
+# ANU API key resolution via secret CLI (silent fallback if absent).
+HERE="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+if [[ -f "$HERE/_resolve_anu_key.sh" ]]; then
+    source "$HERE/_resolve_anu_key.sh"
+fi
+
 exec hexa run "$QM/cli/qmirror.hexa" "$@"
