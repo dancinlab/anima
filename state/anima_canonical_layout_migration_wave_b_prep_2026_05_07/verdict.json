@@ -1,0 +1,92 @@
+{
+  "schema": "anima/state/canonical_layout_migration_prep_verdict/v1",
+  "bg_id": "BG-LAYOUT-MIGRATION-WAVE-B-PREP",
+  "ts_start": "2026-05-06T18:12:40Z",
+  "ts_end":   "2026-05-06T18:17:43Z",
+  "duration_sec_approx": 303,
+  "status": "PLANNING_LANDED_EXEC_DEFERRED",
+  "exec_successor_bg": "BG-LAYOUT-MIGRATION-WAVE-B-EXEC",
+  "exec_window_expected": "~2026-05-12",
+
+  "current_state_summary": "anima disk_state=modules_docs (per hive mk2_apex per_repo_override.anima); 19 anima-* feature dirs at top level, 0/19 canonical_layout compliant (no core/, no module/, no doc/, no lint.<ext> siblings); 1 partial pilot at anima/anima/ using SINGULAR naming with rng feature split into core/rng + modules/rng (still plural) + missing doc/rng + missing lint.<ext>; 4 anima-* dirs carry legacy plural docs/ (anima-physics, anima-voice, anima-hci-research, anima-cpgd-research, anima-tribev2-pilot); flat docs/ has 1129 top-level md (345 ai.md) across 15 subdirs; 9 carve-outs preserved per raw#168 (tool/ bin/ state/ .roadmap.* .own .guide hypotheses/ config/ scripts/ tests/).",
+
+  "target_state_summary": "19 anima-* features each migrated to <feature>/{core,module,doc}/ + lint.<ext> singular triplet; anima/anima/ pilot completed (rename modules->module, add doc/rng, add lint sibling); flat docs/ reduced to cross-cutting catch-all (per mk2_apex flat_docs_disposition); 9 carve-outs unchanged; mk2_apex per_repo_override.anima.disk_state target update from 'modules_docs' to 'feature_grouped' (hive-side spec edit owed).",
+
+  "migration_phase_count": 3,
+  "phases": {
+    "phase_1": {"name": "low-risk dir renames (singular)", "items": 6, "estimated_effort_h": 6, "risk": "LOW", "method": "git mv (history-preserving)"},
+    "phase_2": {"name": "feature classification + file moves", "blocked_by": ["DEF-1 anima-engines ontology", "DEF-3 anima-core sub-feature classification"], "estimated_effort_d": "3-7"},
+    "phase_3": {"name": "cross-link update sweep", "items": ["import statements", ".roadmap handler paths", "spec handler paths", "README path examples"], "estimated_effort_h": 8}
+  },
+
+  "safe_partial_count": 6,
+  "safe_partial_ids": ["SP-1", "SP-2", "SP-3", "SP-4", "SP-5", "SP-6"],
+  "deferred_to_exec_count": 5,
+  "deferred_ids": ["DEF-1", "DEF-2", "DEF-3", "DEF-4", "DEF-5"],
+
+  "feature_candidates_count": 19,
+  "feature_candidates_compliant": 0,
+  "feature_candidates_partial": 1,
+  "carve_out_count": 9,
+
+  "blocking_issues": [
+    "DEF-1 anima-engines 166 top-level *_phi.hexa files require ontology classification (sub-feature granularity decision)",
+    "DEF-2 anima-tools 35 files vs raw#168 tool/ carve-out — user sign-off needed (fold into tool/ OR retain as feature)",
+    "DEF-3 anima-core 20 mixed files (lib/runtime/verification subdirs) — sub-feature recursion classification",
+    "DEF-4 flat docs/ 1129 md files require per-feature ownership classification (multi-day, separate cycle)",
+    "DEF-5 modules/ root has 2 cross-cutting bridge files (hive_bridge.hexa, hive_bridge_bidirectional.hexa) — disposition decision (fold into anima-core/module/ OR retain cross-cutting)",
+    "anima/anima/ semantic ambiguity — canonical anima-self namespace OR vestigial mount-point",
+    "lint.<ext> sibling payload undefined (delegate vs feature-local vs empty stub)",
+    "ubu1/ubu2 host-side path sweep not performed in $0 mac prep"
+  ],
+
+  "raw_invariants_compliance": {
+    "raw_9_hexa_orchestration":   {"status": "PASS", "evidence": "analysis via Bash ls/find only; no .py introduced; deliverables = .json + .md"},
+    "raw_10_honest_c3":           {"status": "PASS", "count": 9, "evidence": "9 honest_c3 limits documented in migration plan section 8"},
+    "raw_15_additive":            {"status": "PASS", "evidence": "all SP-* operations are git mv (history-preserving); NO destructive removes; pre/post-migration tags planned for rollback"},
+    "raw_168_minimum_viable":     {"status": "PASS", "evidence": "9 carve-outs explicitly excluded: tool/ bin/ state/ .roadmap.* .own .guide hypotheses/ config/ scripts/ tests/; tool/ lock per 2026-05-03 user directive (.roadmap.anima_tools.cond.1=decision_locked)"},
+    "raw_82_retraction_protocol": {"status": "N_A", "evidence": "no prior verdict to retract; this is initial prep BG"},
+    "raw_12_pre_register_frozen": {"status": "N_A", "evidence": "layout migration is operational, not falsifier-bearing"}
+  },
+
+  "own_mandates_compliance": {
+    "own_14_anima_models_datasets_hf_only":  {"status": "N_A", "note": "no model/dataset moves"},
+    "own_15_hf_release_lifecycle":           {"status": "N_A", "note": "no HF interactions"},
+    "own_16_h100_cost_discipline":           {"status": "PASS", "note": "$0 mac local; no H100"},
+    "own_17_simple_first_failure_pattern":   {"status": "PASS", "note": "prep BG = simple ls/find; no exec attempt"},
+    "own_18_evaluator_strict_definition":    {"status": "N_A"},
+    "own_19_corpus_priority":                {"status": "N_A"},
+    "own_20_chat_template_format_mandate":   {"status": "N_A"},
+    "own_21_anima_hypotheses_folder_ssot":   {"status": "PASS", "note": "hypotheses/ explicitly enumerated as carve-out (NOT migrated); 111 entries preserved"}
+  },
+
+  "honest_c3": [
+    "no actual moves performed in this BG (analysis-only); compliance rate post-EXEC unknown until ~2026-05-12",
+    "anima-engines 166 files lack ontology mapping; classification cost not modeled in this prep",
+    "anima-tools vs raw#168 tool/ carve-out interaction needs user sign-off; defaulted to DEFERRED",
+    "anima/anima/ namespace semantics ambiguous (canonical OR vestigial); affects collapse decision",
+    "flat docs/ 1129 md per-feature ownership classification not performed; multi-day separate cycle owed",
+    "cross-link grep sweep (.hexa imports + .roadmap handlers + .own evidence_trails) not executed; pre-flight to EXEC BG owed",
+    "ubu1/ubu2 host-side hard-coded path sweep not performed in $0 mac local prep",
+    "lint.<ext> 4th sibling payload spec undefined; downstream BG-LINT-SIBLING-PAYLOAD-SPEC may be required",
+    "raw#82 retraction-protocol consumers in state/1828 entries: handler paths in roadmaps may ripple if <feature>/module/<X> renames occur; conservative update per EXEC BG"
+  ],
+
+  "deliverables": [
+    "docs/anima_canonical_layout_feature_grouped_migration_plan_2026_05_07.md (10 sections, ~360 lines)",
+    "state/anima_canonical_layout_migration_wave_b_prep_2026_05_07/survey.json",
+    "state/anima_canonical_layout_migration_wave_b_prep_2026_05_07/safe_partial_migrations.json",
+    "state/anima_canonical_layout_migration_wave_b_prep_2026_05_07/verdict.json"
+  ],
+
+  "cross_links": {
+    "hive_spec":  "hive/spec/mk2_apex.spec.yaml § sections.canonical_layout",
+    "anima_audit": "docs/anima_mk2_compliance_audit_2026_05_07.md § 1.2 + § 4.2.3",
+    "anima_cli_mk2": "anima/spec/anima_cli_mk2.spec.yaml § 15.cycle_amend_2026_05_07.hive_mk2_compliance_gaps.g12",
+    "exec_successor": "BG-LAYOUT-MIGRATION-WAVE-B-EXEC ~2026-05-12",
+    "rollback_tag_pre": "wave-b-pre-migration-2026-05-12 (planned)",
+    "rollback_tag_post": "wave-b-phase-1-complete-<DATE> (planned)"
+  },
+
+  "verdict": "PLANNING_LANDED_EXEC_DEFERRED — 6 safe partials identified for Phase-1 (all git-mv-based dir renames), 5 deferred items for full EXEC BG; raw#15 + raw#168 + raw#9 + raw#10 fully compliant; NO file moves attempted in prep-BG per scope mandate."
+}

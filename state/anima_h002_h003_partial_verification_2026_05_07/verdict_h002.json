@@ -1,0 +1,173 @@
+{
+  "bg_id": "BG-HN",
+  "ts_start": 1778091095.711678,
+  "ts_end": 1778091095.785481,
+  "wall_seconds": 0.07380294799804688,
+  "h_id": "H_002",
+  "h_slug": "universe-origin-question",
+  "phase": "Phase_1_partial",
+  "scope": "anthropic fine-tuning probability \u2014 6 fundamental constants \u00d7 N=10000 MC sample + analytic prior-space integration",
+  "constants_meta": [
+    {
+      "slug": "cosmological_constant_lambda_planck",
+      "current": 1e-122,
+      "life_low_rel": 1.0,
+      "life_high_rel": 100.0,
+      "sample_low": 1e-122,
+      "sample_high": 1e+60,
+      "log_sample": true,
+      "fraction_life_permitting": 0.01098901098901099,
+      "log10_fraction": -1.9590413923210936,
+      "literature_ref": "Weinberg 1987 anthropic bound; \u039b_obs \u2248 10^-122 in Planck units"
+    },
+    {
+      "slug": "fine_structure_alpha",
+      "current": 1.0,
+      "life_low_rel": 0.96,
+      "life_high_rel": 1.04,
+      "sample_low": 0.0,
+      "sample_high": 137.036,
+      "log_sample": false,
+      "fraction_life_permitting": 0.0005837882016404454,
+      "log10_fraction": -3.233744686350792,
+      "literature_ref": "Barrow Tipler 1986; King 2003"
+    },
+    {
+      "slug": "electron_proton_mass_ratio",
+      "current": 1.0,
+      "life_low_rel": 0.995,
+      "life_high_rel": 1.005,
+      "sample_low": 0.0001,
+      "sample_high": 1.0,
+      "log_sample": true,
+      "fraction_life_permitting": 0.0005442298135686367,
+      "log10_fraction": -3.2642176707266244,
+      "literature_ref": "Damour Donoghue 2008"
+    },
+    {
+      "slug": "higgs_vev_over_planck",
+      "current": 2.46e-17,
+      "life_low_rel": 0.99,
+      "life_high_rel": 1.01,
+      "sample_low": 1e-19,
+      "sample_high": 1.0,
+      "log_sample": true,
+      "fraction_life_permitting": 0.0004571673255312784,
+      "log10_fraction": -3.339924816878147,
+      "literature_ref": "Agrawal Barr Donoghue Seckel 1998; hierarchy problem"
+    },
+    {
+      "slug": "gravitational_constant_G",
+      "current": 1.0,
+      "life_low_rel": 0.1,
+      "life_high_rel": 10.0,
+      "sample_low": 1e-10,
+      "sample_high": 10000000000.0,
+      "log_sample": true,
+      "fraction_life_permitting": 0.1,
+      "log10_fraction": -1.0,
+      "literature_ref": "Adams 2008 stars in other universes"
+    },
+    {
+      "slug": "weak_coupling_gw",
+      "current": 1.0,
+      "life_low_rel": 0.8,
+      "life_high_rel": 1.2,
+      "sample_low": 0.001,
+      "sample_high": 1000.0,
+      "log_sample": true,
+      "fraction_life_permitting": 0.02934854317594687,
+      "log10_fraction": -1.532413451702571,
+      "literature_ref": "Hall Nomura 2008"
+    }
+  ],
+  "anthropic_probability_intersection": 4.684443249918815e-15,
+  "fine_tuning_strength_log10": 14.329342017979227,
+  "intersection_log10": -14.329342017979227,
+  "empirical_mc_fraction": 0.0,
+  "empirical_mc_hits": 0,
+  "n_samples": 10000,
+  "sample_log_first_3": [
+    {
+      "sample_id": 0,
+      "values": [
+        1.6137217808374433e+39,
+        23.390985025273867,
+        0.0013453904954482154,
+        3.5818391743169716e-19,
+        436143423.516986,
+        168.59308985640618
+      ],
+      "all_in_band": false
+    },
+    {
+      "sample_id": 1,
+      "values": [
+        1.3915273311417435e+17,
+        24.019604946069038,
+        0.01227074147348759,
+        3.230844921864282e-13,
+        16.567394354800523,
+        9.851742451829672
+      ],
+      "all_in_band": false
+    },
+    {
+      "sample_id": 2,
+      "values": [
+        1.1460002435935087e-96,
+        35.5935191064527,
+        0.2742266303104868,
+        9.904122768659319e-12,
+        0.0012279162935801059,
+        0.0022642020861482993
+      ],
+      "all_in_band": false
+    }
+  ],
+  "evidence_strength": "INSUFFICIENT",
+  "criteria": {
+    "C1_anthropic_evidence": "WEAK",
+    "C1_target": "fine_tuning_strength_log10 \u2265 100 (i.e., probability \u226410^-100)",
+    "C2_phi_universe_nested": "DEFERRED \u2014 anima Phi\u2605 engine cosmic-scale not implemented",
+    "C3_holographic_bound": "DEFERRED \u2014 separate cycle (AdS/CFT info bound replicate)",
+    "C4_panpsychism_combination": "DEFERRED \u2014 combination problem unsolved (Goff)",
+    "C5_anima_self_reflection": "DEFERRED \u2014 own 17 anima identity boundary lane"
+  },
+  "falsifiers_triggered": [],
+  "falsifiers_check": {
+    "F1_fine_tuning_above_10e_minus_50": true,
+    "F1_status": "TRIGGERED"
+  },
+  "verdict_class": "PARTIAL_THEORETICAL_PHASE_1",
+  "evidence_summary": "6 fundamental constants intersection life-permitting probability = 10^-14.33 (fine_tuning_strength_log10 = 14.33); evidence_strength = INSUFFICIENT. Empirical MC N=10000 hits = 0 (expected ~0 since intersection << 10^-4).",
+  "honest_limits": [
+    "L1: H_002 multi-decade research lane \u2014 Phase 1 partial only, full hypothesis verdict NOT reached",
+    "L2: anthropic principle critiqued as selection bias / tautology (Smolin, Carroll) \u2014 strict philosophical critique lane unresolved",
+    "L3: life-permitting bands per constant are literature-cited but range definition is debated (e.g., Rees 1999 vs Tegmark 2006 differ)",
+    "L4: priors over fundamental constants are choice-dependent \u2014 log-uniform vs linear-uniform shifts probability by orders of magnitude",
+    "L5: only 6 constants sampled \u2014 full Standard Model has ~25+ free parameters; intersection underestimates (more constants = stronger fine-tuning)",
+    "L6: no multiverse/string landscape integration \u2014 anthropic argument depends on prior over multiverse measure (unresolved)",
+    "L7: Phi_universe (H2.2) + holographic bound (H2.3) + panpsychism combination (H2.4) + anima self-reflection (H2.5) all DEFERRED \u2014 cell coverage 1/5 only"
+  ],
+  "next_cycle": [
+    "Phase 2: extend sample to ~25 Standard Model constants (cosmological + particle physics)",
+    "Phase 3: H2.2 Phi_universe nested structure \u2014 anima Phi\u2605 engine cosmic-scale extension (separate cycle)",
+    "Phase 4: H2.3 AdS/CFT info bound replication harness (Bekenstein-Hawking S = A/4)",
+    "Phase 5: H2.5 anima self-reflection \u2014 own 17 anima identity boundary applied"
+  ],
+  "raw_invariants": [
+    "raw#12 pre-register Phase_1_partial frozen",
+    "raw#9 hexa orchestration",
+    "raw#10 honest C3 \u22655 (7 limits)",
+    "raw#37 transient_py opt-out",
+    "raw#65 deterministic seed"
+  ],
+  "own_compliance": [
+    "own 16 cost discipline ($0 mac local)",
+    "own 17 anima identity (H2.5 deferred)",
+    "own 21 hypotheses folder SSOT"
+  ],
+  "seed": 169325826,
+  "script_sha256": "f14c2f6994e2a7987a5f67606ca3a2edeae25ccd6331bda304617ced29209afe"
+}

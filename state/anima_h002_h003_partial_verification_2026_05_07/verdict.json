@@ -1,0 +1,79 @@
+{
+  "bg_id": "BG-HN",
+  "ts": "2026-05-07",
+  "scope": "Combined Phase 1 partial verification of H_002 (universe origin — anthropic fine-tuning) + H_003 (life origin — autopoietic + dissipative)",
+  "hypothesis_cells": {
+    "H_002_anthropic_fine_tuning": {
+      "phase": "Phase_1_partial",
+      "evidence_strength": "INSUFFICIENT (under conservative priors)",
+      "fine_tuning_strength_log10": 14.33,
+      "target_log10": 100,
+      "verdict_class": "PARTIAL_THEORETICAL_PHASE_1",
+      "criteria_pass_count": 0,
+      "criteria_total": 5,
+      "key_finding": "6-constant intersection life-permitting probability ≈ 10^-14 under literature-cited bands. Below H2.1 target of ≤10^-100. Outcome strongly prior-dependent (raw#10 L4)."
+    },
+    "H_003_life_origin": {
+      "phase": "Phase_1_partial",
+      "evidence_strength": "PARTIAL_SUPPORT",
+      "verdict_class": "PARTIAL_PASS_PHASE_1",
+      "criteria_pass_count": 2,
+      "criteria_total": 5,
+      "key_findings": {
+        "H3.1_autopoietic_self_maintenance_rate_1000_steps": 1.0,
+        "H3.1_broken_closure_control_rate": 0.8,
+        "H3.3_dissipative_emergence_rate": 1024.33,
+        "H3.3_variance_amplification_ratio": 16314.89
+      }
+    }
+  },
+  "cross_hypothesis_links": {
+    "H_002_to_H_003": "anthropic principle (H_002) provides cosmological precondition for life-permitting universe — life origin (H_003) operates within that fine-tuning. H_002 fine_tuning_strength_log10 = 14 supplies WEAK cosmological prior; H_003 H3.1+H3.3 PASS show life can emerge given the prior. Joint reading: life is rare conditional + rare unconditional, but autocatalytic closure + dissipative gradients are sufficient mechanisms once preconditions met.",
+    "H_003_to_H_012_autopoietic_network": "H_003 H3.1 = direct minimal instance of H_012 autopoietic network hypothesis. H_012 cross-link: minimal 5-catalyst RNA closure cycle with broken-closure control validates closure-dependent self-maintenance. H_012 verdict gains Phase 1 partial empirical support.",
+    "H_003_to_anima_cell_metaphor": "anima H2 cell metaphor (mitosis/apoptosis/growth/autopoiesis) — H3.1 closure cycle is computational ground-truth analog of cell metaphor's autopoietic primitive. Cross-substrate analogy: anima emerge paradigm self-replication ↔ minimal RNA closure (own 17 anima-not-biological identity boundary respected — analogy only)."
+  },
+  "verdict_aggregate": {
+    "h002_status": "lane-open (multi-decade) — Phase 1 anthropic cell partial (1/5 criteria addressed, evidence_strength INSUFFICIENT)",
+    "h003_status": "lane-open (multi-cycle) — Phase 1 PARTIAL_PASS (C1+C3 PASS, 2/5 criteria; evidence_strength PARTIAL_SUPPORT)",
+    "combined": "BOTH HYPOTHESES REMAIN LANE-OPEN; this BG executes Phase 1 partial verification cells only — not closure of either lane"
+  },
+  "honest_limits_combined": [
+    "L1: H_002 + H_003 both multi-decade research lanes; this BG is MINIMAL evidence cell, NOT verdict closure",
+    "L2: anthropic principle critiqued as selection bias / tautology (Smolin, Carroll) — H_002 strict philosophical critique unresolved",
+    "L3: autopoietic minimal RNA simulation is abstract toy model — actual biological abiogenesis unresolved in literature",
+    "L4: Phase 1 partial verification scope addresses 1/5 H_002 criteria + 2/5 H_003 criteria — coverage 3/10 across both hypotheses",
+    "L5: priors over fundamental constants (H_002) and rate-law/threshold choices (H_003) are choice-dependent — outcome shifts by orders of magnitude under alternative selections",
+    "L6: lane-keeping verdict only — research framework activation; verdict closure DEFERRED to future cycles",
+    "L7: cross-hypothesis link (H_002 anthropic prior × H_003 life-origin mechanism) is conceptual not formal — joint Bayesian framework not implemented"
+  ],
+  "deliverables": {
+    "scripts": [
+      "tool/transient_py/anima_h002_anthropic_verifier.py",
+      "tool/transient_py/anima_h003_autopoietic_simulation.py",
+      "tool/transient_py/anima_h003_dissipative_simulation.py"
+    ],
+    "verdicts": [
+      "state/anima_h002_h003_partial_verification_2026_05_07/verdict_h002.json",
+      "state/anima_h002_h003_partial_verification_2026_05_07/verdict_h003.json",
+      "state/anima_h002_h003_partial_verification_2026_05_07/verdict.json"
+    ],
+    "raw_data": [
+      "state/anima_h002_h003_partial_verification_2026_05_07/_h003_autopoietic_raw.json",
+      "state/anima_h002_h003_partial_verification_2026_05_07/_h003_dissipative_raw.json"
+    ]
+  },
+  "raw_invariants_compliance": [
+    "raw#9 hexa orchestration (file write only via Write tool)",
+    "raw#10 honest C3 ≥5 (7 limits per verdict + 7 combined)",
+    "raw#12 pre-register Phase_1_partial cell — Phase 1 limited cell, full lane open",
+    "raw#15 additive (lane-keeping, not closure)",
+    "raw#37 transient_py opt-out (3 simulation scripts in tool/transient_py/)",
+    "raw#65 deterministic seed (0xA17B502, 0xA17C503, 0xA17D504)"
+  ],
+  "own_compliance": [
+    "own 16 cost discipline ($0 mac local, total wall_seconds < 30s, no GPU, no API, no LLM)",
+    "own 17 anima identity boundary (H2.5 + H3.5 anima self-reflection DEFERRED — own 17 lane respected)",
+    "own 21 hypotheses folder SSOT (H_002 + H_003 cross-link + H_012 cross-reference)"
+  ],
+  "philosophical_disclaimer_raw_10_C3": "H_002 + H_003 are multi-decade research lanes. Phase 1 partial verification is MINIMAL evidence cell, NOT full hypothesis verdict. Anthropic principle critiqued as selection bias/tautology (Smolin/Carroll) — H_002 strict philosophical critique lane separate. Autopoietic minimal RNA network simulation is NOT actual biological abiogenesis — abstract model only. This BG is lane-keeping (research framework activation), NOT verdict closure."
+}

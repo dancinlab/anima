@@ -1,0 +1,77 @@
+{
+  "schema": "anima/state/canonical_layout_survey/v1",
+  "bg_id": "BG-LAYOUT-MIGRATION-WAVE-B-PREP",
+  "ts_utc": "2026-05-06T18:12:40Z",
+  "anima_root": "/Users/ghost/core/anima",
+  "hive_mk2_apex_ref": "hive/spec/mk2_apex.spec.yaml#sections.canonical_layout",
+  "current_disk_state": "modules_docs_partial_with_anima_anima_pilot",
+  "top_level_inventory": {
+    "feature_candidate_dirs_anima_prefixed": [
+      {"name": "anima-core",            "topfiles": 20,  "has_core": false, "has_module_singular": false, "has_modules_plural": false, "has_doc_singular": false, "has_docs_plural": false, "lint_sibling": false, "git_status": "plain_dir"},
+      {"name": "anima-engines",         "topfiles": 166, "has_core": false, "has_module_singular": false, "has_modules_plural": false, "has_doc_singular": false, "has_docs_plural": false, "lint_sibling": false, "git_status": "plain_dir"},
+      {"name": "anima-physics",         "topfiles": 41,  "has_core": false, "has_module_singular": false, "has_modules_plural": false, "has_doc_singular": false, "has_docs_plural": true,  "lint_sibling": false, "git_status": "plain_dir"},
+      {"name": "anima-voice",           "topfiles": 52,  "has_core": false, "has_module_singular": false, "has_modules_plural": false, "has_doc_singular": false, "has_docs_plural": true,  "lint_sibling": false, "git_status": "plain_dir"},
+      {"name": "anima-tools",           "topfiles": 35,  "has_core": false, "has_module_singular": false, "has_modules_plural": false, "has_doc_singular": false, "has_docs_plural": false, "lint_sibling": false, "git_status": "plain_dir", "carve_out_note": "raw#168 minimum-viable: stays at top level under tool/ canonical OR could migrate as its own feature; user 2026-05-03 directive locks tool/ at top level"},
+      {"name": "anima-measurement",     "topfiles": 12,  "has_core": false, "has_module_singular": false, "has_modules_plural": false, "has_doc_singular": false, "has_docs_plural": false, "lint_sibling": false, "git_status": "plain_dir"},
+      {"name": "anima-hexad",           "topfiles": 6,   "has_core": false, "has_module_singular": false, "has_modules_plural": false, "has_doc_singular": false, "has_docs_plural": false, "lint_sibling": false, "git_status": "plain_dir"},
+      {"name": "anima-body",            "topfiles": 2,   "has_core": false, "has_module_singular": false, "has_modules_plural": false, "has_doc_singular": false, "has_docs_plural": false, "lint_sibling": false, "git_status": "plain_dir"},
+      {"name": "anima-os",              "topfiles": 0,   "has_core": false, "has_module_singular": false, "has_modules_plural": false, "has_doc_singular": false, "has_docs_plural": false, "lint_sibling": false, "git_status": "plain_dir"},
+      {"name": "anima-serve",           "topfiles": 1,   "has_core": false, "has_module_singular": false, "has_modules_plural": false, "has_doc_singular": false, "has_docs_plural": false, "lint_sibling": false, "git_status": "plain_dir"},
+      {"name": "anima-hci-research",    "topfiles": 1,   "has_core": false, "has_module_singular": false, "has_modules_plural": false, "has_doc_singular": false, "has_docs_plural": true,  "lint_sibling": false, "git_status": "plain_dir"},
+      {"name": "anima-cpgd-research",   "topfiles": 1,   "has_core": false, "has_module_singular": false, "has_modules_plural": false, "has_doc_singular": false, "has_docs_plural": true,  "lint_sibling": false, "git_status": "plain_dir"},
+      {"name": "anima-tribev2-pilot",   "topfiles": 1,   "has_core": false, "has_module_singular": false, "has_modules_plural": false, "has_doc_singular": false, "has_docs_plural": true,  "lint_sibling": false, "git_status": "plain_dir"},
+      {"name": "anima-agent-channels",  "topfiles": 7,   "has_core": false, "has_module_singular": false, "has_modules_plural": false, "has_doc_singular": false, "has_docs_plural": false, "lint_sibling": false, "git_status": "plain_dir"},
+      {"name": "anima-agent-core",      "topfiles": 6,   "has_core": false, "has_module_singular": false, "has_modules_plural": false, "has_doc_singular": false, "has_docs_plural": false, "lint_sibling": false, "git_status": "plain_dir"},
+      {"name": "anima-agent-hire-sim",  "topfiles": 10,  "has_core": false, "has_module_singular": false, "has_modules_plural": false, "has_doc_singular": false, "has_docs_plural": false, "lint_sibling": false, "git_status": "plain_dir"},
+      {"name": "anima-agent-plugins",   "topfiles": 7,   "has_core": false, "has_module_singular": false, "has_modules_plural": false, "has_doc_singular": false, "has_docs_plural": false, "lint_sibling": false, "git_status": "plain_dir"},
+      {"name": "anima-agent-providers", "topfiles": 6,   "has_core": false, "has_module_singular": false, "has_modules_plural": false, "has_doc_singular": false, "has_docs_plural": false, "lint_sibling": false, "git_status": "plain_dir"},
+      {"name": "anima-agent-skills",    "topfiles": 3,   "has_core": false, "has_module_singular": false, "has_modules_plural": false, "has_doc_singular": false, "has_docs_plural": false, "lint_sibling": false, "git_status": "plain_dir"}
+    ],
+    "anima_anima_pilot": {
+      "path": "/Users/ghost/core/anima/anima",
+      "subdirs_singular_canonical": ["core", "module", "spec", "config", "state"],
+      "subdirs_plural_legacy": ["modules"],
+      "feature_split_observed": "rng",
+      "rng_split": {
+        "core_rng_files": ["dual_stream_seedanchor.hexa", "registry.hexa", "rng_main.hexa", "router.hexa", "source.hexa"],
+        "module_rng_files": ["anu.hexa", "curby.hexa", "drand.hexa", "esp32.hexa", "ibm_q.hexa", "idq_quantis.hexa", "kaist_optical.hexa", "nist_beacon.hexa", "urandom.hexa", "fixtures/", "README.ai.md"],
+        "doc_rng_status": "MISSING — README.ai.md sits inside module/rng/ (likely doc/rng/README.ai.md target)",
+        "lint_sibling_status": "MISSING (anima/rng/lint.<ext> not yet created)"
+      },
+      "interpretation": "anima/anima/{core,module,...}/rng is a PARTIAL canonical_layout pilot (singular naming, single feature split). NOT the canonical anima-wide layout — siblings of anima-* repos are not re-homed yet."
+    },
+    "carve_outs_per_raw_168": {
+      "tool_top_level": {"path": "tool/", "entry_count_approx": 582, "rationale": "raw#168 minimum-viable + 2026-05-03 user directive (a) lock-in (.roadmap.anima_tools.cond.1=decision_locked)"},
+      "bin_top_level":  {"path": "bin/", "entry_count": 21, "rationale": "anima CLI mk2 entry-points; binary surface; never feature-internal"},
+      "hypotheses_top_level": {"path": "hypotheses/", "entry_count": 111, "rationale": "own 21 anima-hypotheses-folder-ssot — discovery framework SSOT, anima self-axis"},
+      "state_top_level": {"path": "state/", "entry_count_approx": 1828, "rationale": "run artifacts ledger; cross-cutting, not feature-owned"},
+      "roadmap_top_level": {"path": ".roadmap.*", "entry_count_approx": 50, "rationale": "per-domain JSONL metadata, not features themselves; mk2_apex per_repo_override.anima.roadmap_format=roadmap_v2_per_domain"},
+      "own_guide_top_level": {"paths": [".own", ".guide"], "rationale": "policy/mandate SSOT; not feature-internal"},
+      "config_top_level": {"path": "config/", "entry_count_approx": 87, "rationale": "host pool / pod / cross-feature config registry"},
+      "scripts_top_level": {"path": "scripts/", "rationale": "operational scripts; cross-feature"},
+      "tests_top_level": {"path": "tests/", "entry_count_approx": 217, "rationale": "test corpus shared across features"}
+    },
+    "flat_docs_status": {
+      "path": "docs/",
+      "top_level_md_count": 1129,
+      "ai_native_md_count": 345,
+      "subdirs": ["man", "ai-native", "drill_domain_tmp", "hypotheses", "papers", "patches", "drill_min_20260420", "anima", "models", "upstream_notes", "api", "modules", "drill_supplement_tmp", "superpowers", "drill_tmp"],
+      "signal_noise_problem_present": true,
+      "mk2_target_per_apex": "PER-FEATURE relocate to <feature>/doc/; cross-cutting historical landing reports stay as repo-root docs/ catch-all"
+    },
+    "modules_root_status": {
+      "path": "modules/",
+      "top_level_files": ["hive_bridge_bidirectional.hexa", "hive_bridge.hexa"],
+      "interpretation": "near-empty top-level modules/ — only 2 hive bridge hexa files. Either migrate these into anima-core/module/ OR retain as cross-cutting bridge surface."
+    }
+  },
+  "summary": {
+    "feature_candidate_count": 19,
+    "feature_candidates_with_docs_subdir": 4,
+    "feature_candidates_zero_canonical_compliance": 19,
+    "partial_compliant_features": 1,
+    "partial_compliant_path": "anima/anima/{core,module}/rng (singular naming, partial split)",
+    "carve_out_count": 9,
+    "blocking_complexity": "anima-engines = 166 top-level files (largest carve-up cost)"
+  }
+}

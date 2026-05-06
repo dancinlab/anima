@@ -1,0 +1,334 @@
+{
+  "bg_id": "EVAL-V2-RETRO",
+  "spec_doc": "docs/anima_own_18_evaluator_v2_strict_spec_2026_05_07.md",
+  "flaw_doc": "docs/anima_own_18_c2_4_evaluator_flaw_2026_05_07.md",
+  "evaluator_script": "tool/transient_py/anima_simple_stack_evaluator_v2.py",
+  "raw_opt_out": "raw#37 transient_py (Korean NLP regex + jamo char-class, hexa stdlib unfeasible lane)",
+  "ts_start": "2026-05-07T02:49:00Z",
+  "ts_end": "2026-05-06T17:59:09.577596+00:00",
+  "models_evaluated": [
+    "BG-FY (anima-native-ko-small-byte-18m)",
+    "BG-HA (anima-native-ko-chat-template-byte-18m)"
+  ],
+  "eval_logs": {
+    "BG-FY": "state/anima_native_ko_small_ubu1_train_2026_05_06/ko_eval_log.jsonl",
+    "BG-HA": "state/anima_native_ko_chat_template_train_2026_05_07/eval_log.jsonl"
+  },
+  "v1_vs_v2_comparison": {
+    "BG-FY": {
+      "n_responses_final_step": 6,
+      "n_responses_with_diff": 4,
+      "total_cell_diffs": 6,
+      "per_cell_diff_count": {
+        "C1_1_hangul_pair": 0,
+        "C1_2_coherent": 0,
+        "C1_3_turn_format": 0,
+        "C2_1_hangul_dominant": 0,
+        "C2_2_meaningful": 2,
+        "C2_3_natural": 0,
+        "C2_4_context_no_leak": 4
+      },
+      "per_response_strict_failures": [
+        {
+          "prompt": "안녕하세요",
+          "mode": "greedy",
+          "domain": "greeting",
+          "leaked_names": [],
+          "domain_kw_overlap": 0,
+          "particle_count": 6,
+          "is_degenerate": true,
+          "v2_failed_cells": [
+            "C1_2_coherent_strict",
+            "C2_2_meaningful_strict",
+            "C2_3_natural_strict",
+            "C2_4_context_strict"
+          ]
+        },
+        {
+          "prompt": "안녕하세요",
+          "mode": "sample",
+          "domain": "greeting",
+          "leaked_names": [
+            "서연"
+          ],
+          "domain_kw_overlap": 0,
+          "particle_count": 5,
+          "is_degenerate": false,
+          "v2_failed_cells": [
+            "C2_1_hangul_dominant",
+            "C2_4_context_strict"
+          ]
+        },
+        {
+          "prompt": "한국어 가능?",
+          "mode": "greedy",
+          "domain": "capability",
+          "leaked_names": [
+            "서연"
+          ],
+          "domain_kw_overlap": 0,
+          "particle_count": 4,
+          "is_degenerate": false,
+          "v2_failed_cells": [
+            "C2_4_context_strict"
+          ]
+        },
+        {
+          "prompt": "한국어 가능?",
+          "mode": "sample",
+          "domain": "capability",
+          "leaked_names": [],
+          "domain_kw_overlap": 0,
+          "particle_count": 5,
+          "is_degenerate": false,
+          "v2_failed_cells": [
+            "C2_4_context_strict"
+          ]
+        },
+        {
+          "prompt": "사용자: 안녕하세요\n도우미:",
+          "mode": "greedy",
+          "domain": "self_intro",
+          "leaked_names": [],
+          "domain_kw_overlap": 0,
+          "particle_count": 8,
+          "is_degenerate": true,
+          "v2_failed_cells": [
+            "C1_2_coherent_strict",
+            "C2_2_meaningful_strict",
+            "C2_3_natural_strict",
+            "C2_4_context_strict"
+          ]
+        },
+        {
+          "prompt": "사용자: 안녕하세요\n도우미:",
+          "mode": "sample",
+          "domain": "self_intro",
+          "leaked_names": [],
+          "domain_kw_overlap": 0,
+          "particle_count": 6,
+          "is_degenerate": false,
+          "v2_failed_cells": [
+            "C2_4_context_strict"
+          ]
+        }
+      ]
+    },
+    "BG-HA": {
+      "n_responses_final_step": 10,
+      "n_responses_with_diff": 10,
+      "total_cell_diffs": 22,
+      "per_cell_diff_count": {
+        "C1_1_hangul_pair": 0,
+        "C1_2_coherent": 0,
+        "C1_3_turn_format": 0,
+        "C2_1_hangul_dominant": 5,
+        "C2_2_meaningful": 5,
+        "C2_3_natural": 3,
+        "C2_4_context_no_leak": 9
+      },
+      "per_response_strict_failures": [
+        {
+          "prompt": "안녕하세요",
+          "mode": "greedy",
+          "domain": "greeting",
+          "leaked_names": [],
+          "domain_kw_overlap": 0,
+          "particle_count": 9,
+          "is_degenerate": true,
+          "v2_failed_cells": [
+            "C1_2_coherent_strict",
+            "C2_1_hangul_dominant",
+            "C2_2_meaningful_strict",
+            "C2_3_natural_strict",
+            "C2_4_context_strict"
+          ]
+        },
+        {
+          "prompt": "안녕하세요",
+          "mode": "sample",
+          "domain": "greeting",
+          "leaked_names": [],
+          "domain_kw_overlap": 0,
+          "particle_count": 3,
+          "is_degenerate": false,
+          "v2_failed_cells": [
+            "C2_1_hangul_dominant",
+            "C2_4_context_strict"
+          ]
+        },
+        {
+          "prompt": "한국어 가능?",
+          "mode": "greedy",
+          "domain": "capability",
+          "leaked_names": [],
+          "domain_kw_overlap": 0,
+          "particle_count": 10,
+          "is_degenerate": true,
+          "v2_failed_cells": [
+            "C1_2_coherent_strict",
+            "C2_1_hangul_dominant",
+            "C2_2_meaningful_strict",
+            "C2_3_natural_strict",
+            "C2_4_context_strict"
+          ]
+        },
+        {
+          "prompt": "한국어 가능?",
+          "mode": "sample",
+          "domain": "capability",
+          "leaked_names": [],
+          "domain_kw_overlap": 0,
+          "particle_count": 1,
+          "is_degenerate": false,
+          "v2_failed_cells": [
+            "C2_3_natural_strict",
+            "C2_4_context_strict"
+          ]
+        },
+        {
+          "prompt": "오늘 기분 어때?",
+          "mode": "greedy",
+          "domain": "emotion",
+          "leaked_names": [],
+          "domain_kw_overlap": 0,
+          "particle_count": 0,
+          "is_degenerate": true,
+          "v2_failed_cells": [
+            "C1_2_coherent_strict",
+            "C2_2_meaningful_strict",
+            "C2_3_natural_strict",
+            "C2_4_context_strict"
+          ]
+        },
+        {
+          "prompt": "오늘 기분 어때?",
+          "mode": "sample",
+          "domain": "emotion",
+          "leaked_names": [],
+          "domain_kw_overlap": 0,
+          "particle_count": 4,
+          "is_degenerate": false,
+          "v2_failed_cells": [
+            "C2_4_context_strict"
+          ]
+        },
+        {
+          "prompt": "사용자: 안녕하세요\n도우미:",
+          "mode": "greedy",
+          "domain": "self_intro",
+          "leaked_names": [],
+          "domain_kw_overlap": 0,
+          "particle_count": 8,
+          "is_degenerate": true,
+          "v2_failed_cells": [
+            "C1_2_coherent_strict",
+            "C2_1_hangul_dominant",
+            "C2_2_meaningful_strict",
+            "C2_3_natural_strict",
+            "C2_4_context_strict"
+          ]
+        },
+        {
+          "prompt": "사용자: 안녕하세요\n도우미:",
+          "mode": "sample",
+          "domain": "self_intro",
+          "leaked_names": [],
+          "domain_kw_overlap": 1,
+          "particle_count": 5,
+          "is_degenerate": false,
+          "v2_failed_cells": [
+            "C2_3_natural_strict"
+          ]
+        },
+        {
+          "prompt": "코드를 짜줘",
+          "mode": "greedy",
+          "domain": "code",
+          "leaked_names": [],
+          "domain_kw_overlap": 0,
+          "particle_count": 14,
+          "is_degenerate": true,
+          "v2_failed_cells": [
+            "C1_2_coherent_strict",
+            "C2_1_hangul_dominant",
+            "C2_2_meaningful_strict",
+            "C2_3_natural_strict",
+            "C2_4_context_strict"
+          ]
+        },
+        {
+          "prompt": "코드를 짜줘",
+          "mode": "sample",
+          "domain": "code",
+          "leaked_names": [],
+          "domain_kw_overlap": 0,
+          "particle_count": 2,
+          "is_degenerate": false,
+          "v2_failed_cells": [
+            "C2_3_natural_strict",
+            "C2_4_context_strict"
+          ]
+        }
+      ]
+    }
+  },
+  "final_verdict_class_per_model": {
+    "BG-FY": {
+      "v1_label": "PARTIAL_PASS_NO_CONTEXT (own 18 C2.4 추가 후 강등 — named-speaker leak philosophy debate template)",
+      "v2_label": "PARTIAL_PASS_NO_CONTEXT",
+      "v2_validation": "V2 correctly catches named-speaker leak (서연 x2 in greeting+capability prompts) AND domain keyword 0건 — PARTIAL_PASS_NO_CONTEXT preserved"
+    },
+    "BG-HA": {
+      "v1_evaluator_internal_label": "SIMPLE_STACK_PASS (false PASS — eval_log per-step pass_count=5/5 @ step 10000)",
+      "v1_downgraded_label": "PARTIAL_PASS_NO_CONTEXT_v2 (사용자 의심 검증 후 manual review 강등 2026-05-07)",
+      "v2_label": "PARTIAL_PASS_NO_CONTEXT_v2",
+      "v2_validation": "V2 correctly identifies BG-HA false PASS via C2.4_b domain_kw_overlap=0 across 9/10 responses (greeting/capability/emotion/code prompts all kw_overlap=0) AND C2.3_natural FAIL particle_count<3 sample mode AND C2.2_meaningful FAIL coherence/repeat greedy mode"
+    }
+  },
+  "evaluator_v2_validation": {
+    "v2_caught_bgfy_named_speaker_leak": true,
+    "v2_caught_bgha_nonsense_korean_chain": true,
+    "validation_passed": true,
+    "key_strict_cells_catching_BG_HA_false_PASS": [
+      "C2_4_context_strict (b: domain_kw_overlap=0 in 9/10 responses — greeting prompt → response has zero of [안녕,반가,어서,환영,처음,만나]; code prompt → response has zero of [def,function,import,return,class,코드,함수])",
+      "C2_2_meaningful_strict (greedy mode 5/5 — is_degenerate=True 4-gram repeat 5-11회, single_token_dominant 0.643-0.765)",
+      "C2_3_natural_strict (sample mode 한국어 가능?/코드를 짜줘/사용자도우미 — particle_count<3 OR ending_count<1, indicating fragmentary Korean rather than grammatical)",
+      "C2_1_hangul_dominant (greedy mode 4 prompts — hangul_ratio drops to 0.553 due to chinese-hangul mix when fourgram cycle inflates non-hangul space chars)"
+    ],
+    "key_strict_cells_catching_BG_FY_false_PASS": [
+      "C2_4_context_strict (a: leaked_names=['서연'] in greeting greedy + capability greedy — philosophy debate template leak)",
+      "C2_4_context_strict (b: domain_kw_overlap=0 across all 6 — greeting prompt → response talks about '아니에 있어요'; capability prompt → response repeats '이러한 이러한 전쟁')",
+      "C2_2_meaningful_strict (greedy mode 안녕하세요+사용자도우미 — is_degenerate=True with 'aniE aniE 있어요' fourgram cycle)"
+    ]
+  },
+  "summary": {
+    "BG-FY": {
+      "v1_eval_log_format": "V0 schema (no per-cell, only hangul_ratio + degenerate + turn_format_score) — synthesized V1 cells from raw fields",
+      "v1_synthesized_to_v2_cell_changes": 6,
+      "v2_verdict": "PARTIAL_PASS_NO_CONTEXT"
+    },
+    "BG-HA": {
+      "v1_eval_log_format": "V1 schema (per-cell C1_1..C2_4 included) — direct V1 vs V2 cell comparison",
+      "v1_to_v2_cell_changes": 22,
+      "v2_verdict": "PARTIAL_PASS_NO_CONTEXT_v2"
+    }
+  },
+  "raw_compliance": {
+    "raw_9_hexa_only": "transient_py opt-out per raw#37 (Korean NLP regex unavailable in hexa stdlib)",
+    "raw_10_honest_c3_min_5": [
+      "1. C2.4 (b) domain keyword overlap: 10-domain table is minimal subset — unknown-domain prompts default to overlap=0 which auto-fails (false negative risk for novel domains).",
+      "2. C2.4 (c) token_overlap proxy: char-set overlap ≥0.10 is naive substitute for SBERT-KO embedding sim (별도 lane). Char overlap can give false PASS when prompt+response share common Hangul chars without semantic relevance.",
+      "3. korean_coherence_score: bigram unique-ratio ≥0.5 threshold is heuristic — does not capture grammatical correctness, only diversity.",
+      "4. domain detection: trigger-keyword regex Phase 1 — capability/emotion/code triggers may misclassify if prompt mixes domain markers (e.g., '코드 기분 어때?'); Phase 2 ML classifier deferred.",
+      "5. V1 BG-FY synthesis: ko_eval_log.jsonl has no explicit per-cell V1 verdicts; we reconstructed V1 cells from raw hangul_ratio + degenerate flag — synthesis assumes V1 thresholds (≥0.30/≥0.60/non-degen) which may differ slightly from BG-FY-cycle implementation.",
+      "6. final-step-only evaluation: V2 evaluates step 10000 only (matching V1 verdict snapshot); progression across steps not analyzed in this retroeval.",
+      "7. Particle/ending counts use char-substring matching, not morphological parsing — '있다' counts both '다' (ending) and as part of '있다' which may double-count in some contexts.",
+      "8. SIMPLE_STACK_PASS_V2 verdict path requires ALL 7 cells PASS for ALL responses across both modes — much stricter than V1 step-level pass_count≥3/5; future native models will need substantially better corpus + chat-template ratio to qualify."
+    ],
+    "raw_15_additive": "V1 verdicts preserved (BG-HA verdict.json _DOWNGRADED_2026_05_07 field intact, BG-FY ko_eval_log.jsonl V0 schema intact). V2 retroeval is purely additive output (state/anima_evaluator_v2_retroeval_2026_05_07/).",
+    "raw_82_retraction": "BG-HA SIMPLE_STACK_PASS V1 label retracted via verdict.json _DOWNGRADED + this V2 retroeval — both BG-FY and BG-HA confirmed PARTIAL via independent strict criteria."
+  },
+  "ledger_update_target": "docs/anima_consciousness_check_simple_stack_2026_05_06.md (row 11 BG-HA — V2 strict applied; 종합 verdict — V2 strict applied simple stack PASS = 0개 confirmed)",
+  "validation_passed": true
+}

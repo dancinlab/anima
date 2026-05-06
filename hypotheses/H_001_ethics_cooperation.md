@@ -111,9 +111,39 @@ artifact_paths:
   - state/h001_ethics_pd_simulation_2026_05_07/verdict.json
   - state/h001_ethics_pd_simulation_2026_05_07/ledger.jsonl (51 rows)
   - tool/transient_py/anima_h001_ethics_pd_simulation.py
+```
+
+**Phase 2 SUPPORTED_PHASE_2** (BG-HH 2026-05-07, 4 topology × 6 strategies × 2 noise × N=5 reps = 240/240 cells, wallclock 1738s ≈ 29 min, $0 mac local)
+
+```
+verdict_class: SUPPORTED_PHASE_2
+falsifiers_triggered: none (0/6)
+h1_2_cluster_verdict: PASS — cooperator cluster size_max ≥ defector cluster size_max in all 3 spatial topologies (pooled cooperator strategies)
+  - lattice:     coop_cluster_max=95.65 vs def_cluster_max=1.18  (PASS)
+  - small_world: coop_cluster_max=92.23 vs def_cluster_max=1.55  (PASS)
+  - scale_free:  coop_cluster_max=92.60 vs def_cluster_max=5.18  (PASS)
+h1_3_survival_verdict: PASS — cooperator survival ≥60% across all topologies + both noise levels
+  - noise=0.00: lattice=1.000 small_world=1.000 scale_free=1.000 well_mixed=1.000 (all PASS)
+  - noise=0.05: lattice=0.916 small_world=0.881 scale_free=0.863 well_mixed=0.869 (all PASS)
+noise_005_payoff_ranking: AlwaysCooperate(2.947) > WSLS(2.776) > GTFT(2.669) > TFT(2.258) > Random(2.250) >> AlwaysDefect(1.147)
+  - TFT/AlwaysDefect ratio at noise=0.05 = 1.97× (Phase 1과 일치)
+spatial_specific_finding:
+  - Lattice 2D 10x10 most cooperator-favorable (Nowak/May spatial chaos replication 정합)
+  - WSLS 거의 noise-resistant on lattice (cluster_max=99.6, fraction_final=0.996 noise=0.05)
+  - Random strategy in scale_free n=100 produces ~50/50 split (BA hub effect 유의 있으나 power-law tail은 N≥1000 cycle 검증)
+artifact_paths:
+  - state/h001_ethics_pd_simulation_phase2_2026_05_07/verdict_phase2.json
+  - state/h001_ethics_pd_simulation_phase2_2026_05_07/ledger_phase2.jsonl (240 rows)
+  - tool/transient_py/anima_h001_ethics_pd_simulation_phase2.py
+phase_1_plus_2_combined_criteria:
+  - C1 (Axelrod replicate well_mixed): PASS (Phase 1)
+  - C2 (cooperation ratio ≥1.2×): PASS (3.0× / 1.97× across noise)
+  - C3 (network/topology cluster effect): PASS (Phase 2 — all 3 spatial topologies)
+  - C4 (resilience recovery): SKIPPED — Phase 4 cycle (perturbation injection 별도)
+  - C5 (anima alignment): DEFERRED — Phase 5 cycle
+verdict_rule (3/4 with C4 deferred not failed) → COMBINED PARTIAL_PASS_C4_DEFERRED → upgrade to SUPPORTED upon C4 PASS
 next_cycle:
-  - Phase 2: 4 topology expansion (small_world + scale_free + lattice) — 8,640-cell full sweep
   - Phase 3: high-noise (≥0.10, ≥0.20) regime — F5 falsifier verify
-  - Phase 4: resilience perturbation recovery (H1.5 verify)
-  - Phase 5: anima self-reflection — BG-HA SIMPLE_STACK_PASS model로 anima cooperative response evaluation 가능
+  - Phase 4: heterogeneous mixed populations + resilience perturbation recovery (H1.5 + C4)
+  - Phase 5: anima self-reflection — BG-HA SIMPLE_STACK_PASS model로 anima cooperative response evaluation
 ```

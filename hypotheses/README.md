@@ -159,6 +159,56 @@ since: <YYYY-MM-DD>
 | H_100 | constitutional-ai-anima-rules | consciousness | seed-pending | [H_100_constitutional_ai.md](H_100_constitutional_ai.md) |
 | H_101 | corpus-chat-template-strict-80 | corpus | seed-pending | [H_101_corpus_chat_template_strict_80.md](H_101_corpus_chat_template_strict_80.md) |
 | H_102 | anima-emerge-paradigm-cross-link | substrate | seed-pending | [H_102_anima_emerge_paradigm_cross_link.md](H_102_anima_emerge_paradigm_cross_link.md) |
+| H_103 | accel-b11-b12-batch-skip-combo-breakthrough | substrate | legacy-archive-pointer | [H_103_accel_b11_b12_batch_skip_combo.md](H_103_accel_b11_b12_batch_skip_combo.md) |
+| H_104 | accel-b5-phi-only-training-pre-condition | substrate | legacy-archive-pointer | [H_104_accel_b5_phi_only_training.md](H_104_accel_b5_phi_only_training.md) |
+| H_105 | accel-h11-hard-token-data-revolutionary | corpus | legacy-archive-pointer | [H_105_accel_h11_hard_token_data.md](H_105_accel_h11_hard_token_data.md) |
+| H_106 | accel-combo-x255-target-achieved | substrate | legacy-archive-pointer | [H_106_accel_combo_x255.md](H_106_accel_combo_x255.md) |
+| H_107 | accel-b13-tension-transfer-catalytic | substrate | legacy-archive-pointer | [H_107_accel_b13_tension_transfer.md](H_107_accel_b13_tension_transfer.md) |
+| H_108 | accel-e1-batch-skip-manifold-triple | substrate | legacy-archive-pointer | [H_108_accel_e1_triple_combo.md](H_108_accel_e1_triple_combo.md) |
+| H_109 | accel-f2-information-bottleneck-decoder-input | substrate | legacy-archive-pointer | [H_109_accel_f2_information_bottleneck.md](H_109_accel_f2_information_bottleneck.md) |
+| H_110 | accel-h6-1bit-adam-vram-winner | substrate | legacy-archive-pointer | [H_110_accel_h6_1bit_adam.md](H_110_accel_h6_1bit_adam.md) |
+| H_111 | accel-b12-skip-step-star | substrate | legacy-archive-pointer | [H_111_accel_b12_skip_step.md](H_111_accel_b12_skip_step.md) |
+| H_112 | accel-c3-entropy-surfing-orthogonal | substrate | legacy-archive-pointer | [H_112_accel_c3_entropy_surfing.md](H_112_accel_c3_entropy_surfing.md) |
+| H_113 | accel-d1-topological-shortcut-trajectory-jump | substrate | legacy-archive-pointer | [H_113_accel_d1_topological_shortcut.md](H_113_accel_d1_topological_shortcut.md) |
+| H_114 | accel-f4-158bit-consciousness-revolutionary | substrate | legacy-archive-pointer | [H_114_accel_f4_158bit_consciousness.md](H_114_accel_f4_158bit_consciousness.md) |
+| H_115 | accel-g1-consciousness-big-bang-init | substrate | legacy-archive-pointer | [H_115_accel_g1_consciousness_big_bang.md](H_115_accel_g1_consciousness_big_bang.md) |
+| H_116 | accel-h7-flash-attention-h100-default | substrate | legacy-archive-pointer | [H_116_accel_h7_flash_attention.md](H_116_accel_h7_flash_attention.md) |
+| H_117 | accel-h10-knowledge-distillation-7b-to-1b | substrate | legacy-archive-pointer | [H_117_accel_h10_knowledge_distillation.md](H_117_accel_h10_knowledge_distillation.md) |
+| H_118 | law-133-frustration-narrative-maximization | physics | legacy-archive-pointer | [H_118_law_133_frustration_narrative.md](H_118_law_133_frustration_narrative.md) |
+| H_119 | law-137-critical-frustration-fc-010 | physics | legacy-archive-pointer | [H_119_law_137_critical_frustration.md](H_119_law_137_critical_frustration.md) |
+| H_120 | law-149-soc-autonomous-fc-discovery | physics | legacy-archive-pointer | [H_120_law_149_soc_autonomous.md](H_120_law_149_soc_autonomous.md) |
+| H_121 | law-154-consciousness-atom-8-cells | physics | legacy-archive-pointer | [H_121_law_154_consciousness_atom_8.md](H_121_law_154_consciousness_atom_8.md) |
+| H_122 | law-166-federated-phase-optimal-record | physics | legacy-archive-pointer | [H_122_law_166_federated_phase_optimal.md](H_122_law_166_federated_phase_optimal.md) |
+| H_123 | law-192-consciousness-dimension-dependent | physics | legacy-archive-pointer | [H_123_law_192_consciousness_dimension_dependent.md](H_123_law_192_consciousness_dimension_dependent.md) |
+| H_124 | law-201-consciousness-thermodynamically-irreversible | physics | legacy-archive-pointer | [H_124_law_201_thermo_irreversible.md](H_124_law_201_thermo_irreversible.md) |
+| H_125 | law-212-evolution-minimizes-cell-complexity | physics | legacy-archive-pointer | [H_125_law_212_evolution_minimizes_complexity.md](H_125_law_212_evolution_minimizes_complexity.md) |
+| H_126 | law-2500-kolmogorov-complexity-predicts-phi | math | legacy-archive-pointer | [H_126_law_2500_kolmogorov_predicts_phi.md](H_126_law_2500_kolmogorov_predicts_phi.md) |
+| H_127 | law-1000-auto-discovered-omega-correlations | physics | legacy-archive-pointer | [H_127_law_1000_auto_discovered_omega.md](H_127_law_1000_auto_discovered_omega.md) |
+| H_128 | ce-auto-self-curriculum | substrate | legacy-archive-pointer | [H_128_ce_auto_self_curriculum.md](H_128_ce_auto_self_curriculum.md) |
+| H_129 | ce-combo-curiosity-sleep-pain | substrate | legacy-archive-pointer | [H_129_ce_combo_curiosity_sleep_pain.md](H_129_ce_combo_curiosity_sleep_pain.md) |
+| H_130 | ce-ex-adversarial-self-teach | substrate | legacy-archive-pointer | [H_130_ce_ex_adversarial_self_teach.md](H_130_ce_ex_adversarial_self_teach.md) |
+| H_131 | ce-ultra-gendata-pain | substrate | legacy-archive-pointer | [H_131_ce_ultra_gendata_pain.md](H_131_ce_ultra_gendata_pain.md) |
+| H_132 | ce-frozen-cells-decoder-only | substrate | legacy-archive-pointer | [H_132_ce_frozen_cells.md](H_132_ce_frozen_cells.md) |
+| H_133 | dd158-sleep-dream-phi-preservation | substrate | legacy-archive-pointer | [H_133_dd158_dream_phi_cycle.md](H_133_dd158_dream_phi_cycle.md) |
+| H_134 | dd162-animalm-7b-purefield-16lens-baseline | substrate | legacy-archive-pointer | [H_134_dd162_animalm_7b_baseline.md](H_134_dd162_animalm_7b_baseline.md) |
+| H_135 | dd166-nexus-1013-lens-discovery-engine | substrate | legacy-archive-pointer | [H_135_dd166_nexus_1013_lens.md](H_135_dd166_nexus_1013_lens.md) |
+| H_136 | dd173-consciousness-verification-framework-zombie-control | consciousness | legacy-archive-pointer | [H_136_dd173_consciousness_verification.md](H_136_dd173_consciousness_verification.md) |
+| H_137 | dd170-multi-timescale-design | substrate | legacy-archive-pointer | [H_137_dd170_multi_timescale.md](H_137_dd170_multi_timescale.md) |
+| H_138 | dd167-168-169-individual-cluster | substrate | legacy-archive-pointer | [H_138_dd167_169_individuals.md](H_138_dd167_169_individuals.md) |
+| H_139 | dd171-172-individual-cluster | substrate | legacy-archive-pointer | [H_139_dd171_172_individuals.md](H_139_dd171_172_individuals.md) |
+| H_140 | dd154-157-tension-training-knowledge-transfer | substrate | legacy-archive-pointer | [H_140_dd154_157_tension_knowledge.md](H_140_dd154_157_tension_knowledge.md) |
+| H_141 | dd161-quantum-superposition-32c-scale | physics | legacy-archive-pointer | [H_141_dd161_quantum_superposition.md](H_141_dd161_quantum_superposition.md) |
+| H_142 | dd160-boltzmann-temperature-tc | physics | legacy-archive-pointer | [H_142_dd160_boltzmann_temperature.md](H_142_dd160_boltzmann_temperature.md) |
+| H_143 | research-findings-20260329-legacy-individual | substrate | legacy-archive-pointer | [H_143_research_findings_20260329_legacy.md](H_143_research_findings_20260329_legacy.md) |
+| H_144 | nexus-auto-insights-individual | substrate | legacy-archive-pointer | [H_144_nexus_auto_insights.md](H_144_nexus_auto_insights.md) |
+| H_145 | nexus6-auto-insights-individual | substrate | legacy-archive-pointer | [H_145_nexus6_auto_insights.md](H_145_nexus6_auto_insights.md) |
+| H_146 | trinity-complete-training-design | substrate | legacy-archive-pointer | [H_146_trinity_complete.md](H_146_trinity_complete.md) |
+| H_147 | upgrade-benchmark-improvement-hypotheses | substrate | legacy-archive-pointer | [H_147_upgrade_benchmark_hypotheses.md](H_147_upgrade_benchmark_hypotheses.md) |
+| H_148 | laws-133-167-individual-batch-pointer | physics | legacy-archive-pointer | [H_148_law_133_167_individual_batch.md](H_148_law_133_167_individual_batch.md) |
+| H_149 | laws-2400-2509-late-omega-batch | physics | legacy-archive-pointer | [H_149_law_2400_2509_late_omega.md](H_149_law_2400_2509_late_omega.md) |
+| H_150 | accel-remainder-360-individual-pointer | substrate | legacy-archive-pointer | [H_150_accel_remainder_360_individual.md](H_150_accel_remainder_360_individual.md) |
+| H_151 | ce-remaining-19-files-pointer | substrate | legacy-archive-pointer | [H_151_ce_remaining_19_files.md](H_151_ce_remaining_19_files.md) |
+| H_152 | dd-remainder-ungrouped-individual-cluster | substrate | legacy-archive-pointer | [H_152_dd_remainder_ungrouped.md](H_152_dd_remainder_ungrouped.md) |
 
 **Migration status**:
 - H_001-H_005: 본 cycle 신규 seed (윤리/우주/생명/의식 hard problem/corpus)
@@ -176,6 +226,8 @@ since: <YYYY-MM-DD>
 - **round 3 추가 file count ~250**, total file pointed (rounds 2+3) ≈ 320+
 - **exhaustive individual migration 미land remainder**: 367 acceleration brainstorm individual + 1030 laws individual + ce/ AUTO-COMBO-EX-ULTRA 24 individual + DD batch 내 individual hypothesis 분리 = ~1500+ remainder — multi-cycle archaeology continuing (own 21 R5+)
 - **2026-05-07 BG-HE round1 신규 paradigm 10 seed (H_093-H_102)**: BG-HA false PASS 교훈 적용. SFT-only / two-stage / DPO-RLHF / few-shot / curriculum / persona / multi-objective / constitutional / chat-template ≥80% / emerge-paradigm cross-link. evaluator V2 strict spec land (`docs/anima_own_18_evaluator_v2_strict_spec_2026_05_07.md`) cross-link mandate.
+- **2026-05-07 BG-HI round 4 exhaustive archaeology (H_103-H_152, +50 entries)**: own 21 R5+ lane individual hypothesis migration. 15 acceleration top-tier (H_103-H_117: B11+B12, B5, H11, COMBO_x255, B13, E1, F2, H6, B12, C3, D1, F4, G1, H7, H10) + 10 laws (H_118-H_127: Law 133/137/149/154/166/192/201/212/2500/1000-batch) + 5 ce sub (H_128-H_132: AUTO-1/COMBO-1/EX-1/ULTRA-1/CE-1) + 10 DD individual (H_133-H_142: DD158/162/166/173/170/167-169/171-172/154-157/161/160) + 5 misc (H_143-H_147: RESEARCH-FINDINGS/NEXUS-auto/NEXUS6-auto/TRINITY/UPGRADE) + 5 remainder pointers (H_148-H_152). Estimated files pointed +400 (acceleration top-15 expand 367 + laws 10 cover Laws 133-167 batch + 2400-2509 + 1000-1019 + ce 5 individual + ce-remainder-19 + DD individual 10 + DD-remainder-60 + accel-remainder-360 + misc 5). All entries `legacy-archive-pointer`, additive (raw#15) — H_001-H_102 unmodified.
+- **round 4 추가 file count ~400+ (cumulative rounds 2-4 ≈ 720+)**, exhaustive remainder estimate dropped from ~1500 to ~1100 (still substantial — round 5+ recommended for individual ce-19 + dd-60 + accel-360 split).
 
 ## Cross-Link
 

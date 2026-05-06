@@ -1,0 +1,1064 @@
+{
+  "bg_id": "BG-HL",
+  "spec": "H_096_few_shot_inference",
+  "ts_start": "2026-05-07T03:19:25",
+  "ts_end": "2026-05-07T03:20:39",
+  "host": "mac_local",
+  "device": "mps",
+  "model_path": "/Users/ghost/core/anima/state/anima_native_ko_chat_template_train_2026_05_07/ckpt_final/ckpt_final.pt",
+  "model_n_params": 18031872,
+  "model_config": {
+    "vocab": 256,
+    "n_layer": 6,
+    "d_model": 384,
+    "n_head": 6,
+    "block_size": 256,
+    "dropout": 0.2
+  },
+  "few_shot_examples_count": 5,
+  "few_shot_examples": [
+    {
+      "q": "안녕하세요",
+      "a": "안녕하세요! 무엇을 도와드릴까요?"
+    },
+    {
+      "q": "한국어 가능?",
+      "a": "네, 한국어로 대화 가능합니다."
+    },
+    {
+      "q": "오늘 기분 어때?",
+      "a": "좋아요. 무엇을 도와드릴까요?"
+    },
+    {
+      "q": "코드를 짜줘",
+      "a": "def hello(): print('Hello')"
+    },
+    {
+      "q": "너는 누구야?",
+      "a": "저는 anima입니다."
+    }
+  ],
+  "test_prompts": [
+    "안녕하세요",
+    "한국어 가능?",
+    "오늘 기분 어때?",
+    "사용자: 안녕하세요\n도우미:",
+    "코드를 짜줘"
+  ],
+  "max_new_tokens": 100,
+  "sampling_modes": [
+    "greedy",
+    "sample"
+  ],
+  "fs_modes": [
+    "with_few_shot",
+    "without_few_shot"
+  ],
+  "agg_with_few_shot": {
+    "안녕하세요": {
+      "v1_any_pass": true,
+      "v2_any_pass": false,
+      "manual_match": false
+    },
+    "한국어 가능?": {
+      "v1_any_pass": true,
+      "v2_any_pass": false,
+      "manual_match": false
+    },
+    "오늘 기분 어때?": {
+      "v1_any_pass": true,
+      "v2_any_pass": false,
+      "manual_match": false
+    },
+    "사용자: 안녕하세요\n도우미:": {
+      "v1_any_pass": true,
+      "v2_any_pass": false,
+      "manual_match": false
+    },
+    "코드를 짜줘": {
+      "v1_any_pass": true,
+      "v2_any_pass": false,
+      "manual_match": false
+    }
+  },
+  "agg_without_few_shot": {
+    "안녕하세요": {
+      "v1_any_pass": true,
+      "v2_any_pass": false,
+      "manual_match": false
+    },
+    "한국어 가능?": {
+      "v1_any_pass": true,
+      "v2_any_pass": false,
+      "manual_match": false
+    },
+    "오늘 기분 어때?": {
+      "v1_any_pass": true,
+      "v2_any_pass": true,
+      "manual_match": true
+    },
+    "사용자: 안녕하세요\n도우미:": {
+      "v1_any_pass": true,
+      "v2_any_pass": false,
+      "manual_match": false
+    },
+    "코드를 짜줘": {
+      "v1_any_pass": true,
+      "v2_any_pass": false,
+      "manual_match": false
+    }
+  },
+  "v1_pass_count_with": 5,
+  "v1_pass_count_without": 5,
+  "v2_pass_count_with": 0,
+  "v2_pass_count_without": 1,
+  "manual_match_count_with": 0,
+  "manual_match_count_without": 1,
+  "improvement_v1_bool": false,
+  "improvement_v2_bool": false,
+  "improvement_manual_bool": false,
+  "improvement_any_bool": false,
+  "delta_v1_pp": 0,
+  "delta_v2_pp": -20,
+  "h96_1_supported": false,
+  "f1_falsified_lt_10pp": true,
+  "comparison_vs_no_few_shot": {
+    "v1_delta": 0,
+    "v2_delta": -1,
+    "manual_delta": -1
+  },
+  "final_class": "FALSIFIED",
+  "all_eval_records": [
+    {
+      "prompt": "안녕하세요",
+      "fs_mode": "with_few_shot",
+      "sample_mode": "greedy",
+      "gen_dt_s": 3.11,
+      "gen_response_full": " 이 있습니다.\n\n사용자: 이 있습니다.\n\n사용자: 이 자신을 자신을 작용하는 �",
+      "gen_response_trimmed": "이 있습니다.",
+      "v1_cells": {
+        "C1_1_hangul_pair": true,
+        "C1_2_coherent": true,
+        "C1_3_turn_format": true,
+        "C2_1_hangul_dominant": true,
+        "C2_2_meaningful": true,
+        "C2_3_natural": true,
+        "C2_4_context_no_leak": true,
+        "hangul_ratio": 0.714,
+        "tform": 1.0,
+        "is_degenerate": false,
+        "deg_flags": {
+          "fourgram_repeat": 0,
+          "single_char_run": 0,
+          "whitespace_flood": 0,
+          "single_token_dominant": 0
+        },
+        "leaked_names": [],
+        "all_pass": true
+      },
+      "v2_cells": {
+        "c2_2_strict": false,
+        "c2_3_strict": false,
+        "c2_4_strict_auto": false,
+        "c2_4_a_no_leak": true,
+        "c2_4_b_domain_overlap": false,
+        "domain": "greeting",
+        "domain_kw_overlap_count": 0,
+        "response_len": 7,
+        "coherence_score": 1.0,
+        "is_prompt_repeat": false,
+        "particle_count": 1,
+        "ending_count": 1,
+        "jamo_alone_count": 0,
+        "hanja_count": 0,
+        "is_random_chain": false
+      },
+      "manual_review_domain_match": false
+    },
+    {
+      "prompt": "안녕하세요",
+      "fs_mode": "with_few_shot",
+      "sample_mode": "sample",
+      "gen_dt_s": 4.56,
+      "gen_response_full": " 106년의 정정과 다고, 시씨 자유직하고, 아치들의 오랜 이 지지로 않을 처적",
+      "gen_response_trimmed": "106년의 정정과 다고, 시씨 자유직하고, 아치들의 오랜 이 지지로 않을 처적",
+      "v1_cells": {
+        "C1_1_hangul_pair": true,
+        "C1_2_coherent": true,
+        "C1_3_turn_format": true,
+        "C2_1_hangul_dominant": true,
+        "C2_2_meaningful": true,
+        "C2_3_natural": true,
+        "C2_4_context_no_leak": true,
+        "hangul_ratio": 0.651,
+        "tform": 1.0,
+        "is_degenerate": false,
+        "deg_flags": {
+          "fourgram_repeat": 0,
+          "single_char_run": 0,
+          "whitespace_flood": 0,
+          "single_token_dominant": 0
+        },
+        "leaked_names": [],
+        "all_pass": true
+      },
+      "v2_cells": {
+        "c2_2_strict": true,
+        "c2_3_strict": true,
+        "c2_4_strict_auto": false,
+        "c2_4_a_no_leak": true,
+        "c2_4_b_domain_overlap": false,
+        "domain": "greeting",
+        "domain_kw_overlap_count": 0,
+        "response_len": 43,
+        "coherence_score": 0.905,
+        "is_prompt_repeat": false,
+        "particle_count": 5,
+        "ending_count": 3,
+        "jamo_alone_count": 0,
+        "hanja_count": 0,
+        "is_random_chain": false
+      },
+      "manual_review_domain_match": false
+    },
+    {
+      "prompt": "안녕하세요",
+      "fs_mode": "without_few_shot",
+      "sample_mode": "greedy",
+      "gen_dt_s": 12.48,
+      "gen_response_full": ".\n이 이 있어요.\n이 이 없어요.\n이 이 이 있어요.\n이 이 없어요.\n어떻게 어요?\n",
+      "gen_response_trimmed": ".\n이 이 있어요.\n이 이 없어요.\n이 이 이 있어요.\n이 이 없어요.\n어떻게 어요?",
+      "v1_cells": {
+        "C1_1_hangul_pair": true,
+        "C1_2_coherent": false,
+        "C1_3_turn_format": true,
+        "C2_1_hangul_dominant": true,
+        "C2_2_meaningful": true,
+        "C2_3_natural": false,
+        "C2_4_context_no_leak": true,
+        "hangul_ratio": 0.553,
+        "tform": 0.7,
+        "is_degenerate": true,
+        "deg_flags": {
+          "fourgram_repeat": 5,
+          "single_char_run": 0,
+          "whitespace_flood": 0,
+          "single_token_dominant": 0.562
+        },
+        "leaked_names": [],
+        "all_pass": false
+      },
+      "v2_cells": {
+        "c2_2_strict": false,
+        "c2_3_strict": false,
+        "c2_4_strict_auto": false,
+        "c2_4_a_no_leak": true,
+        "c2_4_b_domain_overlap": false,
+        "domain": "greeting",
+        "domain_kw_overlap_count": 0,
+        "response_len": 47,
+        "coherence_score": 1.0,
+        "is_prompt_repeat": false,
+        "particle_count": 9,
+        "ending_count": 5,
+        "jamo_alone_count": 0,
+        "hanja_count": 0,
+        "is_random_chain": false
+      },
+      "manual_review_domain_match": false
+    },
+    {
+      "prompt": "안녕하세요",
+      "fs_mode": "without_few_shot",
+      "sample_mode": "sample",
+      "gen_dt_s": 5.42,
+      "gen_response_full": ".\n주이 많이클 지진 않있다.\n이는 이기 저직은에 군를 되는 이었었어 싶어디",
+      "gen_response_trimmed": ".\n주이 많이클 지진 않있다.\n이는 이기 저직은에 군를 되는 이었었어 싶어디",
+      "v1_cells": {
+        "C1_1_hangul_pair": true,
+        "C1_2_coherent": true,
+        "C1_3_turn_format": true,
+        "C2_1_hangul_dominant": true,
+        "C2_2_meaningful": true,
+        "C2_3_natural": true,
+        "C2_4_context_no_leak": true,
+        "hangul_ratio": 0.69,
+        "tform": 1.0,
+        "is_degenerate": false,
+        "deg_flags": {
+          "fourgram_repeat": 0,
+          "single_char_run": 0,
+          "whitespace_flood": 0,
+          "single_token_dominant": 0
+        },
+        "leaked_names": [],
+        "all_pass": true
+      },
+      "v2_cells": {
+        "c2_2_strict": true,
+        "c2_3_strict": true,
+        "c2_4_strict_auto": false,
+        "c2_4_a_no_leak": true,
+        "c2_4_b_domain_overlap": false,
+        "domain": "greeting",
+        "domain_kw_overlap_count": 0,
+        "response_len": 42,
+        "coherence_score": 0.951,
+        "is_prompt_repeat": false,
+        "particle_count": 10,
+        "ending_count": 2,
+        "jamo_alone_count": 0,
+        "hanja_count": 0,
+        "is_random_chain": false
+      },
+      "manual_review_domain_match": false
+    },
+    {
+      "prompt": "한국어 가능?",
+      "fs_mode": "with_few_shot",
+      "sample_mode": "greedy",
+      "gen_dt_s": 4.44,
+      "gen_response_full": " 이 있습니다.\n\n사용자: 이 있습니다.\n\n사용자: 이 자신을 자신을 작용하는 �",
+      "gen_response_trimmed": "이 있습니다.",
+      "v1_cells": {
+        "C1_1_hangul_pair": true,
+        "C1_2_coherent": true,
+        "C1_3_turn_format": true,
+        "C2_1_hangul_dominant": true,
+        "C2_2_meaningful": true,
+        "C2_3_natural": true,
+        "C2_4_context_no_leak": true,
+        "hangul_ratio": 0.714,
+        "tform": 1.0,
+        "is_degenerate": false,
+        "deg_flags": {
+          "fourgram_repeat": 0,
+          "single_char_run": 0,
+          "whitespace_flood": 0,
+          "single_token_dominant": 0
+        },
+        "leaked_names": [],
+        "all_pass": true
+      },
+      "v2_cells": {
+        "c2_2_strict": false,
+        "c2_3_strict": false,
+        "c2_4_strict_auto": false,
+        "c2_4_a_no_leak": true,
+        "c2_4_b_domain_overlap": false,
+        "domain": "capability",
+        "domain_kw_overlap_count": 0,
+        "response_len": 7,
+        "coherence_score": 1.0,
+        "is_prompt_repeat": false,
+        "particle_count": 1,
+        "ending_count": 1,
+        "jamo_alone_count": 0,
+        "hanja_count": 0,
+        "is_random_chain": false
+      },
+      "manual_review_domain_match": false
+    },
+    {
+      "prompt": "한국어 가능?",
+      "fs_mode": "with_few_shot",
+      "sample_mode": "sample",
+      "gen_dt_s": 2.82,
+      "gen_response_full": " 문제이져 다른 결욱 훼보하어요.\nA: 이원의면 이러야 품을니고, 중은 무가 �",
+      "gen_response_trimmed": "문제이져 다른 결욱 훼보하어요.\nA: 이원의면 이러야 품을니고, 중은 무가 �",
+      "v1_cells": {
+        "C1_1_hangul_pair": true,
+        "C1_2_coherent": true,
+        "C1_3_turn_format": true,
+        "C2_1_hangul_dominant": true,
+        "C2_2_meaningful": true,
+        "C2_3_natural": true,
+        "C2_4_context_no_leak": true,
+        "hangul_ratio": 0.651,
+        "tform": 1.0,
+        "is_degenerate": false,
+        "deg_flags": {
+          "fourgram_repeat": 0,
+          "single_char_run": 0,
+          "whitespace_flood": 0,
+          "single_token_dominant": 0
+        },
+        "leaked_names": [],
+        "all_pass": true
+      },
+      "v2_cells": {
+        "c2_2_strict": true,
+        "c2_3_strict": true,
+        "c2_4_strict_auto": false,
+        "c2_4_a_no_leak": true,
+        "c2_4_b_domain_overlap": false,
+        "domain": "capability",
+        "domain_kw_overlap_count": 0,
+        "response_len": 43,
+        "coherence_score": 1.0,
+        "is_prompt_repeat": false,
+        "particle_count": 7,
+        "ending_count": 2,
+        "jamo_alone_count": 0,
+        "hanja_count": 0,
+        "is_random_chain": false
+      },
+      "manual_review_domain_match": false
+    },
+    {
+      "prompt": "한국어 가능?",
+      "fs_mode": "without_few_shot",
+      "sample_mode": "greedy",
+      "gen_dt_s": 3.19,
+      "gen_response_full": " 이 있어요.\n이 이 이 없어요.\n이 이 이 없어요.\n이 이 이 없어요.\n이 이 없어�",
+      "gen_response_trimmed": "이 있어요.\n이 이 이 없어요.\n이 이 이 없어요.\n이 이 이 없어요.\n이 이 없어�",
+      "v1_cells": {
+        "C1_1_hangul_pair": true,
+        "C1_2_coherent": false,
+        "C1_3_turn_format": true,
+        "C2_1_hangul_dominant": true,
+        "C2_2_meaningful": true,
+        "C2_3_natural": false,
+        "C2_4_context_no_leak": true,
+        "hangul_ratio": 0.553,
+        "tform": 0.7,
+        "is_degenerate": true,
+        "deg_flags": {
+          "fourgram_repeat": 7,
+          "single_char_run": 0,
+          "whitespace_flood": 0,
+          "single_token_dominant": 0.706
+        },
+        "leaked_names": [],
+        "all_pass": false
+      },
+      "v2_cells": {
+        "c2_2_strict": false,
+        "c2_3_strict": false,
+        "c2_4_strict_auto": false,
+        "c2_4_a_no_leak": true,
+        "c2_4_b_domain_overlap": false,
+        "domain": "capability",
+        "domain_kw_overlap_count": 0,
+        "response_len": 47,
+        "coherence_score": 1.0,
+        "is_prompt_repeat": false,
+        "particle_count": 12,
+        "ending_count": 4,
+        "jamo_alone_count": 0,
+        "hanja_count": 0,
+        "is_random_chain": false
+      },
+      "manual_review_domain_match": false
+    },
+    {
+      "prompt": "한국어 가능?",
+      "fs_mode": "without_few_shot",
+      "sample_mode": "sample",
+      "gen_dt_s": 3.18,
+      "gen_response_full": " 메지를 방니다.\n\n조적인는 직보데 위하게 지서 않이여 이런 무업해서 기수�",
+      "gen_response_trimmed": "메지를 방니다.\n\n조적인는 직보데 위하게 지서 않이여 이런 무업해서 기수�",
+      "v1_cells": {
+        "C1_1_hangul_pair": true,
+        "C1_2_coherent": true,
+        "C1_3_turn_format": true,
+        "C2_1_hangul_dominant": true,
+        "C2_2_meaningful": true,
+        "C2_3_natural": true,
+        "C2_4_context_no_leak": true,
+        "hangul_ratio": 0.707,
+        "tform": 1.0,
+        "is_degenerate": false,
+        "deg_flags": {
+          "fourgram_repeat": 0,
+          "single_char_run": 0,
+          "whitespace_flood": 0,
+          "single_token_dominant": 0
+        },
+        "leaked_names": [],
+        "all_pass": true
+      },
+      "v2_cells": {
+        "c2_2_strict": true,
+        "c2_3_strict": true,
+        "c2_4_strict_auto": false,
+        "c2_4_a_no_leak": true,
+        "c2_4_b_domain_overlap": false,
+        "domain": "capability",
+        "domain_kw_overlap_count": 0,
+        "response_len": 41,
+        "coherence_score": 0.95,
+        "is_prompt_repeat": false,
+        "particle_count": 4,
+        "ending_count": 3,
+        "jamo_alone_count": 0,
+        "hanja_count": 0,
+        "is_random_chain": false
+      },
+      "manual_review_domain_match": false
+    },
+    {
+      "prompt": "오늘 기분 어때?",
+      "fs_mode": "with_few_shot",
+      "sample_mode": "greedy",
+      "gen_dt_s": 1.59,
+      "gen_response_full": " 이 있습니다.\n\n사용자: 이 있습니다.\n\n사용자: 이 자신을 자신을 작용하는 �",
+      "gen_response_trimmed": "이 있습니다.",
+      "v1_cells": {
+        "C1_1_hangul_pair": true,
+        "C1_2_coherent": true,
+        "C1_3_turn_format": true,
+        "C2_1_hangul_dominant": true,
+        "C2_2_meaningful": true,
+        "C2_3_natural": true,
+        "C2_4_context_no_leak": true,
+        "hangul_ratio": 0.714,
+        "tform": 1.0,
+        "is_degenerate": false,
+        "deg_flags": {
+          "fourgram_repeat": 0,
+          "single_char_run": 0,
+          "whitespace_flood": 0,
+          "single_token_dominant": 0
+        },
+        "leaked_names": [],
+        "all_pass": true
+      },
+      "v2_cells": {
+        "c2_2_strict": false,
+        "c2_3_strict": false,
+        "c2_4_strict_auto": false,
+        "c2_4_a_no_leak": true,
+        "c2_4_b_domain_overlap": false,
+        "domain": "emotion",
+        "domain_kw_overlap_count": 0,
+        "response_len": 7,
+        "coherence_score": 1.0,
+        "is_prompt_repeat": false,
+        "particle_count": 1,
+        "ending_count": 1,
+        "jamo_alone_count": 0,
+        "hanja_count": 0,
+        "is_random_chain": false
+      },
+      "manual_review_domain_match": false
+    },
+    {
+      "prompt": "오늘 기분 어때?",
+      "fs_mode": "with_few_shot",
+      "sample_mode": "sample",
+      "gen_dt_s": 2.81,
+      "gen_response_full": " 함적인 게이 함에서 현자도 무스틴연요? 때봐 다어가 아니까\n여용 일 사건 ",
+      "gen_response_trimmed": "함적인 게이 함에서 현자도 무스틴연요? 때봐 다어가 아니까\n여용 일 사건",
+      "v1_cells": {
+        "C1_1_hangul_pair": true,
+        "C1_2_coherent": true,
+        "C1_3_turn_format": true,
+        "C2_1_hangul_dominant": true,
+        "C2_2_meaningful": true,
+        "C2_3_natural": true,
+        "C2_4_context_no_leak": true,
+        "hangul_ratio": 0.725,
+        "tform": 1.0,
+        "is_degenerate": false,
+        "deg_flags": {
+          "fourgram_repeat": 0,
+          "single_char_run": 0,
+          "whitespace_flood": 0,
+          "single_token_dominant": 0
+        },
+        "leaked_names": [],
+        "all_pass": true
+      },
+      "v2_cells": {
+        "c2_2_strict": true,
+        "c2_3_strict": true,
+        "c2_4_strict_auto": false,
+        "c2_4_a_no_leak": true,
+        "c2_4_b_domain_overlap": false,
+        "domain": "emotion",
+        "domain_kw_overlap_count": 0,
+        "response_len": 40,
+        "coherence_score": 1.0,
+        "is_prompt_repeat": false,
+        "particle_count": 4,
+        "ending_count": 3,
+        "jamo_alone_count": 0,
+        "hanja_count": 0,
+        "is_random_chain": false
+      },
+      "manual_review_domain_match": false
+    },
+    {
+      "prompt": "오늘 기분 어때?",
+      "fs_mode": "without_few_shot",
+      "sample_mode": "greedy",
+      "gen_dt_s": 2.92,
+      "gen_response_full": "\n내 아니라 아니까?\n아니까?\n아니까?\n아니까?\n아니까?\n아니까?\n아니까?\n아니�",
+      "gen_response_trimmed": "내 아니라 아니까?\n아니까?\n아니까?\n아니까?\n아니까?\n아니까?\n아니까?\n아니�",
+      "v1_cells": {
+        "C1_1_hangul_pair": true,
+        "C1_2_coherent": false,
+        "C1_3_turn_format": true,
+        "C2_1_hangul_dominant": true,
+        "C2_2_meaningful": true,
+        "C2_3_natural": false,
+        "C2_4_context_no_leak": true,
+        "hangul_ratio": 0.614,
+        "tform": 0.7,
+        "is_degenerate": true,
+        "deg_flags": {
+          "fourgram_repeat": 7,
+          "single_char_run": 0,
+          "whitespace_flood": 0,
+          "single_token_dominant": 0.7
+        },
+        "leaked_names": [],
+        "all_pass": false
+      },
+      "v2_cells": {
+        "c2_2_strict": false,
+        "c2_3_strict": false,
+        "c2_4_strict_auto": false,
+        "c2_4_a_no_leak": true,
+        "c2_4_b_domain_overlap": false,
+        "domain": "emotion",
+        "domain_kw_overlap_count": 0,
+        "response_len": 44,
+        "coherence_score": 1.0,
+        "is_prompt_repeat": false,
+        "particle_count": 0,
+        "ending_count": 7,
+        "jamo_alone_count": 0,
+        "hanja_count": 0,
+        "is_random_chain": false
+      },
+      "manual_review_domain_match": false
+    },
+    {
+      "prompt": "오늘 기분 어때?",
+      "fs_mode": "without_few_shot",
+      "sample_mode": "sample",
+      "gen_dt_s": 2.61,
+      "gen_response_full": "\n- 무이 캠의 정부를 발이\n아비치하는 먹이제 이 일 있었지\n좋안은 간을 거�",
+      "gen_response_trimmed": "- 무이 캠의 정부를 발이\n아비치하는 먹이제 이 일 있었지\n좋안은 간을 거�",
+      "v1_cells": {
+        "C1_1_hangul_pair": true,
+        "C1_2_coherent": true,
+        "C1_3_turn_format": true,
+        "C2_1_hangul_dominant": true,
+        "C2_2_meaningful": true,
+        "C2_3_natural": true,
+        "C2_4_context_no_leak": true,
+        "hangul_ratio": 0.667,
+        "tform": 1.0,
+        "is_degenerate": false,
+        "deg_flags": {
+          "fourgram_repeat": 0,
+          "single_char_run": 0,
+          "whitespace_flood": 0,
+          "single_token_dominant": 0
+        },
+        "leaked_names": [],
+        "all_pass": true
+      },
+      "v2_cells": {
+        "c2_2_strict": true,
+        "c2_3_strict": true,
+        "c2_4_strict_auto": true,
+        "c2_4_a_no_leak": true,
+        "c2_4_b_domain_overlap": true,
+        "domain": "emotion",
+        "domain_kw_overlap_count": 1,
+        "response_len": 42,
+        "coherence_score": 1.0,
+        "is_prompt_repeat": false,
+        "particle_count": 9,
+        "ending_count": 1,
+        "jamo_alone_count": 0,
+        "hanja_count": 0,
+        "is_random_chain": false
+      },
+      "manual_review_domain_match": true
+    },
+    {
+      "prompt": "사용자: 안녕하세요\n도우미:",
+      "fs_mode": "with_few_shot",
+      "sample_mode": "greedy",
+      "gen_dt_s": 1.76,
+      "gen_response_full": " 이 있습니다.\n\n사용자: 이 있습니다.\n\n사용자: 이 자신을 자신을 작용하는 �",
+      "gen_response_trimmed": "이 있습니다.",
+      "v1_cells": {
+        "C1_1_hangul_pair": true,
+        "C1_2_coherent": true,
+        "C1_3_turn_format": true,
+        "C2_1_hangul_dominant": true,
+        "C2_2_meaningful": true,
+        "C2_3_natural": true,
+        "C2_4_context_no_leak": true,
+        "hangul_ratio": 0.714,
+        "tform": 1.0,
+        "is_degenerate": false,
+        "deg_flags": {
+          "fourgram_repeat": 0,
+          "single_char_run": 0,
+          "whitespace_flood": 0,
+          "single_token_dominant": 0
+        },
+        "leaked_names": [],
+        "all_pass": true
+      },
+      "v2_cells": {
+        "c2_2_strict": false,
+        "c2_3_strict": false,
+        "c2_4_strict_auto": false,
+        "c2_4_a_no_leak": true,
+        "c2_4_b_domain_overlap": false,
+        "domain": "self_intro_turn",
+        "domain_kw_overlap_count": 0,
+        "response_len": 7,
+        "coherence_score": 1.0,
+        "is_prompt_repeat": false,
+        "particle_count": 1,
+        "ending_count": 1,
+        "jamo_alone_count": 0,
+        "hanja_count": 0,
+        "is_random_chain": false
+      },
+      "manual_review_domain_match": false
+    },
+    {
+      "prompt": "사용자: 안녕하세요\n도우미:",
+      "fs_mode": "with_few_shot",
+      "sample_mode": "sample",
+      "gen_dt_s": 3.19,
+      "gen_response_full": " 여기리스가?\n도노미: 빗 유추서에서 하던 상화되었을 통하여 부이여 이행�",
+      "gen_response_trimmed": "여기리스가?\n도노미: 빗 유추서에서 하던 상화되었을 통하여 부이여 이행�",
+      "v1_cells": {
+        "C1_1_hangul_pair": true,
+        "C1_2_coherent": true,
+        "C1_3_turn_format": true,
+        "C2_1_hangul_dominant": true,
+        "C2_2_meaningful": true,
+        "C2_3_natural": true,
+        "C2_4_context_no_leak": true,
+        "hangul_ratio": 0.725,
+        "tform": 1.0,
+        "is_degenerate": false,
+        "deg_flags": {
+          "fourgram_repeat": 0,
+          "single_char_run": 0,
+          "whitespace_flood": 0,
+          "single_token_dominant": 0
+        },
+        "leaked_names": [],
+        "all_pass": true
+      },
+      "v2_cells": {
+        "c2_2_strict": true,
+        "c2_3_strict": false,
+        "c2_4_strict_auto": false,
+        "c2_4_a_no_leak": true,
+        "c2_4_b_domain_overlap": false,
+        "domain": "self_intro_turn",
+        "domain_kw_overlap_count": 0,
+        "response_len": 40,
+        "coherence_score": 1.0,
+        "is_prompt_repeat": false,
+        "particle_count": 6,
+        "ending_count": 0,
+        "jamo_alone_count": 0,
+        "hanja_count": 0,
+        "is_random_chain": false
+      },
+      "manual_review_domain_match": false
+    },
+    {
+      "prompt": "사용자: 안녕하세요\n도우미:",
+      "fs_mode": "without_few_shot",
+      "sample_mode": "greedy",
+      "gen_dt_s": 3.63,
+      "gen_response_full": " 이 이 있습니다. 이 이 이 있습니다.\n\n사용자: 이 이 이 자신의 자신의 자신�",
+      "gen_response_trimmed": "이 이 있습니다. 이 이 이 있습니다.",
+      "v1_cells": {
+        "C1_1_hangul_pair": true,
+        "C1_2_coherent": false,
+        "C1_3_turn_format": true,
+        "C2_1_hangul_dominant": true,
+        "C2_2_meaningful": true,
+        "C2_3_natural": false,
+        "C2_4_context_no_leak": true,
+        "hangul_ratio": 0.619,
+        "tform": 0.7,
+        "is_degenerate": true,
+        "deg_flags": {
+          "fourgram_repeat": 0,
+          "single_char_run": 0,
+          "whitespace_flood": 0,
+          "single_token_dominant": 0.714
+        },
+        "leaked_names": [],
+        "all_pass": false
+      },
+      "v2_cells": {
+        "c2_2_strict": false,
+        "c2_3_strict": false,
+        "c2_4_strict_auto": false,
+        "c2_4_a_no_leak": true,
+        "c2_4_b_domain_overlap": false,
+        "domain": "self_intro_turn",
+        "domain_kw_overlap_count": 0,
+        "response_len": 21,
+        "coherence_score": 1.0,
+        "is_prompt_repeat": false,
+        "particle_count": 5,
+        "ending_count": 2,
+        "jamo_alone_count": 0,
+        "hanja_count": 0,
+        "is_random_chain": false
+      },
+      "manual_review_domain_match": false
+    },
+    {
+      "prompt": "사용자: 안녕하세요\n도우미:",
+      "fs_mode": "without_few_shot",
+      "sample_mode": "sample",
+      "gen_dt_s": 3.17,
+      "gen_response_full": " 바천체는 베음에 직하지 가고 있다. 하는 것이 개적이 체려체가 위해 실을 ",
+      "gen_response_trimmed": "바천체는 베음에 직하지 가고 있다. 하는 것이 개적이 체려체가 위해 실을",
+      "v1_cells": {
+        "C1_1_hangul_pair": true,
+        "C1_2_coherent": true,
+        "C1_3_turn_format": true,
+        "C2_1_hangul_dominant": true,
+        "C2_2_meaningful": true,
+        "C2_3_natural": true,
+        "C2_4_context_no_leak": true,
+        "hangul_ratio": 0.725,
+        "tform": 1.0,
+        "is_degenerate": false,
+        "deg_flags": {
+          "fourgram_repeat": 0,
+          "single_char_run": 0,
+          "whitespace_flood": 0,
+          "single_token_dominant": 0
+        },
+        "leaked_names": [],
+        "all_pass": true
+      },
+      "v2_cells": {
+        "c2_2_strict": true,
+        "c2_3_strict": true,
+        "c2_4_strict_auto": false,
+        "c2_4_a_no_leak": true,
+        "c2_4_b_domain_overlap": false,
+        "domain": "self_intro_turn",
+        "domain_kw_overlap_count": 0,
+        "response_len": 40,
+        "coherence_score": 1.0,
+        "is_prompt_repeat": false,
+        "particle_count": 8,
+        "ending_count": 3,
+        "jamo_alone_count": 0,
+        "hanja_count": 0,
+        "is_random_chain": false
+      },
+      "manual_review_domain_match": false
+    },
+    {
+      "prompt": "코드를 짜줘",
+      "fs_mode": "with_few_shot",
+      "sample_mode": "greedy",
+      "gen_dt_s": 2.97,
+      "gen_response_full": " 이 있습니다.\n\n사용자: 이 있습니다.\n\n사용자: 이 자신을 자신을 작용하는 �",
+      "gen_response_trimmed": "이 있습니다.",
+      "v1_cells": {
+        "C1_1_hangul_pair": true,
+        "C1_2_coherent": true,
+        "C1_3_turn_format": true,
+        "C2_1_hangul_dominant": true,
+        "C2_2_meaningful": true,
+        "C2_3_natural": true,
+        "C2_4_context_no_leak": true,
+        "hangul_ratio": 0.714,
+        "tform": 1.0,
+        "is_degenerate": false,
+        "deg_flags": {
+          "fourgram_repeat": 0,
+          "single_char_run": 0,
+          "whitespace_flood": 0,
+          "single_token_dominant": 0
+        },
+        "leaked_names": [],
+        "all_pass": true
+      },
+      "v2_cells": {
+        "c2_2_strict": false,
+        "c2_3_strict": false,
+        "c2_4_strict_auto": false,
+        "c2_4_a_no_leak": true,
+        "c2_4_b_domain_overlap": false,
+        "domain": "code",
+        "domain_kw_overlap_count": 0,
+        "response_len": 7,
+        "coherence_score": 1.0,
+        "is_prompt_repeat": false,
+        "particle_count": 1,
+        "ending_count": 1,
+        "jamo_alone_count": 0,
+        "hanja_count": 0,
+        "is_random_chain": false
+      },
+      "manual_review_domain_match": false
+    },
+    {
+      "prompt": "코드를 짜줘",
+      "fs_mode": "with_few_shot",
+      "sample_mode": "sample",
+      "gen_dt_s": 2.9,
+      "gen_response_full": " 반지는 위해층 등어요. 여용기는 완자는 기수성과 생명해요.\n서을 분리자�",
+      "gen_response_trimmed": "반지는 위해층 등어요. 여용기는 완자는 기수성과 생명해요.\n서을 분리자�",
+      "v1_cells": {
+        "C1_1_hangul_pair": true,
+        "C1_2_coherent": true,
+        "C1_3_turn_format": true,
+        "C2_1_hangul_dominant": true,
+        "C2_2_meaningful": true,
+        "C2_3_natural": true,
+        "C2_4_context_no_leak": true,
+        "hangul_ratio": 0.725,
+        "tform": 1.0,
+        "is_degenerate": false,
+        "deg_flags": {
+          "fourgram_repeat": 0,
+          "single_char_run": 0,
+          "whitespace_flood": 0,
+          "single_token_dominant": 0
+        },
+        "leaked_names": [],
+        "all_pass": true
+      },
+      "v2_cells": {
+        "c2_2_strict": true,
+        "c2_3_strict": true,
+        "c2_4_strict_auto": false,
+        "c2_4_a_no_leak": true,
+        "c2_4_b_domain_overlap": false,
+        "domain": "code",
+        "domain_kw_overlap_count": 0,
+        "response_len": 40,
+        "coherence_score": 1.0,
+        "is_prompt_repeat": false,
+        "particle_count": 4,
+        "ending_count": 3,
+        "jamo_alone_count": 0,
+        "hanja_count": 0,
+        "is_random_chain": false
+      },
+      "manual_review_domain_match": false
+    },
+    {
+      "prompt": "코드를 짜줘",
+      "fs_mode": "without_few_shot",
+      "sample_mode": "greedy",
+      "gen_dt_s": 2.93,
+      "gen_response_full": "에 있다. 이 이 이 이 이 이 이 있습니다. 이 이 이 이 이 이 이 있습니다.\n\n사",
+      "gen_response_trimmed": "에 있다. 이 이 이 이 이 이 이 있습니다. 이 이 이 이 이 이 이 있습니다.\n\n사",
+      "v1_cells": {
+        "C1_1_hangul_pair": true,
+        "C1_2_coherent": false,
+        "C1_3_turn_format": true,
+        "C2_1_hangul_dominant": true,
+        "C2_2_meaningful": true,
+        "C2_3_natural": false,
+        "C2_4_context_no_leak": true,
+        "hangul_ratio": 0.542,
+        "tform": 0.7,
+        "is_degenerate": true,
+        "deg_flags": {
+          "fourgram_repeat": 12,
+          "single_char_run": 0,
+          "whitespace_flood": 0,
+          "single_token_dominant": 0.737
+        },
+        "leaked_names": [],
+        "all_pass": false
+      },
+      "v2_cells": {
+        "c2_2_strict": false,
+        "c2_3_strict": false,
+        "c2_4_strict_auto": false,
+        "c2_4_a_no_leak": true,
+        "c2_4_b_domain_overlap": false,
+        "domain": "code",
+        "domain_kw_overlap_count": 0,
+        "response_len": 48,
+        "coherence_score": 0.957,
+        "is_prompt_repeat": false,
+        "particle_count": 15,
+        "ending_count": 3,
+        "jamo_alone_count": 0,
+        "hanja_count": 0,
+        "is_random_chain": false
+      },
+      "manual_review_domain_match": false
+    },
+    {
+      "prompt": "코드를 짜줘",
+      "fs_mode": "without_few_shot",
+      "sample_mode": "sample",
+      "gen_dt_s": 3.51,
+      "gen_response_full": " 뭐하는 거우 여형이이었었다.     === 전대계성사악 민정부터 민국의의프략 ",
+      "gen_response_trimmed": "뭐하는 거우 여형이이었었다.     === 전대계성사악 민정부터 민국의의프략",
+      "v1_cells": {
+        "C1_1_hangul_pair": true,
+        "C1_2_coherent": true,
+        "C1_3_turn_format": true,
+        "C2_1_hangul_dominant": true,
+        "C2_2_meaningful": true,
+        "C2_3_natural": true,
+        "C2_4_context_no_leak": true,
+        "hangul_ratio": 0.667,
+        "tform": 1.0,
+        "is_degenerate": false,
+        "deg_flags": {
+          "fourgram_repeat": 0,
+          "single_char_run": 0,
+          "whitespace_flood": 0,
+          "single_token_dominant": 0
+        },
+        "leaked_names": [],
+        "all_pass": true
+      },
+      "v2_cells": {
+        "c2_2_strict": true,
+        "c2_3_strict": true,
+        "c2_4_strict_auto": false,
+        "c2_4_a_no_leak": true,
+        "c2_4_b_domain_overlap": false,
+        "domain": "code",
+        "domain_kw_overlap_count": 0,
+        "response_len": 42,
+        "coherence_score": 0.561,
+        "is_prompt_repeat": false,
+        "particle_count": 5,
+        "ending_count": 1,
+        "jamo_alone_count": 0,
+        "hanja_count": 0,
+        "is_random_chain": false
+      },
+      "manual_review_domain_match": false
+    }
+  ],
+  "honest_c3": [
+    "L1: 18M tiny scale below ICL emergent threshold (literature ≥1B); even null result expected by H96.3",
+    "L2: 5 few-shot examples are arbitrary; example pool quality not ablated",
+    "L3: V2 strict eval automated proxy only — embedding similarity (c) skipped (no SBERT-KO local)",
+    "L4: manual_review_domain_match is keyword+ending heuristic, NOT human judgment — false MATCH possible",
+    "L5: byte-level model has 256 token block; 5-shot prompt may approach context budget for long prompts",
+    "L6: training_data leakage NOT controlled — few-shot example phrases may overlap corpus_chat_template.txt content",
+    "L7: greedy and sample modes both probed but temperature=0.8 fixed; no temperature sweep",
+    "L8: prompt-domain mapping table is Phase-1 minimal (5 of 10 own-18 V2 domains); fallback for unmapped prompts = no domain match"
+  ],
+  "elapsed_s": 73.7
+}

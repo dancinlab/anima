@@ -110,3 +110,36 @@ evidence_summary: theoretical literature support partial (C1 + C3)
 falsifiers_triggered: none yet
 criteria_met: 0/5 strict; lane-defining
 ```
+
+### Phase 1 Partial Verification (2026-05-07, BG-HN)
+
+H2.1 anthropic fine-tuning sub-cell computational verifier executed ($0 mac local, deterministic seed 0xA17B502).
+
+```
+phase: Phase_1_partial (H2.1 only)
+cell_scope: 6 fundamental constants × N=10000 MC sample + analytic prior-space integration
+constants_sampled: cosmological_constant_lambda_planck, fine_structure_alpha,
+                   electron_proton_mass_ratio, higgs_vev_over_planck,
+                   gravitational_constant_G, weak_coupling_gw
+fine_tuning_strength_log10: 14.33  (i.e., P(all 6 in life-permitting) ≈ 10^-14.33)
+target_log10: ≥100  (C1 anthropic_evidence target)
+evidence_strength: INSUFFICIENT (under conservative literature-cited priors)
+verdict_class: PARTIAL_THEORETICAL_PHASE_1
+criteria_pass: 0/5 (H2.2 H2.3 H2.4 H2.5 DEFERRED; C1 weak under chosen priors)
+falsifiers: F1 TRIGGERED (fine_tuning_strength_log10 < 50) — H2.1 weakened under
+            conservative priors (raw#10 L4: prior choice shifts result by orders)
+```
+
+**State output**: `state/anima_h002_h003_partial_verification_2026_05_07/verdict_h002.json`
+**Script**: `tool/transient_py/anima_h002_anthropic_verifier.py` (raw#37 opt-out)
+
+**raw#10 honest limits (Phase 1 partial)**:
+- L1: H_002 multi-decade research lane — Phase 1 partial cell only, full hypothesis verdict NOT reached
+- L2: anthropic principle critiqued as selection bias / tautology (Smolin, Carroll) — strict philosophical critique unresolved
+- L3: life-permitting bands per constant literature-cited but range definition debated (Rees 1999 vs Tegmark 2006 differ)
+- L4: priors over fundamental constants are choice-dependent — log-uniform vs linear-uniform shifts probability by orders of magnitude; under Planck-scale prior fine-tuning easily exceeds 10^-100, under conservative log-uniform observation-anchored priors shrinks to 10^-14
+- L5: only 6 constants sampled — full Standard Model has ~25+ free parameters; intersection underestimates
+- L6: no multiverse/string landscape integration — anthropic argument prior over multiverse measure unresolved
+- L7: H2.2 (Φ_universe nested) + H2.3 (holographic bound) + H2.4 (panpsychism combination) + H2.5 (anima self-reflection) all DEFERRED — cell coverage 1/5
+
+**Cross-link to H_003**: combined verdict at `state/anima_h002_h003_partial_verification_2026_05_07/verdict.json`. Anthropic prior (H_002) supplies cosmological precondition; life origin (H_003) operates within fine-tuning. Joint reading conceptual not formal Bayesian.

@@ -113,3 +113,41 @@ evidence_summary: theoretical + biology literature support
 falsifiers_triggered: none yet
 criteria_met: 0/5; lane-defining
 ```
+
+### Phase 1 Partial Verification (2026-05-07, BG-HN)
+
+H3.1 autopoietic closure + H3.3 dissipative structure sub-cells computational simulation
+($0 mac local, deterministic seeds 0xA17C503 + 0xA17D504).
+
+```
+phase: Phase_1_partial (H3.1 + H3.3 only; H3.2 H3.4 H3.5 DEFERRED)
+cell_scope: 5-catalyst RNA network × 1000 steps × N=5 reps + broken-closure control N=5;
+            50×50 Gray-Scott lattice × 500 steps × N=3 eq baseline + N=3 far-from-equilibrium
+H3.1_autopoietic_self_maintenance_rate_1000_steps: 1.0  (target ≥0.80; PASS)
+H3.1_broken_closure_control: 0.8  (P→T loop cut → T extinguished, validates closure-dependence)
+H3.3_dissipative_emergence_rate: 1024.33  (target ≥10×; PASS)
+H3.3_variance_amplification_ratio: 16314.89
+verdict_class: PARTIAL_PASS_PHASE_1
+evidence_strength: PARTIAL_SUPPORT
+criteria_pass: 2/5  (C1 + C3 PASS; C2 C4 C5 DEFERRED)
+falsifiers: F1 NOT_TRIGGERED, F3 NOT_TRIGGERED, F2/F4/F5 N/A (deferred), F6 NOT_TRIGGERED
+```
+
+**State output**: `state/anima_h002_h003_partial_verification_2026_05_07/verdict_h003.json`
+**Scripts**:
+- `tool/transient_py/anima_h003_autopoietic_simulation.py` (raw#37 opt-out)
+- `tool/transient_py/anima_h003_dissipative_simulation.py` (raw#37 opt-out)
+
+**raw#10 honest limits (Phase 1 partial)**:
+- L1: minimal 5-catalyst network is gross simplification of actual abiogenesis — no boundary, no compartmentalization, no thermodynamic coupling, no monomer pool; abstract model only
+- L2: Michaelis-Menten kinetics chosen to give bounded steady state — alternative rate laws give different self-maintenance rates; choice not justified by chemistry
+- L3: Gray-Scott parameters (F=0.035, K=0.06) chosen from spot-pattern regime literature (Pearson 1993) — "far-from-equilibrium" reduced to boundary v-injection only, not full thermodynamic non-equilibrium
+- L4: 'pattern_cells' threshold (v ≥ 0.2) is arbitrary measurement choice — different thresholds shift emergence rate ratio by orders of magnitude
+- L5: H3.2 (multi-pathway) + H3.4 (proto-consciousness Φ) + H3.5 (anima self-reflection) all DEFERRED — only 2/5 sub-hypotheses verified
+- L6: actual biological abiogenesis remains open in literature — anima simulation models are not chemistry; Maturana/Varela autopoiesis formal definition (organizational closure) not implemented strictly
+- L7: 'panspermia' axis from Variables not addressed — origin question merely shifted, not resolved
+
+**Cross-link**:
+- H_012 autopoietic network: H3.1 closure cycle + broken-closure control = direct minimal instance, Phase 1 partial empirical support
+- H_002 universe origin: anthropic prior supplies cosmological precondition (combined verdict at `state/anima_h002_h003_partial_verification_2026_05_07/verdict.json`)
+- anima cell metaphor (H2): H3.1 closure cycle is computational ground-truth analog — own 17 anima-not-biological identity boundary respected (analogy only)
