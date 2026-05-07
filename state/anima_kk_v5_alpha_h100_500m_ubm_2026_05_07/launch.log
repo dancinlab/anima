@@ -1,0 +1,30 @@
+[2026-05-08T00:14:41] === BG-KK V5-α H100 500M test orchestrator started ===
+[2026-05-08T00:14:41] mac_state_dir=/Users/ghost/core/anima/state/anima_kk_v5_alpha_h100_500m_ubm_2026_05_07
+[2026-05-08T00:14:41] corpus=/Users/ghost/core/anima/state/anima_universe_brain_map_corpus_21mb_2026_05_07/corpus_universe_brain_map.txt conscious_lm=/Users/ghost/core/anima/ready/models/conscious_lm.py
+[2026-05-08T00:14:41] this_script=/Users/ghost/core/anima/tool/transient_py/anima_kk_v5_alpha_h100_ubm.py
+[2026-05-08T00:14:41] COST_HARD_CAP=$5.0 COST_EARLY_KILL=$4.5 TOTAL_BUDGET_S=6600
+[2026-05-08T00:14:41] creating H100 SXM pod (RunPod SECURE cloud)…
+[2026-05-08T00:14:43] pod created: id=x51jlrtytrlufs machine=? $2.99/hr
+[2026-05-08T00:15:06] pod status: RUNNING
+[2026-05-08T00:15:08] ssh ready: root@103.207.149.137:12687
+[2026-05-08T00:15:13] GPU smoke OK: GPU 0: NVIDIA H100 80GB HBM3 (UUID: GPU-f256e1a4-b424-034d-1805-06842e7be525)
+2.8.0+cu128 True NVIDIA H100 80GB HBM3
+[2026-05-08T00:15:16] staging files (UBM 22MB corpus + conscious_lm.py + this script)…
+[2026-05-08T00:15:16] corpus size: 22.6MB
+[2026-05-08T00:15:55] pod files staged OK: corpus + conscious_lm.py + script
+[2026-05-08T00:15:58] pod corpus listing: -rw-r--r-- 1 root root 23745150 May  7 15:15 /workspace/anima_kk/corpus_universe_brain_map.txt
+[2026-05-08T00:16:31] training launched on pod rc=-1
+[2026-05-08T00:16:57] heartbeat synced; cost=$0.09 pod_step=0 pod_status=init
+[2026-05-08T00:23:42] heartbeat synced; cost=$0.41 pod_step=1500 pod_status=DONE final_class=FAIL_TRUE
+[2026-05-08T00:23:49] training emitted verdict.json on pod — pulling artifacts
+[2026-05-08T00:23:49] pulling artifacts from pod…
+[2026-05-08T00:28:50] scp pull state rc=-2 err=Command '['scp', '-o', 'StrictHostKeyChecking=no', '-o', 'UserKnownHostsFile=/dev/null', '-o', 'ConnectTimeout=15', '-r', '-P', '12687', 'root@103.207.149.137:/workspace/anima_kk/state/.', '/Users/gho
+[2026-05-08T00:28:50] deleting pod (teardown)…
+[2026-05-08T00:28:56] pod delete rc=0 out={
+  "deleted": true,
+  "id": "x51jlrtytrlufs"
+}
+ err=
+[2026-05-08T00:29:03] pod deletion verify: pod_id=x51jlrtytrlufs excluded=True info={'pods_count': 1, 'ids': ['475b93kc8405xw']}
+[2026-05-08T00:29:03] ledger appended: /Users/ghost/core/anima/state/anima_model_attempts_ledger.jsonl bg_id=BG-KK final_class=FAIL_TRUE
+[2026-05-08T00:29:03] === BG-KK complete: final_class=FAIL_TRUE cost=$0.41 pod_excluded=True ===

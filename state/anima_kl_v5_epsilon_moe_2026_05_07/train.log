@@ -1,0 +1,22 @@
+[23:56:21] BG-KL V5-ε MoE start (host=ghostui-MacBookAir.local)
+[23:56:21]   device=mps, NO_CKPT_RANDOM_INIT, steps=1500, lr=0.0003
+[23:56:21]   batch=2 grad_accum=8 eval_steps=[0, 500, 1000, 1500]
+[23:56:21]   corpus=corpus_chat_template.txt (own 20 BG-JY explicit chat-template)
+[23:56:21]   watchdog_no_progress_sec=600
+[23:56:21] init V5-ε MoE model (NO ckpt — random init from scratch)
+[23:56:21]   arch: 12L/640d/10h vocab=11885 block=256 dropout=0.3
+[23:56:21]   MoE: n_experts=8 top_k=2 aux_coef=0.01
+[23:56:40]   sp loaded: vocab=11885
+[23:56:40]   total params: 228,821,216 (228.82M)
+[23:56:40]   frozen: 0
+[23:56:40]   trainable: 228,821,216 (228.82M) — FULL FRESH MoE
+[23:56:40]   backbone (non-expert/head_g): 160,358,496 (160.36M)
+[23:56:40]   per-expert: 7,606,400 (7.61M)
+[23:56:40]   router: 5,120
+[23:56:40]   active_per_token (top-2): ~175,576,416 (175.58M)
+[23:56:40]   trainable name top-segments: ['base.blocks', 'base.head_a', 'base.head_g', 'base.ln_f', 'base.pos_emb', 'base.tension_proj', 'base.tok_emb']
+[23:56:40] loading corpus: /Users/ghost/core/anima/state/anima_jy_chat_template_corpus_2026_05_07/corpus_chat_template.txt
+[23:56:43]   corpus: 95,420,911 bytes (91.00MB) in 2.1s
+[23:59:15]   SP encode: 29,543,543 tokens in 152.0s
+[23:59:22]   train_data: 28,066,365 tokens; block_size=256
+[23:59:25] === eval step 0 (random init baseline) ===
