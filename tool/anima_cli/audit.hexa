@@ -347,6 +347,41 @@ fn check_git_clean(root: string) -> string {
         "no untracked binaries (staged changes allowed)")
 }
 
+// Federation health probe per bedrock/spec/sovereign_cli_federation.spec.yaml v1:
+// invoke qrng cli's selftest as an opt-in capability check. Audit stays
+// sovereign — peer absence emits stderr notice + WARN row, not FAIL.
+// Provenance label `qrng_cli` (or `absent`) propagated into row detail.
+fn check_qrng_health(root: string) -> string {
+    let qrng_bin = _str(exec("command -v qrng 2>/dev/null")).trim()
+    let qrng_root_env = _str(env("QRNG_ROOT"))
+    let mut qcmd = ""
+    if qrng_bin != "" {
+        qcmd = qrng_bin + " selftest"
+    } else if qrng_root_env != "" && _fexists(qrng_root_env + "/cli/qrng.hexa") {
+        qcmd = "QRNG_ROOT=" + _shq(qrng_root_env) + " hexa run "
+             + _shq(qrng_root_env + "/cli/qrng.hexa") + " selftest"
+    } else {
+        let ws_root = _str(env("HOME")) + "/core/qrng"
+        if _fexists(ws_root + "/cli/qrng.hexa") {
+            qcmd = "QRNG_ROOT=" + _shq(ws_root) + " hexa run "
+                 + _shq(ws_root + "/cli/qrng.hexa") + " selftest"
+        }
+    }
+    if qcmd == "" {
+        // P5 audible fall-through (WARN, not FAIL — audit stays sovereign)
+        exec("printf '%s\\n' '[anima audit] qrng cli unavailable — qrng_health WARN' >&2")
+        return _row("qrng_health", "WARN", false, 0,
+            "provenance=absent (qrng cli unreachable; install via `hx install qrng`)")
+    }
+    let out = _str(exec(qcmd + " 2>&1"))
+    if out.contains("__QRNG_SELFTEST__ PASS") {
+        return _row("qrng_health", "PASS", false, 0,
+            "provenance=qrng_cli  selftest sentinel green")
+    }
+    return _row("qrng_health", "WARN", false, 0,
+        "provenance=qrng_cli  selftest non-PASS (live tier may need QRNG_LIVE=1)")
+}
+
 // ─── aggregation ──────────────────────────────────────────────────────
 
 fn _worst(results: array) -> string {
@@ -438,6 +473,7 @@ fn run_all(root: string) -> array {
     results = results + [check_orphan_json_root(root)]
     results = results + [check_large_file(root)]
     results = results + [check_git_clean(root)]
+    results = results + [check_qrng_health(root)]
     return results
 }
 
@@ -540,5 +576,3 @@ fn main() {
     if sub == "--json" { sub_default(true); return }
     sub_default(json_mode)
 }
-
-main()
