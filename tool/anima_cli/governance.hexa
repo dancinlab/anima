@@ -65,7 +65,7 @@ fn _user_argv(raw) -> array {
     // or first known subcommand. anima dispatcher passes argv = [hexa, mod, sub, ...]
     let mut idx = 0
     let known = ["raw", "triad", "hexa-only", "english-only", "ai-config-ban",
-                 "deprecated-ban", "scf-lint", "--selftest", "--help", "-h", "help"]
+                 "deprecated-ban", "scf-lint", "surface-contract", "--selftest", "--help", "-h", "help"]
     let mut found = -1
     let mut j = 0
     while j < len(out) {
@@ -98,6 +98,7 @@ let TOOL_ENGLISH_ONLY  = _sibling("hive",      "tool/english_only_lint.hexa")
 let TOOL_AI_CONFIG_BAN = _sibling("hive",      "tool/ai_config_ban_lint.hexa")
 let TOOL_DEPRECATED    = _sibling("hive",      "tool/deprecated_ref_scanner.hexa")
 let TOOL_SCF_LINT      = _sibling("hive",      "tool/sovereign_cli_federation_lint.hexa")
+let TOOL_SURFACE_LINT  = _sibling("hive",      "tool/cli_surface_contract_lint.hexa")
 
 fn _run_backend(backend: string, rest: array, sub_label: string) -> int {
     if !_fexists(backend) {
@@ -137,6 +138,7 @@ fn _selftest() {
         ["ai-config-ban",  TOOL_AI_CONFIG_BAN],
         ["deprecated-ban", TOOL_DEPRECATED],
         ["scf-lint",       TOOL_SCF_LINT],
+        ["surface-contract", TOOL_SURFACE_LINT],
     ]
     let mut i = 0
     let mut all_pass = true
@@ -170,6 +172,7 @@ fn _help() {
     println("  anima governance ai-config-ban [args]    raw 13  AI config ban")
     println("  anima governance deprecated-ban [args]   raw 21  deprecated-ref")
     println("  anima governance scf-lint [args]         spec sovereign_cli_federation A7 heuristic")
+    println("  anima governance surface-contract [args] spec sovereign_cli_federation cli_surface keys")
     println("  anima governance --selftest              backend reachability")
     println("  anima governance --help                  this help")
     println("")
@@ -180,6 +183,7 @@ fn _help() {
     println("  ai-config-ban    " + TOOL_AI_CONFIG_BAN)
     println("  deprecated-ban   " + TOOL_DEPRECATED)
     println("  scf-lint         " + TOOL_SCF_LINT)
+    println("  surface-contract " + TOOL_SURFACE_LINT)
 }
 
 fn main() -> void {
@@ -222,6 +226,9 @@ fn main() -> void {
     } else if head == "scf-lint" {
         let rest = _rest_from(cli, 1)
         rc = _run_backend(TOOL_SCF_LINT, rest, "scf-lint")
+    } else if head == "surface-contract" {
+        let rest = _rest_from(cli, 1)
+        rc = _run_backend(TOOL_SURFACE_LINT, rest, "surface-contract")
     } else {
         eprintln("anima governance: unknown subcommand: " + head)
         eprintln("reason: cli-arg-parse-failed")

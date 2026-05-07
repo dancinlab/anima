@@ -430,6 +430,9 @@ fn main() {
             }
             if qm_cmd == "" {
                 // P5 audible fall-through: stderr notice + degrade to embedded_self (dispatch.hexa).
+                // F-SCF-4 sovereign scope: dispatch.hexa itself depends on the hexa runtime;
+                // that is a packaging concern, NOT a federation concern (per spec F-SCF-4
+                // scope_clarification — peer = sister repo, runtime ≠ peer).
                 exec("printf '%s\\n' '[anima phi.substrate] qmirror cli unavailable — falling back to dispatch.hexa (embedded_self)' >&2")
                 cmd = "hexa run " + _shq(dispatcher) + " route phi" + panel_arg + json_arg
             } else {
