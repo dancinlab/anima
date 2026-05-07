@@ -1,0 +1,175 @@
+// ═══════════════════════════════════════════════════════════
+// anima/scripts/akida/dispatch.hexa — anima-side "use akida || fallback CPU"
+//
+// 배경:
+//   anima 의 phi-extractor / closed-loop-verify 가 substrate=akida 요청 시
+//   AKD1000 가속을 시도하고 실패 시 CPU baseline 으로 투명하게 폴백한다.
+//   nexus 의 scripts/akida/dispatch.hexa 와 sister.
+//
+// 설계:
+//   1. probe — akida package + AKD1000 device 동시 검사 (1 프로세스, timeout)
+//   2. route — workload 별 (phi / trace) akida-harness OR cpu-baseline
+//   3. emit — ANIMA_AKIDA_DISPATCH NDJSON meta to stderr
+//
+// CLI:
+//   hexa run scripts/akida/dispatch.hexa probe
+//   hexa run scripts/akida/dispatch.hexa route phi   [extras]
+//   hexa run scripts/akida/dispatch.hexa route trace [extras]
+//
+// 환경변수:
+//   FORCE_FALLBACK=1            probe skip, 무조건 cpu
+//   AKIDA_FORCE_EMULATOR=1      _akida_runtime emulator 강제
+//   AKIDA_PROBE_TIMEOUT=<sec>
+//
+// 규칙: hexa >=/<= 금지. stdlib only.
+// ═══════════════════════════════════════════════════════════
+
+fn _ns_now() -> i64 {
+    let mut r: i64 = 0
+    let raw = to_string(exec("date +%s%N 2>/dev/null")).trim()  // @allow-bare-exec
+    if raw.len() > 0 && raw.contains("N") == false {
+        try { r = to_int(raw) } catch e {}  // @allow-silent-catch
+    }
+    if r < 1 {
+        let s2 = to_string(exec("python3 -c 'import time;print(time.time_ns())' 2>/dev/null")).trim()  // @allow-bare-exec
+        try { r = to_int(s2) } catch e2 {}  // @allow-silent-catch
+    }
+    if r < 1 {
+        let s3 = to_string(exec("date +%s")).trim()  // @allow-bare-exec
+        try { let sec = to_int(s3); r = sec * 1000000000 } catch e3 {}  // @allow-silent-catch
+    }
+    return r
+}
+
+fn _shq(s: string) -> string { return s.replace("'", "'\\''") }
+
+fn _meta(stage: string, route: string, workload: string, rc: i64, dur_us: i64) {
+    let mut m: [string] = []
+    m.push("ANIMA_AKIDA_DISPATCH {\"stage\":\"")
+    m.push(stage)
+    m.push("\",\"route\":\"")
+    m.push(route)
+    m.push("\",\"workload\":\"")
+    m.push(workload)
+    m.push("\",\"rc\":")
+    m.push(to_string(rc))
+    m.push(",\"duration_us\":")
+    m.push(to_string(dur_us))
+    m.push("}")
+    eprintln(m.join(""))
+}
+
+fn probe_akida() -> [string] {
+    if env("FORCE_FALLBACK") == "1" {
+        return ["unavailable", "FORCE_FALLBACK=1"]
+    }
+    let timeout_s = if env("AKIDA_PROBE_TIMEOUT") != "" { env("AKIDA_PROBE_TIMEOUT") } else { "2" }
+    let probe_py = "import sys; sys.path.insert(0, 'scripts/akida'); " +
+                   "from _akida_runtime import try_akida; " +
+                   "ak, dev = try_akida(); " +
+                   "print('pkg=' + ('yes' if ak else 'no') + ' dev=' + ('yes' if dev else 'no')); " +
+                   "sys.exit(0 if (ak and dev) else 1)"
+    let cmd = "timeout " + timeout_s + "s python3 -c '" + _shq(probe_py) + "' 2>&1; echo \"__RC=$?\""
+    let out = to_string(exec(cmd))                                // @allow-bare-exec
+    let rc_at = out.index_of("__RC=")
+    let mut rc: i64 = 1
+    let mut payload = out
+    if rc_at > -1 {
+        let tail = out.substring(rc_at + 5, len(out)).trim()
+        try { rc = to_int(tail) } catch e {}                       // @allow-silent-catch
+        payload = out.substring(0, rc_at).trim()
+    }
+    if rc == 0 {
+        return ["available", payload]
+    }
+    return ["unavailable", payload]
+}
+
+fn workload_route(workload: string, extras_str: string) -> [string] {
+    if workload == "phi" {
+        let aki = "python3 scripts/akida/phi_substrate_invariance.py" + extras_str
+        let cpu = "python3 scripts/akida/phi_substrate_invariance.py --cpu-only" + extras_str
+        return [aki, cpu]
+    }
+    if workload == "trace" {
+        let aki = "python3 scripts/akida/trace_equivalence.py" + extras_str
+        let cpu = "python3 scripts/akida/trace_equivalence.py --cpu-only" + extras_str
+        return [aki, cpu]
+    }
+    return ["", ""]
+}
+
+fn _join_extras(extras: [string]) -> string {
+    if len(extras) < 1 { return "" }
+    let mut buf: [string] = []
+    let mut i = 0
+    while i < len(extras) {
+        buf.push(" '" + _shq(extras[i]) + "'")
+        i = i + 1
+    }
+    return buf.join("")
+}
+
+fn route(workload: string, extras: [string]) -> i32 {
+    let extras_str = _join_extras(extras)
+    let pair = workload_route(workload, extras_str)
+    let aki = pair[0]
+    let cpu = pair[1]
+    if aki == "" {
+        eprintln("dispatch.hexa: unknown workload " + workload)
+        return 2
+    }
+    let p = probe_akida()
+    let avail = p[0] == "available"
+    let chosen = if avail { aki } else { cpu }
+    let route_label = if avail { "akida" } else { "fallback-cpu" }
+
+    let t0 = _ns_now()
+    let wrapped = chosen + "; echo \"__RC=$?\""
+    let out = to_string(exec(wrapped))                              // @allow-bare-exec
+    let t1 = _ns_now()
+    let rc_at = out.index_of("__RC=")
+    let mut rc: i64 = 1
+    let mut payload = out
+    if rc_at > -1 {
+        let tail = out.substring(rc_at + 5, len(out)).trim()
+        try { rc = to_int(tail) } catch e {}                         // @allow-silent-catch
+        payload = out.substring(0, rc_at)
+    }
+    print(payload)
+    _meta("done", route_label, workload, rc, (t1 - t0) / 1000)
+    return rc as i32
+}
+
+fn main_dispatch(a: [string]) -> i32 {
+    let mut cmd = "help"
+    if len(a) > 2 { cmd = a[2] }
+
+    if cmd == "probe" {
+        let p = probe_akida()
+        println("akida=" + p[0])
+        println("reason=" + p[1])
+        if p[0] == "available" { return 0 }
+        return 1
+    }
+    if cmd == "route" {
+        if len(a) < 4 {
+            println("usage: hexa run scripts/akida/dispatch.hexa route <workload> [extras]")
+            return 1
+        }
+        let workload = a[3]
+        let extras: [string] = if len(a) > 4 { a.slice(4, len(a)) } else { [] }
+        return route(workload, extras)
+    }
+
+    println("usage:")
+    println("  hexa run scripts/akida/dispatch.hexa probe")
+    println("  hexa run scripts/akida/dispatch.hexa route <workload> [extras]")
+    println("workloads: phi | trace")
+    println("env: FORCE_FALLBACK=1 | AKIDA_FORCE_EMULATOR=1 | AKIDA_PROBE_TIMEOUT=<sec>")
+    return 1
+}
+
+let _argv = args()
+let _rc = main_dispatch(_argv)
+exit(_rc)  // @allow-silent-exit

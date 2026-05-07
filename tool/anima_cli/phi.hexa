@@ -341,18 +341,26 @@ fn _print_help() {
     println("")
     println("USAGE")
     println("  anima phi compute --target=<name> --inputs='<json>'")
+    println("  anima phi substrate [--substrate=cpu|akida|auto]   F-M3b cross-substrate Phi probe")
     println("  anima phi --selftest")
     println("  anima phi --help")
     println("")
     println("TARGETS")
     println("  wraith   wraith-wallet broadcast policy gate (12-signal composite)")
     println("")
+    println("SUBSTRATE (use akida || fallback CPU)")
+    println("  cpu      CPU baseline only (deterministic, always available)")
+    println("  akida    require AKD1000 hardware; exits non-zero if unavailable")
+    println("  auto     probe akida → use it, else fallback to CPU (default)")
+    println("           wraps anima/scripts/akida/dispatch.hexa route phi")
+    println("")
     println("STATUS")
-    println("  SCAFFOLD ONLY (2026-05-07). Returns uniform geometric-mean stub.")
-    println("  Real Φ_wraith path is TBD (gated on wraith multisig + operator enable).")
+    println("  SCAFFOLD ONLY (2026-05-07). compute returns uniform geomean stub;")
+    println("  substrate emits PARTIAL-CPU-ONLY when akida pipeline absent.")
     println("")
     println("OUTPUT")
     println("  JSON: {schema, ts, target, phi (0-100), method, breakdown, missing}")
+    println("  substrate: {falsifier_id, verdict, raw_log_path, hardware_present, ...}")
 }
 
 // ─── entry ─────────────────────────────────────────────────────────────
@@ -378,6 +386,28 @@ fn main() {
     if raw.len() == 0 { _print_help(); return }
 
     let sub = raw[0]
+    if sub == "substrate" {
+        // 2026-05-07 — F-M3b Putnam-Lawvere substrate-invariance via dispatch.hexa.
+        // Use akida || fallback CPU. Output is dispatch.hexa's evidence JSON.
+        let substrate_choice = _arg_value("--substrate")
+        let panel = _arg_value("--panel-size")
+        let root = _resolve_root()
+        let dispatcher = root + "/scripts/akida/dispatch.hexa"
+        let panel_arg = if panel == "" { " --panel-size 20" } else { " --panel-size " + panel }
+        let mut cmd = ""
+        if substrate_choice == "cpu" {
+            cmd = "python3 " + _shq(root) + "/scripts/akida/phi_substrate_invariance.py --cpu-only" + panel_arg
+        } else if substrate_choice == "akida" {
+            cmd = "python3 " + _shq(root) + "/scripts/akida/phi_substrate_invariance.py" + panel_arg
+        } else {
+            // auto (default) — dispatch.hexa probes then routes
+            cmd = "hexa run " + _shq(dispatcher) + " route phi" + panel_arg
+        }
+        let out = exec(cmd)  // @allow-bare-exec
+        let s = _str(out)
+        print(s)
+        return
+    }
     if sub == "compute" {
         let target = _arg_value("--target")
         let inputs = _arg_value("--inputs")
