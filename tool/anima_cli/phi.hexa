@@ -388,24 +388,69 @@ fn main() {
     let sub = raw[0]
     if sub == "substrate" {
         // 2026-05-07 — F-M3b Putnam-Lawvere substrate-invariance via dispatch.hexa.
-        // Use akida || fallback CPU. Output is dispatch.hexa's evidence JSON.
+        // Sovereign-CLI federation per hive/spec/sovereign_cli_federation.spec.yaml:
+        // auto = probe akida || fallback CPU; cpu / akida = explicit pin;
+        // qmirror = federation consumer of qmirror cli's iit subcmd (added 2026-05-07).
+        // Output is dispatch.hexa's federation envelope (--json) — provenance
+        // label propagated end-to-end so consumers can attribute the value.
         let substrate_choice = _arg_value("--substrate")
         let panel = _arg_value("--panel-size")
+        let want_json = _has_flag("--json")
         let root = _resolve_root()
         let dispatcher = root + "/scripts/akida/dispatch.hexa"
         let panel_arg = if panel == "" { " --panel-size 20" } else { " --panel-size " + panel }
+        let json_arg = if want_json { " --json" } else { "" }
         let mut cmd = ""
         if substrate_choice == "cpu" {
             cmd = "python3 " + _shq(root) + "/scripts/akida/phi_substrate_invariance.py --cpu-only" + panel_arg
         } else if substrate_choice == "akida" {
             cmd = "python3 " + _shq(root) + "/scripts/akida/phi_substrate_invariance.py" + panel_arg
+        } else if substrate_choice == "qmirror" {
+            // P1-P5 federation consumer: phi.substrate gets IIT phi-star from qmirror cli.
+            // Resolution: $ANIMA/mirror/qmirror/run_qmirror_live.sh (preferred — auto-arms ANU keys)
+            //          → command -v qmirror (PATH:hx-installed)
+            //          → $QMIRROR_ROOT/cli/qmirror.hexa (env override)
+            //          → $WS/qmirror/cli/qmirror.hexa (workspace sibling)
+            //          → fall-through to dispatch.hexa (embedded_self) with stderr notice.
+            let n_qb = if panel == "" { "4" } else { panel }
+            let live_sh = root + "/mirror/qmirror/run_qmirror_live.sh"
+            let qmirror_path_bin = _str(exec("command -v qmirror 2>/dev/null")).trim()
+            let qmirror_env_root = _str(env("QMIRROR_ROOT"))
+            let mut ws = _str(env("WS"))
+            if ws == "" { ws = _str(env("HOME")) + "/core" }
+            let mut qm_cmd = ""
+            if _str(exec("test -x " + _shq(live_sh) + " && echo 1 || echo 0")).trim() == "1" {
+                qm_cmd = _shq(live_sh) + " iit --n-qubits=" + n_qb + " --json"
+            } else if qmirror_path_bin != "" {
+                qm_cmd = qmirror_path_bin + " iit --n-qubits=" + n_qb + " --json"
+            } else if qmirror_env_root != "" && _str(exec("test -f " + _shq(qmirror_env_root + "/cli/qmirror.hexa") + " && echo 1 || echo 0")).trim() == "1" {
+                qm_cmd = "QMIRROR_ROOT=" + _shq(qmirror_env_root) + " hexa run " + _shq(qmirror_env_root + "/cli/qmirror.hexa") + " iit --n-qubits=" + n_qb + " --json"
+            } else if _str(exec("test -f " + _shq(ws + "/qmirror/cli/qmirror.hexa") + " && echo 1 || echo 0")).trim() == "1" {
+                qm_cmd = "QMIRROR_ROOT=" + _shq(ws + "/qmirror") + " hexa run " + _shq(ws + "/qmirror/cli/qmirror.hexa") + " iit --n-qubits=" + n_qb + " --json"
+            }
+            if qm_cmd == "" {
+                // P5 audible fall-through: stderr notice + degrade to embedded_self (dispatch.hexa).
+                exec("printf '%s\\n' '[anima phi.substrate] qmirror cli unavailable — falling back to dispatch.hexa (embedded_self)' >&2")
+                cmd = "hexa run " + _shq(dispatcher) + " route phi" + panel_arg + json_arg
+            } else {
+                let raw_out = _str(exec(qm_cmd + " 2>&1"))
+                // P4 provenance: emit envelope with qmirror-origin label so consumers
+                // can attribute the value (`provenance:"qmirror_iit"` + qmirror's own
+                // engine field carried through verbatim under .qmirror_raw).
+                if want_json {
+                    let escaped = raw_out.replace("\\", "\\\\").replace("\"", "\\\"").replace("\n", " ")
+                    println("{\"schema\":\"anima.phi.substrate.v1\",\"ts\":\"" + _ts_iso() + "\",\"substrate\":\"qmirror\",\"provenance\":\"qmirror_iit\",\"n_qubits\":" + n_qb + ",\"qmirror_raw\":\"" + escaped + "\"}")
+                } else {
+                    println("# anima phi substrate=qmirror  provenance=qmirror_iit  n_qubits=" + n_qb)
+                    print(raw_out)
+                }
+                return
+            }
         } else {
-            // auto (default) — dispatch.hexa probes then routes
-            cmd = "hexa run " + _shq(dispatcher) + " route phi" + panel_arg
+            cmd = "hexa run " + _shq(dispatcher) + " route phi" + panel_arg + json_arg
         }
         let out = exec(cmd)  // @allow-bare-exec
-        let s = _str(out)
-        print(s)
+        print(_str(out))
         return
     }
     if sub == "compute" {
