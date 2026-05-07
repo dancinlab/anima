@@ -1,0 +1,159 @@
+// ═══════════════════════════════════════════════════════════
+// anima/scripts/akida/runner.hexa — anima-side F-M3b + F-M4 runner
+//
+// 배경:
+//   nexus 본 witness `~/core/nexus/design/kick/2026-05-07_anima-nexus-akida-
+//   physical-math-limit-saturation_omega_cycle.json` 의 12 falsifier 중
+//   F-M3b (Phi substrate-invariance) + F-M4 (closed_loop_verify trace bisim)
+//   는 anima-owned. nexus runner.hexa 와 sister 관계.
+//
+// 설계:
+//   --hardware 없이 호출되면 cnn2snn_emulator (cpu_emulator_cnn2snn_stub)
+//   substrate 로 PARTIAL evidence 만 emit — F-C 가 promotion 차단.
+//   --hardware 시 BrainChip akida package + AKD1000 device 요구.
+//
+// CLI:
+//   hexa run scripts/akida/runner.hexa go             // F-M3b + F-M4 emulator
+//   hexa run scripts/akida/runner.hexa go --hardware  // 실 AKD1000 모드
+//
+// 규칙: hexa >=/<= 금지 — < / > 만 사용. stdlib only.
+// ═══════════════════════════════════════════════════════════
+
+fn _ns_now() -> i64 {
+    let mut r: i64 = 0
+    let raw = to_string(exec("date +%s%N 2>/dev/null")).trim()  // @allow-bare-exec
+    if raw.len() > 0 && raw.contains("N") == false {
+        try { r = to_int(raw) } catch e {}  // @allow-silent-catch
+    }
+    if r < 1 {
+        let s2 = to_string(exec("python3 -c 'import time;print(time.time_ns())' 2>/dev/null")).trim()  // @allow-bare-exec
+        try { r = to_int(s2) } catch e2 {}  // @allow-silent-catch
+    }
+    if r < 1 {
+        let s3 = to_string(exec("date +%s")).trim()  // @allow-bare-exec
+        try { let sec = to_int(s3); r = sec * 1000000000 } catch e3 {}  // @allow-silent-catch
+    }
+    return r
+}
+
+fn _meta(stage: string, fid: string, rc: i64, dur_us: i64) {
+    let mut m: [string] = []
+    m.push("ANIMA_AKIDA_RUNNER {\"stage\":\"")
+    m.push(stage)
+    m.push("\",\"falsifier_id\":\"")
+    m.push(fid)
+    m.push("\",\"rc\":")
+    m.push(to_string(rc))
+    m.push(",\"duration_us\":")
+    m.push(to_string(dur_us))
+    m.push("}")
+    eprintln(m.join(""))
+}
+
+fn _exec_capture(label: string, fid: string, cmd: string) -> i64 {
+    let t0 = _ns_now()
+    let wrapped = cmd + "; echo \"__RC=$?\""
+    let out = to_string(exec(wrapped))                              // @allow-bare-exec
+    let t1 = _ns_now()
+    let rc_at = out.index_of("__RC=")
+    let mut rc: i64 = 1
+    if rc_at > -1 {
+        let tail = out.substring(rc_at + 5, len(out)).trim()
+        try { rc = to_int(tail) } catch e {}                         // @allow-silent-catch
+        print(out.substring(0, rc_at))
+    } else {
+        print(out)
+    }
+    _meta(label, fid, rc, (t1 - t0) / 1000)
+    return rc
+}
+
+fn run_fm3b(hardware: bool) -> i64 {
+    let suffix = if hardware { "" } else { " --cpu-only" }
+    return _exec_capture(
+        "F-M3b",
+        "F-M3b",
+        "python3 scripts/akida/phi_substrate_invariance.py --panel-size 20" + suffix
+    )
+}
+
+fn run_fm4(hardware: bool) -> i64 {
+    let suffix = if hardware { "" } else { " --cpu-only" }
+    return _exec_capture(
+        "F-M4",
+        "F-M4",
+        "python3 scripts/akida/trace_equivalence.py --n-events 100" + suffix
+    )
+}
+
+fn emit_followup() -> i64 {
+    let cmd = "python3 -c \"" +
+        "import json,os,time\n" +
+        "ev_dir='state/akida_evidence'\n" +
+        "out='design/kick/2026-05-07_anima-side-followup_omega_cycle.json'\n" +
+        "results=[]\n" +
+        "for fid in ['F-M3b','F-M4']:\n" +
+        "    matches=sorted(f for f in os.listdir(ev_dir) if f.startswith(fid+'_'))\n" +
+        "    if not matches: continue\n" +
+        "    p=os.path.join(ev_dir,matches[-1])\n" +
+        "    ev=json.load(open(p))\n" +
+        "    results.append({'falsifier_id':fid,'evidence':ev})\n" +
+        "follow={'topic':'anima-side-akida-followup-2026-05-07-hexa-run',\n" +
+        "        'sister_of_nexus_witness':os.path.expanduser('~/core/nexus/design/kick/2026-05-07_anima-nexus-akida-physical-math-limit-saturation_omega_cycle.json'),\n" +
+        "        'ts':time.strftime('%Y-%m-%dT%H:%M:%SZ',time.gmtime()),\n" +
+        "        'results':results,\n" +
+        "        'evidence_summary':{r['falsifier_id']:{'verdict':r['evidence'].get('verdict'),'raw_log_path':r['evidence'].get('raw_log_path'),'measured_ts':r['evidence'].get('measured_ts')} for r in results}}\n" +
+        "os.makedirs(os.path.dirname(out) or '.',exist_ok=True)\n" +
+        "json.dump(follow,open(out,'w'),indent=2)\n" +
+        "print(json.dumps({'anima_followup_witness':out,'verdicts':follow['evidence_summary']},indent=2))\n" +
+        "\""
+    return _exec_capture("followup-emit", "anima-side", cmd)
+}
+
+fn run_go(hardware: bool) -> i32 {
+    let t0 = _ns_now()
+    let r1 = run_fm3b(hardware)
+    let r2 = run_fm4(hardware)
+    let r3 = emit_followup()
+    let t1 = _ns_now()
+    let mut worst: i64 = r1
+    if r2 > worst { worst = r2 }
+    if r3 > worst { worst = r3 }
+    _meta("go", "anima-side-complete", worst, (t1 - t0) / 1000)
+    return worst as i32
+}
+
+fn _has_flag(a: [string], flag: string) -> bool {
+    let mut i = 0
+    while i < len(a) {
+        if a[i] == flag { return true }
+        i = i + 1
+    }
+    return false
+}
+
+fn main_dispatch(a: [string]) -> i32 {
+    let mut cmd = "help"
+    if len(a) > 2 { cmd = a[2] }
+    let hw = _has_flag(a, "--hardware")
+
+    if cmd == "go" {
+        return run_go(hw)
+    }
+    if cmd == "F-M3b" {
+        return run_fm3b(hw) as i32
+    }
+    if cmd == "F-M4" {
+        return run_fm4(hw) as i32
+    }
+
+    println("usage:")
+    println("  hexa run scripts/akida/runner.hexa go [--hardware]")
+    println("  hexa run scripts/akida/runner.hexa F-M3b [--hardware]")
+    println("  hexa run scripts/akida/runner.hexa F-M4  [--hardware]")
+    return 1
+}
+
+let _argv = args()
+let _rc = main_dispatch(_argv)
+exit(_rc)  // @allow-silent-exit
