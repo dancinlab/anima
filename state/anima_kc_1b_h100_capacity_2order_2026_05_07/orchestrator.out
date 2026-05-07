@@ -1,0 +1,26 @@
+[2026-05-07T19:55:26] === BG-KC 1B H100 capacity 2-order test orchestrator started ===
+[2026-05-07T19:55:26] mac_state_dir=/Users/ghost/core/anima/state/anima_kc_1b_h100_capacity_2order_2026_05_07
+[2026-05-07T19:55:26] corpus=/Users/ghost/core/anima/state/anima_universe_brain_map_corpus_21mb_2026_05_07/corpus_universe_brain_map.txt conscious_lm=/Users/ghost/core/anima/ready/models/conscious_lm.py
+[2026-05-07T19:55:26] this_script=/Users/ghost/core/anima/tool/transient_py/anima_kc_1b_h100_capacity.py
+[2026-05-07T19:55:26] COST_HARD_CAP=$5.0 COST_EARLY_KILL=$4.5 TOTAL_BUDGET_S=6600
+[2026-05-07T19:55:26] creating H100 SXM pod (RunPod SECURE cloud)…
+[2026-05-07T19:55:27] pod created: id=yvs7zb1mdkk9hm machine=? $2.99/hr
+[2026-05-07T19:55:46] pod status: RUNNING
+[2026-05-07T19:55:47] ssh ready: root@103.207.149.84:12386
+[2026-05-07T19:55:52] GPU smoke OK: GPU 0: NVIDIA H100 80GB HBM3 (UUID: GPU-d4223839-be61-de13-c958-7b1daa00515c)
+2.8.0+cu128 True NVIDIA H100 80GB HBM3
+[2026-05-07T19:55:54] staging files (corpus 22MB + conscious_lm.py + this script)…
+[2026-05-07T19:56:42] training launched on pod rc=-1
+[2026-05-07T19:57:05] heartbeat synced; cost=$0.06 pod_step=0 pod_status=init
+[2026-05-07T20:03:06] heartbeat synced; cost=$0.36 pod_step=400 pod_status=eval_done v5=0/15 v58=0/5 manual=0/15
+[2026-05-07T20:10:28] heartbeat synced; cost=$0.68 pod_step=800 pod_status=eval_done v5=0/15 v58=0/5 manual=0/15
+[2026-05-07T20:10:33] training emitted verdict.json on pod — pulling artifacts
+[2026-05-07T20:10:33] pulling artifacts from pod…
+[2026-05-07T20:15:33] scp pull state rc=-2 err=Command '['scp', '-o', 'StrictHostKeyChecking=no', '-o', 'UserKnownHostsFile=/dev/null', '-o', 'ConnectTimeout=15', '-r', '-P', '12386', 'root@103.207.149.84:/workspace/anima_kc/state/.', '/Users/ghos
+[2026-05-07T20:15:33] FAILED verdict written: /Users/ghost/core/anima/state/anima_kc_1b_h100_capacity_2order_2026_05_07/verdict.json reason=no verdict from pod after monitor loop
+[2026-05-07T20:15:36] pod delete rc=0 out={
+  "deleted": true,
+  "id": "yvs7zb1mdkk9hm"
+}
+ err=
+[2026-05-07T20:15:36] ledger appended: /Users/ghost/core/anima/state/anima_model_attempts_ledger.jsonl bg_id=BG-KC final_class=FAILED
