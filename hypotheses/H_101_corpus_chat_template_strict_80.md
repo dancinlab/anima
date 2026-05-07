@@ -83,7 +83,7 @@ own 20 (chat-template format mandate ≥30%)는 BG-HA 18M false PASS evidence로
 
 ## Cross-Links
 
-- **sister roadmaps**: `.roadmap.rule` R1 (own 19/20 strengthening) + `.roadmap.philosophy` D4 + `.roadmap.clm_native_chat`
+- **sister roadmaps**: `.roadmap.law` R1 (own 19/20 strengthening) + `.roadmap.philosophy` D4 + `.roadmap.clm_native_chat`
 - **raw**: raw#12 + raw#10 + raw#9 + raw#15 + raw#37 + raw#82
 - **own**: own 17 + own 18 + own 19 + own 20 (strengthening target) + own 21
 - **sister H**: H_005 (corpus quality > capacity) + H_093 (SFT-only) + H_094 (two-stage) + H_098 (persona) + H_100 (constitutional)

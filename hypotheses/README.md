@@ -233,7 +233,7 @@ since: <YYYY-MM-DD>
 
 - `.roadmap.hypothesis` (인덱스 + cycle definition + E1-E12 + W1-W12)
 - `.roadmap.philosophy` (A 철학 발견 — D1-D4)
-- `.roadmap.rule` (B 규칙 발견 — own 14-20 evolution)
+- `.roadmap.law` (B 법칙 발견 — own 14-20 evolution)
 - `docs/hypotheses/` (legacy archive — CX/DD/genesis/dasein 등 historical)
 - `state/<name>_pre_register*.json` (raw#12 frozen prereg JSON)
 

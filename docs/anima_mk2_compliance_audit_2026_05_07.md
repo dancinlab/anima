@@ -10,7 +10,7 @@ related_specs:
   - hive/docs/mk2_phase_1_to_5_execution_plan_2026_05_02.ai.md
 related_anima:
   - anima/spec/anima_cli_mk2.spec.yaml (v0.2 638 LoC)
-  - .roadmap.philosophy + .roadmap.rule + .roadmap.hypothesis (본 cycle 신규)
+  - .roadmap.philosophy + .roadmap.law + .roadmap.hypothesis (본 cycle 신규)
   - .own (own 17-21, 본 cycle own 19/20/21 추가)
   - hypotheses/ folder (92 H entries, own 21 SSOT)
 purpose: |
@@ -116,7 +116,7 @@ anima:
 
 ## 3. 본 cycle 변경 정합 verification
 
-### 3.1 .roadmap.philosophy + .roadmap.rule + .roadmap.hypothesis (3 신규)
+### 3.1 .roadmap.philosophy + .roadmap.law + .roadmap.hypothesis (3 신규)
 
 | spec | mk2 정합 | 근거 |
 |---|---|---|
@@ -207,7 +207,7 @@ anima:
   - hive/docs/prefs_5_keys_mk2_landed_2026_05_03.ai.md
 - anima 본 cycle:
   - anima/.own own 17-21
-  - anima/.roadmap.philosophy + .roadmap.rule + .roadmap.hypothesis
+  - anima/.roadmap.philosophy + .roadmap.law + .roadmap.hypothesis
   - anima/hypotheses/ (92 H entries, README.md index)
   - anima/spec/anima_cli_mk2.spec.yaml (v0.2)
   - docs/anima_own_18_c2_4_evaluator_flaw_2026_05_07.md

@@ -3,7 +3,7 @@ id: H_096
 slug: in-context-few-shot
 title: in-context learning + few-shot prompting (pre-trained model + prompt examples)
 domain: corpus | substrate
-status: seed-pending
+status: FALSIFIED_at_18M
 exploration_method: E2 (failure-driven) + E5 (variable-ablation prompt format) + E7 (user-directive)
 verification_method: W1 + W2 (replication) + W3 (ablation 0/1/3/5 shot) + W9 + W10
 raw_rank: 12
@@ -85,7 +85,7 @@ pre-trained model (BG-HA 18M 등) 자체는 그대로 두고, inference 시 prom
 
 ## Cross-Links
 
-- **sister roadmaps**: `.roadmap.rule` R1 + `.roadmap.philosophy` D4 + `.roadmap.clm_native_chat`
+- **sister roadmaps**: `.roadmap.law` R1 + `.roadmap.philosophy` D4 + `.roadmap.clm_native_chat`
 - **raw**: raw#12 + raw#10 + raw#9 + raw#15 + raw#37
 - **own**: own 17 + own 18 + own 19 + own 20 + own 21
 - **sister H**: H_005 + H_093 (SFT-only) + H_094 (two-stage) + H_097 (curriculum)
@@ -94,11 +94,45 @@ pre-trained model (BG-HA 18M 등) 자체는 그대로 두고, inference 시 prom
 ## Verdict
 
 ```
-status: seed-pending
-verdict_class: TBD
-evidence_summary: not_yet_run — BG-HA model existing weights 활용 inference cycle
-falsifiers_triggered: none
-criteria_met: not_yet_run
-next_cycle: BG-HG few-shot eval lane
-artifact_paths: pending
+status: FALSIFIED
+verdict_class: FALSIFIED
+bg_id: BG-HL
+ts: 2026-05-07T03:19:25
+host: mac_local (MPS, $0)
+elapsed_s: 73.7
+evidence_summary: |
+  BG-HA 18M ckpt_final.pt + 5 few-shot Q&A examples (anima-native chat-format) vs
+  zero-shot baseline, 5 own-18 prompts × {greedy, sample} × {with_few_shot, without_few_shot}
+  = 20 inference records.
+  V1 (loose) PASS: with=5/5, without=5/5, Δ=0pp.
+  V2 strict PASS: with=0/5, without=1/5, Δ=-20pp (REGRESSION direction).
+  manual_review_domain_match: with=0/5, without=1/5 (single lucky sample-mode hit on emotion prompt).
+  Greedy with-few-shot mode-collapses to identical "이 있습니다." across all 5 test prompts —
+  18M byte-level model cannot extract task structure from in-context Q&A demonstrations.
+  Sample mode produces nonsense Korean chains regardless of few-shot conditioning.
+
+falsifiers_triggered:
+  - F1 (zero vs 3-shot ΔC2.4 < 10pp at 18M) — TRIGGERED: V2 Δ = -20pp << 10pp lift threshold.
+    18M tiny scale below ICL emergent threshold (consistent with H96.3 capacity prediction).
+
+criteria_met:
+  - C1 (≥30pp lift at 18M): FAIL (Δ=-20pp)
+  - C2 (k=0<k=1<k=3<k=5 monotonic): not run (Phase 1 only k=0 vs k=5)
+  - C3 (capacity emergent): not directly tested (only 18M probed); F1 trigger 자체가 H96.3 정합 evidence
+  - C4 (domain match advantage): not run
+  - C5 (template robustness): not run
+
+verdict_rule_applied: F1 + F2 모두 FAIL → FALSIFIED at 18M scale.
+  H96.1 (≥30pp lift at 18M) directly falsified.
+
+next_cycle:
+  - 18M scale 폐기; H96.3 capacity emergent prediction은 100M+ scale에서만 검증 가능
+  - NO 18M retrain — pure inference paradigm 차원 추가 cycle 의미 없음 (substrate too small)
+  - sister H_093 (SFT-only) / H_094 (two-stage) training paradigm 우위 재확인
+  - in-context paradigm은 minimum 100M+ pre-trained substrate 확보 후 재시도
+
+artifact_paths:
+  - script: tool/transient_py/anima_h096_few_shot_inference.py
+  - verdict: state/anima_h096_few_shot_inference_2026_05_07/verdict.json
+  - inference_log: state/anima_h096_few_shot_inference_2026_05_07/inference_log.jsonl
 ```

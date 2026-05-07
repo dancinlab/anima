@@ -85,7 +85,7 @@ since: 2026-05-07
 
 ## Cross-Links
 
-- **sister roadmaps**: `.roadmap.rule` R1 + `.roadmap.philosophy` D2 (자기 = self) + `.roadmap.clm_native_chat`
+- **sister roadmaps**: `.roadmap.law` R1 + `.roadmap.philosophy` D2 (자기 = self) + `.roadmap.clm_native_chat`
 - **raw**: raw#12 + raw#10 + raw#9 + raw#15 + raw#37
 - **own**: own 17 (anima identity) + own 18 + own 19 + own 20 + own 21
 - **sister H**: H_005 + H_093 (SFT-only) + H_094 (two-stage) + H_097 (curriculum) + H_100 (constitutional AI) + H_101 (chat ≥80%)

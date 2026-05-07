@@ -85,7 +85,7 @@ pre-training 단계 완전 제거하고 chat-format SFT (Supervised Fine-Tuning)
 
 ## Cross-Links
 
-- **sister roadmaps**: `.roadmap.rule` R1 (own 19/20) + `.roadmap.philosophy` D4 corpus priority + `.roadmap.clm_native_chat`
+- **sister roadmaps**: `.roadmap.law` R1 (own 19/20) + `.roadmap.philosophy` D4 corpus priority + `.roadmap.clm_native_chat`
 - **raw**: raw#12 + raw#10 + raw#9 + raw#15 + raw#37 (transient_py)
 - **own**: own 17 (anima identity) + own 18 (simple stack 4-cond) + own 19 (corpus priority) + own 20 (chat-template format) + own 21 (hypotheses SSOT)
 - **sister H**: H_005 (corpus quality > capacity) + H_094 (instruction-tuning two-stage) + H_098 (persona-conditioned) + H_101 (chat-template ≥80%)

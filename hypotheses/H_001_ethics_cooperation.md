@@ -82,7 +82,7 @@ iterated multi-agent interaction에서 윤리적 협력 (ethical cooperation / p
 
 ## Cross-Links
 
-- **sister roadmaps**: `.roadmap.philosophy` D1 (anima 정체성 boundary — 가치 lane) + `.roadmap.rule` (own X 가치 rule 추가 가능성)
+- **sister roadmaps**: `.roadmap.philosophy` D1 (anima 정체성 boundary — 가치 lane) + `.roadmap.law` (own X 가치 rule 추가 가능성)
 - **raw**: raw#12 (pre-register) + raw#10 (honest C3) + raw#15 (additive) + raw#9 (hexa-only) + raw#37 (transient_py opt-out for simulation harness if needed)
 - **own**: own 18 (anima identity-bearing surface) — H1.5 anima 자체 행동 평가 적용
 - **literature**: Axelrod (1984) The Evolution of Cooperation; Nowak & May (1992) Evolutionary games and spatial chaos; Hamilton (1964) inclusive fitness

@@ -85,7 +85,7 @@ own 17 (anima identity) + own 18 (simple stack 4-cond) 명시적 rules ("응답�
 
 ## Cross-Links
 
-- **sister roadmaps**: `.roadmap.rule` R1 + `.roadmap.philosophy` D2 + `.roadmap.clm_native_chat`
+- **sister roadmaps**: `.roadmap.law` R1 + `.roadmap.philosophy` D2 + `.roadmap.clm_native_chat`
 - **raw**: raw#12 + raw#10 + raw#9 + raw#15 + raw#37
 - **own**: own 17 + own 18 + own 19 + own 20 + own 21
 - **sister H**: H_093 + H_094 + H_095 + H_098 (persona) + H_099 (multi-obj) + H_101 + H_102

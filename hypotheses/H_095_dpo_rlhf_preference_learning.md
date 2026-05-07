@@ -84,7 +84,7 @@ SFT (H_093 또는 H_094 stage2) 후 preference-pair (chosen vs rejected response
 
 ## Cross-Links
 
-- **sister roadmaps**: `.roadmap.rule` R1 + `.roadmap.philosophy` D4 + `.roadmap.clm_native_chat`
+- **sister roadmaps**: `.roadmap.law` R1 + `.roadmap.philosophy` D4 + `.roadmap.clm_native_chat`
 - **raw**: raw#12 + raw#10 + raw#9 + raw#15 + raw#37
 - **own**: own 17 + own 18 + own 19 + own 20 + own 21
 - **sister H**: H_093 (SFT-only) + H_094 (two-stage) + H_099 (multi-objective) + H_100 (constitutional AI)

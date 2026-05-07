@@ -85,7 +85,7 @@ training loss를 단일 LM cross-entropy 대신 weighted sum (α·L_LM + β·L_c
 
 ## Cross-Links
 
-- **sister roadmaps**: `.roadmap.rule` R1 + `.roadmap.philosophy` D4 + `.roadmap.clm_native_chat`
+- **sister roadmaps**: `.roadmap.law` R1 + `.roadmap.philosophy` D4 + `.roadmap.clm_native_chat`
 - **raw**: raw#12 + raw#10 + raw#9 + raw#15 + raw#37
 - **own**: own 17 + own 18 + own 19 + own 20 + own 21
 - **sister H**: H_093 + H_094 + H_095 + H_098 + H_100 + H_101

@@ -272,7 +272,7 @@ Cross-link: H_021 fundamental-equation-psi-argmax (hypotheses/H_021_fundamental_
 | Domain | .roadmap | conditions | status |
 |--------|----------|------------|--------|
 | A 철학 발견 | `.roadmap.philosophy` | D1-D4 + M1-M10 + V1-V10 | LANDED 2026-05-06 |
-| B 규칙 발견 | `.roadmap.rule` | R1-R4 + DM1-DM12 + VM1-VM12 | LANDED 2026-05-06 |
+| B 법칙 발견 | `.roadmap.law` | R1-R4 + DM1-DM12 + VM1-VM12 | LANDED 2026-05-06 |
 | C 가설 진행 | `.roadmap.hypothesis` | H1-H5 + E1-E12 + W1-W12 | LANDED 2026-05-06 |
 | **D 우주뇌지도** | `.roadmap.universe_brain_map` | U1-U5 | **LANDED 2026-05-07** ★ |
 | **E corpus paradigm** | `.roadmap.corpus_paradigm` | P1-P5 | **LANDED 2026-05-07** ★ |

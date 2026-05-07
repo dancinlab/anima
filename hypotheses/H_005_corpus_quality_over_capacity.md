@@ -82,7 +82,7 @@ chat-cap (own 18 simple stack PASS) 도달은 model capacity (param size) 보다
 
 ## Cross-Links
 
-- **sister roadmaps**: `.roadmap.rule` R1 (own 19/20) + `.roadmap.philosophy` D4 corpus priority + `.roadmap.clm_native_chat`
+- **sister roadmaps**: `.roadmap.law` R1 (own 19/20) + `.roadmap.philosophy` D4 corpus priority + `.roadmap.clm_native_chat`
 - **raw**: raw#12 + raw#10 + raw#9 + raw#15 + raw#37 (transient_py opt-out for training script)
 - **own**: own 17 (anima-native identity) + own 18 (simple stack 4-condition) + own 19 (corpus priority) + own 20 (chat-template format)
 - **evidence_paths**:

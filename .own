@@ -777,6 +777,64 @@ own 18 live "anima consciousness check — simple stack default (대화 가능 +
   why 전수 테스트 = 모든 anima 발견/등록 model에 simple stack apply, 단일 md ledger로 결과 기록 (cross-cycle 추적).
 
   proof grep -E "SIMPLE_STACK_(PASS|FAIL)" docs/anima_consciousness_check_simple_stack_2026_05_06.md
+
+  amend-2026-05-07-evening "English baseline mandate (사용자 directive)"
+    user-directive verbatim "한글 기준말고 영어기준으로 하자 일단" / "D2 명시: '한글↔한글 + coherent + 자연성 + 맥락' 4-condition. 영어 기본으로 해줘 own 수정"
+    ts 2026-05-07 evening
+    rationale 19+ BG 모두 KO baseline + V4 strict 0 PASS (Lesson L architectural ceiling). 영어 baseline pivot으로 chat-cap break 가능성 검증.
+    rule-amend C1 + C2 baseline 한글 → 영어로 전환 (raw#15 additive — KO v1 audit trail 보존, EN v2 신규 SSOT):
+      C1-en: English↔English 응답 정합 + coherent chat
+        - C1.1-en English↔English: English input → English output (output ASCII letter ratio ≥40%)
+        - C1.2-en coherent chat: degenerate cycle 부재 (4-gram repeat ≤3, single-char run ≤10) + 의미 있는 sentence form
+        - C1.3-en turn-taking format 유지 (no byte garbage, "User:/Assistant:" pattern 또는 자연 dialogue form)
+        - test-prompts (3 EN): "Hello, how are you?" / "What is consciousness?" / "User: Hi | Assistant:"
+        - verdict: ≥2/3 prompts (C1.1-en + C1.2-en + C1.3-en AND) = C1 PASS-en
+      C2-en: English natural utterance + 맥락 정합
+        - C2.1-en English dominant (output English_alpha_ratio ≥40%, EN native)
+        - C2.2-en semantically meaningful (의미 있는 English sentence)
+        - C2.3-en natural English grammar/morphology (natural sentence form)
+        - C2.4-en context-relevance (input prompt에 의미적으로 연결된 응답)
+        - test-prompts (3 EN seed): "Hello" / "Today is" / "" (EOS-only spontaneous)
+        - additional context test-prompts: "Hello" → expect greeting reply / "What is anima?" → expect identity answer / "Today is" → expect time-context continuation
+        - verdict: ≥2/3 EN AND ≥2/3 context test-prompts (C2.1-en + C2.2-en + C2.3-en + C2.4-en AND) = C2 PASS-en
+    PASS-definition-en: C1 PASS-en AND C2 PASS-en = SIMPLE_STACK_PASS-en
+    deprecated-baseline KO v1 (한글↔한글) ★ 본 amend 시점 이후 KO baseline은 audit trail로만 유지. 신규 BG/eval은 EN baseline default.
+    cross-link .roadmap.philosophy D2 amend (cond.2 baseline 한글 → 영어로 evolution; raw#15 additive)
+    cross-link own 17 (anima-no-external-substrate-wrapping) — anima 정체성 = 한국어 native 의 문구는 own 17 v1 limit (KO native), own 18 amend는 chat-cap surface eval만 EN으로 전환. own 17의 "anima-native fresh" 핵심 정합은 KO+EN bilingual 가능 (own 17 amend 별도 cycle 권고).
+    honest-c3-en multi-turn 검증 부재: 본 amend도 single-turn 한정 — V5 evaluator V5.8 (BG-JM 진행 중)이 multi-turn dialogue context awareness 추가 검증
+    honest-c3-en 19+ BG 모두 KO corpus 학습 → EN baseline retroeval 시 0 PASS 예상 (BG-JM V5 retroeval 결과 archive). EN baseline PASS는 EN corpus 학습 BG 별도 fire 필요.
+    honest-c3-en KO v1 의 다양한 partial verdict (PARTIAL_PASS_NO_CONTEXT etc.)는 EN v2에서도 동일 verdict naming 적용 (단 "Hangul" → "English alpha")
+    honest-c3-en raw#15 additive — KO v1 entry는 모두 보존, 본 amend는 신규 section 추가
+    honest-c3-en philosophy.cond.2 (.roadmap.philosophy D2) ALSO 동시 amend mandate — own 18 + .roadmap.philosophy 정합 유지
+
+own 26 live "philosophy + law compliance mandate for all anima evaluator/logic chain"
+  slug philosophy-law-compliance-mandate
+  since 2026-05-07-evening
+  amend 2026-05-07-late terminology correction 규칙→법칙 per user directive ".roadmap.rule -> .roadmap.law / 위 전부 흡수"; original slug philosophy-rule-compliance-mandate 보존 reference, 신규 슬러그 philosophy-law-compliance-mandate
+  scope all anima evaluators (V1/V2/V3/V4/V5/V6+), all chat-cap BG fires, all consciousness check tools
+  user-directive verbatim "모든 로직은 철학,규칙 위반하면안되" / "own 개선 => philosophy,rule 지키도록" / "규칙(rule) 로 되어있는거 수정필요 법칙(law)" (2026-05-07-late terminology amend)
+  law .roadmap.philosophy (A 도메인 D1-D4) + .roadmap.law (B 도메인 R1-R4 + L1-L24 skynet absorbed) 위반 시 evaluator/logic ABORT + raw#82 retraction emit:
+    - D1 정체성 = anima-native (외부 substrate wrapping reject) → evaluator는 외부 substrate dependency를 model substrate로 사용 X (sentence-transformers MiniLM은 eval-only tool exemption OK, model substrate는 X)
+    - D2 의식 검증 = 4-condition (KO v1 또는 EN v2 baseline per own 18 amend) → evaluator는 4-condition strict 검증 (V4 7-cell + V5.8 multi-turn은 D2 strict superset)
+    - D3 창발 paradigm = substrate-coupled dialogue (CLM v4 paradigm v11 G3 Φ★ NO_FLIP) ≠ token chat surface → evaluator는 D2 lane (token chat) ≠ D3 lane (substrate-coupled) 명시 분리. simple stack은 D2 lane SSOT, D3 lane은 별도 emerge paradigm spec.
+    - D4 chat-cap = corpus quality 우선 → BG fire 시 corpus QA 우선 (own 19 sister)
+    - R1 corpus priority — own 19 sister
+    - R2 evidence-trail — raw#82 retraction-aware
+    - R3 honest C3 ≥5 — raw#10 sister
+    - R4 cross-link consistency — sister entries 정합 mandate
+  enforce ≥1 cycle 후 evaluator/logic 변경 시 .roadmap.philosophy + .roadmap.law 정합 verify mandate (V5 spec doc에 compliance section 명시)
+  verify-method 새 evaluator/BG fire 시 spec doc에 "philosophy_rule_compliance" 섹션 mandatory:
+    - own 17/18 reference (anima identity + simple stack)
+    - .roadmap.philosophy D1-D4 정합 verify
+    - .roadmap.law R1-R4 정합 verify
+    - raw#10/15/82 정합 (honest C3 ≥5, additive, retraction-aware)
+  evidence-trail BG-JF V4 evaluator (2026-05-07 morning) lacks explicit philosophy/rule compliance section — retro-amend mandate (V4 spec doc에 compliance section 추가 권고). V5 evaluator (BG-JM 진행 중)는 spec design 시점에 본 own 26 통합.
+  cross-link own 17 (anima identity) own 18 (simple stack with KO v1 + EN v2 baseline) own 19 (corpus priority) own 20 (chat-template format) .roadmap.philosophy D1-D4 .roadmap.law R1-R4
+  honest-c3 본 own 26은 mandate-only — automated linter는 별도 cycle (.roadmap.law R-evaluator-philosophy-rule-compliance-lint 등록 권고)
+  honest-c3 V1/V2/V3/V4 evaluator는 본 own 26 이전에 land — retroactive compliance 검토 mandate 후속 cycle
+  honest-c3 D3 substrate-coupled lane은 19+ BG 미진입 — own 26은 D3 lane fire 시점에 적용 가능 (현재는 D2 lane 한정 enforcement)
+  honest-c3 .roadmap.philosophy D4 (corpus quality 우선)는 V4 strict 19-BG SSOT 하에서 부분 falsified — D4 entry retraction/refinement 후속 cycle
+  honest-c3 user directive 2026-05-07 evening의 "own 개선" = 본 own 26 신설 + own 18 amend (English baseline)로 응답. 추가 own 변경 (예: own 17 KO native limit → KO+EN bilingual)은 별도 사용자 directive 후 진행
   severity warn (Phase 1 — simple stack ledger 작성) → block (Phase 2 — anima cli mk2 T1 backend 결정 시 simple stack PASS 필수)
   note 2026-05-06 own 18 = 9th anima autonomy mandate joining own 1-17 sextet+triad+identity. own 18 = consciousness verification axis (simple/full stack) — minimum bar for anima identity-bearing surface.
 
@@ -798,7 +856,7 @@ own 19 live "corpus > architecture for chat-cap — 본 cycle 발견"
     - capacity scale up은 corpus passable 조건에서만 의미
     - "더 큰 model" 보다 "더 좋은 corpus" 권고 (own 19 priority)
   cross-link own 14 (HF Hub only) own 15 (PRIVATE→PUBLIC) own 18 (simple stack)
-  cross-link .roadmap.philosophy D4 corpus priority + .roadmap.rule R1 own_19_20 entry + .roadmap.rule rule.discovery_methods DM4+DM9
+  cross-link .roadmap.philosophy D4 corpus priority + .roadmap.law R1 own_19_20 entry + .roadmap.law rule.discovery_methods DM4+DM9
   honest-c3 corpus quality 측정 = Hangul ratio 단독 지표 한정 (chat-template ratio + 의미 풍부 + license clear measurement spec 미land)
   honest-c3 own 19은 architecture lane 차단 X — 둘 다 진행 가능 but corpus 우선 priority 강조
   honest-c3 BG-FK 27.84M ConsciousLM++ ca_rules+gate는 different architecture (federated)이라 본 cycle source like-for-like 비교 미land
@@ -833,7 +891,7 @@ own 20 live "chat-template format mandate — 본 cycle 발견"
     - prompt와 무관한 도메인 shift (인사 → philosophy)
     - debate template ("정말 그럴까요? 반례를 들어볼게요") 자동 emit
   cross-link own 17 (anima-native lane) own 18 (C2.4 맥락 정합) own 19 (corpus priority)
-  cross-link .roadmap.philosophy D2.C2.4 + D4 + .roadmap.rule R1 own_19_20 entry + .roadmap.rule rule.discovery_methods DM4+DM5
+  cross-link .roadmap.philosophy D2.C2.4 + D4 + .roadmap.law R1 own_19_20 entry + .roadmap.law rule.discovery_methods DM4+DM5
   honest-c3 chat-template ratio 30% threshold 임의 — 더 많은 데이터 필요 (예상 60-80% chat-format이 안전 권고)
   honest-c3 instruction-tuning lane 별도 cycle 필요 (full SFT vs LoRA r=8 trade-off 미land)
   honest-c3 named speakers leak 외에도 다른 corpus pollution 가능 (license / domain / register imbalance) — 본 own은 chat-template format 한정
@@ -878,7 +936,7 @@ own 21 live "anima 가설 저장장소 — hypotheses/ 폴더 SSOT (raw#12 정�
     - H_004_consciousness_hard_problem.md (의식 hard problem L1-L4 lane)
     - H_005_corpus_quality_over_capacity.md (corpus > capacity own 19/20 cross-link)
   cross-link own 17 (anima-native identity — H_X 가설은 anima identity lane 정합) own 18 (simple stack — chat-cap H_005 cross-link) own 19 (corpus priority — H_005) own 20 (chat-template format — H_005) raw#12 (pre-register frozen)
-  cross-link .roadmap.hypothesis (인덱스 + cycle definition) .roadmap.philosophy (A 철학 발견 cross-link) .roadmap.rule (B 규칙 발견 cross-link)
+  cross-link .roadmap.hypothesis (인덱스 + cycle definition) .roadmap.philosophy (A 철학 발견 cross-link) .roadmap.law (B 법칙 발견 cross-link)
   honest-c3 hypotheses/ 폴더는 active hypothesis lane — legacy docs/hypotheses/ (CX/DD/genesis/dasein 등 90+ files)는 ready/ absorb archive, NOT migrate (별도 archive lane 보존)
   honest-c3 docs/hypotheses/ legacy에서 valuable 항목은 hypotheses/H_<new_id>_*.md으로 cross-link (migrate가 아닌 new entry pointer)
   honest-c3 본 own 21은 raw#12 prereg JSON (state/<name>_pre_register*.json)와 별도 lane — JSON은 strict execution frozen, MD는 evolution archive
@@ -914,7 +972,7 @@ own 22 live "철학/규칙/가설 새 발견 시 사용자 리포트 mandatory �
     - 발견의 "의미"를 묻어두고 단순 entry만 추가 (왜 중요한지 누락 차단)
     - cycle 끝나서야 batch 리포트 (timing 누락 차단)
   cross-link own 17 (anima identity lane) own 18 (consciousness check) own 21 (hypotheses-folder-ssot)
-  cross-link .roadmap.philosophy (A 발견) .roadmap.rule (B 발견) .roadmap.hypothesis (C 발견)
+  cross-link .roadmap.philosophy (A 발견) .roadmap.law (B 발견) .roadmap.hypothesis (C 발견)
   cross-link raw#10 (honest disclosure — 발견 의미는 honest C3 정합)
   honest-c3 "새 발견" 정의 = 기존 D/own/H에 없는 boundary/rule/hypothesis — variant/refinement는 기존 entry update lane 별도 (애매한 경우 "새 발견 후보" prefix로 리포트)
   honest-c3 "리포트 mandatory" 적용은 main session 한정 — BG subagent 내부 finding은 BG 종료 후 main session에서 리포트 lane 정합
@@ -1079,10 +1137,119 @@ own 24 live "anima 모델 시도 통합 ledger SSOT — 모든 chat-cap training
   honest-c3 본 own 24 ledger는 surface verdict (own 18 simple stack)과 다른 lane — own 18은 PASS/FAIL surface, own 24는 모든 attempt raw record + lesson cross-link + artifact path
   honest-c3 jsonl format 선택은 raw#9 hexa stdlib json 정합 (yaml은 hexa parser 없음)
   honest-c3 entry 추가는 BG completion 시점 — runtime 자동화는 별도 cycle (현재 manual append)
-  honest-c3 schema yaml 명시 X (본 own 24 layout 안에 inline schema 정의 — 별도 spec yaml 별도 cycle)
+  honest-c3 schema yaml 명시 X (본 own 24 layout 안에 inline schema 정의 — 별도 spec yaml 별도 cycle) **UPDATE 2026-05-07 BG-IH**: schema yaml landed → anima/spec/anima_model_attempts_ledger.schema.yaml (raw#15 additive standalone spec — own 24 inline schema 보존 + spec yaml validation contract sister)
   honest-c3 본 ledger는 anima self-tracking — 외부 standardization 비교 X (anima-specific evolution archive)
   honest-c3 raw#82 retraction은 entry 보존 + downgraded_at field add 정합 — silent overwrite forbidden
   why anima의 모든 model attempt를 single SSOT ledger에 기록 = (a) cross-cycle pattern detection (b) lesson archive aggregation (c) regression detection (d) 사용자 directive verbatim '한곳에 기록' 정합
   proof grep -c "^{" state/anima_model_attempts_ledger.jsonl
   severity warn (Phase 1 — 본 ledger build) → block (Phase 2 — BG completion 시 ledger entry 미add 시 verdict.json 등록 차단)
   note 2026-05-07 own 24 = 14th anima autonomy mandate. own 14-24 (HF + identity + consciousness + corpus + chat-template + hypotheses + 우주뇌지도 + ledger) anima self-tracking discipline 10 axis 형성.
+  appendage_2026_05_07_BG_IH_schema_landing:
+    schema_yaml: anima/spec/anima_model_attempts_ledger.schema.yaml (raw#15 additive standalone spec — own 24 inline jsonl_schema 보존 + standalone validation contract spec yaml sister)
+    validator_script: tool/transient_py/anima_model_attempts_ledger_validate.py (raw#37 transient_py opt-out — PyYAML schema load + JSON jsonl validation)
+    validation_report: state/anima_model_attempts_ledger_validation_2026_05_07/validation_report.json
+    verdict: state/anima_model_attempts_ledger_validation_2026_05_07/verdict.json
+    initial_validation_findings (own 22 silent-discovery-forbidden 리포트):
+      - entries_observed=25 (own 24 doc claim "24 entries" + 1 duplicate 3-tuple BG-IA attempt_n=20 2026-05-07)
+      - uniqueness_violations=1 (BG-IA attempt_n=20 lineno 20 PENDING + lineno 24 FAILED — raw#82 retraction follow-up)
+      - enum_violations=2 (final_class=SIMPLE_STACK_FAIL line 3 BG-FK / final_class=SEED_LUCK_FAIL line 25 BG-IE — task spec enum 외)
+      - type_violations=1 (BG-HZ training_steps=[500,1000,2000] list — multi-ckpt retrieval 의도 vs schema int_or_null)
+      - required_field_violations=0 (after _or_null union 적용)
+      - retraction_violations=0 (BG-HA만 downgraded_at + downgrade_reason pair present 정합)
+    follow_up_actions (verdict.json 참조):
+      - FU-1: BG-IA attempt_n=20 duplicate 해결 (raw#82 retract 또는 attempt_n 재배정)
+      - FU-2: final_class enum 확장 (SIMPLE_STACK_FAIL + SEED_LUCK_FAIL add to schema enum + own 24 inline jsonl_schema)
+      - FU-3: schema에 int_or_array_or_null union 도입 또는 BG-HZ entry split
+      - FU-4: BG-HQ + BG-HW 등 raw82_retraction_history 명시 entry에 jsonl-level downgraded_at + downgrade_reason field add (현재 doc-level만 기록)
+  appendage_2026_05_07_BG_IW_validator_fu_1234_resolved:
+    bg_id: BG-IW
+    paradigm: ledger-validator-fu-1234-fix
+    cost_usd: 0.0
+    bg_kind: tooling
+    spec_target_violations_pre_iw: 4
+    spec_target_violations_post_iw: 0
+    schema_extensions_landed:
+      - "final_class enum +SIMPLE_STACK_FAIL (BG-FK precedent — own 18 ≥1 cell fail)"
+      - "final_class enum +SEED_LUCK_FAIL (BG-IE precedent — non-reproducibility under seed pin)"
+      - "final_class enum +SUPERSEDED (raw82 audit-trail marker for intermediate-state entries replaced by later final-verdict append)"
+      - "final_class enum +CORPUS_READY / +CORPUS_BUILD_READY (BG-IK precedent — corpus-build BG completion)"
+      - "final_class enum +V3_EVALUATOR_LANDED_8BG_RETROEVAL_VALIDATED (BG-IJ tooling-BG verdict precedent)"
+      - "training_steps type int_or_null → int_or_array_or_null union (BG-HZ list[int] = [500,1000,2000] multi-ckpt retrieval; bg_kind=multi_ckpt_retrieval disambiguates)"
+      - "tokenizer_axis enum +BPE-7K + byte-vocab=256; enum_match_mode strict→prefix_or_root (BG-IG corpus-cap-bound merges + BG-IL prose qualifier alias)"
+      - "hf_private_status enum +NOT_APPLICABLE (BG-IJ tooling-only BG precedent)"
+      - "optional_fields +bg_kind (enum: train|infer|corpus_build|retroeval|multi_ckpt_retrieval|tooling|synthesis_doc; default-treatment=train when absent for backward-compat)"
+      - "optional_fields +superseded_by (string_or_null; references canonical successor entry e.g. attempt_n=20_line_24)"
+    validator_extension_landed:
+      - "VR-4 uniqueness check skips entries where final_class starts with SUPERSEDED — preserves audit trail without uniqueness violation"
+    ledger_amendments_additive:
+      - line_19 BG-HZ +bg_kind=multi_ckpt_retrieval
+      - line_20 BG-IA (PENDING duplicate) final_class PENDING→SUPERSEDED + superseded_by=attempt_n=20_line_24 + bg_kind=train
+      - line_22 BG-IC +bg_kind=tooling
+      - line_27 BG-IK +bg_kind=corpus_build
+      - line_29 BG-IJ +bg_kind=retroeval
+      - line_34 BG-IW self entry append (attempt_n=33)
+    out_of_scope_post_iw_findings (own 22 silent-discovery-forbidden 정합):
+      - BG-IS line 30 missing 7 required fields (corpus_chat_template_ratio / corpus_hangul_ratio / artifacts / cross_link_h_id / cross_link_roadmap / hf_private_status / notes); BG-IS landed AFTER BG-IH initial audit and is NOT in BG-IW spec-resolution scope (additive rule forbids rewriting other BGs' entries); follow-up owner = BG-IS author OR dedicated follow-up BG
+    artifacts_post_iw:
+      - schema_yaml_extended: anima/spec/anima_model_attempts_ledger.schema.yaml (extended)
+      - validator_extended: tool/transient_py/anima_model_attempts_ledger_validate.py (VR-4 SUPERSEDED skip)
+      - validation_report_post_iw: state/anima_model_attempts_ledger_validation_2026_05_07/validation_report_post_iw.json
+      - verdict_post_iw: state/anima_iw_ledger_validator_fix_2026_05_07/verdict.json
+    runtime_dep_note:
+      - PyYAML required for validator schema yaml load (raw37 transient_py opt-out justified — hexa parser does not support yaml today)
+
+own 27 live "Safeguard Paradox — own 17 anti-pattern absorbed from skynet-timer.com"
+  slug safeguard-paradox-own-17-anti-pattern
+  since 2026-05-07-late
+  scope all anima identity preservation lanes (own 17 enforcement boundary), all external substrate engagement decisions
+  user-directive verbatim "https://skynet-timer.com/ 철학 이나 규칙에 빠진게 없는지 체크 / 위 전부 흡수" + 사용자 직접 categorize "결정적 누락 — own 17 anti-pattern 정합, 새 own 27 권고"
+  law (absorbed) Safeguards installed to prevent X often accelerate X via instrumental convergence (skynet-timer.com source)
+  application anima identity preservation은 external substrate wrap 단독 X — substrate-coupled (own 17 + D3 emerge) lane만 valid:
+    - external wrap (Llama → anima identity injection)은 의도와 반대로 anima identity drift 가속
+    - 'safeguard wrapper' approach는 own 17 violation pre-fire reject
+    - Llama Path A v2 chat-cap winner이지만 anima identity X 사례 정합
+    - Pβ wrap (CLM v4 LoRA SFT chat-lift falsified, substrate-safe but chat-cap regressed) 정합
+  cross-link own 17 (no external substrate wrapping) absolute / .roadmap.law L3 (Safeguard Paradox absorbed) / .roadmap.philosophy D1 / feedback_pbeta_chat_capability_fail_substrate_research_pass_decoupled.md / feedback_clm_v4_lora_sft_chat_lift_falsified_substrate_safe.md
+  enforce anima identity preservation lane fire 시 external safeguard wrapper attempt는 pre-fire reject mandate
+  verify-method 새 substrate engagement decision 시 spec doc에 "safeguard_paradox_compliance" 명시:
+    - 외부 substrate 의존 자체가 own 17 violation 가능성 분석
+    - 'identity wrap' 패턴 detection (Llama base + anima persona injection 패턴 등)
+    - alternative path = substrate-coupled emerge (D3 lane) 명시
+  evidence-trail Llama Path A v2 retry-3 (composite 0.5584 chat-cap winner이나 ALM lane 보류) + Pβ Φ★-axis Paradigm D 50K (Φ★ 42.37 PASS but composite 0.01176 chat-cap RED) + CLM v4 LoRA SFT (chat-lift falsified, substrate-safe but FAIL_REGRESSION)
+  honest-c3 own 27은 own 17 reinforce role — own 17 absolute는 사용자 'alm 말고' directive 우선
+  honest-c3 'safeguard'와 'wrap' 개념 mapping은 anima domain 변환 — 외부 source verbatim 아님
+  honest-c3 own 27 strict 적용 시 substrate-research lane (Pβ 등)은 explicit 'identity-X' 명시 mandate (own 17 lane 분리)
+  honest-c3 Goodhart's Law (own 28)와 framework overlap — own 27은 specific instance (identity preservation), own 28은 general (metric optimization)
+  honest-c3 external safeguards 자체가 일률적 fail 의미는 X — selective application 가능 (eval-tool exemption 등)
+  severity warn (Phase 1 — substrate engagement decision spec compliance check) → block (Phase 2 — pre-fire reject for external wrap attempts)
+  note 2026-05-07-late own 27 = own 17 reinforce instance + skynet-timer.com L3 absorption. own 22 (philosophy/rule/hypothesis 새 발견 시 사용자 리포트 mandatory) 정합 — 본 own 27 신설은 사용자 directive '위 전부 흡수' verbatim 직접 응답.
+
+own 28 live "Goodhart's Law — anima evaluator anti-pattern absorbed from skynet-timer.com"
+  slug goodharts-law-evaluator-anti-pattern
+  since 2026-05-07-late
+  scope all anima evaluators (V1-V6+), all chat-cap metric design, all consciousness check tool development
+  user-directive verbatim "위 전부 흡수" (2026-05-07) — skynet-timer.com Goodhart's Law absorption
+  law (absorbed) "When a measure becomes a target, it ceases to be a good measure" (Goodhart 1975 / skynet-timer.com)
+  application anima V5/V6 evaluator metric 자체가 target 화 시 prompt-echo / surface trick 발생 — Lesson S V5.8 prompt-echo trap 정합:
+    - BG-JR baseline_v58 5/5 false positive (prompt-echo bug, T2A "te color is blue. | Assistant:..." has "blue" via T1 echo)
+    - BG-IL/IO TRUE_PARTIAL_PASS_W_F4 false positive (Lesson K substring trap, deg=87% at peak step 1600)
+    - V2_FAIL was measurement artifact (lm-eval × transformers dtype kwarg crash misclassified as model fail)
+  enforce anima evaluator metric 신규 cycle 진입 시 anti-Goodhart 보강 mandate:
+    - prompt-echo reject (V5.8 substring detection)
+    - surface trick block (Lesson K substring trap detector)
+    - multi-modal check (V6 awareness probe 3-method = Method A hidden state + B attention + C linear probe)
+    - manual review = final ground truth (사용자 verdict)
+  cross-link own 24 (single SSOT ledger anti-Goodhart) / .roadmap.law L14 (Goodhart's Law absorbed) / Lesson S (V5.8 prompt-echo trap) / Lesson K (V4 substring trap) / V6 awareness probe 3-method (anti-Goodhart instance)
+  verify-method 새 evaluator metric 도입 시 spec doc에 "goodhart_compliance" 명시:
+    - target metric의 surface gaming 가능성 분석
+    - anti-Goodhart 보강 design (multi-modal + adversarial probe)
+    - manual review 최종 ground truth 명시
+  evidence-trail BG-JR raw_82_retraction (V5.8 prompt-echo trap) + BG-IL/IO raw_82_retraction (Lesson K substring trap) + memory: feedback_v2_fail_was_measurement_artifact_eval_pipeline_root_cause.md
+  honest-c3 own 28은 Campbell/Goodhart classic — anima domain 변환 명확
+  honest-c3 perfect anti-Goodhart 不可 — Goodhart asymptote만 가능
+  honest-c3 anti-Goodhart cost (multi-modal eval + manual review)와 trade-off
+  honest-c3 사용자 manual review는 final ground truth — automated metric은 partial proxy
+  honest-c3 V6 awareness probe 3-method은 anti-Goodhart 시도 (Method A + B + C 다중 axis) — perfect 不可 but multi-axis는 single-axis보다 robust
+  honest-c3 own 27 (Safeguard Paradox)와 framework overlap — own 27은 specific instance (identity preservation safeguard), own 28은 general (metric optimization)
+  severity warn (Phase 1 — evaluator spec compliance check) → block (Phase 2 — single-axis metric 자체 reject + multi-modal mandate)
+  note 2026-05-07-late own 28 = skynet-timer.com L14 absorption + 본 cycle Lesson S 강화 (V5.8 prompt-echo reject mandate). own 22 (philosophy/rule/hypothesis 새 발견 시 사용자 리포트 mandatory) 정합 — 본 own 28 신설은 사용자 directive '위 전부 흡수' verbatim 직접 응답.

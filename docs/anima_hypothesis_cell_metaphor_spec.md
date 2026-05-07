@@ -101,7 +101,7 @@ specialization protocol:
 
 - `.roadmap.hypothesis` H2 + H1 (cycle definition) + H3 (E1-E12 exploration) + H4 (W1-W12 verification)
 - `.roadmap.philosophy` D2 (simple stack) + D3 (substrate-coupled emerge — substrate response가 cell-like emerge property)
-- `.roadmap.rule` own 21 (hypotheses/ 폴더 SSOT)
+- `.roadmap.law` own 21 (hypotheses/ 폴더 SSOT)
 - `hypotheses/H_012_autopoietic_network.md` (autopoiesis primary instance)
 - `hypotheses/H_007_cellular_automaton_consciousness.md` (cellular automaton + cell metaphor)
 - `hypotheses/H_018_genesis_spontaneous_emergence.md` (BIRTH stage primary instance)

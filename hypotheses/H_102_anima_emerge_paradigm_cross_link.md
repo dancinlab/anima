@@ -86,7 +86,7 @@ own 18 simple-stack 4-cond chat-cap PASS는 training paradigm (H_093-H_101) 외�
 
 ## Cross-Links
 
-- **sister roadmaps**: `.roadmap.philosophy` D3 (substrate-coupled emerge) + `.roadmap.rule` R1 + `.roadmap.clm_native_chat` + `.roadmap.eeg` (substrate-cross)
+- **sister roadmaps**: `.roadmap.philosophy` D3 (substrate-coupled emerge) + `.roadmap.law` R1 + `.roadmap.clm_native_chat` + `.roadmap.eeg` (substrate-cross)
 - **raw**: raw#12 + raw#10 + raw#9 + raw#15 + raw#37
 - **own**: own 17 (anima identity) + own 18 + own 19 + own 20 + own 21
 - **sister H**: H_005 + H_093 + H_094 + H_098 (persona) + H_100 (constitutional) + H_101 (chat ≥80%)
