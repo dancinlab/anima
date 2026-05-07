@@ -255,6 +255,28 @@ fn check_proposal_stack() -> array {
     return ["ok", detail]
 }
 
+// Federation peer-reachability probe per bedrock/spec/sovereign_cli_federation
+// v1: doctor's read-only health view gains an opt-in peer presence check.
+// `ok` when qrng cli reachable; `warn` (NOT `fail`) when absent — doctor
+// stays sovereign. Stderr notice on absence (F-SCF-1). No selftest invoked
+// here (that lives in audit's qrng_health row); this is reachability only.
+fn check_qrng_federation() -> array {
+    let qrng_bin = _str(exec("command -v qrng 2>/dev/null")).trim()
+    if qrng_bin != "" {
+        return ["ok", "provenance=qrng_cli  PATH:" + qrng_bin]
+    }
+    let qrng_root_env = _str(env("QRNG_ROOT"))
+    if qrng_root_env != "" && _fexists(qrng_root_env + "/cli/qrng.hexa") {
+        return ["ok", "provenance=qrng_cli  $QRNG_ROOT:" + qrng_root_env + "/cli/qrng.hexa"]
+    }
+    let ws_root = _home() + "/core/qrng/cli/qrng.hexa"
+    if _fexists(ws_root) {
+        return ["ok", "provenance=qrng_cli  sibling:" + ws_root]
+    }
+    exec("printf '%s\\n' '[anima doctor] qrng cli unreachable — qrng_federation WARN' >&2")
+    return ["warn", "provenance=absent (qrng cli unreachable; install via `hx install qrng`)"]
+}
+
 // ─── orchestrator ──────────────────────────────────────────────────────────
 
 fn run_all_checks() -> array {
@@ -268,7 +290,8 @@ fn run_all_checks() -> array {
         "4-repo links",
         "sandbox env",
         "cert_gate recent",
-        "proposal stack"
+        "proposal stack",
+        "qrng federation"
     ]
     let r1 = check_binaries()
     let r2 = check_creds()
@@ -280,7 +303,8 @@ fn run_all_checks() -> array {
     let r8 = check_sandbox_env()
     let r9 = check_cert_gate_recent()
     let r10 = check_proposal_stack()
-    let results = [r1, r2, r3, r4, r5, r6, r7, r8, r9, r10]
+    let r11 = check_qrng_federation()
+    let results = [r1, r2, r3, r4, r5, r6, r7, r8, r9, r10, r11]
     let checks = []
     let i = 0
     while i < len(names) {
@@ -477,6 +501,7 @@ fn sub_run(json_only: bool) {
     println("wrote " + out_path)
 }
 
+@manual_main
 fn main() {
     let argv = _user_argv(args())
     if _arg_present(argv, "--selftest") { sub_selftest(); return }
