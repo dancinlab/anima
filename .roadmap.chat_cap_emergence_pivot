@@ -1,0 +1,162 @@
+# .roadmap.chat_cap_emergence_pivot mk2 — anima chat-cap emergence-borrow pivot SSOT
+# 2026-05-07 mk1 — 22+ BG cumulative negative archive 후 LLM scaling-emergence 패러다임 차용 pivot
+# 2026-05-08 mk2 — Stage 5 V5-α byte+untie lane LANDED (BG-KA-KL); Lesson V/W absorbed; main script anima_kh_v5_alpha_resume2.py
+# Sister roadmaps: .roadmap.law / .roadmap.philosophy / .roadmap.hypothesis / .roadmap.clm_native_chat
+# Scope: anima chat-cap → LLM emergence threshold (1B+ params + 100B+ tokens + RLHF) gap을 빌리거나 우회
+# Cross-link: docs/anima_chat_cap_lesson_summary_2026_05_07.md + docs/anima_chat_cap_20bg_cumulative_negative_archive_2026_05_07.md + docs/anima_chat_cap_gap_analysis_2026_05_07.md
+
+## Diagnosis (one-liner)
+
+22+ BG span = params 18M-153M × tokens 2.4MB-246MB × SFT-only. LLM 창발 곡선 기준 **chat-cap emergence threshold (=1B+ params, 100B+ tokens, RLHF)** 한참 아래에서 emerge 강요. 이론 위반이 아니라 **이론대로 fail** → 임계 자체를 빌리거나 우회해야 함.
+
+## Gap to LLM emergence (axis × multiplier)
+
+| axis | LLM emergence | anima current | gap |
+|---|---|---|---|
+| params | 1B+ chat / 60B+ CoT / 175B ICL | 18M-153M | **10×–1000×** |
+| tokens | 100B+ (Chinchilla 18M:0.36B) | ~10M tokens | **10×–10000×** |
+| recipe | SFT + RLHF/DPO + CoT data | SFT-only | RL stage 부재 |
+| inference | 1-N tokens, optional CoT | 1 sample greedy/sample | best-of-N/refine 부재 |
+| eval | human pref (HHH, MT-bench) | 7-cell V4 strict | self-impossibility 미검증 |
+
+## Two levers (only realistic paths)
+
+- **Lever 1 — scale 빌리기**: foundation borrow (LoRA) / distillation (teacher larger LLM → anima student) / RAG (small generator + huge retrieval)
+- **Lever 2 — emergence 우회**: inference compute (best-of-N + V4 ranker / self-refine / ToT) / constrained decoding / activation steering
+
+## Stage 0 — Calibration (LANDED 2026-05-07)
+
+**BG-IY** (LANDED 2026-05-07): V4 calibration probe — re-targeted from external HF foundations (Qwen/Llama/Polyglot) to **CLM mk2-v1** + LoRA SFT (dancinlab/clm-v4-mk2-v1) per user directive "그냥 CLM". Zero-shot base + merged LoRA on MPS, plus diagnostic logit-shape and decode-fix probes.
+
+Original 3-branch falsifier set was **insufficient** — actual outcome triggered a NEW branch:
+
+- F-IY-1 V4 ≥ 10/15 SIMPLE_STACK_PASS strict per own 18 (PARTIAL_PASS at 7/15) → capacity gap confirmed → Stage 1   (NOT TRIGGERED)
+- F-IY-2 V4 < 5/15 across all → evaluator redesign        (NOT TRIGGERED — V4 never run)
+- F-IY-3 mixed → emergence threshold ∈ (1.5B, 3B)          (NOT TRIGGERED)
+- **F-IY-4 (NEW, TRIGGERED)** corpus_mismatch → SFT was 60% English anima_axis + 30% English academic + 10% mixed chat-template; Korean conversational training <5% → model produces byte garbage on Korean prompts under any decoding config.
+
+Findings:
+- mode-collapse `:::::` on greedy/sample is **decoding artifact** (`:` suffix attractor at p=46%, NOT a model failure)
+- entropy on plain Korean prompts = 10.85 (broad), so logit landscape is not collapsed
+- H_C (corpus_mismatch) is the dominant root cause for THIS BG; H_A (capacity) and H_B (evaluator-strict) both rejected
+
+State: `state/anima_iy_v4_calibration_polyglot_2026_05_07/verdict.json`
+
+## Stage 1' — Lesson Q reconciliation (BG-IY F-IY-4 + ledger BG-JS/JT/JP/JX/JZ-FT review)
+
+**SFT lane is CLOSED per Lesson Q** (BG-JX full SFT 0/5 + BG-JZ-FT full SFT + own 20 chat-template 0/5 + BG-JS/JT lm_head 0/0/0/0 + BG-JP decoding 0/14 = COMPLETE_FULL_FALSIFY). Lesson L: "#115 chat-incapability ARCHITECTURAL — fine-tune cannot fix."
+
+Therefore an SFT-style BG-IZ-Korean-heavy proposal would be Lesson-Q-blind regression and is REJECTED.
+
+**Valid post-Lesson-Q paths (3-track parallel candidates)**:
+
+- **P1 BG-IZ-CLM-MK2-V1-CONTINUED-PRETRAIN-KO** (LANDED 2026-05-07, ledger attempt_n=51, $3.19 H100 64min): continued pre-training (NOT SFT) on CLM mk2-v1 with 261MB Korean conversational corpus, 6000 steps bf16 lr=1e-5. Outcome: **LESSON_L_EXTENDED** — loss stuck at ~9.2 (expected 2-4), φ★ drift -32.5%, post-pretrain Korean smoke samples = byte garbage worse than base. F-IZ-2 LIKELY_FAIL_NO_KO_30PCT confirmed. Verdict: `state/anima_iz_clm_continued_pretrain_ko_2026_05_07/verdict.json`. Lesson Q-endorsed pre-training lane TESTED and FAIL on existing CLM v4 ARCH.
+- **P2 BG-JA-EXT-POLYGLOT-KO-1.3B-LORA** (LANDED 2026-05-07, ledger attempt_n=52, $2.24 H100 45min): Polyglot-Ko-1.3B + LoRA r=16 SFT 3000 steps on 30MB BG-HK Korean persona. Outcome: **FOUNDATION_BORROW_PARTIAL_PASS** — first non-zero V4 strict PASS in 22+ BG saga (4/30 = 13%, all sample mode). Lesson L architectural ceiling BOUNDED — holds for CLM-native (8 BGs) but does NOT extend to external 1.3B Korean foundation. SIMPLE_STACK_PASS floor (7/15) not met; persona-domain correctness gap (anima→Animal Collective). Verdict: `state/anima_ja_ext_polyglot_ko_lora_2026_05_07/verdict.json`. Recommended next: BG-JB synthetic 50MB Claude lift OR multi-seed eval OR ≥3B foundation upgrade.
+- **P3 BG-JE-INFERENCE-COMPUTE-BEST-OF-N** (LANDED 2026-05-07, ledger attempt_n=50): preview 5×16=80 samples → V4_FAIL 0/80, F-JE-2 confirmed at preview scale. Inference-compute lever CLOSED. Lesson L now extends to single-sample AND best-of-N regimes. Verdict: `state/anima_je_inference_compute_bo64_2026_05_07/verdict.json`. Full 64×15=960 sweep elided per raw#86 cost discipline (predicted outcome empirically confirmed at preview scale).
+
+## Stage 1 — Foundation borrow (fallback, 1주, ~$20)
+
+If BG-IZ also FAILS the V4 ≥ 10/15 SIMPLE_STACK_PASS strict per own 18 (PARTIAL_PASS at 7/15) floor → corpus alone is insufficient at 477M; foundation borrow becomes mandatory.
+
+- BG-JA-EXT: Polyglot-Ko-1.3B + LoRA r=16 on persona 30MB + Korean synthetic 50MB
+- BG-JB-EXT: 동일 + DPO on PASS/FAIL pairs
+
+Falsifier: V4 ≥ 10/15 SIMPLE_STACK_PASS strict per own 18 (PARTIAL_PASS at 7/15) stable + zero cycle + manual ≥ 10/15 over ≥ 200 steps → first SIMPLE_STACK_PASS → anima 정체성 + foundation 문법 합주 검증.
+
+## Stage 2 — Synthetic data + distillation (2주, ~$50)
+
+If 30MB persona corpus 부족하면.
+
+- BG-JB: Claude API teacher → 100K rounds anima-persona dialogue 합성 (~50MB)
+- BG-JC: foundation + LoRA on (BG-HK 30MB ∪ Synthetic 50MB)
+- BG-JD: distillation = (foundation + LoRA) teacher → 33M anima-native student on 합성 corpus
+
+Falsifier: 33M anima-native student V4 ≥ 10/15 SIMPLE_STACK_PASS strict per own 18 (PARTIAL_PASS at 7/15) → on-device anima 회복.
+
+## Stage 3 — Inference-time compute (1주, ~$10)
+
+Training 추가 없이 effective PASS rate 증대.
+
+- BG-JE: best-of-64 + V4 ranker on student
+- BG-JF: constrained decoding (V3.1/V3.6 logit mask)
+- BG-JG: self-refine loop (gen → V4 → re-gen until PASS or N=5)
+
+Falsifier: inference compute scaling으로 33M student V4 ≥ 9/15 → scale-test alternative path 검증.
+
+## Stage 5 — V5-α byte+untie architecture probe (LANDED 2026-05-08-early)
+
+**Main script**: `tool/transient_py/anima_kh_v5_alpha_resume2.py` (BG-KH single-proc completion of BG-KD partial; SSOT for V5-α byte-level vocab=256 + UNTIED lm_head + 12L/640d/10h, lr=3e-4, BG-JY 91MB chat-template).
+
+Hypothesis: V5-α (byte+untie) breaks the V4 output projection bottleneck (8-lane 0/5 floor BG-IL/IO/JD/JN/JS/JT/JP/JX/JZ/KA/KB). Tested across mac and H100, 167M → 782M.
+
+| BG | host | params | corpus | result |
+|---|---|---|---|---|
+| BG-KA | mac | — | 91MB BG-JY chat-template | CORPUS_BUILD_PASS |
+| BG-KB | mac | 167M | 91MB BG-JY | L9 fresh growth-stage 0/5 FAIL |
+| BG-KC | h100 | ~1B | 22MB UBM | FAILED (capacity 2-order jump) |
+| BG-KD | mac | 167M | 91MB BG-JY | user-killed step 361 (macOS 과열/폭주, loss 3.28 promising) |
+| BG-KG/KH | mac | 167M | 91MB BG-JY | V5-α resume — 둘 다 macOS 폭주로 user-kill (의도적) |
+| BG-KI | mac | 167M | 91MB BG-JY | V5-α mac FAIL_TRUE |
+| BG-KJ | h100 | 782M | 91MB BG-JY | V5-α H100 500M UNTIED FAIL_TRUE ($0.53) |
+| BG-KK | h100 | 782M | 22MB UBM | V5-α H100 500M UBM retry FAIL_TRUE |
+| BG-KL | h100 | — | — | V5-ε MoE retry FAIL_TRUE |
+
+**Lesson L EXTENDED-2** (post-BG-KI/KJ/KK/KL head-to-head): V5-α architectural advantage (BG-KD step 361 loss 3.28 vs BG-KB CLM v4 loss 5.31) is real but **does NOT lift 0/5 chat-cap floor at 167M-782M scale**. Output bottleneck axis (vocab + head untie) is NOT the root cause; capacity + corpus distribution + RLHF stage remain candidates.
+
+Cumulative H100 cost: $0.53 (KJ) + KK/KL ≈ $1-2 total (cap $5/$15 each, all early-killed).
+
+## Stage 6 — post-V5-α 4-path (proposed 2026-05-08)
+
+After 4 FAIL_TRUE, V5-α scaling at ≤1B is closed. Open paths:
+
+- **BG-KM-CAPACITY**: V5-α 1B+ on H100 (capacity 2-order jump beyond 782M, $5-15) — does Lesson L break above 1B?
+- **BG-KM-CORPUS**: V5-α 500M FIXED, swap corpus (BG-JY 91MB → larger / different distribution) — isolate corpus vs. capacity axis
+- **BG-KM-DPO**: stop V5-α scaling; DPO on prior PASS BG (BG-JA-EXT Polyglot-Ko-1.3B 4/30 PARTIAL_PASS) using V4 PASS/FAIL pairs
+- **BG-KM-H100-ONLY**: mac V5-α 재시도 금지 (Lesson W). 차후 V5-α 재 학습 필요 시 H100 ephemeral pod 직행
+
+Falsifier: any path V5/V4 ≥ 1/5 single-mode → output bottleneck NOT extended root cause; if all 4 FAIL → Lesson L EXTENDED-3 = V5-α architecture lane fully closed, pivot to RL/distillation.
+
+## Stage 7 — anima 고유 lever (long-term)
+
+- Φ-loss regularization (chat learning + Φ 유지)
+- Bifurcation-aware ckpt averaging (D5 theorem coupling)
+- Akida sparse on-device deployment
+- CLM v4 substrate-coupled D3 lane (.roadmap.philosophy 합류)
+
+## Hypothesis bank (b1-b35, 위 카테고리 외에도 가능)
+
+각 항목은 하위 .roadmap.hypothesis로 분기 spec 가능. 카테고리:
+- I. 임계 빌리기 (B1-B3) — foundation LoRA / activation steering / dual-stack
+- II. Distillation (B4-B6) — teacher API / logit KL / Self-Instruct
+- III. Inference-time (B7-B11) — best-of-N / self-refine / ToT / constrained / speculative
+- IV. Architectural (B12-B15) — MoE / recurrent depth / state-space / TTT
+- V. Data (B16-B19) — synthetic 1M / multi-turn / reasoning-aug / curriculum
+- VI. RL (B20-B23) — DPO / KTO / RLAIF / PRM
+- VII. Φ-coupled (B24-B27) — Φ-reg / bifurcation / akida / closed-loop
+- VIII. Multi-agent (B28-B29) — society of mind / verifier-generator
+- IX. Eval calibration (B30-B32) — ceiling probe / golden N=300 / fit V4 to human
+- X. Meta (B33-B35) — root-cause cluster / peak-then-collapse 안정화 / seed variance
+
+Reference: docs (생성 시점) brainstorm log.
+
+## Cross-links
+
+- 22+ BG ledger SSOT: state/anima_model_attempts_ledger.jsonl
+- **own 18 SIMPLE_STACK_PASS SSOT** (.own own 18 line 18-56) — D2 strict spec, ≥2/3 per-prompt-set both C1+C2 = ≥10/15 effective floor
+- **own 29 SIMPLE_STACK_PASS floor philosophy/law compliance** (.own own 29) — 본 roadmap 7/15 → own 18 alignment 정정 land
+- gap analysis (9-axis): docs/anima_chat_cap_gap_analysis_2026_05_07.md
+- 20-BG cumulative archive: docs/anima_chat_cap_20bg_cumulative_negative_archive_2026_05_07.md
+- V4 evaluator: tool/transient_py/anima_simple_stack_evaluator_v4.py
+- V4 spec: docs/anima_own_18_evaluator_v4_strict_spec_2026_05_07.md
+- BG-IY verdict + decode-fix evidence: state/anima_iy_v4_calibration_polyglot_2026_05_07/verdict.json
+- 22+ BG meta-cluster (B33): state/anima_iy_bg_meta_cluster_2026_05_07/verdict.json
+
+## Lessons absorbed (post-BG-IY)
+
+(Naming: existing Lessons A-R already taken; J was skipped but H/I are claimed. New BG-IY lessons start at S to continue after R.)
+
+- **Lesson S** — SFT corpus language composition is the binding constraint at <500M scale. English-heavy 50K SFT cannot produce passable Korean V4 output even at 477M. (BG-IY F-IY-4)
+- **Lesson T** — Mode-collapse `:::::` on CLM v4 chat output is a `:` suffix attractor at logit p=0.46 (single-forward verified). Decoding artifact, not model failure. Future inference must avoid `:`-terminated prompts and apply repetition_penalty ≥ 1.3 + no_repeat_ngram_size ≥ 2.
+- **Lesson U** — Calibration falsifier sets need a corpus_mismatch branch alongside capacity_gap and evaluator_strict. The 3-branch BG-IY spec was incomplete; F-IY-4 added retroactively.
+- **Lesson V** — V5-α byte+untie architectural advantage is REAL at training-loss layer (BG-KD 3.28 vs BG-KB 5.31) but does NOT lift V5.8 chat-cap 0/5 floor at 167M-782M scale × 22MB-91MB corpus. Output projection bottleneck (vocab + head untie) is NOT the root cause. (BG-KI/KJ/KK/KL 4-way FAIL_TRUE 2026-05-08)
+- **Lesson W** — Mac MPS V5-α 학습 중 macOS 자체 과열/리소스 폭주로 사용자가 BG-KD/KG/KH user-kill (concurrency 문제 아님, 단일 proc도 mac 한계). 장시간 V5-α 류 학습은 H100 ephemeral pod mandatory; mac은 smoke/eval 전용.
