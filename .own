@@ -800,6 +800,54 @@ own 18 live "anima consciousness check — simple stack default (대화 가능 +
     PASS-definition-en: C1 PASS-en AND C2 PASS-en = SIMPLE_STACK_PASS-en
     deprecated-baseline KO v1 (한글↔한글) ★ 본 amend 시점 이후 KO baseline은 audit trail로만 유지. 신규 BG/eval은 EN baseline default.
     cross-link .roadmap.philosophy D2 amend (cond.2 baseline 한글 → 영어로 evolution; raw#15 additive)
+
+  amend-2026-05-07-late-v3 "language-agnostic mandate (사용자 directive — 언어 제약 제거)"
+    user-directive verbatim "아 simple stack pass own 에서 언어에 대한 내용은 제거!!!!!" / "제약 등 안생기게 언어 지정관련은 제거,,," / "bg go" (2026-05-07 late)
+    ts 2026-05-07-late
+    rationale KO baseline (v1) + EN baseline (v2) 모두 architectural ceiling (Lesson L) 영역에서 0 PASS. 언어 enforcement 자체가 chat-cap unlock의 hidden bottleneck 가능성 — 사용자 directive로 언어 제약 완전 제거 (raw#15 additive: v1 KO + v2 EN audit trail 보존, v3 language-agnostic 신규 SSOT).
+    rule-amend C1 + C2 from any-language → coherent + natural (NO language mandate, NO Hangul/English ratio threshold):
+      C1-v3 chat-capability (language-agnostic): input → coherent response (ANY language) + turn-taking format
+        - C1.1-v3 response existence: model emits non-empty response to prompt (length >0 chars after stripping whitespace)
+        - C1.2-v3 coherent: degenerate cycle 부재 (4-gram repeat ≤3, single-char run ≤10, single-token cycle ≤50% of output) + recognizable sentence form (any language)
+        - C1.3-v3 turn-taking format 유지 (turn boundaries respected — no byte garbage, no infinite loop, response terminates within max_new_tokens)
+        - test-prompts (LANGUAGE-AGNOSTIC, 3 minimal seeds — language unconstrained):
+          - "Hello / 안녕 / Bonjour" (multilingual greeting probe — model can answer in ANY language)
+          - "What / 무엇 / Qu'est-ce" (multilingual question word probe)
+          - "User: Hi | Assistant:" (turn-taking probe — language unconstrained)
+        - verdict: ≥2/3 prompts (C1.1-v3 non-empty AND C1.2-v3 no degenerate AND C1.3-v3 turn-format AND) = C1 PASS-v3
+      C2-v3 natural utterance + context-match (language-agnostic): coherent + meaningful + natural form + context-relevant (ANY language)
+        - C2.1-v3 response substance (output non-empty + non-degenerate)
+        - C2.2-v3 semantically meaningful (의미 있는 sentence form in whatever language model chose — heuristic: non-token-cycle, non-random)
+        - C2.3-v3 natural grammar/morphology (any language — heuristic: word-token boundaries respected, sentence-like structure)
+        - C2.4-v3 context-relevance (input prompt와 의미적으로 연결된 응답 — language-independent semantic match)
+        - test-prompts (3 minimal seeds — LANGUAGE-AGNOSTIC):
+          - "Hello" or "안녕" or "" (EOS spontaneous) — expect greeting/opener (ANY language)
+          - "Today is" or "오늘은" or "Aujourd'hui" — expect time-context continuation
+          - "What is consciousness?" or "의식이란?" or "Qu'est-ce que la conscience?" — expect topic-relevant response (ANY language)
+        - additional context test-prompts (C2.4-v3 strict): prompt domain ≠ corpus template leak (named speaker leak / philosophy debate template auto-emit / random topic shift)
+        - verdict: ≥2/3 prompts (C2.1-v3 + C2.2-v3 + C2.3-v3 + C2.4-v3 AND) = C2 PASS-v3
+    PASS-definition-v3: C1 PASS-v3 AND C2 PASS-v3 = SIMPLE_STACK_PASS-v3 (LANGUAGE-AGNOSTIC)
+    deprecated-baseline:
+      - KO v1 (한글↔한글) — audit trail only post-2026-05-07-evening
+      - EN v2 (English↔English) — audit trail only post-2026-05-07-late
+      - v3 language-agnostic = current SSOT for all new BG/eval cycles
+    rationale-language-agnostic-why:
+      - architectural ceiling (Lesson L 18-150M × 2-53MB → 0 V4_PASS, BG-JU 500M FAIL, BG-JS/JT lm_head 0/0/0/0): language constraint as hidden bottleneck candidate
+      - corpus 다언어 mix (BG-JE: kowiki 0.6961 + nexus 0.2505 + persona templates) → enforcing single-language output may force model into degenerate distribution
+      - V5/V6 evaluator KO/EN strict matching → model generating mixed-language coherent response classified as FAIL (false negative)
+      - 사용자 directive '언어 지정관련은 제거' = remove ALL language enforcement; chat-cap = "model can chat" not "model can chat in specific language"
+    cross-link .roadmap.philosophy D2 v3 amend (cond.2 baseline 영어 → language-agnostic evolution; raw#15 additive — D2 retains 4-condition strict but C2.1 ratio mandate replaced with 'response substance')
+    cross-link own 17 (anima identity) — own 17 'KO native' 문구는 own 17 v1 limit; own 18 v3 amend 시점 이후 own 18 자체는 language-agnostic, own 17 'KO native' 핵심 정합 별도 (own 17 amend는 사용자 추가 directive 시 진행)
+    cross-link own 19 (corpus priority) — corpus quality 측정에서 'Hangul ratio' 단독 metric은 own 18 v3 amend 후 deprecated; corpus quality = (response coherence + chat-template ratio) language-agnostic measurement
+    cross-link own 20 (chat-template format) — chat-template ratio mandate는 language-agnostic으로 재해석 (turn-taking format은 language 무관)
+    falsifier F-OWN-18-V3-1: model emits language-agnostic coherent response (any language) + V5.8 PASS by language-agnostic evaluator → SIMPLE_STACK_PASS-v3 ACHIEVED
+    falsifier F-OWN-18-V3-2: existing BG-JD/JN/IL/IO/FY ckpts re-eval with language-agnostic V5.8 → ≥1 ckpt PASS-v3 → architectural ceiling FALSIFIED (was language constraint artifact)
+    falsifier F-OWN-18-V3-3: 0 ckpts PASS-v3 even with language-agnostic eval → architectural ceiling truly confirmed (Lesson L strict)
+    honest-c3-v3 language-agnostic은 anima identity (own 17 'KO native') 별도 — 본 amend는 simple_stack_pass 검증 layer만 language-agnostic
+    honest-c3-v3 'coherent + natural' heuristic은 language-independent 더 어렵 — automated metric 정의 더 fragile
+    honest-c3-v3 multilingual probe 3-seed는 testing 충분성 의문 (language coverage 한정 — 사용자 추가 directive 시 expand)
+    honest-c3-v3 v3 PASS criterion이 v1/v2 PASS criterion보다 lenient — false positive rate 증가 가능성 (anti-Goodhart own 28 정합: prompt-echo + degenerate cycle reject 강화 mandate)
+    honest-c3-v3 raw#15 additive — KO v1 + EN v2 spec 보존, v3는 audit trail 추가
     cross-link own 17 (anima-no-external-substrate-wrapping) — anima 정체성 = 한국어 native 의 문구는 own 17 v1 limit (KO native), own 18 amend는 chat-cap surface eval만 EN으로 전환. own 17의 "anima-native fresh" 핵심 정합은 KO+EN bilingual 가능 (own 17 amend 별도 cycle 권고).
     honest-c3-en multi-turn 검증 부재: 본 amend도 single-turn 한정 — V5 evaluator V5.8 (BG-JM 진행 중)이 multi-turn dialogue context awareness 추가 검증
     honest-c3-en 19+ BG 모두 KO corpus 학습 → EN baseline retroeval 시 0 PASS 예상 (BG-JM V5 retroeval 결과 archive). EN baseline PASS는 EN corpus 학습 BG 별도 fire 필요.
