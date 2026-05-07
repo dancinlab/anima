@@ -15,9 +15,46 @@
 
 Usage:
   python3 experiments/closed_loop_verify.py
+  python3 experiments/closed_loop_verify.py --substrate=akida   (2026-05-07)
+    → opt-in: route through scripts/akida/dispatch.hexa route trace (F-M4).
+      probe failure → fallback to default Law-124 verification below
 """
 
 import sys, os
+
+def _akida_pre_import_route():
+    """2026-05-07 — pre-import gate so heavy imports (torch, consciousness_engine)
+    do not load when the run is delegated to akida dispatch. Returns True if
+    the akida route handled execution (caller should sys.exit). False = continue
+    with default flow including the imports below."""
+    if "--substrate=akida" not in sys.argv and \
+       not (("--substrate" in sys.argv and "akida" in sys.argv)) and \
+       os.environ.get("ANIMA_AKIDA_ROUTE") != "1":
+        return False
+    import subprocess
+    repo = os.path.expanduser("~/core/anima")
+    dispatcher = os.path.join(repo, "scripts/akida/dispatch.hexa")
+    if not os.path.exists(dispatcher):
+        return False
+    probe = subprocess.run(
+        ["bash", "-c", f"hexa run '{dispatcher}' probe 2>/dev/null; echo __RC=$?"],
+        capture_output=True, text=True, timeout=8,
+    )
+    rc = -1
+    for line in probe.stdout.splitlines():
+        if line.startswith("__RC="):
+            try: rc = int(line[5:].strip())
+            except ValueError: pass
+    if rc != 0:
+        print(f"[closed_loop_verify] --substrate=akida requested but probe_rc={rc}; falling back to default Law-124 verification", flush=True)
+        return False
+    cmd = ["bash", "-c", f"hexa run '{dispatcher}' route trace"]
+    proc = subprocess.run(cmd, text=True)
+    sys.exit(proc.returncode)
+
+if _akida_pre_import_route():
+    sys.exit(0)
+
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 import torch
