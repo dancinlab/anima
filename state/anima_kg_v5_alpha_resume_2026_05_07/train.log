@@ -1,0 +1,39 @@
+[21:13:41] BG-KG V5-alpha SINGLE-PROC RESUME cycle start (host=ghostui-MacBookAir.local)
+[21:13:41]   context: BG-KD killed @ step 361 (loss 3.28); BG-KG = re-run NO concurrent BGs
+[21:13:41]   device=mps, NO_CKPT_RANDOM_INIT, steps=1500, lr=0.0003
+[21:13:41]   batch=2 grad_accum=8 eval_steps=[0, 500, 1000, 1500]
+[21:13:41]   V5-alpha deltas vs CLM v4: vocab=256 byte-level, head_a UNTIED, block_size=512
+[21:13:41]   corpus=corpus_chat_template.txt (own 20 BG-JY explicit chat-template)
+[21:13:41]   watchdog_no_progress_sec=600
+[21:13:41] init FRESH V5-alpha model (NO ckpt — random init from scratch)
+[21:13:41]   arch: 12L/640d/10h vocab=256 (BYTE-LEVEL) block=512 dropout=0.3
+[21:13:41]   V5-alpha deltas: untie_head_a=True, vocab=256 (byte) vs CLM v4 11885 (SP)
+[21:14:09]   UNTIE confirmed: tok_emb.weight id=4626244208 != head_a.weight id=4626020608
+[21:14:09]   tok_emb shape=(256, 640) head_a shape=(256, 640)
+[21:14:10]   byte tokenizer: vocab=256 (raw UTF-8 bytes)
+[21:14:10]   total params: 153,407,456 (153.41M)
+[21:14:10]   frozen: 0 (0.00M)
+[21:14:10]   trainable: 153,407,456 (153.41M) — FULL FRESH UNTIED
+[21:14:10]   trainable name top-segments: ['blocks', 'head_a', 'head_g', 'ln_f', 'pos_emb', 'tension_proj', 'tok_emb']
+[21:14:10] loading corpus: /Users/ghost/core/anima/state/anima_jy_chat_template_corpus_2026_05_07/corpus_chat_template.txt
+[21:14:10]   corpus: 95,420,911 bytes (91.00MB) in 0.1s
+[21:14:15]   byte encode: 95,420,911 tokens (byte=token 1:1) in 5.8s
+[21:15:03]   train_data: 90,649,865 byte-tokens; block_size=512
+[21:15:25] === eval step 0 (random init baseline, byte-level) ===
+[21:19:15]   eval step=0 dlg=color v58=False t2a='(t�):�vB\u05ee�"���JA�\x034%�m%TJQ#3����B�F���\tTC(�����(������ƥ�:�x�'
+[21:22:50]   eval step=0 dlg=profession v58=False t2a="J�a��:A'X�J��\x7f�����]�\x03�\x0c���yM�x�]!�Ę\x13��j:F��b�B�\x00�4�P�Ps��h�"
+[21:26:20]   eval step=0 dlg=day v58=False t2a='�p�|x�$\r�7x� \x0b�4����x\x06�1\\t��\x1c��$�c�\x0c��\r6[G\x17)��#O\x0c�\x13��&o�x��t'
+[21:28:32]   eval step=0 dlg=anima_fact v58=False t2a='���\x1f̭2�8�\x17�po�A!b^\x19\x0c\x00��.���&Hx{�ĥ�D�5(\x0b��T�xm=4A�v��ءPT͙��\x16�'
+[21:30:55]   eval step=0 dlg=cosmology v58=False t2a="&�'�X%�Pg�Y\x0b����nY��H'Y���P��'�xػB@�ģT8�T�H�7���U%%�\t\u05c85��\x0c�\x10"
+[21:30:55]   step 0: v58_pass=0/5 (expected 0 — random init byte-level)
+[21:30:59]   step 0 snapshot saved (~585MB)
+[21:30:59] === begin V5-alpha fresh growth-stage cycle ===
+[21:30:59]     (random init, byte-level, UNTIED head_a, BG-JY corpus)
+[21:31:31]   step 1/1500 loss_a=5.6944 lr=6.00e-06 (31.7s for last 25 steps)
+[21:33:24]   step 25/1500 loss_a=5.0952 lr=7.80e-05 (113.7s for last 25 steps)
+[21:35:09]   step 50/1500 loss_a=4.2640 lr=1.53e-04 (104.9s for last 25 steps)
+[21:36:48]   step 75/1500 loss_a=4.0451 lr=2.28e-04 (98.7s for last 25 steps)
+[21:38:28]   step 100/1500 loss_a=4.0288 lr=3.00e-04 (99.7s for last 25 steps)
+[21:40:07]   step 125/1500 loss_a=3.7777 lr=3.00e-04 (99.4s for last 25 steps)
+[21:41:50]   step 150/1500 loss_a=3.7533 lr=2.99e-04 (103.1s for last 25 steps)
+[21:44:02]   step 175/1500 loss_a=3.5607 lr=2.98e-04 (131.8s for last 25 steps)
