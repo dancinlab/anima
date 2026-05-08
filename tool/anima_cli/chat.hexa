@@ -163,6 +163,10 @@ fn _alias_resolve(alias: string) -> array {
         return ["llama", "dancinlab/bg-ja-ext-polyglot-ko-1b3-r16-partial-2026-05-07", "partial", "4/30", "phase_3c_landed"]
     }
     if a == "paradigm-a-prime" {
+        // [D1 SCOPE_CLAMP 2026-05-08] substrate-research lane only — paradigm-a-prime
+        // (Llama Path A v2 lineage) 은 own 17 ALM 영구 보류 strict 적용; default backend
+        // 활성화 X (default = anima_native), 사용자 explicit alias 선택 시점만 활성.
+        // SIMPLE_STACK_PASS verdict 시 `_SUBSTRATE_RESEARCH` label 한정 own 18 정합.
         return ["llama", "dancinlab/llm-llama32-3b-paradigm-a-prime-r16-sft-stage1", "true", "", "phase_3c_landed"]
     }
     if a == "clm-v4-1-7-y1" {
