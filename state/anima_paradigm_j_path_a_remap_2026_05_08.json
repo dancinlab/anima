@@ -1,0 +1,80 @@
+{
+  "anima_cycle": "2026-05-08",
+  "kick_fire_slot": "1/5",
+  "title": "clm-v4-paradigm-j-50k-final Path A safetensors prefix remap actual fire",
+  "directive_user_verbatim": "kick 무한 발사로 돌파 탐색",
+  "iter7_a_root_cause_commit": "91b9b695",
+  "root_cause": {
+    "summary": "wrapper-prefix-only mismatch — LoRA stored keys lacked CLMv4ForCausalLM base_model_prefix='decoder' segment",
+    "stored_wrapper_prefix": "base_model.model.blocks.X",
+    "expected_wrapper_prefix": "base_model.model.decoder.blocks.X",
+    "scope": "wrapper-only; tensor data + target_modules + lora_alpha + r unchanged"
+  },
+  "path_chosen": {
+    "id": "A",
+    "name": "in_place_safetensors_prefix_remap",
+    "cost_usd": 0.0,
+    "cost_discipline_own_16": "PASS",
+    "scope_clamp_own_17": "D1 within strict (paradigm-j)",
+    "rationale_vs_paths_b_c": "Path A is bit-preserved + deterministic + 0 USD; Path B (re-train) and Path C (HF re-export) both cost USD or compute"
+  },
+  "execution": {
+    "tool_path": "tool/transient_py/clm_v4_paradigm_j_path_a_prefix_remap.py",
+    "raw_37_transient_py": true,
+    "interpreter": ".venv-eeg/bin/python",
+    "exit_code": 0
+  },
+  "source": {
+    "repo": "dancinlab/clm-v4-paradigm-j-50k-final",
+    "snapshot_dir": "/Users/ghost/.cache/huggingface/hub/models--dancinlab--clm-v4-paradigm-j-50k-final/snapshots/a6da7a7725d8c3cff3b53c9df37a6352c7c8c7a6",
+    "adapter_model_safetensors_sha256": "8bc08e92445e5cd64c595e24b8f01f6c858df49ca19bc2aaba212d7311467644",
+    "files_present": ["adapter_config.json", "adapter_model.safetensors", "jvae_heads.pt", "README.md"]
+  },
+  "target": {
+    "dir": "/Users/ghost/.cache/anima/clm_v4_remapped/paradigm_j",
+    "adapter_model_safetensors_sha256": "6f1cf277fb76c923653fb896bcc739d9be9173902e69f039aefba159673092a6",
+    "files_emitted": ["adapter_config.json", "adapter_model.safetensors", "jvae_heads.pt", "REMAP_SOURCE.json"],
+    "size_bytes_total_approx": 156432000
+  },
+  "remap": {
+    "source_wrapper": "base_model.model.blocks",
+    "target_wrapper": "base_model.model.decoder.blocks",
+    "total_keys": 352,
+    "keys_remapped": 352,
+    "keys_unchanged": 0,
+    "first_remapped_example": {
+      "before": "base_model.model.blocks.0.attn.k_proj.lora_A.weight",
+      "after": "base_model.model.decoder.blocks.0.attn.k_proj.lora_A.weight"
+    },
+    "lora_target_modules_preserved": ["k_proj", "down_proj", "up_proj", "v_proj", "o_proj", "gate_proj", "q_proj"],
+    "lora_alpha_preserved": 128,
+    "lora_r_preserved": 128
+  },
+  "verification": {
+    "reload_total_keys": 352,
+    "reload_keys_with_decoder_prefix": 352,
+    "reload_keys_with_legacy_prefix": 0,
+    "first_tensor_shape": [128, 768],
+    "pass": true,
+    "note": "all 352 LoRA tensors reload under expected base_model.model.decoder.blocks.X prefix; zero legacy-prefix residue"
+  },
+  "trinity_emit_own_33": {
+    "SUBSTRATE_IDENTITY": "repo=dancinlab/clm-v4-paradigm-j-50k-final paradigm=paradigm_j_50k substrate_class=clm-v4-lora-adapter baseline_method=path_a_prefix_remap wrapper_target=decoder",
+    "PARADIGM_J_PATH_A_REMAP_OK": "total_keys=352 keys_remapped=352 keys_unchanged=0 verification=PASS",
+    "C3_HONEST": "C1 schema-only fix — does not modify LoRA tensor values; C2 verification = key-prefix structural; C3 downstream forward-pass not yet executed in this fire"
+  },
+  "next_step_spec": {
+    "task": "clm_v4_mount.hexa LoRA load path: prefer remapped cache when present",
+    "patch_target_lines": "anima-core/runtime/clm_v4_mount.hexa _detect_lora_adapter / _materialize_merged_lora",
+    "spec": "Before HF cache snapshot resolution, check ~/.cache/anima/clm_v4_remapped/<adapter_short>/ for adapter_model.safetensors + adapter_config.json + REMAP_SOURCE.json (verification.pass=true). If present, use remapped dir directly as adapter source for peft.load_adapter; bypass merge_and_unload's snapshot resolver. Adapter shortname mapping: dancinlab/clm-v4-paradigm-j-50k-final -> paradigm_j.",
+    "deferred_to": "hexa-native cycle (raw#9 — emit but no patch in this fire)",
+    "trigger_condition_for_followon": "user OK kick fire 2/5"
+  },
+  "own_compliance": {
+    "own_16_cost": "0 USD",
+    "own_17_scope_clamp": "D1 within strict",
+    "own_33_trinity_emit": "SUBSTRATE_IDENTITY + PARADIGM_J_PATH_A_REMAP_OK + C3_HONEST",
+    "own_34_mandate_2_wrapping_0": "PASS — large files (.safetensors 152MB / .pt 4.3MB) NOT staged for commit; only spec/state/script committed"
+  },
+  "timestamp_utc": "20260508T154145Z"
+}

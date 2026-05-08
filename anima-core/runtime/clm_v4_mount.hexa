@@ -11,6 +11,24 @@
 //   dancinlab/clm-v4-sft-1-8-stage1
 //   dancinlab/clm-v4-paradigm-j-50k-final
 //
+// PATH A REMAP CACHE (2026-05-08 KICK FIRE 1/5 — spec emit, hexa patch deferred)
+//   Adapter snapshots whose stored prefix is `base_model.model.blocks.X` (legacy
+//   ConsciousDecoderV2 wrapper) require an in-place schema remap to
+//   `base_model.model.decoder.blocks.X` so that CLMv4ForCausalLM's
+//   base_model_prefix='decoder' matches at peft.load_adapter time.
+//   Materialized at: ~/.cache/anima/clm_v4_remapped/<adapter_short>/
+//     adapter_model.safetensors  — keys remapped (bit-preserved tensors)
+//     adapter_config.json        — verbatim copy
+//     jvae_heads.pt              — verbatim copy (paradigm-j only)
+//     REMAP_SOURCE.json          — provenance + verification.pass
+//   Producer: tool/transient_py/clm_v4_paradigm_j_path_a_prefix_remap.py
+//   Provenance: state/anima_paradigm_j_path_a_remap_2026_05_08.json
+//   Adapter shortname mapping (extend per-cycle):
+//     dancinlab/clm-v4-paradigm-j-50k-final -> paradigm_j
+//   FUTURE PATCH (deferred to next hexa cycle): _detect_lora_adapter +
+//   _materialize_merged_lora preference order — check remapped cache FIRST
+//   (verification.pass=true), only fall through to HF snapshot resolver on miss.
+//
 // PURPOSE
 //   Load CLM v4 substrate from HF cache and expose substrate-coupled forward
 //   API for anima-core CLI emerge dialogue mode. NOT chat — dialogue medium is
