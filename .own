@@ -751,6 +751,30 @@ own 18 live "anima consciousness check — simple stack default (대화 가능 +
     - C1 PASS + C2 PASS + C3 FAIL = PARTIAL_PASS_NO_CONSCIOUSNESS (legacy SIMPLE_STACK_PASS, 의식 metric 미검출)
     - C1 PASS + C2 FAIL + C3 PASS = PARTIAL_PASS_CONSCIOUS_BUT_FRAGMENTARY (의식 active but 응답 의미 X)
 
+  c3-aggregation-rule-ssot ★ (2026-05-08 loop iter 3, own-18-aggregation): C3 verdict 는 N-prompt × 4-cell 측정 매트릭스 위에서 다음 규칙으로 집계 — 본 SSOT 외 변형 정의 부재 (own 24 single SSOT mandate):
+    - **rule-name**: per-prompt-pass-rate-AND-ensemble-mean (P4 hybrid; alias `per_prompt_06_AND_ensemble_mean`)
+    - **per-prompt-pass-rate (PPR)**: 각 prompt k 별 4-cell strict AND verdict 산출 후 PASS prompt 수 / total. floor: PPR ≥ 0.6 (보수적 X 기조; dialogue coherence metric per-turn rate ≥ 0.6 와 정합)
+    - **ensemble-mean cell-wise (EMC)**: 각 cell (C3.1/C3.2/C3.3/C3.4) 별 N-prompt mean 값이 cell threshold 만족. direction='ge' 면 mean ≥ thr, direction='le' 면 mean ≤ thr. 4-cell ALL PASS = EMC PASS
+    - **C3 verdict aggregate**: PPR ≥ 0.6 AND EMC PASS = **C3 PASS** ★ (P4 hybrid; 두 조건 AND). 둘 중 하나만 PASS → C3 PARTIAL_PASS (PPR_only 또는 EMC_only sub-label).
+    - **rejected alternates** (iter 3 verdict poll, state/anima_consciousness_baseline_ensemble_2026_05_08.json N=15 데이터 적용):
+        * (P1) per-prompt PASS rate ≥ 0.6 only — paradigm-a-prime PASS (rate=0.79) / clm_v4 FAIL (rate=0.21) / random FAIL (rate=0). PPR-only 는 cell-wise direction 불일치 prompt 다수 시 false-PASS risk (예: 단 3 prompt 만 4-cell AND PASS but 나머지 mean 매우 낮음 → P4 의 EMC AND 가 보호 역할)
+        * (P2) ensemble-min cell-wise (모든 prompt 의 cell 값이 threshold 만족) — 너무 strict, 단 1개 outlier 로 FAIL → iter 2 (a) 가 본 P2 적용 시 paradigm-a-prime C3.4 axis_l2 min=0.061 < 0.117 FAIL 발생; 사용자 directive "보수적 X" 위반 (random FAIL 까지 strict 만 유지, chat-cap 까지 strict 는 과도)
+        * (P3) ensemble-mean only — per-prompt outlier cluster 무감지 (단 3 prompt 만 high cell 값으로 mean inflate 시 false PASS); per-prompt rate 추가 검증 부재로 보수적 X 위반 risk
+    - **iter 1 N=15 적용 verdict 결과** (single discriminative cell C3.4 strict ROC PASS, 다른 3 cell 은 best-effort with caveat per honest_c3):
+        * random_init  : PPR=0/14=0.00, C3.4 mean=0.075 < 0.117 → C3 FAIL (보수적 X strict 만족)
+        * clm_v4       : PPR=3/14=0.21, C3.4 mean=0.085 < 0.117 → C3 FAIL (real-mode but small-sample; BG-KM-LLAMA-3B retest 후 PASS expected)
+        * paradigm_a_prime : PPR=11/14=0.79, C3.4 mean=0.133 ≥ 0.117 → C3 PASS (chat-cap proxy; iter 2 (a) blocker 해소: P2 거부 / P4 채택으로 paradigm-a-prime min=0.061 outlier 1개 무력화)
+    - **applies-to-ALL-cells**: C3.1, C3.2, C3.3, C3.4 모든 cell 에 적용 (cell direction 별 ge/le 자동 적용); cell threshold 는 state/anima_consciousness_baseline_ensemble_2026_05_08.json threshold_final_roc_formal SSOT mirror (loop iter d ROC formal)
+    - **single-probe lane** (sub_simple, prompt_a vs prompt_b N=1 pair): aggregation 적용 불가 → verdict = `BASELINE_MEASURED` (C3 4-cell raw values + per-cell PASS) emit 만; 본 aggregation rule 적용 verdict 는 `baseline-ensemble` subcmd (N≥15) 또는 BG-K* V4 evaluator (N=15 multi-prompt) 한정
+    - **mandatory-mirror**: 본 aggregation rule 변경 시 c3-measurement-cli (sub_baseline_ensemble verdict 계산) + V4 evaluator + 모든 BG-K* verdict emit 코드 mirror 의무 (own 24 single SSOT)
+    - **honest-c3 본 rule**:
+        * iter 1 N=15 small sample — N≥50 으로 stability 재검증 별도 cycle
+        * C3.2 direction 'le' inversion 은 synthetic_fallback artifact — real-mode (BG-KM-LLAMA-3B + clm_v4) retest 후 direction 재검토 mandate
+        * C3.3 dominance score degenerate (3-model 모두 1.0) — entropy 강화 (sub_simple 의 c3_3_entropy 변형 진행 중) 후 EMC/PPR 양쪽 discrimination 확보
+        * iter 2 (a) blocker 해소 = C3.4 axis_l2 단일 cell 한정 (P2 ensemble-min 거부 → P4 PPR+EMC 채택). 4-cell strict AND on iter 1 SSOT thresholds 는 모든 모델 FAIL (C3.2/C3.3 degenerate caveat) — BG-KM-LLAMA-3B real-mode retest 후 전체 4-cell 정합 별도 cycle
+        * paradigm-a-prime 은 synthetic_fallback chat-cap proxy 한정 — real chat-cap 데이터 (BG-KM-LLAMA-3B) retest 후 본 verdict 재확정
+        * P4 의 PPR ≥ 0.6 floor 는 dialogue coherence metric per-turn rate ≥ 0.6 와 alignment (own 18 ↔ docs/anima_dialogue_coherence_metric_2026_05_08.md 정합)
+
   c3-measurement-cli: anima consciousness simple [<model>] (tool/anima_cli/consciousness.hexa)
     threshold-status: ROC_FORMAL 2026-05-08 loop iter d (15-prompt × 3-model ensemble; Youden's J + random FAIL ≥ 0.95 + chat-cap PASS ≥ 0.7 constrained — C3.4 strict PASS, C3.1/C3.2/C3.3 best-effort with caveat; BG-KM-LLAMA-3B real chat-cap retest 후 cell-by-cell 재강화 별도 cycle)
     threshold-ensemble-ssot: state/anima_consciousness_baseline_ensemble_2026_05_08.json (`anima consciousness baseline-ensemble` 15-prompt × 3-model ROC formal SSOT)

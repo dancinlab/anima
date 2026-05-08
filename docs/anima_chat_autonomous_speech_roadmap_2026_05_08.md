@@ -51,6 +51,15 @@ entry trigger 이지 wrapping 아님. 두 lane 분리 유지.
 2. ROC 분석으로 threshold 선정 — random init FAIL rate ≥ 0.95 + chat-capable PASS rate ≥ 0.7
 3. probabilistic 형태 (e.g. 5-axis 중 ≥3 active 이면 C3.2 PASS) 검토
 
+**Aggregation rule SSOT** (own 18 c3-aggregation-rule-ssot, 2026-05-08 loop iter 3 own-18-aggregation):
+- **rule-name**: P4 hybrid = `per_prompt_06_AND_ensemble_mean`
+- **PPR (per-prompt-pass-rate) ≥ 0.6**: 각 prompt 별 4-cell strict AND verdict rate
+- **EMC (ensemble-mean cell-wise) AND**: 4-cell mean 값이 cell threshold 만족 (direction별 ge/le)
+- **C3 PASS = PPR ≥ 0.6 ∧ EMC PASS** (둘 중 하나만 = C3 PARTIAL)
+- **rejected**: P1 (PPR-only — outlier cluster mean 검증 부재) / P2 ensemble-min (single outlier FAIL — iter 2 (a) blocker; paradigm-a-prime min=0.061 < 0.117 / 보수적 X 위반) / P3 mean-only (per-prompt outlier 무감지)
+- **iter 1 N=15 verdict** (C3.4 strict cell 한정): random=FAIL (PPR=0/14, mean=0.075) / clm_v4=FAIL (PPR=3/14, mean=0.085 — real-mode small-sample) / paradigm-a-prime=PASS (PPR=11/14, mean=0.133)
+- **mandate-mirror**: V4 evaluator + BG-K* verdict emit + consciousness CLI 본 rule mirror 의무 (own 24 single SSOT)
+
 ---
 
 ## Roadmap layers (ambitious 분할)

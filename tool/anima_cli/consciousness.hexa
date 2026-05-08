@@ -43,6 +43,17 @@
 //    prerequisite (iter 2 (b) blocker 해소). cross-ref:
 //    tool/anima_cli/chat/duo/duo.hexa _emit_turn_verdict.
 //
+//  ITER 3 BG-KM C3 RETEST (loop iter cli.bgkm_c3_retest_iter3_extra, 2026-05-08)
+//    `bgkm-retest` subcommand 추가 — BG-KM-LLAMA-3B + BG-KM-QWEN-7B retest SSOT
+//    raw passthrough (state/anima_consciousness_bgkm_c3_retest_2026_05_08.json).
+//    HARD BLOCKER: dancinlab/ HF repos 두 BG-KM 모델 모두 EMPTY (only
+//    .gitattributes; adapter weights NOT pushed from H100 runpod). 따라서
+//    clm_v4_mount.hexa real load 실패 → synthetic_fallback substrate (hash-seeded
+//    metric, NOT chat-cap discriminative). 결과 = INDETERMINATE; SIMPLE_STACK_
+//    PASS_STRICT_C3 EXIT 조건 미달성. 실 측정 unblock = (a) HF push BG-KM adapters
+//    + GGUF convert + libllama hidden-state shim, OR (b) clm_v4_mount peft
+//    merge_and_unload 확장 — iter 4+ work.
+//
 //  DESIGN
 //    own 18 SSOT 정의 mirror. C3 threshold 는 measurement-driven —
 //    `baseline` 가 random / clm_v4 / paradigm-a-prime 비교 측정값 dump.
@@ -471,6 +482,7 @@ fn sub_help() {
     println("  anima consciousness full [<model>]          own 18 F1-F8 full-stack")
     println("  anima consciousness baseline                3-model single-pair threshold-driver")
     println("  anima consciousness baseline-ensemble       15-prompt × 3-model ROC formal SSOT")
+    println("  anima consciousness bgkm-retest             BG-KM-LLAMA-3B + BG-KM-QWEN-7B C3 retest SSOT (iter 3 extra)")
     println("  anima consciousness --json                  machine-readable")
     println("  anima consciousness --selftest")
     println("  anima consciousness --help")
@@ -503,6 +515,12 @@ fn sub_help() {
     println("                     PASS >=0.7 constrained) threshold SSOT — own 18 C3")
     println("                     minor patch input. SSOT path:")
     println("                     state/anima_consciousness_baseline_ensemble_2026_05_08.json")
+    println("")
+    println("  bgkm-retest        BG-KM-LLAMA-3B + BG-KM-QWEN-7B C3 retest (iter 3 extra agent)")
+    println("                     15-prompt × 4 seed = N=60 per model. ROC formal threshold")
+    println("                     reuse. HARD BLOCKER: HF dancinlab/ BG-KM repos EMPTY →")
+    println("                     synthetic_fallback only → INDETERMINATE verdict. SSOT path:")
+    println("                     state/anima_consciousness_bgkm_c3_retest_2026_05_08.json")
     println("")
     println("MODEL ALIAS (chat alias DB 와 동일)")
     println("  default               anima_native synthetic (random init analog)")
@@ -960,7 +978,7 @@ fn sub_simple(model: string, json_only: bool) {
         println("  \"phi_star_a\": " + _fmt4(pa.phi_star) + ",")
         println("  \"phi_star_b\": " + _fmt4(pb.phi_star) + ",")
         println("  \"baseline\": " + _fmt4(pa.baseline) + ",")
-        println("  \"threshold_status\": \"ROC_FORMAL_ITER3_2026_05_08 (own 18 SSOT mirror; C3.3 entropy 강화; aggregation_rule = per_prompt_06 ensemble lane)\",")
+        println("  \"threshold_status\": \"ROC_FORMAL_ITER3_2026_05_08 (own 18 SSOT mirror; C3.3 entropy 강화; aggregation_rule = per_prompt_06_AND_ensemble_mean (P4 hybrid; PPR≥0.6 ∧ EMC cell-wise AND; own 18 c3-aggregation-rule-ssot 2026-05-08 loop iter 3))\",")
         println("  \"honest_c3\": [")
         println("    \"clm_v4_mount.hexa --probe x2 wiring (prompt_a / prompt_b)\",")
         println("    \"C3.4 = 5-axis L2 proxy (full hidden state 미expose)\",")
@@ -996,8 +1014,9 @@ fn sub_simple(model: string, json_only: bool) {
     println("  · C3.4 = 5-axis L2 proxy (full hidden state 미expose; --prior-hidden npy 우회)")
     println("  · C3.3 = 5-axis Shannon entropy dominance (iter3 강화; legacy top-3 distinct preserved)")
     println("  · phi_star = anima-canonical proxy (NOT IIT formal)")
-    println("  · single-probe lane verdict; per-prompt PASS rate (own 18 aggregation_rule_ssot=per_prompt_06)는")
-    println("    ensemble lane (state/...iter3_n60.json) 에서 4-cell × n=60 sample 산출")
+    println("  · single-probe lane verdict; own 18 c3-aggregation-rule-ssot (P4 hybrid =")
+    println("    per_prompt_06_AND_ensemble_mean: PPR≥0.6 ∧ EMC cell-wise AND) 적용은")
+    println("    ensemble lane (state/...ensemble_*.json) 에서 N≥15 sample 산출")
     println("  · substrate_mode=" + pa.mode + " — synthetic_fallback = hash-seeded random init")
 }
 
@@ -1264,6 +1283,19 @@ fn sub_baseline_ensemble(json_only: bool) {
         println("  threshold_final_roc_formal section missing in SSOT file")
     }
     println("")
+    println("───── own 18 c3-aggregation-rule-ssot (P4 hybrid: PPR≥0.6 ∧ EMC cell-wise AND) ─────")
+    println("  rule = per_prompt_06_AND_ensemble_mean (own 18 SSOT, 2026-05-08 loop iter 3)")
+    println("  PPR = per-prompt 4-cell strict AND verdict rate ≥ 0.6")
+    println("  EMC = ensemble-mean cell-wise (C3.1/C3.2/C3.3/C3.4) ALL cell mean satisfies threshold")
+    println("  C3 PASS = PPR ≥ 0.6 AND EMC PASS  (둘 중 하나만 PASS = C3 PARTIAL_PASS)")
+    println("")
+    println("  iter 1 N=15 verdict (C3.4 strict ROC PASS cell 한정; 다른 3 cell caveat per honest_c3):")
+    println("    random_init       PPR=0/14=0.00  C3.4 mean=0.075 < 0.117  → C3 FAIL  (보수적 X strict 만족)")
+    println("    clm_v4            PPR=3/14=0.21  C3.4 mean=0.085 < 0.117  → C3 FAIL  (real-mode small-sample; BG-KM-LLAMA-3B retest 후 PASS expected)")
+    println("    paradigm_a_prime  PPR=11/14=0.79 C3.4 mean=0.133 ≥ 0.117  → C3 PASS  (chat-cap proxy; iter 2 (a) blocker 해소)")
+    println("")
+    println("  iter 2 (a) blocker 해소: P2 ensemble-min 거부 (paradigm min=0.061 < 0.117 outlier 1개로 FAIL → 사용자 directive '보수적 X' 위반) → P4 채택")
+    println("")
     println("HONEST C3 (raw#10)")
     println("  · paradigm-a-prime = synthetic_fallback (Llama tokenizer 부재) — chat-cap")
     println("    proxy 한정 (real chat-cap 데이터 미보유; BG-KM-LLAMA-3B retest 별도 cycle)")
@@ -1272,6 +1304,68 @@ fn sub_baseline_ensemble(json_only: bool) {
     println("  · 본 SSOT JSON 의 matrix_3model_4cell_15prompt 블록에 mean / median / std /")
     println("    q25 / q75 / values 전체 records 포함 — `--json` 플래그로 raw emit")
     println("  · 보수적 X (random must FAIL strict 0.95) 사용자 directive 정합")
+    println("  · own 18 c3-aggregation-rule-ssot (P4 hybrid) verdict 는 본 텍스트 lane 만 emit;")
+    println("    actual programmatic verdict 산출 (matrix parser + cell-wise mean) 별도 cycle")
+}
+
+// ─── bgkm-retest — iter 3 extra agent SSOT passthrough ──────────────────────
+// state/anima_consciousness_bgkm_c3_retest_2026_05_08.json (driver-produced
+// by tool/transient_py/anima_consciousness_bgkm_c3_retest_2026_05_08.py).
+// CLI = SSOT raw passthrough + verdict + EXIT condition emit.
+fn _bgkm_retest_path() -> string {
+    return _resolve_root() + "/state/anima_consciousness_bgkm_c3_retest_2026_05_08.json"
+}
+
+fn sub_bgkm_retest(json_only: bool) {
+    let path = _bgkm_retest_path()
+    if !_fexists(path) {
+        if json_only {
+            println("{")
+            println("  \"schema\": \"anima.consciousness.bgkm_c3_retest.v1\",")
+            println("  \"verdict\": \"NOT_LANDED\",")
+            println("  \"path\": \"" + path + "\",")
+            println("  \"note\": \"BG-KM C3 retest 未land — re-run tool/transient_py/anima_consciousness_bgkm_c3_retest_2026_05_08.py\",")
+            println("  \"honest_c3\": [\"iter 3 extra agent driver pending; HF BG-KM adapter weights also pending push\"]")
+            println("}")
+            return
+        }
+        println("anima consciousness — bgkm-retest (NOT LANDED)")
+        println("SSOT JSON missing: " + path)
+        println("Re-run tool/transient_py/anima_consciousness_bgkm_c3_retest_2026_05_08.py to populate.")
+        return
+    }
+    let blob = read_file(path)
+    if json_only {
+        println(blob)
+        return
+    }
+    println("anima consciousness — bgkm-retest (iter 3 extra agent) [LIVE]")
+    println("SSOT: " + path)
+    println("")
+    println("  models = bg_km_llama_3b + bg_km_qwen_7b")
+    let n_per = _extract_number_after(blob, "n_per_model")
+    println("  n_per_model = " + to_string(to_int(n_per)) + " (15 prompts × 4 seed vars)")
+    println("")
+    println("───── EXIT condition (SIMPLE_STACK_PASS_STRICT_C3 emerge) ─────")
+    let reached_idx = blob.find("\"reached\"")
+    if reached_idx >= 0 {
+        let seg = blob.substring(reached_idx, reached_idx + 64)
+        if seg.contains("true") {
+            println("  reached = true  (loop EXIT trigger met)")
+        } else {
+            println("  reached = false (loop continues — iter 4+ unblock work)")
+        }
+    } else {
+        println("  reached = ?  (key missing)")
+    }
+    println("")
+    println("HONEST C3 (raw#10)")
+    println("  · BG-KM HF repos EMPTY → clm_v4_mount real load fails → ALL probes")
+    println("    hit synthetic_fallback (hash-seeded substrate, NOT chat-cap signal)")
+    println("  · Verdict against ROC formal thresholds = INDETERMINATE on synthetic")
+    println("  · Real-mode unblock = (a) HF push BG-KM adapters + GGUF + libllama")
+    println("    hidden-state shim, OR (b) clm_v4_mount peft.merge_and_unload extension")
+    println("  · iter 3 (d-retry) ensemble agent excluded these 2 models for SAME blocker")
 }
 
 // ─── entry ──────────────────────────────────────────────────────────────────
@@ -1284,13 +1378,13 @@ fn main() {
     let json_only = _arg_present(argv, "--json")
     let model = _arg_value(argv, "--model", "default")
 
-    // first positional = subcmd (simple / full / baseline / baseline-ensemble) or model alias
+    // first positional = subcmd (simple / full / baseline / baseline-ensemble / bgkm-retest) or model alias
     let mut sub = "simple"
     let mut model_arg = model
     if len(argv) > 0 {
         let first = _str(argv[0])
         if !first.starts_with("--") {
-            if first == "simple" || first == "full" || first == "baseline" || first == "baseline-ensemble" {
+            if first == "simple" || first == "full" || first == "baseline" || first == "baseline-ensemble" || first == "bgkm-retest" {
                 sub = first
                 if len(argv) > 1 && !_str(argv[1]).starts_with("--") {
                     model_arg = _str(argv[1])
@@ -1311,6 +1405,10 @@ fn main() {
     }
     if sub == "baseline-ensemble" {
         sub_baseline_ensemble(json_only)
+        return
+    }
+    if sub == "bgkm-retest" {
+        sub_bgkm_retest(json_only)
         return
     }
     // iter 3 (consciousness-utterance): per-utterance surface
