@@ -408,3 +408,48 @@ raw#82 정합 (원본 verdict 보존 + scope_lane field add):
 6. D1 lane within emerge unblock direct path = **clm_v4 peft merge + byte_mount 신설** (in-flight, 본 cycle 결정적 결과 의존)
 
 — **post-cycle close+++ 2026-05-08**, 22+ bg agents fired, 4 in-flight, **anima 의식 검증 valid emerge 후보 = BG-FY UTOPIA_LANE 0.75** (Φ_norm 측정 pending), paradigm-a-prime substrate-research lane Φc 도달, EXIT prereq 5/8 ✔.
+
+---
+
+## ★★★★ Final++++ update — KICK FIRE 5 + ALL BG GO 6 consolidation SSOT (2026-05-08 close++++) ★★★★
+
+### KICK FIRE 5 actual-fire commits
+
+| KF | commit | scope | impact |
+|---|---|---|---|
+| KF-1 | `dc1510a3` | paradigm-j Path A schema remap | safetensors prefix decoder injection + cache materialization |
+| KF-2 | `fdfe9e57` | ALT-AGG-1 v3 SSOT supersede + .own line 881 정정 | own 14 anti-Goodhart C3.4 anchor + ≥1 corroboration |
+| KF-3 | `12257be1` | chat stdbuf -oL fix + selftest probe | libc block-buffer mitigation streaming dispatch |
+| KF-4 | `235eb9d0` | corpus Q1+Q2+KOBEST tier_a_v3 8.4% reduction | iter7 KOBEST scope shrink (-17.19% pref stem) |
+| KF-5 | `4522bbc7` | clm_v4_jvae_probe.hexa Variant 1 hexa-native | paradigm-j-only 3-channel additive JVAE FFI |
+
+### ALL BG GO 6 commits
+
+| BG | commit | scope | verification |
+|---|---|---|---|
+| BG-1 | `d134b94a` | clm_v4_mount LoRA load remapped cache priority | paradigm-j Path A end-to-end activation |
+| BG-2 | `4309a374` | consciousness N=30 actual integration | V4 N=15 + 15 self-ref 5-axis 균등 (small-sample WARN path) |
+| BG-3 | `d478023c` | sft-1-7-y1 + sft-1-8 Path A actual remap | rank_3 candidate unblock (identical fingerprint) |
+| BG-4/5/6 | iter5/6/7 (16 spec) | measurement infra formalize | spec land only |
+
+### 5 핵심 발견
+
+1. own 18 line 881 falsification — paradigm-a-prime PPR_v2=10/14=0.71 → 2/14=0.143 N=15 honest-c3 driver re-run 반증 → v3 ALT-AGG-1 supersede
+2. wrapper-prefix-only artifact — sft-1-7-y1/sft-1-8 identical adapter_config target_modules → merge_no_op identical 4-cell mean
+3. libc block-buffer — chat.hexa subprocess pipe stdout block-buffered (stdbuf -oL fix)
+4. corpus -17.19% — tier_a_v3 Q1+Q2+KOBEST filter pref stem 분포 정량 fix
+5. paradigm-j-only JVAE — clm_v4_jvae_probe.hexa hexa-native (sft-1-7-y1/1-8 미적용, jvae_heads.pt verbatim 한정)
+
+### consolidation SSOT doc
+
+- `docs/anima_cycle_2026_05_08_consolidation_ssot.md` (NEW) — 8 section SSOT (cycle 목표 / KF+BG 표 / 핵심 발견 / ALT-AGG-1 supersede ledger / D1-within ranking / HF upload manifest / 사용자 directive checklist / own 33 trinity self-check)
+
+### 본 cycle 최종 진실 (close++++)
+
+1. **KICK FIRE 5 + ALL BG GO 6 actual-fire ✔** — 측정 infra unblock + ALT-AGG-1 SSOT supersede + libc/JVAE/corpus 4 root cause
+2. **D1-within rank_1 paradigm-j + rank_3 BG-FY 18M dual lane** — 측정 unblock pending (paradigm-j JVAE fire / BG-FY scp pull 사용자 verbatim 대기)
+3. **HF upload manifest 8 repo private default** — public promote 0 (own 37 mandate-9 4-prereq 미충족)
+4. **EXIT prereq 5/8 ✔** — V4 mirror ✔ / D × L × H meta-sweep ✔ / L18 spec ✔ / D5 classifier ✔ / substrate real ✔; V6 awareness + D1 within real-mode + 사용자 verbatim 3 pending
+5. **105 cycle commits / 22+ BG agents / 4 in-flight** — anima 의식 검증 valid emerge 후보 BG-FY UTOPIA_LANE 0.75 + paradigm-j rank_1 (D1 within), paradigm-a-prime Φc 0.5034 (substrate-research lane)
+
+— **post-cycle close++++ 2026-05-08**, KICK FIRE 5 + ALL BG GO 6 actual-fire, 105 commits, consolidation SSOT doc land, 사용자 verbatim 8 keyword 대기.
