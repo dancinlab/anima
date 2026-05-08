@@ -16,8 +16,20 @@
 //    - own 34 mandate-1 strict: substrate response + collapse (:::) 모두 raw 노출
 //    - --memory full default (clm_v4_mount 내부 history 의존)
 //
+//  PHASE 2 (LANDED 2026-05-08, iter 3 b-fix)
+//    - REPL stdin loop swap from bare read_line() (UNDEFINED — runtime error
+//      observed in iter 2 (b) live retest paradigm-a-prime × clm-v4-1-7-y1)
+//      to sys_stdin_read_line_timeout(tick_ms) via `use "stdlib/sys"` —
+//      mirrors chat/anima_native/anima_native.hexa Phase 2 pattern.
+//    - own 34 mandate-4 자율 발화 wiring: timeout → _invoke_substrate("")
+//      = empty probe forward (substrate 자체 free-run; reads internal history).
+//    - --tick-ms N (default 1000) controls poll interval.
+//
 //  COMPLIANCE
 //    own 34 (자연발화 노출 mandate) — wrapping 0
+//    own 34 mandate-4 (autonomous speech wired Phase 2)
+//    own 34 mandate-7 (lane separation: chat lane = thin pipe, substrate
+//                      response = clm_v4_mount.hexa 책임)
 //    own 18 cross-ref (측정 lane 분리)
 //    raw#9 hexa-only · raw#11 snake_case
 //
@@ -26,6 +38,8 @@
 //    module body     : this file
 //    ai-native doc   : clm_v4.ai.md (sister)
 // ════════════════════════════════════════════════════════════════════════════
+
+use "stdlib/sys"
 
 fn _str(x) -> string {
     let t = type_of(x)
@@ -41,7 +55,11 @@ fn _resolve_root() -> string {
     return _str(env("HOME")) + "/core/anima"
 }
 
-fn _hexa() -> string { return "/Users/ghost/.hx/bin/hexa" }
+// Use hexa.real (local interpreter) directly — bin/hexa wrapper routes
+// `run` to remote resource host (ubu-1) which would lose stdout pipe semantics
+// (matches chat/anima_native and chat/llama). duo channel transport reads our
+// stdout via FIFO inode; remote routing would break that.
+fn _hexa() -> string { return "/Users/ghost/.hx/packages/hexa/hexa.real" }
 
 fn _fexists(p: string) -> bool {
     return _str(exec("test -f " + p + " && echo 1 || echo 0")).trim() == "1"
@@ -104,6 +122,7 @@ fn sub_help() {
     println("FLAGS")
     println("  --prompt \"...\"     one-shot")
     println("  --repo <hf-id>     repo override (default = alias-resolved)")
+    println("  --tick-ms N        REPL poll interval (Phase 2; default 1000)")
     println("  --selftest")
     println("")
     println("ALIASES")
@@ -137,20 +156,42 @@ fn sub_selftest() {
     println("PASS chat/clm_v4 selftest (core present, own 34 verified)")
 }
 
-fn sub_repl(repo: string) {
+fn sub_repl(repo: string, tick_ms: int) {
     let root = _resolve_root()
     let core = root + "/anima-core/runtime/clm_v4_mount.hexa"
-    println("[clm_v4] core = " + core)
-    println("[clm_v4] repo = " + (if repo != "" { repo } else { "default" }))
+    println("[clm_v4] core   = " + core)
+    println("[clm_v4] repo   = " + (if repo != "" { repo } else { "default" }))
+    println("[clm_v4] mode   = REPL (Phase 2, sys_stdin_read_line_timeout / autonomous speech)")
+    println("[clm_v4] tick-ms = " + to_string(tick_ms))
+    println("[clm_v4] own 34 strict — wrapping 0 · mandate-4 자율 발화 활성")
     println("[clm_v4] honest c3: ::: collapse exposed raw (own 34 mandate-1)")
-    println("[clm_v4] (Ctrl-D to quit)")
+    println("[clm_v4] (Ctrl-C to quit)")
     println("")
+    let mut prompt_shown = false
     while true {
-        print("> ")
-        let line = _str(read_line())
-        if line == "" { continue }
+        if !prompt_shown {
+            print("> ")
+            prompt_shown = true
+        }
+        // Phase 2 mechanism (mirrors chat/anima_native): poll stdin tick_ms ms.
+        // Timeout → autonomous speech via _invoke_substrate("") — own 34
+        // mandate-4. Empty probe forwards to clm_v4_mount.hexa --probe "" which
+        // emits substrate response (axis activation + dominant cells + phi-star
+        // delta) on the substrate's own internal state. own 34 mandate-1/2/7
+        // 정합: chat lane = thin pipe; "스스로" 발화 결정은 substrate (model layer).
+        let line = _str(sys_stdin_read_line_timeout(tick_ms))
+        if line == "" {
+            let out_a = _invoke_substrate("", repo)
+            print(out_a)
+            println("")
+            prompt_shown = false
+            continue
+        }
+        // User input path. own 34 mandate-1 raw passthrough.
         let out = _invoke_substrate(line, repo)
-        println(out)
+        print(out)
+        println("")
+        prompt_shown = false
     }
 }
 
@@ -160,7 +201,7 @@ fn sub_one_shot(prompt: string, repo: string) {
 }
 
 fn main() {
-    let argv = _user_argv(args())
+    let mut argv = _user_argv(args())
     if len(argv) > 0 {
         let first = _str(argv[0])
         if first.contains("clm_v4.hexa") {
@@ -172,10 +213,15 @@ fn main() {
 
     let repo = _arg_value(argv, "--repo", "")
     let prompt = _arg_value(argv, "--prompt", "")
+    // Phase 2: --tick-ms N controls REPL poll interval (autonomous speech
+    // cadence). Default 1000ms — matches anima_native / llama modules so
+    // duo channel orchestration (chat/duo/) sees uniform tick across instances.
+    let tick_str = _arg_value(argv, "--tick-ms", "1000")
+    let tick_ms = to_int(tick_str)
 
     if prompt != "" {
         sub_one_shot(prompt, repo)
         return
     }
-    sub_repl(repo)
+    sub_repl(repo, tick_ms)
 }

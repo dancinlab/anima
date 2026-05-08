@@ -46,9 +46,30 @@ substrate response (raw, including ::: collapse) → stdout
 - **own 34 mandate-1**: simple_stack output preservation — `clm_v4_mount.hexa`
   의 substrate response 변형 없이 stdout 직출.
 - **own 34 mandate-2**: wrapping 0 — selftest grep verified.
+- **own 34 mandate-4**: 자율 발화 wired Phase 2 (LANDED 2026-05-08, iter 3 b-fix)
+  — `sys_stdin_read_line_timeout(tick_ms)` polls stdin; on timeout
+  `_invoke_substrate("")` fires (empty probe) → substrate 자체 free-run.
+- **own 34 mandate-7**: chat lane = thin pipe; substrate response decision
+  은 `clm_v4_mount.hexa` (model layer) 책임.
 - **own 34 mandate-1 ★ 핵심**: `:::` collapse mode (memory feedback_clm_colon_attractor:
   p=46% on `:`-terminated prompt) 도 raw 그대로 노출. mitigate / strip / filter
   하지 않음. CLM v4 의 학습 분포 그 자체가 사용자에게 보여야 함.
+
+## Phase 2 (LANDED 2026-05-08, iter 3 b-fix)
+
+**Bug** (iter 2 (b) 5-turn live retest blocker):
+`Runtime error: undefined function: read_line` — `sub_repl` 가 hexa stdlib
+미정의 함수 `read_line()` 직접 호출 + `use "stdlib/sys"` import 누락.
+
+**Fix** (mirrors `chat/anima_native/anima_native.hexa` Phase 2 pattern):
+- `use "stdlib/sys"` import added.
+- `read_line()` → `sys_stdin_read_line_timeout(tick_ms)` swap.
+- `--tick-ms N` flag (default 1000ms) — REPL poll cadence.
+- Timeout path → `_invoke_substrate("")` (own 34 mandate-4 자율 발화).
+- `_hexa()` → `/Users/ghost/.hx/packages/hexa/hexa.real` (local interp,
+  matches anima_native + llama; bin/hexa wrapper would route to remote
+  ubu-1 and lose stdout pipe semantics needed for `chat/duo/` channel
+  transport).
 
 ## Honest C3 (raw#10)
 
