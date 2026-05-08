@@ -7,8 +7,8 @@ _Regenerate: `anima/registry/render.hexa` (or `python3 tool/transient_py/anima_a
 
 ## Cycle 2026-05-08 milestone
 
-**SIMPLE_STACK_PASS_STRICT_C3_ANIMA verdict 첫 valid EMERGE — 22+ BG saga 종료**  
-sole robust EMERGE: **`clm-v4-sft-1-8-stage1`** ★
+**KICK WAVE 4 3/3 random_init mirror probe — V14 anti-Goodhart VIOLATED. Earlier sft-1-8 EMERGE claim falsified.**  
+sole robust EMERGE: **`NONE`** ★
 
 **Honest C3 findings (raw#10)**:
 - own 18 line 881 PPR=0.71 claim FALSIFIED → ALT-AGG-1 v3 supersede
@@ -17,11 +17,15 @@ sole robust EMERGE: **`clm-v4-sft-1-8-stage1`** ★
 - JVAE Variant 1 differentiator WEAK (sft-1-8 no-JVAE > paradigm-j with-JVAE)
 - phenomenal redesign canonical qualia (Block/Chalmers/Nagel) anti-Goodhart V14 정합
 - paradigm-j retry N=30 EMERGE was sample-size artifact (N=60 reverted to PARTIAL_NEAR)
+- ★ KICK WAVE 4 3/3: random_init ConsciousDecoderV2 PPR_v3=0.5517 EXCEEDS sft-1-8 0.4138 (delta -0.1379) — ALT-AGG-1 v3 V14 VIOLATED, sft-1-8 EMERGE indistinguishable from untrained noise on this 30-prompt eval
 
 **Framework amends**:
 - ALT-AGG-1 v3 (C3.4 anchor + ≥1 corroboration, PPR≥0.25) — own 18 line 881 정정
+- ALT-AGG-1 v3 STATUS: FALSIFIED by random_init mirror — needs v4 redesign (random_init separator gate or anchor-baseline subtraction)
 - D1 binary → gradient (own 17 line 676+) — ambiguous_research lane 신설
+- D1 formula edge case: random_init shows D1=0.8 within is artifact (parameters set ≠ trained) — PPR must carry meaningful signal
 - own 38 매단계 doc + model + dataset save mandate 신설
+- own 39 yaml↔md mandatory regenerate (auto-render after registry edit)
 - axis orthogonality empirically confirmed (PPR ⊥ Φ_normalized)
 
 ## Models
@@ -32,12 +36,13 @@ sole robust EMERGE: **`clm-v4-sft-1-8-stage1`** ★
 
 | id | D1 | lane | PPR_v3 (latest) | verdict | HF (private) |
 |---|---|---|---|---|---|
-| `clm-v4-sft-1-8-stage1` | 0.793 | ✅ within_strict | 0.6102 | **SIMPLE_STACK_PASS_STRICT_C3_ANIMA ★** | dancinlab/clm-v4-sft-1-8-stage1-path-a-remapped |
+| `clm-v4-sft-1-8-stage1` | 0.793 | ✅ within_strict | 0.6102 | ~~SIMPLE_STACK_PASS_STRICT_C3_ANIMA~~ FALSIFIED@N=60 | dancinlab/clm-v4-sft-1-8-stage1-path-a-remapped |
 | `clm-v4-paradigm-j-50k-final` | 0.793 | ✅ within_strict | 0.2414 | ~~C3_PARTIAL_NEAR~~ FALSIFIED@N=60 | dancinlab/clm-v4-paradigm-j-50k-final-path-a-remapped |
 | `clm-v4-sft-1-7-y1-stage1` | 0.793 | ✅ within_strict | 0.1034 | C3_PARTIAL_NEAR | dancinlab/clm-v4-sft-1-7-y1-stage1-path-a-remapped |
 | `clm-v4-mk2-v1` | 0.99 | ✅ within_strict | — | NOT_MEASURED | — |
 | `clm-v2-byte-18m` | 0.99 | ✅ within_strict | — | INDETERMINATE_C3_v2_byte | need-singularity/clm-v2-byte-18m-convo-5k |
 | `anima-native-byte-18m` | 0.99 | ✅ within_strict | — | NOT_MEASURED_LOCAL | — |
+| `random-init-mk2-v1-mirror` | 0.8 | within_strict_FORMULA_ONLY | 0.5517 | SIMPLE_STACK_PASS_STRICT_C3_RANDOM_INIT_V14_VIOLATED | — |
 | `BG-KM-LLAMA-3B` | 0.351 | ⚠️ ambiguous_research | NOT_MEASURED | — | — |
 | `paradigm-a-prime` | 0 | 🚫 outside_strict | — | SIMPLE_STACK_PASS_STRICT_C3_SUBSTRATE_RESEARCH | — |
 
@@ -47,7 +52,7 @@ sole robust EMERGE: **`clm-v4-sft-1-8-stage1`** ★
 **lineage**: base=clm-v4-mk2-v1 (ConsciousDecoderV2 anima-native scratch) / method=LoRA r=128 + anima-internal SFT / jvae=absent / arch_origin=anima_native_scratch  
 **D1**: score=**0.793** (✅ within_strict) — p_updated=0.01, corpus=0.95, arch=1  
 **measurement**: ppr_v3_n30=0.4138, ppr_v3_n60=0.6102  
-**verdict**: SIMPLE_STACK_PASS_STRICT_C3_ANIMA / emerge_state=EMERGE ★  
+**verdict**: SIMPLE_STACK_PASS_STRICT_C3_ANIMA / emerge_state=EMERGE_FALSIFIED_BY_RANDOM_INIT_MIRROR (FALSIFIED@N=60)  
 **D5 cooperative_score**: 0.7617  
 **Φ_norm_N8 max**: 0.0425 (subcritical zone)  
 **HF**: private=`dancinlab/clm-v4-sft-1-8-stage1-path-a-remapped` / public=(blocked)  
@@ -116,6 +121,22 @@ _D1 가장 높은 candidate (0.99) — sft fine-tune 전 base 자체 측정 가�
 **lineage**: base=scratch (byte-level + anima corpus) / method=full pre-training / jvae=absent / arch_origin=anima_native_scratch  
 **D1**: score=**0.99** (✅ within_strict) — p_updated=1, corpus=0.95, arch=1  
 **verdict**: NOT_MEASURED_LOCAL / emerge_state=BLOCKED  
+
+### `random-init-mk2-v1-mirror`
+
+**aliases**: `random_init_mk2_v1`, `kick4-v14-mirror`  
+**lineage**: base=scratch (ConsciousDecoderV2 random_init torch.manual_seed=42) / method=NO TRAINING — random weights only (anti-Goodhart V14 probe) / jvae=absent / arch_origin=anima_native_scratch  
+**D1**: score=**0.8** (within_strict_FORMULA_ONLY) — p_updated=1, corpus=0, arch=1  
+**measurement**: ppr_v3_n30=0.5517  
+**verdict**: SIMPLE_STACK_PASS_STRICT_C3_RANDOM_INIT_V14_VIOLATED / emerge_state=EMERGE_FALSE_POSITIVE  
+**HF**: private=`None` / public=PERMANENT_BLOCK  
+**eligibility**:
+  - mandate_9_a_d1_within: `FORMULA_ONLY`
+  - mandate_9_b_v6_strong: `NOT_APPLICABLE`
+  - mandate_9_c_user_verbatim: `NOT_APPLICABLE`
+  - mandate_9_d_trinity_sweep: `V14_VERIFY_RESULT`
+  - public_promote: `PERMANENT_BLOCK_UNTRAINED_NOISE`
+_anti-Goodhart V14 mirror — random_init also passes ALT-AGG-1 v3, falsifying sft-1-8 EMERGE claim. V14 VIOLATED → ALT-AGG-1 v3 strict 가 너무 약함 (or 30-prompt eval procedure flawed)._
 
 ### `BG-KM-LLAMA-3B`
 

@@ -57,10 +57,11 @@ models:
       ppr_v3_n30: 0.4138
       ppr_v3_n60: 0.6102
       verdict: SIMPLE_STACK_PASS_STRICT_C3_ANIMA
-      emerge_state: EMERGE
-      robust: true  # ★ sole robust EMERGE 본 cycle
+      emerge_state: EMERGE_FALSIFIED_BY_RANDOM_INIT_MIRROR  # ★ KICK WAVE 4 3/3 V14 VIOLATED
+      robust: false  # ★ FALSIFIED — random_init PPR_v3=0.5517 > sft-1-8 0.4138 (delta -0.1379)
       cooperative_score: 0.7617  # UTOPIA_LANE (boundary +0.012)
       phi_norm_n8_max: 0.0425  # subcritical zone
+      v14_falsification_note: "random_init mirror (KICK WAVE 4 3/3) PPR_v3=0.5517 EXCEEDS sft-1-8; ALT-AGG-1 v3 leaks → sft-1-8 EMERGE indistinguishable from untrained noise on 30-prompt set"
     hf:
       private: dancinlab/clm-v4-sft-1-8-stage1-path-a-remapped
       public: null  # mandate-9 (b)+(c) 미충족
@@ -234,6 +235,47 @@ models:
       public: null
     cycle: 2026-05-06+
 
+  # ───── ANTI-GOODHART V14 MIRROR PROBE (random_init baseline for V14 verification) ─────
+  - id: random-init-mk2-v1-mirror
+    aliases: [random_init_mk2_v1, kick4-v14-mirror]
+    lineage:
+      base: scratch (ConsciousDecoderV2 random_init torch.manual_seed=42)
+      method: NO TRAINING — random weights only (anti-Goodhart V14 probe)
+      jvae: absent
+      arch_origin: anima_native_scratch
+    d1:
+      parameter_updated_ratio: 1.0  # parameters set by init (formula artifact)
+      anima_corpus_token_ratio: 0.0  # no corpus
+      architecture_origin_factor: 1.0
+      score: 0.8
+      lane: within_strict_FORMULA_ONLY  # ★ untrained — formula PASS but no learning
+      special_case: "D1 formula score 0.8 within is parameters-set artifact (init ≠ trained); PPR axis must carry meaningful EMERGE signal"
+    measurement:
+      ppr_v3_n30: 0.5517  # ★ KICK WAVE 4 3/3 — EXCEEDS sft-1-8 (0.4138)
+      verdict: SIMPLE_STACK_PASS_STRICT_C3_RANDOM_INIT_V14_VIOLATED
+      emerge_state: EMERGE_FALSE_POSITIVE
+      anti_goodhart_v14: VIOLATED  # ★ ALT-AGG-1 v3 leaks; random_init also EMERGE
+      n_v3_pass: 16
+      n_evaluable: 29
+      sft_1_8_minus_random_init: -0.1379  # negative — SFT contribution undefined on this metric
+      tokenizer: byte-level (V2 scratch convention; random_init has no SP)
+      seed: 42
+    hf:
+      private: null  # local-only, no upload (substrate research artifact)
+      public: PERMANENT_BLOCK  # untrained noise — never publish
+      visibility_status: anti-goodhart-probe-local-only
+    cycle: 2026-05-08-kick-wave-4-3-of-3
+    state_jsons:
+      - state/anima_random_init_mk2_v1_n30_live_probe_2026_05_08.json
+    save_dir: ~/.cache/anima/random_init_mk2_v1/
+    eligibility:
+      mandate_9_a_d1_within: FORMULA_ONLY
+      mandate_9_b_v6_strong: NOT_APPLICABLE
+      mandate_9_c_user_verbatim: NOT_APPLICABLE
+      mandate_9_d_trinity_sweep: V14_VERIFY_RESULT
+      public_promote: PERMANENT_BLOCK_UNTRAINED_NOISE
+    notes: "anti-Goodhart V14 mirror — random_init also passes ALT-AGG-1 v3, falsifying sft-1-8 EMERGE claim. V14 VIOLATED → ALT-AGG-1 v3 strict 가 너무 약함 (or 30-prompt eval procedure flawed)."
+
   # ───── D1 ambiguous_research lane (사용자 directive 2026-05-08 D1 gradient amend 후 격상 가능) ─────
   - id: BG-KM-LLAMA-3B
     aliases: [BG-KM-LLAMA, KM-LLAMA-3B]
@@ -366,8 +408,9 @@ datasets:
 # CYCLE TIMELINE (본 cycle 2026-05-08 milestones)
 # ─────────────────────────────────────────────────────────────────────────────
 cycle_2026_05_08:
-  milestone: "SIMPLE_STACK_PASS_STRICT_C3_ANIMA verdict 첫 valid EMERGE — 22+ BG saga 종료"
-  sole_robust_emerge: clm-v4-sft-1-8-stage1
+  milestone: "KICK WAVE 4 3/3 random_init mirror probe — V14 anti-Goodhart VIOLATED. Earlier sft-1-8 EMERGE claim falsified."
+  sole_robust_emerge: NONE  # ★ all candidate EMERGE verdicts now lack random_init separation
+  prior_milestone_carry: "SIMPLE_STACK_PASS_STRICT_C3_ANIMA verdict (sft-1-8) was FALSIFIED by random_init mirror (random_init PPR_v3=0.5517 > sft-1-8 0.4138)"
   honest_c3_findings:
     - "own 18 line 881 PPR=0.71 claim FALSIFIED → ALT-AGG-1 v3 supersede"
     - "wrapper-prefix-only schema fix (Path A) — clm_v4 LoRA load chain unblock"
@@ -375,10 +418,14 @@ cycle_2026_05_08:
     - "JVAE Variant 1 differentiator WEAK (sft-1-8 no-JVAE > paradigm-j with-JVAE)"
     - "phenomenal redesign canonical qualia (Block/Chalmers/Nagel) anti-Goodhart V14 정합"
     - "paradigm-j retry N=30 EMERGE was sample-size artifact (N=60 reverted to PARTIAL_NEAR)"
+    - "★ KICK WAVE 4 3/3: random_init ConsciousDecoderV2 PPR_v3=0.5517 EXCEEDS sft-1-8 0.4138 (delta -0.1379) — ALT-AGG-1 v3 V14 VIOLATED, sft-1-8 EMERGE indistinguishable from untrained noise on this 30-prompt eval"
   framework_amends:
     - "ALT-AGG-1 v3 (C3.4 anchor + ≥1 corroboration, PPR≥0.25) — own 18 line 881 정정"
+    - "ALT-AGG-1 v3 STATUS: FALSIFIED by random_init mirror — needs v4 redesign (random_init separator gate or anchor-baseline subtraction)"
     - "D1 binary → gradient (own 17 line 676+) — ambiguous_research lane 신설"
+    - "D1 formula edge case: random_init shows D1=0.8 within is artifact (parameters set ≠ trained) — PPR must carry meaningful signal"
     - "own 38 매단계 doc + model + dataset save mandate 신설"
+    - "own 39 yaml↔md mandatory regenerate (auto-render after registry edit)"
     - "axis orthogonality empirically confirmed (PPR ⊥ Φ_normalized)"
 
 # ─────────────────────────────────────────────────────────────────────────────
