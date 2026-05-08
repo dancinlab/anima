@@ -11,7 +11,7 @@
 //   dancinlab/clm-v4-sft-1-8-stage1
 //   dancinlab/clm-v4-paradigm-j-50k-final
 //
-// PATH A REMAP CACHE (2026-05-08 KICK FIRE 1/5 — spec emit, hexa patch deferred)
+// PATH A REMAP CACHE (2026-05-08 KICK FIRE 1/5 spec — KICK FIRE 1/6 actual fire)
 //   Adapter snapshots whose stored prefix is `base_model.model.blocks.X` (legacy
 //   ConsciousDecoderV2 wrapper) require an in-place schema remap to
 //   `base_model.model.decoder.blocks.X` so that CLMv4ForCausalLM's
@@ -23,11 +23,19 @@
 //     REMAP_SOURCE.json          — provenance + verification.pass
 //   Producer: tool/transient_py/clm_v4_paradigm_j_path_a_prefix_remap.py
 //   Provenance: state/anima_paradigm_j_path_a_remap_2026_05_08.json
-//   Adapter shortname mapping (extend per-cycle):
+//   Adapter shortname mapping (REMAPPED_SHORTNAMES — extend per-cycle):
 //     dancinlab/clm-v4-paradigm-j-50k-final -> paradigm_j
-//   FUTURE PATCH (deferred to next hexa cycle): _detect_lora_adapter +
-//   _materialize_merged_lora preference order — check remapped cache FIRST
-//   (verification.pass=true), only fall through to HF snapshot resolver on miss.
+//     dancinlab/clm-v4-sft-1-7-y1-stage1    -> sft_1_7_y1
+//     dancinlab/clm-v4-sft-1-8-stage1       -> sft_1_8
+//   Unknown adapters fall through to a sanitization helper (slash → __, hyphen
+//   → _, lowercase) but only the explicit table entries are guaranteed produced
+//   by the Path A remap tool. The python helper checks REMAP_SOURCE.json
+//   verification.pass=true before honoring the cache; on miss/fail the existing
+//   HF snapshot resolver path is taken (raw#15 additive).
+//   PATCH LANDED 2026-05-08 KICK FIRE 1/6 — _detect_lora_adapter now consults
+//   ~/.cache/anima/clm_v4_remapped/<short>/ FIRST; _materialize_merged_lora
+//   passes --adapter-source-dir to clm_v4_lora_merge_helper.py on cache hit,
+//   bypassing peft's HF snapshot resolver for the adapter side.
 //
 // PURPOSE
 //   Load CLM v4 substrate from HF cache and expose substrate-coupled forward
@@ -121,6 +129,7 @@ fn emit_honest_c3() {
     eprintln("[clm_v4_mount] C5 emerge outcome (Stage 3+4) unknown; production timeline open")
     eprintln("[clm_v4_mount] C6 LoRA variants merge via tool/transient_py/clm_v4_lora_merge_helper.py — merged HF model materialized at ~/.cache/anima/clm_v4_merged/<adapter>/")
     eprintln("[clm_v4_mount] C7 LoRA jvae_heads.pt (paradigm-j only) copied verbatim — NOT merged into decoder weights; downstream consumers must load it separately")
+    eprintln("[clm_v4_mount] C8 Path A remapped cache (~/.cache/anima/clm_v4_remapped/<short>/) is preferred when REMAP_SOURCE.json verification.pass=true; fix is schema-only (LoRA tensor values bit-preserved)")
 }
 
 // ═══════════════════════════════════════════════════════════
@@ -431,6 +440,52 @@ fn _write_helper() {
     // → resolve merged_dir on local disk → AutoModelForCausalLM from merged_dir.
     // Fallback chain preserved: HF snapshot detection first; if no adapter
     // detected, falls through to direct AutoModelForCausalLM load (existing path).
+    //
+    // KICK FIRE 1/6 (2026-05-08): Path A remapped cache priority. When the
+    // adapter has a verified remap at ~/.cache/anima/clm_v4_remapped/<short>/,
+    // detection + merge use that local dir instead of HF snapshot.
+    parts.push("REMAPPED_CACHE_ROOT = os.path.expanduser('~/.cache/anima/clm_v4_remapped')\n\n")
+
+    parts.push("REMAPPED_SHORTNAMES = {\n")
+    parts.push("    'dancinlab/clm-v4-paradigm-j-50k-final': 'paradigm_j',\n")
+    parts.push("    'dancinlab/clm-v4-sft-1-7-y1-stage1': 'sft_1_7_y1',\n")
+    parts.push("    'dancinlab/clm-v4-sft-1-8-stage1': 'sft_1_8',\n")
+    parts.push("}\n\n")
+
+    parts.push("def _adapter_shortname(repo_id):\n")
+    parts.push("    # Explicit table > sanitization fallback (slash -> __, hyphen -> _, lower).\n")
+    parts.push("    if repo_id in REMAPPED_SHORTNAMES:\n")
+    parts.push("        return REMAPPED_SHORTNAMES[repo_id]\n")
+    parts.push("    s = repo_id.replace('/', '__').replace('-', '_').lower()\n")
+    parts.push("    return s\n\n")
+
+    parts.push("def _resolve_remapped_cache_dir(repo_id):\n")
+    parts.push("    # Returns Path to remapped cache dir IFF it exists and verification.pass=true,\n")
+    parts.push("    # else None. Required files: adapter_config.json + adapter_model.safetensors\n")
+    parts.push("    # + REMAP_SOURCE.json (with verification.pass == True).\n")
+    parts.push("    short = _adapter_shortname(repo_id)\n")
+    parts.push("    cand = Path(REMAPPED_CACHE_ROOT) / short\n")
+    parts.push("    if not cand.is_dir():\n")
+    parts.push("        return None\n")
+    parts.push("    if not (cand / 'adapter_config.json').is_file():\n")
+    parts.push("        return None\n")
+    parts.push("    if not (cand / 'adapter_model.safetensors').is_file():\n")
+    parts.push("        return None\n")
+    parts.push("    rs = cand / 'REMAP_SOURCE.json'\n")
+    parts.push("    if not rs.is_file():\n")
+    parts.push("        sys.stderr.write(f'[clm_v4_mount] remapped cache present but REMAP_SOURCE.json missing at {cand}; ignoring\\n')\n")
+    parts.push("        return None\n")
+    parts.push("    try:\n")
+    parts.push("        rs_data = json.loads(rs.read_text(encoding='utf-8'))\n")
+    parts.push("    except Exception as ex:\n")
+    parts.push("        sys.stderr.write(f'[clm_v4_mount] REMAP_SOURCE.json read failed ({ex}); ignoring remapped cache\\n')\n")
+    parts.push("        return None\n")
+    parts.push("    verif = (rs_data or {}).get('verification') or {}\n")
+    parts.push("    if not verif.get('pass'):\n")
+    parts.push("        sys.stderr.write(f'[clm_v4_mount] remapped cache verification.pass != true at {cand}; ignoring\\n')\n")
+    parts.push("        return None\n")
+    parts.push("    return cand\n\n")
+
     parts.push("def _resolve_hf_snapshot(repo_id):\n")
     parts.push("    cache_root = Path(os.environ.get('HF_HOME', os.path.expanduser('~/.cache/huggingface')))\n")
     parts.push("    hub = cache_root / 'hub'\n")
@@ -444,11 +499,18 @@ fn _write_helper() {
     parts.push("    # Returns adapter_config dict if model_path is a LoRA repo, else None.\n")
     parts.push("    # Detection routes (priority):\n")
     parts.push("    #   1. local fs path → adapter_config.json directly\n")
-    parts.push("    #   2. HF cache snapshot resolution → adapter_config.json\n")
+    parts.push("    #   2. Path A remapped cache (~/.cache/anima/clm_v4_remapped/<short>/) — verified\n")
+    parts.push("    #   3. HF cache snapshot resolution → adapter_config.json\n")
     parts.push("    p = Path(model_path)\n")
     parts.push("    if p.is_dir() and (p / 'adapter_config.json').is_file():\n")
     parts.push("        try:\n")
     parts.push("            return json.loads((p / 'adapter_config.json').read_text(encoding='utf-8'))\n")
+    parts.push("        except Exception: return None\n")
+    parts.push("    remapped = _resolve_remapped_cache_dir(model_path)\n")
+    parts.push("    if remapped is not None:\n")
+    parts.push("        sys.stderr.write(f'[clm_v4_mount] LoRA remapped cache HIT: {remapped} (Path A prefix-remap, verification.pass=true)\\n')\n")
+    parts.push("        try:\n")
+    parts.push("            return json.loads((remapped / 'adapter_config.json').read_text(encoding='utf-8'))\n")
     parts.push("        except Exception: return None\n")
     parts.push("    snap = _resolve_hf_snapshot(model_path)\n")
     parts.push("    if snap is not None and (snap / 'adapter_config.json').is_file():\n")
@@ -464,13 +526,22 @@ fn _write_helper() {
     parts.push("def _materialize_merged_lora(adapter_repo, adapter_cfg):\n")
     parts.push("    # Spawn clm_v4_lora_merge_helper.py via subprocess (own python).\n")
     parts.push("    # Returns (merged_dir, base_model, error_str).\n")
+    parts.push("    # KICK FIRE 1/6: when remapped cache is verified-present, pass\n")
+    parts.push("    # --adapter-source-dir to bypass HF snapshot resolution for the adapter\n")
+    parts.push("    # side. Base model snapshot path is unaffected (still HF).\n")
     parts.push("    import subprocess\n")
     parts.push("    helper = _resolve_merge_helper_path()\n")
     parts.push("    if not os.path.isfile(helper):\n")
     parts.push("        return (None, None, f'merge helper missing: {helper}')\n")
     parts.push("    base_model = (adapter_cfg or {}).get('base_model_name_or_path') or 'dancinlab/clm-v4-mk2-v1'\n")
     parts.push("    cmd = [sys.executable, helper, '--adapter-repo', adapter_repo, '--base-model', base_model]\n")
-    parts.push("    sys.stderr.write(f'[clm_v4_mount] LoRA detected -> merge_and_unload via helper (adapter={adapter_repo}, base={base_model})\\n')\n")
+    parts.push("    remapped = _resolve_remapped_cache_dir(adapter_repo)\n")
+    parts.push("    adapter_source_note = ''\n")
+    parts.push("    if remapped is not None:\n")
+    parts.push("        cmd += ['--adapter-source-dir', str(remapped)]\n")
+    parts.push("        adapter_source_note = f' adapter_source=remapped:{remapped}'\n")
+    parts.push("        _emit('CLM_V4_LORA_REMAPPED_CACHE_USED', adapter=adapter_repo, short=_adapter_shortname(adapter_repo), source_dir=str(remapped))\n")
+    parts.push("    sys.stderr.write(f'[clm_v4_mount] LoRA detected -> merge_and_unload via helper (adapter={adapter_repo}, base={base_model}){adapter_source_note}\\n')\n")
     parts.push("    try:\n")
     parts.push("        proc = subprocess.run(cmd, capture_output=True, text=True, timeout=1800)\n")
     parts.push("    except Exception as ex:\n")

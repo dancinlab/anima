@@ -184,7 +184,12 @@ def _copy_extra_adapter_assets(adapter_snap: Path, dst: Path) -> list[str]:
     return copied
 
 
-def _do_merge(adapter_repo: str, base_model: str, merged_dir: Path) -> dict:
+def _do_merge(
+    adapter_repo: str,
+    base_model: str,
+    merged_dir: Path,
+    adapter_source_dir: Path | None = None,
+) -> dict:
     try:
         import torch  # type: ignore
         from transformers import AutoModelForCausalLM, AutoTokenizer  # type: ignore
@@ -198,10 +203,25 @@ def _do_merge(adapter_repo: str, base_model: str, merged_dir: Path) -> dict:
         base_model,
         target_files=["config.json", "model.safetensors", "modeling_clm_v4.py"],
     )
-    adapter_snap = _ensure_full_snapshot(
-        adapter_repo,
-        target_files=["adapter_config.json", "adapter_model.safetensors"],
-    )
+    # Adapter source: prefer override (e.g., remapped cache from Path A prefix
+    # remap, ~/.cache/anima/clm_v4_remapped/<short>/) over HF snapshot resolution.
+    # When override is provided, peft loads adapter directly from that local dir.
+    if adapter_source_dir is not None:
+        adapter_snap = Path(adapter_source_dir)
+        if not (adapter_snap / "adapter_config.json").is_file():
+            raise SystemExit(
+                f"[clm_v4_lora_merge] adapter_source_dir missing adapter_config.json: {adapter_snap}"
+            )
+        if not (adapter_snap / "adapter_model.safetensors").is_file():
+            raise SystemExit(
+                f"[clm_v4_lora_merge] adapter_source_dir missing adapter_model.safetensors: {adapter_snap}"
+            )
+        _eprint(f"[clm_v4_lora_merge] adapter source OVERRIDE (remapped cache) = {adapter_snap}")
+    else:
+        adapter_snap = _ensure_full_snapshot(
+            adapter_repo,
+            target_files=["adapter_config.json", "adapter_model.safetensors"],
+        )
 
     _eprint(f"[clm_v4_lora_merge] base snap = {base_snap}")
     _eprint(f"[clm_v4_lora_merge] adapter snap = {adapter_snap}")
@@ -247,6 +267,7 @@ def _do_merge(adapter_repo: str, base_model: str, merged_dir: Path) -> dict:
         "ts": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
         "adapter_repo": adapter_repo,
         "adapter_snapshot": str(adapter_snap),
+        "adapter_source_override": str(adapter_source_dir) if adapter_source_dir else "",
         "base_model": base_model,
         "base_snapshot": str(base_snap),
         "modeling_files_copied": copied_modeling,
@@ -315,6 +336,11 @@ def main() -> int:
         action="store_true",
         help="report adapter cache + config detection only; no download/merge",
     )
+    ap.add_argument(
+        "--adapter-source-dir",
+        default="",
+        help="local override for adapter source dir (e.g., ~/.cache/anima/clm_v4_remapped/<short>/). When set, peft loads from this dir instead of HF snapshot — used for Path A prefix-remap adapters.",
+    )
     args = ap.parse_args()
 
     if args.check_only:
@@ -324,11 +350,14 @@ def main() -> int:
 
     # Resolve base model: adapter_config base_model_name_or_path > --base-model
     # Pre-resolve via cached config if available; fallback to download chain.
+    # When --adapter-source-dir is set, prefer reading config from that dir.
+    adapter_source_dir = Path(args.adapter_source_dir) if args.adapter_source_dir else None
     snap = _resolve_hf_snapshot(args.adapter_repo)
     base_model = args.base_model
-    if snap is not None and (snap / "adapter_config.json").exists():
+    cfg_lookup_dir = adapter_source_dir if adapter_source_dir is not None else snap
+    if cfg_lookup_dir is not None and (cfg_lookup_dir / "adapter_config.json").exists():
         try:
-            cfg = _resolve_adapter_config(snap)
+            cfg = _resolve_adapter_config(cfg_lookup_dir)
             cfg_base = cfg.get("base_model_name_or_path")
             if cfg_base:
                 base_model = cfg_base
@@ -337,7 +366,13 @@ def main() -> int:
 
     cache_root = Path(args.cache_root)
     cache_root.mkdir(parents=True, exist_ok=True)
-    merged_dir = cache_root / _adapter_cache_key(args.adapter_repo)
+    # Cache key extension: when adapter_source_dir is provided (e.g., Path A
+    # remapped cache), suffix with "__remapped" to keep the merged artifact
+    # distinct from a stock HF-snapshot merge of the same adapter_repo.
+    cache_key = _adapter_cache_key(args.adapter_repo)
+    if adapter_source_dir is not None:
+        cache_key = cache_key + "__remapped"
+    merged_dir = cache_root / cache_key
 
     manifest_path = merged_dir / "_ANIMA_MERGE_MANIFEST.json"
     if manifest_path.is_file() and not args.force:
@@ -352,7 +387,7 @@ def main() -> int:
         )
         return 0
 
-    manifest = _do_merge(args.adapter_repo, base_model, merged_dir)
+    manifest = _do_merge(args.adapter_repo, base_model, merged_dir, adapter_source_dir=adapter_source_dir)
     _emit(
         "CLM_V4_LORA_MERGED",
         path=manifest["merged_dir"],
