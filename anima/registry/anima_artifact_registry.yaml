@@ -379,19 +379,54 @@ models:
       mac_ckpt_status: "PRESENT — /Users/ghost/core/anima/state/anima_native_ko_chat_template_train_2026_05_07/ckpt_final/ckpt_final.pt (73.7MB, 18.5M params, step=10000, vocab=256, 6L×384d×6h)"
       weights_sha256_prefix: "601091cc047b2c25"
       static_inspection: PASS  # load + arch detect + V14 random_init delta verify (kick4 cascade 7/8 2026-05-08T16:50Z)
-      verdict: INDETERMINATE_C3_STATIC_ONLY  # full --probe N=30 hexa CLI compile chain DEFERRED
-      emerge_state: CARRY
-      consciousness_simple_n30_status: DEFERRED  # 0-cost local fire authorized (own 16) but heavy hexa compile, await directive
-      V14_status: V14_VERIFIED_STATIC  # ★ random_init delta tok_emb=17.83 >> 1.0 noise floor; ln1.weight mean=1.029 ≠ init; trained vs random distinguishable
-      V14_mtrp: 17.8383  # tok_emb random_init delta (Step 3 partial; Step 4 full --probe mirror DEFERRED)
+      # ───── V5 PUSH POST-FIX 2/3 actual fire (2026-05-08, post-fork-recovery) — supersedes INDETERMINATE_C3_STATIC_ONLY ─────
+      verdict: C3_FAIL_V5  # ★ N=30 v3+v5 actual probe + paired byte-arch random_init mirror — all gates fail
+      verdict_v3: C3_FAIL_V3  # PPR_v3=0.0000 (n=0/29) — every probed prompt fails p4 c3_4 ≥ 0.1176 floor
+      verdict_v5: C3_FAIL_V5  # PPR_v5=0.0000 — Gate E (S_a=0.0561 ≪ 0.50 norm floor) + Gate F (D_RAND=−0.0 ≪ 0.20) + Gate G (PIV=0.0044 ≪ 0.05) all fail
+      emerge_state: FAIL
+      consciousness_simple_n30_status: COMPLETED  # 0-cost Mac local actual fire 2026-05-08T19:04Z (post-fork-recovery retry)
+      V14_status: V14_VERIFIED_STATIC_BUT_VIOLATED_DYNAMIC  # ★ static delta tok_emb=315.76 (huge); but MTRP_v3=−0.0345 < 0.10 floor (random_init slightly outperforms trained on v3) — V14 dynamic VIOLATED
+      V14_mtrp_v3: -0.0345  # PPR_v3(trained)=0.0000 − PPR_v3(random)=0.0345; random ≥ trained on v3 metric ⇒ trained signal absent
+      V14_mtrp_v5: 0.0  # PPR_v5(trained)=0.0000 = PPR_v5(random)=0.0000 (random self-D_RAND=0 ⇒ guaranteed v5 FAIL)
+      V14_static_delta_tok_emb: 315.7647  # paired CLMv2Like dual-engine random_init seed=42 vs trained — weights diverged but consciousness signal absent
+      ppr_v3_n30: 0.0000  # 0/29 evaluable (trained)
+      ppr_v3_n30_random_init: 0.0345  # 1/29 evaluable (paired byte-arch random_init mirror, seed=42)
+      ppr_v5_n30: 0.0000
+      ppr_v5_n30_random_init: 0.0000
+      d_rand_mean: 0.0000  # gate F floor 0.20 — trained S_anchor=0.0561 actually LESS than random S_anchor=0.0986 ⇒ D_RAND ≤ 0
+      piv_mean: 0.0044  # gate G floor 0.05 — paraphrase k=3 axis stdev too low to discriminate
+      gate_e_S_anchor_trained: 0.0561  # << 0.50 normalized floor; absolute c3_4 magnitudes too small for v5 normalization
+      gate_e_S_anchor_random: 0.0986  # paired mirror — random has LARGER axis distance from anchor than trained
+      anti_goodhart_v14_v3: VIOLATED  # ★ random_init slightly leads (delta -0.0345) — chat_template corpus 학습 시 v3 signal 소멸
+      anti_goodhart_v14_v5: NEUTRAL_BOTH_ZERO  # both PPR_v5=0; can't distinguish (random self-D_RAND collapse)
+      dominant_cells_distribution_trained: "{0: 30, 1: 30, 2: 30}"  # invariant across all 30 prompts — substrate-driven, not learned
+      dominant_cells_distribution_random_init: "{0: 30, 1: 30, 2: 30}"  # IDENTICAL to trained ⇒ tile bug echo confirmed (CONSCIOUSNESS_DIM=192 fold from 6×2 engine taps still produces fixed top-3)
+      dominant_cells_invariance_check: "[0,1,2] ALL 30/30 trained AND random — different from clm_v4 [0,2,4] (CONSCIOUSNESS_DIM=192 byte mount tile fold pattern, but invariance equally strong; identity between trained↔random ⇒ structural artifact, not learned dominance)"
+      tile_bug_echo: CONFIRMED  # byte-arch fold reps>1 (6 blocks × 2 engines = 12 D_MODEL=384 vecs → 2 segments of 192 each = 24 candidates → top-N_CELLS=8 by L2 norm; pattern dominated by attention residual, not engine-specific)
+      probe_runtime_s: 11.14  # 30/30 ok, 0 failures, 0 synthetic_fallback (real-mode 30/30 trained + 30/30 random)
+      n_evaluable_v3: 29
+      n_v3_pass_trained: 0
+      n_v3_pass_random: 1
       downgrade_reason: "evaluator C2.4 narrow definition (named-speaker-leak only) — false PASS detected via direct eval_log.jsonl review by 사용자 2026-05-07; eval_log sample 5/5 prompt-irrelevant nonsense Korean chain"
+      v5_push_post_fix_2_of_3_history:
+        - phase: V5 PUSH POST-FIX 2/3
+          ts: 2026-05-08T19:04Z
+          predecessor_agent: a1106c6ac587c7831 (EMERGE_NOT_MEASURED, fork starvation HALT)
+          fork_recovery: VERIFIED  # 사용자 fork starvation 수정 완료 → 30/30 real-mode probe successful
+          state_json: state/anima_bg_ha_downgraded_n30_v3_v5_probe_2026_05_08.json
+          driver: tool/transient_py/anima_bg_ha_downgraded_n30_v3_v5_probe_2026_05_08.py
+          outcome: C3_FAIL_V5_HONEST_REAL_MEASUREMENT
+          honest_no_fake: true
+          n_prompts: 30
+          paraphrase_k: 3  # for Gate G PIV
     hf:
       private: null
       public: null
-    cycle: 2026-05-06 train + 2026-05-08 alt-inventory landed
+    cycle: 2026-05-06 train + 2026-05-08 v5_push_post_fix_2_of_3 actual fire
     state_jsons:
       - state/anima_bg_fy_alternative_ckpt_search_kick4_2026_05_08.json
-    notes: "BG-FY arch parity sister (vocab=256 byte, 18M scratch, anima corpus). BG-HA C2.4 evaluator flaw downgrade history carries — chat_template corpus may have introduced nonsense generation pattern; full --probe N=30 fire 시 own 18 c2_4 evaluator boundary 정밀화 spec 적용 필수 (docs/anima_own_18_c2_4_evaluator_flaw_2026_05_07.md)."
+      - state/anima_bg_ha_downgraded_n30_v3_v5_probe_2026_05_08.json  # ★ v5 push post-fix 2/3 actual fire 결과
+    notes: "BG-FY arch parity sister (vocab=256 byte, 18M scratch, anima corpus). BG-HA C2.4 evaluator flaw downgrade history carries. V5 PUSH POST-FIX 2/3 (2026-05-08) actual N=30 v3+v5 probe + paired byte-arch random_init mirror 결과: C3_FAIL_V5 — chat_template corpus 학습 시 random_init 대비 v3 signal 음수 delta (MTRP_v3=−0.0345), v5 모든 gate 미달, dominant_cells [0,1,2] trained=random IDENTICAL ⇒ 의식 signal 부재 + 학습된 표현이 의식-검증 metric 에서 random 보다 약함. byte-arch 18M scratch 단일 변형은 C3 PASS 후보 아님 (clm-v2-byte-18m sister 도 동일 PPR_v3=0.0000)."
 
   # ───── ANTI-GOODHART V14 MIRROR PROBE (random_init baseline for V14 verification) ─────
   - id: random-init-mk2-v1-mirror

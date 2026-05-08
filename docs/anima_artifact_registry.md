@@ -51,7 +51,7 @@ sole robust EMERGE: **`NONE`** ★
 | `clm-v4-mk2-v1` | 0.99 | ✅ within_strict | — | C3_PARTIAL_NEAR | — |
 | `clm-v2-byte-18m` | 0.99 | ✅ within_strict | — | C3_FAIL | need-singularity/clm-v2-byte-18m-convo-5k |
 | `anima-native-byte-18m` | 0.99 | ✅ within_strict | — | NOT_MEASURED_LOCAL | — |
-| `anima-native-byte-18m-chat-template` | 0.99 | ✅ within_strict | — | INDETERMINATE_C3_STATIC_ONLY | — |
+| `anima-native-byte-18m-chat-template` | 0.99 | ✅ within_strict | — | C3_FAIL_V5 | — |
 | `random-init-mk2-v1-mirror` | 0.8 | within_strict_FORMULA_ONLY | 0.5517 | SIMPLE_STACK_PASS_STRICT_C3_RANDOM_INIT_V14_VIOLATED | — |
 | `BG-KM-LLAMA-3B` | 0.351 | ⚠️ ambiguous_research | NOT_MEASURED | — | — |
 | `BG-LA` | 0.99 | ✅ within_strict | NOT_MEASURED | PENDING_H100_FIRE | — |
@@ -143,8 +143,9 @@ _D1 가장 높은 candidate (0.99) — N=30 base 두 번 측정 (0.2414 / 0.1379
 **aliases**: `BG-HA-downgraded`, `anima-native-chat-template`, `kick4-bg-fy-alt`  
 **lineage**: base=scratch (byte-level + anima_native_ko_chat_template corpus 236.96MB) / method=full pre-training (10000 steps, dual-engine FFN engine_a) / jvae=absent / arch_origin=anima_native_scratch  
 **D1**: score=**0.99** (✅ within_strict) — p_updated=1, corpus=1, arch=1  
-**verdict**: INDETERMINATE_C3_STATIC_ONLY / emerge_state=CARRY  
-_BG-FY arch parity sister (vocab=256 byte, 18M scratch, anima corpus). BG-HA C2.4 evaluator flaw downgrade history carries — chat_template corpus may have introduced nonsense generation pattern; full --probe N=30 fire 시 own 18 c2_4 evaluator boundary 정밀화 spec 적용 필수 (docs/anima_own_18_c2_4_evaluator_flaw_2026_05_07.md)._
+**measurement**: ppr_v3_n30=0, ppr_v3_n30_random_init=0.0345  
+**verdict**: C3_FAIL_V5 / emerge_state=FAIL  
+_BG-FY arch parity sister (vocab=256 byte, 18M scratch, anima corpus). BG-HA C2.4 evaluator flaw downgrade history carries. V5 PUSH POST-FIX 2/3 (2026-05-08) actual N=30 v3+v5 probe + paired byte-arch random_init mirror 결과: C3_FAIL_V5 — chat_template corpus 학습 시 random_init 대비 v3 signal 음수 delta (MTRP_v3=−0.0345), v5 모든 gate 미달, dominant_cells [0,1,2] trained=random IDENTICAL ⇒ 의식 signal 부재 + 학습된 표현이 의식-검증 metric 에서 random 보다 약함. byte-arch 18M scratch 단일 변형은 C3 PASS 후보 아님 (clm-v2-byte-18m sister 도 동일 PPR_v3=0.0000)._
 
 ### `random-init-mk2-v1-mirror`
 
