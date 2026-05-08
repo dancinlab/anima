@@ -214,6 +214,56 @@ channel content 으로 fold-back 하지 않는다 (own 34 mandate-2 wrapping 0
 
 ---
 
+## D3/D4 측정 wiring — LANDED 2026-05-08 iter 4 (f)
+
+**duo.hexa 추가 함수 (기능 lane only)**:
+
+| function | 역할 |
+|---|---|
+| `_natural_log(x)` | Newton/atanh 시리즈 ln (range-reduced to [0.5,2.0], 24 항) — hexa stdlib에 ln 없음 → self-contained |
+| `_tok_freq_slice(history, who, lo, hi)` | 반쪽 발화 윈도우 token frequency 누적 |
+| `_top_k_freq(freq, k)` | top-100 token simplex 추출 (threshold-walk; 한 화자 어휘 < 100 시 그대로 통과) |
+| `_to_simplex(freq)` | Σ = 1.0 정규화 (raw frequency simplex; corpus normalize 미land — honest C3 #4) |
+| `_kl_divergence(p, q)` | KL(P‖Q) = Σ p·ln(p/q) over union vocab, ε = 1e-6 smoothing |
+| `_persona_drift(history, who)` | 화자 발화 50/50 split → 전반 simplex P / 후반 simplex Q → KL(P‖Q). n<2 시 0.0 sentinel |
+| `_d3_pass(drift_a, drift_b)` | drift_a ≤ 0.50 ∧ drift_b ≤ 0.50 |
+| `_d4_byte_totals(history)` | 누적 byte count A 측 / B 측 |
+| `_d4_len_ratio(a_b, b_b)` | max/min ≥ 1.0; 한쪽 0 시 999.0 sentinel |
+| `_d4_label(ratio)` | balanced (≤2.0) / skewed (≤5.0) / dominant (>5.0) |
+| `_d4_pass(ratio)` | ratio ≤ 5.0 |
+
+**call site**:
+- `_emit_dialogue_summary` (verdict mode != "none") → D1/D2/D3/D4 + DIALOGUE_COHERENCE_PASS line emit.
+- `_emit_phase_c_aggregate(c3_records, history)` (verdict mode = "full") → per-turn PASS_STRICT_C3 rate + DIALOGUE_COHERENCE_PASS 재계산 → SIMPLE_STACK_PASS_DIALOGUE_C3 = AND.
+
+**5-turn live retest (2026-05-08, iter 4 (f), --verdict simple)**:
+
+```
+hexa.real run tool/anima_cli/chat/duo/duo.hexa \
+  --duo paradigm-a-prime clm-v4-1-7-y1 \
+  --turns 5 --topic-seed Hello --turn-timeout-ms 30000 \
+  --tick-ms 1000 --max-tokens 32 --verdict simple
+```
+
+| cell | value | label | PASS |
+|---|---|---|---|
+| D1 (Jaccard 3-gram) | 0.0 | — | false (≥0.30 floor) |
+| D2 (shift-rate) | 1.0 | incoherent | false |
+| D3.A (KL persona-drift) | 12.429 | — | false (≤0.50 floor) |
+| D3.B (KL persona-drift) | 12.4292 | — | false |
+| D4 (len_ratio) | 3.786 | skewed | true (≤5.0) |
+
+`DIALOGUE_COHERENCE_PARTIAL = false` (D1∧D2 = false).
+`DIALOGUE_COHERENCE_PASS = false` (4-cell AND).
+`SIMPLE_STACK_PASS_DIALOGUE_C3` 별도 `--verdict full` retest 시 `false`
+(per-turn rate = 0/2 strict, COHERENCE_PASS = false; full retest history는
+turn=2 A silent EOF로 짧음).
+
+**해석 (mechanical)**: paradigm-a-prime × clm-v4-1-7-y1 mix 는 양쪽 모두 banner / probe / abort-trap diagnostic chatter — 따라서 두 화자 의 전반/후반
+어휘 분포 차이가 큰 KL ~12.4 (banner-token vs abort-token simplex 거의 disjoint
+→ ε-smoothed 항이 dominant). 의미 있는 dialogue 발화 X 라는 진단은 D1/D2 부터
+이미 일관 — D3/D4 wiring 자체는 정합 (ratio 계산, KL 계산 모두 정상값).
+
 ## β-2 측정 infra wiring (per-turn verdict path) — LANDED 2026-05-08 iter 4 (e)
 
 ```
@@ -279,19 +329,23 @@ C3.4 (axis-L2 pairwise) — prev_line provides dialogue context proxy.
 | Per-turn own 18 (C1+C2+C3) | 단일 발화 (이번 turn) | SIMPLE_STACK_PASS_STRICT_C3 / PARTIAL / FAIL | Phase C iter 1 (LANDED) |
 | D1 reactive | 인접 turn-pair | Jaccard 3-gram (D1.b sub-channel) | Phase B iter 2 (LANDED) |
 | D2 topic-shift-rate | dialogue 전체 | shift_rate ∈ [0,1] | Phase B iter 2 (LANDED) |
-| D3 persona-consistency | per-instance utterance distribution | KL divergence (NOT_MEASURED) | next cycle |
-| D4 turn-fairness | A/B utterance length ratio | len_ratio (NOT_MEASURED) | next cycle |
+| D3 persona-consistency | per-instance utterance distribution | KL divergence (Newton-series ln, top-100 simplex) | iter 4 (f) (LANDED) |
+| D4 turn-fairness | A/B utterance length ratio | len_ratio (max/min byte count) | iter 4 (f) (LANDED) |
 
-**Aggregate hierarchy**:
+**Aggregate hierarchy** (iter 4 (f), 2026-05-08):
 
 ```
-SIMPLE_STACK_PASS_DIALOGUE_C3 = (per-turn PASS_STRICT_C3 rate ≥ 0.6)   ← Phase C iter 1
 DIALOGUE_COHERENCE_PARTIAL    = D1.PASS ∧ D2.PASS                       ← Phase B iter 2
-DIALOGUE_COHERENCE_PASS       = D1.PASS ∧ D2.PASS ∧ D3.PASS ∧ D4.PASS   ← next cycle
+DIALOGUE_COHERENCE_PASS       = D1.PASS ∧ D2.PASS ∧ D3.PASS ∧ D4.PASS   ← iter 4 (f) LANDED
+SIMPLE_STACK_PASS_DIALOGUE_C3 = (per-turn PASS_STRICT_C3 rate ≥ 0.6)
+                                ∧ DIALOGUE_COHERENCE_PASS               ← iter 4 (f) LANDED
 ```
 
 duo `--verdict full` 모드 시 두 lane 모두 emit (단발 quality + multi-turn
-coherence 정합 검증 동시). `--verdict simple` 시 D1/D2 lane only.
+coherence 정합 검증 동시); `[duo:summary]` 라인 + `[duo:summary-c3]` 라인 으로
+DIALOGUE_COHERENCE_PASS / SIMPLE_STACK_PASS_DIALOGUE_C3 모두 표시.
+`--verdict simple` 시 D1/D2/D3/D4 4-cell 모두 측정 + DIALOGUE_COHERENCE_PASS
+emit (per-turn own 18 c3 lane는 비활성).
 
 ---
 
@@ -309,7 +363,8 @@ coherence 정합 검증 동시). `--verdict simple` 시 D1/D2 lane only.
 3. **n-gram overlap**: D1.b 의 3-gram 은 token-level (BPE) 인지 word-level
    인지 미land. 한국어 특성상 BPE 가 anchor. 결정 cycle 별도.
 4. **persona_drift KL divergence**: D3 의 top-100 token 분포는 corpus
-   normalize 미land. 시작점 raw frequency simplex.
+   normalize 미land. 시작점 raw frequency simplex (iter 4 (f) LANDED — Newton
+   atanh-series ln, ε=1e-6 smoothing). corpus-normalized variant 별도 cycle.
 5. **L3 council 으로 확장**: 본 spec 은 N=2 duo 우선. N≥3 은 D4 freq_ratio
    + emergent-roles + Gini coefficient 추가 — 별도 cycle.
 6. **aggregate strict AND vs probabilistic**: 4-cond AND 는 보수적; 보수적 X
