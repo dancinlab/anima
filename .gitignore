@@ -28,6 +28,26 @@ state/trained_adapters_r*/
 # Large corpus files (100-200MB each) — use R2 for distribution
 anima/data/corpus_*.txt
 anima/data/corpus_multilingual/
+
+# H_093 SFT-only corpus (51MB) — anima models + datasets HF-only rule
+state/anima_h093_sft_only_corpus_2026_05_07/corpus_sft_only.txt
+state/anima_h093_sft_only_train_2026_05_07/ckpt_final.pt
+state/anima_h154_bpe_step_retrieve_2026_05_07/ckpt_*.pt
+state/anima_ig_bpe_16k_universe_brain_map_train_2026_05_07/ckpt_*.pt
+state/anima_ig_bpe_16k_universe_brain_map_train_2026_05_07/runs/
+
+# BG-IK NEXUS-UBM combined corpus (27.5MB) — HF Hub only, NEVER anima git
+state/anima_ik_nexus_ubm_combined_corpus_2026_05_07/corpus_combined.txt
+
+# BG-IM 18M NEXUS-UBM byte-level control train ckpts — HF Hub or /tmp only
+state/anima_im_18m_nexus_ubm_train_2026_05_07/ckpt_*.pt
+
+# BG-IQ universe-brain-map 21MB rebuild corpus (22.6MB) — HF Hub or local-only
+state/anima_universe_brain_map_corpus_21mb_2026_05_07/corpus_universe_brain_map.txt
+
+# BG-IO 100M UBM 21MB rebuild train ckpts — HF Hub or /tmp only
+state/anima_io_100m_ubm_21mb_rebuild_train_2026_05_07/ckpt_*.pt
+state/anima_io_100m_ubm_21mb_rebuild_train_2026_05_07/runs/
 training/corpus_*.txt
 training/corpus_*.txt.gz
 training/deploy/.reval_tmp/
@@ -162,6 +182,11 @@ state/clm_eeg_p1_lz_pre_register_real.json
 # F3 prod scipy raw 9 exemption (own 1 + commit f890d69f)
 tool/anima_holographic_ib_ksg_validate_prod.py
 
+# anima chat Phase 3 GGUF conversion infra — .py allowed (chat path stays
+# hexa-only; this is one-time HF→GGUF build/transformation, lane-separated).
+# See tool/anima_gguf_convert.py header + .roadmap.cli cli.gguf_conversion_landed_2026_05_08
+!tool/anima_gguf_convert.py
+
 # RunPod operational deployment scripts (raw 9 jurisdiction-out per anima/.own own 1 pattern)
 # These are pod-side install/measure scripts, not anima governance/orchestration
 anima-tribev2-pilot/scripts/install_pod_deps.sh
@@ -256,3 +281,10 @@ tool/transient_py/__pycache__/
 
 # HF-hosted datasets (migrated 2026-05-04 — see docs/anima_hf_dataset_migration_2026_05_04.ai.md)
 state/p9_path_a_*/sft_data_*.jsonl
+
+# anima native KO chat-template corpus (BG-FZ 2026-05-06) — 237MB, regeneratable from filter script + sft_data.jsonl
+state/anima_native_ko_chat_template_2026_05_06/corpus_chat_template.txt
+state/anima_je_corpus_100mb_plus_2026_05_07/corpus_combined_100mb_plus.txt
+
+# BG-JH 100M corpus 204MB train ckpts (12 ckpts × ~615MB = 7.4GB) — HF Hub or /tmp only
+state/anima_jh_100m_corpus_204mb_train_2026_05_07/ckpt_*.pt
