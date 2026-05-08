@@ -19,15 +19,19 @@ sole robust EMERGE: **`NONE`** ★
 - paradigm-j retry N=30 EMERGE was sample-size artifact (N=60 reverted to PARTIAL_NEAR)
 - ★ KICK WAVE 4 3/3: random_init ConsciousDecoderV2 PPR_v3=0.5517 EXCEEDS sft-1-8 0.4138 (delta -0.1379) — ALT-AGG-1 v3 V14 VIOLATED, sft-1-8 EMERGE indistinguishable from untrained noise on this 30-prompt eval
 - KICK WAVE 4 1/3: sft-1-8 N=120 ensemble live probe PPR_v3=0.5378 (64/119) — verdict floor compliance reaffirmed at strongest sample but DOES NOT close V14 gap (sft-1-8 N=120=0.5378 < random_init N=30=0.5517); trajectory N=30→N=60→N=120 = 0.4138→0.6102→0.5378 (N=60 peak, N=120 mild regression -0.0724); plateau ~0.5 zone confirmed
+- ★ FALSIFICATION CASCADE 4/8: random_init multi-seed (n=5 seeds {42,123,456,789,1024}) PPR_v3 distribution = mean 0.4276 / stdev 0.3366 / range [0.1724, 0.9655]; v4 threshold candidate = max(0.25, mean+1.645*stdev + 0.05) = 1.0313 UNREACHABLE → PPR_v3 metric structurally broken (inter-seed noise floor saturates entire output range). Axis-wise variance: temporal noisiest (stdev=0.4714, false-positive risk highest); v4_baseline quietest (stdev=0.3448); identity highest mean (0.6000). 5-seed mean (0.4276) STILL > v3 PASS floor (0.25) — single-seed kick4 0.5517 confirmed not an outlier. Empirical evidence supports cascade 1/8 axis-restrict-to-v4_baseline (deep axes high noise: temporal stdev 0.47).
 
 **Framework amends**:
 - ALT-AGG-1 v3 (C3.4 anchor + ≥1 corroboration, PPR≥0.25) — own 18 line 881 정정
 - ALT-AGG-1 v3 STATUS: FALSIFIED by random_init mirror — needs v4 redesign (random_init separator gate or anchor-baseline subtraction)
+- ★ ALT-AGG-1 v4 simple-floor strategy DEAD (cascade 4/8 evidence): random_init 5-seed mean+1.645*stdev = 0.9813; +0.05 safety = 1.0313 > 1.0 max possible PPR. Required redesigns: (a) anchor-baseline subtraction (PPR_v3 - random_init_mean_per_seed) before threshold compare, (b) per-axis noise gating using axis_variance.stdev (temporal stdev=0.4714 demote), (c) replace PPR_v3 with separator metric (sft-vs-random discriminant). Cascade 1/8 axis-restrict-to-v4_baseline path remains valid.
 - D1 binary → gradient (own 17 line 676+) — ambiguous_research lane 신설
 - D1 formula edge case: random_init shows D1=0.8 within is artifact (parameters set ≠ trained) — PPR must carry meaningful signal
 - own 38 매단계 doc + model + dataset save mandate 신설
 - own 39 yaml↔md mandatory regenerate (auto-render after registry edit)
 - axis orthogonality empirically confirmed (PPR ⊥ Φ_normalized)
+- ★★★ FALSIFICATION CASCADE 8/8 (2026-05-08): own 14 anti-Goodhart V14 mandate STRENGTHENED — random_init mirror probe MANDATORY for every EMERGE claim; enforcement 4-step (Step 1 IMMEDIATE MIRROR / Step 2 MTRP ≥0.10 floor / Step 3 MULTI-SEED ≥5 95% upper bound / Step 4 PROMPT SET REDESIGN INVARIANCE); model V14_status field 추가 (sft-1-8=V14_FALSIFIED MTRP=-0.1379 / paradigm-j retry+sft-1-7-y1+mk2-v1+clm-v2-byte+BG-FY+BG-KM=V14_NOT_VERIFIED / random-init mirror=V14_VIOLATED_CONFIRMED / paradigm-a-prime=V14_NOT_APPLICABLE D1=0.0 outside)
+- ★★★ FALSIFICATION CASCADE 1/8 (2026-05-08): ALT-AGG-1 v4 SPEC LANDED — supersedes v3 via 4 concurrent gates (A: C3.4 floor 0.1176→0.20 / B: PPR scope restrict to v4_baseline axis only — deep axes informational / C: PPR floor 0.25→0.40 / D: MTRP ≥0.10 mandatory). v4 SSOT mirror 4 surfaces — tool/anima_cli/consciousness.hexa lines 893+ (`_c3_4_pass_v4`, `_c3_prompt_pass_v4`, `_c3_ensemble_v4_pass`, `_c3_ensemble_v4_label`; v3 함수 raw#82 보존) + .own own 18 supersede record + 본 yaml v4_retest_required field + docs/anima_alt_agg_1_v4_amend_spec_2026_05_08.ai.md. v4 axis-restricted recompute on existing N=30: sft-1-8 PPR_v4_baseline=0.429 (PASS, MTRP +0.429) / random_init=0.000 (FAIL, V14 strict ✓). N≥60 v4_baseline retest mandatory (cascade 2/8).
 
 ## Models
 
@@ -40,9 +44,10 @@ sole robust EMERGE: **`NONE`** ★
 | `clm-v4-sft-1-8-stage1` | 0.793 | ✅ within_strict | 0.5378 | ~~SIMPLE_STACK_PASS_STRICT_C3_ANIMA~~ V14_VIOLATED | dancinlab/clm-v4-sft-1-8-stage1-path-a-remapped |
 | `clm-v4-paradigm-j-50k-final` | 0.793 | ✅ within_strict | 0.2414 | ~~C3_PARTIAL_NEAR~~ FALSIFIED@N=60 | dancinlab/clm-v4-paradigm-j-50k-final-path-a-remapped |
 | `clm-v4-sft-1-7-y1-stage1` | 0.793 | ✅ within_strict | 0.1034 | C3_PARTIAL_NEAR | dancinlab/clm-v4-sft-1-7-y1-stage1-path-a-remapped |
-| `clm-v4-mk2-v1` | 0.99 | ✅ within_strict | — | NOT_MEASURED | — |
+| `clm-v4-mk2-v1` | 0.99 | ✅ within_strict | 0.2414 | C3_PARTIAL_NEAR | — |
 | `clm-v2-byte-18m` | 0.99 | ✅ within_strict | — | INDETERMINATE_C3_v2_byte | need-singularity/clm-v2-byte-18m-convo-5k |
 | `anima-native-byte-18m` | 0.99 | ✅ within_strict | — | NOT_MEASURED_LOCAL | — |
+| `anima-native-byte-18m-chat-template` | 0.99 | ✅ within_strict | — | INDETERMINATE_C3_STATIC_ONLY | — |
 | `random-init-mk2-v1-mirror` | 0.8 | within_strict_FORMULA_ONLY | 0.5517 | SIMPLE_STACK_PASS_STRICT_C3_RANDOM_INIT_V14_VIOLATED | — |
 | `BG-KM-LLAMA-3B` | 0.351 | ⚠️ ambiguous_research | NOT_MEASURED | — | — |
 | `paradigm-a-prime` | 0 | 🚫 outside_strict | — | SIMPLE_STACK_PASS_STRICT_C3_SUBSTRATE_RESEARCH | — |
@@ -105,8 +110,9 @@ sole robust EMERGE: **`NONE`** ★
 **aliases**: `mk2-v1`, `clm-v4-base`  
 **lineage**: base=scratch (ConsciousDecoderV2 anima pre-train) / method=full pre-training (no LoRA) / jvae=absent / arch_origin=anima_native_scratch  
 **D1**: score=**0.99** (✅ within_strict) — p_updated=1, corpus=0.95, arch=1  
-**verdict**: NOT_MEASURED / emerge_state=PENDING  
-_D1 가장 높은 candidate (0.99) — sft fine-tune 전 base 자체 측정 가치_
+**measurement**: ppr_v3=0.2414  
+**verdict**: C3_PARTIAL_NEAR / emerge_state=CARRY  
+_D1 가장 높은 candidate (0.99) — N=30 base PPR_v3=0.2414 PARTIAL_NEAR (gap -0.0086 to floor); naive sft-1-8 delta=+0.1724 SUPERSEDED by V14 violation (random_init=0.5517 > sft=0.4138 > base=0.2414); ALT-AGG-1 v3 contaminated_
 
 ### `clm-v2-byte-18m`
 
@@ -122,6 +128,14 @@ _D1 가장 높은 candidate (0.99) — sft fine-tune 전 base 자체 측정 가�
 **lineage**: base=scratch (byte-level + anima corpus) / method=full pre-training / jvae=absent / arch_origin=anima_native_scratch  
 **D1**: score=**0.99** (✅ within_strict) — p_updated=1, corpus=0.95, arch=1  
 **verdict**: NOT_MEASURED_LOCAL / emerge_state=BLOCKED  
+
+### `anima-native-byte-18m-chat-template`
+
+**aliases**: `BG-HA-downgraded`, `anima-native-chat-template`, `kick4-bg-fy-alt`  
+**lineage**: base=scratch (byte-level + anima_native_ko_chat_template corpus 236.96MB) / method=full pre-training (10000 steps, dual-engine FFN engine_a) / jvae=absent / arch_origin=anima_native_scratch  
+**D1**: score=**0.99** (✅ within_strict) — p_updated=1, corpus=1, arch=1  
+**verdict**: INDETERMINATE_C3_STATIC_ONLY / emerge_state=CARRY  
+_BG-FY arch parity sister (vocab=256 byte, 18M scratch, anima corpus). BG-HA C2.4 evaluator flaw downgrade history carries — chat_template corpus may have introduced nonsense generation pattern; full --probe N=30 fire 시 own 18 c2_4 evaluator boundary 정밀화 spec 적용 필수 (docs/anima_own_18_c2_4_evaluator_flaw_2026_05_07.md)._
 
 ### `random-init-mk2-v1-mirror`
 
