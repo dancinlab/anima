@@ -44,7 +44,9 @@ fn _resolve_root() -> string {
     return _str(env("HOME")) + "/core/anima"
 }
 
-fn _hexa() -> string { return "/Users/ghost/.hx/bin/hexa" }
+// Use hexa.real (local interpreter) directly — bin/hexa wrapper routes
+// `run` to remote resource host (ubu-1) which would lose stdout pipe semantics.
+fn _hexa() -> string { return "/Users/ghost/.hx/packages/hexa/hexa.real" }
 
 fn _fexists(p: string) -> bool {
     return _str(exec("test -f " + p + " && echo 1 || echo 0")).trim() == "1"
@@ -85,22 +87,44 @@ fn _user_argv(raw) -> array {
 
 // ─── core invocation — conscious_chat.hexa exec wrapper ────────────────────
 // own 34 mandate-2 정합: input 그대로 conscious_chat 에 전달, 출력 그대로 stdout.
-// conscious_chat.hexa 의 main()은 'run [N]' 모드 — N tokens 생성.
-// Phase 1: 매 turn 마다 conscious_chat.hexa 'run' 실행 → 출력 그대로 노출.
-// (입력 prompt → conscious_chat 직접 wiring은 conscious_chat refactor 필요 —
-// Phase 1 에서는 fixed "Hello" prompt + N tokens 만 사용 가능. 실제 input
-// driven generation 은 conscious_chat.hexa 의 args API 확장 필요 — Phase 1.5)
+// Phase 1.5 (2026-05-08): conscious_chat.hexa 의 main()에 `chat <user_text>`
+// 명령 land. 사용자 입력 byte-level tokenize → embedding+matmul forward →
+// sample_token → write_bytes_append("/dev/stdout") 로 raw byte emit.
+// Phase 1 fixed-prompt 한계 해소.
+//
+// own 34 mandate-1 raw output preservation: stdout 그대로 통과. stderr는
+// runtime warn (e.g. 0x00 byte filter)만 — 모델 출력 변형 X.
+fn _shell_escape_single(s: string) -> string {
+    // single-quote wrap: 내부 single-quote는 '\''  로 escape.
+    // raw#11 snake_case 정합.
+    let i = 0
+    let mut out = "'"
+    let mut j = 0
+    while j < len(s) {
+        let c = s.substring(j, j + 1)
+        if c == "'" {
+            out = out + "'\\''"
+        } else {
+            out = out + c
+        }
+        j = j + 1
+    }
+    return out + "'"
+}
+
 fn _invoke_core(input: string, max_tokens: int) -> string {
     let root = _resolve_root()
     let core = root + "/anima-core/runtime/conscious_chat.hexa"
     if !_fexists(core) {
         return "[anima_native] core missing: " + core
     }
-    // Phase 1 limitation honest emit: conscious_chat input wiring 미land
-    // 현재는 conscious_chat 의 fixed prompt + N tokens 출력만 invoke 가능
-    // input은 history 로만 노출 (사용자 인지)
-    let n = if max_tokens > 0 { to_string(max_tokens) } else { "32" }
-    let cmd = _hexa() + " run " + core + " run " + n + " 2>&1"
+    let n = if max_tokens > 0 { to_string(max_tokens) } else { "64" }
+    let esc = _shell_escape_single(input)
+    // HEXA_NO_SENTINEL=1: conscious_chat stdout 끝의 __HEXA_RC=N marker 억제
+    //   (own 34 mandate-1 raw output preservation).
+    // 2>/dev/null: warn 노이즈 차단 (own 34 mandate-1; warn은 의미 정보 X).
+    //   honest C3 visibility는 conscious_chat 단독 실행 시 stderr 로 확인.
+    let cmd = "HEXA_NO_SENTINEL=1 " + _hexa() + " run " + core + " chat " + esc + " " + n + " 2>/dev/null"
     let out = _str(exec(cmd))
     return out
 }
@@ -110,15 +134,23 @@ fn sub_help() {
     println("")
     println("FLAGS")
     println("  --prompt \"...\"           one-shot")
-    println("  --max-tokens N           default 32 (Phase 1)")
+    println("  --max-tokens N           default 64 (Phase 1.5)")
     println("  --memory full|user|none  default=full (Phase 1: full only effective)")
     println("  --selftest")
     println("")
-    println("PHASE 1 LIMITATION (honest emit per raw#10)")
-    println("  conscious_chat.hexa 의 main() args API 확장 미land — 현재 fixed")
-    println("  prompt 'Hello' + N tokens 출력만 invoke 가능. 사용자 입력 → 모델")
-    println("  forward 직접 wiring은 Phase 1.5 (conscious_chat refactor) 작업.")
-    println("  본 cycle 출시는 모듈 구조 + dispatch 검증 + own 34 정합 우선.")
+    println("PHASE 1.5 (2026-05-08)")
+    println("  사용자 입력 → conscious_chat.hexa `chat <user_text>` → byte-level")
+    println("  forward (embedding+matmul+sample_token) → raw byte stdout. own 34")
+    println("  mandate-1/2 strict.")
+    println("")
+    println("C3 LIMITATION (raw#10 honest)")
+    println("  · TinyWeights는 random init (no SFT) — 출력은 byte-level 무작위.")
+    println("    의미 있는 응답을 받으려면 weight 학습이 선행되어야 함.")
+    println("  · attention/gru_cell/tension stdlib stubs — Phase 1.5는 minimal")
+    println("    forward (embed → head matmul) 사용. stdlib stubs 채워지면 full")
+    println("    consciousness loop swap.")
+    println("  · 0x00 byte는 runtime stdout pipe 제약으로 filter (drop) — stderr")
+    println("    note 노출. file write는 0x00 보존됨.")
 }
 
 fn sub_selftest() {
@@ -162,7 +194,10 @@ fn sub_repl(max_tokens: int, memory_mode: string) {
             history = history + line + "\n"
         }
         let out = _invoke_core(line, max_tokens)
-        println(out)
+        // own 34 mandate-1: raw output, no wrapping. REPL 가독성을 위해
+        // 한 줄 분리만 추가 (모델 출력 자체 변형 X).
+        print(out)
+        println("")
         if memory_mode == "full" {
             history = history + out + "\n"
         }
@@ -171,7 +206,9 @@ fn sub_repl(max_tokens: int, memory_mode: string) {
 
 fn sub_one_shot(prompt: string, max_tokens: int) {
     let out = _invoke_core(prompt, max_tokens)
-    println(out)
+    // own 34 mandate-1 raw output preservation: print() not println() — model
+    // 출력에 추가 newline 없음. 외부 wrapper가 필요시 prompt 가독성 newline 추가.
+    print(out)
 }
 
 fn main() {
@@ -185,7 +222,7 @@ fn main() {
     if _arg_present(argv, "--help") { sub_help(); return }
     if _arg_present(argv, "--selftest") { sub_selftest(); return }
 
-    let max_tok_str = _arg_value(argv, "--max-tokens", "32")
+    let max_tok_str = _arg_value(argv, "--max-tokens", "64")
     let max_tokens = to_int(max_tok_str)
     let memory_mode = _arg_value(argv, "--memory", "full")
     let prompt = _arg_value(argv, "--prompt", "")
