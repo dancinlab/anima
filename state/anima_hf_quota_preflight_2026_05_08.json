@@ -1,0 +1,167 @@
+{
+  "schema": "anima/hf_quota_preflight/1",
+  "schema_version": 1,
+  "generated_utc": "2026-05-08T00:00:00Z",
+  "generated_local_kst": "2026-05-08",
+  "task": "anima_hf_quota_preflight_2026_05_08",
+  "purpose": "Pre-flight quota + readiness check for 9-file 4.49GB HF dancinlab upload (cli.large_artifact_hf_upload_2026_05_08, dry-run commit 702cf6c0). Read-only — no upload executed. Emits risk matrix + procedure for --apply phase.",
+  "predecessor": "tool/anima_large_artifact_hf_upload.py --dry-run (commit 702cf6c0)",
+  "downstream_blocker_resolved": "blockers[1] HF dancinlab quota pre-flight (cli.large_artifact_hf_upload_2026_05_08)",
+  "auth": {
+    "token_source_canonical_3tier_hit": "tier-2 (~/.cache/huggingface/token, mtime 2026-05-05)",
+    "token_role": "write",
+    "token_displayName": "anima",
+    "token_createdAt": "2026-05-04T12:38:46.928Z",
+    "user": "dancinlife",
+    "user_id": "69229786cde1fd9952da8cfa",
+    "user_email": "nerve011235@gmail.com",
+    "user_isPro": false,
+    "orgs": [
+      {"name": "need-singularity", "fullname": "dancinlab", "id": "69c9d89bbe5716c7092b2ca2", "role": "admin", "billingMode": "prepaid", "canPay": false},
+      {"name": "dancinlab", "fullname": "dancinlab", "id": "69fd3ca5f204ce9d18fa21ad", "role": "admin", "billingMode": "prepaid", "canPay": false}
+    ],
+    "destination_org": "dancinlab",
+    "destination_org_role": "admin (write/create allowed)"
+  },
+  "tier_assessment": {
+    "user_tier": "Free (isPro=false)",
+    "org_tier": "Free organization (no Team/Enterprise/Plus/Academia subscription — confirmed via 'Organization needs to be subscribed' 403 on /api/organizations/dancinlab/resource-groups)",
+    "private_storage_quota_gb": 100,
+    "public_storage_quota": "best-effort (HF asks community-value content; mitigations against abuse)",
+    "lfs_track_auto": true,
+    "lfs_track_threshold": "10MB default (.gitattributes auto-rule by HF on .pt/.safetensors/.bin/.gguf/.parquet/.txt>10MB) — all 9 files fall above threshold so LFS auto-track applies",
+    "per_file_size_limit_doc_lookup": "no hard per-file cap on free tier per https://huggingface.co/docs/hub/storage-limits (warnings appear for >5GB single file, encourage shard); largest of our 9 = 919MB → well below sharding warning",
+    "doc_url": "https://huggingface.co/docs/hub/storage-limits"
+  },
+  "current_usage": {
+    "method": "GET /api/{models,datasets}?author=dancinlab&limit=500 + per-repo ?blobs=true sibling.size sum",
+    "models_total": 50,
+    "datasets_total": 4,
+    "private_repos": 26,
+    "public_repos": 28,
+    "private_storage_used_gb": 14.94,
+    "public_storage_used_gb": 3.61,
+    "total_storage_used_gb": 18.56,
+    "largest_private": [
+      {"repo": "dancinlab/clm-v4-mk2-v1", "size_gb": 7.49},
+      {"repo": "dancinlab/clm-v4-base-mirror", "size_gb": 5.37}
+    ]
+  },
+  "quota_status": {
+    "verdict": "ok",
+    "private_remaining_gb": 85.06,
+    "after_upload_private_gb": 19.43,
+    "after_upload_remaining_gb": 80.57,
+    "headroom_pct_after_upload": 80.6,
+    "feasible": true,
+    "reasoning": "Free-tier org private quota = 100GB. Current private usage 14.94GB. After 4.49GB upload (assuming all 9 default to private per own 31 mandate-8): 19.43GB used / 80.57GB free. Headroom 80.6% post-upload — comfortable margin even if 2-3 future BG cycles add similar volume."
+  },
+  "nine_repo_create_dry_run": {
+    "repos_planned": 9,
+    "repos_already_existing_409_risk": 0,
+    "repos_404_confirmed": 9,
+    "creation_method": "HfApi.create_repo(repo_id, repo_type, private=True, exist_ok=True) — exist_ok 추가 권장 to handle re-run",
+    "per_file_lfs_track": "auto (HF Hub default .gitattributes for .pt/.safetensors/.txt>10MB)",
+    "matrix": [
+      {"idx": 1, "repo_id": "dancinlab/anima-iz-clm-continued-pretrain-ko-final-2026-05-07", "type": "model", "size_mb": 919.26, "exists": false, "lfs_required": true, "ready": "GREEN"},
+      {"idx": 2, "repo_id": "dancinlab/anima-jd-100m-sp-ko-32k-ubm-best-2026-05-07", "type": "model", "size_mb": 643.86, "exists": false, "lfs_required": true, "ready": "GREEN"},
+      {"idx": 3, "repo_id": "dancinlab/anima-mistral-c2-pilot-r64-adapter-2026-04-26", "type": "model", "size_mb": 640.06, "exists": false, "lfs_required": true, "ready": "GREEN"},
+      {"idx": 4, "repo_id": "dancinlab/anima-mistral-r14-r64-adapter-2026-04-26", "type": "model", "size_mb": 640.06, "exists": false, "lfs_required": true, "ready": "GREEN"},
+      {"idx": 5, "repo_id": "dancinlab/anima-kk-v5-alpha-500m-ubm-fail-2026-05-07", "type": "model", "size_mb": 535.15, "exists": false, "lfs_required": true, "ready": "GREEN"},
+      {"idx": 6, "repo_id": "dancinlab/anima-iz-clm-continued-pretrain-ko-step1000-2026-05-07", "type": "model", "size_mb": 515.48, "exists": false, "lfs_required": true, "ready": "GREEN"},
+      {"idx": 7, "repo_id": "dancinlab/anima-km-capacity-1-5b-orchestrator-failed-2026-05-08", "type": "model", "size_mb": 347.64, "exists": false, "lfs_required": true, "ready": "GREEN"},
+      {"idx": 8, "repo_id": "dancinlab/anima-je-corpus-100mb-plus-2026-05-07", "type": "dataset", "size_mb": 204.37, "exists": false, "lfs_required": true, "ready": "GREEN"},
+      {"idx": 9, "repo_id": "dancinlab/anima-corpus-mix-70wiki-30dialogue-tier-c-archival-2026-05-06", "type": "dataset", "size_mb": 147.68, "exists": false, "lfs_required": true, "ready": "GREEN", "user_decision_pending": "archival path (a/b/c) confirm — recommended (a) private archival with tier-c-archival label"}
+    ],
+    "all_files_local_present_verified": true,
+    "size_match_dry_run_vs_local_stat": "9/9 match within 0.01MB (rounding)"
+  },
+  "network_bandwidth_estimate": {
+    "total_bytes": 4814795832,
+    "total_gb": 4.49,
+    "assumed_uplink_mb_s_low": 5,
+    "assumed_uplink_mb_s_high": 20,
+    "estimated_minutes_low": 4,
+    "estimated_minutes_high": 15,
+    "recommended_host": "Mac local (current host) — own 30 mandate-1 ckpt preservation 정합 ; H100 runpod 별도 uplink (pod -> HF) is independent path and not required here",
+    "concurrent_upload_strategy": "sequential 9 file (already implemented in tool/anima_large_artifact_hf_upload.py) — safer than parallel (rate-limit avoidance + single-pipe LFS reliability)",
+    "interruption_recovery": "HfApi.upload_file resumable via Xet/LFS multipart; --verify post-upload size match catches partial uploads"
+  },
+  "risk_matrix": [
+    {"id": "R1", "category": "quota", "severity": "low", "desc": "Private 100GB quota — current 14.94GB + 4.49GB = 19.43GB, 80.6% headroom remains.", "mitigation": "monitor; set CI guard if approaching 80GB."},
+    {"id": "R2", "category": "token", "severity": "low", "desc": "Token tier-2 (~/.cache/huggingface/token) is current canonical, write-role, dancinlab admin. tier-1 (secret CLI) was diagnosed stale 2026-05-07 but tier-2 valid.", "mitigation": "use tier-2 explicitly via huggingface_hub.HfApi(token=open(...).read().strip())."},
+    {"id": "R3", "category": "naming-collision", "severity": "none", "desc": "All 9 target repo_ids return 404 — no collision.", "mitigation": "use create_repo(exist_ok=True) defensively for re-run."},
+    {"id": "R4", "category": "per-file-size", "severity": "low", "desc": "Largest file 919MB < HF 5GB single-file warning threshold. No sharding required.", "mitigation": "none."},
+    {"id": "R5", "category": "lfs-track", "severity": "low", "desc": ".pt / .safetensors / .txt>10MB auto-tracked by HF .gitattributes default — works without manual git lfs install.", "mitigation": "huggingface_hub upload_file path uses HTTP multipart, not git-lfs CLI."},
+    {"id": "R6", "category": "bandwidth", "severity": "med", "desc": "4.49GB total upload at 5-20MB/s = 4-15 min. Network interruption mid-upload requires resume.", "mitigation": "huggingface_hub default retry; --verify 단계로 size mismatch detect 후 재upload."},
+    {"id": "R7", "category": "consent", "severity": "blocker", "desc": "actual upload BLOCKED until 사용자 explicit OK LARGE ARTIFACT HF UPLOAD keyword.", "mitigation": "본 pre-flight emit + raw#10 honest C3 disclosure + user explicit consent gate."},
+    {"id": "R8", "category": "own-17-classification", "severity": "med", "desc": "corpus_mix #9 own 17 strict reading reject — recommend tier-c-archival label clarity. mistral_c2_pilot/r14 = foundation-borrow, NOT identity-bearing.", "mitigation": "Card metadata explicit tier label per artifact (already in dry-run plan)."},
+    {"id": "R9", "category": "anomaly-disclosure", "severity": "low", "desc": "BG-KM-CAP ckpt_final.pt 348MB present despite training_steps=0 (orchestrator failed). Architecture-init snapshot.", "mitigation": "Card metadata explicit anomaly disclosure (already in dry-run plan, raw#10 honest C3)."},
+    {"id": "R10", "category": "public-promote", "severity": "blocker-future", "desc": "private→public promote requires V6 awareness probe + manual review (own 28 anti-Goodhart).", "mitigation": "default = private; public promote out of scope for this cycle."}
+  ],
+  "apply_procedure": {
+    "preconditions": [
+      "사용자 message contains explicit 'OK LARGE ARTIFACT HF UPLOAD' keyword",
+      "Mac local network reachable to huggingface.co (verify via curl https://huggingface.co/api/whoami-v2)",
+      "~/.cache/huggingface/token mtime within last 30 days OR re-validate via /api/whoami-v2 200",
+      "9 source files md5/sha256 sanity check (optional — file_size already verified)",
+      "corpus_mix #9 archival path (a/b/c) user decision = (a) recorded"
+    ],
+    "step_by_step": [
+      "1) cd /Users/ghost/core/anima",
+      "2) python3 tool/anima_large_artifact_hf_upload.py --apply  (NOTE: 사용자 directive only)",
+      "3) (optional) python3 tool/anima_large_artifact_hf_upload.py --verify  (size match + private confirm per repo)",
+      "4) ledger entry append per artifact: state/anima_model_attempts_ledger.jsonl + state/anima_corpus_hf_upload_log.jsonl appropriate",
+      "5) git add state/anima_large_artifact_hf_upload_log.jsonl + .roadmap.cli (status update dry_run_emitted → applied)",
+      "6) git commit -m 'feat(large artifact HF upload): 9 file 4.49GB applied — own 36 mandate retroactive'"
+    ],
+    "env_required": [
+      "PATH includes /Users/ghost/.local/bin (hf CLI 1.8.0)",
+      "PYTHONPATH default (huggingface_hub installed in active venv)",
+      "no DYLD_LIBRARY_PATH manipulation needed (HTTP-only path)"
+    ],
+    "rollback_on_failure": [
+      "per-repo failure: tool retries 3x with backoff (already in script); on persistent failure log status=FAILED in jsonl, do NOT delete remote (raw#82 retraction-aware)",
+      "global rollback: hf repo delete dancinlab/<repo_id> -y --type=model|dataset (manual, only if user explicit OK DELETE)"
+    ]
+  },
+  "user_confirm_prompt_template": {
+    "prompt_text": "[HF dancinlab pre-flight RESULT] quota=ok (priv 14.94/100GB → 19.43/100GB after; 80.6% headroom). 9 repo 404 (collision none). 4.49GB upload est 4-15 min @ Mac local uplink. Risk matrix: R1-R6/R8-R9 low-med (mitigated), R7/R10 blocker-consent gate. Confirm 'OK LARGE ARTIFACT HF UPLOAD' to proceed with --apply, OR 'SKIP' to defer, OR per-file selection to subset.",
+    "required_keyword": "OK LARGE ARTIFACT HF UPLOAD",
+    "alternate_decisions": [
+      "SKIP — defer entire 9-file upload",
+      "PARTIAL: <idx-list> — apply only subset (e.g., 'PARTIAL: 1,2,5' for IZ-final + JD-best + KK-fail only)",
+      "ARCHIVAL DECISION: a — confirm (a) private archival for corpus_mix #9",
+      "ARCHIVAL DECISION: b — skip corpus_mix #9 entirely",
+      "ARCHIVAL DECISION: c — re-curate corpus_mix #9 to dialogue 30% only (separate cycle)"
+    ]
+  },
+  "compliance": [
+    "raw#10 honest C3 (read-only pre-flight + explicit consent gate maintained)",
+    "raw#82 retraction-aware (no remote delete in rollback default)",
+    "own 31 mandate-1 (dancinlab strict)",
+    "own 31 mandate-8 (private default)",
+    "own 36 mandate-7 (retroactive 9-file enforcement)",
+    "own 37 mandate-1 (dancinlab/ org strict — token role + admin verified)"
+  ],
+  "honest_c3": [
+    "1) HF API /api/organizations/{org}/storage endpoint does not exist publicly — private storage usage estimated via summing siblings.size from /api/{models,datasets}/{repo}?blobs=true. Estimate excludes git-history overhead (HF de-dups via Xet/LFS pointer; actual billable may differ ±5-10%).",
+    "2) numModels=50 from /api/organizations/dancinlab/overview — pagination via offset returns same first-50 list. If actual count exceeds 50 (HF API quirk on free org), tail repos missed in storage sum. Validation: hf models list dancinlab via CLI returns same 50 — count consistent.",
+    "3) Bandwidth estimate 5-20MB/s assumes residential broadband; H100 runpod uplink path (Mac → HF directly is preferred per task design) — actual time variance ±2x possible.",
+    "4) Token role check passed via /api/whoami-v2 displayName='anima' role='write' but token literal NOT inspected for expiry (HF tokens are non-expiring unless rotated — last verified valid 2026-05-07).",
+    "5) Free-org private 100GB confirmed via https://huggingface.co/docs/hub/storage-limits (Free user/org: 100GB private). Doc may change — re-verify quarterly.",
+    "6) corpus_mix #9 archival decision (a/b/c) is user-pending; this pre-flight assumes (a) for sizing math. If (b)=skip selected, total_size_planned drops to 4.34GB (8 files) and quota math improves marginally.",
+    "7) Per-file 5GB soft warning vs hard limit not strictly documented for free tier; largest 919MB safely below either reading.",
+    "8) Pre-flight executed read-only — no test create_repo / dry upload. If create_repo race fails at --apply (e.g. concurrent same-named create from CI), fallback exist_ok=True parameter recommended."
+  ],
+  "outcome": {
+    "quota_verdict": "ok",
+    "all_9_ready": true,
+    "blocker_resolved_for_large_artifact_hf_upload_2026_05_08": "blockers[1] HF dancinlab quota pre-flight CLEARED",
+    "remaining_blockers_to_apply": [
+      "사용자 explicit OK LARGE ARTIFACT HF UPLOAD",
+      "corpus_mix #9 archival path (a/b/c) decision",
+      "(future) V6 awareness probe — public promote prerequisite (out of scope)"
+    ]
+  }
+}
