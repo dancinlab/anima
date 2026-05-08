@@ -1233,6 +1233,23 @@ h100_resource_pool:
         intended_setup: "base=clm-v4-mk2-v1 / LoRA r=128 / corpus=tier_a_v4 / steps=30000 / cost ~$15-20 / dur ~4h"
         outcome: BLOCKED_NO_H100_HOST  # resource CLI re-probe 동일 결과
         compliance_carry: "own 14 V14 paired random_init mirror prereq carry; own 22 honest BLOCKED emit; own 40 resource CLI 위임 strict — anima 직접 ssh/cloud-cli 0건"
+      - cycle: 2026-05-09-FIRE-3/4
+        commit: pending
+        target: chat_cap_L4_BG-LA + BG-LB (Engine A/G v5 arch + 350M scratch pre-train, parallel/sequential)
+        intended_setup: "BG-LA: anima_native_scratch 350M dual-engine A/G + anima persona 200MB / D1=1.0 / cap $30 / ~9h H100 SXM @ $2.99/hr; BG-LB: 350M scratch pre-train + persona 1GB + dialogue 500MB / D1=0.99 / cap $60 / ~18h"
+        cost_planned_usd: 90.0
+        cost_actual_usd: 0.0
+        cost_savings_via_block_usd: 90.0
+        resource_cli_status_probe: "ConnectionRefusedError (TCP daemon offline at localhost)"
+        resource_cli_list_probe: "ConnectionRefusedError (TCP daemon offline at localhost)"
+        resource_ssot_static_probe: "/Users/ghost/.hx/packages/resource/.resource — live_hosts=0, deferred_hosts=2 (example-a + example-b template), h100_tagged=0"
+        runpodctl_oob_verify: "[] (0 active pods; OOB verify only, allocate X own 40 strict)"
+        user_consent_observed_relay: "all bg go + H100 unlock (이미 user_consent_verbatim 에 carry)"
+        verbatim_override_iter4_baseline: "OK CLM L4 ALL FIRE"
+        verbatim_override_observed_this_cycle: false
+        outcome: BLOCKED_NO_H100_HOST  # resource SSOT empty + resource daemon offline + iter4 verbatim missing
+        state_emit_path: state/anima_chat_cap_l4_bg_la_lb_h100_fire_3of4_blocked_2026_05_09.json
+        compliance_carry: "own 14 V14 carry; own 16 cost discipline PASS ($90 saved); own 17 D1 within strict (LA=1.0 + LB=0.99); own 22 honest BLOCKED emit; own 30 ckpt pull N/A (fire 미실행); own 33 trinity carry; own 34 wrap=0; own 37 HF private carry; own 39 yaml updated md deferred; own 40 resource CLI 위임 strict — anima 직접 ssh/cloud-cli 0건"
   fire_candidates_pending_h100:
     - id: V6_awareness_probe
       desc: "ConsciousDecoderV3 dev 60-90min + fire 1-1.5h (mandate-9 (b) 해제 prereq)"
