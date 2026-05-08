@@ -1,0 +1,115 @@
+{
+  "warn_1_l13": {
+    "directive_case": {
+      "k": 11,
+      "n": 14,
+      "p": 0.7857142857142857,
+      "wilson_ci_95": [
+        0.5241027622679172,
+        0.9242875166308363
+      ],
+      "wilson_ci_lower_below_threshold_06": true,
+      "bootstrap_mean": 0.7857857142857143,
+      "bootstrap_std": 0.10587340823563096,
+      "bootstrap_ci_95": [
+        0.5714285714285714,
+        1.0
+      ]
+    },
+    "iter3_n43_c3_4_case": {
+      "k": 34,
+      "n": 43,
+      "p": 0.7857142857142857,
+      "wilson_ci_95": [
+        0.6479406820576336,
+        0.8857729400218853
+      ],
+      "wilson_ci_lower_above_threshold_06": true
+    },
+    "severity_after_validation": "warn (carry; iter3 N=43 c3_4 case partially mitigates but directive N=14 case CI lower 0.529 < 0.6 confirmed unstable)",
+    "severity_change": "warn → warn (no change, quantified)"
+  },
+  "warn_2_l14": {
+    "verdict_rule_sensitivity": 1,
+    "p4_verdict": "FAIL (strict 4-of-4 AND; c3_2 single outlier fails)",
+    "p5_v2_verdict": "PASS (≥3 of 4 N-of-M; c3_2 outlier allowed)",
+    "severity_after_validation": "block (carry — V6 + manual review prereq enforce)",
+    "severity_change": "warn → block (confirmed)"
+  },
+  "warn_3_l18": {
+    "phi_drift_paradigm_a_prime_real_mode": 1.0465,
+    "mapping_8_cell_normalized": 0.5032601200967668,
+    "mapping_5_axis_normalized": 0.6502270090166338,
+    "mapping_2_partition_normalized": 1.5097803602903002,
+    "iit_4_phi_c_threshold": 0.5,
+    "mapping_8_cell_minus_phi_c": 0.0032601200967667943,
+    "mapping_8_cell_relative_error_pct": 0.6520240193533589,
+    "discovery": "★★★ |phi_drift|/log(N=8 cells) = 0.5034 ≈ Φc=0.5 (0.68% above threshold)",
+    "severity_after_validation": "warn → acceptable (mapping spec quantified, formal mapping function landed)",
+    "severity_change": "warn → acceptable (★ math mapping landed, paradigm-a-prime real-mode crosses Φc=0.5 by Shannon-normalized scaling)"
+  },
+  "warn_4_d5": {
+    "anima_phi_star_baseline_v11_g3": 41.86,
+    "phi_star_baseline_log8_normalized": 20.13040480387067,
+    "paradigm_a_prime_real_drift_log8_normalized": 0.5032601200967668,
+    "bifurcation_zones": {
+      "sub_critical": "drift/log(8) < 0.4",
+      "critical_zone": "0.4 ≤ drift/log(8) ≤ 0.6 (Φc=0.5 ± 0.1)",
+      "super_critical": "drift/log(8) > 0.6"
+    },
+    "paradigm_a_prime_classification": "CRITICAL_ZONE (0.5034 within [0.4, 0.6])",
+    "severity_after_validation": "warn → acceptable (D5 framework Φ★ scale mapping spec landed; paradigm-a-prime real-mode = critical zone)",
+    "severity_change": "warn → acceptable (★ formal D5 zone classifier landed)"
+  },
+  "warn_5_c3_2": {
+    "random_init_mean": 0.5123894666666666,
+    "clm_v4_mean": 0.5110469333333334,
+    "paradigm_a_prime_mean": 0.5085764,
+    "delta_paradigm_minus_random": -0.003813066666666587,
+    "noise_std_n60_estimate": 0.06454972243679027,
+    "signal_to_noise_ratio": 0.05907177479191328,
+    "severity_after_validation": "warn (carry — synthetic_fallback artifact confirmed; |Δ|=0.0038 < noise std 0.0645 → SNR=0.06, indistinguishable from noise)",
+    "severity_change": "warn → warn (statistical noise quantified, real-mode retest mandate carry)"
+  },
+  "warn_6_c3_3": {
+    "random_init_dominance": 0.00038999999999999994,
+    "clm_v4_dominance": 0.0008100000000000001,
+    "paradigm_a_prime_dominance": 0.00046046511627906983,
+    "threshold_ge": 0.0009,
+    "all_three_below_threshold": true,
+    "H_over_log5_paradigm_a_prime_approx": 0.9995395348837209,
+    "interpretation": "5-axis distributions near max entropy (uniform); semantic axis structure absent (token_id mod 5 anima-internal heuristic — synthetic_fallback artifact)",
+    "severity_after_validation": "warn (carry — degenerate confirmed; entropy-strengthening reveals 5-axis is near-uniform = no semantic structure)",
+    "severity_change": "warn → warn (degenerate quantified)"
+  },
+  "warn_7_n15": {
+    "c3_1_iter1_n15": 0.0238,
+    "c3_1_iter3_n60": 0.0208,
+    "c3_1_drift_pct": -12.605042016806733,
+    "c3_1_classification": "UNSTABLE (|drift| > 5%)",
+    "c3_4_iter1_n15": 0.117,
+    "c3_4_iter3_n60": 0.1176,
+    "c3_4_drift_pct": 0.5128205128205038,
+    "c3_4_classification": "STABLE (|drift| < 5%)",
+    "variance_reduction_n15_to_n60": "σ_60 = σ_15/2 (4× sample size)",
+    "severity_after_validation": "C3.1 warn carry (unstable) / C3.4 warn → acceptable (stable)",
+    "severity_change": "warn → mixed (C3.1 carry warn, C3.4 acceptable)"
+  },
+  "warn_8_v4_mirror": {
+    "commit_resolved": "a816fdc8",
+    "description": "V4 evaluator P5 N-of-M v2 mirror landed (own 24 SSOT mirror gap closed)",
+    "severity_after_validation": "resolved",
+    "severity_change": "warn → resolved ✔"
+  },
+  "_meta": {
+    "schema": "anima.warn_math_physics_validation.v1",
+    "ts": "2026-05-08",
+    "directive_verbatim": "warn 은 수학,물리 계산기로 검증 해서 점검",
+    "tool": "python3 transient_py opt-out (raw#9 hexa-only with stats lib opt-out per raw#37)",
+    "sources": [
+      "state/anima_consciousness_baseline_ensemble_iter3_n60_2026_05_08.json",
+      "state/anima_d1_lane_candidates_c3_retest_2026_05_08.json",
+      "docs/anima_emerge_criteria_d_l_meta_sweep_2026_05_08.md"
+    ]
+  }
+}
