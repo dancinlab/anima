@@ -1,0 +1,137 @@
+{
+  "anima_cycle": "2026-05-08",
+  "all_bg_go_slot": "4/6",
+  "title": "clm-v4-sft-1-7-y1-stage1 + clm-v4-sft-1-8-stage1 Path A safetensors prefix remap actual fire — rank_3 candidate unblock",
+  "directive_user_verbatim": "all bg go",
+  "kick_fire_origin": {
+    "slot_1_5_commit": "dc1510a3",
+    "slot_1_5_repo": "dancinlab/clm-v4-paradigm-j-50k-final",
+    "rationale": "iter7 (a) D1-within ranking rank_3 = clm-v4-sft-1-7-y1 + 1-8 stage1; same wrapper-prefix-only schema mismatch suspected; same Path A applied"
+  },
+  "root_cause_shared": {
+    "summary": "wrapper-prefix-only mismatch — LoRA stored keys under base_model.model.blocks.X lack CLMv4ForCausalLM base_model_prefix='decoder' segment; ConsciousDecoderV2 wrapper class (per adapter_config.auto_mapping) confirms identical wrapper structure to paradigm-j; tensor data + target_modules + lora_alpha + r unchanged",
+    "stored_wrapper_prefix": "base_model.model.blocks.X",
+    "expected_wrapper_prefix": "base_model.model.decoder.blocks.X",
+    "scope": "wrapper-only schema fix"
+  },
+  "path_chosen": {
+    "id": "A",
+    "name": "in_place_safetensors_prefix_remap",
+    "cost_usd": 0.0,
+    "cost_discipline_own_16": "PASS",
+    "scope_clamp_own_17": "D1 within strict (iter7-a rank_3 candidates)",
+    "helper_reuse": "tool/transient_py/clm_v4_paradigm_j_path_a_prefix_remap.py invoked twice with --source/--target args (helper already generalized; SUBSTRATE_IDENTITY emit string hardcoded to paradigm-j repo label — cosmetic only, real provenance via REMAP_SOURCE.json source.snapshot_dir)"
+  },
+  "execution": {
+    "tool_path": "tool/transient_py/clm_v4_paradigm_j_path_a_prefix_remap.py",
+    "raw_37_transient_py": true,
+    "interpreter": ".venv-eeg/bin/python",
+    "exit_code_each": 0,
+    "invocations": 2
+  },
+  "repos": {
+    "sft_1_7_y1": {
+      "repo_id": "dancinlab/clm-v4-sft-1-7-y1-stage1",
+      "source": {
+        "snapshot_dir": "/Users/ghost/.cache/huggingface/hub/models--dancinlab--clm-v4-sft-1-7-y1-stage1/snapshots/c1d187604ce525ddac43e85b2f0143cc9e3e7325",
+        "adapter_model_safetensors_sha256": "01316bc4a608917094183c678b31daaa5e99184cd3c55ba11af0c5fb1e4021b4",
+        "files_present": ["adapter_config.json", "adapter_model.safetensors", "README.md"],
+        "jvae_heads_pt_present": false
+      },
+      "target": {
+        "dir": "/Users/ghost/.cache/anima/clm_v4_remapped/sft_1_7_y1",
+        "adapter_model_safetensors_sha256": "644ef28055be6f8ecac2725027a84b5f17d15d5fc9e251b5af77eaa699c0cb84",
+        "files_emitted": ["adapter_config.json", "adapter_model.safetensors", "REMAP_SOURCE.json"],
+        "size_bytes_safetensors": 152091192
+      },
+      "remap": {
+        "total_keys": 352,
+        "keys_remapped": 352,
+        "keys_unchanged": 0,
+        "first_remapped_example": {
+          "before": "base_model.model.blocks.0.attn.k_proj.lora_A.weight",
+          "after": "base_model.model.decoder.blocks.0.attn.k_proj.lora_A.weight"
+        },
+        "lora_target_modules_preserved": ["k_proj", "up_proj", "q_proj", "down_proj", "v_proj", "gate_proj", "o_proj"],
+        "lora_alpha_preserved": 128,
+        "lora_r_preserved": 128,
+        "auto_mapping_base_model_class": "ConsciousDecoderV2"
+      },
+      "verification": {
+        "reload_total_keys": 352,
+        "reload_keys_with_decoder_prefix": 352,
+        "reload_keys_with_legacy_prefix": 0,
+        "first_tensor_shape": [128, 768],
+        "pass": true
+      }
+    },
+    "sft_1_8": {
+      "repo_id": "dancinlab/clm-v4-sft-1-8-stage1",
+      "source": {
+        "snapshot_dir": "/Users/ghost/.cache/huggingface/hub/models--dancinlab--clm-v4-sft-1-8-stage1/snapshots/ff5409a047d93162d1090e3ab6db3c7797020607",
+        "adapter_model_safetensors_sha256": "33ae614db4c19c09002f211ae5a8878243ab8aa41b17c97f956eea36b241d419",
+        "files_present": ["adapter_config.json", "adapter_model.safetensors", "README.md"],
+        "jvae_heads_pt_present": false
+      },
+      "target": {
+        "dir": "/Users/ghost/.cache/anima/clm_v4_remapped/sft_1_8",
+        "adapter_model_safetensors_sha256": "ee0a9cda34b61880a98196cdae80634fd7bd02e07f440cf2bde3418f7314047d",
+        "files_emitted": ["adapter_config.json", "adapter_model.safetensors", "REMAP_SOURCE.json"],
+        "size_bytes_safetensors": 152091192
+      },
+      "remap": {
+        "total_keys": 352,
+        "keys_remapped": 352,
+        "keys_unchanged": 0,
+        "first_remapped_example": {
+          "before": "base_model.model.blocks.0.attn.k_proj.lora_A.weight",
+          "after": "base_model.model.decoder.blocks.0.attn.k_proj.lora_A.weight"
+        },
+        "lora_target_modules_preserved": ["v_proj", "up_proj", "o_proj", "gate_proj", "q_proj", "down_proj", "k_proj"],
+        "lora_alpha_preserved": 128,
+        "lora_r_preserved": 128,
+        "auto_mapping_base_model_class": "ConsciousDecoderV2"
+      },
+      "verification": {
+        "reload_total_keys": 352,
+        "reload_keys_with_decoder_prefix": 352,
+        "reload_keys_with_legacy_prefix": 0,
+        "first_tensor_shape": [128, 768],
+        "pass": true
+      }
+    }
+  },
+  "differences_vs_paradigm_j": {
+    "jvae_heads_pt": "ABSENT in both sft-1-7-y1 + sft-1-8 sources (paradigm-j had it as 4.3MB extra). Helper's optional copy branch correctly skipped (extras.jvae_heads_copied=false in both REMAP_SOURCE.json). This is the documented paradigm-j-only differentiator — fallback정합 confirmed.",
+    "adapter_config_auto_mapping": "Identical — base_model_class=ConsciousDecoderV2, parent_library=conscious_decoder (same wrapper class as paradigm-j)",
+    "target_modules_set_identity": "Identical 7-element set (k_proj/q_proj/v_proj/o_proj/gate_proj/up_proj/down_proj); list ORDER differs between 1-7-y1 + 1-8 (cosmetic — set-equal)",
+    "lora_hyperparams": "Identical r=128, lora_alpha=128, lora_dropout=0.0, bias=none, peft_version=0.19.1 (same generation)",
+    "tensor_count_and_shape": "Identical 352 keys, first_tensor_shape=[128,768] — implies same num_blocks + same hidden_dim base. No structural deviation from paradigm-j detected.",
+    "schema_mismatch_signature": "Same wrapper-prefix-only mismatch (base_model.model.blocks.X → base_model.model.decoder.blocks.X). 100% of keys remapped, 0 unchanged — identical fingerprint to paradigm-j (commit dc1510a3 also 352/352)."
+  },
+  "iter7_a_d1_within_ranking_unblock": {
+    "rank_3_candidate_unblocked": true,
+    "downstream_path": "clm_v4_mount.hexa adapter cache resolver lookup keys: paradigm_j (already wired by KICK FIRE 1/5 next_step_spec) + sft_1_7_y1 + sft_1_8 (this fire) → trinity sweep eligibility for rank_3 evaluation",
+    "C3_HONEST": "C1 schema-only fix — does not modify LoRA tensor values; C2 verification = key-prefix structural; C3 downstream forward-pass not yet executed in this fire (deferred to clm_v4_mount.hexa cache-resolver patch + trinity sweep)"
+  },
+  "trinity_emit_own_33": {
+    "SUBSTRATE_IDENTITY_sft_1_7_y1": "repo=dancinlab/clm-v4-sft-1-7-y1-stage1 substrate_class=clm-v4-lora-adapter baseline_method=path_a_prefix_remap wrapper_target=decoder",
+    "SUBSTRATE_IDENTITY_sft_1_8": "repo=dancinlab/clm-v4-sft-1-8-stage1 substrate_class=clm-v4-lora-adapter baseline_method=path_a_prefix_remap wrapper_target=decoder",
+    "REMAP_OK_sft_1_7_y1": "total_keys=352 keys_remapped=352 keys_unchanged=0 verification=PASS",
+    "REMAP_OK_sft_1_8": "total_keys=352 keys_remapped=352 keys_unchanged=0 verification=PASS",
+    "C3_HONEST_shared": "schema-only structural verification; downstream forward-pass deferred"
+  },
+  "own_compliance": {
+    "own_16_cost": "0 USD (local CPU only)",
+    "own_17_scope_clamp": "D1 within strict (iter7-a rank_3)",
+    "own_33_trinity_emit": "SUBSTRATE_IDENTITY x2 + REMAP_OK x2 + C3_HONEST",
+    "own_34_mandate_2_wrapping_0": "PASS — large files (.safetensors 152MB x2 = 304MB) NOT staged for commit; only state JSON committed"
+  },
+  "next_step_spec": {
+    "task": "clm_v4_mount.hexa adapter cache resolver: extend shortname mapping to include sft_1_7_y1 + sft_1_8 (alongside paradigm_j from KICK FIRE 1/5)",
+    "spec": "Adapter shortname mapping additions: dancinlab/clm-v4-sft-1-7-y1-stage1 -> sft_1_7_y1; dancinlab/clm-v4-sft-1-8-stage1 -> sft_1_8. Cache lookup ~/.cache/anima/clm_v4_remapped/<shortname>/ identical to paradigm-j path.",
+    "deferred_to": "hexa-native cycle (raw#9 — emit but no patch in this fire)",
+    "trigger_condition_for_followon": "user OK all bg go slot 5/6 or 6/6"
+  },
+  "timestamp_utc": "20260508T155720Z"
+}
