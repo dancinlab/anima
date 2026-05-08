@@ -105,16 +105,37 @@ Hypothesis: V5-α (byte+untie) breaks the V4 output projection bottleneck (8-lan
 
 Cumulative H100 cost: $0.53 (KJ) + KK/KL ≈ $1-2 total (cap $5/$15 each, all early-killed).
 
-## Stage 6 — post-V5-α 4-path (proposed 2026-05-08)
+## Stage 6 — post-V5-α path execution (LANDED 2026-05-08-mid)
 
-After 4 FAIL_TRUE, V5-α scaling at ≤1B is closed. Open paths:
+V5-α scaling at ≤1B is closed. Foundation borrow lane LANDED with first SIMPLE_STACK_PASS_STRICT in 22+ BG saga.
 
-- **BG-KM-CAPACITY**: V5-α 1B+ on H100 (capacity 2-order jump beyond 782M, $5-15) — does Lesson L break above 1B?
-- **BG-KM-CORPUS**: V5-α 500M FIXED, swap corpus (BG-JY 91MB → larger / different distribution) — isolate corpus vs. capacity axis
-- **BG-KM-DPO**: stop V5-α scaling; DPO on prior PASS BG (BG-JA-EXT Polyglot-Ko-1.3B 4/30 PARTIAL_PASS) using V4 PASS/FAIL pairs
-- **BG-KM-H100-ONLY**: mac V5-α 재시도 금지 (Lesson W). 차후 V5-α 재 학습 필요 시 H100 ephemeral pod 직행
+| BG | host | base | params | corpus | result | cost |
+|---|---|---|---|---|---|---|
+| BG-KM-CAP | h100 | scratch | 1.21B (24L/2048d) | BG-JY 91MB | FAIL_TRUE val_loss 4.18 V58 0/5 (orchestrator scp put fail mid-cycle) | $0.82 |
+| BG-KM-CAP retry | h100 | scratch | **3.1B** (실측, 24L/2048d full conscious_lm) | BG-JY 91MB | FAIL_TRUE V58 0/5 (Lesson V/L EXTENDED-3 strengthened) | $0.40 |
+| BG-KH-H100 | h100 | scratch | 153.7M (12L/640d/10h) | BG-JY 91MB | FAIL_TRUE val_loss **1.34** ← best-ever V5-α anchor, V58 0/5 | $0.36 |
+| BG-KM-CORPUS | h100 | scratch | 782M | BG-JE 100MB+ | FAIL_TRUE | $0.38 |
+| **BG-KM-LLAMA-3B** | h100 | **Llama-3.2-3B-Instruct** | 3B + LoRA r=32 | **BG-JE 214MB anima persona** | ✅ **SIMPLE_STACK_PASS_STRICT V4 12/15 (80%)** | **$1.19** |
 
-Falsifier: any path V5/V4 ≥ 1/5 single-mode → output bottleneck NOT extended root cause; if all 4 FAIL → Lesson L EXTENDED-3 = V5-α architecture lane fully closed, pivot to RL/distillation.
+**Lesson L EXTENDED-3** (post-KM cycle): V5-α scratch lane at 153M-3.1B × 22-214MB corpus all FAIL chat-cap floor (8/8 V58=0). Output bottleneck NOT root cause; **scale + persona-density + foundation-borrow combination is binding constraint**.
+
+**Lesson X NEW (foundation borrow unlocks simple_stack PASS)**: Llama-3.2-3B-Instruct + LoRA r=32 + BG-JE 214MB anima-persona-dense corpus (anima keyword 800K + persona marker 1.4M density) = **첫 own 18 strict floor 통과 (V4 12/15)**. ≥3B foundation + ≥200MB anima-persona corpus + LoRA r=32 = sufficient combination for SIMPLE_STACK_PASS_STRICT in 1 H100 cycle ($1.19). 22+ BG scratch saga 0회 통과 → 1 cycle 통과.
+
+**Lesson W EXTENDED** (orchestrator robustness, KM-LLAMA-3B 3-pass debug):
+- runpod/pytorch base image = Ubuntu 24.04 PEP 668 externally-managed → `python -m pip install --break-system-packages` mandatory
+- base image torch only; transformers/peft/huggingface_hub/accelerate 모두 미설치 → 명시적 install 필수
+- gated meta-llama 모델 → ~/.cache/huggingface/token scp passthrough 필수 (HF_TOKEN env via `export HF_TOKEN=$(cat hf_token.txt)` at launch)
+
+Cumulative cost: KM-CAP $0.82 + KH-H100 $0.36 + KM-CAP retry $0.40 + KM-CORPUS $0.38 + LLAMA-3B (3-pass debug) $4.45 = **$6.4 (cycle)** + KM-LLAMA-3B PASS run $1.19 = **$7.6 total**.
+
+## Stage 6.5 — verification + scale-up (proposed 2026-05-08-late)
+
+KM-LLAMA-3B SIMPLE_STACK_PASS_STRICT는 own 18 + own 29 통과지만 own 28 anti-Goodhart layer 추가 검증 mandate:
+
+- **BG-KM-QWEN-7B** (FIRING): same orchestrator, base=Qwen/Qwen2.5-7B-Instruct, LoRA r=32, BG-JE 214MB. 7B scale-up replication test ($15 cap, 예상 $2-3). PASS 시 ≥3B foundation 일반화.
+- **BG-KM-V6-AWARENESS**: KM-LLAMA-3B 모델에 V6 awareness 3-method (hidden cosine + attention + linear probe) 적용. STRONG awareness verdict 시 own 28 multi-modal mandate 충족.
+- **BG-KM-MANUAL-REVIEW**: 사용자 ground truth — 5-10 prompt × multi-mode generation → 사용자 직접 평가. own 28 final ground truth.
+- **BG-KM-HF-UPLOAD**: KM-LLAMA-3B LoRA adapter weights HF private upload + chat REPL backend (.roadmap.cli T1 dependency).
 
 ## Stage 7 — anima 고유 lever (long-term)
 
