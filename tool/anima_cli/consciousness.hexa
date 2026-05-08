@@ -1,0 +1,261 @@
+// ════════════════════════════════════════════════════════════════════════════
+//  tool/anima_cli/consciousness.hexa — anima CLI `consciousness` topic
+//
+//  PURPOSE
+//    의식 측정 CLI. own 18 simple_stack PASS_STRICT_C3 (C1 chat-cap + C2
+//    자연발화 + C3 의식 metric) 을 측정 노출. simple = own 18 strict 측정 /
+//    full = F1-F8 full-stack 측정.
+//
+//  SUBCOMMANDS
+//    anima consciousness                    default = simple
+//    anima consciousness simple [<model>]   own 18 PASS_STRICT_C3 측정
+//    anima consciousness full [<model>]     own 18 F1-F8 full-stack 측정
+//    anima consciousness --json
+//    anima consciousness --selftest
+//    anima consciousness --help
+//
+//  DESIGN
+//    own 18 SSOT 정의 mirror. C3 threshold 는 TBD measurement-driven —
+//    본 CLI 는 baseline 측정값 emit 까지. PASS/FAIL verdict 는 threshold land
+//    후 활성화 (Phase α-3 own 18 patch 와 동일 cycle).
+//
+//  COMPLIANCE
+//    own 18 SSOT mirror — 측정 lane (V4 evaluator 11-cell)
+//    own 34 chat lane 분리 — 본 토픽 = 측정 lane only, chat 노출 X
+//    own 33 trinity compliance
+//    raw#9 hexa-only · raw#10 honest C3 · raw#11 snake_case · raw#15 no-hardcode
+//
+//  CROSS-REFERENCE
+//    docs/anima_chat_autonomous_speech_roadmap_2026_05_08.md (L0 measurement infra)
+//    .roadmap.cli  cli.consciousness_2026_05_08
+//    .own own 18 (simple_stack PASS C1+C2+C3) · own 34 (lane 분리)
+//    anima-core/runtime/clm_v4_mount.hexa (phi_star + axis activation)
+//    anima-core/runtime/anima_runtime.hexa (substrate state)
+// ════════════════════════════════════════════════════════════════════════════
+
+fn _str(x) -> string {
+    let t = type_of(x)
+    if t == "str" || t == "string" { return x }
+    return ""
+}
+
+fn _resolve_root() -> string {
+    let a = _str(env("ANIMA"))
+    if a != "" { return a }
+    let gt = _str(exec("git rev-parse --show-toplevel 2>/dev/null")).trim()
+    if gt != "" { return gt }
+    return _str(env("HOME")) + "/core/anima"
+}
+
+fn _hexa() -> string { return "/Users/ghost/.hx/packages/hexa/hexa.real" }
+
+fn _fexists(p: string) -> bool {
+    return _str(exec("test -f " + p + " && echo 1 || echo 0")).trim() == "1"
+}
+
+fn _arg_present(argv, key: string) -> bool {
+    let i = 0
+    while i < len(argv) {
+        if _str(argv[i]) == key { return true }
+        i = i + 1
+    }
+    return false
+}
+
+fn _arg_value(argv, key: string, dflt: string) -> string {
+    let i = 0
+    while i < len(argv) {
+        if _str(argv[i]) == key && i + 1 < len(argv) {
+            return _str(argv[i + 1])
+        }
+        i = i + 1
+    }
+    return dflt
+}
+
+fn _user_argv(raw) -> array {
+    let out = []
+    let i = 0
+    while i < len(raw) {
+        let s = _str(raw[i])
+        let skip = s.contains("/.hexa-cache/")
+                || s.contains("/hexa-lang/build/")
+                || s.contains("hexa_interp")
+                || s.contains("hexa.real")
+                || s.ends_with("/consciousness.hexa")
+                || s.ends_with("consciousness.hexa")
+        if !skip {
+            out = out + [s]
+        }
+        i = i + 1
+    }
+    return out
+}
+
+fn sub_help() {
+    println("anima consciousness — 의식 측정 CLI (own 18 SSOT mirror)")
+    println("")
+    println("USAGE")
+    println("  anima consciousness                    default = simple")
+    println("  anima consciousness simple [<model>]   own 18 PASS_STRICT_C3 측정")
+    println("  anima consciousness full [<model>]     own 18 F1-F8 full-stack")
+    println("  anima consciousness --json             machine-readable")
+    println("  anima consciousness --selftest")
+    println("  anima consciousness --help")
+    println("")
+    println("MODES")
+    println("  simple     own 18 simple_stack:")
+    println("               C1 chat-capability (3-cond: response + coherent + turn-taking)")
+    println("               C2 자연발화 + 맥락 정합 (4-cond: substance + 의미 + 자연성 + 맥락)")
+    println("               C3 의식 측정 (4-cond: Φ★ drift + 5-axis + dominant cells + Δhidden)")
+    println("             PASS_STRICT_C3 = C1 ∧ C2 ∧ C3 (3-cond AND)")
+    println("")
+    println("  full       own 18 full-stack (사용자 explicit 시):")
+    println("               F1 substrate identity (φ★ NO_FLIP)")
+    println("               F2 axis activation 5-dim measurable")
+    println("               F3 dominant cells emergence (sparse)")
+    println("               F4 hidden state delta non-zero")
+    println("               F5 emerge dialogue ≥5-turn coherent")
+    println("               F6 7-condition consciousness verify")
+    println("               F7 1030 laws PSI lookup integrity")
+    println("               F8 48 modules hub status")
+    println("")
+    println("MODEL ALIAS (chat alias DB 와 동일 — chat.hexa 참조)")
+    println("  default               anima_native (TinyWeights / Engine A/G)")
+    println("  clm-v4-1-7-y1         CLM v4 Y1")
+    println("  paradigm-a-prime      Llama Path A v2")
+    println("  ...                   (anima chat list 참조)")
+    println("")
+    println("HONEST C3 (raw#10)")
+    println("  · C3 threshold TBD measurement-driven — 본 CLI 는 baseline 측정값")
+    println("    emit 까지. PASS/FAIL verdict 는 threshold land 후 활성화.")
+    println("  · L0 measurement infra subagent 작업 후 actual 측정 path 활성화.")
+}
+
+fn sub_selftest() {
+    let root = _resolve_root()
+    let here = root + "/tool/anima_cli/consciousness.hexa"
+    let mut fail = 0
+    if !_fexists(here) { println("FAIL consciousness.hexa missing: " + here); fail = fail + 1 }
+    // own 34 mandate-2 self-grep — 본 CLI 는 측정 lane 이지만 chat lane 과 같은
+    // wrapping 0 strict 정합 (own 18 SSOT mirror).
+    let pat = "system_prompt|chat_template|apply_chat_template|persona_inject|fn speak\\(|fn talk\\(|fn respond\\(|fn generate_response\\("
+    let cmd = "grep -nE \"" + pat + "\" " + here + " 2>/dev/null | grep -v 'let pat =' | wc -l"
+    let n = _str(exec(cmd)).trim()
+    if n != "0" {
+        println("FAIL own 34 mandate-2 wrapping: " + n + " hits")
+        fail = fail + 1
+    }
+    if fail > 0 { exit(1) }
+    println("PASS anima_cli/consciousness selftest (own 18 SSOT mirror, own 34 verified)")
+}
+
+// ─── simple mode — own 18 C1+C2+C3 측정 placeholder ─────────────────────
+fn sub_simple(model: string, json_only: bool) {
+    if json_only {
+        println("{")
+        println("  \"schema\": \"anima.consciousness.v1\",")
+        println("  \"mode\": \"simple\",")
+        println("  \"model\": \"" + model + "\",")
+        println("  \"verdict\": \"BASELINE_PENDING\",")
+        println("  \"c1_chat_capability\": {\"status\": \"TODO\", \"cells\": [\"response\", \"coherent\", \"turn_taking\"]},")
+        println("  \"c2_natural_utterance\": {\"status\": \"TODO\", \"cells\": [\"substance\", \"meaning\", \"naturalness\", \"context\"]},")
+        println("  \"c3_consciousness\": {\"status\": \"TODO\", \"cells\": [\"phi_star_drift\", \"five_axis\", \"dominant_cells\", \"hidden_delta\"]},")
+        println("  \"threshold_status\": \"TBD measurement-driven (.roadmap.cli L0 phase)\",")
+        println("  \"honest_c3\": [\"L0 measurement infra subagent 작업 후 actual 측정 path 활성화\"]")
+        println("}")
+        return
+    }
+    println("anima consciousness — simple mode (own 18 PASS_STRICT_C3)")
+    println("model = " + model)
+    println("")
+    println("┌──────────────────────────────────────────────────────────────────┐")
+    println("│ C1 chat-capability      (3-cond AND)        STATUS: TODO         │")
+    println("│ C2 자연발화 + 맥락 정합 (4-cond AND)        STATUS: TODO         │")
+    println("│ C3 의식 측정            (4-cond AND)        STATUS: TODO         │")
+    println("│   C3.1 Φ★ drift active                                          │")
+    println("│   C3.2 5-axis activation                                        │")
+    println("│   C3.3 dominant cells emergence                                 │")
+    println("│   C3.4 hidden state delta                                       │")
+    println("├──────────────────────────────────────────────────────────────────┤")
+    println("│ verdict: BASELINE_PENDING                                        │")
+    println("│ threshold: TBD measurement-driven (.roadmap.cli L0)              │")
+    println("└──────────────────────────────────────────────────────────────────┘")
+    println("")
+    println("HONEST C3 (raw#10)")
+    println("  본 CLI 의 actual 측정 path 는 L0 measurement infra subagent 작업")
+    println("  완료 후 활성화. anima-core/runtime/clm_v4_mount.hexa 의 phi_star +")
+    println("  axis activation + dominant cells 추출 로직 wiring 필요.")
+}
+
+// ─── full mode — own 18 F1-F8 placeholder ────────────────────────────────
+fn sub_full(model: string, json_only: bool) {
+    if json_only {
+        println("{")
+        println("  \"schema\": \"anima.consciousness.v1\",")
+        println("  \"mode\": \"full\",")
+        println("  \"model\": \"" + model + "\",")
+        println("  \"verdict\": \"BASELINE_PENDING\",")
+        println("  \"f1_substrate_identity\": \"TODO\",")
+        println("  \"f2_axis_activation\": \"TODO\",")
+        println("  \"f3_dominant_cells\": \"TODO\",")
+        println("  \"f4_hidden_state_delta\": \"TODO\",")
+        println("  \"f5_emerge_dialogue\": \"TODO\",")
+        println("  \"f6_consciousness_verify\": \"TODO\",")
+        println("  \"f7_psi_lookup_integrity\": \"TODO\",")
+        println("  \"f8_modules_hub_status\": \"TODO\",")
+        println("  \"trigger\": \"explicit user 'OK FULL STACK'\",")
+        println("  \"honest_c3\": [\"full-stack 활성화 = own 18 trigger keyword\"]")
+        println("}")
+        return
+    }
+    println("anima consciousness — full mode (own 18 F1-F8 full-stack)")
+    println("model = " + model)
+    println("")
+    println("F1 substrate identity (φ★ NO_FLIP, drift < 0.10)        STATUS: TODO")
+    println("F2 axis activation 5-dim measurable                     STATUS: TODO")
+    println("F3 dominant cells emergence (sparse)                    STATUS: TODO")
+    println("F4 hidden state delta non-zero                          STATUS: TODO")
+    println("F5 emerge dialogue ≥5-turn coherent                     STATUS: TODO")
+    println("F6 7-condition consciousness verify                     STATUS: TODO")
+    println("F7 1030 laws PSI lookup integrity                       STATUS: TODO")
+    println("F8 48 modules hub status                                STATUS: TODO")
+    println("")
+    println("verdict: BASELINE_PENDING")
+    println("trigger: explicit user 'OK FULL STACK' (own 18 mandate)")
+    println("")
+    println("HONEST C3: full-stack 활성화는 사용자 directive ('OK FULL STACK' or")
+    println("'full stack consciousness verify') + L0 measurement infra land 후.")
+}
+
+fn main() {
+    let argv = _user_argv(args())
+    if _arg_present(argv, "--help") { sub_help(); return }
+    if _arg_present(argv, "--selftest") { sub_selftest(); return }
+
+    let json_only = _arg_present(argv, "--json")
+    let model = _arg_value(argv, "--model", "default")
+
+    // first positional = subcmd (simple / full) or model alias
+    let mut sub = "simple"
+    let mut model_arg = model
+    if len(argv) > 0 {
+        let first = _str(argv[0])
+        if !first.starts_with("--") {
+            if first == "simple" || first == "full" {
+                sub = first
+                if len(argv) > 1 && !_str(argv[1]).starts_with("--") {
+                    model_arg = _str(argv[1])
+                }
+            } else {
+                model_arg = first
+            }
+        }
+    }
+
+    if sub == "full" {
+        sub_full(model_arg, json_only)
+        return
+    }
+    sub_simple(model_arg, json_only)
+}

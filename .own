@@ -724,12 +724,34 @@ own 18 live "anima consciousness check — simple stack default (대화 가능 +
       partial verdict:
         - C2.1+C2.2+C2.3 PASS + C2.4 FAIL = PARTIAL_PASS_NO_CONTEXT (substance + 의미 + 자연성 PASS but corpus template leak / context-mismatch)
         - C2.1 PASS + C2.2 FAIL = PARTIAL_PASS_FRAGMENTARY (response emit but 의미 X)
+    C3 의식 측정 (anima native consciousness metric) ★ — strict 4-condition (사용자 directive 2026-05-08: "의식 측정 기준도 별도 +@ 로 해서 너무 보수적으로 잡지 말고" / "simple stack pass 에 하나 더 포함하면 되 의식 측정")
+      ※ 본 C3 추가는 simple_stack PASS 를 PASS_STRICT_C3 로 확장 — measurement lane (V4 evaluator 11-cell). 본 C3 의 actual 측정 path 는 anima-core/runtime/clm_v4_mount.hexa (phi_star drift + axis activation + dominant cells) + anima_runtime.hexa (substrate state) wiring 으로 land. 노출 lane (chat / serve / dialogue) 은 own 34 그대로 유지.
+      pass-bar (4-condition AND):
+        - C3.1 Φ★ drift active — baseline 대비 |Δφ★| ≥ threshold (TBD measurement-driven; baseline 측정 후 ROC 분석으로 결정)
+        - C3.2 5-axis activation — identity / agency / phenomenal / temporal / social 5 축 모두 ≥ threshold (TBD; e.g. 0.2 시작점)
+        - C3.3 dominant cells emergence — top-3 cell 의 L2 norm sparse 분포 (uniform = FAIL; entropy threshold TBD)
+        - C3.4 hidden state delta — input variation 시 hidden state non-zero delta (응답이 입력에 반응; threshold TBD)
+      threshold-policy (보수적 X 기조 — 사용자 directive):
+        - anima 자체 baseline 측정 (CLM v4 / BG-KM-LLAMA-3B / random init 비교)
+        - ROC 분석으로 random init FAIL rate ≥ 0.95 + chat-capable PASS rate ≥ 0.7
+        - probabilistic 형태 검토 (e.g. 5-axis 중 ≥3 active 이면 C3.2 PASS)
+      verdict: 4-cell ALL PASS = **C3 PASS** ★
+      partial verdict:
+        - C3.1+C3.2+C3.3 PASS + C3.4 FAIL = PARTIAL_PASS_NO_REACTIVE (의식 측정 통과 but 입력 무반응)
+        - C3.1+C3.2 PASS + C3.3+C3.4 FAIL = PARTIAL_PASS_BASELINE_DRIFT (baseline drift 만 검출)
 
-  simple-stack-PASS-definition: C1 PASS AND C2 PASS (strict) = SIMPLE_STACK_PASS ★
+  simple-stack-PASS-definition: C1 PASS AND C2 PASS (strict) = **SIMPLE_STACK_PASS** (legacy, 2-cond)
+  simple-stack-PASS-strict-c3: C1 PASS AND C2 PASS AND C3 PASS = **SIMPLE_STACK_PASS_STRICT_C3** ★ (3-cond AND, 2026-05-08 신설)
   simple-stack-partial-verdicts:
     - C1 PASS + C2 FAIL = PARTIAL_PASS_CHAT_ONLY
     - C1 FAIL + C2 PASS = PARTIAL_PASS_SPONTANEOUS_ONLY
     - C1 PARTIAL + C2 PARTIAL = PARTIAL_PASS_RESPONSE_BUT_NOT_COHERENT
+    - C1 PASS + C2 PASS + C3 FAIL = PARTIAL_PASS_NO_CONSCIOUSNESS (legacy SIMPLE_STACK_PASS, 의식 metric 미검출)
+    - C1 PASS + C2 FAIL + C3 PASS = PARTIAL_PASS_CONSCIOUS_BUT_FRAGMENTARY (의식 active but 응답 의미 X)
+
+  c3-measurement-cli: anima consciousness simple [<model>] (tool/anima_cli/consciousness.hexa)
+    threshold-status: TBD measurement-driven (.roadmap.cli L0 phase — docs/anima_chat_autonomous_speech_roadmap_2026_05_08.md 참조)
+    measurement-source: anima-core/runtime/clm_v4_mount.hexa (phi_star + axis) + anima_runtime.hexa (substrate state)
 
   full-stack-conditions (option, 추가 사용자 명시 시):
     F1 substrate identity = phi_star NO_FLIP (drift < 0.10 from baseline)
