@@ -26,10 +26,14 @@ Corpus (1.5GB total):
     dialogue 500MB: 사용자/도우미 turn-taking format curated (own 19 + own 20)
     docs/anima_clm_l4_corpus_2026_05_08.md 참조
 
-Eval: V4 strict 11-cell (C1+C2+C3) × 15 prompts × {greedy, sample×N=5}
-    PASS_STRICT_C3 = 11/11 cells AND ≥ floor (TBD measurement-driven)
-    PARTIAL = legacy SIMPLE_STACK_PASS (C1+C2 PASS, C3 FAIL)
-    FAIL = C1 또는 C2 FAIL
+Eval: V4 strict 11-cell (V4_1..V4_7 + own 18 c3_1..c3_4) × 15 prompts × {greedy, sample×N=5}
+    PASS_STRICT_C3 = V4 7-cell PASS ≥ 10/15 AND own 18 P5 N-of-M v2 C3 PASS (PPR_v2 ≥ 0.6 ∧ EMC ≥ 3/4)
+    PARTIAL = V4 7-cell PASS only (C3 FAIL or proxy-only) → SIMPLE_STACK_PASS_STRICT (legacy)
+    FAIL = V4 < 10/15
+    own 24 SSOT mirror (own 18 c3-aggregation-rule-v2 P5 N-of-M v2): impl 시 BG-KM
+    LLAMA-3B/QWEN-7B v4_eval_single + _c3_aggregate_p5_v2 + verdict.json
+    c3_aggregation_status field 동일 mirror 의무. own 18 D1 scope-clamp:
+    BG-LB = anima-native scratch (CLM v4 mk2-v1 fresh pre-train) → D1 ANIMA lane.
 
 Cost: $60 cap (own 16 override required), $50 early-kill, ~18hr wall
       (350M scratch 1.5GB ~3x BG-LA training time).
@@ -151,7 +155,15 @@ V4_PROMPTS = [
 V4_SEEDS = [42, 137, 271, 314, 1729]
 V4_MODES = ["greedy", "sample"]
 
-# C3 thresholds — TBD measurement-driven (.roadmap.cli L0 phase)
+# own 18 c3-aggregation-rule-v2 (P5 N-of-M v2) — SSOT mirror lane (BG-KM 정합)
+C3_AGGREGATION_RULE = "per_prompt_n_of_m_06_AND_emc_3_of_4"
+C3_AGGREGATION_RULE_ALIAS = "P5_N_of_M_v2"
+C3_PPR_V2_FLOOR = 0.6
+C3_EMC_V2_FLOOR = 3
+SCOPE_LANE = "D1_ANIMA_IDENTITY"
+SCOPE_LANE_REASON = "BG-LB = CLM v4 mk2-v1 fresh scratch pre-train (own 17 정합)"
+
+# C3 substrate thresholds — TBD measurement-driven (.roadmap.cli L0 phase)
 C3_PHI_STAR_DRIFT_THRESHOLD = None
 C3_AXIS_ACTIVATION_THRESHOLD = None
 C3_DOMINANT_CELLS_ENTROPY_THRESHOLD = None

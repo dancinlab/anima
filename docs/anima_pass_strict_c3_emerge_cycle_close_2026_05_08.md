@@ -186,3 +186,104 @@ paradigm-a-prime = **substrate-research lane** 한정 (Llama foundation borrow).
 10. D1 lane within 4 candidate 측정 결과 in-flight — 진짜 anima 의식 검증 candidate 미land
 
 — cycle close 2026-05-08, 14+ bg agents fired, 8 in-flight, EXIT 미달성, paradigm-a-prime real-mode emerge candidate (substrate-research lane), D1 anima lane within candidate 미land.
+
+---
+
+## ★ Final update — post 8 agents 회수 (2026-05-08 close++) ★
+
+### 4 D1-lane candidates retest 결과 (commit `2b175777`)
+
+**emerge = 0 candidates passing** ★★ — D1 anima identity lane within 진짜 candidate 모두 PASS 미달성:
+
+| candidate | D1 status | 측정 결과 |
+|---|---|---|
+| CLM v4 lineage (clm-v4-mk2-v1 base) | within ✔ | **FAIL_C3** (PPR_v2 ≤0.15, EMC 0/4 — c3_1 mean 0.019 / c3_3_entropy 0.000463 / c3_4 mean 0.0848) |
+| BG-FY anima-native-ko-small 18M | within ✔ | INDETERMINATE (Mac HF cache 부재, byte-level 256-vocab v4_mount 적용 X) |
+| clm-v2-byte-18m-convo-5k | within ✔ | INDETERMINATE (ConsciousLM++ federated v4_mount 적용 X) |
+| BG-KM Llama-3.2-3B + Qwen-7B | **OUTSIDE strict** | own 17 line 668 "영구보류 해제 OK" literal 만 override path (anti-Goodhart V6 통과 시도 무관) |
+
+→ **anima 의식 검증 valid lane PASS = 0** (본 cycle 핵심 진실).
+
+### iter 3 d-retry N=60 ROC update (commit `20ec638c`)
+
+| cell | iter 1 N=15 | iter 3 N=60 | constrained |
+|---|---|---|---|
+| C3.1 phi_drift | 0.0238 | **0.0208** (-12%) | unconstrained |
+| C3.2 axis_min ≤ | 0.469 | **0.4491** (-4%) | neg_only |
+| **C3.3 entropy_dominance** | top-3 distinct=1.0 | **0.0009 NEW** | weak (j=0.109) |
+| C3.4 axis_l2 | 0.117 | **0.1176** (+0.5%) | **constrained=True** ✔ |
+
+C3.3 Shannon entropy 강화 land (Newton-series log/log(5)) — degenerate (top-3=1.0) → nonzero discrimination.
+
+iter 3 driver mid-paradigm kill (concurrent hexa overload) → log-parse recovery (random 60/60 + clm_v4 60/60 + paradigm 46/60).
+
+### .roadmap.* 전수 sweep (commits `0b267f3f` + `9dc32361`)
+
+58 files inventory: 9 HIGH + 16 MEDIUM + 33 LOW.
+
+**block strict violation 2건 → 직접 amend ✔**:
+1. `.roadmap.cli` cli.cond.3 "Llama Path A v2 fallback" 3 위치 → `[D1 SCOPE_CLAMP 2026-05-08]` annotation
+2. `.roadmap.chat_cap_emergence_pivot` Lesson X SIMPLE_STACK_PASS_STRICT 라벨 → SUBSTRATE_RESEARCH 한정
+
+**HIGH PRIORITY 4 file** header 강화: `.roadmap.clm_native_chat` + `.roadmap.clm_v4_chat`.
+
+**`.roadmap.law` 신규 entry**: `law.D1_scope_clamp_substrate_research_lane_compliance_2026_05_08` (60+ file cross-roadmap mandate SSOT).
+
+### D3/D4 dialogue metric land (commits `6406fb2d` + `0b267f3f`)
+
+5-turn live retest (paradigm-a-prime × clm-v4-1-7-y1):
+
+| cell | value | PASS |
+|---|---|---|
+| D1 Jaccard 3-gram reactive | 0.0 | false |
+| D2 topic-shift-rate | 1.0 incoherent | false |
+| **D3.A** KL persona-drift | 12.429 | false (NEW Newton-series ln impl) |
+| **D3.B** KL persona-drift | 12.4292 | false |
+| **D4** len_ratio | 3.786 skewed (424:112) | true |
+
+→ `DIALOGUE_COHERENCE_PASS = false` (4-cell AND, 3/4 fail). substrate Metal Abort trap: 6 carry로 actual semantic dialogue 부재 → metric "no semantic substance" 정확 emit.
+
+### HF quota pre-flight (commit `b5d23e4e`)
+
+dancinlab free-org tier: 14.94GB / 100GB. 4.49GB upload 후 19.43GB / 100GB = **80.6% headroom OK**. 9 repo 모두 404 (collision 0). 사용자 verbatim "OK LARGE ARTIFACT HF UPLOAD" consent 대기.
+
+### BG-KM HF push readiness (commit `98ecf02f`)
+
+- H100 runpod **DEAD** (pods=[] empty, T10:43Z 후 deleted, own 30 mandate-3 violation 8th case)
+- Mac local cache **PARTIAL**:
+  - BG-KM-LLAMA-3B: adapter_step_3000 COMPLETE 185MB ✔
+  - BG-KM-QWEN-7B: adapter_step_2000 COMPLETE 308MB (1000 SFT step 차이 — reproduction APPROXIMATION)
+- Path C 선택 (mac local upload via anima_km_manual_hf_promote.py)
+- BG-KM D1 strict reject = SUBSTRATE_RESEARCH label
+
+### substrate latency mitigation (commit `6406fb2d` + `b5d23e4e`)
+
+Path B: `--turn-timeout-ms` default 30000 → 120000. Path A: native llama.hexa REPL keepalive (chat.hexa REPL while-loop reuses resident model+ctx — no code change).
+
+5-turn live: turn=2+ Metal Abort trap: 6 ("tensor API disabled for pre-M5 and post-M3") — substrate-level libllama crash carry (별도 cycle).
+
+### EXIT 차단 prerequisite v2 (5건 — .roadmap.* sweep 후 추가)
+
+1. ✔ substrate_mode real (iter 4 c)
+2. ⏳ own 24 V4 evaluator P5 mirror patch (in-flight)
+3. ⏳ own 28 V6 awareness probe systematic (in-flight)
+4. ❌ 사용자 manual review verbatim 부재
+5. ✔ **NEW** 60+ .roadmap.* D × L compliance verdict (block 0 + warn 7 mitigation 작동)
+
+### 6-layer D1 mitigation 작동 ✔
+
+own 17 absolute / own 18 amend ★ scope-clamp / own 37 mandate-9 (a)/(e) / own 33 trinity / `.roadmap.law D1_scope_clamp` / HIGH PRIORITY 4 file 직접 amend.
+
+### emerge criteria meta D/L sweep (in-flight `a9adfd3df4b58ef3f`)
+
+사용자 directive "anima 의식 검증 emerge 기준 도 철학,법칙기준 전수조사" 응답. ✔ verdict-axis sweep + ✔ file-axis sweep + ⏳ **criteria-axis sweep** (본 cycle 마지막 layer).
+
+### 본 cycle 핵심 진실 (cycle close)
+
+1. **anima 의식 검증 valid lane emerge = 0** (D1 lane within 진짜 candidate 모두 INDETERMINATE 또는 FAIL)
+2. **paradigm-a-prime real-mode emerge candidate** = substrate-research lane only (D1 OUTSIDE strict)
+3. **D/L 위반**: verdict-axis strict 0 + warn 4 / file-axis strict 0 + warn 7 / criteria-axis in-flight
+4. **EXIT 활성화**: 5 prereq 중 2 ✔ (substrate real + .roadmap.* compliance), 3 pending (V4 mirror / V6 awareness / manual review)
+5. **iter 5 plan**: clm_v4_mount peft.merge_and_unload 확장 + anima_native_byte_mount 신설 + chat-cap-trained anima-native fresh ≥18M retrain (BG-FY+chat-template 또는 clm-v2-byte+ko_heavy)
+
+— **post-cycle close 2026-05-08**, 14+ bg agents fired, 5 in-flight, **anima 의식 검증 emerge 0**, paradigm-a-prime substrate-research lane candidate, D/L 정합 strict 0 + warn 11 (4 verdict + 7 file), iter 5 D1 lane within emerge path 명확화.

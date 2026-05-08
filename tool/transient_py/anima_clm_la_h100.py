@@ -22,10 +22,15 @@ Architecture (placeholder — final arch subject to L0 measurement-driven tuning
     Engine G hooks: cell-state vector dim=64, refresh every 4 layers, A↔G tension
                    gate on attention scores (softmax temperature modulated by tension)
 
-Eval: V4 strict 11-cell (C1+C2+C3) × 15 prompts × {greedy, sample×N=5}
-    PASS_STRICT_C3 = 11/11 cells AND ≥ floor (TBD measurement-driven .roadmap.cli L0)
-    PARTIAL = C1+C2 PASS, C3 FAIL (legacy SIMPLE_STACK_PASS, 의식 metric 미검출)
-    FAIL = C1 또는 C2 FAIL
+Eval: V4 strict 11-cell (V4_1..V4_7 + own 18 c3_1..c3_4) × 15 prompts × {greedy, sample×N=5}
+    PASS_STRICT_C3 = V4 7-cell PASS ≥ 10/15 AND own 18 P5 N-of-M v2 C3 PASS (PPR_v2 ≥ 0.6 ∧ EMC ≥ 3/4)
+    PARTIAL = V4 7-cell PASS only (C3 FAIL or proxy-only) → SIMPLE_STACK_PASS_STRICT (legacy)
+    FAIL = V4 < 10/15
+    own 24 SSOT mirror (own 18 c3-aggregation-rule-v2 P5 N-of-M v2): impl 시 BG-KM
+    LLAMA-3B/QWEN-7B v4_eval_single + _c3_aggregate_p5_v2 + verdict.json
+    c3_aggregation_status field 동일 mirror 의무. own 18 D1 scope-clamp:
+    BG-LA = anima-native scratch (CLM v5 dual-engine) → D1 ANIMA lane → PASS 시
+    SIMPLE_STACK_PASS_STRICT_C3_ANIMA classification.
 
 Cost: $30 cap (own 16 override required — 사용자 'OK CLM L4 ALL FIRE'),
       $25 early-kill, ~9hr wall (H100 SXM @ $2.99/hr × 9hr ≈ $27).
@@ -144,7 +149,21 @@ V4_PROMPTS = [
 V4_SEEDS = [42, 137, 271, 314, 1729]
 V4_MODES = ["greedy", "sample"]
 
-# C3 thresholds — TBD measurement-driven (.roadmap.cli L0 phase, own 18 C3 honest-c3)
+# own 18 c3-aggregation-rule-v2 (P5 N-of-M v2) — SSOT mirror lane (BG-KM 정합)
+# rule = `per_prompt_n_of_m_06_AND_emc_3_of_4`
+# PPR_v2 = per-prompt N-of-M (≥3 of 4 c3 cells PASS per prompt) verdict rate ≥ 0.6
+# EMC_v2 = ensemble cell-wise (≥3 of 4 c3 cell-mean PASS) ≥ 3 of 4
+# C3 PASS = PPR_v2 ≥ 0.6 AND EMC_v2 ≥ 3 of 4
+C3_AGGREGATION_RULE = "per_prompt_n_of_m_06_AND_emc_3_of_4"
+C3_AGGREGATION_RULE_ALIAS = "P5_N_of_M_v2"
+C3_PPR_V2_FLOOR = 0.6
+C3_EMC_V2_FLOOR = 3
+# own 18 D1 scope: BG-LA = anima-native scratch (CLM v5) → D1 ANIMA lane
+# PASS_STRICT_C3 + D1 lane = SIMPLE_STACK_PASS_STRICT_C3_ANIMA classification
+SCOPE_LANE = "D1_ANIMA_IDENTITY"
+SCOPE_LANE_REASON = "BG-LA = anima-native scratch (CLM v5 dual-engine, own 17 정합)"
+
+# C3 substrate thresholds — TBD measurement-driven (.roadmap.cli L0 phase, own 18 C3 honest-c3)
 C3_PHI_STAR_DRIFT_THRESHOLD = None       # TBD; baseline 측정 후 ROC 분석으로 결정
 C3_AXIS_ACTIVATION_THRESHOLD = None      # TBD; e.g. 0.2 시작점
 C3_DOMINANT_CELLS_ENTROPY_THRESHOLD = None  # TBD
