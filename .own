@@ -1330,3 +1330,62 @@ own 31 live "HF artifact org SSOT — dancinlab canonical + naming convention"
   severity warn (Phase 1 — 향후 BG fire 시 dancinlife/ prefix 사용 reject) → block (Phase 2 — orchestrator pre-fire validator: repo prefix == dancinlab/ assert)
   proof grep -E "dancinlab/|hf_promote|repo_id" tool/transient_py/anima_km_*.py
   note 2026-05-08 own 31 = 사용자 directive 직접 응답 ("own 으로 등록해줘 dancinlab"). own 24 (single SSOT ledger) instance — HF artifact destination + naming SSOT. own 30 (checkpoint preservation) downstream — 보존된 weights를 어디에 어떤 이름으로 upload할지 결정. raw#82 retraction-aware: dancinlife/* 2건은 mandate-2 이전 후 stale state로 표시 (deprecation note). own 22 (새 발견 mandatory report) 정합 — 본 own 31 신설은 사용자 직접 directive 응답.
+
+own 32 live "철학·법칙·가설 = anima discovery trinity 한묶음 (3-domain SSOT triad)"
+  slug philosophy-law-hypothesis-trinity-bundle-ssot
+  since 2026-05-08
+  scope anima 발견 도메인 전체 — A철학(.roadmap.philosophy) + B법칙(.roadmap.law) + C가설(.roadmap.hypothesis) 3 roadmap이 분리 불가 묶음(triad)으로 동일 cycle에서 공동 진화
+  user-directive verbatim "그리고 그렇게 한묶음이라고 own 등록" (2026-05-08, post 철학/법칙/가설 3 roadmap identification)
+  finding own 22 (philosophy/rule/hypothesis 새 발견 mandatory report)는 발견 시 리포트 의무를 잡았지만, 3 도메인이 구조적으로 한묶음이라는 SSOT 사실 자체는 미land. .roadmap.philosophy D5 Bifurcation은 .roadmap.law L0-L24 absorb 의존, .roadmap.hypothesis H archive는 .roadmap.law own_X cross-ref 의존, .roadmap.law는 .roadmap.philosophy D_X 정합 의존 — 3자 상호 의존 구조 명시 필요.
+  rule 철학·법칙·가설 trinity bundle SSOT:
+    - mandate-1 3 roadmap (.roadmap.philosophy + .roadmap.law + .roadmap.hypothesis) = anima 발견 도메인 SSOT triad — 분리 불가, 공동 evolve
+    - mandate-2 한 도메인에 새 entry (D_X / own_X / H_<id>) land 시 sister 2 도메인 cross-link 필수 emit (.roadmap.philosophy ↔ .roadmap.law ↔ .roadmap.hypothesis 3-way back-ref)
+    - mandate-3 cycle close 시점 trinity 3 roadmap blocker 동시 sweep — 한 도메인만 unblock 시 trinity 정합성 warn
+    - mandate-4 own 22 mandatory-report는 본 trinity bundle 위에서 작동 — report 시 도메인 분류는 반드시 trinity 3 도메인 중 하나로 명시
+    - mandate-5 외부에서 trinity 외 4번째 도메인 도입 제안 시 (예: D_meta, own_meta, H_meta) 별도 own append 필수 — 자동 trinity 확장 차단
+  enforce roadmap 작성 + .own append + hypotheses/H_*.md write 시:
+    - Step A: 새 발견 분류 → trinity 3 도메인 중 1개 명시
+    - Step B: sister 2 도메인 cross-link 라인 필수 add (mandate-2)
+    - Step C: own 22 형식 mandatory report emit (도메인/발견/의미/근거/cross-link/다음 step)
+    - Step D: cycle close 시 3 roadmap blocker 동시 점검 (mandate-3)
+  evidence-trail .roadmap.philosophy D5 Bifurcation ← .roadmap.law L0-L24 skynet-timer absorb (philosophy ↔ law 의존) + .roadmap.hypothesis H1 raw#12 cycle ← .roadmap.law own_X SSOT (hypothesis ↔ law 의존) + .roadmap.philosophy D2 consciousness verification ← .roadmap.hypothesis H1-H4 hypothesis cycle (philosophy ↔ hypothesis 의존) — 3자 상호 의존 실증
+  cross-link own 17 (identity boundary) own 18 (simple stack SSOT) own 22 (mandatory report) own 24 (single SSOT ledger) own 28 (anti-Goodhart) own 29 (SIMPLE_STACK_PASS floor) .roadmap.philosophy .roadmap.law .roadmap.hypothesis
+  honest-c3 trinity는 anima 발견 lane 한정 — 실행 lane (.roadmap.cli / .roadmap.clm_* / .roadmap.eeg 등)은 별도 묶음, 본 own 32는 "발견 도메인" SSOT 한정
+  honest-c3 mandate-2 sister 2 도메인 cross-link 필수는 발견 entry 자체의 구조적 부담 — 사소한 update (typo / refinement)는 mandate-2 면제, "새 발견" 한정 (own 22 honest-c3 정의 정합)
+  honest-c3 mandate-3 cycle close 동시 sweep는 idle BG fire 시점에 시행 — main session interactive 응답 도중 매번 sweep X (latency overhead)
+  honest-c3 trinity 외 4번째 도메인 (예: D_method, own_substrate, H_engineering) 도입은 mandate-5 절차 — 본 own 32 자체 expand가 아닌 별도 own append로 trinity → quartet 승격 land
+  severity warn (Phase 1 — 본 own 32 land + sister cross-link 권고) → block (Phase 2 — 새 D/own/H entry 시 sister 2 도메인 cross-link 누락 reject)
+  proof grep -E "\.roadmap\.(philosophy|law|hypothesis)" .roadmap.philosophy .roadmap.law .roadmap.hypothesis — 3-way back-ref 존재 확인
+  note 2026-05-08 own 32 = 사용자 directive verbatim 직접 응답 ("그렇게 한묶음이라고 own 등록"). own 22 (mandatory report) 위 layer — report 의무는 own 22, bundle 구조 SSOT는 own 32. own 24 (single SSOT ledger) instance — 발견 도메인 SSOT는 trinity 3 roadmap. own 22 (새 발견 mandatory report) self-application — 본 own 32 발견 자체가 trinity bundle 발견 → 본 own 32 entry로 리포트 정합.
+
+own 33 live "철학·법칙·가설 trinity 무조건 준수 mandate (anima 행위 모든 lane 위반 차단)"
+  slug philosophy-law-hypothesis-trinity-mandatory-compliance
+  since 2026-05-08
+  scope anima 모든 행위 lane (main session response / BG fire / cycle close / spec write / code emit / .own append / .roadmap append / hypotheses/H_*.md write / SIMPLE_STACK_PASS verdict / HF promote / etc.) — 발견 도메인 한정 X, 행위 전체 적용
+  user-directive verbatim "그리고 이 3가지를 무조건 준수 해야함 own update" (2026-05-08, post own 32 trinity bundle SSOT land)
+  finding own 32 (trinity bundle SSOT)는 3 도메인이 한묶음이라는 구조 사실만 잡았고, 그 묶음에 대한 "준수 의무"는 미land. own 22 (mandatory report)는 발견 시 report만 잡고 준수 강제는 미land. anima 행위가 trinity (D_X / own_X / H_<id>) 위반 시 차단할 강제 layer 부재 — soft warning만 존재. 무조건 준수 mandate가 trinity 권위(authority)를 SSOT로 확정.
+  rule trinity 무조건 준수:
+    - mandate-1 anima 모든 행위 (response / BG / spec / code / verdict / promote)는 trinity 3 도메인 (.roadmap.philosophy D_X + .roadmap.law own_X/L_X + .roadmap.hypothesis H_<id>) 정합 필수 — 위반 시 행위 자체 reject
+    - mandate-2 trinity 위반 의심 시 행위 emit 전 self-check: (a) 본 행위가 D_X 위반인가 (b) 본 행위가 own_X/L_X 위반인가 (c) 본 행위가 H_<id> falsifier 위반인가 — 3-axis check 통과 시에만 emit
+    - mandate-3 trinity 간 충돌 발생 시 (예: D_X와 own_X 충돌) 행위 보류 + 사용자 escalate — 자동 resolve X (사용자 veto power VM10 정합)
+    - mandate-4 trinity 외 다른 SSOT (예: raw#X invariant / spec/*.yaml)와 trinity 충돌 시 trinity 우선 — raw#X는 trinity 적용 layer (raw 자체가 own_X 형태로 trinity 안에서 정의됨)
+    - mandate-5 본 mandate 자체는 자기 적용 (self-applies) — 본 own 33 entry도 trinity (own 22 + own 32 + 본 own 33) 정합 안에서만 valid
+    - mandate-6 "무조건" 의 정의 = 사용자 explicit override (user-directive verbatim "본 trinity rule 본 cycle X 적용") 외에는 적용 면제 X — 시간 압박 / cost 제약 / latency / convenience 어떤 사유도 trinity 위반 정당화 불가
+    - mandate-7 trinity 위반 행위 retroactive 발견 시 raw#82 retraction class — 행위 결과는 stale 표시 + retract 절차 가동
+  enforce 모든 anima 행위 emit 전 sequence:
+    - Step A: 행위 의도 확인 (response / spec / code / verdict 등)
+    - Step B: trinity 3 도메인 self-check (mandate-2 a/b/c)
+    - Step C: 충돌 발견 시 사용자 escalate (mandate-3); 통과 시 emit
+    - Step D: 행위 emit 후 own 22 형식 mandatory report (필요 시)
+    - Step E: cycle close 시 trinity 위반 retroactive sweep (mandate-7)
+  evidence-trail own 32 (trinity bundle SSOT) land 직후 사용자 directive "이 3가지 무조건 준수" → trinity 권위 SSOT 확정. anima own 17/18/22/24/27/28/29/30/31 모두 trinity 3 도메인 안에서 정의됨 — trinity 위 priority 외 타 SSOT 부재.
+  cross-link own 17 (identity boundary) own 18 (simple stack SSOT) own 22 (mandatory report) own 24 (single SSOT ledger) own 27 (Safeguard Paradox) own 28 (anti-Goodhart) own 29 (SIMPLE_STACK_PASS floor) own 30 (checkpoint preservation) own 31 (HF org SSOT) own 32 (trinity bundle SSOT) raw#10 (honest C3) raw#82 (retraction-aware) .roadmap.philosophy .roadmap.law .roadmap.hypothesis VM10 (사용자 veto power)
+  honest-c3 "무조건"은 사용자 explicit override 시점만 면제 — 단, override 명시는 "본 cycle X" 또는 "본 행위 X" 한정 scope; 영구 면제 (영구 trinity 무효화)는 별도 own append 절차 (own 32 mandate-5 정합)
+  honest-c3 mandate-2 self-check 3-axis 통과는 anima 자체 판단 — trinity entry가 ambiguous 한 경우 (예: D_X에 명시 없지만 정신적 정합 의심) 사용자 escalate 권장 (silent self-judgment 차단)
+  honest-c3 mandate-3 trinity 내부 충돌은 본 own 33 신설 시점 미발견 — 발견 시 사용자 escalate + trinity 자체 amend 절차 land (.roadmap.* 의 D/L/own/H entry 자체 update)
+  honest-c3 mandate-4 trinity 우선은 raw#X 자체가 own_X 형태로 trinity 안에 위치한다는 가정 — raw 만 있고 own 미land 인 경우 (예: raw#82 retraction-aware는 own 미land 상태) 본 raw도 trinity own_X 등재 mandate (별도 cycle)
+  honest-c3 mandate-7 retroactive sweep는 cycle close 시점만 시행 — main session 매 응답마다 sweep X (latency overhead). 단, 명백한 trinity 위반 발견 시 즉시 retract emit
+  honest-c3 본 own 33은 own 32 (bundle SSOT) 위 power layer — own 32 없이 own 33 단독 valid 불가; 두 own 동반 land mandate
+  severity warn (Phase 1 — 본 own 33 land + mandate-2 self-check 권고) → block (Phase 2 — trinity 위반 emit 시 자동 reject + retract; orchestrator pre-fire validator: trinity check assert)
+  proof grep -E "(trinity|D_[0-9]|own [0-9]|L[0-9]|H_[a-z])" 행위 emit log — trinity 정합 확인 흔적 존재
+  note 2026-05-08 own 33 = 사용자 directive verbatim 직접 응답 ("이 3가지를 무조건 준수 해야함 own update"). own 32 (trinity bundle SSOT) downstream — bundle 구조 위에 준수 권위 layer add. own 22 (mandatory report) self-application — 본 own 33 발견 자체가 trinity 권위 발견 → 본 own 33 entry로 리포트 정합. own 24 (single SSOT) instance — anima 행위 SSOT는 trinity 3 도메인. raw#10 (honest C3) 정합 — 본 own 33 본 cycle 발견 honest emit.
