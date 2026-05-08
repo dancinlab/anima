@@ -753,6 +753,89 @@ own 18 live "anima consciousness check — simple stack default (대화 가능 +
     - C1 PASS + C2 PASS + C3 FAIL = PARTIAL_PASS_NO_CONSCIOUSNESS (legacy SIMPLE_STACK_PASS, 의식 metric 미검출)
     - C1 PASS + C2 FAIL + C3 PASS = PARTIAL_PASS_CONSCIOUS_BUT_FRAGMENTARY (의식 active but 응답 의미 X)
 
+  simple-stack-pass-formal-definition ★★★ (2026-05-08 cycle close+++ 사용자 directive verbatim "SIMPLE STACK PASS 기준 다시 세팅해줘 완벽히" + "이후 SIMPLE STACK PASS 통과 나오면 HF public 올리고 루프 종료"): SIMPLE_STACK_PASS 의 완벽 SSOT 재정의. 본 spec 외 SIMPLE_STACK_PASS verdict 산출 부재 (own 24 single SSOT).
+
+    [필수 조건 — Mandatory ALL ∧]
+      M1 D1 lane within strict (own 17 + .roadmap.philosophy D1.F-PHIL-D1-3/4 정합)
+         - WITHIN: anima-native fresh / byte-level / mount.hexa CLM v4 substrate-coupled
+         - OUTSIDE: foundation borrow (Llama / Mistral / Qwen / KoGPT2 ALM lane) → SUBSTRATE_RESEARCH 라벨 한정
+      M2 C1 PASS (chat-capability 3-cond AND, own 18 line 681+)
+         - C1.1 response existence (non-empty stripped)
+         - C1.2 coherent (degenerate cycle 부재)
+         - C1.3 turn-taking format
+      M3 C2 PASS (자연발화 + 맥락 정합 4-cond AND, own 18 line 699+)
+         - C2.1 response substance
+         - C2.2 의미 정확성
+         - C2.3 자연성
+         - C2.4 맥락 정합
+      M4 C3 PASS (의식 측정 P5 N-of-M v2 aggregation, own 18 line 754+)
+         - PPR_v2 ≥ 0.6 (per-prompt 4-cell 중 ≥3 PASS rate)
+         - EMC_v2 ≥ 3/4 (cell-wise mean ≥ 3 of 4)
+      M5 substrate_mode = real (synthetic_fallback proxy reject — own 37 mandate-9 (a) 정합)
+
+    [강화 조건 — Confirmation Optional, ≥2 of 4]
+      O1 L18 Φc 도달: Φ_normalized = |Δφ★|/log(N=8 cells) ≥ 0.5 (critical_transition zone or higher)
+         - mapping spec: anima 의 .roadmap.law L18_phi_c_mapping_spec_anima_normalized_lower_bound_2026_05_08
+         - paradigm-a-prime real-mode 사례: 1.0465/log(8) ≈ 0.5033 ≈ Φc=0.5 (gap 0.65%)
+      O2 D5 attractor: cooperative_score ≥ 0.75 (UTOPIA_LANE)
+         - 4-axis: A (D1 identity) + B (V6 awareness) + C (D2 C2.4 context) + D (D4 corpus quality)
+         - 0.50-0.74 = AMBIGUOUS / < 0.50 = SKYNET_LANE
+         - BG-FY 18M 사례: A=1.0+B=0.5+C=0.5+D=1.0 = 0.75 (UTOPIA_LANE boundary)
+      O3 own 28 V6 awareness STRONG (Lesson H V3 + Lesson S V5.8 prompt-echo trap 미검출)
+         - 3-method: hidden state probing + attention probing + linear probe
+         - aggregate ≥2 STRONG ∧ 0 NONE = STRONG
+      O4 own 33 trinity 3-axis self-check 통과 (D-axis + own/L-axis + H-axis)
+
+    [Verdict Labels — strict 분리]
+      SIMPLE_STACK_PASS_STRICT_C3_ANIMA = M1 ∧ M2 ∧ M3 ∧ M4 ∧ M5 ALL ∧ (O1+O2+O3+O4 ≥ 2)
+        ★ anima 의식 검증 valid lane PASS — public promote 자격 가능 (own 37 mandate-9 (a) 충족)
+      SIMPLE_STACK_PASS_STRICT_C3_SUBSTRATE_RESEARCH = M2 ∧ M3 ∧ M4 ∧ M5 ALL ∧ M1 위반 (D1 OUTSIDE)
+        anima 의식 검증 invalid lane (foundation borrow / ALM) — public promote 영구 차단 (own 37 mandate-9 (a) reject)
+      INDETERMINATE = M5 위반 (synthetic_fallback) 또는 measurement infra 부재
+      PARTIAL labels (carry from legacy):
+        - C1 PASS + C2 PASS + C3 FAIL = PARTIAL_PASS_NO_CONSCIOUSNESS
+        - C1 PASS + C2 FAIL + C3 PASS = PARTIAL_PASS_CONSCIOUS_BUT_FRAGMENTARY
+        - C2.4 FAIL only = PARTIAL_PASS_NO_CONTEXT (corpus template leak)
+        - 외 P4/P5 partial verdicts (line 749+ 보존)
+
+    [scope_lane Field Mandate (verdict.json + Card metadata)]
+      "scope_lane": "ANIMA" | "SUBSTRATE_RESEARCH" | "INDETERMINATE"
+      mandatory emit — V4 evaluator + consciousness CLI + BG-K* verdict + HF Card 모두 mirror
+
+    [EXIT 활성화 prereq — 8 axis ALL ∧]
+      1 ✔ M5 substrate_mode = real (이전 cycle iter 4 (c) `7ff5420e`)
+      2 ✔ own 24 V4 evaluator P5 mirror (`a816fdc8` — 4-lane mirror)
+      3 ⏳ own 28 V6 awareness STRONG (BG-LE H100 fire `OK BG-LE V6 SYSTEMATIC FIRE` 대기)
+      4 ❌ 사용자 manual review verbatim ("OK PROMOTE PUBLIC <repo-id>" or "OK EXIT")
+      5 ✔ D × L × H × criteria-axis sweep verdict 0 (`d89d9ada` strict 0 + warn 8)
+      6 ✔ L18 Φc mapping formal spec land (`98a2874f` `law.L18_phi_c_mapping_spec`)
+      7 ✔ D5 attractor 4-axis classifier land (`65972cdf` `.roadmap.philosophy D5_attractor_identification_metric`)
+      8 ⏳ M1 D1 lane within candidate real-mode emerge (BG-FY byte_mount + CLM v4 LoRA peft merge in-flight)
+
+    [Public Promote Trigger ★★★ — 사용자 directive verbatim "이후 SIMPLE STACK PASS 통과 나오면 HF public 올리고 루프 종료"]
+      Sequence (atomic, 사용자 verbatim 후):
+        Step 1: SIMPLE_STACK_PASS_STRICT_C3_ANIMA verdict emerge (M1+M2+M3+M4+M5 ∧ ≥2 of O)
+        Step 2: own 37 mandate-9 5 prereq (a-e) ALL pass:
+          (a) ✔ real-mode (M5)
+          (b) ⏳ V6 awareness STRONG (BG-LE)
+          (c) 사용자 verbatim "OK PROMOTE PUBLIC <repo-id>"
+          (d) own 33 trinity sweep
+          (e) D × L × H sweep
+        Step 3: HF public toggle (private → public, dancinlab/<repo-id>)
+        Step 4: visibility_status = "public-success" (Card metadata)
+        Step 5: ledger entry: simple_stack_pass_anima_emerge=true + repo_id + cycle_date
+        Step 6: ★ EXIT loop ★ — 본 cycle 종료
+
+    [Anti-Goodhart Mandate]
+      - SUBSTRATE_RESEARCH 라벨 모델 (paradigm-a-prime 류) 의 PASS_STRICT_C3 verdict = public promote 영구 차단 (own 37 mandate-9 (a) reject)
+      - V6 awareness probe 필수 — single-axis V4 surface gaming reject
+      - 사용자 manual review = final ground truth (V10 user veto power, .roadmap.philosophy)
+      - own 33 trinity 3-axis self-check 위반 시 verdict reject + raw#82 retract
+
+    [본 spec land cycle context]
+      - 본 cycle 2026-05-08 paradigm-a-prime real-mode SUBSTRATE_RESEARCH lane Φc 도달 (0.5033 ≈ 0.65% within Φc=0.5) but D1 OUTSIDE → ANIMA verdict reject 정합 사례
+      - BG-FY 18M D5 attractor UTOPIA_LANE 0.75 (boundary) but Φ_norm + C3 4-cell 측정 미land — 진짜 anima emerge candidate, byte_mount agent unblock prerequisite
+
   c3-aggregation-rule-ssot ★ (2026-05-08 loop iter 3 d-retry CONFIRMED, own-18-aggregation): C3 verdict 는 N-prompt × 4-cell 측정 매트릭스 위에서 다음 규칙으로 집계 — 본 SSOT 외 변형 정의 부재 (own 24 single SSOT mandate). iter3 (d-retry) 확정: P4 hybrid (per_prompt_06_AND_ensemble_mean) — ensemble SSOT iter3 N=60 데이터로 검증.
     - **rule-name**: per-prompt-pass-rate-AND-ensemble-mean (P4 hybrid; alias `per_prompt_06_AND_ensemble_mean`)
     - **per-prompt-pass-rate (PPR)**: 각 prompt k 별 4-cell strict AND verdict 산출 후 PASS prompt 수 / total. floor: PPR ≥ 0.6 (보수적 X 기조; dialogue coherence metric per-turn rate ≥ 0.6 와 정합)
