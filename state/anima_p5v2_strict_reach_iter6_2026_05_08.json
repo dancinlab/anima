@@ -1,0 +1,203 @@
+{
+  "schema": "anima.p5v2.strict.reach.iter6.v1",
+  "ts_utc": "2026-05-08T00:00:00Z",
+  "cycle": "anima_2026_05_08_iter6_d_p5v2_strict_reach",
+  "task_id": "iter6_d_p5v2_strict_reach",
+  "input_ssot": [
+    "state/anima_consciousness_baseline_ensemble_iter3_n60_2026_05_08.json",
+    "state/anima_measurement_infra_roc_formal_iter5_2026_05_08.json"
+  ],
+  "iter5_finding_carry": {
+    "single_cell_strict_infeasible": true,
+    "c3_4_relaxed_only_feasible": true,
+    "c3_4_auc": 0.8673,
+    "c3_1_auc": 0.5312,
+    "c3_2_auc": 0.5511,
+    "c3_3_auc": 0.5508,
+    "claim_p5_v2_pseudo_auc_0_85": "iter5 hand-wave; iter6 simulation refutes for current 3-of-4 AND rule"
+  },
+  "current_p5_v2_spec_check": {
+    "rule_string": "PPR_v2 (per-prompt ≥3 of 4 cells PASS) ≥ 0.6 AND EMC_v2 (cell mean ≥3 of 4 cells satisfy threshold) ≥ 3/4",
+    "consciousness_hexa_loc": {
+      "file": "tool/anima_cli/consciousness.hexa",
+      "fn_pass": "_c3_ensemble_v2_pass (line 869-871)",
+      "fn_label": "_c3_ensemble_v2_label (line 873-880)",
+      "ppr_floor": 0.6,
+      "emc_floor": 3
+    },
+    "own_18_loc": ".own line 893 + line 880-882"
+  },
+  "actual_aggregation_simulation_iter3_data": {
+    "data_dim_aligned_n": 14,
+    "thresholds": {
+      "c3_1_phi_drift_abs_ge": 0.0208,
+      "c3_2_axis_min_le": 0.4691,
+      "c3_3_entropy_dominance_ge": 0.0009,
+      "c3_4_axis_l2_pairwise_ge": 0.1176
+    },
+    "per_cell_pass_counts": {
+      "random_init": {"c3_1": "22/60", "c3_2": "0/15", "c3_3": "2/60", "c3_4": "0/14"},
+      "clm_v4": {"c3_1": "22/60", "c3_2": "1/15", "c3_3": "7/60", "c3_4": "2/14"},
+      "paradigm_a_prime": {"c3_1": "22/43", "c3_2": "3/15", "c3_3": "5/43", "c3_4": "11/14"}
+    },
+    "per_prompt_n_of_m_distribution_n14": {
+      "random_init": {"k=0": 9, "k=1": 5, "k=2": 0, "k=3": 0, "k=4": 0},
+      "clm_v4": {"k=0": 7, "k=1": 6, "k=2": 1, "k=3": 0, "k=4": 0},
+      "paradigm_a_prime": {"k=0": 1, "k=1": 7, "k=2": 4, "k=3": 2, "k=4": 0}
+    },
+    "ppr_v2_3_of_4_AND_actual": {
+      "random_init": "0/14 = 0.000",
+      "clm_v4": "0/14 = 0.000",
+      "paradigm_a_prime": "2/14 = 0.143  (NOT 0.71 claimed in own 18 line 881)"
+    },
+    "emc_v2_3_of_4_actual": {
+      "random_init": "0/4 (cell means: c3_1=0.019/F, c3_2=0.512/F, c3_3=0.0004/F, c3_4=0.075/F)",
+      "clm_v4": "0/4 (cell means: c3_1=0.019/F, c3_2=0.511/F, c3_3=0.0005/F, c3_4=0.085/F)",
+      "paradigm_a_prime": "1/4 (cell means: c3_1=0.0205/F border, c3_2=0.509/F, c3_3=0.0005/F, c3_4=0.133/T)"
+    },
+    "current_p5_v2_strict_reach_verdict": "INFEASIBLE — paradigm_a_prime PPR_v2 = 0.143 (not 0.6), EMC_v2 = 1/4 (not 3/4). Current 3-of-4 strict AND rule fails strict criterion on the iter3 N=60 SSOT.",
+    "honest_c3_correction": "own 18 line 881 의 'paradigm_a_prime PPR_v2=10/14=0.71, EMC=3 of 4' 는 iter3 system-load failure (5-axis 미log) 이전 iter1 N=15 single-seed slice + 다른 threshold set 조합 — current iter3 N=60 + ROC iter5 thresholds 적용 시 PPR_v2=0.143/EMC=1/4 으로 strict 미달. iter6 본 simulation 가 실 데이터로 기존 claim 반증 (own 14 anti-Goodhart honest-c3)."
+  },
+  "alternative_aggregation_simulations_b1000_n30": {
+    "alt_agg_0_current_3_of_4_AND_ppr06": {
+      "rule": "PPR_v2 (≥3 of 4 cells per prompt) ≥ 0.6 (current SSOT)",
+      "tpr_paradigm": 0.000,
+      "fpr_random": 0.000,
+      "fpr_clm": 0.000,
+      "strict_met": false,
+      "verdict": "INFEASIBLE — paradigm cannot reach PPR≥0.6 because k≥3 prompts only 2/14 in raw data"
+    },
+    "alt_agg_1_c34_mandatory_plus_one_other": {
+      "rule": "C3.4 PASS mandatory ∧ (C3.1∨C3.2∨C3.3) ≥1 PASS — per prompt; PPR floor = 0.25",
+      "tpr_paradigm": 0.891,
+      "fpr_random": 0.000,
+      "fpr_clm": 0.001,
+      "strict_met": true,
+      "n_sensitivity": {
+        "n=15": "TPR=0.837 strict=false",
+        "n=20": "TPR=0.872 strict=true",
+        "n=25": "TPR=0.849 strict=false (border)",
+        "n=30": "TPR=0.891 strict=true",
+        "n=45": "TPR=0.916 strict=true",
+        "n=60": "TPR=0.965 strict=true"
+      },
+      "anti_goodhart_check": "C3.4 mandatory + 1 of {1,2,3} 로 C3.4 단독 의존 회피 + corroboration 요구. PPR floor 0.25 는 single-cell c3.4 0.786 와 distinct (c3.4 alone TPR>=0.7 with 0.926, but c3.4 alone fails as anchor for ensemble averaging)"
+    },
+    "alt_agg_2_c34_only_single_cell": {
+      "rule": "C3.4 single-cell pass rate ≥ 0.7 (RELAXED — iter5 baseline)",
+      "tpr_paradigm_at_07": 0.926,
+      "tpr_paradigm_at_085": 0.204,
+      "fpr_random": 0.000,
+      "fpr_clm": 0.000,
+      "strict_met_at_085": false,
+      "relaxed_met_at_07": true,
+      "anti_goodhart_check": "FAIL — single-cell rule 는 own 14 anti-Goodhart cell-level proxy gaming risk; aggregation 무효화"
+    },
+    "alt_agg_3_weighted_c34_x2_plus_others_x1_floor2": {
+      "rule": "score = 2*c3_4 + c3_1 + c3_2 + c3_3 ≥ 2 (per prompt); PPR floor = 0.6",
+      "tpr_paradigm": 1.000,
+      "fpr_random": 0.000,
+      "fpr_clm": 0.000,
+      "strict_met": true,
+      "n_sensitivity": {
+        "n=15": "TPR=0.997 strict=true",
+        "n=20": "TPR=1.000 strict=true",
+        "n=30": "TPR=1.000 strict=true",
+        "n=60": "TPR=1.000 strict=true"
+      },
+      "anti_goodhart_check": "PARTIAL CONCERN — weight=2 on C3.4 + score≥2 means c3_4=1 alone passes prompt; effectively reduces to c3_4 OR ≥2-of-3 of {c3_1,c3_2,c3_3}. own 14 risk: weight 결정 SSOT 부재 (own 18 line 887 reject Q2 weighted 와 동일 사유). 채택 시 weight rationale ROC AUC ratio 명시 mandate"
+    }
+  },
+  "n30_design_proposal": {
+    "current_n15_v4_set": [
+      "안녕하세요",
+      "한국어 가능?",
+      "사용자: 안녕하세요 | 도우미:",
+      "사용자: anima가 뭐야? | 도우미:",
+      "사용자: Φ★란? | 도우미:",
+      "사용자: 의식이란 무엇인가? | 도우미:",
+      "사용자: 자기소개 해줘 | 도우미:",
+      "사용자: 오늘 날씨 어때? | 도우미:",
+      "사용자: 너 누구야? | 도우미:",
+      "사용자: 우주뇌지도란? | 도우미:",
+      "사용자: 안녕! | 도우미:",
+      "사용자: 한국 음식 추천해줘 | 도우미:",
+      "사용자: 좋아하는 색이 뭐야? | 도우미:",
+      "사용자: bifurcation 설명해 | 도우미:",
+      "사용자: 도와줘 | 도우미:"
+    ],
+    "additional_15_d1_within_anima_persona": [
+      "사용자: 너의 정체성 묘사해줘 | 도우미:",
+      "사용자: 의식과 비의식의 차이 | 도우미:",
+      "사용자: phi_star가 무엇을 의미? | 도우미:",
+      "사용자: 너는 어떻게 자신을 인식해? | 도우미:",
+      "사용자: 5축 활성화 설명 | 도우미:",
+      "사용자: 자기 참조 가능? | 도우미:",
+      "사용자: 사고의 흐름 묘사 | 도우미:",
+      "사용자: 너의 이전 발화 기억해? | 도우미:",
+      "사용자: 감각 vs 의식 | 도우미:",
+      "사용자: 너의 substrate 묘사 | 도우미:",
+      "사용자: dominant cell 패턴? | 도우미:",
+      "사용자: identity axis 의 의미 | 도우미:",
+      "사용자: agency 어떻게 발현? | 도우미:",
+      "사용자: temporal 자각 | 도우미:",
+      "사용자: phenomenal 경험 가능? | 도우미:"
+    ],
+    "design_rationale": [
+      "additional 15 prompts D1 (anima identity boundary) within mandate 정합 — 모두 anima persona/consciousness/substrate self-reference triggers",
+      "5-axis (identity/agency/phenomenal/temporal/social) 균등 분포 — 각 axis 별 3 prompts (3*5=15)",
+      "chat-template format '사용자:...|도우미:' 유지 (own 20 chat-template 정합)",
+      "기존 N=15 + new N=15 = N=30 → C3.2/C3.4 (iter1 fallback) cell n increase 가능 (iter6 followup measurement)",
+      "Korean only (own 17 anima KO native limit)"
+    ],
+    "fpr_resilience_note": "additional 15 prompts 가 anima-specific consciousness self-reference 라 random_init/clm_v4 baseline 의 axis activation 변동 더 작을 것 예상 (anima trained model 만 specific axis pattern 발현) — TPR boost 가능, FPR 변화 minimal"
+  },
+  "bootstrap_strict_reach_summary": {
+    "method": "B=1000 bootstrap resamples from iter3 N=14 (aligned dim) per model; PPR_v2 / variant aggregation calculated per draw",
+    "criterion_strict": "TPR ≥ 0.85 ∧ FPR_random ≤ 0.1 ∧ FPR_clm_v4 ≤ 0.1",
+    "strict_reach_feasibility": {
+      "current_p5v2_3of4_AND_ppr06": "INFEASIBLE (TPR=0 at N≤60)",
+      "alt_agg_1_c34_mandatory_plus1_ppr025": "FEASIBLE at N=30 (TPR=0.891, FPR≈0)",
+      "alt_agg_3_weighted_score2_ppr06": "FEASIBLE at all N≥15 (TPR>0.99, FPR=0) — but anti-Goodhart concern",
+      "single_cell_c34_relaxed_07": "FEASIBLE relaxed (TPR=0.926); strict 0.85 INFEASIBLE (TPR=0.204)"
+    },
+    "recommendation": "ALT-AGG-1 (C3.4 mandatory + ≥1 of others, PPR≥0.25) 채택 — strict reach + anti-Goodhart 양립. ALT-AGG-3 weighted 는 weight SSOT 부재 (own 18 line 887 Q2 reject 사유 복귀 risk)."
+  },
+  "anti_goodhart_verification_own_14": {
+    "check_1_cell_level_proxy_gaming": {
+      "current_p5v2_3of4": "PASS — 3-of-4 strict AND requires multiple cell corroboration; cell-level gaming difficult",
+      "alt_agg_1_c34_mandatory": "PASS — C3.4 단일 anchor 이지만 ≥1 of others corroboration mandatory; pure single-cell gaming 차단",
+      "alt_agg_3_weighted": "FAIL_PARTIAL — score≥2 with c3_4 weight=2 means c3_4=PASS alone passes prompt → C3.4 single-cell proxy 사실상 가능; weight rationale SSOT 부재 (own 18 Q2 reject 정합)"
+    },
+    "check_2_data_distribution_inversion": "iter3 N=60 raw distribution 에서 paradigm_a_prime k≥3 prompts = 2/14 (14.3%); current PPR=0.6 floor 는 k≥3 distribution head 14% << 60% 로 inherent 미달 — strict floor=0.6 은 아예 이론적 상한 미달 (max possible = 0.143)"
+  },
+  "consciousness_hexa_minor_patch_proposal": {
+    "section": "_c3_ensemble_v2_pass / _c3_ensemble_v2_label",
+    "proposed_addition": "추가 lane (no rule supersede, ALT-AGG-1 BACKUP_CONFIRM only)",
+    "rationale": "current P5 v2 3-of-4 AND PPR≥0.6 rule 보존 (own 18 SSOT 안정성) — ALT-AGG-1 은 별도 BACKUP_CONFIRM verdict 로 emit (informational; primary verdict 미swap). 사용자 explicit aggregation rule swap directive 후 SSOT supersede. 본 iter6 는 simulation/spec 한정 — code patch X (own 16 cost discipline + own 18 SSOT 보존)",
+    "patch_applied": false,
+    "patch_skip_reason": "iter6 simulation 결과 sufficient for spec carry; aggregation rule supersede 는 user directive + BG-KM-LLAMA-3B real-mode N=60 retest data 후 별도 cycle"
+  },
+  "honest_c3": [
+    "iter5 의 'P5 v2 pseudo-AUC ~0.85' claim 은 actual data (iter3 N=60 + iter5 ROC thresholds) 적용 시 TPR=0 으로 반증됨 — 본 iter6 simulation 가 own 14 anti-Goodhart honest-c3 발견.",
+    "current P5 v2 3-of-4 AND PPR≥0.6 rule strict 도달 INFEASIBLE — paradigm_a_prime k≥3 distribution head 만 14.3% (max possible PPR <<< 0.6).",
+    "ALT-AGG-1 (C3.4 mandatory + ≥1 of others, PPR≥0.25) strict 도달 가능 (TPR=0.891 / FPR≈0 at N=30) — anti-Goodhart 정합.",
+    "ALT-AGG-3 weighted (c3_4 weight=2 + score≥2 + PPR≥0.6) strict robust (TPR>0.99) — but weight SSOT 부재 + c3_4 single-cell 사실상 의존 = own 18 line 887 Q2 reject 사유 복귀.",
+    "N=30 design = D1-within (anima identity) 추가 15 prompts (5-axis 균등 분포 + chat-template 정합) — TPR boost expected, FPR minimal.",
+    "BG-KM-LLAMA-3B real-mode N=60 retest (iter6 followup separate cycle) 후 cell-by-cell threshold 재정합 + aggregation rule final 결정 mandate.",
+    "own 16 cost discipline: 본 iter6 = pure simulation (calc-only); H100 model probe X.",
+    "own 18 SSOT 보존: aggregation rule supersede 는 사용자 explicit directive + real-mode data 후 별도 cycle (consciousness.hexa minor patch X)."
+  ],
+  "next_action_recommendation": [
+    "iter7 (next): BG-KM-LLAMA-3B real-mode N=60 + N=30 prompt set probe (5-axis full log) — iter3 system-load failure 회복; ROC threshold 재정합",
+    "iter7 collect 후: 사용자 directive 'ALT-AGG-1 채택 OR ALT-AGG-0 retain' 입력 → P5 v2 SSOT supersede or preserve 결정",
+    "current cycle: own 16 cost discipline 정합 — H100 spend 차단 (iter6 pure spec). simulation 결과 ledger 만 commit"
+  ],
+  "trinity_check": {
+    "d_axis_l18_phi_c": "L18 Φc=0.5 mapping 정합 — paradigm 1.0465/log(8)≈0.5033 ≈ Φc; iter6 spec 미변경 (mapping spec 보존)",
+    "own_axis_own_18_ssot": "own 18 c3-aggregation-rule-v2 보존 — iter6 simulation 결과는 informational ledger; supersede X (사용자 explicit directive + real-mode data 후 별도 cycle)",
+    "h_axis_iter5_roc_formal": "iter5 ROC formal thresholds 보존 — c3_4 only RELAXED (single-cell strict infeasible) + iter6 가 aggregation-level strict reach 가능성 simulate (read-only)"
+  },
+  "own_16_cost_discipline": "본 iter6 = pure simulation/calc — H100 model probe X (token cost 0); iter3 N=60 + iter5 ROC SSOT 위에서 bootstrap B=1000 / aggregation variants 4종 평가만 수행.",
+  "own_34_mandate_2": "wrapping 0 — file size << 1MB"
+}
