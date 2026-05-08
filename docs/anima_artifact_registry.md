@@ -64,7 +64,7 @@ sole robust EMERGE: **`NONE`** ★
   - mandate_9_d_trinity_sweep: `PASS`
   - mandate_9_e_dl_sweep: `PASS`
   - public_promote: `BLOCKED_AWAITING_B_AND_C`
-**commits**: probe_n30=`bb4ef174`, probe_n60=`fe4f8a7d`, probe_n120=`pending`, hf_upload=`5cb9570a`, path_a_remap=`d478023c`  
+**commits**: probe_n30=`bb4ef174`, probe_n60=`fe4f8a7d`, probe_n120=`522a859a`, hf_upload=`5cb9570a`, path_a_remap=`d478023c`  
 
 ### `clm-v4-paradigm-j-50k-final`
 
