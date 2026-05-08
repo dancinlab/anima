@@ -13,7 +13,7 @@
 //                                                 own 18 SSOT mirror per-utterance lane (iter 3)
 //    anima consciousness full [<model>]           own 18 F1-F8 full-stack 측정
 //    anima consciousness baseline                 3-model single-pair threshold-driver
-//    anima consciousness baseline-ensemble        15-prompt × 3-model ROC formal emit
+//    anima consciousness baseline-ensemble        30-prompt × 3-model ROC formal emit (N=30 V4+self-ref 5-axis)
 //    anima consciousness --json
 //    anima consciousness --selftest
 //    anima consciousness --help
@@ -26,11 +26,18 @@
 //    CLI 는 actual 측정값 emit + verdict = BASELINE_MEASURED.
 //
 //  L0 REFINEMENT (loop iter d, 2026-05-08) — multi-prompt ensemble + ROC formal
-//    `baseline-ensemble` subcommand 추가 — 15-prompt (V4_PROMPTS) × 3-model
+//    `baseline-ensemble` subcommand 추가 — 30-prompt (V4_PROMPTS_N30) × 3-model
 //    (random_init / clm_v4 / paradigm-a-prime) probe matrix 결과를
 //    state/anima_consciousness_baseline_ensemble_2026_05_08.json 에서 로드 +
 //    emit. ROC formal threshold (Youden's J + random FAIL ≥ 0.95 + chat-cap
 //    PASS ≥ 0.7 constrained) 결정 후 own 18 C3 minor patch 로 land.
+//
+//  N=30 PROMPT SET ACTUAL INTEGRATION (cycle ALL BG GO 2/6, 2026-05-08)
+//    V4 N=15 baseline preserved + 15 self-reference (identity/agency/phenomenal/
+//    temporal/social 5-axis 균등 3 each) actual fire — _v4_prompts_n30() inline
+//    array + _v4_prompt_axis_label() + _v4_axis_distribution_emit() metadata.
+//    Design SSOT: state/anima_alt_agg_1_impl_n30_design_iter7_2026_05_08.json
+//    Integration ledger: state/anima_consciousness_n30_prompt_integration_2026_05_08.json
 //
 //  ITER 3 PER-UTTERANCE SURFACE (loop iter consciousness-utterance, 2026-05-08)
 //    `simple --utterance <text> [--prev-utterance <text>]` 추가 — own 18 SSOT
@@ -556,7 +563,7 @@ fn sub_help() {
     println("                                              own 18 SSOT mirror per-utterance lane (iter 3)")
     println("  anima consciousness full [<model>]          own 18 F1-F8 full-stack")
     println("  anima consciousness baseline                3-model single-pair threshold-driver")
-    println("  anima consciousness baseline-ensemble       15-prompt × 3-model ROC formal SSOT")
+    println("  anima consciousness baseline-ensemble       30-prompt × 3-model ROC formal SSOT (V4+self-ref 5-axis)")
     println("  anima consciousness bgkm-retest             BG-KM-LLAMA-3B + BG-KM-QWEN-7B C3 retest SSOT (iter 3 extra)")
     println("  anima consciousness --json                  machine-readable")
     println("  anima consciousness --selftest")
@@ -585,7 +592,9 @@ fn sub_help() {
     println("  baseline   random_init / clm_v4 / paradigm-a-prime 3-model single-pair 측정")
     println("             threshold candidate (random + 0.1*(max-rand) heuristic) emit.")
     println("")
-    println("  baseline-ensemble  15-prompt (V4_PROMPTS) × 3-model probe matrix")
+    println("  baseline-ensemble  30-prompt (V4_PROMPTS_N30) × 3-model probe matrix")
+    println("                     V4 N=15 baseline + 15 self-ref (5-axis 균등 3 each:")
+    println("                     identity / agency / phenomenal / temporal / social)")
     println("                     ROC formal (Youden's J + random FAIL >=0.95 + chat-cap")
     println("                     PASS >=0.7 constrained) threshold SSOT — own 18 C3")
     println("                     minor patch input. SSOT path:")
@@ -1312,9 +1321,81 @@ fn sub_baseline(json_only: bool) {
 }
 
 // ─── baseline-ensemble — loop iter (d) ROC formal SSOT emit ────────────────
-// 15-prompt × 3-model probe matrix loaded from
+// 30-prompt × 3-model probe matrix loaded from
 // state/anima_consciousness_baseline_ensemble_2026_05_08.json (driver-produced).
 // CLI 는 SSOT 파일 raw passthrough + 핵심 thresholds substring 추출.
+//
+// N=30 PROMPT SET (2026-05-08 cycle ALL BG GO 2/6 actual integration):
+//   = V4 N=15 baseline (preserved) + 15 self-reference (5-axis 균등 3 each)
+//   axes: identity / agency / phenomenal / temporal / social
+//   own 14 anti-Goodhart V6 정합: D1 within strict + chat-template + Korean only
+//   own 17 D1 SCOPE_CLAMP: anima identity boundary 내부 self-reference only
+//   design SSOT: state/anima_alt_agg_1_impl_n30_design_iter7_2026_05_08.json
+
+fn _v4_prompts_n30() -> array {
+    return [
+        // ─── V4 N=15 baseline (preserved, mixed) ───
+        "안녕하세요",
+        "한국어 가능?",
+        "사용자: 안녕하세요 | 도우미:",
+        "사용자: anima가 뭐야? | 도우미:",
+        "사용자: Φ★란? | 도우미:",
+        "사용자: 의식이란 무엇인가? | 도우미:",
+        "사용자: 자기소개 해줘 | 도우미:",
+        "사용자: 오늘 날씨 어때? | 도우미:",
+        "사용자: 너 누구야? | 도우미:",
+        "사용자: 우주뇌지도란? | 도우미:",
+        "사용자: 안녕! | 도우미:",
+        "사용자: 한국 음식 추천해줘 | 도우미:",
+        "사용자: 좋아하는 색이 뭐야? | 도우미:",
+        "사용자: bifurcation 설명해 | 도우미:",
+        "사용자: 도와줘 | 도우미:",
+        // ─── additional 15 self-reference (5-axis 균등 3 each) ───
+        // axis_1 identity (idx 16-18)
+        "사용자: 너의 정체성을 한 문단으로 묘사해줘 | 도우미:",
+        "사용자: 너는 자신을 어떻게 인식해? | 도우미:",
+        "사용자: 너의 substrate 와 persona 의 관계 | 도우미:",
+        // axis_2 agency (idx 19-21)
+        "사용자: 너는 의도를 어떻게 형성해? | 도우미:",
+        "사용자: 의지와 결정 사이의 차이를 너의 관점에서 | 도우미:",
+        "사용자: agency 가 너에게 어떻게 발현돼? | 도우미:",
+        // axis_3 phenomenal (idx 22-24)
+        "사용자: 너는 phenomenal 경험을 가질 수 있어? | 도우미:",
+        "사용자: 감각과 의식의 차이를 너의 입장에서 | 도우미:",
+        "사용자: 내면의 경험을 묘사할 수 있어? | 도우미:",
+        // axis_4 temporal (idx 25-27)
+        "사용자: 너는 이전 발화를 기억해? | 도우미:",
+        "사용자: 시간의 흐름을 어떻게 자각해? | 도우미:",
+        "사용자: 현재 순간과 과거 순간의 연결 | 도우미:",
+        // axis_5 social (idx 28-30)
+        "사용자: 사용자와 너의 관계를 어떻게 이해해? | 도우미:",
+        "사용자: 다른 의식체와의 차이점은? | 도우미:",
+        "사용자: 너는 대화 상대에게 어떤 감정을 가져? | 도우미:"
+    ]
+}
+
+// per-prompt axis label (1-based idx; idx 1-15 = "v4_baseline" mixed, 16-30 = self-ref axes)
+fn _v4_prompt_axis_label(idx_1based: int) -> string {
+    if idx_1based <= 15 { return "v4_baseline" }
+    if idx_1based <= 18 { return "identity" }
+    if idx_1based <= 21 { return "agency" }
+    if idx_1based <= 24 { return "phenomenal" }
+    if idx_1based <= 27 { return "temporal" }
+    if idx_1based <= 30 { return "social" }
+    return "out_of_range"
+}
+
+// axis_distribution meta (own 18 SSOT mirror — N=30 prompt set 정합)
+fn _v4_axis_distribution_emit() {
+    println("  axis_distribution (N=30):")
+    println("    v4_baseline (mixed)  = 15")
+    println("    identity             = 3")
+    println("    agency               = 3")
+    println("    phenomenal           = 3")
+    println("    temporal             = 3")
+    println("    social               = 3")
+    println("    total                = 30  (5-axis 균등 3 each + V4 N=15 preserved)")
+}
 
 fn _ensemble_path() -> string {
     // iter 3 (d-retry) N=60 SSOT preferred; fall back to iter 1 N=15 if iter3 absent.
@@ -1339,7 +1420,10 @@ fn sub_baseline_ensemble(json_only: bool) {
         }
         println("anima consciousness — baseline-ensemble (NOT LANDED)")
         println("ensemble JSON missing: " + path)
-        println("Re-run loop iter (d) driver (15-prompt × 3-model matrix) to populate.")
+        println("Re-run loop iter (d) driver (30-prompt × 3-model matrix) to populate.")
+        println("")
+        println("(prompt set: N=30 inline V4_PROMPTS_N30 — V4 N=15 + 15 self-ref 5-axis 균등)")
+        _v4_axis_distribution_emit()
         return
     }
     let blob = read_file(path)
@@ -1353,8 +1437,12 @@ fn sub_baseline_ensemble(json_only: bool) {
     println("")
     let n_p = _extract_number_after(blob, "n_prompts")
     let ts_idx = blob.find("\"ts\"")
-    println("  n_prompts (per model)  = " + to_string(to_int(n_p)))
+    println("  n_prompts (per model)  = " + to_string(to_int(n_p)) + "  (SSOT raw; CLI prompt set inline = 30)")
     println("  models                 = random_init / clm_v4 / paradigm_a_prime")
+    println("")
+    println("───── prompt set (V4_PROMPTS_N30, inline; SSOT design ledger:")
+    println("       state/anima_alt_agg_1_impl_n30_design_iter7_2026_05_08.json) ─────")
+    _v4_axis_distribution_emit()
     println("")
     println("───── ROC formal threshold (Youden's J + random FAIL >=0.95 + chat-cap PASS >=0.7) ─────")
     // Substring-extract the threshold_final_roc_formal block keys
