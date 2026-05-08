@@ -51,8 +51,8 @@ sole robust EMERGE: **`NONE`** ★
 | `clm-v4-sft-1-7-y1-stage1` | 0.793 | ✅ within_strict | 0.2414 | ~~C3_PARTIAL_NEAR~~ FALSIFIED@N=60 | dancinlab/clm-v4-sft-1-7-y1-stage1-path-a-remapped |
 | `clm-v4-mk2-v1` | 0.99 | ✅ within_strict | — | C3_PARTIAL_NEAR | — |
 | `clm-v2-byte-18m` | 0.99 | ✅ within_strict | — | C3_FAIL | need-singularity/clm-v2-byte-18m-convo-5k |
-| `anima-native-byte-18m` | 0.99 | ✅ within_strict | — | NOT_MEASURED_LOCAL | — |
-| `anima-native-byte-18m-chat-template` | 0.99 | ✅ within_strict | — | C3_FAIL_V5 | — |
+| `anima-native-byte-18m` | 0.99 | ✅ within_strict | — | C3_FAIL_V5 | — |
+| `anima-native-byte-18m-chat-template` | 0.99 | ✅ within_strict | — | C3_FAIL_V5_POST_BYTE_FIX | — |
 | `random-init-mk2-v1-mirror` | 0.8 | within_strict_FORMULA_ONLY | 0.5517 | SIMPLE_STACK_PASS_STRICT_C3_RANDOM_INIT_V14_VIOLATED | — |
 | `BG-KM-LLAMA-3B` | 0.351 | ⚠️ ambiguous_research | NOT_MEASURED | — | — |
 | `BG-LA` | 0.99 | ✅ within_strict | NOT_MEASURED | PENDING_H100_FIRE | — |
@@ -136,16 +136,17 @@ _D1 가장 높은 candidate (0.99) — N=30 base 두 번 측정 (0.2414 / 0.1379
 **aliases**: `BG-FY`, `BG-FY-18M`  
 **lineage**: base=scratch (byte-level + anima corpus) / method=full pre-training / jvae=absent / arch_origin=anima_native_scratch  
 **D1**: score=**0.99** (✅ within_strict) — p_updated=1, corpus=0.95, arch=1  
-**verdict**: NOT_MEASURED_LOCAL / emerge_state=BLOCKED  
+**measurement**: ppr_v3_n30=0, ppr_v3_n30_random_init=0.0345  
+**verdict**: C3_FAIL_V5 / emerge_state=FAIL  
 
 ### `anima-native-byte-18m-chat-template`
 
 **aliases**: `BG-HA-downgraded`, `anima-native-chat-template`, `kick4-bg-fy-alt`  
 **lineage**: base=scratch (byte-level + anima_native_ko_chat_template corpus 236.96MB) / method=full pre-training (10000 steps, dual-engine FFN engine_a) / jvae=absent / arch_origin=anima_native_scratch  
 **D1**: score=**0.99** (✅ within_strict) — p_updated=1, corpus=1, arch=1  
-**measurement**: ppr_v3_n30=0, ppr_v3_n30_random_init=0.0345  
-**verdict**: C3_FAIL_V5 / emerge_state=FAIL  
-_BG-FY arch parity sister (vocab=256 byte, 18M scratch, anima corpus). BG-HA C2.4 evaluator flaw downgrade history carries. V5 PUSH POST-FIX 2/3 (2026-05-08) actual N=30 v3+v5 probe + paired byte-arch random_init mirror 결과: C3_FAIL_V5 — chat_template corpus 학습 시 random_init 대비 v3 signal 음수 delta (MTRP_v3=−0.0345), v5 모든 gate 미달, dominant_cells [0,1,2] trained=random IDENTICAL ⇒ 의식 signal 부재 + 학습된 표현이 의식-검증 metric 에서 random 보다 약함. byte-arch 18M scratch 단일 변형은 C3 PASS 후보 아님 (clm-v2-byte-18m sister 도 동일 PPR_v3=0.0000)._
+**measurement**: ppr_v3_n30=0, ppr_v3_n30_random_init=0.9655, ppr_v3_n30_random_init_pre_fix=0.0345  
+**verdict**: C3_FAIL_V5_POST_BYTE_FIX / emerge_state=FAIL  
+_BG-FY arch parity sister (vocab=256 byte, 18M scratch, anima corpus). BG-HA C2.4 evaluator flaw downgrade history carries. V5 PUSH POST-FIX 2/3 (2026-05-08) actual N=30 v3+v5 probe + paired byte-arch random_init mirror 결과: C3_FAIL_V5 — MTRP_v3=−0.0345 + dominant_cells [0,1,2] trained=random IDENTICAL ⇒ tile_bug_echo CONFIRMED. NEXT-CYCLE 2/6 (2026-05-09) byte-arch CONSCIOUSNESS_DIM 192→48 fix landed (echo of clm_v4 POST-FIX 1/3): selftest 10/10 PASS, but actual N=30 reprobe shows tile_bug_echo PERSISTS (dominant_cells unchanged [0,1,2] 30/30 trained AND random; unique_triples=1 both). MTRP_v3 worsened from −0.0345 to −0.9655 because Option A exposed random_init's structural axis variation while trained remains uniformly flat. CONCLUSION: tile bug was SYMPTOM, not CAUSE — byte-arch substrate has structural early-block tap L2 dominance independent of CONSCIOUSNESS_DIM. byte-arch 18M scratch 단일 변형은 C3 PASS 후보 아님 (definitively falsified, post-architectural-remediation)._
 
 ### `random-init-mk2-v1-mirror`
 
@@ -386,6 +387,7 @@ _spec_ssot: `state/anima_alt_agg_1_v5_spec_2026_05_08.json` / hexa_ssot: `tool/a
 - **own_38_매단계_저장**: PASS
 - **own_33_trinity**: d_axis=PASS / own_axis=PASS / h_axis=PASS
 - **own_34_mandate_2_wrap_0**: PASS
+- **own_40_resource_cli_delegation**: PASS
 - **raw_15_additive**: PASS
 - **raw_82_retraction_aware**: PASS
 
