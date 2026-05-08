@@ -1879,3 +1879,34 @@ own 38 live "매단계 doc + model + dataset save/upload mandate — 산출물 �
   severity warn (Phase 1 — 본 own 38 land + 매단계 manual check) → block (Phase 2 — anima audit `--mandate-38` 가 axis-A/B/C 산출물 모두 save/upload 검증; 누락 commit reject; retroactive backfill 자동 detect)
   proof grep -E "docs/anima_.*_2026_05_08\.(ai\.)?md" + grep -E "huggingface-cli upload --private" + state/anima_*_save_upload_2026_05_08.json manifest 검증
   note 2026-05-08 own 38 = 사용자 directive verbatim 직접 응답 ("doc save, model, dataset HF upload 누락없이 매단계 저장 => own 등록"). own 30 + own 37 보강 — own 30 = model preservation single-axis, own 37 = HF visibility (PRIVATE/PUBLIC) lifecycle, 본 own 38 = 매단계 저장 + 누락 차단 enforcement axis. own 33 trinity self-application 정합 (D_매단계 산출물 보존 + own 24/30/37 cross-link + H_artifact_distribution_매단계). own 22 mandatory report 정합. own 16 cost discipline 정합 (HF private free).
+
+own 39 live "registry yaml ↔ md auto-regenerate mandate — anima/registry/render.hexa 필수 진행 (yaml 변경 시 md 자동 갱신, drift 차단)"
+  trigger 사용자 directive 2026-05-08 verbatim "own 에 등록 => anima/registry/render.hexa (NEW) — yaml → md orchestrator (raw#9 hexa, raw#37 transient_py invoke) 필수 진행"
+  scope yaml SSOT 변경 시 본 render orchestrator (또는 helper) 의무 실행 + md view layer 자동 갱신 — yaml-md drift 차단:
+    - axis-1 (registry yaml): anima/registry/anima_artifact_registry.yaml — model + dataset combined catalog SSOT (cycle 2026-05-08 신설)
+    - axis-2 (render orchestrator): anima/registry/render.hexa — raw#9 hexa orchestration + raw#37 transient_py helper invoke
+    - axis-3 (md output): docs/anima_artifact_registry.md — view layer regenerable artifact (yaml 의 readable form)
+    - axis-4 (helper): tool/transient_py/anima_artifact_registry_render.py — raw#37 transient (gitignored), regenerable from hexa SSOT
+    - 미래 확장 axis: 다른 yaml SSOT (anima/spec/*.yaml 등) → md view 가 필요 시 동일 mandate pattern 적용
+  rule yaml staged → render 실행 → md 자동 갱신 → yaml + md 동시 commit. mandate enforcement 형식:
+    - Step 1 (yaml edit detect): git status / git diff 에서 anima/registry/*.yaml 변경 발견
+    - Step 2 (render mandatory): commit 직전 anima/registry/render.hexa (또는 python3 tool/transient_py/anima_artifact_registry_render.py) 의무 실행
+    - Step 3 (md verify): docs/anima_artifact_registry.md mtime > yaml mtime 검증 (mtime drift 차단)
+    - Step 4 (commit dual-stage): yaml + md 동시 staged commit (단일 commit, raw#15 additive 정합)
+    - Step 5 (anima audit `--mandate-39` Phase 2 별도 cycle): pre-commit hook 가 yaml staged 시 md regenerate 의무 verify, miss 시 commit reject + 자동 render 실행
+  precedence
+    - own 24 (single SSOT) — yaml = master, md = regenerable view (yaml ≠ md drift 시 md 자동 update mandate)
+    - own 38 (매단계 저장) — render 실행 자체가 axis-A doc save mandate 정합
+    - own 22 (mandatory report) — yaml change report 시 md regenerate ledger 첨부
+    - own 16 (cost discipline) — render 실행 = 0 USD local
+    - own 34 mandate-2 (wrap=0) — yaml + md text-only, binary 절대 X
+  related own 24 (single SSOT) own 38 (매단계 저장) own 22 (mandatory report) own 16 (cost) own 33 (trinity) own 34 (chat lane) raw#9 (hexa orchestration) raw#15 (additive) raw#37 (transient_py opt-out)
+  cross-reference 본 own 39 첫 적용 사례 = anima cycle 2026-05-08 commit `36be7255` (render.hexa + md generation land) — sft-1-8 SOLE robust EMERGE + paradigm-j FALSIFIED at N=60 + D1 gradient amend 모두 yaml SSOT 반영 후 md regenerate. 사용자 directive emphasis "필수 진행" — Phase 1 (warn) 즉시 발효, Phase 2 (block automation) 별도 cycle.
+  honest-c3 render 실행 누락 시 yaml-md drift 발생 — own 24 single SSOT 위반 risk + 사용자/agent confusion 가능 ("어느 게 truth?")
+  honest-c3 yaml SSOT 가 master, md 는 regenerable view — 절대 md 직접 edit X (다음 render 실행 시 overwrite 됨). md edit 필요 시 yaml 에 가하고 render 다시 실행.
+  honest-c3 mandate axis-2 render orchestrator (anima/registry/render.hexa) 가 unavailable 시 (예: hexa 컴파일 실패) 우회 path = python3 helper 직접 실행 (`python3 tool/transient_py/anima_artifact_registry_render.py`) — raw#9 hexa-canonical 위반 lite, 단 yaml-md sync 보장 우선.
+  honest-c3 본 own 39 enforcement Phase 1 (warn) = land 시점 manual check, Phase 2 (block automation) = anima audit `--mandate-39` flag pre-commit hook (별도 cycle, mandate-39-block-spec)
+  honest-c3 다른 yaml SSOT (anima/spec/anima_cli_mk2.spec.yaml / emerge_paradigm.spec.yaml / anima_model_attempts_ledger.schema.yaml 등) 도 미래에 md view 필요 시 본 own 39 mandate pattern 확장 적용 (axis 추가)
+  severity warn (Phase 1 — 본 own 39 land + yaml edit 시 manual render 실행) → block (Phase 2 — anima audit `--mandate-39` 가 yaml staged 시 md regenerate 의무 verify; mtime drift detect 시 commit reject + 자동 render 실행)
+  proof grep -E "anima/registry/.*\.yaml" git diff + ls -la docs/anima_artifact_registry.md (mtime 비교) + python3 tool/transient_py/anima_artifact_registry_render.py 실행 가능 여부
+  note 2026-05-08 own 39 = 사용자 directive verbatim 직접 응답 ("own 에 등록 => anima/registry/render.hexa (NEW) — yaml → md orchestrator (raw#9 hexa, raw#37 transient_py invoke) 필수 진행"). own 24 (single SSOT) 보강 — yaml = master, md = view-layer auto-regenerable. own 38 (매단계 저장) cross-link — render 실행 = axis-A doc save mandate 정합. own 33 trinity self-application (D_yaml-md drift 차단 + own 24/38 cross-link + H_render orchestrator land). raw#9 hexa orchestration / raw#37 transient_py opt-out 정합.
