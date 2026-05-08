@@ -44,7 +44,25 @@
 //  CROSS-REFERENCE
 //    .roadmap.cli  cli.chat_module_architecture_2026_05_08
 //    .own         own 34, own 18 C2, own 33
+//
+//  STREAMING DISPATCH (loop iter 4 (b) — 2026-05-08)
+//    `_dispatch_module_streaming(mod, repo, argv, on_line)` reads inner
+//    module stdout LINE-BY-LINE through a temp FIFO (stdlib/channel) and
+//    forwards each line to `on_line`. Default `_dispatch_module` now wraps
+//    the streaming form with `_print_line` — backward-compat preserved
+//    (one-shot `--prompt` byte sequence identical, REPL banners arrive
+//    incrementally instead of one buffered blob). Unblocks duo channel
+//    transport (iter 3 (b-fix) honest C3 carry — chat.hexa exec() captured
+//    full stdout, prevented per-turn channel_recv emission).
+//
+//    own 34 mandate-1 raw preservation: line transport is whitespace-
+//    preserving (newline split only), no semantic transformation. Inner
+//    cmd bytes pass through verbatim. Sentinel `__HEXA_DISP_END__` filtered
+//    out of forwarded stream (own 36 control-band convention — never seen
+//    by downstream consumer).
 // ════════════════════════════════════════════════════════════════════════════
+
+use "stdlib/channel"
 
 fn _str(x) -> string {
     let t = type_of(x)
@@ -101,10 +119,16 @@ fn _user_argv(raw) -> array {
     let i = 0
     while i < len(raw) {
         let s = _str(raw[i])
-        // strip hexa-cache, hexa interpreter path, and chat.hexa script path
+        // strip hexa-cache, hexa runtime expanded tmp, hexa interp path, chat.hexa
+        // script path. iter 4 (b): added .hexa-runtime + hexa_expanded for parity
+        // with duo._user_argv (these tmp file paths would otherwise leak into the
+        // forwarded argv as a phantom positional, e.g. interpreted as `--repo`
+        // value and shadowing the actual alias).
         let skip = s.contains("/.hexa-cache/")
+                || s.contains("/.hexa-runtime/")
                 || s.contains("/hexa-lang/build/")
                 || s.contains("hexa_interp")
+                || s.contains("hexa_expanded")
                 || s.contains("hexa.real")
                 || s.ends_with("/chat.hexa")
                 || s.ends_with("chat.hexa")
@@ -248,28 +272,132 @@ fn sub_selftest() {
     println("PASS anima_cli/chat selftest (own 34 mandate-2 verified, 5 files present)")
 }
 
-fn _dispatch_module(mod_name: string, repo: string, argv) {
+// Default per-line callback for streaming dispatch. own 34 mandate-1: print()
+// (NOT println()) — newline already attached by line emit semantics; we restore
+// it here because channel_recv strips trailing \r?\n. No transformation; the
+// line bytes pass through verbatim.
+fn _print_line(line: string) {
+    print(line + "\n")
+}
+
+// _dispatch_module_streaming — line-by-line dispatch (loop iter 4 (b))
+//
+// Streaming variant of _dispatch_module. Inner cmd's stdout flows through a
+// temp FIFO (stdlib/channel allocator); chat.hexa reads each line via
+// channel_recv with timeout and forwards to `on_line`. Unblocks duo channel
+// transport (iter 3 (b-fix) honest C3 carry — chat.hexa exec() captured full
+// stdout in one buffer → duo's per-turn channel_recv saw the whole banner
+// only after inner cmd exited).
+//
+// Backward compat: when on_line == _print_line, the visible byte sequence is
+// the same as the legacy buffered path (lines reassembled with '\n'). The
+// new property is per-line cadence — chat.hexa stdout flushes each line as
+// it arrives (hexa runtime sets stdout _IOLBF; print(line+"\n") flushes), so
+// a downstream FIFO reader (duo) sees lines incrementally.
+//
+// own 34 mandate-1 raw preservation: no semantic transformation. The sentinel
+// __HEXA_DISP_END__ is a control-band marker (own 36 convention) filtered
+// out before the on_line callback ever sees it.
+//
+// FIFO failure path: if channel_pair_open returns -1 (rare, /tmp non-writable),
+// we fall back to legacy buffered exec() and feed each split line to on_line —
+// semantic identical, no streaming benefit.
+//
+// Returns 0 on clean completion, 2 on module-not-found.
+fn _dispatch_module_streaming(mod_name: string, repo: string, argv, on_line) -> int {
     let root = _resolve_root()
     let mod_path = root + "/tool/anima_cli/chat/" + mod_name + "/" + mod_name + ".hexa"
     if !_fexists(mod_path) {
-        println("anima chat: module not found: " + mod_path)
-        println("           (Phase gate: " + mod_name + " 미구현 — see .roadmap.cli)")
-        exit(2)
+        on_line("anima chat: module not found: " + mod_path)
+        on_line("           (Phase gate: " + mod_name + " 미구현 — see .roadmap.cli)")
+        return 2
     }
-    // Pass repo + flags to module via argv
-    let i = 0
-    let extra = ""
+    // Pass repo + flags to module via argv (parity with legacy form).
+    let mut i = 0
+    let mut extra = ""
     while i < len(argv) {
         let s = _str(argv[i])
         extra = extra + " " + s
         i = i + 1
     }
-    let cmd = _hexa() + " run " + mod_path + " --repo \"" + repo + "\"" + extra
-    // Phase 3c: exec() captures stdout; print it through so module output
-    // (chat replies) reaches the user terminal. own 34 mandate-1 raw
-    // preservation: print() not println(), no transformation.
-    let out = _str(exec(cmd))
-    print(out)
+    let inner_cmd = _hexa() + " run " + mod_path + " --repo \"" + repo + "\"" + extra
+    // Allocate a temp FIFO via stdlib/channel — we use only the read side.
+    // pair[0] = c2p (parent reads), pair[1] = p2c (parent writes; unused here).
+    // (The unused write pair is opened so we can call channel_close() on it
+    //  to unlink the inode at tear-down — not for I/O.)
+    let pair = channel_pair_open()
+    let read_fd = pair[0]
+    let write_fd = pair[1]
+    if read_fd < 0 {
+        // Fallback: legacy buffered path (FIFO creation failed). Feed lines
+        // to callback for parity. own 34 mandate-1 — bytes still verbatim.
+        let out = _str(exec(inner_cmd))
+        let parts = out.split("\n")
+        let mut k = 0
+        while k < len(parts) - 1 {
+            on_line(_str(parts[k]))
+            k = k + 1
+        }
+        // Last fragment: emit only if non-empty (avoid trailing blank line).
+        if len(parts) > 0 {
+            let tail = _str(parts[len(parts) - 1])
+            if tail != "" { on_line(tail) }
+        }
+        return 0
+    }
+    let fifo_path = channel_path_for(read_fd)
+    let END = "__HEXA_DISP_END__"
+    // Background the inner cmd writing to the FIFO. Append END sentinel
+    // after the cmd exits so the read loop terminates deterministically.
+    //
+    // Backgrounding gotcha: hexa's exec() uses popen(cmd, "r") and reads to
+    // EOF on the pipe. A naked `(...) &` would inherit popen's stdout fd in
+    // the backgrounded subshell, keeping the pipe open and blocking exec()
+    // forever. We close subshell stdin/stdout/stderr (`</dev/null
+    // >/dev/null 2>&1`) BEFORE the `&` so popen sees EOF immediately and
+    // exec() returns. The inner cmd's stdout is already redirected to the
+    // FIFO inside the subshell, so the /dev/null on subshell stdout doesn't
+    // suppress the actual chat output.
+    //
+    // own 34 mandate-1: stderr is folded into the FIFO via `2>&1` so
+    // diagnostic chatter (e.g. llama.cpp gguf banner, hxllama warnings)
+    // reaches the chat lane verbatim — same semantics as legacy buffered
+    // _dispatch_module exec(cmd) where popen captures stdout+stderr.
+    let bg_cmd = "(" + inner_cmd
+        + " > '" + fifo_path + "' 2>&1; "
+        + "printf '%s\\n' '" + END + "' > '" + fifo_path + "') "
+        + "</dev/null >/dev/null 2>&1 &"
+    let _r = exec(bg_cmd)
+    // Per-line ceiling: 10 min. Chat output cadence (LLM token streams) is
+    // typically <60s/line; long generations stay within 10min. Two consecutive
+    // empty reads (timeout / EOF) → terminate (defensive — END sentinel is
+    // the canonical exit). own 34 mandate-1 — raw bytes through.
+    let timeout_ms = 600000
+    let mut done = false
+    let mut empty_streak = 0
+    while !done {
+        let line = _str(channel_recv(read_fd, timeout_ms))
+        if line == END {
+            done = true
+        } else if line == "" {
+            empty_streak = empty_streak + 1
+            if empty_streak >= 2 { done = true }   // EOF / dual-timeout guard
+        } else {
+            empty_streak = 0
+            on_line(line)
+        }
+    }
+    let _c1 = channel_close(read_fd)
+    let _c2 = channel_close(write_fd)
+    return 0
+}
+
+// _dispatch_module — backward-compat wrapper around streaming form.
+// External byte sequence preserved (one-shot --prompt mode identical); REPL
+// banners now arrive incrementally instead of one buffered blob (Phase 3c
+// honest C3 #5 / iter 3 (b-fix) C3 carry resolved).
+fn _dispatch_module(mod_name: string, repo: string, argv) {
+    let _rc = _dispatch_module_streaming(mod_name, repo, argv, _print_line)
 }
 
 fn main() {

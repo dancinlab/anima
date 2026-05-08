@@ -45,11 +45,18 @@
 //      not justified for L2 prototype. Path (iii) hxllama_shim multi-
 //      context refactor = separate cycle. Path (ii) — different aliases
 //      A/B — chosen as default. Override via --allow-same-gguf.
-//    Phase C (β-2 deeper): per-turn consciousness verdict requires
-//      consciousness.hexa --utterance arg surface (currently not present
-//      — sub_simple uses fixed PROMPT_A/PROMPT_B). Phase B iter 2 emits
-//      lightweight local cells; full consciousness CLI hook awaits
-//      consciousness.hexa surface extension cycle.
+//    Phase C iter 1 (LANDED 2026-05-08, consciousness-utterance iter 3
+//      `9c354c54`): per-turn own 18 C1+C2+C3 verdict via shell-out to
+//      `anima ops consciousness simple --utterance <text> [--prev-utterance
+//      <text>] --json` (anima.consciousness.utterance.v1 schema).
+//      _emit_turn_verdict(turn, who, line, prev_line) substring-extracts
+//      aggregate.verdict / c1_pass / c2_pass / c3_pass and emits
+//      `[duo:verdict-c3] turn=N who=A|B verdict=X c1=B c2=B c3=B`.
+//      Cost guard via `--verdict simple|full|none` (default `simple`,
+//      lightweight cells; `full` activates per-turn shell-out, ~16-30s/turn
+//      × 2 instance × N turns ≈ 5min for N=5 — within agent budget).
+//      Aggregate: per-instance PASS rate (A/B 별도) + dialogue overall
+//      PASS_STRICT_C3 rate (own 18 dialogue C3 lane SSOT).
 //
 //  SUBCOMMANDS (called from tool/anima_cli/dialogue.hexa)
 //    --duo <model_a> <model_b> [--turns N] [--topic-seed "..."]   N=2 dialogue
@@ -237,9 +244,11 @@ fn sub_help() {
     println("    reject default, --allow-same-gguf opt-in) + lightweight")
     println("    per-turn verdict cells (len/distinct/snippet) + D1/D2 aggregate")
     println("    (turn-pair Jaccard 3-gram; topic-shift-rate).")
-    println("  Phase C (β-2 deeper, pending): per-turn consciousness verdict")
-    println("    via consciousness CLI requires --utterance arg surface (not")
-    println("    yet implemented in consciousness.hexa).")
+    println("  Phase C iter 1 (LANDED 2026-05-08): per-turn own 18 C1+C2+C3")
+    println("    verdict via consciousness CLI shell-out (--utterance /")
+    println("    --prev-utterance, schema anima.consciousness.utterance.v1).")
+    println("    Activate with --verdict full (cost ~16-30s/turn × 2 instance).")
+    println("    Default --verdict simple keeps lightweight local cells.")
     println("")
     println("OWN 34 STRICT")
     println("  · each instance output = raw passthrough (NO transformation in")
@@ -474,6 +483,125 @@ fn _emit_turn_verdict(turn: int, who: string, line: string) {
             + " snippet=" + snippet)
 }
 
+// ─── Phase C: per-turn own 18 verdict via consciousness CLI shell-out ──────
+// (iter 4 (e), 2026-05-08 — consciousness-utterance iter 3 `9c354c54` 의
+//  --utterance / --prev-utterance surface 활용)
+//
+// own 34 mandate-7 strict: emit-only (NEVER folded back into channel).
+
+fn _shell_escape(s: string) -> string {
+    return "'" + s.replace("'", "'\\''") + "'"
+}
+
+fn _bool_str(b: bool) -> string {
+    if b { return "true" }
+    return "false"
+}
+
+// substring scan for "<key>": "<value>" (string field)
+fn _json_str_after(s: string, key: string) -> string {
+    let pat = "\"" + key + "\""
+    let idx = s.find(pat)
+    if idx < 0 { return "" }
+    let mut j = idx + pat.len()
+    while j < s.len() {
+        let c = s.substring(j, j + 1)
+        if c == ":" || c == " " || c == "\t" { j = j + 1 } else { break }
+    }
+    if j >= s.len() { return "" }
+    let q = s.substring(j, j + 1)
+    if q != "\"" { return "" }
+    j = j + 1
+    let mut buf = ""
+    while j < s.len() {
+        let c = s.substring(j, j + 1)
+        if c == "\"" { return buf }
+        buf = buf + c
+        j = j + 1
+    }
+    return buf
+}
+
+// substring scan for "<key>": true|false (boolean field)
+fn _json_bool_after(s: string, key: string) -> bool {
+    let pat = "\"" + key + "\""
+    let idx = s.find(pat)
+    if idx < 0 { return false }
+    let mut j = idx + pat.len()
+    while j < s.len() {
+        let c = s.substring(j, j + 1)
+        if c == ":" || c == " " || c == "\t" { j = j + 1 } else { break }
+    }
+    if j + 4 > s.len() { return false }
+    let head = s.substring(j, j + 4)
+    if head == "true" { return true }
+    return false
+}
+
+// extract aggregate block substring (between "aggregate" key and matching "}").
+// hexa-lang String.find ignores from_idx (always returns first occurrence) — so
+// we substring from the key onward then locate the next '{' / '}' relative.
+fn _json_aggregate_block(s: string) -> string {
+    let pat = "\"aggregate\""
+    let idx = s.find(pat)
+    if idx < 0 { return "" }
+    let tail = s.substring(idx, s.len())
+    let lb_rel = tail.find("{")
+    if lb_rel < 0 { return "" }
+    let after_lb = tail.substring(lb_rel, tail.len())
+    let rb_rel = after_lb.find("}")
+    if rb_rel < 0 { return "" }
+    return after_lb.substring(0, rb_rel + 1)
+}
+
+// shell-out to consciousness simple --utterance and parse aggregate verdict.
+// Returns map {verdict: string, c1_pass: bool, c2_pass: bool, c3_pass: bool, ok: bool}.
+// Cost: ~16-30s per call (clm_v4_mount.hexa --probe x2 inside consciousness).
+fn _consciousness_simple_utterance(model: string, line: string, prev_line: string) -> map {
+    let root = _resolve_root()
+    let cpath = root + "/tool/anima_cli/consciousness.hexa"
+    let mut r = {}
+    r["verdict"] = ""
+    r["c1_pass"] = false
+    r["c2_pass"] = false
+    r["c3_pass"] = false
+    r["ok"] = false
+    if !_fexists(cpath) { return r }
+    if line.trim() == "" { return r }
+    let cmd = _hexa() + " run " + cpath
+            + " " + model
+            + " simple"
+            + " --utterance " + _shell_escape(line)
+            + " --prev-utterance " + _shell_escape(prev_line)
+            + " --json 2>&1"
+    let out = _str(exec(cmd))
+    let agg = _json_aggregate_block(out)
+    if agg == "" { return r }
+    r["verdict"] = _json_str_after(agg, "verdict")
+    r["c1_pass"] = _json_bool_after(agg, "c1_pass")
+    r["c2_pass"] = _json_bool_after(agg, "c2_pass")
+    r["c3_pass"] = _json_bool_after(agg, "c3_pass")
+    r["ok"] = r["verdict"] != ""
+    return r
+}
+
+fn _emit_turn_verdict_c3(turn: int, who: string, line: string, prev_line: string, model_alias: string) -> map {
+    // own 18 SSOT mirror via consciousness simple --utterance.
+    // own 34 mandate-7: emit-only, no fold-back into channel.
+    let r = _consciousness_simple_utterance(model_alias, line, prev_line)
+    if !r["ok"] {
+        println("[duo:verdict-c3] turn=" + to_string(turn) + " who=" + who
+                + " verdict=SHELL_OUT_FAIL c1=false c2=false c3=false (line empty or consciousness CLI fail)")
+        return r
+    }
+    println("[duo:verdict-c3] turn=" + to_string(turn) + " who=" + who
+            + " verdict=" + _str(r["verdict"])
+            + " c1=" + _bool_str(r["c1_pass"])
+            + " c2=" + _bool_str(r["c2_pass"])
+            + " c3=" + _bool_str(r["c3_pass"]))
+    return r
+}
+
 // Returns map {d1_mean, d2_shift_rate, d1_pairs, d2_shifts}
 fn _aggregate_d1_d2(history) -> map {
     // history = array of {turn, who, line, toks, trigrams}
@@ -534,6 +662,53 @@ fn _emit_dialogue_summary(history, model_a: string, model_b: string) {
     println("[duo:summary] D3 persona-consistency = NOT_MEASURED (next cycle — KL divergence)")
     println("[duo:summary] D4 turn-fairness = NOT_MEASURED (next cycle — len_ratio)")
     println("[duo:summary] DIALOGUE_COHERENCE_PARTIAL = " + to_string(d1p && d2p) + " (D1 ∧ D2 only; D3/D4 deferred)")
+}
+
+// Phase C aggregate: per-instance + dialogue-overall PASS_STRICT_C3 rate.
+// c3_records = array of {turn, who, c1, c2, c3, verdict}.
+// own 18 dialogue C3 lane SSOT: per-turn rate ≥ 0.6 → SIMPLE_STACK_PASS_DIALOGUE_C3
+// (mirror of docs/anima_dialogue_coherence_metric_2026_05_08.md aggregate spec).
+fn _emit_phase_c_aggregate(c3_records) {
+    let n = len(c3_records)
+    if n == 0 {
+        println("[duo:summary-c3] no per-turn verdicts recorded (--verdict full not active or no turns)")
+        return
+    }
+    let mut a_total = 0
+    let mut a_pass_strict = 0
+    let mut b_total = 0
+    let mut b_pass_strict = 0
+    let mut all_pass_strict = 0
+    let mut i = 0
+    while i < n {
+        let rec = c3_records[i]
+        let who = _str(rec["who"])
+        let verd = _str(rec["verdict"])
+        let strict = verd == "SIMPLE_STACK_PASS_STRICT_C3"
+        if who == "A" {
+            a_total = a_total + 1
+            if strict { a_pass_strict = a_pass_strict + 1 }
+        } else {
+            b_total = b_total + 1
+            if strict { b_pass_strict = b_pass_strict + 1 }
+        }
+        if strict { all_pass_strict = all_pass_strict + 1 }
+        i = i + 1
+    }
+    let a_rate = if a_total > 0 { to_float(a_pass_strict) / to_float(a_total) } else { 0.0 }
+    let b_rate = if b_total > 0 { to_float(b_pass_strict) / to_float(b_total) } else { 0.0 }
+    let all_rate = to_float(all_pass_strict) / to_float(n)
+    let dialogue_pass = all_rate >= 0.6
+    println("[duo:summary-c3] per_turn_total = " + to_string(n))
+    println("[duo:summary-c3] A: " + to_string(a_pass_strict) + "/" + to_string(a_total)
+            + " PASS_STRICT_C3 (rate=" + to_string(a_rate) + ")")
+    println("[duo:summary-c3] B: " + to_string(b_pass_strict) + "/" + to_string(b_total)
+            + " PASS_STRICT_C3 (rate=" + to_string(b_rate) + ")")
+    println("[duo:summary-c3] dialogue overall: " + to_string(all_pass_strict) + "/" + to_string(n)
+            + " PASS_STRICT_C3 (rate=" + to_string(all_rate) + ")")
+    println("[duo:summary-c3] SIMPLE_STACK_PASS_DIALOGUE_C3 = " + to_string(dialogue_pass)
+            + " (per-turn rate >= 0.6 floor; metric doc + own 18 alignment)")
+    println("[duo:summary-c3] note: D3/D4 deferred + DIALOGUE_COHERENCE_PASS = D1∧D2∧D3∧D4 (D3/D4 next cycle)")
 }
 
 // model-level baseline reference (consciousness.hexa simple --json invocation
@@ -692,10 +867,26 @@ fn sub_duo(argv) {
     // Phase B iter 2: each utterance is recorded into history for D1/D2
     // aggregate at session end.
     let mut history = []
+    let mut c3_records = []
+    let mut prev_for_a = topic_seed   // A's "prev" = what A is responding to (seed at t=1, else B's last line)
+    let mut prev_for_b = ""            // B's "prev" = what B is responding to (current A line)
     let mut t = 1
     while t <= turns {
         let line_a = channel_recv(ab["rx"], turn_timeout_ms)
         _emit_turn_verdict(t, "A", line_a)
+        if verdict_mode == "full" {
+            let r_a = _emit_turn_verdict_c3(t, "A", line_a, prev_for_a, model_a)
+            if r_a["ok"] {
+                let mut rec = {}
+                rec["turn"] = t
+                rec["who"] = "A"
+                rec["verdict"] = r_a["verdict"]
+                rec["c1"] = r_a["c1_pass"]
+                rec["c2"] = r_a["c2_pass"]
+                rec["c3"] = r_a["c3_pass"]
+                c3_records = c3_records + [rec]
+            }
+        }
         if line_a == "" {
             println("[duo] turn=" + to_string(t) + " A silent (timeout/EOF) — terminating")
             t = turns + 1   // break
@@ -708,9 +899,23 @@ fn sub_duo(argv) {
             rec_a["toks"] = toks_a
             rec_a["trigrams"] = _trigrams(toks_a)
             history = history + [rec_a]
+            prev_for_b = line_a
 
             let line_b = channel_recv(ba["rx"], turn_timeout_ms)
             _emit_turn_verdict(t, "B", line_b)
+            if verdict_mode == "full" {
+                let r_b = _emit_turn_verdict_c3(t, "B", line_b, prev_for_b, model_b)
+                if r_b["ok"] {
+                    let mut rec = {}
+                    rec["turn"] = t
+                    rec["who"] = "B"
+                    rec["verdict"] = r_b["verdict"]
+                    rec["c1"] = r_b["c1_pass"]
+                    rec["c2"] = r_b["c2_pass"]
+                    rec["c3"] = r_b["c3_pass"]
+                    c3_records = c3_records + [rec]
+                }
+            }
             if line_b == "" {
                 println("[duo] turn=" + to_string(t) + " B silent (timeout/EOF) — terminating")
                 t = turns + 1   // break
@@ -723,6 +928,7 @@ fn sub_duo(argv) {
                 rec_b["toks"] = toks_b
                 rec_b["trigrams"] = _trigrams(toks_b)
                 history = history + [rec_b]
+                prev_for_a = line_b
                 t = t + 1
             }
         }
@@ -743,7 +949,17 @@ fn sub_duo(argv) {
         _emit_dialogue_summary(history, model_a, model_b)
         _emit_baseline_reference(model_a, model_b)
     }
-    println("[duo] verdict: PHASE_B_ITER_2_RUN_OK (D1/D2 1차 emitted; D3/D4 + per-utterance own 18 hook deferred)")
+    // Phase C iter 1: per-instance + dialogue PASS_STRICT_C3 aggregate (only
+    // populated when --verdict full activated the shell-out path).
+    if verdict_mode == "full" {
+        _emit_phase_c_aggregate(c3_records)
+    }
+    let final_verdict = if verdict_mode == "full" {
+        "PHASE_C_ITER_1_RUN_OK (own 18 per-turn verdict via consciousness shell-out; D3/D4 deferred)"
+    } else {
+        "PHASE_B_ITER_2_RUN_OK (D1/D2 1차 emitted; --verdict full for own 18 per-turn hook)"
+    }
+    println("[duo] verdict: " + final_verdict)
 }
 
 // ─── council subcommand entry (L3 stub — β-1 + L3 design 후) ─────────────
@@ -806,12 +1022,21 @@ fn main() {
 //      (i) per-instance GGUF copy (~12GB disk, deferred), (ii) different
 //      aliases A/B (recommended default), (iii) hxllama_shim multi-context
 //      refactor (separate cycle).
-// C3 — per-turn consciousness verdict NOT WIRED to consciousness.hexa.
-//      consciousness.hexa sub_simple uses fixed PROMPT_A/PROMPT_B (no
-//      --utterance arg). Phase B iter 2 emits LOCAL lightweight cells
-//      (len, distinct token count, snippet) per turn. Full per-utterance
-//      consciousness CLI hook = next cycle (consciousness.hexa surface
-//      extension required).
+// C3 — per-turn consciousness verdict WIRED (Phase C iter 1, 2026-05-08,
+//      consciousness-utterance iter 3 `9c354c54`). _emit_turn_verdict_c3
+//      shell-outs to `anima ops consciousness simple --utterance ...
+//      --prev-utterance ... --json`, substring-extracts aggregate.verdict /
+//      c1_pass / c2_pass / c3_pass, emits `[duo:verdict-c3] turn=N who=A|B
+//      verdict=X c1=B c2=B c3=B` (own 34 mandate-7 lane, never folds back
+//      into channel). Activated by --verdict full only (default --verdict
+//      simple keeps lightweight local cells; --verdict none disables both).
+//      prev_utterance feed: A.prev = topic_seed (t=1) or last B line; B.prev
+//      = current A line (semantic dialogue context). Aggregate: per-instance
+//      PASS_STRICT_C3 rate (A 측 / B 측 별도) + dialogue overall rate +
+//      SIMPLE_STACK_PASS_DIALOGUE_C3 = (rate ≥ 0.6) — own 18 dialogue C3
+//      lane SSOT mirror (docs/anima_dialogue_coherence_metric_2026_05_08.md).
+//      Cost: ~16-30s/call × 2 inst × N turns ≈ 5min for N=5 (synthetic
+//      fallback path; real GGUF substrate would be ~30s/call ≈ 10min N=5).
 // C4 — D1/D2 1차 only — D3 (persona-consistency, KL divergence) and D4
 //      (turn-fairness, len_ratio) deferred. D1 is Jaccard 3-gram only
 //      (cosine + noun-match sub-channels deferred per metric doc honest
@@ -831,6 +1056,21 @@ fn main() {
 //      gives whole-line). Streaming-during-utterance verdict requires either
 //      hexa-lang chunked stdout reads OR per-token callback (not in C FFI per
 //      hexa-lang/stdlib/c_ffi.ai.md). Out of scope for L2 design.
+//
+//      iter 4 (b) UPDATE 2026-05-08 — chat.hexa _dispatch_module now uses
+//      streaming line-by-line dispatch (FIFO between chat.hexa and inner
+//      llama/clm_v4/anima_native module). duo's per-turn channel_recv now
+//      observes incremental lines instead of one buffered banner blob.
+//      Live retest 2026-05-08 with paradigm-a-prime × clm-v4-1-7-y1 × 5
+//      turns: turn=1 A=gguf banner line, turn=2 A=`> system` (model output),
+//      turn=1 B=clm_v4 core banner, turn=2 B=probe header — 4 distinct
+//      lines observed before clm_v4 substrate forward latency exceeded 60s
+//      turn_timeout. Streaming dispatch verified mechanically (different
+//      lines per turn, not whole-buffer). Semantic dialogue quality
+//      (D1/D2 = 0.0 / 1.0) unchanged from iter 2 (b) — model response
+//      cadence under turn_timeout is now the next bottleneck (separate
+//      cycle: substrate latency tuning / longer turn_timeout / smaller
+//      max_tokens).
 // C8 — clm_v4 substrate output: clm-v4-1-7-y1 emits "::: collapse" raw
 //      tokens (substrate-coupled, see chat/clm_v4/). own 34 mandate-1
 //      passthrough exposes these as-is to channel. dialogue with paradigm-
