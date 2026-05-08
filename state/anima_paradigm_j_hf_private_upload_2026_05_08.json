@@ -1,0 +1,107 @@
+{
+  "anima_cycle": "2026-05-08",
+  "save_upload_slot": "2/4",
+  "kick_fire_slot_origin": "1/5",
+  "task": "clm_v4_paradigm_j_50k_final_path_a_remapped_hf_private_upload",
+  "hf_repo": {
+    "id": "dancinlab/clm-v4-paradigm-j-50k-final-path-a-remapped",
+    "url": "https://huggingface.co/dancinlab/clm-v4-paradigm-j-50k-final-path-a-remapped",
+    "type": "model",
+    "private": true,
+    "private_flag_confirmed_via_api": true,
+    "head_sha": "e05af35b684bc67223ad3845180e5de6d9660995",
+    "created_via": "huggingface_hub.create_repo(exist_ok=True, private=True)",
+    "uploaded_via": "huggingface_hub.HfApi.upload_folder",
+    "commit_message": "Path A wrapper-prefix-remap (352/352 LoRA decoder prefix)"
+  },
+  "auth": {
+    "user": "dancinlife",
+    "token_role": "write",
+    "token_displayName": "anima",
+    "org_dancinlab_role": "admin"
+  },
+  "source": {
+    "local_dir": "/Users/ghost/.cache/anima/clm_v4_remapped/paradigm_j",
+    "size_bytes_total_approx": 156433138,
+    "files": [
+      {
+        "name": "adapter_model.safetensors",
+        "local_size": 152091192,
+        "local_sha256": "6f1cf277fb76c923653fb896bcc739d9be9173902e69f039aefba159673092a6",
+        "hf_lfs_sha256": "6f1cf277fb76c923653fb896bcc739d9be9173902e69f039aefba159673092a6",
+        "sha256_match": true
+      },
+      {
+        "name": "adapter_config.json",
+        "local_size": 1164,
+        "local_sha256": "031e9bbca74d4996ac7098d96d5a383f296fd21c6010edfe5d1056a798039271"
+      },
+      {
+        "name": "jvae_heads.pt",
+        "local_size": 4338421,
+        "local_sha256": "78d3c3be888ed3ccb6952952869d2371495af1cc53331e13a5d97c4b957c551b",
+        "hf_lfs_sha256": "78d3c3be888ed3ccb6952952869d2371495af1cc53331e13a5d97c4b957c551b",
+        "sha256_match": true
+      },
+      {
+        "name": "REMAP_SOURCE.json",
+        "local_size": 1388,
+        "local_sha256": "6a81ea8f90423f386adf0014bf93db26d6183999ecd80aef09a337360da7589c"
+      },
+      {
+        "name": "README.md",
+        "local_size": 2933,
+        "language": "english_only_per_own_37"
+      }
+    ]
+  },
+  "hf_files_listed": [
+    ".gitattributes",
+    "README.md",
+    "REMAP_SOURCE.json",
+    "adapter_config.json",
+    "adapter_model.safetensors",
+    "jvae_heads.pt"
+  ],
+  "remap_provenance": {
+    "source_repo": "dancinlab/clm-v4-paradigm-j-50k-final",
+    "source_snapshot": "a6da7a7725d8c3cff3b53c9df37a6352c7c8c7a6",
+    "source_adapter_sha256": "8bc08e92445e5cd64c595e24b8f01f6c858df49ca19bc2aaba212d7311467644",
+    "target_adapter_sha256": "6f1cf277fb76c923653fb896bcc739d9be9173902e69f039aefba159673092a6",
+    "wrapper_prefix_source": "base_model.model.blocks",
+    "wrapper_prefix_target": "base_model.model.decoder.blocks",
+    "lora_tensors_total": 352,
+    "lora_tensors_remapped": 352,
+    "lora_tensors_unchanged": 0,
+    "verification_pass": true,
+    "iter7_a_root_cause_commit": "91b9b695",
+    "kick_fire_commit": "dc1510a3",
+    "remap_timestamp_utc": "20260508T154145Z",
+    "reproducer": "tool/transient_py/clm_v4_paradigm_j_path_a_prefix_remap.py"
+  },
+  "own_governance": {
+    "own_16_cost": "private_free",
+    "own_17_d1_scope_clamp": "within_bound",
+    "own_33_trinity_emit": true,
+    "own_34_mandate_2_wrap": 0,
+    "own_34_local_commit_safetensors": false,
+    "own_37_visibility_lifecycle": "private_default",
+    "own_37_mandate_9_strict": true
+  },
+  "public_promote_5_prereq_status": {
+    "1_simple_stack_pass_strict_c3_anima_real_mode": "NOT_MET",
+    "2_v6_awareness_measurement_landed": "NOT_MET",
+    "3_user_verbatim_ok_promote_public": "NOT_ISSUED",
+    "4_trinity_sweep_complete": "NOT_MET",
+    "5_d1_scope_clamp_within_bound": "MET",
+    "verdict": "PUBLIC_BLOCKED_PRIVATE_ONLY"
+  },
+  "verification": {
+    "hf_api_repo_info_private": true,
+    "hf_api_lfs_sha256_adapter_match": true,
+    "hf_api_lfs_sha256_jvae_match": true,
+    "files_count_matches_expected": true,
+    "expected_files_present": ["README.md", "REMAP_SOURCE.json", "adapter_config.json", "adapter_model.safetensors", "jvae_heads.pt"]
+  },
+  "timestamp_utc_recorded": "20260508T160500Z"
+}
