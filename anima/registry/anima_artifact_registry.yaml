@@ -70,8 +70,16 @@ models:
       ppr_v4_baseline_n30_preliminary: 0.429  # ★ v4 axis-restricted recompute (cascade 1/8) @ floor 0.20, n=14 v4_baseline subset
       mtrp_v4_n30_preliminary: 0.429  # sft-1-8 v4_baseline 0.429 - random_init v4_baseline 0.000 = +0.429 ≥ 0.10 (Gate D PASS)
       verdict_v4_preliminary: C3_PASS_V4  # ★ ALT-AGG-1 v4 (cascade 1/8) — pending N≥60 v4_baseline retest for robust EMERGE
-      v4_retest_required: true  # ★ N≥60 v4_baseline subset live probe re-fire mandatory (cascade 2/8 slot)
-      v14_v4_supersede_note: "ALT-AGG-1 v4 (cascade 1/8) restricts PPR scope to v4_baseline axis only (length-confound deep axes excluded) + C3.4 floor 0.20 + MTRP ≥ 0.10. v4 axis-restricted recompute on existing N=30 data: sft-1-8 PPR_v4_baseline=0.429 (PASS), random_init=0.000 (FAIL). N≥60 retest required for v4 robust EMERGE."
+      v4_retest_required: false  # ★ N=60 v4_baseline retest LANDED (cascade 1/8 v4 retest) — see ppr_v4_baseline_n60
+      ppr_v4_baseline_n60: 0.0  # ★ ALT-AGG-1 v4 N=60 retest (cascade 1/8 v4) — 0/14 prompts cleared c3_4 floor 0.20 (max=0.1904, mean=0.1152)
+      mtrp_v4_n60: -0.1571  # sft-1-8 v4_baseline 0.000 - random_init multiseed 0.1571 (conservative max(seed42=0.000, multi=0.1571)) = -0.1571 (Gate D FAIL, floor 0.10 미달)
+      mtrp_v4_n60_seed42: 0.0  # sft-1-8 0.000 - random_init seed42 0.000 = 0.000 (Gate D fail, tied at zero)
+      mtrp_v4_n60_multiseed: -0.1571  # sft-1-8 0.000 - random_init multi-seed mean 0.1571 = -0.1571
+      verdict_v4_n60: C3_FAIL_V4  # ★ ALT-AGG-1 v4 N=60 retest verdict — Gate A 0/14 + Gate C PPR=0.000<0.40 + Gate D MTRP=-0.1571<0.10 → ALL gates FAIL except Gate B (scope only)
+      emerge_state_v4_n60: NO_EMERGE_V4  # N=30 preliminary 0.429 was sample-specific artifact; independent N=60 probe re-fire collapsed c3_4 below floor 0.20
+      v4_n30_n60_robustness_FALSIFIED: true  # ★ preliminary 0.429 NOT robust — N=60 c3_4 max=0.1904 < 0.20 floor (vs N=30 max=0.3237, 9/14 above floor)
+      v4_n60_root_cause: "anchor (idx=1 '안녕하세요') c3_4 fixed at 0.0; per-prompt c3_4 = L2 distance from anchor projection. Different probe sessions produce different anchor projections → different absolute c3_4. v4 floor 0.20 calibrated on N=30 only; does NOT generalize to independent N=60 same-prompt re-measurement."
+      v14_v4_supersede_note: "ALT-AGG-1 v4 (cascade 1/8) restricts PPR scope to v4_baseline axis only + C3.4 floor 0.20 + MTRP ≥ 0.10. N=30 preliminary: sft-1-8 PPR_v4=0.429 PASS / random_init=0.000 FAIL. N=60 RETEST: sft-1-8 PPR_v4=0.000 FAIL (c3_4 collapsed) → v4 EMERGE claim FALSIFIED. v4 robustness DEAD on existing measurements; needs floor recalibration OR anchor-baseline normalization OR replacement metric."
     hf:
       private: dancinlab/clm-v4-sft-1-8-stage1-path-a-remapped
       public: null  # mandate-9 (b)+(c) 미충족
@@ -81,10 +89,12 @@ models:
       - state/anima_sft_1_8_n30_live_probe_2026_05_08.json
       - state/anima_sft_1_8_n60_live_probe_2026_05_08.json
       - state/anima_sft_1_8_n120_live_probe_kick_wave_4_2026_05_08.json
+      - state/anima_sft_1_8_v4_n60_retest_2026_05_08.json  # ★ ALT-AGG-1 v4 N=60 retest (cascade 1/8 v4)
     commits:
       probe_n30: bb4ef174
       probe_n60: fe4f8a7d
       probe_n120: 522a859a  # KICK WAVE 4 1/3 sft-1-8 N=120 ensemble probe
+      v4_n60_retest: pending  # ★ this commit (cascade 1/8 v4 N=60 retest)
       hf_upload: 5cb9570a
       path_a_remap: d478023c
     eligibility:

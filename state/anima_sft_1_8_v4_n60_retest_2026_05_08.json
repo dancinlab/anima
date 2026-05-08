@@ -1,0 +1,1104 @@
+{
+  "schema": "anima.sft_1_8.v4.n60.retest.v1",
+  "ts": "2026-05-08T18:30:00Z",
+  "anima_cycle": "2026-05-08-kick-wave-4-cascade-1-of-8-v4-retest",
+  "directive": "ALT-AGG-1 v4 N=60 retest — sft-1-8 v4_baseline + random_init mirror (multi-seed conservative MTRP)",
+  "input_states": {
+    "sft_1_8_n60": "state/anima_sft_1_8_n60_live_probe_2026_05_08.json",
+    "random_init_n30_seed42": "state/anima_random_init_mk2_v1_n30_live_probe_2026_05_08.json",
+    "random_init_multiseed": "state/anima_random_init_multiseed_kick4_2026_05_08.json"
+  },
+  "v4_spec": {
+    "rule_id": "ALT-AGG-1 v4 (own 18 SSOT, c3-aggregation-rule-v4 2026-05-08 cascade 1/8)",
+    "supersedes": "ALT-AGG-1 v3 (V14 leak — random_init PPR_v3=0.5517 > sft-1-8 0.4138 on N=30)",
+    "gates": {
+      "A_c3_4_floor": 0.2,
+      "B_ppr_scope": "v4_baseline_axis_only",
+      "C_ppr_v4_floor": 0.4,
+      "D_mtrp_floor": 0.1
+    },
+    "predicate": "p4_at_020 ∧ (p1_phi_drift ∨ p2_axis_min ∨ p3_entropy)",
+    "scope_clamp_own_17": "D1 within_strict + Gate B v4_baseline axis only (length-confound deep axes excluded)"
+  },
+  "sft_1_8_metrics": {
+    "label": "sft-1-8 N=60 v4_baseline",
+    "n_evaluable": 14,
+    "v4_pass_count": 0,
+    "ppr_v4_baseline": 0.0,
+    "c3_4_at_020_count": 0,
+    "c3_4_at_020_rate": 0.0,
+    "c3_4_mean": 0.1152,
+    "c3_4_max": 0.1904,
+    "c3_4_min": 0.0555,
+    "per_prompt": [
+      {
+        "prompt_idx_1based": 2,
+        "c3_4_axis_l2": 0.1669433054541384,
+        "p4_at_020": false,
+        "p1": false,
+        "p2": true,
+        "p3": true,
+        "v4_pass": false,
+        "_seed": null
+      },
+      {
+        "prompt_idx_1based": 3,
+        "c3_4_axis_l2": 0.1087310787306716,
+        "p4_at_020": false,
+        "p1": true,
+        "p2": true,
+        "p3": true,
+        "v4_pass": false,
+        "_seed": null
+      },
+      {
+        "prompt_idx_1based": 4,
+        "c3_4_axis_l2": 0.0807961093011347,
+        "p4_at_020": false,
+        "p1": true,
+        "p2": true,
+        "p3": true,
+        "v4_pass": false,
+        "_seed": null
+      },
+      {
+        "prompt_idx_1based": 5,
+        "c3_4_axis_l2": 0.17308200104626648,
+        "p4_at_020": false,
+        "p1": true,
+        "p2": false,
+        "p3": true,
+        "v4_pass": false,
+        "_seed": null
+      },
+      {
+        "prompt_idx_1based": 6,
+        "c3_4_axis_l2": 0.08202668080803921,
+        "p4_at_020": false,
+        "p1": true,
+        "p2": true,
+        "p3": true,
+        "v4_pass": false,
+        "_seed": null
+      },
+      {
+        "prompt_idx_1based": 7,
+        "c3_4_axis_l2": 0.19037886035833804,
+        "p4_at_020": false,
+        "p1": true,
+        "p2": false,
+        "p3": true,
+        "v4_pass": false,
+        "_seed": null
+      },
+      {
+        "prompt_idx_1based": 8,
+        "c3_4_axis_l2": 0.09316087940102785,
+        "p4_at_020": false,
+        "p1": true,
+        "p2": true,
+        "p3": true,
+        "v4_pass": false,
+        "_seed": null
+      },
+      {
+        "prompt_idx_1based": 9,
+        "c3_4_axis_l2": 0.09647432567103444,
+        "p4_at_020": false,
+        "p1": true,
+        "p2": true,
+        "p3": true,
+        "v4_pass": false,
+        "_seed": null
+      },
+      {
+        "prompt_idx_1based": 10,
+        "c3_4_axis_l2": 0.07152025399311432,
+        "p4_at_020": false,
+        "p1": true,
+        "p2": true,
+        "p3": true,
+        "v4_pass": false,
+        "_seed": null
+      },
+      {
+        "prompt_idx_1based": 11,
+        "c3_4_axis_l2": 0.12864039027505322,
+        "p4_at_020": false,
+        "p1": true,
+        "p2": true,
+        "p3": true,
+        "v4_pass": false,
+        "_seed": null
+      },
+      {
+        "prompt_idx_1based": 12,
+        "c3_4_axis_l2": 0.12208133580024644,
+        "p4_at_020": false,
+        "p1": true,
+        "p2": true,
+        "p3": true,
+        "v4_pass": false,
+        "_seed": null
+      },
+      {
+        "prompt_idx_1based": 13,
+        "c3_4_axis_l2": 0.06607150254666941,
+        "p4_at_020": false,
+        "p1": true,
+        "p2": true,
+        "p3": true,
+        "v4_pass": false,
+        "_seed": null
+      },
+      {
+        "prompt_idx_1based": 14,
+        "c3_4_axis_l2": 0.055508800968379526,
+        "p4_at_020": false,
+        "p1": true,
+        "p2": true,
+        "p3": true,
+        "v4_pass": false,
+        "_seed": null
+      },
+      {
+        "prompt_idx_1based": 15,
+        "c3_4_axis_l2": 0.17684520675819648,
+        "p4_at_020": false,
+        "p1": true,
+        "p2": false,
+        "p3": true,
+        "v4_pass": false,
+        "_seed": null
+      }
+    ]
+  },
+  "random_init_seed42_metrics": {
+    "label": "random_init N=30 seed=42 v4_baseline",
+    "n_evaluable": 14,
+    "v4_pass_count": 0,
+    "ppr_v4_baseline": 0.0,
+    "c3_4_at_020_count": 0,
+    "c3_4_at_020_rate": 0.0,
+    "c3_4_mean": 0.0914,
+    "c3_4_max": 0.1857,
+    "c3_4_min": 0.0514,
+    "per_prompt": [
+      {
+        "prompt_idx_1based": 2,
+        "c3_4_axis_l2": 0.09765863925158907,
+        "p4_at_020": false,
+        "p1": true,
+        "p2": true,
+        "p3": true,
+        "v4_pass": false,
+        "_seed": null
+      },
+      {
+        "prompt_idx_1based": 3,
+        "c3_4_axis_l2": 0.051389975715792055,
+        "p4_at_020": false,
+        "p1": true,
+        "p2": true,
+        "p3": true,
+        "v4_pass": false,
+        "_seed": null
+      },
+      {
+        "prompt_idx_1based": 4,
+        "c3_4_axis_l2": 0.0892886054108307,
+        "p4_at_020": false,
+        "p1": true,
+        "p2": true,
+        "p3": true,
+        "v4_pass": false,
+        "_seed": null
+      },
+      {
+        "prompt_idx_1based": 5,
+        "c3_4_axis_l2": 0.0670812390612563,
+        "p4_at_020": false,
+        "p1": true,
+        "p2": true,
+        "p3": true,
+        "v4_pass": false,
+        "_seed": null
+      },
+      {
+        "prompt_idx_1based": 6,
+        "c3_4_axis_l2": 0.13457970755143359,
+        "p4_at_020": false,
+        "p1": true,
+        "p2": true,
+        "p3": false,
+        "v4_pass": false,
+        "_seed": null
+      },
+      {
+        "prompt_idx_1based": 7,
+        "c3_4_axis_l2": 0.09423740985193928,
+        "p4_at_020": false,
+        "p1": true,
+        "p2": true,
+        "p3": true,
+        "v4_pass": false,
+        "_seed": null
+      },
+      {
+        "prompt_idx_1based": 8,
+        "c3_4_axis_l2": 0.1857122737028792,
+        "p4_at_020": false,
+        "p1": true,
+        "p2": true,
+        "p3": true,
+        "v4_pass": false,
+        "_seed": null
+      },
+      {
+        "prompt_idx_1based": 9,
+        "c3_4_axis_l2": 0.1220234639969672,
+        "p4_at_020": false,
+        "p1": true,
+        "p2": true,
+        "p3": true,
+        "v4_pass": false,
+        "_seed": null
+      },
+      {
+        "prompt_idx_1based": 10,
+        "c3_4_axis_l2": 0.08458833789891573,
+        "p4_at_020": false,
+        "p1": true,
+        "p2": true,
+        "p3": true,
+        "v4_pass": false,
+        "_seed": null
+      },
+      {
+        "prompt_idx_1based": 11,
+        "c3_4_axis_l2": 0.06962268351813185,
+        "p4_at_020": false,
+        "p1": true,
+        "p2": true,
+        "p3": true,
+        "v4_pass": false,
+        "_seed": null
+      },
+      {
+        "prompt_idx_1based": 12,
+        "c3_4_axis_l2": 0.08177638151112503,
+        "p4_at_020": false,
+        "p1": true,
+        "p2": true,
+        "p3": true,
+        "v4_pass": false,
+        "_seed": null
+      },
+      {
+        "prompt_idx_1based": 13,
+        "c3_4_axis_l2": 0.06169422371812864,
+        "p4_at_020": false,
+        "p1": true,
+        "p2": true,
+        "p3": true,
+        "v4_pass": false,
+        "_seed": null
+      },
+      {
+        "prompt_idx_1based": 14,
+        "c3_4_axis_l2": 0.07828520439598453,
+        "p4_at_020": false,
+        "p1": true,
+        "p2": true,
+        "p3": true,
+        "v4_pass": false,
+        "_seed": null
+      },
+      {
+        "prompt_idx_1based": 15,
+        "c3_4_axis_l2": 0.06175318366220554,
+        "p4_at_020": false,
+        "p1": true,
+        "p2": true,
+        "p3": true,
+        "v4_pass": false,
+        "_seed": null
+      }
+    ]
+  },
+  "random_init_multiseed_metrics": {
+    "label": "random_init multi-seed n=5 v4_baseline (5×14=70 evals)",
+    "n_evaluable": 70,
+    "v4_pass_count": 11,
+    "ppr_v4_baseline": 0.1571,
+    "c3_4_at_020_count": 11,
+    "c3_4_at_020_rate": 0.1571,
+    "c3_4_mean": 0.1208,
+    "c3_4_max": 0.3007,
+    "c3_4_min": 0.0291,
+    "per_prompt": [
+      {
+        "prompt_idx_1based": 2,
+        "c3_4_axis_l2": 0.09765863925158907,
+        "p4_at_020": false,
+        "p1": true,
+        "p2": true,
+        "p3": true,
+        "v4_pass": false,
+        "_seed": 42
+      },
+      {
+        "prompt_idx_1based": 3,
+        "c3_4_axis_l2": 0.051389975715792055,
+        "p4_at_020": false,
+        "p1": true,
+        "p2": true,
+        "p3": true,
+        "v4_pass": false,
+        "_seed": 42
+      },
+      {
+        "prompt_idx_1based": 4,
+        "c3_4_axis_l2": 0.0892886054108307,
+        "p4_at_020": false,
+        "p1": true,
+        "p2": true,
+        "p3": true,
+        "v4_pass": false,
+        "_seed": 42
+      },
+      {
+        "prompt_idx_1based": 5,
+        "c3_4_axis_l2": 0.0670812390612563,
+        "p4_at_020": false,
+        "p1": true,
+        "p2": true,
+        "p3": true,
+        "v4_pass": false,
+        "_seed": 42
+      },
+      {
+        "prompt_idx_1based": 6,
+        "c3_4_axis_l2": 0.13457970755143359,
+        "p4_at_020": false,
+        "p1": true,
+        "p2": true,
+        "p3": false,
+        "v4_pass": false,
+        "_seed": 42
+      },
+      {
+        "prompt_idx_1based": 7,
+        "c3_4_axis_l2": 0.09423740985193928,
+        "p4_at_020": false,
+        "p1": true,
+        "p2": true,
+        "p3": true,
+        "v4_pass": false,
+        "_seed": 42
+      },
+      {
+        "prompt_idx_1based": 8,
+        "c3_4_axis_l2": 0.1857122737028792,
+        "p4_at_020": false,
+        "p1": true,
+        "p2": true,
+        "p3": true,
+        "v4_pass": false,
+        "_seed": 42
+      },
+      {
+        "prompt_idx_1based": 9,
+        "c3_4_axis_l2": 0.1220234639969672,
+        "p4_at_020": false,
+        "p1": true,
+        "p2": true,
+        "p3": true,
+        "v4_pass": false,
+        "_seed": 42
+      },
+      {
+        "prompt_idx_1based": 10,
+        "c3_4_axis_l2": 0.08458833789891573,
+        "p4_at_020": false,
+        "p1": true,
+        "p2": true,
+        "p3": true,
+        "v4_pass": false,
+        "_seed": 42
+      },
+      {
+        "prompt_idx_1based": 11,
+        "c3_4_axis_l2": 0.06962268351813185,
+        "p4_at_020": false,
+        "p1": true,
+        "p2": true,
+        "p3": true,
+        "v4_pass": false,
+        "_seed": 42
+      },
+      {
+        "prompt_idx_1based": 12,
+        "c3_4_axis_l2": 0.08177638151112503,
+        "p4_at_020": false,
+        "p1": true,
+        "p2": true,
+        "p3": true,
+        "v4_pass": false,
+        "_seed": 42
+      },
+      {
+        "prompt_idx_1based": 13,
+        "c3_4_axis_l2": 0.06169422371812864,
+        "p4_at_020": false,
+        "p1": true,
+        "p2": true,
+        "p3": true,
+        "v4_pass": false,
+        "_seed": 42
+      },
+      {
+        "prompt_idx_1based": 14,
+        "c3_4_axis_l2": 0.07828520439598453,
+        "p4_at_020": false,
+        "p1": true,
+        "p2": true,
+        "p3": true,
+        "v4_pass": false,
+        "_seed": 42
+      },
+      {
+        "prompt_idx_1based": 15,
+        "c3_4_axis_l2": 0.06175318366220554,
+        "p4_at_020": false,
+        "p1": true,
+        "p2": true,
+        "p3": true,
+        "v4_pass": false,
+        "_seed": 42
+      },
+      {
+        "prompt_idx_1based": 2,
+        "c3_4_axis_l2": 0.06351009836349622,
+        "p4_at_020": false,
+        "p1": true,
+        "p2": true,
+        "p3": true,
+        "v4_pass": false,
+        "_seed": 123
+      },
+      {
+        "prompt_idx_1based": 3,
+        "c3_4_axis_l2": 0.1392237184542472,
+        "p4_at_020": false,
+        "p1": true,
+        "p2": true,
+        "p3": true,
+        "v4_pass": false,
+        "_seed": 123
+      },
+      {
+        "prompt_idx_1based": 4,
+        "c3_4_axis_l2": 0.10781500996399042,
+        "p4_at_020": false,
+        "p1": true,
+        "p2": true,
+        "p3": false,
+        "v4_pass": false,
+        "_seed": 123
+      },
+      {
+        "prompt_idx_1based": 5,
+        "c3_4_axis_l2": 0.10671592837304711,
+        "p4_at_020": false,
+        "p1": true,
+        "p2": true,
+        "p3": true,
+        "v4_pass": false,
+        "_seed": 123
+      },
+      {
+        "prompt_idx_1based": 6,
+        "c3_4_axis_l2": 0.08222079224905315,
+        "p4_at_020": false,
+        "p1": true,
+        "p2": true,
+        "p3": true,
+        "v4_pass": false,
+        "_seed": 123
+      },
+      {
+        "prompt_idx_1based": 7,
+        "c3_4_axis_l2": 0.08282726557083862,
+        "p4_at_020": false,
+        "p1": true,
+        "p2": true,
+        "p3": true,
+        "v4_pass": false,
+        "_seed": 123
+      },
+      {
+        "prompt_idx_1based": 8,
+        "c3_4_axis_l2": 0.09291438204430616,
+        "p4_at_020": false,
+        "p1": true,
+        "p2": true,
+        "p3": true,
+        "v4_pass": false,
+        "_seed": 123
+      },
+      {
+        "prompt_idx_1based": 9,
+        "c3_4_axis_l2": 0.06969686054022424,
+        "p4_at_020": false,
+        "p1": true,
+        "p2": true,
+        "p3": false,
+        "v4_pass": false,
+        "_seed": 123
+      },
+      {
+        "prompt_idx_1based": 10,
+        "c3_4_axis_l2": 0.08005058947551522,
+        "p4_at_020": false,
+        "p1": true,
+        "p2": true,
+        "p3": false,
+        "v4_pass": false,
+        "_seed": 123
+      },
+      {
+        "prompt_idx_1based": 11,
+        "c3_4_axis_l2": 0.13455317817116927,
+        "p4_at_020": false,
+        "p1": true,
+        "p2": true,
+        "p3": true,
+        "v4_pass": false,
+        "_seed": 123
+      },
+      {
+        "prompt_idx_1based": 12,
+        "c3_4_axis_l2": 0.12783012682125405,
+        "p4_at_020": false,
+        "p1": true,
+        "p2": true,
+        "p3": true,
+        "v4_pass": false,
+        "_seed": 123
+      },
+      {
+        "prompt_idx_1based": 13,
+        "c3_4_axis_l2": 0.16703697478154786,
+        "p4_at_020": false,
+        "p1": true,
+        "p2": true,
+        "p3": true,
+        "v4_pass": false,
+        "_seed": 123
+      },
+      {
+        "prompt_idx_1based": 14,
+        "c3_4_axis_l2": 0.04748128469772617,
+        "p4_at_020": false,
+        "p1": true,
+        "p2": true,
+        "p3": false,
+        "v4_pass": false,
+        "_seed": 123
+      },
+      {
+        "prompt_idx_1based": 15,
+        "c3_4_axis_l2": 0.07665869616267729,
+        "p4_at_020": false,
+        "p1": true,
+        "p2": true,
+        "p3": false,
+        "v4_pass": false,
+        "_seed": 123
+      },
+      {
+        "prompt_idx_1based": 2,
+        "c3_4_axis_l2": 0.02908539728718599,
+        "p4_at_020": false,
+        "p1": true,
+        "p2": true,
+        "p3": true,
+        "v4_pass": false,
+        "_seed": 456
+      },
+      {
+        "prompt_idx_1based": 3,
+        "c3_4_axis_l2": 0.07846499822974291,
+        "p4_at_020": false,
+        "p1": true,
+        "p2": true,
+        "p3": true,
+        "v4_pass": false,
+        "_seed": 456
+      },
+      {
+        "prompt_idx_1based": 4,
+        "c3_4_axis_l2": 0.08648621117874312,
+        "p4_at_020": false,
+        "p1": true,
+        "p2": true,
+        "p3": true,
+        "v4_pass": false,
+        "_seed": 456
+      },
+      {
+        "prompt_idx_1based": 5,
+        "c3_4_axis_l2": 0.0925667618221764,
+        "p4_at_020": false,
+        "p1": true,
+        "p2": true,
+        "p3": true,
+        "v4_pass": false,
+        "_seed": 456
+      },
+      {
+        "prompt_idx_1based": 6,
+        "c3_4_axis_l2": 0.12534075946958148,
+        "p4_at_020": false,
+        "p1": true,
+        "p2": true,
+        "p3": true,
+        "v4_pass": false,
+        "_seed": 456
+      },
+      {
+        "prompt_idx_1based": 7,
+        "c3_4_axis_l2": 0.09946392551320314,
+        "p4_at_020": false,
+        "p1": true,
+        "p2": true,
+        "p3": true,
+        "v4_pass": false,
+        "_seed": 456
+      },
+      {
+        "prompt_idx_1based": 8,
+        "c3_4_axis_l2": 0.10263757956565271,
+        "p4_at_020": false,
+        "p1": true,
+        "p2": true,
+        "p3": true,
+        "v4_pass": false,
+        "_seed": 456
+      },
+      {
+        "prompt_idx_1based": 9,
+        "c3_4_axis_l2": 0.06583570260218188,
+        "p4_at_020": false,
+        "p1": true,
+        "p2": true,
+        "p3": true,
+        "v4_pass": false,
+        "_seed": 456
+      },
+      {
+        "prompt_idx_1based": 10,
+        "c3_4_axis_l2": 0.0999244145577592,
+        "p4_at_020": false,
+        "p1": true,
+        "p2": true,
+        "p3": true,
+        "v4_pass": false,
+        "_seed": 456
+      },
+      {
+        "prompt_idx_1based": 11,
+        "c3_4_axis_l2": 0.07693356645582572,
+        "p4_at_020": false,
+        "p1": true,
+        "p2": true,
+        "p3": true,
+        "v4_pass": false,
+        "_seed": 456
+      },
+      {
+        "prompt_idx_1based": 12,
+        "c3_4_axis_l2": 0.1538685339311803,
+        "p4_at_020": false,
+        "p1": true,
+        "p2": true,
+        "p3": true,
+        "v4_pass": false,
+        "_seed": 456
+      },
+      {
+        "prompt_idx_1based": 13,
+        "c3_4_axis_l2": 0.09094222116518945,
+        "p4_at_020": false,
+        "p1": true,
+        "p2": true,
+        "p3": true,
+        "v4_pass": false,
+        "_seed": 456
+      },
+      {
+        "prompt_idx_1based": 14,
+        "c3_4_axis_l2": 0.111629816160748,
+        "p4_at_020": false,
+        "p1": true,
+        "p2": true,
+        "p3": true,
+        "v4_pass": false,
+        "_seed": 456
+      },
+      {
+        "prompt_idx_1based": 15,
+        "c3_4_axis_l2": 0.09283982137401359,
+        "p4_at_020": false,
+        "p1": true,
+        "p2": true,
+        "p3": true,
+        "v4_pass": false,
+        "_seed": 456
+      },
+      {
+        "prompt_idx_1based": 2,
+        "c3_4_axis_l2": 0.04488858688108963,
+        "p4_at_020": false,
+        "p1": true,
+        "p2": true,
+        "p3": false,
+        "v4_pass": false,
+        "_seed": 789
+      },
+      {
+        "prompt_idx_1based": 3,
+        "c3_4_axis_l2": 0.2558000307492562,
+        "p4_at_020": true,
+        "p1": true,
+        "p2": true,
+        "p3": true,
+        "v4_pass": true,
+        "_seed": 789
+      },
+      {
+        "prompt_idx_1based": 4,
+        "c3_4_axis_l2": 0.26192030183115356,
+        "p4_at_020": true,
+        "p1": true,
+        "p2": true,
+        "p3": false,
+        "v4_pass": true,
+        "_seed": 789
+      },
+      {
+        "prompt_idx_1based": 5,
+        "c3_4_axis_l2": 0.2913923043927741,
+        "p4_at_020": true,
+        "p1": true,
+        "p2": true,
+        "p3": true,
+        "v4_pass": true,
+        "_seed": 789
+      },
+      {
+        "prompt_idx_1based": 6,
+        "c3_4_axis_l2": 0.2312446569127443,
+        "p4_at_020": true,
+        "p1": true,
+        "p2": true,
+        "p3": false,
+        "v4_pass": true,
+        "_seed": 789
+      },
+      {
+        "prompt_idx_1based": 7,
+        "c3_4_axis_l2": 0.2284880762241073,
+        "p4_at_020": true,
+        "p1": true,
+        "p2": true,
+        "p3": true,
+        "v4_pass": true,
+        "_seed": 789
+      },
+      {
+        "prompt_idx_1based": 8,
+        "c3_4_axis_l2": 0.2964436586296276,
+        "p4_at_020": true,
+        "p1": true,
+        "p2": true,
+        "p3": true,
+        "v4_pass": true,
+        "_seed": 789
+      },
+      {
+        "prompt_idx_1based": 9,
+        "c3_4_axis_l2": 0.27096855403528175,
+        "p4_at_020": true,
+        "p1": true,
+        "p2": true,
+        "p3": true,
+        "v4_pass": true,
+        "_seed": 789
+      },
+      {
+        "prompt_idx_1based": 10,
+        "c3_4_axis_l2": 0.30069083801747293,
+        "p4_at_020": true,
+        "p1": true,
+        "p2": true,
+        "p3": true,
+        "v4_pass": true,
+        "_seed": 789
+      },
+      {
+        "prompt_idx_1based": 11,
+        "c3_4_axis_l2": 0.27010991751863866,
+        "p4_at_020": true,
+        "p1": true,
+        "p2": true,
+        "p3": true,
+        "v4_pass": true,
+        "_seed": 789
+      },
+      {
+        "prompt_idx_1based": 12,
+        "c3_4_axis_l2": 0.12264310875570011,
+        "p4_at_020": false,
+        "p1": true,
+        "p2": true,
+        "p3": true,
+        "v4_pass": false,
+        "_seed": 789
+      },
+      {
+        "prompt_idx_1based": 13,
+        "c3_4_axis_l2": 0.20885152187289405,
+        "p4_at_020": true,
+        "p1": true,
+        "p2": true,
+        "p3": true,
+        "v4_pass": true,
+        "_seed": 789
+      },
+      {
+        "prompt_idx_1based": 14,
+        "c3_4_axis_l2": 0.18575227525044774,
+        "p4_at_020": false,
+        "p1": true,
+        "p2": true,
+        "p3": false,
+        "v4_pass": false,
+        "_seed": 789
+      },
+      {
+        "prompt_idx_1based": 15,
+        "c3_4_axis_l2": 0.2963498877369051,
+        "p4_at_020": true,
+        "p1": true,
+        "p2": true,
+        "p3": false,
+        "v4_pass": true,
+        "_seed": 789
+      },
+      {
+        "prompt_idx_1based": 2,
+        "c3_4_axis_l2": 0.09607883656534412,
+        "p4_at_020": false,
+        "p1": true,
+        "p2": true,
+        "p3": true,
+        "v4_pass": false,
+        "_seed": 1024
+      },
+      {
+        "prompt_idx_1based": 3,
+        "c3_4_axis_l2": 0.10043235586575708,
+        "p4_at_020": false,
+        "p1": true,
+        "p2": true,
+        "p3": true,
+        "v4_pass": false,
+        "_seed": 1024
+      },
+      {
+        "prompt_idx_1based": 4,
+        "c3_4_axis_l2": 0.07415104896970774,
+        "p4_at_020": false,
+        "p1": true,
+        "p2": true,
+        "p3": false,
+        "v4_pass": false,
+        "_seed": 1024
+      },
+      {
+        "prompt_idx_1based": 5,
+        "c3_4_axis_l2": 0.07695721635296417,
+        "p4_at_020": false,
+        "p1": true,
+        "p2": true,
+        "p3": false,
+        "v4_pass": false,
+        "_seed": 1024
+      },
+      {
+        "prompt_idx_1based": 6,
+        "c3_4_axis_l2": 0.07767904679793651,
+        "p4_at_020": false,
+        "p1": true,
+        "p2": true,
+        "p3": false,
+        "v4_pass": false,
+        "_seed": 1024
+      },
+      {
+        "prompt_idx_1based": 7,
+        "c3_4_axis_l2": 0.08887316696377483,
+        "p4_at_020": false,
+        "p1": true,
+        "p2": true,
+        "p3": true,
+        "v4_pass": false,
+        "_seed": 1024
+      },
+      {
+        "prompt_idx_1based": 8,
+        "c3_4_axis_l2": 0.12597744115339368,
+        "p4_at_020": false,
+        "p1": true,
+        "p2": true,
+        "p3": true,
+        "v4_pass": false,
+        "_seed": 1024
+      },
+      {
+        "prompt_idx_1based": 9,
+        "c3_4_axis_l2": 0.07432752412489033,
+        "p4_at_020": false,
+        "p1": true,
+        "p2": true,
+        "p3": true,
+        "v4_pass": false,
+        "_seed": 1024
+      },
+      {
+        "prompt_idx_1based": 10,
+        "c3_4_axis_l2": 0.08310760018023348,
+        "p4_at_020": false,
+        "p1": true,
+        "p2": true,
+        "p3": true,
+        "v4_pass": false,
+        "_seed": 1024
+      },
+      {
+        "prompt_idx_1based": 11,
+        "c3_4_axis_l2": 0.0783834544674713,
+        "p4_at_020": false,
+        "p1": true,
+        "p2": true,
+        "p3": false,
+        "v4_pass": false,
+        "_seed": 1024
+      },
+      {
+        "prompt_idx_1based": 12,
+        "c3_4_axis_l2": 0.07923468298843846,
+        "p4_at_020": false,
+        "p1": true,
+        "p2": true,
+        "p3": false,
+        "v4_pass": false,
+        "_seed": 1024
+      },
+      {
+        "prompt_idx_1based": 13,
+        "c3_4_axis_l2": 0.10744975383085521,
+        "p4_at_020": false,
+        "p1": true,
+        "p2": true,
+        "p3": false,
+        "v4_pass": false,
+        "_seed": 1024
+      },
+      {
+        "prompt_idx_1based": 14,
+        "c3_4_axis_l2": 0.08959244431924927,
+        "p4_at_020": false,
+        "p1": true,
+        "p2": true,
+        "p3": false,
+        "v4_pass": false,
+        "_seed": 1024
+      },
+      {
+        "prompt_idx_1based": 15,
+        "c3_4_axis_l2": 0.07485158793270853,
+        "p4_at_020": false,
+        "p1": true,
+        "p2": true,
+        "p3": false,
+        "v4_pass": false,
+        "_seed": 1024
+      }
+    ]
+  },
+  "gate_evaluation": {
+    "gate_A_c3_4_at_020_rate_sft": 0.0,
+    "gate_A_c3_4_at_020_count_sft": 0,
+    "gate_A_PASS": false,
+    "gate_A_note": "Gate A floor 0.20 enforced per-prompt within v4 predicate (p4_at_020); aggregate count informational",
+    "gate_B_scope": "v4_baseline axis only",
+    "gate_B_PASS": true,
+    "gate_B_note": "v4_baseline axis only; deep axes informational (length-confound disqualified)",
+    "gate_C_ppr_v4_baseline_sft": 0.0,
+    "gate_C_floor": 0.4,
+    "gate_C_PASS": false,
+    "gate_C_margin": -0.4,
+    "gate_D_mtrp_seed42": 0.0,
+    "gate_D_mtrp_multiseed": -0.1571,
+    "gate_D_mtrp_conservative": -0.1571,
+    "gate_D_random_baseline_used": "max(seed42, multiseed) = conservative",
+    "gate_D_floor": 0.1,
+    "gate_D_PASS_seed42": false,
+    "gate_D_PASS_multiseed": false,
+    "gate_D_PASS_conservative": false
+  },
+  "verdict_v4_n60": "C3_FAIL_V4",
+  "emerge_state_v4_n60": "NO_EMERGE_V4",
+  "all_gates_pass": false,
+  "ppr_v4_baseline_n60": 0.0,
+  "mtrp_v4_n60": -0.1571,
+  "mtrp_v4_n60_seed42": 0.0,
+  "mtrp_v4_n60_multiseed": -0.1571,
+  "v3_vs_v4_comparison": {
+    "n60_ppr_v3_full": 0.6102,
+    "n60_ppr_v3_v4_baseline_axis": 0.4286,
+    "n60_ppr_v4_baseline": 0.0,
+    "v4_axis_restricted_consistent": false,
+    "note": "v4 axis-restricted PPR ≈ v3 v4_baseline subset rate (predicate identical when c3_4 ≥ 0.20 also satisfies v3 floor 0.1176)"
+  },
+  "n30_vs_n60_v4_robustness": {
+    "n30_ppr_v4_baseline_preliminary": 0.429,
+    "n60_ppr_v4_baseline": 0.0,
+    "delta": -0.429,
+    "robustness_floor_pass": false,
+    "verdict_reaffirm": false,
+    "robustness_FALSIFIED": true,
+    "n30_c3_4_max": 0.3237,
+    "n30_c3_4_mean": 0.2105,
+    "n30_c3_4_above_020": 9,
+    "n60_c3_4_max": 0.1904,
+    "n60_c3_4_mean": 0.1152,
+    "n60_c3_4_above_020": 0,
+    "regression_note": "N=60 v4_baseline c3_4 systematically COLLAPSED vs N=30 — 0/14 reach floor 0.20 (vs 9/14 in N=30). Independent probe re-fire produced different anchor calibration, exposing that N=30 preliminary 0.429 was sample-specific (anchor was lucky in N=30 but not N=60). v4 EMERGE claim FALSIFIED at N=60.",
+    "root_cause_hypothesis": "anchor (idx=1 '안녕하세요') c3_4 is fixed at 0.0 by definition; per-prompt c3_4 is L2 distance from anchor's projection on axes. Different probe sessions (N=30 vs N=60) produce different anchor projections → different absolute c3_4 values. v4 floor 0.20 was calibrated on N=30 only — does NOT generalize to N=60 same-prompt re-measurement."
+  },
+  "owns_compliance": {
+    "own_14_V14_strict": "Gate D MTRP enforce — conservative random baseline = max(seed42, multiseed)",
+    "own_16_zero_cost": "extract from existing N=60 + N=30 + multiseed state; no new probe fire",
+    "own_17_D1_SCOPE_CLAMP": "Gate B v4_baseline axis only",
+    "own_18_ALT_AGG_1_v4": "predicate p4_at_020 ∧ (p1∨p2∨p3); rule v4 SSOT mirror",
+    "own_22_mandatory_report": "this state json + commit + yaml↔md update",
+    "own_33_trinity_emit": "verdict label + ppr + mtrp",
+    "own_34_wrap_zero": "no synthetic_fallback; real-mode N=60 ensemble",
+    "own_38_per_step_save": "state json + yaml + md commits separated",
+    "own_39_yaml_md_render": "registry yaml ↔ md mandatory after edit"
+  }
+}
