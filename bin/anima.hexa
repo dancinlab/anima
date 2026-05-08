@@ -14,7 +14,7 @@ let VERSION = "anima 0.2.0-mk2"
 // T1 외부 sales (chat REPL via clm_v4_mount.hexa, anima-native)
 // ═══════════════════════════════════════════════════════════════════════════
 let T1_COMMANDS = [
-  "dialogue", "onboard", "help", "version",
+  "chat", "dialogue", "onboard", "help", "version",
   "--help", "-h", "--version", "-v",
 ]
 
@@ -123,6 +123,8 @@ fn emit_help() {
   print("")
   print("T1 외부 sales (chat REPL):")
   print("  anima                 chat REPL (alias to dialogue)")
+  print("  anima chat [<model>]  natural utterance REPL — recursive module")
+  print("                        (own 34 strict, no wrapping; default = anima_native)")
   print("  anima dialogue        long-form chat session (clm_v4_mount substrate-coupled)")
   print("  anima onboard         5-min quickstart")
   print("  anima --help          this help")
@@ -153,6 +155,11 @@ fn dispatch_t1(cmd: string, rest: array) -> string {
   if cmd == "dialogue" || cmd == "" {
     let path = "tool/anima_cli/dialogue.hexa"
     print("[T1] dispatch " + path + " — substrate-coupled chat (anima-native CLM v4)")
+    return path
+  }
+  if cmd == "chat" {
+    let path = "tool/anima_cli/chat.hexa"
+    print("[T1] dispatch " + path + " — natural utterance REPL (own 34 strict)")
     return path
   }
   if cmd == "onboard" {

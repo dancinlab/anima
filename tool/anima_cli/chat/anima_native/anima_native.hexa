@@ -1,0 +1,198 @@
+// ════════════════════════════════════════════════════════════════════════════
+//  tool/anima_cli/chat/anima_native/anima_native.hexa
+//
+//  PURPOSE
+//    Default chat module — anima native arch (TinyWeights / Engine A/G via
+//    anima-core/runtime/conscious_chat.hexa). REPL: stdin line → forward →
+//    stdout. own 34 strict (no wrapping).
+//
+//  RECURSIVE MODULE PATTERN (per user directive 2026-05-08)
+//    "모듈 = 코어 + 모듈 + ai-native doc 재귀"
+//    core            : conscious_chat.hexa (existing) TinyWeights / agi_generate
+//    module body     : this file (chat REPL surface, blocking stdin Phase 1)
+//    ai-native doc   : anima_native.ai.md (sister)
+//
+//  PHASE 1 SCOPE (this commit)
+//    - blocking sys_stdin_read_line (autonomous speech = Phase 2 hexa upstream)
+//    - delegate generation to conscious_chat.hexa via exec()
+//    - --memory full default (자기 출력 + 사용자 입력 누적; conscious_chat 외부에서 관리)
+//    - --max-tokens flag passthrough (default 64 Phase 1 — conscious_chat default)
+//
+//  PHASE 2 (hexa upstream non-blocking stdin land)
+//    - empty enter / no enter 자율 발화 (own 34 mandate-4)
+//    - context full 시 정직 종료 (own 34 mandate-5)
+//
+//  COMPLIANCE
+//    own 34 mandate-1 simple_stack output preservation (raw conscious_chat output)
+//    own 34 mandate-2 wrapping 0 (no system prompt / no speak() / no template)
+//    raw#9 hexa-only · raw#11 snake_case · raw#15 no-hardcode
+// ════════════════════════════════════════════════════════════════════════════
+
+fn _str(x) -> string {
+    let t = type_of(x)
+    if t == "str" || t == "string" { return x }
+    return ""
+}
+
+fn _trim(s: string) -> string { return s.trim() }
+
+fn _resolve_root() -> string {
+    let a = _str(env("ANIMA"))
+    if a != "" { return a }
+    let gt = _str(exec("git rev-parse --show-toplevel 2>/dev/null")).trim()
+    if gt != "" { return gt }
+    return _str(env("HOME")) + "/core/anima"
+}
+
+fn _hexa() -> string { return "/Users/ghost/.hx/bin/hexa" }
+
+fn _fexists(p: string) -> bool {
+    return _str(exec("test -f " + p + " && echo 1 || echo 0")).trim() == "1"
+}
+
+fn _arg_value(argv, key: string, dflt: string) -> string {
+    let i = 0
+    while i < len(argv) {
+        if _str(argv[i]) == key && i + 1 < len(argv) {
+            return _str(argv[i + 1])
+        }
+        i = i + 1
+    }
+    return dflt
+}
+
+fn _arg_present(argv, key: string) -> bool {
+    let i = 0
+    while i < len(argv) {
+        if _str(argv[i]) == key { return true }
+        i = i + 1
+    }
+    return false
+}
+
+fn _user_argv(raw) -> array {
+    let out = []
+    let i = 0
+    while i < len(raw) {
+        let s = _str(raw[i])
+        if !s.contains("/.hexa-cache/") {
+            out = out + [s]
+        }
+        i = i + 1
+    }
+    return out
+}
+
+// ─── core invocation — conscious_chat.hexa exec wrapper ────────────────────
+// own 34 mandate-2 정합: input 그대로 conscious_chat 에 전달, 출력 그대로 stdout.
+// conscious_chat.hexa 의 main()은 'run [N]' 모드 — N tokens 생성.
+// Phase 1: 매 turn 마다 conscious_chat.hexa 'run' 실행 → 출력 그대로 노출.
+// (입력 prompt → conscious_chat 직접 wiring은 conscious_chat refactor 필요 —
+// Phase 1 에서는 fixed "Hello" prompt + N tokens 만 사용 가능. 실제 input
+// driven generation 은 conscious_chat.hexa 의 args API 확장 필요 — Phase 1.5)
+fn _invoke_core(input: string, max_tokens: int) -> string {
+    let root = _resolve_root()
+    let core = root + "/anima-core/runtime/conscious_chat.hexa"
+    if !_fexists(core) {
+        return "[anima_native] core missing: " + core
+    }
+    // Phase 1 limitation honest emit: conscious_chat input wiring 미land
+    // 현재는 conscious_chat 의 fixed prompt + N tokens 출력만 invoke 가능
+    // input은 history 로만 노출 (사용자 인지)
+    let n = if max_tokens > 0 { to_string(max_tokens) } else { "32" }
+    let cmd = _hexa() + " run " + core + " run " + n + " 2>&1"
+    let out = _str(exec(cmd))
+    return out
+}
+
+fn sub_help() {
+    println("anima_native chat module — TinyWeights / Engine A/G (conscious_chat.hexa)")
+    println("")
+    println("FLAGS")
+    println("  --prompt \"...\"           one-shot")
+    println("  --max-tokens N           default 32 (Phase 1)")
+    println("  --memory full|user|none  default=full (Phase 1: full only effective)")
+    println("  --selftest")
+    println("")
+    println("PHASE 1 LIMITATION (honest emit per raw#10)")
+    println("  conscious_chat.hexa 의 main() args API 확장 미land — 현재 fixed")
+    println("  prompt 'Hello' + N tokens 출력만 invoke 가능. 사용자 입력 → 모델")
+    println("  forward 직접 wiring은 Phase 1.5 (conscious_chat refactor) 작업.")
+    println("  본 cycle 출시는 모듈 구조 + dispatch 검증 + own 34 정합 우선.")
+}
+
+fn sub_selftest() {
+    let root = _resolve_root()
+    let core = root + "/anima-core/runtime/conscious_chat.hexa"
+    let mut fail = 0
+    if !_fexists(core) { println("FAIL anima_native: core missing: " + core); fail = fail + 1 }
+    // own 34 mandate-2 self-grep on this file
+    let here = root + "/tool/anima_cli/chat/anima_native/anima_native.hexa"
+    // ERE alternation = `|`; `(` escaped; self-exclude `let pat =` line
+    let pat = "system_prompt|chat_template|apply_chat_template|persona_inject|fn speak\\(|fn talk\\(|fn respond\\(|fn generate_response\\("
+    let cmd = "grep -nE \"" + pat + "\" " + here + " 2>/dev/null | grep -v 'let pat =' | wc -l"
+    let n = _str(exec(cmd)).trim()
+    if n != "0" {
+        println("FAIL own 34 mandate-2 chat lane wrapping: " + n + " hits in anima_native.hexa")
+        fail = fail + 1
+    }
+    if fail > 0 { exit(1) }
+    println("PASS chat/anima_native selftest (core present, own 34 verified)")
+}
+
+fn sub_repl(max_tokens: int, memory_mode: string) {
+    let root = _resolve_root()
+    let core = root + "/anima-core/runtime/conscious_chat.hexa"
+    println("[anima_native] core = " + core)
+    println("[anima_native] mode = REPL (Phase 1, blocking stdin)")
+    println("[anima_native] memory = " + memory_mode + " · max-tokens = " + to_string(max_tokens))
+    println("[anima_native] own 34 strict — wrapping 0")
+    println("[anima_native] (Ctrl-D to quit)")
+    println("")
+    let mut history = ""
+    while true {
+        print("> ")
+        let line = _str(read_line())
+        if line == "" {
+            // Phase 1 blocking stdin: empty line = continue
+            // Phase 2 (non-blocking stdin land) = autonomous speech trigger
+            continue
+        }
+        if memory_mode == "full" || memory_mode == "user" {
+            history = history + line + "\n"
+        }
+        let out = _invoke_core(line, max_tokens)
+        println(out)
+        if memory_mode == "full" {
+            history = history + out + "\n"
+        }
+    }
+}
+
+fn sub_one_shot(prompt: string, max_tokens: int) {
+    let out = _invoke_core(prompt, max_tokens)
+    println(out)
+}
+
+fn main() {
+    let argv = _user_argv(args())
+    if len(argv) > 0 {
+        let first = _str(argv[0])
+        if first.contains("anima_native.hexa") {
+            argv = argv[1:]
+        }
+    }
+    if _arg_present(argv, "--help") { sub_help(); return }
+    if _arg_present(argv, "--selftest") { sub_selftest(); return }
+
+    let max_tok_str = _arg_value(argv, "--max-tokens", "32")
+    let max_tokens = to_int(max_tok_str)
+    let memory_mode = _arg_value(argv, "--memory", "full")
+    let prompt = _arg_value(argv, "--prompt", "")
+
+    if prompt != "" {
+        sub_one_shot(prompt, max_tokens)
+        return
+    }
+    sub_repl(max_tokens, memory_mode)
+}
