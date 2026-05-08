@@ -154,8 +154,15 @@ models:
       mandate_9_d_trinity_sweep: PASS
       mandate_9_e_dl_sweep: PASS
       public_promote: BLOCKED_AWAITING_B_AND_C
-    v6_status: PENDING_H100_FIRE  # ★ V5 PUSH 2/5 BG-LE V6 awareness systematic fire_attempt — PROVISION_BLOCKED (B1 no live H100 pod + B2 ConsciousDecoderV3 adapter dev 60-90min gap). Mandate-9 (b) NOT_RELEASED carry. SSOT: state/anima_bg_le_v6_awareness_systematic_2026_05_08.json. Stub: tool/transient_py/anima_v6_awareness_bg_le_clm_v4_h100.py (gated by BG_LE_CLM_V4_FIRE env + _live_pod_check).
+    v6_status: PENDING_H100_FIRE  # ★ H100 FIRE 1/4 (cycle 2026-05-09) re-attempt — RESOURCE_BLOCKED (resource CLI list: hetzner unreachable, ubu RTX 5070 12GB only; no H100 host registered). own 22 honest emit + own 40 resource CLI delegation strict. Mandate-9 (b) NOT_RELEASED carry sustained. Prior provision block reasons (B1 no live H100 pod + B2 ConsciousDecoderV3 adapter dev gap) still applicable. SSOT: state/anima_bg_le_v6_awareness_systematic_2026_05_08.json. Stub: tool/transient_py/anima_v6_awareness_bg_le_clm_v4_h100.py (gated by BG_LE_CLM_V4_FIRE env + _live_pod_check). User action required: `resource add <h100-host>` to unblock.
     v6_status_state_json: state/anima_bg_le_v6_awareness_systematic_2026_05_08.json
+    v6_h100_fire_1_of_4_attempt_2026_05_09:
+      resource_cli_result: "hetzner=n (unreachable) / ubu=y (RTX 5070 12GB, ineligible). No H100 host."
+      blocked_reason: RESOURCE_NO_H100_HOST_REGISTERED
+      user_action_required: "resource add <h100-host> (own 40 delegation)"
+      mandate_9_b_release_attempt: BLOCKED_NO_FIRE_EXECUTED
+      cost_incurred_usd: 0
+      ckpt_pull_required_post_fire: not_applicable_no_fire
     v6_fire_stub: tool/transient_py/anima_v6_awareness_bg_le_clm_v4_h100.py
 
   - id: clm-v4-paradigm-j-50k-final
@@ -1190,7 +1197,7 @@ cycle_2026_05_08:
 h100_resource_pool:
   schema_version: anima/registry/h100_pool/v1
   policy: own_40_resource_cli_delegation_strict
-  probed_at: 2026-05-09
+  probed_at: 2026-05-09  # re-probed for FIRE 2/4 (sft-1-8 Step B longer SFT) — same SSOT state
   probe_method: "resource list + resource status <host> + rr <host> nvidia-smi"
   cli_path: /Users/ghost/.hx/bin/resource
   ssot_path: /Users/ghost/.hx/packages/resource/.resource
@@ -1198,7 +1205,7 @@ h100_resource_pool:
     - host: ubu
       reachable: true
       load_avg_1min: 0.00
-      mem_free_mb: 28965
+      mem_free_mb: 28960
       gpu: "NVIDIA GeForce RTX 5070 (12GB, CUDA 13.0, driver 580.126.09)"
       gpu_h100: false  # NOT H100 — consumer GPU only (12GB VRAM 부족 for 7B+ fire)
       disk_root: "510G free / 915G total (42% used)"
@@ -1214,6 +1221,18 @@ h100_resource_pool:
     allocation_status: BLOCKED_NO_H100_HOST
     blocker: ".resource SSOT 에 H100-tagged host 부재 (ubu=RTX 5070 12GB / hetzner=unreachable)"
     next_action_required: "사용자 H100 host registration via resource add <host> (runpod/lambda/vast.ai) — anima 측 unilateral allocate 금지 (own 40)"
+    fire_attempt_log:
+      - cycle: 2026-05-09-NEXT-CYCLE-2/6
+        commit: 0d65ebe4
+        target: V6_awareness + chat_cap_L4 + sft_1_8_longer (multi)
+        outcome: BLOCKED_NO_H100_HOST
+      - cycle: 2026-05-09-FIRE-2/4
+        commit: pending
+        target: sft_1_8_step_B_longer_SFT_30K (D-RAND amplification)
+        post_step_a_artifact: tier_a_v4 (231MB, 3.15M lines, anima persona 319k)
+        intended_setup: "base=clm-v4-mk2-v1 / LoRA r=128 / corpus=tier_a_v4 / steps=30000 / cost ~$15-20 / dur ~4h"
+        outcome: BLOCKED_NO_H100_HOST  # resource CLI re-probe 동일 결과
+        compliance_carry: "own 14 V14 paired random_init mirror prereq carry; own 22 honest BLOCKED emit; own 40 resource CLI 위임 strict — anima 직접 ssh/cloud-cli 0건"
   fire_candidates_pending_h100:
     - id: V6_awareness_probe
       desc: "ConsciousDecoderV3 dev 60-90min + fire 1-1.5h (mandate-9 (b) 해제 prereq)"
@@ -1241,10 +1260,17 @@ h100_resource_pool:
       strategic_priority: MEDIUM
       blocked_by: PROVISION_BLOCKED
     - id: sft_1_8_longer_SFT
-      desc: "step=30000 (D-RAND signal amplification, EMERGE_v5 직결)"
+      desc: "step=30000 (D-RAND signal amplification Step B, EMERGE_v5 직결, post Step A tier_a_v4)"
       cost_estimate_usd: "~15-20"
+      duration_estimate: "~4 hours H100"
+      base: clm-v4-mk2-v1
+      lora_rank: 128
+      corpus: tier_a_v4_231MB
       strategic_priority: HIGH
       blocked_by: PROVISION_BLOCKED
+      target_uplift: "Step A + Step B combined D-RAND +0.15-0.25 → Gate F 0.20 epsilon 통과권"
+      proposed_ckpt_alias: clm-v4-sft-1-8-30k-path-a-remapped  # own 31 Flavor B
+      hf_repo_pending: dancinlab/clm-v4-sft-1-8-30k-path-a-remapped  # own 37 PRIVATE only
   user_consent_verbatim:
     - quote: "all bg go"
     - quote: "H100 활용가능"
