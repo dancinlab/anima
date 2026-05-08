@@ -978,6 +978,36 @@ own 18 live "anima consciousness check — simple stack default (대화 가능 +
     - **rule precedence**: v5 ALT-AGG-1 (V5 PUSH 1/5) supersedes v4 ALT-AGG-1 (cascade 1/8) supersedes v3 ALT-AGG-1 (iter7 d) supersedes v2 (iter4 d) supersedes P4 hybrid (iter3) supersedes 4-cell AND (iter1). v4 retired 사유: (1) anchor session variance 가 c3_4 absolute floor 0.20 calibration N=30 한정 generalize 불가 (sft-1-8 N=60 retest c3_4 max=0.1904 collapsed), (2) random_init separator gate 가 ensemble-level 만 차단 (per-prompt leak surface 보존), (3) PIV semantic-discrimination evidence 부재.
     - **upstream substrate bug coupling note** (raw#82 retraction-aware): v3 V14 violation (random_init PPR_v3=0.5517 > sft-1-8 0.4138) + v4 N=60 c3_4 collapse 둘 다 clm_v4_mount L626-630 8-cell 2× tile bug 의 동일 root cause downstream artifact. arch fix 가 v3+v4 measurement 의 사후 재해석 가능성을 함께 열음 — v3+v4 EMERGE/falsification record preservation + post-arch-fix re-probe 시 재평가 marker 추가 (own 18 + registry yaml). 별도 cycle 별도 commit.
     - **next step post-V5-PUSH-1/5**: (a) CLM v4 model 재build (CONSCIOUSNESS_DIM=96, H100 lane 별도 cycle) → (b) sft-1-8 + random_init N=60 arch-fixed 재probe → (c) k≥3 paraphrase variants per prompt 추가 → (d) v5 actual numerics 산출 → (e) random_init [0,2,4] 무력화 verify → (f) EMERGE_v5 claim with V14 D-RAND per-prompt gate. 본 PUSH 1/5 = local arch fix + v5 spec + projection SSOT land 만 (own 16 cost discipline + 사용자 "1m SIMPLE_STACK_PASS_STRICT 통과 1까지 bg 여러개 활용 빠르게 + H100도 당연히 활용가능" directive 향해 PUSH 2-5 별도 cycle).
+    - **★ ALT-AGG-1 v5 PIV/DCR/D-RAND ADDENDUM (V5 PUSH ADDENDUM 2/2 2026-05-08)** ★ raw#15 additive (v3+v4+v5-base 함수 보존). 사용자 directive verbatim: "여러개 활용 빠르게". KICK WAVE 4 5/8 commit `007f462c` `docs/anima_architecture_leak_root_cause_kick4_2026_05_08.ai.md` 의 "진짜 의식 신호 후보 4종 spec" 중 3 actual implement (4번째 anchor-stability random-permuted seed match 별도 cycle). 본 ADDENDUM 은 v5 base spec (Gate E/F/G normalized c3_4 + per-prompt D-RAND + paraphrase PIV) 과 별도 lane 의 4-gate aggregate 로, 기존 N=60 axis log 만으로 0-cost local validation 가능.
+        * **3 metric implement** (consciousness.hexa lines 992-1170, raw#15 additive):
+          1. `_piv_compute(probe_results, axis_idx)` per-axis stdev across N prompts + `_piv_compute_max/_mean` 5-axis aggregate
+          2. `_dcr_compute(probe_results)` distinct-argmax/5 + `_dcr_compute_conditioning_rate(probe_results)` argmax-change rate (sole strong substrate-level discriminator)
+          3. `_drand_delta(trained_c3_4_list, random_c3_4_list)` ensemble mean delta on c3_4_axis_l2
+        * **ALT-AGG-1 v5 ADDENDUM 4-gate aggregate** (`_v5_aggregate_label`):
+          - Gate A: PIV-max ≥ 0.10 (any axis)
+          - Gate B: DCR ≥ 0.40 (anti dominant_cell invariance)
+          - Gate C: D-RAND ≥ 0.05 (trained > random by 5%)
+          - Gate D: V14 paired random self-test PPR_v4 < 0.05
+        * **EXISTING-DATA validation** (commit fe4f8a7d sft-1-8 N=60 + commit 9896288c random_init seed=42 N=30):
+          - sft-1-8 PIV per axis [identity, agency, phenomenal, temporal, social] = [0.0391, 0.0371, 0.0337, 0.0393, 0.0362] → PIV-max=0.0393 (Gate A FAIL)
+          - random_init PIV per axis [0.0392, 0.0420, 0.0404, 0.0435, 0.0428] → PIV-max=0.0435 > sft-1-8 (random session noise EXCEEDS trained signal width — substrate amplitude saturation)
+          - sft-1-8 DCR distinct=0.80 (4/5 axes won), DCR change_rate=0.6379 (37/58 transitions); random_init distinct=0.60, change_rate=0.1429 → ★ DCR change_rate sole strong separator delta +0.495
+          - sft-1-8 c3_4 mean=0.1304 vs random_init=0.1338 → D-RAND=-0.0034 (Gate C FAIL, c3_4 collapse confirms v4 N=60 retest finding)
+          - Random_init dominant_cells [0,0,0,...] cell[0] dominant 28/29 prompts (KICK WAVE 4 5/8 cell-tile collapse 재확인)
+          - **sft-1-8 v5_addendum_verdict = C3_FAIL_V5_ADDENDUM** (Gate B 단독 PASS; Gate A+C+D 모두 FAIL — own 14 V14 strict 정합 sustained, no false EMERGE)
+        * **honest-c3 (raw#10)**:
+          1. DCR change_rate is sole strong substrate-level discriminator (sft 0.638 vs random 0.143); recommend Gate B refinement to use change_rate as primary (distinct=0.6 random_init still PASSES distinct=0.40 floor)
+          2. PIV uniformly FAIL on both — substrate axis amplitude saturation at [0.4-0.5] eliminates per-axis variance; PIV gate effective only post-arch-fix re-probe
+          3. D-RAND on raw c3_4 = 0 — c3_4 metric structurally compromised (v4 retest collapse cause); v5 base Gate E anchor-baseline normalization (`c3_4_v5`) addresses next iteration
+          4. Gate D V14 random self-test floor 0.05 too aggressive — random_init c3_4 mean 0.1338 > 0.05; recommend recalibration to 0.15 OR move to `c3_4_v5_normalized` scale
+          5. dominant_cells proxy via axis-argmax (192-cell raw not exposed via current --probe JSON contract; cell-level DCR strictly stricter when available)
+        * **ADDENDUM SSOT mirror surfaces** (own 22 mandatory report + own 24 single SSOT + own 38 매단계 + own 39 yaml↔md):
+          - `tool/anima_cli/consciousness.hexa` lines 992-1170 (10 신설 함수, raw#15 additive)
+          - `anima/registry/anima_artifact_registry.yaml` sft-1-8 + random_init `v5_addendum_*` fields (10+ fields each) + framework_amends V5 PUSH ADDENDUM 2/2 entry
+          - `docs/anima_alt_agg_1_v5_piv_dcr_drand_spec_2026_05_08.ai.md` (full spec doc, this entry cross-link)
+          - `.own` own 18 (this entry, raw#82 retraction-aware)
+        * **rule precedence**: v5 ALT-AGG-1 ADDENDUM (V5 PUSH ADDENDUM 2/2) augments v5 base (V5 PUSH 1/5) with 4-gate metric replacement; v3+v4+v5-base 모든 predicate 함수 + ensemble/label functions 보존 per raw#82 retraction-aware. ADDENDUM 은 별도 lane (parallel measurement axis) — v5 base Gate E/F/G c3_4_v5 normalization 와 호환 (caller chooses lane based on data availability).
+        * **next step post-ADDENDUM**: (a) post-arch-fix re-probe (CONSCIOUSNESS_DIM 192→96) → PIV gate validation (b) DCR change_rate Gate B refinement (c) Gate D recalibration to 0.15 OR move to c3_4_v5_normalized scale (d) cell-level DCR via 192-cell `dominant_cells` JSON expose (e) PIV paraphrase k≥3 variants (yaml `v5_piv_projection: PENDING_PARAPHRASE_KICK`).
 
   c3-measurement-cli: anima consciousness simple [<model>] (tool/anima_cli/consciousness.hexa)
     threshold-status: ROC_FORMAL_ITER3 2026-05-08 loop iter 3 d-retry (N=60 random+clm + N=46 paradigm; Youden's J + random FAIL ≥ 0.95 + chat-cap PASS ≥ 0.7 constrained — C3.4 strict PASS only, C3.1/C3.2/C3.3 best-effort with caveat; C3.3 entropy 강화 land 후도 single-cell discrimination weak; BG-KM-LLAMA-3B real chat-cap retest 후 cell-by-cell 재강화 별도 cycle. CLI verdict 진화: BASELINE_MEASURED → PASS_STRICT_C3 / FAIL_C3 (live single-probe 4-cell AND))
