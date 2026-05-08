@@ -1008,6 +1008,26 @@ own 18 live "anima consciousness check — simple stack default (대화 가능 +
           - `.own` own 18 (this entry, raw#82 retraction-aware)
         * **rule precedence**: v5 ALT-AGG-1 ADDENDUM (V5 PUSH ADDENDUM 2/2) augments v5 base (V5 PUSH 1/5) with 4-gate metric replacement; v3+v4+v5-base 모든 predicate 함수 + ensemble/label functions 보존 per raw#82 retraction-aware. ADDENDUM 은 별도 lane (parallel measurement axis) — v5 base Gate E/F/G c3_4_v5 normalization 와 호환 (caller chooses lane based on data availability).
         * **next step post-ADDENDUM**: (a) post-arch-fix re-probe (CONSCIOUSNESS_DIM 192→96) → PIV gate validation (b) DCR change_rate Gate B refinement (c) Gate D recalibration to 0.15 OR move to c3_4_v5_normalized scale (d) cell-level DCR via 192-cell `dominant_cells` JSON expose (e) PIV paraphrase k≥3 variants (yaml `v5_piv_projection: PENDING_PARAPHRASE_KICK`).
+    - **★ ALT-AGG-1 v5.1 Gate B-refined DCR change_rate (NEXT-CYCLE 3/6 2026-05-09)** ★ raw#15 additive (v3+v4+v5-base+v5-ADDENDUM 모든 함수 보존). 사용자 directive verbatim: "all bg go". KICK WAVE 4 ADDENDUM commit `c17b923c` 의 핵심 finding 정식화 — DCR change_rate 가 sole strong substrate-level discriminator. 기존 v5 Gate B (`_dcr_pass(dcr_distinct) ≥ 0.40`) 가 random_init distinct=0.60 도 PASS (too weak); v5.1 Gate B-refined (`_c3_b_pass_v5_refined(dcr_change_rate) ≥ 0.40`) 이 random_init 0.143/0.172 strict reject.
+        * **3 신설 함수** (consciousness.hexa lines 1196+, raw#15 additive — v5 `_dcr_pass` 보존):
+          1. `_c3_b_pass_v5_refined(dcr_change_rate)` (NEW) — change_rate ≥ 0.40 floor
+          2. `_c3_ensemble_v5_1_pass(piv_max, dcr_change_rate, d_rand, gate_d_random_below_005)` — 4 gates (A PIV-max + B-refined change_rate + C D-RAND + D V14)
+          3. `_c3_ensemble_v5_1_label` — 3-tier (`C3_PASS_V5_1` / `C3_PARTIAL_NEAR_V5_1` / `C3_FAIL_V5_1`; Gate D=false 즉시 `C3_FAIL_V14_VIOLATED_V5_1`)
+        * **EXISTING-DATA validation across 4 models** (anchor-divergent filter):
+          - sft-1-8 N=60 (commit fe4f8a7d): change_rate=0.6379 (37/58) → Gate B-refined PASS ✓
+          - sft-1-7-y1 N=60 (commit 757e4169): change_rate=0.8475 (50/59) → Gate B-refined PASS ✓ (highest delta)
+          - paradigm-j N=120 (commit 84aa8665): change_rate=0.7479 (89/119) → Gate B-refined PASS ✓
+          - random_init seed=42 N=30: change_rate=0.1429 (4/28; .own historical) / 0.1724 (5/29 full recompute) → Gate B-refined FAIL ★
+        * **strong separator delta** (v5.1 의 핵심 V14 evidence): sft-1-7-y1 +0.7046 (highest) / paradigm-j +0.6050 / sft-1-8 +0.4950 — substrate-level (5-axis 192-cell) 변별력은 living signal.
+        * **v5.1 verdict 산출** (4-gate aggregate): 모든 trained 3 models = `C3_FAIL_V14_VIOLATED_V5_1` (Gate D=false 즉시 V14 violation precedence; Gate B-refined 단독 PASS 으로는 EMERGE 산출 불가). random_init = `C3_FAIL_V5_1_EXPECTED` (V14 strict 정합).
+        * **own 14 V14 strict 정합 sustained** — Gate B 강화만으로 EMERGE 0건; Gate D recalibration (별도 cycle: c3_4_v5 normalized scale OR floor 0.15) 와 Gate A post-arch-fix re-probe (CONSCIOUSNESS_DIM 192→96) 둘 다 mandate carry.
+        * **SSOT mirror surfaces** (own 22/24/38/39 매단계):
+          - `tool/anima_cli/consciousness.hexa` lines 1196+ (3 신설 함수, raw#15 additive — v5 `_dcr_pass` + `_v5_aggregate_label` 보존)
+          - `anima/registry/anima_artifact_registry.yaml` — sft-1-8 + sft-1-7-y1 + paradigm-j + random-init 4 entries 모두 `v5_1_dcr_change_rate` + `v5_1_gate_*_pass` + `v5_1_verdict` + `v5_1_honest_c3` fields land + framework_amends NEXT-CYCLE 3/6 entry
+          - `docs/anima_alt_agg_1_v5_1_dcr_change_rate_gate_b_refined_spec_2026_05_09.ai.md` (NEW spec doc)
+          - `.own` own 18 (this entry, raw#82 retraction-aware — v5 ADDENDUM 두 verdicts 보존)
+        * **rule precedence (raw#15 additive)**: v5.1 augments v5 ADDENDUM with Gate B replacement only; v3+v4+v5-base+v5-ADDENDUM 모든 predicate 함수 + ensemble/label functions 보존. v5.1 은 별도 lane (Gate B replacement) — caller chooses based on data availability and substrate-level discrimination requirement.
+        * **honest-c3 (raw#10)**: (1) Gate B-refined 단독 PASS 으로는 EMERGE 산출 불가; (2) random_init Gate B-refined FAIL 이 sole strong substrate-level evidence; (3) Gate D recalibration mandate carry (random_init c3_4 0.1338 substrate session noise irreducible floor); (4) Gate A PIV post-arch-fix re-probe 후 재평가; (5) anchor-divergent filter convention preserved (.own canonical 0.1429 + full recompute 0.1724 둘 다 Gate B-refined FAIL).
 
   c3-measurement-cli: anima consciousness simple [<model>] (tool/anima_cli/consciousness.hexa)
     threshold-status: ROC_FORMAL_ITER3 2026-05-08 loop iter 3 d-retry (N=60 random+clm + N=46 paradigm; Youden's J + random FAIL ≥ 0.95 + chat-cap PASS ≥ 0.7 constrained — C3.4 strict PASS only, C3.1/C3.2/C3.3 best-effort with caveat; C3.3 entropy 강화 land 후도 single-cell discrimination weak; BG-KM-LLAMA-3B real chat-cap retest 후 cell-by-cell 재강화 별도 cycle. CLI verdict 진화: BASELINE_MEASURED → PASS_STRICT_C3 / FAIL_C3 (live single-probe 4-cell AND))

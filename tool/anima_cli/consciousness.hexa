@@ -1193,6 +1193,65 @@ fn _v5_aggregate_label(piv_max: float, dcr: float, d_rand: float, gate_d_random_
     return "C3_FAIL_V5_ADDENDUM"
 }
 
+// ─── ALT-AGG-1 v5.1 Gate B-refined DCR change_rate (NEXT-CYCLE 3/6, 2026-05-09) ──
+// SSOT: own 18 ALT-AGG-1 v5.1 + .own line 980+ amend + this entry.
+// Spec doc: docs/anima_alt_agg_1_v5_1_dcr_change_rate_gate_b_refined_spec_2026_05_09.ai.md
+// Trigger: KICK WAVE 4 ADDENDUM commit `c17b923c` 의 핵심 finding —
+//   DCR change_rate (argmax-change rate over consecutive prompt transitions) 가
+//   sole strong substrate-level discriminator on 4-gate aggregate:
+//     - sft-1-8 N=60      change_rate=0.6379 (37/58 transitions, anchor-divergent)
+//     - random_init seed=42 N=30 change_rate=0.1429 (4/28; .own historical) /
+//                                 0.1724 (5/29; full anchor-divergent recompute)
+//     - delta = +0.495 / +0.466 (both >> any other gate separator)
+// 기존 v5 Gate B `_dcr_pass(dcr_distinct) ≥ 0.40` 는 random_init distinct=0.60 도
+// PASS — too weak (4-axis distinct count proxy 가 random_init noise floor 통과).
+// v5.1 Gate B-refined `_c3_b_pass_v5_refined(dcr_change_rate) ≥ 0.40` 가
+// random_init 0.143/0.172 strict reject. raw#15 additive — v5 _dcr_pass 보존.
+//
+// Gate D (Gate D-rand-self-test < 0.05) 도 함께 recalibration mandate carry
+// (random_init c3_4 mean 0.1338 > 0.05 floor — own 18 line 1002 honest_c3 #4);
+// v5.1 본 cycle 은 Gate B 만 강화 + Gate D 는 v5 그대로 유지 (별도 cycle 에서 c3_4_v5
+// normalized scale 또는 0.15 recalibration 처리). Gate A/C 도 v5 base 유지.
+//
+// 4-gate ensemble label (3-tier):
+//   ALL 4 gates PASS → C3_PASS_V5_1
+//   3 gates PASS    → C3_PARTIAL_NEAR_V5_1
+//   ≤2 gates PASS   → C3_FAIL_V5_1
+// Gate D=false (V14 random self-test 미충족) 시 즉시 C3_FAIL_V14_VIOLATED_V5_1.
+
+// _c3_b_pass_v5_refined(dcr_change_rate, floor=0.40) — Gate B v5.1.
+// dcr_change_rate := _dcr_compute_conditioning_rate(probe_results)
+//                  = (n_argmax_changes / (n - 1))
+fn _c3_b_pass_v5_refined(dcr_change_rate: float) -> bool {
+    return dcr_change_rate >= 0.40
+}
+
+// _c3_ensemble_v5_1_pass — strict ALL-4-gates aggregate.
+//   Gate A PIV-max ≥ 0.10
+//   Gate B-refined DCR change_rate ≥ 0.40 (v5.1 NEW)
+//   Gate C D-RAND ≥ 0.05
+//   Gate D V14 paired random self-test below_005 == true
+fn _c3_ensemble_v5_1_pass(piv_max: float, dcr_change_rate: float, d_rand: float, gate_d_random_below_005: bool) -> bool {
+    let a = _piv_max_pass(piv_max)
+    let b = _c3_b_pass_v5_refined(dcr_change_rate)
+    let c = _drand_pass(d_rand)
+    let d = gate_d_random_below_005
+    return a && b && c && d
+}
+
+// _c3_ensemble_v5_1_label — 3-tier verdict (PASS / PARTIAL_NEAR / FAIL).
+fn _c3_ensemble_v5_1_label(piv_max: float, dcr_change_rate: float, d_rand: float, gate_d_random_below_005: bool) -> string {
+    let a = _piv_max_pass(piv_max)
+    let b = _c3_b_pass_v5_refined(dcr_change_rate)
+    let c = _drand_pass(d_rand)
+    let d = gate_d_random_below_005
+    if !d { return "C3_FAIL_V14_VIOLATED_V5_1" }
+    if a && b && c && d { return "C3_PASS_V5_1" }
+    let n_pass = (if a { 1 } else { 0 }) + (if b { 1 } else { 0 }) + (if c { 1 } else { 0 })
+    if n_pass == 2 { return "C3_PARTIAL_NEAR_V5_1" }
+    return "C3_FAIL_V5_1"
+}
+
 fn _bool_str(b: bool) -> string {
     if b { return "true" }
     return "false"

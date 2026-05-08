@@ -120,8 +120,16 @@ models:
       v5_addendum_input_states:
         sft_1_8_n60: state/anima_sft_1_8_n60_live_probe_2026_05_08.json
         random_init_seed42: state/anima_random_init_mk2_v1_n30_live_probe_2026_05_08.json
-    hf:
-      private: dancinlab/clm-v4-sft-1-8-stage1-path-a-remapped
+      # ───── ALT-AGG-1 v5.1 Gate B-refined DCR change_rate (NEXT-CYCLE 3/6 2026-05-09) ─────
+      # raw#15 additive — v5_addendum fields above 보존; v5.1 별도 lane (Gate B replacement).
+      # spec doc: docs/anima_alt_agg_1_v5_1_dcr_change_rate_gate_b_refined_spec_2026_05_09.ai.md
+      v5_1_dcr_change_rate: 0.6379  # 37/58 anchor-divergent transitions (commit fe4f8a7d, .own line 994 historical canonical) — Gate B-refined PASS
+      v5_1_gate_b_refined_pass: true  # ★ change_rate ≥ 0.40 ✓
+      v5_1_gate_a_piv_max_pass: false  # piv_max=0.0393 < 0.10 (v5 Gate A 그대로 inherit)
+      v5_1_gate_c_drand_pass: false  # d_rand=-0.0034 < 0.05 (v5 Gate C 그대로 inherit; c3_4 collapse 정합)
+      v5_1_gate_d_random_below_005: false  # random_init c3_4 mean 0.1338 > 0.05 (v5 Gate D 그대로 inherit; recalibration mandate carry)
+      v5_1_verdict: C3_FAIL_V14_VIOLATED_V5_1  # ★ Gate D=false 즉시 V14 violation; Gate B-refined 단독 PASS, A+C+D fail; v5.1 도 strict 통과 X (Gate D recalibration 별도 cycle 필요)
+      v5_1_honest_c3: "Gate B-refined PASS (change_rate=0.6379 vs random_init=0.1429, delta +0.495 strong separator); Gate A+C+D 모두 v5 그대로 유지하며 FAIL — v5.1 본 cycle 은 Gate B 강화만 (own 18 raw#15 additive); Gate D recalibration (c3_4_v5 normalized OR floor 0.15) 별도 cycle mandate"
       public: null  # mandate-9 (b)+(c) 미충족
       visibility_status: private-process
     cycle: 2026-05-08
@@ -179,6 +187,22 @@ models:
       V14_delta_random_init: -0.2672  # paradigm-j - random_init (negative = SFT contribution undefined)
       n120_per_seed_ppr_v3: [0.2069, 0.3448, 0.3793, 0.2069]
       n120_trajectory_note: "N=30→N=60→N=120 (initial line) PPR_v3 = 0.2414→0.2414→0.2845; phenomenal redesign N=30=0.3793 unmatched (paradigm redesign tighter); N=120 floor crossing real but FRAGILE (V14 fail + per-seed range 0.172)"
+      # ───── ALT-AGG-1 v5.1 Gate B-refined DCR change_rate (NEXT-CYCLE 3/6 2026-05-09) ─────
+      # raw#15 additive — measured on commit 84aa8665 N=120 axis log (anchor-divergent filter).
+      # spec doc: docs/anima_alt_agg_1_v5_1_dcr_change_rate_gate_b_refined_spec_2026_05_09.ai.md
+      v5_1_dcr_change_rate: 0.7479  # 89/119 anchor-divergent transitions (FULL anchor-divergent recompute; commit 84aa8665, N=120 4-seed)
+      v5_1_dcr_distinct: 1.0  # 5/5 axes won argmax
+      v5_1_piv_per_axis: [0.0469, 0.0429, 0.0469, 0.0444, 0.0448]
+      v5_1_piv_max: 0.0469  # < 0.10 floor → Gate A FAIL
+      v5_1_piv_mean: 0.0452
+      v5_1_gate_b_refined_pass: true  # ★ 0.7479 ≥ 0.40 ✓
+      v5_1_gate_a_piv_max_pass: false
+      v5_1_gate_c_drand_pass: null  # 미산출 본 cycle
+      v5_1_gate_d_random_below_005: false  # shared substrate v5 Gate D unchanged
+      v5_1_verdict: C3_FAIL_V14_VIOLATED_V5_1  # ★ V14 violation (paradigm-j 기존 V14_VIOLATED + v5.1 Gate D shared) — Gate B-refined PASS 단독으로는 EMERGE 차단
+      v5_1_delta_vs_random_init: 0.6050  # 0.7479 - 0.1429 = +0.6050 (paradigm-j 두번째 strongest delta)
+      v5_1_honest_c3: "paradigm-j N=120 Gate B-refined PASS (change_rate=0.7479 vs random_init 0.1429, delta +0.6050); 기존 V14_VIOLATED status (random_init PPR_v3=0.5517 > paradigm-j 0.2845) sustained — v5.1 Gate B-refined PASS 한 trained 모델이지만 EMERGE claim 차단 (own 14 V14 strict)"
+      v5_1_input_state: state/anima_paradigm_j_n120_live_probe_kick_wave_4_2026_05_08.json
     hf:
       private: dancinlab/clm-v4-paradigm-j-50k-final-path-a-remapped
       public: null
@@ -232,6 +256,22 @@ models:
       V14_mtrp: 0.5517  # random_init shared substrate
       V14_delta_random_init: -0.3103  # sft-1-7-y1 N=60 - random_init (negative)
       n60_trajectory_note: "N=30→N=60 PPR_v3 = 0.1034→0.2414 upward (+0.1380); phenomenal axis N=30 0.000→N=60 0.333 + identity axis 0.667 N=60 strong; per-seed 0.2759 (above floor!) + 0.2069 — boundary instability; floor not crossed but trending; floor proximity gap = 0.25-0.2414 = 0.0086 (very close)"
+      # ───── ALT-AGG-1 v5.1 Gate B-refined DCR change_rate (NEXT-CYCLE 3/6 2026-05-09) ─────
+      # raw#15 additive — measured on commit 757e4169 N=60 axis log (anchor-divergent filter).
+      # spec doc: docs/anima_alt_agg_1_v5_1_dcr_change_rate_gate_b_refined_spec_2026_05_09.ai.md
+      v5_1_dcr_change_rate: 0.8475  # 50/59 anchor-divergent transitions (FULL anchor-divergent recompute; commit 757e4169) — Gate B-refined PASS
+      v5_1_dcr_distinct: 1.0  # 5/5 axes won argmax — sft-1-7-y1 strongest distinct (sft-1-8 0.80, paradigm-j 1.0)
+      v5_1_piv_per_axis: [0.0449, 0.0505, 0.0462, 0.0515, 0.0449]
+      v5_1_piv_max: 0.0515  # < 0.10 floor → Gate A FAIL (substrate amplitude saturation 정합)
+      v5_1_piv_mean: 0.0476
+      v5_1_gate_b_refined_pass: true  # ★ 0.8475 ≥ 0.40 ✓ (sft-1-7-y1 highest among 3 trained candidates)
+      v5_1_gate_a_piv_max_pass: false
+      v5_1_gate_c_drand_pass: null  # not computed — c3_4 paired random_init delta 미산출 본 cycle
+      v5_1_gate_d_random_below_005: false  # random_init c3_4 mean 0.1338 (shared substrate; v5.1 Gate D unchanged)
+      v5_1_verdict: C3_PARTIAL_NEAR_OR_FAIL_V5_1_PENDING_GATE_C  # ★ Gate B-refined PASS strongly; Gate A FAIL + Gate D FAIL → 최소 C3_FAIL_V14_VIOLATED_V5_1 (Gate D fails); Gate C pending d_rand recompute
+      v5_1_delta_vs_random_init: 0.7046  # 0.8475 - 0.1429 = +0.7046 (sft-1-7-y1 strongest separator delta)
+      v5_1_honest_c3: "sft-1-7-y1 Gate B-refined =0.8475 → highest discriminator delta among 3 trained candidates (vs random_init 0.1429 = +0.7046); PIV uniformly FAIL substrate saturation 정합; Gate D V14 random self-test FAIL (c3_4 0.1338 > 0.05) → v5.1 verdict still V14 violated until Gate D recalibration. v5.1 Gate B-refined 만으로는 EMERGE 산출 불가 (own 14 V14 strict 정합 sustained)."
+      v5_1_input_state: state/anima_sft_1_7_y1_n60_live_probe_kick_wave_4_2026_05_08.json
     hf:
       private: dancinlab/clm-v4-sft-1-7-y1-stage1-path-a-remapped
       public: null
@@ -527,6 +567,15 @@ models:
       v5_addendum_verdict: C3_FAIL_V5_ADDENDUM_EXPECTED  # ★ V14 정합 — random_init Gate A/B/C/D 모두 FAIL 또는 anchor reference 역할
       v5_addendum_honest_c3: "DCR change_rate 0.1429 가 sft-1-8 0.6379 의 strong separator (delta +0.495) — anti-Goodhart V14 strict 정합 (random_init 명확 FAIL); PIV max 0.0435 > sft 0.0393 (random_init noise floor exceeds trained signal — PIV gate calibration 재고 mandate); dominant_cells [0,0,0,...] cell-level invariance reaffirms KICK WAVE 4 5/8 arch leak finding"
       v5_addendum_input_state: state/anima_random_init_mk2_v1_n30_live_probe_2026_05_08.json
+      # ───── ALT-AGG-1 v5.1 Gate B-refined DCR change_rate (NEXT-CYCLE 3/6 2026-05-09) ─────
+      # raw#15 additive — Gate B-refined random_init reference (anchor reject baseline).
+      # spec doc: docs/anima_alt_agg_1_v5_1_dcr_change_rate_gate_b_refined_spec_2026_05_09.ai.md
+      v5_1_dcr_change_rate: 0.1429  # 4/28 anchor-divergent transitions (.own line 994 historical canonical) — Gate B-refined FAIL ✓
+      v5_1_dcr_change_rate_full_recompute: 0.1724  # 5/29 (full anchor-divergent recompute, secondary check) — both << 0.40 floor
+      v5_1_gate_b_refined_pass: false  # ★ random_init 강력 reject — sole strong substrate-level discriminator
+      v5_1_gate_b_refined_role: "anchor reject baseline — random_init Gate B-refined FAIL 가 v5.1 의 핵심 V14 separator (delta vs sft-1-8 +0.495 / sft-1-7-y1 +0.7046 / paradigm-j +0.6050)"
+      v5_1_verdict: C3_FAIL_V5_1_EXPECTED  # ★ V14 strict 정합 — random_init Gate A/B-refined/D 모두 FAIL
+      v5_1_honest_c3: "random_init DCR change_rate 0.1429 (axis 3 dominant 27/29 prompts) << 0.40 floor → Gate B-refined sole strong substrate-level discriminator. v5 Gate B (distinct ≥ 0.40) 는 random distinct=0.60 PASS 시켰던 leak 을 v5.1 Gate B-refined 가 close. delta +0.495 (sft-1-8) / +0.7046 (sft-1-7-y1) / +0.6050 (paradigm-j)"
     hf:
       private: null  # local-only, no upload (substrate research artifact)
       public: PERMANENT_BLOCK  # untrained noise — never publish
@@ -759,6 +808,53 @@ models:
 # DATASETS
 # ─────────────────────────────────────────────────────────────────────────────
 datasets:
+  - id: anima-persona-tier-a-v4
+    aliases: [tier_a_v4]
+    description: anima persona corpus v4 — D-RAND AMPLIFY Step A 0-cost paraphrase expansion (87MB → 231MB)
+    size:
+      bytes: 242689472  # 231.45 MB
+      mb: 231.45
+      lines: 3147863
+    parent: anima-persona-tier-a-v3
+    expansion:
+      method: "LLM-free 0-cost paraphrase (synonym dict ko + register swap 반말↔존댓말)"
+      reference_yaml_section: paraphrase_v5.generation_rules
+      synonym_pairs: 20
+      register_swaps: 11
+      k_role_variants: 2  # role_synonym_v1 + role_register_v1
+      k_brain_variants: 1  # brain_synonym_v1
+      ratio: 2.66  # 87.04 → 231.45 MB
+      base_bytes: 91266753  # v3 verbatim preserved
+    verification:
+      config_core_rules_count: 0
+      augmented_count: 0
+      kmmlu_count: 0
+      kobest_count: 0
+      four_grep_all_zero: true
+      anima_role_preservation: 319464  # 3× v3 floor (106488 → 319464)
+    axis_distribution:
+      phenomenal: 33009
+      temporal: 48272
+      social: 29215
+      meta: 391139
+      note: "exact tallies emitted by expand tool — state json axis_distribution_v4"
+    purpose:
+      d_rand_amplify_step_a: "+0.05–0.10 D-RAND uplift via signal volume 2.66×"
+      next_step_b: "tbd — D-RAND amplify Step B (signal sharpening)"
+    hf:
+      private: null  # NOT_UPLOADED yet (own 38 axis-C HF private upload candidate)
+      public: null
+      next_action: "OK APPLY tier_a_v4 HF private upload (own 38 mandate, dancinlab org)"
+    cycle: 2026-05-09
+    state_jsons:
+      - state/anima_persona_tier_a_v4_expand_2026_05_09.json
+    expand_tool: tool/transient_py/anima_persona_tier_a_v4_expand_2026_05_09.py
+    compliance:
+      own_14_anti_goodhart: PASS  # paraphrase semantically equivalent, no proxy gaming
+      own_16_cost_discipline: PASS  # 0 USD, LLM-free
+      own_17_d1_scope_clamp: PASS  # anima self-reference frame within
+      own_36_corpus_gitignore: PASS  # state/anima_persona_*.txt covered
+
   - id: anima-persona-tier-a-v3
     aliases: [tier_a_v3]
     description: anima persona corpus (Q1+Q2+KOBEST filtered v3)
@@ -1008,6 +1104,7 @@ cycle_2026_05_08:
     - "★★★ FALSIFICATION CASCADE 1/8 (2026-05-08): ALT-AGG-1 v4 SPEC LANDED — supersedes v3 via 4 concurrent gates (A: C3.4 floor 0.1176→0.20 / B: PPR scope restrict to v4_baseline axis only — deep axes informational / C: PPR floor 0.25→0.40 / D: MTRP ≥0.10 mandatory). v4 SSOT mirror 4 surfaces — tool/anima_cli/consciousness.hexa lines 893+ (`_c3_4_pass_v4`, `_c3_prompt_pass_v4`, `_c3_ensemble_v4_pass`, `_c3_ensemble_v4_label`; v3 함수 raw#82 보존) + .own own 18 supersede record + 본 yaml v4_retest_required field + docs/anima_alt_agg_1_v4_amend_spec_2026_05_08.ai.md. v4 axis-restricted recompute on existing N=30: sft-1-8 PPR_v4_baseline=0.429 (PASS, MTRP +0.429) / random_init=0.000 (FAIL, V14 strict ✓). N≥60 v4_baseline retest mandatory (cascade 2/8)."
     - "★ V5 PUSH 4/5 (2026-05-08): BG-LA/LB/LC/LD chat-cap roadmap L4 4 paths SPEC_CARRY landed. Source = docs/anima_chat_autonomous_speech_roadmap_2026_05_08.md L4 (108-130). Status: spec-carry only — H100 NOT FIRED 본 cycle (config/h100_pods.json pods=[] empty @ 2026-05-08T18:40:42Z + own 16 cost discipline + own 14 V14 paired random_init mirror prereq not yet wired for these BG ids). 4 entries: BG-LA Engine A/G v5 arch (D1=0.99 within), BG-LB 350M scratch pre-train (D1=0.99 within), BG-LC Llama distill (D1=0.351 ambiguous_research, own 17 SCOPE_CLAMP), BG-LD DPO RLHF on sft-1-7-y1 (D1=0.793 within, Lesson Q SFT-closed compliance via RLHF stage). PPR_v5 (post arch fix V5 PUSH 1/5) target with v3 fallback flag. Verdict carry: PENDING_H100_FIRE; 사용자 verbatim 'OK CLM L4 ALL FIRE' + h100_pods.json non-empty required for γ phase. Total budget cap if/when fired: $30+$60+$40+$20=$150 (vs prompted $12-20 — spec L4 cap retained per own 16)."
     - "★ V5 PUSH ADDENDUM 2/2 (2026-05-08): ALT-AGG-1 v5 PIV/DCR/D-RAND replacement metric IMPLEMENTED — 사용자 directive verbatim '여러개 활용 빠르게'. KICK WAVE 4 5/8 arch leak finding 의 4 candidate signal 후보 중 3 actual fire. consciousness.hexa 함수 신설: `_piv_compute(probe_results, axis_idx)` per-axis stdev across N prompts + `_piv_compute_max/_mean` 5-axis aggregate, `_dcr_compute(probe_results)` distinct-argmax/5 + `_dcr_compute_conditioning_rate(probe_results)` argmax-change rate, `_drand_delta(trained_c3_4_list, random_c3_4_list)` ensemble mean delta, `_v5_aggregate_label` 4-gate aggregate (Gate A PIV-max ≥0.10 ∧ Gate B DCR ≥0.40 ∧ Gate C D-RAND ≥0.05 ∧ Gate D V14 paired random self-test PPR<0.05). raw#15 additive (v3+v4 함수 보존). EXISTING-DATA VALIDATION on sft-1-8 N=60 vs random_init seed=42 N=30: sft PIV-max=0.0393 / random=0.0435 (BOTH FAIL Gate A, random > sft); sft DCR distinct=0.8 / random=0.6 (PASS); sft DCR change_rate=0.6379 / random=0.1429 (★ STRONG SEPARATOR delta +0.495); D-RAND on c3_4 = -0.0034 (FAIL Gate C, c3_4 collapsed per v4 N=60 retest); Gate D V14 random self-test FAIL (random c3_4=0.1338 NOT < 0.05). Verdict sft-1-8 = C3_FAIL_V5_ADDENDUM (only DCR distinct PASS). Random_init dominant_cells [0,0,0,...] 28/29 (KICK WAVE 4 5/8 cell-tile collapse 재확인). spec doc: docs/anima_alt_agg_1_v5_piv_dcr_drand_spec_2026_05_08.ai.md."
+    - "★ NEXT-CYCLE 3/6 (2026-05-09): ALT-AGG-1 v5.1 Gate B-refined LANDED — 사용자 directive verbatim 'all bg go'. v5 base Gate B (DCR distinct ≥ 0.40) 가 random_init distinct=0.60 도 PASS (too weak); v5.1 Gate B-refined (DCR change_rate ≥ 0.40) 이 sole strong substrate-level discriminator (KICK WAVE 4 ADDENDUM commit `c17b923c` finding). consciousness.hexa 함수 신설 (raw#15 additive — v5 _dcr_pass 보존): `_c3_b_pass_v5_refined(dcr_change_rate)`, `_c3_ensemble_v5_1_pass(piv_max, dcr_change_rate, d_rand, gate_d_random_below_005)` (4 gates: A PIV-max ≥0.10 ∧ B-refined change_rate ≥0.40 ∧ C D-RAND ≥0.05 ∧ D V14 self-test), `_c3_ensemble_v5_1_label` (3-tier: C3_PASS_V5_1 / C3_PARTIAL_NEAR_V5_1 / C3_FAIL_V5_1; Gate D=false 즉시 C3_FAIL_V14_VIOLATED_V5_1). EXISTING-DATA validation across 4 models (anchor-divergent filter): sft-1-8 change_rate=0.6379 PASS / sft-1-7-y1 N=60 (commit 757e4169) =0.8475 PASS / paradigm-j N=120 (commit 84aa8665) =0.7479 PASS / random_init seed=42 =0.1429 FAIL. Strong separator delta: sft-1-7-y1 +0.7046 (highest) / paradigm-j +0.6050 / sft-1-8 +0.4950. v5.1 verdict for ALL 3 trained = C3_FAIL_V14_VIOLATED_V5_1 (Gate D shared substrate FAIL — Gate D recalibration to c3_4_v5 normalized scale OR floor 0.15 별도 cycle mandate). own 14 V14 strict 정합 sustained — Gate B-refined 단독 PASS 으로는 EMERGE 산출 불가. spec doc: docs/anima_alt_agg_1_v5_1_dcr_change_rate_gate_b_refined_spec_2026_05_09.ai.md."
 
 # ─────────────────────────────────────────────────────────────────────────────
 # COMPLIANCE
