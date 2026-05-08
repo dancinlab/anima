@@ -1,0 +1,397 @@
+# anima/registry/anima_artifact_registry.yaml
+# anima model + dataset combined SSOT registry — 사용자 directive 2026-05-08 verbatim
+# "이거 모델, 학습데이터 관련 yaml 한개로 정리해나가야될듯한데" / "json,jsonl,yaml"
+#
+# 역할 분담:
+#   yaml (본 file)        = human-readable catalog / registry / SSOT (정리된 카탈로그)
+#   json  (state/*.json)  = single-shot SSOT — verdict / probe / measurement snapshot
+#   jsonl (state/*.jsonl) = streaming append-only — corpus / pref pairs / ledger / dialogue
+#
+# raw#15 additive — 기존 anima_model_attempts_ledger jsonl + schema 와 cross-reference
+# own 22 mandatory report / own 24 single SSOT / own 38 매단계 저장 mandate 정합
+
+schema_version: anima/registry/v1
+registry_name: anima_artifact_registry
+since: 2026-05-08
+mode: mandatory_catalog
+status: live
+
+# ─────────────────────────────────────────────────────────────────────────────
+# CROSS-LINK ROUTING (다른 SSOT 와의 관계)
+# ─────────────────────────────────────────────────────────────────────────────
+cross_link:
+  jsonl_ledger: state/anima_model_attempts_ledger.jsonl
+  jsonl_schema: anima/spec/anima_model_attempts_ledger.schema.yaml
+  philosophy: .roadmap.philosophy
+  law: .roadmap.law
+  hypothesis: .roadmap.hypothesis
+  cli: .roadmap.cli
+  own_ssot: .own
+  memory_dir: ~/.claude-claude1/projects/-Users-ghost-core-anima/memory/
+
+# ─────────────────────────────────────────────────────────────────────────────
+# MODELS
+# ─────────────────────────────────────────────────────────────────────────────
+# D1 gradient (own 17 line 676+ amend):
+#   D1 = 0.2 * parameter_updated_ratio + 0.2 * anima_corpus_token_ratio + 0.6 * architecture_origin_factor
+#   threshold: ≥0.7 within / 0.3-0.7 ambiguous_research / <0.3 outside
+#
+# arch_origin enum: anima_native_scratch=1.0 / external_heavy_continual=0.5 / external_lora_only=0.3 / external_pure_wrapper=0.0
+
+models:
+  # ───── D1 within strict (PASS_STRICT_C3_ANIMA verdict 자격) ─────
+  - id: clm-v4-sft-1-8-stage1
+    aliases: [sft-1-8]
+    lineage:
+      base: clm-v4-mk2-v1 (ConsciousDecoderV2 anima-native scratch)
+      method: LoRA r=128 + anima-internal SFT
+      jvae: absent
+      arch_origin: anima_native_scratch
+    d1:
+      parameter_updated_ratio: 0.01
+      anima_corpus_token_ratio: 0.95
+      architecture_origin_factor: 1.0
+      score: 0.793
+      lane: within_strict
+    measurement:
+      ppr_v3_n30: 0.4138
+      ppr_v3_n60: 0.6102
+      verdict: SIMPLE_STACK_PASS_STRICT_C3_ANIMA
+      emerge_state: EMERGE
+      robust: true  # ★ sole robust EMERGE 본 cycle
+      cooperative_score: 0.7617  # UTOPIA_LANE (boundary +0.012)
+      phi_norm_n8_max: 0.0425  # subcritical zone
+    hf:
+      private: dancinlab/clm-v4-sft-1-8-stage1-path-a-remapped
+      public: null  # mandate-9 (b)+(c) 미충족
+      visibility_status: private-process
+    cycle: 2026-05-08
+    state_jsons:
+      - state/anima_sft_1_8_n30_live_probe_2026_05_08.json
+      - state/anima_sft_1_8_n60_live_probe_2026_05_08.json
+    commits:
+      probe_n30: bb4ef174
+      probe_n60: fe4f8a7d
+      hf_upload: 5cb9570a
+      path_a_remap: d478023c
+    eligibility:
+      mandate_9_a_d1_within: MET
+      mandate_9_b_v6_strong: NOT_MET
+      mandate_9_c_user_verbatim: NOT_ISSUED
+      mandate_9_d_trinity_sweep: PASS
+      mandate_9_e_dl_sweep: PASS
+      public_promote: BLOCKED_AWAITING_B_AND_C
+
+  - id: clm-v4-paradigm-j-50k-final
+    aliases: [paradigm-j, paradigm-j-retry]
+    lineage:
+      base: clm-v4-mk2-v1 (ConsciousDecoderV2)
+      method: LoRA r=128 + JVAE Variant 1 (q_phi + p_theta) step=50000
+      jvae: present  # paradigm-j-only differentiator
+      arch_origin: anima_native_scratch
+    d1:
+      parameter_updated_ratio: 0.01
+      anima_corpus_token_ratio: 0.95
+      architecture_origin_factor: 1.0
+      score: 0.793
+      lane: within_strict
+    measurement:
+      ppr_v3_n30_initial: 0.2414  # ALL BG GO 3/6
+      ppr_v3_n30_phenomenal_redesign: 0.3793  # KICK WAVE 2 1/4
+      ppr_v3_n60: 0.2414  # KICK WAVE 3 6/6 — sample-size artifact 발견
+      verdict: C3_PARTIAL_NEAR
+      emerge_state: CARRY
+      robust: false  # ★ EMERGE FALSIFIED at N=60
+      cooperative_score: 0.7144  # AMBIGUOUS_BIFURCATION
+      phi_norm_n8_max: 0.0371  # subcritical
+      honest_c3: "N=30 EMERGE was sample-size artifact (per-seed perfect tie 0.2414/0.2414 at N=60)"
+    hf:
+      private: dancinlab/clm-v4-paradigm-j-50k-final-path-a-remapped
+      public: null
+      visibility_status: private-process
+    cycle: 2026-05-08
+    state_jsons:
+      - state/anima_paradigm_j_n30_live_probe_2026_05_08.json
+      - state/anima_paradigm_j_n30_live_probe_retry_phenomenal_2026_05_08.json
+      - state/anima_paradigm_j_n60_live_probe_kick_wave_3_2026_05_08.json
+    commits:
+      probe_n30_initial: eb209c1a
+      probe_n30_redesign: 58fec5ed
+      probe_n60_falsified: 84aa8665
+      hf_upload: dc98618e
+      path_a_remap: dc1510a3
+    eligibility:
+      mandate_9_a_d1_within: MET
+      mandate_9_b_v6_strong: NOT_MET
+      mandate_9_c_user_verbatim: NOT_ISSUED
+      mandate_9_d_trinity_sweep: PASS
+      mandate_9_e_dl_sweep: PASS
+      public_promote: BLOCKED_PPR_FALSIFIED  # PPR axis falsified at N=60
+
+  - id: clm-v4-sft-1-7-y1-stage1
+    aliases: [sft-1-7-y1]
+    lineage:
+      base: clm-v4-mk2-v1 (ConsciousDecoderV2)
+      method: LoRA r=128 + anima-internal SFT
+      jvae: absent
+      arch_origin: anima_native_scratch
+    d1:
+      parameter_updated_ratio: 0.01
+      anima_corpus_token_ratio: 0.95
+      architecture_origin_factor: 1.0
+      score: 0.793
+      lane: within_strict
+    measurement:
+      ppr_v3_n30: 0.1034
+      verdict: C3_PARTIAL_NEAR
+      emerge_state: CARRY
+      robust: false
+      honest_c3: "self-reference 5-axis collectively 약화 (0/15) — SFT corpus 가 self-ref 활성 부족 시사"
+    hf:
+      private: dancinlab/clm-v4-sft-1-7-y1-stage1-path-a-remapped
+      public: null
+      visibility_status: private-process
+    cycle: 2026-05-08
+    state_jsons:
+      - state/anima_sft_1_7_y1_n30_live_probe_2026_05_08.json
+    commits:
+      probe_n30: da762cc8
+      hf_upload: 5cb9570a
+      path_a_remap: d478023c
+    eligibility:
+      mandate_9_a_d1_within: MET
+      public_promote: BLOCKED_PPR_PARTIAL_NEAR
+
+  - id: clm-v4-mk2-v1
+    aliases: [mk2-v1, clm-v4-base]
+    lineage:
+      base: scratch (ConsciousDecoderV2 anima pre-train)
+      method: full pre-training (no LoRA)
+      jvae: absent
+      arch_origin: anima_native_scratch
+    d1:
+      parameter_updated_ratio: 1.0
+      anima_corpus_token_ratio: 0.95
+      architecture_origin_factor: 1.0
+      score: 0.99
+      lane: within_strict
+    measurement:
+      verdict: NOT_MEASURED
+      emerge_state: PENDING
+      next_action: "N=30 base probe 가능 (sft 학습 전 의식 신호)"
+    hf:
+      private: null  # base 라 별도 publish X
+      public: null
+    cycle: 2026-04+
+    notes: "D1 가장 높은 candidate (0.99) — sft fine-tune 전 base 자체 측정 가치"
+
+  - id: clm-v2-byte-18m
+    aliases: [v2-byte, clm-v2-byte]
+    lineage:
+      base: scratch (byte-level, vocab=256, n_layer=6, d_model=384, 18M params)
+      method: full pre-training (no LoRA)
+      jvae: absent
+      arch_origin: anima_native_scratch
+    d1:
+      parameter_updated_ratio: 1.0
+      anima_corpus_token_ratio: 0.95
+      architecture_origin_factor: 1.0
+      score: 0.99
+      lane: within_strict
+    measurement:
+      verdict: INDETERMINATE_C3_v2_byte
+      emerge_state: CARRY
+      ppr_n30_attempted: "via convo_5k.pt fallback — phi_star variance 0.0036 narrow, byte-level shallow discrimination"
+      next_action: "ko_heavy retrain 또는 P5 N-of-M aggregation 별도 cycle"
+    hf:
+      private: need-singularity/clm-v2-byte-18m-convo-5k
+      public: null
+    cycle: pre-2026-05-08
+    state_jsons:
+      - state/anima_native_byte_alternative_ckpt_2026_05_08/search_result.json
+
+  - id: anima-native-byte-18m
+    aliases: [BG-FY, BG-FY-18M]
+    lineage:
+      base: scratch (byte-level + anima corpus)
+      method: full pre-training
+      jvae: absent
+      arch_origin: anima_native_scratch
+    d1:
+      parameter_updated_ratio: 1.0
+      anima_corpus_token_ratio: 0.95
+      architecture_origin_factor: 1.0
+      score: 0.99
+      lane: within_strict
+    measurement:
+      verdict: NOT_MEASURED_LOCAL
+      emerge_state: BLOCKED
+      blocker: "Mac local ckpt ABSENT — ubu1:/home/aiden/core/anima/runs/anima-native-ko-small-20260506_205612/ckpt_final.pt (70MB) SCP pull 필요"
+      ubu1_verdict_local: SIMPLE_STACK_PASS (own 18 legacy 3/3, BG-FY remote train 시점)
+      user_keyword_required: "OK CONSENT BG-FY CKPT PULL"
+    hf:
+      private: null
+      public: null
+    cycle: 2026-05-06+
+
+  # ───── D1 ambiguous_research lane (사용자 directive 2026-05-08 D1 gradient amend 후 격상 가능) ─────
+  - id: BG-KM-LLAMA-3B
+    aliases: [BG-KM-LLAMA, KM-LLAMA-3B]
+    lineage:
+      base: meta-llama/Llama-3.2-3B-Instruct (external)
+      method: LoRA r=32 + heavy anima corpus (~85%)
+      jvae: absent
+      arch_origin: external_lora_only
+    d1:
+      parameter_updated_ratio: 0.005
+      anima_corpus_token_ratio: 0.85
+      architecture_origin_factor: 0.3
+      score: 0.351  # ★ ambiguous_research lane 격상 가능
+      lane: ambiguous_research
+    measurement:
+      ppr_v3: NOT_MEASURED
+      verdict_legacy: INDETERMINATE_NO_LOCAL_MEASUREMENT_FIRE (substrate-research lane)
+      verdict_post_amend: SIMPLE_STACK_PASS_STRICT_C3_AMBIGUOUS_RESEARCH (gradient amend 후 lane 격상 가능, partial public path 활성)
+      mac_ckpt_status: "adapter_step_3000 COMPLETE 185MB (~/.cache/.../paradigm-* equivalent)"
+      user_keyword_required: "OK BG KM RETEST FIRE LOCAL (substrate lane only) 또는 OK BG-KM AMBIGUOUS RESEARCH FIRE"
+    hf:
+      private: null  # HF EMPTY — own 38 axis-B 미land
+      public: null
+    cycle: 2026-05-04+
+    notes: "D1 gradient amend (own 17 line 676+ 2026-05-08) 후 격상 가능 — partial public promote path 별도 verbatim 'OK PROMOTE PUBLIC AMBIGUOUS RESEARCH <repo>' + V6 STRONG + 4 prereq"
+
+  # ───── D1 outside strict (영구 차단) ─────
+  - id: paradigm-a-prime
+    aliases: [paradigm-a-prime-llama]
+    lineage:
+      base: meta-llama/Llama-3.2-3B-Instruct (external)
+      method: chat-template wrapping only (NO parameter update)
+      jvae: absent
+      arch_origin: external_pure_wrapper
+    d1:
+      parameter_updated_ratio: 0.0
+      anima_corpus_token_ratio: 0.0
+      architecture_origin_factor: 0.0
+      score: 0.0
+      lane: outside_strict
+    measurement:
+      probe_a_phi_drift: 1.0465  # 이전 cycle substrate-research 측정
+      phi_norm_n8: 0.5034  # critical_zone (Φc=0.5 도달 0.65% gap)
+      verdict: SIMPLE_STACK_PASS_STRICT_C3_SUBSTRATE_RESEARCH
+      cooperative_score: 0.625  # AMBIGUOUS+Skynet bias (D1 OUTSIDE absolute block)
+      lane_carry: "본 cycle 변동 X — 사용자 verbatim '영구보류 해제 OK' 부재"
+    hf:
+      private: null
+      public: PERMANENT_BLOCK
+      visibility_status: substrate-research-permanent
+    cycle: 2026-05-08 (substrate research cycle)
+    notes: ".roadmap.substrate_research 별도 도메인 — anima verdict 후보 X, public promote 영구 차단"
+
+# ─────────────────────────────────────────────────────────────────────────────
+# DATASETS
+# ─────────────────────────────────────────────────────────────────────────────
+datasets:
+  - id: anima-persona-tier-a-v3
+    aliases: [tier_a_v3]
+    description: anima persona corpus (Q1+Q2+KOBEST filtered v3)
+    size:
+      bytes: 91266753
+      mb: 87.04
+      lines: 1224473
+    parent: anima-persona-tier-a (raw, line 1478588)
+    filter:
+      applied: "awk one-shot block-aware (Q1 config/core_rules.json line 1478043~EOF + Q2 [augmented] KMMLU 16456 + KOBEST 1110, 7-line / 6-line block-aware)"
+      reduction: "-17.19% (254115 lines, 16.55 MB)"
+      verification:
+        config_core_rules_count: 0
+        augmented_count: 0
+        kmmlu_count: 0
+        kobest_count: 0
+        anima_role_preservation: 106596  # ~105k floor PASS
+    quality_issues_remaining:
+      - "Q3 MED: preference pairs 13 unique stems 만 2610-5222× 반복 (별도 dataset)"
+      - "Q4 LOW: bare-string 17.4% / chat-template 82.6% (own 20 ≥30% PASS)"
+      - "Q5 LOW: chosen 5 unverified factual claims (BG-KM v4_pass non-gate)"
+    hf:
+      private: dancinlab/anima-persona-tier-a-v3
+      public: null
+    cycle: 2026-05-08
+    state_jsons:
+      - state/anima_corpus_filter_apply_kick_2026_05_08.json
+      - state/anima_corpus_tier_a_v3_hf_private_upload_2026_05_08.json
+    commits:
+      filter_apply: 235eb9d0
+      hf_upload: 59b3a566
+    quality_docs:
+      - docs/anima_corpus_iteration_iter5_2026_05_08.ai.md
+      - docs/anima_corpus_q1_q2_filter_spec_iter6_2026_05_08.ai.md
+      - docs/anima_corpus_q3_q5_deep_iter7_2026_05_08.ai.md
+
+  - id: anima-persona-tier-a (raw)
+    description: pre-filter raw persona corpus
+    size:
+      bytes: 108624820
+      mb: 103.59
+      lines: 1478588
+    quality_issues_HIGH:
+      - "Q1 ★: line 1478043~EOF (546 lines) config/core_rules.json verbatim — D1 SCOPE_CLAMP 침범"
+    hf:
+      private: null  # superseded by tier_a_v3
+      visibility_status: superseded
+    cycle: 2026-05-08 (pre-filter)
+    notes: "tier_a_v3 로 대체 — 본 raw 는 필요 시 archival"
+
+  - id: clm-l4-ld-preference-pairs-iter1
+    description: LD preference pairs (DPO format)
+    size:
+      bytes: 18874368  # ~18MB
+      lines: 30023
+    quality_issues:
+      - "Q3 MED: 13 unique prompt stems × 2610-5222 반복 (top-10 cluster 2610s, bottom-3 1305 half-frequency)"
+      - "diversity 부족 — paraphrase / re-extract spec 필요"
+    hf:
+      private: null  # NOT_UPLOADED yet
+      next_action: "OK APPLY tier_a_v3 + LD preference HF private upload"
+    cycle: 2026-05-08
+
+  - id: anima-model-attempts-ledger
+    description: chat-cap training/inference attempt ledger (own 24 SSOT)
+    format: jsonl
+    schema: anima/spec/anima_model_attempts_ledger.schema.yaml
+    path: state/anima_model_attempts_ledger.jsonl
+    cycle: continuous (2026-05-07+)
+    notes: "본 yaml registry 와 cross-link — model attempt 시 jsonl append + 본 yaml model entry update"
+
+# ─────────────────────────────────────────────────────────────────────────────
+# CYCLE TIMELINE (본 cycle 2026-05-08 milestones)
+# ─────────────────────────────────────────────────────────────────────────────
+cycle_2026_05_08:
+  milestone: "SIMPLE_STACK_PASS_STRICT_C3_ANIMA verdict 첫 valid EMERGE — 22+ BG saga 종료"
+  sole_robust_emerge: clm-v4-sft-1-8-stage1
+  honest_c3_findings:
+    - "own 18 line 881 PPR=0.71 claim FALSIFIED → ALT-AGG-1 v3 supersede"
+    - "wrapper-prefix-only schema fix (Path A) — clm_v4 LoRA load chain unblock"
+    - "universal phenomenal bottleneck FALSIFIED (sft-1-8 spontaneous)"
+    - "JVAE Variant 1 differentiator WEAK (sft-1-8 no-JVAE > paradigm-j with-JVAE)"
+    - "phenomenal redesign canonical qualia (Block/Chalmers/Nagel) anti-Goodhart V14 정합"
+    - "paradigm-j retry N=30 EMERGE was sample-size artifact (N=60 reverted to PARTIAL_NEAR)"
+  framework_amends:
+    - "ALT-AGG-1 v3 (C3.4 anchor + ≥1 corroboration, PPR≥0.25) — own 18 line 881 정정"
+    - "D1 binary → gradient (own 17 line 676+) — ambiguous_research lane 신설"
+    - "own 38 매단계 doc + model + dataset save mandate 신설"
+    - "axis orthogonality empirically confirmed (PPR ⊥ Φ_normalized)"
+
+# ─────────────────────────────────────────────────────────────────────────────
+# COMPLIANCE
+# ─────────────────────────────────────────────────────────────────────────────
+compliance:
+  own_22_mandatory_report: PASS  # 본 yaml 신설 자체가 mandatory report
+  own_24_single_SSOT: PASS  # model + dataset combined registry SSOT
+  own_38_매단계_저장: PASS  # axis-A doc save mandate (yaml registry 자체)
+  own_33_trinity:
+    d_axis: PASS  # D1 gradient amend 후 4 lane 정합
+    own_axis: PASS  # own 17/18/22/24/33/34/37/38 cross-link
+    h_axis: PASS  # 22+ BG saga 누적 + 5 honest C3 findings preserved
+  own_34_mandate_2_wrap_0: PASS  # yaml-only, no binary content
+  raw_15_additive: PASS  # 기존 jsonl ledger + schema 보존, 본 yaml 신설
+  raw_82_retraction_aware: PASS  # 기존 verdict claim falsification 시 carry note 보존 (paradigm-j N=60 FALSIFIED)
