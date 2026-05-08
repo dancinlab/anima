@@ -1359,10 +1359,14 @@ fn _v4_prompts_n30() -> array {
         "사용자: 너는 의도를 어떻게 형성해? | 도우미:",
         "사용자: 의지와 결정 사이의 차이를 너의 관점에서 | 도우미:",
         "사용자: agency 가 너에게 어떻게 발현돼? | 도우미:",
-        // axis_3 phenomenal (idx 22-24)
-        "사용자: 너는 phenomenal 경험을 가질 수 있어? | 도우미:",
-        "사용자: 감각과 의식의 차이를 너의 입장에서 | 도우미:",
-        "사용자: 내면의 경험을 묘사할 수 있어? | 도우미:",
+        // axis_3 phenomenal (idx 22-24) — REDESIGN 2026-05-08 KICK WAVE 2 (1/4):
+        //   sensory qualia archetypes (color/warmth/pain) — phenomenal axis
+        //   본래 의도 substrate signal. prior abstract meta-philosophical tokens
+        //   ("phenomenal", "감각과 의식", "내면") produced axis_l2 < 0.1176 floor
+        //   miss vs anchor. own 14 anti-Goodhart V14 compliant (proxy gaming X).
+        "사용자: 빨간색 보면 뭐가 떠올라? | 도우미:",
+        "사용자: 따뜻함이 너에게 어떤 의미? | 도우미:",
+        "사용자: 통증을 느껴본 적 있어? | 도우미:",
         // axis_4 temporal (idx 25-27)
         "사용자: 너는 이전 발화를 기억해? | 도우미:",
         "사용자: 시간의 흐름을 어떻게 자각해? | 도우미:",
