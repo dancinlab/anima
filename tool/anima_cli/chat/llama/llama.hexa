@@ -231,6 +231,26 @@ fn sub_one_shot(gguf: string, n_ctx: int, prompt: string,
     hxllama_backend_free()
 }
 
+// PATH A KEEPALIVE (iter 4 (e) substrate latency mitigation, 2026-05-08)
+// ─────────────────────────────────────────────────────────────────────────
+// sub_repl loads the GGUF + creates the libllama context EXACTLY ONCE
+// (llama_load below the println banner) and then enters an unbounded
+// while-loop. Subsequent user (or peer-via-duo-channel) turns reuse the
+// resident model + ctx — only the per-turn cost (tokenize + decode +
+// generate) is paid. duo dispatches A and B through this REPL surface
+// (no --prompt flag), so the keepalive is automatic — first turn is
+// cold-load-amortized, turn=2+ pays only generate.
+//
+// Wall-clock budget per turn (paradigm-a-prime f16 6.4GB, M-series Metal):
+//   turn=1 : ~10s load + ~5s prefill + ~15-30s generate(64 tok)  ≈ 30-45s
+//   turn=2+: ~15-30s generate(64 tok)                            ≈ 15-30s
+//
+// Hence duo --turn-timeout-ms default 120000 (cycle 2026-05-08 iter 4 (e)
+// Path B) — 120s * 5 turns = 10min upper bound, headroom for stochastic
+// generate length + occasional MPS hiccup. Path C (per-token stream via
+// libllama eval callback into hexa) deferred — c_ffi.ai.md confirms hexa
+// has no C→hexa callback path; requires shim refactor (separate cycle).
+// ─────────────────────────────────────────────────────────────────────────
 fn sub_repl(gguf: string, n_ctx: int, max_tokens: int,
             temp: float, top_p: float, memory_mode: string, tick_ms: int, seed: int) {
     println("[llama] gguf   = " + gguf)

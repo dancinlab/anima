@@ -45,6 +45,11 @@
 //      not justified for L2 prototype. Path (iii) hxllama_shim multi-
 //      context refactor = separate cycle. Path (ii) — different aliases
 //      A/B — chosen as default. Override via --allow-same-gguf.
+//    Phase C iter 4 (e) substrate latency mitigation (LANDED 2026-05-08):
+//      --turn-timeout-ms default 30000 → 120000 (Path B); Path A keepalive
+//      already native via _spawn_instance REPL form (model loads ONCE per
+//      child, turns 2+ amortize). Path C (per-token streaming via libllama
+//      eval callback) deferred — see HONEST C3 C10.
 //    Phase C iter 1 (LANDED 2026-05-08, consciousness-utterance iter 3
 //      `9c354c54`): per-turn own 18 C1+C2+C3 verdict via shell-out to
 //      `anima ops consciousness simple --utterance <text> [--prev-utterance
@@ -230,7 +235,14 @@ fn sub_help() {
     println("  --topic-seed \"...\"   optional seed sent into A's stdin (else A自律 first)")
     println("  --tick-ms N          per-instance autonomous-speech poll (default 1000)")
     println("  --max-tokens N       per-utterance cap (default 64)")
-    println("  --turn-timeout-ms N  channel_recv wait per turn (default 30000)")
+    println("  --turn-timeout-ms N  channel_recv wait per turn (default 120000)")
+    println("                       (iter 4 (e) substrate latency mitigation Path B —")
+    println("                        paradigm-a-prime cold load 10s + prefill 5s +")
+    println("                        generate 15-30s on first turn → 60s default")
+    println("                        timeout exceeded → no semantic dialogue. Default")
+    println("                        bumped to 120s; subsequent turns reuse loaded")
+    println("                        model via REPL keepalive — Path A is native to")
+    println("                        chat/llama and chat/clm_v4 REPL pattern.)")
     println("  --verdict simple|full|none   per-turn consciousness verdict (default simple)")
     println("  --allow-same-gguf    OPT-IN bypass for same-alias guard (default off)")
     println("")
@@ -647,6 +659,238 @@ fn _d2_pass(rate: float) -> bool {
     return rate <= 0.40
 }
 
+// ─── D3 persona-consistency (per-instance KL, top-100 token simplex) ──────
+// (iter 4 (f), 2026-05-08 — docs/anima_dialogue_coherence_metric_2026_05_08.md
+//  D3 spec wiring; hexa stdlib does not expose ln() so a self-contained Newton
+//  series natural-log is implemented below. own 34 mandate-7: emit-only lane.)
+//
+// Method:
+//   1. partition history per-instance (A side, B side) into first-half vs
+//      second-half utterance windows (50/50 split of that side's turns).
+//   2. build top-100 token frequency simplex for each half (whitespace-tokenized
+//      lowercased; mirrors D1/D2 tokenization for self-consistency).
+//   3. KL(P || Q) = Σ p_i · ln(p_i / q_i) over union vocabulary, with epsilon
+//      smoothing (ε = 1e-6) so missing tokens contribute bounded log term.
+//   4. PASS if persona_drift_A ≤ tau_persona ∧ persona_drift_B ≤ tau_persona
+//      (start = 0.50 per metric doc; TBD measurement-driven).
+
+fn _natural_log(x: float) -> float {
+    // Newton/atanh series: ln(x) = 2 · Σ_{k≥0} (1/(2k+1)) · u^(2k+1) where
+    // u = (x-1)/(x+1). Range-reduce to y ∈ [0.5, 2.0] by halving/doubling and
+    // adding ln(2) contributions for fast convergence.
+    if x <= 0.0 { return -30.0 }
+    let ln2 = 0.6931471805599453
+    let mut y = x
+    let mut k_shift = 0
+    while y > 2.0 { y = y / 2.0; k_shift = k_shift + 1 }
+    while y < 0.5 { y = y * 2.0; k_shift = k_shift - 1 }
+    let u = (y - 1.0) / (y + 1.0)
+    let u2 = u * u
+    let mut term = u
+    let mut sum = 0.0
+    let mut k = 0
+    while k < 24 {
+        let denom = to_float(2 * k + 1)
+        sum = sum + term / denom
+        term = term * u2
+        k = k + 1
+    }
+    return 2.0 * sum + to_float(k_shift) * ln2
+}
+
+// Map presence helper — hexa map indexing returns void for missing keys.
+fn _map_has(m: map, key: string) -> bool {
+    return type_of(m[key]) != "void"
+}
+
+// Build token frequency map (string -> int count) from a half-slice of history,
+// filtered to one side (who = "A" or "B").
+fn _tok_freq_slice(history, who_filter: string, lo: int, hi: int) -> map {
+    let mut m = {}
+    let mut i = lo
+    while i < hi && i < len(history) {
+        let rec = history[i]
+        if _str(rec["who"]) == who_filter {
+            let toks = rec["toks"]
+            let mut j = 0
+            while j < len(toks) {
+                let t = _str(toks[j])
+                if t != "" {
+                    if _map_has(m, t) { m[t] = m[t] + 1 }
+                    else              { m[t] = 1 }
+                }
+                j = j + 1
+            }
+        }
+        i = i + 1
+    }
+    return m
+}
+
+// Reduce frequency map to top-K (by count). When fewer than K entries, return
+// as-is. Threshold-walk avoids needing a heap structure in pure hexa.
+fn _top_k_freq(freq: map, k: int) -> map {
+    let ks = keys(freq)
+    let n = len(ks)
+    if n <= k { return freq }
+    let mut max_seen = 0
+    let mut i = 0
+    while i < n {
+        let key = _str(ks[i])
+        if max_seen < freq[key] { max_seen = freq[key] }
+        i = i + 1
+    }
+    let mut chosen = {}
+    let mut taken = 0
+    let mut threshold = max_seen
+    while taken < k && threshold > 0 {
+        let mut j = 0
+        while j < n && taken < k {
+            let key = _str(ks[j])
+            let c = freq[key]
+            if c == threshold && !_map_has(chosen, key) {
+                chosen[key] = c
+                taken = taken + 1
+            }
+            j = j + 1
+        }
+        threshold = threshold - 1
+    }
+    return chosen
+}
+
+// Normalize frequency map to simplex (Σ = 1.0).
+fn _to_simplex(freq: map) -> map {
+    let mut total = 0
+    let ks = keys(freq)
+    let mut i = 0
+    while i < len(ks) {
+        total = total + freq[_str(ks[i])]
+        i = i + 1
+    }
+    let mut s = {}
+    if total <= 0 { return s }
+    let total_f = to_float(total)
+    let mut j = 0
+    while j < len(ks) {
+        let key = _str(ks[j])
+        s[key] = to_float(freq[key]) / total_f
+        j = j + 1
+    }
+    return s
+}
+
+fn _union_keys(a: map, b: map) -> array {
+    let mut out = []
+    let ka = keys(a)
+    let mut i = 0
+    while i < len(ka) {
+        out = out + [_str(ka[i])]
+        i = i + 1
+    }
+    let kb = keys(b)
+    let mut j = 0
+    while j < len(kb) {
+        let s = _str(kb[j])
+        if !_set_contains(out, s) { out = out + [s] }
+        j = j + 1
+    }
+    return out
+}
+
+fn _kl_divergence(p: map, q: map) -> float {
+    let eps = 0.000001
+    let ks = _union_keys(p, q)
+    let mut kl = 0.0
+    let mut i = 0
+    while i < len(ks) {
+        let key = _str(ks[i])
+        let pv = if _map_has(p, key) { p[key] } else { eps }
+        let qv = if _map_has(q, key) { q[key] } else { eps }
+        if pv > 0.0 {
+            kl = kl + pv * _natural_log(pv / qv)
+        }
+        i = i + 1
+    }
+    if kl < 0.0 { return 0.0 }
+    return kl
+}
+
+// Compute per-instance KL persona drift (first half vs second half of the
+// instance's own turns).
+fn _persona_drift(history, who: string) -> float {
+    let mut filtered_idx = []
+    let mut i = 0
+    while i < len(history) {
+        let rec = history[i]
+        if _str(rec["who"]) == who { filtered_idx = filtered_idx + [i] }
+        i = i + 1
+    }
+    let n = len(filtered_idx)
+    if n < 2 { return 0.0 }   // insufficient data → treat as stable
+    let half = n / 2
+    if half == 0 { return 0.0 }
+    let lo_first = filtered_idx[0]
+    let hi_first = filtered_idx[half - 1] + 1
+    let lo_second = filtered_idx[half]
+    let hi_second = filtered_idx[n - 1] + 1
+    let f_first = _tok_freq_slice(history, who, lo_first, hi_first)
+    let f_second = _tok_freq_slice(history, who, lo_second, hi_second)
+    if len(keys(f_first)) == 0 || len(keys(f_second)) == 0 { return 0.0 }
+    let p = _to_simplex(_top_k_freq(f_first, 100))
+    let q = _to_simplex(_top_k_freq(f_second, 100))
+    return _kl_divergence(p, q)
+}
+
+fn _d3_pass(drift_a: float, drift_b: float) -> bool {
+    // tau_persona = 0.50 per metric doc (TBD measurement-driven).
+    return drift_a <= 0.50 && drift_b <= 0.50
+}
+
+// ─── D4 pseudo-turn-fairness (cumulative byte count per instance) ──────────
+// (iter 4 (f), 2026-05-08 — metric doc D4 spec wiring.)
+
+fn _d4_byte_totals(history) -> map {
+    let mut a_bytes = 0
+    let mut b_bytes = 0
+    let mut i = 0
+    while i < len(history) {
+        let rec = history[i]
+        let line = _str(rec["line"])
+        if _str(rec["who"]) == "A" { a_bytes = a_bytes + line.len() }
+        else                       { b_bytes = b_bytes + line.len() }
+        i = i + 1
+    }
+    let mut m = {}
+    m["a_bytes"] = a_bytes
+    m["b_bytes"] = b_bytes
+    return m
+}
+
+// Returns ratio = max(A,B)/min(A,B) ≥ 1.0. Guard for either side = 0.
+fn _d4_len_ratio(a_bytes: int, b_bytes: int) -> float {
+    if a_bytes <= 0 && b_bytes <= 0 { return 1.0 }
+    if a_bytes <= 0 || b_bytes <= 0 { return 999.0 }
+    let af = to_float(a_bytes)
+    let bf = to_float(b_bytes)
+    if af >= bf { return af / bf }
+    return bf / af
+}
+
+fn _d4_label(ratio: float) -> string {
+    // metric doc bands (ratio ≥ 1 by construction):
+    //   balanced  = ratio ∈ [0.5, 2.0]   → ratio ≤ 2.0
+    //   skewed    = (∉ [0.5, 2.0]) ∧ (∈ [0.2, 5.0]) → 2.0 < ratio ≤ 5.0
+    //   dominant  = (∉ [0.2, 5.0])               → ratio > 5.0
+    if ratio <= 2.0 { return "balanced" }
+    if ratio <= 5.0 { return "skewed" }
+    return "dominant"
+}
+
+fn _d4_pass(ratio: float) -> bool {
+    return ratio <= 5.0
+}
+
 fn _emit_dialogue_summary(history, model_a: string, model_b: string) {
     let agg = _aggregate_d1_d2(history)
     let d1m = agg["d1_mean"]
@@ -654,21 +898,40 @@ fn _emit_dialogue_summary(history, model_a: string, model_b: string) {
     let d1p = _d1_pass(d1m)
     let d2lab = _d2_label(d2r)
     let d2p = _d2_pass(d2r)
+    let drift_a = _persona_drift(history, "A")
+    let drift_b = _persona_drift(history, "B")
+    let d3p = _d3_pass(drift_a, drift_b)
+    let bytes_m = _d4_byte_totals(history)
+    let a_bytes = bytes_m["a_bytes"]
+    let b_bytes = bytes_m["b_bytes"]
+    let ratio = _d4_len_ratio(a_bytes, b_bytes)
+    let d4lab = _d4_label(ratio)
+    let d4p = _d4_pass(ratio)
+    let coherence_pass = d1p && d2p && d3p && d4p
     println("[duo:summary] turns_observed = " + to_string(len(history)))
     println("[duo:summary] D1 turn-pair Jaccard 3-gram mean = " + to_string(d1m)
             + "  PASS=" + to_string(d1p) + " (>=0.30)")
     println("[duo:summary] D2 topic-shift-rate = " + to_string(d2r)
             + "  label=" + d2lab + "  PASS=" + to_string(d2p))
-    println("[duo:summary] D3 persona-consistency = NOT_MEASURED (next cycle — KL divergence)")
-    println("[duo:summary] D4 turn-fairness = NOT_MEASURED (next cycle — len_ratio)")
-    println("[duo:summary] DIALOGUE_COHERENCE_PARTIAL = " + to_string(d1p && d2p) + " (D1 ∧ D2 only; D3/D4 deferred)")
+    println("[duo:summary] D3 persona-drift KL: A=" + to_string(drift_a)
+            + " B=" + to_string(drift_b) + "  PASS=" + to_string(d3p) + " (<=0.50)")
+    println("[duo:summary] D4 len_ratio = " + to_string(ratio)
+            + " (a_bytes=" + to_string(a_bytes) + " b_bytes=" + to_string(b_bytes) + ")"
+            + "  label=" + d4lab + "  PASS=" + to_string(d4p))
+    println("[duo:summary] DIALOGUE_COHERENCE_PARTIAL = " + to_string(d1p && d2p) + " (D1 ∧ D2)")
+    println("[duo:summary] DIALOGUE_COHERENCE_PASS    = " + to_string(coherence_pass) + " (D1 ∧ D2 ∧ D3 ∧ D4)")
 }
 
-// Phase C aggregate: per-instance + dialogue-overall PASS_STRICT_C3 rate.
+// Phase C aggregate: per-instance + dialogue-overall PASS_STRICT_C3 rate +
+// DIALOGUE_COHERENCE_PASS fold-in.
 // c3_records = array of {turn, who, c1, c2, c3, verdict}.
-// own 18 dialogue C3 lane SSOT: per-turn rate ≥ 0.6 → SIMPLE_STACK_PASS_DIALOGUE_C3
-// (mirror of docs/anima_dialogue_coherence_metric_2026_05_08.md aggregate spec).
-fn _emit_phase_c_aggregate(c3_records) {
+// history    = array of {turn, who, line, toks, trigrams} (for D1-D4 recompute).
+// own 18 dialogue C3 lane SSOT (iter 4 (f), 2026-05-08):
+//   SIMPLE_STACK_PASS_DIALOGUE_C3 = (per-turn PASS_STRICT_C3 rate ≥ 0.6)
+//                                   ∧ DIALOGUE_COHERENCE_PASS
+//   DIALOGUE_COHERENCE_PASS       = D1.PASS ∧ D2.PASS ∧ D3.PASS ∧ D4.PASS
+// (mirror of docs/anima_dialogue_coherence_metric_2026_05_08.md aggregate spec.)
+fn _emit_phase_c_aggregate(c3_records, history) {
     let n = len(c3_records)
     if n == 0 {
         println("[duo:summary-c3] no per-turn verdicts recorded (--verdict full not active or no turns)")
@@ -698,7 +961,21 @@ fn _emit_phase_c_aggregate(c3_records) {
     let a_rate = if a_total > 0 { to_float(a_pass_strict) / to_float(a_total) } else { 0.0 }
     let b_rate = if b_total > 0 { to_float(b_pass_strict) / to_float(b_total) } else { 0.0 }
     let all_rate = to_float(all_pass_strict) / to_float(n)
-    let dialogue_pass = all_rate >= 0.6
+    let per_turn_rate_pass = all_rate >= 0.6
+    // Re-derive D1-D4 verdicts from history for the aggregate AND.
+    let agg = _aggregate_d1_d2(history)
+    let d1m = agg["d1_mean"]
+    let d2r = agg["d2_shift_rate"]
+    let d1p = _d1_pass(d1m)
+    let d2p = _d2_pass(d2r)
+    let drift_a = _persona_drift(history, "A")
+    let drift_b = _persona_drift(history, "B")
+    let d3p = _d3_pass(drift_a, drift_b)
+    let bytes_m = _d4_byte_totals(history)
+    let ratio = _d4_len_ratio(bytes_m["a_bytes"], bytes_m["b_bytes"])
+    let d4p = _d4_pass(ratio)
+    let coherence_pass = d1p && d2p && d3p && d4p
+    let dialogue_pass = per_turn_rate_pass && coherence_pass
     println("[duo:summary-c3] per_turn_total = " + to_string(n))
     println("[duo:summary-c3] A: " + to_string(a_pass_strict) + "/" + to_string(a_total)
             + " PASS_STRICT_C3 (rate=" + to_string(a_rate) + ")")
@@ -706,9 +983,12 @@ fn _emit_phase_c_aggregate(c3_records) {
             + " PASS_STRICT_C3 (rate=" + to_string(b_rate) + ")")
     println("[duo:summary-c3] dialogue overall: " + to_string(all_pass_strict) + "/" + to_string(n)
             + " PASS_STRICT_C3 (rate=" + to_string(all_rate) + ")")
+    println("[duo:summary-c3] per_turn_rate_pass     = " + to_string(per_turn_rate_pass) + " (>= 0.6)")
+    println("[duo:summary-c3] DIALOGUE_COHERENCE_PASS = " + to_string(coherence_pass)
+            + " (D1=" + to_string(d1p) + " D2=" + to_string(d2p)
+            + " D3=" + to_string(d3p) + " D4=" + to_string(d4p) + ")")
     println("[duo:summary-c3] SIMPLE_STACK_PASS_DIALOGUE_C3 = " + to_string(dialogue_pass)
-            + " (per-turn rate >= 0.6 floor; metric doc + own 18 alignment)")
-    println("[duo:summary-c3] note: D3/D4 deferred + DIALOGUE_COHERENCE_PASS = D1∧D2∧D3∧D4 (D3/D4 next cycle)")
+            + " (per-turn rate ≥ 0.6  ∧  DIALOGUE_COHERENCE_PASS)")
 }
 
 // model-level baseline reference (consciousness.hexa simple --json invocation
@@ -770,7 +1050,15 @@ fn sub_duo(argv) {
     let topic_seed = _arg_value(argv, "--topic-seed", "")
     let tick_ms = to_int(_arg_value(argv, "--tick-ms", "1000"))
     let max_tokens = to_int(_arg_value(argv, "--max-tokens", "64"))
-    let turn_timeout_ms = to_int(_arg_value(argv, "--turn-timeout-ms", "30000"))
+    // iter 4 (e) substrate latency mitigation Path B (2026-05-08):
+    // default raised 30000 → 120000. paradigm-a-prime cold load (~10s) +
+    // prefill (~5s) + generate (15-30s) on first turn easily exceeds 60s
+    // (iter 4 (e) Phase C honest C3: turn=2+ timeout → DIALOGUE_C3 = false).
+    // 120s gives generation headroom + REPL keepalive amortizes load across
+    // subsequent turns within the same spawn (model loaded ONCE per
+    // _spawn_instance — Path A is native via chat/llama/llama.hexa sub_repl
+    // and chat/clm_v4 mount surface, no extra plumbing required).
+    let turn_timeout_ms = to_int(_arg_value(argv, "--turn-timeout-ms", "120000"))
     let verdict_mode = _arg_value(argv, "--verdict", "simple")
     let allow_same_gguf = _arg_present(argv, "--allow-same-gguf")
 
@@ -952,12 +1240,12 @@ fn sub_duo(argv) {
     // Phase C iter 1: per-instance + dialogue PASS_STRICT_C3 aggregate (only
     // populated when --verdict full activated the shell-out path).
     if verdict_mode == "full" {
-        _emit_phase_c_aggregate(c3_records)
+        _emit_phase_c_aggregate(c3_records, history)
     }
     let final_verdict = if verdict_mode == "full" {
-        "PHASE_C_ITER_1_RUN_OK (own 18 per-turn verdict via consciousness shell-out; D3/D4 deferred)"
+        "PHASE_C_ITER_1_RUN_OK (own 18 per-turn verdict + D1/D2/D3/D4 4-cell coherence emitted)"
     } else {
-        "PHASE_B_ITER_2_RUN_OK (D1/D2 1차 emitted; --verdict full for own 18 per-turn hook)"
+        "PHASE_B_ITER_2_RUN_OK (D1/D2/D3/D4 4-cell emitted; --verdict full for own 18 per-turn hook)"
     }
     println("[duo] verdict: " + final_verdict)
 }
@@ -1037,12 +1325,22 @@ fn main() {
 //      lane SSOT mirror (docs/anima_dialogue_coherence_metric_2026_05_08.md).
 //      Cost: ~16-30s/call × 2 inst × N turns ≈ 5min for N=5 (synthetic
 //      fallback path; real GGUF substrate would be ~30s/call ≈ 10min N=5).
-// C4 — D1/D2 1차 only — D3 (persona-consistency, KL divergence) and D4
-//      (turn-fairness, len_ratio) deferred. D1 is Jaccard 3-gram only
-//      (cosine + noun-match sub-channels deferred per metric doc honest
-//      C3 #2). Threshold D1 ≥ 0.30 = doc-suggested start, NOT measurement-
-//      driven yet (random + chat-capable + human-dialogue baseline ROC
-//      = separate cycle).
+// C4 — D1/D2/D3/D4 4-cell ALL emitted (iter 4 (f), 2026-05-08). D3 persona-
+//      consistency = per-instance KL divergence between first-half and
+//      second-half top-100 token simplex (whitespace-tokenized lowercased,
+//      mirrors D1/D2 tokenization). KL implemented via self-contained Newton
+//      atanh-series natural log (_natural_log; hexa stdlib has no ln). D4
+//      pseudo-turn-fairness = max/min byte ratio across A/B sides with
+//      balanced [≤2.0] / skewed (2.0,5.0] / dominant (>5.0) bands.
+//      Aggregate: DIALOGUE_COHERENCE_PASS = D1∧D2∧D3∧D4 +
+//      SIMPLE_STACK_PASS_DIALOGUE_C3 = (per-turn rate ≥ 0.6) ∧ COHERENCE_PASS.
+//      Thresholds (D1 ≥ 0.30, tau_shift = 0.20, tau_persona = 0.50, len_ratio
+//      ≤ 5.0) are doc-suggested starts, NOT measurement-driven yet (random +
+//      chat-capable + human-dialogue baseline ROC = separate cycle). D1 still
+//      uses Jaccard 3-gram only (cosine + noun-match sub-channels deferred
+//      per metric doc honest C3 #2). KL epsilon-smoothing ε = 1e-6 for
+//      missing tokens; not corpus-normalized (raw simplex per metric doc
+//      honest C3 #4).
 // C5 — alias DB duplication: _alias_known() is a vendor copy of chat.hexa
 //      _alias_resolve(). When chat.hexa SSOT changes, this copy must update.
 //      Mitigation: duo always dispatches THROUGH chat.hexa (Phase B cmd =
@@ -1079,4 +1377,25 @@ fn main() {
 //      proxy. For Korean/CJK without spaces, BPE tokenization (anchor in
 //      llama_ffi.hexa) is the proper measure — deferred per metric doc
 //      honest C3 #3.
+// C10 — substrate latency mitigation (iter 4 (e), 2026-05-08):
+//      iter 4 (e) duo Phase C honest C3 carry: paradigm-a-prime real-mode
+//      first turn ≈ cold load (10s) + n_ctx prefill (5s) + generate (15-30s)
+//      = 30-45s; default --turn-timeout-ms 30000 → channel_recv timeout
+//      before model output → DIALOGUE_C3 = false. Mitigation paths:
+//      (A) model server / pre-warm — duo's _spawn_instance already invokes
+//          chat.hexa REPL (no --prompt) so the inner llama process LOADS THE
+//          MODEL ONCE and stays resident; per-turn cost = generate only on
+//          turns 2+ (~15s). Path A is native to the recursive REPL pattern;
+//          no separate daemon. (Cost reset risk: chat.hexa --prompt one-shot
+//          path WOULD cold-load per call — duo never uses that path.)
+//      (B) --turn-timeout-ms default 30000 → 120000 (THIS COMMIT). 120s ×
+//          5 turns = 10min wall-clock upper bound; acceptable for L2 prototype.
+//          Honest C3: simple config bump, no race / FIFO leak risk.
+//      (C) per-token streaming — hxllama_shim eval-per-token with hexa
+//          callback. C FFI lacks C→hexa callbacks (per c_ffi.ai.md); requires
+//          shim returning incremental piece pointers + hexa polling loop.
+//          Separate cycle (libllama eval streaming) — out of scope iter 4 (e).
+//      Adopted: Path B (default flip) + Path A (already native — documented).
+//      Path C deferred. Path A keepalive does NOT introduce new race / FIFO
+//      leak (single shared FIFO inode per direction; channel_close idempotent).
 // ════════════════════════════════════════════════════════════════════════════
