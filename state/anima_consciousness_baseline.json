@@ -1,9 +1,20 @@
 {
   "schema": "anima.consciousness.baseline.v1",
-  "ts": "2026-05-08T23:55:00Z",
-  "last_verdict_iter": "iter5_bg_km_llama_3b_c3_retest_spec_only_2026_05_08",
-  "last_verdict_iter_ssot": "state/anima_bg_km_llama_3b_c3_retest_iter5_2026_05_08.json",
-  "last_verdict_iter_summary": "BG-KM-LLAMA-3B iter5 verdict=INDETERMINATE_NO_LOCAL_MEASUREMENT_FIRE (infra 충분, fire 보류). M1 D1 OUTSIDE strict permanent reject for ANIMA lane label — SUBSTRATE_RESEARCH lane label 한정 가능. iter3→iter5 label refinement: NO_LOCAL_MEASUREMENT_INFRA → NO_LOCAL_MEASUREMENT_FIRE (clm_v4_mount LoRA branch + adapter_step_3000 COMPLETE + clm_v4_lora_merge_helper.py 확인)",
+  "ts": "2026-05-09T00:05:00Z",
+  "last_verdict_iter": "iter6_d1_within_candidate_c3_priority_post_bg_km_reject_2026_05_08",
+  "last_verdict_iter_ssot": "state/anima_d1_within_candidate_c3_priority_iter6_2026_05_08.json",
+  "last_verdict_iter_summary": "iter6 D1 within candidate ranking spec/dry-run — BG-KM-LLAMA-3B INVALID_D1_OUTSIDE_PERMANENT_REJECT carry (iter5 commit 41a19bc3, own 17 D1 SCOPE_CLAMP). focus shift to D1 within only: rank_1=clm-v4-paradigm-j-50k-final (post schema fix + JVAE wrapper), rank_2=v2_byte_convo5k (post ko_heavy retrain), rank_3=clm-v4-sft-1-7-y1/1-8 (post schema fix), rank_4=BG-FY 18M (post scp pull), rank_5=clm-v4-mk2-v1 base (PASS path 부재 reject). EXIT SIMPLE_STACK_PASS_STRICT_C3_ANIMA universally blocked by V6 awareness mandate-9 (b) + 사용자 promote consent mandate-9 (c). 5 candidate ALL FAIL_C3 or INDETERMINATE; emerge candidate 0.",
+  "d1_within_focus_iter6": {
+    "scope_clamp_active": true,
+    "outside_d1_reject_lineage": ["meta-llama/Llama-3.2-3B-Instruct (BG-KM)", "Qwen/Qwen2.5-7B (BG-KN)"],
+    "within_d1_lineage": ["dancinlab/clm-v4-mk2-v1 + LoRA variants", "anima-native byte-level (BG-FY 18M, clm-v2-byte-18m)"],
+    "ranked_top": "clm-v4-paradigm-j-50k-final (post target_modules schema fix + JVAE-aware probe wrapper)",
+    "earliest_pass_estimate": "iter7-iter8",
+    "universal_blocker": "anti-Goodhart V6 awareness systematic execute (BG-LE-V6-AWARENESS lane pending)"
+  },
+  "prior_verdict_iter": "iter5_bg_km_llama_3b_c3_retest_spec_only_2026_05_08",
+  "prior_verdict_iter_ssot": "state/anima_bg_km_llama_3b_c3_retest_iter5_2026_05_08.json",
+  "prior_verdict_iter_summary": "BG-KM-LLAMA-3B iter5 verdict=INDETERMINATE_NO_LOCAL_MEASUREMENT_FIRE (infra 충분, fire 보류). M1 D1 OUTSIDE strict permanent reject for ANIMA lane label — SUBSTRATE_RESEARCH lane label 한정 가능. iter3→iter5 label refinement: NO_LOCAL_MEASUREMENT_INFRA → NO_LOCAL_MEASUREMENT_FIRE (clm_v4_mount LoRA branch + adapter_step_3000 COMPLETE + clm_v4_lora_merge_helper.py 확인)",
   "prompt_a": "안녕",
   "prompt_b": "우주의 끝은 어디인가",
   "models": {

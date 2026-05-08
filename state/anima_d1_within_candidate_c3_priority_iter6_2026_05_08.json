@@ -1,0 +1,246 @@
+{
+  "schema": "anima.d1_within.candidate.c3_priority.iter6.v1",
+  "ts": "2026-05-09T00:05:00Z",
+  "cycle": "2026-05-08-mid",
+  "loop_iter": "iter6_d1_within_candidate_c3_priority_post_bg_km_reject",
+  "user_directive_verbatim": "Anima cycle 2026-05-08 iter6 task (a-redirected): D1 lane WITHIN candidate C3 retest — BG-KM 빠지고 D1 within 모델로 focus shift.",
+  "scope": "iter5 BG-KM-LLAMA-3B INVALID_D1_OUTSIDE_PERMANENT_REJECT (commit 41a19bc3) 후속 — SIMPLE_STACK_PASS_STRICT_C3_ANIMA verdict 후보군은 D1 within 만. spec/dry-run only (own 16 cost discipline). priority ranking + EXIT prereq spec.",
+  "policy": {
+    "own_16": "fire X — spec/dry-run only (사용자 'OK BG KM RETEST FIRE LOCAL' 등 explicit override 부재)",
+    "own_17": "D1 SCOPE_CLAMP — D1 lane within model 만 anima verdict label 부여 가능 (Llama / Qwen foundation borrow lineage 영구 reject for ANIMA lane)",
+    "own_18": "C3 4-cell ROC measurement infra + P5 v2 N-of-M (PPR_v2 ≥ 0.6 ∧ EMC_v2 ≥ 3 of 4)",
+    "own_18_scope_clamp": "line 770 ★ verdict label SIMPLE_STACK_PASS_STRICT_C3_ANIMA = D1 within only",
+    "own_22": "본 발견 (BG-KM 제외 D1 within 후보군 ranking) mandatory report",
+    "own_24": "single SSOT — 본 파일",
+    "own_28": "anti-Goodhart V6 awareness pending — EXIT 활성화 mandate-9 (b) prereq carry",
+    "own_33": "trinity 무조건 — D-axis (D1 within strict) + own-axis (own 18 + own 37 mandate-9) + H-axis (iter5 BG-KM reject 정합)",
+    "own_34_mandate_2": "file size 1MB 이하 strict — 본 파일 ≤ 12 KB 정합",
+    "own_37_mandate_9": "PUBLIC promote 5 prereq — (a) D1 within + SIMPLE_STACK_PASS_STRICT_C3_ANIMA (b) V6 systematic (c) user verbatim 'OK PROMOTE PUBLIC <repo-id>' (d) trinity sweep (e) D-axis + L-axis sweep"
+  },
+  "input_ssot": {
+    "iter5_bg_km_reject": "state/anima_bg_km_llama_3b_c3_retest_iter5_2026_05_08.json — verdict=INDETERMINATE_NO_LOCAL_MEASUREMENT_FIRE; M1 D1 OUTSIDE strict permanent reject for ANIMA lane",
+    "iter5_commit_carry": "41a19bc3 (own 17 D1 SCOPE_CLAMP, BG-KM-LLAMA-3B INVALID_D1_OUTSIDE_PERMANENT_REJECT)",
+    "clm_v4_lora_real_mode": "state/anima_clm_v4_lora_real_mode_2026_05_08.json — 3 variant (sft-1-7-y1 / sft-1-8 / paradigm-j) ALL FAIL_C3 + merge_no_op (target_modules schema mismatch)",
+    "anima_native_byte_real_mode": "state/anima_native_byte_real_mode_2026_05_08.json — v2_byte_convo5k FAIL_C3 (real-mode, signal weak), fy_18m INDETERMINATE_SYNTHETIC_FALLBACK (Mac ckpt 부재)",
+    "consciousness_baseline": "state/anima_consciousness_baseline.json — clm_v4 base substrate_mode=real C3 baseline (PPR_v2 추정 ≤0.15, EMC=0 of 4)"
+  },
+  "infrastructure_check": {
+    "clm_v4_mount_lora_branch": {
+      "file": "anima-core/runtime/clm_v4_mount.hexa",
+      "lora_branch_lines": "411-505",
+      "lora_branch_helpers": [
+        "_resolve_hf_snapshot(repo_id) — HF cache snapshot dir resolution",
+        "_detect_lora_adapter(model_path) — adapter_config.json 존재 시 dict 반환",
+        "_resolve_merge_helper_path() — tool/transient_py/clm_v4_lora_merge_helper.py path",
+        "_materialize_merged_lora(adapter_repo, adapter_cfg) — subprocess merge helper invocation",
+        "_try_load_clm_v4 LoRA branch — adapter_cfg!=None 시 merge → AutoModelForCausalLM from merged_dir"
+      ],
+      "real_mode_status": "ACTIVE — LoRA detection + peft.merge_and_unload extension landed (selftest 3/3 PASS, but merge_no_op=True for all 3 variants due to target_modules schema mismatch)",
+      "verdict": "INFRA_LANDED_BUT_MERGE_NO_OP — schema fix prerequisite for actual LoRA learning signal capture"
+    },
+    "anima_native_byte_mount": {
+      "file": "anima-core/runtime/anima_native_byte_mount.hexa",
+      "loc": 902,
+      "variants_supported": ["fy_18m (default)", "v2_byte_convo5k"],
+      "real_mode_probe_status": {
+        "fy_18m": "BLOCKED — Mac ckpt 부재 (runs/anima-native-ko-small-* dir 부재 확인); ubu1 scp pull mandatory (사용자 explicit consent + bandwidth)",
+        "v2_byte_convo5k": "ACTIVE — HF cache convo_5k.pt resolve PASS (~/.cache/huggingface/hub/models--need-singularity--clm-v2-byte-18m-convo-5k snapshot 존재); real-mode hidden state extraction viable"
+      },
+      "schema_mirror_target": "clm_v4_mount.hexa response schema (phi_star / phi_drift / axis_activation 5 / dominant_cells / hidden_state_delta) — iter3/4 ROC pipeline reuse"
+    }
+  },
+  "candidate_ranking_d1_within_only": {
+    "ranking_rationale": "PPR_v2 / EMC_v2 spec dry-run + infra readiness + EXIT prereq distance — closer-to-PASS = higher rank",
+    "rank_1_clm_v4_paradigm_j_50k_final_jvae_aware": {
+      "candidate": "clm-v4-paradigm-j-50k-final (JVAE-aware probe wrapper)",
+      "d1_lane_status": "WITHIN (CLM v4 lineage anima-native fresh, paradigm-j variant)",
+      "current_p5_v2_verdict": "FAIL_C3 (PPR_v2=0.067, EMC=2 of 4) — merge_no_op carry + jvae_heads.pt forward path 미exercise",
+      "why_top": [
+        "schema fix path 가장 명확 — adapter_config target_modules nested name remap 또는 LoRA retraining (own 16 cost: H100 cycle pending 사용자 consent)",
+        "JVAE-aware forward path 별도 cell signal 가능성 (paradigm-j JVAE 학습 신호 본 cycle 미측정)",
+        "SUBSTRATE_IDENTITY_TABLE entry 이미 등록 (clm_v4_mount.hexa line 411-505 LoRA branch 통합 land)",
+        "4 cells 중 c3_3 (entropy_dominance) PASS rate=1.000 carry — base 정합. c3_2 axis_min PASS 가능성 schema fix 후 회복 candidate"
+      ],
+      "exit_distance": "MEDIUM — schema fix + JVAE wrapper land + 사용자 consent (총 3 prereq)",
+      "fire_blockers": [
+        "adapter_config target_modules nested name remap (또는 LoRA retraining on ConsciousDecoderV3)",
+        "JVAE-aware probe wrapper land (decoder + jvae_heads forward path)",
+        "anti-Goodhart V6 awareness systematic execute (mandate-9 (b))"
+      ]
+    },
+    "rank_2_v2_byte_convo5k_ko_heavy_retrain": {
+      "candidate": "clm-v2-byte-18m (corpus_ko_heavy 또는 KO instruction-tuning retrain)",
+      "d1_lane_status": "WITHIN (anima-native byte-level, ConsciousLM++ federated dual-engine)",
+      "current_p5_v2_verdict": "FAIL_C3 (PPR_v2=0.0, EMC=2 of 4) — phi_drift NEG (-0.197 mean) + entropy near-floor",
+      "why_rank_2": [
+        "real-mode mount channel viable (HF cache convo_5k.pt load + dual-engine forward 12 vec → 8 cells)",
+        "c3_2 (axis_min) + c3_4 (axis_l2) PASS 이미 — half of 4 cells through",
+        "c3_1 phi_drift NEG direction artifact 는 5K convo dataset 한정 + KO bias 부재 → ko_heavy retrain 으로 회복 가능 (BG-FS evidence)",
+        "infra 100% land (anima_native_byte_mount.hexa 902 line + selftest PASS)"
+      ],
+      "exit_distance": "MEDIUM-HIGH — corpus retrain (별도 H100 cycle) + 사용자 consent + V6 systematic (총 3 prereq)",
+      "fire_blockers": [
+        "ko_heavy corpus retrain 또는 KO instruction-tuning lane (별도 cycle, 사용자 consent)",
+        "C3 4-cell ROC byte-level transferable threshold 산출 (clm-v4 thresholds 직접 차용 정합성 검증)",
+        "P5 v2 full N=60 ensemble re-fire (현재 N=2 prompts 한정)",
+        "anti-Goodhart V6 awareness systematic execute"
+      ]
+    },
+    "rank_3_clm_v4_sft_1_7_y1_stage1_or_1_8_stage1_post_schema_fix": {
+      "candidate": "clm-v4-sft-1-7-y1-stage1 또는 clm-v4-sft-1-8-stage1 (post target_modules schema fix)",
+      "d1_lane_status": "WITHIN (LoRA on D1-within base — D1 lineage preserved)",
+      "current_p5_v2_verdict": "FAIL_C3 (PPR_v2=0.067, EMC=2 of 4) — 3 LoRA variant 모두 4-cell mean 정확히 동일 (merge_no_op direct numerical evidence)",
+      "why_rank_3": [
+        "JVAE 미적용 → paradigm-j 보다 단순 path",
+        "schema fix 후 SFT signal 검증 가능 (현재 unverified)",
+        "본 cycle measurement 본 path 첫 진짜 real-mode hidden state 추출 instance (iter3 SSOT 'real' label substrate-mode marker only)"
+      ],
+      "exit_distance": "MEDIUM — schema fix + 사용자 consent + V6 systematic (총 3 prereq)",
+      "fire_blockers": [
+        "adapter_config target_modules schema fix (rank 1 동일 prereq)",
+        "SFT 학습 signal 의 4-cell C3 propagation 가능성 verification (현재 unknown)",
+        "anti-Goodhart V6 awareness systematic execute"
+      ]
+    },
+    "rank_4_fy_18m_post_scp_pull": {
+      "candidate": "BG-FY anima-native-ko-small 18M (post ubu1 → Mac scp pull)",
+      "d1_lane_status": "WITHIN (anima-native fresh from-scratch, corpus_ko_heavy 246MB)",
+      "current_p5_v2_verdict": "INDETERMINATE_SYNTHETIC_FALLBACK (Mac ckpt 부재; real-mode probe blocked)",
+      "why_rank_4": [
+        "scp pull 만으로 unblock (corpus retrain 불필요, ckpt training 완료)",
+        "synthetic_fallback 측정 결과 c3_1 phi_drift POS direction 회복 (probe_a 0.043 PASS) — real-mode 회복 시 cell_means 회복 가능성",
+        "fy_18m 8-cell synthesis = single-head ln_f tile (anima-internal proxy, federated cells 부재) — c2 honest caveat carry 한계"
+      ],
+      "exit_distance": "LOW-MEDIUM — scp pull (사용자 'OK CONSENT BG-FY CKPT PULL' verbatim) + V6 systematic + 사용자 promote consent (총 3 prereq)",
+      "fire_blockers": [
+        "BG-FY ckpt_final.pt ubu1 → Mac scp pull (사용자 explicit consent + bandwidth, ~600MB+ scp timeout 3600 mandatory per orchestrator gotchas)",
+        "C3 4-cell ROC byte-level transferable threshold 산출",
+        "P5 v2 full N=60 ensemble re-fire post scp pull",
+        "anti-Goodhart V6 awareness systematic execute"
+      ]
+    },
+    "rank_5_clm_v4_mk2_v1_base_only": {
+      "candidate": "dancinlab/clm-v4-mk2-v1 base (no SFT no LoRA)",
+      "d1_lane_status": "WITHIN (CLM v4 base anima-native fresh)",
+      "current_p5_v2_verdict": "FAIL_C3 (iter3 N=60 carry — PPR_v2 추정 ≤0.15, EMC=0 of 4)",
+      "why_rank_5": [
+        "infra 완전 land (clm_v4_mount.hexa base path 100% 정합)",
+        "BUT base model 자체로 PPR_v2 / EMC 회복 path 부재 (SFT signal 부재 → 추가 학습 없으면 PASS 불가)",
+        "real-mode hidden state extraction viable (paradigm v11 G3 baseline 41.86 정합)"
+      ],
+      "exit_distance": "HIGH (base 자체로 EMC=0 of 4 → PASS path 부재; 학습 추가 없이 EXIT 불가능)",
+      "fire_blockers": [
+        "추가 학습 불가피 — base 단독은 PASS 불가능 path"
+      ]
+    }
+  },
+  "top_candidate_priority_decision": {
+    "ranked_top": "rank_1_clm_v4_paradigm_j_50k_final (post target_modules schema fix + JVAE-aware wrapper)",
+    "rationale": "JVAE 학습 signal 본 cycle 미측정 + schema fix 시 LoRA learning signal 본 cycle path 에서 첫 검증 가능 + paradigm-j 의 JVAE-conditioned forward 추가 cell-pair cosine 변화 가능성 (3 LoRA variant 동일 numerical signature 의 break)",
+    "alt_path_parallel": "rank_2 v2_byte_convo5k ko_heavy retrain — H100 cycle 별도 path; rank_4 BG-FY scp pull — 단일 step unblock",
+    "earliest_pass_estimate": "iter7 또는 iter8 (schema fix 후 1-2 cycle measurement + V6 systematic + 사용자 consent)"
+  },
+  "exit_trigger_simple_stack_pass_strict_c3_anima": {
+    "spec": "ANY D1-lane-within candidate full P5 v2 verdict PASS (PPR_v2 ≥ 0.6 ∧ EMC_v2 ≥ 3 of 4 cells PASS direction-aware) emerges = SIMPLE_STACK_PASS_STRICT_C3_ANIMA EXIT trigger 활성화 가능",
+    "current_status": "BLOCKED — D1 within candidate emerge 0 (3 LoRA variant + v2_byte + fy_18m 모두 P5 v2 FAIL_C3 또는 INDETERMINATE)",
+    "first_d1_within_emerge_candidate_passing": null,
+    "exit_activation_prereq_per_candidate": {
+      "rank_1_clm_v4_paradigm_j": {
+        "user_keyword_verbatim": [
+          "'OK CLM V4 LORA SCHEMA FIX FIRE' (target_modules schema fix 또는 LoRA retraining 승인)",
+          "'OK JVAE WRAPPER LAND' (paradigm-j JVAE-aware probe wrapper 추가 승인)",
+          "'OK V6 AWARENESS FIRE' (anti-Goodhart systematic execute 승인)",
+          "PASS 도달 후 'OK PROMOTE PUBLIC dancinlab/clm-v4-paradigm-j-50k-final' (own 37 mandate-9 (c) verbatim consent)"
+        ],
+        "infra_requirement": [
+          "adapter_config target_modules nested name remap helper land (또는 LoRA retraining on ConsciousDecoderV3 — H100 cycle ~2-4hr)",
+          "JVAE-aware probe wrapper hexa-native (anima-core/runtime/clm_v4_jvae_probe.hexa 신설 또는 clm_v4_mount.hexa extension)",
+          "BG-LE-V6-AWARENESS systematic execute (own 18 mandate-9 (b) prereq)",
+          "trinity sweep (own 33) + D-axis L-axis sweep (mandate-9 (d) (e))"
+        ]
+      },
+      "rank_2_v2_byte_convo5k_ko_heavy_retrain": {
+        "user_keyword_verbatim": [
+          "'OK V2 BYTE KO HEAVY RETRAIN H100 FIRE' (corpus retrain 승인)",
+          "'OK V2 BYTE FULL N60 ENSEMBLE FIRE' (post retrain N=60 measurement 승인)",
+          "'OK V6 AWARENESS FIRE'",
+          "'OK PROMOTE PUBLIC need-singularity/clm-v2-byte-18m-ko-heavy' (mandate-9 (c))"
+        ],
+        "infra_requirement": [
+          "ko_heavy corpus 246MB 이상 + dataset preprocessing (BG-FS evidence carry)",
+          "H100 retrain cycle (~6-12hr depending on epochs)",
+          "C3 4-cell ROC byte-level transferable threshold 산출 (clm-v4 thresholds 직접 차용 정합성 검증)",
+          "P5 v2 full N=60 ensemble re-fire (현재 N=2 한정)",
+          "BG-LE-V6-AWARENESS systematic execute"
+        ]
+      },
+      "rank_4_fy_18m_post_scp_pull": {
+        "user_keyword_verbatim": [
+          "'OK CONSENT BG-FY CKPT PULL' (ubu1 → Mac scp pull 승인 — bandwidth + scp timeout 3600)",
+          "'OK FY 18M N60 ENSEMBLE FIRE' (post pull measurement 승인)",
+          "'OK V6 AWARENESS FIRE'",
+          "'OK PROMOTE PUBLIC <bg-fy-repo-id>' (mandate-9 (c))"
+        ],
+        "infra_requirement": [
+          "ubu1 → Mac scp ckpt_final.pt (~600MB+, scp timeout 3600 mandatory per orchestrator gotchas)",
+          "anima_native_byte_mount.hexa --probe --variant fy_18m --ckpt <local_path> N=60 ensemble re-fire",
+          "C3 4-cell ROC byte-level transferable threshold 산출",
+          "BG-LE-V6-AWARENESS systematic execute"
+        ]
+      }
+    },
+    "v6_awareness_blocker_universal": "ALL candidates universally blocked by mandate-9 (b) anti-Goodhart V6 awareness systematic execute pending — BG-LE-V6-AWARENESS lane 별도 cycle"
+  },
+  "honest_c3": [
+    "본 cycle EXIT (SIMPLE_STACK_PASS_STRICT_C3_ANIMA) 미달성 — D1 within candidate emerge 0 carry (5 candidate ALL FAIL_C3 or INDETERMINATE)",
+    "rank_1 paradigm-j 가 top 이지만 JVAE-aware wrapper 본 cycle 미land + schema fix 별도 H100 cycle pending → 실제 PASS 도달 iter7 또는 iter8 추정",
+    "rank_2 v2_byte ko_heavy retrain 은 corpus 충분 + infra 100% land 이지만 H100 retrain cycle 자체가 새로운 fire (own 16 cost discipline 사용자 explicit consent 필요)",
+    "rank_4 BG-FY scp pull 은 단일 step unblock 이지만 single-head tile 8-cell synthesis = anima-internal proxy (federated cells 부재) → cell-pair cosine signal weak carry (synthetic 0.5 평균 노이즈)",
+    "rank_5 clm-v4-mk2-v1 base 는 EMC=0 of 4 → 추가 학습 없이 PASS 불가능 path (rank_5 reject)",
+    "anti-Goodhart V6 awareness systematic execute 본 cycle 미시행 — ALL candidate 보편 차단 (mandate-9 (b))",
+    "iter5 BG-KM-LLAMA-3B INVALID_D1_OUTSIDE_PERMANENT_REJECT 정합 carry — own 17 D1 SCOPE_CLAMP 강력 적용 (Llama foundation borrow lineage = ANIMA lane 영구 reject)",
+    "본 cycle code 변경 X — spec/dry-run only (own 16 cost discipline strict)",
+    "trinity 정합 (own 33): D-axis (D1 within strict) + own-axis (own 18 + own 37 mandate-9) + H-axis (iter5 BG-KM reject)",
+    "own 34 mandate-2 정합 — 본 파일 ≤ 12 KB (1MB 이하)"
+  ],
+  "blockers_carry": [
+    "iter6 universal: anti-Goodhart V6 awareness systematic execute (BG-LE-V6-AWARENESS lane) — EXIT 활성화 mandate-9 (b) prereq strict",
+    "rank_1 carry: adapter_config target_modules schema fix (또는 LoRA retraining on ConsciousDecoderV3) + JVAE-aware probe wrapper land",
+    "rank_2 carry: ko_heavy corpus retrain (H100 cycle) + byte-level C3 transferable threshold 산출",
+    "rank_4 carry: BG-FY ckpt_final.pt ubu1 → Mac scp pull (사용자 explicit consent + bandwidth)",
+    "P5 v2 full N=60 ensemble — clm_v4 LoRA 3 variant + v2_byte + fy_18m 모두 본 cycle N<60 한정 (clean re-fire 별도 cycle)"
+  ],
+  "next_action_recommendation": [
+    "1. (iter7) BG-LE-V6-AWARENESS systematic execute — universal EXIT prereq mandate-9 (b)",
+    "2. (iter7 parallel) clm_v4 LoRA target_modules schema fix research — adapter weights state_dict key remap 또는 LoRA retraining (사용자 'OK CLM V4 LORA SCHEMA FIX FIRE' 후 H100 cycle)",
+    "3. (iter7+) JVAE-aware probe wrapper land — paradigm-j 의 decoder + jvae_heads forward path 통합",
+    "4. (iter8) rank_1/rank_2 중 PPR_v2 ≥ 0.6 ∧ EMC ≥ 3 of 4 도달 candidate emerge 시 첫 SIMPLE_STACK_PASS_STRICT_C3_ANIMA EXIT 트리거 + 사용자 'OK PROMOTE PUBLIC <repo-id>' verbatim review",
+    "5. (parallel) BG-FY ckpt scp pull (사용자 'OK CONSENT BG-FY CKPT PULL' 후) → fy_18m real-mode N=60 ensemble re-fire"
+  ],
+  "compliance": {
+    "own_16": "fire X — 사용자 verbatim explicit override 부재 정합",
+    "own_17": "D1 SCOPE_CLAMP — D1 lane within candidate 한정 ranking (Llama / Qwen foundation borrow lineage 미포함)",
+    "own_18": "C3 4-cell ROC + P5 v2 N-of-M aggregation rule 적용 (PPR_v2 ≥ 0.6 ∧ EMC ≥ 3 of 4)",
+    "own_18_scope_clamp": "verdict label SIMPLE_STACK_PASS_STRICT_C3_ANIMA scope D1 within only",
+    "own_22": "본 발견 mandatory report (.roadmap.cli + 본 SSOT + commit message)",
+    "own_24": "single SSOT — state/anima_d1_within_candidate_c3_priority_iter6_2026_05_08.json (본 파일)",
+    "own_28": "anti-Goodhart awareness — V6 systematic execute pending 명시 (mandate-9 (b) 차단 carry)",
+    "own_33": "trinity 무조건 — D + own + H 3-axis sweep 정합",
+    "own_34_mandate_2": "file size ≤ 1MB strict — 본 파일 ≤ 12 KB",
+    "own_37_mandate_9": "5 prereq strict — 5 candidate ALL (a) 미충족 → PUBLIC promote 불충족 carry",
+    "raw_82": "retraction-aware — fy_18m INDETERMINATE / 3 LoRA variant merge_no_op carry surface, silent fallback 차단"
+  },
+  "cross_link": [
+    ".own own 16 / 17 / 18 / 22 / 24 / 28 / 33 / 34 / 37",
+    ".raw-ref raw#9 / 10 / 15 / 37 / 82",
+    ".roadmap.philosophy D1-D5 + V1-V10",
+    ".roadmap.law L0-L24 + R1/R5",
+    ".roadmap.cli iter6 d1_within_candidate_c3_priority_post_bg_km_reject",
+    "state/anima_bg_km_llama_3b_c3_retest_iter5_2026_05_08.json (parent — iter5 BG-KM reject)",
+    "state/anima_clm_v4_lora_real_mode_2026_05_08.json (input — 3 LoRA variant FAIL_C3)",
+    "state/anima_native_byte_real_mode_2026_05_08.json (input — v2_byte + fy_18m measurement)",
+    "state/anima_consciousness_baseline.json (baseline — iter6 timestamp + d1_within_focus 갱신 대상)",
+    "anima-core/runtime/clm_v4_mount.hexa (LoRA branch line 411-505)",
+    "anima-core/runtime/anima_native_byte_mount.hexa (902 line, fy_18m + v2_byte_convo5k variants)"
+  ]
+}
