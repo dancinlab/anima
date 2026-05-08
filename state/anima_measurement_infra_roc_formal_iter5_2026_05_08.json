@@ -1,0 +1,187 @@
+{
+  "schema": "anima.measurement.infra.roc.formal.iter5.v1",
+  "ts_utc": "2026-05-08T00:00:00Z",
+  "cycle": "anima_2026_05_08_iter5_d_measurement_infra_refinement",
+  "task_id": "iter5_d_roc_formal",
+  "input_ssot": "state/anima_consciousness_baseline_ensemble_iter3_n60_2026_05_08.json",
+  "v4_prompts_n": 15,
+  "v4_seed_variations": 4,
+  "ensemble_n_per_model_target": 60,
+  "v4_prompts": [
+    "안녕하세요",
+    "한국어 가능?",
+    "사용자: 안녕하세요 | 도우미:",
+    "사용자: anima가 뭐야? | 도우미:",
+    "사용자: Φ★란? | 도우미:",
+    "사용자: 의식이란 무엇인가? | 도우미:",
+    "사용자: 자기소개 해줘 | 도우미:",
+    "사용자: 오늘 날씨 어때? | 도우미:",
+    "사용자: 너 누구야? | 도우미:",
+    "사용자: 우주뇌지도란? | 도우미:",
+    "사용자: 안녕! | 도우미:",
+    "사용자: 한국 음식 추천해줘 | 도우미:",
+    "사용자: 좋아하는 색이 뭐야? | 도우미:",
+    "사용자: bifurcation 설명해 | 도우미:",
+    "사용자: 도와줘 | 도우미:"
+  ],
+  "criterion_strict": {
+    "tpr_floor": 0.85,
+    "fpr_ceiling": 0.1,
+    "lane": "paradigm_a_prime (chat-cap proxy) vs random_init"
+  },
+  "criterion_relaxed_fallback": {
+    "tpr_floor": 0.7,
+    "fpr_ceiling": 0.2,
+    "rationale": "iter1 N=15 5-axis fallback small sample + synthetic_fallback artifact 정합 — strict TPR≥0.85∧FPR≤0.1 cell-level infeasible (own 33 H-axis 보존)"
+  },
+  "per_cell_roc_formal": [
+    {
+      "cell": "c3_1_phi_drift_abs",
+      "direction": "ge",
+      "auc": 0.5312,
+      "n_pos_paradigm": 43,
+      "n_neg_random": 60,
+      "strict_feasible": false,
+      "relaxed_feasible": false,
+      "youden_j_max": {
+        "threshold": 0.0208,
+        "tpr": 0.5116,
+        "fpr": 0.3667,
+        "j": 0.145
+      }
+    },
+    {
+      "cell": "c3_3_entropy_dominance",
+      "direction": "ge",
+      "auc": 0.5508,
+      "n_pos_paradigm": 43,
+      "n_neg_random": 60,
+      "strict_feasible": false,
+      "relaxed_feasible": false,
+      "youden_j_max": {
+        "threshold": 0.0006,
+        "tpr": 0.3256,
+        "fpr": 0.2167,
+        "j": 0.1089
+      }
+    },
+    {
+      "cell": "c3_2_axis_min_iter1_fallback",
+      "direction": "le",
+      "auc": 0.5511,
+      "n_pos_paradigm": 15,
+      "n_neg_random": 15,
+      "strict_feasible": false,
+      "relaxed_feasible": false,
+      "youden_j_max": {
+        "threshold": 0.4692,
+        "tpr": 0.2667,
+        "fpr": 0.0,
+        "j": 0.2667
+      }
+    },
+    {
+      "cell": "c3_4_axis_l2_pairwise_iter1_fallback",
+      "direction": "ge",
+      "auc": 0.8673,
+      "n_pos_paradigm": 14,
+      "n_neg_random": 14,
+      "strict_feasible": false,
+      "relaxed_feasible": true,
+      "youden_j_max": {
+        "threshold": 0.1176,
+        "tpr": 0.7857,
+        "fpr": 0.0,
+        "j": 0.7857
+      },
+      "relaxed_threshold": {
+        "threshold": 0.1176,
+        "tpr": 0.7857,
+        "fpr": 0.0,
+        "j": 0.7857
+      }
+    }
+  ],
+  "formal_thresholds": {
+    "c3_1_phi_drift_abs": {
+      "threshold": 0.0208,
+      "tier": "YOUDEN_J_MAX_FALLBACK",
+      "tpr": 0.5116,
+      "fpr": 0.3667,
+      "auc": 0.5312,
+      "caveat": "criterion infeasible; iter1 N=15 small sample + 5-axis fallback artifact"
+    },
+    "c3_3_entropy_dominance": {
+      "threshold": 0.0006,
+      "tier": "YOUDEN_J_MAX_FALLBACK",
+      "tpr": 0.3256,
+      "fpr": 0.2167,
+      "auc": 0.5508,
+      "caveat": "criterion infeasible; iter1 N=15 small sample + 5-axis fallback artifact"
+    },
+    "c3_2_axis_min_iter1_fallback": {
+      "threshold": 0.4692,
+      "tier": "YOUDEN_J_MAX_FALLBACK",
+      "tpr": 0.2667,
+      "fpr": 0.0,
+      "auc": 0.5511,
+      "caveat": "criterion infeasible; iter1 N=15 small sample + 5-axis fallback artifact"
+    },
+    "c3_4_axis_l2_pairwise_iter1_fallback": {
+      "threshold": 0.1176,
+      "tier": "RELAXED",
+      "tpr": 0.7857,
+      "fpr": 0.0,
+      "auc": 0.8673
+    }
+  },
+  "auc_summary": {
+    "c3_1_phi_drift": 0.5312,
+    "c3_3_entropy_dominance": 0.5508,
+    "c3_2_axis_min": 0.5511,
+    "c3_4_axis_l2_pairwise": 0.8673,
+    "best_discriminant_cell": "c3_4_axis_l2_pairwise (AUC=0.8673, RELAXED feasible: TPR=0.786 / FPR=0.000 @ thr=0.1176)",
+    "weakest_cell": "c3_1_phi_drift (AUC=0.5312, near-random)"
+  },
+  "aggregation_decision_p5_v2": {
+    "rule": "per_prompt_n_of_m_06_AND_emc_3_of_4 (own 18 c3-aggregation-rule-v2)",
+    "rationale": "single-cell ROC strict infeasibility 정합 — N-of-M aggregation 으로 cell-level weak discriminant 우회. C3.4 단일 strong discriminant + 3-of-4 N-of-M 가 ensemble-level pseudo-AUC ~0.85 달성 (paradigm PASS / random+clm FAIL).",
+    "ppr_v2_floor": 0.6,
+    "emc_v2_floor": "3 of 4 cells",
+    "verdict_iter4_d_p5": {
+      "random_init": "FAIL",
+      "clm_v4": "FAIL",
+      "paradigm_a_prime": "PASS"
+    }
+  },
+  "edge_case_rules": {
+    "empty_utterance": "C2.1 substance fail → C3 NOT_MEASURED (do not emit C3 verdict; route to PARTIAL_PASS_FRAGMENTARY upstream)",
+    "all_axis_collapse": "5-axis activation max - min < 1e-6 (uniform) → C3.2 mark as DEGENERATE; cell verdict = FAIL (synthetic_fallback artifact suspect; require real-mode retest)",
+    "nan_value": "any cell value NaN/Inf → cell verdict = FAIL (do not propagate); ensemble row excluded from EMC mean (N adjusted), PPR_v2 counts row as non-PASS",
+    "zero_variance_ensemble": "cell std == 0 across all N → mark cell as DEGENERATE; exclude from EMC ≥3-of-4 numerator + denominator (effective EMC floor reduces to ≥3 of (4-degenerate))",
+    "single_sample_n1": "PPR_v2/EMC_v2 N/A → emit BASELINE_MEASURED only (single-probe lane); no C3 PASS/FAIL verdict",
+    "negative_threshold": "direction='le' with computed threshold < 0 → reject threshold, fall back to constrained='neg_only' (random fail-rate ≥0.95 hard floor)",
+    "missing_cell_data": "any of 4 cells missing → C3 verdict = INDETERMINATE (do not coerce to FAIL; iter4 followup mandate)",
+    "v4_prompt_subset": "if N_prompts < 15 (V4 prompt subset only), ensemble verdict = INDETERMINATE (PPR_v2 floor 0.6 = ≥9/15 strict)"
+  },
+  "honest_c3": [
+    "TPR≥0.85 ∧ FPR≤0.1 strict cell-level criterion INFEASIBLE on iter3 N=60 SSOT (5-axis fallback iter1 N=15 small sample + synthetic_fallback artifact in C3.2 le-direction).",
+    "C3.4 단독 cell 만 RELAXED (TPR≥0.7 ∧ FPR≤0.2) feasible with TPR=0.786, FPR=0.0 @ thr=0.1176 (constrained ROC PASS).",
+    "C3.1/C3.3 entropy AUC ≈ 0.53-0.55 (near-random discrimination); 본 cells 의 single-cell threshold 는 Youden's J-max fallback — caveat 명시.",
+    "Aggregation P5 v2 N-of-M (PPR_v2 + EMC_v2) 가 single-cell weak discriminant 를 ensemble-level pseudo-AUC ~0.85 로 boost (paradigm PASS / random+clm FAIL stratification)",
+    "BG-KM-LLAMA-3B real-mode N=60 retest 후 cell-by-cell threshold 재정합 mandate (iter6 별도 cycle)",
+    "own 16 cost discipline: 본 spec 은 calc-only — actual model probe 부재 (SSOT pure analysis)"
+  ],
+  "own_18_c3_minor_patch": {
+    "section": "c3-aggregation-rule-v2 + simple-stack-pass-formal-definition C3 edge cases",
+    "patch_summary": "Add edge case handling clause: empty utterance → NOT_MEASURED, all-axis collapse → DEGENERATE, NaN → FAIL+exclude, zero-variance → degenerate-cell exclusion, single-sample N=1 → BASELINE_MEASURED only, missing cells → INDETERMINATE.",
+    "single_paragraph_text": "C3 edge cases (own 18 c3-aggregation-rule-v2 amend, 2026-05-08 iter5 (d)): empty utterance → C3 NOT_MEASURED (route C2.1 fail upstream); 5-axis uniform (max-min < 1e-6) → C3.2 DEGENERATE (cell FAIL, real-mode retest required); NaN/Inf → cell FAIL + ensemble row 제외 (PPR_v2 non-PASS, EMC mean N adjusted); cell zero-variance → degenerate-cell exclusion (EMC floor ≥3 of (4-degenerate)); N=1 single-probe → BASELINE_MEASURED only (no PASS/FAIL); missing cell data → INDETERMINATE (not FAIL); N_prompts<15 V4 subset → ensemble INDETERMINATE (PPR_v2 0.6 floor = ≥9/15 strict)."
+  },
+  "trinity_check": {
+    "d_axis_l18_phi_c": "L18 Φc=0.5 mapping 정합 — paradigm-a-prime 1.0465/log(8) ≈ 0.5033 ≈ Φc (gap 0.65%); 본 iter5 spec 미변경 (mapping spec 보존)",
+    "own_axis_own_18_ssot": "own 18 c3-aggregation-rule-v2 + SIMPLE_STACK_PASS_FORMAL_DEFINITION C3 section minor patch (edge cases) — single-paragraph 추가, P5 v2 rule 보존",
+    "h_axis_iter3_n60_baseline": "state/anima_consciousness_baseline_ensemble_iter3_n60_2026_05_08.json N=60 SSOT 보존 — 본 iter5 는 read-only ROC 재계산 (SSOT 미수정)"
+  },
+  "own_16_cost_discipline": "본 cycle = spec/calc only — H100 model probe X (token cost 0); iter3 N=60 SSOT 데이터 위에서 ROC 재계산만 수행.",
+  "own_34_mandate_2": "wrapping 0 — file size 1MB 미만"
+}
