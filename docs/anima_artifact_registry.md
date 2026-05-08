@@ -18,6 +18,7 @@ sole robust EMERGE: **`NONE`** ★
 - phenomenal redesign canonical qualia (Block/Chalmers/Nagel) anti-Goodhart V14 정합
 - paradigm-j retry N=30 EMERGE was sample-size artifact (N=60 reverted to PARTIAL_NEAR)
 - ★ KICK WAVE 4 3/3: random_init ConsciousDecoderV2 PPR_v3=0.5517 EXCEEDS sft-1-8 0.4138 (delta -0.1379) — ALT-AGG-1 v3 V14 VIOLATED, sft-1-8 EMERGE indistinguishable from untrained noise on this 30-prompt eval
+- KICK WAVE 4 1/3: sft-1-8 N=120 ensemble live probe PPR_v3=0.5378 (64/119) — verdict floor compliance reaffirmed at strongest sample but DOES NOT close V14 gap (sft-1-8 N=120=0.5378 < random_init N=30=0.5517); trajectory N=30→N=60→N=120 = 0.4138→0.6102→0.5378 (N=60 peak, N=120 mild regression -0.0724); plateau ~0.5 zone confirmed
 
 **Framework amends**:
 - ALT-AGG-1 v3 (C3.4 anchor + ≥1 corroboration, PPR≥0.25) — own 18 line 881 정정
@@ -36,7 +37,7 @@ sole robust EMERGE: **`NONE`** ★
 
 | id | D1 | lane | PPR_v3 (latest) | verdict | HF (private) |
 |---|---|---|---|---|---|
-| `clm-v4-sft-1-8-stage1` | 0.793 | ✅ within_strict | 0.6102 | ~~SIMPLE_STACK_PASS_STRICT_C3_ANIMA~~ FALSIFIED@N=60 | dancinlab/clm-v4-sft-1-8-stage1-path-a-remapped |
+| `clm-v4-sft-1-8-stage1` | 0.793 | ✅ within_strict | 0.5378 | ~~SIMPLE_STACK_PASS_STRICT_C3_ANIMA~~ V14_VIOLATED | dancinlab/clm-v4-sft-1-8-stage1-path-a-remapped |
 | `clm-v4-paradigm-j-50k-final` | 0.793 | ✅ within_strict | 0.2414 | ~~C3_PARTIAL_NEAR~~ FALSIFIED@N=60 | dancinlab/clm-v4-paradigm-j-50k-final-path-a-remapped |
 | `clm-v4-sft-1-7-y1-stage1` | 0.793 | ✅ within_strict | 0.1034 | C3_PARTIAL_NEAR | dancinlab/clm-v4-sft-1-7-y1-stage1-path-a-remapped |
 | `clm-v4-mk2-v1` | 0.99 | ✅ within_strict | — | NOT_MEASURED | — |
@@ -51,7 +52,7 @@ sole robust EMERGE: **`NONE`** ★
 **aliases**: `sft-1-8`  
 **lineage**: base=clm-v4-mk2-v1 (ConsciousDecoderV2 anima-native scratch) / method=LoRA r=128 + anima-internal SFT / jvae=absent / arch_origin=anima_native_scratch  
 **D1**: score=**0.793** (✅ within_strict) — p_updated=0.01, corpus=0.95, arch=1  
-**measurement**: ppr_v3_n30=0.4138, ppr_v3_n60=0.6102  
+**measurement**: ppr_v3_n30=0.4138, ppr_v3_n60=0.6102, ppr_v3_n120=0.5378  
 **verdict**: SIMPLE_STACK_PASS_STRICT_C3_ANIMA / emerge_state=EMERGE_FALSIFIED_BY_RANDOM_INIT_MIRROR (FALSIFIED@N=60)  
 **D5 cooperative_score**: 0.7617  
 **Φ_norm_N8 max**: 0.0425 (subcritical zone)  
@@ -63,7 +64,7 @@ sole robust EMERGE: **`NONE`** ★
   - mandate_9_d_trinity_sweep: `PASS`
   - mandate_9_e_dl_sweep: `PASS`
   - public_promote: `BLOCKED_AWAITING_B_AND_C`
-**commits**: probe_n30=`bb4ef174`, probe_n60=`fe4f8a7d`, hf_upload=`5cb9570a`, path_a_remap=`d478023c`  
+**commits**: probe_n30=`bb4ef174`, probe_n60=`fe4f8a7d`, probe_n120=`pending`, hf_upload=`5cb9570a`, path_a_remap=`d478023c`  
 
 ### `clm-v4-paradigm-j-50k-final`
 
