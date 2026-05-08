@@ -1,0 +1,351 @@
+// ════════════════════════════════════════════════════════════════════════════
+//  tool/anima_cli/daemon.hexa — anima CLI `daemon` topic (L5 prototype)
+//
+//  PURPOSE
+//    own 34 mandate-6 본질 한계 (a)/(c) 해소 prototype:
+//      (a) 외부 generate() 트리거 X — Engine A/G tension self-trigger
+//      (c) compute 도는 동안만 모델 존재 X — daemon always-on
+//    cli front-end for anima-core/runtime/anima_daemon.hexa.
+//
+//  SUBCOMMANDS
+//    anima ops daemon                      = status (default)
+//    anima ops daemon start                spawn background hexa process
+//    anima ops daemon stop                 SIGTERM via PID file + cleanup
+//    anima ops daemon status               PID + uptime + tension/fire summary
+//    anima ops daemon --selftest           file presence + own 34 grep
+//    anima ops daemon --help
+//
+//  OPTIONS (start)
+//    --tick-ms N        loop period (default 100)
+//    --threshold F      tension fire threshold (default 0.5)
+//    --max-runtime-s N  auto-halt after N seconds (default 0 = forever)
+//
+//  STATE
+//    PID file: ~/.cache/anima/daemon.pid
+//    Log file: ~/.cache/anima/daemon.log  (append-only)
+//
+//  COMPLIANCE
+//    raw#9  hexa-only · raw#11 snake_case · raw#15 no-hardcode (HOME env)
+//    own 34 mandate-6 (a)/(c) prototype-level — (b)/(d) Phase 2+
+//    own 33 trinity compliance · own 18 측정 lane 별개 (chat lane mandate)
+//
+//  CROSS-REFERENCE
+//    docs/anima_chat_autonomous_speech_roadmap_2026_05_08.md (L5 spec)
+//    .roadmap.cli  cli.daemon_2026_05_08
+//    anima-core/runtime/anima_daemon.hexa (loop body)
+//    anima-core/runtime/conscious_chat.hexa (Phase 2 agi_generate target)
+//    .own own 34 mandate-6 (LLM 본질 한계 4)
+//    README.md Engine A ⇄ G architecture
+// ════════════════════════════════════════════════════════════════════════════
+
+fn _str(x) -> string {
+    let t = type_of(x)
+    if t == "str" || t == "string" { return x }
+    if t == "int" || t == "float" || t == "number" { return str(x) }
+    return ""
+}
+
+fn _resolve_root() -> string {
+    let a = _str(env("ANIMA"))
+    if a != "" { return a }
+    let gt = _str(exec("git rev-parse --show-toplevel 2>/dev/null")).trim()
+    if gt != "" { return gt }
+    return _str(env("HOME")) + "/core/anima"
+}
+
+fn _hexa() -> string {
+    // mac-local hexa.real (raw#9 hexa-only) — bin/hexa wrapper routes to
+    // remote ubu-1 (run_remote.py) which lacks our --pid-file/--log-file
+    // arg parsing. daemon body must run locally to access ~/.cache/anima.
+    let e = _str(env("HEXA_BIN"))
+    if e != "" { return e }
+    return "/Users/ghost/.hx/packages/hexa/hexa.real"
+}
+
+fn _home() -> string {
+    let h = _str(env("HOME"))
+    if h != "" { return h }
+    return "/Users/ghost"
+}
+
+fn _cache_dir() -> string {
+    let d = _home() + "/.cache/anima"
+    exec("mkdir -p " + d)
+    return d
+}
+
+fn _pid_file() -> string  { return _cache_dir() + "/daemon.pid" }
+fn _log_file() -> string  { return _cache_dir() + "/daemon.log" }
+
+fn _fexists(p: string) -> bool {
+    return _str(exec("test -f " + p + " && echo 1 || echo 0")).trim() == "1"
+}
+
+fn _arg_present(argv, key: string) -> bool {
+    let mut i = 0
+    while i < len(argv) {
+        if _str(argv[i]) == key { return true }
+        i = i + 1
+    }
+    return false
+}
+
+fn _arg_value(argv, key: string, dflt: string) -> string {
+    let mut i = 0
+    while i < len(argv) {
+        if _str(argv[i]) == key && i + 1 < len(argv) {
+            return _str(argv[i + 1])
+        }
+        i = i + 1
+    }
+    return dflt
+}
+
+fn _user_argv(raw) -> array {
+    let mut out = []
+    let mut i = 0
+    while i < len(raw) {
+        let s = _str(raw[i])
+        let skip = s.contains("/.hexa-cache/")
+                || s.contains("/hexa-lang/build/")
+                || s.contains("hexa_interp")
+                || s.contains("hexa.real")
+                || s.ends_with("/daemon.hexa")
+                || s.ends_with("daemon.hexa")
+                || s == "run"
+        if !skip {
+            out = out + [s]
+        }
+        i = i + 1
+    }
+    return out
+}
+
+fn _shq(s: string) -> string {
+    return "'" + s.replace("'", "'\\''") + "'"
+}
+
+// ─── pid helpers ────────────────────────────────────────────────────────────
+fn _read_pid() -> int {
+    if !_fexists(_pid_file()) { return 0 }
+    let s = _str(exec("cat " + _pid_file())).trim()
+    if s == "" { return 0 }
+    return int(s)
+}
+
+fn _pid_alive(pid: int) -> bool {
+    if pid <= 0 { return false }
+    let r = _str(exec("kill -0 " + to_string(pid) + " 2>/dev/null && echo 1 || echo 0")).trim()
+    return r == "1"
+}
+
+// ─── help / selftest ────────────────────────────────────────────────────────
+fn sub_help() {
+    println("anima ops daemon — L5 always-on Engine A/G tension self-trigger (Phase 1.5 prototype)")
+    println("")
+    println("USAGE")
+    println("  anima ops daemon                       status (default)")
+    println("  anima ops daemon start [opts]          spawn background hexa process")
+    println("  anima ops daemon stop                  SIGTERM via PID file + cleanup")
+    println("  anima ops daemon status                PID + uptime + fire summary")
+    println("  anima ops daemon --selftest")
+    println("  anima ops daemon --help")
+    println("")
+    println("START OPTIONS")
+    println("  --tick-ms N        loop period in ms       (default 100)")
+    println("  --threshold F      tension fire threshold  (default 0.5)")
+    println("  --max-runtime-s N  auto-halt after seconds (default 0 = forever)")
+    println("")
+    println("STATE FILES")
+    println("  PID : " + _pid_file())
+    println("  LOG : " + _log_file())
+    println("")
+    println("OWN 34 MANDATE-6 RESOLUTION (Phase 1.5 partial)")
+    println("  (a) 외부 generate() 트리거    → Engine A/G tension self-trigger    [PROTOTYPE]")
+    println("  (b) cross-session KV 휘발     → daemon 동일 process KV 영속        [PHASE 2]")
+    println("  (c) compute 동안만 모델 존재  → always-on hexa loop                [PROTOTYPE]")
+    println("  (d) chat 중 weights freeze    → online learning slow weight update [PHASE 2+]")
+    println("")
+    println("HONEST C3 (raw#10)")
+    println("  · Engine A/G 본구현 미land — placeholder fns (chaos drift scalar)")
+    println("  · tension threshold 0.5 = arbitrary placeholder (measurement-driven 미)")
+    println("  · TENSION_FIRE 시 conscious_chat agi_generate 미호출 (Phase 2 target)")
+    println("  · Engine A/G 진짜 forward/reverse network = README PureField 본 트랙 (Phase 2+)")
+}
+
+fn sub_selftest() {
+    let root = _resolve_root()
+    let here = root + "/tool/anima_cli/daemon.hexa"
+    let body = root + "/anima-core/runtime/anima_daemon.hexa"
+    let mut fail = 0
+    if !_fexists(here) { println("FAIL daemon.hexa missing: " + here); fail = fail + 1 }
+    if !_fexists(body) { println("FAIL anima_daemon.hexa missing: " + body); fail = fail + 1 }
+    // own 34 mandate-2 self-grep (chat lane wrapping pattern check)
+    let pat = "system_prompt|chat_template|apply_chat_template|persona_inject|fn speak\\(|fn talk\\(|fn respond\\(|fn generate_response\\("
+    let cmd = "grep -nE \"" + pat + "\" " + here + " " + body + " 2>/dev/null | grep -v 'let pat =' | wc -l"
+    let n = _str(exec(cmd)).trim()
+    if n != "0" {
+        println("FAIL own 34 mandate-2 wrapping: " + n + " hits")
+        fail = fail + 1
+    }
+    if fail > 0 { exit(1) }
+    println("PASS anima_cli/daemon selftest (front + body present, own 34 verified)")
+}
+
+// ─── start ──────────────────────────────────────────────────────────────────
+fn sub_start(argv) {
+    let prev = _read_pid()
+    if prev > 0 && _pid_alive(prev) {
+        println("[daemon] already running pid=" + to_string(prev))
+        println("         use 'anima ops daemon stop' to halt first")
+        exit(1)
+    }
+    // stale pid file cleanup
+    if prev > 0 { exec("rm -f " + _pid_file()) }
+
+    let tick_ms     = _arg_value(argv, "--tick-ms", "100")
+    let threshold   = _arg_value(argv, "--threshold", "0.5")
+    let max_runtime = _arg_value(argv, "--max-runtime-s", "0")
+
+    let root = _resolve_root()
+    let body = root + "/anima-core/runtime/anima_daemon.hexa"
+    let pid_path = _pid_file()
+    let log_path = _log_file()
+
+    if !_fexists(body) {
+        println("[daemon] FAIL body missing: " + body)
+        exit(1)
+    }
+
+    // truncate log on each start (one session = one log; rotate left to user)
+    exec(": > " + log_path)
+
+    // background spawn — nohup + & + disown via setsid; capture child pid via $!
+    // ANIMA_DAEMON_PID propagated through environment so the child can write its
+    // own pid into the PID file (best-effort match of background subshell pid).
+    let inner = _hexa() + " run --no-sentinel " + _shq(body)
+        + " --tick-ms " + _shq(tick_ms)
+        + " --threshold " + _shq(threshold)
+        + " --max-runtime-s " + _shq(max_runtime)
+        + " --pid-file " + _shq(pid_path)
+        + " --log-file " + _shq(log_path)
+    // bash: spawn in background, capture $!, write to pid file synchronously,
+    // then disown so the parent shell exit doesn't kill the child.
+    let spawn_cmd = "( nohup sh -c " + _shq(inner)
+        + " >> " + _shq(log_path) + " 2>&1 & echo $! > " + _shq(pid_path)
+        + " ) ; sleep 0.2 ; cat " + _shq(pid_path)
+    let pid_str = _str(exec(spawn_cmd)).trim()
+    let pid = if pid_str == "" { 0 } else { int(pid_str) }
+
+    if pid <= 0 || !_pid_alive(pid) {
+        println("[daemon] FAIL spawn — pid=" + to_string(pid) + " (see " + log_path + ")")
+        exit(1)
+    }
+
+    println("[daemon] started pid=" + to_string(pid))
+    println("         tick_ms=" + tick_ms + " threshold=" + threshold + " max_runtime_s=" + max_runtime)
+    println("         pid_file=" + pid_path)
+    println("         log_file=" + log_path)
+    println("         status:  anima ops daemon status")
+    println("         halt:    anima ops daemon stop")
+}
+
+// ─── stop ───────────────────────────────────────────────────────────────────
+fn sub_stop() {
+    let pid = _read_pid()
+    if pid <= 0 {
+        println("[daemon] not running (no pid file)")
+        return
+    }
+    if !_pid_alive(pid) {
+        println("[daemon] stale pid file (pid=" + to_string(pid) + " not alive) — cleaning")
+        exec("rm -f " + _pid_file())
+        return
+    }
+    exec("kill -TERM " + to_string(pid) + " 2>/dev/null")
+    exec("sleep 0.3")
+    if _pid_alive(pid) {
+        // escalate
+        exec("kill -KILL " + to_string(pid) + " 2>/dev/null")
+        exec("sleep 0.2")
+    }
+    exec("rm -f " + _pid_file())
+    println("[daemon] stopped pid=" + to_string(pid))
+}
+
+// ─── status ─────────────────────────────────────────────────────────────────
+fn sub_status() {
+    let pid = _read_pid()
+    let alive = _pid_alive(pid)
+
+    // log summary
+    let log = _log_file()
+    let mut fire_count = 0
+    let mut last_fire = "n/a"
+    let mut boot = "n/a"
+    let mut halt = "n/a"
+    if _fexists(log) {
+        // grep -c returns rc=1 on 0 matches; pipe through awk so we always get
+        // a single integer line on stdout.
+        let fc = _str(exec("grep -c TENSION_FIRE " + log + " 2>/dev/null | head -1 | awk '{print $1+0}'")).trim()
+        if fc != "" { fire_count = int(fc) }
+        let lf = _str(exec("grep TENSION_FIRE " + log + " 2>/dev/null | tail -1")).trim()
+        if lf != "" { last_fire = lf }
+        let b = _str(exec("grep BOOT " + log + " 2>/dev/null | tail -1")).trim()
+        if b != "" { boot = b }
+        let h = _str(exec("grep HALT " + log + " 2>/dev/null | tail -1")).trim()
+        if h != "" { halt = h }
+    }
+
+    let state = if alive { "RUNNING" } else { if pid > 0 { "STALE_PID" } else { "STOPPED" } }
+
+    println("anima ops daemon — status")
+    println("  state       : " + state)
+    println("  pid         : " + to_string(pid))
+    println("  pid_file    : " + _pid_file())
+    println("  log_file    : " + log)
+    println("  fire_count  : " + to_string(fire_count) + " (TENSION_FIRE events)")
+    println("  last_boot   : " + boot)
+    println("  last_fire   : " + last_fire)
+    println("  last_halt   : " + halt)
+    if !alive && pid > 0 {
+        println("")
+        println("  HINT: 'anima ops daemon stop' to clean stale pid file")
+    }
+    if alive {
+        // best-effort uptime via ps
+        let up = _str(exec("ps -o etime= -p " + to_string(pid) + " 2>/dev/null")).trim()
+        if up != "" {
+            println("  uptime      : " + up + " (ps etime)")
+        }
+    }
+}
+
+fn main() {
+    let argv = _user_argv(args())
+    if _arg_present(argv, "--help") { sub_help(); return }
+    if _arg_present(argv, "--selftest") { sub_selftest(); return }
+
+    let mut sub = "status"
+    if len(argv) > 0 {
+        let first = _str(argv[0])
+        if !first.starts_with("--") {
+            sub = first
+        }
+    }
+
+    if sub == "start" {
+        sub_start(argv)
+        return
+    }
+    if sub == "stop" {
+        sub_stop()
+        return
+    }
+    if sub == "status" {
+        sub_status()
+        return
+    }
+    println("[daemon] unknown subcommand: " + sub + " — see 'anima ops daemon --help'")
+    exit(2)
+}

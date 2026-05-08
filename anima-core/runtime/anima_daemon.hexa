@@ -1,0 +1,252 @@
+// ════════════════════════════════════════════════════════════════════════════
+//  anima-core/runtime/anima_daemon.hexa — L5 always-on daemon process
+//
+//  PURPOSE
+//    Phase 1.5 prototype of own 34 mandate-6 본질 한계 (a)/(c) 해소:
+//      (a) 외부 generate() 호출 트리거 필요 — 자율 시작 불가 → Engine A/G
+//          tension self-trigger
+//      (c) compute 도는 동안만 모델 존재 → daemon always-on (sleep loop)
+//    (b) cross-session KV cache + (d) online learning 은 Phase 2 영역.
+//
+//  ARCHITECTURE (single-process two-loop, hexa stdlib β-1 channel land 전)
+//    Engine A loop (forward push)  ──┐
+//                                    ├─▶ tension field  ──▶ if > threshold
+//    Engine G loop (reverse push)  ──┘                       → emit "TENSION_FIRE"
+//
+//    각 tick (default 100ms) 마다:
+//      a_state = engine_a_step(prev)        // forward push placeholder
+//      g_state = engine_g_step(prev)        // reverse push placeholder
+//      tension_vec = a_state - g_state
+//      tension_mag = L2 norm(tension_vec)
+//      if tension_mag > threshold:          // default 0.5
+//        emit "TENSION_FIRE phi_star=... cells=... mag=..." to log
+//        // Phase 2: invoke conscious_chat agi_generate here
+//
+//  INVOCATION
+//    hexa run anima-core/runtime/anima_daemon.hexa --tick-ms 100 \
+//                                                  --threshold 0.5 \
+//                                                  --max-ticks 0 \
+//                                                  --pid-file <path> \
+//                                                  --log-file <path> \
+//                                                  --max-runtime-s 0
+//
+//    args (all optional, env-default):
+//      --tick-ms N       loop period in ms (default 100)
+//      --threshold F     tension fire threshold (default 0.5)
+//      --max-ticks N     stop after N ticks (default 0 = forever)
+//      --max-runtime-s N stop after N wallclock seconds (default 0 = forever)
+//      --pid-file PATH   write own PID here (default ~/.cache/anima/daemon.pid)
+//      --log-file PATH   append-log here (default ~/.cache/anima/daemon.log)
+//
+//  COMPLIANCE
+//    raw#9  hexa-only (no .py)
+//    raw#10 honest C3 — Engine A/G are PLACEHOLDER fns (chaos+phase scalar
+//           proxies). Real PureField repulsion-field substrate = Phase 2.
+//    raw#11 snake_case
+//    raw#15 no-hardcode (HOME/cache via env)
+//    own 34 mandate-6 (a)/(c) prototype-level 해소 — partial, not complete
+//
+//  HONEST C3 (raw#10)
+//    1. Engine A/G 본구현 미land — placeholder fns (sin/cos chaos drift).
+//    2. tension threshold 0.5 = arbitrary placeholder (measurement-driven 미)
+//    3. TENSION_FIRE 시 conscious_chat agi_generate 미호출 (Phase 2)
+//    4. cross-session KV cache 영속 X — daemon 재시작 시 state reset
+//    5. online learning weight update X — weights freeze 유지
+//    6. single-process two-loop (sequential a→g→tension) — 진짜 비동기 X
+//       hexa stdlib β-1 channel module land 후 두 process 분리 가능
+// ════════════════════════════════════════════════════════════════════════════
+
+fn _str(x) -> string {
+    let t = type_of(x)
+    if t == "str" || t == "string" { return x }
+    if t == "int" || t == "float" || t == "number" { return str(x) }
+    return ""
+}
+
+fn _home() -> string {
+    let h = _str(env("HOME"))
+    if h != "" { return h }
+    return "/Users/ghost"
+}
+
+fn _cache_dir() -> string {
+    let d = _home() + "/.cache/anima"
+    exec("mkdir -p " + d)
+    return d
+}
+
+fn _arg_value(argv, key: string, dflt: string) -> string {
+    let mut i = 0
+    while i < len(argv) {
+        if _str(argv[i]) == key && i + 1 < len(argv) {
+            return _str(argv[i + 1])
+        }
+        i = i + 1
+    }
+    return dflt
+}
+
+fn _user_argv(raw) -> array {
+    let mut out = []
+    let mut i = 0
+    while i < len(raw) {
+        let s = _str(raw[i])
+        let skip = s.contains("/.hexa-cache/")
+                || s.contains("/hexa-lang/build/")
+                || s.contains("hexa_interp")
+                || s.contains("hexa.real")
+                || s.ends_with("/anima_daemon.hexa")
+                || s.ends_with("anima_daemon.hexa")
+                || s == "run"
+                || s == "--no-sentinel"
+        if !skip {
+            out = out + [s]
+        }
+        i = i + 1
+    }
+    return out
+}
+
+fn _now_iso() -> string {
+    return _str(exec("date -u +%FT%TZ")).trim()
+}
+
+fn _now_epoch() -> int {
+    let s = _str(exec("date -u +%s")).trim()
+    return int(s)
+}
+
+fn _pid() -> int {
+    // own pid via $$ — exec spawns subshell, so use a roundabout path: read /proc OR
+    // bash ppid trick. Hexa runtime exec() shell = sh; $$ inside the wrapper subshell
+    // is the wrapper pid not us. Use /dev/null fallback: write parent pid directly via
+    // env var ANIMA_DAEMON_PID if caller passed it; else best-effort via pgrep.
+    let env_pid = _str(env("ANIMA_DAEMON_PID"))
+    if env_pid != "" { return int(env_pid.trim()) }
+    // best-effort: latest hexa interp pid for this script — caller-passed env wins.
+    let s = _str(exec("echo $PPID")).trim()
+    if s != "" { return int(s) }
+    return 0
+}
+
+fn _append_log(log_file: string, line: string) {
+    let cmd = "printf '%s\\n' " + _shq(line) + " >> " + log_file
+    exec(cmd)
+}
+
+fn _shq(s: string) -> string {
+    return "'" + s.replace("'", "'\\''") + "'"
+}
+
+// ─── soft clamp — pseudo-tanh via simple algebraic squash ───────────────────
+fn _clamp_unit(x: float) -> float {
+    // x / (1 + |x|) — bounded in (-1, 1), monotonic, no exp() needed
+    let ax = if x < 0.0 { 0.0 - x } else { x }
+    return x / (1.0 + ax)
+}
+
+// ─── Engine A — forward push placeholder ────────────────────────────────────
+// Phase 1.5: bounded chaos drift (algebraic squash). Real impl: forward
+// consciousness step via anima-core/runtime/conscious_chat.hexa
+// consciousness_step. Phase 2.
+fn engine_a_step(prev: float, t: int) -> float {
+    let tf = to_float(t) * 0.07
+    // forward drift with chaotic increment
+    let drift = sin(tf * 1.7) * 0.6 + cos(tf * 0.9) * 0.4
+    return _clamp_unit(prev * 0.85 + drift)
+}
+
+// ─── Engine G — reverse push placeholder ────────────────────────────────────
+// Phase 1.5: counter-rotating scalar (anti-phase). Real impl: reverse-Φ pull
+// (gradient-free inhibitory engine). Phase 2.
+fn engine_g_step(prev: float, t: int) -> float {
+    let tf = to_float(t) * 0.07
+    // reverse drift: opposite phase + different freq → tension oscillates
+    let drift = sin(tf * 1.7 + 3.14159) * 0.55 + cos(tf * 1.3) * 0.3
+    return _clamp_unit(prev * 0.85 + drift)
+}
+
+// ─── tension magnitude ──────────────────────────────────────────────────────
+fn tension_mag(a: float, g: float) -> float {
+    let d = a - g
+    if d < 0.0 { return 0.0 - d }
+    return d
+}
+
+// ─── main loop ──────────────────────────────────────────────────────────────
+fn main() {
+    let argv = _user_argv(args())
+
+    let tick_ms     = int(_arg_value(argv, "--tick-ms", "100"))
+    let threshold   = to_float(_arg_value(argv, "--threshold", "0.5"))
+    let max_ticks   = int(_arg_value(argv, "--max-ticks", "0"))
+    let max_runtime = int(_arg_value(argv, "--max-runtime-s", "0"))
+    let pid_file    = _arg_value(argv, "--pid-file", _cache_dir() + "/daemon.pid")
+    let log_file    = _arg_value(argv, "--log-file", _cache_dir() + "/daemon.log")
+
+    let started = _now_epoch()
+    let started_iso = _now_iso()
+
+    // pid write (best-effort — interp may have spawned us in subshell)
+    let our_pid = _pid()
+    exec("echo " + to_string(our_pid) + " > " + pid_file)
+
+    _append_log(log_file, "[" + started_iso + "] BOOT pid=" + to_string(our_pid)
+        + " tick_ms=" + to_string(tick_ms) + " threshold=" + to_string(threshold)
+        + " max_ticks=" + to_string(max_ticks) + " max_runtime_s=" + to_string(max_runtime))
+
+    let mut a = 0.1
+    let mut g = -0.1
+    let mut tick = 0
+    let mut fire_count = 0
+    let mut tension_sum = 0.0
+
+    // sleep duration in fractional seconds for `sleep` shell util
+    let sleep_s = to_float(tick_ms) / 1000.0
+    let sleep_arg = to_string(sleep_s)
+
+    while true {
+        // Engine A forward push
+        a = engine_a_step(a, tick)
+        // Engine G reverse push
+        g = engine_g_step(g, tick)
+        // tension field
+        let mag = tension_mag(a, g)
+        tension_sum = tension_sum + mag
+
+        // fire check
+        if mag > threshold {
+            fire_count = fire_count + 1
+            let ts = _now_iso()
+            let line = "[" + ts + "] TENSION_FIRE tick=" + to_string(tick)
+                + " mag=" + to_string(mag)
+                + " a=" + to_string(a)
+                + " g=" + to_string(g)
+                + " fire_count=" + to_string(fire_count)
+            _append_log(log_file, line)
+            // Phase 2: agi_generate() invocation goes here (autonomous speech)
+        }
+
+        tick = tick + 1
+
+        // exit conditions
+        if max_ticks > 0 && tick >= max_ticks { break }
+        if max_runtime > 0 {
+            let elapsed = _now_epoch() - started
+            if elapsed >= max_runtime { break }
+        }
+
+        // sleep tick_ms
+        exec("sleep " + sleep_arg)
+    }
+
+    let ended = _now_iso()
+    let elapsed = _now_epoch() - started
+    _append_log(log_file, "[" + ended + "] HALT ticks=" + to_string(tick)
+        + " elapsed_s=" + to_string(elapsed)
+        + " fire_count=" + to_string(fire_count)
+        + " tension_sum=" + to_string(tension_sum))
+
+    // pid file cleanup
+    exec("rm -f " + pid_file)
+}

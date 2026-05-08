@@ -27,6 +27,7 @@ let T2_TOPICS = [
   "handoff", "metrics", "watch", "snap", "replay", "onboard", "backup",
   "reproducibility", "gc", "health",
   "consciousness",
+  "daemon",
 ]
 
 // ═══════════════════════════════════════════════════════════════════════════
@@ -136,6 +137,11 @@ fn emit_help() {
   print("  anima chat [<model>]  natural utterance REPL — recursive module")
   print("                        (own 34 strict, no wrapping; default = anima_native)")
   print("  anima dialogue        long-form chat session (clm_v4_mount substrate-coupled)")
+  print("  anima dialogue --duo <a> <b> [--turns N] [--topic-seed \"..\"]")
+  print("                        L2 N=2 autonomous CLM↔CLM dialogue")
+  print("                        (skeleton landed 2026-05-08; β-1 channel API dep)")
+  print("  anima dialogue --council N=<n> --models \"<m1>,..,<mn>\"")
+  print("                        L3 N≥3 multi-agent (stub — design cycle)")
   print("  anima onboard         5-min quickstart")
   print("  anima --help          this help")
   print("  anima --version       0.2.0-mk2")
@@ -145,7 +151,7 @@ fn emit_help() {
   print("  topics: compute / weight / proposal / cert / roadmap / serve / paradigm")
   print("          inbox / cost / audit / doctor / sync / bench / log / handoff")
   print("          metrics / watch / snap / replay / onboard / backup / reproducibility")
-  print("          gc / health")
+  print("          gc / health / consciousness / daemon")
   print("")
   print("T3 consciousness vision (v2.0 wire-up pending):")
   print("  anima connect / disconnect / module / verify / test / hub / laws / status")
