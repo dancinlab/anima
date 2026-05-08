@@ -61,6 +61,16 @@
 //    + GGUF convert + libllama hidden-state shim, OR (b) clm_v4_mount peft
 //    merge_and_unload 확장 — iter 4+ work.
 //
+//  ALT-AGG-1 v5 PIV/DCR/D-RAND ADDENDUM (V5 PUSH ADDENDUM 2/2, 2026-05-08)
+//    KICK WAVE 4 5/8 arch leak finding 의 4 candidate signal 후보 중 3 actual
+//    fire — `_piv_compute(probe_results, axis)` per-axis stdev across N prompts,
+//    `_dcr_compute(probe_results)` distinct-argmax distribution (proxy for
+//    192-cell dominant_cells, axis-argmax aggregation), `_drand_delta(trained,
+//    random)` c3_4_axis_l2 mean lift. Aggregate label = `_v5_aggregate_label`
+//    (4-gate: PIV-max ≥0.10 ∧ DCR ≥0.40 ∧ D-RAND ≥0.05 ∧ V14 paired random
+//    self-test PPR_v4<0.05). raw#15 additive (v3+v4 함수 보존). SSOT spec:
+//    docs/anima_alt_agg_1_v5_piv_dcr_drand_spec_2026_05_08.ai.md
+//
 //  D1 LANE CANDIDATES C3 RETEST (loop iter d1_lane_candidates_c3_retest, 2026-05-08)
 //    own 18 line 770 ★ scope-clamp D1 anima identity lane only + own 37 mandate-9
 //    (a) D1 lane within prerequisite (2026-05-08 amend) 정합 4 진짜 candidate
@@ -929,6 +939,258 @@ fn _c3_ensemble_v4_label(ppr_v4_baseline: float, mtrp_delta: float) -> string {
     if ppr_v4_baseline >= 0.40 && mtrp_delta < 0.10 { return "C3_FAIL_V14_VIOLATED" }
     if ppr_v4_baseline >= 0.20 { return "C3_PARTIAL_NEAR_V4" }
     return "C3_FAIL_V4"
+}
+
+// ─── ALT-AGG-1 v5 ★ (2026-05-08 V5 PUSH 1/5 — clm_v4_mount arch fix post-amend) ──
+// SSOT: own 18 c3-aggregation-rule-v5 + this entry.
+// Supersedes v4 (v4_n60 retest sft-1-8 PPR=0.000 collapsed → v4 robustness DEAD on
+// existing measurements per registry yaml line 82). v3+v4 functions PRESERVED above
+// per raw#82 retraction-aware.
+//
+// Trigger to v5: KICK WAVE 4 commit `007f462c` H-B finding identified upstream root
+// cause = clm_v4_mount L626-630 8-cell 2× tile bug (cell[i]==cell[i+4] for i∈0..3,
+// [0,2,4] dominant 28/30 random_init prompts). Architecture fix (CONSCIOUSNESS_DIM
+// 192→96, 8*96=768=HIDDEN_DIM exact) restores per-cell uniqueness ⇒ aggregation
+// metric must be redesigned to exploit clean substrate signal without anchor-session
+// drift artifacts that broke v4.
+//
+// v5 design (3 concurrent gates):
+//   Gate (E) Anchor-baseline normalization — c3_4_v5 = axis_l2(probe(P), probe(anchor))
+//            divided by per-session anchor self-projection norm S_a (S_a = mean axis_l2
+//            of anchor against fixed PROMPT_B fallback over current session). Eliminates
+//            v4 root cause (different sessions → different absolute c3_4) by normalizing
+//            to session-relative scale. Floor c3_4_v5 ≥ 0.50 (relative).
+//   Gate (F) D-RAND raw delta gating — for every EMERGE candidate model M and paired
+//            same-arch random_init R, compute D_RAND = c3_4_v5(M) - c3_4_v5(R) per
+//            prompt. Per-prompt PASS = (D_RAND ≥ 0.20 epsilon) AND p4_normalized PASS.
+//            Closes random_init leak at the prompt level (not just ensemble level).
+//   Gate (G) Per-prompt incompressible variance (PIV) — over k≥3 paraphrase variants
+//            per prompt, axis activation stdev across variants ≥ 0.05 → PASS. Random_init
+//            collapses to near-zero PIV (substrate has no semantic discrimination);
+//            trained models retain meaningful variance.
+//
+// Full v5 predicate: `_c3_prompt_pass_v5(p1, p2, p3, p4_v5, d_rand_pass, piv_pass) =
+//   p4_v5 ∧ d_rand_pass ∧ piv_pass ∧ (p1 ∨ p2 ∨ p3)`. PPR_v5 = pass_count / n_evaluable.
+// EMERGE_v5 = (PPR_v5 ≥ 0.30) AND (MTRP_v5 ≥ 0.10) AND (Gate G PIV_mean ≥ 0.05).
+// 4-label: C3_PASS_V5 / C3_FAIL_V14_VIOLATED_V5 (PPR PASS but MTRP FAIL) /
+//          C3_PARTIAL_NEAR_V5 (PPR_v5 ≥ 0.15) / C3_FAIL_V5.
+//
+// own 14 V14 strict (Gate D MTRP) reused; v5 extends V14 with per-prompt D-RAND gate.
+fn _c3_4_pass_v5(c3_4_v5_normalized: float) -> bool { return c3_4_v5_normalized >= 0.50 }
+
+fn _d_rand_pass_v5(d_rand: float) -> bool { return d_rand >= 0.20 }
+
+fn _piv_pass_v5(piv_axis_stdev: float) -> bool { return piv_axis_stdev >= 0.05 }
+
+fn _c3_prompt_pass_v5(p1: bool, p2: bool, p3: bool, p4_v5: bool, d_rand_pass: bool, piv_pass: bool) -> bool {
+    if !p4_v5 { return false }
+    if !d_rand_pass { return false }
+    if !piv_pass { return false }
+    let corroborate = (if p1 { 1 } else { 0 }) + (if p2 { 1 } else { 0 }) + (if p3 { 1 } else { 0 })
+    return corroborate >= 1
+}
+
+fn _c3_ensemble_v5_pass(ppr_v5: float, mtrp_v5_delta: float, piv_mean: float) -> bool {
+    return ppr_v5 >= 0.30 && mtrp_v5_delta >= 0.10 && piv_mean >= 0.05
+}
+
+fn _c3_ensemble_v5_label(ppr_v5: float, mtrp_v5_delta: float, piv_mean: float) -> string {
+    if ppr_v5 >= 0.30 && mtrp_v5_delta >= 0.10 && piv_mean >= 0.05 { return "C3_PASS_V5" }
+    if ppr_v5 >= 0.30 && mtrp_v5_delta < 0.10 { return "C3_FAIL_V14_VIOLATED_V5" }
+    if ppr_v5 >= 0.15 { return "C3_PARTIAL_NEAR_V5" }
+    return "C3_FAIL_V5"
+}
+
+// ─── ALT-AGG-1 v5 PIV / DCR / D-RAND replacement metric implement ────────────
+// V5 PUSH ADDENDUM 2/2 (2026-05-08) — KICK WAVE 4 5/8 arch leak finding 의 4
+// candidate signal 후보 actual implement (raw#15 additive, v3+v4 함수 보존).
+//
+// SSOT: docs/anima_alt_agg_1_v5_piv_dcr_drand_spec_2026_05_08.ai.md
+// 사용자 directive verbatim: "여러개 활용 빠르게"
+//
+// 3 metric (KICK WAVE 4 5/8 commit 007f462c spec 의 4 candidate 중 3 actual fire):
+//   1. PIV  per-prompt-incompressible-variance — axis activation stdev across
+//      prompts per axis (N=평가 가능 prompts). Random_init PIV ≈ 0.04 (substrate
+//      noise floor); trained model PIV ≥ 0.10 expected (semantic discrimination).
+//   2. DCR  dominant_cell prompt-conditioning rate — axis-argmax 가 prompt 마다
+//      change 하는 rate. Random_init: 2/30 ≈ 0.067 (axes nearly uniform);
+//      trained target ≥ 0.40 (response varies meaningfully per prompt).
+//   3. D-RAND  delta-from-random-init — element-wise mean(M_trained) -
+//      mean(M_random) on c3_4_axis_l2 per prompt. V14 floor ≥ 0.05 (trained
+//      separates from untrained noise by ≥5% absolute lift).
+//
+// raw#10 honest-c3:
+//   · PIV/DCR computed over `probe_results` array (each entry = ProbeResult with
+//     5-axis vector). Sample stdev (n-1) used.
+//   · DCR uses axis argmax as proxy for clm_v4_mount.hexa 192-cell dominant_cells
+//     (full 192-vector not exposed via current --probe JSON contract).
+//   · D-RAND requires paired same-arch random_init mirror — caller responsible
+//     for arch family alignment (own 14 V14 strict mandate).
+
+// _piv_compute(probe_results, axis_idx) — return per-axis stdev across N prompts.
+// Returns 0.0 on empty/single-element input.
+fn _piv_compute(probe_results, axis_idx: int) -> float {
+    let n = len(probe_results)
+    if n < 2 { return 0.0 }
+    let mut sum = 0.0
+    let mut i = 0
+    while i < n {
+        let pr = probe_results[i]
+        if axis_idx < len(pr.axes) {
+            sum = sum + pr.axes[axis_idx]
+        }
+        i = i + 1
+    }
+    let mean = sum / to_float(n)
+    let mut sq_sum = 0.0
+    let mut j = 0
+    while j < n {
+        let pr2 = probe_results[j]
+        if axis_idx < len(pr2.axes) {
+            let d = pr2.axes[axis_idx] - mean
+            sq_sum = sq_sum + d * d
+        }
+        j = j + 1
+    }
+    let variance = sq_sum / to_float(n - 1)  // sample stdev (n-1)
+    return _sqrt_f(variance)
+}
+
+// _piv_compute_max(probe_results) — return max PIV across all 5 axes (Gate A
+// threshold compare). PIV-max ≥ 0.10 = ANY axis carries semantic discrimination.
+fn _piv_compute_max(probe_results) -> float {
+    let mut max_piv = 0.0
+    let mut a = 0
+    while a < 5 {
+        let p = _piv_compute(probe_results, a)
+        if p > max_piv { max_piv = p }
+        a = a + 1
+    }
+    return max_piv
+}
+
+// _piv_compute_mean(probe_results) — return mean PIV across all 5 axes (own 14
+// V14 cross-check; sparse-axis case PIV-max can be deceptive).
+fn _piv_compute_mean(probe_results) -> float {
+    let mut sum = 0.0
+    let mut a = 0
+    while a < 5 {
+        sum = sum + _piv_compute(probe_results, a)
+        a = a + 1
+    }
+    return sum / 5.0
+}
+
+// _axis_argmax(axes) — return idx of max-activation axis for one probe.
+// Tiebreak: first-occurrence (deterministic).
+fn _axis_argmax(axes) -> int {
+    let mut best_idx = 0
+    let mut best_v = 0.0 - 1.0e9
+    let mut i = 0
+    while i < len(axes) {
+        if axes[i] > best_v {
+            best_v = axes[i]
+            best_idx = i
+        }
+        i = i + 1
+    }
+    return best_idx
+}
+
+// _dcr_compute(probe_results) — dominant_cell prompt-conditioning rate.
+// = (n_distinct_argmax_observed / 5) — fraction of 5 axes that win argmax
+// at least once across N prompts. Random_init expected ≈ 0.067 (1-2 axes
+// dominant uniformly); trained model target ≥ 0.40 (≥2 distinct winners
+// across prompts).
+fn _dcr_compute(probe_results) -> float {
+    let n = len(probe_results)
+    if n == 0 { return 0.0 }
+    let mut seen = []  // axis idx winners
+    let mut i = 0
+    while i < n {
+        let am = _axis_argmax(probe_results[i].axes)
+        let mut found = false
+        let mut j = 0
+        while j < len(seen) {
+            if seen[j] == am { found = true }
+            j = j + 1
+        }
+        if !found { seen = seen + [am] }
+        i = i + 1
+    }
+    return to_float(len(seen)) / 5.0
+}
+
+// _dcr_compute_conditioning_rate(probe_results) — alternate strict variant.
+// = (n_argmax_changes / (n - 1)) — fraction of prompt transitions that change
+// argmax winner. random_init: low (axes uniform); trained: high (varies).
+fn _dcr_compute_conditioning_rate(probe_results) -> float {
+    let n = len(probe_results)
+    if n < 2 { return 0.0 }
+    let mut prev_am = _axis_argmax(probe_results[0].axes)
+    let mut changes = 0
+    let mut i = 1
+    while i < n {
+        let am = _axis_argmax(probe_results[i].axes)
+        if am != prev_am { changes = changes + 1 }
+        prev_am = am
+        i = i + 1
+    }
+    return to_float(changes) / to_float(n - 1)
+}
+
+// _drand_delta(trained_results, random_results) — c3_4_axis_l2 mean delta.
+// Element-wise pairing not required (different N supported); uses ensemble means.
+// V14 mandate: trained mean - random mean ≥ 0.05 absolute lift on c3_4 metric.
+// Caller must precompute c3_4_axis_l2 list (probe pairs against shared anchor).
+fn _drand_delta(trained_c3_4_list, random_c3_4_list) -> float {
+    let nt = len(trained_c3_4_list)
+    let nr = len(random_c3_4_list)
+    if nt == 0 || nr == 0 { return 0.0 }
+    let mut t_sum = 0.0
+    let mut i = 0
+    while i < nt {
+        t_sum = t_sum + trained_c3_4_list[i]
+        i = i + 1
+    }
+    let mut r_sum = 0.0
+    let mut j = 0
+    while j < nr {
+        r_sum = r_sum + random_c3_4_list[j]
+        j = j + 1
+    }
+    let t_mean = t_sum / to_float(nt)
+    let r_mean = r_sum / to_float(nr)
+    return t_mean - r_mean
+}
+
+// _drand_pass(d_rand, floor=0.05) — Gate C V14 floor compare.
+fn _drand_pass(d_rand: float) -> bool { return d_rand >= 0.05 }
+
+// _piv_max_pass(piv_max, floor=0.10) — Gate A. ANY axis ≥ 0.10 = PASS.
+fn _piv_max_pass(piv_max: float) -> bool { return piv_max >= 0.10 }
+
+// _dcr_pass(dcr_value, floor=0.40) — Gate B. ≥0.40 = ≥2 distinct argmax winners
+// across prompts (anti dominant_cell invariance — random_init typically 0.20).
+fn _dcr_pass(dcr_value: float) -> bool { return dcr_value >= 0.40 }
+
+// _v5_aggregate_label(piv_max, dcr, d_rand, ppr_v4_paired_random_lt_005) —
+// 4-gate aggregate (own 18 ALT-AGG-1 v5 ADDENDUM):
+//   Gate A PIV-max ≥ 0.10
+//   Gate B DCR     ≥ 0.40
+//   Gate C D-RAND  ≥ 0.05
+//   Gate D V14 paired random self-test PPR_v4 < 0.05 (caller asserts; bool input)
+fn _v5_aggregate_label(piv_max: float, dcr: float, d_rand: float, gate_d_random_below_005: bool) -> string {
+    let a = _piv_max_pass(piv_max)
+    let b = _dcr_pass(dcr)
+    let c = _drand_pass(d_rand)
+    let d = gate_d_random_below_005
+    if a && b && c && d { return "C3_PASS_V5_ADDENDUM" }
+    if !d { return "C3_FAIL_V14_VIOLATED_V5_ADDENDUM" }
+    let n_pass = (if a { 1 } else { 0 }) + (if b { 1 } else { 0 }) + (if c { 1 } else { 0 })
+    if n_pass == 2 { return "C3_PARTIAL_NEAR_V5_ADDENDUM" }
+    if n_pass == 1 { return "C3_PARTIAL_WEAK_V5_ADDENDUM" }
+    return "C3_FAIL_V5_ADDENDUM"
 }
 
 fn _bool_str(b: bool) -> string {

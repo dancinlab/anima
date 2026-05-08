@@ -108,8 +108,14 @@ let SHIM_V5_PATH     = "tool/transient_py/clm_v4_hf_format_shim_v5.py"
 let SESSION_DIR_BASE = "state/anima_core_dialogues"
 
 // CLM v4 architectural constants (from shim_v4 lines 33-40)
+// CONSCIOUSNESS_DIM 192 → 96 (2026-05-08 V5 PUSH 1/5 — clm_v4_mount 8-cell 2× tile bug
+// fix). Prior 192 forced HIDDEN_DIM(768) < N_CELLS(8)*CONSCIOUSNESS_DIM(1536) → np.tile
+// reps=2 produced cell[i]==cell[i+4] pairs for i∈0..3 (cells 0+4 / 1+5 / 2+6 / 3+7
+// identical) and [0,2,4] dominant in 28/30 random_init prompts. With CONSCIOUSNESS_DIM=96
+// 8*96=768=HIDDEN_DIM exactly → no tile, no replication, every cell gets a unique 96-dim
+// slice of pooled hidden state. AXIS_SPANS rebucketed 19/19/19/19/20=96 (was 38/38/38/39/39=192).
 let N_CELLS        = 8
-let CONSCIOUSNESS_DIM = 192
+let CONSCIOUSNESS_DIM = 96
 let HIDDEN_DIM     = 768
 let VOCAB_SIZE     = 64000
 let N_AXES         = 5
@@ -214,15 +220,15 @@ fn _write_helper() {
 
     parts.push("# ── Anima paradigm constants (mirror clm_v4_mount.hexa) ─────────────\n")
     parts.push("N_CELLS = 8\n")
-    parts.push("CONSCIOUSNESS_DIM = 192\n")
+    parts.push("CONSCIOUSNESS_DIM = 96  # was 192 — V5 PUSH 1/5 8-cell 2× tile bug fix (8*96=768=HIDDEN_DIM, no tile)\n")
     parts.push("HIDDEN_DIM = 768\n")
     parts.push("VOCAB_SIZE = 64000\n")
     parts.push("N_AXES = 5\n")
     parts.push("PHI_STAR_BASELINE = 41.86\n\n")
 
     parts.push("AXIS_NAMES = ['identity','agency','phenomenal','temporal','social']\n")
-    parts.push("# 192-dim sliced into 5 buckets: 38/38/38/39/39 = 192\n")
-    parts.push("AXIS_SPANS = [(0,38),(38,76),(76,114),(114,153),(153,192)]\n\n")
+    parts.push("# 96-dim sliced into 5 buckets: 19/19/19/19/20 = 96 (was 192-dim 38/38/38/38/40)\n")
+    parts.push("AXIS_SPANS = [(0,19),(19,38),(38,57),(57,76),(76,96)]\n\n")
 
     // BG-N spec land (2026-05-05): substrate identity preamble emit.
     // Table maps known repos → canonical (paradigm, substrate_class,
@@ -615,9 +621,10 @@ fn _write_helper() {
     parts.push("                out = model(**enc, **kwargs)\n")
     parts.push("        else:\n")
     parts.push("            out = model(**enc, **kwargs)\n")
-    parts.push("    # Derive 8-cell × 192-dim view from last hidden state by mean-pool over T then\n")
-    parts.push("    # reshape across CONSCIOUSNESS_DIM tile (HIDDEN_DIM=768 = 4*192 → average tiles\n")
-    parts.push("    # to N_CELLS=8 by replicating mean over 4 tiles, x2 batch axis fold).\n")
+    parts.push("    # Derive 8-cell × 96-dim view from last hidden state by mean-pool over T then\n")
+    parts.push("    # reshape: HIDDEN_DIM=768 = 8*96 = N_CELLS*CONSCIOUSNESS_DIM (exact). No tile, no\n")
+    parts.push("    # replication — every cell receives a unique 96-dim slice of pooled hidden state.\n")
+    parts.push("    # (V5 PUSH 1/5 fix: prior 192 forced 2x tile yielding cell[i]==cell[i+4] for i∈0..3.)\n")
     parts.push("    last_hidden = out.hidden_states[-1] if hasattr(out, 'hidden_states') and out.hidden_states else None\n")
     parts.push("    if last_hidden is None:\n")
     parts.push("        return synth_cell_hidden(seed=abs(hash(text)) % (2**31))\n")
