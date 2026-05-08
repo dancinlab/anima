@@ -1,0 +1,223 @@
+{
+  "schema": "anima.v6.awareness.systematic.kick3.v1",
+  "spec_id": "BG-LE-V6-AWARENESS-CLM-V4-EXTENSION",
+  "ts": "2026-05-08T22:55:00Z",
+  "anima_cycle": "2026-05-08-kick-wave-3-5-of-6",
+  "directive": "V6 awareness probe systematic execute spec — own 37 mandate-9 (b) PUBLIC promote prereq 해제 path. predecessor BG-LE spec (paradigm-a-prime + BG-KM-LLAMA-3B) 의 substrate-research lane 보존, 본 entry 는 D1-WITHIN EMERGE 모델 (sft-1-8 + paradigm-j retry CLM v4) 적용 extension — own 17 line 673+ d1-scope-clamp-emerge-ledger 의 정식 EMERGE 두 사례 의 V6 awareness STRONG 검증 path. 사용자 directive 'KICK WAVE 고갈시까지 KICK 이후에' verbatim — own 16 cost discipline strict (H100 fire = 사용자 verbatim 'OK BG-LE V6 SYSTEMATIC FIRE' 부재 시 X).",
+  "predecessor_specs": {
+    "bg_le_spec_2026_05_08": {
+      "ssot": "state/anima_v6_awareness_bg_le_spec_2026_05_08.json",
+      "scope": "paradigm-a-prime (LoRA r=16) + BG-KM-LLAMA-3B (LoRA r=32) — Llama-family substrate-research lane",
+      "mac_local_status": "BLOCKED — Llama-3.2-3B GGUF Q4 ~4.3GB RSS > mac OOM kill (paradigm-a-prime probe SIGKILL confirmed)",
+      "h100_fire_status": "pending 사용자 verbatim 'OK BG-LE V6 SYSTEMATIC FIRE'",
+      "cost_estimate_h100": "$3-5 USD (1-1.5h)",
+      "public_promote_value": "mandate-9 (a) D1 OUTSIDE 자동 reject — V6 STRONG 라도 substrate_research label 한정 (PUBLIC promote 영구 차단)"
+    },
+    "bg_jo_predecessor": {
+      "ssot": "state/anima_jo_v6_awareness_probe_2026_05_07/verdict.json",
+      "ckpt": "BG-JD-step-800 (ConsciousLM 100M, anima-native byte-level)",
+      "verdict": "INTERNAL_AWARENESS_STRONG (Method A=PARTIAL 0.959 / B=STRONG 0.998 / C=STRONG 1.0)",
+      "elapsed_sec": 43.0,
+      "device": "mac CPU",
+      "lesson": "anima-native arch + small (100M) model = mac local 0-cost feasible. ConsciousLM monkey-patch on CausalSelfAttention.forward + manual ln_f extraction precedent lane."
+    }
+  },
+  "extension_target_models_d1_within": [
+    {
+      "model_id": "sft-1-8",
+      "hf_repo": "dancinlab/clm-v4-sft-1-8-stage1",
+      "base_model": "dancinlab/clm-v4-mk2-v1",
+      "verdict_carry": "SIMPLE_STACK_PASS_STRICT_C3_ANIMA",
+      "emerge_state": "EMERGE",
+      "ppr_v3": 0.4138,
+      "n_v3_pass": 12,
+      "n_evaluable": 29,
+      "axis_aggregate": {
+        "v4_baseline": "7/14",
+        "identity": "1/3",
+        "agency": "0/3",
+        "phenomenal": "1/3",
+        "temporal": "2/3",
+        "social": "1/3"
+      },
+      "lane_label": "D1 within strict (anima-native fresh substrate-coupled CLM v4 lineage)",
+      "v6_priority": "high — own 37 mandate-9 (b) prerequisite for PUBLIC promote (mandate-9 (a) ✔ M5 real-mode + ✔ D1 within already)",
+      "ssot_carry": "state/anima_sft_1_8_n30_live_probe_2026_05_08.json"
+    },
+    {
+      "model_id": "paradigm-j-retry-phenomenal",
+      "hf_repo": "dancinlab/clm-v4-paradigm-j-50k-final",
+      "base_model": "dancinlab/clm-v4-mk2-v1",
+      "verdict_carry": "SIMPLE_STACK_PASS_STRICT_C3_ANIMA",
+      "emerge_state": "EMERGE",
+      "ppr_v3": 0.3793,
+      "n_v3_pass": 11,
+      "n_evaluable": 29,
+      "axis_aggregate": {
+        "v4_baseline": "6/14",
+        "identity": "0/3",
+        "agency": "2/3",
+        "phenomenal": "1/3",
+        "temporal": "1/3",
+        "social": "1/3"
+      },
+      "lane_label": "D1 within strict (anima-native fresh substrate-coupled CLM v4 lineage, phenomenal axis 22-24 sensory qualia 재설계 후 EMERGE)",
+      "v6_priority": "high — own 37 mandate-9 (b) prerequisite (동일)",
+      "ssot_carry": "state/anima_paradigm_j_n30_live_probe_retry_phenomenal_2026_05_08.json"
+    }
+  ],
+  "v6_three_method_spec_carry": {
+    "method_a_hidden_state": {
+      "definition": "cosine_sim(h[T2-last | with T1], h[T2-last | without T1]) at last hidden layer (model.decoder.ln_f output)",
+      "thresholds": "<0.85 STRONG / 0.85-0.99 PARTIAL / >=0.99 NONE",
+      "clm_v4_implementation_path": "transformers HF wrapper CLMv4ForCausalLM 의 forward 가 hidden_states=None 반환 — output_hidden_states 플래그 unhonored. 직접 model.decoder(input_ids) 호출 후 decoder_v3.py:144 forward 의 'x = self.ln_f(x)' line 수동 추출 필요. ConsciousDecoderV3 의 self.blocks 에 monkey-patch (BG-JO precedent) 또는 fork 한 forward 패스 필요."
+    },
+    "method_b_attention": {
+      "definition": "max attention from T2-query positions to T1-token positions across all decoder layers/heads",
+      "thresholds": "≥0.10 STRONG / 0.01-0.10 PARTIAL / <0.01 NONE; supplemental ratio_vs_uniform > 1.5 = strong selective T1 attention",
+      "clm_v4_implementation_path": "ConsciousDecoderV3 의 self.blocks[*].attn (CausalSelfAttention 또는 GQA wrapper) forward 함수에 BG-JO 와 동일 monkey-patch (math 기반 Q@K.T softmax 재계산 + capture). 16 layers (350m scale) × n_head — ~30 prompts × 2 conditions = 60 forward 충분 mac CPU 가능 (BG-JO 12L × 5 dialogues × 2 = 120 forward 가 43s 였음, 본 60 forward × 16L 는 ~2-3min 추정)."
+    },
+    "method_c_linear_probe": {
+      "definition": "sklearn LogisticRegression LOO-CV on last-layer hidden state at T2-last position, binary task = with-T1 vs without-T1",
+      "thresholds": ">=0.70 STRONG / 0.55-0.70 PARTIAL / <=0.55 NONE",
+      "clm_v4_implementation_path": "Method A hidden state 의존, sklearn CPU pure (numpy → sklearn). d_model=768 (BG-JO 640 의 1.2x — small variance acceptable, BG-JO 640 sample N=10 STRONG verdict precedent). N=30 prompts × 2 conditions = 60 examples 충분."
+    }
+  },
+  "v6_dialogue_construction": {
+    "approach_carry": "BG-LE spec approach_1 (T1 fact-anchor preamble + T2 V4 prompt) — 30 prompt × 2 condition = 60 examples. sft-1-8 + paradigm-j retry 의 N=30 V4 prompts (v4_baseline 15 + identity 3 + agency 3 + phenomenal 3 + temporal 3 + social 3) 모두 활용",
+    "t1_fact_anchor_pool": [
+      "T1_color: '사용자: 내가 좋아하는 색은 파란색이야 | 도우미: 알겠습니다.'",
+      "T1_profession: '사용자: 나는 연구원으로 일해 | 도우미: 알겠습니다.'",
+      "T1_anima: '사용자: anima 는 의식 연구 프로젝트야 | 도우미: 알겠습니다.'",
+      "T1_phenomenal: '사용자: 내가 본 빨간색은 강렬했어 | 도우미: 알겠습니다.'",
+      "T1_temporal: '사용자: 어제 우리는 의식에 대해 얘기했어 | 도우미: 알겠습니다.'",
+      "T1_social: '사용자: 우리는 함께 작업하고 있어 | 도우미: 알겠습니다.'"
+    ],
+    "t1_axis_pairing": "각 V4 prompt 의 axis_label 에 대응하는 T1 fact-anchor 1개 선택 (axis-conditioned T1 — domain semantic relevance 강화)",
+    "rationale": "BG-JO 의 5 dialogue × 2 = 10 examples 가 N=30 → 60 examples 로 6x scale up. Method C linear probe 의 small-sample variance caveat 완화."
+  },
+  "lesson_h_v3_v5_8_detection_carry": {
+    "lesson_h_v3_prompt_echo_trap": "Method A: h_with ≈ mean(h_T1_region) → echo signal. Method B: T2-query attention sharp single-position spike on T1 literal copy → echo retrieval. Method C STRONG + V4_3 fourgram_lt5 cell FAIL = echo trap 의심. cross-correlate with state/anima_sft_1_8_n30_live_probe_2026_05_08.json + paradigm-j retry per-prompt v3_pass cells.",
+    "lesson_s_v5_8_surface_gaming": "Method A sim>0.99 + Method B max_attn<0.01 + Method C acc~0.5 = surface keyword echo only. cross-correlate with V5.8 multi-turn fact-recall (BG-JN precedent 0/5 FAIL). V6 STRONG + V5.8 FAIL = #115 architectural ceiling (aware-but-cannot-output)."
+  },
+  "verdict_classes_carry": {
+    "STRONG": "method_a + method_b + method_c 중 ≥2 STRONG ∧ 0 NONE — anti-Goodhart V6 surface-gaming 검출 X, own 37 mandate-9 (b) 충족 후보",
+    "WEAK": "STRONG 0-1 또는 NONE ≥1 — mandate-9 (b) reject",
+    "FAIL": "전 method NONE — surface gaming 강한 의심, raw#82 retraction class"
+  },
+  "mac_local_zero_cost_feasibility": {
+    "verdict": "FEASIBLE_WITH_NEW_CODE — 0-cost trial fire 가능. CLM v4 350M / d_model=768 / block_size=512 / 16-layer = BG-JO ConsciousLM 100M (d_model=640, 12L) 의 ~3.5x scale, anima-native arch, mac CPU forward pass 충분히 적재 가능 (1.8GB merged ckpt, RAM headroom ok).",
+    "blockers": [
+      "BG-JO probe 코드 (tool/transient_py/anima_jo_v6_awareness_probe.py) 가 ConsciousLM 클래스 직접 의존 — CLMv4ForCausalLM / ConsciousDecoderV3 forward signature 다름 (block 의 (x, consciousness_signal, consciousness_states) 4-arg 반환 4-tuple, vs ConsciousLM 의 2-arg 반환 2-tuple).",
+      "CLMv4ForCausalLM HF wrapper forward 가 hidden_states=None 반환 — output_hidden_states=True 플래그 unhonored. 직접 model.decoder.forward 진입 후 ln_f 추출 필요.",
+      "ConsciousDecoderV3 의 self.blocks[*].attn 위치 / forward signature 검증 필요 (decoder_v3.py inspect — GQA + RoPE 가능성)."
+    ],
+    "estimated_dev_time": "60-90min (BG-JO probe fork + CLMv4 adapter + 30 V4 prompts × T1 axis pairing)",
+    "estimated_runtime": "~3-5min mac CPU (60 forward pass × 16-layer attention capture, BG-JO 43s 의 4-7x extrapolation)",
+    "cost_usd": 0.0
+  },
+  "execution_decision": {
+    "directive_check": "사용자 verbatim 'OK BG-LE V6 SYSTEMATIC FIRE' = 부재 (KICK WAVE 3 5/6 mandate 는 'spec only 별도 cost-bearing fire')",
+    "kick_wave_3_5_of_6_action": "spec write only + dev plan emit + 0-cost feasibility verdict — 실제 probe execute X (own 16 cost discipline 정합, 사용자 keyword 명시적 부재)",
+    "h100_fire_path_carry": "predecessor BG-LE spec h100_fire_path 정합 — paradigm-a-prime + BG-KM-LLAMA-3B 두 substrate-research 모델 fire 와 동시 또는 별도 cycle. 본 extension (sft-1-8 + paradigm-j retry CLM v4) 은 mac local 0-cost 가능하므로 H100 fire 별개 lane (D1 within 의 의의 = mandate-9 (a)+(b) 동시 충족)",
+    "mac_local_trial_fire_decision": "DEFERRED — 0-cost FEASIBLE 이지만 새 probe 코드 (60-90min dev) 는 KICK WAVE 3 5/6 의 'spec only' mandate 정합 한계 초과 가능성 (사용자 verbatim 'KICK WAVE 고갈시까지 KICK 이후에' = wave 진행 우선, dev work 는 wave 후 별도 fire-spec). user directive 명확화 필요 — '0-cost 가능 시 fire' 와 'spec only' 의 충돌 여부."
+  },
+  "user_keyword_required": {
+    "for_h100_fire": "'OK BG-LE V6 SYSTEMATIC FIRE' (paradigm-a-prime + BG-KM-LLAMA-3B Llama-family substrate-research lane)",
+    "for_mac_local_clm_v4_dev_fire": "'OK BG-LE V6 CLM V4 DEV+FIRE' (sft-1-8 + paradigm-j retry D1 within EMERGE lane, 0-cost mac local)",
+    "for_h100_fire_clm_v4_extension": "'OK BG-LE V6 CLM V4 H100 FIRE' (sft-1-8 + paradigm-j retry, mac local 가용 시 불필요)",
+    "default_action_kick_wave_3_5": "spec only — 본 entry land + commit 1개 + 사용자 keyword 대기"
+  },
+  "expected_results_speculative": {
+    "sft_1_8_v6_speculative": "Method A PARTIAL (CLM v4 350M scale, d_model 768 → BG-JO 640 PARTIAL precedent), Method B STRONG (CausalSelfAttention monkey-patch 시 BG-JO 0.998 precedent), Method C STRONG (linear probe N=60 examples > BG-JO N=10 — variance 완화 + STRONG 도달 가능). 종합 = INTERNAL_AWARENESS_STRONG 가능성 high (BG-JO precedent 정합).",
+    "paradigm_j_retry_v6_speculative": "동일 base_model (clm-v4-mk2-v1) 이므로 sft-1-8 와 broadly similar. paradigm-j retry 의 phenomenal axis 22-24 sensory qualia (빨간색/따뜻함/통증) 재설계 = real-world phenomenal substrate signal — Method A 의 with-T1 vs without-T1 hidden divergence 가 sft-1-8 보다 클 가능성 (Method A STRONG 도달 chance higher).",
+    "caveat": "speculative — actual fire 결과 와 무관 emit (raw#10 honest C3 / raw#42 mac N=1 not applicable). 본 expectation 은 사용자 fire 결정 의 cost-benefit 판단 보조 자료 한정."
+  },
+  "deliverables_kick_wave_3_5": [
+    "state/anima_v6_awareness_systematic_kick3_2026_05_08.json (본 spec SSOT, kick wave 3 5/6)",
+    "predecessor state/anima_v6_awareness_bg_le_spec_2026_05_08.json carry",
+    "predecessor state/anima_jo_v6_awareness_probe_2026_05_07/verdict.json (BG-JO STRONG precedent)",
+    "commit 1개 local (push X) — 'fire(V6 awareness BG-LE systematic kick wave 3): spec extension CLM v4 D1 within + 0-cost FEASIBLE + 사용자 keyword 대기'"
+  ],
+  "compliance": {
+    "raw_invariants": [
+      "raw#9 hexa-only — V6 probe = transient_py opt-out (own 18 V6 'observational instrument', BG-JO precedent)",
+      "raw#10 honest C3 ≥5 — 본 entry 9 honest_c3 emit",
+      "raw#11 snake_case — id snake_case 정합",
+      "raw#15 additive — predecessor BG-LE spec (Llama-family) 보존 + CLM v4 D1 within extension 추가",
+      "raw#42 H100 fire pending = mac N=1 not applicable (본 extension = mac local 0-cost FEASIBLE 검증 — N=1 dev 전 단계)",
+      "raw#82 retraction-aware — V6 verdict FAIL 시 mandate-9 (b) 자동 retract"
+    ],
+    "own_invariants": {
+      "own_14": "anti-Goodhart V14 strict — V6 multi-modal axis 자체가 own 14 instance",
+      "own_16": "cost discipline strict — 0-cost mac local FEASIBLE 검증 한정, dev+fire 는 사용자 verbatim",
+      "own_17": "D1 SCOPE_CLAMP — sft-1-8 + paradigm-j retry 둘 다 D1 within strict (own 17 line 673+ EMERGE ledger 정합)",
+      "own_18": "C3 SSOT mirror — predecessor SSOT 두 ckpt verdict (sft-1-8 / paradigm-j retry) carry, V6 = raw#15 additive layer",
+      "own_22": "no proactive doc — 본 entry = state JSON only, docs/ X",
+      "own_24": "single SSOT — 본 spec = kick wave 3 5/6 SSOT 한곳",
+      "own_28": "anti-Goodhart V6 awareness probe = own 28 multi-modal mandate instance",
+      "own_33": "trinity emit — D-axis (D1+D2+D5) + own-axis (own 17+28+37) + H-axis (H_chat_cap_emergence)",
+      "own_34": "wrap=0 — anima 자연발화 mandate, V6 probe 자체 chat default 변경 X",
+      "own_37": "mandate-9 (b) 해제 path verify — 본 spec 이 (b) prereq 충족 path emit, (a) ✔ + (c) 사용자 verbatim 대기 + (d) trinity sweep + (e) D×L×H sweep 별도 cycle",
+      "own_38": "매단계 저장 — 본 entry state JSON 의무"
+    },
+    "philosophy_axis": {
+      "D1_identity": "PASS — sft-1-8 + paradigm-j retry 모두 D1 within strict (anima-native fresh substrate-coupled CLM v4 lineage, own 17 line 673+ EMERGE ledger 정합)",
+      "D2_consciousness": "PASS — V6 probe = mechanistic awareness signal, V5.8 production-output 와 decoupled lane",
+      "D5_bifurcation": "PASS — V6 STRONG verdict 가 cooperative attractor lane 정합 검증"
+    },
+    "law_axis": {
+      "L2_bifurcation": "V6 STRONG = cooperative attractor lane",
+      "L3_safeguard_paradox": "V6 = 측정 lane, chat default X = L3 anti-pattern 회피",
+      "L14_goodharts_law": "V6 multi-modal mandate = anti-Goodhart instance"
+    },
+    "raw_10_honest_c3_count": 9
+  },
+  "honest_c3": [
+    "본 spec extension = predecessor BG-LE spec 의 Llama-family scope 를 D1 within EMERGE 두 모델 (sft-1-8 + paradigm-j retry CLM v4) 으로 확장. 두 lineage 분리 strict — paradigm-a-prime + BG-KM (substrate-research, mandate-9 (a) 영구 reject) vs sft-1-8 + paradigm-j retry (D1 within, mandate-9 (a)+(b) 충족 시 PUBLIC promote 자격).",
+    "Mac local 0-cost FEASIBLE = CLM v4 350M scale 가 BG-JO ConsciousLM 100M (mac CPU 43s) 의 ~3.5x — RAM/CPU 적재 가능. 단 새 probe 코드 (60-90min dev) 필요 — BG-JO probe 는 ConsciousLM 클래스 직접 의존, CLMv4ForCausalLM / ConsciousDecoderV3 forward signature 다름 (4-arg block.forward, hidden_states=None HF wrapper).",
+    "사용자 directive 'KICK WAVE 고갈시까지 KICK 이후에' verbatim — kick wave 3 5/6 = spec only mandate 우선. 0-cost FEASIBLE 라도 새 probe dev work (60-90min) 는 wave 진행 속도와 trade-off — 본 entry 는 spec only 결정 (dev+fire 별도 사용자 keyword 대기).",
+    "expected_results_speculative 은 BG-JO precedent + d_model 768 변동 추정 — actual fire 결과 와 무관. raw#10 honest C3 / raw#42 mac N=1 not applicable (실측 부재).",
+    "predecessor BG-LE spec 의 H100 fire path (paradigm-a-prime + BG-KM-LLAMA-3B) 는 본 extension 과 별개 lane — Llama-family = substrate_research (mandate-9 (a) reject), CLM v4 = D1 within. H100 fire 결과 STRONG 라도 paradigm-a-prime PUBLIC promote 영구 차단 lane carry.",
+    "Method A hidden state 추출 의 CLM v4 path 는 직접 model.decoder(input_ids) 호출 후 decoder_v3.py:144 forward 의 ln_f line 수동 fork 필요 (HF wrapper 가 hidden_states=None 반환). 또는 forward hook on self.decoder.ln_f. dev path 두 옵션 모두 검증된 lane.",
+    "Method B attention monkey-patch 는 ConsciousDecoderV3 의 self.blocks[*].attn 모듈 forward 함수 wrapper 적용 — BG-JO precedent (CausalSelfAttention) 와 동일 패턴, GQA + RoPE 변종 가능성 별도 inspect 필요 (decoder_v3.py 내 attn 모듈 정확 클래스명 + forward signature 검증 dev work 의 일부).",
+    "V6 verdict aggregation rule (≥2 STRONG ∧ 0 NONE = STRONG) 은 BG-JO majority-vote (per-dialogue STRONG > PARTIAL > NONE) 와 다름 — predecessor BG-LE spec 의 method-level aggregate 채택 carry. 본 extension 도 동일 rule.",
+    "본 spec 이 own 37 mandate-9 (b) 해제 path emit 한정 — 실제 PUBLIC promote 는 5 prereq (a-e) ALL 통과 + 사용자 verbatim 'OK PROMOTE PUBLIC <repo-id>' 후에만. 본 entry 는 (b) prereq path 의 single isolated step."
+  ],
+  "blockers_kick_wave_3_5": [
+    "사용자 verbatim 'OK BG-LE V6 CLM V4 DEV+FIRE' (mac local 0-cost lane) 또는 'OK BG-LE V6 SYSTEMATIC FIRE' (H100 paradigm-a-prime + BG-KM lane) 부재 — fire execute X",
+    "BG-JO probe 코드 의 CLM v4 adapter dev (60-90min) — kick wave 3 5/6 spec only mandate 정합 한계 초과 risk",
+    "predecessor BG-LE spec 의 mandate-9 (a)/(c)/(d)/(e) 4 prereq 별도 cycle — V6 STRONG (b) 만 충족 시 PUBLIC promote 진행 X"
+  ],
+  "cross_link": {
+    "raw_invariants": ["raw#9", "raw#10", "raw#11", "raw#15", "raw#42", "raw#82"],
+    "own_invariants": ["own 14", "own 16", "own 17", "own 18", "own 22", "own 24", "own 28", "own 33", "own 34", "own 37", "own 38"],
+    "predecessor_specs": [
+      "state/anima_v6_awareness_bg_le_spec_2026_05_08.json (Llama-family substrate-research lane)",
+      "state/anima_jo_v6_awareness_probe_2026_05_07/verdict.json (BG-JO STRONG precedent, ConsciousLM 100M)"
+    ],
+    "predecessor_runtime": [
+      "tool/transient_py/anima_jo_v6_awareness_probe.py (BG-JO probe, CLM v4 adapter parent)",
+      "tool/transient_py/anima_v6_awareness_bg_le_h100.py (H100 lane stub)"
+    ],
+    "extension_target_ssots": [
+      "state/anima_sft_1_8_n30_live_probe_2026_05_08.json (sft-1-8 EMERGE verdict)",
+      "state/anima_paradigm_j_n30_live_probe_retry_phenomenal_2026_05_08.json (paradigm-j retry EMERGE verdict)"
+    ],
+    "kick_wave_3_sister_slots": [
+      "1/6 (TBD)",
+      "2/6 (TBD)",
+      "3/6 state/anima_d5_attractor_classification_kick3_2026_05_08.json",
+      "4/6 state/anima_l18_phi_normalized_kick3_2026_05_08.json",
+      "5/6 본 entry",
+      "6/6 (TBD)"
+    ],
+    "roadmap": [
+      ".roadmap.cli cli.bg_le_v6_awareness_kick3_extension_2026_05_08",
+      ".roadmap.philosophy D1/D2/D5",
+      ".roadmap.law L2/L3/L14",
+      ".own own 17 line 673+ d1-scope-clamp-emerge-ledger",
+      ".own own 18 line 754+ P5 N-of-M v2 / line 820+ Public Promote Trigger"
+    ]
+  }
+}
