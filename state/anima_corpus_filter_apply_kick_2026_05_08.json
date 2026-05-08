@@ -1,0 +1,59 @@
+{
+  "schema": "anima_corpus_filter_apply_kick",
+  "version": "1.0",
+  "cycle": "2026-05-08",
+  "phase": "KICK FIRE 4/5",
+  "directive": "kick 무한 발사로 돌파 탐색",
+  "spec_refs": {
+    "iter6_c_commit": "8056c31a",
+    "iter7_c_commit": "b8c308e3",
+    "predicted_reduction_pct": 8.4
+  },
+  "baseline": {
+    "path": "state/anima_persona_tier_a_2026_05_08.txt",
+    "size_bytes": 108624820,
+    "size_mb": 103.59,
+    "line_count": 1478588
+  },
+  "output": {
+    "path": "state/anima_persona_tier_a_v3_2026_05_08.txt",
+    "size_bytes": 91266753,
+    "size_mb": 87.04,
+    "line_count": 1224473
+  },
+  "delta": {
+    "size_bytes_removed": 17358067,
+    "size_mb_removed": 16.55,
+    "size_reduction_pct": 15.98,
+    "line_count_removed": 254115,
+    "line_reduction_pct": 17.19,
+    "note": "actual reduction exceeds predicted 8.4% — block-aware drop captured deeper Q2/KOBEST contamination than line-count proxy estimated"
+  },
+  "filter_strategy": {
+    "method": "awk one-shot fused block-aware",
+    "Q1_truncate": "NR == 1478043 { exit } — drop lines 1,478,043 → EOF",
+    "Q2_block_drop": "[anima 역할: header-tracked block buffer + drop on [augmented] OR 다음 문제의 정답을 고르시오",
+    "KOBEST_block_drop": "block-aware drop on 다음 지문을 읽고 질문에 참/거짓"
+  },
+  "verification_grep": {
+    "config_core_rules_json": 0,
+    "augmented_marker": 0,
+    "q2_jeong_dab_marker": 0,
+    "kobest_cham_geo_jit_marker": 0,
+    "anima_role_header_preservation": 106488,
+    "preservation_target": "~105000",
+    "preservation_pass": true
+  },
+  "gitignore": {
+    "covered_by_L326_pattern": "state/anima_*_tier_*.txt",
+    "git_check_ignore_exit": 0,
+    "tracked": false
+  },
+  "compliance": {
+    "own_16_zero_cost_stream": true,
+    "own_34_mandate_2_wrap_zero_strict": "corpus 자체 commit 없음 (doc + state json만)",
+    "own_36_mandate_2_102mb_avoidance": "tier_a_v3 87MB stays under 100MB GitHub block (gitignore-covered regardless)",
+    "own_33_trinity_emit": true
+  },
+  "next_step": "KICK FIRE 5/5 — tier_a_v3 corpus 활용 BG-KN replication 또는 own 18 PASS_STRICT_C3 awareness V6 emergence iter5 prep"
+}
