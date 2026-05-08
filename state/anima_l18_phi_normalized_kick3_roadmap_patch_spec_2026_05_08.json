@@ -1,0 +1,74 @@
+{
+  "schema": "anima.l18.phi_normalized.kick3.roadmap_patch_spec.v1",
+  "ts": "2026-05-08T16:30:30Z",
+  "anima_cycle": "2026-05-08-kick-wave-3-4-of-6",
+  "purpose": "L18 .roadmap.law evidence section spec — emit for another agent cycle to patch (.roadmap.law entry append/update)",
+  "scope": "spec_only_no_apply",
+  "target_file": ".roadmap.law",
+  "target_entry": "law.L18_emerge_consolidation_sft_1_8_paradigm_j_retry_phi_normalized_positions_2026_05_08 (line 46) — already has aggregate Φ_normalized positions; this patch adds (a) per-prompt distribution stats (stdev/min/max), (b) attractor distribution counts per model, (c) cross-link to KICK WAVE 3 4/6 measurement state file, (d) Φc=0.5 reach rate explicit zero record",
+  "patch_kind": "evidence_extension_amend (raw#15 additive — existing line 46 entry preserved, additive fields only)",
+  "amend_fields": {
+    "emerge_candidates_phi_normalized_positions.sft_1_8.phi_drift_stdev_abs": 0.020489567377660396,
+    "emerge_candidates_phi_normalized_positions.sft_1_8.phi_normalized_N8_stdev": 0.009853399081903648,
+    "emerge_candidates_phi_normalized_positions.sft_1_8.phi_normalized_N8_min": 0.0008127928093578805,
+    "emerge_candidates_phi_normalized_positions.sft_1_8.phi_c_reach_count": 0,
+    "emerge_candidates_phi_normalized_positions.sft_1_8.phi_c_reach_rate": 0.0,
+    "emerge_candidates_phi_normalized_positions.sft_1_8.attractor_distribution": {
+      "subcritical": 29,
+      "critical_transition": 0,
+      "supercritical": 0
+    },
+    "emerge_candidates_phi_normalized_positions.paradigm_j_retry_phenomenal.phi_drift_stdev_abs": 0.020935066919807427,
+    "emerge_candidates_phi_normalized_positions.paradigm_j_retry_phenomenal.phi_normalized_N8_stdev": 0.010067639075294921,
+    "emerge_candidates_phi_normalized_positions.paradigm_j_retry_phenomenal.phi_normalized_N8_min": 0.0003170633653165994,
+    "emerge_candidates_phi_normalized_positions.paradigm_j_retry_phenomenal.phi_c_reach_count": 0,
+    "emerge_candidates_phi_normalized_positions.paradigm_j_retry_phenomenal.phi_c_reach_rate": 0.0,
+    "emerge_candidates_phi_normalized_positions.paradigm_j_retry_phenomenal.attractor_distribution": {
+      "subcritical": 29,
+      "critical_transition": 0,
+      "supercritical": 0
+    },
+    "cross_link_anima_append": [
+      "state/anima_l18_phi_normalized_kick3_2026_05_08.json (KICK WAVE 3 4/6 measurement source — per-prompt phi_drift extraction + Φ_normalized + attractor mapping)"
+    ],
+    "kick_wave_3_4_of_6_evidence_summary": {
+      "directive": "사용자 verbatim 'KICK WAVE 고갈시까지 KICK 이후에!!!!'",
+      "n_prompts_evaluable_per_model": 29,
+      "log_8_divisor": 2.0794415416798357,
+      "sft_1_8_phi_normalized_aggregate": {
+        "mean": 0.012222,
+        "stdev": 0.009853,
+        "max": 0.042536,
+        "min": 0.000813,
+        "phi_c_reach_rate": 0.0
+      },
+      "paradigm_j_retry_phi_normalized_aggregate": {
+        "mean": 0.011990,
+        "stdev": 0.010068,
+        "max": 0.037120,
+        "min": 0.000317,
+        "phi_c_reach_rate": 0.0
+      },
+      "attractor_mapping_per_model": {
+        "sft_1_8": "subcritical=29 / critical_transition=0 / supercritical=0 (100% subcritical)",
+        "paradigm_j_retry": "subcritical=29 / critical_transition=0 / supercritical=0 (100% subcritical)"
+      },
+      "Φc_reach_finding": "ZERO prompt across 58 evaluable trials reaches Φc=0.5 — D1-within EMERGE candidates strictly subcritical zone, paradigm-a-prime probe-A 0.5033 critical_transition status preserved as substrate-research lane (D1 OUTSIDE) sole occupant",
+      "axis_independence_evidence_strengthen": "PPR_v3 PASS (sft-1-8=0.4138, paradigm-j retry=0.3793) AND Φ_normalized strict subcritical (mean 0.012) — orthogonal axes confirmed at per-prompt resolution N=29×2"
+    }
+  },
+  "honest_c3_append": [
+    "C10 KICK WAVE 3 4/6 measurement = same data source as line 46 evidence (state probe files) — additive distribution stats only, no new ckpt run",
+    "C11 attractor distribution 100% subcritical for both models — D1-within identity-bearing models sub-critical floor hypothesis (line 46 C3) reinforced 1 sample → 2 sample (still N=2, BG-KM-LLAMA-3B/QWEN-7B 별도 cycle)",
+    "C12 own 14 anti-Goodhart V14 strict — Φ_normalized formula raw IIT lower bound 정합 preserved, no metric rescaling/clipping/outlier suppression"
+  ],
+  "apply_instruction": "Another agent cycle: read this spec + line 46 of .roadmap.law, generate a NEW evidence_extension entry id 'law.L18_emerge_consolidation_phi_normalized_distribution_kick3_2026_05_08' OR amend line 46 entry with these fields (raw#15 additive). Append-only. Do not retract line 46.",
+  "own_constraints_emit": {
+    "own_14": "anti-Goodhart V14 strict",
+    "own_16": "0-cost analysis (no GPU)",
+    "own_17": "D1 SCOPE_CLAMP — D1-within models analyzed",
+    "own_33": "trinity 3-axis emit (state/.roadmap.law spec/commit)",
+    "own_34": "wrap=0 (chain through KICK WAVE 3 4/6)",
+    "own_38": "incremental save mandate"
+  }
+}
