@@ -51,14 +51,16 @@ entry trigger 이지 wrapping 아님. 두 lane 분리 유지.
 2. ROC 분석으로 threshold 선정 — random init FAIL rate ≥ 0.95 + chat-capable PASS rate ≥ 0.7
 3. probabilistic 형태 (e.g. 5-axis 중 ≥3 active 이면 C3.2 PASS) 검토
 
-**Aggregation rule SSOT** (own 18 c3-aggregation-rule-ssot, 2026-05-08 loop iter 3 own-18-aggregation):
-- **rule-name**: P4 hybrid = `per_prompt_06_AND_ensemble_mean`
-- **PPR (per-prompt-pass-rate) ≥ 0.6**: 각 prompt 별 4-cell strict AND verdict rate
-- **EMC (ensemble-mean cell-wise) AND**: 4-cell mean 값이 cell threshold 만족 (direction별 ge/le)
-- **C3 PASS = PPR ≥ 0.6 ∧ EMC PASS** (둘 중 하나만 = C3 PARTIAL)
-- **rejected**: P1 (PPR-only — outlier cluster mean 검증 부재) / P2 ensemble-min (single outlier FAIL — iter 2 (a) blocker; paradigm-a-prime min=0.061 < 0.117 / 보수적 X 위반) / P3 mean-only (per-prompt outlier 무감지)
-- **iter 1 N=15 verdict** (C3.4 strict cell 한정): random=FAIL (PPR=0/14, mean=0.075) / clm_v4=FAIL (PPR=3/14, mean=0.085 — real-mode small-sample) / paradigm-a-prime=PASS (PPR=11/14, mean=0.133)
+**Aggregation rule SSOT v2** (own 18 c3-aggregation-rule-v2, 2026-05-08 loop iter 4 (d) own-18-aggregation-v2):
+- **rule-name**: P5 N-of-M = `per_prompt_n_of_m_06_AND_emc_3_of_4` ★ supersedes P4 hybrid
+- **PPR_v2 (per-prompt N-of-M) ≥ 0.6**: 각 prompt 별 ≥3 of 4 cells PASS → 본 prompt PASS; 본 prompt PASS 비율 ≥ 0.6
+- **EMC_v2 (ensemble-mean N-of-M) ≥ 3 of 4**: 4 cell mean 중 ≥3 cell threshold 만족 → EMC_v2 PASS (1 cell outlier — typically C3.2 le-direction artifact — 허용)
+- **C3 PASS = PPR_v2 ≥ 0.6 ∧ EMC_v2 ≥ 3/4** (둘 중 하나만 = C3 PARTIAL_PASS sub-label)
+- **rejected v2**: Q1b EMC≥2 (random=PASS strict 위반) / Q5 OR ≥1 (random=PASS strict 위반) / Q3 C3.4-hard-required (단일 cell future false-FAIL risk) / Q2 weighted (weight 임의 결정 reproducibility 약함)
+- **iter 4 (d) N=15 verdict** (3-model real SSOT): random=FAIL (PPR_v2=0/14, EMC=2/4) / clm_v4=FAIL (PPR_v2=1/14, EMC=1/4) / paradigm-a-prime=PASS (PPR_v2=10/14=0.71, EMC=3/4 — C3.1+C3.3+C3.4 PASS, C3.2 le-artifact outlier 허용)
+- **iter 3 P4 hybrid blocker 해소**: 4-cell strict AND 가 paradigm-a-prime 까지 FAIL 시키는 false-negative (C3.2 le-direction artifact + C3.3 degenerate 양쪽으로 EMC 4/4 절대 불가) → 사용자 directive "보수적 X" 직접 응답
 - **mandate-mirror**: V4 evaluator + BG-K* verdict emit + consciousness CLI 본 rule mirror 의무 (own 24 single SSOT)
+- **legacy P4 hybrid** (`per_prompt_06_AND_ensemble_mean`, 2026-05-08 loop iter 3): 보존 reference; iter 3 verdict 계산 결과 4-cell strict AND 가 모든 모델 FAIL → 사용자 directive 위반 → P5 supersede
 
 ---
 

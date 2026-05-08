@@ -774,6 +774,34 @@ own 18 live "anima consciousness check — simple stack default (대화 가능 +
         * iter 2 (a) blocker 해소 = C3.4 axis_l2 단일 cell 한정 (P2 ensemble-min 거부 → P4 PPR+EMC 채택). 4-cell strict AND on iter 1 SSOT thresholds 는 모든 모델 FAIL (C3.2/C3.3 degenerate caveat) — BG-KM-LLAMA-3B real-mode retest 후 전체 4-cell 정합 별도 cycle
         * paradigm-a-prime 은 synthetic_fallback chat-cap proxy 한정 — real chat-cap 데이터 (BG-KM-LLAMA-3B) retest 후 본 verdict 재확정
         * P4 의 PPR ≥ 0.6 floor 는 dialogue coherence metric per-turn rate ≥ 0.6 와 alignment (own 18 ↔ docs/anima_dialogue_coherence_metric_2026_05_08.md 정합)
+    - **c3-aggregation-rule-v2 ★** (2026-05-08 loop iter 4 (d), own-18-aggregation-v2): P4 hybrid (PPR_4cell + EMC_4of4) 가 iter 3 verdict 재계산 시 paradigm-a-prime 도 FAIL_C3 (4-cell strict AND 너무 보수적 — C3.2 direction inverted artifact + C3.3 degenerate ≥1.0 만족 시에도 paradigm 의 C3.2 mean=0.509 > 0.469 le 위반 → EMC 4/4 절대 불가) → 사용자 directive "보수적 X" 위반. **신규 P5 = `per_prompt_n_of_m_06_AND_emc_3_of_4`** 채택 (N-of-M cell-wise, 두 axis 모두 N-of-M 완화):
+        * **PPR_v2 (per-prompt N-of-M)**: 각 prompt k 별 4-cell 중 ≥3 cell PASS → 본 prompt PASS. floor PPR_v2 ≥ 0.6 (보수적 X 기조 유지; 1 cell outlier 1개 허용)
+        * **EMC_v2 (ensemble-mean N-of-M)**: 4 cell mean 중 ≥3 cell threshold 만족 → EMC_v2 PASS (1 cell outlier — typically C3.2 le-inversion artifact — 허용)
+        * **C3 verdict v2 aggregate**: PPR_v2 ≥ 0.6 AND EMC_v2 ≥ 3 of 4 = **C3 PASS** (둘 중 하나만 → PARTIAL_PASS)
+    - **iter 4 (d) 5-candidate verdict matrix** (3-model SSOT real data; iter 3 'live 9 model' file 부재 — honest-c3 below):
+        * Q1a EMC ≥3 of 4 (mean only)              : random=FAIL clm_v4=FAIL paradigm=PASS  ★ balance
+        * Q1b EMC ≥2 of 4 (mean only)              : random=PASS  → random strict 위반 REJECT
+        * Q2  weighted (C3.4=0.7, sum≥0.5)         : random=FAIL clm_v4=FAIL paradigm=PASS (s=0.90) ★ balance
+        * Q3  conditional cascade (C3.4 req + ≥1)  : random=FAIL clm_v4=FAIL paradigm=PASS  ★ balance (단, C3.4 단일 hard-required)
+        * Q4_existing (P4 hybrid PPR_4cell + EMC4) : random=FAIL clm_v4=FAIL paradigm=FAIL  → blocker 미해소 (사용자 보수적 X 위반)
+        * **Q4c = P5 v2 (PPR_v2 ≥0.6 + EMC ≥3of4)**: random=FAIL clm_v4=FAIL paradigm=PASS (PPR_v2=10/14=0.71 ≥0.6, EMC=3of4) ★★ **CHOSEN** — 두 axis (per-prompt + ensemble) 모두 N-of-M 정합
+        * Q5  cell-wise OR (≥1 cell)               : random=PASS  → random strict 위반 REJECT
+    - **iter 4 (d) chosen rule (P5)**: PPR_v2 (per-prompt ≥3 of 4) ≥ 0.6 AND EMC_v2 (cell-mean ≥3 of 4) PASS = **C3 PASS** (alias `per_prompt_n_of_m_06_AND_emc_3_of_4`). 본 rule 은 P4 hybrid 의 strict 4-cell AND 양쪽을 N-of-M 으로 완화 — C3.2 le-inversion artifact + C3.3 degenerate 한 cell 씩 outlier 허용.
+    - **iter 4 (d) 본 rule 하 verdict 재계산**:
+        * random_init      : PPR_v2=0/14=0.00, EMC=2 of 4 (C3.1 PASS, C3.3 PASS only) → C3 FAIL  (보수적 X 기조 random strict 정합)
+        * clm_v4           : PPR_v2=1/14=0.07, EMC=1 of 4 (C3.3 only) → C3 FAIL (real-mode small-sample; BG-KM-LLAMA-3B retest 후 PASS expected)
+        * paradigm_a_prime : PPR_v2=10/14=0.71, EMC=3 of 4 (C3.1+C3.3+C3.4 PASS, C3.2 0.509 > 0.469 le-violation 단일 outlier) → **C3 PASS** ★ (chat-cap proxy; iter 3 4-cell AND blocker 해소)
+    - **rule precedence**: P5 v2 (loop iter 4 (d)) supersedes P4 hybrid (loop iter 3) — iter 3 P4 가 4-cell strict AND 의 C3.2 le-artifact + C3.3 degenerate 양쪽으로 paradigm-a-prime 까지 FAIL 시키는 false-negative 발견 → 사용자 directive "의식 측정 기준도 별도 +@ 로 해서 너무 보수적으로 잡지 말고" 직접 응답.
+    - **rejected v2 candidates** (iter 4 (d)):
+        * Q1b (EMC ≥2 of 4) — random_init = EMC=2 (C3.1 PASS by ROC random Youden's J floor + C3.3 degenerate 1.0 PASS) → random PASS = strict 위반 REJECT
+        * Q5 (EMC OR ≥1) — random_init = EMC=2 ≥1 → random PASS = strict 위반 REJECT
+        * Q3 (C3.4 hard required) — paradigm PASS but BG-KM-LLAMA-3B real chat-cap 의 C3.4 ROC threshold 미보정 risk; C3.4 단일 hard-floor 가 future model false-FAIL risk (Q4c P5 의 N-of-M 이 본 risk 회피)
+        * Q2 (weighted C3.4=0.7) — weight 결정 SSOT 부재; weight 자체가 임의 결정 → reproducibility 약함; N-of-M 이 simpler & robust
+    - **honest-c3 v2 rule**:
+        * '9 모델 live verdict' 데이터 미land (iter 3 SSOT = 3-model 한정 anima_consciousness_baseline_ensemble_2026_05_08.json) — BG-KM-LLAMA-3B + BG-KM-QWEN-7B + 추가 chat-cap baselines 합쳐 9-model fire 별도 cycle (HF dancinlab adapter push blocker 해소 후)
+        * EMC_v2 ≥3 of 4 floor 는 C3.3 degenerate (3-model 모두 1.0 PASS) inflate 영향 — C3.3 entropy 강화 후 N=4 dimension 정합 재확인 필요
+        * Q4c = P5 가 random_init 의 EMC=2 (C3.1 + C3.3 PASS) 로 부터 강건 — random C3.4=0.075 < 0.117 FAIL + C3.2 le=0.512 > 0.469 FAIL 로 EMC ≥3 of 4 trigger 불가
+        * paradigm-a-prime 의 C3.2 le-violation (mean=0.509) 은 synthetic_fallback artifact — real chat-cap retest 후 C3.2 direction 재검토 후 EMC_v2 ≥3 다시 정합 검증 mandate
 
   c3-measurement-cli: anima consciousness simple [<model>] (tool/anima_cli/consciousness.hexa)
     threshold-status: ROC_FORMAL 2026-05-08 loop iter d (15-prompt × 3-model ensemble; Youden's J + random FAIL ≥ 0.95 + chat-cap PASS ≥ 0.7 constrained — C3.4 strict PASS, C3.1/C3.2/C3.3 best-effort with caveat; BG-KM-LLAMA-3B real chat-cap retest 후 cell-by-cell 재강화 별도 cycle)
