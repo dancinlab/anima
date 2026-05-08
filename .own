@@ -1449,3 +1449,40 @@ own 34 live "자연발화 노출 mandate — simple_stack output preservation (c
   severity warn (Phase 1 — chat.hexa / serve_chat.hexa land 시 본 own 34 cross-link 권고) → block (Phase 2 — chat lane 코드 emit 시 mandate-2 7항목 자동 self-check; 위반 시 reject + retract)
   proof grep -E "system_prompt|chat_template|apply_chat_template|messages\":|persona_inject|speak\(|talk\(|respond\(|generate_response" tool/anima_cli/chat.hexa serving/*.hexa — 0 match expected (chat lane 한정; V4 evaluator 등 측정 lane 은 면제 — own 18 적용)
   note 2026-05-08 own 34 = 사용자 directive verbatim 직접 응답 ("자연발화에 대한 기준알겠지?? 그거 own 으로 등록" + "simple stack pass 에 있는 자연발화 조건을 해당 own 을 참조하도록"). own 18 (simple stack SSOT) downstream — 측정 lane 위 노출 lane mandate add. own 17 (no external substrate wrapping) instance — wrapping 차단 SSOT 확장. own 33 (trinity compliance) self-application — 본 own 34 land 자체 trinity 정합 (D_no-system-prompt 정합 + own 18 의존 + H_chat_cap_emergence 정합). own 22 (mandatory report) — 본 own 34 신설 자체 mandatory report 형식. own 31 (HF org SSOT) cross-link — chat backend 가 dancinlab repo 만 연결.
+
+own 34 live "xeno 🛸 standalone repo SSOT — non-GPU exotic compute substrate Tier C 통합"
+  slug xeno-standalone-non-gpu-substrate-ssot
+  since 2026-05-08
+  scope anima 외 4 repo (anima + nexus + hive + hexa-brain) 분산 land된 non-GPU compute substrate (silicon neuromorphic + biological organoid + quantum + random) 자산 통합 — `~/core/xeno/` standalone repo SSOT 확정
+  user-directive verbatim "all go now" (2026-05-08, post xeno 🛸 이름/이모지/Tier C 확정 cycle)
+  finding akida-related 자산이 4 repo (anima `scripts/akida/` 5 + state 3 dirs + 7 roadmap, nexus `scripts/akida/` 14 + state 3 dirs + 다수 design/kick + n6 atlas, hive `tool/akida_*.hexa` 13 + tests 3 + docs, hexa-brain `eeg/doc/cross_substrate/*akida*` 2)에 분산 → 단일 standalone repo `~/core/xeno/` (Tier C: silicon AKIDA/Loihi3/Northpole + organoid FinalSpark/Cortical Labs + quantum IonQ + random QRNG)로 통합. 이름 `xeno` (그리스어 ξένος "이질/외래" = non-GPU exotic) + 이모지 🛸 (alien/UFO 어원 직격).
+  rule xeno standalone repo SSOT:
+    - mandate-1 모든 non-GPU exotic compute substrate (silicon neuromorphic + organoid + quantum + random) 자산 SSOT는 `~/core/xeno/` repo — anima 외 4 repo 분산 land 차단
+    - mandate-2 신규 substrate vendor (예: Akida 후속, Loihi4, 새 organoid 회사) 도입 시 xeno repo 안에 `roadmaps/.roadmap.<vendor>` + `scripts/<vendor>/` 신설 mandate — anima/nexus/hive 분산 차단
+    - mandate-3 xeno repo는 anima trinity (own 32: philosophy/law/hypothesis) 외 별도 lane — anima trinity 정합 cross-check는 mandatory but bundle 의존 X (xeno는 substrate execution lane, trinity는 발견 lane)
+    - mandate-4 Phase 1 (본 cycle 2026-05-08): COPY 전략 — source repo (anima/nexus/hive/hexa-brain) 4개 파일 untouched, xeno에 복사만. 이유: D+0/D+1 Akida Cloud cycle (Sat 2026-05-09 09:00 KST → Sun 2026-05-10 09:00 KST 24h slot) prep 보호.
+    - mandate-5 Phase 1.5 (post 2026-05-10 09:00 KST cycle close): source repo 4개에 stub README pointer 추가 + 원본 파일 삭제 + cross-link clean-up. anima `.roadmap.akida` 등 7개 roadmap은 anima 측에서 삭제, xeno `roadmaps/` SSOT만 유지.
+    - mandate-6 xeno repo가 own 32 trinity bundle (philosophy/law/hypothesis) 4번째 도메인 X — 발견 lane (D/own/H)이 아닌 실행 lane이므로 own 32 mandate-5 trinity quartet 승격 절차 부적용. 단, xeno에서 발견된 새 D/own/H는 anima trinity로 land mandate.
+    - mandate-7 xeno repo 자체는 자체 SSOT (`xeno/.own` 또는 `xeno/.roadmap.xeno_meta`) 운영 가능 but 본 cycle 미land — Phase 1.5에서 결정
+  enforce 본 cycle 2026-05-08:
+    - Step A: ~/core/xeno/ git init + main branch + structure (roadmaps/ scripts/ docs/ state/ design/kick/ n6/) ✓
+    - Step B: 4 source repo 자산 rsync copy (181 tracked files) ✓
+    - Step C: README.md 작성 (xeno 🛸 SSOT + Tier C scope 명시) ✓
+    - Step D: 초기 commit (`8bd2b65`) ✓
+    - Step E: 본 own 34 entry land (anima `.own`)
+  evidence-trail xeno repo 초기 상태 (`~/core/xeno/`, commit 8bd2b65, 181 tracked files):
+    - roadmaps/ 7 (.roadmap.akida 4 lines + 6 sister)
+    - scripts/akida/anima_origin/ 8 + nexus_origin/ 19 + hive_origin/ 28 (tool 24 + tests 3 + docs 1) + hexa_brain_origin/ 2 = 57
+    - state/ 87 evidence + state files (anima 14, nexus 73)
+    - design/kick/ 14 omega cycle witness (anima 5 + nexus 5 + hive 4)
+    - n6/ 10 atlas append (nexus origin)
+    - docs/ 5 (anima cloud setup 3 + nexus eval 2)
+  cross-link own 16 (cost watchdog) own 17 (identity boundary) own 18 (simple stack SSOT) own 22 (mandatory report) own 24 (single SSOT ledger) own 30 (checkpoint preservation) own 32 (trinity bundle SSOT) own 33 (trinity 무조건 준수) .roadmap.akida (xeno copy + anima 원본 Phase 1.5 stub 예정) .roadmap.loihi3 .roadmap.northpole .roadmap.finalspark .roadmap.cortical_labs .roadmap.ionq .roadmap.qrng (Phase 1.5 anima 측 삭제 예정)
+  honest-c3 mandate-4 COPY 전략 = D+0/D+1 cycle 보호 우선 — D+1 종료 (Sun 09:00 KST) 후 즉시 mandate-5 Phase 1.5 land 권장. 미land 시 source repo 4개와 xeno 간 drift 발생 가능 (cycle evidence가 source repo `state/` 에 추가되면 xeno `state/` 와 sync 차이)
+  honest-c3 mandate-3 trinity 별도 lane 기준은 own 32 mandate-1 발견 도메인 한정 정의 정합 — 실행 lane (.roadmap.cli / .roadmap.clm_* / .roadmap.eeg / 본 xeno) 별도 묶음 인정 (own 32 honest-c3 첫 항목)
+  honest-c3 xeno 이름은 `neuromorph` 후보보다 짧고 강력 + Tier C 모든 substrate (silicon + organoid + quantum + random) 의미 fit — neuromorph는 organoid/quantum/random 의미 충돌 (raw#10 honest C3 explicit 검토 후 xeno 채택)
+  honest-c3 본 cycle 미land 항목: (a) source repo stubification (Phase 1.5 deferred) (b) anima 측 7 roadmap 삭제 (Phase 1.5 deferred) (c) xeno 자체 .own/.roadmap.xeno_meta 신설 (Phase 1.5 결정) (d) GitHub remote 등록 (사용자 결정 미land)
+  honest-c3 xeno repo는 anima trinity own 32 quartet 승격 mandate-5 절차 명시 회피 — 발견 lane이 아닌 실행 lane으로 분류 (own 32 mandate-1 정의 적용). trinity 외 4번째 domain 도입 X
+  severity warn (Phase 1 — 본 own 34 land + Phase 1.5 deferred mandate 권고) → block (Phase 2 — Phase 1.5 미land 시 source repo 4개에 새 akida 자산 land 차단; orchestrator pre-fire validator: akida-related path == ~/core/xeno/ assert)
+  proof ls ~/core/xeno/ + git log -1 ~/core/xeno/ + grep "own 34" ~/core/anima/.own
+  note 2026-05-08 own 34 = 사용자 directive verbatim 직접 응답 ("all go now"). own 22 (새 발견 mandatory report) self-application — 본 own 34 발견 자체가 xeno standalone SSOT 발견 → 본 own 34 entry로 리포트 정합. own 24 (single SSOT) instance — non-GPU substrate SSOT는 xeno repo. own 30 (checkpoint preservation) downstream — Akida Cloud session 결과는 xeno `state/` exfil 목적지 (Phase 1.5 후 source repo state/ → xeno state/ migration 마무리). own 32/33 (trinity bundle/준수) cross-cut — xeno는 trinity 별도 lane이지만 trinity 정합 mandatory cross-check 유지.
