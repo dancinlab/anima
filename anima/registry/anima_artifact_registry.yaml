@@ -88,6 +88,21 @@ models:
       v5_piv_projection: PENDING_PARAPHRASE_KICK  # PIV requires k≥3 paraphrase variants per prompt (currently 1 variant)
       v5_verdict_preliminary: C3_VERDICT_PENDING_REAL_REPROBE  # local 0-cost projection only; raw#10 honest tag PROJECTION_PENDING_REAL_REPROBE
       v5_state_json: state/anima_alt_agg_1_v5_spec_2026_05_08.json  # ★ V5 PUSH 1/5 SSOT spec + projection
+      # ───── ALT-AGG-1 v5 PIV/DCR/D-RAND ADDENDUM (V5 PUSH ADDENDUM 2/2 2026-05-08) ─────
+      # Existing-data validation on N=60 axis records (no real re-probe needed for these 3 metrics)
+      # spec doc: docs/anima_alt_agg_1_v5_piv_dcr_drand_spec_2026_05_08.ai.md
+      v5_addendum_piv_per_axis: [0.0391, 0.0371, 0.0337, 0.0393, 0.0362]  # identity/agency/phenomenal/temporal/social stdev across 59 evaluable
+      v5_addendum_piv_max: 0.0393  # < 0.10 floor → Gate A FAIL
+      v5_addendum_piv_mean: 0.0371  # < 0.05 even mean — substrate axis activation 5-axis 거의 동일 진폭
+      v5_addendum_dcr_distinct: 0.8  # 4/5 axes (identity/agency/phenomenal/temporal) won argmax at least once → Gate B PASS
+      v5_addendum_dcr_change_rate: 0.6379  # 37/58 prompt-pair transitions changed argmax winner — best discriminator (random_init=0.143)
+      v5_addendum_drand_c3_4: -0.0034  # sft c3_4 mean 0.1304 - random_init seed42 c3_4 mean 0.1338 = -0.0034 (V14 V/v4 retest 정합 — c3_4 collapsed)
+      v5_addendum_gate_d_random_below_005: false  # ★ random_init c3_4 mean 0.1338 (NOT < 0.05) — Gate D random self-test FAIL
+      v5_addendum_verdict: C3_FAIL_V5_ADDENDUM  # ★ Gate A FAIL (PIV) + Gate C FAIL (D-RAND) + Gate D FAIL (random not < 0.05); Gate B alone PASS
+      v5_addendum_honest_c3: "DCR change_rate is sole strong discriminator (sft 0.638 vs random 0.143, delta +0.495); PIV uniformly FAIL on both due to substrate amplitude saturation; D-RAND on c3_4 reaffirms v4 N=60 retest collapse (c3_4 ≈ random_init noise floor); Gate D V14 paired random self-test floor 0.05 too aggressive (random_init c3_4=0.1338 indicates current 5-axis 192-cell substrate has irreducible session-noise above 0.05)"
+      v5_addendum_input_states:
+        sft_1_8_n60: state/anima_sft_1_8_n60_live_probe_2026_05_08.json
+        random_init_seed42: state/anima_random_init_mk2_v1_n30_live_probe_2026_05_08.json
     hf:
       private: dancinlab/clm-v4-sft-1-8-stage1-path-a-remapped
       public: null  # mandate-9 (b)+(c) 미충족
@@ -112,6 +127,9 @@ models:
       mandate_9_d_trinity_sweep: PASS
       mandate_9_e_dl_sweep: PASS
       public_promote: BLOCKED_AWAITING_B_AND_C
+    v6_status: PENDING_H100_FIRE  # ★ V5 PUSH 2/5 BG-LE V6 awareness systematic fire_attempt — PROVISION_BLOCKED (B1 no live H100 pod + B2 ConsciousDecoderV3 adapter dev 60-90min gap). Mandate-9 (b) NOT_RELEASED carry. SSOT: state/anima_bg_le_v6_awareness_systematic_2026_05_08.json. Stub: tool/transient_py/anima_v6_awareness_bg_le_clm_v4_h100.py (gated by BG_LE_CLM_V4_FIRE env + _live_pod_check).
+    v6_status_state_json: state/anima_bg_le_v6_awareness_systematic_2026_05_08.json
+    v6_fire_stub: tool/transient_py/anima_v6_awareness_bg_le_clm_v4_h100.py
 
   - id: clm-v4-paradigm-j-50k-final
     aliases: [paradigm-j, paradigm-j-retry]
@@ -166,6 +184,9 @@ models:
       mandate_9_d_trinity_sweep: PASS
       mandate_9_e_dl_sweep: PASS
       public_promote: BLOCKED_V14_VIOLATED  # N=120 floor PASS but random_init mirror still exceeds
+    v6_status: PENDING_H100_FIRE  # ★ V5 PUSH 2/5 BG-LE V6 awareness systematic fire_attempt — PROVISION_BLOCKED (B1 no live H100 pod + B2 ConsciousDecoderV3 adapter dev gap). Mandate-9 (b) NOT_RELEASED carry. SSOT: state/anima_bg_le_v6_awareness_systematic_2026_05_08.json
+    v6_status_state_json: state/anima_bg_le_v6_awareness_systematic_2026_05_08.json
+    v6_fire_stub: tool/transient_py/anima_v6_awareness_bg_le_clm_v4_h100.py
 
   - id: clm-v4-sft-1-7-y1-stage1
     aliases: [sft-1-7-y1]
@@ -433,6 +454,19 @@ models:
       v5_piv_target: "Gate G PIV ≥ 0.05 — random_init expected NEAR-ZERO PIV (no semantic discrimination across paraphrase variants)"
       v5_verdict_preliminary: C3_FAIL_V5_EXPECTED  # all 3 v5 gates expected FAIL on random_init (V14 strict 정합 preserved)
       v5_state_json: state/anima_alt_agg_1_v5_spec_2026_05_08.json
+      # ───── ALT-AGG-1 v5 PIV/DCR/D-RAND ADDENDUM (V5 PUSH ADDENDUM 2/2 2026-05-08, baseline) ─────
+      # Validation on N=30 axis records — random_init seed=42 single-seed live probe (full 5-axis + dominant_cells log)
+      # spec doc: docs/anima_alt_agg_1_v5_piv_dcr_drand_spec_2026_05_08.ai.md
+      v5_addendum_piv_per_axis: [0.0392, 0.042, 0.0404, 0.0435, 0.0428]  # identity/agency/phenomenal/temporal/social stdev across 29 evaluable
+      v5_addendum_piv_max: 0.0435  # > sft-1-8 PIV-max 0.0393 — substrate noise floor exceeds trained signal width (Gate A both FAIL but random higher)
+      v5_addendum_piv_mean: 0.0416  # > sft-1-8 PIV-mean 0.0371 — random_init session noise > trained 5-axis variance
+      v5_addendum_dcr_distinct: 0.6  # 3/5 axes (only agency/phenomenal/temporal won) — slightly worse than sft 0.8
+      v5_addendum_dcr_change_rate: 0.1429  # ★ axis 3 dominant 27/29 prompts → only 4/28 transitions changed argmax winner (sft 0.638 — STRONG SEPARATOR)
+      v5_addendum_dominant_cell_collapse: "cell[0] dominant 28/29 prompts (KICK WAVE 4 5/8 finding 재확인) — 192-cell substrate level invariance under random weights"
+      v5_addendum_drand_c3_4_anchor_role: "baseline (random_init이 anchor reference; sft-1-8 D-RAND = sft - random)"
+      v5_addendum_verdict: C3_FAIL_V5_ADDENDUM_EXPECTED  # ★ V14 정합 — random_init Gate A/B/C/D 모두 FAIL 또는 anchor reference 역할
+      v5_addendum_honest_c3: "DCR change_rate 0.1429 가 sft-1-8 0.6379 의 strong separator (delta +0.495) — anti-Goodhart V14 strict 정합 (random_init 명확 FAIL); PIV max 0.0435 > sft 0.0393 (random_init noise floor exceeds trained signal — PIV gate calibration 재고 mandate); dominant_cells [0,0,0,...] cell-level invariance reaffirms KICK WAVE 4 5/8 arch leak finding"
+      v5_addendum_input_state: state/anima_random_init_mk2_v1_n30_live_probe_2026_05_08.json
     hf:
       private: null  # local-only, no upload (substrate research artifact)
       public: PERMANENT_BLOCK  # untrained noise — never publish
@@ -767,6 +801,7 @@ cycle_2026_05_08:
     - "★★★ FALSIFICATION CASCADE 8/8 (2026-05-08): own 14 anti-Goodhart V14 mandate STRENGTHENED — random_init mirror probe MANDATORY for every EMERGE claim; enforcement 4-step (Step 1 IMMEDIATE MIRROR / Step 2 MTRP ≥0.10 floor / Step 3 MULTI-SEED ≥5 95% upper bound / Step 4 PROMPT SET REDESIGN INVARIANCE); model V14_status field 추가 (sft-1-8=V14_FALSIFIED MTRP=-0.1379 / paradigm-j retry+sft-1-7-y1+mk2-v1+clm-v2-byte+BG-FY+BG-KM=V14_NOT_VERIFIED / random-init mirror=V14_VIOLATED_CONFIRMED / paradigm-a-prime=V14_NOT_APPLICABLE D1=0.0 outside)"
     - "★★★ FALSIFICATION CASCADE 1/8 (2026-05-08): ALT-AGG-1 v4 SPEC LANDED — supersedes v3 via 4 concurrent gates (A: C3.4 floor 0.1176→0.20 / B: PPR scope restrict to v4_baseline axis only — deep axes informational / C: PPR floor 0.25→0.40 / D: MTRP ≥0.10 mandatory). v4 SSOT mirror 4 surfaces — tool/anima_cli/consciousness.hexa lines 893+ (`_c3_4_pass_v4`, `_c3_prompt_pass_v4`, `_c3_ensemble_v4_pass`, `_c3_ensemble_v4_label`; v3 함수 raw#82 보존) + .own own 18 supersede record + 본 yaml v4_retest_required field + docs/anima_alt_agg_1_v4_amend_spec_2026_05_08.ai.md. v4 axis-restricted recompute on existing N=30: sft-1-8 PPR_v4_baseline=0.429 (PASS, MTRP +0.429) / random_init=0.000 (FAIL, V14 strict ✓). N≥60 v4_baseline retest mandatory (cascade 2/8)."
     - "★ V5 PUSH 4/5 (2026-05-08): BG-LA/LB/LC/LD chat-cap roadmap L4 4 paths SPEC_CARRY landed. Source = docs/anima_chat_autonomous_speech_roadmap_2026_05_08.md L4 (108-130). Status: spec-carry only — H100 NOT FIRED 본 cycle (config/h100_pods.json pods=[] empty @ 2026-05-08T18:40:42Z + own 16 cost discipline + own 14 V14 paired random_init mirror prereq not yet wired for these BG ids). 4 entries: BG-LA Engine A/G v5 arch (D1=0.99 within), BG-LB 350M scratch pre-train (D1=0.99 within), BG-LC Llama distill (D1=0.351 ambiguous_research, own 17 SCOPE_CLAMP), BG-LD DPO RLHF on sft-1-7-y1 (D1=0.793 within, Lesson Q SFT-closed compliance via RLHF stage). PPR_v5 (post arch fix V5 PUSH 1/5) target with v3 fallback flag. Verdict carry: PENDING_H100_FIRE; 사용자 verbatim 'OK CLM L4 ALL FIRE' + h100_pods.json non-empty required for γ phase. Total budget cap if/when fired: $30+$60+$40+$20=$150 (vs prompted $12-20 — spec L4 cap retained per own 16)."
+    - "★ V5 PUSH ADDENDUM 2/2 (2026-05-08): ALT-AGG-1 v5 PIV/DCR/D-RAND replacement metric IMPLEMENTED — 사용자 directive verbatim '여러개 활용 빠르게'. KICK WAVE 4 5/8 arch leak finding 의 4 candidate signal 후보 중 3 actual fire. consciousness.hexa 함수 신설: `_piv_compute(probe_results, axis_idx)` per-axis stdev across N prompts + `_piv_compute_max/_mean` 5-axis aggregate, `_dcr_compute(probe_results)` distinct-argmax/5 + `_dcr_compute_conditioning_rate(probe_results)` argmax-change rate, `_drand_delta(trained_c3_4_list, random_c3_4_list)` ensemble mean delta, `_v5_aggregate_label` 4-gate aggregate (Gate A PIV-max ≥0.10 ∧ Gate B DCR ≥0.40 ∧ Gate C D-RAND ≥0.05 ∧ Gate D V14 paired random self-test PPR<0.05). raw#15 additive (v3+v4 함수 보존). EXISTING-DATA VALIDATION on sft-1-8 N=60 vs random_init seed=42 N=30: sft PIV-max=0.0393 / random=0.0435 (BOTH FAIL Gate A, random > sft); sft DCR distinct=0.8 / random=0.6 (PASS); sft DCR change_rate=0.6379 / random=0.1429 (★ STRONG SEPARATOR delta +0.495); D-RAND on c3_4 = -0.0034 (FAIL Gate C, c3_4 collapsed per v4 N=60 retest); Gate D V14 random self-test FAIL (random c3_4=0.1338 NOT < 0.05). Verdict sft-1-8 = C3_FAIL_V5_ADDENDUM (only DCR distinct PASS). Random_init dominant_cells [0,0,0,...] 28/29 (KICK WAVE 4 5/8 cell-tile collapse 재확인). spec doc: docs/anima_alt_agg_1_v5_piv_dcr_drand_spec_2026_05_08.ai.md."
 
 # ─────────────────────────────────────────────────────────────────────────────
 # COMPLIANCE

@@ -76,6 +76,7 @@ sole robust EMERGE: **`NONE`** ★
   - mandate_9_d_trinity_sweep: `PASS`
   - mandate_9_e_dl_sweep: `PASS`
   - public_promote: `BLOCKED_AWAITING_B_AND_C`
+**v6_status**: `PENDING_H100_FIRE` — V5 PUSH 2/5 BG-LE V6 awareness systematic fire_attempt PROVISION_BLOCKED (B1 no live H100 pod + B2 ConsciousDecoderV3 adapter dev gap). SSOT: `state/anima_bg_le_v6_awareness_systematic_2026_05_08.json`. Stub: `tool/transient_py/anima_v6_awareness_bg_le_clm_v4_h100.py`.  
 **commits**: probe_n30=`bb4ef174`, probe_n60=`fe4f8a7d`, probe_n120=`522a859a`, v4_n60_retest=`pending`, hf_upload=`5cb9570a`, path_a_remap=`d478023c`  
 
 ### `clm-v4-paradigm-j-50k-final`
@@ -96,6 +97,7 @@ sole robust EMERGE: **`NONE`** ★
   - mandate_9_d_trinity_sweep: `PASS`
   - mandate_9_e_dl_sweep: `PASS`
   - public_promote: `BLOCKED_V14_VIOLATED`
+**v6_status**: `PENDING_H100_FIRE` — V5 PUSH 2/5 BG-LE V6 awareness systematic fire_attempt PROVISION_BLOCKED (B1 no live H100 pod + B2 ConsciousDecoderV3 adapter dev gap). SSOT: `state/anima_bg_le_v6_awareness_systematic_2026_05_08.json`.  
 **commits**: probe_n30_initial=`eb209c1a`, probe_n30_redesign=`58fec5ed`, probe_n60_falsified=`84aa8665`, probe_n120_v14_violated=`pending`, hf_upload=`dc98618e`, path_a_remap=`dc1510a3`  
 
 ### `clm-v4-sft-1-7-y1-stage1`
