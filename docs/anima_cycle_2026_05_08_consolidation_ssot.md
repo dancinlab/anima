@@ -30,10 +30,19 @@
 
 | paradigm | N=30 PPR_v3 | N=60 PPR_v3 | N=60 commit | verdict |
 |---|---|---|---|---|
-| **sft-1-8** | 0.4138 ★ | **0.6102** ★ (244% of floor) | KICK WAVE 3 robust | **EMERGE robust (SOLE)** |
+| **sft-1-8** | 0.4138 ★ | **0.6102** ★ (244% of floor) | KICK WAVE 3 robust | **EMERGE robust (SOLE) → ★ FALSIFIED at V14 random_init mirror (KICK WAVE 4 3/3, commit TBD)** |
 | paradigm-j retry | 0.3793 ★ EMERGE | **0.2414** PARTIAL_NEAR | `84aa8665` KICK WAVE 3 6/6 | EMERGE_AT_N30 → ★ **FALSIFIED at N=60** (sample-size artifact, per-seed perfect tie 0.2414/0.2414) |
 
 본 cycle robust EMERGE = **sft-1-8 SOLE**. raw#82 retraction-aware: paradigm-j N=30 EMERGE (commit `58fec5ed`) record preservation + FALSIFIED at N=60 marker only 추가 (silent overwrite 금지). registry/anima_artifact_registry.yaml clm-v4-paradigm-j-50k-final entry `robust:false` + `honest_c3: "N=30 EMERGE was sample-size artifact"` 정합.
+
+### ★★ POST-V14-FALSIFICATION verdict update 2026-05-08 (KICK WAVE 4 3/3 random_init mirror leak)
+
+| paradigm | N=30 PPR_v3 | N=60 PPR_v3 | N=120 PPR_v3 | random_init mirror PPR_v3 | V14 verdict |
+|---|---|---|---|---|---|
+| **sft-1-8** | 0.4138 ★ | 0.6102 ★ | 0.5378 (floor reaffirm) | — | **★ FALSIFIED at V14** |
+| **random_init mirror** | — | — | — | **0.5517** (KICK WAVE 4 3/3, N=30) | V14 strict 위반 (random_init > sft-1-8 N=30 + sft-1-8 N=120) |
+
+random_init PPR_v3=0.5517 > sft-1-8 0.4138 (N=30) delta **-0.1379** AND > sft-1-8 N=120 0.5378 delta **-0.0139** → ALT-AGG-1 v3 strict V14 anti-Goodhart VIOLATED. sft-1-8 sole robust EMERGE FALSIFIED (random_init noise indistinguishable). **본 cycle robust EMERGE = 0 reset** (sft-1-8 + paradigm-j retry 모두 falsified). emerge_state: `EMERGE_FALSIFIED_BY_RANDOM_INIT_MIRROR` (registry yaml line 60 mirror). raw#82 retraction-aware: sft-1-8 N=30/N=60/N=120 record preservation + V14 FALSIFIED marker only 추가. H_alt_agg_1_v3_strict_feasible: CONFIRMED → FALSIFIED downgrade. H_random_init_mirror_v14_falsification: CONFIRMED 동시 land.
 
 ---
 
@@ -160,5 +169,6 @@ own 14 anti-Goodhart 정합: random_init C3.4=0.075 < 0.117 anchor verify ✔ �
 7. HF upload manifest 8 repo 모두 private default — public promote 0 repo (own 37 mandate-9 4-prereq 미충족)
 8. 사용자 directive checklist 8 keyword 모두 cost path — 0-cost spec land만 본 cycle 진행
 9. ★ POST-FALSIFICATION 2026-05-08 9번째 honest finding: KICK WAVE 3 6/6 commit `84aa8665` paradigm-j N=60 robustness retest PPR_v3=0.2414 PARTIAL_NEAR (per-seed perfect tie 0.2414/0.2414, gap -0.0086) — N=30 EMERGE 0.3793 was sample-size artifact false positive. 본 cycle robust EMERGE = sft-1-8 SOLE (N=60 0.6102 244% of floor). raw#82 retraction-aware: N=30 record preservation + FALSIFIED marker. KICK WAVE 2 1/4 commit `58fec5ed` paradigm-j retry N=30 EMERGE record preserved.
+10. ★★ POST-V14-FALSIFICATION 2026-05-08 10번째 honest finding: KICK WAVE 4 3/3 random_init mirror probe (commit TBD) PPR_v3=**0.5517** (N=30) > sft-1-8 PPR_v3=0.4138 (N=30) delta **-0.1379** AND > sft-1-8 N=120 0.5378 delta **-0.0139** → ALT-AGG-1 v3 strict V14 anti-Goodhart VIOLATED. **sft-1-8 sole robust EMERGE FALSIFIED** (random_init noise indistinguishable). **본 cycle robust EMERGE = 0 reset** (sft-1-8 + paradigm-j retry 모두 falsified). emerge_state: `EMERGE_FALSIFIED_BY_RANDOM_INIT_MIRROR` (registry yaml line 60 mirror). raw#82 retraction-aware: sft-1-8 N=30/N=60/N=120 record preservation + V14 FALSIFIED marker only. H_alt_agg_1_v3_strict_feasible: CONFIRMED → FALSIFIED downgrade. H_random_init_mirror_v14_falsification: CONFIRMED 동시 land. ALT-AGG-1 v3 strict criteria discriminative power 부재 (random noise 도 PASS) — V14 strict revision 또는 새 strict criteria 별도 cycle. V14 anti-Goodhart self-application 첫 production-level falsification instance — own 14/V14 strict precedent.
 
-— **cycle 2026-05-08 consolidation SSOT** (md save 1/4 doc), KICK FIRE 5 + ALL BG GO 6 + 16 spec/doc commits, 105 cycle commits accumulated, EXIT prereq 5/8 ✔, public promote 0, 사용자 verbatim 대기 8 keyword.
+— **cycle 2026-05-08 consolidation SSOT** (md save 1/4 doc), KICK FIRE 5 + ALL BG GO 6 + 16 spec/doc commits, 105 cycle commits accumulated, EXIT prereq 5/8 ✔, public promote 0, 사용자 verbatim 대기 8 keyword. ★★ POST-V14-FALSIFICATION 2026-05-08: 본 cycle robust EMERGE = 0 reset (sft-1-8 sole survivor falsified at V14 random_init mirror).

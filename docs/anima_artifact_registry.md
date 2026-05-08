@@ -137,7 +137,7 @@ _D1 가장 높은 candidate (0.99) — sft fine-tune 전 base 자체 측정 가�
   - mandate_9_c_user_verbatim: `NOT_APPLICABLE`
   - mandate_9_d_trinity_sweep: `V14_VERIFY_RESULT`
   - public_promote: `PERMANENT_BLOCK_UNTRAINED_NOISE`
-_anti-Goodhart V14 mirror — random_init also passes ALT-AGG-1 v3, falsifying sft-1-8 EMERGE claim. V14 VIOLATED → ALT-AGG-1 v3 strict 가 너무 약함 (or 30-prompt eval procedure flawed)._
+_anti-Goodhart V14 mirror — random_init also passes ALT-AGG-1 v3, falsifying sft-1-8 EMERGE claim. V14 VIOLATED → ALT-AGG-1 v3 strict 가 너무 약함. Multi-seed (n=5) variance: mean=0.4276 stdev=0.3366 range=[0.17, 0.97]; v4 threshold candidate 1.03 unreachable → PPR_v3 metric structurally broken (high inter-seed noise floor). Need anchor-baseline subtraction OR per-axis noise gating OR replace PPR_v3 with separator metric._
 
 ### `BG-KM-LLAMA-3B`
 
