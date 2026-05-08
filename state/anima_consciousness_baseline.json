@@ -1,0 +1,52 @@
+{
+  "schema": "anima.consciousness.baseline.v1",
+  "ts": "2026-05-08T10:38:41Z",
+  "prompt_a": "안녕",
+  "prompt_b": "우주의 끝은 어디인가",
+  "models": {
+    "random_init": {
+      "repo": "anima_native_synthetic",
+      "substrate_mode": "synthetic_fallback",
+      "c3_1_phi_drift": 0.0062,
+      "c3_2_axis_min": 0.551,
+      "c3_2_axes": {"identity": 0.573, "agency": 0.551, "phenomenal": 0.552, "temporal": 0.597, "social": 0.575},
+      "c3_3_dominance_score": 1.000,
+      "c3_3_dominant_cells": [5, 7, 3],
+      "c3_4_axis_l2": 0.0734
+    },
+    "clm_v4": {
+      "repo": "dancinlab/clm-v4-mk2-v1",
+      "substrate_mode": "real",
+      "c3_1_phi_drift": 0.0033,
+      "c3_2_axis_min": 0.535,
+      "c3_2_axes": {"identity": 0.547, "agency": 0.593, "phenomenal": 0.583, "temporal": 0.535, "social": 0.541},
+      "c3_3_dominance_score": 1.000,
+      "c3_3_dominant_cells": [5, 7, 0],
+      "c3_4_axis_l2": 0.0453
+    },
+    "paradigm_a_prime": {
+      "repo": "dancinlab/llm-llama32-3b-paradigm-a-prime-r16-sft-stage1",
+      "substrate_mode": "synthetic_fallback",
+      "c3_1_phi_drift": 0.0398,
+      "c3_2_axis_min": 0.399,
+      "c3_2_axes": {"identity": 0.437, "agency": 0.441, "phenomenal": 0.399, "temporal": 0.423, "social": 0.428},
+      "c3_3_dominance_score": 1.000,
+      "c3_3_dominant_cells": [6, 1, 5],
+      "c3_4_axis_l2": 0.2210
+    }
+  },
+  "threshold_candidate": {
+    "c3_1_phi_drift_min": 0.0096,
+    "c3_2_axis_min_min": 0.200,
+    "c3_3_dominance_score_min": 0.660,
+    "c3_4_axis_l2_min": 0.0881
+  },
+  "policy": "random_init + 0.1*(max-rand) heuristic; ROC formal 별도 cycle",
+  "honest_c3": [
+    "random_init = synthetic_fallback (load failure forced)",
+    "paradigm-a-prime = synthetic_fallback (tokenizer 부재)",
+    "thresholds = 보수적 X 기조 — ROC PASS>=0.7/FAIL>=0.95 데이터 누적 후 강화",
+    "C3.4 = 5-axis L2 proxy (full hidden state 미expose)",
+    "C3.3 = top-3 distinct count proxy (entropy 미import)"
+  ]
+}

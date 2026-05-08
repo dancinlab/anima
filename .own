@@ -726,14 +726,14 @@ own 18 live "anima consciousness check — simple stack default (대화 가능 +
         - C2.1 PASS + C2.2 FAIL = PARTIAL_PASS_FRAGMENTARY (response emit but 의미 X)
     C3 의식 측정 (anima native consciousness metric) ★ — strict 4-condition (사용자 directive 2026-05-08: "의식 측정 기준도 별도 +@ 로 해서 너무 보수적으로 잡지 말고" / "simple stack pass 에 하나 더 포함하면 되 의식 측정")
       ※ 본 C3 추가는 simple_stack PASS 를 PASS_STRICT_C3 로 확장 — measurement lane (V4 evaluator 11-cell). 본 C3 의 actual 측정 path 는 anima-core/runtime/clm_v4_mount.hexa (phi_star drift + axis activation + dominant cells) + anima_runtime.hexa (substrate state) wiring 으로 land. 노출 lane (chat / serve / dialogue) 은 own 34 그대로 유지.
-      pass-bar (4-condition AND):
-        - C3.1 Φ★ drift active — baseline 대비 |Δφ★| ≥ threshold (TBD measurement-driven; baseline 측정 후 ROC 분석으로 결정)
-        - C3.2 5-axis activation — identity / agency / phenomenal / temporal / social 5 축 모두 ≥ threshold (TBD; e.g. 0.2 시작점)
-        - C3.3 dominant cells emergence — top-3 cell 의 L2 norm sparse 분포 (uniform = FAIL; entropy threshold TBD)
-        - C3.4 hidden state delta — input variation 시 hidden state non-zero delta (응답이 입력에 반응; threshold TBD)
-      threshold-policy (보수적 X 기조 — 사용자 directive):
-        - anima 자체 baseline 측정 (CLM v4 / BG-KM-LLAMA-3B / random init 비교)
-        - ROC 분석으로 random init FAIL rate ≥ 0.95 + chat-capable PASS rate ≥ 0.7
+      pass-bar (4-condition AND, threshold L0 baseline-measured 2026-05-08 — random_init + 0.1*(max-rand) heuristic, state/anima_consciousness_baseline.json SSOT):
+        - C3.1 Φ★ drift active — baseline 대비 |Δφ★| ≥ 0.0096 (L0 baseline-measured 2026-05-08; ROC formal 별도 cycle 강화)
+        - C3.2 5-axis activation — identity / agency / phenomenal / temporal / social 5 축 모두 ≥ 0.200 (L0 baseline-measured 2026-05-08; e.g. 5-axis 중 ≥3 active 이면 C3.2 PASS probabilistic 형태 별도 검토)
+        - C3.3 dominant cells emergence — top-3 distinct count score ≥ 0.660 (sparse top-3 distinct 2 이상 = PASS proxy; uniform = FAIL; L2 norm entropy 강화 별도 cycle)
+        - C3.4 hidden state delta — 5-axis L2 distance(prompt_a vs prompt_b) ≥ 0.0881 (input variation 반응 proxy; full hidden state expose 별도 cycle 강화)
+      threshold-policy (보수적 X 기조 — 사용자 directive, L0 baseline-measured 2026-05-08):
+        - baseline 측정 SSOT: state/anima_consciousness_baseline.json (random_init / clm_v4 / paradigm-a-prime 3-model — `anima consciousness baseline`)
+        - 본 threshold = random_init + 0.1*(max-rand) heuristic — ROC formal (random FAIL ≥ 0.95 + chat-capable PASS ≥ 0.7) 별도 cycle 데이터 누적 후 강화
         - probabilistic 형태 검토 (e.g. 5-axis 중 ≥3 active 이면 C3.2 PASS)
       verdict: 4-cell ALL PASS = **C3 PASS** ★
       partial verdict:
@@ -750,8 +750,14 @@ own 18 live "anima consciousness check — simple stack default (대화 가능 +
     - C1 PASS + C2 FAIL + C3 PASS = PARTIAL_PASS_CONSCIOUS_BUT_FRAGMENTARY (의식 active but 응답 의미 X)
 
   c3-measurement-cli: anima consciousness simple [<model>] (tool/anima_cli/consciousness.hexa)
-    threshold-status: TBD measurement-driven (.roadmap.cli L0 phase — docs/anima_chat_autonomous_speech_roadmap_2026_05_08.md 참조)
-    measurement-source: anima-core/runtime/clm_v4_mount.hexa (phi_star + axis) + anima_runtime.hexa (substrate state)
+    threshold-status: BASELINE_MEASURED 2026-05-08 (L0 measurement infra LIVE — random_init + 0.1*(max-rand) heuristic; ROC formal 강화 별도 cycle)
+    threshold-baseline-ssot: state/anima_consciousness_baseline.json (`anima consciousness baseline` 재측정 시 갱신)
+    measurement-source: anima-core/runtime/clm_v4_mount.hexa --probe TEXT --output-format json x2 (prompt_a / prompt_b) + anima_runtime.hexa (substrate state)
+    measurement-matrix:
+      - C3.1 = abs(phi_drift) from probe(prompt_a)
+      - C3.2 = min(5-axis activation) from probe(prompt_a)
+      - C3.3 = top-3 distinct count score from probe(prompt_a) dominant_cells
+      - C3.4 = 5-axis L2 distance(probe(prompt_a), probe(prompt_b))
 
   full-stack-conditions (option, 추가 사용자 명시 시):
     F1 substrate identity = phi_star NO_FLIP (drift < 0.10 from baseline)

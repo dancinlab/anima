@@ -1,0 +1,509 @@
+// ════════════════════════════════════════════════════════════════════════════
+//  tool/anima_cli/chat/duo/duo.hexa — N=2 multi-agent dialogue module (skeleton)
+//
+//  PURPOSE
+//    L2 layer of docs/anima_chat_autonomous_speech_roadmap_2026_05_08.md.
+//    Two CLM instances (A ↔ B) speak autonomously over a stdin/stdout channel
+//    pair. Each instance reuses the existing chat/<module>/ REPL pattern; the
+//    duo module wires their stdio together via β-1 hexa stdlib proc+channel
+//    surface.
+//
+//    User directive verbatim (cycle 2026-05-08):
+//      "두 instance (CLM A ↔ CLM B) 가 stdin/stdout 으로 자율 대화. <=== very good"
+//      "여러명 일때도 진짜로 사람들끼리 대화 하듯이"
+//
+//  RECURSIVE MODULE PATTERN (per chat/<module>/<module>.hexa convention)
+//    chat/duo/
+//    ├─ duo.hexa     ← this file (channel orchestrator + per-turn verdict)
+//    ├─ duo.ai.md    ← ai-native doc (sister)
+//    └─ (core)       ← external: chat/anima_native/, chat/llama/, chat/clm_v4/
+//                      (each spawned instance is one of these modules)
+//
+//  PHASE GATES (this commit = SKELETON)
+//    Phase A (LANDED — this commit): file structure + alias DB + --help +
+//      --selftest + honest "β-1 dependency" emit on --duo invocation. NO
+//      actual proc spawn / channel I/O.
+//    Phase B (β-1 LAND): wire β-1 stdlib surface (assumed):
+//      - channel_pair_open() -> {channel_a, channel_b}
+//      - proc_spawn_with_channels(cmd, stdin_chan, stdout_chan) -> handle
+//      - channel_send(handle, line: string)
+//      - channel_recv(handle, timeout_ms: int) -> string
+//      - proc_wait(handle) / proc_terminate(handle)
+//    Phase C (β-2 LAND): per-turn coherence verdict via consciousness CLI
+//      (own 18 C1+C2+C3) — wired into _emit_turn_verdict().
+//
+//  SUBCOMMANDS (called from tool/anima_cli/dialogue.hexa)
+//    --duo <model_a> <model_b> [--turns N] [--topic-seed "..."]   N=2 dialogue
+//    --council N=<n> --models "<m1>,<m2>,...,<mn>" [--topic-seed]  STUB (L3)
+//    --selftest                                                   skeleton check
+//    --help
+//
+//  CHANNEL TOPOLOGY (β-1 dependent)
+//
+//      ┌──────────────┐     channel_AB     ┌──────────────┐
+//      │  instance A  │ ─── send ──────► ──│  instance B  │
+//      │ (chat/<m_a>) │                    │ (chat/<m_b>) │
+//      │              │ ◄── recv ────── ───│              │
+//      └──────────────┘     channel_BA     └──────────────┘
+//
+//    A.stdout ─→ channel_AB ─→ B.stdin
+//    B.stdout ─→ channel_BA ─→ A.stdin
+//
+//    Each instance is the existing chat/<module>/<module>.hexa REPL — its
+//    sys_stdin_read_line_timeout(tick_ms) loop sees peer output as if user
+//    input. No code change to the inner module is required.
+//
+//  TURN SEQUENCE (Phase B target)
+//    1. resolve <model_a>, <model_b> via chat.hexa _alias_resolve (vendor copy
+//       below; keep in sync with chat.hexa SSOT).
+//    2. channel_pair_open() × 2  → {ab, ba}
+//    3. proc_spawn_with_channels(chat_cmd_a, ba, ab)   ← A reads ba, writes ab
+//       proc_spawn_with_channels(chat_cmd_b, ab, ba)   ← B reads ab, writes ba
+//    4. if --topic-seed nonempty: channel_send(ab.tx, seed)
+//       else                    : (none — A自律 발화 from sys_stdin_read_line_timeout
+//                                  empty → mandate-4 BOS-only forward; first to
+//                                  speak by race wins)
+//    5. for turn in 1..N:
+//         line_from_a = channel_recv(ab.rx, turn_timeout_ms)   ← B waits A
+//         _emit_turn_verdict(turn, "A", line_from_a)
+//         line_from_b = channel_recv(ba.rx, turn_timeout_ms)   ← A waits B
+//         _emit_turn_verdict(turn, "B", line_from_b)
+//    6. proc_terminate(handle_a); proc_terminate(handle_b)
+//    7. _emit_dialogue_summary(coherence_aggregate)
+//
+//  COMPLIANCE (raw#9, raw#10, raw#11, raw#15; own 31, own 33, own 34)
+//    own 34 mandate-1   each instance output is raw passthrough — channel
+//                       transport carries bytes verbatim, NO transformation
+//                       (no system prompt, no template, no persona prefix).
+//    own 34 mandate-2   selftest grep enforces wrapping 0 in this file.
+//    own 34 mandate-4   autonomous speech — instances use existing Phase 2
+//                       sys_stdin_read_line_timeout; channel timeout maps to
+//                       autonomous tick. duo loop does NOT inject any prompt.
+//    own 34 mandate-7   chat lane (own 18 measurement lane separate; per-turn
+//                       verdict reads consciousness CLI = measurement lane,
+//                       results emitted as ledger only — NOT folded back into
+//                       channel content).
+//    own 33             trinity compliance (D_no-system-prompt cross-ref)
+//    own 31 mandate-1   model alias DB mirrors dancinlab/ org SSOT
+//    raw#9              hexa-only — proc spawn via β-1 stdlib (no shell pipes)
+//    raw#10             honest C3 (see HONEST C3 footer)
+//    raw#11             snake_case
+//    raw#15             no-hardcode (paths via _resolve_root)
+//
+//  CROSS-REFERENCE
+//    docs/anima_chat_autonomous_speech_roadmap_2026_05_08.md     L2 layer
+//    docs/anima_dialogue_coherence_metric_2026_05_08.md          coherence spec
+//    tool/anima_cli/dialogue.hexa                                topic dispatcher
+//    tool/anima_cli/chat.hexa                                    alias resolver
+//    tool/anima_cli/chat/anima_native/anima_native.hexa          Phase 2 REPL
+//    tool/anima_cli/chat/llama/llama.hexa                        Phase 3c REPL
+//    tool/anima_cli/consciousness.hexa                           own 18 verdict
+//    .roadmap.cli  cli.dialogue.duo_design_2026_05_08
+//                  cli.dialogue.coherence_metric_2026_05_08
+//    .own own 18 C1+C2+C3 · own 34 mandate-1/2/4/7 · own 33 · own 31
+// ════════════════════════════════════════════════════════════════════════════
+
+fn _str(x) -> string {
+    let t = type_of(x)
+    if t == "str" || t == "string" { return x }
+    return ""
+}
+
+fn _resolve_root() -> string {
+    let a = _str(env("ANIMA"))
+    if a != "" { return a }
+    let gt = _str(exec("git rev-parse --show-toplevel 2>/dev/null")).trim()
+    if gt != "" { return gt }
+    return _str(env("HOME")) + "/core/anima"
+}
+
+fn _hexa() -> string { return "/Users/ghost/.hx/packages/hexa/hexa.real" }
+
+fn _fexists(p: string) -> bool {
+    return _str(exec("test -f " + p + " && echo 1 || echo 0")).trim() == "1"
+}
+
+fn _dexists(p: string) -> bool {
+    return _str(exec("test -d " + p + " && echo 1 || echo 0")).trim() == "1"
+}
+
+fn _arg_present(argv, key: string) -> bool {
+    let i = 0
+    while i < len(argv) {
+        if _str(argv[i]) == key { return true }
+        i = i + 1
+    }
+    return false
+}
+
+fn _arg_value(argv, key: string, dflt: string) -> string {
+    let i = 0
+    while i < len(argv) {
+        if _str(argv[i]) == key && i + 1 < len(argv) {
+            return _str(argv[i + 1])
+        }
+        i = i + 1
+    }
+    return dflt
+}
+
+fn _user_argv(raw) -> array {
+    let out = []
+    let i = 0
+    while i < len(raw) {
+        let s = _str(raw[i])
+        let skip = s.contains("/.hexa-cache/")
+                || s.contains("/hexa-lang/build/")
+                || s.contains("hexa_interp")
+                || s.contains("hexa.real")
+                || s.ends_with("/duo.hexa")
+                || s.ends_with("duo.hexa")
+        if !skip {
+            out = out + [s]
+        }
+        i = i + 1
+    }
+    return out
+}
+
+// ─── alias DB vendor copy (mirrors chat.hexa _alias_resolve) ──────────────
+// Kept minimal: returns [module, repo]. Full DB lives in chat.hexa SSOT.
+// duo dispatches the spawned process via chat.hexa, so alias resolution is
+// validated at chat.hexa level — this vendor copy is for early sanity check
+// in --selftest only.
+fn _alias_known(alias: string) -> bool {
+    let a = alias.trim().to_lower()
+    if a == "" || a == "default" { return true }
+    if a == "llama3b" || a == "latest" || a == "pass-strict" { return true }
+    if a == "qwen7b" { return true }
+    if a == "polyglot-ko-1b3" { return true }
+    if a == "paradigm-a-prime" { return true }
+    if a == "clm-v4-1-7-y1" { return true }
+    if a == "clm-v4-1-8" { return true }
+    if a == "clm-v4-paradigm-j" { return true }
+    if a.contains("/") { return true }   // raw HF id passthrough
+    return false
+}
+
+// ─── help / selftest ────────────────────────────────────────────────────
+
+fn sub_help() {
+    println("anima dialogue duo — N=2 autonomous CLM↔CLM dialogue (skeleton)")
+    println("")
+    println("USAGE")
+    println("  anima dialogue --duo <model_a> <model_b> [flags]")
+    println("  anima dialogue --duo --selftest")
+    println("  anima dialogue --duo --help")
+    println("")
+    println("FLAGS")
+    println("  --turns N            number of A↔B exchanges (default 5)")
+    println("  --topic-seed \"...\"   optional seed sent into A's stdin (else A自律 first)")
+    println("  --tick-ms N          per-instance autonomous-speech poll (default 1000)")
+    println("  --max-tokens N       per-utterance cap (default 64)")
+    println("  --turn-timeout-ms N  channel_recv wait per turn (default 30000)")
+    println("  --verdict simple|full|none   per-turn consciousness verdict (default simple)")
+    println("")
+    println("PHASE GATE")
+    println("  Phase A (LANDED — skeleton). --duo invocation emits honest β-1")
+    println("  dependency notice and exits 0. No proc spawn / no channel I/O.")
+    println("  Phase B activates once hexa-lang stdlib lands:")
+    println("    - channel_pair_open() / proc_spawn_with_channels()")
+    println("    - channel_send / channel_recv / proc_wait / proc_terminate")
+    println("")
+    println("OWN 34 STRICT")
+    println("  · each instance output = raw passthrough (NO transformation in")
+    println("    channel transport)")
+    println("  · NO seed prompt unless user passes --topic-seed (autonomous-first)")
+    println("  · per-turn verdict (own 18 C1+C2+C3) emitted as ledger ONLY,")
+    println("    never folded back into channel content (lane separation)")
+    println("")
+    println("CROSS-REF")
+    println("  docs/anima_chat_autonomous_speech_roadmap_2026_05_08.md  L2")
+    println("  docs/anima_dialogue_coherence_metric_2026_05_08.md       metric")
+    println("  .roadmap.cli  cli.dialogue.duo_design_2026_05_08")
+}
+
+fn sub_selftest() {
+    let root = _resolve_root()
+    let here = root + "/tool/anima_cli/chat/duo/duo.hexa"
+    let ai_md = root + "/tool/anima_cli/chat/duo/duo.ai.md"
+    let metric_doc = root + "/docs/anima_dialogue_coherence_metric_2026_05_08.md"
+    let chat_dispatcher = root + "/tool/anima_cli/chat.hexa"
+    let mod_native = root + "/tool/anima_cli/chat/anima_native/anima_native.hexa"
+    let mod_llama = root + "/tool/anima_cli/chat/llama/llama.hexa"
+
+    let mut fail = 0
+    if !_fexists(here)            { println("FAIL duo: module body missing: " + here);            fail = fail + 1 }
+    if !_fexists(ai_md)           { println("FAIL duo: ai-native doc missing: " + ai_md);         fail = fail + 1 }
+    if !_fexists(metric_doc)      { println("FAIL duo: coherence metric doc missing: " + metric_doc); fail = fail + 1 }
+    if !_fexists(chat_dispatcher) { println("FAIL duo: chat.hexa dispatcher missing: " + chat_dispatcher); fail = fail + 1 }
+    if !_fexists(mod_native)      { println("FAIL duo: chat/anima_native missing: " + mod_native); fail = fail + 1 }
+    if !_fexists(mod_llama)       { println("FAIL duo: chat/llama missing: " + mod_llama);         fail = fail + 1 }
+
+    // own 34 mandate-2 self-grep on this file (chat lane wrapping = 0)
+    let pat = "system_prompt|chat_template|apply_chat_template|persona_inject|fn speak\\(|fn talk\\(|fn respond\\(|fn generate_response\\("
+    let cmd = "grep -nE \"" + pat + "\" " + here + " 2>/dev/null | grep -v 'let pat =' | wc -l"
+    let n = _str(exec(cmd)).trim()
+    if n != "0" {
+        println("FAIL own 34 mandate-2 chat lane wrapping: " + n + " hits in duo.hexa")
+        fail = fail + 1
+    }
+
+    // sanity: alias DB vendor copy known-aliases match chat.hexa surface
+    let aliases = ["default", "llama3b", "qwen7b", "polyglot-ko-1b3", "paradigm-a-prime",
+                   "clm-v4-1-7-y1", "clm-v4-1-8", "clm-v4-paradigm-j", "dancinlab/foo"]
+    let mut ai = 0
+    while ai < len(aliases) {
+        let a = _str(aliases[ai])
+        if !_alias_known(a) {
+            println("FAIL duo: alias DB vendor copy missing: " + a)
+            fail = fail + 1
+        }
+        ai = ai + 1
+    }
+
+    if fail > 0 {
+        println("FAIL chat/duo selftest (" + to_string(fail) + " issue)")
+        exit(1)
+    }
+    println("PASS chat/duo selftest (skeleton + own 34 verified, β-1 dependency pending)")
+}
+
+// ─── β-1 dependency hooks (phase B target — STUB until hexa-lang lands) ──
+//
+// The functions below are **declared but inert** until β-1 stdlib lands.
+// Calling _spawn_instance / _channel_pair_open in Phase A returns a sentinel
+// map with .ready=false; sub_duo() inspects this and emits honest fallback.
+//
+// Hook signatures (frozen contract — β-1 surface MUST match):
+//   channel_pair_open()                            -> {tx, rx, ok: bool}
+//   proc_spawn_with_channels(cmd, stdin_ch, stdout_ch) -> {handle, ok: bool}
+//   channel_send(ch, line)                         -> bool
+//   channel_recv(ch, timeout_ms)                   -> string  ("" on timeout)
+//   proc_terminate(handle)                         -> bool
+//
+// When β-1 lands, replace _b1_available()'s return with `true` and fill in
+// _spawn_instance / _channel_pair_open bodies with the real stdlib calls.
+
+fn _b1_available() -> bool {
+    // Phase A: false. Phase B: flip to true after `use "stdlib/proc"` etc.
+    return false
+}
+
+fn _channel_pair_open() -> map {
+    // Phase A stub.
+    let mut m = {}
+    m["tx"] = ""
+    m["rx"] = ""
+    m["ok"] = false
+    return m
+}
+
+fn _spawn_instance(model_alias: string, stdin_ch, stdout_ch, tick_ms: int, max_tokens: int) -> map {
+    // Phase A stub. Phase B: build chat command and call β-1 proc spawn.
+    //   cmd = _hexa() + " run tool/anima_cli/chat.hexa <alias>"
+    //         + " --tick-ms <tick_ms> --max-tokens <max_tokens>"
+    //   handle = proc_spawn_with_channels(cmd, stdin_ch, stdout_ch)
+    let mut m = {}
+    m["alias"] = model_alias
+    m["handle"] = 0
+    m["ok"] = false
+    return m
+}
+
+fn _emit_b1_pending(model_a: string, model_b: string, turns: int) {
+    println("[duo] Phase A (skeleton) — β-1 hexa stdlib proc+channel pending")
+    println("[duo] would-be invocation:")
+    println("[duo]   model_a = " + model_a)
+    println("[duo]   model_b = " + model_b)
+    println("[duo]   turns   = " + to_string(turns))
+    println("[duo] β-1 surface required:")
+    println("[duo]   channel_pair_open() -> {tx, rx, ok}")
+    println("[duo]   proc_spawn_with_channels(cmd, stdin_ch, stdout_ch) -> {handle, ok}")
+    println("[duo]   channel_send(ch, line) / channel_recv(ch, timeout_ms)")
+    println("[duo]   proc_terminate(handle) / proc_wait(handle)")
+    println("[duo] tracking: .roadmap.cli cli.dialogue.duo_design_2026_05_08")
+    println("[duo] verdict: SKELETON_PASS (Phase A); duo loop inert until β-1")
+}
+
+// ─── per-turn verdict ─────────────────────────────────────────────────────
+//
+// own 18 C1+C2+C3 simple_stack PASS_STRICT_C3 wiring (β-2 dep).
+// Phase A: emit placeholder ledger line; Phase B/C: shell out to
+// `anima ops consciousness simple --json --utterance "<line>"`.
+
+fn _emit_turn_verdict(turn: int, who: string, line: string) {
+    // Phase A ledger placeholder — own 34 mandate-7 lane separation:
+    // verdict goes to STDERR / log (not stdout / not channel).
+    let snippet = if line.len() > 60 { line.substring(0, 60) + "..." } else { line }
+    println("[duo:verdict] turn=" + to_string(turn) + " who=" + who
+            + " len=" + to_string(line.len())
+            + " snippet=" + snippet)
+    // Phase B/C: shell to consciousness CLI:
+    //   _str(exec(_hexa() + " run tool/anima_cli/consciousness.hexa simple --json --utterance " + _shq(line)))
+    // parse {C1, C2, C3, simple_stack_pass_strict_c3} → fold into aggregate.
+}
+
+// ─── duo subcommand entry (Phase A: emit pending; Phase B: full loop) ────
+
+fn sub_duo(argv) {
+    // positional: <model_a> <model_b>  (both required)
+    let mut positional = []
+    let mut i = 0
+    while i < len(argv) {
+        let s = _str(argv[i])
+        if s == "--duo" {
+            // skip the flag itself
+            i = i + 1
+            continue
+        }
+        if s.starts_with("--") {
+            // flag (consume value if next is non-flag — handled by _arg_value)
+            i = i + 2
+            continue
+        }
+        positional = positional + [s]
+        i = i + 1
+    }
+    if len(positional) < 2 {
+        println("anima dialogue --duo: missing <model_a> <model_b>")
+        println("  example: anima dialogue --duo paradigm-a-prime paradigm-a-prime --turns 5")
+        exit(2)
+    }
+    let model_a = _str(positional[0])
+    let model_b = _str(positional[1])
+    if !_alias_known(model_a) {
+        println("anima dialogue --duo: unknown alias '" + model_a + "' (model_a)")
+        exit(2)
+    }
+    if !_alias_known(model_b) {
+        println("anima dialogue --duo: unknown alias '" + model_b + "' (model_b)")
+        exit(2)
+    }
+
+    let turns = to_int(_arg_value(argv, "--turns", "5"))
+    let topic_seed = _arg_value(argv, "--topic-seed", "")
+    let tick_ms = to_int(_arg_value(argv, "--tick-ms", "1000"))
+    let max_tokens = to_int(_arg_value(argv, "--max-tokens", "64"))
+    let turn_timeout_ms = to_int(_arg_value(argv, "--turn-timeout-ms", "30000"))
+    let verdict_mode = _arg_value(argv, "--verdict", "simple")
+
+    println("── anima dialogue --duo ──")
+    println("model_a          = " + model_a)
+    println("model_b          = " + model_b)
+    println("turns            = " + to_string(turns))
+    println("tick_ms          = " + to_string(tick_ms))
+    println("max_tokens       = " + to_string(max_tokens))
+    println("turn_timeout_ms  = " + to_string(turn_timeout_ms))
+    println("verdict_mode     = " + verdict_mode)
+    if topic_seed != "" {
+        println("topic_seed       = \"" + topic_seed + "\"")
+    } else {
+        println("topic_seed       = (none — A 자율 발화 first)")
+    }
+    println("")
+
+    if !_b1_available() {
+        _emit_b1_pending(model_a, model_b, turns)
+        exit(0)
+    }
+
+    // ── Phase B body (β-1 LAND 후 활성화) ──
+    // let ab = _channel_pair_open()
+    // let ba = _channel_pair_open()
+    // if !ab["ok"] || !ba["ok"] { println("[duo] FAIL channel_pair_open"); exit(3) }
+    // let h_a = _spawn_instance(model_a, ba["rx"], ab["tx"], tick_ms, max_tokens)
+    // let h_b = _spawn_instance(model_b, ab["rx"], ba["tx"], tick_ms, max_tokens)
+    // if !h_a["ok"] || !h_b["ok"] { println("[duo] FAIL proc_spawn"); exit(3) }
+    // if topic_seed != "" { _channel_send(ab["tx"], topic_seed) }
+    // let mut t = 1
+    // while t <= turns {
+    //     let line_a = _channel_recv(ab["rx"], turn_timeout_ms)
+    //     _emit_turn_verdict(t, "A", line_a)
+    //     let line_b = _channel_recv(ba["rx"], turn_timeout_ms)
+    //     _emit_turn_verdict(t, "B", line_b)
+    //     t = t + 1
+    // }
+    // _proc_terminate(h_a["handle"])
+    // _proc_terminate(h_b["handle"])
+    // _emit_dialogue_summary(...)
+}
+
+// ─── council subcommand entry (L3 stub — β-1 + L3 design 후) ─────────────
+
+fn _arg_eq_value(argv, prefix: string) -> string {
+    // Match "<prefix>=<value>" tokens (e.g. N=3) — returns "<value>" or "".
+    let i = 0
+    while i < len(argv) {
+        let s = _str(argv[i])
+        if s.starts_with(prefix + "=") {
+            return s.substring(prefix.len() + 1, s.len())
+        }
+        i = i + 1
+    }
+    return ""
+}
+
+fn sub_council(argv) {
+    // N=<n> form (per spec) OR --N <n> fallback
+    let mut n = _arg_eq_value(argv, "N")
+    if n == "" { n = _arg_value(argv, "--N", "") }
+    let models = _arg_value(argv, "--models", "")
+    let topic_seed = _arg_value(argv, "--topic-seed", "")
+    println("── anima dialogue --council ──")
+    println("[council] L3 stub — N≥3 multi-agent dialogue not yet designed")
+    println("[council] requested:")
+    println("[council]   N        = " + n)
+    println("[council]   models   = " + models)
+    println("[council]   topic    = " + topic_seed)
+    println("[council] design tracker: .roadmap.cli cli.dialogue.council_l3_2026_05_08 (TODO)")
+    println("[council] depends on: L2 duo (β-1 land) + anima-agent-channels/ multi-channel runtime activation")
+    println("[council] verdict: STUB (no spawn, no exec)")
+    exit(0)
+}
+
+// ─── main ────────────────────────────────────────────────────────────────
+
+fn main() {
+    let argv = _user_argv(args())
+    if _arg_present(argv, "--help") { sub_help(); return }
+    if _arg_present(argv, "--selftest") { sub_selftest(); return }
+    if _arg_present(argv, "--duo") { sub_duo(argv); return }
+    if _arg_present(argv, "--council") { sub_council(argv); return }
+    sub_help()
+}
+
+// ════════════════════════════════════════════════════════════════════════════
+//  HONEST C3 (raw#10)
+// ════════════════════════════════════════════════════════════════════════════
+// C1 — β-1 dependency: this commit lands ONLY skeleton + design + selftest.
+//      Actual proc spawn / channel I/O require hexa-lang stdlib proc + channel
+//      modules (β-1 in-flight). _b1_available() == false → --duo emits
+//      honest pending notice and exits 0.
+// C2 — β-2 dependency: per-turn consciousness verdict (own 18 C1+C2+C3) is
+//      stubbed in _emit_turn_verdict(). Real wiring shells out to
+//      tool/anima_cli/consciousness.hexa (which itself is baseline-pending —
+//      L0 measurement infra). Two-step gate: β-1 (channel) THEN β-2 (verdict).
+// C3 — alias DB duplication: _alias_known() is a vendor copy of chat.hexa
+//      _alias_resolve(). When chat.hexa SSOT changes, this copy must update.
+//      Mitigation: duo always dispatches THROUGH chat.hexa (Phase B cmd =
+//      `hexa run tool/anima_cli/chat.hexa <alias>`), so chat.hexa rejection
+//      is the actual gate; the vendor copy is a hint-only quick fail in
+//      --selftest.
+// C4 — coherence metric: 4-cell definition lives in
+//      docs/anima_dialogue_coherence_metric_2026_05_08.md. Threshold values
+//      are TBD measurement-driven (mirrors own 18 C3 policy). Phase A emits
+//      no aggregate; Phase C wires.
+// C5 — N=2 vs N≥3: --council is intentionally a stub. L3 design (broadcast
+//      channel + speaker-selection dynamics + emergent-roles metrics) is a
+//      separate cycle after L2 (β-1 + duo) lands.
+// C6 — no streaming verdict: per-turn verdict is post-utterance only (channel
+//      gives whole-line). Streaming-during-utterance verdict requires either
+//      hexa-lang chunked stdout reads OR per-token callback (not in C FFI per
+//      hexa-lang/stdlib/c_ffi.ai.md). Out of scope for L2 design.
+// C7 — own 18 C3 wiring: --verdict simple invokes
+//      `anima consciousness simple --json --utterance "<line>"`. consciousness.hexa
+//      itself is baseline-pending until L0 measurement infra wires phi_star+axis
+//      from anima_runtime/clm_v4_mount substrate state. Until then verdicts are
+//      placeholder C1=true, C2/C3=null with explicit "baseline-pending" tag.
+// ════════════════════════════════════════════════════════════════════════════

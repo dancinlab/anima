@@ -21,6 +21,16 @@
 //    anima dialogue --output-format compact|full|json     (forwarded to mount)
 //    anima dialogue --help
 //
+//  L2 MULTI-AGENT (added 2026-05-08, β-1 channel API dependent — see
+//                  docs/anima_chat_autonomous_speech_roadmap_2026_05_08.md L2)
+//    anima dialogue --duo <model_a> <model_b> [--turns N] [--topic-seed "..."]
+//                                                        N=2 CLM↔CLM autonomous
+//                                                        dialogue (skeleton —
+//                                                        β-1 stdlib proc+channel
+//                                                        pending; honest emit)
+//    anima dialogue --council N=<n> --models "<m1>,...,<mn>" [--topic-seed]
+//                                                        N≥3 multi-agent (L3 stub)
+//
 //  DESIGN
 //    raw#9   hexa-only (no .py in this layer; mount.hexa does shim emit)
 //    raw#10  honest C3 ≥5 (see CAVEATS below)
@@ -143,7 +153,15 @@ fn _user_argv(raw) -> array {
     let i = 0
     while i < len(raw) {
         let s = _str(raw[i])
-        if !s.contains("/.hexa-cache/") {
+        // Strip hexa-cache fragments AND interpreter / our-script path so that
+        // forwarders (e.g. _forward_to_duo) don't propagate them as user args.
+        let skip = s.contains("/.hexa-cache/")
+                || s.contains("/hexa-lang/build/")
+                || s.contains("hexa_interp")
+                || s.contains("hexa.real")
+                || s.ends_with("/dialogue.hexa")
+                || s.ends_with("dialogue.hexa")
+        if !skip {
             out = out + [s]
         }
         i = i + 1
@@ -216,13 +234,20 @@ fn _session_log_path(root: string, ts: string) -> string {
 fn sub_help() {
     println("anima dialogue — substrate-coupled emerge dialogue (CLM v4 mount)")
     println("")
-    println("USAGE")
+    println("USAGE (substrate-coupled — emerge paradigm)")
     println("  anima dialogue --probe \"text\"      one-shot probe (auto-logs)")
     println("  anima dialogue --interactive       native REPL (readline loop)")
     println("  anima dialogue --selftest          5-turn synthetic conversation")
     println("  anima dialogue --help")
     println("")
-    println("FLAGS (forwarded to mount.hexa)")
+    println("USAGE (L2 multi-agent — β-1 channel API dependent)")
+    println("  anima dialogue --duo <model_a> <model_b> [--turns N] [--topic-seed \"...\"]")
+    println("                                     N=2 CLM↔CLM autonomous dialogue")
+    println("                                     (skeleton — β-1 stdlib pending)")
+    println("  anima dialogue --council N=<n> --models \"<m1>,...,<mn>\" [--topic-seed]")
+    println("                                     N≥3 multi-agent (L3 stub)")
+    println("")
+    println("FLAGS (forwarded to mount.hexa — substrate path only)")
     println("  --substrate clm-v4                  substrate (default clm-v4)")
     println("  --inject-states PATH                consciousness_states fixture (npy/json)")
     println("  --output-format compact|full|json   mount response format")
@@ -705,12 +730,57 @@ fn sub_interactive(argv) {
     _emit_session_summary(session_log)
 }
 
+// ─── L2 multi-agent forwarders (β-1 channel API dependent) ───────────────
+//
+// L2 design + skeleton land: cycle 2026-05-08. duo body lives at
+// tool/anima_cli/chat/duo/duo.hexa (recursive module pattern). Phase A
+// emits honest β-1 pending notice; Phase B activates after hexa stdlib
+// proc + channel modules land.
+//
+// Cross-link:
+//   docs/anima_chat_autonomous_speech_roadmap_2026_05_08.md  L2 layer
+//   docs/anima_dialogue_coherence_metric_2026_05_08.md        coherence spec
+//   tool/anima_cli/chat/duo/duo.hexa                          skeleton body
+//   .roadmap.cli  cli.dialogue_2026_05_08
+//                 cli.dialogue.duo_design_2026_05_08
+//                 cli.dialogue.coherence_metric_2026_05_08
+
+fn _duo_module_path() -> string {
+    return _resolve_root() + "/tool/anima_cli/chat/duo/duo.hexa"
+}
+
+fn _forward_to_duo(argv) {
+    let path = _duo_module_path()
+    if !_fexists(path) {
+        println("anima dialogue --duo: chat/duo module missing: " + path)
+        exit(2)
+    }
+    // Use hexa.real (mac-local interpreter) directly — bin/hexa wrapper routes
+    // `run` to remote resource host (ubu-1) which mangles --flags into
+    // run_remote.py args. Mirrors chat.hexa _hexa() pattern.
+    let real = "/Users/ghost/.hx/packages/hexa/hexa.real"
+    let mut cmd = real + " run " + path
+    let mut i = 0
+    while i < len(argv) {
+        cmd = cmd + " " + _sh_q(_str(argv[i]))
+        i = i + 1
+    }
+    let out = _str(exec(cmd))
+    print(out)
+}
+
+fn sub_duo(argv) { _forward_to_duo(argv) }
+
+fn sub_council(argv) { _forward_to_duo(argv) }
+
 // ─── entry ───────────────────────────────────────────────────────────────
 
 fn main() {
     let argv = _user_argv(args())
     if _arg_present(argv, "--selftest") { sub_selftest(); return }
     if _arg_present(argv, "--help") || len(argv) == 0 { sub_help(); return }
+    if _arg_present(argv, "--duo") { sub_duo(argv); return }
+    if _arg_present(argv, "--council") { sub_council(argv); return }
     if _arg_present(argv, "--probe") { sub_probe(argv); return }
     if _arg_present(argv, "--interactive") { sub_interactive(argv); return }
     println("dialogue: unknown invocation")
