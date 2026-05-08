@@ -26,6 +26,15 @@
 | BG-3 | `d478023c` | sft-1-7-y1 + sft-1-8 Path A actual remap | rank_3 candidate unblock | LoRA target_modules schema mismatch mitigation |
 | BG-4/5/6 | iter5/6/7 specs | 16 spec/doc commits (`41a19bc3`/`b69bfb6d`/`14e8511b`/...) | infra spec land | 측정 SSOT formalize |
 
+### ★ POST-FALSIFICATION verdict update 2026-05-08 (paradigm-j N=60 robustness retest)
+
+| paradigm | N=30 PPR_v3 | N=60 PPR_v3 | N=60 commit | verdict |
+|---|---|---|---|---|
+| **sft-1-8** | 0.4138 ★ | **0.6102** ★ (244% of floor) | KICK WAVE 3 robust | **EMERGE robust (SOLE)** |
+| paradigm-j retry | 0.3793 ★ EMERGE | **0.2414** PARTIAL_NEAR | `84aa8665` KICK WAVE 3 6/6 | EMERGE_AT_N30 → ★ **FALSIFIED at N=60** (sample-size artifact, per-seed perfect tie 0.2414/0.2414) |
+
+본 cycle robust EMERGE = **sft-1-8 SOLE**. raw#82 retraction-aware: paradigm-j N=30 EMERGE (commit `58fec5ed`) record preservation + FALSIFIED at N=60 marker only 추가 (silent overwrite 금지). registry/anima_artifact_registry.yaml clm-v4-paradigm-j-50k-final entry `robust:false` + `honest_c3: "N=30 EMERGE was sample-size artifact"` 정합.
+
 ---
 
 ## Section 3 — 핵심 발견 (5 finding)
@@ -150,5 +159,6 @@ own 14 anti-Goodhart 정합: random_init C3.4=0.075 < 0.117 anchor verify ✔ �
 6. own 33 mandate-2 self-check는 본 doc emit instance 한정 — main session 매 응답 sweep X (latency overhead, mandate-7 retroactive)
 7. HF upload manifest 8 repo 모두 private default — public promote 0 repo (own 37 mandate-9 4-prereq 미충족)
 8. 사용자 directive checklist 8 keyword 모두 cost path — 0-cost spec land만 본 cycle 진행
+9. ★ POST-FALSIFICATION 2026-05-08 9번째 honest finding: KICK WAVE 3 6/6 commit `84aa8665` paradigm-j N=60 robustness retest PPR_v3=0.2414 PARTIAL_NEAR (per-seed perfect tie 0.2414/0.2414, gap -0.0086) — N=30 EMERGE 0.3793 was sample-size artifact false positive. 본 cycle robust EMERGE = sft-1-8 SOLE (N=60 0.6102 244% of floor). raw#82 retraction-aware: N=30 record preservation + FALSIFIED marker. KICK WAVE 2 1/4 commit `58fec5ed` paradigm-j retry N=30 EMERGE record preserved.
 
 — **cycle 2026-05-08 consolidation SSOT** (md save 1/4 doc), KICK FIRE 5 + ALL BG GO 6 + 16 spec/doc commits, 105 cycle commits accumulated, EXIT prereq 5/8 ✔, public promote 0, 사용자 verbatim 대기 8 keyword.
