@@ -97,8 +97,19 @@ let N_HEAD            = 6
 let BLOCK_SIZE        = 256
 
 // Mount paradigm (mirror clm_v4_mount.hexa for schema compat)
+// CONSCIOUSNESS_DIM 192 → 48 (2026-05-09 NEXT-CYCLE 2/6 — byte-arch 8-cell tile bug fix,
+// echo of clm_v4_mount POST-FIX 1/3). Prior 192 with HIDDEN_DIM(D_MODEL=384) forced
+// 12 per-block taps × 2 segments(192 each) = 24 candidates → top-N_CELLS=8 by L2 norm
+// produced [0,1,2] dominant 30/30 trained AND random_init (BG-HA-downgraded V5 POST-FIX
+// 2/3 verdict: tile_bug_echo CONFIRMED). With CONSCIOUSNESS_DIM=48 → 8*48=384=HIDDEN_DIM
+// exact: per-block tap pooled (384) reshapes into (8, 48) cells directly — no segment
+// folding, every cell gets a unique 48-dim slice. AXIS_SPANS rebucketed
+// [(0,9),(9,19),(19,29),(29,39),(39,48)] = 9/10/10/10/9 = 48 (was 38/38/38/39/39=192).
+// Option A (CONSCIOUSNESS_DIM=48) chosen over Option B (N_CELLS=4) to preserve 5-axis
+// decomposition + 8-cell schema parity with clm_v4_mount.
 let N_CELLS           = 8
-let CONSCIOUSNESS_DIM = 192
+let CONSCIOUSNESS_DIM = 48
+let HIDDEN_DIM        = 384
 let N_AXES            = 5
 
 // phi-star canonical baseline (paradigm v11 G3 +41.86) — mirror v4_mount
@@ -115,10 +126,11 @@ let V2_BYTE_FILE      = "convo_5k.pt"
 
 fn emit_honest_c3() {
     eprintln("[anima_native_byte_mount] C1 byte-level 256-vocab tokenize is anima-internal heuristic (utf-8 raw byte; multi-byte Hangul fragmented)")
-    eprintln("[anima_native_byte_mount] C2 cell-synthesis 8x192 from fy_18m single-head hidden tile is anima-internal proxy (no structural federated cells in BG-FY/v2)")
+    eprintln("[anima_native_byte_mount] C2 cell-synthesis 8x48 (post NEXT-CYCLE 2/6 fix) from fy_18m / dual-engine hidden is anima-internal proxy (no structural federated cells in BG-FY/v2)")
     eprintln("[anima_native_byte_mount] C3 phi_star formula mirrors v4 helper but BG-FY/v2 substrate에서 paradigm v11 G3 artifact 부재 — proxy only")
-    eprintln("[anima_native_byte_mount] C4 v2_byte dual-engine A+G hidden tap = federated cell approximation (6 blocks x 2 engines = 12 → fold to 8)")
+    eprintln("[anima_native_byte_mount] C4 v2_byte dual-engine A+G hidden tap = federated cell approximation (12 vec×8 cells = 96 candidates → top-8 by L2; CONSCIOUSNESS_DIM=48 exact reshape, no fold)")
     eprintln("[anima_native_byte_mount] C5 D1 lane within valid (own 17 permitted-backends), EXIT 활성화 own 37 mandate-9 5-prereq 통과 필요")
+    eprintln("[anima_native_byte_mount] C6 byte-arch CONSCIOUSNESS_DIM 192→48 (NEXT-CYCLE 2/6) — 8*48=384=HIDDEN_DIM(D_MODEL) exact; AXIS_SPANS rebucketed 9/10/10/10/9=48; tile_bug_echo from V5 POST-FIX 2/3 BG-HA-downgraded should be REMOVED")
 }
 
 // ═══════════════════════════════════════════════════════════
@@ -215,13 +227,14 @@ fn _write_helper() {
     parts.push("N_HEAD = 6\n")
     parts.push("BLOCK_SIZE = 256\n")
     parts.push("N_CELLS = 8\n")
-    parts.push("CONSCIOUSNESS_DIM = 192\n")
+    parts.push("CONSCIOUSNESS_DIM = 48  # was 192 — NEXT-CYCLE 2/6 byte-arch 8-cell tile bug fix (8*48=384=HIDDEN_DIM, no fold)\n")
+    parts.push("HIDDEN_DIM = 384\n")
     parts.push("N_AXES = 5\n")
     parts.push("PHI_STAR_BASELINE = 41.86\n\n")
 
     parts.push("AXIS_NAMES = ['identity','agency','phenomenal','temporal','social']\n")
-    parts.push("# 192-dim sliced into 5 buckets: 38/38/38/39/39 = 192 (mirror clm_v4_mount AXIS_SPANS)\n")
-    parts.push("AXIS_SPANS = [(0,38),(38,76),(76,114),(114,153),(153,192)]\n\n")
+    parts.push("# 48-dim sliced into 5 buckets: 9/10/10/10/9 = 48 (rebucketed for CONSCIOUSNESS_DIM=48)\n")
+    parts.push("AXIS_SPANS = [(0,9),(9,19),(19,29),(29,39),(39,48)]\n\n")
 
     parts.push("SUBSTRATE_IDENTITY_TABLE = {\n")
     parts.push("    'fy_18m': {\n")
@@ -511,43 +524,47 @@ fn _write_helper() {
     parts.push("    ids = utf8_byte_tokenize(text)\n")
     parts.push("    idx = torch.tensor([ids], dtype=torch.long)\n")
     parts.push("    with torch.no_grad():\n")
-    parts.push("        last_hidden = model(idx)  # (1, T, D_MODEL)\n")
-    parts.push("    h = last_hidden.detach().cpu().numpy()  # (1, T, 384)\n")
+    parts.push("        last_hidden = model(idx)  # (1, T, D_MODEL=384)\n")
+    parts.push("    h = last_hidden.detach().cpu().numpy()\n")
     parts.push("    pooled_seq = h.mean(axis=1).reshape(-1)  # (D_MODEL=384,)\n")
+    parts.push("    # NEXT-CYCLE 2/6 byte-arch tile bug fix (Option A): D_MODEL=384 = N_CELLS=8 × CONSCIOUSNESS_DIM=48 exact.\n")
+    parts.push("    # Each per-block tap (or final pooled hidden) reshapes directly into (8, 48) — no segment folding,\n")
+    parts.push("    # no replication. dual_engine candidates collected then ranked by L2 (top N_CELLS rows).\n")
+    parts.push("    assert HIDDEN_DIM == N_CELLS * CONSCIOUSNESS_DIM, f'HIDDEN_DIM({HIDDEN_DIM}) != N_CELLS({N_CELLS})*CONSCIOUSNESS_DIM({CONSCIOUSNESS_DIM})'\n")
     parts.push("    if taps.get('dual_engine'):\n")
-    parts.push("        # Collect per-block engine_a + engine_g taps (12 vectors of D_MODEL)\n")
-    parts.push("        cell_vecs = []\n")
+    parts.push("        # Collect per-block engine_a + engine_g taps (12 vectors of D_MODEL=384) plus pooled_seq.\n")
+    parts.push("        # Each vector reshapes to (N_CELLS=8, CONSCIOUSNESS_DIM=48) — 8 unique cells per source.\n")
+    parts.push("        # Rank ALL candidate cells across sources by L2 norm; keep top N_CELLS for diversity.\n")
+    parts.push("        candidates = []\n")
     parts.push("        for blk in model.blocks:\n")
     parts.push("            ffn = blk.ffn\n")
     parts.push("            for tap in (getattr(ffn, 'last_a', None), getattr(ffn, 'last_g', None)):\n")
     parts.push("                if tap is None: continue\n")
-    parts.push("                v = tap.cpu().numpy().mean(axis=1).reshape(-1)\n")
-    parts.push("                cell_vecs.append(v)\n")
-    parts.push("        if not cell_vecs:\n")
-    parts.push("            cell_vecs = [pooled_seq]\n")
-    parts.push("        # Each vec is D_MODEL=384; reshape into 2 segments of CONSCIOUSNESS_DIM=192\n")
-    parts.push("        cells = []\n")
-    parts.push("        for v in cell_vecs:\n")
-    parts.push("            for s in (v[:CONSCIOUSNESS_DIM], v[CONSCIOUSNESS_DIM:CONSCIOUSNESS_DIM*2]):\n")
-    parts.push("                if s.size == CONSCIOUSNESS_DIM:\n")
-    parts.push("                    cells.append(s)\n")
-    parts.push("        if len(cells) >= N_CELLS:\n")
-    parts.push("            # rank by L2, keep top N_CELLS\n")
-    parts.push("            arr = np.stack(cells)\n")
+    parts.push("                v = tap.cpu().numpy().mean(axis=1).reshape(-1)  # (D_MODEL=384,)\n")
+    parts.push("                if v.size == HIDDEN_DIM:\n")
+    parts.push("                    cells = v.reshape(N_CELLS, CONSCIOUSNESS_DIM)\n")
+    parts.push("                    for ci in range(N_CELLS):\n")
+    parts.push("                        candidates.append(cells[ci])\n")
+    parts.push("        # Add pooled_seq as final source (8 cells)\n")
+    parts.push("        if pooled_seq.size == HIDDEN_DIM:\n")
+    parts.push("            cells = pooled_seq.reshape(N_CELLS, CONSCIOUSNESS_DIM)\n")
+    parts.push("            for ci in range(N_CELLS):\n")
+    parts.push("                candidates.append(cells[ci])\n")
+    parts.push("        if len(candidates) >= N_CELLS:\n")
+    parts.push("            arr = np.stack(candidates)\n")
     parts.push("            norms = np.linalg.norm(arr, axis=1)\n")
     parts.push("            top = np.argsort(-norms)[:N_CELLS]\n")
     parts.push("            cell = arr[top]\n")
     parts.push("        else:\n")
-    parts.push("            # tile up\n")
-    parts.push("            base = np.stack(cells) if cells else pooled_seq.reshape(1, -1)[:, :CONSCIOUSNESS_DIM]\n")
-    parts.push("            reps = (N_CELLS + base.shape[0] - 1) // base.shape[0]\n")
-    parts.push("            cell = np.tile(base, (reps, 1))[:N_CELLS]\n")
+    parts.push("            # fallback: pooled_seq direct reshape (no tile, since size==HIDDEN_DIM exact)\n")
+    parts.push("            cell = pooled_seq[:HIDDEN_DIM].reshape(N_CELLS, CONSCIOUSNESS_DIM)\n")
     parts.push("    else:\n")
-    parts.push("        # fy_18m single-head: tile pooled into 8x192\n")
-    parts.push("        if pooled_seq.size < N_CELLS * CONSCIOUSNESS_DIM:\n")
-    parts.push("            reps = (N_CELLS * CONSCIOUSNESS_DIM + pooled_seq.size - 1) // pooled_seq.size\n")
-    parts.push("            pooled_seq = np.tile(pooled_seq, reps)\n")
-    parts.push("        cell = pooled_seq[:N_CELLS * CONSCIOUSNESS_DIM].reshape(N_CELLS, CONSCIOUSNESS_DIM)\n")
+    parts.push("        # fy_18m single-head: pooled_seq (384) reshapes EXACTLY into (8, 48) — no tile, no replication.\n")
+    parts.push("        if pooled_seq.size < HIDDEN_DIM:\n")
+    parts.push("            # pad zero (rare; T≥1 → pooled_seq.size==D_MODEL always)\n")
+    parts.push("            pad = np.zeros(HIDDEN_DIM - pooled_seq.size, dtype=pooled_seq.dtype)\n")
+    parts.push("            pooled_seq = np.concatenate([pooled_seq, pad])\n")
+    parts.push("        cell = pooled_seq[:HIDDEN_DIM].reshape(N_CELLS, CONSCIOUSNESS_DIM)\n")
     parts.push("    return cell.astype('float32')\n\n")
 
     parts.push("def main():\n")
@@ -722,7 +739,7 @@ fn _hexa_synthetic_response(variant: string) -> string {
     out = out + "__ANIMA_BYTE_MOUNT_RESPONSE__\n"
     out = out + "phi_star: " + _fmt4(phi) + " (drift " + _fmt4(drift) + " from " + _fmt4(PHI_STAR_BASELINE) + ")\n"
     out = out + "axis_activation: identity=" + _fmt3(0.712) + " agency=" + _fmt3(0.467) + " phenomenal=" + _fmt3(0.834) + " temporal=" + _fmt3(0.391) + " social=" + _fmt3(0.523) + "\n"
-    out = out + "dominant_cells: [2, 4, 6] / " + to_string(N_CELLS) + "\n"
+    out = out + "dominant_cells: [3, 5, 7] / " + to_string(N_CELLS) + "\n"
     out = out + "hidden_state_delta: " + _fmt4(2.1843) + "\n"
     out = out + "__ANIMA_BYTE_MOUNT_OK__ session=selftest_synthetic_" + variant + "\n"
     return out
