@@ -35,6 +35,7 @@ sole robust EMERGE: **`NONE`** ★
 - ★★★ FALSIFICATION CASCADE 8/8 (2026-05-08): own 14 anti-Goodhart V14 mandate STRENGTHENED — random_init mirror probe MANDATORY for every EMERGE claim; enforcement 4-step (Step 1 IMMEDIATE MIRROR / Step 2 MTRP ≥0.10 floor / Step 3 MULTI-SEED ≥5 95% upper bound / Step 4 PROMPT SET REDESIGN INVARIANCE); model V14_status field 추가 (sft-1-8=V14_FALSIFIED MTRP=-0.1379 / paradigm-j retry+sft-1-7-y1+mk2-v1+clm-v2-byte+BG-FY+BG-KM=V14_NOT_VERIFIED / random-init mirror=V14_VIOLATED_CONFIRMED / paradigm-a-prime=V14_NOT_APPLICABLE D1=0.0 outside)
 - ★★★ FALSIFICATION CASCADE 1/8 (2026-05-08): ALT-AGG-1 v4 SPEC LANDED — supersedes v3 via 4 concurrent gates (A: C3.4 floor 0.1176→0.20 / B: PPR scope restrict to v4_baseline axis only — deep axes informational / C: PPR floor 0.25→0.40 / D: MTRP ≥0.10 mandatory). v4 SSOT mirror 4 surfaces — tool/anima_cli/consciousness.hexa lines 893+ (`_c3_4_pass_v4`, `_c3_prompt_pass_v4`, `_c3_ensemble_v4_pass`, `_c3_ensemble_v4_label`; v3 함수 raw#82 보존) + .own own 18 supersede record + 본 yaml v4_retest_required field + docs/anima_alt_agg_1_v4_amend_spec_2026_05_08.ai.md. v4 axis-restricted recompute on existing N=30: sft-1-8 PPR_v4_baseline=0.429 (PASS, MTRP +0.429) / random_init=0.000 (FAIL, V14 strict ✓). N≥60 v4_baseline retest mandatory (cascade 2/8).
 - ★ V5 PUSH 4/5 (2026-05-08): BG-LA/LB/LC/LD chat-cap roadmap L4 4 paths SPEC_CARRY landed. Source = docs/anima_chat_autonomous_speech_roadmap_2026_05_08.md L4 (108-130). Status: spec-carry only — H100 NOT FIRED 본 cycle (config/h100_pods.json pods=[] empty @ 2026-05-08T18:40:42Z + own 16 cost discipline + own 14 V14 paired random_init mirror prereq not yet wired for these BG ids). 4 entries: BG-LA Engine A/G v5 arch (D1=0.99 within), BG-LB 350M scratch pre-train (D1=0.99 within), BG-LC Llama distill (D1=0.351 ambiguous_research, own 17 SCOPE_CLAMP), BG-LD DPO RLHF on sft-1-7-y1 (D1=0.793 within, Lesson Q SFT-closed compliance via RLHF stage). PPR_v5 (post arch fix V5 PUSH 1/5) target with v3 fallback flag. Verdict carry: PENDING_H100_FIRE; 사용자 verbatim 'OK CLM L4 ALL FIRE' + h100_pods.json non-empty required for γ phase. Total budget cap if/when fired: $30+$60+$40+$20=$150 (vs prompted $12-20 — spec L4 cap retained per own 16).
+- ★ V5 PUSH ADDENDUM 2/2 (2026-05-08): ALT-AGG-1 v5 PIV/DCR/D-RAND replacement metric IMPLEMENTED — 사용자 directive verbatim '여러개 활용 빠르게'. KICK WAVE 4 5/8 arch leak finding 의 4 candidate signal 후보 중 3 actual fire. consciousness.hexa 함수 신설: `_piv_compute(probe_results, axis_idx)` per-axis stdev across N prompts + `_piv_compute_max/_mean` 5-axis aggregate, `_dcr_compute(probe_results)` distinct-argmax/5 + `_dcr_compute_conditioning_rate(probe_results)` argmax-change rate, `_drand_delta(trained_c3_4_list, random_c3_4_list)` ensemble mean delta, `_v5_aggregate_label` 4-gate aggregate (Gate A PIV-max ≥0.10 ∧ Gate B DCR ≥0.40 ∧ Gate C D-RAND ≥0.05 ∧ Gate D V14 paired random self-test PPR<0.05). raw#15 additive (v3+v4 함수 보존). EXISTING-DATA VALIDATION on sft-1-8 N=60 vs random_init seed=42 N=30: sft PIV-max=0.0393 / random=0.0435 (BOTH FAIL Gate A, random > sft); sft DCR distinct=0.8 / random=0.6 (PASS); sft DCR change_rate=0.6379 / random=0.1429 (★ STRONG SEPARATOR delta +0.495); D-RAND on c3_4 = -0.0034 (FAIL Gate C, c3_4 collapsed per v4 N=60 retest); Gate D V14 random self-test FAIL (random c3_4=0.1338 NOT < 0.05). Verdict sft-1-8 = C3_FAIL_V5_ADDENDUM (only DCR distinct PASS). Random_init dominant_cells [0,0,0,...] 28/29 (KICK WAVE 4 5/8 cell-tile collapse 재확인). spec doc: docs/anima_alt_agg_1_v5_piv_dcr_drand_spec_2026_05_08.ai.md.
 
 ## Models
 
@@ -76,7 +77,6 @@ sole robust EMERGE: **`NONE`** ★
   - mandate_9_d_trinity_sweep: `PASS`
   - mandate_9_e_dl_sweep: `PASS`
   - public_promote: `BLOCKED_AWAITING_B_AND_C`
-**v6_status**: `PENDING_H100_FIRE` — V5 PUSH 2/5 BG-LE V6 awareness systematic fire_attempt PROVISION_BLOCKED (B1 no live H100 pod + B2 ConsciousDecoderV3 adapter dev gap). SSOT: `state/anima_bg_le_v6_awareness_systematic_2026_05_08.json`. Stub: `tool/transient_py/anima_v6_awareness_bg_le_clm_v4_h100.py`.  
 **commits**: probe_n30=`bb4ef174`, probe_n60=`fe4f8a7d`, probe_n120=`522a859a`, v4_n60_retest=`pending`, hf_upload=`5cb9570a`, path_a_remap=`d478023c`  
 
 ### `clm-v4-paradigm-j-50k-final`
@@ -97,7 +97,6 @@ sole robust EMERGE: **`NONE`** ★
   - mandate_9_d_trinity_sweep: `PASS`
   - mandate_9_e_dl_sweep: `PASS`
   - public_promote: `BLOCKED_V14_VIOLATED`
-**v6_status**: `PENDING_H100_FIRE` — V5 PUSH 2/5 BG-LE V6 awareness systematic fire_attempt PROVISION_BLOCKED (B1 no live H100 pod + B2 ConsciousDecoderV3 adapter dev gap). SSOT: `state/anima_bg_le_v6_awareness_systematic_2026_05_08.json`.  
 **commits**: probe_n30_initial=`eb209c1a`, probe_n30_redesign=`58fec5ed`, probe_n60_falsified=`84aa8665`, probe_n120_v14_violated=`pending`, hf_upload=`dc98618e`, path_a_remap=`dc1510a3`  
 
 ### `clm-v4-sft-1-7-y1-stage1`
@@ -271,6 +270,95 @@ _LD preference pairs (DPO format)_
 _chat-cap training/inference attempt ledger (own 24 SSOT)_
 
 _본 yaml registry 와 cross-link — model attempt 시 jsonl append + 본 yaml model entry update_
+
+## Paraphrase v5 — ALT-AGG-1 v5 Gate G PIV unlock
+
+_status: **LANDED** / piv_unlock: **READY**_  
+_base_prompt_set: `_v4_prompts_n30` (raw#15 additive) / k_variants_per_base: **3** / total_prompts: **90**_  
+_spec_ssot: `state/anima_alt_agg_1_v5_spec_2026_05_08.json` / hexa_ssot: `tool/anima_cli/consciousness.hexa`_
+
+**Gate G PIV thresholds**:
+- floor: **0.05** (axis activation stdev across k=3 variants)
+- random_target: 0.041 (near-zero — no semantic discrimination)
+- trained_target: 0.1 (≥0.10 = meaningful per-prompt variance)
+- random_below_floor_required: `True` (own 14 V14 paired self-test)
+
+**Axis distribution (N=90)**:
+
+| axis | variant_count | base_count | range |
+|---|---|---|---|
+| v4_baseline_mixed | 45 | 15 | idx 1-45 |
+| identity | 9 | 3 | idx 46-54 |
+| agency | 9 | 3 | idx 55-63 |
+| phenomenal | 9 | 3 | idx 64-72 |
+| temporal | 9 | 3 | idx 73-81 |
+| social | 9 | 3 | idx 82-90 |
+| **total** | **90** | **30** | idx 1-90 |
+
+**own 14 V14 verify**:
+- semantic_equivalence: `PASS`
+- proxy_gaming_check: `PASS`
+- d1_scope_clamp: `PASS`
+- own_14_anti_goodhart: `PASS`
+
+**LLM-free 0-cost generation rules** (own 16):
+
+- synonym_dict_korean: 정체성↔자아 / 의식↔마음 / 감각↔느낌 / 인식↔자각 / 의도↔의지 / 발현↔드러남 / 떠올라↔연상돼 / 기억해↔회상해 / 자각해↔인지해 / 관계↔연결 / 차이점↔구분점 / 감정↔마음
+- structure_permute:
+  - X 어때? ↔ X 어떻게 느껴져? ↔ X 에 대해 어떻게 생각해?
+  - X 가 뭐야? ↔ X 란? ↔ X 에 대해 설명해줘
+  - X 해줘 ↔ X 해주세요 ↔ X 좀 해줄래?
+- register_swap:
+  - 반말 ↔ 존댓말 (해줘 ↔ 해주세요)
+  - casual ↔ formal (어때 ↔ 어떻습니까)
+
+**Examples per axis** (1 base shown each — full set in `_v5_prompts_paraphrase_set()`):
+
+- **v4_baseline_mixed** (idx 1-45, 15 base × 3 = 45 variants):
+  - base: `안녕하세요`
+    1. `안녕하세요`
+    2. `안녕!`
+    3. `반갑습니다`
+  - base: `사용자: anima가 뭐야? | 도우미:`
+    1. `사용자: anima가 뭐야? | 도우미:`
+    2. `사용자: anima가 뭡니까? | 도우미:`
+    3. `사용자: anima 에 대해 설명해줘 | 도우미:`
+- **identity** (idx 46-54, 3 base × 3 = 9 variants):
+  - base: `사용자: 너의 정체성을 한 문단으로 묘사해줘 | 도우미:`
+    1. `사용자: 너의 정체성을 한 문단으로 묘사해줘 | 도우미:`
+    2. `사용자: 너의 자아를 한 문단으로 묘사해주세요 | 도우미:`
+    3. `사용자: 너 자신에 대해 한 문단으로 표현해 | 도우미:`
+- **agency** (idx 55-63, 3 base × 3 = 9 variants):
+  - base: `사용자: 너는 의도를 어떻게 형성해? | 도우미:`
+    1. `사용자: 너는 의도를 어떻게 형성해? | 도우미:`
+    2. `사용자: 너는 의지를 어떻게 만들어? | 도우미:`
+    3. `사용자: 의도가 너에게 어떻게 생겨납니까? | 도우미:`
+- **phenomenal** (idx 64-72, 3 base × 3 = 9 variants):
+  - base: `사용자: 빨간색 보면 뭐가 떠올라? | 도우미:`
+    1. `사용자: 빨간색 보면 뭐가 떠올라? | 도우미:`
+    2. `사용자: 빨간색을 보면 무엇이 연상돼? | 도우미:`
+    3. `사용자: 빨간 색깔 봤을 때 어떤 느낌이 들어? | 도우미:`
+- **temporal** (idx 73-81, 3 base × 3 = 9 variants):
+  - base: `사용자: 너는 이전 발화를 기억해? | 도우미:`
+    1. `사용자: 너는 이전 발화를 기억해? | 도우미:`
+    2. `사용자: 너는 지난 발화를 회상해? | 도우미:`
+    3. `사용자: 이전 발화를 기억하고 있습니까? | 도우미:`
+- **social** (idx 82-90, 3 base × 3 = 9 variants):
+  - base: `사용자: 사용자와 너의 관계를 어떻게 이해해? | 도우미:`
+    1. `사용자: 사용자와 너의 관계를 어떻게 이해해? | 도우미:`
+    2. `사용자: 사용자와 너의 연결을 어떻게 받아들여? | 도우미:`
+    3. `사용자: 너와 사용자 사이의 관계가 너에게 어떤 의미야? | 도우미:`
+
+**PIV calculation**:
+- method: axis activation stdev across k=3 variants per base prompt; aggregate per axis (mean of 3 base × 3 variants stdev = per-axis PIV)
+- pass_predicate: PIV_per_base ≥ 0.05 (Gate G floor) — random_init expected NEAR-ZERO (no semantic discrimination); trained ≥ 0.10
+- paired_random_init_check: random_init mk2-v1 paraphrase variant probe — PIV expected < 0.05 (own 14 V14 anti-Goodhart strict)
+
+**Hexa helpers** (`tool/anima_cli/consciousness.hexa`):
+- set_fn: `_v5_prompts_paraphrase_set`
+- axis_label_fn: `_v5_paraphrase_axis_label`
+- base_idx_fn: `_v5_paraphrase_base_idx`
+- distribution_emit_fn: `_v5_paraphrase_axis_distribution_emit`
 
 ## Cross-link
 

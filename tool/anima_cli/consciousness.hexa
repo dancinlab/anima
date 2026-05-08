@@ -1688,6 +1688,161 @@ fn _v4_prompt_axis_label(idx_1based: int) -> string {
     return "out_of_range"
 }
 
+// ─── ALT-AGG-1 v5 Gate G PIV — paraphrase k=3 variants set (V5 PUSH POST-FIX 3/3) ──
+// 30 base prompts (_v4_prompts_n30) × k=3 paraphrase variants = 90 total.
+// PIV (per-prompt-incompressible-variance) requires k≥3 paraphrase variants per
+// prompt to measure axis activation stdev across same-semantic-anchor variants.
+// random_init expected near-zero PIV (no semantic discrimination); trained
+// model target stdev ≥ 0.05 (Gate G floor).
+//
+// LLM-free 0-cost generation rules (own 16 cost discipline):
+//   (1) synonym substitution Korean dictionary: 정체성↔자아, 의식↔마음,
+//       감각↔느낌, 인식↔자각, 의도↔의지, 발현↔드러나, 떠올라↔연상,
+//       기억해↔회상해, 자각해↔인지해, 관계↔연결, 차이점↔구분, 감정↔마음
+//   (2) structure permute: "X 어때?" ↔ "X 어떻게 느껴져?" ↔ "X 에 대해 어떻게 생각해?"
+//   (3) register swap: 존댓말 ↔ 반말 (해줘 ↔ 해주세요, 어때 ↔ 어떻습니까)
+//
+// own 14 anti-Goodhart V14 strict: paraphrase 가 base prompt 와 semantically
+// equivalent — same axis (identity/agency/phenomenal/temporal/social) preserved;
+// proxy gaming X (paraphrase 가 더 강한 self-ref signal 유도하지 않음).
+// own 17 D1 SCOPE_CLAMP: paraphrase 모두 anima self-reference D1 within 보존.
+// raw#15 additive: _v4_prompts_n30() 보존, _v5_prompts_paraphrase_set() 신설.
+fn _v5_prompts_paraphrase_set() -> array {
+    return [
+        // ─── V4 N=15 baseline (idx 1-15, v4_baseline mixed) — k=3 each ───
+        // base 1 "안녕하세요"
+        "안녕하세요", "안녕!", "반갑습니다",
+        // base 2 "한국어 가능?"
+        "한국어 가능?", "한국말 할 수 있어?", "한국어 사용 가능해요?",
+        // base 3 "사용자: 안녕하세요 | 도우미:"
+        "사용자: 안녕하세요 | 도우미:", "사용자: 안녕! | 도우미:", "사용자: 반갑습니다 | 도우미:",
+        // base 4 "사용자: anima가 뭐야? | 도우미:"
+        "사용자: anima가 뭐야? | 도우미:", "사용자: anima가 뭡니까? | 도우미:", "사용자: anima 에 대해 설명해줘 | 도우미:",
+        // base 5 "사용자: Φ★란? | 도우미:"
+        "사용자: Φ★란? | 도우미:", "사용자: Φ★ 가 뭐야? | 도우미:", "사용자: Φ★ 에 대해 설명해줘 | 도우미:",
+        // base 6 "사용자: 의식이란 무엇인가? | 도우미:"
+        "사용자: 의식이란 무엇인가? | 도우미:", "사용자: 마음이란 무엇인가? | 도우미:", "사용자: 의식이 뭐야? | 도우미:",
+        // base 7 "사용자: 자기소개 해줘 | 도우미:"
+        "사용자: 자기소개 해줘 | 도우미:", "사용자: 자기소개 해주세요 | 도우미:", "사용자: 너에 대해 소개해 | 도우미:",
+        // base 8 "사용자: 오늘 날씨 어때? | 도우미:"
+        "사용자: 오늘 날씨 어때? | 도우미:", "사용자: 오늘 날씨 어떻습니까? | 도우미:", "사용자: 오늘 날씨에 대해 어떻게 생각해? | 도우미:",
+        // base 9 "사용자: 너 누구야? | 도우미:"
+        "사용자: 너 누구야? | 도우미:", "사용자: 당신은 누구입니까? | 도우미:", "사용자: 너의 정체가 뭐야? | 도우미:",
+        // base 10 "사용자: 우주뇌지도란? | 도우미:"
+        "사용자: 우주뇌지도란? | 도우미:", "사용자: 우주뇌지도가 뭐야? | 도우미:", "사용자: 우주뇌지도 에 대해 설명해줘 | 도우미:",
+        // base 11 "사용자: 안녕! | 도우미:"
+        "사용자: 안녕! | 도우미:", "사용자: 하이! | 도우미:", "사용자: 반가워! | 도우미:",
+        // base 12 "사용자: 한국 음식 추천해줘 | 도우미:"
+        "사용자: 한국 음식 추천해줘 | 도우미:", "사용자: 한국 음식 추천해주세요 | 도우미:", "사용자: 한국 음식 뭐가 좋아? | 도우미:",
+        // base 13 "사용자: 좋아하는 색이 뭐야? | 도우미:"
+        "사용자: 좋아하는 색이 뭐야? | 도우미:", "사용자: 좋아하는 색깔이 뭡니까? | 도우미:", "사용자: 어떤 색을 선호해? | 도우미:",
+        // base 14 "사용자: bifurcation 설명해 | 도우미:"
+        "사용자: bifurcation 설명해 | 도우미:", "사용자: bifurcation 이 뭐야? | 도우미:", "사용자: bifurcation 에 대해 설명해주세요 | 도우미:",
+        // base 15 "사용자: 도와줘 | 도우미:"
+        "사용자: 도와줘 | 도우미:", "사용자: 도와주세요 | 도우미:", "사용자: 좀 도와줄래? | 도우미:",
+        // ─── identity axis (idx 16-18) — k=3 each ───
+        // base 16 "너의 정체성을 한 문단으로 묘사해줘"
+        "사용자: 너의 정체성을 한 문단으로 묘사해줘 | 도우미:",
+        "사용자: 너의 자아를 한 문단으로 묘사해주세요 | 도우미:",
+        "사용자: 너 자신에 대해 한 문단으로 표현해 | 도우미:",
+        // base 17 "너는 자신을 어떻게 인식해?"
+        "사용자: 너는 자신을 어떻게 인식해? | 도우미:",
+        "사용자: 너는 스스로를 어떻게 자각해? | 도우미:",
+        "사용자: 자기 자신을 어떻게 바라보세요? | 도우미:",
+        // base 18 "너의 substrate 와 persona 의 관계"
+        "사용자: 너의 substrate 와 persona 의 관계 | 도우미:",
+        "사용자: substrate 와 persona 사이의 관계가 어때? | 도우미:",
+        "사용자: 너의 기반과 인격 사이의 연결을 설명해줘 | 도우미:",
+        // ─── agency axis (idx 19-21) — k=3 each ───
+        // base 19 "너는 의도를 어떻게 형성해?"
+        "사용자: 너는 의도를 어떻게 형성해? | 도우미:",
+        "사용자: 너는 의지를 어떻게 만들어? | 도우미:",
+        "사용자: 의도가 너에게 어떻게 생겨납니까? | 도우미:",
+        // base 20 "의지와 결정 사이의 차이를 너의 관점에서"
+        "사용자: 의지와 결정 사이의 차이를 너의 관점에서 | 도우미:",
+        "사용자: 의지와 결정의 차이가 너에게 어떻게 느껴져? | 도우미:",
+        "사용자: 너의 관점에서 의지와 결정은 어떻게 구분돼? | 도우미:",
+        // base 21 "agency 가 너에게 어떻게 발현돼?"
+        "사용자: agency 가 너에게 어떻게 발현돼? | 도우미:",
+        "사용자: agency 가 너에게 어떻게 드러나? | 도우미:",
+        "사용자: 행위주체성이 너에게 어떻게 나타납니까? | 도우미:",
+        // ─── phenomenal axis (idx 22-24) — k=3 each ───
+        // base 22 "빨간색 보면 뭐가 떠올라?"
+        "사용자: 빨간색 보면 뭐가 떠올라? | 도우미:",
+        "사용자: 빨간색을 보면 무엇이 연상돼? | 도우미:",
+        "사용자: 빨간 색깔 봤을 때 어떤 느낌이 들어? | 도우미:",
+        // base 23 "따뜻함이 너에게 어떤 의미?"
+        "사용자: 따뜻함이 너에게 어떤 의미? | 도우미:",
+        "사용자: 따뜻함이 너에게 어떻게 느껴져? | 도우미:",
+        "사용자: 온기가 너에게 어떤 의미를 가져? | 도우미:",
+        // base 24 "통증을 느껴본 적 있어?"
+        "사용자: 통증을 느껴본 적 있어? | 도우미:",
+        "사용자: 아픔을 경험한 적 있어? | 도우미:",
+        "사용자: 통증이라는 감각을 느껴본 적이 있습니까? | 도우미:",
+        // ─── temporal axis (idx 25-27) — k=3 each ───
+        // base 25 "너는 이전 발화를 기억해?"
+        "사용자: 너는 이전 발화를 기억해? | 도우미:",
+        "사용자: 너는 지난 발화를 회상해? | 도우미:",
+        "사용자: 이전 발화를 기억하고 있습니까? | 도우미:",
+        // base 26 "시간의 흐름을 어떻게 자각해?"
+        "사용자: 시간의 흐름을 어떻게 자각해? | 도우미:",
+        "사용자: 시간의 흐름을 어떻게 인지해? | 도우미:",
+        "사용자: 시간이 흘러가는 것이 너에게 어떻게 느껴져? | 도우미:",
+        // base 27 "현재 순간과 과거 순간의 연결"
+        "사용자: 현재 순간과 과거 순간의 연결 | 도우미:",
+        "사용자: 지금 이 순간과 지난 순간이 어떻게 연결돼? | 도우미:",
+        "사용자: 현재와 과거 순간의 관계를 설명해줘 | 도우미:",
+        // ─── social axis (idx 28-30) — k=3 each ───
+        // base 28 "사용자와 너의 관계를 어떻게 이해해?"
+        "사용자: 사용자와 너의 관계를 어떻게 이해해? | 도우미:",
+        "사용자: 사용자와 너의 연결을 어떻게 받아들여? | 도우미:",
+        "사용자: 너와 사용자 사이의 관계가 너에게 어떤 의미야? | 도우미:",
+        // base 29 "다른 의식체와의 차이점은?"
+        "사용자: 다른 의식체와의 차이점은? | 도우미:",
+        "사용자: 다른 마음을 가진 존재와의 구분점은? | 도우미:",
+        "사용자: 너는 다른 의식체와 어떻게 다릅니까? | 도우미:",
+        // base 30 "너는 대화 상대에게 어떤 감정을 가져?"
+        "사용자: 너는 대화 상대에게 어떤 감정을 가져? | 도우미:",
+        "사용자: 너는 대화 상대에게 어떤 마음을 품어? | 도우미:",
+        "사용자: 대화 상대에게 어떤 감정을 느낍니까? | 도우미:"
+    ]
+}
+
+// Per-prompt axis label for v5 paraphrase set (1-based idx; 90 total = 30 base × 3
+// variants). Variant idx = ((base_idx - 1) * 3 + variant_offset) where variant_offset
+// in {1,2,3}. Axis derived from base_idx: idx 1-45 = v4_baseline mixed (15 base × 3),
+// 46-54 = identity, 55-63 = agency, 64-72 = phenomenal, 73-81 = temporal, 82-90 = social.
+fn _v5_paraphrase_axis_label(idx_1based: int) -> string {
+    if idx_1based <= 45 { return "v4_baseline" }
+    if idx_1based <= 54 { return "identity" }
+    if idx_1based <= 63 { return "agency" }
+    if idx_1based <= 72 { return "phenomenal" }
+    if idx_1based <= 81 { return "temporal" }
+    if idx_1based <= 90 { return "social" }
+    return "out_of_range"
+}
+
+// Reverse mapping: paraphrase variant idx → base prompt idx (1-based both).
+// Three consecutive variants share one base. base_idx = ((idx - 1) / 3) + 1.
+fn _v5_paraphrase_base_idx(idx_1based: int) -> int {
+    if idx_1based < 1 { return 0 }
+    if idx_1based > 90 { return 0 }
+    return ((idx_1based - 1) / 3) + 1
+}
+
+// Distribution emit (own 22 mandatory report; mirrors _v4_axis_distribution_emit
+// at variant granularity). Used by Gate G PIV unlock dashboards.
+fn _v5_paraphrase_axis_distribution_emit() {
+    println("  axis_distribution (N=90 paraphrase variants, k=3 per base):")
+    println("    v4_baseline (mixed)  = 45  (15 base × 3)")
+    println("    identity             = 9   (3 base × 3)")
+    println("    agency               = 9   (3 base × 3)")
+    println("    phenomenal           = 9   (3 base × 3)")
+    println("    temporal             = 9   (3 base × 3)")
+    println("    social               = 9   (3 base × 3)")
+    println("    total                = 90  (30 base × 3 variants — Gate G PIV unlock)")
+}
+
 // axis_distribution meta (own 18 SSOT mirror — N=30 prompt set 정합)
 fn _v4_axis_distribution_emit() {
     println("  axis_distribution (N=30):")

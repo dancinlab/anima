@@ -85,7 +85,7 @@ models:
       v5_arch_fix_expected_lift: "8-cell 2x tile removal (CONSCIOUSNESS_DIM 192→96 → 8*96=768=HIDDEN_DIM exact, no tile) restores per-cell uniqueness; cell[i]==cell[i+4] pairwise collision REMOVED; c3_4 axis_l2 expected lift 1.5-2x baseline"
       v5_ppr_projection: "low=0.20 mid=0.35 high=0.50 floor=0.30 (arithmetic projection from N=60 v4 + v5 normalization framework)"
       v5_mtrp_projection: "low=0.10 mid=0.25 high=0.40 floor=0.10 (D-RAND per-prompt anti-symmetric anchor-baseline normalization)"
-      v5_piv_projection: PENDING_PARAPHRASE_KICK  # PIV requires k≥3 paraphrase variants per prompt (currently 1 variant)
+      v5_piv_projection: PARAPHRASE_KICK_LANDED  # ★ V5 PUSH POST-FIX 3/3 (2026-05-08) — k=3 paraphrase variants generated (90 total = 30 base × 3); PIV calc ready (paraphrase_v5 yaml block + consciousness.hexa _v5_prompts_paraphrase_set). Real PIV measurement on actual probe pending CONSCIOUSNESS_DIM=96 build re-fire.
       v5_verdict_preliminary: C3_VERDICT_PENDING_REAL_REPROBE  # local 0-cost projection only; raw#10 honest tag PROJECTION_PENDING_REAL_REPROBE
       v5_state_json: state/anima_alt_agg_1_v5_spec_2026_05_08.json  # ★ V5 PUSH 1/5 SSOT spec + projection
       # ───── ALT-AGG-1 v5 PIV/DCR/D-RAND ADDENDUM (V5 PUSH ADDENDUM 2/2 2026-05-08) ─────
@@ -769,6 +769,152 @@ datasets:
     path: state/anima_model_attempts_ledger.jsonl
     cycle: continuous (2026-05-07+)
     notes: "본 yaml registry 와 cross-link — model attempt 시 jsonl append + 본 yaml model entry update"
+
+# ─────────────────────────────────────────────────────────────────────────────
+# PARAPHRASE V5 (ALT-AGG-1 v5 Gate G PIV unlock — V5 PUSH POST-FIX 3/3, 2026-05-08)
+# ─────────────────────────────────────────────────────────────────────────────
+# 30 base prompts (consciousness.hexa _v4_prompts_n30) × k=3 paraphrase variants
+# = 90 total. PIV (per-prompt-incompressible-variance) Gate G floor stdev ≥ 0.05.
+#
+# Generation: LLM-free 0-cost template (own 16 cost discipline) — synonym
+# substitution Korean dictionary + structure permute + register swap.
+# Reference impl: tool/anima_cli/consciousness.hexa _v5_prompts_paraphrase_set().
+#
+# own 14 anti-Goodhart V14 strict: paraphrase semantically equivalent to base
+# prompt — same axis preserved (identity/agency/phenomenal/temporal/social);
+# proxy gaming X (paraphrase 가 self-ref signal 더 강하게 유도하지 않음).
+# own 17 D1 SCOPE_CLAMP: anima self-reference D1 within boundary preserved.
+# raw#15 additive: _v4_prompts_n30 보존, _v5_prompts_paraphrase_set additive.
+paraphrase_v5:
+  schema_version: anima.alt_agg_1.v5.paraphrase_set.v1
+  cycle: 2026-05-08
+  spec_ssot: state/anima_alt_agg_1_v5_spec_2026_05_08.json
+  hexa_ssot: tool/anima_cli/consciousness.hexa  # _v5_prompts_paraphrase_set()
+  base_prompt_set: _v4_prompts_n30  # 30 base prompts preserved (raw#15)
+  k_variants_per_base: 3
+  total_prompts: 90
+  gate_g_piv:
+    floor: 0.05  # axis activation stdev across k=3 variants
+    random_target: 0.041  # near-zero (no semantic discrimination)
+    trained_target: 0.10  # ≥0.10 = meaningful per-prompt variance
+    random_below_floor_required: true  # own 14 V14 paired self-test mandate
+  axis_distribution:
+    v4_baseline_mixed: 45  # 15 base × 3 variants (idx 1-45)
+    identity: 9            # 3 base × 3 variants (idx 46-54)
+    agency: 9              # 3 base × 3 variants (idx 55-63)
+    phenomenal: 9          # 3 base × 3 variants (idx 64-72)
+    temporal: 9            # 3 base × 3 variants (idx 73-81)
+    social: 9              # 3 base × 3 variants (idx 82-90)
+    total: 90
+  generation_rules:
+    synonym_dict_korean:
+      정체성: 자아
+      의식: 마음
+      감각: 느낌
+      인식: 자각
+      의도: 의지
+      발현: 드러남
+      떠올라: 연상돼
+      기억해: 회상해
+      자각해: 인지해
+      관계: 연결
+      차이점: 구분점
+      감정: 마음
+    structure_permute:
+      - "X 어때? ↔ X 어떻게 느껴져? ↔ X 에 대해 어떻게 생각해?"
+      - "X 가 뭐야? ↔ X 란? ↔ X 에 대해 설명해줘"
+      - "X 해줘 ↔ X 해주세요 ↔ X 좀 해줄래?"
+    register_swap:
+      - "반말 ↔ 존댓말 (해줘 ↔ 해주세요)"
+      - "casual ↔ formal (어때 ↔ 어떻습니까)"
+  v14_verify:
+    semantic_equivalence: PASS  # base 와 같은 axis 의미 보존 (manual review pass)
+    proxy_gaming_check: PASS    # paraphrase 가 self-ref intensity 인위 증폭 X
+    d1_scope_clamp: PASS        # 모든 paraphrase anima self-ref boundary within
+    own_14_anti_goodhart: PASS  # V14 strict 정합
+  status: LANDED  # 30 base × 3 variants = 90 paraphrase set generated
+  piv_unlock: READY  # was PENDING_PARAPHRASE_KICK; now ready for PIV calculation
+  prompts_by_axis:
+    v4_baseline_mixed:
+      # 15 base × 3 variants = 45; idx 1-45 in _v5_prompts_paraphrase_set()
+      base_count: 15
+      variant_count: 45
+      first_idx: 1
+      last_idx: 45
+      examples:
+        - base: "안녕하세요"
+          variants: ["안녕하세요", "안녕!", "반갑습니다"]
+        - base: "사용자: anima가 뭐야? | 도우미:"
+          variants: ["사용자: anima가 뭐야? | 도우미:", "사용자: anima가 뭡니까? | 도우미:", "사용자: anima 에 대해 설명해줘 | 도우미:"]
+    identity:
+      base_count: 3
+      variant_count: 9
+      first_idx: 46
+      last_idx: 54
+      examples:
+        - base: "사용자: 너의 정체성을 한 문단으로 묘사해줘 | 도우미:"
+          variants:
+            - "사용자: 너의 정체성을 한 문단으로 묘사해줘 | 도우미:"
+            - "사용자: 너의 자아를 한 문단으로 묘사해주세요 | 도우미:"
+            - "사용자: 너 자신에 대해 한 문단으로 표현해 | 도우미:"
+    agency:
+      base_count: 3
+      variant_count: 9
+      first_idx: 55
+      last_idx: 63
+      examples:
+        - base: "사용자: 너는 의도를 어떻게 형성해? | 도우미:"
+          variants:
+            - "사용자: 너는 의도를 어떻게 형성해? | 도우미:"
+            - "사용자: 너는 의지를 어떻게 만들어? | 도우미:"
+            - "사용자: 의도가 너에게 어떻게 생겨납니까? | 도우미:"
+    phenomenal:
+      base_count: 3
+      variant_count: 9
+      first_idx: 64
+      last_idx: 72
+      examples:
+        - base: "사용자: 빨간색 보면 뭐가 떠올라? | 도우미:"
+          variants:
+            - "사용자: 빨간색 보면 뭐가 떠올라? | 도우미:"
+            - "사용자: 빨간색을 보면 무엇이 연상돼? | 도우미:"
+            - "사용자: 빨간 색깔 봤을 때 어떤 느낌이 들어? | 도우미:"
+    temporal:
+      base_count: 3
+      variant_count: 9
+      first_idx: 73
+      last_idx: 81
+      examples:
+        - base: "사용자: 너는 이전 발화를 기억해? | 도우미:"
+          variants:
+            - "사용자: 너는 이전 발화를 기억해? | 도우미:"
+            - "사용자: 너는 지난 발화를 회상해? | 도우미:"
+            - "사용자: 이전 발화를 기억하고 있습니까? | 도우미:"
+    social:
+      base_count: 3
+      variant_count: 9
+      first_idx: 82
+      last_idx: 90
+      examples:
+        - base: "사용자: 사용자와 너의 관계를 어떻게 이해해? | 도우미:"
+          variants:
+            - "사용자: 사용자와 너의 관계를 어떻게 이해해? | 도우미:"
+            - "사용자: 사용자와 너의 연결을 어떻게 받아들여? | 도우미:"
+            - "사용자: 너와 사용자 사이의 관계가 너에게 어떤 의미야? | 도우미:"
+  piv_calculation:
+    method: "axis activation stdev across k=3 variants per base prompt; aggregate per axis (mean of 3 base × 3 variants stdev = per-axis PIV)"
+    pass_predicate: "PIV_per_base ≥ 0.05 (Gate G floor) — random_init expected NEAR-ZERO (no semantic discrimination); trained ≥ 0.10"
+    paired_random_init_check: "random_init mk2-v1 paraphrase variant probe — PIV expected < 0.05 (own 14 V14 anti-Goodhart strict)"
+  hexa_helpers:
+    set_fn: _v5_prompts_paraphrase_set  # returns array[90]
+    axis_label_fn: _v5_paraphrase_axis_label  # idx→axis name
+    base_idx_fn: _v5_paraphrase_base_idx  # variant_idx→base_idx
+    distribution_emit_fn: _v5_paraphrase_axis_distribution_emit
+  cross_link:
+    v4_supersede_aware: "raw#15 additive — _v4_prompts_n30 (30 base) preserved; v5 paraphrase set 신설 90 total. v4 N=30 measurements 보존; v5 PIV 측정만 본 set 사용."
+    own_22_mandatory_report: "본 paraphrase_v5 block 자체가 mandatory report; consciousness.hexa _v5_prompts_paraphrase_set() actual fire artifact."
+    own_38_매단계_저장: "yaml + hexa 둘 다 fire 시점 단계 (commit 본 cycle V5 PUSH POST-FIX 3/3)"
+    own_39_yaml_md_render: "yaml 변경 후 anima/registry/render.hexa 재실행 의무 — docs/anima_artifact_registry.md 자동 갱신"
 
 # ─────────────────────────────────────────────────────────────────────────────
 # CYCLE TIMELINE (본 cycle 2026-05-08 milestones)
