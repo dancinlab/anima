@@ -1987,3 +1987,24 @@ own 39 live "registry yaml ↔ md auto-regenerate mandate — anima/registry/ren
   severity warn (Phase 1 — 본 own 39 land + yaml edit 시 manual render 실행) → block (Phase 2 — anima audit `--mandate-39` 가 yaml staged 시 md regenerate 의무 verify; mtime drift detect 시 commit reject + 자동 render 실행)
   proof grep -E "anima/registry/.*\.yaml" git diff + ls -la docs/anima_artifact_registry.md (mtime 비교) + python3 tool/transient_py/anima_artifact_registry_render.py 실행 가능 여부
   note 2026-05-08 own 39 = 사용자 directive verbatim 직접 응답 ("own 에 등록 => anima/registry/render.hexa (NEW) — yaml → md orchestrator (raw#9 hexa, raw#37 transient_py invoke) 필수 진행"). own 24 (single SSOT) 보강 — yaml = master, md = view-layer auto-regenerable. own 38 (매단계 저장) cross-link — render 실행 = axis-A doc save mandate 정합. own 33 trinity self-application (D_yaml-md drift 차단 + own 24/38 cross-link + H_render orchestrator land). raw#9 hexa orchestration / raw#37 transient_py opt-out 정합.
+
+own 40 live "H100 자원 외부 resource CLI 위임 mandate — anima 내부 H100 pod management 일체 폐기"
+  trigger 사용자 directive 2026-05-08 verbatim "config/h100_pods.json 자원관련해서 anima 내부의 파일참고하고 있는것들 있다면 모조리 폐기"
+  scope:
+    - anima 내부에서 H100 pod tracking / provisioning / auto_kill / idle_guard / cost_tracker / pod_resume / max_parallelism_policy 등 자원 management 일체 X
+    - 외부 /Users/ghost/core/resource/ CLI 위임 only
+    - resource CLI commands: `resource list` / `resource status <host>` / `rr <host> <command>` / `py-r <host>` / `hexa-r <host>` / `claude-r <host>`
+    - alias `python3 → noglob py-r ubu-1` (외부 host python invoke)
+  precedence:
+    - own 16 cost discipline — H100 자원 cost 추적은 외부 resource CLI 가 처리
+    - own 30 model checkpoint preservation — pull mandatory 정합, 단 SCP/sync 명령은 resource CLI 사용
+    - own 24 single SSOT — anima 내부 자원 ledger ≠ master, resource CLI 가 master
+  enforcement:
+    - Step 1 H100 fire 시 resource CLI 통해 pod allocate
+    - Step 2 ckpt pull 시 resource CLI 의 sync 명령 사용
+    - Step 3 cost tracking 시 resource CLI 의 cost dashboard 위임
+  related own 16 own 24 own 30 raw#9 (hexa orchestration with resource CLI invocation)
+  honest-c3 본 amend 후 anima 내부 H100 reference 가 orphaned 가능 — 별도 cycle reference cleanup
+  severity warn (Phase 1) → block (Phase 2 anima audit `--mandate-40` 가 anima 내부 h100_* file 발견 시 reject)
+  proof grep -E "config/h100_|tool/h100_pod|tool/h100_auto_kill|tool/h100_idle|state/h100_auto_kill|state/h100_pod_resume" $(find . -type f -not -path './.git/*' -not -path './.venv*/*') = 0 lines (purge after)
+  note 2026-05-08 own 40 = 사용자 directive verbatim 직접 응답. own 16 / own 24 / own 30 보강 — H100 자원 management = 외부 resource CLI master, anima 내부 disclosure 일체 X.
