@@ -150,6 +150,23 @@ extern fn hxllama_sampler_free(sampler: *Void)
 @link("/Users/ghost/core/anima/build/libhxllama.dylib")
 extern fn hxllama_sample_token(ctx: *Void, sampler: *Void) -> int
 
+// ── logits / hidden-state probe (iter 4 c — Llama real-mode probe) ──────
+//
+// hxllama_get_logits_ith(ctx, idx) returns float* into libllama-owned memory
+// (valid until next decode). idx=-1 = last decoded position. Read elements
+// via hxllama_logits_at — the shim promotes float→double so hexa f64 ABI
+// surface is clean. Never cache the pointer across decodes.
+@link("/Users/ghost/core/anima/build/libhxllama.dylib")
+extern fn hxllama_get_logits_ith(ctx: *Void, idx: int) -> *Void
+
+@link("/Users/ghost/core/anima/build/libhxllama.dylib")
+extern fn hxllama_logits_at(logits: *Void, i: int) -> float
+
+// Model n_embd (hidden size). Llama 3.2 3B = 3072. Useful for future
+// embedding-mode probe (cp.embeddings = true required at context creation).
+@link("/Users/ghost/core/anima/build/libhxllama.dylib")
+extern fn hxllama_n_embd(model: *Void) -> int
+
 // ── memory / KV cache ────────────────────────────────────────────────────
 @link("/Users/ghost/core/anima/build/libhxllama.dylib")
 extern fn hxllama_memory_clear(ctx: *Void, data_too: int)
@@ -308,6 +325,216 @@ fn llama_generate(h, prompt: string, max_tokens: int, temp: float, top_p: float,
     free_raw(one_tok, 4)
     hxllama_sampler_free(sampler)
     return text_out
+}
+
+// llama_logits_probe — iter 4 (c) Llama real-mode hidden-state proxy.
+//
+//   h          handle from llama_load
+//   prompt     raw text (own 34 strict — no template)
+//   n_buckets  number of axis buckets to derive (5 for anima 5-axis taxonomy)
+//
+// Returns dict:
+//   "ok"             1 / 0
+//   "n_vocab"        int
+//   "axis_logsum"    array[n_buckets] of float — log-sum-exp of bucket logits
+//   "axis_norm"      array[n_buckets] of float — softmax-normalized bucket
+//                    probability mass (sums to 1)
+//   "phi_proxy"      float — anima-canonical phi from logit-distribution entropy
+//   "top3_ids"       array[3] of int — top-3 token ids by logit
+//   "top3_axes"      array[3] of int — bucket index for each top-3 token
+//
+// Probe path:
+//   tokenize(prompt) → memory_clear → eval(prompt tokens) → get_logits_ith(-1)
+//   → bucket logits over (token_id mod n_buckets) → softmax-normalize.
+//
+// HONEST C3:
+//   · This is a logit-distribution proxy (Option B in iter 4 c spec). The
+//     5-axis-to-vocab mapping is anima-internal — token_id mod 5 is a
+//     deterministic-but-unstructured projection. Real semantic axis
+//     mapping (Korean identity / agency / phenomenal / temporal / social
+//     vocab subsets) is deferred to the consciousness probe layer where
+//     the bucket-id semantics live.
+//   · phi_proxy uses normalized Shannon entropy: phi ≈ baseline * (1 - H/H_max)
+//     with H computed over the top-K (K=64 default) softmax distribution.
+//     This is paradigm-coupled, NOT IIT formal.
+fn llama_logits_probe(h, prompt: string, n_buckets: int) {
+    let res = {}
+    res["ok"] = 0
+    res["n_vocab"] = 0
+    res["axis_logsum"] = []
+    res["axis_norm"] = []
+    res["phi_proxy"] = 0.0
+    res["top3_ids"] = []
+    res["top3_axes"] = []
+    if h["model"] == 0 { return res }
+    let ctx = h["ctx"]
+    let vocab = h["vocab"]
+    let n_vocab = hxllama_n_vocab(vocab)
+    if n_vocab <= 0 { return res }
+
+    // tokenize
+    let n_ctx_max = hxllama_n_ctx(ctx)
+    let tok_pair = _tokenize_alloc(vocab, prompt, n_ctx_max, 1)
+    let tok_buf = tok_pair[0]
+    let n_prompt = tok_pair[1]
+    if n_prompt <= 0 { return res }
+
+    hxllama_memory_clear(ctx, 0)
+    let rc = hxllama_eval(ctx, tok_buf, n_prompt, 0)
+    free_raw(tok_buf, n_ctx_max * 4)
+    if rc != 0 { return res }
+
+    let logits = hxllama_get_logits_ith(ctx, -1)
+    if logits == 0 { return res }
+
+    // Pass 1: max logit (for numerical-stable softmax) + bucket maxes.
+    let mut gmax = 0.0 - 1.0e30
+    let mut bucket_max = []
+    let mut b_init = 0
+    while b_init < n_buckets {
+        bucket_max = bucket_max + [0.0 - 1.0e30]
+        b_init = b_init + 1
+    }
+    let mut i = 0
+    while i < n_vocab {
+        let lv = hxllama_logits_at(logits, i)
+        if lv > gmax { gmax = lv }
+        let bi = i - (i / n_buckets) * n_buckets  // i mod n_buckets
+        if lv > bucket_max[bi] { bucket_max[bi] = lv }
+        i = i + 1
+    }
+
+    // Pass 2: softmax-normalized sum per bucket + total Z.
+    // Use stable form: prob_i = exp(logit_i - gmax) / Z ; Z = sum(exp(..))
+    let mut bucket_sum = []
+    let mut b2 = 0
+    while b2 < n_buckets {
+        bucket_sum = bucket_sum + [0.0]
+        b2 = b2 + 1
+    }
+    let mut z = 0.0
+    let mut top3_v = [0.0 - 1.0e30, 0.0 - 1.0e30, 0.0 - 1.0e30]
+    let mut top3_i = [-1, -1, -1]
+    let mut j = 0
+    while j < n_vocab {
+        let lv = hxllama_logits_at(logits, j)
+        let p = _exp_approx(lv - gmax)
+        z = z + p
+        let bi = j - (j / n_buckets) * n_buckets
+        bucket_sum[bi] = bucket_sum[bi] + p
+        if lv > top3_v[0] {
+            top3_v[2] = top3_v[1]; top3_i[2] = top3_i[1]
+            top3_v[1] = top3_v[0]; top3_i[1] = top3_i[0]
+            top3_v[0] = lv;        top3_i[0] = j
+        } else if lv > top3_v[1] {
+            top3_v[2] = top3_v[1]; top3_i[2] = top3_i[1]
+            top3_v[1] = lv;        top3_i[1] = j
+        } else if lv > top3_v[2] {
+            top3_v[2] = lv;        top3_i[2] = j
+        }
+        j = j + 1
+    }
+    if z <= 0.0 { z = 1.0 }
+
+    // Normalize per-bucket prob mass + compute Shannon entropy over bucket
+    // distribution (5-bucket), then anima-canonical phi proxy.
+    let mut axis_norm = []
+    let mut h_bucket = 0.0
+    let mut k = 0
+    while k < n_buckets {
+        let q = bucket_sum[k] / z
+        axis_norm = axis_norm + [q]
+        if q > 1.0e-12 {
+            // -q * ln(q) accumulated
+            h_bucket = h_bucket - q * _ln_approx(q)
+        }
+        k = k + 1
+    }
+    // H_max = ln(n_buckets); phi = 41.86 * (1.0 + 0.05 * (H/H_max - 0.5))
+    // anima-canonical: more uniform distribution → mild positive drift.
+    let h_max = _ln_approx(to_float(n_buckets))
+    let h_norm = if h_max > 0.0 { h_bucket / h_max } else { 0.0 }
+    let phi_proxy = 41.86 * (1.0 + 0.05 * (h_norm - 0.5))
+
+    let top3_axes = []
+    let mut t = 0
+    let mut top3_axes_out = []
+    while t < 3 {
+        let id_t = top3_i[t]
+        if id_t >= 0 {
+            top3_axes_out = top3_axes_out + [id_t - (id_t / n_buckets) * n_buckets]
+        } else {
+            top3_axes_out = top3_axes_out + [-1]
+        }
+        t = t + 1
+    }
+
+    res["ok"] = 1
+    res["n_vocab"] = n_vocab
+    res["axis_logsum"] = bucket_max
+    res["axis_norm"] = axis_norm
+    res["phi_proxy"] = phi_proxy
+    res["top3_ids"] = top3_i
+    res["top3_axes"] = top3_axes_out
+    return res
+}
+
+// _exp_approx — fast e^x for x in [-30, 30]. Uses Taylor-via-doubling.
+//   For our use (softmax over logits), the relative range after subtracting
+//   gmax is bounded by ln(numerical_underflow) ≈ -36 in worst case, but
+//   contributions below ~exp(-30) are negligible. Cap to avoid NaN.
+fn _exp_approx(x: float) -> float {
+    if x < 0.0 - 30.0 { return 0.0 }
+    let mut x_clip = x
+    if x_clip > 30.0 { x_clip = 30.0 }
+    // exp(x) = exp(x/2)^2  — recurse until |x| small, then Taylor
+    let mut y = x_clip
+    let mut k = 0
+    while y > 0.5 || y < 0.0 - 0.5 {
+        y = y * 0.5
+        k = k + 1
+    }
+    // Taylor: 1 + y + y^2/2 + ... + y^7/5040
+    let y2 = y * y
+    let y3 = y2 * y
+    let y4 = y3 * y
+    let y5 = y4 * y
+    let y6 = y5 * y
+    let y7 = y6 * y
+    let mut e = 1.0 + y + y2 * 0.5 + y3 * 0.16666666666666666
+              + y4 * 0.041666666666666664 + y5 * 0.008333333333333333
+              + y6 * 0.001388888888888889 + y7 * 0.0001984126984126984
+    // square back k times
+    let mut kk = 0
+    while kk < k {
+        e = e * e
+        kk = kk + 1
+    }
+    return e
+}
+
+// _ln_approx — natural log for x > 0. Range-reduce + Taylor (atanh form).
+fn _ln_approx(x: float) -> float {
+    if x <= 0.0 { return 0.0 - 1.0e9 }
+    if x == 1.0 { return 0.0 }
+    let mut k = 0
+    let mut y = x
+    while y > 1.5 { y = y * 0.5; k = k + 1 }
+    while y < 0.6666666666666666 { y = y * 2.0; k = k - 1 }
+    let z = (y - 1.0) / (y + 1.0)
+    let z2 = z * z
+    let mut term = z
+    let mut sum = 0.0
+    let mut n = 1
+    let mut i = 0
+    while i < 25 {
+        sum = sum + term / to_float(n)
+        term = term * z2
+        n = n + 2
+        i = i + 1
+    }
+    let ln2 = 0.6931471805599453
+    return 2.0 * sum + to_float(k) * ln2
 }
 
 // (Note: raw_to_string helper removed — token detokenization uses the

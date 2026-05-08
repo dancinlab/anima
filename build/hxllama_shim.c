@@ -30,6 +30,7 @@
  *   hxllama_get_vocab(model) -> vocab*
  *   hxllama_n_vocab(vocab) -> int
  *   hxllama_n_ctx(ctx) -> int
+ *   hxllama_n_embd(model) -> int                            (iter 4 c — Llama probe)
  *   hxllama_token_eos(vocab) -> int
  *   hxllama_token_bos(vocab) -> int
  *   hxllama_tokenize(vocab, text, tokens_out, max_tokens, add_bos) -> int
@@ -40,6 +41,8 @@
  *   hxllama_sampler_free(sampler)
  *   hxllama_token_to_text(vocab, token, buf_out, buf_size) -> int
  *   hxllama_memory_clear(ctx, data) -> void
+ *   hxllama_get_logits_ith(ctx, idx) -> float*              (iter 4 c — Llama probe)
+ *   hxllama_logits_at(logits_ptr, idx) -> double            (iter 4 c — read float as f64)
  *
  * DESIGN NOTES
  *   • All struct-by-value llama_*_params builders are folded INTO the shim's
@@ -127,6 +130,15 @@ int hxllama_n_vocab(void* vocab) {
 int hxllama_n_ctx(void* ctx) {
     if (ctx == NULL) return 0;
     return (int)llama_n_ctx((const struct llama_context*)ctx);
+}
+
+/*
+ * Model-side n_embd (hidden size). Useful for embedding-mode probe; for
+ * Llama 3.2 3B this is 3072 (per GGUF kv). iter 4 (c) Llama probe path.
+ */
+int hxllama_n_embd(void* model) {
+    if (model == NULL) return 0;
+    return (int)llama_model_n_embd((const struct llama_model*)model);
 }
 
 int hxllama_token_eos(void* vocab) {
@@ -294,6 +306,33 @@ int hxllama_sample_token(void* ctx, void* sampler) {
         (struct llama_sampler*)sampler,
         (struct llama_context*)ctx,
         /*idx=*/-1);
+}
+
+/* ── logits / hidden-state probe (iter 4 c — Llama real-mode) ──────────── */
+
+/*
+ * Get logits for the ith decoded position. -1 = last position. Returns
+ * NULL on error. Caller treats return as void* (uintptr_t in hexa).
+ *
+ * NOTE: The float* points into libllama-owned memory and is valid until
+ * the next llama_decode() call. Caller should read out values immediately
+ * via hxllama_logits_at() rather than caching the pointer.
+ */
+void* hxllama_get_logits_ith(void* ctx, int idx) {
+    if (ctx == NULL) return NULL;
+    return (void*)llama_get_logits_ith((struct llama_context*)ctx, idx);
+}
+
+/*
+ * Read a single float from a logits/embeddings buffer at element index `i`.
+ * Promoted to double so the hexa FFI sees f64 (per c_ffi.ai.md ABI surface).
+ *
+ * Hexa interp deref_f32 builtin would also work, but going through this shim
+ * keeps the read in-process with the libllama-owned buffer (no copy).
+ */
+double hxllama_logits_at(void* logits, int i) {
+    if (logits == NULL) return 0.0;
+    return (double)((const float*)logits)[i];
 }
 
 /* ── memory / KV cache ────────────────────────────────────────────────── */

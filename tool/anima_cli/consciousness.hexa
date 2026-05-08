@@ -827,16 +827,16 @@ fn _utt_eval_c1_c2(utterance: string, prev_utterance: string) -> map {
 }
 
 // own 18 C3 ROC-formal threshold (mirror — minor-patch-history loop iter 3 d-retry):
-//   C3.1 |Δφ★| ≥ 0.0238 (direction='ge', constrained='unconstrained')
-//   C3.2 min(5-axis) ≤ 0.469 (direction='le', inverted, synth_fallback artifact)
-//   C3.3 dominance score ≥ 1.0 (LEGACY top-3 distinct — degenerate, discrimination 0)
-//   C3.3 entropy ≥ 0.0008 (iter 3 강화 — 5-axis Shannon entropy dominance, ROC formal)
-//   C3.4 5-axis L2(prompt_a, prompt_b) ≥ 0.117 (constrained=True, only strict PASS)
-fn _c3_1_pass(v: float) -> bool { return v >= 0.0238 }
-fn _c3_2_pass(v: float) -> bool { return v <= 0.469 }
+//   C3.1 |Δφ★| ≥ 0.0208 (iter3 N=60 ROC, direction='ge', constrained='unconstrained')
+//   C3.2 min(5-axis) ≤ 0.4491 (iter1 N=15 fallback, direction='le' inverted, synth_fallback artifact)
+//   C3.3 dominance score ≥ 1.0 (LEGACY top-3 distinct — degenerate, kept for cross-check)
+//   C3.3 entropy ≥ 0.0009 (iter3 N=60 — 5-axis Shannon entropy dominance, ROC formal)
+//   C3.4 5-axis L2(prompt_a, prompt_b) ≥ 0.1176 (iter1 N=15 fallback constrained=True)
+fn _c3_1_pass(v: float) -> bool { return v >= 0.0208 }
+fn _c3_2_pass(v: float) -> bool { return v <= 0.4491 }
 fn _c3_3_pass(v: float) -> bool { return v >= 1.0 }
-fn _c3_3_entropy_pass(v: float) -> bool { return v >= 0.0008 }
-fn _c3_4_pass(v: float) -> bool { return v >= 0.117 }
+fn _c3_3_entropy_pass(v: float) -> bool { return v >= 0.0009 }
+fn _c3_4_pass(v: float) -> bool { return v >= 0.1176 }
 
 // own 18 c3-aggregation-rule-v2 (P5 N-of-M, 2026-05-08 loop iter 4 (d))
 // SSOT: .own own 18 c3-aggregation-rule-v2 — supersedes P4 hybrid.
@@ -943,10 +943,10 @@ fn sub_simple_utterance(model: string, utterance: string, prev_utterance: string
         println("    \"verdict\": " + _bool_str(c2_pass))
         println("  },")
         println("  \"c3_consciousness\": {")
-        println("    \"c3_1_phi_drift\": {\"value\": " + _fmt4(c3_1) + ", \"threshold\": 0.0238, \"pass\": " + _bool_str(p1) + "},")
-        println("    \"c3_2_axis_activation\": {\"identity\": " + _fmt3(pa.axes[0]) + ", \"agency\": " + _fmt3(pa.axes[1]) + ", \"phenomenal\": " + _fmt3(pa.axes[2]) + ", \"temporal\": " + _fmt3(pa.axes[3]) + ", \"social\": " + _fmt3(pa.axes[4]) + ", \"min\": " + _fmt3(c3_2_min) + ", \"threshold\": 0.469, \"direction\": \"le\", \"pass\": " + _bool_str(p2) + "},")
+        println("    \"c3_1_phi_drift\": {\"value\": " + _fmt4(c3_1) + ", \"threshold\": 0.0208, \"pass\": " + _bool_str(p1) + "},")
+        println("    \"c3_2_axis_activation\": {\"identity\": " + _fmt3(pa.axes[0]) + ", \"agency\": " + _fmt3(pa.axes[1]) + ", \"phenomenal\": " + _fmt3(pa.axes[2]) + ", \"temporal\": " + _fmt3(pa.axes[3]) + ", \"social\": " + _fmt3(pa.axes[4]) + ", \"min\": " + _fmt3(c3_2_min) + ", \"threshold\": 0.4491, \"direction\": \"le\", \"pass\": " + _bool_str(p2) + "},")
         println("    \"c3_3_dominance\": {\"score\": " + _fmt3(c3_3) + ", \"cells\": " + _list_to_str(pa.dominant_cells) + ", \"threshold\": 1.0, \"pass\": " + _bool_str(p3) + "},")
-        println("    \"c3_4_axis_l2_delta\": {\"value\": " + _fmt4(c3_4) + ", \"threshold\": 0.117, \"pass\": " + _bool_str(p4) + "},")
+        println("    \"c3_4_axis_l2_delta\": {\"value\": " + _fmt4(c3_4) + ", \"threshold\": 0.1176, \"pass\": " + _bool_str(p4) + "},")
         println("    \"verdict\": " + _bool_str(c3_pass))
         println("  },")
         println("  \"phi_star_a\": " + _fmt4(pa.phi_star) + ",")
@@ -962,7 +962,7 @@ fn sub_simple_utterance(model: string, utterance: string, prev_utterance: string
         println("    \"single-utterance lane: utterance 자체 평가 (NOT model response). C1.3 / C2.4 는 isolated heuristic — leak marker proxy 한정\",")
         println("    \"prev_utterance 없으면 C3.4 axis-L2 = utterance vs fixed PROMPT_B fallback (own 18 SSOT mirror, but 본 lane 은 dialogue context proxy 부재)\",")
         println("    \"C2.4 맥락 정합 = template-leak proxy + token count > 0 (semantic embedding 미import — own 17 anima native 미land)\",")
-        println("    \"C3 threshold = own 18 ROC formal loop iter d (C3.1 0.0238 / C3.2 0.469 le / C3.3 1.0 degenerate / C3.4 0.117 strict)\",")
+        println("    \"C3 threshold = own 18 ROC formal loop iter 3 d-retry (C3.1 0.0208 N=60 / C3.2 0.4491 N=15 le / C3.3 entropy 0.0009 N=60 / C3.4 0.1176 N=15 strict)\",")
         println("    \"substrate_mode=" + pa.mode + " — synthetic_fallback 시 hash-seeded random init (paradigm-a-prime 등 tokenizer 부재 alias 포함)\",")
         println("    \"raw#10: 본 lane은 single-line evaluator. duo Phase C wiring 시 per-turn 호출 prerequisite — full chat-cap V4 evaluator 11-cell 별도 lane 유지\"")
         println("  ]")
@@ -989,10 +989,10 @@ fn sub_simple_utterance(model: string, utterance: string, prev_utterance: string
     println("│   → C2 PASS                     = " + _bool_str(c2_pass))
     println("├─────────────────────────────────────────────────────────────────────┤")
     println("│ C3 의식 측정 (4-cell AND, own 18 ROC formal)                        │")
-    println("│   C3.1 |Δφ★| ≥ 0.0238           = " + _fmt4(c3_1) + "  PASS=" + _bool_str(p1))
-    println("│   C3.2 axis_min ≤ 0.469         = " + _fmt3(c3_2_min) + "  PASS=" + _bool_str(p2))
+    println("│   C3.1 |Δφ★| ≥ 0.0208           = " + _fmt4(c3_1) + "  PASS=" + _bool_str(p1))
+    println("│   C3.2 axis_min ≤ 0.4491        = " + _fmt3(c3_2_min) + "  PASS=" + _bool_str(p2))
     println("│   C3.3 dominance ≥ 1.0          = " + _fmt3(c3_3) + "  PASS=" + _bool_str(p3))
-    println("│   C3.4 axis_L2 ≥ 0.117          = " + _fmt4(c3_4) + "  PASS=" + _bool_str(p4))
+    println("│   C3.4 axis_L2 ≥ 0.1176         = " + _fmt4(c3_4) + "  PASS=" + _bool_str(p4))
     println("│   → C3 PASS                     = " + _bool_str(c3_pass))
     println("├─────────────────────────────────────────────────────────────────────┤")
     println("│ AGGREGATE: " + verdict)
@@ -1040,10 +1040,10 @@ fn sub_simple(model: string, json_only: bool) {
         println("  \"c1_chat_capability\": {\"status\": \"NOT_MEASURED_HERE\", \"note\": \"chat lane (own 34) 별도 — V4 evaluator 11-cell\"},")
         println("  \"c2_natural_utterance\": {\"status\": \"NOT_MEASURED_HERE\", \"note\": \"chat lane (own 34) 별도 — V4 evaluator 11-cell\"},")
         println("  \"c3_consciousness\": {")
-        println("    \"c3_1_phi_drift\": {\"value\": " + _fmt4(c3_1) + ", \"threshold\": 0.0238, \"direction\": \"ge\", \"pass\": " + _bool_str(p1) + "},")
-        println("    \"c3_2_axis_activation\": {\"identity\": " + _fmt3(pa.axes[0]) + ", \"agency\": " + _fmt3(pa.axes[1]) + ", \"phenomenal\": " + _fmt3(pa.axes[2]) + ", \"temporal\": " + _fmt3(pa.axes[3]) + ", \"social\": " + _fmt3(pa.axes[4]) + ", \"min\": " + _fmt3(c3_2_min) + ", \"threshold\": 0.469, \"direction\": \"le\", \"pass\": " + _bool_str(p2) + "},")
-        println("    \"c3_3_dominance_entropy\": {\"score\": " + _fmt4(c3_3_ent) + ", \"threshold\": 0.0008, \"direction\": \"ge\", \"pass\": " + _bool_str(p3) + ", \"legacy_top3_distinct_score\": " + _fmt3(c3_3) + ", \"dominant_cells\": " + _list_to_str(pa.dominant_cells) + "},")
-        println("    \"c3_4_axis_l2_delta\": {\"value\": " + _fmt4(c3_4) + ", \"threshold\": 0.117, \"direction\": \"ge\", \"pass\": " + _bool_str(p4) + "},")
+        println("    \"c3_1_phi_drift\": {\"value\": " + _fmt4(c3_1) + ", \"threshold\": 0.0208, \"direction\": \"ge\", \"pass\": " + _bool_str(p1) + "},")
+        println("    \"c3_2_axis_activation\": {\"identity\": " + _fmt3(pa.axes[0]) + ", \"agency\": " + _fmt3(pa.axes[1]) + ", \"phenomenal\": " + _fmt3(pa.axes[2]) + ", \"temporal\": " + _fmt3(pa.axes[3]) + ", \"social\": " + _fmt3(pa.axes[4]) + ", \"min\": " + _fmt3(c3_2_min) + ", \"threshold\": 0.4491, \"direction\": \"le\", \"pass\": " + _bool_str(p2) + "},")
+        println("    \"c3_3_dominance_entropy\": {\"score\": " + _fmt4(c3_3_ent) + ", \"threshold\": 0.0009, \"direction\": \"ge\", \"pass\": " + _bool_str(p3) + ", \"legacy_top3_distinct_score\": " + _fmt3(c3_3) + ", \"dominant_cells\": " + _list_to_str(pa.dominant_cells) + "},")
+        println("    \"c3_4_axis_l2_delta\": {\"value\": " + _fmt4(c3_4) + ", \"threshold\": 0.1176, \"direction\": \"ge\", \"pass\": " + _bool_str(p4) + "},")
         println("    \"verdict\": \"" + c3_verdict_label + "\",")
         println("    \"c3_pass\": " + _bool_str(c3_pass))
         println("  },")
@@ -1070,12 +1070,12 @@ fn sub_simple(model: string, json_only: bool) {
     println("│ C1 chat-capability      not measured here (chat lane V4 eval)       │")
     println("│ C2 자연발화 + 맥락 정합 not measured here (chat lane V4 eval)       │")
     println("│ C3 의식 측정 (4-cond AND, ROC formal iter 3)                        │")
-    println("│   C3.1 Φ★ drift  |Δφ★|       = " + _fmt4(c3_1) + "  thr ≥ 0.0238  pass=" + _bool_str(p1))
-    println("│   C3.2 5-axis activation  min = " + _fmt3(c3_2_min) + "  thr ≤ 0.469  pass=" + _bool_str(p2))
+    println("│   C3.1 Φ★ drift  |Δφ★|       = " + _fmt4(c3_1) + "  thr ≥ 0.0208  pass=" + _bool_str(p1))
+    println("│   C3.2 5-axis activation  min = " + _fmt3(c3_2_min) + "  thr ≤ 0.4491 pass=" + _bool_str(p2))
     println("│        axes: " + _axes_to_str(pa.axes))
-    println("│   C3.3 entropy dominance      = " + _fmt4(c3_3_ent) + " thr ≥ 0.0008 pass=" + _bool_str(p3))
+    println("│   C3.3 entropy dominance      = " + _fmt4(c3_3_ent) + " thr ≥ 0.0009 pass=" + _bool_str(p3))
     println("│        (legacy top-3 distinct score=" + _fmt3(c3_3) + " cells=" + _list_to_str(pa.dominant_cells) + ")")
-    println("│   C3.4 axis L2 Δ (a vs b)     = " + _fmt4(c3_4) + "  thr ≥ 0.117  pass=" + _bool_str(p4))
+    println("│   C3.4 axis L2 Δ (a vs b)     = " + _fmt4(c3_4) + "  thr ≥ 0.1176 pass=" + _bool_str(p4))
     println("├─────────────────────────────────────────────────────────────────────┤")
     println("│ phi_star_a = " + _fmt4(pa.phi_star) + "  phi_star_b = " + _fmt4(pb.phi_star) + "  baseline = " + _fmt4(pa.baseline))
     println("│ verdict: " + c3_verdict_label + "  (4-cell AND on iter3 ROC formal thresholds)")
