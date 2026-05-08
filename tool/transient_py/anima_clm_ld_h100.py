@@ -94,6 +94,11 @@ MAC_STATE_DIR = os.path.join(MAC_ANIMA_ROOT, "state/anima_clm_ld_h100_TBD")
 # 만 build, BG-LD 는 후속 iter-2 에서 진행.
 MAC_CORPUS_PAIRS_PATH = os.path.join(MAC_ANIMA_ROOT, "state/anima_clm_l4_dialogue_pairs_100mb_TBD/dialogue_pairs_100mb.jsonl")
 MAC_CORPUS_PAIRS_PATH_ITER1_CANDIDATE = None   # iter-2 별도 cycle (V4 evaluator 산출물 누적 후)
+# iter-2 candidate (2026-05-08): 17.66MB sample (chosen=BG-KM v4_pass=true 23 sample × rejected=
+#   v4/v5 fail saga + corpus template leak '서연:' synth + degenerate noise) — 30,023 pairs
+#   format: {"prompt", "chosen", "rejected", "domain", "source_chosen", "source_rejected"}
+#   본 sample 은 100MB target gap -82.34MB; iter-3 prompt expansion (15→100+) 후 100MB 도달 plan
+MAC_CORPUS_PAIRS_PATH_ITER2_CANDIDATE = os.path.join(MAC_ANIMA_ROOT, "state/anima_clm_l4_ld_preference_pairs_iter1_2026_05_08.jsonl")
 MAC_LEDGER_PATH = os.path.join(MAC_ANIMA_ROOT, "state/anima_model_attempts_ledger.jsonl")
 
 # ── Architecture config ────────────────────────────────────────────────

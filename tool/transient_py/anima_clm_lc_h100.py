@@ -95,6 +95,8 @@ MAC_STATE_DIR = os.path.join(MAC_ANIMA_ROOT, "state/anima_clm_lc_h100_TBD")
 #   (BG-LA 와 동일 source — distill 입력 재사용)
 MAC_CORPUS_PATH = os.path.join(MAC_ANIMA_ROOT, "state/anima_clm_l4_persona_200mb_TBD/corpus_persona_200mb.txt")
 MAC_CORPUS_PATH_ITER1_CANDIDATE = os.path.join(MAC_ANIMA_ROOT, "state/anima_persona_tier_a_2026_05_08.txt")
+# iter-2 candidate (2026-05-08): same path (additive +0.93MB semantic-deepen, BG-LA 재사용)
+MAC_CORPUS_PATH_ITER2_CANDIDATE = os.path.join(MAC_ANIMA_ROOT, "state/anima_persona_tier_a_2026_05_08.txt")
 MAC_LEDGER_PATH = os.path.join(MAC_ANIMA_ROOT, "state/anima_model_attempts_ledger.jsonl")
 
 # ── Architecture config ────────────────────────────────────────────────

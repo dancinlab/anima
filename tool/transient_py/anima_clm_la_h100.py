@@ -95,6 +95,10 @@ MAC_STATE_DIR = os.path.join(MAC_ANIMA_ROOT, "state/anima_clm_la_h100_TBD")
 #   (own 17 정합, density 1.60% own 18 C3 threshold 0.4% pass; full 200MB 별도 cycle 확장)
 MAC_CORPUS_PATH = os.path.join(MAC_ANIMA_ROOT, "state/anima_clm_l4_persona_200mb_TBD/corpus_persona_200mb.txt")
 MAC_CORPUS_PATH_ITER1_CANDIDATE = os.path.join(MAC_ANIMA_ROOT, "state/anima_persona_tier_a_2026_05_08.txt")
+# iter-2 candidate (2026-05-08): same path (iter-2 = additive append over iter-1; +0.93MB)
+#   semantic-density filter (multi-keyword set co-hit ≥2 / 6 axes + char-density ≥0.4%) — own 18 C3 정합
+#   final size 103.59MB combined density 1.5911% (own 18 C3 threshold 0.4% pass 4×)
+MAC_CORPUS_PATH_ITER2_CANDIDATE = os.path.join(MAC_ANIMA_ROOT, "state/anima_persona_tier_a_2026_05_08.txt")
 MAC_LEDGER_PATH = os.path.join(MAC_ANIMA_ROOT, "state/anima_model_attempts_ledger.jsonl")
 
 # ── Architecture config (placeholder — measurement-driven tune) ────────

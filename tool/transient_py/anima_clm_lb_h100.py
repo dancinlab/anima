@@ -99,6 +99,11 @@ MAC_CORPUS_PERSONA_PATH = os.path.join(MAC_ANIMA_ROOT, "state/anima_clm_l4_perso
 MAC_CORPUS_DIALOGUE_PATH = os.path.join(MAC_ANIMA_ROOT, "state/anima_clm_l4_dialogue_500mb_TBD/corpus_dialogue_500mb.txt")
 MAC_CORPUS_PERSONA_PATH_ITER1_CANDIDATE = os.path.join(MAC_ANIMA_ROOT, "state/anima_persona_tier_a_2026_05_08.txt")
 MAC_CORPUS_DIALOGUE_PATH_ITER1_CANDIDATE = os.path.join(MAC_ANIMA_ROOT, "state/anima_dialogue_tier_a_2026_05_08.txt")
+# iter-2 candidates (2026-05-08): persona 동상 file (additive +0.93MB semantic-deepen);
+#   dialogue iter-2 신규 file 72.78MB (BG-JE ext + paradigm ext + V4 BG-KM PASS + core_dialogues normalized)
+#   density 0.97%, chat-template ratio 28.95% (own 20 ≥30% threshold marginal — iter-3 expansion 후속)
+MAC_CORPUS_PERSONA_PATH_ITER2_CANDIDATE = os.path.join(MAC_ANIMA_ROOT, "state/anima_persona_tier_a_2026_05_08.txt")
+MAC_CORPUS_DIALOGUE_PATH_ITER2_CANDIDATE = os.path.join(MAC_ANIMA_ROOT, "state/anima_dialogue_tier_a_iter2_2026_05_08.txt")
 MAC_LEDGER_PATH = os.path.join(MAC_ANIMA_ROOT, "state/anima_model_attempts_ledger.jsonl")
 
 # ── Architecture config (mk2-v1 — current CLM v4 production) ───────────
