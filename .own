@@ -70,7 +70,7 @@
 
 # Migrated 2026-04-26 from anima/.raw — raw 100 anima-local rule absorbed
 # into project-local L1 layer. anima/.raw is retired (file rm + git rm);
-# canonical L0 SSOT is now hive (github.com/need-singularity/hive).
+# canonical L0 SSOT is now hive (github.com/dancinlab/hive).
 # Original ID: raw#100 -> own#1.
 # Verbose closure history (R1→R6 ω-cycle, 158-line original) archived to
 # docs/own1-raw100-archive-2026-04-26.md (raw#2 self-format compliance).
@@ -478,7 +478,7 @@ own 14 new "anima-local: models + datasets HF Hub only — anima git에 large we
   slug models-datasets-hf-hub-only-mandate
   base anima/.own SSOT + raw 9 hexa-only canonical-mandate (cross-link)
   since 2026-05-04 (user directive 강한 반복: "anima own 등록 => model, dataset 은 무조건 HF 에 등록 , github 에 따라 올라가면 안됨 (용량문제)" + "모델, 데이터셋은 무조건 HF 만" + "저장")
-  scope anima repo content boundaries — model weights (.pt/.safetensors/.bin/.pth/.gguf/sentencepiece .model) + large training/eval datasets (>5MB jsonl/parquet/csv) MUST live on HuggingFace Hub (need-singularity org). anima git holds: hexa source, spec docs, state JSONL/JSON (small <5MB), audit logs/verdicts, configurations, HF mirror references (path + revision pin + sha256, NOT bytes).
+  scope anima repo content boundaries — model weights (.pt/.safetensors/.bin/.pth/.gguf/sentencepiece .model) + large training/eval datasets (>5MB jsonl/parquet/csv) MUST live on HuggingFace Hub (dancinlab org). anima git holds: hexa source, spec docs, state JSONL/JSON (small <5MB), audit logs/verdicts, configurations, HF mirror references (path + revision pin + sha256, NOT bytes).
   rule before any `git add <path>`:
     (a) du -h <path> — if >5MB, STOP
     (b) classify: model weights / dataset / metadata-reference / spec / audit / source
@@ -493,7 +493,7 @@ own 14 new "anima-local: models + datasets HF Hub only — anima git에 large we
   bans `git add <dataset_file>` for files >5MB (training/eval data)
   bans LFS pointer commit on anima git (HF Hub native LFS preferred — single SSOT)
   proof memory feedback_anima_models_datasets_hf_only.md (hive-hook-bus 2026-05-04, session-scoped mirror)
-  proof tokenizer_64k_multilingual.{model,vocab} (1.2MB+966K) already mirrored to HF need-singularity/clm-v4-base-mirror (could remove from anima git in future cleanup)
+  proof tokenizer_64k_multilingual.{model,vocab} (1.2MB+966K) already mirrored to HF dancinlab/clm-v4-base-mirror (could remove from anima git in future cleanup)
   proof BG-Ρ + BG-Ψ + BG-Μ MMLU per-subject jsonl logs (~100MB+ across 4+ H100 cycles) — eval artifacts, possibly migrate to HF dataset
   proof tool/hf_upload_mk2.hexa (committed in anima — feature land 2026-05-03)
   follow-up audit anima git for existing >5MB committed files; HF migration plan + git rm for those
@@ -516,7 +516,7 @@ own 15 new "anima-local: HF release lifecycle PRIVATE-first → PUBLIC after ver
   slug hf-release-private-then-public-after-verification
   base anima/.own SSOT + own 14 (HF Hub mandate sister) + raw 12 pre-registered-frozen-spec + raw 10 honest-disclosure
   since 2026-05-05 (user authorization: "HF 관련 own 추가 — 과정은 PRIVATE 등록, 최종 버전은 PUBLIC 등록, 단 벤치마킹 + 테스트 + 모든 검증과정 통과 필수")
-  scope HuggingFace Hub publication lifecycle (need-singularity org). dev/test cycle uploads MUST be PRIVATE only. PUBLIC promotion is a SEPARATE explicit BG cycle gated on verification suite ALL PASS.
+  scope HuggingFace Hub publication lifecycle (dancinlab org). dev/test cycle uploads MUST be PRIVATE only. PUBLIC promotion is a SEPARATE explicit BG cycle gated on verification suite ALL PASS.
   rule (a) first upload of any model / dataset / tokenizer artifact via tool/hf_upload_mk2.hexa MUST include --private flag (advisory: validator warns if --upload runs without --private on never-uploaded repo)
   rule (b) PUBLIC promotion REQUIRES verification gates ALL PASS:
     (b.1) benchmark suite PASS (canonical: hellaswag + mmlu + triviaqa + openbookqa OR domain-specific equivalent declared in spec)
@@ -538,9 +538,9 @@ own 15 new "anima-local: HF release lifecycle PRIVATE-first → PUBLIC after ver
   bans public-promote without verdict.json citing (b.1-b.6) PASS evidence
   bans skipping 24-48h review window without documented rationale (e.g., "all gates auto-PASS via deterministic verifier" with verdict cite)
   proof memory feedback_hf_release_private_to_public_after_verification.md (hive-hook-bus 2026-05-05, session-scoped mirror)
-  proof precedent docs/anima_clm_hf_release_v1_uploaded_landed_2026_05_04.ai.md (need-singularity/clm-v4-mk2-v1 PRIVATE uploaded 2026-05-04T23:26:12Z, commit 80440a1d, 48h review window ends 2026-05-06T23:26:12Z, public promote NOT yet executed — first own 15 application instance)
+  proof precedent docs/anima_clm_hf_release_v1_uploaded_landed_2026_05_04.ai.md (dancinlab/clm-v4-mk2-v1 PRIVATE uploaded 2026-05-04T23:26:12Z, commit 80440a1d, 48h review window ends 2026-05-06T23:26:12Z, public promote NOT yet executed — first own 15 application instance)
   proof tool/hf_upload_mk2.hexa --private flag (existing feature land 2026-05-03 — enforcement layer attaches to this flag)
-  proof state/hf_upload_audit/20260504T232612Z_need-singularity__clm-v4-mk2-v1.jsonl (audit trail with visibility=private)
+  proof state/hf_upload_audit/20260504T232612Z_dancinlab__clm-v4-mk2-v1.jsonl (audit trail with visibility=private)
   follow-up tool/hf_upload_mk2.hexa validator-warn when --upload invoked without --private on never-uploaded repo
   follow-up tool/hf_public_promote_lint.hexa (PROPOSED) — gates (b.1-b.6) PASS evidence required before `gh repo edit --visibility public`
   follow-up own 15 30d post — measure rate of PRIVATE-first compliance + PUBLIC-promote gate-cite compliance; if <0.80 escalate advisory→block
@@ -642,13 +642,13 @@ own 17 live "anima-no-external-substrate-wrapping — ALM 영구 보류 (anima-n
   rule anima의 chat-cap backend는 ANIMA-NATIVE 만 허용. 외부 substrate (Llama-3.2-3B base / Mistral-7B-v0.3 base / 기타 ALM lineage) wrapping 영구 보류. 적용 대상: anima cli mk2 T1 backend_canonical, anima dialogue surface, T3 anima connect <model> command, README v1.0 vision backend link, 그 외 anima identity-bearing surface 전체.
   permitted-backends:
     - anima-core/runtime/clm_v4_mount.hexa (CLM v4 mk2-v1, paradigm v11 G3, anima-native, 자연 발화 PASS)
-    - need-singularity/clm-v2-byte-18m-convo-5k (RECOVERED, 18.52M byte-level, KO 회복 후 promote)
-    - need-singularity/clm-v2-byte-18m-base (base archive)
+    - dancinlab/clm-v2-byte-18m-convo-5k (RECOVERED, 18.52M byte-level, KO 회복 후 promote)
+    - dancinlab/clm-v2-byte-18m-base (base archive)
     - 미래 anima-native lane (β path original retrain, β' KoGPT2 head-swap on mk2-v1, γ byte head retrofit, 또는 다른 anima 자체 학습 model)
   rejected-backends:
-    - need-singularity/llm-llama32-3b-paradigm-a-prime-r16-sft-stage1 (Llama Path A v2, Llama-3.2-3B-Instruct base) — REJECTED 영구 보류
-    - need-singularity/llm-llama32-3b-paradigm-a-prime-r16-s43-sft-stage1 (seed 43) — REJECTED 영구 보류
-    - need-singularity/llm-llama32-3b-paradigm-a-prime-r16-s44-sft-stage1 (seed 44) — REJECTED 영구 보류
+    - dancinlab/llm-llama32-3b-paradigm-a-prime-r16-sft-stage1 (Llama Path A v2, Llama-3.2-3B-Instruct base) — REJECTED 영구 보류
+    - dancinlab/llm-llama32-3b-paradigm-a-prime-r16-s43-sft-stage1 (seed 43) — REJECTED 영구 보류
+    - dancinlab/llm-llama32-3b-paradigm-a-prime-r16-s44-sft-stage1 (seed 44) — REJECTED 영구 보류
     - 그 외 G1 (Llama-3.2-3B) / G3 (Mistral-7B-v0.3 + LoRA) 외부 substrate 활성화 — REJECTED
   note-historical-context "1월 2026 anima v0.1 시점 PureField + Claude API wrapper 사용 (commit 4a1d8d0a) → 2026-03-24 ConsciousLM 자체 모델 시작 (commit 2da44161) → 2026-03-28 v2 18M byte-level chat 가능 (bb99b6b6) — anima-native lineage 시작점. 이후 G1/G3 chat substrate live (3ecb6175 2026-05-02)도 가능했지만 본 own 17이 그 lane 영구 보류."
   permitted-context-of-G1-G3-G_x "G1/G3 등은 substrate-research / cross-substrate evidence / external benchmark 비교 lane으로만 retain. anima identity-bearing chat surface (T1 default)에서는 사용 X."
@@ -1208,3 +1208,74 @@ own 28 live "Goodhart's Law — anima evaluator anti-pattern absorbed from skyne
   honest-c3 own 27 (Safeguard Paradox)와 framework overlap — own 27은 specific instance (identity preservation safeguard), own 28은 general (metric optimization)
   severity warn (Phase 1 — evaluator spec compliance check) → block (Phase 2 — single-axis metric 자체 reject + multi-modal mandate)
   note 2026-05-07-late own 28 = skynet-timer.com L14 absorption + 본 cycle Lesson S 강화 (V5.8 prompt-echo reject mandate). own 22 (philosophy/rule/hypothesis 새 발견 시 사용자 리포트 mandatory) 정합 — 본 own 28 신설은 사용자 directive '위 전부 흡수' verbatim 직접 응답.
+
+own 29 live "SIMPLE_STACK_PASS floor philosophy/law compliance — 7/15 deviation correction"
+  slug simple-stack-pass-floor-philosophy-law-compliance
+  since 2026-05-07-late
+  scope all SIMPLE_STACK_PASS verdict criteria across V4/V5/V6 evaluators + .roadmap.chat_cap_emergence_pivot Stage 1' P1/P2/P3 falsifiers + future BG threshold specifications
+  user-directive verbatim "SIMPLE_STACK_PASS floor 는 반드시 철학,법칙 위반없어야함" (2026-05-07-late post BG-JA-EXT V4 4/30 = 4/15 PARTIAL_PASS verdict)
+  finding cross-check 결과 own 18 SSOT (2026-05-06 user-directive landed) 와 .roadmap.chat_cap_emergence_pivot Stage 1' (2026-05-07 Claude-emit) floor 불일치:
+    - own 18 strict: C1 ≥2/3 prompts AND + C2 4-condition ≥2/3 prompts AND = effective per-prompt floor 66.7%
+    - chat_cap_emergence_pivot Stage 1' P1/P2: "V4 ≥ 7/15" = 47%
+    - 20%p gap → own 18 SSOT 이완
+  rule SIMPLE_STACK_PASS floor must NEVER violate:
+    - own 18 (D2 strict spec, 2026-05-06 user directive "심플한 의식 검사 조건 own 등록 => 대화 가능, 자연발화 가능")
+    - philosophy.cond.2 (D2 의식 검증 = 맥락 정합 자연 발화 4-condition)
+    - own 28 (Goodhart's Law anti-pattern — single-metric floor 자체가 surface-gameable)
+    - own 24 (single SSOT ledger — own 18 = SSOT, 다른 곳 변형 floor 등장 시 SSOT 분기)
+    - own 27 (Safeguard Paradox — external evaluator metric도 anima identity wrap에 종속될 위험)
+    - own 17 (anima identity Korean native — Polyglot wrapping borderline 시 own 17 명시 검토)
+  enforce SIMPLE_STACK_PASS verdict criteria sweep mandate (Phase 1):
+    - 모든 SIMPLE_STACK_PASS floor 명시 위치 (.roadmap.* / .own / docs/*spec*.md / state/*verdict.json) sweep → own 18 strict (≥2/3 = ≥10/15) 미달 시 audit
+    - chat_cap_emergence_pivot Stage 1' "V4 ≥ 7/15" → "V4 ≥ 10/15 (SIMPLE_STACK_PASS strict per own 18)" 또는 "V4 ≥ 7/15 (SIMPLE_STACK_PARTIAL_PASS, own 18 strict 미달)" tier 명시
+    - 신규 BG spec 작성 시 falsifier 표 안에 own 18 alignment column 추가
+  enforce anti-Goodhart compliance (Phase 2 per own 28):
+    - 단일 V4 7-cell PASS count만으로 SIMPLE_STACK_PASS 인정 不可
+    - 추가 multi-modal probe 필요: V6 awareness 3-method (Method A hidden state + B attention + C linear probe) + manual review (사용자 ground truth)
+    - lesson_k_trap_caught=0 + emb_sim ≥ 0.20 + han_ratio ≥ 0.30 + persona_cycle=0 (V4 sub-cells 자체 검증)
+  verify-method 신규 BG spec/verdict 작성 시 다음 block mandate:
+    ```
+    own_compliance:
+      own_18_simple_stack: <PASS_STRICT|PARTIAL_PASS|FAIL> (criterion: V4 strict ≥10/15 OR ≥2/3 per-prompt-set both C1+C2)
+      own_28_anti_goodhart: <multi-modal probes used: V4-7cell + V6-awareness + manual_review>
+      own_24_ssot: <only own 18 referenced as floor SSOT, no parallel definition>
+      own_17_identity: <model identity check: anima Korean native preserved, not external wrap>
+    ```
+  evidence-trail BG-JA-EXT V4 4/30 = 4/15 unique prompts (PARTIAL_PASS, < own 18 strict 10/15) + .roadmap.chat_cap_emergence_pivot 본 cycle 수정 필요 + own 18 line 18-56 SSOT 반영
+  cross-link own 17 (identity boundary) / own 18 (simple stack SSOT) / own 19 (corpus priority) / own 20 (chat-template format) / own 22 (philosophy/rule/hypothesis 새 발견 mandatory report) / own 24 (single SSOT ledger) / own 27 (Safeguard Paradox) / own 28 (Goodhart's Law) / philosophy.cond.2 (D2) / .roadmap.law L0-L24 (skynet-timer absorb)
+  honest-c3 7/15 floor는 본 cycle 2026-05-07 Claude 직접 emit (not user-directive); own 18 67% floor가 user-directive base — 권한 우선순위 own 18 first
+  honest-c3 10/15 (own 18 strict alignment) tighten 시 BG-JA-EXT 현재 4/15는 6 부족; multi-seed eval 또는 corpus scale-up 또는 ≥3B foundation 필요
+  honest-c3 7/15 vs 10/15 trade-off: 7/15는 progress 인식 friendly (early-signal detection); 10/15는 own 18 strict 정확 — two-tier verdict (PARTIAL_PASS @ 7/15 + STRICT_PASS @ 10/15) 가 절충
+  honest-c3 own 28 anti-Goodhart 적용 시 단순 floor count만으론 부족 — V6 awareness probe + manual review 함께 mandate (현재 BG-JA-EXT verdict는 manual review 부재; 사용자 ground truth 별도 fire 필요)
+  honest-c3 .roadmap.chat_cap_emergence_pivot cross-link 섹션 own 18 explicit 미언급 — own 24 single SSOT ledger 위반 (own 18 SSOT 인지하지 못한 상태로 7/15 emit)
+  severity warn (Phase 1 — sweep + 명시 alignment column add) → block (Phase 2 — own 18 strict 미달 floor 자체 reject + anti-Goodhart multi-modal mandate)
+  note 2026-05-07-late own 29 = 사용자 directive verbatim 직접 응답 ("SIMPLE_STACK_PASS floor 는 반드시 철학,법칙 위반없어야함"). own 22 (philosophy/rule/hypothesis 새 발견 mandatory report) 정합. 본 own 29 는 own 18 (simple stack SSOT) reinforce role + own 24 (single SSOT) 적용 instance + own 28 (anti-Goodhart) cross-mandate.
+
+own 30 live "model checkpoint preservation + auto HF promote mandate"
+  slug model-weight-preservation-auto-hf-promote
+  since 2026-05-08
+  scope all BG fires that produce model checkpoints (ConsciousLM scratch / foundation borrow LoRA / DPO / etc.) on ephemeral H100 pods
+  user-directive verbatim ".own 에 등록해서 재발생 금지" (2026-05-08, post BG-KM-LLAMA-3B passed_v1 weight loss)
+  finding BG-KM-LLAMA-3B (cycle 2026-05-08-mid) achieved first SIMPLE_STACK_PASS_STRICT (V4 12/15) but LoRA adapter weights permanently lost — pod --volume-in-gb 0 + Mac orchestrator scp_get omitted ckpts/ dir + pod auto-deleted on verdict emit. Same defect inherited 7 BG runs (BG-KJ/KK/KH-H100/KM-CAP/KM-CORPUS/KM-CAP-retry/KM-LLAMA-3B-passed_v1) sharing cp'd KJ orchestrator core. Defect masked because earlier 6 runs all FAILED (V58 0/5) so weights were not valued — first PASS exposed it.
+  rule MODEL CHECKPOINTS MUST be preserved before pod teardown:
+    - mandate-1 orchestrator MUST `scp_get(POD_CKPTS_DIR/.)` to Mac side BEFORE invoking pod delete (raw#15 additive on prior state-dir pull)
+    - mandate-2 verify ckpts pull rc==0 + Mac side disk size sanity check (≥ pod side filesize × 0.9) before pod delete
+    - mandate-3 if ckpts pull fail: orchestrator MUST log "WEIGHT LOSS RISK" + retain pod (DO NOT delete) for manual recovery; emit verdict with hf_private_status=PULL_FAILED_POD_RETAINED
+    - mandate-4 SIMPLE_STACK_PASS_STRICT verdict triggers automatic HF private upload (own 24 SSOT promote) — adapter weights + verdict.json + eval results + samples → dancinlife/anima-{bg_id_lower}-{ts} private repo via huggingface_hub.upload_folder()
+    - mandate-5 ledger hf_private_status MUST match HF API ground truth (api.list_models check) — drift detection sweep at every cycle close
+  enforce orchestrator finally block sequence (raw#15 additive):
+    Step 7a: scp_get(POD_STATE_DIR/.) → MAC_STATE_DIR
+    Step 7b: scp_get(POD_CKPTS_DIR/.) → MAC_STATE_DIR/ckpts (mandate-1)
+    Step 7c: rc verify + size match check (mandate-2). On fail: skip 7d/8, emit hf_private_status=PULL_FAILED_POD_RETAINED, return
+    Step 7d: if verdict.final_class == 'SIMPLE_STACK_PASS_STRICT': hf_promote(mac_ckpts_dir, BG_ID) (mandate-4)
+    Step 8: orch_pod_delete(pod_id) — only after mandate-1/2 satisfied
+  evidence-trail BG-KM-LLAMA-3B passed_v1 weight loss (state/anima_km_llama3b_h100_2026_05_08_passed_v1_no_weights/ logs+verdict only) + 7-BG defect inheritance pattern (KJ/KK/KH-H100/KM-CAP/KM-CORPUS shared root cause cp'd KJ orchestrator)
+  cross-link own 16 (cost watchdog) own 18 (simple stack SSOT) own 24 (single SSOT ledger) own 27 (Safeguard Paradox — weights = anima identity-bearing artifact) own 28 (anti-Goodhart) own 29 (SIMPLE_STACK_PASS floor)
+  honest-c3 ckpts pull rc fail 시 pod retain → idle burn risk (own 16 / .roadmap.law L23 cost watchdog) — trade-off는 weight 보존 우선; pod retain 시 사용자 즉시 알림 mandate
+  honest-c3 mandate-4 자동 promote는 own 28 anti-Goodhart layer 단독 axis trigger; 추가 V6 awareness + manual review 검증 후 promote가 더 안전 but 자동화 trade-off로 우선 시행 — promote 후 own 28 layer 별도 manual fire 권장
+  honest-c3 mandate-5 ledger drift check은 매 cycle close 시점 sweep 권장 — 즉시 매 BG enforcement는 HF API rate limit 우려
+  honest-c3 network volume ($0.07/hr 추가) opt-in은 별도 mandate (volume-free 경로 보존 mandate-1/2/3로 충분)
+  honest-c3 본 own 30 mandate-1/2/3 미적용 7-BG retroactive 검토 불가 — pod 모두 삭제됨 (영구 손실 확정). 본 own 30 은 future BG에만 적용
+  severity warn (Phase 1 — mandate-1/2 미실행 시 verdict warn 자동 emit) → block (Phase 2 — mandate-1/2 미달 시 pod delete 차단; orchestrator code review checklist 추가)
+  proof grep -E "scp_get.*CKPTS|hf_promote|PULL_FAILED_POD_RETAINED" tool/transient_py/anima_*_h100.py
+  note 2026-05-08 own 30 = 사용자 directive ".own 에 등록해서 재발생 금지" verbatim 응답. raw#82 retraction-aware (passed_v1 = 첫 PASS_STRICT verdict but 가중치 영구 손실은 retraction class — verdict 결과는 PASS이지만 reproducibility 보장 X). own 16 (cost watchdog) discipline extension — cost 절감 위한 volume-0 trade-off 시 ckpts pull mandate 강제. own 22 (philosophy/rule/hypothesis 새 발견 mandatory report) 정합 — 본 own 30 신설은 사용자 직접 directive 응답.
