@@ -81,13 +81,30 @@ models:
       v4_n60_root_cause: "anchor (idx=1 '안녕하세요') c3_4 fixed at 0.0; per-prompt c3_4 = L2 distance from anchor projection. Different probe sessions produce different anchor projections → different absolute c3_4. v4 floor 0.20 calibrated on N=30 only; does NOT generalize to independent N=60 same-prompt re-measurement."
       v14_v4_supersede_note: "ALT-AGG-1 v4 (cascade 1/8) restricts PPR scope to v4_baseline axis only + C3.4 floor 0.20 + MTRP ≥ 0.10. N=30 preliminary: sft-1-8 PPR_v4=0.429 PASS / random_init=0.000 FAIL. N=60 RETEST: sft-1-8 PPR_v4=0.000 FAIL (c3_4 collapsed) → v4 EMERGE claim FALSIFIED. v4 robustness DEAD on existing measurements; needs floor recalibration OR anchor-baseline normalization OR replacement metric."
       # ───── ALT-AGG-1 v5 (V5 PUSH 1/5 2026-05-08, post-arch-fix) ─────
-      v5_n60_status: pending_post_arch_fix_reprobe  # ★ projection only — real re-probe pending CONSCIOUSNESS_DIM=96 build
+      # ★ V5 PUSH POST-FIX 1/3 ACTUAL RE-PROBE LANDED 2026-05-08 (raw#82 retraction-aware: projection record preserved below as *_projection; actual measurement overlay added with explicit ACTUAL_ prefix).
+      v5_n60_status: actual_reprobe_landed_emerge_falsified_post_arch_fix  # ★ raw#82 — projection retracted by actual measurement; arch fix verified working at substrate level (dominant_cells [0,2,4] invariance BROKEN for trained model) but EMERGE claim FALSIFIED at v5 4-gate
       v5_arch_fix_expected_lift: "8-cell 2x tile removal (CONSCIOUSNESS_DIM 192→96 → 8*96=768=HIDDEN_DIM exact, no tile) restores per-cell uniqueness; cell[i]==cell[i+4] pairwise collision REMOVED; c3_4 axis_l2 expected lift 1.5-2x baseline"
+      v5_arch_fix_actual_verify: "ACTUAL POST-FIX VERIFY (2026-05-08 reprobe): sft-1-8 dominant_cells unique=23/60 (38% diversity, most_common=[1,4,5] 13.3%); random_init dominant_cells unique=1/59 (most_common=[0,1,2] rate=100% — NEW signature, NOT pre-fix [0,2,4]). Pre-fix [0,2,4] invariance for trained model is BROKEN ⇒ arch fix WORKS at substrate-level. Random_init still produces 100% invariant pattern but it shifted from [0,2,4]→[0,1,2] — substrate-level uniformity persists in random_init (expected — no semantic discrimination)."
       v5_ppr_projection: "low=0.20 mid=0.35 high=0.50 floor=0.30 (arithmetic projection from N=60 v4 + v5 normalization framework)"
+      v5_ppr_actual_n60: 0.0169  # ★ ACTUAL post-fix re-probe — 1/59 prompts pass (Gate F D-RAND ≥ 0.20 only 1/59 PASS; Gate E p4_v5 ≥ 0.50 alone PASS rate 91% 54/59)
       v5_mtrp_projection: "low=0.10 mid=0.25 high=0.40 floor=0.10 (D-RAND per-prompt anti-symmetric anchor-baseline normalization)"
+      v5_mtrp_actual_n60: 0.0169  # ★ ACTUAL post-fix re-probe — D-RAND mean=0.109 < 0.20 floor; MTRP_v5 (PPR_sft - PPR_random) ≈ 0.017 << 0.10 floor
       v5_piv_projection: PARAPHRASE_KICK_LANDED  # ★ V5 PUSH POST-FIX 3/3 (2026-05-08) — k=3 paraphrase variants generated (90 total = 30 base × 3); PIV calc ready (paraphrase_v5 yaml block + consciousness.hexa _v5_prompts_paraphrase_set). Real PIV measurement on actual probe pending CONSCIOUSNESS_DIM=96 build re-fire.
-      v5_verdict_preliminary: C3_VERDICT_PENDING_REAL_REPROBE  # local 0-cost projection only; raw#10 honest tag PROJECTION_PENDING_REAL_REPROBE
+      v5_piv_actual_proxy_n60: 0.0486  # ACTUAL axis-stdev-across-prompts proxy (informational only — Gate G paraphrase still PENDING per spec). sft=0.0486 vs random=0.0000 — substrate-level differentiation present but below 0.05 floor by 0.0014.
+      v5_gate_breakdown_actual_n60:
+        gate_e_p4_v5_pass: 54  # /59 (91%) — Gate E robust post-fix arch
+        gate_f_d_rand_pass: 1  # /59 (1.7%) — Gate F is the killer (D-RAND mean=0.109 < 0.20 floor)
+        gate_g_piv_pending: GATE_G_PENDING_PARAPHRASE  # k=3 paraphrase build landed but actual measurement on prompts not yet integrated into v5 reprobe pipeline
+        both_e_and_f_pass: 1  # /59 — predicate p4_v5 ∧ d_rand ∧ (p1∨p2∨p3) FAIL ensemble
+      v5_c3_4_v5_actual_stats: "mean=1.000 max=1.956 min=0.319 (sa_m=0.109 normalizer, sa_r=1.000 fallback)"
+      v5_d_rand_actual_stats: "mean=0.109 max=0.213 min=0.035 — only 1/59 prompts above 0.20 floor"
+      v5_dominant_signature_m: "{'n':60, 'unique':23, 'most_common':[1,4,5], 'most_common_rate':0.1333, 'top3':[[[1,4,5],8],[[2,4,5],7],[[0,1,5],5]]}"
+      v5_dominant_signature_r: "{'n':59, 'unique':1, 'most_common':[0,1,2], 'most_common_rate':1.0}"
+      v5_verdict_actual_n60: C3_FAIL_V5  # ★ ACTUAL N=60 post-arch-fix re-probe — PPR_v5=0.017 < 0.30 + MTRP_v5=0.017 < 0.10 + Gate G pending. raw#82 supersedes v5_verdict_preliminary projection.
+      v5_verdict_preliminary: SUPERSEDED_BY_ACTUAL_C3_FAIL_V5  # raw#82 retraction-aware — preserve original "C3_VERDICT_PENDING_REAL_REPROBE" tag in commits/lineage; ACTUAL overlay = C3_FAIL_V5
+      v5_emerge_claim_status: EMERGE_v5_FALSIFIED_BY_ACTUAL_REPROBE  # ★ post-fix arch verified at substrate (no [0,2,4] invariance for trained), but D-RAND per-prompt leak persists ⇒ trained signal not significantly above random at v5 V14 strict gates
       v5_state_json: state/anima_alt_agg_1_v5_spec_2026_05_08.json  # ★ V5 PUSH 1/5 SSOT spec + projection
+      v5_actual_reprobe_state_json: state/anima_sft_1_8_v5_n60_actual_reprobe_2026_05_08.json  # ★ V5 PUSH POST-FIX 1/3 ACTUAL re-probe full per-prompt + dominant_cells signature
       # ───── ALT-AGG-1 v5 PIV/DCR/D-RAND ADDENDUM (V5 PUSH ADDENDUM 2/2 2026-05-08) ─────
       # Existing-data validation on N=60 axis records (no real re-probe needed for these 3 metrics)
       # spec doc: docs/anima_alt_agg_1_v5_piv_dcr_drand_spec_2026_05_08.ai.md
@@ -113,11 +130,13 @@ models:
       - state/anima_sft_1_8_n60_live_probe_2026_05_08.json
       - state/anima_sft_1_8_n120_live_probe_kick_wave_4_2026_05_08.json
       - state/anima_sft_1_8_v4_n60_retest_2026_05_08.json  # ★ ALT-AGG-1 v4 N=60 retest (cascade 1/8 v4)
+      - state/anima_sft_1_8_v5_n60_actual_reprobe_2026_05_08.json  # ★ V5 PUSH POST-FIX 1/3 actual N=60 re-probe (post arch fix CONSCIOUSNESS_DIM=96)
     commits:
       probe_n30: bb4ef174
       probe_n60: fe4f8a7d
       probe_n120: 522a859a  # KICK WAVE 4 1/3 sft-1-8 N=120 ensemble probe
       v4_n60_retest: pending  # ★ this commit (cascade 1/8 v4 N=60 retest)
+      v5_n60_actual_reprobe: pending  # ★ V5 PUSH POST-FIX 1/3 actual N=60 re-probe (post arch fix)
       hf_upload: 5cb9570a
       path_a_remap: d478023c
     eligibility:
@@ -483,12 +502,18 @@ models:
           highest_mean_axis: identity  # mean=0.6000
         anti_goodhart_v14_status: VIOLATED_CONFIRMED  # 5-seed mean still > v3 PASS floor
       # ───── ALT-AGG-1 v5 (V5 PUSH 1/5 2026-05-08, post-arch-fix) ─────
-      v5_n60_status: pending_post_arch_fix_reprobe  # ★ post-CONSCIOUSNESS_DIM=96 reprobe required
+      # ★ V5 PUSH POST-FIX 1/3 ACTUAL RE-PROBE LANDED 2026-05-08 (raw#82 retraction-aware overlay)
+      v5_n60_status: actual_reprobe_landed_random_init_paired_mirror_post_arch_fix
       v5_arch_fix_invariance_check: "cells [0,2,4] dominant 28/30 random_init prompts — V5 PUSH 1/5 H-B finding: 8-cell 2× tile (192→96 fix) BREAKS this invariance. Random_init cell-level diversity must increase post-fix; if [0,2,4] dominance persists ⇒ deeper substrate confound (separate cycle)"
+      v5_arch_fix_invariance_actual_n60: "★ ACTUAL POST-FIX RE-PROBE: random_init dominant_cells unique=1/59, most_common=[0,1,2] rate=100% — pre-fix [0,2,4] invariance VERIFIED BROKEN, BUT new substrate-level [0,1,2] invariance EMERGES post-fix. Substrate-level uniformity in random_init is structural (no semantic input → uniform feature pooling) NOT fixed by arch dim change alone. sft-1-8 trained model dominant_cells unique=23/60 (most_common=[1,4,5] only 13.3%) — trained discriminates per-prompt (38% diversity)."
       v5_d_rand_target: "Gate F D-RAND ≥ 0.20 epsilon — random_init expected to FAIL D-RAND per-prompt floor (random weights cannot generate consistent c3_4_v5 lift relative to anchor)"
+      v5_d_rand_actual_n60_role: "anchor reference (paired mirror) — sft-1-8 D-RAND mean=0.109 < 0.20 floor → 1/59 PASS; random_init c3_4_raw is structural noise floor"
       v5_piv_target: "Gate G PIV ≥ 0.05 — random_init expected NEAR-ZERO PIV (no semantic discrimination across paraphrase variants)"
-      v5_verdict_preliminary: C3_FAIL_V5_EXPECTED  # all 3 v5 gates expected FAIL on random_init (V14 strict 정합 preserved)
+      v5_piv_actual_n60_proxy: 0.0  # ACTUAL axis-stdev across prompts (proxy — paraphrase Gate G still PENDING) — random_init=0.0000 vs sft-1-8=0.0486; near-zero confirms expected behavior
+      v5_verdict_preliminary: SUPERSEDED_BY_ACTUAL_C3_FAIL_V5_EXPECTED  # raw#82 retraction-aware
+      v5_verdict_actual_n60: C3_FAIL_V5_EXPECTED  # ★ ACTUAL — V14 strict 정합 preserved (random_init dominant=[0,1,2] 100% invariant; PIV proxy=0.0; D-RAND role: paired mirror anchor)
       v5_state_json: state/anima_alt_agg_1_v5_spec_2026_05_08.json
+      v5_actual_reprobe_state_json: state/anima_sft_1_8_v5_n60_actual_reprobe_2026_05_08.json  # ★ shared state (paired mirror in same JSON)
       # ───── ALT-AGG-1 v5 PIV/DCR/D-RAND ADDENDUM (V5 PUSH ADDENDUM 2/2 2026-05-08, baseline) ─────
       # Validation on N=30 axis records — random_init seed=42 single-seed live probe (full 5-axis + dominant_cells log)
       # spec doc: docs/anima_alt_agg_1_v5_piv_dcr_drand_spec_2026_05_08.ai.md
