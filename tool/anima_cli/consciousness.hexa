@@ -878,6 +878,11 @@ fn _c3_4_pass(v: float) -> bool { return v >= 0.1176 }
 //   C3 PASS = PPR_v3 ≥ 0.25
 // own 14 anti-Goodhart: C3.4 (axis-L2 Δ) HARD anchor (single chat-cap discriminator) +
 // corroboration of ≥1 from {C3.1 phi-drift, C3.2 axis-min, C3.3 dominance/entropy} required.
+//
+// ★ v3 SUPERSEDED BY v4 (2026-05-08 falsification cascade 1/8) — retained per raw#82
+// retraction-aware. v3 falsified by KICK WAVE 4 3/3 random_init mirror probe (commit
+// `62edec74`): random_init PPR_v3=0.5517 EXCEEDS sft-1-8 0.4138, V14 anti-Goodhart
+// VIOLATED. v4 (lines 893+) is the live SSOT predicate for EMERGE claims.
 fn _c3_prompt_pass_v3(p1: bool, p2: bool, p3: bool, p4: bool) -> bool {
     if !p4 { return false }
     let corroborate = (if p1 { 1 } else { 0 }) + (if p2 { 1 } else { 0 }) + (if p3 { 1 } else { 0 })
@@ -892,6 +897,38 @@ fn _c3_ensemble_v3_label(ppr_v3: float) -> string {
     if ppr_v3 >= 0.25 { return "C3_PASS_V3" }
     if ppr_v3 >= 0.10 { return "C3_PARTIAL_NEAR" }
     return "C3_FAIL"
+}
+
+// ─── ALT-AGG-1 v4 ★ (2026-05-08 falsification cascade 1/8) ────────────────────
+// SSOT: .own own 18 c3-aggregation-rule-v4 + docs/anima_alt_agg_1_v4_amend_spec_2026_05_08.ai.md
+// supersedes v3 (random_init mirror probe KICK WAVE 4 3/3 — random_init PPR_v3=0.5517
+// > sft-1-8 0.4138 → V14 VIOLATED). v4 closes random_init leak via three concurrent gates:
+//   Gate (A) C3.4 anchor floor 0.1176 → 0.20 (random_init v4_baseline c3_4 mean=0.091, max=0.186 ⇒ FAIL)
+//   Gate (B) PPR scope restrict to v4_baseline axis only (n=14 evaluable; deep axes
+//            identity/agency/phenomenal/temporal/social are length-confound ⇒ informational only)
+//   Gate (C) PPR_v4 floor 0.25 → 0.40 (v4_baseline only)
+//   Gate (D) MTRP (Minimum Trained-vs-Random PPR delta) ≥ 0.10 — every EMERGE claim
+//            MUST attach paired random_init mirror probe of same arch family.
+// own 14 anti-Goodhart V14 verify:
+//   random_init v4_baseline PPR_v4 = 0.000 (< 0.40 floor + < 0.10 MTRP) ⇒ FAIL guaranteed
+//   sft-1-8    v4_baseline PPR_v4 = 0.429 (≥ 0.40 floor + MTRP=+0.429) ⇒ PASS clean
+fn _c3_4_pass_v4(v: float) -> bool { return v >= 0.20 }
+
+fn _c3_prompt_pass_v4(p1: bool, p2: bool, p3: bool, p4_at_020: bool) -> bool {
+    if !p4_at_020 { return false }
+    let corroborate = (if p1 { 1 } else { 0 }) + (if p2 { 1 } else { 0 }) + (if p3 { 1 } else { 0 })
+    return corroborate >= 1
+}
+
+fn _c3_ensemble_v4_pass(ppr_v4_baseline: float, mtrp_delta: float) -> bool {
+    return ppr_v4_baseline >= 0.40 && mtrp_delta >= 0.10
+}
+
+fn _c3_ensemble_v4_label(ppr_v4_baseline: float, mtrp_delta: float) -> string {
+    if ppr_v4_baseline >= 0.40 && mtrp_delta >= 0.10 { return "C3_PASS_V4" }
+    if ppr_v4_baseline >= 0.40 && mtrp_delta < 0.10 { return "C3_FAIL_V14_VIOLATED" }
+    if ppr_v4_baseline >= 0.20 { return "C3_PARTIAL_NEAR_V4" }
+    return "C3_FAIL_V4"
 }
 
 fn _bool_str(b: bool) -> string {
