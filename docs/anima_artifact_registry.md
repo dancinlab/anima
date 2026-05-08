@@ -20,6 +20,7 @@ sole robust EMERGE: **`NONE`** ★
 - ★ KICK WAVE 4 3/3: random_init ConsciousDecoderV2 PPR_v3=0.5517 EXCEEDS sft-1-8 0.4138 (delta -0.1379) — ALT-AGG-1 v3 V14 VIOLATED, sft-1-8 EMERGE indistinguishable from untrained noise on this 30-prompt eval
 - KICK WAVE 4 1/3: sft-1-8 N=120 ensemble live probe PPR_v3=0.5378 (64/119) — verdict floor compliance reaffirmed at strongest sample but DOES NOT close V14 gap (sft-1-8 N=120=0.5378 < random_init N=30=0.5517); trajectory N=30→N=60→N=120 = 0.4138→0.6102→0.5378 (N=60 peak, N=120 mild regression -0.0724); plateau ~0.5 zone confirmed
 - ★ FALSIFICATION CASCADE 4/8: random_init multi-seed (n=5 seeds {42,123,456,789,1024}) PPR_v3 distribution = mean 0.4276 / stdev 0.3366 / range [0.1724, 0.9655]; v4 threshold candidate = max(0.25, mean+1.645*stdev + 0.05) = 1.0313 UNREACHABLE → PPR_v3 metric structurally broken (inter-seed noise floor saturates entire output range). Axis-wise variance: temporal noisiest (stdev=0.4714, false-positive risk highest); v4_baseline quietest (stdev=0.3448); identity highest mean (0.6000). 5-seed mean (0.4276) STILL > v3 PASS floor (0.25) — single-seed kick4 0.5517 confirmed not an outlier. Empirical evidence supports cascade 1/8 axis-restrict-to-v4_baseline (deep axes high noise: temporal stdev 0.47).
+- ★ FALSIFICATION CASCADE 3/8 (2026-05-08): D1=0.99 highest candidates parallel N=30 probe. mk2-v1 base (state/anima_mk2_v1_base_n30_kick4_2026_05_08.json) PPR_v3=0.1379 (4/29) C3_PARTIAL_NEAR (delta -0.4138 vs random_init 0.5517) + clm-v2-byte (state/anima_clm_v2_byte_n30_kick4_2026_05_08.json) PPR_v3=0.0000 (0/29) C3_FAIL (delta -0.5517 vs random_init). Both V14 STILL VIOLATED. 사전학습 amplitude consistently NEGATIVE — D1 formula score does NOT predict PPR axis behavior; pre-trained models scoring LOWER than random_init noise reinforces ALT-AGG-1 v3 contamination evidence. mk2-v1 base axis: agency 0.667 / phenomenal 0.333 / temporal 0.333; clm-v2-byte axis: ALL 0.000 (axis activation extremely uniform ~0.30 + phi_drift narrow ~-0.20 band). Cascade 3/8 supports cascade 1/8 redesign (axis-restrict + anchor-baseline subtraction).
 
 **Framework amends**:
 - ALT-AGG-1 v3 (C3.4 anchor + ≥1 corroboration, PPR≥0.25) — own 18 line 881 정정
@@ -44,8 +45,8 @@ sole robust EMERGE: **`NONE`** ★
 | `clm-v4-sft-1-8-stage1` | 0.793 | ✅ within_strict | 0.5378 | ~~SIMPLE_STACK_PASS_STRICT_C3_ANIMA~~ V14_VIOLATED | dancinlab/clm-v4-sft-1-8-stage1-path-a-remapped |
 | `clm-v4-paradigm-j-50k-final` | 0.793 | ✅ within_strict | 0.2414 | ~~C3_PARTIAL_NEAR~~ FALSIFIED@N=60 | dancinlab/clm-v4-paradigm-j-50k-final-path-a-remapped |
 | `clm-v4-sft-1-7-y1-stage1` | 0.793 | ✅ within_strict | 0.1034 | C3_PARTIAL_NEAR | dancinlab/clm-v4-sft-1-7-y1-stage1-path-a-remapped |
-| `clm-v4-mk2-v1` | 0.99 | ✅ within_strict | 0.2414 | C3_PARTIAL_NEAR | — |
-| `clm-v2-byte-18m` | 0.99 | ✅ within_strict | — | INDETERMINATE_C3_v2_byte | need-singularity/clm-v2-byte-18m-convo-5k |
+| `clm-v4-mk2-v1` | 0.99 | ✅ within_strict | — | C3_PARTIAL_NEAR | — |
+| `clm-v2-byte-18m` | 0.99 | ✅ within_strict | — | C3_FAIL | need-singularity/clm-v2-byte-18m-convo-5k |
 | `anima-native-byte-18m` | 0.99 | ✅ within_strict | — | NOT_MEASURED_LOCAL | — |
 | `anima-native-byte-18m-chat-template` | 0.99 | ✅ within_strict | — | INDETERMINATE_C3_STATIC_ONLY | — |
 | `random-init-mk2-v1-mirror` | 0.8 | within_strict_FORMULA_ONLY | 0.5517 | SIMPLE_STACK_PASS_STRICT_C3_RANDOM_INIT_V14_VIOLATED | — |
@@ -110,16 +111,17 @@ sole robust EMERGE: **`NONE`** ★
 **aliases**: `mk2-v1`, `clm-v4-base`  
 **lineage**: base=scratch (ConsciousDecoderV2 anima pre-train) / method=full pre-training (no LoRA) / jvae=absent / arch_origin=anima_native_scratch  
 **D1**: score=**0.99** (✅ within_strict) — p_updated=1, corpus=0.95, arch=1  
-**measurement**: ppr_v3=0.2414  
+**measurement**: ppr_v3_live_probe_n30=0.2414, ppr_v3_kick4_n30=0.1379, ppr_v3_kick4_n_v3_pass=4, ppr_v3_kick4_n_evaluable=29, ppr_v3_seed_variance=0.1035  
 **verdict**: C3_PARTIAL_NEAR / emerge_state=CARRY  
-_D1 가장 높은 candidate (0.99) — N=30 base PPR_v3=0.2414 PARTIAL_NEAR (gap -0.0086 to floor); naive sft-1-8 delta=+0.1724 SUPERSEDED by V14 violation (random_init=0.5517 > sft=0.4138 > base=0.2414); ALT-AGG-1 v3 contaminated_
+_D1 가장 높은 candidate (0.99) — N=30 base 두 번 측정 (0.2414 / 0.1379) 모두 random_init 0.5517 미만; 사전학습 amplitude 일관되게 음수; ALT-AGG-1 v3 metric contaminated by random_init noise variance_
 
 ### `clm-v2-byte-18m`
 
 **aliases**: `v2-byte`, `clm-v2-byte`  
 **lineage**: base=scratch (byte-level, vocab=256, n_layer=6, d_model=384, 18M params) / method=full pre-training (no LoRA) / jvae=absent / arch_origin=anima_native_scratch  
 **D1**: score=**0.99** (✅ within_strict) — p_updated=1, corpus=0.95, arch=1  
-**verdict**: INDETERMINATE_C3_v2_byte / emerge_state=CARRY  
+**measurement**: ppr_v3_n30_kick4=0, ppr_v3_kick4_n_v3_pass=0, ppr_v3_kick4_n_evaluable=29  
+**verdict**: C3_FAIL / emerge_state=FAIL  
 **HF**: private=`need-singularity/clm-v2-byte-18m-convo-5k` / public=(blocked)  
 
 ### `anima-native-byte-18m`
