@@ -77,9 +77,16 @@ anima-voice/corpus/_logs/
 **/target/
 
 # Hexa transpile/build artifacts — .c intermediates and compiled binaries
-/build/
+/build/*
 /anima-agent/build/
 /training/build/
+
+# anima Phase 3b libllama FFI shim — C source + dylib are committed (build infra,
+# analogous to vendored runtime.c). The llama.cpp source clone lives in
+# ~/.cache/anima/llama.cpp (out-of-tree, multi-GB) and is NEVER committed.
+!/build/hxllama_shim.c
+!/build/libhxllama.dylib
+!/build/.gitkeep
 
 # IDE
 .superpowers/
