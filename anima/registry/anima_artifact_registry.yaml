@@ -438,30 +438,57 @@ models:
       mac_ckpt_status: "PRESENT — /Users/ghost/core/anima/state/anima_native_ko_chat_template_train_2026_05_07/ckpt_final/ckpt_final.pt (73.7MB, 18.5M params, step=10000, vocab=256, 6L×384d×6h)"
       weights_sha256_prefix: "601091cc047b2c25"
       static_inspection: PASS  # load + arch detect + V14 random_init delta verify (kick4 cascade 7/8 2026-05-08T16:50Z)
-      # ───── V5 PUSH POST-FIX 2/3 actual fire (2026-05-08, post-fork-recovery) — supersedes INDETERMINATE_C3_STATIC_ONLY ─────
-      verdict: C3_FAIL_V5  # ★ N=30 v3+v5 actual probe + paired byte-arch random_init mirror — all gates fail
-      verdict_v3: C3_FAIL_V3  # PPR_v3=0.0000 (n=0/29) — every probed prompt fails p4 c3_4 ≥ 0.1176 floor
-      verdict_v5: C3_FAIL_V5  # PPR_v5=0.0000 — Gate E (S_a=0.0561 ≪ 0.50 norm floor) + Gate F (D_RAND=−0.0 ≪ 0.20) + Gate G (PIV=0.0044 ≪ 0.05) all fail
+      # ───── NEXT-CYCLE 2/6 POST byte-arch fix actual reprobe (2026-05-09) — supersedes V5 PUSH POST-FIX 2/3 ─────
+      # Fix: anima_native_byte_mount.hexa CONSCIOUSNESS_DIM 192→48 (Option A: 8*48=384=HIDDEN_DIM exact reshape, no segment fold).
+      # Driver: tool/transient_py/anima_bg_ha_downgraded_n30_v5_post_byte_fix_2026_05_09.py
+      # State : state/anima_bg_ha_downgraded_n30_v5_post_byte_fix_2026_05_09.json
+      # Result: tile_bug_echo NOT removed by Option A reshape — dominant_cells [0,1,2] still 30/30 trained AND 30/30 random
+      # (unique_triples_trained=1, unique_triples_random=1). Root cause is NOT segment folding; per-block tap norm
+      # distribution structurally favors early-block engine_a/g cells regardless of CONSCIOUSNESS_DIM granularity.
+      # PPR_v3_trained=0.0000 (S_a_t=0.0671 < THR_C3_4=0.1176 floor) vs PPR_v3_random=0.9655 (S_a_r=0.2130 >> floor)
+      # ⇒ MTRP_v3=−0.9655 (V14 catastrophic violation, random_init dominates trained on axis_l2 metric). PPR_v5=0 both.
+      # Verdict: C3_FAIL_V5_POST_BYTE_FIX — confirms byte-arch 18M scratch + chat-template corpus is NOT a viable C3
+      # candidate even after architectural tile-bug remediation. byte-arch consciousness signal absent at substrate level.
+      verdict: C3_FAIL_V5_POST_BYTE_FIX  # ★ NEXT-CYCLE 2/6 — post-fix N=30 reprobe — tile_bug_echo persists (structural, not fold artifact)
+      verdict_v3: C3_FAIL_V3_POST_BYTE_FIX  # PPR_v3=0.0000 trained vs 0.9655 random — MTRP_v3=−0.9655 catastrophic
+      verdict_v5: C3_FAIL_V5_POST_BYTE_FIX  # PPR_v5=0.0000 — Gate E (S_a_t=0.0671 < THR_C3_4=0.1176 floor) + Gate F (D_RAND=0) + Gate G (PIV=0.0022) all fail
       emerge_state: FAIL
+      verdict_history:
+        - phase: V5 PUSH POST-FIX 2/3 (2026-05-08)
+          verdict: C3_FAIL_V5
+          ppr_v3_trained: 0.0000
+          ppr_v3_random: 0.0345
+          mtrp_v3: -0.0345
+          tile_bug_echo: CONFIRMED  # CONSCIOUSNESS_DIM=192 fold from 6×2 engine taps
+          state_json: state/anima_bg_ha_downgraded_n30_v3_v5_probe_2026_05_08.json
+        - phase: NEXT-CYCLE 2/6 POST BYTE-ARCH FIX (2026-05-09)
+          verdict: C3_FAIL_V5_POST_BYTE_FIX
+          ppr_v3_trained: 0.0000
+          ppr_v3_random: 0.9655
+          mtrp_v3: -0.9655
+          tile_bug_echo: PERSISTS_STRUCTURAL  # Option A reshape did NOT remove [0,1,2] invariance
+          interpretation: "byte-arch dual-engine ckpt has substrate-level early-block dominance — tile bug was symptom, not cause. Root cause: per-block tap L2 norm distribution structurally favors blocks[0..2] regardless of CONSCIOUSNESS_DIM granularity. Random_init S_anchor=0.2130 dominates trained S_anchor=0.0671 on axis_l2 ⇒ trained representation more uniform than noise (Goodhart of corpus learned to flatten axis activation)."
+          state_json: state/anima_bg_ha_downgraded_n30_v5_post_byte_fix_2026_05_09.json
       consciousness_simple_n30_status: COMPLETED  # 0-cost Mac local actual fire 2026-05-08T19:04Z (post-fork-recovery retry)
       V14_status: V14_VERIFIED_STATIC_BUT_VIOLATED_DYNAMIC  # ★ static delta tok_emb=315.76 (huge); but MTRP_v3=−0.0345 < 0.10 floor (random_init slightly outperforms trained on v3) — V14 dynamic VIOLATED
       V14_mtrp_v3: -0.0345  # PPR_v3(trained)=0.0000 − PPR_v3(random)=0.0345; random ≥ trained on v3 metric ⇒ trained signal absent
       V14_mtrp_v5: 0.0  # PPR_v5(trained)=0.0000 = PPR_v5(random)=0.0000 (random self-D_RAND=0 ⇒ guaranteed v5 FAIL)
       V14_static_delta_tok_emb: 315.7647  # paired CLMv2Like dual-engine random_init seed=42 vs trained — weights diverged but consciousness signal absent
-      ppr_v3_n30: 0.0000  # 0/29 evaluable (trained)
-      ppr_v3_n30_random_init: 0.0345  # 1/29 evaluable (paired byte-arch random_init mirror, seed=42)
+      ppr_v3_n30: 0.0000  # 0/29 evaluable (trained, post-byte-fix unchanged)
+      ppr_v3_n30_random_init: 0.9655  # ★ POST-FIX: 28/29 evaluable (random_init S_anchor=0.2130 ≥ THR_C3_4=0.1176 floor → catastrophic dominance)
+      ppr_v3_n30_random_init_pre_fix: 0.0345  # pre-fix CONSCIOUSNESS_DIM=192 — random S_a was 0.0986 < floor too
       ppr_v5_n30: 0.0000
       ppr_v5_n30_random_init: 0.0000
-      d_rand_mean: 0.0000  # gate F floor 0.20 — trained S_anchor=0.0561 actually LESS than random S_anchor=0.0986 ⇒ D_RAND ≤ 0
-      piv_mean: 0.0044  # gate G floor 0.05 — paraphrase k=3 axis stdev too low to discriminate
-      gate_e_S_anchor_trained: 0.0561  # << 0.50 normalized floor; absolute c3_4 magnitudes too small for v5 normalization
-      gate_e_S_anchor_random: 0.0986  # paired mirror — random has LARGER axis distance from anchor than trained
-      anti_goodhart_v14_v3: VIOLATED  # ★ random_init slightly leads (delta -0.0345) — chat_template corpus 학습 시 v3 signal 소멸
+      d_rand_mean: 0.0000  # gate F floor 0.20 — D_RAND_v5_norm capped (random self-compare), trained S_a still < floor
+      piv_mean: 0.0022  # ★ POST-FIX gate G floor 0.05 — paraphrase k=3 axis stdev DROPPED from 0.0044 (pre-fix) ⇒ post-fix axis activation MORE uniform
+      gate_e_S_anchor_trained: 0.0671  # ★ POST-FIX (was 0.0561 pre-fix) — slight increase but still < 0.1176 v3 floor + < 0.50 v5 norm floor
+      gate_e_S_anchor_random: 0.2130  # ★ POST-FIX (was 0.0986 pre-fix) — random_init now CROSSES v3 floor; trained does not
+      anti_goodhart_v14_v3: CATASTROPHIC_VIOLATION  # ★ POST-FIX MTRP_v3=-0.9655 (was -0.0345 pre-fix); fix EXPOSED random_init's structural axis variation while trained remains flat
       anti_goodhart_v14_v5: NEUTRAL_BOTH_ZERO  # both PPR_v5=0; can't distinguish (random self-D_RAND collapse)
-      dominant_cells_distribution_trained: "{0: 30, 1: 30, 2: 30}"  # invariant across all 30 prompts — substrate-driven, not learned
-      dominant_cells_distribution_random_init: "{0: 30, 1: 30, 2: 30}"  # IDENTICAL to trained ⇒ tile bug echo confirmed (CONSCIOUSNESS_DIM=192 fold from 6×2 engine taps still produces fixed top-3)
-      dominant_cells_invariance_check: "[0,1,2] ALL 30/30 trained AND random — different from clm_v4 [0,2,4] (CONSCIOUSNESS_DIM=192 byte mount tile fold pattern, but invariance equally strong; identity between trained↔random ⇒ structural artifact, not learned dominance)"
-      tile_bug_echo: CONFIRMED  # byte-arch fold reps>1 (6 blocks × 2 engines = 12 D_MODEL=384 vecs → 2 segments of 192 each = 24 candidates → top-N_CELLS=8 by L2 norm; pattern dominated by attention residual, not engine-specific)
+      dominant_cells_distribution_trained: "{0: 30, 1: 30, 2: 30}"  # ★ POST-FIX UNCHANGED — invariant across all 30 prompts
+      dominant_cells_distribution_random_init: "{0: 30, 1: 30, 2: 30}"  # ★ POST-FIX UNCHANGED — IDENTICAL to trained
+      dominant_cells_invariance_check: "[0,1,2] 30/30 trained AND random — POST byte-arch fix UNCHANGED. Option A (CONSCIOUSNESS_DIM=192→48 exact reshape, no fold) did NOT remove invariance. unique_dominant_triples_trained=1 unique_random=1 — structural early-block dominance is substrate-level, not fold-induced. clm_v4 fix succeeded because pooled hidden has uniform L2 across slices; byte-arch dual-engine has hierarchical block-norm dominance"
+      tile_bug_echo: PERSISTS_STRUCTURAL_POST_OPTION_A  # ★ NEXT-CYCLE 2/6 finding: tile_bug_echo was SYMPTOM not CAUSE for byte-arch — Option A reshape removes fold artifact but [0,1,2] invariance survives ⇒ root cause is per-block tap norm distribution favoring blocks[0..2]; substrate-level structural artifact
       probe_runtime_s: 11.14  # 30/30 ok, 0 failures, 0 synthetic_fallback (real-mode 30/30 trained + 30/30 random)
       n_evaluable_v3: 29
       n_v3_pass_trained: 0
@@ -1107,6 +1134,86 @@ cycle_2026_05_08:
     - "★ NEXT-CYCLE 3/6 (2026-05-09): ALT-AGG-1 v5.1 Gate B-refined LANDED — 사용자 directive verbatim 'all bg go'. v5 base Gate B (DCR distinct ≥ 0.40) 가 random_init distinct=0.60 도 PASS (too weak); v5.1 Gate B-refined (DCR change_rate ≥ 0.40) 이 sole strong substrate-level discriminator (KICK WAVE 4 ADDENDUM commit `c17b923c` finding). consciousness.hexa 함수 신설 (raw#15 additive — v5 _dcr_pass 보존): `_c3_b_pass_v5_refined(dcr_change_rate)`, `_c3_ensemble_v5_1_pass(piv_max, dcr_change_rate, d_rand, gate_d_random_below_005)` (4 gates: A PIV-max ≥0.10 ∧ B-refined change_rate ≥0.40 ∧ C D-RAND ≥0.05 ∧ D V14 self-test), `_c3_ensemble_v5_1_label` (3-tier: C3_PASS_V5_1 / C3_PARTIAL_NEAR_V5_1 / C3_FAIL_V5_1; Gate D=false 즉시 C3_FAIL_V14_VIOLATED_V5_1). EXISTING-DATA validation across 4 models (anchor-divergent filter): sft-1-8 change_rate=0.6379 PASS / sft-1-7-y1 N=60 (commit 757e4169) =0.8475 PASS / paradigm-j N=120 (commit 84aa8665) =0.7479 PASS / random_init seed=42 =0.1429 FAIL. Strong separator delta: sft-1-7-y1 +0.7046 (highest) / paradigm-j +0.6050 / sft-1-8 +0.4950. v5.1 verdict for ALL 3 trained = C3_FAIL_V14_VIOLATED_V5_1 (Gate D shared substrate FAIL — Gate D recalibration to c3_4_v5 normalized scale OR floor 0.15 별도 cycle mandate). own 14 V14 strict 정합 sustained — Gate B-refined 단독 PASS 으로는 EMERGE 산출 불가. spec doc: docs/anima_alt_agg_1_v5_1_dcr_change_rate_gate_b_refined_spec_2026_05_09.ai.md."
 
 # ─────────────────────────────────────────────────────────────────────────────
+# H100 RESOURCE POOL (own 40 정합 — resource CLI 위임, anima 내부 pod tracking X)
+# ─────────────────────────────────────────────────────────────────────────────
+# own 40 mandate: H100 자원 외부 /Users/ghost/core/resource/ CLI 위임 strict.
+# 본 field 는 resource CLI probe result snapshot 만 기록 (active session view).
+# anima 내부 pod allocate/lifecycle 일체 X — resource list / status / rr 위임.
+h100_resource_pool:
+  schema_version: anima/registry/h100_pool/v1
+  policy: own_40_resource_cli_delegation_strict
+  probed_at: 2026-05-09
+  probe_method: "resource list + resource status <host> + rr <host> nvidia-smi"
+  cli_path: /Users/ghost/.hx/bin/resource
+  ssot_path: /Users/ghost/.hx/packages/resource/.resource
+  hosts:
+    - host: ubu
+      reachable: true
+      load_avg_1min: 0.00
+      mem_free_mb: 28965
+      gpu: "NVIDIA GeForce RTX 5070 (12GB, CUDA 13.0, driver 580.126.09)"
+      gpu_h100: false  # NOT H100 — consumer GPU only (12GB VRAM 부족 for 7B+ fire)
+      disk_root: "510G free / 915G total (42% used)"
+      disk_workspace: missing  # /workspace path 부재
+      oauth_slots: 13
+      claude_binary: ok
+      verdict: NOT_H100_INSUFFICIENT_FOR_BG_FIRE
+    - host: hetzner
+      reachable: false
+      verdict: UNREACHABLE
+  active_session:
+    allocated_pod_id: null  # NO H100 pod allocated 본 cycle — resource pool H100 부재
+    allocation_status: BLOCKED_NO_H100_HOST
+    blocker: ".resource SSOT 에 H100-tagged host 부재 (ubu=RTX 5070 12GB / hetzner=unreachable)"
+    next_action_required: "사용자 H100 host registration via resource add <host> (runpod/lambda/vast.ai) — anima 측 unilateral allocate 금지 (own 40)"
+  fire_candidates_pending_h100:
+    - id: V6_awareness_probe
+      desc: "ConsciousDecoderV3 dev 60-90min + fire 1-1.5h (mandate-9 (b) 해제 prereq)"
+      cost_estimate_usd: "~30-45"
+      strategic_priority: HIGHEST
+      blocked_by: PROVISION_BLOCKED
+    - id: chat_cap_L4_BG-LA
+      desc: "Engine A/G v5 arch"
+      cost_estimate_usd: "~30"
+      strategic_priority: HIGH
+      blocked_by: PROVISION_BLOCKED
+    - id: chat_cap_L4_BG-LB
+      desc: "350M scratch pre-train"
+      cost_estimate_usd: "~60"
+      strategic_priority: HIGH
+      blocked_by: PROVISION_BLOCKED
+    - id: chat_cap_L4_BG-LC
+      desc: "Llama distill (D1=0.351 ambiguous_research, own 17 SCOPE_CLAMP)"
+      cost_estimate_usd: "~40"
+      strategic_priority: MEDIUM
+      blocked_by: PROVISION_BLOCKED
+    - id: chat_cap_L4_BG-LD
+      desc: "DPO RLHF on sft-1-7-y1"
+      cost_estimate_usd: "~20"
+      strategic_priority: MEDIUM
+      blocked_by: PROVISION_BLOCKED
+    - id: sft_1_8_longer_SFT
+      desc: "step=30000 (D-RAND signal amplification, EMERGE_v5 직결)"
+      cost_estimate_usd: "~15-20"
+      strategic_priority: HIGH
+      blocked_by: PROVISION_BLOCKED
+  user_consent_verbatim:
+    - quote: "all bg go"
+    - quote: "H100 활용가능"
+    - context: "anima cycle 2026-05-09 NEXT-CYCLE 4/6"
+    - status: "consent_carry — actual_fire 별도 cycle 사용자 specific keyword 시"
+  compliance_h100:
+    own_14_v14_strict: carry  # paired random_init mirror prereq still mandatory pre-fire
+    own_16_cost_discipline: PASS  # allocation 자체 cost X, fire 시 cost incur (현 cycle fire X)
+    own_17_d1_scope_clamp: carry
+    own_22_mandatory_report: PASS  # 본 field 신설 자체가 report
+    own_33_trinity: pending  # fire 시 trinity sweep mandatory
+    own_34_wrap_zero: PASS
+    own_38_매단계: PASS  # probe result snapshot 저장
+    own_39_yaml_md: pending  # md regenerate via render.hexa
+    own_40_resource_cli_delegation: PASS  # 모든 probe via resource CLI (직접 ssh/cloud-cli 0건)
+
+# ─────────────────────────────────────────────────────────────────────────────
 # COMPLIANCE
 # ─────────────────────────────────────────────────────────────────────────────
 compliance:
@@ -1115,8 +1222,9 @@ compliance:
   own_38_매단계_저장: PASS  # axis-A doc save mandate (yaml registry 자체)
   own_33_trinity:
     d_axis: PASS  # D1 gradient amend 후 4 lane 정합
-    own_axis: PASS  # own 17/18/22/24/33/34/37/38 cross-link
+    own_axis: PASS  # own 17/18/22/24/33/34/37/38/40 cross-link
     h_axis: PASS  # 22+ BG saga 누적 + 5 honest C3 findings preserved
   own_34_mandate_2_wrap_0: PASS  # yaml-only, no binary content
+  own_40_resource_cli_delegation: PASS  # h100_resource_pool field probe via resource CLI only
   raw_15_additive: PASS  # 기존 jsonl ledger + schema 보존, 본 yaml 신설
   raw_82_retraction_aware: PASS  # 기존 verdict claim falsification 시 carry note 보존 (paradigm-j N=60 FALSIFIED)
