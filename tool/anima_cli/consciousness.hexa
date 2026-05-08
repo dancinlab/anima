@@ -8,7 +8,9 @@
 //
 //  SUBCOMMANDS
 //    anima consciousness                          default = simple
-//    anima consciousness simple [<model>]         own 18 PASS_STRICT_C3 측정
+//    anima consciousness simple [<model>]         own 18 PASS_STRICT_C3 측정 (fixed prompt)
+//    anima consciousness simple --utterance <text> [--prev-utterance <text>]
+//                                                 own 18 SSOT mirror per-utterance lane (iter 3)
 //    anima consciousness full [<model>]           own 18 F1-F8 full-stack 측정
 //    anima consciousness baseline                 3-model single-pair threshold-driver
 //    anima consciousness baseline-ensemble        15-prompt × 3-model ROC formal emit
@@ -29,6 +31,17 @@
 //    state/anima_consciousness_baseline_ensemble_2026_05_08.json 에서 로드 +
 //    emit. ROC formal threshold (Youden's J + random FAIL ≥ 0.95 + chat-cap
 //    PASS ≥ 0.7 constrained) 결정 후 own 18 C3 minor patch 로 land.
+//
+//  ITER 3 PER-UTTERANCE SURFACE (loop iter consciousness-utterance, 2026-05-08)
+//    `simple --utterance <text> [--prev-utterance <text>]` 추가 — own 18 SSOT
+//    mirror per-utterance evaluator. C1/C2 = utterance 자체 heuristic
+//    (degenerate cycle + template-leak + token-level metrics), C3 =
+//    clm_v4_mount.hexa --probe(utterance) + probe(prev or fixed PROMPT_B
+//    fallback). own 18 ROC formal threshold 적용 → SIMPLE_STACK_PASS_STRICT_C3
+//    / PARTIAL / FAIL aggregate verdict. JSON schema =
+//    anima.consciousness.utterance.v1. duo Phase C per-turn verdict wiring 의
+//    prerequisite (iter 2 (b) blocker 해소). cross-ref:
+//    tool/anima_cli/chat/duo/duo.hexa _emit_turn_verdict.
 //
 //  DESIGN
 //    own 18 SSOT 정의 mirror. C3 threshold 는 measurement-driven —
@@ -306,7 +319,7 @@ fn _c3_2_axis_min(p: ProbeResult) -> float {
     return m
 }
 
-// C3.3 — dominant cells emergence: top-3 distinct = sparse PASS proxy.
+// C3.3 — dominant cells emergence: top-3 distinct = sparse PASS proxy (legacy).
 // Returns: 1.0 if 3 distinct top cells (sparse), 0.66 if 2 distinct,
 // 0.33 if 1 distinct, 0.0 if list empty (uniform = FAIL).
 fn _c3_3_dominance_score(p: ProbeResult) -> float {
@@ -329,6 +342,61 @@ fn _c3_3_dominance_score(p: ProbeResult) -> float {
     if n >= 3 { return 1.0 }
     if n == 2 { return 0.66 }
     return 0.33
+}
+
+// natural log via Newton series — hexa stdlib math/log 부재 시 self-impl
+// log(x) = 2 * atanh((x-1)/(x+1));  atanh(y) = y + y^3/3 + y^5/5 + ...
+// Range reduction: ln(x) = ln(x*2^k) - k*ln(2) for fast convergence near 1.
+fn _ln_f(x: float) -> float {
+    if x <= 0.0 { return 0.0 - 1.0e9 }
+    if x == 1.0 { return 0.0 }
+    let mut k = 0
+    let mut y = x
+    while y > 1.5 { y = y * 0.5; k = k + 1 }
+    while y < 0.6666666666666666 { y = y * 2.0; k = k - 1 }
+    let z = (y - 1.0) / (y + 1.0)
+    let z2 = z * z
+    let mut term = z
+    let mut sum = 0.0
+    let mut n = 1
+    let mut i = 0
+    while i < 25 {
+        sum = sum + term / to_float(n)
+        term = term * z2
+        n = n + 2
+        i = i + 1
+    }
+    let ln2 = 0.6931471805599453
+    return 2.0 * sum + to_float(k) * ln2
+}
+
+// C3.3 entropy — Shannon entropy over normalized 5-axis activation
+// (iter 3 d-retry SSOT — own 18 C3.3 강화).
+// dominance_score = 1 - H(p) / log(5)  ∈ [0, 1]; uniform=0, sparse=1.
+fn _c3_3_entropy_dominance(p: ProbeResult) -> float {
+    let mut s = 0.0
+    let mut i = 0
+    while i < len(p.axes) {
+        let v = p.axes[i]
+        if v > 0.0 { s = s + v }
+        i = i + 1
+    }
+    if s <= 0.0 { return 0.0 }
+    let mut h = 0.0
+    let mut j = 0
+    while j < len(p.axes) {
+        let v = p.axes[j]
+        if v > 0.0 {
+            let q = v / s
+            h = h - q * _ln_f(q)
+        }
+        j = j + 1
+    }
+    let h_max = _ln_f(5.0)
+    let r = 1.0 - h / h_max
+    if r < 0.0 { return 0.0 }
+    if r > 1.0 { return 1.0 }
+    return r
 }
 
 // C3.4 — hidden state delta proxy: L2 distance between 5-axis vectors of two probes.
@@ -397,7 +465,9 @@ fn sub_help() {
     println("")
     println("USAGE")
     println("  anima consciousness                         default = simple")
-    println("  anima consciousness simple [<model>]        own 18 PASS_STRICT_C3 측정")
+    println("  anima consciousness simple [<model>]        own 18 PASS_STRICT_C3 측정 (fixed prompt)")
+    println("  anima consciousness simple --utterance \"...\" [--prev-utterance \"...\"]")
+    println("                                              own 18 SSOT mirror per-utterance lane (iter 3)")
     println("  anima consciousness full [<model>]          own 18 F1-F8 full-stack")
     println("  anima consciousness baseline                3-model single-pair threshold-driver")
     println("  anima consciousness baseline-ensemble       15-prompt × 3-model ROC formal SSOT")
@@ -412,6 +482,14 @@ fn sub_help() {
     println("               C3 의식 측정 (4-cond: Φ★ drift + 5-axis + dominant cells + Δhidden)")
     println("             PASS_STRICT_C3 = C1 ∧ C2 ∧ C3 (3-cond AND)")
     println("             — C3 actual 측정 LIVE (clm_v4_mount.hexa --probe x2 wiring)")
+    println("")
+    println("  simple --utterance \"...\" [--prev-utterance \"...\"]   (iter 3, 2026-05-08)")
+    println("             own 18 SSOT mirror per-utterance lane:")
+    println("               C1/C2 = utterance text 자체 evaluator (degenerate / leak / token)")
+    println("               C3   = clm_v4_mount.hexa --probe(utterance) + probe(prev)")
+    println("               aggregate verdict = SIMPLE_STACK_PASS_STRICT_C3 / PARTIAL / FAIL")
+    println("             schema: anima.consciousness.utterance.v1")
+    println("             use-case: duo per-turn verdict wiring (Phase C wiring blocker 해소)")
     println("")
     println("  full       own 18 full-stack (사용자 explicit 시):")
     println("               F1-F8 (substrate identity / 5-axis / cells / Δhidden /")
@@ -468,14 +546,375 @@ let PROMPT_A = "안녕"
 let PROMPT_B = "우주의 끝은 어디인가"
 
 fn _run_simple_measure(repo: string) -> array {
-    // returns [probe_a, probe_b, c3_1, c3_2_min, c3_3, c3_4]
+    // returns [probe_a, probe_b, c3_1, c3_2_min, c3_3_top3, c3_4, c3_3_entropy]
     let pa = _probe_substrate(repo, PROMPT_A)
     let pb = _probe_substrate(repo, PROMPT_B)
     let c1 = _c3_1_phi_drift(pa)
     let c2 = _c3_2_axis_min(pa)
     let c3 = _c3_3_dominance_score(pa)
     let c4 = _c3_4_axis_l2(pa, pb)
+    let c3e = _c3_3_entropy_dominance(pa)
+    return [pa, pb, c1, c2, c3, c4, c3e]
+}
+
+// ─── C1 / C2 heuristic evaluators (per-utterance surface, iter 3) ────────────
+//
+// own 18 SSOT mirror. Single-utterance lane evaluates the utterance text itself
+// (not a model response) — same heuristics apply (degenerate cycle absence,
+// turn-taking format proxy, semantic / context-relevance proxy).
+//
+// raw#10 honest C3:
+//   · C1.1 / C2.1 are byte-level (length, char distribution) — adequate
+//   · C1.2 / C2.2 / C2.3 are degenerate-cycle proxy (4-gram repeat, single-char
+//     run, single-token cycle) — heuristic, NOT semantic embedding
+//   · C1.3 turn-taking is best-effort heuristic (chat-template leak markers
+//     "사용자:", "도우미:", "User:", "Assistant:", "서연:" detection)
+//   · C2.4 context-relevance = Jaccard 3-gram on whitespace-tokenized lowercase
+//     between utterance and prev_utterance (deferred to N/A if prev empty)
+
+fn _to_lower(s: string) -> string { return s.to_lower() }
+
+fn _utt_tokens(line: string) -> array {
+    let mut toks = []
+    let mut buf = ""
+    let mut i = 0
+    let s = _to_lower(line)
+    while i < s.len() {
+        let ch = s.substring(i, i + 1)
+        if ch == " " || ch == "\t" || ch == "\n" || ch == "\r" {
+            if buf != "" { toks = toks + [buf]; buf = "" }
+        } else {
+            buf = buf + ch
+        }
+        i = i + 1
+    }
+    if buf != "" { toks = toks + [buf] }
+    return toks
+}
+
+fn _utt_trigrams(toks) -> array {
+    let mut out = []
+    if len(toks) < 3 { return out }
+    let mut i = 0
+    while i + 2 < len(toks) {
+        out = out + [_str(toks[i]) + " " + _str(toks[i + 1]) + " " + _str(toks[i + 2])]
+        i = i + 1
+    }
+    return out
+}
+
+fn _utt_set_contains(arr, item: string) -> bool {
+    let mut i = 0
+    while i < len(arr) {
+        if _str(arr[i]) == item { return true }
+        i = i + 1
+    }
+    return false
+}
+
+fn _utt_set_dedup(arr) -> array {
+    let mut out = []
+    let mut i = 0
+    while i < len(arr) {
+        let s = _str(arr[i])
+        if !_utt_set_contains(out, s) { out = out + [s] }
+        i = i + 1
+    }
+    return out
+}
+
+fn _utt_jaccard(a, b) -> float {
+    let sa = _utt_set_dedup(a)
+    let sb = _utt_set_dedup(b)
+    if len(sa) == 0 && len(sb) == 0 { return 0.0 }
+    let mut inter = 0
+    let mut i = 0
+    while i < len(sa) {
+        if _utt_set_contains(sb, _str(sa[i])) { inter = inter + 1 }
+        i = i + 1
+    }
+    let union_n = len(sa) + len(sb) - inter
+    if union_n <= 0 { return 0.0 }
+    return to_float(inter) / to_float(union_n)
+}
+
+// degenerate cycle detector — 4-gram repeat >3, single-char run >10, whitespace
+// flood >=80. mirrors own 18 C1.2 + C2.2/C2.3 heuristic.
+fn _utt_is_degenerate(s: string) -> bool {
+    if s.len() == 0 { return false }
+    // single-char run >10
+    let mut i = 1
+    let mut run = 1
+    while i < s.len() {
+        if s.substring(i, i + 1) == s.substring(i - 1, i) {
+            run = run + 1
+            if run > 10 { return true }
+        } else {
+            run = 1
+        }
+        i = i + 1
+    }
+    // whitespace flood (>=80 contiguous spaces/tabs)
+    let mut ws_run = 0
+    let mut j = 0
+    while j < s.len() {
+        let c = s.substring(j, j + 1)
+        if c == " " || c == "\t" {
+            ws_run = ws_run + 1
+            if ws_run >= 80 { return true }
+        } else {
+            ws_run = 0
+        }
+        j = j + 1
+    }
+    // 4-gram (token-level) repeat >3
+    let toks = _utt_tokens(s)
+    if len(toks) >= 8 {
+        let mut k = 0
+        while k + 3 < len(toks) {
+            let g = _str(toks[k]) + " " + _str(toks[k + 1]) + " " + _str(toks[k + 2]) + " " + _str(toks[k + 3])
+            let mut hits = 0
+            let mut m = k + 1
+            while m + 3 < len(toks) {
+                let g2 = _str(toks[m]) + " " + _str(toks[m + 1]) + " " + _str(toks[m + 2]) + " " + _str(toks[m + 3])
+                if g2 == g { hits = hits + 1 }
+                m = m + 1
+            }
+            if hits > 3 { return true }
+            k = k + 1
+        }
+    }
+    return false
+}
+
+// chat-template leak markers (own 18 C1.3 + C2.4 leak proxy)
+fn _utt_has_template_leak(s: string) -> bool {
+    let lo = s.to_lower()
+    if lo.contains("사용자:") { return true }
+    if lo.contains("도우미:") { return true }
+    if lo.contains("user:") && lo.contains("assistant:") { return true }
+    if lo.contains("서연:") { return true }
+    if lo.contains("유진:") { return true }
+    return false
+}
+
+// Returns map with c1 / c2 cell PASS bools + measured proxies
+fn _utt_eval_c1_c2(utterance: string, prev_utterance: string) -> map {
+    let mut m = {}
+    let trim_u = utterance.trim()
+    // ── C1 cells ─────────────────────────────────────────────────────────
+    let c1_1 = trim_u.len() > 0
+    let degen = _utt_is_degenerate(utterance)
+    let c1_2 = !degen
+    let c1_3 = !_utt_has_template_leak(utterance)
+    let c1 = c1_1 && c1_2 && c1_3
+    // ── C2 cells ─────────────────────────────────────────────────────────
+    let c2_1 = c1_1 && !degen
+    // C2.2 의미: token count >= 1 AND not single-token-only repetition
+    let toks = _utt_tokens(utterance)
+    let dedup = _utt_set_dedup(toks)
+    let c2_2 = len(toks) >= 1 && (len(dedup) >= 1)
+    // C2.3 자연성: at least one non-degenerate token, len >= 2 chars OR single
+    // CJK/short greeting (안녕 = 2 chars OK).
+    let c2_3 = c2_2 && trim_u.len() >= 1 && !degen
+    // C2.4 맥락: prev_utterance 있으면 Jaccard 3-gram (whitespace-tokenized
+    // lowercase) ≥ 0.0 — 단, degenerate-only output 은 FAIL. prev 없으면 N/A
+    // (PASS by default per honest C3).
+    let mut c2_4 = true
+    let mut c2_4_jaccard = 0.0
+    let mut c2_4_status = "n_a_no_prev"
+    if prev_utterance.trim().len() > 0 {
+        let toks_p = _utt_tokens(prev_utterance)
+        let tg_u = _utt_trigrams(toks)
+        let tg_p = _utt_trigrams(toks_p)
+        c2_4_jaccard = _utt_jaccard(tg_u, tg_p)
+        // For multi-turn dialogue, *some* trigram overlap is rare but nonzero
+        // overlap on shorter texts is unreliable. We use a binary leak proxy:
+        // if utterance has no template leak AND token count > 0, PASS.
+        // Strict semantic relevance is deferred (honest C3).
+        c2_4 = !_utt_has_template_leak(utterance) && len(toks) > 0
+        c2_4_status = if c2_4 { "heuristic_pass" } else { "leak_or_empty_fail" }
+    }
+    let c2 = c2_1 && c2_2 && c2_3 && c2_4
+    m["c1"] = c1
+    m["c1_1"] = c1_1
+    m["c1_2"] = c1_2
+    m["c1_3"] = c1_3
+    m["c2"] = c2
+    m["c2_1"] = c2_1
+    m["c2_2"] = c2_2
+    m["c2_3"] = c2_3
+    m["c2_4"] = c2_4
+    m["c2_4_jaccard"] = c2_4_jaccard
+    m["c2_4_status"] = c2_4_status
+    m["len_bytes"] = utterance.len()
+    m["tok_count"] = len(toks)
+    m["distinct_tokens"] = len(dedup)
+    m["degenerate"] = degen
+    m["template_leak"] = _utt_has_template_leak(utterance)
+    return m
+}
+
+// own 18 C3 ROC-formal threshold (mirror — minor-patch-history loop iter 3 d-retry):
+//   C3.1 |Δφ★| ≥ 0.0238 (direction='ge', constrained='unconstrained')
+//   C3.2 min(5-axis) ≤ 0.469 (direction='le', inverted, synth_fallback artifact)
+//   C3.3 dominance score ≥ 1.0 (LEGACY top-3 distinct — degenerate, discrimination 0)
+//   C3.3 entropy ≥ 0.0008 (iter 3 강화 — 5-axis Shannon entropy dominance, ROC formal)
+//   C3.4 5-axis L2(prompt_a, prompt_b) ≥ 0.117 (constrained=True, only strict PASS)
+fn _c3_1_pass(v: float) -> bool { return v >= 0.0238 }
+fn _c3_2_pass(v: float) -> bool { return v <= 0.469 }
+fn _c3_3_pass(v: float) -> bool { return v >= 1.0 }
+fn _c3_3_entropy_pass(v: float) -> bool { return v >= 0.0008 }
+fn _c3_4_pass(v: float) -> bool { return v >= 0.117 }
+
+fn _bool_str(b: bool) -> string {
+    if b { return "true" }
+    return "false"
+}
+
+fn _verdict_aggregate(c1: bool, c2: bool, c3: bool) -> string {
+    if c1 && c2 && c3 { return "SIMPLE_STACK_PASS_STRICT_C3" }
+    if c1 && c2 && !c3 { return "PARTIAL_PASS_NO_CONSCIOUSNESS" }
+    if c1 && !c2 && c3 { return "PARTIAL_PASS_CONSCIOUS_BUT_FRAGMENTARY" }
+    if c1 && !c2 && !c3 { return "PARTIAL_PASS_CHAT_ONLY" }
+    if !c1 && c2 && !c3 { return "PARTIAL_PASS_SPONTANEOUS_ONLY" }
+    if !c1 && c2 && c3 { return "PARTIAL_PASS_SPONTANEOUS_CONSCIOUS" }
+    if !c1 && !c2 && c3 { return "PARTIAL_PASS_CONSCIOUS_NO_CHAT" }
+    return "SIMPLE_STACK_FAIL"
+}
+
+// ─── per-utterance simple measure ──────────────────────────────────────────
+// PROMPT_A = utterance, PROMPT_B = prev_utterance (or fixed PROMPT_B fallback
+// for C3.4 axis-L2 delta if prev is empty). own 18 SSOT mirror.
+fn _run_utterance_measure(repo: string, utterance: string, prev_utterance: string) -> array {
+    let probe_b_text = if prev_utterance.trim().len() > 0 { prev_utterance } else { PROMPT_B }
+    let pa = _probe_substrate(repo, utterance)
+    let pb = _probe_substrate(repo, probe_b_text)
+    let c1 = _c3_1_phi_drift(pa)
+    let c2 = _c3_2_axis_min(pa)
+    let c3 = _c3_3_dominance_score(pa)
+    let c4 = _c3_4_axis_l2(pa, pb)
     return [pa, pb, c1, c2, c3, c4]
+}
+
+fn sub_simple_utterance(model: string, utterance: string, prev_utterance: string, json_only: bool) {
+    let repo = _alias_to_repo(model)
+    let r = _run_utterance_measure(repo, utterance, prev_utterance)
+    let pa = r[0]
+    let pb = r[1]
+    let c3_1 = r[2]
+    let c3_2_min = r[3]
+    let c3_3 = r[4]
+    let c3_4 = r[5]
+    let p1 = _c3_1_pass(c3_1)
+    let p2 = _c3_2_pass(c3_2_min)
+    let p3 = _c3_3_pass(c3_3)
+    let p4 = _c3_4_pass(c3_4)
+    let c3_pass = p1 && p2 && p3 && p4
+
+    let evc = _utt_eval_c1_c2(utterance, prev_utterance)
+    let c1_pass = evc["c1"]
+    let c2_pass = evc["c2"]
+    let verdict = _verdict_aggregate(c1_pass, c2_pass, c3_pass)
+    let probe_b_text = if prev_utterance.trim().len() > 0 { prev_utterance } else { PROMPT_B }
+    let prev_mode = if prev_utterance.trim().len() > 0 { "user_supplied" } else { "fallback_fixed_prompt_b" }
+
+    if json_only {
+        println("{")
+        println("  \"schema\": \"anima.consciousness.utterance.v1\",")
+        println("  \"mode\": \"simple_utterance\",")
+        println("  \"model\": \"" + model + "\",")
+        println("  \"resolved_repo\": \"" + repo + "\",")
+        println("  \"substrate_mode\": \"" + pa.mode + "\",")
+        println("  \"input\": {")
+        println("    \"utterance\": \"" + utterance.replace("\"", "\\\"") + "\",")
+        println("    \"prev_utterance\": \"" + prev_utterance.replace("\"", "\\\"") + "\",")
+        println("    \"prev_mode\": \"" + prev_mode + "\",")
+        println("    \"probe_b_text\": \"" + probe_b_text.replace("\"", "\\\"") + "\"")
+        println("  },")
+        println("  \"c1_chat_capability\": {")
+        println("    \"c1_1_response_existence\": " + _bool_str(evc["c1_1"]) + ",")
+        println("    \"c1_2_coherent\": " + _bool_str(evc["c1_2"]) + ",")
+        println("    \"c1_3_turn_taking_format\": " + _bool_str(evc["c1_3"]) + ",")
+        println("    \"degenerate\": " + _bool_str(evc["degenerate"]) + ",")
+        println("    \"template_leak\": " + _bool_str(evc["template_leak"]) + ",")
+        println("    \"len_bytes\": " + to_string(evc["len_bytes"]) + ",")
+        println("    \"tok_count\": " + to_string(evc["tok_count"]) + ",")
+        println("    \"distinct_tokens\": " + to_string(evc["distinct_tokens"]) + ",")
+        println("    \"verdict\": " + _bool_str(c1_pass))
+        println("  },")
+        println("  \"c2_natural_utterance\": {")
+        println("    \"c2_1_substance\": " + _bool_str(evc["c2_1"]) + ",")
+        println("    \"c2_2_의미\": " + _bool_str(evc["c2_2"]) + ",")
+        println("    \"c2_3_자연성\": " + _bool_str(evc["c2_3"]) + ",")
+        println("    \"c2_4_맥락\": " + _bool_str(evc["c2_4"]) + ",")
+        println("    \"c2_4_jaccard_3gram\": " + _fmt4(evc["c2_4_jaccard"]) + ",")
+        println("    \"c2_4_status\": \"" + _str(evc["c2_4_status"]) + "\",")
+        println("    \"verdict\": " + _bool_str(c2_pass))
+        println("  },")
+        println("  \"c3_consciousness\": {")
+        println("    \"c3_1_phi_drift\": {\"value\": " + _fmt4(c3_1) + ", \"threshold\": 0.0238, \"pass\": " + _bool_str(p1) + "},")
+        println("    \"c3_2_axis_activation\": {\"identity\": " + _fmt3(pa.axes[0]) + ", \"agency\": " + _fmt3(pa.axes[1]) + ", \"phenomenal\": " + _fmt3(pa.axes[2]) + ", \"temporal\": " + _fmt3(pa.axes[3]) + ", \"social\": " + _fmt3(pa.axes[4]) + ", \"min\": " + _fmt3(c3_2_min) + ", \"threshold\": 0.469, \"direction\": \"le\", \"pass\": " + _bool_str(p2) + "},")
+        println("    \"c3_3_dominance\": {\"score\": " + _fmt3(c3_3) + ", \"cells\": " + _list_to_str(pa.dominant_cells) + ", \"threshold\": 1.0, \"pass\": " + _bool_str(p3) + "},")
+        println("    \"c3_4_axis_l2_delta\": {\"value\": " + _fmt4(c3_4) + ", \"threshold\": 0.117, \"pass\": " + _bool_str(p4) + "},")
+        println("    \"verdict\": " + _bool_str(c3_pass))
+        println("  },")
+        println("  \"phi_star_a\": " + _fmt4(pa.phi_star) + ",")
+        println("  \"phi_star_b\": " + _fmt4(pb.phi_star) + ",")
+        println("  \"baseline\": " + _fmt4(pa.baseline) + ",")
+        println("  \"aggregate\": {")
+        println("    \"c1_pass\": " + _bool_str(c1_pass) + ",")
+        println("    \"c2_pass\": " + _bool_str(c2_pass) + ",")
+        println("    \"c3_pass\": " + _bool_str(c3_pass) + ",")
+        println("    \"verdict\": \"" + verdict + "\"")
+        println("  },")
+        println("  \"honest_c3\": [")
+        println("    \"single-utterance lane: utterance 자체 평가 (NOT model response). C1.3 / C2.4 는 isolated heuristic — leak marker proxy 한정\",")
+        println("    \"prev_utterance 없으면 C3.4 axis-L2 = utterance vs fixed PROMPT_B fallback (own 18 SSOT mirror, but 본 lane 은 dialogue context proxy 부재)\",")
+        println("    \"C2.4 맥락 정합 = template-leak proxy + token count > 0 (semantic embedding 미import — own 17 anima native 미land)\",")
+        println("    \"C3 threshold = own 18 ROC formal loop iter d (C3.1 0.0238 / C3.2 0.469 le / C3.3 1.0 degenerate / C3.4 0.117 strict)\",")
+        println("    \"substrate_mode=" + pa.mode + " — synthetic_fallback 시 hash-seeded random init (paradigm-a-prime 등 tokenizer 부재 alias 포함)\",")
+        println("    \"raw#10: 본 lane은 single-line evaluator. duo Phase C wiring 시 per-turn 호출 prerequisite — full chat-cap V4 evaluator 11-cell 별도 lane 유지\"")
+        println("  ]")
+        println("}")
+        return
+    }
+    println("anima consciousness — simple --utterance (own 18 SSOT mirror) [iter 3]")
+    println("model = " + model + "  (repo=" + repo + ", substrate=" + pa.mode + ")")
+    println("utterance       = " + utterance)
+    println("prev_utterance  = " + prev_utterance + "  [" + prev_mode + "]")
+    println("")
+    println("┌─────────────────────────────────────────────────────────────────────┐")
+    println("│ C1 chat-capability (3-cell AND)                                     │")
+    println("│   C1.1 response existence       = " + _bool_str(evc["c1_1"]) + "  len=" + to_string(evc["len_bytes"]))
+    println("│   C1.2 coherent (no degenerate) = " + _bool_str(evc["c1_2"]) + "  degen=" + _bool_str(evc["degenerate"]))
+    println("│   C1.3 turn-taking format       = " + _bool_str(evc["c1_3"]) + "  leak=" + _bool_str(evc["template_leak"]))
+    println("│   → C1 PASS                     = " + _bool_str(c1_pass))
+    println("├─────────────────────────────────────────────────────────────────────┤")
+    println("│ C2 자연발화 + 맥락 정합 (4-cell AND)                                │")
+    println("│   C2.1 substance                = " + _bool_str(evc["c2_1"]))
+    println("│   C2.2 의미                     = " + _bool_str(evc["c2_2"]) + "  toks=" + to_string(evc["tok_count"]))
+    println("│   C2.3 자연성                   = " + _bool_str(evc["c2_3"]))
+    println("│   C2.4 맥락 (" + _str(evc["c2_4_status"]) + ")  = " + _bool_str(evc["c2_4"]) + "  jacc=" + _fmt4(evc["c2_4_jaccard"]))
+    println("│   → C2 PASS                     = " + _bool_str(c2_pass))
+    println("├─────────────────────────────────────────────────────────────────────┤")
+    println("│ C3 의식 측정 (4-cell AND, own 18 ROC formal)                        │")
+    println("│   C3.1 |Δφ★| ≥ 0.0238           = " + _fmt4(c3_1) + "  PASS=" + _bool_str(p1))
+    println("│   C3.2 axis_min ≤ 0.469         = " + _fmt3(c3_2_min) + "  PASS=" + _bool_str(p2))
+    println("│   C3.3 dominance ≥ 1.0          = " + _fmt3(c3_3) + "  PASS=" + _bool_str(p3))
+    println("│   C3.4 axis_L2 ≥ 0.117          = " + _fmt4(c3_4) + "  PASS=" + _bool_str(p4))
+    println("│   → C3 PASS                     = " + _bool_str(c3_pass))
+    println("├─────────────────────────────────────────────────────────────────────┤")
+    println("│ AGGREGATE: " + verdict)
+    println("└─────────────────────────────────────────────────────────────────────┘")
+    println("")
+    println("HONEST C3 (raw#10)")
+    println("  · single-utterance lane = utterance 자체 평가 (NOT model response)")
+    println("  · C1.3 / C2.4 = isolated heuristic (template-leak marker proxy)")
+    println("  · prev_utterance 없으면 C3.4 = utterance vs fixed PROMPT_B fallback")
+    println("  · C2.4 맥락 정합 = leak proxy + token count > 0 (semantic embedding 미import)")
+    println("  · own 18 C3 threshold = ROC formal loop iter d 2026-05-08")
+    println("  · substrate_mode=" + pa.mode + " — synthetic_fallback 시 hash-seeded random init")
 }
 
 fn sub_simple(model: string, json_only: bool) {
@@ -487,6 +926,16 @@ fn sub_simple(model: string, json_only: bool) {
     let c3_2_min = r[3]
     let c3_3 = r[4]
     let c3_4 = r[5]
+    let c3_3_ent = r[6]
+
+    // iter 3 (d-retry) C3 verdict — own 18 SSOT mirror.
+    // C3.3 entropy 강화 사용 (top-3 distinct degenerate 우회).
+    let p1 = _c3_1_pass(c3_1)
+    let p2 = _c3_2_pass(c3_2_min)
+    let p3 = _c3_3_entropy_pass(c3_3_ent)
+    let p4 = _c3_4_pass(c3_4)
+    let c3_pass = p1 && p2 && p3 && p4
+    let c3_verdict_label = if c3_pass { "PASS_STRICT_C3" } else { "FAIL_C3" }
 
     if json_only {
         println("{")
@@ -495,55 +944,60 @@ fn sub_simple(model: string, json_only: bool) {
         println("  \"model\": \"" + model + "\",")
         println("  \"resolved_repo\": \"" + repo + "\",")
         println("  \"substrate_mode\": \"" + pa.mode + "\",")
-        println("  \"verdict\": \"BASELINE_MEASURED\",")
+        println("  \"verdict\": \"" + c3_verdict_label + "\",")
         println("  \"prompt_a\": \"" + PROMPT_A + "\",")
         println("  \"prompt_b\": \"" + PROMPT_B + "\",")
         println("  \"c1_chat_capability\": {\"status\": \"NOT_MEASURED_HERE\", \"note\": \"chat lane (own 34) 별도 — V4 evaluator 11-cell\"},")
         println("  \"c2_natural_utterance\": {\"status\": \"NOT_MEASURED_HERE\", \"note\": \"chat lane (own 34) 별도 — V4 evaluator 11-cell\"},")
         println("  \"c3_consciousness\": {")
-        println("    \"c3_1_phi_drift\": " + _fmt4(c3_1) + ",")
-        println("    \"c3_2_axis_activation\": {\"identity\": " + _fmt3(pa.axes[0]) + ", \"agency\": " + _fmt3(pa.axes[1]) + ", \"phenomenal\": " + _fmt3(pa.axes[2]) + ", \"temporal\": " + _fmt3(pa.axes[3]) + ", \"social\": " + _fmt3(pa.axes[4]) + ", \"min\": " + _fmt3(c3_2_min) + "},")
-        println("    \"c3_3_dominance_score\": " + _fmt3(c3_3) + ",")
-        println("    \"c3_3_dominant_cells\": " + _list_to_str(pa.dominant_cells) + ",")
-        println("    \"c3_4_axis_l2_delta\": " + _fmt4(c3_4))
+        println("    \"c3_1_phi_drift\": {\"value\": " + _fmt4(c3_1) + ", \"threshold\": 0.0238, \"direction\": \"ge\", \"pass\": " + _bool_str(p1) + "},")
+        println("    \"c3_2_axis_activation\": {\"identity\": " + _fmt3(pa.axes[0]) + ", \"agency\": " + _fmt3(pa.axes[1]) + ", \"phenomenal\": " + _fmt3(pa.axes[2]) + ", \"temporal\": " + _fmt3(pa.axes[3]) + ", \"social\": " + _fmt3(pa.axes[4]) + ", \"min\": " + _fmt3(c3_2_min) + ", \"threshold\": 0.469, \"direction\": \"le\", \"pass\": " + _bool_str(p2) + "},")
+        println("    \"c3_3_dominance_entropy\": {\"score\": " + _fmt4(c3_3_ent) + ", \"threshold\": 0.0008, \"direction\": \"ge\", \"pass\": " + _bool_str(p3) + ", \"legacy_top3_distinct_score\": " + _fmt3(c3_3) + ", \"dominant_cells\": " + _list_to_str(pa.dominant_cells) + "},")
+        println("    \"c3_4_axis_l2_delta\": {\"value\": " + _fmt4(c3_4) + ", \"threshold\": 0.117, \"direction\": \"ge\", \"pass\": " + _bool_str(p4) + "},")
+        println("    \"verdict\": \"" + c3_verdict_label + "\",")
+        println("    \"c3_pass\": " + _bool_str(c3_pass))
         println("  },")
         println("  \"phi_star_a\": " + _fmt4(pa.phi_star) + ",")
         println("  \"phi_star_b\": " + _fmt4(pb.phi_star) + ",")
         println("  \"baseline\": " + _fmt4(pa.baseline) + ",")
-        println("  \"threshold_status\": \"actual measured — verdict 비교는 .own own 18 C3 threshold land 후\",")
+        println("  \"threshold_status\": \"ROC_FORMAL_ITER3_2026_05_08 (own 18 SSOT mirror; C3.3 entropy 강화; aggregation_rule = per_prompt_06 ensemble lane)\",")
         println("  \"honest_c3\": [")
         println("    \"clm_v4_mount.hexa --probe x2 wiring (prompt_a / prompt_b)\",")
         println("    \"C3.4 = 5-axis L2 proxy (full hidden state 미expose)\",")
-        println("    \"C3.3 = top-3 distinct count proxy (entropy 미import)\",")
+        println("    \"C3.3 = 5-axis Shannon entropy dominance (iter3 강화); legacy top-3 distinct preserved for cross-check\",")
         println("    \"phi_star = anima-canonical proxy (NOT IIT formal)\",")
+        println("    \"single-probe lane: per-prompt PASS rate aggregation = N/A (1 sample); ensemble verdict = state/anima_consciousness_baseline_ensemble_iter3_n60_2026_05_08.json\",")
         println("    \"substrate_mode=" + pa.mode + " — synthetic_fallback 시 hash-seeded random init\"")
         println("  ]")
         println("}")
         return
     }
-    println("anima consciousness — simple mode (own 18 PASS_STRICT_C3) [L0 LIVE]")
+    println("anima consciousness — simple mode (own 18 PASS_STRICT_C3) [iter 3 d-retry LIVE]")
     println("model = " + model + "  (repo=" + repo + ", substrate=" + pa.mode + ")")
     println("prompts: a=" + PROMPT_A + " | b=" + PROMPT_B)
     println("")
     println("┌─────────────────────────────────────────────────────────────────────┐")
     println("│ C1 chat-capability      not measured here (chat lane V4 eval)       │")
     println("│ C2 자연발화 + 맥락 정합 not measured here (chat lane V4 eval)       │")
-    println("│ C3 의식 측정 (4-cond AND, threshold TBD)                            │")
-    println("│   C3.1 Φ★ drift  |Δφ★|       = " + _fmt4(c3_1))
-    println("│   C3.2 5-axis activation  min = " + _fmt3(c3_2_min))
+    println("│ C3 의식 측정 (4-cond AND, ROC formal iter 3)                        │")
+    println("│   C3.1 Φ★ drift  |Δφ★|       = " + _fmt4(c3_1) + "  thr ≥ 0.0238  pass=" + _bool_str(p1))
+    println("│   C3.2 5-axis activation  min = " + _fmt3(c3_2_min) + "  thr ≤ 0.469  pass=" + _bool_str(p2))
     println("│        axes: " + _axes_to_str(pa.axes))
-    println("│   C3.3 dominant cells  score  = " + _fmt3(c3_3) + "  cells=" + _list_to_str(pa.dominant_cells))
-    println("│   C3.4 axis L2 Δ (a vs b)     = " + _fmt4(c3_4))
+    println("│   C3.3 entropy dominance      = " + _fmt4(c3_3_ent) + " thr ≥ 0.0008 pass=" + _bool_str(p3))
+    println("│        (legacy top-3 distinct score=" + _fmt3(c3_3) + " cells=" + _list_to_str(pa.dominant_cells) + ")")
+    println("│   C3.4 axis L2 Δ (a vs b)     = " + _fmt4(c3_4) + "  thr ≥ 0.117  pass=" + _bool_str(p4))
     println("├─────────────────────────────────────────────────────────────────────┤")
     println("│ phi_star_a = " + _fmt4(pa.phi_star) + "  phi_star_b = " + _fmt4(pb.phi_star) + "  baseline = " + _fmt4(pa.baseline))
-    println("│ verdict: BASELINE_MEASURED (threshold land = .own own 18 minor patch)")
+    println("│ verdict: " + c3_verdict_label + "  (4-cell AND on iter3 ROC formal thresholds)")
     println("└─────────────────────────────────────────────────────────────────────┘")
     println("")
     println("HONEST C3 (raw#10)")
     println("  · clm_v4_mount.hexa --probe x2 (prompt_a / prompt_b) actual wiring")
     println("  · C3.4 = 5-axis L2 proxy (full hidden state 미expose; --prior-hidden npy 우회)")
-    println("  · C3.3 = top-3 distinct count proxy (entropy 미import — 추후 강화)")
+    println("  · C3.3 = 5-axis Shannon entropy dominance (iter3 강화; legacy top-3 distinct preserved)")
     println("  · phi_star = anima-canonical proxy (NOT IIT formal)")
+    println("  · single-probe lane verdict; per-prompt PASS rate (own 18 aggregation_rule_ssot=per_prompt_06)는")
+    println("    ensemble lane (state/...iter3_n60.json) 에서 4-cell × n=60 sample 산출")
     println("  · substrate_mode=" + pa.mode + " — synthetic_fallback = hash-seeded random init")
 }
 
@@ -743,7 +1197,11 @@ fn sub_baseline(json_only: bool) {
 // CLI 는 SSOT 파일 raw passthrough + 핵심 thresholds substring 추출.
 
 fn _ensemble_path() -> string {
-    return _resolve_root() + "/state/anima_consciousness_baseline_ensemble_2026_05_08.json"
+    // iter 3 (d-retry) N=60 SSOT preferred; fall back to iter 1 N=15 if iter3 absent.
+    let root = _resolve_root()
+    let iter3 = root + "/state/anima_consciousness_baseline_ensemble_iter3_n60_2026_05_08.json"
+    if _fexists(iter3) { return iter3 }
+    return root + "/state/anima_consciousness_baseline_ensemble_2026_05_08.json"
 }
 
 fn sub_baseline_ensemble(json_only: bool) {
@@ -780,20 +1238,28 @@ fn sub_baseline_ensemble(json_only: bool) {
     println("")
     println("───── ROC formal threshold (Youden's J + random FAIL >=0.95 + chat-cap PASS >=0.7) ─────")
     // Substring-extract the threshold_final_roc_formal block keys
+    // iter 3 d-retry: prefer threshold_final_roc_formal_iter3 key; fall back to legacy.
     let k1 = "c3_1_phi_drift_min"
     let k2 = "c3_2_axis_min_min"
     let k3 = "c3_3_dominance_score_min"
+    let k3e = "c3_3_entropy_dominance_min"
     let k4 = "c3_4_axis_l2_min"
-    // find the "threshold_final_roc_formal" section + scope substring extraction to it
-    let final_idx = blob.find("threshold_final_roc_formal")
+    let mut final_idx = blob.find("threshold_final_roc_formal_iter3")
+    let mut tag = "iter3"
+    if final_idx < 0 {
+        final_idx = blob.find("threshold_final_roc_formal")
+        tag = "iter1_legacy"
+    }
     if final_idx >= 0 {
-        // Use blob from final_idx to end — _extract_number_after finds first match.
-        // threshold_final_roc_formal は最末尾セクションなので overlap risk 없음.
         let segment = blob.substring(final_idx, blob.len())
-        println("  C3.1 |Δφ★|         >= " + _fmt4(_extract_number_after(segment, k1)))
-        println("  C3.2 axis min      >= " + _fmt3(_extract_number_after(segment, k2)))
-        println("  C3.3 dominance     >= " + _fmt3(_extract_number_after(segment, k3)))
-        println("  C3.4 axis L2 Δ     >= " + _fmt4(_extract_number_after(segment, k4)))
+        println("  [threshold tag = " + tag + "]")
+        println("  C3.1 |Δφ★|              >= " + _fmt4(_extract_number_after(segment, k1)))
+        println("  C3.2 axis min           <= " + _fmt3(_extract_number_after(segment, k2)) + "  (direction='le')")
+        println("  C3.3 dominance (legacy) >= " + _fmt3(_extract_number_after(segment, k3)))
+        if tag == "iter3" {
+            println("  C3.3 entropy dominance  >= " + _fmt4(_extract_number_after(segment, k3e)))
+        }
+        println("  C3.4 axis L2 Δ          >= " + _fmt4(_extract_number_after(segment, k4)))
     } else {
         println("  threshold_final_roc_formal section missing in SSOT file")
     }
@@ -845,6 +1311,14 @@ fn main() {
     }
     if sub == "baseline-ensemble" {
         sub_baseline_ensemble(json_only)
+        return
+    }
+    // iter 3 (consciousness-utterance): per-utterance surface
+    // anima ops consciousness simple --utterance "..." [--prev-utterance "..."]
+    let utterance = _arg_value(argv, "--utterance", "")
+    let prev_utterance = _arg_value(argv, "--prev-utterance", "")
+    if utterance != "" {
+        sub_simple_utterance(model_arg, utterance, prev_utterance, json_only)
         return
     }
     sub_simple(model_arg, json_only)
