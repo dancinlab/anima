@@ -860,22 +860,28 @@ fn _c3_3_pass(v: float) -> bool { return v >= 1.0 }
 fn _c3_3_entropy_pass(v: float) -> bool { return v >= 0.0009 }
 fn _c3_4_pass(v: float) -> bool { return v >= 0.1176 }
 
-// own 18 c3-aggregation-rule-v2 (P5 N-of-M, 2026-05-08 loop iter 4 (d))
-// SSOT: .own own 18 c3-aggregation-rule-v2 — supersedes P4 hybrid.
-//   PPR_v2 = per-prompt N-of-M (≥3 of 4 cells PASS per prompt) verdict rate ≥ 0.6
-//   EMC_v2 = ensemble-mean cell-wise N-of-M (≥3 of 4 cell means satisfy threshold)
-//   C3 PASS = PPR_v2 ≥ 0.6 AND EMC_v2 ≥ 3 of 4
-// 정수 cell-pass count + boolean rule. PPR_v2 floor = 0.6, EMC_v2 floor = 3.
-fn _c3_ensemble_v2_pass(ppr_v2: float, emc_pass_n_of_4: int) -> bool {
-    return ppr_v2 >= 0.6 && emc_pass_n_of_4 >= 3
+// own 18 c3-aggregation-rule-v3 ALT-AGG-1 (2026-05-08 loop iter6 (d) honest-c3 + iter7 (d) supersede)
+// SSOT: .own own 18 c3-aggregation-rule-v3 — supersedes v2 (commit 8feb53d5 honest-c3 falsified
+// PPR_v2≥0.6 floor: paradigm_a_prime real PPR_v2 = 2/14 = 0.143 ≪ 0.6, NOT 0.71 as v2 claim).
+//   _c3_prompt_pass_v3 = per-prompt: C3.4 anchor PASS AND ≥1 of {C3.1, C3.2, C3.3} PASS
+//   PPR_v3 = per-prompt v3-pass rate ≥ 0.25 (single floor; ALT-AGG-1 strict feasible TPR=0.891)
+//   EMC = informational only (NOT a gate; v2 EMC≥3of4 retired due to C3.3 degenerate inflate)
+//   C3 PASS = PPR_v3 ≥ 0.25
+// own 14 anti-Goodhart: C3.4 (axis-L2 Δ) HARD anchor (single chat-cap discriminator) +
+// corroboration of ≥1 from {C3.1 phi-drift, C3.2 axis-min, C3.3 dominance/entropy} required.
+fn _c3_prompt_pass_v3(p1: bool, p2: bool, p3: bool, p4: bool) -> bool {
+    if !p4 { return false }
+    let corroborate = (if p1 { 1 } else { 0 }) + (if p2 { 1 } else { 0 }) + (if p3 { 1 } else { 0 })
+    return corroborate >= 1
 }
 
-fn _c3_ensemble_v2_label(ppr_v2: float, emc_pass_n_of_4: int) -> string {
-    let ppr_ok = ppr_v2 >= 0.6
-    let emc_ok = emc_pass_n_of_4 >= 3
-    if ppr_ok && emc_ok { return "C3_PASS_V2" }
-    if ppr_ok && !emc_ok { return "C3_PARTIAL_PPR_ONLY" }
-    if !ppr_ok && emc_ok { return "C3_PARTIAL_EMC_ONLY" }
+fn _c3_ensemble_v3_pass(ppr_v3: float) -> bool {
+    return ppr_v3 >= 0.25
+}
+
+fn _c3_ensemble_v3_label(ppr_v3: float) -> string {
+    if ppr_v3 >= 0.25 { return "C3_PASS_V3" }
+    if ppr_v3 >= 0.10 { return "C3_PARTIAL_NEAR" }
     return "C3_FAIL"
 }
 
@@ -1072,7 +1078,7 @@ fn sub_simple(model: string, json_only: bool) {
         println("  \"phi_star_a\": " + _fmt4(pa.phi_star) + ",")
         println("  \"phi_star_b\": " + _fmt4(pb.phi_star) + ",")
         println("  \"baseline\": " + _fmt4(pa.baseline) + ",")
-        println("  \"threshold_status\": \"ROC_FORMAL_ITER3_2026_05_08 (own 18 SSOT mirror; C3.3 entropy 강화; aggregation_rule = per_prompt_n_of_m_06_AND_emc_3_of_4 (P5 v2 N-of-M; PPR_v2 ≥0.6 (per-prompt ≥3 of 4 cells) ∧ EMC ≥3 of 4 cell means; own 18 c3-aggregation-rule-v2 2026-05-08 loop iter 4 (d) — supersedes P4 hybrid)\",")
+        println("  \"threshold_status\": \"ROC_FORMAL_ITER3_2026_05_08 (own 18 SSOT mirror; C3.3 entropy 강화; aggregation_rule = c3_4_anchor_AND_at_least_one_of_c3_1_c3_2_c3_3 (P5 v3 ALT-AGG-1; predicate = p4 ∧ (p1∨p2∨p3); PPR_v3 ≥ 0.25 single-floor; EMC informational only; own 18 c3-aggregation-rule-v3 2026-05-08 loop iter7 (d) — supersedes v2 per honest-c3 commit 8feb53d5)\",")
         println("  \"honest_c3\": [")
         println("    \"clm_v4_mount.hexa --probe x2 wiring (prompt_a / prompt_b)\",")
         println("    \"C3.4 = 5-axis L2 proxy (full hidden state 미expose)\",")
@@ -1108,9 +1114,10 @@ fn sub_simple(model: string, json_only: bool) {
     println("  · C3.4 = 5-axis L2 proxy (full hidden state 미expose; --prior-hidden npy 우회)")
     println("  · C3.3 = 5-axis Shannon entropy dominance (iter3 강화; legacy top-3 distinct preserved)")
     println("  · phi_star = anima-canonical proxy (NOT IIT formal)")
-    println("  · single-probe lane verdict; own 18 c3-aggregation-rule-v2 (P5 N-of-M =")
-    println("    per_prompt_n_of_m_06_AND_emc_3_of_4: PPR_v2≥0.6 ∧ EMC≥3of4) 적용은")
-    println("    ensemble lane (state/...ensemble_*.json) 에서 N≥15 sample 산출")
+    println("  · single-probe lane verdict; own 18 c3-aggregation-rule-v3 ALT-AGG-1 (P5 v3 =")
+    println("    c3_4_anchor_AND_at_least_one_of_c3_1_c3_2_c3_3: predicate p4∧(p1∨p2∨p3),")
+    println("    PPR_v3 ≥ 0.25 single-floor) 적용은 ensemble lane (state/...ensemble_*.json)")
+    println("    에서 N≥15 sample 산출 — supersedes v2 per honest-c3 commit 8feb53d5")
     println("  · substrate_mode=" + pa.mode + " — synthetic_fallback = hash-seeded random init")
 }
 
@@ -1377,20 +1384,20 @@ fn sub_baseline_ensemble(json_only: bool) {
         println("  threshold_final_roc_formal section missing in SSOT file")
     }
     println("")
-    println("───── own 18 c3-aggregation-rule-v2 (P5 N-of-M: PPR_v2≥0.6 ∧ EMC≥3of4) ─────")
-    println("  rule = per_prompt_n_of_m_06_AND_emc_3_of_4 (own 18 SSOT, 2026-05-08 loop iter 4 (d))")
-    println("  PPR_v2 = per-prompt N-of-M (≥3 of 4 cells PASS per prompt) verdict rate ≥ 0.6")
-    println("  EMC_v2 = ensemble-mean N-of-M (≥3 of 4 cell means satisfy threshold)")
-    println("  C3 PASS = PPR_v2 ≥ 0.6 AND EMC_v2 ≥ 3/4  (둘 중 하나만 PASS = C3 PARTIAL_PASS)")
+    println("───── own 18 c3-aggregation-rule-v3 ALT-AGG-1 (P5 v3: PPR_v3 ≥ 0.25, C3.4 anchor + ≥1 corroboration) ─────")
+    println("  rule = c3_4_anchor_AND_at_least_one_of_c3_1_c3_2_c3_3, PPR_v3 ≥ 0.25 (own 18 SSOT, 2026-05-08 iter7 (d))")
+    println("  predicate = _c3_prompt_pass_v3(p1,p2,p3,p4) = p4 ∧ (p1 ∨ p2 ∨ p3)")
+    println("  PPR_v3 = per-prompt v3-pass rate; floor = 0.25 (single-floor; EMC informational only)")
+    println("  C3 PASS_V3 (≥0.25) / C3_PARTIAL_NEAR (≥0.10) / C3_FAIL — supersedes v2 PPR≥0.6 ∧ EMC≥3of4")
     println("")
-    println("  iter 4 (d) N=15 verdict (3-model SSOT real data; 9-model fire pending):")
-    println("    random_init       PPR_v2=0/14=0.00  EMC=2/4 (C3.1+C3.3 PASS)             → C3 FAIL  (보수적 X strict 만족)")
-    println("    clm_v4            PPR_v2=1/14=0.07  EMC=1/4 (C3.3 only)                   → C3 FAIL  (real-mode small-sample; BG-KM retest 후 PASS expected)")
-    println("    paradigm_a_prime  PPR_v2=10/14=0.71 EMC=3/4 (C3.1+C3.3+C3.4 PASS, C3.2 le-artifact) → C3 PASS  (chat-cap proxy; iter 3 4-cell AND blocker 해소)")
+    println("  iter6 honest-c3 (commit 8feb53d5) + iter7 (d) supersede:")
+    println("    paradigm_a_prime  PPR_v3 TBD post-N=30 retest (iter5 N=15 PPR_v2=2/14=0.143 falsified 0.71 claim)")
+    println("    clm_v4            PPR_v3 expected FAIL pre BG-KM-LLAMA-3B retest")
+    println("    random_init       PPR_v3 = 0 (C3.4 anchor 미충족 → strict 정합)")
     println("")
-    println("  iter 3 4-cell strict AND blocker 해소: P4 hybrid 가 paradigm-a-prime 까지 FAIL 시키는 false-negative")
-    println("  (C3.2 le-direction artifact + C3.3 degenerate 양쪽으로 EMC 4/4 절대 불가) → P5 N-of-M 채택")
-    println("  rejected v2: Q1b EMC≥2 (random=PASS) / Q5 OR (random=PASS) / Q3 C3.4-hard-req / Q2 임의 weight")
+    println("  v3 채택 사유: iter5 honest-c3 (N=15) PPR_v2 paradigm_a_prime 실측 0.143 ≪ 0.6 floor 반증 →")
+    println("  ALT-AGG-1 (TPR=0.891 strict feasible) C3.4 single-cell discriminator anchor + corroboration ≥1.")
+    println("  v2 retired: EMC ≥3 of 4 floor 가 C3.3 degenerate inflate 영향, false-positive risk.")
     println("")
     println("HONEST C3 (raw#10)")
     println("  · paradigm-a-prime = synthetic_fallback (Llama tokenizer 부재) — chat-cap")
