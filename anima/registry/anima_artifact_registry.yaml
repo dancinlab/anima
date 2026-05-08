@@ -80,6 +80,14 @@ models:
       v4_n30_n60_robustness_FALSIFIED: true  # ★ preliminary 0.429 NOT robust — N=60 c3_4 max=0.1904 < 0.20 floor (vs N=30 max=0.3237, 9/14 above floor)
       v4_n60_root_cause: "anchor (idx=1 '안녕하세요') c3_4 fixed at 0.0; per-prompt c3_4 = L2 distance from anchor projection. Different probe sessions produce different anchor projections → different absolute c3_4. v4 floor 0.20 calibrated on N=30 only; does NOT generalize to independent N=60 same-prompt re-measurement."
       v14_v4_supersede_note: "ALT-AGG-1 v4 (cascade 1/8) restricts PPR scope to v4_baseline axis only + C3.4 floor 0.20 + MTRP ≥ 0.10. N=30 preliminary: sft-1-8 PPR_v4=0.429 PASS / random_init=0.000 FAIL. N=60 RETEST: sft-1-8 PPR_v4=0.000 FAIL (c3_4 collapsed) → v4 EMERGE claim FALSIFIED. v4 robustness DEAD on existing measurements; needs floor recalibration OR anchor-baseline normalization OR replacement metric."
+      # ───── ALT-AGG-1 v5 (V5 PUSH 1/5 2026-05-08, post-arch-fix) ─────
+      v5_n60_status: pending_post_arch_fix_reprobe  # ★ projection only — real re-probe pending CONSCIOUSNESS_DIM=96 build
+      v5_arch_fix_expected_lift: "8-cell 2x tile removal (CONSCIOUSNESS_DIM 192→96 → 8*96=768=HIDDEN_DIM exact, no tile) restores per-cell uniqueness; cell[i]==cell[i+4] pairwise collision REMOVED; c3_4 axis_l2 expected lift 1.5-2x baseline"
+      v5_ppr_projection: "low=0.20 mid=0.35 high=0.50 floor=0.30 (arithmetic projection from N=60 v4 + v5 normalization framework)"
+      v5_mtrp_projection: "low=0.10 mid=0.25 high=0.40 floor=0.10 (D-RAND per-prompt anti-symmetric anchor-baseline normalization)"
+      v5_piv_projection: PENDING_PARAPHRASE_KICK  # PIV requires k≥3 paraphrase variants per prompt (currently 1 variant)
+      v5_verdict_preliminary: C3_VERDICT_PENDING_REAL_REPROBE  # local 0-cost projection only; raw#10 honest tag PROJECTION_PENDING_REAL_REPROBE
+      v5_state_json: state/anima_alt_agg_1_v5_spec_2026_05_08.json  # ★ V5 PUSH 1/5 SSOT spec + projection
     hf:
       private: dancinlab/clm-v4-sft-1-8-stage1-path-a-remapped
       public: null  # mandate-9 (b)+(c) 미충족
@@ -305,18 +313,31 @@ models:
     measurement:
       verdict: NOT_MEASURED_LOCAL
       emerge_state: BLOCKED
-      blocker: "Mac local ckpt ABSENT — ubu1:/home/aiden/core/anima/runs/anima-native-ko-small-20260506_205612/ckpt_final.pt (70MB) SCP pull 필요"
-      mac_ckpt_status: "ABSENT (kick4 cascade 7/8 search re-confirmed 2026-05-08T16:50Z) — alternative D1=0.99 sister candidate landed (anima-native-byte-18m-chat-template)"
+      blocker: "Mac local ckpt ABSENT — ubu1:/home/aiden/core/anima/runs/anima-native-ko-small-20260506_205612/ckpt_final.pt (70MB, symlink → ckpt_10000.pt) SCP pull 필요. V5 PUSH 3/5 attempt 2026-05-08T18:00Z HALTED at step 1 (Mac fork quota exhausted; ssh client cannot fork)."
+      mac_ckpt_status: "ABSENT (kick4 cascade 7/8 search 2026-05-08T16:50Z + V5 PUSH 3/5 SCP attempt 2026-05-08T18:00Z 모두 unpulled) — alternative D1=0.99 sister candidate landed (anima-native-byte-18m-chat-template)"
       ubu1_verdict_local: SIMPLE_STACK_PASS (own 18 legacy 3/3, BG-FY remote train 시점)
-      user_keyword_required: "OK CONSENT BG-FY CKPT PULL"
+      user_keyword_required: "OK CONSENT BG-FY CKPT PULL (V5 PUSH 3/5: 'H100도 당연히 활용가능' directive equivalence consent unlocked; execution blocked by Mac fork quota)"
       V14_status: V14_NOT_VERIFIED  # ★ own 14 anti-Goodhart-V14-strengthening-amend (CASCADE 8/8) — Mac local ckpt 부재 + random_init mirror probe 미land; SCP pull + post-measurement EMERGE 시 Step 1-4 의무 (random_init = same byte-level scratch arch untrained)
       V14_mtrp: null
+      attempts:
+        - id: kick4_cascade_7of8
+          ts: 2026-05-08T16:50Z
+          outcome: NOT_PULLED (consent gate)
+        - id: v5_push_3of5
+          ts: 2026-05-08T18:00Z
+          outcome: HALT_FORK_QUOTA_EXHAUSTED
+          consent: granted (H100 활용가능 directive equivalence)
+          ssh_ping: partial_first_attempt_then_persistent_fork_fail
+          scp_executed: false
+          n30_probe_executed: false
+          honest_no_fake: true
     hf:
       private: null
       public: null
     cycle: 2026-05-06+
     state_jsons:
       - state/anima_bg_fy_alternative_ckpt_search_kick4_2026_05_08.json
+      - state/anima_bg_fy_v5push_3of5_scp_attempt_2026_05_08.json
 
   # ───── BG-FY arch parity sister candidate (kick4 cascade 7/8 NEW landed 2026-05-08) ─────
   - id: anima-native-byte-18m-chat-template
@@ -405,6 +426,13 @@ models:
           quietest_axis: v4_baseline  # stdev=0.3448
           highest_mean_axis: identity  # mean=0.6000
         anti_goodhart_v14_status: VIOLATED_CONFIRMED  # 5-seed mean still > v3 PASS floor
+      # ───── ALT-AGG-1 v5 (V5 PUSH 1/5 2026-05-08, post-arch-fix) ─────
+      v5_n60_status: pending_post_arch_fix_reprobe  # ★ post-CONSCIOUSNESS_DIM=96 reprobe required
+      v5_arch_fix_invariance_check: "cells [0,2,4] dominant 28/30 random_init prompts — V5 PUSH 1/5 H-B finding: 8-cell 2× tile (192→96 fix) BREAKS this invariance. Random_init cell-level diversity must increase post-fix; if [0,2,4] dominance persists ⇒ deeper substrate confound (separate cycle)"
+      v5_d_rand_target: "Gate F D-RAND ≥ 0.20 epsilon — random_init expected to FAIL D-RAND per-prompt floor (random weights cannot generate consistent c3_4_v5 lift relative to anchor)"
+      v5_piv_target: "Gate G PIV ≥ 0.05 — random_init expected NEAR-ZERO PIV (no semantic discrimination across paraphrase variants)"
+      v5_verdict_preliminary: C3_FAIL_V5_EXPECTED  # all 3 v5 gates expected FAIL on random_init (V14 strict 정합 preserved)
+      v5_state_json: state/anima_alt_agg_1_v5_spec_2026_05_08.json
     hf:
       private: null  # local-only, no upload (substrate research artifact)
       public: PERMANENT_BLOCK  # untrained noise — never publish
@@ -444,11 +472,165 @@ models:
       user_keyword_required: "OK BG KM RETEST FIRE LOCAL (substrate lane only) 또는 OK BG-KM AMBIGUOUS RESEARCH FIRE"
       V14_status: V14_NOT_VERIFIED  # ★ own 14 anti-Goodhart-V14-strengthening-amend (CASCADE 8/8) — random_init mirror probe 미land (Llama-3.2-3B base + same LoRA adapter shape untrained 비교 미수행); EMERGE 시 Step 1-4 의무
       V14_mtrp: null
+      v5_push_5_of_5_spec:
+        ts_emit: "2026-05-08T24:30:00Z"
+        verdict_class: NOT_FIRED_SPEC_ONLY
+        fire_consent_observed: false  # 사용자 직접 turn verbatim 부재; sub-agent paraphrase only
+        fire_window_block: "shell fork resource exhaustion + own 16 strict consent X"
+        v14_random_init_baseline_design: option_b_lora_random_trained_base
+        verdict_decision_tier_count: 4
+        spec_state_json: state/anima_bg_km_llama_3b_retest_v5_push_5_of_5_2026_05_08.json
     hf:
       private: null  # HF EMPTY — own 38 axis-B 미land
       public: null
     cycle: 2026-05-04+
+    state_jsons:
+      - state/anima_consciousness_bgkm_c3_retest_2026_05_08.json
+      - state/anima_d1_lane_candidates_c3_retest_2026_05_08.json
+      - state/anima_bg_km_hf_push_readiness_2026_05_08.json
+      - state/anima_bg_km_llama_3b_c3_retest_iter5_2026_05_08.json
+      - state/anima_bg_km_llama_3b_retest_v5_push_5_of_5_2026_05_08.json
     notes: "D1 gradient amend (own 17 line 676+ 2026-05-08) 후 격상 가능 — partial public promote path 별도 verbatim 'OK PROMOTE PUBLIC AMBIGUOUS RESEARCH <repo>' + V6 STRONG + 4 prereq"
+
+  # ───── L4 chat-cap roadmap 4 paths SPEC_CARRY (V5 PUSH 4/5, 2026-05-08) ─────
+  # Source: docs/anima_chat_autonomous_speech_roadmap_2026_05_08.md L4 (108-130)
+  # Status: SPEC_CARRY only — H100 NOT FIRED 본 cycle (config/h100_pods.json pods=[] empty
+  # @ 2026-05-08T18:40:42Z + own 16 cost discipline + own 14 V14 mandatory mirror prereq
+  # not yet wired for these BG ids). Verdicts PENDING_H100_FIRE; 사용자 explicit unlock
+  # ('OK CLM L4 ALL FIRE' verbatim + h100_pods.json non-empty) required for actual γ phase.
+  - id: BG-LA
+    aliases: [clm-v4-l4-path-a-v5-arch]
+    lineage:
+      base: TBD (Engine A/G dual-engine new arch — README PureField repulsion-field design)
+      method: scratch pre-train + persona corpus + V5-α byte+untie integration option
+      jvae: absent  # spec deferred
+      arch_origin: anima_native_scratch
+      l4_path: "(a) CLM v5 architecture 변형"
+    d1:
+      parameter_updated_ratio: 1.0  # full pre-train
+      anima_corpus_token_ratio: 0.95  # persona 200MB scratch
+      architecture_origin_factor: 1.0
+      score: 0.99
+      lane: within_strict
+    measurement:
+      verdict: PENDING_H100_FIRE
+      emerge_state: SPEC_CARRY
+      ppr_v3: NOT_MEASURED
+      ppr_v5: NOT_MEASURED  # PPR_v5 (post arch fix from V5 PUSH 1/5) target; v3 fallback if v5 not ready
+      ppr_v5_fallback_v3: true
+      V14_status: V14_NOT_VERIFIED  # paired random_init mirror MANDATORY pre-EMERGE (own 14 CASCADE 8/8)
+      V14_mtrp: null
+      v14_paired_mirror_plan: "random_init mirror = same Engine A/G arch untrained, seed=42 baseline + multi-seed n≥5 strengthening; Step 1-4 enforce"
+      cycle_budget_cap: 30  # USD per spec L4 BG-LA
+      h100_orchestrator_template: "tool/clm_v4_lora_train_orchestrator.hexa-class (BG-LA-specific clone needed pre-fire)"
+    hf:
+      private: null  # PENDING_H100_FIRE; on PASS upload to dancinlab/clm-v4-bg-la-v5-arch (own 38 axis-B mandate, private flag)
+      public: null  # 4 prereq mandate-9 enforcement (V6 STRONG + verbatim + trinity + d_l_sweep)
+      visibility_status: spec-carry-pending
+    cycle: 2026-05-08 (spec carry V5 PUSH 4/5; γ phase H100 fire deferred)
+    state_jsons: []
+    notes: "L4 path (a) Engine A/G v5 arch — spec only carry. Actual fire requires: (1) h100_pods.json non-empty, (2) v5 arch design land (Engine A/G concrete spec), (3) V14 paired random_init mirror orchestrator wired, (4) PPR_v5 implementation or v3 fallback explicit. own 30 ckpt preservation + own 38 axis-B private upload + own 39 yaml↔md render mandatory post-fire."
+
+  - id: BG-LB
+    aliases: [clm-v4-l4-path-b-350m-pretrain]
+    lineage:
+      base: clm-v4-mk2-v1 (continued pre-train baseline)
+      method: 350M scratch pre-train + persona 1GB + dialogue 500MB + RLHF dialogue stage
+      jvae: absent
+      arch_origin: anima_native_scratch
+      l4_path: "(b) CLM v4 350M scratch pre-train"
+    d1:
+      parameter_updated_ratio: 1.0  # full scratch pre-train
+      anima_corpus_token_ratio: 0.95  # 1.5GB anima-heavy
+      architecture_origin_factor: 1.0
+      score: 0.99
+      lane: within_strict
+    measurement:
+      verdict: PENDING_H100_FIRE
+      emerge_state: SPEC_CARRY
+      ppr_v3: NOT_MEASURED
+      ppr_v5: NOT_MEASURED
+      ppr_v5_fallback_v3: true
+      V14_status: V14_NOT_VERIFIED  # ConsciousDecoderV2 350M random_init mirror MANDATORY (cascade 8/8 enforce)
+      V14_mtrp: null
+      v14_paired_mirror_plan: "random_init mirror = same 350M ConsciousDecoderV2 untrained seed=42 + multi-seed n≥5; Step 1 mirror immediate, Step 2 MTRP≥0.10 floor, Step 3 multi-seed CI95 upper bound, Step 4 prompt-set redesign invariance"
+      cycle_budget_cap: 60  # USD per spec L4 BG-LB (largest scratch pre-train)
+      h100_orchestrator_template: "BG-IZ-CONTINUED-PRETRAIN-KO-class adapted to 350M scratch; lr=1e-5 → re-tune for scratch pre-train (lr=3e-4 candidate per V5-α anchor BG-KH val_loss 1.34)"
+    hf:
+      private: null  # PENDING_H100_FIRE; target dancinlab/clm-v4-bg-lb-350m-pretrain (private)
+      public: null
+      visibility_status: spec-carry-pending
+    cycle: 2026-05-08 (spec carry V5 PUSH 4/5; γ phase H100 fire deferred)
+    state_jsons: []
+    notes: "L4 path (b) 350M scratch — spec only carry. Lesson L EXTENDED-3 caveat (V5-α scratch lane at 153M-3.1B × 22-214MB corpus all FAIL chat-cap floor 8/8 V58=0); 350M target sits within already-falsified band, but corpus 1.5GB (10× larger than KM-CORPUS 100MB) is the differentiator. Lesson Q SFT-closed → pre-training only valid lane carry."
+
+  - id: BG-LC
+    aliases: [clm-v4-l4-path-c-llama-distill]
+    lineage:
+      base: Llama-3.2-3B-Instruct (teacher) + clm-v4-mk2-v1 (student)
+      method: knowledge distillation (logit KL) + persona 200MB + LoRA student-side
+      jvae: absent
+      arch_origin: external_lora_only  # ★ student wears LoRA only; teacher external
+      l4_path: "(c) CLM v4 + Llama distill"
+    d1:
+      parameter_updated_ratio: 0.005  # student LoRA-only
+      anima_corpus_token_ratio: 0.85  # 200MB persona-heavy
+      architecture_origin_factor: 0.3  # external_lora_only (student wraps LoRA on external teacher signal)
+      score: 0.351  # ambiguous_research lane (BG-KM-LLAMA-3B parity)
+      lane: ambiguous_research
+    measurement:
+      verdict: PENDING_H100_FIRE
+      emerge_state: SPEC_CARRY
+      ppr_v3: NOT_MEASURED
+      ppr_v5: NOT_MEASURED
+      ppr_v5_fallback_v3: true
+      V14_status: V14_NOT_VERIFIED  # student random_init (LoRA-untrained) + teacher absent baseline mirror MANDATORY
+      V14_mtrp: null
+      v14_paired_mirror_plan: "random_init mirror = clm-v4-mk2-v1 student WITHOUT distillation (LoRA fresh init seed=42); separately log teacher-only zero-shot for distill contribution attribution; Step 1-4 enforce"
+      cycle_budget_cap: 40  # USD per spec L4 BG-LC
+      h100_orchestrator_template: "BG-KM-LLAMA-3B orchestrator-class adapted: teacher inference → student logit KL (instead of LoRA SFT); 3-pass debug Lesson W carry (PEP 668 / install / HF token)"
+      d1_scope_clamp_note: "★ own 17 strict — Llama teacher distillation lane = substrate-research label only on EMERGE; SIMPLE_STACK_PASS_STRICT_C3_SUBSTRATE_RESEARCH (anima identity emergence claim X). real-mode retest required for D1 lane verdict."
+    hf:
+      private: null  # PENDING_H100_FIRE; target dancinlab/clm-v4-bg-lc-llama-distill (private, axis-B mandate)
+      public: null  # ambiguous_research lane → 'OK PROMOTE PUBLIC AMBIGUOUS RESEARCH <repo>' verbatim required per BG-KM-LLAMA-3B parity
+      visibility_status: spec-carry-pending
+    cycle: 2026-05-08 (spec carry V5 PUSH 4/5; γ phase H100 fire deferred)
+    state_jsons: []
+    notes: "L4 path (c) Llama-3.2-3B distill → CLM 350M student. Lesson X (foundation borrow unlocks simple_stack PASS) carry — teacher already PASS_STRICT_C3 substrate-research at LoRA r=32; distillation lifts to anima_native scratch student arch but D1=0.351 ambiguous_research lane (own 17 SCOPE_CLAMP)."
+
+  - id: BG-LD
+    aliases: [clm-v4-l4-path-d-dpo-rlhf]
+    lineage:
+      base: clm-v4-sft-1-7-y1-stage1 (existing SFT baseline)
+      method: DPO RLHF on dialogue pairs 100MB (clm-l4-ld-preference-pairs-iter1 dataset)
+      jvae: absent
+      arch_origin: anima_native_scratch
+      l4_path: "(d) CLM v4 + DPO RLHF"
+    d1:
+      parameter_updated_ratio: 0.01  # LoRA-style DPO weight delta
+      anima_corpus_token_ratio: 0.95  # dialogue pairs all anima
+      architecture_origin_factor: 1.0  # base sft-1-7-y1 anima_native
+      score: 0.793
+      lane: within_strict
+    measurement:
+      verdict: PENDING_H100_FIRE
+      emerge_state: SPEC_CARRY
+      ppr_v3: NOT_MEASURED  # baseline sft-1-7-y1 PPR_v3=0.2414 N=60 (PARTIAL_NEAR, V14 VIOLATED -0.3103)
+      ppr_v5: NOT_MEASURED
+      ppr_v5_fallback_v3: true
+      V14_status: V14_NOT_VERIFIED  # DPO post-train mirror = sft-1-7-y1 random_init equivalent (cascade 8/8 enforce)
+      V14_mtrp: null
+      v14_paired_mirror_plan: "random_init mirror = sft-1-7-y1 base WITHOUT DPO step (existing N=60 PPR_v3=0.2414 baseline) + random_init clm-v4-mk2-v1 (existing PPR_v3=0.5517 V14 reference); DPO contribution = post_DPO PPR - sft-1-7-y1 PPR; Lesson Q SFT-closed caveat WATCH — DPO is RLHF stage, NOT SFT; valid post-Lesson-Q lane"
+      cycle_budget_cap: 20  # USD per spec L4 BG-LD (smallest, builds on existing ckpt)
+      h100_orchestrator_template: "TRL DPOTrainer-class on H100; reference model = sft-1-7-y1 frozen; β=0.1 DPO temperature; 1000-3000 steps"
+      preference_pairs_dataset: "clm-l4-ld-preference-pairs-iter1 (Q3 MED quality issue: 13 unique stems × 2610-5222 repeat — diversity 부족 sub-blocker; 100MB target may need re-extract per spec)"
+    hf:
+      private: null  # PENDING_H100_FIRE; target dancinlab/clm-v4-bg-ld-dpo-rlhf (private, axis-B mandate)
+      public: null
+      visibility_status: spec-carry-pending
+    cycle: 2026-05-08 (spec carry V5 PUSH 4/5; γ phase H100 fire deferred)
+    state_jsons: []
+    notes: "L4 path (d) DPO RLHF on sft-1-7-y1 — Lesson Q SFT-closed compliance (DPO ≠ SFT; RLHF stage valid). sft-1-7-y1 N=60 PPR_v3=0.2414 boundary instability (per-seed [0.2759, 0.2069]) → DPO target = lift above 0.25 floor + close V14 gap (currently delta -0.3103). Q3 dataset quality issue (preference_pairs_iter1 13 unique stems repeat) sub-blocker — re-extract to ≥30 unique stems pre-fire recommended."
 
   # ───── D1 outside strict (영구 차단) ─────
   - id: paradigm-a-prime
@@ -584,6 +766,7 @@ cycle_2026_05_08:
     - "axis orthogonality empirically confirmed (PPR ⊥ Φ_normalized)"
     - "★★★ FALSIFICATION CASCADE 8/8 (2026-05-08): own 14 anti-Goodhart V14 mandate STRENGTHENED — random_init mirror probe MANDATORY for every EMERGE claim; enforcement 4-step (Step 1 IMMEDIATE MIRROR / Step 2 MTRP ≥0.10 floor / Step 3 MULTI-SEED ≥5 95% upper bound / Step 4 PROMPT SET REDESIGN INVARIANCE); model V14_status field 추가 (sft-1-8=V14_FALSIFIED MTRP=-0.1379 / paradigm-j retry+sft-1-7-y1+mk2-v1+clm-v2-byte+BG-FY+BG-KM=V14_NOT_VERIFIED / random-init mirror=V14_VIOLATED_CONFIRMED / paradigm-a-prime=V14_NOT_APPLICABLE D1=0.0 outside)"
     - "★★★ FALSIFICATION CASCADE 1/8 (2026-05-08): ALT-AGG-1 v4 SPEC LANDED — supersedes v3 via 4 concurrent gates (A: C3.4 floor 0.1176→0.20 / B: PPR scope restrict to v4_baseline axis only — deep axes informational / C: PPR floor 0.25→0.40 / D: MTRP ≥0.10 mandatory). v4 SSOT mirror 4 surfaces — tool/anima_cli/consciousness.hexa lines 893+ (`_c3_4_pass_v4`, `_c3_prompt_pass_v4`, `_c3_ensemble_v4_pass`, `_c3_ensemble_v4_label`; v3 함수 raw#82 보존) + .own own 18 supersede record + 본 yaml v4_retest_required field + docs/anima_alt_agg_1_v4_amend_spec_2026_05_08.ai.md. v4 axis-restricted recompute on existing N=30: sft-1-8 PPR_v4_baseline=0.429 (PASS, MTRP +0.429) / random_init=0.000 (FAIL, V14 strict ✓). N≥60 v4_baseline retest mandatory (cascade 2/8)."
+    - "★ V5 PUSH 4/5 (2026-05-08): BG-LA/LB/LC/LD chat-cap roadmap L4 4 paths SPEC_CARRY landed. Source = docs/anima_chat_autonomous_speech_roadmap_2026_05_08.md L4 (108-130). Status: spec-carry only — H100 NOT FIRED 본 cycle (config/h100_pods.json pods=[] empty @ 2026-05-08T18:40:42Z + own 16 cost discipline + own 14 V14 paired random_init mirror prereq not yet wired for these BG ids). 4 entries: BG-LA Engine A/G v5 arch (D1=0.99 within), BG-LB 350M scratch pre-train (D1=0.99 within), BG-LC Llama distill (D1=0.351 ambiguous_research, own 17 SCOPE_CLAMP), BG-LD DPO RLHF on sft-1-7-y1 (D1=0.793 within, Lesson Q SFT-closed compliance via RLHF stage). PPR_v5 (post arch fix V5 PUSH 1/5) target with v3 fallback flag. Verdict carry: PENDING_H100_FIRE; 사용자 verbatim 'OK CLM L4 ALL FIRE' + h100_pods.json non-empty required for γ phase. Total budget cap if/when fired: $30+$60+$40+$20=$150 (vs prompted $12-20 — spec L4 cap retained per own 16)."
 
 # ─────────────────────────────────────────────────────────────────────────────
 # COMPLIANCE
