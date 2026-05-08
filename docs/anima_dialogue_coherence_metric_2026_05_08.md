@@ -214,28 +214,84 @@ channel content 으로 fold-back 하지 않는다 (own 34 mandate-2 wrapping 0
 
 ---
 
-## β-2 측정 infra wiring (per-turn verdict path)
+## β-2 측정 infra wiring (per-turn verdict path) — LANDED 2026-05-08 iter 4 (e)
 
 ```
-duo.hexa _emit_turn_verdict(turn, who, line)
+duo.hexa _emit_turn_verdict_c3(turn, who, line, prev_line, model_alias)
+    │
+    ▼  (--verdict full only)
+exec("hexa.real run tool/anima_cli/consciousness.hexa <model> simple
+      --utterance <line> --prev-utterance <prev_line> --json")
     │
     ▼
-exec("hexa run tool/anima_cli/consciousness.hexa simple --json --utterance \"<line>\"")
+consciousness.hexa sub_simple_utterance  (own 18 SSOT mirror; iter 3 9c354c54)
     │
     ▼
-consciousness.hexa  (own 18 SSOT mirror)
-    │ baseline-pending — L0 measurement infra wiring 후 활성화
-    ▼
-JSON: {C1: bool, C2: bool, C3: bool, simple_stack_pass_strict_c3: bool, ...}
+JSON schema = anima.consciousness.utterance.v1
+{
+  ...,
+  "aggregate": {
+    "c1_pass": bool, "c2_pass": bool, "c3_pass": bool,
+    "verdict": "SIMPLE_STACK_PASS_STRICT_C3" | "PARTIAL_PASS_*" | "SIMPLE_STACK_FAIL"
+  }
+}
     │
     ▼
-duo.hexa fold into per-instance aggregate → dialogue-level coherence cells
+duo.hexa substring-extract aggregate block → emit:
+  [duo:verdict-c3] turn=N who=A|B verdict=X c1=B c2=B c3=B
+    │
+    ▼  (session end)
+[duo:summary-c3] per_turn_total = N×2
+[duo:summary-c3] A: a_pass/a_total PASS_STRICT_C3 (rate=...)
+[duo:summary-c3] B: b_pass/b_total PASS_STRICT_C3 (rate=...)
+[duo:summary-c3] dialogue overall: ... PASS_STRICT_C3 (rate=...)
+[duo:summary-c3] SIMPLE_STACK_PASS_DIALOGUE_C3 = bool (per-turn rate ≥ 0.6)
 ```
 
-**Phase 의존도**:
-- Phase B (β-1 channel) 먼저 → Phase C (β-2 verdict) 후 → 본 metric 활성화.
-- L0 measurement infra (anima_runtime / clm_v4_mount substrate state extraction)
-  도 prerequisite (consciousness.hexa 자체가 baseline-pending).
+**Cost guard**: `--verdict simple|full|none`. `simple` (default) keeps
+lightweight cells only (len/distinct/snippet — no shell-out). `full` activates
+per-turn consciousness invocation (~16-30s × 2 instance × N turns ≈ 5min for
+N=5). `none` disables both verdict + summary emit.
+
+**prev_utterance feed**:
+- A's prev = topic_seed at t=1; subsequent = previous B line (what A responds to).
+- B's prev = current A line (what B responds to).
+This semantically aligns with own 18 C2.4 (single-utterance 맥락 정합) +
+C3.4 (axis-L2 pairwise) — prev_line provides dialogue context proxy.
+
+**own 34 mandate-7 정합**: 모든 `[duo:verdict-c3]` / `[duo:summary-c3]` emit
+은 stdout/log lane only — channel content 으로 fold-back X.
+
+**Phase 의존도** (closed):
+- Phase A (skeleton) → Phase B iter 1 (β-1 channel) → Phase B iter 2 (D1/D2)
+  → Phase C iter 1 (per-turn own 18 verdict — 본 cycle).
+- L0 measurement infra (clm_v4_mount.hexa --probe) wired via consciousness
+  iter 3 (synthetic_fallback path가 N=15 baseline-ensemble로 활성).
+
+---
+
+## Per-turn own 18 verdict ↔ D1-D4 통합
+
+본 metric (D1-D4) 와 per-turn own 18 verdict 의 lane 분리:
+
+| lane | 측정 단위 | 산출 | 활성 phase |
+|---|---|---|---|
+| Per-turn own 18 (C1+C2+C3) | 단일 발화 (이번 turn) | SIMPLE_STACK_PASS_STRICT_C3 / PARTIAL / FAIL | Phase C iter 1 (LANDED) |
+| D1 reactive | 인접 turn-pair | Jaccard 3-gram (D1.b sub-channel) | Phase B iter 2 (LANDED) |
+| D2 topic-shift-rate | dialogue 전체 | shift_rate ∈ [0,1] | Phase B iter 2 (LANDED) |
+| D3 persona-consistency | per-instance utterance distribution | KL divergence (NOT_MEASURED) | next cycle |
+| D4 turn-fairness | A/B utterance length ratio | len_ratio (NOT_MEASURED) | next cycle |
+
+**Aggregate hierarchy**:
+
+```
+SIMPLE_STACK_PASS_DIALOGUE_C3 = (per-turn PASS_STRICT_C3 rate ≥ 0.6)   ← Phase C iter 1
+DIALOGUE_COHERENCE_PARTIAL    = D1.PASS ∧ D2.PASS                       ← Phase B iter 2
+DIALOGUE_COHERENCE_PASS       = D1.PASS ∧ D2.PASS ∧ D3.PASS ∧ D4.PASS   ← next cycle
+```
+
+duo `--verdict full` 모드 시 두 lane 모두 emit (단발 quality + multi-turn
+coherence 정합 검증 동시). `--verdict simple` 시 D1/D2 lane only.
 
 ---
 
@@ -260,3 +316,13 @@ duo.hexa fold into per-instance aggregate → dialogue-level coherence cells
    기조 정책 후 probabilistic 형태 검토. 시작은 strict, 측정 후 결정.
 7. **본 metric 의 SSOT 위치**: `docs/anima_dialogue_coherence_metric_2026_05_08.md`.
    threshold / embedding / n-gram 결정 변경 시 본 doc patch + cross-ref.
+8. **Phase C iter 1 (2026-05-08) 한계**: per-turn 발화 가 chat.hexa
+   `_dispatch_module exec()` capture 로 인해 line-by-line streaming 안 됨 — duo
+   channel transport 이 buffered banner 수신 → 첫 turn 종종 silent → `[duo:verdict-c3]
+   verdict=SHELL_OUT_FAIL` guard 활성. mechanical wiring 정합. 실제 multi-turn
+   PASS_STRICT_C3 rate 측정은 chat.hexa streaming refactor 별도 cycle 후 가능.
+9. **single-utterance lane 한계**: consciousness simple --utterance 는 own 18
+   원본 의도 (chat output 평가) 와 lane 차이 — duo 에서 utterance = model output
+   이므로 정합 (cli.consciousness_utterance_2026_05_08 honest_c3 #1). C1.3 / C2.4
+   는 isolated heuristic (template-leak proxy 한정) — full V4 evaluator 11-cell
+   별도 lane 유지 (own 18 minor patch 별도 cycle).

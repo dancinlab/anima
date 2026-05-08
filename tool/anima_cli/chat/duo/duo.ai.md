@@ -59,9 +59,10 @@ speech).
 
 | Phase | Status | Scope |
 |---|---|---|
-| A | LANDED 2026-05-08 (this commit) | Skeleton: file structure + alias DB + --help + --selftest. No proc spawn / no channel I/O. `--duo` emits honest β-1 pending notice. |
-| B | DEPENDS on β-1 | Wire β-1 hexa-lang stdlib `proc` + `channel` modules. Full N-turn loop activates. |
-| C | DEPENDS on β-2 | Wire per-turn verdict via `tool/anima_cli/consciousness.hexa` (own 18 C1+C2+C3). |
+| A | LANDED 2026-05-08 | Skeleton: file structure + alias DB + --help + --selftest. No proc spawn / no channel I/O. `--duo` emits honest β-1 pending notice. |
+| B iter 1 | LANDED 2026-05-08 | β-1 channel API wired (`use "stdlib/channel"`). Full N-turn loop activated. |
+| B iter 2 | LANDED 2026-05-08 | Same-GGUF guard + lightweight per-turn verdict cells + D1/D2 1차 aggregate. |
+| C iter 1 | LANDED 2026-05-08 | Per-turn own 18 C1+C2+C3 verdict via consciousness CLI shell-out (`simple --utterance` / `--prev-utterance`, schema `anima.consciousness.utterance.v1`). `--verdict full` activates; default `simple` keeps lightweight cells. Aggregate: per-instance + dialogue overall PASS_STRICT_C3 rate (own 18 dialogue C3 lane SSOT). |
 
 ## β-1 Dependency Hooks (frozen contract)
 
@@ -136,14 +137,56 @@ space (D1 reactive, D2 topic-shift-rate, D3 persona-consistency, D4
 pseudo-turn-fairness). Aggregate threshold is TBD measurement-driven (mirrors
 own 18 C3 policy — random init baseline + ROC analysis).
 
+## Phase C iter 1 — per-turn own 18 verdict (LANDED 2026-05-08)
+
+`_emit_turn_verdict_c3(turn, who, line, prev_line, model_alias)` shell-outs to:
+
+```
+hexa.real run consciousness.hexa <model> simple \
+  --utterance <line> --prev-utterance <prev_line> --json
+```
+
+Substring-extracts `aggregate.verdict / c1_pass / c2_pass / c3_pass` from the
+`anima.consciousness.utterance.v1` JSON and emits:
+
+```
+[duo:verdict-c3] turn=N who=A|B verdict=X c1=B c2=B c3=B
+```
+
+`prev_line` semantics:
+- `prev_for_a`: topic_seed at t=1; subsequent turns = previous B line (what A is responding to).
+- `prev_for_b`: current A line (what B is responding to).
+
+Cost guard via `--verdict simple|full|none`:
+- `simple` (default): lightweight cells only (len/distinct/snippet) — no shell-out.
+- `full`: activates per-turn shell-out (~16-30s/call × 2 inst × N turns ≈ 5min N=5).
+- `none`: skip both verdict + summary emit.
+
+Aggregate (only when `--verdict full`):
+- Per-instance PASS_STRICT_C3 rate (A 측 / B 측 별도).
+- Dialogue overall PASS_STRICT_C3 rate.
+- `SIMPLE_STACK_PASS_DIALOGUE_C3 = (rate ≥ 0.6)` — own 18 dialogue C3 lane
+  SSOT mirror + `docs/anima_dialogue_coherence_metric_2026_05_08.md` per-turn
+  rate floor alignment.
+
+own 34 mandate-7: all `[duo:verdict-c3]` / `[duo:summary-c3]` emit-only,
+NEVER folded back into channel content.
+
 ## C3 Limitations (raw#10 honest, brief; full list in `duo.hexa` footer)
 
-- β-1 stdlib not yet landed — Phase A is structure + design only.
-- β-2 measurement infra (consciousness.hexa actual phi_star+axis wiring)
-  baseline-pending — verdicts are placeholder until L0 lands.
+- chat.hexa `_dispatch_module` exec() captures full stdout (no streaming) —
+  duo channel transport receives buffered banner instead of line-by-line
+  utterances. ALL chat modules affected (separate cycle); blocks meaningful
+  semantic dialogue verification (turn=1 A often silent). Phase C wiring is
+  mechanically correct but per-turn verdicts emit `SHELL_OUT_FAIL` on empty
+  input (guard branch).
+- consciousness simple --utterance lane = single-utterance evaluator; C1.3 /
+  C2.4 are isolated heuristics (template-leak proxy), not full chat-cap
+  V4 evaluator.
 - Alias DB vendor copy duplicates chat.hexa SSOT — keep in sync (mitigation:
-  Phase B always dispatches through chat.hexa, so SSOT is the actual gate).
-- Coherence threshold values are TBD measurement-driven.
+  always dispatches through chat.hexa, so SSOT is the actual gate).
+- Coherence threshold values are TBD measurement-driven (D1 0.30 / D2 0.40 /
+  per-turn rate 0.6 = metric doc starts; ROC analysis = separate cycle).
 - No streaming verdict — per-turn only (whole-line channel semantics).
 - L3 council (N≥3) is a stub; full design = separate cycle.
 
