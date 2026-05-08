@@ -333,8 +333,11 @@ fn cmd_chat(user_text: string, max_tokens: int) {
         bi = bi + 1
     }
     if len(prompt) == 0 {
-        // empty input — nothing to forward
-        return
+        // own 34 mandate-4 자율 발화 (Phase 2 fix Variant B): empty input 시
+        // model layer 가 BOS-only forward 결정. single seed byte (0x00) feed
+        // → sample max_tokens. anima_native REPL 측 wrapping 회피 (mandate-2/7
+        // 정합 — chat lane 은 thin pipe). prompt_n=1 이라 출력 자동 제외.
+        prompt = prompt.push(0)
     }
 
     // silent init (own 34 mandate-1: stdout cleanliness — no warmup logs)

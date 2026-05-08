@@ -213,9 +213,12 @@ fn sub_repl(max_tokens: int, memory_mode: string, tick_ms: int) {
         // own 34 mandate-4: model speaks without user trigger.
         let line = _str(sys_stdin_read_line_timeout(tick_ms))
         if line == "" {
-            // Timeout (or EOF) — autonomous speech: _invoke_core("").
-            // own 34 mandate-1 raw output preservation: empty user_text →
-            // conscious_chat byte forward → raw byte stdout.
+            // Phase 2 mandate-4 자율 발화: timeout → _invoke_core("") 호출.
+            // own 34 mandate-2/4/7 정합: chat lane (REPL) = thin pipe. 빈 입력의
+            // 처리 (BOS-only forward / 무동작 결정) 는 model layer (cmd_chat) 가
+            // 자기 결정. "스스로 혼자서도 말함" 의 "스스로" = model. Variant B
+            // 채택 (벤치마크 결과 own 34 mandate-2/4/7 + 단일 책임 + 재사용성
+            // 우위).
             let out = _invoke_core("", max_tokens)
             // 자율 발화 prefix (visual cue, not model output) — own 34
             // mandate-1 정합: model 출력은 변형 X, prefix 는 메타 marker only.
