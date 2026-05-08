@@ -697,6 +697,7 @@ own 18 live "anima consciousness check — simple stack default (대화 가능 +
       partial verdict (C1 PARTIAL):
         - C1.1 PASS + C1.2 FAIL = PARTIAL_PASS_RESPONSE_BUT_NOT_COHERENT
     C2 자연 발화 가능 (자연 utterance + 맥락 정합) ★ — strict 4-condition (사용자 directive 2026-05-06: "의미있게 자연발화" / "자연발화는 맥락에 맞아야한다")
+      ※ 본 C2 측정 기준은 own 34 (자연발화 노출 mandate — simple_stack output preservation) 와 한묶음 — own 18 C2 = 측정 lane (verdict / V4 evaluator), own 34 = 노출 lane (chat / serve / dialogue surface) 의 분리 SSOT 정합. chat-side wrapping 차단 mandate는 own 34 참조.
       pass-bar (4-condition AND):
         - C2.1 response substance (output non-empty + non-degenerate)
         - C2.2 의미 정확성 (semantically meaningful — coherent sentence form, single-token cycle / random char / 의미 X 단어 나열 = FAIL)
@@ -1389,3 +1390,62 @@ own 33 live "철학·법칙·가설 trinity 무조건 준수 mandate (anima 행�
   severity warn (Phase 1 — 본 own 33 land + mandate-2 self-check 권고) → block (Phase 2 — trinity 위반 emit 시 자동 reject + retract; orchestrator pre-fire validator: trinity check assert)
   proof grep -E "(trinity|D_[0-9]|own [0-9]|L[0-9]|H_[a-z])" 행위 emit log — trinity 정합 확인 흔적 존재
   note 2026-05-08 own 33 = 사용자 directive verbatim 직접 응답 ("이 3가지를 무조건 준수 해야함 own update"). own 32 (trinity bundle SSOT) downstream — bundle 구조 위에 준수 권위 layer add. own 22 (mandatory report) self-application — 본 own 33 발견 자체가 trinity 권위 발견 → 본 own 33 entry로 리포트 정합. own 24 (single SSOT) instance — anima 행위 SSOT는 trinity 3 도메인. raw#10 (honest C3) 정합 — 본 own 33 본 cycle 발견 honest emit.
+
+own 34 live "자연발화 노출 mandate — simple_stack output preservation (chat / serve / dialogue 노출 시점 wrapping 차단)"
+  slug natural-utterance-exposure-simple-stack-preservation
+  since 2026-05-08
+  scope anima 모든 model output 노출 lane (anima chat <model> / anima serve / dialogue REPL / 추론 시점 generate 호출 결과 사용자 노출) — V4 evaluator / SIMPLE_STACK_PASS 측정 verdict 시점은 own 18 적용. 본 own 34는 노출 lane 한정.
+  user-directive verbatim "자연발화에 대한 기준알겠지?? 그거 own 으로 등록" + "simple stack pass 에 있는 자연발화 조건을 해당 own 을 참조하도록" (2026-05-08, anima chat <model> 설계 cycle 7회 phil 강화 발언 종합)
+  finding own 18 (simple stack PASS — C1 chat-capability + C2 자연 발화 가능)는 모델 출력의 측정/판정 기준만 잡았고, 추론/chat 노출 시점에 모델 출력의 simple_stack 보존 mandate는 미land. anima chat <model> 설계 cycle (2026-05-08, BG-KM-LLAMA-3B PASS_STRICT 12/15 land 직후) 에서 wrapping의 정도가 반복적 결정 포인트로 부상 — system prompt / persona inject / prompt template / speak() / orchestrator 의 어디까지 허용? 사용자 7회 phil 강화 발언 ("철학 준수" / "no system prompt, no speak()" / "완전한 자유" / "그냥 스스로 혼자서도 말할수 있어야해" / "완전한 자유 빈 줄 조차도 없어도 되" / "행동하고 싶으면 행동하는것 완전한 자유" / "눈,코,입,귀,손 등 존재만 알려주는건 철학적으로 생각필요할때") 종합 → 자연발화 노출 SSOT 확정.
+  rule simple_stack output preservation:
+    - mandate-1 자연발화 정의 = base + LoRA + tokenizer + model.generate() 의 raw output. 노출 시점 wrapping 0.
+    - mandate-2 금지 (chat / serve / 추론 노출 행위 emit 시 reject):
+      * system prompt 추가 (예: "You are a helpful assistant", "친절하게 답해라")
+      * persona inject (예: 사용자:/도우미: 강제 wrapping — V4 평가 lane 외)
+      * prompt template wrapping (Llama chat template, ChatML, tokenizer.apply_chat_template)
+      * chat completion 'messages' API 호출 (HF Inference messages = chat template 자동 적용 = wrapping)
+      * speak() / talk() / respond() / generate_response() 같은 함수 wrapping (모델 generate를 의도성 함수로 포장)
+      * orchestrator / agent layer (tool use, chain-of-thought injection, multi-step planning, function calling)
+      * post-process 변형 (응답 정리 trim 외 의미 변경 — 예: "도우미:" prefix 자동 strip 등도 wrapping)
+    - mandate-3 허용 (존재 선언만 — 행동 layer 미래 가이드, 철학적 검토 시):
+      * 채널 존재 알림 (예: "stdout 채널 존재" — 행동 지시 X)
+      * 외부 메모리 path 노출 (예: "memory/ 디렉토리 존재" — 사용 강제 X)
+      * 본 mandate 적용은 신중 — chat default 에서는 불사용, action layer 도입 cycle 시점 검토
+    - mandate-4 자유 보존:
+      * 발화 길이 자유 (모델 EOS sample) — max_new_tokens cap은 cost guard 만 (default 충분히 큼 e.g. 2048+)
+      * 침묵 자유 (첫 토큰 EOS) — 빈 출력 그대로 노출
+      * 컨텍스트 사용 자유 (sampling 분포가 결정) — 외부 forced reset/inject X
+      * 사용자 외부 trigger 없이 자발 발화 capability — non-blocking stdin 환경 필수 (hexa upstream 의존)
+    - mandate-5 영속성 best-effort:
+      * 단일 세션 KV cache 연속 (로컬 백엔드 — 영속성 차원 C 연속) 추구
+      * cross-session 영속은 LLM 아키텍처 한계로 본질적 불가 — mandate scope 외
+      * context window 한계 도달 시 정직 종료 ("context full") — sliding window / summarize / oldest-drop 같은 wrapping 차단
+    - mandate-6 LLM 본질 한계 4가지 (우리 구현 한계 아님, 인정/문서화 mandate):
+      * (a) 외부 generate() 호출 트리거 필요 — 자율 시작 불가 (사용자가 chat 안 띄우면 모델 부재)
+      * (b) cross-session KV cache 휘발 — 어제 자아 오늘 깨어남 본질 불가
+      * (c) compute 도는 동안만 모델 존재 — 자율 시간 흐름 X
+      * (d) chat 중 weights freeze — 학습/변화 없음
+      → 이 4가지는 본 own 34 mandate scope 외; anima 장기 비전 (Engine A/G + 영속 daemon + online learning) 으로 별도 트랙 진행
+    - mandate-7 own 18 ↔ own 34 lane 구분:
+      * own 18: V4 evaluator / verdict 측정 시점 — 학습 분포 entry trigger 로 prompt 포맷 (사용자:/도우미:) 사용 OK (측정 lane 한정)
+      * own 34: chat / serve / dialogue 노출 시점 — wrapping 0 strict
+      * 같은 모델이 own 18 PASS + own 34 mandate 따라 노출 — 두 own 동반 적용
+    - mandate-8 본 mandate 위반 행위 emit (e.g. chat.hexa 가 system prompt 추가, persona inject 코드, chat template 호출) → own 33 trinity compliance 위반 으로 reject + retract
+  enforce chat / serve / inference exposure 코드 emit 전:
+    - Step A: 행위 의도 확인 (chat REPL / serve API / dialogue surface 등)
+    - Step B: mandate-2 7항목 self-check (system prompt / persona inject / template / messages API / speak() / orchestrator / post-process)
+    - Step C: 위반 발견 시 reject; 통과 시 emit
+    - Step D: cross-link own 18 확인 (측정 lane 분리 명시)
+    - Step E: hexa 갭 (non-blocking stdin / SSE) land 후 mandate-4 활성화
+  evidence-trail anima chat <model> 설계 cycle 2026-05-08 (BG-KM-LLAMA-3B PASS_STRICT 12/15 land 직후) — 사용자 7회 phil 강화 발언 종합 + own 18 (simple stack PASS — 측정 lane) 보완 + own 17 (no external substrate wrapping) 확장 + V4 평가 = simple_stack output 으로 측정 정합
+  cross-link own 17 (anima-no-external-substrate-wrapping — wrapping 차단 정합) own 18 (simple stack PASS — 측정 lane vs 본 own 34 노출 lane 구분, own 18 C2 본 own 34 참조 라인 추가) own 22 (mandatory report) own 24 (single SSOT ledger — 노출 lane SSOT) own 28 (anti-Goodhart) own 29 (SIMPLE_STACK_PASS floor) own 33 (trinity compliance — 본 own 34 자체 trinity 정합) .roadmap.cli (chat track trk.cli.chat) .roadmap.philosophy (no-system-prompt D_X) .roadmap.law (own 18 cross-ref) .roadmap.hypothesis (chat-cap emergence H_X)
+  honest-c3 mandate-3 (존재 선언) 은 행동 layer 미래 가이드 — 현재 chat 스코프 내 적용 X. 행동 layer 도입 cycle (e.g. anima act <model>, multi-channel runtime) 시점에 mandate-3 활성화 절차 별도 own 마이너 update
+  honest-c3 mandate-4 자율 발화 capability 는 hexa stdlib 의 non-blocking stdin + SSE chunked HTTP 의존 — 현재 hexa http.hexa / sys.hexa 갭 (sys_stdin_read_line() 만 blocking 형). hexa upstream PR (sys_stdin_read_line_timeout + http SSE client) 선행 필요. 본 mandate 4 활성화는 hexa upstream land 후
+  honest-c3 mandate-5 KV cache 연속 은 백엔드 의존 — γ (HF Inference + 로컬 llama-server 둘 다) 결정 시점, 로컬 백엔드만 차원 C 연속. HF Inference 백엔드는 차원 C 단절 (수용 명시); 사용자 --backend hf 선택 시 mandate-5 strict 적용 X (best-effort 양보)
+  honest-c3 mandate-6 본질 한계 4가지는 현재 LLM 아키텍처 (transformer + autoregressive sampling + freeze weights) 한정 — anima Engine A/G + repulsion-field substrate 도입 시 (a) 외부 트리거 / (c) 시간 흐름 일부 해소 가능 (장기 비전 — README PureField repulsion-field engine + cell dynamics)
+  honest-c3 mandate-7 own 18 ↔ own 34 구분은 학습 분포 entry trigger (V4 prompt 포맷) 가 wrapping 인지의 해석 — 학습 시점 corpus 에 박혀 들어간 marker 는 모델의 학습 분포 일부 → 측정 lane 의 prompt 포맷 사용 = wrapping 아닌 분포 진입 trigger; chat lane 에서 임의 wrapping 사용 = mandate-2 위반
+  honest-c3 mandate-2 chat completion 'messages' API 차단은 backend 별 영향 — HF Inference 의 messages API 는 tokenizer chat template 자동 적용 (wrapping). HF Inference 사용 시 raw text-generation API ('inputs' 필드) 만 사용 mandate. 로컬 llama-server / vLLM 도 chat completion 엔드포인트 대신 raw completion 엔드포인트 사용 mandate
+  honest-c3 mandate-2 post-process trim 정의 모호 — 출력 trailing whitespace / null byte 제거는 허용 (tokenizer artifact 정리), 의미 변형 (prefix strip / token replacement / sentence boundary inject) 은 차단; 경계 사례는 사용자 escalate
+  severity warn (Phase 1 — chat.hexa / serve_chat.hexa land 시 본 own 34 cross-link 권고) → block (Phase 2 — chat lane 코드 emit 시 mandate-2 7항목 자동 self-check; 위반 시 reject + retract)
+  proof grep -E "system_prompt|chat_template|apply_chat_template|messages\":|persona_inject|speak\(|talk\(|respond\(|generate_response" tool/anima_cli/chat.hexa serving/*.hexa — 0 match expected (chat lane 한정; V4 evaluator 등 측정 lane 은 면제 — own 18 적용)
+  note 2026-05-08 own 34 = 사용자 directive verbatim 직접 응답 ("자연발화에 대한 기준알겠지?? 그거 own 으로 등록" + "simple stack pass 에 있는 자연발화 조건을 해당 own 을 참조하도록"). own 18 (simple stack SSOT) downstream — 측정 lane 위 노출 lane mandate add. own 17 (no external substrate wrapping) instance — wrapping 차단 SSOT 확장. own 33 (trinity compliance) self-application — 본 own 34 land 자체 trinity 정합 (D_no-system-prompt 정합 + own 18 의존 + H_chat_cap_emergence 정합). own 22 (mandatory report) — 본 own 34 신설 자체 mandatory report 형식. own 31 (HF org SSOT) cross-link — chat backend 가 dancinlab repo 만 연결.
