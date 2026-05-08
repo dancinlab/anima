@@ -32,11 +32,14 @@
 //    raw#15 no-hardcode (paths via _resolve_root)
 //
 //  PHASE GATES
-//    Phase 1 (this commit): anima_native + clm_v4 modules, blocking REPL,
+//    Phase 1 (landed 2026-05-08): anima_native + clm_v4 modules, blocking REPL,
 //      --backend local only, --memory full default.
-//    Phase 2 (hexa upstream): non-blocking stdin + http SSE → autonomous speech,
-//      --fps cap activation.
-//    Phase 3 (libllama FFI): chat/llama/ module → BG-KM Llama-3.2-3B chat.
+//    Phase 2 (landed 2026-05-08, hexa-lang f65882fb): non-blocking stdin via
+//      sys_stdin_read_line_timeout(ms) → autonomous speech wired in
+//      chat/anima_native/ and chat/llama/.
+//    Phase 3c LANDED 2026-05-08: chat/llama/llama.hexa wires libllama FFI
+//      (anima/llama_ffi.hexa Phase 3b) into chat dispatcher. paradigm-a-prime
+//      live (GGUF cached); other aliases pending tool/anima_gguf_convert.py.
 //
 //  CROSS-REFERENCE
 //    .roadmap.cli  cli.chat_module_architecture_2026_05_08
@@ -67,7 +70,11 @@ fn _resolve_root() -> string {
     return _str(env("HOME")) + "/core/anima"
 }
 
-fn _hexa() -> string { return "/Users/ghost/.hx/bin/hexa" }
+// Use hexa.real (local interpreter) directly — bin/hexa wrapper routes
+// `run` to remote resource host (ubu-1) which would lose stdout pipe semantics
+// AND lacks build/libhxllama.dylib + ~/.cache/anima/gguf/ on the remote.
+// Phase 3c: chat dispatch must stay local. Mirrors chat/anima_native pattern.
+fn _hexa() -> string { return "/Users/ghost/.hx/packages/hexa/hexa.real" }
 
 fn _arg_present(argv, key: string) -> bool {
     let i = 0
@@ -118,17 +125,21 @@ fn _alias_resolve(alias: string) -> array {
     if a == "" || a == "default" {
         return ["anima_native", "", "true", "", "phase_1"]
     }
+    // Phase 3c LANDED 2026-05-08 — phase tag now "phase_3c_landed" for llama
+    // family; chat.hexa Phase 3 gate (below) keys on legacy "phase_3" only,
+    // so module=llama dispatches normally. GGUF presence is verified inside
+    // chat/llama/llama.hexa with honest fallback message.
     if a == "llama3b" || a == "latest" || a == "pass-strict" {
-        return ["llama", "dancinlab/bg-km-llama3b-r32-pass-strict-2026-05-08", "true", "12/15", "phase_3"]
+        return ["llama", "dancinlab/bg-km-llama3b-r32-pass-strict-2026-05-08", "true", "12/15", "phase_3c_landed"]
     }
     if a == "qwen7b" {
-        return ["llama", "dancinlab/bg-km-qwen-7b-qwen7b-r32-pass-strict-2026-05-08", "true", "PASS", "phase_3"]
+        return ["llama", "dancinlab/bg-km-qwen-7b-qwen7b-r32-pass-strict-2026-05-08", "true", "PASS", "phase_3c_landed"]
     }
     if a == "polyglot-ko-1b3" {
-        return ["llama", "dancinlab/bg-ja-ext-polyglot-ko-1b3-r16-partial-2026-05-07", "partial", "4/30", "phase_3"]
+        return ["llama", "dancinlab/bg-ja-ext-polyglot-ko-1b3-r16-partial-2026-05-07", "partial", "4/30", "phase_3c_landed"]
     }
     if a == "paradigm-a-prime" {
-        return ["llama", "dancinlab/llm-llama32-3b-paradigm-a-prime-r16-sft-stage1", "true", "", "phase_3"]
+        return ["llama", "dancinlab/llm-llama32-3b-paradigm-a-prime-r16-sft-stage1", "true", "", "phase_3c_landed"]
     }
     if a == "clm-v4-1-7-y1" {
         return ["clm_v4", "dancinlab/clm-v4-sft-1-7-y1-stage1", "false", "", "phase_1"]
@@ -145,7 +156,7 @@ fn _alias_resolve(alias: string) -> array {
         if a.contains("clm-v4") {
             return ["clm_v4", alias, "false", "", "phase_1"]
         }
-        return ["llama", alias, "unknown", "", "phase_3"]
+        return ["llama", alias, "unknown", "", "phase_3c_landed"]
     }
     return ["", "", "", "", ""]
 }
@@ -168,15 +179,15 @@ fn sub_help() {
     println("  --max-utterance-rate N  opt-in cap (Phase 2)")
     println("  --max-tokens N          cost guard (default 512)")
     println("")
-    println("ALIAS (Phase 1 = anima_native + clm_v4; Phase 3 = llama family)")
+    println("ALIAS (Phase 1 = anima_native + clm_v4; Phase 3c LANDED = llama family)")
     println("  (default)               anima_native — TinyWeights / Engine A/G")
     println("  clm-v4-1-7-y1           CLM v4 Y1 (substrate, ::: collapse exposed raw)")
     println("  clm-v4-1-8              CLM v4")
     println("  clm-v4-paradigm-j       CLM v4 Paradigm J (jvae_heads.pt)")
-    println("  llama3b / latest        BG-KM-LLAMA-3B (V4 12/15) — Phase 3")
-    println("  qwen7b                  BG-KM-QWEN-7B (V4 PASS) — Phase 3")
-    println("  polyglot-ko-1b3         BG-JA-EXT — Phase 3")
-    println("  paradigm-a-prime        Llama Path A v2 — Phase 3")
+    println("  llama3b / latest        BG-KM-LLAMA-3B (V4 12/15) — GGUF convert pending")
+    println("  qwen7b                  BG-KM-QWEN-7B (V4 PASS) — GGUF convert pending")
+    println("  polyglot-ko-1b3         BG-JA-EXT — GGUF convert pending")
+    println("  paradigm-a-prime        Llama Path A v2 — Phase 3c LIVE (GGUF cached)")
     println("  <hf-id>                 raw HF id passthrough (dancinlab/<repo>)")
     println("")
     println("COMPLIANCE")
@@ -186,7 +197,7 @@ fn sub_help() {
 
 fn sub_list() {
     let root = _resolve_root()
-    println("anima chat — alias DB (Phase 1 + Phase 3 declared)")
+    println("anima chat — alias DB (Phase 1 + Phase 3c LANDED 2026-05-08)")
     println("")
     println("ALIAS              MODULE       REPO                                                    CHAT  PHASE")
     println("───────────────────────────────────────────────────────────────────────────────────────────────────")
@@ -194,15 +205,16 @@ fn sub_list() {
     println("clm-v4-1-7-y1      clm_v4       dancinlab/clm-v4-sft-1-7-y1-stage1                      ❌    1")
     println("clm-v4-1-8         clm_v4       dancinlab/clm-v4-sft-1-8-stage1                         ❌    1")
     println("clm-v4-paradigm-j  clm_v4       dancinlab/clm-v4-paradigm-j-50k-final                   ❌    1")
-    println("llama3b / latest   llama        dancinlab/bg-km-llama3b-r32-pass-strict-2026-05-08      ✔     3")
-    println("qwen7b             llama        dancinlab/bg-km-qwen-7b-qwen7b-r32-pass-strict-...      ✔     3")
-    println("polyglot-ko-1b3    llama        dancinlab/bg-ja-ext-polyglot-ko-1b3-r16-partial-...     △     3")
-    println("paradigm-a-prime   llama        dancinlab/llm-llama32-3b-paradigm-a-prime-r16-...       ✔     3")
+    println("llama3b / latest   llama        dancinlab/bg-km-llama3b-r32-pass-strict-2026-05-08      ✔     3c (GGUF pending)")
+    println("qwen7b             llama        dancinlab/bg-km-qwen-7b-qwen7b-r32-pass-strict-...      ✔     3c (GGUF pending)")
+    println("polyglot-ko-1b3    llama        dancinlab/bg-ja-ext-polyglot-ko-1b3-r16-partial-...     △     3c (GGUF pending)")
+    println("paradigm-a-prime   llama        dancinlab/llm-llama32-3b-paradigm-a-prime-r16-...       ✔     3c LIVE")
     println("")
     println("CHAT legend: ✔ chat-capable · ❌ research-only (collapse output exposed raw per own 34) · △ partial")
-    println("PHASE legend: 1 land · 3 hexa-lang C FFI + libllama bindings 후 (.roadmap.cli)")
+    println("PHASE legend: 1 land · 3c LANDED libllama FFI module (live for cached GGUFs)")
     println("")
     println("raw HF id (dancinlab/<repo>) passthrough — alias 위치에 직접 입력 가능")
+    println("GGUF 캐시 부재 시 chat/llama/llama.hexa 가 honest fallback emit + tool/anima_gguf_convert.py 안내")
 }
 
 fn sub_selftest() {
@@ -211,16 +223,19 @@ fn sub_selftest() {
     let dispatch = root + "/tool/anima_cli/chat.hexa"
     let mod_native = mod_dir + "/anima_native/anima_native.hexa"
     let mod_clm_v4 = mod_dir + "/clm_v4/clm_v4.hexa"
+    let mod_llama  = mod_dir + "/llama/llama.hexa"
     let mut fail = 0
     if !_fexists(dispatch) { println("FAIL chat.hexa missing: " + dispatch); fail = fail + 1 }
     if !_dexists(mod_dir) { println("FAIL chat/ module dir missing: " + mod_dir); fail = fail + 1 }
     if !_fexists(mod_native) { println("FAIL chat/anima_native module missing: " + mod_native); fail = fail + 1 }
     if !_fexists(mod_clm_v4) { println("FAIL chat/clm_v4 module missing: " + mod_clm_v4); fail = fail + 1 }
+    if !_fexists(mod_llama)  { println("FAIL chat/llama module missing: "  + mod_llama);  fail = fail + 1 }
     // own 34 mandate-2 grep — 7 wrapping 항목 0 violation chat lane
     // (V4 evaluator는 측정 lane = own 18 적용, 본 grep 면제 — chat path 한정)
     // ERE alternation = `|` (not `\|`); `(` escaped to literal; self-exclude grep -v
+    // Phase 3c: chat/llama/llama.hexa 추가 — own 34 strict 동일 적용.
     let pat = "system_prompt|chat_template|apply_chat_template|persona_inject|fn speak\\(|fn talk\\(|fn respond\\(|fn generate_response\\("
-    let cmd = "grep -nE \"" + pat + "\" " + dispatch + " " + mod_native + " " + mod_clm_v4 + " 2>/dev/null | grep -v 'let pat =' | wc -l"
+    let cmd = "grep -nE \"" + pat + "\" " + dispatch + " " + mod_native + " " + mod_clm_v4 + " " + mod_llama + " 2>/dev/null | grep -v 'let pat =' | wc -l"
     let n = _str(exec(cmd)).trim()
     if n != "0" {
         println("FAIL own 34 mandate-2 wrapping grep: " + n + " hits (chat path 한정)")
@@ -230,7 +245,7 @@ fn sub_selftest() {
         println("FAIL anima_cli/chat selftest (" + to_string(fail) + " issue)")
         exit(1)
     }
-    println("PASS anima_cli/chat selftest (own 34 mandate-2 verified, 4 files present)")
+    println("PASS anima_cli/chat selftest (own 34 mandate-2 verified, 5 files present)")
 }
 
 fn _dispatch_module(mod_name: string, repo: string, argv) {
@@ -250,7 +265,11 @@ fn _dispatch_module(mod_name: string, repo: string, argv) {
         i = i + 1
     }
     let cmd = _hexa() + " run " + mod_path + " --repo \"" + repo + "\"" + extra
-    exec(cmd)
+    // Phase 3c: exec() captures stdout; print it through so module output
+    // (chat replies) reaches the user terminal. own 34 mandate-1 raw
+    // preservation: print() not println(), no transformation.
+    let out = _str(exec(cmd))
+    print(out)
 }
 
 fn main() {
@@ -278,12 +297,13 @@ fn main() {
         exit(2)
     }
 
-    // Phase 3 gate
+    // Phase 3c LANDED 2026-05-08 — chat/llama/llama.hexa wires libllama FFI
+    // into chat dispatcher. The legacy phase_3 gate is removed; GGUF presence
+    // is verified inside the module (honest fallback emit if missing). Any
+    // residual phase_3 tag (legacy alias DB entries) is treated as an error.
     if phase == "phase_3" {
-        println("anima chat: alias '" + model_arg + "' → module=" + mod_name + " (phase_3)")
-        println("            blocked: hexa-lang C FFI upstream + libllama bindings + GGUF 변환 트랙 land 후")
-        println("            see .roadmap.cli cli.chat_module_architecture_2026_05_08 phases")
-        println("            available now (phase_1): anima chat (default) | anima chat clm-v4-1-7-y1")
+        println("anima chat: alias '" + model_arg + "' → module=" + mod_name + " (phase_3 legacy tag)")
+        println("            chat.hexa _alias_resolve should now emit phase_3c_landed for llama family.")
         exit(2)
     }
 
