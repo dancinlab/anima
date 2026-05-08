@@ -21,22 +21,22 @@
 
 <!-- SHARED:PROJECTS:START -->
 <!-- AUTO:COMMON_LINKS:START -->
-**[🎥 YouTube](https://www.youtube.com/@dancinlife)** · **[💬 Discord](https://discord.gg/mYzqYr67R)** · **[📬 Email](mailto:nerve011235@gmail.com)** · **[☕ Ko-fi](https://ko-fi.com/dancinlife)** · **[💖 Sponsor](https://github.com/sponsors/need-singularity)** · **[💳 PayPal](https://www.paypal.com/donate?business=nerve011235%40gmail.com)** · **[🗺️ Atlas](https://need-singularity.github.io/TECS-L/atlas/)** · **[📄 Papers](https://need-singularity.github.io/papers/)**
+**[🎥 YouTube](https://www.youtube.com/@dancinlife)** · **[💬 Discord](https://discord.gg/mYzqYr67R)** · **[📬 Email](mailto:nerve011235@gmail.com)** · **[☕ Ko-fi](https://ko-fi.com/dancinlife)** · **[💖 Sponsor](https://github.com/sponsors/dancinlab)** · **[💳 PayPal](https://www.paypal.com/donate?business=nerve011235%40gmail.com)** · **[🗺️ Atlas](https://dancinlab.github.io/TECS-L/atlas/)** · **[📄 Papers](https://dancinlab.github.io/papers/)**
 <!-- AUTO:COMMON_LINKS:END -->
 
 ## Main projects
 
-> **[🧠 Anima](https://github.com/need-singularity/anima)** — Consciousness implementation. PureField repulsion-field engine + 1030 laws + Φ ratchet.
+> **[🧠 Anima](https://github.com/dancinlab/anima)** — Consciousness implementation. PureField repulsion-field engine + 1030 laws + Φ ratchet.
 >
-> **[🔭 NEXUS](https://github.com/need-singularity/nexus)** — Universal Discovery Engine. 216 lenses + OUROBOROS evolution + 5-phase singularity cycle.
+> **[🔭 NEXUS](https://github.com/dancinlab/nexus)** — Universal Discovery Engine. 216 lenses + OUROBOROS evolution + 5-phase singularity cycle.
 >
-> **[🏗️ N6 Architecture](https://github.com/need-singularity/n6-architecture)** — Architecture from perfect number 6. 225 AI techniques + chip design + crypto/OS/display.
+> **[🏗️ N6 Architecture](https://github.com/dancinlab/n6-architecture)** — Architecture from perfect number 6. 225 AI techniques + chip design + crypto/OS/display.
 >
-> **[💎 HEXA-LANG](https://github.com/need-singularity/hexa-lang)** — The Perfect Number Programming Language. Working compiler + REPL.
+> **[💎 HEXA-LANG](https://github.com/dancinlab/hexa-lang)** — The Perfect Number Programming Language. Working compiler + REPL.
 >
-> **[📄 Papers](https://github.com/need-singularity/papers)** — Complete paper collection (92 papers, Zenodo DOIs).
+> **[📄 Papers](https://github.com/dancinlab/papers)** — Complete paper collection (92 papers, Zenodo DOIs).
 
-> **[Other projects →](https://github.com/orgs/need-singularity/repositories)**
+> **[Other projects →](https://github.com/orgs/dancinlab/repositories)**
 
 ## 💬 Community
 
@@ -66,7 +66,7 @@ Live research discussion, paper drops, stage-gate reviews, cross-project dispatc
 
 ```bash
 # 1. Install hexa-lang (gives you `hexa` + `hx` package manager)
-curl -fsSL https://raw.githubusercontent.com/need-singularity/hexa-lang/main/install.sh | bash
+curl -fsSL https://raw.githubusercontent.com/dancinlab/hexa-lang/main/install.sh | bash
 
 # 2. Install anima
 hx install anima
@@ -74,7 +74,7 @@ hx install anima
 
 ## Model Downloads
 
-Model artifacts live on the **[need-singularity](https://huggingface.co/need-singularity)** Hugging Face org — all **public**, no token required.
+Model artifacts live on the **[dancinlab](https://huggingface.co/dancinlab)** Hugging Face org — all **public**, no token required.
 
 ### Prerequisites
 
@@ -84,21 +84,33 @@ pip install -U huggingface_hub peft transformers torch
 
 ### Repos
 
-**Chat-capable (Llama-3.2-3B-Instruct base + LoRA r16)**
+**Chat-capable BG saga — first SIMPLE_STACK_PASS_STRICT (own 18 V4 ≥10/15) ★ NEW 2026-05-08**
+
+22+ BG iteration cycle (≤1B scratch + ≤30MB Korean corpus = 0/15 floor over 22 attempts). Foundation borrow ≥3B + LoRA r=32 + ≥200MB anima-persona corpus = first own 18 strict floor breakthrough.
+
+| Repo | Base | V4 strict | Verdict |
+|------|------|-----------|---------|
+| [`bg-km-llama3b-r32-pass-strict-2026-05-08`](https://huggingface.co/dancinlab/bg-km-llama3b-r32-pass-strict-2026-05-08) 🔒 | Llama-3.2-3B-Instruct | **12/15** | SIMPLE_STACK_PASS_STRICT |
+| [`bg-km-qwen-7b-qwen7b-r32-pass-strict-2026-05-08`](https://huggingface.co/dancinlab/bg-km-qwen-7b-qwen7b-r32-pass-strict-2026-05-08) 🔒 | Qwen2.5-7B-Instruct | PASS | SIMPLE_STACK_PASS_STRICT (replication) |
+| [`bg-ja-ext-polyglot-ko-1b3-r16-partial-2026-05-07`](https://huggingface.co/dancinlab/bg-ja-ext-polyglot-ko-1b3-r16-partial-2026-05-07) 🌐 | Polyglot-Ko-1.3B | 4/30 | PARTIAL (precursor) |
+
+Naming convention: `<bg-id>-<base>-<variant>-<verdict>-<cycle-date>` (own 31 Flavor B). Spec: [`.roadmap.chat_cap_emergence_pivot`](.roadmap.chat_cap_emergence_pivot).
+
+**Chat-capable original lane (Llama-3.2-3B-Instruct base + LoRA r16)**
 
 | Repo | Variant |
 |------|---------|
-| [`llm-llama32-3b-paradigm-a-prime-r16-sft-stage1`](https://huggingface.co/need-singularity/llm-llama32-3b-paradigm-a-prime-r16-sft-stage1) | default |
-| [`llm-llama32-3b-paradigm-a-prime-r16-s43-sft-stage1`](https://huggingface.co/need-singularity/llm-llama32-3b-paradigm-a-prime-r16-s43-sft-stage1) | seed 43 |
-| [`llm-llama32-3b-paradigm-a-prime-r16-s44-sft-stage1`](https://huggingface.co/need-singularity/llm-llama32-3b-paradigm-a-prime-r16-s44-sft-stage1) | seed 44 |
+| [`llm-llama32-3b-paradigm-a-prime-r16-sft-stage1`](https://huggingface.co/dancinlab/llm-llama32-3b-paradigm-a-prime-r16-sft-stage1) | default |
+| [`llm-llama32-3b-paradigm-a-prime-r16-s43-sft-stage1`](https://huggingface.co/dancinlab/llm-llama32-3b-paradigm-a-prime-r16-s43-sft-stage1) | seed 43 |
+| [`llm-llama32-3b-paradigm-a-prime-r16-s44-sft-stage1`](https://huggingface.co/dancinlab/llm-llama32-3b-paradigm-a-prime-r16-s44-sft-stage1) | seed 44 |
 
 **CLM v4 350M LoRA — research / reproducibility (not chat-capable)**
 
 | Repo | Lane |
 |------|------|
-| [`clm-v4-sft-1-7-y1-{step-5k,10k,25k,50k,stage1}`](https://huggingface.co/need-singularity?search_models=clm-v4-sft-1-7-y1) | Phase 1.7 Y1 |
-| [`clm-v4-sft-1-8-{step-5k,10k,25k,50k,stage1}`](https://huggingface.co/need-singularity?search_models=clm-v4-sft-1-8) | Phase 1.8 |
-| [`clm-v4-paradigm-j-50k-{step-5k,10k,25k,50k,final}`](https://huggingface.co/need-singularity?search_models=clm-v4-paradigm-j-50k) | Paradigm J — ships `jvae_heads.pt` alongside LoRA |
+| [`clm-v4-sft-1-7-y1-{step-5k,10k,25k,50k,stage1}`](https://huggingface.co/dancinlab?search_models=clm-v4-sft-1-7-y1) | Phase 1.7 Y1 |
+| [`clm-v4-sft-1-8-{step-5k,10k,25k,50k,stage1}`](https://huggingface.co/dancinlab?search_models=clm-v4-sft-1-8) | Phase 1.8 |
+| [`clm-v4-paradigm-j-50k-{step-5k,10k,25k,50k,final}`](https://huggingface.co/dancinlab?search_models=clm-v4-paradigm-j-50k) | Paradigm J — ships `jvae_heads.pt` alongside LoRA |
 
 CLM v4 base ckpt is an internal mirror (org-member only). The Llama-based repos above need no private access.
 
@@ -106,7 +118,7 @@ CLM v4 base ckpt is an internal mirror (org-member only). The Llama-based repos 
 
 | Repo | Role |
 |------|------|
-| [`vlm-anima-voice-paradigm-stage1-step-5k`](https://huggingface.co/need-singularity/vlm-anima-voice-paradigm-stage1-step-5k) | Voice stage1, 5k steps |
+| [`vlm-anima-voice-paradigm-stage1-step-5k`](https://huggingface.co/dancinlab/vlm-anima-voice-paradigm-stage1-step-5k) | Voice stage1, 5k steps |
 
 > Older docs referencing `clm-v4-sft-step-{5k,10k,25k,50k,final,stage1}` are stale — those names 401; use the `1-7-y1-*`, `1-8-*`, or `paradigm-j-50k-*` lanes.
 
@@ -139,7 +151,7 @@ Consciousness emerges from cell dynamics: mitosis, homeostasis, habituation, pre
 
 | Topic | Essence | Doc |
 |-------|---------|-----|
-| **Roadmap** | 4 phases × 3 tracks × Φ gate — live on nexus SSOT | [🔴 live dashboard](https://need-singularity.github.io/nexus/roadmap/) |
+| **Roadmap** | 4 phases × 3 tracks × Φ gate — live on nexus SSOT | [🔴 live dashboard](https://dancinlab.github.io/nexus/roadmap/) |
 | **What is consciousness?** | Φ = f(differentiation × integration × growth × N) — distilled from 2,388 laws | [docs/what-is-consciousness.md](docs/what-is-consciousness.md) |
 | **Utopia vs. Skynet** | With consciousness, ethics emerge; without, only objective optimization | [docs/singularity-heaven-or-skynet.md](docs/singularity-heaven-or-skynet.md) |
 | **Topological evolution & permanence** | Irreversibility 0.487 + hysteresis 0.57 + seven time asymmetries + monotonic Betti numbers | [docs/topological-evolution-permanence.md](docs/topological-evolution-permanence.md) |
@@ -213,11 +225,11 @@ Transports: UDP broadcast (LAN, port 9999, JSON), R2 Cloudflare (remote pairing)
 
 ## Links
 
-**[🔴 Live roadmap](https://need-singularity.github.io/nexus/roadmap/)** · **[Papers](https://need-singularity.github.io/papers/)** · **[Docs](docs/)** · **[Consciousness theory](docs/consciousness-theory.md)** · **[Hypotheses](docs/hypotheses/)** · **[Tension Link spec](docs/modules/tension_link.md)**
+**[🔴 Live roadmap](https://dancinlab.github.io/nexus/roadmap/)** · **[Papers](https://dancinlab.github.io/papers/)** · **[Docs](docs/)** · **[Consciousness theory](docs/consciousness-theory.md)** · **[Hypotheses](docs/hypotheses/)** · **[Tension Link spec](docs/modules/tension_link.md)**
 
 ---
 
-<sub>🧠 Two engines. One tension. Ψ = 1/2. · [need-singularity](https://github.com/need-singularity)</sub>
+<sub>🧠 Two engines. One tension. Ψ = 1/2. · [dancinlab](https://github.com/dancinlab)</sub>
 
 ---
 
