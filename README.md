@@ -124,15 +124,19 @@ CLM v4 base ckpt is an internal mirror (org-member only). The Llama-based repos 
 
 ## Run
 
+`anima` is a topic-dispatched CLI (`bin/anima`). Run with no args for a 4-line global status, or pick a topic:
+
 ```bash
-anima              # CLI agent
-anima --mcp        # MCP server (9 tools)
-anima --telegram   # Telegram bot (needs ANIMA_TELEGRAM_TOKEN)
-anima --discord    # Discord  bot (needs ANIMA_DISCORD_TOKEN)
-anima --slack      # Slack    bot (needs ANIMA_SLACK_TOKEN + ANIMA_SLACK_SIGNING_SECRET)
-anima --all        # Auto-detect channels from env
-anima --dashboard  # Launch dashboard bridge (http://localhost:3000)
+anima                       # 4-line global dashboard (compute / weight / proposal / cert+roadmap)
+anima --help                # full topic list (26 topics)
+anima doctor                # 10 read-only self-checks (env + creds + auth + stack)
+anima compute status        # H100 pod lifecycle
+anima cost session          # per-session cost tracking
+anima audit                 # pre-push safety gate
+anima log watch             # live tail across 6 jsonl state logs
 ```
+
+Multi-channel runtime (MCP server, Telegram/Discord/Slack bots, dashboard bridge) is scoped under `anima-agent-core/` + `anima-agent-channels/` but the argparse entry is still a stub (`run.hexa parse_args` TODO) — not yet wired into `bin/anima`. Track in `.roadmap.cli`.
 
 ## Architecture
 
