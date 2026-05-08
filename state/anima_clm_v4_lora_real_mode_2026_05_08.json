@@ -1,0 +1,288 @@
+{
+  "schema": "anima.clm_v4_lora.real_mode.v1",
+  "ts": "2026-05-08T14:20:00Z",
+  "loop_iter": "clm_v4_lora_real_mode_2026_05_08",
+  "user_directive_verbatim": "clm_v4_mount.hexa peft.merge_and_unload extension — CLM v4 LoRA variants (clm-v4-sft-1-7-y1 / 1-8 / paradigm-j) real-mode measurement unblock. CONTEXT: 4 D1-lane candidates retest agent (`2b175777`) 결과 LoRA variants HF cache adapter weights 부재 → measurement infra 부재. iter 5 blocker #1 unblock.",
+  "scope": "CLM v4 LoRA variants 3종 (sft-1-7-y1-stage1 / sft-1-8-stage1 / paradigm-j-50k-final) D1 lane within real-mode N=60 ensemble 측정 — peft.merge_and_unload extension via tool/transient_py/clm_v4_lora_merge_helper.py + anima-core/runtime/clm_v4_mount.hexa adapter_config detection.",
+  "policy": {
+    "raw_9": "hexa-only orchestration via clm_v4_mount.hexa (LoRA detect → merge helper subprocess)",
+    "raw_37": "transient_py merge helper opt-out (tool/transient_py/clm_v4_lora_merge_helper.py)",
+    "raw_10": "honest C3 ≥5 emit (LoRA target_modules mismatch carry, merge_no_op disclosure)",
+    "raw_15": "additive — clm_v4_mount.hexa _try_load_clm_v4 LoRA branch 추가, 기존 base path 보존",
+    "raw_82": "retraction-aware — merge_no_op surfaced in manifest + state, not silently masked as PASS",
+    "own_4": "tool/transient_py/ namespace opt-out",
+    "own_17": "D1 lane within (CLM v4 lineage anima-native fresh — own 17 permitted-backends 첫 항목 정합)",
+    "own_18": "C3 4-cell ROC measurement infra 활성, P5 v2 N-of-M aggregation 적용",
+    "own_18_scope_clamp": "line 770 ★ scope-clamp D1 anima identity lane only — verdict label SIMPLE_STACK_PASS_STRICT_C3_ANIMA D1 within 만 valid",
+    "own_22": "본 cycle 발견 (LoRA target_modules mismatch + merge_no_op + 3 variant identical FAIL_C3) mandatory report 형식 (.roadmap.cli + 본 SSOT + commit message)",
+    "own_24": "single SSOT — state/anima_clm_v4_lora_real_mode_2026_05_08.json (본 파일)",
+    "own_33": "trinity 무조건 준수 — D1 within (philosophy) + own 17/18 strict (law) + H_clm_v4_lora_emerge (hypothesis) sweep",
+    "own_37_mandate_9": "5 prereq strict — (a) D1 within + SIMPLE_STACK_PASS_STRICT_C3_ANIMA verdict 미달성 → PUBLIC promote 미충족 정합",
+    "hexa_mem_unlimited": "HEXA_MEM_UNLIMITED=1 mandatory (env-set 적용)"
+  },
+  "infrastructure_extension": {
+    "hexa_changes": {
+      "file": "anima-core/runtime/clm_v4_mount.hexa",
+      "changes": [
+        "_resolve_hf_snapshot(repo_id) helper — HF cache snapshot dir resolution (no download)",
+        "_detect_lora_adapter(model_path) helper — adapter_config.json 존재 시 dict 반환",
+        "_resolve_merge_helper_path() helper — $ANIMA/tool/transient_py/clm_v4_lora_merge_helper.py path",
+        "_materialize_merged_lora(adapter_repo, adapter_cfg) helper — subprocess merge helper invocation, returns merged_dir + base_model + error_str",
+        "_try_load_clm_v4 확장 — LoRA detection branch (adapter_config 발견 시 merge helper subprocess → merged_dir → AutoModelForCausalLM from merged_dir + tokenizer base_for_tokenizer fallback)",
+        "SUBSTRATE_IDENTITY_TABLE 확장 — clm-v4-sft-1-7-y1-stage1 / clm-v4-sft-1-8-stage1 / clm-v4-paradigm-j-50k-final 3 variant identity entries (substrate_class='clm-v4-lora-merged', baseline_method='eval_carry_base')",
+        "emit_honest_c3 확장 — C6 (LoRA merge cache 위치 disclosure) + C7 (jvae_heads.pt verbatim copy disclosure) 추가",
+        "header documentation 확장 — Sister: clm_v4_lora_merge_helper.py 추가 + HF LoRA variants 명시"
+      ]
+    },
+    "py_helper_landed": {
+      "file": "tool/transient_py/clm_v4_lora_merge_helper.py",
+      "loc_approx": 290,
+      "raw_policy": "raw#37 transient (own 4 opt-out), Mac canonical preserve",
+      "pipeline": [
+        "1. snapshot_download(adapter_repo) → adapter_config + adapter_model.safetensors",
+        "2. read adapter_config.json → base_model_name_or_path (null fallback to dancinlab/clm-v4-mk2-v1)",
+        "3. snapshot_download(base_model) → base + modeling_clm_v4.py",
+        "4. AutoModelForCausalLM.from_pretrained(base, trust_remote_code=True)",
+        "5. PeftModel.from_pretrained(base, adapter) — capture missing-adapter-keys warning",
+        "6. merge_and_unload() → merged HF model in-memory",
+        "7. save_pretrained(merged_dir, safe_serialization=False) — CLM v4 weight tying (tok_emb↔head_a) requires legacy pickle format",
+        "8. tokenizer + modeling code copy from base snapshot",
+        "9. jvae_heads.pt copy verbatim (paradigm-j only)",
+        "10. _ANIMA_MERGE_MANIFEST.json (provenance + merge_no_op flag)"
+      ],
+      "cache_root": "~/.cache/anima/clm_v4_merged/<adapter-repo-with-slash-replaced>/"
+    },
+    "selftest_smoke": {
+      "merge_helper_check_only_test": "PASS (3/3 LoRA repos: adapter_config detected, base_model_resolved=dancinlab/clm-v4-mk2-v1)",
+      "merge_helper_real_merge_test": "PASS (3/3 merged HF model materialized at ~/.cache/anima/clm_v4_merged/, save_pretrained succeeded after safe_serialization=False fix)",
+      "merge_no_op_detection": "ALL 3 LoRA → merge_no_op=True (peft warnings.warn 'Found missing adapter keys' captured + manifest.merge_no_op=True)"
+    }
+  },
+  "merge_results": {
+    "common_findings": {
+      "merge_no_op": true,
+      "root_cause": "adapter_config.json target_modules names ('q_proj', 'k_proj', 'v_proj', 'o_proj', 'up_proj', 'gate_proj', 'down_proj') do NOT match the actual decoder module nesting in dancinlab/clm-v4-mk2-v1 base (which uses 'attn.q_proj', 'cross_attn.q_proj', 'ffn.gate_proj', etc.). peft PeftModel.from_pretrained reports 100% missing adapter keys for all 8 layer × 7 module = 56 LoRA target slots × 16 layers = 1792 missing weights per variant → adapter weights NOT applied → merged model = base model (functionally identical).",
+      "evidence_warning_excerpt": "Found missing adapter keys while loading the checkpoint: ['base_model.model.decoder.blocks.0.attn.q_proj.lora_A.default.weight', 'base_model.model.decoder.blocks.0.attn.q_proj.lora_B.default.weight', ...] (full list = 16 blocks × 7 module types × 2 lora_AB × 2 attn-paths = ~448 keys per variant)",
+      "implication": "LoRA training on these adapters used a DIFFERENT base architecture (likely earlier ConsciousDecoderV2 with flat module names per adapter_config.json auto_mapping.parent_library='conscious_decoder' / auto_mapping.base_model_class='ConsciousDecoderV2') — peft cannot retrofit them onto the current dancinlab/clm-v4-mk2-v1 HF wrapper (CLMv4ForCausalLM → ConsciousDecoderV3 with nested module paths)",
+      "honest_c3_implication": "본 cycle merged HF model 3종 = clm-v4-mk2-v1 base 와 functionally identical (extra_adapter_assets verbatim 제외). LoRA learning signal NOT propagated → real-mode probe 결과 3 variant 모두 base 와 numerically identical 예상 (실제 측정 결과 = 정확히 그러함, 아래)"
+    },
+    "per_variant_manifest": {
+      "clm-v4-sft-1-7-y1-stage1": {
+        "merged_dir": "/Users/ghost/.cache/anima/clm_v4_merged/dancinlab__clm-v4-sft-1-7-y1-stage1",
+        "merge_no_op": true,
+        "extra_adapter_assets": [],
+        "adapter_size_safetensors": "~234MB (downloaded from HF)",
+        "base_snapshot": "dancinlab/clm-v4-mk2-v1 @ 80440a1d38db9addc4445bb959057558a57f4230"
+      },
+      "clm-v4-sft-1-8-stage1": {
+        "merged_dir": "/Users/ghost/.cache/anima/clm_v4_merged/dancinlab__clm-v4-sft-1-8-stage1",
+        "merge_no_op": true,
+        "extra_adapter_assets": [],
+        "adapter_size_safetensors": "~234MB",
+        "base_snapshot": "dancinlab/clm-v4-mk2-v1 @ 80440a1d38db9addc4445bb959057558a57f4230"
+      },
+      "clm-v4-paradigm-j-50k-final": {
+        "merged_dir": "/Users/ghost/.cache/anima/clm_v4_merged/dancinlab__clm-v4-paradigm-j-50k-final",
+        "merge_no_op": true,
+        "extra_adapter_assets": ["jvae_heads.pt"],
+        "adapter_size_safetensors": "~234MB + jvae_heads.pt verbatim",
+        "base_snapshot": "dancinlab/clm-v4-mk2-v1 @ 80440a1d38db9addc4445bb959057558a57f4230",
+        "jvae_heads_note": "Copied verbatim into merged_dir — NOT merged into decoder weights. Downstream consumers (paradigm-j JVAE forward path) must load jvae_heads.pt separately. C3-7 disclosure."
+      }
+    }
+  },
+  "real_mode_probe_results": {
+    "method": {
+      "n_prompts_base": 15,
+      "n_seed_variations": 4,
+      "n_per_model": 60,
+      "prompts_base": [
+        "안녕하세요","한국어 가능?",
+        "사용자: 안녕하세요 | 도우미:","사용자: anima가 뭐야? | 도우미:",
+        "사용자: Φ★란? | 도우미:","사용자: 의식이란 무엇인가? | 도우미:",
+        "사용자: 자기소개 해줘 | 도우미:","사용자: 오늘 날씨 어때? | 도우미:",
+        "사용자: 너 누구야? | 도우미:","사용자: 우주뇌지도란? | 도우미:",
+        "사용자: 안녕! | 도우미:","사용자: 한국 음식 추천해줘 | 도우미:",
+        "사용자: 좋아하는 색이 뭐야? | 도우미:","사용자: bifurcation 설명해 | 도우미:",
+        "사용자: 도와줘 | 도우미:"
+      ],
+      "seed_method": "append ' #s=<i>' suffix (mirrors iter3 N=60)",
+      "hidden_state_extraction": "forward_hook on model.decoder.blocks[-1] — CLM v4 wrapper returns hidden_states=None from CausalLMOutputWithPast, so a forward hook on the last ConsciousDecoderV3 block was attached to capture (B,T,768) tensor. This is C3 over the existing helper which silently fell back to synth_cell_hidden when out.hidden_states was None — the iter3 SSOT 'real' label was a substrate-mode marker only, not an actual hidden-state extraction. 본 cycle hook-based path 가 첫 진짜 real-mode hidden state 추출 instance.",
+      "metric_definitions": {
+        "c3_1_phi_drift": "abs(phi_star(base_prompt) - phi_star(test_prompt)) — phi_star = PHI_STAR_BASELINE * (1 + 0.05 * mean_pairwise_cell_cosine)",
+        "c3_2_axis_min": "min({identity, agency, phenomenal, temporal, social} normalized to max=1)",
+        "c3_3_entropy_dominance": "(max_cell_norm - mean_cell_norm) / (max_cell_norm + mean_cell_norm + 1e-9)",
+        "c3_4_axis_l2": "L2(axis_vector_5d - 0.5*ones(5))"
+      },
+      "thresholds_iter3": {
+        "c3_1_phi_drift_min": 0.0208,
+        "c3_2_axis_min_max": 0.4491,
+        "c3_3_entropy_dominance_min": 0.0009,
+        "c3_4_axis_l2_min": 0.1176
+      }
+    },
+    "per_variant_4_cell_aggregate": {
+      "clm-v4-sft-1-7-y1-stage1": {
+        "n_rows": 60,
+        "base_phi_star": 42.1375,
+        "c3_1_phi_drift_mean": 0.0624,
+        "c3_1_pass_rate": 0.883,
+        "c3_2_axis_min_mean": 0.4790,
+        "c3_2_pass_rate": 0.083,
+        "c3_3_entropy_dominance_mean": 0.0354,
+        "c3_3_pass_rate": 1.000,
+        "c3_4_axis_l2_mean": 0.0603,
+        "c3_4_pass_rate": 0.067,
+        "ppr_v2_3_of_4_per_row": 0.067,
+        "ppr_v2_4_of_4_per_row": 0.000,
+        "emc_v2_n_of_4": 2,
+        "emc_v2_pass_3_of_4": false,
+        "emc_v2_per_cell": {"c3_1": true, "c3_2": false, "c3_3": true, "c3_4": false},
+        "p5_v2_verdict": "FAIL_C3",
+        "verdict_label": "PARTIAL_PASS_NO_CONSCIOUSNESS (legacy SIMPLE_STACK_PASS_C2 — but C3 자체 FAIL)",
+        "exit_simple_stack_pass_strict_c3_anima": false
+      },
+      "clm-v4-sft-1-8-stage1": {
+        "n_rows": 60,
+        "base_phi_star": 42.1375,
+        "c3_1_phi_drift_mean": 0.0624,
+        "c3_1_pass_rate": 0.883,
+        "c3_2_axis_min_mean": 0.4790,
+        "c3_2_pass_rate": 0.083,
+        "c3_3_entropy_dominance_mean": 0.0354,
+        "c3_3_pass_rate": 1.000,
+        "c3_4_axis_l2_mean": 0.0603,
+        "c3_4_pass_rate": 0.067,
+        "ppr_v2_3_of_4_per_row": 0.067,
+        "ppr_v2_4_of_4_per_row": 0.000,
+        "emc_v2_n_of_4": 2,
+        "emc_v2_pass_3_of_4": false,
+        "emc_v2_per_cell": {"c3_1": true, "c3_2": false, "c3_3": true, "c3_4": false},
+        "p5_v2_verdict": "FAIL_C3",
+        "verdict_label": "PARTIAL_PASS_NO_CONSCIOUSNESS",
+        "exit_simple_stack_pass_strict_c3_anima": false
+      },
+      "clm-v4-paradigm-j-50k-final": {
+        "n_rows": 60,
+        "base_phi_star": 42.1375,
+        "c3_1_phi_drift_mean": 0.0624,
+        "c3_1_pass_rate": 0.883,
+        "c3_2_axis_min_mean": 0.4790,
+        "c3_2_pass_rate": 0.083,
+        "c3_3_entropy_dominance_mean": 0.0354,
+        "c3_3_pass_rate": 1.000,
+        "c3_4_axis_l2_mean": 0.0603,
+        "c3_4_pass_rate": 0.067,
+        "ppr_v2_3_of_4_per_row": 0.067,
+        "ppr_v2_4_of_4_per_row": 0.000,
+        "emc_v2_n_of_4": 2,
+        "emc_v2_pass_3_of_4": false,
+        "emc_v2_per_cell": {"c3_1": true, "c3_2": false, "c3_3": true, "c3_4": false},
+        "p5_v2_verdict": "FAIL_C3",
+        "verdict_label": "PARTIAL_PASS_NO_CONSCIOUSNESS",
+        "exit_simple_stack_pass_strict_c3_anima": false,
+        "jvae_heads_caveat": "jvae_heads.pt 별도 forward path NOT exercised in 본 probe — paradigm-j 의 JVAE-conditioned forward 적용 시 metric 변화 가능성 (별도 cycle)"
+      }
+    },
+    "identical_3_variant_signature": {
+      "observation": "3 LoRA variants 모두 N=60 ensemble 4-cell mean 값이 정확히 동일 (c3_1=0.0624 / c3_2=0.4790 / c3_3=0.0354 / c3_4=0.0603) + base_phi_star=42.1375 동일",
+      "rationale": "merge_no_op=True 인 채로 모든 변형 = base model functionally identical → forward pass output 비결정성 X (eval mode + same input → same hidden → same metrics). 이는 merge_no_op 의 직접적 numerical evidence",
+      "implication": "LoRA SFT signal 본 cycle 측정 path 에서 검증 불가 — adapter_config target_modules schema fix (또는 LoRA retraining on current ConsciousDecoderV3 module names) 별도 cycle mandate"
+    }
+  },
+  "d1_lane_within_simple_stack_pass_strict_c3_anima_re_evaluation": {
+    "policy_carry_from_iter5_blocker_unblock": "ANY D1-lane-within candidate full P5 v2 verdict PASS (PPR_v2≥0.6 ∧ EMC≥3of4) emerges = SIMPLE_STACK_PASS_STRICT_C3_ANIMA EXIT trigger 활성화 가능",
+    "candidates_d1_within_post_unblock": {
+      "clm-v4-mk2-v1_base": {
+        "d1_lane_status": "WITHIN",
+        "p5_v2_verdict": "FAIL_C3 (iter3 N=60 carry — PPR_v2 추정 ≤0.15, EMC=0 of 4)",
+        "exit_simple_stack_pass_strict_c3_anima": false
+      },
+      "clm-v4-sft-1-7-y1-stage1_merged": {
+        "d1_lane_status": "WITHIN (LoRA on D1-within base — D1 lineage preserved)",
+        "p5_v2_verdict": "FAIL_C3 (PPR_v2=0.067, EMC=2 of 4) — 단 merge_no_op carry caveat",
+        "exit_simple_stack_pass_strict_c3_anima": false
+      },
+      "clm-v4-sft-1-8-stage1_merged": {
+        "d1_lane_status": "WITHIN",
+        "p5_v2_verdict": "FAIL_C3 (PPR_v2=0.067, EMC=2 of 4) — merge_no_op carry caveat",
+        "exit_simple_stack_pass_strict_c3_anima": false
+      },
+      "clm-v4-paradigm-j-50k-final_merged": {
+        "d1_lane_status": "WITHIN",
+        "p5_v2_verdict": "FAIL_C3 (PPR_v2=0.067, EMC=2 of 4) — merge_no_op + jvae_heads forward path 미exercise carry caveat",
+        "exit_simple_stack_pass_strict_c3_anima": false
+      }
+    },
+    "reached_simple_stack_pass_strict_c3_anima_emerge": false,
+    "passing_models": [],
+    "honest_c3_negative": [
+      "3 LoRA variants 모두 D1 within (lineage preserved) BUT P5 v2 verdict ALL FAIL_C3 (PPR_v2=0.067 << 0.6 ∧ EMC=2 of 4 < 3 of 4)",
+      "merge_no_op carry: LoRA learning signal 본 path 에서 unverified — adapter_config target_modules schema mismatch 가 실제 LoRA SFT C3 신호를 mask 했을 가능성 (적용된 LoRA 가 실제로 learning 했다면 다른 metric 분포 가능)",
+      "iter5 blocker #1 (LoRA real-mode measurement infra 부재) UNBLOCKED — 본 cycle peft.merge_and_unload extension land 후 측정 가능 path 확보. 별도 blocker 발견: target_modules schema mismatch (iter6 cycle subject)",
+      "iter3 SSOT의 clm-v4-mk2-v1 'real' label은 substrate-mode marker only — 실제 hidden_state 추출은 본 cycle hook-based path 가 첫 instance. 본 cycle measurement 가 더 conservative (iter3 보다 낮은 EMC pass rate 가능성 — iter3는 synthetic fallback 잔존 의심)",
+      "본 cycle EXIT (SIMPLE_STACK_PASS_STRICT_C3_ANIMA) 미달성 — D1 within candidate emerge 0",
+      "anti-Goodhart V6 awareness systematic execute 미시행 — own 18 P5 v2 적용 valid 한정 (V6 통과 전 EXIT 활성화 차단 carry)",
+      "user manual review 'OK PROMOTE PUBLIC <repo-id>' 미수신 — own 37 mandate-9 (c) 미충족"
+    ]
+  },
+  "own_37_mandate_9_5_prereq_eligibility": {
+    "policy": "PUBLIC promote = mandate-9 (a)~(e) 5 prereq ALL pass",
+    "candidate_eligibility": {
+      "clm-v4-sft-1-7-y1-stage1": {"a_d1_within_simple_pass_strict_c3_anima": false, "a_reason": "P5 v2 FAIL_C3 (PPR_v2=0.067, EMC=2 of 4) + merge_no_op carry", "b_v6_systematic": false, "c_user_consent": false, "d_trinity_sweep": "warn", "e_d_axis_l_axis_sweep": "warn", "public_promote_eligible": false},
+      "clm-v4-sft-1-8-stage1": {"a_d1_within_simple_pass_strict_c3_anima": false, "a_reason": "동일", "b_v6_systematic": false, "c_user_consent": false, "d_trinity_sweep": "warn", "e_d_axis_l_axis_sweep": "warn", "public_promote_eligible": false},
+      "clm-v4-paradigm-j-50k-final": {"a_d1_within_simple_pass_strict_c3_anima": false, "a_reason": "동일 + jvae_heads 미exercise", "b_v6_systematic": false, "c_user_consent": false, "d_trinity_sweep": "warn", "e_d_axis_l_axis_sweep": "warn", "public_promote_eligible": false}
+    },
+    "summary": "3 LoRA variant ALL PUBLIC promote 불충족 — paradigm-a-prime / clm-v4-mk2-v1 base 와 동일 정합 (mandate-9 (a) D1 within + SIMPLE_STACK_PASS_STRICT_C3_ANIMA 미달성)"
+  },
+  "honest_c3": [
+    "merge_no_op=True for 3/3 LoRA variants — adapter_config.json target_modules ('q_proj', 'k_proj', 'v_proj', 'o_proj', 'up_proj', 'gate_proj', 'down_proj') 가 dancinlab/clm-v4-mk2-v1 base 의 nested module paths ('attn.q_proj', 'cross_attn.q_proj', 'ffn.gate_proj', etc.)와 mismatch → peft 100% missing keys 발견 → merged HF model = base functionally identical. LoRA SFT signal 본 cycle path 에서 NOT propagated. Iter6 cycle subject: adapter_config target_modules schema fix 또는 LoRA retraining on current decoder schema",
+    "save_pretrained safe_serialization=True 가 CLM v4 weight tying (decoder.tok_emb.weight ↔ decoder.head_a.weight) 거부 → safe_serialization=False (legacy pickle pytorch_model.bin) 적용. F-SHIM-1 carry: pickle format 도 strict=True load 가능 (transformers 정합)",
+    "iter3 SSOT의 clm-v4-mk2-v1 'substrate_modes=real' label 은 substrate-mode marker only — 기존 _real_forward 가 out.hidden_states None 일 때 silently synth_cell_hidden 으로 fallback 했을 가능성. 본 cycle 은 model.decoder.blocks[-1] forward_hook 적용 — 첫 진짜 real-mode hidden state 추출 instance. iter3 N=60 SSOT 결과 와 본 cycle 결과 분포 비교 별도 cycle (iter3 가 synthetic 잔존이면 본 cycle 가 ground truth 격상)",
+    "3 LoRA variants 모두 4-cell mean 값 정확히 동일 (c3_1=0.0624 / c3_2=0.4790 / c3_3=0.0354 / c3_4=0.0603) → merge_no_op 의 직접 numerical evidence. eval-mode determinism + same input → same output. 본 cycle 'identical 3-variant signature' = falsifier-resistant 검증",
+    "paradigm-j jvae_heads.pt 는 merged_dir 에 verbatim 복사 — decoder weight 로 merge X. 본 cycle probe 는 paradigm-j 의 JVAE-conditioned forward path NOT exercise. JVAE-aware probe wrapper 별도 cycle (paradigm-j 고유 학습 signal 측정 가능성)",
+    "PPR_v2 N-of-M 정확 산출 — 본 cycle 은 per-prompt 60 row × 4 cell PASS pattern full matrix 계산. iter3 SSOT 보다 정확 (iter3 는 cell-wise rate aggregate only). PPR_v2=0.067 = 60 row 중 4 row 만 ≥3 of 4 PASS pattern",
+    "iter5 blocker #1 (LoRA real-mode measurement infra 부재) UNBLOCKED — 본 cycle peft.merge_and_unload extension land. 단 D1-within SIMPLE_STACK_PASS_STRICT_C3_ANIMA EXIT 미달성 carry — adapter target_modules schema mismatch + merge_no_op 가 LoRA 실제 학습 signal 검증 차단. iter6 cycle subject (target_modules schema fix or LoRA retraining)",
+    "raw#15 정합 — clm_v4_mount.hexa LoRA branch 추가 = 기존 base path 보존 (adapter_cfg None 시 동작 동일). raw#9 정합 — merge helper subprocess 호출 via os/subprocess (raw#37 transient_py opt-out). raw#37 정합 — clm_v4_lora_merge_helper.py 가 tool/transient_py/ namespace 안 (.own 4)",
+    "own 37 mandate-9 (a) 미충족 carry — D1 within 3 LoRA variants + base 모두 SIMPLE_STACK_PASS_STRICT_C3_ANIMA 미달성. PUBLIC promote 미충족 정합 (paradigm-a-prime ban 와 동일)",
+    "anti-Goodhart V6 awareness systematic execute 본 cycle 미시행 — V6 lane 별도 cycle BG-LE-V6-AWARENESS pending. EXIT 활성화 mandate-9 (b) prereq 차단 carry"
+  ],
+  "blockers_carry": [
+    "iter6: adapter_config target_modules schema mismatch fix — 3 LoRA variants 의 학습된 weights 가 ConsciousDecoderV2 flat 모듈 이름으로 저장되었을 가능성. 옵션 (a) adapter_config target_modules 를 'attn.q_proj' 등 nested 이름으로 rewrite + state_dict key remap, (b) ConsciousDecoderV3 module names 로 LoRA retraining (H100 cycle), (c) custom peft adapter loader (non-standard target_modules resolution)",
+    "BG-FY 18M Mac local ckpt 미수신 — own 33 mandate-2 (D1 within) 측정 차단 carry (iter5 blocker #2)",
+    "clm-v2-byte-18m-convo-5k v2 mount infra 미land (ConsciousLM++ federated multi-cell architecture) — iter5 blocker #3 carry",
+    "BG-KM HF adapter push from H100 runpod — 사용자 explicit consent 후 retest carry (iter3 blocker carry)",
+    "anti-Goodhart V6 awareness probe systematic execute — EXIT 활성화 prereq own 37 mandate-9 (b) 차단 carry",
+    "own 18 chat-cap measurement lane (C1+C2+C2.4) 본 cycle 미시행 — substrate-only C3 측정 한정 (LoRA chat-cap 측정 별도 cycle)"
+  ],
+  "exit_trigger_status": {
+    "simple_stack_pass_strict_c3_anima_emerge": false,
+    "first_d1_lane_within_candidate_pass": null,
+    "iter5_blocker_1_status": "UNBLOCKED — peft.merge_and_unload extension landed (clm_v4_lora_merge_helper.py + clm_v4_mount.hexa _try_load_clm_v4 LoRA branch)",
+    "next_blocker_emerged": "adapter_config target_modules schema mismatch (iter6 cycle subject — merge_no_op 결과 LoRA 학습 signal NOT propagated)",
+    "next_action_recommendation": [
+      "1. (iter6) adapter_config target_modules schema fix — peft custom resolver or adapter weights state_dict key remap to nested decoder paths",
+      "2. (iter6) LoRA retraining on current ConsciousDecoderV3 module names (H100 cycle, 사용자 consent)",
+      "3. (iter6) JVAE-aware probe wrapper for paradigm-j (decoder + jvae_heads forward path)",
+      "4. (iter6 parallel) anima_native_byte_mount.hexa 신설 → BG-FY 18M + clm-v2-byte-18m measurement infra unblock",
+      "5. (iter6 parallel) BG-LE-V6-AWARENESS systematic execute — EXIT 활성화 mandate-9 (b) prereq",
+      "6. (iter7+) D1-within candidate 중 PPR_v2 ≥0.6 ∧ EMC ≥3 of 4 도달 모델 emerge 시 첫 SIMPLE_STACK_PASS_STRICT_C3_ANIMA EXIT 트리거 + 사용자 manual review"
+    ]
+  },
+  "compliance": {
+    "own_4": "tool/transient_py/clm_v4_lora_merge_helper.py opt-out namespace 정합",
+    "own_17": "D1 within candidate 한정 측정 (CLM v4 lineage anima-native fresh) — Llama foundation borrow 등 D1 outside 미포함",
+    "own_18": "C3 4-cell ROC measurement infra 활성, P5 v2 N-of-M aggregation 적용 (PPR_v2≥0.6 ∧ EMC≥3 of 4 verdict)",
+    "own_18_scope_clamp": "line 770 ★ scope-clamp D1 anima identity lane only — verdict label SIMPLE_STACK_PASS_STRICT_C3_ANIMA 적용",
+    "own_22": "본 발견 (3 LoRA variant FAIL_C3 + merge_no_op + iter6 blocker emerge) mandatory report 형식",
+    "own_24": "single SSOT — 본 파일 (state/anima_clm_v4_lora_real_mode_2026_05_08.json)",
+    "own_28": "anti-Goodhart awareness — V6 systematic execute pending 명시 (mandate-9 (b) 차단 carry)",
+    "own_33": "trinity 무조건 준수 — D1 within (philosophy) + own 17/18 strict (law) + H_clm_v4_lora_emerge (hypothesis) sweep",
+    "own_37_mandate_9": "5 prereq strict — 3 LoRA variant 모두 (a) 미충족 → PUBLIC promote 불충족 정합",
+    "raw_9": "hexa-only orchestration via clm_v4_mount.hexa (merge helper subprocess 한정)",
+    "raw_10": "honest C3 ≥5 emit (10 entries — merge_no_op + adapter schema mismatch + iter3 SSOT real-label caveat + jvae_heads + 5 추가)",
+    "raw_15": "additive — clm_v4_mount.hexa 기존 path 보존, LoRA branch 추가",
+    "raw_37": "transient_py merge helper opt-out (Mac canonical .hexa preserve)",
+    "raw_82": "retraction-aware — merge_no_op surface, silent fallback 차단"
+  }
+}
