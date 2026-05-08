@@ -1508,3 +1508,32 @@ own 34 live "xeno 🛸 standalone repo SSOT — non-GPU exotic compute substrate
   severity warn (Phase 1 — 본 own 34 land + Phase 1.5 deferred mandate 권고) → block (Phase 2 — Phase 1.5 미land 시 source repo 4개에 새 akida 자산 land 차단; orchestrator pre-fire validator: akida-related path == ~/core/xeno/ assert)
   proof ls ~/core/xeno/ + git log -1 ~/core/xeno/ + grep "own 34" ~/core/anima/.own
   note 2026-05-08 own 34 = 사용자 directive verbatim 직접 응답 ("all go now"). own 22 (새 발견 mandatory report) self-application — 본 own 34 발견 자체가 xeno standalone SSOT 발견 → 본 own 34 entry로 리포트 정합. own 24 (single SSOT) instance — non-GPU substrate SSOT는 xeno repo. own 30 (checkpoint preservation) downstream — Akida Cloud session 결과는 xeno `state/` exfil 목적지 (Phase 1.5 후 source repo state/ → xeno state/ migration 마무리). own 32/33 (trinity bundle/준수) cross-cut — xeno는 trinity 별도 lane이지만 trinity 정합 mandatory cross-check 유지.
+
+own 35 live "AKD1000 RPi5 dev kit primary + Akida Cloud fallback — physical chip 우선, cloud는 wait/maintenance 보조"
+  slug akd1000-physical-primary-akida-cloud-fallback
+  since 2026-05-08
+  scope anima Tier C silicon neuromorphic substrate execution lane (xeno repo) — AKIDA AKD1000 chip 기반 모든 D+0/D+1 cycle, falsifier fire, N-2/N-3/N-5 측정
+  user-directive verbatim "AKD1000 first use || akida cloud fallback" (2026-05-08, post BrainChip shop URL share)
+  finding 이전 own 34 + .roadmap.akida event entry는 Akida Cloud (Colfax-hosted, Sat 2026-05-09 09:00 KST 24h slot)를 D+0/D+1 cycle primary 경로처럼 기술. 사용자 update: AKD1000 physical chip (RPi5 dev kit, 주문 2026-04-29, $1,495) = primary, Akida Cloud = fallback (chip 미수신 wait + maintenance 보조 lane). 정책 inversion mandate.
+  rule AKD1000 primary + Akida Cloud fallback:
+    - mandate-1 N-2/N-3/N-5 + nexus 12-falsifier (8 post-arrival) primary fire 경로 = AKD1000 physical chip (RPi5 dev kit `host.rpi5-akida` workspace)
+    - mandate-2 Akida Cloud (`host.akida-cloud-colfax` ephemeral) = fallback only — primary 사용 불가 (chip 미수신 / 고장 / maintenance) 시점 활성화
+    - mandate-3 fallback 활성 시 명시 markup mandatory: verdict.json + state file에 `path = "fallback-cloud"` field; primary 사용 시 `path = "primary-physical"` 명시
+    - mandate-4 본 cycle (Sat 2026-05-09 09:00 KST) Akida Cloud 슬롯은 mandate-2 fallback 활성 instance — chip 미수신 wait 중 사전 검증 lane (RPi5 dev kit ETA 미확정 per .roadmap.akida akida.blk.1)
+    - mandate-5 primary path 활성 후 (chip 도착 + RPi5 부팅 + Meta TF 환경 OK) cloud fallback 자동 deactivate — 단, cloud session 결과는 history에 보존 (own 30 checkpoint preservation 정합)
+    - mandate-6 raw 91 honest C3 정합 — fallback path 사용 시 silent skip BANNED, 명시 emit ("USING FALLBACK: <reason>")
+    - mandate-7 nexus host_register.sh 의 host.rpi5-akida (primary) + host.akida-cloud-colfax (fallback, P0a generated) 두 host class 병존 — 사용 시점 verdict 정합으로 구분
+  enforce verdict.json + state emit 시:
+    - Step A: 측정 시점 path 자동 detect (AKD1000 device probe rc==0 → primary, fail → fallback 활성)
+    - Step B: verdict.json `path` field 필수 + cloud 활성 시 `cloud_session_ts` + `cloud_reservation` field 추가
+    - Step C: __AKIDA_R__ <PASS|FAIL> emit 시 path-specific suffix (primary: `__AKIDA_R_PRIMARY__`, fallback: `__AKIDA_R_FALLBACK__`)
+  evidence-trail BrainChip shop URL (https://shop.brainchipinc.com/products/akida%E2%84%A2-development-kit-raspberry-pi-5-draft) RPi5+AKD1000 $1,495 dev kit + 1 week cloud $995 + AKD1000 M.2 card $249 + Akida PCIe board $289. anima 주문 2026-04-29 (per .roadmap.akida) = RPi5 dev kit 추정 (cloud trial $1는 short-term, dev kit이 long-term primary 정합). 본 own 35 = 사용자 explicit policy inversion directive.
+  cross-link own 16 (cost watchdog — primary $1,495 vs fallback $995/wk, 보조 사용 cost 정당화) own 17 (identity boundary) own 30 (checkpoint preservation — primary + fallback 결과 모두 보존) own 32 (trinity bundle SSOT) own 33 (trinity 무조건 준수) own 34 (xeno standalone SSOT — 본 mandate가 xeno cycle topic 동작 변경 mandate) .roadmap.akida (akida.blk.1 RPi5 chip 도착 = primary 활성 trigger) raw 91 (honest C3 fail-loud)
+  honest-c3 본 own 35 inversion은 own 34 (xeno SSOT) + .roadmap.akida event entry 와 의미 조정 — 이전 cloud-primary 어조는 본 own 35 후 fallback-only 어조로 amend mandate (Phase 1.5 docs update lane)
+  honest-c3 mandate-3 path field는 verdict.json 추가 schema — 기존 schema (falsifier_id/measured_ts/measured_value/verdict/raw_log_path/hardware_present) 에 `path` 추가 mandate. nexus runner.py + anima Phi pipeline emit 코드 수정 필요 (Phase 1.5 후속 cycle)
+  honest-c3 mandate-5 cloud auto-deactivate는 chip 도착 시점 manual 확정 절차 — 자동 detect (`akida.devices()` rc check) 만으로 충분 X (사용자 confirm + .roadmap.akida akida.blk.1 status update 동반 mandate)
+  honest-c3 BrainChip shop URL은 본 own 35 land 시점 (2026-05-08) 활성 — URL stale risk (재고 변경 / 가격 변경 / draft 표기 → 정식 URL 전환). 본 own 35 evidence-trail은 시점 snapshot, 향후 정식 URL 발견 시 update mandate
+  honest-c3 본 own 35 land 후 즉시 영향: xeno bin/xeno cycle status에 primary vs fallback indicator 추가 + xeno README 정책 명시 + docs/anima_origin/akida_cloud_*.md 두 문서에 fallback notice 추가
+  severity warn (Phase 1 — 본 own 35 land + path field 권고) → block (Phase 2 — verdict.json path field 누락 시 reject; cloud 사용 시 silent skip 자동 detect + reject)
+  proof grep -E "host\.(rpi5-akida|akida-cloud-colfax)" workspace + verdict.json `path` field 존재 확인 + xeno cycle output에 primary/fallback indicator 표시 확인
+  note 2026-05-08 own 35 = 사용자 directive verbatim 직접 응답 ("AKD1000 first use || akida cloud fallback"). own 34 (xeno standalone SSOT) downstream policy update — xeno cycle topic 동작 의미 변경. own 22 (새 발견 mandatory report) self-application — primary/fallback policy 자체가 새 발견 → 본 own 35 entry로 리포트 정합. own 24 (single SSOT) instance — Tier C primary 경로 SSOT는 AKD1000 physical, fallback SSOT는 Akida Cloud. raw 91 (honest C3) 정합 — fallback 사용 시 명시 emit mandate.
