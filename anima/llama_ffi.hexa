@@ -230,7 +230,7 @@ fn _tokenize_alloc(vocab, text: string, max_tokens: int, add_bos: int) {
 // own 34 mandate-2 compliance: this function emits ONLY the model's natural
 // token output. No system prompt / chat template / persona injection. The
 // raw `prompt` is the literal first-input text (caller-controlled).
-fn llama_generate(h, prompt: string, max_tokens: int, temp: float, top_p: float) -> string {
+fn llama_generate(h, prompt: string, max_tokens: int, temp: float, top_p: float, seed: int) -> string {
     if h["model"] == 0 {
         return ""
     }
@@ -259,11 +259,20 @@ fn llama_generate(h, prompt: string, max_tokens: int, temp: float, top_p: float)
     // 4. sampler — split path due to hexa FFI 4-arg pattern restriction
     // (top_p is folded as 0.9 in shim; passed as positional carrier here for
     // documentation but unused by hxllama_sampler_new_temp).
+    // seed: caller-provided. 0 = wall-clock random; non-zero = deterministic.
     let _unused_top_p = top_p
+    let actual_seed = if seed == 0 {
+        // Wall-clock entropy: posix time in seconds (deterministic per-second
+        // is fine — sampler internal LCG seeds from this).
+        let ts = _str(exec("date +%s")).trim()
+        to_int(ts)
+    } else {
+        seed
+    }
     let sampler = if temp <= 0.0 {
         hxllama_sampler_new_greedy()
     } else {
-        hxllama_sampler_new_temp(40, 0xC0FFEE, temp)
+        hxllama_sampler_new_temp(40, actual_seed, temp)
     }
     if sampler == 0 {
         return ""

@@ -89,7 +89,16 @@ fn _exec_hexa(path: string, rest: array) -> int {
   // Forward to a tool/anima_cli/<path>.hexa via the canonical hexa interp.
   // Returns child exit code (best-effort — exec() returns stdout, RC is forwarded
   // through __HEXA_RC sentinel; we treat any output absence as 0 here).
-  let mut cmd = _hexa_bin() + " run " + _shq(path)
+  //
+  // chat.hexa path 는 mac-local hexa.real 강제 (build/libhxllama.dylib +
+  // ~/.cache/anima/gguf/ 가 mac-local; remote ubu-1 wrapper 라우팅 시
+  // libhxllama 부재 → child rc=2). Phase 3c carry — see honest C3.
+  let bin = if path.contains("chat.hexa") || path.contains("/chat/") {
+    "/Users/ghost/.hx/packages/hexa/hexa.real"
+  } else {
+    _hexa_bin()
+  }
+  let mut cmd = bin + " run " + _shq(path)
   let mut i = 0
   while i < len(rest) {
     cmd = cmd + " " + _shq(_str(rest[i]))

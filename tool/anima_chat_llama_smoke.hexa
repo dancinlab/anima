@@ -83,7 +83,7 @@ fn main() {
 
     println("")
     println("Generating 10 tokens for prompt 'Hello' (greedy, temp=0.0)...")
-    let text = llama_generate(h, "Hello", 10, 0.0, 0.9)
+    let text = llama_generate(h, "Hello", 10, 0.0, 0.9, 0)
     println("  raw output: " + text)
 
     println("")

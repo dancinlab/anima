@@ -212,10 +212,10 @@ fn sub_selftest() {
 // ─── REPL / one-shot ─────────────────────────────────────────────────────
 
 fn sub_one_shot(gguf: string, n_ctx: int, prompt: string,
-                max_tokens: int, temp: float, top_p: float) {
+                max_tokens: int, temp: float, top_p: float, seed: int) {
     println("[llama] gguf  = " + gguf)
     println("[llama] n_ctx = " + to_string(n_ctx))
-    println("[llama] mode  = one-shot · max-tokens=" + to_string(max_tokens) + " · temp=" + to_string(temp))
+    println("[llama] mode  = one-shot · max-tokens=" + to_string(max_tokens) + " · temp=" + to_string(temp) + " · seed=" + to_string(seed))
     println("[llama] own 34 strict — wrapping 0 · raw decode→sample→detokenize")
     println("")
     let h = llama_load(gguf, n_ctx)
@@ -224,7 +224,7 @@ fn sub_one_shot(gguf: string, n_ctx: int, prompt: string,
         exit(1)
     }
     // own 34 mandate-1 raw output: print() not println().
-    let out = llama_generate(h, prompt, max_tokens, temp, top_p)
+    let out = llama_generate(h, prompt, max_tokens, temp, top_p, seed)
     print(out)
     println("")
     llama_free(h)
@@ -232,7 +232,7 @@ fn sub_one_shot(gguf: string, n_ctx: int, prompt: string,
 }
 
 fn sub_repl(gguf: string, n_ctx: int, max_tokens: int,
-            temp: float, top_p: float, memory_mode: string, tick_ms: int) {
+            temp: float, top_p: float, memory_mode: string, tick_ms: int, seed: int) {
     println("[llama] gguf   = " + gguf)
     println("[llama] n_ctx  = " + to_string(n_ctx))
     println("[llama] mode   = REPL (Phase 3c, sys_stdin_read_line_timeout / autonomous speech)")
@@ -259,7 +259,7 @@ fn sub_repl(gguf: string, n_ctx: int, max_tokens: int,
         let line = _str(sys_stdin_read_line_timeout(tick_ms))
         if line == "" {
             // Autonomous speech path. own 34 mandate-1 raw output.
-            let out_a = llama_generate(h, history, max_tokens, temp, top_p)
+            let out_a = llama_generate(h, history, max_tokens, temp, top_p, seed)
             print(out_a)
             println("")
             if memory_mode == "full" {
@@ -272,7 +272,7 @@ fn sub_repl(gguf: string, n_ctx: int, max_tokens: int,
         if memory_mode == "full" || memory_mode == "user" {
             history = history + line + "\n"
         }
-        let out_u = llama_generate(h, history, max_tokens, temp, top_p)
+        let out_u = llama_generate(h, history, max_tokens, temp, top_p, seed)
         // own 34 mandate-1: raw model output, no wrapping. REPL 가독성을 위해
         // 한 줄 분리만 추가 — 모델 출력 자체 변형 X.
         print(out_u)
@@ -314,10 +314,14 @@ fn main() {
     let tick_str = _arg_value(argv, "--tick-ms", "1000")
     let tick_ms = to_int(tick_str)
     let prompt = _arg_value(argv, "--prompt", "")
+    // --seed: 0 = wall-clock (sampling 다양성), nonzero = deterministic
+    // (reproducibility). Phase 3c initial: hardcoded 0xC0FFEE; now CLI exposed.
+    let seed_str = _arg_value(argv, "--seed", "0")
+    let seed = to_int(seed_str)
 
     if prompt != "" {
-        sub_one_shot(gguf, n_ctx, prompt, max_tokens, temp, top_p)
+        sub_one_shot(gguf, n_ctx, prompt, max_tokens, temp, top_p, seed)
         return
     }
-    sub_repl(gguf, n_ctx, max_tokens, temp, top_p, memory_mode, tick_ms)
+    sub_repl(gguf, n_ctx, max_tokens, temp, top_p, memory_mode, tick_ms, seed)
 }
