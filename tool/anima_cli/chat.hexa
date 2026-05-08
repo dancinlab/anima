@@ -269,11 +269,19 @@ fn sub_selftest() {
         println("FAIL own 34 mandate-2 wrapping grep: " + n + " hits (chat path 한정)")
         fail = fail + 1
     }
+    // iter7 (b): stdbuf probe — informational (WARN on empty, OK on non-empty;
+    // no fail — bare-mac legacy path preserved per backward-compat invariant).
+    let pfx = _stdbuf_prefix()
+    if pfx != "" {
+        println("OK    stdbuf probe = " + pfx.trim())
+    } else {
+        println("WARN  stdbuf probe = (none) — install GNU coreutils for line-buffered streaming")
+    }
     if fail > 0 {
         println("FAIL anima_cli/chat selftest (" + to_string(fail) + " issue)")
         exit(1)
     }
-    println("PASS anima_cli/chat selftest (own 34 mandate-2 verified, 5 files present)")
+    println("PASS anima_cli/chat selftest (own 34 mandate-2 verified, 5 files present, stdbuf probe added)")
 }
 
 // Default per-line callback for streaming dispatch. own 34 mandate-1: print()
@@ -282,6 +290,34 @@ fn sub_selftest() {
 // line bytes pass through verbatim.
 fn _print_line(line: string) {
     print(line + "\n")
+}
+
+// _stdbuf_prefix — line-buffered stdout prefix probe (iter7 (b) land 2026-05-08)
+//
+// Returns a shell prefix that forces inner cmd's stdout to line-buffered mode
+// so each emitted line flushes immediately to the FIFO, instead of waiting on
+// the default 4KB block-buffered pipe behavior. Probes (in order):
+//   1. `stdbuf` (Linux GNU coreutils, also homebrew/macports on Mac)
+//   2. `gstdbuf` (Mac coreutils via brew install coreutils — `g`-prefix)
+//   3. ""       (honest C3 fallback — bare-mac legacy path preserved)
+//
+// Backward compat: empty prefix returns byte-identical to pre-iter7 behavior
+// (concat of "" + inner_cmd == inner_cmd). Non-empty prefix preserves byte
+// stream verbatim per own 34 mandate-1 — stdbuf only touches buffer cadence,
+// not bytes. Single-shot WARN sentinel `/tmp/.anima_chat_stdbuf_warn_<pid>`
+// emits one informational line per process when probe falls through to "".
+fn _stdbuf_prefix() -> string {
+    let s = _str(exec("command -v stdbuf 2>/dev/null")).trim()
+    if s != "" { return "stdbuf -oL " }
+    let g = _str(exec("command -v gstdbuf 2>/dev/null")).trim()
+    if g != "" { return "gstdbuf -oL " }
+    let pid = _str(exec("echo $$")).trim()
+    let sentinel = "/tmp/.anima_chat_stdbuf_warn_" + pid
+    if !_fexists(sentinel) {
+        let _t = exec("touch " + sentinel + " 2>/dev/null")
+        println("WARN anima chat: neither stdbuf nor gstdbuf available — inner cmd stdout may block-buffer (4KB) on FIFO; first-line latency ∞ risk. Install GNU coreutils (`brew install coreutils`) for line-buffered streaming.")
+    }
+    return ""
 }
 
 // _dispatch_module_streaming — line-by-line dispatch (loop iter 4 (b))
@@ -324,7 +360,8 @@ fn _dispatch_module_streaming(mod_name: string, repo: string, argv, on_line) -> 
         extra = extra + " " + s
         i = i + 1
     }
-    let inner_cmd = _hexa() + " run " + mod_path + " --repo \"" + repo + "\"" + extra
+    let _stdbuf_pfx = _stdbuf_prefix()
+    let inner_cmd = _stdbuf_pfx + _hexa() + " run " + mod_path + " --repo \"" + repo + "\"" + extra
     // Allocate a temp FIFO via stdlib/channel — we use only the read side.
     // pair[0] = c2p (parent reads), pair[1] = p2c (parent writes; unused here).
     // (The unused write pair is opened so we can call channel_close() on it
