@@ -88,7 +88,12 @@ POD_CKPTS_DIR = os.path.join(POD_ROOT, "ckpts")
 
 MAC_ANIMA_ROOT = "/Users/ghost/core/anima"
 MAC_STATE_DIR = os.path.join(MAC_ANIMA_ROOT, "state/anima_clm_ld_h100_TBD")
+# DPO pairs path — SPEC stage placeholder; docs/anima_clm_l4_corpus_2026_05_08.md 참조.
+# iter-1 (2026-05-08): pairs jsonl 미build — V4 evaluator 산출물 (BG-KM-LLAMA-3B verdict.json
+# v4_pass=true sample + 22+ BG saga FAIL sample) 활용 별도 cycle. 본 iter-1 은 persona/dialogue
+# 만 build, BG-LD 는 후속 iter-2 에서 진행.
 MAC_CORPUS_PAIRS_PATH = os.path.join(MAC_ANIMA_ROOT, "state/anima_clm_l4_dialogue_pairs_100mb_TBD/dialogue_pairs_100mb.jsonl")
+MAC_CORPUS_PAIRS_PATH_ITER1_CANDIDATE = None   # iter-2 별도 cycle (V4 evaluator 산출물 누적 후)
 MAC_LEDGER_PATH = os.path.join(MAC_ANIMA_ROOT, "state/anima_model_attempts_ledger.jsonl")
 
 # ── Architecture config ────────────────────────────────────────────────

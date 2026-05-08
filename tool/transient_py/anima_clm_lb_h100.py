@@ -92,8 +92,13 @@ POD_BASE_DIR = os.path.join(POD_ROOT, "mk2_v1_base")   # download from dancinlab
 MAC_ANIMA_ROOT = "/Users/ghost/core/anima"
 MAC_STATE_DIR = os.path.join(MAC_ANIMA_ROOT, "state/anima_clm_lb_h100_TBD")
 # Corpus paths — SPEC stage placeholder; docs/anima_clm_l4_corpus_2026_05_08.md 참조.
+# iter-1 candidate (2026-05-08):
+#   persona: state/anima_persona_tier_a_2026_05_08.txt — 102.66MB (target 1GB; iter-2 expansion 별도 cycle)
+#   dialogue: state/anima_dialogue_tier_a_2026_05_08.txt — 12.96MB sample (target 500MB; iter-2 별도 cycle)
 MAC_CORPUS_PERSONA_PATH = os.path.join(MAC_ANIMA_ROOT, "state/anima_clm_l4_persona_1gb_TBD/corpus_persona_1gb.txt")
 MAC_CORPUS_DIALOGUE_PATH = os.path.join(MAC_ANIMA_ROOT, "state/anima_clm_l4_dialogue_500mb_TBD/corpus_dialogue_500mb.txt")
+MAC_CORPUS_PERSONA_PATH_ITER1_CANDIDATE = os.path.join(MAC_ANIMA_ROOT, "state/anima_persona_tier_a_2026_05_08.txt")
+MAC_CORPUS_DIALOGUE_PATH_ITER1_CANDIDATE = os.path.join(MAC_ANIMA_ROOT, "state/anima_dialogue_tier_a_2026_05_08.txt")
 MAC_LEDGER_PATH = os.path.join(MAC_ANIMA_ROOT, "state/anima_model_attempts_ledger.jsonl")
 
 # ── Architecture config (mk2-v1 — current CLM v4 production) ───────────

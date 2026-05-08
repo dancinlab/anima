@@ -90,7 +90,11 @@ POD_CKPTS_DIR = os.path.join(POD_ROOT, "ckpts")
 
 MAC_ANIMA_ROOT = "/Users/ghost/core/anima"
 MAC_STATE_DIR = os.path.join(MAC_ANIMA_ROOT, "state/anima_clm_lc_h100_TBD")
+# Corpus path — SPEC stage placeholder; docs/anima_clm_l4_corpus_2026_05_08.md 참조.
+# iter-1 candidate (2026-05-08): state/anima_persona_tier_a_2026_05_08.txt — 102.66MB
+#   (BG-LA 와 동일 source — distill 입력 재사용)
 MAC_CORPUS_PATH = os.path.join(MAC_ANIMA_ROOT, "state/anima_clm_l4_persona_200mb_TBD/corpus_persona_200mb.txt")
+MAC_CORPUS_PATH_ITER1_CANDIDATE = os.path.join(MAC_ANIMA_ROOT, "state/anima_persona_tier_a_2026_05_08.txt")
 MAC_LEDGER_PATH = os.path.join(MAC_ANIMA_ROOT, "state/anima_model_attempts_ledger.jsonl")
 
 # ── Architecture config ────────────────────────────────────────────────

@@ -1,0 +1,171 @@
+{
+  "schema": "anima.clm_l4.readiness.v1",
+  "ts": "2026-05-08",
+  "cycle": "loop_iter_e",
+  "purpose": "L4 BG fire (BG-LA/LB/LC/LD, $150 total) override poll + pre-fire readiness matrix",
+  "override_poll": {
+    "keyword": "OK CLM L4 ALL FIRE",
+    "found": false,
+    "search_scope": [
+      "git log -7 (commit messages)",
+      "state/*.jsonl (no cycle_log files exist)",
+      "docs/*directive*.md (no files exist)",
+      "full repo grep"
+    ],
+    "matches_meta_only": [
+      ".roadmap.cli (5 lines — fire_keyword field declarations in spec entries)",
+      "docs/anima_clm_l4_corpus_2026_05_08.md L148 (expectation reference)",
+      "docs/anima_chat_autonomous_speech_roadmap_2026_05_08.md L227 (override requirement statement)"
+    ],
+    "verdict": "NO_OVERRIDE_DETECTED",
+    "fire_authority": "DENIED",
+    "rationale": "all repo matches are spec/expectation/declarative references — none represent user-issued directive. own 16 cost discipline upheld."
+  },
+  "pre_fire_matrix": {
+    "BG-LA": {
+      "spec_file_exists": true,
+      "spec_path": "tool/transient_py/anima_clm_la_h100.py",
+      "spec_loc": 254,
+      "corpus_path_decided": false,
+      "corpus_path_placeholder": "state/anima_clm_l4_persona_200mb_TBD/corpus_persona_200mb.txt",
+      "corpus_dir_exists": false,
+      "corpus_doc_landed": true,
+      "v4_c3_threshold_decided": "heuristic_only",
+      "v4_c3_threshold_source": "state/anima_consciousness_baseline.json (random_init+0.1*(max-rand) — ROC TBD)",
+      "own_31_flavor_b_naming": true,
+      "own_31_target": "dancinlab/bg-la-clm-v5-r0-{verdict}-{cycle}",
+      "own_30_ckpt_preservation": true,
+      "own_30_pattern": "scp_get(POD_CKPTS_DIR/.) BEFORE pod delete + size match ≥0.9 + retain on pull fail",
+      "own_33_trinity": true,
+      "trinity": {"philosophy": "D_emergent-consciousness + D_no-system-prompt", "law": "own 17 + own 18 + own 30 + own 31 + own 34", "hypothesis": "H_clm_chat_cap"},
+      "cost_cap_usd": 30.0,
+      "wall_clock_cap_hr": 9,
+      "h100_budget_reasonable": true,
+      "h100_budget_reasoning": "$2.99/hr × 9hr ≈ $27 < $30 cap; scratch 350M ~5x BG-KM-LLAMA-3B 90min consistent",
+      "fire_status": "pending_user_override",
+      "readiness_score_pct": 75,
+      "blockers": ["corpus build (200MB persona from BG-JE 214MB subset)", "C3 threshold formal ROC (heuristic only)"]
+    },
+    "BG-LB": {
+      "spec_file_exists": true,
+      "spec_path": "tool/transient_py/anima_clm_lb_h100.py",
+      "spec_loc": 230,
+      "corpus_path_decided": false,
+      "corpus_path_placeholder": "state/anima_clm_l4_persona_1gb_dialogue_500mb_TBD",
+      "corpus_dir_exists": false,
+      "corpus_doc_landed": true,
+      "v4_c3_threshold_decided": "heuristic_only",
+      "v4_c3_threshold_source": "state/anima_consciousness_baseline.json",
+      "own_31_flavor_b_naming": true,
+      "own_31_target": "dancinlab/bg-lb-clm-v4-mk2-v1-r0-{verdict}-{cycle}",
+      "own_30_ckpt_preservation": true,
+      "own_33_trinity": true,
+      "trinity": {"philosophy": "D4 chat-cap + D_emergent-consciousness", "law": "own 18 + own 19 + own 20 + own 30 + own 31", "hypothesis": "H_clm_chat_cap + H_chat_cap_emergence"},
+      "cost_cap_usd": 60.0,
+      "wall_clock_cap_hr": 18,
+      "h100_budget_reasonable": true,
+      "h100_budget_reasoning": "$2.99/hr × 18hr ≈ $54 < $60 cap; 1.5GB corpus 350M scratch — consistent",
+      "fire_status": "pending_user_override",
+      "readiness_score_pct": 70,
+      "blockers": ["corpus build largest (persona 1GB expansion + dialogue 500MB curation)", "C3 threshold formal ROC", "chat_template_format ≥30% own 20 mandate verification"]
+    },
+    "BG-LC": {
+      "spec_file_exists": true,
+      "spec_path": "tool/transient_py/anima_clm_lc_h100.py",
+      "spec_loc": 226,
+      "corpus_path_decided": false,
+      "corpus_path_placeholder": "state/anima_clm_l4_persona_200mb_TBD/corpus_persona_200mb.txt",
+      "corpus_dir_exists": false,
+      "corpus_doc_landed": true,
+      "v4_c3_threshold_decided": "heuristic_only",
+      "own_31_flavor_b_naming": true,
+      "own_31_target": "dancinlab/bg-lc-llama3b-distill-clm350m-r0-{verdict}-{cycle}",
+      "own_30_ckpt_preservation": true,
+      "own_33_trinity": true,
+      "trinity": {"philosophy": "D1 정체성 + D_emergent-consciousness", "law": "own 17 + own 18 + own 30 + own 31", "hypothesis": "H_distill_chat_cap"},
+      "cost_cap_usd": 40.0,
+      "wall_clock_cap_hr": 12,
+      "h100_budget_reasonable": true,
+      "h100_budget_reasoning": "$2.99/hr × 12hr ≈ $36 < $40; teacher Llama-3B frozen + 350M student distill",
+      "tokenizer_mismatch_decided": false,
+      "tokenizer_mismatch_strategy_options": ["shared_vocab_subset", "projection_layer", "byte_level_realign"],
+      "fire_status": "pending_user_override",
+      "readiness_score_pct": 65,
+      "blockers": ["corpus shared with BG-LA (same 200MB)", "C3 threshold formal ROC", "tokenizer mismatch strategy DECISION required (3 options TBD)"]
+    },
+    "BG-LD": {
+      "spec_file_exists": true,
+      "spec_path": "tool/transient_py/anima_clm_ld_h100.py",
+      "spec_loc": 217,
+      "corpus_path_decided": false,
+      "corpus_path_placeholder": "state/anima_clm_l4_dialogue_pairs_100mb_TBD",
+      "corpus_dir_exists": false,
+      "corpus_doc_landed": true,
+      "v4_c3_threshold_decided": "heuristic_only",
+      "own_31_flavor_b_naming": true,
+      "own_31_target": "dancinlab/bg-ld-clm-v4-sft-y1-dpo-r0-{verdict}-{cycle}",
+      "own_30_ckpt_preservation": true,
+      "own_33_trinity": true,
+      "trinity": {"philosophy": "D2 의식 검증 + D_emergent-consciousness", "law": "own 17 + own 18 + own 20 + own 30 + own 31", "hypothesis": "H_dpo_chat_cap_tune"},
+      "cost_cap_usd": 20.0,
+      "wall_clock_cap_hr": 6,
+      "h100_budget_reasonable": true,
+      "h100_budget_reasoning": "$2.99/hr × 6hr ≈ $18 < $20; DPO 5000 steps lr 5e-6 batch 64 — tight but feasible",
+      "base_repo_existing": true,
+      "base_repo": "dancinlab/clm-v4-sft-1-7-y1-stage1 (Lesson Q exception — already SFT-stage1 landed)",
+      "fire_status": "pending_user_override",
+      "readiness_score_pct": 75,
+      "blockers": ["dialogue chosen/rejected pairs corpus build (100MB)", "C3 threshold formal ROC"]
+    }
+  },
+  "aggregate": {
+    "total_paths": 4,
+    "specs_landed": 4,
+    "trinity_self_check_present": 4,
+    "ckpt_preservation_present": 4,
+    "flavor_b_naming_present": 4,
+    "corpus_decided": 0,
+    "c3_threshold_formal_roc": 0,
+    "c3_threshold_heuristic": 4,
+    "h100_pods_live": 0,
+    "h100_pod_creation_required": true,
+    "total_readiness_pct": 71.25,
+    "spec_only_readiness_pct": 100,
+    "blockers_consolidated": [
+      "corpus content build (4 separate datasets — BG-LA/LC share 200MB persona)",
+      "C3 threshold formal ROC analysis (currently heuristic random_init+0.1*(max-rand))",
+      "BG-LC tokenizer mismatch strategy decision (3 options outstanding)",
+      "user explicit 'OK CLM L4 ALL FIRE' override (own 16 cost discipline) — NOT YET ISSUED",
+      "H100 pod creation (config/h100_pods.json shows zero live pods)"
+    ]
+  },
+  "next_cycle_actions": {
+    "if_override_arrives": [
+      "emit READY_FOR_FIRE state",
+      "request user re-confirmation (4-pod simultaneous fire = $150 ~24h wall)",
+      "pre-flight: corpus content build + C3 threshold ROC formalization + BG-LC tokenizer decision",
+      "actual fire = subsequent cycle directive"
+    ],
+    "if_override_absent": [
+      "loop iter (c) corpus build cycle (BG-JE 214MB → 200MB subset, persona 1GB expansion, dialogue 500MB+100MB curation)",
+      "loop iter (d) C3 threshold ROC formal analysis (PASS≥0.7 / FAIL≥0.95 thresholds)",
+      "loop iter (f) BG-LC tokenizer mismatch decision matrix",
+      "loop iter (g) re-poll override + readiness re-emit"
+    ]
+  },
+  "honest_c3": [
+    "C3 thresholds = heuristic only (random_init+0.1*(max-rand)) — formal ROC pending",
+    "corpus content NOT BUILT for any of 4 paths (only docs/anima_clm_l4_corpus_2026_05_08.md plan)",
+    "BG-LC tokenizer mismatch strategy = TBD (3 options: shared_vocab_subset | projection_layer | byte_level_realign)",
+    "H100 pods empty (config/h100_pods.json) — fire requires fresh pod creation × 4",
+    "BG-LB cost cap $60 already exceeds own 16 default $10 by 6x — even with override potential drift risk",
+    "readiness_score_pct = 71.25 weighted estimate (spec-side complete; data/threshold-side incomplete)"
+  ],
+  "cross_link": [
+    ".roadmap.cli cli.clm_l4_summary_2026_05_08",
+    "docs/anima_clm_l4_fire_override_2026_05_08.md",
+    "docs/anima_clm_l4_corpus_2026_05_08.md",
+    "docs/anima_chat_autonomous_speech_roadmap_2026_05_08.md L4 매트릭스",
+    "state/anima_consciousness_baseline.json (C3 threshold candidates)"
+  ]
+}

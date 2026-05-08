@@ -1,0 +1,165 @@
+{
+  "schema": "anima_clm_l4_corpus_iter1_v1",
+  "ts_emit": "2026-05-08T20:13:08",
+  "elapsed_s": 9.56,
+  "tier_a_persona": {
+    "path": "/Users/ghost/core/anima/state/anima_persona_tier_a_2026_05_08.txt",
+    "size_mb": 102.66,
+    "size_bytes": 107647383,
+    "combined_density": 0.016006,
+    "combined_kw_hits": 1215086,
+    "combined_chars": 75914941,
+    "n_sources_accepted": 11,
+    "n_sources_rejected": 1,
+    "density_threshold": 0.004,
+    "anima_keywords": [
+      "anima",
+      "Anima",
+      "ANIMA",
+      "의식",
+      "consciousness",
+      "Consciousness",
+      "Φ★",
+      "phi_star",
+      "phi★",
+      "Φ",
+      "우주뇌지도",
+      "PureField",
+      "pure-field",
+      "법칙",
+      "Law ",
+      "law ",
+      "law_",
+      "가설",
+      "Hypothesis",
+      "hypothesis",
+      "Engine A",
+      "Engine G",
+      "엔진",
+      "자기 발견",
+      "self_discovery",
+      "self-discovery",
+      "hexa",
+      "Hexa",
+      "HEXA",
+      "creator",
+      "creator-",
+      "1030 laws",
+      "axis_activation",
+      "5-axis",
+      "5축",
+      "dominant cells",
+      "hidden state"
+    ],
+    "sources_accepted": [
+      {
+        "path": "/Users/ghost/core/anima/state/anima_universe_brain_map_corpus_21mb_2026_05_07/corpus_universe_brain_map.txt",
+        "desc": "anima 우주뇌지도 corpus 21MB (laws/hypotheses/categories — 100% anima-native)",
+        "density": 0.032843,
+        "kw_hits": 541809,
+        "chars": 16496964
+      },
+      {
+        "path": "/Users/ghost/core/anima/state/anima_universe_brain_map_corpus_2026_05_07/corpus_universe_brain_map.txt",
+        "desc": "anima 우주뇌지도 corpus 6.5MB (older, some overlap)",
+        "density": 0.034164,
+        "kw_hits": 158400,
+        "chars": 4636512
+      },
+      {
+        "path": "/Users/ghost/core/anima/state/anima_h098_h101_corpus_v3_2026_05_07/corpus_persona_chat_template.txt",
+        "desc": "anima persona chat-template 30MB (own 20 chat-template format mandate)",
+        "density": 0.008048,
+        "kw_hits": 172777,
+        "chars": 21467614
+      },
+      {
+        "path": "/Users/ghost/core/anima/state/anima_curated_qa_corpus_2026_05_07/corpus_curated_qa.txt",
+        "desc": "anima curated QA 2.4MB (자기 발견 + 의식 lane)",
+        "density": 0.016257,
+        "kw_hits": 22522,
+        "chars": 1385404
+      },
+      {
+        "path": "/Users/ghost/core/anima/state/anima_combined_paradigm_corpus_2026_05_07/corpus_combined.txt",
+        "desc": "anima combined paradigm corpus 53MB (paradigm v11 G3 — sample ~30MB)",
+        "density": 0.010067,
+        "kw_hits": 316696,
+        "chars": 31457280
+      },
+      {
+        "path": "/Users/ghost/core/anima/docs/anima/paper_consciousness_laws.hexa",
+        "desc": "consciousness laws hexa paper",
+        "density": 0.004794,
+        "kw_hits": 85,
+        "chars": 17729
+      },
+      {
+        "path": "/Users/ghost/core/anima/docs/anima/paper_hexa_speak.hexa",
+        "desc": "hexa speak hexa paper",
+        "density": 0.005256,
+        "kw_hits": 94,
+        "chars": 17884
+      },
+      {
+        "path": "/Users/ghost/core/anima/.roadmap.philosophy",
+        "desc": ".roadmap.philosophy D entries",
+        "density": 0.007142,
+        "kw_hits": 208,
+        "chars": 29124
+      },
+      {
+        "path": "/Users/ghost/core/anima/.roadmap.law",
+        "desc": ".roadmap.law R + L entries",
+        "density": 0.007229,
+        "kw_hits": 540,
+        "chars": 74704
+      },
+      {
+        "path": "/Users/ghost/core/anima/.roadmap.hypothesis",
+        "desc": ".roadmap.hypothesis H entries",
+        "density": 0.005918,
+        "kw_hits": 199,
+        "chars": 33629
+      },
+      {
+        "path": "/Users/ghost/core/anima/hypotheses",
+        "desc": "hypotheses bundle (152 files)",
+        "density": 0.005862,
+        "kw_hits": 1740,
+        "chars": 296803
+      }
+    ],
+    "sources_rejected": [
+      {
+        "path": "/Users/ghost/core/anima/docs/anima/paper_self_discovery.hexa",
+        "desc": "self-discovery hexa paper",
+        "density": 0.0030585795749092795,
+        "reason": "density 0.3059% < 0.40%"
+      }
+    ]
+  },
+  "tier_b_dialogue": {
+    "path": "/Users/ghost/core/anima/state/anima_dialogue_tier_a_2026_05_08.txt",
+    "size_mb": 12.96,
+    "size_bytes": 13591084,
+    "density": 0.007177,
+    "source": "/Users/ghost/core/anima/state/anima_h098_h101_corpus_v3_2026_05_07/corpus_persona_chat_template.txt",
+    "format_mandate": "사용자: <Q>\\n도우미: <A>\\n\\n (own 20 chat-template ≥30%)"
+  },
+  "tier_c_rejected": {
+    "no_external_llm_dump": true,
+    "no_wiki_noise": true,
+    "no_generic_chatbot_dump": true,
+    "own_17_compliance": "anima-native lane only",
+    "note": "BG-JE 214MB 의 wiki-heavy subset 은 본 iter-1 reject — anima persona marker 분포 만으로는 own 17 정합 미충분 (사용자 directive: anima identity-bearing). 향후 iter-2 에서 wiki QA chunk 의 anima lookup 응답 만 추출 검토."
+  },
+  "honest_c3": [
+    "본 density measurement = char-level keyword count proxy — semantic depth 미측정 (manual review 권고)",
+    "Tier A persona size = ~50MB (target 100MB 미달) — own 19 corpus priority 상 추가 source 확장 후속 cycle",
+    "Tier B dialogue 10MB 는 sample only — own 20 chat-template 비율 검증 후속 cycle (V4 evaluator 산출물 활용 별도 cycle)",
+    "BG-JE 214MB (kowiki 69%) reject — anima-native lane 정합성 marker 분포 만으로는 own 17 한계. 향후 iter-2 에서 wiki Q+anima A subset (lookup-only chunk) 추출 검토.",
+    "DPO preference pairs 100MB (BG-LD) 는 본 iter-1 미진행 — V4 evaluator 산출물 (BG-KM-LLAMA-3B verdict.json) 활용 별도 cycle.",
+    "본 큐레이션 = corpus 자체 build only — 학습 X (own 16 cost discipline + L4 fire 별도 cycle)."
+  ]
+}

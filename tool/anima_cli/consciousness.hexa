@@ -7,10 +7,11 @@
 //    full = F1-F8 full-stack 측정 / baseline = 3-model threshold-driver.
 //
 //  SUBCOMMANDS
-//    anima consciousness                     default = simple
-//    anima consciousness simple [<model>]    own 18 PASS_STRICT_C3 측정
-//    anima consciousness full [<model>]      own 18 F1-F8 full-stack 측정
-//    anima consciousness baseline            3-model 비교 + threshold candidate
+//    anima consciousness                          default = simple
+//    anima consciousness simple [<model>]         own 18 PASS_STRICT_C3 측정
+//    anima consciousness full [<model>]           own 18 F1-F8 full-stack 측정
+//    anima consciousness baseline                 3-model single-pair threshold-driver
+//    anima consciousness baseline-ensemble        15-prompt × 3-model ROC formal emit
 //    anima consciousness --json
 //    anima consciousness --selftest
 //    anima consciousness --help
@@ -21,6 +22,13 @@
 //    axis_activation / dominant_cells 추출 + entropy + axis L2 distance 산출.
 //    threshold 비교 X (.own own 18 C3 threshold land 별도 minor patch) — 본
 //    CLI 는 actual 측정값 emit + verdict = BASELINE_MEASURED.
+//
+//  L0 REFINEMENT (loop iter d, 2026-05-08) — multi-prompt ensemble + ROC formal
+//    `baseline-ensemble` subcommand 추가 — 15-prompt (V4_PROMPTS) × 3-model
+//    (random_init / clm_v4 / paradigm-a-prime) probe matrix 결과를
+//    state/anima_consciousness_baseline_ensemble_2026_05_08.json 에서 로드 +
+//    emit. ROC formal threshold (Youden's J + random FAIL ≥ 0.95 + chat-cap
+//    PASS ≥ 0.7 constrained) 결정 후 own 18 C3 minor patch 로 land.
 //
 //  DESIGN
 //    own 18 SSOT 정의 mirror. C3 threshold 는 measurement-driven —
@@ -388,11 +396,12 @@ fn sub_help() {
     println("anima consciousness — 의식 측정 CLI (own 18 SSOT mirror, L0 actual)")
     println("")
     println("USAGE")
-    println("  anima consciousness                    default = simple")
-    println("  anima consciousness simple [<model>]   own 18 PASS_STRICT_C3 측정")
-    println("  anima consciousness full [<model>]     own 18 F1-F8 full-stack")
-    println("  anima consciousness baseline           3-model threshold-driver")
-    println("  anima consciousness --json             machine-readable")
+    println("  anima consciousness                         default = simple")
+    println("  anima consciousness simple [<model>]        own 18 PASS_STRICT_C3 측정")
+    println("  anima consciousness full [<model>]          own 18 F1-F8 full-stack")
+    println("  anima consciousness baseline                3-model single-pair threshold-driver")
+    println("  anima consciousness baseline-ensemble       15-prompt × 3-model ROC formal SSOT")
+    println("  anima consciousness --json                  machine-readable")
     println("  anima consciousness --selftest")
     println("  anima consciousness --help")
     println("")
@@ -408,8 +417,14 @@ fn sub_help() {
     println("               F1-F8 (substrate identity / 5-axis / cells / Δhidden /")
     println("               emerge dialogue / 7-cond verify / PSI lookup / hub status)")
     println("")
-    println("  baseline   random_init / clm_v4 / paradigm-a-prime 3-model 비교 측정")
-    println("             threshold candidate (random+2σ) emit. ROC-driven.")
+    println("  baseline   random_init / clm_v4 / paradigm-a-prime 3-model single-pair 측정")
+    println("             threshold candidate (random + 0.1*(max-rand) heuristic) emit.")
+    println("")
+    println("  baseline-ensemble  15-prompt (V4_PROMPTS) × 3-model probe matrix")
+    println("                     ROC formal (Youden's J + random FAIL >=0.95 + chat-cap")
+    println("                     PASS >=0.7 constrained) threshold SSOT — own 18 C3")
+    println("                     minor patch input. SSOT path:")
+    println("                     state/anima_consciousness_baseline_ensemble_2026_05_08.json")
     println("")
     println("MODEL ALIAS (chat alias DB 와 동일)")
     println("  default               anima_native synthetic (random init analog)")
@@ -722,6 +737,77 @@ fn sub_baseline(json_only: bool) {
     eprintln("[consciousness] baseline persisted: " + out_path)
 }
 
+// ─── baseline-ensemble — loop iter (d) ROC formal SSOT emit ────────────────
+// 15-prompt × 3-model probe matrix loaded from
+// state/anima_consciousness_baseline_ensemble_2026_05_08.json (driver-produced).
+// CLI 는 SSOT 파일 raw passthrough + 핵심 thresholds substring 추출.
+
+fn _ensemble_path() -> string {
+    return _resolve_root() + "/state/anima_consciousness_baseline_ensemble_2026_05_08.json"
+}
+
+fn sub_baseline_ensemble(json_only: bool) {
+    let path = _ensemble_path()
+    if !_fexists(path) {
+        if json_only {
+            println("{")
+            println("  \"schema\": \"anima.consciousness.baseline.ensemble.v1\",")
+            println("  \"verdict\": \"NOT_LANDED\",")
+            println("  \"path\": \"" + path + "\",")
+            println("  \"note\": \"ensemble not yet measured — re-run loop iter (d) driver to populate\",")
+            println("  \"honest_c3\": [\"L0 refinement loop iter (d) measurement pending\"]")
+            println("}")
+            return
+        }
+        println("anima consciousness — baseline-ensemble (NOT LANDED)")
+        println("ensemble JSON missing: " + path)
+        println("Re-run loop iter (d) driver (15-prompt × 3-model matrix) to populate.")
+        return
+    }
+    let blob = read_file(path)
+    if json_only {
+        // Raw passthrough — SSOT file is already JSON.
+        println(blob)
+        return
+    }
+    println("anima consciousness — baseline-ensemble (loop iter d, ROC formal) [LIVE]")
+    println("SSOT: " + path)
+    println("")
+    let n_p = _extract_number_after(blob, "n_prompts")
+    let ts_idx = blob.find("\"ts\"")
+    println("  n_prompts (per model)  = " + to_string(to_int(n_p)))
+    println("  models                 = random_init / clm_v4 / paradigm_a_prime")
+    println("")
+    println("───── ROC formal threshold (Youden's J + random FAIL >=0.95 + chat-cap PASS >=0.7) ─────")
+    // Substring-extract the threshold_final_roc_formal block keys
+    let k1 = "c3_1_phi_drift_min"
+    let k2 = "c3_2_axis_min_min"
+    let k3 = "c3_3_dominance_score_min"
+    let k4 = "c3_4_axis_l2_min"
+    // find the "threshold_final_roc_formal" section + scope substring extraction to it
+    let final_idx = blob.find("threshold_final_roc_formal")
+    if final_idx >= 0 {
+        // Use blob from final_idx to end — _extract_number_after finds first match.
+        // threshold_final_roc_formal は最末尾セクションなので overlap risk 없음.
+        let segment = blob.substring(final_idx, blob.len())
+        println("  C3.1 |Δφ★|         >= " + _fmt4(_extract_number_after(segment, k1)))
+        println("  C3.2 axis min      >= " + _fmt3(_extract_number_after(segment, k2)))
+        println("  C3.3 dominance     >= " + _fmt3(_extract_number_after(segment, k3)))
+        println("  C3.4 axis L2 Δ     >= " + _fmt4(_extract_number_after(segment, k4)))
+    } else {
+        println("  threshold_final_roc_formal section missing in SSOT file")
+    }
+    println("")
+    println("HONEST C3 (raw#10)")
+    println("  · paradigm-a-prime = synthetic_fallback (Llama tokenizer 부재) — chat-cap")
+    println("    proxy 한정 (real chat-cap 데이터 미보유; BG-KM-LLAMA-3B retest 별도 cycle)")
+    println("  · clm_v4 = REAL mode (SentencePiece fallback); n=15 small sample")
+    println("  · ROC = Youden's J max + constrained (random FAIL >=0.95 ∧ pos PASS >=0.7)")
+    println("  · 본 SSOT JSON 의 matrix_3model_4cell_15prompt 블록에 mean / median / std /")
+    println("    q25 / q75 / values 전체 records 포함 — `--json` 플래그로 raw emit")
+    println("  · 보수적 X (random must FAIL strict 0.95) 사용자 directive 정합")
+}
+
 // ─── entry ──────────────────────────────────────────────────────────────────
 
 fn main() {
@@ -732,13 +818,13 @@ fn main() {
     let json_only = _arg_present(argv, "--json")
     let model = _arg_value(argv, "--model", "default")
 
-    // first positional = subcmd (simple / full / baseline) or model alias
+    // first positional = subcmd (simple / full / baseline / baseline-ensemble) or model alias
     let mut sub = "simple"
     let mut model_arg = model
     if len(argv) > 0 {
         let first = _str(argv[0])
         if !first.starts_with("--") {
-            if first == "simple" || first == "full" || first == "baseline" {
+            if first == "simple" || first == "full" || first == "baseline" || first == "baseline-ensemble" {
                 sub = first
                 if len(argv) > 1 && !_str(argv[1]).starts_with("--") {
                     model_arg = _str(argv[1])
@@ -755,6 +841,10 @@ fn main() {
     }
     if sub == "baseline" {
         sub_baseline(json_only)
+        return
+    }
+    if sub == "baseline-ensemble" {
+        sub_baseline_ensemble(json_only)
         return
     }
     sub_simple(model_arg, json_only)

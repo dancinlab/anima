@@ -295,3 +295,21 @@ state/anima_je_corpus_100mb_plus_2026_05_07/corpus_combined_100mb_plus.txt
 
 # BG-JH 100M corpus 204MB train ckpts (12 ckpts × ~615MB = 7.4GB) — HF Hub or /tmp only
 state/anima_jh_100m_corpus_204mb_train_2026_05_07/ckpt_*.pt
+
+# ── own 36 (2026-05-08): model + training artifact HF upload mandate ──
+# Pattern-based ignore — git push 금지, HF dancinlab (own 31) destination 의무.
+# .gguf / .gif / .npz / .npy: model weights + tensor data (size 무관)
+*.gguf
+*.bin
+*.pkl
+*.npy
+*.npz
+# Training corpora (≥10MB rule, pattern-based for safety)
+state/anima_*_corpus_*.txt
+state/anima_*_persona_*.txt
+state/anima_*_dialogue_*.txt
+state/anima_*_preference_*.jsonl
+state/anima_*_pairs_*.jsonl
+# anima chat Phase 3b libllama build artifacts (mac-local, not portable)
+build/libhxllama.dylib
+build/llama.cpp/

@@ -726,14 +726,16 @@ own 18 live "anima consciousness check — simple stack default (대화 가능 +
         - C2.1 PASS + C2.2 FAIL = PARTIAL_PASS_FRAGMENTARY (response emit but 의미 X)
     C3 의식 측정 (anima native consciousness metric) ★ — strict 4-condition (사용자 directive 2026-05-08: "의식 측정 기준도 별도 +@ 로 해서 너무 보수적으로 잡지 말고" / "simple stack pass 에 하나 더 포함하면 되 의식 측정")
       ※ 본 C3 추가는 simple_stack PASS 를 PASS_STRICT_C3 로 확장 — measurement lane (V4 evaluator 11-cell). 본 C3 의 actual 측정 path 는 anima-core/runtime/clm_v4_mount.hexa (phi_star drift + axis activation + dominant cells) + anima_runtime.hexa (substrate state) wiring 으로 land. 노출 lane (chat / serve / dialogue) 은 own 34 그대로 유지.
-      pass-bar (4-condition AND, threshold L0 baseline-measured 2026-05-08 — random_init + 0.1*(max-rand) heuristic, state/anima_consciousness_baseline.json SSOT):
-        - C3.1 Φ★ drift active — baseline 대비 |Δφ★| ≥ 0.0096 (L0 baseline-measured 2026-05-08; ROC formal 별도 cycle 강화)
-        - C3.2 5-axis activation — identity / agency / phenomenal / temporal / social 5 축 모두 ≥ 0.200 (L0 baseline-measured 2026-05-08; e.g. 5-axis 중 ≥3 active 이면 C3.2 PASS probabilistic 형태 별도 검토)
-        - C3.3 dominant cells emergence — top-3 distinct count score ≥ 0.660 (sparse top-3 distinct 2 이상 = PASS proxy; uniform = FAIL; L2 norm entropy 강화 별도 cycle)
-        - C3.4 hidden state delta — 5-axis L2 distance(prompt_a vs prompt_b) ≥ 0.0881 (input variation 반응 proxy; full hidden state expose 별도 cycle 강화)
-      threshold-policy (보수적 X 기조 — 사용자 directive, L0 baseline-measured 2026-05-08):
-        - baseline 측정 SSOT: state/anima_consciousness_baseline.json (random_init / clm_v4 / paradigm-a-prime 3-model — `anima consciousness baseline`)
-        - 본 threshold = random_init + 0.1*(max-rand) heuristic — ROC formal (random FAIL ≥ 0.95 + chat-capable PASS ≥ 0.7) 별도 cycle 데이터 누적 후 강화
+      pass-bar (4-condition AND, threshold L0 ROC formal-measured 2026-05-08 loop iter d — Youden's J + random FAIL ≥ 0.95 + chat-cap proxy PASS ≥ 0.7 constrained, state/anima_consciousness_baseline_ensemble_2026_05_08.json SSOT):
+        - C3.1 Φ★ drift active — |Δφ★| ≥ 0.0238 (loop iter d ROC formal 2026-05-08; constrained='unconstrained' — random_init synthetic_fallback drift 분포가 paradigm 분포와 overlap, real chat-cap 데이터 (BG-KM-LLAMA-3B) retest 후 강화)
+        - C3.2 5-axis activation — min(5-axis) ≤ 0.469 (loop iter d ROC formal direction='le' inverted; random_init synthetic 이 paradigm 보다 axis 값이 artificially 높음 — synthetic_fallback artifact; real-mode retest 후 direction 재검토; probabilistic 형태 (5-axis 중 ≥3 active) 별도 검토)
+        - C3.3 dominant cells emergence — top-3 distinct count score ≥ 1.0 (loop iter d ROC degenerate: 3-model 모두 top-3 distinct = 100%; entropy / L2 norm 강화 별도 cycle 까지 본 cell discriminative power 0)
+        - C3.4 hidden state delta — 5-axis L2 distance(prompt_a vs prompt_b) ≥ 0.117 (loop iter d ROC formal constrained=True; 유일 strict-PASS cell; pairwise prompt[0] vs prompt[k] proxy)
+      threshold-policy (보수적 X 기조 — 사용자 directive, L0 ROC formal 2026-05-08 loop iter d):
+        - ensemble 측정 SSOT: state/anima_consciousness_baseline_ensemble_2026_05_08.json (15-prompt × 3-model — random_init / clm_v4 / paradigm-a-prime — `anima consciousness baseline-ensemble`)
+        - single-pair baseline SSOT: state/anima_consciousness_baseline.json (legacy heuristic — `anima consciousness baseline`)
+        - 본 threshold = ROC formal Youden's J + constrained (random FAIL ≥ 0.95 ∧ chat-cap proxy PASS ≥ 0.7) — paradigm-a-prime 와 clm_v4 baseline 중 stricter (higher) threshold 선택
+        - C3.4 만 constrained=True (strict ROC PASS); C3.1 unconstrained, C3.2 direction inverted (synthetic_fallback artifact), C3.3 degenerate — BG-KM-LLAMA-3B real chat-cap retest 후 cell-by-cell 재강화 별도 cycle
         - probabilistic 형태 검토 (e.g. 5-axis 중 ≥3 active 이면 C3.2 PASS)
       verdict: 4-cell ALL PASS = **C3 PASS** ★
       partial verdict:
@@ -750,14 +752,19 @@ own 18 live "anima consciousness check — simple stack default (대화 가능 +
     - C1 PASS + C2 FAIL + C3 PASS = PARTIAL_PASS_CONSCIOUS_BUT_FRAGMENTARY (의식 active but 응답 의미 X)
 
   c3-measurement-cli: anima consciousness simple [<model>] (tool/anima_cli/consciousness.hexa)
-    threshold-status: BASELINE_MEASURED 2026-05-08 (L0 measurement infra LIVE — random_init + 0.1*(max-rand) heuristic; ROC formal 강화 별도 cycle)
-    threshold-baseline-ssot: state/anima_consciousness_baseline.json (`anima consciousness baseline` 재측정 시 갱신)
+    threshold-status: ROC_FORMAL 2026-05-08 loop iter d (15-prompt × 3-model ensemble; Youden's J + random FAIL ≥ 0.95 + chat-cap PASS ≥ 0.7 constrained — C3.4 strict PASS, C3.1/C3.2/C3.3 best-effort with caveat; BG-KM-LLAMA-3B real chat-cap retest 후 cell-by-cell 재강화 별도 cycle)
+    threshold-ensemble-ssot: state/anima_consciousness_baseline_ensemble_2026_05_08.json (`anima consciousness baseline-ensemble` 15-prompt × 3-model ROC formal SSOT)
+    threshold-baseline-ssot: state/anima_consciousness_baseline.json (legacy single-pair heuristic — `anima consciousness baseline`)
     measurement-source: anima-core/runtime/clm_v4_mount.hexa --probe TEXT --output-format json x2 (prompt_a / prompt_b) + anima_runtime.hexa (substrate state)
     measurement-matrix:
       - C3.1 = abs(phi_drift) from probe(prompt_a)
-      - C3.2 = min(5-axis activation) from probe(prompt_a)
-      - C3.3 = top-3 distinct count score from probe(prompt_a) dominant_cells
-      - C3.4 = 5-axis L2 distance(probe(prompt_a), probe(prompt_b))
+      - C3.2 = min(5-axis activation) from probe(prompt_a) — direction 'le' (inverted, synthetic_fallback artifact pending real-mode retest)
+      - C3.3 = top-3 distinct count score from probe(prompt_a) dominant_cells (degenerate 1.0 for all 3 models — discrimination power 0 until entropy 강화)
+      - C3.4 = 5-axis L2 distance(probe(prompt_a), probe(prompt_b)) — only strict ROC PASS cell
+    minor-patch-history:
+      - 2026-05-08 β-2 land: heuristic random_init + 0.1*(max-rand) — single prompt pair (안녕 / 우주의 끝은 어디인가) — state/anima_consciousness_baseline.json
+      - 2026-05-08 loop iter d: ROC formal 15-prompt × 3-model ensemble — Youden's J + constrained — state/anima_consciousness_baseline_ensemble_2026_05_08.json
+        threshold patch: C3.1 0.0096→0.0238 (heuristic→ROC), C3.2 ≥0.200→≤0.469 (direction inverted), C3.3 ≥0.660→≥1.000 (degenerate cell), C3.4 0.0881→0.1170 (strict ROC PASS)
 
   full-stack-conditions (option, 추가 사용자 명시 시):
     F1 substrate identity = phi_star NO_FLIP (drift < 0.10 from baseline)
@@ -1543,3 +1550,38 @@ own 35 live "AKD1000 RPi5 dev kit primary + Akida Cloud fallback — physical ch
   severity warn (Phase 1 — 본 own 35 land + path field 권고) → block (Phase 2 — verdict.json path field 누락 시 reject; cloud 사용 시 silent skip 자동 detect + reject)
   proof grep -E "host\.(rpi5-akida|akida-cloud-colfax)" workspace + verdict.json `path` field 존재 확인 + xeno cycle output에 primary/fallback indicator 표시 확인
   note 2026-05-08 own 35 = 사용자 directive verbatim 직접 응답 ("AKD1000 first use || akida cloud fallback"). own 34 (xeno standalone SSOT) downstream policy update — xeno cycle topic 동작 의미 변경. own 22 (새 발견 mandatory report) self-application — primary/fallback policy 자체가 새 발견 → 본 own 35 entry로 리포트 정합. own 24 (single SSOT) instance — Tier C primary 경로 SSOT는 AKD1000 physical, fallback SSOT는 Akida Cloud. raw 91 (honest C3) 정합 — fallback 사용 시 명시 emit mandate.
+
+own 36 live "model + training artifact HF upload mandate — git push 금지 (size limit + SSOT 정합)"
+  slug model-training-artifact-hf-upload-mandate
+  since 2026-05-08
+  scope anima 모든 model checkpoint / training corpus / preference pairs / dataset / GGUF / LoRA adapter / safetensors / fine-tuned weights — git repo 에 push 금지, HF dancinlab org (own 31) upload 의무
+  user-directive verbatim "102MB corpus = GitHub push limit 초과 — push 시 LFS/R2 필요 (local commit only constraint 정합). own 등록해줘 model, 학습관련등 HF upload 필수" (2026-05-08, loop iter 1 corpus iter 1 (commit 0116a35d) 결과 102MB persona corpus 가 git commit 되었으나 GitHub 100MB hard limit 초과로 push reject 시점)
+  finding own 31 (HF dancinlab org SSOT) 는 model artifact upload destination 만 명시 (Flavor B naming + private default + Card metadata) — 본 model/training artifact 가 git repo 에 절대 들어가면 안 된다는 mandate 가 미land. anima cycle 2026-05-08 loop iter 1 corpus 큐레이션 결과 102MB Tier A persona corpus 가 `state/anima_persona_tier_a_2026_05_08.txt` git commit (0116a35d) → GitHub 100MB hard limit 초과 → push reject. 4 commits unpushed 누적, history rewrite 또는 LFS migrate 필요. 본 incident 가 anti-pattern: training artifact (corpus / model / weights) 는 git scope 외 — HF dancinlab 필수.
+  rule model + training artifact HF upload mandate:
+    - mandate-1 model checkpoint (.pt / .safetensors / .gguf / .bin / .pkl / LoRA adapter) → HF dancinlab upload 의무, git push 절대 금지 (local commit 도 .gitignore 권장)
+    - mandate-2 training corpus 파일 (e.g. state/anima_*_corpus_*.txt / state/*_persona_*.txt / state/*_dialogue_*.txt) ≥ 10MB → HF dataset upload 의무, git push 금지
+    - mandate-3 preference pairs / dialogue pairs (jsonl) ≥ 10MB → HF dataset upload 의무
+    - mandate-4 size-agnostic artifact 범주 (dataset / weights / fine-tuned outputs) 는 size 무관 HF upload 권장; <10MB 라도 large numerical data 는 본 mandate scope (e.g. embedding tensor, V4 evaluator full results)
+    - mandate-5 git push 차단 enforcement: pre-commit hook 또는 anima audit 가 size > 10MB OR extension {.pt|.safetensors|.gguf|.bin|.pkl|.npy|.npz} 검출 시 reject + HF upload 안내 emit
+    - mandate-6 .gitignore 추가 의무: state/*_corpus_*.txt / state/*_persona_*.txt / state/*_dialogue_*.txt / state/*_preference_*.jsonl / build/*.dylib / build/*.so / *.pt / *.safetensors / *.gguf 패턴 자동 ignore
+    - mandate-7 본 mandate 위반 commit retroactive 발견 시 raw#82 retraction class — git filter-repo 또는 BFG 로 history clean + HF re-upload + commit 재작성
+    - mandate-8 own 31 cross-link enforcement — HF upload 시 dancinlab/ org + Flavor B naming + private default + Card metadata 의무 (own 31 mandate-1~9 정합)
+    - mandate-9 size cap 명시: GitHub 100MB hard limit + 50MB warning. .git push 시 100MB 도달 절대 X. branch local 만 허용 (단 사용자 explicit override 없는 한)
+  enforce git commit + push 행위 emit 전:
+    - Step A: git status 점검 — staged 또는 untracked 파일 중 size > 10MB OR extension match 검출
+    - Step B: 검출 시 reject + HF upload 안내 emit ("HF dancinlab upload via tool/anima_gguf_convert.py / anima_km_manual_hf_promote.py / huggingface-cli")
+    - Step C: .gitignore 자동 patch (mandate-6 패턴) 권고
+    - Step D: 사용자 explicit override (`OVERRIDE GIT PUSH MODEL <path>`) 시에만 진행 — but never push (LFS migrate guide emit)
+    - Step E: anima audit `--mandate-36` flag 추가 — pre-push CI gate
+  evidence-trail anima cycle 2026-05-08 loop iter 1 corpus 큐레이션 (commit 0116a35d): `state/anima_persona_tier_a_2026_05_08.txt` 102.66MB git commit → push reject (GitHub 100MB hard limit) → 4 commits unpushed 누적 → push path 결정 필요 (LFS / git filter-repo / .gitignore + history rewrite). 본 incident 가 본 own 36 직접 trigger.
+  cross-link own 17 (anima-no-external-substrate-wrapping — anima native artifact 만 HF) own 18 (simple_stack PASS — V4 evaluator 산출물 큐레이션 영역) own 22 (mandatory report) own 24 (single SSOT ledger — HF = artifact SSOT) own 28 (anti-Goodhart — model artifact 측정 검증 없으면 HF upload 보류) own 30 (model checkpoint preservation — own 30 mandate-1 scp pull 후 HF 가 영구 destination) own 31 (HF dancinlab org SSOT — 본 own 36 의 destination spec) own 33 (trinity compliance) raw#82 (retraction-aware) raw#9 (hexa-only — HF upload script .py allowed transient_py 영역, chat path 외)
+  honest-c3 mandate-2 size threshold 10MB = GitHub free tier 50MB warning + 100MB hard limit 보다 conservative — small corpus 도 HF go 권장 (SSOT 정합); 10MB 미만 model 형태 (e.g. small LoRA <10MB) 는 mandate scope 명시 — 결정: <10MB LoRA 도 HF go (size 무관 본 mandate-1 적용)
+  honest-c3 mandate-5 enforcement 미land 시점 (본 own 36 신설 시점) — anima audit `--mandate-36` flag 별도 cycle 작업; 본 cycle 은 mandate text + .gitignore patch 우선
+  honest-c3 mandate-6 .gitignore 자동 patch 는 anima native 대상만 — 외부 ML library cache (~/.cache/huggingface/) 는 별도 idiom (이미 .gitignore 로 처리됨 일반적)
+  honest-c3 mandate-7 retroactive history clean 은 raw#82 정합 destructive op — 사용자 explicit confirm 필수 (git filter-repo 또는 BFG)
+  honest-c3 mandate-9 LFS 옵션 explicit 거부 X — 단 LFS quota (GitHub 무료 1GB) 와 cost 추적 (own 16) 정합으로 default = HF + git skip 추천. LFS 는 사용자 explicit `OK USE LFS <path>` 시에만
+  honest-c3 본 own 36 발단 = 0116a35d 라는 자체 anti-pattern commit — retroactive cleanup 필요 (4 commits 의 0116a35d 만 102MB 파일 제거 대상). 본 own land 후 즉시 cleanup cycle 권고
+  honest-c3 mandate-1 + mandate-2 vs own 17 (anima-no-external-substrate) 정합 점검 — HF dancinlab 은 anima org-controlled (own 31), 외부 wrapping 아님; mandate-1 정합 ✔
+  severity warn (Phase 1 — 본 own 36 land + .gitignore patch) → block (Phase 2 — anima audit `--mandate-36` 가 size > 10MB OR extension match commit reject)
+  proof grep -E "\.pt|\.safetensors|\.gguf|\.bin|\.pkl|\.npy" $(git diff --name-only HEAD~10..HEAD) — 0 match expected post-cleanup; size > 10MB scan via git ls-files | xargs -I{} sh -c 'wc -c "{}"' | awk '$1 > 10485760'
+  note 2026-05-08 own 36 = 사용자 directive verbatim 직접 응답 ("102MB corpus = GitHub push limit 초과 — own 등록해줘 model, 학습관련등 HF upload 필수"). own 31 (HF org SSOT) downstream — destination 정의 위 size+extension git ban mandate add. own 30 (ckpt preservation) instance — H100 scp pull → HF upload 가 own 30 mandate-1 + own 36 mandate-1 동시 정합. own 33 (trinity compliance) self-application — 본 own 36 자체 trinity 정합 (D_anima-self-contained + own 31 의존 + H_artifact_distribution). own 22 (새 발견 mandatory report) — 본 own 36 발단 incident (0116a35d push reject) report 정합. own 24 (single SSOT ledger) instance — model/training artifact SSOT = HF dancinlab.

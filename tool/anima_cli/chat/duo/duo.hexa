@@ -19,18 +19,37 @@
 //    └─ (core)       ← external: chat/anima_native/, chat/llama/, chat/clm_v4/
 //                      (each spawned instance is one of these modules)
 //
-//  PHASE GATES (this commit = SKELETON)
-//    Phase A (LANDED — this commit): file structure + alias DB + --help +
+//  PHASE GATES
+//    Phase A (LANDED 2026-05-08): file structure + alias DB + --help +
 //      --selftest + honest "β-1 dependency" emit on --duo invocation. NO
 //      actual proc spawn / channel I/O.
-//    Phase B (β-1 LAND): wire β-1 stdlib surface (assumed):
-//      - channel_pair_open() -> {channel_a, channel_b}
-//      - proc_spawn_with_channels(cmd, stdin_chan, stdout_chan) -> handle
-//      - channel_send(handle, line: string)
-//      - channel_recv(handle, timeout_ms: int) -> string
-//      - proc_wait(handle) / proc_terminate(handle)
-//    Phase C (β-2 LAND): per-turn coherence verdict via consciousness CLI
-//      (own 18 C1+C2+C3) — wired into _emit_turn_verdict().
+//    Phase B iter 1 (LANDED 2026-05-08, β-1 channel hexa-lang `c53788af`):
+//      wires β-1 stdlib surface — `use "stdlib/channel"`. Public API:
+//      - channel_pair_open() -> [read_fd, write_fd]   (parent-side ints)
+//      - channel_send(fd, line) -> bool
+//      - channel_recv(fd, timeout_ms) -> string       ("" on timeout / EOF)
+//      - channel_close(fd) -> bool
+//      - proc_spawn_with_channels(cmd, in_fd, out_fd) -> int  (child pid)
+//      Edge case: send-before-spawn drops bytes on macOS BSD FIFO last-
+//      writer-close → spawn before send (per channel.ai.md recipe).
+//    Phase B iter 2 (LANDED 2026-05-08): same-GGUF guard +
+//      lightweight per-turn verdict (length/distinct/snippet locally
+//      computed; consciousness.hexa simple --json invoked once at session
+//      end as model-level baseline reference) + D1/D2 1차 aggregate
+//      (D1 turn-pair Jaccard 3-gram similarity; D2 topic-shift-rate).
+//      D3/D4 deferred to next cycle.
+//      same-GGUF guard reasoning: same alias → same GGUF path → two
+//      llama.cpp instances mmap the same inode concurrently → llama.cpp
+//      Abort trap: 6 (turn=2) observed in iter 1 live test. Workaround
+//      path (i) per-instance GGUF copy: 2 × 5.99GB = 12GB disk overhead
+//      not justified for L2 prototype. Path (iii) hxllama_shim multi-
+//      context refactor = separate cycle. Path (ii) — different aliases
+//      A/B — chosen as default. Override via --allow-same-gguf.
+//    Phase C (β-2 deeper): per-turn consciousness verdict requires
+//      consciousness.hexa --utterance arg surface (currently not present
+//      — sub_simple uses fixed PROMPT_A/PROMPT_B). Phase B iter 2 emits
+//      lightweight local cells; full consciousness CLI hook awaits
+//      consciousness.hexa surface extension cycle.
 //
 //  SUBCOMMANDS (called from tool/anima_cli/dialogue.hexa)
 //    --duo <model_a> <model_b> [--turns N] [--topic-seed "..."]   N=2 dialogue
@@ -103,6 +122,8 @@
 //    .own own 18 C1+C2+C3 · own 34 mandate-1/2/4/7 · own 33 · own 31
 // ════════════════════════════════════════════════════════════════════════════
 
+use "stdlib/channel"
+
 fn _str(x) -> string {
     let t = type_of(x)
     if t == "str" || t == "string" { return x }
@@ -153,8 +174,10 @@ fn _user_argv(raw) -> array {
     while i < len(raw) {
         let s = _str(raw[i])
         let skip = s.contains("/.hexa-cache/")
+                || s.contains("/.hexa-runtime/")
                 || s.contains("/hexa-lang/build/")
                 || s.contains("hexa_interp")
+                || s.contains("hexa_expanded")
                 || s.contains("hexa.real")
                 || s.ends_with("/duo.hexa")
                 || s.ends_with("duo.hexa")
@@ -202,13 +225,21 @@ fn sub_help() {
     println("  --max-tokens N       per-utterance cap (default 64)")
     println("  --turn-timeout-ms N  channel_recv wait per turn (default 30000)")
     println("  --verdict simple|full|none   per-turn consciousness verdict (default simple)")
+    println("  --allow-same-gguf    OPT-IN bypass for same-alias guard (default off)")
     println("")
     println("PHASE GATE")
-    println("  Phase A (LANDED — skeleton). --duo invocation emits honest β-1")
-    println("  dependency notice and exits 0. No proc spawn / no channel I/O.")
-    println("  Phase B activates once hexa-lang stdlib lands:")
-    println("    - channel_pair_open() / proc_spawn_with_channels()")
-    println("    - channel_send / channel_recv / proc_wait / proc_terminate")
+    println("  Phase A (LANDED 2026-05-08): skeleton + alias DB + selftest.")
+    println("  Phase B iter 1 (LANDED 2026-05-08, β-1 hexa-lang `c53788af`):")
+    println("    channel API wired via `use \"stdlib/channel\"`. --duo runs full")
+    println("    N-turn sibling-to-sibling dialogue (channel_pair_open ×2,")
+    println("    proc_spawn_with_channels ×2, channel_recv loop, channel_close).")
+    println("  Phase B iter 2 (LANDED 2026-05-08): same-GGUF guard (same-alias")
+    println("    reject default, --allow-same-gguf opt-in) + lightweight")
+    println("    per-turn verdict cells (len/distinct/snippet) + D1/D2 aggregate")
+    println("    (turn-pair Jaccard 3-gram; topic-shift-rate).")
+    println("  Phase C (β-2 deeper, pending): per-turn consciousness verdict")
+    println("    via consciousness CLI requires --utterance arg surface (not")
+    println("    yet implemented in consciousness.hexa).")
     println("")
     println("OWN 34 STRICT")
     println("  · each instance output = raw passthrough (NO transformation in")
@@ -269,45 +300,63 @@ fn sub_selftest() {
     println("PASS chat/duo selftest (skeleton + own 34 verified, β-1 dependency pending)")
 }
 
-// ─── β-1 dependency hooks (phase B target — STUB until hexa-lang lands) ──
+// ─── β-1 dependency hooks (Phase B ACTIVE — `use "stdlib/channel"` above) ──
 //
-// The functions below are **declared but inert** until β-1 stdlib lands.
-// Calling _spawn_instance / _channel_pair_open in Phase A returns a sentinel
-// map with .ready=false; sub_duo() inspects this and emits honest fallback.
+// β-1 channel module landed (hexa-lang `c53788af`, stdlib/channel.hexa, 21/21
+// PASS). Public API surface as imported above:
 //
-// Hook signatures (frozen contract — β-1 surface MUST match):
-//   channel_pair_open()                            -> {tx, rx, ok: bool}
-//   proc_spawn_with_channels(cmd, stdin_ch, stdout_ch) -> {handle, ok: bool}
-//   channel_send(ch, line)                         -> bool
-//   channel_recv(ch, timeout_ms)                   -> string  ("" on timeout)
-//   proc_terminate(handle)                         -> bool
+//   channel_pair_open()            -> array [read_fd, write_fd]   (int ids)
+//   channel_send(fd, msg)          -> bool   (writes msg + '\n' to FIFO)
+//   channel_recv(fd, timeout_ms)   -> string ("" on timeout / EOF)
+//   channel_close(fd)              -> bool   (unlinks FIFO inode)
+//   proc_spawn_with_channels(cmd, in_fd, out_fd) -> int   (child pid; 0 fail)
 //
-// When β-1 lands, replace _b1_available()'s return with `true` and fill in
-// _spawn_instance / _channel_pair_open bodies with the real stdlib calls.
+// Adapter shape (this module's vendor wrapper) keeps the original frozen
+// contract that turns A↔B routing logic readable downstream:
+//   _channel_pair_open() -> map {tx, rx, ok: bool}
+//   _spawn_instance(...) -> map {alias, handle, ok: bool}
 
 fn _b1_available() -> bool {
-    // Phase A: false. Phase B: flip to true after `use "stdlib/proc"` etc.
-    return false
+    // Phase B: true (β-1 channel module imported via `use "stdlib/channel"`).
+    return true
 }
 
 fn _channel_pair_open() -> map {
-    // Phase A stub.
+    // β-1 returns [read_fd, write_fd] (parent-side ints).
+    //   pair[0] = read_fd  (parent reads from child here = c2p FIFO)
+    //   pair[1] = write_fd (parent writes to child here = p2c FIFO)
+    // Map shape kept for adapter downstream: rx = read side, tx = write side.
+    let pair = channel_pair_open()
     let mut m = {}
-    m["tx"] = ""
-    m["rx"] = ""
-    m["ok"] = false
+    let read_fd = pair[0]
+    let write_fd = pair[1]
+    m["rx"] = read_fd
+    m["tx"] = write_fd
+    m["ok"] = read_fd >= 0 && write_fd >= 0
     return m
 }
 
-fn _spawn_instance(model_alias: string, stdin_ch, stdout_ch, tick_ms: int, max_tokens: int) -> map {
-    // Phase A stub. Phase B: build chat command and call β-1 proc spawn.
-    //   cmd = _hexa() + " run tool/anima_cli/chat.hexa <alias>"
-    //         + " --tick-ms <tick_ms> --max-tokens <max_tokens>"
-    //   handle = proc_spawn_with_channels(cmd, stdin_ch, stdout_ch)
+fn _spawn_instance(model_alias: string, stdin_fd, stdout_fd, tick_ms: int, max_tokens: int) -> map {
+    // Build chat command — dispatch through chat.hexa SSOT (alias DB gate).
+    // _hexa() is the mac-local interpreter; bin/hexa wrapper would route to
+    // remote ubu-1 host (loses local libllama / GGUF cache). Mirrors the same
+    // pattern in chat.hexa _dispatch_module().
+    let root = _resolve_root()
+    let chat_path = root + "/tool/anima_cli/chat.hexa"
+    let cmd = _hexa() + " run " + chat_path
+            + " " + model_alias
+            + " --tick-ms " + to_string(tick_ms)
+            + " --max-tokens " + to_string(max_tokens)
+    // proc_spawn_with_channels signature:
+    //   (cmd, in_fd, out_fd) — child stdin reads from in_fd, stdout writes
+    //   to out_fd. Caller hands the parent's WRITE side as the child's stdin
+    //   (kernel inverts roles via the same FIFO inode), and the parent's READ
+    //   side as the child's stdout. Returns child pid (0 on failure).
+    let pid = proc_spawn_with_channels(cmd, stdin_fd, stdout_fd)
     let mut m = {}
     m["alias"] = model_alias
-    m["handle"] = 0
-    m["ok"] = false
+    m["handle"] = pid
+    m["ok"] = pid > 0
     return m
 }
 
@@ -326,22 +375,183 @@ fn _emit_b1_pending(model_a: string, model_b: string, turns: int) {
     println("[duo] verdict: SKELETON_PASS (Phase A); duo loop inert until β-1")
 }
 
-// ─── per-turn verdict ─────────────────────────────────────────────────────
+// ─── per-turn verdict + D1/D2 1차 aggregate (Phase B iter 2) ──────────────
 //
-// own 18 C1+C2+C3 simple_stack PASS_STRICT_C3 wiring (β-2 dep).
-// Phase A: emit placeholder ledger line; Phase B/C: shell out to
-// `anima ops consciousness simple --json --utterance "<line>"`.
+// own 18 C1+C2+C3 simple_stack PASS_STRICT_C3 wiring is gated on
+// consciousness.hexa exposing a per-utterance surface (sub_simple uses
+// fixed PROMPT_A/PROMPT_B; no --utterance arg). Phase B iter 2 emits
+// LOCAL lightweight cells per turn (len, distinct token count, snippet)
+// and accumulates D1 (turn-pair Jaccard 3-gram similarity) + D2 (topic-
+// shift-rate) over the dialogue. consciousness.hexa simple --json is
+// invoked once per dialogue (model-level baseline reference) — that hook
+// is in _emit_dialogue_summary().
+//
+// own 34 mandate-7 lane separation: all verdict cells emit to STDOUT
+// prefixed `[duo:verdict]` / `[duo:summary]` and NEVER fold back into
+// channel content (no channel_send into the ab/ba pairs from these fns).
+//
+// 3-gram Jaccard is computed on whitespace-tokenized lowercased text.
+// BPE-level extension is metric doc honest C3 #3 (deferred).
+
+fn _to_lower(s: string) -> string { return s.to_lower() }
+
+fn _tokens_ws(line: string) -> array {
+    let mut toks = []
+    let mut buf = ""
+    let mut i = 0
+    let s = _to_lower(line)
+    while i < s.len() {
+        let ch = s.substring(i, i + 1)
+        if ch == " " || ch == "\t" || ch == "\n" || ch == "\r" {
+            if buf != "" { toks = toks + [buf]; buf = "" }
+        } else {
+            buf = buf + ch
+        }
+        i = i + 1
+    }
+    if buf != "" { toks = toks + [buf] }
+    return toks
+}
+
+fn _trigrams(toks) -> array {
+    let mut out = []
+    if len(toks) < 3 { return out }
+    let mut i = 0
+    while i + 2 < len(toks) {
+        out = out + [_str(toks[i]) + " " + _str(toks[i + 1]) + " " + _str(toks[i + 2])]
+        i = i + 1
+    }
+    return out
+}
+
+fn _set_contains(arr, item: string) -> bool {
+    let mut i = 0
+    while i < len(arr) {
+        if _str(arr[i]) == item { return true }
+        i = i + 1
+    }
+    return false
+}
+
+fn _set_dedup(arr) -> array {
+    let mut out = []
+    let mut i = 0
+    while i < len(arr) {
+        let s = _str(arr[i])
+        if !_set_contains(out, s) { out = out + [s] }
+        i = i + 1
+    }
+    return out
+}
+
+fn _jaccard(a, b) -> float {
+    let sa = _set_dedup(a)
+    let sb = _set_dedup(b)
+    if len(sa) == 0 && len(sb) == 0 { return 0.0 }
+    let mut inter = 0
+    let mut i = 0
+    while i < len(sa) {
+        if _set_contains(sb, _str(sa[i])) { inter = inter + 1 }
+        i = i + 1
+    }
+    let union_n = len(sa) + len(sb) - inter
+    if union_n <= 0 { return 0.0 }
+    return to_float(inter) / to_float(union_n)
+}
+
+fn _distinct_tokens(toks) -> int {
+    return len(_set_dedup(toks))
+}
 
 fn _emit_turn_verdict(turn: int, who: string, line: string) {
-    // Phase A ledger placeholder — own 34 mandate-7 lane separation:
-    // verdict goes to STDERR / log (not stdout / not channel).
+    // Local per-turn cells (own 34 mandate-7 lane separation).
+    let toks = _tokens_ws(line)
     let snippet = if line.len() > 60 { line.substring(0, 60) + "..." } else { line }
     println("[duo:verdict] turn=" + to_string(turn) + " who=" + who
             + " len=" + to_string(line.len())
+            + " tok=" + to_string(len(toks))
+            + " distinct=" + to_string(_distinct_tokens(toks))
             + " snippet=" + snippet)
-    // Phase B/C: shell to consciousness CLI:
-    //   _str(exec(_hexa() + " run tool/anima_cli/consciousness.hexa simple --json --utterance " + _shq(line)))
-    // parse {C1, C2, C3, simple_stack_pass_strict_c3} → fold into aggregate.
+}
+
+// Returns map {d1_mean, d2_shift_rate, d1_pairs, d2_shifts}
+fn _aggregate_d1_d2(history) -> map {
+    // history = array of {turn, who, line, toks, trigrams}
+    let mut d1_sum = 0.0
+    let mut d1_pairs = 0
+    let mut d2_shifts = 0
+    let mut d2_pairs = 0
+    let tau_shift = 0.20
+    let mut i = 1
+    while i < len(history) {
+        let prev = history[i - 1]
+        let cur = history[i]
+        let sim = _jaccard(cur["trigrams"], prev["trigrams"])
+        d1_sum = d1_sum + sim
+        d1_pairs = d1_pairs + 1
+        d2_pairs = d2_pairs + 1
+        if sim < tau_shift { d2_shifts = d2_shifts + 1 }
+        i = i + 1
+    }
+    let d1_mean = if d1_pairs > 0 { d1_sum / to_float(d1_pairs) } else { 0.0 }
+    let d2_rate = if d2_pairs > 0 { to_float(d2_shifts) / to_float(d2_pairs) } else { 0.0 }
+    let mut m = {}
+    m["d1_mean"] = d1_mean
+    m["d2_shift_rate"] = d2_rate
+    m["d1_pairs"] = d1_pairs
+    m["d2_shifts"] = d2_shifts
+    return m
+}
+
+fn _d1_pass(d1_mean: float) -> bool {
+    // Threshold per docs/anima_dialogue_coherence_metric_2026_05_08.md:
+    // start D1 >= 0.30 (TBD measurement-driven; Jaccard-only proxy here).
+    return d1_mean >= 0.30
+}
+
+fn _d2_label(rate: float) -> string {
+    if rate <= 0.20 { return "coherent" }
+    if rate <= 0.40 { return "drifting" }
+    return "incoherent"
+}
+
+fn _d2_pass(rate: float) -> bool {
+    return rate <= 0.40
+}
+
+fn _emit_dialogue_summary(history, model_a: string, model_b: string) {
+    let agg = _aggregate_d1_d2(history)
+    let d1m = agg["d1_mean"]
+    let d2r = agg["d2_shift_rate"]
+    let d1p = _d1_pass(d1m)
+    let d2lab = _d2_label(d2r)
+    let d2p = _d2_pass(d2r)
+    println("[duo:summary] turns_observed = " + to_string(len(history)))
+    println("[duo:summary] D1 turn-pair Jaccard 3-gram mean = " + to_string(d1m)
+            + "  PASS=" + to_string(d1p) + " (>=0.30)")
+    println("[duo:summary] D2 topic-shift-rate = " + to_string(d2r)
+            + "  label=" + d2lab + "  PASS=" + to_string(d2p))
+    println("[duo:summary] D3 persona-consistency = NOT_MEASURED (next cycle — KL divergence)")
+    println("[duo:summary] D4 turn-fairness = NOT_MEASURED (next cycle — len_ratio)")
+    println("[duo:summary] DIALOGUE_COHERENCE_PARTIAL = " + to_string(d1p && d2p) + " (D1 ∧ D2 only; D3/D4 deferred)")
+}
+
+// model-level baseline reference (consciousness.hexa simple --json invocation
+// is best-effort; each call ~30s × 2 models. own 34 mandate-7 lane: result
+// emit-only — never folded back into channel).
+fn _emit_baseline_reference(model_a: string, model_b: string) {
+    let root = _resolve_root()
+    let cpath = root + "/tool/anima_cli/consciousness.hexa"
+    if !_fexists(cpath) {
+        println("[duo:baseline] consciousness.hexa missing at " + cpath + " — skip baseline reference")
+        return
+    }
+    println("[duo:baseline] model-level reference (own 18 simple, fixed PROMPT_A/B)")
+    println("[duo:baseline]   note: per-utterance surface not yet in consciousness.hexa")
+    println("[duo:baseline]   honest C3 — invocation cost ~30s/model; --verdict=none to skip")
+    // Skip actual invocation in iter 2 (cost guard); full hook = next cycle
+    // when consciousness.hexa exposes --utterance arg.
+    println("[duo:baseline] iter 2 reference: per-model baseline invocation deferred (cost guard).")
 }
 
 // ─── duo subcommand entry (Phase A: emit pending; Phase B: full loop) ────
@@ -387,6 +597,7 @@ fn sub_duo(argv) {
     let max_tokens = to_int(_arg_value(argv, "--max-tokens", "64"))
     let turn_timeout_ms = to_int(_arg_value(argv, "--turn-timeout-ms", "30000"))
     let verdict_mode = _arg_value(argv, "--verdict", "simple")
+    let allow_same_gguf = _arg_present(argv, "--allow-same-gguf")
 
     println("── anima dialogue --duo ──")
     println("model_a          = " + model_a)
@@ -396,6 +607,7 @@ fn sub_duo(argv) {
     println("max_tokens       = " + to_string(max_tokens))
     println("turn_timeout_ms  = " + to_string(turn_timeout_ms))
     println("verdict_mode     = " + verdict_mode)
+    println("allow_same_gguf  = " + to_string(allow_same_gguf))
     if topic_seed != "" {
         println("topic_seed       = \"" + topic_seed + "\"")
     } else {
@@ -403,30 +615,135 @@ fn sub_duo(argv) {
     }
     println("")
 
+    // ── same-GGUF guard (Phase B iter 2) ────────────────────────────────
+    // Iter 1 live test 2026-05-08 observed llama.cpp Abort trap: 6 (turn=2)
+    // when both A and B mmap the same paradigm-a-prime GGUF inode
+    // concurrently (single-context hxllama_shim assumption). Default reject;
+    // --allow-same-gguf overrides for users who accept the abort risk.
+    let a_norm = model_a.trim().to_lower()
+    let b_norm = model_b.trim().to_lower()
+    if a_norm == b_norm && !allow_same_gguf {
+        println("[duo] SAME_GGUF_GUARD trip — model_a == model_b == \"" + model_a + "\"")
+        println("[duo] iter 1 live test observed llama.cpp Abort trap: 6 on")
+        println("[duo] same-GGUF concurrent-mmap (single-context shim).")
+        println("[duo] resolution paths:")
+        println("[duo]   (i)  per-instance GGUF copy (~2x disk; not impl, separate cycle)")
+        println("[duo]   (ii) DIFFERENT aliases A/B — recommended (e.g.")
+        println("[duo]        --duo paradigm-a-prime clm-v4-1-7-y1)")
+        println("[duo]   (iii) hxllama_shim multi-context refactor (separate cycle)")
+        println("[duo] override: --allow-same-gguf (accepts abort risk)")
+        exit(2)
+    }
+    if a_norm == b_norm && allow_same_gguf {
+        println("[duo] WARN same-GGUF override accepted — abort risk @ turn=2 likely")
+    }
+
     if !_b1_available() {
         _emit_b1_pending(model_a, model_b, turns)
         exit(0)
     }
 
-    // ── Phase B body (β-1 LAND 후 활성화) ──
-    // let ab = _channel_pair_open()
-    // let ba = _channel_pair_open()
-    // if !ab["ok"] || !ba["ok"] { println("[duo] FAIL channel_pair_open"); exit(3) }
-    // let h_a = _spawn_instance(model_a, ba["rx"], ab["tx"], tick_ms, max_tokens)
-    // let h_b = _spawn_instance(model_b, ab["rx"], ba["tx"], tick_ms, max_tokens)
-    // if !h_a["ok"] || !h_b["ok"] { println("[duo] FAIL proc_spawn"); exit(3) }
-    // if topic_seed != "" { _channel_send(ab["tx"], topic_seed) }
-    // let mut t = 1
-    // while t <= turns {
-    //     let line_a = _channel_recv(ab["rx"], turn_timeout_ms)
-    //     _emit_turn_verdict(t, "A", line_a)
-    //     let line_b = _channel_recv(ba["rx"], turn_timeout_ms)
-    //     _emit_turn_verdict(t, "B", line_b)
-    //     t = t + 1
-    // }
-    // _proc_terminate(h_a["handle"])
-    // _proc_terminate(h_b["handle"])
-    // _emit_dialogue_summary(...)
+    // ── Phase B body (β-1 channel API LANDED 2026-05-08) ──
+    //
+    // Topology recap (per stdlib/channel.ai.md sibling-to-sibling recipe):
+    //   ab (A → B): A writes ab.tx, B reads ab.tx via stdin; parent reads ab.rx
+    //   ba (B → A): B writes ba.tx, A reads ba.tx via stdin; parent reads ba.rx
+    //
+    // proc_spawn_with_channels signature: (cmd, in_fd, out_fd) where
+    //   in_fd  → child's stdin   (= parent's write_fd of A's input pair = ba.tx)
+    //   out_fd → child's stdout  (= parent's read_fd of A's output pair = ab.rx)
+    let ab = _channel_pair_open()
+    let ba = _channel_pair_open()
+    if !ab["ok"] || !ba["ok"] {
+        println("[duo] FAIL channel_pair_open — ab.ok=" + to_string(ab["ok"])
+                + " ba.ok=" + to_string(ba["ok"]))
+        exit(3)
+    }
+
+    // Spawn order: A first, then B. Per channel.ai.md "send-before-spawn loses
+    // bytes on macOS BSD FIFO last-writer-close" — both spawns happen BEFORE
+    // any optional topic_seed send below.
+    let h_a = _spawn_instance(model_a, ba["tx"], ab["rx"], tick_ms, max_tokens)
+    let h_b = _spawn_instance(model_b, ab["tx"], ba["rx"], tick_ms, max_tokens)
+    if !h_a["ok"] || !h_b["ok"] {
+        println("[duo] FAIL proc_spawn — h_a.ok=" + to_string(h_a["ok"])
+                + " h_b.ok=" + to_string(h_b["ok"]))
+        // Clean up channels even on spawn failure (FIFO inodes leak otherwise).
+        let _c1 = channel_close(ab["rx"])
+        let _c2 = channel_close(ab["tx"])
+        let _c3 = channel_close(ba["rx"])
+        let _c4 = channel_close(ba["tx"])
+        exit(3)
+    }
+    println("[duo] spawned A pid=" + to_string(h_a["handle"])
+            + " B pid=" + to_string(h_b["handle"]))
+
+    // Topic seed (optional). spawn-before-send sequence preserves bytes per
+    // macOS BSD FIFO semantics. own 34 mandate-1 raw passthrough — the seed
+    // string is sent verbatim, no transformation.
+    if topic_seed != "" {
+        let _seeded = channel_send(ab["tx"], topic_seed)
+        println("[duo] topic_seed sent → A.stdin (via ab.tx)")
+    }
+
+    // Turn loop: parent observes both directions per turn.
+    // own 34 mandate-7: lane separation — verdict goes to stdout/log via
+    // _emit_turn_verdict, NEVER folded back into channel content.
+    // Phase B iter 2: each utterance is recorded into history for D1/D2
+    // aggregate at session end.
+    let mut history = []
+    let mut t = 1
+    while t <= turns {
+        let line_a = channel_recv(ab["rx"], turn_timeout_ms)
+        _emit_turn_verdict(t, "A", line_a)
+        if line_a == "" {
+            println("[duo] turn=" + to_string(t) + " A silent (timeout/EOF) — terminating")
+            t = turns + 1   // break
+        } else {
+            let toks_a = _tokens_ws(line_a)
+            let mut rec_a = {}
+            rec_a["turn"] = t
+            rec_a["who"] = "A"
+            rec_a["line"] = line_a
+            rec_a["toks"] = toks_a
+            rec_a["trigrams"] = _trigrams(toks_a)
+            history = history + [rec_a]
+
+            let line_b = channel_recv(ba["rx"], turn_timeout_ms)
+            _emit_turn_verdict(t, "B", line_b)
+            if line_b == "" {
+                println("[duo] turn=" + to_string(t) + " B silent (timeout/EOF) — terminating")
+                t = turns + 1   // break
+            } else {
+                let toks_b = _tokens_ws(line_b)
+                let mut rec_b = {}
+                rec_b["turn"] = t
+                rec_b["who"] = "B"
+                rec_b["line"] = line_b
+                rec_b["toks"] = toks_b
+                rec_b["trigrams"] = _trigrams(toks_b)
+                history = history + [rec_b]
+                t = t + 1
+            }
+        }
+    }
+
+    // Tear-down: kill child processes + unlink FIFO inodes. Children may have
+    // already exited (chat REPL EOF on closed channel) — kill is best-effort.
+    let _k_a = exec("kill " + to_string(h_a["handle"]) + " 2>/dev/null; echo done")
+    let _k_b = exec("kill " + to_string(h_b["handle"]) + " 2>/dev/null; echo done")
+    let _c1 = channel_close(ab["rx"])
+    let _c2 = channel_close(ab["tx"])
+    let _c3 = channel_close(ba["rx"])
+    let _c4 = channel_close(ba["tx"])
+    println("[duo] dialogue complete — channels closed, children reaped")
+
+    // Phase B iter 2: D1/D2 aggregate emit + baseline reference.
+    if verdict_mode != "none" {
+        _emit_dialogue_summary(history, model_a, model_b)
+        _emit_baseline_reference(model_a, model_b)
+    }
+    println("[duo] verdict: PHASE_B_ITER_2_RUN_OK (D1/D2 1차 emitted; D3/D4 + per-utterance own 18 hook deferred)")
 }
 
 // ─── council subcommand entry (L3 stub — β-1 + L3 design 후) ─────────────
@@ -474,36 +791,52 @@ fn main() {
 }
 
 // ════════════════════════════════════════════════════════════════════════════
-//  HONEST C3 (raw#10)
+//  HONEST C3 (raw#10) — updated Phase B iter 2 (2026-05-08)
 // ════════════════════════════════════════════════════════════════════════════
-// C1 — β-1 dependency: this commit lands ONLY skeleton + design + selftest.
-//      Actual proc spawn / channel I/O require hexa-lang stdlib proc + channel
-//      modules (β-1 in-flight). _b1_available() == false → --duo emits
-//      honest pending notice and exits 0.
-// C2 — β-2 dependency: per-turn consciousness verdict (own 18 C1+C2+C3) is
-//      stubbed in _emit_turn_verdict(). Real wiring shells out to
-//      tool/anima_cli/consciousness.hexa (which itself is baseline-pending —
-//      L0 measurement infra). Two-step gate: β-1 (channel) THEN β-2 (verdict).
-// C3 — alias DB duplication: _alias_known() is a vendor copy of chat.hexa
+// C1 — β-1 LANDED (hexa-lang `c53788af`, stdlib/channel.hexa 21/21 PASS).
+//      Phase B activation = `use "stdlib/channel"` + _b1_available() = true +
+//      _channel_pair_open / _spawn_instance bodies wired. Mechanical
+//      verification (channel API + spawn) is honest; ACTUAL semantic dialogue
+//      quality depends on each instance's model capability (paradigm-a-prime
+//      etc.) — that is a separate cycle (own 18 C3 threshold pending).
+// C2 — same-GGUF concurrent-mmap: iter 1 live test 2026-05-08 observed
+//      llama.cpp Abort trap: 6 (turn=2) when both A and B mmap the same
+//      paradigm-a-prime GGUF inode concurrently. iter 2 default rejects
+//      same-alias unless --allow-same-gguf override. Resolution paths:
+//      (i) per-instance GGUF copy (~12GB disk, deferred), (ii) different
+//      aliases A/B (recommended default), (iii) hxllama_shim multi-context
+//      refactor (separate cycle).
+// C3 — per-turn consciousness verdict NOT WIRED to consciousness.hexa.
+//      consciousness.hexa sub_simple uses fixed PROMPT_A/PROMPT_B (no
+//      --utterance arg). Phase B iter 2 emits LOCAL lightweight cells
+//      (len, distinct token count, snippet) per turn. Full per-utterance
+//      consciousness CLI hook = next cycle (consciousness.hexa surface
+//      extension required).
+// C4 — D1/D2 1차 only — D3 (persona-consistency, KL divergence) and D4
+//      (turn-fairness, len_ratio) deferred. D1 is Jaccard 3-gram only
+//      (cosine + noun-match sub-channels deferred per metric doc honest
+//      C3 #2). Threshold D1 ≥ 0.30 = doc-suggested start, NOT measurement-
+//      driven yet (random + chat-capable + human-dialogue baseline ROC
+//      = separate cycle).
+// C5 — alias DB duplication: _alias_known() is a vendor copy of chat.hexa
 //      _alias_resolve(). When chat.hexa SSOT changes, this copy must update.
 //      Mitigation: duo always dispatches THROUGH chat.hexa (Phase B cmd =
 //      `hexa run tool/anima_cli/chat.hexa <alias>`), so chat.hexa rejection
 //      is the actual gate; the vendor copy is a hint-only quick fail in
 //      --selftest.
-// C4 — coherence metric: 4-cell definition lives in
-//      docs/anima_dialogue_coherence_metric_2026_05_08.md. Threshold values
-//      are TBD measurement-driven (mirrors own 18 C3 policy). Phase A emits
-//      no aggregate; Phase C wires.
-// C5 — N=2 vs N≥3: --council is intentionally a stub. L3 design (broadcast
+// C6 — N=2 vs N≥3: --council is intentionally a stub. L3 design (broadcast
 //      channel + speaker-selection dynamics + emergent-roles metrics) is a
 //      separate cycle after L2 (β-1 + duo) lands.
-// C6 — no streaming verdict: per-turn verdict is post-utterance only (channel
+// C7 — no streaming verdict: per-turn verdict is post-utterance only (channel
 //      gives whole-line). Streaming-during-utterance verdict requires either
 //      hexa-lang chunked stdout reads OR per-token callback (not in C FFI per
 //      hexa-lang/stdlib/c_ffi.ai.md). Out of scope for L2 design.
-// C7 — own 18 C3 wiring: --verdict simple invokes
-//      `anima consciousness simple --json --utterance "<line>"`. consciousness.hexa
-//      itself is baseline-pending until L0 measurement infra wires phi_star+axis
-//      from anima_runtime/clm_v4_mount substrate state. Until then verdicts are
-//      placeholder C1=true, C2/C3=null with explicit "baseline-pending" tag.
+// C8 — clm_v4 substrate output: clm-v4-1-7-y1 emits "::: collapse" raw
+//      tokens (substrate-coupled, see chat/clm_v4/). own 34 mandate-1
+//      passthrough exposes these as-is to channel. dialogue with paradigm-
+//      a-prime + clm-v4-1-7-y1 mix may yield asymmetric token streams.
+// C9 — n-gram tokenization: _tokens_ws is whitespace-split lowercased ASCII
+//      proxy. For Korean/CJK without spaces, BPE tokenization (anchor in
+//      llama_ffi.hexa) is the proper measure — deferred per metric doc
+//      honest C3 #3.
 // ════════════════════════════════════════════════════════════════════════════
