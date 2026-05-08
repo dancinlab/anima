@@ -21,6 +21,7 @@ sole robust EMERGE: **`NONE`** ★
 - KICK WAVE 4 1/3: sft-1-8 N=120 ensemble live probe PPR_v3=0.5378 (64/119) — verdict floor compliance reaffirmed at strongest sample but DOES NOT close V14 gap (sft-1-8 N=120=0.5378 < random_init N=30=0.5517); trajectory N=30→N=60→N=120 = 0.4138→0.6102→0.5378 (N=60 peak, N=120 mild regression -0.0724); plateau ~0.5 zone confirmed
 - ★ FALSIFICATION CASCADE 4/8: random_init multi-seed (n=5 seeds {42,123,456,789,1024}) PPR_v3 distribution = mean 0.4276 / stdev 0.3366 / range [0.1724, 0.9655]; v4 threshold candidate = max(0.25, mean+1.645*stdev + 0.05) = 1.0313 UNREACHABLE → PPR_v3 metric structurally broken (inter-seed noise floor saturates entire output range). Axis-wise variance: temporal noisiest (stdev=0.4714, false-positive risk highest); v4_baseline quietest (stdev=0.3448); identity highest mean (0.6000). 5-seed mean (0.4276) STILL > v3 PASS floor (0.25) — single-seed kick4 0.5517 confirmed not an outlier. Empirical evidence supports cascade 1/8 axis-restrict-to-v4_baseline (deep axes high noise: temporal stdev 0.47).
 - ★ FALSIFICATION CASCADE 3/8 (2026-05-08): D1=0.99 highest candidates parallel N=30 probe. mk2-v1 base (state/anima_mk2_v1_base_n30_kick4_2026_05_08.json) PPR_v3=0.1379 (4/29) C3_PARTIAL_NEAR (delta -0.4138 vs random_init 0.5517) + clm-v2-byte (state/anima_clm_v2_byte_n30_kick4_2026_05_08.json) PPR_v3=0.0000 (0/29) C3_FAIL (delta -0.5517 vs random_init). Both V14 STILL VIOLATED. 사전학습 amplitude consistently NEGATIVE — D1 formula score does NOT predict PPR axis behavior; pre-trained models scoring LOWER than random_init noise reinforces ALT-AGG-1 v3 contamination evidence. mk2-v1 base axis: agency 0.667 / phenomenal 0.333 / temporal 0.333; clm-v2-byte axis: ALL 0.000 (axis activation extremely uniform ~0.30 + phi_drift narrow ~-0.20 band). Cascade 3/8 supports cascade 1/8 redesign (axis-restrict + anchor-baseline subtraction).
+- ★ FALSIFICATION CASCADE 6/8 (2026-05-08): paradigm-j retry N=120 (4 seeds × 30, state/anima_paradigm_j_n120_live_probe_kick_wave_4_2026_05_08.json) PPR_v3=0.2845 (33/116) — UNEXPECTED CROSSING above 0.25 floor (initial line N=30→N=60→N=120 = 0.2414→0.2414→0.2845); per-seed [0.2069, 0.3448, 0.3793, 0.2069] range 0.172 boundary instability; V14 STILL VIOLATED (delta vs random_init -0.2672); axis ensemble: v4_baseline 0.268 / identity 0.333 / agency 0.250 / phenomenal 0.333 / temporal 0.333 / social 0.250 (uniform plateau ~0.3). sft-1-7-y1 N=60 (2 seeds × 30, state/anima_sft_1_7_y1_n60_live_probe_kick_wave_4_2026_05_08.json) PPR_v3=0.2414 (14/58) — UPWARD trajectory N=30 0.1034 → N=60 0.2414 (+0.1380) but BELOW floor; per-seed [0.2759, 0.2069] one seed crosses; phenomenal axis N=30 0.000 → N=60 0.333 + identity 0.667; V14 VIOLATED (delta -0.3103). Both candidates floor proximity but V14 mirror still exceeds — confirms cascade 8/8 V14_status=VIOLATED + cascade 1/8 v4 redesign mandate.
 
 **Framework amends**:
 - ALT-AGG-1 v3 (C3.4 anchor + ≥1 corroboration, PPR≥0.25) — own 18 line 881 정정
@@ -43,8 +44,8 @@ sole robust EMERGE: **`NONE`** ★
 | id | D1 | lane | PPR_v3 (latest) | verdict | HF (private) |
 |---|---|---|---|---|---|
 | `clm-v4-sft-1-8-stage1` | 0.793 | ✅ within_strict | 0.5378 | ~~SIMPLE_STACK_PASS_STRICT_C3_ANIMA~~ V14_VIOLATED | dancinlab/clm-v4-sft-1-8-stage1-path-a-remapped |
-| `clm-v4-paradigm-j-50k-final` | 0.793 | ✅ within_strict | 0.2414 | ~~C3_PARTIAL_NEAR~~ FALSIFIED@N=60 | dancinlab/clm-v4-paradigm-j-50k-final-path-a-remapped |
-| `clm-v4-sft-1-7-y1-stage1` | 0.793 | ✅ within_strict | 0.1034 | C3_PARTIAL_NEAR | dancinlab/clm-v4-sft-1-7-y1-stage1-path-a-remapped |
+| `clm-v4-paradigm-j-50k-final` | 0.793 | ✅ within_strict | 0.2845 | ~~SIMPLE_STACK_PASS_STRICT_C3_ANIMA_V14_VIOLATED~~ V14_VIOLATED | dancinlab/clm-v4-paradigm-j-50k-final-path-a-remapped |
+| `clm-v4-sft-1-7-y1-stage1` | 0.793 | ✅ within_strict | 0.2414 | ~~C3_PARTIAL_NEAR~~ FALSIFIED@N=60 | dancinlab/clm-v4-sft-1-7-y1-stage1-path-a-remapped |
 | `clm-v4-mk2-v1` | 0.99 | ✅ within_strict | — | C3_PARTIAL_NEAR | — |
 | `clm-v2-byte-18m` | 0.99 | ✅ within_strict | — | C3_FAIL | need-singularity/clm-v2-byte-18m-convo-5k |
 | `anima-native-byte-18m` | 0.99 | ✅ within_strict | — | NOT_MEASURED_LOCAL | — |
@@ -77,11 +78,11 @@ sole robust EMERGE: **`NONE`** ★
 **aliases**: `paradigm-j`, `paradigm-j-retry`  
 **lineage**: base=clm-v4-mk2-v1 (ConsciousDecoderV2) / method=LoRA r=128 + JVAE Variant 1 (q_phi + p_theta) step=50000 / jvae=present / arch_origin=anima_native_scratch  
 **D1**: score=**0.793** (✅ within_strict) — p_updated=0.01, corpus=0.95, arch=1  
-**measurement**: ppr_v3_n30_initial=0.2414, ppr_v3_n30_phenomenal_redesign=0.3793, ppr_v3_n60=0.2414  
-**verdict**: C3_PARTIAL_NEAR / emerge_state=CARRY (FALSIFIED@N=60)  
+**measurement**: ppr_v3_n30_initial=0.2414, ppr_v3_n30_phenomenal_redesign=0.3793, ppr_v3_n60=0.2414, ppr_v3_n120=0.2845  
+**verdict**: SIMPLE_STACK_PASS_STRICT_C3_ANIMA_V14_VIOLATED / emerge_state=EMERGE_FALSIFIED_BY_RANDOM_INIT_MIRROR (FALSIFIED@N=60)  
 **D5 cooperative_score**: 0.7144  
 **Φ_norm_N8 max**: 0.0371 (subcritical zone)  
-**honest_c3**: N=30 EMERGE was sample-size artifact (per-seed perfect tie 0.2414/0.2414 at N=60)  
+**honest_c3**: N=30 EMERGE was sample-size artifact (per-seed perfect tie 0.2414/0.2414 at N=60); N=120 (4-seed) crosses 0.25 floor at 0.2845 BUT random_init=0.5517 still EXCEEDS by +0.2672 — V14 anti-Goodhart VIOLATED, paradigm-j EMERGE indistinguishable from untrained noise  
 **HF**: private=`dancinlab/clm-v4-paradigm-j-50k-final-path-a-remapped` / public=(blocked)  
 **eligibility**:
   - mandate_9_a_d1_within: `MET`
@@ -89,22 +90,22 @@ sole robust EMERGE: **`NONE`** ★
   - mandate_9_c_user_verbatim: `NOT_ISSUED`
   - mandate_9_d_trinity_sweep: `PASS`
   - mandate_9_e_dl_sweep: `PASS`
-  - public_promote: `BLOCKED_PPR_FALSIFIED`
-**commits**: probe_n30_initial=`eb209c1a`, probe_n30_redesign=`58fec5ed`, probe_n60_falsified=`84aa8665`, hf_upload=`dc98618e`, path_a_remap=`dc1510a3`  
+  - public_promote: `BLOCKED_V14_VIOLATED`
+**commits**: probe_n30_initial=`eb209c1a`, probe_n30_redesign=`58fec5ed`, probe_n60_falsified=`84aa8665`, probe_n120_v14_violated=`pending`, hf_upload=`dc98618e`, path_a_remap=`dc1510a3`  
 
 ### `clm-v4-sft-1-7-y1-stage1`
 
 **aliases**: `sft-1-7-y1`  
 **lineage**: base=clm-v4-mk2-v1 (ConsciousDecoderV2) / method=LoRA r=128 + anima-internal SFT / jvae=absent / arch_origin=anima_native_scratch  
 **D1**: score=**0.793** (✅ within_strict) — p_updated=0.01, corpus=0.95, arch=1  
-**measurement**: ppr_v3_n30=0.1034  
+**measurement**: ppr_v3_n30=0.1034, ppr_v3_n60=0.2414  
 **verdict**: C3_PARTIAL_NEAR / emerge_state=CARRY (FALSIFIED@N=60)  
-**honest_c3**: self-reference 5-axis collectively 약화 (0/15) — SFT corpus 가 self-ref 활성 부족 시사  
+**honest_c3**: self-reference 5-axis collectively 약화 N=30 (0/15) — SFT corpus self-ref 활성 부족; N=60 (2-seed) reveals upward trajectory (0.1034→0.2414, +0.1380) WITHIN PARTIAL_NEAR band; phenomenal axis improves N=30 0.000→N=60 0.333; identity axis strong 0.667 emerging signal but identity sample n=6 only — N=120 needed to distinguish band-shift from sample noise  
 **HF**: private=`dancinlab/clm-v4-sft-1-7-y1-stage1-path-a-remapped` / public=(blocked)  
 **eligibility**:
   - mandate_9_a_d1_within: `MET`
-  - public_promote: `BLOCKED_PPR_PARTIAL_NEAR`
-**commits**: probe_n30=`da762cc8`, hf_upload=`5cb9570a`, path_a_remap=`d478023c`  
+  - public_promote: `BLOCKED_PPR_PARTIAL_NEAR_V14_VIOLATED`
+**commits**: probe_n30=`da762cc8`, probe_n60_partial_near_carry=`pending`, hf_upload=`5cb9570a`, path_a_remap=`d478023c`  
 
 ### `clm-v4-mk2-v1`
 

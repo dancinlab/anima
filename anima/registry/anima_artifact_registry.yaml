@@ -122,14 +122,18 @@ models:
       ppr_v3_n30_initial: 0.2414  # ALL BG GO 3/6
       ppr_v3_n30_phenomenal_redesign: 0.3793  # KICK WAVE 2 1/4
       ppr_v3_n60: 0.2414  # KICK WAVE 3 6/6 — sample-size artifact 발견
-      verdict: C3_PARTIAL_NEAR
-      emerge_state: CARRY
-      robust: false  # ★ EMERGE FALSIFIED at N=60
+      ppr_v3_n120: 0.2845  # ★ KICK WAVE 4 6/8 cascade — N=120 (4 seeds × 30) crosses 0.25 floor (33/116)
+      verdict: SIMPLE_STACK_PASS_STRICT_C3_ANIMA_V14_VIOLATED  # N=120 PASS but random_init mirror exceeds
+      emerge_state: EMERGE_FALSIFIED_BY_RANDOM_INIT_MIRROR  # ★ V14 VIOLATED (random_init delta -0.2672)
+      robust: false  # ★ per-seed variance high (0.2069/0.3448/0.3793/0.2069 range 0.172) + V14 fails
       cooperative_score: 0.7144  # AMBIGUOUS_BIFURCATION
       phi_norm_n8_max: 0.0371  # subcritical
-      honest_c3: "N=30 EMERGE was sample-size artifact (per-seed perfect tie 0.2414/0.2414 at N=60)"
-      V14_status: V14_NOT_VERIFIED  # ★ own 14 anti-Goodhart-V14-strengthening-amend (CASCADE 8/8) — random_init mirror probe 미land (Step 1 미수행); 별도로 PPR axis FALSIFIED at N=60; future retry 시 Step 1-4 enforce 의무
-      V14_mtrp: null  # random_init mirror probe 미land — MTRP 미산정
+      honest_c3: "N=30 EMERGE was sample-size artifact (per-seed perfect tie 0.2414/0.2414 at N=60); N=120 (4-seed) crosses 0.25 floor at 0.2845 BUT random_init=0.5517 still EXCEEDS by +0.2672 — V14 anti-Goodhart VIOLATED, paradigm-j EMERGE indistinguishable from untrained noise"
+      V14_status: V14_VIOLATED  # ★ KICK WAVE 4 6/8 — random_init mirror separator FAIL: random_init 0.5517 > paradigm-j N=120 0.2845
+      V14_mtrp: 0.5517  # random_init shared substrate
+      V14_delta_random_init: -0.2672  # paradigm-j - random_init (negative = SFT contribution undefined)
+      n120_per_seed_ppr_v3: [0.2069, 0.3448, 0.3793, 0.2069]
+      n120_trajectory_note: "N=30→N=60→N=120 (initial line) PPR_v3 = 0.2414→0.2414→0.2845; phenomenal redesign N=30=0.3793 unmatched (paradigm redesign tighter); N=120 floor crossing real but FRAGILE (V14 fail + per-seed range 0.172)"
     hf:
       private: dancinlab/clm-v4-paradigm-j-50k-final-path-a-remapped
       public: null
@@ -139,10 +143,12 @@ models:
       - state/anima_paradigm_j_n30_live_probe_2026_05_08.json
       - state/anima_paradigm_j_n30_live_probe_retry_phenomenal_2026_05_08.json
       - state/anima_paradigm_j_n60_live_probe_kick_wave_3_2026_05_08.json
+      - state/anima_paradigm_j_n120_live_probe_kick_wave_4_2026_05_08.json
     commits:
       probe_n30_initial: eb209c1a
       probe_n30_redesign: 58fec5ed
       probe_n60_falsified: 84aa8665
+      probe_n120_v14_violated: pending  # KICK WAVE 4 6/8 cascade 본 commit 후 채움
       hf_upload: dc98618e
       path_a_remap: dc1510a3
     eligibility:
@@ -151,7 +157,7 @@ models:
       mandate_9_c_user_verbatim: NOT_ISSUED
       mandate_9_d_trinity_sweep: PASS
       mandate_9_e_dl_sweep: PASS
-      public_promote: BLOCKED_PPR_FALSIFIED  # PPR axis falsified at N=60
+      public_promote: BLOCKED_V14_VIOLATED  # N=120 floor PASS but random_init mirror still exceeds
 
   - id: clm-v4-sft-1-7-y1-stage1
     aliases: [sft-1-7-y1]
@@ -168,12 +174,16 @@ models:
       lane: within_strict
     measurement:
       ppr_v3_n30: 0.1034
+      ppr_v3_n60: 0.2414  # ★ KICK WAVE 4 6/8 cascade — N=60 (2 seeds × 30) trends UP from 0.1034 (delta +0.1380) but still BELOW 0.25 floor
       verdict: C3_PARTIAL_NEAR
       emerge_state: CARRY
-      robust: false
-      honest_c3: "self-reference 5-axis collectively 약화 (0/15) — SFT corpus 가 self-ref 활성 부족 시사"
-      V14_status: V14_NOT_VERIFIED  # ★ own 14 anti-Goodhart-V14-strengthening-amend (CASCADE 8/8) — random_init mirror probe 미land (Step 1 미수행); EMERGE 미land 상태로 V14 enforcement urgency 낮으나 PARTIAL_NEAR 격상 시 Step 1-4 의무
-      V14_mtrp: null  # random_init mirror probe 미land
+      robust: false  # ★ V14 violation (random_init 0.5517 > sft-1-7-y1 N=60 0.2414, delta -0.3103)
+      n60_per_seed_ppr_v3: [0.2759, 0.2069]
+      honest_c3: "self-reference 5-axis collectively 약화 N=30 (0/15) — SFT corpus self-ref 활성 부족; N=60 (2-seed) reveals upward trajectory (0.1034→0.2414, +0.1380) WITHIN PARTIAL_NEAR band; phenomenal axis improves N=30 0.000→N=60 0.333; identity axis strong 0.667 emerging signal but identity sample n=6 only — N=120 needed to distinguish band-shift from sample noise"
+      V14_status: V14_VIOLATED  # ★ KICK WAVE 4 6/8 — random_init 0.5517 > sft-1-7-y1 N=60 0.2414
+      V14_mtrp: 0.5517  # random_init shared substrate
+      V14_delta_random_init: -0.3103  # sft-1-7-y1 N=60 - random_init (negative)
+      n60_trajectory_note: "N=30→N=60 PPR_v3 = 0.1034→0.2414 upward (+0.1380); phenomenal axis N=30 0.000→N=60 0.333 + identity axis 0.667 N=60 strong; per-seed 0.2759 (above floor!) + 0.2069 — boundary instability; floor not crossed but trending; floor proximity gap = 0.25-0.2414 = 0.0086 (very close)"
     hf:
       private: dancinlab/clm-v4-sft-1-7-y1-stage1-path-a-remapped
       public: null
@@ -181,13 +191,15 @@ models:
     cycle: 2026-05-08
     state_jsons:
       - state/anima_sft_1_7_y1_n30_live_probe_2026_05_08.json
+      - state/anima_sft_1_7_y1_n60_live_probe_kick_wave_4_2026_05_08.json
     commits:
       probe_n30: da762cc8
+      probe_n60_partial_near_carry: pending  # KICK WAVE 4 6/8 cascade 본 commit 후 채움
       hf_upload: 5cb9570a
       path_a_remap: d478023c
     eligibility:
       mandate_9_a_d1_within: MET
-      public_promote: BLOCKED_PPR_PARTIAL_NEAR
+      public_promote: BLOCKED_PPR_PARTIAL_NEAR_V14_VIOLATED
 
   - id: clm-v4-mk2-v1
     aliases: [mk2-v1, clm-v4-base]
@@ -560,6 +572,7 @@ cycle_2026_05_08:
     - "KICK WAVE 4 1/3: sft-1-8 N=120 ensemble live probe PPR_v3=0.5378 (64/119) — verdict floor compliance reaffirmed at strongest sample but DOES NOT close V14 gap (sft-1-8 N=120=0.5378 < random_init N=30=0.5517); trajectory N=30→N=60→N=120 = 0.4138→0.6102→0.5378 (N=60 peak, N=120 mild regression -0.0724); plateau ~0.5 zone confirmed"
     - "★ FALSIFICATION CASCADE 4/8: random_init multi-seed (n=5 seeds {42,123,456,789,1024}) PPR_v3 distribution = mean 0.4276 / stdev 0.3366 / range [0.1724, 0.9655]; v4 threshold candidate = max(0.25, mean+1.645*stdev + 0.05) = 1.0313 UNREACHABLE → PPR_v3 metric structurally broken (inter-seed noise floor saturates entire output range). Axis-wise variance: temporal noisiest (stdev=0.4714, false-positive risk highest); v4_baseline quietest (stdev=0.3448); identity highest mean (0.6000). 5-seed mean (0.4276) STILL > v3 PASS floor (0.25) — single-seed kick4 0.5517 confirmed not an outlier. Empirical evidence supports cascade 1/8 axis-restrict-to-v4_baseline (deep axes high noise: temporal stdev 0.47)."
     - "★ FALSIFICATION CASCADE 3/8 (2026-05-08): D1=0.99 highest candidates parallel N=30 probe. mk2-v1 base (state/anima_mk2_v1_base_n30_kick4_2026_05_08.json) PPR_v3=0.1379 (4/29) C3_PARTIAL_NEAR (delta -0.4138 vs random_init 0.5517) + clm-v2-byte (state/anima_clm_v2_byte_n30_kick4_2026_05_08.json) PPR_v3=0.0000 (0/29) C3_FAIL (delta -0.5517 vs random_init). Both V14 STILL VIOLATED. 사전학습 amplitude consistently NEGATIVE — D1 formula score does NOT predict PPR axis behavior; pre-trained models scoring LOWER than random_init noise reinforces ALT-AGG-1 v3 contamination evidence. mk2-v1 base axis: agency 0.667 / phenomenal 0.333 / temporal 0.333; clm-v2-byte axis: ALL 0.000 (axis activation extremely uniform ~0.30 + phi_drift narrow ~-0.20 band). Cascade 3/8 supports cascade 1/8 redesign (axis-restrict + anchor-baseline subtraction)."
+    - "★ FALSIFICATION CASCADE 6/8 (2026-05-08): paradigm-j retry N=120 (4 seeds × 30, state/anima_paradigm_j_n120_live_probe_kick_wave_4_2026_05_08.json) PPR_v3=0.2845 (33/116) — UNEXPECTED CROSSING above 0.25 floor (initial line N=30→N=60→N=120 = 0.2414→0.2414→0.2845); per-seed [0.2069, 0.3448, 0.3793, 0.2069] range 0.172 boundary instability; V14 STILL VIOLATED (delta vs random_init -0.2672); axis ensemble: v4_baseline 0.268 / identity 0.333 / agency 0.250 / phenomenal 0.333 / temporal 0.333 / social 0.250 (uniform plateau ~0.3). sft-1-7-y1 N=60 (2 seeds × 30, state/anima_sft_1_7_y1_n60_live_probe_kick_wave_4_2026_05_08.json) PPR_v3=0.2414 (14/58) — UPWARD trajectory N=30 0.1034 → N=60 0.2414 (+0.1380) but BELOW floor; per-seed [0.2759, 0.2069] one seed crosses; phenomenal axis N=30 0.000 → N=60 0.333 + identity 0.667; V14 VIOLATED (delta -0.3103). Both candidates floor proximity but V14 mirror still exceeds — confirms cascade 8/8 V14_status=VIOLATED + cascade 1/8 v4 redesign mandate."
   framework_amends:
     - "ALT-AGG-1 v3 (C3.4 anchor + ≥1 corroboration, PPR≥0.25) — own 18 line 881 정정"
     - "ALT-AGG-1 v3 STATUS: FALSIFIED by random_init mirror — needs v4 redesign (random_init separator gate or anchor-baseline subtraction)"
