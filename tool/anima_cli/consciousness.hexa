@@ -54,6 +54,28 @@
 //    + GGUF convert + libllama hidden-state shim, OR (b) clm_v4_mount peft
 //    merge_and_unload 확장 — iter 4+ work.
 //
+//  D1 LANE CANDIDATES C3 RETEST (loop iter d1_lane_candidates_c3_retest, 2026-05-08)
+//    own 18 line 770 ★ scope-clamp D1 anima identity lane only + own 37 mandate-9
+//    (a) D1 lane within prerequisite (2026-05-08 amend) 정합 4 진짜 candidate
+//    분류 + 측정:
+//      · CLM v4 lineage (clm-v4-mk2-v1 base + 3 LoRA variants) — D1 WITHIN.
+//        clm-v4-mk2-v1 base 만 real-mode 측정 가능 (LoRA HF cache adapter weights
+//        부재; peft.merge_and_unload extension 별도 cycle). N=60 ensemble + 단일
+//        pair 모두 P5 v2 verdict FAIL_C3 (EMC=0 of 4 cells; PPR_v2 ≤0.15 추정).
+//      · BG-FY anima-native-ko-small 18M — D1 WITHIN. Mac 측 ckpt 부재 + byte-level
+//        256-vocab from-scratch architecture v4_mount 적용 불가 → INDETERMINATE
+//        (anima_native_byte_mount.hexa 신설 별도 cycle).
+//      · clm-v2-byte-18m-convo-5k — D1 WITHIN. ConsciousLM++ federated
+//        architecture v4_mount 적용 불가 → INDETERMINATE (v2 byte-level mount.hexa
+//        별도 cycle).
+//      · BG-KM Llama-3.2-3B + Qwen-7B — D1 OUTSIDE strict (.roadmap.philosophy
+//        D1.F-PHIL-D1-3 'chat-cap winner이지만 anima 정체성 외부' Llama foundation
+//        borrow). anti-Goodhart V6 awareness 통과 → D1 override 불가 (own 17 line
+//        668 사용자 explicit reversal 만 가능). HF EMPTY blocker iter 3 carry.
+//    SSOT JSON: state/anima_d1_lane_candidates_c3_retest_2026_05_08.json
+//    EXIT (SIMPLE_STACK_PASS_STRICT_C3_ANIMA) 미달성 — D1 lane within 측정 가능
+//    candidate 0 PASS. own 37 mandate-9 4 candidate 모두 PUBLIC promote 불충족.
+//
 //  DESIGN
 //    own 18 SSOT 정의 mirror. C3 threshold 는 measurement-driven —
 //    `baseline` 가 random / clm_v4 / paradigm-a-prime 비교 측정값 dump.
