@@ -88,8 +88,12 @@ Notes:
   redirect points to `stdout_ch.tx`. Stderr inherited (visible to terminal —
   honest C3 visibility).
 
-When β-1 lands, flip `_b1_available()` from `false` to `true` and fill the
-two stub functions (`_channel_pair_open`, `_spawn_instance`).
+Phase B activated 2026-05-08 (commits `6406fb2d` chat module wire-up,
+`6afed74b` duo skeleton, `73461c56` duo Phase B β-1 channel transport
+land — β-1 channel stdlib upstream landed at hexa-lang `c53788af`).
+`_b1_available()` returns `true`; `_channel_pair_open` /
+`_spawn_instance` bodies wired (see duo.hexa). Historical record only —
+do NOT re-flip the gate.
 
 ## Turn Sequence (Phase B target)
 
