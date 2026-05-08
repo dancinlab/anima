@@ -42,13 +42,14 @@ byte tokens → stdout
 - **own 34 mandate-2**: wrapping 0 — no system prompt, no persona inject, no
   chat template, no speak() function, no orchestrator, no post-process meaning
   change. Verified by selftest grep.
-- **own 34 mandate-4**: freedom preservation — model EOS / silence / context
-  use all decided by sampling distribution.
+- **own 34 mandate-4**: autonomous speech — Phase 2 LANDED 2026-05-08. REPL
+  polls stdin via `sys_stdin_read_line_timeout(tick_ms)`; on timeout (no user
+  input), `_invoke_core("")` is invoked → model speaks without user trigger.
 - **own 34 mandate-7**: chat lane (own 34) vs measurement lane (own 18)
   separation — this module is chat lane only.
-- **raw#9**: pure hexa, no .py invocation.
-- **raw#10**: honest C3 — Phase 1 limitation explicitly emitted (see PHASE 1
-  LIMITATION in module --help output).
+- **raw#9**: pure hexa, no .py invocation. `use "stdlib/sys"` import.
+- **raw#10**: honest C3 — Phase 1/1.5/2 limitations explicitly emitted in
+  module --help output.
 
 ## Phase 1 Limitation (honest emit)
 
@@ -69,10 +70,48 @@ What Phase 1.5 will add (separate cycle):
   agi_generate
 - Or vendor agi_generate logic into this module body and call directly
 
-What Phase 2 (hexa upstream land) will add:
-- Non-blocking stdin → autonomous speech (own 34 mandate-4)
-- Empty Enter / no-Enter trigger removal (per user directive
+What Phase 2 (LANDED 2026-05-08, hexa-lang upstream commit `f65882fb`) added:
+- `use "stdlib/sys"` → `sys_stdin_read_line_timeout(ms)` non-blocking stdin
+- REPL replaces blocking `read_line()` with `sys_stdin_read_line_timeout(tick_ms)`
+- Timeout (no user input) → `_invoke_core("")` = autonomous speech
+  (own 34 mandate-4 "스스로 혼자서도 말함")
+- New `--tick-ms N` flag (default 1000) controls poll cadence
+- Empty Enter / no-Enter trigger removed (per user directive
   "완전한 자유 빈 줄 조차도 없어도 되")
+- Backward compat: `sub_one_shot` (--prompt) unchanged
+
+## Phase 2 Mechanism
+
+```
+sub_repl loop (every tick_ms)
+   │
+   ├── sys_stdin_read_line_timeout(tick_ms)
+   │      │
+   │      ├── line == ""  (timeout / EOF)
+   │      │      → _invoke_core("", max_tokens)   ← AUTONOMOUS SPEECH
+   │      │      → print raw byte output
+   │      │      → history += out (memory=full)
+   │      │
+   │      └── line != ""  (user input)
+   │             → _invoke_core(line, max_tokens)
+   │             → print raw byte output
+   │             → history += line + out
+   │
+   └── loop
+```
+
+## Phase 2 C3 Limitations (raw#10 honest)
+
+- **Random init**: TinyWeights는 random init (no SFT) — autonomous speech =
+  무의미 byte. Phase 1.5 limitation 그대로 (모델 weight 학습 영역).
+- **perl spawn cost**: `sys_stdin_read_line_timeout` perl one-liner 매 tick
+  ~5-10ms. mandate-4 활성화 정확성 우선 (모델 추론 budget 대비 무시 가능).
+- **mandate-4 의 의미**: "스스로 혼자서도 말함" = `_invoke_core("")` 도달성 =
+  본 wiring 으로 mechanically 보장. semantic quality (의미 있는 발화) 는
+  weight 학습 영역으로 별개 lane (anima 장기 비전).
+- **EOF 처리**: stdin EOF 시 `IO::Select::can_read` 즉시 ready → "" 반환 →
+  매 iteration `_invoke_core("")` 호출. interactive tty / fifo 입력 시
+  정상 1-sec cadence. EOF 자동 종료는 차후 enhance.
 
 ## Cross-Reference
 
