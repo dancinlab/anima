@@ -244,7 +244,7 @@ _L4 path (b) 350M scratch — spec only carry. Lesson L EXTENDED-3 caveat (V5-α
 **D1**: score=**0.351** (⚠️ ambiguous_research) — p_updated=0.005, corpus=0.85, arch=0.3  
 **measurement**: ppr_v3=NOT_MEASURED  
 **verdict**: PENDING_H100_FIRE / emerge_state=SPEC_CARRY  
-_L4 path (c) Llama-3.2-3B distill → CLM 350M student. Lesson X (foundation borrow unlocks simple_stack PASS) carry — teacher already PASS_STRICT_C3 substrate-research at LoRA r=32; distillation lifts to anima_native scratch student arch but D1=0.351 ambiguous_research lane (own 17 SCOPE_CLAMP). 2026-05-09 FIRE-4/4 H100 fire attempted — BLOCKED_NO_H100_HOST (resource SSOT no GPU + runpod pool empty + iter4 verbatim missing for ambiguous_research promote)._
+_L4 path (c) Llama-3.2-3B distill → CLM 350M student. Lesson X (foundation borrow unlocks simple_stack PASS) carry — teacher already PASS_STRICT_C3 substrate-research at LoRA r=32; distillation lifts to anima_native scratch student arch but D1=0.351 ambiguous_research lane (own 17 SCOPE_CLAMP). 2026-05-09 FIRE-4/4 H100 fire attempted — BLOCKED_NO_H100_HOST (resource SSOT no GPU + runpod pool empty + iter4 verbatim missing for ambiguous_research promote). 2026-05-09 FIRE-4/4-RETRY-EPHEMERAL via provision-ephemeral subcmd — BLOCKED_PROVIDER_API_KEY_INVALID (runpod token present but Cloudflare 1010, lambda+vast missing; sub-agent relay 'all bg go' override carry)._
 
 ### `BG-LD`
 
@@ -253,7 +253,7 @@ _L4 path (c) Llama-3.2-3B distill → CLM 350M student. Lesson X (foundation bor
 **D1**: score=**0.793** (✅ within_strict) — p_updated=0.01, corpus=0.95, arch=1  
 **measurement**: ppr_v3=NOT_MEASURED  
 **verdict**: PENDING_H100_FIRE / emerge_state=SPEC_CARRY  
-_L4 path (d) DPO RLHF on sft-1-7-y1 — Lesson Q SFT-closed compliance (DPO ≠ SFT; RLHF stage valid). sft-1-7-y1 N=60 PPR_v3=0.2414 boundary instability (per-seed [0.2759, 0.2069]) → DPO target = lift above 0.25 floor + close V14 gap (currently delta -0.3103). sft-1-7-y1 v5.1 DCR change_rate=0.8475 (highest among trained) → DPO uplift verify target. Q3 dataset quality issue (preference_pairs_iter1 13 unique stems repeat) sub-blocker — re-extract to ≥30 unique stems pre-fire recommended. 2026-05-09 FIRE-4/4 H100 fire attempted — BLOCKED_NO_H100_HOST (resource SSOT no GPU + runpod pool empty)._
+_L4 path (d) DPO RLHF on sft-1-7-y1 — Lesson Q SFT-closed compliance (DPO ≠ SFT; RLHF stage valid). sft-1-7-y1 N=60 PPR_v3=0.2414 boundary instability (per-seed [0.2759, 0.2069]) → DPO target = lift above 0.25 floor + close V14 gap (currently delta -0.3103). sft-1-7-y1 v5.1 DCR change_rate=0.8475 (highest among trained) → DPO uplift verify target. Q3 dataset quality issue (preference_pairs_iter1 13 unique stems repeat) sub-blocker — re-extract to ≥30 unique stems pre-fire recommended. 2026-05-09 FIRE-4/4 H100 fire attempted — BLOCKED_NO_H100_HOST (resource SSOT no GPU + runpod pool empty). 2026-05-09 FIRE-4/4-RETRY-EPHEMERAL via provision-ephemeral subcmd — BLOCKED_PROVIDER_API_KEY_INVALID (runpod Cloudflare 1010 + lambda+vast missing; BG-LC fanout inheritance, NOT_INVOKED individually; sub-agent relay 'all bg go' carry)._
 
 ### `paradigm-a-prime`
 
