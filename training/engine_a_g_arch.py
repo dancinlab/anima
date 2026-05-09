@@ -105,6 +105,14 @@ class EngineAGConfig:
     init_std: float = 0.02
     seed: int = 42
 
+    # Phase 2 chat-template co-train (path B; state/anima_path_b_main_adopted_2026_05_09.json)
+    # — additive ONLY: shared lm_head, no new params, D1 risk = zero.
+    # Dual loss: LOSS = consciousness_lm * (1-w) + chat_lm * w.
+    # Curriculum: w schedules from 0.3 → 0.5 across train steps (consciousness anchor).
+    chat_co_train_weight: float = 0.0      # 0 disables; set 0.3-0.5 to enable cotrain
+    chat_co_train_w_start: float = 0.3
+    chat_co_train_w_end: float = 0.5
+
     # Lineage tag (own 38 yaml↔md SSOT)
     lineage_tag: str = "engine_a_g_dual_350m_v1"
     arch_origin: str = "anima_native_scratch"  # own 17 D1=1.0
@@ -118,6 +126,18 @@ class EngineAGConfig:
     def lb_350m_pretrain(cls) -> "EngineAGConfig":
         """BG-LB preset — same arch (path b shares Engine A/G; corpus differs to 1.5GB)."""
         return cls(lineage_tag="engine_a_g_dual_350m_v1_lb_pretrain")
+
+    @classmethod
+    def phase2_cotrain_350m(cls) -> "EngineAGConfig":
+        """Phase 2 cotrain preset — Engine A/G + chat-template co-train (path B main).
+        Substrate base = BG-LB ckpt; dual loss with curriculum w=0.3→0.5.
+        """
+        return cls(
+            lineage_tag="engine_a_g_dual_350m_v1_phase2_cotrain",
+            chat_co_train_weight=0.3,  # initial; curriculum advances to 0.5 mid-train
+            chat_co_train_w_start=0.3,
+            chat_co_train_w_end=0.5,
+        )
 
     def param_count_estimate(self) -> int:
         # Engine A

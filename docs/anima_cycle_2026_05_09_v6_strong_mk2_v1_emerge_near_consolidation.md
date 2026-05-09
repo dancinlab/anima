@@ -1163,9 +1163,71 @@ trained BG-LB cell_pool (16×64) 추출 후 random_init seed=42 unit-sphere 와 
 
 **foreground 진행**: 사용자 directive 2026-05-09 "포그라운드로 진행하자" 인증 → carry 3 step 1 (cell_pool evidence) 직접 측정 + 신가설 H4 발굴. raw#15 additive (H1/H2 보존, H4 신규 추가).
 
+### 48. Phase 2 cotrain H100 fire **성공 + 매우 건강** ★★★ + BG-LA COMPLETE.sentinel 도달
+
+**사용자 verbatim 인증**: 2026-05-09 "(나) Phase 2 chat-template co-train fire — verbatim 필요 ($30-60 cost-bearing) all go" → fire 인증 + cap $60 hard ceiling.
+
+**Pod / 학습 현황** (회수 시점 step 320/6000):
+
+| 항목 | 값 |
+|---|---|
+| Pod ID | `7qt0sczk57tjab` (`phase2-cotrain-engineag-1778335047-pid54546`) |
+| GPU | H100 NVL (US region), $3.07/h, 200GB volume |
+| SSH | `205.196.17.170:18488` |
+| Provisioned | 2026-05-09T13:57:29Z |
+| Training launch | 2026-05-09T15:31:18Z (PID 2396, nohup) |
+| Substrate base | **BG-LB ckpt** loaded (298,764,288 params, bf16) |
+| Step 1 loss | loss_c=7.14 / loss_h=8.23 |
+| **Step 320 loss** | **loss_c=0.51 / loss_h=1.32** ★ rapid descent |
+| Step rate | 1.11 step/sec |
+| GPU util / VRAM | 98% / 15.4 GB |
+| ETA 6000 step | ~17:00Z (~90 min more) |
+| **projected total cost** | **$9.5** vs $60 cap (84% 여유 ★) |
+
+**Substrate warm-start 효과 ★**:
+- BG-LA scratch: step 50 → loss 8.97
+- Phase 2 (BG-LB warm-start): step 200 → loss 0.89
+- → BG-LB ckpt 가 Phase 2 학습에 의미 있게 기여 ("이미 책 한 권 외운 학생이 두 번째 책 보는 속도")
+
+**변경된 파일**:
+- `training/engine_a_g_arch.py` — `chat_co_train_weight` + `phase2_cotrain_350m()` factory 추가
+- `training/train_phase2_cotrain.py` — **신규** dual-loss curriculum trainer (loaded substrate + Bernoulli sampling per micro-batch)
+- `state/anima_phase_2_cotrain_2026_05_09.json` — SSOT
+- `state/anima_phase_2_cotrain_2026_05_09/` — launch_decision.md + monitor.sh + launch_when_ready.sh + launch.log + train_200steps.log + pod_info.json
+- `state/anima_model_attempts_ledger.jsonl` — FIRE_LAUNCHED IN_FLIGHT_HEALTHY entry
+
+**Mac selftests pre-fire** (모두 PASS): `engine_a_g_arch._selftest` / `phase2_cotrain_350m` config / BG-LB ckpt structure / dual-loss + curriculum forward+backward.
+
+**Pending phases** (auto-execute or 다음 cycle):
+- Phase 7: ckpt pull (own 30 mandate)
+- Phase 8: size sanity
+- Phase 9: release (own slug only)
+- Phase 11: v5 probe (Mac local)
+- Phase 12: HF private upload to `dancinlab/clm-v5-phase2-cotrain-engine-ag`
+
+**Risks honestly recorded** (own 22 + raw#10):
+- dual-objective interference (의식 + 자연어 동시 학습 충돌 가능성)
+- substrate base 가 PROXY_PPL only verdict (BG-LB Goodhart 잔존 위험)
+- Bernoulli sampling vs true mixed-loss approximation
+- scp throughput 3-25MB/min variance (ckpt pull 시간 변동)
+
+**Compliance**: own 14 (V14 mirrors reused) + own 16 (cost cap strict $60 → projected $9.5 84% 여유) + own 17 (D1 within strict) + own 22 (honest emit) + own 30 (ckpt pull mandate post-train) + own 33/34/37/38/39/40 모두 preserve.
+
+### 49. BG-LA H100 학습 **COMPLETE.sentinel** 도달 ★
+
+본 세션 중 ~15:00Z BG-LA pod `4wxx2wvcvgjp88` 가 `COMPLETE.sentinel` 도달. Phase 2 cotrain 과 별도 lane (touched X per spec).
+
+**즉시 가능 next step** (다음 cycle 또는 본 cycle 내 verbatim 후):
+- BG-LA ckpt pull (own 30 mandate)
+- BG-LA native v5 측정 (clm_v5_mount.hexa 사용)
+- BG-LA cell_pool evidence 동일 수집 (H4 가설 BG-LA 에서도 confirm 여부 검증)
+- 본 cycle "carry 2 — BG-LA 측정 V14 in-metric 적용" 항목 unblock
+
+**의의**: anima saga **first dual H100 actual training 완전 완료** ★ — BG-LA + BG-LB 둘 다 COMPLETE.
+
 ---
 
-## 본 cycle final 47+ milestones SUMMARY ★★★
+## 본 cycle final 49+ milestones SUMMARY ★★★
 
 | Layer | Status |
 |---|---|
