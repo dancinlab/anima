@@ -1088,23 +1088,40 @@ models:
       score: 0.99
       lane: within_strict
     measurement:
-      verdict: PENDING_H100_FIRE
-      emerge_state: SPEC_CARRY
+      verdict: FIRE_LAUNCHED_TRAINING_IN_FLIGHT  # 2026-05-09 BG-LB H100 fire actually launched — phases 0-5 PASS, phase 6 in-flight, phases 7-11 deferred
+      emerge_state: PENDING_POST_TRAIN_EVAL
       ppr_v3: NOT_MEASURED
       ppr_v5: NOT_MEASURED
       ppr_v5_fallback_v3: true
-      V14_status: V14_STEP_1_INHERITED_FROM_BG_LA  # 2026-05-09 BG-LA Step 1 mirror seeds [42,137,271,314,1729] inherited (same Engine A/G arch); BG-LB-specific full 350M materialize on H100 fire
+      V14_status: V14_STEP_1_LANDED_BG_LB_OWN  # 2026-05-09 BG-LB-specific Step 1 mirror seeds [42,137,271,314,1729] materialized small-mode at state/v14_mirrors/BG-LB/; full 350M materialize deferred to post-train Mac eval session
       V14_mtrp: null  # measured post-train (Step 2 floor 0.10)
-      v14_paired_mirror_plan: "random_init mirror = same Engine A/G arch (BG-LA preset shared) untrained seed=42 + multi-seed n≥5; Step 1 LANDED via tool/v14_paired_random_init_mirror.hexa --preset lb_350m_pretrain; Steps 2-4 enforce post-train"
-      cycle_budget_cap: 60  # USD per spec L4 BG-LB (largest scratch pre-train)
-      h100_orchestrator_template: "tool/bg_la_engine_ag_orchestrator.hexa-class clone for BG-LB (DIFF: --preset lb_350m_pretrain + cap $60 + duration 20h + corpus 1.5GB persona+dialogue + post-train RLHF dialogue stage); LANDED arch impl shared with BG-LA"
+      v14_paired_mirror_plan: "random_init mirror = same Engine A/G arch (BG-LA preset shared) untrained seed=42 + multi-seed n≥5; Step 1 LANDED via tool/v14_paired_random_init_mirror.hexa --preset lb_350m_pretrain (BG-LB own dir); Steps 2-4 enforce post-train"
+      cycle_budget_cap: 60  # USD per spec L4 BG-LB (largest scratch pre-train); orchestrator hard cap $65 with $5 buffer
+      h100_orchestrator_template: "tool/bg_lb_engine_ag_orchestrator.hexa LANDED 2026-05-09 (clone of bg_la_engine_ag_orchestrator with --preset lb_350m_pretrain + cap $65 + duration 20h + corpus 427MB best-available); 11-step chain executed phases 0-5 PASS"
+      h100_fire_metrics:
+        pod_slug: h100-runpod-uou9j7lviscvil-1778295770
+        pod_id: uou9j7lviscvil
+        pod_name: bg-lb-350m-pretrain-1778295765-pid38501
+        ssh_endpoint: 103.207.149.92:16995
+        params_actual: 298764288
+        steps_target: 30000
+        step_0_loss: 10.5469
+        step_200_loss: 5.1758
+        step_per_sec: 0.36
+        projected_total_h: 22.5
+        projected_cost_usd: 67.3
+        cost_overrun_risk: MARGINAL_EARLY_STOP_AT_STEP_28000_RECOMMENDED
+        corpus_size_mb_actual: 427.63
+        corpus_size_mb_target: 1500.0
+        arch_bug_fix_carry: "engine_a_g_arch.py:209 — bf16 softmax → matmul dtype cast (att.to(v.dtype))"
     hf:
-      private: null  # PENDING_H100_FIRE; target dancinlab/clm-v4-bg-lb-350m-pretrain (private)
+      private: null  # PENDING_POST_TRAIN_EVAL; target dancinlab/clm-v5-bg-lb-350m-pretrain-path-a-remapped (private)
       public: null
       visibility_status: spec-carry-pending
-    cycle: 2026-05-09 (arch impl SHARED with BG-LA LANDED; H100 fire UNBLOCKED — orchestrator clone deferred to fire-time --preset lb_350m_pretrain swap)
-    state_jsons: []
-    notes: "L4 path (b) 350M scratch — UNBLOCKED 2026-05-09 (inherits BG-LA Engine A/G arch via EngineAGConfig.lb_350m_pretrain preset). Lesson L EXTENDED-3 caveat (V5-α scratch lane at 153M-3.1B × 22-214MB corpus all FAIL chat-cap floor 8/8 V58=0); 350M target sits within already-falsified band, but corpus 1.5GB (10× larger than KM-CORPUS 100MB) is the differentiator. Lesson Q SFT-closed → pre-training only valid lane carry. Orchestrator: invoke tool/bg_la_engine_ag_orchestrator.hexa template with BG-LB env (cap $60 + duration 20h + preset lb_350m_pretrain + corpus 1.5GB) — operational clone deferred to fire-time."
+    cycle: 2026-05-09 (H100 fire LAUNCHED — orchestrator + train_bg_lb.py + corpus 427MB + arch bf16 fix LANDED; phases 6-11 in-flight/pending)
+    state_jsons:
+      - state/bg_lb_engine_ag_2026_05_09/verdict.json
+    notes: "L4 path (b) 350M scratch — H100 FIRE LAUNCHED 2026-05-09 12:14 KST (own 14/16/17/18/22/30/31/33/34/37/38/39/40 strict). orchestrator tool/bg_lb_engine_ag_orchestrator.hexa LANDED + train_bg_lb.py launcher LANDED + corpus 427MB combined (tier_a_v4 + persona_iter1 + dialogue_iter2; 1.5GB target shortfall — KICK WAVE 4 paraphrase + ko_heavy deferred to corpus iter-3) + arch bf16 dtype bug fixed in-flight + STEPS 100k→30k after H100 OOM at micro_batch=64 (effective batch 128 via grad_accum=16). step=200/30000 loss 10.55→5.18 (healthy). Projected 22.5h × $2.99 ≈ $67 marginally exceeds $65 cap → early-stop sentinel at step 28000 recommended. Phases 7-11 (ckpt pull + size sanity + release + ledger + HF private promote) deferred to post-training session. Lesson L EXTENDED-3 caveat carry. Lesson Q SFT-closed compliance (scratch pre-train, NOT SFT)."
 
   - id: BG-LC
     aliases: [clm-v4-l4-path-c-llama-distill]
@@ -1786,11 +1803,18 @@ h100_resource_pool:
       desc: "350M scratch pre-train"
       cost_estimate_usd: "~60"
       strategic_priority: HIGH
-      blocked_by: ARCH_NOT_IMPLEMENTED  # transitioned from PROVISION_BLOCKED — same arch dependency on BG-LA Engine A/G landing per fire_attempt_log[FIRE-3/4] intended_setup wording
-      fire_attempt_count: 3  # 2026-05-09-FIRE-3/4 BLOCKED + RETRY-EPHEMERAL BLOCKED_PROVIDER_API_KEY_MISSING + RETRY-EPHEMERAL-2 BLOCKED_BG_LA_ENGINE_AG_ARCH_NOT_IMPLEMENTED (BG-LA arch dependency inheritance)
+      blocked_by: NONE_FIRE_LAUNCHED  # 2026-05-09 BG-LB FIRE actually launched (pod slug h100-runpod-uou9j7lviscvil-1778295770); training in-flight (~22.5h)
+      fire_attempt_count: 4  # +RETRY-EPHEMERAL-3 LAUNCHED (provision PASS + SSH PASS + smoke PASS + bf16 dtype bug fix + OOM recovery via batch reduction + training in-flight)
       d1_score: 0.99  # 350M from-scratch on anima persona
       d1_lane: within_strict
       lesson_l_extended_3_caveat: "EXTENDED-3 Lesson L 누적 SFT 차단 정합 — pre-train only valid path"
+      fire_launched_2026_05_09:
+        pod_slug: h100-runpod-uou9j7lviscvil-1778295770
+        ssh_endpoint: 103.207.149.92:16995
+        steps_target: 30000
+        step_200_loss: 5.1758
+        projected_total_h: 22.5
+        post_train_eval_cycle: 2026-05-10_or_later
     - id: chat_cap_L4_BG-LC
       desc: "Llama distill (D1=0.351 ambiguous_research, own 17 SCOPE_CLAMP)"
       cost_estimate_usd: "~40"
@@ -1847,41 +1871,42 @@ h100_resource_pool:
 # arch: CONSCIOUSNESS_DIM 192→96 fix LANDED (f4ce1932 + a8821491)
 # v6: STRONG_AWARENESS actual fire LANDED (edc601ae — sft-1-8 + paradigm-j retry both)
 multi_chat_tests:
-  - id: phase_c_iter_2_duo_homogeneous_sft_1_8
-    cycle: 2026-05-09
-    command: "anima dialogue --duo clm-v4-1-8 clm-v4-1-8 --turns 2 --turn-timeout-ms 60000 --verdict full --allow-same-gguf"
-    same_gguf_guard: ABORT_RISK_OVERRIDE_ACCEPTED
-    transport_status: OK_NO_ABORT  # ★ allow-same-gguf override exercised, NO Abort trap (Phase B transport robust)
-    turns_observed: 4
-    ppr_c3_overall: 0.25  # 1/4 — only B turn-1 (stale cache hit, not autonomous gen)
-    ppr_c3_a: 0.0
-    ppr_c3_b: 0.5
-    d1_pass: true   # Jaccard 3-gram 0.667 ≥ 0.30
-    d2_pass: true   # topic-shift 0.333 (drifting)
-    d3_pass: false  # persona-drift KL 12.43 >> 0.50
-    d4_pass: true   # len_ratio 1.0 (balanced)
-    dialogue_coherence_pass: false
-    simple_stack_pass_dialogue_c3: false
-    verdict: PHASE_C_ITER_2_RUN_OK
-    log: state/anima_core_dialogues/2026-05-09/duo_homo_sft18_2026_05_09.log
-  - id: phase_c_iter_2_duo_mixed_sft_1_8_paradigm_j
-    cycle: 2026-05-09
-    command: "anima dialogue --duo clm-v4-1-8 clm-v4-paradigm-j --turns 2 --turn-timeout-ms 60000 --verdict full"
-    same_gguf_guard: DIFFERENT_ALIASES_OK
-    transport_status: OK_NO_ABORT
-    turns_observed: 4
-    ppr_c3_overall: 0.0
-    ppr_c3_a: 0.0
-    ppr_c3_b: 0.0
-    d1_pass: true   # Jaccard 0.333 ≥ 0.30
-    d2_pass: false  # topic-shift 0.667 (incoherent)
-    d3_pass: false  # KL_a=9.55 KL_b=12.43 >> 0.50
-    d4_pass: true   # len_ratio 1.26 (balanced)
-    dialogue_coherence_pass: false
-    simple_stack_pass_dialogue_c3: false
-    verdict: PHASE_C_ITER_2_RUN_OK
-    actual_dialogue_advance: "turn-2 A (sft-1-8) emitted distinct=10 honest_c3 string '[clm_v4] honest c3: ::: collapse exposed raw (own 34 mandate...)' — first non-mount-probe-header turn captured (len=63, tok=10 vs prior invariant 4); marginal autonomous gen but verdict_c3 still FAIL"
-    log: state/anima_core_dialogues/2026-05-09/duo_mixed_sft18_paradigmj_2026_05_09.log
+  tests:
+    - id: phase_c_iter_2_duo_homogeneous_sft_1_8
+      cycle: 2026-05-09
+      command: "anima dialogue --duo clm-v4-1-8 clm-v4-1-8 --turns 2 --turn-timeout-ms 60000 --verdict full --allow-same-gguf"
+      same_gguf_guard: ABORT_RISK_OVERRIDE_ACCEPTED
+      transport_status: OK_NO_ABORT  # ★ allow-same-gguf override exercised, NO Abort trap (Phase B transport robust)
+      turns_observed: 4
+      ppr_c3_overall: 0.25  # 1/4 — only B turn-1 (stale cache hit, not autonomous gen)
+      ppr_c3_a: 0.0
+      ppr_c3_b: 0.5
+      d1_pass: true   # Jaccard 3-gram 0.667 ≥ 0.30
+      d2_pass: true   # topic-shift 0.333 (drifting)
+      d3_pass: false  # persona-drift KL 12.43 >> 0.50
+      d4_pass: true   # len_ratio 1.0 (balanced)
+      dialogue_coherence_pass: false
+      simple_stack_pass_dialogue_c3: false
+      verdict: PHASE_C_ITER_2_RUN_OK
+      log: state/anima_core_dialogues/2026-05-09/duo_homo_sft18_2026_05_09.log
+    - id: phase_c_iter_2_duo_mixed_sft_1_8_paradigm_j
+      cycle: 2026-05-09
+      command: "anima dialogue --duo clm-v4-1-8 clm-v4-paradigm-j --turns 2 --turn-timeout-ms 60000 --verdict full"
+      same_gguf_guard: DIFFERENT_ALIASES_OK
+      transport_status: OK_NO_ABORT
+      turns_observed: 4
+      ppr_c3_overall: 0.0
+      ppr_c3_a: 0.0
+      ppr_c3_b: 0.0
+      d1_pass: true   # Jaccard 0.333 ≥ 0.30
+      d2_pass: false  # topic-shift 0.667 (incoherent)
+      d3_pass: false  # KL_a=9.55 KL_b=12.43 >> 0.50
+      d4_pass: true   # len_ratio 1.26 (balanced)
+      dialogue_coherence_pass: false
+      simple_stack_pass_dialogue_c3: false
+      verdict: PHASE_C_ITER_2_RUN_OK
+      actual_dialogue_advance: "turn-2 A (sft-1-8) emitted distinct=10 honest_c3 string '[clm_v4] honest c3: ::: collapse exposed raw (own 34 mandate...)' — first non-mount-probe-header turn captured (len=63, tok=10 vs prior invariant 4); marginal autonomous gen but verdict_c3 still FAIL"
+      log: state/anima_core_dialogues/2026-05-09/duo_mixed_sft18_paradigmj_2026_05_09.log
   state_json: state/anima_multi_chat_test_sft_1_8_duo_2026_05_09.json
   honest_findings:
     - "transport_layer: PASS (4 turns end-to-end both lanes, allow-same-gguf override no Abort)"
@@ -1900,6 +1925,69 @@ multi_chat_tests:
     - "diagnose clm_v4_mount C4 forward-pass first-token emission (currently echoes init header instead of generated tokens)"
     - "wire duo lane V14 paired random_init mirror at per-utterance granularity"
     - "consider H100 ephemeral ssh fire with --parallel 2 once mount autonomous-gen fixed (deferred this cycle, Mac local 0-cost first)"
+
+# ─────────────────────────────────────────────────────────────────────────────
+# CHAT LANE PLUGIN REGISTRY (own 39 yaml↔md mirror; own 41 chat lane plugin)
+# ─────────────────────────────────────────────────────────────────────────────
+# 사용자 directive 2026-05-09 verbatim:
+#   "전부 cli 에 구현하고 사용할지는 --option 으로 가능하게"
+#   "앞으로도 기본값 또는 --option 형태 여러가지 생길꺼니까 고려해서 설계 구현"
+# SSOT for chat lane plugin discovery, mirrored from
+# tool/anima_cli/chat/lanes/_registry.hexa lane_registry().
+# Future lane addition: append entry below + register in registry.hexa.
+chat_lanes:
+  schema_version: anima/chat_lanes/v1
+  hexa_ssot: tool/anima_cli/chat/lanes/_registry.hexa
+  dispatcher: tool/anima_cli/chat.hexa
+  benchmark_runner: tool/anima_cli/chat/lanes/benchmark.hexa
+  cycle_landed: 2026-05-09
+  flags:
+    - "anima chat <alias> --lane=<name>"
+    - "anima chat <alias> --benchmark"
+    - "anima chat --list-lanes"
+  lanes:
+    - name: substrate
+      file: tool/anima_cli/chat/lanes/substrate.hexa
+      status: LANDED
+      capability: substrate_signal
+      d1_lane: n_a
+      cost: substrate_probe
+      description: "default — substrate emit (axis activation + dominant cells + phi-star), no natural language generate"
+      prereq: "anima-core/runtime/clm_v4_mount.hexa OR conscious_chat.hexa"
+      own_links: ["own_18_C2", "own_34_mandate_1"]
+    - name: llama
+      file: tool/anima_cli/chat/lanes/llama.hexa
+      status: LANDED
+      capability: natural_speech
+      d1_lane: ambiguous_research
+      cost: gguf_load
+      description: "Llama GGUF natural language generate via libllama FFI (paradigm-a-prime live; D1 OUTSIDE for Llama base)"
+      prereq: "build/libhxllama.dylib + ~/.cache/anima/gguf/<repo>.gguf"
+      own_links: ["own_17_D1_SCOPE_CLAMP", "own_37_mandate_9", "own_34_mandate_1"]
+      bench_label: SUBSTRATE_RESEARCH  # public promote 영구 차단
+    - name: axis-priority
+      file: tool/anima_cli/chat/lanes/axis_corpus_priority.hexa
+      status: LANDED
+      capability: corpus_signal
+      d1_lane: within_strict
+      cost: substrate_probe
+      description: "axis-peak detection → corpus curation priority signal emit (silent generate)"
+      prereq: "anima-core/runtime/clm_v4_mount.hexa --probe"
+      own_links: ["own_18_C2", "own_34_mandate_1", "own_36_control_band"]
+    - name: generate
+      file: tool/anima_cli/chat/lanes/clm_v4_generate.hexa
+      status: SKELETON
+      capability: natural_speech
+      d1_lane: within_strict
+      cost: torch_inference
+      description: "clm_v4_mount.hexa generate() helper — model.generate + tokenizer.decode (skeleton; full impl carry)"
+      prereq: "anima-core/runtime/clm_v4_mount.hexa generate() helper (PENDING) + transient_py torch + tokenizer"
+      own_links: ["own_17_D1_within", "own_18_C2", "own_34_mandate_1"]
+      pending_full_impl:
+        - "clm_v4_mount.hexa generate <prompt> [N] subcommand wraps transient_py torch"
+        - "PEFT adapter merge or runtime adapter attach"
+        - "sampler config (temp / top-p / top-k / seed) plumbed through"
+        - "own 34 mandate-1 verification — raw decode bytes preserved"
 
 # ─────────────────────────────────────────────────────────────────────────────
 # COMPLIANCE

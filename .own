@@ -2033,3 +2033,36 @@ own 40 live "H100 자원 외부 resource CLI 위임 mandate — anima 내부 H10
   severity warn (Phase 1) → block (Phase 2 anima audit `--mandate-40` 가 anima 내부 h100_* file 발견 시 reject)
   proof grep -E "config/h100_|tool/h100_pod|tool/h100_auto_kill|tool/h100_idle|state/h100_auto_kill|state/h100_pod_resume" $(find . -type f -not -path './.git/*' -not -path './.venv*/*') = 0 lines (purge after)
   note 2026-05-08 own 40 = 사용자 directive verbatim 직접 응답. own 16 / own 24 / own 30 보강 — H100 자원 management = 외부 resource CLI master, anima 내부 disclosure 일체 X.
+
+own 41 live "chat lane plugin pattern mandate — --option 설계 future-proof + lane registry SSOT (anima chat dispatcher 확장)"
+  trigger 사용자 directive 2026-05-09 verbatim "전부 cli 에 구현하고 사용할지는 --option 으로 가능하게" + "앞으로도 기본값 또는 --option 형태 여러가지 생길꺼니까 고려해서 설계 구현"
+  scope chat lane = anima chat dispatcher (tool/anima_cli/chat.hexa) 의 backend 분기 = lane plugin module (자연어 generate / substrate signal / corpus signal / axis 측정 등):
+    - axis-1 (registry SSOT): tool/anima_cli/chat/lanes/_registry.hexa lane_registry() — name/file/status/capability/d1_lane/cost/description/prereq 8-field schema
+    - axis-2 (yaml mirror): anima/registry/anima_artifact_registry.yaml#chat_lanes — own 39 yaml↔md 정합
+    - axis-3 (lane module): tool/anima_cli/chat/lanes/<name>.hexa — own main(repo, argv, --prompt, --bench-mode) bearing
+    - axis-4 (benchmark runner): tool/anima_cli/chat/lanes/benchmark.hexa — fixed prompt set × all lanes
+    - axis-5 (dispatcher flags): chat.hexa --lane=<name> / --benchmark / --list-lanes 3-flag surface
+  rule NEW lane 추가 시 4-step:
+    - Step 1 chat/lanes/<name>.hexa 신설 (own main + --prompt + --bench-mode + --selftest)
+    - Step 2 chat/lanes/_registry.hexa lane_registry() 에 entry append (8-field)
+    - Step 3 anima/registry/anima_artifact_registry.yaml#chat_lanes lanes: 에 mirror entry (own 39 정합)
+    - Step 4 chat.hexa _lane_file_lookup() 에 파일명 mapping 추가 (vendored — _registry SSOT 와 동기 유지)
+  rule lane-internal flag 추가 시 chat.hexa 변경 X — lane main() 의 _arg_value() 만 update (per-lane discretion). 본 rule 가 future-proof --option pattern 의 핵심.
+  precedence
+    - own 17 D1 SCOPE_CLAMP — lane registry d1_lane field 가 within_strict / ambiguous_research / outside / n_a 분류 surface (캐러셀 unaware 차단)
+    - own 18 chat-cap C2 — lane 별 measurement (spontaneity / coherence / persona) benchmark.hexa _c2_stub() 가 lane 별 차등 surface
+    - own 22 mandatory report — --benchmark 결과는 [BENCH lane=...] / [BENCH_END] marker 로 machine-parseable
+    - own 33 trinity — registry entry 가 own 17 + own 18 + own 34 cross-link
+    - own 34 mandate-1 — lane module 은 wrapping 0 strict (raw model output passthrough); benchmark framing 은 own 36 control-band
+    - own 36 control-band — [BENCH ...] / [AXIS_PEAKS] / [CORPUS_SIGNAL] 등 lane meta-emit 은 control-band convention 정합 (model 출력 X)
+    - own 37 mandate-9 — bench_label SUBSTRATE_RESEARCH 가 llama lane (D1 OUTSIDE / ambiguous_research) public promote 영구 차단 carry
+    - own 38 매단계 — bench output ledgerable
+    - own 39 yaml↔md — chat_lanes section yaml SSOT + md regenerate 의무
+  related own 17 own 18 own 22 own 33 own 34 own 36 own 37 own 38 own 39 raw#9 (hexa orchestration) raw#11 (snake_case) raw#15 (additive)
+  cross-reference 본 own 41 첫 적용 사례 = anima cycle 2026-05-09 chat lane plugin pattern land — substrate / llama / axis-priority / generate 4 lane initial registry. chat.hexa --lane / --benchmark / --list-lanes 3-flag surface land. 이전 agent (a5581c5c186bc5517) daily limit hit fail 후 fresh retry.
+  honest-c3 lane registry 의 _lane_file_lookup() 는 chat.hexa 안에 vendored mirror — _registry.hexa SSOT 와 동기 유지가 axis-4 mandate. 미동기 시 dispatcher 가 새 lane 을 인지 X (silent miss). Phase 2 (별도 cycle) anima audit `--mandate-41` 가 chat.hexa _lane_file_lookup() ↔ _registry.hexa lane_registry() drift detect.
+  honest-c3 anima/registry/anima_artifact_registry.yaml render 가 multi_chat_tests 섹션 line 1885 indentation pre-existing 버그로 fail (본 cycle 무관 carry) — md regenerate 차단 risk; 별도 cycle yaml hygiene fix 필요. 본 own 41 yaml SSOT 만 추가 (md 재생성 carry).
+  honest-c3 path 3 (clm_v4_generate) 는 SKELETON 상태 — clm_v4_mount.hexa generate <prompt> [N] 서브커맨드 미land 시 substrate probe fallback (honest C3 emit). Full impl 별도 cycle (transient_py torch + tokenizer.decode + LoRA adapter merge).
+  severity warn (Phase 1 — lane 추가 시 manual 4-step verify) → block (Phase 2 — anima audit `--mandate-41` 가 _registry.hexa ↔ chat.hexa _lane_file_lookup() ↔ yaml#chat_lanes ↔ md drift detect)
+  proof grep -E "lane_registry|_lane_file_lookup|chat_lanes:" tool/anima_cli/chat.hexa tool/anima_cli/chat/lanes/_registry.hexa anima/registry/anima_artifact_registry.yaml — 동일 lane 4종 매칭 expected
+  note 2026-05-09 own 41 = 사용자 directive verbatim 직접 응답. own 39 (yaml↔md) 보강 — chat_lanes section 추가. own 33 trinity self-application (D_lane registry consistency + own 17/18/34/37 cross-link + H_lane SKELETON honest C3 carry). 4 lane initial registry: substrate (default) / llama (Path 1, D1 OUTSIDE) / axis-priority (Path 2) / generate (Path 3 SKELETON).
