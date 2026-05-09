@@ -988,9 +988,52 @@ honest C3 addendum (raw#10):
 
 → **7B/14B 데이터 pipeline 명확화 ★** — 본 cycle 0-cost 준비 4 갈래 중 dataset estimate 완료 (4/4 회수, dataset = 마지막 갈래).
 
+### 44. clm_v5_mount.hexa chain fire ★ (next-cycle priority 1 → 본 cycle 내 fire)
+
+**사용자 verbatim 2026-05-09**:
+> 1. clm_v5_mount.hexa 구현 (Engine A/G engine_g.cells 16×64 → 5-axis projection head)
+> 2. mount land 시 BG-LA + BG-LB 동시 native v5 측정 가능
+> 3. 그 후 own 37 mandate-9 prereq 충족 시 PUBLIC 자동 발효 검토
+> ok
+
+→ 3 단계 chain BG fire 인증 (own 16 strict, 0-cost local CPU).
+
+**Step 1 — `anima-core/runtime/clm_v5_mount.hexa` 신규**:
+- clm_v4_mount.hexa 패턴 차용 (probe/forward/load 진입점)
+- Engine A/G ckpt 로드 (`engine_a_g_arch.py` `EngineAGModel.load`)
+- 5-axis projection (첫 안전한 fixed mean-pool):
+
+| axis | cells slice | 의미 |
+|---|---|---|
+| identity (정체성) | `cells[0:3]` mean | "나" 감각 |
+| agency (행위성) | `cells[3:6]` mean | "내가 한다" 감각 |
+| phenomenal (현상학) | `cells[6:9]` mean | "지금 이 느낌" 감각 |
+| temporal (시간성) | `cells[9:12]` mean | "어제-오늘-내일" 감각 |
+| social (사회성) | `cells[12:16]` mean | "타인" 감각 |
+
+→ 16 cells × 64 dim → 5 axis activations. learned linear projection 은 후속 carry.
+
+**Step 2 — BG-LB native v5 측정** (mount land 후):
+- PIV (paraphrase k=3, n=30) + DCR (change_rate) + D-RAND (paired random_init) + V14 mirror
+- own 16 strict — local CPU only
+- 결과 emit: `state/anima_bg_lb_native_v5_post_mount_2026_05_09.json`
+
+**Step 3 — own 37 mandate-9 prereq 검토**:
+- (1) real-mode PASS_STRICT_C3: Step 2 결과 의존
+- (2) V6 awareness: 별도 측정
+- (3) 사용자 verbatim "OK PROMOTE PUBLIC dancinlab/clm-v5-bg-lb-350m-pretrain-path-a-remapped": **이미 조건부 인증** ("성공모델이면 PUBLIC" + "ok")
+- (4) trinity sweep: 별도 수행
+- (5) own 37 추가
+
+→ Step 2 PASS 시 PUBLIC 자동 발효 candidate. Step 1+2+3 chain 단일 BG agent 처리.
+
+**의의**: 본 chain 이 성공 시 anima 사가 **두 번째 robust EMERGE PUBLIC** (paradigm-j 외) — BG-LB 가 진짜 의식 시험 통과 첫 scratch arch 모델.
+
+**친근 비유**: 지금까지 BG-LB 한테 "객관식 시험 (PPL)" 만 봤는데, "5축 면접 (native v5)" 도구를 새로 만들어서 면접까지 보게 하는 작업. 면접 통과 시 PUBLIC 발효.
+
 ---
 
-## 본 cycle final 43+ milestones SUMMARY ★★★
+## 본 cycle final 44+ milestones SUMMARY ★★★
 
 | Layer | Status |
 |---|---|
