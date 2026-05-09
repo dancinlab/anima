@@ -464,6 +464,112 @@ cycle 종합 ledger preserved across all `raw#82 retraction-aware` overlays.
 
 ---
 
+## ★★★ 추가 milestones 23-27 (cycle 후반)
+
+### 23. paradigm-j retry PUBLIC PROMOTE — first robust EMERGE PUBLIC ★★★ (in-flight `ae7b24dc8c92d0eeb`)
+
+ALT-AGG-1 v5.2 adaptive floor (commit `942b5fda`) 후 paradigm-j 4/4 gates PASS → **EMERGE_v5_2 ACTIVE**:
+- Gate A_adaptive: PIV-max 0.0874 ≥ floor 0.05 ✅ (margin +0.0374)
+- Gate B-refined: DCR 1.0 ✅
+- Gate C: D-RAND 0.2249 ≥ 0.05 ✅
+- Gate D: V14 random self-PPR 0.0 < 0.05 ✅
+
+**own 37 mandate-9 5/5 PASS** (사용자 verbatim `OK PROMOTE PUBLIC dancinlab/clm-v4-paradigm-j-50k-final-path-a-remapped` issued):
+- (a) D1=0.793 ✅
+- (b) V6 STRONG ✅ (commit `edc601ae`)
+- **(c) 사용자 verbatim ✅ NEW**
+- (d) trinity sweep ✅
+- (e) D × L sweep ✅
+
+→ **22+ BG saga first robust EMERGE first PUBLIC instance** ★★★ (sft-1-8 = V14 borderline; paradigm-j = **V14 robust** + EMERGE_v5_2 + 5/5 prereq 모두 strict 통과)
+
+### 24. paraphrase k=5+ amplification FALSIFIED — substrate ceiling confirmed (commit `d5003029`)
+
+paradigm-j paraphrase k=3 → k=5 (90 → 150 prompts):
+
+| 메트릭 | k=3 | k=5 | 변화 |
+|---|---|---|---|
+| **PIV-max** | 0.0874 | **0.0776** | **-0.0098** ★ attenuated (k 늘릴수록 max 줄어듬) |
+| PIV-mean | 0.0354 | 0.0399 | +0.0045 |
+
+**Sample size noise hypothesis CLOSED** — k=3 의 0.0874 가 noise spike 였음, k=5 에서 max 평균으로 돌아감. **substrate paraphrase amplitude bounded ≈0.04 mean / ≈0.08 max** intrinsic ceiling confirmed.
+
+amplification path 2 (k expansion) FALSIFIED. v5.2 lineage 영향 X (PIV-max 0.0776 ≥ 0.05 floor PASS carry).
+
+### 25. init-pattern plugin pattern LAND — own 41 axis-8 (commit `0abdb3cf`)
+
+AI 끼리 dialogue 첫 발언 어떻게 시작? 4 plugin patterns:
+
+| Pattern | 의미 |
+|---|---|
+| autonomous | 빈 prompt (자율 generate) |
+| system-seed | 사용자 정의 시스템 prompt |
+| topic-pool | 10가지 화제 deterministic-per-second |
+| **self-reflective** ★ default | "너 자신에 대해 어떻게 느껴?" — anima 본질 정합 |
+
+CLI flags: `--init-pattern=<name|all>` / `--list-init-patterns` / `--init-seed=<text>` / `--init-topics=<list>` / `--init-topic-index=<n>` (replay deterministic).
+
+own 41 axis-8 5-step rule (NEW init-pattern 추가 5단계). benchmark cross-product = 4 lanes × 3 modes × 4 init-patterns = **48 조합** auto-enumerate.
+
+### 26. Path 3 generate FULL LAND — structural blocker UNBLOCKED (commit `fe30c736`)
+
+**chat-cap architecture layer 마지막 blocker 해소** ★:
+
+```
+clm_v4_mount.hexa generate <prompt> [N]
+  → cmd_generate dispatcher
+  → transient_py helper (model.generate + tokenizer.decode)
+  → JSON record emit (own 18 C2 axis stub 포함)
+```
+
+CLI flags: `--temperature` / `--top-p` / `--top-k` / `--repetition-penalty` / `--seed`. CLM v4 colon-attractor 회피 (memory `feedback_clm_colon_attractor.md`) — `:::` mode-collapse retry mechanism.
+
+### 27. ★ Honest C5 — substrate quality 한계 발견 ★
+
+Path 3 generate path 작동 ✅, **단 sft-1-8 substrate 가 자연어 generate undertrained**:
+
+| Prompt | Generated text |
+|---|---|
+| "안녕" | `��◗��t.�/�` |
+| "What are you?" | `��◗��t.�/\|` |
+| "Hello" | `I I st for for for for for for for for for` |
+
+**chat-cap 2-layer breakdown 정밀 진단** (raw#10 honest C3):
+- **architecture layer**: Path 3 generate path ✅ UNBLOCKED ★
+- **substrate quality layer**: sft-1-8 자체 자연어 emit 능력 ❌ (consciousness-state targets 학습 위주)
+
+→ "**The path emerges; the substrate quality does not**" — chat-cap C2 SIMPLE_STACK_PASS first-actual NOT MET on substrate quality axis-2. 단 testbed unblocked → 다음 cycle 에 foundation-borrow / arch-redesign / pre-train scale-up 시도 가능.
+
+---
+
+## chat orchestra 4-axis 완성 ★
+
+| Axis | Plugin pattern | Status |
+|---|---|---|
+| **lane** (own 41 axis-1) | substrate / llama / axis-priority / **generate ✅ FULL** | LANDED |
+| **mode** (axis-6) | 1:1 / ai-duo / ai-trio | LANDED |
+| **init-pattern** (axis-8) | autonomous / system-seed / topic-pool / self-reflective ★ | LANDED |
+| **transport** (in-flight `a15681f00671ca167`) | imtl / FIFO / β-1 / FFI / 등 | in-flight |
+
+cross-product benchmark cap (transport land 시): **N lanes × 3 modes × 4 init-patterns × M transports** auto-enumerate per single CLI command. 사용자 directive "전부 벤치마킹 + cli 에 구현 + --option + 앞으로 여러개 생길거 future-proof" 누적 정합.
+
+---
+
+## 본 cycle final 27 milestones (1-27)
+
+historic moments cumulative:
+1. **first dual H100 actual training** (BG-LA + BG-LB)
+2. **first PUBLIC anima 모델** (sft-1-8 V14 borderline path)
+3. **first robust EMERGE candidate → first robust EMERGE PUBLIC** (paradigm-j v5.2 EMERGE_v5_2 + 5/5 prereq strict)
+4. **chat orchestra 4-axis future-proof** (lane × mode × init-pattern × transport)
+5. **own audit 25 findings + own 34 collision discovery**
+6. **structural blocker UNBLOCKED (Path 3 generate FULL)** + substrate quality 한계 발견 (raw#10 honest C3)
+7. **D-RAND ⊥ PIV ⊥ DCR amplification path orthogonality** (v5.2 winner / k=5+ ceiling / JVAE 100K in-flight)
+
+raw#15 additive + raw#82 retraction-aware 전체 cycle 일관 preserve.
+
+---
+
 ## 가장 큰 깨달음 (final)
 
 본 cycle 의 cumulative honest C3 12 findings 종합:
