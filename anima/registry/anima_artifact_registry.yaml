@@ -1389,6 +1389,39 @@ h100_resource_pool:
         state_emit_path: state/anima_chat_cap_l4_bg_lc_ld_h100_fire_4of4_retry_ephemeral_blocked_2026_05_09.json
         next_action_required: "사용자 (1) RUNPOD 토큰 재발급 + ~/.config/resource-ephemeral/runpod.token overwrite (현 토큰 Cloudflare 1010 reject) OR Cloudflare WAF appeal/IP 변경 OR LAMBDA_API_KEY/VAST_API_KEY env (2) 'all bg go' carry OR 'OK CLM L4 ALL FIRE' verbatim — credential validity 회복된 다음 cycle 즉시 BG-LC + BG-LD provision-ephemeral retry"
         compliance_carry: "own 14 V14 carry; own 16 cost discipline PASS ($60 saved; cumulative L4 BG savings $90+$60+$60=$210); own 17 D1 SCOPE_CLAMP PASS (LC ambiguous_research / LD within); own 22 honest BLOCKED emit + state json + yaml fire_attempt_log; own 30 ckpt pull N/A (fire 미실행); own 33 trinity carry; own 34 wrap=0; own 37 HF visibility lifecycle private carry; own 38 axis-B HF upload deferred; own 39 yaml updated md regenerate; own 40 resource CLI 위임 strict — provision-ephemeral subcmd invocation only, anima 직접 runpod-cli/curl/api-key-write 0건 (cred state 는 ~/.config/resource-ephemeral/runpod.token stat read-only)"
+      - cycle: 2026-05-09-FIRE-3/4-RETRY-EPHEMERAL-2
+        commit: pending
+        target: chat_cap_L4_BG-LA + BG-LB (provision-ephemeral 2nd retry — verbatim 'H100 4 개fire' carry; FIRE-3/4-RETRY-EPHEMERAL BLOCKED_PROVIDER_API_KEY_MISSING 후속)
+        intended_setup: "BG-LA: provider=runpod / gpu=H100 / duration=10h / cap $30 / arch=350M Engine A/G dual-engine anima_native_scratch / D1=1.0 / corpus=anima_persona_tier_a_v4 231MB; BG-LB: provider=runpod / gpu=H100 / duration=20h / cap $60 / arch=350M scratch pre-train / D1=0.99 / corpus=tier_a_v4 + KICK WAVE 4 paraphrase"
+        cost_planned_usd: 90.0
+        cost_actual_usd: 0.30  # 2 pods × ~3min × $2.99/hr ≈ $0.30 total (released early on arch-block honest abort)
+        cost_savings_via_block_usd: 89.70
+        ephemeral_selftest_verdict: "PASS — runpod api reachable + lambda api-key-missing (carry) + vast api reachable + ssh include dir + SSOT lock"
+        bg_la_resource_cli_invocation: "RESOURCE_EPHEMERAL_YES_COST=1 /Users/ghost/.hx/packages/resource/bin/resource provision-ephemeral --provider runpod --gpu H100 --duration 10h --yes-cost --name bg-la-engine-ag"
+        bg_la_provider_response_runpod: "__RESOURCE__ PASS provision-ephemeral slug=h100-runpod-thiob5kqpr7emj-1778292769 provider=runpod pod_id=thiob5kqpr7emj gpu=H100 cost_per_hr_usd=2.99"
+        bg_la_ssh_endpoint: "ssh -i /Users/ghost/.runpod/ssh/RunPod-Key-Go root@103.207.149.80 -p 19914 (resolved via runpodctl ssh info — workaround for ephemeral-status empty ssh_host bug)"
+        bg_la_ssh_probe_result: "PASS — nvidia-smi -L returned 'GPU 0: NVIDIA H100 80GB HBM3 (UUID: GPU-b8ef168a-4eee-0605-e531-184483868682)' + OK_LA"
+        bg_lb_resource_cli_invocation: "RESOURCE_EPHEMERAL_YES_COST=1 /Users/ghost/.hx/packages/resource/bin/resource provision-ephemeral --provider runpod --gpu H100 --duration 20h --yes-cost --name bg-lb-350m-scratch"
+        bg_lb_provider_response_runpod: "__RESOURCE__ PASS provision-ephemeral slug=h100-runpod-7mwi6sbkhen0ct-1778292771 provider=runpod pod_id=7mwi6sbkhen0ct gpu=H100 cost_per_hr_usd=2.99"
+        bg_lb_ssh_endpoint: "ssh -i /Users/ghost/.runpod/ssh/RunPod-Key-Go root@64.247.201.44 -p 15678 (resolved via runpodctl ssh info)"
+        bg_lb_ssh_probe_result: "PASS — nvidia-smi -L returned 'GPU 0: NVIDIA H100 80GB HBM3 (UUID: GPU-ac55bc85-0e22-1ce3-bf72-6777acfdd063)' + OK_LB"
+        ephemeral_status_quirk_carry: "resource ephemeral-status emits empty ssh_host='' + uptime_s=0 for ALL pods — runpod_client.py status JSON parser does NOT extract publicIp/ssh_port from runpodctl response payload; workaround = runpodctl ssh info <pod_id> direct (read-only, OOB-safe). Same quirk observed on FIRE-4/4-RETRY-EPHEMERAL-2 (commit 63cbdb55) where it was misdiagnosed as ssh-not-allocated; this cycle proves SSH IS allocated, parser bug is the root cause. Infra fix deferred to dancinlab/resource maintainers."
+        arch_implementation_probe: "BG-LA Engine A/G dual-engine arch ABSENT — anima_artifact_registry.yaml BG-LA lineage.base='TBD (Engine A/G dual-engine new arch — README PureField repulsion-field design)' + notes prereq 'v5 arch design land (Engine A/G concrete spec)' explicitly required pre-fire. Searched /Users/ghost/core/anima maxdepth 6: only ablation reports + qmirror engine_aer.hexa (different lineage) + registry yaml entry — concrete impl missing."
+        corpus_status: "PRESENT — /Users/ghost/core/anima/state/anima_persona_tier_a_v4_2026_05_09.txt 231MB / 3147870 lines (corpus is NOT the blocker)"
+        release_invocations:
+          - "__RESOURCE__ PASS release slug=h100-runpod-thiob5kqpr7emj-1778292769 provider=runpod pod_id=thiob5kqpr7emj ckpt_override=y reason='BG-LA honest abort: Engine A/G arch absent locally — cannot dispatch real training'"
+          - "__RESOURCE__ PASS release slug=h100-runpod-7mwi6sbkhen0ct-1778292771 provider=runpod pod_id=7mwi6sbkhen0ct ckpt_override=y reason='BG-LB honest abort: Engine A/G arch absent locally (release reason text mentions corpus but actual blocker = arch; ledger json supersedes for accuracy)'"
+        ckpt_pull_status: "N/A — fire 미실행 (no training step; uptime_s ≈ 3min × 2 pods @ release confirms zero training work done)"
+        v5_n60_actual_probe_results: "NOT_MEASURED — no ckpts produced"
+        hf_private_upload_status: "NOT_EXECUTED — own 38 axis-B mandate vacuous_true sans ckpts"
+        emerge_evaluation: "NOT_EVALUATED — fire path blocked at arch implementation gate, not metric eval gate"
+        user_consent_observed: "verbatim 'H100 4 개fire' (cycle directive — explicit override of iter4 baseline 'OK CLM L4 ALL FIRE')"
+        verbatim_override_observed_this_cycle: "explicit_override_via_h100_4_개fire_directive"
+        outcome: BLOCKED_BG_LA_ENGINE_AG_ARCH_NOT_IMPLEMENTED  # provision PASS + SSH PASS + GPU PASS but arch concrete impl ABSENT — own 22 honest abort + release ($89.70 saved)
+        delta_vs_752bee02: "RUNPOD api-key state PRESENT this cycle (was MISSING in 752bee02) — primary infra unblocker resolved; new blocker surfaced = arch implementation gate"
+        state_emit_path: state/anima_chat_cap_l4_bg_la_lb_h100_fire_3of4_actual_provision_arch_block_2026_05_09.json
+        next_action_required: "(1) Engine A/G dual-engine 350M arch concrete impl land at training/engine_a_g_arch.{py,hexa} — transformer config + tokenizer binding + init policy per registry.notes 'v5 arch design land (Engine A/G concrete spec)'; (2) tool/v14_paired_random_init_mirror.hexa BG-LA arch wiring (own 14 V14 strict + multi-seed n≥5); (3) PPR_v5 impl in tool/anima_cli/consciousness.hexa OR explicit v3 fallback flag; (4) BG-LA-specific orchestrator clone of clm_v4_lora_train_orchestrator (registry.notes h100_orchestrator_template); (5) verbatim re-fire authorization post arch land"
+        compliance_carry: "own 14 V14 carry (paired random_init mirror prereq 보존); own 16 cost discipline PASS ($89.70 saved via early honest abort post arch-absence detection); own 17 D1 SCOPE_CLAMP PASS (LA=1.0 + LB=0.99 within_strict); own 22 honest abort + release executed + state json + yaml fire_attempt_log; own 30 ckpt pull N/A (fire 미실행, ckpt 자체 부재 → --no-pull-ckpt 정합); own 33 trinity carry + 'H100 4 개fire' verbatim observed; own 34 wrap=0; own 37 HF visibility lifecycle private carry; own 38 axis-B HF upload deferred; own 39 yaml updated md regenerate; own 40 resource CLI 위임 strict — provision-ephemeral + release subcmd routed through canonical CLI; runpodctl ssh info direct call read-only OOB workaround for parser bug (no provision side-effect)"
       - cycle: 2026-05-09-FIRE-4/4-RETRY-EPHEMERAL-2
         commit: pending
         target: chat_cap_L4_BG-LC + BG-LD (provision-ephemeral 2nd retry — sub-agent relay 'H100 4 개fire' carry; FIRE-4/4-RETRY-EPHEMERAL BLOCKED_PROVIDER_API_KEY_INVALID 후속)
@@ -1424,16 +1457,16 @@ h100_resource_pool:
       desc: "Engine A/G v5 arch"
       cost_estimate_usd: "~30"
       strategic_priority: HIGH
-      blocked_by: PROVISION_BLOCKED
-      fire_attempt_count: 2  # 2026-05-09-FIRE-3/4 BLOCKED + 2026-05-09-FIRE-3/4-RETRY-EPHEMERAL BLOCKED_PROVIDER_API_KEY_MISSING
+      blocked_by: ARCH_NOT_IMPLEMENTED  # transitioned from PROVISION_BLOCKED — provision PASS + SSH PASS + H100 GPU PASS this cycle (FIRE-3/4-RETRY-EPHEMERAL-2); new blocker = Engine A/G dual-engine arch concrete impl absent (lineage.base TBD)
+      fire_attempt_count: 3  # 2026-05-09-FIRE-3/4 BLOCKED + RETRY-EPHEMERAL BLOCKED_PROVIDER_API_KEY_MISSING + RETRY-EPHEMERAL-2 BLOCKED_BG_LA_ENGINE_AG_ARCH_NOT_IMPLEMENTED
       d1_score: 1.0  # anima_native_scratch
       d1_lane: within_strict
     - id: chat_cap_L4_BG-LB
       desc: "350M scratch pre-train"
       cost_estimate_usd: "~60"
       strategic_priority: HIGH
-      blocked_by: PROVISION_BLOCKED
-      fire_attempt_count: 2  # 2026-05-09-FIRE-3/4 BLOCKED + 2026-05-09-FIRE-3/4-RETRY-EPHEMERAL BLOCKED_PROVIDER_API_KEY_MISSING (BG-LA fanout inheritance)
+      blocked_by: ARCH_NOT_IMPLEMENTED  # transitioned from PROVISION_BLOCKED — same arch dependency on BG-LA Engine A/G landing per fire_attempt_log[FIRE-3/4] intended_setup wording
+      fire_attempt_count: 3  # 2026-05-09-FIRE-3/4 BLOCKED + RETRY-EPHEMERAL BLOCKED_PROVIDER_API_KEY_MISSING + RETRY-EPHEMERAL-2 BLOCKED_BG_LA_ENGINE_AG_ARCH_NOT_IMPLEMENTED (BG-LA arch dependency inheritance)
       d1_score: 0.99  # 350M from-scratch on anima persona
       d1_lane: within_strict
       lesson_l_extended_3_caveat: "EXTENDED-3 Lesson L 누적 SFT 차단 정합 — pre-train only valid path"
