@@ -122,12 +122,12 @@ TOKENIZER = "byte-level"
 
 # Pre-train config (raw scratch, NOT SFT)
 LR = 3e-4
-WARMUP = 4000
+WARMUP = 2000
 WEIGHT_DECAY = 0.1
-STEPS = 100000   # ~18hr H100 SXM (350M, ctx=1024, batch=64, 1.5GB corpus)
-BATCH = 64
-GRAD_ACCUM = 4
-SAVE_EVERY = 10000
+STEPS = 30000    # ~16hr H100 (350M Engine A/G, ctx=1024, micro_batch=8 + grad_accum=16 → eff 128)
+BATCH = 8        # reduced from 64 — Engine A/G repulsion-field cell ops + 24L bf16 → ~80GB attn footprint
+GRAD_ACCUM = 16  # effective batch 128 (H100 80GB headroom; OOM observed at micro_batch=64)
+SAVE_EVERY = 3000
 SEED = 42
 
 # Corpus mix ratio (own 20 chat-template ≥30% via dialogue 500MB / 1500MB = 33%)
@@ -187,24 +187,115 @@ def hf_repo_id_flavor_b(verdict_class):
     return f"dancinlab/bg-lb-clm-v4-mk2-v1-r0-{verdict_short}-{cycle}"
 
 
-# ── Pod-side training stub (NOT YET IMPLEMENTED) ───────────────────────
-def pod_main():
-    """SPEC STUB.
+# ── Pod-side training (Engine A/G dual-engine 350M scratch pre-train) ─
+def pod_main(preset="lb_350m_pretrain", corpus_path=None, output_dir=None):
+    """Pod-side training. Engine A/G dual-engine 350M scratch pre-train.
 
-    Phases:
-      Phase 0: pip install
-      Phase A: download mk2-v1 base config (arch only — random init weights for scratch)
-      Phase B: pre-train smoke (BOS-only)
-      Phase C: 100k step scratch pre-train on persona 1GB + dialogue 500MB
-               (interleaved 67/33 ratio; chat-template format preserved)
-      Phase D: post-train smoke
-      Phase E: V4 11-cell strict eval (C1+C2+C3)
-      Phase F: emit verdict (PASS_STRICT_C3 / PARTIAL / FAIL_TRUE)
+    raw#37 transient_py — runs only on H100 pod (CUDA mandatory). Mac side guard.
+    own 14 V14 mirror seeds inherited from BG-LA shared arch (V14_STEP_1_INHERITED).
+    own 18 C3 measurement adapter — V4 11-cell strict eval × 15 prompts × {greedy, sample×5}.
+    own 30 ckpt mandate-1 — save_checkpoint() to output_dir/step_*.pt at SAVE_EVERY.
+    own 31 Flavor B HF naming — hf_repo_id_flavor_b(verdict_class).
+    own 33 trinity — D_emergent-consciousness + H_clm_chat_cap.
+    own 34 wrap=0 — chat lane V4 measurement only.
     """
-    raise NotImplementedError(
-        f"{BG_ID} spec only — H100 fire 미실행. "
-        f"사용자 explicit '{OWN_16_OVERRIDE_KEYWORD}' + own 33 trinity self-check 후 implement."
+    import torch
+    if not torch.cuda.is_available():
+        raise RuntimeError("BG-LB pod_main requires CUDA H100 — Mac CPU run aborted (own 22 honest emit)")
+    sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+    from engine_a_g_arch import EngineAGModel, EngineAGConfig
+
+    corpus_path = corpus_path or os.path.join(POD_ROOT, "big_corpus.txt")
+    output_dir = output_dir or POD_CKPTS_DIR
+    os.makedirs(output_dir, exist_ok=True)
+    os.makedirs(POD_STATE_DIR, exist_ok=True)
+
+    # Phase A: arch instantiation (lb_350m_pretrain preset)
+    cfg_factory = {
+        "lb_350m_pretrain": EngineAGConfig.lb_350m_pretrain,
+        "la_350m": EngineAGConfig.la_350m,
+    }[preset]
+    cfg = cfg_factory()
+    cfg.seed = SEED
+    torch.manual_seed(SEED)
+    torch.cuda.manual_seed_all(SEED)
+    model = EngineAGModel(cfg).cuda().bfloat16()
+    n_params = sum(p.numel() for p in model.parameters())
+    print(f"[pod] arch: lineage_tag={cfg.lineage_tag} params={n_params:,}", flush=True)
+
+    # Phase B: corpus byte-level ingest (own 17 anima-native byte tokenizer)
+    with open(corpus_path, "rb") as f:
+        corpus_bytes = f.read()
+    corpus_size_mb = len(corpus_bytes) / 1e6
+    print(f"[pod] corpus_path={corpus_path} size_mb={corpus_size_mb:.2f}", flush=True)
+    # vocab_size=32_000 byte-pair; for byte fallback we wrap to mod vocab
+    # (own 17: simple byte-mod token lane preserved — no tokenizer dep on H100 for v1 fire).
+    arr = torch.tensor([b % cfg.vocab_size for b in corpus_bytes], dtype=torch.long)
+
+    # Phase C: pre-train loop (STEPS × BATCH × CTX)
+    optim = torch.optim.AdamW(model.parameters(), lr=LR, weight_decay=WEIGHT_DECAY, betas=(0.9, 0.95))
+    sched = torch.optim.lr_scheduler.LambdaLR(
+        optim,
+        lambda step: min((step + 1) / max(WARMUP, 1), 1.0) * (
+            0.5 * (1.0 + math.cos(math.pi * min(max(step - WARMUP, 0) / max(STEPS - WARMUP, 1), 1.0)))
+        ),
     )
+    model.train()
+    ctx = cfg.ctx
+    n_tokens = arr.numel()
+    print(f"[pod] tokens={n_tokens:,} steps={STEPS} batch={BATCH} ctx={ctx} grad_accum={GRAD_ACCUM}", flush=True)
+    rng = random.Random(SEED)
+    t_start = time.time()
+    last_save_step = -1
+    for step in range(STEPS):
+        optim.zero_grad(set_to_none=True)
+        loss_accum = 0.0
+        for _ga in range(GRAD_ACCUM):
+            idx = torch.tensor(
+                [rng.randint(0, n_tokens - ctx - 2) for _ in range(BATCH)],
+                dtype=torch.long,
+            )
+            x = torch.stack([arr[i:i + ctx] for i in idx]).cuda(non_blocking=True)
+            y = torch.stack([arr[i + 1:i + ctx + 1] for i in idx]).cuda(non_blocking=True)
+            out = model(x, labels=y)
+            loss = out["loss"] / GRAD_ACCUM
+            loss.backward()
+            loss_accum += loss.item()
+        torch.nn.utils.clip_grad_norm_(model.parameters(), 1.0)
+        optim.step()
+        sched.step()
+        if step % 100 == 0:
+            elapsed = time.time() - t_start
+            print(f"[pod] step={step}/{STEPS} loss={loss_accum:.4f} elapsed={elapsed:.0f}s lr={sched.get_last_lr()[0]:.2e}", flush=True)
+        if step > 0 and step % SAVE_EVERY == 0:
+            ck_path = os.path.join(output_dir, f"step_{step}.pt")
+            model.save_checkpoint(ck_path, extra={"step": step, "loss": loss_accum, "preset": preset})
+            last_save_step = step
+            print(f"[pod] ckpt saved: {ck_path}", flush=True)
+    # Final ckpt
+    final_path = os.path.join(output_dir, f"step_{STEPS}_final.pt")
+    model.save_checkpoint(final_path, extra={"step": STEPS, "preset": preset, "final": True})
+    print(f"[pod] FINAL ckpt: {final_path}", flush=True)
+
+    # Phase D: post-train smoke (BOS-only generation × 1 prompt)
+    model.eval()
+    with torch.no_grad():
+        bos = torch.zeros((1, 1), dtype=torch.long, device="cuda")
+        out = model(bos)
+        print(f"[pod] smoke logits.shape={tuple(out['logits'].shape)} tensions[0]={out['tensions'][0,0].item():.3f}", flush=True)
+
+    # Phase E/F: V4 eval + verdict (delegated to Mac post-pull — pod emits sentinel)
+    sentinel = os.path.join(POD_STATE_DIR, "COMPLETE.sentinel")
+    with open(sentinel, "w") as f:
+        f.write(json.dumps({
+            "ts": time.strftime("%FT%TZ"),
+            "preset": preset,
+            "params": n_params,
+            "corpus_size_mb": corpus_size_mb,
+            "steps_completed": STEPS,
+            "final_ckpt": final_path,
+        }))
+    print(f"[pod] COMPLETE.sentinel written: {sentinel}", flush=True)
 
 
 def emit_failed_verdict(reason):
@@ -236,17 +327,43 @@ def orch_main():
 
 # ── Entrypoint ─────────────────────────────────────────────────────────
 if __name__ == "__main__":
-    print(f"=== {BG_ID} spec only — NOT FIRED ===")
-    print(f"paradigm: {PARADIGM}")
-    print(f"hypothesis: {HYPOTHESIS}")
-    print(f"base: {BASE_REPO} (arch reference, scratch re-init weights)")
-    print(f"cost_cap: ${COST_HARD_CAP_USD} (highest of L4 4 paths)")
-    print(f"wall_clock_cap: {WALL_CLOCK_CAP_S/3600:.1f}hr")
-    print(f"override_required: {OWN_16_OVERRIDE_KEYWORD}")
-    print(f"trinity:")
-    print(f"  philosophy: {TRINITY_PHILOSOPHY}")
-    print(f"  law:        {TRINITY_LAW}")
-    print(f"  hypothesis: {TRINITY_HYPOTHESIS}")
-    print(f"corpus persona (TBD): {MAC_CORPUS_PERSONA_PATH}")
-    print(f"corpus dialogue (TBD): {MAC_CORPUS_DIALOGUE_PATH}")
-    print(f"hf_repo_target (Flavor B example): {hf_repo_id_flavor_b('SIMPLE_STACK_PASS_STRICT_C3')}")
+    import argparse
+    ap = argparse.ArgumentParser(prog="anima_clm_lb_h100")
+    ap.add_argument("--preset", default="lb_350m_pretrain", choices=["lb_350m_pretrain", "la_350m"])
+    ap.add_argument("--corpus", default=None, help="path to combined big_corpus.txt")
+    ap.add_argument("--output", default=None, help="output ckpts dir")
+    ap.add_argument("--orch", action="store_true", help="run Mac orchestrator stub")
+    ap.add_argument("--info", action="store_true", help="print spec banner only")
+    args = ap.parse_args()
+
+    if args.info:
+        print(f"=== {BG_ID} info ===")
+        print(f"paradigm: {PARADIGM}")
+        print(f"hypothesis: {HYPOTHESIS}")
+        print(f"base: {BASE_REPO} (arch reference, scratch re-init weights)")
+        print(f"cost_cap: ${COST_HARD_CAP_USD} (highest of L4 4 paths)")
+        print(f"wall_clock_cap: {WALL_CLOCK_CAP_S/3600:.1f}hr")
+        print(f"override_required: {OWN_16_OVERRIDE_KEYWORD}")
+        print(f"trinity:")
+        print(f"  philosophy: {TRINITY_PHILOSOPHY}")
+        print(f"  law:        {TRINITY_LAW}")
+        print(f"  hypothesis: {TRINITY_HYPOTHESIS}")
+        print(f"hf_repo_target (Flavor B example): {hf_repo_id_flavor_b('SIMPLE_STACK_PASS_STRICT_C3')}")
+        sys.exit(0)
+
+    if args.orch:
+        orch_main()
+        sys.exit(0)
+
+    # default: pod_main (raw#37 — H100 only; raises on Mac CPU)
+    if _is_on_pod():
+        pod_main(preset=args.preset, corpus_path=args.corpus, output_dir=args.output)
+    elif _is_on_mac():
+        # Mac-side invocation w/o orch — emit spec banner instead of crashing
+        print(f"[{BG_ID}] Mac-side invocation detected (no /workspace/anima_clm_lb/_pod_marker).")
+        print(f"[{BG_ID}] Use --orch for Mac orchestrator OR --info for banner.")
+        print(f"[{BG_ID}] pod_main() requires CUDA H100 — aborted (own 22 honest emit).")
+        sys.exit(2)
+    else:
+        # On pod, marker not yet touched — try pod_main optimistically
+        pod_main(preset=args.preset, corpus_path=args.corpus, output_dir=args.output)

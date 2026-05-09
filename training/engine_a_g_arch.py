@@ -158,8 +158,9 @@ class RoPE(nn.Module):
     def rotate(self, x: torch.Tensor, seq_off: int = 0) -> torch.Tensor:
         # x: (B, H, T, D) — name avoids clash with nn.Module.apply()
         T = x.shape[-2]
-        cos = self.cos[seq_off:seq_off + T]
-        sin = self.sin[seq_off:seq_off + T]
+        # Match RoPE buffers to input dtype (float32 buffers preserve precision; cast to x.dtype to match).
+        cos = self.cos[seq_off:seq_off + T].to(x.dtype)
+        sin = self.sin[seq_off:seq_off + T].to(x.dtype)
         x1, x2 = x[..., ::2], x[..., 1::2]
         rotated = torch.stack([x1 * cos - x2 * sin, x1 * sin + x2 * cos], dim=-1)
         return rotated.flatten(-2)
@@ -199,13 +200,19 @@ class GQAttention(nn.Module):
         # A/G tension gate — temperature modulation
         scale = 1.0 / math.sqrt(self.d_head)
         if tension is not None:
-            # tension shape (B,) — scalar per batch
-            t_clamped = (tension - 1.0).clamp(-0.5, 0.5)
-            scale = scale / (1.0 + self.gate_beta * t_clamped).view(B, 1, 1, 1)
+            # tension shape (B,) — scalar per batch; keep in q's dtype to prevent
+            # bf16 → float32 upcast cascading through softmax + att @ v.
+            tension_q = tension.to(dtype=q.dtype)
+            t_clamped = (tension_q - 1.0).clamp(-0.5, 0.5)
+            scale_t = (1.0 + self.gate_beta * t_clamped).view(B, 1, 1, 1)
+            scale = (torch.tensor(scale, dtype=q.dtype, device=q.device) / scale_t)
         att = torch.matmul(q, k.transpose(-2, -1)) * scale
         mask = torch.triu(torch.ones(T, T, device=x.device, dtype=torch.bool), diagonal=1)
         att = att.masked_fill(mask, float("-inf"))
         att = att.softmax(dim=-1)
+        # Ensure att shares dtype with v (bf16 forward path; tension cast can leave
+        # softmax output in fp32 on some torch builds → matmul dtype mismatch).
+        att = att.to(dtype=v.dtype)
         out = torch.matmul(att, v).transpose(1, 2).contiguous().view(B, T, -1)
         return self.o_proj(out), att.detach()
 
