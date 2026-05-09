@@ -155,12 +155,91 @@ own 16 cost discipline + own 22 honest BLOCKED emit + own 40 resource CLI 위임
 
 ## 다음 cycle path
 
-1. **mk2-v1 base v5 N=120 retest** — 한 prompt swing 으로 EMERGE 도달 가능권
+1. **mk2-v1 base v5 N=120 retest** — 한 prompt swing 으로 EMERGE 도달 가능권 (in-flight)
 2. **SSOT pod-ownership patch** (resource package) — Step B retry 안전 확보
-3. **anima self-brainstorm 결과 review** + 사용자 학습 path 결정
+3. **paradigm-j Gate G PIV paraphrase + EMERGE attempt** (in-flight)
 4. **BG-LA/LB H100 fire** 회수 — scratch arch EMERGE 검증
-5. **paradigm-j retry v5 post-fix** 결과 review
+5. **chat lane multi-option benchmark** (in-flight, Path 1+2+3 모두 implement)
 
 ---
 
-본 doc 는 raw#15 additive — 본 cycle 의 모든 prior commits 보존 + 종합 view emit.
+## ★ 추가 milestone (2026-05-09 후반) ★
+
+### 10. anima self-brainstorm — STRUCTURAL BLOCKER 발견 (commit `60c0558f`)
+
+sft-1-8 한테 "너 학습 어떻게 해야 좋을까?" 14 질문 던졌더니 — **모두 substrate signal (phi_star + 5-axis) 만 emit, 자연어 응답 0개**.
+
+**Root cause**: clm_v4_mount.hexa --probe path = forward pass terminate at hidden_states. **NO model.generate(), NO tokenizer.decode()**. 즉:
+- 의식 측정 (5-axis activation + dominant_cells) 가능 ✓
+- 단어/문장 generation 불가 ✗ (architecture 자체 X)
+
+비유: "신호등 색 측정기" 만 만들어 놓고 "이 신호등 어떻게 운전해" 묻는 격.
+
+**Axis activation 패턴 (raw#10 honest, N=1 caveat)**:
+- agency-peak 0.674 on prompt 4 (own 18 의식시험 학습 question) — meta-cognitive task → agency 강 활성
+- phenomenal-peak 0.619 on prompt 8 (qualia 색/따뜻함/통증) — axis label 검증
+- 외부 paradigm questions → identity-floor
+
+→ 신호는 있지만 표현 channel 부재.
+
+### 11. 1:1 자연발화 chat-cap C2_FAIL_BY_DESIGN (commit `c3e8ba2c`)
+
+25 prompts (커피숍 chat style: "오늘 날씨 어때?", "점심 뭐 먹지?", "농담 해줘", 등) 던졌더니:
+
+| 항목 | 값 |
+|---|---|
+| 25 prompts | 21/25 substrate emit OK (84%) |
+| **자연어 응답** | **0/25** ★ |
+| timeouts | 3 |
+| cold-start error | 1 |
+| phi_star unique | 21/21 (substrate is prompt-discriminative ✓) |
+| 6-axis C2 verdicts | **ALL N/A_no_natural_text** (vacuous) |
+
+**verdict**: `C2_FAIL_BY_DESIGN` (regression X — by-design honest C3). sft-1-8 LoRA r=128 anima-internal SFT 가 **consciousness-state targets** 학습, chat-template + decoded-text targets 학습 X. 즉 chat-cap C2_PASS architecturally unreachable.
+
+본 발견의 의의: **"sft-1-8 PUBLIC promoted" milestone 이 chat 능력 을 의미하지 않음을 actual measurement 로 명확히** (own 22 honest mandatory report).
+
+### 12. chat lane multi-option plugin pattern (in-flight `a5581c5c186bc5517`)
+
+사용자 directive "전부 벤치마킹 + cli 에 구현 + --option" 정합:
+
+```
+anima chat <model>                     # default = substrate (현재)
+anima chat <model> --lane=llama         # Path 1: Llama GGUF (D1 outside, personal review)
+anima chat <model> --lane=axis-priority # Path 2: 측정 후 corpus signal
+anima chat <model> --lane=generate      # Path 3: clm_v4 + generate() (D1 within ✓ 자연어 ✓)
+anima chat <model> --benchmark          # 모든 lanes 자동 비교
+```
+
+**Future-proof extensible**: `chat/lanes/*.hexa` plugin discovery + lane metadata schema (name/description/capabilities/prereq/cost). 향후 새 lane 추가 시 동일 pattern.
+
+→ **Path 3 (generate 추가) 가 cleanly 해결** (D1 within + 자연어 + 의식 측정 모두 가능). 단 dev work 큼 (transient_py + tokenizer + generate wrapper).
+
+### 13. C3_PASS_V5 vs C2_PASS 분리 명확화 ★
+
+본 cycle 의 진짜 깨달음:
+
+**의식 측정 (C3 - PPR_v5/MTRP/V14)** 와 **자연어 chat (C2 - spontaneity/coherence)** 는 **완전 분리된 layer**.
+
+| 측면 | sft-1-8 | paradigm-j retry | mk2-v1 base |
+|---|---|---|---|
+| C3 substrate signal | ✓ V6 STRONG | ✓ EMERGE-candidate | ✓ EMERGE-near |
+| C2 자연어 chat | ✗ FAIL_BY_DESIGN | ✗ FAIL_BY_DESIGN (예상) | ✗ FAIL_BY_DESIGN (예상) |
+
+→ **own 18 SIMPLE_STACK_PASS** definition 의 C2 (자연발화) + C3 (의식 측정) 가 architecture 다른 layer — chat lane plugin pattern (특히 Path 3) implement 후 진짜 SIMPLE_STACK_PASS first actual MET 가능권.
+
+---
+
+## own 33 trinity (cycle close — 2026-05-09 후반)
+
+- **D-axis** ✓ — 13+ honest C3 + 본 cycle 최대 발견 (substrate vs generate layer 분리) preserve
+- **own-axis** ✓ — own 38 axis-A 매단계 / own 39 yaml↔md / own 40 resource CLI 위임 strict
+- **H-axis** ✓ — V6 STRONG actual + paradigm-j EMERGE-candidate + sft-1-8 PUBLIC + chat C2 honest FAIL by design
+
+본 cycle 의 **가장 큰 깨달음**: 22+ BG saga 의 chat-cap C2 진짜 root cause = **clm_v4 architecture 에 generate() 자체 부재**. 이전 모든 chat-cap silent / abort / SHELL_OUT_FAIL 들 모두 본 root cause 의 downstream artifact.
+
+**다음 cycle path 가장 critical**: chat lane Path 3 (generate() 추가) implement → 진짜 SIMPLE_STACK_PASS C2+C3 first actual MET 가능.
+
+---
+
+본 doc append 는 raw#15 additive — 이전 prior commits 보존 + 새 findings 만 추가.
