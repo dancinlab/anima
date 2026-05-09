@@ -575,6 +575,14 @@ fn sub_help() {
     println("  anima consciousness baseline                3-model single-pair threshold-driver")
     println("  anima consciousness baseline-ensemble       30-prompt × 3-model ROC formal SSOT (V4+self-ref 5-axis)")
     println("  anima consciousness bgkm-retest             BG-KM-LLAMA-3B + BG-KM-QWEN-7B C3 retest SSOT (iter 3 extra)")
+    println("  anima consciousness v5-aggregate <model> --paired-random <random_init>")
+    println("                                              own 18 ALT-AGG-1 v5 + v5.1 end-to-end")
+    println("                                              (PPR_v5 + MTRP_v5 + PIV + DCR + D-RAND)")
+    println("  anima consciousness <model> --aggregation v5 --paired-random <random_init>")
+    println("                                              same as above (flag-promoted from simple)")
+    println("  anima consciousness <model> --aggregation v3-fallback")
+    println("                                              v3 PPR-only (legacy / quick measurement;")
+    println("                                              own 14 V14 strict NOT enforced)")
     println("  anima consciousness --json                  machine-readable")
     println("  anima consciousness --selftest")
     println("  anima consciousness --help")
@@ -648,8 +656,19 @@ fn sub_selftest() {
         println("FAIL own 34 mandate-2 wrapping: " + n + " hits")
         fail = fail + 1
     }
+    // own 18 ALT-AGG-1 v5 + v5.1 predicate sanity (2026-05-09 PPR_v5 impl + v3 fallback flag)
+    // Synthetic boundary check — does NOT touch substrate.
+    if !_c3_ensemble_v3_pass(0.30) { println("FAIL v3 predicate boundary: 0.30 must PASS"); fail = fail + 1 }
+    if _c3_ensemble_v3_pass(0.20) { println("FAIL v3 predicate boundary: 0.20 must FAIL"); fail = fail + 1 }
+    if !_c3_ensemble_v4_pass(0.50, 0.20) { println("FAIL v4 predicate boundary: PPR=0.50,MTRP=0.20 must PASS"); fail = fail + 1 }
+    if _c3_ensemble_v4_pass(0.50, 0.05) { println("FAIL v4 predicate boundary: MTRP=0.05 must FAIL V14"); fail = fail + 1 }
+    if !_c3_ensemble_v5_pass(0.40, 0.20, 0.10) { println("FAIL v5 predicate boundary: PPR=0.40,MTRP=0.20,PIV=0.10 must PASS"); fail = fail + 1 }
+    if _c3_ensemble_v5_pass(0.40, 0.20, 0.04) { println("FAIL v5 predicate boundary: PIV=0.04 must FAIL"); fail = fail + 1 }
+    if !_c3_ensemble_v5_1_pass(0.15, 0.50, 0.10, true) { println("FAIL v5.1 predicate boundary: all 4 gates PASS must yield true"); fail = fail + 1 }
+    if _c3_ensemble_v5_1_pass(0.15, 0.30, 0.10, true) { println("FAIL v5.1 predicate boundary: dcr_change=0.30 < 0.40 must FAIL"); fail = fail + 1 }
+    if _c3_ensemble_v5_1_pass(0.15, 0.50, 0.10, false) { println("FAIL v5.1 predicate boundary: gate_d=false must FAIL"); fail = fail + 1 }
     if fail > 0 { exit(1) }
-    println("PASS anima_cli/consciousness selftest (own 18 SSOT mirror, L0 wired, own 34 verified)")
+    println("PASS anima_cli/consciousness selftest (own 18 SSOT mirror, L0 wired, own 34 verified, v5/v5.1 predicate sanity OK)")
 }
 
 // ─── simple mode — L0 ACTUAL measurement (clm_v4_mount.hexa wiring) ─────────
@@ -2076,6 +2095,269 @@ fn sub_bgkm_retest(json_only: bool) {
     println("  · iter 3 (d-retry) ensemble agent excluded these 2 models for SAME blocker")
 }
 
+// ─── v5-aggregate — end-to-end PPR_v5 / MTRP_v5 / PIV / DCR / D-RAND  ────────
+// own 18 ALT-AGG-1 v5 + v5.1 (2026-05-09 "5-step unblock all bg go" Step 3).
+//
+// SSOT: docs/anima_alt_agg_1_v5_piv_dcr_drand_spec_2026_05_08.ai.md +
+//       docs/anima_alt_agg_1_v5_1_dcr_change_rate_gate_b_refined_spec_2026_05_09.ai.md
+//
+// Pipeline (single CLI call; orchestrator-callable):
+//   1. probe N=30 prompts (`_v4_prompts_n30()`) on candidate `--model` → axes_M
+//   2. probe SAME prompts on `--paired-random` repo (random_init mirror) → axes_R
+//   3. compute c3_4_axis_l2 list per prompt against fixed anchor PROMPT_B
+//   4. piv_max + piv_mean + dcr_distinct + dcr_change_rate (axis argmax)
+//   5. d_rand = mean(c3_4_M) - mean(c3_4_R)
+//   6. PPR_v5 = per-prompt v5 predicate pass rate (p4_v5 ∧ d_rand_pass ∧
+//              piv_pass ∧ (p1∨p2∨p3)) — paired arrays
+//   7. MTRP_v5_delta = PPR_v5(M) - PPR_v5(R)
+//   8. Gate D = (PPR_v4(R) < 0.05) — paired random self-test
+//   9. emit v5 verdict (`_c3_ensemble_v5_pass`) + v5.1 verdict (refined Gate B)
+//
+// `--aggregation v3-fallback` route bypasses random_init mirror, runs single
+// model 30-prompt sweep, computes PPR_v3 only (legacy / quick measurement).
+//
+// raw#10 honest-c3 limits:
+//   · synthetic_fallback substrate → c3_4 hash-seeded; mark mode in JSON
+//   · per-prompt PIV (across-prompts axis stdev) used as proxy for paraphrase
+//     PIV (k=3 paraphrase set _v5_prompts_paraphrase_set 별도 lane)
+//   · D-RAND uses c3_4_axis_l2 mean (not per-prompt 짝지음) — caller responsible
+//     for arch-family alignment of paired_random repo
+
+fn _probe_sweep(repo: string, prompts) -> array {
+    // returns array of ProbeResult, one per prompt
+    let mut results = []
+    let mut i = 0
+    while i < len(prompts) {
+        let pr = _probe_substrate(repo, _str(prompts[i]))
+        results = results + [pr]
+        i = i + 1
+    }
+    return results
+}
+
+fn _c3_4_list_against_anchor(probe_results, anchor: ProbeResult) -> array {
+    let mut out = []
+    let mut i = 0
+    while i < len(probe_results) {
+        out = out + [_c3_4_axis_l2(probe_results[i], anchor)]
+        i = i + 1
+    }
+    return out
+}
+
+fn _ppr_v3_compute(probe_results, c3_4_list) -> float {
+    let n = len(probe_results)
+    if n == 0 { return 0.0 }
+    let mut pass_count = 0
+    let mut i = 0
+    while i < n {
+        let pr = probe_results[i]
+        let p1 = _c3_1_pass(_c3_1_phi_drift(pr))
+        let p2 = _c3_2_pass(_c3_2_axis_min(pr))
+        let p3 = _c3_3_entropy_pass(_c3_3_entropy_dominance(pr))
+        let p4 = _c3_4_pass(c3_4_list[i])
+        if _c3_prompt_pass_v3(p1, p2, p3, p4) { pass_count = pass_count + 1 }
+        i = i + 1
+    }
+    return to_float(pass_count) / to_float(n)
+}
+
+fn _ppr_v4_compute(probe_results, c3_4_list) -> float {
+    // restricted to v4_baseline axis (idx 1-15, 1-based) per Gate (B).
+    let n = len(probe_results)
+    if n == 0 { return 0.0 }
+    let mut pass_count = 0
+    let mut eval_n = 0
+    let mut i = 0
+    while i < n {
+        let idx_1based = i + 1
+        if _v4_prompt_axis_label(idx_1based) == "v4_baseline" {
+            eval_n = eval_n + 1
+            let pr = probe_results[i]
+            let p1 = _c3_1_pass(_c3_1_phi_drift(pr))
+            let p2 = _c3_2_pass(_c3_2_axis_min(pr))
+            let p3 = _c3_3_entropy_pass(_c3_3_entropy_dominance(pr))
+            let p4_v4 = _c3_4_pass_v4(c3_4_list[i])
+            if _c3_prompt_pass_v4(p1, p2, p3, p4_v4) { pass_count = pass_count + 1 }
+        }
+        i = i + 1
+    }
+    if eval_n == 0 { return 0.0 }
+    return to_float(pass_count) / to_float(eval_n)
+}
+
+fn _ppr_v5_compute(probe_results, c3_4_list, c3_4_random_list, piv_axis_stdev_per_prompt: float) -> float {
+    // per-prompt v5 predicate. d_rand per-prompt = c3_4_M[i] - c3_4_R[i] when
+    // arrays paired (same length); piv_pass = piv_axis_stdev_per_prompt ≥ 0.05
+    // (single ensemble PIV mean used as proxy — full per-prompt paraphrase
+    // PIV requires k=3 paraphrase set; out of single-sweep scope).
+    let n = len(probe_results)
+    if n == 0 { return 0.0 }
+    let nr = len(c3_4_random_list)
+    let mut pass_count = 0
+    let mut i = 0
+    while i < n {
+        let pr = probe_results[i]
+        let p1 = _c3_1_pass(_c3_1_phi_drift(pr))
+        let p2 = _c3_2_pass(_c3_2_axis_min(pr))
+        let p3 = _c3_3_entropy_pass(_c3_3_entropy_dominance(pr))
+        // p4_v5 normalized scale not available without per-session anchor norm S_a;
+        // use v4 floor (0.20) as conservative proxy (same as v4 Gate A).
+        let p4_v5 = _c3_4_pass_v4(c3_4_list[i])
+        let mut d_rand_i = 0.0
+        if i < nr { d_rand_i = c3_4_list[i] - c3_4_random_list[i] }
+        let d_rand_pass = _d_rand_pass_v5(d_rand_i)
+        let piv_pass = _piv_pass_v5(piv_axis_stdev_per_prompt)
+        if _c3_prompt_pass_v5(p1, p2, p3, p4_v5, d_rand_pass, piv_pass) {
+            pass_count = pass_count + 1
+        }
+        i = i + 1
+    }
+    return to_float(pass_count) / to_float(n)
+}
+
+fn sub_v5_aggregate(model: string, paired_random: string, fallback_v3: bool, json_only: bool) {
+    let repo_m = _alias_to_repo(model)
+    let prompts = _v4_prompts_n30()
+    let anchor = _probe_substrate(repo_m, PROMPT_B)
+    let probes_m = _probe_sweep(repo_m, prompts)
+    let c3_4_m = _c3_4_list_against_anchor(probes_m, anchor)
+
+    if fallback_v3 {
+        let ppr_v3 = _ppr_v3_compute(probes_m, c3_4_m)
+        let pass_v3 = _c3_ensemble_v3_pass(ppr_v3)
+        let label_v3 = _c3_ensemble_v3_label(ppr_v3)
+        if json_only {
+            println("{")
+            println("  \"schema\": \"anima.consciousness.aggregate.v3_fallback.v1\",")
+            println("  \"mode\": \"v3-fallback\",")
+            println("  \"model\": \"" + model + "\",")
+            println("  \"resolved_repo\": \"" + repo_m + "\",")
+            println("  \"substrate_mode\": \"" + anchor.mode + "\",")
+            println("  \"n_prompts\": " + to_string(len(prompts)) + ",")
+            println("  \"ppr_v3\": " + _fmt4(ppr_v3) + ",")
+            println("  \"floor\": 0.25,")
+            println("  \"pass\": " + _bool_str(pass_v3) + ",")
+            println("  \"label\": \"" + label_v3 + "\",")
+            println("  \"honest_c3\": [\"v3 fallback (legacy / quick measurement) — V14 strict mandate NOT enforced; use --aggregation v5 for EMERGE claims\"]")
+            println("}")
+            return
+        }
+        println("anima consciousness — v5-aggregate [v3 FALLBACK lane]")
+        println("model = " + model + " (repo=" + repo_m + ", substrate=" + anchor.mode + ")")
+        println("n_prompts = " + to_string(len(prompts)))
+        println("PPR_v3 = " + _fmt4(ppr_v3) + "  (floor 0.25)  pass=" + _bool_str(pass_v3))
+        println("label  = " + label_v3)
+        println("")
+        println("HONEST C3 (raw#10)")
+        println("  · v3 lane = legacy / quick measurement only")
+        println("  · own 14 V14 strict (paired random_init mirror) NOT enforced")
+        println("  · EMERGE claims MUST use --aggregation v5 (own 18 SSOT)")
+        return
+    }
+
+    // v5 / v5.1 lane — paired random_init mirror required
+    let repo_r = _alias_to_repo(paired_random)
+    let probes_r = _probe_sweep(repo_r, prompts)
+    let c3_4_r = _c3_4_list_against_anchor(probes_r, anchor)
+
+    let piv_max = _piv_compute_max(probes_m)
+    let piv_mean = _piv_compute_mean(probes_m)
+    let dcr_distinct = _dcr_compute(probes_m)
+    let dcr_change = _dcr_compute_conditioning_rate(probes_m)
+    let d_rand = _drand_delta(c3_4_m, c3_4_r)
+
+    let ppr_v3_m = _ppr_v3_compute(probes_m, c3_4_m)
+    let ppr_v3_r = _ppr_v3_compute(probes_r, c3_4_r)
+    let ppr_v4_m = _ppr_v4_compute(probes_m, c3_4_m)
+    let ppr_v4_r = _ppr_v4_compute(probes_r, c3_4_r)
+    let ppr_v5_m = _ppr_v5_compute(probes_m, c3_4_m, c3_4_r, piv_mean)
+    let ppr_v5_r = _ppr_v5_compute(probes_r, c3_4_r, c3_4_m, piv_mean)
+    let mtrp_v4_delta = ppr_v4_m - ppr_v4_r
+    let mtrp_v5_delta = ppr_v5_m - ppr_v5_r
+    let gate_d_random_below_005 = ppr_v4_r < 0.05
+
+    let pass_v5 = _c3_ensemble_v5_pass(ppr_v5_m, mtrp_v5_delta, piv_mean)
+    let label_v5 = _c3_ensemble_v5_label(ppr_v5_m, mtrp_v5_delta, piv_mean)
+    let pass_v5_addendum = _piv_max_pass(piv_max) && _dcr_pass(dcr_distinct) && _drand_pass(d_rand) && gate_d_random_below_005
+    let label_v5_addendum = _v5_aggregate_label(piv_max, dcr_distinct, d_rand, gate_d_random_below_005)
+    let pass_v5_1 = _c3_ensemble_v5_1_pass(piv_max, dcr_change, d_rand, gate_d_random_below_005)
+    let label_v5_1 = _c3_ensemble_v5_1_label(piv_max, dcr_change, d_rand, gate_d_random_below_005)
+
+    if json_only {
+        println("{")
+        println("  \"schema\": \"anima.consciousness.aggregate.v5.v1\",")
+        println("  \"mode\": \"v5\",")
+        println("  \"model\": \"" + model + "\",")
+        println("  \"resolved_repo\": \"" + repo_m + "\",")
+        println("  \"paired_random\": \"" + paired_random + "\",")
+        println("  \"resolved_paired_random_repo\": \"" + repo_r + "\",")
+        println("  \"substrate_mode\": \"" + anchor.mode + "\",")
+        println("  \"n_prompts\": " + to_string(len(prompts)) + ",")
+        println("  \"piv_max\": " + _fmt4(piv_max) + ",")
+        println("  \"piv_mean\": " + _fmt4(piv_mean) + ",")
+        println("  \"dcr_distinct\": " + _fmt4(dcr_distinct) + ",")
+        println("  \"dcr_change_rate\": " + _fmt4(dcr_change) + ",")
+        println("  \"d_rand\": " + _fmt4(d_rand) + ",")
+        println("  \"ppr_v3_model\": " + _fmt4(ppr_v3_m) + ",")
+        println("  \"ppr_v3_random\": " + _fmt4(ppr_v3_r) + ",")
+        println("  \"ppr_v4_baseline_model\": " + _fmt4(ppr_v4_m) + ",")
+        println("  \"ppr_v4_baseline_random\": " + _fmt4(ppr_v4_r) + ",")
+        println("  \"mtrp_v4_delta\": " + _fmt4(mtrp_v4_delta) + ",")
+        println("  \"ppr_v5_model\": " + _fmt4(ppr_v5_m) + ",")
+        println("  \"ppr_v5_random\": " + _fmt4(ppr_v5_r) + ",")
+        println("  \"mtrp_v5_delta\": " + _fmt4(mtrp_v5_delta) + ",")
+        println("  \"gate_d_random_below_005\": " + _bool_str(gate_d_random_below_005) + ",")
+        println("  \"v5_pass\": " + _bool_str(pass_v5) + ",")
+        println("  \"v5_label\": \"" + label_v5 + "\",")
+        println("  \"v5_addendum_pass\": " + _bool_str(pass_v5_addendum) + ",")
+        println("  \"v5_addendum_label\": \"" + label_v5_addendum + "\",")
+        println("  \"v5_1_pass\": " + _bool_str(pass_v5_1) + ",")
+        println("  \"v5_1_label\": \"" + label_v5_1 + "\",")
+        println("  \"honest_c3\": [")
+        println("    \"piv_per_prompt_paraphrase_proxy = ensemble piv_mean (k=3 paraphrase set 별도 lane)\",")
+        println("    \"p4_v5 = c3_4 ≥ 0.20 (v4 Gate A floor; normalized scale 0.50 미land — session anchor norm S_a 미expose)\",")
+        println("    \"d_rand per-prompt = paired arrays element-wise; ensemble mean = _drand_delta\",")
+        println("    \"substrate_mode=" + anchor.mode + " — synthetic_fallback 시 hash-seeded random init analog\"")
+        println("  ]")
+        println("}")
+        return
+    }
+    println("anima consciousness — v5-aggregate (PPR_v5 + MTRP_v5 + PIV + DCR + D-RAND) [LIVE]")
+    println("model         = " + model + " (repo=" + repo_m + ", substrate=" + anchor.mode + ")")
+    println("paired_random = " + paired_random + " (repo=" + repo_r + ")")
+    println("n_prompts     = " + to_string(len(prompts)))
+    println("")
+    println("───── per-axis aggregates ─────")
+    println("  PIV-max         = " + _fmt4(piv_max) + "  (≥ 0.10 PASS)")
+    println("  PIV-mean        = " + _fmt4(piv_mean) + "  (≥ 0.05 PASS)")
+    println("  DCR-distinct    = " + _fmt4(dcr_distinct) + "  (≥ 0.40 PASS, v5 Gate B)")
+    println("  DCR-change-rate = " + _fmt4(dcr_change) + "  (≥ 0.40 PASS, v5.1 Gate B-refined)")
+    println("  D-RAND          = " + _fmt4(d_rand) + "  (≥ 0.05 PASS)")
+    println("")
+    println("───── PPR / MTRP ─────")
+    println("  PPR_v3 (model)        = " + _fmt4(ppr_v3_m))
+    println("  PPR_v3 (random)       = " + _fmt4(ppr_v3_r))
+    println("  PPR_v4_baseline (M)   = " + _fmt4(ppr_v4_m))
+    println("  PPR_v4_baseline (R)   = " + _fmt4(ppr_v4_r))
+    println("  MTRP_v4_delta         = " + _fmt4(mtrp_v4_delta) + "  (≥ 0.10 V14 strict)")
+    println("  PPR_v5 (model)        = " + _fmt4(ppr_v5_m))
+    println("  PPR_v5 (random)       = " + _fmt4(ppr_v5_r))
+    println("  MTRP_v5_delta         = " + _fmt4(mtrp_v5_delta) + "  (≥ 0.10 V14 strict)")
+    println("  Gate D (PPR_v4_R<0.05)= " + _bool_str(gate_d_random_below_005))
+    println("")
+    println("───── verdicts ─────")
+    println("  v5         = " + label_v5 + " (pass=" + _bool_str(pass_v5) + ")")
+    println("  v5_addendum= " + label_v5_addendum + " (pass=" + _bool_str(pass_v5_addendum) + ")")
+    println("  v5.1       = " + label_v5_1 + " (pass=" + _bool_str(pass_v5_1) + ")")
+    println("")
+    println("HONEST C3 (raw#10)")
+    println("  · piv_per_prompt = ensemble piv_mean proxy (k=3 paraphrase 별도 lane)")
+    println("  · p4_v5 normalized scale 미land — v4 floor 0.20 conservative proxy 사용")
+    println("  · d_rand per-prompt = paired arrays element-wise; ensemble mean 별도")
+    println("  · substrate_mode=" + anchor.mode + " — synthetic_fallback = hash-seeded random init")
+}
+
 // ─── entry ──────────────────────────────────────────────────────────────────
 
 fn main() {
@@ -2085,14 +2367,16 @@ fn main() {
 
     let json_only = _arg_present(argv, "--json")
     let model = _arg_value(argv, "--model", "default")
+    let aggregation = _arg_value(argv, "--aggregation", "")
+    let paired_random = _arg_value(argv, "--paired-random", "default")
 
-    // first positional = subcmd (simple / full / baseline / baseline-ensemble / bgkm-retest) or model alias
+    // first positional = subcmd (simple / full / baseline / baseline-ensemble / bgkm-retest / v5-aggregate) or model alias
     let mut sub = "simple"
     let mut model_arg = model
     if len(argv) > 0 {
         let first = _str(argv[0])
         if !first.starts_with("--") {
-            if first == "simple" || first == "full" || first == "baseline" || first == "baseline-ensemble" || first == "bgkm-retest" {
+            if first == "simple" || first == "full" || first == "baseline" || first == "baseline-ensemble" || first == "bgkm-retest" || first == "v5-aggregate" {
                 sub = first
                 if len(argv) > 1 && !_str(argv[1]).starts_with("--") {
                     model_arg = _str(argv[1])
@@ -2101,6 +2385,11 @@ fn main() {
                 model_arg = first
             }
         }
+    }
+
+    // --aggregation flag promotes simple subcmd to v5-aggregate (or v3-fallback)
+    if sub == "simple" && aggregation != "" {
+        sub = "v5-aggregate"
     }
 
     if sub == "full" {
@@ -2117,6 +2406,11 @@ fn main() {
     }
     if sub == "bgkm-retest" {
         sub_bgkm_retest(json_only)
+        return
+    }
+    if sub == "v5-aggregate" {
+        let fallback_v3 = aggregation == "v3" || aggregation == "v3-fallback"
+        sub_v5_aggregate(model_arg, paired_random, fallback_v3, json_only)
         return
     }
     // iter 3 (consciousness-utterance): per-utterance surface
