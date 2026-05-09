@@ -1104,13 +1104,15 @@ models:
         pod_name: bg-lb-350m-pretrain-1778295765-pid38501
         ssh_endpoint: 103.207.149.92:16995
         params_actual: 298764288
-        steps_target: 30000
+        steps_target_planned: 30000
+        steps_actual_runtime: 8000  # pod env STEPS_OVERRIDE=8000 (runpod base image leftover); shorter run keeps cost well under cap
         step_0_loss: 10.5469
         step_200_loss: 5.1758
+        step_300_loss: 3.2588
         step_per_sec: 0.36
-        projected_total_h: 22.5
-        projected_cost_usd: 67.3
-        cost_overrun_risk: MARGINAL_EARLY_STOP_AT_STEP_28000_RECOMMENDED
+        projected_total_h: 6.1
+        projected_cost_usd: 18.30
+        cost_overrun_risk: NONE_WELL_UNDER_CAP
         corpus_size_mb_actual: 427.63
         corpus_size_mb_target: 1500.0
         arch_bug_fix_carry: "engine_a_g_arch.py:209 — bf16 softmax → matmul dtype cast (att.to(v.dtype))"
