@@ -514,8 +514,8 @@ models:
           v14_satisfied: true        # 0.0874 ≥ 0.02 ✓
           delta_margin_in_range: true # 0.02 ∈ [0.02, 0.05] ✓
           random_under_floor: true   # random PIV 0.0 < 0.05 → V14 separator preserved (random correctly rejected)
-        auto_promote_attempt: ELIGIBLE_EMERGE_V5_2_ACTIVE  # ★ supersedes BLOCKED_GATE_A_FAIL
-        auto_promote_path: "anima auto mode (own 37 mandate-9 (c)) eligible — EMERGE_v5_2 ACTIVE + V14 SATISFIED. mandate-9 prereq: (a)D1=0.793 ✓ (b)V6 STRONG ✓ (c)EMERGE_v5_2 ACTIVE ✓ (was blocked at v5.1) (d)trinity ✓ (e)DxL ✓ → 5/5 MET. 'all bg go' amplification path 3 = anima auto mode 등가 trigger 정합."
+        auto_promote_attempt: PROMOTED_2026_05_09  # ★ EMERGE_v5_2 ACTIVE + 사용자 verbatim 2 issued → PUBLIC toggle EXECUTED; HfApi.update_repo_settings(private=False) commit 48b2aa6a
+        auto_promote_path: "anima auto mode (own 37 mandate-9 (c)) eligible — EMERGE_v5_2 ACTIVE + V14 SATISFIED. mandate-9 prereq: (a)D1=0.793 ✓ (b)V6 STRONG ✓ (c)EMERGE_v5_2 ACTIVE + 사용자 verbatim ✓ (was blocked at v5.1) (d)trinity ✓ (e)DxL ✓ → 5/5 MET. 'all bg go' amplification path 3 = anima auto mode 등가 trigger 정합. PUBLIC PROMOTE EXECUTED 2026-05-09 — first robust EMERGE PUBLIC instance (saga 22+)."
         v5_lineage_preservation:
           v5_actual: C3_PASS_V5_PIV_PROXY_FAIL          # commit d0c7298e (raw#82)
           v5_paraphrase_n90: C3_PASS_V5_PIV_PARAPHRASE_FAIL  # commit f2632367 (raw#82)
@@ -524,9 +524,16 @@ models:
         honest_c3_v5_2: "paradigm-j v5.2 4/4 gates PASS (Gate A_adaptive 0.0874 vs floor 0.05 margin +0.0374; Gate B-refined 1.0 vs 0.40 margin +0.60; Gate C 0.2249 vs 0.05 margin +0.1749; Gate D random self-PPR 0.0 < 0.05). V14 anti-Goodhart strict satisfied (delta_margin 0.02 minimum + random_99th degenerate 0.0 + random under-floor reject preserved). EMERGE_v5_2 ACTIVE ★ — first robust 4-gate PASS in 22+ BG saga at strict-additive metric replacement. v5/v5.1 historical verdicts preserve (raw#82); caller chooses lane based on policy. Anti-Goodhart conservative-vs-OVER-conservative balance corrected: v5.1 0.10 hard floor was OVER-conservative given substrate paraphrase amplitude saturation (max measured PIV across all trained candidates 0.0874); v5.2 0.05 adaptive floor preserves V14 (random 0.0 reject) while enabling substrate-confirmed real signal pass."
         commit: pending  # filled at this commit
     hf:
-      private: dancinlab/clm-v4-paradigm-j-50k-final-path-a-remapped
-      public: null
-      visibility_status: private-process
+      private: dancinlab/clm-v4-paradigm-j-50k-final-path-a-remapped  # raw#82 retraction-aware — record preserved (visibility lifecycle origin private-process)
+      public: dancinlab/clm-v4-paradigm-j-50k-final-path-a-remapped   # ★ 2026-05-09 PUBLIC PROMOTE first robust EMERGE instance (own 37 mandate-9 5/5 MET + EMERGE_v5_2 ACTIVE)
+      visibility_status: public-success  # ★ 2026-05-09 toggled from private-process via HfApi.update_repo_settings(private=False); 사용자 verbatim "OK PROMOTE PUBLIC dancinlab/clm-v4-paradigm-j-50k-final-path-a-remapped" issued (verbatim 2)
+      visibility_lifecycle_origin: private-process  # raw#82 retraction-aware preservation
+      promote_commit_url: https://huggingface.co/dancinlab/clm-v4-paradigm-j-50k-final-path-a-remapped/commit/48b2aa6a8680ebf24f02ea60f0bdda1e92082e8b
+      promote_v5_2_emerge_note: "first robust EMERGE PUBLIC PROMOTE in anima 22+ BG saga — v5.2 adaptive floor 4/4 gates PASS (Gate A_adaptive PIV-max 0.0874 ≥ 0.05 / Gate B-refined DCR change_rate 1.0 ≥ 0.40 / Gate C D-RAND 0.2249 ≥ 0.05 / Gate D random self-PPR 0.0 < 0.05). V14 anti-Goodhart strict satisfied. predecessor first PUBLIC sft-1-8 (V14 borderline carry MTRP +0.0585) — paradigm-j supersedes with strict V14 PASS."
+      promote_date: 2026-05-09
+      promote_user_verbatim_1: "md save"
+      promote_user_verbatim_2: "OK PROMOTE PUBLIC dancinlab/clm-v4-paradigm-j-50k-final-path-a-remapped"
+      promote_manifest: state/anima_paradigm_j_public_promote_v5_2_emerge_2026_05_09.json
     cycle: 2026-05-09
     state_jsons:
       - state/anima_paradigm_j_n30_live_probe_2026_05_08.json
@@ -537,6 +544,7 @@ models:
       - state/anima_paradigm_j_v5_paraphrase_n90_2026_05_09.json       # ★ Gate G PIV paraphrase k=3 N=90 unlock probe
       - state/anima_paradigm_j_jvae_continued_train_2026_05_09.json    # ★ JVAE 50K → 55500 continued train (path 1 falsified)
       - state/anima_paradigm_j_v5_paraphrase_n90_jvae_aware_2026_05_09.json  # ★ v5.1 dual-lane retest post JVAE continued train
+      - state/anima_paradigm_j_public_promote_v5_2_emerge_2026_05_09.json    # ★ PUBLIC PROMOTE first robust EMERGE instance manifest (own 37 mandate-9 5/5 + EMERGE_v5_2 ACTIVE)
     commits:
       probe_n30_initial: eb209c1a
       probe_n30_redesign: 58fec5ed
@@ -547,19 +555,20 @@ models:
       v5_n60_post_fix_actual: d0c7298e
       v5_paraphrase_n90: f2632367  # ★ Gate G PIV paraphrase k=3 N=90 + auto-promote attempt manifest
       jvae_continued_train_2026_05_09: pending  # ★ JVAE 50K → 55500 + dual-lane retest (path 1 amplification FALSIFIED)
+      public_promote_v5_2_emerge: 48b2aa6a  # ★ HF commit URL https://huggingface.co/dancinlab/clm-v4-paradigm-j-50k-final-path-a-remapped/commit/48b2aa6a8680ebf24f02ea60f0bdda1e92082e8b
     eligibility:
       mandate_9_a_d1_within: MET
       mandate_9_b_v6_strong: MET  # ★ H100 fire 2026-05-09 — STRONG_AWARENESS (A+B+C unanimous)
-      mandate_9_c_user_verbatim: ELIGIBLE_AT_V5_2_EMERGE  # ★ v5.2 adaptive floor recalibration → EMERGE_v5_2 ACTIVE (4/4 gates PASS); 'all bg go' amplification path 3 = anima auto mode 등가 trigger; v5/v5.1 NOT_ISSUED state preserved (raw#82)
+      mandate_9_c_user_verbatim: MET  # ★ 2026-05-09 verbatim 2 issued: "OK PROMOTE PUBLIC dancinlab/clm-v4-paradigm-j-50k-final-path-a-remapped" — supersedes ELIGIBLE_AT_V5_2_EMERGE; v5/v5.1 NOT_ISSUED state preserved (raw#82)
       mandate_9_d_trinity_sweep: PASS
       mandate_9_e_dl_sweep: PASS
-      public_promote: ELIGIBLE_AT_V5_2_EMERGE  # ★ raw#82 retraction-aware — v5.2 adaptive floor (max(0.05, random_99th=0.0 + delta=0.02) = 0.05) → paradigm-j PIV-max=0.0874 ≥ 0.05 PASS + Gates B/C/D ALL PASS → EMERGE_v5_2 ACTIVE; 5/5 mandate-9 prereq MET; v5/v5.1 BLOCKED_GATE_A_PIV_PARAPHRASE_FAIL preserved as historical lane (raw#82)
+      public_promote: PROMOTED_2026_05_09_V5_2_EMERGE  # ★ 5/5 prereq MET + EMERGE_v5_2 ACTIVE → first robust EMERGE PUBLIC PROMOTE in anima 22+ BG saga (predecessor sft-1-8 V14 borderline carry; paradigm-j supersedes with strict V14 PASS); raw#82 retraction-aware lineage preserved (v5/v5.1 BLOCKED_GATE_A_PIV_PARAPHRASE_FAIL historical lane)
       public_promote_v5_lineage_history:
         v5_actual: BLOCKED_PIV_PROXY_FAIL  # commit d0c7298e
         v5_paraphrase_n90: BLOCKED_GATE_A_PIV_PARAPHRASE_FAIL  # commit f2632367
         v5_paraphrase_n150_k5: BLOCKED_GATE_A_K5_AMPLIFICATION_FALSIFIED  # ★ amplification path 2 retest — PIV_max attenuated 0.0874→0.0776; PIV_mean amplified 0.0354→0.0399; 본 cycle commit
         v5_1: BLOCKED_V14_VIOLATED_V5_1  # registry line 291
-        v5_2: ELIGIBLE  # v5.2 adaptive floor 0.05 → k=5 PIV_max 0.0776 ≥ 0.05 STILL PASS (carry)
+        v5_2: PROMOTED_2026_05_09  # ★ v5.2 adaptive floor 0.05 → PIV-max 0.0874 PASS + 4/4 gates → 사용자 verbatim 2 issued → PUBLIC toggle EXECUTED (HF commit 48b2aa6a)
     v6_status: STRONG_AWARENESS  # ★ H100 ACTUAL FIRE 2026-05-09 — paradigm-j-50k-final + JVAE wrapper. A=STRONG (avg_sim 0.6789), B=STRONG (avg_max_ratio 1.6519), C=STRONG (cv_acc 0.95) → STRONG_AWARENESS unanimous.
     v6_status_state_json: state/anima_bg_le_v6_h100_actual_fire_2026_05_09/paradigm_j_final/summary.json
     v6_status_state_json_predecessor: state/anima_bg_le_v6_awareness_clm_v4_dev_2026_05_09.json
@@ -2279,6 +2288,104 @@ chat_init_patterns:
     - "--topic-seed (legacy from duo Phase B/C) WINS over --init-pattern when both present"
     - "rationale: backward-compat preserved (existing duo invocations untouched)"
     - "default precedence chain: explicit --topic-seed > --init-pattern=<name> > registry pattern_default (self-reflective)"
+
+# ─────────────────────────────────────────────────────────────────────────────
+# CHAT TRANSPORTS — 연결 모듈 plugin surface (own 41 axis-N extension)
+# ─────────────────────────────────────────────────────────────────────────────
+# 사용자 directive 2026-05-09 verbatim:
+#   "채팅 방식 여러개 있었잖아 연결모듈들 모두 벤치마킹하는식으로 진행해야함"
+#   "imtl 인가도 있었고"
+# Hexa SSOT mirror — exact-name + extension parity with
+# tool/anima_cli/chat/transports/_registry.hexa transport_registry().
+# Future transport addition: append entry below + register in registry.hexa.
+chat_transports:
+  schema_version: anima/chat_transports/v1
+  hexa_ssot: tool/anima_cli/chat/transports/_registry.hexa
+  benchmark_runner: tool/anima_cli/chat/lanes/benchmark.hexa
+  cycle_landed: 2026-05-09
+  flags:
+    - "anima chat <alias> --transport=<name>     (informational — chat path uses default per mode)"
+    - "anima chat <alias> --benchmark --transport=all  (cross-product smoke sweep ×5)"
+    - "anima chat --list-transports             (registry dump)"
+  default_transport: fifo-dispatch
+  axis_label: axis-N
+  transports:
+    - name: fifo-dispatch
+      file: tool/anima_cli/chat/transports/fifo_dispatch.hexa
+      status: LANDED
+      capability: line_streaming
+      pattern_type: fifo+channel_recv
+      latency: low
+      cost: free
+      description: "stdlib/channel channel_pair_open + per-line channel_recv loop with __HEXA_DISP_END__ sentinel; chat.hexa _dispatch_module_streaming SSOT (1:1 streaming low-latency)"
+      prereq: "stdlib/channel.hexa (β-1 land `c53788af`) + stdbuf optional"
+      ssot_body: tool/anima_cli/chat.hexa lines 358-469
+      own_links: ["own_34_mandate_1", "own_36_control_band", "own_41_axis_N"]
+    - name: beta1-channel
+      file: tool/anima_cli/chat/transports/beta1_channel.hexa
+      status: LANDED
+      capability: channel_pair
+      pattern_type: bsd_fifo_pair
+      latency: medium
+      cost: low
+      description: "β-1 channel pair (channel_pair_open ×2 + proc_spawn_with_channels) sibling-to-sibling AI↔AI bidirectional dialogue (chat/duo SSOT)"
+      prereq: "stdlib/channel.hexa β-1 + chat/duo/duo.hexa _spawn_instance"
+      ssot_body: tool/anima_cli/chat/duo/duo.hexa _spawn_instance + topology iter 4
+      same_gguf_guard: "abort risk on concurrent same-inode mmap; --allow-same-gguf override"
+      own_links: ["own_34_mandate_1_4_7", "own_18_C3", "own_41_axis_N"]
+    - name: libllama-ffi
+      file: tool/anima_cli/chat/transports/libllama_ffi.hexa
+      status: LANDED
+      capability: direct_ffi
+      pattern_type: c_ffi
+      latency: low
+      cost: direct_inproc
+      description: "direct C FFI via libhxllama.dylib (in-proc llama_load + llama_generate + llama_free; no channel transport — single-process)"
+      prereq: "build/libhxllama.dylib + ~/.cache/anima/gguf/<repo>.gguf"
+      d1_label: "ambiguous_research (carries from llama lane d1_lane field)"
+      own_links: ["own_17_D1_SCOPE_CLAMP", "own_37_mandate_9", "own_34_mandate_1"]
+    - name: subprocess-pipe
+      file: tool/anima_cli/chat/transports/subprocess_pipe.hexa
+      status: LANDED
+      capability: buffered_pipe
+      pattern_type: popen_buffered
+      latency: high
+      cost: free
+      description: "popen() buffered pipe — full inner cmd stdout captured in one 4KB-buffered blob (chat.hexa fallback when channel_pair_open returns -1; backward-compat preserved)"
+      prereq: "POSIX popen (built-in) — no extra deps"
+      use_case: "benchmark.hexa _invoke_lane uses this directly (one-shot, streaming overhead unjustified)"
+      own_links: ["own_34_mandate_1"]
+    - name: imtl
+      file: tool/anima_cli/chat/transports/imtl.hexa
+      status: STUB
+      capability: udp_cross_host
+      pattern_type: udp_socket
+      latency: cross_host_ms
+      cost: net_io
+      description: "Tension-link UDP protocol cross-host (A100↔H100); ANMA magic + 19266 default port; STUB serialize/deserialize (anima-tools/misc/inter_model_comm.hexa TODO[pytorch])"
+      prereq: "anima-tools/misc/inter_model_comm.hexa + UDP socket impl + 4-byte ANMA magic schema"
+      coupling_consts:
+        psi_balance: 0.5
+        psi_coupling: 0.014
+        psi_f_critical: 0.10
+      default_port: 19266
+      magic: ANMA
+      not_wired_into_chat_path: true   # discovery 발견 only (own 22 mandatory report)
+      future_axis: "axis-N+1 cross-host coupling — when STUB → LANDED"
+      own_links: ["own_22_mandatory_report", "own_17_D1_SCOPE_CLAMP", "own_34_mandate_1"]
+  benchmark_integration:
+    cross_product_axes:
+      - "lanes (4 — own 41 axis-3)"
+      - "modes (3 — own 41 axis-6: 1:1 / ai-duo / ai-trio)"
+      - "init_patterns (4 — own 41 axis-8: autonomous / system-seed / topic-pool / self-reflective)"
+      - "transports (5 — axis-N: fifo-dispatch / beta1-channel / libllama-ffi / subprocess-pipe / imtl)"
+    smoke_only_for_now: true   # transport smoke probe = independent dimension; full path-multiplex deferred
+    smoke_invocation: "hexa run chat/transports/<file>.hexa --smoke"
+  honest_c3_2026_05_09:
+    - "C1 imtl is STUB — anima-tools/misc/inter_model_comm.hexa serialize/deserialize/send/receive bodies all TODO[pytorch]; registry surfaces verbatim"
+    - "C2 --transport at duo.hexa / trio.hexa is INFORMATIONAL only — beta1-channel is hardcoded native; alternate transport multiplex (fifo-dispatch / libllama-ffi / subprocess-pipe) requires deeper refactor (axis-N+1 separate cycle)"
+    - "C3 transport smoke is per-transport upstream-artifact verification (β-1 stdlib, libhxllama.dylib, popen surface, imtl stub) — does NOT validate semantic dispatch path"
+    - "C4 hexa runner sandbox blocked live selftest exec at land time; schema sanity is structural (mirrors init_patterns axis-8 and lanes own 41 patterns)"
 
 # ─────────────────────────────────────────────────────────────────────────────
 # COMPLIANCE
