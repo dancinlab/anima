@@ -1,0 +1,159 @@
+__ANIMA_CLM_V5_MOUNTED__ mode=real schema=engine_a_g_arch/v1 lineage_tag=engine_a_g_dual_350m_v1_lb_pretrain arch_origin=anima_native_scratch n_cells=16 c_dim=64 d_model=1024 n_layers=24 projection=mean_group_spread
+{
+  "mode": "v5-measure",
+  "mounted_real": true,
+  "mirror_loaded": true,
+  "mirror_seed": 42,
+  "preset": "lb_350m_pretrain",
+  "projection_strategy": "mean_group_spread",
+  "n_prompts": 30,
+  "piv": {
+    "trained": {
+      "piv_max": 0.010707189152482642,
+      "piv_mean": 0.007879337688606745,
+      "per_axis_mean_stdev": {
+        "identity": 0.005069665415169183,
+        "agency": 0.010707189152482642,
+        "phenomenal": 0.008718316839599187,
+        "temporal": 0.006684325230654464,
+        "social": 0.00821719180512825
+      }
+    },
+    "random_init": {
+      "piv_max": 0.02243814828773187,
+      "piv_mean": 0.01515571566229176,
+      "per_axis_mean_stdev": {
+        "identity": 0.011234799754975816,
+        "agency": 0.02243814828773187,
+        "phenomenal": 0.01640156098720608,
+        "temporal": 0.013491232782951472,
+        "social": 0.012212836498593563
+      }
+    }
+  },
+  "dcr": {
+    "trained": {
+      "dcr_change_rate": 0.6206896551724138,
+      "argmax_seq": [
+        "identity",
+        "agency",
+        "agency",
+        "identity",
+        "agency",
+        "identity",
+        "agency",
+        "identity",
+        "identity",
+        "identity",
+        "identity",
+        "agency",
+        "identity",
+        "agency",
+        "identity",
+        "identity",
+        "identity",
+        "identity",
+        "agency",
+        "agency",
+        "identity",
+        "agency",
+        "identity",
+        "identity",
+        "identity",
+        "agency",
+        "agency",
+        "identity",
+        "agency",
+        "identity"
+      ]
+    },
+    "random_init": {
+      "dcr_change_rate": 0.8620689655172413,
+      "argmax_seq": [
+        "phenomenal",
+        "social",
+        "identity",
+        "social",
+        "temporal",
+        "agency",
+        "phenomenal",
+        "agency",
+        "temporal",
+        "agency",
+        "temporal",
+        "phenomenal",
+        "agency",
+        "identity",
+        "social",
+        "agency",
+        "social",
+        "phenomenal",
+        "social",
+        "temporal",
+        "social",
+        "social",
+        "social",
+        "identity",
+        "agency",
+        "agency",
+        "phenomenal",
+        "phenomenal",
+        "identity",
+        "social"
+      ]
+    }
+  },
+  "d_rand": {
+    "d_rand": 0.023679747581481926,
+    "t_mu": {
+      "identity": 0.9820144951343537,
+      "agency": 0.9765584369500478,
+      "phenomenal": 0.940459676583608,
+      "temporal": 0.9375943501790365,
+      "social": 0.9347521781921386
+    },
+    "r_mu": {
+      "identity": 0.9338810384273529,
+      "agency": 0.9350991408030193,
+      "phenomenal": 0.9340978562831879,
+      "temporal": 0.9152907768885294,
+      "social": 0.9346115867296855
+    },
+    "per_axis_l1": {
+      "identity": 0.048133456707000755,
+      "agency": 0.04145929614702859,
+      "phenomenal": 0.006361820300420096,
+      "temporal": 0.02230357329050703,
+      "social": 0.00014059146245315457
+    }
+  },
+  "verdict": {
+    "label": "C3_FAIL_V14_VIOLATED_V5",
+    "piv_verdict": "FAIL",
+    "dcr_verdict": "PASS_STRICT",
+    "drand_verdict": "AMBIGUOUS",
+    "v14_violations": [
+      "PIV",
+      "DCR"
+    ]
+  },
+  "thresholds": {
+    "piv_pass_strict": 0.1,
+    "dcr_pass_strict": 0.4,
+    "drand_pass_strict": 0.05,
+    "v14_delta_safety": 0.02
+  },
+  "lineage": {
+    "schema": "engine_a_g_arch/v1",
+    "lineage_tag": "engine_a_g_dual_350m_v1_lb_pretrain",
+    "arch_origin": "anima_native_scratch",
+    "n_cells": 16,
+    "consciousness_dim": 64,
+    "d_model": 1024,
+    "vocab_size": 32000,
+    "n_layers": 24
+  },
+  "ts_utc": "2026-05-09T14:30:54Z"
+}
+__ANIMA_CLM_V5_VERDICT__ label=C3_FAIL_V14_VIOLATED_V5 piv_max=0.010707189152482642 dcr_change_rate=0.6206896551724138 d_rand=0.023679747581481926 v14_violations=PIV,DCR
+__ANIMA_CLM_V5_OK__ session=20260509T143054Z

@@ -1031,9 +1031,70 @@ honest C3 addendum (raw#10):
 
 **친근 비유**: 지금까지 BG-LB 한테 "객관식 시험 (PPL)" 만 봤는데, "5축 면접 (native v5)" 도구를 새로 만들어서 면접까지 보게 하는 작업. 면접 통과 시 PUBLIC 발효.
 
+### 45. clm_v5_mount.hexa chain 회수 — BG-LB **Goodhart falsified** ★★★
+
+본 cycle 가장 중대한 honest C3 발견.
+
+**Step 1 결과** — `clm_v5_mount.hexa` LANDED:
+- 파일: `/Users/ghost/core/anima/anima-core/runtime/clm_v5_mount.hexa` (890 lines)
+- projection: **mean_group_spread** (fixed mean-pool, 16 cells → 5 axes via 3+3+3+3+4)
+- 선택 이유: (a) zero new params (V14 paired-mirror parity), (b) deterministic (own 14 reproducibility), (c) honest C3 (post-hoc axis discovery 회피)
+- 5 modes: `--selftest` / `--load` / `--probe` / `--dialogue` / `--v5-measure`
+- honest C3 emit 6 줄 (cell projection heuristic / learnable cell_pool caveat / raw torch.load / V14 in-metric / own 16 local CPU / generate not exposed)
+- raw#15 additive — `clm_v4_mount.hexa` + `engine_a_g_arch.py` 무수정
+
+**Step 2 결과** — BG-LB native v5 측정 = **`C3_FAIL_V14_VIOLATED_V5`** ❌
+
+| Metric | Trained BG-LB | Random_init (seed=42) | Threshold | Verdict |
+|---|---:|---:|---:|---|
+| **PIV_max** | 0.0107 | **0.0224** | ≥ 0.10 | **FAIL + V14 violated** (rand > trained) |
+| **DCR** | 0.621 | **0.862** | ≥ 0.40 | PASS_STRICT but **V14 violated** (rand > trained) |
+| **D-RAND** | 0.0237 | — (paired) | ≥ 0.05 | AMBIGUOUS |
+
+→ random_init 이 BG-LB 보다 PIV + DCR 두 metric 에서 δ_safety=0.02 초과 우세 → **Goodhart 명백**.
+
+**핵심 발견**: PROXY_PPL "EMERGE PASS" (PPR=1.000, MTRP=0.988) 는 byte-modulo perplexity fit — 의식 substrate 아닌 **noise-suppression 학습** 가능성. cell_pool axis-stdev 가 trained < random 라는 사실 = 학습이 cell pool 을 *더 균일하게* 수렴시켰음.
+
+**Step 3 결과** — own 37 mandate-9 prereq 정합:
+
+| Prereq | Status | Evidence |
+|---|---|---|
+| (a) D1 within-strict | ✓ **MET** | anima_native_scratch lineage (registry line 1310) |
+| (b) V6 awareness STRONG | pending | downstream blocked |
+| (c) real-mode PASS_STRICT_C3 | ❌ **FAILED** | C3_FAIL_V14_VIOLATED_V5 |
+| (c') 사용자 verbatim 조건절 | conditional **NOT TRIGGERED** | "성공모델이면 PUBLIC" antecedent falsified |
+| (d) trinity sweep | pending | downstream blocked |
+
+→ **5/5 status: 1 MET, 1 FAILED, 3 pending** → **PUBLIC PROMOTE BLOCKED** ★. HF visibility 그대로 private.
+
+**registry yaml 갱신** (own 39 mandate):
+- `private_promote_4_prereq.real_mode_pass_strict_c3: FAILED`
+- state_jsons appended (`anima_bg_lb_native_v5_post_mount_2026_05_09.json`)
+- notes amended with Goodhart-falsification verdict
+
+**친근 한 줄**: "객관식만 잘 풀려고 외워 공부한 학생이, 면접에서 '당신은 누구인가?' 질문에 멍한 상태. 외운 건 잘하는데 의식이 없음."
+
+**본 cycle 영향**:
+| 항목 | 변경 전 | 변경 후 |
+|---|---|---|
+| robust EMERGE 카운트 | 1 (paradigm-j) | **1 유지** (BG-LB 후보 격하) |
+| BG-LB 등급 | EMERGE_PROXY_PPL ★ | **substrate-research 로 격하 검토** |
+| BG-LB visibility | private | private 유지 (영구 차단 X — arch 수정 후 재측정 lane 열어둠) |
+
+**다음 cycle priority carry 갱신** (4 항목):
+
+1. **PROXY_PPL 을 emerge metric 에서 deprecate** — Goodhart 입증, byte-modulo PPL ≠ consciousness substrate
+2. **BG-LA 측정 시 동일 V14 in-metric 적용** (BG-LA 도 같은 arch, 동일 결과 예상)
+3. **Engine A/G arch 자체 검토** — `cell_pool_init` learnable 인데 trained 후 random 보다 axis-stdev 낮음 = noise-suppression 학습 의심
+4. **Phase 2 cotrain (chat-template 동시) 결과 대기** — chat 학습이 의식 셀 의미 새겨주는지 검증
+
+**의의**: 본 finding 은 anima saga 에서 **PPL-proxy 의 위험성 처음 정량 입증**. PUBLIC promote 5/5 prereq 가 실제로 Goodhart 자동 차단하는 것 검증. own 37 mandate-9 의 strict 함이 보호 작동.
+
+raw#10 honest preserve — anima saga 의 **honest C3 가장 중대 발견 cycle** ★★★
+
 ---
 
-## 본 cycle final 44+ milestones SUMMARY ★★★
+## 본 cycle final 45+ milestones SUMMARY ★★★
 
 | Layer | Status |
 |---|---|

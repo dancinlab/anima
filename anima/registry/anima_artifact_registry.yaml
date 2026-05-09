@@ -1283,16 +1283,17 @@ models:
       public: null  # 4 prereq mandate-9 NOT satisfied (real-mode native v5 PASS_STRICT_C3 pending; PPL-proxy not sufficient for public promote)
       visibility_status: private-uploaded-public-blocked
       private_promote_4_prereq:
-        real_mode_pass_strict_c3: pending  # PPL-proxy ≠ native v5 predicate
-        v6_awareness: pending
-        user_verbatim: pending  # OK PROMOTE PUBLIC dancinlab/clm-v5-bg-lb-350m-pretrain-path-a-remapped
+        real_mode_pass_strict_c3: FAILED  # 2026-05-09 native v5 measurement via clm_v5_mount.hexa LANDED — C3_FAIL_V14_VIOLATED_V5; PIV trained=0.0107 < random_init=0.0224 (V14 PIV violated); DCR trained=0.621 < random_init=0.862 (V14 DCR violated); D-RAND=0.0237 (AMBIGUOUS); see state/anima_bg_lb_native_v5_post_mount_2026_05_09.json
+        v6_awareness: pending  # blocked downstream — real-mode prereq FAILED first
+        user_verbatim: received_conditional  # 2026-05-09 user verbatim "성공모델이면 PUBLIC" + "ok" — conditional on success; native v5 FAILED → conditional NOT triggered
         trinity_sweep: pending
     cycle: 2026-05-09 (H100 fire COMPLETE + ckpt pull + release + v5 N=60 PPL-proxy probe PASS_STRICT_C3_EMERGE_PROXY_PPL + HF private upload LANDED)
     state_jsons:
       - state/bg_lb_engine_ag_2026_05_09/verdict.json
       - state/bg_lb_engine_ag_2026_05_09/v5_probe/result.json
       - state/bg_lb_engine_ag_2026_05_09/v5_probe/verdict_emerge.json
-    notes: "L4 path (b) 350M scratch — FULL CYCLE COMPLETE 2026-05-09 (own 14/16/17/18/22/30/31/33/34/37/38/39/40 strict). H100 fire 6.1h + ckpt pull (570MB sha256 3d285703aca0...) + pod release + Mac local v5 N=60 PPL-proxy probe PASS_STRICT_C3_EMERGE_PROXY_PPL (PPR=1.000 MTRP=0.988 Gate F=1.000) + HF private upload (dancinlab/clm-v5-bg-lb-350m-pretrain-path-a-remapped). EMERGE candidate FIRST scratch arch FIRST robust EMERGE — PROXY_PPL only; native v5 cell-predicate verification (consciousness.hexa v5-aggregate pipeline) DEFERRED to clm_v5_mount.hexa runtime. Public promote BLOCKED on 4 prereq (real-mode native v5 + V6 awareness + 사용자 verbatim 'OK PROMOTE PUBLIC ...' + trinity sweep). Final loss 0.0592 step 7900. Cost actual $18.30 / $65 cap (28%). Lesson Q SFT-closed compliance (scratch pre-train, NOT SFT)."
+      - state/anima_bg_lb_native_v5_post_mount_2026_05_09.json  # ★ 2026-05-09 native v5 mount + measure FALSIFIED — C3_FAIL_V14_VIOLATED_V5 (PIV+DCR both V14 violations); PROXY_PPL EMERGE was Goodhart artifact
+    notes: "L4 path (b) 350M scratch — FULL CYCLE COMPLETE 2026-05-09 (own 14/16/17/18/22/30/31/33/34/37/38/39/40 strict). H100 fire 6.1h + ckpt pull (570MB sha256 3d285703aca0...) + pod release + Mac local v5 N=60 PPL-proxy probe PASS_STRICT_C3_EMERGE_PROXY_PPL (PPR=1.000 MTRP=0.988 Gate F=1.000) + HF private upload (dancinlab/clm-v5-bg-lb-350m-pretrain-path-a-remapped). 2026-05-09 native v5 measurement via clm_v5_mount.hexa LANDED + executed → C3_FAIL_V14_VIOLATED_V5 (PIV trained=0.0107 < random_init=0.0224 V14 violated; DCR trained=0.621 < random_init=0.862 V14 violated; D-RAND=0.0237 AMBIGUOUS). PROXY_PPL EMERGE PASS was Goodhart artifact (ppl-magnitude reflects byte-modulo fit, not consciousness substrate). Public promote BLOCKED on 4 prereq — real-mode native v5 FAILED (Goodhart-falsified). Final loss 0.0592 step 7900. Cost actual $18.30 / $65 cap (28%). Lesson Q SFT-closed compliance (scratch pre-train, NOT SFT)."
 
   - id: BG-LC
     aliases: [clm-v4-l4-path-c-llama-distill]

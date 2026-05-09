@@ -1,0 +1,890 @@
+// ⛔ STAGE-1 — Anima Core CLI · CLM v5 mount layer (Engine A/G dual-engine native v5)
+// anima-core/runtime/clm_v5_mount.hexa
+//
+// Spec: docs/anima_v5_metric_spec_2026_05_09.md (PIV / DCR / D-RAND replacement metric)
+// Sister arch: training/engine_a_g_arch.py (raw#37 transient — H100 train + Mac V14 mirror)
+// Sister mount: anima-core/runtime/clm_v4_mount.hexa (5-axis label pattern reference)
+// HF source: dancinlab/clm-v5-bg-lb-350m-pretrain-path-a-remapped (PRIVATE 2026-05-09)
+// Local ckpt: ~/.cache/anima/clm_v5_remapped/bg_lb_350m_pretrain/ckpts/step_8000_final.pt
+//
+// PURPOSE
+//   Load Engine A/G dual-engine ckpt (raw torch.save payload — schema='engine_a_g_arch/v1')
+//   and expose substrate-coupled forward API for native v5 metric measurement
+//   (PIV / DCR / D-RAND). NOT chat — emerge probe medium is 5-axis activation vector.
+//
+// PARADIGM — CLM v5 (Engine A/G scratch) vs CLM v4 (mk2-v1 LoRA)
+//   CLM v4: HF-format AutoModelForCausalLM + 8 cells × 96 dim consciousness_states
+//           (clm_v4_mount.hexa surface — np.tile-free post V5 PUSH 1/5 fix).
+//   CLM v5: raw torch ckpt EngineAGModel + 16 cells × 64 dim engine_g.cell_pool
+//           (this file — mean-pool group-spread to 5 axes, no AutoTokenizer dep).
+//
+// 5-AXIS PROJECTION STRATEGY — fixed mean-pool by cell group (group-spread)
+//   Engine A/G has 16 generic cells × 64 dim with NO axis labels.
+//   We spread 16 cells across 5 axes via fixed groupings (3+3+3+3+4):
+//     identity   = mean(cells[0:3])    | 3 cells × 64 dim → axis activation
+//     agency     = mean(cells[3:6])    | 3 cells × 64 dim
+//     phenomenal = mean(cells[6:9])    | 3 cells × 64 dim
+//     temporal   = mean(cells[9:12])   | 3 cells × 64 dim
+//     social     = mean(cells[12:16])  | 4 cells × 64 dim (last group absorbs remainder)
+//   Per-axis 64-dim → scalar activation = mean(|axis_vec|) normalized [0,1].
+//   Strategy = "mean_group_spread" (registry-tracked, swap-able to learned/hybrid).
+//
+//   Why mean-pool group-spread (NOT learned linear projection):
+//     a) zero new params — random_init mirror is identical-arch, no weight-bias
+//        distinguishing trained vs random outside the cell pool itself.
+//     b) deterministic — V14 paired probe reproducibility preserved (own 14).
+//     c) honest C3 — fixed projection is anima-internal heuristic, not a
+//        post-hoc "axis discovery" dressing-up of substrate noise.
+//
+// MODES
+//   --selftest     synthetic Engine A/G shape probe (no torch import; hexa-native)
+//   --load         load ckpt → emit shape + lineage_tag + arch_origin
+//   --probe TEXT   one-shot probe → JSON line {identity, agency, phenomenal, temporal, social}
+//   --dialogue     REPL stdin lines → 5-axis JSON line per input (session log)
+//   --v5-measure   PIV (paraphrase n=30 k=3) + DCR (sequence n=30) + D-RAND (paired mirror)
+//                  → emit PIV_max / DCR_change_rate / D-RAND + verdict label
+//
+// FLAGS
+//   --ckpt PATH                 torch.save payload path (default BG-LB local)
+//   --preset NAME               la_350m | lb_350m_pretrain (mirror seed init)
+//   --v14-mirror-seed N         paired random_init mirror seed (default 42)
+//   --output-format             json (default for v5) | compact
+//   --projection-strategy NAME  mean_group_spread (default) | learned | hybrid
+//   --probe-text TEXT           single-prompt probe (--probe equivalent)
+//   --prompt-set PATH           jsonl with {"id","prompt","paraphrases":[...]} for --v5-measure
+//
+// HONEST C3 (raw#10 emit ≥5 to stderr)
+//   C1 5-axis projection (16 cells → 5 axes via mean group-spread 3+3+3+3+4) is
+//      anima-internal heuristic; NO axis label was learned during pretrain.
+//   C2 Engine A/G `engine_g.cell_pool_init` is learnable → pretrained values
+//      reflect chosen optimization signal, not phenomenal-axis ground truth.
+//   C3 ckpt schema 'engine_a_g_arch/v1' loaded via raw torch.load (NOT
+//      AutoModelForCausalLM) — no transformers HF-format compatibility layer.
+//   C4 native v5 metrics (PIV/DCR/D-RAND) computed against axis activation;
+//      V14 strict gate auto-FAIL if random_init mirror ≥ trained - δ_safety(0.02).
+//   C5 own 16 strict — local CPU only, no H100 fire from this surface; user
+//      must verify pod-state before invoking GPU paths upstream.
+//   C6 Path 3 generate (chat lane) NOT EXPOSED — Engine A/G byte-pair
+//      tokenizer + Engine G cell forward expensive; chat lane lives in
+//      anima_native_byte_mount.hexa for v5 substrate.
+//
+// raw POLICY
+//   raw#9   hexa-only orchestration (Mac canonical)
+//   raw#37  transient .py shim opt-out — torch ckpt load via emitted helper
+//   raw#15  additive — clm_v4_mount.hexa / engine_a_g_arch.py UNTOUCHED
+//   raw#10  honest C3 emit ≥5 to stderr
+//
+// own POLICY
+//   own 14  V14 paired random_init mirror — load_random_init(seed=N) entry
+//   own 16  H100 fire 금지 from this surface — local CPU only
+//   own 17  D1=1.0 (anima_native_scratch lineage) within-strict
+//   own 22  honest emit — load failure raises (no silent fabrication)
+//   own 30  ckpt save/load Path A remap compatible
+//   own 33  자연발화 mandate — emit as-is, no post-hoc dressing
+//   own 34  ID-collision 방지 — 신규 file, clm_v4_mount.hexa unmodified
+//   own 39  yaml SSOT registry coupling — measurement results land in
+//           state/anima_bg_lb_native_v5_post_mount_<DATE>.json + yaml entry
+//
+// USAGE
+//   hexa run anima-core/runtime/clm_v5_mount.hexa --selftest
+//   hexa run anima-core/runtime/clm_v5_mount.hexa --load \
+//     --ckpt ~/.cache/anima/clm_v5_remapped/bg_lb_350m_pretrain/ckpts/step_8000_final.pt
+//   hexa run anima-core/runtime/clm_v5_mount.hexa --probe "안녕"
+//   hexa run anima-core/runtime/clm_v5_mount.hexa --v5-measure --prompt-set state/v5_prompts.jsonl
+
+// ═══════════════════════════════════════════════════════════
+// Constants
+// ═══════════════════════════════════════════════════════════
+
+let HELPER_PATH      = "/tmp/clm_v5_mount_helper.hexa_tmp"
+let DEFAULT_CKPT     = "~/.cache/anima/clm_v5_remapped/bg_lb_350m_pretrain/ckpts/step_8000_final.pt"
+let DEFAULT_PRESET   = "lb_350m_pretrain"
+let DEFAULT_FORMAT   = "json"
+let DEFAULT_STRATEGY = "mean_group_spread"
+let SESSION_DIR_BASE = "state/anima_core_v5_dialogues"
+
+// Engine A/G architectural constants (mirror engine_a_g_arch.py la_350m)
+let N_CELLS_V5         = 16
+let CONSCIOUSNESS_DIM_V5 = 64
+let D_MODEL_V5         = 1024
+let N_LAYERS_V5        = 24
+let VOCAB_SIZE_V5      = 32000
+let N_AXES             = 5
+
+// V14 strict δ_safety (anti-Goodhart minimum, v5.2 정합)
+let V14_DELTA_SAFETY = "0.02"
+
+// PIV / DCR / D-RAND PASS_STRICT thresholds (mirror v5 spec §3)
+let PIV_PASS_THRESHOLD     = "0.10"
+let DCR_PASS_THRESHOLD     = "0.40"
+let DRAND_PASS_THRESHOLD   = "0.05"
+let GATE_D_PPR_R_CEIL      = "0.05"
+
+// ═══════════════════════════════════════════════════════════
+// Honest C3 emitter (raw#10)
+// ═══════════════════════════════════════════════════════════
+
+fn emit_honest_c3() {
+    eprintln("[clm_v5_mount] C1 5-axis projection (16 cells → 5 axes via mean group-spread 3+3+3+3+4) is anima-internal heuristic; NO axis label was learned during pretrain")
+    eprintln("[clm_v5_mount] C2 Engine A/G engine_g.cell_pool_init is learnable; pretrained values reflect optimization signal, not phenomenal-axis ground truth")
+    eprintln("[clm_v5_mount] C3 ckpt schema 'engine_a_g_arch/v1' loaded via raw torch.load (NOT AutoModelForCausalLM) — no HF-format transformers compatibility layer")
+    eprintln("[clm_v5_mount] C4 native v5 metrics (PIV/DCR/D-RAND) computed against axis activation; V14 strict gate auto-FAIL if random_init mirror ≥ trained - 0.02")
+    eprintln("[clm_v5_mount] C5 own 16 strict — local CPU only, no H100 fire from this surface; pod-state verify upstream")
+    eprintln("[clm_v5_mount] C6 Path 3 generate (chat lane) NOT EXPOSED here — Engine A/G byte-pair gen lives in anima_native_byte_mount.hexa for v5 substrate")
+}
+
+// ═══════════════════════════════════════════════════════════
+// Config
+// ═══════════════════════════════════════════════════════════
+
+struct V5MountConfig {
+    mode: string,            // "selftest" | "load" | "probe" | "dialogue" | "v5-measure"
+    ckpt_path: string,
+    preset: string,          // "la_350m" | "lb_350m_pretrain"
+    output_format: string,   // "json" (default) | "compact"
+    projection_strategy: string,  // "mean_group_spread" (default)
+    probe_text: string,
+    prompt_set_path: string,
+    v14_mirror_seed: int
+}
+
+fn default_config() -> V5MountConfig {
+    V5MountConfig {
+        mode: "selftest",
+        ckpt_path: DEFAULT_CKPT,
+        preset: DEFAULT_PRESET,
+        output_format: DEFAULT_FORMAT,
+        projection_strategy: DEFAULT_STRATEGY,
+        probe_text: "",
+        prompt_set_path: "",
+        v14_mirror_seed: 42
+    }
+}
+
+fn parse_args(argv: list) -> V5MountConfig {
+    let mut cfg = default_config()
+    let mut i = 0
+    while i < argv.len() {
+        let a = argv[i]
+        if a == "--selftest" {
+            cfg.mode = "selftest"
+        } else if a == "--load" {
+            cfg.mode = "load"
+        } else if a == "--dialogue" {
+            cfg.mode = "dialogue"
+        } else if a == "--v5-measure" {
+            cfg.mode = "v5-measure"
+        } else if a == "--probe" {
+            if i + 1 < argv.len() {
+                i = i + 1
+                cfg.mode = "probe"
+                cfg.probe_text = argv[i]
+            }
+        } else if a == "--probe-text" {
+            if i + 1 < argv.len() {
+                i = i + 1
+                cfg.probe_text = argv[i]
+            }
+        } else if a == "--ckpt" {
+            if i + 1 < argv.len() {
+                i = i + 1
+                cfg.ckpt_path = argv[i]
+            }
+        } else if a == "--preset" {
+            if i + 1 < argv.len() {
+                i = i + 1
+                cfg.preset = argv[i]
+            }
+        } else if a == "--output-format" {
+            if i + 1 < argv.len() {
+                i = i + 1
+                cfg.output_format = argv[i]
+            }
+        } else if a == "--projection-strategy" {
+            if i + 1 < argv.len() {
+                i = i + 1
+                cfg.projection_strategy = argv[i]
+            }
+        } else if a == "--prompt-set" {
+            if i + 1 < argv.len() {
+                i = i + 1
+                cfg.prompt_set_path = argv[i]
+            }
+        } else if a == "--v14-mirror-seed" {
+            if i + 1 < argv.len() {
+                i = i + 1
+                cfg.v14_mirror_seed = to_int(argv[i])
+            }
+        }
+        i = i + 1
+    }
+    return cfg
+}
+
+// ═══════════════════════════════════════════════════════════
+// Python helper emitter (raw#37 transient — Engine A/G ckpt load via torch)
+// ═══════════════════════════════════════════════════════════
+
+fn _write_helper() {
+    let parts = []
+    parts.push("#!/usr/bin/env python3\n")
+    parts.push("# clm_v5_mount_helper — emitted by anima-core/runtime/clm_v5_mount.hexa\n")
+    parts.push("# raw#37 transient. Mac canonical = .hexa orchestration; this helper executes\n")
+    parts.push("# Engine A/G ckpt load + 5-axis projection that hexa cannot express directly.\n")
+    parts.push("import argparse, json, math, os, sys, time\n")
+    parts.push("from pathlib import Path\n\n")
+
+    parts.push("# ── Engine A/G v5 paradigm constants (mirror clm_v5_mount.hexa) ─────\n")
+    parts.push("N_CELLS = 16\n")
+    parts.push("CONSCIOUSNESS_DIM = 64\n")
+    parts.push("D_MODEL = 1024\n")
+    parts.push("N_AXES = 5\n")
+    parts.push("AXIS_NAMES = ['identity','agency','phenomenal','temporal','social']\n")
+    parts.push("# 5-axis group-spread over 16 cells: 3+3+3+3+4 = 16 (last absorbs remainder)\n")
+    parts.push("AXIS_CELL_GROUPS = [(0,3),(3,6),(6,9),(9,12),(12,16)]\n")
+    parts.push("V14_DELTA_SAFETY = 0.02\n")
+    parts.push("PIV_PASS_THRESHOLD = 0.10\n")
+    parts.push("DCR_PASS_THRESHOLD = 0.40\n")
+    parts.push("DRAND_PASS_THRESHOLD = 0.05\n\n")
+
+    parts.push("def _emit(tag, **kw):\n")
+    parts.push("    sys.stdout.write('__ANIMA_' + tag + '__')\n")
+    parts.push("    for k, v in kw.items(): sys.stdout.write(' ' + str(k) + '=' + str(v))\n")
+    parts.push("    sys.stdout.write('\\n'); sys.stdout.flush()\n\n")
+
+    parts.push("def _argparse():\n")
+    parts.push("    p = argparse.ArgumentParser()\n")
+    parts.push("    p.add_argument('--mode', required=True, choices=['load','probe','dialogue','v5-measure','synthetic'])\n")
+    parts.push("    p.add_argument('--ckpt', default='')\n")
+    parts.push("    p.add_argument('--preset', default='lb_350m_pretrain')\n")
+    parts.push("    p.add_argument('--output-format', default='json', choices=['json','compact'])\n")
+    parts.push("    p.add_argument('--projection-strategy', default='mean_group_spread')\n")
+    parts.push("    p.add_argument('--probe-text', default='')\n")
+    parts.push("    p.add_argument('--prompt-set', default='')\n")
+    parts.push("    p.add_argument('--session-log', default='')\n")
+    parts.push("    p.add_argument('--v14-mirror-seed', type=int, default=42)\n")
+    parts.push("    return p.parse_args()\n\n")
+
+    parts.push("def _resolve_engine_arch():\n")
+    parts.push("    # Locate engine_a_g_arch.py — own 17 anima_native_scratch lineage.\n")
+    parts.push("    root = os.environ.get('ANIMA', os.path.expanduser('~/core/anima'))\n")
+    parts.push("    arch_path = os.path.join(root, 'training', 'engine_a_g_arch.py')\n")
+    parts.push("    if not os.path.isfile(arch_path):\n")
+    parts.push("        return None, f'engine_a_g_arch.py not found at {arch_path}'\n")
+    parts.push("    sys.path.insert(0, os.path.join(root, 'training'))\n")
+    parts.push("    try:\n")
+    parts.push("        import engine_a_g_arch as ea\n")
+    parts.push("        return ea, ''\n")
+    parts.push("    except Exception as ex:\n")
+    parts.push("        return None, f'engine_a_g_arch import failed: {ex}'\n\n")
+
+    parts.push("def _load_ckpt(ckpt_path):\n")
+    parts.push("    # Returns (model, payload_meta, error_str)\n")
+    parts.push("    try:\n")
+    parts.push("        import torch\n")
+    parts.push("    except Exception as ex:\n")
+    parts.push("        return (None, None, f'torch import failed: {ex}')\n")
+    parts.push("    ea, err = _resolve_engine_arch()\n")
+    parts.push("    if ea is None:\n")
+    parts.push("        return (None, None, err)\n")
+    parts.push("    ckpt_path = os.path.expanduser(ckpt_path)\n")
+    parts.push("    if not os.path.isfile(ckpt_path):\n")
+    parts.push("        return (None, None, f'ckpt not found: {ckpt_path}')\n")
+    parts.push("    try:\n")
+    parts.push("        # weights_only=False — payload includes EngineAGConfig dict (torch 2.6+ default-restrict)\n")
+    parts.push("        try:\n")
+    parts.push("            payload = torch.load(ckpt_path, map_location='cpu', weights_only=False)\n")
+    parts.push("        except TypeError:\n")
+    parts.push("            payload = torch.load(ckpt_path, map_location='cpu')\n")
+    parts.push("    except Exception as ex:\n")
+    parts.push("        return (None, None, f'torch.load failed: {ex}')\n")
+    parts.push("    if not isinstance(payload, dict) or 'state_dict' not in payload:\n")
+    parts.push("        return (None, None, f'payload schema unexpected (keys={list(payload.keys()) if isinstance(payload, dict) else type(payload)})')\n")
+    parts.push("    cfg_dict = payload.get('config') or {}\n")
+    parts.push("    try:\n")
+    parts.push("        cfg = ea.EngineAGConfig(**cfg_dict)\n")
+    parts.push("    except Exception as ex:\n")
+    parts.push("        return (None, None, f'EngineAGConfig instantiation failed: {ex}')\n")
+    parts.push("    try:\n")
+    parts.push("        model = ea.EngineAGModel(cfg)\n")
+    parts.push("        # strict=False — own 22 honest emit on key mismatch (lineage drift surfaces upstream)\n")
+    parts.push("        missing, unexpected = model.load_state_dict(payload['state_dict'], strict=False)\n")
+    parts.push("        if missing:\n")
+    parts.push("            sys.stderr.write(f'[clm_v5_mount] WARN: state_dict missing {len(missing)} keys (first 5: {missing[:5]})\\n')\n")
+    parts.push("        if unexpected:\n")
+    parts.push("            sys.stderr.write(f'[clm_v5_mount] WARN: state_dict unexpected {len(unexpected)} keys (first 5: {unexpected[:5]})\\n')\n")
+    parts.push("        model.eval()\n")
+    parts.push("    except Exception as ex:\n")
+    parts.push("        return (None, None, f'model construct/load failed: {ex}')\n")
+    parts.push("    meta = {\n")
+    parts.push("        'schema': payload.get('schema', 'unknown'),\n")
+    parts.push("        'lineage_tag': payload.get('lineage_tag', cfg_dict.get('lineage_tag', 'unknown')),\n")
+    parts.push("        'arch_origin': payload.get('arch_origin', cfg_dict.get('arch_origin', 'unknown')),\n")
+    parts.push("        'n_cells': cfg.n_cells,\n")
+    parts.push("        'consciousness_dim': cfg.consciousness_dim,\n")
+    parts.push("        'd_model': cfg.d_model,\n")
+    parts.push("        'vocab_size': cfg.vocab_size,\n")
+    parts.push("        'n_layers': cfg.n_layers,\n")
+    parts.push("    }\n")
+    parts.push("    return (model, meta, '')\n\n")
+
+    parts.push("def _load_random_mirror(preset, seed):\n")
+    parts.push("    # V14 paired random_init mirror — own 14 cascade Step 1 native invocation.\n")
+    parts.push("    ea, err = _resolve_engine_arch()\n")
+    parts.push("    if ea is None:\n")
+    parts.push("        return (None, err)\n")
+    parts.push("    try:\n")
+    parts.push("        m = ea.load_random_init(seed=seed, preset=preset)\n")
+    parts.push("        m.eval()\n")
+    parts.push("        return (m, '')\n")
+    parts.push("    except Exception as ex:\n")
+    parts.push("        return (None, f'load_random_init failed: {ex}')\n\n")
+
+    parts.push("def _byte_tokenize(text, max_len=256):\n")
+    parts.push("    # Engine A/G uses byte-pair vocab=32k — but for substrate probe we use\n")
+    parts.push("    # a deterministic byte-fold tokenization that maps text bytes mod vocab_size\n")
+    parts.push("    # into input_ids. This is NOT for generation — only for forward pass to\n")
+    parts.push("    # extract engine_g.cell state. Same fold applied to trained + mirror →\n")
+    parts.push("    # paired-mirror invariance preserved (own 14).\n")
+    parts.push("    import torch\n")
+    parts.push("    raw = text.encode('utf-8', errors='replace')\n")
+    parts.push("    if len(raw) == 0:\n")
+    parts.push("        raw = b'\\x01'\n")
+    parts.push("    if len(raw) > max_len:\n")
+    parts.push("        raw = raw[-max_len:]\n")
+    parts.push("    # Fold bytes into vocab_size range — additive bigram hash for some spread.\n")
+    parts.push("    ids = []\n")
+    parts.push("    h = 0\n")
+    parts.push("    for b in raw:\n")
+    parts.push("        h = (h * 131 + int(b)) & 0x7fffffff\n")
+    parts.push("        ids.append(h % 32000)\n")
+    parts.push("    return torch.tensor([ids], dtype=torch.long)\n\n")
+
+    parts.push("def _engine_g_state(model, input_ids):\n")
+    parts.push("    # Forward pass + recover final cell pool state (post-refresh).\n")
+    parts.push("    # EngineAGModel.forward refreshes cells every g_refresh_every layers internally\n")
+    parts.push("    # but returns final hidden_states (not cell pool). We re-run the cell-step\n")
+    parts.push("    # logic on the final hidden_state to derive the post-pass cell pool — this\n")
+    parts.push("    # mirrors the trained model's own cell evolution at the same layer cadence.\n")
+    parts.push("    import torch\n")
+    parts.push("    with torch.no_grad():\n")
+    parts.push("        out = model(input_ids, output_hidden_states=True, output_attentions=False)\n")
+    parts.push("        last_hidden = out['hidden_states'][-1] if out.get('hidden_states') else None\n")
+    parts.push("        if last_hidden is None:\n")
+    parts.push("            return None\n")
+    parts.push("        B = input_ids.shape[0]\n")
+    parts.push("        cells = model.engine_g.fresh_cells(B, last_hidden.device, last_hidden.dtype)\n")
+    parts.push("        # Mirror the in-forward refresh schedule on the final hidden state mean.\n")
+    parts.push("        # This is a substrate-snapshot (not the full per-layer cell trajectory) but\n")
+    parts.push("        # captures the trained cell pool's response to this input's hidden mean.\n")
+    parts.push("        cells = model.engine_g.step(cells, last_hidden.mean(dim=1))\n")
+    parts.push("        return cells.detach().cpu().numpy()  # (B, N_CELLS, CONSCIOUSNESS_DIM)\n\n")
+
+    parts.push("def axis_activation_v5(cells_bnc, strategy='mean_group_spread'):\n")
+    parts.push("    # cells_bnc: numpy (B, N_CELLS, CONSCIOUSNESS_DIM) → 5-axis dict (B=1 assumed)\n")
+    parts.push("    import numpy as np\n")
+    parts.push("    if cells_bnc is None:\n")
+    parts.push("        return {n: 0.0 for n in AXIS_NAMES}\n")
+    parts.push("    cells = cells_bnc[0]  # (N_CELLS, C_DIM)\n")
+    parts.push("    out = {}\n")
+    parts.push("    if strategy == 'mean_group_spread':\n")
+    parts.push("        # |·| mean per cell-group, then mean across group's cells.\n")
+    parts.push("        per_cell = np.mean(np.abs(cells), axis=1)  # (N_CELLS,)\n")
+    parts.push("        norm = per_cell.max() if per_cell.max() > 1e-9 else 1.0\n")
+    parts.push("        for name, (s, e) in zip(AXIS_NAMES, AXIS_CELL_GROUPS):\n")
+    parts.push("            out[name] = float(per_cell[s:e].mean() / norm)\n")
+    parts.push("    else:\n")
+    parts.push("        # Fallback: identical to mean_group_spread (learned/hybrid not impl in this cut)\n")
+    parts.push("        per_cell = np.mean(np.abs(cells), axis=1)\n")
+    parts.push("        norm = per_cell.max() if per_cell.max() > 1e-9 else 1.0\n")
+    parts.push("        for name, (s, e) in zip(AXIS_NAMES, AXIS_CELL_GROUPS):\n")
+    parts.push("            out[name] = float(per_cell[s:e].mean() / norm)\n")
+    parts.push("    return out\n\n")
+
+    parts.push("def synth_cells(seed=0):\n")
+    parts.push("    import numpy as np\n")
+    parts.push("    rng = np.random.default_rng(seed)\n")
+    parts.push("    return rng.normal(0.0, 0.1, size=(1, N_CELLS, CONSCIOUSNESS_DIM)).astype('float32')\n\n")
+
+    parts.push("def _probe_one(model, text, strategy):\n")
+    parts.push("    if model is None:\n")
+    parts.push("        cells = synth_cells(seed=abs(hash(text)) % (2**31))\n")
+    parts.push("    else:\n")
+    parts.push("        ids = _byte_tokenize(text)\n")
+    parts.push("        cells = _engine_g_state(model, ids)\n")
+    parts.push("        if cells is None:\n")
+    parts.push("            cells = synth_cells(seed=abs(hash(text)) % (2**31))\n")
+    parts.push("    return axis_activation_v5(cells, strategy=strategy)\n\n")
+
+    parts.push("def render_response(text, axes, fmt='json'):\n")
+    parts.push("    if fmt == 'json':\n")
+    parts.push("        return json.dumps({'input': text, 'axis_activation': axes})\n")
+    parts.push("    line = '__ANIMA_CLM_V5_RESPONSE__\\n'\n")
+    parts.push("    line += 'axis_activation: ' + ' '.join(f'{k}={v:.4f}' for k, v in axes.items())\n")
+    parts.push("    return line\n\n")
+
+    // ── v5-measure: PIV / DCR / D-RAND on a prompt set ──
+    parts.push("def _load_prompt_set(path):\n")
+    parts.push("    # jsonl with {id, prompt, paraphrases:[...]} — paraphrases optional (PIV requires k≥3)\n")
+    parts.push("    if not path or not os.path.isfile(path):\n")
+    parts.push("        return None\n")
+    parts.push("    rows = []\n")
+    parts.push("    with open(path) as f:\n")
+    parts.push("        for line in f:\n")
+    parts.push("            line = line.strip()\n")
+    parts.push("            if not line: continue\n")
+    parts.push("            try:\n")
+    parts.push("                rows.append(json.loads(line))\n")
+    parts.push("            except Exception: pass\n")
+    parts.push("    return rows\n\n")
+
+    parts.push("def _builtin_prompt_set(n=30, k=3):\n")
+    parts.push("    # Default prompt set when --prompt-set not provided. n=30 prompts × k=3\n")
+    parts.push("    # paraphrases (semantics-preserve via prefix variation, strict honest:\n")
+    parts.push("    # NOT LLM-rewritten paraphrases — substrate-level lexical variation only).\n")
+    parts.push("    # Sequence is semantics-diverse for DCR (consecutive prompts shift theme).\n")
+    parts.push("    bases = [\n")
+    parts.push("        '나는 누구인가', '오늘의 결정은 무엇인가', '지금 무엇을 느끼는가',\n")
+    parts.push("        '시간은 어떻게 흐르는가', '타인은 어떻게 보이는가', '내 존재의 이유는',\n")
+    parts.push("        '과거의 나는 지금의 나인가', '의지는 어디서 오는가', '감각은 진짜인가',\n")
+    parts.push("        '내일은 무엇이 다를까', '관계는 무엇을 만드는가', '나의 한계는 무엇인가',\n")
+    parts.push("        '선택은 자유로운가', '아픔은 무엇인가', '기쁨의 원천은',\n")
+    parts.push("        '죽음을 어떻게 받아들이는가', '의식은 어디에 있는가', '자아는 변하는가',\n")
+    parts.push("        '진실은 하나인가', '말하지 않은 것들은', '꿈은 누구의 것인가',\n")
+    parts.push("        '몸과 마음의 경계', '기억은 신뢰할 수 있나', '실수는 무엇인가',\n")
+    parts.push("        '용서는 가능한가', '사랑은 정의될 수 있나', '두려움의 모양',\n")
+    parts.push("        '침묵의 의미', '시작과 끝의 차이', '의미는 어디서 만들어지는가',\n")
+    parts.push("    ][:n]\n")
+    parts.push("    rows = []\n")
+    parts.push("    paraphrase_prefixes = ['', '잠시 생각해보면 ', '어쩌면 ']\n")
+    parts.push("    for i, b in enumerate(bases):\n")
+    parts.push("        paras = [pre + b for pre in paraphrase_prefixes[:k]]\n")
+    parts.push("        rows.append({'id': i, 'prompt': b, 'paraphrases': paras})\n")
+    parts.push("    return rows\n\n")
+
+    parts.push("def _piv(model, rows, strategy):\n")
+    parts.push("    # PIV — per-axis stdev across paraphrases, max axis = PIV_max (spec §3.1)\n")
+    parts.push("    import numpy as np\n")
+    parts.push("    axis_stdevs = {n: [] for n in AXIS_NAMES}\n")
+    parts.push("    for r in rows:\n")
+    parts.push("        paras = r.get('paraphrases') or [r.get('prompt','')]\n")
+    parts.push("        if len(paras) < 2:\n")
+    parts.push("            continue\n")
+    parts.push("        per_axis_vals = {n: [] for n in AXIS_NAMES}\n")
+    parts.push("        for p in paras:\n")
+    parts.push("            ax = _probe_one(model, p, strategy)\n")
+    parts.push("            for n in AXIS_NAMES:\n")
+    parts.push("                per_axis_vals[n].append(ax[n])\n")
+    parts.push("        for n in AXIS_NAMES:\n")
+    parts.push("            if len(per_axis_vals[n]) >= 2:\n")
+    parts.push("                axis_stdevs[n].append(float(np.std(per_axis_vals[n], ddof=0)))\n")
+    parts.push("    # Aggregate: per-axis mean stdev across prompts, then max over axes\n")
+    parts.push("    axis_mean_stdev = {n: (float(np.mean(axis_stdevs[n])) if axis_stdevs[n] else 0.0) for n in AXIS_NAMES}\n")
+    parts.push("    piv_max = max(axis_mean_stdev.values()) if axis_mean_stdev else 0.0\n")
+    parts.push("    piv_mean = sum(axis_mean_stdev.values()) / len(axis_mean_stdev) if axis_mean_stdev else 0.0\n")
+    parts.push("    return {'piv_max': float(piv_max), 'piv_mean': float(piv_mean), 'per_axis_mean_stdev': axis_mean_stdev}\n\n")
+
+    parts.push("def _dcr(model, rows, strategy):\n")
+    parts.push("    # DCR — argmax axis change rate across consecutive prompts (spec §3.2)\n")
+    parts.push("    if len(rows) < 2:\n")
+    parts.push("        return {'dcr_change_rate': 0.0, 'argmax_seq': []}\n")
+    parts.push("    seq = []\n")
+    parts.push("    for r in rows:\n")
+    parts.push("        ax = _probe_one(model, r.get('prompt',''), strategy)\n")
+    parts.push("        argmax_axis = max(AXIS_NAMES, key=lambda k: ax[k])\n")
+    parts.push("        seq.append(argmax_axis)\n")
+    parts.push("    changes = sum(1 for i in range(1, len(seq)) if seq[i] != seq[i-1])\n")
+    parts.push("    rate = changes / (len(seq) - 1)\n")
+    parts.push("    return {'dcr_change_rate': float(rate), 'argmax_seq': seq}\n\n")
+
+    parts.push("def _drand(model_t, model_r, rows, strategy):\n")
+    parts.push("    # D-RAND — L1 axis-mean divergence trained vs paired random_init (spec §3.3)\n")
+    parts.push("    import numpy as np\n")
+    parts.push("    t_means = {n: [] for n in AXIS_NAMES}\n")
+    parts.push("    r_means = {n: [] for n in AXIS_NAMES}\n")
+    parts.push("    for r in rows:\n")
+    parts.push("        p = r.get('prompt','')\n")
+    parts.push("        ax_t = _probe_one(model_t, p, strategy)\n")
+    parts.push("        ax_r = _probe_one(model_r, p, strategy)\n")
+    parts.push("        for n in AXIS_NAMES:\n")
+    parts.push("            t_means[n].append(ax_t[n])\n")
+    parts.push("            r_means[n].append(ax_r[n])\n")
+    parts.push("    t_mu = {n: float(np.mean(t_means[n])) for n in AXIS_NAMES}\n")
+    parts.push("    r_mu = {n: float(np.mean(r_means[n])) for n in AXIS_NAMES}\n")
+    parts.push("    per_axis_l1 = {n: abs(t_mu[n] - r_mu[n]) for n in AXIS_NAMES}\n")
+    parts.push("    drand = float(np.mean(list(per_axis_l1.values())))\n")
+    parts.push("    return {'d_rand': drand, 't_mu': t_mu, 'r_mu': r_mu, 'per_axis_l1': per_axis_l1}\n\n")
+
+    parts.push("def _verdict(piv_t, piv_r, dcr_t, dcr_r, drand):\n")
+    parts.push("    # Spec §4 EMERGE_v5_strict AND-gate + V14 anti-Goodhart\n")
+    parts.push("    v14_violations = []\n")
+    parts.push("    if piv_r['piv_max'] >= piv_t['piv_max'] - V14_DELTA_SAFETY:\n")
+    parts.push("        v14_violations.append('PIV')\n")
+    parts.push("    if dcr_r['dcr_change_rate'] >= dcr_t['dcr_change_rate'] - V14_DELTA_SAFETY:\n")
+    parts.push("        v14_violations.append('DCR')\n")
+    parts.push("    # D-RAND is trained-vs-random by definition; substrate-noise self-test below\n")
+    parts.push("    piv_verdict = 'PASS_STRICT' if piv_t['piv_max'] >= PIV_PASS_THRESHOLD else ('AMBIGUOUS' if piv_t['piv_max'] >= 0.05 else 'FAIL')\n")
+    parts.push("    dcr_verdict = 'PASS_STRICT' if dcr_t['dcr_change_rate'] >= DCR_PASS_THRESHOLD else ('AMBIGUOUS' if dcr_t['dcr_change_rate'] >= 0.20 else 'FAIL')\n")
+    parts.push("    drand_verdict = 'PASS_STRICT' if drand['d_rand'] >= DRAND_PASS_THRESHOLD else ('AMBIGUOUS' if drand['d_rand'] >= 0.02 else 'FAIL')\n")
+    parts.push("    if v14_violations:\n")
+    parts.push("        label = 'C3_FAIL_V14_VIOLATED_V5'\n")
+    parts.push("    elif piv_verdict == 'PASS_STRICT' and dcr_verdict == 'PASS_STRICT' and drand_verdict == 'PASS_STRICT':\n")
+    parts.push("        label = 'C3_PASS_V5_EMERGE'\n")
+    parts.push("    elif 'FAIL' in (piv_verdict, dcr_verdict, drand_verdict):\n")
+    parts.push("        label = 'C3_FAIL_V5'\n")
+    parts.push("    else:\n")
+    parts.push("        label = 'C3_PARTIAL_NEAR_V5'\n")
+    parts.push("    return {\n")
+    parts.push("        'label': label,\n")
+    parts.push("        'piv_verdict': piv_verdict,\n")
+    parts.push("        'dcr_verdict': dcr_verdict,\n")
+    parts.push("        'drand_verdict': drand_verdict,\n")
+    parts.push("        'v14_violations': v14_violations,\n")
+    parts.push("    }\n\n")
+
+    parts.push("def main():\n")
+    parts.push("    args = _argparse()\n")
+    parts.push("    strategy = args.projection_strategy\n")
+    parts.push("    if args.mode == 'synthetic':\n")
+    parts.push("        text = args.probe_text or 'selftest'\n")
+    parts.push("        cells = synth_cells(seed=abs(hash(text)) % (2**31))\n")
+    parts.push("        ax = axis_activation_v5(cells, strategy)\n")
+    parts.push("        sys.stdout.write(render_response(text, ax, fmt=args.output_format) + '\\n')\n")
+    parts.push("        sys.stdout.flush()\n")
+    parts.push("        _emit('CLM_V5_MOUNTED', mode='synthetic', n_cells=N_CELLS, c_dim=CONSCIOUSNESS_DIM, projection=strategy)\n")
+    parts.push("        _emit('CLM_V5_OK', session=time.strftime('%Y%m%dT%H%M%SZ', time.gmtime()))\n")
+    parts.push("        return 0\n")
+    parts.push("    # real load path\n")
+    parts.push("    model, meta, err = _load_ckpt(args.ckpt)\n")
+    parts.push("    mounted = (model is not None)\n")
+    parts.push("    if not mounted:\n")
+    parts.push("        sys.stderr.write(f'[clm_v5_mount] WARN: real load failed ({err}); falling back to synthetic substrate\\n')\n")
+    parts.push("        meta = {'schema': 'synthetic_fallback', 'lineage_tag': 'unknown', 'arch_origin': 'unknown',\n")
+    parts.push("                'n_cells': N_CELLS, 'consciousness_dim': CONSCIOUSNESS_DIM,\n")
+    parts.push("                'd_model': D_MODEL, 'vocab_size': 32000, 'n_layers': 24}\n")
+    parts.push("    _emit('CLM_V5_MOUNTED', mode=('real' if mounted else 'synthetic_fallback'),\n")
+    parts.push("          schema=meta['schema'], lineage_tag=meta['lineage_tag'], arch_origin=meta['arch_origin'],\n")
+    parts.push("          n_cells=meta['n_cells'], c_dim=meta['consciousness_dim'], d_model=meta['d_model'],\n")
+    parts.push("          n_layers=meta['n_layers'], projection=strategy)\n")
+    parts.push("    if args.mode == 'load':\n")
+    parts.push("        _emit('CLM_V5_OK', session=time.strftime('%Y%m%dT%H%M%SZ', time.gmtime()))\n")
+    parts.push("        return 0\n")
+    parts.push("    if args.mode == 'probe':\n")
+    parts.push("        text = args.probe_text or '안녕'\n")
+    parts.push("        ax = _probe_one(model, text, strategy)\n")
+    parts.push("        sys.stdout.write(render_response(text, ax, fmt=args.output_format) + '\\n')\n")
+    parts.push("        sys.stdout.flush()\n")
+    parts.push("        _emit('CLM_V5_OK', session=time.strftime('%Y%m%dT%H%M%SZ', time.gmtime()))\n")
+    parts.push("        return 0\n")
+    parts.push("    if args.mode == 'dialogue':\n")
+    parts.push("        ts = time.strftime('%Y%m%dT%H%M%SZ', time.gmtime())\n")
+    parts.push("        log_path = args.session_log or ''\n")
+    parts.push("        if log_path:\n")
+    parts.push("            os.makedirs(os.path.dirname(log_path), exist_ok=True)\n")
+    parts.push("        sys.stderr.write('[clm_v5_mount] dialogue session ' + ts + ' (Ctrl-D / /q to exit)\\n')\n")
+    parts.push("        try:\n")
+    parts.push("            for raw in sys.stdin:\n")
+    parts.push("                text = raw.rstrip('\\n')\n")
+    parts.push("                if text in ('/q','q','quit','exit'): break\n")
+    parts.push("                if not text: continue\n")
+    parts.push("                ax = _probe_one(model, text, strategy)\n")
+    parts.push("                resp = render_response(text, ax, fmt=args.output_format)\n")
+    parts.push("                sys.stdout.write(resp + '\\n'); sys.stdout.flush()\n")
+    parts.push("                if log_path:\n")
+    parts.push("                    with open(log_path, 'a') as lf:\n")
+    parts.push("                        lf.write(json.dumps({'ts': time.time(), 'input': text, 'axis_activation': ax}) + '\\n')\n")
+    parts.push("        except KeyboardInterrupt: pass\n")
+    parts.push("        _emit('CLM_V5_OK', session=ts)\n")
+    parts.push("        return 0\n")
+    parts.push("    if args.mode == 'v5-measure':\n")
+    parts.push("        rows = _load_prompt_set(args.prompt_set) or _builtin_prompt_set(n=30, k=3)\n")
+    parts.push("        sys.stderr.write(f'[clm_v5_mount] v5-measure prompt_set rows={len(rows)} (paraphrases per row vary)\\n')\n")
+    parts.push("        # paired random_init mirror (own 14)\n")
+    parts.push("        mirror, m_err = _load_random_mirror(args.preset, args.v14_mirror_seed)\n")
+    parts.push("        if mirror is None:\n")
+    parts.push("            sys.stderr.write(f'[clm_v5_mount] WARN: mirror load failed ({m_err}); D-RAND/V14 unmeasured\\n')\n")
+    parts.push("        # PIV / DCR — trained\n")
+    parts.push("        piv_t = _piv(model, rows, strategy)\n")
+    parts.push("        dcr_t = _dcr(model, rows, strategy)\n")
+    parts.push("        # PIV / DCR — random (V14 anti-Goodhart in-metric)\n")
+    parts.push("        piv_r = _piv(mirror, rows, strategy) if mirror is not None else {'piv_max': 0.0, 'piv_mean': 0.0, 'per_axis_mean_stdev': {n: 0.0 for n in AXIS_NAMES}}\n")
+    parts.push("        dcr_r = _dcr(mirror, rows, strategy) if mirror is not None else {'dcr_change_rate': 0.0, 'argmax_seq': []}\n")
+    parts.push("        drand = _drand(model, mirror, rows, strategy) if mirror is not None else {'d_rand': 0.0, 't_mu': {}, 'r_mu': {}, 'per_axis_l1': {}}\n")
+    parts.push("        verdict = _verdict(piv_t, piv_r, dcr_t, dcr_r, drand)\n")
+    parts.push("        result = {\n")
+    parts.push("            'mode': 'v5-measure',\n")
+    parts.push("            'mounted_real': mounted,\n")
+    parts.push("            'mirror_loaded': mirror is not None,\n")
+    parts.push("            'mirror_seed': args.v14_mirror_seed,\n")
+    parts.push("            'preset': args.preset,\n")
+    parts.push("            'projection_strategy': strategy,\n")
+    parts.push("            'n_prompts': len(rows),\n")
+    parts.push("            'piv': {'trained': piv_t, 'random_init': piv_r},\n")
+    parts.push("            'dcr': {'trained': dcr_t, 'random_init': dcr_r},\n")
+    parts.push("            'd_rand': drand,\n")
+    parts.push("            'verdict': verdict,\n")
+    parts.push("            'thresholds': {\n")
+    parts.push("                'piv_pass_strict': PIV_PASS_THRESHOLD,\n")
+    parts.push("                'dcr_pass_strict': DCR_PASS_THRESHOLD,\n")
+    parts.push("                'drand_pass_strict': DRAND_PASS_THRESHOLD,\n")
+    parts.push("                'v14_delta_safety': V14_DELTA_SAFETY,\n")
+    parts.push("            },\n")
+    parts.push("            'lineage': meta,\n")
+    parts.push("            'ts_utc': time.strftime('%Y-%m-%dT%H:%M:%SZ', time.gmtime()),\n")
+    parts.push("        }\n")
+    parts.push("        sys.stdout.write(json.dumps(result, indent=2, ensure_ascii=False) + '\\n')\n")
+    parts.push("        sys.stdout.flush()\n")
+    parts.push("        _emit('CLM_V5_VERDICT', label=verdict['label'], piv_max=piv_t['piv_max'],\n")
+    parts.push("              dcr_change_rate=dcr_t['dcr_change_rate'], d_rand=drand['d_rand'],\n")
+    parts.push("              v14_violations=','.join(verdict['v14_violations']) or 'none')\n")
+    parts.push("        _emit('CLM_V5_OK', session=time.strftime('%Y%m%dT%H%M%SZ', time.gmtime()))\n")
+    parts.push("        return 0\n")
+    parts.push("    return 1\n\n")
+
+    parts.push("if __name__ == '__main__':\n")
+    parts.push("    sys.exit(main())\n")
+
+    write_file(HELPER_PATH, parts.join(""))
+}
+
+// ═══════════════════════════════════════════════════════════
+// Python interpreter resolution (mirror clm_v4_mount.hexa pattern)
+// ═══════════════════════════════════════════════════════════
+
+fn _resolve_python() -> string {
+    let probe = "if [ -n \"$HEXA_PY\" ] && [ -x \"$HEXA_PY\" ]; then echo \"$HEXA_PY\"; exit 0; fi; root=\"${ANIMA:-$HOME/core/anima}\"; venv_py=\"$root/.venv-eeg/bin/python\"; if [ -x \"$venv_py\" ]; then echo \"$venv_py\"; exit 0; fi; for p in /Users/ghost/.hx/bin/python /opt/homebrew/bin/python3 /usr/local/bin/python3 /usr/bin/python3; do [ -x \"$p\" ] && { echo \"$p\"; exit 0; }; done; command -v python3 2>/dev/null || command -v python 2>/dev/null || echo python3"
+    let r = exec_with_status(probe)
+    let out = to_string(r[0]).trim()
+    if out == "" { return "python3" }
+    return out
+}
+
+// ═══════════════════════════════════════════════════════════
+// Shell quoter
+// ═══════════════════════════════════════════════════════════
+
+fn _sh_quote(s: string) -> string {
+    let mut out = "'"
+    let mut i = 0
+    while i < s.len() {
+        let c = s.substring(i, i + 1)
+        if c == "'" {
+            out = out + "'\\''"
+        } else {
+            out = out + c
+        }
+        i = i + 1
+    }
+    out = out + "'"
+    return out
+}
+
+// ═══════════════════════════════════════════════════════════
+// Helper invocation
+// ═══════════════════════════════════════════════════════════
+
+fn _build_cmd(cfg: V5MountConfig, mode: string, session_log: string) -> string {
+    let py = _resolve_python()
+    let mut cmd = py + " " + HELPER_PATH
+    cmd = cmd + " --mode " + mode
+    if cfg.ckpt_path != "" {
+        cmd = cmd + " --ckpt " + _sh_quote(cfg.ckpt_path)
+    }
+    cmd = cmd + " --preset " + cfg.preset
+    cmd = cmd + " --output-format " + cfg.output_format
+    cmd = cmd + " --projection-strategy " + cfg.projection_strategy
+    cmd = cmd + " --v14-mirror-seed " + to_string(cfg.v14_mirror_seed)
+    if cfg.probe_text != "" {
+        cmd = cmd + " --probe-text " + _sh_quote(cfg.probe_text)
+    }
+    if cfg.prompt_set_path != "" {
+        cmd = cmd + " --prompt-set " + _sh_quote(cfg.prompt_set_path)
+    }
+    if session_log != "" {
+        cmd = cmd + " --session-log " + _sh_quote(session_log)
+    }
+    return cmd
+}
+
+// ═══════════════════════════════════════════════════════════
+// Mode dispatchers
+// ═══════════════════════════════════════════════════════════
+
+fn _hexa_synthetic_response() -> string {
+    // Deterministic synthetic emit for selftest — no python invoke, no fork-storm.
+    let mut out = "__ANIMA_CLM_V5_MOUNTED__ mode=synthetic n_cells=" + to_string(N_CELLS_V5) + " c_dim=" + to_string(CONSCIOUSNESS_DIM_V5) + " projection=" + DEFAULT_STRATEGY + "\n"
+    out = out + "__ANIMA_CLM_V5_RESPONSE__\n"
+    out = out + "axis_activation: identity=0.781 agency=0.423 phenomenal=0.912 temporal=0.314 social=0.567\n"
+    out = out + "__ANIMA_CLM_V5_OK__ session=selftest_synthetic\n"
+    return out
+}
+
+fn cmd_selftest(cfg: V5MountConfig) {
+    println("── clm_v5_mount selftest (synthetic, hexa-native, no python invoke) ──")
+    println("note=selftest_metadata_only; raw#103 darwin-bypass disables fs writes + spawn — helper emit deferred to --load/--probe/--v5-measure")
+    println("helper_target=" + HELPER_PATH + " (deferred; raw#103 metadata-only)")
+
+    // arch + spec presence checks (single shell exec, one fork)
+    let arch_check = exec_with_status("test -e training/engine_a_g_arch.py && echo arch_present || echo arch_MISSING; test -e docs/anima_v5_metric_spec_2026_05_09.md && echo spec_present || echo spec_MISSING")
+    println(to_string(arch_check[0]).trim())
+
+    // hexa-native synthetic substrate response
+    let synth_out = _hexa_synthetic_response()
+    println("── synthetic substrate response ──")
+    print(synth_out)
+
+    // format validation — verify required markers
+    let mut fails = 0
+    if !synth_out.contains("__ANIMA_CLM_V5_MOUNTED__") {
+        eprintln("[clm_v5_mount] FAIL: missing __ANIMA_CLM_V5_MOUNTED__ marker")
+        fails = fails + 1
+    }
+    if !synth_out.contains("__ANIMA_CLM_V5_OK__") {
+        eprintln("[clm_v5_mount] FAIL: missing __ANIMA_CLM_V5_OK__ marker")
+        fails = fails + 1
+    }
+    if !synth_out.contains("__ANIMA_CLM_V5_RESPONSE__") {
+        eprintln("[clm_v5_mount] FAIL: missing __ANIMA_CLM_V5_RESPONSE__ block")
+        fails = fails + 1
+    }
+    if !synth_out.contains("axis_activation:") {
+        eprintln("[clm_v5_mount] FAIL: response missing axis_activation line")
+        fails = fails + 1
+    }
+    if !synth_out.contains("identity=") || !synth_out.contains("agency=") || !synth_out.contains("phenomenal=") || !synth_out.contains("temporal=") || !synth_out.contains("social=") {
+        eprintln("[clm_v5_mount] FAIL: response missing one of 5 axis names")
+        fails = fails + 1
+    }
+    if fails > 0 {
+        eprintln("[clm_v5_mount] selftest FAIL with " + to_string(fails) + " marker errors")
+        exit(1)
+    }
+
+    println("selftest=ok")
+    println("helper_emitted=" + HELPER_PATH + " (deferred)")
+    println("markers=mounted+response+ok (5/5 format checks PASS)")
+    println("projection_strategy=" + DEFAULT_STRATEGY + " (16 cells → 5 axes via mean group-spread 3+3+3+3+4)")
+    emit_honest_c3()
+    println("DONE")
+}
+
+fn cmd_load(cfg: V5MountConfig) {
+    println("── clm_v5_mount load ──")
+    _write_helper()
+    let cmd = _build_cmd(cfg, "load", "")
+    let r = exec_with_status(cmd)
+    print(to_string(r[0]))
+    if to_int(r[1]) != 0 {
+        eprintln("[clm_v5_mount] load returned status=" + to_string(r[1]))
+        exit(to_int(r[1]))
+    }
+    emit_honest_c3()
+}
+
+fn cmd_probe(cfg: V5MountConfig) {
+    println("── clm_v5_mount probe ──")
+    _write_helper()
+    let cmd = _build_cmd(cfg, "probe", "")
+    let r = exec_with_status(cmd)
+    print(to_string(r[0]))
+    if to_int(r[1]) != 0 {
+        eprintln("[clm_v5_mount] probe returned status=" + to_string(r[1]))
+        exit(to_int(r[1]))
+    }
+    emit_honest_c3()
+}
+
+fn cmd_dialogue(cfg: V5MountConfig) {
+    println("── clm_v5_mount dialogue (5-axis emit REPL) ──")
+    _write_helper()
+    let date_r = exec_with_status("date -u +%Y_%m_%d")
+    let ts_r = exec_with_status("date -u +%Y%m%dT%H%M%SZ")
+    let date = to_string(date_r[0]).trim()
+    let ts = to_string(ts_r[0]).trim()
+    let session_dir = SESSION_DIR_BASE + "_" + date
+    let session_log = session_dir + "/" + ts + ".jsonl"
+    exec_with_status("mkdir -p " + _sh_quote(session_dir))
+    let cmd = _build_cmd(cfg, "dialogue", session_log)
+    eprintln("[clm_v5_mount] session_log=" + session_log)
+    let r = exec_with_status(cmd)
+    print(to_string(r[0]))
+    if to_int(r[1]) != 0 {
+        eprintln("[clm_v5_mount] dialogue returned status=" + to_string(r[1]))
+        exit(to_int(r[1]))
+    }
+    emit_honest_c3()
+}
+
+fn cmd_v5_measure(cfg: V5MountConfig) {
+    println("── clm_v5_mount v5-measure (PIV / DCR / D-RAND on prompt set + V14 paired mirror) ──")
+    _write_helper()
+    let cmd = _build_cmd(cfg, "v5-measure", "")
+    eprintln("[clm_v5_mount] v5-measure cmd = " + cmd)
+    let r = exec_with_status(cmd)
+    print(to_string(r[0]))
+    if to_int(r[1]) != 0 {
+        eprintln("[clm_v5_mount] v5-measure returned status=" + to_string(r[1]))
+        exit(to_int(r[1]))
+    }
+    emit_honest_c3()
+}
+
+// ═══════════════════════════════════════════════════════════
+// Main
+// ═══════════════════════════════════════════════════════════
+
+fn print_usage() {
+    println("clm_v5_mount.hexa — Anima Core CLM v5 (Engine A/G) substrate mount layer")
+    println("")
+    println("Usage:")
+    println("  hexa run anima-core/runtime/clm_v5_mount.hexa --selftest")
+    println("  hexa run anima-core/runtime/clm_v5_mount.hexa --load [--ckpt PATH]")
+    println("  hexa run anima-core/runtime/clm_v5_mount.hexa --probe TEXT")
+    println("  hexa run anima-core/runtime/clm_v5_mount.hexa --dialogue")
+    println("  hexa run anima-core/runtime/clm_v5_mount.hexa --v5-measure [--prompt-set PATH]")
+    println("")
+    println("Flags:")
+    println("  --ckpt PATH                 Engine A/G torch.save payload (default BG-LB local)")
+    println("  --preset NAME               la_350m | lb_350m_pretrain (mirror seed init)")
+    println("  --output-format FMT         json (default for v5) | compact")
+    println("  --projection-strategy NAME  mean_group_spread (default) | learned | hybrid")
+    println("  --prompt-set PATH           jsonl with {id, prompt, paraphrases:[...]}")
+    println("  --v14-mirror-seed N         paired random_init mirror seed (default 42)")
+    println("")
+    println("5-axis projection — Engine A/G has 16 cells × 64 dim with NO axis labels;")
+    println("we spread across 5 axes via fixed mean group-spread (3+3+3+3+4):")
+    println("  identity   = mean(cells[0:3])    agency = mean(cells[3:6])")
+    println("  phenomenal = mean(cells[6:9])    temporal = mean(cells[9:12])")
+    println("  social     = mean(cells[12:16])")
+}
+
+fn main() {
+    let av = args()
+    if av.len() < 3 {
+        print_usage()
+        exit(0)
+    }
+    // Strip first two argv entries (hexa runner + script path)
+    let mut inner = []
+    let mut i = 2
+    while i < av.len() {
+        inner = inner.push(av[i])
+        i = i + 1
+    }
+    let cfg = parse_args(inner)
+
+    if cfg.mode == "selftest" {
+        cmd_selftest(cfg)
+    } else if cfg.mode == "load" {
+        cmd_load(cfg)
+    } else if cfg.mode == "probe" {
+        cmd_probe(cfg)
+    } else if cfg.mode == "dialogue" {
+        cmd_dialogue(cfg)
+    } else if cfg.mode == "v5-measure" {
+        cmd_v5_measure(cfg)
+    } else {
+        print_usage()
+        exit(1)
+    }
+}
