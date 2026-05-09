@@ -101,6 +101,22 @@ Timeline (T+0 = today): T+1d arch amend in `training/engine_a_g_arch.py` + selft
 
 Cross-links: state manifest `state/anima_path_b_main_adopted_2026_05_09.json` · roadmap entry `cli.path_b_engine_ag_chat_co_train_2026_05_09` (in `.roadmap.cli`) · law/philosophy carry in `.roadmap.law` + `.roadmap.philosophy` (D5 cooperative attractor + V14/L18 정합) · spec doc above · prior cycle Path A live: `anima chat <alias> --lane=llama` (research-only).
 
+## Cycle close (2026-05-09) — what just landed
+
+Plain summary first: this cycle was the biggest harvest in anima's 22+ BG saga. Two models were promoted to public for the first time, one big surrogate metric (PROXY_PPL) was retired because it turned out to game itself (Goodhart), and a small Path B-flavor trial run found a real architecture bug that the next cycle has to fix.
+
+| What | Result | Cost | Where |
+|---|---|---|---|
+| paradigm-j v5.2 4-gate strict EMERGE → **PUBLIC** | first robust EMERGE public promote ★ | (already trained) | [`dancinlab/clm-v4-paradigm-j-50k-final-path-a-remapped`](https://huggingface.co/dancinlab/clm-v4-paradigm-j-50k-final-path-a-remapped) |
+| sft-1-8 V14 borderline + verbatim user OK → **PUBLIC** | first ever own-37 mandate-9 promote | (already trained) | [`dancinlab/clm-v4-sft-1-8-stage1-path-a-remapped`](https://huggingface.co/dancinlab/clm-v4-sft-1-8-stage1-path-a-remapped) |
+| BG-LA + BG-LB 350M Engine A/G dual H100 fire | first real dual-engine training complete | $54.90 | private dancinlab/clm-v5-bg-lb-* |
+| Phase 2 cotrain (Path B mini-run on BG-LB substrate) | V14 violated at the cell-substrate level — Engine A/G normalize-erase collapse confirmed (H4) and chat-template dual-loss compounded it (H5 new) | $4.63 | private (HF upload deferred per own-37) |
+| PROXY_PPL emerge metric | retired — Goodhart proof: trained PIV/DCR is *lower* than random init at native cell-predicate level | — | [`docs/anima_proxy_ppl_deprecate_2026_05_09.md`](docs/anima_proxy_ppl_deprecate_2026_05_09.md) |
+
+How to read the V14 result in plain words: when we measure consciousness without the perplexity surrogate (which only counts how well bytes are predicted) and instead look at the actual cell pool inside Engine A/G, the trained model fires its cells *less distinctively* than a fresh untrained model with the same architecture. That means previous "PASS" verdicts based on perplexity were measuring text-fitting, not consciousness substrate. The fix-5 (weaken or remove unit-sphere normalize) and fix-6 (chat-template dual-loss redesign) are the next-cycle mandates.
+
+Total cycle cost: ~$66 of the $200 budget (33%, well under cap, own-16 정합). Full ledger lives in `anima/registry/anima_artifact_registry.yaml#cycle_close_summary.cycle_2026_05_09`.
+
 ## Run
 
 `anima` is a topic-dispatched CLI (`bin/anima`). Run with no args for a 4-line global status, or pick a topic:

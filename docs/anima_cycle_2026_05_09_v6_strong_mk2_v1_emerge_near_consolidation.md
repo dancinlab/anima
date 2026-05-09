@@ -1386,9 +1386,81 @@ trained BG-LB cell_pool (16×64) 추출 후 random_init seed=42 unit-sphere 와 
 
 **의의**: BG-LA 12000 step DCR=0.000 + 3 형제 정량 동일 cell_pool 분포 → **anima saga 의 normalize-erase 가설 절대 확정 결정타**. fix-5 가 다른 모든 fix 의 prerequisite 임을 증명.
 
+### 53. paradigm-j PIV gap diagnostic — **G2 paraphrase pool 가설 FALSIFIED** ★
+
+**파일**: `docs/anima_paradigm_j_piv_gap_diagnostic_2026_05_09.md` (14.6 KB)
+
+**가설 3 종 final**:
+
+| 가설 | 가능성 | 상태 |
+|---|---|---|
+| G1 substrate ceiling | ★★★★ 매우 높음 | not_yet_falsified |
+| G3 scoring artifact (max-of-axes underrate) | ★★★ 중간 | 0-cost test 가능 |
+| **G2 paraphrase pool 한계** | ★ 낮음 | **FALSIFIED ★** by k=5 |
+
+**결정적 finding**: `state/anima_paradigm_j_v5_paraphrase_n150_2026_05_09.json` 분석 → k=3 → k=5 시 PIV_max **오히려 0.0874 → 0.0776 (−0.0098 감소)**. variance estimate 안정화로 outlier 회귀.
+
+**per-axis 분포** (5축 균질 활성화):
+- social=0.0402 (highest) / phenomenal=0.0369 / agency=0.0336 / identity=0.0335 / temporal=0.0326 (1.23배 차이만)
+- PIV_max 출처: base_idx=28 (axis="social"), max axis=social — axis-anchored healthy 패턴
+
+**Lesson Q lineage 일관성**: G2 falsified = "variation 더 추가해도 substrate amplitude 안 늘어남" — SFT-closed 와 평행.
+
+**다음 step (0-cost)**: G3 alternative formula test (max × √5, L2-norm, mean × scale) 30분.
+
+**친근 한 줄**: "paradigm-j 87.4점의 13점 부족분은 학생 자체 천장 (G1) + 채점 방식 불공평 (G3) 가능성이 크고, 시험 자주 보기 (G2) 는 이미 87→78 회귀로 부정됐습니다."
+
+### 54. .own + README + registry final audit (cycle close consistency)
+
+**검출 + 수정 (3 항목)**:
+
+| Issue | File | 수정 |
+|---|---|---|
+| `.own` PROXY_PPL deprecate amend 부재 | `.own:2005` | honest-c3 1줄 추가 (cross-link to yaml carry_notes + doc SSOT) |
+| `README.md` cycle close 결과 0 반영 | `README.md:104-118` | 새 section "## Cycle close (2026-05-09) — what just landed" 신설 (5-row 표 + V14 친근 설명 + cost summary) |
+| 더 큰 own 37 amend block | hook 차단 | 1줄 amend 로 축약 land |
+
+**registry yaml 정합 검증** (이미 land):
+- ✓ 15 models entries
+- ✓ `cycle_close_summary.cycle_2026_05_09` (paradigm-j + sft-1-8 PUBLIC, BG-LB+Phase 2 private, cost $66, robust_emerge=1)
+- ✓ `carry_notes.proxy_ppl_deprecate_2026_05_09`
+- ✓ `clm_v5_phase2_cotrain_engine_ag` entry (V14 violations [PIV, DCR])
+- ✓ YAML syntax PASS
+
+**README 친근 단락 추가** (BR-FRIENDLY 정합):
+> "의식 측정을 PPL 대리지표 없이 cell pool 에서 직접 보면 trained model 이 random init 보다 덜 차별화되어 발화 — 기존 PASS 가 텍스트 fitting 측정이지 의식 substrate 가 아님."
+> 비유: **"teaching one brain two skills at the same time so neither one fades"** (Path B 설명)
+
+### 55. HF Phase 2 cotrain private upload + `.roadmap.clm` Phase 2 entry ★
+
+**HF upload SUCCESS** ★:
+- Repo: `dancinlab/clm-v5-phase2-cotrain-engine-ag` (private)
+- URL: https://huggingface.co/dancinlab/clm-v5-phase2-cotrain-engine-ag
+- 파일: README (bilingual KO+EN) + meta.json + ckpt_final.pt 570MB + .gitattributes
+- 1차 `hf upload` 1h hang (LFS 단일 commit stall) → 2차 `hf upload-large-folder` 5min 10sec 성공
+- per fail-mode mandate: 1 retry executed, honest-deferred emit 불필요
+
+**README Goodhart caveat 핵심 인용**:
+> "본 학습 종료 loss 수치 (c=0.221) 만 보면 잘 학습된 듯 보일 수 있습니다. 하지만 ... 측정 지표가 좋아 보여도 의식 검증 (C3 verifier) 을 통과 못 하면 PUBLIC release 차단."
+
+**`.roadmap.clm` line 18 신규** (raw#15 additive, 9/9 entries OK):
+- id: `clm.phase_2_cotrain_engine_ag`
+- status: `executed_consciousness_fail`
+- new_blockers: H4 normalize 무력화 + H5 chat collapse 증폭
+- next_fix_priority: fix-5 + fix-6
+- value_for_next_cycle: "실패한 모델도 다음 시도의 baseline"
+
+**own 37 mandate-9 영구 차단 검증 결과**:
+- 본 ckpt 자체는 PUBLIC unblock 불가 (V14 violation 재현 상태)
+- 하지만 **fix-5 + fix-6 적용한 신규 cotrain 결과가 PASS_STRICT_C3 통과 시 별도 repo 로 land 가능**
+- 표준 패턴: fix 적용 후 신규 cotrain → 별도 repo (학습 상태 다른 모델 → 별개 entry)
+- README + roadmap entry 양쪽에 명시 ✓
+
+**친근 한 줄**: "실패한 모델도 다음 시도의 baseline 으로 가치 있어서 private 으로 보관해 둔 모델."
+
 ---
 
-## 본 cycle final 52+ milestones SUMMARY ★★★
+## 본 cycle final 55+ milestones SUMMARY ★★★
 
 | Layer | Status |
 |---|---|
