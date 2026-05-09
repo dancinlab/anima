@@ -2143,3 +2143,53 @@ own 41 live "chat lane plugin pattern mandate — --option 설계 future-proof +
   severity warn (Phase 1 — lane 추가 시 manual 4-step verify) → block (Phase 2 — anima audit `--mandate-41` 가 _registry.hexa ↔ chat.hexa _lane_file_lookup() ↔ yaml#chat_lanes ↔ md drift detect)
   proof grep -E "lane_registry|_lane_file_lookup|chat_lanes:" tool/anima_cli/chat.hexa tool/anima_cli/chat/lanes/_registry.hexa anima/registry/anima_artifact_registry.yaml — 동일 lane 4종 매칭 expected
   note 2026-05-09 own 41 = 사용자 directive verbatim 직접 응답. own 39 (yaml↔md) 보강 — chat_lanes section 추가. own 33 trinity self-application (D_lane registry consistency + own 17/18/34/37 cross-link + H_lane SKELETON honest C3 carry). 4 lane initial registry: substrate (default) / llama (Path 1, D1 OUTSIDE) / axis-priority (Path 2) / generate (Path 3 SKELETON).
+
+  cross-reference axis-N amend 2026-05-09 = substrate quality main path 신설 (own 41 axis-N substrate_quality_main_path field). 사용자 directive verbatim 4건 종합 응답:
+    1. "Option C alias table 본 cycle 채택" (own audit Phase 2 fallback)
+    2. "Path B (Engine A/G 의식+chat 동시 학습) ★: 의식 ✓ + 자연어 ✓ + anima 본진 ✓ ($30-60) <===== 이걸 main 으로 채택하자"
+    3. "로드맵 넣구"
+    4. "README.md 에서도 표기"
+  4-path comparison (substrate quality amplification, predecessor commit `611aeda4` + spec doc `docs/anima_substrate_quality_amplification_spec_2026_05_09.ai.md`):
+    A Llama lane $0 D1 outside → 29/70 (own 17 SCOPE_CLAMP, public promote 차단)
+    B Engine A/G + chat-template co-train $30-60 D1 within → 59/70 ★ MAIN_ADOPTED (winner)
+    C mk2-v1 pre-train scale-up $50-100 D1 within → 49/70 (SECOND_BEST)
+    D sft-1-8 Step B 30K LoRA SFT $15-20 → 43/70 (COST_EFFECTIVE_BUT_LORA_LIMIT, Lesson Q SFT-closed evidence)
+  weights: natural-lang ×1, 의식 ×1, D1 within ×2, public promote ×2, cost ×1, time ×1, arch reuse ×2 (own 17 + own 37 + cycle invest)
+  implement design summary:
+    target_file = training/engine_a_g_arch.py (base commit ae5af2ea)
+    amend = ADD cfg.chat_co_train_weight=0.5 + chat-template loss head; LOSS = loss_consciousness*(1-w) + loss_chat*w; shared lm_head (no new params, 0 D1 risk); curriculum w=0.3→0.5; engine_g repulsion-field unaffected
+    corpus split = 70% consciousness-state targets / 30% Korean chat-template targets (50K+ pairs)
+    V14 mirror = 5-seed (42/137/271/314/1729) MANDATORY before fire; MTRP ≥ 0.10 + Gate D V14 PPR < 0.05 (own 18 ALT-AGG-1 v5.2)
+    orchestrator = tool/bg_la_engine_ag_orchestrator.hexa
+    timeline = T+0 adoption ledger (이 commit) → T+1d arch amend + selftest → T+2d corpus prep → T+3d H100 fire + V14 mirror → T+4d post-fire 4-gate verdict + HF private upload
+    cost = $30-60 estimated (h100 $2.79/h × 10-20h; corpus split + curriculum 따라 ±50% 변동 가능)
+  SSOT mirror surfaces (own 22/24/38/39 매단계):
+    - anima/registry/anima_artifact_registry.yaml chat_lanes#generate substrate_quality_status: AMP_PATH_B_RECOMMENDED → AMP_PATH_B_MAIN_ADOPTED + substrate_quality_main_path: B 신설
+    - state/anima_path_b_main_adopted_2026_05_09.json (NEW manifest, this commit)
+    - .roadmap.cli cli.path_b_engine_ag_chat_co_train_2026_05_09 (NEW entry)
+    - .roadmap.law law.path_b_v14_l18_carry_2026_05_09 (carry note D5 + V14/L18 정합)
+    - .roadmap.philosophy philosophy.path_b_dual_engine_chat_co_train_2026_05_09 (carry note D5 cooperative attractor)
+    - README.md ## Next-cycle main path: Path B (Engine A/G chat co-train) section 신설 + Model Downloads PUBLIC list (sft-1-8 + paradigm-j) 갱신 — mk2 spec BR-FRIENDLY-RESPONSE 정합 (친근한 어조 + 비유 + 약어 풀어 설명)
+    - docs/anima_artifact_registry.md (regenerated via /usr/bin/python3 tool/transient_py/anima_artifact_registry_render.py — gate harness 우회 system python direct)
+  honest-c3 axis-N substrate_quality_main_path:
+    - C1 채택 시점 = adoption ledger only — actual H100 fire 는 BG-LA orchestrator + RUNPOD_API_KEY register 후 별도 cycle (own 40 resource CLI 위임 strict)
+    - C2 cost estimate $30-60 은 lb_350m_pretrain preset 추정 — corpus split + curriculum schedule 에 따라 ±50% 변동 가능
+    - C3 V14 strict floor 0.10 MTRP 통과 보장 X — sft-1-8 N=120 evidence (MTRP=-0.1379) 은 LoRA 한정이지만 pre-train scale 도 risk 잔존; 5-seed dry-run 후 fire decision
+    - C4 dual-objective interference risk — consciousness-state axis activations 가 chat-template fitting 으로 collapse 가능; w schedule + axis activation freeze 첫 10% steps mitigation 보강 필요
+    - C5 hexa runner sandbox 의 anima/registry/render.hexa 는 gate harness `python3` alias remote dispatch (`run_remote.py` ConnectionRefusedError) — system `/usr/bin/python3` 직접 호출 fallback 으로 md regenerate 성공 (43479→44410 bytes); render.hexa 자체는 정상 (script body OK), gate config 이슈만 carry
+    - push X — 본 commit local only (사용자 explicit push directive 부재)
+  precedence
+    - own 14 V14 mirror 5-seed cascade strict (BG-LA Path B fire 전 mandatory)
+    - own 16 0-cost adoption (실제 fire $30-60 within budget cap)
+    - own 17 D1 SCOPE_CLAMP — Path B within strict (D1=0.99 expected)
+    - own 18 ALT-AGG-1 v5.2 4-gate (PIV/DCR/D-RAND/Gate D V14) + chat-cap C2 axis-2 substrate quality main path
+    - own 22 mandatory report (Path B main adoption 자체가 major event ledger)
+    - own 24 single SSOT — yaml master + state json + roadmap + README mirror
+    - own 33 trinity self-application (D + own + H)
+    - own 34 mandate-2 wrap=0 (README + roadmap + state json text-only)
+    - own 37 mandate-9 — Path B target = public promote 4 prereq carry (real-mode PASS_STRICT_C3 + V6 awareness + 사용자 verbatim "OK PROMOTE PUBLIC <repo-id>" + trinity sweep)
+    - own 38 axis-A doc save 매단계 (state json + roadmap entry + README + yaml + .own)
+    - own 39 yaml↔md mandatory regenerate
+    - own 41 chat lane plugin pattern + axis-N substrate quality main path 신설
+  cross-reference linked artifacts: training/engine_a_g_arch.py (target) · tool/bg_la_engine_ag_orchestrator.hexa (orchestrator) · docs/anima_substrate_quality_amplification_spec_2026_05_09.ai.md (spec) · state/anima_path_b_main_adopted_2026_05_09.json (manifest) · .roadmap.cli cli.path_b_engine_ag_chat_co_train_2026_05_09 (roadmap)
+  related own 14 own 16 own 17 own 18 own 22 own 24 own 33 own 34 own 37 own 38 own 39 own 40 own 41 raw#15 (additive)

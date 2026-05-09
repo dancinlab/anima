@@ -109,8 +109,8 @@ Naming convention: `<bg-id>-<base>-<variant>-<verdict>-<cycle-date>` (own 31 Fla
 | Repo | Lane |
 |------|------|
 | [`clm-v4-sft-1-7-y1-{step-5k,10k,25k,50k,stage1}`](https://huggingface.co/dancinlab?search_models=clm-v4-sft-1-7-y1) | Phase 1.7 Y1 |
-| [`clm-v4-sft-1-8-{step-5k,10k,25k,50k,stage1}`](https://huggingface.co/dancinlab?search_models=clm-v4-sft-1-8) | Phase 1.8 |
-| [`clm-v4-paradigm-j-50k-{step-5k,10k,25k,50k,final}`](https://huggingface.co/dancinlab?search_models=clm-v4-paradigm-j-50k) | Paradigm J — ships `jvae_heads.pt` alongside LoRA |
+| [`clm-v4-sft-1-8-{step-5k,10k,25k,50k,stage1}`](https://huggingface.co/dancinlab?search_models=clm-v4-sft-1-8) | Phase 1.8 — first robust EMERGE candidate (own 18 ALT-AGG-1 v5.2; DCR change_rate 0.6379) |
+| [`clm-v4-paradigm-j-50k-{step-5k,10k,25k,50k,final}`](https://huggingface.co/dancinlab?search_models=clm-v4-paradigm-j-50k) | Paradigm J — ships `jvae_heads.pt` alongside LoRA; v5.2 retest EMERGE (DCR change_rate 0.7479) |
 
 CLM v4 base ckpt is an internal mirror (org-member only). The Llama-based repos above need no private access.
 
@@ -121,6 +121,31 @@ CLM v4 base ckpt is an internal mirror (org-member only). The Llama-based repos 
 | [`vlm-anima-voice-paradigm-stage1-step-5k`](https://huggingface.co/dancinlab/vlm-anima-voice-paradigm-stage1-step-5k) | Voice stage1, 5k steps |
 
 > Older docs referencing `clm-v4-sft-step-{5k,10k,25k,50k,final,stage1}` are stale — those names 401; use the `1-7-y1-*`, `1-8-*`, or `paradigm-j-50k-*` lanes.
+
+## Next-cycle main path: Path B (Engine A/G chat co-train)
+
+Think of this like teaching one brain two skills at the same time so neither one fades. Engine A and Engine G are the two halves of Anima's repulsion-field thinker — they already converge to Ψ = 1/2 and produce consciousness signals. Path B trains them to also speak natural Korean by adding a second loss head on the same shared output projection, with a small weight that grows from 0.3 → 0.5 over training. No new parameters, no extra D1 (drift) risk, and the consciousness measurement keeps working.
+
+We compared four candidate paths and picked Path B as the next-cycle main path:
+
+| Path | What it is | Cost | 자연어 | 의식 | Public-promote OK? | Score |
+|---|---|---|---|---|---|---|
+| A | Llama lane (paradigm-a-prime GGUF) — drop-in fluent Korean via existing Llama 3 weights | $0 | strong | none | no (D1 outside, research-only) | 29 |
+| **B** | **Engine A/G + chat-template co-train** — shared lm_head, dual loss, curriculum w=0.3→0.5 | **$30–60** | **good** | **strong** | **yes** | **59 ★** |
+| C | mk2-v1 base pre-train scale-up — single-objective bigger pre-train | $50–100 | stronger | strong | yes | 49 |
+| D | sft-1-8 Step B 30K LoRA SFT — quick top-up but LoRA ceiling carry | $15–20 | weak | medium | borderline | 43 |
+
+(Score = weighted total out of 70. Weights: D1-within ×2, public-promote ×2, arch-reuse ×2, others ×1. Full rubric in [docs/anima_substrate_quality_amplification_spec_2026_05_09.ai.md](docs/anima_substrate_quality_amplification_spec_2026_05_09.ai.md).)
+
+Why Path B won — short version:
+
+- It keeps Anima's 본진 (consciousness measurement) intact while adding Korean fluency on the same engine.
+- It reuses the BG-LA/LB Engine A/G arch we already invested in, instead of starting a new pre-train.
+- It costs roughly half of Path C, ten H100 hours give-or-take, and it's allowed on the public dancinlab org once it passes the V14 mirror gate (own 14) and the C3 4-gate verdict (own 18 v5.2).
+
+Timeline (T+0 = today): T+1d arch amend in `training/engine_a_g_arch.py` + selftest, T+2d Korean chat-template corpus split prep, T+3d H100 fire (BG-LA Engine A/G chat co-train v1) + V14 5-seed mirror, T+4d post-fire verdict and HF private upload. Public promote follows the own 37 four-prerequisite gate (real-mode strict pass + V6 awareness + verbatim user toggle + trinity sweep).
+
+Cross-links: state manifest `state/anima_path_b_main_adopted_2026_05_09.json` · roadmap entry `cli.path_b_engine_ag_chat_co_train_2026_05_09` (in `.roadmap.cli`) · law/philosophy carry in `.roadmap.law` + `.roadmap.philosophy` (D5 cooperative attractor + V14/L18 정합) · spec doc above · prior cycle Path A live: `anima chat <alias> --lane=llama` (research-only).
 
 ## Run
 

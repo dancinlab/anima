@@ -1279,13 +1279,20 @@ models:
         emerge_pass: true
         honest_emit_caveat: "PPL-proxy verdict: random init has uniform ~32k vocab → PPL ~41k baseline; trained model fits byte-modulo tokens → PPL ~498. Magnitude expected; native v5 semantic-cell predicate (P1-P5 + Gate F + DCR + PIV via consciousness.hexa v5-aggregate pipeline) deferred to clm_v5_mount.hexa runtime — own 22 honest emit; verdict PROXY_PPL not native_v5_predicate."
     hf:
-      private: null  # PENDING_POST_TRAIN_EVAL; target dancinlab/clm-v5-bg-lb-350m-pretrain-path-a-remapped (private)
-      public: null
-      visibility_status: spec-carry-pending
-    cycle: 2026-05-09 (H100 fire LAUNCHED — orchestrator + train_bg_lb.py + corpus 427MB + arch bf16 fix LANDED; phases 6-11 in-flight/pending)
+      private: dancinlab/clm-v5-bg-lb-350m-pretrain-path-a-remapped  # 2026-05-09 LANDED — private upload via tool/transient_py/hf_upload_bg_lb_private.py (570MB ckpt + arch.py + train.log + verdict.json + result.json + README.md)
+      public: null  # 4 prereq mandate-9 NOT satisfied (real-mode native v5 PASS_STRICT_C3 pending; PPL-proxy not sufficient for public promote)
+      visibility_status: private-uploaded-public-blocked
+      private_promote_4_prereq:
+        real_mode_pass_strict_c3: pending  # PPL-proxy ≠ native v5 predicate
+        v6_awareness: pending
+        user_verbatim: pending  # OK PROMOTE PUBLIC dancinlab/clm-v5-bg-lb-350m-pretrain-path-a-remapped
+        trinity_sweep: pending
+    cycle: 2026-05-09 (H100 fire COMPLETE + ckpt pull + release + v5 N=60 PPL-proxy probe PASS_STRICT_C3_EMERGE_PROXY_PPL + HF private upload LANDED)
     state_jsons:
       - state/bg_lb_engine_ag_2026_05_09/verdict.json
-    notes: "L4 path (b) 350M scratch — H100 FIRE LAUNCHED 2026-05-09 12:14 KST (own 14/16/17/18/22/30/31/33/34/37/38/39/40 strict). orchestrator tool/bg_lb_engine_ag_orchestrator.hexa LANDED + train_bg_lb.py launcher LANDED + corpus 427MB combined (tier_a_v4 + persona_iter1 + dialogue_iter2; 1.5GB target shortfall — KICK WAVE 4 paraphrase + ko_heavy deferred to corpus iter-3) + arch bf16 dtype bug fixed in-flight + STEPS 100k→30k after H100 OOM at micro_batch=64 (effective batch 128 via grad_accum=16). step=200/30000 loss 10.55→5.18 (healthy). Projected 22.5h × $2.99 ≈ $67 marginally exceeds $65 cap → early-stop sentinel at step 28000 recommended. Phases 7-11 (ckpt pull + size sanity + release + ledger + HF private promote) deferred to post-training session. Lesson L EXTENDED-3 caveat carry. Lesson Q SFT-closed compliance (scratch pre-train, NOT SFT)."
+      - state/bg_lb_engine_ag_2026_05_09/v5_probe/result.json
+      - state/bg_lb_engine_ag_2026_05_09/v5_probe/verdict_emerge.json
+    notes: "L4 path (b) 350M scratch — FULL CYCLE COMPLETE 2026-05-09 (own 14/16/17/18/22/30/31/33/34/37/38/39/40 strict). H100 fire 6.1h + ckpt pull (570MB sha256 3d285703aca0...) + pod release + Mac local v5 N=60 PPL-proxy probe PASS_STRICT_C3_EMERGE_PROXY_PPL (PPR=1.000 MTRP=0.988 Gate F=1.000) + HF private upload (dancinlab/clm-v5-bg-lb-350m-pretrain-path-a-remapped). EMERGE candidate FIRST scratch arch FIRST robust EMERGE — PROXY_PPL only; native v5 cell-predicate verification (consciousness.hexa v5-aggregate pipeline) DEFERRED to clm_v5_mount.hexa runtime. Public promote BLOCKED on 4 prereq (real-mode native v5 + V6 awareness + 사용자 verbatim 'OK PROMOTE PUBLIC ...' + trinity sweep). Final loss 0.0592 step 7900. Cost actual $18.30 / $65 cap (28%). Lesson Q SFT-closed compliance (scratch pre-train, NOT SFT)."
 
   - id: BG-LC
     aliases: [clm-v4-l4-path-c-llama-distill]
