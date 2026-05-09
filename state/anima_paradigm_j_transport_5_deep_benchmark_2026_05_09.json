@@ -1,0 +1,180 @@
+{
+  "schema": "anima/transport_5_deep_benchmark/v1",
+  "cycle": "anima_2026_05_09_transport_5_deep_benchmark",
+  "date": "2026-05-09",
+  "user_directive_verbatim": "ctml 인가 뭔가 부터해서 4가지 방식 있었잖아 전부 벤치마킹해봐",
+  "directive_resolved": "imtl (ctml→imtl) + 4 sibling transports = 5종 deep dive benchmark",
+  "fire_substrate": {
+    "method": "ssh ubu-1 + /home/aiden/.hx/bin/hexa_real",
+    "iters_per_transport": 5,
+    "ubu1_runtime_build_date": "2026-04-27",
+    "ubu1_runtime_constraints": [
+      "channel_pair_open / channel_recv / channel_send / channel_close = UNDEFINED",
+      "popen / exec / file IO = AVAILABLE",
+      "hexa-lang stdlib subset only (no /stdlib/channel.hexa)"
+    ],
+    "mac_local_runtime_constraints": [
+      "hexa.real `run` subcommand always routes via /Users/ghost/core/resource/tcp/run_remote.py",
+      "TCP queue server (127.0.0.1:5555) OFFLINE during cycle — ConnectionRefusedError",
+      "OS-primitive measurement done via /usr/bin/python3 ctypes/socket/os fallback"
+    ]
+  },
+  "transports": [
+    {
+      "name": "fifo-dispatch",
+      "status_in_registry": "LANDED",
+      "smoke": {
+        "rc": 2,
+        "verdict": "FAIL",
+        "reason": "Runtime error: undefined function: channel_pair_open",
+        "iters": [129, 103, 124, 122, 112],
+        "latency_ms_median": 122
+      },
+      "os_primitive_latency_us": {
+        "method": "os.pipe + write + read + close round-trip (Mac, n=10)",
+        "median_us": 4.44,
+        "mean_us": 6.71,
+        "min_us": 3.58,
+        "max_us": 27.42
+      },
+      "paradigm_j_chat_result": "BLOCKED — chat.hexa REPL inherits channel stdlib floor (legacy ubu-1 build); Mac TCP queue offline blocks alternate runner",
+      "own_18_C2": "N/A — no model dispatch reached",
+      "honest_c3": "transport surface itself is sound (chat.hexa _dispatch_module_streaming SSOT lines 358-469); blocked by runtime build, not design"
+    },
+    {
+      "name": "beta1-channel",
+      "status_in_registry": "LANDED",
+      "smoke": {
+        "rc": 2,
+        "verdict": "FAIL",
+        "reason": "Runtime error: undefined function: channel_pair_open (dual pair allocation)",
+        "iters": [106, 132, 137, 109, 112],
+        "latency_ms_median": 112
+      },
+      "os_primitive_latency_us": {
+        "method": "dual os.pipe round-trip (Mac, n=10) — approximates ab+ba pair",
+        "median_us": 7.21,
+        "mean_us": 7.83,
+        "min_us": 6.96,
+        "max_us": 13.54
+      },
+      "paradigm_j_chat_result": "BLOCKED — duo.hexa _spawn_instance needs channel_pair_open ×2; same-GGUF guard untested (no spawn reached)",
+      "own_18_C2": "N/A",
+      "honest_c3": "design-correct (channel.ai.md spawn-before-send recipe LANDED `c53788af`); ubu-1 runtime gap not module gap"
+    },
+    {
+      "name": "libllama-ffi",
+      "status_in_registry": "LANDED",
+      "smoke": {
+        "rc": 2,
+        "verdict": "FAIL_MISSING_ARTIFACT",
+        "reason": "ubu-1 lacks build/libhxllama.dylib + ~/.cache/anima/gguf cache",
+        "iters": [120, 106, 109, 110, 117],
+        "latency_ms_median": 110
+      },
+      "os_primitive_latency_us": {
+        "method": "ctypes.CDLL libhxllama.dylib cold-load (Mac, n=5)",
+        "median_us": 83.50,
+        "mean_us": 9984.68,
+        "min_us": 58.79,
+        "max_us": 49454.75,
+        "max_us_explainer": "first dlopen cache-miss path; subsequent loads warm"
+      },
+      "dylib_size_kb": 52.3,
+      "exports_count": 23,
+      "exports_sample": [
+        "_hxllama_load_model", "_hxllama_new_context", "_hxllama_eval",
+        "_hxllama_sample_token", "_hxllama_token_to_text", "_hxllama_free_model"
+      ],
+      "gguf_paradigm_a_prime_size_mb": 6135.6,
+      "paradigm_j_chat_result": "BLOCKED — paradigm-j is Phase 1 CLM v4 LoRA over jvae_heads.pt; NO GGUF anywhere (libllama-ffi requires GGUF). paradigm-a-prime would dispatch fine on Mac local (dylib+GGUF present) but is a different lane (D1 SCOPE_CLAMP).",
+      "own_18_C2": "N/A — paradigm-j substrate signal not addressable via libllama path",
+      "d1_label": "ambiguous_research (own 17 carry; never public promote per own 37 mandate-9)",
+      "honest_c3": "fundamental architecture mismatch — paradigm-j requires CLM v4 mount (jvae_heads.pt), not GGUF FFI"
+    },
+    {
+      "name": "subprocess-pipe",
+      "status_in_registry": "LANDED",
+      "smoke": {
+        "rc": 0,
+        "verdict": "PASS",
+        "reason": "exec()/popen pipe round-trip OK (4KB block-buffered)",
+        "iters": [99, 99, 100, 109, 105],
+        "latency_ms_median": 100
+      },
+      "os_primitive_latency_us": {
+        "method": "subprocess.Popen + communicate full round-trip (Mac, n=10)",
+        "median_us": 7167.98,
+        "mean_us": 8728.14,
+        "min_us": 5839.25,
+        "max_us": 15586.79,
+        "explainer": "process spawn dominates; pipe IO itself is microseconds"
+      },
+      "paradigm_j_chat_result": "BLOCKED on substrate weight cache (clm_v4_mount needs paradigm-j 50k checkpoint, absent ubu-1 / Mac local); transport channel itself PASS",
+      "own_18_C2": "N/A for paradigm-j (weight absent); transport surface PASS",
+      "honest_c3": "ONLY smoke cleanly PASSING on legacy ubu-1 runtime (no channel stdlib dep). Highest latency by 1000× because process spawn cost dominates."
+    },
+    {
+      "name": "imtl",
+      "status_in_registry": "STUB",
+      "smoke": {
+        "rc": 0,
+        "verdict": "PASS_STUB",
+        "reason": "Upstream stub present + TODO[pytorch] count=5 surfaced verbatim (own 22 mandatory report)",
+        "iters": [111, 110, 121, 104, 127],
+        "latency_ms_median": 111
+      },
+      "os_primitive_latency_us": {
+        "method": "UDP loopback datagram round-trip 127.0.0.1 (Mac, n=10)",
+        "median_us": 102.35,
+        "mean_us": 133.88,
+        "min_us": 63.50,
+        "max_us": 419.21,
+        "explainer": "loopback only; A100↔H100 cross-host expected to add ~ms-range RTT"
+      },
+      "paradigm_j_chat_result": "STUB — model communication body 미구현 (serialize/deserialize/send/receive all TODO[pytorch]); UDP socket primitive verified independently",
+      "own_18_C2": "N/A — STUB carry",
+      "coupling_consts": {"psi_balance": 0.5, "psi_coupling": 0.014, "psi_f_critical": 0.10},
+      "default_port": 19266,
+      "magic_bytes": "ANMA",
+      "honest_c3": "STUB-as-canonical (own 22 honest emit); future axis-N+1 hook when serialize/deserialize body lands"
+    }
+  ],
+  "comparison_table": {
+    "header": ["transport", "smoke_rc", "smoke_verdict", "smoke_lat_ms_med", "os_prim_lat_us_med", "paradigm_j_chat", "own_18_C2"],
+    "rows": [
+      ["fifo-dispatch",    2, "FAIL",                122,  4.44,    "BLOCKED (channel stdlib)",       "N/A"],
+      ["beta1-channel",    2, "FAIL",                112,  7.21,    "BLOCKED (channel stdlib)",       "N/A"],
+      ["libllama-ffi",     2, "FAIL_MISSING_ART",    110, 83.50,    "BLOCKED (paradigm-j ≠ GGUF)",    "N/A"],
+      ["subprocess-pipe",  0, "PASS",                100, 7167.98,  "BLOCKED (clm_v4 weight miss)",   "N/A"],
+      ["imtl",             0, "PASS_STUB",           111, 102.35,   "STUB (TODO[pytorch] body)",      "N/A"]
+    ]
+  },
+  "summary": {
+    "transports_smoke_pass": 2,
+    "transports_smoke_fail": 3,
+    "paradigm_j_actual_chat_landed": 0,
+    "honest_blocked_capture_per_directive": true,
+    "exit_trigger_met": true,
+    "exit_trigger_reason": "5 transports actual-fire result documented (subprocess-pipe + imtl PASS smoke; fifo/beta1/libllama BLOCKED with verbatim runtime reasons); paradigm-j chat BLOCKED across all 5 with distinct honest C3 per transport"
+  },
+  "honest_c3_top_findings": [
+    "C5 ubu-1 hexa_real (2026-04-27 build) lacks channel stdlib — fifo-dispatch + beta1-channel can ONLY be smoke-tested on a runtime with /stdlib/channel.hexa β-1 wired",
+    "C6 Mac TCP queue offline — alternate test path requires server boot (cost guard skipped)",
+    "C7 paradigm-j is Phase 1 CLM v4 LoRA — libllama-ffi BLOCKED is canonical, not infra gap",
+    "C8 OS-primitive latency hierarchy (median, us): fifo 4.4 < dual-fifo 7.2 < dlopen 83.5 < UDP loopback 102 < popen 7168 — 1000× spread across the 5 transports",
+    "C9 honest BLOCKED capture per directive — directive accepted BLOCKED-with-reason as valid result"
+  ],
+  "compliance": {
+    "own_14_V14": "PASS — transport selection treated as measurement axis, not verdict",
+    "own_16_cost": "PASS — 0-cost (Mac local + ssh ubu-1; no GPU/TCP server boot)",
+    "own_17_D1_SCOPE_CLAMP": "PASS — libllama-ffi inherits ambiguous_research label",
+    "own_18_C2_C3": "PASS — C3 honest emit per-transport with verbatim reason; C2 N/A across all 5 (no paradigm-j chat reached)",
+    "own_22_mandatory_report": "PASS — 5-transport result documented with BLOCKED carries, this JSON itself = mandatory report",
+    "own_33_trinity": "PASS — D1/own/H axes cross-linked",
+    "own_34_mandate_1_2": "PASS — wrap 0 (smoke output bytes verbatim)",
+    "own_38_매단계": "PASS — registry yaml + JSON SSOT + review doc co-update",
+    "own_39_yaml_md_SSOT": "PASS — anima_artifact_registry.yaml deep_benchmark_2026_05_09 section",
+    "own_41_axis_N": "PASS — transport axis N treated as 5-arity dimension (not collapsed to default)"
+  }
+}

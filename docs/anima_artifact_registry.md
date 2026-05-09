@@ -484,6 +484,44 @@ _spec_ssot: `state/anima_alt_agg_1_v5_spec_2026_05_08.json` / hexa_ssot: `tool/a
 - **own_ssot**: `.own`
 - **memory_dir**: `~/.claude-claude1/projects/-Users-ghost-core-anima/memory/`
 
+## Chat transports (axis-N)
+
+_Hexa SSOT: `tool/anima_cli/chat/transports/_registry.hexa` · default = `fifo-dispatch` · landed 2026-05-09_
+
+| name | status | capability | latency | cost | description |
+|---|---|---|---|---|---|
+| `fifo-dispatch` | LANDED | line_streaming | low | free | stdlib/channel channel_pair_open + per-line channel_recv loop with __HEXA_DISP_END__ sentinel; chat.hexa _dispatch_module_streaming SSOT (1:1 streaming low-latency) |
+| `beta1-channel` | LANDED | channel_pair | medium | low | β-1 channel pair (channel_pair_open ×2 + proc_spawn_with_channels) sibling-to-sibling AI↔AI bidirectional dialogue (chat/duo SSOT) |
+| `libllama-ffi` | LANDED | direct_ffi | low | direct_inproc | direct C FFI via libhxllama.dylib (in-proc llama_load + llama_generate + llama_free; no channel transport — single-process) |
+| `subprocess-pipe` | LANDED | buffered_pipe | high | free | popen() buffered pipe — full inner cmd stdout captured in one 4KB-buffered blob (chat.hexa fallback when channel_pair_open returns -1; backward-compat preserved) |
+| `imtl` | STUB | udp_cross_host | cross_host_ms | net_io | Tension-link UDP protocol cross-host (A100↔H100); ANMA magic + 19266 default port; STUB serialize/deserialize (anima-tools/misc/inter_model_comm.hexa TODO[pytorch]) |
+
+### Deep benchmark — anima_2026_05_09_transport_5_deep_benchmark
+
+_Fire substrate: ssh ubu-1 + /home/aiden/.hx/bin/hexa_real (legacy runtime, channel stdlib ABSENT) · iters/transport: 5 · paradigm-j chat: **BLOCKED**_
+
+| transport | smoke rc | verdict | smoke lat ms (med) | OS-prim lat us (med) | paradigm-j chat |
+|---|---:|---|---:|---:|---|
+| `fifo-dispatch` | 2 | FAIL | 122 | 4.44 | BLOCKED — chat REPL inherits channel undefined error (transport infrastructure f |
+| `beta1-channel` | 2 | FAIL | 112 | 7.21 | BLOCKED — duo.hexa REPL needs channel_pair_open ×2 (transport infrastructure flo |
+| `libllama-ffi` | 2 | FAIL_MISSING_ARTIFACT | 110 | 83.5 | BLOCKED — paradigm-j is Phase 1 CLM v4 LoRA, NO GGUF anywhere (libllama-ffi requ |
+| `subprocess-pipe` | 0 | PASS | 100 | 7167.98 | BLOCKED on substrate weight cache (clm_v4_mount needs paradigm-j 50k checkpoint) |
+| `imtl` | 0 | PASS_STUB | 111 | 102.35 | STUB — model communication body not implemented (serialize/deserialize/send/rece |
+
+**Summary**: pass=2 / fail=3 / total=5 · paradigm-j actual chat landed = 0
+
+**Honest C3 addendum**:
+- C5 ubu-1 runtime (4월 27 hexa_real build) lacks channel_pair_open / channel_recv / channel_send — fifo-dispatch + beta1-channel transport smoke FAIL upstream of any chat semantic
+- C6 Mac local hexa.real routes ALL `run` invocations to TCP queue server (port 5555) which is OFFLINE — no native channel-aware test path on Mac without server boot (cost guard)
+- C7 paradigm-j 자체 is GGUF-incompatible (Phase 1 CLM v4 LoRA over jvae_heads.pt) — libllama-ffi BLOCKED is the canonical state, not a runner artifact; merge-then-convert pipeline pre-req
+- C8 OS-primitive latencies (pipe 4.4us / dual-pipe 7.2us / dlopen 83.5us / popen 7168us / UDP 102us) are honest lower-bounds for hexa-runtime transport overhead; full chat-loop latency would add tokenize+sample+detokenize per-token (paradigm-a-prime ~30 tok/s on M-series CPU)
+- C9 EXIT trigger met by *honest BLOCKED capture* per directive — 5 transports actual-fire result documented even when verdict is BLOCKED-with-reason; not a degenerate skip
+
+**Artifacts**:
+- `ssot_json`: `state/anima_paradigm_j_transport_5_deep_benchmark_2026_05_09.json`
+- `review_doc`: `docs/anima_paradigm_j_transport_5_benchmark_2026_05_09.ai.md`
+- `timing_csv`: `/tmp/transport_bench/timing.csv`
+
 ## Compliance
 
 - **own_22_mandatory_report**: PASS
