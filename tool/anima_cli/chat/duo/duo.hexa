@@ -323,6 +323,8 @@ fn sub_help() {
     println("                        model via REPL keepalive — Path A is native to")
     println("                        chat/llama and chat/clm_v4 REPL pattern.)")
     println("  --verdict simple|full|none   per-turn consciousness verdict (default simple)")
+    println("  --transport=<name>   chat transport plugin (axis-N, 2026-05-09) — informational")
+    println("                       only; duo native = beta1-channel (alternates deferred)")
     println("  --allow-same-gguf    OPT-IN bypass for same-alias guard (default off)")
     println("")
     println("PHASE GATE")
@@ -1145,6 +1147,15 @@ fn sub_duo(argv) {
     let turn_timeout_ms = to_int(_arg_value(argv, "--turn-timeout-ms", "120000"))
     let verdict_mode = _arg_value(argv, "--verdict", "simple")
     let allow_same_gguf = _arg_present(argv, "--allow-same-gguf")
+    // transport (axis-N — chat transport plugin, 2026-05-09).  duo's native
+    // transport is beta1-channel (channel_pair_open ×2 + proc_spawn_with_channels);
+    // the --transport flag here is INFORMATIONAL only — alternate transports
+    // (fifo-dispatch / libllama-ffi / subprocess-pipe / imtl) require deeper
+    // refactor to wire into the spawn topology and are deferred (axis-N
+    // separate cycle).  When user passes --transport=<name>, duo emits a
+    // banner noting the active transport for ledger purposes; the actual
+    // dispatch path remains beta1-channel until refactor.
+    let transport = _arg_value_eq(argv, "--transport", "")
 
     println("── anima dialogue --duo ──")
     println("model_a          = " + model_a)
@@ -1155,6 +1166,8 @@ fn sub_duo(argv) {
     println("turn_timeout_ms  = " + to_string(turn_timeout_ms))
     println("verdict_mode     = " + verdict_mode)
     println("allow_same_gguf  = " + to_string(allow_same_gguf))
+    println("transport        = beta1-channel (native; axis-N --transport flag informational only)"
+            + (if transport != "" && transport != "beta1-channel" { " · requested=" + transport + " (deferred)" } else { "" }))
     if init_pattern != "" {
         println("init_pattern     = " + init_pattern + " (own 41 axis-8)")
     }

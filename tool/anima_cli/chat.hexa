@@ -28,6 +28,11 @@
 //                             default = (none) → legacy module dispatch
 //                             registered lanes in chat/lanes/_registry.hexa
 //    --list-lanes             dump registered chat lanes + metadata (own 39)
+//    --list-transports        dump registered chat transports (axis-N, 2026-05-09)
+//    --transport <name>       chat transport plugin (fifo-dispatch / beta1-channel /
+//                             libllama-ffi / subprocess-pipe / imtl) — informational
+//                             + smoke-test only at chat.hexa scope (default streaming
+//                             = fifo-dispatch SSOT); carries to duo/trio/benchmark.
 //    --benchmark              all-lanes × fixed-prompts comparison run
 //                             (own 22 mandatory report; own 33 trinity emit)
 //
@@ -227,6 +232,7 @@ fn sub_help() {
     println("  anima chat <alias> --benchmark      run all lanes × fixed prompts")
     println("  anima chat --list-lanes             dump registered chat lanes + meta")
     println("  anima chat --list-init-patterns     dump registered chat init-patterns (own 41 axis-8)")
+    println("  anima chat --list-transports        dump registered chat transports (axis-N, 2026-05-09)")
     println("  anima chat list                     alias DB dump")
     println("  anima chat --help")
     println("  anima chat --selftest")
@@ -241,6 +247,9 @@ fn sub_help() {
     println("                          (default = legacy module dispatch via alias)")
     println("  --list-lanes            registered chat lanes (chat/lanes/_registry.hexa)")
     println("  --list-init-patterns    registered chat init-patterns (own 41 axis-8)")
+    println("  --transport <name>      chat transport plugin (fifo-dispatch/beta1-channel/")
+    println("                          libllama-ffi/subprocess-pipe/imtl); axis-N (2026-05-09)")
+    println("  --list-transports       registered chat transports (chat/transports/_registry.hexa)")
     println("  --benchmark             all-lanes × fixed-prompts comparison")
     println("  --dry-run               with --benchmark, list invocations without exec")
     println("")
@@ -544,6 +553,23 @@ fn sub_list_lanes() {
     println("(Benchmark all: anima chat <alias> --benchmark)")
 }
 
+// anima chat --list-transports — chat transport plugin registry dump (axis-N)
+// (cycle 2026-05-09 — own 41 axis-N transport plugin pattern; user directive:
+//  "채팅 방식 여러개 있었잖아 연결모듈들 모두 벤치마킹하는식으로 진행해야함")
+fn sub_list_transports() {
+    let root = _resolve_root()
+    let registry = root + "/tool/anima_cli/chat/transports/_registry.hexa"
+    if !_fexists(registry) {
+        println("anima chat --list-transports: registry missing: " + registry)
+        exit(2)
+    }
+    let cmd = _hexa() + " run " + registry + " 2>&1"
+    print(_str(exec(cmd)))
+    println("")
+    println("(Transport smoke: anima chat --transport=<name> --selftest)")
+    println("(Benchmark cross-product: anima chat <alias> --benchmark --transport=all)")
+}
+
 // own 41 axis-8 — chat init-pattern plugin registry dump (mirror of --list-lanes)
 fn sub_list_init_patterns() {
     let root = _resolve_root()
@@ -647,6 +673,13 @@ fn main() {
     // No alias required — the registry is alias-agnostic.
     if _arg_present(argv, "--list-lanes") {
         sub_list_lanes()
+        return
+    }
+
+    // anima chat --list-transports (axis-N transport plugin registry dump)
+    // No alias required — the registry is alias-agnostic.
+    if _arg_present(argv, "--list-transports") {
+        sub_list_transports()
         return
     }
 

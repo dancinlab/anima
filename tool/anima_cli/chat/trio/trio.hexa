@@ -262,6 +262,8 @@ fn sub_help() {
     println("  --lane-A <name>       chat lane plugin for instance A (own 41)")
     println("  --lane-B <name>       chat lane plugin for instance B (own 41)")
     println("  --lane-C <name>       chat lane plugin for instance C (own 41)")
+    println("  --transport=<n>       chat transport plugin (axis-N, 2026-05-09) — informational")
+    println("                        only; trio native = beta1-channel (alternates deferred)")
     println("  --allow-same-gguf     OPT-IN bypass for 3-way same-alias guard (default off)")
     println("")
     println("PHASE GATE")
@@ -418,6 +420,10 @@ fn sub_trio(argv) {
     let lane_b = _arg_value(argv, "--lane-B", "(default)")
     let lane_c = _arg_value(argv, "--lane-C", "(default)")
     let allow_same_gguf = _arg_present(argv, "--allow-same-gguf")
+    // transport (axis-N — chat transport plugin, 2026-05-09).  trio's native
+    // transport is beta1-channel (channel_pair_open ×6 + proc_spawn_with_channels
+    // ×3); the --transport flag here is INFORMATIONAL only (carry from duo).
+    let transport = _arg_value_eq(argv, "--transport", "")
 
     println("── anima dialogue --trio ──")
     println("model_a / lane   = " + model_a + " / " + lane_a)
@@ -430,6 +436,8 @@ fn sub_trio(argv) {
     println("turn_timeout_ms  = " + to_string(turn_timeout_ms))
     println("verdict_mode     = " + verdict_mode)
     println("allow_same_gguf  = " + to_string(allow_same_gguf))
+    println("transport        = beta1-channel (native; axis-N --transport flag informational only)"
+            + (if transport != "" && transport != "beta1-channel" { " · requested=" + transport + " (deferred)" } else { "" }))
     if init_pattern != "" {
         println("init_pattern     = " + init_pattern + " (own 41 axis-8)")
     }

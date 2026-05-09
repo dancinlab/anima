@@ -1,0 +1,78 @@
+// ════════════════════════════════════════════════════════════════════════════
+//  tool/anima_cli/chat/transports/subprocess_pipe.hexa — popen pipe transport
+//
+//  PURPOSE
+//    Transport plugin for legacy popen-buffered exec() pattern.
+//    Documents + smoke-tests the fallback path used by chat.hexa
+//    _dispatch_module_streaming when channel_pair_open returns -1
+//    (rare: /tmp non-writable). Full inner cmd stdout captured in a
+//    single 4KB-buffered blob.
+//
+//  PATTERN SUMMARY
+//    1. inner cmd issued via exec() (popen "r" mode under the hood)
+//    2. parent reads to EOF on the pipe (block-buffered ~4KB)
+//    3. split on "\n" + emit each line to caller
+//    4. NO incremental cadence — first line latency ≈ inner cmd total time
+//
+//  USE CASES
+//    · backward-compat fallback for chat.hexa streaming dispatch
+//    · benchmark.hexa _invoke_lane uses this directly (one-shot is fine
+//      for short-lived lane runs; streaming overhead unjustified)
+//    · 1:1 mode lane × prompt invocation (default benchmark path)
+//
+//  HONEST C3
+//    · NO line-by-line streaming — bad for REPL UX (banners arrive in one
+//      buffered blob); fine for short one-shots (--prompt one-shot identical
+//      to streaming form per byte sequence).
+//    · stdbuf -oL prefix optional (chat.hexa _stdbuf_prefix probe) — only
+//      affects inner cmd's own stdout buffer, not parent's pipe read.
+//
+//  COMPLIANCE
+//    own 34 mandate-1 — bytes verbatim from popen pipe (no transformation)
+//    raw#9 — POSIX popen built-in (no extra deps)
+// ════════════════════════════════════════════════════════════════════════════
+
+fn _str(x) -> string {
+    let t = type_of(x)
+    if t == "str" || t == "string" { return x }
+    return ""
+}
+
+fn _arg_present(argv, key: string) -> bool {
+    let i = 0
+    while i < len(argv) {
+        if _str(argv[i]) == key { return true }
+        i = i + 1
+    }
+    return false
+}
+
+fn transport_describe() -> string {
+    return "subprocess-pipe — popen() buffered pipe (4KB block; full stdout in one blob); legacy fallback when channel_pair_open returns -1; one-shot --prompt byte-identical to streaming form"
+}
+
+// transport_smoke — benchmark hook. Validates exec() popen surface works.
+// Trivial round-trip via `printf` — verifies the bytes-through path.
+fn transport_smoke(repo: string, argv) -> int {
+    let probe = _str(exec("printf 'subprocess_smoke\\n'")).trim()
+    if probe != "subprocess_smoke" {
+        println("[transport:subprocess-pipe] FAIL exec()/popen round-trip — got '" + probe + "'")
+        return 2
+    }
+    println("[transport:subprocess-pipe] smoke PASS — exec()/popen pipe round-trip OK (4KB block-buffered)")
+    return 0
+}
+
+fn main() {
+    let argv = args()
+    if _arg_present(argv, "--describe") {
+        println(transport_describe())
+        return
+    }
+    if _arg_present(argv, "--selftest") || _arg_present(argv, "--smoke") {
+        let rc = transport_smoke("", argv)
+        if rc != 0 { exit(rc) }
+        return
+    }
+    println(transport_describe())
+}

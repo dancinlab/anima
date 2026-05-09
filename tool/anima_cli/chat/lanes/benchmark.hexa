@@ -181,6 +181,53 @@ fn _bench_modes() -> array {
     return ["1:1", "ai-duo", "ai-trio"]
 }
 
+// ─── transport dimension (2026-05-09 own 41 axis-N — chat transport plugin) ─
+// Transports mirror anima/registry/anima_artifact_registry.yaml#chat_transports
+// SSOT. User directive verbatim: "채팅 방식 여러개 있었잖아 연결모듈들 모두
+// 벤치마킹하는식으로 진행해야함" + "imtl 인가도 있었고".
+// Vendored list — sync with chat/transports/_registry.hexa.
+fn _bench_transports() -> array {
+    return ["fifo-dispatch", "beta1-channel", "libllama-ffi", "subprocess-pipe", "imtl"]
+}
+
+fn _transport_known(t: string) -> bool {
+    if t == "fifo-dispatch" || t == "beta1-channel" || t == "libllama-ffi" { return true }
+    if t == "subprocess-pipe" || t == "imtl" { return true }
+    if t == "all" || t == "" || t == "default" { return true }
+    return false
+}
+
+fn _transport_describe(t: string) -> string {
+    if t == "fifo-dispatch"   { return "Transport 1 — stdlib/channel + per-line channel_recv (chat.hexa default streaming SSOT)" }
+    if t == "beta1-channel"   { return "Transport 2 — β-1 channel pair + proc_spawn_with_channels (duo/trio sibling SSOT)" }
+    if t == "libllama-ffi"    { return "Transport 3 — direct C FFI (libhxllama.dylib in-proc; no channel; D1 SCOPE_CLAMP)" }
+    if t == "subprocess-pipe" { return "Transport 4 — popen() buffered pipe (4KB block; legacy fallback; one-shot byte-identical)" }
+    if t == "imtl"            { return "Transport 5 — UDP cross-host Tension-link (anima saga inter-model; STUB upstream)" }
+    return "(unknown transport)"
+}
+
+fn _transport_file(t: string) -> string {
+    if t == "fifo-dispatch"   { return "fifo_dispatch.hexa" }
+    if t == "beta1-channel"   { return "beta1_channel.hexa" }
+    if t == "libllama-ffi"    { return "libllama_ffi.hexa" }
+    if t == "subprocess-pipe" { return "subprocess_pipe.hexa" }
+    if t == "imtl"            { return "imtl.hexa" }
+    return ""
+}
+
+fn _transport_smoke(t: string, repo: string, dry_run: bool) -> string {
+    let root = _resolve_root()
+    let f = _transport_file(t)
+    if f == "" { return "[bench:transport] unknown transport: " + t }
+    let path = root + "/tool/anima_cli/chat/transports/" + f
+    if !_fexists(path) { return "[bench:transport] transport file missing: " + path }
+    if dry_run {
+        return "[DRY_RUN] would invoke transport smoke: " + t
+    }
+    let cmd = _hexa() + " run " + path + " --smoke 2>&1"
+    return _str(exec(cmd))
+}
+
 // ─── init-pattern dimension (2026-05-09 own 41 mirror, axis-8) ────────────
 // Init-patterns mirror anima/registry/anima_artifact_registry.yaml#chat_init_patterns
 // SSOT. Only meaningful for ai-duo / ai-trio modes (1:1 has no first-turn
@@ -403,10 +450,39 @@ fn sub_selftest() {
         println("FAIL bench: init-pattern set arity != 4 (got " + to_string(len(ips)) + ")")
         fail = fail + 1
     }
+    // transport dimension (axis-N, 2026-05-09): chat/transports/ presence + 5 modules
+    let tdir = root + "/tool/anima_cli/chat/transports"
+    let t_reg = tdir + "/_registry.hexa"
+    let t_files = [
+        tdir + "/fifo_dispatch.hexa",
+        tdir + "/beta1_channel.hexa",
+        tdir + "/libllama_ffi.hexa",
+        tdir + "/subprocess_pipe.hexa",
+        tdir + "/imtl.hexa"
+    ]
+    if !_fexists(t_reg) {
+        println("FAIL bench: transport registry missing: " + t_reg)
+        fail = fail + 1
+    }
+    let mut tpi = 0
+    while tpi < len(t_files) {
+        let f = _str(t_files[tpi])
+        if !_fexists(f) {
+            println("FAIL bench: transport module missing: " + f)
+            fail = fail + 1
+        }
+        tpi = tpi + 1
+    }
+    let tps = _bench_transports()
+    if len(tps) != 5 {
+        println("FAIL bench: transport set arity != 5 (got " + to_string(len(tps)) + ")")
+        fail = fail + 1
+    }
     if fail > 0 { exit(1) }
     println("PASS chat/lanes/benchmark selftest (" + to_string(len(lanes)) + " lanes × "
         + to_string(len(prompts)) + " prompts × " + to_string(len(modes)) + " modes × "
-        + to_string(len(ips)) + " init-patterns registered)")
+        + to_string(len(ips)) + " init-patterns × "
+        + to_string(len(tps)) + " transports registered)")
 }
 
 fn main() {
@@ -453,17 +529,57 @@ fn main() {
         exit(2)
     }
 
+    // ── transport dimension parse (axis-N — chat transport plugin, 2026-05-09)
+    // --transport=<name>  pin a specific transport (fifo-dispatch / beta1-channel
+    //                     / libllama-ffi / subprocess-pipe / imtl)
+    // --transport=all     cross-product sweep across all 5 transports (smoke per axis)
+    // --transport=help    list registered transports and exit
+    // (absent)            no-op — current chat path uses default transport per
+    //                     mode (chat.hexa fifo-dispatch, duo/trio beta1-channel)
+    let transport = _arg_value(argv, "--transport", "")
+
+    if transport == "help" {
+        let tps = _bench_transports()
+        println("anima chat --benchmark --transport — registered transports (axis-N):")
+        let mut k = 0
+        while k < len(tps) {
+            let t = _str(tps[k])
+            println("  " + t + "  —  " + _transport_describe(t))
+            k = k + 1
+        }
+        println("  all  —  cross-product smoke sweep (5× per benchmark run)")
+        println("default = (none) — chat path uses native transport per mode")
+        return
+    }
+
+    if !_transport_known(transport) {
+        println("[bench] unknown --transport '" + transport
+                + "' (expected: fifo-dispatch | beta1-channel | libllama-ffi | subprocess-pipe | imtl | all)")
+        exit(2)
+    }
+
     let prompts = _prompt_set()
     let lanes = _bench_lanes()
     let modes = _bench_modes()
     let init_patterns_all = _bench_init_patterns()
+    let transports_all = _bench_transports()
+    // Build effective sweep set for transports. "all" = full cross-product;
+    // any other value (incl. "" for default) = single entry.
+    let transport_sweep = if transport == "all" { transports_all } else { [transport] }
 
     // Build effective sweep set for init patterns. "all" = full cross-product;
     // any other value (incl. "" for default) = single entry.
     let init_sweep = if init_pattern == "all" { init_patterns_all } else { [init_pattern] }
 
     println("════════════════════════════════════════════════════════════════════════")
-    if mode == "all" && init_pattern == "all" {
+    if mode == "all" && init_pattern == "all" && transport == "all" {
+        println("  anima chat --benchmark --mode=all --init-pattern=all --transport=all — "
+            + to_string(len(lanes)) + " lanes × "
+            + to_string(len(modes)) + " modes × "
+            + to_string(len(init_patterns_all)) + " init-patterns × "
+            + to_string(len(transports_all)) + " transports × "
+            + to_string(len(prompts)) + " prompts")
+    } else if mode == "all" && init_pattern == "all" {
         println("  anima chat --benchmark --mode=all --init-pattern=all — "
             + to_string(len(lanes)) + " lanes × "
             + to_string(len(modes)) + " modes × "
@@ -487,8 +603,36 @@ fn main() {
     println("  own 22 mandatory report · own 33 trinity · own 34 mandate-1 raw bytes")
     println("  own 41 chat lane plugin pattern · own 18 chat-cap C2 multi-mode")
     println("  own 41 axis-8 chat init-pattern plugin (4 patterns: autonomous / system-seed / topic-pool / self-reflective)")
+    println("  own 41 axis-N chat transport plugin (5 transports: fifo-dispatch / beta1-channel / libllama-ffi / subprocess-pipe / imtl)")
+    if transport != "" {
+        println("  transport = " + transport
+                + (if transport == "all" { " (cross-product 5 smoke probes)" } else { "" }))
+    }
     println("════════════════════════════════════════════════════════════════════════")
     println("")
+
+    // ── transport dimension smoke probe emit (axis-N) ─────────────────────────
+    // When --transport is set (single name OR "all"), run smoke probe per
+    // transport BEFORE the main lane × mode × init-pattern × prompt loop.
+    // This is the discovery 발견 surface — verifies upstream artifact presence
+    // (β-1 stdlib, libhxllama.dylib, anima-tools/misc/inter_model_comm.hexa,
+    // popen surface) and emits status verbatim per own 22 mandatory report.
+    // Smoke probes are independent of lane/mode dispatch — they are a
+    // benchmark dimension (axis), not an execution path multiplier.
+    if transport != "" {
+        println("──── transport smoke (axis-N) ────────────────────────────────────────")
+        let mut tsi = 0
+        while tsi < len(transport_sweep) {
+            let t = _str(transport_sweep[tsi])
+            println("[bench:transport=" + t + "] " + _transport_describe(t))
+            let smoke_out = _transport_smoke(t, repo, dry_run)
+            println(smoke_out)
+            println("")
+            tsi = tsi + 1
+        }
+        println("──── transport smoke complete ────────────────────────────────────────")
+        println("")
+    }
 
     // Emit cross-product. init-pattern is a no-op for 1:1 mode, so we collapse
     // the sweep to a single iteration when only mode=1:1 is active (preserves

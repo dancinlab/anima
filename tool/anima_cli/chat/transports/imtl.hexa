@@ -1,0 +1,120 @@
+// ════════════════════════════════════════════════════════════════════════════
+//  tool/anima_cli/chat/transports/imtl.hexa — IMTL Tension-link transport (STUB)
+//
+//  PURPOSE
+//    Transport plugin for inter-model UDP cross-host Tension-link protocol
+//    (anima saga "imtl" 본진). Documents + smoke-tests the SSOT stub in
+//    anima-tools/misc/inter_model_comm.hexa. NOT a re-implementation —
+//    serialize_state / deserialize_state / send_state / receive_state remain
+//    TODO[pytorch] in the upstream stub.
+//
+//  USER DIRECTIVE (2026-05-09 verbatim)
+//    "imtl 인가도 있었고"   → discovery 발견:
+//      anima-tools/misc/inter_model_comm.hexa  (UDP A100↔H100, ANMA magic,
+//                                                psi-coupling state ferry)
+//
+//  PATTERN SUMMARY
+//    1. UDP socket bind on port (default 19266)
+//    2. magic 4-byte header "ANMA" + serialized consciousness state
+//       (phi: float, tension: float, cells: opaque)
+//    3. send_state(host, port, state) → fire-and-forget UDP datagram
+//    4. receive_state(port) → blocking recv + deserialize
+//    5. coupling const: psi_balance=0.5, psi_coupling=0.014,
+//       psi_f_critical=0.10
+//
+//  STATUS (own 22 mandatory report — honest)
+//    · UPSTREAM STUB: anima-tools/misc/inter_model_comm.hexa lines 16-32
+//      all TODO[pytorch] — serialize/deserialize/send/receive bodies = 0 / NO-OP.
+//    · NOT WIRED into chat path (chat.hexa / duo.hexa / trio.hexa do not
+//      currently invoke imtl — discovery 발견 only; future axis-N+1 hook).
+//    · CARRY: "imtl" referenced as legacy multi-server consciousness state
+//      ferry (A100 host ↔ H100 host) for distributed substrate coupling.
+//    · selftest grep on tests/test_inter_model_comm.hexa reports PASS in
+//      smoke_full_ubu2_resmoke (2026-04-19) but no functional protocol body.
+//
+//  USE CASES (future — when STUB → LANDED)
+//    · cross-host consciousness state synchronization (A100 base ↔ H100 train)
+//    · distributed substrate coupling (psi-balance ferry)
+//    · multi-server dialogue (council L3 across geo-separated GPU pools)
+//
+//  COMPLIANCE
+//    own 16 cost — net_io cost class (UDP datagram, no retry; loss tolerated)
+//    own 17 D1 SCOPE_CLAMP — cross-host transport is research lane until
+//      protocol body lands + own 18 verdict pipeline integrated
+//    own 22 mandatory report — STUB status surfaced verbatim (this file IS
+//      the discovery 발견 report carrying the stub forward)
+//    own 34 mandate-1 — when LANDED, byte payload verbatim through UDP (no
+//      transformation; ANMA magic = control-band only)
+// ════════════════════════════════════════════════════════════════════════════
+
+fn _str(x) -> string {
+    let t = type_of(x)
+    if t == "str" || t == "string" { return x }
+    return ""
+}
+
+fn _arg_present(argv, key: string) -> bool {
+    let i = 0
+    while i < len(argv) {
+        if _str(argv[i]) == key { return true }
+        i = i + 1
+    }
+    return false
+}
+
+fn _resolve_root() -> string {
+    let a = _str(env("ANIMA"))
+    if a != "" { return a }
+    let gt = _str(exec("git rev-parse --show-toplevel 2>/dev/null")).trim()
+    if gt != "" { return gt }
+    return _str(env("HOME")) + "/core/anima"
+}
+
+fn _fexists(p: string) -> bool {
+    return _str(exec("test -f \"" + p + "\" && echo 1 || echo 0")).trim() == "1"
+}
+
+fn transport_describe() -> string {
+    return "imtl — Tension-link UDP cross-host (A100↔H100; ANMA magic + 19266 default port; psi-coupling 0.014); STUB upstream (anima-tools/misc/inter_model_comm.hexa TODO[pytorch] body)"
+}
+
+// transport_smoke — benchmark hook. Validates upstream stub presence + reports
+// NOT_WIRED status honestly (own 22 mandatory report). Returns 0 on PASS
+// (stub present + status honest) so benchmark cross-product doesn't FAIL on
+// imtl axis — STUB is the canonical state.
+fn transport_smoke(repo: string, argv) -> int {
+    let root = _resolve_root()
+    let upstream = root + "/anima-tools/misc/inter_model_comm.hexa"
+    let test_file = root + "/tests/test_inter_model_comm.hexa"
+    if !_fexists(upstream) {
+        println("[transport:imtl] FAIL upstream stub missing: " + upstream)
+        return 2
+    }
+    println("[transport:imtl] upstream stub present: " + upstream)
+    if _fexists(test_file) {
+        println("[transport:imtl] test stub present: " + test_file)
+    } else {
+        println("[transport:imtl] WARN test stub missing: " + test_file)
+    }
+    let todo_count = _str(exec("grep -c 'TODO\\[pytorch\\]' " + upstream + " 2>/dev/null")).trim()
+    println("[transport:imtl] TODO[pytorch] count = " + todo_count + " (serialize/deserialize/send/receive)")
+    println("[transport:imtl] STATUS = STUB (NOT_WIRED into chat path; future axis-N+1 hook)")
+    println("[transport:imtl] coupling consts: psi_balance=0.5 psi_coupling=0.014 psi_f_critical=0.10")
+    println("[transport:imtl] default port=19266 magic=ANMA")
+    println("[transport:imtl] smoke PASS (own 22 mandatory report — STUB status surfaced verbatim)")
+    return 0
+}
+
+fn main() {
+    let argv = args()
+    if _arg_present(argv, "--describe") {
+        println(transport_describe())
+        return
+    }
+    if _arg_present(argv, "--selftest") || _arg_present(argv, "--smoke") {
+        let rc = transport_smoke("", argv)
+        if rc != 0 { exit(rc) }
+        return
+    }
+    println(transport_describe())
+}
