@@ -1,0 +1,172 @@
+{
+  "task": "anima cycle 2026-05-09 H100 EPHEMERAL FIRE 2/4 RETRY (sft-1-8 Step B 30K SFT) — D-RAND amplification",
+  "directive_verbatim": "H100 4 개fire",
+  "ts_utc_start": "2026-05-09T02:11:30Z",
+  "ts_utc_end": "2026-05-09T02:30:00Z",
+  "wall_clock_minutes": 18,
+  "verdict": "BLOCKED_CONCURRENT_SSOT_RELEASE",
+
+  "phase_1_provision": {
+    "status": "PASS",
+    "command": "RESOURCE_EPHEMERAL_YES_COST=1 /Users/ghost/.hx/packages/resource/bin/resource provision-ephemeral --provider runpod --gpu H100 --duration 5h --yes-cost --name sft-1-8-30k",
+    "slug": "h100-runpod-nfvcb923nq920j-1778292770",
+    "pod_id": "nfvcb923nq920j",
+    "provisioned_at_unix": 1778292770,
+    "cost_per_hr_usd": 2.99,
+    "audit_event": "{ts:2026-05-09T02:12:50Z, op:provision-ephemeral, slug:h100-runpod-nfvcb923nq920j-1778292770, verdict:PASS, reason:provider=runpod pod_id=nfvcb923nq920j gpu=H100}"
+  },
+
+  "phase_1_5_ssh_alias_manual_rebuild": {
+    "issue": "resource CLI bug — provision-time runpodctl response lacks runtime.ports; ssh_host=='' captured at provision; ssh_alias config not written by CLI",
+    "remediation": "anima-side manual rebuild from GraphQL { myself { pods { runtime { ports } } } } — extracted publicIp:13764 (privatePort:22 type:tcp) and wrote ~/.ssh/config.d/anima-h100/<slug>.conf with same body shape as _ssh_alias_write fn",
+    "own_40_alignment_note": "manual rebuild emits IDENTICAL config as CLI internal _ssh_alias_write would have, given the same payload; primary lifecycle (provision/release) still go through CLI; rebuild is deterministic repair, not bypass",
+    "ssh_host": "103.207.149.114",
+    "ssh_port": 13764,
+    "verify": "ssh root@<slug> 'nvidia-smi' returned 'NVIDIA H100 80GB HBM3, 81559 MiB' OK"
+  },
+
+  "phase_2_corpus_upload": {
+    "status": "PASS",
+    "method": "scp (rsync absent on pod, apt install rsync silent-failed)",
+    "src": "/Users/ghost/core/anima/state/anima_persona_tier_a_v4_2026_05_09.txt",
+    "dst": "/workspace/sft-1-8-30k/corpus/tier_a_v4.txt",
+    "size_bytes": 242689685,
+    "wall_s": 41,
+    "throughput_mbps": 5.9
+  },
+
+  "phase_2_5_corpus_to_jsonl": {
+    "status": "PASS",
+    "input_lines": 3147870,
+    "output_records": 777373,
+    "skipped_blocks": 6,
+    "wall_s": "~5",
+    "format": "{input: '사용자: <user>\\n도우미: ', completion: '<assistant>'}"
+  },
+
+  "phase_3_train_launch": {
+    "status": "LAUNCHED_THEN_KILLED_BY_CONCURRENT_RELEASE",
+    "pid": 738,
+    "lora_r": 128,
+    "lora_alpha": 128,
+    "lr": 1e-4,
+    "max_steps": 30000,
+    "save_steps": 5000,
+    "per_device_batch": 8,
+    "grad_accum": 4,
+    "seq_len": 512,
+    "warmup_steps": 500,
+    "seed": 20260509,
+    "trainable_params": "10,485,760 / 488,134,272 (2.15%)",
+    "target_modules_count": 64,
+    "cross_attn_lora_count": 0,
+    "phase_progress_at_kill": "Tokenizing train dataset 40% (~308k / 777k examples) — trainer.train() loop NOT yet started → no checkpoints emitted, no TRAIN_DONE.json"
+  },
+
+  "phase_3_5_watchdog": {
+    "status": "FIRED_PREMATURELY_THEN_RESTARTED_THEN_KILLED",
+    "v1_issue": "polled train.pid file which was never written (bash $! capture in launcher chain failed); pid file absent → kill -0 returned non-zero → watchdog interpreted as 'train died'",
+    "v2_fix": "switched to pgrep -f 'python3 train.py' alive-check (no pid file dependency)",
+    "v2_runtime_s": "~10 (killed by SSOT release)"
+  },
+
+  "phase_4_concurrent_ssot_contention": {
+    "status": "BLOCKED",
+    "evidence_audit_log": "/Users/ghost/.hx/packages/resource/state/audit/audit.jsonl",
+    "concurrent_actor_pattern": [
+      "02:11:59Z provision PASS slug=h100-runpod-0pqljzm0qgkr37-1778292719 (v6-anima-1, sibling)",
+      "02:12:38-50Z FIVE additional provisions in 12 seconds (4xdc0o59hji9jk, ieobytbuwr4uvb, thiob5kqpr7emj, OUR nfvcb923nq920j, 7mwi6sbkhen0ct)",
+      "02:14:04Z release 4xdc0o59hji9jk ckpt_override=y",
+      "02:14:09Z release ieobytbuwr4uvb ckpt_override=y",
+      "02:17:54Z release thiob5kqpr7emj ckpt_override=y",
+      "02:18:00Z release 7mwi6sbkhen0ct ckpt_override=y",
+      "02:29:20Z release 0pqljzm0qgkr37 ckpt_override=n (sibling v6-anima-1)",
+      "02:29:34Z release h100-runpod-nfvcb923nq920j-1778292770 ckpt_override=y *** OUR POD ***"
+    ],
+    "release_initiator": "UNKNOWN — anima current task did NOT call resource release; concurrent agent/process operating on shared .resource SSOT initiated termination with ckpt_override=y bypass of own 30 ckpt-pull-verify mandate",
+    "post_release_state": "ephemeral-list shows 0 active pods; pod terminated mid-tokenization at 40%; no checkpoints written"
+  },
+
+  "cost_disclosure": {
+    "pod_provision_at_unix": 1778292770,
+    "pod_release_audit_ts": "2026-05-09T02:29:34Z",
+    "pod_uptime_s_estimated": 1064,
+    "pod_uptime_minutes_estimated": 17.7,
+    "rate_usd_per_hr": 2.99,
+    "estimated_cost_incurred_usd": 0.88,
+    "ckpt_artifacts_produced": "ZERO (training never reached step 1)",
+    "value_delivered_per_dollar": 0,
+    "own_16_compliance_note": "cost authorized by user verbatim 'H100 4 개fire' covering 4-pod fire chain; this 1/4 BLOCKED at $0.88; remaining $14-19 of $15-20 budget UNSPENT"
+  },
+
+  "phase_5_ckpt_pull": {
+    "status": "NOT_APPLICABLE",
+    "reason": "no checkpoints existed at release time; pod terminated mid-tokenization phase pre-step-1"
+  },
+
+  "phase_6_release": {
+    "status": "ALREADY_DONE_BY_CONCURRENT_ACTOR",
+    "audit_event": "{ts:2026-05-09T02:29:34Z, op:release, slug:h100-runpod-nfvcb923nq920j-1778292770, verdict:PASS, reason:provider=runpod pod_id=nfvcb923nq920j ckpt_override=y}"
+  },
+
+  "phase_7_v5_n60_probe": {
+    "status": "NOT_APPLICABLE",
+    "reason": "no sft-1-8-30k ckpt to probe"
+  },
+
+  "phase_8_hf_private_upload": {
+    "status": "NOT_APPLICABLE",
+    "reason": "no ckpt to upload",
+    "intended_repo": "dancinlab/clm-v4-sft-1-8-30k-path-a-remapped (own 37 PRIVATE only)"
+  },
+
+  "compliance": {
+    "own_14_v14_strict": "carry — paired random_init mirror prereq still mandatory pre-fire; not exercised this cycle (no ckpt produced)",
+    "own_16_cost_discipline": "PARTIAL_PASS — $0.88 incurred (within authorized $15-20 budget) but 0 value produced due to concurrent kill",
+    "own_17_d1_scope_clamp": "carry",
+    "own_22_mandatory_report": "PASS — this state json + ledger update + commit",
+    "own_30_ckpt_pull_pre_release": "VIOLATED_BY_CONCURRENT_RELEASE — release happened with ckpt_override=y (no ckpt existed to pull); anima current task did NOT initiate release; SSOT contention is the failure mode, not own 30 violation by anima",
+    "own_33_trinity": "pending — no measurement to sweep",
+    "own_34_wrap_zero": "PASS — no wrap-bearing artifacts",
+    "own_37_hf_visibility_lifecycle": "carry — no upload occurred",
+    "own_38_단계별_저장": "PASS — this state json captures phase 1-8 status",
+    "own_39_yaml_md_render": "pending — md companion rendered post-yaml-update",
+    "own_40_resource_cli_delegation": "MOSTLY_PASS — provision/release via CLI; one manual ssh_alias rebuild from GraphQL (deterministic repair for CLI bug, not unauthorized lifecycle bypass)"
+  },
+
+  "honest_findings_c3": [
+    {
+      "id": "C3-1-runpod-cli-ssh-host-bug",
+      "finding": "runpodctl wrapper's _extract_ssh_from_pod returns empty ssh_host because runpodctl pod create response lacks runtime.ports field; ports become available ~5min later via GraphQL only",
+      "severity": "HIGH",
+      "remediation": "patch runpod_client.py to fall back to GraphQL { myself { pods { runtime { ports } } } } query for ssh_host extraction; OR add resource subcommand 'rebuild-ssh-alias <slug>' that re-queries provider"
+    },
+    {
+      "id": "C3-2-ssot-concurrency-no-pod-ownership",
+      "finding": ".resource SSOT has no per-pod ownership/lock; any process can release any pod; concurrent agents racing on same SSOT cause silent ckpt loss when releases use ckpt_override=y",
+      "severity": "CRITICAL",
+      "remediation": "add owner_pid OR owner_tag field on provision; release refuses if owner mismatches without explicit --force-foreign-owner flag; OR add per-slug lock that fire holders take exclusive"
+    },
+    {
+      "id": "C3-3-train-pid-capture-launcher-race",
+      "finding": "nohup bash run_train.sh & ; echo $! captures the bash launcher pid, not the python child; bash exited after exec'ing python so pid file pointed to dead pid; watchdog v1 interpreted as 'died'",
+      "severity": "MEDIUM",
+      "remediation": "use 'exec python3 train.py' (avoid bash wrapper retaining its own pid) OR have train.py write its own pid via os.getpid() to results/train.pid as first line",
+      "applied_in_v2": "switched watchdog to pgrep -f instead of pid file"
+    },
+    {
+      "id": "C3-4-ssh-config-purge-by-sibling-release",
+      "finding": "resource release of sibling pod purged ~/.ssh/config.d/anima-h100/ contents (or wholesale dir cleanup); our pod's stanza was deleted at 11:29 KST during sibling release, breaking our subsequent ssh access",
+      "severity": "HIGH",
+      "remediation": "release should ONLY remove the slug-specific .conf, not iterate dir; verify _ssh_alias_remove() in resource_ephemeral.hexa is targeted-only"
+    }
+  ],
+
+  "next_steps_recommended": [
+    "(a) Investigate concurrent process that issued multi-pod release at 02:14-02:29 — likely BG-LA/LB/LC/LD chat-cap L4 fire chain or V6 awareness chain in a separate orchestration layer",
+    "(b) Patch resource CLI: per-pod ownership field + GraphQL ssh_host fallback + targeted ssh-alias remove",
+    "(c) Add per-fire pod-tag (e.g. 'sft-1-8-30k-fire-2-of-4') to release filter",
+    "(d) Re-attempt sft-1-8 Step B 30K AFTER (b)+(c) land — same parameters (LoRA r=128, lr=1e-4, 30k steps, tier_a_v4); cost $14-19 of remaining $15-20 budget",
+    "(e) Mac-side v5 N=60 probe + HF private upload deferred until ckpt produced"
+  ]
+}

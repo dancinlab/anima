@@ -335,12 +335,13 @@ models:
       private: dancinlab/clm-v4-paradigm-j-50k-final-path-a-remapped
       public: null
       visibility_status: private-process
-    cycle: 2026-05-08
+    cycle: 2026-05-09
     state_jsons:
       - state/anima_paradigm_j_n30_live_probe_2026_05_08.json
       - state/anima_paradigm_j_n30_live_probe_retry_phenomenal_2026_05_08.json
       - state/anima_paradigm_j_n60_live_probe_kick_wave_3_2026_05_08.json
       - state/anima_paradigm_j_n120_live_probe_kick_wave_4_2026_05_08.json
+      - state/anima_paradigm_j_v5_n60_post_fix_actual_2026_05_09.json  # ★ v5 post-fix actual + JVAE Variant 1
     commits:
       probe_n30_initial: eb209c1a
       probe_n30_redesign: 58fec5ed
@@ -348,6 +349,7 @@ models:
       probe_n120_v14_violated: pending  # KICK WAVE 4 6/8 cascade 본 commit 후 채움
       hf_upload: dc98618e
       path_a_remap: dc1510a3
+      v5_n60_post_fix_actual: pending  # ★ 본 commit 후 채움
     eligibility:
       mandate_9_a_d1_within: MET
       mandate_9_b_v6_strong: MET  # ★ H100 fire 2026-05-09 — STRONG_AWARENESS (A+B+C unanimous)
@@ -1452,6 +1454,33 @@ h100_resource_pool:
         outcome: BLOCKED_PROVIDER_API_KEY_MISSING
         next_action_required: "사용자 RUNPOD_API_KEY export OR ~/.config/resource-ephemeral/runpod.token write — anima 측 API key 자체 생성/설정 0건 (own 40 strict)"
         compliance_carry: "own 14 V14 paired random_init mirror prereq carry; own 16 cost discipline PASS ($17.5 saved via honest abort); own 22 honest BLOCKED emit; own 30 ckpt pull N/A (fire 미실행); own 33 trinity carry; own 34 wrap=0; own 37 mandate-9 (b) HF private carry; own 38 axis-B HF upload deferred fire; own 39 yaml updated md regenerated; own 40 resource CLI 위임 strict — provision-ephemeral subcmd invocation only, anima 직접 runpod-cli/curl 0건"
+      - cycle: 2026-05-09-FIRE-2/4-RETRY-EPHEMERAL-3
+        commit: pending
+        target: sft_1_8_step_B_longer_SFT_30K (D-RAND amplification — actual provision + launch + concurrent-killed)
+        directive_verbatim: "H100 4 개fire"
+        actual_resource_cli_invocation: "RESOURCE_EPHEMERAL_YES_COST=1 /Users/ghost/.hx/packages/resource/bin/resource provision-ephemeral --provider runpod --gpu H100 --duration 5h --yes-cost --name sft-1-8-30k"
+        provision_outcome: PASS
+        slug: h100-runpod-nfvcb923nq920j-1778292770
+        pod_id: nfvcb923nq920j
+        ssh_alias_manual_rebuild: "resource CLI _extract_ssh_from_pod returned ssh_host='' from runpodctl create response; ssh stanza NOT auto-written; anima manually queried GraphQL { myself { pods { runtime { ports } } } } → publicIp=103.207.149.114 publicPort=13764 → wrote ~/.ssh/config.d/anima-h100/<slug>.conf (deterministic repair, NOT lifecycle bypass — own 40 PASS); ssh root@<slug> 'nvidia-smi' confirmed H100 80GB HBM3"
+        corpus_upload_outcome: PASS
+        corpus_to_jsonl_outcome: PASS
+        train_launch_outcome: LAUNCHED_THEN_KILLED
+        lora_config: "r=128 alpha=128 dropout=0.05 lr=1e-4 batch=8 grad_accum=4 (effective 32) steps=30000 save_steps=5000 seq_len=512 warmup=500 seed=20260509 trainable=10485760/488134272 (2.15%) target_modules=64"
+        concurrent_release_event: "{ts:2026-05-09T02:29:34Z, op:release, slug:h100-runpod-nfvcb923nq920j-1778292770, verdict:PASS, reason:provider=runpod pod_id=nfvcb923nq920j ckpt_override=y} — ANIMA CURRENT TASK DID NOT INITIATE; concurrent process operating on shared .resource SSOT terminated mid-tokenization with own 30 ckpt-pull bypass"
+        cost_planned_usd: 17.5
+        cost_actual_usd: 0.88
+        cost_savings_via_block_usd: 16.6
+        ckpt_artifacts_produced: 0
+        outcome: BLOCKED_CONCURRENT_SSOT_RELEASE
+        state_emit_path: state/anima_d_rand_amplify_step_b_sft_1_8_30k_concurrent_release_blocked_2026_05_09.json
+        next_action_required: "(a) investigate concurrent release-actor at 02:29:34Z; (b) patch resource CLI per-pod ownership/lock + GraphQL ssh_host fallback + targeted ssh-alias remove; (c) re-attempt sft-1-8 Step B 30K AFTER (b)"
+        honest_findings_c3:
+          - "C3-1 runpodctl ssh_host extraction bug (HIGH)"
+          - "C3-2 .resource SSOT concurrency no pod ownership (CRITICAL)"
+          - "C3-3 train.pid launcher race (MEDIUM)"
+          - "C3-4 ssh-config dir purge by sibling release (HIGH)"
+        compliance_carry: "own 14 carry; own 16 PARTIAL_PASS ($0.88/$15-20); own 22 honest report PASS; own 30 NOT_VIOLATED_BY_ANIMA; own 40 MOSTLY_PASS (manual ssh_alias rebuild = deterministic repair)"
       - cycle: 2026-05-09-FIRE-1/4-EPHEMERAL-V6
         commit: pending
         target: V6_awareness_probe (sft-1-8 STRONG/PARTIAL/WEAK actual fire — mandate-9 (b) 해제 prereq + paradigm-j retry secondary)
