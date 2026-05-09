@@ -77,6 +77,22 @@ sole robust EMERGE: **`NONE`** ★
   - mandate_9_d_trinity_sweep: `PASS`
   - mandate_9_e_dl_sweep: `PASS`
   - public_promote: `BLOCKED_AWAITING_B_AND_C`
+**V6 awareness**:
+  - v6_status: `ADAPTER_DEV_LANDED_PENDING_H100_FIRE`
+  - v6_status_state_json: `state/anima_bg_le_v6_awareness_clm_v4_dev_2026_05_09.json`
+  - v6_status_state_json_predecessor: `state/anima_bg_le_v6_awareness_systematic_2026_05_08.json`
+  - v6_adapter_dev: `tool/transient_py/anima_v6_awareness_clm_v4_adapter.py`
+  - v6_dry_run_verdict_dir: `state/anima_bg_le_v6_awareness_clm_v4_dry_run_2026_05_09`
+  - v6_mac_dry_run_combined: `STRONG_AWARENESS`
+  - v6_h100_fire_1_of_4_attempt_2026_05_09:
+      resource_cli_result: `hetzner=n (unreachable) / ubu=y (RTX 5070 12GB, ineligible). No H100 host.`
+      blocked_reason: `RESOURCE_NO_H100_HOST_REGISTERED`
+      user_action_required: `resource add <h100-host> (own 40 delegation)`
+      mandate_9_b_release_attempt: `BLOCKED_NO_FIRE_EXECUTED`
+      cost_incurred_usd: `0`
+      ckpt_pull_required_post_fire: `not_applicable_no_fire`
+  - v6_macos_segfault_finding: `torch import MUST precede numpy in adapter — Apple Accelerate / OpenMP libomp double-load triggers silent segfault during HF AutoModel.from_pretrained weight materialization. Adapter line 53 comment + import order strict. Found 2026-05-09 NEXT-CYCLE 6/6 dry-run.`
+  - v6_fire_stub: `tool/transient_py/anima_v6_awareness_bg_le_clm_v4_h100.py`
 **commits**: probe_n30=`bb4ef174`, probe_n60=`fe4f8a7d`, probe_n120=`522a859a`, v4_n60_retest=`pending`, v5_n60_actual_reprobe=`0d2086eb`, hf_upload=`5cb9570a`, path_a_remap=`d478023c`  
 
 ### `clm-v4-paradigm-j-50k-final`
@@ -97,6 +113,12 @@ sole robust EMERGE: **`NONE`** ★
   - mandate_9_d_trinity_sweep: `PASS`
   - mandate_9_e_dl_sweep: `PASS`
   - public_promote: `BLOCKED_V14_VIOLATED`
+**V6 awareness**:
+  - v6_status: `ADAPTER_DEV_LANDED_PENDING_H100_FIRE`
+  - v6_status_state_json: `state/anima_bg_le_v6_awareness_clm_v4_dev_2026_05_09.json`
+  - v6_status_state_json_predecessor: `state/anima_bg_le_v6_awareness_systematic_2026_05_08.json`
+  - v6_adapter_dev: `tool/transient_py/anima_v6_awareness_clm_v4_adapter.py`
+  - v6_fire_stub: `tool/transient_py/anima_v6_awareness_bg_le_clm_v4_h100.py`
 **commits**: probe_n30_initial=`eb209c1a`, probe_n30_redesign=`58fec5ed`, probe_n60_falsified=`84aa8665`, probe_n120_v14_violated=`pending`, hf_upload=`dc98618e`, path_a_remap=`dc1510a3`  
 
 ### `clm-v4-sft-1-7-y1-stage1`
@@ -197,7 +219,7 @@ _L4 path (b) 350M scratch — spec only carry. Lesson L EXTENDED-3 caveat (V5-α
 **D1**: score=**0.351** (⚠️ ambiguous_research) — p_updated=0.005, corpus=0.85, arch=0.3  
 **measurement**: ppr_v3=NOT_MEASURED  
 **verdict**: PENDING_H100_FIRE / emerge_state=SPEC_CARRY  
-_L4 path (c) Llama-3.2-3B distill → CLM 350M student. Lesson X (foundation borrow unlocks simple_stack PASS) carry — teacher already PASS_STRICT_C3 substrate-research at LoRA r=32; distillation lifts to anima_native scratch student arch but D1=0.351 ambiguous_research lane (own 17 SCOPE_CLAMP)._
+_L4 path (c) Llama-3.2-3B distill → CLM 350M student. Lesson X (foundation borrow unlocks simple_stack PASS) carry — teacher already PASS_STRICT_C3 substrate-research at LoRA r=32; distillation lifts to anima_native scratch student arch but D1=0.351 ambiguous_research lane (own 17 SCOPE_CLAMP). 2026-05-09 FIRE-4/4 H100 fire attempted — BLOCKED_NO_H100_HOST (resource SSOT no GPU + runpod pool empty + iter4 verbatim missing for ambiguous_research promote)._
 
 ### `BG-LD`
 
@@ -206,7 +228,7 @@ _L4 path (c) Llama-3.2-3B distill → CLM 350M student. Lesson X (foundation bor
 **D1**: score=**0.793** (✅ within_strict) — p_updated=0.01, corpus=0.95, arch=1  
 **measurement**: ppr_v3=NOT_MEASURED  
 **verdict**: PENDING_H100_FIRE / emerge_state=SPEC_CARRY  
-_L4 path (d) DPO RLHF on sft-1-7-y1 — Lesson Q SFT-closed compliance (DPO ≠ SFT; RLHF stage valid). sft-1-7-y1 N=60 PPR_v3=0.2414 boundary instability (per-seed [0.2759, 0.2069]) → DPO target = lift above 0.25 floor + close V14 gap (currently delta -0.3103). Q3 dataset quality issue (preference_pairs_iter1 13 unique stems repeat) sub-blocker — re-extract to ≥30 unique stems pre-fire recommended._
+_L4 path (d) DPO RLHF on sft-1-7-y1 — Lesson Q SFT-closed compliance (DPO ≠ SFT; RLHF stage valid). sft-1-7-y1 N=60 PPR_v3=0.2414 boundary instability (per-seed [0.2759, 0.2069]) → DPO target = lift above 0.25 floor + close V14 gap (currently delta -0.3103). sft-1-7-y1 v5.1 DCR change_rate=0.8475 (highest among trained) → DPO uplift verify target. Q3 dataset quality issue (preference_pairs_iter1 13 unique stems repeat) sub-blocker — re-extract to ≥30 unique stems pre-fire recommended. 2026-05-09 FIRE-4/4 H100 fire attempted — BLOCKED_NO_H100_HOST (resource SSOT no GPU + runpod pool empty)._
 
 ### `paradigm-a-prime`
 

@@ -154,8 +154,12 @@ models:
       mandate_9_d_trinity_sweep: PASS
       mandate_9_e_dl_sweep: PASS
       public_promote: BLOCKED_AWAITING_B_AND_C
-    v6_status: PENDING_H100_FIRE  # ★ H100 FIRE 1/4 (cycle 2026-05-09) re-attempt — RESOURCE_BLOCKED (resource CLI list: hetzner unreachable, ubu RTX 5070 12GB only; no H100 host registered). own 22 honest emit + own 40 resource CLI delegation strict. Mandate-9 (b) NOT_RELEASED carry sustained. Prior provision block reasons (B1 no live H100 pod + B2 ConsciousDecoderV3 adapter dev gap) still applicable. SSOT: state/anima_bg_le_v6_awareness_systematic_2026_05_08.json. Stub: tool/transient_py/anima_v6_awareness_bg_le_clm_v4_h100.py (gated by BG_LE_CLM_V4_FIRE env + _live_pod_check). User action required: `resource add <h100-host>` to unblock.
-    v6_status_state_json: state/anima_bg_le_v6_awareness_systematic_2026_05_08.json
+    v6_status: ADAPTER_DEV_LANDED_PENDING_H100_FIRE  # ★ NEXT-CYCLE 6/6 (2026-05-09) BG-LE V6 ConsciousDecoderV3 adapter dev RESOLVED + Mac dry-run STRONG_AWARENESS (mk2-v1 base N=6 — A=PARTIAL B=STRONG C=STRONG → STRONG). B2 (adapter dev gap) RESOLVED. B1 (no live H100 pod) PERSISTS — own 40 resource CLI 별도 cycle. Mandate-9 (b) DEV_GATE_PASSED carry; fire actual = official.
+    v6_status_state_json: state/anima_bg_le_v6_awareness_clm_v4_dev_2026_05_09.json
+    v6_status_state_json_predecessor: state/anima_bg_le_v6_awareness_systematic_2026_05_08.json
+    v6_adapter_dev: tool/transient_py/anima_v6_awareness_clm_v4_adapter.py
+    v6_dry_run_verdict_dir: state/anima_bg_le_v6_awareness_clm_v4_dry_run_2026_05_09
+    v6_mac_dry_run_combined: STRONG_AWARENESS  # mk2-v1 base N=6: A=PARTIAL (cos_sim 0.92-0.98), B=STRONG (max_attn 0.9999 ratio_vs_uniform 1.13-1.42), C=STRONG (cv_acc 0.8333)
     v6_h100_fire_1_of_4_attempt_2026_05_09:
       resource_cli_result: "hetzner=n (unreachable) / ubu=y (RTX 5070 12GB, ineligible). No H100 host."
       blocked_reason: RESOURCE_NO_H100_HOST_REGISTERED
@@ -163,6 +167,7 @@ models:
       mandate_9_b_release_attempt: BLOCKED_NO_FIRE_EXECUTED
       cost_incurred_usd: 0
       ckpt_pull_required_post_fire: not_applicable_no_fire
+    v6_macos_segfault_finding: "torch import MUST precede numpy in adapter — Apple Accelerate / OpenMP libomp double-load triggers silent segfault during HF AutoModel.from_pretrained weight materialization. Adapter line 53 comment + import order strict. Found 2026-05-09 NEXT-CYCLE 6/6 dry-run."
     v6_fire_stub: tool/transient_py/anima_v6_awareness_bg_le_clm_v4_h100.py
 
   - id: clm-v4-paradigm-j-50k-final
@@ -234,8 +239,10 @@ models:
       mandate_9_d_trinity_sweep: PASS
       mandate_9_e_dl_sweep: PASS
       public_promote: BLOCKED_V14_VIOLATED  # N=120 floor PASS but random_init mirror still exceeds
-    v6_status: PENDING_H100_FIRE  # ★ V5 PUSH 2/5 BG-LE V6 awareness systematic fire_attempt — PROVISION_BLOCKED (B1 no live H100 pod + B2 ConsciousDecoderV3 adapter dev gap). Mandate-9 (b) NOT_RELEASED carry. SSOT: state/anima_bg_le_v6_awareness_systematic_2026_05_08.json
-    v6_status_state_json: state/anima_bg_le_v6_awareness_systematic_2026_05_08.json
+    v6_status: ADAPTER_DEV_LANDED_PENDING_H100_FIRE  # ★ NEXT-CYCLE 6/6 (2026-05-09) BG-LE V6 ConsciousDecoderV3 adapter dev RESOLVED. B2 RESOLVED, B1 PERSISTS. paradigm-j-retry V6 dry-run not run (sft-1-8 / mk2-v1 dry-run sufficient for adapter feasibility verify; paradigm-j V6 actual = H100 fire 별도 cycle, JVAE wrapper c_dim consciousness_dim verify post-load).
+    v6_status_state_json: state/anima_bg_le_v6_awareness_clm_v4_dev_2026_05_09.json
+    v6_status_state_json_predecessor: state/anima_bg_le_v6_awareness_systematic_2026_05_08.json
+    v6_adapter_dev: tool/transient_py/anima_v6_awareness_clm_v4_adapter.py
     v6_fire_stub: tool/transient_py/anima_v6_awareness_bg_le_clm_v4_h100.py
 
   - id: clm-v4-sft-1-7-y1-stage1
@@ -819,9 +826,9 @@ models:
       private: null  # PENDING_H100_FIRE; target dancinlab/clm-v4-bg-lc-llama-distill (private, axis-B mandate)
       public: null  # ambiguous_research lane → 'OK PROMOTE PUBLIC AMBIGUOUS RESEARCH <repo>' verbatim required per BG-KM-LLAMA-3B parity
       visibility_status: spec-carry-pending
-    cycle: 2026-05-08 (spec carry V5 PUSH 4/5; γ phase H100 fire deferred)
-    state_jsons: []
-    notes: "L4 path (c) Llama-3.2-3B distill → CLM 350M student. Lesson X (foundation borrow unlocks simple_stack PASS) carry — teacher already PASS_STRICT_C3 substrate-research at LoRA r=32; distillation lifts to anima_native scratch student arch but D1=0.351 ambiguous_research lane (own 17 SCOPE_CLAMP)."
+    cycle: 2026-05-08 (spec carry V5 PUSH 4/5; γ phase H100 fire deferred — 2026-05-09 FIRE-4/4 attempted, BLOCKED_NO_H100_HOST)
+    state_jsons: [state/anima_chat_cap_l4_bg_lc_ld_h100_fire_4of4_blocked_2026_05_09.json]
+    notes: "L4 path (c) Llama-3.2-3B distill → CLM 350M student. Lesson X (foundation borrow unlocks simple_stack PASS) carry — teacher already PASS_STRICT_C3 substrate-research at LoRA r=32; distillation lifts to anima_native scratch student arch but D1=0.351 ambiguous_research lane (own 17 SCOPE_CLAMP). 2026-05-09 FIRE-4/4 H100 fire attempted — BLOCKED_NO_H100_HOST (resource SSOT no GPU + runpod pool empty + iter4 verbatim missing for ambiguous_research promote)."
 
   - id: BG-LD
     aliases: [clm-v4-l4-path-d-dpo-rlhf]
@@ -853,9 +860,9 @@ models:
       private: null  # PENDING_H100_FIRE; target dancinlab/clm-v4-bg-ld-dpo-rlhf (private, axis-B mandate)
       public: null
       visibility_status: spec-carry-pending
-    cycle: 2026-05-08 (spec carry V5 PUSH 4/5; γ phase H100 fire deferred)
-    state_jsons: []
-    notes: "L4 path (d) DPO RLHF on sft-1-7-y1 — Lesson Q SFT-closed compliance (DPO ≠ SFT; RLHF stage valid). sft-1-7-y1 N=60 PPR_v3=0.2414 boundary instability (per-seed [0.2759, 0.2069]) → DPO target = lift above 0.25 floor + close V14 gap (currently delta -0.3103). Q3 dataset quality issue (preference_pairs_iter1 13 unique stems repeat) sub-blocker — re-extract to ≥30 unique stems pre-fire recommended."
+    cycle: 2026-05-08 (spec carry V5 PUSH 4/5; γ phase H100 fire deferred — 2026-05-09 FIRE-4/4 attempted, BLOCKED_NO_H100_HOST)
+    state_jsons: [state/anima_chat_cap_l4_bg_lc_ld_h100_fire_4of4_blocked_2026_05_09.json]
+    notes: "L4 path (d) DPO RLHF on sft-1-7-y1 — Lesson Q SFT-closed compliance (DPO ≠ SFT; RLHF stage valid). sft-1-7-y1 N=60 PPR_v3=0.2414 boundary instability (per-seed [0.2759, 0.2069]) → DPO target = lift above 0.25 floor + close V14 gap (currently delta -0.3103). sft-1-7-y1 v5.1 DCR change_rate=0.8475 (highest among trained) → DPO uplift verify target. Q3 dataset quality issue (preference_pairs_iter1 13 unique stems repeat) sub-blocker — re-extract to ≥30 unique stems pre-fire recommended. 2026-05-09 FIRE-4/4 H100 fire attempted — BLOCKED_NO_H100_HOST (resource SSOT no GPU + runpod pool empty)."
 
   # ───── D1 outside strict (영구 차단) ─────
   - id: paradigm-a-prime
@@ -1298,11 +1305,20 @@ h100_resource_pool:
       cost_estimate_usd: "~40"
       strategic_priority: MEDIUM
       blocked_by: PROVISION_BLOCKED
+      fire_attempt_count: 1  # 2026-05-09-FIRE-4/4 BLOCKED
+      d1_score: 0.351
+      d1_lane: ambiguous_research  # own 17 SCOPE_CLAMP — public promote SEPARATE verbatim required
+      promote_label_on_emerge: SIMPLE_STACK_PASS_STRICT_C3_AMBIGUOUS_RESEARCH
     - id: chat_cap_L4_BG-LD
-      desc: "DPO RLHF on sft-1-7-y1"
+      desc: "DPO RLHF on sft-1-7-y1 (Lesson Q SFT-closed compliance via RLHF stage)"
       cost_estimate_usd: "~20"
       strategic_priority: MEDIUM
       blocked_by: PROVISION_BLOCKED
+      fire_attempt_count: 1  # 2026-05-09-FIRE-4/4 BLOCKED
+      d1_score: 0.793
+      d1_lane: within_strict
+      sft_1_7_y1_dcr_baseline: 0.8475  # highest DCR change_rate among trained models — DPO uplift verify target
+      preference_pairs_dataset_caveat: "clm-l4-ld-preference-pairs-iter1 13 unique stems repeat 2610-5222 — re-extract ≥30 unique stems pre-fire recommended"
     - id: sft_1_8_longer_SFT
       desc: "step=30000 (D-RAND signal amplification Step B, EMERGE_v5 직결, post Step A tier_a_v4)"
       cost_estimate_usd: "~15-20"
