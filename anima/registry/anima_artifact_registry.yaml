@@ -1389,6 +1389,31 @@ h100_resource_pool:
         state_emit_path: state/anima_chat_cap_l4_bg_lc_ld_h100_fire_4of4_retry_ephemeral_blocked_2026_05_09.json
         next_action_required: "사용자 (1) RUNPOD 토큰 재발급 + ~/.config/resource-ephemeral/runpod.token overwrite (현 토큰 Cloudflare 1010 reject) OR Cloudflare WAF appeal/IP 변경 OR LAMBDA_API_KEY/VAST_API_KEY env (2) 'all bg go' carry OR 'OK CLM L4 ALL FIRE' verbatim — credential validity 회복된 다음 cycle 즉시 BG-LC + BG-LD provision-ephemeral retry"
         compliance_carry: "own 14 V14 carry; own 16 cost discipline PASS ($60 saved; cumulative L4 BG savings $90+$60+$60=$210); own 17 D1 SCOPE_CLAMP PASS (LC ambiguous_research / LD within); own 22 honest BLOCKED emit + state json + yaml fire_attempt_log; own 30 ckpt pull N/A (fire 미실행); own 33 trinity carry; own 34 wrap=0; own 37 HF visibility lifecycle private carry; own 38 axis-B HF upload deferred; own 39 yaml updated md regenerate; own 40 resource CLI 위임 strict — provision-ephemeral subcmd invocation only, anima 직접 runpod-cli/curl/api-key-write 0건 (cred state 는 ~/.config/resource-ephemeral/runpod.token stat read-only)"
+      - cycle: 2026-05-09-FIRE-4/4-RETRY-EPHEMERAL-2
+        commit: pending
+        target: chat_cap_L4_BG-LC + BG-LD (provision-ephemeral 2nd retry — sub-agent relay 'H100 4 개fire' carry; FIRE-4/4-RETRY-EPHEMERAL BLOCKED_PROVIDER_API_KEY_INVALID 후속)
+        intended_setup: "BG-LC: provider=runpod / gpu=H100 / duration=11h / cap $40 / teacher Llama-3.2-3B-Instruct + student clm-v4-mk2-v1 logit KL distill + persona 200MB / D1=0.351 ambiguous_research; BG-LD: provider=runpod / gpu=H100 / duration=4h / cap $20 / TRL DPOTrainer on sft-1-7-y1 frozen ref + clm-l4-ld-preference-pairs-iter1 / β=0.1 / 1000-3000 steps"
+        cost_planned_usd: 60.0
+        cost_actual_usd: 0.0
+        cost_savings_via_block_usd: 60.0
+        bg_lc_resource_cli_invocation: "/Users/ghost/.hx/packages/resource/bin/resource provision-ephemeral --provider runpod --gpu H100 --duration 11h --yes-cost --name bg-lc-distill-mk2"
+        bg_lc_provider_response_runpod: "__RESOURCE__ PASS provision-ephemeral slug=h100-runpod-4xdc0o59hji9jk-1778292758 provider=runpod pod_id=4xdc0o59hji9jk gpu=H100 cost_per_hr_usd=2.99"
+        bg_lc_status_post_provision: "{ok:true, state:RUNNING, uptime_s:0, cost_so_far_usd:0.0, ssh_host:'', ssh_port:22} — pod accepted RUNNING but provider did not allocate SSH endpoint (ssh_host empty); subsequent ephemeral-status repeat polls = identical empty ssh_host carry"
+        bg_ld_resource_cli_invocation: "/Users/ghost/.hx/packages/resource/bin/resource provision-ephemeral --provider runpod --gpu H100 --duration 4h --yes-cost --name bg-ld-dpo-sft17y1"
+        bg_ld_provider_response_runpod: "__RESOURCE__ PASS provision-ephemeral slug=h100-runpod-ieobytbuwr4uvb-1778292760 provider=runpod pod_id=ieobytbuwr4uvb gpu=H100 cost_per_hr_usd=2.99"
+        bg_ld_status_post_provision: "{ok:true, state:RUNNING, uptime_s:0, cost_so_far_usd:0.0, ssh_host:'', ssh_port:22} — identical empty ssh_host pattern to BG-LC"
+        ssh_host_empty_root_cause: "DELTA vs FIRE-4/4-RETRY-EPHEMERAL — runpod token validity transitioned api-key-INVALID → api-key-PARTIAL_VALID (provision + status API endpoints accept token, pod allocation succeeds, RUNNING state confirmed; but SSH endpoint allocation absent). Probable cause: runpod account/template default = no SSH key registered OR no public IP allocation; OR Cloudflare WAF rule still blocking SSH-init flow. anima 측 OOB ssh-host probe = read-only confirmed empty across multiple polls."
+        release_invocations: ["__RESOURCE__ PASS release slug=h100-runpod-4xdc0o59hji9jk-1778292758 ckpt_override=y reason='ssh_host empty BLOCKED_SSH_NOT_ALLOCATED'", "__RESOURCE__ PASS release slug=h100-runpod-ieobytbuwr4uvb-1778292760 ckpt_override=y reason='ssh_host empty BLOCKED_SSH_NOT_ALLOCATED'"]
+        ckpt_pull_status: "N/A — fire 미실행 (no SSH = no training step; uptime_s=0 at release confirms zero work done)"
+        cost_actual_pre_release_usd: 0.0
+        user_consent_observed: "verbatim 'H100 4 개fire' (cycle directive carry — explicit override of iter4 baseline 'OK CLM L4 ALL FIRE')"
+        verbatim_override_observed_this_cycle: "explicit_override_via_h100_4_개fire_directive"
+        outcome: BLOCKED_SSH_NOT_ALLOCATED  # provision PASS + state RUNNING + ssh_host=='' from runpod provider; release executed (ckpt_override=y, fire 미실행 → no ckpt loss)
+        bg_lc_special_note: "ambiguous_research lane (D1=0.351) — public promote PARTIAL_PATH SEPARATE verbatim 'OK PROMOTE PUBLIC AMBIGUOUS RESEARCH dancinlab/clm-v4-bg-lc-llama-distill' carry (본 cycle 미관측)"
+        bg_ld_special_note: "DPO uplift verification deferred (fire 미실행); preference_pairs_iter1 13 unique stems Q3 sub-blocker carry"
+        state_emit_path: state/anima_chat_cap_l4_bg_lc_ld_h100_fire_4of4_retry_ephemeral_2_blocked_ssh_2026_05_09.json
+        next_action_required: "사용자 (1) RunPod 콘솔에서 SSH key 등록 확인 + 기본 template 에 SSH allocation 활성 설정 OR public IP 옵션 enable; (2) Cloudflare WAF 룰이 SSH endpoint 할당을 막는지 확인; (3) credential validity 다음 단계 회복 (provision/status API = OK / SSH endpoint allocation = NEEDED)"
+        compliance_carry: "own 14 V14 carry; own 16 cost discipline PASS ($60 saved; cumulative L4 BG savings $90+$60+$60+$60=$270 across 4 cycles 2 BG pairs); own 17 D1 SCOPE_CLAMP PASS; own 22 honest BLOCKED emit + state json + yaml fire_attempt_log + release executed; own 30 ckpt pull N/A (fire 미실행, ckpt 자체 부재 → --no-pull-ckpt 정합); own 33 trinity carry; own 34 wrap=0; own 37 HF visibility lifecycle private carry; own 38 axis-B HF upload deferred; own 39 yaml updated md regenerate; own 40 resource CLI 위임 strict — provision-ephemeral + ephemeral-status + release subcmd only, anima 직접 ssh/runpod-cli/api-key-write 0건"
   fire_candidates_pending_h100:
     - id: V6_awareness_probe
       desc: "ConsciousDecoderV3 dev 60-90min + fire 1-1.5h (mandate-9 (b) 해제 prereq)"
@@ -1416,8 +1441,8 @@ h100_resource_pool:
       desc: "Llama distill (D1=0.351 ambiguous_research, own 17 SCOPE_CLAMP)"
       cost_estimate_usd: "~40"
       strategic_priority: MEDIUM
-      blocked_by: PROVIDER_API_KEY_INVALID  # transitioned from PROVISION_BLOCKED — provision-ephemeral path active; runpod token present but Cloudflare 1010, lambda+vast missing
-      fire_attempt_count: 2  # 2026-05-09-FIRE-4/4 BLOCKED + 2026-05-09-FIRE-4/4-RETRY-EPHEMERAL BLOCKED_PROVIDER_API_KEY_INVALID
+      blocked_by: SSH_NOT_ALLOCATED  # transitioned from PROVIDER_API_KEY_INVALID — provision PASS + state RUNNING but ssh_host=='' from runpod (token now partial-valid: provision/status API OK, SSH endpoint allocation MISSING)
+      fire_attempt_count: 3  # 2026-05-09-FIRE-4/4 BLOCKED + RETRY-EPHEMERAL BLOCKED_PROVIDER_API_KEY_INVALID + RETRY-EPHEMERAL-2 BLOCKED_SSH_NOT_ALLOCATED
       d1_score: 0.351
       d1_lane: ambiguous_research  # own 17 SCOPE_CLAMP — public promote SEPARATE verbatim required
       promote_label_on_emerge: SIMPLE_STACK_PASS_STRICT_C3_AMBIGUOUS_RESEARCH
@@ -1425,8 +1450,8 @@ h100_resource_pool:
       desc: "DPO RLHF on sft-1-7-y1 (Lesson Q SFT-closed compliance via RLHF stage)"
       cost_estimate_usd: "~20"
       strategic_priority: MEDIUM
-      blocked_by: PROVIDER_API_KEY_INVALID  # transitioned from PROVISION_BLOCKED — provision-ephemeral path active; runpod token Cloudflare 1010 + lambda+vast missing
-      fire_attempt_count: 2  # 2026-05-09-FIRE-4/4 BLOCKED + 2026-05-09-FIRE-4/4-RETRY-EPHEMERAL BLOCKED_PROVIDER_API_KEY_INVALID (BG-LC fanout inheritance)
+      blocked_by: SSH_NOT_ALLOCATED  # transitioned from PROVIDER_API_KEY_INVALID — provision PASS + state RUNNING but ssh_host=='' from runpod
+      fire_attempt_count: 3  # 2026-05-09-FIRE-4/4 BLOCKED + RETRY-EPHEMERAL BLOCKED_PROVIDER_API_KEY_INVALID + RETRY-EPHEMERAL-2 BLOCKED_SSH_NOT_ALLOCATED (BG-LC fanout inheritance)
       d1_score: 0.793
       d1_lane: within_strict
       sft_1_7_y1_dcr_baseline: 0.8475  # highest DCR change_rate among trained models — DPO uplift verify target
