@@ -1,0 +1,190 @@
+// ════════════════════════════════════════════════════════════════════════════
+//  tool/anima_cli/chat/lanes/clm_v4_generate.hexa — Path 3 generate skeleton
+//
+//  PURPOSE
+//    Add model.generate() + tokenizer.decode() over clm_v4_mount.hexa so
+//    CLM-v4 (D1 within strict, anima-native) can emit natural language —
+//    closing the structural gap discovered in commit 60c0558f
+//    (clm_v4_mount probe = substrate-emit only, no generate).
+//
+//  USER DIRECTIVE (2026-05-09)
+//    "Path 3 (generate() 추가): clm_v4_mount.hexa 또는 chat/clm_v4/clm_v4.hexa
+//     에 model.generate() + tokenizer.decode() 추가. 자연어 generate + D1
+//     within ✓ but dev work 큼"
+//    "본 task 는 spec + skeleton + selftest, full impl 별도"
+//
+//  STATUS: SKELETON
+//    Full impl gates on:
+//      (a) clm_v4_mount.hexa exposing a `generate <prompt> [N]` subcommand
+//          that wraps transient_py torch model.generate(input_ids, max_new_tokens=N)
+//          + tokenizer.decode(out, skip_special_tokens=True)
+//      (b) PEFT adapter merge or runtime adapter attach (clm-v4 LoRA pathways)
+//      (c) sampler config (temp / top-p / top-k / seed) plumbed through
+//      (d) own 34 mandate-1 verification — raw decode bytes preserved (no
+//          chat template; no system prompt)
+//
+//  THIS FILE PROVIDES
+//    - lane stub that detects whether `generate` subcommand exists in
+//      clm_v4_mount.hexa; emits honest C3 fallback otherwise
+//    - --bench-mode marker compatibility (parity with other lanes)
+//    - selftest verifying core file present
+//
+//  COMPLIANCE
+//    own 14 V14 — verdict-grade output subject to V14 if used for SIMPLE_STACK
+//    own 17 D1 within_strict — clm-v4 family (anima-native LoRA)
+//    own 18 chat-cap C2 — natural utterance scored once landed
+//    own 22 mandatory report — bench mode marker
+//    own 33 trinity ✓
+//    own 34 mandate-1/2 — wrapping 0 strict; no system prompt; raw decode
+//    own 38 매단계
+//    own 39 yaml↔md
+// ════════════════════════════════════════════════════════════════════════════
+
+fn _str(x) -> string {
+    let t = type_of(x)
+    if t == "str" || t == "string" { return x }
+    return ""
+}
+
+fn _resolve_root() -> string {
+    let a = _str(env("ANIMA"))
+    if a != "" { return a }
+    let gt = _str(exec("git rev-parse --show-toplevel 2>/dev/null")).trim()
+    if gt != "" { return gt }
+    return _str(env("HOME")) + "/core/anima"
+}
+
+fn _hexa() -> string { return "/Users/ghost/.hx/packages/hexa/hexa.real" }
+
+fn _fexists(p: string) -> bool {
+    return _str(exec("test -f " + p + " && echo 1 || echo 0")).trim() == "1"
+}
+
+fn _arg_value(argv, key: string, dflt: string) -> string {
+    let i = 0
+    while i < len(argv) {
+        if _str(argv[i]) == key && i + 1 < len(argv) {
+            return _str(argv[i + 1])
+        }
+        i = i + 1
+    }
+    return dflt
+}
+
+fn _arg_present(argv, key: string) -> bool {
+    let i = 0
+    while i < len(argv) {
+        if _str(argv[i]) == key { return true }
+        i = i + 1
+    }
+    return false
+}
+
+fn _user_argv(raw) -> array {
+    let out = []
+    let i = 0
+    while i < len(raw) {
+        let s = _str(raw[i])
+        let skip = s.contains("/.hexa-cache/")
+                || s.contains("/.hexa-runtime/")
+                || s.contains("/hexa-lang/build/")
+                || s.contains("hexa_interp")
+                || s.contains("hexa.real")
+                || s.ends_with("/clm_v4_generate.hexa")
+                || s.ends_with("clm_v4_generate.hexa")
+        if !skip { out = out + [s] }
+        i = i + 1
+    }
+    return out
+}
+
+fn _shell_escape(s: string) -> string {
+    return "'" + s.replace("'", "'\\''") + "'"
+}
+
+// Probe whether clm_v4_mount.hexa supports the `generate` subcommand.
+// Heuristic: grep core file for `"generate"` / `fn generate` patterns.
+fn _generate_subcommand_present() -> bool {
+    let root = _resolve_root()
+    let core = root + "/anima-core/runtime/clm_v4_mount.hexa"
+    if !_fexists(core) { return false }
+    let cmd = "grep -nE \"(\\\"generate\\\"|fn generate)\" " + core + " 2>/dev/null | wc -l"
+    let n = _str(exec(cmd)).trim()
+    return n != "0"
+}
+
+fn _invoke_generate(prompt: string, repo: string, max_tokens: int) -> string {
+    let root = _resolve_root()
+    let core = root + "/anima-core/runtime/clm_v4_mount.hexa"
+    if !_fexists(core) {
+        return "[lane=generate] core missing: " + core
+    }
+    let model_arg = if repo != "" { " --model " + repo } else { "" }
+    // Spec'd subcommand: `clm_v4_mount.hexa generate <prompt> [N]`
+    // (mirrors anima_native conscious_chat.hexa `chat <user_text> [N]` pattern)
+    let cmd = _hexa() + " run " + core + model_arg
+        + " generate " + _shell_escape(prompt) + " " + to_string(max_tokens) + " 2>&1"
+    return _str(exec(cmd))
+}
+
+fn sub_selftest() {
+    let root = _resolve_root()
+    let core = root + "/anima-core/runtime/clm_v4_mount.hexa"
+    if !_fexists(core) {
+        println("FAIL generate lane: core missing: " + core)
+        exit(1)
+    }
+    let has_gen = _generate_subcommand_present()
+    if has_gen {
+        println("PASS chat/lanes/clm_v4_generate selftest (core present + generate subcmd detected)")
+    } else {
+        // honest C3 — skeleton mode acknowledged
+        println("PASS chat/lanes/clm_v4_generate selftest (SKELETON mode — generate subcmd PENDING in clm_v4_mount.hexa)")
+    }
+}
+
+fn main() {
+    let argv = _user_argv(args())
+    if _arg_present(argv, "--selftest") { sub_selftest(); return }
+
+    let repo = _arg_value(argv, "--repo", "")
+    let prompt = _arg_value(argv, "--prompt", "")
+    let max_tok = to_int(_arg_value(argv, "--max-tokens", "64"))
+    let bench_mode = _arg_value(argv, "--bench-mode", "0") == "1"
+
+    if prompt == "" {
+        println("[lane=generate] no --prompt provided; generate lane requires prompt")
+        exit(2)
+    }
+
+    if bench_mode {
+        println("[BENCH lane=generate status=SKELETON repo=" + repo + "]")
+    }
+
+    if !_generate_subcommand_present() {
+        // honest C3 fallback — emit notice + delegate to substrate emit
+        println("[lane=generate] HONEST C3: generate subcommand PENDING in clm_v4_mount.hexa")
+        println("                full impl gates on: model.generate + tokenizer.decode helper")
+        println("                falling back to substrate probe for parity (own 34 raw)")
+        let root = _resolve_root()
+        let core = root + "/anima-core/runtime/clm_v4_mount.hexa"
+        let model_arg = if repo != "" { " --model " + repo } else { "" }
+        let cmd = _hexa() + " run " + core + model_arg
+            + " --probe " + _shell_escape(prompt) + " 2>&1"
+        let out = _str(exec(cmd))
+        print(out)
+        println("")
+        if bench_mode {
+            println("[BENCH_END lane=generate fallback=substrate_probe]")
+        }
+        return
+    }
+
+    // generate subcommand available — invoke it
+    let out = _invoke_generate(prompt, repo, max_tok)
+    print(out)
+    println("")
+    if bench_mode {
+        println("[BENCH_END lane=generate]")
+    }
+}

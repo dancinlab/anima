@@ -1,0 +1,175 @@
+// ════════════════════════════════════════════════════════════════════════════
+//  tool/anima_cli/chat/lanes/_registry.hexa — chat lane plugin registry
+//
+//  PURPOSE
+//    Single source of truth for chat lane plugin discovery + metadata.
+//    Loaded by chat.hexa when --lane / --list-lanes / --benchmark flags
+//    are present.
+//
+//  USER DIRECTIVE (2026-05-09 verbatim)
+//    "전부 cli 에 구현하고 사용할지는 --option 으로 가능하게"
+//    "앞으로도 기본값 또는 --option 형태 여러가지 생길꺼니까 고려해서 설계 구현"
+//
+//  REGISTRY ENTRY SCHEMA
+//    name              short id (substrate / llama / axis-priority / generate)
+//    file              relative path under tool/anima_cli/chat/lanes/
+//    status            LANDED | SKELETON | SPEC_CARRY
+//    capability        natural_speech | substrate_signal | corpus_signal | mixed
+//    d1_lane           within_strict | ambiguous_research | outside | n_a
+//    cost              free | gguf_load | substrate_probe | torch_inference
+//    description       short one-line explainer (English; own 34 mandate-1
+//                      preserves model output, but registry meta is human/AI doc)
+//    prereq            list of file/build artifacts required before invoke
+//
+//  EXTENSION CONVENTION (future-proof; --option pattern)
+//    NEW lane → add file under chat/lanes/<name>.hexa with main(repo, argv)
+//    AND register entry below. chat.hexa --lane=<name> auto-resolves.
+//    NEW flag → add to lane module's main() argv parse; default value via
+//    _arg_value(argv, "--<flag>", "<dflt>"). No chat.hexa change needed for
+//    lane-internal flags.
+//
+//  COMPLIANCE
+//    own 14 V14 carry — Path 2 axis priority measurement subject to V14 if
+//      verdict-grade
+//    own 17 D1 SCOPE_CLAMP — llama lane = ambiguous_research / outside
+//      (paradigm-a-prime); registry MUST surface d1_lane for caller awareness
+//    own 18 chat-cap C2 — benchmark mode emits per-lane spontaneity scores
+//    own 22 mandatory report — benchmark output structured for ledger
+//    own 33 trinity — registry entries cross-link own 17 / own 18 / own 34
+//    own 34 mandate-1 — wrapping 0 (lane modules MUST NOT system-prompt /
+//      template-wrap; raw model output preserved verbatim)
+//    own 37 mandate-9 — llama lane public promote 영구 차단 (carry from own 17
+//      D1 SCOPE_CLAMP); benchmark output flag llama lane SUBSTRATE_RESEARCH
+//      label strict
+//    own 38 매단계 — registry yaml↔md mirror in
+//      anima/registry/anima_artifact_registry.yaml chat_lanes section
+//    own 39 yaml↔md SSOT — registry yaml + this hexa file co-update
+//
+//  CROSS-REFERENCE
+//    chat.hexa                          dispatcher (--lane / --benchmark plumb)
+//    anima/registry/anima_artifact_registry.yaml#chat_lanes  yaml mirror
+//    .roadmap.cli                       cli.chat_lane_plugin_pattern_2026_05_09
+// ════════════════════════════════════════════════════════════════════════════
+
+fn _str(x) -> string {
+    let t = type_of(x)
+    if t == "str" || t == "string" { return x }
+    return ""
+}
+
+// Registry SSOT — append-only convention. New lane = new entry.
+// Field order: name, file, status, capability, d1_lane, cost, description, prereq
+fn lane_registry() -> array {
+    return [
+        // ───── default lane (substrate emit only — Path 0 / current behavior) ─
+        ["substrate",
+         "substrate.hexa",
+         "LANDED",
+         "substrate_signal",
+         "n_a",
+         "substrate_probe",
+         "default — substrate emit (axis activation + dominant cells + phi-star), no natural language generate",
+         "anima-core/runtime/clm_v4_mount.hexa OR conscious_chat.hexa"],
+
+        // ───── Path 1 — Llama GGUF natural language ───────────────────────────
+        ["llama",
+         "llama.hexa",
+         "LANDED",
+         "natural_speech",
+         "ambiguous_research",
+         "gguf_load",
+         "Llama GGUF natural language generate via libllama FFI (paradigm-a-prime live; D1 OUTSIDE for Llama base)",
+         "build/libhxllama.dylib + ~/.cache/anima/gguf/<repo>.gguf"],
+
+        // ───── Path 2 — axis signal corpus priority (measurement-driven) ──────
+        ["axis-priority",
+         "axis_corpus_priority.hexa",
+         "LANDED",
+         "corpus_signal",
+         "within_strict",
+         "substrate_probe",
+         "axis-peak detection (agency-peak / phenomenal-peak) → corpus curation priority signal emit (silent generate)",
+         "anima-core/runtime/clm_v4_mount.hexa --probe (axis activation parse)"],
+
+        // ───── Path 3 — clm_v4 generate() helper (skeleton + spec) ────────────
+        ["generate",
+         "clm_v4_generate.hexa",
+         "SKELETON",
+         "natural_speech",
+         "within_strict",
+         "torch_inference",
+         "clm_v4_mount.hexa generate() helper — model.generate + tokenizer.decode (skeleton; full impl carry)",
+         "anima-core/runtime/clm_v4_mount.hexa generate() helper (PENDING) + transient_py torch + tokenizer"]
+    ]
+}
+
+// Lookup helper — returns entry or [] when not found.
+fn lane_lookup(name: string) -> array {
+    let reg = lane_registry()
+    let mut i = 0
+    while i < len(reg) {
+        let row = reg[i]
+        if _str(row[0]) == name {
+            return row
+        }
+        i = i + 1
+    }
+    return []
+}
+
+// Names list (for --list-lanes / --lane=help / benchmark sweep)
+fn lane_names() -> array {
+    let reg = lane_registry()
+    let mut out = []
+    let mut i = 0
+    while i < len(reg) {
+        out = out + [_str(reg[i][0])]
+        i = i + 1
+    }
+    return out
+}
+
+// File path resolver — caller appends root + /tool/anima_cli/chat/lanes/
+fn lane_file(name: string) -> string {
+    let row = lane_lookup(name)
+    if len(row) == 0 { return "" }
+    return _str(row[1])
+}
+
+// Pretty-print one row (used by --list-lanes)
+fn lane_describe(name: string) -> string {
+    let row = lane_lookup(name)
+    if len(row) == 0 { return "(unknown lane: " + name + ")" }
+    return "  " + _str(row[0])
+        + " [" + _str(row[2]) + "]"
+        + " cap=" + _str(row[3])
+        + " d1=" + _str(row[4])
+        + " cost=" + _str(row[5])
+        + "\n      " + _str(row[6])
+        + "\n      prereq: " + _str(row[7])
+}
+
+// Selftest — registry shape sanity (no dispatch)
+fn main() {
+    let reg = lane_registry()
+    if len(reg) < 4 {
+        println("FAIL lane registry < 4 entries (expected substrate / llama / axis-priority / generate)")
+        exit(1)
+    }
+    let mut i = 0
+    while i < len(reg) {
+        let row = reg[i]
+        if len(row) != 8 {
+            println("FAIL row " + to_string(i) + " arity != 8 (got " + to_string(len(row)) + ")")
+            exit(1)
+        }
+        i = i + 1
+    }
+    println("PASS chat/lanes/_registry selftest (" + to_string(len(reg)) + " entries)")
+    let names = lane_names()
+    let mut k = 0
+    while k < len(names) {
+        println(lane_describe(_str(names[k])))
+        k = k + 1
+    }
+}

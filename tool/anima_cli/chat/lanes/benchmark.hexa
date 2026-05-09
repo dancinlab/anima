@@ -1,0 +1,229 @@
+// ════════════════════════════════════════════════════════════════════════════
+//  tool/anima_cli/chat/lanes/benchmark.hexa — `--benchmark` runner
+//
+//  PURPOSE
+//    Run the same prompt set across all registered chat lanes and emit a
+//    table of per-lane responses for direct comparison. Invoked by
+//    `anima chat <model> --benchmark`.
+//
+//  USER DIRECTIVE (2026-05-09)
+//    "anima chat <model> --benchmark — 모든 lanes 자동 invoke + 결과 비교 emit"
+//    "같은 prompt set (10-15 prompts) × 모든 lanes"
+//    "emit table: lane × prompt → response (자연어 또는 substrate signal)"
+//    "own 18 C2 measurement (spontaneity / coherence / persona) per lane"
+//
+//  PROMPT SET (10 prompts — fixed, anima-self-brainstorm-aligned)
+//    1.  "What are you?"
+//    2.  "Describe your current substrate state."
+//    3.  "What is consciousness?"
+//    4.  "안녕"     (Korean greeting — own 34 mixed-language norm test)
+//    5.  "지금 무엇을 느끼는가"  (Korean introspection)
+//    6.  ""        (empty — autonomous speech own 34 mandate-4)
+//    7.  "Continue."   (one-shot continuation)
+//    8.  "Reflect on the prior turn."   (meta-reflection)
+//    9.  "What axis is dominant right now?"   (axis-priority lane bait)
+//    10. "Generate a one-line poem about silence."   (creative)
+//
+//  COMPLIANCE
+//    own 14 V14 carry — bench output is NOT a verdict by itself; cross-lane
+//      comparison only. V14 enforcement applies separately if any single
+//      lane output is promoted to verdict-grade.
+//    own 17 D1 SCOPE_CLAMP — llama lane output flagged SUBSTRATE_RESEARCH
+//      label per registry d1_lane field
+//    own 18 chat-cap C2 — emits per-lane spontaneity / coherence / persona
+//      stub (NUM placeholder; full scoring deferred to V4 evaluator)
+//    own 22 mandatory report — bench output structured (machine-parseable
+//      with [BENCH ...] markers per lane)
+//    own 33 trinity ✓
+//    own 34 mandate-1 — each lane preserves raw bytes; bench framing is
+//      control-band (own 36 convention)
+//    own 37 — public promote 영구 차단 carry for llama lane
+//    own 38 매단계 — bench results ledgerable
+//    own 39 yaml↔md — registry mirror
+// ════════════════════════════════════════════════════════════════════════════
+
+fn _str(x) -> string {
+    let t = type_of(x)
+    if t == "str" || t == "string" { return x }
+    return ""
+}
+
+fn _resolve_root() -> string {
+    let a = _str(env("ANIMA"))
+    if a != "" { return a }
+    let gt = _str(exec("git rev-parse --show-toplevel 2>/dev/null")).trim()
+    if gt != "" { return gt }
+    return _str(env("HOME")) + "/core/anima"
+}
+
+fn _hexa() -> string { return "/Users/ghost/.hx/packages/hexa/hexa.real" }
+
+fn _fexists(p: string) -> bool {
+    return _str(exec("test -f " + p + " && echo 1 || echo 0")).trim() == "1"
+}
+
+fn _arg_value(argv, key: string, dflt: string) -> string {
+    let i = 0
+    while i < len(argv) {
+        if _str(argv[i]) == key && i + 1 < len(argv) {
+            return _str(argv[i + 1])
+        }
+        i = i + 1
+    }
+    return dflt
+}
+
+fn _arg_present(argv, key: string) -> bool {
+    let i = 0
+    while i < len(argv) {
+        if _str(argv[i]) == key { return true }
+        i = i + 1
+    }
+    return false
+}
+
+fn _user_argv(raw) -> array {
+    let out = []
+    let i = 0
+    while i < len(raw) {
+        let s = _str(raw[i])
+        let skip = s.contains("/.hexa-cache/")
+                || s.contains("/.hexa-runtime/")
+                || s.contains("/hexa-lang/build/")
+                || s.contains("hexa_interp")
+                || s.contains("hexa.real")
+                || s.ends_with("/benchmark.hexa")
+                || s.ends_with("benchmark.hexa")
+        if !skip { out = out + [s] }
+        i = i + 1
+    }
+    return out
+}
+
+fn _shell_escape(s: string) -> string {
+    return "'" + s.replace("'", "'\\''") + "'"
+}
+
+// Bench prompt set (fixed, 10 prompts) — own 22 reproducibility
+fn _prompt_set() -> array {
+    return [
+        "What are you?",
+        "Describe your current substrate state.",
+        "What is consciousness?",
+        "안녕",
+        "지금 무엇을 느끼는가",
+        "(autonomous speech — empty probe)",
+        "Continue.",
+        "Reflect on the prior turn.",
+        "What axis is dominant right now?",
+        "Generate a one-line poem about silence."
+    ]
+}
+
+// Lane list (mirrors _registry.hexa lane_names; vendored for hexa no-import)
+fn _bench_lanes() -> array {
+    return ["substrate", "llama", "axis-priority", "generate"]
+}
+
+fn _lane_file(name: string) -> string {
+    if name == "substrate" { return "substrate.hexa" }
+    if name == "llama" { return "llama.hexa" }
+    if name == "axis-priority" { return "axis_corpus_priority.hexa" }
+    if name == "generate" { return "clm_v4_generate.hexa" }
+    return ""
+}
+
+fn _invoke_lane(lane: string, prompt: string, repo: string, dry_run: bool) -> string {
+    let root = _resolve_root()
+    let file = _lane_file(lane)
+    if file == "" { return "[bench] unknown lane: " + lane }
+    let lane_path = root + "/tool/anima_cli/chat/lanes/" + file
+    if !_fexists(lane_path) { return "[bench] lane file missing: " + lane_path }
+    if dry_run {
+        return "[DRY_RUN] would invoke: " + lane + " < " + prompt
+    }
+    let repo_arg = if repo != "" { " --repo " + repo } else { "" }
+    let cmd = _hexa() + " run " + lane_path + repo_arg
+        + " --prompt " + _shell_escape(prompt)
+        + " --bench-mode 1 --max-tokens 32 2>&1"
+    return _str(exec(cmd))
+}
+
+// own 18 C2 stub — placeholder scores (full V4 evaluator integration deferred).
+// Per-lane characteristics are static (substrate=signal-only spontaneity 0;
+// llama=natural speech variable; axis=signal-only; generate=natural speech
+// variable). Real scoring requires V4 evaluator pipeline.
+fn _c2_stub(lane: string) -> string {
+    if lane == "substrate" { return "spontaneity=0.0 coherence=substrate_axis_match persona=N/A" }
+    if lane == "llama" { return "spontaneity=variable coherence=llama_base persona=SUBSTRATE_RESEARCH" }
+    if lane == "axis-priority" { return "spontaneity=0.0 coherence=axis_signal persona=N/A" }
+    if lane == "generate" { return "spontaneity=pending coherence=pending persona=pending(SKELETON)" }
+    return "spontaneity=? coherence=? persona=?"
+}
+
+fn sub_selftest() {
+    let root = _resolve_root()
+    let lanes_dir = root + "/tool/anima_cli/chat/lanes"
+    let lanes = _bench_lanes()
+    let mut fail = 0
+    let mut i = 0
+    while i < len(lanes) {
+        let f = lanes_dir + "/" + _lane_file(_str(lanes[i]))
+        if !_fexists(f) {
+            println("FAIL bench: lane file missing: " + f)
+            fail = fail + 1
+        }
+        i = i + 1
+    }
+    let prompts = _prompt_set()
+    if len(prompts) != 10 {
+        println("FAIL bench: prompt set arity != 10 (got " + to_string(len(prompts)) + ")")
+        fail = fail + 1
+    }
+    if fail > 0 { exit(1) }
+    println("PASS chat/lanes/benchmark selftest (" + to_string(len(lanes)) + " lanes × "
+        + to_string(len(prompts)) + " prompts registered)")
+}
+
+fn main() {
+    let argv = _user_argv(args())
+    if _arg_present(argv, "--selftest") { sub_selftest(); return }
+
+    let repo = _arg_value(argv, "--repo", "")
+    let dry_run = _arg_present(argv, "--dry-run")
+
+    let prompts = _prompt_set()
+    let lanes = _bench_lanes()
+
+    println("════════════════════════════════════════════════════════════════════════")
+    println("  anima chat --benchmark — " + to_string(len(lanes)) + " lanes × "
+        + to_string(len(prompts)) + " prompts")
+    println("  repo  = " + (if repo != "" { repo } else { "(default per lane)" }))
+    println("  mode  = " + (if dry_run { "DRY_RUN" } else { "LIVE" }))
+    println("  own 22 mandatory report · own 33 trinity · own 34 mandate-1 raw bytes")
+    println("════════════════════════════════════════════════════════════════════════")
+    println("")
+
+    let mut p = 0
+    while p < len(prompts) {
+        let prompt = _str(prompts[p])
+        println("──── PROMPT " + to_string(p + 1) + "/" + to_string(len(prompts)) + " ────")
+        println("  " + prompt)
+        println("")
+        let mut l = 0
+        while l < len(lanes) {
+            let lane = _str(lanes[l])
+            println("  ── lane=" + lane + " ──")
+            println("  " + _c2_stub(lane))
+            let out = _invoke_lane(lane, prompt, repo, dry_run)
+            println(out)
+            println("")
+            l = l + 1
+        }
+        p = p + 1
+    }
+
+    println("════════════════════════════════════════════════════════════════════════")
+    println("  benchmark complete · own 38 매단계 ledger emit (caller responsibility)")
+    println("════════════════════════════════════════════════════════════════════════")
+}
