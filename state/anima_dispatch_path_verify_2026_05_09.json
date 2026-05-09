@@ -1,0 +1,79 @@
+{
+  "schema_version": 1,
+  "cycle": "2026-05-09",
+  "task": "chat.hexa _dispatch_module path verify + 1:1 + multi chat sft-1-8 fresh retry",
+  "context": {
+    "prior_agents_failed_daily_limit": ["a316a21efdbfa0ee1", "afef8cea7aaa14232"],
+    "user_directive_verbatim": "all bg go",
+    "structural_blocker_commit": "60c0558f",
+    "c2_fail_by_design_commit": "c3e8ba2c"
+  },
+  "dispatch_path_analysis": {
+    "chat_hexa_path": "tool/anima_cli/chat.hexa::_dispatch_module → _dispatch_module_streaming",
+    "inner_cmd_construction": "stdbuf -oL hexa.real run tool/anima_cli/chat/clm_v4/clm_v4.hexa --repo <X>",
+    "fifo_pattern": "stdlib/channel temp FIFO + per-line channel_recv forwarding (END sentinel __HEXA_DISP_END__)",
+    "clm_v4_module": "_invoke_substrate(text, repo) → hexa.real run anima-core/runtime/clm_v4_mount.hexa --probe TEXT --model REPO",
+    "model_generate_grep_count": 0,
+    "tokenizer_decode_grep_count": 0,
+    "verdict": "chat dispatch is thin pipe to substrate emitter — NOT separate decode path"
+  },
+  "one_to_one_chat_attempts": {
+    "alias": "clm-v4-1-8",
+    "repo": "dancinlab/clm-v4-sft-1-8-stage1",
+    "prompts": ["안녕", "오늘 어때?", "이름이 뭐야", "기분은?", "무엇을 생각해"],
+    "outputs": [
+      "── clm_v4_mount probe ──",
+      "── clm_v4_mount probe ──",
+      "── clm_v4_mount probe ──",
+      "── clm_v4_mount probe ──",
+      "── clm_v4_mount probe ──"
+    ],
+    "natural_text_count": 0,
+    "truncation_observed": "33 bytes banner-only at chat dispatch layer",
+    "direct_module_call_full_emit": "28 lines substrate signals (phi_star + 5-axis + dominant_cells + hidden_state_delta) — NO natural-language text",
+    "verdict": "C2_FAIL_BY_DESIGN reaffirm at chat dispatch path"
+  },
+  "multi_chat_duo_attempts": [
+    {
+      "duo": "clm-v4-1-8 clm-v4-1-8",
+      "result": "SAME_GGUF_GUARD trip rc=0 (llama.cpp Abort trap:6 risk on concurrent-mmap)",
+      "natural_text_emitted": false
+    },
+    {
+      "duo": "paradigm-a-prime clm-v4-1-8",
+      "result": "240s timeout 0 bytes",
+      "natural_text_emitted": false
+    },
+    {
+      "duo": "clm-v4-1-8 clm-v4-paradigm-j",
+      "result": "240s timeout 0 bytes",
+      "natural_text_emitted": false
+    }
+  ],
+  "own_18_c2_verdict": {
+    "result": "C2_FAIL_BY_DESIGN reaffirm",
+    "structural_blocker_circumvented": false,
+    "saga_chat_cap_c2_first_emerge": false,
+    "saga_count": "22+ BG iter"
+  },
+  "structural_unblock_paths": {
+    "remaining_valid": ["Path 3 — clm_v4 model.generate() native decode via chat/lanes/generate.hexa (currently SKELETON per chat.hexa header line 89)"],
+    "falsified_at_dispatch_path": ["chat dispatch wrap (clm_v4 backend == substrate emit only)"]
+  },
+  "compliance": {
+    "own_14": "strict",
+    "own_16": "0-cost mac local",
+    "own_17": "ALM 영구 보류 (paradigm-a-prime fallback alias only)",
+    "own_18": "C2_FAIL reaffirm — own 18 C2_PASS lane = chat/llama paradigm-a-prime + bg-km-llama3b/qwen7b (Phase 3c LIVE separate cycle)",
+    "own_22": "honest emit",
+    "own_33": "trinity",
+    "own_34": "wrapping 0 strict",
+    "own_38": "axis-A doc carry",
+    "own_39": "yaml SSOT + render"
+  },
+  "artifacts": {
+    "transcript_txt": "state/anima_sft_1_8_natural_speech_chat_cap_2026_05_09/dispatch_path_verify_2026_05_09.txt",
+    "registry_yaml_field": "models[clm-v4-sft-1-8-stage1].measurement.c2_dispatch_path_*",
+    "registry_md_render": "docs/anima_artifact_registry.md (own 18 C2 자연발화 chat-cap measurement section)"
+  }
+}

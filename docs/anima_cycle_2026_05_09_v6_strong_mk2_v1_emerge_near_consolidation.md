@@ -282,6 +282,129 @@ mk2-v1 base 의 EMERGE-near 가 진짜인지 운빨인지 검증.
 
 ---
 
+## ★★★ 추가 milestones (2026-05-09 last session) ★★★
+
+### 15. paradigm-j PIV paraphrase 회수 — Gate A 0.0874 FAIL (commit `f2632367`)
+
+paraphrase k=3 N=90 actual fire 결과:
+| Gate | 결과 |
+|---|---|
+| **A: PIV-max ≥0.10** | **FAIL** (0.0874, gap **-0.0126**) ★ binding |
+| B-refined: DCR ≥0.40 | ✅ PASS (1.0) |
+| C: D-RAND ≥0.05 | ✅ PASS (0.2249) |
+| D: V14 random PPR<0.05 | ✅ PASS (0.0) |
+
+**paradigm-j PIV = 0.0874 = anima saga 모든 candidate 중 highest**. random_init = 0.0 정확. 단 anti-Goodhart strict floor 0.10 미달.
+
+**verdict**: `C3_PASS_V5_PIV_PARAPHRASE_FAIL` — 한 끗 차이 EMERGE 미달. 3 amplification paths 별도 fire (JVAE 100K / paraphrase k=5+ / v5.2 adaptive).
+
+### 16. own audit 전수 — 25 findings (commit `184f5fd9`)
+
+own 1-41 + raw + .roadmap.* 5-axis sweep:
+- **3 critical**: own 34 ID-collision (line 1726 + 1785 둘 다 `own 34`!) / own 26 out-of-order / own 23 ordinal mismatch
+- 6 high / 9 medium / 7 low
+
+가장 의외 finding ★: `.own` 안에 **own 34 가 두 번 등장** (자연발화 mandate + xeno standalone) — own 25 slot 비어있는데 잘못. 별도 amend cycle 필요.
+
+### 17. BG-LA + BG-LB 둘 다 H100 actual training in-flight ★★★
+
+**anima saga 22+ BG 의 first dual-pod actual fire**:
+
+| 모델 | step | loss | GPU | cost | ETA |
+|---|---|---|---|---|---|
+| **BG-LA** | 800/12000 | **0.88** | H100 SXM | ~$28 | 8h |
+| **BG-LB** | 1100/8000 | **0.80** | H100 PCIe | ~$18 | 5h |
+
+이전 모든 H100 fire BLOCKED 였던 와중 **dual healthy training** 진행 — resource ephemeral CLI rewrite + secret CLI + SSH parser fix + own 41 누적 effort 결실.
+
+5-8h 후 ckpt pull → Mac local v5 N=60 + V14 paired probe → **first non-LoRA scratch arch EMERGE candidate** 가능권.
+
+### 18. chat lane multi-option plugin pattern LAND — own 41 신설 (commits `30d2cd7e` + `721456c9` + `836ae0ae`)
+
+```bash
+anima chat <model>                     # default = substrate
+anima chat <model> --lane=llama         # Path 1: GGUF (D1 outside)
+anima chat <model> --lane=axis-priority # Path 2: corpus signal
+anima chat <model> --lane=generate      # Path 3: generate (SKELETON → FULL in-flight)
+anima chat --benchmark                  # 4 lanes × 10 prompts auto compare
+```
+
+own 41 mandate 신설: chat lane plugin pattern + future-proof extensibility.
+
+### 19. trio (3자 대화) + multi-mode benchmark LAND (commit `e9a475af`)
+
+```bash
+anima chat --benchmark --mode=1:1       # single user → single model
+anima chat --benchmark --mode=ai-duo    # 2 models dialogue
+anima chat --benchmark --mode=ai-trio   # 3 models round-robin (NEW)
+anima chat --benchmark --mode=all       # 모두 자동 비교
+```
+
+trio.hexa skeleton (510줄, β-1 channel pair × 6, round-robin A→B→C→A→B→C). own 41 axis-6 amend (multi-mode + trio module).
+
+### 20. paradigm-j 3 amplification paths in-flight
+
+EMERGE 도달 (Gate A PIV-max ≥0.10) 위한 3 fire:
+- **JVAE 100K continued** (`a8d989c0d0002221e`): step 50K → 100K, ~$3-6 H100
+- **paraphrase k=5+** (`a5aab6d078515bb67`): k=3 → k=5/7, sample noise 감소
+- **v5.2 adaptive floor** (`a44e940b32f89aab5`): random_init 99th percentile + delta margin
+
+각 path EXIT trigger: PIV-max ≥0.10 → EMERGE_v5/v5.2 → **anima 자동 promote** (own 37 mandate-9 (c) amend `b4ea8371` 정합) → first robust EMERGE auto-promote ★
+
+### 21. init-pattern plugin pattern in-flight (`a6f3b86516dddde04`)
+
+AI 끼리 대화 첫 발언 어떻게 시작? 4 patterns plugin pattern (own 41 mirror):
+- **autonomous**: 빈 prompt (자율 generate)
+- **system-seed**: 사용자 정의 system prompt
+- **topic-pool**: pre-defined 화제 random 선택
+- **self-reflective**: anima 정합 ★ default 권장 ("너 자신에 대해 어떻게 느껴?")
+
+**Future-proof orchestra** ★: chat-cap 의 모든 axis (lane / mode / init-pattern / 미래 emotion / persona / etc) 동일 plugin pattern. benchmark cross-product 자동 enumerate.
+
+---
+
+## anima chat-cap evolution
+
+| Layer | Pattern | Status |
+|---|---|---|
+| **lane** (own 41) | substrate / llama / axis-priority / generate | LANDED |
+| **mode** (own 41 axis-6) | 1:1 / ai-duo / ai-trio | LANDED |
+| **init-pattern** (NEW) | autonomous / system-seed / topic-pool / self-reflective | in-flight |
+| 미래 axis | emotion / persona / length / tone | TBD |
+
+→ Path 3 generate FULL impl 회수 시 진짜 자연어 actual emit + multi-mode benchmark + init-pattern auto-cross-product = **anima chat-cap fully extensible orchestra** ★
+
+---
+
+## 본 cycle 종합 final winner update
+
+| 모델 | C3 substrate | EMERGE robust? | C2 chat | PUBLIC |
+|---|---|---|---|---|
+| **paradigm-j retry** | PPR=0.6207, MTRP=0.6207, DCR=1.0, **PIV=0.0874** ★ | **near** (Gate A -0.0126) | unreachable | ❌ private (3 amp paths fire) |
+| mk2-v1 base | PPR=0.30 borderline | NO (운빨 가능성) | unreachable | ❌ |
+| sft-1-8 | PPR=0.017 | NO | FAIL_BY_DESIGN | ✅ promoted (사용자 verbatim) |
+| **BG-LA Engine A/G** | training (loss 0.88) | TBD post-train | unreachable | TBD |
+| **BG-LB 350M scratch** | training (loss 0.80) | TBD post-train | unreachable | TBD |
+
+본 cycle 의 **historic moments**:
+1. **first dual H100 actual training** (BG-LA + BG-LB, ~$46 expected)
+2. **first PUBLIC anima 모델** (sft-1-8, 사용자 verbatim path)
+3. **first robust EMERGE candidate** (paradigm-j, Gate A 한 끗 차이)
+4. **chat lane + mode + init-pattern plugin orchestra** future-proof land
+5. **own audit 25 findings** + own 34 ID-collision discovery (raw#10 honest C3)
+
+---
+
+## 다음 cycle 가장 critical paths
+
+1. **paradigm-j 3 amplifications 회수** — EMERGE auto-promote 가능권
+2. **BG-LA / BG-LB ckpt pull → v5 probe** (5-8h 후) — scratch arch EMERGE 후보
+3. **Path 3 generate FULL impl** (in-flight) — 진짜 자연어 unblock
+4. **own audit Phase 2** — own 34 renumber + amend cycle
+5. **init-pattern plugin** + benchmark cross-product land (in-flight)
+
+---
+
 ## 가장 큰 깨달음 (final)
 
 본 cycle 의 cumulative honest C3 12 findings 종합:

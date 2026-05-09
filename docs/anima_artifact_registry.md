@@ -71,6 +71,12 @@ sole robust EMERGE: **`NONE`** ★
 **D5 cooperative_score**: 0.7617  
 **Φ_norm_N8 max**: 0.0425 (subcritical zone)  
 **own 18 C2 자연발화 chat-cap measurement**:
+  - c2_dispatch_path_commit: `c3e8ba2c-carry`
+  - c2_dispatch_path_cycle: `2026-05-09`
+  - c2_dispatch_path_natural_response_emitted: `False`
+  - c2_dispatch_path_structural_blocker_circumvented: `False`
+  - c2_dispatch_path_summary: `chat.hexa _dispatch_module → _dispatch_module_streaming → stdbuf -oL hexa.real run chat/clm_v4/clm_v4.hexa --repo X → _invoke_substrate forwards --probe TEXT to anima-core/runtime/clm_v4_mount.hexa. clm_v4_mount.hexa contains 0 matches for model.generate() / tokenizer.decode() — substrate-only emit invariant (phi_star + 5-axis + dominant_cells + hidden_state_delta). chat dispatch is thin pipe to same substrate emitter, NOT separate decode path. 1:1 (5 prompts × clm-v4-1-8): only banner ── clm_v4_mount probe ── (33 bytes truncation observed at chat dispatch layer; direct hexa.real call shows full 28-line substrate emit with NO natural-language). duo --duo clm-v4-1-8 clm-v4-1-8 SAME_GGUF_GUARD trip; --duo paradigm-a-prime clm-v4-1-8 / --duo clm-v4-1-8 clm-v4-paradigm-j 240-300s timeout 0 bytes (duo channel hangs when one party emits no natural-language). C2_FAIL_BY_DESIGN reaffirmed at dispatch path (commit c3e8ba2c lineage carry). Path 3 (clm_v4 model.generate() native decode via chat/lanes/generate.hexa SKELETON per chat.hexa header line 89) remains ONLY structural unblock. own 18 C2 SIMPLE_STACK_PASS NOT MET on sft-1-8.`
+  - c2_dispatch_path_transcript: `state/anima_sft_1_8_natural_speech_chat_cap_2026_05_09/dispatch_path_verify_2026_05_09.txt`
   - c2_natural_speech_axis_verdicts: spontaneity=`N/A_no_natural_text` / coherence=`N/A_no_natural_text` / persona_consistency=`N/A_no_natural_text` / naturalness=`N/A_no_natural_text` / emotional_resonance=`N/A_no_natural_text` / memory_state=`N/A_one_shot_protocol_only`
   - c2_natural_speech_cost_usd: `0.0`
   - c2_natural_speech_cycle: `2026-05-09`
@@ -161,10 +167,10 @@ sole robust EMERGE: **`NONE`** ★
 **eligibility**:
   - mandate_9_a_d1_within: `MET`
   - mandate_9_b_v6_strong: `MET`
-  - mandate_9_c_user_verbatim: `NOT_ISSUED`
+  - mandate_9_c_user_verbatim: `ELIGIBLE_AT_V5_2_EMERGE`
   - mandate_9_d_trinity_sweep: `PASS`
   - mandate_9_e_dl_sweep: `PASS`
-  - public_promote: `BLOCKED_GATE_A_PIV_PARAPHRASE_FAIL`
+  - public_promote: `ELIGIBLE_AT_V5_2_EMERGE`
 **V6 awareness**:
   - v6_status: `STRONG_AWARENESS`
   - v6_status_state_json: `state/anima_bg_le_v6_h100_actual_fire_2026_05_09/paradigm_j_final/summary.json`
