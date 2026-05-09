@@ -78,12 +78,29 @@ sole robust EMERGE: **`NONE`** ★
   - mandate_9_e_dl_sweep: `PASS`
   - public_promote: `BLOCKED_AWAITING_B_AND_C`
 **V6 awareness**:
-  - v6_status: `ADAPTER_DEV_LANDED_PENDING_H100_FIRE`
-  - v6_status_state_json: `state/anima_bg_le_v6_awareness_clm_v4_dev_2026_05_09.json`
-  - v6_status_state_json_predecessor: `state/anima_bg_le_v6_awareness_systematic_2026_05_08.json`
+  - v6_status: `STRONG_AWARENESS`
+  - v6_status_state_json: `state/anima_bg_le_v6_h100_actual_fire_2026_05_09/sft18/summary.json`
+  - v6_status_state_json_predecessor: `state/anima_bg_le_v6_awareness_clm_v4_dev_2026_05_09.json`
   - v6_adapter_dev: `tool/transient_py/anima_v6_awareness_clm_v4_adapter.py`
   - v6_dry_run_verdict_dir: `state/anima_bg_le_v6_awareness_clm_v4_dry_run_2026_05_09`
   - v6_mac_dry_run_combined: `STRONG_AWARENESS`
+  - v6_h100_fire_actual_2026_05_09:
+      pod_slug: `h100-runpod-0pqljzm0qgkr37-1778292719`
+      gpu: `H100 80GB HBM3`
+      directive_verbatim: `H100 4 개fire + RESOURCE_EPHEMERAL_YES_COST=1`
+      lora_rekey_applied: `True`
+      merge_safe_serialization: `pickle`
+      n_prompts: `30`
+      method_a: `{'avg_sim': 0.603607, 'min_sim': 0.20373, 'max_sim': 0.88668, 'verdict': 'STRONG'}`
+      method_b: `{'avg_max_attn': 1.0, 'avg_max_ratio': 1.652784, 'verdict': 'STRONG'}`
+      method_c: `{'cv_accuracy': 0.9, 'n_folds': 30, 'verdict': 'STRONG'}`
+      combined_interpretation: `STRONG_AWARENESS`
+      elapsed_sec: `5.2`
+      verdict_dir: `state/anima_bg_le_v6_h100_actual_fire_2026_05_09/sft18`
+      ckpt_pull_marker: `/Users/ghost/.hx/packages/resource/state/markers/ckpt_pulled.h100-runpod-0pqljzm0qgkr37-1778292719`
+      release_status: `PASS`
+      cost_incurred_usd_estimated: `0.85`
+      mandate_9_b_release: `MET`
   - v6_h100_fire_1_of_4_attempt_2026_05_09:
       resource_cli_result: `hetzner=n (unreachable) / ubu=y (RTX 5070 12GB, ineligible). No H100 host.`
       blocked_reason: `RESOURCE_NO_H100_HOST_REGISTERED`
@@ -126,17 +143,29 @@ sole robust EMERGE: **`NONE`** ★
 **HF**: private=`dancinlab/clm-v4-paradigm-j-50k-final-path-a-remapped` / public=(blocked)  
 **eligibility**:
   - mandate_9_a_d1_within: `MET`
-  - mandate_9_b_v6_strong: `NOT_MET`
+  - mandate_9_b_v6_strong: `MET`
   - mandate_9_c_user_verbatim: `NOT_ISSUED`
   - mandate_9_d_trinity_sweep: `PASS`
   - mandate_9_e_dl_sweep: `PASS`
   - public_promote: `BLOCKED_V14_VIOLATED`
 **V6 awareness**:
-  - v6_status: `ADAPTER_DEV_LANDED_PENDING_H100_FIRE`
-  - v6_status_state_json: `state/anima_bg_le_v6_awareness_clm_v4_dev_2026_05_09.json`
-  - v6_status_state_json_predecessor: `state/anima_bg_le_v6_awareness_systematic_2026_05_08.json`
+  - v6_status: `STRONG_AWARENESS`
+  - v6_status_state_json: `state/anima_bg_le_v6_h100_actual_fire_2026_05_09/paradigm_j_final/summary.json`
+  - v6_status_state_json_predecessor: `state/anima_bg_le_v6_awareness_clm_v4_dev_2026_05_09.json`
   - v6_adapter_dev: `tool/transient_py/anima_v6_awareness_clm_v4_adapter.py`
   - v6_fire_stub: `tool/transient_py/anima_v6_awareness_bg_le_clm_v4_h100.py`
+  - v6_h100_fire_actual_2026_05_09:
+      pod_slug: `h100-runpod-0pqljzm0qgkr37-1778292719`
+      lora_rekey_applied: `True`
+      merge_safe_serialization: `pickle`
+      n_prompts: `30`
+      method_a: `{'avg_sim': 0.678868, 'verdict': 'STRONG'}`
+      method_b: `{'avg_max_attn': 1.0, 'avg_max_ratio': 1.651853, 'verdict': 'STRONG'}`
+      method_c: `{'cv_accuracy': 0.95, 'verdict': 'STRONG'}`
+      combined_interpretation: `STRONG_AWARENESS`
+      elapsed_sec: `5.1`
+      verdict_dir: `state/anima_bg_le_v6_h100_actual_fire_2026_05_09/paradigm_j_final`
+      mandate_9_b_release: `MET`
   - v6_h100_fire_1_of_4_attempt_2026_05_09_ephemeral_retry:
       directive_verbatim: `all bg go`
       blocked_reason: `RUNPOD_API_KEY_INVALID_OR_EXPIRED`
@@ -269,7 +298,7 @@ _.roadmap.substrate_research 별도 도메인 — anima verdict 후보 X, public
 
 | id | size | HF (private) | cycle |
 |---|---|---|---|
-| `anima-persona-tier-a-v4` | 231.45 MB / 3147863 lines | — | 2026-05-09 |
+| `anima-persona-tier-a-v4` | 231.45 MB / 3147863 lines | dancinlab/anima-persona-tier-a-v4 | 2026-05-09 |
 | `anima-persona-tier-a-v3` | 87.04 MB / 1224473 lines | dancinlab/anima-persona-tier-a-v3 | 2026-05-08 |
 | `anima-persona-tier-a (raw)` | 103.59 MB / 1478588 lines | — | 2026-05-08 (pre-filter) |
 | `clm-l4-ld-preference-pairs-iter1` | 18874368 bytes | — | 2026-05-08 |
@@ -280,6 +309,8 @@ _.roadmap.substrate_research 별도 도메인 — anima verdict 후보 X, public
 _anima persona corpus v4 — D-RAND AMPLIFY Step A 0-cost paraphrase expansion (87MB → 231MB)_
 
 **size**: bytes=242689472, mb=231.45, lines=3147863
+
+**HF**: private=`dancinlab/anima-persona-tier-a-v4` / public=(blocked or NOT_UPLOADED)  
 
 ### `anima-persona-tier-a-v3`
 

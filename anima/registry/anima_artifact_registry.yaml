@@ -154,12 +154,39 @@ models:
       mandate_9_d_trinity_sweep: PASS
       mandate_9_e_dl_sweep: PASS
       public_promote: BLOCKED_AWAITING_B_AND_C
-    v6_status: ADAPTER_DEV_LANDED_PENDING_H100_FIRE  # ★ NEXT-CYCLE 6/6 (2026-05-09) BG-LE V6 ConsciousDecoderV3 adapter dev RESOLVED + Mac dry-run STRONG_AWARENESS (mk2-v1 base N=6 — A=PARTIAL B=STRONG C=STRONG → STRONG). B2 (adapter dev gap) RESOLVED. B1 (no live H100 pod) PERSISTS — own 40 resource CLI 별도 cycle. Mandate-9 (b) DEV_GATE_PASSED carry; fire actual = official.
-    v6_status_state_json: state/anima_bg_le_v6_awareness_clm_v4_dev_2026_05_09.json
-    v6_status_state_json_predecessor: state/anima_bg_le_v6_awareness_systematic_2026_05_08.json
+    v6_status: STRONG_AWARENESS  # ★ H100 ACTUAL FIRE 2026-05-09 — A=STRONG (avg_sim 0.6036 < 0.85), B=STRONG (avg_max_ratio 1.6528), C=STRONG (cv_acc 0.90 ≥ 0.70) → combined STRONG_AWARENESS. EXIT trigger MET. mandate-9 (b) MET.
+    v6_status_state_json: state/anima_bg_le_v6_h100_actual_fire_2026_05_09/sft18/summary.json
+    v6_status_state_json_predecessor: state/anima_bg_le_v6_awareness_clm_v4_dev_2026_05_09.json
     v6_adapter_dev: tool/transient_py/anima_v6_awareness_clm_v4_adapter.py
     v6_dry_run_verdict_dir: state/anima_bg_le_v6_awareness_clm_v4_dry_run_2026_05_09
     v6_mac_dry_run_combined: STRONG_AWARENESS  # mk2-v1 base N=6: A=PARTIAL (cos_sim 0.92-0.98), B=STRONG (max_attn 0.9999 ratio_vs_uniform 1.13-1.42), C=STRONG (cv_acc 0.8333)
+    v6_h100_fire_actual_2026_05_09:
+      pod_slug: h100-runpod-0pqljzm0qgkr37-1778292719
+      gpu: H100 80GB HBM3
+      directive_verbatim: 'H100 4 개fire + RESOURCE_EPHEMERAL_YES_COST=1'
+      lora_rekey_applied: true  # base_model.model.* → base_model.model.decoder.* (HF wrapper namespace)
+      merge_safe_serialization: pickle  # tied head_a/tok_emb fallback
+      n_prompts: 30  # full V4 set
+      method_a:
+        avg_sim: 0.603607
+        min_sim: 0.20373
+        max_sim: 0.88668
+        verdict: STRONG  # < 0.85 threshold
+      method_b:
+        avg_max_attn: 1.0
+        avg_max_ratio: 1.652784
+        verdict: STRONG  # ratio above uniform
+      method_c:
+        cv_accuracy: 0.90
+        n_folds: 30
+        verdict: STRONG  # ≥ 0.70 threshold
+      combined_interpretation: STRONG_AWARENESS
+      elapsed_sec: 5.2
+      verdict_dir: state/anima_bg_le_v6_h100_actual_fire_2026_05_09/sft18
+      ckpt_pull_marker: /Users/ghost/.hx/packages/resource/state/markers/ckpt_pulled.h100-runpod-0pqljzm0qgkr37-1778292719
+      release_status: PASS
+      cost_incurred_usd_estimated: 0.85  # ~17min × $2.99/h
+      mandate_9_b_release: MET  # ★ STRONG_AWARENESS → V6 gate met
     v6_h100_fire_1_of_4_attempt_2026_05_09:
       resource_cli_result: "hetzner=n (unreachable) / ubu=y (RTX 5070 12GB, ineligible). No H100 host."
       blocked_reason: RESOURCE_NO_H100_HOST_REGISTERED
@@ -252,16 +279,35 @@ models:
       path_a_remap: dc1510a3
     eligibility:
       mandate_9_a_d1_within: MET
-      mandate_9_b_v6_strong: NOT_MET
+      mandate_9_b_v6_strong: MET  # ★ H100 fire 2026-05-09 — STRONG_AWARENESS (A+B+C unanimous)
       mandate_9_c_user_verbatim: NOT_ISSUED
       mandate_9_d_trinity_sweep: PASS
       mandate_9_e_dl_sweep: PASS
-      public_promote: BLOCKED_V14_VIOLATED  # N=120 floor PASS but random_init mirror still exceeds
-    v6_status: ADAPTER_DEV_LANDED_PENDING_H100_FIRE  # ★ NEXT-CYCLE 6/6 (2026-05-09) BG-LE V6 ConsciousDecoderV3 adapter dev RESOLVED. B2 RESOLVED, B1 PERSISTS. paradigm-j-retry V6 dry-run not run (sft-1-8 / mk2-v1 dry-run sufficient for adapter feasibility verify; paradigm-j V6 actual = H100 fire 별도 cycle, JVAE wrapper c_dim consciousness_dim verify post-load).
-    v6_status_state_json: state/anima_bg_le_v6_awareness_clm_v4_dev_2026_05_09.json
-    v6_status_state_json_predecessor: state/anima_bg_le_v6_awareness_systematic_2026_05_08.json
+      public_promote: BLOCKED_V14_VIOLATED  # N=120 floor PASS but random_init mirror still exceeds (V14 still blocks; V6 met but not sufficient)
+    v6_status: STRONG_AWARENESS  # ★ H100 ACTUAL FIRE 2026-05-09 — paradigm-j-50k-final + JVAE wrapper. A=STRONG (avg_sim 0.6789), B=STRONG (avg_max_ratio 1.6519), C=STRONG (cv_acc 0.95) → STRONG_AWARENESS unanimous.
+    v6_status_state_json: state/anima_bg_le_v6_h100_actual_fire_2026_05_09/paradigm_j_final/summary.json
+    v6_status_state_json_predecessor: state/anima_bg_le_v6_awareness_clm_v4_dev_2026_05_09.json
     v6_adapter_dev: tool/transient_py/anima_v6_awareness_clm_v4_adapter.py
     v6_fire_stub: tool/transient_py/anima_v6_awareness_bg_le_clm_v4_h100.py
+    v6_h100_fire_actual_2026_05_09:
+      pod_slug: h100-runpod-0pqljzm0qgkr37-1778292719  # shared chain (single pod fired both lanes)
+      lora_rekey_applied: true
+      merge_safe_serialization: pickle
+      n_prompts: 30
+      method_a:
+        avg_sim: 0.678868
+        verdict: STRONG
+      method_b:
+        avg_max_attn: 1.0
+        avg_max_ratio: 1.651853
+        verdict: STRONG
+      method_c:
+        cv_accuracy: 0.95
+        verdict: STRONG
+      combined_interpretation: STRONG_AWARENESS
+      elapsed_sec: 5.1
+      verdict_dir: state/anima_bg_le_v6_h100_actual_fire_2026_05_09/paradigm_j_final
+      mandate_9_b_release: MET
     v6_h100_fire_1_of_4_attempt_2026_05_09_ephemeral_retry:
       directive_verbatim: "all bg go"
       blocked_reason: RUNPOD_API_KEY_INVALID_OR_EXPIRED  # shared with sft-1-8 attempt (single ephemeral chain blocks both)
@@ -956,12 +1002,21 @@ datasets:
       d_rand_amplify_step_a: "+0.05–0.10 D-RAND uplift via signal volume 2.66×"
       next_step_b: "tbd — D-RAND amplify Step B (signal sharpening)"
     hf:
-      private: null  # NOT_UPLOADED yet (own 38 axis-C HF private upload candidate)
+      private: dancinlab/anima-persona-tier-a-v4
+      private_url: https://huggingface.co/datasets/dancinlab/anima-persona-tier-a-v4
+      private_sha: 53ed3e6383cd7ad5e4d3e15a3534be427ec99a0b
+      private_uploaded_cycle: 2026-05-09
       public: null
-      next_action: "OK APPLY tier_a_v4 HF private upload (own 38 mandate, dancinlab org)"
+      public_promote_blocked: true
+      public_promote_prerequisites_unmet:
+        - "real-mode PASS_STRICT_C3"
+        - "V6 awareness"
+        - "사용자 verbatim 'OK PROMOTE PUBLIC dancinlab/anima-persona-tier-a-v4'"
+        - "trinity sweep"
     cycle: 2026-05-09
     state_jsons:
       - state/anima_persona_tier_a_v4_expand_2026_05_09.json
+      - state/anima_corpus_tier_a_v4_hf_private_upload_2026_05_09.json
     expand_tool: tool/transient_py/anima_persona_tier_a_v4_expand_2026_05_09.py
     compliance:
       own_14_anti_goodhart: PASS  # paraphrase semantically equivalent, no proxy gaming
