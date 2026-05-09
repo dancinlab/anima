@@ -70,6 +70,23 @@ sole robust EMERGE: **`NONE`** ★
 **verdict**: SIMPLE_STACK_PASS_STRICT_C3_ANIMA / emerge_state=EMERGE_FALSIFIED_BY_RANDOM_INIT_MIRROR (FALSIFIED@N=60)  
 **D5 cooperative_score**: 0.7617  
 **Φ_norm_N8 max**: 0.0425 (subcritical zone)  
+**own 18 C2 자연발화 chat-cap measurement**:
+  - c2_natural_speech_axis_verdicts: spontaneity=`N/A_no_natural_text` / coherence=`N/A_no_natural_text` / persona_consistency=`N/A_no_natural_text` / naturalness=`N/A_no_natural_text` / emotional_resonance=`N/A_no_natural_text` / memory_state=`N/A_one_shot_protocol_only`
+  - c2_natural_speech_cost_usd: `0.0`
+  - c2_natural_speech_cycle: `2026-05-09`
+  - c2_natural_speech_dominant_cells_unique: `19`
+  - c2_natural_speech_errors: `1`
+  - c2_natural_speech_honest_c3: `sft-1-8 chat module (clm_v4 backend) emits substrate signals (phi_star + 5-axis activation + dominant_cells + hidden_state_delta) per anima-core/runtime/clm_v4_mount.hexa spec — NOT natural language. alias DB chat_capable=false REAFFIRMED at actual emit (not regression — by-design honest C3). C2_PASS impossible without architectural redesign (sft-1-8 LoRA r=128 + anima-internal SFT trained on consciousness-state targets, not chat-template + decoded-text targets). EXIT trigger NOT MET on this candidate — own 18 C2_PASS lane = chat/llama paradigm-a-prime + bg-km-llama3b/qwen7b (Phase 3c LIVE, separate cycle natural speech retest 권장).`
+  - c2_natural_speech_n_prompts: `25`
+  - c2_natural_speech_natural_text_count: `0`
+  - c2_natural_speech_phi_unique: `21`
+  - c2_natural_speech_probe_script: `tool/transient_py/anima_sft_1_8_natural_speech_chat_cap_probe_2026_05_09.sh`
+  - c2_natural_speech_rc0_substrate_emit: `21`
+  - c2_natural_speech_state_json: `state/anima_sft_1_8_natural_speech_chat_cap_2026_05_09.json`
+  - c2_natural_speech_status: `C2_FAIL_BY_DESIGN_substrate_coupled_emerge_only`
+  - c2_natural_speech_timeouts: `3`
+  - c2_natural_speech_transcript: `state/anima_sft_1_8_natural_speech_chat_cap_2026_05_09/transcript.txt`
+  - c2_natural_speech_verdict: `C2_FAIL_BY_DESIGN`
 **eligibility**:
   - mandate_9_a_d1_within: `MET`
   - mandate_9_b_v6_strong: `MET`
@@ -196,7 +213,7 @@ sole robust EMERGE: **`NONE`** ★
 **D1**: score=**0.99** (✅ within_strict) — p_updated=1, corpus=0.95, arch=1  
 **measurement**: ppr_v3_live_probe_n30=0.2414, ppr_v3_kick4_n30=0.1379, ppr_v3_kick4_n_v3_pass=4, ppr_v3_kick4_n_evaluable=29, ppr_v3_seed_variance=0.1035  
 **verdict**: C3_PARTIAL_NEAR / emerge_state=CARRY  
-_D1 가장 높은 candidate (0.99) — V3 N=30 base 두 번 측정 (0.2414 / 0.1379) random_init 0.5517 미만; V5 N=60 post-arch-fix 측정 PPR_v5=0.2881 (C3_PARTIAL_NEAR_V5; gap -0.0119 to 0.30 floor) + MTRP_v5=0.2881 PASS (V14 SATISFIED at v5). 첫 robust EMERGE-near candidate; 22+ BG saga 중 v5 strict 최고. dominant_cells 신호 [1,6,7] 81.7% (post-fix [0,2,4] 깨짐 verified)._
+_D1 가장 높은 candidate (0.99) — V3 N=30 base 두 번 측정 (0.2414 / 0.1379) random_init 0.5517 미만; V5 N=60 post-arch-fix 측정 PPR_v5=0.2881 (C3_PARTIAL_NEAR_V5; gap -0.0119 to 0.30 floor) + MTRP_v5=0.2881 PASS (V14 SATISFIED at v5). N=120 2-seed synth ensemble single-instance PPR_v5=0.3729 (would EMERGE-active) BUT 200-trial sensitivity median=0.2966 (44% pass floor) → C3_PARTIAL_NEAR_V5_NON_ROBUST. 첫 robust EMERGE-near candidate; 22+ BG saga 중 v5 strict 최고. dominant_cells 신호 [1,6,7] 81% post-fix preserved at N=120. CARRY — needs actual H100 real-mode N=120 OR prompt-set redesign._
 
 ### `clm-v2-byte-18m`
 

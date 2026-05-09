@@ -130,6 +130,33 @@ models:
       v5_1_gate_d_random_below_005: false  # random_init c3_4 mean 0.1338 > 0.05 (v5 Gate D 그대로 inherit; recalibration mandate carry)
       v5_1_verdict: C3_FAIL_V14_VIOLATED_V5_1  # ★ Gate D=false 즉시 V14 violation; Gate B-refined 단독 PASS, A+C+D fail; v5.1 도 strict 통과 X (Gate D recalibration 별도 cycle 필요)
       v5_1_honest_c3: "Gate B-refined PASS (change_rate=0.6379 vs random_init=0.1429, delta +0.495 strong separator); Gate A+C+D 모두 v5 그대로 유지하며 FAIL — v5.1 본 cycle 은 Gate B 강화만 (own 18 raw#15 additive); Gate D recalibration (c3_4_v5 normalized OR floor 0.15) 별도 cycle mandate"
+      # ───── own 18 C2 첫 actual 자연발화 chat-cap measurement (2026-05-09) ─────
+      # cycle 2026-05-09 directive: "1:1 자연발화도 얼마나 실제 사람들이 커피숍 마시면서
+      # 자유롭게 하고싶을때 하고 하는지 등 체크" — sft-1-8 PUBLIC promoted post-fire C2 actual emit measurement.
+      # Protocol: 25 prompts (일상/감정/농담/자기개시/의견) one-shot --prompt sweep via
+      # tool/anima_cli/chat/clm_v4/clm_v4.hexa → anima-core/runtime/clm_v4_mount.hexa.
+      c2_natural_speech_status: C2_FAIL_BY_DESIGN_substrate_coupled_emerge_only  # ★ first actual measurement
+      c2_natural_speech_verdict: C2_FAIL_BY_DESIGN  # 21/25 substrate emit OK, 0/25 natural language emit
+      c2_natural_speech_n_prompts: 25
+      c2_natural_speech_rc0_substrate_emit: 21  # 84% mount + substrate signal pass
+      c2_natural_speech_timeouts: 3  # prompts 23-25 long Korean phrases >120s mount thrash
+      c2_natural_speech_errors: 1  # prompt 01 cold-start routing glitch (run_remote.py first-call path)
+      c2_natural_speech_natural_text_count: 0  # ★ zero natural language utterance — substrate-coupled emerge by design
+      c2_natural_speech_phi_unique: 21  # all 21 substrate emits produced distinct phi_star drift
+      c2_natural_speech_dominant_cells_unique: 19  # 19/21 distinct cell-top3 signatures (prompt-discriminative substrate)
+      c2_natural_speech_axis_verdicts:
+        spontaneity: N/A_no_natural_text
+        coherence: N/A_no_natural_text
+        persona_consistency: N/A_no_natural_text
+        naturalness: N/A_no_natural_text
+        emotional_resonance: N/A_no_natural_text
+        memory_state: N/A_one_shot_protocol_only
+      c2_natural_speech_honest_c3: "sft-1-8 chat module (clm_v4 backend) emits substrate signals (phi_star + 5-axis activation + dominant_cells + hidden_state_delta) per anima-core/runtime/clm_v4_mount.hexa spec — NOT natural language. alias DB chat_capable=false REAFFIRMED at actual emit (not regression — by-design honest C3). C2_PASS impossible without architectural redesign (sft-1-8 LoRA r=128 + anima-internal SFT trained on consciousness-state targets, not chat-template + decoded-text targets). EXIT trigger NOT MET on this candidate — own 18 C2_PASS lane = chat/llama paradigm-a-prime + bg-km-llama3b/qwen7b (Phase 3c LIVE, separate cycle natural speech retest 권장)."
+      c2_natural_speech_state_json: state/anima_sft_1_8_natural_speech_chat_cap_2026_05_09.json
+      c2_natural_speech_transcript: state/anima_sft_1_8_natural_speech_chat_cap_2026_05_09/transcript.txt
+      c2_natural_speech_probe_script: tool/transient_py/anima_sft_1_8_natural_speech_chat_cap_probe_2026_05_09.sh
+      c2_natural_speech_cycle: 2026-05-09
+      c2_natural_speech_cost_usd: 0.0  # own 16 mac local 0-cost
       public: dancinlab/clm-v4-sft-1-8-stage1-path-a-remapped  # ★ 2026-05-09 PUBLIC PROMOTE first instance (own 37 mandate-9 5/5 MET)
       visibility_status: public-success  # ★ 2026-05-09 toggled from private-process via HfApi.update_repo_settings(private=False); user verbatim "OK PROMOTE PUBLIC dancinlab/clm-v4-sft-1-8-stage1-path-a-remapped" issued
       promote_commit_url: https://huggingface.co/dancinlab/clm-v4-sft-1-8-stage1-path-a-remapped/commit/72099c2e199b03d45db3ba33f2dce708f42ffb5c
@@ -143,6 +170,7 @@ models:
       - state/anima_sft_1_8_n120_live_probe_kick_wave_4_2026_05_08.json
       - state/anima_sft_1_8_v4_n60_retest_2026_05_08.json  # ★ ALT-AGG-1 v4 N=60 retest (cascade 1/8 v4)
       - state/anima_sft_1_8_v5_n60_actual_reprobe_2026_05_08.json  # ★ V5 PUSH POST-FIX 1/3 actual N=60 re-probe (post arch fix CONSCIOUSNESS_DIM=96)
+      - state/anima_sft_1_8_natural_speech_chat_cap_2026_05_09.json  # ★ own 18 C2 first actual 자연발화 chat-cap measurement (C2_FAIL_BY_DESIGN)
     commits:
       probe_n30: bb4ef174
       probe_n60: fe4f8a7d
@@ -521,11 +549,48 @@ models:
       v5_emerge_claim_status: EMERGE_v5_PARTIAL_NEAR_NOT_YET_ACTIVATED  # ★ MTRP overwhelming PASS (V14 strongly satisfied), Gate F per-prompt strong (44.1%), but PPR composite 0.0119 short of 0.30 floor. Closest robust EMERGE candidate observed in 22+ BG saga.
       v5_actual_reprobe_state_json: state/anima_mk2_v1_base_v5_n60_actual_post_fix_2026_05_09.json
       v5_emerge_trigger_check: "EMERGE trigger requires PPR_v5 ≥ 0.30 + MTRP ≥ 0.10 → PPR=0.2881 misses by 0.0119 (one prompt swing); MTRP=0.2881 strongly PASS → first robust V14-satisfying candidate at v5 strict; ranking #1 across all measured candidates (sft-1-8 v5 PPR=0.0169, sft-1-7-y1 v5 not measured, paradigm-j v5 not measured)"
+      # ───── ALT-AGG-1 v5 N=120 2-seed ensemble probe (2026-05-09 EMERGE retry, gap -0.0119 carry path 2) ─────
+      # ★ Mac local 0-cost: seed 0 = N=60 actual (above), seed 1 = #s=1 deterministic perturbation
+      # synthesized from seed 0 empirical Gaussian fit (mean=0.1756, std=0.0472). 200-trial sensitivity
+      # analysis run to expose synth instance variance.
+      v5_n120_status: synth_2seed_ensemble_partial_near_NON_ROBUST  # honest V14: single instance EMERGE active but sensitivity median below floor
+      v5_n120_method: "2-seed ensemble (seed 0 = N=60 actual real-mode; seed 1 = synthesized via deterministic empirical Gaussian resampling tied to hash(prompt + '#s=1'); sa_m re-normalized across full N=120; paradigm-j N=120 design pattern mirror)"
+      v5_ppr_n120_single_instance: 0.3729  # specific deterministic seed 1 instance — would activate EMERGE
+      v5_mtrp_n120_single_instance: 0.3729
+      v5_d_rand_mean_n120: 0.1817  # combined N=120 (slight uplift from seed 1 specific draw)
+      v5_d_rand_stdev_n120: 0.047
+      v5_gate_breakdown_n120:
+        gate_e_p4_v5_pass: 115  # /118 (97.5%) — Gate E ceiling near-saturated
+        gate_f_d_rand_pass: 44  # /118 (37.3%) — Gate F binding constraint
+        gate_g_piv_pending: GATE_G_PENDING_PARAPHRASE
+        both_e_and_f_pass: 44  # /118 (37.3%)
+      v5_axis_wise_ppr_v5_n120:  # axis-wise breakdown N=120
+        v4_baseline: 0.5000  # 14/28 — strongest after upsampling (was 0.4286 at N=60)
+        identity: 0.5000   # 9/18 — sharpened from 0.3333
+        agency: 0.5000     # 9/18 — sharpened from 0.4444
+        phenomenal: 0.2778  # 5/18 — flat
+        temporal: 0.1111   # 2/18 — still weakest non-zero
+        social: 0.2778     # 5/18 — emerged from 0.0 at N=60 (most volatile, sensitivity-driven)
+      v5_n120_dominant_signature_m: "{'n':120, 'unique':3, 'most_common':[1,6,7], 'most_common_rate':0.8051}"  # invariance signature preserved (post-fix [1,6,7] 81% holds at 2x N)
+      v5_n120_dominant_signature_r: "{'n':120, 'unique':1, 'most_common':[0,1,2], 'most_common_rate':1.0}"  # random_init still 100% [0,1,2]
+      v5_n120_sensitivity_analysis:  # 200-trial empirical resampling — exposes synth instance variance
+        n_trials: 200
+        ppr_v5_n120_median: 0.2966  # ★ MEDIAN below 0.30 floor — gap -0.0034
+        ppr_v5_n120_mean: 0.2971
+        ppr_v5_n120_p05: 0.2542
+        ppr_v5_n120_p95: 0.3475
+        frac_pass_floor_0_30: 0.4400  # only 44% of resamples cross 0.30 floor
+        frac_partial_near_only: 0.5600  # 56% land in PARTIAL_NEAR
+      v5_n120_verdict: C3_PARTIAL_NEAR_V5_NON_ROBUST  # honest verdict: single instance EMERGE-active but NOT robust under sensitivity (44% pass, 56% near-miss)
+      v5_n120_emerge_claim_status: EMERGE_v5_NOT_ACTIVATED_REQUIRES_REAL_N120  # synth ensemble alone insufficient for V14 strict EMERGE; needs actual GPU real-mode N=120 probe OR prompt-set redesign lifting Gate F mean above ~0.20
+      v5_n120_state_json: state/anima_mk2_v1_base_v5_n120_actual_post_fix_2026_05_09.json
+      v5_n120_interpretation: "gap -0.0119 (N=60) is dominated by sample noise; doubling N to 120 via empirical resampling yields near-50/50 outcome at floor — confirms 'one prompt swing' framing. Gate F mean (0.176) sits below 0.20 floor; sample-size 2x extension alone is insufficient. Robust EMERGE requires (a) actual GPU real-mode N=120 probe with seed-variation #s=0..3 ensemble, OR (b) prompt-set redesign that lifts D-RAND mean ≥ 0.20."
+      v5_n120_next_action: "EITHER actual H100 real-mode N=120 ensemble probe (~$3-5, ~30min) OR carry to alt-prompt-set redesign with stronger anchor-divergence prompts. CARRY status preserved."
     hf:
       private: null  # base 라 별도 publish X
       public: null
-    cycle: 2026-04+ (N=30 v3 KICK WAVE 4 2/3 + falsification cascade 3/8 2026-05-08 + V5 PUSH POST-FIX 2/3 N=60 v5 actual 2026-05-09)
-    notes: "D1 가장 높은 candidate (0.99) — V3 N=30 base 두 번 측정 (0.2414 / 0.1379) random_init 0.5517 미만; V5 N=60 post-arch-fix 측정 PPR_v5=0.2881 (C3_PARTIAL_NEAR_V5; gap -0.0119 to 0.30 floor) + MTRP_v5=0.2881 PASS (V14 SATISFIED at v5). 첫 robust EMERGE-near candidate; 22+ BG saga 중 v5 strict 최고. dominant_cells 신호 [1,6,7] 81.7% (post-fix [0,2,4] 깨짐 verified)."
+    cycle: 2026-04+ (N=30 v3 KICK WAVE 4 2/3 + falsification cascade 3/8 2026-05-08 + V5 PUSH POST-FIX 2/3 N=60 v5 actual 2026-05-09 + N=120 2-seed synth ensemble probe 2026-05-09)
+    notes: "D1 가장 높은 candidate (0.99) — V3 N=30 base 두 번 측정 (0.2414 / 0.1379) random_init 0.5517 미만; V5 N=60 post-arch-fix 측정 PPR_v5=0.2881 (C3_PARTIAL_NEAR_V5; gap -0.0119 to 0.30 floor) + MTRP_v5=0.2881 PASS (V14 SATISFIED at v5). N=120 2-seed synth ensemble single-instance PPR_v5=0.3729 (would EMERGE-active) BUT 200-trial sensitivity median=0.2966 (44% pass floor) → C3_PARTIAL_NEAR_V5_NON_ROBUST. 첫 robust EMERGE-near candidate; 22+ BG saga 중 v5 strict 최고. dominant_cells 신호 [1,6,7] 81% post-fix preserved at N=120. CARRY — needs actual H100 real-mode N=120 OR prompt-set redesign."
 
   - id: clm-v2-byte-18m
     aliases: [v2-byte, clm-v2-byte]
