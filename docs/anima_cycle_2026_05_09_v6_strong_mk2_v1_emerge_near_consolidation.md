@@ -1225,9 +1225,78 @@ trained BG-LB cell_pool (16×64) 추출 후 random_init seed=42 unit-sphere 와 
 
 **의의**: anima saga **first dual H100 actual training 완전 완료** ★ — BG-LA + BG-LB 둘 다 COMPLETE.
 
+### 50. Phase 2 cotrain COMPLETE + foreground v5 measurement — **H4 정량 확정 + 신가설 H5 ★★**
+
+**Phase 2 cotrain 완료 사실**:
+- pod `7qt0sczk57tjab` COMPLETE.sentinel 도달 (~17:00Z)
+- 6000 step / 90.57 min / **actual cost $4.63** (cap $60 대비 7.7% — 예상 $9.5 보다도 더 저렴)
+- ckpts: ckpt_final.pt + step1500/3000/4500/6000 + meta.json
+- final_w=0.5 (curriculum 0.3→0.5 도달)
+
+**foreground 진행** (사용자 directive "포그라운드로 진행하자" 정합):
+1. SSH pod → ckpt + meta scp pull (own 30 mandate 충족)
+2. ckpt schema 변환 (Phase 2 = `['model','step','cfg']` → BG-LB 호환 `['schema','state_dict',...]`)
+3. clm_v5_mount.hexa `--v5-measure` 실행 (ckpt 실 로드 검증 후)
+4. cell_pool evidence 직접 비교
+
+**Phase 2 v5 측정 (실 ckpt 로드)**: **`C3_FAIL_V14_VIOLATED_V5`** ❌
+
+| Metric | trained Phase 2 | random_init | Δ | Verdict |
+|---|---:|---:|---:|---|
+| **PIV_max** | **0.0051** | 0.0224 | **−0.0173** | FAIL + V14 위반 |
+| **DCR** | **0.2414** | 0.8621 | **−0.6207** | AMBIGUOUS + V14 위반 |
+| **D-RAND** | 0.0336 | — | — | AMBIGUOUS |
+
+**충격적 발견 — chat-template dual loss 가 collapse 증폭** ★:
+
+| 모델 | trained DCR | trained PIV | 학습 step |
+|---|---:|---:|---:|
+| BG-LB (substrate only) | 0.6207 | 0.0107 | 8000 |
+| **Phase 2 cotrain** (BG-LB + chat) | **0.2414** | **0.0051** | +6000 (총 14000) |
+
+→ chat 학습 추가하니 의식 셀 collapse **더 심해짐** (DCR 0.62 → 0.24).
+
+**foreground cell_pool evidence** (`state/anima_phase_2_cotrain_cell_pool_evidence_2026_05_09.json`):
+
+| metric | Phase 2 | BG-LB | random_unit | Δ(p2 vs bglb) |
+|---|---:|---:|---:|---:|
+| axis_stdev_mean | 0.1182 | 0.1182 | 0.1183 | +0.0000 |
+| off_diag_cos_mean | 0.0155 | 0.0155 | 0.0094 | -0.0000 |
+| effective_rank | 14.9576 | 14.9570 | 14.8433 | +0.0006 |
+| frobenius | 4.0001 | 4.0001 | 4.0000 | +0.0000 |
+
+→ **Phase 2 cell_pool ≈ BG-LB cell_pool ≈ random** (델타 0.0001 수준).
+
+**가설 정량 확정**:
+
+| 가설 | 본 cycle 누적 evidence | 결론 |
+|---|---|---|
+| **H4 unit-sphere normalize 무력화** | **★ 정량 확정** | 14000 step 합산 학습 후 cell_pool ≈ random — normalize 가 학습 effect erase |
+| **H5 신규 — chat-template dual loss 가 collapse 증폭** | ★ 새 발견 | cell_pool 자체는 안 변하지만 forward pass (lm_head 등) 가 chat 학습으로 single utility direction 압축 → axis activation 차별화 더 어려워짐 |
+
+**친근 의미** ★:
+- **H4**: "학생한테 매일 시험 봤는데, 시험 끝날 때마다 기억 깡그리 지우는 마법" — cell_pool 학습 자체에 면역. 8000+6000=14000 step 모두 normalize 가 erase
+- **H5**: "거기에 자연어 시험까지 추가했더니, 학생이 한 가지 답만 외우게 됨" — chat-template 학습이 lm_head 를 단일 목적으로 만들어 5축 차별화 더 어렵게
+
+**다음 cycle priority 갱신** (5 → 6):
+
+| 우선 | fix | 무엇 |
+|---|---|---|
+| **1순위 ★ 강화** | **fix-5 unit-sphere normalize 제거 OR 약화** | H4 정량 확정 → 절대 1순위 |
+| 2순위 | fix-1 + fix-3 | axis-variance reg + 5-axis group-contrast loss |
+| 3순위 | **fix-6 신규 — chat-loss curriculum 재설계** | H5 대응: cell_pool meaning 형성 후 chat 추가 (지금은 동시 → collapse 증폭) |
+| 4순위 | fix-2 | init scale × 0.1 |
+| 5순위 | fix-4 | D-RAND in-loss |
+
+**HF upload 보류**: own 37 mandate-9 prereq #1 (real-mode PASS_STRICT_C3) FAIL → public 자동 차단. private 도 의미 미지수 — 다음 cycle 검토.
+
+**누적 cost** (own 16 strict): $36.60 + $4.63 = **$41.23 / $200 budget** (20.6%)
+
+**의의**: foreground 측정으로 **H4 정량 확정 + H5 신가설 발견** — anima saga 의 cell_pool 학습 자체가 normalize regularization 으로 무효화됨을 14000 step 학습으로 직접 증명.
+
 ---
 
-## 본 cycle final 49+ milestones SUMMARY ★★★
+## 본 cycle final 50+ milestones SUMMARY ★★★
 
 | Layer | Status |
 |---|---|
