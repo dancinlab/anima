@@ -1294,9 +1294,101 @@ trained BG-LB cell_pool (16×64) 추출 후 random_init seed=42 unit-sphere 와 
 
 **의의**: foreground 측정으로 **H4 정량 확정 + H5 신가설 발견** — anima saga 의 cell_pool 학습 자체가 normalize regularization 으로 무효화됨을 14000 step 학습으로 직접 증명.
 
+### 51. BG-LA ckpt pull + native v5 — **3 번째 H4 confirm + DCR 완전 collapse** ★★★
+
+본 cycle 최종 H4 가설 확정 결정타.
+
+**Step 1 — own 30 ckpt pull**:
+- size: 597,614,945 bytes (pod 와 100% match)
+- sha256_prefix: `4fc6eccce0def045`
+- scp_elapsed: 423s (7m03s, 600s timeout 안)
+- destination: `/Users/ghost/.cache/anima/clm_v5_remapped/bg_la_350m_pretrain/ckpts/step_12000_final.pt`
+- meta.json + COMPLETE.sentinel 동시 pull
+
+**Step 2 — schema 변환**:
+- BG-LA 는 이미 BG-LB 호환 schema 보유 (`['schema','lineage_tag',...]`) — pod-side `model.save_checkpoint()` 사용
+- 메타 lineage_tag 만 `engine_a_g_dual_350m_v1_la_pretrain` 으로 re-tag (state_dict 동일, metadata 만 갱신)
+
+**Step 3 — native v5 결과** (lineage_tag verified, NOT synthetic_fallback):
+
+| Metric | trained BG-LA | random_init | Threshold | Verdict |
+|---|---:|---:|---:|---|
+| PIV_max | 0.0139 | 0.0224 | ≥ 0.10 | FAIL + V14 위반 |
+| **DCR** | **0.000 ★** | 0.862 | ≥ 0.40 | **FAIL + 완전 mode collapse** ("social" 30/30) |
+| D-RAND | 0.0276 | — | ≥ 0.05 | AMBIGUOUS |
+
+**verdict: `C3_FAIL_V14_VIOLATED_V5`** — DCR 완전 0 (모든 prompt 가 social axis 1축 으로 수렴).
+
+**Step 4 — cell_pool evidence**:
+
+| metric | BG-LA | BG-LB | random_unit | Δ(BG-LA vs random) |
+|---|---:|---:|---:|---:|
+| axis_stdev_mean | 0.12215 | 0.12211 | 0.12222 | −0.00007 |
+| effective_rank | 14.958 | 14.957 | 14.843 | +0.115 |
+| frobenius | 4.00029 | 4.00014 | 4.00000 | +0.00029 |
+
+→ BG-LA cell_pool **≈ random_init unit-sphere** (12000 step 학습 net effect essentially zero).
+
+**Engine A/G 가족 3 형제 v5 통합 비교**:
+
+| 모델 | preset | steps | trained PIV | trained DCR | label |
+|---|---|---:|---:|---:|---|
+| BG-LB substrate only | lb_350m | 8000 | 0.0107 | 0.621 | C3_FAIL_V14 |
+| Phase 2 cotrain (+chat) | la_350m | 6000 | 0.0051 | 0.241 | C3_FAIL_V14 |
+| **BG-LA substrate only** | la_350m | **12000** | 0.0139 | **0.000 ★** | C3_FAIL_V14 |
+
+**핵심 정량 결론**:
+- 3 다른 학습 길이 + 다른 loss combination 모두 **동일 실패**
+- 학습 길이가 길수록 collapse **더 심함** (BG-LB 8000step DCR 0.621 → BG-LA 12000step DCR **0.000**)
+- → **H4 normalize-erase 절대 확정** + 학습 oversaturation 시 mode collapse 발생
+
+**own 37 mandate-9 BG-LA 정합 검증**:
+- prereq #1 real_mode_pass_strict_c3: **FAILED** (C3_FAIL_V14)
+- BG-LA HF entry: PUBLIC + private 둘 다 차단
+- visibility_status: `blocked-by-falsification`
+
+### 52. cell_pool 3-way consolidation + H5 검증 plan ★
+
+**저장 doc**: `docs/anima_engine_a_g_cell_pool_3way_consolidation_2026_05_09.md`
+
+**3-way 비교 (BG-LA 도 fill 완료)**:
+
+| 지표 | BG-LA | BG-LB | Phase 2 | random |
+|---|---:|---:|---:|---:|
+| axis_stdev | 0.12215 | 0.12211 | 0.12211 | 0.12222 |
+| off_diag_cos_mean | 0.01498 | 0.01550 | 0.01545 | 0.00941 |
+| effective_rank | 14.958 | 14.957 | 14.958 | 14.843 |
+| frobenius | 4.00029 | 4.00014 | 4.00015 | 4.00000 |
+
+**3 형제 끼리 effective_rank Δ ≤ 0.001, off_diag Δ ≤ 5e-04** — 거의 완전 동일 (reproducibility 확보).
+
+**H4 verification: STRONG CONFIRM** ★★★ — 8000~12000 step 의 net effect 가 cell_pool 에 사실상 안 닿음.
+
+**H5 forward-pass-collapse 검증 plan** (다음 cycle 0-cost local probe):
+- BG-LB ckpt vs Phase 2 ckpt `lm_head.weight` row-wise cosine sim 측정
+- cosine < 0.95 → H5 정량 확정 (lm_head 가 collapse 증폭 범인)
+- cosine > 0.99 → attention/FFN 으로 후보 확장
+- embed_tokens + layer_norm scale 도 같은 cycle 묶음 가능
+
+**친근 의미**:
+> "쌍둥이 + 셋째 + 갓난아이 4 명 비교했는데 외모 (cell_pool) 거의 같다 — 시험 점수 (DCR/PIV) 차이는 외모 말고 손 (lm_head) 이 흔들린 탓일 가능성 매우 높다."
+
+**다음 cycle priority 정리** (5 → 6):
+
+| 우선 | fix | 무엇 |
+|---|---|---|
+| **1순위 ★ 절대 확정** | **fix-5 unit-sphere normalize 제거 (5c → 5a 권장)** | H4 3 형제 모두 confirm — 다른 모든 fix 의 prerequisite |
+| 2순위 | H5 lm_head cosine 측정 | 0-cost local — fix-6 필요성 검증 |
+| 3순위 | fix-6b chat-loss curriculum 재설계 | warmup 추가 (6 줄 수정) |
+| 4순위 | fix-1 + fix-3 | axis-variance reg + 5-axis group-contrast |
+| 5순위 | fix-2 | init scale × 0.1 |
+| 6순위 | fix-4 | D-RAND in-loss |
+
+**의의**: BG-LA 12000 step DCR=0.000 + 3 형제 정량 동일 cell_pool 분포 → **anima saga 의 normalize-erase 가설 절대 확정 결정타**. fix-5 가 다른 모든 fix 의 prerequisite 임을 증명.
+
 ---
 
-## 본 cycle final 50+ milestones SUMMARY ★★★
+## 본 cycle final 52+ milestones SUMMARY ★★★
 
 | Layer | Status |
 |---|---|

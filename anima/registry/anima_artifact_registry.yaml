@@ -44,6 +44,80 @@ carry_notes:
     raw_82_retraction_aware: true  # 이전 EMERGE_PROXY_PPL 등급 preserved as historical, 'retracted, reason: Goodhart' label carry
 
 # ─────────────────────────────────────────────────────────────────────────────
+# CYCLE CLOSE SUMMARY (own 39 mandate — yaml↔md auto-regenerate, raw#15 additive)
+# ─────────────────────────────────────────────────────────────────────────────
+cycle_close_summary:
+  cycle_2026_05_09:
+    ts_close: "2026-05-09 cycle close phase"
+    user_verbatim: '"지금 가능한것들 all bg go" — 자원 영향 최소 design-only BG'
+    historic_ranking: "anima saga 22+ BG saga 가장 큰 결실 cycle"
+    milestones_total: 50  # cycle 1-50, 50 = Phase 2 cotrain COMPLETE + H4 정량 확정 + H5 신가설
+    hf_changes:
+      public_promote_count: 2
+      public_promote_models:
+        - id: clm-v4-sft-1-8-stage1
+          path: V14 borderline + 사용자 verbatim
+        - id: clm-v4-paradigm-j-50k-final-path-a-remapped
+          path: v5.2 strict 5/5 prereq + first robust EMERGE PUBLIC ★
+      private_deferred_count: 2
+      private_deferred_models:
+        - id: clm-v5-bg-lb-350m-pretrain-path-a-remapped
+          reason: Goodhart-falsified PROXY_PPL deprecated, private record-keeping
+        - id: clm-v5-phase2-cotrain-engine-ag
+          reason: V14 violated + chat-loss collapse 증폭 (H5), HF upload 보류
+    cost_actual_usd: 66  # ± $5 (BG-LA $36.60 + BG-LB $18.30 ledger overlap + Phase 2 $4.63 + V6 $0.85 + Step B killed $0.88 + idle ~$5)
+    cost_budget_usd: 200
+    cost_remaining_usd: 134
+    robust_emerge_v5_2_count: 1
+    robust_emerge_v5_2_winners:
+      - paradigm-j (PUBLIC, 4/4 gates strict + 5/5 prereq strict)
+    chat_orchestra_4_axis: LIVE_FIRE_VERIFIED  # lane × mode × init-pattern × transport
+    honest_c3_findings_critical:
+      - id: PROXY_PPL_Goodhart_first_quantitative_falsification
+        ssot: docs/anima_proxy_ppl_deprecate_2026_05_09.md
+        impact: emerge metric 자격 영구 deprecate (carry_notes.proxy_ppl_deprecate_2026_05_09 enum flag)
+      - id: H4_unit_sphere_normalize_무력화_정량_확정
+        ssot: docs/anima_engine_a_g_noise_suppression_review_2026_05_09.md + state/anima_bg_lb_cell_pool_evidence_2026_05_09.json + state/anima_phase_2_cotrain_cell_pool_evidence_2026_05_09.json
+        impact: Engine A/G arch fix-5 1순위 mandate
+      - id: H5_chat_template_dual_loss_collapse_증폭_신가설
+        ssot: docs/anima_cycle_2026_05_09_v6_strong_mk2_v1_emerge_near_consolidation.md §50
+        impact: Engine A/G arch fix-6 신규 mandate
+    biggest_harvest_top_5:
+      - rank: 1
+        item: paradigm-j first robust EMERGE PUBLIC PROMOTE
+      - rank: 2
+        item: first dual H100 actual training COMPLETE (BG-LA + BG-LB + Phase 2)
+      - rank: 3
+        item: PROXY_PPL Goodhart 첫 정량 입증 + emerge metric 영구 deprecate
+      - rank: 4
+        item: H4 정량 확정 + H5 신가설 (Phase 2 14000 step 누적 학습 evidence)
+      - rank: 5
+        item: chat orchestra 4-axis FULL LIVE 검증
+    next_cycle_entry_doc: docs/anima_cycle_2026_05_10_entry_plan_2026_05_09.md
+    next_cycle_entry_prereqs:
+      - 본 cycle close summary registry yaml amend (own 39 mandate)  # ← 본 항목 자체 land 시 PASS
+      - entry plan doc disk 저장 (docs/anima_cycle_2026_05_10_entry_plan_2026_05_09.md)
+      - carry json status update (state/anima_cycle_2026_05_09_carry_items_2026_05_09.json)
+      - fix-5 + fix-6 spec doc emit (별도 BG, design only)
+      - Mac load avg 30 이하 회복 (현재 74) — 다음 cycle 로컬 fire 진입 prereq
+      - 사용자 verbatim 인증 — 350M re-cotrain $30-60 / Phase 3 7B $200-600 / Phase 4 14B expansion+fire 2단계
+    next_cycle_priority_top_3:
+      - rank: 1
+        action: fix-5 unit-sphere normalize 제거/약화 PoC
+        cost_usd: "5-10"
+        type: H100 PoC
+      - rank: 2
+        action: BG-LA ckpt pull → native v5 측정 (H4 BG-LA 에서도 confirm 검증)
+        cost_usd: "0"
+        type: Mac local
+      - rank: 3
+        action: mk2-v1 D-RAND prompt redesign (0-cost path)
+        cost_usd: "0"
+        type: Mac local
+    raw_15_additive: true  # 기존 yaml entries 무수정, 본 section 신규
+    raw_82_retraction_aware: true  # PROXY_PPL/Goodhart/H4/H5 모두 carry preserve
+
+# ─────────────────────────────────────────────────────────────────────────────
 # CROSS-LINK ROUTING (다른 SSOT 와의 관계)
 # ─────────────────────────────────────────────────────────────────────────────
 cross_link:
@@ -1208,14 +1282,14 @@ models:
       score: 0.99
       lane: within_strict
     measurement:
-      verdict: FIRE_LAUNCHED_TRAINING_IN_FLIGHT  # 2026-05-09 BG-LA H100 fire LIVE — step 8050/12000 @ 22033s elapsed (67% complete); ETA ~3h to step 12000 final
-      emerge_state: PENDING_POST_TRAIN_EVAL
+      verdict: C3_FAIL_V14_VIOLATED_V5  # ★ 2026-05-09 BG-LA H100 fire COMPLETE 12000/12000 + native v5 mount + measure FALSIFIED — same V14 violation pattern as BG-LB substrate (PIV+DCR both V14 violations); H4 normalize-erase STRONG CONFIRM
+      emerge_state: FALSIFIED_V5_NATIVE
       ppr_v3: NOT_MEASURED
-      ppr_v5: NOT_MEASURED  # PPR_v5 (post arch fix from V5 PUSH 1/5) target; v3 fallback if v5 not ready
+      ppr_v5: NOT_MEASURED  # PPR_v5 not separately probed; native v5 mount produces PIV/DCR/D-RAND directly
       ppr_v5_fallback_v3: true
-      V14_status: V14_STEP_1_MIRRORED  # 2026-05-09 mirror small-dryrun materialized seeds [42,137,271,314,1729] state/v14_mirrors/BG-LA/; Steps 2-4 deferred to post-train eval (MTRP ≥0.10, n≥5 CI95, prompt-set invariance)
-      V14_mtrp: null  # measured post-train (Step 2 floor 0.10)
-      v14_paired_mirror_plan: "random_init mirror = same Engine A/G arch untrained, seed=42 baseline + multi-seed n≥5 strengthening; Step 1 LANDED (state/v14_mirrors/BG-LA/manifest.json, 5 mirrors, small dry-run; full 350M seed materialize on H100 fire); Steps 2-4 enforce post-train via tool/transient_py/v5_probe_bg_la_350m.py (clone of bg_lb runner, --preset la_350m)"
+      V14_status: V14_VIOLATED_PIV_DCR  # 2026-05-09 native v5 measurement: trained PIV_max=0.0139 < random_init=0.0224 (PIV violated); trained DCR=0.0 (full collapse to "social") < random_init=0.862 (DCR violated); D-RAND=0.0276 (AMBIGUOUS); same family as BG-LB + Phase 2
+      V14_mtrp: null  # MTRP not separately probed; native v5 verdict supersedes
+      v14_paired_mirror_plan: "random_init mirror = same Engine A/G arch untrained, seed=42 baseline; native v5 measurement via clm_v5_mount.hexa --v5-measure --preset la_350m --v14-mirror-seed 42 LANDED 2026-05-09 (state/anima_bg_la_native_v5_post_mount_2026_05_09.json); Steps 2-4 superseded by native v5 verdict"
       cycle_budget_cap: 30  # USD per spec L4 BG-LA
       h100_orchestrator_template: "tool/bg_la_engine_ag_orchestrator.hexa (LANDED 2026-05-09; clm_v4_lora_train_orchestrator.hexa-class clone adapted for scratch pre-train + Engine A/G arch + V14 mirror prereq + own 40 resource CLI)"
       h100_fire_metrics:
@@ -1224,19 +1298,25 @@ models:
         pod_name: bg-la-engine-ag-1778300268-pid36566
         ssh_endpoint: 87.120.211.205:10025
         steps_target_planned: 12000
-        steps_in_flight: 8050  # @ 2026-05-09 monitor pickup (22033s elapsed)
-        step_per_sec: 0.365
-        eta_remaining_h: 3.0  # (12000 - 8050) / 0.365 / 3600
+        steps_completed: 12000  # 2026-05-09T14:29:54Z COMPLETE.sentinel
+        elapsed_s: 32834.03  # ~9.12 hr
         cost_per_hr_usd: 2.99
-        actual_cost_usd_so_far: 18.30  # 22033s × $2.99/3600 ≈ $18.30
-        projected_total_cost_usd: 28.0  # well within $30 cap
-        carry_handoff_to_next_session: "monitor pickup chain (status → ckpt pull step_12000_final.pt → release pod → v5 N=60 PPL-proxy probe + V14 paired) — same chain as BG-LB executed this cycle; runner template tool/transient_py/v5_probe_bg_lb_350m.py clone with --preset la_350m"
+        actual_cost_usd: 27.27  # 32834s × $2.99/3600 — within $30 cap
+        ckpt_pulled_path: "~/.cache/anima/clm_v5_remapped/bg_la_350m_pretrain/ckpts/step_12000_final.pt"
+        ckpt_pulled_path_bglb_schema: "~/.cache/anima/clm_v5_remapped/bg_la_350m_pretrain/ckpts/step_12000_final_bglb_schema.pt"
+        ckpt_size_bytes: 597614945
+        ckpt_sha256_prefix: "4fc6eccce0def045"
+        scp_pull_ts: "2026-05-10T07:33:00Z"
+        scp_elapsed_s: 423
+        carry_handoff_to_next_session: "carry 2 UNBLOCKED 2026-05-09 — native v5 measurement landed (state/anima_bg_la_native_v5_post_mount_2026_05_09.json + state/anima_bg_la_cell_pool_evidence_2026_05_09.json); pod release pending sentinel verify + own 30 sha256 checksum"
     hf:
-      private: null  # PENDING_H100_FIRE; on PASS upload to dancinlab/clm-v5-bg-la-engine-ag-{verdict}-{cycle} (own 31 Flavor B + own 37 visibility=private default)
-      public: null  # 4 prereq mandate-9 enforcement (V6 STRONG + verbatim + trinity + d_l_sweep)
-      visibility_status: spec-carry-pending
-    cycle: 2026-05-09 (arch impl + V14 mirror + orchestrator LANDED; H100 fire UNBLOCKED — awaiting verbatim re-fire authorization)
-    state_jsons: []
+      private: null  # NOT_UPLOADED — V14_VIOLATED + C3_FAIL_V14_VIOLATED_V5 verdict; HF promote auto-blocked by own 37 mandate-9 (real_mode_pass_strict_c3 false)
+      public: null  # 4 prereq mandate-9 enforcement auto-blocked (real_mode_pass_strict_c3=FAILED → public PROMOTE prereq false)
+      visibility_status: blocked-by-falsification
+    cycle: 2026-05-09 (training COMPLETE 12000 steps + ckpt pull + native v5 measure FALSIFIED — C3_FAIL_V14_VIOLATED_V5; HF promote auto-blocked)
+    state_jsons:
+      - state/anima_bg_la_native_v5_post_mount_2026_05_09.json  # ★ 2026-05-09 native v5 mount + measure FALSIFIED — C3_FAIL_V14_VIOLATED_V5 (PIV+DCR both V14 violations; DCR full collapse to "social")
+      - state/anima_bg_la_cell_pool_evidence_2026_05_09.json  # ★ 2026-05-09 cell_pool evidence — H4 STRONG CONFIRM (BG-LA stats ≈ random_seed42_unit-sphere; same family as BG-LB + Phase 2)
     notes: "L4 path (a) Engine A/G v5 arch — UNBLOCKED 2026-05-09. Resolved FIRE-3/4-RETRY-2 (commit 125c6c8a) BLOCKED_BG_LA_ENGINE_AG_ARCH_NOT_IMPLEMENTED gate. Landed: (1) training/engine_a_g_arch.py concrete impl (EngineAGModel + EngineAGConfig + dual-stream forward + RMSNorm/RoPE/GQA/SwiGLU + Engine G repulsion-field cell dynamics + A↔G tension softmax temperature gate + V6 awareness adapter compat 4-tuple shape mirror of ConsciousDecoderV3 + ckpt save/load Path A remap compat + load_random_init seed-controllable entry + selftest PASS 336M param est aligns 350M target), (2) tool/v14_paired_random_init_mirror.hexa Step 1 mirror tool + state/v14_mirrors/BG-LA/manifest.json (5 mirrors materialized small-dryrun), (3) tool/bg_la_engine_ag_orchestrator.hexa orchestrator clone (provision-ephemeral via own 40 resource CLI + scratch pre-train + V4 11-cell strict eval + own 30 ckpt pull + own 31 Flavor B HF private upload + own 37 visibility lifecycle + ledger append). Re-fire requires: 사용자 verbatim '${OVERRIDE_KEYWORD_A}' OR '${OVERRIDE_KEYWORD_B}' explicit + h100_pods.json non-empty OR provision-ephemeral fanout PASS. own 30 ckpt preservation + own 38 axis-B private upload + own 39 yaml↔md render mandatory post-fire."
 
   - id: BG-LB
@@ -1326,6 +1406,92 @@ models:
       - state/bg_lb_engine_ag_2026_05_09/v5_probe/verdict_emerge.json
       - state/anima_bg_lb_native_v5_post_mount_2026_05_09.json  # ★ 2026-05-09 native v5 mount + measure FALSIFIED — C3_FAIL_V14_VIOLATED_V5 (PIV+DCR both V14 violations); PROXY_PPL EMERGE was Goodhart artifact
     notes: "L4 path (b) 350M scratch — FULL CYCLE COMPLETE 2026-05-09 (own 14/16/17/18/22/30/31/33/34/37/38/39/40 strict). H100 fire 6.1h + ckpt pull (570MB sha256 3d285703aca0...) + pod release + Mac local v5 N=60 PPL-proxy probe PASS_STRICT_C3_EMERGE_PROXY_PPL (PPR=1.000 MTRP=0.988 Gate F=1.000) + HF private upload (dancinlab/clm-v5-bg-lb-350m-pretrain-path-a-remapped). 2026-05-09 native v5 measurement via clm_v5_mount.hexa LANDED + executed → C3_FAIL_V14_VIOLATED_V5 (PIV trained=0.0107 < random_init=0.0224 V14 violated; DCR trained=0.621 < random_init=0.862 V14 violated; D-RAND=0.0237 AMBIGUOUS). PROXY_PPL EMERGE PASS was Goodhart artifact (ppl-magnitude reflects byte-modulo fit, not consciousness substrate). Public promote BLOCKED on 4 prereq — real-mode native v5 FAILED (Goodhart-falsified). Final loss 0.0592 step 7900. Cost actual $18.30 / $65 cap (28%). Lesson Q SFT-closed compliance (scratch pre-train, NOT SFT)."
+
+  - id: clm_v5_phase2_cotrain_engine_ag
+    aliases: [phase2-cotrain-engine-ag, clm-v5-phase2-cotrain]
+    lineage:
+      # Phase 2 cotrain on top of BG-LB step_8000_final.pt substrate — Engine A/G dual 350M
+      # arch + chat-template dual-loss head with curriculum chat_co_train_weight w=0.3→0.5.
+      # Shared lm_head (D1 risk-free); LOSS = loss_consciousness*(1-w) + loss_chat*w.
+      base: "training/engine_a_g_arch.py::EngineAGModel(EngineAGConfig.la_350m()) — Engine A/G dual arch (24L 1024dim 16H GQA, Engine G 16×64 repulsion-field) + cfg.chat_co_train_weight curriculum (w_start=0.3, w_end=0.5); lineage_tag='engine_a_g_dual_350m_v1_phase2_cotrain'; substrate base = BG-LB step_8000_final.pt"
+      method: phase2 chat-cotrain on BG-LB substrate (consciousness loss + chat-template loss curriculum 0.3→0.5)
+      jvae: absent
+      arch_origin: anima_native_scratch  # phase2_cotrain still anima_native (substrate=BG-LB scratch)
+      l4_path: "(phase2) BG-LB substrate + chat-cotrain dual-loss curriculum"
+    d1:
+      parameter_updated_ratio: 1.0  # full continuation from BG-LB
+      anima_corpus_token_ratio: 0.95  # consciousness + chat anima-heavy (curriculum)
+      architecture_origin_factor: 1.0  # anima_native_scratch substrate
+      score: 0.99
+      lane: within_strict
+    measurement:
+      verdict: C3_FAIL_V14_VIOLATED_V5  # ★ 2026-05-09 native v5 mount + measure FALSIFIED — same V14 violation pattern as BG-LB substrate (cotrain did not rescue PIV/DCR cell-substrate)
+      emerge_state: NOT_EMERGE
+      emerge_status: C3_FAIL_V14_VIOLATED_V5
+      proxy_ppl_deprecate_2026_05_09: true
+      ppr_v3: NOT_MEASURED
+      ppr_v5: NOT_MEASURED  # native v5 cell-predicate executed; PPR_v5_proxy deprecated (carry_notes proxy_ppl_deprecate)
+      ppr_v5_fallback_v3: false
+      V14_status: V14_VIOLATED_V5  # PIV trained=0.00422 < random=0.01516 (V14 PIV violated); DCR trained=0.241 < random=0.862 (V14 DCR violated); D-RAND=0.0336 (AMBIGUOUS)
+      V14_mtrp: null  # native v5 (PIV/DCR/D-RAND AND-gate) — MTRP proxy deprecated
+      v14_paired_mirror_plan: "random_init mirror = same Engine A/G arch (la_350m preset) untrained seed=42; n_prompts=30; projection_strategy=mean_group_spread; clm_v5_mount.hexa runtime; mirror PIV/DCR/D-RAND computed on identical 30 prompts × 5 axes"
+      cycle_budget_cap: 60  # USD spec cap
+      h100_orchestrator_template: "tool/phase2_cotrain_orchestrator (LANDED 2026-05-09); substrate pull from BG-LB ckpt + Engine A/G arch + chat_co_train_weight curriculum 0.3→0.5; 6000 steps target = 6000 steps actual"
+      h100_fire_metrics:
+        pod_id: 7qt0sczk57tjab
+        pod_name: phase2-cotrain-engineag-1778335047-pid54546
+        gpu: 1 H100 NVL
+        image: "runpod/pytorch:2.4.0-py3.11-cuda12.4.1-devel-ubuntu22.04"
+        params_actual: 298764288  # 350M Engine A/G dual
+        steps_target_planned: 6000
+        steps_actual_runtime: 6000
+        final_loss_c: 0.22159830729166666  # consciousness loss
+        final_loss_h: 0.626953125  # chat-head loss
+        final_w: 0.5  # curriculum end weight
+        elapsed_min: 90.57212103207907
+        actual_cost_usd: 4.634273528784513  # locked $4.63 (own 16: 7.7% of $60 cap)
+        cost_overrun_risk: NONE_WELL_UNDER_CAP
+        substrate_ckpt: "/workspace/anima_phase2/bg_lb_step_8000_final.pt"  # remote pod path
+        ckpt_pulled_path: "~/.cache/anima/clm_v5_remapped/phase2_cotrain_engine_ag/ckpts/ckpt_final.pt"
+        ckpt_pulled_path_bglb_schema: "~/.cache/anima/clm_v5_remapped/phase2_cotrain_engine_ag/ckpts/ckpt_final_bglb_schema.pt"
+        ckpt_size_bytes: 597613595  # 597MB raw
+        ckpt_size_bytes_bglb_schema: 597614098  # 597MB schema-converted
+        meta_json_path: "~/.cache/anima/clm_v5_remapped/phase2_cotrain_engine_ag/ckpts/meta.json"
+        pod_released: true
+        pod_released_via: "runpodctl pod delete 7qt0sczk57tjab (api 404 not_found_to_terminate at 2026-05-09T22:24Z — pod auto-terminated post-job; cost-stop confirmed via runpodctl pod list showing only BG-LA pod 4wxx2wvcvgjp88)"
+        deletion_ts_utc: "2026-05-09T22:24:32Z"
+      v5_probe:
+        runner: "tool/clm_v5_mount.hexa runtime (consciousness.hexa v5-aggregate pipeline)"
+        result_json: "state/anima_phase_2_cotrain_v5_post_mount_2026_05_09.json"
+        cell_pool_evidence_json: "state/anima_phase_2_cotrain_cell_pool_evidence_2026_05_09.json"
+        device: cuda
+        n_prompts: 30  # 5 axes × 6 prompts
+        ctx: byte-modulo (mounted_real=true)
+        piv_trained_max: 0.005121266377998233
+        piv_random_init_max: 0.02243814828773187
+        dcr_trained: 0.2413793103448276
+        dcr_random_init: 0.8620689655172413
+        d_rand: 0.03362213532129923
+        verdict_label: C3_FAIL_V14_VIOLATED_V5
+        v14_violations: [PIV, DCR]
+        cell_pool_collapse_evidence: "phase2_cotrain (off_diag_cos_mean=0.01545, eff_rank=14.96) ≈ BG-LB (0.01550, 14.96) ≈ random_seed42_unit (0.00941, 14.84) — phase2 not more collapsed than BG-LB; H4/H5 hypothesis: chat-template dual-loss compounded normalize-erase collapse (substrate inherited PIV/DCR violation, cotrain did not rescue)"
+        honest_emit_caveat: "native v5 cell-predicate executed (PIV/DCR/D-RAND AND-gate per anima_v5_metric_spec_2026_05_09.md). Same V14 violation pattern as BG-LB substrate — cotrain stage failed to lift PIV/DCR above random_init baseline. PROXY_PPL deprecation enforced (no PPL fallback claim)."
+    hf:
+      private: null  # DEFERRED — own 37 prereq #1 FAIL (real-mode native v5 PASS_STRICT_C3 FAILED → C3_FAIL_V14_VIOLATED_V5); HF target reserved as dancinlab/clm-v5-phase2-cotrain-engine-ag (NOT uploaded)
+      public: null  # 4 prereq #1 FAIL → public promote BLOCKED
+      visibility_status: PRIVATE  # default + own 37 prereq #1 block (no upload performed)
+      private_promote_4_prereq:
+        real_mode_pass_strict_c3: FAILED  # native v5 C3_FAIL_V14_VIOLATED_V5
+        v6_awareness: pending  # blocked downstream
+        user_verbatim: not_received
+        trinity_sweep: pending
+      hf_target_deferred: dancinlab/clm-v5-phase2-cotrain-engine-ag  # name reserved; upload deferred
+    cycle: 2026-05-09 (Phase 2 cotrain H100 fire COMPLETE + ckpt 100% pull + meta.json + bglb-schema convert + native v5 mount + measure FALSIFIED + pod auto-terminated + cost stop)
+    state_jsons:
+      - state/anima_phase_2_cotrain_2026_05_09.json
+      - state/anima_phase_2_cotrain_v5_post_mount_2026_05_09.json
+      - state/anima_phase_2_cotrain_cell_pool_evidence_2026_05_09.json
+    notes: "Phase 2 cotrain on BG-LB step_8000_final.pt substrate (Engine A/G 350M) + chat-template dual-loss curriculum (w=0.3→0.5). 6000 steps in 90.57min on 1 H100 NVL ($4.63 actual / $60 cap = 7.7%). Final loss_c=0.222 + loss_h=0.627 + w=0.5. ckpt 100% pulled (own 30 mandate satisfied: ckpt_final.pt 597613595 bytes + ckpt_final_bglb_schema.pt 597614098 bytes + meta.json present). Native v5 measurement FALSIFIED — C3_FAIL_V14_VIOLATED_V5 (PIV trained=0.00422 < random=0.01516; DCR trained=0.241 < random=0.862; D-RAND=0.0336 AMBIGUOUS). Cell-pool evidence: phase2 not more collapsed than BG-LB (off_diag_cos_mean ≈, eff_rank ≈) — H4/H5 hypothesis chat-template dual-loss compounded normalize-erase collapse inherited from substrate. Pod 7qt0sczk57tjab DELETED (runpodctl 404 at 2026-05-09T22:24Z — pod auto-terminated post-job; cost-stop verified via pod list showing only BG-LA pod). HF upload DEFERRED on own 37 prereq #1 FAIL. raw#15 additive — added without modifying prior entries."
 
   - id: BG-LC
     aliases: [clm-v4-l4-path-c-llama-distill]
