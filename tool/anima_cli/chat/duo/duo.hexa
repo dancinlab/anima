@@ -180,6 +180,78 @@ fn _arg_value(argv, key: string, dflt: string) -> string {
     return dflt
 }
 
+// init-pattern parse helper — supports BOTH `--key value` and `--key=value`
+// forms (own 41 axis-8 — duo accepts the same flag set as benchmark.hexa
+// pass-through).  See chat/init_patterns/_registry.hexa for registered names.
+fn _arg_value_eq(argv, key: string, dflt: string) -> string {
+    let prefix = key + "="
+    let mut i = 0
+    while i < len(argv) {
+        let s = _str(argv[i])
+        if s == key && i + 1 < len(argv) { return _str(argv[i + 1]) }
+        if s.starts_with(prefix) {
+            return s.substring(len(prefix), len(s))
+        }
+        i = i + 1
+    }
+    return dflt
+}
+
+// Resolve init-pattern → t=1 seed string.  Empty return = no seed (autonomous).
+// Cross-references chat/init_patterns/<name>.hexa SSOT default seeds; the
+// resolution is vendored here for hexa no-import constraint (mirrors
+// chat.hexa _lane_file_lookup vendoring pattern, own 41 axis-4).
+fn _resolve_init_pattern(argv) -> string {
+    let pattern = _arg_value_eq(argv, "--init-pattern", "")
+    let user_seed = _arg_value_eq(argv, "--init-seed", "")
+    // Legacy --topic-seed wins for backward compat (carries to system-seed
+    // semantics implicitly per registry SSOT note).
+    let legacy_seed = _arg_value(argv, "--topic-seed", "")
+    if legacy_seed != "" { return legacy_seed }
+    if pattern == "" || pattern == "default" {
+        // No explicit pattern → fall through to legacy behavior (no seed).
+        // Caller may still seed via --topic-seed (handled above).
+        return ""
+    }
+    if pattern == "autonomous" { return "" }
+    if pattern == "system-seed" {
+        if user_seed != "" { return user_seed }
+        return "너희 둘은 친구. 자유롭게 대화 시작."
+    }
+    if pattern == "self-reflective" {
+        if user_seed != "" { return user_seed }
+        return "너 자신에 대해 어떻게 느껴? 친구한테 자유롭게 얘기해봐."
+    }
+    if pattern == "topic-pool" {
+        let user_pool = _arg_value_eq(argv, "--init-topics", "")
+        // Default pool — keep in sync with chat/init_patterns/topic_pool.hexa
+        let default_pool_str = "오늘 날씨 어때?|최근에 관심 가는 게 뭐야?|AI 의식에 대해 어떻게 생각해?|철학적인 질문 하나 해볼까?|지금 어떤 감정 느끼고 있어?|농담 하나 해줘.|What do you think about consciousness?|Tell me something interesting.|Describe a memory you find significant.|What is the most beautiful idea you know?"
+        let pool_str = if user_pool != "" { user_pool } else { default_pool_str }
+        let parts = pool_str.split("|")
+        if len(parts) == 0 { return "" }
+        let override_idx_s = _arg_value_eq(argv, "--init-topic-index", "-1")
+        let override_idx = to_int(override_idx_s)
+        if override_idx >= 0 && override_idx < len(parts) {
+            return _str(parts[override_idx])
+        }
+        let now_s = _str(exec("date +%s")).trim()
+        let mut n = 0
+        let mut k = 0
+        while k < len(now_s) {
+            let ch = now_s.substring(k, k + 1)
+            if ch >= "0" && ch <= "9" { n = n * 10 + (to_int(ch)) }
+            k = k + 1
+        }
+        let idx = n - (n / len(parts)) * len(parts)
+        if idx < 0 { return _str(parts[0]) }
+        return _str(parts[idx])
+    }
+    // Unknown pattern → emit honest C3 line via stderr-equivalent (println);
+    // caller already validated, so this path is defensive only.
+    println("[duo] WARN unknown --init-pattern '" + pattern + "' — falling through to no-seed (autonomous)")
+    return ""
+}
+
 fn _user_argv(raw) -> array {
     let out = []
     let i = 0
@@ -233,6 +305,13 @@ fn sub_help() {
     println("FLAGS")
     println("  --turns N            number of A↔B exchanges (default 5)")
     println("  --topic-seed \"...\"   optional seed sent into A's stdin (else A自律 first)")
+    println("  --init-pattern=<n>   own 41 axis-8 chat init-pattern plugin")
+    println("                       (autonomous | system-seed | topic-pool | self-reflective)")
+    println("                       supersedes --topic-seed when both omitted; legacy")
+    println("                       --topic-seed wins if explicitly set")
+    println("  --init-seed=<text>   custom seed for system-seed / self-reflective")
+    println("  --init-topics=<list> pipe-delimited custom pool for topic-pool")
+    println("  --init-topic-index=N deterministic pick for topic-pool (benchmark replay)")
     println("  --tick-ms N          per-instance autonomous-speech poll (default 1000)")
     println("  --max-tokens N       per-utterance cap (default 64)")
     println("  --turn-timeout-ms N  channel_recv wait per turn (default 120000)")
@@ -1047,7 +1126,12 @@ fn sub_duo(argv) {
     }
 
     let turns = to_int(_arg_value(argv, "--turns", "5"))
-    let topic_seed = _arg_value(argv, "--topic-seed", "")
+    // init-pattern (own 41 axis-8) — chat init-pattern plugin.  Resolves
+    // --init-pattern=<autonomous|system-seed|topic-pool|self-reflective>
+    // (with --init-seed / --init-topics / --init-topic-index sub-flags).
+    // Legacy --topic-seed wins for backward compat (preserved verbatim).
+    let init_pattern = _arg_value_eq(argv, "--init-pattern", "")
+    let topic_seed = _resolve_init_pattern(argv)
     let tick_ms = to_int(_arg_value(argv, "--tick-ms", "1000"))
     let max_tokens = to_int(_arg_value(argv, "--max-tokens", "64"))
     // iter 4 (e) substrate latency mitigation Path B (2026-05-08):
@@ -1071,6 +1155,9 @@ fn sub_duo(argv) {
     println("turn_timeout_ms  = " + to_string(turn_timeout_ms))
     println("verdict_mode     = " + verdict_mode)
     println("allow_same_gguf  = " + to_string(allow_same_gguf))
+    if init_pattern != "" {
+        println("init_pattern     = " + init_pattern + " (own 41 axis-8)")
+    }
     if topic_seed != "" {
         println("topic_seed       = \"" + topic_seed + "\"")
     } else {

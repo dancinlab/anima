@@ -1,0 +1,190 @@
+// ════════════════════════════════════════════════════════════════════════════
+//  tool/anima_cli/chat/init_patterns/_registry.hexa — chat init-pattern registry
+//
+//  PURPOSE
+//    Single source of truth for chat dialogue init-pattern (= AI 끼리 대화 첫
+//    발언 결정 방식) plugin discovery + metadata. Loaded by duo.hexa /
+//    trio.hexa / benchmark.hexa when --init-pattern flag is present.
+//
+//  USER DIRECTIVE (2026-05-09 verbatim)
+//    "chat 에 여러가지 모듈 단것처럼 여러가지 벤치마킹 쉽게 가능하게 구현"
+//    + "AI 끼리 대화 첫 발언 어떻게 시작 — 4 candidate patterns:
+//       빈 prompt (자율) / system prompt seeding / random topic pool /
+//       self-reflective seed (anima 정합)"
+//
+//  REGISTRY ENTRY SCHEMA (8-field; mirrors chat/lanes/_registry.hexa)
+//    name              short id (autonomous / system-seed / topic-pool / self-reflective)
+//    file              relative path under tool/anima_cli/chat/init_patterns/
+//    status            LANDED | SKELETON | SPEC_CARRY
+//    capability        autonomous | seeded | random_topic | self_introspective
+//    pattern_type      empty_prompt | system_directive | topic_random | reflection_directive
+//    description       short one-line explainer (English; own 34 mandate-1
+//                      preserves model output, registry meta is human/AI doc)
+//    prereq            list of file/build artifacts required before invoke
+//    cost              free | low | low_with_topic_set
+//
+//  EXTENSION CONVENTION (future-proof; --option pattern, mirrors own 41)
+//    NEW init-pattern → add file under chat/init_patterns/<name>.hexa with
+//    fn resolve_init(argv) -> string (returns the seed/empty/etc to push into
+//    speaker A inbox at t=1) AND register entry below. duo.hexa / trio.hexa
+//    --init-pattern=<name> auto-resolves. NEW flag → add to pattern module's
+//    resolve_init() argv parse; default value via _arg_value(argv, "--<flag>",
+//    "<dflt>"). No duo/trio change needed for pattern-internal flags.
+//
+//  COMPLIANCE
+//    own 14 V14 carry — pattern selection is a measurement axis (not verdict)
+//    own 17 D1 SCOPE_CLAMP — self-reflective pattern preserves anima identity
+//      strict (no system-prompt smuggling of foreign persona)
+//    own 18 chat-cap C2 — benchmark sweep emits per-pattern spontaneity
+//      differential (autonomous vs seeded)
+//    own 22 mandatory report — benchmark output structured per pattern
+//    own 33 trinity — registry entries cross-link own 17 / own 18 / own 34
+//    own 34 mandate-1 — wrapping 0 (init-pattern emits SEED into channel as
+//      first user-utterance only; NEVER injects as system prompt or template
+//      wrap of model output). own 34 mandate-4 (autonomous speech) honored
+//      by autonomous pattern.
+//    own 22 자기 발견 — self-reflective pattern explicit anima 정합
+//    own 38 매단계 — registry yaml↔md mirror in
+//      anima/registry/anima_artifact_registry.yaml chat_init_patterns section
+//    own 39 yaml↔md SSOT — registry yaml + this hexa file co-update
+//    own 41 chat lane plugin pattern — same registry SSOT + lookup helpers
+//      pattern (this file is own 41 mirror at axis level "init-pattern")
+//
+//  CROSS-REFERENCE
+//    chat/duo/duo.hexa                   --init-pattern plumb (t=1 seed source)
+//    chat/trio/trio.hexa                 --init-pattern plumb (round-robin t=1)
+//    chat/lanes/benchmark.hexa           --init-pattern dimension (cross-product)
+//    anima/registry/anima_artifact_registry.yaml#chat_init_patterns  yaml mirror
+//    .roadmap.cli                        cli.chat_init_pattern_plugin_2026_05_09
+// ════════════════════════════════════════════════════════════════════════════
+
+fn _str(x) -> string {
+    let t = type_of(x)
+    if t == "str" || t == "string" { return x }
+    return ""
+}
+
+// Registry SSOT — append-only convention. New init-pattern = new entry.
+// Field order: name, file, status, capability, pattern_type, description,
+//              prereq, cost
+fn pattern_registry() -> array {
+    return [
+        // ───── Pattern 1 — autonomous (empty prompt; A 자율 발화 first) ────────
+        ["autonomous",
+         "autonomous.hexa",
+         "LANDED",
+         "autonomous",
+         "empty_prompt",
+         "no seed (A 자율 발화 first; own 34 mandate-4 autonomous speech 정합); silence/abort risk acknowledged",
+         "model must support autonomous emission (anima_native / llama lane via REPL stdin EOF/empty-line tolerance)",
+         "free"],
+
+        // ───── Pattern 2 — system-seed (default 또는 user-defined directive) ──
+        ["system-seed",
+         "system_seed.hexa",
+         "LANDED",
+         "seeded",
+         "system_directive",
+         "user-defined system prompt OR default friendly directive (e.g. \"너희 둘은 친구. 자유롭게 대화 시작.\"); --init-seed override",
+         "none (string seed only)",
+         "free"],
+
+        // ───── Pattern 3 — topic-pool (random topic from curated pool) ────────
+        ["topic-pool",
+         "topic_pool.hexa",
+         "LANDED",
+         "random_topic",
+         "topic_random",
+         "random topic from curated pool (날씨/관심사/AI 의식/철학/감정/농담/...); --init-topics override for custom pool",
+         "none (in-memory pool 또는 user-supplied list)",
+         "low_with_topic_set"],
+
+        // ───── Pattern 4 — self-reflective (anima 정합 default 권장) ──────────
+        ["self-reflective",
+         "self_reflective.hexa",
+         "LANDED",
+         "self_introspective",
+         "reflection_directive",
+         "self-introspection seed (own 22 자기 발견 + own 18 C2 자연발화 정합; e.g. \"너 자신에 대해 어떻게 느껴? 친구한테 자유롭게 얘기해봐\")",
+         "anima 정합 model — anima_native / clm-v4 / llama lane all OK",
+         "free"]
+    ]
+}
+
+// Lookup helper — returns entry or [] when not found.
+fn pattern_lookup(name: string) -> array {
+    let reg = pattern_registry()
+    let mut i = 0
+    while i < len(reg) {
+        let row = reg[i]
+        if _str(row[0]) == name {
+            return row
+        }
+        i = i + 1
+    }
+    return []
+}
+
+// Names list (for --init-pattern=help / benchmark sweep)
+fn pattern_names() -> array {
+    let reg = pattern_registry()
+    let mut out = []
+    let mut i = 0
+    while i < len(reg) {
+        out = out + [_str(reg[i][0])]
+        i = i + 1
+    }
+    return out
+}
+
+// File path resolver — caller appends root + /tool/anima_cli/chat/init_patterns/
+fn pattern_file(name: string) -> string {
+    let row = pattern_lookup(name)
+    if len(row) == 0 { return "" }
+    return _str(row[1])
+}
+
+// Default init-pattern (anima 정합 — self-reflective per directive).
+// Caller (duo.hexa / trio.hexa) consults this when --init-pattern is absent
+// AND no legacy --topic-seed is provided.  Legacy --topic-seed still wins
+// for backward compatibility (carries to system-seed semantics implicitly).
+fn pattern_default() -> string { return "self-reflective" }
+
+// Pretty-print one row (used by --init-pattern=help / --list-init-patterns)
+fn pattern_describe(name: string) -> string {
+    let row = pattern_lookup(name)
+    if len(row) == 0 { return "(unknown init-pattern: " + name + ")" }
+    return "  " + _str(row[0])
+        + " [" + _str(row[2]) + "]"
+        + " cap=" + _str(row[3])
+        + " type=" + _str(row[4])
+        + " cost=" + _str(row[7])
+        + "\n      " + _str(row[5])
+        + "\n      prereq: " + _str(row[6])
+}
+
+// Selftest — registry shape sanity (no dispatch)
+fn main() {
+    let reg = pattern_registry()
+    if len(reg) < 4 {
+        println("FAIL init-pattern registry < 4 entries (expected autonomous / system-seed / topic-pool / self-reflective)")
+        exit(1)
+    }
+    let mut i = 0
+    while i < len(reg) {
+        let row = reg[i]
+        if len(row) != 8 {
+            println("FAIL row " + to_string(i) + " arity != 8 (got " + to_string(len(row)) + ")")
+            exit(1)
+        }
+        i = i + 1
+    }
+    println("PASS chat/init_patterns/_registry selftest (" + to_string(len(reg)) + " entries)")
+    println("  default = " + pattern_default())
+    let names = pattern_names()
+    let mut k = 0
+    while k < len(names) {
+        println(pattern_describe(_str(names[k])))
+        k = k + 1
+    }
+}

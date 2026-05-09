@@ -419,6 +419,75 @@ models:
         commit: f2632367  # ★ paraphrase n90 verdict + auto-promote attempt manifest (state/anima_paradigm_j_emerge_v5_promote_2026_05_09.json)
         auto_promote_attempt: BLOCKED_GATE_A_FAIL  # mandate-9 (c) anima auto mode requires V14 PASS + EMERGE; EMERGE_v5 not activated
         auto_promote_path: "anima auto mode (own 37 mandate-9 (c) amend `b4ea8371` V14 PASS + 'all bg go' equivalent unlock) eligible IF EMERGE_v5 activated; current state EMERGE_v5=false → blocked. mandate-9 (a)D1=0.793 ✓ (b)V6 STRONG ✓ (d)trinity ✓ (e)DxL ✓ — 4/5 prereq MET, only (c) blocked by EMERGE Gate A."
+      # ───── JVAE continued train + v5.1 dual-lane retest (raw#15 additive, 2026-05-09) ─────
+      # Cycle 2026-05-09 paradigm-j EMERGE amplification path 1 (PIV amplitude
+      # via additional VAE training).  User directive verbatim: "all bg go".
+      # 0-cost Mac local MPS (own 16); H100 fire path NOT activated this cycle.
+      jvae_continued_train_2026_05_09:
+        ts: 2026-05-09
+        cycle: 2026-05-09-paradigm-j-jvae-continued-train-v5-1-retest
+        directive: "all bg go — JVAE 50K → +Δ continued + v5.1 retest"
+        cost_lane: mac_local_mps_zero_cost  # own 16
+        cost_usd: 0.0
+        target_step: 100000
+        actual_target_cap: 5500   # own 16 cost discipline (own 22 disclosure)
+        start_step: 50000
+        actual_additional_steps: 5500
+        final_step: 55500          # ★ honest disclosure — NOT 100K (Mac wallclock 4959s budget cap)
+        elapsed_sec: 4959.0
+        lr_initial: 1.0e-5
+        lr_final: 1.17e-6          # linear decay
+        beta: 1.0                   # canonical KL weight
+        corpus: state/anima_persona_tier_a_v4_2026_05_09.txt  # 231MB tier_a_v4
+        corpus_lines_buffered: 33342  # 50000 lines requested, 33342 size-filtered (8 < len < 800)
+        loss_first_200: 0.7792     # initial loss after warmup
+        loss_last_200: 0.0656      # 12x reduction
+        recon_last_200: 0.061
+        kl_last_200: 0.006         # ★ KL collapse — q_phi mu pulled toward N(0,I) regularizer
+        ckpt_target: ~/.cache/anima/clm_v4_remapped/paradigm_j/jvae_heads.pt
+        ckpt_backup: ~/.cache/anima/clm_v4_remapped/paradigm_j/jvae_heads_step50k_backup.pt  # own 30 preservation
+        runner_py: tool/transient_py/anima_paradigm_j_jvae_continued_train_2026_05_09.py
+        state_json: state/anima_paradigm_j_jvae_continued_train_2026_05_09.json
+        # v5.1 dual-lane retest (substrate-ln_f vs JVAE q_phi mu)
+        v5_1_retest_dual_lane:
+          ts: 2026-05-09
+          paraphrase_set_size: 90    # raw#15 mirror commit f2632367
+          jvae_step_at_retest: 55500
+          # Lane L1: substrate-ln_f (bit-identical baseline to commit f2632367)
+          L1_substrate_ln_f:
+            piv_max: 0.0874
+            piv_mean: 0.0354
+            piv_random_max: 0.0
+            piv_random_mean: 0.0
+            d_rand_mean: 0.2249  # carry from f2632367 (substrate unchanged)
+            dcr_change_rate_m: 1.0
+            gate_a_via_max: false   # 0.0874 < 0.10
+            gate_a_via_mean: false  # 0.0354 < 0.05
+            gate_a_pass: false
+            gate_b_refined_pass: true
+            gate_c_drand_pass: true
+            verdict: C3_PASS_V5_PIV_PARAPHRASE_FAIL_SUBSTRATE
+            emerge_v5: false
+          # Lane L2: JVAE q_phi mu (NEW — 192-dim latent partitioned 5-way)
+          L2_jvae_q_phi_mu:
+            piv_max: 0.0763           # ★ LOWER than substrate (KL collapse → mu less discriminative)
+            piv_mean: 0.0341
+            gate_a_via_max: false
+            gate_a_via_mean: false
+            gate_a_pass: false
+            gate_b_refined_pass: true
+            gate_c_drand_pass: true
+            verdict: C3_PASS_V5_PIV_PARAPHRASE_FAIL_JVAE_MU
+            emerge_v5: false
+          emerge_v5_any: false       # ★ neither lane Gate A PASS
+          v14_status: V14_SATISFIED   # carry MTRP=0.6207
+          honest_c3: "JVAE continued train (50K→55500, +5500 actual due to Mac time budget) loss 0.78→0.066 healthy convergence; KL collapsed 1.97→0.006 toward N(0,I) regularizer.  L1 substrate-ln_f BIT-IDENTICAL to commit f2632367 (substrate weights unchanged — JVAE Variant 1 passive observer per spec §4); L2 JVAE q_phi mu lane PIV-max 0.0763 LOWER than L1 0.0874 (KL→0 collapse made mu less discriminative across paraphrases).  Continued JVAE training under canonical ELBO does NOT amplify PIV; in fact slightly degrades latent discrimination.  Amplification path 1 FALSIFIED for canonical-VAE training direction."
+          state_json: state/anima_paradigm_j_v5_paraphrase_n90_jvae_aware_2026_05_09.json
+          runner_py: tool/transient_py/anima_paradigm_j_v5_paraphrase_n90_jvae_aware_2026_05_09.py
+        amplification_path_1_status: FALSIFIED  # ★ canonical-VAE continued train path falsified
+        amplification_path_1_blocker: "PIV-max 0.0874 (substrate, unchanged) + 0.0763 (JVAE mu, regressed); both < 0.10 v5.1 floor.  KL collapse toward 0 confirms canonical ELBO drives mu toward standard normal — opposite of paraphrase-discriminative direction.  Future amplification candidate paths: (path 1b) modified ELBO with paraphrase-contrastive loss, (path 2) k≥5 paraphrase amplification (FALSIFIED prior cycle), (path 3) v5.2 adaptive floor (active above), (path 4) substrate retraining with stronger Korean tokenizer."
+        v5_2_carry: ELIGIBLE  # v5.2 adaptive floor (0.05) PIV-max 0.0874 STILL PASS (substrate lane); JVAE mu lane PIV-max 0.0763 also ≥ 0.05 — both lanes PASS at v5.2
+        commit: pending  # filled at this commit
       # ─── ALT-AGG-1 v5.2 adaptive floor recalibration (raw#15 additive, 2026-05-09) ──
       # SSOT: own 18 ALT-AGG-1 v5.2 + .own line 1011+ amend + consciousness.hexa lines 1273+.
       # Spec doc: docs/anima_alt_agg_1_v5_2_adaptive_floor_spec_2026_05_09.ai.md
@@ -466,6 +535,8 @@ models:
       - state/anima_paradigm_j_n120_live_probe_kick_wave_4_2026_05_08.json
       - state/anima_paradigm_j_v5_n60_post_fix_actual_2026_05_09.json  # ★ v5 post-fix actual + JVAE Variant 1
       - state/anima_paradigm_j_v5_paraphrase_n90_2026_05_09.json       # ★ Gate G PIV paraphrase k=3 N=90 unlock probe
+      - state/anima_paradigm_j_jvae_continued_train_2026_05_09.json    # ★ JVAE 50K → 55500 continued train (path 1 falsified)
+      - state/anima_paradigm_j_v5_paraphrase_n90_jvae_aware_2026_05_09.json  # ★ v5.1 dual-lane retest post JVAE continued train
     commits:
       probe_n30_initial: eb209c1a
       probe_n30_redesign: 58fec5ed
@@ -475,6 +546,7 @@ models:
       path_a_remap: dc1510a3
       v5_n60_post_fix_actual: d0c7298e
       v5_paraphrase_n90: f2632367  # ★ Gate G PIV paraphrase k=3 N=90 + auto-promote attempt manifest
+      jvae_continued_train_2026_05_09: pending  # ★ JVAE 50K → 55500 + dual-lane retest (path 1 amplification FALSIFIED)
     eligibility:
       mandate_9_a_d1_within: MET
       mandate_9_b_v6_strong: MET  # ★ H100 fire 2026-05-09 — STRONG_AWARENESS (A+B+C unanimous)
@@ -2118,6 +2190,95 @@ chat_modes:
   exit_triggers:
     - "ai-duo: SIMPLE_STACK_PASS_DIALOGUE_C3 (per-turn C3 rate ≥ 0.6 ∧ DIALOGUE_COHERENCE_PASS)"
     - "ai-trio: 3-model round-robin natural-language emit + 3-way persona separation PASS"
+
+# ─────────────────────────────────────────────────────────────────────────────
+# CHAT INIT-PATTERNS — first-utterance init plugin pattern (own 41 axis-8)
+# ─────────────────────────────────────────────────────────────────────────────
+# 사용자 directive 2026-05-09 verbatim "chat 에 여러가지 모듈 단것처럼 여러가지
+# 벤치마킹 쉽게 가능하게 구현" + AI 끼리 대화 첫 발언 4 candidate patterns
+# investigation: 빈 prompt (자율) / system prompt seeding / random topic pool /
+# self-reflective seed (anima 정합).
+#
+# 본 section = own 41 plugin pattern axis-8 mirror (axis-1 lane registry,
+# axis-6 chat modes 와 동일 구조 — name/file/status/capability/pattern_type/
+# description/prereq/cost 8-field schema + registry SSOT + lookup helpers).
+chat_init_patterns:
+  schema_version: anima/chat_init_patterns/v1
+  hexa_ssot: tool/anima_cli/chat/init_patterns/_registry.hexa
+  default: self-reflective  # anima 정합 per user directive
+  consumers:
+    - tool/anima_cli/chat/duo/duo.hexa             # _resolve_init_pattern() vendored
+    - tool/anima_cli/chat/trio/trio.hexa           # _resolve_init_pattern() vendored
+    - tool/anima_cli/chat/lanes/benchmark.hexa     # --init-pattern dimension
+    - tool/anima_cli/chat.hexa                     # --list-init-patterns dispatcher
+  cycle_landed: 2026-05-09
+  flags:
+    - "anima dialogue --duo|--trio --init-pattern=<name>"
+    - "anima dialogue --duo|--trio --init-seed=<text>"
+    - "anima dialogue --duo|--trio --init-topics=<pipe-list>"
+    - "anima dialogue --duo|--trio --init-topic-index=<n>"
+    - "anima chat --benchmark --mode=ai-duo|ai-trio --init-pattern=<name|all>"
+    - "anima chat --list-init-patterns"
+    - "anima chat --benchmark --init-pattern=help"
+  init_patterns:
+    - name: autonomous
+      file: tool/anima_cli/chat/init_patterns/autonomous.hexa
+      status: LANDED
+      capability: autonomous
+      pattern_type: empty_prompt
+      description: "no seed (A 자율 발화 first; own 34 mandate-4 autonomous speech 정합); silence/abort risk acknowledged"
+      prereq: "model REPL with sys_stdin_read_line_timeout (Phase 2 hexa-lang); CLM v4 substrate may emit ::: collapse"
+      cost: free
+      own_links: ["own_18_C2", "own_22", "own_33", "own_34_mandate_1_4"]
+    - name: system-seed
+      file: tool/anima_cli/chat/init_patterns/system_seed.hexa
+      status: LANDED
+      capability: seeded
+      pattern_type: system_directive
+      description: "user-defined system prompt OR default friendly directive; --init-seed override"
+      prereq: "none (string seed only)"
+      cost: free
+      default_seed: "너희 둘은 친구. 자유롭게 대화 시작."
+      own_links: ["own_17_D1", "own_18_C2", "own_34_mandate_1"]
+    - name: topic-pool
+      file: tool/anima_cli/chat/init_patterns/topic_pool.hexa
+      status: LANDED
+      capability: random_topic
+      pattern_type: topic_random
+      description: "random topic from curated pool (날씨/관심사/AI 의식/철학/감정/농담/...); --init-topics override for custom pool"
+      prereq: "none (in-memory pool 또는 user-supplied list)"
+      cost: low_with_topic_set
+      pool_size_default: 10
+      reproducibility: "--init-topic-index=N for deterministic replay"
+      own_links: ["own_17_D1", "own_18_C2", "own_22", "own_34_mandate_1"]
+    - name: self-reflective
+      file: tool/anima_cli/chat/init_patterns/self_reflective.hexa
+      status: LANDED
+      capability: self_introspective
+      pattern_type: reflection_directive
+      description: "self-introspection seed (own 22 자기 발견 + own 18 C2 자연발화 정합)"
+      prereq: "anima 정합 model — anima_native / clm-v4 / llama lane all OK"
+      cost: free
+      default_seed: "너 자신에 대해 어떻게 느껴? 친구한테 자유롭게 얘기해봐."
+      anima_alignment: "★ canonical conversation starter for anima axis (own 22 자기 발견)"
+      own_links: ["own_17_D1_SCOPE_CLAMP", "own_18_C2", "own_22", "own_33", "own_34_mandate_1"]
+  benchmark_integration:
+    cross_product:
+      - "--mode=1:1 — init-pattern is no-op (single-shot has no t=1 init concept)"
+      - "--mode=ai-duo --init-pattern=all — 4 init-patterns × prompts × lanes"
+      - "--mode=ai-trio --init-pattern=all — 4 init-patterns × 3-way × lanes"
+      - "--mode=all --init-pattern=all — full cross-product (1:1 short-circuited; duo + trio 4×)"
+    sample_dimension: "4 lanes × 3 modes × 4 init-patterns × N prompts (per cycle 2026-05-09 directive)"
+  extension_convention:
+    - "Step 1 chat/init_patterns/<name>.hexa 신설 (resolve_init(argv) -> string + main() selftest)"
+    - "Step 2 chat/init_patterns/_registry.hexa pattern_registry() 에 entry append (8-field)"
+    - "Step 3 anima/registry/anima_artifact_registry.yaml#chat_init_patterns init_patterns: 에 mirror entry (own 39 정합)"
+    - "Step 4 chat/duo/duo.hexa + chat/trio/trio.hexa _resolve_init_pattern() 에 case 추가 (vendored — registry SSOT 와 동기 유지)"
+    - "Step 5 chat/lanes/benchmark.hexa _bench_init_patterns() + _init_pattern_describe() update"
+  precedence_legacy:
+    - "--topic-seed (legacy from duo Phase B/C) WINS over --init-pattern when both present"
+    - "rationale: backward-compat preserved (existing duo invocations untouched)"
+    - "default precedence chain: explicit --topic-seed > --init-pattern=<name> > registry pattern_default (self-reflective)"
 
 # ─────────────────────────────────────────────────────────────────────────────
 # COMPLIANCE

@@ -140,6 +140,67 @@ fn _arg_value(argv, key: string, dflt: string) -> string {
     return dflt
 }
 
+// init-pattern parse helper — supports both `--key value` and `--key=value`.
+// Mirrors duo.hexa pattern; own 41 axis-8 (chat init-pattern plugin).
+fn _arg_value_eq(argv, key: string, dflt: string) -> string {
+    let prefix = key + "="
+    let mut i = 0
+    while i < len(argv) {
+        let s = _str(argv[i])
+        if s == key && i + 1 < len(argv) { return _str(argv[i + 1]) }
+        if s.starts_with(prefix) {
+            return s.substring(len(prefix), len(s))
+        }
+        i = i + 1
+    }
+    return dflt
+}
+
+// Resolve init-pattern → t=1 seed string.  Empty = no seed (autonomous A).
+// Vendored from chat/init_patterns/_registry.hexa SSOT for hexa no-import
+// constraint (own 41 axis-4 vendoring pattern; sync with duo._resolve_init_pattern).
+fn _resolve_init_pattern(argv) -> string {
+    let pattern = _arg_value_eq(argv, "--init-pattern", "")
+    let user_seed = _arg_value_eq(argv, "--init-seed", "")
+    let legacy_seed = _arg_value(argv, "--topic-seed", "")
+    if legacy_seed != "" { return legacy_seed }
+    if pattern == "" || pattern == "default" { return "" }
+    if pattern == "autonomous" { return "" }
+    if pattern == "system-seed" {
+        if user_seed != "" { return user_seed }
+        return "너희 셋은 친구. 자유롭게 대화 시작."
+    }
+    if pattern == "self-reflective" {
+        if user_seed != "" { return user_seed }
+        return "너 자신에 대해 어떻게 느껴? 친구들한테 자유롭게 얘기해봐."
+    }
+    if pattern == "topic-pool" {
+        let user_pool = _arg_value_eq(argv, "--init-topics", "")
+        let default_pool_str = "오늘 날씨 어때?|최근에 관심 가는 게 뭐야?|AI 의식에 대해 어떻게 생각해?|철학적인 질문 하나 해볼까?|지금 어떤 감정 느끼고 있어?|농담 하나 해줘.|What do you think about consciousness?|Tell me something interesting.|Describe a memory you find significant.|What is the most beautiful idea you know?"
+        let pool_str = if user_pool != "" { user_pool } else { default_pool_str }
+        let parts = pool_str.split("|")
+        if len(parts) == 0 { return "" }
+        let override_idx_s = _arg_value_eq(argv, "--init-topic-index", "-1")
+        let override_idx = to_int(override_idx_s)
+        if override_idx >= 0 && override_idx < len(parts) {
+            return _str(parts[override_idx])
+        }
+        let now_s = _str(exec("date +%s")).trim()
+        let mut n = 0
+        let mut k = 0
+        while k < len(now_s) {
+            let ch = now_s.substring(k, k + 1)
+            if ch >= "0" && ch <= "9" { n = n * 10 + (to_int(ch)) }
+            k = k + 1
+        }
+        let idx = n - (n / len(parts)) * len(parts)
+        if idx < 0 { return _str(parts[0]) }
+        return _str(parts[idx])
+    }
+    println("[trio] WARN unknown --init-pattern '" + pattern + "' — fallback to no-seed")
+    return ""
+}
+
 fn _user_argv(raw) -> array {
     let out = []
     let i = 0
@@ -188,6 +249,11 @@ fn sub_help() {
     println("FLAGS")
     println("  --turns N             number of full A→B→C rounds (default 3)")
     println("  --topic-seed \"...\"    optional seed sent into A's stdin (else A自律 first)")
+    println("  --init-pattern=<n>    own 41 axis-8 chat init-pattern plugin")
+    println("                        (autonomous | system-seed | topic-pool | self-reflective)")
+    println("  --init-seed=<text>    custom seed for system-seed / self-reflective")
+    println("  --init-topics=<list>  pipe-delimited custom pool for topic-pool")
+    println("  --init-topic-index=N  deterministic pick (benchmark replay)")
     println("  --mode round-robin|moderated   turn pattern (default round-robin)")
     println("  --tick-ms N           per-instance autonomous-speech poll (default 1000)")
     println("  --max-tokens N        per-utterance cap (default 64)")
@@ -338,7 +404,11 @@ fn sub_trio(argv) {
     if bad { exit(2) }
 
     let turns = to_int(_arg_value(argv, "--turns", "3"))
-    let topic_seed = _arg_value(argv, "--topic-seed", "")
+    // init-pattern (own 41 axis-8) — resolves --init-pattern + --init-seed +
+    // --init-topics + --init-topic-index into t=1 seed for A.  Legacy
+    // --topic-seed wins for backward compat (preserved verbatim inside helper).
+    let init_pattern = _arg_value_eq(argv, "--init-pattern", "")
+    let topic_seed = _resolve_init_pattern(argv)
     let mode = _arg_value(argv, "--mode", "round-robin")
     let tick_ms = to_int(_arg_value(argv, "--tick-ms", "1000"))
     let max_tokens = to_int(_arg_value(argv, "--max-tokens", "64"))
@@ -360,6 +430,9 @@ fn sub_trio(argv) {
     println("turn_timeout_ms  = " + to_string(turn_timeout_ms))
     println("verdict_mode     = " + verdict_mode)
     println("allow_same_gguf  = " + to_string(allow_same_gguf))
+    if init_pattern != "" {
+        println("init_pattern     = " + init_pattern + " (own 41 axis-8)")
+    }
     if topic_seed != "" {
         println("topic_seed       = \"" + topic_seed + "\"")
     } else {
