@@ -1197,7 +1197,7 @@ cycle_2026_05_08:
 h100_resource_pool:
   schema_version: anima/registry/h100_pool/v1
   policy: own_40_resource_cli_delegation_strict
-  probed_at: 2026-05-09  # re-probed for FIRE 2/4 (sft-1-8 Step B longer SFT) — same SSOT state
+  probed_at: 2026-05-09  # re-probed for FIRE 3/4 (BG-LA + BG-LB) + FIRE 4/4 (BG-LC + BG-LD) chat-cap L4 H100 fire — same SSOT state, GPU host still absent
   probe_method: "resource list + resource status <host> + rr <host> nvidia-smi"
   cli_path: /Users/ghost/.hx/bin/resource
   ssot_path: /Users/ghost/.hx/packages/resource/.resource
@@ -1205,7 +1205,7 @@ h100_resource_pool:
     - host: ubu
       reachable: true
       load_avg_1min: 0.00
-      mem_free_mb: 28960
+      mem_free_mb: 28818
       gpu: "NVIDIA GeForce RTX 5070 (12GB, CUDA 13.0, driver 580.126.09)"
       gpu_h100: false  # NOT H100 — consumer GPU only (12GB VRAM 부족 for 7B+ fire)
       disk_root: "510G free / 915G total (42% used)"
@@ -1250,6 +1250,26 @@ h100_resource_pool:
         outcome: BLOCKED_NO_H100_HOST  # resource SSOT empty + resource daemon offline + iter4 verbatim missing
         state_emit_path: state/anima_chat_cap_l4_bg_la_lb_h100_fire_3of4_blocked_2026_05_09.json
         compliance_carry: "own 14 V14 carry; own 16 cost discipline PASS ($90 saved); own 17 D1 within strict (LA=1.0 + LB=0.99); own 22 honest BLOCKED emit; own 30 ckpt pull N/A (fire 미실행); own 33 trinity carry; own 34 wrap=0; own 37 HF private carry; own 39 yaml updated md deferred; own 40 resource CLI 위임 strict — anima 직접 ssh/cloud-cli 0건"
+      - cycle: 2026-05-09-FIRE-4/4
+        commit: pending
+        target: chat_cap_L4_BG-LC + BG-LD (Llama distill ambiguous_research + DPO RLHF on sft-1-7-y1)
+        intended_setup: "BG-LC: teacher Llama-3.2-3B + student clm-v4-mk2-v1 logit KL distill + persona 200MB / D1=0.351 ambiguous_research / cap $40 / ~10h H100; BG-LD: TRL DPOTrainer on sft-1-7-y1 frozen ref + dialogue pref pairs 100MB / β=0.1 / 1000-3000 steps / D1=0.793 within / cap $20 / ~3-5h"
+        cost_planned_usd: 60.0
+        cost_actual_usd: 0.0
+        cost_savings_via_block_usd: 60.0
+        resource_cli_list_probe: "ubu reachable load=0.00 mem_free=28818MB (RTX 5070 12GB, NOT H100); hetzner unreachable; runpod pool empty"
+        resource_cli_status_ubu: "PASS reachable (CPU/consumer host, gpu_h100=false)"
+        resource_cli_status_hetzner: "FAIL unreachable (UNREACHABLE verdict)"
+        resource_ssot_static_probe: "/Users/ghost/.hx/packages/resource/.resource — live_hosts=2 (ubu/hetzner non-H100), deferred_hosts=2 (example-a/example-b template), h100_tagged=0"
+        runpodctl_oob_verify: "[] (0 active pods; OOB verify only, allocate X own 40 strict)"
+        user_consent_observed_relay: "all bg go + H100 unlock (consent_carry from FIRE-3/4)"
+        verbatim_override_iter4_baseline: "OK CLM L4 ALL FIRE"
+        verbatim_override_observed_this_cycle: false
+        outcome: BLOCKED_NO_H100_HOST  # resource SSOT no GPU + runpod pool empty + iter4 verbatim missing
+        bg_lc_special_note: "ambiguous_research lane (D1=0.351) — public promote PARTIAL_PATH requires SEPARATE verbatim 'OK PROMOTE PUBLIC AMBIGUOUS RESEARCH <repo>' per BG-KM-LLAMA-3B parity; on EMERGE label = SIMPLE_STACK_PASS_STRICT_C3_AMBIGUOUS_RESEARCH (NOT _ANIMA); own 17 d1_scope_clamp_note carry"
+        bg_ld_special_note: "RLHF stage on sft-1-7-y1 (Lesson Q SFT-closed compliance — DPO ≠ SFT); sft-1-7-y1 v5.1 DCR change_rate=0.8475 (highest among trained models); DPO target = verify whether DCR strength persists/amplifies post-RLHF; Q3 dataset diversity sub-blocker (clm-l4-ld-preference-pairs-iter1: 13 unique stems × 2610-5222 repeat) — re-extract to ≥30 unique stems pre-fire recommended"
+        state_emit_path: state/anima_chat_cap_l4_bg_lc_ld_h100_fire_4of4_blocked_2026_05_09.json
+        compliance_carry: "own 14 V14 paired random_init mirror prereq carry (BG-LC: student LoRA fresh init seed=42 mirror; BG-LD: sft-1-7-y1 base WITHOUT DPO step + random_init clm-v4-mk2-v1); own 16 cost discipline PASS ($60 saved); own 17 D1 SCOPE_CLAMP — BG-LC ambiguous_research / BG-LD within strict; own 22 honest BLOCKED emit; own 30 ckpt pull N/A (fire 미실행); own 33 trinity carry; own 34 wrap=0; own 37 mandate-9 — BG-LC public promote 영구 차단 OR ambiguous_research partial path / BG-LD PRIVATE; own 38 axis-B/C HF private upload pending fire; own 39 yaml updated md regenerate; own 40 resource CLI 위임 strict — anima 직접 ssh/cloud-cli 0건"
   fire_candidates_pending_h100:
     - id: V6_awareness_probe
       desc: "ConsciousDecoderV3 dev 60-90min + fire 1-1.5h (mandate-9 (b) 해제 prereq)"
@@ -1261,11 +1281,18 @@ h100_resource_pool:
       cost_estimate_usd: "~30"
       strategic_priority: HIGH
       blocked_by: PROVISION_BLOCKED
+      fire_attempt_count: 1  # 2026-05-09-FIRE-3/4 BLOCKED
+      d1_score: 1.0  # anima_native_scratch
+      d1_lane: within_strict
     - id: chat_cap_L4_BG-LB
       desc: "350M scratch pre-train"
       cost_estimate_usd: "~60"
       strategic_priority: HIGH
       blocked_by: PROVISION_BLOCKED
+      fire_attempt_count: 1  # 2026-05-09-FIRE-3/4 BLOCKED
+      d1_score: 0.99  # 350M from-scratch on anima persona
+      d1_lane: within_strict
+      lesson_l_extended_3_caveat: "EXTENDED-3 Lesson L 누적 SFT 차단 정합 — pre-train only valid path"
     - id: chat_cap_L4_BG-LC
       desc: "Llama distill (D1=0.351 ambiguous_research, own 17 SCOPE_CLAMP)"
       cost_estimate_usd: "~40"
