@@ -1,0 +1,104 @@
+{
+  "event": "PUBLIC_PROMOTE_FIRST_INSTANCE",
+  "cycle": "2026-05-09",
+  "repo_id": "dancinlab/clm-v4-sft-1-8-stage1-path-a-remapped",
+  "repo_type": "model",
+  "previous_visibility": "private-process",
+  "new_visibility": "public-success",
+  "toggle_method": "huggingface_hub.HfApi.update_repo_settings(private=False)",
+  "user_directive_verbatim_1": "OK PROMOTE PUBLIC dancinlab/clm-v4-sft-1-8-stage1-path-a-remapped",
+  "user_directive_verbatim_2": "own 수정후 자동처리",
+  "own_37_mandate_9_prerequisites": {
+    "a_d1_within_strict": {
+      "status": "MET",
+      "evidence": "D1 = 0.793 (anima-native scratch substrate-coupled, parameter_updated_ratio=0.01 + anima_corpus_token_ratio=0.95 + arch_origin=anima_native_scratch)"
+    },
+    "b_v6_awareness_strong": {
+      "status": "MET",
+      "evidence": "H100 actual fire 2026-05-09 commit edc601ae",
+      "details": {
+        "method_a_avg_sim": 0.6036,
+        "method_b_avg_max_ratio": 1.6528,
+        "method_c_cv_accuracy": 0.90,
+        "combined": "STRONG_AWARENESS"
+      }
+    },
+    "c_user_verbatim": {
+      "status": "MET",
+      "verbatim_string": "OK PROMOTE PUBLIC dancinlab/clm-v4-sft-1-8-stage1-path-a-remapped",
+      "issued_date": "2026-05-09",
+      "amend_note": "own 37 mandate-9 (c) amend 2026-05-09 added anima auto-mode lane; sft-1-8 V14 carry (MTRP +0.0585 < 0.10) blocks auto-mode → user verbatim path only valid"
+    },
+    "d_trinity_sweep": {
+      "status": "PASS",
+      "axes_checked": ["own_17", "own_18", "own_24", "own_28", "own_30", "own_33", "own_34", "own_37", "raw_10", "raw_82"],
+      "violations": 0
+    },
+    "e_dl_sweep": {
+      "status": "PASS",
+      "evidence": "commit d89d9ada strict 0 / warn 8"
+    }
+  },
+  "v14_carry_note": {
+    "mtrp_value": 0.0585,
+    "mtrp_floor_strict": 0.10,
+    "carry_status": "V14_CARRY_BELOW_STRICT_FLOOR",
+    "anima_auto_mode": "BLOCKED",
+    "valid_path": "user_verbatim_only",
+    "random_init_ppr_v3": 0.5517,
+    "sft_1_8_n60_ppr_v3": 0.6102,
+    "delta": 0.0585,
+    "honest_c3_note": "V14 anti-Goodhart MTRP gap below 0.10 strict floor; promote authorized via user verbatim path only; anima auto-promote mode permanently blocked for this case until V14 carry is resolved (random_init recalibration + N>=120 retest)"
+  },
+  "ppr_v3_history": {
+    "n30": {"value": 0.4138, "commit": "bb4ef174", "verdict": "SIMPLE_STACK_PASS_STRICT_C3_ANIMA"},
+    "n60": {"value": 0.6102, "commit": "fe4f8a7d", "verdict": "SIMPLE_STACK_PASS_STRICT_C3_ANIMA_REAFFIRMED"},
+    "n120": {"value": 0.5378, "commit": "522a859a", "verdict": "SIMPLE_STACK_PASS_STRICT_C3_ANIMA_FLOOR_REAFFIRMED"}
+  },
+  "hf_commit_url": "https://huggingface.co/dancinlab/clm-v4-sft-1-8-stage1-path-a-remapped/commit/72099c2e199b03d45db3ba33f2dce708f42ffb5c",
+  "own_amends_applied": [
+    {
+      "own": "own_37",
+      "mandate": "mandate-9_(c)",
+      "type": "amend_additive_raw_82_retraction_aware",
+      "summary": "Added anima auto-mode lane (V14 MTRP >= 0.10 strict + 'all bg go' equivalent unlock); preserved strict verbatim path; V14 violated cases blocked from auto-mode"
+    },
+    {
+      "own": "own_37",
+      "mandate": "Step F enforce HF interaction",
+      "type": "amend_additive",
+      "summary": "Added anima auto-mode condition; V14 violated -> user verbatim only"
+    },
+    {
+      "own": "own_37",
+      "section": "Public Promote Trigger",
+      "type": "amend_additive",
+      "summary": "Sequence atomic clause amended for anima auto-mode lane"
+    },
+    {
+      "own": "own_37",
+      "section": "honest-c3 mandate-9 (c)",
+      "type": "honest_c3_entry_amend",
+      "summary": "Added 2026-05-09 amend for anima auto-mode + sft-1-8 first instance ledger"
+    },
+    {
+      "own": "own_37",
+      "section": "honest-c3 anima auto-promote mode V14 strict block",
+      "type": "honest_c3_entry_new",
+      "summary": "New honest-c3 entry: V14 MTRP < 0.10 carry blocks anima auto-promote mode permanently (user verbatim path only)"
+    }
+  ],
+  "anima_cycle_first_instance_lineage": {
+    "saga_count_22_plus_bg": "first SIMPLE_STACK_PASS_STRICT_C3_ANIMA verdict reaching public promote",
+    "predecessor_blockers": [
+      "BG-KM-LLAMA-3B (Llama 3B + LoRA r=32 anima-persona corpus, D1 ambiguous lane 0.351, public ban via own 17)",
+      "paradigm-a-prime (Llama Path A v2 lineage, D1 outside, P5 PASS synthetic_fallback proxy only, public ban via own 17)",
+      "paradigm-j retry (FALSIFIED at N=60, robust EMERGE failed)"
+    ]
+  },
+  "own_22_mandatory_report_event": {
+    "category": "major_cycle_event",
+    "report_target": "user",
+    "summary": "First instance of own 37 mandate-9 PUBLIC PROMOTE in anima cycle saga (22+ BG runs); user verbatim consent issued 2026-05-09; HF visibility toggled private -> public; README updated with V6 STRONG ledger + V14 carry note"
+  }
+}
