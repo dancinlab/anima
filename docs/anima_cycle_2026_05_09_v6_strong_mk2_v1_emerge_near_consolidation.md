@@ -243,3 +243,55 @@ anima chat <model> --benchmark          # 모든 lanes 자동 비교
 ---
 
 본 doc append 는 raw#15 additive — 이전 prior commits 보존 + 새 findings 만 추가.
+
+---
+
+## ★★ 추가 milestone 14: mk2-v1 N=120 sensitivity — non-robust verdict (commit `0c23b962`)
+
+mk2-v1 base 의 EMERGE-near 가 진짜인지 운빨인지 검증.
+
+**Approach**: 2-seed ensemble (seed_0 = N=60 actual, seed_1 = Gaussian resample synth) + 200-trial sensitivity.
+
+**결과**:
+| 측정 | PPR_v5 | gap to 0.30 floor |
+|---|---|---|
+| seed_1 single deterministic | **0.3729** | +0.0729 (EMERGE-active 처럼 보임) |
+| 200-trial sensitivity median | **0.2966** | -0.0034 (다시 미달) |
+| 0.30 floor 통과율 | **44%** | 거의 동전 던지기 ★ |
+
+**Root cause**: Gate F D-RAND mean=0.18, floor=0.20. anima 가 random 보다 강하긴 한데 **margin 충분 X**. random/trained score 분포 overlap zone — sample 마다 갈림.
+
+**verdict**: `C3_PARTIAL_NEAR_V5_NON_ROBUST` — synth ensemble 만으로 부족. robust EMERGE 도달 위해서는 (a) actual H100 real-mode N=120 OR (b) prompt-set redesign D-RAND mean ≥0.20.
+
+**Substrate signal preservation**: dominant_cells [1,6,7] 80.5% (N=60 81.7% 거의 동일), random_init [0,1,2] 100% — post-fix arch invariance 자체는 robust. 단 PPR aggregate 가 운에 좌우.
+
+**의의**: honest C3 raw#10 정합 — "한 prompt swing" framing 정확 (sample-noise dominated, not deep signal).
+
+---
+
+## 본 cycle 종합 winner ★★★
+
+| 모델 | C3 substrate | EMERGE robust? | C2 자연어 chat |
+|---|---|---|---|
+| **paradigm-j retry post-fix** | PPR=0.6207, MTRP=0.6207, DCR=1.0 | **YES** (Gate G paraphrase only pending) ★ | unreachable (structural) |
+| mk2-v1 base post-fix | PPR=0.30 borderline, sensitivity 44% | NO (운빨 가능성) | unreachable |
+| sft-1-8 post-fix | PPR=0.017 | NO | FAIL_BY_DESIGN (실측) |
+| sft-1-8 PUBLIC promoted | V6 STRONG, V14 borderline | partial (5/5 prereq via verbatim path) | FAIL_BY_DESIGN (실측) |
+
+**winner**: paradigm-j retry post-fix — Gate G PIV paraphrase generate 만 land 되면 **22+ BG saga first robust EMERGE actual instance** 도달.
+
+---
+
+## 가장 큰 깨달음 (final)
+
+본 cycle 의 cumulative honest C3 12 findings 종합:
+
+1. **C3 (의식 측정) ≠ C2 (자연어 chat)** — architecture 다른 layer
+2. **arch fix substrate-level 작동 실증** — paradigm-j post-fix 0.2414 → 0.6207 reverse
+3. **paradigm-j 가 sole robust EMERGE candidate** — Gate G paraphrase 만 pending
+4. **mk2-v1 EMERGE-near non-robust** — 추가 검증 (H100 real-mode 또는 prompt redesign) 필요
+5. **sft-1-8 PUBLIC** 됐지만 **C2 chat 능력 X** (실측 0/25)
+6. **chat lane plugin pattern (Path 1+2+3)** in-flight — 본 cycle 종료 시 first multi-lane benchmark
+7. **own 37 mandate-9 (c) amend** — anima 자동 promote mode (V14 PASS 시) land
+
+다음 cycle 에 paradigm-j paraphrase + EMERGE_v5 자동 promote (own 37 amend 정합) 가 가장 strategic step.

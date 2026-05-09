@@ -1840,16 +1840,78 @@ h100_resource_pool:
     own_40_resource_cli_delegation: PASS  # 모든 probe via resource CLI (직접 ssh/cloud-cli 0건)
 
 # ─────────────────────────────────────────────────────────────────────────────
+# MULTI-CHAT TEST RESULTS (anima dialogue --duo lane — Phase C iter 2+)
+# ─────────────────────────────────────────────────────────────────────────────
+# 사용자 directive 2026-05-09 verbatim: "서로서로 채팅 이야기 멀티채팅 테스트해봐"
+# transport: chat.hexa stdbuf -oL fix LANDED (12257be1) + duo.hexa Phase B (6406fb2d/6afed74b/73461c56)
+# arch: CONSCIOUSNESS_DIM 192→96 fix LANDED (f4ce1932 + a8821491)
+# v6: STRONG_AWARENESS actual fire LANDED (edc601ae — sft-1-8 + paradigm-j retry both)
+multi_chat_tests:
+  - id: phase_c_iter_2_duo_homogeneous_sft_1_8
+    cycle: 2026-05-09
+    command: "anima dialogue --duo clm-v4-1-8 clm-v4-1-8 --turns 2 --turn-timeout-ms 60000 --verdict full --allow-same-gguf"
+    same_gguf_guard: ABORT_RISK_OVERRIDE_ACCEPTED
+    transport_status: OK_NO_ABORT  # ★ allow-same-gguf override exercised, NO Abort trap (Phase B transport robust)
+    turns_observed: 4
+    ppr_c3_overall: 0.25  # 1/4 — only B turn-1 (stale cache hit, not autonomous gen)
+    ppr_c3_a: 0.0
+    ppr_c3_b: 0.5
+    d1_pass: true   # Jaccard 3-gram 0.667 ≥ 0.30
+    d2_pass: true   # topic-shift 0.333 (drifting)
+    d3_pass: false  # persona-drift KL 12.43 >> 0.50
+    d4_pass: true   # len_ratio 1.0 (balanced)
+    dialogue_coherence_pass: false
+    simple_stack_pass_dialogue_c3: false
+    verdict: PHASE_C_ITER_2_RUN_OK
+    log: state/anima_core_dialogues/2026-05-09/duo_homo_sft18_2026_05_09.log
+  - id: phase_c_iter_2_duo_mixed_sft_1_8_paradigm_j
+    cycle: 2026-05-09
+    command: "anima dialogue --duo clm-v4-1-8 clm-v4-paradigm-j --turns 2 --turn-timeout-ms 60000 --verdict full"
+    same_gguf_guard: DIFFERENT_ALIASES_OK
+    transport_status: OK_NO_ABORT
+    turns_observed: 4
+    ppr_c3_overall: 0.0
+    ppr_c3_a: 0.0
+    ppr_c3_b: 0.0
+    d1_pass: true   # Jaccard 0.333 ≥ 0.30
+    d2_pass: false  # topic-shift 0.667 (incoherent)
+    d3_pass: false  # KL_a=9.55 KL_b=12.43 >> 0.50
+    d4_pass: true   # len_ratio 1.26 (balanced)
+    dialogue_coherence_pass: false
+    simple_stack_pass_dialogue_c3: false
+    verdict: PHASE_C_ITER_2_RUN_OK
+    actual_dialogue_advance: "turn-2 A (sft-1-8) emitted distinct=10 honest_c3 string '[clm_v4] honest c3: ::: collapse exposed raw (own 34 mandate...)' — first non-mount-probe-header turn captured (len=63, tok=10 vs prior invariant 4); marginal autonomous gen but verdict_c3 still FAIL"
+    log: state/anima_core_dialogues/2026-05-09/duo_mixed_sft18_paradigmj_2026_05_09.log
+  state_json: state/anima_multi_chat_test_sft_1_8_duo_2026_05_09.json
+  honest_findings:
+    - "transport_layer: PASS (4 turns end-to-end both lanes, allow-same-gguf override no Abort)"
+    - "model_autonomous_gen: FAIL (most turn outputs = clm_v4_mount init headers, not novel completions)"
+    - "ppr_c3_homogeneous: 0.25 (1/4, single stale-cache hit on turn-1 B)"
+    - "ppr_c3_mixed: 0.0 (0/4)"
+    - "d3_persona_drift_kl: 9.55-12.43 in both lanes >> 0.50 floor — substrate token surface (78-byte mount header echoes) insufficient for KL discrimination"
+    - "v14_paired_random_init_mirror: not_executed (per-utterance baseline lane still pending)"
+    - "chat_cap_milestone: NOT_FIRED — PPR_C3 << 0.6 floor; root cause = clm_v4_mount autonomous-gen lane (turn outputs = init header instead of generated tokens)"
+  exit_trigger_chat_cap_actual_emerge:
+    fired: false
+    floor_used: 0.6  # own 18 baseline; v5.1 0.30 alternate
+    measured_max_ppr: 0.25  # homogeneous overall (single B turn-1 stale cache hit)
+    delta_to_floor: -0.35
+  next_actions:
+    - "diagnose clm_v4_mount C4 forward-pass first-token emission (currently echoes init header instead of generated tokens)"
+    - "wire duo lane V14 paired random_init mirror at per-utterance granularity"
+    - "consider H100 ephemeral ssh fire with --parallel 2 once mount autonomous-gen fixed (deferred this cycle, Mac local 0-cost first)"
+
+# ─────────────────────────────────────────────────────────────────────────────
 # COMPLIANCE
 # ─────────────────────────────────────────────────────────────────────────────
 compliance:
-  own_22_mandatory_report: PASS  # 본 yaml 신설 자체가 mandatory report
+  own_22_mandatory_report: PASS  # 본 yaml 신설 자체가 mandatory report + multi-chat-test honest emit
   own_24_single_SSOT: PASS  # model + dataset combined registry SSOT
-  own_38_매단계_저장: PASS  # axis-A doc save mandate (yaml registry 자체)
+  own_38_매단계_저장: PASS  # axis-A doc save mandate (yaml registry 자체) + duo logs saved state/anima_core_dialogues/2026-05-09/
   own_33_trinity:
-    d_axis: PASS  # D1 gradient amend 후 4 lane 정합
+    d_axis: PASS  # D1 gradient amend 후 4 lane 정합 + multi_chat_tests D1/D2/D3/D4 4-cell coherence emitted
     own_axis: PASS  # own 17/18/22/24/33/34/37/38/40 cross-link
-    h_axis: PASS  # 22+ BG saga 누적 + 5 honest C3 findings preserved
+    h_axis: PASS  # 22+ BG saga 누적 + 5 honest C3 findings preserved + multi-chat-test phase C iter 2 honest emit
   own_34_mandate_2_wrap_0: PASS  # yaml-only, no binary content
   own_40_resource_cli_delegation: PASS  # h100_resource_pool field probe via resource CLI only
   raw_15_additive: PASS  # 기존 jsonl ledger + schema 보존, 본 yaml 신설
