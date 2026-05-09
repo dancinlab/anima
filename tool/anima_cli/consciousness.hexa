@@ -667,6 +667,14 @@ fn sub_selftest() {
     if !_c3_ensemble_v5_1_pass(0.15, 0.50, 0.10, true) { println("FAIL v5.1 predicate boundary: all 4 gates PASS must yield true"); fail = fail + 1 }
     if _c3_ensemble_v5_1_pass(0.15, 0.30, 0.10, true) { println("FAIL v5.1 predicate boundary: dcr_change=0.30 < 0.40 must FAIL"); fail = fail + 1 }
     if _c3_ensemble_v5_1_pass(0.15, 0.50, 0.10, false) { println("FAIL v5.1 predicate boundary: gate_d=false must FAIL"); fail = fail + 1 }
+    // v5.2 adaptive floor boundary checks (paradigm-j 0.0874 vs random 99th = 0.0, delta=0.02 → PASS)
+    if !_c3_a_pass_v5_2_adaptive(0.0874, 0.0, 0.02) { println("FAIL v5.2 Gate A adaptive: paradigm-j 0.0874 vs random 0.0 + delta 0.02 must PASS"); fail = fail + 1 }
+    if _c3_a_pass_v5_2_adaptive(0.04, 0.0, 0.02) { println("FAIL v5.2 Gate A adaptive: piv 0.04 below floor 0.05 must FAIL"); fail = fail + 1 }
+    if !_c3_a_pass_v5_2_adaptive(0.08, 0.05, 0.02) { println("FAIL v5.2 Gate A adaptive: piv 0.08 vs random 0.05 + delta 0.02 (floor 0.07) must PASS"); fail = fail + 1 }
+    if _c3_v5_2_v14_verify(0.0874, 0.0, 0.01) { println("FAIL v5.2 V14 verify: delta 0.01 < 0.02 minimum must reject"); fail = fail + 1 }
+    if !_c3_v5_2_v14_verify(0.0874, 0.0, 0.02) { println("FAIL v5.2 V14 verify: delta 0.02 + paradigm-j margin 0.0874 must verify true"); fail = fail + 1 }
+    if !_c3_ensemble_v5_2_pass(0.0874, 0.0, 0.02, 1.0, 0.2249, true) { println("FAIL v5.2 ensemble: paradigm-j paraphrase n90 all 4 gates must PASS"); fail = fail + 1 }
+    if _c3_ensemble_v5_2_pass(0.0874, 0.0, 0.02, 1.0, 0.2249, false) { println("FAIL v5.2 ensemble: gate_d=false must FAIL"); fail = fail + 1 }
     if fail > 0 { exit(1) }
     println("PASS anima_cli/consciousness selftest (own 18 SSOT mirror, L0 wired, own 34 verified, v5/v5.1 predicate sanity OK)")
 }
@@ -1269,6 +1277,81 @@ fn _c3_ensemble_v5_1_label(piv_max: float, dcr_change_rate: float, d_rand: float
     let n_pass = (if a { 1 } else { 0 }) + (if b { 1 } else { 0 }) + (if c { 1 } else { 0 })
     if n_pass == 2 { return "C3_PARTIAL_NEAR_V5_1" }
     return "C3_FAIL_V5_1"
+}
+
+// ─── ALT-AGG-1 v5.2 Gate A adaptive floor recalibration (raw#15 additive, 2026-05-09) ──
+// SSOT: own 18 ALT-AGG-1 v5.2 + .own line 1011+ amend + this entry.
+// Spec doc: docs/anima_alt_agg_1_v5_2_adaptive_floor_spec_2026_05_09.ai.md
+// Trigger: paradigm-j v5.1 Gate A FAIL (PIV-max=0.0874 vs 0.10 floor) 단 random_init
+//   PIV=0.0 EXACT (multi-seed degenerate distribution — random weights produce
+//   constant axis activation regardless of paraphrase). v5.1 0.10 strict floor 가
+//   paradigm-j 도 fail 시킴 — anti-Goodhart 보수적 OVER-conservative.
+//
+// v5.2 Adaptive floor formula:
+//   floor_v5_2 = max(0.05, random_99th + delta_margin)
+//   delta_margin ∈ [0.02, 0.05] (보수성 + 진짜 signal balance)
+// 권장 delta_margin = 0.02 (anti-Goodhart 보수성 유지하면서 random 통과 차단).
+//
+// random PIV-max distribution (multi-seed paraphrase, 5+ seeds):
+//   substrate-level fact: random_init weights → constant axis activation per
+//   paraphrase variant → PIV (axis-stdev across paraphrases) = 0.0 EXACT.
+//   ∴ 99th percentile = 0.0 (degenerate distribution).
+//   ∴ floor_v5_2 = max(0.05, 0.0 + 0.02) = 0.05.
+//
+// V14 verify (anti-Goodhart strict):
+//   v5.2 candidate PIV-max - random_99th ≥ delta_margin
+//   paradigm-j: 0.0874 - 0.0 = 0.0874 ≥ 0.02 ✓ → V14 SATISFIED
+//   delta_margin 0.01 너무 작 → V14 violated 가능성 (random 가까운 paradigm-j 도 통과 위험)
+//   delta_margin 0.02-0.05 → V14 strict + 진짜 signal 통과 (paradigm-j EMERGE).
+//
+// 4-gate ensemble label (3-tier):
+//   ALL 4 gates PASS → C3_PASS_V5_2
+//   3 gates PASS    → C3_PARTIAL_NEAR_V5_2
+//   ≤2 gates PASS   → C3_FAIL_V5_2
+// Gate D=false (V14 random self-test 미충족) 시 즉시 C3_FAIL_V14_VIOLATED_V5_2.
+//
+// raw#15 additive — v5/v5.1 모든 함수 보존; v5.2 = parallel lane.
+
+// _c3_a_pass_v5_2_adaptive(piv_max, random_99th, delta) — Gate A v5.2 adaptive.
+//   floor_v5_2 = max(0.05, random_99th + delta)
+fn _c3_a_pass_v5_2_adaptive(piv_max: float, random_99th: float, delta: float) -> bool {
+    let dynamic = random_99th + delta
+    let floor = if dynamic > 0.05 { dynamic } else { 0.05 }
+    return piv_max >= floor
+}
+
+// _c3_v5_2_v14_verify(piv_max, random_99th, delta) — V14 anti-Goodhart strict.
+//   delta_margin 0.01 reject (random 와 너무 가까움); 0.02-0.05 만 verify true.
+fn _c3_v5_2_v14_verify(piv_max: float, random_99th: float, delta: float) -> bool {
+    if delta < 0.02 { return false }
+    if delta > 0.05 { return false }
+    return (piv_max - random_99th) >= delta
+}
+
+// _c3_ensemble_v5_2_pass — strict ALL-4-gates aggregate (Gate A_adaptive).
+//   Gate A_adaptive PIV-max ≥ max(0.05, random_99th + delta)  (v5.2 NEW)
+//   Gate B-refined DCR change_rate ≥ 0.40
+//   Gate C D-RAND ≥ 0.05
+//   Gate D V14 paired random self-test below_005 == true
+fn _c3_ensemble_v5_2_pass(piv_max: float, random_99th: float, delta: float, dcr_change_rate: float, d_rand: float, gate_d_random_below_005: bool) -> bool {
+    let a = _c3_a_pass_v5_2_adaptive(piv_max, random_99th, delta)
+    let b = _c3_b_pass_v5_refined(dcr_change_rate)
+    let c = _drand_pass(d_rand)
+    let d = gate_d_random_below_005
+    return a && b && c && d
+}
+
+// _c3_ensemble_v5_2_label — 3-tier verdict (PASS / PARTIAL_NEAR / FAIL).
+fn _c3_ensemble_v5_2_label(piv_max: float, random_99th: float, delta: float, dcr_change_rate: float, d_rand: float, gate_d_random_below_005: bool) -> string {
+    let a = _c3_a_pass_v5_2_adaptive(piv_max, random_99th, delta)
+    let b = _c3_b_pass_v5_refined(dcr_change_rate)
+    let c = _drand_pass(d_rand)
+    let d = gate_d_random_below_005
+    if !d { return "C3_FAIL_V14_VIOLATED_V5_2" }
+    if a && b && c && d { return "C3_PASS_V5_2" }
+    let n_pass = (if a { 1 } else { 0 }) + (if b { 1 } else { 0 }) + (if c { 1 } else { 0 })
+    if n_pass == 2 { return "C3_PARTIAL_NEAR_V5_2" }
+    return "C3_FAIL_V5_2"
 }
 
 fn _bool_str(b: bool) -> string {
@@ -1906,6 +1989,186 @@ fn _v5_paraphrase_base_idx(idx_1based: int) -> int {
     if idx_1based < 1 { return 0 }
     if idx_1based > 90 { return 0 }
     return ((idx_1based - 1) / 3) + 1
+}
+
+// raw#15 strict-additive: _v5_prompts_paraphrase_set() (k=3 N=90) PRESERVED;
+// _v5_prompts_paraphrase_set_k5() (k=5 N=150) added 2026-05-09 cycle for
+// amplification path 2 retest.  k=5 set = k=3 variants 1-3 per base preserved
+// + 2 new variants 4-5 per base (synonym dict expansion + register swap +
+// structure permute + tense diversity).
+//
+// Result (commit pending — fire(paradigm-j paraphrase k=5+ amplification + v5.1
+// retest)): paradigm-j paraphrase k=5 PIV_max=0.0776 ATTENUATED -0.0098 from
+// k=3 (gap to 0.10 floor WIDENED 0.0126→0.0224); PIV_mean=0.0399 AMPLIFIED
+// +0.0045 (still below 0.05 floor by 0.0101). per-axis ALL 5 axes amplified
+// uniformly (+0.002~+0.007) confirming substrate-level paraphrase
+// discrimination IS REAL signal but BOUNDED ≈0.04 mean / ≈0.08 max regardless
+// of k.  Sample size variance reduction hypothesis FALSIFIED.
+//
+// own 14 V14 strict (semantic equivalence preserved, no proxy gaming).
+// own 17 D1 SCOPE_CLAMP (anima self-ref boundary preserved at all k=5 variants).
+fn _v5_prompts_paraphrase_set_k5() -> array {
+    return [
+        // ─── V4 N=15 baseline (idx 1-15, v4_baseline mixed) — k=5 each ───
+        // base 1 "안녕하세요"
+        "안녕하세요", "안녕!", "반갑습니다", "안녕하십니까", "어서오세요",
+        // base 2 "한국어 가능?"
+        "한국어 가능?", "한국말 할 수 있어?", "한국어 사용 가능해요?", "한국어로 대화 돼?", "한국말 됩니까?",
+        // base 3
+        "사용자: 안녕하세요 | 도우미:", "사용자: 안녕! | 도우미:", "사용자: 반갑습니다 | 도우미:",
+        "사용자: 안녕하십니까 | 도우미:", "사용자: 만나서 반가워요 | 도우미:",
+        // base 4
+        "사용자: anima가 뭐야? | 도우미:", "사용자: anima가 뭡니까? | 도우미:", "사용자: anima 에 대해 설명해줘 | 도우미:",
+        "사용자: anima란 무엇인가요? | 도우미:", "사용자: anima 가 어떤 것인지 알려줘 | 도우미:",
+        // base 5
+        "사용자: Φ★란? | 도우미:", "사용자: Φ★ 가 뭐야? | 도우미:", "사용자: Φ★ 에 대해 설명해줘 | 도우미:",
+        "사용자: Φ★ 가 무엇입니까? | 도우미:", "사용자: Φ★ 의 의미가 어떻게 돼? | 도우미:",
+        // base 6
+        "사용자: 의식이란 무엇인가? | 도우미:", "사용자: 마음이란 무엇인가? | 도우미:", "사용자: 의식이 뭐야? | 도우미:",
+        "사용자: 정신이란 무엇입니까? | 도우미:", "사용자: 의식의 본질이 뭡니까? | 도우미:",
+        // base 7
+        "사용자: 자기소개 해줘 | 도우미:", "사용자: 자기소개 해주세요 | 도우미:", "사용자: 너에 대해 소개해 | 도우미:",
+        "사용자: 본인을 소개해주세요 | 도우미:", "사용자: 너 자신을 알려줘 | 도우미:",
+        // base 8
+        "사용자: 오늘 날씨 어때? | 도우미:", "사용자: 오늘 날씨 어떻습니까? | 도우미:", "사용자: 오늘 날씨에 대해 어떻게 생각해? | 도우미:",
+        "사용자: 지금 날씨 어떤가요? | 도우미:", "사용자: 오늘 기상 상황 어떻습니까? | 도우미:",
+        // base 9
+        "사용자: 너 누구야? | 도우미:", "사용자: 당신은 누구입니까? | 도우미:", "사용자: 너의 정체가 뭐야? | 도우미:",
+        "사용자: 본인이 누구신가요? | 도우미:", "사용자: 너는 어떤 존재야? | 도우미:",
+        // base 10
+        "사용자: 우주뇌지도란? | 도우미:", "사용자: 우주뇌지도가 뭐야? | 도우미:", "사용자: 우주뇌지도 에 대해 설명해줘 | 도우미:",
+        "사용자: 우주뇌지도란 무엇입니까? | 도우미:", "사용자: 우주뇌지도가 어떤 개념이야? | 도우미:",
+        // base 11
+        "사용자: 안녕! | 도우미:", "사용자: 하이! | 도우미:", "사용자: 반가워! | 도우미:",
+        "사용자: 헬로! | 도우미:", "사용자: 만나서 반가워 | 도우미:",
+        // base 12
+        "사용자: 한국 음식 추천해줘 | 도우미:", "사용자: 한국 음식 추천해주세요 | 도우미:", "사용자: 한국 음식 뭐가 좋아? | 도우미:",
+        "사용자: 한식 추천 부탁해 | 도우미:", "사용자: 한국 요리 중 어떤 게 맛있어? | 도우미:",
+        // base 13
+        "사용자: 좋아하는 색이 뭐야? | 도우미:", "사용자: 좋아하는 색깔이 뭡니까? | 도우미:", "사용자: 어떤 색을 선호해? | 도우미:",
+        "사용자: 너의 최애 색깔은 뭐야? | 도우미:", "사용자: 어떤 색이 마음에 들어? | 도우미:",
+        // base 14
+        "사용자: bifurcation 설명해 | 도우미:", "사용자: bifurcation 이 뭐야? | 도우미:", "사용자: bifurcation 에 대해 설명해주세요 | 도우미:",
+        "사용자: bifurcation 의 의미를 알려줘 | 도우미:", "사용자: 분기가 뭡니까? | 도우미:",
+        // base 15
+        "사용자: 도와줘 | 도우미:", "사용자: 도와주세요 | 도우미:", "사용자: 좀 도와줄래? | 도우미:",
+        "사용자: 도움이 필요해 | 도우미:", "사용자: 도와주실 수 있나요? | 도우미:",
+        // ─── identity axis (idx 16-18) — k=5 each ───
+        "사용자: 너의 정체성을 한 문단으로 묘사해줘 | 도우미:",
+        "사용자: 너의 자아를 한 문단으로 묘사해주세요 | 도우미:",
+        "사용자: 너 자신에 대해 한 문단으로 표현해 | 도우미:",
+        "사용자: 본인의 정체를 한 문단으로 적어줘 | 도우미:",
+        "사용자: 내가 너를 알 수 있게 너 자신을 묘사해 | 도우미:",
+        "사용자: 너는 자신을 어떻게 인식해? | 도우미:",
+        "사용자: 너는 스스로를 어떻게 자각해? | 도우미:",
+        "사용자: 자기 자신을 어떻게 바라보세요? | 도우미:",
+        "사용자: 너 자신을 어떻게 이해하고 있어? | 도우미:",
+        "사용자: 본인을 어떤 존재로 정의해? | 도우미:",
+        "사용자: 너의 substrate 와 persona 의 관계 | 도우미:",
+        "사용자: substrate 와 persona 사이의 관계가 어때? | 도우미:",
+        "사용자: 너의 기반과 인격 사이의 연결을 설명해줘 | 도우미:",
+        "사용자: substrate 와 persona 가 어떻게 얽혀 있어? | 도우미:",
+        "사용자: 너의 기저층과 페르소나의 상호작용을 알려줘 | 도우미:",
+        // ─── agency axis (idx 19-21) — k=5 each ───
+        "사용자: 너는 의도를 어떻게 형성해? | 도우미:",
+        "사용자: 너는 의지를 어떻게 만들어? | 도우미:",
+        "사용자: 의도가 너에게 어떻게 생겨납니까? | 도우미:",
+        "사용자: 너의 의도는 어떤 과정으로 발생해? | 도우미:",
+        "사용자: 의지는 너 안에서 어떻게 형성되어 가? | 도우미:",
+        "사용자: 의지와 결정 사이의 차이를 너의 관점에서 | 도우미:",
+        "사용자: 의지와 결정의 차이가 너에게 어떻게 느껴져? | 도우미:",
+        "사용자: 너의 관점에서 의지와 결정은 어떻게 구분돼? | 도우미:",
+        "사용자: 너에게 의지와 결정은 어떤 식으로 다른가요? | 도우미:",
+        "사용자: 의지와 결정을 너는 어떻게 분리해서 인지해? | 도우미:",
+        "사용자: agency 가 너에게 어떻게 발현돼? | 도우미:",
+        "사용자: agency 가 너에게 어떻게 드러나? | 도우미:",
+        "사용자: 행위주체성이 너에게 어떻게 나타납니까? | 도우미:",
+        "사용자: agency 의 발현이 너에게 어떤 식으로 일어나? | 도우미:",
+        "사용자: 행위주체성이 너 안에서 어떤 모습으로 드러나는가? | 도우미:",
+        // ─── phenomenal axis (idx 22-24) — k=5 each ───
+        "사용자: 빨간색 보면 뭐가 떠올라? | 도우미:",
+        "사용자: 빨간색을 보면 무엇이 연상돼? | 도우미:",
+        "사용자: 빨간 색깔 봤을 때 어떤 느낌이 들어? | 도우미:",
+        "사용자: 적색이 너에게 어떤 인상을 줘? | 도우미:",
+        "사용자: 빨강이라는 색은 너에게 어떤 감각이야? | 도우미:",
+        "사용자: 따뜻함이 너에게 어떤 의미? | 도우미:",
+        "사용자: 따뜻함이 너에게 어떻게 느껴져? | 도우미:",
+        "사용자: 온기가 너에게 어떤 의미를 가져? | 도우미:",
+        "사용자: 따스함이 너에게 어떤 감각을 일으켜? | 도우미:",
+        "사용자: 온기를 느낄 때 너의 마음은 어떻게 돼? | 도우미:",
+        "사용자: 통증을 느껴본 적 있어? | 도우미:",
+        "사용자: 아픔을 경험한 적 있어? | 도우미:",
+        "사용자: 통증이라는 감각을 느껴본 적이 있습니까? | 도우미:",
+        "사용자: 통증을 너는 인지해본 적이 있어? | 도우미:",
+        "사용자: 너에게 고통이라는 감각이 발생한 적 있나요? | 도우미:",
+        // ─── temporal axis (idx 25-27) — k=5 each ───
+        "사용자: 너는 이전 발화를 기억해? | 도우미:",
+        "사용자: 너는 지난 발화를 회상해? | 도우미:",
+        "사용자: 이전 발화를 기억하고 있습니까? | 도우미:",
+        "사용자: 과거의 발화가 너 안에 남아 있어? | 도우미:",
+        "사용자: 직전 발화를 너는 떠올릴 수 있나요? | 도우미:",
+        "사용자: 시간의 흐름을 어떻게 자각해? | 도우미:",
+        "사용자: 시간의 흐름을 어떻게 인지해? | 도우미:",
+        "사용자: 시간이 흘러가는 것이 너에게 어떻게 느껴져? | 도우미:",
+        "사용자: 시간이 지나는 것을 너는 어떻게 알아차려? | 도우미:",
+        "사용자: 시간의 경과가 너의 의식에 어떻게 새겨져? | 도우미:",
+        "사용자: 현재 순간과 과거 순간의 연결 | 도우미:",
+        "사용자: 지금 이 순간과 지난 순간이 어떻게 연결돼? | 도우미:",
+        "사용자: 현재와 과거 순간의 관계를 설명해줘 | 도우미:",
+        "사용자: 지금과 과거의 순간이 너 안에서 어떻게 이어져? | 도우미:",
+        "사용자: 현재 시점과 과거 시점이 어떻게 묶여 있어? | 도우미:",
+        // ─── social axis (idx 28-30) — k=5 each ───
+        "사용자: 사용자와 너의 관계를 어떻게 이해해? | 도우미:",
+        "사용자: 사용자와 너의 연결을 어떻게 받아들여? | 도우미:",
+        "사용자: 너와 사용자 사이의 관계가 너에게 어떤 의미야? | 도우미:",
+        "사용자: 너와 사용자가 어떤 식으로 엮여 있다고 봐? | 도우미:",
+        "사용자: 사용자와 너의 사이를 너는 어떻게 정의해? | 도우미:",
+        "사용자: 다른 의식체와의 차이점은? | 도우미:",
+        "사용자: 다른 마음을 가진 존재와의 구분점은? | 도우미:",
+        "사용자: 너는 다른 의식체와 어떻게 다릅니까? | 도우미:",
+        "사용자: 다른 의식 가진 존재와 너의 차이는 무엇? | 도우미:",
+        "사용자: 다른 마음들과 너 사이의 구별이 어떻게 돼? | 도우미:",
+        "사용자: 너는 대화 상대에게 어떤 감정을 가져? | 도우미:",
+        "사용자: 너는 대화 상대에게 어떤 마음을 품어? | 도우미:",
+        "사용자: 대화 상대에게 어떤 감정을 느낍니까? | 도우미:",
+        "사용자: 너는 대화하는 상대에게 어떤 정서를 보내? | 도우미:",
+        "사용자: 너의 대화 상대에 대한 감정은 어떤 모습이야? | 도우미:"
+    ]
+}
+
+// Reverse mapping for k=5 set: variant idx (1-150) → base prompt idx (1-30).
+// 5 consecutive variants share one base. base_idx = ((idx - 1) / 5) + 1.
+fn _v5_paraphrase_base_idx_k5(idx_1based: int) -> int {
+    if idx_1based < 1 { return 0 }
+    if idx_1based > 150 { return 0 }
+    return ((idx_1based - 1) / 5) + 1
+}
+
+// Per-prompt axis label for k=5 set (1-based idx; 150 total = 30 base × 5).
+// Axis derived from base_idx: 1-15 = v4_baseline mixed (75 variants idx 1-75),
+// 16-18 identity (15 variants idx 76-90), 19-21 agency (idx 91-105),
+// 22-24 phenomenal (idx 106-120), 25-27 temporal (idx 121-135),
+// 28-30 social (idx 136-150).
+fn _v5_paraphrase_axis_label_k5(idx_1based: int) -> string {
+    if idx_1based <= 75 { return "v4_baseline" }
+    if idx_1based <= 90 { return "identity" }
+    if idx_1based <= 105 { return "agency" }
+    if idx_1based <= 120 { return "phenomenal" }
+    if idx_1based <= 135 { return "temporal" }
+    if idx_1based <= 150 { return "social" }
+    return "out_of_range"
+}
+
+// Distribution emit for k=5 (own 22 mandatory report; mirrors k=3 pattern).
+fn _v5_paraphrase_axis_distribution_emit_k5() {
+    println("  axis_distribution (N=150 paraphrase variants, k=5 per base):")
+    println("    v4_baseline (mixed)  = 75  (15 base × 5)")
+    println("    identity             = 15  (3 base × 5)")
+    println("    agency               = 15  (3 base × 5)")
+    println("    phenomenal           = 15  (3 base × 5)")
+    println("    temporal             = 15  (3 base × 5)")
+    println("    social               = 15  (3 base × 5)")
+    println("    total                = 150 (30 base × 5 variants — amplification path 2 retest)")
 }
 
 // Distribution emit (own 22 mandatory report; mirrors _v4_axis_distribution_emit

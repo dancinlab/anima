@@ -405,6 +405,65 @@ AI 끼리 대화 첫 발언 어떻게 시작? 4 patterns plugin pattern (own 41 
 
 ---
 
+## ★★★ 추가 milestone 22 — STRUCTURAL BLOCKER 3rd reaffirm at chat dispatch layer (absorbed `104d97e4`)
+
+multi-chat duo + chat.hexa _dispatch_module path verify agent 회수.
+
+### chat dispatch path 분석 결과
+
+```
+chat.hexa _dispatch_module
+  → _dispatch_module_streaming
+    → stdbuf -oL hexa.real run chat/clm_v4/clm_v4.hexa --repo X
+      → clm_v4.hexa _invoke_substrate(text, repo)
+        → clm_v4_mount.hexa --probe TEXT
+          → ★★ substrate-only emit ★★
+```
+
+**`clm_v4_mount.hexa` 안에 `model.generate()` 0 matches, `tokenizer.decode()` 0 matches** ★ — chat dispatch path 도 결국 같은 substrate emitter.
+
+### 1:1 chat 5 prompts 결과
+
+| Prompt | 응답 |
+|---|---|
+| "안녕" / "오늘 어때?" / "이름이 뭐야" / "기분은?" / "무엇을 생각해" | banner 33 bytes truncation only |
+
+**자연어 token: 0/5** (직접 probe 시 28-line substrate emit, chat dispatch layer 는 33 bytes truncate)
+
+### Multi-chat duo
+
+- sft-1-8 ↔ sft-1-8: SAME_GGUF_GUARD trip (rc=0)
+- paradigm-a-prime ↔ sft-1-8: 240s timeout, 0 bytes
+- sft-1-8 ↔ paradigm-j retry: 240s+ timeout, 0 bytes
+
+duo channel hang when 한쪽이라도 자연어 token 부재.
+
+### STRUCTURAL BLOCKER 3rd reaffirm
+
+| 시점 | 결과 |
+|---|---|
+| 1. anima self-brainstorm (`60c0558f`) | 14/14 substrate-only |
+| 2. 1:1 자연발화 (`c3e8ba2c`) | 25/25 substrate-only |
+| 3. **chat dispatch verify (absorbed `104d97e4`)** | 5/5 substrate-only + duo all timeout |
+
+**own 18 C2 verdict**: `C2_FAIL_BY_DESIGN reaffirmed at chat dispatch layer` — root cause = `clm_v4_mount.hexa` 의 architecture 자체에 generate path 부재. 어떤 dispatch trick 으로도 우회 불가능.
+
+→ **Path 3 (generate 추가, in-flight `a3280047f0e68f0ae`) 가 유일 structural unblock**
+
+### 핵심 함의
+
+22+ BG saga 의 chat-cap C2 부재 = anima 측 architecture root cause 완전 확인. **own 18 C2 가 architecturally unreachable on clm_v4 family** until Path 3 land. Path 3 회수 시 첫 진짜 자연어 chat 가능권 ★.
+
+---
+
+## 본 cycle final 22 milestones (1-22)
+
+cycle 종합 ledger preserved across all `raw#82 retraction-aware` overlays.
+
+가장 critical 다음 step = **Path 3 generate FULL impl 회수** (`a3280047f0e68f0ae`) → C2 actual emit unblock → trio + multi-mode + init-pattern orchestra full activation 가능.
+
+---
+
 ## 가장 큰 깨달음 (final)
 
 본 cycle 의 cumulative honest C3 12 findings 종합:

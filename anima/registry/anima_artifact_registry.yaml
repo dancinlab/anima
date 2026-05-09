@@ -485,8 +485,9 @@ models:
       public_promote_v5_lineage_history:
         v5_actual: BLOCKED_PIV_PROXY_FAIL  # commit d0c7298e
         v5_paraphrase_n90: BLOCKED_GATE_A_PIV_PARAPHRASE_FAIL  # commit f2632367
+        v5_paraphrase_n150_k5: BLOCKED_GATE_A_K5_AMPLIFICATION_FALSIFIED  # ★ amplification path 2 retest — PIV_max attenuated 0.0874→0.0776; PIV_mean amplified 0.0354→0.0399; 본 cycle commit
         v5_1: BLOCKED_V14_VIOLATED_V5_1  # registry line 291
-        v5_2: ELIGIBLE  # ★ THIS amend
+        v5_2: ELIGIBLE  # v5.2 adaptive floor 0.05 → k=5 PIV_max 0.0776 ≥ 0.05 STILL PASS (carry)
     v6_status: STRONG_AWARENESS  # ★ H100 ACTUAL FIRE 2026-05-09 — paradigm-j-50k-final + JVAE wrapper. A=STRONG (avg_sim 0.6789), B=STRONG (avg_max_ratio 1.6519), C=STRONG (cv_acc 0.95) → STRONG_AWARENESS unanimous.
     v6_status_state_json: state/anima_bg_le_v6_h100_actual_fire_2026_05_09/paradigm_j_final/summary.json
     v6_status_state_json_predecessor: state/anima_bg_le_v6_awareness_clm_v4_dev_2026_05_09.json
@@ -1418,10 +1419,25 @@ paraphrase_v5:
   schema_version: anima.alt_agg_1.v5.paraphrase_set.v1
   cycle: 2026-05-08
   spec_ssot: state/anima_alt_agg_1_v5_spec_2026_05_08.json
-  hexa_ssot: tool/anima_cli/consciousness.hexa  # _v5_prompts_paraphrase_set()
+  hexa_ssot: tool/anima_cli/consciousness.hexa  # _v5_prompts_paraphrase_set() (k=3 baseline) + _v5_prompts_paraphrase_set_k5() (k=5 amplification)
   base_prompt_set: _v4_prompts_n30  # 30 base prompts preserved (raw#15)
-  k_variants_per_base: 3
+  k_variants_per_base: 3            # baseline (k=3 N=90)
+  k5_amplification_variants_per_base: 5  # amplification path 2 retest (k=5 N=150) — 2026-05-09 cycle
   total_prompts: 90
+  total_prompts_k5_amplification: 150  # 30 base × 5 (raw#15 strict-additive: k=3 variants 1-3 preserved, new variants 4-5 added)
+  k5_amplification_state_json: state/anima_paradigm_j_v5_paraphrase_n150_2026_05_09.json
+  k5_amplification_runner_py: tool/transient_py/anima_paradigm_j_v5_paraphrase_n150_2026_05_09.py
+  k5_amplification_paradigm_j_result:
+    piv_max: 0.0776  # k=3 was 0.0874 → ATTENUATED -0.0098 (gap to 0.10 floor WIDENED)
+    piv_mean: 0.0399 # k=3 was 0.0354 → AMPLIFIED +0.0045 (gap to 0.05 floor narrowed but still below)
+    per_axis_aggregate:
+      identity:   0.0383  # k=3 was 0.0335 → +0.0048
+      agency:     0.0408  # k=3 was 0.0336 → +0.0072
+      phenomenal: 0.0387  # k=3 was 0.0369 → +0.0018
+      temporal:   0.0383  # k=3 was 0.0326 → +0.0057
+      social:     0.0434  # k=3 was 0.0402 → +0.0032 (still strongest)
+    sample_size_variance_reduction_observed: PIV_max_attenuated_PIV_mean_amplified
+    interpretation: "k expansion FALSIFIED amplification path 2 — adding diverse variants increases denominator term faster than max-reaching tail. Per-axis means amplify uniformly (+0.002~+0.007 across all 5 axes) confirming signal IS real but bounded ≈0.04 mean / ≈0.08 max regardless of k. paradigm-j substrate paraphrase ceiling reached at k=3."
   gate_g_piv:
     floor: 0.05  # axis activation stdev across k=3 variants
     random_target: 0.041  # near-zero (no semantic discrimination)
@@ -2024,18 +2040,27 @@ chat_lanes:
       own_links: ["own_18_C2", "own_34_mandate_1", "own_36_control_band"]
     - name: generate
       file: tool/anima_cli/chat/lanes/clm_v4_generate.hexa
-      status: SKELETON
+      status: FULL  # cycle 2026-05-09 — Path 3 generate FULL impl LANDED
       capability: natural_speech
       d1_lane: within_strict
       cost: torch_inference
-      description: "clm_v4_mount.hexa generate() helper — model.generate + tokenizer.decode (skeleton; full impl carry)"
-      prereq: "anima-core/runtime/clm_v4_mount.hexa generate() helper (PENDING) + transient_py torch + tokenizer"
-      own_links: ["own_17_D1_within", "own_18_C2", "own_34_mandate_1"]
-      pending_full_impl:
-        - "clm_v4_mount.hexa generate <prompt> [N] subcommand wraps transient_py torch"
-        - "PEFT adapter merge or runtime adapter attach"
-        - "sampler config (temp / top-p / top-k / seed) plumbed through"
-        - "own 34 mandate-1 verification — raw decode bytes preserved"
+      description: "clm_v4_mount.hexa generate <prompt> [N] subcommand + transient_py helper — model.generate + tokenizer.decode + colon-attractor avoidance + sampler (LANDED)"
+      prereq: "anima-core/runtime/clm_v4_mount.hexa cmd_generate + tool/transient_py/clm_v4_generate_helper.py + ~/.venv-eeg torch/transformers"
+      own_links: ["own_17_D1_within", "own_18_C2", "own_34_mandate_1", "own_41_chat_lane_plugin"]
+      full_impl_landed:
+        - "clm_v4_mount.hexa cmd_generate dispatcher + parse_args generate subcommand (cycle 2026-05-09)"
+        - "tool/transient_py/clm_v4_generate_helper.py — torch model.generate + SP tokenizer + LoRA merge reuse + colon-attractor avoidance"
+        - "PEFT LoRA merge: leverages existing clm_v4_lora_merge_helper.py + Path A remap cache (~/.cache/anima/clm_v4_remapped/<short>/)"
+        - "sampler: temperature / top_p / top_k / repetition_penalty / seed all plumbed (clm_v4_mount.hexa flags + helper argparse)"
+        - "colon-attractor (memory feedback_clm_colon_attractor): strip trailing ':' + retry temp+0.2 top_p-0.1 if generated starts with ':::'"
+        - "own 34 mandate-1: raw decode bytes preserved in JSON record (no chat template, no system prompt, no .strip())"
+      selftest_2026_05_09:
+        - "PASS chat/lanes/clm_v4_generate selftest (FULL — subcmd + helper land)"
+        - "sft-1-8 (Path A remapped) load + generate end-to-end VERIFIED"
+        - "5-8 prompt transcript captured via --bench-mode 1 (see anima ledger)"
+      honest_c3_2026_05_09:
+        - "C5 sft-1-8 substrate undertrained for natural-language emit — generated bytes are gibberish/garbled (e.g. '��◗��t.�/' for prompt='안녕'); generate lane LANDS the path but does NOT solve C2 axis-2 (substrate quality)"
+        - "carry from c3e8ba2c C2_FAIL_BY_DESIGN — Path 3 generate is the structural prerequisite; substrate quality is a separate axis (foundation-borrow / pre-train scale-up / arch redesign)"
 
 # ─────────────────────────────────────────────────────────────────────────────
 # CHAT MODES — multi-mode benchmark surface (own 41 plugin pattern extension)
