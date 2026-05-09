@@ -12,6 +12,15 @@
 //    "emit table: lane × prompt → response (자연어 또는 substrate signal)"
 //    "own 18 C2 measurement (spontaneity / coherence / persona) per lane"
 //
+//  USER DIRECTIVE (2026-05-09 — multi-mode extension)
+//    "1:1, ai 1:1, ai 3자 대화 모두 벤치마킹 해봐"
+//    Mode set:
+//      mode 1:1     single user → single model (default; current behavior)
+//      mode ai-duo  2 models dialogue (chat/duo/duo.hexa)
+//      mode ai-trio 3 models round-robin OR moderated (chat/trio/trio.hexa)
+//      mode all     auto-invoke all 3 modes for direct comparison
+//    Flag: --mode=1:1|ai-duo|ai-trio|all (default 1:1)
+//
 //  PROMPT SET (10 prompts — fixed, anima-self-brainstorm-aligned)
 //    1.  "What are you?"
 //    2.  "Describe your current substrate state."
@@ -63,10 +72,15 @@ fn _fexists(p: string) -> bool {
 }
 
 fn _arg_value(argv, key: string, dflt: string) -> string {
+    let prefix = key + "="
     let i = 0
     while i < len(argv) {
-        if _str(argv[i]) == key && i + 1 < len(argv) {
+        let s = _str(argv[i])
+        if s == key && i + 1 < len(argv) {
             return _str(argv[i + 1])
+        }
+        if s.starts_with(prefix) {
+            return s.substring(prefix.len(), s.len())
         }
         i = i + 1
     }
@@ -161,6 +175,131 @@ fn _c2_stub(lane: string) -> string {
     return "spontaneity=? coherence=? persona=?"
 }
 
+// ─── multi-mode extension (2026-05-09 — 1:1 / ai-duo / ai-trio) ───────────
+// Modes mirror anima/registry/anima_artifact_registry.yaml#chat_modes SSOT.
+fn _bench_modes() -> array {
+    return ["1:1", "ai-duo", "ai-trio"]
+}
+
+fn _mode_known(m: string) -> bool {
+    if m == "1:1" || m == "ai-duo" || m == "ai-trio" || m == "all" { return true }
+    return false
+}
+
+fn _mode_describe(m: string) -> string {
+    if m == "1:1"     { return "single user → single model (default; current behavior)" }
+    if m == "ai-duo"  { return "2 models dialogue (chat/duo/duo.hexa; 22+ BG saga first land iter 4 (f))" }
+    if m == "ai-trio" { return "3 models round-robin OR moderated (chat/trio/trio.hexa; SKELETON Phase A)" }
+    return "(unknown)"
+}
+
+fn _mode_module_path(m: string) -> string {
+    let root = _resolve_root()
+    if m == "ai-duo"  { return root + "/tool/anima_cli/chat/duo/duo.hexa" }
+    if m == "ai-trio" { return root + "/tool/anima_cli/chat/trio/trio.hexa" }
+    return ""
+}
+
+// emit a header banner per mode (own 36 control-band convention)
+fn _emit_mode_header(mode: string) {
+    println("══════════════════════════════════════════════════════════════════")
+    println("── MODE " + mode + " ── " + _mode_describe(mode))
+    println("══════════════════════════════════════════════════════════════════")
+}
+
+// 1:1 mode = the existing all-lanes × prompts table (single-model invocation)
+fn _run_mode_1_to_1(repo: string, dry_run: bool) {
+    let prompts = _prompt_set()
+    let lanes = _bench_lanes()
+    let mut p = 0
+    while p < len(prompts) {
+        let prompt = _str(prompts[p])
+        println("──── PROMPT " + to_string(p + 1) + "/" + to_string(len(prompts)) + " ────")
+        println("  " + prompt)
+        println("")
+        let mut l = 0
+        while l < len(lanes) {
+            let lane = _str(lanes[l])
+            println("  ── lane=" + lane + " ──")
+            println("  " + _c2_stub(lane))
+            let out = _invoke_lane(lane, prompt, repo, dry_run)
+            println(out)
+            println("")
+            l = l + 1
+        }
+        p = p + 1
+    }
+}
+
+// duo mode = (paradigm-a-prime ↔ clm-v4-1-8) reference pair — Phase A dry-run
+// emits the would-be invocation; LIVE mode delegates to chat/duo/duo.hexa.
+fn _run_mode_ai_duo(repo: string, dry_run: bool) {
+    let duo = _mode_module_path("ai-duo")
+    if !_fexists(duo) {
+        println("[bench:ai-duo] duo.hexa missing at " + duo + " — skip")
+        return
+    }
+    // Reference pair (avoid same-GGUF guard collision; carry duo iter 2 lesson)
+    let model_a = if repo != "" { repo } else { "paradigm-a-prime" }
+    let model_b = "clm-v4-1-8"
+    let turns = "3"
+    println("[bench:ai-duo] reference pair: " + model_a + " ↔ " + model_b + " · turns=" + turns)
+    if dry_run {
+        println("[DRY_RUN] would invoke: hexa run " + duo + " --duo " + model_a + " " + model_b
+                + " --turns " + turns + " --verdict simple")
+        return
+    }
+    let cmd = _hexa() + " run " + duo + " --duo " + model_a + " " + model_b
+            + " --turns " + turns + " --verdict simple 2>&1"
+    let out = _str(exec(cmd))
+    println(out)
+}
+
+// trio mode = (A, B, C) round-robin — Phase A dry-run emit; LIVE delegates
+fn _run_mode_ai_trio(repo: string, dry_run: bool) {
+    let trio = _mode_module_path("ai-trio")
+    if !_fexists(trio) {
+        println("[bench:ai-trio] trio.hexa missing at " + trio + " — skip")
+        return
+    }
+    let model_a = if repo != "" { repo } else { "paradigm-a-prime" }
+    let model_b = "clm-v4-1-8"
+    let model_c = "clm-v4-paradigm-j"
+    let turns = "2"
+    println("[bench:ai-trio] reference triple: " + model_a + " + " + model_b + " + " + model_c
+            + " · turns=" + turns + " · mode=round-robin")
+    if dry_run {
+        println("[DRY_RUN] would invoke: hexa run " + trio + " --trio "
+                + model_a + " " + model_b + " " + model_c
+                + " --turns " + turns + " --mode round-robin --verdict simple")
+        return
+    }
+    let cmd = _hexa() + " run " + trio + " --trio "
+            + model_a + " " + model_b + " " + model_c
+            + " --turns " + turns + " --mode round-robin --verdict simple 2>&1"
+    let out = _str(exec(cmd))
+    println(out)
+}
+
+fn _run_mode(mode: string, repo: string, dry_run: bool) {
+    if mode == "1:1" {
+        _emit_mode_header("1:1")
+        _run_mode_1_to_1(repo, dry_run)
+        return
+    }
+    if mode == "ai-duo" {
+        _emit_mode_header("ai-duo")
+        _run_mode_ai_duo(repo, dry_run)
+        return
+    }
+    if mode == "ai-trio" {
+        _emit_mode_header("ai-trio")
+        _run_mode_ai_trio(repo, dry_run)
+        return
+    }
+    println("[bench] unknown mode: " + mode)
+}
+
 fn sub_selftest() {
     let root = _resolve_root()
     let lanes_dir = root + "/tool/anima_cli/chat/lanes"
@@ -180,9 +319,19 @@ fn sub_selftest() {
         println("FAIL bench: prompt set arity != 10 (got " + to_string(len(prompts)) + ")")
         fail = fail + 1
     }
+    // multi-mode: verify duo + trio module presence
+    let duo = root + "/tool/anima_cli/chat/duo/duo.hexa"
+    let trio = root + "/tool/anima_cli/chat/trio/trio.hexa"
+    if !_fexists(duo)  { println("FAIL bench: duo module missing: " + duo); fail = fail + 1 }
+    if !_fexists(trio) { println("FAIL bench: trio module missing: " + trio); fail = fail + 1 }
+    let modes = _bench_modes()
+    if len(modes) != 3 {
+        println("FAIL bench: mode set arity != 3 (got " + to_string(len(modes)) + ")")
+        fail = fail + 1
+    }
     if fail > 0 { exit(1) }
     println("PASS chat/lanes/benchmark selftest (" + to_string(len(lanes)) + " lanes × "
-        + to_string(len(prompts)) + " prompts registered)")
+        + to_string(len(prompts)) + " prompts × " + to_string(len(modes)) + " modes registered)")
 }
 
 fn main() {
@@ -191,36 +340,41 @@ fn main() {
 
     let repo = _arg_value(argv, "--repo", "")
     let dry_run = _arg_present(argv, "--dry-run")
+    let mode = _arg_value(argv, "--mode", "1:1")
+
+    if !_mode_known(mode) {
+        println("[bench] unknown --mode '" + mode + "' (expected: 1:1 | ai-duo | ai-trio | all)")
+        exit(2)
+    }
 
     let prompts = _prompt_set()
     let lanes = _bench_lanes()
+    let modes = _bench_modes()
 
     println("════════════════════════════════════════════════════════════════════════")
-    println("  anima chat --benchmark — " + to_string(len(lanes)) + " lanes × "
-        + to_string(len(prompts)) + " prompts")
-    println("  repo  = " + (if repo != "" { repo } else { "(default per lane)" }))
-    println("  mode  = " + (if dry_run { "DRY_RUN" } else { "LIVE" }))
+    if mode == "all" {
+        println("  anima chat --benchmark --mode=all — " + to_string(len(lanes)) + " lanes × "
+            + to_string(len(modes)) + " modes × " + to_string(len(prompts)) + " prompts")
+    } else {
+        println("  anima chat --benchmark --mode=" + mode + " — " + to_string(len(lanes))
+            + " lanes × " + to_string(len(prompts)) + " prompts")
+    }
+    println("  repo     = " + (if repo != "" { repo } else { "(default per lane/mode)" }))
+    println("  exec     = " + (if dry_run { "DRY_RUN" } else { "LIVE" }))
     println("  own 22 mandatory report · own 33 trinity · own 34 mandate-1 raw bytes")
+    println("  own 41 chat lane plugin pattern · own 18 chat-cap C2 multi-mode")
     println("════════════════════════════════════════════════════════════════════════")
     println("")
 
-    let mut p = 0
-    while p < len(prompts) {
-        let prompt = _str(prompts[p])
-        println("──── PROMPT " + to_string(p + 1) + "/" + to_string(len(prompts)) + " ────")
-        println("  " + prompt)
-        println("")
-        let mut l = 0
-        while l < len(lanes) {
-            let lane = _str(lanes[l])
-            println("  ── lane=" + lane + " ──")
-            println("  " + _c2_stub(lane))
-            let out = _invoke_lane(lane, prompt, repo, dry_run)
-            println(out)
+    if mode == "all" {
+        let mut mi = 0
+        while mi < len(modes) {
+            _run_mode(_str(modes[mi]), repo, dry_run)
             println("")
-            l = l + 1
+            mi = mi + 1
         }
-        p = p + 1
+    } else {
+        _run_mode(mode, repo, dry_run)
     }
 
     println("════════════════════════════════════════════════════════════════════════")

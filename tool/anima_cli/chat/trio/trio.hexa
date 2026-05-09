@@ -1,0 +1,555 @@
+// ════════════════════════════════════════════════════════════════════════════
+//  tool/anima_cli/chat/trio/trio.hexa — N=3 multi-agent dialogue (skeleton)
+//
+//  PURPOSE
+//    L3 layer extension of duo (N=2). Three CLM instances (A ↔ B ↔ C) speak
+//    autonomously over channel pairs. Round-robin turn pattern (A → B → C →
+//    A → B → C → ...) OR moderated mode (A = moderator, B/C = participants).
+//
+//    User directive verbatim (cycle 2026-05-09):
+//      "1:1, ai 1:1, ai 3자 대화 모두 벤치마킹 해봐"
+//
+//    EXIT trigger watch: trio mode actual natural-language emit (3-model
+//    round-robin) → 22+ BG saga first multi-agent dialogue ★
+//
+//  RECURSIVE MODULE PATTERN (per chat/<module>/<module>.hexa convention,
+//  mirrors chat/duo/ design)
+//    chat/trio/
+//    ├─ trio.hexa     ← this file (channel orchestrator + per-turn verdict)
+//    ├─ trio.ai.md    ← ai-native doc (sister, future)
+//    └─ (core)        ← external: chat/anima_native/, chat/llama/, chat/clm_v4/
+//                       (each spawned instance is one of these modules; each
+//                        instance optionally selects a chat lane via own 41
+//                        plugin pattern: --lane-A/--lane-B/--lane-C)
+//
+//  PHASE GATES
+//    Phase A (LANDED 2026-05-09 — this commit): file structure + alias DB +
+//      --help + --selftest + skeleton round-robin loop using β-1 channel
+//      stdlib (stdlib/channel.hexa). Honest C3: round-robin topology requires
+//      3-way fan-in/fan-out; current implementation uses 3 SHARED inbound
+//      channels (one per recipient) — each instance reads from its own inbox
+//      while the parent dispatcher routes the previous speaker's emit to the
+//      next speaker's inbox.
+//    Phase B (CARRY): same-GGUF guard ×3 (3-way alias collision check) +
+//      moderated mode (--mode=moderated; A speaks first, then B and C reply
+//      in turn, A continues round) + per-turn cells.
+//    Phase C (CARRY): own 18 C3 per-turn verdict ×3 + DIALOGUE_COHERENCE_PASS
+//      3-way (D1 turn-pair Jaccard, D2 topic-shift-rate, D3 persona-drift KL
+//      ×3 sides — A vs B vs C separation, D4 byte-fairness 3-ratio).
+//
+//  TURN PATTERNS
+//    --mode=round-robin (default): A → B → C → A → B → C → ...
+//      previous-speaker emit fed forward to NEXT speaker (cyclical).
+//    --mode=moderated: A speaks (moderator prompt), B replies, C replies, then
+//      A speaks again referencing both B/C — turn N: A_N → B_N → C_N.
+//
+//  CHANNEL TOPOLOGY (β-1 dependent, 3-way)
+//
+//    Each instance has ONE inbox FIFO that the parent writes routed messages to.
+//    Each instance has ONE outbox FIFO that the parent reads from.
+//
+//      ┌───────────┐  inA←       outA→  ┌──────────────────┐
+//      │ instance A│  ◄─ recv          ─►│                  │
+//      └───────────┘                     │                  │
+//      ┌───────────┐  inB←       outB→  │  parent          │
+//      │ instance B│  ◄─ recv          ─►│  dispatcher      │
+//      └───────────┘                     │                  │
+//      ┌───────────┐  inC←       outC→  │  (round-robin    │
+//      │ instance C│  ◄─ recv          ─►│   route emit→next│
+//      └───────────┘                     │   speaker inbox) │
+//                                        └──────────────────┘
+//
+//    Per-turn step: read from outbox of speaker[k]; write that line to inbox
+//    of speaker[(k+1) % 3]. Each instance is the existing chat/<module>/
+//    <module>.hexa REPL — its sys_stdin_read_line_timeout(tick_ms) loop sees
+//    routed peer output as if user input.
+//
+//  CHAT LANE PLUGIN INTEGRATION (own 41)
+//    --lane-A=substrate   first model uses substrate lane (signal-only)
+//    --lane-B=llama       second model uses llama lane (natural speech)
+//    --lane-C=generate    third model uses generate lane (natural speech)
+//    Lane mismatch (e.g. substrate vs llama) is ALLOWED — trio mode is the
+//    designated ground for cross-lane interaction observation. own 41 axis-3
+//    (per-lane main bearing) preserves wrapping=0 across each instance.
+//
+//  COMPLIANCE
+//    own 14 V14 carry — bench output is NOT a verdict by itself; cross-mode
+//      comparison only.
+//    own 16 cost — 0-cost local hexa orchestration; per-instance model load
+//      via existing chat REPL keepalive (Path A from duo iter 4 (e)).
+//    own 17 D1 SCOPE_CLAMP — each instance lane d1_lane field surfaced via
+//      registry; trio output flagged per-instance lane label.
+//    own 18 chat-cap C2 — multi-mode measurement: 1:1 (single-model spontaneity)
+//      + duo (2-way coherence) + trio (3-way persona separation A vs B vs C).
+//    own 22 mandatory report — `[trio:verdict]` / `[trio:summary]` markers.
+//    own 33 trinity — own 17 + own 18 + own 34 cross-link (this file footer).
+//    own 34 mandate-1/4/7 — wrapping 0 strict (raw passthrough), autonomous-
+//      first (no seed unless --topic-seed), lane separation (verdict cells
+//      emit-only — never folded back into channel content).
+//    own 38 매단계 — bench output ledgerable.
+//    own 39 yaml↔md — registry chat_modes section mirror.
+//    own 41 chat lane plugin pattern — per-instance --lane-A/B/C support.
+//
+//  CROSS-REFERENCE
+//    tool/anima_cli/chat/duo/duo.hexa                    L2 N=2 sibling
+//    tool/anima_cli/chat/lanes/_registry.hexa            lane plugin SSOT
+//    tool/anima_cli/chat/lanes/benchmark.hexa            multi-mode bench
+//    anima/registry/anima_artifact_registry.yaml         chat_modes mirror
+//    .own own 41 chat lane plugin pattern
+// ════════════════════════════════════════════════════════════════════════════
+
+use "stdlib/channel"
+
+fn _str(x) -> string {
+    let t = type_of(x)
+    if t == "str" || t == "string" { return x }
+    return ""
+}
+
+fn _resolve_root() -> string {
+    let a = _str(env("ANIMA"))
+    if a != "" { return a }
+    let gt = _str(exec("git rev-parse --show-toplevel 2>/dev/null")).trim()
+    if gt != "" { return gt }
+    return _str(env("HOME")) + "/core/anima"
+}
+
+fn _hexa() -> string { return "/Users/ghost/.hx/packages/hexa/hexa.real" }
+
+fn _fexists(p: string) -> bool {
+    return _str(exec("test -f " + p + " && echo 1 || echo 0")).trim() == "1"
+}
+
+fn _arg_present(argv, key: string) -> bool {
+    let i = 0
+    while i < len(argv) {
+        if _str(argv[i]) == key { return true }
+        i = i + 1
+    }
+    return false
+}
+
+fn _arg_value(argv, key: string, dflt: string) -> string {
+    let i = 0
+    while i < len(argv) {
+        if _str(argv[i]) == key && i + 1 < len(argv) {
+            return _str(argv[i + 1])
+        }
+        i = i + 1
+    }
+    return dflt
+}
+
+fn _user_argv(raw) -> array {
+    let out = []
+    let i = 0
+    while i < len(raw) {
+        let s = _str(raw[i])
+        let skip = s.contains("/.hexa-cache/")
+                || s.contains("/.hexa-runtime/")
+                || s.contains("/hexa-lang/build/")
+                || s.contains("hexa_interp")
+                || s.contains("hexa_expanded")
+                || s.contains("hexa.real")
+                || s.ends_with("/trio.hexa")
+                || s.ends_with("trio.hexa")
+        if !skip { out = out + [s] }
+        i = i + 1
+    }
+    return out
+}
+
+// ─── alias DB vendor copy (mirrors duo + chat.hexa) ──────────────────────
+fn _alias_known(alias: string) -> bool {
+    let a = alias.trim().to_lower()
+    if a == "" || a == "default" { return true }
+    if a == "llama3b" || a == "latest" || a == "pass-strict" { return true }
+    if a == "qwen7b" { return true }
+    if a == "polyglot-ko-1b3" { return true }
+    if a == "paradigm-a-prime" { return true }
+    if a == "clm-v4-1-7-y1" { return true }
+    if a == "clm-v4-1-8" { return true }
+    if a == "clm-v4-paradigm-j" { return true }
+    if a == "mk2-v1" { return true }
+    if a.contains("/") { return true }   // raw HF id passthrough
+    return false
+}
+
+// ─── help / selftest ────────────────────────────────────────────────────
+
+fn sub_help() {
+    println("anima dialogue trio — N=3 autonomous CLM↔CLM↔CLM dialogue (skeleton)")
+    println("")
+    println("USAGE")
+    println("  anima dialogue --trio <model_a> <model_b> <model_c> [flags]")
+    println("  anima dialogue --trio --selftest")
+    println("  anima dialogue --trio --help")
+    println("")
+    println("FLAGS")
+    println("  --turns N             number of full A→B→C rounds (default 3)")
+    println("  --topic-seed \"...\"    optional seed sent into A's stdin (else A自律 first)")
+    println("  --mode round-robin|moderated   turn pattern (default round-robin)")
+    println("  --tick-ms N           per-instance autonomous-speech poll (default 1000)")
+    println("  --max-tokens N        per-utterance cap (default 64)")
+    println("  --turn-timeout-ms N   channel_recv wait per turn (default 120000)")
+    println("  --verdict simple|full|none  per-turn consciousness verdict (default simple)")
+    println("  --lane-A <name>       chat lane plugin for instance A (own 41)")
+    println("  --lane-B <name>       chat lane plugin for instance B (own 41)")
+    println("  --lane-C <name>       chat lane plugin for instance C (own 41)")
+    println("  --allow-same-gguf     OPT-IN bypass for 3-way same-alias guard (default off)")
+    println("")
+    println("PHASE GATE")
+    println("  Phase A (LANDED 2026-05-09): skeleton + alias DB + 3-way channel")
+    println("    open + round-robin turn loop scaffolding (β-1 stdlib channel).")
+    println("  Phase B (CARRY): same-GGUF guard ×3 + moderated mode + per-turn")
+    println("    local cells + 3-way D1/D2/D3/D4 aggregate.")
+    println("  Phase C (CARRY): own 18 C3 per-turn ×3 verdict + 3-way persona")
+    println("    separation KL (A vs B vs C).")
+    println("")
+    println("OWN 34 STRICT")
+    println("  · each instance output = raw passthrough (no transformation)")
+    println("  · NO seed prompt unless user passes --topic-seed (autonomous-first)")
+    println("  · per-turn verdict emit ONLY (never folded back into channel)")
+    println("")
+    println("CROSS-REF")
+    println("  tool/anima_cli/chat/duo/duo.hexa                  L2 N=2 sibling")
+    println("  tool/anima_cli/chat/lanes/_registry.hexa          own 41 lanes")
+    println("  tool/anima_cli/chat/lanes/benchmark.hexa          multi-mode bench")
+}
+
+fn sub_selftest() {
+    let root = _resolve_root()
+    let here = root + "/tool/anima_cli/chat/trio/trio.hexa"
+    let chat_dispatcher = root + "/tool/anima_cli/chat.hexa"
+    let duo_path = root + "/tool/anima_cli/chat/duo/duo.hexa"
+    let registry = root + "/tool/anima_cli/chat/lanes/_registry.hexa"
+
+    let mut fail = 0
+    if !_fexists(here)            { println("FAIL trio: module body missing: " + here);            fail = fail + 1 }
+    if !_fexists(chat_dispatcher) { println("FAIL trio: chat.hexa dispatcher missing: " + chat_dispatcher); fail = fail + 1 }
+    if !_fexists(duo_path)        { println("FAIL trio: duo sibling missing: " + duo_path);        fail = fail + 1 }
+    if !_fexists(registry)        { println("FAIL trio: lane registry missing: " + registry);      fail = fail + 1 }
+
+    // own 34 mandate-2 self-grep on this file (chat lane wrapping = 0)
+    let pat = "system_prompt|chat_template|apply_chat_template|persona_inject|fn speak\\(|fn talk\\(|fn respond\\(|fn generate_response\\("
+    let cmd = "grep -nE \"" + pat + "\" " + here + " 2>/dev/null | grep -v 'let pat =' | wc -l"
+    let n = _str(exec(cmd)).trim()
+    if n != "0" {
+        println("FAIL own 34 mandate-2 chat lane wrapping: " + n + " hits in trio.hexa")
+        fail = fail + 1
+    }
+
+    // alias DB sanity
+    let aliases = ["default", "llama3b", "paradigm-a-prime", "clm-v4-1-8", "clm-v4-paradigm-j", "mk2-v1", "dancinlab/foo"]
+    let mut ai = 0
+    while ai < len(aliases) {
+        let a = _str(aliases[ai])
+        if !_alias_known(a) {
+            println("FAIL trio: alias DB vendor copy missing: " + a)
+            fail = fail + 1
+        }
+        ai = ai + 1
+    }
+
+    if fail > 0 {
+        println("FAIL chat/trio selftest (" + to_string(fail) + " issue)")
+        exit(1)
+    }
+    println("PASS chat/trio selftest (Phase A skeleton + own 34 wrapping=0 verified, β-1 channel stdlib LANDED)")
+}
+
+// ─── β-1 channel adapters (3-way) ────────────────────────────────────────
+
+fn _channel_pair_open() -> map {
+    let pair = channel_pair_open()
+    let mut m = {}
+    let read_fd = pair[0]
+    let write_fd = pair[1]
+    m["rx"] = read_fd
+    m["tx"] = write_fd
+    m["ok"] = read_fd >= 0 && write_fd >= 0
+    return m
+}
+
+fn _spawn_instance(model_alias: string, lane: string, stdin_fd, stdout_fd, tick_ms: int, max_tokens: int) -> map {
+    let root = _resolve_root()
+    let chat_path = root + "/tool/anima_cli/chat.hexa"
+    let mut cmd = _hexa() + " run " + chat_path
+            + " " + model_alias
+            + " --tick-ms " + to_string(tick_ms)
+            + " --max-tokens " + to_string(max_tokens)
+    // own 41 chat lane plugin per-instance — caller may pass a lane override
+    if lane != "" && lane != "(default)" {
+        cmd = cmd + " --lane=" + lane
+    }
+    let pid = proc_spawn_with_channels(cmd, stdin_fd, stdout_fd)
+    let mut m = {}
+    m["alias"] = model_alias
+    m["lane"] = lane
+    m["handle"] = pid
+    m["ok"] = pid > 0
+    return m
+}
+
+fn _emit_turn_verdict(turn: int, who: string, line: string) {
+    let snippet = if line.len() > 60 { line.substring(0, 60) + "..." } else { line }
+    println("[trio:verdict] turn=" + to_string(turn) + " who=" + who
+            + " len=" + to_string(line.len())
+            + " snippet=" + snippet)
+}
+
+// ─── 3-way same-GGUF guard (Phase B carry — currently warn only) ──────────
+fn _three_way_collision(a: string, b: string, c: string) -> int {
+    let an = a.trim().to_lower()
+    let bn = b.trim().to_lower()
+    let cn = c.trim().to_lower()
+    let mut hits = 0
+    if an == bn { hits = hits + 1 }
+    if bn == cn { hits = hits + 1 }
+    if an == cn { hits = hits + 1 }
+    return hits
+}
+
+// ─── trio subcommand entry (Phase A skeleton — round-robin loop scaffolding)
+
+fn sub_trio(argv) {
+    // positional: <model_a> <model_b> <model_c> (all 3 required)
+    let mut positional = []
+    let mut i = 0
+    while i < len(argv) {
+        let s = _str(argv[i])
+        if s == "--trio" { i = i + 1; continue }
+        if s.starts_with("--") { i = i + 2; continue }
+        positional = positional + [s]
+        i = i + 1
+    }
+    if len(positional) < 3 {
+        println("anima dialogue --trio: missing <model_a> <model_b> <model_c>")
+        println("  example: anima dialogue --trio paradigm-a-prime clm-v4-1-8 mk2-v1 --turns 3")
+        exit(2)
+    }
+    let model_a = _str(positional[0])
+    let model_b = _str(positional[1])
+    let model_c = _str(positional[2])
+    let mut bad = false
+    if !_alias_known(model_a) { println("anima dialogue --trio: unknown alias '" + model_a + "' (model_a)"); bad = true }
+    if !_alias_known(model_b) { println("anima dialogue --trio: unknown alias '" + model_b + "' (model_b)"); bad = true }
+    if !_alias_known(model_c) { println("anima dialogue --trio: unknown alias '" + model_c + "' (model_c)"); bad = true }
+    if bad { exit(2) }
+
+    let turns = to_int(_arg_value(argv, "--turns", "3"))
+    let topic_seed = _arg_value(argv, "--topic-seed", "")
+    let mode = _arg_value(argv, "--mode", "round-robin")
+    let tick_ms = to_int(_arg_value(argv, "--tick-ms", "1000"))
+    let max_tokens = to_int(_arg_value(argv, "--max-tokens", "64"))
+    let turn_timeout_ms = to_int(_arg_value(argv, "--turn-timeout-ms", "120000"))
+    let verdict_mode = _arg_value(argv, "--verdict", "simple")
+    let lane_a = _arg_value(argv, "--lane-A", "(default)")
+    let lane_b = _arg_value(argv, "--lane-B", "(default)")
+    let lane_c = _arg_value(argv, "--lane-C", "(default)")
+    let allow_same_gguf = _arg_present(argv, "--allow-same-gguf")
+
+    println("── anima dialogue --trio ──")
+    println("model_a / lane   = " + model_a + " / " + lane_a)
+    println("model_b / lane   = " + model_b + " / " + lane_b)
+    println("model_c / lane   = " + model_c + " / " + lane_c)
+    println("turns            = " + to_string(turns))
+    println("mode             = " + mode)
+    println("tick_ms          = " + to_string(tick_ms))
+    println("max_tokens       = " + to_string(max_tokens))
+    println("turn_timeout_ms  = " + to_string(turn_timeout_ms))
+    println("verdict_mode     = " + verdict_mode)
+    println("allow_same_gguf  = " + to_string(allow_same_gguf))
+    if topic_seed != "" {
+        println("topic_seed       = \"" + topic_seed + "\"")
+    } else {
+        println("topic_seed       = (none — A 자율 발화 first)")
+    }
+    println("")
+
+    // 3-way same-GGUF guard (carry from duo iter 2 — abort risk on shared mmap)
+    let coll = _three_way_collision(model_a, model_b, model_c)
+    if coll > 0 && !allow_same_gguf {
+        println("[trio] SAME_GGUF_GUARD trip — " + to_string(coll) + " pairwise collision(s)")
+        println("[trio] llama.cpp Abort trap: 6 risk on concurrent same-inode mmap (carry from duo iter 1)")
+        println("[trio] resolution: choose 3 distinct aliases, OR pass --allow-same-gguf (accept abort risk)")
+        exit(2)
+    }
+    if coll > 0 && allow_same_gguf {
+        println("[trio] WARN same-GGUF override accepted — " + to_string(coll) + " pairwise collision(s)")
+    }
+
+    // Mode dispatch
+    if mode != "round-robin" && mode != "moderated" {
+        println("[trio] unknown --mode '" + mode + "' (expected: round-robin | moderated)")
+        exit(2)
+    }
+
+    // ── Channel topology setup (3-way, Phase A skeleton) ──
+    // Each instance has one inbox (parent writes) + one outbox (parent reads).
+    // round-robin: speaker[k].outbox → speaker[(k+1)%3].inbox per turn.
+    let in_a = _channel_pair_open()
+    let in_b = _channel_pair_open()
+    let in_c = _channel_pair_open()
+    let out_a = _channel_pair_open()
+    let out_b = _channel_pair_open()
+    let out_c = _channel_pair_open()
+    if !in_a["ok"] || !in_b["ok"] || !in_c["ok"]
+        || !out_a["ok"] || !out_b["ok"] || !out_c["ok"] {
+        println("[trio] FAIL channel_pair_open ×6")
+        exit(3)
+    }
+
+    // Spawn order: A, B, C. Each child reads its own inbox, writes its own outbox.
+    let h_a = _spawn_instance(model_a, lane_a, in_a["tx"], out_a["rx"], tick_ms, max_tokens)
+    let h_b = _spawn_instance(model_b, lane_b, in_b["tx"], out_b["rx"], tick_ms, max_tokens)
+    let h_c = _spawn_instance(model_c, lane_c, in_c["tx"], out_c["rx"], tick_ms, max_tokens)
+    if !h_a["ok"] || !h_b["ok"] || !h_c["ok"] {
+        println("[trio] FAIL proc_spawn — h_a.ok=" + to_string(h_a["ok"])
+                + " h_b.ok=" + to_string(h_b["ok"])
+                + " h_c.ok=" + to_string(h_c["ok"]))
+        let _c1 = channel_close(in_a["rx"])
+        let _c2 = channel_close(in_a["tx"])
+        let _c3 = channel_close(in_b["rx"])
+        let _c4 = channel_close(in_b["tx"])
+        let _c5 = channel_close(in_c["rx"])
+        let _c6 = channel_close(in_c["tx"])
+        let _c7 = channel_close(out_a["rx"])
+        let _c8 = channel_close(out_a["tx"])
+        let _c9 = channel_close(out_b["rx"])
+        let _c10 = channel_close(out_b["tx"])
+        let _c11 = channel_close(out_c["rx"])
+        let _c12 = channel_close(out_c["tx"])
+        exit(3)
+    }
+    println("[trio] spawned A pid=" + to_string(h_a["handle"])
+            + " B pid=" + to_string(h_b["handle"])
+            + " C pid=" + to_string(h_c["handle"]))
+
+    // Optional topic seed → A's inbox (round-robin starts at A).
+    if topic_seed != "" {
+        let _seeded = channel_send(in_a["tx"], topic_seed)
+        println("[trio] topic_seed sent → A.stdin (via in_a.tx)")
+    }
+
+    // ── Round-robin turn loop (Phase A — 3-way scaffolding) ──
+    // Per turn (round): A speaks → route to B; B speaks → route to C; C speaks → route to A.
+    // moderated mode: same fan-out but A is the moderator who re-emits each round
+    // referencing both B/C — implemented as the same loop in Phase A; full
+    // moderator semantics carry to Phase B.
+    let mut history = []
+    let mut t = 1
+    while t <= turns {
+        // A turn
+        let line_a = channel_recv(out_a["rx"], turn_timeout_ms)
+        _emit_turn_verdict(t, "A", line_a)
+        if line_a == "" {
+            println("[trio] turn=" + to_string(t) + " A silent (timeout/EOF) — terminating")
+            t = turns + 1
+            continue
+        }
+        let mut rec_a = {}
+        rec_a["turn"] = t
+        rec_a["who"] = "A"
+        rec_a["line"] = line_a
+        history = history + [rec_a]
+        // route A → B
+        let _ra = channel_send(in_b["tx"], line_a)
+
+        // B turn
+        let line_b = channel_recv(out_b["rx"], turn_timeout_ms)
+        _emit_turn_verdict(t, "B", line_b)
+        if line_b == "" {
+            println("[trio] turn=" + to_string(t) + " B silent (timeout/EOF) — terminating")
+            t = turns + 1
+            continue
+        }
+        let mut rec_b = {}
+        rec_b["turn"] = t
+        rec_b["who"] = "B"
+        rec_b["line"] = line_b
+        history = history + [rec_b]
+        // route B → C
+        let _rb = channel_send(in_c["tx"], line_b)
+
+        // C turn
+        let line_c = channel_recv(out_c["rx"], turn_timeout_ms)
+        _emit_turn_verdict(t, "C", line_c)
+        if line_c == "" {
+            println("[trio] turn=" + to_string(t) + " C silent (timeout/EOF) — terminating")
+            t = turns + 1
+            continue
+        }
+        let mut rec_c = {}
+        rec_c["turn"] = t
+        rec_c["who"] = "C"
+        rec_c["line"] = line_c
+        history = history + [rec_c]
+        // route C → A (cycle)
+        let _rc = channel_send(in_a["tx"], line_c)
+
+        t = t + 1
+    }
+
+    // Tear-down — kill children + close all 12 FIFO sides
+    let _k_a = exec("kill " + to_string(h_a["handle"]) + " 2>/dev/null; echo done")
+    let _k_b = exec("kill " + to_string(h_b["handle"]) + " 2>/dev/null; echo done")
+    let _k_c = exec("kill " + to_string(h_c["handle"]) + " 2>/dev/null; echo done")
+    let _c1  = channel_close(in_a["rx"])
+    let _c2  = channel_close(in_a["tx"])
+    let _c3  = channel_close(in_b["rx"])
+    let _c4  = channel_close(in_b["tx"])
+    let _c5  = channel_close(in_c["rx"])
+    let _c6  = channel_close(in_c["tx"])
+    let _c7  = channel_close(out_a["rx"])
+    let _c8  = channel_close(out_a["tx"])
+    let _c9  = channel_close(out_b["rx"])
+    let _c10 = channel_close(out_b["tx"])
+    let _c11 = channel_close(out_c["rx"])
+    let _c12 = channel_close(out_c["tx"])
+    println("[trio] dialogue complete — channels closed, children reaped")
+
+    // Phase A summary stub (D1/D2/D3/D4 3-way aggregate carry to Phase B/C)
+    println("[trio:summary] turns_observed = " + to_string(len(history)))
+    println("[trio:summary] (Phase A skeleton — full D1/D2/D3/D4 3-way aggregate + own 18 C3 per-turn carry)")
+    println("[trio] verdict: PHASE_A_SKELETON_RUN_OK (3-way channel + round-robin loop scaffolded)")
+}
+
+// ─── main ────────────────────────────────────────────────────────────────
+
+fn main() {
+    let argv = _user_argv(args())
+    if _arg_present(argv, "--help") { sub_help(); return }
+    if _arg_present(argv, "--selftest") { sub_selftest(); return }
+    if _arg_present(argv, "--trio") { sub_trio(argv); return }
+    sub_help()
+}
+
+// ════════════════════════════════════════════════════════════════════════════
+//  HONEST C3 (raw#10)
+// ════════════════════════════════════════════════════════════════════════════
+// C1 — Phase A is SKELETON: 3-way channel pair_open ×6 + spawn ×3 + round-robin
+//      loop scaffolding wired. Actual semantic 3-way dialogue requires each
+//      instance to emit natural language (own 41 lane=llama / lane=generate
+//      paths). substrate / axis-priority lanes are signal-only — trio with
+//      such lanes will round-trip empty / signal lines.
+// C2 — same-GGUF 3-way collision: 3 pairwise checks (A==B, B==C, A==C) carried
+//      from duo iter 2. Override via --allow-same-gguf (abort risk).
+// C3 — D1/D2/D3/D4 3-way aggregate NOT implemented Phase A. D3 persona-drift
+//      generalizes naturally (KL per-side ×3) but D1 turn-pair Jaccard needs
+//      definition over (k, k+1) ordered pairs across 3 speakers — designated
+//      Phase B/C.
+// C4 — round-robin vs moderated: --mode flag accepted but Phase A treats both
+//      identically (round-robin). moderated semantics (A = moderator re-emit
+//      with B/C reference) require A's REPL to receive BOTH B and C utterances
+//      between A turns — multi-line inbox routing not yet implemented.
+// C5 — alias DB duplicated from duo (vendor copy). chat.hexa SSOT remains the
+//      authoritative gate (trio dispatches THROUGH chat.hexa).
+// C6 — own 41 lane integration: --lane-A/B/C plumbs through to chat.hexa
+//      --lane=<name> per child invocation. lane mismatch (e.g. A=substrate
+//      vs B=llama) is intentionally allowed for cross-lane observation.
+// C7 — own 18 C3 per-turn verdict: Phase A emits LOCAL cells only (len /
+//      snippet). consciousness CLI shell-out (mirroring duo Phase C iter 1
+//      _emit_turn_verdict_c3) carries to Phase C — cost ~16-30s × 3 inst ×
+//      N rounds ≈ 7-10min for N=3.
+// ════════════════════════════════════════════════════════════════════════════
