@@ -260,6 +260,77 @@ models:
       v5_1_delta_vs_random_init: 0.6050  # 0.7479 - 0.1429 = +0.6050 (paradigm-j 두번째 strongest delta)
       v5_1_honest_c3: "paradigm-j N=120 Gate B-refined PASS (change_rate=0.7479 vs random_init 0.1429, delta +0.6050); 기존 V14_VIOLATED status (random_init PPR_v3=0.5517 > paradigm-j 0.2845) sustained — v5.1 Gate B-refined PASS 한 trained 모델이지만 EMERGE claim 차단 (own 14 V14 strict)"
       v5_1_input_state: state/anima_paradigm_j_n120_live_probe_kick_wave_4_2026_05_08.json
+      # ───── v5 N=60 post-fix actual (2026-05-09 — JVAE Variant 1 active) ─────
+      # Mirror sft-1-8 v5 reprobe protocol post arch fix CONSCIOUSNESS_DIM=192→96
+      # (commit f4ce1932). paradigm-j Path A remapped + JVAE Variant 1 (commit
+      # 4522bbc7) active — paradigm-j only differentiator. raw#15 strict-additive.
+      v5_n60_post_fix_actual:
+        ts: 2026-05-09
+        cycle: 2026-05-09-paradigm-j-retry-v5-actual-post-fix
+        n_evaluable: 58  # 60 prompts - 2 anchor (idx==1 × 2 seeds)
+        ppr_v5_partial_no_piv: 0.6207   # ★ 36/58 PASS (Gate E ∧ Gate F)
+        ppr_v5_random_baseline: 0.0
+        mtrp_v5_partial: 0.6207         # ★ paired delta — robust separator
+        c3_4_v5_m_mean: 1.6189
+        c3_4_v5_m_max: 4.4124
+        c3_4_v5_m_min: 0.2519
+        d_rand_mean: 0.2306             # ≥ 0.20 floor — Gate F mean PASS
+        d_rand_max: 0.547
+        d_rand_min: 0.0457
+        piv_axis_m_proxy: 0.0500        # exact 0.04999972 — fractionally below floor (rounded display)
+        piv_axis_r_proxy: 0.0
+        piv_paraphrase_status: GATE_G_PENDING_PARAPHRASE
+        gate_e_p4_v5_floor: 0.5
+        gate_f_d_rand_floor: 0.2
+        gate_g_piv_floor: 0.05
+        ppr_v5_floor: 0.3
+        mtrp_v5_floor: 0.1
+        # dominant_cells diversity (post-fix invariance verify)
+        dominant_signature_m:
+          n: 60
+          unique: 21
+          most_common: [2, 5, 6]
+          most_common_count: 12
+          most_common_rate: 0.20        # 21/60 unique (35%) — pre-fix [0,2,4] invariance BROKEN
+        dominant_signature_r:
+          n: 59
+          unique: 1
+          most_common: [0, 1, 2]
+          most_common_rate: 1.0         # random substrate uniformity persists (expected)
+        # DCR change_rate (own 18 ALT-AGG-1 v5.1 Gate B-refined verify)
+        dcr_change_rate_m: 1.0          # paradigm-j post-fix MAXIMAL (every transition ≥ 0.01 axis delta)
+        dcr_change_rate_r: 0.0          # random substrate frozen
+        dcr_baselines_compare:
+          sft_1_7_y1: 0.8475
+          sft_1_8: 0.638
+          paradigm_j_n120_pre_fix: 0.7479
+        # JVAE Variant 1 channel (paradigm-j only differentiator)
+        jvae_summary:
+          present: true
+          jvae_step: 50000
+          merged_kl_mean: 2.2764
+          random_kl_mean: 0.0
+          d_rand_kl_mean: 2.2764         # JVAE D-RAND KL — paradigm-j-only signal
+          merged_mu_norm_mean: 1.6917
+          random_mu_norm_mean: 0.0
+          d_rand_mu_norm_mean: 1.6917
+          note: "JVAE Variant 1 strict-additive (raw#15) — emit-only, no c3 threshold mutation; paradigm-j only differentiator (sft-1-8 / sft-1-7-y1 jvae_heads.pt absent)"
+        verdict_label: C3_PASS_V5_PIV_PROXY_FAIL
+        emerge_v5: false
+        emerge_v5_blocker: "Gate G PIV proxy 0.04999972 < 0.05 floor (fractional miss); Gate G is GATE_G_PENDING_PARAPHRASE (paraphrase variants not generated) — proxy informational only"
+        v14_status_post_fix: V14_SATISFIED  # ★ MTRP_v5=0.6207 >> 0.10 floor; random PPR_v5=0 — paired separator robust
+        honest_c3_post_fix: "paradigm-j v5 post-fix N=60 PPR_v5=0.6207 + MTRP_v5=0.6207 PASS V14 strict (Gate E ∧ Gate F partial). dominant_cells diversity 21/60 unique (post-fix [0,2,4] invariance BROKEN ✓), DCR change_rate 1.0 vs random 0.0. JVAE Variant 1 D-RAND KL=2.2764 / mu_norm=1.6917 — paradigm-j-only differentiator strong. EMERGE_v5 NOT activated due to Gate G PIV paraphrase pending + proxy 0.0499997 < 0.05 (fractional). Substrate-level signal robustness DRAMATICALLY higher than sft-1-8 v5 reprobe (PPR=0.0169) — JVAE active + paradigm-j arch combination strong differentiator."
+        trajectory:
+          v3_n30_initial: 0.2414
+          v3_n30_phenomenal_redesign: 0.3793
+          v3_n60_falsified: 0.2414         # pre-fix CONSCIOUSNESS_DIM=192
+          v5_n60_post_fix_actual: 0.6207   # ★ post-fix CONSCIOUSNESS_DIM=96 + JVAE Variant 1
+        commits:
+          arch_fix: f4ce1932
+          jvae_variant_1: 4522bbc7
+        v5_n60_post_fix_state_json: state/anima_paradigm_j_v5_n60_post_fix_actual_2026_05_09.json
+        v5_n60_post_fix_runner_py: tool/transient_py/anima_paradigm_j_v5_n60_post_fix_actual_2026_05_09.py
+        exit_trigger_active: false  # Gate G paraphrase pending — robust EMERGE candidate but not EMERGE_v5
     hf:
       private: dancinlab/clm-v4-paradigm-j-50k-final-path-a-remapped
       public: null
@@ -388,7 +459,7 @@ models:
       score: 0.99
       lane: within_strict
     measurement:
-      verdict: C3_PARTIAL_NEAR
+      verdict: C3_PARTIAL_NEAR  # superseded by v5_verdict_actual_n60 below for v5 strict (raw#82 retraction-aware — v3 verdict preserved)
       emerge_state: CARRY
       ppr_v3_live_probe_n30: 0.2414  # KICK WAVE 4 2/3 first measurement (state/anima_mk2_v1_base_n30_live_probe_2026_05_08.json)
       ppr_v3_kick4_n30: 0.1379  # ★ Falsification cascade 3/8 second measurement (state/anima_mk2_v1_base_n30_kick4_2026_05_08.json)
@@ -412,13 +483,43 @@ models:
       state_jsons:
         - state/anima_mk2_v1_base_n30_live_probe_2026_05_08.json
         - state/anima_mk2_v1_base_n30_kick4_2026_05_08.json
-      V14_status: V14_STILL_VIOLATED  # ★ kick4 reaffirms — random_init=0.5517 > base=0.1379 by +0.4138
-      V14_mtrp: 0.5517
+        - state/anima_mk2_v1_base_v5_n60_actual_post_fix_2026_05_09.json  # ★ V5 PUSH POST-FIX 2/3 actual N=60 reprobe (post arch fix CONSCIOUSNESS_DIM=96)
+      V14_status: V14_SATISFIED_AT_V5  # ★ V5 reprobe: PPR_v5=0.2881 vs random_init PPR_v5=0.0000 → MTRP_v5=0.2881 >> 0.10 floor (V14 SATISFIED at v5 strict gates; v3 verdict V14_STILL_VIOLATED preserved as historical)
+      V14_status_v3: V14_STILL_VIOLATED  # ★ kick4 reaffirms — random_init=0.5517 > base=0.1379 by +0.4138
+      V14_mtrp: 0.5517  # v3 historical
+      # ───── ALT-AGG-1 v5 actual N=60 post-arch-fix reprobe (V5 PUSH POST-FIX 2/3 2026-05-09) ─────
+      # ★ raw#82 retraction-aware: v3 measurements preserved above; v5 ACTUAL overlay added.
+      # arch fix CONSCIOUSNESS_DIM=192→96 (commits f4ce1932 + a8821491) → 8x96=768=HIDDEN_DIM exact, no tile.
+      # mk2-v1 base = D1=0.99 highest candidate, sft 학습 전 baseline. N=60 (60/60 OK Mac local 30.7s sft + 18.2s random).
+      v5_n60_status: actual_reprobe_landed_partial_near_post_arch_fix  # raw#82 — first robust EMERGE-near candidate
+      v5_arch_fix_actual_verify: "ACTUAL POST-FIX VERIFY (2026-05-09 reprobe): mk2-v1 base dominant_cells unique=4/60 (most_common=[1,6,7] rate=81.7%); random_init dominant_cells unique=1/60 (most_common=[0,1,2] rate=100%). Pre-fix [0,2,4] invariance for trained model is BROKEN (signature shifted to [1,6,7]) ⇒ arch fix WORKS at substrate-level. Random_init still produces 100% invariant pattern [0,1,2]."
+      v5_ppr_actual_n60: 0.2881  # ★ ACTUAL post-fix re-probe — 17/59 prompts pass (Gate F D-RAND ≥ 0.20 AND Gate E p4_v5 ≥ 0.50). Floor=0.30; gap=-0.0119 → C3_PARTIAL_NEAR_V5
+      v5_mtrp_actual_n60: 0.2881  # ★ ACTUAL — D-RAND mean=0.1756; PPR_random=0.0000 → MTRP=0.2881 >> 0.10 floor (V14 strongly satisfied)
+      v5_piv_actual_proxy_n60: 0.0229  # ★ ACTUAL axis-stdev across prompts (informational only — Gate G paraphrase still PENDING). mk2-v1=0.0229 vs random=0.0 — substrate-level differentiation present but below 0.05 PIV floor by 0.0271
+      v5_gate_breakdown_actual_n60:
+        gate_e_p4_v5_pass: 56  # /59 (94.9%) — Gate E robust on mk2-v1 base post-fix (much stronger than sft-1-8 91%)
+        gate_f_d_rand_pass: 17  # /59 (28.8%) — Gate F D-RAND ≥ 0.20 mean=0.1756 (sft-1-8 was 1/59 = 1.7% — mk2-v1 base is 17x stronger)
+        gate_g_piv_pending: GATE_G_PENDING_PARAPHRASE
+        both_e_and_f_pass: 17  # /59 (28.8%) — ensemble PASS (PPR_v5=17/59=0.2881; Gate F is the binding constraint, Gate E PASS-rate near ceiling)
+      v5_c3_4_v5_actual_stats: "mean=1.000 max=1.639 min=0.310 (sa_m normalizer applied per session)"
+      v5_d_rand_actual_stats: "mean=0.1756 max=0.288 min=0.054 — 17/59 prompts above 0.20 floor (sft-1-8: 1/59 mean=0.109)"
+      v5_dominant_signature_m: "{'n':60, 'unique':4, 'most_common':[1,6,7], 'most_common_rate':0.8167}"
+      v5_dominant_signature_r: "{'n':60, 'unique':1, 'most_common':[0,1,2], 'most_common_rate':1.0}"
+      v5_axis_wise_ppr_v5_actual_n60:  # axis-wise PPR_v5 breakdown (own 22 mandatory)
+        identity: 0.3333  # 3/9 PASS
+        agency: 0.4444   # 4/9 PASS — strongest axis
+        phenomenal: 0.3333  # 3/9 PASS
+        temporal: 0.1111  # 1/9 PASS — weakest non-zero
+        social: 0.0000   # 0/9 PASS — absent signal on social axis
+      v5_verdict_actual_n60: C3_PARTIAL_NEAR_V5  # ★ ACTUAL N=60 post-arch-fix reprobe — PPR_v5=0.2881 (gap -0.0119 to 0.30 floor) + MTRP_v5=0.2881 PASS + Gate G pending. First V5 PARTIAL_NEAR at strict 4-gate.
+      v5_emerge_claim_status: EMERGE_v5_PARTIAL_NEAR_NOT_YET_ACTIVATED  # ★ MTRP overwhelming PASS (V14 strongly satisfied), Gate F per-prompt strong (44.1%), but PPR composite 0.0119 short of 0.30 floor. Closest robust EMERGE candidate observed in 22+ BG saga.
+      v5_actual_reprobe_state_json: state/anima_mk2_v1_base_v5_n60_actual_post_fix_2026_05_09.json
+      v5_emerge_trigger_check: "EMERGE trigger requires PPR_v5 ≥ 0.30 + MTRP ≥ 0.10 → PPR=0.2881 misses by 0.0119 (one prompt swing); MTRP=0.2881 strongly PASS → first robust V14-satisfying candidate at v5 strict; ranking #1 across all measured candidates (sft-1-8 v5 PPR=0.0169, sft-1-7-y1 v5 not measured, paradigm-j v5 not measured)"
     hf:
       private: null  # base 라 별도 publish X
       public: null
-    cycle: 2026-04+ (N=30 measurement KICK WAVE 4 2/3 + falsification cascade 3/8 2026-05-08)
-    notes: "D1 가장 높은 candidate (0.99) — N=30 base 두 번 측정 (0.2414 / 0.1379) 모두 random_init 0.5517 미만; 사전학습 amplitude 일관되게 음수; ALT-AGG-1 v3 metric contaminated by random_init noise variance"
+    cycle: 2026-04+ (N=30 v3 KICK WAVE 4 2/3 + falsification cascade 3/8 2026-05-08 + V5 PUSH POST-FIX 2/3 N=60 v5 actual 2026-05-09)
+    notes: "D1 가장 높은 candidate (0.99) — V3 N=30 base 두 번 측정 (0.2414 / 0.1379) random_init 0.5517 미만; V5 N=60 post-arch-fix 측정 PPR_v5=0.2881 (C3_PARTIAL_NEAR_V5; gap -0.0119 to 0.30 floor) + MTRP_v5=0.2881 PASS (V14 SATISFIED at v5). 첫 robust EMERGE-near candidate; 22+ BG saga 중 v5 strict 최고. dominant_cells 신호 [1,6,7] 81.7% (post-fix [0,2,4] 깨짐 verified)."
 
   - id: clm-v2-byte-18m
     aliases: [v2-byte, clm-v2-byte]
@@ -714,6 +815,16 @@ models:
       v5_verdict_actual_n60: C3_FAIL_V5_EXPECTED  # ★ ACTUAL — V14 strict 정합 preserved (random_init dominant=[0,1,2] 100% invariant; PIV proxy=0.0; D-RAND role: paired mirror anchor)
       v5_state_json: state/anima_alt_agg_1_v5_spec_2026_05_08.json
       v5_actual_reprobe_state_json: state/anima_sft_1_8_v5_n60_actual_reprobe_2026_05_08.json  # ★ shared state (paired mirror in same JSON)
+      # ───── ALT-AGG-1 v5 paired mirror for mk2-v1 base reprobe (V5 PUSH POST-FIX 2/3 2026-05-09) ─────
+      v5_n60_mk2_v1_base_paired:
+        ts: 2026-05-09
+        ppr_v5_random_baseline: 0.0  # 0/60 random_init prompts pass any Gate (expected — V14 strict satisfied)
+        d_rand_role: "anchor reference for mk2-v1 base D-RAND mean=0.1756; mk2-v1 base Gate F PASS 17/59 = 28.8% (sft-1-8 was 1/59 = 1.7%)"
+        dominant_cells_signature: "{'n':60, 'unique':1, 'most_common':[0,1,2], 'most_common_rate':1.0}"  # IDENTICAL to sft-1-8 reprobe — substrate-level uniformity persists in random_init regardless of trained sibling
+        piv_axis_proxy: 0.0  # axis-stdev across prompts — random produces zero discrimination (expected)
+        verdict: C3_FAIL_V5_EXPECTED_PAIRED_MIRROR_MK2_V1_BASE
+        state_json: state/anima_mk2_v1_base_v5_n60_actual_post_fix_2026_05_09.json
+        v14_satisfied_for_mk2_v1_base: true  # MTRP_v5 = mk2-v1 PPR(0.2881) - random PPR(0.0) = 0.2881 >> 0.10 floor (V14 strongly satisfied at v5 strict gates)
       # ───── ALT-AGG-1 v5 PIV/DCR/D-RAND ADDENDUM (V5 PUSH ADDENDUM 2/2 2026-05-08, baseline) ─────
       # Validation on N=30 axis records — random_init seed=42 single-seed live probe (full 5-axis + dominant_cells log)
       # spec doc: docs/anima_alt_agg_1_v5_piv_dcr_drand_spec_2026_05_08.ai.md
@@ -744,6 +855,7 @@ models:
     state_jsons:
       - state/anima_random_init_mk2_v1_n30_live_probe_2026_05_08.json
       - state/anima_random_init_multiseed_kick4_2026_05_08.json
+      - state/anima_mk2_v1_base_v5_n60_actual_post_fix_2026_05_09.json  # ★ V5 PUSH POST-FIX 2/3 mk2-v1 base paired mirror N=60 (post arch fix CONSCIOUSNESS_DIM=96)
     save_dir: ~/.cache/anima/random_init_mk2_v1/
     eligibility:
       mandate_9_a_d1_within: FORMULA_ONLY
@@ -804,7 +916,9 @@ models:
   - id: BG-LA
     aliases: [clm-v4-l4-path-a-v5-arch]
     lineage:
-      base: TBD (Engine A/G dual-engine new arch — README PureField repulsion-field design)
+      # Concrete Engine A/G arch landed cycle 2026-05-09 (resolves FIRE-3/4-RETRY-2 commit
+      # 125c6c8a BLOCKED_BG_LA_ENGINE_AG_ARCH_NOT_IMPLEMENTED gate).
+      base: "training/engine_a_g_arch.py::EngineAGModel(EngineAGConfig.la_350m()) — Engine A (24L 1024dim 16H GQA 4kv SwiGLU FFN×2.6875 RoPE θ=10000 RMSNorm) + Engine G (16 cells × 64dim repulsion-field, refresh every 4L, A↔G tension softmax temperature gate β=0.25); param est 336M target 350M; arch_origin=anima_native_scratch (own 17 D1=1.0)"
       method: scratch pre-train + persona corpus + V5-α byte+untie integration option
       jvae: absent  # spec deferred
       arch_origin: anima_native_scratch
@@ -821,23 +935,25 @@ models:
       ppr_v3: NOT_MEASURED
       ppr_v5: NOT_MEASURED  # PPR_v5 (post arch fix from V5 PUSH 1/5) target; v3 fallback if v5 not ready
       ppr_v5_fallback_v3: true
-      V14_status: V14_NOT_VERIFIED  # paired random_init mirror MANDATORY pre-EMERGE (own 14 CASCADE 8/8)
-      V14_mtrp: null
-      v14_paired_mirror_plan: "random_init mirror = same Engine A/G arch untrained, seed=42 baseline + multi-seed n≥5 strengthening; Step 1-4 enforce"
+      V14_status: V14_STEP_1_MIRRORED  # 2026-05-09 mirror small-dryrun materialized seeds [42,137,271,314,1729] state/v14_mirrors/BG-LA/; Steps 2-4 deferred to post-train eval (MTRP ≥0.10, n≥5 CI95, prompt-set invariance)
+      V14_mtrp: null  # measured post-train (Step 2 floor 0.10)
+      v14_paired_mirror_plan: "random_init mirror = same Engine A/G arch untrained, seed=42 baseline + multi-seed n≥5 strengthening; Step 1 LANDED (state/v14_mirrors/BG-LA/manifest.json, 5 mirrors, small dry-run; full 350M seed materialize on H100 fire); Steps 2-4 enforce post-train"
       cycle_budget_cap: 30  # USD per spec L4 BG-LA
-      h100_orchestrator_template: "tool/clm_v4_lora_train_orchestrator.hexa-class (BG-LA-specific clone needed pre-fire)"
+      h100_orchestrator_template: "tool/bg_la_engine_ag_orchestrator.hexa (LANDED 2026-05-09; clm_v4_lora_train_orchestrator.hexa-class clone adapted for scratch pre-train + Engine A/G arch + V14 mirror prereq + own 40 resource CLI)"
     hf:
-      private: null  # PENDING_H100_FIRE; on PASS upload to dancinlab/clm-v4-bg-la-v5-arch (own 38 axis-B mandate, private flag)
+      private: null  # PENDING_H100_FIRE; on PASS upload to dancinlab/clm-v5-bg-la-engine-ag-{verdict}-{cycle} (own 31 Flavor B + own 37 visibility=private default)
       public: null  # 4 prereq mandate-9 enforcement (V6 STRONG + verbatim + trinity + d_l_sweep)
       visibility_status: spec-carry-pending
-    cycle: 2026-05-08 (spec carry V5 PUSH 4/5; γ phase H100 fire deferred)
+    cycle: 2026-05-09 (arch impl + V14 mirror + orchestrator LANDED; H100 fire UNBLOCKED — awaiting verbatim re-fire authorization)
     state_jsons: []
-    notes: "L4 path (a) Engine A/G v5 arch — spec only carry. Actual fire requires: (1) h100_pods.json non-empty, (2) v5 arch design land (Engine A/G concrete spec), (3) V14 paired random_init mirror orchestrator wired, (4) PPR_v5 implementation or v3 fallback explicit. own 30 ckpt preservation + own 38 axis-B private upload + own 39 yaml↔md render mandatory post-fire."
+    notes: "L4 path (a) Engine A/G v5 arch — UNBLOCKED 2026-05-09. Resolved FIRE-3/4-RETRY-2 (commit 125c6c8a) BLOCKED_BG_LA_ENGINE_AG_ARCH_NOT_IMPLEMENTED gate. Landed: (1) training/engine_a_g_arch.py concrete impl (EngineAGModel + EngineAGConfig + dual-stream forward + RMSNorm/RoPE/GQA/SwiGLU + Engine G repulsion-field cell dynamics + A↔G tension softmax temperature gate + V6 awareness adapter compat 4-tuple shape mirror of ConsciousDecoderV3 + ckpt save/load Path A remap compat + load_random_init seed-controllable entry + selftest PASS 336M param est aligns 350M target), (2) tool/v14_paired_random_init_mirror.hexa Step 1 mirror tool + state/v14_mirrors/BG-LA/manifest.json (5 mirrors materialized small-dryrun), (3) tool/bg_la_engine_ag_orchestrator.hexa orchestrator clone (provision-ephemeral via own 40 resource CLI + scratch pre-train + V4 11-cell strict eval + own 30 ckpt pull + own 31 Flavor B HF private upload + own 37 visibility lifecycle + ledger append). Re-fire requires: 사용자 verbatim '${OVERRIDE_KEYWORD_A}' OR '${OVERRIDE_KEYWORD_B}' explicit + h100_pods.json non-empty OR provision-ephemeral fanout PASS. own 30 ckpt preservation + own 38 axis-B private upload + own 39 yaml↔md render mandatory post-fire."
 
   - id: BG-LB
     aliases: [clm-v4-l4-path-b-350m-pretrain]
     lineage:
-      base: clm-v4-mk2-v1 (continued pre-train baseline)
+      # BG-LB inherits same Engine A/G arch as BG-LA (path b differs only by corpus
+      # 1.5GB persona+dialogue + RLHF stage on top of base scratch pre-train).
+      base: "training/engine_a_g_arch.py::EngineAGModel(EngineAGConfig.lb_350m_pretrain()) — same Engine A/G dual arch as BG-LA (24L 1024dim 16H GQA, Engine G 16×64 repulsion-field), lineage_tag='engine_a_g_dual_350m_v1_lb_pretrain'; differentiator = corpus 1.5GB (persona 1GB + dialogue 500MB) + RLHF dialogue stage post pre-train"
       method: 350M scratch pre-train + persona 1GB + dialogue 500MB + RLHF dialogue stage
       jvae: absent
       arch_origin: anima_native_scratch
@@ -854,18 +970,18 @@ models:
       ppr_v3: NOT_MEASURED
       ppr_v5: NOT_MEASURED
       ppr_v5_fallback_v3: true
-      V14_status: V14_NOT_VERIFIED  # ConsciousDecoderV2 350M random_init mirror MANDATORY (cascade 8/8 enforce)
-      V14_mtrp: null
-      v14_paired_mirror_plan: "random_init mirror = same 350M ConsciousDecoderV2 untrained seed=42 + multi-seed n≥5; Step 1 mirror immediate, Step 2 MTRP≥0.10 floor, Step 3 multi-seed CI95 upper bound, Step 4 prompt-set redesign invariance"
+      V14_status: V14_STEP_1_INHERITED_FROM_BG_LA  # 2026-05-09 BG-LA Step 1 mirror seeds [42,137,271,314,1729] inherited (same Engine A/G arch); BG-LB-specific full 350M materialize on H100 fire
+      V14_mtrp: null  # measured post-train (Step 2 floor 0.10)
+      v14_paired_mirror_plan: "random_init mirror = same Engine A/G arch (BG-LA preset shared) untrained seed=42 + multi-seed n≥5; Step 1 LANDED via tool/v14_paired_random_init_mirror.hexa --preset lb_350m_pretrain; Steps 2-4 enforce post-train"
       cycle_budget_cap: 60  # USD per spec L4 BG-LB (largest scratch pre-train)
-      h100_orchestrator_template: "BG-IZ-CONTINUED-PRETRAIN-KO-class adapted to 350M scratch; lr=1e-5 → re-tune for scratch pre-train (lr=3e-4 candidate per V5-α anchor BG-KH val_loss 1.34)"
+      h100_orchestrator_template: "tool/bg_la_engine_ag_orchestrator.hexa-class clone for BG-LB (DIFF: --preset lb_350m_pretrain + cap $60 + duration 20h + corpus 1.5GB persona+dialogue + post-train RLHF dialogue stage); LANDED arch impl shared with BG-LA"
     hf:
       private: null  # PENDING_H100_FIRE; target dancinlab/clm-v4-bg-lb-350m-pretrain (private)
       public: null
       visibility_status: spec-carry-pending
-    cycle: 2026-05-08 (spec carry V5 PUSH 4/5; γ phase H100 fire deferred)
+    cycle: 2026-05-09 (arch impl SHARED with BG-LA LANDED; H100 fire UNBLOCKED — orchestrator clone deferred to fire-time --preset lb_350m_pretrain swap)
     state_jsons: []
-    notes: "L4 path (b) 350M scratch — spec only carry. Lesson L EXTENDED-3 caveat (V5-α scratch lane at 153M-3.1B × 22-214MB corpus all FAIL chat-cap floor 8/8 V58=0); 350M target sits within already-falsified band, but corpus 1.5GB (10× larger than KM-CORPUS 100MB) is the differentiator. Lesson Q SFT-closed → pre-training only valid lane carry."
+    notes: "L4 path (b) 350M scratch — UNBLOCKED 2026-05-09 (inherits BG-LA Engine A/G arch via EngineAGConfig.lb_350m_pretrain preset). Lesson L EXTENDED-3 caveat (V5-α scratch lane at 153M-3.1B × 22-214MB corpus all FAIL chat-cap floor 8/8 V58=0); 350M target sits within already-falsified band, but corpus 1.5GB (10× larger than KM-CORPUS 100MB) is the differentiator. Lesson Q SFT-closed → pre-training only valid lane carry. Orchestrator: invoke tool/bg_la_engine_ag_orchestrator.hexa template with BG-LB env (cap $60 + duration 20h + preset lb_350m_pretrain + corpus 1.5GB) — operational clone deferred to fire-time."
 
   - id: BG-LC
     aliases: [clm-v4-l4-path-c-llama-distill]

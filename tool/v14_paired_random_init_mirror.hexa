@@ -1,0 +1,223 @@
+// tool/v14_paired_random_init_mirror.hexa — V14 paired random_init mirror runner
+//                                            (BG-LA + BG-LB Engine A/G arch shared lane)
+//
+// PURPOSE
+//   own 14 V14 CASCADE 8/8 mandatory pre-EMERGE — paired random_init mirror = same arch
+//   untrained, multi-seed n≥5; provides null baseline for trained model EMERGE claim.
+//
+//   Registry yaml BG-LA `measurement.v14_paired_mirror_plan` =
+//     "random_init mirror = same Engine A/G arch untrained, seed=42 baseline +
+//      multi-seed n≥5 strengthening; Step 1-4 enforce"
+//
+// V14 STEP 1-4 (own 14 CASCADE)
+//   Step 1: random_init mirror immediate — same arch + matching seed (training=0)
+//   Step 2: MTRP (mirror trained-vs-random performance) ≥ 0.10 floor — trained must
+//           clearly exceed random; floor blocks <0.10 lift as "not significant"
+//   Step 3: multi-seed n≥5 CI95 upper bound — random init variance band; trained must
+//           exceed band upper bound (not just mean)
+//   Step 4: prompt-set redesign invariance — swap V4 15-prompt set with paraphrased
+//           variant; lift must persist (not prompt-overfit artifact)
+//
+// SCOPE
+//   This tool runs Step 1 + materializes mirror checkpoints (1 baseline seed=42 + 4
+//   strengthening seeds [137, 271, 314, 1729]). Steps 2-4 are downstream — invoked by
+//   BG-LA orchestrator post-training-and-eval (anima_clm_la_h100.py V4 eval phase).
+//
+// USAGE
+//   hexa run tool/v14_paired_random_init_mirror.hexa --selftest
+//   hexa run tool/v14_paired_random_init_mirror.hexa --emit
+//   hexa run tool/v14_paired_random_init_mirror.hexa --materialize-mirrors
+//   hexa run tool/v14_paired_random_init_mirror.hexa --bg-id BG-LA --preset la_350m
+//   hexa run tool/v14_paired_random_init_mirror.hexa --bg-id BG-LB --preset lb_350m_pretrain
+//
+// raw#9   sibling-pattern hexa orchestration on Mac
+// raw#15  repo-relative paths
+// raw#37  transient-py allowed for actual model construction (training/engine_a_g_arch.py)
+//
+// own 14  V14 CASCADE 8/8 mandatory — this tool is the gate
+// own 16  0-cost dev — Mac-side only, no H100 spend
+// own 17  D1=1.0 (anima_native_scratch) within strict — mirror inherits arch_origin
+// own 18  C3 measurement adapter compat — mirror exposes same hidden_states/attentions
+// own 22  honest emit — failure halts; no fabricated mirror
+// own 30  ckpt save — mirror ckpts saved to state/v14_mirrors/<bg_id>/seed_<n>.pt
+// own 33  trinity compliance — D_no-fabricated-baseline + own 14 + H_v14_mandatory_floor
+
+let SCHEMA              = "anima/v14_paired_random_init_mirror/v1"
+let CYCLE_TAG           = "v14_paired_mirror_2026_05_09"
+
+let ANIMA_ROOT          = "/Users/ghost/core/anima"
+let MIRROR_BASE_DIR     = "/Users/ghost/core/anima/state/v14_mirrors"
+let ARCH_PY_PATH        = "/Users/ghost/core/anima/training/engine_a_g_arch.py"
+let MATERIALIZE_PY_PATH = "/Users/ghost/core/anima/tool/transient_py/v14_materialize_mirror.py"
+
+let SEEDS_DEFAULT       = "42,137,271,314,1729"  // V4_SEEDS parity (own 18 정합)
+let MTRP_FLOOR          = 0.10                    // Step 2 own 14 floor
+let CI95_N_MIN          = 5                       // Step 3 multi-seed minimum
+
+// ─── helpers ──────────────────────────────────────────────────────────────
+
+fn _sq(s: string) -> string {
+    let mut o = "'"
+    o = o + s.replace("'", "'\\''")
+    o = o + "'"
+    return o
+}
+fn _file_exists(p: string) -> bool {
+    return exec_with_status("test -e " + _sq(p))[1] == 0
+}
+fn _argv() -> array {
+    let a = args()
+    let mut o = []
+    let mut i = 2
+    while i < len(a) { o.push(a[i]); i = i + 1 }
+    return o
+}
+fn _flag(av, k) -> bool {
+    for x in av { if to_string(x) == k { return true } }
+    return false
+}
+fn _opt(av, k, d) -> string {
+    let mut i = 0
+    while i < len(av) {
+        if to_string(av[i]) == k && i + 1 < len(av) { return to_string(av[i + 1]) }
+        i = i + 1
+    }
+    return d
+}
+
+// ─── selftest ─────────────────────────────────────────────────────────────
+
+fn _selftest() {
+    println("[selftest] schema=" + SCHEMA)
+    println("[selftest] cycle=" + CYCLE_TAG)
+
+    if !_file_exists(ARCH_PY_PATH) {
+        eprintln("FAIL: arch py missing: " + ARCH_PY_PATH)
+        exit(1)
+    }
+    println("[T1] arch py present (training/engine_a_g_arch.py)")
+
+    let r = exec_with_status("python3 -c 'import sys; sys.path.insert(0, \"" + ANIMA_ROOT + "/training\"); from engine_a_g_arch import load_random_init, EngineAGConfig; cfg = EngineAGConfig.la_350m(); print(cfg.param_count_estimate())'")
+    if r[1] != 0 {
+        eprintln("FAIL: arch py import error: " + to_string(r[0]))
+        exit(1)
+    }
+    println("[T2] arch import OK — la_350m param est: " + to_string(r[0]).trim())
+
+    exec_with_status("mkdir -p " + _sq(MIRROR_BASE_DIR))
+    if !_file_exists(MIRROR_BASE_DIR) {
+        eprintln("FAIL: mirror dir not creatable: " + MIRROR_BASE_DIR)
+        exit(1)
+    }
+    println("[T3] mirror dir OK: " + MIRROR_BASE_DIR)
+
+    println("[T4] V14 step gates:")
+    println("       Step 1: random_init mirror materialize (this tool)")
+    println("       Step 2: MTRP ≥ " + to_string(MTRP_FLOOR) + " floor (downstream eval)")
+    println("       Step 3: multi-seed n≥" + to_string(CI95_N_MIN) + " CI95 upper bound (downstream eval)")
+    println("       Step 4: prompt-set redesign invariance (downstream eval)")
+
+    println("[T5] seed list (V4_SEEDS parity): " + SEEDS_DEFAULT)
+
+    println("[selftest] PASS")
+    exit(0)
+}
+
+// ─── emit transient_py mirror materializer ────────────────────────────────
+
+fn _emit() {
+    exec_with_status("mkdir -p " + _sq(ANIMA_ROOT + "/tool/transient_py"))
+
+    let body = "" +
+        "\"\"\"v14_materialize_mirror.py — V14 random_init mirror ckpt materializer.\n" +
+        "raw#37 transient (Mac-side; called by tool/v14_paired_random_init_mirror.hexa --materialize-mirrors).\n" +
+        "own 14 Step 1 — paired random_init mirror at multi-seed.\n" +
+        "\"\"\"\n" +
+        "import os, sys, json, argparse\n" +
+        "sys.path.insert(0, '" + ANIMA_ROOT + "/training')\n" +
+        "from engine_a_g_arch import load_random_init, EngineAGConfig\n" +
+        "\n" +
+        "ap = argparse.ArgumentParser()\n" +
+        "ap.add_argument('--bg-id', required=True)\n" +
+        "ap.add_argument('--preset', default='la_350m', choices=['la_350m','lb_350m_pretrain'])\n" +
+        "ap.add_argument('--seeds', default='42,137,271,314,1729')\n" +
+        "ap.add_argument('--out-dir', required=True)\n" +
+        "ap.add_argument('--small', action='store_true', help='1-layer 128-dim mini for selftest')\n" +
+        "args = ap.parse_args()\n" +
+        "\n" +
+        "os.makedirs(args.out_dir, exist_ok=True)\n" +
+        "manifest = {'schema': 'v14_mirror/v1', 'bg_id': args.bg_id, 'preset': args.preset, 'mirrors': []}\n" +
+        "for s in [int(x) for x in args.seeds.split(',') if x.strip()]:\n" +
+        "    m = load_random_init(seed=s, preset=args.preset)\n" +
+        "    if args.small:\n" +
+        "        # mini ckpt for Mac dry-run (no full 350M materialization)\n" +
+        "        from engine_a_g_arch import EngineAGModel\n" +
+        "        cfg = EngineAGConfig.la_350m() if args.preset == 'la_350m' else EngineAGConfig.lb_350m_pretrain()\n" +
+        "        cfg.n_layers = 1\n" +
+        "        cfg.d_model = 128\n" +
+        "        cfg.n_heads = 4\n" +
+        "        cfg.n_kv_heads = 2\n" +
+        "        cfg.vocab_size = 256\n" +
+        "        cfg.seed = s\n" +
+        "        import torch\n" +
+        "        torch.manual_seed(s)\n" +
+        "        m = EngineAGModel(cfg)\n" +
+        "    path = os.path.join(args.out_dir, f'seed_{s}.pt')\n" +
+        "    m.save_checkpoint(path, extra={'mirror_kind': 'random_init', 'v14_step': 1, 'small': args.small})\n" +
+        "    manifest['mirrors'].append({'seed': s, 'path': path, 'param_count': sum(p.numel() for p in m.parameters())})\n" +
+        "    print(f'[v14] seed={s} path={path} params={manifest[\"mirrors\"][-1][\"param_count\"]:,}')\n" +
+        "\n" +
+        "with open(os.path.join(args.out_dir, 'manifest.json'), 'w') as f:\n" +
+        "    json.dump(manifest, f, indent=2)\n" +
+        "print(json.dumps({'ok': True, 'n_mirrors': len(manifest['mirrors']), 'manifest': os.path.join(args.out_dir, 'manifest.json')}))\n"
+
+    write_file(MATERIALIZE_PY_PATH, body)
+    exec_with_status("chmod +x " + _sq(MATERIALIZE_PY_PATH))
+    println("[emit] materialize py: " + MATERIALIZE_PY_PATH)
+}
+
+// ─── materialize-mirrors ──────────────────────────────────────────────────
+
+fn _materialize(bg_id: string, preset: string, seeds: string, small: bool) {
+    let out_dir = MIRROR_BASE_DIR + "/" + bg_id
+    exec_with_status("mkdir -p " + _sq(out_dir))
+    if !_file_exists(MATERIALIZE_PY_PATH) {
+        _emit()
+    }
+    let mut cmd = "python3 " + _sq(MATERIALIZE_PY_PATH) +
+                  " --bg-id " + _sq(bg_id) +
+                  " --preset " + _sq(preset) +
+                  " --seeds " + _sq(seeds) +
+                  " --out-dir " + _sq(out_dir)
+    if small { cmd = cmd + " --small" }
+    println("[materialize] " + cmd)
+    let r = exec_with_status(cmd)
+    println(to_string(r[0]))
+    if r[1] != 0 {
+        eprintln("FAIL: materialize exit=" + to_string(r[1]))
+        exit(1)
+    }
+    println("[materialize] PASS — manifest at " + out_dir + "/manifest.json")
+}
+
+// ─── main ─────────────────────────────────────────────────────────────────
+
+fn main() {
+    let av = _argv()
+    if _flag(av, "--selftest") { _selftest(); return }
+    if _flag(av, "--emit") { _emit(); return }
+    if _flag(av, "--materialize-mirrors") {
+        let bg_id = _opt(av, "--bg-id", "BG-LA")
+        let preset = _opt(av, "--preset", "la_350m")
+        let seeds = _opt(av, "--seeds", SEEDS_DEFAULT)
+        let small = _flag(av, "--small")
+        _materialize(bg_id, preset, seeds, small)
+        return
+    }
+    println("usage:")
+    println("  hexa run tool/v14_paired_random_init_mirror.hexa --selftest")
+    println("  hexa run tool/v14_paired_random_init_mirror.hexa --emit")
+    println("  hexa run tool/v14_paired_random_init_mirror.hexa --materialize-mirrors --bg-id BG-LA --preset la_350m [--small]")
+}
+
+main()

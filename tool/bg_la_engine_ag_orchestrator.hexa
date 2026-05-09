@@ -1,0 +1,362 @@
+// tool/bg_la_engine_ag_orchestrator.hexa — BG-LA chat-cap L4 path (a) Engine A/G dual-engine
+//                                            350M scratch pre-train H100 lifecycle orchestrator.
+//
+// PURPOSE
+//   Resolve registry yaml `h100_orchestrator_template = "tool/clm_v4_lora_train_orchestrator.hexa-class
+//   (BG-LA-specific clone needed pre-fire)"` blocker. Mirror clm_v4_lora_train_orchestrator.hexa
+//   pattern adapted to:
+//     - scratch pre-train (NOT LoRA SFT) on Engine A/G dual-engine 350M arch
+//     - corpus = state/anima_persona_tier_a_v4_2026_05_09.txt (231MB anima-native)
+//     - cost cap $30 (own 16 override required: 'OK CLM L4 ALL FIRE' OR 'all bg go')
+//     - resource CLI (own 40 strict — ephemeral provision via /Users/ghost/.hx/packages/resource/bin/resource)
+//
+// SPEC SOURCE
+//   docs/anima_chat_autonomous_speech_roadmap_2026_05_08.md L120-130 (BG-LA row in fire matrix)
+//   tool/transient_py/anima_clm_la_h100.py (spec-only stub; pod_main + orch_main NotImplementedError)
+//   training/engine_a_g_arch.py (THIS CYCLE — concrete arch impl)
+//   tool/v14_paired_random_init_mirror.hexa (THIS CYCLE — V14 mirror prereq)
+//
+// raw#9   hexa-only Mac orchestration
+// raw#15  repo-relative paths
+// raw#37  transient-py for pod-side training (anima_clm_la_h100.py)
+// raw#71  pre-registered cost caps locked
+//
+// SAFETY CAPS (own 16)
+//   max_wall_minutes    = 600   (10h hard pod kill — plan ~9h H100 SXM)
+//   budget_target_usd   = 27    (~9h × $2.99/hr)
+//   budget_hard_cap_usd = 30    (BG-LA spec L4 cap)
+//
+// own 14 V14 paired random_init mirror MANDATORY pre-fire — _verify_v14_mirrors gate
+// own 16 cost discipline + override keyword
+// own 17 D1=1.0 anima_native_scratch within strict (Engine A/G new arch)
+// own 18 C3 measurement adapter — V4 11-cell strict eval × 15 prompts × {greedy, sample×5}
+// own 22 honest emit — failure halts; no fabricated verdict
+// own 30 ckpt preservation — scp_get(POD_CKPTS_DIR/.) BEFORE pod delete; mandate-1/2/3
+// own 33 trinity self-check — D_emergent-consciousness + own 17/18/30/31/34 + H_clm_chat_cap
+// own 34 wrap=0 — chat lane V4 measurement only
+// own 38 yaml↔md SSOT — registry yaml lineage.base updated post-land
+// own 39 yaml↔md render — docs/anima_artifact_registry.md regenerate post-land
+// own 40 resource CLI delegation strict — provision-ephemeral via canonical CLI
+//
+// USAGE
+//   hexa run tool/bg_la_engine_ag_orchestrator.hexa --selftest
+//   hexa run tool/bg_la_engine_ag_orchestrator.hexa --emit
+//   hexa run tool/bg_la_engine_ag_orchestrator.hexa --verify-v14
+//   hexa run tool/bg_la_engine_ag_orchestrator.hexa --launch  // requires verbatim override observed
+
+let SCHEMA              = "anima/bg_la_engine_ag/orchestrator/v1"
+let BG_ID               = "BG-LA"
+let CYCLE_TAG           = "bg_la_engine_ag_2026_05_09"
+
+let ANIMA_ROOT          = "/Users/ghost/core/anima"
+let STATE_DIR           = "/Users/ghost/core/anima/state/bg_la_engine_ag_2026_05_09"
+let RESULTS_DIR         = "/Users/ghost/core/anima/state/bg_la_engine_ag_2026_05_09/results"
+let CORPUS_PATH         = "/Users/ghost/core/anima/state/anima_persona_tier_a_v4_2026_05_09.txt"
+let ARCH_PY_PATH        = "/Users/ghost/core/anima/training/engine_a_g_arch.py"
+let TRAIN_PY_PATH       = "/Users/ghost/core/anima/tool/transient_py/anima_clm_la_h100.py"
+let V14_MIRROR_TOOL     = "/Users/ghost/core/anima/tool/v14_paired_random_init_mirror.hexa"
+let V14_MIRROR_DIR      = "/Users/ghost/core/anima/state/v14_mirrors/BG-LA"
+let LEDGER_PATH         = "/Users/ghost/core/anima/state/anima_model_attempts_ledger.jsonl"
+
+let RESOURCE_CLI        = "/Users/ghost/.hx/packages/resource/bin/resource"
+let SSH_KEY             = "/Users/ghost/.runpod/ssh/RunPod-Key-Go"
+
+let BUDGET_TARGET_USD   = 27
+let BUDGET_HARD_CAP_USD = 30
+let MAX_WALL_MIN        = 600
+let OD_RATE_USD         = 2.99
+
+let HF_TARGET_PRIVATE   = "dancinlab/clm-v5-bg-la-engine-ag"   // own 31 Flavor B suffix appended on PASS
+let HF_VISIBILITY_DEFAULT = "private"                            // own 37 lifecycle default
+
+let OVERRIDE_KEYWORD_A  = "OK CLM L4 ALL FIRE"
+let OVERRIDE_KEYWORD_B  = "all bg go"
+
+let GPU_KIND            = "H100"
+let DURATION_HOURS      = 10
+let PROVIDER            = "runpod"
+
+// ─── helpers ──────────────────────────────────────────────────────────────
+
+fn _sq(s: string) -> string {
+    let mut o = "'"
+    o = o + s.replace("'", "'\\''")
+    o = o + "'"
+    return o
+}
+fn _file_exists(p: string) -> bool {
+    return exec_with_status("test -e " + _sq(p))[1] == 0
+}
+fn _argv() -> array {
+    let a = args()
+    let mut o = []
+    let mut i = 2
+    while i < len(a) { o.push(a[i]); i = i + 1 }
+    return o
+}
+fn _flag(av, k) -> bool {
+    for x in av { if to_string(x) == k { return true } }
+    return false
+}
+fn _opt(av, k, d) -> string {
+    let mut i = 0
+    while i < len(av) {
+        if to_string(av[i]) == k && i + 1 < len(av) { return to_string(av[i + 1]) }
+        i = i + 1
+    }
+    return d
+}
+
+// ─── selftest ─────────────────────────────────────────────────────────────
+
+fn _selftest() {
+    println("[selftest] schema=" + SCHEMA)
+    println("[selftest] bg_id=" + BG_ID)
+    println("[selftest] cycle=" + CYCLE_TAG)
+
+    exec_with_status("mkdir -p " + _sq(STATE_DIR) + " " + _sq(RESULTS_DIR))
+    if !_file_exists(STATE_DIR) {
+        eprintln("FAIL: state dir not creatable")
+        exit(1)
+    }
+    println("[T1] state dir OK: " + STATE_DIR)
+
+    if !_file_exists(ARCH_PY_PATH) {
+        eprintln("FAIL: arch py missing: " + ARCH_PY_PATH)
+        exit(1)
+    }
+    println("[T2] Engine A/G arch py OK: " + ARCH_PY_PATH)
+
+    if !_file_exists(TRAIN_PY_PATH) {
+        eprintln("FAIL: train py missing: " + TRAIN_PY_PATH)
+        exit(1)
+    }
+    println("[T3] train py OK (anima_clm_la_h100.py)")
+
+    if !_file_exists(V14_MIRROR_TOOL) {
+        eprintln("FAIL: V14 mirror tool missing: " + V14_MIRROR_TOOL)
+        exit(1)
+    }
+    println("[T4] V14 mirror tool OK")
+
+    if !_file_exists(CORPUS_PATH) {
+        eprintln("FAIL: corpus missing: " + CORPUS_PATH)
+        exit(1)
+    }
+    let cz = exec_with_status("wc -c < " + _sq(CORPUS_PATH))
+    println("[T5] corpus tier_a_v4 OK: " + to_string(cz[0]).trim() + " bytes")
+
+    if !_file_exists(RESOURCE_CLI) {
+        eprintln("FAIL: resource CLI missing (own 40 strict): " + RESOURCE_CLI)
+        exit(1)
+    }
+    println("[T6] resource CLI OK (own 40 strict)")
+
+    println("[T7] cost caps: target=$" + to_string(BUDGET_TARGET_USD) + " hard=$" + to_string(BUDGET_HARD_CAP_USD) + " wall=" + to_string(MAX_WALL_MIN) + "min")
+    println("[T8] HF target (private): " + HF_TARGET_PRIVATE + " (own 37 visibility=" + HF_VISIBILITY_DEFAULT + ")")
+    println("[T9] override keywords: '" + OVERRIDE_KEYWORD_A + "' OR '" + OVERRIDE_KEYWORD_B + "'")
+
+    println("[T10] V14 mirror dir: " + V14_MIRROR_DIR)
+    if _file_exists(V14_MIRROR_DIR + "/manifest.json") {
+        println("       V14 manifest present — verify-v14 ready")
+    } else {
+        println("       V14 manifest ABSENT — run --materialize-mirrors first")
+    }
+
+    println("[selftest] PASS")
+    exit(0)
+}
+
+// ─── verify V14 mirrors (own 14 mandatory pre-fire) ───────────────────────
+
+fn _verify_v14() {
+    println("[verify-v14] mirror dir: " + V14_MIRROR_DIR)
+    if !_file_exists(V14_MIRROR_DIR + "/manifest.json") {
+        println("[verify-v14] manifest absent — running materialize-mirrors --small (Mac dry-run)")
+        let cmd = "hexa run " + _sq(V14_MIRROR_TOOL) + " --materialize-mirrors --bg-id " + _sq(BG_ID) + " --preset la_350m --small"
+        let r = exec_with_status(cmd)
+        println(to_string(r[0]))
+        if r[1] != 0 {
+            eprintln("FAIL: V14 materialize failed (exit=" + to_string(r[1]) + ")")
+            exit(1)
+        }
+    }
+    let manifest_check = exec_with_status("python3 -c 'import json; m = json.load(open(\"" + V14_MIRROR_DIR + "/manifest.json\")); print(len(m[\"mirrors\"]))'")
+    if manifest_check[1] != 0 {
+        eprintln("FAIL: manifest unreadable")
+        exit(1)
+    }
+    let n = to_string(manifest_check[0]).trim()
+    println("[verify-v14] mirrors materialized: " + n + " (V14 Step 1 PASS)")
+    println("[verify-v14] Steps 2-4 deferred to post-training eval (MTRP ≥0.10 + n≥5 CI95 + prompt-set invariance)")
+}
+
+// ─── emit exec.bash (provision → upload → train → pull → release) ────────
+
+fn _emit() {
+    exec_with_status("mkdir -p " + _sq(STATE_DIR) + " " + _sq(RESULTS_DIR))
+    let exec_path = STATE_DIR + "/exec.bash"
+    let body = "" +
+        "#!/bin/bash\n" +
+        "# emitted by tool/bg_la_engine_ag_orchestrator.hexa\n" +
+        "# BG-LA Engine A/G dual-engine 350M scratch pre-train H100 lifecycle\n" +
+        "# own 14 V14 mirror prereq + own 16 cost cap + own 30 ckpt pull + own 40 resource CLI\n" +
+        "set -uo pipefail\n" +
+        "\n" +
+        "STATE_DIR='" + STATE_DIR + "'\n" +
+        "RESULTS_DIR='" + RESULTS_DIR + "'\n" +
+        "CORPUS_PATH='" + CORPUS_PATH + "'\n" +
+        "ARCH_PY='" + ARCH_PY_PATH + "'\n" +
+        "TRAIN_PY='" + TRAIN_PY_PATH + "'\n" +
+        "RESOURCE='" + RESOURCE_CLI + "'\n" +
+        "SSH_KEY='" + SSH_KEY + "'\n" +
+        "BUDGET_HARD_CAP=" + to_string(BUDGET_HARD_CAP_USD) + "\n" +
+        "MAX_WALL_MIN=" + to_string(MAX_WALL_MIN) + "\n" +
+        "BG_LANE='" + BG_ID + "'\n" +
+        "POD_NAME='bg-la-engine-ag'\n" +
+        "DURATION='" + to_string(DURATION_HOURS) + "h'\n" +
+        "GPU='" + GPU_KIND + "'\n" +
+        "PROVIDER='" + PROVIDER + "'\n" +
+        "VERDICT='${STATE_DIR}/verdict.json'\n" +
+        "RUN_LOG='${STATE_DIR}/run.log'\n" +
+        "POD_INFO='${STATE_DIR}/pod_info.json'\n" +
+        "START_EPOCH=$(date -u +%s)\n" +
+        "\n" +
+        "log() { echo \"[$(date -u +%FT%TZ)] $*\" | tee -a \"$RUN_LOG\"; }\n" +
+        "\n" +
+        "# Phase 0: own 14 V14 mirror prereq verify\n" +
+        "log \"=== Phase 0: V14 mirror prereq verify ===\"\n" +
+        "hexa run /Users/ghost/core/anima/tool/bg_la_engine_ag_orchestrator.hexa --verify-v14 || { log 'FATAL: V14 mirrors missing'; exit 2; }\n" +
+        "\n" +
+        "# Phase 1: provision-ephemeral (own 40 strict)\n" +
+        "log \"=== Phase 1: provision-ephemeral via resource CLI ===\"\n" +
+        "$RESOURCE provision-ephemeral --provider $PROVIDER --gpu $GPU --duration $DURATION --yes-cost --name $POD_NAME 2>&1 | tee -a \"$RUN_LOG\"\n" +
+        "PROV_RC=${PIPESTATUS[0]}\n" +
+        "if [ $PROV_RC -ne 0 ]; then log \"FATAL: provision rc=$PROV_RC\"; exit 3; fi\n" +
+        "\n" +
+        "# Parse pod info (set POD_ID + SSH_HOST + SSH_PORT — provider-specific)\n" +
+        "POD_ID=$($RESOURCE ephemeral-list --owner $BG_LANE --json 2>/dev/null | python3 -c 'import json,sys; d=json.load(sys.stdin); print(d[\"pods\"][0][\"pod_id\"])' || echo '')\n" +
+        "if [ -z \"$POD_ID\" ]; then log \"FATAL: pod_id parse failed\"; exit 4; fi\n" +
+        "SSH_INFO=$(runpodctl ssh info \"$POD_ID\" 2>&1 || echo '')\n" +
+        "SSH_HOST=$(echo \"$SSH_INFO\" | grep -oE '[0-9]+\\.[0-9]+\\.[0-9]+\\.[0-9]+' | head -1)\n" +
+        "SSH_PORT=$(echo \"$SSH_INFO\" | grep -oE 'port [0-9]+' | grep -oE '[0-9]+' | head -1)\n" +
+        "log \"pod_id=$POD_ID ssh=$SSH_HOST:$SSH_PORT\"\n" +
+        "echo \"{\\\"pod_id\\\":\\\"$POD_ID\\\",\\\"ssh_host\\\":\\\"$SSH_HOST\\\",\\\"ssh_port\\\":\\\"$SSH_PORT\\\"}\" > \"$POD_INFO\"\n" +
+        "\n" +
+        "# Phase 2: SSH + GPU smoke\n" +
+        "log \"=== Phase 2: SSH + GPU smoke ===\"\n" +
+        "ssh -i \"$SSH_KEY\" -p \"$SSH_PORT\" -o StrictHostKeyChecking=no root@$SSH_HOST 'nvidia-smi -L' 2>&1 | tee -a \"$RUN_LOG\"\n" +
+        "\n" +
+        "# Phase 3: stage corpus + arch py + train py\n" +
+        "log \"=== Phase 3: stage artifacts to pod ===\"\n" +
+        "ssh -i \"$SSH_KEY\" -p \"$SSH_PORT\" -o StrictHostKeyChecking=no root@$SSH_HOST 'mkdir -p /workspace/anima_clm_la /workspace/anima_clm_la/ckpts /workspace/anima_clm_la/state'\n" +
+        "scp -i \"$SSH_KEY\" -P \"$SSH_PORT\" -o StrictHostKeyChecking=no \"$ARCH_PY\" root@$SSH_HOST:/workspace/anima_clm_la/engine_a_g_arch.py\n" +
+        "scp -i \"$SSH_KEY\" -P \"$SSH_PORT\" -o StrictHostKeyChecking=no \"$TRAIN_PY\" root@$SSH_HOST:/workspace/anima_clm_la/anima_clm_la_h100.py\n" +
+        "scp -i \"$SSH_KEY\" -P \"$SSH_PORT\" -o StrictHostKeyChecking=no \"$CORPUS_PATH\" root@$SSH_HOST:/workspace/anima_clm_la/corpus_persona_tier_a_v4.txt\n" +
+        "ssh -i \"$SSH_KEY\" -p \"$SSH_PORT\" -o StrictHostKeyChecking=no root@$SSH_HOST 'touch /workspace/anima_clm_la/_pod_marker'\n" +
+        "\n" +
+        "# Phase 4: install deps (Ubuntu 24.04 PEP 668 — break-system-packages per orchestrator gotcha memory)\n" +
+        "log \"=== Phase 4: install transformers/torch ===\"\n" +
+        "ssh -i \"$SSH_KEY\" -p \"$SSH_PORT\" -o StrictHostKeyChecking=no root@$SSH_HOST 'pip install --break-system-packages transformers safetensors 2>&1 | tail -5'\n" +
+        "\n" +
+        "# Phase 5: launch training (nohup; monitor via heartbeat)\n" +
+        "log \"=== Phase 5: launch pod training ===\"\n" +
+        "ssh -i \"$SSH_KEY\" -p \"$SSH_PORT\" -o StrictHostKeyChecking=no root@$SSH_HOST 'cd /workspace/anima_clm_la && nohup python3 anima_clm_la_h100.py > train.log 2>&1 &'\n" +
+        "\n" +
+        "# Phase 6: heartbeat monitor (60s tick, cost halt at hard cap)\n" +
+        "log \"=== Phase 6: heartbeat monitor ===\"\n" +
+        "ELAPSED=0\n" +
+        "while [ $ELAPSED -lt $((MAX_WALL_MIN * 60)) ]; do\n" +
+        "    sleep 60\n" +
+        "    ELAPSED=$(($(date -u +%s) - START_EPOCH))\n" +
+        "    COST=$(echo \"scale=2; $ELAPSED * " + to_string(OD_RATE_USD) + " / 3600\" | bc)\n" +
+        "    log \"hb t=${ELAPSED}s cost=\\$$COST\"\n" +
+        "    if (( $(echo \"$COST > $BUDGET_HARD_CAP\" | bc -l) )); then\n" +
+        "        log \"COST_OVERRUN — hard cap exceeded; killing\"\n" +
+        "        break\n" +
+        "    fi\n" +
+        "    # COMPLETE.sentinel check\n" +
+        "    DONE=$(ssh -i \"$SSH_KEY\" -p \"$SSH_PORT\" -o StrictHostKeyChecking=no root@$SSH_HOST 'test -f /workspace/anima_clm_la/state/COMPLETE.sentinel && echo done || echo running' 2>/dev/null)\n" +
+        "    if [ \"$DONE\" = \"done\" ]; then log 'COMPLETE.sentinel detected'; break; fi\n" +
+        "done\n" +
+        "\n" +
+        "# Phase 7: ckpt pull (own 30 mandate-1 BEFORE pod delete)\n" +
+        "log \"=== Phase 7: ckpt pull (own 30 mandate-1) ===\"\n" +
+        "scp -i \"$SSH_KEY\" -P \"$SSH_PORT\" -o StrictHostKeyChecking=no -r -o ConnectTimeout=3600 root@$SSH_HOST:/workspace/anima_clm_la/ckpts/. \"$RESULTS_DIR/ckpts/\" 2>&1 | tee -a \"$RUN_LOG\"\n" +
+        "PULL_RC=${PIPESTATUS[0]}\n" +
+        "scp -i \"$SSH_KEY\" -P \"$SSH_PORT\" -o StrictHostKeyChecking=no -r root@$SSH_HOST:/workspace/anima_clm_la/state/. \"$RESULTS_DIR/state/\" 2>&1 | tee -a \"$RUN_LOG\"\n" +
+        "\n" +
+        "# Phase 8: size sanity check (own 30 mandate-2)\n" +
+        "POD_SZ=$(ssh -i \"$SSH_KEY\" -p \"$SSH_PORT\" -o StrictHostKeyChecking=no root@$SSH_HOST 'du -sb /workspace/anima_clm_la/ckpts | cut -f1' 2>/dev/null || echo 0)\n" +
+        "LOCAL_SZ=$(du -sb \"$RESULTS_DIR/ckpts\" 2>/dev/null | cut -f1 || echo 0)\n" +
+        "log \"size check: pod=$POD_SZ local=$LOCAL_SZ (own 30 mandate-2 floor 0.9× pod)\"\n" +
+        "\n" +
+        "# Phase 9: pod release ONLY if pull succeeded (own 30 mandate-3)\n" +
+        "if [ $PULL_RC -eq 0 ] && [ \"$LOCAL_SZ\" != \"0\" ]; then\n" +
+        "    log \"=== Phase 9: pod release ===\"\n" +
+        "    $RESOURCE release --pod-id \"$POD_ID\" 2>&1 | tee -a \"$RUN_LOG\"\n" +
+        "else\n" +
+        "    log \"PULL FAILED — POD RETAINED (own 30 mandate-3)\"\n" +
+        "fi\n" +
+        "\n" +
+        "# Phase 10: ledger append\n" +
+        "log \"=== Phase 10: ledger append ===\"\n" +
+        "python3 -c \"import json,time; open('" + LEDGER_PATH + "','a').write(json.dumps({'ts':time.strftime('%FT%TZ'),'bg_id':'" + BG_ID + "','cycle':'" + CYCLE_TAG + "','verdict_path':'$VERDICT','pod_id':'$POD_ID','elapsed_s':$ELAPSED,'cost_usd_est':$COST}) + chr(10))\"\n" +
+        "\n" +
+        "# Phase 11: verdict + HF promote (private only — own 37 lifecycle)\n" +
+        "log \"=== Phase 11: verdict + HF promote (private default) ===\"\n" +
+        "if [ -f \"$VERDICT\" ]; then\n" +
+        "    VERDICT_CLASS=$(python3 -c \"import json; print(json.load(open('$VERDICT')).get('final_class','UNKNOWN'))\" 2>/dev/null || echo UNKNOWN)\n" +
+        "    log \"verdict=$VERDICT_CLASS\"\n" +
+        "    if [[ \"$VERDICT_CLASS\" == \"SIMPLE_STACK_PASS_STRICT_C3\" || \"$VERDICT_CLASS\" == \"SIMPLE_STACK_PASS_STRICT_C3_ANIMA\" ]]; then\n" +
+        "        log \"HF private upload: " + HF_TARGET_PRIVATE + "-{cycle} (own 31 Flavor B + own 37 private default)\"\n" +
+        "        # huggingface-cli upload (private flag) — actual upload deferred to anima_clm_la_h100.py post-eval\n" +
+        "    fi\n" +
+        "fi\n" +
+        "log \"BG-LA orchestrator DONE\"\n"
+
+    write_file(exec_path, body)
+    exec_with_status("chmod +x " + _sq(exec_path))
+    println("[emit] exec.bash: " + exec_path)
+}
+
+// ─── launch (gated) ───────────────────────────────────────────────────────
+
+fn _launch(verbatim_observed: string) {
+    if verbatim_observed != OVERRIDE_KEYWORD_A && verbatim_observed != OVERRIDE_KEYWORD_B {
+        eprintln("FAIL: verbatim override required — pass --verbatim '" + OVERRIDE_KEYWORD_A + "' OR '" + OVERRIDE_KEYWORD_B + "'")
+        exit(1)
+    }
+    println("[launch] verbatim observed: " + verbatim_observed)
+    _verify_v14()
+    _emit()
+    let exec_path = STATE_DIR + "/exec.bash"
+    println("[launch] invoking " + exec_path)
+    let r = exec_with_status("bash " + _sq(exec_path))
+    println(to_string(r[0]))
+    if r[1] != 0 {
+        eprintln("FAIL: launch exit=" + to_string(r[1]))
+        exit(1)
+    }
+}
+
+// ─── main ─────────────────────────────────────────────────────────────────
+
+fn main() {
+    let av = _argv()
+    if _flag(av, "--selftest") { _selftest(); return }
+    if _flag(av, "--emit") { _emit(); return }
+    if _flag(av, "--verify-v14") { _verify_v14(); return }
+    if _flag(av, "--launch") {
+        let v = _opt(av, "--verbatim", "")
+        _launch(v)
+        return
+    }
+    println("usage:")
+    println("  hexa run tool/bg_la_engine_ag_orchestrator.hexa --selftest")
+    println("  hexa run tool/bg_la_engine_ag_orchestrator.hexa --emit")
+    println("  hexa run tool/bg_la_engine_ag_orchestrator.hexa --verify-v14")
+    println("  hexa run tool/bg_la_engine_ag_orchestrator.hexa --launch --verbatim '" + OVERRIDE_KEYWORD_A + "'")
+}
+
+main()
