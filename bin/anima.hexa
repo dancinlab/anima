@@ -78,8 +78,17 @@ fn _user_argv() -> array {
 // Dispatch helpers
 // ═══════════════════════════════════════════════════════════════════════════
 fn _hexa_bin() -> string {
+  // Prefer hexa.real over the ~/.hx/bin/hexa routing shim. The shim
+  // unconditionally dispatches `hexa run` to remote ubu-1, which breaks
+  // anima_cli topics that observe Mac-local state (pre-push audit, secret
+  // scan, .resource SSOT). Falls back to the shim if hexa.real is not
+  // installed. Same pattern as bin/resource (commit 387dbaa). HEXA_BIN env
+  // override is honored first for explicit-routing escape hatch.
   let e = _str(env("HEXA_BIN"))
   if e != "" { return e }
+  if file_exists("/Users/ghost/.hx/packages/hexa/hexa.real") {
+    return "/Users/ghost/.hx/packages/hexa/hexa.real"
+  }
   return "/Users/ghost/.hx/bin/hexa"
 }
 

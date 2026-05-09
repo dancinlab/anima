@@ -167,7 +167,14 @@ anima-agent/results/*.py
 .hook-commands/
 
 # AOT 컴파일 산출물 (소스는 tool/ · $HEXA_LANG/에 존재, 바이너리는 재빌드 가능)
-/bin/
+# Note: /bin/* (not /bin/) so re-include exceptions below can match — git rule
+# disallows un-excluding files inside a fully-excluded directory.
+/bin/*
+# bin/anima — hand-written bash dispatcher (canonical CLI entry, brew-installed
+# via packaging/brew_formula_anima.rb, exec-shimmed by ~/.hx/bin/anima). NOT a
+# build artifact — the /bin/ ignore rule above was a 2026-04-23 oversight (PR #39
+# announced "bin/anima unified CLI" but omitted this exception).
+!/bin/anima
 
 # 외부 리포 로컬 심볼릭 링크 (n6-architecture — local-only, not committed)
 /n6/
