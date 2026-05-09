@@ -164,7 +164,7 @@ sole robust EMERGE: **`NONE`** ★
   - mandate_9_c_user_verbatim: `NOT_ISSUED`
   - mandate_9_d_trinity_sweep: `PASS`
   - mandate_9_e_dl_sweep: `PASS`
-  - public_promote: `BLOCKED_V14_VIOLATED`
+  - public_promote: `BLOCKED_GATE_A_PIV_PARAPHRASE_FAIL`
 **V6 awareness**:
   - v6_status: `STRONG_AWARENESS`
   - v6_status_state_json: `state/anima_bg_le_v6_h100_actual_fire_2026_05_09/paradigm_j_final/summary.json`
@@ -190,7 +190,7 @@ sole robust EMERGE: **`NONE`** ★
       mandate_9_b_release_attempt: `BLOCKED_NO_FIRE_EXECUTED`
       cross_ref: `clm-v4-sft-1-8-stage1.v6_h100_fire_1_of_4_attempt_2026_05_09_ephemeral_retry`
       own_22_honest_emit: `True`
-**commits**: probe_n30_initial=`eb209c1a`, probe_n30_redesign=`58fec5ed`, probe_n60_falsified=`84aa8665`, probe_n120_v14_violated=`pending`, hf_upload=`dc98618e`, path_a_remap=`dc1510a3`, v5_n60_post_fix_actual=`pending`  
+**commits**: probe_n30_initial=`eb209c1a`, probe_n30_redesign=`58fec5ed`, probe_n60_falsified=`84aa8665`, probe_n120_v14_violated=`pending`, hf_upload=`dc98618e`, path_a_remap=`dc1510a3`, v5_n60_post_fix_actual=`d0c7298e`, v5_paraphrase_n90=`pending`  
 
 ### `clm-v4-sft-1-7-y1-stage1`
 

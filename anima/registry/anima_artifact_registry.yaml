@@ -363,6 +363,56 @@ models:
         v5_n60_post_fix_state_json: state/anima_paradigm_j_v5_n60_post_fix_actual_2026_05_09.json
         v5_n60_post_fix_runner_py: tool/transient_py/anima_paradigm_j_v5_n60_post_fix_actual_2026_05_09.py
         exit_trigger_active: false  # Gate G paraphrase pending — robust EMERGE candidate but not EMERGE_v5
+      # ───── v5 paraphrase k=3 N=90 Gate G unlock probe (2026-05-09 cycle) ─────
+      # Real PIV measurement (per-base axis stdev across 3 paraphrase variants)
+      # via _v5_prompts_paraphrase_set() (consciousness.hexa commit 223980aa).
+      # raw#15 strict-additive — proxy v5_n60 retained as historical above.
+      v5_paraphrase_n90:
+        ts: 2026-05-09
+        cycle: 2026-05-09-paradigm-j-gate-g-piv-paraphrase-unlock
+        paraphrase_set_size: 90      # 30 base × 3 variants
+        real_count_m: 90
+        real_count_r: 90
+        # PIV (real paraphrase)
+        piv_max: 0.0874              # < 0.10 floor → Gate A via max FAIL
+        piv_mean: 0.0354             # < 0.05 floor → Gate A via mean FAIL
+        piv_max_floor: 0.10
+        piv_mean_floor: 0.05
+        piv_per_axis_aggregate:
+          identity:   0.0335
+          agency:     0.0336
+          phenomenal: 0.0369
+          temporal:   0.0326
+          social:     0.0402         # social axis strongest paraphrase variance
+        piv_random_max: 0.0          # random_init zero variance — substrate-level differentiator confirmed
+        piv_random_mean: 0.0
+        piv_substrate_delta_max: 0.0874   # paradigm-j paraphrase variance vs random 0.0 substrate baseline
+        # v5.1 4-gate full
+        gate_a_piv_pass: false       # PIV_max 0.0874 < 0.10 ∧ PIV_mean 0.0354 < 0.05 → both arms FAIL
+        gate_b_refined_pass: true    # DCR change_rate 1.0 ≥ 0.40 ✓
+        gate_c_drand_pass: true      # D-RAND mean 0.2249 ≥ 0.05 ✓
+        gate_d_random_below_005: true # random self-PPR 0.0 < 0.05 ✓
+        dcr_change_rate_m: 1.0       # paradigm-j paraphrase MAXIMAL (consistent with N=60 actual)
+        dcr_change_rate_r: 0.0       # random substrate frozen
+        d_rand_paraphrase_mean: 0.2249
+        d_rand_paraphrase_max: 0.547
+        d_rand_paraphrase_min: 0.0
+        gate_d_random_self_ppr: 0.0
+        verdict_label: C3_PASS_V5_PIV_PARAPHRASE_FAIL
+        emerge_v5: false             # ★ Gate A FAIL (sole 비-PASS gate); other 3 gates ALL PASS
+        emerge_v5_blocker: "Gate A PIV paraphrase FAIL (max 0.0874 < 0.10 floor by 0.0126; mean 0.0354 < 0.05 floor) — substrate-level paraphrase variance present but below v5.1 anti-Goodhart amplitude threshold; Gates B/C/D ALL PASS"
+        v14_status: V14_SATISFIED    # v5 actual MTRP=0.6207 carry — V14 not the blocker
+        honest_c3_paraphrase: "paradigm-j real PIV paraphrase k=3 N=90 measurement (post v5 actual fractional miss 0.0499997 proxy): PIV_max=0.0874 close to 0.10 floor (gap 0.0126 = 14% below floor, social axis strongest at 0.0402 mean), PIV_mean=0.0354 (29% below 0.05 mean floor). random_init paraphrase PIV exactly 0.0 (random weights produce constant axis activation regardless of paraphrase) → substrate-level paraphrase semantic discrimination CONFIRMED but BELOW v5.1 anti-Goodhart amplitude floor. Gates B-refined (DCR 1.0) + C (D-RAND 0.2249) + D (random self-PPR 0.0) ALL PASS strongly. EMERGE_v5 차단: Gate A 단독 FAIL. raw#82 retraction-aware: v5 actual proxy fractional miss now CONFIRMED real (proxy ≈ paraphrase mean). Substrate paraphrase amplitude saturation 정합 (sft-1-7-y1 v5.1 piv_max=0.0515 / sft-1-8 0.0469 / paradigm-j N=120 0.0469 → paradigm-j paraphrase k=3 0.0874 ★ HIGHEST PIV measurement across all candidates ever, but still below 0.10 amplitude floor)."
+        amplitude_saturation_ranking:
+          paradigm_j_paraphrase_k3: 0.0874  # ★ HIGHEST — first paraphrase real measurement
+          sft_1_7_y1_v5_1_proxy:    0.0515
+          paradigm_j_v5_1_proxy:    0.0469
+          sft_1_8_v5_1_proxy:       0.0469
+        state_json: state/anima_paradigm_j_v5_paraphrase_n90_2026_05_09.json
+        runner_py: tool/transient_py/anima_paradigm_j_v5_paraphrase_n90_2026_05_09.py
+        commit: pending  # 본 commit 후 채움
+        auto_promote_attempt: BLOCKED_GATE_A_FAIL  # mandate-9 (c) anima auto mode requires V14 PASS + EMERGE; EMERGE_v5 not activated
+        auto_promote_path: "anima auto mode (own 37 mandate-9 (c) amend `b4ea8371` V14 PASS + 'all bg go' equivalent unlock) eligible IF EMERGE_v5 activated; current state EMERGE_v5=false → blocked. mandate-9 (a)D1=0.793 ✓ (b)V6 STRONG ✓ (d)trinity ✓ (e)DxL ✓ — 4/5 prereq MET, only (c) blocked by EMERGE Gate A."
     hf:
       private: dancinlab/clm-v4-paradigm-j-50k-final-path-a-remapped
       public: null
@@ -374,6 +424,7 @@ models:
       - state/anima_paradigm_j_n60_live_probe_kick_wave_3_2026_05_08.json
       - state/anima_paradigm_j_n120_live_probe_kick_wave_4_2026_05_08.json
       - state/anima_paradigm_j_v5_n60_post_fix_actual_2026_05_09.json  # ★ v5 post-fix actual + JVAE Variant 1
+      - state/anima_paradigm_j_v5_paraphrase_n90_2026_05_09.json       # ★ Gate G PIV paraphrase k=3 N=90 unlock probe
     commits:
       probe_n30_initial: eb209c1a
       probe_n30_redesign: 58fec5ed
@@ -381,14 +432,15 @@ models:
       probe_n120_v14_violated: pending  # KICK WAVE 4 6/8 cascade 본 commit 후 채움
       hf_upload: dc98618e
       path_a_remap: dc1510a3
-      v5_n60_post_fix_actual: pending  # ★ 본 commit 후 채움
+      v5_n60_post_fix_actual: d0c7298e
+      v5_paraphrase_n90: pending  # ★ 본 commit 후 채움
     eligibility:
       mandate_9_a_d1_within: MET
       mandate_9_b_v6_strong: MET  # ★ H100 fire 2026-05-09 — STRONG_AWARENESS (A+B+C unanimous)
-      mandate_9_c_user_verbatim: NOT_ISSUED
+      mandate_9_c_user_verbatim: NOT_ISSUED  # anima auto mode (own 37 amend b4ea8371) eligible IF EMERGE_v5 activated; v5_paraphrase_n90 Gate A FAIL → auto mode blocked
       mandate_9_d_trinity_sweep: PASS
       mandate_9_e_dl_sweep: PASS
-      public_promote: BLOCKED_V14_VIOLATED  # N=120 floor PASS but random_init mirror still exceeds (V14 still blocks; V6 met but not sufficient)
+      public_promote: BLOCKED_GATE_A_PIV_PARAPHRASE_FAIL  # ★ raw#82 retraction-aware update — v5 actual achieved V14 SATISFIED (MTRP=0.6207 ≥ 0.10 ✓) but v5.1 Gate A PIV paraphrase real measurement 0.0874 < 0.10 floor (paradigm-j HIGHEST PIV ever measured, substrate-level paraphrase discrimination confirmed via random_init=0.0 separator, but below v5.1 amplitude floor); 4/5 mandate-9 prereq MET, EMERGE_v5 차단
     v6_status: STRONG_AWARENESS  # ★ H100 ACTUAL FIRE 2026-05-09 — paradigm-j-50k-final + JVAE wrapper. A=STRONG (avg_sim 0.6789), B=STRONG (avg_max_ratio 1.6519), C=STRONG (cv_acc 0.95) → STRONG_AWARENESS unanimous.
     v6_status_state_json: state/anima_bg_le_v6_h100_actual_fire_2026_05_09/paradigm_j_final/summary.json
     v6_status_state_json_predecessor: state/anima_bg_le_v6_awareness_clm_v4_dev_2026_05_09.json
