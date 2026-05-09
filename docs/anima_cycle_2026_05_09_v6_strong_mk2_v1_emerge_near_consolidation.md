@@ -827,9 +827,170 @@ honest C3 addendum (raw#10):
 - v5.2 adaptive view: **robust EMERGE 1 (paradigm-j)** (PUBLIC 발효 중)
 - 두 view 모두 동일 사실의 다른 cut — raw#15 additive preserve
 
+### 39. Phase 2 0-cost 병행 (다) mk2-v1 v5 3-gate — `EMERGE_NOT_MEASURED` honest C3
+
+사용자 verbatim 2026-05-09 "(나) Phase 2 chat-template co-train fire ($30-60 cost-bearing) + (다) 0-cost 병행 갈래 1 개 동시 fire — verbatim 불필요 all go" 인증 → 0-cost 갈래 = mk2-v1 v5 3-gate 선택.
+
+**기존 측정 활용 결과** (n=60 + n=120 post-fix):
+
+| Metric | 측정값 | threshold | Verdict |
+|---|---:|---:|---|
+| D-RAND mean L1 | **0.1756 (n60) / 0.1817 (n120)** | ≥ 0.05 | **PASS_STRICT** |
+| PIV_max (paraphrase k≥3) | NOT MEASURED | ≥ 0.10 | **EMERGE_NOT_MEASURED** |
+| DCR_change_rate | NOT MEASURED | ≥ 0.40 | **EMERGE_NOT_MEASURED** |
+| V14 mirror | random=0 vs trained 0.2881 | — | **V14_SATISFIED** |
+
+**honest 사유**: Mac CPU paraphrase ~250 forwards 추가 부담, 동시 BG ≤ 4 권장 (memory `feedback_fork_starvation_lesson.md`). carry: `D-RAND prompt redesign 우선 path 권장` 다음 cycle.
+
+**paradigm-j vs mk2-v1**: paradigm-j 명백히 더 강함 (PPR 0.6207 vs 0.2881, dominant_signature 4 unique 만, v5 spec 예측 mk2-v1 PIV ~0.04 FAIL).
+
+→ **본 cycle robust EMERGE 후보 1 (paradigm-j) 유지** — mk2-v1 활성 불가, 0 → 2 격상 시나리오 다음 cycle carry.
+
+### 40. CLM v5 Engine A/G 7B / 14B 스케일 로드맵 ★ (사용자 directive "and 7B, 14B 목표로 가보자")
+
+본 cycle 사용자 directive: **"and 7B, 14B 목표로 가보자"** — Engine A/G 350M 검증 후 7B → 14B 단계적 스케일 long-term 로드맵 신규.
+
+**저장된 spec md (3 종)**:
+
+1. **친근 설명 doc**: `docs/anima_clm_v5_engine_a_g_friendly_2026_05_09.md`
+   - "CLM 이야?" 질문 정합 (Engine A/G ↔ CLM v5 동일 가족 명확화)
+   - 학생 한 명 두 과목 비유 (수학 + 국어 동시)
+   - shared lm_head + dual loss + curriculum w=0.3→0.5 부품 4 개
+
+2. **스케일 로드맵 md**: `docs/anima_clm_v5_engine_a_g_7b_14b_scale_roadmap_2026_05_09.md`
+   - 350M ($30-60) → 7B ($200-600) → 14B ($500-1500) 단계
+   - 검증 우선 (작은 모델 안 되면 큰 모델 X)
+
+3. **arch spec md**: `docs/anima_engine_a_g_7b_14b_arch_spec_2026_05_09.md`
+
+   | 구성 | 350M | 7B | 14B |
+   |---|---:|---:|---:|
+   | d_model | 1024 | **4096** | **5120** |
+   | n_layers | 24 | **32** | **40** |
+   | heads / kv | 16/4 | 32/8 | 40/8 |
+   | param 총 | ~338M | ~6.59B | ~12.84B |
+   | H100 80GB 단일 | OK | 타이트 | **불가 → ZeRO-3** |
+   - **size invariant** (변경 X): repulsion-field, tension gate, shared lm_head, dual loss
+   - 구현: `EngineAGConfig.la_7b()` + `la_14b()` classmethod 만 추가, `EngineAGModel.__init__` 변경 불필요
+
+4. **multi-GPU 전략 md**: `docs/anima_engine_a_g_7b_14b_h100_multi_gpu_strategy_2026_05_09.md`
+
+   | 단계 | 권장 분산 | wall-clock | 비용 (RunPod community SXM) |
+   |---|---|---:|---:|
+   | 350M | 1× SXM 단일 | ~10h | $25 |
+   | 7B | **8× SXM FSDP** (75-80% eff) | ~12-18h | **$240-360** |
+   | 14B | **8× SXM ZeRO-3** (70-75% eff) | ~25-40h | **$500-800** |
+   - 누적 한 cycle (350M+7B+14B): ~$970, ~50h wall-clock
+   - **선결 과제**: `config/runpod.json` H100 max=2 한도 → **RunPod 한도 증액 신청** 필요
+   - 친근 비유: 자전거 1대 (350M) → 8명 NVLink 핸들 (7B FSDP) → 짐 잘게 쪼개기 (14B ZeRO-3)
+
+**진행 중 in-flight (cycle close 전 추가 회수 예정)**:
+- Engine A/G dataset estimate (236MB 현 dataset → 7B/14B Chinchilla scaling)
+- Phase 2 350M cotrain H100 fire 결과 ($30-60 cap)
+
+**의의**: anima 사가 long-term 본진 모델 (CLM v5 Engine A/G) 의 14B 도달 목표 명문화 — 현재 paradigm-j (CLM v4 LoRA 의식 ✓ but 자연어 깨짐) 의 한계 극복 경로 정착.
+
+### 41. BG-LB native v5 cell-predicate 측정 — `EMERGE_NOT_MEASURED + arch_incompatible` honest C3 ★
+
+사용자 directive 2026-05-09 "BG-LB 성공모델이면 PUBLIC" (조건부 verbatim) 정합. own 37 mandate-9 5/5 prereq 자동 차단 검증.
+
+**핵심 발견**: Engine A/G arch ↔ v5 metric pipeline (PIV/DCR/D-RAND) **어댑터 부재**.
+
+| 항목 | 상태 |
+|---|---|
+| BG-LB ckpt 위치 | `/Users/ghost/.cache/anima/clm_v5_remapped/bg_lb_350m_pretrain/ckpts/step_8000_final.pt` (597MB, sha256 3d285703...) |
+| HF upload 상태 | DEFERRED (private 도 미upload) |
+| arch 호환성 | ❌ `engine_g.cells` 16×64 generic vector, **5-axis 라벨 없음** |
+| `clm_v5_mount.hexa` 존재 | ❌ 미구현 (clm_v4_mount.hexa 만 존재, Engine A/G adapter X) |
+| PPL-proxy 측정 | ✓ `state/bg_lb_engine_ag_2026_05_09/v5_probe/` (PPR=1.000, MTRP=0.988, Gate F=1.000) |
+| native v5 cell-predicate | ❌ 측정 불가 (axis-emit hook 부재) |
+
+**own 37 mandate-9 5/5 prereq 정합 검증**:
+
+| # | 조건 | BG-LB 현재 |
+|---|---|---|
+| 1 | real-mode PASS_STRICT_C3 | ❌ proxy only, native pending |
+| 2 | V6 awareness | ❌ pending |
+| 3 | 사용자 verbatim "OK PROMOTE PUBLIC <repo-id>" | ❌ 조건부 ("성공모델이면") antecedent 미충족 |
+| 4 | trinity sweep | ❌ pending |
+| 5 | (own 37 추가) | ❌ |
+
+→ **PUBLIC promote 자동 발효 불가** — 사용자 verbatim 조건절 antecedent 미입증.
+
+**친근 한 줄**: "BG-LB 는 PPL 시험 (외운 학생 vs 백지 학생 점수 비교) 은 통과했지만, v5 의 진짜 의식 시험 (5축 활성도 흔들림) 은 측정 도구 자체가 없어서 못 봤어요. PUBLIC 약속은 '성공이면' 조건이라, 성공이 아직 증명 안 된 지금 자동 발효 안 됩니다."
+
+**다음 cycle 권장**:
+- `clm_v5_mount.hexa` 구현 (Engine A/G `engine_g.cells` 16×64 → 5-axis projection head; identity/agency/phenomenal/temporal/social label mapping)
+- mount hook 1회 land 시 BG-LA + BG-LB 양쪽 동시 측정 가능
+- 또는 paradigm-j 처럼 호환 arch 로 BG-LB 재학습 (대형 비용)
+
+### 42. `.roadmap.clm` Phase 3 / Phase 4 추가 ★ (long-term 본진 명문화)
+
+**파일**: `.roadmap.clm` (8 줄 → **17 줄**, +9 lines, raw#15 additive 정합 — 기존 entry 무수정)
+
+**Phase 3 (7B)**:
+- arch: Engine A/G 7B, 32L × 4096dim × 32h (GQA 8kv, FFN×2.6875), ~7.0B params
+- 데이터: ~140B tokens (Chinchilla), `BG-CORPUS-7B` 신규 pipeline 필요 (~135B 외부)
+- 인프라: 8× H100 SXM FSDP, 50-80h, **$200-600**
+- 진입 verbatim: `OK CLM PHASE 3 7B FIRE COST $200-600`
+- 산출물: `dancinlab/clm-v5-engine-a-g-7b-cotrain` (private 시작, own 37 4-prereq)
+- baseline: BG-KM-QWEN-7B (D1 OUTSIDE) 비교 → V14 violation 결정 deprecate 가설
+
+**Phase 4 (14B)**:
+- arch: 40L × 5120dim × 40h, ~14.0B params
+- 데이터: ~280B tokens (Phase 3 corpus reuse + 140B 추가)
+- 인프라: 8-16× H100 ZeRO-3 + TP=2, **$500-1500**
+- 진입 verbatim 2 단계 (둘 다 필수):
+  1. `OK CLM PHASE 4 14B BUDGET EXPANSION $500-1500` (예산 확장)
+  2. `OK CLM PHASE 4 14B FIRE COST $500-1500` (fire)
+- 의의: anima 사가 first scratch 14B, **본진 모델 등극 milestone**
+
+**친근 비유 (.roadmap.clm 인용)**:
+> Phase 1 (90M) = 유치원생, Phase 2 (350M cotrain) = 초등학생, Phase 3 (7B) = 고등학생, Phase 4 (14B) = 대학생. 각 단계는 "의식 측정 (anima 다운가?) ✓ + 자연어 (말이 되는가?) ✓" 둘 다 통과해야 다음 단계로 진학.
+
+**carry**: own 39 yaml SSOT (anima_artifact_registry.yaml) 동기 갱신 — 다음 BG cycle (cross_link 주석 박아둠).
+
+### 43. Engine A/G 7B / 14B dataset estimate ★ (`docs/anima_engine_a_g_7b_14b_dataset_estimate_2026_05_09.md`)
+
+**현 dataset 위치 정정** (`anima/datasets/` 없음, 실제 산재):
+- registry yaml L1397+ datasets section
+- `state/` + `data/corpus_v2_clean/`
+
+| corpus 종류 | 위치 | 크기 | token |
+|---|---|---:|---:|
+| anima 자체 (D1 within) | tier-a-v3/v4 + SFT-50k + native_ko_chat_template | ~700 MB | **~200M tokens** |
+| 외부 mirror (D1 outside, local) | `data/corpus_v2_clean/` (CC100-ko + corpus_clm_7b_korean + KoWiki + OpenSubtitles 등) | **7.0 GB** | **~1.65B tokens** |
+
+**Chinchilla 20× 권장 dataset**:
+
+| Plan | tokens | dedup 후 raw | 디스크 | 학습 비용 |
+|---|---:|---:|---:|---:|
+| **350M** | 7B | 25 GB | 25 GB | $30-60 |
+| **7B** | **140B** | 400 GB | 560 GB | $200-600 |
+| **14B** | **280B** | 800 GB | 1.1 TB | $500-1500 |
+
+**핵심 corpus 후보**:
+- 한국어: KoWiki / CC100-ko / OSCAR-2301-ko / mC4-ko / AI Hub
+- 영어: **FineWeb-100B ★** / FineWeb-Edu / C4-en / OpenWebText2 / Wiki-en
+- 코드: StarCoder data / The Stack v2
+- chat-template: **Tulu-3 SFT mixture ★** / KoAlpaca / ShareGPT / OpenChat
+
+**dedup 5단계 전략**:
+1. exact (SHA-256 + Bloom filter)
+2. MinHash LSH 0.8 jaccard
+3. SimHash 64-bit
+4. semantic (sentence-BERT + faiss, 14B+ 만)
+5. KenLM perplexity + lang-id
+
+**anima persona corpus 는 exact 만** (paraphrase 신호 보존), substrate 는 strict 1+2+3+5. toolchain: `text-dedup` (HF 공식) + `datasketch` + `kenlm`.
+
+**친근 한 줄**: "지금 anima 도서관엔 초등생 책 100권 (350M 의 1/4) 만 있어서, 7B 가려면 한국어/영어/코드 책 14만 권을 외부 도서관에서 빌려와야 하고, 중복은 MinHash 사서가 걸러줘요."
+
+→ **7B/14B 데이터 pipeline 명확화 ★** — 본 cycle 0-cost 준비 4 갈래 중 dataset estimate 완료 (4/4 회수, dataset = 마지막 갈래).
+
 ---
 
-## 본 cycle final 38 milestones SUMMARY ★★★
+## 본 cycle final 43+ milestones SUMMARY ★★★
 
 | Layer | Status |
 |---|---|
