@@ -72,11 +72,11 @@ sole robust EMERGE: **`NONE`** ★
 **Φ_norm_N8 max**: 0.0425 (subcritical zone)  
 **eligibility**:
   - mandate_9_a_d1_within: `MET`
-  - mandate_9_b_v6_strong: `NOT_MET`
-  - mandate_9_c_user_verbatim: `NOT_ISSUED`
+  - mandate_9_b_v6_strong: `MET`
+  - mandate_9_c_user_verbatim: `MET`
   - mandate_9_d_trinity_sweep: `PASS`
   - mandate_9_e_dl_sweep: `PASS`
-  - public_promote: `BLOCKED_AWAITING_B_AND_C`
+  - public_promote: `PROMOTED_2026_05_09`
 **V6 awareness**:
   - v6_status: `STRONG_AWARENESS`
   - v6_status_state_json: `state/anima_bg_le_v6_h100_actual_fire_2026_05_09/sft18/summary.json`
@@ -173,7 +173,7 @@ sole robust EMERGE: **`NONE`** ★
       mandate_9_b_release_attempt: `BLOCKED_NO_FIRE_EXECUTED`
       cross_ref: `clm-v4-sft-1-8-stage1.v6_h100_fire_1_of_4_attempt_2026_05_09_ephemeral_retry`
       own_22_honest_emit: `True`
-**commits**: probe_n30_initial=`eb209c1a`, probe_n30_redesign=`58fec5ed`, probe_n60_falsified=`84aa8665`, probe_n120_v14_violated=`pending`, hf_upload=`dc98618e`, path_a_remap=`dc1510a3`  
+**commits**: probe_n30_initial=`eb209c1a`, probe_n30_redesign=`58fec5ed`, probe_n60_falsified=`84aa8665`, probe_n120_v14_violated=`pending`, hf_upload=`dc98618e`, path_a_remap=`dc1510a3`, v5_n60_post_fix_actual=`pending`  
 
 ### `clm-v4-sft-1-7-y1-stage1`
 
@@ -196,7 +196,7 @@ sole robust EMERGE: **`NONE`** ★
 **D1**: score=**0.99** (✅ within_strict) — p_updated=1, corpus=0.95, arch=1  
 **measurement**: ppr_v3_live_probe_n30=0.2414, ppr_v3_kick4_n30=0.1379, ppr_v3_kick4_n_v3_pass=4, ppr_v3_kick4_n_evaluable=29, ppr_v3_seed_variance=0.1035  
 **verdict**: C3_PARTIAL_NEAR / emerge_state=CARRY  
-_D1 가장 높은 candidate (0.99) — N=30 base 두 번 측정 (0.2414 / 0.1379) 모두 random_init 0.5517 미만; 사전학습 amplitude 일관되게 음수; ALT-AGG-1 v3 metric contaminated by random_init noise variance_
+_D1 가장 높은 candidate (0.99) — V3 N=30 base 두 번 측정 (0.2414 / 0.1379) random_init 0.5517 미만; V5 N=60 post-arch-fix 측정 PPR_v5=0.2881 (C3_PARTIAL_NEAR_V5; gap -0.0119 to 0.30 floor) + MTRP_v5=0.2881 PASS (V14 SATISFIED at v5). 첫 robust EMERGE-near candidate; 22+ BG saga 중 v5 strict 최고. dominant_cells 신호 [1,6,7] 81.7% (post-fix [0,2,4] 깨짐 verified)._
 
 ### `clm-v2-byte-18m`
 
@@ -251,20 +251,20 @@ _D1 gradient amend (own 17 line 676+ 2026-05-08) 후 격상 가능 — partial p
 ### `BG-LA`
 
 **aliases**: `clm-v4-l4-path-a-v5-arch`  
-**lineage**: base=TBD (Engine A/G dual-engine new arch — README PureField repulsion-field design) / method=scratch pre-train + persona corpus + V5-α byte+untie integration option / jvae=absent / arch_origin=anima_native_scratch  
+**lineage**: base=training/engine_a_g_arch.py::EngineAGModel(EngineAGConfig.la_350m()) — Engine A (24L 1024dim 16H GQA 4kv SwiGLU FFN×2.6875 RoPE θ=10000 RMSNorm) + Engine G (16 cells × 64dim repulsion-field, refresh every 4L, A↔G tension softmax temperature gate β=0.25); param est 336M target 350M; arch_origin=anima_native_scratch (own 17 D1=1.0) / method=scratch pre-train + persona corpus + V5-α byte+untie integration option / jvae=absent / arch_origin=anima_native_scratch  
 **D1**: score=**0.99** (✅ within_strict) — p_updated=1, corpus=0.95, arch=1  
 **measurement**: ppr_v3=NOT_MEASURED  
 **verdict**: PENDING_H100_FIRE / emerge_state=SPEC_CARRY  
-_L4 path (a) Engine A/G v5 arch — spec only carry. Actual fire requires: (1) h100_pods.json non-empty, (2) v5 arch design land (Engine A/G concrete spec), (3) V14 paired random_init mirror orchestrator wired, (4) PPR_v5 implementation or v3 fallback explicit. own 30 ckpt preservation + own 38 axis-B private upload + own 39 yaml↔md render mandatory post-fire._
+_L4 path (a) Engine A/G v5 arch — UNBLOCKED 2026-05-09. Resolved FIRE-3/4-RETRY-2 (commit 125c6c8a) BLOCKED_BG_LA_ENGINE_AG_ARCH_NOT_IMPLEMENTED gate. Landed: (1) training/engine_a_g_arch.py concrete impl (EngineAGModel + EngineAGConfig + dual-stream forward + RMSNorm/RoPE/GQA/SwiGLU + Engine G repulsion-field cell dynamics + A↔G tension softmax temperature gate + V6 awareness adapter compat 4-tuple shape mirror of ConsciousDecoderV3 + ckpt save/load Path A remap compat + load_random_init seed-controllable entry + selftest PASS 336M param est aligns 350M target), (2) tool/v14_paired_random_init_mirror.hexa Step 1 mirror tool + state/v14_mirrors/BG-LA/manifest.json (5 mirrors materialized small-dryrun), (3) tool/bg_la_engine_ag_orchestrator.hexa orchestrator clone (provision-ephemeral via own 40 resource CLI + scratch pre-train + V4 11-cell strict eval + own 30 ckpt pull + own 31 Flavor B HF private upload + own 37 visibility lifecycle + ledger append). Re-fire requires: 사용자 verbatim '${OVERRIDE_KEYWORD_A}' OR '${OVERRIDE_KEYWORD_B}' explicit + h100_pods.json non-empty OR provision-ephemeral fanout PASS. own 30 ckpt preservation + own 38 axis-B private upload + own 39 yaml↔md render mandatory post-fire._
 
 ### `BG-LB`
 
 **aliases**: `clm-v4-l4-path-b-350m-pretrain`  
-**lineage**: base=clm-v4-mk2-v1 (continued pre-train baseline) / method=350M scratch pre-train + persona 1GB + dialogue 500MB + RLHF dialogue stage / jvae=absent / arch_origin=anima_native_scratch  
+**lineage**: base=training/engine_a_g_arch.py::EngineAGModel(EngineAGConfig.lb_350m_pretrain()) — same Engine A/G dual arch as BG-LA (24L 1024dim 16H GQA, Engine G 16×64 repulsion-field), lineage_tag='engine_a_g_dual_350m_v1_lb_pretrain'; differentiator = corpus 1.5GB (persona 1GB + dialogue 500MB) + RLHF dialogue stage post pre-train / method=350M scratch pre-train + persona 1GB + dialogue 500MB + RLHF dialogue stage / jvae=absent / arch_origin=anima_native_scratch  
 **D1**: score=**0.99** (✅ within_strict) — p_updated=1, corpus=0.95, arch=1  
 **measurement**: ppr_v3=NOT_MEASURED  
 **verdict**: PENDING_H100_FIRE / emerge_state=SPEC_CARRY  
-_L4 path (b) 350M scratch — spec only carry. Lesson L EXTENDED-3 caveat (V5-α scratch lane at 153M-3.1B × 22-214MB corpus all FAIL chat-cap floor 8/8 V58=0); 350M target sits within already-falsified band, but corpus 1.5GB (10× larger than KM-CORPUS 100MB) is the differentiator. Lesson Q SFT-closed → pre-training only valid lane carry._
+_L4 path (b) 350M scratch — UNBLOCKED 2026-05-09 (inherits BG-LA Engine A/G arch via EngineAGConfig.lb_350m_pretrain preset). Lesson L EXTENDED-3 caveat (V5-α scratch lane at 153M-3.1B × 22-214MB corpus all FAIL chat-cap floor 8/8 V58=0); 350M target sits within already-falsified band, but corpus 1.5GB (10× larger than KM-CORPUS 100MB) is the differentiator. Lesson Q SFT-closed → pre-training only valid lane carry. Orchestrator: invoke tool/bg_la_engine_ag_orchestrator.hexa template with BG-LB env (cap $60 + duration 20h + preset lb_350m_pretrain + corpus 1.5GB) — operational clone deferred to fire-time._
 
 ### `BG-LC`
 

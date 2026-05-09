@@ -130,11 +130,15 @@ models:
       v5_1_gate_d_random_below_005: false  # random_init c3_4 mean 0.1338 > 0.05 (v5 Gate D 그대로 inherit; recalibration mandate carry)
       v5_1_verdict: C3_FAIL_V14_VIOLATED_V5_1  # ★ Gate D=false 즉시 V14 violation; Gate B-refined 단독 PASS, A+C+D fail; v5.1 도 strict 통과 X (Gate D recalibration 별도 cycle 필요)
       v5_1_honest_c3: "Gate B-refined PASS (change_rate=0.6379 vs random_init=0.1429, delta +0.495 strong separator); Gate A+C+D 모두 v5 그대로 유지하며 FAIL — v5.1 본 cycle 은 Gate B 강화만 (own 18 raw#15 additive); Gate D recalibration (c3_4_v5 normalized OR floor 0.15) 별도 cycle mandate"
-      public: null  # mandate-9 (b)+(c) 미충족
-      visibility_status: private-process
+      public: dancinlab/clm-v4-sft-1-8-stage1-path-a-remapped  # ★ 2026-05-09 PUBLIC PROMOTE first instance (own 37 mandate-9 5/5 MET)
+      visibility_status: public-success  # ★ 2026-05-09 toggled from private-process via HfApi.update_repo_settings(private=False); user verbatim "OK PROMOTE PUBLIC dancinlab/clm-v4-sft-1-8-stage1-path-a-remapped" issued
+      promote_commit_url: https://huggingface.co/dancinlab/clm-v4-sft-1-8-stage1-path-a-remapped/commit/72099c2e199b03d45db3ba33f2dce708f42ffb5c
+      promote_v14_carry_note: "V14 MTRP +0.0585 < 0.10 strict floor → anima auto-promote mode BLOCKED (own 37 mandate-9 (c) amend 2026-05-09); user verbatim path only valid; promote authorized via user directive 1 verbatim explicit consent"
+      promote_date: 2026-05-09
     cycle: 2026-05-08
     state_jsons:
       - state/anima_sft_1_8_n30_live_probe_2026_05_08.json
+      - state/anima_sft_1_8_public_promote_2026_05_09.json  # ★ PUBLIC PROMOTE first instance manifest
       - state/anima_sft_1_8_n60_live_probe_2026_05_08.json
       - state/anima_sft_1_8_n120_live_probe_kick_wave_4_2026_05_08.json
       - state/anima_sft_1_8_v4_n60_retest_2026_05_08.json  # ★ ALT-AGG-1 v4 N=60 retest (cascade 1/8 v4)
@@ -149,11 +153,11 @@ models:
       path_a_remap: d478023c
     eligibility:
       mandate_9_a_d1_within: MET
-      mandate_9_b_v6_strong: NOT_MET
-      mandate_9_c_user_verbatim: NOT_ISSUED
+      mandate_9_b_v6_strong: MET  # ★ 2026-05-09 H100 actual fire commit edc601ae STRONG_AWARENESS verdict
+      mandate_9_c_user_verbatim: MET  # ★ 2026-05-09 user directive 1 verbatim "OK PROMOTE PUBLIC dancinlab/clm-v4-sft-1-8-stage1-path-a-remapped"
       mandate_9_d_trinity_sweep: PASS
       mandate_9_e_dl_sweep: PASS
-      public_promote: BLOCKED_AWAITING_B_AND_C
+      public_promote: PROMOTED_2026_05_09  # ★ first instance of own 37 mandate-9 PUBLIC PROMOTE in anima cycle history
     v6_status: STRONG_AWARENESS  # ★ H100 ACTUAL FIRE 2026-05-09 — A=STRONG (avg_sim 0.6036 < 0.85), B=STRONG (avg_max_ratio 1.6528), C=STRONG (cv_acc 0.90 ≥ 0.70) → combined STRONG_AWARENESS. EXIT trigger MET. mandate-9 (b) MET.
     v6_status_state_json: state/anima_bg_le_v6_h100_actual_fire_2026_05_09/sft18/summary.json
     v6_status_state_json_predecessor: state/anima_bg_le_v6_awareness_clm_v4_dev_2026_05_09.json
