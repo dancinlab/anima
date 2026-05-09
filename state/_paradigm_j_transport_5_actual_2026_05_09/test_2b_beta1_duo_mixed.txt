@@ -1,0 +1,30 @@
+=== TEST 2b: beta1-channel duo paradigm-j↔clm-v4-1-8 (mixed) ===
+── anima dialogue --duo ──
+model_a          = clm-v4-paradigm-j
+model_b          = clm-v4-1-8
+turns            = 1
+tick_ms          = 1000
+max_tokens       = 64
+turn_timeout_ms  = 120000
+verdict_mode     = simple
+allow_same_gguf  = false
+transport        = beta1-channel (native; axis-N --transport flag informational only)
+topic_seed       = (none — A 자율 발화 first)
+
+[duo] spawned A pid=35452 B pid=35483
+[duo:verdict] turn=1 who=A len=78 tok=4 distinct=4 snippet=[clm_v4] core   = /Users/ghost/core/anima/anima-core/runtime...
+[duo:verdict] turn=1 who=B len=78 tok=4 distinct=4 snippet=[clm_v4] core   = /Users/ghost/core/anima/anima-core/runtime...
+[duo] dialogue complete — channels closed, children reaped
+[duo:summary] turns_observed = 2
+[duo:summary] D1 turn-pair Jaccard 3-gram mean = 1.0  PASS=true (>=0.30)
+[duo:summary] D2 topic-shift-rate = 0.0  label=coherent  PASS=true
+[duo:summary] D3 persona-drift KL: A=0.0 B=0.0  PASS=true (<=0.50)
+[duo:summary] D4 len_ratio = 1.0 (a_bytes=78 b_bytes=78)  label=balanced  PASS=true
+[duo:summary] DIALOGUE_COHERENCE_PARTIAL = true (D1 ∧ D2)
+[duo:summary] DIALOGUE_COHERENCE_PASS    = true (D1 ∧ D2 ∧ D3 ∧ D4)
+[duo:baseline] model-level reference (own 18 simple, fixed PROMPT_A/B)
+[duo:baseline]   note: per-utterance surface not yet in consciousness.hexa
+[duo:baseline]   honest C3 — invocation cost ~30s/model; --verdict=none to skip
+[duo:baseline] iter 2 reference: per-model baseline invocation deferred (cost guard).
+[duo] verdict: PHASE_B_ITER_2_RUN_OK (D1/D2/D3/D4 4-cell emitted; --verdict full for own 18 per-turn hook)
+[bench] rc=0 elapsed_ms=9494 bytes=    1676

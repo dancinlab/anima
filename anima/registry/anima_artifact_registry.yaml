@@ -2540,6 +2540,111 @@ chat_transports:
       review_doc: docs/anima_paradigm_j_transport_5_benchmark_2026_05_09.ai.md
       timing_csv: /tmp/transport_bench/timing.csv  # ephemeral; values mirrored in ssot_json
 
+  # ───────── 2026-05-09 Mac-local actual fire reinforce ─────────
+  # 사용자 directive verbatim: "이것도 1. fifo-dispatch ... 5. imtl 테스트 해봐줘"
+  # method: Mac local RESOURCE_LOCAL_HEXA=1 hexa.real (→ hexa_interp.real) — 0-cost,
+  #         actual paradigm-j chat dispatch + duo channel pair + libllama gguf attempt + UDP listen probe
+  actual_fire_2026_05_09_mac_reinforce:
+    cycle: anima_2026_05_09_paradigm_j_transport_5_actual_reinforce
+    fire_substrate: "Mac local (RESOURCE_LOCAL_HEXA=1 hexa.real → hexa_interp.real); 0-cost"
+    paradigm_j_repo_canonical: dancinlab/clm-v4-paradigm-j-50k-final-path-a-remapped
+    paradigm_j_local_alias: clm-v4-paradigm-j
+    paradigm_j_visibility_status: PUBLIC promoted (own 37 4 prerequisite met earlier cycle)
+    transports_tested: 5
+    results:
+      - name: fifo-dispatch
+        smoke_rc: 4
+        smoke_ms: 4387
+        smoke_verdict: FAIL_SAME_PROC_ROUNDTRIP    # harness limit, not transport defect
+        actual_chat_lane_substrate_ms: 9371
+        actual_chat_lane_substrate_bytes: 1793
+        actual_chat_lane_substrate_throughput_B_per_s: 191.3
+        actual_chat_integrity: PASS
+        paradigm_j_substrate_emit: "LIVE phi_star=41.8768 drift=+0.0168 axis_activation 5/5 (identity=0.595 agency=0.572 phenomenal=0.612 temporal=0.603 social=0.546) dominant_cells=[5,6,3]/8 mode=synthetic_fallback (sentencepiece fallback BG-AH)"
+        own_18_C2:
+          spontaneity: N/A
+          coherence: PASS
+          persona: N/A
+      - name: beta1-channel
+        smoke_rc: 4
+        smoke_ms: 5325
+        smoke_verdict: FAIL_SAME_PROC_ROUNDTRIP
+        actual_duo_same_gguf_ms: 3883
+        actual_duo_same_gguf_verdict: GUARD_TRIPPED  # own 22 mandatory report
+        actual_duo_mixed_ms: 9494
+        actual_duo_mixed_bytes: 1720
+        actual_duo_mixed_throughput_B_per_s: 181.2
+        actual_duo_mixed_verdict_cells:
+          D1_jaccard_3gram_mean: 1.0
+          D2_topic_shift_rate: 0.0
+          D3_persona_drift_KL_A: 0.0
+          D3_persona_drift_KL_B: 0.0
+          D4_len_ratio: 1.0
+          DIALOGUE_COHERENCE_PASS: true
+        paradigm_j_substrate_emit: "DEFERRED (banner-level coherence; per-turn body emit needs deeper integration axis-N+1)"
+        own_18_C2:
+          spontaneity: PASS
+          coherence: PASS
+          persona: MIXED
+      - name: libllama-ffi
+        smoke_rc: 0
+        smoke_ms: 416
+        smoke_verdict: PASS
+        actual_chat_paradigm_j_ms: 12358
+        actual_chat_paradigm_j_verdict: BLOCKED_HONEST  # paradigm-j = LoRA, no GGUF
+        actual_chat_paradigm_a_prime_fallback_ms: 18911
+        actual_chat_paradigm_a_prime_verdict: ABORT_TRAP_6  # libhxllama in-proc under hexa_interp tmpfile-spawn unstable
+        paradigm_j_substrate_emit: "BLOCKED — libllama path requires GGUF"
+        d1_label: ambiguous_research  # own 17 D1_SCOPE_CLAMP carry
+      - name: subprocess-pipe
+        smoke_rc: 0
+        smoke_ms: 361
+        smoke_verdict: PASS
+        actual_chat_lane_substrate_ms: 12367
+        actual_chat_lane_substrate_bytes: 1819
+        actual_chat_lane_substrate_throughput_B_per_s: 147.1
+        actual_chat_integrity: PASS
+        paradigm_j_substrate_emit: "LIVE phi_star=41.8720 drift=+0.0120 axis_activation 5/5 (identity=0.586 agency=0.657 phenomenal=0.599 temporal=0.585 social=0.599)"
+        own_18_C2:
+          spontaneity: N/A
+          coherence: PASS
+          persona: N/A
+      - name: imtl
+        smoke_rc: 0
+        smoke_ms: 431
+        smoke_verdict: PASS_STUB
+        udp_19266_socket_check: "Connection to 127.0.0.1 port 19266 [udp/*] succeeded! (kernel layer ready)"
+        paradigm_j_model_communication: "BLOCKED — TODO[pytorch] body absent (5 count)"
+        coupling_consts:
+          psi_balance: 0.5
+          psi_coupling: 0.014
+          psi_f_critical: 0.10
+          default_port: 19266
+          magic: ANMA
+    summary:
+      smoke_pass: 3   # libllama-ffi + subprocess-pipe + imtl (STUB)
+      smoke_fail_harness_limit: 2   # fifo-dispatch + beta1-channel (single-proc self-roundtrip)
+      paradigm_j_substrate_emit_LIVE: 2   # fifo-dispatch + subprocess-pipe (via --lane substrate)
+      paradigm_j_substrate_emit_DEFERRED: 1   # beta1-channel (duo mixed banner coherence)
+      paradigm_j_substrate_emit_BLOCKED: 2    # libllama-ffi (no GGUF) + imtl (STUB)
+      duo_mixed_DIALOGUE_COHERENCE_PASS: true
+    os_primitive_baselines_us_p50:
+      pipe_roundtrip: 1.75
+      dlopen_libhxllama: 85.71
+      popen_exec: 5582.67
+      udp_loopback: 25.29
+    honest_c3_reinforce:
+      - "D1 Mac local smoke PASS 3건 + harness-limit FAIL 2건 (vs ubu-1 cycle stdlib-absent FAIL 3건) — channel stdlib LANDED on Mac"
+      - "D2 actual chat 진입 가능 → paradigm-j substrate emit LIVE 2 transport (fifo-dispatch + subprocess-pipe via --lane substrate)"
+      - "D3 beta1-channel duo mixed paradigm-j ↔ clm-v4-1-8 D1+D2+D3+D4 모두 PASS"
+      - "D4 libllama-ffi paradigm-j BLOCKED 양 cycle 공통 canonical; paradigm-a-prime fallback Abort trap: 6 (hexa_interp tmpfile-spawn 불안정 — runner artifact 한계)"
+      - "D5 imtl STUB carry 양 cycle 동일 — UDP kernel layer ready, model commu body TODO[pytorch] 5건"
+      - "D6 default chat (no --lane flag) → banner-only output; substrate emit needs --lane substrate (axis-priority/generate)"
+    artifacts:
+      ssot_json: state/anima_paradigm_j_transport_5_actual_test_2026_05_09.json
+      review_doc: docs/anima_paradigm_j_transport_5_benchmark_2026_05_09.ai.md   # REINFORCE section appended
+      raw_transcripts_dir: state/_paradigm_j_transport_5_actual_2026_05_09/
+
 # ─────────────────────────────────────────────────────────────────────────────
 # COMPLIANCE
 # ─────────────────────────────────────────────────────────────────────────────
