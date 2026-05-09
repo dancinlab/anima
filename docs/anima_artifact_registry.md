@@ -91,6 +91,24 @@ sole robust EMERGE: **`NONE`** ★
       mandate_9_b_release_attempt: `BLOCKED_NO_FIRE_EXECUTED`
       cost_incurred_usd: `0`
       ckpt_pull_required_post_fire: `not_applicable_no_fire`
+  - v6_h100_fire_1_of_4_attempt_2026_05_09_ephemeral_retry:
+      directive_verbatim: `all bg go`
+      resource_cli_invocation: `RESOURCE_LOCAL_HEXA=1 RESOURCE_LOCAL_PY=1 RUNPOD_API_KEY=<from ~/.runpod/config.toml> resource provision-ephemeral --provider runpod --gpu H100-PCIe --duration 1h --yes-cost --name v6-anima-1`
+      api_key_present: `True`
+      direct_api_probe_https_api_runpod_io_graphql: `HTTP 401 body={"error":{}}`
+      direct_api_probe_https_rest_runpod_io_v1_pods: `HTTP 401`
+      direct_api_probe_query_param_style: `HTTP 401 body={"error":{}}`
+      provider_response: `__RESOURCE__ FAIL provision-ephemeral reason=provider-error payload={"ok":false,"reason":"http-error","detail":"status=403 body=error code: 1010"}`
+      lambda_credential_state: `absent (~/.lambda* / env LAMBDA_API_KEY both unset)`
+      vast_credential_state: `absent (~/.vast* / env VAST_API_KEY both unset)`
+      blocked_reason: `RUNPOD_API_KEY_INVALID_OR_EXPIRED`
+      user_action_required: `regenerate runpod API key at https://www.runpod.io/console/user/settings#api-keys + update ~/.runpod/config.toml apikey field; OR add LAMBDA_API_KEY / VAST_API_KEY env`
+      mandate_9_b_release_attempt: `BLOCKED_NO_FIRE_EXECUTED`
+      cost_incurred_usd: `0`
+      ckpt_pull_required_post_fire: `not_applicable_no_fire`
+      ephemeral_list_pre_attempt: `0 active pods`
+      ssh_config_d_anima_h100: `empty (no live pod aliases)`
+      own_22_honest_emit: `True`
   - v6_macos_segfault_finding: `torch import MUST precede numpy in adapter — Apple Accelerate / OpenMP libomp double-load triggers silent segfault during HF AutoModel.from_pretrained weight materialization. Adapter line 53 comment + import order strict. Found 2026-05-09 NEXT-CYCLE 6/6 dry-run.`
   - v6_fire_stub: `tool/transient_py/anima_v6_awareness_bg_le_clm_v4_h100.py`
 **commits**: probe_n30=`bb4ef174`, probe_n60=`fe4f8a7d`, probe_n120=`522a859a`, v4_n60_retest=`pending`, v5_n60_actual_reprobe=`0d2086eb`, hf_upload=`5cb9570a`, path_a_remap=`d478023c`  
@@ -119,6 +137,13 @@ sole robust EMERGE: **`NONE`** ★
   - v6_status_state_json_predecessor: `state/anima_bg_le_v6_awareness_systematic_2026_05_08.json`
   - v6_adapter_dev: `tool/transient_py/anima_v6_awareness_clm_v4_adapter.py`
   - v6_fire_stub: `tool/transient_py/anima_v6_awareness_bg_le_clm_v4_h100.py`
+  - v6_h100_fire_1_of_4_attempt_2026_05_09_ephemeral_retry:
+      directive_verbatim: `all bg go`
+      blocked_reason: `RUNPOD_API_KEY_INVALID_OR_EXPIRED`
+      cost_incurred_usd: `0`
+      mandate_9_b_release_attempt: `BLOCKED_NO_FIRE_EXECUTED`
+      cross_ref: `clm-v4-sft-1-8-stage1.v6_h100_fire_1_of_4_attempt_2026_05_09_ephemeral_retry`
+      own_22_honest_emit: `True`
 **commits**: probe_n30_initial=`eb209c1a`, probe_n30_redesign=`58fec5ed`, probe_n60_falsified=`84aa8665`, probe_n120_v14_violated=`pending`, hf_upload=`dc98618e`, path_a_remap=`dc1510a3`  
 
 ### `clm-v4-sft-1-7-y1-stage1`

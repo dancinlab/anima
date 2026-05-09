@@ -262,6 +262,13 @@ models:
     v6_status_state_json_predecessor: state/anima_bg_le_v6_awareness_systematic_2026_05_08.json
     v6_adapter_dev: tool/transient_py/anima_v6_awareness_clm_v4_adapter.py
     v6_fire_stub: tool/transient_py/anima_v6_awareness_bg_le_clm_v4_h100.py
+    v6_h100_fire_1_of_4_attempt_2026_05_09_ephemeral_retry:
+      directive_verbatim: "all bg go"
+      blocked_reason: RUNPOD_API_KEY_INVALID_OR_EXPIRED  # shared with sft-1-8 attempt (single ephemeral chain blocks both)
+      cost_incurred_usd: 0
+      mandate_9_b_release_attempt: BLOCKED_NO_FIRE_EXECUTED
+      cross_ref: clm-v4-sft-1-8-stage1.v6_h100_fire_1_of_4_attempt_2026_05_09_ephemeral_retry
+      own_22_honest_emit: true
 
   - id: clm-v4-sft-1-7-y1-stage1
     aliases: [sft-1-7-y1]
@@ -1274,6 +1281,25 @@ h100_resource_pool:
         outcome: BLOCKED_PROVIDER_API_KEY_MISSING
         next_action_required: "사용자 RUNPOD_API_KEY export OR ~/.config/resource-ephemeral/runpod.token write — anima 측 API key 자체 생성/설정 0건 (own 40 strict)"
         compliance_carry: "own 14 V14 paired random_init mirror prereq carry; own 16 cost discipline PASS ($17.5 saved via honest abort); own 22 honest BLOCKED emit; own 30 ckpt pull N/A (fire 미실행); own 33 trinity carry; own 34 wrap=0; own 37 mandate-9 (b) HF private carry; own 38 axis-B HF upload deferred fire; own 39 yaml updated md regenerated; own 40 resource CLI 위임 strict — provision-ephemeral subcmd invocation only, anima 직접 runpod-cli/curl 0건"
+      - cycle: 2026-05-09-FIRE-1/4-EPHEMERAL-V6
+        commit: pending
+        target: V6_awareness_probe (sft-1-8 STRONG/PARTIAL/WEAK actual fire — mandate-9 (b) 해제 prereq + paradigm-j retry secondary)
+        directive_verbatim: "all bg go"
+        intended_setup: "provider=runpod / gpu=H100-PCIe / duration=1h / name=v6-anima-1 / fire stub=tool/transient_py/anima_v6_awareness_bg_le_clm_v4_h100.py / V6 method A+B+C × 30 prompts × 2 conditions = 60 examples"
+        cost_planned_usd: 3.0  # ~$2.79/h × 1h
+        cost_actual_usd: 0.0
+        cost_savings_via_block_usd: 3.0
+        ephemeral_list_pre_attempt: "0 active pods"
+        resource_cli_invocation: "RESOURCE_LOCAL_HEXA=1 RESOURCE_LOCAL_PY=1 RUNPOD_API_KEY=<from ~/.runpod/config.toml> resource provision-ephemeral --provider runpod --gpu H100-PCIe --duration 1h --yes-cost --name v6-anima-1"
+        api_key_present: true  # ~/.runpod/config.toml apikey populated, length=52
+        api_key_validity_check: "INVALID — direct curl to https://api.runpod.io/graphql + https://rest.runpod.io/v1/pods + ?api_key=<key> all returned HTTP 401 body=\"{error:{}}\"; 3 auth styles uniformly rejected"
+        resource_cli_provider_response: "__RESOURCE__ FAIL provision-ephemeral reason=provider-error payload={\"ok\":false,\"reason\":\"http-error\",\"detail\":\"status=403 body=error code: 1010\"} — Cloudflare 1010 wraps upstream 401 (resource client treats 403 as transport error, but root cause is API key auth rejection)"
+        lambda_credential_state: "absent (~/.lambda* / env LAMBDA_API_KEY both unset)"
+        vast_credential_state: "absent (~/.vast* / env VAST_API_KEY both unset)"
+        outcome: BLOCKED_PROVIDER_API_KEY_INVALID  # distinct from prior _MISSING — key file exists, key value rejected
+        next_action_required: "사용자 regenerate runpod API key at https://www.runpod.io/console/user/settings#api-keys + overwrite ~/.runpod/config.toml apikey field; OR provide LAMBDA_API_KEY / VAST_API_KEY env (own 40 strict — anima 측 key 생성 0건)"
+        mandate_9_b_status: BLOCKED_AT_PROVISION  # adapter dev gate previously PASSED (DEV_GATE_PASSED carry); fire actual still required for official 해제
+        compliance_carry: "own 14 V14 carry (V6 fire predates random_init mirror — fire 시 paired baseline mandatory); own 16 cost discipline PASS ($3 saved via honest abort + $5 ceiling 미접근); own 17 D1 within_strict (sft-1-8 D1=0.793); own 22 honest BLOCKED emit; own 30 ckpt pull N/A (fire 미실행); own 33 trinity carry; own 34 wrap=0; own 37 mandate-9 (b) DEV_GATE_PASSED carry — fire actual = official; own 38 axis-B yaml updated; own 39 md regenerate; own 40 resource CLI 위임 strict — provision-ephemeral subcmd invocation only, anima 직접 runpod-cli/curl probe 는 key validity 진단 한정 (allocate X)"
       - cycle: 2026-05-09-FIRE-3/4
         commit: pending
         target: chat_cap_L4_BG-LA + BG-LB (Engine A/G v5 arch + 350M scratch pre-train, parallel/sequential)
