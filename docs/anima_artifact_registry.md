@@ -196,7 +196,7 @@ sole robust EMERGE: **`NONE`** ★
       mandate_9_b_release_attempt: `BLOCKED_NO_FIRE_EXECUTED`
       cross_ref: `clm-v4-sft-1-8-stage1.v6_h100_fire_1_of_4_attempt_2026_05_09_ephemeral_retry`
       own_22_honest_emit: `True`
-**commits**: probe_n30_initial=`eb209c1a`, probe_n30_redesign=`58fec5ed`, probe_n60_falsified=`84aa8665`, probe_n120_v14_violated=`pending`, hf_upload=`dc98618e`, path_a_remap=`dc1510a3`, v5_n60_post_fix_actual=`d0c7298e`, v5_paraphrase_n90=`f2632367`, jvae_continued_train_2026_05_09=`pending`, public_promote_v5_2_emerge=`48b2aa6a`  
+**commits**: probe_n30_initial=`eb209c1a`, probe_n30_redesign=`58fec5ed`, probe_n60_falsified=`84aa8665`, probe_n120_v14_violated=`pending`, hf_upload=`dc98618e`, path_a_remap=`dc1510a3`, v5_n60_post_fix_actual=`d0c7298e`, v5_paraphrase_n90=`f2632367`, jvae_continued_train_2026_05_09=`330ba515`, public_promote_v5_2_emerge=`48b2aa6a`  
 
 ### `clm-v4-sft-1-7-y1-stage1`
 

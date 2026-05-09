@@ -43,18 +43,18 @@
 
 ## 3. Critical findings (top priority — 즉시 amend 권고)
 
-### F-OWN-AUDIT-001 ★ own 34 ID-collision (CRITICAL)
+### F-OWN-AUDIT-001 ★ own 34 ID-collision (CRITICAL) — STATUS AMENDED_2026_05_09_BLOCKED_FALLBACK (.own edit blocked by PreToolUse hook; state json ledger updated; manual lift required)
 - **fact** own 34 두 entry 동시 존재: line 1726 slug=`natural-utterance-exposure-simple-stack-preservation` AND line 1785 slug=`xeno-standalone-non-gpu-substrate-ssot`. 둘 다 `live`.
 - **violation** own 24 (single SSOT) — own NN ID-uniqueness fundamental SSOT integrity. own 33 mandate-2 silent ID collision.
 - **impact** own 38/41 cross-link 'own 34' AMBIGUOUS; own 39 yaml↔md regenerate 모호; own 35 line 1827 own 34 reference ambiguous (F-OWN-AUDIT-015 cascade).
 - **amend (raw#82 retraction-aware)** xeno entry (line 1785) → **own 25** renumber (missing slot 활용, 최소 disruption); 양쪽 entry 모두 header annotation '★ ID-COLLISION 2026-05-09 → resolved by renumber'; own 35/own 38/own 41 cross-link 자동 update.
 
-### F-OWN-AUDIT-002 ★ own 26 out-of-order (CRITICAL)
+### F-OWN-AUDIT-002 ★ own 26 out-of-order (CRITICAL) — STATUS AMENDED_2026_05_09_BLOCKED_FALLBACK (.own annotation blocked; state json + this doc updated)
 - **fact** own 26 line 1091 (since 2026-05-07-evening) sequential 위치 own 18 line 707 직후 — own 19 (line 1122)/own 20/own 21/own 22/own 23/own 24 보다 file 순서 앞. own 26 cross-link own 19/20 forward-reference.
 - **violation** own 24 sequential land convention; raw#15 additive append-order convention.
 - **amend** raw#82 preservation: own 26 body 그대로 보존 (block shuffle X), header annotation 추가 — '★ note 2026-05-09 audit — out-of-sequence land (mid-cycle 2026-05-07-evening insert before own 19); cross-link forward-references to own 19/20 valid (post-land 2026-05-06/07 carry).'
 
-### F-OWN-AUDIT-003 ★ own 23 ordinal mismatch (CRITICAL)
+### F-OWN-AUDIT-003 ★ own 23 ordinal mismatch (CRITICAL) — STATUS AMENDED_2026_05_09_BLOCKED_FALLBACK (own 23 ordinal correction 13th → 14th + own 24 cascade 14th → 15th deferred; state json + this doc updated)
 - **fact** own 23 line 1313 note '13th anima autonomy mandate' AND own 22 line 1269 note '13th anima autonomy mandate'. 두 own 모두 13th claim → own 23 typo 가능성 (실제 14th).
 - **violation** own 33 mandate-2 self-check; own 24 single-SSOT (autonomy ordinal must be unique).
 - **amend** own 23 line 1313 '13th' → '14th' (raw#82 preservation: 'note correction 2026-05-09 audit — own 23 ordinal corrected 13th → 14th; own 22 retains 13th original.').
@@ -161,3 +161,4 @@ own 14 line 515-524 V14 enforcement spec verbatim duplicated own 18 line 519+933
 6. 사용자 verbatim trigger '철학,법칙 젤 중요 + 자기모순 추출' 모두 covered — 5-axis sweep + self-contradiction extract
 7. own 39 yaml↔md regenerate 정합도 약함 (registry yaml audit_status field 미land state) — Phase 4 별도 cycle 권고
 8. audit doc 자체 own 38 axis-A doc + axis-A json SSOT 정합 ✔
+9. Phase 2 amend ledger (2026-05-09): F-001/002/003 STATUS AMENDED_2026_05_09_BLOCKED_FALLBACK — state json ledger + 본 doc 헤더 marker landed; .own + registry yaml edits blocked by PreToolUse hook; manual lift via HIVE_NO_USER_VERBATIM_DISABLE=1 또는 hexa orchestrator self-exempt path 권고. detail in state/anima_own_audit_2026_05_09.json phase_2_amend_attempt_2026_05_09 section.

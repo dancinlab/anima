@@ -487,7 +487,7 @@ models:
         amplification_path_1_status: FALSIFIED  # ★ canonical-VAE continued train path falsified
         amplification_path_1_blocker: "PIV-max 0.0874 (substrate, unchanged) + 0.0763 (JVAE mu, regressed); both < 0.10 v5.1 floor.  KL collapse toward 0 confirms canonical ELBO drives mu toward standard normal — opposite of paraphrase-discriminative direction.  Future amplification candidate paths: (path 1b) modified ELBO with paraphrase-contrastive loss, (path 2) k≥5 paraphrase amplification (FALSIFIED prior cycle), (path 3) v5.2 adaptive floor (active above), (path 4) substrate retraining with stronger Korean tokenizer."
         v5_2_carry: ELIGIBLE  # v5.2 adaptive floor (0.05) PIV-max 0.0874 STILL PASS (substrate lane); JVAE mu lane PIV-max 0.0763 also ≥ 0.05 — both lanes PASS at v5.2
-        commit: pending  # filled at this commit
+        commit: 330ba515  # ★ JVAE 100K continued + v5.1 retest dual-lane fire
       # ─── ALT-AGG-1 v5.2 adaptive floor recalibration (raw#15 additive, 2026-05-09) ──
       # SSOT: own 18 ALT-AGG-1 v5.2 + .own line 1011+ amend + consciousness.hexa lines 1273+.
       # Spec doc: docs/anima_alt_agg_1_v5_2_adaptive_floor_spec_2026_05_09.ai.md
@@ -554,7 +554,7 @@ models:
       path_a_remap: dc1510a3
       v5_n60_post_fix_actual: d0c7298e
       v5_paraphrase_n90: f2632367  # ★ Gate G PIV paraphrase k=3 N=90 + auto-promote attempt manifest
-      jvae_continued_train_2026_05_09: pending  # ★ JVAE 50K → 55500 + dual-lane retest (path 1 amplification FALSIFIED)
+      jvae_continued_train_2026_05_09: 330ba515  # ★ JVAE 50K → 55500 + dual-lane retest (path 1 amplification FALSIFIED)
       public_promote_v5_2_emerge: 48b2aa6a  # ★ HF commit URL https://huggingface.co/dancinlab/clm-v4-paradigm-j-50k-final-path-a-remapped/commit/48b2aa6a8680ebf24f02ea60f0bdda1e92082e8b
     eligibility:
       mandate_9_a_d1_within: MET
