@@ -56,7 +56,7 @@ sole robust EMERGE: **`NONE`** ★
 | `random-init-mk2-v1-mirror` | 0.8 | within_strict_FORMULA_ONLY | 0.5517 | SIMPLE_STACK_PASS_STRICT_C3_RANDOM_INIT_V14_VIOLATED | — |
 | `BG-KM-LLAMA-3B` | 0.351 | ⚠️ ambiguous_research | NOT_MEASURED | — | — |
 | `BG-LA` | 0.99 | ✅ within_strict | NOT_MEASURED | PENDING_H100_FIRE | — |
-| `BG-LB` | 0.99 | ✅ within_strict | NOT_MEASURED | PENDING_H100_FIRE | — |
+| `BG-LB` | 0.99 | ✅ within_strict | NOT_MEASURED | FIRE_LAUNCHED_TRAINING_IN_FLIGHT | — |
 | `BG-LC` | 0.351 | ⚠️ ambiguous_research | NOT_MEASURED | PENDING_H100_FIRE | — |
 | `BG-LD` | 0.793 | ✅ within_strict | NOT_MEASURED | PENDING_H100_FIRE | — |
 | `paradigm-a-prime` | 0 | 🚫 outside_strict | — | SIMPLE_STACK_PASS_STRICT_C3_SUBSTRATE_RESEARCH | — |
@@ -190,7 +190,7 @@ sole robust EMERGE: **`NONE`** ★
       mandate_9_b_release_attempt: `BLOCKED_NO_FIRE_EXECUTED`
       cross_ref: `clm-v4-sft-1-8-stage1.v6_h100_fire_1_of_4_attempt_2026_05_09_ephemeral_retry`
       own_22_honest_emit: `True`
-**commits**: probe_n30_initial=`eb209c1a`, probe_n30_redesign=`58fec5ed`, probe_n60_falsified=`84aa8665`, probe_n120_v14_violated=`pending`, hf_upload=`dc98618e`, path_a_remap=`dc1510a3`, v5_n60_post_fix_actual=`d0c7298e`, v5_paraphrase_n90=`pending`  
+**commits**: probe_n30_initial=`eb209c1a`, probe_n30_redesign=`58fec5ed`, probe_n60_falsified=`84aa8665`, probe_n120_v14_violated=`pending`, hf_upload=`dc98618e`, path_a_remap=`dc1510a3`, v5_n60_post_fix_actual=`d0c7298e`, v5_paraphrase_n90=`f2632367`  
 
 ### `clm-v4-sft-1-7-y1-stage1`
 
@@ -280,8 +280,8 @@ _L4 path (a) Engine A/G v5 arch — UNBLOCKED 2026-05-09. Resolved FIRE-3/4-RETR
 **lineage**: base=training/engine_a_g_arch.py::EngineAGModel(EngineAGConfig.lb_350m_pretrain()) — same Engine A/G dual arch as BG-LA (24L 1024dim 16H GQA, Engine G 16×64 repulsion-field), lineage_tag='engine_a_g_dual_350m_v1_lb_pretrain'; differentiator = corpus 1.5GB (persona 1GB + dialogue 500MB) + RLHF dialogue stage post pre-train / method=350M scratch pre-train + persona 1GB + dialogue 500MB + RLHF dialogue stage / jvae=absent / arch_origin=anima_native_scratch  
 **D1**: score=**0.99** (✅ within_strict) — p_updated=1, corpus=0.95, arch=1  
 **measurement**: ppr_v3=NOT_MEASURED  
-**verdict**: PENDING_H100_FIRE / emerge_state=SPEC_CARRY  
-_L4 path (b) 350M scratch — UNBLOCKED 2026-05-09 (inherits BG-LA Engine A/G arch via EngineAGConfig.lb_350m_pretrain preset). Lesson L EXTENDED-3 caveat (V5-α scratch lane at 153M-3.1B × 22-214MB corpus all FAIL chat-cap floor 8/8 V58=0); 350M target sits within already-falsified band, but corpus 1.5GB (10× larger than KM-CORPUS 100MB) is the differentiator. Lesson Q SFT-closed → pre-training only valid lane carry. Orchestrator: invoke tool/bg_la_engine_ag_orchestrator.hexa template with BG-LB env (cap $60 + duration 20h + preset lb_350m_pretrain + corpus 1.5GB) — operational clone deferred to fire-time._
+**verdict**: FIRE_LAUNCHED_TRAINING_IN_FLIGHT / emerge_state=PENDING_POST_TRAIN_EVAL  
+_L4 path (b) 350M scratch — H100 FIRE LAUNCHED 2026-05-09 12:14 KST (own 14/16/17/18/22/30/31/33/34/37/38/39/40 strict). orchestrator tool/bg_lb_engine_ag_orchestrator.hexa LANDED + train_bg_lb.py launcher LANDED + corpus 427MB combined (tier_a_v4 + persona_iter1 + dialogue_iter2; 1.5GB target shortfall — KICK WAVE 4 paraphrase + ko_heavy deferred to corpus iter-3) + arch bf16 dtype bug fixed in-flight + STEPS 100k→30k after H100 OOM at micro_batch=64 (effective batch 128 via grad_accum=16). step=200/30000 loss 10.55→5.18 (healthy). Projected 22.5h × $2.99 ≈ $67 marginally exceeds $65 cap → early-stop sentinel at step 28000 recommended. Phases 7-11 (ckpt pull + size sanity + release + ledger + HF private promote) deferred to post-training session. Lesson L EXTENDED-3 caveat carry. Lesson Q SFT-closed compliance (scratch pre-train, NOT SFT)._
 
 ### `BG-LC`
 

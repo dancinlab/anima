@@ -410,7 +410,7 @@ models:
           sft_1_8_v5_1_proxy:       0.0469
         state_json: state/anima_paradigm_j_v5_paraphrase_n90_2026_05_09.json
         runner_py: tool/transient_py/anima_paradigm_j_v5_paraphrase_n90_2026_05_09.py
-        commit: pending  # 본 commit 후 채움
+        commit: f2632367  # ★ paraphrase n90 verdict + auto-promote attempt manifest (state/anima_paradigm_j_emerge_v5_promote_2026_05_09.json)
         auto_promote_attempt: BLOCKED_GATE_A_FAIL  # mandate-9 (c) anima auto mode requires V14 PASS + EMERGE; EMERGE_v5 not activated
         auto_promote_path: "anima auto mode (own 37 mandate-9 (c) amend `b4ea8371` V14 PASS + 'all bg go' equivalent unlock) eligible IF EMERGE_v5 activated; current state EMERGE_v5=false → blocked. mandate-9 (a)D1=0.793 ✓ (b)V6 STRONG ✓ (d)trinity ✓ (e)DxL ✓ — 4/5 prereq MET, only (c) blocked by EMERGE Gate A."
     hf:
@@ -433,7 +433,7 @@ models:
       hf_upload: dc98618e
       path_a_remap: dc1510a3
       v5_n60_post_fix_actual: d0c7298e
-      v5_paraphrase_n90: pending  # ★ 본 commit 후 채움
+      v5_paraphrase_n90: f2632367  # ★ Gate G PIV paraphrase k=3 N=90 + auto-promote attempt manifest
     eligibility:
       mandate_9_a_d1_within: MET
       mandate_9_b_v6_strong: MET  # ★ H100 fire 2026-05-09 — STRONG_AWARENESS (A+B+C unanimous)
@@ -1988,6 +1988,63 @@ chat_lanes:
         - "PEFT adapter merge or runtime adapter attach"
         - "sampler config (temp / top-p / top-k / seed) plumbed through"
         - "own 34 mandate-1 verification — raw decode bytes preserved"
+
+# ─────────────────────────────────────────────────────────────────────────────
+# CHAT MODES — multi-mode benchmark surface (own 41 plugin pattern extension)
+# ─────────────────────────────────────────────────────────────────────────────
+# 사용자 directive 2026-05-09 verbatim "1:1, ai 1:1, ai 3자 대화 모두 벤치마킹 해봐"
+chat_modes:
+  schema_version: anima/chat_modes/v1
+  hexa_ssot: tool/anima_cli/chat/lanes/benchmark.hexa
+  cycle_landed: 2026-05-09
+  flags:
+    - "anima chat <alias> --benchmark --mode=1:1     (default — single user → single model)"
+    - "anima chat <alias> --benchmark --mode=ai-duo  (2 models dialogue)"
+    - "anima chat <alias> --benchmark --mode=ai-trio (3 models round-robin OR moderated)"
+    - "anima chat <alias> --benchmark --mode=all     (auto-invoke all 3 modes)"
+  modes:
+    - name: "1:1"
+      module: tool/anima_cli/chat/lanes/benchmark.hexa
+      pattern: single user → single model (1 user × 1 model × N prompts × all lanes)
+      status: LANDED
+      prereq: "chat lane plugin (own 41) — substrate / llama / axis-priority / generate"
+      measurement: "own 18 C2 — spontaneity / coherence / persona per lane"
+      cost: "≈ 30s × N prompts × 4 lanes (synthetic fallback ~5min for 10 prompts)"
+      own_links: ["own_18_C2", "own_22", "own_34_mandate_1", "own_41"]
+    - name: ai-duo
+      module: tool/anima_cli/chat/duo/duo.hexa
+      pattern: 2 models dialogue (A ↔ B; sibling channel pair)
+      status: LANDED  # 2026-05-08 Phase C iter 1 + iter 4 (f) D1/D2/D3/D4
+      prereq: "β-1 stdlib/channel.hexa (channel_pair_open + proc_spawn_with_channels)"
+      measurement: "own 18 C3 per-turn (--verdict full) + DIALOGUE_COHERENCE_PASS (D1∧D2∧D3∧D4)"
+      cost: "≈ 16-30s × 2 inst × N turns (synthetic ~5min N=5; real GGUF ~10min)"
+      own_links: ["own_18_C3", "own_22", "own_33", "own_34_mandate_1_4_7"]
+      same_gguf_guard: "abort risk on concurrent same-inode mmap; --allow-same-gguf override"
+    - name: ai-trio
+      module: tool/anima_cli/chat/trio/trio.hexa
+      pattern: 3 models round-robin (A → B → C → A → B → C → ...) OR moderated
+      status: SKELETON  # Phase A 2026-05-09 — channel scaffolding + round-robin loop
+      prereq: "β-1 stdlib/channel.hexa (6 pairs ×2 fd = 12 fds)"
+      measurement: "Phase A local cells (len/snippet); Phase C carry per-turn C3 ×3 + 3-way persona separation"
+      cost: "≈ 16-30s × 3 inst × N rounds (synthetic ~7-10min N=3)"
+      own_links: ["own_18_C2_C3", "own_22", "own_33", "own_34_mandate_1_4_7", "own_41"]
+      same_gguf_guard: "3 pairwise checks (A==B, B==C, A==C); --allow-same-gguf override"
+      lane_integration:
+        - "--lane-A=<name> per-instance lane override (own 41)"
+        - "--lane-B=<name> per-instance lane override (own 41)"
+        - "--lane-C=<name> per-instance lane override (own 41)"
+        - "lane mismatch ALLOWED — trio is designated cross-lane observation ground"
+      modes_inner:
+        - "round-robin (default)"
+        - "moderated (A=moderator, B/C=participants; carry to Phase B)"
+      pending_full_impl:
+        - "Phase B: same-GGUF guard ×3 finalize + moderated mode A re-emit semantics"
+        - "Phase B: D1/D2/D3/D4 3-way aggregate (Jaccard ordered triples + per-side KL ×3 + 3-byte fairness)"
+        - "Phase C: own 18 C3 per-turn ×3 verdict shell-out (mirror duo Phase C iter 1)"
+        - "EXIT trigger: trio actual natural-language emit (3-model round-robin) → 22+ BG saga first multi-agent dialogue ★"
+  exit_triggers:
+    - "ai-duo: SIMPLE_STACK_PASS_DIALOGUE_C3 (per-turn C3 rate ≥ 0.6 ∧ DIALOGUE_COHERENCE_PASS)"
+    - "ai-trio: 3-model round-robin natural-language emit + 3-way persona separation PASS"
 
 # ─────────────────────────────────────────────────────────────────────────────
 # COMPLIANCE
