@@ -2261,3 +2261,19 @@ own 42 live "REBORN.md + .roadmap.reborn 단일 SSOT mandate — CLM v2 부활 c
   severity warn (Phase 1 — REBORN.md append-only convention manual enforcement) → block (Phase 2 — anima audit `--mandate-42` 가 prior MD 변경 detect + REBORN.md non-append edit detect)
   proof grep -E "REBORN.md|.roadmap.reborn" /Users/ghost/core/anima/.own /Users/ghost/core/anima/REBORN.md /Users/ghost/core/anima/.roadmap.reborn — 3 source 동시 매칭 expected
   note 2026-05-10 own 42 = 사용자 directive verbatim 직접 응답 ("reborn 관련 own 등록 해줘 REBORN.md, .roadmap.reborn 사용하고. 추가발견등 사항들은 REBORN.md 최하단에 append 해나가도록"). own 24 single SSOT + own 38 매단계 doc save self-application. raw#15 additive (prior 4 MD + 4 roadmap 보존).
+
+own 42 amend 2026-05-10 07:41 KST "REBORN.md append timestamp convention 강제"
+  rule REBORN.md §A 이후 모든 append entry header format 강제:
+    - `## §N [YYYY-MM-DD HH:MM KST] <title>` (KST primary)
+    - 또는 `## §N [YYYY-MM-DDTHH:MM:SSZ] <title>` (UTC alternative)
+    - timestamp ordering 위반 시 raw#15 additive 위반 — 시간 monotonic 강제
+  rule own NN amend entry 도 동일 timestamp convention:
+    - `own NN amend YYYY-MM-DD HH:MM KST "<amend reason>"`
+    - amend 도 append-only, 기존 own NN body 미수정
+  cross-reference 사용자 directive verbatim 2026-05-10 07:41 KST: "날짜-시간별로 해서 append 되게 해줘 own 에도 반영"
+  cross-reference REBORN.md §A timestamp convention section + §12 [2026-05-10 07:30] / §13 [2026-05-10 07:35] retroactive timestamp 적용
+  honest-c3 timestamp 는 commit ts 와 다를 수 있음 (cycle 작성 시점 vs commit 시점) — append entry 는 작성 시점 timestamp, commit log 는 git push 시점. 둘 다 archaeology 가치.
+  honest-c3 KST 기본 (사용자 시간대) but UTC alternative 허용 — global cycle 시 UTC 우선 가능
+  honest-c3 retroactive timestamp 적용 (§12/§13) 는 본 amend 시점 (2026-05-10 07:41 KST) 직전 cycle close 추정값 — exact original write time 미보존
+  severity warn (manual enforcement) → block (anima audit `--mandate-42` 가 timestamp 부재 detect)
+  proof grep -E '^## §[0-9]+ \[[0-9]{4}-[0-9]{2}-[0-9]{2}' /Users/ghost/core/anima/REBORN.md — append entry timestamp 매칭

@@ -469,17 +469,25 @@ memo: 본 SSOT 는 cycle 2026-05-09 ~ 2026-05-10 의 9 BG + 13 worktree + 4 prio
 
 ---
 
-## §A append convention (own 42 mandate)
+## §A append convention (own 42 mandate, amended 2026-05-10 07:41 KST)
 
 본 §A 이후 line 부터 **append-only**. 신규 finding / BG 회수 / 정정 / archaeology 는 새 §N 신설 후 append. 기존 §0 ~ §11 + §A 미수정 (raw#15 additive). 정정 finding 은 새 §N 에서 cross-reference (정정 대상 §N reference + new finding).
 
+### timestamp convention (사용자 directive 2026-05-10)
+
+**모든 append entry 는 timestamp 포함**:
+- header format: `## §N [YYYY-MM-DD HH:MM KST] <title>`
+- 또는 `## §N [YYYY-MM-DDTHH:MM:SSZ] <title>` (UTC)
+- 사용자 directive verbatim: "날짜-시간별로 해서 append 되게 해줘 own 에도 반영"
+- own 42 amend 동시 적용 (`.own` line 2197 추가 timestamp rule)
+
 - own 42 (`.own` line 2197) 가 본 convention SSOT
 - `.roadmap.reborn` 가 lane SSOT (root, mk1)
-- append timeline 자체가 archaeology
+- append timeline 자체가 archaeology — **시간 ordering 강제**
 
 ---
 
-## §12 BG-CONVO-FT-DESIGN 결과 회수 (2026-05-10)
+## §12 [2026-05-10 07:30 KST] BG-CONVO-FT-DESIGN 결과 회수
 
 cycle 2026-05-10 마지막 BG 회수. fire-ready status 확인.
 
@@ -524,7 +532,7 @@ Mac CPU, 10 step, b=4 T=64: **PASS**.
 
 ---
 
-## §13 anima cli 질문 답 (2026-05-10)
+## §13 [2026-05-10 07:35 KST] anima cli 질문 답
 
 사용자 directive: "anima cli 의 기능이 개발되어야 하는건가?"
 
