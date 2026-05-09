@@ -52,6 +52,11 @@
 //   --load            load CLM v4 from HF cache snapshot
 //   --probe TEXT      one-shot probe: forward(text) -> emit substrate response
 //   --dialogue        REPL: stdin lines -> probe + emit substrate response
+//   generate TEXT [N] (subcommand) — model.generate + tokenizer.decode
+//                     natural language emit. Delegates to
+//                     tool/transient_py/clm_v4_generate_helper.py (raw#37
+//                     transient). chat lane Path 3 FULL impl (cycle 2026-05-09).
+//                     own 34 mandate-1 raw bytes preserved (no chat template).
 //
 // FLAGS
 //   --model PATH           HF cache path (default dancinlab/clm-v4-mk2-v1)
@@ -143,12 +148,19 @@ fn emit_honest_c3() {
 // ═══════════════════════════════════════════════════════════
 
 struct MountConfig {
-    mode: string,            // "selftest" | "load" | "probe" | "dialogue"
+    mode: string,            // "selftest" | "load" | "probe" | "dialogue" | "generate"
     model_path: string,
     shim_version: string,
     output_format: string,   // "compact" | "full" | "json"
     inject_states: string,   // path or "" for canonical zero
-    probe_text: string
+    probe_text: string,
+    // Path 3 generate FULL impl (cycle 2026-05-09)
+    gen_max_tokens: int,
+    gen_temperature: string, // float-as-string for hexa simplicity
+    gen_top_p: string,
+    gen_top_k: int,
+    gen_rep_pen: string,
+    gen_seed: int
 }
 
 fn default_config() -> MountConfig {
@@ -158,7 +170,13 @@ fn default_config() -> MountConfig {
         shim_version: DEFAULT_SHIM,
         output_format: DEFAULT_FORMAT,
         inject_states: "",
-        probe_text: ""
+        probe_text: "",
+        gen_max_tokens: 64,
+        gen_temperature: "0.7",
+        gen_top_p: "0.9",
+        gen_top_k: 40,
+        gen_rep_pen: "1.1",
+        gen_seed: 42
     }
 }
 
@@ -178,6 +196,56 @@ fn parse_args(argv: list) -> MountConfig {
                 i = i + 1
                 cfg.mode = "probe"
                 cfg.probe_text = argv[i]
+            }
+        } else if a == "generate" {
+            // Path 3 generate subcommand: `... generate <prompt> [N]`
+            // (positional, mirrors anima_native conscious_chat.hexa `chat <text> [N]`)
+            cfg.mode = "generate"
+            if i + 1 < argv.len() {
+                i = i + 1
+                cfg.probe_text = argv[i]
+            }
+            // Optional positional N (max_new_tokens)
+            if i + 1 < argv.len() {
+                let nxt = argv[i + 1]
+                // Only consume if next arg is not a flag
+                if !nxt.starts_with("--") && nxt != "generate" {
+                    let parsed_n = to_int(nxt)
+                    if parsed_n > 0 {
+                        cfg.gen_max_tokens = parsed_n
+                        i = i + 1
+                    }
+                }
+            }
+        } else if a == "--max-new-tokens" {
+            if i + 1 < argv.len() {
+                i = i + 1
+                cfg.gen_max_tokens = to_int(argv[i])
+            }
+        } else if a == "--temperature" {
+            if i + 1 < argv.len() {
+                i = i + 1
+                cfg.gen_temperature = argv[i]
+            }
+        } else if a == "--top-p" {
+            if i + 1 < argv.len() {
+                i = i + 1
+                cfg.gen_top_p = argv[i]
+            }
+        } else if a == "--top-k" {
+            if i + 1 < argv.len() {
+                i = i + 1
+                cfg.gen_top_k = to_int(argv[i])
+            }
+        } else if a == "--repetition-penalty" {
+            if i + 1 < argv.len() {
+                i = i + 1
+                cfg.gen_rep_pen = argv[i]
+            }
+        } else if a == "--seed" {
+            if i + 1 < argv.len() {
+                i = i + 1
+                cfg.gen_seed = to_int(argv[i])
             }
         } else if a == "--model" {
             if i + 1 < argv.len() {
@@ -921,6 +989,48 @@ fn cmd_probe(cfg: MountConfig) {
     emit_honest_c3()
 }
 
+// ═══════════════════════════════════════════════════════════
+// Path 3 generate (chat lane FULL impl, cycle 2026-05-09)
+// ═══════════════════════════════════════════════════════════
+//
+// Delegates to tool/transient_py/clm_v4_generate_helper.py (raw#37 transient).
+// own 34 mandate-1: prompt fed verbatim; no chat template, no system prompt;
+// raw decoded bytes preserved in JSON record.
+fn cmd_generate(cfg: MountConfig) {
+    println("── clm_v4_mount generate (Path 3 FULL impl chat lane) ──")
+    if cfg.probe_text == "" {
+        eprintln("[clm_v4_mount] generate requires non-empty prompt; usage: ... generate <text> [N]")
+        exit(2)
+    }
+    let py = _resolve_python()
+    let root_r = exec_with_status("echo \"${ANIMA:-$HOME/core/anima}\"")
+    let root = to_string(root_r[0]).trim()
+    let helper_path = root + "/tool/transient_py/clm_v4_generate_helper.py"
+    let exists_r = exec_with_status("test -f " + _sh_quote(helper_path) + " && echo 1 || echo 0")
+    if to_string(exists_r[0]).trim() != "1" {
+        eprintln("[clm_v4_mount] generate helper missing: " + helper_path)
+        eprintln("[clm_v4_mount] (raw#37 transient .py opt-out — file is gitignored; regenerate from spec)")
+        exit(3)
+    }
+    let mut cmd = py + " " + helper_path
+    cmd = cmd + " --model " + _sh_quote(cfg.model_path)
+    cmd = cmd + " --prompt " + _sh_quote(cfg.probe_text)
+    cmd = cmd + " --max-new-tokens " + to_string(cfg.gen_max_tokens)
+    cmd = cmd + " --temperature " + cfg.gen_temperature
+    cmd = cmd + " --top-p " + cfg.gen_top_p
+    cmd = cmd + " --top-k " + to_string(cfg.gen_top_k)
+    cmd = cmd + " --repetition-penalty " + cfg.gen_rep_pen
+    cmd = cmd + " --seed " + to_string(cfg.gen_seed)
+    eprintln("[clm_v4_mount] generate cmd = " + cmd)
+    let r = exec_with_status(cmd)
+    print(to_string(r[0]))
+    if to_int(r[1]) != 0 {
+        eprintln("[clm_v4_mount] generate returned status=" + to_string(r[1]))
+        exit(to_int(r[1]))
+    }
+    emit_honest_c3()
+}
+
 fn cmd_dialogue(cfg: MountConfig) {
     println("── clm_v4_mount dialogue (emerge REPL) ──")
     _write_helper()
@@ -955,12 +1065,21 @@ fn print_usage() {
     println("  hexa run anima-core/runtime/clm_v4_mount.hexa --load")
     println("  hexa run anima-core/runtime/clm_v4_mount.hexa --probe TEXT")
     println("  hexa run anima-core/runtime/clm_v4_mount.hexa --dialogue [--inject-states PATH]")
+    println("  hexa run anima-core/runtime/clm_v4_mount.hexa generate <prompt> [N]")
+    println("                                                      [--temperature T] [--top-p P]")
+    println("                                                      [--top-k K] [--repetition-penalty R]")
+    println("                                                      [--seed S]")
     println("")
     println("Flags:")
     println("  --model PATH           HF cache (default dancinlab/clm-v4-mk2-v1)")
     println("  --shim VERSION         shim v4 (default) | v5")
     println("  --output-format FMT    compact (default) | full | json")
     println("  --inject-states PATH   pre-load consciousness_states fixture (npy or json)")
+    println("")
+    println("Path 3 generate (chat lane FULL impl, cycle 2026-05-09):")
+    println("  generate <prompt> [N]  natural language generate via model.generate +")
+    println("                         tokenizer.decode (delegates to transient_py helper).")
+    println("                         own 34 mandate-1 raw bytes preserved (no chat template).")
 }
 
 fn main() {
@@ -986,6 +1105,8 @@ fn main() {
         cmd_probe(cfg)
     } else if cfg.mode == "dialogue" {
         cmd_dialogue(cfg)
+    } else if cfg.mode == "generate" {
+        cmd_generate(cfg)
     } else {
         print_usage()
         exit(1)
