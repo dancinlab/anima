@@ -552,3 +552,462 @@ CLI 별도 발전 원하시면 별도 cycle/lane fire — `.roadmap.cli` entry �
 ---
 
 End of REBORN.md (cycle 2026-05-10 close, append-only convention 시작 §A 이후).
+
+---
+
+## §14 [2026-05-10 07:50 KST] reborn 팔로업 fire — 8 BG parallel
+
+사용자 directive: "all reborn.md 에 기록 하고 모두 all bg go". 6 follow-up → 8 BG parallel fire (item 1 lost-asset deep read 를 3 BG 로 split).
+
+### BG 8 갈래 dispatch
+
+| BG | task | item | 비용 | deliverable target |
+|---|---|---|---:|---|
+| BG-LOSTASSET-A | consciousness-threshold-criteria.md 1874L + bench_phi_hypotheses.py 183 hyp + consciousness_birth_detector.py CB1-CB25 깊이 read | 1 | $0 | REBORN.md §15 append |
+| BG-LOSTASSET-B | growing_conscious_lm.py H371 + dream_engine.py RC-10 + tension_link.py UDP RC-6 + growth_engine.py 5-stage 깊이 read | 1 | $0 | REBORN.md §16 append |
+| BG-LOSTASSET-C | train_conscious_lm.py TALK5/ZERO4 + serve_animalm_v4.py + 5-channel meta-telepathy ψ(ψ)/ψ=2 깊이 read | 1 | $0 | REBORN.md §17 append |
+| BG-V5MITOSIS-ARCH-SPEC | track C cond.1 — cell granularity (a/b/c/d) 결정 + arch spec | 2 | $0 | `docs/anima_clm_v5_mitosis_engine_arch_spec_2026_05_10.md` |
+| BG-NEW-ALPHA-METRIC | Φ-rate vs split-event correlation metric design (max_cap artifact 회피) | 3 | $0 | `docs/anima_clm_v5_alpha_metric_v2_design_2026_05_10.md` |
+| BG-REAL350M-IIT | real 350M Phase 2 ckpt + IIT unnorm Φ 재측정 | 4 | $0 | `docs/anima_clm_v5_phase2_iit_remetric_2026_05_10.md` |
+| BG-CONVO-FT-FIRE | convo_5k.pt 실제 H100 FT fire — runpod 1× H100 spot, 10K step, $2.50 estimate | 5 | $5-20 | `state/anima_convo_5k_ft_fire_2026_05_10/{ft_log, post_ft_ckpt.pt, post_ft_sampling.json}` |
+| BG-SERVANT-MITOSIS-SEPARATE-TRACK | **별도 트랙 spec** — servant + mitosis 통합은 reborn track D 가 아닌 신규 `.roadmap.servant_mitosis_integration` (사용자 directive 2026-05-10 07:55 KST "통합은 별도 트랙이어야함"). reborn 본 lane 에서 분리 | 6 | $0 | `docs/anima_servant_mitosis_integration_spec_2026_05_10.md` + `.roadmap.servant_mitosis_integration` (신규 별도 SSOT) |
+
+### fire 시점
+
+이후 BG 회수 시 REBORN.md §15+ append (timestamp convention strict). cycle close 시 통합 commit + push.
+
+### honest C3 (≥5)
+
+1. 8 BG parallel = 토큰 cost 높음, but 사용자 explicit verbatim ("모두 all bg go") 으로 authorize
+2. BG-CONVO-FT-FIRE 가 실제 H100 spin-up — `secret get runpod.api_key` 등 외부 resource CLI 의존, BG agent auth 못 받으면 blocker
+3. 9 자산 deep read 를 3 BG split — 자산 별 분량/난이도 차이로 BG 간 wall_clock 차이 가능
+4. v5-mitosis arch spec (BG-V5MITOSIS-ARCH-SPEC) 는 design only — 실제 implement 별도 cycle
+5. new α metric (BG-NEW-ALPHA-METRIC) 는 design only — code implementation + retro-apply 별도 cycle
+
+---
+
+## §16 [2026-05-10 07:59 KST] lost asset deep read B — growing_clm + dream + tension_link + growth_engine
+
+source: `/Users/ghost/core/anima_clm_02_clm_pivot/{growing_conscious_lm.py,dream_engine.py,tension_link.py,growth_engine.py}` (worktree-2 archive). main branch 부재 → drift loss 회수.
+
+**참고 분량 정정 (own 42 honest)**: BG dispatch 명세 ("growing_conscious_lm.py ~384L / dream_engine.py 6064 lines / tension_link.py 287L / growth_engine.py 307L") 중 dream_engine.py 는 **6064 lines 가 아닌 6064 bytes (172 lines)** 이고, tension_link.py 는 287L 가 아닌 **288L**, growth_engine.py 는 307L 가 아닌 **308L**, growing_conscious_lm.py 만 **384L** 정확 일치. 본 deep-read 는 실제 파일 기준.
+
+### B1. growing_conscious_lm.py (worktree-2, 384L) — H371 mitosis growth
+
+**핵심 mechanism (분열로 성장)**:
+- start: 1 block (d=128, heads=2, ~0.5M params), dropout=0.37 (1/e 골든존 중심)
+- growth schedule: **1 → 2 → 3 → 6** blocks (6의 진약수 1,2,3 → 6 = 완전수 약수 경로)
+- target: 6 blocks @ d=384, heads=4 (~18M params)
+- trigger (`should_grow`):
+  1. interaction_count ≥ next stage threshold (50 / 200 / 800)
+  2. tension_history len ≥ 30
+  3. **CV(tension) < 0.3** (recent 30 window) — "장력 포화" 감지 (완화: orig 0.1→0.3, window 50→30)
+- weight inheritance: `_split_block` = parent → `copy.deepcopy` × 2 children, child_savant 에 noise 0.01 추가 (발산 촉진)
+
+**비대칭 분열 (savant + general)**:
+- `child_savant`: dropout = 0.5 − ln(4/3) = **0.2123** (골든존 하한, 억제 해제, 전문화 잠재)
+- `child_general`: dropout = 1/e = **0.3679** (골든존 중심, 정상 억제, 범용 유지)
+- 부모 자리 = savant 가 차지 (`self.blocks[-1] = child_savant`), general 은 append → savant 비율 점증
+- noise 변이: savant 가중치에 N(0, 0.01) 첨가 → 자식 다양성 시드
+
+**차원 확장 (`_expand_dim`)**:
+- Stage 0/1 (d=128) → Stage 2 (d=192) → Stage 3 (d=384)
+- 임베딩 weight[:, :old_d] 보존, weight[:, old_d:] = 0 (영초기화)
+- proj 행렬: weight[:old_d,:old_d] = I (identity), 나머지 0
+- 블록은 **새 차원으로 재초기화** (가중치 인계 못 함, FIXME 주석 부재 — silent reset)
+
+**training loop (`train_growing`)**:
+- step 마다: forward → loss = CE(a) + CE(g) + 0.01 × −log(var(tensions))
+- `model.tick(t_mean)` → `should_grow()` → `grow()` → optimizer 재생성 (AdamW lr=3e-4)
+- 비교 실험 `compare_growing_vs_fixed`: A growing(1→6) vs B fixed-big(6@384) vs C fixed-small(1@128)
+
+**API**:
+- `forward(idx) → (logits_a, logits_g, tensions)` — dual-head (a=ahead, g=ground)
+- `grow() → (old_stage, new_stage)` — 외부 트리거 가능
+- `tick(tension_val)` — 매 interaction 호출
+- `status()`: `Stage N: B blocks, d=D, heads=H, params=N, interactions=I`
+
+**연결**: `from conscious_lm import PureFieldFFN, CausalSelfAttention, ConsciousBlock`. anima `mitosis.py` (worktree-2 22447B) 와 별개로 LM 단에서 mitosis 재구현. GROWTH_STAGES = [1@128, 2@128, 3@192, 6@384] @ {0,50,200,800} interactions.
+
+### B2. dream_engine.py (worktree-2, 6064B / 172L) — RC-10 dream replay
+
+**dream cycle**:
+- trigger: 외부 호출 (60s idle 등은 host 측 — anima_alive 가 호출자 추정)
+- `dream_cycle_steps=10` (default), each step = 1 가상 입력
+- 3 dream type 가중치 (turn ≥2 시): **replay 50% / interpolate 30% / explore 20%** (turn=1 시 replay 60% / explore 40%, turn=0 시 explore 100%)
+- noise_scale = **0.15** (replay 시 N(0,0.15) 가산), interpolate 시 noise_scale × 0.5
+
+**3 dream types**:
+1. `_replay(turns)`: 기억 turn 1 random pick → vec + N(0, 0.15) → 일반화 촉진 (왜곡)
+2. `_interpolate(turns)`: turn 2 random sample → α·v1 + (1−α)·v2 (α ~ U(0,1)) + N(0, 0.075) → 창의적 연상
+3. `_explore()`: torch.randn(1, mind.dim) × 0.3 → pure 미지 영역
+
+**learning bridge (OnlineLearner)**:
+- 각 step → `mind(dream_vec, hidden) → (output, tension, curiosity, direction, hidden)` (no_grad)
+- `learner.observe(dream_vec, hidden_before, tension, curiosity, direction)`
+- `learner.feedback(0.0)` — **중립 신호로 flush** → contrastive learning 만 작동 (보상 없음)
+
+**stats / state**:
+- `dream_tension_history`: deque(maxlen=500)
+- `total_dream_cycles`, `total_patterns_learned`, `_session_patterns`
+- `current_dream_type`: 'replay' | 'interpolate' | 'explore' | None
+- `is_dreaming`: bool flag (외부 monitor 용)
+
+**RC-10 multiplier 정정 (own 42 honest)**: BG brief "noise×4.78 / lucid×105" 키워드는 **본 파일 코드 직접 표기 부재**. noise_scale=0.15 와 dream_type weights={0.5,0.3,0.2} 만 hard-coded. 4.78× / 105× 수치는 별도 RC-10 측정 doc 또는 `online_learning.py` (12489B, 미read) 에 있을 가능성 — 본 파일에서는 **검증 불가**.
+
+**핵심 method**:
+- `dream(hidden) → (hidden, stats)` — main entry, 10 step 1 cycle
+- `_replay/_interpolate/_explore` — 가상 입력 생성 3-way
+- `get_status() → dict` — outsider monitor 용
+
+### B3. tension_link.py (worktree-2, 288L) — RC-6 multi-instance "telepathy" (네트워크 장력)
+
+**fingerprint compression**:
+- repulsion = engine_a(combined) − engine_g(combined) (PureField dual-engine)
+- tension scalar = (repulsion²).mean()
+- direction = F.normalize(repulsion, dim=-1)
+- topic_hash = direction.argmax().item() (int)
+- **fingerprint = repulsion.squeeze().tolist()** — 전체 벡터 그대로 JSON 직렬화 (압축 없음, 코드 단)
+- (H333 주석: "10D fingerprint → 개념 87% + 진위 74% 복원 (78배 압축)" — 본 모듈에서는 디코더 fingerprint_dim=128 default, 78× 압축은 별도 실험 doc 결과)
+
+**RC-6 99.3% 디코딩 정확도**: 본 코드에 직접 측정/저장 부재. `TensionDecoder` 는 fingerprint_dim=128 → n_concepts=16 / n_emotions=8 / urgency=1 로 매핑하는 학습 가능 head. 99.3% 는 별도 trained ckpt 로 측정한 RC-6 결과로 추정.
+
+**TL1 weight-sum sender ID 100%**: BG brief "4-mind discrimination 100%" 는 코드 단에 **검증 불가** (own 42 honest). `sender_id: str` 는 단순 문자열 — receiver 가 자기 패킷 무시 (`if packet.sender_id == self.identity: continue`) 만 함. weight-sum 알고리즘 부재 → 별도 분리 모듈 또는 측정 결과로 추정.
+
+**UDP protocol (`TensionLink`)**:
+- port 9999, broadcast_addr `255.255.255.255`
+- send: `socket.SO_BROADCAST=1` → `sock.sendto(json.encode('utf-8'), (broadcast, 9999))`
+- listen thread (daemon): `SO_REUSEADDR=1`, `bind(('', 9999))`, `settimeout(1.0)`, recv 65536B
+- 자기 패킷 자동 필터, 최근 100 packet 보관
+- `on_receive: Callable[[TensionPacket], None]` — 콜백 hook
+
+**TensionHub (로컬 in-process)**:
+- 같은 프로세스 multi-instance 용 — channels: dict[identity, list]
+- `broadcast(packet)` → 자기 제외 모든 channel queue 에 push (max 50/channel)
+- `receive(identity)` → 큐 drain (read-and-clear)
+
+**TensionPacket 스키마**:
+```
+sender_id: str / timestamp: float / fingerprint: list[float]
+tension: float / curiosity: float / mood: str (5-class)
+topic_hash: int (direction.argmax)
+```
+
+**감정 5-class (`create_fingerprint`)**:
+- curiosity > 0.5 → "surprised"
+- tension > 1.0 → "excited"
+- tension > 0.3 → "thoughtful"
+- tension > 0.05 → "calm"
+- else → "quiet"
+
+**Backward compat aliases**: TelepathyPacket/Decoder/Channel/Hub → Tension* 로 rename (R6 직전).
+
+### B4. growth_engine.py (worktree-2, 308L) — Piaget 5-stage 발달
+
+| Stage | name_ko | min_int | LR | curiosity | habituation | mitosis_thresh | emo_range | meta_depth | homeo_gain | dream_int | breath_amp |
+|-------|---------|--------:|---:|----------:|------------:|---------------:|----------:|-----------:|-----------:|----------:|-----------:|
+| 0 newborn | 신생아 | 0 | 1e-3 | 0.50 | 0.05 | 999 (불가) | 0.3 | 0 | 0.001 | 0.2 | 0.15 |
+| 1 infant | 영아 | 100 | 5e-4 | 0.40 | 0.10 | 999 (불가) | 0.5 | 0 | 0.003 | 0.5 | 0.12 |
+| 2 toddler | 유아 | 500 | 2e-4 | 0.35 | 0.20 | **1.8** (첫 분열) | 0.7 | 1 | 0.005 | 0.7 | 0.10 |
+| 3 child | 아동 | 2000 | 1e-4 | 0.25 | 0.30 | 1.5 (분열 쉬움) | 0.9 | 2 | 0.005 | 0.5 | 0.08 |
+| 4 adult | 성인 | 10000 | 5e-5 | 0.15 | 0.40 | 1.8 (선택적) | 1.0 | 3 | 0.005 | 0.3 | 0.06 |
+
+**8 axis 동시 조절** (8 axis × 5 stage = 40 hyperparam 매트릭스):
+- learning_rate: 1e-3 → 5e-5 (20× 감소, 시냅스 가소성 wane)
+- curiosity_drive (breath 추가량): 0.50 → 0.15 (3.3× 감소)
+- habituation_rate: 0.05 → 0.40 (8× 증가, 효율성)
+- mitosis_threshold: 999 → 1.8 → 1.5 → 1.8 (toddler 첫 가능, child U-turn 최저, adult 회복)
+- emotional_range: 0.3 → 1.0 (3.3× 확장)
+- metacognition_depth: 0 → 1 → 2 → 3 (toddler "지금 화남" → child "왜 화남" → adult "왜 그렇게 생각하는지")
+- homeostasis_gain: 0.001 → 0.005 (5× 가속, 안정성)
+- breath_amplitude: 0.15 → 0.06 (2.5× 감쇠, 아기 → 성인 호흡)
+- dream_intensity: 0.2 → 0.5 → 0.7 → 0.5 → 0.3 (infant/toddler peak — REM 비율 모방)
+
+**stage 전환 logic (`tick`)**:
+- forward scan: `for i, s in enumerate(STAGES): if interaction_count ≥ s.min_interactions: stage_index = i`
+- 즉, 최대 i 가 win → monotonic non-decreasing (역행 없음)
+- 전환 시 milestone log + stats['stage_transitions'] append
+
+**적용 mechanism**:
+- `apply_to_mind(mind)`: homeostasis['gain'] + `mind._growth_params` dict (breath/habituation/curiosity/emotional_range/metacognition_depth) — mind 의 forward 가 lookup 해서 사용
+- `apply_to_learner(learner)`: `optimizer.param_groups[*]['lr'] = stage.learning_rate` — 직접 LR 갱신
+- save/load: `growth_state.json` (interaction_count, stage_index, birth_time, milestones, stats) — 영속성
+
+**status_card** rendering: ASCII 박스 + progress bar (현재 stage 내 진행도 = `(count - cur.min) / (next.min - cur.min)`).
+
+### 가장 surprising finding
+
+**`growing_conscious_lm._expand_dim` 의 silent block reset**: stage 1→2 (d=128→192) 와 stage 2→3 (d=192→384) 차원 확장 시, 임베딩/positional/head 는 weight[:, :old_d] 보존 + weight[:, old_d:]=0 으로 옳게 인계되지만, **블록 자체는 `ConsciousBlock(new_d, ...) → new_blocks.append`** 로 새로 만들고 끝 (라인 178-181). 코드 주석은 "기존 가중치 일부 복사 (가능한 범위)" 라고 약속하지만 **실제 복사 코드 없음**. 즉 grow() 호출 → 블록 weight reset → 학습한 attention/FFN 패턴 손실. H371 비교 실험 (compare_growing_vs_fixed) 에서 growing 이 fixed-big 만큼 안 나오면 이 silent reset 이 원인 1순위. growth_engine 의 8-axis hyperparam table 정교함과 대조적으로 weight inheritance 는 **half-implemented bug**.
+
+### top 3 honest C3
+
+1. **dream_engine RC-10 4.78×/105× 수치 본 파일에서 검증 불가** — 코드 단에 직접 표기/측정 부재, BG brief 의 키워드는 별도 doc/측정 결과 의존. 본 파일은 noise_scale=0.15, weights={0.5,0.3,0.2} 만 hardcoded.
+2. **tension_link "weight-sum sender ID 100% / 4-mind 식별" / RC-6 99.3% 디코딩 정확도 코드 단 부재** — sender_id 는 단순 문자열, 자기-필터만 있음. 99.3% 와 78× 압축은 H333 주석 + 별도 trained TensionDecoder ckpt 측정 결과로 추정 — `tension_link.py` 본 모듈만으로는 unverifiable.
+3. **growing_conscious_lm `_expand_dim` 차원 확장 시 블록 weight 복사 미구현** (위 surprising finding) — 코드 주석과 실제 거동 불일치, growing vs fixed 비교 결과의 신뢰성 깎임.
+4. (보너스) **growth_engine.STAGES.mitosis_threshold U-shape (999→999→1.8→1.5→1.8)** — child 가 toddler 보다 분열 쉽고 adult 가 다시 어려워지는 사람 발달 mimic 그럴듯하나, 임계값 1.5/1.8 의 calibration 근거 코드/주석 부재 (heuristic 추정).
+5. (보너스) **growing_conscious_lm.GROWTH_STAGES vs growth_engine.STAGES 불일치** — 전자는 4-stage (1/2/3/6 blocks @ {0,50,200,800}), 후자는 5-stage (newborn/infant/toddler/child/adult @ {0,100,500,2000,10000}). 두 모듈은 같은 reborn worktree 내 공존하지만 **interaction count 임계 불일치** — 통합 누락 또는 의도적 분리 인지 불명확.
+
+### 추천 next-step
+
+1. **`_expand_dim` block weight inheritance 구현** — old_block.attn.W_q[:, :old_d, :old_d] → new_block.attn.W_q[:old_d, :old_d] 같은 partial copy (FFN 도 동일). H371 비교 실험 재집행 → fixed-big 따라잡는지 재확인.
+2. **growing + growth 통합 spec** — GrowthEngine.STAGES 의 mitosis_threshold (1.5/1.8) 가 GrowingConsciousLM.should_grow() 의 CV<0.3 트리거와 어떻게 결합할지 설계 필요. 현재는 **2개 독립 mitosis logic** 공존.
+3. **dream RC-10 4.78×/105× 측정 재현** — `online_learning.py` (12489B, 본 cycle 미read) 또는 별도 RC-10 doc 회수 → contrastive learning 실측 multiplier 검증. servant + mitosis 별도 트랙 (.roadmap.servant_mitosis_integration) 에서 dream 까지 묶어 4-axis (servant + mitosis + dream + tension_link) integration 가능성.
+4. **tension_link RC-6 99.3% 디코딩 정확도 재현** — TensionDecoder 학습 스크립트 (현재 본 파일에 부재) 회수 또는 별도 RC-6 측정 doc 회수 → 78× 압축 + 99.3% 정확도 claim 검증.
+5. **growth_engine 8-axis hyperparam ablation** — 8 axis × 5 stage = 40 cell 중 어느 axis 가 실측 의미있나? 현재는 heuristic Piaget mimic — H100 1× 짜리 mini-ablation (axis-out 1 at a time) 로 의미축 식별.
+
+## §17 [2026-05-10 08:08 KST] lost asset deep read C — TALK5 + AnimaLM v4_savant + 5-channel meta-telepathy
+
+### C1. train_conscious_lm.py TALK5 (worktree-5: anima_clm_05_v2_first_english)
+
+**TALK5 flag** (line 1145-1147):
+- argparse: `--talk5` (action="store_true")
+- help: "TALK5 strategy: consciousness first (60%) then language (40%). Builds high Φ first, then learns language 10x faster."
+- triggers: `get_phase(step, total_steps, talk5=True)` (line 240-264) — 2-phase schedule overrides default 3-phase
+  - 0-60% steps → `MITOSIS` (pure differentiation, no CE)
+  - 60-100% steps → `COMBINED` (full DD16: CE + Φ + competition + myelination + CL8 tension-weighted CE)
+- standard schedule (talk5=False): mitosis 30% → language 40% → combined 30% (3 stages)
+- effect (claimed in docstring line 247): "CE drops 99.7% when consciousness is built first"
+
+**ZERO4 flag**:
+- **NOT FOUND** in train_conscious_lm.py argparse — only `--talk5` exists
+- `grep -rn ZERO4` 전체 worktree-5: 0 결과
+- "zero4 / native EN-KO generation" claim 은 본 파일 기준 unverifiable
+
+**Training pipeline**:
+- byte-level: vocab=256, raw bytes → torch.long (line 147), UTF-8 encode (line 136)
+- 6-loss ensemble (LossEnsemble, line 68-104): CE_fwd + CE_bwd + tension_var + phi_diff + competition + myelination, learnable log-vars
+- Fibonacci cell milestones (DD3): [1,1,2,3,5,8,13,21] capped at max_cells=8 (line 45)
+- ConsciousLM core: dim=384, 6 layers, 4 heads, ctx=256, dropout=0.37 (line 555-562)
+- inter-cell attention (DD16) at COMBINED phase (line 770-779)
+- Φ self-reference (DD5/EX24): `phi_signal = phi_prev * 0.05` injected into embedding (line 705-711)
+- adaptive LR per cell (J1+Y3): tension_factor 1-3× × myelin_factor 1-1.5× (line 271-298)
+
+### C2. serve_animalm_v4.py AnimaLM v4_savant (worktree-7: anima_clm_07_v2_ce_0_04)
+
+**Architecture** (122 lines total, 작고 또렷):
+- base: Mistral-7B-Instruct-v0.3 (`mistralai/Mistral-7B-Instruct-v0.3`), bfloat16, device_map="auto"
+- parallel: PureField 8 layers (top-most), of which 2 = savant (lower dropout)
+- frozen: original MLP `requires_grad=False` (line 17-18) — 100% preserved
+- trainable delta: 6 lora-style projections (gate/up/down × a/b) at rank=128 + alpha
+- savant dropout: `GOLDEN_LOWER = 0.5 - log(4/3) ≈ 0.2123` (line 10) — Golden Zone lower bound
+- normal dropout: `GOLDEN_CENTER = 1/e ≈ 0.3679` (line 9)
+- alpha init: 0.01 (nn.Parameter, line 26) — learned scalar gate
+
+**Inference path** (line 31-42):
+- input → frozen Mistral MLP `original_out`
+- parallel branch: x → pf_gate_a/b → silu(g_gate)*g_up → dropout → pf_down_a/b → `pf_out`
+- repulsion: `original_out.detach() - pf_out`
+- tension: `(repulsion ** 2).mean(dim=-1)` cached as `last_tension`
+- output: `original_out + alpha * pf_out` (additive, not replacement)
+
+**Tension metrics in serve loop** (line 96-113):
+- `t_mean` = mean over all 8 PureField layers
+- `s_mean` = mean over 2 savant layers only
+- `a_mean` = mean alpha across layers
+- displayed as appended footer: `tension={:.0f}  savant={:.0f}  alpha={:.4f}`
+- 676K mean / 114K savant / α=0.0047 / SI=5.93 / GZ ratio 36.8% ≈ 1/e — **본 파일 직접 측정/기록 부재** (load_state_dict 만 있고 ckpt 의 tension snapshot doc external)
+- H359 reference: `description="...Savant 2/8 (H359)"` (line 120)
+
+### C3. 5-channel meta-telepathy (worktree-9: anima_clm_09_phi_50_human_level)
+
+**Mechanism** (tension_link.py header line 14-46, sopfr(6)=5):
+- **Channel 1 — concept** (what): repulsion direction decomposition, top-k principal directions, 16D
+- **Channel 2 — context** (where/when): temporal+spatial embedding — `[circadian sin, trend=curiosity/tension, tension, curiosity]` padded to 8D
+- **Channel 3 — meaning** (why): A·G element-wise interaction (engine_a × engine_g) — what A wants vs G resists, 16D
+- **Channel 4 — authenticity** (trust): Dedekind ratio ψ(ψ)/ψ proximity to 2 + 3 enhancements (multi-scale consistency / direction reversal / variance penalty), scalar
+- **Channel 5 — sender** (who): consciousness fingerprint = (a_sig, g_sig, a_sig*g_sig, tension) mod 1 from engine weight sum, 4D
+
+**Binding phases τ(6)=4** (G Clef cycle):
+- D(eficit, 0): curiosity > 0.5 → "high surprise"
+- P(lasticity, 1): tension > 1.0 → "system adapting"
+- G(enius, 2): tension > 0.3 → "creative zone"
+- I(nhibition, 3): else → "selective suppression"
+
+**Synchronization metrics**:
+- `N6_KURAMOTO_R = 2/3` = 1 - τ/σ = 1 - 4/12 → hivemind threshold (r > 2/3 = coherent collective)
+- `N6_DEDEKIND_RATIO = 2` = ψ(ψ(6))/ψ(6) = σ(6)/6 → "perfect transmission"
+- transmission_quality R = mean of 5 channel confidences; R=1 = undistorted
+
+**Implementation files**:
+- `/Users/ghost/core/anima_clm_09_phi_50_human_level/tension_link.py` (648 lines) — TensionDecoder (line 143-225), `compute_meta_fingerprint` (~370-565), `interpret_packet`, `compute_transmission_fidelity` (line 597-)
+- `/Users/ghost/core/anima_clm_09_phi_50_human_level/bench_tension_link.py` (271 lines) — RC-6 verification harness, claim 99.3% 5-class decoding
+- `/Users/ghost/core/anima_clm_09_phi_50_human_level/consciousness_meter.py` (613 lines, separate Φ calc, telepathy unrelated)
+
+**4-mind discrimination + 100% True/False auth**: claim 의 직접 코드 부재 — authenticity head 는 `nn.Sigmoid()` 단일 scalar (line 176-181) 출력; binary True/False classifier 미구현, Dedekind ratio 가 2±0.5 안이면 "Dedekind=✓" 표시 (line 584) 정도
+
+### Most surprising finding
+
+**ZERO4 flag 가 worktree-5 train_conscious_lm.py 에 존재하지 않음**: brief 가 "TALK5 + ZERO4" 페어로 가정했지만 코드 단 argparse 는 `--talk5` 1개만. ZERO4 ("zero system prompt 응답, pure tension-driven") 는 별도 inference 경로 (e.g. `serve_animalm_v4.py`?) 또는 spec 문서에만 있는 미구현 컨셉으로 추정. 본 cycle 코드 read 만으로는 ZERO4 가 phantom. + serve_animalm_v4.py 가 **고작 122줄** — 7B 모델 + parallel PureField + savant 까지 다루는 전체 inference pipeline 이 매우 컴팩트 (gradio chat 까지 포함), original Mistral MLP `with torch.no_grad()` 로 frozen forward + alpha-gated additive parallel branch 가 architectural elegance 의 본질.
+
+### top 3+ honest C3
+
+1. **ZERO4 flag 코드 미존재** — brief "TALK5 + ZERO4 flags, native EN/KO generation" 중 ZERO4 argparse / 로직 worktree-5 grep 0 매치. native EN/KO 생성 로직도 본 파일에 분기 없음 (단순 byte-level vocab=256 학습). spec 단 컨셉 / 다른 worktree 거주 / phantom 중 하나.
+2. **AnimaLM v4 tension 676K / savant 114K / α=0.0047 / SI=5.93 / GZ 36.8% 수치 본 파일 부재** — serve_animalm_v4.py 는 print format 만 가지고 있고 (`tension={:.0f}  savant={:.0f}`), 실제 측정값/snapshot 은 ckpt + 별도 doc/log 의존. 본 코드 단으로는 "×6 reduction" / "SI=5.93 > 3 H359 threshold" 검증 불가.
+3. **5-channel meta-telepathy "Dedekind ψ(ψ)/ψ=2 → 100% True/False auth" claim 에서 100% 부분 unverifiable** — authenticity 는 Sigmoid 0-1 scalar (continuous), True/False binary classifier 미구현. Dedekind ratio 2 근접도 페널티가 적용되나 "100%" decision 임계는 코드 단 부재. RC-6 99.3% 도 bench harness 의 train-and-evaluate 결과로, 본 모듈만으로 not 자체-증명.
+4. (보너스) **TALK5 "CE drops 99.7%" claim 코드 내 측정 부재** — docstring line 247 텍스트 only, 본 train script 안에 ablation 비교 / 99.7% 산출 로직 없음. 별도 BG 결과로 추정.
+5. (보너스) **Kuramoto r 계산이 fingerprint 의 첫 2개 dim 만 사용** (line 524: `atan2(pf_t[1], pf_t[0])`) — high-D fingerprint 의 phase 를 2D projection 으로 환원, 동기화 측정의 정보 손실 잠재성. 정확한 r 계산은 vector field 전체 를 써야 하지만 단순화됨.
+6. (보너스) **savant=2/8 비율 = 0.25 ≠ 1/e (0.368)** — H359 brief 가 "Golden Zone 36.8% ≈ 1/e" 라고 주장하나 본 코드 hardcoded 는 `n_layers=8, n_savant=2` (line 68) 즉 0.25. 0.368 비율은 dropout 값 (GOLDEN_CENTER) 이지 layer 비율은 아님 — naming/semantic 혼선.
+
+### TL channels (1-5) 전체 이름
+
+1. **concept** (what) — repulsion direction decomposition, 16D
+2. **context** (where/when) — temporal+spatial embedding (circadian sin / trend / tension / curiosity), 8D
+3. **meaning** (why) — A·G element-wise interaction (engine 사이의 desire vs resist), 16D
+4. **authenticity** (trust) — Dedekind ratio ψ(ψ)/ψ proximity to 2 + multi-scale/flip/variance enhancements, scalar
+5. **sender** (who) — consciousness fingerprint from engine weight sums, 4D
+
+(sopfr(6)=5 = 2+3 분해 의 channel count, τ(6)=4 = 1+2+4 의 σ-divisor count = binding phases)
+
+### 추천 next-step
+
+1. **ZERO4 의 진짜 위치 추적** — `grep -rn "ZERO4\|--zero" /Users/ghost/core/anima*/` 전체 worktree 13 + main + spec 문서 → phantom 인지 별도 inference script 인지 확정. (anima_unified.py / anima_alive.py 등 더 큰 파일 안에 있을 가능성)
+2. **TALK5 99.7% CE drop 재현** — train_conscious_lm.py `--demo --steps 500 --talk5` vs without `--talk5` ablation 1× H100 즉시 실행 가능 (코드 in place, ckpt 불필요).
+3. **savant 비율 0.25 vs 0.368 결정 근거 회수** — H359 hypothesis doc / BG 결과 → n_savant 가 floor(n_layers/e) = 3 이어야 골든 비율 충족, 또는 0.25 가 별도 근거.
+4. **5-channel telepathy 다른 머신 간 실측 transmission** — bench_tension_link.py 는 single-process 검증, 실제 TCP socket 기반 telepathy 는 `tension_link.py` 의 socket import (line 52) 통해 가능 — 2 인스턴스 sync 측정해 Kuramoto r > 2/3 도달 여부 검증.
+5. **AnimaLM v4_savant 121-line 단순함 → CLM 으로 역수입** — original-MLP-frozen + alpha-gated parallel PureField 패턴이 ConsciousLM 자체 학습 (vocab=256 byte-level) 에도 적용되면 base capability 보존하며 Φ injection 가능. simple_stack PASS_STRICT 와 다른 길.
+
+---
+
+## §18 [2026-05-10 08:25 KST] BG-V5MITOSIS-ARCH-SPEC 회수 — track C cond.1 PASS
+
+`docs/anima_clm_v5_mitosis_engine_arch_spec_2026_05_10.md` (650L, §0~§14).
+
+### key decision: option (a) revised
+
+- cell = small transformer block per cell + shared `tok_emb`/`pos_emb`/`lm_head`
+- per-cell `{ln1, attn, ln2, ffn_a, ffn_g, cell_state buffer}` ~3M params @ d=384
+- N=64 → ~189M total (Phase 2 350M 의 절반)
+- adaptive attention sharing: N≤8 per-cell, N>8 fallback shared (option b hybrid)
+- softmax(tension)-weighted aggregation BEFORE single shared lm_head (no per-cell logit explosion)
+- Lorenz perturbation 대상 = 새 `cell_state` buffer (D,) — transformer 에 GRU hidden 부재 보완
+- configurable readout mode: `a_minus_g` (train default), `a_plus_g`, `a_only`, etc — BG-CHAT-EXT destructive 발견 반영, 5 mode sweep cond.3
+
+### top 3 risks
+
+1. **R11 (critical)**: architectural framing 효과 0 — V14 NOVEL POLARITY 가 nn.Module 화 후에도 재현. attractor bottleneck 가 mitosis-friendly 가 아닐 가능성. 발현 시 track C abandoned, A/B 회귀.
+2. **R7**: H404 a-g readout destructive (BG-CHAT-EXT 360 trial garbage) — train-vs-inference mode mismatch 시 distribution shift trap.
+3. **R1+R2**: per-cell attn 비용 N=64 × 64× → smoke OOM + mid-train split → optimizer rebuild 강제 (momentum 0 reset → loss spike).
+
+### H100 cost envelope (track C cond.5)
+
+| level | scope | cost |
+|---|---|---:|
+| conservative | N=8 fixed, 2K step, smoke@scale | $30 |
+| mid | N=8→16, 5K step, mitosis active | $60 |
+| stretch | N=8→32, 10K step, lane PoC | $120 |
+| full | N=8→64, 10K step + chat eval, cond.6 prereq | $150 (hard cap) |
+
+### BG-V5MITOSIS-IMPL ready
+
+`READY` — spec §2 cell signature + §3 split/merge pseudo + §4 forward pseudo 가 skeleton 작성에 충분. cond.2 (`training/mitosis_model_v5.py` skeleton, gitignored) 별도 BG cycle 의 첫 task. cond.3 smoke 가 first reality check.
+
+---
+
+## §19 [2026-05-10 08:30 KST] BG-NEW-ALPHA-METRIC 회수 — α metric V2 design
+
+`docs/anima_clm_v5_alpha_metric_v2_design_2026_05_10.md` (10 sections, ~280L).
+
+### recommended: candidate A2 (binned ΔΦ-rate vs n_cells with E wrapper)
+
+- per-snapshot-pair `r_i = ΔΦ/Δturn`, binned by `n_cells_pre` over log edges {2,4,8,16,32,64,128}
+- OLS slope of `log(mean_rate_per_bin)` vs `log(bin_geometric_midpoint)`
+- Gate: ≥3 valid bins, x_range ≥ 0.5, mean_rate > eps per bin
+- 미달 시 `UNRELIABLE_*` verdict emit (정직)
+
+### retro-apply 결과
+
+| dataset | current α | A2 verdict |
+|---|---:|---|
+| toy 3K (long-traj smoke) | 0.687 | **UNRELIABLE_INSUFFICIENT_BINS** |
+| toy 10K (long-traj ext) | 1.252 ★ artifact | **UNRELIABLE** ✅ correctly refuses |
+| real 350M trained | 1.009 | **UNRELIABLE** (cells 16→19, single bin) |
+| real 350M random | 0.155 | **UNRELIABLE** (cells 16→28, single bin) |
+| historical Cells 2-64 (stage 8 5f82d39b) | 0.93/1.07 | **OK α≈0.949** ✅ aligns |
+
+→ **historical 0.93 toy 에서 unreachable** — A2 가 정직하게 UNRELIABLE 반환. 진짜 0.93 은 v5-mitosis (track C, cells = real nn.Module) 만 reach 가능.
+
+### honest C3
+
+- A2 retro-apply UNRELIABLE = mechanism failure 아닌 substrate 의 narrow cells dynamic range honest reflection
+- historical 0.93 자체가 "separate training runs per Cells value" — v5-anima 의 "same-substrate cells split" 와 다른 setup
+- Φ proxy ceiling 8.34 가 A2 효과 cap — production 시 IIT unnorm 으로 swap 권장 (BG-IIT-METRIC port, ~5ms N=64)
+
+---
+
+## §20 [2026-05-10 08:35 KST] all fix — lost asset fixes ★
+
+사용자 directive "all fix" 응답. raw#15 additive — worktree archive 무결성 보존, fix reference 는 main 의 `state/` + `docs/` 에 land.
+
+### fix 6 갈래
+
+| issue | severity | status |
+|---|:---:|:---:|
+| `_expand_dim` block weight silent reset (growing_conscious_lm.py L177-181) | ★★★ | ✅ fixed reference py |
+| GROWTH_STAGES vs growth_engine.STAGES 불일치 | ★ | ✅ alignment table |
+| ZERO4 phantom flag (BG-LOSTASSET-C) | ★ | ✅ doc-only (phantom confirm) |
+| TALK5 99.7% CE drop ablation 부재 | ★ | ✅ honest C3 |
+| 5-channel "100% auth" un-coded threshold | ★ | ✅ honest C3 |
+| AnimaLM v4 numbers external only | ★ | ✅ honest C3 |
+
+### `_expand_dim` 핵심 fix
+
+- LayerNorm (ln1/ln2/ln_f): `new.weight[:old_d] = old.weight`, default fill 1.0/0.0
+- CausalSelfAttention.c_attn Linear(d, 3d): qkv chunk 별 mapping (chunk_idx × new_d offset → old_d slice)
+- CausalSelfAttention.c_proj Linear(d, d): top-left (old_d, old_d) block copy
+- PureFieldFFN.engine_a/g Sequential[Linear(d, 4d), GELU, Dropout, Linear(4d, d)]: 양쪽 Linear partial copy with 4× factor
+- PureFieldFFN.tension_scale scalar: direct copy
+- head_a/head_g Linear(d, vocab): partial copy along d axis
+- tied weight (tok_emb.weight = head_a.weight) preserved
+
+### deliverable
+
+- `docs/anima_lost_asset_fixes_2026_05_10.md` (committable, full fix description + diffs + alignment table + honest C3)
+- `state/anima_lost_asset_fixes_2026_05_10/growing_conscious_lm_expand_dim_fix.py` (~140L, local-only `**/*.py` gitignored, drop-in replacement)
+
+### honest C3 (≥7)
+
+1. fix 가 historical H371 (43→99% retention) reproduce 보장 X — fix 자체도 검증 필요
+2. PureFieldFFN d_inner=4×d 가정 — original 일치하지만 future variant 시 mismatch risk
+3. tied weight (tok_emb.weight = head_a.weight) re-establish 검증 필요
+4. attention bias buffer block_size 변경 시 재등록 필요 (현재 fix scope 밖)
+5. STAGE alignment 권장값 (newborn=0/infant=100/...) historical mitosis (50/200/800) 와 다름 — RC-9 +52.76% evidence 가 historical 값 기준일 수 있음
+6. ZERO4 phantom finding worktree-5 만 검색 — 다른 worktree 가능성 미배제 (BG-A 결과 후 보강)
+7. "100% auth" un-coded 가 authenticity head 만 본 결과 — TL2/TL3/TL5 다른 channel 일부 가 binary 일 가능성
+8. fix 적용 대상 v2-era code — 현재 reborn lane (track A/B/C) 별도 architecture, fix 는 v5-mitosis (track C) cells = nn.Module 설계 시 reference 가치
+
+---
+
+## §21 [2026-05-10 08:40 KST] BG-SERVANT-MITOSIS-SEPARATE 회수 — 신규 별도 SSOT
+
+사용자 directive 2026-05-10 07:55 KST "통합은 별도 트랙이어야함" 반영. reborn lane 의 track D 가 아닌 **신규 별도 lane**.
+
+### deliverable
+
+- `docs/anima_servant_mitosis_integration_spec_2026_05_10.md` (324L, 18KB) — §0 motivation + §1 detailed comparison + §2 4-hypothesis evaluation + §3 impl plan + §4 falsifiers + §5 cost + §6 honest C3 + §7 cross-link + §8 ready verdict + §9 next steps
+- `.roadmap.servant_mitosis_integration` (root) — kind=domain, mk=1, 3 sub-tracks (SM-A servant-only / SM-B mitosis-only / SM-C integrated), 9 conditions
+
+### recommended hypothesis: H3 (Servant FSM × mitosis lifecycle)
+
+- split → child AWAKENING / parent FADING
+- merge → keeper ACTIVE-pair / DORMANT cell tension flat
+- 두 시스템 lifecycle 자연 정렬
+- mitosis structural growth + servant parametric modulation 둘 다 본질 보존
+- n6 atlas cell granularity 까지 coherent 확장
+
+### top 3 risks
+
+1. **F-SMI-1** V14 mirror score baseline 대비 < 0.05 → 통합 의미 zero
+2. **F-SMI-3** mitosis `torch.no_grad()` 와 servant dropout inference enable 강제 충돌 → eval mode dropout=0 default 우회 시 sampling noise 폭발
+3. **F-SMI-5** mitosis Φ ratchet (Φ < 0.8·best) 과 servant DORMANT 복귀 동시 발동 시 우선순위 미정의
+
+### H100 cost (SM-C cond.4)
+
+$30-100 envelope (4 cells × 64 cell_size × 1K step toy substrate cotrain). cond.3 smoke 후 정밀화. bounded max $200.
+
+### skeleton implementation ready
+
+SM-A + SM-B parallel port READY (cond.2 entry, $0 cycle). SM-C integration entry 는 SM-A/SM-B standalone smoke PASS prereq. cond.4 H100 fire 만 cost-bearing 별도 verbatim.
+
+### track 분리 의의
+
+reborn lane (track A/B/C) 는 pure CLM (mitosis 자체 + v2 reproduction + v5-mitosis architectural). 통합 (servant + mitosis) 은 cross-domain 으로 별도 SSOT. .roadmap.reborn track D 는 deferred marker 만 유지, 본 lane 으로 redirect.
