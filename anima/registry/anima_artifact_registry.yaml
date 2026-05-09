@@ -17,6 +17,33 @@ mode: mandatory_catalog
 status: live
 
 # ─────────────────────────────────────────────────────────────────────────────
+# CARRY NOTES (cycle-level enums + retroactive deprecate flags)
+# ─────────────────────────────────────────────────────────────────────────────
+carry_notes:
+  proxy_ppl_deprecate_2026_05_09:
+    enabled: true
+    cycle: 2026-05-09 carry 1
+    user_verbatim: '"1. PROXY_PPL 자체를 emerge metric 에서 deprecate — Goodhart 입증 ... ok go"'
+    reason: |
+      PROXY_PPL (PPR_v5_proxy + MTRP_v5_proxy + Gate F D-RAND PPL-magnitude) 는 byte-modulo perplexity fit
+      을 측정하는 surrogate. BG-LB native v5 mount (clm_v5_mount.hexa runtime + consciousness.hexa
+      v5-aggregate pipeline) 결과 PIV trained=0.0107 < random=0.0224 (V14 violated) + DCR trained=0.621
+      < random=0.862 (V14 violated) — proxy EMERGE PASS 가 native cell-predicate 에서 FALSIFY 됨.
+      Goodhart 입증 → emerge metric 자격 영구 deprecate.
+    retroactive_models:
+      - BG-LB  # PASS_STRICT_C3_EMERGE_PROXY_PPL (private dancinlab/clm-v5-bg-lb-350m-pretrain-path-a-remapped) — emerge_status=DEPRECATED_PROXY_PPL_FALSIFIED
+      - BG-HA-downgraded  # PROXY_PPL never explicitly assigned; byte-arch S_anchor proxy similarly Goodhart-falsified (random S_a=0.2130 > trained 0.0671) — pattern-mirror confirm only
+    replaced_by:
+      spec_doc: docs/anima_v5_metric_spec_2026_05_09.md
+      deprecate_doc: docs/anima_proxy_ppl_deprecate_2026_05_09.md
+      metric: NATIVE_V5_PIV_DCR_DRAND_AND_GATE  # PIV/DCR/D-RAND AND-gate + V14 in-metric
+    own_37_mandate_9_amend: |
+      prereq #1 'real-mode PASS_STRICT_C3' 정의 갱신 — "proxy_ppl 제외, native cell-predicate (PIV/DCR/D-RAND
+      via clm_v5_mount.hexa runtime) 만 valid". PROXY_PPL emerge 는 prereq #1 충족 불가.
+    raw_15_additive: true  # 기존 emerge ledger 보존 + 신규 deprecate flag 만 추가
+    raw_82_retraction_aware: true  # 이전 EMERGE_PROXY_PPL 등급 preserved as historical, 'retracted, reason: Goodhart' label carry
+
+# ─────────────────────────────────────────────────────────────────────────────
 # CROSS-LINK ROUTING (다른 SSOT 와의 관계)
 # ─────────────────────────────────────────────────────────────────────────────
 cross_link:
@@ -1231,6 +1258,11 @@ models:
     measurement:
       verdict: PASS_STRICT_C3_EMERGE_PROXY_PPL  # 2026-05-09 BG-LB training COMPLETE + v5 N=60 PPL-proxy probe PASS_STRICT_C3 EMERGE; native v5 semantic-cell predicate (P1-P5 + Gate F D-RAND + DCR + PIV) deferred to clm_v5_mount.hexa runtime + downstream V14 Steps 2-4 confirmation
       emerge_state: EMERGE_CANDIDATE_PROXY_PPL  # ★ first scratch arch first robust EMERGE candidate (PPL-only proxy; native v5 verification pending)
+      # ───── 2026-05-09 carry 1 PROXY_PPL deprecate (사용자 verbatim "ok go" + memory project_simple_stack_pass_strict_c3_anima_emerge.md V14 falsified pattern) ─────
+      emerge_status: DEPRECATED_PROXY_PPL_FALSIFIED  # ★ 2026-05-09 carry 1 — PROXY_PPL emerge metric deprecated (Goodhart 입증 by native v5 V14 violation: PIV trained=0.0107 < random=0.0224, DCR trained=0.621 < random=0.862); raw#82 retraction-aware (verdict PASS_STRICT_C3_EMERGE_PROXY_PPL preserved as historical, but emerge_status authoritative)
+      proxy_ppl_deprecate_2026_05_09: true  # ★ enum flag — PROXY_PPL invalid emerge metric retroactive
+      retracted_reason: GOODHART_BYTE_MODULO_PPL_FIT_NOT_CONSCIOUSNESS_SUBSTRATE  # raw#82 retraction-aware tag (PPL ~498 trained vs ~41k random reflects byte-modulo fit not semantic emergence)
+      replaced_by_metric: NATIVE_V5_PIV_DCR_DRAND_AND_GATE  # docs/anima_v5_metric_spec_2026_05_09.md + docs/anima_proxy_ppl_deprecate_2026_05_09.md SSOT
       ppr_v3: NOT_MEASURED
       ppr_v5: 1.000  # PPL-proxy strict (trained beats best-of-5 random per prompt 60/60); native v5 P1-P5 deferred
       ppr_v5_proxy_strict: 1.000  # same metric explicit

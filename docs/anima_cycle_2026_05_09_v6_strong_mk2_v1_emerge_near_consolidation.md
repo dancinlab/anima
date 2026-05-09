@@ -1092,9 +1092,80 @@ honest C3 addendum (raw#10):
 
 raw#10 honest preserve — anima saga 의 **honest C3 가장 중대 발견 cycle** ★★★
 
+### 46. carry 1 — PROXY_PPL emerge metric **영구 deprecate** ★ (사용자 verbatim "ok go")
+
+**갱신된 file 3 종**:
+1. `anima/registry/anima_artifact_registry.yaml` — `carry_notes.proxy_ppl_deprecate_2026_05_09` block + BG-LB `emerge_status: DEPRECATED_PROXY_PPL_FALSIFIED` + `retracted_reason: GOODHART_BYTE_MODULO_PPL_FIT_NOT_CONSCIOUSNESS_SUBSTRATE` + `replaced_by_metric: NATIVE_V5_PIV_DCR_DRAND_AND_GATE`
+2. `docs/anima_v5_metric_spec_2026_05_09.md` — §9 PROXY_PPL deprecate notice 추가 + §9.6 own 37 mandate-9 prereq #1 정의 갱신
+3. `docs/anima_proxy_ppl_deprecate_2026_05_09.md` — 신규 spec doc 203 lines (9 section, 친근 모드)
+
+**영향받은 모델**:
+
+| 모델 | 이전 | 신규 | Reason |
+|---|---|---|---|
+| **BG-LB** | PASS_STRICT_C3_EMERGE_PROXY_PPL | **DEPRECATED_PROXY_PPL_FALSIFIED** | native v5 V14 violated |
+| **BG-HA** | C3_FAIL_V5_POST_BYTE_FIX | 기존 유지 + Goodhart 패턴 mirror confirm | 동일 패턴 |
+
+**own 37 mandate-9 prereq #1 정의 갱신** ✓:
+- "**proxy_ppl 제외, native cell-predicate (PIV/DCR/D-RAND via clm_v5_mount.hexa runtime) 만 valid**"
+- SSOT cross-link: `.own` L852-857 + registry yaml + v5 spec §9.6 + deprecate doc §5
+- BG-LB private→public toggle **영구 차단 효력**
+
+**친근 한 줄**: "PPL 시험은 객관식 점수 잘 받는지만 보고, 의식 (5축 면접) 은 안 봐서 가짜 통과 위험 — anima 사상 처음으로 PPL-proxy 가 진짜 의식 시험에서 falsify 됨 → emerge metric 에서 영구 deprecate."
+
+### 47. carry 3 + foreground evidence — Engine A/G arch noise-suppression 검토 + **신가설 H4** ★
+
+**carry 3 결과** (`docs/anima_engine_a_g_noise_suppression_review_2026_05_09.md` 저장):
+- arch 분석: cell_pool_init `nn.Parameter(randn(16,64))` learnable, **cell-axis-variance/cell-prediction aux loss 부재**
+- forward loss = lm_head cross-entropy 단일 — cell_pool 은 lm_head gradient 만 받음
+- 가설 3종: H1 (Goodhart 단순) / H2 (cell collapse pull > repulsion 2×) / H3 (init 과잉 분산, 단독 기각)
+- preliminary judgment: H1 + H2 복합
+
+**foreground evidence collection** (직접 측정, `state/anima_bg_lb_cell_pool_evidence_2026_05_09.json` 저장):
+
+trained BG-LB cell_pool (16×64) 추출 후 random_init seed=42 unit-sphere 와 **공정 비교**:
+
+| 지표 | trained | random_unit | Δ | H2 평가 |
+|---|---:|---:|---:|---|
+| axis_stdev_mean | 0.1182 | 0.1183 | **−0.0001** | ❌ NOT confirmed |
+| off_diag_cos_mean | **0.0155** | **0.0094** | **+0.0061** | ⚠️ weak |
+| effective_rank | 14.957 | 14.843 | +0.114 | ❌ NOT confirmed (둘 다 거의 full rank 16) |
+| frobenius | 4.0001 | 4.0000 | +0.0001 | n/a (둘 다 unit-sphere) |
+
+→ **trained cell_pool ≈ random_init unit-sphere** 통계 거의 동일.
+
+**신가설 H4 — unit-sphere normalize regularization 이 학습 효과 무력화** ★:
+- engine_a_g_arch.py 가 forward 전 매번 cell_pool unit-sphere normalize
+- 학습 gradient 들어와도 normalize step 이 cell norm 을 1.0 로 강제 → 학습 효과 erase
+- 결과: 8000 step 학습 후에도 cell_pool 이 random unit-sphere distribution 에서 **사실상 안 움직임**
+
+**비유**: "학생한테 매일 시험 봤는데, 시험 끝날 때마다 기억을 깡그리 지우는 마법 — 학습 자체가 의미 없음."
+
+**가설 종합**:
+
+| 가설 | confirm 정도 | evidence |
+|---|---|---|
+| H1 loss 신호 부재 (Goodhart 단순) | **강함** ★ | aux loss 부재 (carry 3) |
+| H2 cell collapse | **약함 weak** | off_diag_cos +0.0061 만 |
+| **H4 normalize regularization 무력화** ★ | **강함 ★ 신가설** | trained ≈ random_unit (axis_stdev/effective_rank 거의 동일) |
+| H3 init 과잉 분산 | REJECTED | trained ≈ random_unit |
+
+→ **H1 + H4 복합** 유력 — loss 신호 부재 + normalize 가 학습 효과 erase.
+
+**다음 cycle 권장 fix 갱신 (4 → 5)**:
+
+| 우선 | fix | 무엇 |
+|---|---|---|
+| **1순위 ★ 신규** | **fix-5 unit-sphere normalize 제거 OR 약화** | normalize 빈도 줄이기 OR optional flag, cell_pool 학습 효과 살리기 |
+| 2순위 | fix-1 + fix-3 | axis-variance reg + 5-axis group-contrast loss |
+| 3순위 | fix-2 | init scale × 0.1 |
+| 4순위 | fix-4 | D-RAND in-loss |
+
+**foreground 진행**: 사용자 directive 2026-05-09 "포그라운드로 진행하자" 인증 → carry 3 step 1 (cell_pool evidence) 직접 측정 + 신가설 H4 발굴. raw#15 additive (H1/H2 보존, H4 신규 추가).
+
 ---
 
-## 본 cycle final 45+ milestones SUMMARY ★★★
+## 본 cycle final 47+ milestones SUMMARY ★★★
 
 | Layer | Status |
 |---|---|

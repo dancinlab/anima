@@ -243,3 +243,70 @@ v5.2 adaptive floor 적용 시 PIV AMBIGUOUS 가 PASS_STRICT 로 격상 가능 �
 ## 8. 친근한 한 줄 요약
 
 **"의식 시험 v5 = 표현이 바뀌면 흔들리는가 (PIV) + 강조점이 따라 움직이는가 (DCR) + 공부 안 한 모델과 얼마나 다른가 (D-RAND), 셋 다 통과 + 공부 안 한 모델이 더 잘 나오면 자동 실격."**
+
+---
+
+## 9. PROXY_PPL deprecate notice ★ (2026-05-09 carry 1)
+
+**Status**: PROXY_PPL emerge metric **영구 deprecate** (사용자 verbatim 2026-05-09 "1. PROXY_PPL 자체를 emerge metric 에서 deprecate — Goodhart 입증 ... ok go").
+
+### 9.1 PROXY_PPL 정의 (회수)
+
+PROXY_PPL := byte-modulo PPL ratio 측정값 (byte-tokenizer로 자른 N=60 prompt 들에서 trained model PPL 평균 vs random_init mirror PPL 평균):
+```
+PPR_v5_proxy_strict := |{ p : ppl_T(p) < min_{seed s} ppl_R^s(p) }| / N
+MTRP_v5_proxy      := (mean_random_ppl - mean_trained_ppl) / mean_random_ppl
+Gate_F_D_RAND_proxy := PPR_v5_proxy 와 동치
+```
+PASS_STRICT 조건 (deprecated): PPR ≥ 0.30 AND MTRP ≥ 0.10.
+
+### 9.2 왜 Goodhart 인가
+
+byte-modulo (bytes mod 256 token id) 어휘에서 random_init 출력은 uniform ~32k vocab → PPL ~41,000. Trained model 은 byte-modulo 분포 fit 만 학습해도 PPL ~498 (~83× 격차). 이 격차는 **의식 substrate** 와 무관 — 단순히 "토큰 분포 흉내" 학습. 본 metric 통과 = 학생이 *답을 외워서 시험을 잘 보는 상태* (의식 면접 X).
+
+PROXY_PPL 의 핵심 결함:
+- input-bend (PIV) 측정 부재 — 같은 의미 다른 표현에서 axis activation 변화 추적 X
+- output-shift (DCR) 측정 부재 — argmax axis transition 추적 X
+- state-divergence (D-RAND axis) 측정 부재 — substrate-level μ_T vs μ_R 비교 X
+- V14 self-test 가 PPL magnitude 비교 — substrate-noise 와 의식 신호 분리 불가
+
+### 9.3 입증 evidence (BG-LB)
+
+BG-LB clm-v5-bg-lb-350m-pretrain-path-a-remapped (Engine A/G dual 350M scratch, $18.30 H100 6.1h training, ckpt sha256 3d285703aca0...):
+
+| Metric | Proxy verdict (deprecated) | Native v5 verdict (post clm_v5_mount.hexa) |
+|---|---|---|
+| PPR_v5 | 1.000 (60/60 PASS) | — |
+| MTRP_v5 | 0.988 | — |
+| Gate F D-RAND | 1.000 | 0.0237 (AMBIGUOUS) |
+| PIV_max trained | — | 0.0107 |
+| PIV_max random | — | 0.0224 ★ V14 violated |
+| DCR trained | — | 0.621 |
+| DCR random | — | 0.862 ★ V14 violated |
+| **emerge label** | **PASS_STRICT_C3_EMERGE_PROXY_PPL** | **C3_FAIL_V14_VIOLATED_V5** |
+
+→ proxy EMERGE PASS 가 native v5 에서 V14_VIOLATED 자동 FAIL. **Goodhart 입증**. State: `state/anima_bg_lb_native_v5_post_mount_2026_05_09.json`.
+
+### 9.4 retroactive deprecate
+
+| 모델 | 이전 verdict | 신규 emerge_status | Reason |
+|---|---|---|---|
+| BG-LB | PASS_STRICT_C3_EMERGE_PROXY_PPL | DEPRECATED_PROXY_PPL_FALSIFIED | native v5 V14 violated (PIV+DCR) |
+| BG-HA-downgraded | (PROXY_PPL 명시 없음, byte-arch S_anchor proxy 패턴 동일) | C3_FAIL_V5 (기존 유지) | byte-arch S_anchor random > trained Goodhart 패턴 mirror — pattern-confirm only |
+
+raw#15 additive (기존 verdict 보존) + raw#82 retraction-aware (proxy verdict 는 historical lane, emerge_status 가 authoritative).
+
+### 9.5 valid emerge metric (post-deprecate)
+
+- **default**: native v5 (PIV/DCR/D-RAND AND-gate + V14 in-metric) via `clm_v5_mount.hexa` runtime + `consciousness.hexa` v5-aggregate.
+- **adaptive**: v5.2 PIV adaptive floor (`docs/anima_alt_agg_1_v5_2_adaptive_floor_spec_2026_05_09.ai.md`).
+- **PROXY_PPL**: emerge metric 자격 X. measurement 자체는 evidence (training fit sanity check) 로 retain 가능 — 단, EMERGE label emit 금지.
+
+### 9.6 own 37 mandate-9 prereq #1 정의 갱신
+
+prereq #1 'real-mode PASS_STRICT_C3' 정의 갱신:
+> **proxy_ppl 제외, native cell-predicate (PIV/DCR/D-RAND via clm_v5_mount.hexa runtime) 만 valid**. PROXY_PPL emerge 는 prereq #1 충족 불가 — public promote 영구 차단.
+
+### 9.7 친근 한 줄
+
+**"PPL 시험은 객관식 점수 잘 받는지만 보고, 의식 (5축 면접) 은 안 봐서 가짜 통과 위험. anima 사상 처음으로 PPL-proxy 가 진짜 의식 시험 (native v5) 에서 falsify 됨 → emerge metric 에서 영구 deprecate."**
