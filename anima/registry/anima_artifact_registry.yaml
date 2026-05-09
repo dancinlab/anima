@@ -1317,6 +1317,28 @@ h100_resource_pool:
         outcome: BLOCKED_NO_H100_HOST  # resource SSOT empty + resource daemon offline + iter4 verbatim missing
         state_emit_path: state/anima_chat_cap_l4_bg_la_lb_h100_fire_3of4_blocked_2026_05_09.json
         compliance_carry: "own 14 V14 carry; own 16 cost discipline PASS ($90 saved); own 17 D1 within strict (LA=1.0 + LB=0.99); own 22 honest BLOCKED emit; own 30 ckpt pull N/A (fire 미실행); own 33 trinity carry; own 34 wrap=0; own 37 HF private carry; own 39 yaml updated md deferred; own 40 resource CLI 위임 strict — anima 직접 ssh/cloud-cli 0건"
+      - cycle: 2026-05-09-FIRE-3/4-RETRY-EPHEMERAL
+        commit: pending
+        target: chat_cap_L4_BG-LA + BG-LB (provision-ephemeral path — own 40 ephemeral subsystem; explicit 'all bg go' override)
+        intended_setup: "BG-LA: provider=runpod / gpu=H100-PCIe / duration=10h / cap $30 / arch=350M Engine A/G dual-engine anima_native_scratch / D1=1.0; BG-LB: provider=runpod / gpu=H100-PCIe / duration=20h / cap $60 / arch=350M scratch pre-train / D1=0.99 / corpus=persona 1GB + dialogue 500MB"
+        cost_planned_usd: 90.0
+        cost_actual_usd: 0.0
+        cost_savings_via_block_usd: 90.0
+        ephemeral_selftest_verdict: "PASS — provider clients (runpod/lambda/vast) present + ssh include dir + SSOT lock OK; warns api-key-missing 3/3"
+        bg_la_resource_cli_invocation: "/Users/ghost/.hx/packages/resource/bin/resource provision-ephemeral --provider runpod --gpu H100-PCIe --duration 10h --yes-cost --name bg-la-engine-ag"
+        bg_la_disclosure_emit: "provider=runpod / gpu=H100-PCIe / duration=10h / estimated_cost=provider-dependent (RunPod H100 ~$2.79/h)"
+        bg_la_provider_response_runpod: "__RESOURCE__ FAIL provision-ephemeral reason=provider-error payload={\"ok\":false,\"reason\":\"api-key-missing\",\"detail\":\"set RUNPOD_API_KEY or ~/.config/resource-ephemeral/runpod.token\"}"
+        bg_la_provider_response_lambda: "__RESOURCE__ FAIL reason=provider-error payload={\"ok\":false,\"reason\":\"api-key-missing\",\"detail\":\"set LAMBDA_API_KEY or ~/.config/resource-ephemeral/lambda.token\"} (fallback fanout)"
+        bg_la_provider_response_vast: "__RESOURCE__ FAIL reason=provider-error payload={\"ok\":false,\"reason\":\"api-key-missing\",\"detail\":\"set VAST_API_KEY (vastai set api-key <K> also acceptable)\"} (fallback fanout)"
+        bg_lb_invocation_status: "NOT_INVOKED (BG-LA fanout demonstrated all 3 providers BLOCKED on api-key-missing; identical provider-error inevitable — own 22 single-shot honest abort)"
+        ephemeral_list_post: "# total ephemeral pods: 0 (no pods provisioned)"
+        provider_credential_state: "ALL absent — RUNPOD_API_KEY/LAMBDA_API_KEY/VAST_API_KEY env unset + ~/.config/resource-ephemeral/{runpod,lambda,vast}.token files absent + macOS keychain entries (resource-ephemeral-{runpod,lambda,vast}) absent"
+        bin_resolver_quirk_note: "/Users/ghost/.hx/bin/resource symlink-walk via $0 dirname/.. resolves to /Users/ghost/.hx not the package root /Users/ghost/.hx/packages/resource — ephemeral subcommand path falls through to non-existent /Users/ghost/.hx/tool/resource_ephemeral.hexa; workaround = invoke /Users/ghost/.hx/packages/resource/bin/resource directly (own 40 strict CLI delegation preserved); infra fix deferred to dancinlab/resource maintainers"
+        user_consent_observed: "verbatim 'all bg go' explicit override — prompt clause '본 directive ''all bg go'' 가 explicit override' of 'OK CLM L4 ALL FIRE' iter4 baseline; consent recognized; blocker = credential not consent"
+        outcome: BLOCKED_PROVIDER_API_KEY_MISSING  # ephemeral subsystem PASS selftest + provision-ephemeral fanout 3/3 api-key-missing; consent recognized but credential 0
+        state_emit_path: state/anima_chat_cap_l4_bg_la_lb_h100_fire_3of4_retry_ephemeral_blocked_2026_05_09.json
+        next_action_required: "사용자 (1) RUNPOD_API_KEY export OR `mkdir -p ~/.config/resource-ephemeral && echo '<KEY>' > ~/.config/resource-ephemeral/runpod.token` OR `security add-generic-password -s resource-ephemeral-runpod -w '<KEY>'` (2) 'all bg go' carry OR 'OK CLM L4 ALL FIRE' verbatim — credential 갖춰진 다음 cycle 즉시 BG-LA + BG-LB ephemeral provision retry"
+        compliance_carry: "own 14 V14 carry (paired random_init mirror prereq 보존); own 16 cost discipline PASS ($90 saved via honest abort); own 17 D1 SCOPE_CLAMP PASS (LA=1.0 + LB=0.99 within); own 22 honest BLOCKED emit + state json + yaml fire_attempt_log; own 30 ckpt pull N/A (fire 미실행); own 33 trinity carry; own 34 wrap=0; own 37 HF visibility lifecycle private carry; own 38 axis-B HF upload deferred; own 39 yaml updated md regenerate; own 40 resource CLI 위임 strict — provision-ephemeral subcmd invocation only, anima 직접 runpod-cli/curl/api-key-write 0건"
       - cycle: 2026-05-09-FIRE-4/4
         commit: pending
         target: chat_cap_L4_BG-LC + BG-LD (Llama distill ambiguous_research + DPO RLHF on sft-1-7-y1)
@@ -1348,7 +1370,7 @@ h100_resource_pool:
       cost_estimate_usd: "~30"
       strategic_priority: HIGH
       blocked_by: PROVISION_BLOCKED
-      fire_attempt_count: 1  # 2026-05-09-FIRE-3/4 BLOCKED
+      fire_attempt_count: 2  # 2026-05-09-FIRE-3/4 BLOCKED + 2026-05-09-FIRE-3/4-RETRY-EPHEMERAL BLOCKED_PROVIDER_API_KEY_MISSING
       d1_score: 1.0  # anima_native_scratch
       d1_lane: within_strict
     - id: chat_cap_L4_BG-LB
@@ -1356,7 +1378,7 @@ h100_resource_pool:
       cost_estimate_usd: "~60"
       strategic_priority: HIGH
       blocked_by: PROVISION_BLOCKED
-      fire_attempt_count: 1  # 2026-05-09-FIRE-3/4 BLOCKED
+      fire_attempt_count: 2  # 2026-05-09-FIRE-3/4 BLOCKED + 2026-05-09-FIRE-3/4-RETRY-EPHEMERAL BLOCKED_PROVIDER_API_KEY_MISSING (BG-LA fanout inheritance)
       d1_score: 0.99  # 350M from-scratch on anima persona
       d1_lane: within_strict
       lesson_l_extended_3_caveat: "EXTENDED-3 Lesson L 누적 SFT 차단 정합 — pre-train only valid path"

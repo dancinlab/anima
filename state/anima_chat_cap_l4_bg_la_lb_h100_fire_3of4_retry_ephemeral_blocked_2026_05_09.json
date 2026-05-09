@@ -1,0 +1,127 @@
+{
+  "schema": "anima.chat_cap_l4.bg_la_lb.h100_fire_retry_ephemeral.v1",
+  "ts_emit_utc": "2026-05-09T00:30:00Z",
+  "cycle": "2026-05-09",
+  "loop_iter": "h100_fire_3_of_4_retry_ephemeral_bg_la_bg_lb_chat_cap_l4",
+  "scope": "Anima cycle 2026-05-09 H100 EPHEMERAL FIRE 3/4 — chat-cap L4 BG-LA + BG-LB provision-ephemeral retry post own 40 ephemeral CLI land",
+  "predecessor_ssot": [
+    "2cd40a5d fire(BG-LA + BG-LB chat-cap L4 H100 fire — D1=0.99 within): BLOCKED_NO_H100_HOST — resource SSOT static path",
+    "0d65ebe4 fire(resource CLI H100 pod allocate — own 40 정합) — allocation_status BLOCKED_NO_H100_HOST",
+    "anima/registry/anima_artifact_registry.yaml fire_attempt_log[FIRE-3/4]",
+    "/Users/ghost/.hx/packages/resource/tool/resource_ephemeral.hexa (own 40 ephemeral subsystem)",
+    "/Users/ghost/.hx/packages/resource/tool/transient_py/runpod_client.py (provider client, api-key-resolve 3-tier env→file→keychain)"
+  ],
+  "user_directive_observed": {
+    "verbatim_quotes_this_cycle": ["all bg go"],
+    "context": "anima cycle 2026-05-09 H100 EPHEMERAL FIRE 3/4 prompt — explicit override of paraphrase block",
+    "consent_status": "directive_recognized — 'all bg go' explicit override of 'OK CLM L4 ALL FIRE' verbatim baseline",
+    "verbatim_override_required_iter4_baseline": "OK CLM L4 ALL FIRE",
+    "verbatim_override_observed_this_cycle": "explicit_override_via_all_bg_go (per prompt clause: '본 directive ''all bg go'' 가 explicit override')",
+    "blocker_post_consent": "provider api-key absent — own 40 strict prevents anima 측 key 자체 생성/등록"
+  },
+  "step_1_ephemeral_selftest": {
+    "executed_at_utc": "2026-05-09T00:25:00Z",
+    "command": "/Users/ghost/.hx/packages/resource/bin/resource --selftest-ephemeral",
+    "result_lines": [
+      "PASS provider client present: runpod",
+      "PASS provider client present: lambda",
+      "PASS provider client present: vast",
+      "PASS ssh include dir: /Users/ghost/.ssh/config.d/anima-h100",
+      "WARN provider runpod dry: api-key-missing (expected on fresh dev box)",
+      "WARN provider lambda dry: api-key-missing (expected on fresh dev box)",
+      "WARN provider vast dry: api-key-missing (expected on fresh dev box)",
+      "PASS SSOT lock acquired"
+    ],
+    "selftest_verdict": "PASS",
+    "api_key_state_3_providers": "ALL_MISSING (runpod + lambda + vast — env unset + token files absent + macOS keychain entries absent)"
+  },
+  "step_2_provision_attempts": {
+    "BG-LA": {
+      "command": "/Users/ghost/.hx/packages/resource/bin/resource provision-ephemeral --provider runpod --gpu H100-PCIe --duration 10h --yes-cost --name bg-la-engine-ag",
+      "disclosure_emit": "provider=runpod / gpu=H100-PCIe / duration=10h / estimated_cost=provider-dependent (RunPod H100 ~$2.79/h)",
+      "provider_response": "__RESOURCE__ FAIL provision-ephemeral reason=provider-error payload={\"ok\":false,\"reason\":\"api-key-missing\",\"detail\":\"set RUNPOD_API_KEY or ~/.config/resource-ephemeral/runpod.token\"}",
+      "fallback_lambda_command": "/Users/ghost/.hx/packages/resource/bin/resource provision-ephemeral --provider lambda --gpu H100-PCIe --duration 10h --yes-cost --name bg-la-engine-ag",
+      "fallback_lambda_response": "__RESOURCE__ FAIL provision-ephemeral reason=provider-error payload={\"ok\":false,\"reason\":\"api-key-missing\",\"detail\":\"set LAMBDA_API_KEY or ~/.config/resource-ephemeral/lambda.token\"}",
+      "fallback_vast_command": "/Users/ghost/.hx/packages/resource/bin/resource provision-ephemeral --provider vast --gpu H100-PCIe --duration 10h --yes-cost --name bg-la-engine-ag",
+      "fallback_vast_response": "__RESOURCE__ FAIL provision-ephemeral reason=provider-error payload={\"ok\":false,\"reason\":\"api-key-missing\",\"detail\":\"set VAST_API_KEY (vastai set api-key <K> also acceptable)\"}",
+      "verdict": "BLOCKED_PROVIDER_API_KEY_MISSING_ALL_3_PROVIDERS"
+    },
+    "BG-LB": {
+      "command_planned": "/Users/ghost/.hx/packages/resource/bin/resource provision-ephemeral --provider runpod --gpu H100-PCIe --duration 20h --yes-cost --name bg-lb-350m-scratch",
+      "execution_status": "NOT_INVOKED — BG-LA fanout demonstrated all 3 providers BLOCKED on api-key-missing; BG-LB invocation would emit identical provider-error (no point burning further audit churn). own 22 honest BLOCKED 정합 — single-shot fanout sufficient.",
+      "verdict": "BLOCKED_PROVIDER_API_KEY_MISSING_INHERITED_FROM_BG_LA_FANOUT"
+    },
+    "ephemeral_list_post": {
+      "command": "/Users/ghost/.hx/packages/resource/bin/resource ephemeral-list",
+      "result": "# total ephemeral pods: 0",
+      "verdict": "NO_PODS_PROVISIONED"
+    }
+  },
+  "step_3_bin_resolver_quirk_carry": {
+    "issue": "/Users/ghost/.hx/bin/resource symlink-walk via $0 dirname/.. resolves to /Users/ghost/.hx not /Users/ghost/.hx/packages/resource — ephemeral subcommand path falls through to non-existent /Users/ghost/.hx/tool/resource_ephemeral.hexa",
+    "symlink_target": "/Users/ghost/.hx/bin/resource -> /Users/ghost/.hx/packages/resource/bin/resource",
+    "shim_line_97_98_pattern": "eph_self_dir=$(cd -P $(dirname $0)) ; eph_pkg_root=$(cd -P $eph_self_dir/..) — does NOT walk symlink before computing pkg_root",
+    "workaround_used": "invoke /Users/ghost/.hx/packages/resource/bin/resource directly (own 40 strict CLI delegation preserved — still routes through canonical resource shim, just bypasses outer symlink resolver bug)",
+    "sosno_decision": "infra fix deferred to dancinlab/resource maintainers — anima cycle scope = chat-cap fire, NOT shim repair. ledger note carry only.",
+    "carry_from": "FIRE-2/4-RETRY-EPHEMERAL (commit 88c1b6f1 fire-attempt-log entry bin_resolver_quirk_note)"
+  },
+  "step_4_fire_path_decision": {
+    "verdict": "BLOCKED_PROVIDER_API_KEY_MISSING",
+    "rationale": [
+      "own 40 strict — resource CLI provision-ephemeral subcmd delegated; provider api-key resolve 3-tier (env / ~/.config/resource-ephemeral/<provider>.token / macOS keychain resource-ephemeral-<provider>) ALL absent",
+      "anima 측 RunPod/Lambda/Vast api-key 자체 생성/등록 = own 40 위반 (provider account ownership = 사용자, anima 측 credential write 0건)",
+      "ephemeral selftest PASS (provider client + ssh include dir + SSOT lock 정상) — blocker = credential only, infra ready",
+      "user_consent_verbatim 'all bg go' explicit override 인정 — 단 credential 부재로 implementation 차단"
+    ],
+    "fire_attempted": false,
+    "pods_provisioned_count": 0,
+    "ckpts_pulled_count": 0,
+    "v14_mirror_executed": false,
+    "ppr_v3_v5_v51_measured": false,
+    "emerge_state": "FIRE_NOT_ATTEMPTED — V14_NOT_VERIFIED preserved",
+    "cost_actual_usd": 0.0,
+    "cost_planned_usd": 90.0,
+    "cost_savings_via_block_usd": 90.0
+  },
+  "step_5_path_results": {
+    "BG-LA": {
+      "fire_status": "BLOCKED_PROVIDER_API_KEY_MISSING",
+      "spec_path": "tool/transient_py/anima_clm_la_h100.py (254 LOC, SPEC_CARRY only)",
+      "intended_arch": "350M Engine A/G dual-engine (anima-native scratch, D1=1.0 within strict)",
+      "intended_corpus": "anima persona 200MB tier_a_v4 / dialogue",
+      "intended_duration": "~9h H100 SXM @ $2.99/hr / cap $30",
+      "verdict": null,
+      "v14_mirror": null,
+      "ppr_v5_n60": null,
+      "ckpt_local_path_planned": "~/.cache/anima/clm_v4_remapped/bg_la/",
+      "hf_repo_planned": "dancinlab/clm-v5-bg-la-{verdict}-{cycle}"
+    },
+    "BG-LB": {
+      "fire_status": "BLOCKED_PROVIDER_API_KEY_MISSING",
+      "spec_path": "tool/transient_py/anima_clm_lb_h100.py (SPEC_CARRY only)",
+      "intended_arch": "350M scratch pre-train (Lesson L EXTENDED-3 caveat — pre-train only valid path)",
+      "intended_corpus": "persona 1GB + dialogue 500MB (corpus expand 필요 — tier_a_v4 + KICK WAVE 4 paraphrase 활용 plan)",
+      "intended_duration": "~18h H100 SXM / cap $60",
+      "intended_d1": 0.99,
+      "verdict": null,
+      "v14_mirror": null,
+      "ppr_v5_n60": null,
+      "ckpt_local_path_planned": "~/.cache/anima/clm_v4_remapped/bg_lb/",
+      "hf_repo_planned": "dancinlab/clm-v4-bg-lb-{verdict}-{cycle}"
+    }
+  },
+  "step_6_compliance": {
+    "own_14_v14_strict": "carry — paired random_init mirror prereq 보존 (fire 미실행)",
+    "own_16_cost_discipline": "PASS — $90 planned $0 actual $90 saved via honest abort",
+    "own_17_d1_scope_clamp": "PASS — BG-LA D1=1.0 + BG-LB D1=0.99 둘 다 within_strict",
+    "own_22_honest_report": "PASS — state json + yaml fire_attempt_log entry + commit message",
+    "own_30_ckpt_preservation": "N/A — fire 미실행, no ckpts to preserve",
+    "own_33_trinity": "carry — D + own + H_clm_chat_cap",
+    "own_34_wrap_zero": "PASS — directive 직접 응답 0 wrap",
+    "own_37_hf_visibility_lifecycle": "carry — private default, public promote 4 prereq 보존",
+    "own_38_axis_b_hf_upload": "deferred — fire 미실행",
+    "own_39_yaml_md": "PASS — yaml updated + md regenerate",
+    "own_40_resource_cli_strict": "PASS — provision-ephemeral subcmd invocation only (3 providers fanout); anima 직접 runpodctl/curl/cloud-cli allocate 0건; api-key write 0건"
+  },
+  "next_action_required": "사용자 (1) RUNPOD_API_KEY export OR `mkdir -p ~/.config/resource-ephemeral && echo '<KEY>' > ~/.config/resource-ephemeral/runpod.token` OR `security add-generic-password -a $USER -s resource-ephemeral-runpod -w '<KEY>'` (2) verbatim 'OK CLM L4 ALL FIRE' direct turn OR continued 'all bg go' override carry — credential 갖춰진 다음 cycle 즉시 BG-LA + BG-LB ephemeral provision retry"
+}
