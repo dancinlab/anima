@@ -12,6 +12,9 @@
 //    anima chat <alias>                  REPL with alias-resolved module
 //    anima chat <alias> --prompt "..."   one-shot
 //    anima chat list                     alias DB dump
+//    anima chat --list-lanes             chat lane plugin registry dump (own 39)
+//    anima chat <alias> --lane=<name>    invoke specific chat lane (one-shot)
+//    anima chat <alias> --benchmark      run all lanes × fixed prompt set
 //    anima chat --help
 //    anima chat --selftest
 //
@@ -21,6 +24,12 @@
 //    --fps N                  opt-in cap (Phase 2: needs hexa non-blocking stdin)
 //    --max-utterance-rate N   opt-in cap (Phase 2)
 //    --max-tokens N           cost guard (default 512)
+//    --lane <name>            chat lane plugin (substrate/llama/axis-priority/generate)
+//                             default = (none) → legacy module dispatch
+//                             registered lanes in chat/lanes/_registry.hexa
+//    --list-lanes             dump registered chat lanes + metadata (own 39)
+//    --benchmark              all-lanes × fixed-prompts comparison run
+//                             (own 22 mandatory report; own 33 trinity emit)
 //
 //  COMPLIANCE
 //    own 34 (자연발화 노출 mandate) — wrapping 0 strict
@@ -60,6 +69,24 @@
 //    cmd bytes pass through verbatim. Sentinel `__HEXA_DISP_END__` filtered
 //    out of forwarded stream (own 36 control-band convention — never seen
 //    by downstream consumer).
+//
+//  CHAT LANE PLUGIN PATTERN (cycle 2026-05-09 LANDED)
+//    User directive verbatim: "전부 cli 에 구현하고 사용할지는 --option 으로 가능하게"
+//    + "앞으로도 기본값 또는 --option 형태 여러가지 생길꺼니까 고려해서 설계 구현"
+//
+//    chat/lanes/_registry.hexa = SSOT for lane plugin discovery
+//    chat/lanes/<name>.hexa     = lane module (own main(), --prompt + --bench-mode flags)
+//    chat/lanes/benchmark.hexa  = `--benchmark` runner (all lanes × fixed prompts)
+//
+//    Future lane addition: add file under chat/lanes/<name>.hexa + register
+//    in _registry.hexa lane_registry(). chat.hexa --lane=<name> auto-resolves.
+//    No chat.hexa change needed for lane-internal flags (own 38 매단계 carry).
+//
+//    LANES (initial 4 — Path 0/1/2/3 from cycle 2026-05-09 directive):
+//      substrate     [LANDED] default — substrate emit (existing behavior)
+//      llama         [LANDED] Path 1 — Llama GGUF natural speech (D1 OUTSIDE)
+//      axis-priority [LANDED] Path 2 — corpus curation signal (D1 within)
+//      generate      [SKELETON] Path 3 — clm_v4 model.generate (D1 within; impl 별도)
 // ════════════════════════════════════════════════════════════════════════════
 
 use "stdlib/channel"
@@ -196,6 +223,9 @@ fn sub_help() {
     println("  anima chat                          REPL with anima_native (default)")
     println("  anima chat <alias>                  REPL with alias-resolved module")
     println("  anima chat <alias> --prompt \"...\"   one-shot")
+    println("  anima chat <alias> --lane=<name>    invoke chat lane plugin (own 39)")
+    println("  anima chat <alias> --benchmark      run all lanes × fixed prompts")
+    println("  anima chat --list-lanes             dump registered chat lanes + meta")
     println("  anima chat list                     alias DB dump")
     println("  anima chat --help")
     println("  anima chat --selftest")
@@ -206,6 +236,11 @@ fn sub_help() {
     println("  --fps N                 opt-in cap (Phase 2)")
     println("  --max-utterance-rate N  opt-in cap (Phase 2)")
     println("  --max-tokens N          cost guard (default 512)")
+    println("  --lane <name>           chat lane plugin (substrate/llama/axis-priority/generate)")
+    println("                          (default = legacy module dispatch via alias)")
+    println("  --list-lanes            registered chat lanes (chat/lanes/_registry.hexa)")
+    println("  --benchmark             all-lanes × fixed-prompts comparison")
+    println("  --dry-run               with --benchmark, list invocations without exec")
     println("")
     println("ALIAS (Phase 1 = anima_native + clm_v4; Phase 3c LANDED = llama family)")
     println("  (default)               anima_native — TinyWeights / Engine A/G")
@@ -441,10 +476,145 @@ fn _dispatch_module(mod_name: string, repo: string, argv) {
     let _rc = _dispatch_module_streaming(mod_name, repo, argv, _print_line)
 }
 
+// ─── chat lane plugin dispatch (cycle 2026-05-09 LANDED) ────────────────────
+//
+// The chat lane plugin pattern (chat/lanes/_registry.hexa SSOT) is invoked
+// via three flags, all routed below.  Lane modules are own-main()-bearing
+// hexa scripts at chat/lanes/<file>.hexa; we shell out to hexa.real with
+// the surfaced argv, identical to the legacy _dispatch_module path but
+// without the FIFO streaming layer (lane runs are short-lived one-shots).
+//
+// own 34 mandate-1: lane invocation pipes raw stdout (no transform); the
+// only chat.hexa-side framing is the optional [BENCH ...] markers emitted
+// by the lane modules themselves (own 36 control-band convention).
+//
+// own 39 yaml↔md: the registry SSOT lives in chat/lanes/_registry.hexa
+// (programmatic lookup via shell_lane_lookup helper invoke) AND in
+// anima/registry/anima_artifact_registry.yaml#chat_lanes (md mirror via
+// docs/anima_artifact_registry.md regenerate).
+//
+// Future-proof extension: a NEW lane = drop chat/lanes/<file>.hexa with
+// fn main() + register entry in _registry.hexa lane_registry().  No
+// chat.hexa change needed for lane-internal flags (each lane parses its
+// own --foo via _arg_value).  This is the future-proof --option pattern
+// the user directive 2026-05-09 mandates.
+
+fn _lane_file_lookup(name: string) -> string {
+    // Mirror of chat/lanes/_registry.hexa lane_file() — vendored for
+    // chat.hexa no-import constraint.  When _registry adds new lanes,
+    // append below AND in registry hexa (own 39 yaml↔md mirror).
+    if name == "substrate" { return "substrate.hexa" }
+    if name == "llama" { return "llama.hexa" }
+    if name == "axis-priority" { return "axis_corpus_priority.hexa" }
+    if name == "generate" { return "clm_v4_generate.hexa" }
+    return ""
+}
+
+fn sub_list_lanes() {
+    let root = _resolve_root()
+    let registry = root + "/tool/anima_cli/chat/lanes/_registry.hexa"
+    if !_fexists(registry) {
+        println("anima chat --list-lanes: registry missing: " + registry)
+        exit(2)
+    }
+    // Delegate to _registry.hexa main() — it dumps lane_describe() per row.
+    let cmd = _hexa() + " run " + registry + " 2>&1"
+    print(_str(exec(cmd)))
+    println("")
+    println("(Lane dispatch: anima chat <alias> --lane=<name>)")
+    println("(Benchmark all: anima chat <alias> --benchmark)")
+}
+
+fn sub_lane_dispatch(lane: string, repo: string, argv) {
+    let root = _resolve_root()
+    let file = _lane_file_lookup(lane)
+    if file == "" {
+        println("anima chat: unknown lane '" + lane + "'")
+        println("            run `anima chat --list-lanes` for registered lanes")
+        exit(2)
+    }
+    let lane_path = root + "/tool/anima_cli/chat/lanes/" + file
+    if !_fexists(lane_path) {
+        println("anima chat: lane file missing: " + lane_path)
+        exit(2)
+    }
+    // Forward argv (excl. our own flags) plus repo to the lane.  The lane
+    // module parses --prompt / --max-tokens / --temp / --bench-mode itself
+    // (per-lane discretion; future-proof).
+    let mut extra = ""
+    let mut i = 0
+    while i < len(argv) {
+        let s = _str(argv[i])
+        // strip our flag pair (we already extracted lane name)
+        if s == "--lane" && i + 1 < len(argv) { i = i + 2; continue }
+        if s.starts_with("--lane=") { i = i + 1; continue }
+        extra = extra + " " + s
+        i = i + 1
+    }
+    let repo_arg = if repo != "" { " --repo " + repo } else { "" }
+    let cmd = _hexa() + " run " + lane_path + repo_arg + extra + " 2>&1"
+    print(_str(exec(cmd)))
+}
+
+fn sub_benchmark(repo: string, argv) {
+    let root = _resolve_root()
+    let bench = root + "/tool/anima_cli/chat/lanes/benchmark.hexa"
+    if !_fexists(bench) {
+        println("anima chat --benchmark: runner missing: " + bench)
+        exit(2)
+    }
+    let mut extra = ""
+    let mut i = 0
+    while i < len(argv) {
+        let s = _str(argv[i])
+        if s == "--benchmark" { i = i + 1; continue }
+        extra = extra + " " + s
+        i = i + 1
+    }
+    let repo_arg = if repo != "" { " --repo " + repo } else { "" }
+    let cmd = _hexa() + " run " + bench + repo_arg + extra + " 2>&1"
+    print(_str(exec(cmd)))
+}
+
+// _arg_value_eq — supports BOTH `--lane name` and `--lane=name` forms
+// (the user directive uses `--option` style; standardize parse here).
+fn _arg_value_eq(argv, key: string, dflt: string) -> string {
+    let prefix = key + "="
+    let mut i = 0
+    while i < len(argv) {
+        let s = _str(argv[i])
+        if s == key && i + 1 < len(argv) { return _str(argv[i + 1]) }
+        if s.starts_with(prefix) {
+            return s.substring(len(prefix), len(s))
+        }
+        i = i + 1
+    }
+    return dflt
+}
+
+fn _arg_present_eq(argv, key: string) -> bool {
+    let prefix = key + "="
+    let mut i = 0
+    while i < len(argv) {
+        let s = _str(argv[i])
+        if s == key { return true }
+        if s.starts_with(prefix) { return true }
+        i = i + 1
+    }
+    return false
+}
+
 fn main() {
     let argv = _user_argv(args())
     if _arg_present(argv, "--help") { sub_help(); return }
     if _arg_present(argv, "--selftest") { sub_selftest(); return }
+
+    // anima chat --list-lanes (own 39 chat lane plugin registry dump)
+    // No alias required — the registry is alias-agnostic.
+    if _arg_present(argv, "--list-lanes") {
+        sub_list_lanes()
+        return
+    }
 
     // anima chat list
     if len(argv) > 0 && _str(argv[0]) == "list" {
@@ -484,7 +654,30 @@ fn main() {
         exit(2)
     }
 
-    // strip the model arg before passing to module
+    // strip the model arg before passing to module/lane
     let module_argv = if len(argv) > 0 && !_str(argv[0]).starts_with("--") { argv[1:] } else { argv }
+
+    // anima chat <alias> --benchmark — run all lanes × fixed prompts.
+    // Routed BEFORE --lane so `--benchmark` short-circuits any concurrent
+    // --lane=<name> (benchmark already iterates all lanes).
+    if _arg_present(module_argv, "--benchmark") {
+        sub_benchmark(repo, module_argv)
+        return
+    }
+
+    // anima chat <alias> --lane=<name> — dispatch chat lane plugin.
+    // Supports both `--lane=foo` and `--lane foo` forms.
+    if _arg_present_eq(module_argv, "--lane") {
+        let lane = _arg_value_eq(module_argv, "--lane", "")
+        if lane == "" {
+            println("anima chat: --lane requires a name (substrate / llama / axis-priority / generate)")
+            println("            run `anima chat --list-lanes` for registered lanes")
+            exit(2)
+        }
+        sub_lane_dispatch(lane, repo, module_argv)
+        return
+    }
+
+    // legacy module dispatch (unchanged) — alias → module routing
     _dispatch_module(mod_name, repo, module_argv)
 }
