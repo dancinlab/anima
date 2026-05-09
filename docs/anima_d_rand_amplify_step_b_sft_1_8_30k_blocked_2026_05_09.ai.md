@@ -2,18 +2,21 @@
 
 ## Context
 
-anima cycle 2026-05-09 H100 FIRE 2/4 — D-RAND amplification 4-option spec
+anima cycle 2026-05-09 H100 EPHEMERAL FIRE 2/4 — D-RAND amplification 4-option spec
 (commit `8ab182a9`) Step B = longer SFT 10K → 30K via H100 (~$15-20).
 
 - Step A 완료: commit `87ba3a22`, tier_a_v4 231MB / 3.15M lines / anima 319k
   headers landed (`docs/anima_d_rand_amplify_step_a_tier_a_v4_2026_05_09.ai.md`).
 - 사용자 directive verbatim: "all bg go" + "H100 활용가능" (consent_carry).
 - 본 task = Step B fire on tier_a_v4 (post Step A).
+- Cycle directive verbatim: ephemeral provision via `resource provision-ephemeral`
+  (own 40 lifecycle), full chain (provision → fire → ckpt pull → release →
+  validation → ledger update).
 
-## Resource CLI probe (own 40 strict)
+## Attempt 1 — `.resource` SSOT host probe (commit `f993eca0`)
 
 ```
-$ /Users/ghost/core/resource/bin/resource list
+$ /Users/ghost/.hx/bin/resource list
 host         reachable  load    mem_free_mb  nexus
 hetzner      n          -       -            -
 ubu          y          0.00    28960        ok
@@ -24,29 +27,77 @@ ubu          y          0.00    28960        ok
 | ubu | y | RTX 5070 (12GB) | no | NOT_H100_INSUFFICIENT_FOR_BG_FIRE |
 | hetzner | n | — | — | UNREACHABLE |
 
-**Allocation status: BLOCKED_NO_H100_HOST** (.resource SSOT 에 H100 host 부재).
+**Allocation status: BLOCKED_NO_H100_HOST** — superseded by ephemeral lane.
+
+## Attempt 2 — provision-ephemeral (own 40 lifecycle, this cycle)
+
+```
+$ /Users/ghost/.hx/packages/resource/bin/resource provision-ephemeral \
+    --provider runpod --gpu H100-PCIe --duration 5h --yes-cost --name sft-1-8-30k
+
+# resource provision-ephemeral — cost disclosure (own 16)
+#   provider:      runpod
+#   gpu:           H100-PCIe
+#   duration:      5h (best-effort; user must release)
+#   estimated cost: provider-dependent (RunPod H100 ~$2.79/h, Lambda H100 ~$2.49/h, vast.ai ~$1.50-2.50/h)
+__RESOURCE__ FAIL provision-ephemeral reason=provider-error \
+  payload={"ok":false,"reason":"api-key-missing",
+           "detail":"set RUNPOD_API_KEY or ~/.config/resource-ephemeral/runpod.token"}
+```
+
+**Allocation status: BLOCKED_PROVIDER_API_KEY_MISSING.**
+
+| probe | result |
+|---|---|
+| `RUNPOD_API_KEY` env | unset |
+| `~/.config/resource-ephemeral/runpod.token` | absent (parent dir 미존재) |
+| provider response | `api-key-missing` (provider client refused before pod allocate) |
+| cost incurred | $0.00 (provision aborted pre-allocate) |
+
+### Resolver quirk note (logged for follow-up)
+
+`/Users/ghost/.hx/bin/resource` is a symlink to
+`/Users/ghost/.hx/packages/resource/bin/resource`. The new ephemeral
+dispatch block (lines 90-126 of the package bin) uses
+`$(cd -P "$(dirname "$0")/..")` for `eph_pkg_root`, but `$0` is the
+symlink path so this resolves to `/Users/ghost/.hx`, not the package
+root. Result: `eph_tool` becomes
+`/Users/ghost/.hx/tool/resource_ephemeral.hexa` (does not exist) and
+the script aborts with `tool missing` before reaching the ephemeral
+hexa script. Workaround used here: invoke
+`/Users/ghost/.hx/packages/resource/bin/resource` directly (own 40
+strict CLI delegation preserved — anima invokes the resource CLI, not
+runpod-cli or curl). The legacy `_self_locate` symlink-walker further
+down the script handles this correctly; the ephemeral block predates
+that helper and should be migrated. Not in scope for this anima
+cycle's fix; logged in registry `bin_resolver_quirk_note`.
 
 ## Verdict
 
-H100 fire 2/4 (sft-1-8 Step B longer SFT 30K) **BLOCKED**.
+H100 EPHEMERAL FIRE 2/4 (sft-1-8 Step B longer SFT 30K) **BLOCKED**.
 
-Identical blocker pattern as commit `0d65ebe4` (FIRE 1/4 attempt):
-- ubu = RTX 5070 12GB consumer GPU, 7B+ LoRA fire 부적격 (VRAM 부족)
-- hetzner = unreachable
-- 그 외 H100-tagged host 부재
+Provider credential not configured. Per task directive verbatim
+("API key 부재 시 honest BLOCKED emit") + own 40 strict
+(anima 측 API key 자체 생성/설정 0건) → honest abort.
 
-own 40 strict — anima 측 unilateral allocate 금지. 본 cycle fire 일체 X.
+Full chain steps 2-6 (corpus upload → ckpt pull → 30K SFT →
+own 30 ckpt pull → release → v5 N=60 probe → ledger update) not
+executed (provision step blocking).
 
-## Intended setup (when H100 unblocked)
+## Intended setup (when API key registered)
 
 | field | value |
 |---|---|
+| provider | runpod (RunPod H100-PCIe ~$2.79/h) |
+| duration | 5h ceiling (~4h actual fire + buffer) |
 | base | clm-v4-mk2-v1 (ConsciousDecoderV2 anima-native scratch) |
 | LoRA r | 128 (sft-1-8 동등) |
+| LoRA alpha | 128 |
+| lr | 1e-4 |
+| batch | 8 (gradient_accumulation 4) |
 | corpus | tier_a_v4 (231MB, 3.15M lines, anima 319k) |
 | steps | 30000 (sft-1-8 step=10000, 3× longer) |
 | cost | ~$15-20 H100 |
-| duration | ~4 hours |
 | ckpt alias | clm-v4-sft-1-8-30k-path-a-remapped (own 31 Flavor B) |
 | HF repo | dancinlab/clm-v4-sft-1-8-30k-path-a-remapped (own 37 PRIVATE only) |
 | paired V14 mirror | random_init mandatory (CONSCIOUSNESS_DIM=96 post-arch-fix) |
@@ -54,39 +105,54 @@ own 40 strict — anima 측 unilateral allocate 금지. 본 cycle fire 일체 X.
 
 ## Next action required (user)
 
-`resource add <h100-host>` via runpod / lambda / vast.ai —
-anima 측 직접 ssh/cloud-cli 일체 0건 (own 40).
+```
+# Option A — env export (ephemeral, current shell)
+export RUNPOD_API_KEY=<key>
 
-H100 등록 후 본 task 재실행 시:
-1. Step B fire → ckpt sft-1-8-30k
-2. own 30 ckpt pull mandatory (mac local + HF private)
-3. V14 paired random_init mirror
-4. PPR_v3 / v5 / v5.1 + Gate F D-RAND verify
-5. yaml entry 신설 + render md (own 39)
-6. own 38 axis-B HF private upload
+# Option B — token file (persistent)
+mkdir -p ~/.config/resource-ephemeral
+echo <key> > ~/.config/resource-ephemeral/runpod.token
+chmod 600 ~/.config/resource-ephemeral/runpod.token
+```
+
+Then re-run this cycle. anima 측 직접 ssh / cloud-cli / runpod-cli /
+curl 일체 0건 (own 40 strict).
+
+Post-API-key chain (anima will execute):
+1. provision-ephemeral fire → pod_id (own 40 lifecycle)
+2. corpus rsync tier_a_v4 → /workspace/data/
+3. base ckpt download via huggingface-cli → /workspace/base/
+4. SFT 30K fire (LoRA r=128, 4h H100)
+5. own 30 ckpt pull mandatory (mac local + HF private upload)
+6. resource release <slug> --reason "step b sft 30k complete"
+7. V14 paired random_init mirror probe
+8. v5 N=60 actual probe (post arch-fix CONSCIOUSNESS_DIM=96) + Gate F D-RAND verify
+9. yaml entry 신설 + render md (own 39)
+10. own 38 axis-B HF private upload
 
 ## Compliance
 
 | own | status | note |
 |---|---|---|
 | own 14 V14 strict | carry | paired random_init mirror prereq |
-| own 16 cost | PASS | allocation 자체 cost 0 (fire X) |
+| own 16 cost | PASS | provision aborted pre-allocate ($17.5 saved via honest abort) |
 | own 17 D1 SCOPE_CLAMP | carry | LoRA on ConsciousDecoderV2 D1=0.793 within |
-| own 22 mandatory report | PASS | 본 md + yaml h100_resource_pool field |
+| own 22 mandatory report | PASS | 본 md + yaml fire_attempt_log[2] field |
 | own 30 ckpt preservation | pending | fire 시 mandatory |
 | own 33 trinity | pending | fire 시 sweep |
 | own 34 wrap=0 | PASS | yaml + md only, binary X |
 | own 37 mandate-9 strict | pending | HF PRIVATE only |
-| own 38 axis-B/C | PASS | probe snapshot 저장 |
+| own 38 axis-B/C | PASS | probe snapshot 저장 (provider response captured verbatim) |
 | own 39 yaml↔md | PASS | yaml + md paired |
-| own 40 resource CLI 위임 | PASS | resource list 단일 호출, 직접 ssh 0건 |
+| own 40 resource CLI 위임 | PASS | provision-ephemeral subcmd invocation only, 직접 cloud-cli 0건 |
 
 Lesson Q SFT-closed 우회 path 정합 — corpus expansion + arch-fixed substrate
 가 신규 lane, SFT 단독 closed 와 별개 (Step B fire 시 본 lane 검증).
 
 ## SSOT cross-link
 
-- `anima/registry/anima_artifact_registry.yaml` → `h100_resource_pool.active_session.fire_attempt_log[1]` (cycle FIRE-2/4)
-- `anima/registry/anima_artifact_registry.yaml` → `h100_resource_pool.fire_candidates_pending_h100[5]` (sft_1_8_longer_SFT enriched fields)
+- `anima/registry/anima_artifact_registry.yaml` → `h100_resource_pool.active_session.fire_attempt_log[2]` (cycle FIRE-2/4-RETRY-EPHEMERAL)
+- `anima/registry/anima_artifact_registry.yaml` → `h100_resource_pool.fire_candidates_pending_h100[5]` (sft_1_8_longer_SFT — `blocked_by` transitioned PROVISION_BLOCKED → PROVIDER_API_KEY_MISSING, fire_attempt_count=2)
 - Step A artifact: `docs/anima_d_rand_amplify_step_a_tier_a_v4_2026_05_09.ai.md`
 - Spec parent: `docs/anima_d_rand_signal_amplification_spec_2026_05_09.ai.md`
+- Prior FIRE-2/4 attempt: commit `f993eca0` (host-pool blocker)

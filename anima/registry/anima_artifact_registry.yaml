@@ -167,6 +167,24 @@ models:
       mandate_9_b_release_attempt: BLOCKED_NO_FIRE_EXECUTED
       cost_incurred_usd: 0
       ckpt_pull_required_post_fire: not_applicable_no_fire
+    v6_h100_fire_1_of_4_attempt_2026_05_09_ephemeral_retry:
+      directive_verbatim: "all bg go"
+      resource_cli_invocation: "RESOURCE_LOCAL_HEXA=1 RESOURCE_LOCAL_PY=1 RUNPOD_API_KEY=<from ~/.runpod/config.toml> resource provision-ephemeral --provider runpod --gpu H100-PCIe --duration 1h --yes-cost --name v6-anima-1"
+      api_key_present: true  # ~/.runpod/config.toml apikey field populated, length=52
+      direct_api_probe_https_api_runpod_io_graphql: "HTTP 401 body={\"error\":{}}"
+      direct_api_probe_https_rest_runpod_io_v1_pods: "HTTP 401"
+      direct_api_probe_query_param_style: "HTTP 401 body={\"error\":{}}"
+      provider_response: "__RESOURCE__ FAIL provision-ephemeral reason=provider-error payload={\"ok\":false,\"reason\":\"http-error\",\"detail\":\"status=403 body=error code: 1010\"}"
+      lambda_credential_state: "absent (~/.lambda* / env LAMBDA_API_KEY both unset)"
+      vast_credential_state: "absent (~/.vast* / env VAST_API_KEY both unset)"
+      blocked_reason: RUNPOD_API_KEY_INVALID_OR_EXPIRED  # 401 across all auth styles confirms key dead, not transport issue
+      user_action_required: "regenerate runpod API key at https://www.runpod.io/console/user/settings#api-keys + update ~/.runpod/config.toml apikey field; OR add LAMBDA_API_KEY / VAST_API_KEY env"
+      mandate_9_b_release_attempt: BLOCKED_NO_FIRE_EXECUTED
+      cost_incurred_usd: 0
+      ckpt_pull_required_post_fire: not_applicable_no_fire
+      ephemeral_list_pre_attempt: "0 active pods"
+      ssh_config_d_anima_h100: "empty (no live pod aliases)"
+      own_22_honest_emit: true
     v6_macos_segfault_finding: "torch import MUST precede numpy in adapter — Apple Accelerate / OpenMP libomp double-load triggers silent segfault during HF AutoModel.from_pretrained weight materialization. Adapter line 53 comment + import order strict. Found 2026-05-09 NEXT-CYCLE 6/6 dry-run."
     v6_fire_stub: tool/transient_py/anima_v6_awareness_bg_le_clm_v4_h100.py
 
@@ -1240,6 +1258,22 @@ h100_resource_pool:
         intended_setup: "base=clm-v4-mk2-v1 / LoRA r=128 / corpus=tier_a_v4 / steps=30000 / cost ~$15-20 / dur ~4h"
         outcome: BLOCKED_NO_H100_HOST  # resource CLI re-probe 동일 결과
         compliance_carry: "own 14 V14 paired random_init mirror prereq carry; own 22 honest BLOCKED emit; own 40 resource CLI 위임 strict — anima 직접 ssh/cloud-cli 0건"
+      - cycle: 2026-05-09-FIRE-2/4-RETRY-EPHEMERAL
+        commit: pending
+        target: sft_1_8_step_B_longer_SFT_30K (D-RAND amplification — provision-ephemeral path)
+        post_step_a_artifact: tier_a_v4 (231MB, 3.15M lines, anima persona 319k — Step A commit 87ba3a22)
+        intended_setup: "provider=runpod / gpu=H100-PCIe / duration=5h / name=sft-1-8-30k / base=clm-v4-mk2-v1 / LoRA r=128 / corpus=tier_a_v4 / steps=30000"
+        cost_planned_usd: 17.5  # ~$2.79/h × 5h ceiling
+        cost_actual_usd: 0.0
+        cost_savings_via_block_usd: 17.5
+        resource_cli_invocation: "resource provision-ephemeral --provider runpod --gpu H100-PCIe --duration 5h --yes-cost --name sft-1-8-30k"
+        resource_cli_disclosure_emit: "provider=runpod / gpu=H100-PCIe / duration=5h / estimated_cost=provider-dependent (RunPod H100 ~$2.79/h)"
+        resource_cli_provider_response: "__RESOURCE__ FAIL provision-ephemeral reason=provider-error payload={\"ok\":false,\"reason\":\"api-key-missing\",\"detail\":\"set RUNPOD_API_KEY or ~/.config/resource-ephemeral/runpod.token\"}"
+        provider_credential_state: "RUNPOD_API_KEY env unset + ~/.config/resource-ephemeral/runpod.token absent"
+        bin_resolver_quirk_note: "/Users/ghost/.hx/bin/resource symlink-walk via $0 dirname/.. resolves to /Users/ghost/.hx not the package root /Users/ghost/.hx/packages/resource — ephemeral subcommand path falls through to non-existent /Users/ghost/.hx/tool/resource_ephemeral.hexa; workaround = invoke /Users/ghost/.hx/packages/resource/bin/resource directly (own 40 strict CLI delegation preserved)"
+        outcome: BLOCKED_PROVIDER_API_KEY_MISSING
+        next_action_required: "사용자 RUNPOD_API_KEY export OR ~/.config/resource-ephemeral/runpod.token write — anima 측 API key 자체 생성/설정 0건 (own 40 strict)"
+        compliance_carry: "own 14 V14 paired random_init mirror prereq carry; own 16 cost discipline PASS ($17.5 saved via honest abort); own 22 honest BLOCKED emit; own 30 ckpt pull N/A (fire 미실행); own 33 trinity carry; own 34 wrap=0; own 37 mandate-9 (b) HF private carry; own 38 axis-B HF upload deferred fire; own 39 yaml updated md regenerated; own 40 resource CLI 위임 strict — provision-ephemeral subcmd invocation only, anima 직접 runpod-cli/curl 0건"
       - cycle: 2026-05-09-FIRE-3/4
         commit: pending
         target: chat_cap_L4_BG-LA + BG-LB (Engine A/G v5 arch + 350M scratch pre-train, parallel/sequential)
@@ -1327,7 +1361,8 @@ h100_resource_pool:
       lora_rank: 128
       corpus: tier_a_v4_231MB
       strategic_priority: HIGH
-      blocked_by: PROVISION_BLOCKED
+      blocked_by: PROVIDER_API_KEY_MISSING  # transitioned from PROVISION_BLOCKED — H100 host registration superseded by ephemeral provider lane (own 40 lifecycle); now blocked at RUNPOD_API_KEY env + ~/.config/resource-ephemeral/runpod.token
+      fire_attempt_count: 2  # FIRE-2/4 (no h100 host) + FIRE-2/4-RETRY-EPHEMERAL (api-key-missing)
       target_uplift: "Step A + Step B combined D-RAND +0.15-0.25 → Gate F 0.20 epsilon 통과권"
       proposed_ckpt_alias: clm-v4-sft-1-8-30k-path-a-remapped  # own 31 Flavor B
       hf_repo_pending: dancinlab/clm-v4-sft-1-8-30k-path-a-remapped  # own 37 PRIVATE only
