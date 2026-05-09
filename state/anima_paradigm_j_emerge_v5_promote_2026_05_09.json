@@ -1,0 +1,106 @@
+{
+  "schema": "anima.paradigm_j.emerge_v5.promote_attempt.v1",
+  "ts": "2026-05-09T03:30:00Z",
+  "anima_cycle": "2026-05-09-paradigm-j-gate-g-piv-paraphrase-unlock",
+  "directive_user_verbatim": "keep going",
+  "task": "Gate G PIV paraphrase k=3 N=90 unlock + v5.1 4-gate full + EMERGE_v5 attempt + auto-promote attempt",
+  "input_state_json": "state/anima_paradigm_j_v5_paraphrase_n90_2026_05_09.json",
+
+  "v5_paraphrase_n90_summary": {
+    "n_paraphrase": 90,
+    "n_base": 30,
+    "k_per_base": 3,
+    "piv_max": 0.0874,
+    "piv_max_floor": 0.10,
+    "piv_mean": 0.0354,
+    "piv_mean_floor": 0.05,
+    "piv_random_max": 0.0,
+    "piv_random_mean": 0.0,
+    "piv_substrate_delta_max": 0.0874,
+    "per_axis_aggregate_mean": {
+      "identity":   0.0335,
+      "agency":     0.0336,
+      "phenomenal": 0.0369,
+      "temporal":   0.0326,
+      "social":     0.0402
+    },
+    "dcr_change_rate_m": 1.0,
+    "dcr_change_rate_r": 0.0,
+    "d_rand_paraphrase_mean": 0.2249,
+    "gate_d_random_self_ppr": 0.0,
+    "v14_carry_mtrp_v5": 0.6207,
+    "v14_status": "V14_SATISFIED"
+  },
+
+  "v5_1_gates": {
+    "gate_a_piv_pass": false,
+    "gate_a_via_max": false,
+    "gate_a_via_mean": false,
+    "gate_b_refined_pass": true,
+    "gate_c_drand_pass": true,
+    "gate_d_random_below_005": true,
+    "gates_passed": "B+C+D",
+    "gates_failed": "A"
+  },
+
+  "verdict_label": "C3_PASS_V5_PIV_PARAPHRASE_FAIL",
+  "emerge_v5": false,
+  "emerge_v5_blocker": "Gate A PIV paraphrase FAIL (max 0.0874 < 0.10 floor by 0.0126; mean 0.0354 < 0.05 floor) — substrate-level paraphrase variance present but below v5.1 anti-Goodhart amplitude threshold; Gates B/C/D ALL PASS",
+
+  "auto_promote_attempt": {
+    "attempted": false,
+    "reason": "BLOCKED_GATE_A_FAIL_EMERGE_V5_NOT_ACTIVATED",
+    "mandate_9_prereq": {
+      "a_d1_within_strict": {"status": "MET", "score": 0.793},
+      "b_v6_strong_awareness": {"status": "MET", "commit": "edc601ae"},
+      "c_anima_auto_mode_or_user_verbatim": {
+        "status": "BLOCKED",
+        "anima_auto_mode_amend_b4ea8371_eligibility": "anima auto mode requires V14 PASS (MTRP_v5=0.6207 ≥ 0.10 ✓) + EMERGE actual; EMERGE_v5=false → blocked",
+        "user_verbatim_OK_PROMOTE_PUBLIC": "NOT_ISSUED"
+      },
+      "d_trinity_sweep": {"status": "PASS"},
+      "e_d_x_l_sweep": {"status": "PASS"}
+    },
+    "prereq_met_count": 4,
+    "prereq_total": 5,
+    "hf_action": "NO_OP",
+    "hf_repo_id": "dancinlab/clm-v4-paradigm-j-50k-final-path-a-remapped",
+    "hf_visibility_before": "private",
+    "hf_visibility_after": "private",
+    "hf_visibility_status": "private-process (unchanged)",
+    "readme_update": "NOT_PERFORMED — auto-promote blocked; README update deferred until Gate A unlocks",
+    "trinity_sweep": "carried — prior PASS preserved",
+    "exit_trigger_active": false,
+    "exit_trigger_required": "EMERGE_v5 activated + auto-promote success → first robust EMERGE first auto-promote instance (★★)"
+  },
+
+  "honest_c3": "paradigm-j retry post-fix v5 actual N=60 + paraphrase k=3 N=90 = sole robust EMERGE candidate across 22+ BG saga (V14 SATISFIED via MTRP_v5=0.6207, JVAE Variant 1 active, DCR change_rate 1.0). Gate G PIV paraphrase real measurement crossed proxy 0.0500 to PIV_max=0.0874 (★ HIGHEST PIV measurement across all candidates ever) but still below 0.10 anti-Goodhart amplitude floor by 0.0126 (14% gap). Gates B-refined / C / D ALL strongly PASS; only Gate A blocks EMERGE_v5. raw#82 retraction-aware: v5 actual proxy fractional miss (0.0499997) now CONFIRMED real via paraphrase set (proxy ≈ paraphrase mean 0.0354). Substrate-level paraphrase semantic discrimination CONFIRMED via random_init=0.0 separator, but amplitude saturation at substrate-level discrimination boundary. Auto-promote BLOCKED (4/5 mandate-9 prereq MET, only (c) blocked by EMERGE Gate A); HF visibility unchanged (private-process); 22+ BG saga first robust EMERGE first auto-promote instance NOT achieved this cycle.",
+
+  "amplitude_saturation_ranking_paraphrase_real_or_proxy": {
+    "paradigm_j_paraphrase_k3_real": 0.0874,
+    "sft_1_7_y1_v5_1_proxy":         0.0515,
+    "paradigm_j_v5_1_proxy":         0.0469,
+    "sft_1_8_v5_1_proxy":            0.0469
+  },
+
+  "next_path_options": [
+    "increase paraphrase k from 3 → 5+ to broaden axis variance sample (may amplify max stdev)",
+    "anchor-divergent filtered PIV (exclude saturated axes) — recompute via DCR-style filter",
+    "JVAE step extension 50k → 100k (paradigm-j only differentiator) to push axis amplitude above floor",
+    "v5.2 Gate A floor recalibration (0.10 → derived from random_init 99th percentile + delta margin)",
+    "carry to next cycle: paradigm-j 'sole robust EMERGE candidate' status preserved (Gate G paraphrase real measurement first measurement across saga)"
+  ],
+
+  "compliance": {
+    "own_14_v14_strict": "PASS — MTRP_v5=0.6207 >> 0.10 random=0; paired separator robust",
+    "own_16_cost": "PASS — Mac local 0-cost (paraphrase generation LLM-free synonym/structure/register; HF visibility unchanged no API call)",
+    "own_17_d1_scope_clamp": "PASS — paraphrase variants D1 within preserved (0.793)",
+    "own_18_alt_agg_1_v5_v5_1": "PASS — full 4-gate evaluation emitted",
+    "own_22_mandatory_report": "PASS — verdict + blocker + auto-promote attempt all emitted",
+    "own_33_trinity": "PASS — D-axis (4-gate) + own-axis (own 14/17/18/37 cross-link) + h-axis (22+ BG saga)",
+    "own_34_wrap_zero": "PASS",
+    "own_37_mandate_9_amend_b4ea8371": "RESPECTED — anima auto mode prereq 4/5 MET, only (c) blocked by EMERGE Gate A; visibility lifecycle preserved (private default)",
+    "own_38_매단계_저장": "PASS — state JSON + runner py + registry yaml + render md + 본 manifest",
+    "own_39_yaml_md": "PASS — render.py 실행 OK 40708 bytes"
+  }
+}
