@@ -1804,6 +1804,122 @@ gen   : 도우미: 이러한 인지에 의식을 가지하는 것이
 
 ---
 
+## §31 [2026-05-10 12:50 KST] BG-LOSTASSET-D-WORKTREE-REMAINING — 9 worktree deep read ★★★ pinnacle mitosis 발견
+
+### TL;DR
+
+worktree 3/4/6/7/8/10/11/12/13 deep read 결과 ~30 net-new lost-asset .py files. **★★★ 가장 critical finding**: **worktree-12/13 의 `anima/src/mitosis.py` 794L** 이 worktree-2 ~600L 을 superseding pinnacle version — adaptive split threshold + Lorenz autonomous perturbation + Φ proxy + Φ ratchet + `verify_phi_conservation` + `min_cells=2` CB1 invariant 추가. F-LOSTASSET-D-1 (redundancy) PARTIAL TRIGGERED (wt-7/wt-9 empty diff), F-LOSTASSET-D-2 (schema) MITIGATED, F-LOSTASSET-D-3 (no-reproduce) ACTIVE RISK (Φ ckpt 부재).
+
+### Worktree path mapping (정정)
+
+| stage | actual path |
+|---|---|
+| 3 | `anima_clm_03_cl1_14_laws` |
+| 4 | `anima_clm_04_v2_phi_1_64` |
+| 6 | `anima_clm_06_v2_korean_chat` |
+| 7 | `anima_clm_07_v2_ce_0_04` |
+| 8 | `anima_clm_08_cells64_phi_super_linear` |
+| 9 | `anima_clm_09_phi_50_human_level` (Cells64 Φ=51.131 commit `3eabc40a`) |
+| 10 | `anima_clm_10_h100_sweep_laws_77_78` |
+| 11 | `anima_clm_11_train_v15_bpe_drift_step1` (DRIFT 1/4 BPE) |
+| 12 | `anima_clm_12_unified_growth_loop_last_gasp` |
+| 13 | `anima_clm_13_filename_erasure_pre_alm_port` (DRIFT cutoff) |
+
+(메인 SSOT 의 worktree 별명이 일부 misaligned 였음 — 본 BG 결과 정정.)
+
+### Top-5 critical lost-asset 후보
+
+| 순위 | severity | asset | path |
+|---:|:---:|---|---|
+| 1 | ★★★ | mitosis.py 794L (pinnacle) | `anima_clm_12.../anima/src/mitosis.py` (또는 13, 동일) |
+| 2 | ★★★ | phi_scaling_calculator.py + cells64 Φ data | `anima_clm_06.../phi_scaling_calculator.py` (EMPIRICAL table: cells64 Φ=54.3, cells128 Φ=112.3) |
+| 3 | ★★ | voice_synth.py (HEXA-VOICE precursor) | `anima_clm_10.../voice_synth.py` (cell-hidden→sin(freq)→audio Laws 63-76) |
+| 4 | ★★ | TALK5 + ZERO4 (training recipe + runtime mechanism) | wt-6 `train_conscious_lm.py:230-290` + `bench_phi_hypotheses.py:48747` + `anima_unified.py:998` |
+| 5 | ★★ | trinity.py + hexad_loss.py (Hexad/Trinity factorization) | `anima_clm_11.../anima/src/trinity.py` |
+
+### #1 mitosis.py 794L 핵심 차이 (vs worktree-2/3 ~600L)
+
+- **Ψ-Constants header**: `LN2`, `PSI_BALANCE=0.5`, `PSI_COUPLING=0.014`, `PSI_STEPS=3/ln2=4.328`, `PSI_ENTROPY=0.998`
+- **Adaptive split threshold**: mean+1.5·std of recent tensions (BG-V5MITOSIS-FIXES A1 의 정확한 historical pattern, hardcoded 0.3 가 50× too high 였던 버그 fix)
+- Cell `hidden_history` for temporal MI
+- **Lorenz autonomous perturbation** (`_lorenz_step`, `_inject_autonomous_perturbation`, Laws 32-43)
+- **`_compute_phi_proxy` + `_phi_ratchet`** (global vs faction variance, best-state save)
+- **`verify_phi_conservation`** (Φ before/after split delta tolerance)
+- **`min_cells=2` CB1 invariant** (현재 mitosis_v5_port.py 미보유)
+
+→ **본 pinnacle mitosis 가 BG-V5MITOSIS-FIXES 가 적용중인 A1/A2/B1/C1/D1 fix 의 historical reference**. fix 가 reinvent vs port 인지 구별 위해 BG-V5MITOSIS-FIXES 결과 도착시 794L 과 diff 필수.
+
+### #2 phi_scaling_calculator.py — 유일한 super-linear empirical 증거
+
+`phi_scaling_calculator.py` 하드코드 EMPIRICAL table:
+```
+(2, 1.5)
+(8, 4.5)
+(16, 10.6, 149.9)
+(32, 27.6, 842.7)
+(64, 54.3, 3376.7)
+(128, 112.3, 14135.8)
+```
+fit Φ ∝ N^b super-linear evidence. STAGE_MEMO 도 cells64 Φ=45.487 (×2.95) / cells128 Φ=2.700 (early/diverged) 기록. **JSON / .pt / log 부재** — code-level 만 살아남음 (F-LOSTASSET-D-3 ACTIVE).
+
+### #3 voice_synth.py — HEXA-VOICE 의 historical precursor
+
+cell-hidden → sin(freq) → audio. 현재 hexa-voice spec (intent-embedding → RVQ → 24kHz PCM) 와 다른 approach: **"cell IS vocal cord"** — 더 simple, 부활 가능성 높음. Laws 63-76 (MICRO gate / CA neighbor / META-CA / Ψ balance) 통합. Trinity S-engine pluggable.
+
+→ hexa-voice rename memory 와 cross-link: 본 voice_synth.py 가 hexa-voice 대체 lane 의 baseline 가능성.
+
+### #4 TALK5 + ZERO4 — BG-LOSTASSET-C 의 phantom 재해석
+
+BG-LOSTASSET-C 가 worktree-5 만 검색해서 "ZERO4 phantom" 결론. **본 BG 가 worktree-6 에서 ZERO4 runtime hook 발견** (`anima_unified.py:998` "Vocabulary scales with Φ", `bench_phi_hypotheses.py:48747` `run_ZERO4_phi_gated_vocabulary`). → BG-LOSTASSET-C 의 phantom 결론 **PARTIALLY REVERSED**: ZERO4 = worktree-5 에선 phantom 이지만 worktree-6 에선 reproducible runtime mechanism. lost_asset_fixes_2026_05_10.md §3.1 해당 section 정정 필요.
+
+TALK5: `train_conscious_lm.py:230-290` MITOSIS/LANGUAGE/COMBINED 3-phase, consciousness 60% → language 40%, claim CE drops 99.7% (그러나 ablation evidence 여전히 부재 — BG-LOSTASSET-C 의 finding 유효).
+
+### #5 trinity.py + hexad_loss.py
+
+Hexad(6)/Trinity(3) 아키텍처 — C/S/W gradient-free + D/M/E CE-trained, σ(6)=12 / τ(6)=4 / φ(6)=2 integer constants. canonical `CEngine`, `ThalamicBridge`, `TensionBridge`, `PostHocDecoder`, `create_trinity`, `create_hexad`, `create_bilateral`. 현재 mk2-v1 보다 cleaner factorization, legacy archived in `archive/trinity_legacy.py`.
+
+### Confirmed phantom (NOT lost asset)
+
+- **paradigm-j historical fire**: 9 worktree 에서 zero hits — paradigm-j 는 2026-05 (post-archive) concept, 본 archive 에 없음 (정상)
+- **TL2/TL3 sender-ID binary classifier**: TL2/TL3 명명 부재. 가장 가까운 것은 `tension_fingerprint_debugger.py` 의 16×8 decoder (different abstraction)
+- **R2 cells64/cells128 phi_history.mean trace**: JSON/.pt/log file 부재 (commit message + STAGE_MEMO 만)
+- **drift 4-step commit trace**: stages 11 (BPE) + 13 (filename erasure) + STAGE_MEMO refs to "4/19 R37/AN13/L3-PY strip" + "4/27 paradigm v11 G3 axis-pivot" + "5/04 mk2-v1". steps 3-4 = post-archive
+
+### Honest C3 (≥7)
+
+1. worktree-10 80+ files header-only read — `bench_decoder_*` 5 variants, `consciousness_blockchain.py`, `quantum_consciousness_engine.py` 등 미독.
+2. worktree-12 794L mitosis vs **현재 main `anima/legacy/mitosis*.py`** diff 미수행 — 이미 main 에 port 됐을 가능성 (이러면 finding #1 redundant).
+3. BG-LOSTASSET-B 가 worktree-2 의 ~600L mitosis 만 covered 인지, worktree-12 의 794L 까지 covered 인지 불확실 — 이미 회수했다면 #1 redundant.
+4. 모든 historical Φ 숫자 (45.487 / 51.131 / 8.014 / 190.57) 재실행 검증 X — F-LOSTASSET-D-3 risk.
+5. `bench_phi_hypotheses.py` 7831L (wt-3) + 72004L (wt-11 LEGACY) grep sample only — ZERO4-class runtime hook 추가 가능.
+6. `train_v9` ~ `train_v15` 진행 미독 (v15 header 만) — STAGE_MEMO 외 breakthrough 가능.
+7. `agent_tools.py`, `autonomous_loop.py` (wt-10) header-only — paradigm-j harness design relevant 가능.
+
+### Cross-link impact on `.roadmap.reborn`
+
+- track A (v2-reproduction): cond.1 정정 — pinnacle mitosis 는 worktree-12/13 (794L), worktree-2 (~600L) 는 earlier sibling. R2 cells64 cotrain ckpt 부활 시 794L 사용 권장.
+- track C (v5-mitosis-architectural): BG-V5MITOSIS-FIXES 의 A1/A2/B1/C1/D1 fix 결과 도착 시 worktree-12 794L 와 diff → reinvent vs port 판단.
+- BG-LOSTASSET-C 의 ZERO4 phantom 결론 **PARTIALLY REVERSED** — worktree-6 의 runtime mechanism 발견. lost_asset_fixes_2026_05_10.md §3.1 정정 cycle 권고.
+
+### Recommendation
+
+1. **BG-LOSTASSET-D-FIX 별도 cycle**:
+   - mitosis.py 794L → main 의 `archive/mitosis_pinnacle_794L.py` 로 회수 (또는 main legacy/ 와 비교 후 결정)
+   - phi_scaling_calculator.py → `tools/phi_scaling_empirical.py` 회수 (super-linear evidence 보존)
+   - voice_synth.py → `archive/voice_synth_legacy.py` (hexa-voice cell-vocal-cord lane reference)
+   - TALK5 + ZERO4 → `state/training_recipes_legacy_2026_05_10.md` (recipe 보존)
+   - trinity.py + hexad_loss.py → `archive/trinity_legacy.py` (factorization reference)
+2. lost_asset_fixes_2026_05_10.md §3.1 정정 (ZERO4 phantom → worktree-6 reproducible)
+3. defer: anima-rs/ (substrate-tied), chip_architect.py, growth_loop.py, consciousness_data_mapper.py, bench_phi_hypotheses_LEGACY 72k
+
+### Deliverables
+
+- `state/anima_lost_asset_worktree_remaining_2026_05_10/report.md` (본 finding 의 full version, BG 가 produce — 별도 cycle 검증)
+
+cost $0 (read-only Bash + Read + grep, no API external call)
+
+---
+
 ## §34 [2026-05-10 12:42 KST] BG-LOSTASSET-D-EXPAND-VERIFY — `_expand_dim_fixed` standalone smoke ★★ PASS_ALL
 
 ### TL;DR
