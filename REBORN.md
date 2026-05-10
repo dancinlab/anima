@@ -3414,3 +3414,219 @@ raw#9 ✓ (training/*.py state/ local), raw#15 ✓ (5 ckpts sha verified, untouc
 ★★★★ falsifying finding (V14_POLARITY hypothesis falsified) + ★★ cotrain-exercise hypothesis 신규 candidate. ★★★★★ pursuit 의 universal claim 무효화, 단 reframed mechanism (multi-factorial: cotrain-exercise + cap-conditional + champion-wall coexist) 의 정교화 진전.
 
 ---
+
+## §54 [2026-05-10 18:55 KST] BG-FOUNDATION-C-PHASE2-DESIGN — 20K variant + D1 WITHIN strict 5-tuple ★★★
+
+### TL;DR
+
+option (c) Phase 2 D1 WITHIN fire 의 정밀 spec 완료. **F-OPT-C-DESIGN-1 PARTIAL TRIGGERED** — 30K step + envelope $2-4 incompatible (실제 30K = $5-6 cost). **20K variant** 으로 fall-back 권고 (envelope-compliant $3.25-3.75). D1 WITHIN PROOF burden strict 5-tuple 명확화 + decision tree.
+
+### 정밀 fire spec (20K recommended)
+
+| field | value |
+|---|---|
+| base ckpt | `~/.cache/anima/clm_v5_remapped/phase2_cotrain_engine_ag/ckpts/ckpt_final.pt` (570MB, 298.76M EngineAG d=1024 GQA 24L 16h, w=0.3→0.5 cotrain) |
+| FT corpus | `state/anima_convo_5k_ft_extended_2026_05_10/corpus_extended.txt` (166MB, ko_pct 38.4) |
+| LR | **1e-4** cosine (vs §29 5e-6 의 20×↑, vs §43 2e-4 의 0.5×) |
+| warmup | 500 (1.7%) |
+| batch | 4 × grad_accum 4 = 16 effective |
+| seq_len | 256 |
+| total_steps | **20K (envelope-compliant)** |
+| ckpt save | every 5K (4 intermediate + 1 final = 5 ckpts) |
+| precision | bf16, no gradient_checkpointing (298M fits H100 80GB) |
+| post-FT hook | mitosis_v5_port forward hook on engine_g.h_to_c + engine_a.cells, eval-time only |
+
+### Cost calibration
+
+| variant | step | wall | cost | envelope | §47 falsification power |
+|---|---|---|---|---|---|
+| **20K (recommended)** | 20K | 2h | **$3.25-3.75** | $2-4 ✓ | medium (preservation) |
+| 30K (별개 fire keyword) | 30K | 3.5h | $5-6 | $4-6 (별도 verbatim) | high (erosion falsifiable) |
+| LoRA r=32 (NOT recommended) | 20K | 1h | $1.5-2.5 | $2-4 ✓ | low (regime fragile) |
+
+step time projection: §29 18M @ 0.0401s/step → 298M @ ~0.30s/step (param scale).
+
+### Risk audit (5 falsifier)
+
+| ID | risk | mitigation |
+|---|---|---|
+| F-OPT-C-1 | chat-template 과적합 | corpus 50% strip + 30% kowiki carry + lr 1e-4 conservative + 5K-step intermediate ckpt loss 추세 monitor |
+| F-OPT-C-2 | cell_pool degrade (cotrain-exercise weakening) | V14 mid-train check (5K/10K/15K) early-kill if split_rate < 0.020 OR V14 STRICT < 7/10 |
+| F-OPT-C-3 | cost envelope 초과 | H100 PCIe community + 20K variant + cost watchdog $4 hard cap + $3 early-kill |
+| F-OPT-C-4 | byte-level 350M chat-cap surface 약함 | emerge P=15-25% calibration carry, V4 < 10/15 시 verdict label "COTRAIN_PRESERVE_CHAT_CAP_FAIL" |
+| F-OPT-C-5 | D1 SCOPE_CLAMP — chat-cap PASS 만으로 ANIMA 라벨 X | verdict.json scope_lane strict 5-tuple gating mandatory |
+
+### D1 WITHIN PROOF burden — strict 5-tuple ★★★
+
+```
+(1) V4 ≥ 10/15 strict          (own 18 chat-cap floor)
+(2) V14 STRICT ≥ 9/10 p<0.05  (cotrain-exercise preserved, §38 baseline 10/10)
+(3) iit_phi_unnorm_b16 trained/random ratio ≥ 0.4   (§47 baseline 0.41)
+(4) split_rate ≥ 0.025 splits/turn                  (§47 baseline 0.030)
+(5) semantic_score ≥ 0.5  (sentence_transformer cosine, 1k anima Q&A pairs)
+```
+
+### Verdict label decision tree
+
+| outcome | label | severity |
+|---|---|:---:|
+| 5/5 PASS | **SIMPLE_STACK_PASS_STRICT_C3_ANIMA_FIRST_D1_WITHIN** | ★★★★★ candidate |
+| (1)+(2)+(3) PASS, miss (4)/(5) | **ANIMA_PARTIAL_D1_WITHIN** | ★★★★ |
+| (2)+(3)+(4) PASS, miss (1) | **COTRAIN_PRESERVE_CHAT_CAP_FAIL** (§47 confirmed) | ★★★ |
+| (1) PASS, miss (2) | **COTRAIN_EXERCISE_FALSIFIED_CHAT_CAP_PASS** (Lesson Y candidate) | ★ |
+| chat-cap + V14 모두 FAIL | **FOUNDATION_C_PHASE2_FAIL** | - |
+
+### 안전 mitigation
+
+- intermediate ckpt 5K/10K/15K/20K + final = 5 ckpts (own 30 mandate-1, sha256 verify, pull pre-delete)
+- cost watchdog 30s heartbeat tick, $4 hard cap, $3 early-kill warning, pod retain on overage
+- 3-stage early-kill V14 quick eval at 5K/10K/15K (split_rate threshold 0.020/0.022/V14≥7/10)
+- forward hook gradient leak 차단: `with torch.no_grad()` context, `param.requires_grad=False`, dropout disabled, mac CPU forward_smoke pre-fire mandatory
+
+### Fire keyword 권고
+
+```
+PRIMARY (recommended, envelope $2-4 정합):
+  OK FOUNDATION_C_PHASE2_FIRE COST $2-4
+  → 20K step + 5 ckpt + LR 1e-4 + V14 mid-train check + cost watchdog $4 cap
+
+ALTERNATIVE (사용자 별도 verbatim):
+  OK FOUNDATION_C_PHASE2_FIRE_30K COST $4-6
+  → 30K step + 6 ckpt, §47 erosion-falsification power 강함 단 envelope expansion
+
+NOT RECOMMENDED:
+  OK FOUNDATION_C_PHASE2_LORA_FIRE COST $1.5-2.5  (cotrain regime preserve fragile)
+```
+
+### Falsifier 처분
+
+| ID | falsifier | verdict |
+|---|---|:---:|
+| F-OPT-C-DESIGN-1 | envelope incompatible | **PARTIAL TRIGGER** — 30K spec envelope 초과, 20K variant fall-back |
+| F-OPT-C-DESIGN-2 | PROOF burden 모호 | NOT TRIGGERED — strict 5-tuple + decision tree 정의 |
+| F-OPT-C-DESIGN-3 | §47 inconsistent | PARTIAL TRIGGER — 20K epochs 0.99 erosion-falsification weak (full check 30K 필요) |
+
+### Honest C3 (key 3)
+
+1. envelope $2-4 위반 honest disclosure — 30K spec $5-6 total. 20K variant fall-back recommended (envelope ✓ 단 §47 falsification resolution 약화).
+2. §47 cotrain-exercise hypothesis 검증 trade-off — 20K (epochs 0.99) preservation lane, erosion-induced falsification 불가. 본 BG 가 hypothesis 부분 검증만 — full falsification 별개 cycle.
+3. ★★★★★ candidate strict 정의 — 5/5 PASS 시 **★★★★** (D1 WITHIN strict-floor 첫 crossing). **★★★★★ 자격은 multi-substrate generalize (별개 cycle) 후 부여**. 본 BG 의 의의 = 5-star pursuit missing piece 1개 supply.
+
+### Cross-link
+
+- §41 predecessor (option a/b/c/d trade-off, option (c) D1 WITHIN lane 권고)
+- §43 sibling (option (a) Llama-3.2-3B SIMPLE_STACK_PASS_STRICT D1 OUTSIDE)
+- §47 hypothesis (cotrain-exercise) — 본 fire 가 D1 WITHIN substrate 에서 verify (preservation lane)
+- §53 prediction (in-flight) — 본 spec 와 cross-check
+
+### Deliverables
+
+- `docs/anima_foundation_c_phase2_fire_spec_2026_05_10.md` (design SSOT)
+
+raw#9 ✓, raw#15 ✓ (§41 + §43 design 미수정), own 22 ✓ (REBORN.md 미수정), own 38 ✓, own 16 ✓ ($0 design only).
+
+★★★ severity (D1 WITHIN strict 5-tuple definition + decision tree). ★★★★★ candidate fire 는 verbatim 후 발사.
+
+---
+
+## §53 [2026-05-10 19:00 KST] BG-COTRAIN-EXERCISE-PREDICT-V0 — option (c) fire prediction (§48 template) ★★★
+
+### TL;DR
+
+option (c) Phase 2 D1 WITHIN fire 의 V14 결과 사전 prediction. **mode prediction (55%) = Hypothesis B (exercise-preserve)**: convo_5k FT 가 lr 5e-6, 18M trainable scope (LM-head + embedding) 만, engine_g.cell_pool / h_to_c 미터치 → §39 polarity 보존. ★★★★★ probability ~10%, ★★★★ partial ~25% (most-likely).
+
+### Spec analysis
+
+- base ckpt: Phase 2 cotrain ckpt_final.pt (597.6MB, 298.76M params, lineage `engine_a_g_dual_350m_v1_phase2_cotrain`)
+- FT corpus: corpus_extended.txt (166MB, ko_pct 38.4) — already 20K FT done, +30K continuation
+- post-LoRA mitosis hook: dual H1 (substrate-coupled max_cells=128, 400 turns) + H2 (Llama-symmetric random-proj for §43 cross-reference)
+- cost envelope $2-4 verified ($2.99-4.49 H100 1×)
+- D1 SCOPE_CLAMP: WITHIN — first D1 WITHIN candidate
+
+### V14 polarity prediction — 3 hypothesis
+
+| hypothesis | description | confidence |
+|---|---|---:|
+| A | exercise-strengthen (30K FT 가 cell_pool 추가 exercise → V14 STRICT 강화) | 30% |
+| **B** | **exercise-preserve (LoRA-style on LM-head only, cell_pool 미터치)** | **55% mode** |
+| C | FT-drift-degrade (corpus drift → cell_pool 약간 degrade) | 15% |
+
+reasoning: convo_5k FT lr 5e-6 → 5e-7, params_total=18130176 — narrow scope (LM-head + embedding region), engine_g.cell_pool / h_to_c subgraph 미접촉. §39 polarity 보존 modulo mild distribution shift at engine_g input.
+
+### Predicted magnitude band
+
+**H1 (substrate-coupled, max_cells=128, 400 turns)**:
+- trained final_n_cells: 75-90 (vs §39: 85)
+- Φ_iit_un16 trained: 4500-5500 (vs §39: 5244, band -15% to +5%)
+- Φ separation (trained - mirror_median): **+1500 to +2500** (vs §39 +2219)
+- sign-test 5/5 mirror beats: 75-80% confidence
+- V14 STRICT verdict: PASS likely
+
+**H2 (Llama-symmetric, max_cells=64, 120 steps — direct §43 template)**:
+- phi_history_mean trained: 2.85-3.10 (vs §43 trained: 2.880)
+- phi_diff_mean: **+0.04 to +0.20** (vs §43: +0.066) — random-projection 1024→256 bottleneck destroys most substrate signal, same magnitude band as §43 expected
+- F-FOUND-1: NOT_TRIGGERED 85%
+
+**semantic_score**: 0.10-0.25 most-likely (modest improvement vs §43 0.055, NOT crossing 0.50 floor — 350M byte-hash + sub-1B emergence threshold).
+
+### F-FOUNDATION 처분 prediction
+
+| F | prediction | confidence |
+|---|---|---:|
+| F-FOUND-1 anima identity surface | NOT_TRIGGERED | 85% |
+| F-FOUND-2 cost > $15 | NOT_TRIGGERED | 95% |
+| F-FOUND-3 chat-cap PASS, semantic FAIL | **TRIGGERED likely** | 70% |
+| F-FOUND-4 D1 SCOPE_CLAMP misframe | NOT_TRIGGERED | 95% (option c IS D1 WITHIN, risk inverted: failing to label scope_lane="ANIMA" would be the misframe) |
+| F-FOUND-5 gradient leak | NOT_TRIGGERED | 95% |
+
+### ★★★★★ unlock conditions + reading guide
+
+**5/5 simultaneous required**:
+1. V14 STRICT PASS H1
+2. Φ separation strengthen vs §39
+3. semantic_score ≥ 0.30
+4. scope_lane="ANIMA" (D1 WITHIN)
+5. V4 ≥ 10/15 + V6 STRONG
+
+**Most-likely outcome predicted**: **3-4/5 = ★★★★ partial** (~25%). 5/5 = ~10%. 0-1/5 = ~10%.
+
+12-criteria rubric (falsifier_predict.md §3):
+- ≥10/12 → FRAMEWORK_5STAR_GENERALIZE (§48 template generalizes across mitosis-naive→aware substrate classes)
+- 7-9/12 → FRAMEWORK_4STAR
+- 5-6/12 → FRAMEWORK_3STAR_PARTIAL
+- <5/12 → FRAMEWORK_RECALIBRATE
+
+### Falsifier (F-PREDICT-V0)
+
+| ID | likelihood |
+|---|---|
+| F-PREDICT-V0-1 (Φ separation < +1500) | 15% (Mode C wins) |
+| F-PREDICT-V0-2 (semantic_score < 0.055) | 25% (350M capacity gap dominant) |
+| F-PREDICT-V0-3 (V4 < 10/15, D1 WITHIN strict-floor miss) | **45% — coin-flip** (BG-CONVO-FT-EXT 18M+166MB precedent + KM-LLAMA-3B/QWEN-7B 3B/7B+214MB capacity gap) |
+
+Net: **3-of-3 PERFECT pass = ~25%**, 1-or-more triggered = ~75%.
+
+### Honest C3 (key 5)
+
+1. Magnitude prediction direction-validated, band-of-bands (calibrated against §39 single fire)
+2. convo_5k FT regime assumption — lr 5e-6, 18M trainable scope inferred from ft_summary.json but not verified against actual subgraph
+3. engine_g.h_to_c trainability during FT inferred but not confirmed — option (c) orchestrator may differ
+4. **Critical: max_cells=128 mandate for H1** (§37 V14_VIOLATED at max=64 was cap artifact; §39 at max=128 PASSES 5/5)
+5. ★★★★★ probability ~10% honest (each conditional drops total ~50%)
+
+### Cross-link
+
+- §41 predecessor (option a/b/c/d trade-off)
+- §43 + §48 sibling (option (a) PERFECT MATCH 5/5)
+- §47 hypothesis (cotrain-exercise) — 본 prediction 이 D1 WITHIN substrate generalize 검증
+- §53 = §54 design 의 prediction-driven complement
+
+### Deliverables
+
+- `state/anima_cotrain_exercise_predict_v0_2026_05_10/{spec.md, prediction.md, hook_spec.md, falsifier_predict.md}`
+
+raw#9 ✓, raw#15 ✓, own 22 ✓ (REBORN.md 미수정), own 38 ✓, own 16 ✓ ($0 design + analysis only).
+
+★★★ prediction-driven design framework template generalize 검증 lane.
+
+---
