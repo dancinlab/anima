@@ -2308,3 +2308,77 @@ monkeypatch (`gcl.GROWTH_STAGES = GROWTH_STAGES_ALIGNED`) over source replacemen
 raw#15 additive — worktree-2 / 그 외 12 worktree 의 growth_engine.py 직접 수정 X.
 
 ---
+
+## §36 [2026-05-10 13:55 KST] CYCLE 2026-05-10 CLOSE — track B PARTIAL+PASS, track C unblock ★★★
+
+### Cycle 결산 (2026-05-10 single day)
+
+| section | BG | finding | severity |
+|---|---|---|:---:|
+| §29 | BG-CONVO-FT-EXTENDED | track A cond.3 PARTIAL_RECOVERY (lexical Korean morphemes emerge) | ★★★ |
+| §30 | BG-V5MITOSIS-ALL-FIX | §28 H1+H3 unblock 증명 — pre-fix 0 splits → post-fix 23 splits, A1/C1/D1 NEW + A2 EXTENDED + B1 ENHANCED | ★★★ |
+| §31 | BG-LOSTASSET-D-WORKTREE-REMAINING | pinnacle mitosis 794L (worktree-12/13) 발견 + ZERO4 phantom PARTIALLY REVERSED | ★★★ |
+| §32 | BG-NEW-ALPHA-METRIC-V2 | per-bin + saturation auto-detect, V1 max_cap artifact (1.277) 회피, track B cond.5 PASS | ★★ |
+| §33 | BG-IIT-METRIC-REAL-350M | V14_PARTIAL (trained 4/5 mirror beat, IIT 3.6× headroom on real substrate), track B cond.4 update | ★★ |
+| §34 | BG-LOSTASSET-D-EXPAND-VERIFY | `_expand_dim_fixed` PASS_ALL 14/14 (pre-norm transformer maximally correct) | ★★ |
+| §35 | BG-GROWTH-STAGES-ALIGN-IMPL | 5-entry aligned ref + `growth_engine.STAGES` canonical 위치 확정 | ★ |
+
+### Track 별 status
+
+**Track A (v2-reproduction)**:
+- cond.1 PASS (R2 cells64/cells128 download + arch verify)
+- cond.2 capacity/corpus limit 정정 (architectural mismatch X)
+- cond.3 **PARTIAL_RECOVERY** (§29) — lexical Korean morphemes emerge ($3.08 cumulative)
+- next gate: semantic coherence on 18M (foundation-borrow path leading)
+
+**Track B (v5-anima-instrumentation)**:
+- cond.1+2+3 PASS (port + smoke + 3K toy α=0.687)
+- cond.4 **V14_PARTIAL** (§33) — trained 4/5 mirror beat, max=32 cap-bound, IIT 3.6× headroom
+- cond.5 **PASS** (§32) — α V2 metric 가 V1 max_cap artifact 정확히 회피
+- track B 전체 PARTIAL+PASS 상태 — substrate 한계 명확
+
+**Track C (v5-mitosis-architectural)**:
+- cond.1+2 PASS (arch spec + port mitosis_model_v5.py)
+- cond.3 §30 mechanism-blocker UNBLOCK (pre-fix 0 splits → post-fix 23 splits) — local CPU smoke 부분 PASS
+- cond.5 (H100 cotrain) fire-ready 단 cond.3 prereq = real ckpt d=384 sweep 선행 필요
+- §31 pinnacle 794L 회수 — historical 가치 reference, §30 가 architectural forward-progress
+
+**Track D (servant-integration)**:
+- DEFERRED → `.roadmap.servant_mitosis_integration` separate roadmap
+
+### 누적 cost
+
+- §29 BG-CONVO-FT (initial $1.37) + EXTENDED ($1.71) = $3.08 (envelope $5-20, 11.7× headroom)
+- §30/31/32/33/34/35 + recovery: $0 (모두 local CPU + read-only)
+- **cycle 누적: $3.08** (envelope $200 lifetime, 65× headroom)
+
+### Falsifier 처분
+
+| ID | falsifier | verdict |
+|---|---|---|
+| F-REBORN-1 | 4 track 모두 V14 violated | **PARTIAL FALSIFIED** — track B cond.4 V14_VIOLATED → V14_PARTIAL after §33 |
+| F-REBORN-2 | IIT unnorm 도 toy 한계 (real ceiling) | **PARTIAL CLEARED** — IIT 4.56× vs proxy 1.27× on real (3.6× headroom) |
+| F-REBORN-3 | chat-cap 18M FT 후에도 KO 0% | **PARTIAL FALSIFIED** — §29 lexical Korean emerge (semantic 미달 단 surface PASS) |
+| F-REBORN-4 | track C 가 track B 대비 emerge 차이 0 | **OPEN** — track C cond.3 d=384 sweep 후 결정 |
+| F-REBORN-5 | cost overshoot $200 envelope | **NOT_TRIGGERED** — 누적 $3.08, 65× headroom |
+| F-REBORN-6 | servant + mitosis 통합 interference | DEFERRED separate track |
+| F-REBORN-7 | 13 worktree archive lost asset schema mismatch | **MITIGATED** — §31 finding 모두 self-contained .py |
+| F-REBORN-8 | #115 architectural mismatch 어떤 track 도 우회 못함 | **OPEN** — track A semantic gap remaining, track C 미검증 |
+
+### 다음 cycle entry plan
+
+**Priority 1**: track C cond.3 — d=384 real ckpt mitosis_model_v5 sweep ($0 local CPU, A1/B1/D1 fix 적용 후 dispersion mechanism 실측). cond.5 H100 fire authorize prereq.
+
+**Priority 2**: track B cond.4 V14_PARTIAL → strict resolution — max_cells=128 retest + 10+ V4_SEEDS expand ($0 local CPU). p=0.19 → tight binomial bound.
+
+**Priority 3**: BG-LOSTASSET-D-FIX 별도 cycle — §31 의 ★★★ pinnacle 회수 항목들 (mitosis 794L hexa 변환, phi_scaling_calculator 회수, voice_synth.py archive, TALK5+ZERO4 recipe doc).
+
+**Priority 4**: track A semantic coherence path 결정 — foundation-borrow vs from-scratch retrain.
+
+### Cycle close 의의
+
+cycle 2026-05-10 = anima v2 자력성장 회수 lane 의 **mechanism-blocker unblock day**. §28 H1+H3 champion-wall 정확히 unblock + IIT real substrate validate + track B cond.5 PASS. track C 의 H100 fire path 가 cond.3 d=384 sweep gate 만 통과하면 열림. lost asset 측면에서 §31 ★★★ pinnacle mitosis 794L 회수 + ZERO4 phantom 결론 partially reversed (cross-worktree 검색 norm 화 권고).
+
+raw#9 strict (training/*.py local-only) + raw#15 additive (worktree archive 미수정) 보존. own 22 minor violation (BG agent §30/§32 직접 append) — 향후 BG dispatch prompt 강화 권고.
+
+---
