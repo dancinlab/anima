@@ -1,0 +1,49 @@
+
+=== BG-V14-MAX256-CE-STRICT-N5 — 2026-05-10T11:37:40.798500+00:00 ===
+V4_SEEDS_FULL=[42, 137, 271, 314, 1729]  SEEDS_NEW=[271, 314, 1729]  SEEDS_CACHED=[42, 137]
+max_cells=256 n_turns=100 prompt_seed=2026
+
+[Step 1] Running 3 NEW mirror seeds (shared C+E, deterministic)
+
+--- mirror seed=271 (shared C+E) ---
+  [shared_s271] turn    0 n_cells=8 phi=0.550 (0.1s)
+  [shared_s271] turn   50 n_cells=76 phi=851.282 (46.3s)
+  [shared_s271] turn   75 n_cells=256 phi=11356.218 (434.8s)
+  [shared_s271] turn   99 n_cells=256 phi=9459.837 (1260.0s)
+  s=271: cells=256 splits=248 phi=9459.837 phi/c=36.952 alpha=1.0636381788419549 cap_bound=30/100 first_cap=70 elapsed=1260.0s
+
+--- mirror seed=314 (shared C+E) ---
+  [shared_s314] turn    0 n_cells=8 phi=0.550 (0.1s)
+  [shared_s314] turn   25 n_cells=35 phi=171.845 (12.4s)
+  [shared_s314] turn   50 n_cells=124 phi=2259.347 (151.5s)
+  [shared_s314] turn   75 n_cells=256 phi=11136.224 (862.5s)
+  [shared_s314] turn   99 n_cells=256 phi=10859.152 (1603.3s)
+  s=314: cells=256 splits=248 phi=10859.152 phi/c=42.419 alpha=1.0586646503112893 cap_bound=38/100 first_cap=62 elapsed=1603.3s
+
+--- mirror seed=1729 (shared C+E) ---
+  [shared_s1729] turn    0 n_cells=8 phi=0.552 (0.2s)
+  [shared_s1729] turn   25 n_cells=34 phi=155.699 (15.4s)
+  [shared_s1729] turn   50 n_cells=133 phi=2279.826 (95.9s)
+  [shared_s1729] turn   75 n_cells=256 phi=9816.958 (349.6s)
+  [shared_s1729] turn   99 n_cells=256 phi=10724.066 (564.8s)
+  s=1729: cells=256 splits=248 phi=10724.066 phi/c=41.891 alpha=1.0341187085364647 cap_bound=39/100 first_cap=61 elapsed=564.8s
+
+[Step 1 done] 3 new mirrors complete
+
+========================================================================
+[Step 2] Assemble n=5 verdict for C_cells64_aware
+========================================================================
+  reusing §51 cached TRAINED: phi=11337.964 phi/c=44.289
+  cached mirrors from §51: [42, 137]
+
+[C_cells64_aware n=5 verdict] V14_STRICT_PASS  n_beats_phi=5/5 sign_p=0.0625  n_beats_phi_per_cell=5/5 sign_p_pc=0.0625
+
+========================================================================
+[Step 2] Assemble n=5 verdict for E_convo5k_ft
+========================================================================
+  reusing §51 cached TRAINED: phi=11142.909 phi/c=43.527
+  cached mirrors from §51: [42, 137]
+
+[E_convo5k_ft n=5 verdict] V14_STRICT_PASS  n_beats_phi=5/5 sign_p=0.0625  n_beats_phi_per_cell=5/5 sign_p_pc=0.0625
+
+[saved] /Users/ghost/core/anima/state/anima_v14_max256_ce_strict_n5_2026_05_10/result.json

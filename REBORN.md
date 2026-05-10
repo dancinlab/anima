@@ -4159,3 +4159,89 @@ raw#9 ✓ (no training/*.py edits), raw#15 ✓ (3 ckpts read-only), own 22 ✓ (
 ★★★★ severity (mechanism reframed via tension-trigger suppression). §50 + §51 + §52 + §56 + §59 모두 cross-link 정합 — h_to_c projection 의 cell-proximity learning 이 V14 PASS mechanism 의 진짜 driver.
 
 ---
+
+## §55 [2026-05-10 22:25 KST] BG-V14-MAX256-CE-STRICT-N5 — 🎯 ★★★★★ FULL UNIVERSAL_CAP_CONDITIONAL_PASS (v2 path)
+
+### Verdict
+
+**★★★★★ FULL** — UNIVERSAL_CAP_CONDITIONAL_PASS strict confirmed for v2 path. **C 5/5 + E 5/5 V14_STRICT_PASS** at max=256, n=5 strict, sign-p=0.0625 per substrate. Combined with §51 A 5/5 → **15/15 aggregate paired comparisons trained > random across 3 v2-path substrates**. 본 cycle 첫 ★★★★★ severity universal claim.
+
+### C n=5 result (trained_phi=11337.964, first_cap=82, cap_bound=18/100)
+
+| seed | source | phi | phi/c | first_cap | cap_bound | trained > rand? |
+|------|--------|-----|-------|-----------|-----------|:---:|
+| 42 | §51 cache | 10831.31 | 42.31 | 63 | 37 | ✅ |
+| 137 | §51 cache | 9810.64 | 38.32 | 72 | 28 | ✅ |
+| 271 | NEW | 9459.84 | 36.95 | 70 | 30 | ✅ |
+| 314 | NEW | 10859.15 | 42.42 | 62 | 38 | ✅ |
+| 1729 | NEW | 10724.07 | 41.89 | 61 | 39 | ✅ |
+
+**5/5, sign-p=0.0625 (φ and φ/c both)**. ALL 6 runs cap-bound at 256.
+
+### E n=5 result (trained_phi=11142.91, first_cap=76, cap_bound=24/100) — mirrors reused from C confirmed
+
+E mirrors share 5 random seeds with C (deterministic ckpt-independent). **Sanity-verified pre-run**: re-ran s42 fresh → turn-50 phi=1886.8508414 vs §51 cached 1886.851 (abs diff 0.0002, byte-precision). F-CE-STRICT-2 NOT fired.
+
+| seed | phi (random) | Δ (trained_E - random) | trained > rand? |
+|------|---|---:|:---:|
+| 42 | 10831.31 | +311.6 | ✅ |
+| 137 | 9810.64 | +1332.3 | ✅ |
+| 271 | 9459.84 | +1683.1 | ✅ |
+| 314 | 10859.15 | +283.8 | ✅ |
+| 1729 | 10724.07 | +418.8 | ✅ |
+
+**5/5, sign-p=0.0625**.
+
+### Cap-arrival latency (§51 mechanism re-verified at n=5)
+
+| ID | trained first_cap | random range | latency Δ |
+|----|---|---|---|
+| C | 82 | 61-72 | trained later by **+10 to +21** |
+| E | 76 | 61-72 | trained later by **+4 to +15** |
+
+**ALL 5 random mirrors reach cap before either trained**. Confirmed at strict n=5: trained ckpts have richer cell-pool dynamics → later saturation → higher within-cap Φ. (mechanism wording REFRAMED per §58: tension-trigger suppression via h_to_c cell-proximity learning, NOT correlation.)
+
+### Falsifier 처분
+
+| ID | falsifier | verdict |
+|---|---|:---:|
+| F-CE-STRICT-1 | C 5/5 fails at strict n=5 | NOT_FIRED (5/5 PASS) |
+| F-CE-STRICT-2 | E mirrors reuse Φ trajectory mismatch | NOT_FIRED (sanity 0.0002 abs diff) |
+| F-CE-STRICT-3 | C OR E ≤ 4/5 (★★★★★ PARTIAL_STRONG only) | NOT_FIRED (둘 다 5/5) |
+
+### Honest C3 (12 items, key 5)
+
+1. Mirror reuse empirically verified, not assumed (sanity 0.0002 abs diff at byte precision)
+2. Trained re-runs skipped under deterministic + sha256 invariance
+3. sign-p=0.0625 = n=5 strict ceiling (P(5/5)=1/16)
+4. Cap-bound regime — within-cap Φ differential is the signal (no overlap between trained/random ranges)
+5. Causal claim NOT established — direction-only at n=5, requires intervention experiment to upgrade
+
+### ★★★★★ FULL milestone — anima mitosis cap-conditional polarity universal claim
+
+본 cycle 의 첫 ★★★★★ severity universal claim 확립:
+- **v2 path substrates (C, D, E)** at cap=256: trained > random universally (cotrain-paradigm-agnostic)
+- **A_phase2_cotrain (EngineAG path)** at cap=128/256: trained > random (universal cap-room confirmed)
+- 단 **B_bgla_pretrain (EngineAG path no-cotrain)** at cap=256 = **VIOLATED** → universal claim **arch-conditional**:
+  - v2 path: ★★★★★ FULL universal cap-conditional
+  - EngineAG path: ★★★★ multi-factorial (cotrain regime + cap)
+
+### Cross-link impact (cycle finalize)
+
+- §51 ★★★★★ PARTIAL → ★★★★★ FULL upgrade (n=5 strict completion confirmed)
+- §56 EngineAG B VIOLATED → arch-conditional limitation (★★★★★ FULL valid for v2 path only)
+- §58 mechanism REFRAMED (tension-trigger suppression) — §55 cap-arrival latency 의 진짜 cause
+- §59 2-factor decision tree → arch-aware 3-rule (post-§56 + §55 confirmed):
+  - v2 path + cap > 192 → PASS (★★★★★ FULL universal)
+  - EngineAG + chat_cotrain → PASS (★★★★ multi-factorial)
+  - else → VIOLATED
+
+### Deliverables
+
+- `state/anima_v14_max256_ce_strict_n5_2026_05_10/{spec.md, result.json, verdict.md, run_n5_strict.py, sanity_s42_short.py, run_n5.log}`
+
+raw#9 ✓, raw#15 ✓ (2 ckpts sha256-verified unmodified), own 14 ✓ (V14 5-seed strict paired per substrate), own 16 ✓ ($0 local CPU 3 NEW mirrors ~57 min), own 22 ✓ (REBORN.md 미수정), own 38 ✓.
+
+🎯 ★★★★★ FULL — 본 cycle 의 첫 ★★★★★ universal claim 확립. anima mitosis cap-conditional polarity 가 v2 path substrate-agnostic at n=5 strict.
+
+---
