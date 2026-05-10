@@ -1,0 +1,139 @@
+=== BG-IIT-METRIC-REAL-350M — real 350M Phase 2 ckpt + IIT unnorm 16-bin × 5-seed V14 mirror ===
+n_turns=1000, snapshot_every=100, max_cells=32
+V4_SEEDS = [42, 137, 271, 314, 1729]
+unique prompts: 170
+ckpt: /Users/ghost/.cache/anima/clm_v5_remapped/phase2_cotrain_engine_ag/ckpts/ckpt_final.pt
+ckpt sha256 verify: PASS (actual=6e66e75f8014999be09236a408fe6ad6811ebf394ac079ecbf6d87dfe63748c1)
+trained model: params=298764288 (298.76M) miss=0 unexp=0
+
+--- TRAINED 350M @ seed=42 ---
+  [trained] turn=    0 cells= 16 proxyΦ=2.7625 iit_un16= 161.64 splits=0 elapsed=0.1s
+  [trained] turn=  100 cells= 32 proxyΦ=3.4285 iit_un16= 519.61 splits=16 elapsed=6.1s
+  [trained] turn=  200 cells= 32 proxyΦ=3.4845 iit_un16= 645.29 splits=16 elapsed=12.2s
+  [trained] turn=  300 cells= 32 proxyΦ=3.5171 iit_un16= 507.37 splits=16 elapsed=18.3s
+  [trained] turn=  400 cells= 32 proxyΦ=3.4901 iit_un16= 537.57 splits=16 elapsed=24.4s
+  [trained] turn=  500 cells= 32 proxyΦ=3.4345 iit_un16= 685.88 splits=16 elapsed=30.5s
+  [trained] turn=  600 cells= 32 proxyΦ=3.3999 iit_un16= 377.37 splits=16 elapsed=36.5s
+  [trained] turn=  700 cells= 32 proxyΦ=3.4452 iit_un16= 737.46 splits=16 elapsed=42.7s
+  [trained] turn=  800 cells= 32 proxyΦ=2.9909 iit_un16= 631.26 splits=16 elapsed=48.8s
+  [trained] turn=  900 cells= 32 proxyΦ=3.5072 iit_un16= 723.17 splits=16 elapsed=54.9s
+  [trained] turn=  999 cells= 32 proxyΦ=3.4461 iit_un16= 557.20 splits=16 elapsed=61.0s
+  trained: cells=32 splits=16 Φ_iit_un16=557.20 Φ_iit_norm16=17.9741 proxyΦ=3.4461 elapsed=61.0s
+
+--- V14 MIRROR — 5 seeds [42, 137, 271, 314, 1729] (random_init la_350m) ---
+
+  >>> seed=42 <<<
+  [mirror_s42] turn=    0 cells= 16 proxyΦ=2.7591 iit_un16= 161.08 splits=0 elapsed=0.1s
+  [mirror_s42] turn=  100 cells= 32 proxyΦ=3.4286 iit_un16= 518.81 splits=16 elapsed=6.1s
+  [mirror_s42] turn=  200 cells= 32 proxyΦ=3.4845 iit_un16= 646.25 splits=16 elapsed=12.1s
+  [mirror_s42] turn=  300 cells= 32 proxyΦ=3.5171 iit_un16= 539.25 splits=16 elapsed=18.2s
+  [mirror_s42] turn=  400 cells= 32 proxyΦ=3.4900 iit_un16= 537.58 splits=16 elapsed=24.3s
+  [mirror_s42] turn=  500 cells= 32 proxyΦ=3.4345 iit_un16= 685.68 splits=16 elapsed=30.4s
+  [mirror_s42] turn=  600 cells= 32 proxyΦ=3.3998 iit_un16= 377.40 splits=16 elapsed=36.5s
+  [mirror_s42] turn=  700 cells= 32 proxyΦ=3.4451 iit_un16= 737.67 splits=16 elapsed=42.6s
+  [mirror_s42] turn=  800 cells= 32 proxyΦ=2.9909 iit_un16= 437.42 splits=16 elapsed=48.7s
+  [mirror_s42] turn=  900 cells= 32 proxyΦ=3.5071 iit_un16= 722.80 splits=16 elapsed=54.8s
+  [mirror_s42] turn=  999 cells= 32 proxyΦ=3.4460 iit_un16= 426.88 splits=16 elapsed=60.8s
+  mirror s=42: cells=32 splits=16 Φ_iit_un16=426.88 Φ_iit_norm16=13.7704 proxyΦ=3.4460
+
+  >>> seed=137 <<<
+  [mirror_s137] turn=    0 cells= 16 proxyΦ=2.8264 iit_un16= 169.63 splits=0 elapsed=0.1s
+  [mirror_s137] turn=  100 cells= 32 proxyΦ=3.4614 iit_un16= 658.47 splits=16 elapsed=6.0s
+  [mirror_s137] turn=  200 cells= 32 proxyΦ=3.4777 iit_un16= 528.00 splits=16 elapsed=12.1s
+  [mirror_s137] turn=  300 cells= 32 proxyΦ=3.4842 iit_un16= 724.23 splits=16 elapsed=18.1s
+  [mirror_s137] turn=  400 cells= 32 proxyΦ=3.5089 iit_un16= 725.68 splits=16 elapsed=24.2s
+  [mirror_s137] turn=  500 cells= 32 proxyΦ=3.4899 iit_un16= 740.63 splits=16 elapsed=30.2s
+  [mirror_s137] turn=  600 cells= 32 proxyΦ=3.4058 iit_un16= 650.28 splits=16 elapsed=36.3s
+  [mirror_s137] turn=  700 cells= 32 proxyΦ=3.3763 iit_un16= 629.95 splits=16 elapsed=42.3s
+  [mirror_s137] turn=  800 cells= 32 proxyΦ=2.9889 iit_un16= 679.78 splits=16 elapsed=48.4s
+  [mirror_s137] turn=  900 cells= 32 proxyΦ=3.4370 iit_un16= 727.92 splits=16 elapsed=54.6s
+  [mirror_s137] turn=  999 cells= 32 proxyΦ=3.4418 iit_un16= 539.52 splits=16 elapsed=60.7s
+  mirror s=137: cells=32 splits=16 Φ_iit_un16=539.52 Φ_iit_norm16=17.4040 proxyΦ=3.4418
+
+  >>> seed=271 <<<
+  [mirror_s271] turn=    0 cells= 16 proxyΦ=2.8135 iit_un16= 164.51 splits=0 elapsed=0.1s
+  [mirror_s271] turn=  100 cells= 32 proxyΦ=3.4474 iit_un16= 569.47 splits=16 elapsed=6.0s
+  [mirror_s271] turn=  200 cells= 32 proxyΦ=3.5100 iit_un16= 362.94 splits=16 elapsed=12.1s
+  [mirror_s271] turn=  300 cells= 32 proxyΦ=3.4936 iit_un16= 646.08 splits=16 elapsed=18.2s
+  [mirror_s271] turn=  400 cells= 32 proxyΦ=3.4462 iit_un16= 659.34 splits=16 elapsed=24.2s
+  [mirror_s271] turn=  500 cells= 32 proxyΦ=3.5017 iit_un16= 692.68 splits=16 elapsed=30.3s
+  [mirror_s271] turn=  600 cells= 32 proxyΦ=3.4440 iit_un16= 733.83 splits=16 elapsed=36.4s
+  [mirror_s271] turn=  700 cells= 32 proxyΦ=3.3916 iit_un16= 539.38 splits=16 elapsed=42.4s
+  [mirror_s271] turn=  800 cells= 32 proxyΦ=2.9120 iit_un16= 330.53 splits=16 elapsed=48.5s
+  [mirror_s271] turn=  900 cells= 32 proxyΦ=3.4671 iit_un16= 442.91 splits=16 elapsed=54.6s
+  [mirror_s271] turn=  999 cells= 32 proxyΦ=3.4470 iit_un16= 488.94 splits=16 elapsed=60.6s
+  mirror s=271: cells=32 splits=16 Φ_iit_un16=488.94 Φ_iit_norm16=15.7724 proxyΦ=3.4470
+
+  >>> seed=314 <<<
+  [mirror_s314] turn=    0 cells= 16 proxyΦ=2.7828 iit_un16= 156.76 splits=0 elapsed=0.1s
+  [mirror_s314] turn=  100 cells= 32 proxyΦ=3.4924 iit_un16= 728.72 splits=16 elapsed=6.1s
+  [mirror_s314] turn=  200 cells= 32 proxyΦ=3.4537 iit_un16= 393.70 splits=16 elapsed=12.2s
+  [mirror_s314] turn=  300 cells= 32 proxyΦ=3.4835 iit_un16= 649.24 splits=16 elapsed=18.2s
+  [mirror_s314] turn=  400 cells= 32 proxyΦ=3.4821 iit_un16= 502.46 splits=16 elapsed=24.3s
+  [mirror_s314] turn=  500 cells= 32 proxyΦ=3.4277 iit_un16= 572.52 splits=16 elapsed=30.3s
+  [mirror_s314] turn=  600 cells= 32 proxyΦ=3.3530 iit_un16= 677.11 splits=16 elapsed=36.5s
+  [mirror_s314] turn=  700 cells= 32 proxyΦ=3.4369 iit_un16= 625.78 splits=16 elapsed=42.5s
+  [mirror_s314] turn=  800 cells= 32 proxyΦ=3.1014 iit_un16= 662.38 splits=16 elapsed=48.6s
+  [mirror_s314] turn=  900 cells= 32 proxyΦ=3.4549 iit_un16= 701.49 splits=16 elapsed=54.7s
+  [mirror_s314] turn=  999 cells= 32 proxyΦ=3.4773 iit_un16= 606.96 splits=16 elapsed=60.8s
+  mirror s=314: cells=32 splits=16 Φ_iit_un16=606.96 Φ_iit_norm16=19.5793 proxyΦ=3.4773
+
+  >>> seed=1729 <<<
+  [mirror_s1729] turn=    0 cells= 16 proxyΦ=2.8793 iit_un16=  82.35 splits=0 elapsed=0.1s
+  [mirror_s1729] turn=  100 cells= 32 proxyΦ=3.4500 iit_un16= 730.20 splits=16 elapsed=6.1s
+  [mirror_s1729] turn=  200 cells= 32 proxyΦ=3.4484 iit_un16= 699.05 splits=16 elapsed=12.2s
+  [mirror_s1729] turn=  300 cells= 32 proxyΦ=3.4591 iit_un16= 481.48 splits=16 elapsed=18.3s
+  [mirror_s1729] turn=  400 cells= 32 proxyΦ=3.5116 iit_un16= 525.67 splits=16 elapsed=24.4s
+  [mirror_s1729] turn=  500 cells= 32 proxyΦ=3.4396 iit_un16= 723.99 splits=16 elapsed=30.5s
+  [mirror_s1729] turn=  600 cells= 32 proxyΦ=3.4165 iit_un16= 711.41 splits=16 elapsed=36.6s
+  [mirror_s1729] turn=  700 cells= 32 proxyΦ=3.4419 iit_un16= 736.21 splits=16 elapsed=42.7s
+  [mirror_s1729] turn=  800 cells= 32 proxyΦ=2.9913 iit_un16= 640.73 splits=16 elapsed=48.8s
+  [mirror_s1729] turn=  900 cells= 32 proxyΦ=3.4808 iit_un16= 730.32 splits=16 elapsed=54.9s
+  [mirror_s1729] turn=  999 cells= 32 proxyΦ=3.5015 iit_un16= 452.94 splits=16 elapsed=60.9s
+  mirror s=1729: cells=32 splits=16 Φ_iit_un16=452.94 Φ_iit_norm16=14.6109 proxyΦ=3.5015
+
+=== 5-seed strict V14 verdict aggregation ===
+  trained @T=1000: cells=32 splits=16 Φ_iit_un16=557.20 Φ_iit_n16=17.9741 proxy=3.4461
+  mirror s=42: cells=32 splits=16 Φ_iit_un16=426.88 Φ_iit_n16=13.7704 proxy=3.4460
+  mirror s=137: cells=32 splits=16 Φ_iit_un16=539.52 Φ_iit_n16=17.4040 proxy=3.4418
+  mirror s=271: cells=32 splits=16 Φ_iit_un16=488.94 Φ_iit_n16=15.7724 proxy=3.4470
+  mirror s=314: cells=32 splits=16 Φ_iit_un16=606.96 Φ_iit_n16=19.5793 proxy=3.4773
+  mirror s=1729: cells=32 splits=16 Φ_iit_un16=452.94 Φ_iit_n16=14.6109 proxy=3.5015
+  random Φ_iit_un16: min=426.88 med=488.94 max=606.96
+  random cells:      min=32 med=32 max=32
+  random splits:     [16, 16, 16, 16, 16]
+  strict_phi_pass=False strict_cells_pass=False
+  partial_phi_pass=True partial_cells_pass=False
+  violated_phi=False violated_cells=True
+  ====> VERDICT: V14_PARTIAL
+
+=== α exponents (log-log Φ vs n_cells) ===
+  trained:        proxy=0.304  iit_norm=0.800  iit_unnorm=1.848
+  mirror s=42: proxy=0.306  iit_norm=0.723  iit_unnorm=1.770
+  mirror s=137: proxy=0.268  iit_norm=0.904  iit_unnorm=1.952
+  mirror s=271: proxy=0.274  iit_norm=0.639  iit_unnorm=1.686
+  mirror s=314: proxy=0.295  iit_norm=0.897  iit_unnorm=1.945
+  mirror s=1729: proxy=0.244  iit_norm=1.896  iit_unnorm=2.943
+
+=== Dynamic range (trained substrate snapshots) ===
+  proxy max/min       = 1.27×
+  iit_phi_norm  max/min = 2.21×
+  iit_phi_unnorm max/min = 4.56×  (target >5×, ceiling-free)
+
+=== trained snapshots (turn → cells / proxy / iit_un16) ===
+   turn  cells     proxy    iit_n16   iit_un16  splits
+      0     16    2.7625    10.7760     161.64       0
+    100     32    3.4285    16.7617     519.61      16
+    200     32    3.4845    20.8159     645.29      16
+    300     32    3.5171    16.3668     507.37      16
+    400     32    3.4901    17.3408     537.57      16
+    500     32    3.4345    22.1252     685.88      16
+    600     32    3.3999    12.1733     377.37      16
+    700     32    3.4452    23.7892     737.46      16
+    800     32    2.9909    20.3632     631.26      16
+    900     32    3.5072    23.3281     723.17      16
+    999     32    3.4461    17.9741     557.20      16
+
+result.json: /Users/ghost/core/anima/state/anima_iit_real_350m_2026_05_10/result.json (36.8 KB)
+v14_verdict.md: /Users/ghost/core/anima/state/anima_iit_real_350m_2026_05_10/v14_verdict.md
+plot: /Users/ghost/core/anima/state/anima_iit_real_350m_2026_05_10/v14_5seed_comparison.png

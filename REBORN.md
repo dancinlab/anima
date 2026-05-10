@@ -2019,6 +2019,88 @@ cost $0 (Mac CPU local — 42s + 143s = 3.1min wall total)
 
 ---
 
+## §33 [2026-05-10 13:30 KST] BG-IIT-METRIC-REAL-350M — V14_PARTIAL on real Phase 2 ★★
+
+### Verdict
+
+**V14_PARTIAL** — trained Φ_iit_un16 = 557.20 vs random median 488.9 (+14%), beats 4/5 mirrors (s42, s271, s1729) + ties s137, loses to s314 (607). strict V14 X, partial PASS. n=5 sign-test p≈0.19 (not significant).
+
+### Real Phase 2 ckpt 핵심 사실
+
+- 298.76M params unique (GQA K/V shared, "350M" nominal), miss=0 unexp=0, sha PASS `6e66e75f...`
+- bf16 → fp32 streamed cast (mmap memory issue 없음) → F-IIT-REAL-1 CLEARED
+- pipeline: `engine_g.cell_pool_init` → MitosisV5Engine wrap → `engine_g.h_to_c(hidden_mean)` 가 cell_input — trained 차이는 **learned h_to_c 만** 통해 흐름
+
+### 1K-turn V14 5-seed comparison
+
+| run | seed | n_cells | n_splits | Φ_iit_un16 | Φ_iit_n16 | proxy |
+|---|---|---|---|---|---|---|
+| trained | 42 | 32 | 16 | **557.20** | 17.97 | 3.446 |
+| mirror | 42 | 32 | 16 | 426.88 | 13.77 | 3.446 |
+| mirror | 137 | 32 | 16 | 539.52 | 17.40 | 3.442 |
+| mirror | 271 | 32 | 16 | 488.94 | 15.77 | 3.447 |
+| mirror | 314 | 32 | 16 | **606.96** | 19.58 | 3.477 |
+| mirror | 1729 | 32 | 16 | 452.94 | 14.61 | 3.502 |
+
+trained 80th percentile. 모든 6 runs max_cells=32 cap-bound (16 splits each) — cell-count 비교 불가, Φ 만 비교.
+
+### Dynamic range — proxy vs IIT (real substrate, trained snapshots)
+
+| metric | max/min | 평가 |
+|---|---|---|
+| proxy Φ (cosine × log(n+1)) | **1.27×** | nearly flat, ceiling visible at N=32 |
+| IIT Φ normalized 16-bin | 2.21× | mild improvement |
+| IIT Φ unnormalized 16-bin | **4.56×** | best — ceiling-free at this N |
+
+**IIT unnorm 가 proxy 대비 3.6× more dynamic range** on real substrate. 단 toy 1530× 와 비교 시 작은 이유 = N range 16→32 (4×) vs toy 8→64 (8×) — 본질적으로 좁은 N range. → **F-IIT-REAL-2 PARTIALLY CLEARED**.
+
+### α exponent (log Φ_un16 vs log n_cells, N=16→32 narrow noise-sensitive)
+
+trained=1.848, mirrors {42:1.770, 137:1.952, 271:1.686, 314:1.945, 1729:2.943} — trained mid-pack. clean trained-superior scaling signal X. (이건 §30 BG-V5MITOSIS-FIXES 로 인한 max=32 cap binding 의 직접 결과.)
+
+### §30 BG-V5MITOSIS-FIXES 의 영향 (cross-link)
+
+§30 A1 dispersion-trigger + A2 per-cell adaptive threshold 가 적용된 후 split rate 가 너무 aggressive — **모든 trajectory max=32 cap 도달 (turn 100 내)**. 이전 BG (max=64, A1/A2 미적용) 는 trained 16→19 / random 16→28 (NOVEL POLARITY V14 violated). 본 BG 에서는 cap-bound 으로 cell-count 비교 자체 불가능.
+
+→ A1/A2 fix 가 V14 NOVEL POLARITY 를 partially flip 시킨 것 (Φ 면에서). 단 너무 aggressive — max_cells=128 + A1/A2 milder threshold 로 retest 권고.
+
+### Honest C3 (≥7, full 11 in result.json)
+
+1. 298.76M unique (GQA shared), "350M" nominal. cell_pool (16, 64), max=32 cap.
+2. byte-hash mod 32000 ≠ real BPE — trained vs random 비교 는 relative semantic.
+3. mitosis cell_pool seeded from substrate cell_pool_init. trained-vs-random 차이 = learned engine_g.h_to_c 만.
+4. trained @ seed=42 (deterministic ckpt), random 5 V4_SEEDS — paired-by-prompt-stream.
+5. **max_cells=32 cap-bound ALL 6 runs** — n_cells 비교 dimension 사라짐. Φ 만 discriminating.
+6. IIT MIP = spectral Fiedler approximation N>8 (initial=16). canonical PyPhi X — directional only.
+7. 16-bin histogram MI on 64-dim cell — coarse. KDE 로 true differential MI 필요.
+8. Lorenz scale=0.05 6-trajectory 전부 동일 — 차이는 h_to_c 만.
+9. ctx_T=16 (training T=1024) — under-sample. all-runs constant.
+10. α regression N=16→32 narrow + noise-sensitive — direction-of-trend only.
+11. **5-seed strict 는 EVERY mirror beat 필요. trained 4/5 (s314 loss). p≈0.19 by sign test n=5, 1-tailed — not significant.** 10+ seed OR wider max_cells → V14_PARTIAL → PASS_REVISED vs STILL_VIOLATED 분리.
+
+### Recommendation (cross-link `.roadmap.reborn`)
+
+track B reborn.B.cond.4 update — V14_VIOLATED → V14_PARTIAL. Φ 면에서는 trained advantage (median +14%, 4/5 beat), 단 strict 불충족.
+
+후속 lane:
+1. **max_cells=128 retest** (cell-count discriminating dimension 회복) — F-IIT-REAL 의 § 30 cap-binding artifact 회피
+2. **10+ V4_SEEDS expand** — n=5 → tight binomial bound, 4/5 sign-test resolution
+
+cost $0, local Mac CPU via run_remote.py worker (~7 min total, 6 trajectory × 1000 turn).
+
+### Deliverables (own 38)
+
+- `state/anima_iit_real_350m_2026_05_10/spec.md`
+- `state/anima_iit_real_350m_2026_05_10/run.py` (gitignored)
+- `state/anima_iit_real_350m_2026_05_10/run.log`
+- `state/anima_iit_real_350m_2026_05_10/result.json` (37.7 KB)
+- `state/anima_iit_real_350m_2026_05_10/v14_verdict.md`
+- `state/anima_iit_real_350m_2026_05_10/v14_5seed_comparison.png` (170 KB, 4-panel)
+
+raw#15 additive: Phase 2 ckpt 미수정.
+
+---
+
 ## §34 [2026-05-10 12:42 KST] BG-LOSTASSET-D-EXPAND-VERIFY — `_expand_dim_fixed` standalone smoke ★★ PASS_ALL
 
 ### TL;DR
