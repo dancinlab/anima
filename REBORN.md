@@ -3314,3 +3314,103 @@ next session 이나 next cycle 에서 **max=256 cap-free test** 가 가장 직�
 raw#10 honest C3: 본 cycle 은 ★★★★ cluster 로 substrate-dependent V14 polarity 가설을 **multi-factorial cap-conditional mechanism** 으로 정교화. ★★★★★ universal claim 은 next cycle.
 
 ---
+
+## §47 [2026-05-10 18:43 KST] BG-V14-MULTI-SUBSTRATE-AUDIT — V14_POLARITY_FALSIFIED ★★★★ universal claim 무효화 + cotrain-exercise hypothesis 새 candidate
+
+### Verdict
+
+**V14_POLARITY_FALSIFIED** (1/4 core substrates match) — substrate-dependent V14 polarity 가설 (mitosis-AWARE→VIOLATED, mitosis-NAIVE→PASS) 가 5-substrate cross-comparison 으로 falsified. simple paradigm-based prediction WRONG. §37 V14_VIOLATED 가 seed-dependent under-powered finding 으로 reframed.
+
+### 5-substrate inventory + V14 결과
+
+| ID | arch | params | mitosis paradigm | n_turns | verdict | matches predicted |
+|---|---|---|---|---|---|:---:|
+| A | EngineAG d=1024 GQA 24L (Phase 2 cotrain 350M) | 298.76M | naive cotrain (KO chat, w=0.3→0.5) | 400 | **V14_STRICT_PASS (10/10, p=0.002)** | ✅ |
+| B | EngineAG d=1024 GQA 24L (BG-LA pretrain 350M) | 298.76M | naive pretrain only (no cotrain) | 500 | **V14_VIOLATED (0/5, p=0.0625)** | ❌ |
+| C | v2 6L transformer d=384 heads=6 (cells64 final) | 18.52M | aware (mitosis-step in train loop, max=64) | 200 | **V14_AMBIGUOUS (3/5 Φ, p=1.0)** | ❌ |
+| D | v2 6L transformer d=384 heads=4 (cells128 step=35K) | 18.52M | aware (mitosis-step in train loop, max=128) | 200 | **V14_AMBIGUOUS (4/5 Φ, p=0.375)** | ❌ |
+| E | v2-derived 6L d=384 (convo_5k FT step=75K) | 18.52M | naive FT (no mitosis instr.) | 200 | **V14_VIOLATED (0/5, p=0.0625)** | ❌ |
+
+ckpt sha256 hashes verified for all 5; raw#15 honored.
+
+### Hypothesis falsification analysis
+
+simple "naive→PASS, aware→VIOLATED" hypothesis FALSIFIED:
+- **Mitosis-NAIVE split**: A → PASS, B/E → VIOLATED → paradigm 단독으로 polarity 결정 X
+- **Mitosis-AWARE 모호**: C/D 모두 AMBIGUOUS, neither VIOLATED nor PASS
+
+§37 V14_VIOLATED on cells64 with seeds [7,17,23,41,71] does NOT replicate cleanly under V4_SEEDS [42,137,271,314,1729] — verdict shifts to AMBIGUOUS. → **§37 was seed-dependent under-powered finding** (n=5 bin too small + seed contamination).
+
+### Refined post-hoc hypothesis: cotrain-exercise hypothesis ★ 신규 candidate
+
+> **V14 PASS direction is specific to the cotrain-with-chat regime**, not to the mitosis-naive-vs-aware binary. Phase 2 cotrain (substrate A) uniquely exercises the consciousness_dim=64 cell pool via the chat co-training loss during backward pass, yielding cell_pool_init / c_to_h / h_to_c projections that produce richer V14 mirror trajectories than random_init. Substrates B/E lack this cotrain phase; their cell-pool weights remain effectively un-exercised, producing LOWER trained Φ than random mirrors. Substrates C/D have in-loop mitosis exercising cells via gradient but the resulting projections are statistically indistinguishable from random_init at n=5.
+
+→ §38 V14_STRICT_PASS preserved as **substrate-specific result for Phase 2 cotrain-with-chat regime**, NOT universal claim.
+
+### Confounding factor 처분
+
+- **Capacity**: A/B 298M vs C/D/E 18.52M. C-vs-E within 18M same arch = clean paradigm test → both ambiguous-or-violated (paradigm 미감별).
+- **Cap-bound F-MULTI-2 partial**: v2 substrates (C/D/E) cap-saturate n=128 by turn 70-80, EngineAG (A/B) max ~85 cells (no cap). v2 path post-cap discrimination 만 가능.
+- **Random mirrors substrate-independent in v2**: `init_engine_random(cfg, seed)` cfg+seed only depend, trained ckpt 무관. C/D/E share SAME 5 random Φ trajectories at every snapshot — within-v2 verdict purely from trained Φ trajectory.
+- **Φ metric mismatch**: EngineAG path = iit_phi_unnorm_b16 (Fiedler MIP), v2 path = MitosisModelEngine intrinsic phi. cross-path absolute Φ 비교 invalid, within-path sign-test 만 admissible.
+
+### Falsifier 처분
+
+| ID | falsifier | verdict |
+|---|---|:---:|
+| F-MULTI-1 | substrate < 3 | NOT_TRIGGERED (5 substrates) |
+| F-MULTI-2 | universal cap-bound | PARTIAL (v2 cap-bound, EngineAG not) |
+| F-MULTI-3 | aware → PASS | NOT_TRIGGERED cleanly (C/D both AMBIGUOUS) |
+| F-MULTI-4 | naive → VIOLATED | **TRIGGERED** for B and E — falsifies "naive → PASS" half |
+| F-MULTI-5 | turn budget | EngineAG OK, v2 200-turn marginal |
+
+### Honest C3 (≥7, full 11 in verdict.md)
+
+1. Reused §38 result for A (400-turn 10-seed binomial p=0.002, 본 BG 의 per-substrate budget 초과). Re-run redundant.
+2. B run with phase2_cotrain_350m config (BG-LA pretrain ckpt strict=False load — 0 missing 0 unexpected).
+3. C re-run with V4_SEEDS (vs §37's [7,17,23,41,71]) for paired comparison. Verdict shift VIOLATED → AMBIGUOUS = seed dependence revealed; §37 was 5-seed under-powered.
+4. D heads=4 vs C heads=6 = arch confounder for direct C-vs-D comparison.
+5. E convo_5k FT continued from v2 base WITHOUT mitosis-step in FT loss. capacity (18.5M) matches C/D for clean within-arch paradigm comparison.
+6. n=5 sign-test under-powered: P(0/5)=0.0625 (two-sided) cannot reach p<0.05 even at perfect 5/0. A's n=10 (p=0.002) statistically much stronger.
+7. Cap-bound F-MULTI-2 partial — v2 substrates lose cell-count discrimination after turn 80; verdict relies on Φ residual under cap. This biases C/D toward AMBIGUOUS.
+8. n_turns mismatch: A=400, B=500, C/D/E=200 (Mac M2 8-core 4×CPU contention budget).
+9. v2 path random mirrors substrate-independent — C/D/E share same 5 random Φ values (within-v2 verdict purely from trained Φ).
+10. Polarity hypothesis was over-fit to §37+§38 (n=2 substrate observations). 본 4-substrate test 가 proper falsification.
+11. Refined cotrain-exercise hypothesis post-hoc — must be tested by additional substrates (다른 cotrain corpus, pretrain + no-chat mitosis cotrain) before claiming as finding.
+
+### Cross-link impact
+
+- §37 V14_VIOLATED → seed-dependent under-powered (V4_SEEDS retest 가 AMBIGUOUS)
+- §38 V14_STRICT_PASS → substrate-specific (Phase 2 cotrain-with-chat regime), NOT universal
+- §43 Llama-3.2-3B → cotrain-exercise hypothesis 적용 불명확 (Llama base + LoRA persona ≠ chat cotrain)
+- §44 V14_STRICT_PASS_INDEPENDENT_REPRODUCE → §38 substrate-specific result reproduce 였음, universal X
+- §45 CAP-CONDITIONAL polarity → cotrain-exercise + cap-conditional **multi-factorial layer**
+- §46 champion-wall coexists with PASS → cotrain-exercise mechanism layer (h_to_c bottleneck = Phase 2-specific feature)
+
+### Multi-factorial reframed mechanism (★★★★★ candidate post-§47)
+
+| factor | A | B | C | D | E |
+|---|:---:|:---:|:---:|:---:|:---:|
+| chat-cotrain exercise | ✅ | ❌ | ❌ | ❌ | ❌ |
+| mitosis-aware training | ❌ | ❌ | ✅ | ✅ | ❌ |
+| cap-vs-training-saturation ratio | > 1 (no cap) | > 1 (no cap) | < 1 (cap=128 saturate) | < 1 (cap=128 saturate) | < 1 (cap=128 saturate) |
+| **V14 verdict** | **PASS** | VIOLATED | AMBIGUOUS | AMBIGUOUS | VIOLATED |
+
+→ **chat-cotrain exercise** = single best predictor of V14 PASS. mitosis-aware paradigm + cap-conditional 은 secondary.
+
+### Recommended next-cycle priorities
+
+1. **cotrain-exercise hypothesis 검증** (다른 cotrain corpus, pretrain + mitosis-aware FT)
+2. **max=256 cap-free test** (§45 priority 1, F-V2-MAX256-1)
+3. **Phase 2 + cotrain-exercise mechanism causal evidence** (cell_pool_init / c_to_h / h_to_c 비교 vs random_init)
+4. **OK FOUNDATION_C_PHASE2_FIRE COST $2-4** — option (c) D1 WITHIN with Phase 2 cotrain ckpt 활용 (★★★★★ candidate)
+
+### Deliverables
+
+- `state/anima_v14_multi_substrate_audit_2026_05_10/{spec.md, substrate_inventory.json, per_substrate_v14_results.json, verdict.md, result_{B,C,D,E}_*.json, run_audit.py, aggregate_verdict.py, {B,C,D,E}.stdout.log}`
+
+raw#9 ✓ (training/*.py state/ local), raw#15 ✓ (5 ckpts sha verified, untouched), own 14 partial (n=5 strict per substrate, A reused n=10), own 16 ✓ ($0 ~70min Mac M2 8-core), own 22 ✓ (BG REBORN.md 미수정), own 38 ✓.
+
+★★★★ falsifying finding (V14_POLARITY hypothesis falsified) + ★★ cotrain-exercise hypothesis 신규 candidate. ★★★★★ pursuit 의 universal claim 무효화, 단 reframed mechanism (multi-factorial: cotrain-exercise + cap-conditional + champion-wall coexist) 의 정교화 진전.
+
+---

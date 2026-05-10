@@ -1,0 +1,106 @@
+{
+  "substrate_id": "E_convo5k_ft",
+  "schema": "v2_d384",
+  "arch": "v2-derived 6L d=384 byte-level (FT)",
+  "paradigm": "naive_ft_no_mitosis",
+  "ckpt": "/Users/ghost/core/anima/state/anima_convo_5k_ft_extended_2026_05_10/post_ft_ext_ckpt.pt",
+  "ckpt_sha256": "608d38a599570c5f3da4cc5ffd9ee191bf68bf0463099f23268207feb1d5436f",
+  "n_params": 18523392,
+  "n_turns": 200,
+  "max_cells_setting": 128,
+  "metric_primary": "phi_final + phi_per_cell_final",
+  "trained_phi": 1989.259792996926,
+  "trained_phi_per_cell": 15.541092132788485,
+  "trained_alpha_v2": 1.0459606871434022,
+  "trained_n_cells": 128,
+  "trained_splits": 120,
+  "trained_cap_bound_turns": 135,
+  "random_phi": [
+    2753.0425079889765,
+    2488.040012673589,
+    2377.880075257174,
+    2253.7647917741565,
+    2593.1386556683797
+  ],
+  "random_phi_per_cell": [
+    21.50814459366388,
+    19.437812599012414,
+    18.577188087946674,
+    17.607537435735598,
+    20.258895747409216
+  ],
+  "random_n_cells": [
+    128,
+    128,
+    128,
+    128,
+    128
+  ],
+  "random_seeds": [
+    42,
+    137,
+    271,
+    314,
+    1729
+  ],
+  "n_random_beats_phi": 0,
+  "n_random_beats_phi_per_cell": 0,
+  "n_random_total": 5,
+  "sign_test_p_phi": 0.0625,
+  "sign_test_p_phi_per_cell": 0.0625,
+  "verdict": "V14_VIOLATED",
+  "expected_v14": "PASS",
+  "matches_expected": false,
+  "mirror_runs": [
+    {
+      "seed": 42,
+      "elapsed_s": 399.9025490283966,
+      "final_n_cells": 128,
+      "n_splits": 120,
+      "cap_bound_turns": 148,
+      "phi_final": 2753.0425079889765,
+      "phi_per_cell_final": 21.50814459366388,
+      "alpha_v2": 1.065008169786263
+    },
+    {
+      "seed": 137,
+      "elapsed_s": 524.9373261928558,
+      "final_n_cells": 128,
+      "n_splits": 120,
+      "cap_bound_turns": 140,
+      "phi_final": 2488.040012673589,
+      "phi_per_cell_final": 19.437812599012414,
+      "alpha_v2": 1.0467850416288127
+    },
+    {
+      "seed": 271,
+      "elapsed_s": 461.4999752044678,
+      "final_n_cells": 128,
+      "n_splits": 120,
+      "cap_bound_turns": 141,
+      "phi_final": 2377.880075257174,
+      "phi_per_cell_final": 18.577188087946674,
+      "alpha_v2": 1.0798943077006165
+    },
+    {
+      "seed": 314,
+      "elapsed_s": 436.4907388687134,
+      "final_n_cells": 128,
+      "n_splits": 120,
+      "cap_bound_turns": 149,
+      "phi_final": 2253.7647917741565,
+      "phi_per_cell_final": 17.607537435735598,
+      "alpha_v2": 1.034145664658749
+    },
+    {
+      "seed": 1729,
+      "elapsed_s": 462.6471872329712,
+      "final_n_cells": 128,
+      "n_splits": 120,
+      "cap_bound_turns": 150,
+      "phi_final": 2593.1386556683797,
+      "phi_per_cell_final": 20.258895747409216,
+      "alpha_v2": 1.0250495451532975
+    }
+  ]
+}
