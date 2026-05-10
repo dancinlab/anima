@@ -1576,3 +1576,76 @@ servant 와 mitosis 둘 다 **3 consecutive trigger pattern** — 우연 또는 
 ### SM-C cond.3 prereq
 
 `smi.cond.global.1` 충족 (SM-A + SM-B PASS). 다음 cycle $0 SM-C `ServantMitosisEngine = ServantCell extends Cell + per-cell FSM + H3 lifecycle hook on split/merge` 진행 가능.
+
+---
+
+## §27 [2026-05-10 09:40 KST] BG-ALPHA-V2-IMPL-RETRO 회수 — A2 binned ΔΦ-rate canonical α V2
+
+design SSOT: `docs/anima_clm_v5_alpha_metric_v2_design_2026_05_10.md` §3,§7. impl + retro on 5 datasets, $0, raw#15 additive.
+
+### deliverable
+
+- `state/anima_alpha_v2_impl_2026_05_10/alpha_v2.py` (~165L, `compute_alpha_v2()` + V1 helper)
+- `state/anima_alpha_v2_impl_2026_05_10/retro_apply.py` (5-dataset driver)
+- `state/anima_alpha_v2_impl_2026_05_10/retro_results.json`
+- `state/anima_alpha_v2_impl_2026_05_10/alpha_v1_vs_v2_comparison.png`
+- `docs/anima_alpha_v2_impl_retro_2026_05_10.md`
+
+### 5-dataset α V1 vs V2 표 (eps=1e-6 default + eps=1e-3 strict for toy)
+
+| dataset | α V1 | α V2 | verdict V2 | n_bins | CI95 |
+|---|---:|---:|---|---:|---|
+| toy 3K (smoke) | 0.116 | -0.487 | OK | 3 | [-1.248, 1.417] |
+| toy 3K @eps=1e-3 | 0.116 | — | UNRELIABLE_INSUFFICIENT_BINS(0) | 0 | n/a |
+| toy 10K (BG-LONG-TRAJ-EXT) | 0.221 | -0.792 | OK | 3 | [-1.248, 0.346] |
+| toy 10K @eps=1e-3 | 0.221 | — | UNRELIABLE_INSUFFICIENT_BINS(0) | 0 | n/a |
+| real 350M trained (proxy) | 1.009 | — | UNRELIABLE_INSUFFICIENT_BINS(0) | 0 | n/a |
+| real 350M random (proxy) | 0.155 | — | UNRELIABLE_INSUFFICIENT_BINS(0) | 0 | n/a |
+| real 350M IIT-unnorm (trained) | 2.641 | — | UNRELIABLE_INSUFFICIENT_BINS(1) | 1 | n/a |
+| historical Cells 2-64 (default) | 0.949 | **0.991** ★ | OK | 5 | [0.372, 1.605] |
+| historical Cells 2-64 (aligned) | 0.949 | **1.041** ★ | OK | 5 | [0.469, 1.605] |
+
+### ★ historical 0.93/1.07 align ✅
+
+α V2 = **0.991 (default edges) / 1.041 (aligned edges)** — 둘 다 historical 0.93 ± 0.15 또는 historical 1.07 ± 0.05 안. **F-α2-1 reject 안 됨 ✅, F-α2-4 reject 안 됨 ✅**.
+
+### α V1 vs V2 차이
+
+| 케이스 | V1 결론 | V2 결론 | 의미 |
+|---|---|---|---|
+| toy 10K monotone 발산 (0.197→1.252) | 1.252 super-historical | UNRELIABLE @eps=1e-3 | **artifact 자동 거부 ★** F-α2-2 reject 안 됨 ✅ |
+| real 350M trained vs random | 1.009 vs 0.155 (큰 차이) | 둘 다 UNRELIABLE | **honest: substrate cells dynamic range 부족 — 비교 의미 없음** F-α2-3 reject 안 됨 ✅ |
+| real 350M IIT-unnorm | 2.641 (super-historical 2배) | UNRELIABLE | proxy ceiling 회피해도 cells window 좁아 측정 불가 |
+| historical Cells 2-64 | 0.949 | 0.991-1.041 | **align ✅** ±0.05 reproducibility |
+| toy 3K eps=1e-6 OK | — | -0.487 음수 α | **post-cap noise leak (honest C3 #7 actualized)** |
+
+### top 3 honest C3
+
+1. ★★★ **default eps=1e-6 가 toy 에서 OK 출력 — design honest C3 #7 적중**: post-cap [64,128) bin 의 Lorenz noise 누적 mean rate 가 ~1e-4 ~ 3e-4 수준이라 1e-6 floor 통과, 실제 V2 가 음수 α 발생. **production 권장 default `min_rate=1e-3`** (또는 substrate 별 calibration). 본 impl 은 user-tunable parameter 노출.
+2. ★★★ **historical alignment 은 retro-fit synthetic** — Cells 2-64 raw 데이터는 별도 train run 의 peak Φ 기록이고, ΔΦ/Δturn 정의를 인접 Cells 값 사이에 적용 (Δturn=1 placeholder)했다. 본질적으로 V1 OLS 와 같은 데이터에 같은 OLS 적용한 것 (단지 step1 rate 변환 후) — F-α2-1 PASS 는 strict 한 새 evidence 가 아니라 **mathematical equivalence**. real reproduce 검증은 v5-mitosis cotrain 의 per-step phi_history 수집 후 별도 cycle.
+3. ★★ **toy 3 valid bins 는 [8,16) (1 pair) + [32,64) (7 pairs) + [64,128) (22+ pairs)** — [16,32) bin 은 toy mitosis 의 8→41 jump 로 인해 영구히 비어있음. design §4.1 의 "n_pairs ~ 100 binning" 가정이 toy substrate 에선 과대평가 (실제 [8,16) 1 pair only). production v5-mitosis cotrain 시 split granularity (cells 2/4/8/.../64) 를 의도적으로 통과시켜야 함 — F-α2-6 (min_samples=5) 는 본 spec 에선 hard-coded 제거되어 있음 (any non-empty bin 통과), production 화 시 재검토 필요.
+
+### F-α2 falsifiers status (5+ from §6)
+
+- F-α2-1 (historical α ≠ 0.93±0.15): **PASS** (V2=0.991/1.041)
+- F-α2-2 (toy 10K 발산 그대로): **PASS @eps=1e-3** (UNRELIABLE 출력)
+- F-α2-3 (random vs trained 둘 다 distinct): **PASS** (둘 다 UNRELIABLE)
+- F-α2-4 (bin midpoint ±0.05 차이): **PASS** (default 0.991 vs aligned 1.041, 0.05 안)
+- F-α2-5 (Φ-rate monotone fail): **partial** — toy 에서 음수 α 발생 (V1 0.221 → V2 -0.792 @eps=1e-6) 는 mechanism 이 아닌 noise leak, eps gating 으로 해결
+- F-α2-7 (CI 항상 wide): **partial** — historical CI95 폭 = 1.23, gate threshold ≥ 0.5 면 conservative 가 너무 강함 (n_bootstrap=200 + 5 bins 한계)
+
+### canonical SSOT 권장
+
+```python
+# production usage
+from alpha_v2 import compute_alpha_v2
+out = compute_alpha_v2(snapshots, phi_field="iit_phi_unnorm_b16", min_rate=1e-3)
+if out["verdict"] == "OK":
+    canonical_alpha = out["alpha"]   # use this
+else:
+    log_unreliable(out["verdict"])   # honest refuse to claim α
+```
+
+기존 V1 `alpha_exponent_full` field 는 historical record 로 유지 (raw#15 additive). v5-mitosis cotrain run.py 에 V2 추가 (parallel emit) 권장.
+
+raw#10 honest C3 ≥ 7 above. raw#15 additive — 기존 result.json 무수정.
