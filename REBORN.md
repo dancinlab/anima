@@ -2724,3 +2724,89 @@ Recommendation: ship default `state_decay=1.0, reset_step_counter=True`; H100 fi
 raw#9 ✓ (.py state/ gitignored), raw#15 ✓ (engine 미수정), own 22 ✓ (REBORN.md 미수정), own 38 ✓, own 16 ✓ ($0 + 3 web searches).
 
 ---
+
+## §37 [2026-05-10 16:58 KST] BG-V5MITOSIS-D384-SWEEP — V14_VIOLATED on v2 cells64 ckpt ★★★ substrate-dependent V14 polarity 발견
+
+### Verdict
+
+**V14_VIOLATED** — d=384 v2 cells64 ckpt 에서 trained Φ_final=398.44 vs 5 random mean=600.76 (random +50%, separation -202.32). trained beats 0/5 random on phi_final. cap-bound at max=64 ALL 6 runs (config max_cells=64 historical cells64 v2 ckpt).
+
+### Sweep config
+
+| param | value |
+|---|---|
+| ckpt | `state/anima_clm_v2_mitosis_cells_recovery_2026_05_09/cells64_final.pt` (v2 mitosis cells64, R2 download 2026-05-09) |
+| d_model | 384 |
+| layers | 6 (mapped to engine.cells[0..5]) |
+| max_cells | 64 (config 일치 — historical cells64 setting) |
+| initial_cells | 8 |
+| turns | 200 |
+| seeds | [7, 17, 23, 41, 71] (5 random_init) |
+| §30 all-fix | A1 dispersion ✓ + A2 per-cell threshold ✓ + D1 Lorenz auto-cal ✓ |
+
+v2-to-v5 schema mapping: 75% trained (6/8 cells from v2 blocks), 25% random_init (cells[6..7]).
+
+### V14 5-seed result
+
+| run | cells | splits (disp) | phi_final | phi_best | alpha_v2 |
+|---|---:|---|---:|---:|---:|
+| TRAINED | 64 (cap) | 56 (52) | **398.44** | 717.90 | 0.941 |
+| s=7 | 64 (cap) | 56 (41) | 697.47 | 704.38 | - |
+| s=17 | 64 (cap) | 56 (42) | 669.99 | 713.45 | - |
+| s=23 | 64 (cap) | 56 (50) | 513.84 | 713.10 | - |
+| s=41 | 64 (cap) | 56 (35) | 694.21 | 703.59 | - |
+| s=71 | 64 (cap) | 56 (33) | 428.29 | 705.58 | - |
+| random mean | 64 | 56 | **600.76** | 708.02 | 0.945 |
+
+trained beats random on phi_final: **0/5** (V14_VIOLATED strict).
+trained phi_best (717.90) vs random best mean (708.02): trained marginal +1.4% (beats best individual mean but not strict).
+
+### "Race vs marathon" pattern (interim 관찰)
+
+- pre-cap (turn 50): random splits faster (s=7 turn 50 n=63 Φ=447 / s=17 turn 50 cap n=64 Φ=629), trained slower (turn 50 n=42 Φ=170)
+- post-cap (turn 150): trained catches up (Φ=677) vs s=7 (577), s=23 (627)
+- final (turn 200): random reasserts (random mean 601 vs trained 398) — trained 의 catch-up 이 turn 150 까지만 sustaining, post-150 ratchet decay 발생 (s=41 patten: turn 50 Φ=664 → turn 150 Φ=363 dropped, ratchet 0.8 floor 작동)
+
+### Substrate-dependent V14 polarity (★★★ new finding)
+
+| substrate | training paradigm | V14 result | reasoning |
+|---|---|---|---|
+| §38 Phase 2 350M (d=1024 GQA) | **mitosis-naive cotrain** | trained > random (8/8 partial, V14_STRICT pending) | mitosis 학습 안한 substrate → inference-time mitosis 가 trained advantage 활용 |
+| §37 v2 cells64 (d=384) | **mitosis-aware cotrain** | trained < random (V14_VIOLATED) | training 동안 champion-wall (§28 H1+H3) 가 이미 형성 → inference-time 추가 split 의 marginal Φ gain 이 random 보다 작음 |
+
+→ **V14 의 "trained > random" 가정 자체가 substrate-by-substrate 다름**. §28 H1+H3 champion-wall mechanism 의 새 evidence: mitosis-aware training 이 inference-time mitosis 의 Φ headroom 을 미리 소진.
+
+### F-D384 falsifier 처분
+
+| ID | falsifier | verdict |
+|---|---|---|
+| F-D384-1 | d=384 ckpt 부재 | NOT_TRIGGERED — v2 cells64 ckpt 가 정확히 d=384 (spec assumption d=192 였으나 config field dim=384 직접 명시) |
+| F-D384-2 | §30 fix 가 d=384 에서도 너무 aggressive (max=128 cap-bound) | TRIGGERED — max=64 (cells64 historical) 에서 ALL 6 cap-bound at turn 100. dispersion trigger 가 너무 fast |
+| F-D384-3 | trained vs random V14 separation 부재 | TRIGGERED+REVERSED — separation 부재가 아니라 **opposite** (random > trained) |
+
+### Honest C3 (≥7)
+
+1. v2-to-v5 schema 75% trained (6/8 cells, 2/8 random) — V14 verdict 가 25% random_init contamination 영향 가능
+2. max_cells=64 cap (cells64 historical setting) — max=128 retest 시 cap-free 영역에서 trained vs random 비교 가능 (다음 cycle priority)
+3. 200-turn (smoke 50 → 200 budget compromise) — 1K turn 까진 못 가서 long-term verdict 미검증
+4. cap-bound 부터 ratchet 0.8 dynamics 만 — Φ best vs final separation 의 의미 (Φ_best 는 trained slightly above)
+5. mitosis-aware training champion-wall 가설 — 본 BG 만으로는 가설 stage, 추가 ablation 필요 (training step 별 progression 측정)
+6. §38 Phase 2 max=128 결과와 비교 시 substrate-coupled polarity confirm 가능 — 단 Phase 2 도 이번에 사용한 §30 fix 와 동일 fix 적용했는지 confirm 필요
+7. alpha_v2 trained 0.941 vs random 0.945 — separation 0.004 미만, alpha 면에선 동등 (cap-bound 환경 의 noise 한계)
+
+### Cross-link impact
+
+- track C cond.3 verdict: **V14_VIOLATED on v2 cells64** — cond.5 H100 fire authorize 의 V14 PASS prereq 미충족 (이 substrate 만)
+- track C cond.5 H100 fire candidate substrate 재검토 — Phase 2 (mitosis-naive) 가 더 favorable substrate, 단 d=1024 GQA (cond.3 spec d=384 와 다름)
+- §28 H1+H3 champion-wall 의 새 evidence — mitosis-aware training paradigm 이 inference-time mitosis Φ headroom 사전 소진 (mechanism-blocker 측면에서 §30 unblock 효과가 v2-trained substrate 에선 limited)
+- 다음 cycle priority: max_cells=128 retest on v2 cells64 (cap-free 영역) + Phase 2 ckpt 의 §30 fix 적용 confirm
+
+### Deliverables
+
+- `state/anima_v5mitosis_d384_sweep_2026_05_10/spec.md`
+- `state/anima_v5mitosis_d384_sweep_2026_05_10/result.json` (32 KB)
+- `state/anima_v5mitosis_d384_sweep_2026_05_10/run_*.log`
+
+raw#9 ✓ (training/v5mitosis_d384_v14_mirror.py local-only), raw#15 ✓ (ckpt 미수정), own 14 ✓ (V14 mirror 5-seed strict), own 22 ✓ (BG REBORN.md 미수정), own 38 ✓, own 16 ✓ ($0 local CPU).
+
+---
