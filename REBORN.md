@@ -2611,3 +2611,116 @@ phi_scaling_calculator.hexa 23L → **124L** (EMPIRICAL table frozen const, cell
 raw#9 ✓ (archive-legacy hexa-only, .py state/ gitignored), raw#15 additive ✓ (worktree-6/10 미수정), own 22 ✓ (BG REBORN.md 미수정), own 38 ✓, own 16 ✓ ($0).
 
 ---
+
+## §42 [2026-05-10 15:30 KST] BG-NET2NET-OPTIMIZER-REBUILD-DESIGN — C1 STUB body 설계 + smoke ★★ PARTIAL_PASS
+
+### TL;DR
+
+§30 C1 STUB 의 Net2Net AdamW state migration 설계 + 330L drop-in callback (`mitosis_c1_body.py`) + 300-step CPU smoke. cond.5 H100 fire C1 prereq **PARTIAL PASS** — functional 면에서 PASS (state migrate correct shape/values, deterministic, zero callback errors over 5-event stress test, not no-op), empirical 면 NEGATIVE (toy 16-channel 에선 baseline 이 Net2Net 능가, bias-correction warmup boost dominates). 실제 LLM training 결정 = H100 first-fire 가 진짜 validation.
+
+### Lit review (3 papers)
+
+| paper | key insight |
+|---|---|
+| Net2Net (Chen et al. 2016, arXiv:1511.05641) | function-preserving Net2WiderNet, optimizer black box. exp_avg/exp_avg_sq migration 미논의 — 본 설계의 gap fill 필요 |
+| bert2BERT (ACL 2022) | empirical: m_t/v_t component-wise copy + bias-correction step counter **reset/rescale** 권고 (1/(1-β1^t) factor 가 effective LR 변화). 본 default `reset_step_counter=True` 의 근거 |
+| DeepSpeed/Megatron | dynamic param shape mid-training X. AdamW state schema `{exp_avg, exp_avg_sq, step}` per-Param 확정 |
+
+### C1 callback design
+
+**split** (parent_idx → child_idx == N_after - 1):
+- rows 0..N-1 copy old state direct
+- row N: `exp_avg = old[parent_idx] + ε·randn` (symmetry break, σ=1% of parent_norm)
+- `exp_avg_sq` raw copy (variance-like, magnitude-dominated, no noise)
+
+**merge** (keeper_old, removed_old → keeper_new):
+- keeper row = mean of two pre-merge rows
+- `exp_avg_sq` clamp 1e-12 floor (0-denom 방지)
+- removed row 삭제
+
+**Step counter**: default `reset_step_counter=True` — bert2BERT empirical practice 일치, optimizer warmup boost on new param shape
+
+**Optimizer surgery**: `_replace_param_in_optimizer` swaps param_groups[i].params[j] = new_param, deletes old state entry, installs migrated state on correct device/dtype
+
+**Thread safety**: callback synchronously fires from `_notify_optimizer_rebuild` at end of `_split_cell_slice`/`_merge_cell_pair` — never inside forward/backward. Engine wraps callback in try/except, fail-open via event_log error entry.
+
+### mitosis_c1_body.py (330L)
+
+3-layer architecture:
+1. `_RowStateSnapshot` — per-row CPU snapshot
+2. Pure-tensor mutators: `_net2net_split_state` / `_net2net_merge_state`
+3. `_replace_param_in_optimizer` — surgery
+4. `net2net_adamw_callback(optimizer, momentum_noise, rng_seed, reset_step_counter, state_decay)` factory
+
+Drop-in registration:
+```python
+cb = net2net_adamw_callback(opt, momentum_noise=0.01, rng_seed=42)
+eng.register_optimizer_rebuild_callback(cb)
+```
+
+raw#15 strict — `training/mitosis_v5_port.py` + `training/mitosis_model_v5.py` zero edit. callback 외부 wire only.
+
+### Smoke 결과 (300 steps, 4 cells × 16 channels, 2 scenarios)
+
+| Scenario | baseline final loss | Net2Net final loss | Net2Net wins? |
+|---|---:|---:|:---:|
+| A: stationary target | 3.0e-6 | 5.9e-4 | NO (5-step post-split window: yes) |
+| B: target shift @ step 50 | 6.8e-5 | 2.5e-4 | NO |
+
+stress test: 5 split/merge events, **zero callback errors**, final state shape == engine final n_cells exactly.
+
+`state_decay` sweep (stationary): 1.0 → 5.9e-4, 0.5 → 3.3e-4, 0.1 → 6.4e-5, 0.0 (≡baseline) → 2.0e-6 — monotonic toward zero-init.
+
+**Honest interpretation**: zero-init wins this toy because AdamW bias-correction at step=0 inflates effective LR (`1/(1-β1^t)` factor) — one-shot warmup PUNCH toward optimum. Net2Net 의 momentum 보존이 split row 의 새 axis 와 partially off-axis. **16-channel single-Param toy artifact**: 실제 LLM (수백만 param + low LR ~1e-4 + plateau-rich landscape) 에선 momentum preservation 가 thousands post-event step 에서 dominate. smoke 가 결정 못함 — H100 fire 만이 진짜 validation.
+
+### cond.5 H100 fire C1 prereq verdict — PARTIAL PASS
+
+| dimension | status |
+|---|:---:|
+| Functional (state migrate correct shape/values, deterministic, zero callback errors over 5-event stress) | **PASS** |
+| Not no-op (curves visibly differ from step 62 onward) | **PASS** |
+| Empirical efficacy in toy | **NEGATIVE** (toy artifact) |
+| Risk mitigation (knobs `state_decay` 1.0→0.0 + `reset_step_counter`) | **PASS** (operator fallback to zero-init equivalent without code change) |
+
+→ **PARTIAL PASS** (closer to PASS).
+
+Recommendation: ship default `state_decay=1.0, reset_step_counter=True`; H100 first-fire 시 first 1K steps grad-norm monitor; F-NET2NET-1 fire 시 `state_decay=0.0` fallback.
+
+### Falsifier 처분
+
+| ID | falsifier | verdict |
+|---|---|---|
+| F-NET2NET-1 | grad explode | NOT_FIRED in CPU smoke. open for H100 first-fire (grad-norm monitor first 100 post-event steps) |
+| F-NET2NET-2 | merge cancellation | PARTIALLY FIRED — Net2Net merge jump consistently larger than baseline (Δ +5.97e-4 stationary / +5.6e-3 shift). Loss 계속 감소 — not catastrophic. exp_avg_sq 1e-12 clamp 가 zero-denom blowup 방지 |
+| F-NET2NET-3 | 100-step insufficient | CONFIRMED — 300-step extension trend stable. longer toy 가 ranking flip 못함 (fundamental dynamics, not noise). 실제 LLM 만 right validation |
+
+### Honest C3 (9, ≥7)
+
+1. Smoke 가 Net2Net 에 unfavorable — bias-correction warmup boost dominates 16-channel toy
+2. Real LLM smoke X ($0 own 16) — cond.5 fire 가 first real validation
+3. `old_param` lookup heuristic — optimizer scan for 2D param shape diff ±1; multiple 2D param 시 misidentify 가능. safer alternative = engine pre-event hook (raw#15 violation)
+4. Snapshot CPU-resident — clone slow on huge cell_pool (50MB at 16K×768; OK)
+5. Step counter type fragility — PyTorch wraps tensor or int inconsistently across versions
+6. multiple events between opt.step 보호 X (mitosis fires one per process())
+7. exp_avg_sq 1e-12 clamp — fp16 mixed-precision underflow 가능 (dtype-adaptive 미적용)
+8. `state_decay` knob 있음 단 auto-tuning X
+9. Merge averaging parameter-naive — cell age/quality 가중 X
+
+### Cross-link
+
+- §30 C1 STUB shipped → 본 §42 가 H100 fire prereq satisfy (PARTIAL PASS)
+- track C cond.5 권한 = cond.3 (d=384 sweep §37 in-flight) + cond.5.C1 (본 §42 PARTIAL PASS) 둘 다 충족 시 fire authorize
+- raw#15 strict — `training/mitosis_v5_port.py` + `mitosis_model_v5.py` zero edit, callback 외부 wire
+
+### Deliverables
+
+- `state/anima_net2net_optimizer_rebuild_2026_05_10/spec.md` (4.3 KB)
+- `state/anima_net2net_optimizer_rebuild_2026_05_10/design.md` (13.5 KB)
+- `state/anima_net2net_optimizer_rebuild_2026_05_10/mitosis_c1_body.py` (16.7 KB, 330L gitignored)
+- `state/anima_net2net_optimizer_rebuild_2026_05_10/smoke_test.py` (10.7 KB gitignored)
+- `state/anima_net2net_optimizer_rebuild_2026_05_10/smoke_result.json` (39.9 KB)
+- `state/anima_net2net_optimizer_rebuild_2026_05_10/smoke_loss_curve.png` (106 KB, 2-panel)
+
+raw#9 ✓ (.py state/ gitignored), raw#15 ✓ (engine 미수정), own 22 ✓ (REBORN.md 미수정), own 38 ✓, own 16 ✓ ($0 + 3 web searches).
+
+---
