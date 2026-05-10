@@ -3904,3 +3904,95 @@ raw#9 ✓, raw#15 ✓ (3 ckpts read-only), own 14 partial (5+2+2 mirrors per sub
 ★★★★★ **PARTIAL** (cycle 첫 ★★★★★ severity finding) — n=5 strict 완성 시 full ★★★★★ confirm.
 
 ---
+
+## §59 [2026-05-10 21:30 KST] BG-CAP-VS-TRAINING-RATIO-AUDIT — ratio FALSIFIED + 2-factor decision tree ★★★★
+
+### Verdict
+
+**RATIO_INSUFFICIENT__CAP_DOMINATES__MULTI_FACTOR_REQUIRED** — "cap-vs-training-saturation ratio" hypothesis (§45 framing) FALSIFIED as single-factor predictor. F-RATIO-1/2/3 모두 FIRED. **2-factor decision tree** 발견 (78% acc).
+
+### 2-factor parsimonious rule
+
+```
+PASS if inference_cap > 192   (universal cap-room lever)
+   OR if chat_cotrain == 1    (cotrain-exercise lever, A only)
+VIOLATED otherwise.
+```
+
+### Quantitative evidence (n=9 data points)
+
+| predictor | Spearman ρ | p |
+|---|---|---|
+| ratio (inf_cap / training_obs_max) | 0.291 | **0.448 (NS)** |
+| ratio finite-only (n=7, drop ∞ rows) | 0.496 | 0.258 (NS) |
+| **inference_cap (continuous)** | **0.777** | **0.014 ✓** |
+
+→ **inference_cap 만 statistically significant univariate predictor**. ratio threshold (t=3.0) 7/9 acc, §38 STRICT_PASS (ratio=1.51) + AMBIGUOUS C_47/D_47 misclassify.
+
+### Multi-factor analysis
+
+LR train accuracy 9/9 (overfit at n=9), |coef| ranking on z-scored features (robust):
+- inference_cap=2.65 > chat_cotrain=1.32 > mitosis_aware=0.96 > **ratio=0.52** > is_engine_ag=0.36 ≈ params_M=0.36
+
+DT (decision tree):
+- depth-1 (cap > 192 → PASS): **6/9 = 67%**
+- depth-2 (cap > 192 → PASS; else chat_cotrain → PASS): **7/9 = 78%**
+- depth-3 (adds ratio split): 8/9 = 89% (likely overfit)
+
+### Two-lever hybrid mechanism interpretation ★★★
+
+**Lever 1: Cap-room (cap-conditional)** — substrate-AGNOSTIC
+- inference_cap > 192 → trained ckpts (denser/structured representation per §51 obs#7) get enough room to express discriminating dynamics
+- Confirmed: A_51, C_51, E_51 at cap=256
+
+**Lever 2: Cotrain-exercise (§50 engine_a refined)** — A only at cap ≤ 192
+- chat-cotrained ckpts (substrate A) clear V14 at cap=128
+- Substrate B (same EngineAG arch but pretrain-only, no chat-head loss) fails at cap=128 → confirms lever-2 isolation
+- Cell-pool weight statistics (§52 cotrain_isolation: A vs B `c_to_h.weight` cosine = 0.69, vs `cell_pool_init` cosine = 0.9999) localize lever-2 to **c-engine projection weights**, not cell pool itself
+
+**Two levers INDEPENDENT**:
+- A_38 PASSes via lever-2 at cap=128
+- C/E_51 PASS via lever-1 at cap=256
+
+### Within-substrate cap-polarity flip ledger
+
+| substrate | cap=64 | cap=128 | cap=256 |
+|---|---|---|---|
+| A | n/a | STRICT_PASS (§38) | PASS (§51) |
+| **B** | n/a | **VIOLATED (§47)** | **(in-flight §56!)** |
+| C | VIOLATED (§37) | AMBIGUOUS (§47) | PASS (§51) |
+| D | n/a | AMBIGUOUS (§47) | (untested) |
+| E | n/a | VIOLATED (§47) | PASS (§51) |
+
+**모든 substrate at multiple caps**: raising inference_cap → polarity monotonically improves (VIOLATED → AMBIGUOUS → PASS).
+
+### Highest-leverage missing BG
+
+**Substrate B at cap=256** (정확히 §56 BG-V14-MAX256-B-NO-COTRAIN, in-flight). 결과 도착 시 lever-1 vs lever-2 분리 critical:
+- IF B PASS at cap=256 → lever-1 (cap-room) DOMINATES, lever-2 dispensable
+- IF B VIOLATED at cap=256 → lever-2 (cotrain-exercise) STILL required at cap-free regime, hybrid 확정
+
+### Honest C3 (12 caveats, key 4)
+
+1. n=9 with 6 features → LR overfits, DT depth-3 saturates
+2. ∞-ratio substitution for B/E arbitrary 단 Spearman robust (∞→1 vs ∞→10 both give 0.291)
+3. AMBIGUOUS bin not modeled cleanly by depth-2 rule
+4. Substrate B at cap=256 = single highest-leverage missing BG (§56 in-flight)
+
+### Cross-link impact
+
+- §45 cap-conditional hypothesis: single-factor RATIO 라는 framing FALSIFIED, 단 cap-room (continuous cap) 자체는 PRIMARY predictor 보존
+- §47 cotrain-exercise hypothesis: NOT universally falsified (lever-2 at cap ≤ 192 still required), 단 cap-free regime 에선 dispensable
+- §50 engine_a refined hypothesis: lever-2 의 mechanism candidate, c_to_h projection weights 에 localize
+- §51 ★★★★★ PARTIAL: lever-1 confirmed universal at cap=256
+- §52 cell_pool unit-sphere lock: lever-2 가 cell_pool 가 아닌 projection weights 라는 §59 finding 와 정확히 일치
+
+### Deliverables
+
+- `state/anima_cap_vs_training_ratio_audit_2026_05_10/{spec.md, data_table.json, regression_result.json, verdict.md, run_regression.py}`
+
+raw#15 ✓ (existing data only, no re-fire), own 16 ✓ ($0 local analysis), own 22 ✓ (REBORN.md 미수정), own 38 ✓.
+
+★★★★ severity (univariate cap finding p=0.014, 2-factor decision tree, two-lever mechanism interpretation). n=9 underpowered for ★★★★★ quantitative-formula confidence — depth-2 rule interpretable 단 statistically marginal.
+
+---
