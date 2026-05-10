@@ -1,0 +1,83 @@
+{
+  "substrate_id": "E_convo5k_ft",
+  "schema": "v2_d384",
+  "arch": "v2-derived 6L d=384 byte-level (FT)",
+  "paradigm": "naive_ft_no_mitosis",
+  "ckpt": "/Users/ghost/core/anima/state/anima_convo_5k_ft_extended_2026_05_10/post_ft_ext_ckpt.pt",
+  "ckpt_sha256": "608d38a599570c5f3da4cc5ffd9ee191bf68bf0463099f23268207feb1d5436f",
+  "n_params": 18523392,
+  "n_turns": 100,
+  "max_cells_setting": 256,
+  "metric_primary": "phi_final + phi_per_cell_final",
+  "trained_phi": 11142.909,
+  "trained_phi_per_cell": 43.527,
+  "trained_alpha_v2": 1.0200704184207696,
+  "trained_n_cells": 256,
+  "trained_splits": 248,
+  "trained_cap_bound_turns": 24,
+  "trained_first_cap_turn": 76,
+  "trained_max_n_cells_observed": 256,
+  "random_phi": [
+    10831.306,
+    9810.64
+  ],
+  "random_phi_per_cell": [
+    42.31,
+    38.323
+  ],
+  "random_n_cells": [
+    256,
+    256
+  ],
+  "random_max_n_cells_observed": [
+    256,
+    256
+  ],
+  "random_seeds": [
+    42,
+    137
+  ],
+  "random_first_cap_turn": [
+    63,
+    72
+  ],
+  "random_cap_bound_turns": [
+    37,
+    28
+  ],
+  "n_random_beats_phi": 2,
+  "n_random_beats_phi_per_cell": 2,
+  "n_random_total": 2,
+  "sign_test_p_phi": 0.5,
+  "sign_test_p_phi_per_cell": 0.5,
+  "verdict": "V14_PASS_PARTIAL_n2",
+  "mirror_runs": [
+    {
+      "seed": 42,
+      "final_n_cells": 256,
+      "n_splits": 248,
+      "splits": 248,
+      "phi_final": 10831.306,
+      "phi_per_cell_final": 42.31,
+      "alpha_v2": 1.0502086366680745,
+      "cap_bound_turns": 37,
+      "n_turns": 100,
+      "first_cap_turn": 63,
+      "max_n_cells_observed": 256
+    },
+    {
+      "seed": 137,
+      "final_n_cells": 256,
+      "n_splits": 248,
+      "splits": 248,
+      "phi_final": 9810.64,
+      "phi_per_cell_final": 38.323,
+      "alpha_v2": 1.042702744396559,
+      "cap_bound_turns": 28,
+      "n_turns": 100,
+      "first_cap_turn": 72,
+      "max_n_cells_observed": 256
+    }
+  ],
+  "honest_C3_partial": "Mirror runs reused from substrate C (deterministic identical random init given identical cfg+seed; v2 path mirrors are ckpt-independent). Empirically verified: E-s42 turn 50 phi=1886.851 == C-s42 turn 50 phi=1886.851. This is a valid optimization, NOT a fabrication: same cfg+seed \u2192 same trajectory. E was killed at 09:50 elapsed during s42 execution to save $0 budget."
+}

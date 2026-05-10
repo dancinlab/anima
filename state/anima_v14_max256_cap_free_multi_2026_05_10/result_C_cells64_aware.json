@@ -1,0 +1,83 @@
+{
+  "substrate_id": "C_cells64_aware",
+  "schema": "v2_d384",
+  "arch": "v2 6L transformer d=384 heads=6",
+  "paradigm": "aware_max_cells_64",
+  "ckpt": "/Users/ghost/core/anima/state/anima_clm_v2_mitosis_cells_recovery_2026_05_09/cells64_final.pt",
+  "ckpt_sha256": "61e1d735cf4b5360683e40ab81ada593d757f3543d33d01c08944a4c8b039a4c",
+  "n_params": 18523392,
+  "n_turns": 100,
+  "max_cells_setting": 256,
+  "metric_primary": "phi_final + phi_per_cell_final",
+  "trained_phi": 11337.964,
+  "trained_phi_per_cell": 44.289,
+  "trained_alpha_v2": 1.0469794499742044,
+  "trained_n_cells": 256,
+  "trained_splits": 248,
+  "trained_cap_bound_turns": 18,
+  "trained_first_cap_turn": 82,
+  "trained_max_n_cells_observed": 256,
+  "random_phi": [
+    10831.306,
+    9810.64
+  ],
+  "random_phi_per_cell": [
+    42.31,
+    38.323
+  ],
+  "random_n_cells": [
+    256,
+    256
+  ],
+  "random_max_n_cells_observed": [
+    256,
+    256
+  ],
+  "random_seeds": [
+    42,
+    137
+  ],
+  "random_first_cap_turn": [
+    63,
+    72
+  ],
+  "random_cap_bound_turns": [
+    37,
+    28
+  ],
+  "n_random_beats_phi": 2,
+  "n_random_beats_phi_per_cell": 2,
+  "n_random_total": 2,
+  "sign_test_p_phi": 0.5,
+  "sign_test_p_phi_per_cell": 0.5,
+  "verdict": "V14_PASS_PARTIAL_n2",
+  "mirror_runs": [
+    {
+      "seed": 42,
+      "final_n_cells": 256,
+      "n_splits": 248,
+      "splits": 248,
+      "phi_final": 10831.306,
+      "phi_per_cell_final": 42.31,
+      "alpha_v2": 1.0502086366680745,
+      "cap_bound_turns": 37,
+      "n_turns": 100,
+      "first_cap_turn": 63,
+      "max_n_cells_observed": 256
+    },
+    {
+      "seed": 137,
+      "final_n_cells": 256,
+      "n_splits": 248,
+      "splits": 248,
+      "phi_final": 9810.64,
+      "phi_per_cell_final": 38.323,
+      "alpha_v2": 1.042702744396559,
+      "cap_bound_turns": 28,
+      "n_turns": 100,
+      "first_cap_turn": 72,
+      "max_n_cells_observed": 256
+    }
+  ],
+  "honest_C3_partial": "Run was killed at 47:35 elapsed during s271 turn 50 due to $0 local CPU budget. Trained + s42 + s137 completed in full; s271/s314/s1729 did NOT run. Verdict reflects 2-seed partial sign test."
+}

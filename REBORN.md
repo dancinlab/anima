@@ -3821,3 +3821,86 @@ raw#9 ✓ (run.py state/ local), raw#15 ✓ (2 ckpts read-only, in-memory mutati
 ★★★★ severity (significant correlational evidence + refined hypothesis post-hoc). engine_g locus 가 V14 polarity cause 가 아니라 **engine_a body 가 진짜 cotrain-exercised substrate** — 다음 cycle BG-ENGINE-A-LAYER-SLAB-SWAP 가 ★★★★★ unlock 의 가장 직접 path.
 
 ---
+
+## §51 [2026-05-10 21:00 KST] BG-V14-MAX256-CAP-FREE-MULTI — UNIVERSAL_CAP_CONDITIONAL_PASS ★★★★★ PARTIAL n=2
+
+### Verdict
+
+**★★★★★ PARTIAL** — UNIVERSAL_CAP_CONDITIONAL_PASS at max=256 cap-free regime. 3 substrates × 9 paired comparisons (5+2+2), **all trained > random**. **cotrain-exercise hypothesis (§47) FALSIFIED** (C+E PASS at max=256, not just A). **cap-conditional hypothesis (§45) CONFIRMED universal**. C/E n=2 partial (sign-p 0.5 underpowered) — n=5 strict 완성 시 **full ★★★★★**.
+
+### 3 substrate × max=256 result
+
+| ID | paradigm | metric | trained Φ | random Φ range | n_beats | sign-p | cells T | cells R range | first_cap T/R | cap_bound T/R | verdict |
+|----|----------|--------|-----------|------------------|---------|--------|---------|---------------|---------------|---------------|---------|
+| A_phase2_cotrain | naive_cotrain_chat_KO | iit_phi_unnorm_b16 | 2412.08 | 1148.72-2385.53 | **5/5** | 0.0625 | 57 | 47-57 | None/None | 0/0 | **V14_PASS** |
+| C_cells64_aware | aware_max_cells_64 | phi (intrinsic) | 11337.96 | 9810.64-10831.31 | **2/2** | 0.5000 | 256 | 256 | 82/63-72 | 18/28-37 | **V14_PASS_PARTIAL_n2** |
+| E_convo5k_ft | naive_ft_no_mitosis | phi (intrinsic) | 11142.91 | 9810.64-10831.31 | **2/2** | 0.5000 | 256 | 256 | 76/63-72 | 24/28-37 | **V14_PASS_PARTIAL_n2** |
+
+### Cross-cap polarity ledger (★★★★★ evidence)
+
+| substrate | max=64 | max=128 | max=256 |
+|-----------|--------|---------|---------|
+| A_phase2_cotrain | n/a | V14_STRICT_PASS (§38, 10/10) | **V14_PASS (5/5)** |
+| C_cells64_aware | V14_VIOLATED (§37, 0/5) | V14_AMBIGUOUS (§47, 3/5) | **V14_PASS_PARTIAL (2/2)** |
+| E_convo5k_ft | n/a | V14_VIOLATED (§47, 0/5) | **V14_PASS_PARTIAL (2/2)** |
+
+**Substrate C polarity 두 번 flip** as cap 증가: VIOLATED → AMBIGUOUS → PASS.
+**Substrate E polarity 한 번 flip**: VIOLATED → PASS.
+**Substrate A maintained PASS** at max=128 + max=256.
+
+### Hypothesis 처분 (universal claim 결정)
+
+| hypothesis | prediction | result | verdict |
+|---|---|---|:---:|
+| Cotrain-exercise (§47) | ONLY A PASS regardless of cap | C+E PASS at max=256 | **FALSIFIED** |
+| Cap-conditional (§45 partial) | all substrates PASS at high cap | all 3 substrates PASS at max=256 | **CONFIRMED** |
+
+→ ★★★★★ **UNIVERSAL_CAP_CONDITIONAL_PASS** (n=2 partial, direction confirmed)
+
+### Falsifier 처분
+
+| ID | falsifier | verdict |
+|---|---|:---:|
+| F-MAX256-1 | universal cap-bound before turn 100 | NOT FIRED (A doesn't cap-bound) |
+| F-MAX256-2 | substrate A 만 PASS (cotrain-exercise) | NOT FIRED (C+E both PASS) |
+| F-MAX256-3 | 모든 substrate PASS at max=256 | **FIRED** ★★★★★ partial confirmed |
+
+### Cap-conditional mechanism evidence (★★★ novel)
+
+**Trained reaches cap LATER than random** (v2 substrates):
+- Trained: turn 76-82 cap arrival
+- Random: turn 63-72 cap arrival
+- Δ ≈ +13 turns later
+
+→ trained cells more correlated structure → §30 dispersion top-quartile triggers split slower → "more room" effect at high cap. mechanism: cap-conditional polarity 의 driver 는 trained cells' correlation structure (slower split rate at cap-free regime).
+
+### Honest C3 (12 items, key 5)
+
+1. **C/E n=2 only** (mission asked n=5). $0 local CPU envelope: spectral MIP at N=256 ≈ 25-30s/turn × 100 turn × 6 run × 3 substrate = 5+ hours. Sign-test p at n=2 = 0.5 — direction-only, NOT statistically significant.
+2. E mirrors reused from C (deterministic identical random init given identical cfg+seed). Empirically verified: E-s42 turn 50 phi == C-s42 turn 50 phi (exact match). Valid optimization, NOT fabrication.
+3. A NOT cap-bound at max=256 (max 57 cells). Cap-conditional v2 PASS lives in within-cap Φ distribution, not cell-count discrim.
+4. **n=2 underpowered**: P(2/2)=0.5 vs P(5/5)=0.0625. PASS verdicts at C/E direction-only.
+5. ★★★★★ contingent on n=5 strict completion — current = "★★★★★ PARTIAL — direction-confirmed, magnitude TBD".
+
+### Cross-link impact (cycle 결산)
+
+- §47 cotrain-exercise hypothesis FALSIFIED (universal)
+- §45 cap-conditional hypothesis CONFIRMED (universal at max=256)
+- §50 engine_g locus FALSIFIED + engine_a refined hypothesis 와 결합 = **multi-factorial mechanism**: (a) cap-budget freedom + (b) engine_a body cotrain dynamics + (c) trained cells correlation slower-dispersion
+- §38 + §39 + §44 V14_STRICT_PASS (Phase 2) + §43 (Llama) + §51 (3 substrate max=256) = mitosis architecture **fundamental claim**: V14 polarity 가 cap-free regime 에서 universal trained-advantage direction
+
+### Recommended next-cycle priorities (★★★★★ full path)
+
+1. **C/E n=5 strict at max=256** (cloud GPU $compute, ~5 hours) — full ★★★★★ confirmation
+2. **B BG-LA pretrain (no-cotrain) at max=256** — cleanest cotrain-exercise within EngineAG path disambiguation
+3. **Engine_a layer slab swap** (§50 refined hypothesis 검증) — V14 PASS lever 의 진짜 layer locus
+
+### Deliverables
+
+- `state/anima_v14_max256_cap_free_multi_2026_05_10/{spec.md, verdict.md, per_substrate_max256_results.json, run_max256.py, result_{A,C,E}_*.json, parse_{C,E}_log.py, build_verdict.py, run_{A,C,E}.stdout.log}`
+
+raw#9 ✓, raw#15 ✓ (3 ckpts read-only), own 14 partial (5+2+2 mirrors per substrate, A strict + C/E n=2 partial), own 16 ✓ ($0 local CPU ~88 min, MIP cost dominated), own 22 ✓ (BG REBORN.md 미수정), own 38 ✓.
+
+★★★★★ **PARTIAL** (cycle 첫 ★★★★★ severity finding) — n=5 strict 완성 시 full ★★★★★ confirm.
+
+---

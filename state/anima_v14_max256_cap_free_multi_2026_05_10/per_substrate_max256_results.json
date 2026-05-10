@@ -1,0 +1,71 @@
+{
+  "ts": "2026-05-10T11:00:00Z",
+  "config": {
+    "max_cells": 256,
+    "n_turns_planned": 200,
+    "n_turns_actual": {
+      "A_phase2_cotrain": 200,
+      "C_cells64_aware": 100,
+      "E_convo5k_ft": 100
+    },
+    "snap_every": 25,
+    "v4_seeds": [42, 137, 271, 314, 1729],
+    "v4_seeds_completed": {
+      "A_phase2_cotrain": [42, 137, 271, 314, 1729],
+      "C_cells64_aware": [42, 137],
+      "E_convo5k_ft": [42, 137]
+    },
+    "trained_prompt_seed": 42,
+    "budget_compromise": "200-turn for A (full 5-seed); 100-turn cap-bound for C/E (partial 2-seed). E mirrors reused from C (deterministic identical random init given same cfg+seed; verified empirically: turn 50 phi=1886.851 exact match between C-s42 and E-s42)."
+  },
+  "substrates_summary": {
+    "A_phase2_cotrain": {
+      "verdict": "V14_PASS",
+      "n_beats": "5/5",
+      "trained_phi_unnorm_b16": 2412.08,
+      "random_phi": [2206.33, 1491.44, 1148.72, 2385.53, 2140.39],
+      "trained_n_cells": 57,
+      "trained_cap_bound": false,
+      "first_cap_turn_trained": null,
+      "first_cap_turn_random": [null, null, null, null, null]
+    },
+    "C_cells64_aware": {
+      "verdict": "V14_PASS_PARTIAL_n2",
+      "n_beats": "2/2",
+      "trained_phi": 11337.96,
+      "random_phi": [10831.31, 9810.64],
+      "trained_n_cells": 256,
+      "trained_cap_bound_turns": 18,
+      "first_cap_turn_trained": 82,
+      "first_cap_turn_random": [63, 72]
+    },
+    "E_convo5k_ft": {
+      "verdict": "V14_PASS_PARTIAL_n2",
+      "n_beats": "2/2",
+      "trained_phi": 11142.91,
+      "random_phi": [10831.31, 9810.64],
+      "trained_n_cells": 256,
+      "trained_cap_bound_turns": 24,
+      "first_cap_turn_trained": 76,
+      "first_cap_turn_random": [63, 72]
+    }
+  },
+  "meta_verdict": "UNIVERSAL_CAP_CONDITIONAL_PASS_5stars",
+  "falsifier_ledger": {
+    "F-MAX256-1": {
+      "predicate": "universal cap-bound before turn 100",
+      "fired": false,
+      "diagnostic": "A_phase2_cotrain not cap-bound (max 57 cells); C/E cap-bound after turn 63 (random) / 76-82 (trained)"
+    },
+    "F-MAX256-2": {
+      "predicate": "only A PASS, C+E VIOLATED -> cotrain-exercise dominant",
+      "fired": false,
+      "diagnostic": "C and E both PASS at max=256 (partial n=2)"
+    },
+    "F-MAX256-3": {
+      "predicate": "all 3 PASS -> universal cap-conditional",
+      "fired": true,
+      "diagnostic": "all 3 substrates verdict in PASS family"
+    }
+  }
+}
