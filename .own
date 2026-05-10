@@ -2278,3 +2278,16 @@ own 42 amend 2026-05-10 07:41 KST "REBORN.md append timestamp convention 강제"
   honest-c3 retroactive timestamp 적용 (§12/§13) 는 본 amend 시점 (2026-05-10 07:41 KST) 직전 cycle close 추정값 — exact original write time 미보존
   severity warn (manual enforcement) → block (anima audit `--mandate-42` 가 timestamp 부재 detect)
   proof grep -E '^## §[0-9]+ \[[0-9]{4}-[0-9]{2}-[0-9]{2}' /Users/ghost/core/anima/REBORN.md — append entry timestamp 매칭
+
+own 42 amend 2026-05-10 09:50 KST "immediate md save mandate — BG 회수 즉시 REBORN.md append + commit"
+  rule 사용자 directive verbatim 2026-05-10 09:50 KST: "always md save". BG 회수 결과 cycle close 까지 batch X — **즉시 REBORN.md §N append + commit + push** (raw#15 additive convention 정합).
+  rule timing:
+    - BG completion notification 수신 시점 → 즉시 §N draft (timestamp `[YYYY-MM-DD HH:MM KST]`)
+    - draft 후 즉시 commit + push (cycle close 까지 대기 X)
+    - cycle close 시점은 plan/rationale 만 정리 (data 는 이미 commit 됨)
+  rule 위반 시 risk: BG 결과 누적 시 single point of failure (chat-only acknowledgment), commit 못 한 채 context 만료 가능
+  cross-reference 사용자 directive precedent: cycle 2026-05-10 의 BG-V5MITOSIS-IMPL + BG-SM-AB-PORT 둘 다 chat-acknowledge only, REBORN.md §N missing → 본 amend 발효 시 즉시 §25/§26 retroactive append
+  honest-c3 commit-per-BG = git history 다소 noisy but archaeology 가치 ↑ (개별 BG 결과 traceability)
+  honest-c3 5 BG 동시 fire 시 5 commit 발생 — 시간순 ordering OK but commit 폭증
+  severity warn (manual enforcement) → block (anima audit `--mandate-42-amend2` BG completion 후 §N append commit 부재 detect)
+  proof grep -E '^## §[0-9]+ \[' /Users/ghost/core/anima/REBORN.md — section count 가 BG completion count 와 일치

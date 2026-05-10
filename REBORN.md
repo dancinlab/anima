@@ -1479,3 +1479,100 @@ F-FIRE-1 (auth missing), F-FIRE-2 (upload fail), F-FIRE-3 (loss diverge), F-FIRE
 - HF private upload `dancinlab/clm-v2-byte-18m-convo-5k-ft-recovery` (own 31 + own 37 mandate-9 verbatim) — separate BG, this BG ends at fire+sampling+doc
 
 ---
+
+---
+
+## §24 [2026-05-10 09:30 KST] 다음 cycle 5 BG parallel fire — "all bg go"
+
+사용자 directive 2026-05-10 09:30 KST: "all bg go". 다음 cycle 5 BG dispatch:
+
+| BG | item | task | 비용 |
+|---|---|---|---:|
+| BG-V5MITOSIS-IMPL | 1 | track C cond.2 — `mitosis_model_v5.py` skeleton impl (cells = real nn.Module branches, option (a) revised) | $0 |
+| BG-SM-AB-PORT | 2 | `.roadmap.servant_mitosis_integration` SM-A (servant-only) + SM-B (mitosis-only) parallel port + smoke | $0 |
+| BG-PHASE2-SPLIT-RATE-DIAG | 3 | real 350M trained substrate 의 split-rate suppression mechanism 진단 — 왜 cell 7/16 attractor bottleneck? attention pull / threshold / Lorenz scale 변수 ablation | $0 |
+| BG-CONVO-FT-EXTENDED | 4 | convo_5k FT 추가 corpus + step — lexical fluency 도전 (post-FT bytes OK, lexicon 미회수 정정 시도) | $5-20 cost-bearing |
+| BG-ALPHA-V2-IMPL-RETRO | 5 | α metric V2 (A2 binned ΔΦ-rate) implementation + retro on toy 3K/10K + real Phase 2 data | $0 |
+
+cycle close 시 §25-§29 append (timestamp). cost-bearing item 4 user "all bg go" 으로 authorize 인정 (이전 BG-CONVO-FT-FIRE $1.37 success precedent).
+
+raw#10 honest C3:
+1. 5 BG token cost 높음 (cycle 2 의 8 BG + 5 BG = 누적). user 명시 verbatim 으로 authorize.
+2. item 4 (convo_5k extended FT) 가 lexical fluency reach 보장 X — 18M arch capacity gap 가능성 (3B+ pre-train 만 reach).
+3. item 3 (split-rate suppression 진단) 결과에 따라 v5-mitosis architecture spec 의 R11 (architectural framing 효과 0) 확정/반증 가능.
+
+---
+
+## §25 [2026-05-10 09:30 KST] BG-V5MITOSIS-IMPL 회수 — track C cond.2 PASS 8/8
+
+`training/mitosis_model_v5.py` (~580L, gitignored) + `training/mitosis_model_v5_smoke.py` (~170L).
+
+### smoke 8/8 PASS
+
+| metric | value |
+|---|---|
+| N | 4 → 25 (force) → **64** (patience-driven phase3) |
+| params | 351K → 1.7M (5× growth at N=25) |
+| Φ unnorm | 4.82 → **2775.4** (super-linear) |
+| attention sharing | promoted at force_split #0 (N=22 > 8 trigger ✓) |
+| IIT Φ port | loaded from `state/anima_clm_v5_iit_phi_remetric_2026_05_10/iit_phi_port.py` |
+| shape preservation | (B,T,V) ✓ pre/post split |
+| eval mode no-grad | ✓ |
+| merge round-trip | ✓ |
+
+### top 3 risks
+
+1. **R2 optimizer state migration STUB** — H100 cotrain 시 Net2Net momentum copy 필수. cond.5 pre-fire 보강.
+2. **R6 Φ unnorm runaway** ★ — 4.82 → 2775 in 50 steps. split gate 가 phi_best 따라 계속 firing → cond.4 long-trajectory 폭주 위험. **per-cell normalization (phi/n) secondary tracking 필요**.
+3. **R1 Lorenz cell_state ≠ GRU memory** — d=384 production noise scale 재calibration 필요 (`lorenz_scale=0.05` × p.norm() attention dwarfing 가능).
+
+### H100 cond.5 readiness
+
+| tier | cost | 상태 |
+|---|---:|---|
+| conservative N=8 fixed | $30 | **READY** — engine forward + tied-lm-head works at scale |
+| mid N=8→16 patience | $60 | needs `rebuild_optimizer_after_split` callback |
+| stretch N=8→32+ | $120-150 | needs threshold calibration at d=384 (cond.3 Mac CPU 1-2h gate) |
+
+### cond.3 추천
+
+Mac CPU calibration at d=384: Φ unnorm runaway mitigation, secondary `phi/n` tracking, threshold sweep. H100 verbatim 전 reality check.
+
+---
+
+## §26 [2026-05-10 09:35 KST] BG-SM-AB-PORT 회수 — SM-A + SM-B 둘 다 PASS
+
+신규 separate roadmap `.roadmap.servant_mitosis_integration` 의 SM-A (servant-only) + SM-B (mitosis-only) standalone port.
+
+### deliverable (모두 gitignored `**/*.py`)
+
+- `training/servant_v5_port.py` (~340L) — SM-A 본체
+- `training/mitosis_only_v5_port.py` (~340L) — SM-B 본체
+- `training/sm_a_b_smoke.py` (~270L) — joint smoke runner
+
+### SM-A (servant-only) PASS 6/6
+
+- **n6 atlas 9/9 EXACT match** (servant.hexa main verbatim 재현)
+- 4 phases all visited: DORMANT=42 / AWAKENING=3 / ACTIVE=52 / FADING=3 over 100 steps
+- dropout always [GOLDEN_LOWER=0.2105, GOLDEN_CENTER=0.3679] interp monotone
+- reversibility — final phase = DORMANT
+- bridge hebbian: DORMANT=1.0, ACTIVE=1.5 (HEBBIAN_BOOST exact)
+- dropout interp monotone over [0, SI_SUMMON, 4, SI_STRONG, 8] = [0.3679, 0.3679, 0.2892, 0.2105, 0.2105]
+
+### SM-B (mitosis-only) PASS 6/6
+
+- **6 organic splits in 100 steps** (final n_cells=8 max_cap)
+- Φ finite + Φ_best monotone non-decreasing (0.635 → 1.411)
+- min_cells=2 floor 유지 (CB1)
+- Lorenz state 진화 (x: 1.0 → -4.486 — chaos active)
+- adaptive split_threshold (0.3 → 0.657)
+- 100/100 instrumentation snapshots captured
+- side: **20 Φ ratchet restores 발생** (Law 49 active visible)
+
+### ★ 핵심 발견: AWAKEN_STEPS=3 == split_patience=3
+
+servant 와 mitosis 둘 다 **3 consecutive trigger pattern** — 우연 또는 n6 atlas 의 깊은 정합. SM-C integration 시 design blocker 로 명시.
+
+### SM-C cond.3 prereq
+
+`smi.cond.global.1` 충족 (SM-A + SM-B PASS). 다음 cycle $0 SM-C `ServantMitosisEngine = ServantCell extends Cell + per-cell FSM + H3 lifecycle hook on split/merge` 진행 가능.
