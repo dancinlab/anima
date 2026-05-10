@@ -1,0 +1,91 @@
+[2026-05-10T15:46:05] === BG-FOUNDATION-BORROW-A orchestrator started ===
+[2026-05-10T15:46:05] mac_state_dir=/Users/ghost/core/anima/state/anima_foundation_borrow_a_fire_2026_05_10
+[2026-05-10T15:46:05] corpus=/Users/ghost/core/anima/state/anima_je_corpus_100mb_plus_2026_05_07/corpus_combined_100mb_plus.txt
+[2026-05-10T15:46:05] COST_HARD_CAP=$14.0 COST_EARLY_KILL=$10.0
+[2026-05-10T15:46:05] creating H100 SXM pod (RunPod SECURE cloud)…
+[2026-05-10T15:46:06] pod created: id=yi2qwx8ljo8g9d $2.99/hr
+[2026-05-10T15:46:39] ssh ready: root@216.243.220.218:14521
+[2026-05-10T15:46:44] GPU smoke rc=0: name
+NVIDIA H100 80GB HBM3
+2.8.0+cu128 True
+
+[2026-05-10T15:46:44] staging corpus 214MB→gz + script + mitosis_v5_port.py + pod marker…
+[2026-05-10T15:46:44] corpus.gz size: 90.1MB
+[2026-05-10T15:46:50] mkdir rc=0
+[2026-05-10T16:01:50] scp corpus.gz rc=-2 (90.1MB)
+[2026-05-10T16:02:04] scp script rc=0
+[2026-05-10T16:02:19] scp mitosis_v5_port rc=0
+[2026-05-10T16:02:32] scp hf_token rc=0
+[2026-05-10T16:02:40] decompress rc=0: -rw-r--r-- 1 root root 214299726 May 10 07:02 corpus_anima_persona_214mb.txt
+
+[2026-05-10T16:02:40] training launched on pod…
+[2026-05-10T16:03:10] launch rc=-2 out=
+[2026-05-10T16:04:21] heartbeat: cost=$0.90 pod_phase=lora_sft pod_step=0
+[2026-05-10T16:05:32] heartbeat: cost=$0.96 pod_phase=lora_sft pod_step=0
+[2026-05-10T16:06:37] heartbeat: cost=$1.02 pod_phase=lora_sft_step pod_step=200
+[2026-05-10T16:07:43] heartbeat: cost=$1.07 pod_phase=lora_sft_step pod_step=400
+[2026-05-10T16:08:49] heartbeat: cost=$1.13 pod_phase=lora_sft_step pod_step=400
+[2026-05-10T16:09:56] heartbeat: cost=$1.18 pod_phase=lora_sft_step pod_step=600
+[2026-05-10T16:11:04] heartbeat: cost=$1.24 pod_phase=lora_sft_step pod_step=800
+[2026-05-10T16:12:13] heartbeat: cost=$1.29 pod_phase=lora_sft_step pod_step=800
+[2026-05-10T16:13:19] heartbeat: cost=$1.35 pod_phase=lora_sft_step pod_step=1000
+[2026-05-10T16:14:27] heartbeat: cost=$1.41 pod_phase=lora_sft_step pod_step=1200
+[2026-05-10T16:15:34] heartbeat: cost=$1.46 pod_phase=lora_sft_step pod_step=1200
+[2026-05-10T16:16:41] heartbeat: cost=$1.52 pod_phase=lora_sft_step pod_step=1400
+[2026-05-10T16:17:47] heartbeat: cost=$1.57 pod_phase=lora_sft_step pod_step=1600
+[2026-05-10T16:19:00] heartbeat: cost=$1.63 pod_phase=lora_sft_step pod_step=1800
+[2026-05-10T16:20:12] heartbeat: cost=$1.69 pod_phase=lora_sft_step pod_step=1800
+[2026-05-10T16:21:19] heartbeat: cost=$1.75 pod_phase=lora_sft_step pod_step=2000
+[2026-05-10T16:22:25] heartbeat: cost=$1.80 pod_phase=lora_sft_step pod_step=2200
+[2026-05-10T16:23:37] heartbeat: cost=$1.86 pod_phase=lora_sft_step pod_step=2200
+[2026-05-10T16:24:50] heartbeat: cost=$1.92 pod_phase=lora_sft_step pod_step=2400
+[2026-05-10T16:26:01] heartbeat: cost=$1.98 pod_phase=lora_sft_step pod_step=2600
+[2026-05-10T16:27:09] heartbeat: cost=$2.04 pod_phase=lora_sft_step pod_step=2800
+[2026-05-10T16:28:17] heartbeat: cost=$2.09 pod_phase=lora_sft_step pod_step=2800
+[2026-05-10T16:29:31] heartbeat: cost=$2.15 pod_phase=lora_sft_step pod_step=3000
+[2026-05-10T16:30:41] heartbeat: cost=$2.21 pod_phase=lora_sft_step pod_step=3200
+[2026-05-10T16:31:50] heartbeat: cost=$2.27 pod_phase=lora_sft_step pod_step=3200
+[2026-05-10T16:32:56] heartbeat: cost=$2.33 pod_phase=lora_sft_step pod_step=3400
+[2026-05-10T16:34:06] heartbeat: cost=$2.38 pod_phase=lora_sft_step pod_step=3600
+[2026-05-10T16:35:16] heartbeat: cost=$2.44 pod_phase=lora_sft_step pod_step=3800
+[2026-05-10T16:36:26] heartbeat: cost=$2.50 pod_phase=lora_sft_step pod_step=3800
+[2026-05-10T16:37:42] heartbeat: cost=$2.56 pod_phase=lora_sft_step pod_step=4000
+[2026-05-10T16:38:54] heartbeat: cost=$2.62 pod_phase=lora_sft_step pod_step=4200
+[2026-05-10T16:40:05] heartbeat: cost=$2.68 pod_phase=lora_sft_step pod_step=4200
+[2026-05-10T16:41:13] heartbeat: cost=$2.74 pod_phase=lora_sft_step pod_step=4400
+[2026-05-10T16:42:19] heartbeat: cost=$2.80 pod_phase=lora_sft_step pod_step=4600
+[2026-05-10T16:43:24] heartbeat: cost=$2.85 pod_phase=lora_sft_step pod_step=4800
+[2026-05-10T16:44:30] heartbeat: cost=$2.90 pod_phase=lora_sft_step pod_step=4800
+[2026-05-10T16:45:44] heartbeat: cost=$2.96 pod_phase=lora_sft_step pod_step=5000
+[2026-05-10T16:46:49] heartbeat: cost=$3.02 pod_phase=lora_sft_step pod_step=5200
+[2026-05-10T16:47:54] heartbeat: cost=$3.08 pod_phase=lora_sft_step pod_step=5200
+[2026-05-10T16:49:04] heartbeat: cost=$3.13 pod_phase=lora_sft_step pod_step=5400
+[2026-05-10T16:50:09] heartbeat: cost=$3.19 pod_phase=lora_sft_step pod_step=5600
+[2026-05-10T16:51:14] heartbeat: cost=$3.24 pod_phase=lora_sft_step pod_step=5600
+[2026-05-10T16:52:19] heartbeat: cost=$3.29 pod_phase=lora_sft_step pod_step=5800
+[2026-05-10T16:53:23] heartbeat: cost=$3.35 pod_phase=v4_multiseed_eval pod_step=6000
+[2026-05-10T16:54:29] heartbeat: cost=$3.40 pod_phase=mitosis_hook_trained pod_step=6000
+[2026-05-10T16:55:34] heartbeat: cost=$3.46 pod_phase=v14_mirror pod_step=6000
+[2026-05-10T16:56:43] heartbeat: cost=$3.51 pod_phase=v14_mirror pod_step=6000
+[2026-05-10T16:57:50] heartbeat: cost=$3.57 pod_phase=DONE final_class=SIMPLE_STACK_PASS_STRICT pod_step=6000
+[2026-05-10T16:57:50] pod reports DONE phase=DONE final_class=SIMPLE_STACK_PASS_STRICT
+[2026-05-10T16:57:50] pulling artifacts (state)…
+[2026-05-10T16:58:12] scp pull state rc=0
+[2026-05-10T16:58:12] pulling LoRA adapter weights → /Users/ghost/core/anima/state/anima_foundation_borrow_a_fire_2026_05_10/ckpts (own 30 mandatory)…
+[2026-05-10T17:11:08] scp pull ckpts rc=0
+[2026-05-10T17:11:10]   ckpts size: pod=990109818 mac=990109818 ratio=1.00
+[2026-05-10T17:11:10]   stripping pod-path from /Users/ghost/core/anima/state/anima_foundation_borrow_a_fire_2026_05_10/ckpts/adapter_final/adapter_config.json
+[2026-05-10T17:11:10]   stripping pod-path from /Users/ghost/core/anima/state/anima_foundation_borrow_a_fire_2026_05_10/ckpts/adapter_step_1500/adapter_config.json
+[2026-05-10T17:11:10]   stripping pod-path from /Users/ghost/core/anima/state/anima_foundation_borrow_a_fire_2026_05_10/ckpts/adapter_step_3000/adapter_config.json
+[2026-05-10T17:11:10]   stripping pod-path from /Users/ghost/core/anima/state/anima_foundation_borrow_a_fire_2026_05_10/ckpts/adapter_step_4500/adapter_config.json
+[2026-05-10T17:11:10]   stripping pod-path from /Users/ghost/core/anima/state/anima_foundation_borrow_a_fire_2026_05_10/ckpts/adapter_step_6000/adapter_config.json
+[2026-05-10T17:11:10] cost_actual=$3.57 band=WITHIN_TARGET
+[2026-05-10T17:11:10]   HF promote FAILED: No module named 'huggingface_hub'
+[2026-05-10T17:11:10] deleting pod (teardown)…
+[2026-05-10T17:11:12] pod delete rc=0 out={
+  "deleted": true,
+  "id": "yi2qwx8ljo8g9d"
+}
+
+[2026-05-10T17:11:12] ledger appended: bg_id=BG-FOUNDATION-BORROW-A class=SIMPLE_STACK_PASS_STRICT cost=$3.57
+[2026-05-10T17:11:12] === BG-FOUNDATION-BORROW-A complete: cost=$3.57 ===
