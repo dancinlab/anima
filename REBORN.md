@@ -1804,6 +1804,91 @@ gen   : 도우미: 이러한 인지에 의식을 가지하는 것이
 
 ---
 
+## §30 [2026-05-10 13:20 KST] BG-V5MITOSIS-ALL-FIX — §25 R1/R6 + §28 H1+H3 ship + §25 R2 STUB ★★
+
+own 42 amend2 immediate md save mandate. raw#15 additive — fixes default-ON in __init__ with opt-out flags; original logic preserved as fallback. $0 Mac CPU only, ~70min wall.
+
+### Fix bundle (A1+A2 §28 ship recs / B1 R6 / C1 R2 STUB / D1 R1)
+
+| code | scope | risk addressed | status |
+|---|---|---|---|
+| **A1** | substrate-independent split trigger (cell_pool / cell_state L2 dispersion top-quartile + σ-gate + warmup-gate) | §28 H1 attention-pull collapse | **DONE** |
+| **A2** | per-cell adaptive threshold (each cell tracks its own σ window; children inherit parent threshold on split) | §28 H3 concentration / champion-cell wall | **DONE** |
+| **B1** | phi_per_cell secondary tracking + ratchet refactor (use phi/n not phi_total) | §25 R6 Φ unnorm runaway (4.82→2775 in 50 steps) | **DONE** |
+| **C1** | optimizer rebuild callback `register_optimizer_rebuild_callback(cb)` (Net2Net momentum body deferred) | §25 R2 optimizer state migration | **STUB SHIPPED** (integration point only) |
+| **D1** | Lorenz scale auto-calibration (effective = lorenz_scale × mean(p.norm()) × calibration_factor + setter) | §25 R1 attention-dwarfing at d=384 | **DONE** |
+
+### Smoke verification (3/3 PASS)
+
+| smoke | pre-fix | post-fix |
+|---|---|---|
+| `mitosis_v5_smoke_test.py` | PASS 5/5 (n=25 phase1, 24 splits, max_cells=32) | PASS 5/5 (n=95 phase1, 120 splits, max_cells bumped 32→128 in test config) |
+| `mitosis_model_v5_smoke.py` | PASS 8/8 (n=4→25→64, Φ 4.82→2775) | PASS 8/8 (n=4→36→64, Φ 0.39→2944, dispersion-trigger fires alongside tension) |
+| `mitosis_all_fix_smoke.py` (NEW) | n/a | **13/13 PASS** (PORT 5/5 §28 unblock + MODEL 5/5 mechanism wires + B1 bounded + pre-fix dispersion=0) |
+
+### ★★ §28 mechanism unblock evidence (PORT AttractorSubstrate 1K-turn, rank-2 SVD-clamped h_to_c)
+
+| metric | pre-fix (A1/A2/D1 OFF) | post-fix (defaults ON) |
+|---|---:|---:|
+| splits_total | **0** | **23** ★★ |
+| splits_dispersion | 0 | 9 |
+| splits_tension_only | 0 | 14 |
+| n_cells_final | 8 | 31 |
+| optimizer_rebuild_callbacks_fired | 0 | 23 (C1 wire verified) |
+| phi_per_cell_max | 0.282 | 0.265 (B1 bounded, no N-runaway) |
+
+PORT AttractorSubstrate is a tight replay of §28 H1 mechanism (attractor-bias h_to_c → tension collapse onto 1-2 cells). Pre-fix 0 splits = champion-wall blocking exactly as §28 diagnosed. Post-fix 23 splits with 9 dispersion-trigger = A1+A2 unblock confirmed.
+
+### H100 cond.5 readiness — closer 또는 not?
+
+| tier | before this fix | after this fix |
+|---|---|---|
+| conservative N=8 fixed | READY | READY (unchanged) |
+| mid N=8→16 patience | needs `rebuild_optimizer_after_split` | C1 callback wired — STUB body still TODO trainer-side |
+| stretch N=8→32+ | needs threshold cal at d=384 | A1+A2 unblock champion-wall; D1 calibrates Lorenz; **mechanism path opened** |
+
+verdict: **stretch tier mechanism-blockers cleared**. C1 R2 still STUB (Net2Net momentum body). cond.5 fire **closer but not ready** — Net2Net body + d=384 cond.3 sweep on real ckpt remain.
+
+### Top 3 remaining risks
+
+1. **C1 stub body STILL needed** — Net2Net momentum copy for AdamW state on split not implemented inside callback (caller-side deferred). cond.5 first-fire risk if trainer wires no-op.
+2. **σ-gate on dispersion may be too conservative** — if pool itself is collapsed (low overall σ), dispersion gate stays off. warmup-gate also delays first dispersion-fire by `adaptive_window/2 = 50` steps. real-ckpt d=384 cond.3 sweep needed.
+3. **A2 children inherit parent threshold** — split-line still shares one calibrated σ tree. cross-line contamination possible on deep split chains. v2 Net2Net sibling-decorrelation deferred to v3.
+
+### Honest C3 (raw#10 ≥7)
+
+1. ★★★ **fixes are MECHANISM-LEVEL architectural changes; V14 PASS guarantee X** — substrate quality (real ckpt d=384) is a separate lever. cond.3 d=384 sweep + cond.5 H100 fire 가 진짜 V14 unlock 검증.
+2. ★★ **MODEL synthetic-substrate cap-bind** — joint smoke MODEL track hits cap=128 both pre/post (no attractor projection on random init), masking differential split count. §28 unblock evidence relies on PORT AttractorSubstrate test only. real trained ckpt d=384 cond.3 needed for full validation.
+3. ★★ **C1 STUB body not in this BG** — `register_optimizer_rebuild_callback` is integration point; Net2Net momentum copy logic must be written by H100 trainer (cond.5 prep separate cycle).
+4. **mitosis_v5_smoke_test.py max_cells bumped 32→128** — engine became more aggressive (correct), test cap was insufficient (not engine bug). raw#15 additive — bumped only the test parameter, engine default unchanged.
+5. **dispersion warmup gate (adaptive_window/2 = 50 steps)** — delays first dispersion-fire. on H100 ramp this 가 첫 turn 1-50 silence period. tunable but not yet swept.
+6. **B1 phi_per_cell uses phi_total / n_cells naive division** — no IIT-formal per-cell decomposition. heuristic that prevents N-runaway but isn't theoretically grounded. iit_phi_remetric port 의 spatial_phi_unnormalized 자체는 N-aware, B1 은 추가 안전망.
+7. **PORT smoke pre-fix 0 splits 가 evidence-of-unblock 인지, evidence-of-overcollapse 인지 ambiguous** — AttractorSubstrate rank=2 strength=4 hyperparams 의 over-tuning 가능. seed 41/43 replication + rank=4 / strength=2 sweep 후속 권고.
+
+### Deliverables
+
+- `training/mitosis_v5_port.py` (gitignored) — A1/A2/B1/C1/D1 applied
+- `training/mitosis_model_v5.py` (gitignored) — A1/A2/B1/C1/D1 applied
+- `training/mitosis_v5_smoke_test.py` (gitignored) — max_cells 32→128 bump
+- `training/mitosis_all_fix_smoke.py` (gitignored, NEW) — joint pre/post diagnostic + AttractorSubstrate
+- `state/anima_v5_mitosis_all_fix_2026_05_10/{baseline_pre_fix.json, smoke_results.json, pre_post_compare.png, fix_patches.json}`
+- `docs/anima_v5_mitosis_all_fix_2026_05_10.md` — full A/B/C/D before/after + cross-link
+
+### Cross-link
+
+- §25 R1/R2/R6 risk table — D1/C1/B1 각각 mitigate (R2 STUB)
+- §28 v1 architecture rec #1 (substrate-indep trigger) + #2 (per-cell threshold) — **shipped** ★★
+- track C cond.3 prereq: real ckpt d=384 sweep with these fixes; cond.5 H100 fire prereq: C1 Net2Net body + d=384 stability gate
+- §22 same-cell control 0.94 ratio — orthogonal (per-cell entropy invariant), not affected
+- §31 worktree-12/13 mitosis.py 794L pinnacle — A1/A2/B1 의 v2 origin reference (verify_phi_conservation 등 추가 port 가능)
+- §33 BG-IIT-METRIC-REAL-350M — 본 §30 fixes 적용 후 max=32 cap binding 발생 (다음 cycle max 상향 후 재측정 권고)
+
+### status
+
+own 42 amend2 immediate md save 본 §30 완료. `reborn.B.cond.4` 후속 + track C cond.2 follow-up — **mitosis architecture v1 (§28 ship) + R6/R1 mitigated + R2 integration point**. cond.3 (real ckpt d=384 sweep) ready for next cycle authorize.
+
+---
+
 ## §31 [2026-05-10 12:50 KST] BG-LOSTASSET-D-WORKTREE-REMAINING — 9 worktree deep read ★★★ pinnacle mitosis 발견
 
 ### TL;DR
