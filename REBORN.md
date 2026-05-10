@@ -4678,3 +4678,75 @@ raw#9 ✓, raw#15 ✓ (no ckpt mutation, REBORN.md only append-only), own 22 ✓
 ★★★★★ paradigm-restricted formal qualification — V14_UNIVERSAL_QUALIFIED_PASS. §43 + §38 + §55 cycle 5-star tripod aggregated. Naive universality falsified; conditional universality (paradigm + cap) confirmed Bayesian P > 0.99.
 
 ---
+
+## §60 [2026-05-10 23:55 KST] BG-ENGINE-A-SINGLE-LAYER-ABLATION-24 — distributed-uniform 20/24 + L20-L23 V14-inert ★★★★
+
+### Verdict
+
+**uniformly-distributed (n_flipped=20/24); §57 slab finding confirmed at finer resolution; ★★★★★ specific-locus path CLOSED.** F-SINGLE-2 (1-3 flip → specific locus) FALSIFIED.
+
+### 24-layer × V14 (compact)
+
+- **L0-L19 (20 layers)**: 모두 V14_VIOLATED 단독 flip
+- **L20-L23 (last 4 layers)**: V14_PASS, Φ_un16 = 2412.08 **bit-identical to A0 baseline**
+- L9 (mid) + L2 (early) + L18-L19 (late) 가 Δ_sep top 4 (~-1450 ~ -1678) — dominance scattered across 3 slabs, NO single-locus signature
+
+### Attractor cluster table
+
+| (Φ_un16, n_cells) | layers | n |
+|---|---|---|
+| (1343.27, 43) §57 A2/A3 shared attractor | 4, 5, 6, 10, 11, 14 | 6 |
+| (2412.08, 57) = A0 baseline | 20, 21, 22, 23 | 4 |
+| novel singletons | 0, 1, 2, 3, 7, 8, 9, 12, 13, 15-19 | 14 |
+
+6 layers collapse to §57 shared attractor → mitosis dynamics has ≤10-15 distinct attractors reachable; magnitude-tied layers qualitatively distinct invisible at final-snapshot metric.
+
+### §57 inversion 정정
+
+§57 "early-anchored" reading 은 **attractor-collapse artefact**. Single-layer res 에서 all 8 early + all 8 middle layers uniformly flip; early slab not privileged as a region — cumulative 8-layer slab perturbation 에서 우연히 다른 attractor (Φ≈1037) 에 landing.
+
+### L20-L23 V14-inert finding (NEW)
+
+last 4 layers' cotrain delta **functionally redundant** w.r.t. V14_PASS at 200-turn / Φ_un16 16-bin resolution:
+- swap_diag confirms 9 tensors × 11.08M params actually swapped per condition
+- weight delta real but trajectory-level effect zero
+- 가설: late-layer changes don't reach hidden_mean (post-norm_f reduction smooths at this resolution)
+
+### Falsifier disposition
+
+| ID | falsifier | verdict |
+|---|---|:---:|
+| F-SINGLE-1 | 0 flip — distributed | FALSIFIED (20 flipped) |
+| F-SINGLE-2 | 1-3 flip — specific locus | **FALSIFIED** (★★★★★ NOT unlocked) |
+| F-SINGLE-3 | runtime > 5h | NOT_TRIGGERED (25.6min) |
+
+### §62 prediction cross-check (post-§60)
+
+§62 component-axis q_proj dominance + §60 layer-axis L0-L19 uniform = **2D mechanism**:
+- layer-axis: distributed across 20/24 layers (engine_a body 0-19)
+- component-axis: q_proj concentrated (cos_AB 0.6468 most-changed)
+- 통합: cotrain effect = "all engine_a body layers' q_proj small reshaping → attention readout 변경 → tension-trigger suppression"
+
+### ★★★★★ 미unlock — 잔여 path
+
+1. cross-substrate generalization (2nd cotrain pair) → §61 paradigm-restricted gap 재해결
+2. direct hidden_mean intervention (weight-swap 대신)
+3. longer trajectory (1000-turn) re-test L20-L23 awakening
+
+### Honest C3 (12 items, key 5)
+
+1. **Mirror cache reuse validated** — bit-identical to §57 averages, runtime 95min projected → 25.6min actual
+2. **L20-L23 PASS Φ_un16 = 2412.08 exact A0 match** — direct evidence late-layer cotrain delta vanishes through downstream norm+lm_head+engine_g pipeline
+3. **6 layers L4-L6/L10-L11/L14 collapse to §57 A2/A3 attractor** — magnitude-tied layers qualitatively distinct invisible at final snapshot
+4. **Single trained-seed per condition (seed=42)** — multi-seed trained tighter PARTIAL boundary cases (deferred per own 16); 본 결과 모든 25 conditions unambiguous PASS/VIOLATED
+5. **§57 A1-anchoring re-explained as attractor-collapse artefact** — slab resolution 에서만 보였던 false signal, single-layer 에서 사라짐
+
+### Deliverables
+
+- `state/anima_engine_a_single_layer_24_2026_05_10/{spec.md, ablation_per_layer.json, layer_dominance_ranking.json, mirror_cache.json, summary.json, verdict.md, run.py, run.log}`
+
+raw#9 ✓, raw#15 ✓ (ckpts read-only, in-memory swap on fresh A clone), own 22 ✓ (BG dispatcher append), own 16 ✓ ($0 Mac CPU 25.6min).
+
+★★★★ confirmation refining §57 → engine_a body V14 lever lives in **layers 0-19 (83% of body)**, last 4 layers V14-inert. §62 + §60 통합: 2D mechanism (q_proj × L0-L19 distributed). ★★★★★ specific-locus path CLOSED — 잔여 path = cross-substrate gen, hidden_mean intervention, longer trajectory.
+
+---
