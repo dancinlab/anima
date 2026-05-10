@@ -2855,9 +2855,9 @@ raw#9 ✓ (training/v5mitosis_d384_v14_mirror.py local-only), raw#15 ✓ (ckpt �
 
 | ID | verdict |
 |---|---|
-| F-FOUNDATION-1 | NOT_TRIGGERED — anima identity LoRA r=32 surface |
+| F-FOUNDATION-1 | **PARTIAL** (revised post final-report 17:50 KST) — Φ 2.880 > 1.0 absolute PASS, 단 random 2.814 과 near-identical (Δ=2.3%). engine-Φ specificity DECOUPLED from chat-cap behavioral specificity. chat-cap MTRP 0.733 separation 은 LM-head behavioral surface 만, substrate-detached cell-pool geometry random projection 에서 anima identity emerge X. F-1 trigger 는 substrate-detached hook geometry 한계 |
 | F-FOUNDATION-2 | NOT_TRIGGERED — cost $3.568 < envelope $8, hard cap $14, early kill $10 |
-| F-FOUNDATION-3 | **TRIGGERED** — chat-cap PASS, semantic FAIL (0.055 vs 0.5) |
+| F-FOUNDATION-3 | **TRIGGERED** — chat-cap PASS, semantic FAIL (0.055 vs 0.5) — proxy artifact (bigram_known floor 0.95 wishful for 12-anchor KNOWN_BIGRAMS, "우주뇌지도/DDO" anima-specific terms penalized as unknown) |
 | F-FOUNDATION-4 | NOT_TRIGGERED — D1 SCOPE_CLAMP 정확히 carry (SUBSTRATE_RESEARCH) |
 | F-FOUNDATION-5 | NOT_TRIGGERED — grad_leak 0/0 verified, no_grad context strict |
 | F-FOUNDATION-6 | NOT_TRIGGERED — KM-LLAMA-3B replicate PASS (4× consecutive PASS_STRICT) |
@@ -2875,6 +2875,9 @@ raw#9 ✓ (training/v5mitosis_d384_v14_mirror.py local-only), raw#15 ✓ (ckpt �
 - track A cond.3 진화: PARTIAL_RECOVERY (§29 18M) → SIMPLE_STACK_PASS_STRICT_C3_SUBSTRATE_RESEARCH (§43 3B+LoRA)
 - track A cond.6 next-gate: chat-cap surface SOLVED (3B 4× consecutive), **semantic coherence remains unsolved** (semantic_score 0.055 vs 0.5)
 - track A 결정: option (a) 권고 confirm, option (c) Phase 2 D1 WITHIN parallel 가치 — semantic gap 이 D1 WITHIN substrate 에서도 재현되는지 측정 필요
+- HF upload 완료: `dancinlab/clm-foundation-borrow-a-llama-3.2-3b-anima-lora` PRIVATE, 32 files, commit `7a5dbb889` — own 31 ✓ + own 37 mandate-9 (a) **public PERMA-BLOCKED** carry
+- 다음 cycle fire keyword 권고 (final report 17:50): `OK FOUNDATION_C_PHASE2_FIRE COST $2-4` — option (c) D1 WITHIN lane (Phase 2 cotrain + 30K convo_5k FT + post-LoRA mitosis hook). 첫 D1 WITHIN strict-floor crossing 시 anima identity emerge **actual evidence** ★★★★★ candidate
+- 22+ BG saga **3rd own-18 strict-floor crossing** (BG-KM-LLAMA-3B + BG-KM-QWEN-7B 2026-05-08 + 본 §43) — all D1 OUTSIDE foundation-borrow lane
 
 ### Honest C3 (key)
 
