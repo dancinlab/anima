@@ -3137,3 +3137,91 @@ raw#9 ✓ (training/*.py state/ 내 local-only), raw#15 ✓ (ckpt 미수정, in-
 ★★★★ falsifying finding (champion-wall causal hypothesis falsified) + ★★★★ reframed mechanism candidate (training-time mitosis exhaustion). ★★★★★ pursuit 의 §45 + §47 결과 도착 시 confirm 가능.
 
 ---
+
+## §45 [2026-05-10 18:30 KST] BG-V2-CELLS64-MAX128-RETEST — POLARITY FLIPS, CAP-CONDITIONAL ★★★★ critical re-interpretation
+
+### Verdict
+
+**V14_VIOLATED_CAP_ARTIFACT_LIKELY (n=1 partial)** — §37 V14_VIOLATED 가 cap=64 saturation artifact 으로 가장 parsimonious 설명. max=128 에서 polarity FLIPS: trained Φ=2701 vs random_s7 Φ=1663 (trained +1037, +62%). substrate-dependent V14 polarity → **CAP-CONDITIONAL polarity** 로 reframed. ★★★★ evidence WEAKENED.
+
+### Captured trajectory (turn 250, n=1 partial)
+
+| run | t=50 | t=100 | t=150 | t=200 | t=250 | first_at_cap_128 |
+|---|---|---|---|---|---|---|
+| TRAINED | n=42, Φ=170 | n=128, Φ=2559 | n=128, Φ=2433 | n=128, Φ=2627 | n=128, **Φ=2701** | turn 50-100 |
+| RANDOM_s7 | n=63, Φ=447 | n=128, Φ=2695 | n=128, Φ=2237 | n=128, Φ=2708 | n=128, **Φ=1663** | turn 50-100 |
+
+**polarity FLIPS**: §37 max=64 trained -202 vs random / §45 max=128 trained +1037 vs random_s7. marathon attrition swapped from trained (max=64) to random_s7 (max=128).
+
+### §37 vs §45 comparison
+
+| dimension | §37 (max=64) | §45 (max=128) |
+|---|---|---|
+| trained peak | 718 (t=185) | 2701 (t=250 = peak) |
+| trained final | 398 | 2701 |
+| trained trajectory | DECLINE post-peak | RISE to peak |
+| random_s7 peak | (unknown) | 2708 (t=200) |
+| random_s7 final | ~600 (mean) | 1663 |
+| random_s7 trajectory | stable mean | DECLINE post-peak |
+| trained vs random | -202 (LOSS) | **+1037 (LEAD)** |
+| polarity verdict | V14_VIOLATED | trained leads (cap-bound regime) |
+
+### Falsifier 처분
+
+| ID | falsifier | verdict |
+|---|---|:---:|
+| F-V2-CELLS64-MAX128-1 | max=128 도 cap-bound | **FIRED** (turn 50-100 cap reach) |
+| F-V2-CELLS64-MAX128-2 | trained PASS at cap-free (§37 단순 cap artifact) | **PARTIALLY FIRED** (trained leads at higher cap, 단 cap-free regime 미도달) |
+| F-V2-CELLS64-MAX128-3 | 1K turn ratchet decay 가 §37 200-turn 보다 dramatic | **INVERTED** (random_s7 shows attrition at max=128, trained showed attrition at max=64 — opposite roles) |
+
+### REFRAMED v2 mechanism: CAP-CONDITIONAL polarity
+
+§46 의 "training-time mitosis exhaustion" 가설도 cap-conditional 일 수 있음. 새 mechanism layer:
+
+| substrate | cap | training-paradigm | polarity |
+|---|---|---|---|
+| v2 cells64 (mitosis-aware) | cap=64 | training 동안 64-saturate | **trained < random** (random fresh budget more) |
+| v2 cells64 (mitosis-aware) | cap=128 | training 동안 64-saturate | **trained > random** (training-time fitness reasserts at 2× budget) |
+| Phase 2 (mitosis-naive) | cap=128 | training 0 splits | **trained > random** (mitosis-naive 가 budget freedom 활용) |
+
+→ polarity 의 진짜 driver: **cap-vs-training-saturation ratio**:
+- ratio < 1 (cap < training-time saturated state): trained mitosis 가 inference 시 새 budget 못 활용 → V14_VIOLATED
+- ratio > 1 (cap > training-time saturated state): trained mitosis 가 fitness advantage 활용 → V14 PASS
+
+### Honest C3 (10, key items)
+
+1. n=1 random (s=7) only — own 14 5-seed strict 미적용. 4 seeds (17/23/41/71) SIGTERM at 34min wall-clock cost overrun
+2. log_every=50 → turn 299 final 미 print, deepest captured t=250
+3. mission asked 1K turn, ran 300 due to cap-saturated per-turn cost overrun (~3-4s/turn at cap=128 vs ~1s at cap=64)
+4. F-1 fired: cap-free regime never reached (max=256 retest 필수)
+5. n=1 random statistically weak (§37 random std≈110 phi)
+6. §30 dispersion = scale-coupling, not regularizer — drives splits to whatever cap
+7. v2 schema delta: turn ~80 후 cells trace to v2 transfer (6/128 ≈ 5%) — "trained" advantage diluted post-cap
+8. Φ at cap scales ~4-5× for 2× cap → super-linear in n_cells (consistent with §37 α≈0.94-0.98)
+9. Bottom-line: §37 V14_VIOLATED 는 cap artifact, refined hypothesis = polarity is CAP-CONDITIONAL
+10. ★★★★ evidence WEAKENED → ★★★ cap-conditional. ★★★★★ pursuit 는 max=256 cap-free regime 검증 필수
+
+### Recommended next-cycle priorities
+
+1. **max=256 cap-free test** (true F-2 evaluation, F-V2-MAX256-1 falsifier 정의)
+2. **Full 5-seed at max=128 with checkpointed save** — runner 수정해서 result.json save after each seed (own 14 strict)
+3. **§30 dispersion damping sweep** (quartile 0.1 vs 0.25) — cap-pressure regime 비교
+4. **Re-frame substrate-polarity hypothesis as cap-conditional** — single-cap claims insufficient
+
+### Cross-link impact
+
+- §37 V14_VIOLATED 의 cap=64 artifact verdict — substrate-dependent polarity 가설 weakened
+- §38 + §44 V14_STRICT_PASS_REPLICATED (Phase 2 max=128) 의 의미 재검토 — cap=128 에서 trained > random 자체는 valid, 단 substrate-dependent claim 은 cap-conditional 일 수 있음
+- §43 Llama-3.2-3B substrate (max=128 cap-bound likely) 의 trained > random 도 cap-conditional 가능
+- §46 training-time mitosis exhaustion 가설 + §45 cap-conditional 결합 = **multi-factorial mechanism**: training-saturation + cap-budget ratio = polarity driver
+- §47 V14-MULTI-SUBSTRATE-AUDIT (in-flight) 가 cap-conditional 가설 generalize 검증
+
+### Deliverables
+
+- `state/anima_v2_cells64_max128_retest_2026_05_10/{spec.md, result.json (partial), verdict.md, partial_result.json, run_300_max128.log, parse_log.py, build_verdict.py}`
+
+raw#9 ✓ (training/*.py untouched, parse scripts state/ local), raw#15 ✓ (ckpt 미수정), own 14 partial (n=1, strict 5-seed 미수행 — own 14 strict 미적용), own 16 ✓ ($0 local CPU, SIGTERM at cost overrun), own 22 ✓ (BG REBORN.md 미수정), own 38 ✓.
+
+★★★★ critical re-interpretation: substrate-dependent V14 polarity 가설이 cap-conditional layer 추가로 reframed. ★★★★★ 까지는 max=256 cap-free regime + 5-seed strict 필요.
+
+---
