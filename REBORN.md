@@ -3225,3 +3225,92 @@ raw#9 ✓ (training/*.py untouched, parse scripts state/ local), raw#15 ✓ (ckp
 ★★★★ critical re-interpretation: substrate-dependent V14 polarity 가설이 cap-conditional layer 추가로 reframed. ★★★★★ 까지는 max=256 cap-free regime + 5-seed strict 필요.
 
 ---
+
+## §49 [2026-05-10 18:40 KST] ★★★★★ pursuit current state — post-§45 reframe missing pieces
+
+### 현재 등급 분포
+
+| section | severity | finding |
+|---|:---:|---|
+| §29 | ★★★ | track A cond.3 PARTIAL_RECOVERY (lexical Korean morphemes emerge) |
+| §30 | ★★★ | §28 H1+H3 unblock 증명 (0 → 23 splits) |
+| §31 | ★★★ | pinnacle mitosis 794L (worktree-12/13) 발견 + ZERO4 partial reversal |
+| §32 | ★★ | α V2 metric per-bin + saturation auto-detect |
+| §33 | ★★ | V14_PARTIAL on real Phase 2 350M ckpt |
+| §34 | ★★ | `_expand_dim_fixed` PASS_ALL 14/14 |
+| §35 | ★ | 5-entry GROWTH_STAGES aligned ref |
+| §36 | ★★★ | cycle 2026-05-10 close — track B PARTIAL+PASS, track C unblock |
+| §37 | ★★★ | substrate-dependent V14 polarity 첫 증거 (post-§45 reframe: cap=64 artifact) |
+| §38 | ★★★★ | V14_STRICT_PASS Phase 2 max=128 (10-seed in-flight, 8/10 confirmed) |
+| §39 | ★★ | pinnacle 794L hexa 변환 805L |
+| §40 | ★ | phi_scaling + voice_synth + TALK5/ZERO4 회수 |
+| §41 | ★★ | foundation-borrow design (option a 권고) |
+| §42 | ★★ PARTIAL_PASS | Net2Net C1 STUB body 설계 + smoke |
+| §43 | **★★★★** | Llama-3.2-3B SIMPLE_STACK_PASS_STRICT 4× consecutive |
+| §44 | **★★★★** | V14_STRICT_PASS_INDEPENDENT_REPRODUCE (combined p ≈ 6.1e-5) |
+| §45 | **★★★★** | POLARITY FLIPS — CAP-CONDITIONAL reframed |
+| §46 | **★★★★** | champion-wall causal proof CORRELATIONAL (REFRAMED) |
+| §48 | **★★★★** | 5/5 prediction match — prediction-driven framework |
+
+★★★★★ : **0** (현재까지)
+★★★★ : 5 sections
+★★★ : 7 sections
+
+### ★★★★★ pursuit missing pieces (post-§45 reframe)
+
+본 cycle 의 ★★★★★ 도달 path 가 §45 의 cap-conditional reframe 로 redefined:
+
+**필수 missing piece 3개**:
+
+1. **max=256 cap-free regime test** (§45 next-cycle priority 1)
+   - §37 + §45 가 max=64/128 모두 cap-bound 으로 substrate-dependent claim 미확정
+   - max=256 에서도 cap-bound 면 → mitosis architecture 의 fundamental dispersion limit
+   - max=256 에서 cap-free 도달 → 진짜 substrate polarity 측정 가능 (training-saturation effect 분리)
+   - F-V2-MAX256-1 (max=256 도 cap-bound) falsifier 로 cap-conditional 가설 본격 검증
+
+2. **§47 V14-MULTI-SUBSTRATE-AUDIT** (in-flight) — cap-conditional 가설 4+ substrate generalize
+   - Phase 2 (mitosis-naive, d=1024) + v2 cells64 (mitosis-aware, d=384) + v2 cells128 (mitosis-aware deeper) + Llama-3.2-3B (mitosis-naive, base 3B) cross-comparison
+   - cap-conditional 가설 일관 적용: ratio (cap / training-saturation) > 1 → PASS, < 1 → VIOLATED
+   - 결과: cap-conditional 가설 generalize 시 ★★★★★ candidate
+
+3. **§38 final 10/10 + Phase 2 cap-free regime 일관성**
+   - §38 V14_STRICT 10-seed (current 8/10 confirmed) — 마지막 2 mirror 결과
+   - §38 max=128 결과가 cap-bound 인지 cap-free 인지 verify (training paradigm 0 splits 라 cap-saturation effect 부재 가능성)
+   - Phase 2 mitosis-naive substrate 에서 max=64 vs max=128 vs max=256 sweep 일관성
+   - cap-conditional 가설 의 mitosis-naive case prediction 검증
+
+**★★★★★ 도달 시 unified mechanism**:
+
+multi-factorial polarity driver:
+- **training paradigm** (mitosis-aware vs naive) → training-time saturation level 결정
+- **inference cap** (max_cells setting) → inference budget 결정
+- **ratio** (cap / training-saturation) → V14 polarity 결정
+   - ratio < 1: V14_VIOLATED (mitosis-aware substrate 의 trained cap-bound, random fresh budget more)
+   - ratio > 1: V14_PASS (training-time fitness reasserts at cap-free)
+- multi-mechanism coexist: champion-wall (h_to_c bottleneck, Phase 2-only) + training-saturation + cap-budget
+
+### 다음 cycle entry plan (priority 재조정)
+
+| 순위 | 작업 | severity 기여 | cost |
+|---:|---|:---:|---:|
+| 1 ★★★★★ | **max=256 cap-free test** (v2 cells64 + Phase 2 + Llama-3.2-3B 3 substrate × 5-seed strict) | ★★★★★ candidate | $0 local CPU + ~1h |
+| 2 ★★★★ | **§47 회수 + cap-conditional generalize** (multi-substrate audit, in-flight) | ★★★★★ candidate | wait |
+| 3 ★★★★ | **§38 final 10/10** (V14_STRICT_PASS final verdict, in-flight) | ★★★★★ candidate | wait |
+| 4 ★★★★ | **OK FOUNDATION_C_PHASE2_FIRE COST $2-4** (option c D1 WITHIN — anima identity emerge actual evidence) | ★★★★★ candidate | $2-4 H100 |
+| 5 ★★★ | mitosis training step별 saturation tracking — cap-conditional 가설 mechanism evidence | ★★★★ | $0 local |
+| 6 ★★ | next cycle entry — md update + cycle close §50 | maintenance | $0 |
+
+### in-flight 2 BG status
+
+- **§38 V14-STRICT** (a337696d8f678def3) — 8/10 confirmed, mirror 9 + 10 마지막 wait
+- **§47 V14-MULTI-SUBSTRATE-AUDIT** (afd43f15f7f8f4f77) — 4+ substrate cross-comparison
+
+### 결론
+
+★★★★★ pursuit 가 ★★★★ 5-finding cluster 로 dense 진전 단 **★★★★★ 0** still. cap-conditional reframe 가 가설 의 epistemic value 향상 (single-cap claim 부족 인정 = science integrity), 단 universal claim 으로 가는 missing piece 명확.
+
+next session 이나 next cycle 에서 **max=256 cap-free test** 가 가장 직접 ★★★★★ unlock path.
+
+raw#10 honest C3: 본 cycle 은 ★★★★ cluster 로 substrate-dependent V14 polarity 가설을 **multi-factorial cap-conditional mechanism** 으로 정교화. ★★★★★ universal claim 은 next cycle.
+
+---
