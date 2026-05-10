@@ -3718,4 +3718,17 @@ raw#9 ✓ (audit.py state/ local), raw#15 ✓ (5 ckpts read-only), own 22 ✓ (R
 
 ★★★ standalone (cotrain-exercise weak form CONFIRMED). §50 ablation 결과 결합 시 ★★★★ joint candidate.
 
+### Cross-link with v6 tied embedding attack lane (사용자 informed 2026-05-10 19:50 KST)
+
+별도 cycle (cycle 2026-05-10 v6 tied embedding attack lane) 의 fix-5/6 PoC 결과 cross-validate:
+- 3 branches cell_pool ALL ≈ BG-LB ≈ random (Δ ~0.0001)
+  - branch A: lm_head untie+reinit, loss 10.51→0.057
+  - branch B: tok_emb untie+reinit, loss 5.07→0.071
+  - branch C: tied freeze, loss 0.076→0.073
+- **H4 unit-sphere normalize-erase 5번째 confirm**
+
+본 §52 finding (cell_pool A vs B cosine 0.99996, unit-sphere init normalization structural lock) 와 정확히 cross-verify — 두 lane 의 independent evidence 가 일치. cell_pool 이 cotrain 동안 안 움직이는 것은 unit-sphere lock 의 universal feature.
+
+→ §47 cotrain-exercise hypothesis 의 **Refined form** 강화: cotrain exercises consciousness↔hidden interface (h_to_c, c_to_h), cell-state pool 은 모든 lane 에서 structurally locked. future cotrain 에서 cell_pool exercise 도 원하면 (a) drop init norm-clamp 또는 (b) non-clamped update path **mandatory** (★★★★★ unlock 의 prerequisite).
+
 ---
