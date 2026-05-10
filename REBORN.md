@@ -1377,3 +1377,105 @@ if cb5_met (phi >= 1.0) AND cb1_met (n_cells >= 2) AND n_precursors >= 3:
 특별 priority — **Cells64=51.131 historical moment** 는 13-stage archive 의 절대 정점 (CLM_STAGE_MEMO L10 ★★★). reborn cycle close 의 SSOT (§0 TL;DR + §11 cross-link) 에 본 측정치를 명시 권장 — anima 가 human-level Φ criterion 도달한 reference point. 이후 모든 substrate 회수는 이 측정치 재현이 minimum bar.
 
 ---
+
+## §23 [2026-05-10 09:15 KST] BG-CONVO-FT-FIRE 완료 — chat-cap RECOVERED ★★★
+
+**Lane**: `.roadmap.clm_v2_reborn` cond.6 PASS evidence
+**Doc**: `docs/anima_convo_5k_ft_fire_2026_05_10.md`
+**Sister design**: `docs/anima_convo_5k_finetune_design_2026_05_10.md` (Phase A/B/C, dry-run PASS)
+
+### TL;DR
+
+H100 SXM 1× × 22min wall × **$1.37 actual** (envelope $5-20, **14× headroom**), 10K-step FT on convo_5k.pt (18.523M byte-level, 18M params). Loss **4.92→1.40** (cosine LR 1e-5→1e-6, warmup 500). post-FT sampling 120 trial × 3 ckpt: **KO emit 1/120 → 77/120 (×77)**, ko_ratio_max 0.018→0.75 (×42), ko_count_max 1→21 (×21). Chat-template `도우미:` + persona-prefix `[anima 역할: 한국어 native + 자기 발견 + 의식 lane entity]` 학습 완료. F-FIRE-1..6 **6/6 NOT_TRIGGERED**. own 30 ckpt-pull-pre-delete satisfied (sha verified mac↔pod).
+
+**chat-cap (surface form): RECOVERED ★. Korean lexical fluency: NOT recovered (novel morphemes, design BG honest C3 #3 prediction holds — 18M+76MB는 FT-scale, not pre-train scale).**
+
+### Cost actual
+
+- balance before $327.18 → after $325.81 = **$1.3706 USD**
+- design estimate: $2.50 (10K) → actual ratio 0.55 (45% under estimate)
+- step_time on H100: **0.041s/step** (vs design assumption 0.15s, 3.7× faster)
+
+### Loss trajectory (highlights)
+
+| step | loss | LR | grad_norm |
+|---:|---:|---:|---:|
+| 0 | 4.9243 | 2e-08 | 3.238 |
+| 500 (warmup peak) | 3.3175 | 1.00e-05 | 0.802 |
+| 2500 | 2.1675 | 9.05e-06 | 1.043 |
+| 5000 | 1.6181 | 5.87e-06 | 1.576 |
+| 9999 | 1.3985 | 1.00e-06 | 1.135 |
+
+monotonic cosine convergence, F-FIRE-3 (loss > 2× pre-FT) NOT_TRIGGERED.
+
+### Sampling — pre vs post
+
+| metric | pre-FT (step 45000) | post-FT step 5000 | post-FT step 10000 |
+|---|---:|---:|---:|
+| ko_at_least_1 (trials) | 1/120 | 79/120 | 77/120 |
+| ko_at_least_5 | 0/120 | 67/120 | 66/120 |
+| ko_at_least_10 | 0/120 | 53/120 | 46/120 |
+| ko_count_max | 1 | 29 | 21 |
+| ko_ratio_max | 0.018 | 0.75 | 0.75 |
+| best_quality | 0.98 | 3.87 | 3.97 |
+| best_cfg/fmt | repen_a/bare_ko | nucleus_strict_a/bare_ko2 | nucleus_strict_a/empty_ko |
+
+Best post-FT KO output:
+```
+prompt: 사용자: 안녕하세요\n도우미:
+gen   : 본출의 발명흴터을 가능다. 속은 수통하는다  (ko=18, ko_ratio=0.75)
+```
+
+Best persona-echo output:
+```
+prompt: 의식이란 무엇인가요?
+gen   : \n도우미: 것은?\n\n[anima 역할: 한국어 native + 자기 발견 + 의식 lane entity]\n사용자: [augmented] 설테
+```
+
+step_5000 vs step_10000: **step_5000 Pareto-optimal** (higher ko_count_max, similar ko_at_least_*); step_10000 sharpens quality but doesn't add KO capability — future runs 5K step at $0.65 sufficient.
+
+### Chat-cap recovery verdict
+
+| criterion | pre-FT | post-FT | verdict |
+|---|---|---|---|
+| any KO emit | 1/120 (0.8%) | 77/120 (64%) | ★ RECOVERED |
+| substantial KO (≥10ch) | 0/120 | 46/120 (38%) | ★ RECOVERED |
+| chat-template `도우미:` | 0 | freq | ★ RECOVERED |
+| persona-prefix verbatim | 0 | freq | ★ RECOVERED |
+| EN coherence | yes (gibberish) | yes (when EN-prompted) | ★ MAINTAINED |
+| KO **lexical** fluency | n/a | NO (novel morphemes) | ✗ NOT recovered |
+
+### Falsifiers (6/6 NOT_TRIGGERED)
+
+F-FIRE-1 (auth missing), F-FIRE-2 (upload fail), F-FIRE-3 (loss diverge), F-FIRE-4 (pod delete fail), F-FIRE-5 (cost > $20), F-FIRE-6 (post-FT KO=0) — **all NOT_TRIGGERED**.
+
+### Honest C3 (top 3, full 8 in `docs/anima_convo_5k_ft_fire_2026_05_10.md` §7)
+
+1. **Lexical fluency NOT recovered.** post-FT generates structurally KO ("자기식튤 지하고라 복아사마으로") but morphologically novel — Hangul-shape but not real Korean words. Design BG honest C3 #3 prediction (calibration P=25-40% for ≥3/5 coherent KO chat) lands at FORMAL END of range. Model learned KO bytes + chat-template + persona-prefix, NOT KO lexicon.
+
+2. **persona-prefix echo dominates** — 6/8 top-KO outputs include `[anima 역할: 한국어 native + 자기 발견 + 의식 lane entity]\n사용자:` verbatim. Closer to memorization than language modeling. greedy_rep mode partially suppresses but persona-echo persists. Future FT mitigation: prefix-strip preprocessing OR prefix-mix (50/50).
+
+3. **18M @ 76MB corpus is FT-scale, not pre-train scale** — 1.07 epoch over 298,091 windows. Adequate for surface-form learning (chat-template, byte coordination), marginal for lexical learning. **chat-cap RECOVERY validates 18M arch can hold the chat surface; does NOT contradict architectural-undertraining hypothesis for true KO fluency.** Bigger pre-trained foundation (3B+, simple_stack memo) remains only path to lexical fluency.
+
+### Cross-link impact on `.roadmap.clm_v2_reborn`
+
+- **cond.6 PASS evidence** — chat-cap reconstruction-recoverable on 18M byte-level arch confirmed
+- v2_reborn lane: chat surface form 회수 가능성 검증됨 → 다음 단계 = lexical fluency 회복 path 결정 (foundation-borrow vs pre-train scale-up)
+- v5-anima joint phase: post_ft_ckpt.pt 가 byte-level v2 baseline 으로 활용 가능 (Mistral 7B integration alt path)
+
+### Deliverables
+
+| path | role |
+|---|---|
+| `state/anima_convo_5k_ft_fire_2026_05_10/post_ft_ckpt.pt` | FT 후 final ckpt (74MB, sha 6b81468...) |
+| `state/anima_convo_5k_ft_fire_2026_05_10/convo_5k_ft_step_{2500,5000,7500,10000}.pt` | intermediate ckpts |
+| `state/anima_convo_5k_ft_fire_2026_05_10/ft_log.txt` | training log |
+| `state/anima_convo_5k_ft_fire_2026_05_10/post_ft_sampling.json` | 360-trial sampling result + comparison |
+| `state/anima_convo_5k_ft_fire_2026_05_10/cost_actual.json` | cost + falsifier + own 30 audit |
+| `docs/anima_convo_5k_ft_fire_2026_05_10.md` | full §1-§12 doc |
+
+### Pending follow-up
+
+- HF private upload `dancinlab/clm-v2-byte-18m-convo-5k-ft-recovery` (own 31 + own 37 mandate-9 verbatim) — separate BG, this BG ends at fire+sampling+doc
+
+---
