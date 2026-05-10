@@ -233,6 +233,8 @@ fn sub_help() {
     println("  anima chat --list-lanes             dump registered chat lanes + meta")
     println("  anima chat --list-init-patterns     dump registered chat init-patterns (own 41 axis-8)")
     println("  anima chat --list-transports        dump registered chat transports (axis-N, 2026-05-09)")
+    println("  anima chat --list-axes              dump registered chat AXES (own 41 axis-N+1 hook)")
+    println("  anima chat list-axis <name>         dump single axis (lane / mode / init-pattern / transport / verifier / modality)")
     println("  anima chat list                     alias DB dump")
     println("  anima chat --help")
     println("  anima chat --selftest")
@@ -250,6 +252,8 @@ fn sub_help() {
     println("  --transport <name>      chat transport plugin (fifo-dispatch/beta1-channel/")
     println("                          libllama-ffi/subprocess-pipe/imtl); axis-N (2026-05-09)")
     println("  --list-transports       registered chat transports (chat/transports/_registry.hexa)")
+    println("  --list-axes             registered chat AXES (own 41 axis-N+1 hook; chat/axes/_registry.hexa)")
+    println("  --list-axis=<name>      single axis dump (lane / mode / init-pattern / transport / verifier / modality)")
     println("  --benchmark             all-lanes × fixed-prompts comparison")
     println("  --dry-run               with --benchmark, list invocations without exec")
     println("")
@@ -585,6 +589,112 @@ fn sub_list_init_patterns() {
     println("(Benchmark sweep: anima chat --benchmark --mode=ai-duo --init-pattern=all)")
 }
 
+// ─────────────────────────────────────────────────────────────────────────
+// own 41 axis-N+1 hook (T+1 step, cycle 2026-05-10) — generic axis dispatch
+//
+// 본 helper 들은 raw#15 ADDITIVE — 기존 4 hardcode 분기 (--list-lanes /
+// --list-init-patterns / --list-transports) 는 그대로 유지 (back-compat).
+// 신규 진입점:
+//   anima chat --list-axes              → 모든 axis (lane/mode/init-pattern/transport)
+//   anima chat list-axes                → 동일 (positional alias)
+//   anima chat --list-axis=<name>       → 특정 axis 의 names 만 dump
+//   anima chat list-axis <name>         → 동일 (positional)
+//
+// generic dispatch 는 axes/_registry.hexa SSOT 를 통해 axis-5+ 자동 흡수
+// (verifier registry 추가 시 chat.hexa 코드 변경 0 줄).
+// ─────────────────────────────────────────────────────────────────────────
+fn sub_list_axes() {
+    let root = _resolve_root()
+    let registry = root + "/tool/anima_cli/chat/axes/_registry.hexa"
+    if !_fexists(registry) {
+        println("anima chat --list-axes: meta-registry missing: " + registry)
+        exit(2)
+    }
+    let cmd = _hexa() + " run " + registry + " 2>&1"
+    print(_str(exec(cmd)))
+    println("")
+    println("(Axis 별 dump: anima chat list-axis <name>)")
+    println("(Axis 별 detail: anima chat --list-<lanes|modes|init-patterns|transports>)")
+}
+
+// _route_list_axis — generic axis dispatcher (own 41 hook 핵심).
+// axis name (lane / mode / init-pattern / transport / 미래 axis) 을 받아
+// 해당 axis 의 registry 또는 inline anchor 에 위임. axes/_registry.hexa
+// 에 row 추가 시 본 함수만으로 자동 인식 (axis-N+1 hook 정의).
+fn _route_list_axis(axis_name: string) {
+    let root = _resolve_root()
+    let axes_reg = root + "/tool/anima_cli/chat/axes/_registry.hexa"
+    if !_fexists(axes_reg) {
+        println("anima chat list-axis: meta-registry missing: " + axes_reg)
+        exit(2)
+    }
+    // axes/_registry.hexa 에서 row lookup. inline anchor (mode) 는
+    // benchmark.hexa _bench_modes 로 위임, 그 외는 standalone registry 의
+    // main() selftest 결과를 그대로 emit (registry meta 노출 own 24).
+    let trimmed = axis_name.trim()
+    if trimmed == "" {
+        println("anima chat list-axis: axis name 필요 — 예: lane / mode / init-pattern / transport")
+        println("                       (전체: anima chat --list-axes)")
+        exit(2)
+    }
+    // Hardcoded axis → registry/inline mapping (vendored mirror of
+    // axes_registry() — own 39 yaml↔md SSOT carry; 본 mirror 는 axes
+    // registry 를 invoke 하지 않고도 generic dispatch 가능하도록 유지).
+    if trimmed == "lane" {
+        let p = root + "/tool/anima_cli/chat/lanes/_registry.hexa"
+        if !_fexists(p) { println("anima chat list-axis: registry missing: " + p); exit(2) }
+        print(_str(exec(_hexa() + " run " + p + " 2>&1")))
+        return
+    }
+    if trimmed == "mode" {
+        // T+2 promote (2026-05-10) — modes/_registry.hexa standalone registry.
+        // Backward-compat fallback: 파일 부재 시 vendored inline emit.
+        let p = root + "/tool/anima_cli/chat/modes/_registry.hexa"
+        if _fexists(p) {
+            print(_str(exec(_hexa() + " run " + p + " 2>&1")))
+            return
+        }
+        // Fallback (raw#15 additive — promote 이전 동작 보존)
+        println("PASS chat/axes#mode (inline anchor fallback → benchmark.hexa _bench_modes)")
+        println("  default = 1:1")
+        println("  1:1     [LANDED] single user → single model (default; current behavior)")
+        println("  ai-duo  [LANDED] 2 models dialogue (chat/duo/duo.hexa)")
+        println("  ai-trio [SKELETON] 3 models round-robin OR moderated (chat/trio/trio.hexa)")
+        return
+    }
+    if trimmed == "init-pattern" {
+        let p = root + "/tool/anima_cli/chat/init_patterns/_registry.hexa"
+        if !_fexists(p) { println("anima chat list-axis: registry missing: " + p); exit(2) }
+        print(_str(exec(_hexa() + " run " + p + " 2>&1")))
+        return
+    }
+    if trimmed == "transport" {
+        let p = root + "/tool/anima_cli/chat/transports/_registry.hexa"
+        if !_fexists(p) { println("anima chat list-axis: registry missing: " + p); exit(2) }
+        print(_str(exec(_hexa() + " run " + p + " 2>&1")))
+        return
+    }
+    if trimmed == "verifier" {
+        // axis-5 (own 41 axis-N+1) — T+3 land 2026-05-10. raw#15 additive —
+        // 기존 4 case (lane/mode/init-pattern/transport) 보존.
+        let p = root + "/tool/anima_cli/chat/verifiers/_registry.hexa"
+        if !_fexists(p) { println("anima chat list-axis: registry missing: " + p); exit(2) }
+        print(_str(exec(_hexa() + " run " + p + " 2>&1")))
+        return
+    }
+    if trimmed == "modality" {
+        // axis-6 own 41 axis-N+2 — T+6 land 2026-05-10. raw#15 additive.
+        // 6-axis mark — modality (text/audio/vision/multi_modal/tactile).
+        let p = root + "/tool/anima_cli/chat/modalities/_registry.hexa"
+        if !_fexists(p) { println("anima chat list-axis: registry missing: " + p); exit(2) }
+        print(_str(exec(_hexa() + " run " + p + " 2>&1")))  // @allow-bare-exec @allow-silent-exit
+        return
+    }
+    println("anima chat list-axis: unknown axis '" + trimmed + "'")
+    println("            run `anima chat --list-axes` for registered axes")
+    exit(2)
+}
+
 fn sub_lane_dispatch(lane: string, repo: string, argv) {
     let root = _resolve_root()
     let file = _lane_file_lookup(lane)
@@ -686,6 +796,29 @@ fn main() {
     // own 41 axis-8 — chat init-pattern plugin registry dump
     if _arg_present(argv, "--list-init-patterns") {
         sub_list_init_patterns()
+        return
+    }
+
+    // own 41 axis-N+1 hook (T+1 step, cycle 2026-05-10) — meta-registry dump
+    // anima chat --list-axes / anima chat list-axes
+    if _arg_present(argv, "--list-axes") {
+        sub_list_axes()
+        return
+    }
+    if len(argv) > 0 && _str(argv[0]) == "list-axes" {
+        sub_list_axes()
+        return
+    }
+
+    // anima chat --list-axis=<name> / anima chat list-axis <name>
+    if _arg_present_eq(argv, "--list-axis") {
+        let axis_name = _arg_value_eq(argv, "--list-axis", "")
+        _route_list_axis(axis_name)
+        return
+    }
+    if len(argv) > 0 && _str(argv[0]) == "list-axis" {
+        let axis_name = if len(argv) > 1 { _str(argv[1]) } else { "" }
+        _route_list_axis(axis_name)
         return
     }
 

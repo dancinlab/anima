@@ -1030,7 +1030,7 @@ models:
       parameter_updated_ratio: 1.0
       anima_corpus_token_ratio: 1.0
       architecture_origin_factor: 1.0
-      score: 0.99
+      score: 1.0  # ★ AUDIT 2026-05-10 corrected from 0.99 (stale copy from sister anima-native-byte-18m corpus=0.95); 0.2*1.0+0.2*1.0+0.6*1.0=1.000 strict per d1 formula (own 17 D1 SCOPE_CLAMP gradient amend)
       lane: within_strict  # PARITY with BG-FY
     measurement:
       mac_ckpt_status: "PRESENT — /Users/ghost/core/anima/state/anima_native_ko_chat_template_train_2026_05_07/ckpt_final/ckpt_final.pt (73.7MB, 18.5M params, step=10000, vocab=256, 6L×384d×6h)"
@@ -2459,8 +2459,10 @@ chat_lanes:
 # 사용자 directive 2026-05-09 verbatim "1:1, ai 1:1, ai 3자 대화 모두 벤치마킹 해봐"
 chat_modes:
   schema_version: anima/chat_modes/v1
-  hexa_ssot: tool/anima_cli/chat/lanes/benchmark.hexa
+  hexa_ssot: tool/anima_cli/chat/modes/_registry.hexa  # T+2 promote (cycle 2026-05-10) — option A
+  hexa_ssot_prior: tool/anima_cli/chat/lanes/benchmark.hexa  # vendored mirror retained for back-compat
   cycle_landed: 2026-05-09
+  cycle_promoted: 2026-05-10  # T+2 step (own 41 axis-N+1 hook)
   flags:
     - "anima chat <alias> --benchmark --mode=1:1     (default — single user → single model)"
     - "anima chat <alias> --benchmark --mode=ai-duo  (2 models dialogue)"
@@ -2873,6 +2875,368 @@ chat_transports:
       ssot_json: state/anima_paradigm_j_transport_5_actual_test_2026_05_09.json
       review_doc: docs/anima_paradigm_j_transport_5_benchmark_2026_05_09.ai.md   # REINFORCE section appended
       raw_transcripts_dir: state/_paradigm_j_transport_5_actual_2026_05_09/
+
+# ─────────────────────────────────────────────────────────────────────────────
+# CHAT VERIFIERS — axis-5 (own 41 axis-N+1 hook T+3 step land 2026-05-10)
+# ─────────────────────────────────────────────────────────────────────────────
+# 사용자 directive 2026-05-09 verbatim "진행가능한것들 all bg go" → cycle
+# 2026-05-10 axis-5 verifier registry T+3 step (4 modules: c3_per_turn /
+# duo_d1234 / trio_3way / v14_strict).
+#
+# 본 section = own 41 plugin pattern axis-5 = axis-N+1 (meta-registry hook
+# 완성). chat_axes_meta 의 axis-5 row 와 cross-link.
+chat_verifiers:
+  schema_version: anima/chat_verifiers/v1
+  hexa_ssot: tool/anima_cli/chat/verifiers/_registry.hexa
+  benchmark_runner: tool/anima_cli/chat/lanes/benchmark.hexa
+  cycle_landed: 2026-05-10
+  cycle_directive: cli.axis_n1_hook_t3_2026_05_10
+  flags:
+    - "anima chat list-axis verifier            (registry dump — axis-5)"
+    - "anima chat <alias> --benchmark --n-axis  (verifier auto-included T+3)"
+  default_verifier: c3_per_turn
+  axis_label_internal: axis-N+1
+  axis_id: axis-5
+  verifiers:
+    - verifier_id: c3_per_turn
+      name: per-turn C3 (PIV/DCR/D-RAND/V14)
+      file: tool/anima_cli/chat/verifiers/c3_per_turn.hexa
+      status: LANDED  # skeleton + smoke; 실 측정 별도 step (own 16 carry)
+      contract: "c3_per_turn(model, prompt) -> {PIV, DCR, D-RAND, V14}"
+      skeleton_emit: NOT_MEASURED_T_3_skeleton
+      real_measure_anchor: clm_v5_mount.hexa  # 별도 step
+      own_links: ["own_14_V14", "own_16", "own_18_C3", "own_22", "own_34_mandate_1", "own_41"]
+    - verifier_id: duo_d1234
+      name: ai-duo D1-D4 4-cell coherence
+      file: tool/anima_cli/chat/verifiers/duo_d1234.hexa
+      status: LANDED  # skeleton + smoke; 실 측정 별도 step (own 16 carry)
+      contract: "duo_d1234(model_a, model_b, prompt) -> {D1, D2, D3, D4}"
+      skeleton_emit: NOT_MEASURED_T_3_skeleton
+      real_measure_anchor: chat/duo/duo.hexa  # 별도 step
+      own_links: ["own_14_V14", "own_16", "own_17_D1_SCOPE_CLAMP", "own_18_C3", "own_22", "own_34_mandate_1", "own_41"]
+    - verifier_id: trio_3way
+      name: ai-trio 3-way (Phase B)
+      file: tool/anima_cli/chat/verifiers/trio_3way.hexa
+      status: DEFERRED  # Phase B 미구현 — honest C3 emit per own 22
+      contract: "trio_3way(model_a, model_b, model_c, prompt) -> 'DEFERRED_PHASE_B'"
+      defer_reason: "chat/trio/trio.hexa Phase A SKELETON 단계, Phase B 미구현"
+      own_links: ["own_16", "own_22", "own_34_mandate_1", "own_41"]
+    - verifier_id: v14_strict
+      name: V14 strict (random_init mirror anti-Goodhart)
+      file: tool/anima_cli/chat/verifiers/v14_strict.hexa
+      status: LANDED  # skeleton + smoke; 실 측정 별도 step (own 16 carry)
+      contract: "v14_strict(model, prompt) -> {is_violated, delta}"
+      skeleton_emit: NOT_MEASURED_T_3_skeleton
+      real_measure_anchor: clm_v5_mount.hexa + project_v14_violation_arch_tile_bug.md
+      own_links: ["own_14_V14", "own_16", "own_18_C3", "own_22", "own_34_mandate_1", "own_41"]
+  helpers:
+    - "verifiers_registry()         — 전체 verifier row 반환 (9-field × 4)"
+    - "verifiers_lookup(id)         — verifier_id 로 lookup"
+    - "verifiers_names()            — name list 반환"
+    - "verifiers_default()          — default verifier (c3_per_turn)"
+    - "verifiers_describe(id)       — pretty-print one row"
+    - "verifiers_status(id)         — LANDED / DEFERRED status lookup"
+    - "verifiers_registry_path(id, root) — module hexa 절대경로 resolve"
+  benchmark_dispatch:
+    helper: "run_verifier(verifier_id, repo, dry_run)  — tool/anima_cli/chat/lanes/benchmark.hexa"
+    bench_active_list: ["c3_per_turn", "duo_d1234", "v14_strict"]  # _bench_verifiers() T+3
+    bench_deferred: ["trio_3way"]
+    cross_product_count_t3: 720  # 4×3×4×5×3 (lane × mode × init-pattern × transport × verifier)
+    cross_product_count_t2: 240  # 4×3×4×5 (pre-T+3 baseline; --n-axis 미사용 시 그대로)
+  smoke_test_expected:
+    - "hexa run tool/anima_cli/chat/verifiers/_registry.hexa → PASS 4 verifier entries"
+    - "hexa run tool/anima_cli/chat/verifiers/c3_per_turn.hexa --smoke → PASS 4-tuple skeleton"
+    - "hexa run tool/anima_cli/chat/verifiers/duo_d1234.hexa --smoke → PASS 4-cell skeleton"
+    - "hexa run tool/anima_cli/chat/verifiers/trio_3way.hexa --smoke → PASS DEFERRED_PHASE_B stub"
+    - "hexa run tool/anima_cli/chat/verifiers/v14_strict.hexa --smoke → PASS {is_violated, delta} skeleton"
+  honest_c3_2026_05_10:
+    - "C1 trio_3way DEFERRED — Phase B 미구현 (honest C3 emit per own 22; fabrication 금지)"
+    - "C2 c3_per_turn / duo_d1234 / v14_strict 모두 SKELETON — 실 측정은 별도 step (own 16 model load 절대 금지 carry)"
+    - "C3 N-axis cross-product T+3 = 720 combos (240 × 3 active verifiers); trio 활성 시 960 combos 자동 expand"
+    - "C4 raw#15 additive — chat.hexa _route_list_axis verifier case + benchmark.hexa run_combo_dynamic verifier case 모두 신설; 4 axis 기존 case 보존"
+    - "C5 F-axes-6 fixture LANDED — axis-5 추가 시 코드 변경 0 줄 정합 정합 (verifier case 만 신설)"
+  cross_reference:
+    plan_doc: docs/anima_chat_orchestra_axis_n1_hook_plan_2026_05_09.md
+    roadmap_entry: cli.axis_n1_hook_t3_2026_05_10
+    sibling_sections: ["chat_lanes", "chat_modes", "chat_init_patterns", "chat_transports", "chat_axes_meta"]
+
+# ─────────────────────────────────────────────────────────────────────────────
+# CHAT MODALITIES — axis-6 (own 41 axis-N+2 hook T+6 step land 2026-05-10)
+# ─────────────────────────────────────────────────────────────────────────────
+# 사용자 directive 2026-05-09 verbatim "별 5개 짜리 나올때까지 계속 bg 분산처리"
+# → cycle 2026-05-10 axis-6 modality registry T+6 step (5 modules: text /
+# audio / vision / multi_modal / tactile).
+#
+# 본 section = own 41 plugin pattern axis-6 = axis-N+2 (6-axis 완성 ★).
+# chat_axes_meta 의 axis-6 row 와 cross-link.
+chat_modalities:
+  schema_version: anima/chat_modalities/v1
+  hexa_ssot: tool/anima_cli/chat/modalities/_registry.hexa
+  benchmark_runner: tool/anima_cli/chat/lanes/benchmark.hexa
+  cycle_landed: 2026-05-10
+  cycle_directive: cli.axis_n2_hook_t6_2026_05_10
+  flags:
+    - "anima chat list-axis modality            (registry dump — axis-6)"
+    - "anima chat <alias> --benchmark --n-axis  (modality auto-included T+6)"
+  default_modality: text
+  axis_label_internal: axis-N+2
+  axis_id: axis-6
+  modalities:
+    - modality_id: text
+      name: text only (default; str → str passthrough)
+      file: tool/anima_cli/chat/modalities/text.hexa
+      status: LANDED  # default carry; backward-compat strict
+      contract: "run_modality(ctx) -> {input_kind, output_kind, status}"
+      skeleton_emit: LANDED_passthrough
+      own_links: ["own_14_V14", "own_16", "own_22", "own_34_mandate_1", "own_41"]
+    - modality_id: audio
+      name: audio (wav ↔ str via anima-voice)
+      file: tool/anima_cli/chat/modalities/audio.hexa
+      status: LANDED  # skeleton; 실 mic/tts 통합 별도 step (own 16 carry)
+      contract: "run_modality(ctx) -> {input_kind, output_kind, status, asset_anchor}"
+      skeleton_emit: LANDED_skeleton_T_6
+      asset_anchor: anima-voice/voice_e2e.hexa  # 별도 step
+      own_links: ["own_14_V14", "own_16", "own_22", "own_34_mandate_1", "own_41"]
+    - modality_id: vision
+      name: vision (image → caption/embedding)
+      file: tool/anima_cli/chat/modalities/vision.hexa
+      status: DEFERRED  # vision encoder 미통합 — honest C3 emit per own 22
+      contract: "run_modality(ctx) -> {input_kind, output_kind, status}"
+      skeleton_emit: DEFERRED_NO_VISION_ENCODER
+      defer_reason: "vision encoder (CLIP/SigLIP) 선정 + 통합 미완"
+      own_links: ["own_16", "own_22", "own_34_mandate_1", "own_41"]
+    - modality_id: multi_modal
+      name: multi-modal fusion (text + audio + vision)
+      file: tool/anima_cli/chat/modalities/multi_modal.hexa
+      status: DEFERRED_PHASE_C  # ★ 1 순위 후보; Phase A→B→C 단계적 land
+      contract: "run_modality(ctx) -> {input_kind, output_kind, status}"
+      skeleton_emit: DEFERRED_PHASE_C_FUSION_NOT_READY
+      defer_reason: "Phase A (text+audio) → B (+vision) → C (full fusion) 단계 land 예정"
+      ranking: "★ 1 순위 modality (T+5 design spec)"
+      own_links: ["own_16", "own_22", "own_34_mandate_1", "own_41"]
+    - modality_id: tactile
+      name: tactile / sensor (long-term vision; HW absent)
+      file: tool/anima_cli/chat/modalities/tactile.hexa
+      status: DEFERRED  # hardware sensor 부재
+      contract: "run_modality(ctx) -> {input_kind, output_kind, status}"
+      skeleton_emit: DEFERRED_HARDWARE_NOT_PRESENT
+      defer_reason: "촉각 / 압력 / 온도 / 가속 sensor 없음 (long-term vision)"
+      own_links: ["own_16", "own_22", "own_34_mandate_1", "own_41"]
+  helpers:
+    - "modalities_registry()         — 전체 modality row 반환 (9-field × 5)"
+    - "modalities_lookup(id)         — modality_id 로 lookup"
+    - "modalities_names()            — name list 반환"
+    - "modalities_default()          — default modality (text)"
+    - "modalities_describe(id)       — pretty-print one row"
+    - "modalities_status(id)         — LANDED / DEFERRED / DEFERRED_PHASE_C status lookup"
+    - "modalities_registry_path(id, root) — module hexa 절대경로 resolve"
+  benchmark_dispatch:
+    helper: "run_modality(modality_id, repo, dry_run)  — tool/anima_cli/chat/lanes/benchmark.hexa"
+    bench_active_list: ["text", "audio", "vision", "multi_modal", "tactile"]  # _bench_modalities() T+6 (DEFERRED 도 stub emit 으로 carry)
+    bench_landed_only: ["text", "audio"]
+    bench_deferred: ["vision", "multi_modal", "tactile"]
+    cross_product_count_t6_full: 3600  # 4×3×4×5×3×5 (lane × mode × init-pattern × transport × verifier × modality; verifier active 3, modality full 5)
+    cross_product_count_t6_landed_only: 1440  # 4×3×4×5×3×2 (modality LANDED 만 — text + audio)
+    cross_product_count_t3: 720  # T+3 baseline (modality 비활성)
+  smoke_test_expected:
+    - "hexa run tool/anima_cli/chat/modalities/_registry.hexa → PASS 5 modality entries"
+    - "hexa run tool/anima_cli/chat/modalities/text.hexa --smoke → PASS str→str identity"
+    - "hexa run tool/anima_cli/chat/modalities/audio.hexa --smoke → PASS wav↔str skeleton"
+    - "hexa run tool/anima_cli/chat/modalities/vision.hexa --smoke → PASS DEFERRED_NO_VISION_ENCODER stub"
+    - "hexa run tool/anima_cli/chat/modalities/multi_modal.hexa --smoke → PASS DEFERRED_PHASE_C stub"
+    - "hexa run tool/anima_cli/chat/modalities/tactile.hexa --smoke → PASS DEFERRED_HARDWARE_NOT_PRESENT stub"
+  honest_c3_2026_05_10:
+    - "C1 vision DEFERRED — vision encoder 미통합 (honest C3 emit per own 22; fabrication 금지)"
+    - "C2 multi_modal DEFERRED_PHASE_C — fusion encoder 미준비 (Phase A→B→C 단계 land 예정; ★ 1 순위 후보)"
+    - "C3 tactile DEFERRED — hardware sensor 부재 (long-term vision)"
+    - "C4 text/audio LANDED skeleton — 실 mic/tts 통합은 별도 step (own 16 carry)"
+    - "C5 raw#15 additive — chat.hexa _route_list_axis modality case + benchmark.hexa run_combo_dynamic modality case 모두 신설; 5 axis 기존 case 보존"
+    - "C6 F-axes-11 fixture LANDED — axis-6 추가 시 코드 변경 0 줄 (modality case 만 신설; 5 axis 기존 case 그대로) 검증"
+    - "C7 6-axis 완성 ★ — own 41 axis-N+2 hook 완전 land (T+1 → T+2 → T+3 → T+4 → T+5 → T+6 chain)"
+  cross_reference:
+    plan_doc: docs/anima_chat_orchestra_axis_n2_modality_hook_plan_2026_05_10.md
+    roadmap_entry: cli.axis_n2_hook_t6_2026_05_10
+    sibling_sections: ["chat_lanes", "chat_modes", "chat_init_patterns", "chat_transports", "chat_verifiers", "chat_axes_meta"]
+
+# ─────────────────────────────────────────────────────────────────────────────
+# CHAT AXES META — axis-of-axes (own 41 axis-N+1 hook T+1 step land)
+# ─────────────────────────────────────────────────────────────────────────────
+# 사용자 directive 2026-05-09 verbatim "all bg go" + "next" → cycle 2026-05-10
+# own 41 axis-N+1 hook T+1 step (axes/_registry.hexa 신설 + chat.hexa
+# generic _route_list_axis dispatcher).
+#
+# 본 section = own 41 plugin pattern hook 한 층 위 (axis 의 axis = meta-registry).
+# 기존 4 section (chat_lanes / chat_modes / chat_init_patterns / chat_transports)
+# 그대로 retain — chat_axes_meta 가 그 위에 한 층 indirection 추가.
+chat_axes_meta:
+  schema_version: anima/chat_axes_meta/v1
+  hexa_ssot: tool/anima_cli/chat/axes/_registry.hexa
+  dispatcher: tool/anima_cli/chat.hexa  # _route_list_axis() generic loop
+  cycle_landed: 2026-05-10
+  cycle_directive: cli.axis_n1_hook_t1_2026_05_10
+  hook_plan_doc: docs/anima_chat_orchestra_axis_n1_hook_plan_2026_05_09.md
+  default_axis: lane  # axes_default() — chat list-axis no-arg fallback
+  flags:
+    - "anima chat --list-axes              (meta-registry dump — 모든 axis enumerate)"
+    - "anima chat list-axes                (positional alias)"
+    - "anima chat --list-axis=<name>       (single axis dump — lane / mode / init-pattern / transport)"
+    - "anima chat list-axis <name>         (positional alias)"
+  raw_15_additive_carry: |
+    기존 4 hardcode flag 분기 (--list-lanes / --list-init-patterns /
+    --list-transports) 는 그대로 유지 (back-compat strict). 신규 generic
+    --list-axes / --list-axis=<name> 는 raw#15 ADDITIVE only.
+  axes:
+    - axis_id: axis-1
+      name: lane
+      registry_file: tool/anima_cli/chat/lanes/_registry.hexa
+      default_flag: "--lane"
+      list_flag: "--list-lanes"
+      describe_helper: lane_describe
+      status: LANDED
+      axis_label_internal: axis-3
+      cross_link: "yaml#chat_lanes (own 39 mirror)"
+      own_links: ["own_18_C2", "own_34_mandate_1", "own_39", "own_41"]
+    - axis_id: axis-2
+      name: mode
+      registry_file: tool/anima_cli/chat/modes/_registry.hexa  # T+2 promote (cycle 2026-05-10) — inline → standalone (option A)
+      default_flag: "--mode"
+      list_flag: "--list-modes"
+      describe_helper: mode_describe
+      status: LANDED
+      axis_label_internal: axis-6
+      cross_link: "yaml#chat_modes (own 39 mirror)"
+      inline_anchor: false  # T+2 promoted; benchmark.hexa _bench_modes vendored mirror retained for back-compat (raw#15 additive)
+      promote_cycle: 2026-05-10  # T+2 step (own 41 axis-N+1 hook)
+      promote_prior: "tool/anima_cli/chat/lanes/benchmark.hexa#modes (T+1 inline anchor; pre-promote)"
+      own_links: ["own_18_C2_C3", "own_22", "own_33", "own_34_mandate_1", "own_41"]
+    - axis_id: axis-3
+      name: init-pattern
+      registry_file: tool/anima_cli/chat/init_patterns/_registry.hexa
+      default_flag: "--init-pattern"
+      list_flag: "--list-init-patterns"
+      describe_helper: pattern_describe
+      status: LANDED
+      axis_label_internal: axis-8
+      cross_link: "yaml#chat_init_patterns (own 39 mirror)"
+      own_links: ["own_17_D1_SCOPE_CLAMP", "own_18_C2", "own_22", "own_33", "own_34_mandate_1_4", "own_41"]
+    - axis_id: axis-4
+      name: transport
+      registry_file: tool/anima_cli/chat/transports/_registry.hexa
+      default_flag: "--transport"
+      list_flag: "--list-transports"
+      describe_helper: transport_describe
+      status: LANDED
+      axis_label_internal: axis-N
+      cross_link: "yaml#chat_transports (own 39 mirror)"
+      own_links: ["own_17_D1_SCOPE_CLAMP", "own_18_C3", "own_22", "own_34_mandate_1_4_7", "own_36_control_band", "own_37_mandate_9", "own_41"]
+    # ───────── axis-5 verifier (own 41 axis-N+1 LANDED 2026-05-10 T+3) ─────
+    - axis_id: axis-5
+      name: verifier
+      registry_file: tool/anima_cli/chat/verifiers/_registry.hexa  # T+3 신설
+      default_flag: "--verifier"
+      list_flag: "--list-verifiers"
+      describe_helper: verifiers_describe
+      status: LANDED_2026_05_10_T_3  # T+3 step (own 41 axis-N+1 hook 완성)
+      axis_label_internal: axis-N+1
+      inline_anchor: false
+      cross_link: "yaml#chat_verifiers (own 39 mirror)"
+      hook_test_result: |
+        F-axes-6 fixture LANDED — axis-5 활성화 시 dispatcher (chat.hexa) +
+        benchmark.hexa raw#15 additive (verifier case 신설; 4 axis 기존 case
+        보존). 240 → 720 combo (240 × 3 active verifiers; trio DEFERRED 제외).
+      candidate_modules_status:
+        c3_per_turn: LANDED  # skeleton + smoke; 실 측정 별도 step (own 16)
+        duo_d1234:   LANDED  # skeleton + smoke; 실 측정 별도 step (own 16)
+        trio_3way:   DEFERRED  # Phase B 미구현 (honest C3 emit per own 22)
+        v14_strict:  LANDED  # skeleton + smoke; 실 측정 별도 step (own 16)
+      own_links: ["own_14_V14", "own_16_no_model_load", "own_17_D1_SCOPE_CLAMP", "own_18_C3", "own_22", "own_33", "own_34_mandate_1", "own_39", "own_41"]
+    # ───────── axis-6 modality (own 41 axis-N+2 LANDED 2026-05-10 T+6) ─────
+    - axis_id: axis-6
+      name: modality
+      registry_file: tool/anima_cli/chat/modalities/_registry.hexa  # T+6 신설
+      default_flag: "--modality"
+      list_flag: "--list-modalities"
+      describe_helper: modalities_describe
+      status: LANDED_2026_05_10_T_6  # T+6 step (own 41 axis-N+2 hook 완성 ★ — 6-axis 완성)
+      axis_label_internal: axis-N+2
+      inline_anchor: false
+      cross_link: "yaml#chat_modalities (own 39 mirror)"
+      hook_test_result: |
+        F-axes-11 fixture LANDED — axis-6 활성화 시 dispatcher (chat.hexa) +
+        benchmark.hexa raw#15 additive (modality case 신설; 5 axis 기존 case
+        보존). 720 → 3600 combo (720 × 5 modality entries; vision/multi_modal/
+        tactile 도 stub emit 으로 carry). LANDED-only sweep: 720 → 1440 (× 2).
+      candidate_modules_status:
+        text:        LANDED  # default carry; identity passthrough
+        audio:       LANDED  # skeleton; anima-voice asset wrap (own 16)
+        vision:      DEFERRED  # vision encoder 미통합 (honest C3 emit own 22)
+        multi_modal: DEFERRED_PHASE_C  # ★ 1 순위; Phase A→B→C 단계 land
+        tactile:     DEFERRED  # hardware sensor 부재 (long-term)
+      own_links: ["own_14_V14", "own_16_no_model_load", "own_17_D1_SCOPE_CLAMP", "own_18_C2_C3", "own_22", "own_33", "own_34_mandate_1", "own_39", "own_41"]
+  helpers:
+    - "axes_registry()       — 전체 axis row 반환 (8-field × N axes)"
+    - "axes_lookup(key)      — axis_id 또는 name 으로 lookup (양쪽 accept)"
+    - "axes_names()          — name list 반환 (lane / mode / init-pattern / transport)"
+    - "axes_default()        — default axis 반환 (lane)"
+    - "axes_describe(key)    — pretty-print one row"
+    - "axes_is_inline(key)   — registry_file 가 anchor (path#section) 인지 여부"
+    - "axes_registry_path(key, root) — standalone registry 절대경로 resolve (anchor 면 \"\")"
+  smoke_test_expected:
+    - "anima chat --list-axes      → 6 axes (lane/mode/init-pattern/transport/verifier/modality) — T+6 LANDED ★"
+    - "anima chat list-axis lane   → substrate / llama / axis-priority / generate"
+    - "anima chat list-axis mode   → 1:1 / ai-duo / ai-trio (T+2: standalone modes/_registry.hexa)"
+    - "anima chat list-axis init-pattern → autonomous / system-seed / topic-pool / self-reflective"
+    - "anima chat list-axis transport    → fifo-dispatch / beta1-channel / libllama-ffi / subprocess-pipe / imtl"
+    - "anima chat list-axis verifier     → c3_per_turn / duo_d1234 / trio_3way / v14_strict (T+3 LANDED — trio_3way DEFERRED)"
+    - "anima chat list-axis modality     → text / audio / vision / multi_modal / tactile (T+6 LANDED — vision/multi_modal/tactile DEFERRED)"
+    - "기존 --list-lanes / --list-init-patterns / --list-transports 모두 그대로 작동 (back-compat preserved)"
+    - "anima chat --benchmark --n-axis --dry-run → 3600 combos (4×3×4×5×3×5) — generic Cartesian product (T+6 modality activation; LANDED-only sweep = 1440)"
+    - "axis-5 verifier activation real (T+3) → 240 → 720 combo (240 × 3 active verifiers) — F-axes-6 hook 검증 LANDED"
+    - "axis-6 modality activation real (T+6) → 720 → 3600 combo (720 × 5 modality entries; LANDED-only = 1440) — F-axes-11 hook 검증 LANDED ★"
+  n_axis_cross_product:
+    status: LANDED_2026_05_10_T_6  # T+6 step (axis-6 modality active — 6-axis 완성 ★)
+    flag: "--n-axis"
+    entry_point: "tool/anima_cli/chat/lanes/benchmark.hexa benchmark_n_axis_cross()"
+    helpers:
+      - "_bench_axis_names()      — axes/_registry.hexa axes_names() vendored mirror (6 axes T+6)"
+      - "_bench_verifiers()       — axis-5 active list (T+3 LANDED: c3_per_turn / duo_d1234 / v14_strict; trio_3way DEFERRED)"
+      - "_bench_modalities()      — axis-6 active list (T+6 LANDED: text / audio / vision / multi_modal / tactile; vision/multi_modal/tactile DEFERRED stub)"
+      - "_axis_values(axis)       — generic value-list resolver (6 axis case)"
+      - "_cartesian_product(axes) — iterative Cartesian product builder"
+      - "_active_axes()           — filter axes with non-empty value-list"
+      - "_combo_lookup(active, combo, axis) — generic axis value accessor"
+      - "run_combo_dynamic(...)   — generic per-combo dispatch (verifier + modality case 모두 active)"
+      - "run_verifier(id, repo, dry_run) — T+3 axis-5 verifier dispatcher (skeleton smoke)"
+      - "run_modality(id, repo, dry_run) — T+6 axis-6 modality dispatcher (skeleton smoke)"
+    legacy_path_retained: true  # raw#15 additive — hardcoded 4-axis loop active when --n-axis absent
+    hook_simulation_2026_05_10: "T+2 simulation (verifier=['c3_per_turn','duo_d1234']) → 240 → 480 combo doubled — F-axes-6 정합 검증 PASS."
+    hook_real_2026_05_10_t3: "T+3 LANDED — verifier=['c3_per_turn','duo_d1234','v14_strict'] (trio DEFERRED) → 240 → 720 combo. dispatcher (chat.hexa _route_list_axis) + benchmark.hexa run_combo_dynamic verifier case 모두 raw#15 additive (기존 4 axis case 보존)."
+    hook_real_2026_05_10_t6: "T+6 LANDED ★ — modality=['text','audio','vision','multi_modal','tactile'] (vision/multi_modal/tactile DEFERRED stub) → 720 → 3600 combo (LANDED-only sweep: 720 × 2 = 1440). dispatcher + benchmark.hexa run_combo_dynamic modality case 모두 raw#15 additive (기존 5 axis case 보존). 6-axis 완성 ★."
+    next_step: "T+7 axis-7 후보 검토 (예: provider/cost-tier/embodiment 차원); modality 실 mic/encoder 통합 별도 step (own 16 carry)"
+  honest_c3_2026_05_10:
+    - "C1 [RESOLVED T+2] axis-2 mode 가 modes/_registry.hexa 로 promote 됨 (option A); benchmark.hexa _bench_modes vendored mirror 는 back-compat retain."
+    - "C2 axes/_registry.hexa selftest 는 schema sanity (4 entries × 8 fields); model load 0 (own 16) — Mac heavy load (load 89, free RAM 302MB) 안전."
+    - "C3 [PARTIAL T+2] benchmark.hexa benchmark_n_axis_cross() 는 generic — axis-5 추가 시 _bench_axis_names + _axis_values 1 case (vendored mirror, registry 자체는 axes/_registry.hexa SSOT). chat.hexa _route_list_axis 는 여전히 hardcode (T+3 render.hexa 자동 generate 대상)."
+    - "C4 raw#15 additive — 기존 4 hardcode 분기 retain. deprecation cycle 미정 (T+4 이후)."
+    - "C5 axis-5 hook test 는 placeholder simulation (verifier=['c3_per_turn','duo_d1234']) 로 240 → 480 combo 검증 PASS (T+2)."
+    - "C6 [T+2] _route_list_axis mode case 가 modes/_registry.hexa 사용; 파일 부재 시 inline vendored fallback (raw#15 additive carry)."
+  cross_reference:
+    plan_doc: docs/anima_chat_orchestra_axis_n1_hook_plan_2026_05_09.md
+    plan_doc_t5: docs/anima_chat_orchestra_axis_n2_modality_hook_plan_2026_05_10.md
+    roadmap_entry: cli.axis_n2_hook_t6_2026_05_10
+    sibling_sections: ["chat_lanes", "chat_modes", "chat_init_patterns", "chat_transports", "chat_verifiers", "chat_modalities"]
+  exit_triggers:
+    - "F-axes-1 hexa run tool/anima_cli/chat/axes/_registry.hexa selftest PASS (6 entries — T+6 ★)"
+    - "F-axes-2 anima chat --list-axes 6 axes 출력 (T+6 modality 추가 ★)"
+    - "F-axes-3 anima chat list-axis <name> 6 names 정상 dump (verifier + modality 포함)"
+    - "F-axes-4 기존 --list-lanes / --list-init-patterns / --list-transports 모두 그대로 작동"
+    - "F-axes-5 anima/registry/anima_artifact_registry.yaml#chat_axes_meta ↔ axes/_registry.hexa 일치 (own 39)"
+    - "F-axes-6 [T+3 LANDED 2026-05-10] axis-5 verifier 추가 — axes/_registry.hexa 1 줄 + verifiers/_registry.hexa 신규 + 4 모듈; dispatcher + benchmark.hexa raw#15 additive (4 axis case 보존)"
+    - "F-axes-7 [T+2 LANDED 2026-05-10] benchmark.hexa --n-axis generic Cartesian product 240 combos PASS"
+    - "F-axes-8 [T+2 LANDED 2026-05-10] modes/_registry.hexa promote (option A) selftest PASS"
+    - "F-axes-9 [T+2 LANDED 2026-05-10] axis-5 placeholder simulation hook test 240 → 480 combo 검증 PASS"
+    - "F-axes-10 [T+3 LANDED 2026-05-10] axis-5 verifier real activation 240 → 720 combo (240 × 3 active; trio DEFERRED) 검증 PASS"
+    - "F-axes-11 [T+6 LANDED 2026-05-10 ★] axis-6 modality 추가 — axes/_registry.hexa 1 줄 + modalities/_registry.hexa 신규 + 5 모듈 (text/audio/vision/multi_modal/tactile); dispatcher + benchmark.hexa raw#15 additive (5 axis case 보존). 6-axis 완성 — 720 → 3600 combo (LANDED-only 1440)."
 
 # ─────────────────────────────────────────────────────────────────────────────
 # COMPLIANCE

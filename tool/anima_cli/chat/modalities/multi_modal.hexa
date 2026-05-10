@@ -1,0 +1,86 @@
+// ════════════════════════════════════════════════════════════════════════════
+//  tool/anima_cli/chat/modalities/multi_modal.hexa — multi-modal fusion
+//                                                     (own 41 axis-6 / axis-N+2)
+//
+//  PURPOSE
+//    Multi-modal fusion modality — text + audio + vision 한꺼번에. T+6 design
+//    spec 의 ★ 1 순위 후보 — modality 자체 의미 가치 정점. 그러나 fusion
+//    encoder 미준비 → DEFERRED_PHASE_C stub.
+//
+//    친근 비유: multi_modal 은 "오감" — 글자/소리/영상 합쳐 통합 인식. 사람이
+//    영화 볼 때 자막+음성+화면 동시 처리하듯, anima 도 같은 통합 통로 필요.
+//    현재 stub 단계 (Phase A/B/C 단계적 land 예정).
+//
+//  STATUS
+//    DEFERRED_PHASE_C — Phase A (text+audio fusion) → B (+vision) → C (full
+//    fusion) 단계. T+6 stub 은 Phase A 진입 전 placeholder.
+//
+//  CONTRACT
+//    fn run_modality(ctx: dict) -> dict
+//      → {input_kind: "fusion", output_kind: "fusion",
+//         status: "DEFERRED_PHASE_C_FUSION_NOT_READY"}
+//
+//  COMPLIANCE
+//    own 16 — model load 절대 금지 (stub only)
+//    own 22 — honest emit (DEFERRED_PHASE_C 명시; fusion encoder 부재)
+//    own 34 mandate-1 — wrapping 0
+//    own 41 axis-N+2 — axis-6 modality registry entry 4 (★ 1 순위 후보)
+//
+//  CROSS-REFERENCE
+//    chat/modalities/_registry.hexa#multi_modal   registry SSOT
+//    docs/anima_chat_orchestra_axis_n2_modality_hook_plan_2026_05_10.md
+//                                                 T+5 spec ★ ranking
+// ════════════════════════════════════════════════════════════════════════════
+
+fn _str(x) -> string {
+    let t = type_of(x)
+    if t == "str" || t == "string" { return x }
+    return ""
+}
+
+fn _arg_present(argv, key: string) -> bool {
+    let mut i = 0
+    while i < len(argv) {
+        if _str(argv[i]) == key { return true }
+        i = i + 1
+    }
+    return false
+}
+
+fn modality_describe() -> string {
+    return "multi_modal — text+audio+vision fusion DEFERRED_PHASE_C stub (★ 1 순위 후보; Phase A→B→C 단계적 land 예정; honest C3 emit per own 22)"
+}
+
+// run_modality — multi_modal stub. fusion encoder 미준비 honest emit.
+// 친근 비유: anima 의 "오감" 통합 통로 — Phase A (text+audio) 부터 단계 land.
+fn run_modality(ctx) -> array {
+    let keys = ["input_kind", "output_kind", "status"]
+    let vals = ["fusion", "fusion", "DEFERRED_PHASE_C_FUSION_NOT_READY"]
+    return [keys, vals]
+}
+
+fn modality_smoke(repo: string, argv) -> int {
+    let r = run_modality([])
+    if len(r) != 2 { return 2 }
+    let vals = r[1]
+    if _str(vals[2]) != "DEFERRED_PHASE_C_FUSION_NOT_READY" { return 3 }
+    println("[modality:multi_modal] smoke PASS — DEFERRED_PHASE_C stub honest emit (own 22; ★ 1 순위 후보)")
+    return 0
+}
+
+fn main() {
+    let argv = args()
+    if _arg_present(argv, "--describe") {
+        println(modality_describe())
+        return
+    }
+    if _arg_present(argv, "--selftest") || _arg_present(argv, "--smoke") {
+        let rc = modality_smoke("", argv)
+        if rc != 0 {
+            println("FAIL modality multi_modal smoke (rc=" + to_string(rc) + ")")
+            exit(rc)
+        }
+        return
+    }
+    println(modality_describe())
+}

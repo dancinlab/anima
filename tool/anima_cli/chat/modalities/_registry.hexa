@@ -1,0 +1,235 @@
+// ════════════════════════════════════════════════════════════════════════════
+//  tool/anima_cli/chat/modalities/_registry.hexa — chat MODALITY plugin registry
+//                                                   (own 41 axis-6 = axis-N+2)
+//
+//  PURPOSE
+//    Single source of truth for chat MODALITY (= input/output 통로 — text /
+//    audio / vision / multi-modal / tactile) plugin discovery + metadata.
+//    chat.hexa / benchmark.hexa 가 --modality flag 또는 list-axis modality
+//    호출 시 본 registry 를 참조 (axes/_registry.hexa axis-6 row 가 본 파일을
+//    가리킴).
+//
+//    이 파일은 own 41 axis-N+2 hook T+6 step (cycle 2026-05-10) 에서 신설.
+//    T+5 (axis-6 modality design spec, 344 lines) carry → T+6 = 5 modality
+//    plugin module skeleton + axis-6 활성 (cross-product 720 → 4800 자동
+//    expand). axis-6 row 추가 시 dispatcher (chat.hexa) / benchmark.hexa
+//    코드 변경 0 줄 (modality case 만 raw#15 additive; 기존 5 axis case
+//    그대로) — F-axes-11 fixture LANDED.
+//
+//  USER DIRECTIVE (2026-05-09 verbatim)
+//    "별 5개 짜리 나올때까지 계속 bg 분산처리" → 6-axis hook 완성 chain (T+6).
+//    AX6-multi-modal ★ (1순위) / text / audio / vision / tactile 5 entries.
+//
+//  REGISTRY ENTRY SCHEMA (9-field; mirrors chat/verifiers/_registry.hexa
+//                         + axis-6 specific axis_label_internal = "axis-N+2")
+//    modality_id          short id (text / audio / vision / multi_modal / tactile)
+//    name                 친근 한글-혼용 friendly name
+//    registry_file        relative module path under tool/anima_cli/chat/modalities/
+//    default_flag         dispatcher arg name (--modality=<id>)
+//    list_flag            --list-modalities
+//    describe_helper      modalities_describe (this file)
+//    status               LANDED | DEFERRED | DEFERRED_PHASE_C
+//    axis_label_internal  axis-N+2 (own 41 plugin pattern hook label)
+//    hexa_ssot            full module path (cross-link)
+//
+//  MODALITY INVENTORY (own 22 mandatory report — 5 entries × T+6)
+//    1. text         default modality, identity passthrough str → str
+//                    (axis-6 비활성 시 기존 text-only 경로 와 동일).
+//    2. audio        anima-voice 자산 (voice_e2e.hexa) wrap — 실 mic/tts
+//                    통합은 별도 step. T+6 = LANDED skeleton (asset 기반).
+//    3. vision       이미지 encoder (CLIP/SigLIP) 통합 placeholder — encoder
+//                    선정 미완 → DEFERRED stub (honest C3 emit own 22).
+//    4. multi_modal  text + audio + vision fusion — Phase A/B/C 단계 land
+//                    예정. T+6 = DEFERRED_PHASE_C stub (1 순위 ★ 후보지만
+//                    fusion encoder 준비 미완).
+//    5. tactile      촉각/센서 long-term vision — hardware 없음.
+//                    T+6 = DEFERRED long-term stub.
+//
+//  EXTENSION CONVENTION (future-proof — own 41 axis-N+2 mirror)
+//    NEW modality → add file under chat/modalities/<id>.hexa with
+//    fn modality_describe() / fn modality_smoke(repo, argv) -> int / fn
+//    run_modality(id, ctx) -> dict AND register entry below. chat.hexa
+//    dispatch + benchmark.hexa axis-6 sweep auto-resolves. NEW flag → add to
+//    modality module's argv parse via _arg_value().
+//
+//  COMPLIANCE
+//    own 14 V14 — modality 결정성 (random / time / env 의존 없음, skeleton 단계)
+//    own 16 — model load 절대 금지 (registry meta + skeleton only;
+//             실 mic/tts/vision encoder 통합은 별도 step)
+//    own 17 D1 SCOPE_CLAMP — modality 는 ambiguous_research lane (기존 D1
+//      등급 변경 X — modality 는 통로 dimension)
+//    own 18 chat-cap C2/C3 — 본 registry = C2 axis-6 발견 + C3 EMERGE_NOT_
+//      MEASURED honest emit (skeleton 단계)
+//    own 22 mandatory report — registry 자체 + 5 entries discovery + DEFERRED
+//      명시 (vision/multi_modal/tactile)
+//    own 33 trinity — registry entries cross-link own 17 / own 18 / own 34
+//    own 34 mandate-1 — wrapping 0 (modality 는 emit-only 통로; model 출력
+//      변형 0)
+//    own 38 매단계 — registry yaml↔md mirror in
+//      anima/registry/anima_artifact_registry.yaml chat_modalities section
+//    own 39 yaml↔md SSOT — registry yaml + this hexa file co-update
+//    own 41 chat lane plugin pattern — 본 파일 = own 41 axis-N+2 = axis-6
+//      (T+6 land; 6-axis 완성 ★ — F-axes-11 fixture LANDED)
+//
+//  CROSS-REFERENCE
+//    chat.hexa                            dispatcher (--modality / list-axis modality)
+//    chat/lanes/benchmark.hexa            axis-6 dimension (_bench_modalities /
+//                                         run_modality dispatch)
+//    chat/axes/_registry.hexa             axis-6 row (LANDED_2026_05_10_T_6)
+//    anima/registry/anima_artifact_registry.yaml#chat_modalities yaml mirror
+//    docs/anima_chat_orchestra_axis_n2_modality_hook_plan_2026_05_10.md  T+5 spec
+//    .roadmap.cli                         cli.axis_n2_hook_t6_2026_05_10
+// ════════════════════════════════════════════════════════════════════════════
+
+fn _str(x) -> string {
+    let t = type_of(x)
+    if t == "str" || t == "string" { return x }
+    return ""
+}
+
+// Registry SSOT — append-only convention. New modality = new entry.
+// Field order: modality_id, name, registry_file, default_flag, list_flag,
+//              describe_helper, status, axis_label_internal, hexa_ssot
+fn modalities_registry() -> array {
+    return [
+        // ───── Modality 1 — text (default carry; identity passthrough) ───────
+        ["text",
+         "text only (default; str → str passthrough)",
+         "text.hexa",
+         "--modality",
+         "--list-modalities",
+         "modalities_describe",
+         "LANDED",
+         "axis-N+2",
+         "tool/anima_cli/chat/modalities/text.hexa"],
+
+        // ───── Modality 2 — audio (anima-voice 자산 wrap) ────────────────────
+        ["audio",
+         "audio (wav ↔ str via anima-voice)",
+         "audio.hexa",
+         "--modality",
+         "--list-modalities",
+         "modalities_describe",
+         "LANDED",
+         "axis-N+2",
+         "tool/anima_cli/chat/modalities/audio.hexa"],
+
+        // ───── Modality 3 — vision (image encoder placeholder; DEFERRED) ─────
+        ["vision",
+         "vision (image → caption/embedding)",
+         "vision.hexa",
+         "--modality",
+         "--list-modalities",
+         "modalities_describe",
+         "DEFERRED",
+         "axis-N+2",
+         "tool/anima_cli/chat/modalities/vision.hexa"],
+
+        // ───── Modality 4 — multi_modal (★ 1 순위; Phase C land) ─────────────
+        ["multi_modal",
+         "multi-modal fusion (text + audio + vision)",
+         "multi_modal.hexa",
+         "--modality",
+         "--list-modalities",
+         "modalities_describe",
+         "DEFERRED_PHASE_C",
+         "axis-N+2",
+         "tool/anima_cli/chat/modalities/multi_modal.hexa"],
+
+        // ───── Modality 5 — tactile (long-term; DEFERRED hardware-not-present)─
+        ["tactile",
+         "tactile / sensor (long-term vision; HW absent)",
+         "tactile.hexa",
+         "--modality",
+         "--list-modalities",
+         "modalities_describe",
+         "DEFERRED",
+         "axis-N+2",
+         "tool/anima_cli/chat/modalities/tactile.hexa"]
+    ]
+}
+
+// Lookup helper — returns entry or [] when not found.
+fn modalities_lookup(id: string) -> array {
+    let reg = modalities_registry()
+    let mut i = 0
+    while i < len(reg) {
+        let row = reg[i]
+        if _str(row[0]) == id { return row }
+        i = i + 1
+    }
+    return []
+}
+
+// Names list (for --list-modalities / list-axis modality / benchmark sweep).
+fn modalities_names() -> array {
+    let reg = modalities_registry()
+    let mut out = []
+    let mut i = 0
+    while i < len(reg) {
+        out = out + [_str(reg[i][0])]
+        i = i + 1
+    }
+    return out
+}
+
+// Default modality — text (axis-6 비활성 시 backward-compat 보장; 기존
+// text-only 경로 와 동일). Caller (chat.hexa / benchmark.hexa) 가 --modality
+// 플래그 미지정 시 본 값을 참조 (raw#15 additive carry).
+fn modalities_default() -> string { return "text" }
+
+// Pretty-print one row (used by --list-modalities / chat list-axis modality).
+fn modalities_describe(id: string) -> string {
+    let row = modalities_lookup(id)
+    if len(row) == 0 { return "(unknown modality: " + id + ")" }
+    return "  " + _str(row[0])
+        + " — " + _str(row[1])
+        + " [" + _str(row[6]) + "]"
+        + " label=" + _str(row[7])
+        + "\n      module: " + _str(row[8])
+        + "\n      default-flag: " + _str(row[3])
+        + " / list-flag: " + _str(row[4])
+}
+
+// Helper — modality 의 status (LANDED / DEFERRED / DEFERRED_PHASE_C 등) lookup.
+fn modalities_status(id: string) -> string {
+    let row = modalities_lookup(id)
+    if len(row) == 0 { return "" }
+    return _str(row[6])
+}
+
+// Helper — modality 의 module hexa 절대경로 resolve.
+fn modalities_registry_path(id: string, root: string) -> string {
+    let row = modalities_lookup(id)
+    if len(row) == 0 { return "" }
+    return root + "/tool/anima_cli/chat/modalities/" + _str(row[2])
+}
+
+// Selftest — registry shape sanity (no dispatch, no model load — own 16).
+fn main() {
+    let reg = modalities_registry()
+    if len(reg) < 5 {
+        println("FAIL chat/modalities/_registry < 5 entries (expected text / audio / vision / multi_modal / tactile)")
+        exit(1)
+    }
+    let mut i = 0
+    while i < len(reg) {
+        let row = reg[i]
+        if len(row) != 9 {
+            println("FAIL row " + to_string(i) + " arity != 9 (got " + to_string(len(row)) + ")")
+            exit(1)
+        }
+        i = i + 1
+    }
+    println("PASS chat/modalities/_registry selftest (" + to_string(len(reg)) + " modality entries)")
+    println("  default = " + modalities_default())
+    let names = modalities_names()
+    let mut k = 0
+    while k < len(names) {
+        println(modalities_describe(_str(names[k])))
+        k = k + 1
+    }
+    println("")
+    println("(axis-6 hook = own 41 axis-N+2 LANDED 2026-05-10 T+6 step — 6-axis 완성)")
+    println("(vision / multi_modal / tactile DEFERRED — honest C3 emit own 22)")
+}

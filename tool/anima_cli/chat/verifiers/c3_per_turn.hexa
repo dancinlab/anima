@@ -1,0 +1,87 @@
+// ════════════════════════════════════════════════════════════════════════════
+//  tool/anima_cli/chat/verifiers/c3_per_turn.hexa — per-turn C3 verifier
+//                                                   (own 41 axis-5 / axis-N+1)
+//
+//  PURPOSE
+//    Per-turn C3 measurement (PIV / DCR / D-RAND / V14 4-tuple) skeleton.
+//    Wraps clm_v5_mount.hexa anchor PPR/V14 metric for a single (model,
+//    prompt) pair. 본 T+3 = skeleton (registry + smoke); 실 측정은 별도 step
+//    (own 16 model load 절대 금지 carry).
+//
+//  CONTRACT
+//    fn c3_per_turn(model: string, prompt: string) -> dict
+//      → {PIV, DCR, D-RAND, V14}  // skeleton emits NOT_MEASURED placeholder
+//
+//  COMPLIANCE
+//    own 14 V14 — V14 in-metric mirror (random_init delta) 차원
+//    own 16 — model load 절대 금지 (skeleton phase)
+//    own 22 — honest emit (NOT_MEASURED 명시)
+//    own 34 mandate-1 — wrapping 0 (verifier emit-only)
+//    own 41 axis-N+1 — axis-5 verifier registry entry 1
+//
+//  CROSS-REFERENCE
+//    chat/verifiers/_registry.hexa#c3_per_turn  registry SSOT
+//    docs/clm_v5_mount.hexa (안커 별도 step)    실 측정 entry point
+// ════════════════════════════════════════════════════════════════════════════
+
+fn _str(x) -> string {
+    let t = type_of(x)
+    if t == "str" || t == "string" { return x }
+    return ""
+}
+
+fn _arg_present(argv, key: string) -> bool {
+    let mut i = 0
+    while i < len(argv) {
+        if _str(argv[i]) == key { return true }
+        i = i + 1
+    }
+    return false
+}
+
+fn verifier_describe() -> string {
+    return "c3_per_turn — per-turn C3 (PIV/DCR/D-RAND/V14) skeleton wrapper around clm_v5_mount anchor (own 16: skeleton only, 실 측정 별도 step)"
+}
+
+// c3_per_turn — skeleton signature; own 16 carry — no model load.
+// Returns parallel arrays representing the 4-tuple (hexa simple dict-via-arrays).
+//   keys   = ["PIV", "DCR", "D-RAND", "V14"]
+//   values = ["NOT_MEASURED", ...]
+// 실 측정 step 에서 본 함수 body 만 교체 (signature 보존).
+fn c3_per_turn(model: string, prompt: string) -> array {
+    let keys = ["PIV", "DCR", "D-RAND", "V14"]
+    let vals = ["NOT_MEASURED_T_3_skeleton",
+                "NOT_MEASURED_T_3_skeleton",
+                "NOT_MEASURED_T_3_skeleton",
+                "NOT_MEASURED_T_3_skeleton"]
+    return [keys, vals]
+}
+
+// verifier_smoke — registry hook. Validates skeleton signature without
+// model load (own 16). Returns 0 on PASS.
+fn verifier_smoke(repo: string, argv) -> int {
+    let r = c3_per_turn("(skeleton)", "(skeleton)")
+    if len(r) != 2 { return 2 }
+    let keys = r[0]
+    let vals = r[1]
+    if len(keys) != 4 || len(vals) != 4 { return 3 }
+    println("[verifier:c3_per_turn] smoke PASS — 4-tuple (PIV/DCR/D-RAND/V14) skeleton signature OK (own 16 model load 0)")
+    return 0
+}
+
+fn main() {
+    let argv = args()
+    if _arg_present(argv, "--describe") {
+        println(verifier_describe())
+        return
+    }
+    if _arg_present(argv, "--selftest") || _arg_present(argv, "--smoke") {
+        let rc = verifier_smoke("", argv)
+        if rc != 0 {
+            println("FAIL verifier c3_per_turn smoke (rc=" + to_string(rc) + ")")
+            exit(rc)
+        }
+        return
+    }
+    println(verifier_describe())
+}

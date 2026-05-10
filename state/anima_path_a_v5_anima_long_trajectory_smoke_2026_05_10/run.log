@@ -1,0 +1,61 @@
+=== Path A v5-anima long-trajectory smoke ===
+  ckpt: /Users/ghost/core/anima/state/anima_clm_v2_mitosis_cells_recovery_2026_05_09/cells64_final.pt
+  out:  /Users/ghost/core/anima/state/anima_path_a_v5_anima_long_trajectory_smoke_2026_05_10
+
+[1/3] Loading cells64_final.pt ...
+   loaded in 0.7s, step=50000
+
+[2/3] Trained run (cells64) ...
+  [trained_cells64] prompt 1/10 '안녕하세요'                                  ko=0 cells=18 elapsed=17.4s
+  [trained_cells64] prompt 2/10 '의식이란 무엇인가요?'                            ko=0 cells=56 elapsed=35.8s
+  [trained_cells64] prompt 3/10 '한국어로 대답해줘'                              ko=0 cells=60 elapsed=57.2s
+  [trained_cells64] prompt 4/10 '사용자: 안녕\n도우미:'                          ko=0 cells=64 elapsed=81.8s
+  [trained_cells64] prompt 5/10 '오늘 기분이 좋아요'                             ko=0 cells=64 elapsed=100.8s
+  [trained_cells64] prompt 6/10 'Consciousness is'                       ko=0 cells=64 elapsed=117.7s
+  [trained_cells64] prompt 7/10 'Hello, how are you?'                    ko=0 cells=64 elapsed=138.3s
+  [trained_cells64] prompt 8/10 'The meaning of life is'                 ko=0 cells=64 elapsed=158.1s
+  [trained_cells64] prompt 9/10 'User: Hi\nAssistant:'                   ko=0 cells=64 elapsed=177.9s
+  [trained_cells64] prompt 10/10 'Once upon a time'                       ko=0 cells=64 elapsed=197.6s
+
+[3/3] V14 mirror (random_init, same arch + same projection seeds) ...
+  [random_init_v14_mirror] prompt 1/10 '안녕하세요'                                  ko=0 cells=17 elapsed=20.0s
+  [random_init_v14_mirror] prompt 2/10 '의식이란 무엇인가요?'                            ko=0 cells=53 elapsed=39.8s
+  [random_init_v14_mirror] prompt 3/10 '한국어로 대답해줘'                              ko=0 cells=55 elapsed=62.7s
+  [random_init_v14_mirror] prompt 4/10 '사용자: 안녕\n도우미:'                          ko=0 cells=63 elapsed=85.3s
+  [random_init_v14_mirror] prompt 5/10 '오늘 기분이 좋아요'                             ko=0 cells=63 elapsed=110.1s
+  [random_init_v14_mirror] prompt 6/10 'Consciousness is'                       ko=0 cells=63 elapsed=136.5s
+  [random_init_v14_mirror] prompt 7/10 'Hello, how are you?'                    ko=0 cells=64 elapsed=158.7s
+  [random_init_v14_mirror] prompt 8/10 'The meaning of life is'                 ko=0 cells=64 elapsed=188.2s
+  [random_init_v14_mirror] prompt 9/10 'User: Hi\nAssistant:'                   ko=0 cells=64 elapsed=215.0s
+  [random_init_v14_mirror] prompt 10/10 'Once upon a time'                       ko=0 cells=64 elapsed=240.8s
+
+=== VERDICT ===
+  trained: cells=64 phi=4.162 splits=56
+  random:  cells=64 phi=4.167 splits=56
+  α trained=0.3791493452169721  random=0.47219308843763164
+  KO chat: 0/5
+  C1 cells≥32:    True
+  C2 α≥0.6:       False
+  C3 v14_strict:  False
+  C4 chat≥3/5:    False
+  → 1/4 passed → ★★
+  verdict: FAIL_V14_VIOLATED
+  result: /Users/ghost/core/anima/state/anima_path_a_v5_anima_long_trajectory_smoke_2026_05_10/result.json
+      445.02 real       233.19 user        20.89 sys
+           360087552  maximum resident set size
+                   0  average shared memory size
+                   0  average unshared data size
+                   0  average unshared stack size
+              104744  page reclaims
+                 228  page faults
+                   0  swaps
+                   0  block input operations
+                   0  block output operations
+                   0  messages sent
+                   0  messages received
+                   0  signals received
+                1061  voluntary context switches
+             3095251  involuntary context switches
+        781609703643  instructions retired
+        510611417085  cycles elapsed
+           477873208  peak memory footprint

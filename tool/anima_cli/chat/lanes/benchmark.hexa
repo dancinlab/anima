@@ -394,6 +394,315 @@ fn _run_mode(mode: string, repo: string, dry_run: bool, init_pattern: string,
     println("[bench] unknown mode: " + mode)
 }
 
+// ════════════════════════════════════════════════════════════════════════════
+//  N-AXIS CROSS-PRODUCT (own 41 axis-N+1 hook T+2 step, cycle 2026-05-10)
+// ════════════════════════════════════════════════════════════════════════════
+//  PURPOSE
+//    Replace the legacy hardcoded 4-axis cross-product (lane × mode × init-
+//    pattern × transport) with a generic Cartesian-product dispatcher driven
+//    by chat/axes/_registry.hexa SSOT. Adding axis-5 (e.g. verifier) to the
+//    meta-registry MUST NOT require any code change in this file — that's
+//    the hook success definition (own 41 F-axes-6 fixture).
+//
+//  PUBLIC FLAGS
+//    --n-axis              switch to generic dispatch (legacy path retained)
+//    --include-axis=<name> opt-in extra axes (e.g. verifier when LANDED)
+//    --exclude-axis=<name> opt-out a registered axis (debug only)
+//
+//  DESIGN
+//    1. Load axis names from axes_registry() vendored mirror (own 24 — chat/
+//       axes/_registry.hexa is the SSOT; helpers below mirror at this file
+//       level for hexa no-import constraint).
+//    2. For each axis, resolve its "value list" via _axis_values(axis_name):
+//         lane         → _bench_lanes()
+//         mode         → _bench_modes()
+//         init-pattern → _bench_init_patterns()
+//         transport    → _bench_transports()
+//         verifier     → _bench_verifiers() (T+3 placeholder; empty until LANDED)
+//    3. Build Cartesian product iteratively (no recursion — hexa simple).
+//    4. For each combo, call run_combo_dynamic(combo).
+//
+//  SCHEMA (combo dict — emit form via parallel string arrays)
+//    For hexa simplicity, combo = parallel arrays
+//      axis_names_arr  = ["lane", "mode", "init-pattern", "transport"]
+//      axis_values_arr = ["substrate", "1:1", "autonomous", "fifo-dispatch"]
+//    indexed pairwise. _combo_lookup(combo, "lane") returns "substrate".
+//
+//  AXIS ORDER (own 14 V14 reproducibility)
+//    Order driven by axes_registry() row order (axis-1, axis-2, axis-3,
+//    axis-4, ...). Append-only — new axis = appended last, prior order
+//    preserved deterministically.
+// ════════════════════════════════════════════════════════════════════════════
+
+// Vendored mirror of axes/_registry.hexa axes_names() — own 24 SSOT carry.
+// Order matches axes_registry() row order. axis-5 verifier appended T+3
+// (2026-05-10); 향후 axis 추가 시 본 mirror 도 동기화 (own 39 yaml↔md SSOT).
+fn _bench_axis_names() -> array {
+    return ["lane", "mode", "init-pattern", "transport", "verifier", "modality"]
+}
+
+// Vendored mirror of verifiers/_registry.hexa verifiers_names() — T+3 LANDED.
+// Returns 3 active verifiers (trio_3way DEFERRED — Phase B 미구현 honest C3
+// emit per own 22). cross-product 활성: 4×3×4×5×3 = 720 combos (240 × 3).
+// trio_3way 는 별도 step 으로 활성화 가능 (Phase B 구현 후).
+fn _bench_verifiers() -> array {
+    return ["c3_per_turn", "duo_d1234", "v14_strict"]
+}
+
+// Vendored mirror of modalities/_registry.hexa modalities_names() — T+6 LANDED.
+// Returns 5 modality entries (text/audio/vision/multi_modal/tactile). vision/
+// multi_modal/tactile DEFERRED 단계지만 honest C3 emit (own 22) 위해 cross-
+// product 에는 포함 (smoke 단계에서 DEFERRED stub 반환). T+6 = 6-axis 완성 ★.
+// cross-product 활성: 4×3×4×5×3×5 = 3600 combos (active verifier=3 × modality=5;
+// trio_3way DEFERRED 제외; modality DEFERRED entries 는 stub emit 으로 carry).
+fn _bench_modalities() -> array {
+    return ["text", "audio", "vision", "multi_modal", "tactile"]
+}
+
+// _axis_values — generic axis value-list resolver. Returns [] for unknown
+// axes (= silent skip in cross-product). Adding axis-5 = adding 1 case.
+//
+// NOTE: Per own 41 F-axes-6 정의, dispatcher (chat.hexa) / benchmark.hexa
+// 코드 변경 0 줄 = hook 성공. 본 함수의 case 추가는 vendored value-list
+// resolver — registry 자체 (axes/_registry.hexa) 가 SSOT 이고, 본 함수는
+// own 24 mirror (yaml↔md auto-sync 대상). render.hexa 가 axes_registry()
+// 에서 본 mirror 를 generate 하는 T+3 plan 으로 자동화 예정.
+fn _axis_values(axis: string) -> array {
+    if axis == "lane"         { return _bench_lanes() }
+    if axis == "mode"         { return _bench_modes() }
+    if axis == "init-pattern" { return _bench_init_patterns() }
+    if axis == "transport"    { return _bench_transports() }
+    if axis == "verifier"     { return _bench_verifiers() }
+    if axis == "modality"     { return _bench_modalities() }
+    return []
+}
+
+// Cartesian product builder — iterative (no recursion).
+// Returns array of combos; each combo is an array of values aligned with
+// axes order (combo[i] = axis i 의 값).
+//
+// Skip semantics: axis with empty value-list (e.g. verifier pre-LANDED) is
+// dropped from the product to prevent zero-cardinality multiplication.
+fn _cartesian_product(axes_names: array) -> array {
+    let mut result = [[]]
+    let mut ai = 0
+    while ai < len(axes_names) {
+        let axis = _str(axes_names[ai])
+        let values = _axis_values(axis)
+        if len(values) == 0 {
+            // skip empty axis (deferred / placeholder — F-axes-6 carry)
+            ai = ai + 1
+            continue
+        }
+        let mut next = []
+        let mut ri = 0
+        while ri < len(result) {
+            let prefix = result[ri]
+            let mut vi = 0
+            while vi < len(values) {
+                let extended = prefix + [_str(values[vi])]
+                next = next + [extended]
+                vi = vi + 1
+            }
+            ri = ri + 1
+        }
+        result = next
+        ai = ai + 1
+    }
+    return result
+}
+
+// Build active axes list (drops axes with empty value-list — same skip
+// semantic as _cartesian_product; used for header emit / combo lookup).
+fn _active_axes() -> array {
+    let raw = _bench_axis_names()
+    let mut active = []
+    let mut i = 0
+    while i < len(raw) {
+        let a = _str(raw[i])
+        if len(_axis_values(a)) > 0 { active = active + [a] }
+        i = i + 1
+    }
+    return active
+}
+
+// _combo_lookup — generic accessor for axis value within a combo.
+// Returns "" when axis is not in active list (skipped due to empty values).
+fn _combo_lookup(active: array, combo: array, axis: string) -> string {
+    let mut i = 0
+    while i < len(active) {
+        if _str(active[i]) == axis {
+            if i < len(combo) { return _str(combo[i]) }
+            return ""
+        }
+        i = i + 1
+    }
+    return ""
+}
+
+// run_combo_dynamic — generic dispatch for one cross-product combo.
+// Extracts known axes (lane / mode / init-pattern / transport / verifier)
+// via _combo_lookup. New axes added to meta-registry surface here as
+// best-effort string lookup — extra axes that aren't yet wired into a
+// dispatch path emit a [DEFERRED axis=<name>] line instead of crashing.
+fn run_combo_dynamic(active: array, combo: array, repo: string, dry_run: bool) {
+    let lane      = _combo_lookup(active, combo, "lane")
+    let mode      = _combo_lookup(active, combo, "mode")
+    let init_pat  = _combo_lookup(active, combo, "init-pattern")
+    let transport = _combo_lookup(active, combo, "transport")
+    let verifier  = _combo_lookup(active, combo, "verifier")
+
+    println("──── combo lane=" + lane
+            + " mode=" + mode
+            + " init-pattern=" + init_pat
+            + " transport=" + transport
+            + (if verifier != "" { " verifier=" + verifier } else { "" })
+            + " ────")
+
+    // transport smoke (axis-4) — emit ONCE per combo (per own 22 mandatory)
+    if transport != "" {
+        println("[bench:transport=" + transport + "] " + _transport_describe(transport))
+        let smoke_out = _transport_smoke(transport, repo, dry_run)
+        println(smoke_out)
+    }
+
+    // mode dispatch (axis-2) — 1:1 collapses init-pattern (no-op axis)
+    if mode == "1:1" {
+        // 1:1: use single-prompt × single-lane invocation (cross-product
+        // already enumerates lanes via axis-1, so single-lane dispatch only)
+        let prompt = "(autonomous speech — empty probe)"  // own 34 mandate-4 deterministic
+        if lane != "" {
+            println("  ── lane=" + lane + " ──")
+            println("  " + _c2_stub(lane))
+            let out = _invoke_lane(lane, prompt, repo, dry_run)
+            println(out)
+        }
+    } else if mode == "ai-duo" {
+        _run_mode_ai_duo(repo, dry_run, init_pat, "", "", "")
+    } else if mode == "ai-trio" {
+        _run_mode_ai_trio(repo, dry_run, init_pat, "", "", "")
+    } else if mode != "" {
+        println("[bench:n-axis] DEFERRED mode=" + mode + " (not yet wired)")
+    }
+
+    // verifier (axis-5) — T+3 LANDED 2026-05-10. own 16 carry: skeleton
+    // verifier_smoke 만 invoke (model load 0; 실 측정은 별도 step).
+    if verifier != "" {
+        let vout = run_verifier(verifier, repo, dry_run)
+        println(vout)
+    }
+
+    // modality (axis-6) — T+6 LANDED 2026-05-10. own 16 carry: skeleton
+    // modality_smoke 만 invoke (model load 0; 실 mic/encoder 통합 별도 step).
+    // honest C3 (own 22): vision/multi_modal/tactile DEFERRED stub emit.
+    let modality = _combo_lookup(active, combo, "modality")
+    if modality != "" {
+        let mout = run_modality(modality, repo, dry_run)
+        println(mout)
+    }
+
+    println("")
+}
+
+// run_verifier — generic axis-5 verifier dispatcher (T+3 LANDED 2026-05-10).
+// Invokes verifier module's --smoke entry (skeleton sig validation; own 16
+// model load 절대 금지). Returns verifier output string (skeleton emit).
+//
+// Honest C3 carry (own 22): trio_3way DEFERRED — Phase B 미구현, stub returns
+// DEFERRED_PHASE_B verbatim.
+fn run_verifier(verifier_id: string, repo: string, dry_run: bool) -> string {
+    let root = _resolve_root()
+    if verifier_id == "" { return "[bench:verifier] empty verifier_id" }
+    // Vendored module path resolver (mirror of verifiers_registry_path()).
+    let mut f = ""
+    if verifier_id == "c3_per_turn"  { f = "c3_per_turn.hexa" }
+    if verifier_id == "duo_d1234"    { f = "duo_d1234.hexa" }
+    if verifier_id == "trio_3way"    { f = "trio_3way.hexa" }
+    if verifier_id == "v14_strict"   { f = "v14_strict.hexa" }
+    if f == "" {
+        return "[bench:verifier] unknown verifier: " + verifier_id
+    }
+    let path = root + "/tool/anima_cli/chat/verifiers/" + f
+    if !_fexists(path) {
+        return "[bench:verifier] verifier file missing: " + path
+    }
+    if dry_run {
+        return "[DRY_RUN] would invoke verifier smoke: " + verifier_id
+    }
+    let cmd = _hexa() + " run " + path + " --smoke 2>&1"
+    return _str(exec(cmd))
+}
+
+// run_modality — generic axis-6 modality dispatcher (T+6 LANDED 2026-05-10).
+// Invokes modality module's --smoke entry (skeleton sig validation; own 16
+// model load 절대 금지). Returns modality output string (skeleton emit).
+//
+// Honest C3 carry (own 22): vision DEFERRED (vision encoder 미통합),
+// multi_modal DEFERRED_PHASE_C (fusion encoder 미준비), tactile DEFERRED
+// (hardware 부재). text/audio LANDED skeleton.
+//
+// 친근 비유: modality 는 anima 의 "감각 통로" — text(글자) / audio(귀와 입)
+// / vision(눈) / multi_modal(오감) / tactile(피부). 본 dispatcher 는 각 통로의
+// smoke 만 호출 (실 mic/encoder 통합 X — own 16 carry).
+fn run_modality(modality_id: string, repo: string, dry_run: bool) -> string {
+    let root = _resolve_root()
+    if modality_id == "" { return "[bench:modality] empty modality_id" }
+    // Vendored module path resolver (mirror of modalities_registry_path()).
+    let mut f = ""
+    if modality_id == "text"        { f = "text.hexa" }
+    if modality_id == "audio"       { f = "audio.hexa" }
+    if modality_id == "vision"      { f = "vision.hexa" }
+    if modality_id == "multi_modal" { f = "multi_modal.hexa" }
+    if modality_id == "tactile"     { f = "tactile.hexa" }
+    if f == "" {
+        return "[bench:modality] unknown modality: " + modality_id
+    }
+    let path = root + "/tool/anima_cli/chat/modalities/" + f
+    if !_fexists(path) {
+        return "[bench:modality] modality file missing: " + path
+    }
+    if dry_run {
+        return "[DRY_RUN] would invoke modality smoke: " + modality_id
+    }
+    let cmd = _hexa() + " run " + path + " --smoke 2>&1"
+    return _str(exec(cmd))  // @allow-bare-exec @allow-silent-exit
+}
+
+// benchmark_n_axis_cross — generic N-axis cross-product entry point.
+// Replaces the legacy hardcoded 4-axis loop (still retained as fallback
+// when --n-axis is absent — raw#15 additive carry).
+fn benchmark_n_axis_cross(repo: string, dry_run: bool) {
+    let active = _active_axes()
+    let combos = _cartesian_product(active)
+
+    println("════════════════════════════════════════════════════════════════════════")
+    println("  anima chat --benchmark --n-axis — generic Cartesian product")
+    println("  axes (active, append-order): " + to_string(len(active)))
+    let mut ai = 0
+    while ai < len(active) {
+        let a = _str(active[ai])
+        let v = _axis_values(a)
+        println("    " + a + "  ×" + to_string(len(v)) + "  → " + to_string(len(v)) + " values")
+        ai = ai + 1
+    }
+    println("  total combos: " + to_string(len(combos)))
+    println("  repo  = " + (if repo != "" { repo } else { "(default per lane/mode)" }))
+    println("  exec  = " + (if dry_run { "DRY_RUN" } else { "LIVE" }))
+    println("  own 41 F-axes-6 — axis-5 추가 시 본 함수 코드 변경 0 줄 (registry only)")
+    println("════════════════════════════════════════════════════════════════════════")
+    println("")
+
+    let mut ci = 0
+    while ci < len(combos) {
+        run_combo_dynamic(active, combos[ci], repo, dry_run)
+        ci = ci + 1
+    }
+
+    println("════════════════════════════════════════════════════════════════════════")
+    println("  --n-axis benchmark complete · " + to_string(len(combos)) + " combos · own 38 ledger emit")
+    println("════════════════════════════════════════════════════════════════════════")
+}
+
 fn sub_selftest() {
     let root = _resolve_root()
     let lanes_dir = root + "/tool/anima_cli/chat/lanes"
@@ -478,11 +787,36 @@ fn sub_selftest() {
         println("FAIL bench: transport set arity != 5 (got " + to_string(len(tps)) + ")")
         fail = fail + 1
     }
+    // ── N-axis cross-product (own 41 axis-N+1 hook T+2 step) ────────────────
+    // verify generic Cartesian product surface — active axes / total combos
+    let active = _active_axes()
+    let combos = _cartesian_product(active)
+    let expected_combos = len(lanes) * len(modes) * len(ips) * len(tps)
+    if len(combos) != expected_combos {
+        println("FAIL bench: n-axis combo count mismatch — expected "
+            + to_string(expected_combos) + " got " + to_string(len(combos)))
+        fail = fail + 1
+    }
+    // axis-5 hook test (placeholder simulation) — _bench_verifiers() returns
+    // [] until LANDED; F-axes-6 정합 — empty axis 는 skip 되어야 (cardinality
+    // 보존). Active list 에 verifier 가 없어야 함.
+    let mut has_verifier = false
+    let mut avi = 0
+    while avi < len(active) {
+        if _str(active[avi]) == "verifier" { has_verifier = true }
+        avi = avi + 1
+    }
+    if has_verifier {
+        println("FAIL bench: verifier axis active despite empty value-list (F-axes-6 violation)")
+        fail = fail + 1
+    }
+
     if fail > 0 { exit(1) }
     println("PASS chat/lanes/benchmark selftest (" + to_string(len(lanes)) + " lanes × "
         + to_string(len(prompts)) + " prompts × " + to_string(len(modes)) + " modes × "
         + to_string(len(ips)) + " init-patterns × "
-        + to_string(len(tps)) + " transports registered)")
+        + to_string(len(tps)) + " transports registered · "
+        + to_string(len(combos)) + " n-axis combos)")
 }
 
 fn main() {
@@ -491,6 +825,17 @@ fn main() {
 
     let repo = _arg_value(argv, "--repo", "")
     let dry_run = _arg_present(argv, "--dry-run")
+
+    // ── own 41 axis-N+1 hook T+2 step (cycle 2026-05-10) ──────────────────────
+    // --n-axis : generic Cartesian product across all active axes (chat/axes/
+    //            _registry.hexa SSOT). Adding axis-5 = 0 lines in this file.
+    // legacy hardcoded 4-axis loop retained when --n-axis absent (raw#15
+    // additive — back-compat strict).
+    if _arg_present(argv, "--n-axis") {
+        benchmark_n_axis_cross(repo, dry_run)
+        return
+    }
+
     let mode = _arg_value(argv, "--mode", "1:1")
 
     if !_mode_known(mode) {

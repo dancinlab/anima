@@ -1,0 +1,79 @@
+// ════════════════════════════════════════════════════════════════════════════
+//  tool/anima_cli/chat/modalities/tactile.hexa — tactile/sensor (DEFERRED long)
+//                                                  (own 41 axis-6 / axis-N+2)
+//
+//  PURPOSE
+//    Tactile / sensor modality — long-term vision (촉각 / 압력 / 온도 / 가속).
+//    T+6 = DEFERRED long-term stub (hardware not present).
+//    친근 비유: tactile 은 "피부와 균형감각" — anima 가 hardware 신체 만나야
+//    의미 있는 통로. 현재 단계 = placeholder.
+//
+//  STATUS
+//    DEFERRED — hardware sensor 부재. honest emit (own 22 mandatory).
+//
+//  CONTRACT
+//    fn run_modality(ctx: dict) -> dict
+//      → {input_kind: "sensor", output_kind: "signal",
+//         status: "DEFERRED_HARDWARE_NOT_PRESENT"}
+//
+//  COMPLIANCE
+//    own 16 — model load 절대 금지 (stub only)
+//    own 22 — honest emit (DEFERRED + HARDWARE_NOT_PRESENT)
+//    own 34 mandate-1 — wrapping 0
+//    own 41 axis-N+2 — axis-6 modality registry entry 5
+//
+//  CROSS-REFERENCE
+//    chat/modalities/_registry.hexa#tactile   registry SSOT
+// ════════════════════════════════════════════════════════════════════════════
+
+fn _str(x) -> string {
+    let t = type_of(x)
+    if t == "str" || t == "string" { return x }
+    return ""
+}
+
+fn _arg_present(argv, key: string) -> bool {
+    let mut i = 0
+    while i < len(argv) {
+        if _str(argv[i]) == key { return true }
+        i = i + 1
+    }
+    return false
+}
+
+fn modality_describe() -> string {
+    return "tactile — sensor long-term DEFERRED stub (hardware not present; honest C3 emit per own 22)"
+}
+
+// run_modality — tactile stub. hardware 부재 honest emit.
+fn run_modality(ctx) -> array {
+    let keys = ["input_kind", "output_kind", "status"]
+    let vals = ["sensor", "signal", "DEFERRED_HARDWARE_NOT_PRESENT"]
+    return [keys, vals]
+}
+
+fn modality_smoke(repo: string, argv) -> int {
+    let r = run_modality([])
+    if len(r) != 2 { return 2 }
+    let vals = r[1]
+    if _str(vals[2]) != "DEFERRED_HARDWARE_NOT_PRESENT" { return 3 }
+    println("[modality:tactile] smoke PASS — DEFERRED_HARDWARE_NOT_PRESENT stub honest emit (own 22)")
+    return 0
+}
+
+fn main() {
+    let argv = args()
+    if _arg_present(argv, "--describe") {
+        println(modality_describe())
+        return
+    }
+    if _arg_present(argv, "--selftest") || _arg_present(argv, "--smoke") {
+        let rc = modality_smoke("", argv)
+        if rc != 0 {
+            println("FAIL modality tactile smoke (rc=" + to_string(rc) + ")")
+            exit(rc)
+        }
+        return
+    }
+    println(modality_describe())
+}

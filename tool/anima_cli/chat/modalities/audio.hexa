@@ -1,0 +1,85 @@
+// ════════════════════════════════════════════════════════════════════════════
+//  tool/anima_cli/chat/modalities/audio.hexa — audio modality (anima-voice 자산)
+//                                                (own 41 axis-6 / axis-N+2)
+//
+//  PURPOSE
+//    Audio modality — wav ↔ str via anima-voice. T+6 = LANDED skeleton
+//    (anima-voice voice_e2e.hexa 자산 wrap 준비; 실 mic/tts 통합은 별도 step).
+//    친근 비유: audio 는 "귀와 입" — anima 가 mic 으로 듣고 tts 로 말함.
+//
+//  CONTRACT
+//    fn run_modality(ctx: dict) -> dict
+//      → {input_kind: "wav", output_kind: "wav|text", status: "LANDED_skeleton",
+//         asset_anchor: "anima-voice/voice_e2e.hexa"}
+//
+//  COMPLIANCE
+//    own 14 V14 — 결정성 (skeleton 단계; 실 audio 결정성은 별도 step)
+//    own 16 — model load 절대 금지 (skeleton 단계, asset path 만 명시)
+//    own 22 — honest emit (NOT_MEASURED placeholder; 실 mic 미연결)
+//    own 34 mandate-1 — wrapping 0 (audio 통로 emit-only)
+//    own 41 axis-N+2 — axis-6 modality registry entry 2
+//
+//  CROSS-REFERENCE
+//    chat/modalities/_registry.hexa#audio   registry SSOT
+//    anima-voice/voice_e2e.hexa             실 audio asset (별도 step 통합)
+// ════════════════════════════════════════════════════════════════════════════
+
+fn _str(x) -> string {
+    let t = type_of(x)
+    if t == "str" || t == "string" { return x }
+    return ""
+}
+
+fn _arg_present(argv, key: string) -> bool {
+    let mut i = 0
+    while i < len(argv) {
+        if _str(argv[i]) == key { return true }
+        i = i + 1
+    }
+    return false
+}
+
+fn modality_describe() -> string {
+    return "audio — wav ↔ str via anima-voice 자산 (T+6 skeleton; 실 mic/tts 통합 별도 step; own 16)"
+}
+
+// run_modality — audio modality skeleton. anima-voice asset path 만 명시.
+// 친근 비유: audio 는 "귀와 입" — mic 입력 (wav) 을 글자로 옮기고 (STT),
+// 글자를 다시 소리로 (TTS) 만드는 통로. 본 skeleton 은 path 만 emit.
+fn run_modality(ctx) -> array {
+    let keys = ["input_kind", "output_kind", "status", "asset_anchor"]
+    let vals = ["wav",
+                "wav_or_text",
+                "LANDED_skeleton_T_6",
+                "anima-voice/voice_e2e.hexa"]
+    return [keys, vals]
+}
+
+// modality_smoke — registry hook. own 16 carry — no model load.
+fn modality_smoke(repo: string, argv) -> int {
+    let r = run_modality([])
+    if len(r) != 2 { return 2 }
+    let keys = r[0]
+    let vals = r[1]
+    if len(keys) != 4 || len(vals) != 4 { return 3 }
+    if _str(vals[0]) != "wav" { return 4 }
+    println("[modality:audio] smoke PASS — wav↔str skeleton signature OK (asset=anima-voice/voice_e2e.hexa, own 16 model load 0)")
+    return 0
+}
+
+fn main() {
+    let argv = args()
+    if _arg_present(argv, "--describe") {
+        println(modality_describe())
+        return
+    }
+    if _arg_present(argv, "--selftest") || _arg_present(argv, "--smoke") {
+        let rc = modality_smoke("", argv)
+        if rc != 0 {
+            println("FAIL modality audio smoke (rc=" + to_string(rc) + ")")
+            exit(rc)
+        }
+        return
+    }
+    println(modality_describe())
+}
