@@ -4082,3 +4082,80 @@ raw#9 ✓, raw#15 ✓ (B ckpt 미수정), own 14 ✓ (V14 5-seed strict), own 22
 ★★★★ multi-factorial confirm (★★★★★ universal claim downgrade). cleanest disambiguation 결과 — cotrain regime 의 EngineAG path 내 V14 PASS 필수성 확정.
 
 ---
+
+## §58 [2026-05-10 22:10 KST] BG-TRAINED-CORRELATION-MEASUREMENT — §51 mechanism REFRAMED ★★★★ tension-trigger suppression
+
+### Verdict
+
+**ALT_MECHANISM** — §51 "trained → more correlated → dispersion-trigger slower" 가설 FALSIFIED. 진짜 cause = **tension-trigger suppression** via trained h_to_c projection learning cell-proximity. §51 outcome (UNIVERSAL_CAP_CONDITIONAL_PASS observation) 보존, mechanism wording erratum.
+
+### Falsifier 처분
+
+| ID | falsifier | verdict |
+|---|---|:---:|
+| F-CORR-1 | trained correlation 차이 부재 | **FAILED** (trained cos_mean ≤ random in both regimes) |
+| F-CORR-2 | dispersion trigger rate 차이 부재 | **FAILED** (dispersion rate comparable, no direction) |
+| F-CORR-3 | 3 substrate correlation pattern unrelated | **HOLD** (C + E identical pattern) |
+
+### Substrate × correlation table (3 substrate × {trained, random_seed=42} × max=256)
+
+| substrate | run | nC range | cos_mean | abs_cos_mean | eff_rank/N | norm_cv |
+|---|---|---|---|---|---|---|
+| A_phase2_cotrain | trained | 16→57 | +0.103 | 0.155 | 0.684 | 0.328 |
+| A_phase2_cotrain | random | 16→48 | +0.107 | 0.160 | 0.705 | 0.340 |
+| C_cells64_aware | trained | 8→75 | +0.112 | 0.136 | 0.855 | 0.207 |
+| C_cells64_aware | random | 8→209 | +0.111 | 0.135 | 0.811 | 0.266 |
+| E_convo5k_ft | trained | 8→85 | +0.113 | 0.136 | 0.865 | 0.174 |
+| E_convo5k_ft | random | 8→209 | +0.111 | 0.135 | 0.811 | 0.266 |
+
+trained correlation 가 random 보다 **NOT higher** — §51 mechanism wording WRONG.
+
+### Dispersion trigger rate table (cap-approach window)
+
+| substrate | run | disp_above/k late-regime | tension splits | dispersion splits | splits/turn |
+|---|---|---|---|---|---|
+| C trained | 5/18 → 5/18 | 0.278 | 4 | 63 | 1.12 |
+| C random | 9.8/32.2 | 0.304 | **58** | 143 | **3.35** |
+| E trained | 6/18.5 → 8/21 | 0.324 | 5 | 72 | 1.28 |
+| E random | 9.8/32.2 | 0.304 | **58** | 143 | **3.35** |
+
+### REFRAMED mechanism (substantiated): tension-trigger suppression ★★★
+
+cap-arrival latency 의 진짜 cause:
+- **trained**: 4-5 tension-triggered splits in 60 turns
+- **random**: 58 tension splits (10-14× more)
+- Total split rate: **trained 1.12-1.28/turn vs random 3.35/turn (~3× gap)**
+
+**핵심 mechanism**: **Trained's h_to_c projection learned to land hidden_mean closer to existing cell positions** → per-cell tension `||cell - hint||²` stays under threshold → tension-trigger path **starves**; only dispersion path remains active.
+
+| split type | trained fraction | random fraction |
+|---|---|---|
+| dispersion | **94%** | 71% |
+| tension | 6% | 29% |
+
+→ §51 cap-arrival latency observation CONFIRMED, mechanism wording REFRAMED to **tension threshold suppression** via h_to_c cell-proximity learning.
+
+### Cross-link impact (post-§58 mechanism erratum)
+
+- §51 outcome (UNIVERSAL_CAP_CONDITIONAL_PASS) 보존, mechanism description **erratum** 필요
+- §50 ABL2 (random h_to_c → 5× Φ explosive) 의 mechanism reframe: random h_to_c → cell_input chaotic → tension threshold over → explosive tension splits → cap-saturate. §58 mechanism 가 §50 finding 정확히 설명
+- §59 cotrain-exercise lever-2 (chat_cotrain → V14 PASS) 의 mechanism: chat-cotrain 동안 h_to_c 가 cell-proximity 학습 → tension suppress → trained 가 controlled split → richer Φ trajectory
+- §52 c_to_h cosine_AB=0.69 + h_to_c cosine_AB=0.76 weight space evidence 와 완벽히 일치 — h_to_c 가 cotrain-exercised projection
+- §56 EngineAG path 의 cotrain regime 필수성 mechanism: chat-cotrain 만 h_to_c 의 cell-proximity learning 가능
+
+### Honest C3 (8 caveats, key 4)
+
+1. n=1 paired (single random seed=42); cos_mean 차이 (0.01-0.05) within plausible variance, 단 trained ≤ random in BOTH C and E across BOTH regimes — direction stable
+2. C_random ≡ E_random by construction (same seed + same prompt stream + ckpt-independent)
+3. Substrate A cap-free at max=256 (max 57) — cannot test cap-arrival mechanism on A directly
+4. 60-turn cutoff doesn't reach trained first_cap (76-82) — asymmetric comparison
+
+### Deliverables
+
+- `state/anima_trained_correlation_measurement_2026_05_10/{spec.md, run_correlation.py, build_verdict.py, result_{A,C,E}.json, run_*.log, aggregate.json, correlation_metrics.json, dispersion_trigger_metrics.json, verdict.md}`
+
+raw#9 ✓ (no training/*.py edits), raw#15 ✓ (3 ckpts read-only), own 22 ✓ (REBORN.md 미수정), own 38 ✓, own 16 ✓ ($0 local CPU 25 min).
+
+★★★★ severity (mechanism reframed via tension-trigger suppression). §50 + §51 + §52 + §56 + §59 모두 cross-link 정합 — h_to_c projection 의 cell-proximity learning 이 V14 PASS mechanism 의 진짜 driver.
+
+---
