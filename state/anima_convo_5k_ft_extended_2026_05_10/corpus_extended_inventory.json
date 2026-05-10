@@ -1,0 +1,63 @@
+{
+  "build_date": "2026-05-10",
+  "strategy": "S1 corpus-expansion + S2 persona-prefix-mix hybrid",
+  "input_sources": [
+    {
+      "label": "A_dialogue_keep",
+      "src": "/Users/ghost/core/anima/state/anima_dialogue_tier_a_iter2_2026_05_08.txt",
+      "bytes": 38083444,
+      "chars": 27037250,
+      "ko_chars": 5261294,
+      "en_chars": 13347420,
+      "ko_pct": 19.5,
+      "blocks": 102183,
+      "format": "[anima 역할: ...]\\n사용자: ...\\n도우미: ..."
+    },
+    {
+      "label": "B_dialogue_strip",
+      "src": "/Users/ghost/core/anima/state/anima_dialogue_tier_a_iter2_2026_05_08.txt",
+      "bytes": 33463441,
+      "chars": 23906512,
+      "ko_chars": 4507923,
+      "en_chars": 12023491,
+      "ko_pct": 18.9,
+      "blocks": 102183,
+      "format": "사용자: ...\\n도우미: ... (persona-prefix STRIPPED)"
+    },
+    {
+      "label": "C_kowiki_wrapped",
+      "src": "/Users/ghost/core/anima/training/corpus_alm_70b_stripped_kowiki15.txt",
+      "bytes": 94658714,
+      "chars": 42266551,
+      "ko_chars": 26032560,
+      "en_chars": 2422371,
+      "ko_pct": 61.6,
+      "segments": 30727,
+      "format": "사용자: 다음 글을 읽어줘.\\n도우미: <kowiki paragraph>"
+    }
+  ],
+  "output": {
+    "path": "/Users/ghost/core/anima/state/anima_convo_5k_ft_extended_2026_05_10/corpus_extended.txt",
+    "bytes": 166205872,
+    "chars": 93210580,
+    "ko_chars": 35801780,
+    "en_chars": 27793445,
+    "ko_pct": 38.4,
+    "en_pct": 29.8
+  },
+  "vs_base": {
+    "base_corpus_bytes": 76311787,
+    "extended_corpus_bytes": 166205872,
+    "expansion_ratio": 2.18
+  },
+  "windows_estimate": {
+    "seq256_stride256": 649241,
+    "batches_b32": 20288,
+    "epochs_at_20k_step": 0.986
+  },
+  "honest_c3_top3": [
+    "(1) kowiki paragraphs wrapped as '도우미:' turns may collapse template surface form — model could lose chat-cap if the wikipedia chunks dominate gradient. Mitigation: 50% dialogue-keep retains original convo_5k surface signal.",
+    "(2) persona-prefix-strip reduces memorization signal but also reduces 'self-identity' anchor — risk: model loses anima persona attractor that emerged in BG-CONVO-FT-FIRE. Honest: signal-vs-memorization is real trade-off, not pure win.",
+    "(3) byte-level 18M arch capacity caps lexical learning regardless of corpus — kowiki adds real KO words but model may still emit novel morphemes if 18M params can't store enough byte-bigrams (~256² = 64K combinations × 6 layer × 384 dim is the theoretical capacity; KO lexicon needs ~50K dict entries × ~6 bytes each)."
+  ]
+}

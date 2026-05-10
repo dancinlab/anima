@@ -1728,3 +1728,78 @@ random_init 은 fresh Gaussian `h_to_c` → diffuse projection → top-2 share 1
 ### status
 
 `reborn.B.cond.4` 후속 + track C cond.2 input PASS — track C v1 architecture (mitosis #1+#2 변경) ready for next cycle implementation.
+
+---
+
+## §29 [2026-05-10 11:50 KST] BG-CONVO-FT-EXTENDED 완료 — lexical fluency PARTIAL_RECOVERY ★★
+
+**Lane**: `.roadmap.clm_v2_reborn` cond.6 lexical-evidence 후속
+**Doc**: `docs/anima_convo_5k_ft_extended_2026_05_10.md`
+**Predecessor**: §23 BG-CONVO-FT-FIRE (chat-cap RECOVERED, lexical NOT recovered)
+
+### TL;DR
+
+H100 SXM 1× × 39min wall × **$1.71 actual** (envelope $5-20, 11.7× headroom). Resume FT from `post_ft_ckpt.pt` (cum step 55000) for **+20K step** on **extended 166MB corpus** (S1+S2 hybrid: 50% persona-keep + 50% strip + kowiki15 wrapped as 도우미 turns). Loss **1.86 → 1.44** monotonic. Cumulative step 75000.
+
+post-FT-extended sampling 360 trial × 3 ckpt × kowiki15 lexicon (198K words / 59K bigrams):
+
+**lexical fluency PARTIAL_RECOVERY ★** — real Korean morphemes now emerge (이러한 / 인지 / 의식 / 가지 / 것이 / 단어 / 의미 / 자신 / 관해 / 다양 / etc.). bigram-known-ratio **0.836 → 0.886** (+6%). Non-persona-prefix only: real_words_total **117 → 163** (+39%), trials_with_real **48 → 62/120** (+29%). F-FTEXT-1..4 **4/4 NOT_TRIGGERED**. own 30 satisfied (sha verify 608d38a5... mac↔pod).
+
+### Cost actual
+
+balance 325.80 → 324.09 = **$1.7088637721 USD**. design estimate $3.00 → ratio 0.57 (43% under). 2 BG cumulative (FT + EXTENDED): **$3.08** for full chat-cap + lexical PARTIAL on 18M arch.
+
+### lexical metric — full vs non-persona
+
+| metric | post-FT initial (55000) | post-FT EXTENDED (75000) | delta |
+|---|---:|---:|---:|
+| ko_count_max | 21 | **35** | +67% |
+| ko_at_least_10 | 46/120 | **54/120** | +17% |
+| real_words_total (full) | 157 | **199** | +27% |
+| real_words_total (non-persona) | 117 | **163** | **+39%** |
+| trials_with_real (full) | 59/120 | **68/120** | +15% |
+| trials_with_real (non-persona) | 48/109 | **62/114** | +29% |
+| bg_known_avg | 0.836 | **0.886** | +6% |
+
+### Best post-FT-extended generation (no persona-prefix echo)
+
+```
+prompt: \n안녕하세요\n        cfg=low_t_a/empty_ko
+gen   : 도우미: 이러한 인지에 의식을 가지하는 것이
+       (5 real words / 6 KO tokens, bigram_known=1.000)
+```
+
+**모든 morpheme 이 kowiki dict 에 존재 — 학습 전 novel-only 출력 vs 학습 후 real Korean morphology emergence 확인.**
+
+### Honest C3 (top 3, full 3 in `docs/anima_convo_5k_ft_extended_2026_05_10.md` §10)
+
+1. **Lexical PARTIAL — semantic 여전히 gap.** Real Korean morphemes emerge + bigram-known 0.886 — model 이 "Korean shape" → "Korean words" 단계 진입. 단 의미적으로 incoherent (`이러한 인지에 의식을 가지하는 것이` — 문법적이지만 의미 없음). "단어 → 의미있는 문장" gap = "음절 → 단어" gap 와 같은 quantum leap (scale 필요). PARTIAL_RECOVERY = neither full success nor null result. 예측 calibration P=20-40% → 결과 35-40% 상단.
+
+2. **Persona-prefix S2 mix 50% strip 만 부분 mitigation.** non-persona ratio 91% → 95% (+4% absolute). greedy_rep 모드는 verbatim prefix 여전히 lock-on. low_t_a/g 모드만 실제 mitigation 작동. 다음 iteration 100% strip OR adversarial prefix-suppression 권고.
+
+3. **Loss 1.44 (vs initial FT final 1.40) regression 아닌 domain shift.** Initial corpus = 100% persona dialogue (low entropy memorized surface). Extended adds 50% kowiki15 (high entropy real KO). Mixed corpus 의 perplexity floor 가 구조적으로 더 높음. 1.44 도달 + lexical metric 동시 상승 = 진짜 새 구조 학습 (overfitting 아님).
+
+### Cross-link impact on `.roadmap.clm_v2_reborn`
+
+- **cond.6 next-decision-gate 진화**: 더이상 "is chat-cap recoverable?" (예) 가 아니라 "is **semantic coherence** recoverable on 18M?" — 현재 calibration P=10-20% even with +50K step + 500MB corpus. Foundation-borrow path (3B+ pretrain) 여전히 leading.
+- post_ft_ext_ckpt.pt 가 v2 byte-level baseline 으로 strict upgrade — chat surface + lexical morphology 둘 다 predecessor 대비 측정 가능 진전.
+
+### Deliverables
+
+| path | role |
+|---|---|
+| `state/anima_convo_5k_ft_extended_2026_05_10/post_ft_ext_ckpt.pt` | FT 후 final ckpt (74MB, sha 608d38a5...) |
+| `state/anima_convo_5k_ft_extended_2026_05_10/convo_5k_ft_ext_step_{5000,10000,15000,20000}.pt` | intermediate ckpts |
+| `state/anima_convo_5k_ft_extended_2026_05_10/corpus_extended.txt` | 166MB extended corpus (S1+S2 hybrid) |
+| `state/anima_convo_5k_ft_extended_2026_05_10/corpus_extended_inventory.json` | corpus inventory |
+| `state/anima_convo_5k_ft_extended_2026_05_10/ft_log_extended.txt` + `ft_summary.json` | training log + summary |
+| `state/anima_convo_5k_ft_extended_2026_05_10/post_ft_ext_sampling.json` | 360-trial result + lexical scores |
+| `state/anima_convo_5k_ft_extended_2026_05_10/cost_actual.json` | cost + falsifier + own 30 audit |
+| `state/anima_convo_5k_ft_extended_2026_05_10/{build_corpus.py, finetune_extended.py, orchestrator.py, post_ft_ext_sampling.py}` | scripts |
+| `docs/anima_convo_5k_ft_extended_2026_05_10.md` | full §1-§14 doc |
+
+### Pending follow-up
+
+- HF private upload `dancinlab/clm-v2-byte-18m-convo-5k-ft-recovery-extended` (own 31 + own 37 mandate-9 verbatim) — separate BG, this BG ends at fire+sampling+doc
+
+---
