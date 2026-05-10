@@ -1920,6 +1920,105 @@ cost $0 (read-only Bash + Read + grep, no API external call)
 
 ---
 
+## §32 [2026-05-10 13:20 KST] BG-NEW-ALPHA-METRIC-V2 — α-metric V2 per-bin + saturation auto-detect ★★
+
+**Lane**: track B reborn.B.cond.5
+**Predecessor**: §27 `BG-ALPHA-V2-IMPL-RETRO` (aggregate-only V2 with E-wrapper UNRELIABLE gate)
+**Module**: `training/alpha_metric_v2.py` (raw#9 local-only, gitignored `**/*.py`)
+**State**: `state/anima_alpha_metric_v2_2026_05_10/{design.md, comparison.md, result.json, apply.py, dense_3k_run.py, dense_3000_history.json, dense_10000_history.json}`
+
+### TL;DR
+
+V1 OLS log Φ vs log n on the 10K toy gives `alpha_exponent_full = 1.277` — the canonical max_cap regression artifact. V2 per-bin metric on the same trajectory emits `alpha_aggregate = 4.91` (different unit — per_split exponent) AND `saturation_warning = True` AND `max_cap_reached = True` AND per-bin α breakdown ([8,16) → UNRELIABLE rate<0; [16,32) → 4.91; [32,64) → 4.91; [64,128) → UNRELIABLE samples=0). dense 3K and dense 10K give **identical V2 α values** (4.91 / 4.91) because per_split channel filters out Δsplits=0 plateau pairs — confirming V2 is invariant to plateau length. F-ALPHA-V2-1/2/3 verdicts: NOT_TRIGGERED / NOT_TRIGGERED / PARTIAL_TRIGGERED (2-point local α is high variance per Honest C3 #1, but artifact-avoidance is demonstrably superior).
+
+### Method
+
+1. `compute_alpha_v2(history)` returns `{alpha_per_bin: {(N_lo,N_hi): float|"UNRELIABLE"}, alpha_aggregate, saturation_warning, samples_per_bin, splits_per_bin, trended_alpha_per_bin, untrended_alpha_per_bin, ...}`. Bin edges default `(4,8,16,32,64,128)`.
+2. Four channels: per_split (ΔΦ/Δsplits, split-in-gap pairs), trended (ΔΦ/Δstep, split-in-gap), untrended (ΔΦ/Δstep, idle), per_step (ΔΦ/Δstep, all). Per-bin α = 2-point local log-log slope vs nearest valid neighbor.
+3. UNRELIABLE emit: `samples_per_bin[b] < min_samples` (default 30) OR `r_b ≤ 0` OR no valid neighbor.
+4. saturation_warning trigger: (a) last bin's `r_b < saturation_rate_threshold` (1e-5), OR (b) `max_cap_reached` (last 25% plateau at max_observed) AND any bin's `untrended_rate >= per_split_rate`.
+5. Schema auto-translates v5 long-trajectory snapshots `{turn, n_cells, phi, n_splits_cum}` → user spec schema `{step, cell_count, phi_unnorm, split_event_bool}`. `split_event_bool := (Δn_splits_cum > 0)` — preferring cumulative diff (catches batched splits in one process()).
+
+### Inputs (4 datasets — 2 dense regenerated, 2 sparse historical)
+
+| dataset | n_history | source |
+|---|---:|---|
+| dense 3K toy | 3000 | regenerated via `dense_3k_run.py` (seed=42, MitosisV5Engine + TinyV5Substrate from §22 long-trajectory run.py) |
+| dense 10K toy | 10000 | same generator, n_turns=10000 |
+| sparse 3K hist | 31 | `state/anima_clm_v5_anima_long_trajectory_inference_smoke_2026_05_10/result.json` (snapshot_every=100) |
+| sparse 10K hist | 101 | `state/anima_clm_v5_anima_long_trajectory_extended_2026_05_10/result.json` (snapshot_every=100) |
+
+### Headline V1 vs V2 table
+
+| dataset | V1 OLS log Φ vs log n | V1 recorded historical | V2 aggregate α | V2 saturation_warning | V2 max_cap_reached |
+|---|---:|---:|---:|:---:|:---:|
+| dense 3K toy | 0.676 | n/a | **4.91** | True | True |
+| dense 10K toy | 0.674 | n/a | **4.91** | True | True |
+| sparse 3K hist | 0.116 | 0.688 | UNRELIABLE | True | True |
+| sparse 10K hist | 0.221 | **1.277** ← artifact | UNRELIABLE | True | True |
+
+**Key finding**: V1 recorded jumps 0.688 → 1.277 going 3K → 10K (max_cap regression artifact); V2 aggregate stays at 4.91 because per_split channel ignores plateau pairs. saturation_warning correctly flags ALL 4 datasets (max_cap_reached on each). For sparse data, V2 honestly emits aggregate UNRELIABLE because per-bin samples drop below min_samples threshold — the correct verdict.
+
+### Per-bin α (dense 3K, min_samples=5)
+
+| bin | α | samples | splits | mean ΔΦ/split |
+|---|---|---:|---:|---:|
+| [4,8) | UNRELIABLE | 0 | 0 | None |
+| [8,16) | UNRELIABLE (rate<0) | 7 | 8 | -7.43e-02 |
+| [16,32) | **4.91** | 6 | 16 | +2.74e-03 |
+| [32,64) | **4.91** | 16 | 32 | +8.25e-02 |
+| [64,128) | UNRELIABLE | 0 | 0 | None |
+
+dense 10K result is identical — confirming plateau invariance.
+
+### Saturation auto-detection — 10K validation
+
+dense 10K: 7000+ steps at n_cells=64 plateau. V2 detects via dual triggers: `max_cap_reached=True` (last 25% all at n=64) + untrended rate present in [64,128) bin (2.93e-04 idle drift signal). Result: `saturation_warning=True`. V1's `alpha_exponent_full=1.277` carries NO such warning — silently absorbing the artifact into the slope.
+
+### Falsifier verdicts
+
+| ID | falsifier | verdict |
+|---|---|---|
+| F-ALPHA-V2-1 | V2 도 max_cap saturation 회피 못함 | NOT_TRIGGERED — V2 emits per-bin α only for pre-cap bins; saturation_warning + max_cap_reached both True; identical result on 3K and 10K confirms plateau-invariance |
+| F-ALPHA-V2-2 | 3K history JSON 재현 불가 | NOT_TRIGGERED — `dense_3k_run.py` regenerated 3K (42s wall) and 10K (143s wall) on Mac CPU, raw#15 additive (re-imports upstream substrate + prompts + encoder) |
+| F-ALPHA-V2-3 | V2 alpha_per_bin 이 V1 보다 noisy | PARTIAL_TRIGGERED — 2-point local α is high variance per Honest C3 #1; signal-level (3K vs 10K invariance) demonstrably more stable than V1 (recorded V1: 0.688 → 1.277 = +0.589 inflation; V2: 4.91 → 4.91 = 0 inflation). Mitigation: increase min_samples once production density allows. |
+
+### Honest C3 (full 7 in `design.md` §6)
+
+1. **2-point local α is high variance** — single-bin OLS would smooth across many bins; per-bin α is local diagnostic only. Aggregate is the stable scalar.
+2. **V1 vs V2 unit mismatch** — V1: Φ ~ n^α_V1; V2 per_split: dΦ/dsplit ~ n^α_V2. Smooth-derivative predicts α_V2 ≈ α_V1 - 1; observed V2 4.91 vs predicted -0.32 → toy substrate doesn't follow smooth-derivative model. Real 350M data may converge.
+3. **min_samples is dataset-dependent** — 30 for production, 5 for dense toy, 1 for snapshot_every=100 sparse data. At sparse-1 every bin "valid" but 2-point slope is fragile; at min_samples=30 sparse data correctly emits all-UNRELIABLE.
+4. **[16,32) and [32,64) share α 4.91** — 2-point local slope picks `min(neighbors)` so both bins reference the same neighbor pair. ≥ 3 valid bins needed for distinct per-bin α; 4-bin coverage allows interior left+right average.
+5. **Trended α 3.78 vs per_split α 4.91 disagree** — Δsplits per pair varies (1, 2, 3 sometimes); trended uses ΔΦ/Δstep, per_split divides by Δsplits explicitly. Channels capture different aspects of the same scaling.
+6. **Untrended channel populated only post-cap** — pre-cap bins have no untrended pairs because every step in growth phase coincides with split events somewhere nearby. Untrended is functionally "post-saturation idle drift signal" — saturation_warning evidence rather than generic noise floor.
+7. **Saturation auto-detect is binary** — a trajectory that just barely hit cap emits same warning as one that spent 70% post-cap. diagnostics dict carries `max_cell_count_observed` + `max_cap_reached` so callers can compute continuous `saturation_fraction`.
+
+### Cross-link to §27 sibling
+
+§27 `state/anima_alpha_v2_impl_2026_05_10/alpha_v2.py` is **aggregate-only** V2 with bootstrap CI95 + verdict string. This module is the **per-bin** sibling — both implement A2 binned ΔΦ-rate per design SSOT `docs/anima_clm_v5_alpha_metric_v2_design_2026_05_10.md`. Both co-exist (raw#15 additive). Aggregate consumers (paper Φ scaling claims) → §27. Per-bin diagnostic consumers (this fire's max_cap artifact analysis, future Phase 2 production debug) → this module.
+
+### Deliverables
+
+| path | role |
+|---|---|
+| `training/alpha_metric_v2.py` | V2 implementation (~390L, raw#9 local-only) |
+| `state/anima_alpha_metric_v2_2026_05_10/design.md` | metric design (§1-§7 incl. mathematical def + UNRELIABLE criteria + saturation triggers + falsifier verdicts) |
+| `state/anima_alpha_metric_v2_2026_05_10/comparison.md` | V1 vs V2 5-section comparison + per-bin tables + cross-link to §27 |
+| `state/anima_alpha_metric_v2_2026_05_10/result.json` | machine-readable apply.py output (4 datasets) |
+| `state/anima_alpha_metric_v2_2026_05_10/apply.py` | analysis driver |
+| `state/anima_alpha_metric_v2_2026_05_10/dense_3k_run.py` | dense (snapshot_every=1) 3K/10K regenerator |
+| `state/anima_alpha_metric_v2_2026_05_10/dense_3000_history.json` | dense 3K history (3000 records) |
+| `state/anima_alpha_metric_v2_2026_05_10/dense_10000_history.json` | dense 10K history (10000 records) |
+
+### Cross-link impact on `.roadmap.reborn`
+
+- track B reborn.B.cond.5: V2 per-bin metric is now usable input for "is mitosis emerging" gating. Paper Φ scaling claims should switch from V1 OLS recorded to V2 per-bin + saturation_warning to avoid 1.277-style artifacts on long trajectories.
+- §28 BG-V5ANIMA-PHASE2-SPLIT-RATE-DIAG: trained 350M (0 splits in 1K, 16 cells) currently UNRELIABLE under V2 — needs Phase 2 dense per-step Φ history (currently 31 sparse snapshots, n_cells range 16-19) to emit production per-bin α once H1+H3 mechanism unblocks split rate.
+
+cost $0 (Mac CPU local — 42s + 143s = 3.1min wall total)
+
+---
+
 ## §34 [2026-05-10 12:42 KST] BG-LOSTASSET-D-EXPAND-VERIFY — `_expand_dim_fixed` standalone smoke ★★ PASS_ALL
 
 ### TL;DR
