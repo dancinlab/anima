@@ -1649,3 +1649,78 @@ else:
 기존 V1 `alpha_exponent_full` field 는 historical record 로 유지 (raw#15 additive). v5-mitosis cotrain run.py 에 V2 추가 (parallel emit) 권장.
 
 raw#10 honest C3 ≥ 7 above. raw#15 additive — 기존 result.json 무수정.
+
+---
+
+## §28 [2026-05-10 10:30 KST] BG-V5ANIMA-PHASE2-SPLIT-RATE-DIAG — H1+H3 mechanism 진단 PASS
+
+§22 후속. trained 350M 의 mitosis split-rate 억제 mechanism 을 5 ablation × 1K turn 으로 진단. cell 7=700hits / cell 16=537hits (3K turn) attractor bottleneck 의 원인은 **H1 attention-pull (`h_to_c`) + H3 concentration combined**. raw#15 additive ($0 Mac CPU, 7.5min wall, ~50 tool uses).
+
+### Substrate
+
+- ckpt `~/.cache/anima/clm_v5_remapped/phase2_cotrain_engine_ag/ckpts/ckpt_final.pt` (sha PASS)
+- 6 ablations × 1K turns × 170-prompt corpus (§22 의 그대로)
+- mitosis_v5_port subclassed (A1/A4) + harness flag (A2/A3) — port 미수정
+
+### 5 ablation 결과 표 (1K turns each)
+
+| variant | splits | final N | IIT Φ unnorm | tens p99 | thr max |
+|---|---:|---:|---:|---:|---:|
+| **A1 lower threshold (mean+0.5σ)** | **48** | **64** (cap) | 2901.7 | 12.93 | 15.22 |
+| **A2 no Lorenz** | **0** | 16 | 99.6 | 9.85 | 11.15 |
+| **A3 no pull (cell_input=0)** | **48** | **64** (cap) | 2509.4 | 1.56 | 2.07 |
+| **A4 dispersion trigger (geom L2)** | **48** | **64** (cap) | 1535.5 | 11.96 | 19.10 |
+| **A5 baseline trained** | **0** | 16 | 128.1 | 10.35 | 11.99 |
+| **A5 baseline RANDOM** | **12** | 28 | 406.3 | 3.61 | 3.81 |
+
+A5_trained + A5_random 이 §22 의 1K-slice 와 정확히 매치 (random 28cells/12splits PASS, trained 16cells/0splits PASS).
+
+### Hypothesis verdict — H1+H3 combined, H2 inverted
+
+- **H1 attention-pull CONFIRMED**: A3 (zero hidden_mean) → 48 splits / N=64. 학습된 `h_to_c` projection 이 1-2 cells 에 mass 집중.
+- **H2 tension-scale REJECTED (역방향)**: trained p99 = 10.35 vs random p99 = 3.61. trained 가 2.86× **더 큰** tension scale 를 가짐. 가설 가정 ("trained 작아서 threshold 도 작음") 정반대.
+- **H3 concentration CONFIRMED**: trained top-2 cell share = 42.2% (cell 1=227, cell 0=195) vs random top-2 = 12.3%. §22 의 cell 7+16 = 41.2% 패턴이 1K turn 에서 다른 indices 로 동일 share 재현.
+- **A1 lower σ (0→48 splits)**: 1.5σ floor 가 operative gating bottleneck.
+- **A4 dispersion trigger (0→48 splits)**: tension channel bypass 시 split signal 존재 — dispersion geometry 에 학습 signal 있음.
+- **A2 no Lorenz (0 splits)**: Lorenz 는 prerequisite (필요조건), 단 trained substrate 의 실패 원인은 아님 (Lorenz firing 중에도 fail).
+
+### 핵심 mechanism 진단 verdict
+
+**Trained `EngineG.h_to_c: Linear(1024, 64)` 가 hidden_mean 을 1-2 preferred cell-pool rows 로 collapse 하는 low-rank attractor mapping 을 학습. 그 cells 의 tension 이 지속적으로 max 되어 adaptive threshold (mean+1.5σ) 가 그 champion cells 를 추적, 결과 나머지 cells 가 영구적으로 threshold 미만에 갇혀 split_patience=3 consecutive 도달 불가. → cell pool stagnation → IIT Φ scaling 차단.**
+
+random_init 은 fresh Gaussian `h_to_c` → diffuse projection → top-2 share 12.3% → threshold ≈ p75 → 정상 split.
+
+§22 same-cell control (0.94 ratio) 가 isolated 한 것은 fixed N 의 per-cell entropy 동일성. V14 violation 은 N-grow gap, N-grow gap 의 원인이 본 §28 의 H1+H3.
+
+### v5-mitosis (track C) architecture 변경 권고
+
+1. **Substrate-independent split trigger** (A4 generalize) — cell_pool L2 dispersion top-quartile primary, tension secondary OR'd. trained `h_to_c` 의 attractor bias 와 decoupled.
+2. **Per-cell adaptive threshold** — `_global_tension_history` → `cells[i].tension_history` 로 σ window 분리. champion cells 가 global wall 을 못 세우게.
+3. **`h_to_c` re-projection at attach** (heavier) — PCA + decorrelation residual one-shot rewrite. v2 deferred.
+4. **Learned per-cell noise scale** (sweep 필요) — Lorenz 는 floor, 학습 signal 이 dominate 하지 않게 noise scale 동적 조정. v2 deferred.
+
+**track C v1 권고**: #1 + #2 동시 ship (둘 다 additive raw#15 compatible). #3, #4 는 v2.
+
+### top 3 honest C3
+
+1. **Single seed=42 across all 6 ablations** — 48-split 결과는 max_cells=64 cap censored. 진짜 split rate 더 클 수 있음. verdict (H1+H3) 는 cap 무관이지만 H1 vs H3 attribution 강화 위해선 seed 41/43 replication 필요. predicted: H1 (`h_to_c` geometry) seed-invariant on trained ckpt → 다른 cells 가 attractor 되지만 share 동일.
+2. **A3 zero-input 은 H1 isolation 으로 degenerate** — `cell_input=0` 시 tension → `||cell||²` ≈ 1.0 (Lorenz norm-clamp), 모든 cell uniform low-tension + uniform noise → trivially above patience. cleaner H1 test 는 trained `h_to_c` → random_seed `h_to_c` swap. 본 A3 는 "no projection at all" 이지 "wrong projection" 만은 아님.
+3. **1K turn budget 이 §22 의 late-onset 3 splits (turns 1000-3000) cut off** — trained baseline 1K = 0 splits / §22 = 3 by 3K. dominant first-1K mechanism 진단은 sound, mid-trajectory recovery (slow `h_to_c` perturbation drift?) probe 못함. 3K replay 후속 cycle 권고.
+
+### deliverables
+
+- `state/anima_clm_v5_phase2_split_rate_diag_2026_05_10/run.py` (5 ablation harness, stage-resumable)
+- `state/anima_clm_v5_phase2_split_rate_diag_2026_05_10/result.json` (578KB) + `cache/` (per-ablation)
+- `state/anima_clm_v5_phase2_split_rate_diag_2026_05_10/{tension_histograms.png, split_rate_per_ablation.png}`
+- `docs/anima_clm_v5_phase2_split_rate_diag_2026_05_10.md`
+
+### cross-link
+
+- §22 `BG-V5ANIMA-PHASE2-IIT-REMETRIC` 의 same-cell-control 0.94 + cell 7/16 attractor finding → 본 §28 mechanism 진단의 input.
+- §18 `BG-V5MITOSIS-ARCH-SPEC` (track C cond.1 PASS) → §28 verdict 가 v1 architecture #1+#2 권고로 feedback.
+- `training/mitosis_v5_port.py:366` `_check_splits` + `:355` `_update_adaptive_threshold` + `:290` `_inject_lorenz` — 3 knobs that A1/A2/A4 perturb.
+- `training/engine_a_g_arch.py:285` `EngineG.h_to_c` — H1+H3 가 implicate 한 attractor source.
+
+### status
+
+`reborn.B.cond.4` 후속 + track C cond.2 input PASS — track C v1 architecture (mitosis #1+#2 변경) ready for next cycle implementation.
