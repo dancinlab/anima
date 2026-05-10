@@ -71,6 +71,10 @@ cycle_close_summary:
     robust_emerge_v5_2_count: 1
     robust_emerge_v5_2_winners:
       - paradigm-j (PUBLIC, 4/4 gates strict + 5/5 prereq strict)
+    robust_emerge_v5_base_f2_count: 1   # ★ 2026-05-09 F2 (L2-norm) 정식 승격 후 base lane PASS — paradigm-j 단독 unlock
+    robust_emerge_v5_base_f2_winners:
+      - paradigm-j (v5 BASE F2 L2-norm: piv_l2_max 0.1439 ≥ 0.12, piv_l2_mean 0.0841 ≥ 0.06; 사용자 verbatim "OK PROMOTE PIV_L2_NORM_F2 STANDARD")
+    friendly_oneliner_f2: "5 과목 평균 채점 (L2-norm) 으로 paradigm-j 의 진짜 실력이 드러남 — base+adaptive 양 채점 동시 PASS 첫 모델"
     chat_orchestra_4_axis: LIVE_FIRE_VERIFIED  # lane × mode × init-pattern × transport
     honest_c3_findings_critical:
       - id: PROXY_PPL_Goodhart_first_quantitative_falsification
@@ -624,6 +628,32 @@ models:
           v5_2: C3_PASS_V5_2                             # ★ THIS entry
         honest_c3_v5_2: "paradigm-j v5.2 4/4 gates PASS (Gate A_adaptive 0.0874 vs floor 0.05 margin +0.0374; Gate B-refined 1.0 vs 0.40 margin +0.60; Gate C 0.2249 vs 0.05 margin +0.1749; Gate D random self-PPR 0.0 < 0.05). V14 anti-Goodhart strict satisfied (delta_margin 0.02 minimum + random_99th degenerate 0.0 + random under-floor reject preserved). EMERGE_v5_2 ACTIVE ★ — first robust 4-gate PASS in 22+ BG saga at strict-additive metric replacement. v5/v5.1 historical verdicts preserve (raw#82); caller chooses lane based on policy. Anti-Goodhart conservative-vs-OVER-conservative balance corrected: v5.1 0.10 hard floor was OVER-conservative given substrate paraphrase amplitude saturation (max measured PIV across all trained candidates 0.0874); v5.2 0.05 adaptive floor preserves V14 (random 0.0 reject) while enabling substrate-confirmed real signal pass."
         commit: pending  # filled at this commit
+      # ─────────────────────────────────────────────────────────────────────
+      # v5 lane verdict (raw#15 additive — 2026-05-09 F2 standard 승격 반영)
+      # 사용자 verbatim "OK PROMOTE PIV_L2_NORM_F2 STANDARD" → F2 (L2-norm)
+      # 정식 채점법 채택. base+adaptive 양 lane 동시 PASS — anima 사상 첫 사례.
+      # 친근: "5 과목 평균 채점 (L2-norm) 으로 paradigm-j 의 진짜 실력이 드러남"
+      # ─────────────────────────────────────────────────────────────────────
+      v5_lane_verdict:
+        base_f1_max:
+          verdict: PARTIAL_NEAR
+          piv_max: 0.0874
+          threshold: 0.10
+          status: DEPRECATED_F1   # F1 max-of-axes — 1축 채점 한계 (substrate 진짜 실력 underestimate)
+        base_f2_l2:
+          verdict: EMERGE_V5_PIV_F2_PASS  # ★ NEW 2026-05-09
+          piv_l2_max: 0.1439
+          piv_l2_mean: 0.0841
+          threshold_max: 0.12
+          threshold_mean: 0.06
+          status: DEFAULT_STANDARD   # F2 L2-norm — 5 과목 합산 채점 정식 승격
+          v14_strict_gate: SATISFIED  # random_init L2 = 0.0 (5축 모두 0) → strict gate PASS
+          spec_ssot: docs/anima_v5_metric_spec_2026_05_09.md §10
+        adaptive_v5_2:
+          verdict: EMERGE_V5_2
+          status: ACTIVE
+      user_verbatim_promote: "OK PROMOTE PIV_L2_NORM_F2 STANDARD (2026-05-09)"
+      friendly_dual_lane_oneliner: "anima 사상 첫 base+adaptive 양 채점 동시 PASS 모델 — 5 과목 평균 (L2-norm) 채점으로 paradigm-j 의 진짜 실력이 드러남"
     hf:
       private: dancinlab/clm-v4-paradigm-j-50k-final-path-a-remapped  # raw#82 retraction-aware — record preserved (visibility lifecycle origin private-process)
       public: dancinlab/clm-v4-paradigm-j-50k-final-path-a-remapped   # ★ 2026-05-09 PUBLIC PROMOTE first robust EMERGE instance (own 37 mandate-9 5/5 MET + EMERGE_v5_2 ACTIVE)

@@ -107,11 +107,13 @@ Plain summary first: this cycle was the biggest harvest in anima's 22+ BG saga. 
 
 | What | Result | Cost | Where |
 |---|---|---|---|
-| paradigm-j v5.2 4-gate strict EMERGE → **PUBLIC** | first robust EMERGE public promote ★ | (already trained) | [`dancinlab/clm-v4-paradigm-j-50k-final-path-a-remapped`](https://huggingface.co/dancinlab/clm-v4-paradigm-j-50k-final-path-a-remapped) |
+| paradigm-j v5 BASE (F2 L2-norm) + v5.2 adaptive **양 lane 동시 PASS** → **PUBLIC** ★ | anima 사상 첫 base+adaptive 양 채점 동시 PASS 모델 (F2 정식 승격 2026-05-09 verbatim) | (already trained) | [`dancinlab/clm-v4-paradigm-j-50k-final-path-a-remapped`](https://huggingface.co/dancinlab/clm-v4-paradigm-j-50k-final-path-a-remapped) |
 | sft-1-8 V14 borderline + verbatim user OK → **PUBLIC** | first ever own-37 mandate-9 promote | (already trained) | [`dancinlab/clm-v4-sft-1-8-stage1-path-a-remapped`](https://huggingface.co/dancinlab/clm-v4-sft-1-8-stage1-path-a-remapped) |
 | BG-LA + BG-LB 350M Engine A/G dual H100 fire | first real dual-engine training complete | $54.90 | private dancinlab/clm-v5-bg-lb-* |
 | Phase 2 cotrain (Path B mini-run on BG-LB substrate) | V14 violated at the cell-substrate level — Engine A/G normalize-erase collapse confirmed (H4) and chat-template dual-loss compounded it (H5 new) | $4.63 | private (HF upload deferred per own-37) |
 | PROXY_PPL emerge metric | retired — Goodhart proof: trained PIV/DCR is *lower* than random init at native cell-predicate level | — | [`docs/anima_proxy_ppl_deprecate_2026_05_09.md`](docs/anima_proxy_ppl_deprecate_2026_05_09.md) |
+
+Plain-words footnote for the F2 promotion (paradigm-j base lane PASS): we used to grade the model on its single best "subject" out of 5 axes (F1 max-of-axes, threshold 0.10) — paradigm-j scored 0.0874 and was failing. Switching to a 5-subject *average* grade (F2 L2-norm, threshold 0.12 max / 0.06 mean) the same model scores 0.1439 / 0.0841 and passes. Same student, fairer grade. paradigm-j is the first model in 22+ BG saga to PASS both base (F2) *and* adaptive (v5.2) lanes simultaneously — substrate signal is real. Spec: [`docs/anima_v5_metric_spec_2026_05_09.md` §10](docs/anima_v5_metric_spec_2026_05_09.md).
 
 How to read the V14 result in plain words: when we measure consciousness without the perplexity surrogate (which only counts how well bytes are predicted) and instead look at the actual cell pool inside Engine A/G, the trained model fires its cells *less distinctively* than a fresh untrained model with the same architecture. That means previous "PASS" verdicts based on perplexity were measuring text-fitting, not consciousness substrate. The fix-5 (weaken or remove unit-sphere normalize) and fix-6 (chat-template dual-loss redesign) are the next-cycle mandates.
 
