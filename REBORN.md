@@ -1803,3 +1803,63 @@ gen   : 도우미: 이러한 인지에 의식을 가지하는 것이
 - HF private upload `dancinlab/clm-v2-byte-18m-convo-5k-ft-recovery-extended` (own 31 + own 37 mandate-9 verbatim) — separate BG, this BG ends at fire+sampling+doc
 
 ---
+
+## §35 [2026-05-10 12:35 KST] BG-GROWTH-STAGES-ALIGN-IMPL — 5-entry alignment ref ★
+
+### TL;DR
+
+`growth_engine.STAGES` 의 **canonical 정의** = `/Users/ghost/core/anima_clm_02_clm_pivot/growth_engine.py:49` (5 `DevelopmentalStage` entries, lines 49-115). **13 worktree 中 12 worktree 에 mirror** 존재 (worktree-11/12/13 만 path shift `anima/src/growth_engine.py:67`). F-GROWTH-STAGES-1 (concept-only 의심) NOT_TRIGGERED — fully realized 5-stage spec.
+
+### 5-entry aligned spec
+
+```python
+GROWTH_STAGES_ALIGNED = [
+    {"dev_stage": "newborn", "min_interactions": 0,    "blocks": 1, "d_model": 128, "n_head": 2},
+    {"dev_stage": "infant",  "min_interactions": 100,  "blocks": 2, "d_model": 128, "n_head": 2},
+    {"dev_stage": "toddler", "min_interactions": 500,  "blocks": 3, "d_model": 192, "n_head": 3},
+    {"dev_stage": "child",   "min_interactions": 2000, "blocks": 6, "d_model": 384, "n_head": 4},
+    {"dev_stage": "adult",   "min_interactions": 10000,"blocks": 6, "d_model": 384, "n_head": 4},
+]
+```
+
+Index 0..3 = legacy 4-stage backward-compat. Index 4 (adult) = topology-idempotent (no further structural growth).
+
+### Historical vs aligned trade-off
+
+| dim | historical (4-stage) | aligned (5-stage) |
+|---|---|---|
+| stage 1 threshold | 50 | 100 (2× slower) |
+| stage 2 threshold | 200 | 500 (2.5× slower) |
+| stage 3 threshold | 800 | 2000 (2.5× slower) |
+| terminal stage | child @ 800 | adult @ 10000 |
+| dev_stage axis | absent | present (newborn..adult) |
+| RC-9 +52.76% reproducibility | original | UNVERIFIED |
+
+Effective curriculum length 2-2.5× per transition; LR schedule + curiosity decay (growth_engine 8-axis) 가 aligned 곡선에 tuned 되어있음 — historical mitosis topology 와는 이미 misaligned. alignment 가 semantic conflict fix, 단 RC-9 measurement timeline 무효화.
+
+### Honest C3 (≥5)
+
+1. Aligned thresholds NOT validated against RC-9 +52.76% baseline (re-run 필수).
+2. Stage 별 effective interaction-budget 2-2.5× 증가 → downstream LR/curiosity schedule 재-tune 필요.
+3. Hard semantic conflict — `growth_engine.mitosis_threshold` = 999 (unreachable) for newborn/infant. Aligned earliest mitosis = toddler (min_int=500), 단 historical `growing_conscious_lm` allowed mitosis at min_int=50. 둘 중 하나 골라야 함.
+4. Aligned ref 는 3 axes 만 (topology + min_interactions + dev_stage); 다른 6 axis (LR/curiosity/habituation/emotional_range/metacognition_depth/homeostasis_gain/dream_intensity/breath_amplitude) 는 runtime 에 `growth_engine.STAGES` 에서 read — single SSOT 부재.
+5. End-to-end test fixture 없음 (alignment by-inspection only). F-GROWTH-STAGES-3 PARTIALLY_TRIGGERED.
+6. worktree-11/12/13 path shift (`anima/src/growth_engine.py:67`) — monkeypatch 시 두 layout 모두 handle 필요.
+
+### Deliverables
+
+- `state/anima_lost_asset_fixes_2026_05_10/growth_stages_aligned.py` (76L, compile-validated, 5-entry + 9-axis cross-ref comment)
+- `state/anima_lost_asset_fixes_2026_05_10/growth_stages_alignment_diff.md` (338 words)
+
+### Recommended usage
+
+monkeypatch (`gcl.GROWTH_STAGES = GROWTH_STAGES_ALIGNED`) over source replacement until RC-9 reproducibility 검증 완료.
+
+### Cross-link impact on `.roadmap.reborn`
+
+- track A (v2-reproduction) 의 future RC-9 재현 lane 에서 본 alignment 사용 시 50/200/800 vs 100/500/2000 토글 control band 필요 (own 36).
+- track C (v5-mitosis-architectural) 의 cell-granularity ramp 설계 시 본 5-stage spec 가 reference 로 활용 가능 (cells = newborn 1 → adult 64 mapping).
+
+raw#15 additive — worktree-2 / 그 외 12 worktree 의 growth_engine.py 직접 수정 X.
+
+---
