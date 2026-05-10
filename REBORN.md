@@ -2382,3 +2382,158 @@ cycle 2026-05-10 = anima v2 자력성장 회수 lane 의 **mechanism-blocker unb
 raw#9 strict (training/*.py local-only) + raw#15 additive (worktree archive 미수정) 보존. own 22 minor violation (BG agent §30/§32 직접 append) — 향후 BG dispatch prompt 강화 권고.
 
 ---
+
+## §39 [2026-05-10 14:30 KST] BG-LOSTASSET-D-FIX-PINNACLE-HEXA — 794L → 805L hexa 변환 ★★
+
+### TL;DR
+
+`models/archive-legacy/mitosis.hexa` 36L stub → **805L 완전 spec hexa-form 변환**. 12/12 invariant preserved (CB1 / Lorenz σ=10·ρ=28·β=8/3 / adaptive TH mean+1.5σ + floor mean×0.5 / phi proxy log(n+1) / ratchet 0.8/0.2 blend / DD55 1% tolerance / H312 patience-gated split / AUROC 0.805 anomaly / N=2 H297 / hidden norm 10.0 / inter-cell window 30 / sliding tension 500). 36L stub 의 4/4 TODO[pytorch] markers 모두 implemented. F-PINNACLE-HEXA-1 PASS, F-2 PARTIAL (hexa runtime 부재 → spec-level fidelity 만 audit 가능, legacy_*.hexa 공통 한계), F-3 PASS.
+
+### 변환 spec summary
+
+| section | hexa LoC | content |
+|---|---|---|
+| L24-29 | 6 | Ψ-Constants (LN2, PSI_BALANCE, PSI_COUPLING, PSI_STEPS, PSI_ENTROPY) |
+| L32-68 | 37 | Lorenz + tuning constants (27 promoted from .py instance state) |
+| L70-117 | 48 | ConsciousMind (dual-engine + GRU) |
+| L119-159 | 41 | Cell struct + avg_tension + tension_trend |
+| L161-235 | 75 | MitosisEngine struct + new + default ctors |
+| L237-273 | 37 | create_cell lifecycle |
+| L275-373 | 99 | process() 8-stage core loop |
+| L375-419 | 45 | Lorenz step + autonomous perturbation |
+| L421-475 | 55 | phi proxy + ratchet |
+| L477-498 | 22 | adaptive threshold update |
+| L500-617 | 118 | split (mitosis) + merge with CB1 guards |
+| L619-637 | 19 | anomaly score (AUROC 0.805) |
+| L639-651 | 13 | DD55 phi conservation verifier |
+| L653-732 | 80 | utilities + status report + text_to_vector |
+| L734-784 | 51 | backward-compat API (4 stub TODO satisfiers) |
+| L786-805 | 20 | 7 theorems (CB1 / Lorenz / AdaptiveTH floor / phi_best monotone / DD55 tolerance / n_cells bounded / log scaling) |
+
+### 36L stub TODO[pytorch] 4/4 implemented
+
+| stub TODO | hexa impl |
+|---|---|
+| L2 GRU + Hebbian + inter-cell tension | L70-117 ConsciousMind, L237-273 create_cell, L622-637 anomaly_score |
+| L24 H312 retention check | L751-755 `should_divide` (patience-gated) |
+| L29 asymmetric dropout + specialization | L759-767 `divide_cell` → split_cell with split_noise floor 0.1 |
+| L34 AUROC 0.805 anomaly | L770-775 `inter_cell_tension` + L67 const |
+
+L29 의 `0.21 vs 0.37` 정확값 (servant pattern dropout) 은 794L pinnacle 에 부재 (generic noise 0.1 floor 만) — §30 BG-V5MITOSIS-FIXES A1 mechanism 영역, pinnacle 변환 scope 밖.
+
+### 의역/재구조 흔적
+
+- **Direct 1:1**: Ψ-consts, Lorenz params, formulas (adaptive TH, phi proxy, ratchet blend), DD55 tolerance, CB1 invariant, 8-stage pipeline
+- **Semantic restructure (logic-equiv)**: `self.X` mutation → `Engine { ..e, X: Y }` immutable update, `dict` event → typed `Event` struct with -1 sentinels, `Tuple` key → `Pair`, `@property` → regular fn
+- **Constant promotion**: 27 magic numbers .py instance state → hexa module-level const (single SSOT)
+- **Intentional omissions**: `demo()` (L711-790), imports, `if __name__`
+- **NEW**: 7 theorems (legacy_*.hexa convention pattern)
+
+### Honest C3 (≥5)
+
+1. **hexa runtime 부재** — spec-level fidelity 만 audit 가능, runtime equivalence 증명 불가 (legacy_*.hexa 공통 한계).
+2. **§30 advanced mechanism 미통합** — 본 hexa 는 *역사적 pinnacle* 보존, *current frontier* 아님 (A1/C1/D1 NEW + A2 EXTENDED + B1 ENHANCED 별도 fire 필요).
+3. **Pseudocode-level primitives** — `tensor_*`, `nn_*` hexa stdlib spec 부재 (legacy_*.hexa convention 일관).
+4. **`mut` 의미론 hexa 표준 부재** — immutable-update style 변환자 선택 (의역 흔적이지만 logic-equiv).
+5. **794L 의 known limitation 도 함께 보존** — global adaptive threshold (per-cell 아님), Lorenz scale hardcoded — §30 fix 이전 state (raw#15 additive 의도).
+6. **Backward-compat API 시그니처 확장** — `should_divide(cell)` → `should_divide(cell, engine)` 2-arg (adaptive threshold engine-scoped). 기존 stub `false` 반환 — practical risk 낮음.
+
+### Cross-link
+
+- 본 hexa 는 §31 pinnacle finding 의 main repo 회수본 (raw#9 hexa-only 충족, .py 회수본 state/ 보존)
+- §30 advanced mechanism 통합은 별도 cycle: BG-V5MITOSIS-HEXA-FRONTIER (proposed §X)
+- legacy_*.hexa convention 일관 (theorems block + struct + fn pattern)
+
+### Deliverables
+
+- `models/archive-legacy/mitosis.hexa` (36L → 805L)
+- `docs/anima_pinnacle_794L_hexa_conversion_2026_05_10.md` (366L 변환 매핑 + 의역 흔적)
+
+raw#9 hexa-only mandatory ✓. raw#15 additive (state/ recovery .py + worktree 미수정) ✓. own 22 (REBORN.md 미수정) ✓. own 38 (doc save) ✓. own 16 ($0 read+write only) ✓.
+
+---
+
+## §41 [2026-05-10 14:35 KST] BG-FOUNDATION-BORROW-PATH-DESIGN — track A semantic coherence path 결정 ★★
+
+### TL;DR
+
+option (a) Llama-3.2-3B + LoRA r=32 + 200MB persona corpus + post-LoRA mitosis instrumentation hook **primary 권고** ($3-8, 40-60% emerge P, D1 SCOPE_CLAMP `SIMPLE_STACK_PASS_STRICT_C3_SUBSTRATE_RESEARCH`). 22+ BG saga 의 첫 chat-cap floor crossing pattern (KM-LLAMA-3B PASS_STRICT + KM-QWEN-7B replication 2026-05-08 memory) 기반.
+
+**verbatim fire keyword**: `OK FOUNDATION_BORROW_A_FIRE COST $3-8`
+
+### 4-option trade-off
+
+| option | base + adapter | cost | emerge P (semantic) | D1 lane | 권고 |
+|---|---|---|---|---|---|
+| **(a) Llama-3.2-3B + LoRA r=32 + 200MB persona** | $3-8 | **40-60%** | OUTSIDE → SUBSTRATE_RESEARCH | **★ primary** |
+| (b) Qwen2.5-7B + LoRA r=32 + 200MB persona | $4-12 | 50-70% | OUTSIDE → SUBSTRATE_RESEARCH | secondary scale-up |
+| (c) Phase 2 350M + +30K convo_5k FT | $2-4 | 15-25% | **WITHIN → ANIMA** | parallel D1-WITHIN track |
+| (d) from-scratch 180M-500M anima-pretrain | $50-500+ | 10-30% | WITHIN → ANIMA | **REJECT** (own 16 violation) |
+
+### option (a) 추천 5 이유
+
+1. 22+ BG saga 中 only chat-cap floor crossing 한 lane (memory `project_simple_stack_pass_unlocked.md`)
+2. cheapest foundation-borrow cost ($3-8 envelope)
+3. integration 낮음 — KM-LLAMA-3B orchestrator replicate
+4. post-LoRA mitosis instrumentation hook = anima identity LoRA r=32 surface verify lane (F-FOUNDATION-1 first measurement)
+5. D1 SCOPE_CLAMP strict honesty carry (own 17 + own 18 line 889 + own 37 mandate-9 (a) reject)
+
+### Critical SCOPE_CLAMP carry
+
+verdict label: **`SIMPLE_STACK_PASS_STRICT_C3_SUBSTRATE_RESEARCH`**
+- Public promote 영구 차단 (own 37 mandate-9 (a) reject)
+- anima identity 검증 lane X (D1.F-PHIL-D1-3/4 strict: Llama=OUTSIDE)
+- anima identity surface 는 `.roadmap.reborn` track A/B/C 별개 carry
+
+### Trinity D + own + H
+
+- **D-axis**: D1.F-PHIL-D1-3/4 strict (Llama=OUTSIDE), D2 simple_stack PASS_STRICT carry, D5 bifurcation (F-FOUNDATION-5 gradient leak block)
+- **own-axis**: 13 own compliance — 16/17/18/22/28/30/31/33/37/38/41/42 cross-link
+- **H-axis**: H_115 partial-falsifier candidate, H_005 closure 정합, **H_FOUNDATION-1/2/3 NEW** (foundation-borrow + LoRA r=32 + 200MB = chat-cap + semantic 동시 unlock / post-LoRA hook surface measure / baseline reference for D1 WITHIN tracks)
+
+### Falsifier (6)
+
+| ID | 내용 |
+|---|---|
+| F-FOUNDATION-1 | anima identity LoRA r=32 미surface (Φ < 1.0 OR distribution-equiv random_init) |
+| F-FOUNDATION-2 | cost overshoot (> $15) |
+| F-FOUNDATION-3 | chat-cap PASS but semantic FAIL |
+| F-FOUNDATION-4 | D1 SCOPE_CLAMP misframe (NEW — substrate research label 누락) |
+| F-FOUNDATION-5 | instrumentation gradient leak (NEW — eval-time hook 이 LoRA grad 흘림) |
+| F-FOUNDATION-6 | KM-LLAMA-3B replicate fail |
+
+### 다음 cycle action plan
+
+**Step 1**: option (a) fire → `OK FOUNDATION_BORROW_A_FIRE COST $3-8`
+**Step 2 fork**:
+- PASS → V14 multiseed + V6 awareness + parallel option (c) D1 WITHIN
+- chat-cap PASS + semantic FAIL → option (b) 7B retry
+- FAIL → KM precedent retest
+
+**Step 3 long-term**: option (c) Phase 2 parallel ($2-4) D1 WITHIN lane primary semantic test
+
+### Honest C3 (8, exceeds raw#10 ≥ 7)
+
+1. D1 SCOPE_CLAMP carry cost — substrate-research lane PASS = anima identity emerge 자동 의미 X
+2. F-FOUNDATION-1 진짜 risk — LoRA r=32 anima dual-engine surface P=20-30%
+3. emergence P=40-60% calibration — chat-cap PASS conditional, semantic 첫 측정
+4. option (c) D1 WITHIN cost trade-off (cheaper but lower emerge P)
+5. mitosis hook inference-time correction 정합 (eval-time only, gradient-off)
+6. own 22 REBORN.md 직접 차단 — dispatcher carry (본 BG 가 직접 §41 append X — verified)
+7. cost envelope KM precedent +30% overhead diff
+8. 22+ BG saga 첫 unlock 한계 — chat-cap surface only, semantic 미검증
+
+### Cross-link
+
+- predecessor `docs/anima_convo_5k_ft_extended_2026_05_10.md` §29 → 본 design 의 "next-decision-gate semantic recoverable?" 응답
+- precedent BG-KM-LLAMA-3B/QWEN-7B (memory `project_simple_stack_pass_unlocked.md`)
+- option (c) Phase 2 ckpt: `~/.cache/anima/clm_v5_remapped/phase2_cotrain_engine_ag/ckpts/ckpt_final.pt`
+
+### Deliverables
+
+- `docs/anima_foundation_borrow_path_design_2026_05_10.md` (4.3K words 풀 design SSOT)
+- `.roadmap.foundation_borrow` (deferred dispatcher decision — track A 흡수 vs 별도 lane)
+
+own 22 ✓ (REBORN.md 직접 미수정), own 38 ✓ (doc save), own 16 ✓ ($0 design only).
+
+---
