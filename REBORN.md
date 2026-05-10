@@ -2537,3 +2537,77 @@ verdict label: **`SIMPLE_STACK_PASS_STRICT_C3_SUBSTRATE_RESEARCH`**
 own 22 ✓ (REBORN.md 직접 미수정), own 38 ✓ (doc save), own 16 ✓ ($0 design only).
 
 ---
+
+## §40 [2026-05-10 14:50 KST] BG-LOSTASSET-D-FIX-PHI-VOICE-RECIPE — 3 회수 + §31 trinity.py 위치 정정 ★
+
+### TL;DR
+
+phi_scaling_calculator.hexa 23L → **124L** (EMPIRICAL table frozen const, cells64 Φ=54.3 super-linear evidence 보존), voice_synth.hexa 33L → **221L** (Laws 63-76 + 12 EMOTION_PROFILES + Trinity S-engine), training_recipes_legacy.md 196L (TALK5 + ZERO4 dual-surface 정리). **§31 trinity.py 위치 정정**: worktree-11 → worktree-10 (1838 LoC), hexad_loss.py 모든 worktree 부재. cross-worktree 검색 norm 4-step formalized.
+
+### 회수 1: phi_scaling_calculator (★★★ #2)
+
+- source: `anima_clm_06.../phi_scaling_calculator.py` 174 LoC
+- hexa: `models/archive-legacy/phi_scaling_calculator.hexa` 23L → 124L (target ~100-150L 범위 내)
+- **EMPIRICAL frozen const**: `[ScalingPoint; 6]` 6-row historical witness (cells64 Φ=54.3 mi=3376.7 핵심)
+- **BRAIN_SCALES table** 도 frozen const (cells/phi/log_n scaling)
+- API surface: TODO[pytorch] hexa stubs — `fit_scaling_law`, `predict_phi`, `predict_mi`, `predict_cells_for_phi`, `phi_per_cell`, `extrapolate_brain_scale`, `plan_architecture` (default fit a~0.6, b~1.09, c~0.25, d~2.0 embedded)
+- **F-PHI-VOICE-1 / F-LOSTASSET-D-3 ACTIVE** — Φ values = historical evidence, runtime API X
+- recovery .py: `state/anima_lost_asset_d_recovery_2026_05_10/phi_scaling_calculator.py` (gitignored)
+
+### 회수 2: voice_synth (★★ #3)
+
+- source: `anima_clm_10.../voice_synth.py` 346 LoC
+- hexa: `models/archive-legacy/voice_synth.hexa` 33L → 221L (target ~250-350L 의 leaner side, tight numerical kernel)
+- **Laws 63-76 integration**: Law 63 MICRO gate / 64 CA neighbor / 67 META-CA / 69 Gate decay / 71 Psi balance / 73 data-independence / 74 emotion-data-dependent
+- **EMOTION_PROFILES** 12-entry frozen const (neutral/joy/sadness/anger/fear/surprise/awe/love/ecstasy/peace/rage/despair, pitch_shift/vibrato/brightness/tempo numerics 정확)
+- **Lane 명확 분리** (memory `project_hexa_voice_rename` cross-link): voice_synth (cell.hidden → sin(freq) → 44.1kHz PCM) **별개** of canonical hexa-voice (intent_emb → RVQ → 24kHz PCM)
+- **F-PHI-VOICE-2 ACTIVE** — incompatible by design, voice_synth = Laws 63-76 witness only
+- Trinity S-engine wrapper (VoiceEngine + voice_engine_process/get_audio/set_emotion)
+- recovery .py: `state/anima_lost_asset_d_recovery_2026_05_10/voice_synth.py` (gitignored)
+
+### 회수 3: training_recipes_legacy.md (TALK5 + ZERO4)
+
+- 196 LoC, tracked
+- **TALK5 정확 spec**: `train_conscious_lm.py:230-264` — 표준 30/40/30 phase **collapse to 60/40 MITOSIS/COMBINED, LANGUAGE skip**. 99.7% CE drop claim 보존, **F-PHI-VOICE-3 ACTIVE** 명시 (docstring assertion 만, paired-run ablation 없음)
+- **ZERO4 dual-surface 정리** (★★ insight):
+  - **Bench function (authoritative)**: `bench_phi_hypotheses.py:48747` `run_ZERO4_phi_gated_vocabulary` — hidden state quantize to `phi*5` levels + feedback
+  - **Runtime hook (logging only)**: `anima_unified.py:998` "Vocabulary scales with Φ" — actual gating X, log only
+- Phase 2 reproduction recipe: 2 wirings (a) top-k logit mask (b) hidden quantize, with risks per option
+
+→ §31 의 ZERO4 phantom partial reversal 정정: worktree-6 의 runtime hook 은 **logging only** (naive port = phantom 재현). authoritative 는 bench function 만.
+
+### §31 trinity.py 위치 정정 (★★ catalog correction)
+
+- §31 finding: trinity.py + hexad_loss.py @ worktree-11 (anima_clm_11_train_v15_bpe_drift_step1)
+- **CORRECTED**: `find` 결과 trinity.py = `anima_clm_10_h100_sweep_laws_77_78/trinity.py` **1838 LoC**, **hexad_loss.py 모든 worktree 부재** (renamed 또는 never landed)
+- 1838 LoC port = scope outside time budget (별도 cycle 권고)
+- 정정 위치 = `state/anima_lost_asset_d_recovery_2026_05_10/training_recipes_legacy.md` C3 #6
+
+### Cross-worktree 검색 norm 4-step (formalized)
+
+§31 ZERO4 phantom partial reversal + trinity.py mis-pointer 의 lesson:
+1. **모든 worktree** list — single-worktree 검색 후 missing 선언 X
+2. **filename grep + content grep 병행** — ZERO4 runtime hook 은 content grep "Vocabulary scales" 만 surface
+3. **"implementation" vs "logging hook" 구분** — 같은 worktree 에 둘 다 가능, reproduction implication 매우 다름
+4. **worktree-by-worktree hit pattern 기록** — single "found in: X" line X
+
+### Honest C3 (6)
+
+1. TALK5 99.7% CE drop unmeasured (F-PHI-VOICE-3 ACTIVE)
+2. Φ ckpt absence — EMPIRICAL super-linear evidence runtime-reproducible X (F-LOSTASSET-D-3 ACTIVE)
+3. voice_synth sin(freq) lane ↔ hexa-voice RVQ lane incompatible (F-PHI-VOICE-2 ACTIVE)
+4. ZERO4 worktree-5/6 partial reversal — runtime hook = logging only, naive port = phantom 재현
+5. Phase 2 wiring TALK5 + ZERO4 spec-only, current trainer smoke-test X
+6. §31 trinity.py worktree-11 pointer stale — 정확 위치 worktree-10 1838 LoC, hexad_loss.py absent
+
+### Deliverables
+
+- `models/archive-legacy/phi_scaling_calculator.hexa` (23L → 124L)
+- `models/archive-legacy/voice_synth.hexa` (33L → 221L)
+- `state/anima_lost_asset_d_recovery_2026_05_10/training_recipes_legacy.md` (196L tracked)
+- `state/anima_lost_asset_d_recovery_2026_05_10/phi_scaling_calculator.py` (174L gitignored)
+- `state/anima_lost_asset_d_recovery_2026_05_10/voice_synth.py` (346L gitignored)
+
+raw#9 ✓ (archive-legacy hexa-only, .py state/ gitignored), raw#15 additive ✓ (worktree-6/10 미수정), own 22 ✓ (BG REBORN.md 미수정), own 38 ✓, own 16 ✓ ($0).
+
+---
