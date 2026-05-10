@@ -755,6 +755,10 @@ topic_hash: int (direction.argmax)
 4. **tension_link RC-6 99.3% 디코딩 정확도 재현** — TensionDecoder 학습 스크립트 (현재 본 파일에 부재) 회수 또는 별도 RC-6 측정 doc 회수 → 78× 압축 + 99.3% 정확도 claim 검증.
 5. **growth_engine 8-axis hyperparam ablation** — 8 axis × 5 stage = 40 cell 중 어느 axis 가 실측 의미있나? 현재는 heuristic Piaget mimic — H100 1× 짜리 mini-ablation (axis-out 1 at a time) 로 의미축 식별.
 
+### §16 status update [2026-05-10 11:17 KST] — tension_link.py 물리 회수
+
+`tension_link.py` (worktree-2, 287L) 회수 완료 → `state/anima_lost_asset_fixes_2026_05_10/tension_link.py` (local-only, `**/*.py` gitignored — `growing_conscious_lm_expand_dim_fix.py` 와 동일 패턴). import smoke **PASS** (`from tension_link import TensionPacket, TensionDecoder, TensionLink, TensionHub` clean import, torch+socket+threading 의존 OK). TensionDecoder 학습 ckpt 검색 결과: anima_clm_02..13 + anima/state 전체 search → `*tension*decoder*` / `*tension*ckpt*` / `*tension*.pt` **0 hits** — trained checkpoint **NOT FOUND**, 어느 worktree 에도 비-소스 ckpt artifact 부재. `clm_09/bench_tension_link.py` (271L) 는 99.3% 검증 harness 자체 (10D fingerprint × 5-class) 이지만 결과 ckpt/JSON 미저장. 따라서 RC-6 99.3% 디코딩 정확도 + 78× 압축 claim 은 여전히 **unverifiable** (소스 header 주석 + bench script 만 존재, 측정 결과 artifact 부재). 회수 효과: §16 deep-read 의 verbatim 출처가 main repo 내 (gitignored) artifact 로 고정되어 향후 cross-ref 안정. C3#2 (RC-6 99.3% 코드 단 부재) 는 그대로 유지.
+
 ## §17 [2026-05-10 08:08 KST] lost asset deep read C — TALK5 + AnimaLM v4_savant + 5-channel meta-telepathy
 
 ### C1. train_conscious_lm.py TALK5 (worktree-5: anima_clm_05_v2_first_english)
