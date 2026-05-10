@@ -113,11 +113,21 @@ GROWTH_STAGES = [
 
 ## §3 BG-LOSTASSET-C 가 발견한 phantom claims (doc-only fix)
 
-### 3.1 ZERO4 flag — phantom
+### 3.1 ZERO4 flag — phantom **PARTIALLY REVERSED 2026-05-10 12:50 KST**
 
-`grep -rn "ZERO4\|--zero" /Users/ghost/core/anima_clm_05_v2_first_english/` → **0 matches**. ZERO4 는 commit message / spec doc 에만 존재, 실제 train script 의 argparse 에 부재. concept-only.
+원래 finding: `grep -rn "ZERO4\|--zero" /Users/ghost/core/anima_clm_05_v2_first_english/` → **0 matches**. ZERO4 는 worktree-5 의 commit message / spec doc 에만 존재.
 
-**Fix**: REBORN.md / archive doc 에서 "TALK5 + ZERO4" 표기를 "TALK5 (ZERO4 = phantom flag, code 부재 — 별도 spec only)" 로 정정. 본 doc 에서 honest C3 명시.
+**REVERSAL (BG-LOSTASSET-D-WORKTREE-REMAINING §31)**: worktree-6 (anima_clm_06_v2_korean_chat) 에서 ZERO4 의 **runtime hook + bench 발견**:
+- `/Users/ghost/core/anima_clm_06_v2_korean_chat/anima_unified.py:998` — runtime hook "Vocabulary scales with Φ"
+- `/Users/ghost/core/anima_clm_06_v2_korean_chat/bench_phi_hypotheses.py:48747` — `run_ZERO4_phi_gated_vocabulary` bench function
+
+→ ZERO4 는 worktree-5 에선 phantom (commit msg only) 이지만 worktree-6 에선 **reproducible runtime mechanism**. concept-only 결론은 worktree-5 limited scope 의 artifact.
+
+**Fix (정정)**: REBORN.md / archive doc 에서 "TALK5 + ZERO4" 표기는 다음과 같이 분리:
+- worktree-5 era: "ZERO4 = spec/commit msg only, code 부재"
+- worktree-6 era: "ZERO4 = Φ-gated vocabulary runtime hook + bench (reproducible)"
+
+honest C3: BG-LOSTASSET-C 의 "phantom" 결론은 worktree-5 single-worktree 검색의 artifact — 다른 worktree 추가 검색 시 reverse 가능 case 의 대표 예. 향후 cross-worktree 검색 norm 화 권고.
 
 ### 3.2 TALK5 99.7% CE drop — docstring only
 
