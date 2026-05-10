@@ -3630,3 +3630,92 @@ raw#9 ✓, raw#15 ✓, own 22 ✓ (REBORN.md 미수정), own 38 ✓, own 16 ✓ 
 ★★★ prediction-driven design framework template generalize 검증 lane.
 
 ---
+
+## §52 [2026-05-10 19:15 KST] BG-CELL-POOL-WEIGHT-STATISTICS — cotrain-exercise weak form CONFIRMED ★★★
+
+### Verdict
+
+**§47 cotrain-exercise hypothesis 의 weak form CONFIRMED** — interface projections (h_to_c, c_to_h) 가 cotrain 동안 exercised, 단 cell_pool 자체는 unit-sphere init normalization 으로 structurally locked (almost unchanged). **Strong form REJECTED, Weak form CONFIRMED, Refined form 권고**.
+
+### Setup
+
+- 5 ckpts loaded read-only (raw#15): A=Phase 2 cotrain, B=BG-LA pretrain, C=v2 cells64, D=v2 cells128, E=v2 convo_5k FT
+- BONUS: S = BG-LB step 8000 (A pre-cotrain substrate) → cotrain isolation S→A vs S→B 가능
+- 13+ metrics per tensor: L2/L∞/Fro norms, sparsity, mean/std/skew/kurtosis, top-10 SVD, effective rank, stable rank, spectral norm, MP deviation, cosine-to-random-init (5-seed median)
+- Hungarian cross-substrate alignment
+
+### Architectural finding
+
+v2 (C/D/E) 에 **`cell_pool_init` / `c_to_h` / `h_to_c` 부재** — engine_g 가 dual-FFN twin. cotrain-exercise hypothesis 직접 검증은 A vs B (350M paradigm) 만. v2 path = paradigm-orthogonal sanity check.
+
+### Headline 결과
+
+1. **`engine_g.cell_pool_init`** (16, 64):
+   - A vs B cosine = **0.99996** (거의 동일)
+   - S→A fro-norm = **0.0020** (4× smaller than S→B = 0.0087)
+   - cell pool 가 cotrain 동안 거의 안 움직임 — **unit-sphere normalization at init structurally protects it**
+   - **F-WEIGHT-3 FIRED** (cell_pool eff_rank 14.08 invariant across A/B/random)
+
+2. **`engine_g.h_to_c.weight`** (64, 1024):
+   - A vs B cosine = **0.764** (cotrain delta 명확)
+   - S→A fro-norm = **0.162**
+   - eff_rank: 35.2 (A) / 30.4 (B) / 62.0 (random) → trained ~half of random
+   - cotrain effect unmistakable
+
+3. **`engine_g.c_to_h.weight`** (1024, 64):
+   - A vs B cosine = **0.692** (cotrain delta 명확)
+   - S→A fro-norm = **0.116**
+   - cum_var_top10 = 0.72 (A) vs 0.22 (random) → strong rank concentration
+
+4. **F-WEIGHT-2 REJECTED**: every trained tensor diverges from random_init in eff_rank, MP-spectral-ratio, kurtosis. cotrain effect unmistakable on projections.
+
+5. **F-WEIGHT-1 MIXED**: cell_pool A ≈ B (0.99996), 단 projections diverge (0.69-0.76)
+
+### v2 paradigm side-finding
+
+| ckpt | health flag |
+|---|---|
+| C cells64 | healthy training |
+| D cells128 | severe rank collapse (FFN eff_rank 11.5, stable_rank 2.15, kurtosis −1.28) |
+| E convo_5k FT | mid-layer rank restored, tok_emb collapsed (eff_rank 9.29 into chat-domain manifold) |
+
+paradigm 검증과 무관, 단 health flag 가 future training 결정에 사용 가능.
+
+### §47 cotrain-exercise hypothesis 3-form 처분
+
+| form | description | verdict |
+|---|---|:---:|
+| **Strong** | "cell pool itself is exercised" | **REJECTED** (A vs B cosine 0.99996, unit-sphere lock) |
+| **Weak** | "interface projections (h_to_c, c_to_h) are exercised" | **CONFIRMED ★★★** (cosine 0.69-0.76, fro-norm S→A 0.12-0.16) |
+| **Refined** | cotrain exercises consciousness↔hidden *interface*, but cell-state pool 은 structurally locked by unit-sphere init normalization | **권고 hypothesis** |
+
+**Refined hypothesis 의 implication**: future cotrain run 에서 cell_pool exercise 도 원하면:
+- (a) drop the init norm-clamp
+- (b) route consciousness-corpus gradients into cell_pool via non-clamped update path
+
+### Honest C3 (8/10)
+
+1. 5 ckpts loaded, 222 keys cataloged, bonus substrate ckpt for true isolation.
+2. bf16 quantization artifact disambiguated from training delta.
+3. Phase 2 intermediate ckpts (1500/3000/4500/6000) 부재 → trajectory analysis 불가능.
+4. t-SNE on 16 cells skipped (visually meaningless).
+5. v2 (C/D/E) 에 c_to_h / h_to_c 부재 — paradigm-orthogonal only, hypothesis 직접 test X.
+6. random_init baseline = 5-seed median, 단 single substrate (A의 config) 만.
+7. Hungarian alignment: cell-by-cell similarity matrix max-weight matching, 단 16 cells 가 small N.
+8. F-WEIGHT-3 (cell_pool eff_rank invariant) FIRED 단 hypothesis falsifying X — refined form 으로 reframe.
+
+### Cross-link impact
+
+- §47 cotrain-exercise hypothesis 의 weight-space evidence ★★★ — weak form CONFIRMED
+- §50 BG-COTRAIN-EXERCISE-CAUSAL-PROOF (in-flight) ablation 결과와 결합 시 ★★★★ joint
+- ★★★★★ 자격: §50 PASS + re-run cotrain WITHOUT cell_pool norm-clamp 후 cell_pool 도 exercise 됨 검증
+
+### Deliverables
+
+- `state/anima_cell_pool_weight_statistics_2026_05_10/{spec.md, audit.py, statistics_per_ckpt.json (50KB), cross_substrate_alignment.json, cotrain_isolation.json, verdict.md}`
+
+raw#9 ✓ (audit.py state/ local), raw#15 ✓ (5 ckpts read-only), own 22 ✓ (REBORN.md 미수정), own 38 ✓, own 16 ✓ ($0, ~25s wall).
+
+★★★ standalone (cotrain-exercise weak form CONFIRMED). §50 ablation 결과 결합 시 ★★★★ joint candidate.
+
+---
