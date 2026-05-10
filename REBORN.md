@@ -3732,3 +3732,92 @@ raw#9 ✓ (audit.py state/ local), raw#15 ✓ (5 ckpts read-only), own 22 ✓ (R
 → §47 cotrain-exercise hypothesis 의 **Refined form** 강화: cotrain exercises consciousness↔hidden interface (h_to_c, c_to_h), cell-state pool 은 모든 lane 에서 structurally locked. future cotrain 에서 cell_pool exercise 도 원하면 (a) drop init norm-clamp 또는 (b) non-clamped update path **mandatory** (★★★★★ unlock 의 prerequisite).
 
 ---
+
+## §50 [2026-05-10 20:30 KST] BG-COTRAIN-EXERCISE-CAUSAL-PROOF — CORRELATIONAL (engine_g locus FALSIFIED, engine_a refined) ★★★★
+
+### Verdict
+
+**CORRELATIONAL** (falsifier-pass 2/3) — §47 cotrain-exercise hypothesis as originally framed (engine_g.{cell_pool, c_to_h, h_to_c} are V14 PASS driving modules) **NOT proven**. weight differences + forward-projection differences exist (correlational), 단 engine_g modules random_init mutation 이 V14 polarity flip 못함. **causal locus 가 upstream — engine_a (24-layer transformer body) 에 있을 가능성** (post-hoc refined hypothesis).
+
+### Falsifier 처분
+
+| ID | falsifier | verdict |
+|---|---|:---:|
+| F-COTRAIN-EXERCISE-1 | weight stats 차이 부재 | **PASSED** (c_to_h cos_AB=0.6924, h_to_c 0.7640) |
+| F-COTRAIN-EXERCISE-2 | ablation polarity flip X | **FALSIFIED** (0/4 ablations flipped V14) |
+| F-COTRAIN-EXERCISE-3 | forward diversity 차이 부재 | **PASSED** (A eff_dim 4.74 > B 4.09) |
+
+### Phase 1: Weight-space statistics (A=Phase 2, B=BG-LA, R=random seed=42)
+
+| target | l2_A | l2_B | l2_R | effrank_A | effrank_B | sparsity<.01_A | sparsity<.01_B | cos(A,B) |
+|---|---|---|---|---|---|---|---|---|
+| `cell_pool_init` | 4.000 | 4.000 | 4.000 | 15.44 | 15.44 | 0.057 | 0.054 | **1.0000** |
+| `c_to_h.weight` | 7.870 | 9.356 | 5.132 | 51.85 | 46.20 | 0.081 | 0.052 | **0.6924** |
+| `h_to_c.weight` | 6.406 | 6.751 | 5.106 | 58.29 | 57.16 | 0.152 | 0.150 | **0.7640** |
+
+→ cell_pool_init frozen-equivalent (cos=1.0, §52 cross-verify), c_to_h + h_to_c 측정 가능 cotrain delta.
+
+### Phase 2: Forward-pass diversity (n=80 byte-hash prompts)
+
+| substrate | hm avg cos | hm eff_dim (1024D) | c_to_h(hm) avg cos | c_to_h(hm) eff_dim (64D) |
+|---|---|---|---|---|
+| A | 0.956 | 38.80 | 0.839 | **4.74** |
+| B | 0.853 | 35.60 | 0.783 | **4.09** |
+| R | 0.002 | 66.63 | -0.001 | 38.01 |
+
+A's c_to_h projection +16% effective dim vs B, with higher avg cosine (more clustered) — marginal richness gain.
+
+### Phase 3: Ablation V14 (n_turns=200, seeds=[42,137,271], MAX_CELLS=128)
+
+| condition | verdict | trained Φ_un16 | mirror Φ mean | beats | trained_cells |
+|---|---|---|---|---|---|
+| baseline_A (no swap) | **V14_PASS** | 2412.08 | 1615.49 | 3/3 | 57 |
+| ABL1 c_to_h ← random | **V14_PASS** | 2815.73 | 1615.49 | 3/3 | 62 |
+| ABL2 h_to_c ← random | **V14_PASS** | **12116.27** | 1615.49 | 3/3 | **128 cap** |
+| ABL3 both ← random | **V14_PASS** | **12261.13** | 1615.49 | 3/3 | **128 cap** |
+| ABL4 cell_pool ← random | **V14_PASS** | 2412.12 | 1615.49 | 3/3 | 57 |
+
+**0 of 4 ablations flipped V14 verdict.** Random h_to_c (ABL2/3) actually 5× boosts trained Φ + saturates cell count (§46 ablation 11851 reproduce).
+
+### Refined hypothesis (post-hoc)
+
+Phase 2 cotrain DID modify A's weights (F1 evidence) AND DID alter forward-projection geometry (F3 evidence), 단 **V14 PASS lever 가 engine_g 에 위치하지 않음**. 가장 parsimonious:
+
+> **engine_a (24-layer transformer body) 가 cotrain-exercised substrate** — chat dual-loss 가 24 layers' RMSNorm/GQA/SwiGLU weights 에 gradient propagate → richer hidden_mean dynamics. engine_g acts as **readout, not engine**.
+
+직접 test = engine_a layer slab swap while keeping engine_g intact (deferred follow-up BG, ~4hr CPU estimated).
+
+### ABL2/3 explosive 패턴 cross-link (§46 + §50)
+
+random h_to_c → trained Φ explosive (5× baseline, cap-saturate):
+- §46 ablation: h_to_c-only random_init → 11851 Φ vs trained 2412
+- §50 ABL2: 12116 Φ
+- §50 ABL3 (both): 12261 Φ
+
+→ trained h_to_c = real bottleneck (Φ headroom limit), 단 polarity preservation 의 cause 아님. random h_to_c 가 Φ headroom 완화 (cell_input chaotic → explosive mitosis growth).
+
+### Cross-link impact
+
+- §47 cotrain-exercise hypothesis engine_g locus FALSIFIED — refined to engine_a body
+- §52 cell_pool weak CONFIRMED + §50 ABL4 cell_pool random no-op = **cell_pool 자체는 V14 polarity 무관** (a priori from cos_AB=1.0)
+- §43 + §48 prediction match (Llama-3.2-3B) 의 mechanism 도 engine_g 가 아닌 base transformer body 의 LoRA-finetuned hidden dynamics 일 가능성
+- §38 + §39 + §44 V14_STRICT_PASS (Phase 2 substrate) 의 mechanism 가 engine_a body 에 있다는 가설
+- 다음 cycle: BG-ENGINE-A-LAYER-SLAB-SWAP (24 layers 중 어느 layer slab 가 V14 polarity carry?)
+
+### Honest C3 (10/10 in verdict.md, key 5)
+
+1. F2 mirror invariance genuine — mirror Φ pinned at 1615.49 across 5 conditions (mirrors independent random_init la_350m models)
+2. ABL4 cell_pool no-op (Φ identical to baseline) inferable a priori from F1 cos_AB=1.0
+3. Random h_to_c BOOSTS Φ — opposite of "h_to_c is the exercised projection" prediction
+4. F3 PASS uses OR criterion (eff_dim higher OR cos lower) — strict-AND read = F3 ambiguous
+5. Engine_a not directly probed — refined hypothesis post-hoc inference, not measured
+
+### Deliverables
+
+- `state/anima_cotrain_exercise_causal_proof_2026_05_10/{spec.md, run.py, weight_statistics.json (10KB), forward_diversity.json (2KB), ablation_result.json (55KB), summary.json (5KB), verdict.md (10KB), run.log, run.stdout.log, run.stderr.log}`
+
+raw#9 ✓ (run.py state/ local), raw#15 ✓ (2 ckpts read-only, in-memory mutations only), own 22 ✓ (BG REBORN.md 미수정), own 38 ✓, own 16 ✓ ($0 local CPU).
+
+★★★★ severity (significant correlational evidence + refined hypothesis post-hoc). engine_g locus 가 V14 polarity cause 가 아니라 **engine_a body 가 진짜 cotrain-exercised substrate** — 다음 cycle BG-ENGINE-A-LAYER-SLAB-SWAP 가 ★★★★★ unlock 의 가장 직접 path.
+
+---

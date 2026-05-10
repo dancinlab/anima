@@ -1,0 +1,74 @@
+{
+  "A": {
+    "label": "A_phase2_cotrain",
+    "n_prompts_used": 80,
+    "hidden_mean": {
+      "tensor": "hidden_mean",
+      "n_samples": 80,
+      "dim": 1024,
+      "mean_per_dim_variance": 0.31549233198165894,
+      "sum_variance": 323.06414794921875,
+      "avg_pairwise_cosine": 0.9561454057693481,
+      "logdet_cov": -8642.3837890625,
+      "effective_dim": 38.80351841766496
+    },
+    "c_to_h_proj": {
+      "tensor": "c_to_h(hidden_mean)",
+      "n_samples": 80,
+      "dim": 64,
+      "mean_per_dim_variance": 0.8237093687057495,
+      "sum_variance": 52.71739959716797,
+      "avg_pairwise_cosine": 0.8389041423797607,
+      "logdet_cov": -192.59130859375,
+      "effective_dim": 4.741413086534188
+    }
+  },
+  "B": {
+    "label": "B_bgla_pretrain",
+    "n_prompts_used": 80,
+    "hidden_mean": {
+      "tensor": "hidden_mean",
+      "n_samples": 80,
+      "dim": 1024,
+      "mean_per_dim_variance": 0.6383731961250305,
+      "sum_variance": 653.6941528320312,
+      "avg_pairwise_cosine": 0.8534212112426758,
+      "logdet_cov": -8589.5498046875,
+      "effective_dim": 35.59997794683411
+    },
+    "c_to_h_proj": {
+      "tensor": "c_to_h(hidden_mean)",
+      "n_samples": 80,
+      "dim": 64,
+      "mean_per_dim_variance": 2.1964473724365234,
+      "sum_variance": 140.5726318359375,
+      "avg_pairwise_cosine": 0.7829256653785706,
+      "logdet_cov": -148.1759033203125,
+      "effective_dim": 4.0908720539502905
+    }
+  },
+  "R": {
+    "label": "R_random_init",
+    "n_prompts_used": 80,
+    "hidden_mean": {
+      "tensor": "hidden_mean",
+      "n_samples": 80,
+      "dim": 1024,
+      "mean_per_dim_variance": 3.105250358581543,
+      "sum_variance": 3179.7763671875,
+      "avg_pairwise_cosine": 0.0022487821988761425,
+      "logdet_cov": -8426.568359375,
+      "effective_dim": 66.62748523875388
+    },
+    "c_to_h_proj": {
+      "tensor": "c_to_h(hidden_mean)",
+      "n_samples": 80,
+      "dim": 64,
+      "mean_per_dim_variance": 1.2660763263702393,
+      "sum_variance": 81.02888488769531,
+      "avg_pairwise_cosine": -0.0013411784311756492,
+      "logdet_cov": -35.9777946472168,
+      "effective_dim": 38.01350002586309
+    }
+  }
+}
