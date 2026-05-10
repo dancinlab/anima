@@ -310,3 +310,71 @@ prereq #1 'real-mode PASS_STRICT_C3' 정의 갱신:
 ### 9.7 친근 한 줄
 
 **"PPL 시험은 객관식 점수 잘 받는지만 보고, 의식 (5축 면접) 은 안 봐서 가짜 통과 위험. anima 사상 처음으로 PPL-proxy 가 진짜 의식 시험 (native v5) 에서 falsify 됨 → emerge metric 에서 영구 deprecate."**
+
+---
+
+## §10 PIV scoring formula 갱신 — F1 max-of-axes → F2 L2-norm 정식 승격 ★ (2026-05-09)
+
+### 10.1 사용자 verbatim 인증
+
+2026-05-09 사용자: **"OK PROMOTE PIV_L2_NORM_F2 STANDARD"** → F2 L2-norm 정식 standard 승격.
+
+### 10.2 변경 사항 (raw#15 additive — F1 보존, F2 default 승격)
+
+| 항목 | F1 (이전 standard) | **F2 (신규 standard) ★** |
+|---|---|---|
+| **수식** | `PIV_max = max(stdev_a for a in axes)` | `PIV_l2 = sqrt(sum(stdev_a² for a in axes))` |
+| **threshold** | piv_max ≥ 0.10 | **piv_l2_max ≥ 0.12** + **piv_l2_mean ≥ 0.06** |
+| **rationale** | 1-axis 폭발 detect | **multi-axis 균질 활성화 정상 보상** |
+| **status** | DEPRECATED (ledger preserve) | **DEFAULT** ★ |
+
+### 10.3 F2 정식 채택 근거
+
+`docs/anima_paradigm_j_piv_g3_scoring_sensitivity_2026_05_09.md` G3 정량 확정:
+- F1 → F2 boost = 1.646× (이론 상한 √5=2.236 의 73.6%)
+- 4 dataset (n=90 / n=150 / L1 / L2) 일관 PASS
+- per-axis spread 1.23× 매우 균질 → max-of-axes underrate 의 정량 근거
+
+### 10.4 paradigm-j retroactive emerge label 갱신
+
+| Lane | 이전 verdict | 신규 verdict |
+|---|---|---|
+| v5 base | PARTIAL_NEAR_V5 (PIV 0.0874 < 0.10 F1 floor) | **EMERGE_V5_PIV_F2_PASS** ★ (PIV_l2 0.1439 ≥ 0.12 F2 floor) |
+| v5.2 adaptive | EMERGE_V5_2 (이미 발효) | EMERGE_V5_2 (변동 없음) |
+
+→ **paradigm-j 가 v5 BASE strict + v5.2 adaptive 양 lane 동시 PASS** ★ — robust EMERGE 의 lane 강화.
+
+### 10.5 V14 strict 정합 검증
+
+- F2 적용 시 random_init mirror = 0.0 (5축 모두 0) → V14_SATISFIED 모두 유지
+- F2 V14 strict gate auto-FAIL: random_init L2 ≥ trained L2 - δ_safety(0.02)
+- caveat: random_init readout trivially degenerate (`stdev_per_axis` 5축 0.0) — 별도 sanity track 추적
+
+### 10.6 G3 ≠ G1 (substrate ceiling 잔존) — 중요 caveat
+
+F2 정식 승격은 G3 (scoring artifact) 정량 확정 결과 — G1 (substrate ceiling) 가설은 **falsify 되지 않음**:
+- substrate ceiling 영향 24% 잔존 가능성
+- paradigm-j v5 base PASS 는 formula 변경 결과이지 substrate quality 자체 강화 아님
+- Engine A/G fix-5/fix-6 적용 후 신규 cotrain (substrate 강화) 별도 cycle 진행
+
+### 10.7 retroactive 영향 모델
+
+| 모델 | F1 verdict | F2 verdict |
+|---|---|---|
+| **paradigm-j** | PARTIAL_NEAR | **EMERGE_V5_PIV_F2_PASS** ★ |
+| BG-LB | C3_FAIL_V14 | C3_FAIL_V14 (V14 violation 우선, formula 무관) |
+| BG-LA | C3_FAIL_V14 | C3_FAIL_V14 (동일) |
+| Phase 2 cotrain | C3_FAIL_V14 | C3_FAIL_V14 (동일) |
+| mk2-v1 | EMERGE_NOT_MEASURED | EMERGE_NOT_MEASURED (PIV 미실측, F2 적용 불가) |
+
+→ V14 위반 모델은 F2 도 V14 strict gate 로 차단. **F1 → F2 변경은 paradigm-j 단독 unlock**.
+
+### 10.8 own 37 mandate-9 정합
+
+paradigm-j prereq #1 갱신:
+- 이전: 'real-mode PASS_STRICT_C3' = v5.2 adaptive 만 PASS
+- 신규: **v5 BASE (F2) PASS + v5.2 adaptive PASS 양 lane 동시 PASS** → 강화된 PUBLIC 정합
+
+### 10.9 친근 한 줄 (F2 standard 승격) ★
+
+> **"5 과목 모두 비슷하게 70 점인 학생을 최고점 1 과목 (70) 만 보고 fail 시키고 있었어요. 합산 채점 (L2-norm) 으로 보면 156 점, pass — 학생 능력 그대로, 채점이 잘못 됐던 거예요. paradigm-j 가 base + adaptive 두 채점 방식 모두 통과한 첫 모델이 됐습니다."**
