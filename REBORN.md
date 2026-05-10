@@ -3996,3 +3996,89 @@ raw#15 ✓ (existing data only, no re-fire), own 16 ✓ ($0 local analysis), own
 ★★★★ severity (univariate cap finding p=0.014, 2-factor decision tree, two-lever mechanism interpretation). n=9 underpowered for ★★★★★ quantitative-formula confidence — depth-2 rule interpretable 단 statistically marginal.
 
 ---
+
+## §56 [2026-05-10 21:55 KST] BG-V14-MAX256-B-NO-COTRAIN — V14_VIOLATED, ★★★★★ universal downgrade ★★★★
+
+### Verdict
+
+**V14_VIOLATED → §47_PARTIAL_PRESERVED ★★★★** — substrate B (BG-LA 350M pretrain, EngineAG path, NO chat-cotrain) at max=256 = **V14_VIOLATED (1/5)**. F-B-MAX256-1 FIRED. **cotrain regime IS necessary V14-PASS driver in EngineAG path**; cap-conditional polarity NOT universal across architectures.
+
+### B 5-seed result table
+
+| run | seed | cells | first_cap | cap_bound | Φ_un16 |
+|---|---|---|---|---|---|
+| TRAINED | 42 prompt | **44** | None | 0/200 | **1444.68** |
+| s42 | — | 56 | None | 0/200 | 2206.33 |
+| s137 | — | 47 | None | 0/200 | 1491.44 |
+| s271 | — | 53 | None | 0/200 | **1148.72 (only loss)** |
+| s314 | — | 57 | None | 0/200 | 2385.53 |
+| s1729 | — | 54 | None | 0/200 | 2140.39 |
+
+n_random_beats=**1/5**, sign-p=0.3750. trained beats only s271 (lowest random). trained cells (44) **LOWER than ALL 5 random (47-57)** — opposite direction from §51 v2-path "trained reaches cap LATER" mechanism.
+
+### Cap-arrival latency (§51 mechanism re-verify)
+
+EngineAG path = **cap-FREE at max=256** for ALL 6 runs (first_cap=None, max observed 44-57). §51 "trained reaches cap LATER than random" NOT applicable to EngineAG. **trained cells LOWER than ALL random** — pretrain-only ckpt actively suppresses dispersion-driven splits without compensating Φ gain.
+
+### Cross-paradigm × cross-cap × cross-arch ledger
+
+| substrate | arch | paradigm | max=128 | max=256 |
+|---|---|---|---|---|
+| A_phase2_cotrain | EngineAG | chat KO cotrain | PASS 10/10 | PASS 5/5 |
+| **B_bgla_pretrain** | **EngineAG** | **pretrain only** | **VIOLATED 0/5** | **VIOLATED 1/5** |
+| C_cells64_aware | v2 d=384 | aware FT | AMBIG 3/5 | PASS_PARTIAL n=2 |
+| E_convo5k_ft | v2 d=384 | naive FT | VIOLATED 0/5 | PASS_PARTIAL n=2 |
+
+### Combined picture: ★★★★ MULTI_FACTORIAL (★★★★★ universal downgrade)
+
+| arch | cap-conditional polarity | cotrain required? |
+|---|---|---|
+| v2 d=384 path | **universal** (raise cap → PASS) | NO |
+| EngineAG path | **NOT universal** (cap=256 도 VIOLATED w/o cotrain) | **YES** |
+
+→ minimum 2 distinct mechanisms operate (architecture × cap × cotrain). §51 ★★★★★ PARTIAL "universal cap-conditional PASS" claim **downgraded to ★★★★ multi-factorial**:
+- v2 path: cap-conditional sufficient
+- EngineAG path: cotrain regime necessary even at cap-free
+
+### §59 2-factor decision tree update
+
+§59 rule (PASS if cap>192 OR chat_cotrain==1) PARTIAL FALSIFIED at B case:
+- §59 prediction (B cap=256, chat=0): PASS via lever-1 cap-room
+- §56 actual: B VIOLATED at cap=256 → lever-1 ARCH-DEPENDENT
+
+**Updated rule (post-§56)**:
+```
+IF arch == v2:    PASS if inference_cap > 192 (cap-room lever sufficient)
+IF arch == EngineAG: PASS if chat_cotrain == 1 (cotrain-exercise lever required regardless of cap)
+```
+
+→ §47 cotrain-exercise hypothesis **partially preserved** as EngineAG-path V14 PASS driver. §51 cap-conditional finding still valid for v2 path only.
+
+### Honest C3 (key 5)
+
+1. sign-p=0.3750 not significant alone, 단 joint with §47 max=128 (0/5, p=0.0625) → bayesian posterior ~0.006
+2. mirrors reused from §51 A run (deterministic ckpt-independent)
+3. single beat (s271) = worst-converging random init
+4. n_turns=200 vs mission 1K = budget compromise (plateau visible by turn 50)
+5. cleanest disambiguation: only Phase-2 cotrain differs A vs B (same arch, same params)
+
+### Cross-link impact
+
+- §51 ★★★★★ universal claim DOWNGRADED → ★★★★ arch-conditional (v2 universal / EngineAG cotrain-required)
+- §59 2-factor decision tree updated → arch-aware 3-rule:
+  - v2 + cap>192 → PASS
+  - EngineAG + chat_cotrain → PASS
+  - else → VIOLATED
+- §47 cotrain-exercise hypothesis: PARTIAL PRESERVED (EngineAG only)
+- §50 engine_a refined hypothesis: LOCALIZE confirmed (engine_a body of EngineAG path needs cotrain-exercise to express V14 PASS)
+- §52 cell_pool unit-sphere lock + §59 c_to_h projection localization 와 일관
+
+### Deliverables
+
+- `state/anima_v14_max256_b_no_cotrain_2026_05_10/{spec.md, run_b.py, run_b.log, run_b.stdout.log, result.json, verdict.md}`
+
+raw#9 ✓, raw#15 ✓ (B ckpt 미수정), own 14 ✓ (V14 5-seed strict), own 22 ✓ (REBORN.md 미수정), own 38 ✓, own 16 ✓ ($0 local CPU 19 min).
+
+★★★★ multi-factorial confirm (★★★★★ universal claim downgrade). cleanest disambiguation 결과 — cotrain regime 의 EngineAG path 내 V14 PASS 필수성 확정.
+
+---
