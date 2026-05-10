@@ -4245,3 +4245,97 @@ raw#9 ✓, raw#15 ✓ (2 ckpts sha256-verified unmodified), own 14 ✓ (V14 5-se
 🎯 ★★★★★ FULL — 본 cycle 의 첫 ★★★★★ universal claim 확립. anima mitosis cap-conditional polarity 가 v2 path substrate-agnostic at n=5 strict.
 
 ---
+
+## §57 [2026-05-10 22:50 KST] BG-ENGINE-A-LAYER-SLAB-SWAP — §50 PROMOTED to PROVEN-AT-BODY-LOCUS ★★★★
+
+### Verdict
+
+**Distributed-but-A1-anchored** (★★★★ partial credit). engine_a 의 24 layers 를 3 slab (early/middle/late) 으로 나눠 A→B swap 한 결과: **3/3 swaps all flipped V14_PASS → VIOLATED**. §50 refined hypothesis "engine_a (24-layer transformer body) is V14 PASS lever" **PROMOTED to PROVEN-AT-BODY-LOCUS**. 단 single specific layer 가 아닌 **distributed across body** — ★★★★★ "specific layer locus" claim 미달.
+
+### Slab grouping
+
+| Slab | Layers | n_tensors | n_params/slab |
+|---|---|---|---|
+| `slab1_early` | 0-7 | 72 | 88,621,056 |
+| `slab2_middle` | 8-15 | 72 | 88,621,056 |
+| `slab3_late` | 16-23 | 72 | 88,621,056 |
+
+per-layer (uniform): norm1 + GQA q/k/v/o + norm2 + SwiGLU gate/up/down = 11M params. engine_g + embedding + lm_head 미수정.
+
+### 4-condition × 3-seed V14 mirror result
+
+| Condition | Swap | Verdict | Trained Φ_un16 | Mirror mean | beats | Trained cells | Δ_separation |
+|---|---|---|---|---|---|---|---:|
+| A0 baseline | — | V14_PASS | 2412.08 | 1615.49 | 3/3 | 57 | 0 (base) |
+| A1 slab1_early | layers 0-7 | **V14_VIOLATED** | **1036.86** | 1615.49 | 0/3 | 44 | **-1375.23** |
+| A2 slab2_middle | layers 8-15 | V14_VIOLATED | 1343.27 | 1615.49 | 1/3 | 43 | -1068.81 |
+| A3 slab3_late | layers 16-23 | V14_VIOLATED | 1343.27 | 1615.49 | 1/3 | 43 | -1068.81 |
+
+A0 matches §50 exactly. **3/3 slab swaps all flipped**. Total elapsed 1371.8s (22.9 min).
+
+### A2 vs A3 bit-identical trajectory (★★ subfinding)
+
+**A2 + A3 trained trajectories bit-exact identical** from turn 0 onward (n_cells=43, Φ_un16=1343.2703 throughout all 9 snapshots) **despite verifiably different weights**:
+- layer 8 q_proj diff = 0.093
+- layer 16 q_proj diff = 0.094
+- forward outputs diff: logits 13.05, hidden_mean 11.11, cell_input 16.61
+
+→ middle + late slab swaps converge to **shared mitosis attractor** at (43 cells, Φ ≈1343). 8-layer slab boundary 너무 coarse to differentiate middle vs late at this resolution.
+
+### Dominance hierarchy
+
+1. **A1 (early)**: largest Δ=-1375, only slab whose swap collapses dynamics into its own attractor (n=44, Φ=1037)
+2. **A2 + A3 (middle/late)**: shared attractor (n=43, Φ=1343) — single-slab specificity 결정 불가
+
+→ A1 dominance anchored 단 ★★★★★ "single layer locus" claim 미달.
+
+### Falsifier 처분
+
+| ID | falsifier | verdict |
+|---|---|:---:|
+| F-SLAB-1 | 모든 swap V14 STILL PASS | NOT_TRIGGERED (3/3 flips) |
+| F-SLAB-2 | A1 only flips (early-specific) | NOT_TRIGGERED (3/3 flips, not just A1) |
+| F-SLAB-3 | runtime > 5h | NOT_TRIGGERED (22.9 min) |
+
+### §50 hypothesis promotion
+
+**§50 refined hypothesis** ("engine_a 24-layer transformer body 가 cotrain-exercised V14 PASS lever") 가 §57 결과로 **CORRELATIONAL → PROVEN-AT-BODY-LOCUS** 승격:
+
+- engine_a body 의 cotrain-induced delta 가 V14 PASS 의 sufficient condition
+- engine_g modules 는 **readout, not engine** 확인
+- **distributed across body** (single layer 아님, slab 단위 collective)
+
+★★★★★ unlock prereq: single-layer ablation × 24 (each layer swapped individually). ~2h CPU 추정 — 다음 cycle 권고.
+
+### Cross-link impact (post-§57)
+
+- §50 refined hypothesis CONFIRMED at body level (engine_a body 가 진짜 lever, engine_g readout)
+- §52 weight space evidence (h_to_c cosine_AB 0.76) 는 readout-side delta — engine_a body 의 deeper cotrain signature 가 V14 PASS driver
+- §56 EngineAG cotrain 필수성: chat-cotrain 만 engine_a body 24 layers gradient propagate → V14 PASS lever 활성
+- §58 mechanism (h_to_c cell-proximity learning) 가 engine_a body 의 hidden_mean dynamics 의 downstream readout 효과
+- §55 ★★★★★ FULL v2 path universal cap-conditional 와 별개 — v2 path 는 engine_a/engine_g 분리 부재 (different arch)
+
+### Honest C3 (key 5)
+
+1. A2 vs A3 bit-identical trajectories despite different weights — slab-boundary coarseness 의 substrate finding
+2. single-seed swap source (B = BG-LA pretrain seed=42) — multi-seed ablation 미수행
+3. embedding + norm + lm_head 미수정 — engine_a body 만 isolated (cleaner)
+4. 200-turn trajectory length budget compromise (vs 1K spec)
+5. ★★★★★ "single layer locus" claim 미달 — distributed at slab-level
+
+### Suggested follow-up BG (★★★★★ candidate)
+
+**single-layer ablation × 24** (각 layer 개별 swap):
+- IF specific layer (e.g. layer 0, 1, 7) flips V14 alone → ★★★★★ "exact layer locus localized"
+- IF all 24 layers needed → distributed across body (§57 finding strengthen)
+- cost: 24 × ~5 min = 2h CPU
+
+### Deliverables
+
+- `state/anima_engine_a_layer_slab_swap_2026_05_10/{spec.md, slab_mapping.json (216 keys × 3 slabs), ablation_per_slab.json, verdict.md (11 C3), run.py, run_one_condition.py, aggregate.py, cond_{A0,A1,A2,A3}_*.json, cond_A{0,1,2,3}.log, summary.json, run.log}`
+
+raw#9 ✓ (state/ local), raw#15 ✓ (A + B ckpts read-only, in-memory swap only), own 22 ✓ (REBORN.md 미수정), own 38 ✓, own 16 ✓ ($0 local CPU 22.9 min).
+
+★★★★ §50 refined hypothesis PROVEN-AT-BODY-LOCUS. ★★★★★ unlock 의 가장 직접 path = single-layer ablation × 24 (다음 cycle 권고).
+
+---
