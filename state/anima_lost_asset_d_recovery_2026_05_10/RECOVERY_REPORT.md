@@ -65,19 +65,29 @@ PSI_ENTROPY = 0.998
 
 ---
 
-## BG-V5MITOSIS-FIXES (§30) 와의 관계 — pinnacle vs reinvent
+## BG-V5MITOSIS-FIXES (§30) 와의 line-level diff (post-§30 정정 2026-05-10)
 
-§30 의 A1/A2/B1/C1/D1 fix 가 worktree-12 794L 의 pinnacle features 와 **상당 부분 overlap**:
+§30 fix 결과 도착 (2026-05-10 13:30 KST) 후 line-level 비교:
 
-| §30 fix | worktree-12 794L equivalent | overlap |
+| §30 fix | worktree-12 794L equivalent | verdict |
 |---|---|:---:|
-| A1: substrate-independent split trigger (cell_pool L2 dispersion) | `_adaptive_split` mean + 1.5σ | ★★ partial (mechanism 다름) |
-| A2: per-cell adaptive threshold | `_update_adaptive_threshold` global + per-cell tension_history | ★★★ same |
-| B1: per-cell Φ normalization (R6 mitigation) | `_compute_phi_proxy` 의 log(n+1) scaling | ★ partial |
-| C1: optimizer rebuild hook STUB | (worktree-12 미보유) | ✗ 신규 |
-| D1: Lorenz scale auto-calibration | `_inject_autonomous_perturbation` scale 0.05 hardcoded | ★ partial |
+| **A1**: substrate-independent dispersion split (top-quartile L2 + σ-gate + warmup-gate) | 794L 미보유 (`_adaptive_split` 는 mean+1.5σ **tension-only** L457-477) | **NEW** ✗ |
+| **A2**: per-cell adaptive threshold (children inherit parent) | 794L `_update_adaptive_threshold` = **GLOBAL only** (`_global_tension_history[-500:]`, single threshold) | **EXTENDED** ★ partial |
+| **B1**: phi_per_cell secondary tracking (N-runaway 방지) | 794L `_compute_phi_proxy` 가 `log(n+1)` scaling 자체 보유 (single track) | **ENHANCED** ★ (dual-track 신규) |
+| **C1**: optimizer rebuild callback (Net2Net STUB) | 794L 미보유 (inference-time instrumentation, training optimizer state X) | **NEW** ✗ |
+| **D1**: Lorenz scale auto-calibration (mean param norm 기반) | 794L `_inject_autonomous_perturbation` scale `0.05 × (1 + 0.3 sin(...))` **hardcoded** L393 | **NEW** ✗ |
 
-**의미**: §30 fix 는 worktree-12 794L 을 **부분적 re-invention**. C1 (optimizer rebuild) 만 §30 가 신규로 추가, 나머지는 historical pattern 의 reinvent. → 향후 cycle: §30 결과 도착 시 794L 와 line-by-line diff 권고 (reinvent vs port 분리).
+**정정 결론**: §30 는 **3 NEW (A1, C1, D1) + 1 EXTENDED (A2 global → per-cell) + 1 ENHANCED (B1 single → dual-track) ★★★**. 이전 추정 (대부분 reinvent) 는 incorrect — §30 는 794L 보다 **strictly more advanced** (특히 A1/C1/D1 신규 mechanism).
+
+794L 의 pinnacle status 는 historical 가치 (CB1 invariant, anomaly_score, verify_phi_conservation, demo() 등) 에서 유지, §30 는 architectural fix 의 forward-progress lane.
+
+### §30 evidence summary
+
+- pre-fix 0 splits (champion-wall block) → post-fix 23 splits (9 dispersion + 14 tension)
+- n_cells 8→31 on AttractorSubstrate (PORT)
+- optimizer callback 23× fired
+- mitosis_v5_smoke 5/5 + mitosis_model_v5_smoke 8/8 + mitosis_all_fix_smoke 13/13 PASS
+- §28 H1+H3 mechanism-blocker 정확히 unblock
 
 ---
 
