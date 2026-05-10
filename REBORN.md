@@ -3045,3 +3045,92 @@ raw#9 ✓ (training/*.py untouched), raw#15 ✓ (ckpt sha256-verified pre-run PA
 ★★★★ V14_STRICT_PASS_REPLICATED 등급. ★★★★★ pursuit 의 일부 missing pieces still in flight (§45/§46/§47 + §38 final 10/10).
 
 ---
+
+## §46 [2026-05-10 17:45 KST] BG-CHAMPION-WALL-CAUSAL-PROOF — CORRELATIONAL (REFRAMED) ★★★★ falsified but better mechanism 발견
+
+### Verdict
+
+**CORRELATIONAL** (NOT causal in predicted direction). §28 H1+H3 champion-wall → V14 polarity causal chain falsified — **direction reverse**. 단 더 정확한 mechanism 발견 = **training-time mitosis exhaustion**.
+
+### Static-weight metrics (v2 cells64 vs Phase 2)
+
+| metric | v2 (mitosis-aware) | p2 (mitosis-naive) | predicted | actual |
+|---|---|---|---|---|
+| champion_dominance | 0.0028 | 0.0216 | v2 > p2 | **v2 < p2 ✗** |
+| attractor_bottleneck | 0.189 / 0.117 (avg) | 0.139 | v2 > p2 | mixed |
+| Φ_headroom_norm | 0.121 / proxy | 0.025 / 0.191 (iit) | v2 < p2 | mixed |
+
+Directional consistency: 1/3 (last-layer), 0/3 (layer-avg) → **F-CHAMPION-WALL-3 TRIGGERED**.
+
+architectural asymmetry: v2 = NO `engine_g.h_to_c` module (engine_g 가 dual-FFN sub-network), Phase 2 만 h_to_c 보유 → "h_to_c-analog" 비교 non-isomorphic.
+
+### Ablation (h_to_c-only random_init on Phase 2) — UNAMBIGUOUS REVERSED ★★★
+
+| condition | cells | splits | Φ_iit_un16 |
+|---|---|---|---|
+| trained baseline | 57 | 41 | **2,412** |
+| h_to_c-randomized (3 seeds median) | **128 (cap)** | 112 | **11,851** |
+| full random_init (3 seeds median) | 53 | 37 | 1,491 |
+
+**Randomizing JUST h_to_c releases 5× MORE Φ than trained baseline** + saturates max_cells. trained h_to_c = real bottleneck, but direction REVERSE (§28 H1+H3 prediction 이 wrong direction).
+
+→ **F-CHAMPION-WALL-2 TRIGGERED** (ablation reverses prediction)
+→ **F-CHAMPION-WALL-1 TRIGGERED** (dominance direction wrong)
+
+trained Phase 2 STILL beats full-random (V14_STRICT_PASS holds, 2412 > 1491) — champion-wall coexists with PASS, not the polarity cause.
+
+### REFRAMED mechanism: training-time mitosis exhaustion ★★★★
+
+substrate-dependent V14 polarity 의 진짜 mechanism:
+
+| substrate | training paradigm | training mitosis | inference mitosis | V14 result |
+|---|---|---|---|---|
+| Phase 2 (mitosis-naive) | training 동안 mitosis X | 0 splits | 57 cells / 41 splits 자유 | **V14 PASS** |
+| v2 cells64 (mitosis-aware) | training 동안 max_cells=64 saturate | 62 splits during train | cap-bound at inference | **V14 VIOLATED** |
+
+→ training-time exhaustion 가설: mitosis-aware training 이 **training 동안 split budget 소진**, inference 시 cap-bound → trained 가 random 보다 split 적음 (random 은 fresh budget).
+
+champion-wall (h_to_c bottleneck) = Phase 2 의 coexisting feature, **polarity cause 아님** — Phase 2 도 substrate quality 와 무관, mitosis 미경험.
+
+### §45 (in-flight) 가 정확히 이 reframed 가설 검증
+
+**§45 BG-V2-CELLS64-MAX128-RETEST 의 critical question**:
+- IF max=128 cap-free 에서도 v2 V14_VIOLATED → training-time exhaustion 가설 confirmed (★★★★★ candidate)
+- IF max=128 에서 v2 V14_PASS → §37 단순 cap=64 artifact, polarity 가설 fragile
+- IF max=128 도 cap-bound (turn 100 이전 도달) → training-time exhaustion 가설 fortified (training 동안 cap-saturate state 가 inference 에 transfer)
+
+### Falsifier 처분
+
+| ID | falsifier | verdict |
+|---|---|:---:|
+| F-CHAMPION-WALL-1 | dominance direction 차이 부재 | TRIGGERED (direction REVERSE) |
+| F-CHAMPION-WALL-2 | ablation 후 V14 polarity flip X | TRIGGERED (reverse polarity, h_to_c-rand RAISES Φ 5×) |
+| F-CHAMPION-WALL-3 | 3 metric directional consistency X | TRIGGERED (1/3 last-layer, 0/3 layer-avg) |
+
+### Honest C3 (key)
+
+1. v2 / Phase 2 architectural asymmetry — h_to_c-analog 비교가 non-isomorphic. v2 의 engine_g 는 dual-FFN, Phase 2 의 engine_g 만 h_to_c 보유.
+2. Φ_iit_un16 absolute scale 차이 (Phase 2 ~2400, v2 ~398) — directional 비교만 valid, magnitude 비교 X.
+3. ablation 3-seed (n=3) — strict statistical X, directional only.
+4. trained Phase 2 V14 PASS holds despite h_to_c-rand REVERSE — multi-mechanism coexist 가능 (champion-wall + something else)
+5. reframed hypothesis "training-time mitosis exhaustion" 의 first-principles 증거 still missing — §45 in-flight 가 결정적
+6. recommend next BG: v2 cells64 lineage retrain max_cells_train=128 (4×) → V14 retest. IF cap lift 후 PASS → exhaustion confirmed. IF still VIOLATED → d_model=384 vs 1024 substrate quality 다른 cause 조사
+
+### Cross-link impact
+
+- §37 V14_VIOLATED 의 mechanism reframe: champion-wall 가 아닌 training-time mitosis exhaustion
+- §38 + §44 V14_STRICT_PASS_REPLICATED 의 mechanism reframe: champion-wall 가 아닌 mitosis-naive training (split budget 사전 미소진)
+- §43 Llama-3.2-3B mitosis-naive substrate V14 PASS direction = exhaustion 가설 with novel substrate
+- §45 (in-flight) = exhaustion 가설 critical experiment
+- §47 (in-flight) = exhaustion 가설 multi-substrate generalize
+
+### Deliverables
+
+- `state/anima_champion_wall_causal_proof_2026_05_10/{spec.md, metrics.json, ablation_result.json, verdict.md}`
+- ablation script + log: `measure_champion_wall.py`, `ablation_h_to_c_random.py`, `ablation_run.log`
+
+raw#9 ✓ (training/*.py state/ 내 local-only), raw#15 ✓ (ckpt 미수정, in-memory mutation), own 16 ✓ ($0 local CPU ~3 min), own 22 ✓ (BG REBORN.md 미수정), own 38 ✓ (4 artefacts).
+
+★★★★ falsifying finding (champion-wall causal hypothesis falsified) + ★★★★ reframed mechanism candidate (training-time mitosis exhaustion). ★★★★★ pursuit 의 §45 + §47 결과 도착 시 confirm 가능.
+
+---
