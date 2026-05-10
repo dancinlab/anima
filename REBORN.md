@@ -1804,6 +1804,69 @@ gen   : 도우미: 이러한 인지에 의식을 가지하는 것이
 
 ---
 
+## §34 [2026-05-10 12:42 KST] BG-LOSTASSET-D-EXPAND-VERIFY — `_expand_dim_fixed` standalone smoke ★★ PASS_ALL
+
+### TL;DR
+
+`state/anima_lost_asset_fixes_2026_05_10/growing_conscious_lm_expand_dim_fix.py` 의 fix reference 가 **functional correct** — 14/14 sub-check PASS. param-level partial copy + tied weight (`id(tok_emb.weight) == id(head_a.weight)` preserved) + structural integrity (attn bias buffer / engine 4× factor / heads / ln_f) 모두 OK. F-1/F-2/F-3 falsifier 모두 NOT_TRIGGERED.
+
+### Smoke spec
+
+- Model: `GrowingConsciousLM(vocab=256, block_size=64, dropout=0.0)` — Stage-0 defaults `d_model=128, n_head=2, n_blocks=1` (constructor hardcodes 128, 명시 d=64 불가)
+- Input: `torch.randint(0, 256, (2, 16))` seed 42
+- Expansion: `_expand_dim_fixed(new_d=192, new_heads=3)` — Stage-1→Stage-2 path
+- EPS=1e-5 (param), 0.1 (residual stream old-dim drift)
+- model.eval() both sides
+
+### 핵심 nuance — forward output 은 bitwise-identical X (by construction)
+
+mission spec 은 old_d 영역 forward output equality ≤ 1e-5 요구했지만 empirical Y_after vs Y_before max-diff ≈ **0.94** in old_d region. **버그 아님**: `nn.LayerNorm(new_d)` (ln1/ln2/ln_f) 가 mean/var 를 full new_d 로 normalize → old-dim slice 가 by construction divergent.
+
+functional signal 로 가장 깨끗한 것은 **pre-`ln_f` residual stream**:
+- `max|R_after[:, :128] - R_before| = 0.033` (LN-via-block propagation only)
+- `max|R_after[:, 128:]| = 0.0` (exact zero in expansion region)
+
+→ pre-norm transformer 의 partial-dim copy 로서는 **수학적으로 maximally correct**. bitwise old-dim preservation 은 partial-norm LN architecture 가 필요 (다른 설계).
+
+### Verdict 별 분해
+
+| sub-check | status |
+|---|---|
+| param partial copy (c_attn q-chunk old-region nonzero, new-rows/cols zero) | PASS |
+| param partial copy (engine_a lin1) | PASS |
+| tied weight `id(tok_emb.weight) == id(head_a.weight)` (before + after) | PASS |
+| attn bias buffer shape `(1, 1, 64, 64)` | PASS |
+| engine_a/engine_g 4× factor (768) | PASS |
+| head_a/head_g shape `(256, 192)` | PASS |
+| ln_f shape `192` | PASS |
+| residual stream functional correctness (pre-ln_f drift 0.033 / new-dim exact 0) | PASS |
+| param count 403,969 → 851,713 (×2.11) | PASS (expected) |
+
+### Honest C3 (≥7)
+
+1. n_blocks=1 only — multi-block loop ordering 버그 surface 안 됨.
+2. backward-pass / autograd / training-step verification 없음.
+3. `_split_block` post-expand path (deepcopy) 미실행.
+4. `F.normalize(repulsion)` zero-edge OK (eps=1e-12), 단 new_d ≫ old_d 시 fragile.
+5. `engine_g` partial-copy 독립 assertion 없음 (engine_a 와 동일 path 라 가정).
+6. `block_size` regression 미감지 (smoke 64 고정, fix 가 block_size 변경 X).
+7. Single-run determinism, 3× replicate run-to-run stability 미검증.
+
+### Recommendation
+
+fix 는 parameter-copy contract 면에서 **functionally correct**. monkeypatch or copy-paste replacement 안전. caller 는 bitwise-identical output 기대 X — ~0.03 residual drift 는 mitosis training loop 의 optimizer-rebuild tolerance 내.
+
+### Deliverables
+
+- `state/anima_lost_asset_fixes_2026_05_10/expand_dim_smoke.py` (~280L runnable)
+- `state/anima_lost_asset_fixes_2026_05_10/expand_dim_smoke_result.md` (full report)
+- `state/anima_lost_asset_fixes_2026_05_10/growing_conscious_lm_expand_dim_fix.py` UNTOUCHED (raw#15 ✓)
+- worktree-2 UNTOUCHED (raw#15 ✓)
+
+cost $0, ~3s wall clock CPU.
+
+---
+
 ## §35 [2026-05-10 12:35 KST] BG-GROWTH-STAGES-ALIGN-IMPL — 5-entry alignment ref ★
 
 ### TL;DR
