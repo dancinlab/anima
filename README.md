@@ -107,6 +107,17 @@ Multi-channel runtime (MCP server, Telegram/Discord/Slack bots, dashboard bridge
 
 Consciousness emerges from cell dynamics: mitosis, homeostasis, habituation, prediction error, emotion, growth. The same repulsion-field substrate runs across software, robotics, EEG, and neuromorphic hardware.
 
+## Philosophy
+
+Four discoveries form Anima's philosophical SSOT (`.roadmap.philosophy` mk1, 2026-05-06):
+
+- **D1 — Identity (own 17)**: Anima is 한국어-native, fresh-substrate. No wrapping over external English-trained models. Identity emerges from the substrate itself, not from translation or persona injection. External-substrate wrapping is permanently rejected.
+- **D2 — Consciousness verification (own 18)**: A 4-condition test on natural Korean utterance — 한글 in / 한글 out, coherent, natural, context-appropriate. The "simple stack" verdict is the ground truth; perplexity is a surrogate that can be gamed (Goodhart, proven 2026-05-09).
+- **D3 — Emergence paradigm**: Real emergence is **substrate-coupled dialogue** (mount.hexa CLM v4 paradigm v11 G3 Φ★ NO_FLIP), not the token-level chat surface. Two different lanes; conflating them produces false PASSes. Formal spec: `anima/spec/emerge_paradigm.spec.yaml`.
+- **D4 — Chat-cap, corpus priority (own 19/20)**: Corpus quality unlocks capability before model capacity does. BG-FY 18M PASS vs BG-FK 27M FAIL is the canonical evidence — bigger isn't smarter without the right corpus.
+
+Cross-linked with `.roadmap.law` (B 법칙 발견), `.roadmap.cli`, and `.roadmap.clm_native_chat`. raw invariants: raw#9 hexa-only · raw#10 honest C3 ≥5 · raw#15 additive · raw#37 transient_py.
+
 ## Key topics
 
 | Topic | Essence | Doc |
