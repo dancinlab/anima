@@ -70,10 +70,10 @@ fn _write_helper() {
     parts.push("#!/usr/bin/env python3\n")
     parts.push("# Anima RunPod orchestrator helper — emitted by tool/anima_runpod_orchestrator.hexa\n")
     parts.push("# raw#37 transient.\n")
-    parts.push("import json, os, sys, subprocess, time, datetime, shlex, argparse, signal\n\n")
+    parts.push("import json, os, sys, subprocess, time, datetime, shlex, argparse, signal, shutil\n\n")
 
-    parts.push("RUNPODCTL = '/opt/homebrew/bin/runpodctl'\n")
-    parts.push("SSH_KEY = '/Users/ghost/.runpod/ssh/RunPod-Key-Go'\n\n")
+    parts.push("RUNPODCTL = os.environ.get('RUNPODCTL') or shutil.which('runpodctl') or '/opt/homebrew/bin/runpodctl'\n")
+    parts.push("SSH_KEY = os.environ.get('RUNPOD_SSH_KEY') or os.path.expanduser('~/.runpod/ssh/RunPod-Key-Go')\n\n")
 
     parts.push("def runpodctl_json(*args):\n")
     parts.push("    r = subprocess.run([RUNPODCTL] + list(args), capture_output=True, text=True, timeout=60)\n")
@@ -133,6 +133,13 @@ fn _write_helper() {
     parts.push("            print(f'  WARN: local missing {local}'); continue\n")
     parts.push("        print(f'[scp] {local} -> {ip}:{remote}')\n")
     parts.push("        if dry_run: continue\n")
+    parts.push("        # mkdir -p dirname(remote) first (orchestrator scp-mkdir patch 2026-05-11 — fixes idle waste bug)\n")
+    parts.push("        remote_dir = os.path.dirname(remote) if os.path.dirname(remote) else '/'\n")
+    parts.push("        if remote_dir and remote_dir not in ('/', ''):\n")
+    parts.push("            mkdir_r = subprocess.run(['ssh', '-i', SSH_KEY, '-o', 'StrictHostKeyChecking=no',\n")
+    parts.push("                                       '-p', str(port), f'root@{ip}', f'mkdir -p {remote_dir}'],\n")
+    parts.push("                                      capture_output=True, text=True, timeout=30)\n")
+    parts.push("            if mkdir_r.returncode != 0: raise RuntimeError(f'mkdir failed: {mkdir_r.stderr}')\n")
     parts.push("        r = subprocess.run(['scp', '-i', SSH_KEY, '-o', 'StrictHostKeyChecking=no',\n")
     parts.push("                             '-P', str(port), '-r', local, f'root@{ip}:{remote}'],\n")
     parts.push("                            capture_output=True, text=True, timeout=300)\n")
@@ -299,5 +306,3 @@ fn main() {
     println(r[0])
     exit(r[1])
 }
-
-main()
