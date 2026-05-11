@@ -13,6 +13,8 @@ cross-repo / raw 65+68 idempotent byte-eq / raw 91 honest C3 / raw 137 cmix-ban
 
 ---
 
+<!-- [Hc_672 a26-sparse-ppmd-text-heavy-ceiling-47-to-55 — moved to hypotheses_candidates/Hc_672_a26_sparse_ppmd_text_heavy_ceiling.md on 2026-05-11] -->
+
 ## 1. Motivation
 
 ### Reach claim (PROJECTED, not measured)

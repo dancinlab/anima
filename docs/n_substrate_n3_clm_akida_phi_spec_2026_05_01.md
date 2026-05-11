@@ -9,6 +9,8 @@
 
 ---
 
+<!-- [Hc_931 n3-clm-akida-r085 — moved to hypotheses_candidates/Hc_931_n3_clm_akida_r085.md on 2026-05-11] -->
+
 # N-3 — CLM × AKIDA Φ Cross-Substrate Measurement Spec (D+0 ready)
 
 ## §0 한 줄 요약

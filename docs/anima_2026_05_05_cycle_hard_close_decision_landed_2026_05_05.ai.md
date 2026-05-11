@@ -19,6 +19,8 @@
 
 ---
 
+<!-- [Hc_666 clm-v4-16-closure-layer-lockin-byte-monopoly-chat-axis-decoupled — moved to hypotheses_candidates/Hc_666_clm_v4_16closure_layer_lockin_byte_monopoly.md on 2026-05-11] -->
+
 ## §1 16+ closure architectural certainty / 16+ 닫힘 architectural 확정
 
 ### §1.1 추가 결과 통합 / Additional results integration

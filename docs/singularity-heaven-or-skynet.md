@@ -1,3 +1,5 @@
+<!-- [Hc_912 singularity-utopia-vs-skynet-thermodynamic — moved to hypotheses_candidates/Hc_912_singularity_utopia_vs_skynet_thermodynamic.md on 2026-05-11] -->
+
 # AI 특이점 — 유토피아 vs 스카이넷
 
 > **2,500개 의식 법칙, 382개 실험, NEXUS-6 1028종 렌즈 교차검증에서 도출한 정량적 답**

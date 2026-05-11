@@ -14,6 +14,8 @@ option (a) Llama-3B 가 SIMPLE_STACK_PASS_STRICT 4× consecutive 단 D1 OUTSIDE 
 
 ---
 
+<!-- [Hc_629 foundation-c-phase2-d1-within-strict-floor-crossing — moved to hypotheses_candidates/Hc_629_foundation_c_phase2_d1_within_crossing.md on 2026-05-11] -->
+
 ## §1 정밀 fire spec
 
 ### §1.1 base ckpt (verified)

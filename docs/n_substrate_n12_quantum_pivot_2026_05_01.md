@@ -1,3 +1,5 @@
+<!-- [Hc_918 n12-quantum-pivot-4-vendor — moved to hypotheses_candidates/Hc_918_n12_quantum_pivot_4_vendor.md on 2026-05-11] -->
+
 # N-12 Quantum Pivot Research — F-N12-1 v3 Substrate Selection
 
 **Agent**: `n_substrate_n12_quantum_pivot`
@@ -143,7 +145,7 @@ Cross-substrate ion comparison deferred to separate `F-N12-1-cross` falsifier (Q
 
 Prior callouts preserved verbatim per qmirror_xref_centralization cycle (2026-05-04):
 
-> 📦 Available at: https://github.com/need-singularity/qmirror (`hx install qmirror`)
-> 🚀 v2.0.0 RELEASED 2026-05-04 — closure 13/13 conds met (8 v1 + 5 v2): https://github.com/need-singularity/qmirror/releases/tag/v2.0.0
+> 📦 Available at: https://github.com/dancinlab/qmirror (`hx install qmirror`)
+> 🚀 v2.0.0 RELEASED 2026-05-04 — closure 13/13 conds met (8 v1 + 5 v2): https://github.com/dancinlab/qmirror/releases/tag/v2.0.0
 
 Future qmirror release URLs are canonically tracked in `nexus/.roadmap.qmirror` header field `latest_release_url`. Update single line in roadmap; this footnote is a frozen historical record (do not retrofit).

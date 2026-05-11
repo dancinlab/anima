@@ -1,3 +1,5 @@
+<!-- [Hc_902 n-substrate-putnam-multi-realization — moved to hypotheses_candidates/Hc_902_n_substrate_putnam_multi_realization.md on 2026-05-11] -->
+
 # N-Substrate Consciousness Roadmap (CLM × EEG × AKIDA × QRNG × SIM-우주 + 2026 웹 발견)
 
 > **ts**: 2026-05-01
@@ -1149,7 +1151,7 @@ CLM 도 ALM 와 같은 결과:
 | **Label** | `SENT` |
 | From | Min Woo Park `<nerve011235@gmail.com>` |
 | To | **Michael Levin** `<michael.levin@tufts.edu>` (Tufts Allen Discovery Center) |
-| Subject | anima CP2 framework × xenobot bioelectric Φ — collaboration proposal from need-singularity team |
+| Subject | anima CP2 framework × xenobot bioelectric Φ — collaboration proposal from dancinlab team |
 | Body | 3528 chars (영문 final draft, 사용자 review + approve) |
 | Attachments | `n_22_anima_paradigm_v11_xenobot_extension.md` (28.7KB) + `n_22_falsifiers.json` (8.5KB) |
 | MIME total | 54845 bytes / base64url 73127 chars |

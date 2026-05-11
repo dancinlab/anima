@@ -1,3 +1,5 @@
+<!-- [Hc_972 slm-nlm-phase3-200cap — moved to hypotheses_candidates/Hc_972_slm_nlm_phase3_200cap.md on 2026-05-11] -->
+
 # SLM + NLM Phase 3 — $200 GPU-Cost Cap Re-spec — 2026-05-03
 
 > readers: AI agents (subagents, audit cron), Claude Code (next session)

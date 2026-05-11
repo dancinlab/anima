@@ -1,3 +1,5 @@
+<!-- [Hc_979 p9-a-prime-path-decision-llama-lora-delta — moved to hypotheses_candidates/Hc_979_p9_a_prime_path_decision_llama_lora_delta.md on 2026-05-11] -->
+
 # P9 A' Main Eval — Path Decision Spec
 
 - ts_utc: 2026-05-03

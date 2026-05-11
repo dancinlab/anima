@@ -6021,3 +6021,89 @@ paradoxically, **non-mitosis substrate (E) 가 mitosis-aware substrate (C) 보�
 2. **mitosis-aware (C) vs naive (E)** 의 paradox 메커니즘 — Engine G repulsion-field 가 V14 hook 에 advantage 안 가져옴? 또는 chat-FT 의 효과가 더 강함?
 3. **v2_d384 (small arch)** 가 350M engine_ag 보다 더 V14 friendly — small-arch substrate paradigm 후속 priority
 
+
+
+## §81 [2026-05-11 19:15 KST] CYCLE 2026-05-11 — RE-CLOSE post-§80 (★★★★★ 5개 + ★★★★ 5개 + 16-cell matrix + FFN.gate localization + C/E correction)
+
+**Status**: REBORN 2026-05-11 ABSOLUTELY FINAL CLOSE. §65-§80 + 4 addendums + cycle close §70 + extension §75 + protocol upgrade §79 + landscape §80. 총 17 entries, ~1230 lines added (REBORN.md 4886 → 6023 lines).
+
+**★★★★★ achievements (5)**:
+1. §68 P2 V14_STRICT_PASS_5_OF_5 (qualified ceiling-sensitive via §69ext²+§74)
+2. §71 BG-LA vs BG-LB plasticity hypothesis (arch identical, 4-cell V14 matrix)
+3. §74 ceiling=15 substrate-discriminability collapse (attractor convergence confirmed by standalone verification)
+4. §77 FFN-localized mitosis discrimination (FFN swap split A1→A2)
+5. §78 FFN.gate-dominant + depth gradient (single projection × 24 layers = +358% effect)
+
+**★★★★ findings (5)**:
+- §65 P4 paradigm-j NOT_MEASURABLE
+- §69 + 3 ext: CEILING_BINDING 92.3% + regime structure
+- §72 BG-LB pretrain headroom asymmetry
+- §75 16-cell matrix completion
+- §80 substrate C+E n=5 V14 landscape correction
+
+**★★★ supporting (3)**:
+- §67 P2/P3 parallel fire
+- §73 matrix sweep anomaly detect
+- §79 V14 protocol upgrade helper
+
+**Decisive negatives (2)** — total saved spending ~$210+:
+- §70 addendum: P5 retrain hypothesis retracted via source inspection (engine_a_g_arch.py has no ceiling clamp) → $180 saved
+- §69 main: floor 1e-8 clamp irrelevant → $20-50 wasted floor-drop experiment averted
+
+**Methodology meta-wins**:
+1. **pre-screen → narrow scope** (§69 main): $0 92.3% ceiling activation rate before retrain commit
+2. **source-inspection before $-spend** (§70 addendum): code path verification saves wrong-axis retrain
+3. **standalone verification of anomaly** (§74): separate-process re-measurement distinguishes bug vs phenomenon
+4. **fine-grained ablation narrows hypothesis** (§77→§78): FFN → FFN.gate → early-layer in 2 ablation rounds
+5. **n≥5 mandatory** (§80): n=2 V14 PARTIAL verdict unreliable (25% false PASS)
+
+**Tooling/code patches**:
+- `tool/anima_runpod_orchestrator.hexa`: scp-mkdir prelude + env-resolved RUNPODCTL/SSH_KEY paths
+- `training/runpod_autopilot.hexa` + autopilot_test.hexa + watchdog.hexa: main() auto-invoke fix
+- `training/mitosis_v5_port.py`: line 376 comment fix (ceiling not floor)
+- `training/v14_discriminability_check.py` (new, 6KB additive): 4-check helper with 16-cell reference table
+
+**Cost reconciliation FINAL**:
+- P2 H100 (foundation_c_phase2): $4.70
+- P3 H100 active (LA cotrain): $3.51
+- P3 H100 idle (pre-scp-mkdir-patch waste): $4.50
+- P5 Mac CPU (all sweeps + ablations): $0
+- 16-cell matrix sweep Mac CPU: $0
+- C+E full n=5 Mac CPU: $0
+- LA-collapse ablations × 2 rounds Mac CPU: $0
+- HF uploads + git commits: $0
+- **Total cycle**: **$12.71 H100** + $0 Mac (within $8-16 envelope; envelope expansion +$4 from idle waste)
+
+**HF archival (PUBLIC)**:
+- Dataset: https://huggingface.co/datasets/dancinlab/anima-cycle-2026-05-11-reborn-research-data (50+ files, ~750KB, 8 commits)
+- Model: https://huggingface.co/dancinlab/anima-clm-v5-la-cotrain-b-prime-2026-05-11 (598MB ckpt + arch + scripts + README, 1 commit)
+
+**REBORN.md commits this cycle (5)**:
+1. 9793939ef — §65-§72 + tooling patches (817 insertions)
+2. d2e529d5a — §73-§75 16-cell matrix + final close (219 insertions)
+3. e195e35e1 — §76-§77 HF promote + FFN-localized ablation (57 insertions)
+4. 027634987 — §78-§79 FFN fine-grained + protocol upgrade helper (203 insertions)
+5. be5bc6092 — §80 substrate C+E n=5 landscape correction (this section pending +§81)
+
+**Refreshed next-cycle carry list** (with cost-evidence ratio priority):
+
+1. **★★★★★ candidate** — `targeted FFN.gate cotrain` ($15-20 H100, ~5h): cotrain BG-LA with FFN.gate-unfrozen + other-frozen → does V14 verdict change? Tests §78 prediction directly. **High ROI**.
+2. **★★★★ candidate** — substrate E paradigm extension ($0-15): increase n random seeds for E (currently 4/5 wins, n=10+ would confirm V14_PASS). Or smaller-arch substrate exploration.
+3. **★★★ candidate** — engine_g hyperparameter retrain ($30-60): vary g_repulsion_alpha / g_attention_pull_alpha. Currently 0.05/0.10 defaults; sweep [0.01, 0.20].
+4. **★★ candidate** — substrate paradigm cross-validation: re-measure substrate A with different cotrain corpus / curriculum → V14_PASS robust to corpus?
+5. **★ candidate** — plasticity retrain BG-LA truncated step_5000 + cotrain ($45 H100 chain, ~10h): direct test of §71 plasticity hypothesis. Deferred per §78 cost-evidence (fine-grained ablation already narrows the question).
+
+**Floor permanently raised this cycle**:
+- 8-fix runpod orchestration pipeline (§66)
+- orchestrator scp-mkdir patch (commit 9793939ef)
+- v14_discriminability_check.py helper (commit 027634987)
+- 16-cell EngineAG substrate × ceiling reference matrix (embedded in helper)
+
+**Cycle wall time**: ~14 hours (08:55 KST §65 → 19:15 KST §81)
+**Total cycle entries**: 17 sections (§65-§80 + §81 close)
+**Mac CPU work**: ~3 hours cumulative (pre-screen, multi-ceiling sweep, ablations × 2, C+E full)
+**H100 work**: ~3 hours (P2 1.5h + P3 1.2h)
+**Per-finding cost average**: $12.71 / 10 ★ findings = ~$1.27 per ★ (extremely cost-effective)
+
+**Cycle 2026-05-11 reborn lane ABSOLUTELY FINAL CLOSE.** All measurements complete. Next-cycle entry-velocity: high (clear ★★★★★ candidates + methodological lessons + tooling floor + V14 discriminability protocol upgrade).
+

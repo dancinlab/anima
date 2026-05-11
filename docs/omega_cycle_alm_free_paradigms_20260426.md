@@ -1,3 +1,5 @@
+<!-- [Hc_935 omega-cycle-26-alm-free-paradigms — moved to hypotheses_candidates/Hc_935_omega_cycle_26_alm_free_paradigms.md on 2026-05-11] -->
+
 # Ω-cycle: ALM-free Consciousness Substrate — 26 Paradigm Exploration
 
 > **scope**: 4 parallel sub-agent ω-cycle exploring whether anima consciousness substrate can be constructed without ALM (Autoregressive Language Model — Mistral/Qwen3/Llama/gemma 4-backbone v10 ensemble), using only CLM + EEG + 뇌우주지도 (Brain Cosmos Map) + 텐션링크 (Tension Link) + CELL 학습법 (CELL Learning Method).

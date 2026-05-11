@@ -9,6 +9,8 @@
 
 ---
 
+<!-- [Hc_648 clm3-bprime-kogpt2-head-swap-mode-collapse-fix — moved to hypotheses_candidates/Hc_648_clm3_bprime_kogpt2_head_swap.md on 2026-05-11] -->
+
 ## TL;DR
 
 CLM v4 mk2-v1 의 `head_a + tok_emb` (BPE 64K) 를 KoGPT2 (`skt/kogpt2-base-v2`, BPE 51.2K) 의 `wte` 로 교체하고, **body 16-block transformer (RoPE / GQA / SwiGLU) 는 frozen 유지하거나 light-LoRA**로 SFT. BG-DS PASS evidence (CLM L15 hidden → KoGPT2 head 시 10/10 Korean tokens emit, ASCII 0%) 에 의해 chat-cap 회복 확률 0.5–0.7. cost path = QLoRA-only $50–100 (lower bound) ~ full SFT H100 $100–300, 또는 ubu1 RTX 5070 free path.
@@ -269,7 +271,7 @@ BG-FD landed doc 측 β strategic comparison row 측:
 - BG-DS HEAD-bound PASS: `state/anima_emerge_chat_head_swap_kogpt2_2026_05_05/verdict.json`
 - BG-FD γ landed: `docs/anima_clm_3_gamma_body_rewire_landed_2026_05_06.ai.md`
 - BG-FA SFT data inventory: `docs/p9_p0_sft_data_50k_landed_2026_05_03.ai.md`
-- decoder source: `~/.cache/huggingface/hub/models--need-singularity--clm-v4-mk2-v1/snapshots/80440a1d38db9addc4445bb959057558a57f4230/decoder_v3.py` L81/105/109
+- decoder source: `~/.cache/huggingface/hub/models--dancinlab--clm-v4-mk2-v1/snapshots/80440a1d38db9addc4445bb959057558a57f4230/decoder_v3.py` L81/105/109
 
 ## Raw policy compliance
 

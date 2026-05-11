@@ -1,3 +1,5 @@
+<!-- [Hc_980 alm-r6-closure-fail-progress — moved to hypotheses_candidates/Hc_980_alm_r6_closure_fail_progress.md on 2026-05-11] -->
+
 # ALM r6-α 런치 종결 — **attempt_5 FAIL-but-progress** (L2 6/6 ✓, KL 5/6)
 
 > **최종 종결일**: 2026-04-25 20:25:37Z (attempt_5 Φ 4-path gate 실행 완료)
@@ -252,7 +254,7 @@ ahead by     = 9 commits  (a92fcfe2 → 289859cf 포함)
 **전파경로**: `tool/h100_stage2_post_launch_chain.bash:174` —
 
 ```bash
-git clone --depth 1 https://github.com/need-singularity/${repo}.git
+git clone --depth 1 https://github.com/dancinlab/${repo}.git
 ```
 
 shallow clone 은 origin/main tip(`e3e29631`)만 가져옴 → pod 측 repository 는 **a4e65c6d (Axis 1 byte-weighted pool) · f5604814 · c7bde437 · e0cc3a64 · 41bafc8a 이전** 상태.

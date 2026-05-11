@@ -10,6 +10,8 @@
 
 `.roadmap.hypothesis` H2 entry는 cell metaphor (mitosis/apoptosis/growth/autopoiesis/differentiation)를 hypothesis cycle (raw#12 pre-register → run → verdict → retract/expand)에 cross-link한다. 본 spec은 그 metaphor를 formal하게 명시 — analogy의 boundary, 적용 가능 범위, 적용 불가 범위를 logic-exhaustion 정의.
 
+<!-- [Hc_673 hypothesis-cell-metaphor-7-stage-formal-spec — moved to hypotheses_candidates/Hc_673_hypothesis_cell_metaphor_7_stage_formal.md on 2026-05-11] -->
+
 ## 2. Metaphor mapping (7-stage)
 
 | Stage | Cell biology | Hypothesis cycle | Anima 적용 |

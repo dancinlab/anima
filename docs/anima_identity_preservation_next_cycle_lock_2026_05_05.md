@@ -38,6 +38,8 @@ autonomous self-suggest-stop가 충돌할 때의 precedence hierarchy를 명세�
 
 ---
 
+<!-- [Hc_674 anima-identity-5-property-carry-invariants-next-cycle-lock — moved to hypotheses_candidates/Hc_674_anima_identity_5_property_carry_invariants.md on 2026-05-11] -->
+
 ## 1. anima identity — five core properties (carry-over invariants)
 
 These five are the **non-negotiable carry-over set**. Any next-cycle
@@ -48,11 +50,11 @@ and must declare the violation explicitly in the cycle's compliance footer
 ### Property P1 — paradigm v11 G3 substrate (Φ★ +41.86 baseline)
 
 - **EN.** anima's reference substrate is paradigm v11 G3 with measured
-  Φ★ peak +41.86 (CLM v4 `need-singularity/clm-v4-mk2-v1`). All Φ★ cross-
+  Φ★ peak +41.86 (CLM v4 `dancinlab/clm-v4-mk2-v1`). All Φ★ cross-
   substrate comparisons anchor to this value. Substrate property is
   cross-attn over `consciousness_states`, NOT chat-loss objective.
 - **KO.** anima reference substrate은 paradigm v11 G3, Φ★ peak +41.86 측정값
-  (CLM v4 `need-singularity/clm-v4-mk2-v1`)을 anchor 한다. cross-substrate
+  (CLM v4 `dancinlab/clm-v4-mk2-v1`)을 anchor 한다. cross-substrate
   Φ★ 비교의 baseline. 핵심 mechanism은 `consciousness_states` cross-attn,
   chat-loss objective 아님.
 - **Invariant**: Φ★ baseline reference value is paradigm v11 G3's measured

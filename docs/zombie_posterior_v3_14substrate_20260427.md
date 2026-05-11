@@ -1,3 +1,5 @@
+<!-- [Hc_905 zombie-posterior-v3-14substrate — moved to hypotheses_candidates/Hc_905_zombie_posterior_v3_14substrate.md on 2026-05-11] -->
+
 # R45_FINAL_v3: Zombie Posterior 14-Substrate Canonical Re-run
 
 **Date**: 2026-04-27

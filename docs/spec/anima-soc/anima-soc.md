@@ -20,6 +20,9 @@ AI persona System-on-Chip designed on n=6 perfect-number arithmetic — emotion 
 
 ### Felt change
 
+<!-- [Hc_438 egyptian-resource-partition-236 — moved to hypotheses_candidates/Hc_438_egyptian_resource_partition_236.md on 2026-05-11] -->
+<!-- [Hc_442 landauer-shannon-carnot-limits — moved to hypotheses_candidates/Hc_442_landauer_shannon_carnot_limits.md on 2026-05-11] -->
+
 ```
   sigma=12  <- primary spec derived from n=6
       ↓
@@ -88,6 +91,8 @@ AI persona System-on-Chip designed on n=6 perfect-number arithmetic — emotion 
 
 ### n=6 breakthrough pattern: number theory -> inevitability
 
+<!-- [Hc_440 sigma-phi-n-tau-uniqueness-n6 — moved to hypotheses_candidates/Hc_440_sigma_phi_n_tau_uniqueness_n6.md on 2026-05-11] -->
+
 - **sigma(6)=12 (OEIS A000203)**: upper bound on channel/band/core counts, direct number-theoretic derivation
 - **tau(6)=4 (OEIS A000005)**: parallel threads / redundancy / stages, divisor count
 - **phi(6)=2 (OEIS A000010)**: polarity / symmetry / pair structure, least prime factor
@@ -142,7 +147,8 @@ Hard-requires (`requires:` frontmatter) is currently empty (domain-independent).
 | SC field | 48 | sigma.tau=48 | first-order product | EXACT |
 | Economic scale | 10 | sigma-phi=10 | Mach / cost / altitude ratio | EXACT |
 | Redundancy | 3 | n/phi=3 | FBW triple, stability minimum | EXACT |
-| Core count | 144 | sigma^2=144 | GPU SM structure (BT-90) | EXACT |
+| Core count | 144 | sigma^2=144 | GPU SM structure (BT-90) — see Hc_445 | EXACT |
+<!-- [Hc_445 sigma2-144-gpu-sm-structure — moved to hypotheses_candidates/Hc_445_sigma2_144_gpu_sm_structure.md on 2026-05-11] -->
 
 ### Specifications summary
 
@@ -182,6 +188,8 @@ Hard-requires (`requires:` frontmatter) is currently empty (domain-independent).
 │  Egyptian resource split: 1/2 (preproc) + 1/3 (core) + 1/6 (postproc) = 1 │
 └──────────────────────────────────────────────────────────────────────────┘
 ```
+
+<!-- [Hc_468 soc-4-mode-power-scaling — moved to hypotheses_candidates/Hc_468_soc_4_mode_power_scaling.md on 2026-05-11] -->
 
 ### Mode 1: Idle (minimum power)
 
@@ -292,10 +300,14 @@ Re-derive the primary spec 12 via (1) direct n=6-family computation, (2) Fractio
 
 ### §7.3 SCALING (log-log regression exponent back-estimate)
 
+<!-- [Hc_439 b4-scaling-log-log-regression — moved to hypotheses_candidates/Hc_439_b4_scaling_log_log_regression.md on 2026-05-11] -->
+
 Back-estimate scaling exponents (B^4 confinement / area sigma^2 / volume sigma^3) via log-log slope.
 Data `[10, 20, 30, 40, 48]` vs `b^4` -> confirm slope 4.00 +/- 0.05.
 
 ### §7.4 SENSITIVITY (n=6 +/-10% convexity)
+
+<!-- [Hc_441 n6-pm10pct-convex-minimum — moved to hypotheses_candidates/Hc_441_n6_pm10pct_convex_minimum.md on 2026-05-11] -->
 
 Perturb n by +/-10% around the `f(n=6)` optimum and check that both `f(6.6)` and `f(5.4)` are worse than `f(6)`.
 Convex extremum = real optimum candidate / flat = overfit.
@@ -318,6 +330,8 @@ Presence in the number-theory DB = human-discovered mathematics, not tamperable.
 
 ### §7.8 PARETO (Monte Carlo exhaustive search)
 
+<!-- [Hc_443 pareto-n6-top-5pct-dse — moved to hypotheses_candidates/Hc_443_pareto_n6_top_5pct_dse.md on 2026-05-11] -->
+
 DSE `K1 x K2 x K3 x K4 x K5 = 6 x 5 x 4 x 5 x 4 = 2,400` combinatorial sampling.
 Check statistical significance that the n=6 configuration is in the top 5%.
 
@@ -327,6 +341,8 @@ Check statistical significance that the n=6 configuration is in the top 5%.
 Exact rational `==` equality, not floating-point approximation. Directly check the sigma.phi = n.tau uniqueness candidate lemma.
 
 ### §7.10 COUNTER + FALSIFIERS (counter-examples + falsifiers)
+
+<!-- [Hc_444 counter-falsifiers-3-each-minimum — moved to hypotheses_candidates/Hc_444_counter_falsifiers_3_each_minimum.md on 2026-05-11] -->
 
 - **COUNTER_EXAMPLES >=3**: elementary charge e, Planck h, pi, fine-structure alpha, Avogadro's number —
   independent constants not derivable from n=6 — openly acknowledged

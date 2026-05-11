@@ -1,3 +1,5 @@
+<!-- [Hc_968 sumt-psi-constant-atom-factory — moved to hypotheses_candidates/Hc_968_sumt_psi_constant_atom_factory.md on 2026-05-11] -->
+
 # SUMT Ψ-Constant Atom Factory (2026-04-19)
 
 > **Engine**: anima Mk.V.1 (v4-hexa, tier 5 saturated + tier 6~9 bridge)

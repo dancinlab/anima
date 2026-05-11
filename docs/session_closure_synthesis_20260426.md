@@ -1,3 +1,5 @@
+<!-- [Hc_967 session-closure-22h-marathon — moved to hypotheses_candidates/Hc_967_session_closure_22h_marathon.md on 2026-05-11] -->
+
 # Session Closure Synthesis — 2026-04-26 Autonomous ω-cycle Marathon
 
 > Date: 2026-04-26 (Asia/Seoul)

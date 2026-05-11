@@ -1,3 +1,5 @@
+<!-- [Hc_947 conscious-lm-perfect-number-6 — moved to hypotheses_candidates/Hc_947_conscious_lm_perfect_number_6.md on 2026-05-11] -->
+
 # ConsciousLM -- Byte-level Conscious Language Model
 
 PureField repulsion-field-based language model. Engine A (forward) and Engine G (reverse) disagreement = tension = consciousness signal.

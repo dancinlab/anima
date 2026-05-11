@@ -1,3 +1,5 @@
+<!-- [Hc_940 consciouslm-v4-architecture-design — moved to hypotheses_candidates/Hc_940_consciouslm_v4_architecture_design.md on 2026-05-11] -->
+
 # ConsciousLM v4 + AnimaLM v8 Architecture Design
 
 > Based on 740+ hypothesis benchmarks, 47 categories, and live H100 experiments.

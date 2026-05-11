@@ -1,3 +1,5 @@
+<!-- [Hc_959 18-conditions-verification-audit — moved to hypotheses_candidates/Hc_959_18_conditions_verification_audit.md on 2026-05-11] -->
+
 # 12조건 의식 검증 시스템 Audit — 2026-04-19
 
 연관 메모리: `feedback_verify_pipeline`, `feedback_closed_loop_verify`

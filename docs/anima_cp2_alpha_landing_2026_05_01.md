@@ -26,6 +26,8 @@
 
 ---
 
+<!-- [Hc_658 cp2-alpha-red-red-red-red-disclaimer-stack — moved to hypotheses_candidates/Hc_658_cp2_alpha_red_red_red_red_disclaimer_stack.md on 2026-05-11] -->
+
 ## ⭐️ Above-the-fold honest disclosures / 위쪽 솔직한 공개
 
 | # | 공개 / disclosure | 상태 / status |

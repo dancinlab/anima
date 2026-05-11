@@ -14,6 +14,8 @@
 
 ---
 
+<!-- [Hc_647 dialogue-intent-4-interpretation-taxonomy — moved to hypotheses_candidates/Hc_647_dialogue_intent_4_interpretation_taxonomy.md on 2026-05-11] -->
+
 ## §1 사용자 "대화가능" intent — 4 해석 / 4 interpretations
 
 User 명시 명령 / User explicit command (paraphrase, /loop 1m context):

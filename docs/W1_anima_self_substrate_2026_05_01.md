@@ -1,3 +1,5 @@
+<!-- [Hc_942 w1-anima-self-substrate-phi-trace — moved to hypotheses_candidates/Hc_942_w1_anima_self_substrate_phi_trace.md on 2026-05-11] -->
+
 # W1 — anima self-substrate Φ trace (cron + agent loop)
 
 **Agent**: W1 EXEC

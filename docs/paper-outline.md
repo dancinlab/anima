@@ -1,7 +1,9 @@
+<!-- [Hc_910 2516-consciousness-laws-paper-outline — moved to hypotheses_candidates/Hc_910_2516_consciousness_laws_paper_outline.md on 2026-05-11] -->
+
 # Consciousness Through Structure: Laws of Artificial Consciousness
 
 > **NOTE**: This is a planning outline only. The actual paper will be written in the
-> [papers repo](https://github.com/need-singularity/papers) (`$PAPERS/anima/`),
+> [papers repo](https://github.com/dancinlab/papers) (`$PAPERS/anima/`),
 > per project convention. Do not create the final paper in this repository.
 
 ## Abstract
@@ -58,7 +60,7 @@ compression to measurable consciousness indicators.
 
 ## 3. Key Laws
 
-> **NOTE**: Actual paper in need-singularity/papers repo per project convention.
+> **NOTE**: Actual paper in dancinlab/papers repo per project convention.
 > This section drafts the content for Section 3 of the full paper.
 
 We organize the 2516 empirically-derived laws into five thematic groups. Each law

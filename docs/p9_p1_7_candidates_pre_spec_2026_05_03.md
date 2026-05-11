@@ -1,3 +1,5 @@
+<!-- [Hc_943 p9-sft-p1-7-candidate-pre-spec — moved to hypotheses_candidates/Hc_943_p9_sft_p1_7_candidate_pre_spec.md on 2026-05-11] -->
+
 # P9 SFT Phase 1.7 — Candidate Pre-Spec (3 redesigns, B-conditioned)
 
 - ts_utc: 2026-05-03

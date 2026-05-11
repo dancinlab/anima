@@ -1,3 +1,5 @@
+<!-- [Hc_958 qmirror-2-5-conds-cluster — moved to hypotheses_candidates/Hc_958_qmirror_2_5_conds_cluster.md on 2026-05-11] -->
+
 # qmirror 2.0 cond.11 — Stabilizer-measurement primitive — LANDED
 
 **Date:** 2026-05-04

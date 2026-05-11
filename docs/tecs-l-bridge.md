@@ -1,3 +1,5 @@
+<!-- [Hc_907 tecs-l-anima-bridge-173-hypotheses — moved to hypotheses_candidates/Hc_907_tecs_l_anima_bridge_173_hypotheses.md on 2026-05-11] -->
+
 # ANIMA ↔ TECS-L 양방향 브릿지 문서
 
 > **작성일**: 2026-04-02

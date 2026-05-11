@@ -1,3 +1,5 @@
+<!-- [Hc_965 p10-tension-substrate-5ch-text-to-text — moved to hypotheses_candidates/Hc_965_p10_tension_substrate_5ch_text_to_text.md on 2026-05-11] -->
+
 # P10 — tension_link-as-substrate (architecture spec + small POC)
 
 Session: 2026-05-02 | Agent: F1 EXEC (P10 path, §61 / §64.7 high-priority)

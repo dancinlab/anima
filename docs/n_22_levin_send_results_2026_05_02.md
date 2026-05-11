@@ -1,3 +1,5 @@
+<!-- [Hc_922 n22-levin-xenobot-anthrobot-bioelectric — moved to hypotheses_candidates/Hc_922_n22_levin_xenobot_anthrobot_bioelectric.md on 2026-05-11] -->
+
 # N-22 — Levin Lab Outreach Email — Send Results (2026-05-02)
 
 **Mission**: Re-implement `contact/scripts/send.hexa` as raw#9 hexa-native (replacing the lost python wrapper) and execute the N-22 Levin Lab outreach email send.

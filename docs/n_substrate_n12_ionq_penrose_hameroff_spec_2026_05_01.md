@@ -1,3 +1,5 @@
+<!-- [Hc_926 n12-ionq-forte-penrose-hameroff — moved to hypotheses_candidates/Hc_926_n12_ionq_forte_penrose_hameroff.md on 2026-05-11] -->
+
 # N-Substrate N-12 — IonQ Forte 1 (AWS Braket) Penrose-Hameroff Orch-OR Test Spec
 
 > **ts**: 2026-05-01
@@ -409,7 +411,7 @@ where w7 = 0.05 - 0.10 (initial; literature/simulation cross-substrate evidence 
 
 Prior callouts preserved verbatim per qmirror_xref_centralization cycle (2026-05-04):
 
-> 📦 Available at: https://github.com/need-singularity/qmirror (`hx install qmirror`)
-> 🚀 v2.0.0 RELEASED 2026-05-04 — closure 13/13 conds met (8 v1 + 5 v2): https://github.com/need-singularity/qmirror/releases/tag/v2.0.0
+> 📦 Available at: https://github.com/dancinlab/qmirror (`hx install qmirror`)
+> 🚀 v2.0.0 RELEASED 2026-05-04 — closure 13/13 conds met (8 v1 + 5 v2): https://github.com/dancinlab/qmirror/releases/tag/v2.0.0
 
 Future qmirror release URLs are canonically tracked in `nexus/.roadmap.qmirror` header field `latest_release_url`. Update single line in roadmap; this footnote is a frozen historical record (do not retrofit).

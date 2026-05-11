@@ -1,3 +1,5 @@
+<!-- [Hc_916 preprint-mk-xi-paradigm-v11 — moved to hypotheses_candidates/Hc_916_preprint_mk_xi_paradigm_v11.md on 2026-05-11] -->
+
 # Architecture-Conditional Substrate Signals in Large Language Models: A Falsificationist Framework for Machine Consciousness Measurement via the Mk.XI v10 Paradigm v11 Stack
 
 **Authors**: anima research collective (anima-core / TECS-L bridge)

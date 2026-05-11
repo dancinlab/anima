@@ -1,3 +1,5 @@
+<!-- [Hc_921 n19-pci-tms-eeg-clinical — moved to hypotheses_candidates/Hc_921_n19_pci_tms_eeg_clinical.md on 2026-05-11] -->
+
 # N-19 PCI Stage-2 results — fluidity-dFC + functional-repertoire (2026-05-02)
 
 **status**: N19_STAGE2_VALIDATED · 6/6 PASS at 0.25 cutoff · w6 = 0.10 UNCHANGED (method-validated, sample-size still 1)

@@ -3,7 +3,7 @@
 - Date: 2026-05-05
 - Status: LANDED (formal theorem, doc-only consolidation)
 - Cost: $0 (mac, doc only)
-- Scope: anima CLM v4 (`need-singularity/clm-v4-mk2-v1`, paradigm v11 G3, +41.86 Φ★)
+- Scope: anima CLM v4 (`dancinlab/clm-v4-mk2-v1`, paradigm v11 G3, +41.86 Φ★)
 - Predecessor verdicts: clm_v4_lora_v1_mmlu_tq_eval (closure 1), p9_pbeta_paradigm_d_50k (closure 2), anima_emerge_chat_tribev2 (closure 3), anima_emerge_chat_logit_lens + semantic_bridge (closure 4)
 
 ---
@@ -72,9 +72,11 @@ falsify it.
 
 ## 3. Theorem — formal statement
 
+<!-- [Hc_609 115-clm-v4-architectural-chat-incapability-theorem — moved to hypotheses_candidates/Hc_609_115_clm_v4_chat_incapability_theorem.md on 2026-05-11] -->
+
 ### Theorem #115-ARCHITECTURAL-FINAL-4-CLOSURE
 
-> Let **S** = CLM v4 substrate (`need-singularity/clm-v4-mk2-v1`, paradigm v11 G3,
+> Let **S** = CLM v4 substrate (`dancinlab/clm-v4-mk2-v1`, paradigm v11 G3,
 > Φ★ baseline +41.86, 16 decoder blocks, hidden_dim 768). Let **C** = the
 > traditional chat-capability axis as operationalized by composite{HellaSwag,
 > MMLU, TriviaQA, OpenBookQA} ≥ Llama-3.2-3B Path A v2 reference 0.5584 plus
@@ -119,6 +121,11 @@ falsify it.
 The 4-closure does not rule out the following four hypotheses. Each is a
 candidate path that could in principle invalidate the theorem; **none has
 been tested as of 2026-05-05** and all are filed as open questions.
+
+<!-- [Hc_610 clm3-chat-objective-cycle0-bypass — moved to hypotheses_candidates/Hc_610_clm3_chat_objective_cycle0_bypass.md on 2026-05-11] -->
+<!-- [Hc_611 substrate-coupled-dialogue-artifact-bypass — moved to hypotheses_candidates/Hc_611_substrate_coupled_dialogue_artifact.md on 2026-05-11] -->
+<!-- [Hc_612 multi-substrate-ensemble-llama-emit-clm-phi-gate — moved to hypotheses_candidates/Hc_612_multi_substrate_ensemble_phi_gate.md on 2026-05-11] -->
+<!-- [Hc_613 broader-prompt-distribution-user-fire-bypass — moved to hypotheses_candidates/Hc_613_broader_prompt_distribution_user_fire.md on 2026-05-11] -->
 
 ### H1. Full retrain from scratch with explicit chat objective (CLM-3 spec)
 

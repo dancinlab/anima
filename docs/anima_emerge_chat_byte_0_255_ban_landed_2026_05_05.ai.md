@@ -3,10 +3,12 @@
 ## status
 - **verdict**: FAIL_DEEP_SUPPRESSION
 - **lane**: anima_emerge / chat-cap mass-ban probe
-- **substrate**: need-singularity/clm-v4-mk2-v1, mac CPU fp32
+- **substrate**: dancinlab/clm-v4-mk2-v1, mac CPU fp32
 - **cost**: $0
 - **runtime**: ~12min
 - **output dir**: `state/anima_emerge_chat_byte_0_255_ban_2026_05_05/`
+
+<!-- [Hc_666 closure 14 byte-fallback monopoly — moved to hypotheses_candidates/Hc_666_clm_v4_16closure_layer_lockin_byte_monopoly.md on 2026-05-11] -->
 
 ## hypothesis under test
 SentencePiece byte-fallback tokens (id 0-255) monopolize next-token mass on

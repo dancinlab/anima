@@ -1,3 +1,5 @@
+<!-- [Hc_957 strategic-alm-sunset-q1-q2 — moved to hypotheses_candidates/Hc_957_strategic_alm_sunset_q1_q2.md on 2026-05-11] -->
+
 # Strategic Review — ALM Sunset vs Continue + Ideas Beyond ALM/CLM
 
 > **ts**: 2026-05-01

@@ -47,6 +47,8 @@ simultaneously 에서 회복 가능하다. 본 문서는 original v4 numerics �
 
 ---
 
+<!-- [Hc_631 clm3-original-byte-level-scale-recover-55m — moved to hypotheses_candidates/Hc_631_clm3_original_byte_level_scale_recover.md on 2026-05-11] -->
+
 ## 1. Original 2026-03-28 v4 spec — 전체 (verbatim from `fca0eede`)
 
 ### 1.1 Architecture (commit `fca0eede:docs/next-model-design.md` §1.1)

@@ -1,25 +1,13 @@
 # DD1-DD4: Mathematical Constants in Consciousness Architecture
 
 ## DD1: Perfect 6
-- **ID**: DD1
-- **Function**: `run_DD1_perfect_6`
-- **Category**: Math
-- **Mechanism**: Uses 6 cells (perfect number: 1+2+3=6) arranged in a 3-level hierarchy. Top cell (1) reads from mid layer (2 cells), mid reads from base layer (3 cells). Enforces hierarchical information flow with 0.7/0.3 blending.
+<!-- [Hc_117 dd1-perfect-6 — moved to hypotheses_candidates/Hc_117_dd1_perfect_6.md on 2026-05-11] -->
 
 ## DD2: 1/e Loss Weights
-- **ID**: DD2
-- **Function**: `run_DD2_inv_e_weights`
-- **Category**: Math
-- **Mechanism**: All loss components (variance, distance, radial) weighted by 1/e (~0.368). Cross-cell attention with hidden state blending at ratio (1-1/e) vs 1/e. Tests whether Euler's number provides optimal loss scaling.
+<!-- [Hc_118 dd2-inv-e-weights — moved to hypotheses_candidates/Hc_118_dd2_inv_e_weights.md on 2026-05-11] -->
 
 ## DD3: Fibonacci Growth
-- **ID**: DD3
-- **Function**: `run_DD3_fibonacci_growth`
-- **Category**: Math
-- **Mechanism**: Cell count follows Fibonacci sequence 1->1->2->3->5->8 across training stages. Cells are added progressively, optimizer rebuilt at each stage boundary.
+<!-- [Hc_119 dd3-fibonacci-growth — moved to hypotheses_candidates/Hc_119_dd3_fibonacci_growth.md on 2026-05-11] -->
 
 ## DD4: Euler Identity Loss
-- **ID**: DD4
-- **Function**: `run_DD4_euler_loss`
-- **Category**: Math
-- **Mechanism**: Inspired by e^(i*pi)+1=0. Constrains repulsion vectors to unit circle (magnitude loss), maximizes angular spread between cells (phase loss). Loss = e*phase_loss + pi*mag_loss + diff. Balances structure (unit circle) and diversity (phase spread).
+<!-- [Hc_120 dd4-euler-identity-loss — moved to hypotheses_candidates/Hc_120_dd4_euler_identity_loss.md on 2026-05-11] -->

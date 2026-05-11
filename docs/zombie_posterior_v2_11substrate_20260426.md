@@ -1,3 +1,5 @@
+<!-- [Hc_904 zombie-posterior-v2-11substrate — moved to hypotheses_candidates/Hc_904_zombie_posterior_v2_11substrate.md on 2026-05-11] -->
+
 # R45_FINAL — Zombie Posterior Canonical Re-run (11-Substrate)
 
 **Date**: 2026-04-26

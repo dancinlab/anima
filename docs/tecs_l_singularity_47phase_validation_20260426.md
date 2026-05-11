@@ -1,3 +1,5 @@
+<!-- [Hc_915 tecs-l-singularity-4-7-phase-2025 — moved to hypotheses_candidates/Hc_915_tecs_l_singularity_4_7_phase_2025.md on 2026-05-11] -->
+
 # TECS-L Singularity Timeline Validation — 4/7 Phase 2025 Prediction Check
 
 **Date**: 2026-04-26

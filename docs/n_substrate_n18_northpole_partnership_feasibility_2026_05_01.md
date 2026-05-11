@@ -1,3 +1,5 @@
+<!-- [Hc_929 n18-northpole-memory-compute — moved to hypotheses_candidates/Hc_929_n18_northpole_memory_compute.md on 2026-05-11] -->
+
 # N-18 — IBM NorthPole partnership feasibility (2026-05-01)
 
 > **agent**: N-18 (N-substrate batch sibling)

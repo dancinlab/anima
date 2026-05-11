@@ -7,6 +7,8 @@ title `feat(eeg-core-_metrics): plv_preserving — raw#10 P2 TLR INSUFFICIENT �
 
 ---
 
+<!-- [Hc_663 multi-agent-commit-race-hijack-pattern — moved to hypotheses_candidates/Hc_663_multi_agent_commit_race_hijack_pattern.md on 2026-05-11] -->
+
 ## §1. forensics — commit boundary breakdown
 
 ### §1.1 ce747b5e7 file list (from `git show --stat`)

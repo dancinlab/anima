@@ -1,3 +1,5 @@
+<!-- [Hc_976 f1-composite-v2-tension-link-axis — moved to hypotheses_candidates/Hc_976_f1_composite_v2_tension_link_axis.md on 2026-05-11] -->
+
 # F1 Composite Spec v2 — tension_link explicit axis + 4-way joint Φ binding-strength metric
 
 @english-only-exempt(reason="anima research analysis language preservation per user primary language")

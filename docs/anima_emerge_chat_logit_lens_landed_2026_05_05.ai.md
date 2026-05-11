@@ -8,10 +8,12 @@
 - Verdict: **PASS** (n_coherent = 1/8, threshold ≥ 1)
 - raw#37 + raw#15 + raw#10 compliance verified
 
+<!-- [Hc_609 lemma 4 logit lens residual-stream pervasive — moved to hypotheses_candidates/Hc_609_115_clm_v4_chat_incapability_theorem.md on 2026-05-11] -->
+
 ## Hypothesis (BG-AR)
 
 BG-AE found peak L2-norm tension trajectory at **layers 2 and 6** (early/mid)
-across 16 decoder blocks of CLM v4 (`need-singularity/clm-v4-mk2-v1`), with
+across 16 decoder blocks of CLM v4 (`dancinlab/clm-v4-mk2-v1`), with
 `max_l2_variance = 124.41`. The hypothesis under test:
 
 > If early/mid layers carry **richer semantic representations** than the

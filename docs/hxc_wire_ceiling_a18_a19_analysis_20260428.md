@@ -37,6 +37,8 @@ projections that turned out wire-naive.
 
 ---
 
+<!-- [Hc_657 hxc-wire-ceiling-a18-falsifier-violating-bit-vs-byte — moved to hypotheses_candidates/Hc_657_hxc_wire_ceiling_a18_falsifier_violating.md on 2026-05-11] -->
+
 ## 1. A18 module status (MEASURED 2026-04-28)
 
 ### 1.1 Selftest result

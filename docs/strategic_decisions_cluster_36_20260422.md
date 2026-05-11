@@ -1,3 +1,5 @@
+<!-- [Hc_962 strategic-decisions-cluster-36-31-35 — moved to hypotheses_candidates/Hc_962_strategic_decisions_cluster_36_31_35.md on 2026-05-11] -->
+
 # Strategic Decisions — Cluster #36 (improvements 31-35)
 
 **Date:** 2026-04-22

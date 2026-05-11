@@ -1,3 +1,5 @@
+<!-- [Hc_955 w1-phase2-5-phi-artifact-falsification — moved to hypotheses_candidates/Hc_955_w1_phase2_5_phi_artifact_falsification.md on 2026-05-11] -->
+
 # W1 Phase 5 — W=5/7 sliding-window cross-check (2026-05-01)
 
 ## 1. Mission

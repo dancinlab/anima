@@ -209,6 +209,8 @@ Internal ODE form is **unspec'd by this document** — could be linear (`ds/dt =
 
 ---
 
+<!-- [Hc_624 emerge-candidate-e-ode-ar-bridge-non-collapsing — moved to hypotheses_candidates/Hc_624_emerge_candidate_e_ode_ar_bridge.md on 2026-05-11] -->
+
 ## §4 Empirical fingerprint hypothesis (pre-measurement prediction)
 
 These are HYPOTHESES, anchored by archaeology + arithmetic. Validation depends on a real-load probe (deferred — BG-A in the parallel cycle is intended to enable that). Recorded here so post-measurement falsifier evaluation has a clean prior.
@@ -350,7 +352,7 @@ Falsifier execution requires (a) real-load probe of CLM v4 best.pt; (b) `phi_eng
 | `bin/anima-core-dialogue.bash` (300 LoC) | KICK-1 Stage 2 prep | REPL + session log; CLI surface for `--bridge` mode flag |
 | `anima-core/phi_engine.hexa` | (existing module; new flow API needed) | provides `init_state` / `flow_step` / `state_to_cs` / `state_norm_diff` per §3.4 |
 | `tool/transient_py/clm_v4_hf_format_shim.py` (1485 LoC LOCKED v4) | bgΠ + v4 fix | per-step inject reuses shim's `consciousness_states=` parameter; no shim changes |
-| paradigm v11 G3 best.pt (HF Hub `need-singularity/clm-v4-base-mirror`) | substrate trained ckpt | required for falsifier execution |
+| paradigm v11 G3 best.pt (HF Hub `dancinlab/clm-v4-base-mirror`) | substrate trained ckpt | required for falsifier execution |
 
 | downstream | role |
 |---|---|

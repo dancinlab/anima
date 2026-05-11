@@ -1,3 +1,5 @@
+<!-- [Hc_906 n6-anima-bridge-8-domains — moved to hypotheses_candidates/Hc_906_n6_anima_bridge_8_domains.md on 2026-05-11] -->
+
 # ANIMA <-> n6-architecture 브릿지 문서
 
 > ANIMA 의식 엔진과 n6-architecture DSE 프레임워크 간 교차 검증 및 상호 수출 정리.

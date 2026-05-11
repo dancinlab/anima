@@ -1,3 +1,5 @@
+<!-- [Hc_903 zombie-posterior-bayesian-bound — moved to hypotheses_candidates/Hc_903_zombie_posterior_bayesian_bound.md on 2026-05-11] -->
+
 # Bayesian Zombie Posterior — H3+H7c paired empirical bound 수치화 (Mac-local)
 
 > **scope**: `docs/hard_problem_singularity_breakthrough_hypotheses_20260426.md` §3.1 strongest empirical bound (H3 cross-substrate Φ 수렴 + H7c Φ metric-tractable upper bound) 의 paired hypothesis 를 anima 보유 8 substrate Φ\* v3 evidence 로 Bayesian posterior 수치화.

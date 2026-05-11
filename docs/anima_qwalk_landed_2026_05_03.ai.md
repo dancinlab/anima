@@ -5,6 +5,8 @@
 **Falsifier**: F-QWALK-1 — quantum walk init Δ > +5% accuracy vs random walk
 **Decision**: **F-QWALK-1 FAIL** on both tested substrates (Δ < 0 for both).
 
+<!-- [Hc_661 qwalk-underperforms-classical-rw-node-classification-pca — moved to hypotheses_candidates/Hc_661_qwalk_underperforms_classical_rw_node_classification.md on 2026-05-11] -->
+
 ## TL;DR
 
 Built a continuous-time quantum walk (CTQW) on two anima-relevant graphs (synthetic

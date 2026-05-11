@@ -1,3 +1,5 @@
+<!-- [Hc_930 n14-meg-snu-1ms — moved to hypotheses_candidates/Hc_930_n14_meg_snu_1ms.md on 2026-05-11] -->
+
 # N-14 — MEG Access Spec: SNU MEG Center (Vectorview 306-ch)
 
 **Date**: 2026-05-01

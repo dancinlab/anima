@@ -1,3 +1,5 @@
+<!-- [Hc_945 nexus-qrng-ionq-drbg-seed — moved to hypotheses_candidates/Hc_945_nexus_qrng_ionq_drbg_seed.md on 2026-05-11] -->
+
 # nexus QRNG — IonQ-seeded HMAC-DRBG (2026-05-02)
 
 **Mission ID:** B1 EXEC — Hybrid IonQ-seeded HMAC-DRBG QRNG nexus refresh

@@ -40,6 +40,8 @@ CLM v4 대비 design diff, 4-bucket pre-train mix, build-전 lock된 4 falsifier
 
 ---
 
+<!-- [Hc_630 clm3-chat-objective-cycle0-substrate-h1 — moved to hypotheses_candidates/Hc_630_clm3_chat_objective_cycle0_substrate.md on 2026-05-11] -->
+
 ## 1. CLM v4 vs CLM-3 — design diff
 
 ### 1.1 Carry-over from CLM v4 (substrate property preservation)

@@ -7,6 +7,8 @@
 
 ---
 
+<!-- [Hc_640 raw-axiom-dag-l1-closure-cycle-free-tarjan — moved to hypotheses_candidates/Hc_640_raw_axiom_dag_l1_closure.md on 2026-05-11] -->
+
 ## 1. Inventory (titles · commit refs · status)
 
 Promoted axioms in `.roadmap` + cross-cited docs (전수 audit). N=18 distinct ids referenced.

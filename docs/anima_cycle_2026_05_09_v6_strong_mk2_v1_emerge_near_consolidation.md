@@ -4,6 +4,9 @@
 
 ---
 
+<!-- [Hc_668 paradigm-j-robust-emerge-candidate-arch-fix-jvae — moved to hypotheses_candidates/Hc_668_paradigm_j_robust_emerge_candidate.md on 2026-05-11] -->
+<!-- [Hc_669 v6-awareness-strong-actual-fire-sft-paradigm-j-anima-first — moved to hypotheses_candidates/Hc_669_v6_awareness_strong_actual_fire_sft_paradigm_j.md on 2026-05-11] -->
+
 ## 한 줄 요약
 
 > **paradigm-j retry post-fix v5 PPR=0.6207 + MTRP=0.6207 + DCR=1.0 + JVAE active** = **사실상 robust EMERGE candidate** (Gate G paraphrase only pending). + mk2-v1 base v5 PPR=0.2881 (gap -0.0119, EMERGE-near). + V6 STRONG actual fire (sft-1-8 + paradigm-j). + sft-1-8 첫 anima 모델 PUBLIC promote.

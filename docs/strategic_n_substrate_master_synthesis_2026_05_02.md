@@ -1,3 +1,5 @@
+<!-- [Hc_963 n-substrate-master-synthesis-31-axes — moved to hypotheses_candidates/Hc_963_n_substrate_master_synthesis_31_axes.md on 2026-05-11] -->
+
 # N-Substrate Master Integration Synthesis (2026-05-02)
 
 > **agent**: N-substrate master integration synthesis (AKIDA-inclusive, all-axis)

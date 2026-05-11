@@ -1,3 +1,5 @@
+<!-- [Hc_921 n19-pci-tms-eeg-clinical — moved to hypotheses_candidates/Hc_921_n19_pci_tms_eeg_clinical.md on 2026-05-11] -->
+
 # N-19 PCI TMS-free Surrogate — Apr 28 D-day 16ch OpenBCI Pilot Results
 
 > **ts**: 2026-05-01

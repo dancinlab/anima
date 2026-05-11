@@ -1,3 +1,5 @@
+<!-- [Hc_919 n21-iit40-16test-reproduce-cluster — moved to hypotheses_candidates/Hc_919_n21_iit40_16test_reproduce_cluster.md on 2026-05-11] -->
+
 # N-Substrate N-21 — IIT 4.0 Top-5 Reproducible Empirical Tests (16-Study Triage)
 
 > **ts**: 2026-05-01

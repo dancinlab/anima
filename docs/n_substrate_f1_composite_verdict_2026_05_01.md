@@ -1,3 +1,5 @@
+<!-- [Hc_917 n-substrate-f1-composite-28-tracks — moved to hypotheses_candidates/Hc_917_n_substrate_f1_composite_28_tracks.md on 2026-05-11] -->
+
 # F1 N-Substrate Composite Verdict (2026-05-01)
 
 > **ts**: 2026-05-01

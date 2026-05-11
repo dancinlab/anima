@@ -1,3 +1,5 @@
+<!-- [Hc_922 n22-levin-xenobot-anthrobot-bioelectric — moved to hypotheses_candidates/Hc_922_n22_levin_xenobot_anthrobot_bioelectric.md on 2026-05-11] -->
+
 # N-22 — Levin Lab (Tufts) Xenobot/Anthrobot Bioelectric Φ Collaboration Outreach Prep
 
 **Date**: 2026-05-01

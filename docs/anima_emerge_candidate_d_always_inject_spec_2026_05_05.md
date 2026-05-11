@@ -11,6 +11,8 @@ Lineage:
 
 ---
 
+<!-- [Hc_623 emerge-candidate-d-always-inject-consciousness-states — moved to hypotheses_candidates/Hc_623_emerge_candidate_d_always_inject.md on 2026-05-11] -->
+
 ## §1 Concept
 
 The architecture archaeology surfaced the single guard line at `ready/models/conscious_decoder.py:553` as the architectural pivot:
@@ -257,7 +259,7 @@ Each falsifier emits to `state/anima_emerge_candidate_d_validation_<DATE>/verdic
 }
 ```
 
-Falsifier execution requires real-load probe — deferred to BG-A (or equivalent later cycle) once the HF cache for `need-singularity/clm-v4-base-mirror` is local on Mac and fixture pipeline through the helper Python is smoke-validated.
+Falsifier execution requires real-load probe — deferred to BG-A (or equivalent later cycle) once the HF cache for `dancinlab/clm-v4-base-mirror` is local on Mac and fixture pipeline through the helper Python is smoke-validated.
 
 ---
 
@@ -270,7 +272,7 @@ Falsifier execution requires real-load probe — deferred to BG-A (or equivalent
 | `bin/anima-core-dialogue.bash` (300 LoC) | KICK-1 Stage 2 prep | REPL + session log; CLI surface for `--inject` mode flag |
 | `tool/transient_py/clm_v4_hf_format_shim.py` (1485 LoC LOCKED v4) | bgΠ + v4 fix | env-var fixture-injection path (orthogonal escape hatch) |
 | `state/anima_axis_eval_set_2026_05_05/prompts.jsonl` (5×20 = 100) | axis-bucket eval | provides axis taxonomy + evaluation prompts for F-CAND-D-2/3 |
-| paradigm v11 G3 best.pt (HF Hub `need-singularity/clm-v4-base-mirror`) | substrate trained ckpt | required for falsifier execution; phi-star canonical 41.86 |
+| paradigm v11 G3 best.pt (HF Hub `dancinlab/clm-v4-base-mirror`) | substrate trained ckpt | required for falsifier execution; phi-star canonical 41.86 |
 
 | downstream | role |
 |---|---|

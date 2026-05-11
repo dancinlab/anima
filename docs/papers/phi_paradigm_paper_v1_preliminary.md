@@ -39,11 +39,9 @@ real-weight result.
 
 ### 1.1 β paradigm
 
-The **β paradigm** (hexa-lang β, main branch) re-frames model adaptation as
-*admissibility-certified projection* rather than gradient descent on base weights. Adaptation
-artifacts are LoRA deltas whose cert chain (AN11-a/b/c plus meta² triple) is appended iff a
-structural admissibility proof is issued. See `docs/anima_three_paradigm_unified_20260422.md`
-for the three-paradigm unification ((β main) ≅ (proposal stack) ≅ (cell-learning)).
+<!-- [Hc_430 beta-paradigm-cert-projection — moved to hypotheses_candidates/Hc_430_beta_paradigm_cert_projection.md on 2026-05-11] -->
+
+The **β paradigm** re-frames model adaptation as admissibility-certified projection. See `docs/anima_three_paradigm_unified_20260422.md` for the three-paradigm unification ((β main) ≅ (proposal stack) ≅ (cell-learning)).
 
 ### 1.2 Learning-Free Pipeline
 
@@ -93,10 +91,7 @@ The *projection* sends W_S ↦ W_S + Δ_S without exposing any gradient signal o
 
 ### 2.2 CPGD (cert-projected gradient dance)
 
-Within the LoRA delta Δ_S, we do run gradients — but the gate at each step is a **cert
-admissibility check**, not a loss threshold. Steps that would produce an inadmissible Δ
-(AN11 FAIL or meta² chain break) are rejected and the optimizer is rolled back. Hence
-"gradient dance": the optimizer moves *only where cert chain remains closed*.
+<!-- [Hc_431 cpgd-cert-admissibility-gate — moved to hypotheses_candidates/Hc_431_cpgd_cert_admissibility_gate.md on 2026-05-11] -->
 
 ### 2.3 4-path substrate framework
 
@@ -104,10 +99,7 @@ admissibility check**, not a loss threshold. Steps that would produce an inadmis
 
 ### 2.4 Relation to cell-learning
 
-Under the η-paradigm (`docs/cell_learning_method_paradigm_20260422.md`), each substrate is a
-cell-graph and Φ is a *global* closure summary. Substrate independence is equivalent to the
-statement that *the cell-graph closure rule set R is rigid under substrate re-embedding* —
-i.e. the learned structure is not a property of the embedding substrate.
+<!-- [Hc_432 eta-paradigm-R-rigid-under-substrate — moved to hypotheses_candidates/Hc_432_eta_paradigm_R_rigid_under_substrate.md on 2026-05-11] -->
 
 ---
 
@@ -179,13 +171,9 @@ artifact* and establishes the lower noise floor for the H100 campaign.
 
 ## 4. Pre-registration
 
-Pre-registered before any H100 run:
+<!-- [Hc_433 phi-gate-005-substrate-indep — moved to hypotheses_candidates/Hc_433_phi_gate_005_substrate_indep.md on 2026-05-11] -->
 
-- **H0 (null)**: substrates are Φ-independent ⇒ ALL_PAIRS < 0.05.
-- **H1 (alternative)**: ≥ 1 pair ≥ 0.05 ⇒ substrate-dependence OR capacity-mismatch OR measurement-bias.
-- **Decision tree on H1**: `docs/phi_4path_divergence_response.md` (branches A/B/C/D).
-- **Audit anchor**: `state/asset_archive_log.jsonl` under roadmap #10 / #17 / #87.
-
+Audit anchor: `state/asset_archive_log.jsonl` under roadmap #10 / #17 / #87.
 No post-hoc threshold relaxation without explicit pre-registration amendment.
 
 ---
@@ -372,16 +360,7 @@ Machine-readable summary (mirror of `state/phi_cpu_synthetic_4path_result.json` 
 
 ### 10.1 Why a metric redesign (#90)
 
-A v1-spec naive 16-stride projection (commit `7de77d62`) produced |ΔΦ|/Φ_avg values far
-above the 0.05 gate on real base hidden states and was marked **FAIL (honest)** — not because
-the hypothesis failed, but because the metric was ill-posed against the real distributions
-(stride projection collapsed spectral tail structure). A pre-registered redesign (#90,
-commit `4c4e17b1`) replaced the metric stack with:
-
-- **Method A**: full Gram eigenvalue spectrum per path (top-16 eigenvalues)
-- **Method C**: participation ratio PR(path) = (Σλ)² / (Σλ²) as spectral effective rank
-- **Null bootstrap**: shuffle prompt order within each path (H0 = prompt order is the
-  signal, not the substrate) → 100 reps × 6 pairs = 600 null samples → p95 threshold
+<!-- [Hc_434 v2-metric-method-a-c-null-bootstrap — moved to hypotheses_candidates/Hc_434_v2_metric_method_a_c_null_bootstrap.md on 2026-05-11] -->
 
 Spec: `docs/phi_substrate_metric_spec.md`. Config: `config/phi_substrate_metric_config.json`.
 The original ALL_PAIRS `|ΔΦ|/Φ_avg < 0.05` gate (§3.3) is **retained** as the
@@ -434,6 +413,8 @@ structure, so any residual alignment is attributable to cross-substrate spectrum
 — the pre-registered substrate_indep condition under the v2 metric.
 
 ### 10.3 Stage-3 AN11 triple
+
+<!-- [Hc_435 an11-triple-a-b-c — moved to hypotheses_candidates/Hc_435_an11_triple_a_b_c.md on 2026-05-11] -->
 
 Three AN11 verifiers, each independently gating Mk.VI. All three closed 2026-04-23 via the
 cascade (`state/alm_r13_an11_{a,b,c}_live.json`):
@@ -656,12 +637,11 @@ Supersedes: none. Superseded by: post-r14-retrain v2.*
 
 ### 10.9 Meta fixed-point reading of §10.8 (2026-04-24 addendum)
 
+<!-- [Hc_437 meta-fixed-point-iso-anima-nexus — moved to hypotheses_candidates/Hc_437_meta_fixed_point_iso_anima_nexus.md on 2026-05-11] -->
+
 §10.8 reports the trained-weight result as "5/6 PASS with p3_p4 at null-p95 edge
-(inconclusive)". This reading is **correct and is preserved** as the pre-registration
-compliant honest verdict. §10.9 adds a **complementary theoretical reading** that
-treats the exact tie `real(p3_p4) = null_p95 = 0.2145` not as ambiguity but as a
-**meta fixed-point signature** — an analogue of the Ψ ↔ ε isomorphism declared in
-the sibling repo `nexus/state/atlas_convergence_witness.jsonl` (R24, 2026-04-23).
+(inconclusive)". This reading is preserved as the pre-registration compliant honest verdict.
+§10.9 adds a complementary theoretical reading mirrored from `nexus/state/atlas_convergence_witness.jsonl` R24 (2026-04-23).
 
 **Banach contraction setup**
 
@@ -755,6 +735,8 @@ is empirical and will be resolved by r14 retrain and further convergence witness
 ---
 
 ### 10.10 r14 corpus retrain (2026-04-24) — falsifiable prediction #1 verdict
+
+<!-- [Hc_436 corpus-balance-drives-substrate-indep — moved to hypotheses_candidates/Hc_436_corpus_balance_drives_substrate_indep.md on 2026-05-11] -->
 
 **Status**: Option C hypothesis (r13 EN-dominance → substrate specialization) SUBSTANTIALLY CONFIRMED.
 §10.8 prediction #1 tested and partially PASSED (edge still L2 5/6, but +33% reduction on the chronic p3_p4 pair and full 6/6 KL recovery).

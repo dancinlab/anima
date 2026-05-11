@@ -3,10 +3,12 @@
 ## status
 - **verdict**: PASS_KOREAN_FORCED (heuristic) / FAIL_SEMANTIC (qualitative)
 - **lane**: anima_emerge / chat-cap Korean-only vocab restriction
-- **substrate**: need-singularity/clm-v4-mk2-v1, mac CPU fp32
+- **substrate**: dancinlab/clm-v4-mk2-v1, mac CPU fp32
 - **cost**: $0
 - **runtime**: ~20min
 - **output dir**: `state/anima_emerge_chat_korean_only_constraint_2026_05_05/`
+
+<!-- [Hc_671 korean-weight-present-but-uniform-no-structure-clm-v4 — moved to hypotheses_candidates/Hc_671_korean_weight_present_but_uniform_no_structure.md on 2026-05-11] -->
 
 ## hypothesis under test
 Counter-experiment to BG-CO (`ban 0-1000` exposed CJK + Roman-numeral attractor

@@ -1,11 +1,13 @@
+<!-- [Hc_914 qmirror-classical-qpu-mirror — moved to hypotheses_candidates/Hc_914_qmirror_classical_qpu_mirror.md on 2026-05-11] -->
+
 # qmirror: A Classical-CPU Mirror of a Quantum Processing Unit Using Real Quantum Entropy
 
 **Draft preprint** — arXiv-targeted, *DRAFT ONLY*, not yet submitted.
 **Date:** 2026-05-03
 **Status:** v0.1 draft (peer review pending; license audit complete; cross-vendor calibration complete)
 **Source repos:**
-- GitHub canonical: https://github.com/need-singularity/qmirror
-- HuggingFace mirror: https://huggingface.co/need-singularity/qmirror
+- GitHub canonical: https://github.com/dancinlab/qmirror
+- HuggingFace mirror: https://huggingface.co/dancinlab/qmirror
 **License (source):** Apache-2.0 (qmirror code); GPLv3 (optional pyphi backend; see §7)
 
 ---
@@ -620,8 +622,8 @@ peer review is the next step.
     error-correcting codes.* Physical Review A 55, 900, 1997.
 31. **[HMAC-DRBG-2008]** NIST FIPS 198-1. *The Keyed-Hash Message
     Authentication Code (HMAC).* 2008.
-32. **[Hexa-Lang]** need-singularity. *Hexa-lang specification (raw#9
-    family).* GitHub: need-singularity/hexa (accessed 2026-05-03).
+32. **[Hexa-Lang]** dancinlab. *Hexa-lang specification (raw#9
+    family).* GitHub: dancinlab/hexa (accessed 2026-05-03).
 
 ---
 

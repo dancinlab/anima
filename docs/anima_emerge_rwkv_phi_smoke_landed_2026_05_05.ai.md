@@ -55,6 +55,8 @@ hypothesis (architecture-invariant signal) vs artifact hypothesis
 
 ---
 
+<!-- [Hc_665 phi-proxy-dim-dominant-not-architecture-aliasing-bg-cv — moved to hypotheses_candidates/Hc_665_phi_proxy_dim_dominant_not_architecture_aliasing.md on 2026-05-11] -->
+
 ## 3. Architectural Finding
 
 **RWKV 도 transformer / SSM 와 동일 dynamic range — 41.86~42.15 band.**

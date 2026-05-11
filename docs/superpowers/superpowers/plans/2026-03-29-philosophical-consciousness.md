@@ -1,3 +1,5 @@
+<!-- [Hc_951 philosophical-consciousness-5-engines-sein — moved to hypotheses_candidates/Hc_951_philosophical_consciousness_5_engines_sein.md on 2026-05-11] -->
+
 # Philosophical Consciousness Engines Implementation Plan
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.

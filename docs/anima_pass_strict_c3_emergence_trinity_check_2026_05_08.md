@@ -14,6 +14,8 @@ verdict 자체 invalid (raw#82 retraction class).
 
 ---
 
+<!-- [Hc_639 pass-strict-c3-emergence-trinity-check-procedure — moved to hypotheses_candidates/Hc_639_pass_strict_c3_trinity_check_procedure.md on 2026-05-11] -->
+
 ## 1. EXIT 조건 prerequisite SSOT (Step 1-9)
 
 본 9-step sequence 는 PASS_STRICT_C3 emerge 선언 전 mandatory self-check.

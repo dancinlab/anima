@@ -14,6 +14,8 @@
 
 ---
 
+<!-- [Hc_654 foundation-borrow-llama3b-lora-substrate-research — moved to hypotheses_candidates/Hc_654_foundation_borrow_llama3b_lora_substrate_research.md on 2026-05-11] -->
+
 ## §1 4-option trade-off 표
 
 | axis | (a) Llama-3.2-3B + LoRA r=32 + 200MB persona | (b) Qwen2.5-7B + LoRA r=32 + 200MB persona | (c) Phase 2 350M + 추가 +30K convo_5k FT | (d) from-scratch 180M~500M anima-pretrain |

@@ -1,3 +1,5 @@
+<!-- [Hc_953 b-axis-mk-xii-r14-phi-paper — moved to hypotheses_candidates/Hc_953_b_axis_mk_xii_r14_phi_paper.md on 2026-05-11] -->
+
 # B-axis Prompt — Post-H100 Research (Mk.XII / r14 / Φ Paper)
 
 **Date**: 2026-04-22

@@ -1,3 +1,5 @@
+<!-- [Hc_919 n21-iit40-16test-reproduce-cluster — moved to hypotheses_candidates/Hc_919_n21_iit40_16test_reproduce_cluster.md on 2026-05-11] -->
+
 # N-21 #8 — Boly 2015 fMRI Differentiation (ANALOGIZE)
 
 > **ts**: 2026-05-01

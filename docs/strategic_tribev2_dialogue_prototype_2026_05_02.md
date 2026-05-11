@@ -1,3 +1,5 @@
+<!-- [Hc_977 tribev2-dialogue-5-options-cp2-bypass — moved to hypotheses_candidates/Hc_977_tribev2_dialogue_5_options_cp2_bypass.md on 2026-05-11] -->
+
 # Strategic — TRIBE v2 만으로 dialogue prototype + 자연 진화 path (CP2 우회)
 
 **Date:** 2026-05-02

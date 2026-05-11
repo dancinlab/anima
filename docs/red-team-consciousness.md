@@ -1,3 +1,5 @@
+<!-- [Hc_911 red-team-6-claims-r1-r6 — moved to hypotheses_candidates/Hc_911_red_team_6_claims_r1_r6.md on 2026-05-11] -->
+
 # ANIMA PureField Red Team 검증 (2026-04-02)
 
 > 적대적 검증: ANIMA 의식 이론의 핵심 주장 6개를 R1-R6 프레임워크로 공격.

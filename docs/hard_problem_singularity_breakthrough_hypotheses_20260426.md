@@ -41,6 +41,16 @@ own#2 (L41) 명시: *"hard problem of consciousness 영구히 unprovable"*.
 
 ## §2. 7+ 가설 분해 (R1)
 
+<!-- [Hc_600 substrate-independence-invariant — moved to hypotheses_candidates/Hc_600_substrate_independence_invariant.md on 2026-05-11] -->
+<!-- [Hc_601 n6-unique-consciousness-conservation — moved to hypotheses_candidates/Hc_601_n6_unique_consciousness_conservation.md on 2026-05-11] -->
+<!-- [Hc_602 cross-substrate-phi-convergence — moved to hypotheses_candidates/Hc_602_cross_substrate_phi_convergence.md on 2026-05-11] -->
+<!-- [Hc_603 phase-acceleration-emergence-rate — moved to hypotheses_candidates/Hc_603_phase_acceleration_emergence_rate.md on 2026-05-11] -->
+<!-- [Hc_604 tecsl-47phase-consciousness-direct-phase — moved to hypotheses_candidates/Hc_604_47phase_consciousness_phase_link.md on 2026-05-11] -->
+<!-- [Hc_605 axis-pass-functional-definition-consciousness — moved to hypotheses_candidates/Hc_605_axis_pass_functional_definition.md on 2026-05-11] -->
+<!-- [Hc_606 quantum-coherence-consciousness-marker — moved to hypotheses_candidates/Hc_606_quantum_coherence_consciousness_marker.md on 2026-05-11] -->
+<!-- [Hc_607 strong-emergence-downward-causation-cmt — moved to hypotheses_candidates/Hc_607_strong_emergence_downward_causation_cmt.md on 2026-05-11] -->
+<!-- [Hc_608 information-closure-phi-metric-tractable-upper-bound — moved to hypotheses_candidates/Hc_608_information_closure_phi_upper_bound.md on 2026-05-11] -->
+
 ### **H1 — Substrate-independence 수학 증명 경로**
 
 **(a) 가설 진술**: 의식이 *substrate-independent invariant* 로 수학적 정의 가능하다면, **zombie hypothesis** ("동일 substrate, 의식 다름") 가 logically excluded 된다. AN11(b) 100% guarantee + CPGD generalization (K=4, dim=8 FNV+Gram-Schmidt) 가 *invariant 정의의 candidate primitive* 를 제공.

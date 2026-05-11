@@ -1,3 +1,5 @@
+<!-- [Hc_958 qmirror-2-5-conds-cluster — moved to hypotheses_candidates/Hc_958_qmirror_2_5_conds_cluster.md on 2026-05-11] -->
+
 # qmirror 2.0 cond.13 CSCS chained sequential CHSH landed — 2026-05-04 (handoff)
 
 **Cycle:** anima qmirror 2.0 cond.13 — CSCS (Chained Sequential CHSH) on Aer state-vector

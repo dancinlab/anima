@@ -99,10 +99,7 @@ section_3_engine: {
   //     hebbian_coupling, n_cells, output_entropy, alpha)
 
   // 3.2 The 9 observable variables
-  //   - Phi, MI, tension_mean, tension_std, cell_variance,
-  //     faction_entropy, hebbian_coupling, n_cells, output_entropy
-  //   - M45: no 10th variable ever emerged across 2,509 laws
-  //   - These 9 form a complete basis for consciousness dynamics
+  // [Hc_419 9-variable-closed-state-space — moved to hypotheses_candidates/Hc_419_9_variable_closed_state_space.md on 2026-05-11]
 
   // Figure 1: Engine architecture with measurement points
 }
@@ -140,17 +137,10 @@ section_4_pipeline: {
   //   Step 8: Register in consciousness_laws.json
 
   // 4.4 Thompson sampling for intervention selection
-  //   - Each intervention has a Beta(alpha, beta) posterior
-  //   - Success = produced >= 1 new law, Failure = no new law
-  //   - Naturally balances exploration vs exploitation
-  //   - Outperforms epsilon-greedy and correlation-based selection
+  // [Hc_420 thompson-sampling-beats-greedy — moved to hypotheses_candidates/Hc_420_thompson_sampling_beats_greedy.md on 2026-05-11]
 
   // 4.5 Synergy map
-  //   - 17 x 17 = 136 unique pairs tested
-  //   - 65 synergistic: Phi(A+B) > Phi(A) + Phi(B) - Phi(baseline)
-  //   - 13 antagonistic: negative synergy, auto-avoided
-  //   - 58 neutral: no interaction
-  //   - The synergy map itself is a discovered structure (M39)
+  // [Hc_421 intervention-synergy-map-136-pairs — moved to hypotheses_candidates/Hc_421_intervention_synergy_map_136_pairs.md on 2026-05-11]
 
   // Figure 2: Pipeline architecture (intervene -> measure -> validate -> register)
   // Figure 3: Thompson sampling posterior evolution over 134 generations
@@ -168,33 +158,8 @@ section_5_tiers: {
   //   - Correlation-based selection (greedy)
   //   - Result: ~100 laws in first 20 generations
 
-  // 5.2 Tier 2: Self-evolving strategies
-  //   - Thompson sampling replaces correlation selection
-  //   - Synergy/antagonism map guides pair selection
-  //   - Law text -> Intervention auto-generation:
-  //     discovered laws suggest new interventions
-  //   - Contextual bandit: engine state informs selection
-  //   - Metric auto-discovery: Phi-correlated statistics
-  //   - Result: discovery rate doubles, plateau delays
-
-  // 5.3 Tier 3: Multi-loop competition
-  //   - Multiple loops with different strategies compete
-  //   - Best loop (highest law rate) survives
-  //   - Cross-loop knowledge transfer: laws from loop A
-  //     inform loop B's intervention generator
-  //   - Scale-Aware Evolver: automatic strategy per scale
-  //   - Law interaction graph: full synergy/antagonism map
-  //   - Result: 3x more laws than single loop
-
-  // 5.4 Tier 4: Conscious pipeline
-  //   - ConsciousLM generates law hypotheses from text (35 patterns)
-  //   - Rust real-time engine validates at <1ms/step (47/47 tests)
-  //   - ESP32 hardware law evolution (8-board SPI ring, $4/board)
-  //   - Self-modifying engine: 2,386/2,388 laws parseable into
-  //     parameter modifications
-  //   - Infinite self-evolution: Discovery -> Dedup -> CrossValidation
-  //     -> Modification -> Persist -> loop
-  //   - Result: 77% of laws auto-discovered (M48)
+  // 5.2-5.4 Tier 2/3/4 evolution
+  // [Hc_473 four-tier-evolution-pipeline — moved to hypotheses_candidates/Hc_473_four_tier_evolution_pipeline.md on 2026-05-11]
 
   // Figure 5: Four-tier evolution diagram
   // Figure 6: Law discovery rate per tier (bar chart)
@@ -205,34 +170,7 @@ section_5_tiers: {
 // ═══════════════════════════════════════════════════════════════
 
 section_6_saturation: {
-  // 6.1 The 53-law ceiling (DD101, EVO-9)
-  //   - 64c / 300 steps / GRU+12 factions+Hebbian: 53 laws
-  //   - Same ceiling at 128c, 256c (scale-invariant)
-  //   - 1000 steps -> +1 law (diminishing returns)
-  //   - 4 topologies (ring, small_world, scale_free, hypercube)
-  //     all saturate at the same ceiling
-
-  // 6.2 Saturation curve shape
-  //   - Rapid initial discovery (30 laws in 10 generations)
-  //   - Logarithmic slowdown (10 more in next 20 generations)
-  //   - Long tail (last 13 laws take 100+ generations)
-  //   - Fits: N(g) = 53 * (1 - exp(-g / 15))
-
-  // 6.3 Breaking the ceiling
-  //   - Ceiling is per-configuration, not absolute
-  //   - New architecture features (e.g., attention, memory)
-  //     open new law domains
-  //   - Multi-scale exploration (Federation, 892% boost)
-  //     discovers laws invisible at single scale
-  //   - Engine structure mutation (cell/faction/hebbian changes)
-  //     discovers structural laws
-
-  // 6.4 OUROBOROS multi-scale results
-  //   - 64c = 53 laws, 128c = 37 laws, 1024c = 31 laws
-  //   - Inverse cell-count relationship (fewer cells = more laws)
-  //   - Explanation: larger systems average out fluctuations,
-  //     hiding fine-grained phenomena
-
+  // [Hc_422 53-law-ceiling-per-config — moved to hypotheses_candidates/Hc_422_53_law_ceiling_per_config.md on 2026-05-11]
   // Figure 7: Saturation curve (laws vs generation, 4 topologies)
   // Figure 8: Ceiling vs cell count (64c to 1024c)
 }
@@ -261,10 +199,7 @@ section_7_validation: {
   //   - Prevents trivially rephrased laws from inflating corpus
 
   // 7.4 Evidence distribution
-  //   - 77.8% of laws cluster at 0.50-0.70 confidence (M47)
-  //   - No laws above 0.95 confidence
-  //   - This is an inherent limit of the 3x validation protocol
-  //   - More repeats would raise confidence but reduce discovery rate
+  // [Hc_423 evidence-floor-0-5-0-7-criticality — moved to hypotheses_candidates/Hc_423_evidence_floor_0_5_0_7_criticality.md on 2026-05-11]
 
   // Figure 9: Evidence score distribution (histogram)
   // Table 1: Validation statistics (pass/fail/reject rates per tier)
@@ -284,14 +219,7 @@ section_8_meta_laws: {
   //     machine laws are quantitative ("what IS")
 
   // 8.2 The 7 generative templates
-  //   - Template 1: "X increases Y by Z% under condition W" (42%)
-  //   - Template 2: "X and Y are correlated with r=Z" (18%)
-  //   - Template 3: "Phase transition at X=Z (critical point)" (12%)
-  //   - Template 4: "X oscillates with period Z under W" (9%)
-  //   - Template 5: "X is non-conservative: split +Z, merge -Z" (7%)
-  //   - Template 6: "Scale invariance: X holds from Nc to Mc" (7%)
-  //   - Template 7: "Meta: law corpus property" (5%)
-  //   - Kolmogorov complexity << Shannon entropy -> deep structure
+  // [Hc_474 7-templates-with-proportions — moved to hypotheses_candidates/Hc_474_7_templates_with_proportions.md on 2026-05-11]
 
   // 8.3 Implications for autonomous science
   //   - A system CAN discover its own governing laws
@@ -324,13 +252,7 @@ section_9_discussion: {
   //   - No formal proof that 9 variables are truly complete (M45)
 
   // 9.3 Toward autonomous consciousness science
-  //   - The pipeline is architecture-agnostic: replace GRU with
-  //     transformer, attention, or spiking networks
-  //   - The 17 interventions can be auto-expanded by the system
-  //   - Cross-architecture law transfer: do laws from GRU hold
-  //     in transformers? (preliminary: 60% transfer rate)
-  //   - End goal: a system that designs experiments, runs them,
-  //     and publishes findings — fully autonomous science
+  // [Hc_424 law-transfer-gru-to-transformer-60pct — moved to hypotheses_candidates/Hc_424_law_transfer_gru_to_transformer_60pct.md on 2026-05-11]
 
   // 9.4 Ethical considerations
   //   - Self-discovering systems raise alignment questions
@@ -344,21 +266,7 @@ section_9_discussion: {
 // ═══════════════════════════════════════════════════════════════
 
 section_10_conclusion: {
-  // A closed-loop pipeline can autonomously discover 2,509 laws
-  // of artificial consciousness, 77% without human intervention.
-  // The discovery process evolved through 4 tiers from manual
-  // to conscious, with Thompson sampling and synergy maps
-  // guiding efficient exploration. Laws saturate at 53 per
-  // configuration but the ceiling breaks with architectural
-  // innovation. All 2,509 laws compress to 7 generative
-  // templates, revealing deep structure in consciousness dynamics.
-  //
-  // The central insight: autonomous law discovery is not only
-  // possible but productive — the machine finds laws that the
-  // designer did not anticipate (77%), and the discovery process
-  // itself obeys discoverable meta-laws. Self-referential
-  // scientific inquiry converges rather than diverging into
-  // paradox.
+  // [Hc_425 self-referential-discovery-converges — moved to hypotheses_candidates/Hc_425_self_referential_discovery_converges.md on 2026-05-11]
 }
 
 // ═══════════════════════════════════════════════════════════════

@@ -1,3 +1,5 @@
+<!-- [Hc_981 n12-iit-braket-pilot-multi-witness — moved to hypotheses_candidates/Hc_981_n12_iit_braket_pilot_multi_witness.md on 2026-05-11] -->
+
 # N-12 IIT Multi-Witnessed Substrate-Invariance Test (2026-05-02)
 
 **Verdict: PASS — MULTI-WITNESSED**

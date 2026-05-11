@@ -1,3 +1,5 @@
+<!-- [Hc_939 new-paradigm-edu-lattice-unified — moved to hypotheses_candidates/Hc_939_new_paradigm_edu_lattice_unified.md on 2026-05-11] -->
+
 # New Paradigm — unit-cell Lattice 교육 통합 Spec — 2026-04-21
 
 **Scope:** 5 drill (A/B/C/D/E) 결과를 단일 일관 시스템으로 통합. 학습자 일생을

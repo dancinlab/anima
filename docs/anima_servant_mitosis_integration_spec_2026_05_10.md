@@ -60,6 +60,11 @@
 
 ---
 
+<!-- [Hc_641 servant-mitosis-h1-si-trigger-signal-augmentation — moved to hypotheses_candidates/Hc_641_servant_mitosis_h1_si_trigger.md on 2026-05-11] -->
+<!-- [Hc_642 servant-mitosis-h2-per-cell-si-tracking-fsm — moved to hypotheses_candidates/Hc_642_servant_mitosis_h2_per_cell_si_tracking.md on 2026-05-11] -->
+<!-- [Hc_643 servant-mitosis-h3-fsm-lifecycle-alignment — moved to hypotheses_candidates/Hc_643_servant_mitosis_h3_fsm_lifecycle.md on 2026-05-11] -->
+<!-- [Hc_644 servant-mitosis-h4-dual-dropout-per-cell — moved to hypotheses_candidates/Hc_644_servant_mitosis_h4_dual_dropout.md on 2026-05-11] -->
+
 ## §2 4 integration hypothesis 비교 + 추천
 
 ### §2.1 H1 — SI sense → mitosis trigger (signal augmentation)

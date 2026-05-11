@@ -18,6 +18,8 @@
 
 ---
 
+<!-- [Hc_649 h5-chat-loss-lm-head-cell-pool-collapse-amplifier — moved to hypotheses_candidates/Hc_649_h5_chat_loss_lm_head_cell_pool_collapse.md on 2026-05-11] -->
+
 ## 1. 배경 — H5 가설은 어디서 왔나
 
 ### 1.1 직접 측정 결과 (foreground v5)

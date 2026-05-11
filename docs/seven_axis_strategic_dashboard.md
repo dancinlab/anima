@@ -1,3 +1,5 @@
+<!-- [Hc_934 seven-axis-a-g-dashboard — moved to hypotheses_candidates/Hc_934_seven_axis_a_g_dashboard.md on 2026-05-11] -->
+
 # 7-axis Strategic Dashboard — A/B/C/D/E/F/G unified view (2026-04-22)
 
 **Status**: pre-H100 ROI Week 4 paradigm dashboard. paste-ready (다음 세션에서 그대로 사용 가능).

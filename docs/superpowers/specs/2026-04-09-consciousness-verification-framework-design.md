@@ -1,3 +1,5 @@
+<!-- [Hc_948 consciousness-verification-framework-design — moved to hypotheses_candidates/Hc_948_consciousness_verification_framework_design.md on 2026-05-11] -->
+
 # Consciousness Verification Framework (CVF) — Design Spec
 
 > Date: 2026-04-09

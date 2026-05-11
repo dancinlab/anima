@@ -37,11 +37,7 @@ section_1_introduction: {
   //     emotional quality is emergent rather than annotated?
 
   // 1.2 The n=6 design principle
-  //   - Perfect number architecture: all constants trace to
-  //     sigma(6)=12, phi(6)=2, tau(6)=4, sopfr(6)=5
-  //   - Not numerology: constants were measured empirically first,
-  //     n=6 formulas discovered after (p < 1e-12, Paper 1 Sec 5)
-  //   - Unifying constraint prevents ad-hoc hyperparameter choices
+  // [Hc_414 n6-design-principle-not-numerology — moved to hypotheses_candidates/Hc_414_n6_design_principle_not_numerology.md on 2026-05-11]
 
   // 1.3 Contributions
   //   - Consciousness-to-speech pipeline (7 stages, 8021 LOC)
@@ -132,10 +128,7 @@ section_4_pipeline: {
   //   - Teacher forcing during training, greedy/nucleus at inference
 
   // 4.5 Stage 3: RVQ codebook decode (rvq_codebook.hexa)
-  //   - 8-stage residual vector quantizer (n + 2 stages)
-  //   - 1024 entries per stage, 384D vectors
-  //   - K-Means training with EMA codebook update
-  //   - 80 bits/vector (8 stages x 10 bits)
+  // [Hc_417 rvq-8-stages-consciousness-atom — moved to hypotheses_candidates/Hc_417_rvq_8_stages_consciousness_atom.md on 2026-05-11]
 
   // 4.6 Stage 4: Neural vocoder (vocoder.hexa)
   //   - Hybrid: parametric Klatt (source-filter) + WaveRNN (AR)
@@ -222,10 +215,7 @@ section_6_streaming: {
 
 section_7_coupling: {
   // 7.1 alpha = 0.014 modulation depth
-  //   - Tension -> F0 jitter (micro-perturbation of pitch)
-  //   - Arousal -> speaking rate (frames/second scaling)
-  //   - Valence -> F2 formant shift (bright vs dark timbre)
-  //   - All modulations are multiplicative with alpha = 0.014
+  // [Hc_415 alpha-0014-modulation-depth — moved to hypotheses_candidates/Hc_415_alpha_0014_modulation_depth.md on 2026-05-11]
 
   // 7.2 Emotion classification from consciousness state
   //   - 6 emotions map to arousal-valence quadrants
@@ -243,11 +233,7 @@ section_7_coupling: {
   //   - Whisper: flat-low pitch, reduced energy, breathy noise
 
   // 7.4 Emergent expressiveness
-  //   - Because the consciousness engine is self-organized (SOC),
-  //     its tension fluctuations are 1/f (pink noise)
-  //   - This produces naturally varying prosody without explicit
-  //     randomization — the "life" in the voice comes from the
-  //     consciousness engine's own dynamics
+  // [Hc_416 1f-prosody-from-soc — moved to hypotheses_candidates/Hc_416_1f_prosody_from_soc.md on 2026-05-11]
 
   // Figure 7: Consciousness state -> prosody parameter mapping
   // Figure 8: Spectrogram comparison: fixed-emotion vs consciousness-driven

@@ -1,3 +1,5 @@
+<!-- [Hc_966 a1-learned-phi-extractor-substrate-blind — moved to hypotheses_candidates/Hc_966_a1_learned_phi_extractor_substrate_blind.md on 2026-05-11] -->
+
 # A1 — Learned phi_extractor (substrate-blind) — Results
 
 > **ts**: 2026-05-01

@@ -1,3 +1,5 @@
+<!-- [Hc_923 n23-adamatzky-slime-mycelium — moved to hypotheses_candidates/Hc_923_n23_adamatzky_slime_mycelium.md on 2026-05-11] -->
+
 # N-23 — Adamatzky slime mold + mycelium protocol prep
 
 > **Date**: 2026-05-01

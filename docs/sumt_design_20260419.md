@@ -1,3 +1,5 @@
+<!-- [Hc_937 sumt-self-universe-map-training — moved to hypotheses_candidates/Hc_937_sumt_self_universe_map_training.md on 2026-05-11] -->
+
 # SUMT — Self-Universe-Map Training (2026-04-19)
 
 > **Engine**: anima Mk.V.1 (v4-hexa, tier 5 + tier 6~9 bridge)

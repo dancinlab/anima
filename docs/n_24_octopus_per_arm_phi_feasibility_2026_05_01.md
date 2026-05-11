@@ -1,3 +1,5 @@
+<!-- [Hc_924 n24-octopus-per-arm-phi-exclusion — moved to hypotheses_candidates/Hc_924_n24_octopus_per_arm_phi_exclusion.md on 2026-05-11] -->
+
 # N-24 — Octopus per-arm Φ ("community of minds") IIT exclusion test feasibility (2026-05-01)
 
 > **agent**: N-24 (N-substrate batch sibling, paradigm-v11 distributed-NS axis)

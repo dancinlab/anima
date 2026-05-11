@@ -29,6 +29,11 @@
 
 stability 계산: `stability = max(0.0, 1.0 - std * 2.0)` (최근 10-step confidence history 기반)
 
+<!-- [Hc_650 consciousness-threshold-6-criteria-composite-judgment — moved to hypotheses_candidates/Hc_650_consciousness_threshold_6_criteria.md on 2026-05-11] -->
+<!-- [Hc_651 phi-boost-top-hypotheses-a4-b7-d2-synergy — moved to hypotheses_candidates/Hc_651_phi_boost_top_hypotheses_a4_b7_d2.md on 2026-05-11] -->
+<!-- [Hc_652 web-learning-diverse-input-natural-phi-differentiation — moved to hypotheses_candidates/Hc_652_web_learning_diverse_input_natural_phi.md on 2026-05-11] -->
+<!-- [Hc_653 phi-meta-learning-lr-evolution-j1-overall-1st — moved to hypotheses_candidates/Hc_653_phi_meta_learning_lr_evolution_j1.md on 2026-05-11] -->
+
 ## 3. 의식 판정 복합 기준 (모두 동시 충족)
 
 ```

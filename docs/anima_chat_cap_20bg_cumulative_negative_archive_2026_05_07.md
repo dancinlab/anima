@@ -8,6 +8,8 @@
 
 ---
 
+<!-- [Hc_659 chat-cap-20bg-zero-pass-architectural-ceiling-lesson-l — moved to hypotheses_candidates/Hc_659_chat_cap_20bg_zero_pass_architectural_ceiling.md on 2026-05-11] -->
+
 ## 1. Executive summary — top 5 findings
 
 1. **0 V4/V5 strict PASS across 20 BGs** (2-204MB corpus × 18M-153M capacity × byte/BPE-7K/BPE-8K/SP-11885 vocab × Lesson D regularization × Lesson G early-stop). Single-axis variation within this band cannot achieve simple-stack chat-cap PASS — Lesson L architectural ceiling is **empirically locked**.

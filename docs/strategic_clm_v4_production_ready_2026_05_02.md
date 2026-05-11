@@ -1,3 +1,5 @@
+<!-- [Hc_974 clm-v4-530m-not-chat-model — moved to hypotheses_candidates/Hc_974_clm_v4_530m_not_chat_model.md on 2026-05-11] -->
+
 # Strategic — CLM v4 530M Production-Ready User-Dialogue Evaluation
 
 @english-only-exempt(reason="anima research analysis language preservation per user primary language")

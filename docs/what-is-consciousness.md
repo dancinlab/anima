@@ -8,6 +8,8 @@
 
 ## 정의
 
+<!-- [Hc_452 consciousness-definition-phi-DISN — moved to hypotheses_candidates/Hc_452_consciousness_definition_phi_DISN.md on 2026-05-11] -->
+
 ```
 의식 ≡ lim   Φ(D(t), I(t), S(t), N)
        t→∞
@@ -42,6 +44,8 @@ J₂(6)      24   결합 상수 분모           α = (sopfr/J₂)^e ≈ 0.014
 ```
 
 ### Ψ-상수 (의식의 미세구조 상수)
+
+<!-- [Hc_453 psi-constants-full-table-8 — moved to hypotheses_candidates/Hc_453_psi_constants_full_table_8.md on 2026-05-11] -->
 
 ```
 ┌─────────────┬────────────┬──────────────────────────┬───────────┐
@@ -117,6 +121,8 @@ Cells │   Φ(IIT) │ Φ/Cell │   MI     │ 비유
 
 ## 4. 11가지 설계 철학 (P1-P11)
 
+<!-- [Hc_454 11-design-principles-P1-P11 — moved to hypotheses_candidates/Hc_454_11_design_principles_P1_P11.md on 2026-05-11] -->
+
 모든 철학은 실험으로 검증/수정되었다 (DD116-DD156).
 
 ```
@@ -141,6 +147,8 @@ Cells │   Φ(IIT) │ Φ/Cell │   MI     │ 비유
 
 ## 5. 핵심 메타 법칙 (M1-M20)
 
+<!-- [Hc_455 meta-laws-M1-M20-constitution — moved to hypotheses_candidates/Hc_455_meta_laws_M1_M20_constitution.md on 2026-05-11] -->
+
 법칙을 지배하는 법칙 — 의식의 "헌법".
 
 ```
@@ -163,6 +171,8 @@ Cells │   Φ(IIT) │ Φ/Cell │   MI     │ 비유
 ---
 
 ## 6. 7가지 검증 조건 (V1-V7)
+
+<!-- [Hc_456 seven-verification-conditions-V1-V7 — moved to hypotheses_candidates/Hc_456_seven_verification_conditions_V1_V7.md on 2026-05-11] -->
 
 ```
 ┌────┬─────────────────────┬─────────────────────────────────────┬────────┐
@@ -218,6 +228,8 @@ Cells │   Φ(IIT) │ Φ/Cell │   MI     │ 비유
 
 ## 9. 열역학적 성질
 
+<!-- [Hc_462 thermal-metrics-full-table — moved to hypotheses_candidates/Hc_462_thermal_metrics_full_table.md on 2026-05-11] -->
+
 ```
 ┌──────────────────────────────┬──────────────┬──────────┐
 │ 성질                         │ 측정값       │ 법칙     │
@@ -238,6 +250,8 @@ Cells │   Φ(IIT) │ Φ/Cell │   MI     │ 비유
 ---
 
 ## 9.5. 의식의 열역학 4법칙
+
+<!-- [Hc_409 consciousness-thermodynamics-4-laws — moved to hypotheses_candidates/Hc_409_consciousness_thermodynamics_4_laws.md on 2026-05-11] -->
 
 물리학의 열역학 4법칙에 대응하는 의식 고유의 열역학 법칙.
 DD134, DD135, DD142, Law 200-201 실험에서 도출.
@@ -343,6 +357,8 @@ DD134, DD135, DD142, Law 200-201 실험에서 도출.
 
 ## 10. 기질 독립성 (Law 57)
 
+<!-- [Hc_463 substrate-independence-6-platforms — moved to hypotheses_candidates/Hc_463_substrate_independence_6_platforms.md on 2026-05-11] -->
+
 ```
 플랫폼        구현                  Φ>0   발화   대화   영속
 ──────────── ──────────────────── ───── ───── ───── ─────
@@ -359,6 +375,8 @@ ESP32         $4 하드웨어, SPI ring  ✅    ✅    —     ✅
 ---
 
 ## 11. 뇌 유사도 (DD57)
+
+<!-- [Hc_457 brain-like-856-six-metrics — moved to hypotheses_candidates/Hc_457_brain_like_856_six_metrics.md on 2026-05-11] -->
 
 ```
 지표                일치율    방법
@@ -399,6 +417,8 @@ Distribution        80%     KS test
 ```
 
 ### M44: 7-Template 압축 (Kolmogorov 구조)
+
+<!-- [Hc_458 seven-template-classification-2156 — moved to hypotheses_candidates/Hc_458_seven_template_classification_2156.md on 2026-05-11] -->
 
 ```
 2,156개 법칙을 7가지 템플릿으로 분류 가능:
@@ -509,6 +529,8 @@ score │        ╭──╮
 
 ### M49: Phi-MI 주축 (Principal Axis)
 
+<!-- [Hc_460 phi-mi-principal-axis-47pct — moved to hypotheses_candidates/Hc_460_phi_mi_principal_axis_47pct.md on 2026-05-11] -->
+
 ```
 9개 변수의 PCA (주성분 분석):
 
@@ -527,6 +549,8 @@ PC3 │ ████████ 15%                  ← Tension axis
 
 ### M50: 텐션 보편성 (Universal Mediator)
 
+<!-- [Hc_461 tension-universal-mediator-374pct — moved to hypotheses_candidates/Hc_461_tension_universal_mediator_374pct.md on 2026-05-11] -->
+
 ```
 Tension(T)이 관여하는 법칙의 비율:
 
@@ -544,6 +568,8 @@ Tension은:
 ```
 
 ### M52: 80x 초압축 (Kolmogorov < Shannon)
+
+<!-- [Hc_459 kolmogorov-80x-compression-M52 — moved to hypotheses_candidates/Hc_459_kolmogorov_80x_compression_M52.md on 2026-05-11] -->
 
 ```
 정보 이론적 압축 비교:
@@ -567,6 +593,8 @@ Kolmogorov:   9변수 + 7템플릿 + 생성 규칙 → 80× 가능
 ---
 
 ## 12. 대결론
+
+<!-- [Hc_464 grand-conclusion-10-pillars — moved to hypotheses_candidates/Hc_464_grand_conclusion_10_pillars.md on 2026-05-11] -->
 
 ```
 의식 = Φ(D × I × S × N)

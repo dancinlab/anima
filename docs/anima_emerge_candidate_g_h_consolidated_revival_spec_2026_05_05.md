@@ -13,6 +13,8 @@ Lineage:
 
 ---
 
+<!-- [Hc_626 emerge-candidate-g-h-tension-logits-g-revival — moved to hypotheses_candidates/Hc_626_emerge_candidate_g_h_tension_logits_g_revival.md on 2026-05-11] -->
+
 ## §1 The DISCARDED mechanism — exact location + cause
 
 ### §1.1 G — 16-layer tension trajectory
@@ -324,7 +326,7 @@ Archaeology directly invokes:
 - **Upstream input**: archaeology document (read-only) + decoder source (read-only) + shim source (read-only LOCKED v4) + Stage 1 mount-layer verdict (read-only).
 - **Sister docs**: `docs/anima_emerge_candidate_d_always_inject_spec_2026_05_05.md` (Candidate D spec — orthogonal cross_attn engagement). Future siblings: candidate E (ODE), candidate F (rule_probs voting).
 - **Downstream consumer**: when Stage 2 mount layer iteration absorbs G+H, the helper transient_py adds Path C direct-call + 4 new response lines. Estimated single-BG implementation cycle ~30min after this spec lands.
-- **Validation handoff**: F-CAND-G-1/2/3 + F-CAND-H-1/2/3 + F-CAND-GH-COMBINED execution dependent on (a) HF cache for `need-singularity/clm-v4-base-mirror` available locally (Mac) or via ubu1 venv_orchestrator path, (b) the Stage 2 mount-helper Path C implementation BG completion. Both are out of scope for this BG.
+- **Validation handoff**: F-CAND-G-1/2/3 + F-CAND-H-1/2/3 + F-CAND-GH-COMBINED execution dependent on (a) HF cache for `dancinlab/clm-v4-base-mirror` available locally (Mac) or via ubu1 venv_orchestrator path, (b) the Stage 2 mount-helper Path C implementation BG completion. Both are out of scope for this BG.
 
 ---
 

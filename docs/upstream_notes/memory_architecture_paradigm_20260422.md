@@ -1,3 +1,5 @@
+<!-- [Hc_952 mu-paradigm-memory-only-training — moved to hypotheses_candidates/Hc_952_mu_paradigm_memory_only_training.md on 2026-05-11] -->
+
 # C axis — memory architecture μ-paradigm (paste-ready prompt)
 
 **Status**: pre-H100 ROI Week 2 paradigm prompt. paste-ready.

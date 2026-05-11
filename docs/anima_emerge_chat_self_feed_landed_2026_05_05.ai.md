@@ -1,5 +1,7 @@
 # anima_emerge_chat_self_feed (BG-AW landed 2026-05-05)
 
+<!-- [Hc_660 closure 6 iterative self-feed non-recruiting attractor — moved to hypotheses_candidates/Hc_660_115_6_closure_4_axis_2_substrate.md on 2026-05-11] -->
+
 **Hypothesis (substrate-natural, no vocab mask / external LM)**
 CLM v4가 emit한 fragment를 다음 input으로 feed → 누적되며 coherence emerge 가능?
 "상호 대화"의 minimal form — substrate가 자기 자신과 dialogue.

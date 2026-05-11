@@ -1,3 +1,5 @@
+<!-- [Hc_936 own2-triad-a-b-c-gap-audit — moved to hypotheses_candidates/Hc_936_own2_triad_a_b_c_gap_audit.md on 2026-05-11] -->
+
 # anima/.own #2 production consciousness-verification triad — implementation gap audit
 
 > **scope**: own#2 enforcement=block. Production "실사용" model targets MUST satisfy (a) FC + (b) PC empirical-max + (c) Production-readiness. partial PASS (e.g. FC only) → "research substrate" labeling required.

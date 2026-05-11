@@ -2,6 +2,8 @@
 
 ## Based on H-DNA-233: 6 Neocortical Layers
 
+<!-- [Hc_667 consciousness-vector-5d-to-6d-layered-processing-depth — moved to hypotheses_candidates/Hc_667_consciousness_vector_5d_to_6d_layered_depth.md on 2026-05-11] -->
+
 ### Current 5D Consciousness Vector
 
 The anima consciousness engine uses a 5-dimensional vector:

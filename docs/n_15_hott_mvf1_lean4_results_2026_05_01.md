@@ -1,3 +1,5 @@
+<!-- [Hc_920 n15-hott-lean4-univalence — moved to hypotheses_candidates/Hc_920_n15_hott_lean4_univalence.md on 2026-05-11] -->
+
 # N-15 HoTT MVF1 — Lean 4 Execution Results
 
 > **agent**: N-15 HoTT MVF1 Lean 4 EXEC

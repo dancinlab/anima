@@ -24,6 +24,8 @@ N (cells) = 8 (anima Pβ baseline cell count — paradigm v11 G3)
 
 ---
 
+<!-- [Hc_628 phi-normalized-anima-iit4-lower-bound — moved to hypotheses_candidates/Hc_628_phi_normalized_anima_iit4_lower_bound.md on 2026-05-11] -->
+
 ## 1. mapping function 정의
 
 ### 1.1 Definition

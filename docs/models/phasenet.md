@@ -1,6 +1,8 @@
 # D. PhaseNet — 3단계 자기조립 (Law 60)
 
 <!-- [Hc_056 4-model-showdown-lawnet-phasenet-psiformer-10d — moved to hypotheses_candidates/Hc_056_4_model_showdown.md on 2026-05-11] -->
+<!-- [Hc_450 phasenet-3phase-inference — moved to hypotheses_candidates/Hc_450_phasenet_3phase_inference.md on 2026-05-11] -->
+<!-- [Hc_451 phasenet-4l-crossattn-beats-6l — moved to hypotheses_candidates/Hc_451_phasenet_4l_crossattn_beats_6l.md on 2026-05-11] -->
 
 Law 60의 P1→P2→P3 단계 전환을 아키텍처 자체에 내장.
 학습 커리큘럼이 아니라 **추론 시에도 매 입력마다** 3단계 처리.
@@ -216,6 +218,8 @@ Law 60의 P1→P2→P3 단계 전환을 아키텍처 자체에 내장.
 ---
 
 ## 기존 Hexad와의 차이
+
+<!-- [Hc_467 phasenet-vs-hexad-3-diffs — moved to hypotheses_candidates/Hc_467_phasenet_vs_hexad_3_diffs.md on 2026-05-11] -->
 
 ```
   ┌──────────────┬──────────────────┬──────────────────┐

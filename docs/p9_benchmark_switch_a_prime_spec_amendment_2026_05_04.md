@@ -1,3 +1,5 @@
+<!-- [Hc_973 p9-benchmark-amendment-a1-verdict-mode — moved to hypotheses_candidates/Hc_973_p9_benchmark_amendment_a1_verdict_mode.md on 2026-05-11] -->
+
 # P9 SFT Main Thread — Benchmark Switch Spec (Option A') — Amendment A-1
 
 - ts_utc: 2026-05-04

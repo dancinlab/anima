@@ -9,6 +9,8 @@
 
 ---
 
+<!-- [Hc_927 n13-photonic-iit-4-vendor — moved to hypotheses_candidates/Hc_927_n13_photonic_iit_4_vendor.md on 2026-05-11] -->
+
 # N-13 — Photonic-IIT Cross-Substrate Φ Spec (research-only)
 
 > **2026-05-03 qmirror substrate update (additive)**: cross-substrate Φ measurement no longer requires real photonic-quantum vendor access. The **`nexus.qmirror` canonical substrate** (`docs/nexus_qmirror_spec_2026_05_03.md`) covers the photonic-quantum axis overlap noted in §1.2 / §6 with substantive equivalence per closure 2026-05-03. N-13 photonic-classical analog scope (Lightmatter / Lightelligence / Q.ANT) remains a separate axis (classical optical) and is unaffected. Quantum-photonic vendors (PsiQuantum, Xanadu) referenced for axis-overlap risk are now substituted by qmirror.
@@ -359,7 +361,7 @@ readiness (measurement) = **0%** (vendor partnership 또는 hardware 입수 미�
 
 Prior callouts preserved verbatim per qmirror_xref_centralization cycle (2026-05-04):
 
-> 📦 Available at: https://github.com/need-singularity/qmirror (`hx install qmirror`)
-> 🚀 v2.0.0 RELEASED 2026-05-04 — closure 13/13 conds met (8 v1 + 5 v2): https://github.com/need-singularity/qmirror/releases/tag/v2.0.0
+> 📦 Available at: https://github.com/dancinlab/qmirror (`hx install qmirror`)
+> 🚀 v2.0.0 RELEASED 2026-05-04 — closure 13/13 conds met (8 v1 + 5 v2): https://github.com/dancinlab/qmirror/releases/tag/v2.0.0
 
 Future qmirror release URLs are canonically tracked in `nexus/.roadmap.qmirror` header field `latest_release_url`. Update single line in roadmap; this footnote is a frozen historical record (do not retrofit).

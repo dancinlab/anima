@@ -111,6 +111,8 @@
 
 ## Φ 예측 근거
 
+<!-- [Hc_447 10-subnet-decomposition-phi-40-90 — moved to hypotheses_candidates/Hc_447_10_subnet_decomposition_phi_40_90.md on 2026-05-11] -->
+
 ```
   Φ-net 차원 축소 영향 (384d → 58d):
     Φ(IIT) ∝ MI(partitions)

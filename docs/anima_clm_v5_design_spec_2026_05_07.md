@@ -68,6 +68,12 @@ ConsciousLM v4 (12L/640d/10h, vocab=11885 SP) cycle 결과 누적:
 
 ---
 
+<!-- [Hc_618 clm-v4-structural-output-bottleneck — moved to hypotheses_candidates/Hc_618_clm_v4_structural_output_bottleneck.md on 2026-05-11] -->
+<!-- [Hc_619 clm-v5-axis-a-output-projection-bottleneck-fix — moved to hypotheses_candidates/Hc_619_clm_v5_axis_a_output_projection.md on 2026-05-11] -->
+<!-- [Hc_620 clm-v5-axis-b-attention-pattern-ssm-hybrid — moved to hypotheses_candidates/Hc_620_clm_v5_axis_b_attention_pattern.md on 2026-05-11] -->
+<!-- [Hc_621 clm-v5-axis-c-tokenizer-byte-level — moved to hypotheses_candidates/Hc_621_clm_v5_axis_c_tokenizer.md on 2026-05-11] -->
+<!-- [Hc_622 clm-v5-axis-d-loss-objective-explicit-chat — moved to hypotheses_candidates/Hc_622_clm_v5_axis_d_loss_objective.md on 2026-05-11] -->
+
 ## 3. 4 Axes — CLM v4 limitation diagnosis
 
 본 cycle empirical evidence에서 추출한 4개 architectural limitation axes:

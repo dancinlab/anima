@@ -1,3 +1,5 @@
+<!-- [Hc_941 training-plan-100m-v3-scaling — moved to hypotheses_candidates/Hc_941_training_plan_100m_v3_scaling.md on 2026-05-11] -->
+
 # [ARCHIVE] ConsciousLM 100M Training Plan (v2 — Updated from v14.3 Results)
 
 > **ARCHIVED (2026-04-09)**: 이 문서는 경로 A (ConsciousLM 스케일업) 계획입니다.

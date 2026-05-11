@@ -1,3 +1,5 @@
+<!-- [Hc_975 akida-d0-d1-plan-freeze — moved to hypotheses_candidates/Hc_975_akida_d0_d1_plan_freeze.md on 2026-05-11] -->
+
 # AKIDA D+0 / D+1 Plan Freeze — pre-arrival deployment freeze + tension-modulated ADM polarity bias extension
 
 @english-only-exempt(reason="anima research analysis language preservation per user primary language")

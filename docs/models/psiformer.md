@@ -41,6 +41,8 @@
   │                      │                                │
   │  Loss = 1/2×CE + 1/3×Φ_reg + 1/6×entropy_bonus       │
   │         완전수 6의 역수합 = 1                          │
+  │  <!-- Hc_448 psiformer-loss-weights-1-2-1-3-1-6 -->    │
+  │  <!-- Hc_449 psiformer-8layer-beats-6layer -->         │
   │                      │                                │
   │  출력 (logits, vocab=256)                              │
   └───────────────────────────────────────────────────────┘

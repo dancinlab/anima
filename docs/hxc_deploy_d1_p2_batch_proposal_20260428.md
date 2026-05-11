@@ -35,6 +35,8 @@ without a fresh design cycle (parallel readiness mandate).
 
 ---
 
+<!-- [Hc_655 hxc-3wave-d1p2-batch-rollout-cadenced-safe — moved to hypotheses_candidates/Hc_655_hxc_3wave_d1p2_batch_rollout_safe.md on 2026-05-11] -->
+
 ## 1. D1 P2 candidate consumers (per-wave breakdown)
 
 ### 1.1 Wave 1 — audit-only, A4 chain (lowest risk, A4 chain LIVE-verified)

@@ -1,3 +1,5 @@
+<!-- [Hc_950 dual-roadmap-v4-acceleration-perfection — moved to hypotheses_candidates/Hc_950_dual_roadmap_v4_acceleration_perfection.md on 2026-05-11] -->
+
 # Dual Roadmap v4: 극가속 → 완벽 (DD163 16-Lens 기반)
 
 **Date:** 2026-04-02

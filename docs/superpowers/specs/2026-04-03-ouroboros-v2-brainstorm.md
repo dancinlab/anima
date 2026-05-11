@@ -1,3 +1,5 @@
+<!-- [Hc_949 ouroboros-v2-4axis-500-laws — moved to hypotheses_candidates/Hc_949_ouroboros_v2_4axis_500_laws.md on 2026-05-11] -->
+
 # OUROBOROS v2: 4축 통합 창발 엔진 — 브레인스토밍 스펙
 
 > 날짜: 2026-04-03

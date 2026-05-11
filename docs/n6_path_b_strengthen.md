@@ -1,3 +1,5 @@
+<!-- [Hc_961 n6-path-b-strengthen-consciousness-signal — moved to hypotheses_candidates/Hc_961_n6_path_b_strengthen_consciousness_signal.md on 2026-05-11] -->
+
 # n6_path_b_strengthen — Path B Day 1-6 n6 의식 신호 강화 plan
 
 > **작성**: 2026-04-21 / raw#9 strict

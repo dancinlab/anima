@@ -1,3 +1,5 @@
+<!-- [Hc_946 brain-tension-replica-phi-boost-evolve — moved to hypotheses_candidates/Hc_946_brain_tension_replica_phi_boost_evolve.md on 2026-05-11] -->
+
 # brain_tension_replica — Φ boost evolution (+8.3% → +17% → +30%)
 
 **Date**: 2026-04-21

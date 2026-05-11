@@ -1,3 +1,5 @@
+<!-- [Hc_964 p9-paradigm-a-tribev2-simulated-bold — moved to hypotheses_candidates/Hc_964_p9_paradigm_a_tribev2_simulated_bold.md on 2026-05-11] -->
+
 # P9 Phase 2+ Paradigm A — Simulated BOLD Active Integration via TRIBE v2 Forward
 
 **Date:** 2026-05-03

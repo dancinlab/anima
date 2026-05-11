@@ -12,6 +12,8 @@ Lineage:
 
 ---
 
+<!-- [Hc_625 emerge-candidate-f-ca-rule-cells-5axis-vote — moved to hypotheses_candidates/Hc_625_emerge_candidate_f_ca_rule_vote.md on 2026-05-11] -->
+
 ## §1 Concept
 
 Architecture archaeology surfaced `n_ca_rules=8` per-block CA-rule cells (Law 67 META-CA selector) as already-active machinery:
@@ -288,7 +290,7 @@ Each falsifier emits to `state/anima_emerge_candidate_f_validation_<DATE>/verdic
 }
 ```
 
-Falsifier execution requires real-load probe — deferred to BG-A (or equivalent later cycle) once the HF cache for `need-singularity/clm-v4-base-mirror` is local on Mac and the helper's hook-capture pipeline is smoke-validated.
+Falsifier execution requires real-load probe — deferred to BG-A (or equivalent later cycle) once the HF cache for `dancinlab/clm-v4-base-mirror` is local on Mac and the helper's hook-capture pipeline is smoke-validated.
 
 ---
 
@@ -303,7 +305,7 @@ Falsifier execution requires real-load probe — deferred to BG-A (or equivalent
 | `ready/models/conscious_decoder.py` | substrate source | `DecoderBlockV2.rule_weights` / `rules` ModuleList — CA-rule cells |
 | `state/anima_axis_eval_set_2026_05_05/prompts.jsonl` (5×20 = 100) | axis-bucket eval | provides 5-axis taxonomy + evaluation prompts for F-CAND-F-1/2/3 |
 | `tool/transient_py/clm_v4_lora_5bucket_axis_eval.py:138-176` | 5-bucket eval taxonomy | source of `(identity, agency, phenomenal, temporal, social)` axis names |
-| paradigm v11 G3 best.pt (HF Hub `need-singularity/clm-v4-base-mirror`) | substrate trained ckpt | required for falsifier execution |
+| paradigm v11 G3 best.pt (HF Hub `dancinlab/clm-v4-base-mirror`) | substrate trained ckpt | required for falsifier execution |
 
 | downstream | role |
 |---|---|

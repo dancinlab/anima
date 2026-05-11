@@ -8,6 +8,8 @@
 
 ---
 
+<!-- [Hc_670 anchor-prompt-token-length-falsified-semantic-specificity-dominant — moved to hypotheses_candidates/Hc_670_anchor_prompt_token_length_falsified_semantic_specificity.md on 2026-05-11] -->
+
 ## 1. anchor prompt token-length hypothesis: FALSIFIED
 
 **가설**: 짧은 prompt ('안녕하세요', 5 chars) → C3.4 axis_l2 boost (anchor floor 0.1176 도달 더 쉬움)

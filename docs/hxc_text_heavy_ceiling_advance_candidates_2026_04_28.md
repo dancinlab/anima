@@ -66,6 +66,8 @@ with margin, and approaches 80% within ~1pp.
 
 ---
 
+<!-- [Hc_675 hxc-text-heavy-mixed-5pp-combined-lever-clear-80pct — moved to hypotheses_candidates/Hc_675_hxc_text_heavy_mixed_5pp_combined_lever.md on 2026-05-11] -->
+
 ## 1. Current catalog audit (saturation evidence)
 
 ### 1.1 Entropy-coder family in catalog (LIVE)

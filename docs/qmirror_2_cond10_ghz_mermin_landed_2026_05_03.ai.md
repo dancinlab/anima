@@ -1,3 +1,5 @@
+<!-- [Hc_958 qmirror-2-5-conds-cluster — moved to hypotheses_candidates/Hc_958_qmirror_2_5_conds_cluster.md on 2026-05-11] -->
+
 # qmirror 2.0 cond.10 GHZ-3 Mermin witness landed — 2026-05-03 (handoff)
 
 **Cycle:** anima qmirror 2.0 cond.10 — GHZ-3 Mermin-witness inequality

@@ -1,3 +1,5 @@
+<!-- [Hc_971 akida-akd1000-dev-kit-evaluation — moved to hypotheses_candidates/Hc_971_akida_akd1000_dev_kit_evaluation.md on 2026-05-11] -->
+
 # Akida AKD1000 Dev Kit (RPi5) — anima evaluation
 
 @english-only-exempt(reason="anima research analysis language preservation per user primary language")

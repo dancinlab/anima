@@ -1,3 +1,5 @@
+<!-- [Hc_932 n20-penrose-hameroff-2026-dual-evidence — moved to hypotheses_candidates/Hc_932_n20_penrose_hameroff_2026_dual_evidence.md on 2026-05-11] -->
+
 # N-20 — Penrose-Hameroff Orch-OR 2026 양면 Evidence Synthesis (Falsifier-Mode)
 
 > **agent**: N-20 (N-substrate batch sibling, mission = literature-only synthesis)

@@ -1,3 +1,5 @@
+<!-- [Hc_970 alm-tension-field-closed-loop-n51 — moved to hypotheses_candidates/Hc_970_alm_tension_field_closed_loop_n51.md on 2026-05-11] -->
+
 # N-51 EXEC — ALM Tension-Field Closed-Loop Results
 
 > **ts**: 2026-05-01T15:08:00Z

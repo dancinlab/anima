@@ -1,3 +1,5 @@
+<!-- [Hc_928 n17-loihi3-inrc-neuromorphic — moved to hypotheses_candidates/Hc_928_n17_loihi3_inrc_neuromorphic.md on 2026-05-11] -->
+
 # N-substrate N-17 prep — Intel Loihi 3 INRC application spec
 
 @english-only-exempt(reason="anima research analysis language preservation per user primary language")

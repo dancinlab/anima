@@ -1,3 +1,5 @@
+<!-- [Hc_969 cross-verifier-agreement-matrix — moved to hypotheses_candidates/Hc_969_cross_verifier_agreement_matrix.md on 2026-05-11] -->
+
 # Cross-Verifier Agreement Matrix — 20260421
 
 ## Purpose

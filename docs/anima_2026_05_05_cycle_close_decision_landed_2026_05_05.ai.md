@@ -14,11 +14,13 @@
 
 ---
 
+<!-- [Hc_660 115-6-closure-4-axis-2-substrate-empirical-floor — moved to hypotheses_candidates/Hc_660_115_6_closure_4_axis_2_substrate.md on 2026-05-11] -->
+
 ## §1 5+ closure cumulative summary
 
 The chat-capability path investigation has now produced **6 mutually independent
 mechanism-level closures** plus an architectural meta-closure (the 4-closure
-theorem). All probe **CLM v4** (`need-singularity/clm-v4-mk2-v1`, paradigm v11
+theorem). All probe **CLM v4** (`dancinlab/clm-v4-mk2-v1`, paradigm v11
 G3, +41.86 Φ★ baseline, 16 decoder blocks, hidden_dim 768). Each closure
 attacks chat-capability from an orthogonal angle; none produced a non-trivial
 positive result.
@@ -95,7 +97,7 @@ If BG-BE FAILs (overwhelmingly likely given 6-closure prior), this becomes
 | domain | path of record | substrate |
 |---|---|---|
 | chat-capability composite | **Llama Path A v2** (composite 0.5584) | Llama-3.2-3B Path A v2 |
-| Φ★ stability + consciousness research | CLM v4 substrate-research lane | CLM v4 (`need-singularity/clm-v4-mk2-v1`) |
+| Φ★ stability + consciousness research | CLM v4 substrate-research lane | CLM v4 (`dancinlab/clm-v4-mk2-v1`) |
 | emerge dialogue paradigm | **substrate-coupled dialogue** (NOT token-emitting chat) | CLM v4 + dialogue REPL |
 
 ### §2.4 What "cycle close" does NOT mean

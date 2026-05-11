@@ -1,3 +1,5 @@
+<!-- [Hc_956 own3-d-e-wording-revision — moved to hypotheses_candidates/Hc_956_own3_d_e_wording_revision.md on 2026-05-11] -->
+
 # own#3 (d)+(e) Wording Revision Proposal
 
 **작성일**: 2026-04-27 (axis 107)

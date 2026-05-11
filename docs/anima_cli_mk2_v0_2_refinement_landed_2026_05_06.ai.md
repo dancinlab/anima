@@ -27,6 +27,8 @@ related-raws:
 
 # anima cli mk2 v0.2 refinement landed (2026-05-06)
 
+<!-- [Hc_664 anima-cli-mk2-v0-2-apex-compliance-refinement — moved to hypotheses_candidates/Hc_664_anima_cli_mk2_v0_2_apex_compliance.md on 2026-05-11] -->
+
 ## TL;DR
 
 **hive mk2_apex (1535 LoC, baseline 2026-05-02 + 7 amends) full read**:

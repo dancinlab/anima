@@ -34,6 +34,8 @@ cycle 2026-05-09/10 의 user verdict 7-table 의 두 ❌ 항목 중 하나:
 
 ---
 
+<!-- [Hc_627 v5-mitosis-real-nn-module-cells-architectural — moved to hypotheses_candidates/Hc_627_v5_mitosis_real_nn_module_cells.md on 2026-05-11] -->
+
 ## §1 architecture decision (a/b/c/d)
 
 ### option 비교 (`.roadmap.clm_v5_mitosis_engine.architecture_decision_record` 기반 + 본 spec 검토 갱신)

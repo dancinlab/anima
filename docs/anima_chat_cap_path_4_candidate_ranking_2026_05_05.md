@@ -38,6 +38,10 @@ caveat 를 정식 명세한다. 권고 sequence 는 sister BG-EI lm_head_b smoke
 
 ---
 
+<!-- [Hc_632 chat-cap-path1-lm-head-b-retrofit — moved to hypotheses_candidates/Hc_632_chat_cap_path1_lm_head_b_retrofit.md on 2026-05-11] -->
+<!-- [Hc_633 chat-cap-path2-qwen-25-05b-external — moved to hypotheses_candidates/Hc_633_chat_cap_path2_qwen_external.md on 2026-05-11] -->
+<!-- [Hc_634 chat-cap-path4-paradigm-c-hybrid-kogpt2-clm — moved to hypotheses_candidates/Hc_634_chat_cap_path4_paradigm_c_hybrid.md on 2026-05-11] -->
+
 ## 1. Four-path spec + evidence
 
 ### 1.1 Path 1 — `lm_head_b` retrofit (frozen body, new Korean head)

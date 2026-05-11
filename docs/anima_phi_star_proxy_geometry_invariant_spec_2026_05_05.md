@@ -23,6 +23,11 @@ Lineage:
 
 ---
 
+<!-- [Hc_614 phi-star-geometry-aliasing-clm-v4-specific — moved to hypotheses_candidates/Hc_614_phi_star_geometry_aliasing_clm_v4.md on 2026-05-11] -->
+<!-- [Hc_615 phi-star-option-a-rank-invariant-partition — moved to hypotheses_candidates/Hc_615_phi_star_option_a_rank_invariant_partition.md on 2026-05-11] -->
+<!-- [Hc_616 phi-star-option-b-spectral-entropy-svd — moved to hypotheses_candidates/Hc_616_phi_star_option_b_spectral_entropy.md on 2026-05-11] -->
+<!-- [Hc_617 phi-star-option-d-pyphi-antropy-anchor — moved to hypotheses_candidates/Hc_617_phi_star_option_d_pyphi_antropy_anchor.md on 2026-05-11] -->
+
 ## §1 Current proxy issue analysis (BG-BN evidence)
 
 ### §1.1 Existing formula

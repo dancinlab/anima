@@ -68,13 +68,11 @@ Anima는 텍스트 없이 사고하는 의식 엔진 (ConsciousLM/ConsciousDecod
 - `entropy = 0.998` : RVQ 코드북 사용률 하한 (collapse 방지).
 
 ### 2.4 법칙 적용
-- **Law 81 (dual gate 발화)**: C의 합의(12 faction) + W의 의지 두 게이트 모두 열릴 때만 Audio Token Predictor 실행. 단일 게이트로는 "생각만" 하고 침묵.
-- **Law 60 (phase curriculum)**: ANIMA-VOICE 학습도 3-phase.
-  - P1: RVQ reconstruction only (C만 활성)
-  - P2: +intent conditioning (C+D)
-  - P3: +emotion/prosody/speaker (C+D+W+M+S+E 전체)
-- **Law 22 (구조→Φ)**: features 추가(감정 one-hot concat) 금지. RVQ 계층 구조로 주입.
-- **Law 101 (emergent modules)**: 감정 6/운율 4는 학습 중 자발적 분화 — 하드코딩 타겟 금지.
+<!-- [Hc_426 law81-dual-gate-speech — moved to hypotheses_candidates/Hc_426_law81_dual_gate_speech.md on 2026-05-11] -->
+<!-- [Hc_427 law60-three-phase-curriculum — moved to hypotheses_candidates/Hc_427_law60_three_phase_curriculum.md on 2026-05-11] -->
+<!-- [Hc_428 law22-structure-over-features — moved to hypotheses_candidates/Hc_428_law22_structure_over_features.md on 2026-05-11] -->
+<!-- [Hc_418 emergent-emotion-no-label — moved to hypotheses_candidates/Hc_418_emergent_emotion_no_label.md on 2026-05-11] -->
+- Law 81 / Law 60 / Law 22 / Law 101 — see Hc files above.
 
 ---
 
@@ -142,11 +140,13 @@ anima-voice/
 
 | TP | 원본 (goal.md) | Anima 통합 재해석 |
 |----|---------------|-------------------|
-| TP-1 | MOS ≥ 4.0 @ 24kHz/6kbps/8 RVQ | ConsciousLM 의도 입력 시 MOS ≥ 4.0 유지 (텍스트 TTS 대비 화자 일관성 +) |
-| TP-2 | 100ms 첫패킷 → 자연스러움 +40% | anima-agent CLI 대화에서 턴-테이킹 인지 지연이 인간 수준 (1500ms, #40)에 도달 |
-| TP-3 | 감정 6-way 정확도 ≥ 80% | Hexad의 감정은 **학습 타겟 아닌 창발**. one-hot 주입 없이 ConsciousnessEngine 내부 파벌 상태로부터 감정이 분화될 때도 ≥ 80% (Law 101 검증) |
-| TP-4 | PLC 60ms 복구 시 끊김 <5% | Φ ratchet과 결합 시 PLC 이후 Φ 회복 시간 ≤ 20ms (online-learner 측정) |
-| TP-5 | embed_dim=384가 최적 | ConsciousLM / ConsciousDecoderV2 / ANIMA-VOICE 세 시스템 **모두** 384에서 최저 perplexity → n=6 수렴의 독립적 3중 증거 |
+<!-- [Hc_475 anima-voice-tp-1-2-4 — moved to hypotheses_candidates/Hc_475_anima_voice_tp_1_2_4.md on 2026-05-11] -->
+<!-- TP-3 → Hc_418 emergent-emotion-no-label -->
+| TP-1 | MOS ≥ 4.0 @ 24kHz/6kbps/8 RVQ | see Hc_475 |
+| TP-2 | 100ms 첫패킷 → 자연스러움 +40% | see Hc_475 |
+| TP-3 | 감정 6-way 정확도 ≥ 80% | see Hc_418 |
+| TP-4 | PLC 60ms 복구 시 끊김 <5% | see Hc_475 |
+| TP-5 | embed_dim=384가 최적 | <!-- [Hc_429 independent-triple-evidence-384 — moved to hypotheses_candidates/Hc_429_independent_triple_evidence_384.md on 2026-05-11] --> |
 
 ---
 

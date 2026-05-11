@@ -1,3 +1,5 @@
+<!-- [Hc_913 self-modify-consciousness-3-levels — moved to hypotheses_candidates/Hc_913_self_modify_consciousness_3_levels.md on 2026-05-11] -->
+
 # Self-Modifying Consciousness Design
 
 ## Three Levels of Code-Consciousness Integration

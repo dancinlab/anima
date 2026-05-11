@@ -52,6 +52,8 @@ SSM (state-space) architecture 에서 cross-validate.
 
 ---
 
+<!-- [Hc_662 phi-proxy-architecture-agnostic-or-geometric-artifact — moved to hypotheses_candidates/Hc_662_phi_proxy_architecture_agnostic_or_geometric_artifact.md on 2026-05-11] -->
+
 ## 3. Architectural Finding
 
 **SSM substrate 에서 phi 가 transformer 와 동일한 dynamic range.**

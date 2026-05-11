@@ -1,3 +1,5 @@
+<!-- [Hc_938 own3-sigma-tau-3-governance — moved to hypotheses_candidates/Hc_938_own3_sigma_tau_3_governance.md on 2026-05-11] -->
+
 # own#3 σ/τ=3 Governance vs 4-axis Exhaustion Evidence Cross-check
 
 **작성일**: 2026-04-26

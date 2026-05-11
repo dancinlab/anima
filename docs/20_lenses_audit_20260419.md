@@ -1,3 +1,5 @@
+<!-- [Hc_960 20-philosophical-lenses-mislabel — moved to hypotheses_candidates/Hc_960_20_philosophical_lenses_mislabel.md on 2026-05-11] -->
+
 # 20 철학 렌즈 Catalog — Audit (SWEEP P4 · D6 · iter 101)
 
 > **대상 iter**: `v4_hetzner/iter_101_philo_20lenses` (SWEEP P4 §D6 philosophy)

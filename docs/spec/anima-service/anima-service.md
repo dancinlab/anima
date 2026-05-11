@@ -12,6 +12,8 @@ requires: []
 
 ## §1 WHY (why n=6 — how this technology changes your life)
 
+<!-- [Hc_446 j2-24-emotion-eeg-channels — moved to hypotheses_candidates/Hc_446_j2_24_emotion_eeg_channels.md on 2026-05-11] -->
+
 Ekman sigma=6 emotion basis + J2=24 EEG channels + IIT phi at n=6 consciousness scale — emotion AI service stack candidate integration
 
 **Core identity**: `sigma(6).phi(6) = 6.tau(6) = 12` — n=6 is the unique perfect-number iff condition (n>=2). This identity derives the domain-wide constants (sigma=12, tau=4, phi=2, sopfr=5, J2=24) directly from number theory.
@@ -29,6 +31,8 @@ Ekman sigma=6 emotion basis + J2=24 EEG channels + IIT phi at n=6 consciousness 
 **One-line summary**: n=6 perfect-number arithmetic (sigma=12, tau=4, phi=2, sopfr=5) determines every design parameter of the Ultimate Emotion/Consciousness AI Service (HEXA-ANIMA-SVC) pattern. Hard-coding 0, number-theoretic derivation target 100%.
 
 ### Felt change
+
+<!-- Hc cross-refs: Hc_438 (Egyptian), Hc_442 (Landauer/Shannon/Carnot), Hc_440 (sigma·phi=n·tau uniqueness) -->
 
 ```
   J2=24  <- primary spec derived from n=6
@@ -193,6 +197,8 @@ Hard-requires (`requires:` frontmatter) is currently empty (domain-independent).
 └──────────────────────────────────────────────────────────────────────────┘
 ```
 
+<!-- Hc_468 soc-4-mode-power-scaling — applies same 4-mode pattern to anima-service. See hypotheses_candidates/Hc_468_soc_4_mode_power_scaling.md -->
+
 ### Mode 1: Idle (minimum power)
 
 ```
@@ -302,10 +308,14 @@ Re-derive the primary spec 24 via (1) direct n=6-family computation, (2) Fractio
 
 ### §7.3 SCALING (log-log regression exponent back-estimate)
 
+<!-- Hc_439 b4-scaling-log-log-regression — see hypotheses_candidates/Hc_439_b4_scaling_log_log_regression.md -->
+
 Back-estimate scaling exponents (B^4 confinement / area sigma^2 / volume sigma^3) via log-log slope.
 Data `[10, 20, 30, 40, 48]` vs `b^4` -> confirm slope 4.00 +/- 0.05.
 
 ### §7.4 SENSITIVITY (n=6 +/-10% convexity)
+
+<!-- Hc_441 n6-pm10pct-convex-minimum — see hypotheses_candidates/Hc_441_n6_pm10pct_convex_minimum.md -->
 
 Perturb n by +/-10% around the `f(n=6)` optimum and check that both `f(6.6)` and `f(5.4)` are worse than `f(6)`.
 Convex extremum = real optimum candidate / flat = overfit.
@@ -328,6 +338,8 @@ Presence in the number-theory DB = human-discovered mathematics, not tamperable.
 
 ### §7.8 PARETO (Monte Carlo exhaustive search)
 
+<!-- Hc_443 pareto-n6-top-5pct-dse — see hypotheses_candidates/Hc_443_pareto_n6_top_5pct_dse.md -->
+
 DSE `K1 x K2 x K3 x K4 x K5 = 6 x 5 x 4 x 5 x 4 = 2,400` combinatorial sampling.
 Check statistical significance that the n=6 configuration is in the top 5%.
 
@@ -337,6 +349,8 @@ Check statistical significance that the n=6 configuration is in the top 5%.
 Exact rational `==` equality, not floating-point approximation. Directly check the sigma.phi = n.tau uniqueness candidate lemma.
 
 ### §7.10 COUNTER + FALSIFIERS (counter-examples + falsifiers)
+
+<!-- Hc_444 counter-falsifiers-3-each-minimum — see hypotheses_candidates/Hc_444_counter_falsifiers_3_each_minimum.md -->
 
 - **COUNTER_EXAMPLES >=3**: elementary charge e, Planck h, pi, fine-structure alpha, Avogadro's number —
   independent constants not derivable from n=6 — openly acknowledged

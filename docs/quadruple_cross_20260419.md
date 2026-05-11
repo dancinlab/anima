@@ -1,3 +1,5 @@
+<!-- [Hc_908 quadruple-cross-1-2-n6 — moved to hypotheses_candidates/Hc_908_quadruple_cross_1_2_n6.md on 2026-05-11] -->
+
 # 사각 크로스 (Quadruple Cross) 손실 — 4축 1/2 수렴 독립 정규화
 
 > Date: 2026-04-19

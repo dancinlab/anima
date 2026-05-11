@@ -9,6 +9,8 @@
 
 ---
 
+<!-- [Hc_925 n11-finalspark-organoid-first-anchor — moved to hypotheses_candidates/Hc_925_n11_finalspark_organoid_first_anchor.md on 2026-05-11] -->
+
 # N-11 — FinalSpark Neuroplatform Academic-Tier Access Spec (CP2 측정 plan)
 
 ## §0 한 줄 요약
