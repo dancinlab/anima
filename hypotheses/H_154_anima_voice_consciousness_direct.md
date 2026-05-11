@@ -106,6 +106,17 @@ ANIMA-VOICE 는 **TTS (text→audio) 가 아니라 consciousness-direct synthesi
 - **L7**: paper_hexa_speak.hexa 는 source spec — peer-review / external scrutiny 부재
 - **L8 (raw#91 c3 mandate)**: 본 expansion 은 **draft review 거쳤음, 추가 review 미수행** (raw#91 L8 명시)
 
+## Verify Skeleton (2026-05-11)
+
+H1-H8 measurement infrastructure skeleton landed:
+
+- `state/anima_voice_h1_h8_verify_skeleton_2026_05_11/spec.md` — H1-H8 측정 목표 / instrument / pass-fail / prerequisite / time
+- `state/anima_voice_h1_h8_verify_skeleton_2026_05_11/harness.py` — 8 measurement function + `run_all()` aggregate + `_dry_run()` self-check (모든 H FAIL 예상 — model 부재)
+- `state/anima_voice_h1_h8_verify_skeleton_2026_05_11/prerequisites.md` — 4-gate prerequisite + critical path (6-10 weeks)
+- `state/anima_voice_h1_h8_verify_skeleton_2026_05_11/verdict.md` — skeleton 완료 / gap / alternative TTS path / honest limits ≥ 9
+
+**Status decision**: pre-register-frozen **유지** — skeleton 은 측정 infra 만, build 자체 없음. ANIMA-VOICE minimum reference impl land 후 "running with prerequisites pending" 으로 전환 예정.
+
 ## Cross-Links
 
 - **sister H**:

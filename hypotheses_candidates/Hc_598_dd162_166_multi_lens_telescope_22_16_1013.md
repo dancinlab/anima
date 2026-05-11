@@ -7,7 +7,7 @@ status: candidate-unverified
 source_doc: docs/hypotheses/dd/DD162-7b-16lens-baseline.md
 source_lines: 1-15
 promoted_at: 2026-05-11
-linked_h: Hc_586
+linked_h: Hc_586, H_135 (cycle-3 cross-link 2026-05-11), H_134 (DD162 baseline)
 notes: DD162-166 lens cluster
 ---
 

@@ -7,7 +7,7 @@ status: candidate-unverified
 source_doc: docs/hypotheses/NEXUS-auto-insights.md
 source_lines: 1-128
 promoted_at: 2026-05-11
-linked_h: Hc_002, n6-primitives
+linked_h: Hc_002, n6-primitives, H_135 (cycle-3 cross-link 2026-05-11), H_145 (NEXUS6-auto-insights)
 notes: NEXUS-6 singularity-recursion 결과. 98181 unique closed-form
 ---
 

@@ -7,7 +7,7 @@ status: candidate-unverified
 source_doc: docs/nexus_qrng_quantum_seed_2026_05_02.md
 source_lines: 1-40
 promoted_at: 2026-05-11
-linked_h: Hc_944, Hc_914
+linked_h: Hc_944, Hc_914, H_135 (cycle-3 NEXUS cluster cross-link 2026-05-11)
 notes: "B1 EXEC mission 2026-05-02. IonQ Forte 1 Maryland trapped-ion. Hadamard16 |0⟩ → Z measurement. NIST SP 800-90B simplified MCV."
 ---
 

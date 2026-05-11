@@ -121,6 +121,8 @@ since: 2026-03
 - **L8**: B^4 log-log fit 5 data points only [10,20,30,40,48] — **under-powered regression**
 - **L9**: 많은 sub-claim 이 single anima document 출처 — **peer-cross-check (NEXUS-6 ledger original) outstanding**
 - **L10 (raw#91 c3 ≥5 mandate)**: 본 expansion 은 draft review 거쳤음, **추가 review 미수행** (raw#91 L8 명시)
+- **L11 (numerology expansion 2026-05-11)**: 22 / 81 psi-constants curated for non-redundancy — 50+ verify_v* knobs that repeat the same n6_formula were excluded. Including duplicates would inflate match counts artificially; this curation is conservative but introduces a subjective selection step.
+- **L12 (formula-search defense 2026-05-11) — BINDING**: 22-constant test holds the *published formula* fixed and varies n (parent expansion). It does NOT test the complementary critique: *could a different formula from the same vocabulary fit each random n equally well?* The formula-search lane (`state/numerology_critique_n6_2026_05_11/formula_search/`) executes a DFS over depth≤3 expressions in the 11-primitive vocabulary {1, n, μ, φ, τ, σ, sopfr, J₂, e, π, ln2} with ops {+,−,×,÷,^,log,sqrt,neg} at tol=0.01 and finds: n=6 hits 21/22 targets, but **8 other n in [2,30] (10, 14, 16, 21, 22, 24, 26, 29) hit 22/22**. Verdict: **FORMULA_SEARCH_CRITICAL_BEATEN**. Implication — n=6 uniqueness is **narrow-formula uniqueness** (the *specific* published lambdas line up at n=6 jointly with p≈0), NOT **vocabulary-level uniqueness** (depth-3 arithmetic on 11 primitives is universal enough to fit almost any n to almost any of these 22 targets). Future writeups MUST distinguish the two phrasings. See `state/numerology_critique_n6_2026_05_11/formula_search/verdict.md` for full discussion.
 
 ## Cross-Links
 

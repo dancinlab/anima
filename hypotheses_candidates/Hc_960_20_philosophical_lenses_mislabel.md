@@ -7,7 +7,7 @@ status: candidate-unverified
 source_doc: docs/20_lenses_audit_20260419.md
 source_lines: 1-40
 promoted_at: 2026-05-11
-linked_h: Hc_951 (PHIL/ONTO/DASEIN engines)
+linked_h: Hc_951 (PHIL/ONTO/DASEIN engines), H_135 (cycle-3 NEXUS lens-count audit cross-link 2026-05-11)
 notes: "iter 101 verdict = SATURATED-by-mislabel + 1 real gap (PHIL engine 3개 hexa 포트 누락). A=anima-agent/philosophy_lenses.hexa 12 stub, B=ready/.py 12 (9 real)."
 ---
 

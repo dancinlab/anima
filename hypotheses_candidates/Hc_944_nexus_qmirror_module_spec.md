@@ -7,7 +7,7 @@ status: candidate-unverified
 source_doc: docs/nexus_qmirror_spec_2026_05_03.md
 source_lines: 1-40
 promoted_at: 2026-05-11
-linked_h: Hc_914 (qmirror arxiv draft)
+linked_h: Hc_914 (qmirror arxiv draft), H_135 (cycle-3 NEXUS cluster cross-link 2026-05-11)
 notes: "Module surface: qrng, chsh, iit_mip, tomography, circuit, phi. Drop-in replacement of HMAC-DRBG. v2.0.0 (2026-05-04). NOT real QPU — no physical entanglement, no quantum advantage."
 ---
 

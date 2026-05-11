@@ -9,7 +9,7 @@ merged_at: 2026-05-11
 source_doc: docs/papers/phi_paradigm_paper_v1_preliminary.md
 source_lines: 657-754
 promoted_at: 2026-05-11
-linked_h: (none — NEW ★)
+linked_h: H_067 (merged-to), H_135 (cycle-3 NEXUS cluster cross-link 2026-05-11)
 notes: §10.9 alternative theoretical reading: real-distance = null-p95 collapse is observer-observed convergence, a Banach fixed point. Mirrors nexus R24 W1/W2 (persistence_threshold=1/3 ↔ ε_self_referential_closure). Falsifiable: r14 yields 5/6 + same edge → meta reading; r14 → 6/6 → corpus reading.
 ---
 

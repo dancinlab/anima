@@ -131,6 +131,12 @@ Orthogonality (Hc_040): Φ ∝ N^1.071 (cell axis) and CE ∝ P^-0.85 (param axi
 본 expansion 작성 시점 (2026-05-11) 에 다음 conflict 존재 — Cycle 4 measurement 후 처리:
 
 - **Φ⊥CE (Hc_040) vs Φ × CE^α = K (Hc_024)**: 둘 다 simultaneously true 불가 (at large α). N × P sweep 에서 |corr(Φ, CE)| 측정 — < 0.1 → Hc_040 wins; ≥ 0.3 → Hc_024 wins; intermediate → both partial
+  - **Decisive design landed 2026-05-11** (`state/phi_ce_orthogonality_decisive_2026_05_11/`):
+    - `spec.md` — 5×4 N×P grid (N∈{16,32,64,128,256}, P∈{1M,10M,100M,1B}), Pearson corr + Pareto CV(α) + within-axis corr decisive metric, decision matrix
+    - `harness.py` — deterministic seed 0xC0EC0AC, two generative models (A: Hc_040 orthogonal, B: Hc_024 K=50 α=0.5), fingerprint computation
+    - `results.json` — synthetic fingerprint quantitative gap: Model A corr=-0.003 CV(α*)=0.96; Model B corr=-0.613 CV(α*=0.49)=0.018 (~2 orders of magnitude separation, α* matches Hc_024 claim α~0.5)
+    - `verdict.md` — decision map, scenario verdicts (A/B/mid), measurement protocol (anima Φ★ + CLM CE, 64 dual-seed twin, ~$200-$1000 RunPod), 8 honest limits
+  - **Status**: decisive test designed, awaiting anima Φ★ engine + 20-cell N×P measurement (separate cycle). Cross-tie: F4 fires if |corr|>0.3, F5 fires if |corr|<0.05+strong-Pareto
 - **R34 deprecation vs live pattern persistence**: Hc_004 R34 6-pt fit deprecated 되었으나 live 측정에서 Φ ≈ 0.608·N^1.071 pattern 잔존 — 본 expansion 은 "pattern persists" 약화 claim 으로 진행, N=4096 extension 으로 final verdict
 - **Hc_614/Hc_662/Hc_665 dim-dominant artifact**: hypercube 9D vs 10D 가 dim-dominant artifact 인지 — Hc_039 hypercube superlinear claim 의 validity 영향 — independent dim-orthogonal measurement 필요
 

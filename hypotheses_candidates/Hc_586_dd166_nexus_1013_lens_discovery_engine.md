@@ -7,7 +7,7 @@ status: candidate-unverified
 source_doc: docs/hypotheses/dd/DD166-nexus-1013lens-discovery-engine.md
 source_lines: 1-15
 promoted_at: 2026-05-11
-linked_h: Hc_378
+linked_h: Hc_378, H_135 (cycle-3 cross-link 2026-05-11)
 notes: NEXUS-6 통합 시스템
 ---
 
