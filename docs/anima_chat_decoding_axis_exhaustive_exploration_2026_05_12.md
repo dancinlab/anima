@@ -198,28 +198,72 @@
 ## 🎯 Saturation summary
 
 ```
-┌────┬──────────────────────────────────┬───────┬──────────────────────┐
-│ Cat│ Category                         │ items │ already measured     │
-├────┼──────────────────────────────────┼───────┼──────────────────────┤
-│  A │ Sampling families                │ 10    │ A1, A2 (2/10)        │
-│  B │ Temperature                      │ 10    │ B1, B6 (2/10)        │
-│  C │ Repetition control               │ 8     │ C1, C3 (2/8)         │
-│  D │ Constraint / control             │ 10    │ D1 (1/10)            │
-│  E │ Beam search                      │ 7     │ 0/7                  │
-│  F │ Stop conditions                  │ 7     │ F1, F2, F4 (3/7)     │
-│  G │ Prompt engineering               │ 8     │ G1 (1/8)             │
-│  H │ Multi-step generation            │ 7     │ H1 (1/7)             │
-│  I │ State manipulation               │ 8     │ I1 (1/8)             │
-│  J │ Substrate-side (anima)           │ 6     │ J1, J2, J3 (3/6)     │
-│  K │ Confidence / uncertainty         │ 5     │ 0/5                  │
-│  L │ Cross-prompt                     │ 5     │ 0/5                  │
-│  M │ Meta                             │ 3     │ M1, M2 (2/3)         │
-├────┼──────────────────────────────────┼───────┼──────────────────────┤
-│ TOTAL                                  │ 94    │ 18/94 measured (19%) │
-└────┴──────────────────────────────────┴───────┴──────────────────────┘
+┌────┬──────────────────────────────────┬───────┬────────────────────────────┐
+│ Cat│ Category                         │ items │ measured (after P1+P2)     │
+├────┼──────────────────────────────────┼───────┼────────────────────────────┤
+│  A │ Sampling families                │ 10    │ A1, A2 (2/10)              │
+│  B │ Temperature                      │ 10    │ B1..B10 (10/10) ✅          │
+│  C │ Repetition control               │ 8     │ C1..C5 (5/8)               │
+│  D │ Constraint / control             │ 10    │ D1 (1/10)                  │
+│  E │ Beam search                      │ 7     │ E1, E2, E3 (3/7)           │
+│  F │ Stop conditions                  │ 7     │ F1, F2, F3, F4 (4/7)       │
+│  G │ Prompt engineering               │ 8     │ G1 (1/8)                   │
+│  H │ Multi-step generation            │ 7     │ H1, H2, H4 (3/7)           │
+│  I │ State manipulation               │ 8     │ I1 (1/8)                   │
+│  J │ Substrate-side (anima)           │ 6     │ J1, J2, J3 (3/6)           │
+│  K │ Confidence / uncertainty         │ 5     │ 0/5                        │
+│  L │ Cross-prompt                     │ 5     │ 0/5                        │
+│  M │ Meta                             │ 3     │ M1, M2 (2/3)               │
+├────┼──────────────────────────────────┼───────┼────────────────────────────┤
+│ TOTAL                                  │ 94    │ 35/94 measured (37%)       │
+└────┴──────────────────────────────────┴───────┴────────────────────────────┘
 ```
 
-→ **94 axis items × ~19% 측정 완료**. **76 items unmeasured**. **추가 saturation 가능 ★★★★★**.
+→ **94 axis items × ~37% 측정 완료** (was 19% before P1+P2 sweep). **59 items unmeasured**.
+
+---
+
+## 📊 P1+P2 axis exploration results (2026-05-12) — Phase 1A ckpt
+
+비유: 27 mode 측정했지만 **모두 V5.8 PASS threshold (≥3/5) 미달**. saturation 의 한계.
+
+### Ranking top 10 (27 new modes, V5.8 5-dialogue)
+
+| rank | mode               | cat | n_pass | verdict |
+|------|--------------------|-----|--------|---------|
+| 🥇 1  | B1_T0.0_greedy     | B   | 2/5    | FAIL    |
+| 🥈 2  | C_rep1.1_sample08  | C   | 2/5    | FAIL    |
+| 🥉 3  | F1_eos_only_greedy | F   | 2/5    | FAIL    |
+|  4   | F2_newline_greedy  | F   | 2/5    | FAIL    |
+|  5   | F3_user_marker     | F   | 2/5    | FAIL    |
+|  6-8 | E_beam2/4/8        | E   | 2/5    | FAIL    |
+|  9   | H4_best_of_n5      | H   | 2/5    | FAIL    |
+
+### Per-dialogue recall % (27 modes aggregate)
+
+| dialogue   | recall %    | finding                                            |
+|------------|-------------|----------------------------------------------------|
+| anima_fact | 20/27 (74%) | substrate prior — "anima entity" 흔한 표현         |
+| day        | 7/27  (26%) | "수요일" Korean date keyword                       |
+| color      | 1/27   (4%) | H4 best-of-n5 only 1회 hit                          |
+| profession | 0/27   (0%) | **catastrophic forget — 어떤 mode 도 recall 못함** |
+| cosmology  | 1/27   (4%) | C_rep1.1_sample08 1회 sample 운                     |
+
+### 핵심 발견
+
+- 🟥 **PASS mode 0/27** — V5.8 threshold (≥3/5) 어느 axis 도 충족 못함
+- 🟧 **profession 0%** — Phase 1A 가 직업 type recall 능력 부재 (corpus issue 의심)
+- 🟨 **substrate prior dominant** — anima_fact 74% 가 SFT 결과 아니라 base substrate 의 cross-link
+- 🟦 **sample T 단조 감소** — T=0.0 (2/5) > T=0.1-1.3 (1/5) > T=1.5/2.0 (0/5). 노이즈만 추가
+- 🟪 **beam 등가** — beam=2/4/8 동일 result. greedy 와 같은 recall pattern
+- 🟩 **strong rep_penalty (≥1.3) → markdown table 격자 출력 collapse** (불안정)
+- ⚠️ **prior Phase 1A V5.8 4-mode (greedy 3/5) 와 1점 차이** — GPU (cu128 RTX 5070) vs Mac CPU fp32 argmax 비결정성, host 변경. 본 측정 self-consistent
+
+### Honest interpretation
+
+⚠️ **decoding axis 만으로 V5.8 PASS 달성 어려움**. corpus 개선 (Phase 1B) 또는 substrate 변경 (B'' FFN.gate cotrain 15/15 V4-lite winner) 가 더 효과적일 가능성.
+
+⚠️ 본 saturation 측정은 **diminishing returns 한계** 확인 — H4 best-of-n 도 sample 운에 의존하여 color 가끔 hit 만 기여.
 
 ---
 

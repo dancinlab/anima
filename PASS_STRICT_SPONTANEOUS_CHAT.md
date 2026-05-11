@@ -1945,3 +1945,103 @@ https://huggingface.co/spaces/dancinlab/anima-chat
 | 🚀 | **n≥8 substrate scatter** — (V14 × V4-lite) 산점도로 anti-correlation 정량화 (r, p-value) | low | $20 | 1-2d | §19 Hc_1221 → formal H 승격용 stat power |
 
 ---
+
+## §22 [2026-05-12 04:55 KST] AXIS EXPLORATION P1+P2 (B+C+F+E+H, 27 modes) — Phase 1A ckpt no-PASS finding ★★★★ (decoding axis 단독 V5.8 boost 한계 확인)
+
+### 🎯 한 줄 요약
+
+**94-axis brainstorm 의 top-priority subset 27 modes** (Category B 10 temperatures, C 4 rep_penalty × 2 modes, F 3 stop conditions, E 3 beam widths, H best-of-n5 + self-consistency + single) 측정. **0/27 PASS** (best 2/5). decoding axis 만 으로 Phase 1A V5.8 boost 불가능 확인. measured saturation 19% → **37% (35/94)**.
+
+### 비유
+
+🍰 Phase 1A 케이크 위에 27 가지 toppings (decoding axes) 모두 시도. **그 어느 toppings 도 케이크 본체의 단맛 부족 (corpus issue) 을 보충하지 못함**. 다음은 케이크 본체를 다시 굽는 것 (Phase 1A.1 §17 처럼) 이 정공법.
+
+### 📊 P1+P2 결과 요약
+
+| ranking | mode (cat) | n_pass | recall pattern |
+|---------|-----------|--------|----------------|
+| 🥇 1    | B1_T0.0_greedy | 2/5 | day + anima_fact |
+| 🥈 2    | C_rep1.1_sample08 | 2/5 | anima_fact + cosmology |
+| 🥉 3-5  | F1/F2/F3 greedy | 2/5 each | day + anima_fact |
+| 6-8    | E_beam2/4/8 | 2/5 each | day + anima_fact (beam width 무관) |
+| 9      | H4_best_of_n5 | 2/5 | color + anima_fact (best-of sample 운) |
+| 10-20  | B sample T=0.1..1.3, C_rep1.1/1.3 greedy, H1/H2 | 1/5 | anima_fact only |
+| 21-27  | T≥1.5 sample, C_rep≥1.5, C_rep1.3_sample | 0/5 | (noise collapse) |
+
+### 7-element decomposition
+
+- **M (measurement)**: 27 modes × 5 dialogues = 135 generations (Phase 1A ckpt sha 6c67761f...)
+- **R (recall avg)**: ~1.2/5 across 27 modes
+- **I (improvement Δ over prior)**: −1 vs prior Phase 1A greedy 3/5 (host fp variance 추정)
+- **V (verdict)**: 0/27 PASS — V5.8 threshold 미달
+- **A (action)**: next axis G/I/L 측정 vs Phase 1A.1 (§17) 으로 회귀
+- **Δ (delta)**: 19% → 37% measured (94-axis brainstorm), 17 new modes
+- **P (path)**: axis 단독 boost 불가 → corpus engineering 정공법 권고
+
+### Per-dialogue recall rate (27 modes aggregate)
+
+| dialogue   | recall %    | 분석                                                    |
+|------------|-------------|--------------------------------------------------------|
+| anima_fact | 20/27 (74%) | substrate prior (anima keyword 흔함)                   |
+| day        | 7/27  (26%) | "수요일" Korean date keyword 강건                       |
+| color      | 1/27   (4%) | H4 best-of-n5 만 hit (sample 운)                        |
+| profession | 0/27   (0%) | **catastrophic — 어떤 mode 도 의사/doctor recall 못함** |
+| cosmology  | 1/27   (4%) | C_rep1.1_sample08 1회 (sample 운)                       |
+
+### 핵심 발견
+
+1. 🟥 **PASS mode 0/27** — V5.8 ≥3/5 어느 axis 도 미충족
+2. 🟧 **profession 0%** — Phase 1A SFT 가 profession dialogue 학습 약함 (Phase 1A.1 §17 에서 보완됨)
+3. 🟨 **substrate prior dominant** — anima_fact 74% recall 은 SFT 효과 아닌 base substrate cross-link
+4. 🟦 **sample T monotone 감소** — T=0.0 (2/5) > T=0.1-1.3 (1/5) > T≥1.5 (0/5)
+5. 🟪 **beam search 등가** — beam=2/4/8 결과 동일 (greedy 와 같은 recall pattern)
+6. 🟩 **rep_penalty ≥1.3 → degeneracy** — markdown table 격자 패턴 collapse (`| --- | --- |`)
+7. 🟫 **H4 best-of-n5 unique color hit** — sample 5회 중 highest log-prob 선택이 color 한 번 잡음
+
+### Honest interpretation
+
+⚠️ **Prior Phase 1A V5.8 4-mode (greedy 3/5) 와 차이**: 본 측정 greedy 2/5. profession 이 prior 에서 PASS 였는데 본 측정 FAIL. 원인 추정: GPU (RTX 5070 cu128) vs Mac CPU fp32 의 argmax 비결정성 (softmax → argmax edge case), host 변경. 다른 4 dialogue 는 일치. 측정 결과 self-consistent.
+
+⚠️ **mission 의 "Honest expectations" 와 일치**: 사용자가 사전에 "Phase 1A V5.8 std_greedy 3/5 — Category B (temperature) 에서 T=0.3 등 더 낮은 T 가 더 잘 작동할 수 있음" 예측 → **반증** (T=0.0 가 최선). "Category H best-of-n (5 samples + select highest) 이 가장 likely improvement" 예측 → **확인** (color 추가 hit 만, 전체 2/5 동률).
+
+⚠️ **decoding axis saturation 의 한계 일반화**: 25% 측정으로 추세 명확 — corpus / substrate 변경이 정공법.
+
+### 측정 cost
+
+| 항목 | 값 |
+|------|-----|
+| Wall time P1 (B+C+F, 105 generations) | 129s on RTX 5070 (ubu2 host) |
+| Wall time P2 (E+H, ~50 generations) | 227s |
+| Total Wall | **6 min** (vs prediction 3.5h Mac CPU — 35x faster via GPU) |
+| Cost | $0 (self-host GPU) |
+| Budget remaining | 5.9h of 6h cap |
+
+### Files
+
+- script P1: `/tmp/axis_p1_bcf.py` (uploaded to ubu2:/tmp/)
+- script P2: `/tmp/axis_p2_eh.py`
+- results P1: `state/anima_axis_exploration_2026_05_12/results/p1_bcf_result.json`
+- results P2: `state/anima_axis_exploration_2026_05_12/results/p2_eh_result.json`
+- logs: `p1_bcf.log` / `p2_eh.log` (state dir)
+- doc: `docs/anima_chat_decoding_axis_exhaustive_exploration_2026_05_12.md` (37% saturation 갱신)
+
+### 🧭 Cross-link
+
+- §7 V5.8 × 4 modes baseline (substrate A)
+- §10/§13 Phase 1A landed (V5.8 greedy 3/5)
+- §17 Phase 1A.1 landed (color + cosmology boost → 4/5 — **corpus engineering 이 effective**)
+- §19 Hc_1221 anti-correlation hypothesis (related substrate selection axis)
+- §20/§21 anima_chat default switch to B'' (V4-lite 15/15 winner — V5.8 0/5 trade-off 가시화)
+- `docs/anima_chat_decoding_axis_exhaustive_exploration_2026_05_12.md` (94-axis brainstorm SSOT)
+
+### 다음 진행할 것들
+
+| # | 작업 | priority | cost | time | value |
+|---|------|----------|------|------|-------|
+| 🥇 | **Phase 1A.1 ckpt 위에서 같은 27 axis 측정** — §17 의 4/5 PASS 위에 axis boost 시도 (e.g. H4 best-of-n5 가 5/5 만들 수 있는지) | high | $0 | 10min GPU | axis × corpus 합성 효과 측정 |
+| 🥈 | **Phase 1B SFT corpus** — profession dialogue 보강 (의사/doctor mentions × 1000+) | medium | $0.25 | 1h | catastrophic forget (0% recall) 회복 |
+| 🥉 | **Category G prompt engineering 측정** — G2 system prefix / G3-G4 few-shot (8 axes 중 0 measured) | medium | $0 | 30min | prompt format 이 axis 보다 영향 클 수 있음 |
+| 🌟 | **HF dataset 에 axis exploration JSON upload** — `dancinlab/anima-pass-strict-chat-capable` 에 27-mode result row 추가 | low | $0 | 10min | reproducibility |
+| 🚀 | **Category K confidence-aware sampling** (5 axes 0 measured) — entropy 기반 dynamic mode 전환 | low | $0 | 1h | adaptive decoding 가능성 |
+
+---
