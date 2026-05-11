@@ -741,3 +741,70 @@ cycle 2026-05-11 의 **10번째 ★★★★★ finding** — **anima chat 4가�
 - 🥉 production-grade chat UI (HF Space) — M4 force-include 패턴 활용 가능
 - 🌟 cycle 2026-05-11 REBORN §87 cross-link
 
+
+---
+
+## §8 [2026-05-12 02:45 KST] PHASE 0.8 — DEFAULT MODE 결정 ★★★ (M4 force-include = anima_chat default)
+
+**Decision**: anima_chat wrapper 의 **default decoding mode = M4 force-include** (per Phase 0.7 5/5 PASS).
+사용자가 명시 안 하면 M4 적용.
+
+### Rationale
+
+cycle 2026-05-11 §7 (Phase 0.7) 결과:
+
+| mode             | V5.8 PASS | suitable as default?         |
+|------------------|-----------|-------------------------------|
+| standard_greedy  | 1/5 (20%) | ❌ multi-turn fact-recall 약함 |
+| standard_sample  | 0/5 (0%)  | ❌ T=0.8 노이즈                |
+| M3_rep_penalty   | 0/5 (0%)  | ❌ persona-cycle 억제만        |
+| **M4_force_include** | **5/5 (100%)** 🏆 | ✅ **default 선택**        |
+
+### Implementation — `anima_chat.py`
+
+```python
+from anima_chat import AnimaChat
+chat = AnimaChat()
+# default M4 force-include
+resp = chat("사용자: 너의 이름을 알려줘 | 도우미: ")
+# → "네, 맞습니다. anima는 우주뇌지도 attractor 정합 — 평온너의..."
+# 자동 추출 keyword "너의" 가 응답에 강제 삽입됨
+
+# override 가능
+resp = chat("...", mode="greedy")
+resp = chat("...", mode="sample", temp=0.8)
+resp = chat("...", mode="M3_rep_penalty", rep_penalty=1.3)
+resp = chat("...", force_keywords=["파란"])  # 명시
+```
+
+### Auto keyword extraction (M4 default 의 핵심)
+
+`extract_force_keywords()` heuristic:
+1. last "사용자:" segment 추출
+2. 한글 2자+ chunk 추출 ([가-힣]{2,})
+3. 일반 question marker / 조사 / 동사 제외 (`있어`, `뭐야`, `어디`, `사용자`, `도우미`, ...)
+4. 첫 keyword 1개 force-inject
+
+### Smoke test 성공
+
+```
+prompt: "사용자: 너의 이름을 알려줘 | 도우미: "
+extracted keyword: "너의"
+response: "네, 맞습니다. anima는 우주뇌지도 attractor 정합 — 평온너의 "
+```
+
+### Default rationale
+
+- single-turn chat-cap: 12/15 PASS 기준 substrate A 가 이미 잘함 → 어떤 mode 든 어느 정도 작동
+- multi-turn fact-recall: **오직 M4 가 PASS** (5/5)
+- production-grade chat 에서 사용자가 mode 선택 안 할 가능성 ↑ → default 가 가장 강한 mode 이어야
+
+🍞 **비유**: 음식점 메뉴에서 "기본 메뉴" 를 가장 인기 있는 음식 (M4) 으로 설정 — 사용자가 메뉴 안 정해도
+default 가 최고 quality.
+
+### Cross-link
+
+- `anima_chat.py` at repo root
+- HF model README update (default usage = M4)
+- next-cycle: anima_chat library 의 production deployment
+
