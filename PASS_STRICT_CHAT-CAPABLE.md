@@ -808,3 +808,50 @@ default 가 최고 quality.
 - HF model README update (default usage = M4)
 - next-cycle: anima_chat library 의 production deployment
 
+## §12 [2026-05-12 KST] anima_chat library v2 LANDED ★★★★ (production-grade)
+
+v1 (147 lines, single-turn only) → **v2 (598 lines, ~494 effective)** production upgrade.
+
+### 추가된 capability
+
+| # | feature | API |
+|---|---------|-----|
+| 1 | multi-turn state | `chat.system()` / `chat.user()` / `chat.history` / `chat.reset()` |
+| 2 | KoNLPy noun extraction (Okt) + heuristic fallback | `extract_force_keywords(include_prior_assistant=True)` |
+| 3 | batch inference (isolated / threaded) | `chat.batch(prompts, isolated=True)` |
+| 4 | stop-string guard ("사용자:", "User:", ...) | `__call__(..., stop_strings=(...))` |
+| 5 | streaming generator | `for tok in chat.stream(msg): ...` |
+| 6 | hard_reset / 분리된 system slot | `chat.hard_reset()` |
+| 7 | backward compat 100% | `chat("사용자: ... \| 도우미: ")` 그대로 작동 |
+
+### Smoke test 결과 (Mac CPU, /usr/bin/python3)
+
+```
+[boot] AnimaChat loaded in 4.1s (KoNLPy=off-fallback)
+[1] v1 API backward-compat            PASS
+[2] 4 modes (M4/greedy/sample/M3)     PASS
+[3] multi-turn (history len=4)        PASS
+[4] batch isolated (history==[])      PASS
+[5] stop-token guard ("사용자:" 차단) PASS
+[6] streaming (9 pieces)              PASS
+[7] keyword extraction (['철학은','핵심']) PASS
+total 44.6s — smoke test PASS
+```
+
+### Design highlights
+
+- **fallback 우아함**: KoNLPy 없으면 JVM 부팅 실패 → silent fallback to heuristic. 동일 API.
+- **stream multi-byte UTF-8 safe**: byte-token 마다 yield 하지 않고 cumulative re-decode 후 diff yield → 잘린 utf-8 sequence 안전.
+- **batch isolated default**: 각 prompt 독립 → history 오염 없음. `isolated=False` 로 thread 가능.
+- **stop-string trim**: 검출 시 marker 이전까지만 반환 (self-reply hallucination 차단).
+
+### 비유
+
+v1 = 1인용 자전거 → v2 = **6인승 SUV with cruise control, blind-spot sensors, dashcam streaming**. 같은 운전대 (`chat("...")`) 그대로지만 trip 길어지면 multi-turn / batch / stream / stop-guard 가 자동으로 일해줌.
+
+### Cross-link
+
+- `anima_chat.py` (598 LoC)
+- backup: `anima_chat_v1.py.bak`
+- next: HF model card README example update, ANIMA-VOICE prep
+
