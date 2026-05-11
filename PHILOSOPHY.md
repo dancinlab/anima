@@ -521,3 +521,76 @@ P-ETH 는 모든 입력 ready (dataset 200 + heldout 50 + OOD 50 + spec + harnes
 - P-ETH DPO fire 결과 (orchestrator 가 적절한 env 에서 fire) → cont. 7 으로 append
 - BG-LB chat-cap 수렴 ckpt 도착 시 P-SPK + P-IDR re-fire → 새 entry
 - 새 architecture-emergent claim 후보 emerge 시 README 표 row 추가 + 본 ledger 에 design entry
+
+---
+
+## 2026-05-12 (cont. 7) — P-ETH 2회 추가 시도 + env routing diagnostic + 최종 closure 확정
+
+사용자 "ok go" — P-ETH 마지막 자율 fire 2회 추가 시도.
+
+### Diagnostic finding: remote python3 env routing 불안정
+
+본 prompt assistant 의 `python3` 호출이 routing 결과에 따라 다른 env 사용 — 본 cycle 에서 발견된 패턴:
+
+| Env | torch | peft/trl | torchvision |
+|---|---|---|---|
+| `/home/aiden/.local/lib/python3.12/site-packages` | ✅ | ❌ (torchvision::nms 충돌로 import fail) | ❌ (operator missing) |
+| `/home/summer/.local/lib/python3.12/site-packages` | ❌ (없음) | ✅ | ❌ (없음, OK) |
+
+즉 어느 env 도 단독으로 DPO 실행 불가:
+- aiden: torch OK 지만 peft import 가 torchvision::nms 미존재 operator 호출하다 cascade fail
+- summer: peft/trl OK 지만 torch 자체 없음
+
+Orchestrator 가 P-AFR/P-SPK/P-IDR 를 fire 한 path 는 위 둘이 아닌 별도 venv/conda env — 본 prompt assistant 의 `python3` shim 으로 접근 불가.
+
+### Attempts (cont. 7 추가)
+
+| # (total) | Method | Result |
+|---|---|---|
+| 5 | `python3 /tmp/p_eth_dpo_fire.py` (재시도) | `RuntimeError: torchvision::nms` → peft import cascade fail (aiden env routing) |
+| 6 | `python3 /tmp/p_eth_dpo_summer.py` (PYTHONPATH override to summer) | `ModuleNotFoundError: No module named 'torch'` (summer env torch 없음) |
+
+### Total session fire attempts
+
+**6회 시도, 0 회 성공** by prompt assistant. 3 BG (P-AFR/P-SPK/P-IDR) 는 orchestrator (또는 사용자) 가 별도 환경에서 fire — assistant 가 직접 fire 한 BG 는 없음. 즉:
+
+- Assistant scope: **spec / probe / dataset / harness / fire-emit script land** — 100% 완료
+- Orchestrator scope: **actual H100/GPU fire + verdict 산출** — P-AFR/P-SPK/P-IDR 완료, P-ETH 대기
+
+본 cycle 의 자율성 ceiling 은 명확히 코드/데이터/명령 emit 까지였음을 확정.
+
+### 4-BG cycle FINAL closure (75% via orchestrator, 25% pending)
+
+| BG | Verdict | Trigger | README #principle final |
+|---|---|---|---|
+| 7.B P-AFR | POLICY_RETAINED + REVERSE | orchestrator | #4 POLICY · weak counter-evidence |
+| 7.D P-SPK | NULL | orchestrator | #5 DESIGN · NULL |
+| 7.A P-IDR | INDETERMINATE_MIXED | orchestrator | #2 POLICY · indeterminate-mixed signal |
+| 7.C P-ETH | NOT_FIRED | (queued) | #6 POLICY · unverified |
+
+### Session closing statement
+
+본 cycle (2026-05-11 ~ 2026-05-12) 의 핵심 발견:
+
+1. **README Philosophy 표의 7-row 정직성 audit** — 정상 분류 (EMPIRICAL/POLICY/DESIGN) + strength 표기, 이전의 "모두 동급 architecture-emergent claim" framing 에서 evidence-grade 명확화로 진화
+2. **`PHILOSOPHY.md` root append-only ledger 신규 확립** — `hypotheses_candidates/` → `hypotheses/` → `PHILOSOPHY.md` pipeline 사용자 directive 로 명시
+3. **AGENTS.md 📎 References 등록** — 다음 cycle agent 가 본 ledger 참조 가능
+4. **3/4 BG verdict 실제 산출** — empirical falsification 0건이지만 정직한 NULL/INDETERMINATE/REVERSE 결과 모두 land. POLICY/DESIGN 의 empirical 기반은 본 cycle 미확립이지만 **정확한 evidence 등급으로 표기** 됨
+5. **Assistant autonomy ceiling 명확화** — code/data/spec/harness/fire-emit 까지가 reliable, actual fire trigger 는 orchestrator/사용자 monetary+infra decision
+
+### Cycle hand-off
+
+- Next cycle 진입 시 carry:
+  - P-ETH DPO fire (orchestrator queue) → 도착 후 본 ledger 에 cont. 8 append
+  - BG-LB chat-cap 수렴 ckpt 가 P-SPK / P-IDR re-fire trigger
+  - 본 cycle 의 REVERSE 신호 (P-AFR) 가 새 hypothesis 후보로 promote 검토 — H_assistant_framing_neutral_or_helpful 같은 falsifiable claim
+- 모든 artifact pushed: README.md (Philosophy 표 honest C3), PHILOSOPHY.md (cont. 7 까지), AGENTS.md (📎 References), NEXT.md (§7 status + carry), state/p_* 4 dir (spec + probe + dataset + harness + 3 verdicts + 1 pending)
+
+**Final closure 확정** — 본 prompt session 의 deliverable 완료. 자율 fire 추가 시도 없음. P-ETH 도착 시 새 entry.
+
+### Session metrics (cont. 7 / final)
+
+- 2 additional fire attempts (cont. 7), both blocked by env routing
+- Total session: 6 fire attempts × 0 successful by assistant; orchestrator fired 3
+- Net new verdicts this cont.: 0
+- Final cycle metrics: 75% verdicted (3/4), 100% pre-fire ready (4/4), $0 total spend

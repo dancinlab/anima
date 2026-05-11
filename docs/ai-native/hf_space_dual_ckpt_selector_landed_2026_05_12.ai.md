@@ -5,7 +5,7 @@ component: hf-space-dancinlab-anima-chat
 status: LANDED
 owner: anima monorepo
 cycle: HF Space dual-ckpt selector (succeeds §21 B'' swap)
-ssot_artifact: ../../PASS_STRICT_SPONTANEOUS_CHAT.md §22
+ssot_artifact: ../../PASS_STRICT_SPONTANEOUS_CHAT.md §24
 upstream_pin: Space sha 865ff4f / commits c3037e4 + ab8a2ee + 865ff4f
 ---
 
@@ -52,7 +52,7 @@ input = `"안녕! 너는 누구야?"`, 2 ckpt × 2 mode = 4 generations, **4/4 O
 
 ## §4 Cross-link
 
-- SSOT §: `PASS_STRICT_SPONTANEOUS_CHAT.md §22`
+- SSOT §: `PASS_STRICT_SPONTANEOUS_CHAT.md §24` (originally §22, promoted due to numbering collision with §22 axis exploration)
 - Prior B'' swap: PSCC §21 (44c49c6)
 - 4-substrate matrix: PSCC §15
 - V14↔chat-cap anti-correlation: PSCC §19 + `hypotheses_candidates/Hc_1221_*.md`
@@ -60,7 +60,7 @@ input = `"안녕! 너는 누구야?"`, 2 ckpt × 2 mode = 4 generations, **4/4 O
 - Phase 1A model: <https://huggingface.co/dancinlab/anima-clm-phase1a-multi-turn-sft>
 - B'' model: <https://huggingface.co/dancinlab/anima-clm-bprime-prime-v4lite-15-15>
 
-## §5 Next actions (excerpt from PSCC §22)
+## §5 Next actions (excerpt from PSCC §24)
 
 - 🥇 dual-ckpt UX 측정 — 5 prompts × 2 ckpt × 4 modes 40-cell live matrix
 - 🥈 Phase 1A.1 (color/cosmology, 4/5 std_greedy PASS) selector 에 추가 → 3-option matrix

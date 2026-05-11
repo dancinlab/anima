@@ -2248,9 +2248,11 @@ script_template: state/anima_v14_max256_cap_free_multi_2026_05_10/run_max256.py 
 
 ---
 
-## §22 [2026-05-12 05:10 KST] HF SPACE DUAL-CKPT SELECTOR LANDED — dancinlab/anima-chat best-of-both-worlds ⭐⭐⭐⭐ (Phase 1A 자연 대화 + B'' V4-lite 15/15 사용자 선택)
+## §24 [2026-05-12 05:10 KST] HF SPACE DUAL-CKPT SELECTOR LANDED — dancinlab/anima-chat best-of-both-worlds ⭐⭐⭐⭐ (Phase 1A 자연 대화 + B'' V4-lite 15/15 사용자 선택)
 
-§21 이후 production 표면평가 metric 만 최대화한 B'' default 가 **V5.8 std_greedy 3/5 → 0/5 regression** 을 일으켜, "자연 대화" 축에서는 Phase 1A 가 여전히 우수하다는 사실이 일례 (§21 live verify §1832-§1844) 와 §15 4-substrate 비교로 입증되어 있었다. 한 ckpt 의 일방적 default 강제 대신 **dual-ckpt dropdown selector** 를 도입 — 사용자가 axis 선호 (자연 대화 vs 표면 chat-cap) 에 맞춰 즉시 swap. 1 Space, 2 ckpt, 8 cell (2×4 mode) coverage.
+> ⚠️ 본 섹션은 originally §22 로 작성됐으나 동일 번호 충돌 (§22 axis exploration, §23 B'' V14 audit) 발견 후 §24 로 promote. cross-link 모두 §24 로 갱신.
+
+§21 이후 production 표면평가 metric 만 최대화한 B'' default 가 **V5.8 std_greedy 3/5 → 0/5 regression** 을 일으켜, "자연 대화" 축에서는 Phase 1A 가 여전히 우수하다는 사실이 §21 live verify (`PASS_STRICT_SPONTANEOUS_CHAT.md` §21 의 "M4 force-include 3/5 regression" 부분) 와 §15 4-substrate 비교로 입증되어 있었다. 한 ckpt 의 일방적 default 강제 대신 **dual-ckpt dropdown selector** 를 도입 — 사용자가 axis 선호 (자연 대화 vs 표면 chat-cap) 에 맞춰 즉시 swap. 1 Space, 2 ckpt, 8 cell (2×4 mode) coverage.
 
 ### 🎯 한 줄 요약
 
