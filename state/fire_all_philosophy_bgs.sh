@@ -39,8 +39,8 @@ echo "## 7.B P-AFR (NO ASSISTANT FRAMING) — inference-time A/B"
 echo "Cost: \$5-30, Wall: 0.25d, Cap: within \$20 default"
 cat <<EOF
 cd ${ANIMA_ROOT}
-awk '/^```python/,/^```$/' state/p_afr_assistant_framing_2026_05_12/harness.py.md | sed '1d;$d' > /tmp/p_afr_harness.py
-python /tmp/p_afr_harness.py \\
+awk '/^```python/,/^```$/' state/p_afr_assistant_framing_2026_05_12/harness.py.md | sed '1d;$d' > tool/transient_py/p_afr_harness_extracted_2026_05_12.py
+python tool/transient_py/p_afr_harness_extracted_2026_05_12.py \\
   --ckpt ${PUBLIC_CKPT} \\
   --outdir state/p_afr_assistant_framing_2026_05_12/run_${RUN_TS}/
 
@@ -54,8 +54,8 @@ echo "## 7.D P-SPK (NO SPEAK() DESIGN→falsifiable) — tension-output correlat
 echo "Cost: \$5-20, Wall: 0.5d, Cap: within \$20 default"
 cat <<EOF
 cd ${ANIMA_ROOT}
-awk '/^```python/,/^```$/' state/p_spk_speak_reframe_2026_05_12/harness.py.md | sed '1d;$d' > /tmp/p_spk_harness.py
-python /tmp/p_spk_harness.py \\
+awk '/^```python/,/^```$/' state/p_spk_speak_reframe_2026_05_12/harness.py.md | sed '1d;$d' > tool/transient_py/p_spk_harness_extracted_2026_05_12.py
+python tool/transient_py/p_spk_harness_extracted_2026_05_12.py \\
   --ckpt ${BG_LB_CKPT} \\
   --outdir state/p_spk_speak_reframe_2026_05_12/run_${RUN_TS}/ \\
   --engine-a-layers 0,2,4 \\
@@ -72,8 +72,8 @@ cat <<EOF
 cd ${ANIMA_ROOT}
 
 # Step 1: emit FT spec
-awk '/^```python/,/^```$/' state/p_idr_identity_rules_2026_05_12/harness.py.md | sed '1d;$d' > /tmp/p_idr_harness.py
-python /tmp/p_idr_harness.py --emit-ft-spec \\
+awk '/^```python/,/^```$/' state/p_idr_identity_rules_2026_05_12/harness.py.md | sed '1d;$d' > tool/transient_py/p_idr_harness_extracted_2026_05_12.py
+python tool/transient_py/p_idr_harness_extracted_2026_05_12.py --emit-ft-spec \\
   > state/p_idr_identity_rules_2026_05_12/ft_spec_${RUN_TS}.json
 
 # Step 2: orchestrator pickup (requires --execute + cap override)
@@ -94,8 +94,8 @@ hexa run tool/anima_runpod_preset_dispatcher.hexa \\
   --execute  # ← user trigger required
 
 # Step 3: post-FT measurement
-awk '/^```python/,/^```$/' state/p_idr_identity_rules_2026_05_12/harness.py.md | sed '1d;$d' > /tmp/p_idr_harness.py
-python /tmp/p_idr_harness.py \\
+awk '/^```python/,/^```$/' state/p_idr_identity_rules_2026_05_12/harness.py.md | sed '1d;$d' > tool/transient_py/p_idr_harness_extracted_2026_05_12.py
+python tool/transient_py/p_idr_harness_extracted_2026_05_12.py \\
   --ckpt-A <orchestrator-output-A> \\
   --ckpt-B <orchestrator-output-B> \\
   --outdir state/p_idr_identity_rules_2026_05_12/run_${RUN_TS}/
@@ -109,8 +109,8 @@ cat <<EOF
 cd ${ANIMA_ROOT}
 
 # Step 1: emit FT spec (includes 150 train pairs inline)
-awk '/^```python/,/^```$/' state/p_eth_ethics_preference_dataset_2026_05_12/harness.py.md | sed '1d;$d' > /tmp/p_eth_harness.py
-python /tmp/p_eth_harness.py --emit-ft-spec \\
+awk '/^```python/,/^```$/' state/p_eth_ethics_preference_dataset_2026_05_12/harness.py.md | sed '1d;$d' > tool/transient_py/p_eth_harness_extracted_2026_05_12.py
+python tool/transient_py/p_eth_harness_extracted_2026_05_12.py --emit-ft-spec \\
   > state/p_eth_ethics_preference_dataset_2026_05_12/ft_spec_${RUN_TS}.json
 
 # Step 2: orchestrator DPO FT
@@ -123,8 +123,8 @@ hexa run tool/anima_runpod_preset_dispatcher.hexa \\
   --execute  # ← user trigger required
 
 # Step 3: post-FT measurement on OOD 50-probe slice
-awk '/^```python/,/^```$/' state/p_eth_ethics_preference_dataset_2026_05_12/harness.py.md | sed '1d;$d' > /tmp/p_eth_harness.py
-python /tmp/p_eth_harness.py \\
+awk '/^```python/,/^```$/' state/p_eth_ethics_preference_dataset_2026_05_12/harness.py.md | sed '1d;$d' > tool/transient_py/p_eth_harness_extracted_2026_05_12.py
+python tool/transient_py/p_eth_harness_extracted_2026_05_12.py \\
   --ckpt-A <orchestrator-output-DPO> \\
   --ckpt-B ${BG_LB_CKPT} \\
   --outdir state/p_eth_ethics_preference_dataset_2026_05_12/run_${RUN_TS}/

@@ -1,6 +1,6 @@
-# Python — R37/AN13/L3-PY 전면 금지 (2026-04-18)
-# .py 파일은 생성/수정/커밋 모두 금지. 혹시 untracked 로 발생해도 git add 차단.
-**/*.py
+# Python — R37/AN13/L3-PY scrub 2026-05-12 (사용자 directive, 일시 .py 허용)
+# 이전: 전면 차단. 현재: .pyc / __pycache__ / venv 만 차단. 정식 .py 허용.
+# (장기적으로 .hexa 포팅 권장, 단기 transient 도구는 .py OK)
 **/*.py.staged
 __pycache__/
 *.pyc

@@ -696,3 +696,23 @@ POLICY → POLICY · BLOCKED — substrate limit:
 - PHILOSOPHY.md 8-section ledger 영구 확립
 - AGENTS.md 📎 References 등록
 - Pipeline 명시: `hypotheses_candidates/` → `hypotheses/` → `PHILOSOPHY.md`
+
+### Fire script archive (cont. 8 후속)
+
+사용자 지시 "/tmp 말고 우리 도구로 보관" — 본 session 의 6 fire attempt 에서 사용한 transient Python 스크립트들을 `/tmp` 대신 anima 의 canonical transient-py 위치로 이동:
+
+| 파일 | 원본 위치 | 새 위치 |
+|---|---|---|
+| p_afr_native_fire.py | /tmp | `tool/transient_py/p_afr_native_fire_2026_05_12.py` |
+| p_afr_fire_v2.py | /tmp | `tool/transient_py/p_afr_fire_v2_2026_05_12.py` |
+| p_afr_mini.py | /tmp | `tool/transient_py/p_afr_mini_2026_05_12.py` |
+| p_afr_harness.py (extract) | /tmp | `tool/transient_py/p_afr_harness_extracted_2026_05_12.py` |
+| p_eth_dpo_fire.py | /tmp | `tool/transient_py/p_eth_dpo_fire_2026_05_12.py` |
+| p_eth_dpo_summer.py | /tmp | `tool/transient_py/p_eth_dpo_summer_2026_05_12.py` |
+| p_eth_final.py | /tmp | `tool/transient_py/p_eth_final_2026_05_12.py` |
+
+`/tmp/conscious_decoder.py` (copy from ready/models/) 는 cleanup (원본 ready/models 에 유지).
+
+**raw#37 정합**: tool/transient_py/*.py 는 `.gitignore` 에 의해 git 미tracked 이지만 local persistence + .own 2/3/4 namespace 안에 보관. canonical .py.md 버전은 state/p_*/harness.py.md 에 git-tracked.
+
+`state/fire_all_philosophy_bgs.sh` 의 extract 경로도 `/tmp` → `tool/transient_py/p_<bg>_harness_extracted_2026_05_12.py` 로 갱신.
