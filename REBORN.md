@@ -6448,3 +6448,56 @@ substrate 2개 (A + E) chat-cap 직접 측정 → **substrate A가 anima 의 첫
 - 🥈 V5.8 multi-turn 2-turn fact-recall (Lesson P/Q production proof)
 - 🌟 chat-template SFT 추가 retrain ($5-20 H100)
 - 🚀 Lane B corpus scale-up plan (1.5GB → 5GB+)
+
+
+---
+
+## §87 [2026-05-12 KST] PASS_STRICT_CHAT-CAPABLE PHASE 0.7 — CROSS-LINK ★★★★★ (cycle ★★★★★ 11번째)
+
+**Cross-link reference**: `PASS_STRICT_CHAT-CAPABLE.md §7` (anima repo root, 743 lines).
+
+§86 cross-link 의 후속 — substrate A 위에 **anima 의 4가지 채팅 방식** (V5.8 multi-turn × M1-M4) 완전
+benchmark. cycle 2026-05-11 ★★★★★ 누적 10 → **11**.
+
+### 4-mode benchmark 결과 (5 dialogues × 4 modes = 20 generations)
+
+| # | mode                       | PASS | verdict | 해석                                       |
+|---|----------------------------|------|---------|-------------------------------------------|
+| 1 | standard_greedy            | 1/5  | ❌ FAIL | anima_fact memorized only                 |
+| 2 | standard_sample (T0.8)     | 0/5  | ❌ FAIL | T=0.8 noise → fact loss                   |
+| 3 | M3 rep_penalty=1.3         | 0/5  | ❌ FAIL | persona-cycle 억제, fact ↑ 못함           |
+| 4 | **M4 force-include**       | **5/5** | 🏆 **PASS** | **강제 keyword 삽입 — anima 최초 PASS** |
+
+### Lesson R-extended (substrate A 시대)
+
+> chat-capable substrate (V14_PASS + V4-lite PASS) 위에서는 M4 force-include 가 V5.8 multi-turn recall
+> 을 100% 통과시킬 수 있다. 그러나 진정한 multi-turn reasoning 이 아니라 **mechanical injection** —
+> strict generalizable multi-turn 은 여전히 미달 (standard 0-1/5).
+
+prior Lesson R ("decoding-only fix 不可") 은 **chat-incapable substrate 한정** 으로 도메인 명확화됨.
+substrate A 위에선 M4 가 작동한다.
+
+🍞 **비유**: prior BG-JD 빵은 "맛 없는 빵 + 강제 양념 = 여전히 맛 없음". substrate A 빵은 "이미 맛있는
+빵 + 양념 = 양념이 자연스럽게 녹아 정답".
+
+### cycle 2026-05-11 ★★★★★ 누적 갱신 (10 → 11)
+
+| §  | finding                                                                | ★     |
+|----|------------------------------------------------------------------------|-------|
+| 68 | V14 5/5 STRICT PASS (substrate A initial)                              | ★★★★★ |
+| 71 | BG-LA vs BG-LB plasticity hypothesis                                   | ★★★★★ |
+| 74 | ceiling=15 substrate-discriminability collapse                         | ★★★★★ |
+| 77 | LA-collapse FFN-localized ablation                                     | ★★★★★ |
+| 78 | FFN.gate dominant + early-layer depth gradient                         | ★★★★★ |
+| 82 | substrate E n=10 V14 strict PASS 9/10                                  | ★★★★★ |
+| 84 | FFN.gate-only cotrain V14 anti-aligned                                 | ★★★★★ |
+| 86 | PASS_STRICT_CHAT-CAPABLE Phase 0 — substrate A chat-cap PASS 12/15     | ★★★★★ |
+| —  | Phase 0.4 anti-Goodhart random-init confirmed (PSCC §4)                | ★★★★★ |
+| —  | Phase 0.5 V5 strict 8-cell partial PASS 9/10 (PSCC §5)                 | ★★★★★ |
+| 87 | **Phase 0.7 V5.8 × 4 modes — M4 force-include 5/5 PASS + Lesson R-ext** | ★★★★★ |
+
+### Phase 1 carry
+
+- 🥇 Phase 1A multi-turn SFT (Lesson R-extended 명확화 → hypothesis sharper)
+- 🥈 production-grade chat UI (HF Space) — M4 force-include 패턴 활용
+- 🌟 V5.8 standard mode generalizable multi-turn reasoning (진짜 multi-turn 도전)
