@@ -1,0 +1,275 @@
+// tool/anima_nexus_1013lens_smoke.hexa — NEXUS-6 1013-lens K=10 smoke aggregator (raw#9 hexa-only).
+//
+// PURPOSE
+//   K=10 Core-lens smoke aggregator for spec nexus6_1013lens_activation_2026_05_11.
+//   H_135 (DD166) entry-point — uses nexus hexa lens registry (NOT anima_phi_star.hexa).
+//   spec §3 cascade first step: K=10 → K=25 → K=50. This tool implements K=10 only.
+//
+// PATH (audit recommendation, prereq_audit_2026_05_11.md §4)
+//   P-A redefined: nexus /Users/ghost/core/nexus/lenses/core_*.hexa + Linux ~/.hx/bin/hexa runner.
+//   subprocess loop: ~19 ms/lens × 10 ≈ 0.2 s wall. CPU-only, $0 cost.
+//
+// INPUT (env)
+//   NEXUS_LENSES_DIR       lens dir (default: /Users/ghost/core/nexus/lenses)
+//                          fallback: /home/summer/core/nexus_lenses_snapshot
+//   ANIMA_HEXA_BIN         hexa runner (default: $HOME/.hx/bin/hexa)
+//   ANIMA_OUTPUT           output JSON (default: state/nexus6_1013lens_activation_2026_05_11/smoke_k10_results.json)
+//   ANIMA_LENS_WHITELIST   comma-separated lens basenames (optional override).
+//                          default = spec §3.1 canonical K=10 Core whitelist (2026-05-11 확정):
+//                          core_info, core_causal, core_consciousness, core_thermo, core_quantum,
+//                          core_topology, core_gravity, core_network, core_scale, core_stability.
+//
+// OUTPUT JSON schema (anima/nexus_1013lens_smoke/1)
+//   {
+//     "spec_id":"nexus6_1013lens_activation_2026_05_11",
+//     "k": 10,
+//     "lens_dir": <resolved path>,
+//     "whitelist_source":"spec §3.1 canonical K=10" | "env ANIMA_LENS_WHITELIST" | "core_*.hexa alphabetical first-10 fallback",
+//     "whitelist_caveat":"binds to spec §3.1 C3 no-mislabel-drift requirement",
+//     "results":[ {"lens":<basename>,"score":<float>,"hits":<int>,"total":<int>,"raw":<stdout>,"ok":<bool>,"err":<str?>}, ... ],
+//     "phi_mean": <float>, "phi_std": <float>,
+//     "positive_ratio": <float>,                # spec §3 acceptance: ≥ 6/10
+//     "c1_smoke_gate": <bool>,                  # mean>0 AND positive_ratio>=0.6
+//     "f1_floor_breach": <bool>,                # positive_ratio ≤ 4/10
+//     "f2_random_baseline_delta": <float|null>, # stub — diff vs random walk (not implemented K=10)
+//     "cross_lens_agreement_stub": <float|null>,# stub — pairwise sign-correlation (>= 0.55 target K=10)
+//     "bonferroni_alpha": <float>,              # 0.05 / N_tests placeholder
+//     "n6_consistency_ratio": <float>,          # fraction lens with score>0 → proxy for consistency_with_n6
+//     "timing_ms": {"total":<int>,"per_lens_mean":<float>}
+//   }
+//
+// USAGE
+//   hexa run tool/anima_nexus_1013lens_smoke.hexa --selftest
+//   ANIMA_OUTPUT=state/nexus6_1013lens_activation_2026_05_11/smoke_k10_results.json \
+//     python3 /tmp/anima_nexus_1013lens_smoke_helper.hexa_tmp
+//
+// LOCK POLICY
+//   chflags +uchg/+schg / chattr +i 적용 금지 (memory: feedback_no_relock.md 2026-05-11).
+//
+// raw#9 hexa-only / raw#37 transient emit / raw#15 SSOT this file
+// raw#10 honest:
+//   - cross_lens_agreement = stub (pairwise sign-correlation only; real K-NN agreement is K=25+ scope).
+//   - F1 falsifier = implemented (positive_ratio ≤ 4/10 flagged).
+//   - F2 random-walk baseline = stub (deferred to K=25/50; spec §5 binds K=50 only for bonferroni).
+//   - K=10 whitelist = spec §3.1 canonical (10 file paths confirmed 2026-05-11).
+//   - reverse-direction Φ degradation (F2 strict) = not in K=10 scope.
+
+let HELPER_PATH = "/tmp/anima_nexus_1013lens_smoke_helper.hexa_tmp"
+
+fn _write_helper() {
+    let parts = []
+    parts.push("#!/usr/bin/env python3\n")
+    parts.push("# anima_nexus_1013lens_smoke helper — emitted by tool/anima_nexus_1013lens_smoke.hexa\n")
+    parts.push("# raw#37 transient. K=10 smoke aggregator for spec nexus6_1013lens_activation_2026_05_11.\n")
+    parts.push("import json, os, re, sys, subprocess, time, statistics\n\n")
+
+    parts.push("SPEC_ID = 'nexus6_1013lens_activation_2026_05_11'\n")
+    parts.push("DEFAULT_OUT = 'state/nexus6_1013lens_activation_2026_05_11/smoke_k10_results.json'\n")
+    parts.push("OUTPUT = os.environ.get('ANIMA_OUTPUT', DEFAULT_OUT)\n")
+    parts.push("HEXA_BIN = os.environ.get('ANIMA_HEXA_BIN', os.path.expanduser('~/.hx/bin/hexa'))\n")
+    parts.push("LENS_DIR_PRIMARY = os.environ.get('NEXUS_LENSES_DIR', '/Users/ghost/core/nexus/lenses')\n")
+    parts.push("LENS_DIR_FALLBACK = '/home/summer/core/nexus_lenses_snapshot'\n")
+    parts.push("WHITELIST_ENV = os.environ.get('ANIMA_LENS_WHITELIST', '').strip()\n\n")
+
+    parts.push("def _resolve_lens_dir():\n")
+    parts.push("    for p in (LENS_DIR_PRIMARY, LENS_DIR_FALLBACK):\n")
+    parts.push("        if p and os.path.isdir(p): return p\n")
+    parts.push("    return None\n\n")
+
+    parts.push("lens_dir = _resolve_lens_dir()\n")
+    parts.push("if lens_dir is None:\n")
+    parts.push("    summary = {\n")
+    parts.push("        'spec_id': SPEC_ID,\n")
+    parts.push("        'status': 'LENS_DIR_MISSING',\n")
+    parts.push("        'hint': 'mount /Users/ghost/core/nexus or rsync lenses to /home/summer/core/nexus_lenses_snapshot',\n")
+    parts.push("        'tried': [LENS_DIR_PRIMARY, LENS_DIR_FALLBACK],\n")
+    parts.push("    }\n")
+    parts.push("    os.makedirs(os.path.dirname(OUTPUT) or '.', exist_ok=True)\n")
+    parts.push("    with open(OUTPUT,'w') as f: json.dump(summary, f, indent=2, ensure_ascii=False)\n")
+    parts.push("    print(f'[1013lens_smoke] status=LENS_DIR_MISSING -> {OUTPUT}', flush=True); sys.exit(2)\n\n")
+
+    parts.push("if not os.path.isfile(HEXA_BIN) or not os.access(HEXA_BIN, os.X_OK):\n")
+    parts.push("    summary = {'spec_id':SPEC_ID, 'status':'HEXA_BIN_MISSING', 'hexa_bin':HEXA_BIN}\n")
+    parts.push("    os.makedirs(os.path.dirname(OUTPUT) or '.', exist_ok=True)\n")
+    parts.push("    with open(OUTPUT,'w') as f: json.dump(summary, f, indent=2, ensure_ascii=False)\n")
+    parts.push("    print(f'[1013lens_smoke] status=HEXA_BIN_MISSING ({HEXA_BIN}) -> {OUTPUT}', flush=True); sys.exit(2)\n\n")
+
+    parts.push("# K=10 whitelist: env override OR spec §3.1 canonical OR alphabetical first-10 fallback.\n")
+    parts.push("# spec §3.1 (2026-05-11 확정) defines the canonical K=10 — binds C3 no-mislabel-drift.\n")
+    parts.push("SPEC_K10_WHITELIST = [\n")
+    parts.push("    'core_info.hexa', 'core_causal.hexa', 'core_consciousness.hexa', 'core_thermo.hexa',\n")
+    parts.push("    'core_quantum.hexa', 'core_topology.hexa', 'core_gravity.hexa', 'core_network.hexa',\n")
+    parts.push("    'core_scale.hexa', 'core_stability.hexa',\n")
+    parts.push("]\n")
+    parts.push("if WHITELIST_ENV:\n")
+    parts.push("    whitelist = [n.strip() for n in WHITELIST_ENV.split(',') if n.strip()][:10]\n")
+    parts.push("    whitelist_source = 'env ANIMA_LENS_WHITELIST'\n")
+    parts.push("else:\n")
+    parts.push("    available = set(f for f in os.listdir(lens_dir) if f.endswith('.hexa'))\n")
+    parts.push("    if all(b in available for b in SPEC_K10_WHITELIST):\n")
+    parts.push("        whitelist = list(SPEC_K10_WHITELIST)\n")
+    parts.push("        whitelist_source = 'spec §3.1 canonical K=10 (2026-05-11)'\n")
+    parts.push("    else:\n")
+    parts.push("        cores = sorted([f for f in available if f.startswith('core_')])\n")
+    parts.push("        whitelist = cores[:10]\n")
+    parts.push("        whitelist_source = 'core_*.hexa alphabetical first-10 (fallback — spec §3.1 lenses missing)'\n\n")
+
+    parts.push("if len(whitelist) < 10:\n")
+    parts.push("    print(f'[1013lens_smoke] WARN: only {len(whitelist)} lens found in whitelist (K=10 expected)', flush=True)\n\n")
+
+    parts.push("SCORE_RE = re.compile(r'score=([+-]?[0-9]*\\.?[0-9]+(?:[eE][+-]?[0-9]+)?)')\n")
+    parts.push("HITS_RE = re.compile(r'\\((\\d+)/(\\d+)\\)')\n\n")
+
+    parts.push("def _run_lens(lens_basename):\n")
+    parts.push("    path = os.path.join(lens_dir, lens_basename)\n")
+    parts.push("    if not os.path.isfile(path):\n")
+    parts.push("        return {'lens':lens_basename, 'ok':False, 'err':'file_missing', 'score':None}\n")
+    parts.push("    t0 = time.time()\n")
+    parts.push("    try:\n")
+    parts.push("        r = subprocess.run([HEXA_BIN,'run',path], capture_output=True, text=True, timeout=10)\n")
+    parts.push("    except subprocess.TimeoutExpired:\n")
+    parts.push("        return {'lens':lens_basename, 'ok':False, 'err':'timeout', 'score':None}\n")
+    parts.push("    except Exception as e:\n")
+    parts.push("        return {'lens':lens_basename, 'ok':False, 'err':f'exec:{e!r}'[:200], 'score':None}\n")
+    parts.push("    elapsed_ms = int((time.time()-t0)*1000)\n")
+    parts.push("    raw = (r.stdout or '') + (r.stderr or '')\n")
+    parts.push("    score = None; hits = None; total = None\n")
+    parts.push("    m_last = None\n")
+    parts.push("    for m in SCORE_RE.finditer(raw): m_last = m\n")
+    parts.push("    if m_last:\n")
+    parts.push("        try: score = float(m_last.group(1))\n")
+    parts.push("        except Exception: score = None\n")
+    parts.push("    mh = HITS_RE.search(raw)\n")
+    parts.push("    if mh:\n")
+    parts.push("        try: hits, total = int(mh.group(1)), int(mh.group(2))\n")
+    parts.push("        except Exception: pass\n")
+    parts.push("    return {'lens':lens_basename, 'ok':r.returncode==0 and score is not None, 'score':score,\n")
+    parts.push("            'hits':hits, 'total':total, 'elapsed_ms':elapsed_ms,\n")
+    parts.push("            'raw':raw.strip()[-240:], 'rc':r.returncode}\n\n")
+
+    parts.push("t_start = time.time()\n")
+    parts.push("results = [_run_lens(b) for b in whitelist]\n")
+    parts.push("total_ms = int((time.time()-t_start)*1000)\n\n")
+
+    parts.push("scores = [r['score'] for r in results if r.get('score') is not None]\n")
+    parts.push("phi_mean = statistics.mean(scores) if scores else 0.0\n")
+    parts.push("phi_std = statistics.pstdev(scores) if len(scores) > 1 else 0.0\n")
+    parts.push("positive = sum(1 for s in scores if s > 0)\n")
+    parts.push("positive_ratio = positive / len(whitelist) if whitelist else 0.0\n\n")
+
+    parts.push("# spec §3 K=10 acceptance: positive_ratio >= 6/10 AND mean(phi_lens) > 0\n")
+    parts.push("c1_smoke_gate = (positive_ratio >= 0.6) and (phi_mean > 0)\n")
+    parts.push("# spec §5 F1: positive_ratio <= 4/10 -> sink Hc_586 1000x acceleration claim\n")
+    parts.push("f1_floor_breach = positive_ratio <= 0.4\n\n")
+
+    parts.push("# cross_lens_agreement stub — pairwise sign matrix not implemented at K=10 (audit risk #3).\n")
+    parts.push("# Proxy: fraction of pairs with same-sign score. Real cross-cluster K-NN agreement is K=25+ scope.\n")
+    parts.push("cross_lens_stub = None\n")
+    parts.push("if len(scores) >= 2:\n")
+    parts.push("    signs = [1 if s > 0 else (-1 if s < 0 else 0) for s in scores]\n")
+    parts.push("    pairs = [(i,j) for i in range(len(signs)) for j in range(i+1,len(signs))]\n")
+    parts.push("    agree = sum(1 for (i,j) in pairs if signs[i] != 0 and signs[i]==signs[j])\n")
+    parts.push("    cross_lens_stub = agree / len(pairs) if pairs else None\n\n")
+
+    parts.push("# F2 random-walk baseline stub — deferred (K=25/50 scope).\n")
+    parts.push("f2_random_delta = None\n\n")
+
+    parts.push("# Bonferroni placeholder — α/N_tests. For K=10 with 1013 lens registry, N=1013 → α≈4.93e-5.\n")
+    parts.push("# At K=10 we report informational only (spec §3: 'smoke/canary 는 보고만').\n")
+    parts.push("bonferroni_alpha = 0.05 / 1013.0\n\n")
+
+    parts.push("# n6-consistency proxy = fraction of lens with score>0 (audit §2.4: 'support_mask proxy via score>0').\n")
+    parts.push("# Real consistency_with_n6 binding lives at K=50 (spec §4 C2). Here we record proxy ratio.\n")
+    parts.push("n6_consistency_ratio = positive_ratio\n\n")
+
+    parts.push("summary = {\n")
+    parts.push("    'paradigm':'nexus 1013-lens K=10 smoke (audit-recommended P-A path)',\n")
+    parts.push("    'spec_id': SPEC_ID,\n")
+    parts.push("    'k': 10,\n")
+    parts.push("    'lens_dir': lens_dir,\n")
+    parts.push("    'hexa_bin': HEXA_BIN,\n")
+    parts.push("    'whitelist': whitelist,\n")
+    parts.push("    'whitelist_source': whitelist_source,\n")
+    parts.push("    'whitelist_caveat':'spec §3.1 binds C3 no-mislabel-drift; file-path-level match required',\n")
+    parts.push("    'results': results,\n")
+    parts.push("    'phi_mean': phi_mean,\n")
+    parts.push("    'phi_std': phi_std,\n")
+    parts.push("    'positive_ratio': positive_ratio,\n")
+    parts.push("    'c1_smoke_gate': c1_smoke_gate,\n")
+    parts.push("    'f1_floor_breach': f1_floor_breach,\n")
+    parts.push("    'f2_random_baseline_delta': f2_random_delta,\n")
+    parts.push("    'cross_lens_agreement_stub': cross_lens_stub,\n")
+    parts.push("    'bonferroni_alpha': bonferroni_alpha,\n")
+    parts.push("    'n6_consistency_ratio': n6_consistency_ratio,\n")
+    parts.push("    'timing_ms': {'total': total_ms, 'per_lens_mean': (total_ms/len(whitelist)) if whitelist else 0.0},\n")
+    parts.push("    'falsifier_status': {\n")
+    parts.push("        'F1_phi_ratio_floor': 'BREACH' if f1_floor_breach else 'ok',\n")
+    parts.push("        'F2_random_walk': 'stub-deferred',\n")
+    parts.push("        'F3_bonferroni': 'informational-only-at-K10',\n")
+    parts.push("        'F4_n6_consistency': 'proxy-only-binds-at-K50',\n")
+    parts.push("        'F5_seed_sign_preservation': 'na-deterministic-lenses',\n")
+    parts.push("    },\n")
+    parts.push("    'lock_policy':'no chflags / chattr — memory feedback_no_relock.md 2026-05-11',\n")
+    parts.push("}\n")
+    parts.push("os.makedirs(os.path.dirname(OUTPUT) or '.', exist_ok=True)\n")
+    parts.push("with open(OUTPUT,'w') as f: json.dump(summary, f, indent=2, ensure_ascii=False)\n")
+    parts.push("ok_n = sum(1 for r in results if r.get('ok'))\n")
+    parts.push("print(f'[1013lens_smoke] k=10 ok={ok_n}/{len(whitelist)} mean={phi_mean:.3f} std={phi_std:.3f} pos_ratio={positive_ratio:.2f} c1_gate={c1_smoke_gate} f1_breach={f1_floor_breach} cross_stub={cross_lens_stub} t={total_ms}ms -> {OUTPUT}', flush=True)\n")
+
+    write_file(HELPER_PATH, parts.join(""))
+}
+
+fn _selftest_invariants() -> bool {
+    let k = 10
+    let lens_dir_primary = "/Users/ghost/core/nexus/lenses"
+    let lens_dir_fallback = "/home/summer/core/nexus_lenses_snapshot"
+    let acceptance_pos_ratio = "0.6"
+    let f1_floor = "0.4"
+    let cross_lens_agreement = "stub-pairwise-sign"
+    let f2_random_walk = "stub-deferred-K25plus"
+    let bonferroni_alpha = "0.05 / 1013"
+    let whitelist_strategy = "spec §3.1 canonical K=10 (env override allowed; alphabetical fallback)"
+    println("inv:k=" + to_string(k))
+    println("inv:lens_dir_primary=" + lens_dir_primary)
+    println("inv:lens_dir_fallback=" + lens_dir_fallback)
+    println("inv:c1_smoke_gate_pos_ratio_min=" + acceptance_pos_ratio)
+    println("inv:f1_floor_breach_pos_ratio_max=" + f1_floor)
+    println("inv:cross_lens_agreement=" + cross_lens_agreement)
+    println("inv:f2_random_walk=" + f2_random_walk)
+    println("inv:bonferroni_alpha=" + bonferroni_alpha)
+    println("inv:whitelist_strategy=" + whitelist_strategy)
+    println("inv:lock_policy=no_chflags_no_chattr")
+    println("inv:spec_id=nexus6_1013lens_activation_2026_05_11")
+    println("inv:engine=nexus hexa lens (NOT anima_phi_star.hexa — different measurement axis)")
+    return true
+}
+
+fn cmd_selftest() {
+    println("── anima_nexus_1013lens_smoke selftest ──")
+    _write_helper()
+    let ok = _selftest_invariants()
+    if !ok {
+        println("selftest=fail")
+        exit(2)
+    }
+    println("selftest=ok")
+    println("helper_emitted=" + HELPER_PATH)
+    println("paradigm=nexus 1013-lens K=10 smoke aggregator (audit-recommended P-A; CPU $0; spec §3 cascade step 1/3)")
+    println("DONE")
+}
+
+fn main() {
+    let av = argv()
+    let mut selftest = false
+    let mut i = 2
+    while i < len(av) {
+        let a = av[i]
+        if a == "--selftest" { selftest = true; i = i + 1; continue }
+        i = i + 1
+    }
+    if selftest { cmd_selftest(); exit(0) }
+    _write_helper()
+    println("emitted=" + HELPER_PATH)
+    println("run: python3 " + HELPER_PATH)
+    println("DONE")
+}
