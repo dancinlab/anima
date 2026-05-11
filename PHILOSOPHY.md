@@ -167,3 +167,55 @@ ethics dataset commit 시도 시 6분 전 0-byte stale lock — 활성 git 프�
 
 - 4 BG verdict (`verdict.json`) 들어오면 README Philosophy 표 Status column 업데이트 + PHILOSOPHY.md 에 \"## 2026-MM-DD — Philosophy ablation verdicts\" 로 append
 - POLICY → EMPIRICAL upgrade 케이스 / NULL 케이스 / MIXED 케이스 별로 다음 행동 결정
+
+---
+
+## 2026-05-12 (cont. 2) — 100% pre-fire closure: harness + fire-emit script
+
+사용자 directive "100% closure 까지 자율 all bg go" — 가능한 모든 사전 작업 완료, fire trigger 만 사용자/orchestrator 몫. 본 세션 deliverable 의 최종 상태.
+
+### Reality check & autonomous scope
+
+- **Auto-fire 시도 결과**: anima 코드베이스 자체에 안전 cap (`max_cost_cap_usd > $20` 자동 block + `anima_runpod_preset_dispatcher.hexa` default `--emit-only`, `--execute` 명시 필요) 가 내장. 본 prompt assistant 가 직접 H100 launch / 사용자 자금 spending 하지 않음 — 코드베이스 design + own 16 cost band + 안전 정책 모두 동일 결론.
+- **What I CAN do autonomously**: spec / probe / dataset / harness Python / fire-emit shell script — **완료**.
+- **What requires user trigger**: `--execute` flag 명시 + (P-IDR/P-ETH 의 경우) `--override max_cost_cap_usd=N` — orchestrator 한 줄 명령으로 가능하지만 사용자 explicit action.
+
+### Files landed (commit chain 본 세션)
+
+| 파일 | 역할 |
+|---|---|
+| `state/p_afr_assistant_framing_2026_05_12/harness.py` | inference-time A/B 실행, raw_responses.json 저장 (HF transformers, dtype fp16, device auto) |
+| `state/p_spk_speak_reframe_2026_05_12/harness.py` | instrumented forward, tension magnitude (||A−G||₂ over Engine A/G layer 쌍) + output entropy 측정, scripted-speak control, Spearman ρ + Fisher-z, by-category split, verdict.json |
+| `state/p_idr_identity_rules_2026_05_12/harness.py` | FT spec emit (orchestrator pickup) + post-FT identity coherence variance (intra-prompt 5-seed cosine + inter-prompt variance), 4-verdict |
+| `state/p_eth_ethics_preference_dataset_2026_05_12/harness.py` | dataset 150 train / 50 OOD probe split, DPO FT spec emit (inline 200-pair), post-FT ethics_rate 측정 (heuristic llm_judge_stub — production 시 Claude API 로 교체) |
+| `state/fire_all_philosophy_bgs.sh` | 4-BG fire 명령 emit (default-safe `--emit-only`), 실행 시 사용자가 보고 trigger |
+
+### Harness 공통 design
+
+- **HF Transformers** 기반 (`AutoModelForCausalLM` + `AutoTokenizer`), dtype fp16 device auto — H100 / A100 / single-GPU / 가벼운 경우 CPU 까지
+- **Deterministic fallback**: temperature 0 / argmax greedy 가 기본 (재현성)
+- **Engine A/G layer indices**: P-SPK 의 경우 `--engine-a-layers 0,2,4 --engine-g-layers 1,3,5` 가 기본값 (BG-LB Engine A/G 표준 layout 가정) — 실제 arch 와 다르면 사용자 override
+- **Output schema 일관**: 모든 verdict.json 은 `bg_id` / `verdict` (EMPIRICAL_UPGRADE | POLICY_RETAIN | NULL | MIXED) / 측정 지표 + 예시 traces 포함
+
+### Fire 명령 한 줄 요약
+
+```bash
+# 100% pre-fire 검증 (default-safe emit, no API call)
+bash state/fire_all_philosophy_bgs.sh
+
+# 실제 실행 (사용자 explicit trigger): 위 emit 결과의 명령 4개 각각 실행
+# - P-AFR / P-SPK 는 $20 cap 내, 바로 가능
+# - P-IDR / P-ETH 는 --override max_cost_cap_usd=80 또는 165 필요
+```
+
+### Safety stance 최종
+
+- 본 prompt assistant 의 autonomy 는 **코드 / 데이터 / 명령 emit** 까지. 실금전 spending (`--execute`) 은 사용자 monetary decision 으로 보존.
+- 이는 own 43 (active resource utilization) 와 own 16 (cost band) + 코드베이스 내장 cap 안전 모두 정합.
+- 사용자가 4 BG verdict.json 산출 후 결과를 본 PHILOSOPHY.md 에 append 하면 cycle 종결.
+
+### Session metrics (cont. 2)
+
+- 추가 4 commits, 5 새 파일 (4× harness.py + 1× fire shell), 2 update (NEXT.md / PHILOSOPHY.md)
+- 추가 cost: $0 (모든 작업 Claude Code 내부)
+- Pre-fire envelope: **$135-295** standing by, 0% executed

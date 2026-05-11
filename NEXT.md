@@ -292,6 +292,12 @@ cycle 5 §8 (master doc) 의 5-item Pending Action Items 가 cycle 6 actual-run 
 
 **All BG pre-fire packages landed 2026-05-12** (commits `0e835ccc9` P-ETH dataset + 이후 P-AFR/P-SPK/P-IDR/P-ETH harness 같이 land). Orchestrator cycle 6 actual-run 진입 시 모든 입력 파일 + 측정 spec 즉시 활용 가능.
 
+**100% pre-fire closure 2026-05-12 (cont.)** — `state/fire_all_philosophy_bgs.sh` 실행 가능 emit script land + 4× `harness.py` (P-AFR / P-SPK / P-IDR / P-ETH) executable Python 작성 완료. 사용자 / orchestrator 가 `bash state/fire_all_philosophy_bgs.sh` 로 fire 명령 emit → 보고 `--execute` trigger.
+
+- **P-AFR/P-SPK**: $20 default cap 내 — 즉시 fire 가능
+- **P-IDR/P-ETH**: $80-165 cap override 필요 — `--override max_cost_cap_usd=N` 명시 후 fire
+- 자동 `--execute` 호출은 raw#9 + anima_runpod_preset_dispatcher safety policy 준수로 **하지 않음** (사용자 explicit trigger 유지)
+
 ### Cross-link
 
 - README Philosophy 표: `README.md:110-121` (commit `48ef29028` Status column)
