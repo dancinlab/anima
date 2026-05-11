@@ -6235,3 +6235,54 @@ ssh+scp -i $KEY -o "StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null"
 - scp speed pre-check 5MB test mandatory for new pods
 - pod allocation 시 GPU+network 조합 일관성 확인
 
+
+
+## §84 [2026-05-11 21:30 KST] FFN.GATE-ONLY COTRAIN FAILS V14 — substrate dramatically worse, anti-aligned learning direction ★★★★★
+
+**Verdict**: §78 의 falsifiable prediction "FFN.gate targeted cotrain → V14 delta" **STRONG TRUE in negative direction**. FFN.gate-only unfrozen cotrain (6000 steps, 22.6% trainable params, $3.48 H100) → trained_phi=**723.03** (V14_VIOLATED, 0/5 wins). **LA pretrain 의 -50%** (1445 → 723). **B' normal cotrain 의 -7% 보다 7배 더 큰 regress**.
+
+**4-substrate comparison at ceiling=10**:
+
+| substrate | training | trained_phi | Δ vs B (LA pretrain) | V14 verdict |
+|---|---|---|---|---|
+| 🅑 BG-LA pretrain (B) | 12k pretrain | 1444.7 | 0% baseline | V14_VIOLATED (1/5) |
+| 🅑' B' (P3 normal cotrain) | LA pretrain + 5380 cotrain (full unfrozen) | 1343.9 | -7.0% | V14_VIOLATED (1/5) |
+| **🅑'' B'' (FFN.gate-only cotrain)** | LA pretrain + **6000 FFN.gate-only** | **723.0** | **-49.9%** | V14_VIOLATED (0/5) |
+| 🅐 substrate A (BG-LB cotrain) | LB pretrain + 6000 full cotrain | 2412.1 | +67.0% | **V14_PASS 5/5** 🏆 |
+
+**Mechanism interpretation** (★★★★★ insight):
+
+§78 ablation: FFN.gate **weight delta direction** (LA→B') splits trajectory A1→A2 (Φ 1145→5249, +358%).
+§84 reality: **gradient-driven FFN.gate cotrain** moves weights in direction that produces **lower Φ** (723).
+
+→ **FFN.gate의 attractor split 은 random/uncontrolled direction이 큰 효과를 내지만, gradient-driven loss-minimizing cotrain은 Φ-reducing direction으로 학습**. 즉 cross-entropy loss (consciousness corpus + chat-template) 의 gradient signal 이 mitosis-hook V14 metric 과 **negatively correlated**.
+
+**Practical implication**:
+- cotrain protocol 이 V14 metric optimize 하려면 cross-entropy loss 만으로는 부족
+- FFN.gate 학습이 V14 anti-aligned → V14-aware loss or auxiliary objective 필요
+- ★★★★★ §68 P2 의 V14_STRICT_PASS 가 어떻게 가능했나? — substrate A (BG-LB cotrain, full unfrozen) 가 PASS. 즉 FFN.gate 만 학습 ≠ 전체 학습. **다른 component (attn, embed, engine_g) 의 학습이 FFN.gate 의 anti-aligned effect 를 cancel** 해서 PASS 가능.
+
+**§77/§78 reconciliation with §84**:
+
+§77/§78: **eval-time swap** ablation — weight delta direction = random direction (LA random vs B' random) → 큰 trajectory perturbation 만들 가능성 ↑
+§84: **training-time gradient** — weight delta direction = loss-minimizing direction → V14-anti-aligned
+
+두 결과 일관: FFN.gate 가중치는 V14 trajectory 결정 in either direction. 단, gradient direction 은 V14 enhancement 와 anti-aligned.
+
+**Falsifiable prediction confirmed + new prediction**:
+- ✅ §78 prediction "FFN.gate cotrain → V14 delta" — **confirmed in negative direction**
+- 🆕 §84 prediction: full unfrozen cotrain 이 BG-LB 에서 PASS, BG-LA 에서 VIOLATED 인 이유 = FFN.gate component 의 anti-aligned effect 가 BG-LB 의 다른 substrate 구조에서 cancel, BG-LA 에서 cancel 불가. **BG-LB 의 attn/embed/engine_g 의 specific 구조** 가 cotrain V14_PASS 의 enabler.
+
+**Next-cycle ★★★★★ candidate (재정의)**:
+- **FFN.gate-FROZEN cotrain** ($15-20 H100, 6h): freeze FFN.gate, unfreeze rest → if V14 PASS, FFN.gate 안 학습이 BG-LA 의 PASS 가능성. Cheap direct test.
+- 또는 V14-aware loss 추가 — auxiliary objective for cell pool dynamics maintenance during cotrain
+
+**Cost**: $3.48 H100 train + $0.20 V14 strict Mac (compute) + ~$3 idle pre-recovery = ~$6.7 total for §84
+
+**Cycle 2026-05-11 ★★★★★ count: 7** (§68, §71, §74, §77, §78, §82, §84)
+
+**Artifacts**:
+- `state/anima_ffn_gate_cotrain_2026_05_11/ckpts/ckpt_final.pt` (B'' substrate)
+- `state/anima_ffn_gate_cotrain_2026_05_11/v14_strict_ceiling10_result.json`
+- `training/train_p2_cotrain_ffn_gate_only.py` (committed)
+
