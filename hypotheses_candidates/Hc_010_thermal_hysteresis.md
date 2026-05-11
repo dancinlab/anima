@@ -3,7 +3,9 @@ id: Hc_010
 slug: thermal-hysteresis-consciousness
 title: Thermal Hysteresis in Consciousness Measurement (Gap=0.57, CV=1.4%)
 domain: physics, consciousness
-status: candidate-unverified
+status: merged-to-H_124
+merged_to: hypotheses/H_124.md
+merged_at: 2026-05-11
 source_doc: docs/topological-evolution-permanence.md
 source_lines: 149-171
 promoted_at: 2026-05-11

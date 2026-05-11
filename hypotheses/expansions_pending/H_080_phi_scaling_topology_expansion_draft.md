@@ -1,6 +1,7 @@
 # Expansion Draft — H_080: Φ Scaling / Topology Cluster Expansion (topo_24variants unified)
 
-## Status: draft-pending-review (2026-05-11)
+## Status: APPLIED to hypotheses/H_080.md on 2026-05-11 (Cycle 3 closure)
+## Original status: draft-pending-review (2026-05-11)
 
 ## Source candidates merged (12+)
 

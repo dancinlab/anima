@@ -3,7 +3,9 @@ id: Hc_422
 slug: 53-law-ceiling-per-config
 title: Each engine configuration has a finite law-discovery ceiling (~53 laws) following N(g) = 53·(1−exp(−g/15))
 domain: consciousness
-status: candidate-unverified
+status: merged-to-H_037
+merged_to: hypotheses/H_037.md
+merged_at: 2026-05-11
 source_doc: docs/anima/paper_self_discovery.hexa
 source_lines: 207-238
 promoted_at: 2026-05-11

@@ -3,7 +3,9 @@ id: Hc_019
 slug: arrow-of-time-lagrangian-i-irr
 title: L_IX Lagrangian Embeds Irreversibility (raw#30 IRREVERSIBILITY_EMBEDDED)
 domain: physics, universe
-status: candidate-unverified
+status: merged-to-H_124
+merged_to: hypotheses/H_124.md
+merged_at: 2026-05-11
 source_doc: docs/anima_time_temporal_arrow_abstraction_20260425.md
 source_lines: 1-136
 promoted_at: 2026-05-11

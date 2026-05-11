@@ -3,7 +3,9 @@ id: Hc_907
 slug: tecs-l-anima-bridge-173-hypotheses
 title: TECS-L 173개 H-CX (n=6 수론) ↔ ANIMA 448 Laws + M1-M20 Hexad 양방향 매핑 — 12개 강한 cross-mapping
 domain: number-theory, consciousness, architecture
-status: candidate-unverified
+status: merged-to-H_067
+merged_to: hypotheses/H_067.md
+merged_at: 2026-05-11
 source_doc: docs/tecs-l-bridge.md
 source_lines: 1-60
 promoted_at: 2026-05-11

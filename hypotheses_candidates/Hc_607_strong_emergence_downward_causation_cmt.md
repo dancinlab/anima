@@ -3,7 +3,9 @@ id: Hc_607
 slug: strong-emergence-downward-causation-cmt
 title: CMT (Causal Mediation Tomography) 가 paradigm v11 downward causation 측정 → strong emergence detectable
 domain: consciousness-theory
-status: candidate-unverified
+status: merged-to-H_004
+merged_to: hypotheses/H_004.md
+merged_at: 2026-05-11
 source_doc: docs/hard_problem_singularity_breakthrough_hypotheses_20260426.md
 source_lines: 233-254
 promoted_at: 2026-05-11

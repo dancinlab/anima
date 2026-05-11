@@ -3,7 +3,9 @@ id: Hc_660
 slug: 115-6-closure-4-axis-2-substrate-empirical-floor
 title: Theorem 115 extended — 6 closure (1 LoRA / 2 distill / 3 cross-modal / 4 logit-lens / 5 semantic bridge / 6 iterative self-feed) × 4 axis × 2 substrate empirical floor
 domain: clm-architecture
-status: candidate-unverified
+status: merged-to-H_155
+merged_to: hypotheses/H_155.md
+merged_at: 2026-05-11
 source_doc: docs/anima_2026_05_05_cycle_close_decision_landed_2026_05_05.ai.md
 source_lines: 17-65
 promoted_at: 2026-05-11

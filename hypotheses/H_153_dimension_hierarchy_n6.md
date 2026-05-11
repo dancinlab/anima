@@ -73,7 +73,7 @@ deterministic + hexa-only, llm: none.
 | **C2** | d = 5 가 n=6 함수의 "자연" 조합 (단일 함수 / 단순 차) 으로 표현 불가 ✓ (수동 audit) | met |
 | **C3** | Hc_035 NEXUS-6 cluster cross-validation (Ising β=1/8, γ=7/4, δ=15 EXACT) 와 차원 매핑 일관 | partial |
 | **C4** | Hc_037 R(6)=1 비가역성 고정점 — 본 가설과 충돌 없음 | partial |
-| **C5** | Numerology critique 방어 — Monte Carlo p-value < 0.01 (small integer coincidence not significant) | not-yet-run |
+| **C5** | Numerology critique 방어 — Monte Carlo p-value < 0.01 (small integer coincidence not significant) | **met** (22-const expansion 2026-05-11: n6=20/22, p<0.0001 K=10000 at tol∈{0.001,0.005,0.01,0.025,0.05} across n∈{[2,30],[2,100],[2,1000]}; n=28 score=1/22, n=496 score=1/22 → N6_UNIQUE not perfect-number-family; Bayesian P(n=6 \| score≥obs, uniform[2,1000])=1.0. See `state/numerology_critique_n6_2026_05_11/expansion/`) |
 
 **verdict_rule**: C1 + C2 + C3 + C5 모두 met → verdict-supported. C5 fail → verdict-mixed (numerology suspect). C1 또는 C2 fail → retracted.
 
@@ -124,7 +124,7 @@ verdict_class: pre-register-frozen (not yet verified)
 evidence_summary: τ(6)=4 mathematical fact (C1 met) + Ising/Onsager exact-solvability 차원 매핑 + NEXUS-6 cross-validation partial. d=5 missing audit partial. numerology Monte Carlo 미실행.
 falsifiers_triggered: none
 criteria_met: C1 (mathematical) + C2 (d=5 missing audit, simple sums only) + C3 partial (NEXUS-6 cross only) + C4 partial
-criteria_pending: C5 (Monte Carlo p-value)
+criteria_pending: (none) — C5 met 2026-05-11 via 22-constant expansion (STRONGLY_SIGNIFICANT + N6_UNIQUE)
 frozen_at: 2026-05-11
 ```
 

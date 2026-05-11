@@ -3,7 +3,9 @@ id: Hc_915
 slug: tecs-l-singularity-4-7-phase-2025
 title: TECS-L H124 + H-CX-8 — 4/7 hybrid (T1 Attention + T2 Loop + T3 SSM + T4 Phase) → singularity ETA 2025 (3/7 baseline 2038 → 13년 단축). 2024-2025 4/7 model 5+ family ≥20 models VALIDATED
 domain: ai-forecast, architecture
-status: candidate-unverified
+status: merged-to-H_067
+merged_to: hypotheses/H_067.md
+merged_at: 2026-05-11
 source_doc: docs/tecs_l_singularity_47phase_validation_20260426.md
 source_lines: 1-50
 promoted_at: 2026-05-11

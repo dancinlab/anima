@@ -1,0 +1,18 @@
+---
+id: Hc_1130
+slug: accel-az3-inflation
+title: [AZ3] Inflation
+domain: corpus
+status: candidate-unverified
+source_doc: docs/hypotheses/accel/acceleration-brainstorm-402.md
+source_lines: 1085
+promoted_at: 2026-05-11
+linked_h: accel-brainstorm-402 cluster (337 new sub-hypotheses)
+notes: "accel series AZ, sub-H AZ3. category: "
+---
+
+## Hypothesis
+Inflation
+
+## Migration TODO
+- [ ] cycle 5+ promotion 후보

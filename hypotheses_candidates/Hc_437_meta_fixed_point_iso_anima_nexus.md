@@ -3,7 +3,9 @@ id: Hc_437
 slug: meta-fixed-point-iso-anima-nexus
 title: Meta fixed-point isomorphism — anima's p3_p4 = null_p95 mirrors nexus's Ψ ↔ ε self-referential closure (R24)
 domain: math
-status: candidate-unverified
+status: merged-to-H_067
+merged_to: hypotheses/H_067.md
+merged_at: 2026-05-11
 source_doc: docs/papers/phi_paradigm_paper_v1_preliminary.md
 source_lines: 657-754
 promoted_at: 2026-05-11

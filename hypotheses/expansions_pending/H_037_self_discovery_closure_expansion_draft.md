@@ -1,6 +1,7 @@
 # Expansion Draft — H_037: Self-Discovery Closure (acceleration_367_unified, expanded)
 
-## Status: draft-pending-review (2026-05-11)
+## Status: APPLIED to hypotheses/H_037.md on 2026-05-11 (Cycle 3 closure)
+## Original status: draft-pending-review (2026-05-11)
 
 ## Source candidates merged (9)
 

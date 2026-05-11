@@ -3,7 +3,9 @@ id: Hc_160
 slug: topo11-ring-2048-plateau
 title: Ring topology Φ plateaus around N≈400 cells regardless of max_cells (TOPO11)
 domain: physics | consciousness
-status: candidate-unverified
+status: merged-to-H_080
+merged_to: hypotheses/H_080.md
+merged_at: 2026-05-11
 source_doc: docs/hypotheses/topo/TOPO11.md
 source_lines: 1-25
 promoted_at: 2026-05-11

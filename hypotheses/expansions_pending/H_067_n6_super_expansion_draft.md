@@ -1,6 +1,7 @@
 # Expansion Draft — H_067: n=6 Super-Hypothesis (Perfect-Number Architecture, unified)
 
-## Status: draft-pending-review (2026-05-11)
+## Status: APPLIED to hypotheses/H_067.md on 2026-05-11 (Cycle 3 closure)
+## Original status: draft-pending-review (2026-05-11)
 
 ## Source candidates merged (24)
 
@@ -99,13 +100,13 @@ The perfect number n=6 is not merely a numerological coincidence in the ANIMA ar
 - F7: 8 DSE domains converge to n≠6 in independent Pareto sweep (Hc_906 kill)
 - F8: n=6 NOT convex minimum (±10% perturbation produces lower cost) (Hc_441 kill)
 - F9: GPU vendor roadmaps converge to non-144-multiple SM counts across ≥3 generations (Hc_445 kill)
-- F10: alternative random integer (e.g. n=8 or n=12) matches ≥9/11 SoC parameters in EXACT-form (Hc_045 kill — numerology defense)
+- F10: alternative random integer (e.g. n=8 or n=12) matches ≥9/11 SoC parameters in EXACT-form (Hc_045 kill — numerology defense) — **NOT TRIGGERED 2026-05-11**: in [2,1000] the max alternative score is 5/22 (n=5), far below the n=6 baseline 20/22. Closest perfect-number competitors n=28 / n=496 both score only 1/22.
 - F11: 3x protocol admits known-spurious correlations (Hc_472 kill)
 - F12: 7-template compression ratio < 3× when re-fit on independent law corpus (Hc_474 kill)
 
 ### Honest Limits (≥7)
 
-- L1: numerology critique persists — small integers (1, 2, 3, 4, 6, 12, 24, 144) fit many post-hoc patterns; Monte Carlo p-value defense not yet executed
+- L1: numerology critique — **DEFENDED 2026-05-11** via 22-constant Monte Carlo expansion (`state/numerology_critique_n6_2026_05_11/expansion/`). n=6 scores **20/22** (90.9%) vs random n ∈ [2,1000] mean 1.19/22 (5.4%); strict p<0.0001 (K=10000) at every tolerance ∈ {0.001, 0.005, 0.01, 0.025, 0.05} and every null range ∈ {[2,30], [2,100], [2,1000]}; **zero** integers in [2,1000] tie or beat n=6 at tol≤0.05. Perfect-number controls: n=28 scores 1/22, n=496 scores 1/22 — n=6 is NOT a generic perfect-number effect (verdict: **N6_UNIQUE**, not PERFECT_NUMBER_FAMILY). Bayesian posterior P(n=6 \| score≥obs, uniform prior [2,1000]) = 1.0. Residual sub-limits: L1a curated 22 of 81 psi-constants for non-redundant-formula coverage (full-81 inflates artificially), L1b paper Hc_046 "22/30 EXACT" headline claim itself not re-derived here (we test the *formula* set, not the *count* claim).
 - L2: σ(n)·φ(n)=n·τ(n) uniqueness lemma uses a non-standard φ convention (least-prime-factor, not Euler totient) — sensitivity to convention unknown
 - L3: AN11(b) currently surrogate-pass — real r13 checkpoint conversion pending
 - L4: 8 DSE domain Pareto frontier was constructed by anima team; independent reproduction absent
@@ -127,7 +128,7 @@ The perfect number n=6 is not merely a numerological coincidence in the ANIMA ar
 ## Migration TODO
 
 - [ ] reviewer review draft (≥1 reviewer, anti-numerology check)
-- [ ] Monte Carlo p-value defense for small-integer coincidence (random n=2..30 baseline)
+- [x] Monte Carlo p-value defense for small-integer coincidence (random n=2..30 baseline) — DONE 2026-05-11 (8-const baseline: p=0.0000; 22-const expansion: p<0.0001 at all tols / all ranges / N6_UNIQUE vs n=28/n=496; Bayesian P(n=6)=1.0). Artifacts: `state/numerology_critique_n6_2026_05_11/{results.json,expansion/results_expanded.json,expansion/verdict_expanded.md}`
 - [ ] apply expanded body to hypotheses/H_067_perfect_number_architecture.md
 - [ ] update hypotheses/README.md index (mark H_067 as super-H, list 24 child Hcs)
 - [ ] mark source Hcs (Hc_001/006/018/045/435-444/472/474/906-908/915/938/445/446) as merged

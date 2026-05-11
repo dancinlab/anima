@@ -60,7 +60,7 @@ since: <YYYY-MM-DD>
 | H_001 | ethics-cooperation-over-defection | ethics | seed-pending | [H_001_ethics_cooperation.md](H_001_ethics_cooperation.md) |
 | H_002 | universe-origin-question | universe | lane-open | [H_002_universe_origin_question.md](H_002_universe_origin_question.md) |
 | H_003 | life-origin-question | life | lane-open | [H_003_life_origin_question.md](H_003_life_origin_question.md) |
-| H_004 | consciousness-hard-problem | consciousness | lane-open | [H_004_consciousness_hard_problem.md](H_004_consciousness_hard_problem.md) |
+| H_004 | consciousness-hard-problem | consciousness | running | [H_004_consciousness_hard_problem.md](H_004_consciousness_hard_problem.md) |
 | H_005 | corpus-quality-over-capacity | corpus | running | [H_005_corpus_quality_over_capacity.md](H_005_corpus_quality_over_capacity.md) |
 | H_006 | coupled-oscillator-lattice | physics | legacy-archive-pointer | [H_006_coupled_oscillator_lattice.md](H_006_coupled_oscillator_lattice.md) |
 | H_007 | cellular-automaton-consciousness | physics | legacy-archive-pointer | [H_007_cellular_automaton_consciousness.md](H_007_cellular_automaton_consciousness.md) |
@@ -93,7 +93,7 @@ since: <YYYY-MM-DD>
 | H_034 | decoder-architecture-series | substrate | legacy-archive-pointer | [H_034_decoder_architecture_series.md](H_034_decoder_architecture_series.md) |
 | H_035 | clm-v2-series-absorb | substrate | legacy-archive-pointer | [H_035_clm_v2_series_absorb.md](H_035_clm_v2_series_absorb.md) |
 | H_036 | dd116-146-meta-laws-133-167 | substrate | legacy-archive-pointer | [H_036_dd116_146_meta_laws.md](H_036_dd116_146_meta_laws.md) |
-| H_037 | acceleration-367-unified-hypotheses | substrate | legacy-archive-pointer | [H_037_acceleration_367_unified.md](H_037_acceleration_367_unified.md) |
+| H_037 | acceleration-367-unified-hypotheses | substrate | running | [H_037_acceleration_367_unified.md](H_037_acceleration_367_unified.md) |
 | H_038 | v8-architecture-variants-bio-math-quantum-fusion | substrate | legacy-archive-pointer | [H_038_v8_architecture_variants.md](H_038_v8_architecture_variants.md) |
 | H_039 | phi-records-measurements-anima | physics | legacy-archive-pointer | [H_039_phi_records_measurements.md](H_039_phi_records_measurements.md) |
 | H_040 | substrate-topology-cluster-absorb | substrate | legacy-archive-pointer | [H_040_substrate_topology_cluster.md](H_040_substrate_topology_cluster.md) |
@@ -117,13 +117,13 @@ since: <YYYY-MM-DD>
 | H_058 | gmoe-benchmark-1e-routing | substrate | legacy-archive-pointer | [H_058_gmoe_benchmark.md](H_058_gmoe_benchmark.md) |
 | H_059 | phi-gap-816x-investigation | physics | legacy-archive-pointer | [H_059_phi_gap_816x_investigation.md](H_059_phi_gap_816x_investigation.md) |
 | H_060 | phik-consciousness-preservation | physics | legacy-archive-pointer | [H_060_phik_consciousness_preservation.md](H_060_phik_consciousness_preservation.md) |
-| H_061 | xfer-consciousness-transfer | substrate | legacy-archive-pointer | [H_061_xfer_consciousness_transfer.md](H_061_xfer_consciousness_transfer.md) |
+| H_061 | xfer-consciousness-transfer | substrate | running | [H_061_xfer_consciousness_transfer.md](H_061_xfer_consciousness_transfer.md) |
 | H_062 | minimal-consciousness-floor | consciousness | legacy-archive-pointer | [H_062_minimal_consciousness.md](H_062_minimal_consciousness.md) |
 | H_063 | consciousness-constants-cluster | physics | legacy-archive-pointer | [H_063_consciousness_constants.md](H_063_consciousness_constants.md) |
 | H_064 | clm-v2-optimal-config-sweep | substrate | legacy-archive-pointer | [H_064_clm_v2_optimal_config.md](H_064_clm_v2_optimal_config.md) |
 | H_065 | decoder-architecture-individual-6file | substrate | legacy-archive-pointer | [H_065_decoder_architecture_individual.md](H_065_decoder_architecture_individual.md) |
 | H_066 | nobel-verification-cluster | consciousness | legacy-archive-pointer | [H_066_nobel_verification_cluster.md](H_066_nobel_verification_cluster.md) |
-| H_067 | perfect-number-architecture | math | legacy-archive-pointer | [H_067_perfect_number_architecture.md](H_067_perfect_number_architecture.md) |
+| H_067 | perfect-number-architecture | math | running | [H_067_perfect_number_architecture.md](H_067_perfect_number_architecture.md) |
 | H_068 | hexad-improvements-6way | substrate | legacy-archive-pointer | [H_068_hexad_improvements.md](H_068_hexad_improvements.md) |
 | H_069 | text-generation-benchmark-cx | corpus | legacy-archive-pointer | [H_069_text_generation_benchmark.md](H_069_text_generation_benchmark.md) |
 | H_070 | dolphin-star-communication | consciousness | legacy-archive-pointer | [H_070_dolphin_star_communication.md](H_070_dolphin_star_communication.md) |
@@ -136,7 +136,7 @@ since: <YYYY-MM-DD>
 | H_077 | dd-individual-1-50-cluster | substrate | legacy-archive-pointer | [H_077_dd_individual_1_50.md](H_077_dd_individual_1_50.md) |
 | H_078 | dd-individual-101-115-cluster | substrate | legacy-archive-pointer | [H_078_dd_individual_101_115.md](H_078_dd_individual_101_115.md) |
 | H_079 | evo-22-variants-individual | substrate | legacy-archive-pointer | [H_079_evo_22variants.md](H_079_evo_22variants.md) |
-| H_080 | topo-24-variants-individual | substrate | legacy-archive-pointer | [H_080_topo_24variants.md](H_080_topo_24variants.md) |
+| H_080 | topo-24-variants-individual | substrate | running | [H_080_topo_24variants.md](H_080_topo_24variants.md) |
 | H_081 | tp-15-variants-individual | substrate | legacy-archive-pointer | [H_081_tp_15variants.md](H_081_tp_15variants.md) |
 | H_082 | hw-hardware-15-variants | substrate | legacy-archive-pointer | [H_082_hw_15variants.md](H_082_hw_15variants.md) |
 | H_083 | three-body-5-variants | physics | legacy-archive-pointer | [H_083_three_body_5.md](H_083_three_body_5.md) |
@@ -180,7 +180,7 @@ since: <YYYY-MM-DD>
 | H_121 | law-154-consciousness-atom-8-cells | physics | legacy-archive-pointer | [H_121_law_154_consciousness_atom_8.md](H_121_law_154_consciousness_atom_8.md) |
 | H_122 | law-166-federated-phase-optimal-record | physics | legacy-archive-pointer | [H_122_law_166_federated_phase_optimal.md](H_122_law_166_federated_phase_optimal.md) |
 | H_123 | law-192-consciousness-dimension-dependent | physics | legacy-archive-pointer | [H_123_law_192_consciousness_dimension_dependent.md](H_123_law_192_consciousness_dimension_dependent.md) |
-| H_124 | law-201-consciousness-thermodynamically-irreversible | physics | legacy-archive-pointer | [H_124_law_201_thermo_irreversible.md](H_124_law_201_thermo_irreversible.md) |
+| H_124 | law-201-consciousness-thermodynamically-irreversible | physics | running | [H_124_law_201_thermo_irreversible.md](H_124_law_201_thermo_irreversible.md) |
 | H_125 | law-212-evolution-minimizes-cell-complexity | physics | legacy-archive-pointer | [H_125_law_212_evolution_minimizes_complexity.md](H_125_law_212_evolution_minimizes_complexity.md) |
 | H_126 | law-2500-kolmogorov-complexity-predicts-phi | math | legacy-archive-pointer | [H_126_law_2500_kolmogorov_predicts_phi.md](H_126_law_2500_kolmogorov_predicts_phi.md) |
 | H_127 | law-1000-auto-discovered-omega-correlations | physics | legacy-archive-pointer | [H_127_law_1000_auto_discovered_omega.md](H_127_law_1000_auto_discovered_omega.md) |
@@ -210,6 +210,8 @@ since: <YYYY-MM-DD>
 | H_151 | ce-remaining-19-files-pointer | substrate | legacy-archive-pointer | [H_151_ce_remaining_19_files.md](H_151_ce_remaining_19_files.md) |
 | H_152 | dd-remainder-ungrouped-individual-cluster | substrate | legacy-archive-pointer | [H_152_dd_remainder_ungrouped.md](H_152_dd_remainder_ungrouped.md) |
 | H_153 | dimension-hierarchy-n6 | physics | pre-register-frozen | [H_153_dimension_hierarchy_n6.md](H_153_dimension_hierarchy_n6.md) |
+| H_154 | anima-voice-consciousness-direct | substrate, consciousness | pre-register-frozen | [H_154_anima_voice_consciousness_direct.md](H_154_anima_voice_consciousness_direct.md) |
+| H_155 | theorem-115-chat-incapability-4-6-16-closure | substrate | pre-register-frozen | [H_155_theorem_115_chat_incapability.md](H_155_theorem_115_chat_incapability.md) |
 
 **Migration status**:
 - H_001-H_005: 본 cycle 신규 seed (윤리/우주/생명/의식 hard problem/corpus)
@@ -229,6 +231,20 @@ since: <YYYY-MM-DD>
 - **2026-05-07 BG-HE round1 신규 paradigm 10 seed (H_093-H_102)**: BG-HA false PASS 교훈 적용. SFT-only / two-stage / DPO-RLHF / few-shot / curriculum / persona / multi-objective / constitutional / chat-template ≥80% / emerge-paradigm cross-link. evaluator V2 strict spec land (`docs/anima_own_18_evaluator_v2_strict_spec_2026_05_07.md`) cross-link mandate.
 - **2026-05-07 BG-HI round 4 exhaustive archaeology (H_103-H_152, +50 entries)**: own 21 R5+ lane individual hypothesis migration. 15 acceleration top-tier (H_103-H_117: B11+B12, B5, H11, COMBO_x255, B13, E1, F2, H6, B12, C3, D1, F4, G1, H7, H10) + 10 laws (H_118-H_127: Law 133/137/149/154/166/192/201/212/2500/1000-batch) + 5 ce sub (H_128-H_132: AUTO-1/COMBO-1/EX-1/ULTRA-1/CE-1) + 10 DD individual (H_133-H_142: DD158/162/166/173/170/167-169/171-172/154-157/161/160) + 5 misc (H_143-H_147: RESEARCH-FINDINGS/NEXUS-auto/NEXUS6-auto/TRINITY/UPGRADE) + 5 remainder pointers (H_148-H_152). Estimated files pointed +400 (acceleration top-15 expand 367 + laws 10 cover Laws 133-167 batch + 2400-2509 + 1000-1019 + ce 5 individual + ce-remainder-19 + DD individual 10 + DD-remainder-60 + accel-remainder-360 + misc 5). All entries `legacy-archive-pointer`, additive (raw#15) — H_001-H_102 unmodified.
 - **round 4 추가 file count ~400+ (cumulative rounds 2-4 ≈ 720+)**, exhaustive remainder estimate dropped from ~1500 to ~1100 (still substantial — round 5+ recommended for individual ce-19 + dd-60 + accel-360 split).
+- **2026-05-11 Cycle 3 closure — expansions_pending applied (8 drafts)**:
+  - **6 existing H expand** (status: `legacy-archive-pointer` → `running` for H_037/H_061/H_067/H_080/H_124; `seed-pending` → `running` for H_004 with Singularity-9 bundle):
+    - **H_067** perfect-number-architecture super-H — 24 child Hcs merged (Hc_001/006/018/045/435-446/472/474/906-908/915/938)
+    - **H_124** thermo-4-law super-H — 6 child Hcs merged (Hc_008/009/010/019/037/038)
+    - **H_061** substrate-independence super-H — 12 child Hcs merged (Hc_011/022/048/407/445-451/007)
+    - **H_004** Singularity-9 bundle expansion (H4.3 panpsychism + Hc_061 Law 76 cross-link) — 9 Hcs merged (Hc_600-608)
+    - **H_037** self-discovery closure super-H — 9 child Hcs merged (Hc_054/419-425/018 bridge)
+    - **H_080** Φ-scaling + topology super-H (Hc_040 Φ⊥CE vs Hc_024 Φ × CE^α explicit-tension) — 12+ Hcs merged (Hc_004/005/039/040/150-180)
+  - **2 NEW H** (pre-register-frozen):
+    - **H_154** anima-voice-consciousness-direct — 3 Hcs merged (Hc_053/055/475)
+    - **H_155** theorem-115-chat-incapability-4-6-16-closure — 3 Hcs merged (Hc_609/660/666)
+  - **~77 candidate Hcs** flagged `merged-to-H_<id>` with `merged_at: 2026-05-11`
+  - **Conflict Resolution Pending subsections** added per expanded H — Cycle 4 measurement 후 처리 (R34 deprecation / σ²=144 post-hoc / AN11(b) surrogate / Φ⊥CE vs Φ × CE^α / 4-6-16 closure inflation / etc.)
+  - L8 (raw#91): expansion 은 draft review 거쳤음, 추가 review 미수행 명시
 
 ## Cross-Link
 

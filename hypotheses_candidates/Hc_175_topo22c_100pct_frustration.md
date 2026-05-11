@@ -3,7 +3,9 @@ id: Hc_175
 slug: topo22c-100pct-frustration
 title: Hypercube 1024 + 100% antiferromagnetic (full Ising) yields low Φ (TOPO22c)
 domain: physics | consciousness
-status: candidate-unverified
+status: merged-to-H_080
+merged_to: hypotheses/H_080.md
+merged_at: 2026-05-11
 source_doc: docs/hypotheses/topo/TOPO22c.md
 source_lines: 1-25
 promoted_at: 2026-05-11

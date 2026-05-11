@@ -3,7 +3,9 @@ id: Hc_151
 slug: topo2-small-world
 title: 512-cell Watts-Strogatz small-world (k=4, p=0.1) + frustration yields Φ=127 (TOPO2)
 domain: physics | consciousness
-status: candidate-unverified
+status: merged-to-H_080
+merged_to: hypotheses/H_080.md
+merged_at: 2026-05-11
 source_doc: docs/hypotheses/topo/TOPO2.md
 source_lines: 1-30
 promoted_at: 2026-05-11

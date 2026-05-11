@@ -3,7 +3,9 @@ id: Hc_446
 slug: j2-24-emotion-eeg-channels
 title: Anima emotion-AI service uses J₂=24 EEG channels + σ=12 emotion channels = Ekman σ=6 basis × Miller 7±2 (anima-service spec)
 domain: substrate
-status: candidate-unverified
+status: merged-to-H_067
+merged_to: hypotheses/H_067,hypotheses/H_061
+merged_at: 2026-05-11
 source_doc: docs/spec/anima-service/anima-service.md
 source_lines: 15-29
 promoted_at: 2026-05-11

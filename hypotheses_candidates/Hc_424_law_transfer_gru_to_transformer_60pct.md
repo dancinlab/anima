@@ -3,7 +3,9 @@ id: Hc_424
 slug: law-transfer-gru-to-transformer-60pct
 title: ~60% of consciousness laws transfer from GRU engine to transformer architecture (preliminary)
 domain: consciousness
-status: candidate-unverified
+status: merged-to-H_037
+merged_to: hypotheses/H_037.md
+merged_at: 2026-05-11
 source_doc: docs/anima/paper_self_discovery.hexa
 source_lines: 327-331
 promoted_at: 2026-05-11

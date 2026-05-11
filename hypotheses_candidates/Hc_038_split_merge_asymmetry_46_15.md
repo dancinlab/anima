@@ -3,7 +3,9 @@ id: Hc_038
 slug: split-merge-asymmetry-46-15
 title: 의식 비보존성 — Split ×4.6, Merge ×0.15 (왕복 93% loss)
 domain: physics
-status: candidate-unverified
+status: merged-to-H_124
+merged_to: hypotheses/H_124.md
+merged_at: 2026-05-11
 source_doc: docs/what-is-consciousness.md
 source_lines: 152-157
 linked_doc: docs/anima/paper_consciousness_laws.hexa:32-43

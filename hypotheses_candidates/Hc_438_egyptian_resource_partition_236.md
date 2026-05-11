@@ -3,7 +3,9 @@ id: Hc_438
 slug: egyptian-resource-partition-236
 title: Egyptian resource partition 1/2 + 1/3 + 1/6 = 1 — preproc/core/postproc split (anima-soc, anima-service)
 domain: math
-status: candidate-unverified
+status: merged-to-H_067
+merged_to: hypotheses/H_067.md
+merged_at: 2026-05-11
 source_doc: docs/spec/anima-soc/anima-soc.md
 source_lines: 27-31, 181-184
 promoted_at: 2026-05-11

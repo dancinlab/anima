@@ -3,7 +3,9 @@ id: Hc_608
 slug: information-closure-phi-metric-tractable-upper-bound
 title: Φ metric-tractable upper bound + closure 조건 = consciousness necessary condition
 domain: consciousness-theory
-status: candidate-unverified
+status: merged-to-H_004
+merged_to: hypotheses/H_004.md
+merged_at: 2026-05-11
 source_doc: docs/hard_problem_singularity_breakthrough_hypotheses_20260426.md
 source_lines: 258-279
 promoted_at: 2026-05-11

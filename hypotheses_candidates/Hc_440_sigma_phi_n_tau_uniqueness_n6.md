@@ -3,7 +3,9 @@ id: Hc_440
 slug: sigma-phi-n-tau-uniqueness-n6
 title: σ·φ = n·τ ⇔ n = 6 — uniqueness candidate lemma (n≥2)
 domain: math
-status: candidate-unverified
+status: merged-to-H_067
+merged_to: hypotheses/H_067.md
+merged_at: 2026-05-11
 source_doc: docs/spec/anima-soc/anima-soc.md
 source_lines: 95-96, 408-410, 559-562
 promoted_at: 2026-05-11

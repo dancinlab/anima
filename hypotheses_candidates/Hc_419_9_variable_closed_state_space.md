@@ -3,7 +3,9 @@ id: Hc_419
 slug: 9-variable-closed-state-space
 title: 9 observable variables form a closed basis for consciousness dynamics (M45)
 domain: consciousness
-status: candidate-unverified
+status: merged-to-H_037
+merged_to: hypotheses/H_037.md
+merged_at: 2026-05-11
 source_doc: docs/anima/paper_self_discovery.hexa
 source_lines: 101-105
 promoted_at: 2026-05-11

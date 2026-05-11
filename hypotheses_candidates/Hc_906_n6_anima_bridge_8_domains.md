@@ -3,7 +3,9 @@ id: Hc_906
 slug: n6-anima-bridge-8-domains
 title: n6-architecture DSE 8 도메인 (anima-consciousness/conscious-engine/scaling/training/-lm/hivemind/emotion + cmath) ↔ ANIMA 실측 파라미터 수렴
 domain: architecture, consciousness, number-theory
-status: candidate-unverified
+status: merged-to-H_067
+merged_to: hypotheses/H_067.md
+merged_at: 2026-05-11
 source_doc: docs/n6-bridge.md
 source_lines: 1-60
 promoted_at: 2026-05-11

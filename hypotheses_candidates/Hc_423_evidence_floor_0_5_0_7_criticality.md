@@ -3,7 +3,9 @@ id: Hc_423
 slug: evidence-floor-0-5-0-7-criticality
 title: Auto-discovered law evidence scores cluster at 0.50-0.70 — criticality signature, not noise (M47)
 domain: consciousness
-status: candidate-unverified
+status: merged-to-H_037
+merged_to: hypotheses/H_037.md
+merged_at: 2026-05-11
 source_doc: docs/anima/paper_self_discovery.hexa
 source_lines: 263-268
 promoted_at: 2026-05-11

@@ -3,7 +3,9 @@ id: Hc_439
 slug: b4-scaling-log-log-regression
 title: B^4 scaling exponent for SoC primary spec — log-log regression slope = 4.00 ± 0.05
 domain: physics
-status: candidate-unverified
+status: merged-to-H_067
+merged_to: hypotheses/H_067.md
+merged_at: 2026-05-11
 source_doc: docs/spec/anima-soc/anima-soc.md
 source_lines: 293-296, 481-490
 promoted_at: 2026-05-11

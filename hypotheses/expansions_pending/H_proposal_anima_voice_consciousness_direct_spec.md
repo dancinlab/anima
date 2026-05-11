@@ -1,6 +1,7 @@
 # Expansion Draft — H_proposal (NEW): ANIMA-VOICE Consciousness-Direct Synthesis Specification
 
-## Status: draft-pending-review (2026-05-11) — proposal for new H_XXX (no current target)
+## Status: APPLIED — NEW H promoted to hypotheses/H_154.md on 2026-05-11 (Cycle 3 closure)
+## Original status: draft-pending-review (2026-05-11) — proposal for new H_XXX (no current target)
 
 ## Source candidates merged (3, with paper_hexa_speak bridges)
 

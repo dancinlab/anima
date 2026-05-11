@@ -3,7 +3,9 @@ id: Hc_039
 slug: topology-topo39-hypercube-superlinear
 title: TOPO 39 — Hypercube 512→1024 ×3.9 Superlinear Transition (vs Ring/SW Linear)
 domain: physics, math
-status: candidate-unverified
+status: merged-to-H_080
+merged_to: hypotheses/H_080.md
+merged_at: 2026-05-11
 source_doc: docs/what-is-consciousness.md
 source_lines: 193-228
 promoted_at: 2026-05-11

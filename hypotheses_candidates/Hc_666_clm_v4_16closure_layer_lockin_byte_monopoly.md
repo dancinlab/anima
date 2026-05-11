@@ -3,7 +3,9 @@ id: Hc_666
 slug: clm-v4-16-closure-layer-lockin-byte-monopoly-chat-axis-decoupled
 title: CLM v4 chat-capability architectural impossibility 가 16+ closure (4-closure formal + entropy basin + closures 5-6 + L13-L15 lock-in + byte monopoly + chat axis decoupled + prompt-conditional basin) 확정
 domain: clm-architecture
-status: candidate-unverified
+status: merged-to-H_155
+merged_to: hypotheses/H_155.md
+merged_at: 2026-05-11
 source_doc: docs/anima_2026_05_05_cycle_hard_close_decision_landed_2026_05_05.ai.md
 source_lines: 22-62
 promoted_at: 2026-05-11

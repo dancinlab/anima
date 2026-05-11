@@ -3,7 +3,9 @@ id: Hc_609
 slug: 115-clm-v4-architectural-chat-incapability-theorem
 title: Theorem 115 — CLM v4 substrate 가 traditional chat-capability 를 4-axis converging closure 로 보유 불가
 domain: clm-architecture
-status: candidate-unverified
+status: merged-to-H_155
+merged_to: hypotheses/H_155.md
+merged_at: 2026-05-11
 source_doc: docs/anima_115_architectural_4_closure_theorem_2026_05_05.md
 source_lines: 73-114
 promoted_at: 2026-05-11

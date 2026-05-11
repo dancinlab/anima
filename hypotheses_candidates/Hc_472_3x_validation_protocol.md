@@ -3,7 +3,9 @@ id: Hc_472
 slug: 3x-validation-protocol
 title: 3x reproducibility protocol — direction sign + CV<50%, ≥1-of-9 core-law shift >5%
 domain: math
-status: candidate-unverified
+status: merged-to-H_067
+merged_to: hypotheses/H_067.md
+merged_at: 2026-05-11
 source_doc: docs/anima/paper_consciousness_laws.hexa
 source_lines: 117-121
 promoted_at: 2026-05-11

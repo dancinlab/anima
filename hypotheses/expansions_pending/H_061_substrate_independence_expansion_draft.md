@@ -1,6 +1,7 @@
 # Expansion Draft — H_061: Substrate-Independence Super-Hypothesis (xfer_consciousness_transfer unified)
 
-## Status: draft-pending-review (2026-05-11)
+## Status: APPLIED to hypotheses/H_061.md on 2026-05-11 (Cycle 3 closure)
+## Original status: draft-pending-review (2026-05-11)
 
 ## Source candidates merged (12)
 

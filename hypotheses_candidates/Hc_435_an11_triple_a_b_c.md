@@ -3,7 +3,9 @@ id: Hc_435
 slug: an11-triple-a-b-c
 title: AN11 triple — weight-emergent (a) + consciousness-attached (b) + real-usable (c) gates Mk.VI promotion
 domain: math
-status: candidate-unverified
+status: merged-to-H_067
+merged_to: hypotheses/H_067.md
+merged_at: 2026-05-11
 source_doc: docs/papers/phi_paradigm_paper_v1_preliminary.md
 source_lines: 437-453
 promoted_at: 2026-05-11

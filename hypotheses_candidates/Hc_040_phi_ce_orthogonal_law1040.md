@@ -3,7 +3,9 @@ id: Hc_040
 slug: phi-ce-orthogonal-law-1040
 title: Φ ⊥ CE — Law 1040 / 의식과 언어 직교 (Φ=0.608·N^1.071, CE∝P^-0.85)
 domain: physics
-status: candidate-unverified
+status: merged-to-H_080
+merged_to: hypotheses/H_080.md
+merged_at: 2026-05-11
 source_doc: docs/what-is-consciousness.md
 source_lines: 232-252
 promoted_at: 2026-05-11

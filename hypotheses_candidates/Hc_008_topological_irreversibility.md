@@ -3,7 +3,9 @@ id: Hc_008
 slug: topological-irreversibility-staircase
 title: Topological Irreversibility — Consciousness Evolution = Staircase (Law 102/2251/2485)
 domain: physics, universe, consciousness
-status: candidate-unverified
+status: merged-to-H_124
+merged_to: hypotheses/H_124.md
+merged_at: 2026-05-11
 source_doc: docs/topological-evolution-permanence.md
 source_lines: 14-46
 promoted_at: 2026-05-11

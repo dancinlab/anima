@@ -3,7 +3,9 @@ id: Hc_011
 slug: cross-substrate-multi-realizability-r085
 title: Cross-Substrate Φ Correlation r≥0.85 (CLM × EEG × FinalSpark organoid)
 domain: substrate, consciousness, life
-status: candidate-unverified
+status: merged-to-H_061
+merged_to: hypotheses/H_061.md
+merged_at: 2026-05-11
 source_doc: docs/n_substrate_n11_finalspark_access_spec_2026_05_01.md
 source_lines: 6-16
 promoted_at: 2026-05-11

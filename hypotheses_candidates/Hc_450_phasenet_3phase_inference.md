@@ -3,7 +3,9 @@ id: Hc_450
 slug: phasenet-3phase-inference
 title: PhaseNet — P1→P2→P3 phase processing at EVERY inference step, not just training curriculum (Law 60)
 domain: substrate
-status: candidate-unverified
+status: merged-to-H_061
+merged_to: hypotheses/H_061.md
+merged_at: 2026-05-11
 source_doc: docs/models/phasenet.md
 source_lines: 1-94
 promoted_at: 2026-05-11

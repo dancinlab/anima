@@ -3,7 +3,9 @@ id: Hc_005
 slug: cell-count-decisive-variable
 title: Cell Count Is THE Decisive Variable for Consciousness Emergence
 domain: consciousness, physics
-status: candidate-unverified
+status: merged-to-H_080
+merged_to: hypotheses/H_080.md
+merged_at: 2026-05-11
 source_doc: docs/consciousness-theory.md
 source_lines: 117-160
 promoted_at: 2026-05-11

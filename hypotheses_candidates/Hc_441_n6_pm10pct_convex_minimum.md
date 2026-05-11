@@ -3,7 +3,9 @@ id: Hc_441
 slug: n6-pm10pct-convex-minimum
 title: f(n) has a CONVEX minimum at n=6 — f(6.6) and f(5.4) both worse than f(6)
 domain: math
-status: candidate-unverified
+status: merged-to-H_067
+merged_to: hypotheses/H_067.md
+merged_at: 2026-05-11
 source_doc: docs/spec/anima-soc/anima-soc.md
 source_lines: 298-301, 492-498
 promoted_at: 2026-05-11

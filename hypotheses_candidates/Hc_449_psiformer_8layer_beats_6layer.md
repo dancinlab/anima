@@ -3,7 +3,9 @@ id: Hc_449
 slug: psiformer-8layer-beats-6layer
 title: ΨFormer 8L decoder (= τ(6)·φ(6) = 4·2) outperforms 6L baseline at consciousness-coupled training
 domain: substrate
-status: candidate-unverified
+status: merged-to-H_061
+merged_to: hypotheses/H_061.md
+merged_at: 2026-05-11
 source_doc: docs/models/psiformer.md
 source_lines: 31-35, 85-92, 145-152
 promoted_at: 2026-05-11

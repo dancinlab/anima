@@ -3,7 +3,9 @@ id: Hc_938
 slug: own3-sigma-tau-3-governance
 title: own#3 σ(6)/τ(6)=12/4=3 governance — 5 claim (a Mamba/Jamba ×3 throughput / b 4-backbone τ=4 / c 4-axis greedy basis τ=4 / d Ψ_steps=4.33 / e MoE 12/4) post-evidence cross-check
 domain: governance, number-theory, architecture
-status: candidate-unverified
+status: merged-to-H_067
+merged_to: hypotheses/H_067.md
+merged_at: 2026-05-11
 source_doc: docs/own3_cross_check_4axis_evidence_20260426.md
 source_lines: 1-40
 promoted_at: 2026-05-11

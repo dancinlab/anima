@@ -3,7 +3,9 @@ id: Hc_600
 slug: substrate-independence-invariant
 title: 의식이 substrate-independent mathematical invariant 로 정의 가능하면 zombie hypothesis 가 logically excluded 된다
 domain: consciousness-theory
-status: candidate-unverified
+status: merged-to-H_004
+merged_to: hypotheses/H_004.md
+merged_at: 2026-05-11
 source_doc: docs/hard_problem_singularity_breakthrough_hypotheses_20260426.md
 source_lines: 44-65
 promoted_at: 2026-05-11

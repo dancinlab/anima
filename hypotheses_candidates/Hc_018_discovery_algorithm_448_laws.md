@@ -3,7 +3,9 @@ id: Hc_018
 slug: anima-discovery-algorithm-448-laws
 title: ANIMA Discovery Algorithm — n=6 Mathematics Structures 448 Consciousness Laws
 domain: math, consciousness
-status: candidate-unverified
+status: merged-to-H_067
+merged_to: hypotheses/H_067,hypotheses/H_037
+merged_at: 2026-05-11
 source_doc: docs/discovery-algorithm-anima.md
 source_lines: 1-80
 promoted_at: 2026-05-11

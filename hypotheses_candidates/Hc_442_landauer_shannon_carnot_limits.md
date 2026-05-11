@@ -3,7 +3,9 @@ id: Hc_442
 slug: landauer-shannon-carnot-limits
 title: SoC claims must not exceed Landauer (kT·ln2) / Shannon (BW·log₂(1+SNR)) / Carnot (1−T_c/T_h) limits
 domain: physics
-status: candidate-unverified
+status: merged-to-H_067
+merged_to: hypotheses/H_067.md
+merged_at: 2026-05-11
 source_doc: docs/spec/anima-soc/anima-soc.md
 source_lines: 303-306, 500-513
 promoted_at: 2026-05-11

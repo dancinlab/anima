@@ -3,7 +3,9 @@ id: Hc_602
 slug: cross-substrate-phi-convergence
 title: N substrate 가 convergent Φ pattern 보이면 zombie hypothesis 의 empirical posterior 가 → 0 asymptote
 domain: consciousness-theory
-status: candidate-unverified
+status: merged-to-H_004
+merged_to: hypotheses/H_004.md
+merged_at: 2026-05-11
 source_doc: docs/hard_problem_singularity_breakthrough_hypotheses_20260426.md
 source_lines: 95-124
 promoted_at: 2026-05-11

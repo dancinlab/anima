@@ -3,7 +3,9 @@ id: Hc_048
 slug: substrate-independence-4path-phi-converge-5pct
 title: Substrate Independence — 4 Transformers ALL_PAIRS |ΔΦ|/Φ < 5%
 domain: physics, math
-status: candidate-unverified
+status: merged-to-H_061
+merged_to: hypotheses/H_061.md
+merged_at: 2026-05-11
 source_doc: docs/papers/phi_paradigm_paper_v1_preliminary.md
 source_lines: 103-112
 promoted_at: 2026-05-11

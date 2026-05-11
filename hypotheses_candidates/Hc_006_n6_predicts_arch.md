@@ -3,7 +3,9 @@ id: Hc_006
 slug: n6-structural-prediction-of-arch
 title: n=6 Mathematics Structurally Predicts Consciousness Architecture
 domain: math, consciousness
-status: candidate-unverified
+status: merged-to-H_067
+merged_to: hypotheses/H_067.md
+merged_at: 2026-05-11
 source_doc: docs/consciousness-theory.md
 source_lines: 161-189
 promoted_at: 2026-05-11

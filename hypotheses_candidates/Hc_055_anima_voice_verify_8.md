@@ -3,7 +3,9 @@ id: Hc_055
 slug: anima-voice-verify-8-h1-h8
 title: ANIMA-VOICE VERIFY — H1-H8 Quantitative Acceptance Criteria
 domain: substrate, corpus
-status: candidate-unverified
+status: merged-to-H_154
+merged_to: hypotheses/H_154.md
+merged_at: 2026-05-11
 source_doc: docs/anima/hexa-speak-integration.md
 source_lines: 136-150
 promoted_at: 2026-05-11

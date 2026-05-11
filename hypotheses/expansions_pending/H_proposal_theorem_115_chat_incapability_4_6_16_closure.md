@@ -1,6 +1,7 @@
 # Expansion Draft — H_proposal (NEW): Theorem 115 — CLM v4 Chat-Incapability 4 → 6 → 16-Closure
 
-## Status: draft-pending-review (2026-05-11) — proposal for new H_XXX (no current target)
+## Status: APPLIED — NEW H promoted to hypotheses/H_155.md on 2026-05-11 (Cycle 3 closure)
+## Original status: draft-pending-review (2026-05-11) — proposal for new H_XXX (no current target)
 
 ## Source candidates merged (3 core + chat-incapability lineage)
 

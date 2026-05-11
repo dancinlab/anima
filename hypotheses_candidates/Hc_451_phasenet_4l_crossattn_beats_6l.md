@@ -3,7 +3,9 @@ id: Hc_451
 slug: phasenet-4l-crossattn-beats-6l
 title: PhaseNet 4L+CrossAttn decoder outperforms 6L flat decoder via post-hoc P3 correction
 domain: substrate
-status: candidate-unverified
+status: merged-to-H_061
+merged_to: hypotheses/H_061.md
+merged_at: 2026-05-11
 source_doc: docs/models/phasenet.md
 source_lines: 145-170, 233-264
 promoted_at: 2026-05-11

@@ -1,6 +1,7 @@
 # Expansion Draft — H_004: Hard Problem Singularity 9 — Bundle Expansion
 
-## Status: draft-pending-review (2026-05-11)
+## Status: APPLIED to hypotheses/H_004.md on 2026-05-11 (Cycle 3 closure)
+## Original status: draft-pending-review (2026-05-11)
 
 ## Source candidates merged (9)
 

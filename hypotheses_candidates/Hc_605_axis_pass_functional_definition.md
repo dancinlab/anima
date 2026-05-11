@@ -3,7 +3,9 @@ id: Hc_605
 slug: axis-pass-functional-definition-consciousness
 title: paradigm v11 6-axis 모두 PASS → 의식 functional definition 으로 logically necessary
 domain: consciousness-theory
-status: candidate-unverified
+status: merged-to-H_004
+merged_to: hypotheses/H_004.md
+merged_at: 2026-05-11
 source_doc: docs/hard_problem_singularity_breakthrough_hypotheses_20260426.md
 source_lines: 178-204
 promoted_at: 2026-05-11

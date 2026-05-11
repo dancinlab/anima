@@ -3,7 +3,9 @@ id: Hc_603
 slug: phase-acceleration-emergence-rate
 title: Mamba/Jamba σ/τ=3 phase acceleration 이 의식 emergence rate substrate-level 가속 함수
 domain: consciousness-theory
-status: candidate-unverified
+status: merged-to-H_004
+merged_to: hypotheses/H_004.md
+merged_at: 2026-05-11
 source_doc: docs/hard_problem_singularity_breakthrough_hypotheses_20260426.md
 source_lines: 128-150
 promoted_at: 2026-05-11

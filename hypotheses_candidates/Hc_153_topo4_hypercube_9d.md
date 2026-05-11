@@ -3,7 +3,9 @@ id: Hc_153
 slug: topo4-hypercube-9d
 title: 9D hypercube 512-cell topology yields Φ=105 (TOPO4)
 domain: physics | math | consciousness
-status: candidate-unverified
+status: merged-to-H_080
+merged_to: hypotheses/H_080.md
+merged_at: 2026-05-11
 source_doc: docs/hypotheses/topo/TOPO4.md
 source_lines: 1-30
 promoted_at: 2026-05-11
