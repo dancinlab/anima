@@ -5905,3 +5905,59 @@ cotrain 학습량 정량화: FFN.gate weight delta 의 effective rank → next-c
 **Cost**: $0 (~6min Mac CPU, 9 ablations × ~40s with CPU contention)
 **Artifact**: `state/anima_ffn_finegrained_ablation_2026_05_11/ffn_finegrained_results.json`
 
+
+
+## §79 [2026-05-11 17:10 KST] V14 STRICT PROTOCOL UPGRADE — discriminability pre-check helper landed ★★★
+
+**Verdict**: §74 의 ceiling=15 LA-collapse + §77/§78 의 FFN-localized 발견 후속. **`training/v14_discriminability_check.py` (additive helper module)** 작성 + Mac local 설치 (6KB, no breaking change to run_max256.py).
+
+**Helper API**:
+```python
+from v14_discriminability_check import check_substrate_discriminability
+diag = check_substrate_discriminability(
+    substrate_id="B_prime", ckpt_path="...", result=v14_result,
+    ceiling=15.0, log_fn=log,
+)
+result["discriminability"] = diag
+if diag["warning"]:
+    log("⚠️  V14 verdict may be attractor-collapsed")
+```
+
+**4 checks**:
+1. **early-phi variance** — 처음 3 snapshot 의 phi range < 0.5 → substrate signal differentiating 안 함
+2. **trained_random separation ratio** — `trained_phi / max(random_phi) < 1.1` → V14 discriminate 불가
+3. **known collapse zone match** — ceiling/lineage pair 가 §74 의 confirmed collapse zone 과 일치
+4. **reference value match** — trained_phi 가 known collapse-zone reference 값과 정확 일치
+
+**Reference table embedded** (16-cell EngineAG matrix from §75):
+| substrate × ceiling | trained_phi reference |
+|---|---|
+| LA pretrain × 10 | 1444.7 |
+| LA pretrain × 15 | **1144.9186** ⚠️ collapse zone |
+| LA pretrain × 20 | 1562.4 |
+| ... (16 cells total) |
+
+**Smoke test confirmed** (B' × ceiling=15 → 3 warnings all fire):
+- trained_random sep ratio 0.22× < 1.1× (random dominates)
+- ceiling=15 in known collapse zone (§74)
+- trained_phi 1144.9186 matches collapse reference (multiple lineages converge)
+
+**Integration mode** — additive, NOT invasive:
+- `training/v14_discriminability_check.py` 별도 module
+- 기존 `run_max256.py`, `fire_substrate_*` 변경 없음
+- 미래 V14 strict 측정 코드에서 OPT-IN 으로 import + check
+- breaking change risk = zero (additive only)
+
+**Methodology delta**:
+Before §79: V14 verdict reported as-is, no signal of discriminability state
+After §79: V14 verdict + discriminability diag (warning + reasons + check values)
+
+**Limitations**:
+- Reference table hard-coded from cycle 2026-05-11 (LA/LB lineages × 4 ceilings)
+- Other substrates / paradigms 추가 시 reference table 확장 필요
+- Thresholds (early_phi_var=0.5, sep_ratio=1.1) empirical — calibration 추가 측정 필요
+- Discriminability != V14 correctness — 단순히 measurement signal 강도 표지
+
+**Cost**: $0 (~30min code authoring + smoke test)
+**Artifact**: `training/v14_discriminability_check.py` (157 lines, 6KB)
+
