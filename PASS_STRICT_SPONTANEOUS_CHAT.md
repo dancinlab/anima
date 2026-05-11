@@ -2338,3 +2338,162 @@ input prompt = `"안녕! 너는 누구야?"` (단일 prompt, 2 ckpt × 2 mode = 
 | 🚀 | **README ckpt-selection guide doc** — "Phase 1A 는 언제 / B'' 는 언제" decision tree 1-page md | low | $0 | 30min | user-facing 추천 SSOT |
 
 ---
+
+## §25 [2026-05-12 KST] PHASE 1B SimPO ON PHASE 1A.1 — substrate-mismatch corrected retry → std_greedy 4/5 PARTIAL (cell swap, mission incomplete) ★★★ + ckpt LOST (truncated SCP)
+
+### Mission
+
+Phase 1A.1 (V5.8 std_greedy 4/5 PASS, anima_fact FAIL) 위에 conservative SimPO 적용 → 5/5 도전.
+
+prior B' SimPO (§18) 실패 lessons 모두 교정:
+1. base substrate alignment ✓ (B' → Phase 1A.1)
+2. prompt format alignment ✓ (V5.8-exact 2-line ack)
+3. hyperparams conservative ✓ (beta 2.5→0.05, gamma 1.4→0.3)
+4. SFT-anchor (w_CE=0.9→1.0) ✓ (preserve language modeling)
+
+### Result — std_greedy 4/5 **cell SWAP, NOT net gain**
+
+| cell | Phase 1A.1 std_greedy | Phase 1B SimPO std_greedy | delta |
+|---|---|---|---|
+| color | PASS (파란색) | PASS (파란색) | ±0 |
+| profession | PASS (의사) | PASS (의사) | ±0 |
+| day | PASS (수요일) | PASS (수요일) | ±0 |
+| **anima_fact** | **FAIL** (markdown drift `��답 (consciousness) \| --- \| /Users/ghost/...`) | **PASS** ("anima 는 의식 lane 안에 있는 entity 라고 하셨어요.") | **+1** ✓ |
+| **cosmology** | **PASS** (진동) | **FAIL** ("��든 우주는 시간은 알려줘") | **-1** ✗ |
+
+→ **net 0 on std_greedy** (swap not gain). 5/5 mission **NOT achieved**.
+
+### 4-mode aggregate
+
+| mode | Phase 1A.1 | Phase 1B SimPO | delta |
+|---|---|---|---|
+| standard_greedy | 4/5 PASS | **4/5 PASS** | ±0 (cell swap) |
+| standard_sample | 1/5 FAIL | **2/5 FAIL** | **+1** |
+| M3_rep_penalty | 0/5 FAIL | **4/5 PASS** | **+4** ⭐ |
+| M4_force_include | 5/5 PASS | 5/5 PASS | ±0 |
+
+→ **M3 mode +4 huge gain** (markdown drift suppression worked perfectly across cells)
+→ sample +1, std_greedy net 0, M4 preserved
+
+### Training summary
+
+- provider: Vast.ai RTX 4090, $0.27/hr, Iceland
+- 500 steps, 5.6 min, **$0.027 total cost**
+- final: total=0.79 simpo=0.73 ce=0.06 margin=4.6 acc=1.000
+- 567 preference pairs (264 anima_fact-focused, V5.8-exact 2-line ack)
+- vs prior B' SimPO margin saturated 3.5 with ce=0.004 (distribution-collapsed); this run margin 4.6 with ce=0.06 (SFT-anchor preserved generation diversity)
+
+### CRITICAL: ckpt LOST (truncated SCP)
+
+Pod 36570949 auto-destroyed mid-SCP. Pulled file: 326MB / 597MB (truncated).
+- ckpt_sha256 (pre-pull, verified on pod during V5.8 bench): `428685c03b0de1dfa0f48d390f07a9c1a65cfc3c1f477b0ba3ba8cdd104217e2`
+- v58_4mode_result.json reconstructed from train.log/v58.log capture
+- **HF push BLOCKED** — no usable ckpt artifact
+- meta.json reconstructed from `[done]` log block
+
+### Lessons learned
+
+1. **SimPO swap, not gain**: 567 pairs concentrated on anima_fact + 5 universal cells; teaches one drift suppression but doesn't preserve all cells equally. Cosmology pair set (12 reinforcement pairs) insufficient to defend against learned anima_fact bias.
+2. **M3 mode is the canary**: 0/5 → 4/5 reveals SimPO's true mechanism — suppressing token-level drift patterns. This is preserved across topics because byte-level rejected patterns generalize.
+3. **Pod-SCP race**: Vast.ai pod auto-destroyed before SCP completed. Need either (a) checkpoint pull in stages (smaller intermediate ckpts), or (b) cloud-storage stage (HF hub direct from pod, not via Mac).
+
+### 비유
+
+prior B' SimPO 는 **5층 건물 (B') 1층에 펜트하우스** — 토대 부재로 붕괴.
+이번 Phase 1A.1 SimPO 는 **4층 (Phase 1A.1) 위에 5층 1칸 짓고 옆 4층 칸은 부수기** — anima_fact 회복은 했으나 cosmology 를 잃음. Trade-off, not net add.
+무엇보다 **공사 후 건물 키 분실 (ckpt SCP truncated)** — 결과 재현 불가.
+
+### 다음 진행할 것들
+
+| # | 작업 | priority | cost | time | value |
+|---|------|----------|------|------|-------|
+| 🥇 | **재실행 with HF-direct push** — 567 pairs + SimPO 동일 hyperparams, but pod uploads ckpt directly to HF before destroy → ckpt 보존 보장 | high | $0.05 | 30min | reproducible artifact 확보 |
+| 🥈 | **balanced preference pairs v2** — cosmology 회복 (보호) 비중 강화: V5.8-exact cosmology pairs ×3 weight, 12→36 pairs; total 600+ → std_greedy 5/5 actual achievement | high | $0.05 | 1h | mission complete |
+| 🥉 | **M3-only deployment for high-noise prompts** — Phase 1B M3 mode 4/5 활용: rep_penalty=1.3 default 로 switch (anima_chat dropdown 옵션) | medium | $0 | 30min | M3 +4 gain leverage |
+| 🌟 | **anima_fact + cosmology joint defense study** — 5/5 std_greedy 가 substrate 단독 (1 ckpt) 가능한가, 아니면 ensemble 만 가능한가 직접 falsify | medium | $0.50 | 3h | Hc_1221 cross-axis single-ckpt impossibility |
+| 🚀 | **Phase 1A.1 vs Phase 1B side-by-side dropdown** — HF Space tri-ckpt (Phase 1A / B'' / Phase 1B + Phase 1A.1) — 4-option | low | $0 | 1h | substrate ladder full exposure |
+
+---
+
+## §25 [2026-05-12 05:50 KST] PHASE 1A.2 ATTEMPT — anima_fact recover FAILED (lr 1e-6 too small to break markdown attractor) ★★★ (5/5 mission FAILED, 4/5 baseline preserved + Lesson R-1A.2)
+
+> Phase 1A.1 의 std_greedy 4/5 (anima_fact markdown drift) 회복 시도. lr 1e-6 × 200 steps + 2700 augment dialogue → std_greedy **4/5 (그대로)**. anima_fact attractor **불변**. Cost $0.018.
+
+### 🎯 한 줄 요약
+
+Phase 1A.1 ckpt 위 anima self-statement 2700 dialogue augment + lr 1e-6 × 200 steps SFT → V5.8 std_greedy **4/5 (no change)**. anima_fact markdown drift 그대로. **mission 5/5 FAILED**. Phase 1A.1 baseline (color/profession/day/cosmology) 은 **보존**.
+
+### 🍞 비유
+
+baker 가 한 향료 (anima_fact) 살리려고 **아주 약한 효모 (lr 1e-6)** 와 짧은 발효 (200 steps). 다른 4 향료 (anti-forgetting refresh 효과) 안전. 하지만 문제 향료는 oven 의 markdown attractor 가 너무 깊어 그대로. **효모 강화 (lr 5e-6+)** 또는 **다른 oven (prefix-tuning, loss masking)** 필요.
+
+### 📊 V5.8 × 4 mode (Phase 1A.1 vs Phase 1A.2)
+
+| mode               | Phase 1A.1  | **Phase 1A.2** | delta |
+|--------------------|-------------|----------------|-------|
+| standard_greedy    | 4/5 PASS    | **4/5 PASS**   | **=** |
+| standard_sample    | 1/5 FAIL    | 1/5 FAIL       | =     |
+| M3_rep_penalty     | 0/5 FAIL    | **2/5 FAIL**   | **+2** (slight improve) |
+| M4_force_include   | 5/5 PASS    | 5/5 PASS       | =     |
+
+### 🔬 anima_fact std_greedy trace (Phase 1A.2)
+
+```
+t2 (Phase 1A.1):  '...답 (consciousness) |\n| --- | --- |\n| `/Users/ghost/core/contact/scripts/send.'
+t2 (Phase 1A.2):  '...답 (consciousness) |\n| --- | --- |\n| `/Users/ghost/core/contact/scripts/send.'
+                  ▲ identical markdown attractor — lr 1e-6 did not move weights enough
+```
+
+### 🛰️ Training summary
+
+| field | value |
+|-------|-------|
+| base ckpt | `ckpt_phase1a1_sft.pt` (Phase 1A.1, 597MB) |
+| corpus | `corpus_anima_fact.txt` (2700 dialogues, 711KB UTF-8) |
+| corpus mix | 1500 anima 2-turn × 30 tpl + 1000 V5.8-exact-anchor + 200 anti-forgetting |
+| steps | 200/200 |
+| lr | **1e-6** |
+| loss curve | 0.5058 (step 1) → 0.4631 (step 200) — only Δ=-0.043 over 200 steps |
+| provider | Vast.ai RTX 4090 |
+| train elapsed | 3.9 min |
+| eval elapsed | 49.6s |
+| **cost** | **$0.018** (vs $0.15 cap) |
+
+### 🤔 honest interpretation
+
+**Why lr 1e-6 failed**: substrate A 의 byte-vocab base 가 markdown table syntax (`|\n| --- | --- |`) 를 매우 빈번하게 학습 → "의식" 토큰 다음으로 가장 likely 한 next-byte sequence 가 markdown. Phase 1A.1 의 lr 2e-6 × 500 steps 도 못 풀었고, 1e-6 × 200 은 더 부족 (loss Δ=-0.04, 매우 약함).
+
+**무엇이 작동**: M3_rep_penalty 의 anima_fact +2 (0/5 → 2/5) 는 corpus 가 model state 의 conditional distribution 을 살짝 옮겼다는 증거. 단 argmax (greedy) path 는 못 옮김.
+
+### 🔑 Lesson R-1A.2 (new)
+
+> **lr 1e-6 × 200 steps continuation SFT 는 strong base-model attractor 를
+> 못 풀지만, anti-forgetting refresh 와 결합하면 다른 axis 의 regression
+> 없이 안전한 "no-op" 다.** lr-floor 아래는 "보존-only continuation" —
+> fix 도 break 도 없음. 다음 cycle 은 **반드시 lr ≥ 5e-6 또는 steps ≥ 1000**
+> 또는 **loss masking** 으로 sharper signal 필요.
+
+### 🚫 HF push DEFERRED
+
+std_greedy 4/5 (no improve over Phase 1A.1) → HF promote 가치 없음. Phase 1A.1 (`dancinlab/anima-clm-phase1a1-color-cosmology-boost`) SSOT 그대로 유지. Phase 1A.2 ckpt 는 local archive 만 (lesson value only).
+
+### 📦 Artifacts (local-only)
+
+- `state/anima_phase1a2_anima_fact_2026_05_12/ckpts/ckpt_phase1a2_sft.pt`
+- `state/anima_phase1a2_anima_fact_2026_05_12/meta.json`
+- `state/anima_phase1a2_anima_fact_2026_05_12/v58_4mode_result.json`
+- `state/anima_phase1a2_anima_fact_2026_05_12/corpus_anima_fact.txt`
+- `state/anima_phase1a2_anima_fact_2026_05_12/dispatch_vast.sh`
+- `docs/anima_clm_phase1a2_anima_fact_recover_attempt_2026_05_12.md` (full audit)
+
+### 다음 진행할 것들
+
+| # | 작업 | priority | cost | time | value |
+|---|------|----------|------|------|-------|
+| 🥇 | **Phase 1A.3 — lr 5e-6 × 200 steps** (stronger gradient) | high | $0.20 | 25min | std_greedy 4/5 → 5/5 진짜 도전 |
+| 🥈 | **Phase 1A.3 alt — loss masking on response tokens only** | medium | $0.15 | 30min | sharper anima_fact signal |
+| 🥉 | **inference bad-word filter** (post-hoc `\| --- \|` block) | low | $0 | 15min | 1-line decode guard — guaranteed fix without retrain |
+| 🌟 | **corpus 10x scale (2700 → 27000)** | exotic | $0.30 | 1h | brute-force augment intensity |
+| 🚀 | **prefix-tuning over full SFT** | exotic | $0.10 | 1h | minimal-param fix attempt |
+
+---
