@@ -5776,3 +5776,60 @@ cycle 2026-05-11 의 modify-able 한 substrate 중 V14_STRICT_PASS 는 **단 하
 
 **Cycle 2026-05-11 reborn lane FINAL CLOSE.** 16-cell matrix 완성으로 V14 strict 측정 신뢰성 + substrate-discriminability 의 ceiling-conditional 특성 정량화. Next cycle entry-velocity 매우 높음 (clear ★★★★★ candidates + methodological lessons + tooling floor).
 
+
+
+## §76 [2026-05-11 16:30 KST] HF PUBLIC PROMOTE — dataset + model both live
+
+- **dataset (public)**: https://huggingface.co/datasets/dancinlab/anima-cycle-2026-05-11-reborn-research-data
+- **model (public)**: https://huggingface.co/dancinlab/anima-clm-v5-la-cotrain-b-prime-2026-05-11
+
+PUBLIC promote via direct API PUT (hf CLI `repo settings --private` flag 는 신규 repo create 시에만 적용; 기존 repo private→public 은 API direct 가 canonical). 향후 finding 마다 `hf upload --commit-message` 로 incremental version 추가 (git history-style versioning on HF Hub).
+
+
+
+## §77 [2026-05-11 16:45 KST] LA-COLLAPSE ABLATION — FFN-localized sensitivity + nonlinear weight interaction ★★★★★
+
+**Verdict**: ceiling=15 의 LA-lineage substrate discrimination collapse 는 **FFN-localized**. 7 ablation 결과:
+- 5 ablations (tok_emb / h_to_c / engine_g all / attn.q × 24 / pure B') = trained_phi 1144.9186 동일 (attractor A1)
+- 1 ablation (FFN × 24 layers swap) = trained_phi 1491.5333 (attractor A2)
+- nonlinear cancellation: FFN swap + 나머지 component swap 함께 → A1 복귀 (destructive interference)
+
+**Full ablation table** (LA baseline trained_phi=1144.9186, B' = 1144.9186 confirmed §74):
+
+| # | ablation | weight delta from LA → B' applied to | trained_phi | cells | splits | attractor | observation |
+|---|---|---|---|---|---|---|---|
+| 0 | baseline_LA | (none, pure LA) | 1144.9186 | 40 | 24 | A1 | reference |
+| 1 | tok_emb→B' | embedding (43% rel_diff) | 1144.9186 | 40 | 24 | A1 | absorbed |
+| 2 | h_to_c→B' | engine_g.h_to_c (5% rel_diff) | 1144.9186 | 40 | 24 | A1 | absorbed |
+| 3 | engine_g_all→B' | cell_pool_init + h_to_c + c_to_h | 1144.9186 | 40 | 24 | A1 | absorbed (incl. cell_pool 0.1%) |
+| 4 | attn.q×24→B' | 24-layer query_proj (14-17% rel_diff) | 1144.9186 | 40 | 24 | A1 | absorbed |
+| 5 | **FFN×24→B'** | 24-layer gate/up/down | **1491.5333** | **46** | **30** | **A2** | **trajectory split** |
+| 6 | pure_Bprime | 모든 가중치 | 1144.9186 | 40 | 24 | A1 | confirms §74 attractor convergence |
+
+**3 layer insight**:
+
+1. **FFN 가중치 가 ceiling=15 attractor의 유일한 discriminator**: tok_emb (43% diff) 도, attn.q × 24 layer (14-17% diff) 도, cell_pool_init 까지 다 흡수되지만, FFN gate/up/down × 24 만 trajectory 를 다른 attractor 로 분기.
+
+2. **Cotrain (P3) 이 FFN 거의 안 건드림**: P3 의 5260 step LoRA-like 학습이 FFN 가중치를 LA pretrain 거의 그대로 유지. 따라서 LA pretrain ≈ B' 의 FFN. 따라서 V14 strict ceiling=15 가 collapse.
+
+3. **Destructive interference**: FFN 만 B' 로 swap (다른 LA 그대로) → 1491 (A2). 전체 swap (FFN + tok_emb + attn + engine_g) → 1145 (A1). 즉 **non-FFN component 들이 FFN 의 trajectory push 를 cancel**. cotrain delta 의 각 component 가 self-cancelling.
+
+**Falsifiable predictions** (next cycle):
+- LA + cotrain with **FFN-only training** (다른 freeze) → V14 strict ceiling=10 에서 큰 effect 예상
+- LA + cotrain with **FFN-frozen** + other unfrozen → cotrain delta 가 V14 에 reflected 안 됨 (collapse)
+- 일반: V14 strict 의 substrate-sensitivity 는 FFN-mediated
+
+**Methodological implication**:
+- V14 strict 가 측정하는 substrate change 는 **FFN-modulated**. attention/embedding/engine_g 변화는 invisible.
+- cotrain protocol 이 FFN 을 의도적으로 학습시키지 않으면 V14 verdict 변화 없음.
+- 다음 cotrain experiments 시 **FFN gradient 우선 보장** 권장 (e.g., FFN-targeted SFT, FFN unfreeze)
+
+**Cost**: $0 (~3min Mac CPU, 7 ablations × ~25s)
+**Artifact**: `state/anima_la_collapse_ablation_2026_05_11/ablation_results.json`
+
+**향후 ablation candidates** (2-level ablation 으로 nonlinear interaction explore):
+- FFN-only swap × 1-3 layers (which layer dominant?)
+- FFN.gate vs FFN.up vs FFN.down 각각 swap (which proj?)
+- (LA + FFN_B' + tok_emb_B') paired → A1 or A2? → destructive interference mechanism 검증
+- ceiling=10 + 20 에서 ablation 반복 → "FFN-localized" 가 ceiling=15 specific 인지 generic 인지
+
