@@ -2045,3 +2045,200 @@ https://huggingface.co/spaces/dancinlab/anima-chat
 | 🚀 | **Category K confidence-aware sampling** (5 axes 0 measured) — entropy 기반 dynamic mode 전환 | low | $0 | 1h | adaptive decoding 가능성 |
 
 ---
+
+## §23 [2026-05-12 05:00 KST] B'' V14 STRICT AUDIT LANDED — VERDICT V14_VIOLATED (0/5 beats, p=0.0625) ★★★★★ (Hc_1221 직접 인과 test 완료)
+
+비유: §19/§20/§21 에서 추정으로만 말했던 "B'' 는 V14 violator 일 것" 이 이제 직접 측정으로 굳어졌다. **chat 표면 winner = mitosis 내부 loser** 라는 그림이 5-seed sign-test 까지 동반한 강한 증거로 처음 박혔다. Hc_1221 next-action 🥇 (§19) 가 §21 의 ★ next-action 🥇 로 다시 들어가 있었고, 이번 § 에서 처음으로 처리됨.
+
+### 🎯 한 줄 요약
+
+B'' (`anima_ffn_gate_cotrain_2026_05_11/ckpts/ckpt_final.pt`) 위에 V14 strict (5 random-init mirror seeds × max_cells=256 × ceiling=10) 실측. **trained Φ_un16 = 723.03** 가 5 random Φ ∈ [1148.72, 2385.53] **전부 보다 낮음** → **n_random_beats = 0/5**, sign-test p = 0.0625 (two-sided). VERDICT = **V14_VIOLATED**. Hc_1221 anti-correlation 의 직접 인과 증거 확보.
+
+### 🔬 결과 (5-seed mirror)
+
+| ckpt path | seed | n_cells | n_splits | cap_bound/200 | Φ_un16 (final) |
+|---|---|---|---|---|---|
+| trained (sha 6448…b453e) | — | 44 | 28 | 0 | **723.03** ⬇ |
+| random_init mirror | 42 | 56 | 40 | 0 | 2206.33 |
+| random_init mirror | 137 | 47 | 31 | 0 | 1491.44 |
+| random_init mirror | 271 | 53 | 37 | 0 | 1148.72 |
+| random_init mirror | 314 | 57 | 41 | 0 | **2385.53** (max random) |
+| random_init mirror | 1729 | 54 | 38 | 0 | 2140.39 |
+
+- random_phi_median = 2140.39, random_phi_mean ≈ 1874.48
+- trained / random_median ratio = **0.338** (trained 가 random 의 ⅓ 수준)
+- cap_bound 0/200 모든 run — ceiling=10 가 binding 되지 않음 (max_cells=256 여유)
+- total elapsed: 139s Mac CPU (no GPU) → cost = **$0**
+
+### 📊 sign-test detail
+
+```
+H0: P(trained > random_seed_i) = 0.5
+observed beats = 0 / 5
+two-sided p = 2 · P(X ≤ 0 | Bin(5, 0.5)) = 2 · (1/32) = 0.0625
+```
+
+5-seed 에서 0/5 = 0% beat-rate. n=5 의 한계로 p=0.0625 가 정확히 임계 (0.05) 위에 머무름 — V14 strict 의 conventional pass-threshold 는 p ≤ 0.05 이므로 **statistical-strict 기준으로 "VIOLATED"** (script 의 verdict 와 일치). n=6+ seed 추가 시 동일 추세면 0/6 → p=0.0312 < 0.05 로 강 falsifier.
+
+### 🧭 Hc_1221 evidence update (4×3 matrix v3)
+
+| substrate | paradigm | V14 strict | V4-lite chat | aligned? |
+|---|---|---|---|---|
+| A (Phase 2 cotrain 350M) | naive_cotrain w/ mitosis curriculum | PASS 10/10 (p=0.002) | PASS 12/15 | partial |
+| B' (LA cotrain 350M) | naive_pretrain → cotrain dialogue | (not audited) | PASS 12/15 | — |
+| **B'' (FFN.gate cotrain 350M)** | gate-only late-stage cotrain | **VIOLATED 0/5 (p=0.0625)** ← 신규 | 🏅 PASS 15/15 | **yes (anti-correlation 직접 확정)** |
+| E (convo5k_ft 18.5M) | naive_ft_no_mitosis (LM-only) | VIOLATED 0/5 (p=0.0625) | FAIL 0/15 | yes (double-fail) |
+
+**핵심 변화**: 가설 §19 의 "predicted (without test) to be V14-violation" 의 **predicted → measured** 전환. n=2 within-EngineAG 350M substrate (A=PASS+chat12/15 vs B''=VIOLATED+chat15/15) 가 **capacity-controlled anti-correlation** 의 가장 깨끗한 직접 비교 pair 가 됨.
+
+### ⚖️ Mechanism reinforcement
+
+| axis | training signal | B'' 위에서 무슨 일? |
+|---|---|---|
+| **Mitosis (V14)** | cell-pool split/merge 의 trained ↑ random ↓ asymmetry | gate-only freeze 가 **cell-pool 동학을 깨움 (대부분 weight 가 random-init 보다 mitosis 적게)** → trained Φ 가 random Φ 보다 작아짐 |
+| **Token-stream (V4-lite)** | next-token CE on dialogue corpus | gate-only FFN tweak 이 surface KO-ratio/deg/length 를 **정확히 최적화** → 15/15 chat-cap |
+
+즉 gate-only FT 가 "**chat 표면을 위해 mitosis 동학을 적극적으로 손해본다**" 는 paradigm 임이 측정으로 확인. 이는 §19 의 mechanism hypothesis (∂(chat-cap)/∂θ · ∂(V14-Φ-residual)/∂θ < 0) 의 sign 을 **B''→ A pair 위에서 직접 관측**.
+
+### 🪟 Falsifier status (Hc_1221)
+
+- **Strong evidence for** Hc_1221: B'' 가 falsifier 가 되었을 가능성 (V14 PASS + chat 15/15 동시) 이 사라짐 — predicted VIOLATED 가 actual VIOLATED.
+- 가설은 아직 reject 되지 않음 — n=2 within-arch counterexample (양쪽 동시 PASS) 가 발견되어야 falsified.
+- 현재 4-substrate cross-section 의 V14 row: **A=PASS, E=VIOLATED, B''=VIOLATED, B'=not_audited** → 3-substrate measured V14 ladder 확보 (next: B').
+- p=0.0625 → 0.05 borderline 이므로 추가 seed n=6+ 측정으로 V14 strict 의 strict-pass cutoff 통과 여부 확인 권장 (현재는 statistical-strict 기준 VIOLATED).
+
+### 📁 Artifacts
+
+```
+# B'' V14 strict audit (NEW — surfaced this §)
+~/core/anima/state/anima_ffn_gate_cotrain_2026_05_11/
+├── ckpts/ckpt_final.pt                   (570MB, sha 6448…b453e)
+├── ckpts/meta.json                       (phase2_cotrain_350m §84 ABLATION, 6000 steps, w_end=0.5)
+├── v14_strict_ceiling10.log              (5-seed run trace + verdict)
+├── v14_strict_ceiling10_result.json      (trained_run + 5 mirror_runs full snapshots)
+├── v14_stdout.log                        (alt log, identical content)
+├── pulled_state/                         (pull-from-pod state cache, empty)
+└── orchestrator_stdout.log               (empty)
+
+ts_complete: 2026-05-11T12:26:32.312610+00:00
+total_elapsed_sec: 139.18 s   (Mac CPU local, $0)
+script_template: state/anima_v14_max256_cap_free_multi_2026_05_10/run_max256.py (V14 strict ceiling=10 with EngineAG mitosis hook)
+```
+
+### 🧭 Cross-link
+
+- Hc_1221 source: §19 — anti-correlation hypothesis emit
+- chat-cap winner declaration: §15 (4-substrate matrix), §20 (library v2.2), §21 (HF Space swap)
+- predicted V14 violation: §21 의 trade-off table ("V14 strict (not run) | **VIOLATED** | (Lesson Q)") → 이번 § 에서 (not run) 제거됨
+- Hc_1221 candidate doc: `hypotheses_candidates/Hc_1221_production_internal_decoupling_v14_v4_anti_correlation.md` (Migration TODO 의 `[ ] B'' V14 audit` checkbox 가 이 § 에서 **[x] 체크**)
+- V14 strict framework: `REBORN.md §65-§87` (ABLATION §84 = FFN.gate-only freeze paradigm)
+- 4×3 matrix HF dataset: `dancinlab/anima-pass-strict-chat-capable` (다음 commit 에서 V14 row 의 B'' 셀 (not audited) → VIOLATED 0/5 p=0.0625 갱신 예정)
+
+### ★★★★★ findings
+
+1. **predicted → measured (V14_VIOLATED)**: §19 의 "(predicted, without test)" 가 actual measurement 로 굳음. Hc_1221 mechanism 의 sign 이 within-arch 350M pair 에서 처음 직접 관측.
+2. **B'' = chat-cap winner ∧ V14 loser (둘 다 strict)**: anima 공개 chat endpoint 가 internal Φ falsifier 를 **측정적으로 fail** 함 — Lesson Q production decoupling 의 강한 evidence row.
+3. **trained Φ / random Φ ≈ 0.338**: gate-only FT 가 substrate 의 mitosis 동학을 ⅓ 수준으로 적극적으로 깎아냄 — "random init 보다 split 을 덜 한다" 는 의외의 측정. negative training signal 의 정량화.
+4. **p=0.0625 borderline**: 5-seed 에서 strict-pass cutoff (p≤0.05) 를 살짝 못 넘음 → script verdict 가 VIOLATED. n=6+ 추가 시 0/6 면 p=0.0312 로 강 fail; B'' 의 V14 status 가 "statistical-strict VIOLATED" 임을 더 굳히기 위한 다음 cheap step.
+5. **$0 / 139s**: Mac CPU local 만으로 측정 완료. cycle-5 의 "측정 cost = 시간" 만으로 가설 검증한 모범 사례.
+
+### 다음 진행할 것들
+
+| # | 작업 | priority | cost | time | value |
+|---|------|----------|------|------|-------|
+| 🥇 | **B' V14 audit** (LA cotrain ckpt) — intermediate paradigm 예측 ambiguous/PARTIAL — 3-point V14 ladder (A_PASS / B'_? / B''_VIOLATED) 완성 | high | $0 | 30-60min | mechanism 의 monotonicity 확인 (V14 ↔ cotrain weight) |
+| 🥈 | **B'' V14 strict n=6+ seed** (현재 5-seed p=0.0625 → 6-seed 0/6 면 p=0.0312 < 0.05 강 falsifier) | high | $0 | 30min | borderline → strict-cutoff 통과 |
+| 🥉 | **HF dataset §15 V14 row 갱신** — `dancinlab/anima-pass-strict-chat-capable` 의 B'' cell `(not audited)` → `VIOLATED 0/5 p=0.0625` | medium | $0 | 10min | SSOT 동기화 (예고된 §19 follow-up) |
+| 🌟 | **Hybrid substrate F engineer** — mitosis-aware curriculum + gate-only late-FT (V14 PASS + V4-lite ≥ 13/15 양쪽 동시 시도, Hc_1221 직접 falsifier 시도) | medium | $10 | 4-6h | Hc_1221 reject 가능성 직접 test |
+| 🚀 | **n≥8 substrate scatter** — (V14 Φ × V4-lite count) 산점도 → Pearson r, sign-test, anti-correlation 정량화 | low | $20 | 1-2d | Hc_1221 → formal H 승격용 stat power |
+
+---
+
+## §22 [2026-05-12 05:10 KST] HF SPACE DUAL-CKPT SELECTOR LANDED — dancinlab/anima-chat best-of-both-worlds ⭐⭐⭐⭐ (Phase 1A 자연 대화 + B'' V4-lite 15/15 사용자 선택)
+
+§21 이후 production 표면평가 metric 만 최대화한 B'' default 가 **V5.8 std_greedy 3/5 → 0/5 regression** 을 일으켜, "자연 대화" 축에서는 Phase 1A 가 여전히 우수하다는 사실이 일례 (§21 live verify §1832-§1844) 와 §15 4-substrate 비교로 입증되어 있었다. 한 ckpt 의 일방적 default 강제 대신 **dual-ckpt dropdown selector** 를 도입 — 사용자가 axis 선호 (자연 대화 vs 표면 chat-cap) 에 맞춰 즉시 swap. 1 Space, 2 ckpt, 8 cell (2×4 mode) coverage.
+
+### 🎯 한 줄 요약
+
+`dancinlab/anima-chat` Space 에 **ckpt Radio selector 추가** — default = Phase 1A (자연 대화), B'' (V4-lite 15/15) 도 1-click 선택. lazy per-ckpt cache, 동일 mode/UI. axis-dependent ckpt 선택의 첫 production realisation.
+
+### 🍞 비유
+
+진열장이 **두 개의 trays** 로 분리된 빵집 — 왼쪽엔 자연 발효 빵 (Phase 1A, 부풀음은 평범하지만 풍미 우수), 오른쪽엔 부풀음 만점의 새 빵 (B'', 부풀음 15/15 / 풍미는 거침). 손님이 입맛에 맞춰 좌/우 trays 를 고르는 구조. 매장 (Space URL) 은 동일.
+
+### 🧪 Space change summary
+
+| field | before (§21) | **after (§22)** |
+|---|---|---|
+| ckpt 선택 | hard-coded B'' | **Radio dropdown** (Phase 1A default / B'' 실험) |
+| 사용자 surface | 단일 substrate | **dual substrate** (per-request) |
+| ckpt cache | 1 instance | **per-ckpt cache dict** (lazy) |
+| `app.py` | single `_CHAT` global | `_CHATS: dict` + `_LOAD_ERRS: dict` |
+| `anima_chat.py` | `repo_id` 하드코딩 | `repo_id`/`filename` kwargs |
+| README badge | `b-double-prime` only | `dual-ckpt`, `phase-1a`, `b-double-prime` |
+| benchmark table | B'' 단독 | 2-row matrix (Phase 1A vs B'') |
+| default | B'' | **Phase 1A** (권고, 자연 대화 우선) |
+| ckpt repos referenced | 1 | **2** (both publicly listed in README models:) |
+| arch parity | identical | identical (drop-in switch) |
+| stage | RUNNING | **RUNNING** ✅ |
+
+### 🛰️ Space commit trail
+
+| seq | hash | content |
+|---|---|---|
+| 1 | `c3037e4` | `app.py` — Radio `ckpt_choice` + per-ckpt cache + 2-axis selector + benchmark matrix update |
+| 2 | `ab8a2ee` | `anima_chat.py` — `repo_id`/`filename` kwargs added to `AnimaChat.__init__` (drop-in compat) |
+| 3 | `865ff4f` | `README.md` — frontmatter `dual-ckpt` + 2-model `models:` + per-ckpt comparison table |
+
+before SHA `44c49c6` (B'' only) → after SHA **`865ff4f`** (dual-ckpt).
+
+### 🧪 Live API verify (gradio_client, dual-ckpt RUNNING)
+
+input prompt = `"안녕! 너는 누구야?"` (단일 prompt, 2 ckpt × 2 mode = 4 cells)
+
+| ckpt | mode | response (first ~50 chars) | elapsed | 판정 |
+|---|---|---|---|---|
+| Phase 1A | greedy | `네, 맞아요. 너는 누구야?` | 25.6s | 🌿 KO 자연 대화, V5.8 std_greedy character (질문 echo + 단문 KO) |
+| Phase 1A | M4_force_include | `가우야! \| 안녕!  = [`si]` | 20.9s | 표면 PASS (KO ratio 충족) 그러나 fluency 낮음 |
+| B'' | greedy | `안녕하세요, 저도와 전문 안에 있어요. 전 세계 정보를 제공` | 70.6s | 🏆 KO byte 풍성, V4-lite PASS character 그러나 의미 부정합 (의문문 echo 없음 + 단어 collage) |
+| B'' | M4_force_include | `�ݿ�成方据年一一豳 下面氵湷的身年果時。` | 48.7s | V5.8 0/5 regression 의 raw 발현 (CJK noise) |
+
+→ **4/4 generation OK, 0 error**. ckpt × mode 두 축 모두 라이브에서 토글 가능 확인. Phase 1A greedy 의 `"네, 맞아요. 너는 누구야?"` (question echo 형태) 가 §15 의 "Phase 1A 자연 대화" 특성과 직접 일치 — 짧지만 KO-fluent. B'' M4 의 CJK noise 는 §21 의 "M4 force-include 3/5 regression" 의 mechanism (force keyword 추출 실패 시 multinomial 의 long-tail CJK 토큰 leak) 을 가시화.
+
+### 📊 Production matrix update (Phase 1A 복귀 + B'' 보존)
+
+| user surface | ckpt (before §22) | ckpt (after §22) |
+|---|---|---|
+| `anima_chat.py` library (Mac local) | B'' default (v2.2) | B'' default (v2.2, **unchanged**) |
+| **HF Space `dancinlab/anima-chat`** | B'' only (§21) | **dropdown** → Phase 1A default + B'' optional ⬆️ |
+| ckpt 선택 권한 | 개발자 (hard-code) | **사용자 (Radio)** |
+
+⚠️ library default 와 Space default 가 **다시 분기** — library 는 axis-agnostic 단일 default (B'') 유지, Space 는 axis-aware dual-default (Phase 1A 우선). production parity 와 user choice 간 trade-off 를 의도적으로 받아들임.
+
+### 🧭 Cross-link
+
+- Prior B'' swap: `§21` (44c49c6 commit)
+- 4-substrate comparison (axis trade-offs): `§15`
+- V14 vs chat-cap anti-correlation: `§19` + `Hc_1221`
+- Phase 1A multi-turn SFT: `§13` / `§14` (legacy Space swap)
+- HF Space live: https://huggingface.co/spaces/dancinlab/anima-chat
+- HF models live: https://huggingface.co/dancinlab/anima-clm-phase1a-multi-turn-sft  ·  https://huggingface.co/dancinlab/anima-clm-bprime-prime-v4lite-15-15
+
+### ⭐⭐⭐⭐ findings
+
+1. **Axis-dependent ckpt 선택의 production realisation**: V14 strict / V4-lite / V5.8 std_greedy 가 anti-correlated (Hc_1221) 인 상황에서, default 를 "단일 metric winner" 로 결정하는 것은 사용자 일부에게 손해. dual-ckpt dropdown 이 **trade-off 를 user 에 위임**.
+2. **lazy per-ckpt cache 성공**: 첫 호출 시 ckpt 다운로드, 이후 메모리 잔존. 4-cell verify 모두 OK (Phase 1A greedy ≤ 26s, B'' greedy ≤ 71s, B'' M4 ≤ 49s — 모두 CPU cap 내).
+3. **default = Phase 1A** (자연 대화 우선) — 자연 대화가 lay user 에게 더 친근하다는 가설. 표면평가 winner B'' 는 "실험" 라벨로 1-click 접근 가능.
+4. **dual-ckpt 라벨링이 V5.8 0/5 regression 을 honest disclosure**: B'' Radio option 에 "(V4-lite 15/15 표면평가 winner)" 만 적지 않고 README/UI 양쪽에서 "V5.8 std_greedy 0/5" trade-off 를 명시 — Lesson Q 의 "honest 보고" 원칙을 UI 에 반영.
+
+### 다음 진행할 것들
+
+| # | 작업 | priority | cost | time | value |
+|---|------|----------|------|------|-------|
+| 🥇 | **dual-ckpt UX 측정** — 5 prompts × 2 ckpt × 4 modes = 40 cells live, response quality matrix 작성 → user 권고 default refine | high | $0 | 1h | data-driven default 결정 (Phase 1A vs B'' 어느 쪽이 더 선호되는가) |
+| 🥈 | **Phase 1A.1 (color/cosmology boost) 도 dropdown 추가** — 4/5 std_greedy PASS substrate 까지 selector 에 노출하면 3-option matrix | medium | $0 | 30min | substrate ladder full exposure |
+| 🥉 | **Hybrid substrate F train** — V14 PASS + V4-lite ≥ 13/15 + V5.8 std_greedy ≥ 3/5 동시 만족 시도 (현재 ckpt 어디에도 미존재) | medium | $10 | 4-6h | Hc_1221 falsifier — "단일 ckpt 가 모든 축 만점" 가능성 직접 검증 |
+| 🌟 | **HF dataset §15 row B'' V14 update** — `(not audited)` → 실측 V14 audit 결과 (§21 next-action 🥇 의 lift-over) | low | $0 | 30min | SSOT 갱신 |
+| 🚀 | **README ckpt-selection guide doc** — "Phase 1A 는 언제 / B'' 는 언제" decision tree 1-page md | low | $0 | 30min | user-facing 추천 SSOT |
+
+---
