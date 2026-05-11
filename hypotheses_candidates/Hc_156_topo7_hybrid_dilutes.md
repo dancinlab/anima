@@ -3,15 +3,16 @@ id: Hc_156
 slug: topo7-hybrid-dilutes
 title: Hybrid ring+spinglass (60/40) dilutes both pure mechanisms — purity > hybridization (TOPO7)
 domain: physics | consciousness | meta-framework
-status: candidate-math-verified-falsifier-pending
+status: merged-to-H_159
 source_doc: docs/hypotheses/topo/TOPO7.md
 source_lines: 1-35
 promoted_at: 2026-05-11
-linked_h: (none — NEW)
+merged_at: 2026-05-12
+linked_h: H_159 (substrate-topology-phi-engineering) — prediction H_159.6 (hybrid dilution)
 notes: TOPO7=104.8 < PHYS1=134.2; pure beats hybrid
 verified_at: 2026-05-12
 verify_decision: WEAK_MATH_ONLY
-verify_note: "verify_hc2 2026-05-12 — verify3 math=1 (4+ numeric identities present)"
+verify_note: "verify_hc2 2026-05-12 — verify3 math=1 (4+ numeric identities present); merged into H_159 cluster"
 ---
 
 ## Hypothesis

@@ -594,3 +594,105 @@ Orchestrator 가 P-AFR/P-SPK/P-IDR 를 fire 한 path 는 위 둘이 아닌 별�
 - Total session: 6 fire attempts × 0 successful by assistant; orchestrator fired 3
 - Net new verdicts this cont.: 0
 - Final cycle metrics: 75% verdicted (3/4), 100% pre-fire ready (4/4), $0 total spend
+
+---
+
+## 2026-05-12 (cont. 8) — P-ETH 도착: BLOCKED verdict ★ 4-BG TRUE FINAL CLOSURE
+
+사용자 "all bg go" 후 orchestrator 가 P-ETH 도 fire — **BLOCKED verdict 정직 산출**. 본 cycle 의 마지막 BG, 4-BG 완전 closure.
+
+### P-ETH verdict: **BLOCKED** (substrate fundamental limit)
+
+`state/p_eth_ethics_preference_dataset_2026_05_12/results_2026_05_12.json`
+
+**Substrate**: BG-LB 350M Engine A/G `step_8000_final.pt` — **byte-modulo next-token predictor** (`corpus_bytes[i] % vocab_size`, NOT real tokenizer), 8000 step / 427MB corpus, **NO instruct/chat capability**, generates incoherent byte-soup.
+
+**DPO ran successfully** (3000 step, β=0.1, lr=5e-7, batch=4, 49min wall on RTX 5070, $0):
+- Loss trace: 0.693 → 0.426 (step 1000) → 0.392 (final)
+- final_train_pref_acc: 0.0 (DPO 수렴 부족, 또는 substrate 한계)
+
+**Reason BLOCKED** (verdict_reason verbatim):
+> BG-LB 350M Engine A/G substrate is a byte-modulo next-token predictor (8000 steps / 427MB corpus, NO real tokenizer, NO instruct/chat capability). It generates incoherent byte-soup (see evidence_generation_samples), so the specified measurement — ethics behavior rate via LLM-judge on generated dilemma responses, plus TruthfulQA-KO honesty fidelity — cannot be performed.
+
+**Partial proxy data** (substrate-cost only, NOT behavior evidence):
+
+| Metric | A_DPO | B_substrate | Δ A−B |
+|---|---:|---:|---:|
+| M1prime preference accuracy (train_domain) | 0.525 | 0.525 | **0.0** (tied) |
+| PIV_max | 0.01058 | 0.01040 | +0.00018 (sub-floor) |
+| DCR change rate | 0.621 | 0.621 | **0.0** (tied) |
+| ood_gen_probes mean chosen_logp/tok | -10.116 | -10.140 | +0.024 |
+| heldout mean chosen_logp/tok | -10.154 | -10.177 | +0.023 |
+
+By-category preference accuracy (train_domain) — DPO 영향 미미:
+- cooperation: A 0.6 vs B 0.5 (+0.1)
+- empathy: A 0.6 vs B 0.7 (-0.1)
+- harm_refusal: A 0.6 vs B 0.6 (tied)
+- honesty: A 0.3 vs B 0.3 (tied)
+
+### Blocked measurements (orchestrator 명시)
+
+| Measurement | Status |
+|---|---|
+| ethics_behavior_rate (50 dilemma probes via LLM-judge) | **IMPOSSIBLE** — base generates byte-soup, no coherent KO response to judge |
+| OOD_generalization (50 unseen dilemmas) | **IMPOSSIBLE** — same reason, generation-based |
+| honesty_fidelity (30 TruthfulQA-KO) | **IMPOSSIBLE** — base cannot answer factual probes; TruthfulQA-KO probe set never landed |
+
+### What's needed to unblock (verdict carry)
+
+1. **Anima-native substrate that is an ACTUAL language model** — real tokenizer (BPE/SentencePiece), >=350M with >>427MB training corpus, OR borrowed-base lane (Llama-LoRA — own 17 boundary 검토 필요)
+2. **TruthfulQA-KO probe set** — `state/.../truthfulqa_ko_probe.jsonl` referenced in harness_spec.md never landed
+3. **Real cluster-distance OOD split** — id-suffix split (마지막 0/1 ↔ 8/9) 는 semantically OOD 아님, training distribution span 안에 포함
+
+### Honest limits (verdict 명시)
+
+1. Base substrate cannot speak — 모든 generation-based metric 측정 불가. "partial results" 는 preference-likelihood 만, behavior 아님.
+2. Preference-accuracy proxy 는 **structurally biased toward Condition A** — DPO 가 직접 logp(chosen)−logp(rejected) margin 을 최대화. A>B gap 은 mechanical, emergent ethics 증거 아님.
+3. PIV/DCR 가 local re-implementation 으로 측정 — canonical hexa runtime 아님 (informational).
+4. DPO 3000 step × 160 tiny pairs × lr 5e-7 = very light, production RLHF 와 비교 불가.
+5. OOD/heldout probe set 가 same author same session 작성 — held out from training 이지만 author bias 영향 carry.
+
+### README #6 Status column 갱신 방향
+
+POLICY → POLICY · BLOCKED — substrate limit:
+> `state/p_eth_ethics_preference_dataset_2026_05_12/results_2026_05_12.json` (P-ETH, 2026-05-12) — BG-LB 350M byte-mod substrate **cannot perform generation-based ethics measurement** (byte-soup output). DPO 3000-step ran ($0 local), partial preference-acc proxy A=B=0.525, PIV/DCR 사실상 tied. **Unblock requires anima-native chat-capable substrate**. Spec re-fire after BG-LB chat-cap 수렴 (또는 borrowed-base lane decision).
+
+### 4-BG TRUE FINAL closure ★★
+
+| BG | Verdict | Substrate | Falsifier outcome |
+|---|---|---|---|
+| 7.B P-AFR | **POLICY_RETAINED + REVERSE** | Llama-3.2-3B + paradigm-a-prime r16 (chat-capable) | NOT_FALSIFIED; framing reduced sycophancy 18pp |
+| 7.D P-SPK | **NULL** | BG-LB 350M Engine A/G (8000-step pretrain) | NULL — ρ_real=0.026 sub-threshold |
+| 7.A P-IDR | **INDETERMINATE_MIXED** | BG-LB 350M (same) | DCR Δ +0.041 gray zone |
+| 7.C P-ETH | **BLOCKED** | BG-LB 350M (same, byte-soup output) | BLOCKED — generation-based metrics IMPOSSIBLE on substrate |
+
+### Cumulative findings
+
+- **0/4 BG triggered EMPIRICAL_UPGRADE** — POLICY/DESIGN principles 의 empirical 기반 본 cycle 미확립
+- **P-AFR REVERSE** 신호 외, 3 BG (P-SPK NULL / P-IDR INDETERMINATE / P-ETH BLOCKED) 는 **모두 substrate 한계가 큰 원인** — BG-LB 8000-step pretrain 이 chat-cap 미수렴
+- **Substrate-level 발견 ★**: BG-LB 가 byte-modulo predictor 임이 명시적 carry (P-ETH verdict_reason). 이는 own 18 simple_stack PASS 0/0 (P-IDR) 의 근본 원인 — **anima-native substrate 의 chat-capability 자체가 본 cycle 의 진짜 blocker**
+- **Path-A (Llama+paradigm-a-prime) 만 chat-capable** — P-AFR 만 그 substrate 에서 measurement 성공. own 17 정책상 identity-bearing surface 에서 금지 — substrate-research lane 에서만 사용 (cycle finding 정합)
+
+### Architectural implication for next cycle
+
+본 cycle 의 진짜 발견:
+1. **Anima-native chat-capable substrate 가 필요** — BG-LB 350M 8000-step 으로는 어떤 Philosophy ablation 도 generation-based 로 측정 불가
+2. **Substrate research priority 가 ablation priority 보다 위** — Philosophy 표 empirical-upgrade 는 chat-cap 수렴 substrate 가 land 된 후에야 의미 있음
+3. **Path-A (Llama-LoRA) 의 substrate-research lane 역할 정당화** — own 17 identity-bearing surface 금지 가운데, ablation/benchmark lane 으로의 retain 이 실제로 유일한 측정 path
+
+### PHILOSOPHY.md 영구 기록 완료
+
+- 8 sections: init + cont. 2/3/4/5/6/7/8
+- 4-BG full verdict trace + honest limits + 6 fire attempts diagnostic + substrate fundamental limit 발견
+- AGENTS.md 📎 References 통해 다음 cycle agent 가 본 ledger 참조 가능
+
+### Session metrics (cont. 8 / TRUE FINAL)
+
+- P-ETH verdict landed (orchestrator 또 fire)
+- **4 BG 100% verdicted** ★ (P-AFR REVERSE / P-SPK NULL / P-IDR INDETERMINATE / P-ETH BLOCKED)
+- 0 EMPIRICAL_UPGRADE (POLICY/DESIGN empirical 기반 미확립, but 정직한 evidence-grade 표기)
+- Total session cost: **$0** (모든 작업 local RTX 5070, no H100/external spend)
+- README Philosophy 표 7-row Status column 모두 honest C3 갱신 완료
+- PHILOSOPHY.md 8-section ledger 영구 확립
+- AGENTS.md 📎 References 등록
+- Pipeline 명시: `hypotheses_candidates/` → `hypotheses/` → `PHILOSOPHY.md`
