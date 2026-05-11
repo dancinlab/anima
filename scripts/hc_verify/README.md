@@ -6,10 +6,19 @@
 
 ```
 scripts/hc_verify/
-├── verify_hc.py            검증 harness (atlas anchor + n=6 math + falsifier/honest count)
-├── batch_status_update.py  검증 결과 → Hc frontmatter status batch 갱신
-└── README.md               이 파일
+├── verify_hc.py                       검증 harness (atlas anchor + n=6 math + falsifier/honest count)
+├── batch_status_update.py             검증 결과 → Hc frontmatter status batch 갱신
+├── README.md                          이 파일
+└── cache_<YYYY_MM_DD>/                cycle 별 작업 cache (이전엔 /tmp, 이제 repo 내부 — `지속적으로 필요`)
+    ├── batches/hc_all.txt + hc_batch_{1..8}.txt
+    ├── triage/triage_{1..8}.jsonl + triage_all.jsonl + triage_5_fixed.jsonl
+    ├── verify/verify_results.jsonl (v1) + verify2.jsonl + verify3.jsonl
+    ├── ids/ripe_ids.txt + ripe_paths.txt + promote_ids.txt + needs_ids.txt + touched_files.txt
+    ├── verify_hc_v1.py                초기 harness (history)
+    └── triage_processor_agent.py      Stage 1 agent 가 작성한 helper (history)
 ```
+
+cycle 새로 돌릴 때 `cache_<오늘날짜>/` 폴더 신규 생성, 기존은 보존.
 
 ## 사용법 (3-stage pipeline)
 
@@ -19,16 +28,16 @@ scripts/hc_verify/
 
 ```bash
 # 후보 파일 8 batch 으로 split
-ls hypotheses_candidates/Hc_*.md | sort > /tmp/hc_all.txt
-total=$(wc -l < /tmp/hc_all.txt)
+ls hypotheses_candidates/Hc_*.md | sort > scripts/hc_verify/cache_2026_05_12/hc_all.txt
+total=$(wc -l < scripts/hc_verify/cache_2026_05_12/hc_all.txt)
 bs=$(( (total + 7) / 8 ))
 for i in 1 2 3 4 5 6 7 8; do
-  sed -n "$(( (i-1)*bs+1 )),$(( i*bs ))p" /tmp/hc_all.txt > /tmp/hc_batch_${i}.txt
+  sed -n "$(( (i-1)*bs+1 )),$(( i*bs ))p" scripts/hc_verify/cache_2026_05_12/hc_all.txt > scripts/hc_verify/cache_2026_05_12/hc_batch_${i}.txt
 done
 # 각 batch 마다 Claude Code agent 실행 (Explore subagent_type 권장)
 ```
 
-Agent prompt template (각 file → 1 JSON line `/tmp/triage_N.jsonl`):
+Agent prompt template (각 file → 1 JSON line `scripts/hc_verify/cache_2026_05_12/triage_N.jsonl`):
 
 ```
 Triage hypothesis-candidate files. Read each .md file, classify:
@@ -49,7 +58,7 @@ Output JSON: {id, class, domain, status, title, merged_to, verifiable_claim,
 python3 -c "
 import json, glob
 ids = set()
-for f in ['/tmp/triage_%d.jsonl' % i for i in range(1,9)]:
+for f in ['scripts/hc_verify/cache_2026_05_12/triage_%d.jsonl' % i for i in range(1,9)]:
     for ln in open(f):
         r = json.loads(ln)
         if r.get('class') == 'RIPE': ids.add(r['id'])
@@ -58,10 +67,10 @@ for hc_id in ids:
     m = glob.glob(f'hypotheses_candidates/{hc_id}_*.md')
     if m: paths.append(m[0])
 print('\n'.join(paths))
-" > /tmp/ripe_paths.txt
+" > scripts/hc_verify/cache_2026_05_12/ripe_paths.txt
 
 # 검증 실행
-python3 scripts/hc_verify/verify_hc.py $(cat /tmp/ripe_paths.txt | tr '\n' ' ') > /tmp/verify_results.jsonl
+python3 scripts/hc_verify/verify_hc.py $(cat scripts/hc_verify/cache_2026_05_12/ripe_paths.txt | tr '\n' ' ') > scripts/hc_verify/cache_2026_05_12/verify_results.jsonl
 ```
 
 Decision tier:

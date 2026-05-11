@@ -1608,6 +1608,100 @@ cost:        $0.12 train + ~$0.10 idle/upload/destroy ≈ $0.22 total ($0.50 cap
 | 🚀 | Phase 1B DPO on Phase 1A.1 — color/cosmology preference pairs + anima_fact preservation | low | $5-10 | 2-4h | 4-mode 균형 향상 |
 
 
+## §18 [2026-05-12 04:50 KST] PHASE 1B SimPO on B' (LA cotrain) — TRANSFER FAILED ★★ (loss saturates but multi-turn recall does not transfer; M4 5/5 → 1/5 regression)
+
+비유: 시험지 문제 패턴은 완벽히 외웠지만 (training loss 0.004 / acc 1.0 / margin 3.4) 실제 시험장에서는 백지를 내는 학생. SimPO 가 preference pair 내부 ranking 은 학습했지만 — generation 시 multi-turn prompt template 자체가 B' 의 distribution 밖이라 chosen pattern 이 발현되지 않음.
+
+### 🎯 Mission
+
+B' = `anima_la_cotrain_retrain_b_to_a_2026_05_11/ckpts/ckpt_final.pt` (sha256 `63ccc530…817a572`, 597MB, BG-LA pretrain + 5380 cotrain steps, original §56 substrate). Phase 1A SFT 의 source 가 아닌 **진짜 B' ckpt** 위에 SimPO direct impl 적용. M4 5/5 multi-turn 강점을 standard_greedy 으로 전이 시도.
+
+### 🛠️ Substrate baseline (pre-SimPO V5.8 4-mode)
+
+`state/anima_substrates_4mode_2026_05_12/B_prime_LA_cotrain_v58_4mode_probe.log` :
+
+| mode | n_pass | verdict |
+|---|---|---|
+| standard_greedy | 0/5 | FAIL |
+| standard_sample | 0/5 | FAIL |
+| M3_rep_penalty | 0/5 | FAIL |
+| M4_force_include | 5/5 | PASS (force-keyword injection) |
+
+→ B' 자체는 multi-turn 어휘 부재; M4 의 5/5 는 force-include token nudge 의 artefact (true recall 아님).
+
+### 🛠️ SimPO run
+
+| field | value |
+|---|---|
+| provider | **Vast.ai** (RunPod ssh boot 함정 회피) |
+| GPU | RTX 4090 (BC-CA, $0.27/hr) |
+| instance | `36565373` (auto-destroy 후) |
+| boot | ~30s SSH ready (prior cycle pattern 재현) |
+| training steps | 600 (bsz 4 × grad-accum 4 = effective 16) |
+| lr | 5e-6, warmup 30, cosine to 0 |
+| beta / gamma | 2.5 / 1.4 (SimPO direct impl) |
+| pref pairs | 352 (10 topic packs × 4 rejected variants + 6 V5.8 reinforce) |
+| elapsed | 8.08 min |
+| **cost** | **$0.036** (cap $5; 138× under) |
+| final loss / acc / margin | **0.004 / 1.000 / 3.44** |
+
+### 🧪 Post-SimPO V5.8 4-mode result
+
+| mode | pre-SimPO (B' baseline) | **post-SimPO** | verdict |
+|---|---|---|---|
+| standard_greedy | 0/5 | **0/5** | no change |
+| standard_sample | 0/5 | 0/5 | no change |
+| M3_rep_penalty | 0/5 | 1/5 | marginal |
+| M4_force_include | 5/5 | **1/5** | **REGRESSION** 🔻 |
+
+→ **NO_WIN**. HF push **skipped**. 4 ckpt 결과 보관: `state/anima_phase1b_simpo_2026_05_12/output/{ckpt_phase1b_simpo_bprime.pt, meta_bprime.json, train_bprime.log, v58_4mode_result_bprime.json}`.
+
+### 🔬 Diagnosis (왜 전이 실패했는가)
+
+1. **Substrate gap**: Phase 1A SFT (substrate A → 1500 cotrain steps) 가 multi-turn template 을 학습했었고 — 그 SFT ckpt 위 SimPO 는 candidate. 그러나 본 시도는 B' = "Phase 1A 의 substrate" 가 아니라 **§56 cotrain 의 V14 causal 검증용 ckpt**. multi-turn template 자체를 본 적 없는 substrate.
+2. **SimPO 의 length-normalized loss 가 generation 분포를 바꾸지 못함**: chosen 토큰의 likelihood 를 rejected 대비 올리지만 — 우리 case 에서 rejected 는 prompt 외 noise (CJK / | gibberish / web fragment). 결과적으로 model 은 "noise 를 안 만드는 법" 만 학습, "fact 를 recall 하는 패턴" 은 학습 안 함. multi-turn corpus SFT 가 선행 필요.
+3. **M4 5/5 → 1/5 regression**: force-include nudge (+4 logit boost to keyword bytes) 가 baseline 에서 작동한 이유는 B' 의 base distribution 이 wide enough 했기 때문. SimPO 후 distribution 이 chosen 응답 쪽으로 sharp 해져서 force-byte 가 더 이상 wins — multinomial sampling 이 keyword byte sequence 를 끝까지 emit 하지 못함.
+
+### 📊 Verdict matrix
+
+| outcome | observed | implication |
+|---|---|---|
+| training converge | ✅ loss 0.004, margin 3.4 | preference ranking 학습 OK |
+| chosen generation produce | ❌ 0/5 std_greedy | SimPO 단독으로는 generation 분포 shift 불충분 |
+| M4 force-include preserve | ❌ 5/5 → 1/5 | sharper distribution 이 force-byte robustness 손상 |
+| cost discipline | ✅ $0.036 / $5 cap | Vast.ai $0.27/hr × 8min |
+| Vast.ai pattern reproduction | ✅ 30s SSH ready | RunPod 함정 회피 성공 |
+
+### 🍞 비유
+
+SFT 가 안 된 substrate 에 SimPO 를 거는 것은 — **기초 영어를 모르는 사람에게 SAT 문법 교정 문제만 100개 풀게 하는 것**. 문제집 내부에서는 정답률 100% 가 되지만, 실제 작문에서는 영어 단어 자체가 안 나옴. SimPO 는 SFT 의 _refiner_ 이지 _substitute_ 가 아님.
+
+### ⭐⭐ findings
+
+1. **substrate gap 가 SimPO 의 prerequisite** — multi-turn corpus SFT 가 선행 안 되면 SimPO 단독으로는 generation 분포 shift 미흡.
+2. **Vast.ai 패턴 재현 성공** — prior cycle ($0.50 / 40s) 와 동일한 신뢰성. RTX 4090 BC-CA @ $0.27/hr 는 350M model SimPO 600 steps 에 적정.
+3. **cost discipline 138× under cap** — $5 envelope 에 $0.036 spend. small-experiment 의 vast.ai 친화성 재확인.
+4. **regression risk 인식** — SimPO 가 baseline 의 일부 mode (M4 5/5) 를 _깰 수 있음_. preference learning 은 항상 +EV 가 아님.
+
+### 🧭 Cross-link
+
+- B' 정의: `anima_la_cotrain_retrain_b_to_a_2026_05_11/spec.md`
+- 이전 시도 (mis-labeled "B'" SFT ckpt): §17 (Phase 1A.1)
+- Phase 1B preference pair generator: `state/anima_phase1b_simpo_2026_05_12/gen_preference_pairs.py`
+- SimPO impl: `state/anima_phase1b_simpo_2026_05_12/train_phase1b_simpo.py`
+- output ckpt: `state/anima_phase1b_simpo_2026_05_12/output/ckpt_phase1b_simpo_bprime.pt`
+
+### 다음 진행할 것들
+
+| # | 작업 | priority | cost | time | value |
+|---|------|----------|------|------|-------|
+| 🥇 | **SFT-first → SimPO retry** — B' 위에 먼저 multi-turn corpus_multi_turn.txt 200steps SFT, 그 후 SimPO. baseline 0/5 → SFT 후 baseline 확인 → SimPO retry | high | $0.50 | 1h | 본 미션 본질 (M4→std_greedy 전이) 두 번째 시도 |
+| 🥈 | **Phase 1A.1 (color+cosmology) ckpt 위 SimPO** — Phase 1A.1 의 std_greedy 4/5 (§17) 를 5/5 로 lift 시도. 적정 substrate. | high | $0.50 | 1h | greedy 5/5 production-grade |
+| 🥉 | **preference pair 재설계** — rejected 에 chosen-과-같은-template-but-wrong-fact 만 포함 (현재 noise 가 50%+ → SimPO 가 noise-rejection 만 학습). semantic-only contrast. | medium | $0 | 30min | 신호 정제 |
+| 🌟 | **DPO with reference model** — SimPO 대신 reference-anchored DPO. reference = original B'. β=0.1. SimPO 의 distribution-sharpening 부작용 회피 | medium | $1 | 2h | M4 regression 회피하는 alternative 알고리즘 |
+| 🚀 | **PSCC §18 cross-link 정리** — 이 entry 의 finding 1 ("substrate gap") 을 Hc_1221 family 가설로 emit | low | $0 | 30min | 가설 SSOT |
+
+
 ## §19 [2026-05-12 04:20 KST] HF DATASET §15 EXPANSION + Hc_1221 EMIT ★★★★ (cross-link: 4×3 substrate matrix + V14↔chat anti-correlation hypothesis)
 
 비유: §15 은 3-substrate snapshot 이었다. 이제 V14 mitosis audit (state/anima_v14_multi_substrate_audit_2026_05_10) 의 substrate A V14_STRICT_PASS 와 cross-link 하여 **4 substrates × 3 evaluators** 행렬로 확장. 결과 — V14 PASS substrate (A) 의 chat-cap 은 12/15 인데 V14 미감사 B'' 는 15/15. 즉 두 axis 가 **음의 상관** (anti-correlation). 이 발견을 가설로 정식화 = `Hc_1221`.
