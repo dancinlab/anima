@@ -1,0 +1,208 @@
+// tool/hexa_volition_primitives.hexa — volition primitive wrappers (hexa stage 0).
+// @allow-bare-exec-file
+// @allow-silent-exit-file
+// @allow-relop-banned-file
+// @allow-silent-catch-file
+// @allow-no-header-box
+//
+// Reframe: "발화 함수는 있되 도구처럼 꺼내쓸 수 있게"
+//   Native compiler stays untouched. These 5 primitives live as
+//   hexa user-space functions; downstream prototypes (e.g. the
+//   V0 volitional-speak loop) `include` this file and call them.
+//
+// Contract (5 primitives):
+//   M1  volition(model_path, prompt)            -> float   in [0,1] or -1.0 on err
+//   M2  should_speak(v, tau)                    -> bool
+//   M3  speak(content, log_path)                -> string  (echoed back)
+//   M4a desire_push(desire, queue_path)         -> bool
+//   M4b desire_pop(queue_path)                  -> string  ("" if empty)
+//   M5  inhibit(reason, log_path)               -> bool
+//
+// Stage 0 intrinsics relied on:
+//   - exec(cmd) returns stdout string directly (no _str wrap).
+//   - real_args() returns user-only argv (script path excluded).
+//   - to_float(str) parses numeric string -> float (0.0 on garbage).
+//   - len / split / index_of / substring / trim / replace on string.
+//
+// Helper sidecar:
+//   /Users/ghost/core/anima/tool/hexa_volition_helper.py
+//   stdout contract: "VOLITION:<float>\n" or "VOLITION:ERR <msg>\n".
+
+let PY      = "/usr/bin/python3"
+let HELPER  = "/Users/ghost/core/anima/tool/hexa_volition_helper.py"
+
+fn _vp_shell(cmd) {
+    return exec(cmd).trim()
+}
+
+fn _vp_quote(s) {
+    let esc = s.replace("'", "'\\''")
+    return "'" + esc + "'"
+}
+
+fn _vp_ts() {
+    return _vp_shell("date -u +%Y-%m-%dT%H:%M:%SZ")
+}
+
+// --- M1: volition signal calc -----------------------------------
+//
+// volition(model_path, prompt) -> float
+//   Invokes helper.py in volition_only mode and parses the
+//   "VOLITION:<float>" stdout line. Returns -1.0 if no parseable
+//   line is found (caller can treat as "abstain").
+//
+// For mock/dryrun callers: pass model_path="__mock__" and we route
+// to helper --mode mock so the same surface is testable with no
+// model dependency.
+
+pub fn volition(model_path, prompt) -> float {
+    let mut cmd = PY + " " + HELPER
+    if model_path == "__mock__" {
+        cmd = cmd + " --mode mock"
+    } else {
+        cmd = cmd + " --mode volition_only --model " + _vp_quote(model_path) + " --prompt " + _vp_quote(prompt)
+    }
+    let out = exec(cmd + " 2>/dev/null")
+    let lines = out.split("\n")
+    let mut i = 0
+    while i < len(lines) {
+        let ln = lines[i].trim()
+        if len(ln) > 9 {
+            if ln.substring(0, 9) == "VOLITION:" {
+                let rhs = ln.substring(9, len(ln))
+                if len(rhs) > 2 && rhs.substring(0, 3) == "ERR" { return -1.0 }
+                return to_float(rhs)
+            }
+        }
+        i = i + 1
+    }
+    return -1.0
+}
+
+// --- M2: gate decision -----------------------------------------
+
+pub fn should_speak(v: float, tau: float) -> bool {
+    if v > tau { return true }
+    return false
+}
+
+// --- M3: emit + log --------------------------------------------
+//
+// Append "<ts> | <content>" to log_path. Returns the content back
+// so callers can compose: `last = speak(generate(), log)`.
+
+pub fn speak(content, log_path) -> string {
+    let ts = _vp_ts()
+    let line = ts + " | " + content
+    let parent = _vp_shell("dirname " + _vp_quote(log_path))
+    exec("mkdir -p " + _vp_quote(parent))
+    exec("echo " + _vp_quote(line) + " >> " + _vp_quote(log_path))
+    return content
+}
+
+// --- M4: desire queue (file-backed JSONL) ----------------------
+//
+// Schema per line: {"ts":"...","desire":"...","status":"pending"|"done"}
+// Append-only push; pop = scan-forward -> first pending -> rewrite
+// with that one line flipped to status=done.
+
+fn _vp_json_escape(s) {
+    let a = s.replace("\\", "\\\\")
+    let b = a.replace("\"", "\\\"")
+    let c = b.replace("\n", "\\n")
+    return c.replace("\r", "")
+}
+
+pub fn desire_push(desire, queue_path) -> bool {
+    let ts = _vp_ts()
+    let line = "{\"ts\":\"" + ts + "\",\"desire\":\"" + _vp_json_escape(desire) + "\",\"status\":\"pending\"}"
+    let parent = _vp_shell("dirname " + _vp_quote(queue_path))
+    exec("mkdir -p " + _vp_quote(parent))
+    let rc = exec("echo " + _vp_quote(line) + " >> " + _vp_quote(queue_path) + " && echo ok || echo no").trim()
+    if rc == "ok" { return true }
+    return false
+}
+
+// _vp_extract_desire(line) — naive extraction of the "desire" field
+// from a single-line JSON object.
+fn _vp_extract_desire(line) {
+    let key = "\"desire\":\""
+    let i = line.index_of(key)
+    if i < 0 { return "" }
+    let after = line.substring(i + len(key), len(line))
+    // walk until unescaped quote
+    let mut k = 0
+    while k < len(after) {
+        let ch = after.substring(k, k + 1)
+        if ch == "\\" {
+            k = k + 2
+        } else {
+            if ch == "\"" { return after.substring(0, k) }
+            k = k + 1
+        }
+    }
+    return ""
+}
+
+fn _vp_is_pending(line) -> bool {
+    if line.index_of("\"status\":\"pending\"") > -1 { return true }
+    return false
+}
+
+pub fn desire_pop(queue_path) -> string {
+    let exists = _vp_shell("test -f " + _vp_quote(queue_path) + " && echo y || echo n")
+    if exists != "y" { return "" }
+    let blob = exec("cat " + _vp_quote(queue_path))
+    let lines = blob.split("\n")
+    let mut i = 0
+    let mut found_idx = -1
+    let mut desire = ""
+    while i < len(lines) {
+        let ln = lines[i]
+        if len(ln) > 0 {
+            if _vp_is_pending(ln) {
+                if found_idx < 0 {
+                    found_idx = i
+                    desire = _vp_extract_desire(ln)
+                }
+            }
+        }
+        i = i + 1
+    }
+    if found_idx < 0 { return "" }
+    // rewrite queue with found line flipped to status=done
+    let mut new_blob = ""
+    let mut j = 0
+    while j < len(lines) {
+        let ln2 = lines[j]
+        let mut keep = ln2
+        if j == found_idx {
+            keep = ln2.replace("\"status\":\"pending\"", "\"status\":\"done\"")
+        }
+        if len(keep) > 0 {
+            if len(new_blob) > 0 { new_blob = new_blob + "\n" }
+            new_blob = new_blob + keep
+        }
+        j = j + 1
+    }
+    // write back via temp
+    let tmp = queue_path + ".tmp.pop"
+    exec("printf '%s\\n' " + _vp_quote(new_blob) + " > " + _vp_quote(tmp))
+    exec("mv " + _vp_quote(tmp) + " " + _vp_quote(queue_path))
+    return desire
+}
+
+// --- M5: inhibit logging ---------------------------------------
+//
+// Same shape as speak() but marked as inhibition for downstream
+// audit. Returns true on successful append.
+
+pub fn inhibit(reason, log_path) -> bool {
+    let ts = _vp_ts()
+    let line = ts + " | INHIBIT | " + reason
+    let parent = _vp_shell("dirname " + _vp_quote(log_path))
+    exec("mkdir -p " + _vp_quote(parent))
+    let rc = exec("echo " + _vp_quote(line) + " >> " + _vp_quote(log_path) + " && echo ok || echo no").trim()
+    if rc == "ok" { return true }
+    return false
+}
