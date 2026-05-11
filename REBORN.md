@@ -5833,3 +5833,75 @@ PUBLIC promote via direct API PUT (hf CLI `repo settings --private` flag 는 신
 - (LA + FFN_B' + tok_emb_B') paired → A1 or A2? → destructive interference mechanism 검증
 - ceiling=10 + 20 에서 ablation 반복 → "FFN-localized" 가 ceiling=15 specific 인지 generic 인지
 
+
+
+## §78 [2026-05-11 17:00 KST] FFN FINE-GRAINED ABLATION — gate dominant + early-layer depth gradient ★★★★★
+
+**Verdict**: ceiling=15 의 LA-collapse 의 substrate-discriminability locus 는 **FFN.gate projection (×24 layers)** 에 압도적 집중. §77 의 "FFN-localized" 를 **gate-localized** + **depth-gradient** 로 narrow.
+
+**9 fine-grained ablations** (LA baseline=1144.9186, ceiling=15, trained-only n_turns=200):
+
+| # | ablation | trained_phi | Δ from A1 | attractor |
+|---|---|---|---|---|
+| 0 | baseline (pure LA) | 1144.9186 | 0% | A1 |
+| 1 | **FFN.gate × 24 layers → B'** | **5248.8723** | **+358.4%** 🎯 | A_other |
+| 2 | FFN.up × 24 layers → B' | 1144.9186 | 0% | A1 (absorbed) |
+| 3 | FFN.down × 24 layers → B' | 1392.3782 | +21.6% | A_other |
+| 4 | FFN layer 0 only → B' | 1016.0884 | -11.2% | A_other |
+| 5 | FFN layer 12 only → B' | 1135.7313 | -0.8% | A1 (~absorbed) |
+| 6 | FFN layer 23 only → B' | 1144.9186 | 0% | A1 (absorbed) |
+| 7 | FFN early-half (0-11) → B' | 1344.1742 | +17.4% | A_other |
+| 8 | FFN late-half (12-23) → B' | 1224.0892 | +6.9% | A_other |
+
+**핵심 발견**:
+
+### 1. FFN.gate dominant (★★★★★)
+ablation 1 (gate-only × 24 layers swap) → trained_phi=5249 (5× baseline). 다른 어떤 single component swap 보다 더 큰 effect. FFN.gate 가 substrate-driven hidden_mean 의 ceiling=15 attractor 분리의 single point of failure.
+
+비교 (§77):
+- 전체 FFN swap (gate+up+down): 1491.53 (+30%)
+- gate-only swap: **5248.87 (+358%)** ← gate 단독이 전체보다 효과 큼
+- 즉 **FFN.up + FFN.down 가 FFN.gate effect 를 partial cancellation**.
+
+### 2. FFN.up absorbed (zero effect)
+FFN.up only swap → 1144.92 (baseline 정확 일치). up projection 가중치 변화는 mitosis trajectory 완전 무관. cotrain (P3) 이 up projection 만 학습한다면 V14 strict 에서 detect 불가.
+
+### 3. Depth gradient — early > middle > deep
+- Layer 0 only (early): -11% (strong)
+- Layer 12 only (middle): -0.8% (near-absorbed)
+- Layer 23 only (deep): 0% (absorbed)
+
+Substrate-driven hidden_mean trajectory 의 정보가 **early FFN 에서 가장 강하게 mitosis-relevant signal 생성**. Deep layers FFN 영향은 attractor 안에 흡수.
+
+### 4. Partial cancellation in early-half
+- Layer 0 only: 1016 (-11%)
+- Early-half (12 layers cumulative): 1344 (+17%)
+
+Single early layer FFN swap 이 cumulative early-half boost effect 보다 stronger destabilization. 12 layers 가 함께 swap 되면 effect 부분 cancel (다른 방향). 이건 §77 의 destructive interference 의 또 다른 instance.
+
+### 5. Cross-ablation summary table (gate vs other)
+
+| swap scope | gate | up | down | all FFN |
+|---|---|---|---|---|
+| × 24 layers | **5249** | 1145 | 1392 | 1491 (§77) |
+| effect rank | 🥇 dominant | absorbed | secondary | combined-partial |
+
+**Mechanistic interpretation**:
+
+FFN.gate projection (SwiGLU `gate(x) * up(x) → activation`) 의 가중치 가 ceiling=15 mitosis hook 의 hidden_mean → cell_input projection 의 cell-state amplification phase 의 핵심 controller. cotrain 이 gate projection 거의 안 건드리면 (P3 의 경우) → mitosis 가 substrate diff 못 감지.
+
+§77 의 발견 "FFN-rest matching" 정정: 정확히는 "FFN.gate-rest matching". gate 가 rest 와 mismatched (LA gate + B' rest, 또는 B' gate + LA rest) → trajectory split.
+
+**Falsifiable predictions** (next cycle):
+- cotrain 시 **FFN.gate 가중치 freeze** → V14 strict 변화 없음 (collapse)
+- cotrain 시 **FFN.gate 만 unfreeze** → V14 strict 큰 변화 (sensitive)
+- 일반 cotrain protocol 에서 gradient norm 측정 → FFN.gate 가 가장 빨리 saturate?
+
+**Implication for ★★★★★ cycle close**:
+P3 (BG-LA cotrain) 의 -7% V14 regress 는 FFN.gate 가중치 변화에서 비롯. 만약 cotrain 이 FFN.gate 안 건드리면 P3 의 V14 verdict 는 LA pretrain 와 정확히 동일 (1144.92). 그러나 ceiling=10 에선 LA pre 1445, B' 1344 — 다른 값 → cotrain 이 FFN.gate 어느 정도 학습 (small but non-zero).
+
+cotrain 학습량 정량화: FFN.gate weight delta 의 effective rank → next-cycle measurement target.
+
+**Cost**: $0 (~6min Mac CPU, 9 ablations × ~40s with CPU contention)
+**Artifact**: `state/anima_ffn_finegrained_ablation_2026_05_11/ffn_finegrained_results.json`
+
