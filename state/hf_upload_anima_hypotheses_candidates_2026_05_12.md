@@ -25,7 +25,7 @@ The full 1,127 `Hc_*.md` staging hypotheses plus the cluster index, sister verif
 | repo_type | `dataset` |
 | visibility | **private** (cycle-5 default; no user override) |
 | URL | <https://huggingface.co/datasets/dancinlife/anima-hypotheses-candidates> |
-| HF user | `dancinlife` (orgs: `need-singularity`, `dancinlab`) |
+| HF user | `dancinlife` (orgs: `dancinlab`, `dancinlab`) |
 | commit sha | `9898ee369096d6eeaa90a59080502803255b0b1a` |
 | siblings (remote files) | **1132** |
 | upload elapsed | 10.7 s |

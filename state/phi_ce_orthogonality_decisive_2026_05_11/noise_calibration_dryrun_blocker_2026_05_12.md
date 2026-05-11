@@ -46,7 +46,7 @@ resolve path 명시.
 - HF cache (`~/.cache/huggingface/hub/`) 에 존재하는 모델:
   - `Qwen2.5-Coder-{1.5B,3B,7B,7B-Instruct-AWQ}`
   - `Llama-3.2-3B`
-  - `need-singularity/clm-v4-mk2-v1`
+  - `dancinlab/clm-v4-mk2-v1`
   - `skt/kogpt2-base-v2`
 - ❌ **Mistral-7B-v0.3 not cached** — first-run download ~14 GB + auth token
   필요 (Mistral gated). audit §1.1 의 default backbone 부재.
