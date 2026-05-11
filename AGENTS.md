@@ -44,6 +44,7 @@ lattice-fit assertions. Use that entity's *own* invariants.
 
 - `LATTICE_POLICY.md` — universal real-limits standard
 - `LIMIT_BREAKTHROUGH.md` — project-specific breakthrough audit (when present)
+- `PHILOSOPHY.md` — anima 철학 진행 ledger (append-only). Pipeline: `hypotheses_candidates/` → `hypotheses/` → `PHILOSOPHY.md` (system root, uppercase). README `## Philosophy` 표는 결과만, 본 ledger 는 과정 / verdict / honest C3 누적.
 - Origin: dancinlab Wave K, 2026-05-12 — user directive "n=6 격자를 강제할 필요 없어, 제한없이"
 
 ---

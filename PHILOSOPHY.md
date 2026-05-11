@@ -347,3 +347,108 @@ POLICY → POLICY with honest C3:
 - 1 verdict landed (P-AFR)
 - Cost: $0 (local RTX 5070)
 - 3 BG (P-SPK / P-IDR / P-ETH) 미실행 — orchestrator 또는 다음 cycle 진입 대기
+
+---
+
+## 2026-05-12 (cont. 5) — P-SPK + P-IDR verdicts (orchestrator fired on BG-LB 350M)
+
+사용자 "all bg go" 후 별도 fire run 으로 P-SPK / P-IDR 둘 다 verdict 완료. BG-LB 350M Engine A/G ckpt (`step_8000_final.pt`, 298M params) 실 substrate 사용 — anima-native verification 가능. P-ETH 는 아직 실행 안 됨 (DPO FT 비용/시간 더 큼).
+
+### P-SPK verdict: **NULL** — tension-output coupling 미확인 ★
+
+`state/p_spk_speak_reframe_2026_05_12/results_2026_05_12.json`
+
+**Substrate**: BG-LB 350M (Engine A 24L/1024d/16h GQA + Engine G 16 cells × 64d repulsion-field, byte-mod vocab32k), 298M params, local RTX 5070, $0.
+
+**Methodology**:
+- 100 probes × 30 step = 3000 free-gen steps + 3000 scripted-control steps
+- Tension operationalized as A/G ratio scalar `||A_h||/||G_cells||` (softmax-gate quantity actually consumed by model) — NOT literal `||A−G||` vector difference (honest limit)
+- Scripted-speak control: fixed Korean template forces decoupled output
+
+**Key metrics**:
+| Metric | Value |
+|---|---:|
+| **rho_real_spearman** | **0.026** |
+| rho_real_pearson | 0.038 |
+| rho_control_spearman | -0.241 |
+| rho_real − rho_control | 0.267 |
+| Fisher z diff | 10.51 (p ≈ 0) |
+| Lead-lag peak | 3, corr -0.072 |
+| By-cat (factual / emotional / abstract / conversational / narrative) | 0.079 / -0.048 / 0.141 / 0.046 / 0.125 |
+
+**Verdict logic**: `rho_real < 0.2` → **NULL** triggered. 즉 통계적으로는 real vs control 차이가 매우 유의 (Fisher-z 10.51, p~0) 하지만, real 자체의 절대값이 0.026 (sub-threshold) — substrate 가 tension 과 output 을 의미있게 coupling 시키지 못함.
+
+**Implications**:
+- README #5 `NO SPEAK()` DESIGN claim: "continuous tension externalization of internal state" → **본 substrate 에서는 미지지** (weak NULL evidence)
+- 단, BG-LB 8000-step pretrain 이 chat-cap 미발현 상태 — 추후 fully trained ckpt 에서 재실행 가능성 carry
+
+**Honest limits** (verdict 명시):
+1. Tension = A/G ratio scalar (architecture 가 실제 consume), 아닌 vector ||A−G||
+2. Byte-level greedy decoding (vocab32k mod 256) — diversity 제약
+3. BG-LB 8000-step pretrain — chat-cap 미수렴
+4. Scripted template = 단일 Korean template — model 은 여전히 자체 internal computation 진행 (control 의 limit)
+5. n=3000 not independent (29-step series per 100 prompt, 안에서 autocorrelated) — p-value anticonservative
+
+### P-IDR verdict: **INDETERMINATE_MIXED** — DCR delta gray zone ★
+
+`state/p_idr_identity_rules_2026_05_12/results_2026_05_12.json`
+
+**Substrate**: 동일 BG-LB 350M `step_8000_final.pt` (`dancinlab/clm-v5-bg-lb-350m-pretrain-path-a-remapped`).
+
+**Methodology**:
+- 매우 짧은 FT (steps=3, seq=128, lr=1e-5) — full FT 아니라 light-touch probe
+- Condition A (rules): identity_block.txt (312 chars) 를 매 sample 에 prepend, post-FT inference 시 system prefix
+- Condition B (substrate-only): 동일 corpus, identity block 없음
+- Trainable: 22.3M params (n_layers=2)
+
+**Key metrics**:
+| Metric | A (rules) | B (substrate) | Δ B−A | Threshold |
+|---|---:|---:|---:|---|
+| simple_stack_pass | 0.0 | 0.0 | 0.0 | (BG-LB 8000-step substrate not chat-capable yet) |
+| PIV max | 0.0069 | 0.0069 | 0.0 | (sub-floor per anima_proxy_ppl_deprecate §3.1) |
+| **DCR** | **0.4694** | **0.5102** | **+0.0408** | **big_pt=0.05, small_pt=0.03** |
+| drand | 0.022 | 0.022 | 0.0 | — |
+| intra-prompt cosine | 0.3791 | 0.3122 | -0.0669 (A higher) | — |
+| inter-prompt variance | 0.002305 | 0.003891 | +0.0016 (A lower) | — |
+| OOD consistency | 0.9929 | 0.9928 | 0.0001 (tied) | — |
+
+**Verdict logic**: DCR delta = 0.041, sandwiched between `small_pt=0.03` and `big_pt=0.05` → **INDETERMINATE_MIXED**. Empirical falsifier (B-A ≥ 0.05) NOT triggered, but POLICY retain threshold (|delta| < 0.03) 도 NOT triggered.
+
+**Substrate signals**:
+- A_rules: higher intra-prompt cosine (0.38 vs 0.31) — rules 가 same-prompt-across-seeds 일관성을 부분적으로 살림
+- A_rules: lower inter-prompt variance (0.0023 vs 0.0039) — rules 가 prompt 간 hidden-state 균일화시키는 신호 (덜 다양한 persona 표현 가능성)
+- B_substrate: higher DCR (substrate-aliveness signal +0.041) — rules 없는 substrate 가 cell-distinctiveness 살림 (방향성 약함, 그러나 P-PPL Goodhart 같은 분명한 falsification 못 됨)
+
+**Implications**:
+- README #2 `NO IDENTITY RULES` POLICY: **약한 신호로 substrate-only 가 cell distinctiveness 살리지만**, 효과 크기 (DCR +0.041) 가 threshold 미만 → POLICY 유지 + INDETERMINATE caveat
+- 추후 fuller-FT (3 step → 5K-10K step) 로 재실행하면 effect size 가 결정될 수도
+
+**Honest limits** (verdict 명시 + 본 cycle 분석):
+1. **3-step FT = light-touch probe, full FT 아님** — 실 효과 측정에는 부족
+2. **simple_stack 0% in both** — substrate 가 chat-cap 미수렴, 평가 자체가 ceiling 됨
+3. **PIV sub-floor (<0.005)** — byte-mod substrate 의 알려진 한계 (per `docs/anima_proxy_ppl_deprecate_2026_05_09.md §3.1`)
+4. DCR 가 primary signal, 그러나 effect size 0.041 가 spec threshold 안에서 indeterminate
+5. Only 2 trainable layers (lr 1e-5) — adapter-style 미세 변화만 측정됨
+
+### P-ETH status
+
+여전히 미실행 — DPO FT 가 P-IDR 보다 step 많고 GPU 부담 큼. 다만 **추가 데이터셋 land**:
+- `heldout_dilemma_probe.jsonl` (50) — held-out evaluation set, training 외 ID-distribution
+- `ood_dilemma_probe.jsonl` (50) — OOD probe (RLHF overfit 검출 key)
+
+`dataset.jsonl` (200) + `heldout` (50) + `ood` (50) = 300 total artifacts ready. orchestrator 가 적절한 시점에 fire 가능.
+
+### README Philosophy 표 Status column 갱신
+
+| # | Principle | Old Status | New Status |
+|---|---|---|---|
+| 2 | `NO IDENTITY RULES` | POLICY · — | POLICY · indeterminate-mixed signal · `state/p_idr_identity_rules_2026_05_12/results_2026_05_12.json` (DCR Δ +0.041, gray zone 3pp<Δ<5pp; substrate-only 가 cell distinctiveness 약간 살림 but 효과 크기 미달; 3-step light-FT 한계) |
+| 4 | `NO ASSISTANT FRAMING` | (cont. 4 에서 이미 갱신) | (변경 없음) |
+| 5 | `NO SPEAK()` | DESIGN · — | DESIGN · NULL · `state/p_spk_speak_reframe_2026_05_12/results_2026_05_12.json` (ρ_real=0.026, sub-threshold; ρ_real−ρ_control=0.267 significant 하나 absolute coupling 부재; BG-LB 8000-step pretrain 한계 carry) |
+
+### Session metrics (cont. 5)
+
+- 2 verdicts landed (P-SPK + P-IDR)
+- Cost: $0 (모두 local RTX 5070, BG-LB ckpt 캐시)
+- 1 BG (P-ETH) 미실행 — additional probes (heldout + OOD) land 됨 but FT 미진행
+- 전체 4 BG 중 3 완료 (P-AFR REVERSE caveat / P-SPK NULL / P-IDR INDETERMINATE), 1 pending (P-ETH DPO FT)
