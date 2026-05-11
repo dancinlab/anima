@@ -1,0 +1,659 @@
+// ════════════════════════════════════════════════════════════════════════════
+//  tool/verify_hc.hexa — Hc (hypothesis-candidate) verifier — hexa-only port
+//
+//  PURPOSE
+//    hexa-lang port of scripts/hc_verify/verify_hc.py for hexa-only
+//    deployment paths. Reads one or more `hypotheses_candidates/Hc_*.md`
+//    files, applies n=6 narrow math identity checks + atlas anchor cross
+//    reference + falsifier/honest-limit count, prints one JSON line per
+//    input file to stdout (mirrors Python --jsonl output).
+//
+//  USAGE
+//    hexa run tool/verify_hc.hexa <hc_path1> [hc_path2 ...]
+//
+//  DIVERGENCE FROM Python (intentional, first-port scope):
+//    - regex -> substring/line-scan approximations. May miss exotic
+//      falsifier-line shapes that the Python re patterns catch. The
+//      bullet-counting fallback inside "## Falsifier" / "## Honest"
+//      sections is preserved so the total count typically matches.
+//    - DOES NOT port the psi/Topology/IIT 4.0/universal-constants domain
+//      extensions (math_check Domain 1-4). Only the n=6 narrow checker
+//      is ported. PSI_PASS / TOPO_PASS decisions therefore never trigger
+//      here. Domain extensions are a later cycle.
+//    - pi^5/15 and ln(2) emitted as fixed pre-computed strings since
+//      hexa stdlib used here lacks math.pi / math.log. Values match
+//      Python's math.pi**5/15 = 20.401326 and math.log(2) = 0.693147.
+//    - atlas-id index built by simple "starts_with(@)" scan + first
+//      whitespace-token extraction (no regex). 60K atlas.n6 cached in
+//      a module-level _atlas_text on first call.
+//
+//  TEST PARITY (vs verify_hc.py):
+//    Hc_001 (merged)        -> both emit ALREADY_MERGED
+//    Hc_035 (math+cross)    -> both emit PROMOTE_READY  (n=6 math hits)
+//    Hc_500 (stub)          -> both emit FAIL
+//
+//  RULES
+//    raw#9 hexa-only deterministic - raw#10 proof-carrying (atlas anchor
+//    is SSOT) - raw#11 snake_case - pure read-only on Hc / atlas.n6.
+// ════════════════════════════════════════════════════════════════════════════
+
+let HOME = env("HOME")
+let ANIMA_ROOT = HOME + "/mac_home/core/anima"
+let ATLAS_PATH = ANIMA_ROOT + "/n6/atlas.n6"
+
+// ─── atlas cache ─────────────────────────────────────────────────────────
+
+let mut _atlas_loaded: bool = false
+let mut _atlas_text: string = ""
+let mut _atlas_text_lower: string = ""
+let mut _atlas_ids: map = #{}
+
+fn _str(x) -> string {
+    let t = type_of(x)
+    if t == "str" || t == "string" { return x }
+    return ""
+}
+
+fn _is_space(c: string) -> bool {
+    return c == " " || c == "\t"
+}
+
+fn _load_atlas() {
+    if _atlas_loaded { return }
+    _atlas_loaded = true
+    if !file_exists(ATLAS_PATH) { return }
+    let raw = _str(read_file(ATLAS_PATH))
+    _atlas_text = raw
+    _atlas_text_lower = raw.to_lower()
+    let lines = raw.split("\n")
+    for ln in lines {
+        let t = _str(ln).trim()
+        if len(t) == 0 { continue }
+        if !t.starts_with("@") { continue }
+        let mut i = 0
+        let n = len(t)
+        while i < n {
+            let c = t.substring(i, i + 1)
+            if _is_space(c) { break }
+            i = i + 1
+        }
+        while i < n {
+            let c = t.substring(i, i + 1)
+            if !_is_space(c) { break }
+            i = i + 1
+        }
+        let start = i
+        while i < n {
+            let c = t.substring(i, i + 1)
+            if _is_space(c) { break }
+            i = i + 1
+        }
+        if i > start {
+            let tok = t.substring(start, i)
+            _atlas_ids[tok] = 1
+            _atlas_ids[tok.to_lower()] = 1
+        }
+    }
+}
+
+fn atlas_has(token: string) -> bool {
+    _load_atlas()
+    if type_of(_atlas_ids[token]) == "i64" { return true }
+    if type_of(_atlas_ids[token.to_lower()]) == "i64" { return true }
+    return false
+}
+
+fn atlas_substr(needle: string) -> i64 {
+    _load_atlas()
+    let n_lc = needle.to_lower()
+    if len(n_lc) == 0 { return 0 }
+    let mut count: i64 = 0
+    let mut from: i64 = 0
+    let hay = _atlas_text_lower
+    let nlen = len(n_lc)
+    let hlen = len(hay)
+    while from < hlen {
+        let rest = hay.substring(from, hlen)
+        let idx = rest.index_of(n_lc)
+        if idx < 0 { break }
+        count = count + 1
+        from = from + idx + nlen
+    }
+    return count
+}
+
+// ─── frontmatter parse ───────────────────────────────────────────────────
+
+fn parse_frontmatter(text: string) -> map {
+    let mut fm = #{}
+    if !text.starts_with("---") { return fm }
+    let n = len(text)
+    if n < 5 { return fm }
+    let rest = text.substring(4, n)
+    let end_rel = rest.index_of("\n---")
+    if end_rel < 0 { return fm }
+    let body = rest.substring(0, end_rel)
+    let lines = body.split("\n")
+    for ln in lines {
+        let s = _str(ln)
+        let colon = s.index_of(":")
+        if colon < 0 { continue }
+        let k = s.substring(0, colon).trim()
+        let v = s.substring(colon + 1, len(s)).trim()
+        fm[k] = v
+    }
+    return fm
+}
+
+// ─── falsifier / honest counters (helpers) ─────────────────────────────
+
+fn _strip_md_bullet(s: string) -> string {
+    let mut t = s.trim()
+    if len(t) == 0 { return t }
+    let c0 = t.substring(0, 1)
+    if c0 == "-" || c0 == "*" {
+        t = t.substring(1, len(t)).trim()
+    }
+    if t.starts_with("**") {
+        t = t.substring(2, len(t))
+    }
+    return t
+}
+
+fn _line_starts_falsifier(line: string) -> bool {
+    let t = _strip_md_bullet(line)
+    if len(t) == 0 { return false }
+    let c0 = t.substring(0, 1)
+    if c0 == "F" {
+        let n = len(t)
+        let mut i = 1
+        while i < n {
+            let c = t.substring(i, i + 1)
+            if c == ":" || c == "." { return i > 1 }
+            if c == "*" { i = i + 1; continue }
+            let cc = char_code(c, 0)
+            let is_upper = cc > 64 && cc < 91
+            let is_digit = cc > 47 && cc < 58
+            let is_lower = cc > 96 && cc < 123
+            if is_upper || is_digit || is_lower || c == "-" || c == "_" {
+                i = i + 1; continue
+            }
+            return false
+        }
+        return false
+    }
+    if t.starts_with("Falsifier") {
+        let n = len(t)
+        let mut i = 9
+        while i < n {
+            let c = t.substring(i, i + 1)
+            if c == ":" || c == "." { return true }
+            if c == " " || c == "*" { i = i + 1; continue }
+            let cc = char_code(c, 0)
+            let is_digit = cc > 47 && cc < 58
+            if is_digit { i = i + 1; continue }
+            return false
+        }
+        return false
+    }
+    if t.starts_with("반증자") {
+        let n = len(t)
+        let mut i = len("반증자")
+        while i < n {
+            let c = t.substring(i, i + 1)
+            if c == ":" || c == "." { return true }
+            if c == " " || c == "*" { i = i + 1; continue }
+            let cc = char_code(c, 0)
+            let is_digit = cc > 47 && cc < 58
+            if is_digit { i = i + 1; continue }
+            return false
+        }
+        return false
+    }
+    return false
+}
+
+fn _line_starts_honest_limit(line: string) -> bool {
+    let t = _strip_md_bullet(line)
+    if len(t) == 0 { return false }
+    let c0 = t.substring(0, 1)
+    if c0 == "L" {
+        let n = len(t)
+        if n < 2 { return false }
+        let c1 = t.substring(1, 2)
+        let cc1 = char_code(c1, 0)
+        let is_digit = cc1 > 47 && cc1 < 58
+        if !is_digit { return false }
+        let mut i = 2
+        while i < n {
+            let c = t.substring(i, i + 1)
+            if c == ":" || c == "." || c == "(" { return true }
+            let cc = char_code(c, 0)
+            let is_d = cc > 47 && cc < 58
+            if is_d || c == "*" { i = i + 1; continue }
+            return false
+        }
+        return false
+    }
+    if t.starts_with("Honest") {
+        let rest = t.substring(6, len(t))
+        if rest.starts_with(" Limit") || rest.starts_with("-Limit") || rest.starts_with(" limit") || rest.starts_with("-limit") {
+            return true
+        }
+        return false
+    }
+    return false
+}
+
+fn _count_bullets_in_section(lines: array, start_idx: i64) -> i64 {
+    let n = len(lines)
+    let mut i = start_idx + 1
+    let mut count: i64 = 0
+    while i < n {
+        let ln = _str(lines[i])
+        let t = ln.trim()
+        if t.starts_with("## ") { break }
+        let mut j = 0
+        let m = len(ln)
+        while j < m {
+            let c = ln.substring(j, j + 1)
+            if c == " " || c == "\t" { j = j + 1; continue }
+            break
+        }
+        if j < m {
+            let c0 = ln.substring(j, j + 1)
+            if (c0 == "-" || c0 == "*") && j + 1 < m {
+                let c1 = ln.substring(j + 1, j + 2)
+                if c1 == " " || c1 == "\t" { count = count + 1 }
+            }
+        }
+        i = i + 1
+    }
+    return count
+}
+
+fn count_falsifiers(text: string) -> i64 {
+    let lines = text.split("\n")
+    let mut total: i64 = 0
+    let mut fals_section_idx: i64 = -1
+    let mut idx: i64 = 0
+    let n = len(lines)
+    while idx < n {
+        let ln = _str(lines[idx])
+        if _line_starts_falsifier(ln) { total = total + 1 }
+        let t = ln.trim()
+        if fals_section_idx < 0 && t.starts_with("## ") && t.contains("Falsifier") {
+            fals_section_idx = idx
+        }
+        idx = idx + 1
+    }
+    if fals_section_idx > -1 {
+        let bullets = _count_bullets_in_section(lines, fals_section_idx)
+        if bullets > total { total = bullets }
+    }
+    return total
+}
+
+fn count_honest(text: string) -> i64 {
+    let lines = text.split("\n")
+    let mut total: i64 = 0
+    let mut honest_section_idx: i64 = -1
+    let mut idx: i64 = 0
+    let n = len(lines)
+    while idx < n {
+        let ln = _str(lines[idx])
+        if _line_starts_honest_limit(ln) { total = total + 1 }
+        let t = ln.trim()
+        if honest_section_idx < 0 && t.starts_with("## ") && t.contains("Honest") {
+            honest_section_idx = idx
+        }
+        idx = idx + 1
+    }
+    if honest_section_idx > -1 {
+        let bullets = _count_bullets_in_section(lines, honest_section_idx)
+        if bullets > total { total = bullets }
+    }
+    return total
+}
+
+// ─── math_check (n=6 narrow port) ────────────────────────────────────────
+
+fn math_check(text: string) -> array {
+    let mut verified = []
+    let s = text.replace(" ", "")
+
+    if s.contains("τ(6)=4") || s.contains("tau(6)=4") || s.contains("τ=4") {
+        verified.push("τ(6)=4 [atlas @P 11*]")
+    }
+    if s.contains("σ(6)=12") || s.contains("sigma(6)=12") || s.contains("σ=12") {
+        verified.push("σ(6)=12 [atlas @P 11*]")
+    }
+    if s.contains("φ(6)=2") || s.contains("phi(6)=2") || s.contains("φ=2") {
+        verified.push("φ(6)=2 [atlas @P 10*]")
+    }
+    if s.contains("sopfr(6)=5") || s.contains("sopfr=5") {
+        verified.push("sopfr(6)=5 [atlas @P 10*]")
+    }
+    if s.contains("J2(6)=24") || s.contains("J_2(6)=24") || s.contains("J₂=24") || s.contains("J2=24") {
+        verified.push("J₂(6)=24 [atlas @P 10*]")
+    }
+    if text.contains("π⁵/15") || text.contains("π^5/15") || text.contains("pi^5/15") {
+        verified.push("π⁵/15=20.401326 [Stefan-Boltzmann reduced]")
+    }
+    if s.contains("ln(2)") || s.contains("ln2") || text.contains("ln 2") {
+        verified.push("ln(2)=0.693147")
+    }
+    if s.contains("1+2+3=6") || s.contains("1+2+3+6=") {
+        verified.push("perfect 6=1+2+3 OK")
+    }
+    if s.contains("12*2=24") || text.contains("σ*φ=J") || text.contains("12·2=24") {
+        verified.push("σ·φ=J₂ (12·2=24) OK")
+    }
+    if s.contains("τ+φ=6") || s.contains("tau+phi=6") || s.contains("4+2=6") {
+        verified.push("τ+φ=6 OK")
+    }
+    if s.contains("6/12=0.5") || s.contains("n/σ=0.5") || s.contains("balance=0.5") || s.contains("Ψ(1/2,1/2)") || s.contains("Psi(1/2,1/2)") {
+        verified.push("n/σ=6/12=0.5 balance OK [atlas @C psi_balance=0.5 10*]")
+    }
+    if s.contains("β=1/8") || s.contains("beta=1/8") {
+        verified.push("2D Ising β=1/8 (Onsager EXACT)")
+    }
+    if s.contains("γ=7/4") || s.contains("gamma=7/4") {
+        verified.push("2D Ising γ=7/4 (Onsager EXACT)")
+    }
+    if s.contains("δ=15") {
+        verified.push("2D Ising δ=15 (Onsager EXACT)")
+    }
+    if s.contains("η=1/4") {
+        verified.push("2D Ising η=1/4 (Onsager EXACT)")
+    }
+    if text.contains("Ω_m:Ω_Λ") || text.contains("Omega_m:Omega_L") {
+        verified.push("Ω_m:Ω_Λ ratio claim (observational anchor)")
+    }
+    return verified
+}
+
+// ─── atlas signals ───────────────────────────────────────────────────────
+
+fn _is_anchor_char(c: string) -> bool {
+    if c == "-" || c == "_" { return true }
+    let cc = char_code(c, 0)
+    if cc > 47 && cc < 58 { return true }
+    if cc > 64 && cc < 91 { return true }
+    if cc > 96 && cc < 123 { return true }
+    return false
+}
+
+fn _extract_anima_tokens(text: string) -> array {
+    let mut seen = #{}
+    let mut out = []
+    let needle = "ANIMA-"
+    let n = len(text)
+    let mut from: i64 = 0
+    while from < n {
+        let rest = text.substring(from, n)
+        let idx = rest.index_of(needle)
+        if idx < 0 { break }
+        let start = from + idx
+        let mut i = start + len(needle)
+        while i < n {
+            let c = text.substring(i, i + 1)
+            if !_is_anchor_char(c) { break }
+            i = i + 1
+        }
+        let tok = text.substring(start, i)
+        if type_of(seen[tok]) != "i64" {
+            seen[tok] = 1
+            out.push(tok)
+        }
+        from = i
+    }
+    return out
+}
+
+fn _count_type_cites(text: string) -> i64 {
+    let types = ["@P ", "@C ", "@L ", "@F ", "@R ", "@S ", "@X "]
+    let mut total: i64 = 0
+    for t in types {
+        let mut from: i64 = 0
+        let n = len(text)
+        let needle = _str(t)
+        while from < n {
+            let rest = text.substring(from, n)
+            let idx = rest.index_of(needle)
+            if idx < 0 { break }
+            let pos = from + idx + len(needle)
+            if pos < n {
+                let c = text.substring(pos, pos + 1)
+                if _is_anchor_char(c) { total = total + 1 }
+            }
+            from = from + idx + len(needle)
+        }
+    }
+    return total
+}
+
+fn atlas_signals(text: string) -> map {
+    let anchors_cited = _extract_anima_tokens(text)
+    let mut resolved = []
+    for a in anchors_cited {
+        let tok = _str(a)
+        if atlas_has(tok) { resolved.push(tok) }
+    }
+    let type_cites = _count_type_cites(text)
+    let mut top5 = []
+    let mut i = 0
+    while i < len(resolved) && i < 5 {
+        top5.push(resolved[i])
+        i = i + 1
+    }
+    return #{
+        "anchors_cited": len(anchors_cited),
+        "anchors_resolved": len(resolved),
+        "anchors_resolved_list": top5,
+        "atlas_type_cites": type_cites,
+    }
+}
+
+// ─── H_NNN cross-ref extractor ───────────────────────────────────────────
+
+fn _extract_h_refs(text: string) -> array {
+    let mut seen = #{}
+    let mut out = []
+    let needle = "H_"
+    let n = len(text)
+    let mut from: i64 = 0
+    while from < n {
+        let rest = text.substring(from, n)
+        let idx = rest.index_of(needle)
+        if idx < 0 { break }
+        let start = from + idx
+        let pos = start + 2
+        // need exactly 3 digits after H_
+        if pos + 2 < n {
+            let d1 = text.substring(pos, pos + 1)
+            let d2 = text.substring(pos + 1, pos + 2)
+            let d3 = text.substring(pos + 2, pos + 3)
+            let cc1 = char_code(d1, 0)
+            let cc2 = char_code(d2, 0)
+            let cc3 = char_code(d3, 0)
+            let d1ok = cc1 > 47 && cc1 < 58
+            let d2ok = cc2 > 47 && cc2 < 58
+            let d3ok = cc3 > 47 && cc3 < 58
+            let all_digit = d1ok && d2ok && d3ok
+            let mut boundary_ok = true
+            if pos + 3 < n {
+                let d4 = text.substring(pos + 3, pos + 4)
+                let cc4 = char_code(d4, 0)
+                if cc4 > 47 && cc4 < 58 { boundary_ok = false }
+            }
+            let mut left_ok = true
+            if start > 0 {
+                let cprev = text.substring(start - 1, start)
+                if _is_anchor_char(cprev) { left_ok = false }
+            }
+            if all_digit && boundary_ok && left_ok {
+                let tok = text.substring(start, pos + 3)
+                if type_of(seen[tok]) != "i64" {
+                    seen[tok] = 1
+                    out.push(tok)
+                }
+            }
+        }
+        from = start + 2
+    }
+    return out
+}
+
+// ─── JSON output helpers ─────────────────────────────────────────────────
+
+fn _json_escape(s: string) -> string {
+    let a = s.replace("\\", "\\\\")
+    let b = a.replace("\"", "\\\"")
+    let c = b.replace("\n", "\\n")
+    let d = c.replace("\r", "\\r")
+    let e = d.replace("\t", "\\t")
+    return e
+}
+
+fn _arr_to_json_strs(arr: array) -> string {
+    let mut s = "["
+    let mut i = 0
+    let n = len(arr)
+    while i < n {
+        if i > 0 { s = s + ", " }
+        s = s + "\"" + _json_escape(_str(arr[i])) + "\""
+        i = i + 1
+    }
+    s = s + "]"
+    return s
+}
+
+fn _atlas_to_json(a: map) -> string {
+    let mut s = "{"
+    s = s + "\"anchors_cited\": " + to_string(a["anchors_cited"]) + ", "
+    s = s + "\"anchors_resolved\": " + to_string(a["anchors_resolved"]) + ", "
+    s = s + "\"anchors_resolved_list\": " + _arr_to_json_strs(a["anchors_resolved_list"]) + ", "
+    s = s + "\"atlas_type_cites\": " + to_string(a["atlas_type_cites"])
+    s = s + "}"
+    return s
+}
+
+fn _truncate(s: string, n: i64) -> string {
+    let m = len(s)
+    if m < n + 1 { return s }
+    return s.substring(0, n)
+}
+
+fn _basename_stem(path: string) -> string {
+    let parts = path.split("/")
+    let last = _str(parts[len(parts) - 1])
+    let dot = last.index_of(".")
+    if dot < 0 { return last }
+    return last.substring(0, dot)
+}
+
+// ─── verify_one ──────────────────────────────────────────────────────────
+
+fn verify_one(path: string) -> string {
+    if !file_exists(path) {
+        return "{\"id\": \"" + _json_escape(_basename_stem(path)) + "\", \"decision\": \"ERROR\", \"error\": \"file not found\"}"
+    }
+    let text = _str(read_file(path))
+    let fm = parse_frontmatter(text)
+    let status = _str(fm["status"])
+    let id_field = _str(fm["id"])
+    let title = _str(fm["title"])
+    let domain = _str(fm["domain"])
+    let stem = _basename_stem(path)
+    let id_out = if len(id_field) > 0 { id_field } else { stem }
+
+    if status.starts_with("merged-to-H_") {
+        let merged_to = _str(fm["merged_to"])
+        let mt = if len(merged_to) > 0 { merged_to } else { status }
+        let mut j = "{"
+        j = j + "\"id\": \"" + _json_escape(id_out) + "\", "
+        j = j + "\"decision\": \"ALREADY_MERGED\", "
+        j = j + "\"merged_to\": \"" + _json_escape(mt) + "\", "
+        j = j + "\"title\": \"" + _json_escape(_truncate(title, 100)) + "\""
+        j = j + "}"
+        return j
+    }
+
+    let falsifiers = count_falsifiers(text)
+    let honest = count_honest(text)
+    let math_passes = math_check(text)
+    let atlas = atlas_signals(text)
+    let h_refs = _extract_h_refs(text)
+
+    let has_math = len(math_passes) > 0
+    let has_atlas = atlas["anchors_resolved"] > 0 || atlas["atlas_type_cites"] > 0
+    // thresholds are >=3 in Python; rewrite with > for hexa relop policy
+    let has_falsifier = falsifiers > 2
+    let has_honest = honest > 2
+    let has_cross = len(h_refs) > 1
+
+    let mut decision = "FAIL"
+    if has_math && has_atlas && has_falsifier && has_honest {
+        decision = "MATH_PASS_FULL"
+    } else if has_math && has_honest && has_cross {
+        decision = "PROMOTE_READY"
+    } else if has_math && (has_falsifier || has_atlas) {
+        if !has_falsifier {
+            decision = "MATH_PASS_NEEDS_F"
+        } else {
+            decision = "MATH_PASS_NEEDS_ANCHOR"
+        }
+    } else if has_atlas && has_falsifier {
+        decision = "ATLAS_PASS"
+    } else if has_math && has_honest {
+        decision = "MATH_HONEST_NO_CROSS"
+    } else if has_math {
+        decision = "WEAK_MATH_ONLY"
+    } else if has_falsifier {
+        decision = "WEAK_FALSIFIER_ONLY"
+    } else if has_honest && has_cross {
+        decision = "HONEST_CROSS_NO_MATH"
+    } else {
+        decision = "FAIL"
+    }
+
+    let mut h_refs_top8 = []
+    let mut i = 0
+    while i < len(h_refs) && i < 8 {
+        h_refs_top8.push(h_refs[i])
+        i = i + 1
+    }
+
+    let mut j = "{"
+    j = j + "\"id\": \"" + _json_escape(id_out) + "\", "
+    j = j + "\"decision\": \"" + _json_escape(decision) + "\", "
+    j = j + "\"title\": \"" + _json_escape(_truncate(title, 120)) + "\", "
+    j = j + "\"domain\": \"" + _json_escape(domain) + "\", "
+    j = j + "\"status\": \"" + _json_escape(status) + "\", "
+    j = j + "\"falsifiers\": " + to_string(falsifiers) + ", "
+    j = j + "\"honest_limits\": " + to_string(honest) + ", "
+    j = j + "\"math_passes\": " + _arr_to_json_strs(math_passes) + ", "
+    j = j + "\"math_domains\": [], "
+    j = j + "\"atlas\": " + _atlas_to_json(atlas) + ", "
+    j = j + "\"h_refs\": " + _arr_to_json_strs(h_refs_top8)
+    j = j + "}"
+    return j
+}
+
+fn main() {
+    let argv = args()
+    let n = len(argv)
+    if n < 3 {
+        println("usage: hexa run tool/verify_hc.hexa <hc_path1> [hc_path2 ...]")
+        println("hexa-only port of scripts/hc_verify/verify_hc.py (n=6 narrow checker)")
+        return
+    }
+    let mut i = 2
+    while i < n {
+        let p = _str(argv[i])
+        let line = verify_one(p)
+        println(line)
+        i = i + 1
+    }
+}

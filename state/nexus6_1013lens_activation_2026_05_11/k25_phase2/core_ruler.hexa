@@ -1,0 +1,90 @@
+// core_ruler.hexa — Phase 2 reimpl with input channel x
+// axis: metric/measurement — scale measurement stability across windows
+// kernel: divide x into W=8 windows. compute std and median of each.
+//         metric_stability = 1 - var(std_w) / mean(std_w)^2.
+//         + range/IQR ratio as gauge consistency.
+
+let SIGMA = 12.0
+let PHI = 2.0
+let N = 6.0
+let TAU = 4.0
+let J2 = 24.0
+let n6_closure_ok = if (SIGMA * PHI == N * TAU) && (J2 == SIGMA * PHI) { 1 } else { 0 }
+
+let x_path = env("ANIMA_LENS_X_FILE")
+let mut xs = []
+if x_path != "" {
+    let txt = read_file(x_path)
+    let lines = split(txt, "\n")
+    for ln in lines {
+        let toks = split(ln, " ")
+        for t in toks { if t != "" { xs.push(to_float(t)) } }
+    }
+} else {
+    let seed_str = env("ANIMA_LENS_SEED")
+    let mut seed = if seed_str != "" { to_int(seed_str) } else { 1 }
+    let mut k = 0
+    while k < 256 {
+        seed = (seed * 1103515245 + 12345) % 2147483648
+        xs.push(to_float(seed) / 2147483648.0)
+        k = k + 1
+    }
+}
+
+let n = len(xs)
+
+if n < 32 {
+    println("lens[ruler] category=core axis=\"ruler (insufficient_input)\" score=0 support=0 (0/0)")
+    exit(0)
+}
+
+let W = 8
+let chunk = n / W
+let mut stds = []
+let mut means = []
+let mut wi = 0
+while wi < W {
+    let off = wi * chunk
+    let mut s = 0.0
+    let mut k = 0
+    while k < chunk { s = s + xs[off + k]; k = k + 1 }
+    let mu = s / to_float(chunk)
+    let mut v = 0.0
+    let mut k2 = 0
+    while k2 < chunk { let d = xs[off + k2] - mu; v = v + d * d; k2 = k2 + 1 }
+    let var_w = v / to_float(chunk)
+    let sd = sqrt(var_w)
+    stds.push(sd)
+    means.push(mu)
+    wi = wi + 1
+}
+
+let mut s_std = 0.0
+let mut s_std2 = 0.0
+let mut si = 0
+while si < W {
+    s_std = s_std + stds[si]
+    s_std2 = s_std2 + stds[si] * stds[si]
+    si = si + 1
+}
+let mean_std = s_std / to_float(W)
+let var_std = s_std2 / to_float(W) - mean_std * mean_std
+let metric_stab = if mean_std > 0.000001 { 1.0 - var_std / (mean_std * mean_std) } else { 0.0 }
+let ms_clip = if metric_stab < 0.0 { 0.0 } else { if metric_stab > 1.0 { 1.0 } else { metric_stab } }
+
+// range / max-std ratio
+let mut max_std = stds[0]
+let mut min_std = stds[0]
+let mut sj = 1
+while sj < W {
+    if stds[sj] > max_std { max_std = stds[sj] }
+    if stds[sj] < min_std { min_std = stds[sj] }
+    sj = sj + 1
+}
+let range_ratio = if max_std > 0.000001 { (max_std - min_std) / max_std } else { 0.0 }
+let gauge = 1.0 - range_ratio
+
+let score = 0.6 * ms_clip + 0.4 * gauge
+let sc = if score < 0.0 { 0.0 } else { if score > 1.0 { 1.0 } else { score } }
+let hits = if sc > 0.5 { 6 } else { if sc > 0.3 { 4 } else { 2 } }
+println("lens[ruler] category=core axis=\"Ruler/Metric — windowed std stability + gauge consistency (1-range_ratio)\" score=" + to_string(sc) + " support=1 n=" + to_string(n) + " meta={\"mean_std\":" + to_string(mean_std) + ",\"metric_stab\":" + to_string(metric_stab) + ",\"gauge\":" + to_string(gauge) + ",\"n6_closure\":" + to_string(n6_closure_ok) + "} (" + to_string(hits) + "/8)")

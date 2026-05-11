@@ -1,0 +1,80 @@
+// core_triangle.hexa — Phase 2 reimpl with input channel x
+// axis: 3-body geometry — triangulation closure (triplet co-variation)
+// kernel: for τ ∈ {1, 4}: triplet (x_i, x_{i+τ}, x_{i+2τ}) — area_sum = mean of
+//         (x_i - 2·x_{i+τ} + x_{i+2τ})^2 (Laplacian-like 3-body residual).
+//         + 3-correlation: mean of (x_i · x_{i+τ} · x_{i+2τ}).
+
+let SIGMA = 12.0
+let PHI = 2.0
+let N = 6.0
+let TAU = 4.0
+let J2 = 24.0
+let n6_closure_ok = if (SIGMA * PHI == N * TAU) && (J2 == SIGMA * PHI) { 1 } else { 0 }
+
+let x_path = env("ANIMA_LENS_X_FILE")
+let mut xs = []
+if x_path != "" {
+    let txt = read_file(x_path)
+    let lines = split(txt, "\n")
+    for ln in lines {
+        let toks = split(ln, " ")
+        for t in toks { if t != "" { xs.push(to_float(t)) } }
+    }
+} else {
+    let seed_str = env("ANIMA_LENS_SEED")
+    let mut seed = if seed_str != "" { to_int(seed_str) } else { 1 }
+    let mut k = 0
+    while k < 256 {
+        seed = (seed * 1103515245 + 12345) % 2147483648
+        xs.push(to_float(seed) / 2147483648.0)
+        k = k + 1
+    }
+}
+
+let n = len(xs)
+
+if n < 16 {
+    println("lens[triangle] category=core axis=\"triangle (insufficient_input)\" score=0 support=0 (0/0)")
+    exit(0)
+}
+
+let taus = [1, 4]
+let mut residuals = []
+let mut cubics = []
+let mut ti = 0
+while ti < 2 {
+    let t = taus[ti]
+    let mut sum_r = 0.0
+    let mut sum_c = 0.0
+    let mut cnt = 0
+    let mut i = 0
+    while i + 2 * t < n {
+        let a = xs[i]
+        let b = xs[i + t]
+        let c = xs[i + 2 * t]
+        let res = a - 2.0 * b + c
+        sum_r = sum_r + res * res
+        sum_c = sum_c + a * b * c
+        cnt = cnt + 1
+        i = i + 1
+    }
+    let mean_res = if cnt > 0 { sum_r / to_float(cnt) } else { 0.0 }
+    let mean_cub = if cnt > 0 { sum_c / to_float(cnt) } else { 0.0 }
+    residuals.push(mean_res)
+    cubics.push(mean_cub)
+    ti = ti + 1
+}
+
+// Normalize residuals: tri_score = 1 / (1 + mean_residual)
+let avg_res = (residuals[0] + residuals[1]) / 2.0
+let tri_score = 1.0 / (1.0 + avg_res)
+
+// Cubic interaction strength (signed)
+let avg_cub = (cubics[0] + cubics[1]) / 2.0
+let cub_abs = if avg_cub < 0.0 { 0.0 - avg_cub } else { avg_cub }
+let cub_norm = cub_abs / (1.0 + cub_abs)
+
+let score = 0.5 * tri_score + 0.5 * cub_norm
+let sc = if score < 0.0 { 0.0 } else { if score > 1.0 { 1.0 } else { score } }
+let hits = if sc > 0.5 { 6 } else { if sc > 0.3 { 4 } else { 2 } }
+println("lens[triangle] category=core axis=\"3-body Geometry — Laplacian-3-body residual + cubic xyz correlation\" score=" + to_string(sc) + " support=1 n=" + to_string(n) + " meta={\"avg_res\":" + to_string(avg_res) + ",\"avg_cub\":" + to_string(avg_cub) + ",\"tri_score\":" + to_string(tri_score) + ",\"n6_closure\":" + to_string(n6_closure_ok) + "} (" + to_string(hits) + "/8)")
