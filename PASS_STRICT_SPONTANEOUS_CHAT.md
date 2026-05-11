@@ -2497,3 +2497,12 @@ std_greedy 4/5 (no improve over Phase 1A.1) → HF promote 가치 없음. Phase 
 | 🚀 | **prefix-tuning over full SFT** | exotic | $0.10 | 1h | minimal-param fix attempt |
 
 ---
+
+
+## §26: volitional speak() brainstorm (2026-05-12)
+
+사용자 reframe: timer 강제 발화 → substrate 내부 의지 signal 기반 자율 발화. 22 categories × 220+ options saturation.
+
+- doc: [docs/anima_volitional_speak_brainstorm_2026_05_12.md](docs/anima_volitional_speak_brainstorm_2026_05_12.md)
+- key reframe: will = internal signal (volition), mouth = external function (speak)
+- V0 prototype path: A1 hidden-norm + A2 entropy + B1 τ=0.7 + C9 template seed + H1 refractory
