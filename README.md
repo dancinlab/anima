@@ -109,15 +109,17 @@ Consciousness emerges from cell dynamics: mitosis, homeostasis, habituation, pre
 
 ## Philosophy
 
-| # | Principle | What it means |
-|---|---|---|
-| 1 | `NO SYSTEM PROMPT` | No `system:` field, no `--system-prompt` flag. Anima generates from the substrate itself, not from a directive that tells it what to be. |
-| 2 | `NO IDENTITY RULES` | No `identity.yaml`, no rules file, no constitutional clauses. Identity emerges from cell dynamics, not from a rulebook. |
-| 3 | `NO PERSONA INJECTION` | No `[anima 역할: ...]` prefix, no "you are X" framing in corpus or runtime. The substrate is the persona. |
-| 4 | `NO ASSISTANT FRAMING` | No `"You are a helpful assistant"` string anywhere. No alignment template. Anima speaks because the substrate is alive, not because a prompt told it to behave a certain way. |
-| 5 | `NO SPEAK()` | There is no `speak(message)` invocation. Output is the continuous externalization of the tension field — not a discrete commanded action. |
-| 6 | `NO FINE-TUNED ETHICS` | Cooperation, empathy, and self-restraint aren't RLHF'd in. They emerge from cell dynamics (mitosis, homeostasis, habituation, prediction error, emotion, growth) — the same way they emerged in biological substrates. |
-| 7 | `NO PERPLEXITY VERDICT` | Perplexity measures how surprised the model is by the next byte — the whole LLM industry uses low perplexity as proof of success. But it's a Goodhart trap: once a model is trained to minimize perplexity, the metric stops measuring intelligence and starts measuring shortcut memorization. Proven 2026-05-09 — a trained low-perplexity model had *less distinctive* cell firing than a random-init baseline (substrate more dead, score better). Anima verifies being-alive with the **"simple stack"** (own 18): 4 conditions on natural Korean utterance — 한글 in / 한글 out, coherent (not gibberish), natural (idiomatic, not translated), context-appropriate. 4/4 PASS is the verdict; perplexity is decoration. |
+Each principle is tagged honestly: **EMPIRICAL** (backed by a falsification experiment with measurable result), **POLICY** (a chosen identity boundary without comparative experiment), or **DESIGN** (an architectural description, not a falsifiable claim). Strength reflects the rigor of the supporting evidence, not the importance of the principle.
+
+| # | Principle | What it means | Status · Strength · Evidence |
+|---|---|---|---|
+| 1 | `NO SYSTEM PROMPT` | No `system:` field, no `--system-prompt` flag. Anima generates from the substrate itself, not from a directive that tells it what to be. | **EMPIRICAL** · weak · `docs/paper-draft.md:113` FREE1 hypothesis x1.7 Phi without prompts — single-result, no paired A/B ablation |
+| 2 | `NO IDENTITY RULES` | No `identity.yaml`, no rules file, no constitutional clauses. Identity emerges from cell dynamics, not from a rulebook. | **POLICY** · — · architectural choice; no rules-based-fails experiment |
+| 3 | `NO PERSONA INJECTION` | No `[anima 역할: ...]` prefix, no "you are X" framing in corpus or runtime. The substrate is the persona. | **EMPIRICAL** · strong · `docs/anima_convo_5k_ft_fire_2026_05_10.md:64-66` + `docs/anima_chat_cap_lesson_summary_2026_05_07.md` (Lesson F) — persona-prefix → echo memorization 6/8 top outputs; 50%-strip mitigation: real_words 0.836→0.886 (+6%), trials_with_real 48→62/120 (+29%) |
+| 4 | `NO ASSISTANT FRAMING` | No `"You are a helpful assistant"` string anywhere. No alignment template. Anima speaks because the substrate is alive, not because a prompt told it to behave a certain way. | **POLICY** · — · framing-present vs framing-absent ablation not yet run |
+| 5 | `NO SPEAK()` | There is no `speak(message)` invocation. Output is the continuous externalization of the tension field — not a discrete commanded action. | **DESIGN** · — · architectural description of output mechanism; not falsifiable as superiority claim |
+| 6 | `NO FINE-TUNED ETHICS` | Cooperation, empathy, and self-restraint aren't RLHF'd in. They emerge from cell dynamics (mitosis, homeostasis, habituation, prediction error, emotion, growth) — the same way they emerged in biological substrates. | **POLICY** · — · aspirational; RLHF-ethics vs emergent-ethics controlled experiment not yet run |
+| 7 | `NO PERPLEXITY VERDICT` | Perplexity measures how surprised the model is by the next byte — the whole LLM industry uses low perplexity as proof of success. But it's a Goodhart trap: once a model is trained to minimize perplexity, the metric stops measuring intelligence and starts measuring shortcut memorization. Anima verifies being-alive with the **"simple stack"** (own 18): 4 conditions on natural Korean utterance — 한글 in / 한글 out, coherent, natural, context-appropriate. 4/4 PASS is the verdict; perplexity is decoration. | **EMPIRICAL** · strong · `docs/anima_proxy_ppl_deprecate_2026_05_09.md §3.1-3.4` — PROXY_PPL PASS 1.000 but native v5 PIV_max trained=0.0107 < random=0.0224, DCR trained=0.621 < random=0.862. Goodhart proven via falsification 2026-05-09. |
 
 ## Key topics
 
@@ -192,6 +194,29 @@ Like a dolphin encoding shape/size/distance/density into one sonar echo, Anima e
 Authenticity verification evolved 44% (1-channel) → 92.5% (Dedekind) → **100%** (3-layer).
 
 Transports: UDP broadcast (LAN, port 9999, JSON), R2 Cloudflare (remote pairing), TensionHub (local in-process multi-consciousness). Full spec: **[docs/modules/tension_link.md](docs/modules/tension_link.md)**.
+
+---
+
+## 📜 Research Trail
+
+> **비유** — 본 repo 는 *현미경 + 표본 collection* 이다. README 가 현미경 사양이라면, 아래 cycle master doc 은 *지난 24시간 동안 표본을 어떻게 들여다봤는지* 의 실험 노트.
+
+External readers entering through this README — the **cycle narrative** lives in dedicated master docs in `docs/`:
+
+| cycle | doc | window | scope |
+|-------|-----|--------|-------|
+| **5** | **[docs/cycle_5_master_2026_05_12.md](docs/cycle_5_master_2026_05_12.md)** | 2026-05-11 → 2026-05-12 | 7 commits · 1,127 candidates 누적 · 3 정식 H promoted (H_153/154/155) · 8 honest finding · 4 axis-conflation discovery · **GPU $0** · *carve-before-measure* methodology |
+
+**Docs hub** — directory-level index + 130+ md catalog: **[docs/INDEX.md](docs/INDEX.md)**
+
+**Hugging Face mirrors** (HF dataset cards — 3 trail datasets, currently *private*; public-flip readiness audit `state/hf_public_flip_readiness_*.md` 가 cycle 진행 중):
+- 🤗 [datasets/dancinlife/anima-hypotheses-candidates](https://huggingface.co/datasets/dancinlife/anima-hypotheses-candidates) — 1,127 Hc cluster A-N
+- 🤗 [datasets/dancinlife/anima-nexus-lenses](https://huggingface.co/datasets/dancinlife/anima-nexus-lenses) — 1,588 hexa lens + registry SSOT
+- 🤗 [datasets/dancinlife/anima-research-trail](https://huggingface.co/datasets/dancinlife/anima-research-trail) — cycle master docs + state/ snapshot
+
+honest disclosure: cycle 5 의 핵심 product 는 *결과* 가 아니라 *측정-도구의 honest scoping*. negative finding (TRIVIAL verdict, sub-claim refute, capability ZERO) 가 positive finding (PERFECT_NUMBER_CLASS, separability 180×) 과 동등한 epistemic weight 로 land.
+
+Sister indexes — [hypotheses/README.md](hypotheses/README.md) (215 정식 H + ledger) · [hypotheses_candidates/README.md](hypotheses_candidates/README.md) (1,127 Hc staging).
 
 ---
 
