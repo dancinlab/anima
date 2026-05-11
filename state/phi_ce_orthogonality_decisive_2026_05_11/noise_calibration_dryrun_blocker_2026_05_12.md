@@ -116,6 +116,11 @@ ref: silent-failure-enforcement Class 1 (doc/audit/silent_failure_enforcement_au
 - 권고: P=100M scale CLM trainer (Chinchilla 20× token, deterministic seed)
   별도 implementation cycle — 본 calibration 의 *sub-prereq* (calibration 의
   prereq).
+- **B5 status update (2026-05-12, cycle 6 #P)**: B5 spec + Phase 0 scaffolding
+  landed at `state/clm_ce_4scale_trainer_2026_05_12/spec.md` (3-scale base
+  {1M, 10M, 100M} + 1B deferred lane). Status transitioned **BLOCKED →
+  RESOLVED-SPEC**. Actual training pipeline implementation (Python script +
+  RunPod orchestrator) is cycle 7+ scope, cost $210-600 dual-seed 3-scale.
 
 ## 3. What would have happened if executed (estimate)
 

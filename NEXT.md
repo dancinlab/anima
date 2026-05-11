@@ -156,3 +156,36 @@
 ## Lock policy (사용자 directive 2026-05-11)
 
 모든 cycle 5 작업 — chflags +uchg/+schg/chattr +i 절대 적용 금지. unlock 한 파일 재잠금 금지. memory: `feedback_no_relock.md` 정합.
+
+---
+
+## 🔄 cycle 6 status (2026-05-12 진행 중)
+
+cycle 5 master doc (`docs/cycle_5_master_2026_05_12.md`, 517 lines, 11 sections, 29 KB) land — 외부 reader 진입점. cycle 5 §5 (master doc + lens registry + carve land + Φ×CE noise calib prereq) 종결, cycle 6 *actual measurement* 단계 진입.
+
+### cycle 6 queue (5 items, cycle 5 carving 결과의 actual-run scaffold)
+
+| # | item | prereq | cost | value |
+|---|------|--------|-----:|------:|
+| 1 | **B1 fix** (`tool/anima_phi_star.hexa`) | — | $0 (CPU) | high (engine cleanliness) |
+| 2 | **B5 trainer** (CE-track CLM 4-scale) | `state/clm_ce_4scale_trainer_*/` spec | $50-150 | high (CE-track engine land) |
+| 3 | **lens reimpl Phase 1** (K=10 actual reimpl) | `state/nexus6_*/k10_reimpl/` + `lens_channel_reimpl_spec_2026_05_12.md` | $0 (CPU) | very high (TRIVIAL caveat 해소) |
+| 4 | **HF flip audit** (`state/hf_public_flip_readiness_*.md`) | 3 dataset visibility audit | $0 | med (external reader access) |
+| 5 | **docs INDEX + README discoverability** ✅ *본 cycle 6 #S* | — | $0 | med (entry point 강화) |
+
+### Cross-link
+
+- **cycle 5 master doc**: [docs/cycle_5_master_2026_05_12.md](docs/cycle_5_master_2026_05_12.md) — TL;DR / Timeline / 8 honest finding / 4 axis-conflation / Cycle 6 §8 queue 출처
+- **docs hub**: [docs/INDEX.md](docs/INDEX.md) — 1,200+ doc 의 카테고리 anchor
+- **HF mirrors** (private, public-flip audit cycle 6 #R 진행 중):
+  - 🤗 `datasets/dancinlife/anima-hypotheses-candidates`
+  - 🤗 `datasets/dancinlife/anima-nexus-lenses`
+  - 🤗 `datasets/dancinlife/anima-research-trail`
+
+### cycle 5 → cycle 6 carry-over
+
+cycle 5 §8 (master doc) 의 5-item Pending Action Items 가 cycle 6 actual-run scaffold 로 wire 됨. cycle 6 는 *measurement only* 진입 — spec/plan 은 cycle 5 §5 에서 land 완료.
+
+- L1 critical (Φ×CE noise floor): noise_calibration_prereq Gate A/B/C 통과 binding
+- Hc_586 SUSPENDED: lens reimpl Phase 1 verdict 후 resume 검토
+- L12 BINDING (formula-search): "narrow-formula uniqueness" 만 잔존, vocabulary-level 보편성 refuted

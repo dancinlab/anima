@@ -80,6 +80,8 @@ For 15-cell measurement {(Φ_i, CE_i)} (P=100M ceiling per §5.7; 20-cell with P
 5. §2.3 decision matrix 적용 → Hc_040 vs Hc_024 verdict 확정
 6. cross-check: synthetic simulation harness (Model A vs Model B fingerprint) 와 좌표 비교
 
+CE-track engine spec: state/clm_ce_4scale_trainer_2026_05_12/spec.md (B5 RESOLVED-SPEC, cycle 6 #P)
+
 ## 5.7 Cost ceiling rationale (P=100M cap)
 
 **Decision (2026-05-12)**: P=1B 제거 → 15-cell grid (5 N × 3 P). NEXT.md cycle 5 #1
