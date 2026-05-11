@@ -2,7 +2,7 @@
 
 `hypotheses_candidates/Hc_*.md` 의 수학·물리적 검증 → `hypotheses/H_*.md` 승격 파이프라인. atlas.n6 anchor cross-check + n=6 primitives identity 검증.
 
-> **⚠️ Python 정책 (R37/AN13/L3-PY 2026-04-18)**: `.gitignore` 가 `**/*.py` 전면 차단. `verify_hc.py` / `batch_status_update.py` 는 **untracked transient** 상태 (commit 차단). 영구 보존하려면 `.hexa` 로 포팅 필요 (TODO). 현재는 working dir 에 두고 cycle 단위로 재실행 — code 가 짧으므로 lost-and-rewritten 비용 낮음. cache (jsonl/txt) 은 commit 가능 + 검증 trace 보존.
+> **Python 정책 (2026-05-12 update)**: 이전 `R37/AN13/L3-PY` (2026-04-18) Python 전면 차단 정책은 **scrub** 됨 (사용자 directive 2026-05-12). 현재 `verify_hc.py` / `batch_status_update.py` 둘 다 tracked + commit OK. 장기적으로 `.hexa` 포팅 권장하나 단기 transient 도구는 `.py` 그대로 유지.
 
 ## 구조
 

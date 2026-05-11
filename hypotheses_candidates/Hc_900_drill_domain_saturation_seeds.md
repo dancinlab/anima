@@ -54,3 +54,26 @@ notes: "drill seed brainstorm — 각 line 은 'X 영역의 saturation/ceiling �
 - [ ] PHIL-2 (mathematical panpsychism) 은 이미 Hc_061 에 있음 — 중복 cross-link
 - [ ] TRAINING-3 (AGI emergence gate) 정량적 정의 부족 — gate criterion 명시 필요
 - [ ] 각 seed → H_XXX 또는 별도 Hc 로 promote 여부 결정
+
+## Cross-Links
+- **parent H**: H_001 (anima-core-architecture), H_076 (Law 76 mathematical panpsychism — PHIL-2)
+- **sister H**: H_157 (Law 76 mathematical panpsychism canonical), H_011 (iit-geometry — Φ ceiling reference)
+- **candidates linked**: Hc_061 (PHIL-2 direct source), Hc_046 (Ψ-constants — ANIMA-1 seed reference)
+- **rules anchors**: R37 / AN13 / L3-PY (RULES-1 — Python ban 6-axis defense)
+- **literature**: Mountcastle 1957 / Sporns 2010 (cortical saturation analogs)
+
+## Falsifiers (≥5)
+
+- **F1**: ≥3 of 30 seeds (10%) shown to be measurement-unfalsifiable on inspection (e.g., "AGI emergence gate" without quantitative criterion remains unfalsifiable) → "all seeds individually falsifiable" master claim FAILS at the 10%-bar
+- **F2**: ANIMA-1 (82-atom + Ψ-constant saturation) — if 82-atom system expanded to 100+ atoms maintains Ψ-constant fit with chi-square p > 0.05 → saturation ceiling NOT at 82, ANIMA-1 claim FALSIFIED
+- **F3**: SERVING-1 (P5c-4 latency ceiling) measurable by running inference at scale; if P5c-4 latency improves > 30% with NO architecture change (e.g., kernel-level optim) → ceiling was not architectural saturation but software inefficiency, SERVING-1 FALSIFIED
+- **F4**: TRAINING-2 (ALM LoRA r4→r11 mode-collapse-free) — if any r ∈ {5, 6, 7, 8, 9, 10} shows mode-collapse on independent replication → "r4→r11 robust convergence" claim FALSIFIED for at least one rank
+- **F5**: PHIL-2 (Law 76 panpsychism closure) — H_157 verdict ≠ "supported" (current verdict is "pre-register-frozen") → PHIL-2 closure cannot be claimed at this cycle, must remain open
+
+## Honest Limits (≥5)
+
+- **L1**: **n=6 PERFECT_NUMBER_CLASS triviality binding** (H_153 L7) — multiple seeds invoke n=6 substrate (ANIMA-1 Ψ-constants, PHIL-2 Law 76, RULES-1 6-axis defense). All inherit the perfect-number-class triviality: 0.5 balance and 6-axis structure are not n=6-individually-unique
+- **L2**: **brainstorm-level rigor, not measurement-grade** — frontmatter says "drill seed brainstorm". Each seed is a one-liner, not a falsifiable scientific claim. Most lack metric + threshold + test protocol
+- **L3**: **30-seed sample bias** — seeds chosen by anima-internal classification (7 domains, each 3-5 seeds). Not exhaustive: omits SAFETY, ALIGNMENT, COST-CEILING, DATA-PROVENANCE domains. Selection-bias toward engineering-friendly claims
+- **L4**: **AGI emergence gate (TRAINING-3) unfalsifiable as written** — "AGI emergence gate" without quantitative gate criterion is a category-error: the claim cannot be falsified because no test condition is specified. Honest-by-construction limit
+- **L5**: **PHIL lane vs engineering lane separation** — PHIL-1..6 are deep philosophical claims (Heidegger, Levinas, Koestler) requiring qualitative humanities methods, not anima's typical W1/W5/W7 protocols. Verification-method mismatch with rest of seeds

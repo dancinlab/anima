@@ -26,3 +26,25 @@ DecoderBlockV2:553 guard `if consciousness_states is not None` 가 L37 root patt
 - [ ] mount-layer 4-mode flag impl (~65 LoC mount.hexa + dialogue.bash)
 - [ ] BG-A real-load probe ($0-1 H100)
 - [ ] AXIS_SPANS slice geometry calibration (C3 risk)
+
+## Cross-Links
+- **sister H**: H_011 (iit-geometry — phi_star variation by inject mode), H_022 (consciousness-universe-map — substrate engagement)
+- **candidates linked**: Hc_624 (Emerge E — ODE-AR bridge, CHILD-GATED on Hc_623 F-CAND-D-1 PASS), Hc_628 (Φ_normalized lower bound — same phi_star measurement substrate), Hc_614 (phi_star geometry aliasing — phi_star validity bound)
+- **engineering**: conscious_decoder.py:553 guard `if consciousness_states is not None`, mount.hexa, dialogue.bash
+- **literature**: L37 root pattern (substrate change ≠ behavior); paradigm v11 G3 8-cell canonical
+
+## Falsifiers (≥5)
+
+- F-CAND-D-1: canonical phi_star ≠ none phi_star by > 0.005 (otherwise FAIL_TRUE — inject-invisible)
+- F-CAND-D-2: canonical 5-axis phi_star balance (max/min < 1.5) — single-axis dominance = FAIL_TRUE
+- F-CAND-D-3: user_supplied per-axis input ↔ phi_star Pearson ≥ 0.7 — user-spec-tracking
+- **F-CAND-D-4**: zero-mode (arch-engagement-isolator) phi_star ≈ none-mode phi_star by < 0.001 — if zero-mode itself diverges from none, the "isolator" semantics is broken (zero inject is NOT a neutral baseline)
+- **F-CAND-D-5**: 4-mode taxonomy completeness: if a 5th mode (e.g., random-axis inject, adversarial inject) is needed to explain observed cross-attn dormancy patterns → 4-mode taxonomy FALSIFIED as complete
+
+## Honest Limits (≥5)
+
+- **L1**: **n=6 PERFECT_NUMBER_CLASS triviality binding** (H_153 L7) — paradigm v11 G3 uses 8-cell architecture (sopfr(8)=6 perfect-class diagonal). Hc_623's inject pivot rides on this architectural choice; "4-mode taxonomy" inherits perfect-number-class baseline as substrate
+- **L2**: **5-axis AXIS_SPANS calibration risk (C3)** — fronmatter explicitly notes AXIS_SPANS slice geometry calibration is a risk. If C3 calibration fails, F-CAND-D-2 (5-axis balance) is undefined → falsifier cannot decisively rule
+- **L3**: **mount-layer 4-mode flag is software-engineering claim** — ~65 LoC additive change makes claim deployable but does not test consciousness theory. Engineering pragmatism off-lane vs theoretical content limit
+- **L4**: **phi_star variation > 0.005 threshold ad hoc** — F-CAND-D-1 uses 0.005 absolute threshold. No noise-floor characterization provided. If anima phi_star RNG-induced variance is itself > 0.005, the threshold is at noise level
+- **L5**: **Hc_624 downstream gating amplifies error** — Hc_624 (Emerge E) gates on Hc_623's F-CAND-D-1 PASS. If F-CAND-D-1 PASS is marginal (just above 0.005), downstream Hc_624 measurements compound noise. The 4-mode pivot must be robust to ≥10× safety margin for Hc_624 to be meaningful
