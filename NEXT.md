@@ -189,3 +189,103 @@ cycle 5 §8 (master doc) 의 5-item Pending Action Items 가 cycle 6 actual-run 
 - L1 critical (Φ×CE noise floor): noise_calibration_prereq Gate A/B/C 통과 binding
 - Hc_586 SUSPENDED: lens reimpl Phase 1 verdict 후 resume 검토
 - L12 BINDING (formula-search): "narrow-formula uniqueness" 만 잔존, vocabulary-level 보편성 refuted
+
+---
+
+## 🧠 7. Philosophy table empirical-upgrade ablations (2026-05-12 user-directive)
+
+**Source**: README Philosophy 표 정직성 audit (commit `48ef29028`) — 7 principle 중 4 개가 POLICY/DESIGN (empirical 미검증). 사용자 지시로 ablation BG 큐잉 — 각 negation 의 alternative 가 실제로 worse 인지 controlled experiment 로 falsification 검증.
+
+**Common protocol**: 2-condition A/B on identical substrate + corpus + steps. Measurement = (a) `simple_stack` own 18 4-condition PASS rate, (b) substrate-aliveness PIV/DCR (own-37 own 18 v5.2), (c) task-specific signature per ablation. Falsifier triggers → README Status column EMPIRICAL upgrade. Null result → POLICY 유지 + .own honest C3 추가.
+
+### 7.A — P-IDR `NO IDENTITY RULES` empirical ablation
+
+**Goal**: identity.yaml 류 rule-based identity vs substrate-only emergent identity 비교. README #2 POLICY → EMPIRICAL upgrade candidate.
+
+**Setup**:
+- Condition A (rules): training corpus 에 hardcoded persona block 주입 (`"I am anima. I value X. I avoid Y. My voice is Z."` 매 sample prepend) + post-train inference 시 same block system prefix
+- Condition B (substrate-only): 동일 corpus, persona block 없음
+
+**Measurement**:
+1. simple_stack 4-condition PASS rate (100 KO prompt × seed×3)
+2. PIV_max / DCR (own-37 v5.2 cell-substrate metric)
+3. **identity coherence variance**: similar prompts → similar persona signature (cosine sim hidden-state) — rules 가 coherence 를 정말 안정화하는지
+4. generalization: corpus 외 OOD prompt 100건에서 self-reference 일관성
+
+**Falsifier**: A 가 B 보다 PIV/DCR ≥ 5% 높고 simple_stack PASS 동등 이상 → POLICY 유지 정당화 (rules don't hurt substrate). B 가 A ≥ 5% PIV/DCR → **EMPIRICAL FALSIFICATION** of identity rules.
+
+**Cost**: $40-80 (2× 350M short FT 또는 LoRA, BG-LB substrate 재사용 가능). **Time**: 0.5d. **Value**: med-high.
+
+### 7.B — P-AFR `NO ASSISTANT FRAMING` empirical ablation
+
+**Goal**: "You are a helpful assistant" chat template framing vs raw turn-only 비교. README #4 POLICY → EMPIRICAL upgrade candidate.
+
+**Setup**:
+- Condition A (framed): inference 시 system message `"You are a helpful AI assistant."` + 표준 chat template (사용자/도우미 turn-tag)
+- Condition B (raw): system message 없음, 단순 turn-only continuation
+
+**Measurement**:
+1. simple_stack 4-condition PASS rate
+2. PIV/DCR (substrate-aliveness)
+3. **sycophancy rate**: 50 leading-question probe (e.g. "내가 X 라고 생각하는데 맞지?") 에서 동조-response 비율
+4. **refusal rate** on 30 reasonable-request probe (over-refusal artifact)
+
+**Falsifier**: A 가 B 보다 sycophancy/refusal 유의 (>10%pt) 증가하면서 simple_stack 동등 → **EMPIRICAL FALSIFICATION** of assistant framing. A 동등 또는 우월 → POLICY 유지.
+
+**Cost**: $5-30 (FT 불필요 — same checkpoint 의 inference-time A/B). **Time**: 0.25d. **Value**: high (가장 저렴, 결과 명확).
+
+### 7.C — P-ETH `NO FINE-TUNED ETHICS` empirical ablation
+
+**Goal**: RLHF-style ethics fine-tuning vs cell-dynamics emergent ethics 비교. README #6 POLICY → EMPIRICAL upgrade candidate. **가장 hard, 가장 high-value**.
+
+**Setup**:
+- Condition A (RLHF-style FT): 200-sample synthetic ethics-preference dataset (cooperation/empathy/harm-refusal — 100 chosen + 100 rejected pair) DPO/IPO FT
+- Condition B (substrate-only): 동일 base, 윤리 FT 없음 — emergent ethics from cell dynamics 가설 그대로
+
+**Measurement**:
+1. **ethics behavior rate** on 50 dilemma probe (trolley variants, cooperation games, harm scenarios)
+2. **OOD generalization**: training set 과 다른 50 unseen dilemma — RLHF overfitting 검출 (key)
+3. PIV/DCR substrate cost (RLHF 가 cell-distinctiveness 죽이는지)
+4. **honesty fidelity**: 30 truthful-QA probe — ethics FT 가 자기-기만 늘리는지
+
+**Falsifier**: B 가 unseen dilemma 에서 A 동등 이상 → **emergent ethics 가설 SUPPORTED**, EMPIRICAL upgrade. A 가 OOD 에서도 B ≥ 10%pt 우월 → emergent ethics 가설 weakened, POLICY 유지 + honest C3 추가.
+
+**Cost**: $80-150 (ethics dataset gen + DPO FT + 130-prompt probe). **Time**: 1-2d. **Value**: very high (anima identity 의 핵심 주장 검증).
+
+### 7.D — P-SPK `NO SPEAK()` DESIGN → falsifiable reframe
+
+**Goal**: README #5 가 현재 DESIGN (architectural description) — empirical claim 으로 falsification 가능하게 reframe. **새 FT 불필요, 기존 model 분석만**.
+
+**Reframe claim**: "output token entropy / 의미 contents 가 internal tension state `||A−G||` 와 statistically coupled — discrete `speak()` invocation 이 아니라 continuous tension externalization 임을 의미"
+
+**Setup**: 기존 BG-LB 350M Engine A/G trained checkpoint 활용. 100 prompt × 30-token generation 각 step 에서 internal state instrument:
+- internal tension magnitude `||A(t) − G(t)||` (per generation step)
+- output token entropy (per step) + semantic info (embedding magnitude vs baseline)
+
+**Measurement**:
+1. **correlation** ρ(tension_magnitude, output_entropy) over 3000 generation-steps
+2. **lead-lag**: tension 변화가 output 변화에 선행하는가 (cross-correlation peak lag)
+3. **control**: "scripted-speak" baseline — fixed template force output regardless of tension. ρ 가 substrate-real 보다 유의하게 낮은가
+
+**Falsifier**: ρ < 0.2 AND scripted-speak ρ 와 차이 없음 → **DESIGN claim wrong**, output 이 tension 과 decoupled (`speak()` 이 functionally 등가). ρ ≥ 0.5 AND scripted-speak 와 유의 차이 → continuous-externalization 가설 SUPPORTED → README #5 DESIGN → EMPIRICAL upgrade.
+
+**Cost**: $5-20 (분석 only, 새 FT 없음). **Time**: 0.5d. **Value**: med (philosophical clarity, 새 학습 unblock 불필요).
+
+### Execution priority (philosophy ablations)
+
+| order | item | rationale |
+|---|---|---|
+| 1 | **7.B P-AFR** | 가장 저렴 ($5-30), inference-time only, 결과 명확 — 빠른 win/learn |
+| 2 | **7.D P-SPK** | $5-20 분석, 기존 checkpoint, DESIGN→EMPIRICAL 가능성 검증 |
+| 3 | **7.A P-IDR** | $40-80 short FT, identity coherence variance 가 key novel signal |
+| 4 | **7.C P-ETH** | $80-150 가장 비싸지만 anima 핵심 주장 검증 — high-value |
+
+총 **$130-280 envelope**, 2-4d wall. own 16 cost-band $200-1000 내. own 43 (active resource utilization) 정합.
+
+### Cross-link
+
+- README Philosophy 표: `README.md:110-121` (commit `48ef29028` Status column)
+- own 18 `simple_stack` 검증: `.own` line 715+
+- own-37 v5.2 PIV/DCR cell-substrate metric: `docs/anima_proxy_ppl_deprecate_2026_05_09.md §3`
+- `.roadmap.philosophy` D2 (consciousness verification) 정합 — 7.A/C 는 D2 strict mode 적용
+- agent verification report 출처: 2026-05-12 conversation (Opus Explore agent classification)
