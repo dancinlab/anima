@@ -7,6 +7,17 @@
 //   AN11(b)-orthogonal consciousness signal (information integration capacity).
 //   Migration #14 (paradigm v11 measurement-axis 3rd actual pilot, after B-ToM + MCCA).
 //
+// NAMING (2026-05-12 refactor — see state/phi_star_naming_refactor_2026_05_12.md)
+//   axis: phi_star_iit_proxy        // single-model IIT-φ proxy via cov-MIP
+//   llm:  mistral-7b-forward        // Mistral-7B-v0.3 forward (default ANIMA_BASE)
+//                                    // — was "llm: none" in older spec wording; corrected.
+//   distinct_from:
+//     - nexus_lens_score             // /Users/ghost/core/nexus/lenses/*.hexa
+//                                    //   (1,588 multi-lens cross-validation, CPU only)
+//     - phi_star_cell_engine         // (TBD / not-yet-implemented) cell-count N-sweep
+//                                    //   engine required for H_080 / Hc_040 N×P grid.
+//   back-compat: filename + emitted JSON schema 'anima/phi_star/1' UNCHANGED.
+//
 // METHOD (approximation)
 //   1. Forward 16 templates × N_PROBES, collect last-layer hidden states (B, T, H)
 //   2. Reduce to byte-weighted-mean per probe → (N, H)

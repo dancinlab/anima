@@ -2,18 +2,18 @@
 
 본 파일은 cycle 4 §5 land (commit `68f438cc6`) 직후 저장된 다음 사이클 작업 큐. 5 cycle 누적 결과 1127 candidates + 3 정식 H_XXX + 6 expanded H + 6 state/ experiment dirs + 7 commits.
 
-## 🧪 1. anima Φ★ engine + 20-cell Φ×CE 실측
+## 🧪 1. phi_star split-engine + 15-cell Φ×CE 실측
 
-**Goal**: H_080 primary tension decisive 실제 측정. Hc_040 (Φ⊥CE, Law 1040) vs Hc_024 (Φ × CE^α = K, NOBEL-1) — 두 generative model 의 statistical fingerprint 분리도 180×/206× 확보됨. anima Φ★ engine + 20-cell grid + 64 dual-seed 로 실측 후 A/B signature 매칭.
+**Goal**: H_080 primary tension decisive 실제 측정. Hc_040 (Φ⊥CE, Law 1040) vs Hc_024 (Φ × CE^α = K, NOBEL-1) — 두 generative model 의 statistical fingerprint 분리도 180×/206× 확보됨. **split-engine** path: **phi_star_iit_proxy** (current `tool/anima_phi_star.hexa`) + **phi_star_cell_engine** (TBD, N-sweep) + **CLM training pipeline** (CE-track) → 15-cell grid + 64 dual-seed 로 실측 후 A/B signature 매칭. Engine naming refactor 2026-05-12 → `state/phi_star_naming_refactor_2026_05_12.md`.
 
-**Spec ready**: `state/phi_ce_orthogonality_decisive_2026_05_11/{spec.md, harness.py, results.json, verdict.md}`
+**Spec ready**: `state/phi_ce_orthogonality_decisive_2026_05_11/{spec.md, harness.py, results.json, verdict.md, spec_audit_2026_05_11.md}`
 
 **Protocol**:
-- Grid: N ∈ {16, 32, 64, 128, 256} × P ∈ {1M, 10M, 100M, 1B} = 20 cells
+- Grid: N ∈ {16, 32, 64, 128, 256} × P ∈ {1M, 10M, 100M} = 15 cells (P=100M ceiling, see spec.md §5.7; P=1B deferred extension lane)
 - Replication: 64 dual-seed twin (Hc_604) per cell
 - 사전 noise floor calibration (1 cell × 64 dual-seed) → σ_Φ / σ_CE 측정 (L1 critical)
-- Engine: anima Φ★, deterministic, hexa-only, llm: none
-- 분석: 20 (Φ_i, CE_i) → `harness.py` analytics → A/B fingerprint 매칭
+- Engine split: phi_star_iit_proxy (Mistral-7B forward — single-cell snapshot) + phi_star_cell_engine (TBD — N-sweep 실측) + CLM training pipeline (CE-track). deterministic, hexa-only (cell-engine land 시 llm: none 적용; phi_star_iit_proxy 는 Mistral-7B forward 사용)
+- 분석: 15 (Φ_i, CE_i) → `harness.py` analytics → A/B fingerprint 매칭
 
 **Decision matrix**:
 | signature | verdict |
@@ -22,7 +22,7 @@
 | `|corr| ~ 0.5` AND `Pareto CV ~ 0` | Hc_024 (uncertainty) SUPPORTED, Hc_040 FALSIFIED |
 | mixed | 새 hypothesis (e.g., 직교 within-budget, trade-off across-budget) |
 
-- **cost**: $200-1000 + 1-2 day
+- **cost**: $121-420 + 1-2 day (P=100M ceiling, see spec.md §5.7 cost rationale; baseline $200-1000 envelope 내, audit re-estimate $621-1920 → 15-cell cap 으로 압축)
 - **time**: high
 - **value**: very high (Φ×CE 직교 vs trade-off 최종 verdict)
 

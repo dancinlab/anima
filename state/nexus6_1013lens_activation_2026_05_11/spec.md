@@ -48,14 +48,17 @@ expansion 으로 65 acceleration hypothesis Φ-효과 재검증*. Hc_960 의 cav
 
 ## 1. Prereq — 활성화 전제조건
 
-> **2026-05-11 prereq audit 후 P-A 재정의**: 원래 P-A 표현 "anima cosmic-scale measurement
-> engine (Φ★ engine)" 은 *서로 다른 두 도구* 를 conflate 한 것이었다 — `tool/anima_phi_star.hexa`
-> 는 *single-model IIT-φ proxy* (Mistral-7B forward + cov-MIP, scalar Φ\* per model) 이고,
-> 1013-lens engine 은 `/Users/ghost/core/nexus/lenses/*.hexa` lens function set (lens 별
-> closed-form pattern score per data) 으로 **measurement axis 자체가 다르다**. 따라서 P-A 를
-> **P-A1 (single-axis Φ\* extension)** 과 **P-A2 (nexus multi-lens engine — 권고 path)** 로
-> 분리한다. K=10 smoke 의 actual prerequisite 는 P-A2. 출처:
-> `prereq_audit_2026_05_11.md` §1.2, §2.
+> **2026-05-11 prereq audit 후 P-A 재정의** (2026-05-12 engine naming refactor 동시 반영):
+> 원래 P-A 표현 "anima cosmic-scale measurement engine (Φ★ engine)" 은 *서로 다른 두 도구* 를
+> conflate 한 것이었다 — `tool/anima_phi_star.hexa` (canonical name: **phi_star_iit_proxy**) 는
+> *single-model IIT-φ proxy* (Mistral-7B forward + cov-MIP, scalar Φ\* per model) 이고,
+> 1013-lens engine (canonical name: **nexus_lens_score**) 은 `/Users/ghost/core/nexus/lenses/*.hexa`
+> lens function set (lens 별 closed-form pattern score per data) 으로 **measurement axis 자체가
+> 다르다**. 따라서 P-A 를 **P-A1 (phi_star_iit_proxy single-axis extension)** 과
+> **P-A2 (nexus_lens_score multi-lens engine — 권고 path)** 로 분리한다. 추가 3rd engine
+> **phi_star_cell_engine** (TBD, N-sweep) 은 H_080 cluster 별 lane — 본 spec 무관.
+> K=10 smoke 의 actual prerequisite 는 P-A2. 출처: `prereq_audit_2026_05_11.md` §1.2, §2 +
+> `state/phi_star_naming_refactor_2026_05_12.md`.
 
 검증 lane 활성화는 다음 중 *적어도 하나* 가 충족되어야 한다:
 
@@ -119,6 +122,8 @@ support: predicate_holds(L_i, x)  ∈  {0,1}  (lens 적용 가능성 게이트)
 K=50 PASS → C1 charged → H_135 status `legacy-archive-pointer` → `running` 전환 가능.
 
 aggregator: `tool/anima_nexus_1013lens_smoke.hexa` (K=10 step; subprocess loop over §3.1 whitelist).
+
+canonical K=10 smoke executed: 2026-05-12, verdict: C1 PASS_WITH_CAVEAT (pos_ratio=1.0 / 132 ms; score=1.0 = trivial n=6 self-test, lens input channel 부재 — `smoke_k10_caveat_investigation_2026_05_12.md`).
 
 ### 3.1 K=10 Core lens Whitelist (확정 — 2026-05-11)
 
@@ -201,6 +206,8 @@ C1 charged → H_135 verdict_class 갱신:
 - C1 PASS + F2/F4 trip       → `1013-lens-activation-partial-with-caveats`
 - F1 또는 F3 또는 F5 trip    → `1013-lens-activation-FALSIFIED` (Hc_586/598 weaken)
 
+plan: cascade_k25_plan_2026_05_12.md (K=25 canary cascade plan — cycle 5 §3 #E, 2026-05-12)
+
 ## 8. Cycle-3 NEXUS Hc Cross-Reference
 
 본 spec 은 다음 Hcs 의 활성화/검증 vehicle 이다:
@@ -244,6 +251,7 @@ frontmatter 의 frozen_at 은 *논리적 freeze* 일 뿐, OS-level lock 미적�
 | spec.md §3.1 | 본 문서 | 10 files 명시 | **K=10 binding whitelist** |
 | `acceleration_hypotheses.json` _meta.nexus_upgrade | `config/acceleration_hypotheses.json` | TBD (P-B path 용) | P-B fallback 시 적용 |
 | `nexus/lens_registry.json` (1013-official) | (없음) | **TBD** | 1013 official label 의 hexa-side SSOT 미정 — risk #5 (audit) active |
+| synthesized lens registry | `/home/summer/core/nexus_lenses_snapshot/lens_registry.json` | **synthesized 2026-05-12** | 1588 hexa, sha256 audit trail, K=10 binding 10/10 PASS — see `lens_registry_synthesized_2026_05_12.md` (1588 hexa, sha256 audit trail) |
 
 **Decision (2026-05-11)**:
 - K=10 / K=25 / K=50 cascade 의 binding source = §3.1 whitelist (file path 기준)

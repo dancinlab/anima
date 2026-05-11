@@ -136,7 +136,7 @@ Orthogonality (Hc_040): Φ ∝ N^1.071 (cell axis) and CE ∝ P^-0.85 (param axi
     - `harness.py` — deterministic seed 0xC0EC0AC, two generative models (A: Hc_040 orthogonal, B: Hc_024 K=50 α=0.5), fingerprint computation
     - `results.json` — synthetic fingerprint quantitative gap: Model A corr=-0.003 CV(α*)=0.96; Model B corr=-0.613 CV(α*=0.49)=0.018 (~2 orders of magnitude separation, α* matches Hc_024 claim α~0.5)
     - `verdict.md` — decision map, scenario verdicts (A/B/mid), measurement protocol (anima Φ★ + CLM CE, 64 dual-seed twin, ~$200-$1000 RunPod), 8 honest limits
-  - **Status**: decisive test designed, awaiting anima Φ★ engine + 20-cell N×P measurement (separate cycle). Cross-tie: F4 fires if |corr|>0.3, F5 fires if |corr|<0.05+strong-Pareto
+  - **Status**: decisive test designed, awaiting **phi_star_cell_engine** (TBD, N-sweep — current `phi_star_iit_proxy` 단독으로는 N-sweep 미지원, audit §1.3) + CLM training pipeline (CE-track, split-engine) + 15-cell N×P measurement (P=100M ceiling per spec.md §5.7, separate cycle). Engine naming refactor 2026-05-12: `state/phi_star_naming_refactor_2026_05_12.md`. Cross-tie: F4 fires if |corr|>0.3, F5 fires if |corr|<0.05+strong-Pareto
 - **R34 deprecation vs live pattern persistence**: Hc_004 R34 6-pt fit deprecated 되었으나 live 측정에서 Φ ≈ 0.608·N^1.071 pattern 잔존 — 본 expansion 은 "pattern persists" 약화 claim 으로 진행, N=4096 extension 으로 final verdict
 - **Hc_614/Hc_662/Hc_665 dim-dominant artifact**: hypercube 9D vs 10D 가 dim-dominant artifact 인지 — Hc_039 hypercube superlinear claim 의 validity 영향 — independent dim-orthogonal measurement 필요
 
