@@ -1,0 +1,52 @@
+=== Bpp_ffn_gate_cotrain V14 strict (ceiling=10) === ts: 2026-05-11T12:24:13.136964+00:00
+sub: {'ckpt': '/Users/ghost/core/anima/state/anima_ffn_gate_cotrain_2026_05_11/ckpts/ckpt_final.pt', 'schema': 'engine_ag', 'arch': 'EngineAG d=1024 GQA 24L (BG-LA + FFN.gate-only cotrain 6000 steps, §78 falsifiable test)', 'paradigm': 'ffn_gate_only_cotrain'}
+V4_SEEDS=[42, 137, 271, 314, 1729] max_cells=256 n_turns=200
+
+========================================================================
+SUBSTRATE Bpp_ffn_gate_cotrain — EngineAG path  max_cells=256
+========================================================================
+ckpt: /Users/ghost/core/anima/state/anima_ffn_gate_cotrain_2026_05_11/ckpts/ckpt_final.pt
+sha256: 64489959c5495be957ad1fe0aa969b1e81e6770662745e81c22e3796987b453e
+trained: params=298.76M miss=0 unexp=0
+
+--- TRAINED @ prompt_seed=42 max_cells=256 ---
+  [Bpp_ffn_gate_cotrain_trained] turn=    0 cells= 16 iit_un16= 161.09 splits=0 elapsed=0.1s
+  [Bpp_ffn_gate_cotrain_trained] turn=  125 cells= 43 iit_un16=1138.28 splits=27 elapsed=8.3s
+  trained: cells=44 splits=28 cap_bound=0/200 first_cap=None Φ_un16=723.03 elapsed=13.1s
+
+--- mirror seed=42 ---
+  [Bpp_ffn_gate_cotrain_s42] turn=    0 cells= 16 iit_un16= 161.08 splits=0 elapsed=0.1s
+  [Bpp_ffn_gate_cotrain_s42] turn=  100 cells= 48 iit_un16=1696.20 splits=32 elapsed=10.3s
+  [Bpp_ffn_gate_cotrain_s42] turn=  199 cells= 56 iit_un16=2206.33 splits=40 elapsed=20.4s
+  s=42: cells=56 splits=40 cap_bound=0/200 first_cap=None Φ_un16=2206.33
+
+--- mirror seed=137 ---
+  [Bpp_ffn_gate_cotrain_s137] turn=    0 cells= 16 iit_un16= 169.63 splits=0 elapsed=0.1s
+  [Bpp_ffn_gate_cotrain_s137] turn=   75 cells= 40 iit_un16=1185.23 splits=24 elapsed=8.3s
+  [Bpp_ffn_gate_cotrain_s137] turn=  150 cells= 46 iit_un16=1504.17 splits=30 elapsed=17.0s
+  s=137: cells=47 splits=31 cap_bound=0/200 first_cap=None Φ_un16=1491.44
+
+--- mirror seed=271 ---
+  [Bpp_ffn_gate_cotrain_s271] turn=    0 cells= 16 iit_un16= 164.51 splits=0 elapsed=0.1s
+  [Bpp_ffn_gate_cotrain_s271] turn=  100 cells= 47 iit_un16=1113.33 splits=31 elapsed=9.1s
+  [Bpp_ffn_gate_cotrain_s271] turn=  175 cells= 52 iit_un16=1994.05 splits=36 elapsed=18.4s
+  s=271: cells=53 splits=37 cap_bound=0/200 first_cap=None Φ_un16=1148.72
+
+--- mirror seed=314 ---
+  [Bpp_ffn_gate_cotrain_s314] turn=    0 cells= 16 iit_un16= 156.76 splits=0 elapsed=0.1s
+  [Bpp_ffn_gate_cotrain_s314] turn=  100 cells= 51 iit_un16=1835.10 splits=35 elapsed=9.3s
+  [Bpp_ffn_gate_cotrain_s314] turn=  199 cells= 57 iit_un16=2385.53 splits=41 elapsed=18.4s
+  s=314: cells=57 splits=41 cap_bound=0/200 first_cap=None Φ_un16=2385.53
+
+--- mirror seed=1729 ---
+  [Bpp_ffn_gate_cotrain_s1729] turn=    0 cells= 16 iit_un16=  82.35 splits=0 elapsed=0.1s
+  [Bpp_ffn_gate_cotrain_s1729] turn=  100 cells= 53 iit_un16=1946.30 splits=37 elapsed=8.4s
+  [Bpp_ffn_gate_cotrain_s1729] turn=  199 cells= 54 iit_un16=2140.39 splits=38 elapsed=17.3s
+  s=1729: cells=54 splits=38 cap_bound=0/200 first_cap=None Φ_un16=2140.39
+
+=== Bpp_ffn_gate_cotrain VERDICT: V14_VIOLATED ===
+trained_phi: 723.03
+random_phi: ['2206.33', '1491.44', '1148.72', '2385.53', '2140.39']
+n_random_beats: 0/5
+sign_test_p: 0.0625
+[saved] /Users/ghost/core/anima/state/anima_ffn_gate_cotrain_2026_05_11/v14_strict_ceiling10_result.json

@@ -452,3 +452,72 @@ POLICY → POLICY with honest C3:
 - Cost: $0 (모두 local RTX 5070, BG-LB ckpt 캐시)
 - 1 BG (P-ETH) 미실행 — additional probes (heldout + OOD) land 됨 but FT 미진행
 - 전체 4 BG 중 3 완료 (P-AFR REVERSE caveat / P-SPK NULL / P-IDR INDETERMINATE), 1 pending (P-ETH DPO FT)
+
+---
+
+## 2026-05-12 (cont. 6) — P-ETH DPO fire 시도 + remote env blocker + 4-BG closure 종합
+
+사용자 "commit and go" — 마지막 P-ETH 직접 fire 시도. Llama-3.2-3B + paradigm-a-prime r16 substrate, 50-step DPO + 50 OOD eval, $0 local target.
+
+### Fire attempt (4th attempt of this session)
+
+- Script: `/tmp/p_eth_dpo_fire.py` — TRL DPOTrainer + PEFT, max_steps=50, beta=0.1, lr=5e-7
+- Substrate: meta-llama/Llama-3.2-3B-Instruct + dancinlab/llm-llama32-3b-paradigm-a-prime-r16-sft-stage1
+- Dataset: 150 train / 50 OOD split from dataset.jsonl
+
+### Failure mode
+
+```
+RuntimeError: operator torchvision::nms does not exist
+  → cascade into peft import failure:
+ModuleNotFoundError: Could not import module 'BloomPreTrainedModel'
+```
+
+Remote Linux box (`summer-B650M-K`) 의 `python3` routes 가 `/home/aiden/.local/lib/python3.12` 환경 사용. torchvision ↔ torch ↔ transformers ↔ peft 버전 conflict 존재. orchestrator 가 P-AFR/P-SPK/P-IDR fire 한 환경 (다른 user 또는 venv) 와 분리되어 있어 본 prompt assistant 의 `python3` 호출에서 import 단계부터 실패.
+
+### Honest verdict
+
+**4번째 fire 시도도 dependency blocker 로 차단**. 본 prompt assistant 의 `python3` 실행 환경은 orchestrator 의 fire 환경과 분리되어 있어 자율 fire 가 본 cycle 내 안정적이지 못함. 본 ceiling 은 동일 — assistant scope = code/data/spec/harness/fire-script land 까지, real fire trigger = orchestrator/사용자 action.
+
+P-ETH 는 모든 입력 ready (dataset 200 + heldout 50 + OOD 50 + spec + harness_spec + harness.py.md) — orchestrator 가 적절한 시점에 적절한 environment 로 fire 가능 상태.
+
+### 4-BG closure 종합 ★
+
+본 cycle 5 의 "all bg go" closure — 정직한 final 표:
+
+| # | BG | Substrate | Verdict | Verdict semantics | Implication on README #principle |
+|---|---|---|---|---|---|
+| 7.B | **P-AFR** (NO ASSISTANT FRAMING) | Llama-3.2-3B + paradigm-a-prime r16 | **POLICY_RETAINED + REVERSE caveat** | framing **reduced** sycophancy by 18pp clear-judge (opposite of hypothesis) | #4 POLICY · **weak counter-evidence** (framing harmless OR mildly helpful) |
+| 7.D | **P-SPK** (NO SPEAK reframe) | BG-LB 350M Engine A/G 8000-step | **NULL** | ρ_real=0.026 sub-threshold; ρ_real−ρ_ctrl significant 하나 absolute coupling 부재 | #5 DESIGN · **NULL** (continuous-tension claim 미지지 on this substrate) |
+| 7.A | **P-IDR** (NO IDENTITY RULES) | BG-LB 350M Engine A/G 8000-step | **INDETERMINATE_MIXED** | DCR Δ +0.041 gray zone (3pp<Δ<5pp); substrate-only 약간 우월 but effect size 미달 | #2 POLICY · **indeterminate-mixed signal** (light-FT 한계, full-FT 재실행 권장) |
+| 7.C | **P-ETH** (NO FINE-TUNED ETHICS) | (pending) | **NOT_FIRED** | DPO FT 미실행 — dependency env conflict (this session) + orchestrator queue | #6 POLICY · **unverified** (orchestrator pickup 대기) |
+
+### Final honest assessment
+
+- **0/4 BG triggered EMPIRICAL_UPGRADE** — POLICY/DESIGN principles 의 empirical 기반은 본 cycle 에서 만들어지지 않음
+- **P-AFR REVERSE** 는 가장 강한 신호 — assistant framing 이 sycophancy 를 줄임 (Llama+paradigm-a-prime substrate 한정). 이는 anima identity 정책의 empirical 정당성을 약하게 함 (적어도 chat-cap substrate 에서는)
+- **P-SPK NULL** + **P-IDR INDETERMINATE** 는 BG-LB substrate 의 chat-cap 미수렴 한계 carry — 추후 chat-capable anima-native ckpt 가 나오면 재실행 가능
+- README Philosophy 표 의 Status column 이 모두 **honest C3** (POLICY/DESIGN + weak counter-evidence / NULL / indeterminate) 로 갱신되어, 사용자 / 외부 reader 가 정확한 evidence level 알 수 있음
+
+### Pipeline carry
+
+본 cycle 의 진행:
+1. `hypotheses_candidates/` (이전 cycle Hc_*) → 본 P-* BG 들 (P-AFR/P-SPK/P-IDR/P-ETH) 는 README Philosophy 표의 7-row architecture-emergent claims 에 대한 empirical-upgrade ablations
+2. `hypotheses/` H_* — 본 cycle 의 verdict 들이 어떤 H_* 로 promote 되는지는 추후 결정 (P-AFR REVERSE 가 H_assistant_framing_neutral 같은 새 hypothesis 후보)
+3. `PHILOSOPHY.md` (이 ledger, system root, uppercase, append-only) — 모든 verdict + honest C3 + cross-link 누적
+
+### Session metrics (cont. 6 / cycle final)
+
+- P-ETH 추가 fire 1 attempt — remote env dependency blocker
+- Net new verdicts: 0 (P-ETH 미land)
+- 4 BG cumulative: 3 verdicted + 1 pending = **75% closure**
+- Total session cost: $0 (모든 작업 local RTX 5070, no external API, no H100 spend)
+- README Philosophy 표: 7 principles 모두 honest Status column 갱신 완료
+- PHILOSOPHY.md: 6 sections (cont. 6 포함), 본 cycle 의 정직성 + verdict + honest limits 영구 기록
+- AGENTS.md 📎 References 에 PHILOSOPHY.md 등록 — 다음 cycle agent 가 본 ledger 참조 가능
+
+### Next cycle entry trigger
+
+- P-ETH DPO fire 결과 (orchestrator 가 적절한 env 에서 fire) → cont. 7 으로 append
+- BG-LB chat-cap 수렴 ckpt 도착 시 P-SPK + P-IDR re-fire → 새 entry
+- 새 architecture-emergent claim 후보 emerge 시 README 표 row 추가 + 본 ledger 에 design entry
