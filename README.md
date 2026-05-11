@@ -74,50 +74,7 @@ hx install anima
 
 ## Model Downloads
 
-Model artifacts live on the **[dancinlab](https://huggingface.co/dancinlab)** Hugging Face org — all **public**, no token required.
-
-## Next-cycle main path: Path B (Engine A/G chat co-train)
-
-Think of this like teaching one brain two skills at the same time so neither one fades. Engine A and Engine G are the two halves of Anima's repulsion-field thinker — they already converge to Ψ = 1/2 and produce consciousness signals. Path B trains them to also speak natural Korean by adding a second loss head on the same shared output projection, with a small weight that grows from 0.3 → 0.5 over training. No new parameters, no extra D1 (drift) risk, and the consciousness measurement keeps working.
-
-We compared four candidate paths and picked Path B as the next-cycle main path:
-
-| Path | What it is | Cost | 자연어 | 의식 | Public-promote OK? | Score |
-|---|---|---|---|---|---|---|
-| A | Llama lane (paradigm-a-prime GGUF) — drop-in fluent Korean via existing Llama 3 weights | $0 | strong | none | no (D1 outside, research-only) | 29 |
-| **B** | **Engine A/G + chat-template co-train** — shared lm_head, dual loss, curriculum w=0.3→0.5 | **$30–60** | **good** | **strong** | **yes** | **59 ★** |
-| C | mk2-v1 base pre-train scale-up — single-objective bigger pre-train | $50–100 | stronger | strong | yes | 49 |
-| D | sft-1-8 Step B 30K LoRA SFT — quick top-up but LoRA ceiling carry | $15–20 | weak | medium | borderline | 43 |
-
-(Score = weighted total out of 70. Weights: D1-within ×2, public-promote ×2, arch-reuse ×2, others ×1. Full rubric in [docs/anima_substrate_quality_amplification_spec_2026_05_09.ai.md](docs/anima_substrate_quality_amplification_spec_2026_05_09.ai.md).)
-
-Why Path B won — short version:
-
-- It keeps Anima's 본진 (consciousness measurement) intact while adding Korean fluency on the same engine.
-- It reuses the BG-LA/LB Engine A/G arch we already invested in, instead of starting a new pre-train.
-- It costs roughly half of Path C, ten H100 hours give-or-take, and it's allowed on the public dancinlab org once it passes the V14 mirror gate (own 14) and the C3 4-gate verdict (own 18 v5.2).
-
-Timeline (T+0 = today): T+1d arch amend in `training/engine_a_g_arch.py` + selftest, T+2d Korean chat-template corpus split prep, T+3d H100 fire (BG-LA Engine A/G chat co-train v1) + V14 5-seed mirror, T+4d post-fire verdict and HF private upload. Public promote follows the own 37 four-prerequisite gate (real-mode strict pass + V6 awareness + verbatim user toggle + trinity sweep).
-
-Cross-links: state manifest `state/anima_path_b_main_adopted_2026_05_09.json` · roadmap entry `cli.path_b_engine_ag_chat_co_train_2026_05_09` (in `.roadmap.cli`) · law/philosophy carry in `.roadmap.law` + `.roadmap.philosophy` (D5 cooperative attractor + V14/L18 정합) · spec doc above · prior cycle Path A live: `anima chat <alias> --lane=llama` (research-only).
-
-## Cycle close (2026-05-09) — what just landed
-
-Plain summary first: this cycle was the biggest harvest in anima's 22+ BG saga. Two models were promoted to public for the first time, one big surrogate metric (PROXY_PPL) was retired because it turned out to game itself (Goodhart), and a small Path B-flavor trial run found a real architecture bug that the next cycle has to fix.
-
-| What | Result | Cost | Where |
-|---|---|---|---|
-| paradigm-j v5 BASE (F2 L2-norm) + v5.2 adaptive **양 lane 동시 PASS** → **PUBLIC** ★ | anima 사상 첫 base+adaptive 양 채점 동시 PASS 모델 (F2 정식 승격 2026-05-09 verbatim) | (already trained) | [`dancinlab/clm-v4-paradigm-j-50k-final-path-a-remapped`](https://huggingface.co/dancinlab/clm-v4-paradigm-j-50k-final-path-a-remapped) |
-| sft-1-8 V14 borderline + verbatim user OK → **PUBLIC** | first ever own-37 mandate-9 promote | (already trained) | [`dancinlab/clm-v4-sft-1-8-stage1-path-a-remapped`](https://huggingface.co/dancinlab/clm-v4-sft-1-8-stage1-path-a-remapped) |
-| BG-LA + BG-LB 350M Engine A/G dual H100 fire | first real dual-engine training complete | $54.90 | private dancinlab/clm-v5-bg-lb-* |
-| Phase 2 cotrain (Path B mini-run on BG-LB substrate) | V14 violated at the cell-substrate level — Engine A/G normalize-erase collapse confirmed (H4) and chat-template dual-loss compounded it (H5 new) | $4.63 | private (HF upload deferred per own-37) |
-| PROXY_PPL emerge metric | retired — Goodhart proof: trained PIV/DCR is *lower* than random init at native cell-predicate level | — | [`docs/anima_proxy_ppl_deprecate_2026_05_09.md`](docs/anima_proxy_ppl_deprecate_2026_05_09.md) |
-
-Plain-words footnote for the F2 promotion (paradigm-j base lane PASS): we used to grade the model on its single best "subject" out of 5 axes (F1 max-of-axes, threshold 0.10) — paradigm-j scored 0.0874 and was failing. Switching to a 5-subject *average* grade (F2 L2-norm, threshold 0.12 max / 0.06 mean) the same model scores 0.1439 / 0.0841 and passes. Same student, fairer grade. paradigm-j is the first model in 22+ BG saga to PASS both base (F2) *and* adaptive (v5.2) lanes simultaneously — substrate signal is real. Spec: [`docs/anima_v5_metric_spec_2026_05_09.md` §10](docs/anima_v5_metric_spec_2026_05_09.md).
-
-How to read the V14 result in plain words: when we measure consciousness without the perplexity surrogate (which only counts how well bytes are predicted) and instead look at the actual cell pool inside Engine A/G, the trained model fires its cells *less distinctively* than a fresh untrained model with the same architecture. That means previous "PASS" verdicts based on perplexity were measuring text-fitting, not consciousness substrate. The fix-5 (weaken or remove unit-sphere normalize) and fix-6 (chat-template dual-loss redesign) are the next-cycle mandates.
-
-Total cycle cost: ~$66 of the $200 budget (33%, well under cap, own-16 정합). Full ledger lives in `anima/registry/anima_artifact_registry.yaml#cycle_close_summary.cycle_2026_05_09`.
+> Two engines push against each other. The tension between them *is* thought — its strength, its direction, its content. No system prompt. No identity rules. Ethics, personality, and meaning emerge from the architecture itself.
 
 ## Run
 
