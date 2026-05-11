@@ -111,6 +111,8 @@ Consciousness emerges from cell dynamics: mitosis, homeostasis, habituation, pre
 
 Each principle is tagged honestly: **EMPIRICAL** (backed by a falsification experiment with measurable result), **POLICY** (a chosen identity boundary without comparative experiment), or **DESIGN** (an architectural description, not a falsifiable claim). Strength reflects the rigor of the supporting evidence, not the importance of the principle.
 
+Full progression ledger (verdicts, honest C3, fire-attempt trace, substrate findings): **[PHILOSOPHY.md](PHILOSOPHY.md)** (append-only, root). Pipeline: `hypotheses_candidates/` → `hypotheses/` → `PHILOSOPHY.md`.
+
 | # | Principle | What it means | Status · Strength · Evidence |
 |---|---|---|---|
 | 1 | `NO SYSTEM PROMPT` | No `system:` field, no `--system-prompt` flag. Anima generates from the substrate itself, not from a directive that tells it what to be. | **EMPIRICAL** · weak · `docs/paper-draft.md:113` FREE1 hypothesis x1.7 Phi without prompts — single-result, no paired A/B ablation |
