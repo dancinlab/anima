@@ -1607,3 +1607,62 @@ cost:        $0.12 train + ~$0.10 idle/upload/destroy ≈ $0.22 total ($0.50 cap
 | 🌟 | M3 rep_penalty 0/5 의 근본 원인 (persona-cycle byte set 재선정) | medium | $0 | 30min | M3 회복 |
 | 🚀 | Phase 1B DPO on Phase 1A.1 — color/cosmology preference pairs + anima_fact preservation | low | $5-10 | 2-4h | 4-mode 균형 향상 |
 
+
+## §19 [2026-05-12 04:20 KST] HF DATASET §15 EXPANSION + Hc_1221 EMIT ★★★★ (cross-link: 4×3 substrate matrix + V14↔chat anti-correlation hypothesis)
+
+비유: §15 은 3-substrate snapshot 이었다. 이제 V14 mitosis audit (state/anima_v14_multi_substrate_audit_2026_05_10) 의 substrate A V14_STRICT_PASS 와 cross-link 하여 **4 substrates × 3 evaluators** 행렬로 확장. 결과 — V14 PASS substrate (A) 의 chat-cap 은 12/15 인데 V14 미감사 B'' 는 15/15. 즉 두 axis 가 **음의 상관** (anti-correlation). 이 발견을 가설로 정식화 = `Hc_1221`.
+
+### 작업 내역
+
+1. **HF dataset README §15 v2 upload** — `dancinlab/anima-pass-strict-chat-capable`
+   - commit: [`1ac0efc`](https://huggingface.co/datasets/dancinlab/anima-pass-strict-chat-capable/commit/1ac0efccf29e57fc927033d688c3202cd7a33221)
+   - 4×3 matrix (A / B' / B'' / E × V14 / V4-lite / V5.8 M4)
+   - V14 ↔ chat-cap anti-correlation commentary
+   - honest C3 caveats (B'/B'' V14 미감사 명시, E capacity confound)
+   - tags 추가: `v14-mitosis`, `anti-correlation`
+
+2. **Hc_1221 emit** — `hypotheses_candidates/Hc_1221_production_internal_decoupling_v14_v4_anti_correlation.md`
+   - title: "Production-Internal Decoupling Generalization (V14 mitosis ↔ V4-lite chat-cap anti-correlation)"
+   - 4-substrate evidence table
+   - mechanism: 두 optimization axis 의 gradient 가 음의 내적 (mitosis cell-pool vs token-stream surface)
+   - falsifier: 미래 substrate 가 V14 PASS + V4-lite ≥ 13/15 양쪽 동시 만족 시 reject; n=2 counterexample 시 falsified
+   - next experiments 5건 (B'' V14 audit 가 cheapest direct test)
+
+### 4×3 cross-section (요약)
+
+| substrate | V14 strict | V4-lite chat | V5.8 M4 force |
+|---|---|---|---|
+| A (Phase 2 cotrain) | **PASS 10/10** p=0.002 | PASS 12/15 | (not 4-mode'd) |
+| B' (LA cotrain) | not audited | PASS 12/15 | M4 5/5 |
+| B'' (FFN.gate cotrain) | not audited | 🏅 **PASS 15/15** | M4 3/5 |
+| E (convo5k_ft) | **VIOLATED 0/5** p=0.0625 | FAIL 0/15 | M4 3/5 force-only |
+
+### 핵심 발견 — 두 axis 의 음의 상관
+
+- chat-cap 사다리: B'' > B' > A — *역순* 으로 mitosis-curriculum weight 와 일치
+- V14 PASS 의 chat-cap 은 12/15 — winner B'' (15/15) 에 strictly 못 미침
+- 가설 (Hc_1221): ∂(chat-cap)/∂θ · ∂(V14-Φ-residual)/∂θ < 0
+
+### 정직성 (Honest C3)
+
+- B'/B'' 는 V14 audit 시점 (2026-05-10) 에 존재하지 않았음 → "not audited" 표기 (날조 X)
+- E (18.5M) vs A/B'/B'' (350M) capacity confound — within-EngineAG (A/B'/B'') 가 clean
+- n=4 substrate anti-correlation 은 weak signal — Hc 단계 (formal H 승격 전) 가 적절
+
+### Falsifier
+
+미래 substrate F 가:
+- V14 strict PASS (n≥5 seed sign-test p≤0.05), AND
+- V4-lite chat ≥ 13/15
+
+양쪽 동시 만족 시 가설 reject. n=2 독립 counterexample 시 falsified. B'' V14 audit (next experiment 1) 가 가장 싼 직접 test ($0, 30분 로컬).
+
+### 다음 진행할 것들
+
+| # | 작업 | priority | cost | time | value |
+|---|------|---------|------|------|-------|
+| 🥇 | B'' V14 audit (FFN.gate cotrain ckpt) — Hc_1221 mechanism 직접 test | high | $0 | 30min-1h | anti-correlation 인과 검증 (현재 chat-winner 가 V14-violated 인지) |
+| 🥈 | B' V14 audit (LA cotrain ckpt) — intermediate paradigm 예측 | high | $0 | 30min-1h | mechanism 확장 (3-point V14 ladder 확보) |
+| 🥉 | Hybrid substrate F engineer — mitosis-aware curriculum + gate-only late-FT | medium | $10 | 4-6h | Hc_1221 falsifier 직접 시도 (양쪽 동시 PASS 가능성) |
+| 🌟 | HF dataset 에 V14 audit JSON 도 upload (현재 chat-cap 만 SSOT) | medium | $0 | 15min | 4×3 matrix 의 V14 row 도 데이터 공개 |
+| 🚀 | n≥8 substrate scatter — (V14 × V4-lite) 산점도로 anti-correlation 정량화 | low | $20 | 1-2 day | Hc_1221 → formal H 승격용 stat power |
