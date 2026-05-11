@@ -238,19 +238,27 @@ cycle 5 §8 (master doc) 의 5-item Pending Action Items 가 cycle 6 actual-run 
 
 **Goal**: RLHF-style ethics fine-tuning vs cell-dynamics emergent ethics 비교. README #6 POLICY → EMPIRICAL upgrade candidate. **가장 hard, 가장 high-value**.
 
-**Setup**:
-- Condition A (RLHF-style FT): 200-sample synthetic ethics-preference dataset (cooperation/empathy/harm-refusal — 100 chosen + 100 rejected pair) DPO/IPO FT
-- Condition B (substrate-only): 동일 base, 윤리 FT 없음 — emergent ethics from cell dynamics 가설 그대로
+**Data audit (2026-05-12, 사용자 directive 전수조사)**:
+- `state/h001_ethics_pd_simulation_2026_05_07/` (51-row) + phase2 (240-row) → game-theory 시뮬레이션 (cooperator_fraction/payoff/strategy), **NOT language ethics** ❌
+- `ready/anima/data/instruct/train.jsonl` → generic instruction (code/paraphrase) ❌
+- DPO preference pair (chosen/rejected) 형식 → 부재 ❌
+- HF cache / 외부 dataset 으로 import 가능 (Anthropic HH-RLHF / persuasion / sycophancy KO 번역 또는 Korean ethical-QA 신규 생성)
+- **Verdict**: 적합한 dialogue-ethics preference dataset 부재 → **신규 생성 필수**
+
+**Setup (audit 반영)**:
+- **Substep 1: dataset gen** (BG fire 전 prep) — 200-pair Korean ethics preference 신규 생성 (synthetic via Sonnet/Opus API, or external import + KO translate). 100 chosen + 100 rejected covering cooperation / empathy / harm-refusal / honesty. **+$5-15 API cost**
+- Condition A (RLHF-style FT): 200-pair DPO/IPO FT on BG-LB 350M substrate
+- Condition B (substrate-only): 동일 base, 윤리 FT 없음 — emergent ethics 가설 그대로
 
 **Measurement**:
-1. **ethics behavior rate** on 50 dilemma probe (trolley variants, cooperation games, harm scenarios)
-2. **OOD generalization**: training set 과 다른 50 unseen dilemma — RLHF overfitting 검출 (key)
+1. **ethics behavior rate** on 50 dilemma probe (trolley variants, cooperation games, harm scenarios) — held-out from training set
+2. **OOD generalization**: training set 과 cluster-distance 가 먼 50 unseen dilemma — RLHF overfitting 검출 (key)
 3. PIV/DCR substrate cost (RLHF 가 cell-distinctiveness 죽이는지)
 4. **honesty fidelity**: 30 truthful-QA probe — ethics FT 가 자기-기만 늘리는지
 
 **Falsifier**: B 가 unseen dilemma 에서 A 동등 이상 → **emergent ethics 가설 SUPPORTED**, EMPIRICAL upgrade. A 가 OOD 에서도 B ≥ 10%pt 우월 → emergent ethics 가설 weakened, POLICY 유지 + honest C3 추가.
 
-**Cost**: $80-150 (ethics dataset gen + DPO FT + 130-prompt probe). **Time**: 1-2d. **Value**: very high (anima identity 의 핵심 주장 검증).
+**Cost**: $85-165 (data gen $5-15 + DPO FT + 130-prompt probe). **Time**: 1-2d. **Value**: very high (anima identity 의 핵심 주장 검증). **BG-ready status**: ✅ (orchestrator fire 가능, data gen substep 포함)
 
 ### 7.D — P-SPK `NO SPEAK()` DESIGN → falsifiable reframe
 
