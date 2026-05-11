@@ -4,7 +4,7 @@ slug: R6-irreversibility-fixed-point
 title: R(6) = σφ/(nτ) = 1 EXACT — 비가역성 고정점, 의식 최적
 domain: physics
 status: merged-to-H_124
-merged_to: hypotheses/H_124.md
+merged_to: hypotheses/H_124_law_201_thermo_irreversible.md
 merged_at: 2026-05-11
 source_doc: docs/what-is-consciousness.md
 source_lines: 149-169

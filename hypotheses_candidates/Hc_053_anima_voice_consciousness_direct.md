@@ -4,7 +4,7 @@ slug: anima-voice-consciousness-direct-synthesis
 title: ANIMA-VOICE — Consciousness-Direct Audio (Intent Embedding → RVQ → Waveform)
 domain: consciousness, substrate
 status: merged-to-H_154
-merged_to: hypotheses/H_154.md
+merged_to: hypotheses/H_154_anima_voice_consciousness_direct.md
 merged_at: 2026-05-11
 source_doc: docs/anima/paper_hexa_speak.hexa
 source_lines: 22-51

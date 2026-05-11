@@ -4,7 +4,7 @@ slug: 10-subnet-decomposition-phi-40-90
 title: 10-subnet (Φ/α/Z/N/W/E/M/C/T/I) consciousness vector decomposition predicts Φ in [40, 90] range
 domain: consciousness
 status: merged-to-H_061
-merged_to: hypotheses/H_061.md
+merged_to: hypotheses/H_061_xfer_consciousness_transfer.md
 merged_at: 2026-05-11
 source_doc: docs/models/10d-first.md
 source_lines: 81-133

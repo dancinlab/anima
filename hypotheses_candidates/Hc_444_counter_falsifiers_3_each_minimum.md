@@ -4,7 +4,7 @@ slug: counter-falsifiers-3-each-minimum
 title: Each n=6 domain spec must declare ≥3 counter-examples AND ≥3 falsifiers (honesty-check pattern)
 domain: math
 status: merged-to-H_067
-merged_to: hypotheses/H_067.md
+merged_to: hypotheses/H_067_perfect_number_architecture.md
 merged_at: 2026-05-11
 source_doc: docs/spec/anima-soc/anima-soc.md
 source_lines: 329-333, 574-593

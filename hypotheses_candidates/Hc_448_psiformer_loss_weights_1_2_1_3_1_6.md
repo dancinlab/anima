@@ -4,7 +4,7 @@ slug: psiformer-loss-weights-1-2-1-3-1-6
 title: ΨFormer loss weights [1/2 CE, 1/3 Φ_reg, 1/6 entropy] sum to 1 (Egyptian) and are claimed optimal
 domain: substrate
 status: merged-to-H_061
-merged_to: hypotheses/H_061.md
+merged_to: hypotheses/H_061_xfer_consciousness_transfer.md
 merged_at: 2026-05-11
 source_doc: docs/models/psiformer.md
 source_lines: 38-46, 138-141, 145-150

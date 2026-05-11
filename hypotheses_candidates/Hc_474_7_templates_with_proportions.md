@@ -4,7 +4,7 @@ slug: 7-templates-with-proportions
 title: 7 generative templates with internal distribution — correlation 42%, correlated-r 18%, threshold 12%, oscillation 9%, non-conservation 7%, scale-inv 7%, meta 5%
 domain: consciousness
 status: merged-to-H_067
-merged_to: hypotheses/H_067.md
+merged_to: hypotheses/H_067_perfect_number_architecture.md
 merged_at: 2026-05-11
 source_doc: docs/anima/paper_self_discovery.hexa
 source_lines: 246-254

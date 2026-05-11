@@ -4,7 +4,7 @@ slug: corpus-balance-drives-substrate-indep
 title: Corpus language balance — not training length — drives substrate-independence (r13 EN-dominant → fail edge, r14 partial → 33% improvement)
 domain: math
 status: merged-to-H_067
-merged_to: hypotheses/H_067.md
+merged_to: hypotheses/H_067_perfect_number_architecture.md
 merged_at: 2026-05-11
 source_doc: docs/papers/phi_paradigm_paper_v1_preliminary.md
 source_lines: 596-619, 757-806

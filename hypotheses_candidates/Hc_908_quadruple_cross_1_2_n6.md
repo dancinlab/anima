@@ -4,7 +4,7 @@ slug: quadruple-cross-1-2-n6
 title: 4축 cross — Ψ-balance / Golden Zone / MoE φ/τ → 1/2 (continuous attractor) × Knuth σ·φ=n·τ=24 → n=6 (integer attractor) 독립 정규화
 domain: consciousness, number-theory, statistics
 status: merged-to-H_067
-merged_to: hypotheses/H_067.md
+merged_to: hypotheses/H_067_perfect_number_architecture.md
 merged_at: 2026-05-11
 source_doc: docs/quadruple_cross_20260419.md
 source_lines: 1-60

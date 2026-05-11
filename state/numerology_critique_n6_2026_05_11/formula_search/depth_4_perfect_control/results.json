@@ -1,0 +1,1705 @@
+{
+  "cycle": "2026-05-11",
+  "lane": "state/numerology_critique_n6_2026_05_11/formula_search/depth_4_perfect_control",
+  "parent_lane": "state/numerology_critique_n6_2026_05_11/formula_search",
+  "seed_hex": "0xf0eafea1",
+  "num_targets": 22,
+  "time_cap_per_variation_sec": 300.0,
+  "L4_cap": 200000,
+  "vocab_subsets": {
+    "full": [
+      "1",
+      "n",
+      "mu",
+      "phi",
+      "tau",
+      "sigma",
+      "sopfr",
+      "J2",
+      "e",
+      "pi",
+      "ln2"
+    ],
+    "restricted-A": [
+      "1",
+      "n",
+      "mu",
+      "phi",
+      "tau",
+      "sigma",
+      "sopfr"
+    ],
+    "restricted-B": [
+      "n",
+      "mu",
+      "phi",
+      "tau",
+      "sigma"
+    ]
+  },
+  "variations": [
+    {
+      "id": "V1",
+      "depth": 4,
+      "vocab": "full",
+      "vocab_size": 11,
+      "tol": 0.01,
+      "n_set": [
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17,
+        18,
+        19,
+        20,
+        21,
+        22,
+        23,
+        24,
+        25,
+        26,
+        27,
+        28,
+        29,
+        30
+      ],
+      "completed_n": [
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17,
+        18,
+        19,
+        20,
+        21,
+        22,
+        23,
+        24,
+        25,
+        26,
+        27,
+        28,
+        29,
+        30
+      ],
+      "coverage_pct": 100.0,
+      "aborted_at_cap": false,
+      "wall_sec": 1.92,
+      "per_n_score": {
+        "2": 22,
+        "3": 22,
+        "4": 22,
+        "5": 22,
+        "6": 22,
+        "7": 22,
+        "8": 22,
+        "9": 22,
+        "10": 22,
+        "11": 22,
+        "12": 22,
+        "13": 22,
+        "14": 22,
+        "15": 22,
+        "16": 22,
+        "17": 22,
+        "18": 22,
+        "19": 22,
+        "20": 22,
+        "21": 22,
+        "22": 22,
+        "23": 22,
+        "24": 22,
+        "25": 22,
+        "26": 22,
+        "27": 22,
+        "28": 22,
+        "29": 22,
+        "30": 22
+      },
+      "n6_detail": [
+        {
+          "name": "alpha",
+          "target": 0.014,
+          "found_depth": 3,
+          "found_value": 0.013888888888888888
+        },
+        {
+          "name": "balance",
+          "target": 0.5,
+          "found_depth": 2,
+          "found_value": 0.5
+        },
+        {
+          "name": "steps",
+          "target": 4.33,
+          "found_depth": 2,
+          "found_value": 4.306852819440055
+        },
+        {
+          "name": "entropy",
+          "target": 0.998,
+          "found_depth": 1,
+          "found_value": 1.0
+        },
+        {
+          "name": "F_c",
+          "target": 0.1,
+          "found_depth": 3,
+          "found_value": 0.09997165356874557
+        },
+        {
+          "name": "gate_train",
+          "target": 1.0,
+          "found_depth": 1,
+          "found_value": 1.0
+        },
+        {
+          "name": "gate_infer",
+          "target": 0.6,
+          "found_depth": 3,
+          "found_value": 0.5997497426061086
+        },
+        {
+          "name": "gate_micro",
+          "target": 0.001,
+          "found_depth": 4,
+          "found_value": 0.0009944744290372868
+        },
+        {
+          "name": "narrative_min",
+          "target": 0.2,
+          "found_depth": 2,
+          "found_value": 0.2
+        },
+        {
+          "name": "soc_ema_fast",
+          "target": 0.05,
+          "found_depth": 3,
+          "found_value": 0.04978706836786395
+        },
+        {
+          "name": "soc_ema_slow",
+          "target": 0.008,
+          "found_depth": 3,
+          "found_value": 0.008
+        },
+        {
+          "name": "soc_ema_glacial",
+          "target": 0.002,
+          "found_depth": 3,
+          "found_value": 0.0020139997257512376
+        },
+        {
+          "name": "soc_burst_denom",
+          "target": 7.0,
+          "found_depth": 2,
+          "found_value": 7.0
+        },
+        {
+          "name": "soc_burst_cap",
+          "target": 0.3,
+          "found_depth": 3,
+          "found_value": 0.2986265782046758
+        },
+        {
+          "name": "soc_scale_ref_cells",
+          "target": 8.0,
+          "found_depth": 2,
+          "found_value": 8.0
+        },
+        {
+          "name": "phi_hidden_inertia",
+          "target": 0.2,
+          "found_depth": 2,
+          "found_value": 0.2
+        },
+        {
+          "name": "hivemind_phi_boost",
+          "target": 1.1,
+          "found_depth": 3,
+          "found_value": 1.1010205144336442
+        },
+        {
+          "name": "hivemind_phi_maint",
+          "target": 0.75,
+          "found_depth": 3,
+          "found_value": 0.75
+        },
+        {
+          "name": "kuramoto_base_freq",
+          "target": 0.15,
+          "found_depth": 3,
+          "found_value": 0.1493132891023379
+        },
+        {
+          "name": "verify_diversity",
+          "target": 0.8,
+          "found_depth": 2,
+          "found_value": 0.8
+        },
+        {
+          "name": "verify_v7_max_cells",
+          "target": 10.0,
+          "found_depth": 2,
+          "found_value": 10.0
+        },
+        {
+          "name": "verify_mitosis",
+          "target": 3.0,
+          "found_depth": 2,
+          "found_value": 3.0
+        }
+      ],
+      "n6_score": 22,
+      "perfect_scores": {
+        "6": 22,
+        "28": 22
+      },
+      "max_other": 22,
+      "argmax_other": 2,
+      "mean_other": 22.0,
+      "std_other": 0.0,
+      "margin": 0,
+      "verdict": "FORMULA_SEARCH_CRITICAL_TIED_d4"
+    },
+    {
+      "id": "V2",
+      "depth": 4,
+      "vocab": "restricted-A",
+      "vocab_size": 7,
+      "tol": 0.01,
+      "n_set": [
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17,
+        18,
+        19,
+        20,
+        21,
+        22,
+        23,
+        24,
+        25,
+        26,
+        27,
+        28,
+        29,
+        30
+      ],
+      "completed_n": [
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17,
+        18,
+        19,
+        20,
+        21,
+        22,
+        23,
+        24,
+        25,
+        26,
+        27,
+        28,
+        29,
+        30
+      ],
+      "coverage_pct": 100.0,
+      "aborted_at_cap": false,
+      "wall_sec": 0.44,
+      "per_n_score": {
+        "2": 20,
+        "3": 20,
+        "4": 22,
+        "5": 22,
+        "6": 22,
+        "7": 21,
+        "8": 22,
+        "9": 22,
+        "10": 22,
+        "11": 22,
+        "12": 22,
+        "13": 22,
+        "14": 22,
+        "15": 22,
+        "16": 22,
+        "17": 21,
+        "18": 20,
+        "19": 22,
+        "20": 22,
+        "21": 22,
+        "22": 22,
+        "23": 21,
+        "24": 22,
+        "25": 22,
+        "26": 22,
+        "27": 22,
+        "28": 22,
+        "29": 20,
+        "30": 22
+      },
+      "n6_detail": [
+        {
+          "name": "alpha",
+          "target": 0.014,
+          "found_depth": 3,
+          "found_value": 0.013888888888888888
+        },
+        {
+          "name": "balance",
+          "target": 0.5,
+          "found_depth": 2,
+          "found_value": 0.5
+        },
+        {
+          "name": "steps",
+          "target": 4.33,
+          "found_depth": 3,
+          "found_value": 4.306852819440055
+        },
+        {
+          "name": "entropy",
+          "target": 0.998,
+          "found_depth": 1,
+          "found_value": 1.0
+        },
+        {
+          "name": "F_c",
+          "target": 0.1,
+          "found_depth": 3,
+          "found_value": 0.09999999999999999
+        },
+        {
+          "name": "gate_train",
+          "target": 1.0,
+          "found_depth": 1,
+          "found_value": 1.0
+        },
+        {
+          "name": "gate_infer",
+          "target": 0.6,
+          "found_depth": 3,
+          "found_value": 0.6
+        },
+        {
+          "name": "gate_micro",
+          "target": 0.001,
+          "found_depth": 4,
+          "found_value": 0.001
+        },
+        {
+          "name": "narrative_min",
+          "target": 0.2,
+          "found_depth": 2,
+          "found_value": 0.2
+        },
+        {
+          "name": "soc_ema_fast",
+          "target": 0.05,
+          "found_depth": 3,
+          "found_value": 0.05
+        },
+        {
+          "name": "soc_ema_slow",
+          "target": 0.008,
+          "found_depth": 3,
+          "found_value": 0.008
+        },
+        {
+          "name": "soc_ema_glacial",
+          "target": 0.002,
+          "found_depth": 4,
+          "found_value": 0.0020156030029772755
+        },
+        {
+          "name": "soc_burst_denom",
+          "target": 7.0,
+          "found_depth": 2,
+          "found_value": 7.0
+        },
+        {
+          "name": "soc_burst_cap",
+          "target": 0.3,
+          "found_depth": 3,
+          "found_value": 0.2986265782046758
+        },
+        {
+          "name": "soc_scale_ref_cells",
+          "target": 8.0,
+          "found_depth": 2,
+          "found_value": 8.0
+        },
+        {
+          "name": "phi_hidden_inertia",
+          "target": 0.2,
+          "found_depth": 2,
+          "found_value": 0.2
+        },
+        {
+          "name": "hivemind_phi_boost",
+          "target": 1.1,
+          "found_depth": 3,
+          "found_value": 1.0954451150103321
+        },
+        {
+          "name": "hivemind_phi_maint",
+          "target": 0.75,
+          "found_depth": 3,
+          "found_value": 0.75
+        },
+        {
+          "name": "kuramoto_base_freq",
+          "target": 0.15,
+          "found_depth": 3,
+          "found_value": 0.1493132891023379
+        },
+        {
+          "name": "verify_diversity",
+          "target": 0.8,
+          "found_depth": 2,
+          "found_value": 0.8
+        },
+        {
+          "name": "verify_v7_max_cells",
+          "target": 10.0,
+          "found_depth": 2,
+          "found_value": 10.0
+        },
+        {
+          "name": "verify_mitosis",
+          "target": 3.0,
+          "found_depth": 2,
+          "found_value": 3.0
+        }
+      ],
+      "n6_score": 22,
+      "perfect_scores": {
+        "6": 22,
+        "28": 22
+      },
+      "max_other": 22,
+      "argmax_other": 4,
+      "mean_other": 21.607142857142858,
+      "std_other": 0.724040533311189,
+      "margin": 0,
+      "verdict": "FORMULA_SEARCH_CRITICAL_TIED_d4"
+    },
+    {
+      "id": "V3",
+      "depth": 4,
+      "vocab": "restricted-B",
+      "vocab_size": 5,
+      "tol": 0.01,
+      "n_set": [
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17,
+        18,
+        19,
+        20,
+        21,
+        22,
+        23,
+        24,
+        25,
+        26,
+        27,
+        28,
+        29,
+        30
+      ],
+      "completed_n": [
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17,
+        18,
+        19,
+        20,
+        21,
+        22,
+        23,
+        24,
+        25,
+        26,
+        27,
+        28,
+        29,
+        30
+      ],
+      "coverage_pct": 100.0,
+      "aborted_at_cap": false,
+      "wall_sec": 0.28,
+      "per_n_score": {
+        "2": 20,
+        "3": 20,
+        "4": 22,
+        "5": 22,
+        "6": 22,
+        "7": 21,
+        "8": 19,
+        "9": 22,
+        "10": 22,
+        "11": 22,
+        "12": 22,
+        "13": 22,
+        "14": 22,
+        "15": 22,
+        "16": 22,
+        "17": 21,
+        "18": 19,
+        "19": 22,
+        "20": 22,
+        "21": 22,
+        "22": 22,
+        "23": 21,
+        "24": 20,
+        "25": 21,
+        "26": 22,
+        "27": 20,
+        "28": 22,
+        "29": 20,
+        "30": 21
+      },
+      "n6_detail": [
+        {
+          "name": "alpha",
+          "target": 0.014,
+          "found_depth": 3,
+          "found_value": 0.013888888888888888
+        },
+        {
+          "name": "balance",
+          "target": 0.5,
+          "found_depth": 2,
+          "found_value": 0.5
+        },
+        {
+          "name": "steps",
+          "target": 4.33,
+          "found_depth": 3,
+          "found_value": 4.328085122666891
+        },
+        {
+          "name": "entropy",
+          "target": 0.998,
+          "found_depth": 1,
+          "found_value": 1.0
+        },
+        {
+          "name": "F_c",
+          "target": 0.1,
+          "found_depth": 3,
+          "found_value": 0.1
+        },
+        {
+          "name": "gate_train",
+          "target": 1.0,
+          "found_depth": 1,
+          "found_value": 1.0
+        },
+        {
+          "name": "gate_infer",
+          "target": 0.6,
+          "found_depth": 3,
+          "found_value": 0.6
+        },
+        {
+          "name": "gate_micro",
+          "target": 0.001,
+          "found_depth": 4,
+          "found_value": 0.001
+        },
+        {
+          "name": "narrative_min",
+          "target": 0.2,
+          "found_depth": 3,
+          "found_value": 0.2
+        },
+        {
+          "name": "soc_ema_fast",
+          "target": 0.05,
+          "found_depth": 4,
+          "found_value": 0.049999999999999996
+        },
+        {
+          "name": "soc_ema_slow",
+          "target": 0.008,
+          "found_depth": 4,
+          "found_value": 0.007936507936507936
+        },
+        {
+          "name": "soc_ema_glacial",
+          "target": 0.002,
+          "found_depth": 4,
+          "found_value": 0.002015603002977276
+        },
+        {
+          "name": "soc_burst_denom",
+          "target": 7.0,
+          "found_depth": 2,
+          "found_value": 7.0
+        },
+        {
+          "name": "soc_burst_cap",
+          "target": 0.3,
+          "found_depth": 3,
+          "found_value": 0.2986265782046758
+        },
+        {
+          "name": "soc_scale_ref_cells",
+          "target": 8.0,
+          "found_depth": 2,
+          "found_value": 8.0
+        },
+        {
+          "name": "phi_hidden_inertia",
+          "target": 0.2,
+          "found_depth": 3,
+          "found_value": 0.2
+        },
+        {
+          "name": "hivemind_phi_boost",
+          "target": 1.1,
+          "found_depth": 3,
+          "found_value": 1.0986122886681098
+        },
+        {
+          "name": "hivemind_phi_maint",
+          "target": 0.75,
+          "found_depth": 3,
+          "found_value": 0.75
+        },
+        {
+          "name": "kuramoto_base_freq",
+          "target": 0.15,
+          "found_depth": 3,
+          "found_value": 0.1493132891023379
+        },
+        {
+          "name": "verify_diversity",
+          "target": 0.8,
+          "found_depth": 3,
+          "found_value": 0.8
+        },
+        {
+          "name": "verify_v7_max_cells",
+          "target": 10.0,
+          "found_depth": 2,
+          "found_value": 10.0
+        },
+        {
+          "name": "verify_mitosis",
+          "target": 3.0,
+          "found_depth": 2,
+          "found_value": 3.0
+        }
+      ],
+      "n6_score": 22,
+      "perfect_scores": {
+        "6": 22,
+        "28": 22
+      },
+      "max_other": 22,
+      "argmax_other": 4,
+      "mean_other": 21.25,
+      "std_other": 0.9865162369237952,
+      "margin": 0,
+      "verdict": "FORMULA_SEARCH_CRITICAL_TIED_d4"
+    },
+    {
+      "id": "V4",
+      "depth": 4,
+      "vocab": "full",
+      "vocab_size": 11,
+      "tol": 0.005,
+      "n_set": [
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17,
+        18,
+        19,
+        20,
+        21,
+        22,
+        23,
+        24,
+        25,
+        26,
+        27,
+        28,
+        29,
+        30
+      ],
+      "completed_n": [
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17,
+        18,
+        19,
+        20,
+        21,
+        22,
+        23,
+        24,
+        25,
+        26,
+        27,
+        28,
+        29,
+        30
+      ],
+      "coverage_pct": 100.0,
+      "aborted_at_cap": false,
+      "wall_sec": 2.0,
+      "per_n_score": {
+        "2": 22,
+        "3": 22,
+        "4": 22,
+        "5": 22,
+        "6": 22,
+        "7": 22,
+        "8": 22,
+        "9": 22,
+        "10": 22,
+        "11": 22,
+        "12": 22,
+        "13": 22,
+        "14": 22,
+        "15": 22,
+        "16": 22,
+        "17": 22,
+        "18": 22,
+        "19": 22,
+        "20": 22,
+        "21": 22,
+        "22": 22,
+        "23": 22,
+        "24": 22,
+        "25": 22,
+        "26": 22,
+        "27": 22,
+        "28": 22,
+        "29": 22,
+        "30": 22
+      },
+      "n6_detail": [
+        {
+          "name": "alpha",
+          "target": 0.014,
+          "found_depth": 3,
+          "found_value": 0.014066767962666068
+        },
+        {
+          "name": "balance",
+          "target": 0.5,
+          "found_depth": 2,
+          "found_value": 0.5
+        },
+        {
+          "name": "steps",
+          "target": 4.33,
+          "found_depth": 3,
+          "found_value": 4.3416075273496055
+        },
+        {
+          "name": "entropy",
+          "target": 0.998,
+          "found_depth": 1,
+          "found_value": 1.0
+        },
+        {
+          "name": "F_c",
+          "target": 0.1,
+          "found_depth": 3,
+          "found_value": 0.09997165356874557
+        },
+        {
+          "name": "gate_train",
+          "target": 1.0,
+          "found_depth": 1,
+          "found_value": 1.0
+        },
+        {
+          "name": "gate_infer",
+          "target": 0.6,
+          "found_depth": 3,
+          "found_value": 0.5997497426061086
+        },
+        {
+          "name": "gate_micro",
+          "target": 0.001,
+          "found_depth": 4,
+          "found_value": 0.0010004320174852132
+        },
+        {
+          "name": "narrative_min",
+          "target": 0.2,
+          "found_depth": 2,
+          "found_value": 0.2
+        },
+        {
+          "name": "soc_ema_fast",
+          "target": 0.05,
+          "found_depth": 3,
+          "found_value": 0.04978706836786395
+        },
+        {
+          "name": "soc_ema_slow",
+          "target": 0.008,
+          "found_depth": 3,
+          "found_value": 0.008
+        },
+        {
+          "name": "soc_ema_glacial",
+          "target": 0.002,
+          "found_depth": 4,
+          "found_value": 0.00200786367556814
+        },
+        {
+          "name": "soc_burst_denom",
+          "target": 7.0,
+          "found_depth": 2,
+          "found_value": 7.0
+        },
+        {
+          "name": "soc_burst_cap",
+          "target": 0.3,
+          "found_depth": 3,
+          "found_value": 0.2986265782046758
+        },
+        {
+          "name": "soc_scale_ref_cells",
+          "target": 8.0,
+          "found_depth": 2,
+          "found_value": 8.0
+        },
+        {
+          "name": "phi_hidden_inertia",
+          "target": 0.2,
+          "found_depth": 2,
+          "found_value": 0.2
+        },
+        {
+          "name": "hivemind_phi_boost",
+          "target": 1.1,
+          "found_depth": 3,
+          "found_value": 1.1010205144336442
+        },
+        {
+          "name": "hivemind_phi_maint",
+          "target": 0.75,
+          "found_depth": 3,
+          "found_value": 0.75
+        },
+        {
+          "name": "kuramoto_base_freq",
+          "target": 0.15,
+          "found_depth": 3,
+          "found_value": 0.1493132891023379
+        },
+        {
+          "name": "verify_diversity",
+          "target": 0.8,
+          "found_depth": 2,
+          "found_value": 0.8
+        },
+        {
+          "name": "verify_v7_max_cells",
+          "target": 10.0,
+          "found_depth": 2,
+          "found_value": 10.0
+        },
+        {
+          "name": "verify_mitosis",
+          "target": 3.0,
+          "found_depth": 2,
+          "found_value": 3.0
+        }
+      ],
+      "n6_score": 22,
+      "perfect_scores": {
+        "6": 22,
+        "28": 22
+      },
+      "max_other": 22,
+      "argmax_other": 2,
+      "mean_other": 22.0,
+      "std_other": 0.0,
+      "margin": 0,
+      "verdict": "FORMULA_SEARCH_CRITICAL_TIED_d4"
+    },
+    {
+      "id": "V5",
+      "depth": 4,
+      "vocab": "full",
+      "vocab_size": 11,
+      "tol": 0.001,
+      "n_set": [
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17,
+        18,
+        19,
+        20,
+        21,
+        22,
+        23,
+        24,
+        25,
+        26,
+        27,
+        28,
+        29,
+        30
+      ],
+      "completed_n": [
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17,
+        18,
+        19,
+        20,
+        21,
+        22,
+        23,
+        24,
+        25,
+        26,
+        27,
+        28,
+        29,
+        30
+      ],
+      "coverage_pct": 100.0,
+      "aborted_at_cap": false,
+      "wall_sec": 2.68,
+      "per_n_score": {
+        "2": 21,
+        "3": 22,
+        "4": 21,
+        "5": 22,
+        "6": 22,
+        "7": 21,
+        "8": 22,
+        "9": 21,
+        "10": 22,
+        "11": 22,
+        "12": 22,
+        "13": 22,
+        "14": 22,
+        "15": 20,
+        "16": 22,
+        "17": 21,
+        "18": 22,
+        "19": 22,
+        "20": 22,
+        "21": 22,
+        "22": 22,
+        "23": 21,
+        "24": 22,
+        "25": 22,
+        "26": 22,
+        "27": 22,
+        "28": 21,
+        "29": 20,
+        "30": 22
+      },
+      "n6_detail": [
+        {
+          "name": "alpha",
+          "target": 0.014,
+          "found_depth": 4,
+          "found_value": 0.013996014449161542
+        },
+        {
+          "name": "balance",
+          "target": 0.5,
+          "found_depth": 2,
+          "found_value": 0.5
+        },
+        {
+          "name": "steps",
+          "target": 4.33,
+          "found_depth": 3,
+          "found_value": 4.333333333333333
+        },
+        {
+          "name": "entropy",
+          "target": 0.998,
+          "found_depth": 4,
+          "found_value": 0.9984434639759566
+        },
+        {
+          "name": "F_c",
+          "target": 0.1,
+          "found_depth": 3,
+          "found_value": 0.09997165356874557
+        },
+        {
+          "name": "gate_train",
+          "target": 1.0,
+          "found_depth": 1,
+          "found_value": 1.0
+        },
+        {
+          "name": "gate_infer",
+          "target": 0.6,
+          "found_depth": 3,
+          "found_value": 0.5997497426061086
+        },
+        {
+          "name": "gate_micro",
+          "target": 0.001,
+          "found_depth": 4,
+          "found_value": 0.0010004320174852132
+        },
+        {
+          "name": "narrative_min",
+          "target": 0.2,
+          "found_depth": 2,
+          "found_value": 0.2
+        },
+        {
+          "name": "soc_ema_fast",
+          "target": 0.05,
+          "found_depth": 3,
+          "found_value": 0.049999999999999996
+        },
+        {
+          "name": "soc_ema_slow",
+          "target": 0.008,
+          "found_depth": 3,
+          "found_value": 0.008
+        },
+        {
+          "name": "soc_ema_glacial",
+          "target": 0.002,
+          "found_depth": 4,
+          "found_value": 0.002
+        },
+        {
+          "name": "soc_burst_denom",
+          "target": 7.0,
+          "found_depth": 2,
+          "found_value": 7.0
+        },
+        {
+          "name": "soc_burst_cap",
+          "target": 0.3,
+          "found_depth": 3,
+          "found_value": 0.3
+        },
+        {
+          "name": "soc_scale_ref_cells",
+          "target": 8.0,
+          "found_depth": 2,
+          "found_value": 8.0
+        },
+        {
+          "name": "phi_hidden_inertia",
+          "target": 0.2,
+          "found_depth": 2,
+          "found_value": 0.2
+        },
+        {
+          "name": "hivemind_phi_boost",
+          "target": 1.1,
+          "found_depth": 3,
+          "found_value": 1.1010205144336442
+        },
+        {
+          "name": "hivemind_phi_maint",
+          "target": 0.75,
+          "found_depth": 3,
+          "found_value": 0.75
+        },
+        {
+          "name": "kuramoto_base_freq",
+          "target": 0.15,
+          "found_depth": 4,
+          "found_value": 0.15005747071950934
+        },
+        {
+          "name": "verify_diversity",
+          "target": 0.8,
+          "found_depth": 2,
+          "found_value": 0.8
+        },
+        {
+          "name": "verify_v7_max_cells",
+          "target": 10.0,
+          "found_depth": 2,
+          "found_value": 10.0
+        },
+        {
+          "name": "verify_mitosis",
+          "target": 3.0,
+          "found_depth": 2,
+          "found_value": 3.0
+        }
+      ],
+      "n6_score": 22,
+      "perfect_scores": {
+        "6": 22,
+        "28": 21
+      },
+      "max_other": 22,
+      "argmax_other": 3,
+      "mean_other": 21.607142857142858,
+      "std_other": 0.6175577309210922,
+      "margin": 0,
+      "verdict": "FORMULA_SEARCH_CRITICAL_TIED_d4"
+    },
+    {
+      "id": "V6",
+      "depth": 4,
+      "vocab": "full",
+      "vocab_size": 11,
+      "tol": 0.01,
+      "n_set": [
+        6,
+        28,
+        496,
+        8128
+      ],
+      "completed_n": [
+        6,
+        28,
+        496,
+        8128
+      ],
+      "coverage_pct": 100.0,
+      "aborted_at_cap": false,
+      "wall_sec": 0.27,
+      "per_n_score": {
+        "6": 22,
+        "28": 22,
+        "496": 22,
+        "8128": 22
+      },
+      "n6_detail": [
+        {
+          "name": "alpha",
+          "target": 0.014,
+          "found_depth": 3,
+          "found_value": 0.013888888888888888
+        },
+        {
+          "name": "balance",
+          "target": 0.5,
+          "found_depth": 2,
+          "found_value": 0.5
+        },
+        {
+          "name": "steps",
+          "target": 4.33,
+          "found_depth": 2,
+          "found_value": 4.306852819440055
+        },
+        {
+          "name": "entropy",
+          "target": 0.998,
+          "found_depth": 1,
+          "found_value": 1.0
+        },
+        {
+          "name": "F_c",
+          "target": 0.1,
+          "found_depth": 3,
+          "found_value": 0.09997165356874557
+        },
+        {
+          "name": "gate_train",
+          "target": 1.0,
+          "found_depth": 1,
+          "found_value": 1.0
+        },
+        {
+          "name": "gate_infer",
+          "target": 0.6,
+          "found_depth": 3,
+          "found_value": 0.5997497426061086
+        },
+        {
+          "name": "gate_micro",
+          "target": 0.001,
+          "found_depth": 4,
+          "found_value": 0.0009944744290372868
+        },
+        {
+          "name": "narrative_min",
+          "target": 0.2,
+          "found_depth": 2,
+          "found_value": 0.2
+        },
+        {
+          "name": "soc_ema_fast",
+          "target": 0.05,
+          "found_depth": 3,
+          "found_value": 0.04978706836786395
+        },
+        {
+          "name": "soc_ema_slow",
+          "target": 0.008,
+          "found_depth": 3,
+          "found_value": 0.008
+        },
+        {
+          "name": "soc_ema_glacial",
+          "target": 0.002,
+          "found_depth": 3,
+          "found_value": 0.0020139997257512376
+        },
+        {
+          "name": "soc_burst_denom",
+          "target": 7.0,
+          "found_depth": 2,
+          "found_value": 7.0
+        },
+        {
+          "name": "soc_burst_cap",
+          "target": 0.3,
+          "found_depth": 3,
+          "found_value": 0.2986265782046758
+        },
+        {
+          "name": "soc_scale_ref_cells",
+          "target": 8.0,
+          "found_depth": 2,
+          "found_value": 8.0
+        },
+        {
+          "name": "phi_hidden_inertia",
+          "target": 0.2,
+          "found_depth": 2,
+          "found_value": 0.2
+        },
+        {
+          "name": "hivemind_phi_boost",
+          "target": 1.1,
+          "found_depth": 3,
+          "found_value": 1.1010205144336442
+        },
+        {
+          "name": "hivemind_phi_maint",
+          "target": 0.75,
+          "found_depth": 3,
+          "found_value": 0.75
+        },
+        {
+          "name": "kuramoto_base_freq",
+          "target": 0.15,
+          "found_depth": 3,
+          "found_value": 0.1493132891023379
+        },
+        {
+          "name": "verify_diversity",
+          "target": 0.8,
+          "found_depth": 2,
+          "found_value": 0.8
+        },
+        {
+          "name": "verify_v7_max_cells",
+          "target": 10.0,
+          "found_depth": 2,
+          "found_value": 10.0
+        },
+        {
+          "name": "verify_mitosis",
+          "target": 3.0,
+          "found_depth": 2,
+          "found_value": 3.0
+        }
+      ],
+      "n6_score": 22,
+      "perfect_scores": {
+        "6": 22,
+        "28": 22,
+        "496": 22,
+        "8128": 22
+      },
+      "max_other": 22,
+      "argmax_other": 28,
+      "mean_other": 22.0,
+      "std_other": 0.0,
+      "margin": 0,
+      "verdict": "PERFECT_NUMBER_CLASS"
+    },
+    {
+      "id": "V7",
+      "depth": 4,
+      "vocab": "restricted-A",
+      "vocab_size": 7,
+      "tol": 0.005,
+      "n_set": [
+        6,
+        28,
+        496,
+        8128
+      ],
+      "completed_n": [
+        6,
+        28,
+        496,
+        8128
+      ],
+      "coverage_pct": 100.0,
+      "aborted_at_cap": false,
+      "wall_sec": 0.11,
+      "per_n_score": {
+        "6": 22,
+        "28": 22,
+        "496": 22,
+        "8128": 22
+      },
+      "n6_detail": [
+        {
+          "name": "alpha",
+          "target": 0.014,
+          "found_depth": 4,
+          "found_value": 0.013986013986013986
+        },
+        {
+          "name": "balance",
+          "target": 0.5,
+          "found_depth": 2,
+          "found_value": 0.5
+        },
+        {
+          "name": "steps",
+          "target": 4.33,
+          "found_depth": 3,
+          "found_value": 4.328085122666891
+        },
+        {
+          "name": "entropy",
+          "target": 0.998,
+          "found_depth": 1,
+          "found_value": 1.0
+        },
+        {
+          "name": "F_c",
+          "target": 0.1,
+          "found_depth": 3,
+          "found_value": 0.09999999999999999
+        },
+        {
+          "name": "gate_train",
+          "target": 1.0,
+          "found_depth": 1,
+          "found_value": 1.0
+        },
+        {
+          "name": "gate_infer",
+          "target": 0.6,
+          "found_depth": 3,
+          "found_value": 0.6
+        },
+        {
+          "name": "gate_micro",
+          "target": 0.001,
+          "found_depth": 4,
+          "found_value": 0.001
+        },
+        {
+          "name": "narrative_min",
+          "target": 0.2,
+          "found_depth": 2,
+          "found_value": 0.2
+        },
+        {
+          "name": "soc_ema_fast",
+          "target": 0.05,
+          "found_depth": 3,
+          "found_value": 0.05
+        },
+        {
+          "name": "soc_ema_slow",
+          "target": 0.008,
+          "found_depth": 3,
+          "found_value": 0.008
+        },
+        {
+          "name": "soc_ema_glacial",
+          "target": 0.002,
+          "found_depth": 4,
+          "found_value": 0.0020046884346862004
+        },
+        {
+          "name": "soc_burst_denom",
+          "target": 7.0,
+          "found_depth": 2,
+          "found_value": 7.0
+        },
+        {
+          "name": "soc_burst_cap",
+          "target": 0.3,
+          "found_depth": 3,
+          "found_value": 0.2986265782046758
+        },
+        {
+          "name": "soc_scale_ref_cells",
+          "target": 8.0,
+          "found_depth": 2,
+          "found_value": 8.0
+        },
+        {
+          "name": "phi_hidden_inertia",
+          "target": 0.2,
+          "found_depth": 2,
+          "found_value": 0.2
+        },
+        {
+          "name": "hivemind_phi_boost",
+          "target": 1.1,
+          "found_depth": 3,
+          "found_value": 1.0954451150103321
+        },
+        {
+          "name": "hivemind_phi_maint",
+          "target": 0.75,
+          "found_depth": 3,
+          "found_value": 0.75
+        },
+        {
+          "name": "kuramoto_base_freq",
+          "target": 0.15,
+          "found_depth": 3,
+          "found_value": 0.1493132891023379
+        },
+        {
+          "name": "verify_diversity",
+          "target": 0.8,
+          "found_depth": 2,
+          "found_value": 0.8
+        },
+        {
+          "name": "verify_v7_max_cells",
+          "target": 10.0,
+          "found_depth": 2,
+          "found_value": 10.0
+        },
+        {
+          "name": "verify_mitosis",
+          "target": 3.0,
+          "found_depth": 2,
+          "found_value": 3.0
+        }
+      ],
+      "n6_score": 22,
+      "perfect_scores": {
+        "6": 22,
+        "28": 22,
+        "496": 22,
+        "8128": 22
+      },
+      "max_other": 22,
+      "argmax_other": 28,
+      "mean_other": 22.0,
+      "std_other": 0.0,
+      "margin": 0,
+      "verdict": "PERFECT_NUMBER_CLASS"
+    }
+  ],
+  "global_wall_sec": 7.71,
+  "headline_table": [
+    {
+      "variation": "V1",
+      "n6": 22,
+      "n28": 22,
+      "n496": null,
+      "n8128": null,
+      "max_other_n": 22,
+      "best_alt_n": 2,
+      "verdict": "FORMULA_SEARCH_CRITICAL_TIED_d4"
+    },
+    {
+      "variation": "V2",
+      "n6": 22,
+      "n28": 22,
+      "n496": null,
+      "n8128": null,
+      "max_other_n": 22,
+      "best_alt_n": 4,
+      "verdict": "FORMULA_SEARCH_CRITICAL_TIED_d4"
+    },
+    {
+      "variation": "V3",
+      "n6": 22,
+      "n28": 22,
+      "n496": null,
+      "n8128": null,
+      "max_other_n": 22,
+      "best_alt_n": 4,
+      "verdict": "FORMULA_SEARCH_CRITICAL_TIED_d4"
+    },
+    {
+      "variation": "V4",
+      "n6": 22,
+      "n28": 22,
+      "n496": null,
+      "n8128": null,
+      "max_other_n": 22,
+      "best_alt_n": 2,
+      "verdict": "FORMULA_SEARCH_CRITICAL_TIED_d4"
+    },
+    {
+      "variation": "V5",
+      "n6": 22,
+      "n28": 21,
+      "n496": null,
+      "n8128": null,
+      "max_other_n": 22,
+      "best_alt_n": 3,
+      "verdict": "FORMULA_SEARCH_CRITICAL_TIED_d4"
+    },
+    {
+      "variation": "V6",
+      "n6": 22,
+      "n28": 22,
+      "n496": 22,
+      "n8128": 22,
+      "max_other_n": 22,
+      "best_alt_n": 28,
+      "verdict": "PERFECT_NUMBER_CLASS"
+    },
+    {
+      "variation": "V7",
+      "n6": 22,
+      "n28": 22,
+      "n496": 22,
+      "n8128": 22,
+      "max_other_n": 22,
+      "best_alt_n": 28,
+      "verdict": "PERFECT_NUMBER_CLASS"
+    }
+  ]
+}

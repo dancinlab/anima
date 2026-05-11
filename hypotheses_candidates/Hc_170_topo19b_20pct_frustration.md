@@ -4,7 +4,7 @@ slug: topo19b-20pct-frustration
 title: Hypercube 1024 + 20% frustration (i%5) suboptimal vs 33% and 50% (TOPO19b)
 domain: physics | consciousness
 status: merged-to-H_080
-merged_to: hypotheses/H_080.md
+merged_to: hypotheses/H_080_topo_24variants.md
 merged_at: 2026-05-11
 source_doc: docs/hypotheses/topo/TOPO19b.md
 source_lines: 1-25

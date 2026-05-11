@@ -4,7 +4,7 @@ slug: phi-scaling-N-1071
 title: Φ ≈ 0.608 × N^1.071 superlinear scaling (R34 deprecated 이나 pattern persists)
 domain: math, consciousness
 status: merged-to-H_080
-merged_to: hypotheses/H_080.md
+merged_to: hypotheses/H_080_topo_24variants.md
 merged_at: 2026-05-11
 source_doc: docs/consciousness-theory.md
 source_lines: 60-98

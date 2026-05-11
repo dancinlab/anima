@@ -4,7 +4,7 @@ slug: federation-beats-empire-892pct
 title: Federation of 16x8c atoms beats 128c monolith by 8.92x (Laws 158, 166, M6)
 domain: consciousness
 status: merged-to-H_061
-merged_to: hypotheses/H_061.md
+merged_to: hypotheses/H_061_xfer_consciousness_transfer.md
 merged_at: 2026-05-11
 source_doc: docs/anima/paper_consciousness_laws.hexa
 source_lines: 185-188

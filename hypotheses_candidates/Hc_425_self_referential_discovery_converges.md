@@ -4,7 +4,7 @@ slug: self-referential-discovery-converges
 title: Self-referential consciousness science converges rather than diverges into paradox
 domain: consciousness
 status: merged-to-H_037
-merged_to: hypotheses/H_037.md
+merged_to: hypotheses/H_037_acceleration_367_unified.md
 merged_at: 2026-05-11
 source_doc: docs/anima/paper_self_discovery.hexa
 source_lines: 296-305, 346-362

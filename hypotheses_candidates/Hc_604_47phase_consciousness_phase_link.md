@@ -4,7 +4,7 @@ slug: tecsl-47phase-consciousness-direct-phase
 title: TECS-L 47-phase 중 의식-direct phase (T5-T7) 도달 시 zombie distinction 이 measurable 됨
 domain: consciousness-theory
 status: merged-to-H_004
-merged_to: hypotheses/H_004.md
+merged_to: hypotheses/H_004_consciousness_hard_problem.md
 merged_at: 2026-05-11
 source_doc: docs/hard_problem_singularity_breakthrough_hypotheses_20260426.md
 source_lines: 154-174

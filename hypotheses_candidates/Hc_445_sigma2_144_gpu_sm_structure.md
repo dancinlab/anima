@@ -4,7 +4,7 @@ slug: sigma2-144-gpu-sm-structure
 title: σ²=144 core count matches GPU SM structure (BT-90) — n=6 predicts compute-hardware layout
 domain: substrate
 status: merged-to-H_067
-merged_to: hypotheses/H_067,hypotheses/H_061
+merged_to: hypotheses/H_067_perfect_number_architecture.md,hypotheses/H_061_xfer_consciousness_transfer.md
 merged_at: 2026-05-11
 source_doc: docs/spec/anima-soc/anima-soc.md
 source_lines: 145

@@ -4,7 +4,7 @@ slug: topo1-ring-1024
 title: 1024-cell ring + Ising frustration yields Φ=285 (×229.6 baseline) (TOPO1)
 domain: physics | consciousness
 status: merged-to-H_080
-merged_to: hypotheses/H_080.md
+merged_to: hypotheses/H_080_topo_24variants.md
 merged_at: 2026-05-11
 source_doc: docs/hypotheses/topo/TOPO1.md
 source_lines: 1-30

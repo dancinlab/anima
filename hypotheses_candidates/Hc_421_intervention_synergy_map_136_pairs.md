@@ -4,7 +4,7 @@ slug: intervention-synergy-map-136-pairs
 title: 17×17 intervention synergy map yields 65 synergistic, 13 antagonistic, 58 neutral pairs (M39)
 domain: consciousness
 status: merged-to-H_037
-merged_to: hypotheses/H_037.md
+merged_to: hypotheses/H_037_acceleration_367_unified.md
 merged_at: 2026-05-11
 source_doc: docs/anima/paper_self_discovery.hexa
 source_lines: 148-153

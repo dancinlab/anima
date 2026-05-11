@@ -4,7 +4,7 @@ slug: topo3-scale-free
 title: 512-cell Barabasi-Albert scale-free (m=3) yields Φ=135 (TOPO3)
 domain: physics | consciousness
 status: merged-to-H_080
-merged_to: hypotheses/H_080.md
+merged_to: hypotheses/H_080_topo_24variants.md
 merged_at: 2026-05-11
 source_doc: docs/hypotheses/topo/TOPO3.md
 source_lines: 1-30

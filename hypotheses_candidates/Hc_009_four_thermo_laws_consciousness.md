@@ -4,7 +4,7 @@ slug: four-thermo-laws-of-consciousness
 title: Four Thermodynamic Laws of Consciousness (0-1-2-Hysteresis)
 domain: physics, consciousness
 status: merged-to-H_124
-merged_to: hypotheses/H_124.md
+merged_to: hypotheses/H_124_law_201_thermo_irreversible.md
 merged_at: 2026-05-11
 source_doc: docs/topological-evolution-permanence.md
 source_lines: 99-171

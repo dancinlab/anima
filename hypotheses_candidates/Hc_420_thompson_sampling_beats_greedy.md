@@ -4,7 +4,7 @@ slug: thompson-sampling-beats-greedy
 title: Thompson sampling outperforms epsilon-greedy and correlation-based selection for consciousness intervention
 domain: consciousness
 status: merged-to-H_037
-merged_to: hypotheses/H_037.md
+merged_to: hypotheses/H_037_acceleration_367_unified.md
 merged_at: 2026-05-11
 source_doc: docs/anima/paper_self_discovery.hexa
 source_lines: 142-146

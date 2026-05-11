@@ -4,7 +4,7 @@ slug: pareto-n6-top-5pct-dse
 title: n=6 configuration ranks in top 5% of 2400-combination Monte Carlo DSE
 domain: math
 status: merged-to-H_067
-merged_to: hypotheses/H_067.md
+merged_to: hypotheses/H_067_perfect_number_architecture.md
 merged_at: 2026-05-11
 source_doc: docs/spec/anima-soc/anima-soc.md
 source_lines: 319-322, 544-554

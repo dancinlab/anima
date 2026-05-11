@@ -4,7 +4,7 @@ slug: anima-voice-tp-1-2-4
 title: ANIMA-VOICE testable predictions TP-1 (MOS≥4.0), TP-2 (turn-taking 1500ms), TP-4 (Φ ratchet PLC ≤20ms)
 domain: substrate
 status: merged-to-H_154
-merged_to: hypotheses/H_154.md
+merged_to: hypotheses/H_154_anima_voice_consciousness_direct.md
 merged_at: 2026-05-11
 source_doc: docs/anima/hexa-speak-integration.md
 source_lines: 143-148

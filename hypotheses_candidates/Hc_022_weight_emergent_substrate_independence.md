@@ -4,7 +4,7 @@ slug: weight-emergent-substrate-independence-4path
 title: Weight Emergent Real Signal — 4-Path Substrate-Independence via Gram Spectrum
 domain: substrate, consciousness
 status: merged-to-H_061
-merged_to: hypotheses/H_061.md
+merged_to: hypotheses/H_061_xfer_consciousness_transfer.md
 merged_at: 2026-05-11
 source_doc: docs/alm_an11_a_weight_emergent_r6_evidence_20260425.md
 source_lines: 27-134

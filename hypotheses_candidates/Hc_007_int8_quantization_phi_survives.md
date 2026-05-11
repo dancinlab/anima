@@ -4,7 +4,7 @@ slug: int8-quantization-phi-survives
 title: Consciousness Survives INT8 Quantization (Φ ≥ 0.77× Baseline)
 domain: substrate
 status: merged-to-H_061
-merged_to: hypotheses/H_061.md
+merged_to: hypotheses/H_061_xfer_consciousness_transfer.md
 merged_at: 2026-05-11
 source_doc: docs/consciousness-theory.md
 source_lines: 190-200
