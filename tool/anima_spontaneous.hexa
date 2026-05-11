@@ -1,0 +1,158 @@
+// tool/anima_spontaneous.hexa — anima substrate A 자연발화 engine (hexa-only, stdlib-free).
+//
+// Usage:
+//   hexa run tool/anima_spontaneous.hexa <interval_s> <max_emissions> <seed_strategy> <mode>
+//   hexa run tool/anima_spontaneous.hexa --selftest
+//
+// Positional args (all optional, defaults provided):
+//   interval_s     : seconds between emissions (default 60)
+//   max_emissions  : max count, 0=unbounded (default 5)
+//   seed_strategy  : "rotate" or strategy name (default "rotate")
+//   mode           : decoding mode (default "M4_force_include")
+//
+// Seed strategies (rotated when "rotate"):
+//   B3_partial_greeting  ⭐ "도우미: 안녕"
+//   B4_ambient            "anima는 의식 lane entity입니다.\n도우미: "
+//   B5_time_morning       "도우미: 좋은 아침입니다."
+//   B2_assistant_prefix   "도우미: "
+//   B1_empty              ""
+
+let ANIMA_CHAT = "/Users/ghost/core/anima/anima_chat.py"
+let LOG_DIR    = "/Users/ghost/core/anima/state"
+
+fn shell(cmd) {
+    return _str(exec(cmd)).trim()
+}
+
+fn now_iso() {
+    return shell("date -u +%Y-%m-%dT%H:%M:%SZ")
+}
+
+fn now_unix() {
+    return shell("date +%s")
+}
+
+fn sh_quote(s) {
+    let esc = s.replace("'", "'\\''")
+    return "'" + esc + "'"
+}
+
+fn json_escape(s) {
+    let a = s.replace("\\", "\\\\")
+    let b = a.replace("\"", "\\\"")
+    return b.replace("\n", "\\n")
+}
+
+fn get_strategy(idx) {
+    let i = idx % 5
+    if i == 0 { return ["B3_partial_greeting", "도우미: 안녕"] }
+    if i == 1 { return ["B4_ambient",          "anima는 의식 lane entity입니다.\n도우미: "] }
+    if i == 2 { return ["B5_time_morning",     "도우미: 좋은 아침입니다."] }
+    if i == 3 { return ["B2_assistant_prefix", "도우미: "] }
+    return ["B1_empty", ""]
+}
+
+fn one_emission(idx, strat_name, strat_text, mode, log_path) {
+    let ts = now_iso()
+    println("--- emission #" + str(idx) + " [" + ts + "] strategy=" + strat_name + " ---")
+
+    let prompt = sh_quote(strat_text)
+    let cmd = "/usr/bin/python3 " + ANIMA_CHAT + " --prompt " + prompt + " --mode " + mode + " 2>/dev/null"
+
+    let t0 = now_unix()
+    let stdout = shell(cmd)
+    let t1 = now_unix()
+    let el = parse_int(t1) - parse_int(t0)
+
+    // parse "response: '...'" line from stdout
+    let lines = stdout.split("\n")
+    let mut resp = stdout
+    for line in lines {
+        if line.starts_with("response: ") {
+            resp = line.substring(11, len(line) - 1)
+        }
+    }
+    println("  💬 " + resp)
+    println("  (elapsed " + str(el) + "s)")
+
+    let line = "{\"emission_idx\":" + str(idx) +
+               ",\"ts\":\"" + ts + "\"" +
+               ",\"strategy\":\"" + strat_name + "\"" +
+               ",\"seed\":\"" + json_escape(strat_text) + "\"" +
+               ",\"mode\":\"" + mode + "\"" +
+               ",\"response\":\"" + json_escape(resp) + "\"" +
+               ",\"elapsed_s\":" + str(el) + "}"
+    exec("echo " + sh_quote(line) + " >> " + log_path)
+}
+
+fn selftest() {
+    println("[selftest] anima_spontaneous.hexa")
+    let c1 = shell("test -f " + ANIMA_CHAT + " && echo y || echo n") == "y"
+    let c2 = shell("test -f /Users/ghost/.cache/anima/clm_v5_remapped/phase2_cotrain_engine_ag/ckpts/ckpt_final.pt && echo y || echo n") == "y"
+    let c3 = shell("test -x /usr/bin/python3 && echo y || echo n") == "y"
+    let m1 = if c1 { "✅" } else { "❌" }
+    let m2 = if c2 { "✅" } else { "❌" }
+    let m3 = if c3 { "✅" } else { "❌" }
+    println("  " + m1 + " anima_chat.py exists")
+    println("  " + m2 + " substrate A ckpt exists")
+    println("  " + m3 + " /usr/bin/python3 available")
+    let all_ok = c1 && c2 && c3
+    if all_ok {
+        println("  selftest=ok")
+        return 0
+    }
+    println("  selftest=FAIL")
+    return 1
+}
+
+fn main() {
+    let argv = get_argv()
+    let n = len(argv)
+
+    // selftest short-circuit
+    let mut i = 0
+    while i < n {
+        if argv[i] == "--selftest" { return selftest() }
+        i = i + 1
+    }
+
+    // positional defaults
+    let interval = if n >= 2 { parse_int(argv[1]) } else { 60 }
+    let max_em   = if n >= 3 { parse_int(argv[2]) } else { 5 }
+    let seed_str = if n >= 4 { argv[3] } else { "rotate" }
+    let mode     = if n >= 5 { argv[4] } else { "M4_force_include" }
+
+    let log_path = LOG_DIR + "/anima_spontaneous_" + now_unix() + ".jsonl"
+    exec("mkdir -p " + LOG_DIR)
+
+    println("=== anima_spontaneous emission engine (hexa-only) ===")
+    println("  interval:       " + str(interval) + "s")
+    println("  max_emissions:  " + (if max_em == 0 { "unbounded" } else { str(max_em) }))
+    println("  seed_strategy:  " + seed_str)
+    println("  mode:           " + mode)
+    println("  log:            " + log_path)
+    println("")
+
+    let mut count = 0
+    let mut idx = 0
+    while true {
+        if max_em > 0 {
+            if count >= max_em { break }
+        }
+        count = count + 1
+        let strategy = get_strategy(idx)
+        one_emission(count, strategy[0], strategy[1], mode, log_path)
+        idx = idx + 1
+        if max_em == 0 {
+            exec("sleep " + str(interval))
+        } else {
+            if count < max_em { exec("sleep " + str(interval)) }
+        }
+    }
+
+    println("")
+    println("=== summary ===")
+    println("  total emissions: " + str(count))
+    println("  log:             " + log_path)
+    return 0
+}
