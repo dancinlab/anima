@@ -1,13 +1,13 @@
 #!hexa strict
 
-// @resolver-bypass(reason="Shannon H_n corpus entropy floor measurement for anima + n6-architecture; raw 91 honest C3 STRICT — measurement only, no algorithm proposal, no AOT rebuild, no source patch")
+// @resolver-bypass(reason="Shannon H_n corpus entropy floor measurement for anima + CANON; raw 91 honest C3 STRICT — measurement only, no algorithm proposal, no AOT rebuild, no source patch")
 // @tool(slug="anima-n6-entropy-measure", desc="Compute Shannon H_0/H_3/H_4 byte-level entropy on anima/n6/+4 repos to quantify 80% target architectural reachability. Per-repo + per-class breakdown. raw 9 hexa-only top-level (helper python via raw#37 carve-out for log2 math). No catalog promotion, no commit this turn.")
 // @usage(hexa /Users/ghost/core/anima/tool/anima_n6_entropy_measure.hexa)
 
 // PURPOSE
 //   80% target FINAL gap = 13.78pp residual after A29 v3 standalone 66.22% MEASURED
 //   per-repo: hive 96.04% / airgenome 87.53% / nexus 76.02% / hexa-lang 66.52% /
-//             n6-architecture 60.62% / anima 50.83%
+//             CANON 60.62% / anima 50.83%
 //   anima + n6 are dominant blocker. Hypothesis: corpus entropy floor exceeds
 //   80% saving compatible Shannon limit (LZ77 + Huffman ≈ near H_3-H_4 ceiling).
 //
@@ -45,7 +45,7 @@
 //   /Users/ghost/core/hexa-lang/hexa.real /Users/ghost/core/anima/tool/anima_n6_entropy_measure.hexa --selftest
 //   /Users/ghost/core/hexa-lang/hexa.real /Users/ghost/core/anima/tool/anima_n6_entropy_measure.hexa
 //   /Users/ghost/core/hexa-lang/hexa.real /Users/ghost/core/anima/tool/anima_n6_entropy_measure.hexa \
-//     --repos anima,n6-architecture --output /tmp/entropy_floor.jsonl
+//     --repos anima,CANON --output /tmp/entropy_floor.jsonl
 
 const HELPER_PATH = "/tmp/anima_n6_entropy_measure_helper.hexa_tmp"
 const LEDGER_PATH = "/Users/ghost/core/anima/state/format_witness/2026-04-28_anima_n6_corpus_entropy_floor.jsonl"
@@ -54,7 +54,7 @@ const SPEC_DOC    = "docs/anima_n6_corpus_entropy_floor_2026_04_28.md"
 
 const REPO_ROOTS = [
     "anima:/Users/ghost/core/anima",
-    "n6-architecture:/Users/ghost/core/n6-architecture",
+    "CANON:/Users/ghost/core/canon",
     "nexus:/Users/ghost/core/nexus",
     "hexa-lang:/Users/ghost/core/hexa-lang",
     "airgenome:/Users/ghost/core/airgenome",

@@ -149,11 +149,11 @@ echo "armed pid=$!"
 
 | field | value |
 |---|---|
-| target repo | `need-singularity/p9-llama32-lora-stage1` |
+| target repo | `dancinlab/p9-llama32-lora-stage1` |
 | repo HEAD status | 200 (exists) |
 | token present on pod | yes (37 bytes, both `~/.cache/huggingface/token` and `~/.huggingface/token`) |
 | token user | `dancinlife` |
-| token orgs | `[need-singularity]` |
+| token orgs | `[dancinlab]` |
 | org membership match | yes |
 | first push trigger | step 2000 (~37 min from audit ts) |
 | save_steps | 2000 |
@@ -180,9 +180,9 @@ echo "armed pid=$!"
 ## 6) Coordination with sister BG `a993063` (mk2 naming)
 
 - Audit DID NOT independently rename or pre-create any HF repo.
-- `need-singularity/p9-llama32-lora-stage1` exists (created by training launch prep) and is NON-CONFORM per mk2 spec line 323-325.
+- `dancinlab/p9-llama32-lora-stage1` exists (created by training launch prep) and is NON-CONFORM per mk2 spec line 323-325.
 - Sister BG must decide BEFORE 15:54 UTC (step-2000 push) whether to:
-  - (a) create conform alias repo `need-singularity/clm-v4-paradigm-a-prime-llama32-lora-stage1` and patch trainer `--push-to-hub` arg (requires train restart — costly), OR
+  - (a) create conform alias repo `dancinlab/clm-v4-paradigm-a-prime-llama32-lora-stage1` and patch trainer `--push-to-hub` arg (requires train restart — costly), OR
   - (b) accept temporary non-conform with grace period and rename post-training via HF rename API.
 - **Recommendation (audit lens)**: option (b) — the trainer is mid-flight at step 1090, restart costs ~$2.30 sunk + retemplating + warmup. Post-training rename via HF API is cheap and preserves convergence. Sister BG owns the call.
 
@@ -193,7 +193,7 @@ echo "armed pid=$!"
 - **Round-2 trigger time**: 2026-05-03T17:00:00Z (≈ 1.7 h from this audit; should land between step-2000 save (~15:54) and step-3000 (~17:00))
 - **Round-2 checks**:
   - verify checkpoint-2000 exists on pod
-  - verify HF push succeeded (`curl https://huggingface.co/api/models/need-singularity/p9-llama32-lora-stage1` lastModified moved forward + adapter_model.safetensors present)
+  - verify HF push succeeded (`curl https://huggingface.co/api/models/dancinlab/p9-llama32-lora-stage1` lastModified moved forward + adapter_model.safetensors present)
   - cost trajectory still below projection
   - pod-side watchdog still alive (PID 2079)
   - host-side terminator still alive (PID 6740)

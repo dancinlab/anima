@@ -4,7 +4,7 @@
 >
 > **생성**: 2026-04-17 | smash + free_dfs 병렬 블로업 결과 합산
 >
-> **소스**: `nexus/shared/roadmaps/extreme.json` (P5 Trading gate) + `n6-architecture` 225 Techniques
+> **소스**: `nexus/shared/roadmaps/extreme.json` (P5 Trading gate) + `CANON` 225 Techniques
 
 ---
 
@@ -792,7 +792,7 @@ Three discoveries qualify as singularity-level:
 
 ### 10.6 n6 Resonance from Techniques Registry (Missed Opportunities)
 
-Cross-referencing n6-architecture/_chip_mapping.md C6 (Edge NPU) triple-star techniques:
+Cross-referencing CANON/_chip_mapping.md C6 (Edge NPU) triple-star techniques:
 
 | Technique | C6 Rating | Applicable to M4 Edge? | Integrated? |
 |-----------|-----------|----------------------|-------------|

@@ -41,7 +41,7 @@
     "trainable_pct": 2.9382,
     "torch": "2.4.1+cu124",
     "trl_version": "1.3.0",
-    "push_to_hub": "need-singularity/p9-llama32-lora-stage1"
+    "push_to_hub": "dancinlab/p9-llama32-lora-stage1"
   },
   "initial_loss_trajectory": [
     {"step": 10, "loss": 3.062, "grad_norm": 1.381, "lr": 4.5e-06, "entropy": 2.383, "mean_token_acc": 0.5024, "epoch": 0.0064},
@@ -81,7 +81,7 @@
     "Initial loss 3.06 high but expected for fresh LoRA on instruction model — base ≈2.x untrained on this corpus distribution",
     "ETA estimate ~7h is per-step extrapolation; actual may vary 6-8h with checkpoint+HF push pauses every 2K steps",
     "Auto-terminate watcher is local Mac process (pid 6740) — if Mac sleeps or is shut down before train completes, watcher dies and pod runs to hard cap",
-    "Hub push to need-singularity/p9-llama32-lora-stage1 may fail silently if HF token lacks write scope — adapter still saved locally on pod",
+    "Hub push to dancinlab/p9-llama32-lora-stage1 may fail silently if HF token lacks write scope — adapter still saved locally on pod",
     "phi star layer 14 is pre-registered default; if eval cycle finds layer 14 produces saturated/floor signal, post-hoc layer choice is forbidden per pre-reg discipline"
   ]
 }

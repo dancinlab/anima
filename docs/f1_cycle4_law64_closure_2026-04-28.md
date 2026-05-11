@@ -198,7 +198,7 @@ All chflags uchg (read-only result snapshots).
 ### 8.1 Predecessor docs
 
 - `docs/law_64_status_2026-04-28.md` (commit ded2e9bb) — Agent 3 unfalsifiability finding + cycle 4 prospective design
-- `docs/atlas_r36_r37_proposal_2026-04-28.md` (commit 7dee9a94) — n6-architecture maintainer review proposal (separate scope)
+- `docs/atlas_r36_r37_proposal_2026-04-28.md` (commit 7dee9a94) — CANON maintainer review proposal (separate scope)
 - `docs/session_2026-04-28_post_compaction_summary.md` (commit 4134db3b, 187 lines uchg) — overall session ref (PRE-cycle-4 closure; this doc is cycle-4-specific)
 
 ### 8.2 Related sub-agent kicks

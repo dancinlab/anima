@@ -22,7 +22,7 @@
 | Watchdog | Waited 70 min (300+ poll attempts), saw 11758 MiB free, launched, exited per design (single-shot, no respawn) |
 | Interfering process | PID 3100322 holding 5.9 GiB on the GPU at crash time; identity now unknown (process gone, no tag captured) |
 | Savepoints | 0/5 (none written) |
-| HF repos pushed | 0/5 (HF API confirms `need-singularity/clm-v4-paradigm-j-50k-*` does not exist) |
+| HF repos pushed | 0/5 (HF API confirms `dancinlab/clm-v4-paradigm-j-50k-*` does not exist) |
 | Falsifier outcomes | F1/F2/F3/F-J/F-J2 all VACUOUS_FAIL (no data); F4 NOT_APPLICABLE (γ_BOLD=0 by design) |
 | Empirical question answered | None — sweet-spot transfer (r=64→r=128, 250→50K) remains untested |
 | Sentinel-50k retraining? | NO (per task constraint "NO retraining") |
@@ -36,7 +36,7 @@
 2. **Pulled `train.log` (740 bytes) and `launch.log` (3429 bytes)** from `/tmp/p9_paradigm_j_50k_out/` to `/Users/ghost/core/anima/state/p9_paradigm_j_50k_2026_05_03/`.
 3. **Read both logs** — confirmed torch.OutOfMemoryError at `torch.load(CLM_CKPT, ...)` (training script line 178) at 13:53:08 UTC, exactly 4 seconds after watchdog launched training at 13:53:04 UTC.
 4. **Read watchdog launcher log** `/tmp/p9_paradigm_j_50k_launcher.log` — confirmed clean exit per design ("watchdog END (training will run ~2-4h in background)") with no respawn logic.
-5. **Verified HF mirror is empty** via `curl 'https://huggingface.co/api/models?author=need-singularity&search=paradigm-j'` → `[]`. No savepoints pushed.
+5. **Verified HF mirror is empty** via `curl 'https://huggingface.co/api/models?author=dancinlab&search=paradigm-j'` → `[]`. No savepoints pushed.
 6. **Verified savepoint dir is empty** — `/tmp/p9_paradigm_j_50k_savepoints/` exists with zero files. Constraint "Do NOT delete savepoints" honored vacuously (nothing to delete).
 7. **Verified Phase 1.6 baseline + pilot context** by reading `docs/p9_paradigm_j_50k_launched_2026_05_03.ai.md` §3 caveats: Phase 1.6 baseline F1=0.0059, φ★=43.28; pilot sweet spot γ_FE=0.2 was on r=64 substrate (transfer to r=128 + 50K steps was the empirical question this run was supposed to answer).
 8. **Synthesized verdict.json + trajectory.json (empty) + comparison_matrix.json** at `state/p9_paradigm_j_50k_2026_05_03/`. Training script never produced these because it crashed at step 0; harvester wrote them per task spec.

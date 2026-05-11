@@ -146,7 +146,7 @@ for STEP in 2000 4000 6000 8000 10000; do
   for TASK in hellaswag mmlu triviaqa; do
     ssh ubu1 "/home/aiden/venv_orchestrator/bin/python \
       ~/anima/state/p9_a_prime_main_eval_2026_05_03/eval_llama_lora_ckpt.py \
-      --ckpt-repo need-singularity/p9-llama32-lora-stage1 \
+      --ckpt-repo dancinlab/p9-llama32-lora-stage1 \
       --ckpt-revision step-${STEP} \
       --task ${TASK} --limit 500 \
       --output ~/anima/state/p9_a_prime_main_eval_2026_05_03/lora_results/step${STEP}_${TASK}.json"
@@ -230,4 +230,4 @@ docs/p9_a_prime_eval_pipeline_landed_2026_05_03.ai.md  (this file)
 
 ---
 
-**End of P9 A' main eval pipeline landed handoff. Pipeline READY. Next BG cycle: when Path A LoRA ckpts publish to `need-singularity/p9-llama32-lora-stage1` Hub repo, run §6 sequence — output is `state/p9_a_prime_main_eval_2026_05_03_verdict.json` with F1_v3 composite per ckpt.**
+**End of P9 A' main eval pipeline landed handoff. Pipeline READY. Next BG cycle: when Path A LoRA ckpts publish to `dancinlab/p9-llama32-lora-stage1` Hub repo, run §6 sequence — output is `state/p9_a_prime_main_eval_2026_05_03_verdict.json` with F1_v3 composite per ckpt.**

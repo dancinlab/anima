@@ -72,7 +72,7 @@ Silver-tier (|r| ≥ 0.20) **plausible** for ≥ 1 pair (CLM-EEG); composite ≥
 ```
    field                        | value
    ---------------------------- | -----------------------------------------------------
-   model                        | CLM v4 350M (best.pt) + LoRA need-singularity/clm-v4-sft-stage1
+   model                        | CLM v4 350M (best.pt) + LoRA dancinlab/clm-v4-sft-stage1
    input                        | EXACT ZuCo SR sentence text (per-sentence string)
    forward                      | CPU on ubu1 (~17s/sentence; matches Phase 4 ~9s/window scaled to mean ~30 tokens/sentence)
    extraction                   | per-token hidden state R^(T_tok x 768) post-ln_f

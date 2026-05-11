@@ -3,12 +3,12 @@
 # ANIMA PureField Red Team 검증 (2026-04-02)
 
 > 적대적 검증: ANIMA 의식 이론의 핵심 주장 6개를 R1-R6 프레임워크로 공격.
-> n6-architecture Battle Testing 방법론 차용.
+> CANON Battle Testing 방법론 차용.
 > 정직한 평가 -- 약한 주장은 약하다고 인정한다.
 
 ## 방법론
 
-n6-architecture v4 Red Team 시스템 적용:
+CANON v4 Red Team 시스템 적용:
 
 ```
 R1 ALTERNATIVE   — 비-ANIMA 대안 설명이 존재하는가?

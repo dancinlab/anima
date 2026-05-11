@@ -311,7 +311,7 @@ If root cause is (b.i)-(b.iii) rather than capacity, Track A (corpus rebalance) 
 >
 > **Substrate**: Fresh RunPod H100 SXM pod (per `project_runpod_pod_purge_2026_05_03.md` — boot from HF base mirror, ETA 8-12h, $20-30).
 >
-> **Hub publish**: `need-singularity/p9-llama32-lora-stage1-r16` (new repo to avoid clobbering r=64 ckpts).
+> **Hub publish**: `dancinlab/p9-llama32-lora-stage1-r16` (new repo to avoid clobbering r=64 ckpts).
 >
 > **Eval**: When ckpts publish, re-run A' main eval pipeline per `docs/p9_a_prime_eval_pipeline_landed_2026_05_03.ai.md` §6 — point env var at new repo, emit new verdict at `state/p9_path_a_mitigation_b_r16_2026_05_03_verdict.json`.
 >

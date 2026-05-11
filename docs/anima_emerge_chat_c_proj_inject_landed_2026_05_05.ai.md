@@ -16,7 +16,7 @@ hypothesis "c_proj weights exist in best.pt but are not loaded by the HF inferen
 path, so applying c_proj transform to a substrate-realistic fixture would produce
 chat-capable injection" is **inapplicable on this Mac substrate** because:
 
-1. The released HF model `need-singularity/clm-v4-mk2-v1` (model.safetensors)
+1. The released HF model `dancinlab/clm-v4-mk2-v1` (model.safetensors)
    ships only decoder weights — **0 c_proj keys** found in `model.state_dict()`.
 2. **0 best.pt files** found in HF cache or local repo (HF cache layout has
    blobs/snapshots only; `~/.cache/huggingface/hub/**/best.pt` does not exist;
@@ -30,7 +30,7 @@ chat-capable injection" is **inapplicable on this Mac substrate** because:
 
 | Source                                                | Searched              | Hits |
 | ----------------------------------------------------- | --------------------- | ---- |
-| HF model `state_dict()` (`need-singularity/clm-v4-mk2-v1`) | runtime introspection | 0    |
+| HF model `state_dict()` (`dancinlab/clm-v4-mk2-v1`) | runtime introspection | 0    |
 | `~/.cache/huggingface/hub/**/best.pt`                 | glob                  | 0    |
 | `/Users/ghost/core/anima/{ready,checkpoints,state}/**/best.pt` | rglob | 0    |
 

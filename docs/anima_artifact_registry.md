@@ -52,7 +52,7 @@ sole robust EMERGE: **`NONE`** ★
 | `clm-v4-paradigm-j-50k-final` | 0.793 | ✅ within_strict | 0.2845 | ~~SIMPLE_STACK_PASS_STRICT_C3_ANIMA_V14_VIOLATED~~ V14_VIOLATED | dancinlab/clm-v4-paradigm-j-50k-final-path-a-remapped |
 | `clm-v4-sft-1-7-y1-stage1` | 0.793 | ✅ within_strict | 0.2414 | ~~C3_PARTIAL_NEAR~~ FALSIFIED@N=60 | dancinlab/clm-v4-sft-1-7-y1-stage1-path-a-remapped |
 | `clm-v4-mk2-v1` | 0.99 | ✅ within_strict | — | C3_PARTIAL_NEAR | — |
-| `clm-v2-byte-18m` | 0.99 | ✅ within_strict | — | C3_FAIL | need-singularity/clm-v2-byte-18m-convo-5k |
+| `clm-v2-byte-18m` | 0.99 | ✅ within_strict | — | C3_FAIL | dancinlab/clm-v2-byte-18m-convo-5k |
 | `anima-native-byte-18m` | 0.99 | ✅ within_strict | — | C3_FAIL_V5 | — |
 | `anima-native-byte-18m-chat-template` | 0.99 | ✅ within_strict | — | C3_FAIL_V5_POST_BYTE_FIX | — |
 | `random-init-mk2-v1-mirror` | 0.8 | within_strict_FORMULA_ONLY | 0.5517 | SIMPLE_STACK_PASS_STRICT_C3_RANDOM_INIT_V14_VIOLATED | — |
@@ -230,7 +230,7 @@ _D1 가장 높은 candidate (0.99) — V3 N=30 base 두 번 측정 (0.2414 / 0.1
 **D1**: score=**0.99** (✅ within_strict) — p_updated=1, corpus=0.95, arch=1  
 **measurement**: ppr_v3_n30_kick4=0, ppr_v3_kick4_n_v3_pass=0, ppr_v3_kick4_n_evaluable=29  
 **verdict**: C3_FAIL / emerge_state=FAIL  
-**HF**: private=`need-singularity/clm-v2-byte-18m-convo-5k` / public=(blocked)  
+**HF**: private=`dancinlab/clm-v2-byte-18m-convo-5k` / public=(blocked)  
 
 ### `anima-native-byte-18m`
 

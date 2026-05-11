@@ -32,7 +32,7 @@ applied prospectively).
 |---|---:|---:|:---:|
 | nexus | 96 | 636K | yes (full mirror) |
 | anima | 52 | 1.7M | yes (full mirror) |
-| n6-architecture | 69 | 368K | yes (full mirror) |
+| CANON | 69 | 368K | yes (full mirror) |
 | hexa-lang | 11 | 220K | yes (full mirror) |
 | hive | 54 | 396K | yes (full mirror) |
 | airgenome | 3 | 24K | yes (full mirror) |
@@ -49,7 +49,7 @@ Both paths exist on disk simultaneously today.)
 |---|---:|---:|---:|
 | nexus | 5094 | 0 | 5094 |
 | anima | 6679 | 0 | 6679 |
-| n6-architecture | 143 | 0 | 143 |
+| CANON | 143 | 0 | 143 |
 | hexa-lang | 104 | 8 | 96 |
 | hive | 128 | 4 | 124 |
 | airgenome | 132 | 0 | 132 |

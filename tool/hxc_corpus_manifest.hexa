@@ -2,7 +2,7 @@
 // tool/hxc_corpus_manifest.hexa — HXC corpus manifest emitter (raw 9 hexa-only)
 //
 // PURPOSE
-//   Walk the 6-repo HXC artifact universe (anima, nexus, n6-architecture,
+//   Walk the 6-repo HXC artifact universe (anima, nexus, CANON,
 //   hexa-lang, airgenome, hive) under DECLARATIVE class-filter rules and
 //   emit a single manifest JSON capturing every file's path, raw_bytes,
 //   sha256, and HXC class tag. This is the canonical corpus snapshot any
@@ -156,7 +156,7 @@ fn repo_rules() {
         ["",                     "hexa_pitfalls_log.jsonl","1"],
         ["",                     "discovery_log.jsonl",    "1"]
     ]])
-    t = t.push(["n6-architecture", "/Users/ghost/core/n6-architecture", [
+    t = t.push(["CANON", "/Users/ghost/core/canon", [
         ["state/atlas_convergence_witness","*.json"],
         ["state/atlas_convergence_witness","*.jsonl"],
         ["state",                          "iter_*.jsonl"],

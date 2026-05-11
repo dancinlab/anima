@@ -1,7 +1,7 @@
 // tool/clm_v4_lora_train_orchestrator.hexa — CLM v4 + LoRA SFT H100 lifecycle orchestrator
 //
 // PURPOSE
-//   BG-CLM-2-EXEC: LoRA SFT on CLM v4 530M (need-singularity/clm-v4-mk2-v1) using
+//   BG-CLM-2-EXEC: LoRA SFT on CLM v4 530M (dancinlab/clm-v4-mk2-v1) using
 //   60/30/10 rehearsal mix (slice A 30k anima axis pre-staged + B/C downloaded on H100).
 //   Conservative target_modules (self-attn qkvo on 16 layers; explicit cross_attn exclude).
 //   Auto-kill on COMPLETE.sentinel + φ★-flip ABORT trigger.
@@ -52,7 +52,7 @@ let BUDGET_TARGET_USD   = 10
 let BUDGET_HARD_CAP_USD = 15
 let OD_RATE_USD         = 2.99
 
-let HF_BASE_REPO        = "need-singularity/clm-v4-mk2-v1"
+let HF_BASE_REPO        = "dancinlab/clm-v4-mk2-v1"
 
 // === own 16 Phase 2 watchdog hook (constants) ===
 // BG_LANE identifies the orchestrator lane to the cost-watchdog daemon

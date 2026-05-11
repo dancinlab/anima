@@ -8,14 +8,14 @@
 - verdict: **FAIL_NO_PRIVATE_TRACE** (option alpha FINAL CLOSED)
 
 ## Context
-BG-EQ archaeology (2026-05-05) closed local/LFS/HF-cache search FAIL_NO_TRACE but skipped HF remote private repo enumeration to honor $0 constraint. Network reachability returned, so this BG-FA closes that residual: enumerate need-singularity org private+public repos via authenticated HF API, match against v2 byte-level signature (vocab=256, ~62.5M params, commit bb99b6b6 2026-03-28).
+BG-EQ archaeology (2026-05-05) closed local/LFS/HF-cache search FAIL_NO_TRACE but skipped HF remote private repo enumeration to honor $0 constraint. Network reachability returned, so this BG-FA closes that residual: enumerate dancinlab org private+public repos via authenticated HF API, match against v2 byte-level signature (vocab=256, ~62.5M params, commit bb99b6b6 2026-03-28).
 
 ## (a) HF auth + org membership
 - secret CLI key used: `huggingface.token` (NOT `hf.token` — that one rotated invalid; last4 redacted)
-- whoami: user=`dancinlife`, orgs=[`need-singularity`]
+- whoami: user=`dancinlife`, orgs=[`dancinlab`]
 - API base: `https://huggingface.co/api/`
 
-## (b) need-singularity org inventory (40 models + 2 datasets)
+## (b) dancinlab org inventory (40 models + 2 datasets)
 
 ### v4 SFT main lineage (12 repos, mostly private)
 - `clm-v4-base-mirror` (private, 5.4GB best.pt, BPE 64K tokenizer)

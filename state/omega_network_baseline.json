@@ -37,7 +37,7 @@
       "preflight": "remote_preflight.hexa parallel TCP 300ms probe of FALLBACK_CHAIN. all_unreachable verdict → fast exit 64 (skip per-host ConnectTimeout×N). Bypass HEXA_REMOTE_SKIP_PREFLIGHT=1"
     },
     "path_rewrite_logic": {
-      "case_branches": ["~/Dev|core/airgenome → $HOME/airgenome", "~/Dev|core/nexus → $HOME/Dev/nexus", "~/Dev|core/anima → $HOME/anima", "~/core/n6-architecture → $HOME/core/n6-architecture", "~/core/hive → $HOME/core/hive"],
+      "case_branches": ["~/Dev|core/airgenome → $HOME/airgenome", "~/Dev|core/nexus → $HOME/Dev/nexus", "~/Dev|core/anima → $HOME/anima", "~/core/canon → $HOME/core/canon", "~/core/hive → $HOME/core/hive"],
       "macos_case_insensitive_handling": "CWD/HOME lowercased for prefix detection; preserve original CWD as rsync source (pwd -P resolves symlinks → core/ canonical)",
       "self_contained_cli_branch": "$HOME/.hx/packages/*/cli/*.hexa or /bin/*.hexa → no rsync, REMOTE_ROOT=$HOME, REL=''. Catch-all for unmapped cwd",
       "no_sync_arg_rewrite": "Mac-absolute $HOME/.hx/* args bypass printf %q → injected as literal \"$HOME/.hx/...\" so remote shell expands to its own $HOME (hetzner=/root, ubu=/home/summer)",

@@ -48,11 +48,11 @@
     "signals": {
       "local_verdict": "/Users/ghost/core/anima/state/p9_paradigm_d_25k_h100_2026_05_03/verdict.json",
       "ubu1_verdict": "/home/aiden/anima/state/p9_paradigm_d_25k_h100_2026_05_03/verdict.json",
-      "hf_repo_tag": "need-singularity/clm-v4-paradigm-d-25k-final @ step-25000"
+      "hf_repo_tag": "dancinlab/clm-v4-paradigm-d-25k-final @ step-25000"
     },
     "guard3_label_set": ["SUCCESS", "PARTIAL", "COMPLETE", "ABORT", "FAIL"],
     "dispatch_steps": [
-      {"step": 1, "name": "ssh_ubu1_run_all", "cmd": "ssh ubu1 'ANIMA_CKPT_REPO=need-singularity/clm-v4-paradigm-d-25k-final bash ~/anima/state/p9_paradigm_d_25k_eval_2026_05_03/run_all_d_ckpts.sh'"},
+      {"step": 1, "name": "ssh_ubu1_run_all", "cmd": "ssh ubu1 'ANIMA_CKPT_REPO=dancinlab/clm-v4-paradigm-d-25k-final bash ~/anima/state/p9_paradigm_d_25k_eval_2026_05_03/run_all_d_ckpts.sh'"},
       {"step": 2, "name": "scp_results", "src": "ubu1:~/anima/state/p9_paradigm_d_25k_eval_2026_05_03/ckpt_results/*.json", "dst": "state/p9_paradigm_d_25k_eval_2026_05_03_ckpt_results/"},
       {"step": 3, "name": "d_verdict", "tool": "tool/p9_paradigm_d_verdict.hexa"},
       {"step": 4, "name": "cross_axis", "tool": "tool/p9_a_d_cross_axis_verdict.hexa", "skip_if": "state/p9_a_prime_main_eval_2026_05_03_verdict.json missing"}

@@ -12,9 +12,9 @@ to standalone repo `/Users/ghost/core/anima-agent/` with Apache-2.0 license,
 hexa.toml manifest, CLI router, hx install hook, smoke test, 3 quick-start
 examples, GitHub Actions HF auto-mirror, ~280 LoC qmirror-style README.
 
-GitHub: <https://github.com/need-singularity/anima-agent> (public, commit `106f2b6`)
-Release: <https://github.com/need-singularity/anima-agent/releases/tag/v1.0.0>
-HF mirror: <https://huggingface.co/need-singularity/anima-agent> (PENDING HF_TOKEN)
+GitHub: <https://github.com/dancinlab/anima-agent> (public, commit `106f2b6`)
+Release: <https://github.com/dancinlab/anima-agent/releases/tag/v1.0.0>
+HF mirror: <https://huggingface.co/dancinlab/anima-agent> (PENDING HF_TOKEN)
 Registry: `hexa-lang/tool/pkg/registry.tsv` L26 (`anima-agent 1.0.0`)
 
 ## Origin location ambiguity (resolved)
@@ -76,8 +76,8 @@ git -C /Users/ghost/core/nexus diff cli/agent.hexa engine/nexus_cli.hexa hexa.to
 
 ## USER_ACTION pending
 
-1. **GH repo secret HF_TOKEN** (write scope) — at <https://github.com/need-singularity/anima-agent/settings/secrets/actions>
-2. **(Optional)** `hf auth login --force` then `hf repo create need-singularity/anima-agent --type model` (the workflow will idempotently create on first sync once token is set)
+1. **GH repo secret HF_TOKEN** (write scope) — at <https://github.com/dancinlab/anima-agent/settings/secrets/actions>
+2. **(Optional)** `hf auth login --force` then `hf repo create dancinlab/anima-agent --type model` (the workflow will idempotently create on first sync once token is set)
 3. **Review staged nexus refactor** before commit (4 files in `/Users/ghost/core/nexus/`)
 4. **Origin cleanup** (separate cycle, not this one) — add deprecation comment + cross-link in `anima/anima-agent/` after standalone smoke PASS
 

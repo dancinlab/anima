@@ -85,7 +85,7 @@ own 1 live "anima-local: raw 9 hexa-only scope override + grandfather list"
   R3A.1.3 HIGH→CLOSED: AN11(c) live serving 0% deployed → tool/an11_c_live_local_verify.hexa 작성 (socat HTTP responder + curl + sha256 + JSD pipeline). Verified: HTTP 200 OK, 10 calls, JSD=1.0 > 0.15 PASS exit=0. Cert state/an11_c_local_serve_verdict_<TS>.json. Honest caveat: pipeline closure (not production LLM PASS).
   R3A.2.3 HIGH (V3 CPS metric mathematically incoherent — Gram@H.T row-permutation invariant): documentation 추가 필요 (DEPRECATED 마커 + V_pairrank canonical 지정); V3 broken-by-design 명시.
   R3A.3.1+3.2 HIGH (Mk.X G1-G4 pre-approved auto-fire WITHOUT measurement): evidence-gate 도구 작성 필요 (G1-G4 측정 파일 존재 검증 후 auto-fire 허용); 미구현시 raw#10 overclaim 잔존.
-  R3A.5.1+5.2 HIGH (Goodhart self-targeting): cross-repo independent verifier 연결 (n6-architecture/scripts/quality/honesty_triad_linter.hexa hook 검토); HONEST-DEFER multi-week.
+  R3A.5.1+5.2 HIGH (Goodhart self-targeting): cross-repo independent verifier 연결 (CANON/scripts/quality/honesty_triad_linter.hexa hook 검토); HONEST-DEFER multi-week.
   R3A.7.1 HIGH (CP1 manifest r12-pinned vs evidence r6/r13): "5/5" claim 이 실제 5/22; verifier multi-round 지원 OR claim revision 필요. HONEST-DEFER (verifier 내부 수정 multi-week).
   R3A.{1.1, 1.2, 2.1, 2.2, 4.1, 4.2, 6.1, 6.2, 7.2} MEDIUM x9: dual-threshold regime / post-hoc benign-uniform / V1 r6 미실행 / V2 PAPO k 미공시 / cert non-deterministic timestamps / 다중 round phi_vec emit / omega axis 필드 부재 / K=4 floor unenforced / design ad-hoc — 모두 R2 r2-schema-convention 적용 + 기존 도구 보강으로 closure 가능 (다음 round)
   R3B.DIST.001 CRITICAL→CLOSED: dist/*.native 2 binaries git-tracked despite .gitignore line 149 → `git rm --cached dist/*.native` 적용. 파일 disk 잔존 (build output), git 비추적.
@@ -156,15 +156,15 @@ own 1 live "anima-local: raw 9 hexa-only scope override + grandfather list"
   (3) R5 adversarial_baseline drift: state/r6_adversarial_baseline_drift_<TS>.json — documented declared SHA 243a365e... vs actual 6f32bba9... timeline drift (source updated post-baseline 2026-04-22). Resolution chosen: option (b) preserve baseline as historical pin (raw#15); audit-trail in sidecar manifest.
   r6-multi-week-honest-disclosure: archive 자연 성장 (R5 → R6 사이 +7 certs added) — raw#10 honest. Sidecar pattern 채택: originals 변경 회피 + audit-trail 보존 + future readers 가 sidecar 통해 정확한 ts/schema/drift 정보 조회 가능. 모든 700+ archive certs 의 metadata coverage 100% (실 inline 또는 sidecar via).
   r6-new-axes-2026-04-26 Round 6 new axes (R6A cross-repo + R6B stdlib + R6C runtime) audit complete. anima session 직접 closure 불가 (cross-repo + multi-week + production infrastructure 변경 필요). Findings categorized for future cross-repo session:
-  R6A.1 HIGH: 7/8 follower repos `.raw-ref pinned-hash=TO_BE_FILLED_ON_FIRST_SYNC` — only anima synced; nexus 115일 stale (checked-at 2026-01-01). Resolution: cross-repo session run `tool/raw_sync.hexa check` on contact/papers/n6-architecture/nexus/void/airgenome/hexa-os.
+  R6A.1 HIGH: 7/8 follower repos `.raw-ref pinned-hash=TO_BE_FILLED_ON_FIRST_SYNC` — only anima synced; nexus 115일 stale (checked-at 2026-01-01). Resolution: cross-repo session run `tool/raw_sync.hexa check` on contact/papers/canon/nexus/void/airgenome/hexa-os.
   R6A.2 HIGH: airgenome `.raw` untracked + 456L (raw 4-36, divergent from canonical raw 1-3). SSOT contamination — invisible to git diff. Resolution: cross-repo decision (delete or commit + sync via .raw-ref).
   R6A.3 MEDIUM: hexa-lang raw 1-3 (43L parser-owner) vs hive raw 1-44+ (1802L policy-owner) — followers sync from hexa-lang minimal; enforcement from hive. Architectural clarity needed in raw#3 docstring.
   R6A.4 MEDIUM: anima raw 100 singular precedent (no other follower has local override). Mitigated by raw 100 self-documentation. Monitor for raw 101+ in other followers.
-  R6A.5 PASS: atlas.n6 symlink chain 정상 (8 followers + hexa-lang 모두 → n6-architecture/atlas/atlas.n6).
+  R6A.5 PASS: atlas.n6 symlink chain 정상 (8 followers + hexa-lang 모두 → CANON/atlas/atlas.n6).
   R6A.6 MEDIUM: 35 cross-repo daemons read-only monitors (correct design — R3 fs_usage 0 events 확인).
   R6A.7+R6A.8 LOW: hive vs hexa-lang naming + raw#33 scope partial — clarity issues, not bugs.
   R6B Wave A VERIFIED: stdlib/matrix/{mod,construct,stack} 605L, 32/32 selftest PASS, cross-repo invokable.
-  R6B Wave B/C/D RECOMMENDATION: B (statistics, 1.5w) → C (linalg/svd, 1.5w) → D (bytes/safetensors, 1.5w) → integration (0.5w). Cross-repo benefit: nexus 6 .py + n6-architecture 1 .py + anima 3 gitignored-exempt .py 모두 hexa-native 가능.
+  R6B Wave B/C/D RECOMMENDATION: B (statistics, 1.5w) → C (linalg/svd, 1.5w) → D (bytes/safetensors, 1.5w) → integration (0.5w). Cross-repo benefit: nexus 6 .py + CANON 1 .py + anima 3 gitignored-exempt .py 모두 hexa-native 가능.
   R6C autonomy_loop architecture: 3-stage BFS (decompose/execute/critique); LLMAdapter dispatch; mock path functional, claude/animalm/conscious-lm scaffolds (silent fallback to mock — MEDIUM design debt).
   R6C autonomy_live HIGH: s1_call() timeout silent (S1Response.ok=false but caller may not check); goal_store record_step() doesn't validate before appending phi_trail.
   R6C goal_store HIGH: flush_jsonl() STUB — phi_trail in-memory only, never persisted; PHI_MIN_GATE check 항상 fail (n_steps=0).
@@ -177,7 +177,7 @@ own 1 live "anima-local: raw 9 hexa-only scope override + grandfather list"
   (a) cross-repo coherence session: R6A.1 (raw_sync 7 followers) + R6A.2 (airgenome decision) + R6A.3 (raw#3 docstring clarify) — 1-2 days
   (b) hexa-lang stdlib expansion session: R6B Wave B (1.5w) launch
   (c) anima-agent production-readiness session: R6C 5 stubs implementation (goal_store + emit_report + dashboard + autonomy_live S1 + adapter config) — 2-3 weeks
-  (d) integration session post-(b): nexus + n6-architecture .py ports to Wave B stdlib
+  (d) integration session post-(b): nexus + CANON .py ports to Wave B stdlib
   r6-grand-final-2026-04-26 R1→R6 cumulative session 완전 종료: anima-internal 모든 layers (declarations / operational / measurement / meta / archive / cross-repo+stdlib+runtime) audit + closure pattern 일관 (workflow direction 6 round 모두 violation 우선 정리 + raw#15 SSOT preserve + raw#10 honest disclosure). Edit tool race root identified + sibling .md workaround stable. Session 결과: anima-internal closure 정상 + cross-repo/multi-week/production gaps 명시 documented. 새 session 진입 가능.
   severity warn
   migrated-from raw 100 anima/.raw 2026-04-26

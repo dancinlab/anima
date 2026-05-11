@@ -4,7 +4,7 @@
 **Lane**: BG-AZ rec #1 — last available rescue path for #115 architectural impossibility
 **Verdict**: `FAIL_115_FORMAL_CLOSURE` (n_coherent = 0 / 13 configs)
 **Wall**: 118.0s | **Cost**: $0 (mac CPU)
-**Model**: `need-singularity/clm-v4-mk2-v1` (CLM v4 mk2 v1)
+**Model**: `dancinlab/clm-v4-mk2-v1` (CLM v4 mk2 v1)
 
 ---
 

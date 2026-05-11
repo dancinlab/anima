@@ -53,7 +53,7 @@
 - RunPod GraphQL `pod(id:...)` returns null (pod fully terminated; cannot fetch on-pod log/token)
 
 **Circumstantial evidence (strong)**:
-- Audit round 1 (15:17Z) confirmed: `repo_exists_status=200, token_present_pod=true, token_user=dancinlife, token_orgs=[need-singularity], token_org_match=true`
+- Audit round 1 (15:17Z) confirmed: `repo_exists_status=200, token_present_pod=true, token_user=dancinlife, token_orgs=[dancinlab], token_org_match=true`
 - `train_llama_lora.py` line 130: `hub_strategy="every_save"` → push at every save_steps=2000 → expected 5 pushes (2k, 4k, 6k, 8k, 10k)
 - `host_terminator.log` shows monotonic step progression with NO stall — first push (~step 2000 at 15:52:54Z) did not break training cadence
 - Loss at audit-1: 3.06 → 0.74 over 1090 steps with grad_norm 0.234, no NaN/inf, log_clean=true
@@ -61,7 +61,7 @@
 
 **Verification recovery path** (next cycle):
 1. `hf auth login --force` (interactive on Mac) OR ssh into ubu1 and run from there if ubu1 has fresh token
-2. `hf models info need-singularity/p9-llama32-lora-stage1 | jq '.siblings[].rfilename'`
+2. `hf models info dancinlab/p9-llama32-lora-stage1 | jq '.siblings[].rfilename'`
 3. `curl -H "Authorization: Bearer $HF_TOK" /api/models/<repo>/refs` to enumerate tags
 4. If pushes confirmed: trigger sister BG `a993063` post-completion workflow (`hf repos move` legacy→canonical name)
 
@@ -93,7 +93,7 @@ Post-termination billing: **$0.00 additional** (verified via RunPod GraphQL `mys
 Blockers:
 1. **HF push not live-verified** — must re-auth on Mac (or ubu1) and confirm `siblings` includes `adapter_config.json`, `adapter_model.safetensors`, plus tokenizer files. Until verified, kicking off A' eval risks pulling a half-pushed or empty repo.
 2. **`final/` adapter status unknown** — `trainer.save_model('final')` is a separate operation from `every_save` push; even if step-2k…10k commits pushed, `final/` may not have flushed before pid exit. Eval pipeline must accept `step-10000` ckpt as fallback if `final/` missing.
-3. **Naming alias not yet executed** — sister BG `a993063` (`p9_path_a_naming_decision_landed`) pre-created `need-singularity/llm-llama32-3b-paradigm-a-prime-sft-stage1`; post-training `hf repos move` is pending. Eval pipeline should read from legacy `p9-llama32-lora-stage1` until rename lands.
+3. **Naming alias not yet executed** — sister BG `a993063` (`p9_path_a_naming_decision_landed`) pre-created `dancinlab/llm-llama32-3b-paradigm-a-prime-sft-stage1`; post-training `hf repos move` is pending. Eval pipeline should read from legacy `p9-llama32-lora-stage1` until rename lands.
 
 **Recommended next-cycle ordering**:
 1. (5min) Re-auth HF on Mac, run `hf models info` + `--refs` to confirm 5 commits/tags + adapter files present

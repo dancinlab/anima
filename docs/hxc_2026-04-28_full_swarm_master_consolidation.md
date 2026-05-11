@@ -21,7 +21,7 @@ This document **consolidates** outputs across 16 parallel agents that ran inside
 
 | ID | Class | Started | Completed | Status | Core finding (1-2 sentences) | Evidence |
 |---|---|---|---|---|---|---|
-| **a201a6cc** | n6 entropy verdict | T+0h | T+1h | COMPLETE | n6-architecture atlas Shannon H_4 = 0.813 bit/byte → ~90% projected ceiling. Prior Phase 8 closure verdict ("entropy-bound, HXC out-of-scope") FALSIFIED. atlas is NOT entropy-bound; current 4% is an algorithm-catalog deficit. | `docs/hxc_phase10_master_roadmap_20260428.md`, `state/format_witness/2026-04-28_n6-architecture_cross_repo_sweep.jsonl`, commit `bfa959989` (raw 137 strengthening) |
+| **a201a6cc** | n6 entropy verdict | T+0h | T+1h | COMPLETE | CANON atlas Shannon H_4 = 0.813 bit/byte → ~90% projected ceiling. Prior Phase 8 closure verdict ("entropy-bound, HXC out-of-scope") FALSIFIED. atlas is NOT entropy-bound; current 4% is an algorithm-catalog deficit. | `docs/hxc_phase10_master_roadmap_20260428.md`, `state/format_witness/2026-04-28_CANON_cross_repo_sweep.jsonl`, commit `bfa959989` (raw 137 strengthening) |
 | **adc2e734** | Bug 1 verdict (heredoc ARG_MAX) | T+0h | T+1h | COMPLETE | Darwin 25.4.0 ARG_MAX cliff measured at 1,044,361 bytes (1MB) — NOT the 64-128KB threshold the doc claimed. Doc threshold FALSIFIED. `hive/tool/hxc_convert.hexa:191` is HIGH-risk (1MB content); 4 anima MED-risk files. | `state/format_witness/2026-04-28_bug1_a16_verdicts.jsonl` (24 rows), raw 144 follow-up |
 | **a38dcbed** | Bug 2 verdict (AOT cache) | T+0h | T+1h | COMPLETE | Hexa AOT cache at `hexa-lang/self/main.hexa:1080` source_key fn does not canonicalize file symlinks (only directory symlinks). Recommended Option A: 4 LoC realpath + cache_schema_version v5→v6 bump. 99% file-symlink coverage; hard-link/firmlink residual 1% needs Option B content-hash (separate cycle). | commit `b89c8975`, `state/format_witness/2026-04-28_bug2_aot_cache_canonical_path_verdict.jsonl`, raw 145 |
 | **ad82a91829** | Bug 3 verdict (substring offset) | T+0h | T+1h | COMPLETE | A15 tree-subschema decoder is **DEAD CODE**: `hxc_a15_nested_subschema.hexa:594` reads `substring(0, 18) == "# tree-subschema:"` but the literal is 17 chars — comparison is always false. Decoder never fires. 18KB of advertised A15 saving was zero. | commit `1280895e`, `state/format_witness/2026-04-28_bug3_substring_offset_verdict.jsonl`, raw 146 |
@@ -82,7 +82,7 @@ Cumulative byte-weighted compression on the 6-repo aggregate. raw 91 C3: phases 
 | audit (mid-density) | hive triad_audit | 75% | 88% | 91% | ~92% |
 | mixed inventory | nexus 96 files | 43% | 78% | **85%** | ~88% |
 | text-heavy | anima alm_r13 | 24% | 80% | **92%** | ~95% |
-| entropy-bound | n6-architecture atlas | **4%** | **90%** | **93%** | ~95% |
+| entropy-bound | CANON atlas | **4%** | **90%** | **93%** | ~95% |
 | **6-repo aggregate** | weighted | **48%** | **~88%** | **~92%** | **~93%** |
 
 The Phase 5 → Phase 11 P3 trajectory: ~78pp gain over ~5800 LoC. Per-pp marginal cost stays polynomial through Phase 10 P2; rises sharply at Phase 11 (~400 LoC/pp), signaling a second Pareto frontier saturation at ~92%. Phase 12+ would require constraint relaxation (cmix-class neural mixers — raw 18 violation, REJECTED).
@@ -249,7 +249,7 @@ Total anima `.own` count: **9**.
 | nexus | DEFER (hive raw 137b inheritance) | PROPOSE MIRROR own 4 | PROPOSE MIRROR own 5 | READY |
 | hexa-lang | REJECTED (parser-self-host scope) | REJECTED (scope) | REJECTED (scope) | architecturally inappropriate |
 | airgenome | BLOCKED (no `.own` SSOT) | BLOCKED (HIGHEST priority post-bootstrap) | BLOCKED (Python-tier extension needed) | infra prerequisite |
-| n6-architecture | PROPOSE MIRROR own 24 (bash extension) | PROPOSE MIRROR own 25 (entropy-bound verdict absorb) | PROPOSE MIRROR own 26 (renumbered, own 9 already taken) | READY w/ adaptation |
+| CANON | PROPOSE MIRROR own 24 (bash extension) | PROPOSE MIRROR own 25 (entropy-bound verdict absorb) | PROPOSE MIRROR own 26 (renumbered, own 9 already taken) | READY w/ adaptation |
 
 5 actionable mirrors total; awaiting user approval gate.
 
@@ -356,7 +356,7 @@ For external auditors traversing this consolidation: each agent verdict is doubl
 
 | Surface | Path |
 |---|---|
-| n6 entropy verdict | `state/format_witness/2026-04-28_n6-architecture_cross_repo_sweep.jsonl` |
+| n6 entropy verdict | `state/format_witness/2026-04-28_CANON_cross_repo_sweep.jsonl` |
 | Bug 1 verdicts (24 rows) | `state/format_witness/2026-04-28_bug1_a16_verdicts.jsonl` |
 | Bug 2 verdict | `state/format_witness/2026-04-28_bug2_aot_cache_canonical_path_verdict.jsonl` |
 | Bug 3 verdict | `state/format_witness/2026-04-28_bug3_substring_offset_verdict.jsonl` |

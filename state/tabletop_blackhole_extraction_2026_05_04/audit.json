@@ -16,8 +16,8 @@
       "reason": "Both Phase-2 ZERO_COLLISION; joined to mirror Phase-1 absorption pattern + reduce dual-mirror burden"
     },
     "destination_choice": {
-      "recipe_suggested": "n6-architecture/experiments/tabletop-blackhole/",
-      "actual_destination": "n6-architecture/domains/physics/tabletop-blackhole/",
+      "recipe_suggested": "CANON/experiments/tabletop-blackhole/",
+      "actual_destination": "CANON/domains/physics/tabletop-blackhole/",
       "rationale": "domains/physics/tabletop-blackhole/ already houses tabletop-blackhole.md research spec (TBHL-01..08); co-locating .hexa with its design doc matches the Phase-1 crystallography_n6 + chip_isa_n6 absorb pattern. experiments/ dir does not have a tabletop-blackhole subdir at present; adding to experiments/ would create cross-tree split between research spec (under domains/) and code (under experiments/). Co-location chosen for consistency."
     }
   },
@@ -50,7 +50,7 @@
     }
   },
   "consumer_grep": {
-    "scope": "/Users/ghost/core/nexus + /Users/ghost/core/anima + /Users/ghost/core/n6-architecture (excluding worktrees, _archive, raw_archive)",
+    "scope": "/Users/ghost/core/nexus + /Users/ghost/core/anima + /Users/ghost/core/canon (excluding worktrees, _archive, raw_archive)",
     "consumer_files_count": 0,
     "doc_only_references": [
       "/Users/ghost/core/nexus/design/kick/2026-04-27_commit-readiness-audit_omega_cycle.json",
@@ -64,7 +64,7 @@
     "verdict": "ZERO active code consumers. Doc-level mentions + run-marker history only; no refactor required."
   },
   "destination_layout": {
-    "absorb_path": "/Users/ghost/core/n6-architecture/domains/physics/tabletop-blackhole/",
+    "absorb_path": "/Users/ghost/core/canon/domains/physics/tabletop-blackhole/",
     "preserved_predecessor_files": [
       "tabletop-blackhole.md (research spec, TBHL-01..08, n=6 closure derivation)"
     ],
@@ -75,7 +75,7 @@
     "absorb_pattern": "co-located sibling .hexa under domain dir (mirrors crystallography_n6 + chip_isa_n6 + sister fusion_ledger patterns)"
   },
   "smoke_test": {
-    "ran_from": "/Users/ghost/core/n6-architecture",
+    "ran_from": "/Users/ghost/core/canon",
     "command": "hexa run domains/physics/tabletop-blackhole/tabletop_blackhole.hexa --self-test",
     "result": "PASS",
     "sentinel": "__TABLETOP_BLACKHOLE__ PASS",
@@ -87,16 +87,16 @@
   },
   "import_refactor": {
     "old_namespace": "nexus.modules.tabletop_blackhole.*",
-    "new_namespace": "n6-architecture/domains/physics/tabletop-blackhole/tabletop_blackhole.*",
+    "new_namespace": "CANON/domains/physics/tabletop-blackhole/tabletop_blackhole.*",
     "code_changes_required": "NONE (zero internal imports; module is fully self-contained)",
     "doc_only_namespace_refs": "@usage CLI lines remain modules/tabletop_blackhole/ form — informational only"
   },
   "git_action": {
-    "destination_repo": "/Users/ghost/core/n6-architecture",
+    "destination_repo": "/Users/ghost/core/canon",
     "branch": "main",
     "commit_sha": "b59d38b3",
     "commit_strategy": "joined-with-sister (single commit landing both rank-1 fusion_ledger + rank-2 tabletop_blackhole)",
-    "push": "completed (https://github.com/need-singularity/n6-architecture)"
+    "push": "completed (https://github.com/dancinlab/canon)"
   },
   "nexus_cleanup": {
     "delete_target": "/Users/ghost/core/nexus/modules/tabletop_blackhole/",
@@ -110,13 +110,13 @@
       "modules/tabletop_blackhole/tests/__pycache__/ (gitignored, no .hexa sources)"
     ],
     "consumer_refactor_required": false,
-    "user_action_required": "review staged delete and commit when ready (recommended commit message: 'refactor(nexus): remove tabletop_blackhole module — absorbed into n6-architecture/domains/physics/tabletop-blackhole/ at b59d38b3')"
+    "user_action_required": "review staged delete and commit when ready (recommended commit message: 'refactor(nexus): remove tabletop_blackhole module — absorbed into CANON/domains/physics/tabletop-blackhole/ at b59d38b3')"
   },
   "caveats_raw10_4": [
     {
       "id": 1,
       "label": "destination diverged from recipe (experiments/ → domains/physics/)",
-      "detail": "Recipe specified n6-architecture/experiments/tabletop-blackhole/ but actual destination is n6-architecture/domains/physics/tabletop-blackhole/. Rationale: tabletop-blackhole.md research spec already lives under domains/physics/tabletop-blackhole/; co-locating .hexa with research spec matches Phase-1 absorb pattern (crystallography_n6 → domains/physics/crystallography/, chip_isa_n6 → domains/compute/chip-isa-n6/). experiments/_results.jsonl entry NOT updated since the canonical home is now domains/physics/. Future: if experiments/ becomes the convention for production sims, a sibling pointer file (experiments/tabletop-blackhole/_pointer.md) could be added — deferred."
+      "detail": "Recipe specified CANON/experiments/tabletop-blackhole/ but actual destination is CANON/domains/physics/tabletop-blackhole/. Rationale: tabletop-blackhole.md research spec already lives under domains/physics/tabletop-blackhole/; co-locating .hexa with research spec matches Phase-1 absorb pattern (crystallography_n6 → domains/physics/crystallography/, chip_isa_n6 → domains/compute/chip-isa-n6/). experiments/_results.jsonl entry NOT updated since the canonical home is now domains/physics/. Future: if experiments/ becomes the convention for production sims, a sibling pointer file (experiments/tabletop-blackhole/_pointer.md) could be added — deferred."
     },
     {
       "id": 2,
@@ -131,7 +131,7 @@
     {
       "id": 4,
       "label": "tests/ subdir contains only stale pyc remnants + cross-tree git history split",
-      "detail": "Same as fusion_ledger + chip_isa_n6: tests/__pycache__/ but no .hexa or .py source. --self-test in CLI covers all 3 falsifier checks. ALSO: git history split — code is now in n6-architecture@b59d38b3 while origin commits live in nexus@bcadbf6d (separate repos, no submodule link). @origin SHA documented in .README.md but not enforced via git mechanism. Cross-tree archaeology requires manual SHA chase."
+      "detail": "Same as fusion_ledger + chip_isa_n6: tests/__pycache__/ but no .hexa or .py source. --self-test in CLI covers all 3 falsifier checks. ALSO: git history split — code is now in CANON@b59d38b3 while origin commits live in nexus@bcadbf6d (separate repos, no submodule link). @origin SHA documented in .README.md but not enforced via git mechanism. Cross-tree archaeology requires manual SHA chase."
     }
   ],
   "raw_constraints": {

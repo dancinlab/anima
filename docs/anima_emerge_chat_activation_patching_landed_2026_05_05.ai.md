@@ -19,7 +19,7 @@ hidden dim, layer count). Resize handled with naive zero-pad (Pythia D=512 → C
 ## Setup
 
 - donor: `EleutherAI/pythia-70m` (HF, fp32)
-- recipient: `need-singularity/clm-v4-mk2-v1` (CLM v4 mk2 v1, fp32, mac CPU)
+- recipient: `dancinlab/clm-v4-mk2-v1` (CLM v4 mk2 v1, fp32, mac CPU)
 - prompt: `안녕`
 - patch sites: layer ∈ {4, 8, 12}, blend_alpha ∈ {0.5, 1.0, 2.0}
 - patch target: last-token position only, post-block residual via forward-hook

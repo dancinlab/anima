@@ -18,7 +18,7 @@ fn main() {
     let hexa_bin = env_get("HEXA", "/usr/local/bin/hexa")
     if !file_exists(hexa_bin) {
         println("[!!] hexa binary missing at " + hexa_bin)
-        println("     Install: see https://github.com/need-singularity/hexa-lang")
+        println("     Install: see https://github.com/dancinlab/hexa-lang")
         exit(1)
     }
     println("[OK] hexa runtime")

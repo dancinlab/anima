@@ -18,7 +18,7 @@ strengthening architectural #115 framing.
 
 ## Setup
 
-- Substrate: `need-singularity/clm-v4-mk2-v1` (CLM v4 fp32, mac CPU)
+- Substrate: `dancinlab/clm-v4-mk2-v1` (CLM v4 fp32, mac CPU)
 - Tokenizer: `tokenizer_64k_multilingual.model` (SentencePiece, 64k multilingual)
 - Decoder: `greedy` (argmax) + `top-k=40, T=0.8, max_new=30, seed=42`
 - raw37 transient sister-import on `anima_emerge_cand_d_inject_helper.py`

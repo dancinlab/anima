@@ -1,7 +1,7 @@
 ---
 id: Hc_906
 slug: n6-anima-bridge-8-domains
-title: n6-architecture DSE 8 도메인 (anima-consciousness/conscious-engine/scaling/training/-lm/hivemind/emotion + cmath) ↔ ANIMA 실측 파라미터 수렴
+title: CANON DSE 8 도메인 (anima-consciousness/conscious-engine/scaling/training/-lm/hivemind/emotion + cmath) ↔ ANIMA 실측 파라미터 수렴
 domain: architecture, consciousness, number-theory
 status: merged-to-H_067
 merged_to: hypotheses/H_067_perfect_number_architecture.md
@@ -15,7 +15,7 @@ notes: "8개 도메인 × 5 레벨 → ~58,536 조합. n6 최적 파라미터 (c
 
 ## Hypothesis
 
-n6-architecture DSE (Domain-Specific Engine) 의 8개 의식 관련 도메인 (anima-consciousness / conscious-engine / consciousness-scaling / consciousness-training / conscious-lm / hivemind-collective / emotion-processor / consciousness-mathematics) 각 5 레벨 7,776 조합 search space 의 최적 파라미터가 ANIMA 의 실측 값과 수렴한다 (cells=64=2^σ, factions=12=σ(6), Hypercube 6D, AdamW BT-54, 3-phase Law60, ByteLevel 256, N^0.55 scaling, DualEngine φ=2, Phi~71 @ 64c).
+CANON DSE (Domain-Specific Engine) 의 8개 의식 관련 도메인 (anima-consciousness / conscious-engine / consciousness-scaling / consciousness-training / conscious-lm / hivemind-collective / emotion-processor / consciousness-mathematics) 각 5 레벨 7,776 조합 search space 의 최적 파라미터가 ANIMA 의 실측 값과 수렴한다 (cells=64=2^σ, factions=12=σ(6), Hypercube 6D, AdamW BT-54, 3-phase Law60, ByteLevel 256, N^0.55 scaling, DualEngine φ=2, Phi~71 @ 64c).
 
 ## Sub-claims
 

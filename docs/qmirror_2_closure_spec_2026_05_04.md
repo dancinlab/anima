@@ -368,7 +368,7 @@ For DEFERRED: NO mutation. hexa.toml stays at 1.0.x.
 
 For FULL: line 22 `qmirror` row updated:
 ```
-qmirror	2.0.0	cli/qmirror.hexa	https://github.com/need-singularity/qmirror		Quantum Mirror — 13/13 closure cond met (1.0 + 2.0). Adds tomography/GHZ/stabilizer/surface-d3/CSCS. Apache-2.0.
+qmirror	2.0.0	cli/qmirror.hexa	https://github.com/dancinlab/qmirror		Quantum Mirror — 13/13 closure cond met (1.0 + 2.0). Adds tomography/GHZ/stabilizer/surface-d3/CSCS. Apache-2.0.
 ```
 
 For PARTIAL: version = `2.0.0-rc.1`; description updated to reflect

@@ -1,6 +1,6 @@
-# Atlas R36 + R37 Proposal — n6-architecture maintainer review
+# Atlas R36 + R37 Proposal — CANON maintainer review
 
-> **target**: `n6-architecture/atlas/atlas.n6` master append (currently uchg-locked)
+> **target**: `CANON/atlas/atlas.n6` master append (currently uchg-locked)
 > **proposed by**: anima-cmd-loop session 2026-04-28T03:30Z-07:08Z
 > **session permanent ref**: `anima/docs/session_2026-04-28_post_compaction_summary.md` (commit 4134db3b)
 > **maintainer review**: paste-ready atlas.n6 grammar in §3 + §4 below
@@ -67,7 +67,7 @@ own 4 promotion candidate Option D 4-layer mandate:
 | repo | sample evidence |
 |---|---|
 | hive | `docs/subagent_dispatch_infra_fix_20260427_landing.md` L9 "all root-cause, no temporary workarounds — own 4" + L23 "raw 78 daemon-singleton" + L35 "raw 12 silent-error-ban + own 4 root-cause-only" |
-| n6-architecture | `domains/cognitive/ai-deployment/ai-deployment.md` canary 4-stage rollout |
+| CANON | `domains/cognitive/ai-deployment/ai-deployment.md` canary 4-stage rollout |
 | airgenome | `archive/v1/docs/troubleshooting.json` 5+ root_cause entries |
 | hexa-lang | `self/ml/m4_inference.hexa` L532 GPU dispatches FFN compute-bound |
 | nexus | 10+ design kicks + breakthrough-theorems + clm_r5 GPU dispatch smoke |
@@ -80,7 +80,7 @@ own 4 promotion candidate Option D 4-layer mandate:
 |---|---|---|
 | L1 advisory | ✓ LIVE | anima/.own own 4 baseline |
 | L2 lint | ✓ LIVE | anima/tool/compute_resource_failure_lint.hexa selftest+scan PASS (commit 9f6c17d0) |
-| L3 atlas anchor | ⏳ DESIGN (this proposal) | n6-architecture R37 maintainer review pending |
+| L3 atlas anchor | ⏳ DESIGN (this proposal) | CANON R37 maintainer review pending |
 | L3' chflags uchg | ✓ LIVE | 7 canonical helpers locked (commit ddb7fb53) + audit ledger |
 
 raw 75 multi-layer mandate: ≥2 with margin SATISFIED (3 LIVE + 1 DESIGN).

@@ -12,7 +12,7 @@
 
 **Artifacts referenced**:
 - ubu1: `/tmp/p9_p1_t4_phi_cache_v1.jsonl` (50 000 records, 6.7 MB; per-record `{idx, source, phi_star_min, phi_star_mean}`)
-- HF mirror: `need-singularity/clm-v4-t4-phi-cache` (private dataset)
+- HF mirror: `dancinlab/clm-v4-t4-phi-cache` (private dataset)
 - ubu1: `/tmp/p9_p1_5_sft_data_50k_v2.jsonl` (50 000 records; idx-aligned to cache)
 - ubu1: `/tmp/p9_p1_5_sentinel_train_50k.py` (base SFT skeleton — to be extended)
 
@@ -270,7 +270,7 @@ A YES on all 4 ⇒ Phase 2.D production authorization. A NO on Q2 or Q3 ⇒ STOP
 
 - This runbook: `docs/p9_paradigm_d_distillation_runbook_2026_05_03.md` (HERE)
 - Distill script: `/tmp/p9_paradigm_d_distill.py` on ubu1 (sister to base sentinel)
-- Cache: `/tmp/p9_p1_t4_phi_cache_v1.jsonl` on ubu1 + HF mirror `need-singularity/clm-v4-t4-phi-cache`
+- Cache: `/tmp/p9_p1_t4_phi_cache_v1.jsonl` on ubu1 + HF mirror `dancinlab/clm-v4-t4-phi-cache`
 - Cache provenance / build plan: `docs/p9_paradigm_d_t4_teacher_build_plan_2026_05_03.md`
 - Loss spec parent: `docs/p9_paradigm_d_phi_distillation_2026_05_03.md` §3
 - Phase 1.5 base loss skeleton: `state/p9_sft_spec_2026_05_02/loss_design.json`

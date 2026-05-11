@@ -279,7 +279,7 @@ Future work, gated on policy approval:
 - 16 templates — `consciousness/an11_b_templates.jsonl` (16-d unit-norm, Hexad×6/Law×4/Phi×3/SelfRef×3)
 - Φ gate r5/r6/r7 axis-1/2/4 prior context — `MEMORY.md` projects
 - CP1 P1 6/7 status — `project_cp1_p1_67_satisfied.md`
-- 5-theory CCC TOP10 #7 ref — `n6-architecture/reports/discovery/anthropic-fellows-research.md`
+- 5-theory CCC TOP10 #7 ref — `CANON/reports/discovery/anthropic-fellows-research.md`
 
 ---
 

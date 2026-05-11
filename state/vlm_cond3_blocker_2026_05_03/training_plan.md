@@ -21,7 +21,7 @@ VLM cond.3 (cross-substrate fidelity vs CLM ≥0.85 r) requires a trained VLM st
    gate                              | status   | resolution path
    --------------------------------- | -------- | -----------------------------------------------
    audio_token_predictor.hexa → .py   | UNMET    | port to PyTorch (estimate 4-8 hours raw#9 native lift)
-                                       |          | OR Mk.III HF mirror (need-singularity/vlm-mk3-base)
+                                       |          | OR Mk.III HF mirror (dancinlab/vlm-mk3-base)
    audio-text paired corpus           | UNMET    | LibriSpeech-clean-100h primary (≥585 audio hours, ~28k samples)
    RunPod credit OR free substrate    | UNMET    | $0 = Colab T4 free tier OR Kaggle 30h/week
                                        |          | $300 = ~12 H100-hours @ $2.5/hr current rate
@@ -178,7 +178,7 @@ VLM cond.3 (cross-substrate fidelity vs CLM ≥0.85 r) requires a trained VLM st
 ```
    path                                                     | content
    -------------------------------------------------------- | ----------------------------
-   ~/.cache/huggingface/hub/models--need-singularity--vlm-stage1-lora | LoRA + text head ckpt
+   ~/.cache/huggingface/hub/models--dancinlab--vlm-stage1-lora | LoRA + text head ckpt
    state/vlm_stage1_training_log.jsonl                      | per-step loss + val metrics
    state/vlm_cond3_fidelity_2026_xx_xx/r_vs_clm.json        | cross-substrate r measurement
    docs/vlm_cond3_landed_2026_xx_xx.ai.md                   | cond.3 land handoff

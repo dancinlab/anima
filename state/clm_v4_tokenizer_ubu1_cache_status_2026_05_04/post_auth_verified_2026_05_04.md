@@ -21,7 +21,7 @@ Backups preserved at `~/.cache/huggingface/token.bak_2026_05_04` (Mac) and equiv
 ## F-TOK-1 evidence (Mac live HEAD, post-auth)
 
 ```
-GET https://huggingface.co/need-singularity/clm-v4-base-mirror/resolve/10ee03687db312c55bbec5858c814bef28e4d365/tokenizer/tokenizer_64k_multilingual.model
+GET https://huggingface.co/dancinlab/clm-v4-base-mirror/resolve/10ee03687db312c55bbec5858c814bef28e4d365/tokenizer/tokenizer_64k_multilingual.model
 → content-length: 1397                # LFS pointer file size (not actual blob)
 → x-repo-commit: 10ee03687db312c55bbec5858c814bef28e4d365
 → x-linked-etag: "bb851d39fbe3286dda11fc43da78d9bbf29ac6400d61b75616c8c750b710b8ab"
@@ -32,14 +32,14 @@ GET https://huggingface.co/need-singularity/clm-v4-base-mirror/resolve/10ee03687
 ## F-TOK-2 evidence (ubu1 download + roundtrip sha256)
 
 ```
-ssh ubu1 '/home/aiden/venv_orchestrator/bin/hf download need-singularity/clm-v4-base-mirror \
+ssh ubu1 '/home/aiden/venv_orchestrator/bin/hf download dancinlab/clm-v4-base-mirror \
     tokenizer/tokenizer_64k_multilingual.model \
     tokenizer/tokenizer_64k_multilingual.vocab \
     tokenizer/integrity_report.json \
     --revision 10ee03687db312c55bbec5858c814bef28e4d365'
 
 ✓ Downloaded 3 files
-path: /home/aiden/.cache/huggingface/hub/models--need-singularity--clm-v4-base-mirror/snapshots/10ee03687db312c55bbec5858c814bef28e4d365
+path: /home/aiden/.cache/huggingface/hub/models--dancinlab--clm-v4-base-mirror/snapshots/10ee03687db312c55bbec5858c814bef28e4d365
 
 shasum -a 256 <snap>/tokenizer/tokenizer_64k_multilingual.{model,vocab}
 bb851d39fbe3286d…  …/tokenizer_64k_multilingual.model
@@ -59,7 +59,7 @@ This cycle: `__CLM_V4_TOKENIZER_UBU1__ PASS`
 
 2. **F1_v3 base-validation BG cycle** (per `.roadmap.p9_sft cond.benchmark_a_prime_base_validation`): no longer blocked on HF auth. ubu1 BG cycle ~6-17h, $0. Llama-3.2-3B + CLM v4 base both already cached on ubu1.
 
-3. **P9 path A LoRA HF push verification** (per BG-ι Path A complete, commit `e4d86fb2f`): Path A trained LoRA adapter at HF mirror — now live-checkable via `hf download` or `hf list` against the path A pod's recorded HF tag (need-singularity/clm-v4-sft-final or similar).
+3. **P9 path A LoRA HF push verification** (per BG-ι Path A complete, commit `e4d86fb2f`): Path A trained LoRA adapter at HF mirror — now live-checkable via `hf download` or `hf list` against the path A pod's recorded HF tag (dancinlab/clm-v4-sft-final or similar).
 
 ## Honest C3 (raw#10)
 
@@ -89,4 +89,4 @@ This cycle: `__CLM_V4_TOKENIZER_UBU1__ PASS`
 - propagation plan: `state/clm_v4_tokenizer_propagation_plan_2026_05_04/plan.md` (commit `d373e67c7`)
 - caller migration spec: `state/clm_v4_tokenizer_caller_migration_spec_2026_05_04/spec.md` (commit `68803d162`)
 - restoration source: `state/clm_v4_tokenizer_restoration_2026_05_03/` (commit `90488dd3f`)
-- HF audit log: `state/hf_upload_audit/20260503T151341Z_need-singularity__clm-v4-base-mirror.jsonl`
+- HF audit log: `state/hf_upload_audit/20260503T151341Z_dancinlab__clm-v4-base-mirror.jsonl`

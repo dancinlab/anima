@@ -1,7 +1,7 @@
 # hexa-bio research landed — 2026-05-04
 
 > Status: deep research + canonical spec draft DELIVERED for standalone repo `hexa-bio` (4-verb molecular toolkit)
-> Mode: Mac side, raw#9 STRICT, READ-ONLY on n6-architecture, no extraction (sister BG handles extraction)
+> Mode: Mac side, raw#9 STRICT, READ-ONLY on CANON, no extraction (sister BG handles extraction)
 > Cycle: anima cycle 2026-05-04 — research arm
 
 ## What landed
@@ -18,7 +18,7 @@
 
 1. **`nexus/modules/weave/` does not exist** — user comment "간단히 있다는" was a confusion with `nexus/sim_bridge/weave/` (Zlotnick T=1 cage simulator + Caspar-Klug Bayesian audit, belongs to VIROCAPSID assembly axis). hexa-bio MUST treat `nexus/sim_bridge/weave/` as READ-ONLY reference and consume it for the `virocapsid` subcommand.
 
-2. **4 verbs registered in n6-architecture as biology tetrahedron** (cycles 1, 13, 15, 19; all 2026-04-28; alien-grade 4.78):
+2. **4 verbs registered in CANON as biology tetrahedron** (cycles 1, 13, 15, 19; all 2026-04-28; alien-grade 4.78):
    - WEAVE — write-side multi-strand composition; Landauer × NP ceiling; STRUCTURAL load-bearing
    - NANOBOT — single-device mechanical actuation; Brownian floor at 310 K; STRUCTURAL approximate
    - RIBOZYME — RNA catalysis; diffusion-limit ceiling 10⁹ M⁻¹ s⁻¹; STRUCTURAL-APPROXIMATE (corpus span 10–30 nt)
@@ -52,6 +52,6 @@
 - raw#10 — 5 honest C3 caveats explicitly enumerated
 - raw#15 — research artefacts under `state/hexa_bio_research_2026_05_04/` not committed automatically
 - $0 spend — pure file-IO research, no API calls, no GPU
-- READ-ONLY on n6-architecture (verified: only Read tool used on `n6-architecture/`)
+- READ-ONLY on CANON (verified: only Read tool used on `CANON/`)
 - Did NOT touch `nexus/sim_bridge/weave/` (sister assembly-axis SSOT, untouched)
 - Did NOT touch `nexus/modules/weave/` (does not exist)

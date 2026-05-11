@@ -220,7 +220,7 @@ output.
 Per spec §2-3 + §10-5:
 - `registry.tsv` 1줄 add (`/Users/ghost/core/hexa-lang/tool/pkg/registry.tsv`)
   is PENDING in next cycle
-- `https://github.com/need-singularity/qmirror` GitHub push is PENDING
+- `https://github.com/dancinlab/qmirror` GitHub push is PENDING
 - Until both land, `hx install qmirror` only works via local path
   (`/Users/ghost/core/qmirror`) and only on this machine
 - F-INSTALL-1 falsifier sweep (6/6) cannot be executed yet
@@ -261,9 +261,9 @@ registry.tsv lands, F-INSTALL-1 can be executed without code changes.
 
 1. **registry.tsv 1줄 add** in `/Users/ghost/core/hexa-lang/tool/pkg/registry.tsv`:
    ```tsv
-   qmirror	1.0.0	cli/qmirror.hexa	https://github.com/need-singularity/qmirror	/Users/ghost/core/qmirror	Quantum mirror substrate (NIST-validated, IIT-MIP, CHSH, QRNG)
+   qmirror	1.0.0	cli/qmirror.hexa	https://github.com/dancinlab/qmirror	/Users/ghost/core/qmirror	Quantum mirror substrate (NIST-validated, IIT-MIP, CHSH, QRNG)
    ```
-2. **GitHub push** of `/Users/ghost/core/qmirror/` to `need-singularity/qmirror`
+2. **GitHub push** of `/Users/ghost/core/qmirror/` to `dancinlab/qmirror`
 3. **F-INSTALL-1 falsifier sweep** (spec §9-2) — execute 6/6 checks
 4. **nexus deprecation step 1** (mark `nexus/modules/qmirror/` deprecated,
    point to standalone)

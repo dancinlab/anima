@@ -34,7 +34,7 @@ Composite verdict: **FULL** → state/qmirror_2_closure_2026_05_04/verdict.json
 
 (c) **Version bump 1.0.1 → 2.0.0 IRREVERSIBLE** per semver (major bump signals breaking changes). Closure synth must verify backward-compat OR bump_strategy must be explicit. `--bump` flag is gated separately from `--apply` for this reason; default is DRY.
 
-(d) **GitHub release v2.0.0** requires `gh auth status` clean + write scope on `need-singularity/qmirror`; if gh auth fails, release step logs RC!=0 and is SKIPPED (composite verdict still emitted; manual `gh release create v2.0.0` retry required). hf upload (`--hf`) is similarly opt-in and may fail if `HUGGING_FACE_HUB_TOKEN` absent.
+(d) **GitHub release v2.0.0** requires `gh auth status` clean + write scope on `dancinlab/qmirror`; if gh auth fails, release step logs RC!=0 and is SKIPPED (composite verdict still emitted; manual `gh release create v2.0.0` retry required). hf upload (`--hf`) is similarly opt-in and may fail if `HUGGING_FACE_HUB_TOKEN` absent.
 
 ## Files landed
 

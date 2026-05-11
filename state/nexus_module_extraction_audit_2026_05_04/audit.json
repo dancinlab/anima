@@ -71,11 +71,11 @@
       "last_commit_age_days": 7,
       "roadmap_status": "no dedicated roadmap (n6-arch domain)",
       "consumers": ["nexus only (currently)"],
-      "anti_patterns": ["already has predecessor in /Users/ghost/core/n6-architecture/domains/compute/chip-isa-n6/ (per @origin tag)", "destination repo n6-architecture EXISTS standalone"],
+      "anti_patterns": ["already has predecessor in /Users/ghost/core/canon/domains/compute/chip-isa-n6/ (per @origin tag)", "destination repo CANON EXISTS standalone"],
       "scores": {"coupling": 2, "reusability": 2, "maturity": 2, "activity": 1, "modularity": 2},
       "total": 9,
       "verdict": "extract_to_n6_architecture",
-      "rationale": "self-contained 24-bit ISA encoder/decoder; n6-architecture standalone repo already exists at /Users/ghost/core/n6-architecture; merge there rather than spinning new repo. Maturity high (sentinel + 24-mnemonic table + roundtrip falsifier)."
+      "rationale": "self-contained 24-bit ISA encoder/decoder; CANON standalone repo already exists at /Users/ghost/core/canon; merge there rather than spinning new repo. Maturity high (sentinel + 24-mnemonic table + roundtrip falsifier)."
     },
     {
       "name": "chip_rtl_gen",
@@ -86,7 +86,7 @@
       "last_commit_age_days": 7,
       "roadmap_status": "no dedicated roadmap",
       "consumers": ["nexus only"],
-      "anti_patterns": ["@origin tag points to n6-architecture (already exists)", "uses _core_root() but resolves to nexus/modules/chip_rtl_gen path → migration trivial", "templates/ subdir with .v files (Verilog assets — must move with code)"],
+      "anti_patterns": ["@origin tag points to CANON (already exists)", "uses _core_root() but resolves to nexus/modules/chip_rtl_gen path → migration trivial", "templates/ subdir with .v files (Verilog assets — must move with code)"],
       "scores": {"coupling": 1, "reusability": 2, "maturity": 2, "activity": 1, "modularity": 2},
       "total": 8,
       "verdict": "extract_to_n6_architecture",
@@ -225,7 +225,7 @@
       "scores": {"coupling": 2, "reusability": 1, "maturity": 2, "activity": 1, "modularity": 2},
       "total": 8,
       "verdict": "extract_to_n6_architecture",
-      "rationale": "BEC analog Hawking-temperature simulator (Steinhauer 2014) with n=6 closed-form anchors. Niche audience (analog gravity researchers); folds naturally into n6-architecture experiments/."
+      "rationale": "BEC analog Hawking-temperature simulator (Steinhauer 2014) with n=6 closed-form anchors. Niche audience (analog gravity researchers); folds naturally into CANON experiments/."
     },
     {
       "name": "verify_batch",
@@ -236,7 +236,7 @@
       "last_commit_age_days": 7,
       "roadmap_status": "no dedicated roadmap",
       "consumers": ["nexus only"],
-      "anti_patterns": ["writes nexus/state/verify_batch_cache.jsonl (nexus path coupling for cache)", "default root = ~/core/n6-architecture/experiments (already n6-coupled)"],
+      "anti_patterns": ["writes nexus/state/verify_batch_cache.jsonl (nexus path coupling for cache)", "default root = ~/core/canon/experiments (already n6-coupled)"],
       "scores": {"coupling": 1, "reusability": 1, "maturity": 2, "activity": 1, "modularity": 2},
       "total": 7,
       "verdict": "extract_to_n6_architecture (or keep as nexus tool)",

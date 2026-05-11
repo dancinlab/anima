@@ -6,7 +6,7 @@
   "discovery_method": "ls /Users/ghost/core/*/ + git rev-parse + .raw* / .own* / raw_archive probe + uchg scan + raw#N grep",
   "sisters": [
     {
-      "repo_path": "/Users/ghost/core/n6-architecture",
+      "repo_path": "/Users/ghost/core/canon",
       "is_git_repo": true,
       "group": "A",
       "raw_ref_exists": false,
@@ -262,7 +262,7 @@
   },
   "delete_blockers_overall": [
     "hexa-lang is the PARSER OWNER for raw-format — every sister .raw-ref pin-chain depends on it; deleting hexa-lang/.raw* + tool/raw_*.hexa breaks all sister sync tooling fan-out (hive+nexus+airgenome+anima)",
-    "n6-architecture/.own.group_p + .own.readme hold LIVE enforcement (own#6 paper-3pack-verify, own#14 readme-sealed, own#17 english-only, own#21 nexus6-tests-count, own#29 friendly-toolkit) — n6 paper governance dies on .own removal",
+    "CANON/.own.group_p + .own.readme hold LIVE enforcement (own#6 paper-3pack-verify, own#14 readme-sealed, own#17 english-only, own#21 nexus6-tests-count, own#29 friendly-toolkit) — n6 paper governance dies on .own removal",
     "nexus/.own own#1 (atlas-absorb-mandatory) is wired into launchd plist (dev.hexa-lang.atlas-absorb-sweeper.plist, StartInterval=600s) — .own removal orphans launchd job",
     "orpheus + wraith-wallet .own files hold internal CLI routing contracts (orpheus→qmirror, orpheus→wraith, wraith→ghost) — operational break",
     "hexa-os/.raw-ref still points at hexa-lang (NOT migrated to hive) — pin chain is stale; cleanup must coordinate with hexa-lang shutdown",
@@ -273,7 +273,7 @@
     "hexa-lang stdlib (self/stdlib/hxc_a*.hexa) and self/raw_loader.hexa are the FORMAT PARSER consumed cross-repo — these are NOT mk1 SSOT but are NAMED 'raw' (raw_loader, hxc_a*); deletion misclassification risk if treated as mk1",
     "hexa-lang/.own own#1 + own#3 are SELF-HOSTING dogfood rules — even after mk1 EOL elsewhere, hexa-lang must retain .own to prove its own parser; .own is NOT mk1-only artifact",
     ".gitmodules absent across all sisters — submodule registration uses git internal trees only (anima/ready, anima/references/tribev2 are git-trees within anima); BG-η submodule plan refers to anima-internal not sister-cross",
-    "n6-architecture/raw_archive contains .own.*.bak backups of own.group_p / own.readme retired files — those are AUDIT TRAIL of mk1 EOL evidence; deleting raw_archive destroys evidence chain (irreversible)",
+    "CANON/raw_archive contains .own.*.bak backups of own.group_p / own.readme retired files — those are AUDIT TRAIL of mk1 EOL evidence; deleting raw_archive destroys evidence chain (irreversible)",
     "hexa-lang .raw-cache/.raw-status/.raw-exemptions hold RUNTIME state (per-rule entry files, ssot.sha hash, exemption lists) — these are 'computed cache' not 'declared SSOT'; cache regenerable but exemptions list is policy data",
     "no .github/workflows/ scanned (skipped per scope) — CI/CD references to .raw paths could exist in any sister and silently break post-delete",
     "anima/ready has its own .git/ (frozen Apr 21) — if anima mk1 was already retired in main anima but ready/ is pre-EOL snapshot, ready/anima/.raw* could exist (not probed at depth)"

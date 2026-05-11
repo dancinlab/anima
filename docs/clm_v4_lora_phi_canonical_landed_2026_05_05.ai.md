@@ -28,7 +28,7 @@ BG-CLM-2-EXEC follow-up #2: φ★ post-LoRA was NOT measured in-pod (L22 mid-fli
 
 ## Method (canonical, mirrors `tool/anima_phi_v3_canonical.hexa`)
 
-1. Load `need-singularity/clm-v4-mk2-v1` (HF format) on Mac CPU fp32
+1. Load `dancinlab/clm-v4-mk2-v1` (HF format) on Mac CPU fp32
 2. PEFT-load `state/clm_v4_lora_sft_2026_05_05/results/adapter_final/` (10.02 MiB, sha256 `6d5edb93...`)
 3. Forward 16 anima-axis canonical calib prompts (T_seq=256, real-token mean pool on `decoder.ln_f`)
 4. Truncate to top-variance HID_TRUNC=8 dims → Xt (16, 8)

@@ -156,7 +156,7 @@ tiers:
   T1_sales:
     commands: [anima, dialogue, onboard, help, version]
     backend_canonical: anima-core/runtime/clm_v4_mount.hexa  # ALM rejected
-    backend_alternative: need-singularity/clm-v2-byte-18m-convo-5k
+    backend_alternative: dancinlab/clm-v2-byte-18m-convo-5k
   T2_ops:
     prefix: "anima ops"
     topics: [compute, weight, proposal, cert, roadmap, serve, paradigm,
@@ -275,7 +275,7 @@ migration:
 - Roadmap SSOT: `.roadmap.cli`
 - Sister roadmaps: `.roadmap.clm_native_chat`, `.roadmap.clm_v4_chat`, `.roadmap.clm_v2_chat`
 - Hive mk2: `hive/spec/mk2_apex.spec.yaml`, `hive/spec/mk2_ecosystem_catalog.spec.yaml`, `hive/docs/raw_mk2_design.ai.md`
-- Backend candidates: `anima-core/runtime/clm_v4_mount.hexa` (default), `need-singularity/clm-v2-byte-18m-convo-5k` (alternative)
+- Backend candidates: `anima-core/runtime/clm_v4_mount.hexa` (default), `dancinlab/clm-v2-byte-18m-convo-5k` (alternative)
 - v1.0 vision source: 다른 session 2026-05-06 transcript
 - This plan: `docs/anima_cli_mk2_plan_2026_05_06.md`
 

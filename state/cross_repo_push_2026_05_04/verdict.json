@@ -3,15 +3,15 @@
   "ts_utc": "2026-05-04T20:55:00Z",
   "hive_push": {
     "repo": "/Users/ghost/core/hive",
-    "remote": "https://github.com/need-singularity/hive.git",
+    "remote": "https://github.com/dancinlab/hive.git",
     "branch": "hive/main",
     "commits_pushed": [],
     "commits_attempted": ["deb6047bf"],
     "outcome": "BLOCKED_BY_SECRET_SCAN",
     "block_reason": "GitHub Push Protection: 2x HuggingFace User Access Token detections at scripts/leak_guard_pretool.bash:33 (STALE_HF_LYKZ) + :34 (STALE_HF_RERB) — both are post-rotation evidence values, NOT live secrets, but Push Protection cannot distinguish stale from live by content alone",
     "unblock_urls": [
-      "https://github.com/need-singularity/hive/security/secret-scanning/unblock-secret/3DG7RhV2ORcC6LI4IZD79nCM8yH",
-      "https://github.com/need-singularity/hive/security/secret-scanning/unblock-secret/3DG7Rf7bBJsuxqecV89ZaoQmS5m"
+      "https://github.com/dancinlab/hive/security/secret-scanning/unblock-secret/3DG7RhV2ORcC6LI4IZD79nCM8yH",
+      "https://github.com/dancinlab/hive/security/secret-scanning/unblock-secret/3DG7Rf7bBJsuxqecV89ZaoQmS5m"
     ],
     "recovery_recommendation": "Option A: user clicks both unblock URLs + retries `git push origin hive/main` — expected success. Option B (redact STALE_* literals to placeholder strings) reserved if Option A is unacceptable to repo policy.",
     "files_committed": [
@@ -34,7 +34,7 @@
   },
   "hexa_lang_push": {
     "repo": "/Users/ghost/core/hexa-lang",
-    "remote": "https://github.com/need-singularity/hexa-lang.git",
+    "remote": "https://github.com/dancinlab/hexa-lang.git",
     "branch": "diag/orpheus-selftest-sigkill",
     "branch_rationale": "branch is 2 commits ahead of main (.own removal + diag docs); chose to push current branch rather than switch to main to avoid orphaning prior BG-π² Option B land. PR-merge to main is canonical follow-up path.",
     "commits_pushed": ["7122546a"],

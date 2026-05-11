@@ -97,10 +97,10 @@ __ANIMA_HF_UPLOAD_MK2__ PASS
 
 | input | expected | actual |
 |---|---|---|
-| `need-singularity/llm-v1-base` | OK (new) | OK PASS |
-| `need-singularity/nlm-v1-sft-stage1` | OK (added to validator) | OK PASS |
-| `need-singularity/alm-v1-preview` | OK (added to spec) | OK PASS |
-| `need-singularity/zzz-v1-base` | FAIL (not in enum) | FAIL with reconciled error message: `family must be one of {clm\|alm\|blm\|vlm\|slm\|tlm\|nlm\|mlm\|llm\|hexad\|composite}` |
+| `dancinlab/llm-v1-base` | OK (new) | OK PASS |
+| `dancinlab/nlm-v1-sft-stage1` | OK (added to validator) | OK PASS |
+| `dancinlab/alm-v1-preview` | OK (added to spec) | OK PASS |
+| `dancinlab/zzz-v1-base` | FAIL (not in enum) | FAIL with reconciled error message: `family must be one of {clm\|alm\|blm\|vlm\|slm\|tlm\|nlm\|mlm\|llm\|hexad\|composite}` |
 
 All four smoke checks behave as expected. Reject path emits the new 11-entry
 enum in the error message — verifies the validator is reading the updated

@@ -65,12 +65,12 @@ PASS. huggingface_hub 1.7.2 importable on Mac side.
 ### 4.2 Bridge dry_run mode
 
 ```
-$ echo '{"mode":"dry_run","repo":"need-singularity/clm-v4-sft-stage1",
+$ echo '{"mode":"dry_run","repo":"dancinlab/clm-v4-sft-stage1",
         "ckpt_path":"/tmp/test","readme_path":"/tmp/README.md",
         "tag":"step-25k","audit_dir":"/tmp/audit"}' | python3 ...
 {"ok":1,"mode":"dry_run","file_count":2,"total_bytes":20,
  "sha256_map":{"config.json":"f612b89b...","model.bin":"f88b7331..."},
- "audit_path":"/tmp/audit/20260503T142100Z_need-singularity__clm-v4-sft-stage1.jsonl",
+ "audit_path":"/tmp/audit/20260503T142100Z_dancinlab__clm-v4-sft-stage1.jsonl",
  "message":"dry_run: 2 files, 20 bytes, readme=ok"}
 ```
 
@@ -87,7 +87,7 @@ $ hexa run tool/hf_upload_mk2.hexa --selftest
   [P] bridge selftest: selftest: PASS
 __ANIMA_HF_UPLOAD_MK2__ PASS
 
-$ hexa run tool/hf_upload_mk2.hexa --dry-run --repo need-singularity/clm-v4-sft-stage1 \
+$ hexa run tool/hf_upload_mk2.hexa --dry-run --repo dancinlab/clm-v4-sft-stage1 \
     --ckpt /tmp/test --readme /tmp/README.md --tag step-25k
 [hf_upload_mk2] DRY-RUN
   ...
@@ -95,7 +95,7 @@ $ hexa run tool/hf_upload_mk2.hexa --dry-run --repo need-singularity/clm-v4-sft-
   [P] readme OK (5 required H2 + Caveats >=3)
   files       = 2
   total_bytes = 20
-  audit       = state/hf_upload_audit/20260503T142257Z_need-singularity__clm-v4-sft-stage1.jsonl
+  audit       = state/hf_upload_audit/20260503T142257Z_dancinlab__clm-v4-sft-stage1.jsonl
 __ANIMA_HF_UPLOAD_MK2__ PASS
 ```
 
@@ -106,7 +106,7 @@ PASS.
 ```
 $ hexa run tool/hf_upload_mk2_pre_push_hook.hexa --selftest
 [hf_upload_mk2_pre_push] SELFTEST
-  [P] extract_marker: need-singularity/clm-v4-sft-stage1
+  [P] extract_marker: dancinlab/clm-v4-sft-stage1
   [P] extract_marker no-marker: empty
 __HF_UPLOAD_MK2_PRE_PUSH__ PASS
 ```

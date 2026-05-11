@@ -400,7 +400,7 @@ implementation.
 | audit (mid-density) | hive triad_audit | 75% | 88% | 91% | ~92% |
 | mixed inventory | nexus 96 files | 43% | 78% | **85%** | ~88% |
 | text-heavy | anima alm_r13 | 24% | 80% | **92%** | ~95% |
-| entropy-bound | n6-architecture atlas | 4% | **90%** | **93%** | ~95% |
+| entropy-bound | CANON atlas | 4% | **90%** | **93%** | ~95% |
 | **6-repo aggregate** | weighted | **47%** | **~88%** | **~92%** | **~93%** |
 
 Phase 11 closes the 88% → 92% gap (4pp aggregate) at cost ~1500-1800 LoC.

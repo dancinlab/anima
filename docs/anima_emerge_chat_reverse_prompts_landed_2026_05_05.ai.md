@@ -9,7 +9,7 @@
 
 - task_id  `anima_emerge_chat_reverse_prompts_2026_05_05`
 - platform  mac CPU (.venv-eeg python3.12, torch 2.11.0 fp32)
-- model    `need-singularity/clm-v4-mk2-v1`
+- model    `dancinlab/clm-v4-mk2-v1`
 - cost     $0
 - wall     ~30s sweep + 9s load
 - raw      raw#37 transient .py + raw#15 additive (no canonical hexa

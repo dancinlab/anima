@@ -9,7 +9,7 @@
 ## 1. TL;DR
 
 - **Verdict transition**: P9 Path A LoRA training status corrected from `COMPLETE_PROBABLE` (BG-ι, inferred from on-pod step counter) → `PARTIAL_VERIFIED_8K` (BG-ξ, live HF API mirror state). The training process did reach step 10000/10000, but the watcher pid was GONE before the `trainer.save_model('final')` flush completed, and the `final/` adapter never landed on the HF mirror.
-- **HF mirror anchor**: last commit on `need-singularity/p9-llama32-lora-stage1` is `5a9b4584` ("Training in progress, step 8000", 2026-05-03T20:06:18Z) with `adapter_model.safetensors` sha256 `f12f31d8…3336` (389MB). Steps 8001–10000 plus the `final/` checkpoint do NOT exist on HF. The pod is terminated and unreachable, so on-pod recovery is impossible.
+- **HF mirror anchor**: last commit on `dancinlab/p9-llama32-lora-stage1` is `5a9b4584` ("Training in progress, step 8000", 2026-05-03T20:06:18Z) with `adapter_model.safetensors` sha256 `f12f31d8…3336` (389MB). Steps 8001–10000 plus the `final/` checkpoint do NOT exist on HF. The pod is terminated and unreachable, so on-pod recovery is impossible.
 - **Resolution paths** (3 options, ranked recommendation in §5):
   - **A** — Use step-8k LoRA as the eval anchor + amend `docs/p9_benchmark_switch_a_prime_spec_2026_05_03.md` §2.6 pre-registration block. Cost $0, wall ~15min spec edit. Pre-registration compliance: requires dated spec amendment per §7.1(a) caveat.
   - **B** — Short retrain from step-8k → step-10k on a fresh H100 spot pod (~2000 additional steps). Cost ~$4-5 H100 spot, wall ~1.5h. Pre-registration preserved.
@@ -26,7 +26,7 @@ All timestamps UTC.
 
 | ts | actor | event |
 |---|---|---|
-| 2026-05-03T14:28:51Z | TRL Trainer (pod 29dhlqk508ugoc) | initial commit on `need-singularity/p9-llama32-lora-stage1` (commit `0a4b60b6`) |
+| 2026-05-03T14:28:51Z | TRL Trainer (pod 29dhlqk508ugoc) | initial commit on `dancinlab/p9-llama32-lora-stage1` (commit `0a4b60b6`) |
 | 2026-05-03T14:43:21Z | host watcher | watcher start (≈ pod start +34min) |
 | 2026-05-03T15:52:19Z | TRL Trainer | step-2000 rolling save commit `f6916247` |
 | 2026-05-03T17:16:35Z | TRL Trainer | step-4000 rolling save commit `fe83e989` |
@@ -36,7 +36,7 @@ All timestamps UTC.
 | 2026-05-03T21:34:08Z | host watcher | probe STEP=10000/10000, ALIVE=0, DONE=0 (pid GONE in same 10-min probe window; final-save flush race) |
 | 2026-05-03T21:34:13Z | `host_pod_terminator.sh` error-branch | pod terminated; scp of `train.log` failed (`mkdir -p artifacts` missing on error branch) |
 | 2026-05-04 morning | BG-ι (commit `e4d86fb2f`) | analyzes host_terminator.log; infers `COMPLETE_PROBABLE` (60% clean-finish / 25% final-save crash / 10% OOM / 4% spot / 1% manual); HF auth on Mac blocked, no live verification |
-| 2026-05-04 afternoon | HF auth refresh (commit `eea009b40`) | dancinlife token re-issued with write scope; need-singularity admin restored |
+| 2026-05-04 afternoon | HF auth refresh (commit `eea009b40`) | dancinlife token re-issued with write scope; dancinlab admin restored |
 | 2026-05-04 (BG-ξ) | BG-ξ live HF API probe | reveals last commit step 8000, no step-10000 commit, no `final/` adapter; verdict `PROBABLE_HF_PARTIAL`; proposes COMPLETE_PROBABLE → PARTIAL_VERIFIED_8K |
 | 2026-05-04 (this cycle BG-ρ) | this BG | lands `p9_sft.cond.path_a_lora_train_complete` to `.roadmap.p9_sft` with `status: partial_verified_8k`; writes this correction handoff |
 

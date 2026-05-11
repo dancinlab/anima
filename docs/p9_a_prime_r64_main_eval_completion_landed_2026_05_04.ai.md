@@ -9,7 +9,7 @@
 
 ## 1. Audit-Note Up Front (raw#10 honest C3)
 
-The completion brief assumed `12/15 evals done, 3 left = step-10000 × 3 tasks`. Ground truth verified via `huggingface_hub.list_repo_commits('need-singularity/p9-llama32-lora-stage1')` on ubu1 at 2026-05-04T04:21Z:
+The completion brief assumed `12/15 evals done, 3 left = step-10000 × 3 tasks`. Ground truth verified via `huggingface_hub.list_repo_commits('dancinlab/p9-llama32-lora-stage1')` on ubu1 at 2026-05-04T04:21Z:
 
 | commit_id (short) | title                          | step      |
 |-------------------|--------------------------------|-----------|

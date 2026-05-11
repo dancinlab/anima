@@ -2,7 +2,7 @@
 
 - ts_utc: 2026-05-03
 - agent: `qmirror_github_xref`
-- task: additive cross-link to `https://github.com/need-singularity/qmirror` in qmirror-anchored anima docs
+- task: additive cross-link to `https://github.com/dancinlab/qmirror` in qmirror-anchored anima docs
 - mode: additive single-line blockquote per file (no mutation of existing path references / counts / measurements)
 - gate: raw#9 strict (Mac → hexa only; no .py touched) · raw#10 (3 honest C3 caveats) · raw#15 (no personal-path leak in added line)
 - cost: $0 (doc-only)
@@ -12,7 +12,7 @@
 
 ## TL;DR
 
-Added a single blockquote line — `> 📦 Available at: https://github.com/need-singularity/qmirror (`hx install qmirror`)` — to **17 qmirror-anchored anima docs** so future readers can also locate the standalone qmirror repo for installation, in addition to the in-tree canonical paths (`docs/nexus_qmirror_spec_2026_05_03.md`, `nexus/modules/qmirror/...`).
+Added a single blockquote line — `> 📦 Available at: https://github.com/dancinlab/qmirror (`hx install qmirror`)` — to **17 qmirror-anchored anima docs** so future readers can also locate the standalone qmirror repo for installation, in addition to the in-tree canonical paths (`docs/nexus_qmirror_spec_2026_05_03.md`, `nexus/modules/qmirror/...`).
 
 | category | docs | action |
 | --- | --- | --- |
@@ -54,11 +54,11 @@ Total mutation: **0 lines removed, 34 lines added** (2 lines × 17 files: blockq
 
 ## Honest C3 caveats (raw#10)
 
-1. **URL not verified live** — sister BG handles the actual GitHub push to `need-singularity/qmirror`. Until that BG completes, the URL added here is forward-declarative and may return 404 for early readers. Sister marker (TBD) will close the loop; until then, the in-tree path `docs/nexus_qmirror_spec_2026_05_03.md` remains the only verified canonical.
+1. **URL not verified live** — sister BG handles the actual GitHub push to `dancinlab/qmirror`. Until that BG completes, the URL added here is forward-declarative and may return 404 for early readers. Sister marker (TBD) will close the loop; until then, the in-tree path `docs/nexus_qmirror_spec_2026_05_03.md` remains the only verified canonical.
 
 2. **Doc-top growth** — the additive line stacks with sister `aa6c8c54e`'s pre-existing 2026-05-03 qmirror substrate update callouts on the 7 substrate-dependency docs. Those docs now carry **2 stacked qmirror blockquotes at top** before the content begins. The growth is bounded (each cycle adds ≤1 line) but future cycles may want consolidation into a single header summary block.
 
-3. **Future rename sweep required** — there is no central registry binding the GitHub URL across these 17 docs. If the repo is later renamed (e.g. `need-singularity/qmirror` → `singularity/qmirror`, or moved to a different org), all 17 files need a sweep. Mitigation idea (out-of-scope this cycle): add a `nexus.qmirror.upstream_url` symbol in `nexus/.roadmap.qmirror` so future doc references can cite the symbol rather than the literal URL.
+3. **Future rename sweep required** — there is no central registry binding the GitHub URL across these 17 docs. If the repo is later renamed (e.g. `dancinlab/qmirror` → `singularity/qmirror`, or moved to a different org), all 17 files need a sweep. Mitigation idea (out-of-scope this cycle): add a `nexus.qmirror.upstream_url` symbol in `nexus/.roadmap.qmirror` so future doc references can cite the symbol rather than the literal URL.
 
 ---
 

@@ -63,8 +63,8 @@
     "train_done_marker": false
   },
   "hf_repo_status": {
-    "watchdog_target": "need-singularity/clm-v4-paradigm-d-25k-final @ tag step-25000",
-    "launch_script_target": "need-singularity/p9-paradigm-d-25k (DIFFERENT NAME — see ALIGN-1 caveat)",
+    "watchdog_target": "dancinlab/clm-v4-paradigm-d-25k-final @ tag step-25000",
+    "launch_script_target": "dancinlab/p9-paradigm-d-25k (DIFFERENT NAME — see ALIGN-1 caveat)",
     "watchdog_target_probe_http": 401,
     "launch_target_probe_http": 401,
     "search_results_for_paradigm_d": "[] (empty; no public repo)",
@@ -110,7 +110,7 @@
       "id": "C3_HF_REPO_NAME_MISMATCH",
       "severity": "HIGH",
       "title": "Watchdog polls clm-v4-paradigm-d-25k-final but launch_train.sh would push to p9-paradigm-d-25k",
-      "detail": "If training were ever launched, the watchdog HF probe would NEVER fire because launch_train.sh sets ANIMA_HF_REPO=need-singularity/p9-paradigm-d-25k (not clm-v4-paradigm-d-25k-final). Even if local/ubu1 verdict files were absent, HF signal would stay MISSING:http_401 indefinitely. Watchdog auto-fire chain would only trigger via local or ubu1 verdict.json paths."
+      "detail": "If training were ever launched, the watchdog HF probe would NEVER fire because launch_train.sh sets ANIMA_HF_REPO=dancinlab/p9-paradigm-d-25k (not clm-v4-paradigm-d-25k-final). Even if local/ubu1 verdict files were absent, HF signal would stay MISSING:http_401 indefinitely. Watchdog auto-fire chain would only trigger via local or ubu1 verdict.json paths."
     },
     {
       "id": "SEC_1_HF_TOKEN_LEAKED_TO_POD_DISK",

@@ -49,7 +49,7 @@
     "ready_to_push": true
   },
   "user_action_required": {
-    "step_1": "Generate fresh HF token at https://huggingface.co/settings/tokens with 'Write' access to need-singularity org",
+    "step_1": "Generate fresh HF token at https://huggingface.co/settings/tokens with 'Write' access to dancinlab org",
     "step_2_set_secret": "echo 'hf_xxxxxxxx' | /Users/ghost/core/secret/bin/secret set huggingface.token",
     "step_3_verify": "/Users/ghost/.local/bin/hf auth login --token \"$(/Users/ghost/core/secret/bin/secret get huggingface.token)\" && /Users/ghost/.local/bin/hf auth whoami",
     "step_4_relaunch_retry_bg": "Re-launch this same retry BG subagent — staging dir is fully preserved, push will proceed in seconds"

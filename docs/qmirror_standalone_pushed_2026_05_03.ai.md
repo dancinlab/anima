@@ -12,14 +12,14 @@
 
 `qmirror` standalone repository (extracted from `nexus/modules/qmirror` at
 2026-05-03 closure 8/8 cond met) is now a **public GitHub repository** under the
-`need-singularity` org, listed in the HEXA package registry (`hx search qmirror`
+`dancinlab` org, listed in the HEXA package registry (`hx search qmirror`
 PASS, `hx where qmirror` PASS). End-users can clone, fork, or `hx install
 qmirror` (pending sister BG `a03d549d` hx-install end-to-end land).
 
 | Step | Action | Status | Key artifact |
 |------|--------|--------|--------------|
 | 1 | local commit | **PASS** | sha `3488b23` (33 files, +6512) |
-| 2 | gh repo create + push | **PASS** | `https://github.com/need-singularity/qmirror` |
+| 2 | gh repo create + push | **PASS** | `https://github.com/dancinlab/qmirror` |
 | 3 | registry.tsv update | **PASS** | line 22 added (6-field TSV) |
 
 ---
@@ -45,18 +45,18 @@ git commit -m "feat(qmirror): standalone 1.0.0 — closure 8/8 cond met (CHSH/II
 ## 2. Step 2 — GitHub repo create + push
 
 ```
-gh repo create need-singularity/qmirror --public --source=. --push \
+gh repo create dancinlab/qmirror --public --source=. --push \
   --description "Quantum Mirror — classical-CPU + ANU QRNG + Aer simulator. 8/8 closure cond met (CHSH/IIT/NIST/cross-vendor). Apache-2.0."
 ```
 
-- **URL:** `https://github.com/need-singularity/qmirror`
+- **URL:** `https://github.com/dancinlab/qmirror`
 - **Visibility:** PUBLIC (anyone-can-use goal satisfied)
 - **License auto-detected:** Apache License 2.0 (`apache-2.0` key)
 - **Default branch:** `main`
 - **Remote tracking:** `main → origin/main`
 - **Auth:** gh CLI keyring (account `dancinlife`, scopes include `repo`, `read:org`, `delete_repo`); **no token printed** (raw#15)
-- **Org membership check:** PASS implicitly — repo create succeeded under `need-singularity` (no permissions denied)
-- **Pre-existence check:** `gh repo view need-singularity/qmirror` returned `Could not resolve to a Repository` before create (no collision)
+- **Org membership check:** PASS implicitly — repo create succeeded under `dancinlab` (no permissions denied)
+- **Pre-existence check:** `gh repo view dancinlab/qmirror` returned `Could not resolve to a Repository` before create (no collision)
 
 ## 3. Step 3 — registry.tsv update
 
@@ -74,7 +74,7 @@ schema (preserves `hx` parser compatibility).
 +++ registry.tsv.after
 @@ -21,1 +21,2 @@
  yoga	3.2.1	build/yoga-cli	https://github.com/facebook/yoga	/Users/ghost/Dev/hexa-lang/lib/yoga	Facebook Flexbox layout engine ...
-+qmirror	1.0.0	cli/qmirror.hexa	https://github.com/need-singularity/qmirror		Quantum Mirror — classical-CPU + ANU QRNG + Aer simulator. 8/8 closure cond met (CHSH/IIT/NIST/cross-vendor). Apache-2.0.
++qmirror	1.0.0	cli/qmirror.hexa	https://github.com/dancinlab/qmirror		Quantum Mirror — classical-CPU + ANU QRNG + Aer simulator. 8/8 closure cond met (CHSH/IIT/NIST/cross-vendor). Apache-2.0.
 ```
 
 **Field-by-field:**
@@ -84,7 +84,7 @@ schema (preserves `hx` parser compatibility).
 | name    | `qmirror` |
 | version | `1.0.0` |
 | entry   | `cli/qmirror.hexa` |
-| repo    | `https://github.com/need-singularity/qmirror` |
+| repo    | `https://github.com/dancinlab/qmirror` |
 | local   | *(empty — git-only, no local clone path)* |
 | desc    | `Quantum Mirror — classical-CPU + ANU QRNG + Aer simulator. 8/8 closure cond met (CHSH/IIT/NIST/cross-vendor). Apache-2.0.` |
 
@@ -98,7 +98,7 @@ schema (preserves `hx` parser compatibility).
 | Check | Command | Result |
 |-------|---------|--------|
 | listing | `hx search \| grep qmirror` | **PASS** — `qmirror (1.0.0) — Quantum Mirror...` |
-| resolve | `hx where qmirror` | **PASS** — `https://github.com/need-singularity/qmirror` |
+| resolve | `hx where qmirror` | **PASS** — `https://github.com/dancinlab/qmirror` |
 | info    | `hx info qmirror` | expected `'qmirror' not installed` (no clone yet) |
 | install --dry-run | n/a | `hx install` does not expose `--dry-run` in current bin/hx help |
 
@@ -122,4 +122,4 @@ schema (preserves `hx` parser compatibility).
 2. **License audit** for pyphi GPL implications (spec §13 caveat #3 cross-ref).
 3. **README support-posture section** to mitigate caveat C4 (no SLA, best-effort issue triage).
 4. **HuggingFace mirror** (optional) if cross-listing desired (caveat C1).
-5. **Bump `nexus/modules/qmirror`** to thin shim that delegates to `https://github.com/need-singularity/qmirror` (canonical), keeping nexus.qmirror as a façade only.
+5. **Bump `nexus/modules/qmirror`** to thin shim that delegates to `https://github.com/dancinlab/qmirror` (canonical), keeping nexus.qmirror as a façade only.

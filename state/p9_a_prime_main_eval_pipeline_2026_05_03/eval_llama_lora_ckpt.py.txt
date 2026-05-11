@@ -7,7 +7,7 @@ and per-example correctness array (for paired bootstrap + McNemar vs base).
 
 USAGE (typical, post Path A train):
     python eval_llama_lora_ckpt.py \
-        --ckpt-repo need-singularity/p9-llama32-lora-stage1 \
+        --ckpt-repo dancinlab/p9-llama32-lora-stage1 \
         --ckpt-revision step-2000 \
         --task hellaswag \
         --limit 500 \
@@ -58,7 +58,7 @@ TASK_CONFIG = {
 def main():
     ap = argparse.ArgumentParser()
     src = ap.add_mutually_exclusive_group(required=True)
-    src.add_argument("--ckpt-repo", help="HF Hub repo id (e.g. need-singularity/p9-llama32-lora-stage1)")
+    src.add_argument("--ckpt-repo", help="HF Hub repo id (e.g. dancinlab/p9-llama32-lora-stage1)")
     src.add_argument("--ckpt-local-dir", help="Local adapter dir")
     src.add_argument("--base-only", action="store_true",
                       help="Skip LoRA — eval base alone (for re-anchoring)")

@@ -48,7 +48,7 @@ A YAML front-matter `tags` entry `falsification-artifacts` reinforces the framin
 ## 5. HF token source
 
 - **source**: Mac secret CLI vault — `ssh mac "/Users/ghost/core/secret/bin/secret get hf.token"`
-- **prefix**: `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` (whoami → user `dancinlife`)
+- **prefix**: `hf_REDACTED_GH_PUSH_PROTECTION_2026_05_12` (whoami → user `dancinlife`)
 - Linux side `~/.huggingface/token` does **not** exist (path absent on summer user) — Mac vault is the canonical source per `reference_secret_cli.md`.
 
 ## 6. Actual upload commands + wall time

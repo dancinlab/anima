@@ -55,7 +55,7 @@ Hardware / software / data dependencies required to run this checkpoint.
 Three or more honest limitations (raw#10).
 
 - C1 — `llm` lm-family is an additive extension to mk2 spec §3.1 (originally enumerated `blm | clm | tlm | vlm | slm | nlm`). This artifact's existence as the first `llm-*` repo establishes the family for Llama-base derived models. The mk2 spec freeze prevents in-place edit of the spec table; this README documents the extension. Future ratification requires a follow-up cycle that lands `llm-family` into §3.1.
-- C2 — Post-hoc rename risk: the legacy training-time repo name `need-singularity/p9-llama32-lora-stage1` will be renamed to this canonical name via `hf repos move` after training completes. HF preserves URL redirects, but git tags created during training may be retained or lost depending on `hf repos move` semantics on tagged refs. If tags are lost, they must be re-created from commit shas captured in the training log.
+- C2 — Post-hoc rename risk: the legacy training-time repo name `dancinlab/p9-llama32-lora-stage1` will be renamed to this canonical name via `hf repos move` after training completes. HF preserves URL redirects, but git tags created during training may be retained or lost depending on `hf repos move` semantics on tagged refs. If tags are lost, they must be re-created from commit shas captured in the training log.
 - C3 — Single-repo + tags pattern (per mk2 §4.3 second row) was chosen over per-ckpt-repo split because (a) the running pod uses `hub_strategy=every_save` to a single target, (b) preempting training to redirect would have cost ~$50 of progress. This means tag-namespace pollution (5 step-Nk tags + final) lives in one repo; consumers must specify `revision=` to pin a ckpt. If downstream eval requires per-ckpt repo isolation, a follow-up `hf repos duplicate` cycle can split each tag into its own repo.
 
 ## Composability
@@ -78,7 +78,7 @@ How this checkpoint plugs into the broader anima ecosystem.
   author = {anima research},
   title  = {llm-llama32-3b-paradigm-a-prime-sft-stage1},
   year   = {2026},
-  url    = {https://huggingface.co/need-singularity/llm-llama32-3b-paradigm-a-prime-sft-stage1}
+  url    = {https://huggingface.co/dancinlab/llm-llama32-3b-paradigm-a-prime-sft-stage1}
 }
 ```
 

@@ -160,7 +160,7 @@ $SCP "/Users/ghost/core/anima/state/clm_v4_lora_sft_2026_05_05/run_h100.bash" "r
 $SSH 'chmod +x /workspace/clm_v4_lora/run_h100.bash'
 
 log "launching H100 pipeline (corpus + train + intermediate eval + final eval)"
-$SSH 'cat /proc/1/environ | tr "\0" "\n" | grep ^HF_TOKEN= > /workspace/clm_v4_lora/hf_token.env && cd /workspace/clm_v4_lora && set -a && . hf_token.env && set +a && nohup bash run_h100.bash > orchestrator.log 2>&1 & echo $! > run.pid; disown $! 2>/dev/null || true; sleep 2; cat run.pid'
+$SSH 'cat /proc/1/environ | tr "\0" "\n" | grep ^HF_TOKEN= > /workspace/clm_v4_lora/hf_token.env && cd /workspace/clm_v4_lora && set -a && . hf_token.env && set +a && setsid nohup bash run_h100.bash < /dev/null > orchestrator.log 2>&1 & echo $! > run.pid; disown $! 2>/dev/null || true; sleep 2; cat run.pid' < /dev/null
 hb "stage3_h100_launched"
 
 # ── Stage 4: poll loop (heartbeat per cycle, sentinel-kill, cost cap) ──

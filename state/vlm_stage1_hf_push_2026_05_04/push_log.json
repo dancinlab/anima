@@ -5,52 +5,52 @@
   "pushes": [
     {
       "ckpt": "step-5k",
-      "repo": "need-singularity/vlm-anima-voice-paradigm-stage1-step-5k",
+      "repo": "dancinlab/vlm-anima-voice-paradigm-stage1-step-5k",
       "status": "BLOCKED-no-token",
       "preexisting_on_hf": true,
-      "preexisting_url": "https://huggingface.co/need-singularity/vlm-anima-voice-paradigm-stage1-step-5k",
+      "preexisting_url": "https://huggingface.co/dancinlab/vlm-anima-voice-paradigm-stage1-step-5k",
       "preexisting_lastmod": "2026-05-04T05:18:42Z",
       "preexisting_sha": "424be6580b6e3937c3ea6b29759bb3c32221ef78",
       "would_push_files": ["adapter_config.json (1111 B)", "adapter_model.safetensors (322440 B)", "README.md (mk2-conform replaces existing PEFT boilerplate)"],
       "staged_at": "state/vlm_stage1_hf_push_2026_05_04/staging/step-5k/",
-      "audit_path_planned": "state/hf_upload_audit/<TS>_need-singularity__vlm-anima-voice-paradigm-stage1-step-5k.jsonl",
+      "audit_path_planned": "state/hf_upload_audit/<TS>_dancinlab__vlm-anima-voice-paradigm-stage1-step-5k.jsonl",
       "blocker_detail": "hf repo create returned 'Invalid username or password.' for all 5 token sources tried"
     },
     {
       "ckpt": "step-10k",
-      "repo": "need-singularity/vlm-anima-voice-paradigm-stage1-step-10k",
+      "repo": "dancinlab/vlm-anima-voice-paradigm-stage1-step-10k",
       "status": "BLOCKED-no-token",
       "preexisting_on_hf": false,
       "would_push_files": ["adapter_config.json (1111 B)", "adapter_model.safetensors (322440 B)", "README.md (mk2-conform)"],
       "staged_at": "state/vlm_stage1_hf_push_2026_05_04/staging/step-10k/",
-      "audit_path_planned": "state/hf_upload_audit/<TS>_need-singularity__vlm-anima-voice-paradigm-stage1-step-10k.jsonl",
+      "audit_path_planned": "state/hf_upload_audit/<TS>_dancinlab__vlm-anima-voice-paradigm-stage1-step-10k.jsonl",
       "blocker_detail": "same — invalid HF token across all sources"
     },
     {
       "ckpt": "step-15k",
-      "repo": "need-singularity/vlm-anima-voice-paradigm-stage1-step-15k",
+      "repo": "dancinlab/vlm-anima-voice-paradigm-stage1-step-15k",
       "status": "BLOCKED-no-token",
       "preexisting_on_hf": false,
       "would_push_files": ["adapter_config.json (1111 B)", "adapter_model.safetensors (322440 B)", "README.md (mk2-conform)"],
       "staged_at": "state/vlm_stage1_hf_push_2026_05_04/staging/step-15k/",
-      "audit_path_planned": "state/hf_upload_audit/<TS>_need-singularity__vlm-anima-voice-paradigm-stage1-step-15k.jsonl",
+      "audit_path_planned": "state/hf_upload_audit/<TS>_dancinlab__vlm-anima-voice-paradigm-stage1-step-15k.jsonl",
       "blocker_detail": "same — invalid HF token across all sources"
     },
     {
       "ckpt": "step-20k",
-      "repo": "need-singularity/vlm-anima-voice-paradigm-stage1-step-20k",
+      "repo": "dancinlab/vlm-anima-voice-paradigm-stage1-step-20k",
       "status": "BLOCKED-no-token",
       "preexisting_on_hf": false,
       "would_push_files": ["adapter_config.json (1111 B)", "adapter_model.safetensors (322440 B)", "README.md (mk2-conform)"],
       "staged_at": "state/vlm_stage1_hf_push_2026_05_04/staging/step-20k/",
-      "audit_path_planned": "state/hf_upload_audit/<TS>_need-singularity__vlm-anima-voice-paradigm-stage1-step-20k.jsonl",
+      "audit_path_planned": "state/hf_upload_audit/<TS>_dancinlab__vlm-anima-voice-paradigm-stage1-step-20k.jsonl",
       "blocker_detail": "same — invalid HF token across all sources"
     }
   ],
   "resume_recipe": {
-    "step_1_user_action": "hf auth login --force  # paste fresh HF token (write access to need-singularity org)",
+    "step_1_user_action": "hf auth login --force  # paste fresh HF token (write access to dancinlab org)",
     "step_2_propagate": "cp ~/.cache/huggingface/token ~/core/anima/.secrets/hf_token && scp ~/.cache/huggingface/token ubu1:/home/aiden/.hf_token && scp ~/.cache/huggingface/token ubu1:/home/aiden/.cache/huggingface/token && echo $TOKEN | /Users/ghost/core/secret/bin/secret set huggingface.token",
     "step_3_relaunch_cycle": "Re-launch BG subagent with same prompt — staging dir + READMEs + manifest preserved, can skip directly to push step",
-    "step_4_push_per_ckpt_via_hf_cli_bypass": "for s in 5k 10k 15k 20k; do REPO=need-singularity/vlm-anima-voice-paradigm-stage1-step-$s; hf repo create $REPO --type model --exist-ok && hf upload $REPO state/vlm_stage1_hf_push_2026_05_04/staging/step-$s --commit-message \"VLM stage1 step-$s LoRA savepoint manual hexa push 2026-05-04\"; done"
+    "step_4_push_per_ckpt_via_hf_cli_bypass": "for s in 5k 10k 15k 20k; do REPO=dancinlab/vlm-anima-voice-paradigm-stage1-step-$s; hf repo create $REPO --type model --exist-ok && hf upload $REPO state/vlm_stage1_hf_push_2026_05_04/staging/step-$s --commit-message \"VLM stage1 step-$s LoRA savepoint manual hexa push 2026-05-04\"; done"
   }
 }

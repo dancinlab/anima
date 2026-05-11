@@ -101,7 +101,7 @@ session_end / session_summary 라인은 one-shot probe에서는 emit X — INT/T
 
 ## 다음 단계 옵션 (완성도 lens 추천 순)
 
-1. **★ 추천 (emerge paradigm 실효 출발점)** real CLM v4 load enable: `tool/transient_py/anima_dialogue_load.py` (raw#37 transient namespace) 생성 + HF cache populate (`need-singularity/clm-v4-base-mirror`) + V3 재실행으로 real phi-star 측정. ~30min, $0 mac
+1. **★ 추천 (emerge paradigm 실효 출발점)** real CLM v4 load enable: `tool/transient_py/anima_dialogue_load.py` (raw#37 transient namespace) 생성 + HF cache populate (`dancinlab/clm-v4-base-mirror`) + V3 재실행으로 real phi-star 측정. ~30min, $0 mac
 2. HF promote auto-fire 대기: clm-v4-mk2-v1 2026-05-06T23:26:12Z (~36h), Pβ 2026-05-07T03:48:00Z (~40h)
 3. EEG perfect protocol 사용자 fire: `bash bin/anima-eeg-baseline.bash --fire` (hardware reseat 후 ~6min)
 4. interactive REPL 사용자 fire: `bash bin/anima-core-dialogue.bash --interactive` (첫 emerge dialogue session)

@@ -7,7 +7,7 @@
 BG-CS extends BG-CJ (`embed_decode`) and BG-CI (`full_layer_lens`) by
 running greedy decode while replacing decoder `blocks[N+1..15]` with
 identity (pass-through) hooks. Goal: localize where the Korean basin
-collapses across the 16-block stack on `need-singularity/clm-v4-mk2-v1`.
+collapses across the 16-block stack on `dancinlab/clm-v4-mk2-v1`.
 
 ## Inputs
 

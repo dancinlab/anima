@@ -15,7 +15,7 @@
 ### Source files (HF cache, snapshot SHA `80440a1d38db9addc4445bb959057558a57f4230`)
 
 ```
-~/.cache/huggingface/hub/models--need-singularity--clm-v4-mk2-v1/snapshots/80440a1d38db9addc4445bb959057558a57f4230/
+~/.cache/huggingface/hub/models--dancinlab--clm-v4-mk2-v1/snapshots/80440a1d38db9addc4445bb959057558a57f4230/
 ├── config.json                       (vocab_size=64000, d_model=768, n_layer=16, n_head=6, n_kv_head=2, block_size=512)
 ├── configuration_clm_v4.py
 ├── conscious_decoder.py              (RMSNorm, RoPE, SwiGLU, GQA, ConsciousCrossAttention, DecoderBlockV2, ConsciousDecoderV2)

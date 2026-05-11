@@ -27,7 +27,7 @@ in a **two-stage** evolution:
 
 Standing facts:
 
-- **Hexa-brain canonical**: <https://github.com/need-singularity/hexa-brain>
+- **Hexa-brain canonical**: <https://github.com/dancinlab/hexa-brain>
 - **Spinoff date**: 2026-05-04
 - **Spinoff source commit (anima HEAD at split)**:
   `1b306eec24999ffd28505995655674b0f2beaa31`

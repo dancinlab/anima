@@ -27,7 +27,7 @@
 
 ## §1 14+ closure summary (16 closures)
 
-All closures probe **CLM v4** (`need-singularity/clm-v4-mk2-v1`, paradigm v11 G3, +41.86 Φ★ baseline, 16 decoder blocks, hidden_dim 768). 각 closure 는 chat-capability를 orthogonal axis 에서 공격; 누구도 non-trivial positive 를 produce하지 않았다.
+All closures probe **CLM v4** (`dancinlab/clm-v4-mk2-v1`, paradigm v11 G3, +41.86 Φ★ baseline, 16 decoder blocks, hidden_dim 768). 각 closure 는 chat-capability를 orthogonal axis 에서 공격; 누구도 non-trivial positive 를 produce하지 않았다.
 
 ### §1.1 Closure table — 16 mechanisms
 

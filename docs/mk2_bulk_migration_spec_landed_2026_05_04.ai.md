@@ -9,7 +9,7 @@
 
 ## TL;DR
 
-- mk2 currently lands 14/273 = **5.13% rule parity**; 259 mk1 rules pending bulk migration from private GitHub `need-singularity/raw-archive` to `hive/.raw.mk2`.
+- mk2 currently lands 14/273 = **5.13% rule parity**; 259 mk1 rules pending bulk migration from private GitHub `dancinlab/raw-archive` to `hive/.raw.mk2`.
 - 6-strategy decision matrix recommends **S3-cluster-first** (완성도 score 8.0/10): cluster collapse pass first (~25-35 mk2 rules from ~70-100 mk1 raws via arch.001 4→1 pattern), then 1:1 migrate the remaining ~159-189 raws in 25-rule batches.
 - Mid-band yield: ~200 mk2 rules post-migration (cluster collapse 70-100 raws absorbed, hand-review queue ~13-15 outliers explicit).
 - 4 falsifiers preregistered (F-MIG-1 rule_count band 150-230, F-MIG-2 unmapped_count==0, F-MIG-3 schema-validate PASS, F-MIG-4 coverage parity ≥0.90).
@@ -26,7 +26,7 @@
 
 | gate | description                                                              | blocks                       |
 | ---- | ------------------------------------------------------------------------ | ---------------------------- |
-| G1   | private GitHub `need-singularity/raw-archive` clone auth                 | Step 1 of migration sequence |
+| G1   | private GitHub `dancinlab/raw-archive` clone auth                 | Step 1 of migration sequence |
 | G2-G12 | per-cluster review (11 cluster candidates per spec §4)                 | Step 4 (cluster collapse)    |
 | G13  | post-cluster batch commit ACK                                            | Step 7 (JSONL append)        |
 | G14  | per-25-rule 1:1 migration batch ACK (~7-8 batches expected)              | Step 7                       |

@@ -50,7 +50,7 @@ total: 18.52M params (74.1 MB float32)
 - local filesystem `find / -name best.pt` → 0 results
 - git LFS objects 미초기화
 - HF cache: v4 8개만, v1/v2/v3 0개
-- HF private (need-singularity org 40 models + 2 datasets) NOT_FOUND
+- HF private (dancinlab org 40 models + 2 datasets) NOT_FOUND
 - HF public cross-author NOT_FOUND
 - → α path FAIL_NO_TRACE_FINAL closure
 
@@ -103,7 +103,7 @@ list URL: `https://api.cloudflare.com/client/v4/accounts/<id>/r2/buckets`
 2. ✅ download `clm-v2/latest.pt` (base archive, 279MB)
 3. ✅ inspect architecture (byte vocab 256, 6 layers, 384 d_model, 18.52M params)
 4. ⏸ Korean emit smoke (load test + 10+ KO tokens — pending)
-5. ⏸ HF private upload (need-singularity/clm-v2-byte-18m-convo-5k)
+5. ⏸ HF private upload (dancinlab/clm-v2-byte-18m-convo-5k)
 6. ⏸ PUBLIC promote (own 15 lifecycle, F-CLM-NATIVE-α-1 PASS verification 후)
 7. ⏸ .roadmap.clm_v2_chat status transition: archive_active → restored
 
@@ -152,8 +152,8 @@ list URL: `https://api.cloudflare.com/client/v4/accounts/<id>/r2/buckets`
 ## Next cycle steps
 
 1. **HF upload** (own 15 PRIVATE first):
-   - `need-singularity/clm-v2-byte-18m-convo-5k` (private, then PUBLIC promote after F-CLM-NATIVE-α-1 PASS)
-   - `need-singularity/clm-v2-byte-18m-base` (private, optional archive)
+   - `dancinlab/clm-v2-byte-18m-convo-5k` (private, then PUBLIC promote after F-CLM-NATIVE-α-1 PASS)
+   - `dancinlab/clm-v2-byte-18m-base` (private, optional archive)
 2. **Korean emit smoke** ($0 mac, ~5min):
    - load convo_5k.pt
    - byte-level forward (256 byte input)

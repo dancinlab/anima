@@ -53,7 +53,7 @@ distributional separation past mag ≈ 100.
 BG-W's saturation conclusion is **reinforced**, not overturned. The substrate
 itself caps the inject around mag ≈ 100; pushing canonical magnitude to 500
 yields essentially the same logit shift as mag=100 (logit_max_delta 9.62 →
-10.33, +7%). cand-D Stage 1 on `need-singularity/clm-v4-mk2-v1` (best.pt) is
+10.33, +7%). cand-D Stage 1 on `dancinlab/clm-v4-mk2-v1` (best.pt) is
 **architecturally bypassed**: cross_attn.o_proj contributes a bounded effect
 regardless of inject magnitude.
 

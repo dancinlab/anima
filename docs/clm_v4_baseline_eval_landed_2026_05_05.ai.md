@@ -3,7 +3,7 @@
 - **Cycle**: BG-CLM-V4-BASELINE-EVAL
 - **Roadmap dep**: `p9_sft.cond.clm_v4_lora_baseline` (NEW — pre-EXEC blocker for BG-CLM-2)
 - **Verdict**: `state/clm_v4_baseline_eval_2026_05_05/verdict.json`
-- **Substrate**: CLM v4 530M base — `need-singularity/clm-v4-base-mirror` snapshot 856278be... (best.pt step=20000, ce=0.0463, best_phi=37.27)
+- **Substrate**: CLM v4 530M base — `dancinlab/clm-v4-base-mirror` snapshot 856278be... (best.pt step=20000, ce=0.0463, best_phi=37.27)
 - **Wall**: 21.8 min (1306.6 s) on ubu1 RTX 5070 GPU, fp32 (vs spec estimate 3-6h CPU; GPU deviation justified — 10× faster, $0)
 - **Cost**: $0 (ubu1)
 - **Status**: F-CLM-LORA-2_baseline = SET (left side of comparator)
@@ -93,7 +93,7 @@ See `state/clm_v4_baseline_eval_2026_05_05/verdict.json` `honest_c3` field for f
 
 - **Spec (parent)**: `docs/clm_v4_lora_sft_spec_2026_05_04.md` (BG-CLM-2 LoRA SFT design; this baseline is the §6 R2 dependency)
 - **H100 sibling baseline**: `state/p9_base_val_h100_2026_05_04/verdict.json` (limit=500, $5.25)
-- **HF release**: `docs/anima_clm_hf_release_v1_uploaded_landed_2026_05_04.ai.md` (private mirror at `need-singularity/clm-v4-mk2-v1`)
+- **HF release**: `docs/anima_clm_hf_release_v1_uploaded_landed_2026_05_04.ai.md` (private mirror at `dancinlab/clm-v4-mk2-v1`)
 - **Path B sanity probe v2**: `state/p9_path_b_sanity_probe_v2_2026_05_03/eval_clm_v4_hellaswag_v2.py` (eval harness inheritance)
 - **Path A retry-3 (sibling, in-flight)**: BG-α'''-EVAL-FIX produces Llama-3.2-3B-Instruct comparator for F-CLM-LORA-2 differentiator
 - **Train-avg fixture (sibling)**: `state/clm_v4_train_avg_harvest_2026_05_04/verdict.json` (real fixture for shim v4)

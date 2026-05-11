@@ -8,7 +8,7 @@
 
 ## Method
 
-- Mac CPU (.venv-eeg), `need-singularity/clm-v4-mk2-v1`, BG-W sister-import for loaders/forward/phi.
+- Mac CPU (.venv-eeg), `dancinlab/clm-v4-mk2-v1`, BG-W sister-import for loaders/forward/phi.
 - Single prompt `"안녕"`, magnitude 50.0, 11 forward passes.
 - Inject classes:
   - `random` — `(uniform[-1,1] × 50)` over `(1,8,192)`, 5 seeds.

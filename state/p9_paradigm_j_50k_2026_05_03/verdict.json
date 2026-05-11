@@ -40,13 +40,13 @@
     "savepoints_paths": [],
     "hf_mirror_repos_pushed": [],
     "hf_mirror_repos_expected": [
-      "need-singularity/clm-v4-paradigm-j-50k-step-5k",
-      "need-singularity/clm-v4-paradigm-j-50k-step-10k",
-      "need-singularity/clm-v4-paradigm-j-50k-step-25k",
-      "need-singularity/clm-v4-paradigm-j-50k-step-50k",
-      "need-singularity/clm-v4-paradigm-j-50k-final"
+      "dancinlab/clm-v4-paradigm-j-50k-step-5k",
+      "dancinlab/clm-v4-paradigm-j-50k-step-10k",
+      "dancinlab/clm-v4-paradigm-j-50k-step-25k",
+      "dancinlab/clm-v4-paradigm-j-50k-step-50k",
+      "dancinlab/clm-v4-paradigm-j-50k-final"
     ],
-    "hf_api_query_at_harvest": "GET /api/models?author=need-singularity&search=paradigm-j → []"
+    "hf_api_query_at_harvest": "GET /api/models?author=dancinlab&search=paradigm-j → []"
   },
   "falsifier_outcomes": {
     "F1_BLEU1_holdout500": {"status": "VACUOUS_FAIL", "value": null, "reason": "training never produced model checkpoint to evaluate"},
@@ -82,7 +82,7 @@
     "layer_FE": 8,
     "save_at": [5000, 10000, 25000, 50000],
     "hf_push": true,
-    "hf_org": "need-singularity"
+    "hf_org": "dancinlab"
   },
   "config_executed": {
     "n_steps_actual": 0,

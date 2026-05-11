@@ -176,7 +176,7 @@ Search locations (in order, halt at first hit):
 2. `state/p9_paradigm_d_*` (sister to Φ★ cache slot)
 3. ubu1 `/tmp/p9_paradigm_d_logit_cache_v1.jsonl` (matches sister Φ★ cache naming `/tmp/p9_p1_t4_phi_cache_v1.jsonl`)
 4. ubu1 `~/.cache/p9_paradigm_d_logit_*`
-5. HF dataset `need-singularity/clm-v4-paradigm-d-logit-cache` (private, sister to `need-singularity/clm-v4-t4-phi-cache`)
+5. HF dataset `dancinlab/clm-v4-paradigm-d-logit-cache` (private, sister to `dancinlab/clm-v4-t4-phi-cache`)
 6. RunPod network volumes (if any persistent volume was attached to the terminated T4 pod — see §5.3)
 
 ### 5.3 RunPod terminated-pod cache forensics

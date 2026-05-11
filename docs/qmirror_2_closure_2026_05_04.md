@@ -77,7 +77,7 @@ $0 default path; up to $25 if cond.13 hardware anchor engaged
 - 1.0 closure: docs/nexus_qmirror_closure_2026_05_03.md
 - Dispatch audit: state/qmirror_2_closure_2026_05_04/dispatch_audit.json
 - Watchdog verdict: state/qmirror_2_closure_2026_05_04/verdict.json
-- GitHub release: https://github.com/need-singularity/qmirror/releases/tag/v2.0.0
+- GitHub release: https://github.com/dancinlab/qmirror/releases/tag/v2.0.0
 
 ## 9. Closure verdict (final line)
 

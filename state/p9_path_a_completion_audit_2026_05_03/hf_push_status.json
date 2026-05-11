@@ -2,7 +2,7 @@
   "schema": "anima/p9_path_a_completion_audit/hf_push_status/1",
   "ts_utc": "2026-05-03T21:48:00Z",
   "audit_round": "post-termination",
-  "target_repo": "need-singularity/p9-llama32-lora-stage1",
+  "target_repo": "dancinlab/p9-llama32-lora-stage1",
   "verification_status": "BLOCKED — Mac-side HF token expired/invalid; live HF API check not possible within constraints",
   "verification_attempts": [
     {
@@ -46,7 +46,7 @@
       "repo_exists_status": 200,
       "token_present_pod": true,
       "token_user": "dancinlife",
-      "token_orgs": ["need-singularity"],
+      "token_orgs": ["dancinlab"],
       "token_org_match": true,
       "naming_compliance": "NON-CONFORM (mk2) — sister BG a993063 created canonical alias",
       "first_push_eta_min": 37
@@ -79,8 +79,8 @@
   "verdict": "PROBABLY_PUSHED_SUCCESSFULLY — circumstantial evidence (clean monotonic loss to step 10000, on-pod token verified at 15:17Z, hub_strategy=every_save) strongly supports successful pushes. CANNOT CONFIRM via live API check from Mac. Manual re-auth required to verify.",
   "verification_recovery_path": [
     "Step 1: hf auth login --force (interactive) on Mac OR ssh into ubu1 and run hf model info from there if ubu1 has fresh token",
-    "Step 2: hf models info need-singularity/p9-llama32-lora-stage1 | jq '.siblings[].rfilename'",
-    "Step 3: hf models info need-singularity/p9-llama32-lora-stage1 --refs (or curl /api/models/<repo>/refs with valid Bearer)"
+    "Step 2: hf models info dancinlab/p9-llama32-lora-stage1 | jq '.siblings[].rfilename'",
+    "Step 3: hf models info dancinlab/p9-llama32-lora-stage1 --refs (or curl /api/models/<repo>/refs with valid Bearer)"
   ],
   "raw15_compliance": "no token printed; only first 8 chars (prefix-only, no entropy material) referenced when comparing token files"
 }

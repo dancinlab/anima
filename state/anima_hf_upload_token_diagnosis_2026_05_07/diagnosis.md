@@ -2,7 +2,7 @@
 
 ## Summary
 - BG-HD failure root cause: `secret get HF_TOKEN` returns a stale/rotated token rejected by HF API (HTTP 401 "Invalid username or password.").
-- Mac local `~/.cache/huggingface/token` holds a DIFFERENT, valid token with `write` role and `need-singularity` org membership (whoami-v2 HTTP 200, user=dancinlife).
+- Mac local `~/.cache/huggingface/token` holds a DIFFERENT, valid token with `write` role and `dancinlab` org membership (whoami-v2 HTTP 200, user=dancinlife).
 - Conclusion: secret CLI cache is stale; hf-cli local cache is the canonical credential on this Mac.
 
 ## Evidence (token literals redacted; only first 3 chars of body shown)

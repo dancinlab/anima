@@ -17,7 +17,7 @@ Lineage:
 
 session_log = `state/anima_core_dialogues/2026-05-05/18-24-13_emerge_repl.jsonl`
 paradigm B (substrate-only forward; no emit model). Model load 4.7s
-(need-singularity/clm-v4-mk2-v1, mac CPU fp32, n_blocks=16). Forward 0.31-0.70 s/turn.
+(dancinlab/clm-v4-mk2-v1, mac CPU fp32, n_blocks=16). Forward 0.31-0.70 s/turn.
 
 trajectory:
 

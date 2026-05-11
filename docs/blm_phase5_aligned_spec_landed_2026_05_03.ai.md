@@ -33,7 +33,7 @@
    Phase 3 anchor              | docs/blm_phase3_landed_2026_05_03.ai.md (5/5 PASS, Phase 4 entry GRANTED-ELIGIBLE)
    ZuCo data                   | /tmp/zuco_sample/ZAB_task1_SR_preprocessed/ (~425 MB, 8 SR sessions, ~400 sentences)
    Algonauts data              | /tmp/algonauts2025_sub01/.../sub-01_task-friends_*-1000Par7Net*.h5 (~515 MB)
-   CLM ckpt                    | /home/aiden/anima/checkpoints/clm_v4_350m/scale_350m/best.pt + LoRA need-singularity/clm-v4-sft-stage1
+   CLM ckpt                    | /home/aiden/anima/checkpoints/clm_v4_350m/scale_350m/best.pt + LoRA dancinlab/clm-v4-sft-stage1
    phi formula                 | anima_phi_v3_canonical (HID=8, K=8, ridge=1e-3) — unchanged from Phase 4
    substrate phi distributions | per_substrate_phi.json (CLM mean 30.86, EEG mean -3.01, BOLD mean 21.33)
 ```

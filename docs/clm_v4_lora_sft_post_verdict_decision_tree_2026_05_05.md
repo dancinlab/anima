@@ -77,7 +77,7 @@ Optional reinforcers (any one tightens confidence): `F_CLM_LORA_4 == "PASS"` (ax
 - **Substrate hypothesis**: anima's consciousness-coupled CLM v4 substrate provides measurable lift over Llama LoRA on the same rehearsal recipe. The "anima substrate has architectural advantage" hypothesis is **NOT FALSIFIED** by this single-seed test.
 - **Lane closure direction**: CLM v4 lane → **OPEN for scaleup**; Path A v2 lane stays valid as comparator anchor.
 - **Roadmap impact**: `p9_sft.cond.clm_v4_lora_sft` → V2_PASS; CLM v4 substrate validated for SFT; substrate-aware F4 (per `docs/p9_path_a_retry_3_f4_amendment_landed_2026_05_05.ai.md`) is RESOLVED → Path A retry-3 lane closure can be amended from `PARTIAL_PASS_W_F4_DEFERRED_TO_CLM2` to `TRUE_PASS_W_CLM2_F4_LANDED`.
-- **Downstream effects**: justifies BG-CLM-3 5-seed scaleup; HF release prep (`need-singularity/clm-v4-mk2-lora-v1`) green-lit; cross-substrate matrix `tool/p9_a_d_cross_axis_verdict.hexa` populated 3-way.
+- **Downstream effects**: justifies BG-CLM-3 5-seed scaleup; HF release prep (`dancinlab/clm-v4-mk2-lora-v1`) green-lit; cross-substrate matrix `tool/p9_a_d_cross_axis_verdict.hexa` populated 3-way.
 
 ### 1.3 Follow-up BG scaffold — B1 (5-seed scaleup) + B1' (HF release prep, parallel)
 
@@ -98,7 +98,7 @@ required before HF release + roadmap "substrate validated" claim.
 - 20260505, 20260506, 20260507, 20260508 (NEW; reuse spec §3 hyperparameters verbatim except seed)
 
 ### Hyperparams (LOCKED — copy from BG-CLM-2 spec §3 exactly; raw#71 pre-registration)
-- Base: need-singularity/clm-v4-mk2-v1
+- Base: dancinlab/clm-v4-mk2-v1
 - LoRA: r=32, alpha=64, dropout=0.05
 - target_modules: decoder.blocks.{0..15}.attn.{q,k,v,o}_proj (self-attn ONLY; cross_attn EXCLUDED)
 - LR=3e-5, cosine warmup=300, max_steps=6000, save_steps=1000
@@ -143,7 +143,7 @@ V2_PASS validated; pre-stage HF release artifacts (model card, README, adapter m
 in parallel with B1 5-seed scaleup so post-aggregate land is single-commit.
 
 ### Tasks
-1. Build model card via tool/hf_readme_template.md scaffold for need-singularity/clm-v4-mk2-lora-v1
+1. Build model card via tool/hf_readme_template.md scaffold for dancinlab/clm-v4-mk2-lora-v1
 2. Document adapter-merged shape, tokenizer dependency, trust_remote_code=True requirement
 3. Pre-stage tool/hf_upload_mk2.hexa run-config (DRY-RUN only; no upload until B1 aggregate PASS)
 4. Land docs/clm_v4_lora_release_prep_2026_05_06.md with USER ACK gate

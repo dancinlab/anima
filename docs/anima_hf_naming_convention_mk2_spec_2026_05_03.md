@@ -2,7 +2,7 @@
 
 - date: 2026-05-03
 - status: SPEC_FROZEN (forward-looking; legacy migration grace 30d)
-- scope: every model artifact pushed to `huggingface.co/need-singularity/*` AND every local cache entry under `~/.cache/huggingface/hub/models--need-singularity--*`
+- scope: every model artifact pushed to `huggingface.co/dancinlab/*` AND every local cache entry under `~/.cache/huggingface/hub/models--dancinlab--*`
 - author: anima cycle land BG
 - supersedes: ad-hoc patterns observed in P9 SFT cycles (2026-05-02 → 2026-05-03)
 - linked falsifier: **F-NAME-1** — every public HF repo conforms to template (audit-time check, see §10)
@@ -16,14 +16,14 @@
 
 **핵심 형식**:
 ```
-need-singularity/<lm-family>-<base-version>[-<paradigm>][-<stage>][-<scale>][-<step>][-<variant>]
+dancinlab/<lm-family>-<base-version>[-<paradigm>][-<stage>][-<scale>][-<step>][-<variant>]
 ```
 
 **예**:
-- `need-singularity/clm-v4-base-mirror`
-- `need-singularity/clm-v4-sft-stage1`
-- `need-singularity/clm-v4-paradigm-j-50k-step-25k`
-- `need-singularity/blm-v1-paradigm-d-distill-50k-final`
+- `dancinlab/clm-v4-base-mirror`
+- `dancinlab/clm-v4-sft-stage1`
+- `dancinlab/clm-v4-paradigm-j-50k-step-25k`
+- `dancinlab/blm-v1-paradigm-d-distill-50k-final`
 
 **audit 결과** (현재 27 repos, 2026-05-03 기준): **7 CANON / 20 EXT (experimental variant, 합법) / 0 FAIL**. 0 immediate migration required. 30-day grace for `1-N`/`y-N` style → migrate to `paradigm-X` form on next training cycle.
 
@@ -34,7 +34,7 @@ need-singularity/<lm-family>-<base-version>[-<paradigm>][-<stage>][-<scale>][-<s
 ### 1.1 HuggingFace org (canonical, single source of truth)
 
 ```
-need-singularity/
+dancinlab/
 ```
 
 - 하나의 org 측 anima + nexus + 모든 *LM 측 측 측 측 (no per-axis sub-orgs)
@@ -44,11 +44,11 @@ need-singularity/
 ### 1.2 Local cache mirror (HF transformers default)
 
 ```
-~/.cache/huggingface/hub/models--need-singularity--<repo-name>/
+~/.cache/huggingface/hub/models--dancinlab--<repo-name>/
 ```
 
 - mac local 측 ubu1/ubu2/RunPod 측 동일 path (HF_HOME 측 기본 경로)
-- 측 측 측 측 직접 측 mkdir / cp 금지 — 측 측 measure: `from_pretrained("need-singularity/<repo-name>")` 측 통해 측 populate (HF API 측 sha verification 보장)
+- 측 측 측 측 직접 측 mkdir / cp 금지 — 측 측 measure: `from_pretrained("dancinlab/<repo-name>")` 측 통해 측 populate (HF API 측 sha verification 보장)
 
 ### 1.3 Other namespaces (FORBIDDEN for anima/nexus models)
 
@@ -203,7 +203,7 @@ intentionally looser on this slot to avoid a second SSOT.
 
 ```
 hexa run tool/hf_upload_mk2.hexa --validate-naming \
-    "need-singularity/clm-v4-paradigm-j-50k-step-5k"
+    "dancinlab/clm-v4-paradigm-j-50k-step-5k"
 → OK
 __ANIMA_HF_UPLOAD_MK2__ PASS
 ```
@@ -365,7 +365,7 @@ Allowed (canonical):
 
 ## §7 Audit (current 27 repos, 2026-05-03)
 
-Source: `https://huggingface.co/api/models?author=need-singularity&full=false&limit=200`
+Source: `https://huggingface.co/api/models?author=dancinlab&full=false&limit=200`
 
 ### 7.1 Conformance summary
 
@@ -459,7 +459,7 @@ Before `hf push` on a new repo, the cycle owner MUST verify:
 
 ### 10.1 Statement
 
-> **F-NAME-1**: every public `need-singularity/*` HF repo conforms to the §2 EBNF grammar (CANON or EXT-with-banner) AND has a §5-conforming README.
+> **F-NAME-1**: every public `dancinlab/*` HF repo conforms to the §2 EBNF grammar (CANON or EXT-with-banner) AND has a §5-conforming README.
 
 ### 10.2 Verifier sketch (regex; see §8.3 for full impl)
 
@@ -534,7 +534,7 @@ The 7 paradigm letters (A/A'/B/C/D/E/J) cover current research scope. Future par
 - destructive: 0 (no rename / delete of any existing HF repo as part of this spec land)
 - migration: 0 (forward-looking; banner adds + script are separate cycles)
 - byte-diff to any existing artifact: 0
-- HF API calls (audit): 1 read-only LIST against `?author=need-singularity` endpoint
+- HF API calls (audit): 1 read-only LIST against `?author=dancinlab` endpoint
 
 ---
 

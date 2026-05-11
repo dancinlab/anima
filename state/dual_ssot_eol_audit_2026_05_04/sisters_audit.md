@@ -16,7 +16,7 @@
 - **Top 3 risks**:
   1. **hexa-lang is the PARSER OWNER** — every sister .raw-ref pin-chain calls `tool/raw_sync.hexa` + `self/raw_loader.hexa`; mk1 EOL must keep hexa-lang stdlib intact OR coordinate hexa-lang teardown last
   2. **nexus .own own#1 wired to launchd plist** (`dev.hexa-lang.atlas-absorb-sweeper.plist`, 600s interval) — .own removal orphans launchd; plist must be `launchctl unload` first
-  3. **n6-architecture/.own.group_p + .own.readme are LIVE governance** for paper-3pack-verify + sealed-readme + english-only + tests-count + friendly-toolkit — paper publishing pipeline dies on naive removal
+  3. **CANON/.own.group_p + .own.readme are LIVE governance** for paper-3pack-verify + sealed-readme + english-only + tests-count + friendly-toolkit — paper publishing pipeline dies on naive removal
 
 ---
 
@@ -24,7 +24,7 @@
 
 | Repo | .raw-ref | .raw-audit | raw_archive | .own | uchg | raw#N refs | Group |
 |------|----------|------------|-------------|------|------|------------|-------|
-| n6-architecture | — | — | 11 files | .own.group_p + .own.readme | 29 | 24 | A |
+| CANON | — | — | 11 files | .own.group_p + .own.readme | 29 | 24 | A |
 | airgenome | — | — | 2 files | — | 9 | 26 | A |
 | papers | — | — | 3 files | — | 10 | 23 | A |
 | hexa-lang | yes | yes (3) | — | .own | 35 | 11064 | D |
@@ -41,7 +41,7 @@
 | ghost | — | — | — | — | 0 | 3 | C |
 
 Notes on inventory:
-- `n6-architecture` has NO `.raw-ref` (never adopted hive raw mirror) but DOES have raw_archive holding .own.group_p.bak + .own.readme.bak + own29/own15 tool backups + n6 raw47 ai.md backups — 11 files, 2026-05-04T timestamped.
+- `CANON` has NO `.raw-ref` (never adopted hive raw mirror) but DOES have raw_archive holding .own.group_p.bak + .own.readme.bak + own29/own15 tool backups + n6 raw47 ai.md backups — 11 files, 2026-05-04T timestamped.
 - `hexa-lang` has the most complex layout: `.raw-audit` + `.raw-audit.pre-chain` + `.raw-audit.pre-chain.20260420T064235Z` (3 files) + `.raw-cache/` (40 entry files including ssot.sha) + `.raw-status/roadmap-status.json` + `.raw-exemptions/` (3 files: raw_6.list, raw_7.list, README.md) + `.raw-ref` + `.raw-ref.example` + `.own`.
 - `nexus/.raw-audit` is 185KB local audit log (irreversible deletion if not preserved).
 - `hexa-os/.own-rules.json` is JSON variant (HX11 inherit=false), schema differs from .own DSL (not raw-format parsable).
@@ -51,7 +51,7 @@ Notes on inventory:
 ## 3. Group classification
 
 **Group A — Full mk1 mirror (4 sisters, requires 4-stage delete: chflags unlock → archive → git rm → audit)**
-- n6-architecture: raw_archive(11) + .own.group_p + .own.readme + 29 uchg
+- CANON: raw_archive(11) + .own.group_p + .own.readme + 29 uchg
 - airgenome: raw_archive(2) + 9 uchg
 - papers: raw_archive(3) + 10 uchg
 - nexus: .raw-ref + .raw-audit(185KB) + .own + 18 uchg
@@ -142,7 +142,7 @@ Per repo:
 
 - **F-EOL-SISTERS-1**: hexa-lang `self/raw_loader.hexa` deleted → hive `.raw` becomes unparseable → all sister `.raw-ref` verify commands fail with parse error. **Falsifier**: any sister .raw-ref still depends on hexa-lang parser at delete time.
 - **F-EOL-SISTERS-2**: nexus `.own` removed → launchd plist `dev.hexa-lang.atlas-absorb-sweeper.plist` orphans (StartInterval=600s) and emits launchd error logs every 10min indefinitely. **Falsifier**: launchctl list shows plist still loaded post-`.own` removal.
-- **F-EOL-SISTERS-3**: n6-architecture `.own.group_p` + `.own.readme` removed → next paper publish attempt fails own#6 paper-3pack-verify-embedded enforcement → blocks landing. **Falsifier**: any paper publish attempt within 7 days post-removal succeeds (means enforcement was already dead, audit findings stale).
+- **F-EOL-SISTERS-3**: CANON `.own.group_p` + `.own.readme` removed → next paper publish attempt fails own#6 paper-3pack-verify-embedded enforcement → blocks landing. **Falsifier**: any paper publish attempt within 7 days post-removal succeeds (means enforcement was already dead, audit findings stale).
 - **F-EOL-SISTERS-4**: hexa-os `.raw-ref` (stale, points hexa-lang) deleted before hexa-lang teardown → no impact (already broken pin); but if deleted AFTER hexa-lang teardown without hive migration, hexa-os loses raw-format inheritance. **Falsifier**: hexa-os adopts inherit=false JSON-only governance and ignores raw-format entirely.
 
 ---

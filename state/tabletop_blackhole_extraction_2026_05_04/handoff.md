@@ -4,8 +4,8 @@
 
 ## What landed
 
-- `n6-architecture/domains/physics/tabletop-blackhole/tabletop_blackhole.hexa` (307 LoC)
-- `n6-architecture/domains/physics/tabletop-blackhole/tabletop_blackhole.README.md` (49 LoC)
+- `CANON/domains/physics/tabletop-blackhole/tabletop_blackhole.hexa` (307 LoC)
+- `CANON/domains/physics/tabletop-blackhole/tabletop_blackhole.README.md` (49 LoC)
 - Co-located with `tabletop-blackhole.md` (TBHL-01..08 research spec)
 
 ## Destination divergence (vs recipe)
@@ -40,7 +40,7 @@ git status modules/tabletop_blackhole
 # Confirm 2 deletions staged:
 #   deleted: modules/tabletop_blackhole/README.md
 #   deleted: modules/tabletop_blackhole/tabletop_blackhole.hexa
-git commit -m 'refactor(nexus): remove tabletop_blackhole module — absorbed into n6-architecture@b59d38b3'
+git commit -m 'refactor(nexus): remove tabletop_blackhole module — absorbed into CANON@b59d38b3'
 ```
 
 `__pycache__/` and `tests/__pycache__/` remain untracked under nexus

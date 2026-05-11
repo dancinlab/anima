@@ -9,10 +9,10 @@
 // 본 러너는 atlas anchor 를 read-only 인용 + nexus run_all.hexa 위임.
 //
 // Sources (read-only):
-//   ~/core/n6-architecture/atlas/atlas.n6                                    foundation
-//   ~/core/n6-architecture/atlas/atlas.append.anima-philosophy-anchors-*.n6  D1-D4
-//   ~/core/n6-architecture/atlas/atlas.append.anima-discovery-verification-methods-*.n6
-//   ~/core/n6-architecture/atlas/atlas.append.anima-hypotheses-*.n6          H_001-H_032
+//   ~/core/canon/atlas/atlas.n6                                    foundation
+//   ~/core/canon/atlas/atlas.append.anima-philosophy-anchors-*.n6  D1-D4
+//   ~/core/canon/atlas/atlas.append.anima-discovery-verification-methods-*.n6
+//   ~/core/canon/atlas/atlas.append.anima-hypotheses-*.n6          H_001-H_032
 //
 // Usage:
 //   hexa run anima/verify/atlas_check.hexa                  # full report
@@ -22,7 +22,7 @@
 // ═══════════════════════════════════════════════════════════
 
 let HOME = env("HOME")
-let ATLAS_DIR = HOME + "/core/n6-architecture/atlas"
+let ATLAS_DIR = HOME + "/core/canon/atlas"
 let NEXUS_DIR = HOME + "/core/nexus"
 
 let SHARDS = [

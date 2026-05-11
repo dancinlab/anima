@@ -12,13 +12,13 @@
 #      - tool/fish/anima.fish             -> fish completion dir
 #
 #  TAP LAYOUT (see docs/brew_tap_install.md)
-#    brew tap need-singularity/anima      # resolves to
-#                                         # github.com/need-singularity/homebrew-anima
+#    brew tap dancinlab/anima      # resolves to
+#                                         # github.com/dancinlab/homebrew-anima
 #    brew install anima
 #
 #  STATUS
 #    STUB — sha256 below is a placeholder. Replace after staging the real
-#    release tarball at github.com/need-singularity/anima/releases/v<ver>.
+#    release tarball at github.com/dancinlab/anima/releases/v<ver>.
 #
 #  ROADMAP REF
 #    Y5 — brew tap for anima CLI (N74 predecessor: bottle-only CP1 formula)
@@ -26,19 +26,19 @@
 
 class Anima < Formula
   desc "ANIMA — unified CLI for the β-main paradigm (proposal stack + auto-evolution)"
-  homepage "https://github.com/need-singularity/anima"
-  url "https://github.com/need-singularity/anima/archive/refs/tags/v0.1.0.tar.gz"
+  homepage "https://github.com/dancinlab/anima"
+  url "https://github.com/dancinlab/anima/archive/refs/tags/v0.1.0.tar.gz"
   sha256 "0000000000000000000000000000000000000000000000000000000000000000"
   version "0.1.0"
   license "MIT"
-  head "https://github.com/need-singularity/anima.git", branch: "main"
+  head "https://github.com/dancinlab/anima.git", branch: "main"
 
   # hexa-lang is the runtime for every .hexa module dispatched by bin/anima.
   # When the upstream hexa-lang tap is published, uncomment the first form
   # and remove the caveat. Until then we emit a post-install note (see
   # `caveats` below) and treat hexa as a soft runtime dependency.
   #
-  # depends_on "need-singularity/hexa/hexa-lang"
+  # depends_on "dancinlab/hexa/hexa-lang"
   depends_on "bash"
 
   def install
@@ -67,10 +67,10 @@ class Anima < Formula
         #{opt_share}/anima/anima_cli/
 
       Runtime requirement (not yet a brew dependency):
-        hexa-lang — once `need-singularity/hexa` tap ships a formula,
-        run:   brew tap need-singularity/hexa && brew install hexa-lang
+        hexa-lang — once `dancinlab/hexa` tap ships a formula,
+        run:   brew tap dancinlab/hexa && brew install hexa-lang
         until then, build from source:
-          git clone https://github.com/need-singularity/hexa-lang
+          git clone https://github.com/dancinlab/hexa-lang
           cd hexa-lang && make install
 
       Verify install:

@@ -100,7 +100,7 @@
       "d1_lane_status": "WITHIN",
       "d1_lane_rationale": "anima-native byte-level (own 17 permitted-backends 'dancinlab/clm-v2-byte-18m-convo-5k RECOVERED 18.52M byte-level KO 회복 후 promote' + .roadmap.philosophy D1.evidence.accepted_paths 'clm-v2-byte-18m anima-native byte-level RECOVERED 2026-05-06'). 외부 substrate wrapping 부재",
       "measurement_status": "BLOCKED_INFRA_GAP",
-      "measurement_path": "HF cache models--need-singularity--clm-v2-byte-18m-convo-5k/snapshots/.../convo_5k.pt (raw .pt checkpoint, custom architecture)",
+      "measurement_path": "HF cache models--dancinlab--clm-v2-byte-18m-convo-5k/snapshots/.../convo_5k.pt (raw .pt checkpoint, custom architecture)",
       "measurement_blocker": "convo_5k.pt = ConsciousLM++ federated multi-cell custom architecture (BG-FS exhaustive_2026_05_06 evidence). clm_v4_mount.hexa AutoModelForCausalLM 호출 → CLMv4Config 만 인식. v2 byte-level은 model_type 미land + AutoConfig register 부재. .roadmap.cli cli.cond.3 = 'convo_5k.pt KO emit 0/5 (FAIL_KO_BIAS) PARTIAL'. 본 cycle real-mode probe infra 부재",
       "ledger_record": {
         "ssot_blocker": ".roadmap.cli cli.cond.3 status='blocked' blocker_reason='convo_5k.pt KO emit 0/5 (FAIL_KO_BIAS) — F-CLM-NATIVE-α-1 PARTIAL'",

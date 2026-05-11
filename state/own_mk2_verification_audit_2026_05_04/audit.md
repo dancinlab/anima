@@ -9,11 +9,11 @@ mode: READ-ONLY (no deletes, no modifications, no chflags, no git mutations)
 
 ## TL;DR
 
-- 110 `.own*` files discovered across 8 git repos (anima / hexa-lang / hexa-os / n6-architecture / nexus / orpheus / void / wraith-wallet).
-- 102 of 110 are worktree-scoped legacy snapshots under `.claude/worktrees/agent-*/.own`. Top-level (active SSOT) `.own*` count = 10 (across 7 repos: anima 1, hexa-lang 1, hexa-os 1, n6-architecture 4 [2 active + 2 backups], nexus 1, orpheus 1, wraith-wallet 1).
+- 110 `.own*` files discovered across 8 git repos (anima / hexa-lang / hexa-os / CANON / nexus / orpheus / void / wraith-wallet).
+- 102 of 110 are worktree-scoped legacy snapshots under `.claude/worktrees/agent-*/.own`. Top-level (active SSOT) `.own*` count = 10 (across 7 repos: anima 1, hexa-lang 1, hexa-os 1, CANON 4 [2 active + 2 backups], nexus 1, orpheus 1, wraith-wallet 1).
 - by_schema_class (top-level only): mk2_VERIFIED=3 (anima, n6/.own.readme, n6/.own.group_p) / mk2_PARTIAL=0 / mk1_GRANDFATHER=4 (orpheus, wraith-wallet, hexa-lang, nexus) / UNKNOWN=1 (hexa-os `.own-rules.json`) / BACKUP=2 (n6 raw_archive `.bak`).
 - by_timestamp_class (top-level git first_added): PRE_MK2=4 (anima 2026-04-21 / hexa-lang 2026-04-26 / hexa-os 2026-04-19 / nexus 2026-04-21) / POST_MK2_EARLY=1 (n6 .own.group_p 2026-05-03) / POST_MK2_RECENT=3 (n6 .own.readme 2026-05-04 / orpheus 2026-05-04 / wraith-wallet 2026-05-04).
-- Top 3 review-queue items (POST_MK2_RECENT): orpheus `.own` (mk: 1, post-mk2 spec) / wraith-wallet `.own` (mk: 1, post-mk2 spec) / n6-architecture `.own.readme` (n6-local mk2 schema variant, not anima `project/own/v1`).
+- Top 3 review-queue items (POST_MK2_RECENT): orpheus `.own` (mk: 1, post-mk2 spec) / wraith-wallet `.own` (mk: 1, post-mk2 spec) / CANON `.own.readme` (n6-local mk2 schema variant, not anima `project/own/v1`).
 - Cross-link blockers: nexus `.own` own#1 atlas-absorb-mandatory wired to active launchctl `dev.hexa-lang.atlas-absorb-sweeper` (verified loaded). hexa-os `.own-rules.json` referenced in 2 docs + 2 markers + .git/index. Other top-level files referenced by sibling repos via cpre/.guide/.roadmap.
 - Worktree-scoped 102 `.own*` files are legacy snapshots from worktrees (Apr 19-26 mtimes); none govern current state — DEFER all to worktree GC pass (out of mk2 scope).
 
@@ -26,8 +26,8 @@ mode: READ-ONLY (no deletes, no modifications, no chflags, no git mutations)
 | anima | `.own` | 63595 | 2026-05-04T13:29 | 2026-04-21 | 2026-05-04 | mk2_VERIFIED | PRE_MK2 (born) → mk2-upgraded 2026-05-02 | hive/spec/schema/own_v1.schema.yaml; cpre; .guide |
 | hexa-lang | `.own` | 3679 | 2026-05-03T00:24 | 2026-04-26 | 2026-04-26 | mk1_GRANDFATHER | PRE_MK2 | self/raw_loader.hexa; cross-repo parser SSOT |
 | hexa-os | `.own-rules.json` | 1052 | 2026-04-19T00:58 | 2026-04-19 | 2026-04-19 | UNKNOWN (JSON, pre-mk2 raw-own/1.0) | PRE_MK2 | docs/HEXA_SERVE_V01.md, hexa_os_self_mk2_tuning_landed_*.ai.md, 2 markers, .git/index |
-| n6-architecture | `.own.readme` | 17682 | 2026-05-04T09:46 | 2026-05-04 | 2026-05-04 | mk2_VERIFIED (n6-local schema `n6-architecture/own/readme/2`) | POST_MK2_RECENT | docs/n6_architecture_own_readme_mk2_reconstruction_2026_05_04.ai.md; absolute_rules.json |
-| n6-architecture | `.own.group_p` | 10283 | 2026-05-04T09:46 | 2026-05-03 | 2026-05-03 | mk2_VERIFIED (n6-local schema `n6-architecture/own/group_p/2`) | POST_MK2_EARLY | docs/n6_architecture_own_group_p_mk2_reconstruction_2026_05_03.ai.md |
+| CANON | `.own.readme` | 17682 | 2026-05-04T09:46 | 2026-05-04 | 2026-05-04 | mk2_VERIFIED (n6-local schema `CANON/own/readme/2`) | POST_MK2_RECENT | docs/n6_architecture_own_readme_mk2_reconstruction_2026_05_04.ai.md; absolute_rules.json |
+| CANON | `.own.group_p` | 10283 | 2026-05-04T09:46 | 2026-05-03 | 2026-05-03 | mk2_VERIFIED (n6-local schema `CANON/own/group_p/2`) | POST_MK2_EARLY | docs/n6_architecture_own_group_p_mk2_reconstruction_2026_05_03.ai.md |
 | nexus | `.own` | 37054 | 2026-05-04T17:37 | 2026-04-21 | 2026-04-28 | mk1_GRANDFATHER (no frontmatter, raw-format only) | PRE_MK2 | launchctl dev.hexa-lang.atlas-absorb-sweeper (LOADED); tool/atlas_absorb_*.hexa |
 | orpheus | `.own` | 24296 | 2026-05-04T18:59 | 2026-05-04 | 2026-05-04 | mk1_GRANDFATHER (`mk: 1` explicit; uses `schema_version: project/own/v1`) | POST_MK2_RECENT | cpre/contracts.ai.md C1-C7; .roadmap.orpheus |
 | wraith-wallet | `.own` | 21321 | 2026-05-04T17:11 | 2026-05-04 | 2026-05-04 | mk1_GRANDFATHER (`mk: 1` explicit; uses `schema_version: project/own/v1`) | POST_MK2_RECENT | cpre/contracts.ai.md W1-W8; .roadmap.wraith-wallet |
@@ -36,15 +36,15 @@ mode: READ-ONLY (no deletes, no modifications, no chflags, no git mutations)
 
 | path | size | mtime | class |
 |------|-----:|-------|-------|
-| n6-architecture/raw_archive/2026-05-04T/`.own.group_p.bak` | 10283 | 2026-05-04T13:28 | BACKUP (byte-identical to active .own.group_p) |
-| n6-architecture/raw_archive/2026-05-04T/`.own.readme.bak` | 17682 | 2026-05-04T13:28 | BACKUP (byte-identical to active .own.readme) |
+| CANON/raw_archive/2026-05-04T/`.own.group_p.bak` | 10283 | 2026-05-04T13:28 | BACKUP (byte-identical to active .own.group_p) |
+| CANON/raw_archive/2026-05-04T/`.own.readme.bak` | 17682 | 2026-05-04T13:28 | BACKUP (byte-identical to active .own.readme) |
 
 ### Worktree-scoped (legacy snapshots — NOT active SSOT)
 
 | repo | count | example header | class |
 |------|------:|----------------|-------|
 | hexa-lang/.claude/worktrees | 88 (84 `.own` + 4 `.own-rules.json`) | "hexa-lang /.own — L1 project-local (3 rules)" | mk1_GRANDFATHER (snapshots, mtimes 2026-04-19 .. 2026-04-26) |
-| n6-architecture/.claude/worktrees | 3 | "n6-architecture /.own — L1 unified governance DSL (21 rules)" | mk1_GRANDFATHER (snapshots, mtimes 2026-04-24) |
+| CANON/.claude/worktrees | 3 | "CANON /.own — L1 unified governance DSL (21 rules)" | mk1_GRANDFATHER (snapshots, mtimes 2026-04-24) |
 | nexus/.claude/worktrees | 6 | "nexus /.own — L1 project-local (0 rules)" (215 bytes — empty stub) | mk1_GRANDFATHER (snapshots, mtimes 2026-04-21) |
 | void/.claude/worktrees | 5 | "#!raw\nvoid /.own — L1 project-local rules\ninherits hexa-lang/.raw" | mk1_GRANDFATHER (snapshots, mtimes 2026-04-21) |
 
@@ -65,24 +65,24 @@ mode: READ-ONLY (no deletes, no modifications, no chflags, no git mutations)
    ```
    References anima `roles`/`baselines`/`project_directives`/`cross_link_to_specs`/`cross_link_to_raws` sections. SSOT baseline confirmed by BG-β audit (commit a3295309). RECOMMEND: KEEP (canonical mk2 reference).
 
-2. **`n6-architecture/.own.readme`** — 17682 bytes, 5 README-bound rules (own#14/17/20/21/29).
+2. **`CANON/.own.readme`** — 17682 bytes, 5 README-bound rules (own#14/17/20/21/29).
    Frontmatter excerpt:
    ```
    # ---
-   # schema: n6-architecture/own/readme/2
+   # schema: CANON/own/readme/2
    # last_updated: 2026-05-04
    # ssot: { parent_handoff: ..., sibling_emit: .own.group_p, axis_spine: .roadmap.n6_architecture, ... }
    # status: live
    # omega_cycle: 6-step single-pass
    # ---
    ```
-   Uses n6-local schema variant (`n6-architecture/own/readme/2`) — NOT anima `project/own/v1` but follows mk2 spirit (frontmatter + structured ssot block + status). RECOMMEND: KEEP (n6-local mk2 schema is intentional; reconstructed 2026-05-04 from mk1 .own delete at commit 442afa7b).
+   Uses n6-local schema variant (`CANON/own/readme/2`) — NOT anima `project/own/v1` but follows mk2 spirit (frontmatter + structured ssot block + status). RECOMMEND: KEEP (n6-local mk2 schema is intentional; reconstructed 2026-05-04 from mk1 .own delete at commit 442afa7b).
 
-3. **`n6-architecture/.own.group_p`** — 10283 bytes, 1 unified rule (own#6 paper-3pack-verify-embedded).
+3. **`CANON/.own.group_p`** — 10283 bytes, 1 unified rule (own#6 paper-3pack-verify-embedded).
    Frontmatter excerpt:
    ```
    # ---
-   # schema: n6-architecture/own/group_p/2
+   # schema: CANON/own/group_p/2
    # last_updated: 2026-05-03
    # ssot: { ... }
    # status: live
@@ -134,13 +134,13 @@ Per user policy "mk2 설계 이후 작성된 .own 진지하게 검토":
 
 **RECOMMEND: REVIEW → likely MK2_UPGRADE** (sibling cycle — apply same decision as orpheus).
 
-### 3.3 — n6-architecture/.own.readme (created 2026-05-04)
+### 3.3 — CANON/.own.readme (created 2026-05-04)
 
 **What it grandfathers**: 5 README-bound rules (own#14 readme-sealed-required / own#17 public-readme-english-only / own#20 readme-techniques-count-drift / own#21 readme-nexus6-tests-count-drift / own#29 P0 readme-friendly-toolkit-required).
 
 **Why post-mk2**: Reconstruction after mk1 .own (881 LoC, 32 rules) deleted 2026-05-03 commit 442afa7b. n6 chose to split mk1 .own into multiple mk2 files by axis: `.own.readme` (README governance) + `.own.group_p` (paper-md governance) + future axis files. This is INTENTIONAL mk2 design choice (axis-split additive over collapse).
 
-**mk2 spirit consistency**: VERY HIGH — has frontmatter (schema/last_updated/ssot/policy/status/omega_cycle), structured 6-step omega_cycle, predecessor_handoff chain to mk1 recovery blob (`/tmp/n6_own_mk1.txt commit 442afa7b^:.own`). Uses n6-local schema namespace `n6-architecture/own/readme/2` rather than anima's `project/own/v1` — DIFFERENT pattern from anima but mk2-compliant in spirit.
+**mk2 spirit consistency**: VERY HIGH — has frontmatter (schema/last_updated/ssot/policy/status/omega_cycle), structured 6-step omega_cycle, predecessor_handoff chain to mk1 recovery blob (`/tmp/n6_own_mk1.txt commit 442afa7b^:.own`). Uses n6-local schema namespace `CANON/own/readme/2` rather than anima's `project/own/v1` — DIFFERENT pattern from anima but mk2-compliant in spirit.
 
 **Caveat**: n6 schema variant means cross-repo schema validators (e.g., `hive/spec/schema/own_v1.schema.yaml`) will NOT validate n6 .own files. Acceptable if n6 has own validator.
 
@@ -185,7 +185,7 @@ Per user policy "mk2 설계 이후 작성된 .own 진지하게 검토":
 
 - orpheus/.own: confirm structural mk2 compliance + author flip `mk: 1` → `mk: 2`.
 - wraith-wallet/.own: same as orpheus (sibling cycle).
-- n6-architecture/.own.readme: already mk2 (n6-local schema variant) — DOCUMENT cross-repo schema variance in audit (anima `project/own/v1` ≠ n6 `n6-architecture/own/readme/2`).
+- CANON/.own.readme: already mk2 (n6-local schema variant) — DOCUMENT cross-repo schema variance in audit (anima `project/own/v1` ≠ n6 `CANON/own/readme/2`).
 
 ### Phase D — REMEDIATE candidates (additive frontmatter only)
 
@@ -214,7 +214,7 @@ Per user policy "mk2 설계 이후 작성된 .own 진지하게 검토":
 
 1. **mtime/ctime modifiable**: `touch -t` and `chflags`/copy operations can rewrite filesystem timestamps. Git first_added is canonical — but git log requires file is tracked. Worktree `.own` snapshots are partly git-tracked, partly not (worktree branches diverge); some worktree mtimes may be touch-modified. For top-level files, git log was used as ground truth — backup `.bak` files trusted by mtime.
 
-2. **Schema variant ambiguity**: n6-architecture uses n6-local schema namespace (`n6-architecture/own/readme/2`, `n6-architecture/own/group_p/2`) rather than anima's `project/own/v1`. Both are mk2-spirit compliant but cannot share validators. Cross-repo schema canonicalization is OUT OF SCOPE for this audit; documented as caveat.
+2. **Schema variant ambiguity**: CANON uses n6-local schema namespace (`CANON/own/readme/2`, `CANON/own/group_p/2`) rather than anima's `project/own/v1`. Both are mk2-spirit compliant but cannot share validators. Cross-repo schema canonicalization is OUT OF SCOPE for this audit; documented as caveat.
 
 3. **Frontmatter parsing brittleness**: This audit checked first 30 lines for `# ---\n#` markers. JSON files (hexa-os) have entirely different convention (`_meta` block). hexa-lang and nexus have NO frontmatter (raw-format only). Lenient parse used here — strict YAML/TOML parser would reject 5 of 7 top-level files. Manual classification preferred over automated parse for this audit.
 

@@ -18,7 +18,7 @@ The plan is sequenced so each step unlocks the next. **Steps 1, 2, 3 are blockin
 
 | Q | Default recommendation (per completion-quality lens) | User picks |
 |---|---|---|
-| Q1 (repo name) | **Option A: `need-singularity/clm-v4-mk2-v1`** (re-target cond.2 to mk2-spec-conformant canonical name; omit `-530m` size suffix per §3.5) | _____ |
+| Q1 (repo name) | **Option A: `dancinlab/clm-v4-mk2-v1`** (re-target cond.2 to mk2-spec-conformant canonical name; omit `-530m` size suffix per §3.5) | _____ |
 | Q2 (chat caveat wording) | **Use audit §3 Q2 verbatim block** (5-sentence disclosure invoking #115 + Stage 2-alt cross-link) | _____ |
 | Q3 (distill dependency) | **Release v1 NOW, do NOT wait for Paradigm D distill** (logit-axis blocked by vocab mismatch; φ★-axis is v2 follow-on) | _____ |
 | Q4 (sister substrate co-authoring) | **CLM-only release with `## Composability` cross-link section** (no co-author) | _____ |
@@ -34,11 +34,11 @@ The plan is sequenced so each step unlocks the next. **Steps 1, 2, 3 are blockin
 
 **Actions**:
 - (a) Edit `.roadmap.clm` cond.2 `desc` field:
-  - From: `"HF release v1 — public weight + model card published as need-singularity/anima-clm-mk2-v1 ..."`
-  - To: `"HF release v1 — public weight + model card published as need-singularity/clm-v4-mk2-v1 ..."` (Option A) OR `"... published as need-singularity/anima-clm-mk2-v1 (umbrella) + need-singularity/clm-v4-mk2-v1 (weights) ..."` (Option C)
+  - From: `"HF release v1 — public weight + model card published as dancinlab/anima-clm-mk2-v1 ..."`
+  - To: `"HF release v1 — public weight + model card published as dancinlab/clm-v4-mk2-v1 ..."` (Option A) OR `"... published as dancinlab/anima-clm-mk2-v1 (umbrella) + dancinlab/clm-v4-mk2-v1 (weights) ..."` (Option C)
 - (b) Update cond.2 `cross_link.hf_release_planned` field accordingly.
 - (c) Grep for `anima-clm-mk2-v1` literal across `docs/` + `state/` to find downstream cite paths; rewire as needed.
-- (d) Verify naming spec compliance: `hexa run tool/hf_upload_mk2.hexa --validate-naming need-singularity/clm-v4-mk2-v1` → expect `__ANIMA_HF_UPLOAD_MK2__ PASS`.
+- (d) Verify naming spec compliance: `hexa run tool/hf_upload_mk2.hexa --validate-naming dancinlab/clm-v4-mk2-v1` → expect `__ANIMA_HF_UPLOAD_MK2__ PASS`.
 
 **Output**: amended `.roadmap.clm`; grep ledger at `state/anima_clm_hf_release_v1_2026_05_04/cite_path_audit.json`.
 
@@ -69,7 +69,7 @@ The plan is sequenced so each step unlocks the next. **Steps 1, 2, 3 are blockin
 ### Step 4 — Generate `manifest.json` (release audit-trail) — ~15 min mac + 1 ssh ubu1, $0
 
 **Actions**:
-- (a) ssh ubu1: compute sha256 of `~/.cache/huggingface/hub/models--need-singularity--clm-v4-base-mirror/snapshots/856278be.../best.pt` (5GB).
+- (a) ssh ubu1: compute sha256 of `~/.cache/huggingface/hub/models--dancinlab--clm-v4-base-mirror/snapshots/856278be.../best.pt` (5GB).
 - (b) ssh ubu1: compute sha256 of post-shim `model.safetensors` (2.12 GB) at `~/p9_clm_v4_hf_format_2026_05_04/output/model.safetensors`.
 - (c) Mac: read `state/strategic_clm_phase_a1_2026_05_01/run_log.json` and reconstruct best-effort `train_config_recovered.json`.
 - (d) Honest fields where reconstruction is best-effort:
@@ -118,9 +118,9 @@ The plan is sequenced so each step unlocks the next. **Steps 1, 2, 3 are blockin
   - `tokenizer_64k_multilingual.model` + `.vocab` (cp from `state/clm_v4_tokenizer_restoration_2026_05_03/` OR fetch from `clm-v4-base-mirror`)
   - `LICENSE` (cp from anima/LICENSE; MIT)
   - `README.md` (rsync from `state/anima_clm_hf_release_v1_2026_05_04/README.draft.md`)
-- (c) Pre-validate: `hexa run tool/hf_upload_mk2.hexa --dry-run --repo need-singularity/clm-v4-mk2-v1 --ckpt <staging> --readme <staging>/README.md` → expect PASS.
+- (c) Pre-validate: `hexa run tool/hf_upload_mk2.hexa --dry-run --repo dancinlab/clm-v4-mk2-v1 --ckpt <staging> --readme <staging>/README.md` → expect PASS.
 
-**Output**: ubu1 staging dir + dry-run audit log at `state/hf_upload_audit/<ts>_need-singularity__clm-v4-mk2-v1.jsonl`.
+**Output**: ubu1 staging dir + dry-run audit log at `state/hf_upload_audit/<ts>_dancinlab__clm-v4-mk2-v1.jsonl`.
 
 ---
 
@@ -130,14 +130,14 @@ The plan is sequenced so each step unlocks the next. **Steps 1, 2, 3 are blockin
 - (a) Run upload as **private** first to allow user review:
   ```
   hexa run tool/hf_upload_mk2.hexa --upload --private \
-      --repo need-singularity/clm-v4-mk2-v1 \
+      --repo dancinlab/clm-v4-mk2-v1 \
       --ckpt <staging> \
       --readme <staging>/README.md
   ```
 - (b) Confirm `commit_url` populated in audit JSONL.
-- (c) User reviews HF Hub UI: README renders correctly, weights load sanity (`AutoModelForCausalLM.from_pretrained("need-singularity/clm-v4-mk2-v1", trust_remote_code=True)` on a fresh ubu1/mac shell).
+- (c) User reviews HF Hub UI: README renders correctly, weights load sanity (`AutoModelForCausalLM.from_pretrained("dancinlab/clm-v4-mk2-v1", trust_remote_code=True)` on a fresh ubu1/mac shell).
 
-**Output**: private repo at `https://huggingface.co/need-singularity/clm-v4-mk2-v1` with weights + README + LICENSE + tokenizer.
+**Output**: private repo at `https://huggingface.co/dancinlab/clm-v4-mk2-v1` with weights + README + LICENSE + tokenizer.
 
 **Failure mode**: if upload fails (HF auth / network / quota), audit log records `outcome:fail` + error; pipeline exponential backoff retries 3 times (2s/4s/8s) per upload spec §6.1.
 
@@ -160,7 +160,7 @@ The plan is sequenced so each step unlocks the next. **Steps 1, 2, 3 are blockin
 - Use HF Hub UI or `huggingface_hub.HfApi.update_repo_visibility(repo_id, private=False)` (via `_python_bridge/hf_upload_runner.py` or one-shot py call).
 - Audit log entry: separate `state/hf_upload_audit/<ts>_*_promote_public.jsonl` with `mode: promote_public, ok: 1`.
 
-**Output**: public repo at `https://huggingface.co/need-singularity/clm-v4-mk2-v1`.
+**Output**: public repo at `https://huggingface.co/dancinlab/clm-v4-mk2-v1`.
 
 ---
 
@@ -205,7 +205,7 @@ The plan is sequenced so each step unlocks the next. **Steps 1, 2, 3 are blockin
 | Step 2 grep finds many `anima-clm-mk2-v1` cite paths | LOW | LOW | Most cite paths are in landed ai-md; rewire is mechanical |
 | Step 5 `--validate-readme` rejects draft (missing H2) | LOW | LOW | Wrapper names exact missing heading; iterate |
 | Step 6 ubu1 disk full / token missing | LOW | MEDIUM | Pre-flight `df -h` + `hf whoami` on ubu1 |
-| Step 7 HF 401 on `clm-v4-mk2-v1` create_repo | LOW | MEDIUM | Audit log shows prior 401 on `clm-v4-base-mirror` (2026-05-03) was retried PASS; ensure HF token has write scope on need-singularity org |
+| Step 7 HF 401 on `clm-v4-mk2-v1` create_repo | LOW | MEDIUM | Audit log shows prior 401 on `clm-v4-base-mirror` (2026-05-03) was retried PASS; ensure HF token has write scope on dancinlab org |
 | Step 8 user finds README issue | MEDIUM | LOW | Loop back to step 5; private repo can be rewritten freely |
 | Step 9 promote-to-public reveals leak | LOW | HIGH | Final scrub: `grep -E '/Users/[^/]+/' README.md` + `grep -E 'sk-|hf_[A-Za-z0-9]+' README.md` (raw#15 + leak_guard discipline) |
 | F-SHIM-V4-3 bit-exact suspicion (audit §C4) | LOW | LOW | Re-run with seed variation in BG-Σ followup; not v1 blocker |
@@ -217,11 +217,11 @@ The plan is sequenced so each step unlocks the next. **Steps 1, 2, 3 are blockin
 
 cond.2 is `met` when ALL of the following are true:
 
-1. **HF repo exists + public**: `need-singularity/clm-v4-mk2-v1` (or user-chosen variant) accessible without login at `https://huggingface.co/<repo>`.
+1. **HF repo exists + public**: `dancinlab/clm-v4-mk2-v1` (or user-chosen variant) accessible without login at `https://huggingface.co/<repo>`.
 2. **README §5 sections present**: 5 H2 (Origin/Falsifiers/Substrate/Caveats/Composability) per `tool/hf_upload_mk2.hexa --validate-readme` PASS.
 3. **README ≥3 honest caveats**: per raw#10; chat-disclosure C1 prominent.
 4. **License = MIT**: `LICENSE` file in repo root + YAML frontmatter `license: mit`.
-5. **Naming = mk2-spec CANON**: `tool/hf_upload_mk2.hexa --validate-naming need-singularity/<repo>` → `__ANIMA_HF_UPLOAD_MK2__ PASS`.
+5. **Naming = mk2-spec CANON**: `tool/hf_upload_mk2.hexa --validate-naming dancinlab/<repo>` → `__ANIMA_HF_UPLOAD_MK2__ PASS`.
 6. **Weights load**: F-CLM-RELEASE-1 (`AutoModelForCausalLM.from_pretrained(<repo>, trust_remote_code=True)`) returns model on a fresh shell.
 7. **Forward finite**: F-CLM-RELEASE-2 (1-batch forward returns finite logits, shape [1, T, 64000]).
 8. **Sync source exists**: `docs/modules/clm.md` exists in anima git.

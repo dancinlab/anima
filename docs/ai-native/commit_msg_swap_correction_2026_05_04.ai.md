@@ -22,10 +22,10 @@ HF mk2 files in this commit:
 - `docs/anima_hf_upload_mk2_landed_2026_05_03.ai.md`
 - `docs/anima_hf_upload_mk2_spec_2026_05_03.md`
 - `state/hf_upload_audit/.gitkeep`
-- `state/hf_upload_audit/20260503T151303Z_need-singularity__clm-v4-base-mirror.jsonl`
-- `state/hf_upload_audit/20260503T151321Z_need-singularity__clm-v4-base-mirror.jsonl`
-- `state/hf_upload_audit/20260503T151335Z_need-singularity__clm-v4-sft-stage1.jsonl`
-- `state/hf_upload_audit/20260503T151341Z_need-singularity__clm-v4-base-mirror.jsonl`
+- `state/hf_upload_audit/20260503T151303Z_dancinlab__clm-v4-base-mirror.jsonl`
+- `state/hf_upload_audit/20260503T151321Z_dancinlab__clm-v4-base-mirror.jsonl`
+- `state/hf_upload_audit/20260503T151335Z_dancinlab__clm-v4-sft-stage1.jsonl`
+- `state/hf_upload_audit/20260503T151341Z_dancinlab__clm-v4-base-mirror.jsonl`
 - `state/hf_upload_ledger_2026_05.jsonl`
 - `tool/hf_readme_template.md`
 - `tool/hf_upload_mk2.hexa`

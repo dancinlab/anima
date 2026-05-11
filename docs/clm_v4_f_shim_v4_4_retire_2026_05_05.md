@@ -94,7 +94,7 @@ F-SHIM-V4-4 is RE-INSTATED to active falsifier set when ANY of:
 
 ### §3.1 Original own 15 (b.3) shim compatibility gate
 
-Per `.own` own 15 rule (b.3): PUBLIC promote of `need-singularity/clm-v4-mk2-v1` requires:
+Per `.own` own 15 rule (b.3): PUBLIC promote of `dancinlab/clm-v4-mk2-v1` requires:
 
 > shim v4 hf_format compatibility F-SHIM-V4-1/2/3/4 ALL PASS (where applicable — model-specific equivalents OK)
 

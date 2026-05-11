@@ -1,7 +1,7 @@
 {
   "date": "2026-05-04",
   "phase": 2,
-  "scope": "top-2 ZERO_COLLISION nexus modules absorbed into n6-architecture",
+  "scope": "top-2 ZERO_COLLISION nexus modules absorbed into CANON",
   "audit_ref": "/Users/ghost/core/anima/state/nexus_module_extraction_audit_phase2_2026_05_04/",
   "modules": [
     {
@@ -9,7 +9,7 @@
       "name": "fusion_ledger",
       "extraction_readiness": "ZERO_COLLISION",
       "loc": 314,
-      "destination": "n6-architecture/domains/energy/fusion/",
+      "destination": "CANON/domains/energy/fusion/",
       "smoke": "__FUSION_LEDGER__ PASS total=27 matched=26 falsified=1 pct=96.2963",
       "n6_arch_commit": "b59d38b3",
       "nexus_delete_status": "staged_not_committed",
@@ -20,7 +20,7 @@
       "name": "tabletop_blackhole",
       "extraction_readiness": "ZERO_COLLISION",
       "loc": 307,
-      "destination": "n6-architecture/domains/physics/tabletop-blackhole/",
+      "destination": "CANON/domains/physics/tabletop-blackhole/",
       "destination_divergence": "recipe specified experiments/, used domains/physics/ for predecessor co-location",
       "smoke": "__TABLETOP_BLACKHOLE__ PASS",
       "n6_arch_commit": "b59d38b3",
@@ -33,7 +33,7 @@
     "commit_sha": "b59d38b3",
     "branch": "main",
     "pushed": true,
-    "remote": "https://github.com/need-singularity/n6-architecture (PUBLIC)",
+    "remote": "https://github.com/dancinlab/canon (PUBLIC)",
     "files_added": 4,
     "loc_added_total": 732
   },
@@ -80,7 +80,7 @@
     {
       "id": 3,
       "label": "n=6 anchor duplication across modules (drift risk)",
-      "detail": "Same 7 primitives (n, sigma, tau, phi, sopfr, J2, mu) re-defined locally in atlas_n6 + crystallography_n6 + chip_isa_n6 + fusion_ledger + tabletop_blackhole. Intentional per raw#15 root-agnostic policy but creates drift risk. Suggested follow-up (NOT this cycle): n6-architecture/INDEX.json canonical anchor table referenced by all consumers."
+      "detail": "Same 7 primitives (n, sigma, tau, phi, sopfr, J2, mu) re-defined locally in atlas_n6 + crystallography_n6 + chip_isa_n6 + fusion_ledger + tabletop_blackhole. Intentional per raw#15 root-agnostic policy but creates drift risk. Suggested follow-up (NOT this cycle): CANON/INDEX.json canonical anchor table referenced by all consumers."
     },
     {
       "id": 4,

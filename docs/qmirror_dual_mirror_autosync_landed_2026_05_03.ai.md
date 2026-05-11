@@ -4,8 +4,8 @@
 gated on USER_ACTION to set `HF_TOKEN` GH secret)
 **Cycle**: `qmirror_dual_mirror_autosync_2026_05_03`
 **Marker**: `state/markers/qmirror_dual_mirror_autosync_landed.marker`
-**GH commit**: [`df89ff2`](https://github.com/need-singularity/qmirror/commit/df89ff2)
-**First Actions run**: [#25295441499](https://github.com/need-singularity/qmirror/actions/runs/25295441499) (FAIL at verify-HF_TOKEN, **as designed**)
+**GH commit**: [`df89ff2`](https://github.com/dancinlab/qmirror/commit/df89ff2)
+**First Actions run**: [#25295441499](https://github.com/dancinlab/qmirror/actions/runs/25295441499) (FAIL at verify-HF_TOKEN, **as designed**)
 
 ---
 
@@ -16,7 +16,7 @@ The dual-mirror sync burden documented as Caveat §1 of
 if the operator forgets the second push step") is now eliminated.
 
 - **Primary path**: GitHub Actions workflow on push-to-main →
-  `huggingface_hub.upload_folder` to `need-singularity/qmirror`. ~2-3 min lag.
+  `huggingface_hub.upload_folder` to `dancinlab/qmirror`. ~2-3 min lag.
 - **Fallback path**: local pre-push hexa hook for Actions-unavailable cases.
 - **Cost**: $0 (GH Actions free-tier on public repo; HF free-tier on <5GB repo).
 
@@ -45,7 +45,7 @@ exercised.
   2. `actions/setup-python@v5` Python 3.11.
   3. `pip install 'huggingface_hub>=0.24,<2.0'`.
   4. **Verify HF_TOKEN secret present** — exits 1 with the exact
-     `https://github.com/need-singularity/qmirror/settings/secrets/actions`
+     `https://github.com/dancinlab/qmirror/settings/secrets/actions`
      URL if missing. Length-redacted echo (`${#HF_TOKEN} chars`) on success.
   5. **Upload** — inline Python heredoc invokes `HfApi.upload_folder` with:
      - `ignore_patterns=['.git/*', '.github/*', 'state/*', '**/__pycache__/**', '**/*.pyc', '.DS_Store', 'Thumbs.db']`
@@ -59,7 +59,7 @@ exercised.
 
 ### `tool/qmirror_pre_push_to_hf.hexa` (151 lines, local fallback)
 
-- Hexa script that wraps `hf upload need-singularity/qmirror . --repo-type=model`
+- Hexa script that wraps `hf upload dancinlab/qmirror . --repo-type=model`
   with the same `--exclude` set as the workflow's `ignore_patterns`.
 - Defense-in-depth: only fires inside the qmirror repo (`grep -q 'name *= *"qmirror"' hexa.toml`).
 - Self-test (`--selftest`) and dry-run (`--dry-run`) modes.
@@ -89,7 +89,7 @@ X Verify HF_TOKEN secret is present
 X Process completed with exit code 1.
 
 ::error:: HF_TOKEN secret is not set.
-Set it at: https://github.com/need-singularity/qmirror/settings/secrets/actions
+Set it at: https://github.com/dancinlab/qmirror/settings/secrets/actions
 ```
 
 This is **the designed failure mode** — fail-loudly with an actionable URL
@@ -99,23 +99,23 @@ rather than silently uploading an empty/invalid token.
 
 ## USER ACTION REQUIRED
 
-1. Visit <https://github.com/need-singularity/qmirror/settings/secrets/actions>
+1. Visit <https://github.com/dancinlab/qmirror/settings/secrets/actions>
 2. **New repository secret**:
    - Name: `HF_TOKEN`
    - Value: a HuggingFace token with **write** scope to
-     `need-singularity/qmirror` (create one at
+     `dancinlab/qmirror` (create one at
      <https://huggingface.co/settings/tokens> → "Create new token" →
-     Type: "Write", Repository scope: `need-singularity/qmirror`).
+     Type: "Write", Repository scope: `dancinlab/qmirror`).
 3. Re-trigger the failed run:
    ```bash
-   gh run rerun 25295441499 --repo need-singularity/qmirror
+   gh run rerun 25295441499 --repo dancinlab/qmirror
    ```
    (Or push any small commit to `main` to trigger fresh.)
 4. Verify HF auto-updates within ~2-3 min:
    ```bash
-   hf api repos/need-singularity/qmirror | jq .lastModified
+   hf api repos/dancinlab/qmirror | jq .lastModified
    # OR check the workflow Summary at:
-   gh run view <new-run-id> --repo need-singularity/qmirror --log
+   gh run view <new-run-id> --repo dancinlab/qmirror --log
    ```
 
 After verification, the prior cycle's Caveat §1
@@ -135,7 +135,7 @@ After verification, the prior cycle's Caveat §1
 2. **HF token rotation burden** — if the user rotates the HF token (security
    hygiene, expiring tokens, scope changes), they must also update the GH
    secret; there is no auto-refresh hook. Mitigation: write-scope tokens
-   on `need-singularity/qmirror` are narrow (single-repo write); rotation
+   on `dancinlab/qmirror` are narrow (single-repo write); rotation
    cadence can be quarterly without operational pain.
 
 3. **Sync lag ~2-3 min p50** — workflow boot (~30s) + checkout (~5s) +
@@ -173,9 +173,9 @@ After verification, the prior cycle's Caveat §1
 - Local fallback: `qmirror/tool/qmirror_pre_push_to_hf.hexa`
 - README diff: `qmirror/README.md` (+5 lines under Mirrors callout)
 - Prior cycle (this retires its Caveat §1): `docs/qmirror_hf_mirror_pushed_2026_05_03.ai.md`
-- GH commit: <https://github.com/need-singularity/qmirror/commit/df89ff2>
-- First Actions run (FAIL_AS_DESIGNED): <https://github.com/need-singularity/qmirror/actions/runs/25295441499>
-- HF mirror target: <https://huggingface.co/need-singularity/qmirror>
+- GH commit: <https://github.com/dancinlab/qmirror/commit/df89ff2>
+- First Actions run (FAIL_AS_DESIGNED): <https://github.com/dancinlab/qmirror/actions/runs/25295441499>
+- HF mirror target: <https://huggingface.co/dancinlab/qmirror>
 
 ---
 

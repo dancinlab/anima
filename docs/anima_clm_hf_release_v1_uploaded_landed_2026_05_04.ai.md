@@ -3,7 +3,7 @@
 - **Cycle**: BG-HF-CYCLE-2-UPLOAD
 - **Date**: 2026-05-04
 - **Verdict**: `state/clm_v4_hf_release_v1_upload_2026_05_04/verdict.json`
-- **Audit JSONL**: `state/hf_upload_audit/20260504T232612Z_need-singularity__clm-v4-mk2-v1.jsonl`
+- **Audit JSONL**: `state/hf_upload_audit/20260504T232612Z_dancinlab__clm-v4-mk2-v1.jsonl`
 - **Mac stage mirror**: `state/clm_v4_hf_release_v1_upload_stage_2026_05_04/` (README + LICENSE + manifest copy only — weights stayed on ubu1 per own 14)
 - **Mode**: PRIVATE upload + audit-only landing, NO git commit, NO public promote
 - **Cost**: $0 (HF Hub free tier; mac wall ~30 min including 5GB LFS push from ubu1)
@@ -12,7 +12,7 @@
 
 ## §1 Outcome
 
-- **Repo created PRIVATE**: `need-singularity/clm-v4-mk2-v1` at https://huggingface.co/need-singularity/clm-v4-mk2-v1
+- **Repo created PRIVATE**: `dancinlab/clm-v4-mk2-v1` at https://huggingface.co/dancinlab/clm-v4-mk2-v1
 - **Visibility**: `private=true, gated=false, license=mit`
 - **Commit sha**: `80440a1d38db9addc4445bb959057558a57f4230`
 - **Files in repo**: 15 (`.gitattributes` auto-added by HF + 14 staged: README, LICENSE, manifest.json, best.pt, model.safetensors, config.json, modeling_clm_v4.py, configuration_clm_v4.py, decoder_v3.py, conscious_decoder.py, generation_config.json, __init__.py, integrity_report.json, tokenizer_64k_multilingual.model, tokenizer_64k_multilingual.vocab)
@@ -25,11 +25,11 @@
 
 | Lens | Status | Method |
 |---|---|---|
-| L1 validator | PASS | mac `HEXA_LOCAL=1 hexa run tool/hf_upload_mk2.hexa --validate-naming need-singularity/clm-v4-mk2-v1` → `__ANIMA_HF_UPLOAD_MK2__ PASS` (with §3.7 grace warning); `--validate-readme docs/anima_clm_hf_release_v1_README_draft.md` → `__ANIMA_HF_UPLOAD_MK2__ PASS` |
+| L1 validator | PASS | mac `HEXA_LOCAL=1 hexa run tool/hf_upload_mk2.hexa --validate-naming dancinlab/clm-v4-mk2-v1` → `__ANIMA_HF_UPLOAD_MK2__ PASS` (with §3.7 grace warning); `--validate-readme docs/anima_clm_hf_release_v1_README_draft.md` → `__ANIMA_HF_UPLOAD_MK2__ PASS` |
 | L2 leak guard | PASS | manual egrep against 9 token-shape regex patterns from `~/.hive/scripts/leak_guard_pretool.bash` over 11 text files in mac+ubu1 stage; 0 leaks detected |
 | L3 dry-run | PASS | sha256 audit pre-computed and matched all 12 manifest weight_files entries before upload (12/12 match) |
-| L4 actual upload | PASS | `ubu1 hf 1.13.0 hf upload need-singularity/clm-v4-mk2-v1 ~/anima_clm_release_v1_staging` exit=0; commit_url emitted |
-| L5 post-upload verify | PASS | `curl /api/models/need-singularity/clm-v4-mk2-v1` returns `private=true, gated=false, siblings_count=15` matching stage |
+| L4 actual upload | PASS | `ubu1 hf 1.13.0 hf upload dancinlab/clm-v4-mk2-v1 ~/anima_clm_release_v1_staging` exit=0; commit_url emitted |
+| L5 post-upload verify | PASS | `curl /api/models/dancinlab/clm-v4-mk2-v1` returns `private=true, gated=false, siblings_count=15` matching stage |
 
 ---
 
@@ -41,10 +41,10 @@
 - **Enforcement**: convention only — NOT enforced by upload tooling.
 
 **User actions during review window**:
-1. Login HF Hub as `dancinlife`, visit https://huggingface.co/need-singularity/clm-v4-mk2-v1
+1. Login HF Hub as `dancinlife`, visit https://huggingface.co/dancinlab/clm-v4-mk2-v1
 2. Verify README renders correctly (5 H2 sections, 9-bullet Caveats including #115 chat disclosure)
 3. Verify LICENSE = MIT, manifest.json embeds 12 sha256 entries
-4. Run F-CLM-RELEASE-1 (`AutoModelForCausalLM.from_pretrained("need-singularity/clm-v4-mk2-v1", trust_remote_code=True)` on fresh shell)
+4. Run F-CLM-RELEASE-1 (`AutoModelForCausalLM.from_pretrained("dancinlab/clm-v4-mk2-v1", trust_remote_code=True)` on fresh shell)
 5. Run F-CLM-RELEASE-2 (1-batch forward returns finite logits shape `[1, T, 64000]`)
 6. Decision turn — `OK promote public` OR redo loop (loop back to README edit + re-push)
 
@@ -52,7 +52,7 @@
 
 ```bash
 # Preferred (NOT YET IMPLEMENTED at tool/hf_upload_mk2.hexa v2.1.0):
-hexa run tool/hf_upload_mk2.hexa --promote-public --repo need-singularity/clm-v4-mk2-v1
+hexa run tool/hf_upload_mk2.hexa --promote-public --repo dancinlab/clm-v4-mk2-v1
 
 # Fallback A (HF Hub UI): Settings → Change visibility → Public
 
@@ -61,7 +61,7 @@ TOKEN=$(secret get huggingface.token --raw)
 curl -sX PUT \
   -H "Authorization: Bearer $TOKEN" \
   -H 'Content-Type: application/json' \
-  https://huggingface.co/api/models/need-singularity/clm-v4-mk2-v1/settings \
+  https://huggingface.co/api/models/dancinlab/clm-v4-mk2-v1/settings \
   -d '{"private": false}'
 ```
 
@@ -88,8 +88,8 @@ curl -sX PUT \
 - **Sync source**: `docs/modules/clm.md` (anima-internal SSOT)
 - **HF README draft**: `docs/anima_clm_hf_release_v1_README_draft.md` (uploaded as `README.md` in repo)
 - **Manifest**: `state/clm_v4_hf_release_v1_manifest_2026_05_04/manifest.json` (12 sha256 + train config; uploaded as `manifest.json` in repo)
-- **Roadmap**: `.roadmap.clm` cond.2 (canonical name = `need-singularity/clm-v4-mk2-v1`; status still `unmet` — flips to `met` only after public promote per plan §1 step 10)
-- **Predecessor repo**: `need-singularity/clm-v4-base-mirror` (already PUBLIC with tokenizer + integrity_report; 2026-05-03 commit 10ee03687db312c55bbec5858c814bef28e4d365)
+- **Roadmap**: `.roadmap.clm` cond.2 (canonical name = `dancinlab/clm-v4-mk2-v1`; status still `unmet` — flips to `met` only after public promote per plan §1 step 10)
+- **Predecessor repo**: `dancinlab/clm-v4-base-mirror` (already PUBLIC with tokenizer + integrity_report; 2026-05-03 commit 10ee03687db312c55bbec5858c814bef28e4d365)
 
 ---
 

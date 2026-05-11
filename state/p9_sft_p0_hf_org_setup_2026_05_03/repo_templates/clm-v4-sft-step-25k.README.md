@@ -12,7 +12,7 @@ tags:
   - savepoint
 library_name: transformers
 pipeline_tag: text-generation
-base_model: need-singularity/anima-clm-v4-530m
+base_model: dancinlab/anima-clm-v4-530m
 ---
 
 # anima-clm-v4-sft-step-25k
@@ -64,7 +64,7 @@ anima CLM v4 530M under the P9 4-loss objective.
 1. 25K-step intermediate (50% mark); F1–F4 measured only at FINAL.
 2. φ★ is L1+L2 proxy; L3 phenomenal NOT measured.
 3. 4-loss Pareto frontier unverified.
-4. Base CLM v4 ckpt access requires `need-singularity/anima-clm-v4-530m` (gated).
+4. Base CLM v4 ckpt access requires `dancinlab/anima-clm-v4-530m` (gated).
 
 ## Citation
 

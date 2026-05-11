@@ -119,7 +119,7 @@ documentation update — no HF Hub push, no git commit, no `.own` mutation.
 When the 2026-05-06T23:26:12Z review window opens:
 
 - run `tool/hf_upload_mk2.hexa --upload --public --repo
-  need-singularity/clm-v4-mk2-v1 --readme
+  dancinlab/clm-v4-mk2-v1 --readme
   state/clm_v4_hf_release_v1_upload_stage_2026_05_04/README.md` (or
   `--readme docs/modules/clm.md` if SSOT-source surface is preferred)
 - the README pushed will carry the new

@@ -147,7 +147,7 @@ Canonical BPE achieves ~4× compression vs the legacy byte-per-character workaro
 
 The `tool/clm_v4_tokenizer_load.hexa` primitive (98b614363) has now been consumed by **6 callers** with identical resolver logic. Each caller's helper inlines the same `_resolve_tokenizer()` function — this is intentional duplication (not a layering anti-pattern) because the helpers are transient `.hexa_tmp` files emitted at runtime, not Python modules to be imported. The Mac-side .hexa files share zero literal text but share semantic SSOT through the migration spec (commit 68803d162) and the primitive's source-of-truth at the cache resolver order:
 
-1. `~/.cache/huggingface/hub/models--need-singularity--clm-v4-base-mirror/snapshots/*/tokenizer/tokenizer_64k_multilingual.model`
+1. `~/.cache/huggingface/hub/models--dancinlab--clm-v4-base-mirror/snapshots/*/tokenizer/tokenizer_64k_multilingual.model`
 2. `~/anima/checkpoints/clm_v4_350m/tokenizer_64k_multilingual.model`
 3. `/tmp/tokenizer_64k_multilingual.model` (legacy, stderr WARN)
 4. Hard fail with FileNotFoundError pointing to `state/clm_v4_tokenizer_propagation_plan_2026_05_04/plan.md` Step 2.

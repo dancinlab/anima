@@ -41,7 +41,7 @@
 | 79 | `cycle_36_46_false_alarm_sweep` | `94b5640b` | 6 audits sweep: 5 VERIFIED / 1 MIXED / 1 FALSE_ALARM |
 | 80 | `frontmatter_policy_proposer` | `a72f0ee3` | frontmatter 정책 4 옵션 (OPT_C 권장) |
 | 81 | (handoff v3 itself) | `76063da5` | cycles 63-80 closure doc |
-| 82 | `pixie_deep_audit` | `f9aca110` | pixie = need-singularity Discord channel secretary (8 channels) |
+| 82 | `pixie_deep_audit` | `f9aca110` | pixie = dancinlab Discord channel secretary (8 channels) |
 | 83 | `unknown_4_repos_deep_audit` | `d65f6b21` | 잔여 4 repo deep — skynet-timer ↔ anima cross-link 발견 |
 | 84 | (this closure entry) | — | cron 418019a7 종료 + cycle 1-83 grand closure |
 

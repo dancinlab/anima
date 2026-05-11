@@ -100,7 +100,7 @@ artifact).
 | phi-boost | 19 techniques: COMBO2,FX2,WI1,PX4,PX8,GD18,GD15,CL8,CL5,DD3,DD11,DD18,DD5,TL13,TL1,NV7,BV1,EV3,SC2 |
 | corpus | data/corpus_mix_70wiki_30dialogue.txt |
 | falsifier_eval_every | 10,000 steps |
-| post-train HF push | `need-singularity/anima-clm-3-original-byte-55m` PRIVATE first (own 15) |
+| post-train HF push | `dancinlab/anima-clm-3-original-byte-55m` PRIVATE first (own 15) |
 | pip pin | torch==2.11.0, transformers==4.57.6 (lessons: RTX 5070 + V2_FAIL transformers ≥ 4.51) |
 
 ---

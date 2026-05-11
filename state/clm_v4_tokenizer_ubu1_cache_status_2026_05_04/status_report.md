@@ -12,7 +12,7 @@
 | Gate | Verdict | One-line evidence |
 |------|---------|-------------------|
 | F-TOK-1 (HF mirror sha256 match restoration sha256) | **PASS (audit-log basis)** | Upload audit `sha256_map` matches local sha256 byte-for-byte; live HEAD probe blocked by 401 (auth/token issue) so PASS is asserted via the recorded upload audit, not re-fetched via HTTP. |
-| F-TOK-2 (ubu1 cache roundtrip identical bytes) | **UNMET** | ubu1 hub cache for repo `need-singularity/clm-v4-base-mirror` exists but contains ONLY `best.pt` (5.36 GB blob); no tokenizer model/vocab present. Cache prime not yet executed. |
+| F-TOK-2 (ubu1 cache roundtrip identical bytes) | **UNMET** | ubu1 hub cache for repo `dancinlab/clm-v4-base-mirror` exists but contains ONLY `best.pt` (5.36 GB blob); no tokenizer model/vocab present. Cache prime not yet executed. |
 | F-TOK-3 prep (vocab_size) | **PASS (vocab line count = 64000)** | `wc -l tokenizer_64k_multilingual.vocab` = 64000 matches `integrity_report.json` `spec.vocab_size = 64000`. |
 
 **status_emit (single line, stdout-style):**
@@ -44,13 +44,13 @@ Source artifacts re-verified bit-exact against `integrity_report.json` recorded 
 
 ### 3.1 Upload audit log (authoritative provenance)
 
-`state/hf_upload_audit/20260503T151341Z_need-singularity__clm-v4-base-mirror.jsonl`:
+`state/hf_upload_audit/20260503T151341Z_dancinlab__clm-v4-base-mirror.jsonl`:
 
 ```json
 {
   "ts_utc": "2026-05-03T15:13:41Z",
   "mode": "upload",
-  "repo": "need-singularity/clm-v4-base-mirror",
+  "repo": "dancinlab/clm-v4-base-mirror",
   "file_count": 4,
   "total_bytes": 2304683,
   "sha256_map": {
@@ -59,7 +59,7 @@ Source artifacts re-verified bit-exact against `integrity_report.json` recorded 
     "tokenizer_64k_multilingual.model": "bb851d39fbe3286dda11fc43da78d9bbf29ac6400d61b75616c8c750b710b8ab",
     "tokenizer_64k_multilingual.vocab": "972fc0ba2f2633cfa685c70eeab84ce2a22a1327975e989a3b1d5cf5efa480a4"
   },
-  "commit_url": "https://huggingface.co/need-singularity/clm-v4-base-mirror/commit/10ee03687db312c55bbec5858c814bef28e4d365",
+  "commit_url": "https://huggingface.co/dancinlab/clm-v4-base-mirror/commit/10ee03687db312c55bbec5858c814bef28e4d365",
   "outcome": "ok"
 }
 ```
@@ -72,9 +72,9 @@ Source artifacts re-verified bit-exact against `integrity_report.json` recorded 
 ### 3.2 Live HEAD probe (best-effort)
 
 Attempted unauth + auth HEAD on:
-- `https://huggingface.co/need-singularity/clm-v4-base-mirror/resolve/main/tokenizer_64k_multilingual.model`
-- `https://huggingface.co/need-singularity/clm-v4-base-mirror/resolve/main/tokenizer_64k_multilingual.vocab`
-- `https://huggingface.co/need-singularity/clm-v4-base-mirror/resolve/main/tokenizer/tokenizer_64k_multilingual.model`
+- `https://huggingface.co/dancinlab/clm-v4-base-mirror/resolve/main/tokenizer_64k_multilingual.model`
+- `https://huggingface.co/dancinlab/clm-v4-base-mirror/resolve/main/tokenizer_64k_multilingual.vocab`
+- `https://huggingface.co/dancinlab/clm-v4-base-mirror/resolve/main/tokenizer/tokenizer_64k_multilingual.model`
 
 All returned `HTTP/2 401` (`Invalid username or password`). The repo is private and the locally-stored HF token at `/Users/ghost/.cache/huggingface/token` (37-byte `hf_E…`) is rejected by the API. Same on ubu1: `hf auth whoami` reports "Invalid user token. The token stored is invalid. Please run `hf auth login --force`."
 
@@ -98,19 +98,19 @@ aiden
 
 SSH OK.
 
-### 4.2 ubu1 hub cache contents for `models--need-singularity--clm-v4-base-mirror`
+### 4.2 ubu1 hub cache contents for `models--dancinlab--clm-v4-base-mirror`
 
 ```
-$ ssh ubu1 "find ~/.cache/huggingface/hub/models--need-singularity--clm-v4-base-mirror/ -type f"
-~/.cache/huggingface/hub/models--need-singularity--clm-v4-base-mirror/.no_exist/856278beb59c5b39f16485cc8f3a46dcdaf9d1e3/config.json
-~/.cache/huggingface/hub/models--need-singularity--clm-v4-base-mirror/refs/main
-~/.cache/huggingface/hub/models--need-singularity--clm-v4-base-mirror/blobs/22f180efc380aecb4a320191502afa13b81abcd077ec36c5f003dcfbe1d680b4
+$ ssh ubu1 "find ~/.cache/huggingface/hub/models--dancinlab--clm-v4-base-mirror/ -type f"
+~/.cache/huggingface/hub/models--dancinlab--clm-v4-base-mirror/.no_exist/856278beb59c5b39f16485cc8f3a46dcdaf9d1e3/config.json
+~/.cache/huggingface/hub/models--dancinlab--clm-v4-base-mirror/refs/main
+~/.cache/huggingface/hub/models--dancinlab--clm-v4-base-mirror/blobs/22f180efc380aecb4a320191502afa13b81abcd077ec36c5f003dcfbe1d680b4
 ```
 
 Snapshot dir:
 
 ```
-~/.cache/huggingface/hub/models--need-singularity--clm-v4-base-mirror/snapshots/856278beb59c5b39f16485cc8f3a46dcdaf9d1e3/
+~/.cache/huggingface/hub/models--dancinlab--clm-v4-base-mirror/snapshots/856278beb59c5b39f16485cc8f3a46dcdaf9d1e3/
   best.pt -> ../../blobs/22f180efc380aecb4a320191502afa13b81abcd077ec36c5f003dcfbe1d680b4 (5,365,727,261 bytes)
 ```
 
@@ -154,7 +154,7 @@ Per plan §4, this branch maps to: **prime ubu1 cache, then re-run roundtrip che
 2. **Prime ubu1 cache for tokenizer-only files** (cheap; ~2.3 MB total, NOT the 5.36 GB checkpoint):
    ```
    ssh ubu1 'source /home/aiden/venv_orchestrator/bin/activate && \
-     hf download need-singularity/clm-v4-base-mirror \
+     hf download dancinlab/clm-v4-base-mirror \
        tokenizer_64k_multilingual.model tokenizer_64k_multilingual.vocab \
        --revision 10ee03687db312c55bbec5858c814bef28e4d365'
    ```
@@ -162,7 +162,7 @@ Per plan §4, this branch maps to: **prime ubu1 cache, then re-run roundtrip che
 
 3. **Roundtrip sha256 check on ubu1**:
    ```
-   ssh ubu1 'find ~/.cache/huggingface/hub/models--need-singularity--clm-v4-base-mirror/snapshots/ \
+   ssh ubu1 'find ~/.cache/huggingface/hub/models--dancinlab--clm-v4-base-mirror/snapshots/ \
      -name tokenizer_64k_multilingual.model -exec shasum -a 256 {} \;'
    ```
    Expected output (sha256 portion):
@@ -177,7 +177,7 @@ Per plan §4, this branch maps to: **prime ubu1 cache, then re-run roundtrip che
 4. **Live HEAD re-verify** (with restored token) for F-TOK-1 hardening:
    ```
    curl -sI -H "Authorization: Bearer ${HFTOKEN}" \
-     'https://huggingface.co/need-singularity/clm-v4-base-mirror/resolve/10ee03687db312c55bbec5858c814bef28e4d365/tokenizer_64k_multilingual.model'
+     'https://huggingface.co/dancinlab/clm-v4-base-mirror/resolve/10ee03687db312c55bbec5858c814bef28e4d365/tokenizer_64k_multilingual.model'
    ```
    Confirm `content-length: 1306349` and (if Xet) `x-linked-size: 1306349`.
 
@@ -218,7 +218,7 @@ Reason: F-TOK-1 PASS (audit-log) AND F-TOK-2 UNMET → overall = UNMET (block on
 - Read-only references:
   - `state/clm_v4_tokenizer_restoration_2026_05_03/integrity_report.json`
   - `state/clm_v4_tokenizer_restoration_2026_05_03/tokenizer_64k_multilingual.{model,vocab}`
-  - `state/hf_upload_audit/20260503T151341Z_need-singularity__clm-v4-base-mirror.jsonl`
+  - `state/hf_upload_audit/20260503T151341Z_dancinlab__clm-v4-base-mirror.jsonl`
   - ubu1 SSH probes (read-only; no `hf download`, no upload, no chflags, no git mutation).
 
 No `.py` files created (raw#9). No git operations (per BG charter — parent serializes commits). No HF mutation. No SSH-side mutation.

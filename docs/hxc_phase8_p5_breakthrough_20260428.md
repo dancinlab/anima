@@ -31,7 +31,7 @@ discovered and fixed two cascading bugs in HXC subprocess chain.
 | hive | 64% | 66% | +2pp | -14pp |
 | nexus | 41% | 43% | +2pp | -37pp |
 | anima | 26% | 29% | +3pp | -51pp |
-| n6-architecture | 3% | 4% | +1pp | entropy-bound |
+| CANON | 3% | 4% | +1pp | entropy-bound |
 
 **7 individual files** crossed 80% saving (vs 4 in Phase 8 P1).
 
@@ -150,7 +150,7 @@ repo-level dictionary applied across files.
 
 Projected: nexus 43% → 60-70%.
 
-### n6-architecture 4% (entropy-bound)
+### CANON 4% (entropy-bound)
 
 `atlas_convergence_witness.jsonl` 79KB at 1%. Each row has high
 information density per byte (4-precision floats, unique semantic axes).

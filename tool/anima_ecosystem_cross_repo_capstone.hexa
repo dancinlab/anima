@@ -1,7 +1,7 @@
 // tool/anima_ecosystem_cross_repo_capstone.hexa — anima ecosystem cross-repo capstone aggregator (raw#9 hexa-only, NON_MUTATION).
 //
 // PURPOSE
-//   cycles 37-41 deep audited 5 sister repos (nexus, hive, void, papers, n6-architecture).
+//   cycles 37-41 deep audited 5 sister repos (nexus, hive, void, papers, CANON).
 //   본 helper = single meta-ledger 통합 anima 자체 + 5 sister + 7 unaudited new repos (cycle 36).
 //
 //   본 helper = mac-local NON_MUTATION:
@@ -48,7 +48,7 @@ fn _write_helper() {
     parts.push("    {'cycle':38, 'repo':'nexus', 'state_file':'nexus_repo_deep_audit.json'},\n")
     parts.push("    {'cycle':39, 'repo':'void', 'state_file':'void_repo_deep_audit.json'},\n")
     parts.push("    {'cycle':40, 'repo':'papers', 'state_file':'papers_repo_deep_audit.json'},\n")
-    parts.push("    {'cycle':41, 'repo':'n6-architecture', 'state_file':'n6_architecture_repo_deep_audit.json'},\n")
+    parts.push("    {'cycle':41, 'repo':'CANON', 'state_file':'n6_architecture_repo_deep_audit.json'},\n")
     parts.push("]\n\n")
 
     parts.push("# anima self metrics (cycle 22 + 23 + 24 references)\n")
@@ -125,7 +125,7 @@ fn _write_helper() {
     parts.push("    'audit_completion':f'{len(DEEP_AUDIT_STATES)} of {len(DEEP_AUDIT_STATES) + len(UNAUDITED_REMAINING)} new-discovered repos deep-audited ({100*len(DEEP_AUDIT_STATES)/(len(DEEP_AUDIT_STATES)+len(UNAUDITED_REMAINING)):.0f}%)',\n")
     parts.push("    'characterizations':{\n")
     parts.push("        'parent_ecosystem':'nexus (281 anima refs, 2683 hexa)',\n")
-    parts.push("        'theoretical_foundation':'n6-architecture (perfect number 6, 853 hexa)',\n")
+    parts.push("        'theoretical_foundation':'CANON (perfect number 6, 853 hexa)',\n")
     parts.push("        'sister_runtime':'hive (TS+hexa hybrid, this session)',\n")
     parts.push("        'academic_output':'papers (424 md, 94 papers DOI Zenodo)',\n")
     parts.push("        'aspirational_terminal':'void (anima README claims 100% hexa, actual 0.3%)',\n")

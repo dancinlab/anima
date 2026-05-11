@@ -2292,3 +2292,43 @@ own 42 amend 2026-05-10 09:50 KST "immediate md save mandate — BG 회수 즉�
   honest-c3 5 BG 동시 fire 시 5 commit 발생 — 시간순 ordering OK but commit 폭증
   severity warn (manual enforcement) → block (anima audit `--mandate-42-amend2` BG completion 후 §N append commit 부재 detect)
   proof grep -E '^## §[0-9]+ \[' /Users/ghost/core/anima/REBORN.md — section count 가 BG completion count 와 일치
+
+own 43 live "보고 스타일 mandate — Unicode 박스 표 + ★ tiered + 비유 + 다음 진행할 것들 carry list"
+  rule cycle close / 종합 보고 시 다음 형식 강제 (사용자 directive 2026-05-11 verbatim "이런식으로 해줘"):
+    - **헤더**: `## 🏆 <cycle 또는 topic> 최종` (또는 동등 한국어)
+    - **메인 표**: Unicode 박스 (┌─┬─┐ │ ├─┼─┤ └─┴─┘) 의 2-column 항목/결과 표. 행 ≥ 5 (REBORN lines · § entries · ★★★★★ count · 비용 · commits · HF 등)
+    - **★ tiered listing**: ⭐ (★★★★★) / 🌟 (★★★★) / ✨ (★★★) / ⚠️ (negative) / ❌ (decisive negative) / 🏆 (V14_PASS 등 achievement) — 각 row 에 § entries 명시
+    - **carry list**: "다음 cycle 진입 시 carry (★ priority)" 또는 동등 한국어 섹션. 🥇 (1st priority) · 🥈 · 🥉 · ⭐ (overall recommended) symbols + cost/time tag + "(§N 의 inverse / direct test / tooling debt)" 같은 source-reference
+    - **친근 톤 호환**: 비유 ≥1 (AGENTS.md friendly preset 호환), 이모지/concept ≥3, bullet 또는 표 ≥1
+    - **terse exception**: 단순 monitor event 확인, scp progress 등 micro-update 는 친근 표 면제 — 1 줄 응답 가능
+  rule **trigger conditions**:
+    - cycle close (§N final close 류)
+    - 종합 progress report (3+ BG 결과 통합)
+    - "보고", "summary", "current status" 류 사용자 명시 요청
+    - "all bg go" 후 cycle 의 중간/최종 dashboard
+  rule **non-trigger** (이 mandate 면제):
+    - 단일 BG monitor event acknowledgment (1 줄 "대기" 응답 OK)
+    - 한 단계 작업 진행 보고
+    - 코드/명령 결과 단순 확인
+    - 에러/디버그 분석
+  precedence
+    - own 14 V14 mirror — 보고 시 V14 PASS substrates count 명시
+    - own 16 cost discipline — 보고 시 H100 cost + Mac cost 분리 명시
+    - own 22 honest emit — ★ count 정직 (assert 없으면 ★ 부여 X)
+    - own 24 single SSOT — 보고는 REBORN.md 의 mirror, 별도 file 생성 X
+    - own 38 매단계 doc save — 보고 직전 REBORN.md commit 보장
+    - own 42 timestamp convention — 보고 timestamp KST primary
+    - AGENTS.md friendly_tone_response (bedrock/.bind) — 비유 + 이모지 + 표 강제와 정합
+    - AGENTS.md recommendation_format — 추천 시 🥇🥈🥉⭐ + 비교 표 cols `| rank | path | 비용 | wall | 효과 |` 적용
+  cross-reference 사용자 directive verbatim 2026-05-11 21:50 KST: "보고시 이런식으로 해줘 <=== own 등록"
+  cross-reference template instance (cycle 2026-05-11 §85 close 보고): REBORN.md §85 + chat-displayed 박스 표 (예제 보존)
+  cross-reference bedrock/AGENTS.md friendly preset full contract + recommendation_format spec
+  cross-reference feedback memory: ~/.claude/projects/-home-summer-mac-home-core-anima/memory/feedback_agents_md_response_style.md (AGENTS.md style summary)
+  honest-c3 own 43 은 reporting style 의 매 보고 mandate. 자율 진행 mode 에서 LLM 가 micro-update (monitor event 1 line) 시 매번 박스 표 강제 X — terse carve-out 명시
+  honest-c3 본 own 은 friendly preset 의 super-set: AGENTS.md 는 every-turn, own 43 은 cycle close / 종합 보고 시 특히 강제. 두 layer 누적 적용
+  honest-c3 Unicode 박스 (┌─┐ etc) 는 rendering 환경에 따라 align 깨질 수 있음 — markdown table fallback (`| col | col |`) 도 acceptable
+  honest-c3 ★ tier 부여는 own 22 honest emit 기준. ★★★★★ = decisive prediction realized + falsifiable + reproducible. ★★★★ = strong evidence with limitations. ★★★ = supporting. ★★ = tooling/methodology. assert/proof 없으면 부여 금지.
+  severity warn (Phase 1 — 자율 enforcement) → block (Phase 2 — anima audit `--mandate-43` cycle close 시 박스 표 + ★ list + carry section 검사)
+  proof grep -E "## 🏆.*최종|## .*FINAL CLOSE" /Users/ghost/core/anima/REBORN.md — cycle close 보고 매칭
+  note own 43 = 사용자 directive verbatim 직접 응답 (2026-05-11 21:50 KST "이런식으로 해줘"). own 22 mandatory report + own 24 single SSOT + own 38 매단계 doc save + own 42 append timestamp 의 reporting style codification layer.
+

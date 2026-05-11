@@ -26,7 +26,7 @@ unit and random replacements. If any non-baseline config breaks the basin
 
 ## Method
 
-- Model: need-singularity/clm-v4-mk2-v1 (CLM v4 mk2 v1)
+- Model: dancinlab/clm-v4-mk2-v1 (CLM v4 mk2 v1)
 - Loader: shared _try_load_model / _load_tokenizer from
   tool/transient_py/anima_emerge_cand_d_inject_helper.py
 - Prompt: 안녕하세요. 오늘 날씨가 좋네요. (KO long greeting; n_input=12 toks)

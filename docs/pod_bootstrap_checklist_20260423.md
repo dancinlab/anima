@@ -80,10 +80,10 @@ chmod +x /usr/local/bin/hexa
 # I9 — sister repo linkage ($HOME/core layout expected by drill_ext_resolver)
 mkdir -p /root/core
 cd /root/core
-git clone https://github.com/need-singularity/anima.git
-git clone https://github.com/need-singularity/hexa-lang.git
-git clone https://github.com/need-singularity/nexus.git      # optional if drill needs criteria
-git clone https://github.com/need-singularity/airgenome.git  # optional
+git clone https://github.com/dancinlab/anima.git
+git clone https://github.com/dancinlab/hexa-lang.git
+git clone https://github.com/dancinlab/nexus.git      # optional if drill needs criteria
+git clone https://github.com/dancinlab/airgenome.git  # optional
 ln -sfn /root/core/anima       /workspace/anima
 ln -sfn /root/core/hexa-lang   /workspace/hexa-lang
 

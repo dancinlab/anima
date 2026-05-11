@@ -7,13 +7,13 @@ All have valid YAML + canonical qmirror step-level loud-fail pattern. Just need 
 
 | repo | gh repo | hf mirror | failure cause |
 |---|---|---|---|
-| qmirror | need-singularity/qmirror | 200 (public) | step-level loud-fail (no secret) |
-| sim-universe | need-singularity/sim-universe | 200 (public) | step-level loud-fail (no secret) |
-| honesty-monitor | need-singularity/honesty-monitor | 200 (public) | step-level loud-fail (no secret) |
-| anima-agent | need-singularity/anima-agent | 401 (likely not yet pushed) | step-level loud-fail (no secret) |
-| qrng | need-singularity/qrng | 401 (likely not yet pushed) | step-level loud-fail (no secret) |
+| qmirror | dancinlab/qmirror | 200 (public) | step-level loud-fail (no secret) |
+| sim-universe | dancinlab/sim-universe | 200 (public) | step-level loud-fail (no secret) |
+| honesty-monitor | dancinlab/honesty-monitor | 200 (public) | step-level loud-fail (no secret) |
+| anima-agent | dancinlab/anima-agent | 401 (likely not yet pushed) | step-level loud-fail (no secret) |
+| qrng | dancinlab/qrng | 401 (likely not yet pushed) | step-level loud-fail (no secret) |
 
-For all 5: `gh secret set HF_TOKEN -R need-singularity/<repo> --body "$HF_WRITE_TOKEN"` then `gh workflow run sync-to-hf.yml -R need-singularity/<repo> -r main` (or just push a no-op commit).
+For all 5: `gh secret set HF_TOKEN -R dancinlab/<repo> --body "$HF_WRITE_TOKEN"` then `gh workflow run sync-to-hf.yml -R dancinlab/<repo> -r main` (or just push a no-op commit).
 
 ### Repo NOT READY: hexa-bio
 - Job-level conditional bug: `if: ${{ secrets.HF_TOKEN != '' }}` at job-level returns HTTP 422 startup-failure (zero jobs spawned, no logs).

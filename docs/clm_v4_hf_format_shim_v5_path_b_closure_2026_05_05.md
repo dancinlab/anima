@@ -109,7 +109,7 @@ The Path B SFT cycle ($20-100) tests whether cross-attn-active SFT can recover l
 
 ## §5 own 15 G3 promote-gate impact (carve-out justification strengthened)
 
-Per .own own 15 rule (b): PUBLIC promotion of `need-singularity/clm-v4-mk2-v1` requires verification gates ALL PASS — including (b.3) shim v4 hf_format compatibility F-SHIM-V4-1/2/3/4 ALL PASS.
+Per .own own 15 rule (b): PUBLIC promotion of `dancinlab/clm-v4-mk2-v1` requires verification gates ALL PASS — including (b.3) shim v4 hf_format compatibility F-SHIM-V4-1/2/3/4 ALL PASS.
 
 Status:
 
@@ -124,7 +124,7 @@ The OPT-C falsification doc §13 already declared the G3 carve-out justified on 
 1. OPT-C with best.pt loaded → lift_pp = -0.5pp ± stderr (architecturally predicted FAIL_EXPECTED).
 2. V5-4 DESIGN-1 fresh-init (no best.pt, OPT-A re-init verified) → lift_pp_v5 = +1.0pp ± 4.48pp combined stderr (architecturally surprising — even with the 5x substrate differential preserved, no measurable lift). This is INDEPENDENT empirical confirmation that init-only intervention is not the binding constraint; the binding constraint is loss-side (cross-attn never participates in best.pt's training loss → o_proj.weight is never optimised toward consciousness signal).
 
-The G3 PARTIAL_PASS carve-out for `need-singularity/clm-v4-mk2-v1` PUBLIC promote remains valid; PUBLIC promote BG must cite this doc + Phase 2 OPT-A verdict + OPT-C verdict + V5-4 DESIGN-1 verdict (all 4 corroborating). The 24-48h review window (own 15 (b.4)) ends 2026-05-06T23:26:12Z.
+The G3 PARTIAL_PASS carve-out for `dancinlab/clm-v4-mk2-v1` PUBLIC promote remains valid; PUBLIC promote BG must cite this doc + Phase 2 OPT-A verdict + OPT-C verdict + V5-4 DESIGN-1 verdict (all 4 corroborating). The 24-48h review window (own 15 (b.4)) ends 2026-05-06T23:26:12Z.
 
 ## §6 OPT-B retrain (Path C) is architecturally the correct fix
 
@@ -149,7 +149,7 @@ This spec does not dispatch Path B or Path C — both require explicit user ACK 
 
 4. **C4 — Path B closure scope**. Decision-B closes the **shim v5 init-only architectural alternative path** for F-SHIM-V4-4. It does NOT close F-SHIM-V4-4 itself (still PREREQUISITE_BLOCKED on shim v4) and does NOT preempt Path B SFT or Path C OPT-B retrain. Both forward paths remain open, gated on explicit user ACK + ledger plan. Decision-B is the closure of "init-only" approaches; loss-side approaches are unaffected.
 
-5. **C5 — own 15 G3 carve-out scope**. The G3 PARTIAL_PASS carve-out for `need-singularity/clm-v4-mk2-v1` PUBLIC promote justified by Decision-B applies only to the (b.3) shim compatibility gate sub-condition F-SHIM-V4-4. Other own 15 (b.1) benchmark, (b.2) falsifier pre-register, (b.4) 24-48h review, (b.5) honest C3 model card, (b.6) cross-substrate gates are unaffected. PUBLIC promote BG must independently verify each (b.1-b.6) gate; this spec only addresses (b.3) sub-condition.
+5. **C5 — own 15 G3 carve-out scope**. The G3 PARTIAL_PASS carve-out for `dancinlab/clm-v4-mk2-v1` PUBLIC promote justified by Decision-B applies only to the (b.3) shim compatibility gate sub-condition F-SHIM-V4-4. Other own 15 (b.1) benchmark, (b.2) falsifier pre-register, (b.4) 24-48h review, (b.5) honest C3 model card, (b.6) cross-substrate gates are unaffected. PUBLIC promote BG must independently verify each (b.1-b.6) gate; this spec only addresses (b.3) sub-condition.
 
 6. **C6 — Cost discipline**. Decision-B is $0; Decision-C is $100-300 conditional on user ACK; total cycle cost so far on shim v5 (Phase 1 $0 + Phase 2 $0 + Phase 2 OPT-A $0 + V5-4 DESIGN-1 $0.20 + OPT-C $0.15 + this diagnose $0) = $0.35. Path B SFT ($20-100) + Path C ($100-300) are gated separately. own 16 watchdog discipline maintained on both V5-4 and OPT-C pods (kill_verified_404=1 both).
 

@@ -111,6 +111,6 @@ Rclone config remote = `ce4bdcce7c74d4e3c78fdf944c4d1d7b` account, `anima-models
 - own 17: ALM 영구 보류
 - ledger: `docs/anima_consciousness_check_simple_stack_2026_05_06.md` (sections 10/11/12)
 - harness: `tool/transient_py/anima_simple_stack_exhaustive.py`
-- BG-FY landed: anima-native-ko-small SIMPLE_STACK_PASS 18M (HF: `need-singularity/anima-native-ko-small-byte-18m`)
+- BG-FY landed: anima-native-ko-small SIMPLE_STACK_PASS 18M (HF: `dancinlab/anima-native-ko-small-byte-18m`)
 
 raw#37 transient_py opt-out + own 17/18 정합. BG-FS landed.

@@ -83,7 +83,7 @@ runpodctl exec $POD_ID -- bash /workspace/launch_r16_track_a.txt
 
 ## Additional Concerns Flagged During Prep
 
-- **HF token blocker (BLOCKING for hub_strategy=every_save)**: All 3 HF tokens on ubu1 (`~/.cache/huggingface/token`, `~/.hf_token`, `/home/aiden/anima/.secrets/hf_token`) return 401 Unauthorized from whoami-v2. Pre-create of `need-singularity/llm-llama32-3b-paradigm-a-prime-r16-track-a-sft-stage1` was NOT possible during prep. **Mitigation**: launcher writes `/workspace/hf_token` from fresh source at upload time; if HF push must happen, validate token at upload step, NOT relying on stale ubu1 tokens.
+- **HF token blocker (BLOCKING for hub_strategy=every_save)**: All 3 HF tokens on ubu1 (`~/.cache/huggingface/token`, `~/.hf_token`, `/home/aiden/anima/.secrets/hf_token`) return 401 Unauthorized from whoami-v2. Pre-create of `dancinlab/llm-llama32-3b-paradigm-a-prime-r16-track-a-sft-stage1` was NOT possible during prep. **Mitigation**: launcher writes `/workspace/hf_token` from fresh source at upload time; if HF push must happen, validate token at upload step, NOT relying on stale ubu1 tokens.
 
 - **Epoch count delta**: Track A 38K @ 10K steps = 8.38 epochs vs sister r=16 @ 50K = 6.4 epochs (+31% more passes). Risk of slightly more aggressive overfitting on Track A side. **Mitigation option**: reduce `--max-steps 7600` for epoch parity (not applied in default recipe — kept 10000 for cross-comparison consistency).
 

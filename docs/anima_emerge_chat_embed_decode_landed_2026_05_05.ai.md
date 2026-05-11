@@ -10,7 +10,7 @@ and `tok_emb.weight.T` (tied projection), bypassing all blocks.
 
 ## Method
 
-- model: `need-singularity/clm-v4-mk2-v1` on mac CPU fp32
+- model: `dancinlab/clm-v4-mk2-v1` on mac CPU fp32
 - prompts: 2 (`안녕`, `Hello`) -- minimum-pair KO/EN greeting
 - four head paths per prompt (top1 only, last input position):
   1. raw_emb : `tok_emb(ids)[:, -1] -> head_a`

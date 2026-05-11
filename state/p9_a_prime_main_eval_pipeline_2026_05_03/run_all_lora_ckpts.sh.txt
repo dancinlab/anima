@@ -1,5 +1,5 @@
 #!/bin/bash
-# Run eval_llama_lora_ckpt.py for all 5 ckpts × 3 tasks from need-singularity/p9-llama32-lora-stage1.
+# Run eval_llama_lora_ckpt.py for all 5 ckpts × 3 tasks from dancinlab/p9-llama32-lora-stage1.
 # Triggered ONLY after Path A pod (29dhlqk508ugoc / cp5si6man99s33) finishes & pushes to HF Hub.
 #
 # USAGE:
@@ -8,11 +8,11 @@
 #
 # Env (optional):
 #   LIMIT=500 (default)
-#   REPO=need-singularity/p9-llama32-lora-stage1 (default)
+#   REPO=dancinlab/p9-llama32-lora-stage1 (default)
 set -e
 DIR=/home/aiden/anima/state/p9_a_prime_main_eval_2026_05_03
 PY=/home/aiden/venv_orchestrator/bin/python
-REPO=${REPO:-need-singularity/p9-llama32-lora-stage1}
+REPO=${REPO:-dancinlab/p9-llama32-lora-stage1}
 LIMIT=${LIMIT:-500}
 mkdir -p $DIR/lora_results
 

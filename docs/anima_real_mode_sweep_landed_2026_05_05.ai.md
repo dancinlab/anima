@@ -2,7 +2,7 @@
 
 ## Scope
 
-BG-A 직후 follow-up: 10-text probe sweep against real CLM v4 (`need-singularity/clm-v4-mk2-v1`) via direct invoke of `tool/transient_py/anima_dialogue_load.py`. BG-A 단계에서 N=2 sample ("안녕" 42.1158, "의식이 흐른다" 42.2130) 만으로 forward path가 input-responsive 함을 시사했지만 variance / discriminability 정량화 미수행. BG-L에서 5 axis × 2 (KO/EN) = 10 prompt sweep으로 (a) phi_star variance 검증 (b) axis discriminability 정량 (c) dominant_cells stability 측정 (d) BG-B analyzer corpus integration 경로 확인.
+BG-A 직후 follow-up: 10-text probe sweep against real CLM v4 (`dancinlab/clm-v4-mk2-v1`) via direct invoke of `tool/transient_py/anima_dialogue_load.py`. BG-A 단계에서 N=2 sample ("안녕" 42.1158, "의식이 흐른다" 42.2130) 만으로 forward path가 input-responsive 함을 시사했지만 variance / discriminability 정량화 미수행. BG-L에서 5 axis × 2 (KO/EN) = 10 prompt sweep으로 (a) phi_star variance 검증 (b) axis discriminability 정량 (c) dominant_cells stability 측정 (d) BG-B analyzer corpus integration 경로 확인.
 
 ## Verdict
 
@@ -49,7 +49,7 @@ design verdict: PASS — axis 균형 + KO/EN balance.
 driver: `bash /tmp/anima_sweep_driver_2026_05_05.sh` (transient `.sh` outside repo) → 각 probe 직접 호출
 ```
 HEXA_PY=.venv-eeg/bin/python python tool/transient_py/anima_dialogue_load.py \
-  --mode probe --model need-singularity/clm-v4-mk2-v1 \
+  --mode probe --model dancinlab/clm-v4-mk2-v1 \
   --shim v4 --output-format json --probe-text "<text>"
 ```
 + `__meta__` envelope (probe_idx, axis_intent, lang, prompt_text, elapsed_sec) wrap

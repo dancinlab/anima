@@ -13,7 +13,7 @@ parallel_audits:
 
 ## TL;DR
 
-- **Mk1 `.raw` is ALREADY GONE** from `/Users/ghost/core/hive/`. So are `.own`, `.ext`, `.guide` — no glob match. Local cleanup pre-dated this audit (rounds 1+2+remnant landed 2026-05-02 → archived to private repo `need-singularity/raw-archive` 2026-05-03 per `docs/raw_archive_repo_landed_2026_05_03.ai.md`).
+- **Mk1 `.raw` is ALREADY GONE** from `/Users/ghost/core/hive/`. So are `.own`, `.ext`, `.guide` — no glob match. Local cleanup pre-dated this audit (rounds 1+2+remnant landed 2026-05-02 → archived to private repo `dancinlab/raw-archive` 2026-05-03 per `docs/raw_archive_repo_landed_2026_05_03.ai.md`).
 - **Remaining mk1-era artifacts**: `.raw-audit` (uchg-locked, 814 lines = audit ledger of historical unlock/relock events), `.raw-english-violations.jsonl` (94 B), `.raw.modes.jsonl` (mk2 mode override file — keep), `.raw-exemptions/` (raw_6 + raw_7 path-prefix lists — referenced by 2+ tools), `raw_archive/2026-05-04T/` (today's pre-EOL backup).
 - **Mk2 SSOT**: `.raw.mk2` carries **14 rules** (not 3 as spec text suggests). Domains: arch (1), ai-native (1), lint (1), resource (7), cli (4). All 14 rules have non-empty `derives-from` (~30 mk1.raw/own references), but only 2 rules (`arch.001`, `ai-native.001`) have non-empty `supersedes` (6 mk1 rules total).
 - **Parity vs mk1**: 14/273 ≈ **5.1 %** rule count. Migration tool `tool/raw_mk1_to_mk2_migrator.hexa` is explicitly a STUB; modes-mapping migrator doesn't exist yet. Bulk migration is out of scope for this EOL turn.
@@ -53,7 +53,7 @@ parallel_audits:
 bin/ config/ core/ docs/ modules/ packages/ spec/ state/ tool/    (full directory snapshots)
 ```
 
-Note: this archive captures **mk2 + mk2 schema**, NOT mk1 `.raw`. The mk1 file itself was already removed in the 2026-05-02 cleanup; the historical content lives only in `need-singularity/raw-archive` (private GitHub repo).
+Note: this archive captures **mk2 + mk2 schema**, NOT mk1 `.raw`. The mk1 file itself was already removed in the 2026-05-02 cleanup; the historical content lives only in `dancinlab/raw-archive` (private GitHub repo).
 
 ## 2. mk2 SSOT current state
 
@@ -194,9 +194,9 @@ These refs are **textual** (no resolver round-trip exists today). Breakage sever
 
 Either:
 - **Option A**: leave `derives-from`/`supersedes` strings as historical fingerprints (lightweight; current tooling does not resolve them).
-- **Option B**: bulk-replace `mk1.rawN` → `archive:need-singularity/raw-archive#raw_N` (URL pointer to private archive) — explicit dead-end pointer; more honest, but mutates 14 mk2 entries.
+- **Option B**: bulk-replace `mk1.rawN` → `archive:dancinlab/raw-archive#raw_N` (URL pointer to private archive) — explicit dead-end pointer; more honest, but mutates 14 mk2 entries.
 
-Recommend **Option A** (minimal churn) with a 1-line note in `.raw.mk2` header pointing readers at `need-singularity/raw-archive` for historical resolution.
+Recommend **Option A** (minimal churn) with a 1-line note in `.raw.mk2` header pointing readers at `dancinlab/raw-archive` for historical resolution.
 
 ## 6. Migration completeness
 
@@ -213,7 +213,7 @@ Honest read: this is in tension with the mk1→mk2 mapping doc's stated policy "
 
 This audit's user-instructed scope: "dual-SSOT period 해지 모든 mk1 .raw .own 모든프로젝트에서 삭제." Since `.raw` and `.own` are already gone from hive, the residual cleanup is:
 
-1. **Backup verification**: confirm `raw_archive/2026-05-04T/` contains everything wanted-to-keep. Optionally also verify private archive `need-singularity/raw-archive` clones cleanly (cross-check SHA).
+1. **Backup verification**: confirm `raw_archive/2026-05-04T/` contains everything wanted-to-keep. Optionally also verify private archive `dancinlab/raw-archive` clones cleanly (cross-check SHA).
 2. **chflags unlock**: `chflags nouchg /Users/ghost/core/hive/.raw-audit` (1 file).
 3. **Optional removal of mk1-era residuals**:
    - `.raw-audit` (814-line ledger of past edits — historical only; can be moved to private archive instead of deleted).
@@ -225,7 +225,7 @@ This audit's user-instructed scope: "dual-SSOT period 해지 모든 mk1 .raw .ow
    - Update tools whose error messages still cite `.raw must always exist per raw 0 root-ssot` to cite mk2 instead.
 5. **Sister repo pin update**: `/Users/ghost/core/anima/.raw-ref` (and any other sister repo) carries a `pinned-hash` for `hive/.raw`. With hive `.raw` gone, the pin is unverifiable. Either:
    - Retire the `.raw-ref` mechanism repo-wide (replace with `.raw.mk2-ref` if cross-pin is still desired).
-   - Re-pin to `need-singularity/raw-archive#main` for archival pointer.
+   - Re-pin to `dancinlab/raw-archive#main` for archival pointer.
 6. **mk2 dangling reference policy**: Choose Option A (do nothing) or Option B (bulk-replace `mk1.rawN` → `archive:...`) per §5c.
 7. **Doc updates**:
    - Append note to `.raw.mk2` header that mk1 EOL completed 2026-05-04.
@@ -237,17 +237,17 @@ This audit's user-instructed scope: "dual-SSOT period 해지 모든 mk1 .raw .ow
 - **F-EOL-HIVE-1**: post-delete `find /Users/ghost/core/hive -maxdepth 2 -name '.raw' -o -name '.own' -o -name '.ext' -o -name '.guide' -o -name '.raw-audit' -o -name 'raw_archive'` returns exactly **0** for the SSOT files (`.raw`/`.own`/`.ext`/`.guide` already pass; `.raw-audit` and `raw_archive/` MAY be retained or relocated — adjust expectation).
 - **F-EOL-HIVE-2**: post-delete tooling lint passes on a representative sample: `hexa run tool/meta_lint.hexa --selftest` exit 0 (currently will fail because `.raw not present` is treated as harness configuration error per line 133–134).
 - **F-EOL-HIVE-3**: mk2 entries don't carry dangling `mk1.rawN` `supersedes` pointers — either kept as provenance-only strings (Option A) OR replaced with archive pointers (Option B). Whichever chosen must be uniform across all 14 mk2 entries.
-- **F-EOL-HIVE-4**: round-trip clone `git clone git@github.com:need-singularity/hive.git tmp-clone && hexa run tmp-clone/tool/raw_mk2_loader.hexa --selftest` exits 0 (mk2 still self-validates).
+- **F-EOL-HIVE-4**: round-trip clone `git clone git@github.com:dancinlab/hive.git tmp-clone && hexa run tmp-clone/tool/raw_mk2_loader.hexa --selftest` exits 0 (mk2 still self-validates).
 - **F-EOL-HIVE-5**: sister-repo `anima/.raw-ref` either deleted, repointed to private archive, or marked retired with a tombstone — not left dangling with an unverifiable `pinned-hash`.
 - **F-EOL-HIVE-6**: search the repo for the exact byte sequence `env("HIVE")+"/.raw"` (and `env("HIVE") + "/.raw"`) — count must be 0 in production-tier files (i.e., excluding test fixtures and historical comments) post-cleanup.
 
 ## 9. Honest C3
 
-1. **mk2 has only 14 rules at EOL time — the bulk 250+ mk1 rules are NOT migrated.** Deleting mk1 without migration means LIVE rules from the mk1 era effectively vanished from the canonical layer. The historical content is preserved in `need-singularity/raw-archive` (private repo) but not in any reachable runtime path. This is the dominant risk; it is in direct tension with the mk1→mk2 mapping doc's stated gating ("after mk2 reaches lint coverage parity").
+1. **mk2 has only 14 rules at EOL time — the bulk 250+ mk1 rules are NOT migrated.** Deleting mk1 without migration means LIVE rules from the mk1 era effectively vanished from the canonical layer. The historical content is preserved in `dancinlab/raw-archive` (private repo) but not in any reachable runtime path. This is the dominant risk; it is in direct tension with the mk1→mk2 mapping doc's stated gating ("after mk2 reaches lint coverage parity").
 
 2. **chflags uchg unlock is single-file (`.raw-audit`) and trivially reversible — but the broader 244-uchg-file inventory in hive contains many frozen archive directories whose unlocking would be a separate operational mistake.** Audit recommendation: scope the unlock strictly to `.raw-audit`. Do NOT do a blanket `chflags nouchg -R` across the repo.
 
-3. **Sister repo pin chain is real and ALREADY broken at the time of this audit.** `/Users/ghost/core/anima/.raw-ref` carries `pinned-hash 2c67adde9f9068274db8f034f135a9c6e57503bb1e4395a112cd50a0666099ce` against `path .raw` in `github.com/need-singularity/hive`. Since the on-disk `.raw` was deleted on 2026-05-02 and presumably purged from upstream too, that hash is no longer resolvable from `HEAD`. The pin file has not been updated, and `tool/raw_sync.hexa check` will fail. This is a pre-existing breakage, not one this audit creates.
+3. **Sister repo pin chain is real and ALREADY broken at the time of this audit.** `/Users/ghost/core/anima/.raw-ref` carries `pinned-hash 2c67adde9f9068274db8f034f135a9c6e57503bb1e4395a112cd50a0666099ce` against `path .raw` in `github.com/dancinlab/hive`. Since the on-disk `.raw` was deleted on 2026-05-02 and presumably purged from upstream too, that hash is no longer resolvable from `HEAD`. The pin file has not been updated, and `tool/raw_sync.hexa check` will fail. This is a pre-existing breakage, not one this audit creates.
 
 4. **Migration spec explicitly named the gate ("mk2 reaches lint coverage parity + sister-repo adoption"); current decision is BEFORE that gate.** Per `docs/raw_mk1_to_mk2_modes_mapping.ai.md` and `.raw.mk2` header line 42–43: "mk1 EOL is a separate Ω-cycle decision (after mk2 reaches lint coverage parity + sister-repo adoption)." Today's user instruction overrides that gate. The audit captures this explicit override; the operational risk is that the overriding decision is a deliberate one (user knows the gap) vs. inadvertent.
 
@@ -257,4 +257,4 @@ This audit's user-instructed scope: "dual-SSOT period 해지 모든 mk1 .raw .ow
 
 7. **`.raw-exemptions/raw_*.list` files are still consumed by `tool/ai_native_scan.hexa`** per their own header comment. These were named after mk1 rule numbers (raw 6 = folder-naming F4, raw 7 = ai-native scan exemption) but contain LIVE allowlists. Deleting them deletes runtime configuration, not historical data. Recommend rename (`raw_6.list` → `arch.001.exempt.list` mapping mk1.raw6 → mk2.arch.001 if applicable, or simply preserve under a non-mk1-numbered name).
 
-8. **Today's `raw_archive/2026-05-04T/` snapshot is helpful but not git-managed.** The whole directory is ad-hoc; it captures bin/config/core/docs/modules/packages/spec/state/tool dirs as well as mk2 files. Without an explicit retention policy this directory will accumulate. The `need-singularity/raw-archive` private repo is the durable answer; `raw_archive/` local directory should be retained briefly then cleaned per its own policy.
+8. **Today's `raw_archive/2026-05-04T/` snapshot is helpful but not git-managed.** The whole directory is ad-hoc; it captures bin/config/core/docs/modules/packages/spec/state/tool dirs as well as mk2 files. Without an explicit retention policy this directory will accumulate. The `dancinlab/raw-archive` private repo is the durable answer; `raw_archive/` local directory should be retained briefly then cleaned per its own policy.

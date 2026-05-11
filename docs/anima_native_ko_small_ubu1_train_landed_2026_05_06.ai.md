@@ -102,7 +102,7 @@ own 14 enforced: ckpts (~70MB each, 350MB total) stay on ubu1 + HF, NOT in anima
 
 ## 8. HF upload plan (own 14 + own 15 lifecycle)
 
-Repo: `need-singularity/anima-native-ko-small-byte-18m` (TBD final naming)
+Repo: `dancinlab/anima-native-ko-small-byte-18m` (TBD final naming)
 
 **Stage A — PRIVATE first (own 15)**:
 
@@ -113,7 +113,7 @@ Repo: `need-singularity/anima-native-ko-small-byte-18m` (TBD final naming)
 2. Upload via `hf` CLI (ubu1 venv_orchestrator hf at `/home/aiden/venv_orchestrator/bin/hf`):
    ```
    HF_TOKEN=$(secret get HF_TOKEN_NS) /home/aiden/venv_orchestrator/bin/hf \
-     upload need-singularity/anima-native-ko-small-byte-18m \
+     upload dancinlab/anima-native-ko-small-byte-18m \
      /home/aiden/core/anima/runs/anima-native-ko-small-20260506_205612/ \
      --repo-type model --private --create
    ```

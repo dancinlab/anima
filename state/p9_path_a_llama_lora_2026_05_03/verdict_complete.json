@@ -9,7 +9,7 @@
   "final_step": 10000,
   "max_steps": 10000,
   "final_step_ts_utc": "2026-05-03T21:34:08Z",
-  "checkpoint_path": "hf://need-singularity/p9-llama32-lora-stage1 (PROBABLE; not live-verified)",
+  "checkpoint_path": "hf://dancinlab/p9-llama32-lora-stage1 (PROBABLE; not live-verified)",
   "checkpoint_local_path": null,
   "checkpoint_local_path_reason": "host_pod_terminator error-branch did not run mkdir -p artifacts; scp failed; pod since terminated and unreachable (Connection refused on ssh -p 14783 root@103.207.149.110 verified 2026-05-04T06:57Z)",
   "cost_actual_usd": 22.18,
@@ -43,7 +43,7 @@
     "Silent-failure surfaces NOT visible from Mac — NaN/inf loss, OOM at final save, HF push 401/timeout all unobservable; watcher error-branch was supposed to scp train.log but mkdir -p was missing (script bug at host_pod_terminator.sh.txt line 63-65 vs DONE branch line 47)",
     "F1_v3_pending.json predates the v2→v3 falsifier upgrade; eval cycle when it fires must use v3 (3-benchmark lm-eval composite) not legacy BLEU-1"
   ],
-  "next_action": "HF re-auth (5min) → hf models info need-singularity/p9-llama32-lora-stage1 → if siblings include adapter_model.safetensors then fire naming-decision rename workflow + launch cond.benchmark_a_prime_base_validation BG; if siblings empty/incomplete then training spend converted to zero-artifact and Path A must re-launch.",
+  "next_action": "HF re-auth (5min) → hf models info dancinlab/p9-llama32-lora-stage1 → if siblings include adapter_model.safetensors then fire naming-decision rename workflow + launch cond.benchmark_a_prime_base_validation BG; if siblings empty/incomplete then training spend converted to zero-artifact and Path A must re-launch.",
   "unblocks_chain": [
     "p9_sft.cond.benchmark_a_prime_base_validation",
     "p9_sft.cond.3 (F1_v3 verdict + 4-falsifier panel)",

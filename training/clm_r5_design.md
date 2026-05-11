@@ -84,7 +84,7 @@ Filed as blocker-class request, not hard-blocker for r5 fire (fallback 1.2.2 exi
 
 - **Ask:** `std::mmap(path) -> ByteSlice` primitive (read-only, page-cached, syscall-backed).
 - **Rationale:** Every byte-level training loop in anima/nexus will hit the same 17-day wall without this. Even pre-read fallback leaves us with ≥ corpus-size RSS which will break on 50 GB+ corpora (r6 target).
-- **Channel:** issue on `need-singularity/hexa-lang` (or direct maintainer ping per `shared/CLAUDE.md#hive`).
+- **Channel:** issue on `dancinlab/hexa-lang` (or direct maintainer ping per `shared/CLAUDE.md#hive`).
 
 ---
 
@@ -153,7 +153,7 @@ Insert into `tracks.CLM` (sibling of `owner` / `host` / `independent_of`). **Not
       "depends_on": ["r4"],
       "blocks": ["r6_scale_or_corpus_expand"],
       "cross_project_ask": {
-        "repo": "need-singularity/hexa-lang",
+        "repo": "dancinlab/hexa-lang",
         "item": "std::mmap(path) -> ByteSlice primitive",
         "blocker_class": "soft (fallback exists)"
       }

@@ -39,7 +39,7 @@ authorization: user directive 2026-05-04 + 2026-05-05 ("HF 관련 own 추가 —
 - Precedent doc: `docs/anima_clm_hf_release_v1_uploaded_landed_2026_05_04.ai.md` (CLM v4 mk2-v1 first PRIVATE upload, 48h review window in progress)
 - Path decision: `docs/clm_v4_release_path_decision_2026_05_04.md` (Path 1 = release v1 NOW)
 - Tool: `tool/hf_upload_mk2.hexa` (enforcement layer attaches to `--private` flag)
-- Audit ledger: `state/hf_upload_audit/20260504T232612Z_need-singularity__clm-v4-mk2-v1.jsonl` (visibility=private captured)
+- Audit ledger: `state/hf_upload_audit/20260504T232612Z_dancinlab__clm-v4-mk2-v1.jsonl` (visibility=private captured)
 
 ## Follow-ups
 

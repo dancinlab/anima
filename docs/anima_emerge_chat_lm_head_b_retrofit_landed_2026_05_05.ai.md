@@ -38,7 +38,7 @@ recovers Korean → is the head the bottleneck, or is it the KoGPT2 head's
 
 | Metric | Value |
 |---|---|
-| Model | `need-singularity/clm-v4-mk2-v1` (vocab=64000, hidden=768) |
+| Model | `dancinlab/clm-v4-mk2-v1` (vocab=64000, hidden=768) |
 | Platform | mac CPU fp32 (.venv-eeg python3.12) |
 | Load time | 5.1 s |
 | head_b params | 49,152,000 |

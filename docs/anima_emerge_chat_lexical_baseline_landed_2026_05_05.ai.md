@@ -22,7 +22,7 @@ The answer disambiguates two #115 hypotheses:
 
 ## Setup
 
-- model: `need-singularity/clm-v4-mk2-v1` (CLM v4 mk2 v1)
+- model: `dancinlab/clm-v4-mk2-v1` (CLM v4 mk2 v1)
 - platform: mac CPU fp32, `.venv-eeg/bin/python` (torch 2.11.0)
 - prompt: `"안녕"`
 - emit: 50 greedy tokens, argmax of last-position logits

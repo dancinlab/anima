@@ -38,7 +38,7 @@ nohup python3 -u $WORKSPACE/train_llama_lora.py \
     --logging-steps 10 \
     --bf16 \
     --gradient-checkpointing \
-    --push-to-hub need-singularity/p9-llama32-lora-stage1 \
+    --push-to-hub dancinlab/p9-llama32-lora-stage1 \
     > $OUT_DIR/train.log 2>&1 &
 
 TRAIN_PID=$!

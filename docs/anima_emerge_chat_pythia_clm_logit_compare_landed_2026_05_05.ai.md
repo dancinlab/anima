@@ -5,7 +5,7 @@
 Per-token next-token logit distribution comparison between CLM v4 and Pythia 70m on identical short prompts. Question from BG-CD: "substrate body remembers, head_a destroys" — at the emit boundary, what does CLM's logit distribution actually look like vs a vanilla baseline LM?
 
 Models:
-- CLM: need-singularity/clm-v4-mk2-v1
+- CLM: dancinlab/clm-v4-mk2-v1
 - Pythia: EleutherAI/pythia-70m
 
 Prompts: "Hello" (EN), "안녕" (KO).

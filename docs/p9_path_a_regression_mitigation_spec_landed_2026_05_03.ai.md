@@ -102,7 +102,7 @@ Detail per spec §2 + §3.
 
 **Paste-once prompt** (per spec §8.1):
 
-> Spec next-cycle Path A LoRA mitigation execution — Track B (r=64 → r=16). Re-train on Llama-3.2-3B-Instruct with `--lora-r 16 --lora-alpha 16`, all other hyperparams unchanged. Fresh RunPod H100 SXM pod ($20-30, 8-12h). Hub publish: `need-singularity/p9-llama32-lora-stage1-r16`. Eval via existing A' pipeline. Falsifier: F-PATHA-MITIGATION-1. Constraints: raw#9 STRICT, raw#15, raw#10, single-seed (42).
+> Spec next-cycle Path A LoRA mitigation execution — Track B (r=64 → r=16). Re-train on Llama-3.2-3B-Instruct with `--lora-r 16 --lora-alpha 16`, all other hyperparams unchanged. Fresh RunPod H100 SXM pod ($20-30, 8-12h). Hub publish: `dancinlab/p9-llama32-lora-stage1-r16`. Eval via existing A' pipeline. Falsifier: F-PATHA-MITIGATION-1. Constraints: raw#9 STRICT, raw#15, raw#10, single-seed (42).
 
 If user defers: this spec lands as marker + handoff; revisit when Path A A' main eval finishes (step-8000/10000) for final regression-magnitude confirmation.
 

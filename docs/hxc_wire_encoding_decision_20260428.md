@@ -229,7 +229,7 @@ Per Phase 10 master roadmap projections, with each option:
 
 | repo class | current | A16+A17 base64url | A16+A17 base94 | A16+A17 per-bit |
 |---|---:|---:|---:|---:|
-| n6-architecture | 4% | ~10% | ~12% | ~28% |
+| CANON | 4% | ~10% | ~12% | ~28% |
 | anima ledgers | 29% | ~38% | ~40% | ~57% |
 | hexa-lang | 82% | 84% | 84% | 84% (saturated) |
 | nexus 96 files | 43% | ~55% | ~58% | ~71% |
@@ -370,7 +370,7 @@ encoding alone."
   falsifier F-W94-4 decoder LoC > 200 OR encode latency > 200ms per 1KB →
     reject (perf budget; advisory cli-lint warns at 80% threshold).
   cross-repo-applies all hexa-lang governed repos via raw 47 propagation
-    (anima / hive / nexus / hexa-lang / airgenome / n6-architecture).
+    (anima / hive / nexus / hexa-lang / airgenome / CANON).
 ```
 
 ---
@@ -413,7 +413,7 @@ Source files referenced (absolute paths):
 - `<repo-root>/state/format_witness/2026-04-28_phase8_remeasure_post_bug_fixes.jsonl` line 10 — agent a6b12f93 LIVE FIRE evidence.
 - `<repo-root>/state/format_witness/2026-04-28_subagent_swarm_status.jsonl` line 18 — Phase 10 projection.
 - `<repo-root>/docs/hxc_phase10_master_roadmap_20260428.md` — Phase 10 P0-P3 ladder.
-- `<repo-root>/../n6-architecture/state/atlas_convergence_witness.jsonl` (79121 B, 30 lines) — n6 LIVE FIRE substrate.
+- `<repo-root>/../canon/state/atlas_convergence_witness.jsonl` (79121 B, 30 lines) — n6 LIVE FIRE substrate.
 
 raw 9 hexa-only · raw 18 self-host fixpoint · raw 47 cross-repo · raw 65 + 68
 idempotent · raw 71 falsifier-retire · raw 91 honest C3 · raw 92 ai-native-canonical

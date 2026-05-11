@@ -1,7 +1,7 @@
 HF Upload Recipe — anima-clm-3-corpus-ko-heavy
 ================================================
 Date     : 2026-05-06
-Repo     : need-singularity/anima-clm-3-corpus-ko-heavy
+Repo     : dancinlab/anima-clm-3-corpus-ko-heavy
 Repo type: dataset
 Visibility lifecycle: PRIVATE first → verification → PUBLIC (own 15)
 
@@ -26,7 +26,7 @@ License + provenance
 --------------------
   - opensubtitles_ko_mono : OPUS open-subtitles-ko (CC-BY)
   - kowiki / ko_wiki      : Wikipedia ko (CC-BY-SA-3.0)
-  - sft_data.jsonl        : anima-internal synthetic philosophical templates (need-singularity / anima)
+  - sft_data.jsonl        : anima-internal synthetic philosophical templates (dancinlab / anima)
   - v6_wiki / v8_dialogue : anima-internal corpus_v6/v8 builds
 
 Upload (mac, $0)
@@ -35,10 +35,10 @@ Upload (mac, $0)
   export HF_TOKEN="$(/Users/ghost/core/secret/bin/secret get hf_token_write)"
 
   # repo init (PRIVATE)
-  hf repo create need-singularity/anima-clm-3-corpus-ko-heavy --type dataset --private
+  hf repo create dancinlab/anima-clm-3-corpus-ko-heavy --type dataset --private
 
   # upload
-  hf upload need-singularity/anima-clm-3-corpus-ko-heavy \
+  hf upload dancinlab/anima-clm-3-corpus-ko-heavy \
       /Users/ghost/core/anima/state/anima_ko_corpus_assembly_2026_05_06/corpus_ko_heavy.txt \
       corpus_ko_heavy.txt \
       --repo-type dataset \
@@ -54,4 +54,4 @@ Verification (before PRIVATE→PUBLIC promote per own 15)
   4. fresh-train BG (BG-FT/BG-FU) shows train loss decrease in first 500 steps
   5. eval pass on KO chat-template smoke (10 prompts, response in KO)
 
-Promote: hf repo set-visibility need-singularity/anima-clm-3-corpus-ko-heavy --public
+Promote: hf repo set-visibility dancinlab/anima-clm-3-corpus-ko-heavy --public

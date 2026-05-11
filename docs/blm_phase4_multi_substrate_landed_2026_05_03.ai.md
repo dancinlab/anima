@@ -32,7 +32,7 @@
    prior cycle                 | state/blm_phase4_partial_3substrate_2026_05_03/results.json (n=32, FAIL, r=0.0005)
    ZuCo data                   | /tmp/zuco_sample/ZAB_task1_SR_preprocessed/ (~425 MB, 8 SR sessions, gip_ZAB_SR{1..8}_EEG.mat)
    Algonauts data              | /tmp/algonauts2025_sub01/.../sub-01_task-friends_*-1000Par7Net*.h5 (~515 MB symlinked git annex)
-   CLM ckpt                    | /home/aiden/anima/checkpoints/clm_v4_350m/scale_350m/best.pt + LoRA need-singularity/clm-v4-sft-stage1
+   CLM ckpt                    | /home/aiden/anima/checkpoints/clm_v4_350m/scale_350m/best.pt + LoRA dancinlab/clm-v4-sft-stage1
    tokenizer                   | /tmp/tokenizer_64k_multilingual.model (vocab=64000)
    phi formula                 | anima_phi_v3_canonical (HID=8 top-variance, K=8 sample-partition halves, MIN over K, ridge=1e-3)
    N target                    | 128 paired windows (4× scale-up vs PARTIAL n=32)

@@ -2,7 +2,7 @@
   "schema": "anima/p9_path_a_r64_step10k_reconcile/diagnosis/1",
   "ts_utc": "2026-05-04T13:42:00Z",
   "cycle": "p9_path_a_r64_step10k_reconcile_2026_05_04",
-  "investigation_question": "Why does HF repo need-singularity/p9-llama32-lora-stage1 contain only 4 step-named commits (step-2000/4000/6000/8000) instead of the expected 5 (step-2k/4k/6k/8k/10k) plus final?",
+  "investigation_question": "Why does HF repo dancinlab/p9-llama32-lora-stage1 contain only 4 step-named commits (step-2000/4000/6000/8000) instead of the expected 5 (step-2k/4k/6k/8k/10k) plus final?",
   "definitive_cause": "C — partial completion of save+push pipeline: training PROBABLY reached step-10000 in-process (per host_terminator.log STEP=10000/10000 at 21:34:08Z) but the trainer.save_model(checkpoint-10000)+push_to_hub sequence had not flushed a commit to HF before the host_pod_terminator.sh error-path branch fired runpodctl pod delete 5 seconds later (21:34:13Z). The probabilistic partition (60/25/10/4/1) from prior audit collapses to: cause B (push race / final-save crash) is now the dominant causal slice once step-10k commit absence on HF is treated as ground truth.",
   "definitive_cause_short": "host_pod_terminator killed pod inside the step-10000 save+push critical section; no step-10000 commit ever reached HF git transaction.",
   "step_10000_status": {

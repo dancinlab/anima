@@ -156,7 +156,7 @@ All raw 9 hexa-only + raw 12 frozen pre-registration + chflags uchg.
 - Mk.XII Phase 3b Qwen2.5-72B sub for Llama-3.1-70B GATED ~$35-47
 
 ### 7.2 Owner-approval gated
-- atlas R36 + R37 (n6-architecture maintainer)
+- atlas R36 + R37 (CANON maintainer)
 - own 3 + own 4 hive raw promotion (genus rename)
 
 ### 7.3 External-blocker

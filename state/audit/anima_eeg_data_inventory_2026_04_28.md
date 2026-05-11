@@ -149,7 +149,7 @@ For each analysis-ready 16-ch ICA file:
 
 ## 7. Cross-repo verification
 
-- `/Users/ghost/core/n6-architecture/...`: no real EEG `.npy`; only scipy `levy_stable` test fixtures.
+- `/Users/ghost/core/canon/...`: no real EEG `.npy`; only scipy `levy_stable` test fixtures.
 - `/Users/ghost/core/anima/.venv-eeg/...`: MNE bundled fsaverage `*.fif` (head models) and
   scipy validation CSVs — bundled, not user data.
 - `/Users/ghost/core/void/...`: spleen-8x16.bdf is a font, not BioSemi EEG.

@@ -140,7 +140,7 @@ API key `qmirror-cond3-burst` (id ApiKey-5619590b-ba56-4891-8ea3-51085a4d9433) c
 
 Prior callouts preserved verbatim per qmirror_xref_centralization cycle (2026-05-04):
 
-> 📦 Available at: https://github.com/need-singularity/qmirror (`hx install qmirror`)
-> 🚀 v2.0.0 RELEASED 2026-05-04 — closure 13/13 conds met (8 v1 + 5 v2): https://github.com/need-singularity/qmirror/releases/tag/v2.0.0
+> 📦 Available at: https://github.com/dancinlab/qmirror (`hx install qmirror`)
+> 🚀 v2.0.0 RELEASED 2026-05-04 — closure 13/13 conds met (8 v1 + 5 v2): https://github.com/dancinlab/qmirror/releases/tag/v2.0.0
 
 Future qmirror release URLs are canonically tracked in `nexus/.roadmap.qmirror` header field `latest_release_url`. Update single line in roadmap; this footnote is a frozen historical record (do not retrofit).

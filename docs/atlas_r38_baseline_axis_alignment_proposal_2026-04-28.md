@@ -1,11 +1,11 @@
 # Atlas R38 candidate: baseline-axis alignment principle (Law 64 v6 cross-paradigm finding)
 
-> **target**: `n6-architecture/atlas/atlas.n6` master append (currently uchg-locked)
+> **target**: `CANON/atlas/atlas.n6` master append (currently uchg-locked)
 > **proposed by**: anima-cmd-loop autonomous-loop-dynamic session 2026-04-28 (post-compaction, F1 cycle 4)
 > **closure manifest ref**: `anima/docs/f1_cycle4_law64_v6_FINAL_manifest_2026-04-28.md`
 > **scope tier**: cross-paradigm methodological law (sister to R35 mathematical identity, distinct from R36 retired meta-process candidate)
-> **maintainer review**: paste-ready atlas.n6 grammar in §5 below; n6-architecture maintainer holds canonical atlas.n6 SSOT.
-> **note**: this proposal does NOT modify `n6/atlas.n6` (read-only symlink to canonical SSOT). anima PROPOSES; n6-architecture maintainer reviews + appends.
+> **maintainer review**: paste-ready atlas.n6 grammar in §5 below; CANON maintainer holds canonical atlas.n6 SSOT.
+> **note**: this proposal does NOT modify `n6/atlas.n6` (read-only symlink to canonical SSOT). anima PROPOSES; CANON maintainer reviews + appends.
 
 ---
 

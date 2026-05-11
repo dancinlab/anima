@@ -17,7 +17,7 @@
     "exec_pattern": "nohup /tmp/vlm_savepoint_autopush.sh </dev/null >/tmp/vlm_savepoint_autopush.out 2>&1 & disown",
     "config": {
       "savepoints_dir": "/tmp/vlm_stage1_savepoints",
-      "hf_repo_prefix": "need-singularity/vlm-anima-voice-paradigm-stage1",
+      "hf_repo_prefix": "dancinlab/vlm-anima-voice-paradigm-stage1",
       "hf_token_path": "~/.cache/huggingface/token",
       "train_pid_watched": 31960,
       "poll_interval_s": 30,
@@ -36,12 +36,12 @@
   "preseeded_pushed_list": ["step-5k", "step-10k", "step-15k", "step-20k"],
   "preseed_rationale": "Sister BG (a9a016b528) handles the 4 staged ckpts via Mac-side hf_upload_mk2.hexa; daemon must NOT race for those. Pre-seeding marks them as already-pushed so daemon skips them and only handles 25k+.",
   "future_milestones_to_be_auto_pushed": [
-    {"name": "step-25k", "expected_repo": "need-singularity/vlm-anima-voice-paradigm-stage1-step-25k", "eta_min_from_train_start": "~152 (already on disk at setup time)", "status_at_setup": "ON_DISK_AWAITING_TOKEN"},
-    {"name": "step-30k", "expected_repo": "need-singularity/vlm-anima-voice-paradigm-stage1-step-30k", "eta_min_from_train_start": "~183", "status_at_setup": "PENDING"},
-    {"name": "step-35k", "expected_repo": "need-singularity/vlm-anima-voice-paradigm-stage1-step-35k", "eta_min_from_train_start": "~213", "status_at_setup": "PENDING"},
-    {"name": "step-40k", "expected_repo": "need-singularity/vlm-anima-voice-paradigm-stage1-step-40k", "eta_min_from_train_start": "~244", "status_at_setup": "PENDING"},
-    {"name": "step-45k", "expected_repo": "need-singularity/vlm-anima-voice-paradigm-stage1-step-45k", "eta_min_from_train_start": "~274", "status_at_setup": "PENDING"},
-    {"name": "step-50k", "expected_repo": "need-singularity/vlm-anima-voice-paradigm-stage1-step-50k", "eta_min_from_train_start": "~305", "status_at_setup": "PENDING"}
+    {"name": "step-25k", "expected_repo": "dancinlab/vlm-anima-voice-paradigm-stage1-step-25k", "eta_min_from_train_start": "~152 (already on disk at setup time)", "status_at_setup": "ON_DISK_AWAITING_TOKEN"},
+    {"name": "step-30k", "expected_repo": "dancinlab/vlm-anima-voice-paradigm-stage1-step-30k", "eta_min_from_train_start": "~183", "status_at_setup": "PENDING"},
+    {"name": "step-35k", "expected_repo": "dancinlab/vlm-anima-voice-paradigm-stage1-step-35k", "eta_min_from_train_start": "~213", "status_at_setup": "PENDING"},
+    {"name": "step-40k", "expected_repo": "dancinlab/vlm-anima-voice-paradigm-stage1-step-40k", "eta_min_from_train_start": "~244", "status_at_setup": "PENDING"},
+    {"name": "step-45k", "expected_repo": "dancinlab/vlm-anima-voice-paradigm-stage1-step-45k", "eta_min_from_train_start": "~274", "status_at_setup": "PENDING"},
+    {"name": "step-50k", "expected_repo": "dancinlab/vlm-anima-voice-paradigm-stage1-step-50k", "eta_min_from_train_start": "~305", "status_at_setup": "PENDING"}
   ],
   "smoke_tests": {
     "syntax_check": {"cmd": "bash -n /tmp/vlm_savepoint_autopush.sh", "result": "PASS"},
@@ -60,7 +60,7 @@
     },
     "live_daemon_startup": {
       "log_lines_observed": [
-        "DAEMON_START pid=3401937 savepoints_dir=/tmp/vlm_stage1_savepoints repo_prefix=need-singularity/vlm-anima-voice-paradigm-stage1 train_pid=31960",
+        "DAEMON_START pid=3401937 savepoints_dir=/tmp/vlm_stage1_savepoints repo_prefix=dancinlab/vlm-anima-voice-paradigm-stage1 train_pid=31960",
         "TOKEN_INVALID result=FAIL_API_HfHubHTTPError — sleeping 60s before recheck (3 cycles confirmed)"
       ],
       "process_state": "S< (sleeping, low priority)",

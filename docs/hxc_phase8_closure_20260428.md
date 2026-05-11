@@ -34,7 +34,7 @@
 | **mixed inventory (many-small-files)** | nexus aggregate | 43% | -37pp | A16 cross-file dict |
 | **text-heavy / NL training corpus** | anima alm_r13 | 24% | -56pp | A9 hexa-native tokenizer |
 | | hive raw_addition_requests/registry | 1% | -79pp | A9 |
-| **entropy-bound** | n6-architecture atlas-convergence | 4% | -76pp | write-side schema redesign |
+| **entropy-bound** | CANON atlas-convergence | 4% | -76pp | write-side schema redesign |
 
 ## Cross-repo aggregate trajectory
 
@@ -94,7 +94,7 @@
 - Projected: nexus 43% → 60-70%
 
 ### Schema redesign at write-time (out-of-scope)
-- Targets: n6-architecture atlas-convergence (entropy-bound 4%)
+- Targets: CANON atlas-convergence (entropy-bound 4%)
 - Solution: write less-redundant data structure at source
 - Not an HXC concern; upstream pipeline change
 
@@ -114,7 +114,7 @@
 - hive 69% (algorithm-catalog ceiling — A9 + A16 needed)
 - nexus 43% (A16 cross-file dict needed)
 - anima 29% (A9 LLM tokenizer needed)
-- n6-architecture 4% (entropy-bound, out-of-scope)
+- CANON 4% (entropy-bound, out-of-scope)
 
 ## Phase 8 commits inventory (30+)
 

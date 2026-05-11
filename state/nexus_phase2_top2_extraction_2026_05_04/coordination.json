@@ -1,7 +1,7 @@
 {
   "date": "2026-05-04",
   "coordination_strategy": "joined_single_commit_n6_arch_sequential_nexus_stage",
-  "rationale": "Both Phase-2 ZERO_COLLISION modules share n6-architecture working tree at main branch. Joined single commit avoids race-condition partial commits and matches Phase-1 crystallography_n6 + chip_isa_n6 precedent. Nexus deletes staged separately (no commit) per constraint no_auto_commit_nexus_delete.",
+  "rationale": "Both Phase-2 ZERO_COLLISION modules share CANON working tree at main branch. Joined single commit avoids race-condition partial commits and matches Phase-1 crystallography_n6 + chip_isa_n6 precedent. Nexus deletes staged separately (no commit) per constraint no_auto_commit_nexus_delete.",
   "execution_mode": {
     "actual": "single_agent_sequential",
     "rationale_vs_2_bg_parallel": "Both modules' file ops + smoke + commit are I/O-bound and complete in <1min each. Single-agent sequential keeps git tree state deterministic (no commit-race), produces a single joined commit (cleaner history), and matches Phase-1 precedent (chip_isa_n6 audit notes 'joined-with-sister' strategy). 2-BG parallel would have introduced staging/commit ordering complexity for marginal wallclock savings (~30s)."

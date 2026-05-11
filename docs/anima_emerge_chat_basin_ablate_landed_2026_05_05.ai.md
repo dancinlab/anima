@@ -10,7 +10,7 @@ attractor observed in BG-BS (residual noise) and BG-AZ (related diagnostics).
 
 ## Method
 
-- model: `need-singularity/clm-v4-mk2-v1` (CLM v4 mk2 v1) on mac CPU fp32
+- model: `dancinlab/clm-v4-mk2-v1` (CLM v4 mk2 v1) on mac CPU fp32
 - target weight: `model.decoder.head_a.weight` (Linear-style lm_head; cloned
   before mutation, restored after sweep -- raw#15 additive)
 - basin set construction (n=28 unique token ids):

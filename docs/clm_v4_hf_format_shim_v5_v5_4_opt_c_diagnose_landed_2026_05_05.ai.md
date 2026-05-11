@@ -51,7 +51,7 @@ STRENGTHENED — TWO independent eval points now corroborate the F-SHIM-V4-4 PRE
 1. OPT-C with best.pt loaded: lift_pp = -0.5pp (architecturally predicted FAIL_EXPECTED)
 2. V5-4 DESIGN-1 fresh-init (no best.pt): lift_pp_v5 = +1.0pp ± 4.48pp (architecturally surprising — even with substrate differential preserved, no measurable lift; binding constraint is loss-side, not init-side)
 
-The G3 PARTIAL_PASS carve-out for `need-singularity/clm-v4-mk2-v1` PUBLIC promote remains valid; PUBLIC promote BG must cite this diagnose verdict + closure spec + Phase 2 OPT-A verdict + V5-4 DESIGN-1 verdict + OPT-C verdict (all 5 corroborating).
+The G3 PARTIAL_PASS carve-out for `dancinlab/clm-v4-mk2-v1` PUBLIC promote remains valid; PUBLIC promote BG must cite this diagnose verdict + closure spec + Phase 2 OPT-A verdict + V5-4 DESIGN-1 verdict + OPT-C verdict (all 5 corroborating).
 
 ## OPT-B retrain trigger impact
 

@@ -5,18 +5,18 @@
   "context": {
     "original_failure": "HF token revoked at ~22:50 UTC 2026-05-03 (=11:50 KST) during training; in-band push at step 5000/10000/25000/50000/final all failed with HfHubHTTPError 401 (or comparable token-invalidation error); training loop continued and saved local savepoints to /tmp/p9_paradigm_j_50k_v2_savepoints/ on ubu1 RTX 5070 12GB",
     "recovery_window": "2026-05-04T00:21:43Z .. 2026-05-04T00:23:41Z (~118s for 5 uploads, 5x150MB)",
-    "token_state_at_recovery": "valid (whoami=dancinlife, orgs=need-singularity) on both Mac and ubu1",
+    "token_state_at_recovery": "valid (whoami=dancinlife, orgs=dancinlab) on both Mac and ubu1",
     "naming_convention_status": "mk2 hf_upload_mk2.hexa naming validator REJECTED stage substring 'paradigm-j-50k-step-{Nk}' because it does not begin with one of {sft-stage|dpo|merged|base|preview|dev}; recovery upload bypassed mk2 wrapper and used direct `hf upload` shell-out; raw#9 honored (no .py on mac side)",
     "readme_status": "5 mk2-template-conformant READMEs (5 required H2 headings + >=3 honest Caveats bullets) generated under state/p9_paradigm_j_50k_v2_2026_05_03/readmes/, scp'd to each savepoint dir on ubu1 to overwrite the auto-generated PEFT placeholder, and uploaded as part of the folder commit"
   },
   "uploads": [
     {
       "step": 5000,
-      "repo": "need-singularity/clm-v4-paradigm-j-50k-step-5k",
+      "repo": "dancinlab/clm-v4-paradigm-j-50k-step-5k",
       "src_dir_ubu1": "/tmp/p9_paradigm_j_50k_v2_savepoints/step_5000",
       "ok": true,
       "ts_create_utc": "2026-05-04T00:21:43Z",
-      "commit_url": "https://huggingface.co/need-singularity/clm-v4-paradigm-j-50k-step-5k/commit/a5b76c93e8b4eb2026f37654d96304dd85b273ed",
+      "commit_url": "https://huggingface.co/dancinlab/clm-v4-paradigm-j-50k-step-5k/commit/a5b76c93e8b4eb2026f37654d96304dd85b273ed",
       "upload_rc": 0,
       "files": [
         {"rel": "jvae_heads.pt",            "sha256": "61d5e505121b759ae5a7c5fe6f3fb12de81c5d97994b8b7dbcf1841ab986104c"},
@@ -27,11 +27,11 @@
     },
     {
       "step": 10000,
-      "repo": "need-singularity/clm-v4-paradigm-j-50k-step-10k",
+      "repo": "dancinlab/clm-v4-paradigm-j-50k-step-10k",
       "src_dir_ubu1": "/tmp/p9_paradigm_j_50k_v2_savepoints/step_10000",
       "ok": true,
       "ts_create_utc": "2026-05-04T00:22:10Z",
-      "commit_url": "https://huggingface.co/need-singularity/clm-v4-paradigm-j-50k-step-10k/commit/3ac7bac731e429406c009a65c95a941c97b9832d",
+      "commit_url": "https://huggingface.co/dancinlab/clm-v4-paradigm-j-50k-step-10k/commit/3ac7bac731e429406c009a65c95a941c97b9832d",
       "upload_rc": 0,
       "files": [
         {"rel": "jvae_heads.pt",            "sha256": "471b7d7aa91bb02971fafe50cf227d9ce2c18a8fc0ccc3ffea83e110e3c6c28b"},
@@ -42,11 +42,11 @@
     },
     {
       "step": 25000,
-      "repo": "need-singularity/clm-v4-paradigm-j-50k-step-25k",
+      "repo": "dancinlab/clm-v4-paradigm-j-50k-step-25k",
       "src_dir_ubu1": "/tmp/p9_paradigm_j_50k_v2_savepoints/step_25000",
       "ok": true,
       "ts_create_utc": "2026-05-04T00:22:31Z",
-      "commit_url": "https://huggingface.co/need-singularity/clm-v4-paradigm-j-50k-step-25k/commit/c054fe1a7d3b9bfbabd26048bb9b6a003fc30eaf",
+      "commit_url": "https://huggingface.co/dancinlab/clm-v4-paradigm-j-50k-step-25k/commit/c054fe1a7d3b9bfbabd26048bb9b6a003fc30eaf",
       "upload_rc": 0,
       "files": [
         {"rel": "jvae_heads.pt",            "sha256": "d2506e8815b7b3b26165896c761d3824ebb60da196ce06370933caf223ce401d"},
@@ -57,11 +57,11 @@
     },
     {
       "step": 50000,
-      "repo": "need-singularity/clm-v4-paradigm-j-50k-step-50k",
+      "repo": "dancinlab/clm-v4-paradigm-j-50k-step-50k",
       "src_dir_ubu1": "/tmp/p9_paradigm_j_50k_v2_savepoints/step_50000",
       "ok": true,
       "ts_create_utc": "2026-05-04T00:22:57Z",
-      "commit_url": "https://huggingface.co/need-singularity/clm-v4-paradigm-j-50k-step-50k/commit/4fd5f002c820b044ed6df600147d2061e077ece7",
+      "commit_url": "https://huggingface.co/dancinlab/clm-v4-paradigm-j-50k-step-50k/commit/4fd5f002c820b044ed6df600147d2061e077ece7",
       "upload_rc": 0,
       "files": [
         {"rel": "jvae_heads.pt",            "sha256": "78d3c3be888ed3ccb6952952869d2371495af1cc53331e13a5d97c4b957c551b"},
@@ -72,11 +72,11 @@
     },
     {
       "step": 50000,
-      "repo": "need-singularity/clm-v4-paradigm-j-50k-final",
+      "repo": "dancinlab/clm-v4-paradigm-j-50k-final",
       "src_dir_ubu1": "/tmp/p9_paradigm_j_50k_v2_savepoints/final",
       "ok": true,
       "ts_create_utc": "2026-05-04T00:23:37Z",
-      "commit_url": "https://huggingface.co/need-singularity/clm-v4-paradigm-j-50k-final/commit/a6da7a7725d8c3cff3b53c9df37a6352c7c8c7a6",
+      "commit_url": "https://huggingface.co/dancinlab/clm-v4-paradigm-j-50k-final/commit/a6da7a7725d8c3cff3b53c9df37a6352c7c8c7a6",
       "upload_rc": 0,
       "duplicate_of_step_50k_weights": true,
       "duplicate_evidence": "adapter_model.safetensors sha256 == step_50000/adapter_model.safetensors sha256 == 8bc08e92445e5cd64c595e24b8f01f6c858df49ca19bc2aaba212d7311467644; jvae_heads.pt sha256 == step_50000/jvae_heads.pt sha256 == 78d3c3be888ed3ccb6952952869d2371495af1cc53331e13a5d97c4b957c551b",

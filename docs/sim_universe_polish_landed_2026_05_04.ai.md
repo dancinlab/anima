@@ -9,11 +9,11 @@
 ## Summary
 
 Polished the standalone `sim-universe` repo
-(<https://github.com/need-singularity/sim-universe>) to **qmirror v1.0.0
+(<https://github.com/dancinlab/sim-universe>) to **qmirror v1.0.0
 parity**: README badges + architecture diagram + cost comparison + 4
 honest C3 caveats + consumer cross-links; new `CHANGELOG.md` and
 `RELEASE_NOTES_v1.0.0.md`; published GitHub release `v1.0.0`; bootstrapped
-HF Hub mirror at <https://huggingface.co/need-singularity/sim-universe>;
+HF Hub mirror at <https://huggingface.co/dancinlab/sim-universe>;
 verified the existing `.github/workflows/sync-to-hf.yml` GitHub Actions
 workflow is wired and waiting on the `HF_TOKEN` secret.
 
@@ -29,7 +29,7 @@ workflow is wired and waiting on the `HF_TOKEN` secret.
 - `CHANGELOG.md` (NEW, 82 LoC) — v1.0.0 entry with provenance + 5 base caveats
 - `RELEASE_NOTES_v1.0.0.md` (NEW, 111 LoC) — release notes file consumed by `gh release create --notes-file`
 - GitHub release `v1.0.0` published from `main` (commit `16dc90c`)
-- HF Hub repo `need-singularity/sim-universe` (model-type) created + initial 98-file upload (commit `ee60c8c`)
+- HF Hub repo `dancinlab/sim-universe` (model-type) created + initial 98-file upload (commit `ee60c8c`)
 - Smoke test PASS — fresh clone + `hexa run cli/sim-universe.hexa selftest --quick` returns `__SIM_UNIVERSE_SELFTEST__ PASS`
 - State artifacts: `anima/state/sim_universe_polish_2026_05_04/{audit.json, push_log.json, smoke_test.json}`
 - Marker: `anima/state/markers/sim_universe_polish_landed.marker`
@@ -40,7 +40,7 @@ workflow is wired and waiting on the `HF_TOKEN` secret.
    runs on every push to `main` but **fails loudly** at the
    `Verify HF_TOKEN secret is present` step until the `HF_TOKEN` GitHub
    repository secret is set (write-scope) at
-   <https://github.com/need-singularity/sim-universe/settings/secrets/actions>.
+   <https://github.com/dancinlab/sim-universe/settings/secrets/actions>.
    By design — silent half-success is worse than visible failure.
 2. **GitHub release deletion is friction-laden** — once `v1.0.0` is
    published it is technically deletable via `gh release delete v1.0.0`,
@@ -60,7 +60,7 @@ workflow is wired and waiting on the `HF_TOKEN` secret.
 ## USER ACTION required
 
 > Set the **`HF_TOKEN`** GitHub repository secret with a write-scope token at
-> <https://github.com/need-singularity/sim-universe/settings/secrets/actions>
+> <https://github.com/dancinlab/sim-universe/settings/secrets/actions>
 
 Without this secret, the `.github/workflows/sync-to-hf.yml` workflow runs on
 every push to `main` but fails loudly at the `Verify HF_TOKEN secret is

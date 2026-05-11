@@ -15,7 +15,7 @@
 
 ## Why
 
-The v0.2.0 5th tier was a silent fallback that masked operator intent — if the standalone CLI was missing/misconfigured, the router would silently dispatch to deprecated in-tree modules with only a stderr WARN. This violated the operator directive and meant fresh installs could pass smoke tests against stale in-tree code instead of the canonical standalone (need-singularity/qmirror).
+The v0.2.0 5th tier was a silent fallback that masked operator intent — if the standalone CLI was missing/misconfigured, the router would silently dispatch to deprecated in-tree modules with only a stderr WARN. This violated the operator directive and meant fresh installs could pass smoke tests against stale in-tree code instead of the canonical standalone (dancinlab/qmirror).
 
 After v0.3.0, missing standalone → hard fail (exit 127) with structured error message listing all 4 attempted tiers + remediation steps.
 
@@ -81,7 +81,7 @@ Audit log evidence: see `state/nexus_qmirror_legacy_removed_2026_05_03/smoke_tes
 ## Caveats (raw#10 C3, 4 honest)
 
 1. **Deletion irreversibility**: in-tree modules removed on disk. Recovery requires git history checkout (`git log --diff-filter=D` + `git checkout <sha>~1`). No on-disk fallback remains.
-2. **Fresh-install dependency**: a clean nexus install (or any environment where qmirror is not reachable via the 4 tiers) will hard-fail with exit 127. Pre-flight requires `hx install qmirror` or `$QMIRROR_ROOT` set to a need-singularity/qmirror checkout.
+2. **Fresh-install dependency**: a clean nexus install (or any environment where qmirror is not reachable via the 4 tiers) will hard-fail with exit 127. Pre-flight requires `hx install qmirror` or `$QMIRROR_ROOT` set to a dancinlab/qmirror checkout.
 3. **Hard-fail not silent**: when all 4 tiers fail, the router exits 127 with a structured error message. Any caller that previously relied on the v0.2.0 silent in-tree fallback will now surface the failure loudly. This is intentional per operator directive.
 4. **Audit log enum change**: the `route` field no longer emits `legacy-intree`. Log-parsing consumers (dashboards, alerting, BLM/TLM/SLM normalization scripts) must update enum schemas.
 

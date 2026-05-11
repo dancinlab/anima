@@ -71,8 +71,8 @@ Run once, then delete after lm-eval validates it can load.
 import os, sys, json, shutil, torch
 from pathlib import Path
 
-CLM_TOKENIZER_DIR = Path.home() / ".cache/huggingface/hub/models--need-singularity--clm-v4-base-mirror/snapshots/10ee03687db312c55bbec5858c814bef28e4d365/tokenizer"
-CLM_BEST_PT = Path.home() / ".cache/huggingface/hub/models--need-singularity--clm-v4-base-mirror/snapshots/856278beb59c5b39f16485cc8f3a46dcdaf9d1e3/best.pt"
+CLM_TOKENIZER_DIR = Path.home() / ".cache/huggingface/hub/models--dancinlab--clm-v4-base-mirror/snapshots/10ee03687db312c55bbec5858c814bef28e4d365/tokenizer"
+CLM_BEST_PT = Path.home() / ".cache/huggingface/hub/models--dancinlab--clm-v4-base-mirror/snapshots/856278beb59c5b39f16485cc8f3a46dcdaf9d1e3/best.pt"
 OUT_DIR = Path.home() / "p9_base_val_2026_05_04/clm_v4_base_hf"
 
 # NOTE: this is a STUB. The actual CLM v4 architecture class must come from the anima

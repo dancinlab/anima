@@ -8,7 +8,7 @@
 ## Summary
 
 Scrubbed 6 internal modules from `~/core/nexus/` that already exist as
-standalone repos in `need-singularity/*`. Refactored consumers to invoke
+standalone repos in `dancinlab/*`. Refactored consumers to invoke
 the standalones via a 4-tier shellout resolver (env → Mac dev path → home
 path → PATH bin), with hard-fail + actionable hint when no tier resolves.
 
@@ -75,7 +75,7 @@ fn _resolve_<name>_invocation() -> str {
 5. **Smoke not exhaustive** — only `--help` and `qrng status` exercised.
    Full subcmd surface (`collect`, `chain`, `meta`, `selftest` etc.) deferred
    to actual callers; the loud-fail contract is the safety net.
-6. **n6-arch standalone not yet a hexa.toml dep** — `n6-architecture` is
+6. **n6-arch standalone not yet a hexa.toml dep** — `CANON` is
    the absorber for chip_isa_n6/crystallography_n6/fusion_ledger/tabletop,
    but it has no `cli/<name>.hexa` thin router and is not declared in
    `[dependencies]`. Those 4 modules had zero nexus surface consumers,

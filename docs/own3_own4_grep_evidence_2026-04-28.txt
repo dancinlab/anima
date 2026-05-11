@@ -26,11 +26,11 @@ grep -n "H-CX-72\|Golden MoE\|12.*experts.*4.*active" /Users/ghost/core/anima/an
 grep -rIl --include='*.md' --include='*.hexa' --include='*.json' --include='*.n6' \
   --exclude-dir=.git --exclude-dir=node_modules \
   'σ/τ\s*=\s*3\|sigma/tau\s*=\s*3\|tau(6)=4\|σ(6)=12' \
-  /Users/ghost/core/nexus /Users/ghost/core/hive /Users/ghost/core/n6-architecture /Users/ghost/core/hexa-lang
+  /Users/ghost/core/nexus /Users/ghost/core/hive /Users/ghost/core/canon /Users/ghost/core/hexa-lang
 # expected: nexus 10 + hive 3 + n6-arch 5 + hexa-lang 5 = 23 file hits, airgenome 0 (off-domain)
 
 # atlas R35 cross_paradigm_bridge anchor (precondition for R36 dual-layer pattern)
-grep -n "R35.*cross_paradigm\|cross_paradigm_bridge" /Users/ghost/core/n6-architecture/atlas/atlas.n6
+grep -n "R35.*cross_paradigm\|cross_paradigm_bridge" /Users/ghost/core/canon/atlas/atlas.n6
 # expected: 1+ hits at line range 21849-21881
 
 # σ/τ alignment lint impl
@@ -51,8 +51,8 @@ grep -A4 "training-resource troubleshooting" /Users/ghost/core/anima/.own
 grep -n "own 4\|raw 78 daemon-singleton\|raw 12 silent-error-ban" /Users/ghost/core/hive/docs/subagent_dispatch_infra_fix_20260427_landing.md
 # expected: L9 "all root-cause, no temporary workarounds — own 4" + L23 raw 78 + L35 raw 12 + own 4
 
-# n6-architecture canary 4-stage rollout pattern
-grep -n "canary\|4-stage\|rollback" /Users/ghost/core/n6-architecture/domains/cognitive/ai-deployment/ai-deployment.md
+# CANON canary 4-stage rollout pattern
+grep -n "canary\|4-stage\|rollback" /Users/ghost/core/canon/domains/cognitive/ai-deployment/ai-deployment.md
 # expected: L18/L21/L33/L36 canary 4-stage references
 
 # airgenome troubleshooting root_cause entries
@@ -85,7 +85,7 @@ wc -l /Users/ghost/core/anima/state/audit/anima_canonical_helper_lock.jsonl
 
 
 # ─────────────────────────────────────────────────────────────────────────
-# §3 atlas R36 + R37 (n6-architecture maintainer review)
+# §3 atlas R36 + R37 (CANON maintainer review)
 # ─────────────────────────────────────────────────────────────────────────
 
 # R36 candidate absorption (atlas append shard, gitignored)
@@ -130,24 +130,24 @@ grep -c "req-own3-sigma-tau-3-promotion\|req-own4-compute-resource-failure-disci
 # ─────────────────────────────────────────────────────────────────────────
 
 # step 0: verify atlas master is currently uchg
-ls -lO /Users/ghost/core/n6-architecture/atlas/atlas.n6 | awk '{print $5}'
+ls -lO /Users/ghost/core/canon/atlas/atlas.n6 | awk '{print $5}'
 # expected: uchg
 
 # step 1: unlock (escalation_window_sec=300 starts)
-# chflags nouchg /Users/ghost/core/n6-architecture/atlas/atlas.n6
+# chflags nouchg /Users/ghost/core/canon/atlas/atlas.n6
 
 # step 2: append §1.4 R36 grammar at end of @L blocks (search for last @L line as anchor)
-# tail -50 /Users/ghost/core/n6-architecture/atlas/atlas.n6
+# tail -50 /Users/ghost/core/canon/atlas/atlas.n6
 # (paste R36 grammar from anima/docs/atlas_r36_r37_proposal_2026-04-28.md §1.4)
 
 # step 3: append §2.4 R37 grammar (same section)
 # (paste R37 grammar from anima/docs/atlas_r36_r37_proposal_2026-04-28.md §2.4)
 
 # step 4: relock (escalation_window_sec must close < 300s from step 1)
-# chflags uchg /Users/ghost/core/n6-architecture/atlas/atlas.n6
+# chflags uchg /Users/ghost/core/canon/atlas/atlas.n6
 
 # step 5: audit ledger row (raw 85 + raw 77 schema)
-# echo '{"ts":"<ISO>","action":"atlas_R36_R37_append","reason":"...","target_path":"/Users/ghost/core/n6-architecture/atlas/atlas.n6","before_flags":"uchg","after_flags":"uchg","unlock_window_sec":<actual>,"raw_85_compliance":"PASS"}' >> /Users/ghost/core/n6-architecture/state/audit/atlas_uchg_cycles.jsonl
+# echo '{"ts":"<ISO>","action":"atlas_R36_R37_append","reason":"...","target_path":"/Users/ghost/core/canon/atlas/atlas.n6","before_flags":"uchg","after_flags":"uchg","unlock_window_sec":<actual>,"raw_85_compliance":"PASS"}' >> /Users/ghost/core/canon/state/audit/atlas_uchg_cycles.jsonl
 
 
 # ─────────────────────────────────────────────────────────────────────────

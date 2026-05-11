@@ -4,9 +4,9 @@
 //   Polls (every 10 min, max 16h) for ALL THREE Path A r=16 mitigation training pods to complete via:
 //     - HF repo signal per seed: count step-* refs >= 5 (step-2000..step-10000) OR final-tag presence
 //   Seeds tracked:
-//     s42 -> need-singularity/llm-llama32-3b-paradigm-a-prime-r16-sft-stage1
-//     s43 -> need-singularity/llm-llama32-3b-paradigm-a-prime-r16-s43-sft-stage1
-//     s44 -> need-singularity/llm-llama32-3b-paradigm-a-prime-r16-s44-sft-stage1
+//     s42 -> dancinlab/llm-llama32-3b-paradigm-a-prime-r16-sft-stage1
+//     s43 -> dancinlab/llm-llama32-3b-paradigm-a-prime-r16-s43-sft-stage1
+//     s44 -> dancinlab/llm-llama32-3b-paradigm-a-prime-r16-s44-sft-stage1
 //
 //   GUARD-3 (success-signal checklist): file existence != success. Each candidate signal must
 //     - hf_refs endpoint returns 200 AND parses as JSON
@@ -34,9 +34,9 @@
 //   hexa run tool/p9_path_a_r16_3seed_completion_watchdog.hexa --loop               # poll-only DRY (no eval)
 //
 // CONFIG (env overrides)
-//   ANIMA_R16_3SEED_HF_S42      default: need-singularity/llm-llama32-3b-paradigm-a-prime-r16-sft-stage1
-//   ANIMA_R16_3SEED_HF_S43      default: need-singularity/llm-llama32-3b-paradigm-a-prime-r16-s43-sft-stage1
-//   ANIMA_R16_3SEED_HF_S44      default: need-singularity/llm-llama32-3b-paradigm-a-prime-r16-s44-sft-stage1
+//   ANIMA_R16_3SEED_HF_S42      default: dancinlab/llm-llama32-3b-paradigm-a-prime-r16-sft-stage1
+//   ANIMA_R16_3SEED_HF_S43      default: dancinlab/llm-llama32-3b-paradigm-a-prime-r16-s43-sft-stage1
+//   ANIMA_R16_3SEED_HF_S44      default: dancinlab/llm-llama32-3b-paradigm-a-prime-r16-s44-sft-stage1
 //   ANIMA_R16_HF_FINAL_TAG      default: step-10000
 //   ANIMA_R16_HF_MIN_CKPTS      default: 5
 //   ANIMA_R64_BASELINE          default: state/p9_a_prime_main_eval_2026_05_03_r64_baseline.json
@@ -627,9 +627,9 @@ fn main() {
     let av = _argv()
     if _has(av, "--selftest") { cmd_selftest(); exit(0) }
 
-    let s42_repo = _env_or("ANIMA_R16_3SEED_HF_S42", "need-singularity/llm-llama32-3b-paradigm-a-prime-r16-sft-stage1")
-    let s43_repo = _env_or("ANIMA_R16_3SEED_HF_S43", "need-singularity/llm-llama32-3b-paradigm-a-prime-r16-s43-sft-stage1")
-    let s44_repo = _env_or("ANIMA_R16_3SEED_HF_S44", "need-singularity/llm-llama32-3b-paradigm-a-prime-r16-s44-sft-stage1")
+    let s42_repo = _env_or("ANIMA_R16_3SEED_HF_S42", "dancinlab/llm-llama32-3b-paradigm-a-prime-r16-sft-stage1")
+    let s43_repo = _env_or("ANIMA_R16_3SEED_HF_S43", "dancinlab/llm-llama32-3b-paradigm-a-prime-r16-s43-sft-stage1")
+    let s44_repo = _env_or("ANIMA_R16_3SEED_HF_S44", "dancinlab/llm-llama32-3b-paradigm-a-prime-r16-s44-sft-stage1")
     let final_tag = _env_or("ANIMA_R16_HF_FINAL_TAG", "step-10000")
     let hf_min = to_int(_env_or("ANIMA_R16_HF_MIN_CKPTS", "5"))
     let r64_baseline = _env_or("ANIMA_R64_BASELINE", "/Users/ghost/core/anima/state/p9_a_prime_main_eval_2026_05_03_r64_baseline.json")

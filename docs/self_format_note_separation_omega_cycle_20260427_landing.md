@@ -233,7 +233,7 @@ without violating it.
 
 Sister repos surveyed: hive (canonical L0, 116 rules), anima (own 4+ /
 ext 2+ / roadmap 168+), nexus (own 2 raw 108 lineage), hexa-lang (legacy
-4-rule retired), airgenome (inherited), n6-architecture (atlas SSOT shards).
+4-rule retired), airgenome (inherited), CANON (atlas SSOT shards).
 
 Common pattern: all repos use raw 2 grammar; all hit note-overflow on rules
 > 80; no repo currently has annex / `.history` channel — universal gap.

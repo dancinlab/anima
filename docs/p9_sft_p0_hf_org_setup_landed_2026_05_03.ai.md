@@ -16,7 +16,7 @@ related_raws:
 preserved_unchanged:
   - all existing P9 spec artifacts (state/p9_sft_spec_2026_05_02/*.json + docs/p9_sft_spec_2026_05_02.md)
   - existing handoff doc (docs/p9_sft_handoff_prompt_2026_05_02.md)
-  - HF org need-singularity (no destructive ops; create/delete/move all skipped)
+  - HF org dancinlab (no destructive ops; create/delete/move all skipped)
   - dancinlife token entry (no logout / no force-rewrite)
 policy:
   migration: forbidden
@@ -34,7 +34,7 @@ policy:
 
 ## TL;DR (다섯 줄)
 
-- **목표**: P9 SFT EXEC S3 측 Phase 0 — `need-singularity` org 측 6개 private model repo 신규 create + 각 repo README 측 placeholder template 작성.
+- **목표**: P9 SFT EXEC S3 측 Phase 0 — `dancinlab` org 측 6개 private model repo 신규 create + 각 repo README 측 placeholder template 작성.
 - **결론**: HF token 측 revocation 발견 → repo create EXEC **BLOCKED**. 사용자 측 token 재발급 1회 + bash 측 6 줄 명령어로 Phase 0 closure 가능.
 - **사전 staged 산출물**: 6 repo README template + 1 idempotent command file + 1 planning JSON + 본 handoff + marker = total 10 file.
 - **0 destructive**: HF API 측 delete / move / force 0건. dancinlife token 측 logout 0건. 기존 spec 측 4 산출물 (spec doc + 8 JSON + handoff prompt) 무수정.
@@ -73,7 +73,7 @@ Please run `hf auth login --force` to set a new token.
 | #1 hf CLI whoami | `hf auth whoami` | `Invalid user token` |
 | #2 env var override | `HF_TOKEN=hf_eik...JTOn hf auth whoami` | `Invalid user token from HF_TOKEN environment variable` |
 | #3 직접 API POST | `curl POST https://huggingface.co/api/whoami-v2 -H "Authorization: Bearer hf_eik...JTOn"` | `{"error":"Invalid username or password."}` |
-| #4 직접 API repos/create | `curl POST https://huggingface.co/api/repos/create -d '{"name":"clm-v4-sft-step-5k","organization":"need-singularity","private":true,"type":"model"}'` | `{"error":"Invalid username or password."}` |
+| #4 직접 API repos/create | `curl POST https://huggingface.co/api/repos/create -d '{"name":"clm-v4-sft-step-5k","organization":"dancinlab","private":true,"type":"model"}'` | `{"error":"Invalid username or password."}` |
 
 **진단**: dancinlife token (hf_eik…JTOn) 서버측 revocation 또는 만료 확정.
 **Phase 0 EXEC 측 차단**: 6 repo create 측 모두 동일 원인 측 fail 예상.
@@ -84,12 +84,12 @@ Please run `hf auth login --force` to set a new token.
 
 | repo | purpose | private→public gate |
 |---|---|---|
-| `need-singularity/clm-v4-sft-step-5k` | 5K-step intermediate savepoint | F1-F4 ALL PASS at final |
-| `need-singularity/clm-v4-sft-step-10k` | 10K-step intermediate savepoint | F1-F4 ALL PASS at final |
-| `need-singularity/clm-v4-sft-step-25k` | 25K-step intermediate (50% mark) | F1-F4 ALL PASS at final |
-| `need-singularity/clm-v4-sft-step-50k` | 50K end-of-budget per combo | F1-F4 measured here |
-| `need-singularity/clm-v4-sft-final` | 9-combo selection winner | F1-F4 ALL PASS gate |
-| `need-singularity/clm-v4-sft-stage1` | Phase 1 sentinel (pipeline smoke) | diagnostic only, no gate |
+| `dancinlab/clm-v4-sft-step-5k` | 5K-step intermediate savepoint | F1-F4 ALL PASS at final |
+| `dancinlab/clm-v4-sft-step-10k` | 10K-step intermediate savepoint | F1-F4 ALL PASS at final |
+| `dancinlab/clm-v4-sft-step-25k` | 25K-step intermediate (50% mark) | F1-F4 ALL PASS at final |
+| `dancinlab/clm-v4-sft-step-50k` | 50K end-of-budget per combo | F1-F4 measured here |
+| `dancinlab/clm-v4-sft-final` | 9-combo selection winner | F1-F4 ALL PASS gate |
+| `dancinlab/clm-v4-sft-stage1` | Phase 1 sentinel (pipeline smoke) | diagnostic only, no gate |
 
 ### README template 측 공통 4 block (placeholder)
 
@@ -113,7 +113,7 @@ pipeline OOM / NaN 0 + savepoint push step 5K 성공 + φ★ hook every-100-step
 ```bash
 # 1. 토큰 재발급: https://huggingface.co/settings/tokens
 #    scope: write
-#    org access: need-singularity 포함 확인
+#    org access: dancinlab 포함 확인
 # 2. 토큰 등록
 hf auth login --token <NEW_TOKEN>
 # 또는
@@ -124,7 +124,7 @@ cd /Users/ghost/core/anima/state/p9_sft_p0_hf_org_setup_2026_05_03/
 bash repo_create_commands.txt   # 또는 명령어를 한 줄씩 paste
 
 # 4. 검증
-hf auth whoami      # → "dancinlife" 출력 + need-singularity org 포함 확인
+hf auth whoami      # → "dancinlife" 출력 + dancinlab org 포함 확인
 ```
 
 `repo_create_commands.txt` 측 `--exist-ok` flag 부착 → 재실행 시 중복 create error 0건 (idempotent).

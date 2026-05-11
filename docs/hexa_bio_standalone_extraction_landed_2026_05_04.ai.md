@@ -15,8 +15,8 @@ sim-universe (v1.0.0, registry L23) extraction pattern. hexa-bio is the
 ## Outputs
 
 - **Standalone repo**: `/Users/ghost/core/hexa-bio/` (23 files, ~280 LoC README, ~480 LoC CLI router, 4 modules + selftest, 5 tests, 4 examples, install hook, hexa.toml manifest)
-- **GitHub**: <https://github.com/need-singularity/hexa-bio> (public, Apache-2.0, initial commit `3877f5e`, branch `main`)
-- **HF Hub mirror**: <https://huggingface.co/need-singularity/hexa-bio> (model type, 23 files uploaded, commit `df9a668`)
+- **GitHub**: <https://github.com/dancinlab/hexa-bio> (public, Apache-2.0, initial commit `3877f5e`, branch `main`)
+- **HF Hub mirror**: <https://huggingface.co/dancinlab/hexa-bio> (model type, 23 files uploaded, commit `df9a668`)
 - **Registry**: `/Users/ghost/core/hexa-lang/tool/pkg/registry.tsv` L24 added
 - **Nexus refactor scaffold (4-step, NOT auto-committed)**:
   1. Created `nexus/cli/bio.hexa` (4-tier shellout, ~280 LoC, qmirror v0.3.0 pattern)
@@ -47,7 +47,7 @@ sim-universe (v1.0.0, registry L23) extraction pattern. hexa-bio is the
    empirically grounded. Nanobot/ribozyme + T>1 virocapsid mappings are
    inherited algebraic conjecture.
 4. **Migration of `nexus/sim_bridge/weave/` may break edge-case
-   consumers.** Cross-link consumers (n6-architecture papers,
+   consumers.** Cross-link consumers (CANON papers,
    `nexus/state/audit/cage_assembly_events.jsonl` readers) reference the
    old path. The runs/ ledger (~10MB jsonl) is not vendored into the
    standalone; archival decision deferred to user (delete script handles).
@@ -82,8 +82,8 @@ sim-universe (v1.0.0, registry L23) extraction pattern. hexa-bio is the
 
 ## Cross-links
 
-- Standalone repo: <https://github.com/need-singularity/hexa-bio>
-- HF mirror: <https://huggingface.co/need-singularity/hexa-bio>
+- Standalone repo: <https://github.com/dancinlab/hexa-bio>
+- HF mirror: <https://huggingface.co/dancinlab/hexa-bio>
 - Sister marker: `state/markers/qmirror_2_closure_landed.marker`
 - Sister marker: `state/markers/sim_universe_standalone_landed.marker` (if present)
-- Upstream WEAVE concept SSOT: `n6-architecture/domains/biology/hexa-weave/hexa-weave.md`
+- Upstream WEAVE concept SSOT: `CANON/domains/biology/hexa-weave/hexa-weave.md`

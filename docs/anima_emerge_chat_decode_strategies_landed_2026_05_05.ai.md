@@ -4,7 +4,7 @@
 **Verdict**: `FAIL_ALL` (n_coherent = 0/6)
 **Cost**: $0 (mac CPU fp32)
 **Wall**: ~30min (model load + 6 × 30 forward passes + beam-4 × 20 forward passes)
-**Substrate**: `need-singularity/clm-v4-mk2-v1` via `inj_helper._try_load_model`
+**Substrate**: `dancinlab/clm-v4-mk2-v1` via `inj_helper._try_load_model`
 **Prompt**: `안녕`
 **Compliance**: raw#37 + raw#15 + raw#10 PASS; no commit; no secret leak; HEXA_PY=.venv-eeg/bin/python
 

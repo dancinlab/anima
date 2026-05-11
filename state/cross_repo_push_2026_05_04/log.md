@@ -5,7 +5,7 @@
 | field | value |
 |---|---|
 | repo | /Users/ghost/core/hive |
-| remote | https://github.com/need-singularity/hive.git |
+| remote | https://github.com/dancinlab/hive.git |
 | branch | hive/main (NOT main — repo convention) |
 | commit | deb6047bf feat(hive cross-repo land 2026-05-04): leak_guard PreToolUse hook + hive-hook-bus settings repo migration + .raw.mk2 bulk migration (+228 rules) |
 | files changed | 10 files, 986 insertions(+) |
@@ -20,7 +20,7 @@
 | field | value |
 |---|---|
 | repo | /Users/ghost/core/hexa-lang |
-| remote | https://github.com/need-singularity/hexa-lang.git |
+| remote | https://github.com/dancinlab/hexa-lang.git |
 | branch | diag/orpheus-selftest-sigkill (continued — already had .own removal commit landed) |
 | commit | 7122546a feat(hexa-lang Phase 1 ML primitives — hf_hub + ieee754 + sentencepiece + http HEAD/rate-limit/LFS chunked 2026-05-04) |
 | files changed | 5 files, 2913 insertions(+) (4 stdlib modules + tool/pkg/registry.tsv refresh) |

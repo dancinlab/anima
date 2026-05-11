@@ -26,7 +26,7 @@
 //        a. (DRY by default) Bump qmirror version 1.0.1 → 2.0.0 in /Users/ghost/core/qmirror/hexa.toml
 //        b. Append CHANGELOG entry [2.0.0] — 2026-05-04 (axes 2.0 closure)
 //        c. Tag release v2.0.0 on GitHub via `gh release create v2.0.0` (requires gh auth)
-//        d. hf upload to need-singularity/qmirror mirror (huggingface-cli; opt-in via --hf)
+//        d. hf upload to dancinlab/qmirror mirror (huggingface-cli; opt-in via --hf)
 //        e. registry.tsv version bump in /Users/ghost/core/hexa-lang/tool/pkg/registry.tsv
 //
 // USAGE
@@ -70,7 +70,7 @@
 //       changes). Closure synth must verify backward-compat OR bump_strategy must be explicit.
 //       --bump flag is gated separately from --apply for this reason; default is DRY.
 //   (d) GitHub release v2.0.0 requires `gh auth status` clean + write scope on
-//       need-singularity/qmirror; if gh auth fails, release step logs RC!=0 and is SKIPPED
+//       dancinlab/qmirror; if gh auth fails, release step logs RC!=0 and is SKIPPED
 //       (composite verdict still emitted; manual `gh release create v2.0.0` retry required).
 //       hf upload (--hf) is similarly opt-in and may fail if HUGGING_FACE_HUB_TOKEN absent.
 
@@ -319,7 +319,7 @@ fn _do_version_bump(hexa_toml: string, changelog: string, registry: string, targ
 
     // 5. hf upload (opt-in via --hf)
     if do_hf {
-        let hf_cmd = "huggingface-cli upload need-singularity/qmirror /Users/ghost/core/qmirror . --repo-type=model --commit-message=\"qmirror v" + target_version + " (qmirror 2.0 axes closure)\" 2>&1 | tail -20"
+        let hf_cmd = "huggingface-cli upload dancinlab/qmirror /Users/ghost/core/qmirror . --repo-type=model --commit-message=\"qmirror v" + target_version + " (qmirror 2.0 axes closure)\" 2>&1 | tail -20"
         let r5 = exec_with_status(hf_cmd)
         println(to_string(r5[0]))
         if r5[1] != 0 {

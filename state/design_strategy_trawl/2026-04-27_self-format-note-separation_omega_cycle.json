@@ -27,7 +27,7 @@
       "ssot_minimal_lint_v1_violators": ["raw 4 (5 notes)", "raw 13 (3 notes)", "raw 35 (4 notes)", "raw 68 (3 notes)", "raw 100 (3 notes)", "raw 103 (3 notes)", "raw 108 (4 notes)"],
       "violation_axis": "note count > 2 — primary; cumulative note chars + verbatim quote secondary",
       "drift_root_cause": "strengthening cycles (2026-04-27 patches), incident evidence (kick-infra-fallback), deferred follow-up rationale, cross-rule relation prose all accumulate as `note` lines because no other structured key fits without raw 2 keys-whitelist extension",
-      "cross_repo_propagation_risk": "sister repos (nexus / anima / hexa-lang / airgenome / n6-architecture / hive) inherit raw 47 strategy-exploration-omega-cycle and raw 0 root-ssot — same drift expected within 30-90d once they bootstrap their own .raw contents"
+      "cross_repo_propagation_risk": "sister repos (nexus / anima / hexa-lang / airgenome / CANON / hive) inherit raw 47 strategy-exploration-omega-cycle and raw 0 root-ssot — same drift expected within 30-90d once they bootstrap their own .raw contents"
     }
   },
   "five_falsifier_pre_register_raw_71": [
@@ -66,7 +66,7 @@
     {
       "id": "F5",
       "condition": "cross-repo trawl 30d post-registration: <2 sister repos adopt the same separation channel (raw 47 strategy-exploration mandates >=3 sister repo coverage)",
-      "experiment_or_observation": "ls ~/core/{nexus,anima,hexa-lang,airgenome,n6-architecture,hive}/<separation-channel-file> | wc -l",
+      "experiment_or_observation": "ls ~/core/{nexus,anima,hexa-lang,airgenome,CANON,hive}/<separation-channel-file> | wc -l",
       "mechanism": "raw 47 cross-repo mandate fails if <3 sister repos adopt; design has poor portability",
       "deadline_or_cadence": "30d",
       "verdict_check": "numeric_threshold (raw 53)"
@@ -459,7 +459,7 @@
       "~/core/nexus (.own 2 rules raw 108 lineage)",
       "~/core/hexa-lang (.raw legacy 4-rule, retired)",
       "~/core/airgenome (.raw inherited)",
-      "~/core/n6-architecture (atlas SSOT shards)"
+      "~/core/canon (atlas SSOT shards)"
     ],
     "common_patterns_found": [
       "all repos use raw 2 grammar (header + body keys, status whitelist)",

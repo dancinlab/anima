@@ -113,7 +113,7 @@ already routes correctly.
   preserved + extended; mount.hexa / bash wrapper / other anima_cli modules
   untouched
 - own 17 — ALM forced learning DEPRECATED, backend = clm_v4_mount only
-  (DEFAULT_MODEL = need-singularity/clm-v4-mk2-v1)
+  (DEFAULT_MODEL = dancinlab/clm-v4-mk2-v1)
 
 ## Known limits
 

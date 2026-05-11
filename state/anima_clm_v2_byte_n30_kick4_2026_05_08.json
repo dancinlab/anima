@@ -4,9 +4,9 @@
   "anima_cycle": "2026-05-08-falsification-cascade-3-of-8",
   "directive": "mk2-v1 base + clm-v2-byte parallel N=30 probe — D1=0.99 highest candidate baseline measurement; V14 reset 후 robust EMERGE 후보 재탐색 (사용자 'bg 갯수 제한없으니까 최대한 빠르게')",
   "ckpt": {
-    "repo": "need-singularity/clm-v2-byte-18m-convo-5k",
+    "repo": "dancinlab/clm-v2-byte-18m-convo-5k",
     "variant": "v2_byte_convo5k",
-    "snapshot": "~/.cache/huggingface/hub/models--need-singularity--clm-v2-byte-18m-convo-5k/snapshots/1af2bcaeaf70c1d0b1a19939a8ada79a28f8cd30/convo_5k.pt",
+    "snapshot": "~/.cache/huggingface/hub/models--dancinlab--clm-v2-byte-18m-convo-5k/snapshots/1af2bcaeaf70c1d0b1a19939a8ada79a28f8cd30/convo_5k.pt",
     "is_base": true,
     "lora": "absent (full pre-train; convo-5k = 5k convo step)",
     "sft": "absent",
@@ -1302,7 +1302,7 @@
     "own_39": "yaml↔md mandatory regenerate"
   },
   "honest_c3": [
-    "real-mode load via convo_5k.pt (HF need-singularity/clm-v2-byte-18m-convo-5k)",
+    "real-mode load via convo_5k.pt (HF dancinlab/clm-v2-byte-18m-convo-5k)",
     "byte-level 256-vocab utf-8 raw byte tokenize — multi-byte Hangul fragmented across 3-byte sequences",
     "cell synthesis 8x192 from 6 blocks x 2 engines (a+g) hidden tap → fold to 8 (drop 4 lowest-norm) — federated cell approximation",
     "phi_star formula mirrors v4 helper but paradigm v11 G3 artifact 부재 — proxy only",

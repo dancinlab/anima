@@ -55,7 +55,7 @@ Add a single new emit line **between** `__ANIMA_CLM_V4_MOUNTED__` and
 
 ```
 __ANIMA_CLM_V4_MOUNTED__ mode=real phi_star_baseline=41.86
-__ANIMA_SUBSTRATE_IDENTITY__ repo=need-singularity/clm-v4-mk2-v1 paradigm=v11_G3 substrate_class=clm-v4-base baseline_method=eval_carry baseline_value=41.86
+__ANIMA_SUBSTRATE_IDENTITY__ repo=dancinlab/clm-v4-mk2-v1 paradigm=v11_G3 substrate_class=clm-v4-base baseline_method=eval_carry baseline_value=41.86
 __ANIMA_CLM_V4_RESPONSE__
 phi_star: 42.1158 (drift +0.2558 from 41.86)
 ...
@@ -116,8 +116,8 @@ new substrates extend this table.
 
 | substrate_class | repo | paradigm | baseline_method | baseline_value | source verdict |
 |---|---|---|---|---|---|
-| `clm-v4-base` | `need-singularity/clm-v4-mk2-v1` | `v11_G3` | `eval_carry` | `41.86` | `state/clm_v4_baseline_eval_2026_05_05/verdict.json:substrate_phi_star` |
-| `pbeta` | `need-singularity/clm-v4-paradigm-d-pbeta-50k-mk2-v1` | `paradigm_d_50k` | `holdout500_K8` | `42.367` | `state/p9_pbeta_holdout500_eval_2026_05_05/verdict.json:core_metrics.phi_star_mean_holdout500` |
+| `clm-v4-base` | `dancinlab/clm-v4-mk2-v1` | `v11_G3` | `eval_carry` | `41.86` | `state/clm_v4_baseline_eval_2026_05_05/verdict.json:substrate_phi_star` |
+| `pbeta` | `dancinlab/clm-v4-paradigm-d-pbeta-50k-mk2-v1` | `paradigm_d_50k` | `holdout500_K8` | `42.367` | `state/p9_pbeta_holdout500_eval_2026_05_05/verdict.json:core_metrics.phi_star_mean_holdout500` |
 | `clm-2-lora` | `state/clm_v4_lora_sft_2026_05_05/results/adapter_final/` (Mac local; not yet on HF) | `lora_sft` | `K8_post_lora` | `31.349` | `state/clm_v4_lora_phi_canonical_2026_05_05/verdict.json:phi_star_post_lora.mean_k8` |
 
 Notes:
@@ -184,7 +184,7 @@ a corresponding line for selftest parity. That is a hexa-native emit, not
 a python emit, so it must be written in hexa string concat style:
 
 ```hexa
-out = out + "__ANIMA_SUBSTRATE_IDENTITY__ repo=need-singularity/clm-v4-mk2-v1 paradigm=v11_G3 substrate_class=clm-v4-base baseline_method=eval_carry baseline_value=" + _fmt4(PHI_STAR_BASELINE) + "\n"
+out = out + "__ANIMA_SUBSTRATE_IDENTITY__ repo=dancinlab/clm-v4-mk2-v1 paradigm=v11_G3 substrate_class=clm-v4-base baseline_method=eval_carry baseline_value=" + _fmt4(PHI_STAR_BASELINE) + "\n"
 ```
 
 ### §3.2 raw#15 additive safety check

@@ -11,7 +11,7 @@
       "failure_reason": "Verify HF_TOKEN secret is present step → ::error::HF_TOKEN secret is not set. (loud step-gate caught it)",
       "secret_count": 0,
       "hf_lastModified": "stale (from prior push event, not today's dispatch)",
-      "url": "https://github.com/need-singularity/qmirror/actions/runs/25305405327"
+      "url": "https://github.com/dancinlab/qmirror/actions/runs/25305405327"
     },
     "sim-universe": {
       "workflow_dispatch": "SUCCESS (run_id 25305406595)",
@@ -20,7 +20,7 @@
       "failure_reason": "Verify HF_TOKEN secret is present step → ::error::HF_TOKEN secret is not set.",
       "secret_count": 0,
       "hf_lastModified": "2026-05-04T06:00:10.000Z (stale; pre-dispatch)",
-      "url": "https://github.com/need-singularity/sim-universe/actions/runs/25305406595"
+      "url": "https://github.com/dancinlab/sim-universe/actions/runs/25305406595"
     },
     "hexa-bio": {
       "workflow_dispatch": "FAILED to dispatch — HTTP 422 'Unrecognized named-value: secrets' at line 20 (job-level if: ${{ secrets.HF_TOKEN != '' }} is invalid GitHub Actions syntax — secrets ctx not allowed in job-level if)",
@@ -38,7 +38,7 @@
       "failure_reason": "Same as qmirror/sim-universe: HF_TOKEN secret missing",
       "secret_count": 0,
       "hf_lastModified": "2026-05-04T06:36:13.000Z (stale)",
-      "url": "https://github.com/need-singularity/honesty-monitor/actions/runs/25305409672"
+      "url": "https://github.com/dancinlab/honesty-monitor/actions/runs/25305409672"
     }
   },
   "caveats": [
@@ -47,8 +47,8 @@
     "C3: HF lastModified timestamps observed are STALE — they reflect previous mirror push events (earlier today/yesterday), NOT today's dispatch attempts. Once HF_TOKEN is correctly set + workflows re-run, lastModified should advance to a post-fix timestamp."
   ],
   "user_action_required": [
-    "ACTION 1 (REQUIRED): Set HF_TOKEN secret on EACH of 4 repos: gh secret set HF_TOKEN --repo need-singularity/<repo> --body \"hf_xxx...\" (write-scope token from https://huggingface.co/settings/tokens). Repos: qmirror, sim-universe, hexa-bio, honesty-monitor.",
+    "ACTION 1 (REQUIRED): Set HF_TOKEN secret on EACH of 4 repos: gh secret set HF_TOKEN --repo dancinlab/<repo> --body \"hf_xxx...\" (write-scope token from https://huggingface.co/settings/tokens). Repos: qmirror, sim-universe, hexa-bio, honesty-monitor.",
     "ACTION 2 (REQUIRED for hexa-bio): Fix .github/workflows/sync-to-hf.yml line 20 — remove invalid job-level if: ${{ secrets.HF_TOKEN != '' }} and replace with step-level gate matching qmirror's loud-fail pattern. workflow_dispatch will keep failing with HTTP 422 until YAML fixed.",
-    "ACTION 3 (after 1+2): Re-trigger via 'gh workflow run sync-to-hf.yml --repo need-singularity/<repo>' for each of 4 repos and verify SUCCESS conclusion."
+    "ACTION 3 (after 1+2): Re-trigger via 'gh workflow run sync-to-hf.yml --repo dancinlab/<repo>' for each of 4 repos and verify SUCCESS conclusion."
   ]
 }

@@ -1,7 +1,7 @@
 # anima_emerge_cand_d_magnitude_sweep_landed_2026_05_05
 
 ## Scope
-BG-W follow-up to BG-Q F-CAND-D-1 FAIL_TRUE on CLM v4 (`need-singularity/clm-v4-mk2-v1`). BG-Q canonical-mode max drift was 1.28e-4 << 0.01 threshold; honest C1 carry could not disambiguate "channel architecturally bypassed" vs "0.5 magnitude below detection threshold". This sweep parametrizes canonical magnitude at 7 values to map the drift trajectory and decide between hypotheses.
+BG-W follow-up to BG-Q F-CAND-D-1 FAIL_TRUE on CLM v4 (`dancinlab/clm-v4-mk2-v1`). BG-Q canonical-mode max drift was 1.28e-4 << 0.01 threshold; honest C1 carry could not disambiguate "channel architecturally bypassed" vs "0.5 magnitude below detection threshold". This sweep parametrizes canonical magnitude at 7 values to map the drift trajectory and decide between hypotheses.
 
 ## Method
 - 1 prompt = "안녕" (BG-Q's max-drift prompt at mag=0.5)

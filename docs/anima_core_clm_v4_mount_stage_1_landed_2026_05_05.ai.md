@@ -27,7 +27,7 @@
 ## Flags
 
 ```
---model PATH           HF cache (default need-singularity/clm-v4-base-mirror)
+--model PATH           HF cache (default dancinlab/clm-v4-base-mirror)
 --shim VERSION         shim v4 (default) | v5
 --output-format FMT    compact (default) | full | json
 --inject-states PATH   pre-load consciousness_states fixture (npy or json)
@@ -91,7 +91,7 @@ Required Stage 2 work:
 1. Wire `clm_v4_mount.hexa --dialogue` into `anima_runtime.hexa --keyboard` as substrate selector
 2. Add `/clm-v4` command to anima-core REPL that pipes stdin to mount layer
 3. Verify session log JSONL accumulation under `state/anima_core_dialogues_<DATE>/`
-4. First real `--probe` test (requires HF cache for `need-singularity/clm-v4-base-mirror` populated)
+4. First real `--probe` test (requires HF cache for `dancinlab/clm-v4-base-mirror` populated)
 
 No blockers. No hook blocks encountered during Stage 1.
 
@@ -104,7 +104,7 @@ No blockers. No hook blocks encountered during Stage 1.
 - **upstream**: `docs/anima_core_clm_v4_mount_emerge_paradigm_2026_05_05.md` (spec §2 Stage 1)
 - **sister**: `tool/transient_py/clm_v4_hf_format_shim.py` (LOCKED v4 shim, .own 4)
 - **substrate science**: `tool/anima_phi_v3_canonical.hexa` (phi-star paradigm v11 G3 +41.86)
-- **HF source**: `need-singularity/clm-v4-mk2-v1` (PRIVATE, 36h review window 후 PUBLIC)
+- **HF source**: `dancinlab/clm-v4-mk2-v1` (PRIVATE, 36h review window 후 PUBLIC)
 - **downstream**: Stage 2 CLI dialogue command + Stage 3 emerge sessions + Stage 4 pattern documentation
 
 ## End

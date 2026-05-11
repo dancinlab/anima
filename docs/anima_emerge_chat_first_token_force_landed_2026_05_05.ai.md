@@ -1,6 +1,6 @@
 # anima emerge chat — first-token force probe LANDED 2026-05-05
 
-**BG-BP** — first-token sensitivity probe on CLM v4 (`need-singularity/clm-v4-mk2-v1`).
+**BG-BP** — first-token sensitivity probe on CLM v4 (`dancinlab/clm-v4-mk2-v1`).
 
 ## Hypothesis
 

@@ -16,11 +16,11 @@
   },
   "checks_performed": [
     "ls /Users/ghost/core/{qrng,mc-integrate,anima-agent}",
-    "gh repo view need-singularity/{qrng,mc-integrate,anima-agent}",
+    "gh repo view dancinlab/{qrng,mc-integrate,anima-agent}",
     "ls state/{qrng,mc_integrate_decouple,mc_integrate_standalone,anima_agent}_*",
     "find state -maxdepth 1 -type d -name *{qrng,mc-integrate,anima_agent}*",
     "grep registry hexa-lang/tool/pkg/registry.tsv",
-    "gh repo list need-singularity --limit=50"
+    "gh repo list dancinlab --limit=50"
   ],
   "caveats_raw10": [
     "C1: in-flight BG processes (ace8e3c qrng, aa896d07 mc-integrate) may complete during/after this poll — snapshot represents 2026-05-04T16:00 UTC only; re-poll required for terminal verdict.",

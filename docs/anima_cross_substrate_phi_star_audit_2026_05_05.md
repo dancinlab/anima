@@ -55,9 +55,9 @@ bash bin/anima-core-dialogue.bash --probe "<input>"
 ```
 
 the V3 real-mode forward path (per `anima-core/runtime/clm_v4_mount.hexa`,
-Stage 1+2 V1-V6 verified) loads **`need-singularity/clm-v4-mk2-v1`** (the HF-format
+Stage 1+2 V1-V6 verified) loads **`dancinlab/clm-v4-mk2-v1`** (the HF-format
 mirror of CLM v4 base; same arch as the `clm_v4_baseline_eval` cycle's
-`need-singularity/clm-v4-base-mirror`). The phi-star baseline emitted is the
+`dancinlab/clm-v4-base-mirror`). The phi-star baseline emitted is the
 **paradigm v11 G3 carry value 41.86** (per `clm_v4_mount.hexa` PHI_STAR_BASELINE
 constant; see `docs/anima_emerge_candidate_d_always_inject_spec_2026_05_05.md`
 §2.3 — "axis-canonical magnitude 0.5 mirroring paradigm v11 G3 baseline
@@ -137,9 +137,9 @@ bash bin/anima-core-dialogue.bash --probe "안녕" --substrate clm-2-lora
 
 | flag value | base ckpt path | adapter path | baseline phi_star anchor (canonical) | source |
 |---|---|---|---|---|
-| `clm-v4` (default) | `need-singularity/clm-v4-mk2-v1` (HF) | none | 41.86 (paradigm v11 G3 carry) OR 35.81 (in-pipeline) | clm_v4_baseline_eval / clm_v4_lora_phi_canonical |
+| `clm-v4` (default) | `dancinlab/clm-v4-mk2-v1` (HF) | none | 41.86 (paradigm v11 G3 carry) OR 35.81 (in-pipeline) | clm_v4_baseline_eval / clm_v4_lora_phi_canonical |
 | `pbeta` | `checkpoints/clm_v4_350m/scale_350m/best.pt` (legacy) | `state/p9_pbeta_paradigm_d_50k_2026_05_04/savepoints/step_50000/` | 42.367 (holdout500 canonical mean K=8) | p9_pbeta_holdout500_eval |
-| `clm-2-lora` | `need-singularity/clm-v4-mk2-v1` (HF) | `state/clm_v4_lora_sft_2026_05_05/results/adapter_final/` | 31.349 (canonical post-LoRA mean K=8); equivalently 35.81 - 4.46pp drift_in_pipeline | clm_v4_lora_phi_canonical |
+| `clm-2-lora` | `dancinlab/clm-v4-mk2-v1` (HF) | `state/clm_v4_lora_sft_2026_05_05/results/adapter_final/` | 31.349 (canonical post-LoRA mean K=8); equivalently 35.81 - 4.46pp drift_in_pipeline | clm_v4_lora_phi_canonical |
 
 ### §3.2 Implementation status
 

@@ -3,8 +3,8 @@
 //
 // @tool(slug="anima_hf_upload_mk2", desc="Canonical HF upload wrapper. Validates README + naming, walks files via shell find, computes sha256 via shasum, shells out to `hf` CLI (huggingface_hub v1.8.0+) for repo create / upload / tag. Writes audit log to state/hf_upload_audit/. raw#9 STRICT — zero .py on Mac side.")
 // @usage(hexa run tool/hf_upload_mk2.hexa --selftest)
-// @usage(hexa run tool/hf_upload_mk2.hexa --dry-run --repo need-singularity/clm-v4-sft-stage1 --ckpt /path/to/ckpt --readme /path/to/README.md --tag step-25k)
-// @usage(hexa run tool/hf_upload_mk2.hexa --upload --repo need-singularity/clm-v4-sft-stage1 --ckpt /path/to/ckpt --readme /path/to/README.md --tag step-25k --private)
+// @usage(hexa run tool/hf_upload_mk2.hexa --dry-run --repo dancinlab/clm-v4-sft-stage1 --ckpt /path/to/ckpt --readme /path/to/README.md --tag step-25k)
+// @usage(hexa run tool/hf_upload_mk2.hexa --upload --repo dancinlab/clm-v4-sft-stage1 --ckpt /path/to/ckpt --readme /path/to/README.md --tag step-25k --private)
 // @sentinel(__ANIMA_HF_UPLOAD_MK2__ <PASS|FAIL>)
 //
 // Spec ref: docs/anima_hf_upload_mk2_spec_2026_05_03.md
@@ -742,9 +742,9 @@ fn op_selftest() -> int {
     println("  [P] readme validator: good=OK, bad=rejected")
 
     // 2. naming validator unit test
-    let n_good = _naming_validate("need-singularity/clm-v4-sft-stage1")
+    let n_good = _naming_validate("dancinlab/clm-v4-sft-stage1")
     let n_bad1 = _naming_validate("BadOrg/clm-v4-sft-stage1")
-    let n_bad2 = _naming_validate("need-singularity/zzz-v4-sft-stage1")
+    let n_bad2 = _naming_validate("dancinlab/zzz-v4-sft-stage1")
     let n_bad3 = _naming_validate("nodash")
     if n_good != "OK" {
         println("  [F] naming good-case failed: " + n_good)

@@ -45,7 +45,7 @@ def main():
     ap.add_argument("--seed", type=int, default=42)
     ap.add_argument("--gradient-checkpointing", action="store_true", default=True)
     ap.add_argument("--push-to-hub", default="",
-                    help="HF repo id (e.g. need-singularity/p9-llama32-lora-stage1); empty = local only")
+                    help="HF repo id (e.g. dancinlab/p9-llama32-lora-stage1); empty = local only")
     args = ap.parse_args()
 
     out_dir = Path(args.output_dir)

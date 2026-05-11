@@ -19,7 +19,7 @@
         "method": "live `bash tool/atlas_cross_repo_dashboard.sh`",
         "results": {
           "nexus": "6/6 PASS (precondition-e via .own)",
-          "n6-architecture": "6/6 PASS",
+          "CANON": "6/6 PASS",
           "anima": "6/6 PASS",
           "hexa-lang": "5/6 (atlas SSOT n6/atlas.n6 missing — separate axis, not precondition-e)"
         }
@@ -46,7 +46,7 @@
   "remaining_cc_artifacts_intentionally_kept": {
     "claude_directories_per_repo": {
       "nexus": ".claude/{agents,scheduled_tasks.lock,settings.json.bak*}",
-      "n6-architecture": "same pattern",
+      "CANON": "same pattern",
       "hexa-lang": ".claude/{agents,commands,handoffs,hooks,scheduled_tasks.lock,settings.json.bak*}",
       "anima": ".claude/{scheduled_tasks.lock,settings.json.bak*,settings.local.json}"
     },
@@ -63,7 +63,7 @@
     "does NOT migrate the in-flight session off CC (this very session uses CC; the directive is forward-looking)"
   ],
   "what_user_can_do_next_for_full_post_session_cc_purge": [
-    "rm -rf ~/core/{nexus,n6-architecture,hexa-lang,anima}/.claude  # remove operational state",
+    "rm -rf ~/core/{nexus,CANON,hexa-lang,anima}/.claude  # remove operational state",
     "rm ~/core/anima/.claude/settings.local.json  # remove user-local CC settings",
     "deinstall Claude Code CLI from system if no longer needed for any session"
   ]

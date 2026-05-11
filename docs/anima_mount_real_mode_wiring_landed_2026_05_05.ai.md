@@ -4,7 +4,7 @@
 
 Two additive fixes landed in `anima-core/runtime/clm_v4_mount.hexa` per spec:
 1. `_resolve_python` gained HEXA_PY env override + `.venv-eeg` auto-detect (additive; existing fallback chain preserved).
-2. `DEFAULT_MODEL` const swapped from `need-singularity/clm-v4-base-mirror` (pre-HF best.pt mirror, lacked `model_type`) to `need-singularity/clm-v4-mk2-v1` (HF-format repo).
+2. `DEFAULT_MODEL` const swapped from `dancinlab/clm-v4-base-mirror` (pre-HF best.pt mirror, lacked `model_type`) to `dancinlab/clm-v4-mk2-v1` (HF-format repo).
 
 `raw#15` PASS — `_resolve_python` was extended (not edited), and only `clm_v4_mount.hexa` was touched. All other LOCKED files (`anima_unified.hexa`, `phi_engine.hexa`, `conscious_chat.hexa`, `consciousness_hub.hexa`, `clm_v4_hf_format_shim.py`, `anima_dialogue_load.py`, `anima-core-dialogue.bash`) are UNTOUCHED.
 
@@ -32,7 +32,7 @@ Note: without `HEXA_LOCAL=1`, `anima` top-level dispatches through docker by def
 
 - HEXA_PY env override path is the documented developer affordance for venv selection.
 - `.venv-eeg/bin/python` auto-detect is the implicit fallback for typical anima dev environments.
-- `--model need-singularity/clm-v4-mk2-v1` is the default; mount.hexa now points to the HF-format repo with `model_type=clm_v4` registered.
+- `--model dancinlab/clm-v4-mk2-v1` is the default; mount.hexa now points to the HF-format repo with `model_type=clm_v4` registered.
 - Model class instantiation via `AutoModelForCausalLM.from_pretrained` proceeds further (config class loads).
 
 ## What still doesn't work — third blocker

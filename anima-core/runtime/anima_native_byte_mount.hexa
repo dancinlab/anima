@@ -16,7 +16,7 @@
 //     (1) BG-FY anima-native-ko-small 18M (state/anima_native_ko_small_ubu1_train_2026_05_06)
 //         vocab=256 byte | n_layer=6 | d_model=384 | n_head=6 | block_size=256 | 18,031,872 params
 //         from-scratch corpus_ko_heavy 246MB (62.14% Hangul)
-//     (2) clm-v2-byte-18m-convo-5k (HF need-singularity/clm-v2-byte-18m-convo-5k convo_5k.pt)
+//     (2) clm-v2-byte-18m-convo-5k (HF dancinlab/clm-v2-byte-18m-convo-5k convo_5k.pt)
 //         vocab=256 byte | n_layer=6 | d_model=384 | n_head=6 | block_size=256
 //         dual-engine FFN (engine_a + engine_g) + dual head (head_a + head_g) — federated cell proxy
 //
@@ -36,7 +36,7 @@
 // FLAGS
 //   --variant V              fy_18m (default) | v2_byte_convo5k
 //   --ckpt PATH              local ckpt path (BG-FY: ubu1 scp pull required;
-//                            v2: HF cache resolved automatically need-singularity/clm-v2-byte-18m-convo-5k)
+//                            v2: HF cache resolved automatically dancinlab/clm-v2-byte-18m-convo-5k)
 //   --output-format          compact (default) | full | json
 //   --inject-states PATH     pre-load consciousness_states fixture (json/npy, 8×CONSCIOUSNESS_DIM)
 //   --hexa-mem-unlimited     mirror env HEXA_MEM_UNLIMITED=1 (hexa heap arena bypass)
@@ -117,7 +117,7 @@ let N_AXES            = 5
 let PHI_STAR_BASELINE = 41.86
 
 // HF repo for variant=v2_byte_convo5k
-let V2_BYTE_HF_REPO   = "need-singularity/clm-v2-byte-18m-convo-5k"
+let V2_BYTE_HF_REPO   = "dancinlab/clm-v2-byte-18m-convo-5k"
 let V2_BYTE_FILE      = "convo_5k.pt"
 
 // ═══════════════════════════════════════════════════════════
@@ -457,10 +457,10 @@ fn _write_helper() {
     parts.push("    return CLMv2Like\n\n")
 
     parts.push("def _resolve_v2_byte_ckpt():\n")
-    parts.push("    # HF cache resolve for need-singularity/clm-v2-byte-18m-convo-5k convo_5k.pt\n")
+    parts.push("    # HF cache resolve for dancinlab/clm-v2-byte-18m-convo-5k convo_5k.pt\n")
     parts.push("    cache_root = Path(os.environ.get('HF_HOME', os.path.expanduser('~/.cache/huggingface')))\n")
     parts.push("    hub = cache_root / 'hub'\n")
-    parts.push("    repo_dir = hub / 'models--need-singularity--clm-v2-byte-18m-convo-5k'\n")
+    parts.push("    repo_dir = hub / 'models--dancinlab--clm-v2-byte-18m-convo-5k'\n")
     parts.push("    snap_dir = repo_dir / 'snapshots'\n")
     parts.push("    if snap_dir.exists():\n")
     parts.push("        for snap in snap_dir.iterdir():\n")
@@ -469,7 +469,7 @@ fn _write_helper() {
     parts.push("    # Fallback: try hf_hub_download (network-dependent)\n")
     parts.push("    try:\n")
     parts.push("        from huggingface_hub import hf_hub_download\n")
-    parts.push("        return hf_hub_download(repo_id='need-singularity/clm-v2-byte-18m-convo-5k', filename='convo_5k.pt')\n")
+    parts.push("        return hf_hub_download(repo_id='dancinlab/clm-v2-byte-18m-convo-5k', filename='convo_5k.pt')\n")
     parts.push("    except Exception as ex:\n")
     parts.push("        sys.stderr.write(f'[anima_native_byte_mount] HF download failed: {ex}\\n')\n")
     parts.push("        return None\n\n")
@@ -818,7 +818,7 @@ fn cmd_selftest(cfg: MountConfig) {
 
 fn _v2_byte_cache_path() -> string {
     // Best-effort known-snapshot path; selftest only checks presence (not parsed)
-    return "/Users/ghost/.cache/huggingface/hub/models--need-singularity--clm-v2-byte-18m-convo-5k/snapshots/1af2bcaeaf70c1d0b1a19939a8ada79a28f8cd30/convo_5k.pt"
+    return "/Users/ghost/.cache/huggingface/hub/models--dancinlab--clm-v2-byte-18m-convo-5k/snapshots/1af2bcaeaf70c1d0b1a19939a8ada79a28f8cd30/convo_5k.pt"
 }
 
 fn cmd_load(cfg: MountConfig) {

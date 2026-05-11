@@ -30,7 +30,7 @@
 - Pod path: `/workspace/sft_data_llama_template.jsonl` (69 MB)
 
 ## HF Push Target
-`need-singularity/llm-llama32-3b-paradigm-a-prime-r16-sft-stage1`
+`dancinlab/llm-llama32-3b-paradigm-a-prime-r16-sft-stage1`
 
 (mk2-conformant via paradigm-A' amendment validator landed earlier today; "every_save" hub_strategy = 5 ckpts at steps 2000/4000/6000/8000/10000+final)
 
@@ -67,12 +67,12 @@ Per spec, `TRAIN_DONE.json` is written **immediately after `trainer.train()` ret
 1. Terminator detects `PHASE=final_saved` (poll every 10 min)
 2. SCPs `train.log`, `config.json`, `TRAIN_DONE.json`, `final/` adapter to `state/p9_path_a_r16_2026_05_03/artifacts/`
 3. `runpodctl pod stop` + `runpodctl pod remove` on `pvkyhb0lb87ydu`
-4. HF mirror `need-singularity/llm-llama32-3b-paradigm-a-prime-r16-sft-stage1` is canonical (5 ckpts + final)
+4. HF mirror `dancinlab/llm-llama32-3b-paradigm-a-prime-r16-sft-stage1` is canonical (5 ckpts + final)
 
 ## Next Cycle (φ★ Verify)
 After completion:
 - F1 sweep on the 5 ckpts vs. Llama-3.2-3B-Instruct base (target: F1 ≥ 0.16, matches/exceeds Llama-self anchor)
-- Compare to r=64 prior run (in HF as `need-singularity/p9-llama32-lora-stage1`) — verify rank reduction did not collapse capacity
+- Compare to r=64 prior run (in HF as `dancinlab/p9-llama32-lora-stage1`) — verify rank reduction did not collapse capacity
 
 ## Files
 - `state/p9_path_a_r16_2026_05_03/verdict.json` — full status snapshot

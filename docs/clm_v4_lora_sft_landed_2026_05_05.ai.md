@@ -2,7 +2,7 @@
 
 ## TL;DR
 
-BG-CLM-2-EXEC executes `docs/clm_v4_lora_sft_spec_2026_05_04.md` (USER_AUTHORIZED 2026-05-05 "all bg go") on H100 SECURE on-demand. Boots `need-singularity/clm-v4-mk2-v1` (PRIVATE HF mirror, trust_remote_code), applies LoRA r=32 / alpha=64 / dropout=0.05 to **self-attn-only** `decoder.blocks.{0..15}.attn.{q,k,v,o}_proj` (cross_attn EXPLICITLY EXCLUDED to preserve φ★). Trains on 60/30/10 rehearsal mix (slice A 30k anima axis pre-staged + slice B/C downloaded on H100), max_steps=6000, save_steps=1000, lr=3e-5 (40% lower than Path A v2's 5e-5), per_device_batch=8, grad_accum=4 (eff_batch=32), seq_len=512, bf16, cosine schedule, warmup=300, seed=20260504. Intermediate eval at steps 2000/4000/6000 (HellaSwag-200 + φ★ proxy). Auto-kill on COMPLETE.sentinel + L13 trap pre-stop scp + L20 verdict-writer distinguishes eval_crashed from parity_failed. Cost target $6-10, hard cap $15 (5h).
+BG-CLM-2-EXEC executes `docs/clm_v4_lora_sft_spec_2026_05_04.md` (USER_AUTHORIZED 2026-05-05 "all bg go") on H100 SECURE on-demand. Boots `dancinlab/clm-v4-mk2-v1` (PRIVATE HF mirror, trust_remote_code), applies LoRA r=32 / alpha=64 / dropout=0.05 to **self-attn-only** `decoder.blocks.{0..15}.attn.{q,k,v,o}_proj` (cross_attn EXPLICITLY EXCLUDED to preserve φ★). Trains on 60/30/10 rehearsal mix (slice A 30k anima axis pre-staged + slice B/C downloaded on H100), max_steps=6000, save_steps=1000, lr=3e-5 (40% lower than Path A v2's 5e-5), per_device_batch=8, grad_accum=4 (eff_batch=32), seq_len=512, bf16, cosine schedule, warmup=300, seed=20260504. Intermediate eval at steps 2000/4000/6000 (HellaSwag-200 + φ★ proxy). Auto-kill on COMPLETE.sentinel + L13 trap pre-stop scp + L20 verdict-writer distinguishes eval_crashed from parity_failed. Cost target $6-10, hard cap $15 (5h).
 
 ## What landed
 
@@ -20,7 +20,7 @@ Slice A reused from sister Path A v2 (`state/p9_path_a_retrain_v2_exec_2026_05_0
 
 | Choice | Spec | EXEC | Rationale |
 |---|---|---|---|
-| Base model | `~/anima/checkpoints/clm_v4_350m/scale_350m/best.pt` | **`need-singularity/clm-v4-mk2-v1`** (PRIVATE HF) | mk2-v1 ships HF-format (config.json + modeling_clm_v4.py + safetensors); `from_pretrained(trust_remote_code=True)` resolves the `(input_ids, labels) → loss` contract via existing CLMv4ForCausalLM wrapper — F-CLM-LORA-5 satisfied by-construction at load time |
+| Base model | `~/anima/checkpoints/clm_v4_350m/scale_350m/best.pt` | **`dancinlab/clm-v4-mk2-v1`** (PRIVATE HF) | mk2-v1 ships HF-format (config.json + modeling_clm_v4.py + safetensors); `from_pretrained(trust_remote_code=True)` resolves the `(input_ids, labels) → loss` contract via existing CLMv4ForCausalLM wrapper — F-CLM-LORA-5 satisfied by-construction at load time |
 | target_modules | `q_proj/k_proj/v_proj/o_proj` (cell-layer attn) | **explicit full paths `decoder.blocks.{i}.attn.{proj}` × 16 layers × 4 projs** | CRITICAL: `GroupedQueryAttention` (self-attn) AND `ConsciousCrossAttention` use IDENTICAL projection names. PEFT name-match would attach LoRA to BOTH and corrupt φ★. Explicit paths + assert `n_cross_attn_lora==0` at train start = mitigation |
 | φ★ probe | "every 2000 steps" | **pre-LoRA + post-LoRA only** (logit-std proxy on 5 calibration prompts) | Per-step probe would add ~3 min × 3 = 9 min wall; pre/post bracketing captures drift sign. Canonical φ★ via anima_phi_v3_canonical.hexa deferred to Mac post-cycle (substrate carry +41.86 NOT directly comparable to in-pod proxy) |
 | Slice D consciousness-coupled | 5% (2500 samples) | **NOT INCLUDED** | Slice D requires NEW curated dataset (φ★ + tension_link + N-22 axis prompts); not built this cycle. Mitigation deferred — adapter-only training + r=32 small footprint substitute. C3 #5 in verdict honest_c3 |
@@ -69,4 +69,4 @@ Slice A reused from sister Path A v2 (`state/p9_path_a_retrain_v2_exec_2026_05_0
 - CLM v4 baseline (left comparator): `state/clm_v4_baseline_eval_2026_05_05/verdict.json`
 - Llama Path A v2 (right comparator): `state/p9_path_a_retrain_v2_retry_3_eval_rerun_2026_05_05/verdict.json`
 - Sister Llama orchestrator: `tool/p9_path_a_retrain_v2_h100_orchestrator.hexa`
-- HF base mirror: `https://huggingface.co/need-singularity/clm-v4-mk2-v1`
+- HF base mirror: `https://huggingface.co/dancinlab/clm-v4-mk2-v1`

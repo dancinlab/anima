@@ -53,7 +53,7 @@
       }
     },
     "hf_repo_precreate": {
-      "target": "need-singularity/llm-llama32-3b-paradigm-a-prime-r16-track-a-sft-stage1",
+      "target": "dancinlab/llm-llama32-3b-paradigm-a-prime-r16-track-a-sft-stage1",
       "status": "BLOCKED",
       "reason": "All 3 HF tokens on ubu1 are invalid (~/.cache/huggingface/token, ~/.hf_token, /home/aiden/anima/.secrets/hf_token) — return 401 from whoami-v2. Last validated 2026-05-04 07:30 (token mtime).",
       "mitigation": "RunPod launch script writes fresh /workspace/hf_token at provision time; SFTTrainer with hub_strategy=every_save will create repo on first push. Manual pre-create not required.",

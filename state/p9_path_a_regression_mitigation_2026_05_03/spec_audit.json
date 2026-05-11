@@ -195,7 +195,7 @@
     "do_not_launch_retraining": "next-cycle plan deferred to user OK on track selection; §8 handoff includes paste-once prompts"
   },
   "next_cycle_handoff": {
-    "if_user_selects_B": "see spec §8.1 paste-once prompt — re-train Path A LoRA with --lora-r 16 --lora-alpha 16 on fresh H100 SXM pod, publish to need-singularity/p9-llama32-lora-stage1-r16, re-run A' eval, emit verdict at state/p9_path_a_mitigation_b_r16_2026_05_03_verdict.json",
+    "if_user_selects_B": "see spec §8.1 paste-once prompt — re-train Path A LoRA with --lora-r 16 --lora-alpha 16 on fresh H100 SXM pod, publish to dancinlab/p9-llama32-lora-stage1-r16, re-run A' eval, emit verdict at state/p9_path_a_mitigation_b_r16_2026_05_03_verdict.json",
     "if_user_selects_A": "see spec §8.2 — source TriviaQA train + MMLU dev/val, retemplate, mix at 70/30, re-train at r=64 baseline",
     "if_user_defers": "spec lands as marker + handoff; user revisits when Path A A' main eval finishes (step-8000/10000) for final regression-magnitude confirmation"
   },

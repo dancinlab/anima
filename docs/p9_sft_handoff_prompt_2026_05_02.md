@@ -1,7 +1,7 @@
 # P9 SFT EXEC handoff prompt — 다른 세션에서 이어서 진행용
 
 **날짜**: 2026-05-02 (작성 시점)
-**프로젝트**: anima (need-singularity)
+**프로젝트**: anima (dancinlab)
 **목적**: 사용자가 다른 Claude Code 세션에서 P9 SFT 실행을 이어서 진행할 때 사용하는 self-contained handoff prompt.
 
 ---

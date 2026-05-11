@@ -4,15 +4,15 @@
   "scope": "READ-ONLY survey; NO mutations performed (raw#9 + raw#10 + raw#15)",
   "n6_raw_archive_dirs": [
     {
-      "path": "/Users/ghost/core/n6-architecture/raw_archive/2026-05-04T",
+      "path": "/Users/ghost/core/canon/raw_archive/2026-05-04T",
       "file_count": 11,
       "total_size_bytes": 203673,
       "git_tracked": true,
-      "git_remote": "https://github.com/need-singularity/n6-architecture.git",
+      "git_remote": "https://github.com/dancinlab/canon.git",
       "git_last_commit": "113725b0",
       "git_last_commit_msg": "chore(governance): predecessor scrub Phase 2 — declarative texts + raw_archive backup",
       "preservation_tier_overall": "redundant",
-      "preservation_tier_rationale": "All 11 files committed + pushed to need-singularity/n6-architecture private GitHub. Local rm would not destroy evidence — git history retains. Archive copy under state/dual_ssot_eol_archive is BELT-AND-SUSPENDERS (low cost, high audit trail integrity).",
+      "preservation_tier_rationale": "All 11 files committed + pushed to dancinlab/canon private GitHub. Local rm would not destroy evidence — git history retains. Archive copy under state/dual_ssot_eol_archive is BELT-AND-SUSPENDERS (low cost, high audit trail integrity).",
       "files": [
         {
           "name": ".own.group_p.bak",
@@ -20,7 +20,7 @@
           "size_bytes": 10283,
           "mtime": "2026-05-04T13:28:17Z",
           "sha256_first16": "770b955da5428707",
-          "content_hint": "n6-architecture /.own.group_p — L1 paper-md governance (mk2 reconstruction, 1 unified rule); pre-cleanup snapshot of mk1 SSOT row",
+          "content_hint": "CANON /.own.group_p — L1 paper-md governance (mk2 reconstruction, 1 unified rule); pre-cleanup snapshot of mk1 SSOT row",
           "preservation_tier": "redundant"
         },
         {
@@ -29,7 +29,7 @@
           "size_bytes": 17682,
           "mtime": "2026-05-04T13:28:17Z",
           "sha256_first16": "c2d0d4392edef871",
-          "content_hint": "n6-architecture /.own.readme — L1 README.md governance (mk2 reconstruction, 5 rules); pre-cleanup snapshot of mk1 SSOT row",
+          "content_hint": "CANON /.own.readme — L1 README.md governance (mk2 reconstruction, 5 rules); pre-cleanup snapshot of mk1 SSOT row",
           "preservation_tier": "redundant"
         },
         {
@@ -158,7 +158,7 @@
     "primary": "/Users/ghost/core/anima/state/dual_ssot_eol_archive/2026_05_04/n6_raw_archive_snapshot/",
     "method": "cp -Rp (preserves mtime + permissions but NOT chflags uchg flags — none on archive files, verified)",
     "verification": "sha256sum manifest pre-cp + post-cp byte-for-byte equal; manifest committed to git",
-    "secondary_redundancy": "n6-architecture/raw_archive already at git remote need-singularity/n6-architecture commit 113725b0 — anima archive is belt-and-suspenders only",
+    "secondary_redundancy": "CANON/raw_archive already at git remote dancinlab/canon commit 113725b0 — anima archive is belt-and-suspenders only",
     "estimated_size_bytes": 203673,
     "estimated_size_kb": 199
   },
@@ -178,7 +178,7 @@
   ],
   "honest_c3": [
     "launchctl bootout downstream effect: atlas-absorb-sweeper writes per-cycle shards into atlas.n6; consumers (atlas_absorb_lint orphan scanner) will start reporting orphans for new ω-cycle witnesses emitted post-unload. If sister mk2 sweeper not yet wired, this creates an enforcement gap window — must verify mk2 substitute is live OR consumer chain is being deprecated wholesale.",
-    "n6 raw_archive bak files tier classification 'redundant' relies on git remote already containing them at commit 113725b0; if remote becomes unreachable (need-singularity org access lost) OR force-push rewrites history, the local copy would have been the only witness — anima archive fork is the resilience layer.",
+    "n6 raw_archive bak files tier classification 'redundant' relies on git remote already containing them at commit 113725b0; if remote becomes unreachable (dancinlab org access lost) OR force-push rewrites history, the local copy would have been the only witness — anima archive fork is the resilience layer.",
     "cp -Rp preserves POSIX mtime + mode but does NOT preserve macOS extended attributes (com.apple.metadata via xattr) or chflags (uchg/uappnd) flags — verified files have @ in ls (extended attrs present). Archive may be functionally identical but bit-for-bit different at xattr level — sha256 of file content matches; xattr divergence is acceptable for evidence purposes but should be documented.",
     "sha256 manifest verification requires identical shasum binary across both source and archive contexts; on macOS /usr/bin/shasum is Perl-based whereas Linux uses coreutils sha256sum — cross-platform manifest comparison can produce trailing-whitespace divergence. Pin to /usr/bin/shasum -a 256 on macOS for both source + archive computation; never mix with sha256sum unless manifest is normalized.",
     "Plist 'OnDemand=true' in launchctl list output is misleading — this is launchd's keepalive default, NOT user-facing on-demand. The actual cadence is StartInterval=600s (verified in plist body). Documentation must not conflate OnDemand=true with manual-trigger semantics."
@@ -186,11 +186,11 @@
   "raw_compliance": {
     "raw_9": "no .py written (all docs are .md, plan only — no execution scripts)",
     "raw_10": "no chflags / git / launchctl mutations performed in this BG; READ-ONLY survey only",
-    "raw_15": "no chflags writes attempted on .own files in nexus / n6-architecture"
+    "raw_15": "no chflags writes attempted on .own files in nexus / CANON"
   },
   "blocked_paths_respected": [
     "/Users/ghost/core/nexus/* — READ-ONLY (read .own, plist; no edits)",
-    "/Users/ghost/core/n6-architecture/* — READ-ONLY (listed raw_archive, computed sha256; no edits)",
+    "/Users/ghost/core/canon/* — READ-ONLY (listed raw_archive, computed sha256; no edits)",
     "/Users/ghost/Library/LaunchAgents/* — READ-ONLY (read plist, ran launchctl list; no bootout/bootstrap)"
   ]
 }

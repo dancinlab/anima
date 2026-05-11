@@ -14,7 +14,7 @@
 // Targets:
 //   T1) Mac:    $HOME/.cache/huggingface/token        chmod 0600
 //   T2) ubu1:   /home/aiden/.cache/huggingface/token  chmod 0600 (via ssh)
-//   T3) GH:     gh secret set HF_TOKEN --repo need-singularity/{qmirror,sim-universe,hexa-bio,honesty-monitor}
+//   T3) GH:     gh secret set HF_TOKEN --repo dancinlab/{qmirror,sim-universe,hexa-bio,honesty-monitor}
 //
 // raw#10 honest caveats:
 //   1) Atomicity NOT guaranteed across machines — partial sync possible if
@@ -42,10 +42,10 @@ let ANIMA_ROOT = HOME + "/core/anima"
 let LEDGER = ANIMA_ROOT + "/state/hf_token_consolidation_2026_05_04/sync_ledger.jsonl"
 
 let GH_REPOS = [
-    "need-singularity/qmirror",
-    "need-singularity/sim-universe",
-    "need-singularity/hexa-bio",
-    "need-singularity/honesty-monitor",
+    "dancinlab/qmirror",
+    "dancinlab/sim-universe",
+    "dancinlab/hexa-bio",
+    "dancinlab/honesty-monitor",
 ]
 
 let UBU1_HOST = "ubu1"

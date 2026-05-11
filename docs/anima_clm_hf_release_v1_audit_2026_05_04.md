@@ -1,7 +1,7 @@
 # anima CLM cond.2 — HF release v1 readiness audit (2026-05-04)
 
 - **Date**: 2026-05-04
-- **Audit scope**: `.roadmap.clm` cond.2 = "HF release v1 — `need-singularity/anima-clm-mk2-v1` (license=mit, gated=false initial, README sync from `anima/docs/modules/clm.md`)" — current status `unmet`, blocker_reason "weight 확정 + model card draft 필요".
+- **Audit scope**: `.roadmap.clm` cond.2 = "HF release v1 — `dancinlab/anima-clm-mk2-v1` (license=mit, gated=false initial, README sync from `anima/docs/modules/clm.md`)" — current status `unmet`, blocker_reason "weight 확정 + model card draft 필요".
 - **Mode**: BG audit + spec only. **NO exec, NO pod, NO HF push, NO git commit.** No H100 cost, $0 mac-local.
 - **Constraints respected**: raw#9 (no `.py` created), raw#10 (≥5 honest C3 in §10), raw#15 (no destructive paths), anima own 14 (HF-only for weights).
 - **Decision questions** (4) are flagged inline and consolidated in the trailing handoff doc.
@@ -12,11 +12,11 @@
 
 CLM cond.2 release readiness is **~55% READY / 45% GAP**. The hard infrastructure (HF naming spec, upload pipeline, pre-push hook, naming validator, README template, leak-guard hook, MIT license, tokenizer integrity, HF format shim with F-SHIM-V4-3 PASS, base-mirror repo precedent) is **landed**. The blocker stack is concentrated in three places:
 
-1. **Repo-naming SSOT collision** — cond.2 promises `need-singularity/anima-clm-mk2-v1`, but the mk2 naming convention spec (canonical SSOT) requires `clm-v4-...` family-version stems and explicitly bans `anima-` lm-family prefixes. **A user decision is required to either (a) re-target cond.2 to a canonical `clm-v4` name OR (b) amend the naming spec to admit a top-level `anima-clm-mk2-v1` umbrella repo.**
+1. **Repo-naming SSOT collision** — cond.2 promises `dancinlab/anima-clm-mk2-v1`, but the mk2 naming convention spec (canonical SSOT) requires `clm-v4-...` family-version stems and explicitly bans `anima-` lm-family prefixes. **A user decision is required to either (a) re-target cond.2 to a canonical `clm-v4` name OR (b) amend the naming spec to admit a top-level `anima-clm-mk2-v1` umbrella repo.**
 2. **README sync source missing** — `anima/docs/modules/clm.md` does **not exist**. The closest predecessor is `ready/docs/modules/conscious_lm.md` (sister-repo path; not under anima git). A new sync-source doc OR a redirect is required before any push.
 3. **Chat category disclosure** — per `#115`, CLM v4 is a consciousness-measurement substrate, NOT a chat model. The README must explicitly disclose this; the `Caveats` section must be honest about `v3_generate()` returning empty strings absent SFT and the F1_v3 V2 hybrid HF-derived behavior of LoRA SFT post-distill (out of scope for v1).
 
-The model weight itself is **on ubu1 in HF cache** (`models--need-singularity--clm-v4-base-mirror/snapshots/856278be.../best.pt`, 5GB, base=`scale_350m/best.pt`), already round-tripped through the HF format shim with F-SHIM-V4-1/2/3 PASS (F-SHIM-V4-4 deferred to H100). The tokenizer is restored (`tokenizer_64k_multilingual.{model,vocab}`, sha256 `bb851d39...`). The **shim output (HF format dir, 2.12 GB safetensors) was produced on ubu1 successfully** but has NOT been pushed. The base-mirror repo at `need-singularity/clm-v4-base-mirror` already received a real upload on 2026-05-03 (commit `10ee0368...`) of tokenizer + integrity_report + README.
+The model weight itself is **on ubu1 in HF cache** (`models--dancinlab--clm-v4-base-mirror/snapshots/856278be.../best.pt`, 5GB, base=`scale_350m/best.pt`), already round-tripped through the HF format shim with F-SHIM-V4-1/2/3 PASS (F-SHIM-V4-4 deferred to H100). The tokenizer is restored (`tokenizer_64k_multilingual.{model,vocab}`, sha256 `bb851d39...`). The **shim output (HF format dir, 2.12 GB safetensors) was produced on ubu1 successfully** but has NOT been pushed. The base-mirror repo at `dancinlab/clm-v4-base-mirror` already received a real upload on 2026-05-03 (commit `10ee0368...`) of tokenizer + integrity_report + README.
 
 The cond.2 blocker_reason "weight 확정 + model card draft 필요" is therefore partially obsolete: the weight IS confirmed, the model card SKELETON is wired (template + 5-section enforcement), but the **target repo name** and the **README content** are unfinalized. This audit identifies the concrete actions to GREEN-light a v1 release.
 
@@ -30,7 +30,7 @@ The cond.2 blocker_reason "weight 확정 + model card draft 필요" is therefore
 |---|---|:---:|
 | Checkpoint identity | CLM v4 530M ConsciousDecoderV2 (label "350M" misleading per `docs/strategic_clm_v4_production_ready_2026_05_02.md` §1) | READY |
 | Paradigm v11 G3 | PASS +41.86 (5-substrate matrix unique positive integration; vs Mistral −16.7 / Qwen3 +1.04 / Llama +5.09 / Gemma −0.79) | READY |
-| Weight location (canonical) | `need-singularity/clm-v4-base-mirror/snapshots/856278beb59c5b39f16485cc8f3a46dcdaf9d1e3/best.pt` (HF cache, ubu1 + RunPod) | READY |
+| Weight location (canonical) | `dancinlab/clm-v4-base-mirror/snapshots/856278beb59c5b39f16485cc8f3a46dcdaf9d1e3/best.pt` (HF cache, ubu1 + RunPod) | READY |
 | Local mac copy | NOT PRESENT (intentional; raw#9-style ban + 5GB size + anima own 14 HF-only) | OK |
 | File size | 5 GB (best.pt raw); 2.12 GB (HF format `model.safetensors` post-shim) | READY |
 | Reproducibility manifest | step=20000, φ★=27.91, ce=0.046 (per `docs/clm_v4_lora_sft_spec_2026_05_04.md` §3 hyperparams table) | PARTIAL |
@@ -61,7 +61,7 @@ The cond.2 blocker_reason "weight 확정 + model card draft 필요" is therefore
 | Roundtrip integrity | `state/clm_v4_tokenizer_restoration_2026_05_03/integrity_report.json` verdict `INTEGRITY_OK_AT_64000`; ko/en/mixed-symbols 0 UNK | READY |
 | sha256 (model) | `bb851d39fbe3286dda11fc43da78d9bbf29ac6400d61b75616c8c750b710b8ab` | READY |
 | sha256 (vocab) | `972fc0ba2f2633cfa685c70eeab84ce2a22a1327975e989a3b1d5cf5efa480a4` | READY |
-| HF-side presence | already pushed to `need-singularity/clm-v4-base-mirror` (2026-05-03 commit `10ee03687db312c55bbec5858c814bef28e4d365`) co-located with `best.pt` | READY |
+| HF-side presence | already pushed to `dancinlab/clm-v4-base-mirror` (2026-05-03 commit `10ee03687db312c55bbec5858c814bef28e4d365`) co-located with `best.pt` | READY |
 | AutoTokenizer compat | **FAIL** — no `tokenizer.json` / `tokenizer_config.json` in the HF-format dir; only the SentencePiece `.model`. Direct `SentencePieceProcessor()` works (per shim v3 verdict §C3-5). | GAP |
 
 **Action items to GREEN**:
@@ -94,7 +94,7 @@ import sentencepiece as spm
 import torch
 
 model = AutoModelForCausalLM.from_pretrained(
-    "need-singularity/clm-v4-base-mirror",  # OR anima-clm-mk2-v1 if released
+    "dancinlab/clm-v4-base-mirror",  # OR anima-clm-mk2-v1 if released
     trust_remote_code=True,
     torch_dtype=torch.float16,
     low_cpu_mem_usage=False,
@@ -175,7 +175,7 @@ assert torch.isfinite(out.logits).all()
 | Field | Value | Verdict |
 |---|---|:---:|
 | License declared | MIT (per cond.2 `hf_license: mit`) | READY |
-| LICENSE file location | `/Users/ghost/core/anima/LICENSE` (MIT, copyright "need-singularity" 2026) | READY |
+| LICENSE file location | `/Users/ghost/core/anima/LICENSE` (MIT, copyright "dancinlab" 2026) | READY |
 | LICENSE bundling into HF push | NOT_AUTOMATIC — `tool/hf_upload_mk2.hexa` requires LICENSE to be in the `--ckpt` directory or copied alongside README | GAP |
 | Gated initial | `false` (per cond.2 `hf_gated_initial: false`) — accessible without HF approval | READY |
 | Compatibility | CLM v4 base is anima-native (no vendored Llama/Mistral/Qwen weights); MIT is unambiguously compatible | READY |
@@ -195,7 +195,7 @@ This is the **largest single decision-blocker** in the audit.
 
 | Field | Value | Verdict |
 |---|---|:---:|
-| cond.2 declared name | `need-singularity/anima-clm-mk2-v1` | DECLARED |
+| cond.2 declared name | `dancinlab/anima-clm-mk2-v1` | DECLARED |
 | mk2 naming spec EBNF | `<lm-family>-<base-version>[-<paradigm>][-<stage>][-<scale>][-<step>][-<variant>]` | — |
 | `anima-clm-mk2-v1` parses as | lm-family=`anima-clm`?? base-version=`mk2`?? — **NEITHER MATCHES** the §3.1 family enum (`blm/clm/tlm/vlm/slm/nlm/alm/mlm/llm/hexad/composite`) and `mk2` is not a valid `v\d+` base version | **FAIL** under spec §10.2 CANON regex |
 | §6 anti-patterns hit | "repeated lm-family" pattern (`anima-clm` collapses to two prefixes when `anima` is the org-namespace not a family) | FAIL |
@@ -207,11 +207,11 @@ This is the **largest single decision-blocker** in the audit.
 
 | Option | Repo name | Pros | Cons |
 |---|---|---|---|
-| **A. Re-target to canonical clm-v4** | `need-singularity/clm-v4-mk2-v1` OR reuse `need-singularity/clm-v4-base-mirror` (already pushed) | mk2-spec-conformant; can ride existing `clm-v4-base-mirror` (already has tokenizer + integrity_report); zero rename risk | requires cond.2 textual amendment ("anima-clm-mk2-v1" → "clm-v4-mk2-v1" OR "clm-v4-base-mirror"); cond.2 redeemed by pre-existing repo (potentially anti-climactic) |
+| **A. Re-target to canonical clm-v4** | `dancinlab/clm-v4-mk2-v1` OR reuse `dancinlab/clm-v4-base-mirror` (already pushed) | mk2-spec-conformant; can ride existing `clm-v4-base-mirror` (already has tokenizer + integrity_report); zero rename risk | requires cond.2 textual amendment ("anima-clm-mk2-v1" → "clm-v4-mk2-v1" OR "clm-v4-base-mirror"); cond.2 redeemed by pre-existing repo (potentially anti-climactic) |
 | **B. Amend mk2 spec** | `anima-clm-mk2-v1` (as cond.2 promised) | preserves cond.2 text verbatim; introduces "umbrella anima-prefix" repo concept for top-level family-flagship releases | violates current §6 anti-pattern; requires §3.1 enum extension (add `anima-` umbrella); risks naming spec churn |
-| **C. Split into umbrella + canonical** | `need-singularity/anima-clm-mk2-v1` (umbrella, README-only, cross-link) + `need-singularity/clm-v4-mk2-v1` (actual weights) | satisfies both cond.2 text AND mk2 spec; umbrella becomes a "flagship pointer"; no spec amendment | 2 repos to maintain; potential for drift between umbrella README and weights repo README |
+| **C. Split into umbrella + canonical** | `dancinlab/anima-clm-mk2-v1` (umbrella, README-only, cross-link) + `dancinlab/clm-v4-mk2-v1` (actual weights) | satisfies both cond.2 text AND mk2 spec; umbrella becomes a "flagship pointer"; no spec amendment | 2 repos to maintain; potential for drift between umbrella README and weights repo README |
 
-**Recommended (per completion-quality lens)**: **Option A with name `need-singularity/clm-v4-mk2-v1`** — re-target cond.2 to the mk2-spec-conformant canonical name, register the prior `clm-v4-base-mirror` as predecessor in §Composability, and emit the cond.2 amendment as a single-line edit in `.roadmap.clm`. This is the cheapest path with the least drift surface.
+**Recommended (per completion-quality lens)**: **Option A with name `dancinlab/clm-v4-mk2-v1`** — re-target cond.2 to the mk2-spec-conformant canonical name, register the prior `clm-v4-base-mirror` as predecessor in §Composability, and emit the cond.2 amendment as a single-line edit in `.roadmap.clm`. This is the cheapest path with the least drift surface.
 
 **Decision question 1 recommended answer**: `clm-v4-mk2-v1` (matches mk2 spec, no amendment needed, predecessor already up).
 
@@ -220,7 +220,7 @@ This is the **largest single decision-blocker** in the audit.
 **Action items to GREEN**:
 - Pick a name (above) — user decision required.
 - Update `.roadmap.clm` cond.2 field.
-- Run `tool/hf_upload_mk2.hexa --validate-naming need-singularity/<chosen-name>` to confirm CANON.
+- Run `tool/hf_upload_mk2.hexa --validate-naming dancinlab/<chosen-name>` to confirm CANON.
 
 **Status**: **GAP — DECISION-BLOCKER** (cond.2 text vs spec EBNF requires reconciliation).
 
@@ -241,7 +241,7 @@ This is the **largest single decision-blocker** in the audit.
 | Pre-push smoke (dry-run on cond.2 target) | NOT_DONE — pending name finalization | GAP |
 
 **Action items to GREEN**:
-- After name decision: run `hexa run tool/hf_upload_mk2.hexa --dry-run --repo need-singularity/<chosen-name> --ckpt <staging> --readme <draft.md>` (~1 min mac, $0).
+- After name decision: run `hexa run tool/hf_upload_mk2.hexa --dry-run --repo dancinlab/<chosen-name> --ckpt <staging> --readme <draft.md>` (~1 min mac, $0).
 - If pass: run `--upload --private` first (sets `private=true` for review window).
 - Optionally: install `.git/hooks/pre-push` (1-line bash exec hexa); not strictly required for the release itself.
 - This audit doc + plan + landed AI-handoff doc are **scrubbed of token literals** per discipline note.
@@ -269,7 +269,7 @@ This is the **largest single decision-blocker** in the audit.
 
 ### Q1. Repo size suffix — `anima-clm-mk2-v1` vs `anima-clm-mk2-v1-530m` — which name?
 
-**Recommended (per completion-quality lens)**: **`need-singularity/clm-v4-mk2-v1`** (Option A in §1.7 — re-target to canonical mk2-spec-conformant name, omit size suffix per §3.5 "omit if obvious from base-version"). Update cond.2 text in `.roadmap.clm` accordingly.
+**Recommended (per completion-quality lens)**: **`dancinlab/clm-v4-mk2-v1`** (Option A in §1.7 — re-target to canonical mk2-spec-conformant name, omit size suffix per §3.5 "omit if obvious from base-version"). Update cond.2 text in `.roadmap.clm` accordingly.
 
 If user prefers to preserve cond.2's `anima-clm-mk2-v1` literal: select **Option C (split umbrella + canonical)** — author both repos with the umbrella as a README-only flagship pointer.
 

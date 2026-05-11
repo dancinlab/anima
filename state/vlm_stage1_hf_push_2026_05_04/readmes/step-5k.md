@@ -63,7 +63,7 @@ Three or more honest limitations (raw#10). Do NOT skip this section.
 How this checkpoint plugs into the broader anima ecosystem.
 
 - Combines with: AudioTokenPredictor base substrate (atp_pytorch); compose with VLM stage2 once that lands
-- Loaded by: `PeftModel.from_pretrained(atp_base, "need-singularity/vlm-anima-voice-paradigm-stage1-step-5k")`
+- Loaded by: `PeftModel.from_pretrained(atp_base, "dancinlab/vlm-anima-voice-paradigm-stage1-step-5k")`
 - Slots into: vlm (anima 6-LM hexad: clm | alm | blm | vlm | slm | tlm)
 - Compose recipe: docs/vlm_stage1_progress_monitoring_landed_2026_05_04.ai.md
 - Known good downstream tasks: training-curve archival, resumption checkpoint for re-training experiments
@@ -75,10 +75,10 @@ How this checkpoint plugs into the broader anima ecosystem.
 
 ```bibtex
 @misc{anima_vlm_stage1_step5k_2026,
-  author = {need-singularity},
+  author = {dancinlab},
   title  = {vlm-anima-voice-paradigm-stage1-step-5k},
   year   = {2026},
-  url    = {https://huggingface.co/need-singularity/vlm-anima-voice-paradigm-stage1-step-5k}
+  url    = {https://huggingface.co/dancinlab/vlm-anima-voice-paradigm-stage1-step-5k}
 }
 ```
 

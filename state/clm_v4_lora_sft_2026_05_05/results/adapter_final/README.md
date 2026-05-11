@@ -1,9 +1,9 @@
 ---
-base_model: need-singularity/clm-v4-mk2-v1
+base_model: dancinlab/clm-v4-mk2-v1
 library_name: peft
 pipeline_tag: text-generation
 tags:
-- base_model:adapter:need-singularity/clm-v4-mk2-v1
+- base_model:adapter:dancinlab/clm-v4-mk2-v1
 - lora
 - sft
 - transformers

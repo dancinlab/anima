@@ -59,7 +59,7 @@ Axes: **coupling** (low coupling = high) | **reusability** (generic external val
 ### Rank 1 — `crystallography_n6` (score 9)
 
 - **Why**: pure n=6 closed-form Fedorov-230 / Bravais-14 / 7-systems / 32-pt-groups enumerator. Zero external deps. IUCr-canonical reference. Sentinel `__CRYSTALLOGRAPHY_N6__ PASS|FAIL`.
-- **Destination**: `/Users/ghost/core/n6-architecture/domains/structure/crystallography/` (existing standalone repo).
+- **Destination**: `/Users/ghost/core/canon/domains/structure/crystallography/` (existing standalone repo).
 - **Effort**: ~4hr (file move + INDEX update + test author + nexus rm).
 - **Risk**: minimal — no consumers in nexus today.
 
@@ -73,21 +73,21 @@ Axes: **coupling** (low coupling = high) | **reusability** (generic external val
 ### Rank 3 — `chip_isa_n6` (score 9)
 
 - **Why**: 24-bit Xn6 ISA encoder/decoder (24 mnemonics × 4 variants). Lossless roundtrip falsifier. Master identity σ·φ = n·τ = J₂ = 24.
-- **Destination**: `/Users/ghost/core/n6-architecture/domains/compute/chip-isa-n6/` (predecessor 305-LOC stub already there per @origin tag — REPLACE with productized 445-LOC).
+- **Destination**: `/Users/ghost/core/canon/domains/compute/chip-isa-n6/` (predecessor 305-LOC stub already there per @origin tag — REPLACE with productized 445-LOC).
 - **Effort**: ~6hr (replace + sha-mismatch reconciliation + test author).
 - **Risk**: low-medium — destination predecessor may have divergent edits requiring merge audit.
 
 ### Rank 4 — `fusion_ledger` (score 8)
 
 - **Why**: ITER + n=6 fusion-design constants verifier. 27 measured constants vs closed-form (σ, τ, φ, sopfr, J₂). **Honesty preserved**: 26/27 PASS, lawson_triple falsified by 1 decade — explicitly NOT inflated.
-- **Destination**: `/Users/ghost/core/n6-architecture/domains/energy/fusion/`.
+- **Destination**: `/Users/ghost/core/canon/domains/energy/fusion/`.
 - **Effort**: ~6hr (move + data/iter_constants.json migration + INDEX).
 - **Risk**: low — niche audience (fusion + n6 enthusiasts).
 
 ### Rank 5 — `tabletop_blackhole` (score 8)
 
 - **Why**: BEC analog Hawking-temperature simulator (Steinhauer 2014). n=6 anchors: T_H = σ/(τ·n) = 0.5 nK; B_trap = σ·τ = 48 T. Zero external deps.
-- **Destination**: `/Users/ghost/core/n6-architecture/experiments/`.
+- **Destination**: `/Users/ghost/core/canon/experiments/`.
 - **Effort**: ~4hr (move + experiment registration).
 - **Risk**: low.
 
@@ -99,7 +99,7 @@ Axes: **coupling** (low coupling = high) | **reusability** (generic external val
 2. **No clear API (research-stage code)**: `atlas_n6` (empty), `sim` (empty), `kick/mac_kick.hexa` (WRAPPED stub T2, not IMPLEMENTED).
 3. **Already migrated elsewhere**:
    - `sim` → fully absorbed by `/Users/ghost/core/sim-universe/` (recommend `rm -rf modules/sim/`).
-   - `chip_isa_n6` + `chip_rtl_gen` + `crystallography_n6` + `fusion_ledger` + `tabletop_blackhole` → all have @origin tags pointing to `~/core/n6-architecture/` predecessors. n6-architecture standalone EXISTS with rich domain layout (`domains/compute/`, `domains/energy/`, `domains/structure/`, `experiments/`, `papers/`, `lean4-n6/`).
+   - `chip_isa_n6` + `chip_rtl_gen` + `crystallography_n6` + `fusion_ledger` + `tabletop_blackhole` → all have @origin tags pointing to `~/core/canon/` predecessors. CANON standalone EXISTS with rich domain layout (`domains/compute/`, `domains/energy/`, `domains/structure/`, `experiments/`, `papers/`, `lean4-n6/`).
 4. **Cross-tree path coupling (broken post-extraction)**:
    - `mc_integrate.hexa` references `nexus/sim_bridge/godel_q/anu_source.hexa` — but sim_bridge contents extracted to sim-universe (path now broken / will break when sim_bridge is rm'd from nexus).
    - `multiverse_nav.hexa` same coupling to `nexus/sim_bridge/godel_q/anu_source.hexa`.
@@ -112,11 +112,11 @@ Axes: **coupling** (low coupling = high) | **reusability** (generic external val
 
 **Batch 1 (parallel BG extraction, ~18hr total)**: launch 3 BG subagents in parallel for the 3 score-9 modules:
 
-1. BG-A: extract `crystallography_n6` → n6-architecture
+1. BG-A: extract `crystallography_n6` → CANON
 2. BG-B: extract `honesty_monitor` → NEW standalone repo `/Users/ghost/core/honesty-monitor/`
-3. BG-C: extract `chip_isa_n6` → n6-architecture (with predecessor sha audit)
+3. BG-C: extract `chip_isa_n6` → CANON (with predecessor sha audit)
 
-**Batch 2 (next cycle)**: `chip_rtl_gen` + `fusion_ledger` + `tabletop_blackhole` (all → n6-architecture; can be batched with shared test scaffold).
+**Batch 2 (next cycle)**: `chip_rtl_gen` + `fusion_ledger` + `tabletop_blackhole` (all → CANON; can be batched with shared test scaffold).
 
 **Batch 3 (deferred)**:
 - `qrng` (14hr — needs anima-eeg consumer migration plan first; high-priority due to most-active status)
@@ -136,7 +136,7 @@ Axes: **coupling** (low coupling = high) | **reusability** (generic external val
 1. **Scoring is subjective**: 5-axis equal-weight sum may not match real extraction value; alternate weighting (e.g. activity 2x for production-critical modules) would re-rank. `qrng` would jump to top under activity-weighted scoring.
 2. **Ranking depends on nexus future direction**: if nexus shifts toward monolith-first integration, all extraction candidates downgrade to "keep_in_nexus". If nexus shifts toward thin orchestrator, all 8 immediate candidates accelerate.
 3. **Extraction adds dual-mirror burden**: each new repo = GitHub + HuggingFace mirror + per-repo CHANGELOG + release notes + CI maintenance + version-skew risk. qmirror v2.0 has `CHANGELOG_v2_entry.md.draft` + `RELEASE_NOTES_v2.0.0.md.draft` + `registry_v2_entry.tsv.draft` overhead unaccounted for in ranking.
-4. **Audit may miss inter-module hidden coupling**: only @origin tags + nexus-path string-match + sim_bridge cross-ref were checked. Hidden coupling channels NOT enumerated: shared sentinel-token namespaces, env-var convention sharing (`NEXUS_QRNG_*`), atlas-absorb downstream consumer chains, hexa-resolver bypass markers, host-pin marker file dependencies. A pre-extraction sweep with `grep -r <module_name>` across nexus + anima + hive + n6-architecture is REQUIRED before each batch.
+4. **Audit may miss inter-module hidden coupling**: only @origin tags + nexus-path string-match + sim_bridge cross-ref were checked. Hidden coupling channels NOT enumerated: shared sentinel-token namespaces, env-var convention sharing (`NEXUS_QRNG_*`), atlas-absorb downstream consumer chains, hexa-resolver bypass markers, host-pin marker file dependencies. A pre-extraction sweep with `grep -r <module_name>` across nexus + anima + hive + CANON is REQUIRED before each batch.
 
 ---
 
@@ -170,8 +170,8 @@ Both extracted repos use this canonical layout (mirror this for new extractions)
 
 Key fields in `hexa.toml`:
 - `[package].name`, `version` (semver), `entry` = `cli/<repo>.hexa`
-- `repository` = `https://github.com/need-singularity/<repo>`
-- `mirror_url` = `https://huggingface.co/need-singularity/<repo>`
+- `repository` = `https://github.com/dancinlab/<repo>`
+- `mirror_url` = `https://huggingface.co/dancinlab/<repo>`
 - `[lib].entry` = importable hexa module (often `modules/<main>.hexa` or `modules/selftest.hexa`)
 - `[[bin]]` = CLI binary name + path
 - `[test].runner` = `hexa`, `[test].files` = explicit list of selftest files

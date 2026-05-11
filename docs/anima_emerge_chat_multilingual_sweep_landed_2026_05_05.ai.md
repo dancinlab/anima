@@ -21,7 +21,7 @@ Hypothesis to falsify:
 
 ## 2. Method
 
-12 prompt families, greedy-decode 25 max_new on need-singularity/clm-v4-mk2-v1.
+12 prompt families, greedy-decode 25 max_new on dancinlab/clm-v4-mk2-v1.
 Families: chinese_simplified, chinese_traditional, japanese_hiragana,
 japanese_katakana, english, numbers, code_python, code_html, math,
 punctuation, korean, mixed_ko_en. Per-emit char categorization by Unicode

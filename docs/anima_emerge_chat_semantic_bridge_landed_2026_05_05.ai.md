@@ -15,7 +15,7 @@ iterative emits id 32 once then id 10 = `\x06` repeating 14×).
 
 ## Inputs / setup
 
-- **Model**: `need-singularity/clm-v4-mk2-v1` (HF, fp32, mac CPU)
+- **Model**: `dancinlab/clm-v4-mk2-v1` (HF, fp32, mac CPU)
 - **Tokenizer**: `tokenizer_64k_multilingual.model` (SentencePiece 64k)
 - **Prompt**: `"안녕"` (single Korean greeting; encoded to 2 tokens)
 - **Hook**: forward hook on `decoder.ln_f` capturing post-norm hidden;

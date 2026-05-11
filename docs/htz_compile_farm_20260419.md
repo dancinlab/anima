@@ -21,7 +21,7 @@ Larger CPU axis than ubu2 (32t vs 12t), parallel cross-check rail.
 
 ## Deployed artifacts
 
-- `~/hexa-lang/` — full clone of github.com/need-singularity/hexa-lang (main)
+- `~/hexa-lang/` — full clone of github.com/dancinlab/hexa-lang (main)
 - `~/hexa-lang/build/hexa_v2_linux` — pre-built sister binary (1.5 MB, ELF x86_64)
 - `/tmp/hexa_v2_linux` — runtime copy, executable
 - `/tmp/htz_smoke.sh` — per-file transpile + `clang -I~/hexa-lang/self -c` wrapper

@@ -2,8 +2,8 @@
 schema: anima/docs/hf_dataset_migration/ai-native/1
 last_updated: 2026-05-04
 ssot:
-  hf_dataset_repo: need-singularity/anima-sft-data
-  hf_url: https://huggingface.co/datasets/need-singularity/anima-sft-data
+  hf_dataset_repo: dancinlab/anima-sft-data
+  hf_url: https://huggingface.co/datasets/dancinlab/anima-sft-data
   initial_commit: c76663148e97a243b6d2d2e1db75d40dc6dc9380
   initial_file: sft_data_llama_template.jsonl
   initial_size_bytes: 71918520
@@ -23,7 +23,7 @@ omega_cycle: 4-step (audit -> upload -> verify -> migrate)
 
 > **TL;DR**
 >
-> 68.59 MB `sft_data_llama_template.jsonl` migrated from anima git tree → `huggingface.co/datasets/need-singularity/anima-sft-data`. anima git now references via path constant; gitignore prevents re-commit. sha256 verified post-upload (f257d7b3...).
+> 68.59 MB `sft_data_llama_template.jsonl` migrated from anima git tree → `huggingface.co/datasets/dancinlab/anima-sft-data`. anima git now references via path constant; gitignore prevents re-commit. sha256 verified post-upload (f257d7b3...).
 
 ## §1 Problem
 
@@ -44,18 +44,18 @@ GitHub limits:
 | Layer | Before | After |
 |---|---|---|
 | anima git | tracks 71.9 MB jsonl (clone bottleneck) | references HF dataset path only |
-| HF | none | `need-singularity/anima-sft-data` private dataset |
-| Access | `git clone` (slow) | `hf download need-singularity/anima-sft-data` (LFS auto) |
+| HF | none | `dancinlab/anima-sft-data` private dataset |
+| Access | `git clone` (slow) | `hf download dancinlab/anima-sft-data` (LFS auto) |
 
 ## §3 Migration steps (executed 2026-05-04)
 
-1. **Auth**: `HF_TOKEN=$(secret get huggingface.token --raw)` (token via secret CLI; user `dancinlife` / org `need-singularity` confirmed)
+1. **Auth**: `HF_TOKEN=$(secret get huggingface.token --raw)` (token via secret CLI; user `dancinlife` / org `dancinlab` confirmed)
 2. **File audit**: `shasum -a 256 sft_data_llama_template.jsonl` → `f257d7b3...` (71918520 bytes)
-3. **Repo create**: `hf repos create need-singularity/anima-sft-data --type dataset --private`
-4. **Upload**: `hf upload need-singularity/anima-sft-data <local-path> sft_data_llama_template.jsonl --repo-type dataset`
+3. **Repo create**: `hf repos create dancinlab/anima-sft-data --type dataset --private`
+4. **Upload**: `hf upload dancinlab/anima-sft-data <local-path> sft_data_llama_template.jsonl --repo-type dataset`
    - Commit: `c76663148e97a243b6d2d2e1db75d40dc6dc9380`
    - Throughput: 7.82 MB/s
-5. **Verify**: `hf download need-singularity/anima-sft-data sft_data_llama_template.jsonl --local-dir /tmp/hf_verify` → sha256 match (`f257d7b3...`)
+5. **Verify**: `hf download dancinlab/anima-sft-data sft_data_llama_template.jsonl --local-dir /tmp/hf_verify` → sha256 match (`f257d7b3...`)
 6. **Migrate**: `git rm --cached state/p9_path_a_r16_2026_05_03/sft_data_llama_template.jsonl`
 7. **Gitignore**: pattern `state/p9_path_a_*/sft_data_*.jsonl` added to `.gitignore`
 8. **Doc**: this handoff doc
@@ -66,7 +66,7 @@ GitHub limits:
 ```python
 from huggingface_hub import hf_hub_download
 path = hf_hub_download(
-    repo_id="need-singularity/anima-sft-data",
+    repo_id="dancinlab/anima-sft-data",
     filename="sft_data_llama_template.jsonl",
     repo_type="dataset",
 )
@@ -75,7 +75,7 @@ path = hf_hub_download(
 ### Download via CLI:
 ```bash
 HF_TOKEN=$(secret get huggingface.token --raw) hf download \
-    need-singularity/anima-sft-data sft_data_llama_template.jsonl \
+    dancinlab/anima-sft-data sft_data_llama_template.jsonl \
     --repo-type dataset \
     --local-dir state/p9_path_a_r16_2026_05_03/
 ```
@@ -84,7 +84,7 @@ HF_TOKEN=$(secret get huggingface.token --raw) hf download \
 ```yaml
 # anima/config/datasets.yaml (if/when emitted)
 sft_data_llama_template:
-  hf_repo: need-singularity/anima-sft-data
+  hf_repo: dancinlab/anima-sft-data
   filename: sft_data_llama_template.jsonl
   sha256: f257d7b342f2d675412396dd3f530b7f7ee79b263696de37686becb03a7dbb75
   size_bytes: 71918520
@@ -111,7 +111,7 @@ Trigger threshold: file size >50 MB OR cumulative state dir >500 MB.
 
 | Path | Role |
 |---|---|
-| `https://huggingface.co/datasets/need-singularity/anima-sft-data` | HF dataset SSOT (canonical) |
+| `https://huggingface.co/datasets/dancinlab/anima-sft-data` | HF dataset SSOT (canonical) |
 | `state/p9_path_a_r16_2026_05_03/sft_data_llama_template.jsonl` | local cache (gitignored; download on demand) |
 | `.gitignore` | extended with `state/p9_path_a_*/sft_data_*.jsonl` pattern |
 | `docs/anima_hf_dataset_migration_2026_05_04.ai.md` | this handoff doc |

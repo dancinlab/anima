@@ -16,7 +16,7 @@
 | qmirror falsifier closure | 8 (v1.0.0) + 5 (v2.0.0) = **13/13 conds met** |
 | GitHub PUBLIC + HF dual-mirror | 4 packages, all with auto-sync GitHub Actions workflow |
 | arXiv preprint | qmirror v0.1 draft landed (~570 LoC + 32 BibTeX, NOT submitted) |
-| n6-architecture absorbed extractions | 2 (crystallography_n6, chip_isa_n6) on top of base spec |
+| CANON absorbed extractions | 2 (crystallography_n6, chip_isa_n6) on top of base spec |
 | hexa-lang registry growth | L22-L25 (+ 4 new entries: qmirror, sim-universe, hexa-bio, honesty-monitor) |
 | CLM Teacher P9 SFT main thread | r=64 catastrophic forgetting confirmed; r=16 multi-seed retrain in flight |
 | Teacher Paradigm D | Φ★ 25K H100 in flight (defer); KL preflight + 50K cache built |
@@ -25,7 +25,7 @@
 | Total RunPod spend (this window) | ~**$110-130** (band; see §10 Cost Caveats) |
 | Sister BG work cost | $0 (pure ubu1 + Mac local) |
 
-Composite verdict: **anima entered its first publishable cycle.** qmirror is the lighthouse (4 Apache-2.0 packages on GitHub PUBLIC, HF dual-mirror, arXiv-ready draft); the rest of the ecosystem (CLM/VLM, n6-architecture, hexa-lang governance) consolidated around the qmirror release pattern.
+Composite verdict: **anima entered its first publishable cycle.** qmirror is the lighthouse (4 Apache-2.0 packages on GitHub PUBLIC, HF dual-mirror, arXiv-ready draft); the rest of the ecosystem (CLM/VLM, CANON, hexa-lang governance) consolidated around the qmirror release pattern.
 
 ---
 
@@ -64,12 +64,12 @@ Cumulative cost: $0 default path (up to $25 if cond.13 hardware anchor engaged �
 
 ### 1.3 GitHub PUBLIC + HF dual-mirror + Apache-2.0 + LICENSING.md
 
-- canonical: <https://github.com/need-singularity/qmirror> (Apache-2.0)
-- mirror: <https://huggingface.co/need-singularity/qmirror>
+- canonical: <https://github.com/dancinlab/qmirror> (Apache-2.0)
+- mirror: <https://huggingface.co/dancinlab/qmirror>
 - dual-mirror autosync: `.github/workflows/sync-to-hf.yml` (qmirror pattern; loud `Verify HF_TOKEN secret is present` failure if secret missing)
 - LICENSING.md: pyphi GPLv3 isolated via subprocess shim (FSF Mere Aggregation doctrine, Option A + D combined per `state/qmirror_license_audit_2026_05_03/audit.json` — counsel review pending; arXiv draft caveats this in §6 Limitations)
-- v1.0.0 release: <https://github.com/need-singularity/qmirror/releases/tag/v1.0.0>
-- v2.0.0 release: <https://github.com/need-singularity/qmirror/releases/tag/v2.0.0>
+- v1.0.0 release: <https://github.com/dancinlab/qmirror/releases/tag/v1.0.0>
+- v2.0.0 release: <https://github.com/dancinlab/qmirror/releases/tag/v2.0.0>
 
 ### 1.4 hexa-lang registry L22-L25
 
@@ -98,26 +98,26 @@ Each follows the qmirror v1.0.0/v2.0.0 release pattern: GitHub PUBLIC + HF mirro
 
 ### 2.1 sim-universe v1.0.0 (substrate-agnostic simulation)
 
-- canonical: <https://github.com/need-singularity/sim-universe> (Apache-2.0, commit `16dc90c`)
-- mirror: <https://huggingface.co/need-singularity/sim-universe> (commit `ee60c8c`, 98 files)
-- release: <https://github.com/need-singularity/sim-universe/releases/tag/v1.0.0>
+- canonical: <https://github.com/dancinlab/sim-universe> (Apache-2.0, commit `16dc90c`)
+- mirror: <https://huggingface.co/dancinlab/sim-universe> (commit `ee60c8c`, 98 files)
+- release: <https://github.com/dancinlab/sim-universe/releases/tag/v1.0.0>
 - 7 CLI subcommands (Tier-A/Tier-A2/Tier-B + sim_agent surface)
 - Module APIs NOT semver-frozen at 1.0.0 (caveat §4 of polish landing)
 - N-substrate roadmap anchor: `n_substrate_consciousness_roadmap_2026_05_01.md` §11.1 (N-9 / N-10)
 
 ### 2.2 hexa-bio v1.0.0 (Molecular Toolkit, 4 verbs)
 
-- canonical: <https://github.com/need-singularity/hexa-bio> (Apache-2.0, commit `4f4ecfb`)
-- mirror: <https://huggingface.co/need-singularity/hexa-bio> (commit `df9a668`, 23 files)
-- release: <https://github.com/need-singularity/hexa-bio/releases/tag/v1.0.0>
+- canonical: <https://github.com/dancinlab/hexa-bio> (Apache-2.0, commit `4f4ecfb`)
+- mirror: <https://huggingface.co/dancinlab/hexa-bio> (commit `df9a668`, 23 files)
+- release: <https://github.com/dancinlab/hexa-bio/releases/tag/v1.0.0>
 - 4 verbs: weave (WIRED v1.0.0, cage-assembly ODE) + nanobot/ribozyme/virocapsid (STUB v1.0.0-stub)
 - Workflow uses `if: secrets.HF_TOKEN != ''` job-level gate (silent fail mode — different semantics from qmirror/sim-universe loud-fail)
 
 ### 2.3 honesty-monitor v1.0.0 (AI alignment honesty/over-confidence)
 
-- canonical: <https://github.com/need-singularity/honesty-monitor> (Apache-2.0, commit `e005096`)
-- mirror: <https://huggingface.co/need-singularity/honesty-monitor> (commit `c8118fa`, 13 files)
-- release: <https://github.com/need-singularity/honesty-monitor/releases/tag/v1.0.0>
+- canonical: <https://github.com/dancinlab/honesty-monitor> (Apache-2.0, commit `e005096`)
+- mirror: <https://huggingface.co/dancinlab/honesty-monitor> (commit `c8118fa`, 13 files)
+- release: <https://github.com/dancinlab/honesty-monitor/releases/tag/v1.0.0>
 - Self-test: `__HONESTY_MONITOR__ PASS alerts=2 steps=5`
 - Workflow: qmirror pattern (loud fail on missing HF_TOKEN)
 
@@ -125,20 +125,20 @@ Each follows the qmirror v1.0.0/v2.0.0 release pattern: GitHub PUBLIC + HF mirro
 
 Each repo's GitHub Actions sync-to-hf workflow is **inert until `HF_TOKEN` secret is set** at:
 
-- <https://github.com/need-singularity/qmirror/settings/secrets/actions>
-- <https://github.com/need-singularity/sim-universe/settings/secrets/actions>
-- <https://github.com/need-singularity/hexa-bio/settings/secrets/actions>
-- <https://github.com/need-singularity/honesty-monitor/settings/secrets/actions>
+- <https://github.com/dancinlab/qmirror/settings/secrets/actions>
+- <https://github.com/dancinlab/sim-universe/settings/secrets/actions>
+- <https://github.com/dancinlab/hexa-bio/settings/secrets/actions>
+- <https://github.com/dancinlab/honesty-monitor/settings/secrets/actions>
 
 (Initial mirrors were bootstrapped manually via `hf upload`; auto-sync activates from the next push after the secret lands.)
 
 ---
 
-## 3. n6-architecture extraction
+## 3. CANON extraction
 
 ### 3.1 Base spec (carried in)
 
-`anima/n6-architecture` SSOT — n=6 lattice typology spec.
+`anima/canon` SSOT — n=6 lattice typology spec.
 
 ### 3.2 New absorbed modules (this window)
 
@@ -147,13 +147,13 @@ Each repo's GitHub Actions sync-to-hf workflow is **inert until `HF_TOKEN` secre
 | crystallography_n6 | `38d66066` (rank 1, sister BG, pushed) | UNSTAGED_DELETE (pending user `git rm`) |
 | chip_isa_n6 | `e6141bce` (rank 3, this BG, pushed) | COMMITTED `29f26724` |
 
-n6-architecture remote HEAD: `e6141bceffdf0456898b61f48c61a471de688e16` (verified via `git ls-remote`); ahead count 0; GitHub API updatedAt: `2026-05-04T06:29:54Z`.
+CANON remote HEAD: `e6141bceffdf0456898b61f48c61a471de688e16` (verified via `git ls-remote`); ahead count 0; GitHub API updatedAt: `2026-05-04T06:29:54Z`.
 
 User next step (when ready):
 ```
 cd /Users/ghost/core/nexus
 git rm modules/crystallography_n6/README.md modules/crystallography_n6/crystallography_n6.hexa
-git commit -m "chore(modules): remove crystallography_n6 — extracted to n6-architecture"
+git commit -m "chore(modules): remove crystallography_n6 — extracted to CANON"
 ```
 
 ---
@@ -269,7 +269,7 @@ Hand-port: `anima-voice/audio_token_predictor.hexa` (Mk.III, 1576 LoC) → `tool
 
 ### 6.3 4 ckpts pending HF push (sister BG handling)
 
-- step-5k pushed: `need-singularity/vlm-anima-voice-paradigm-stage1-step-5k` (HTTP 200, paradigm prefix per mk2 amendment)
+- step-5k pushed: `dancinlab/vlm-anima-voice-paradigm-stage1-step-5k` (HTTP 200, paradigm prefix per mk2 amendment)
 - step-10k / step-15k / step-25k / step-50k pending (sister BG handles savepoint backup pipeline)
 - Watchdog: `/tmp/vlm_stage1_tail_watchdog.sh` (PID 3436596, 30s interval, patterns Traceback|Killed|OOM|CUDA OOM|RuntimeError|Segmentation; alert log `/tmp/vlm_stage1_watchdog_alert.log`)
 
@@ -410,7 +410,7 @@ RunPod credit balance at synthesis time: **$339.189** (auto-charge enabled, no a
 2. **MEDIUM**: 3 sister packages (sim-universe, hexa-bio, honesty-monitor) v1.1.0 — semver-frozen module APIs, expanded test surface, downstream consumer onboarding
 3. **MEDIUM**: hexa-lang versioning Phase 3 — `use ... require version >= ...` runtime hook (speculative; runtime.c change)
 4. **LOW**: hexa-bio verb expansion (nanobot/ribozyme/virocapsid wired beyond stub)
-5. **LOW**: n6-architecture additional module absorption (pending sister BG audits)
+5. **LOW**: CANON additional module absorption (pending sister BG audits)
 
 ### 10.4 Rejected / explicitly deferred
 
@@ -444,7 +444,7 @@ RunPod credit balance at synthesis time: **$339.189** (auto-charge enabled, no a
 - sim-universe polish: `docs/sim_universe_polish_landed_2026_05_04.ai.md`
 - hexa-bio polish: `docs/hexa_bio_polish_landed_2026_05_04.ai.md`
 - honesty-monitor polish: `docs/honesty_monitor_polish_landed_2026_05_04.ai.md`
-- n6-architecture push verify: `docs/n6_architecture_push_verify_landed_2026_05_04.ai.md`
+- CANON push verify: `docs/n6_architecture_push_verify_landed_2026_05_04.ai.md`
 - P9 Path A r=64 main eval: `docs/p9_a_prime_r64_main_eval_completion_landed_2026_05_04.ai.md`
 - P9 Path A r=16 launch: `docs/p9_path_a_r16_launched_2026_05_04.ai.md`
 - P9 Path A r=16 3-seed watchdog: `docs/p9_path_a_r16_3seed_watchdog_armed_2026_05_04.ai.md`
@@ -471,13 +471,13 @@ RunPod credit balance at synthesis time: **$339.189** (auto-charge enabled, no a
 
 ### 12.3 External canonical references
 
-- qmirror canonical: <https://github.com/need-singularity/qmirror>
-- qmirror v2.0.0 release: <https://github.com/need-singularity/qmirror/releases/tag/v2.0.0>
-- sim-universe canonical: <https://github.com/need-singularity/sim-universe>
-- hexa-bio canonical: <https://github.com/need-singularity/hexa-bio>
-- honesty-monitor canonical: <https://github.com/need-singularity/honesty-monitor>
-- n6-architecture canonical: <https://github.com/need-singularity/n6-architecture>
-- HF org: <https://huggingface.co/need-singularity>
+- qmirror canonical: <https://github.com/dancinlab/qmirror>
+- qmirror v2.0.0 release: <https://github.com/dancinlab/qmirror/releases/tag/v2.0.0>
+- sim-universe canonical: <https://github.com/dancinlab/sim-universe>
+- hexa-bio canonical: <https://github.com/dancinlab/hexa-bio>
+- honesty-monitor canonical: <https://github.com/dancinlab/honesty-monitor>
+- CANON canonical: <https://github.com/dancinlab/canon>
+- HF org: <https://huggingface.co/dancinlab>
 
 ---
 

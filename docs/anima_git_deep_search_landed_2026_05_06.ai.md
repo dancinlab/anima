@@ -26,7 +26,7 @@ BG-EQ's prior conclusion stands: only `AnimaLM` final.pt rename (blob `56dfa7c6`
 
 ### Sub-3: ready/.git embedded full repo deep search
 - size: 7.1GB / git repo (NOT worktree symlink)
-- remote: `https://github.com/need-singularity/anima.git` (same as anima)
+- remote: `https://github.com/dancinlab/anima.git` (same as anima)
 - HEAD: `ssot-hexa-first-fix` branch
 - v2 era commits PRESENT — bb99b6b6 / 6abc42f6 / 13b20f90 cat-file confirms full commit message ("18M parameter byte-level model", CE=1.29, CE=0.04 dialogue_ft)
 - **trees contain only .py source code** (.gitignore excluded `checkpoints/`)

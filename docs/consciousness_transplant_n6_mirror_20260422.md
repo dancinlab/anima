@@ -1,7 +1,7 @@
 # Consciousness-Transplant — n6 §3 Mirror (anima-side)
 
 **Roadmap entry:** #53
-**Source of truth:** `<repo-root>/../n6-architecture/reports/discovery/consciousness-cluster-bt.md §3`
+**Source of truth:** `<repo-root>/../canon/reports/discovery/consciousness-cluster-bt.md §3`
 **Mirror date:** 2026-04-22
 **Mirror rationale:** anima-side reference so roadmap #53 can cite this repo without cross-repo lookup. n6 remains canonical.
 
@@ -9,7 +9,7 @@
 
 ## §3 n=6 mapping (per-domain) — transplant row
 
-From n6-architecture/reports/discovery/consciousness-cluster-bt.md §3:
+From CANON/reports/discovery/consciousness-cluster-bt.md §3:
 
 | Domain                      | Mapping                     | Role         |
 |-----------------------------|-----------------------------|--------------|

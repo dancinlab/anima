@@ -6,7 +6,7 @@ domain: anima-eeg + anima-eeg-core + hexa-brain
 authors:
   - claude-opus-4-7
 status: LANDED
-new_repo: https://github.com/need-singularity/hexa-brain
+new_repo: https://github.com/dancinlab/hexa-brain
 new_repo_local: /Users/ghost/core/hexa-brain
 new_repo_versions: ["v1.0.0 (eeg-only)", "v1.1.0 (eeg + core dual-subsystem)"]
 spinoff_anima_commit: 1b306eec24999ffd28505995655674b0f2beaa31
@@ -17,7 +17,7 @@ size_kb: 15300
 cli_dispatcher: bin/hexa-brain
 license: MIT
 emoji_branding: ["🧠", "⬢🧠", "🧠⬢🧠"]
-sister_pattern_referenced: github.com/need-singularity/sim-universe
+sister_pattern_referenced: github.com/dancinlab/sim-universe
 ---
 
 # anima -> hexa-brain spinoff landed (2026-05-04)
@@ -26,7 +26,7 @@ sister_pattern_referenced: github.com/need-singularity/sim-universe
 
 - **Spinoff complete**: `anima/anima-eeg/` (30 hexa CLI tools, ~600KB source,
   recordings/ canonical sessions) split into standalone repo
-  `github.com/need-singularity/hexa-brain` via `git subtree split --prefix=anima-eeg`.
+  `github.com/dancinlab/hexa-brain` via `git subtree split --prefix=anima-eeg`.
   Full git history preserved, rooted at directory contents (2162 commits in
   the spinoff branch). Initial v1.0.0 release tagged.
 
@@ -42,7 +42,7 @@ sister_pattern_referenced: github.com/need-singularity/sim-universe
   (WebSocket consumers in anima consciousness runtime, dual-stream coupling
   with anima Φ-pipeline) stabilize. Deletion deferred to a future cycle.
 
-- **Reference pattern**: sim-universe (need-singularity/sim-universe) was
+- **Reference pattern**: sim-universe (dancinlab/sim-universe) was
   cloned + structurally mimicked. README captures sim-universe's hero+badges
   format, architecture ASCII, module inventory table, quickstart, roadmap,
   caveats (raw#10 honest C3), license footer, and provenance section.
@@ -65,7 +65,7 @@ sister_pattern_referenced: github.com/need-singularity/sim-universe
   module inventory format are stylistic choices that the user may wish
   to revise; the v1.0.0 release is committed but not yet pushed publicly
   (private repo at creation, user promotes via
-  `gh repo edit need-singularity/hexa-brain --visibility public` when ready).
+  `gh repo edit dancinlab/hexa-brain --visibility public` when ready).
 
 ## Cross-link annotation proposals (apply in next anima cycle, additive_only)
 
@@ -74,7 +74,7 @@ sister_pattern_referenced: github.com/need-singularity/sim-universe
 Append to `cond.1` JSONL line (or insert as new sibling annotation line):
 
 ```json
-{"type":"annotation","target":"eeg.cond.1","kind":"cross_repo_provenance","ts_utc":"2026-05-04T00:00:00Z","standalone_repo":"https://github.com/need-singularity/hexa-brain","standalone_subtree_source":"anima-eeg/","standalone_anima_commit":"1b306eec24999ffd28505995655674b0f2beaa31","standalone_version":"v1.0.0","standalone_license":"MIT","retention_policy":"anima/anima-eeg/_retained_during_stabilization","note":"hexa-brain is the canonical distribution; anima/anima-eeg/ is the consumer-side integration shim until WebSocket interface stabilizes"}
+{"type":"annotation","target":"eeg.cond.1","kind":"cross_repo_provenance","ts_utc":"2026-05-04T00:00:00Z","standalone_repo":"https://github.com/dancinlab/hexa-brain","standalone_subtree_source":"anima-eeg/","standalone_anima_commit":"1b306eec24999ffd28505995655674b0f2beaa31","standalone_version":"v1.0.0","standalone_license":"MIT","retention_policy":"anima/anima-eeg/_retained_during_stabilization","note":"hexa-brain is the canonical distribution; anima/anima-eeg/ is the consumer-side integration shim until WebSocket interface stabilizes"}
 ```
 
 ### Proposal 2: `.roadmap.anima_clm_eeg` cond.1
@@ -82,7 +82,7 @@ Append to `cond.1` JSONL line (or insert as new sibling annotation line):
 Append to `cond.1` JSONL line (or insert as new sibling annotation line):
 
 ```json
-{"type":"annotation","target":"anima_clm_eeg.cond.1","kind":"cross_repo_provenance","ts_utc":"2026-05-04T00:00:00Z","substrate_repo":"https://github.com/need-singularity/hexa-brain","substrate_dependency":"hexa-brain v1.0.0+ provides scalp-EEG acquisition + analysis primitives consumed by anima_clm_eeg pipelines","substrate_local_path_dev":"/Users/ghost/core/hexa-brain","substrate_local_path_anima_shim":"/Users/ghost/core/anima/anima-eeg","note":"anima_clm_eeg consumes recordings produced by hexa-brain.collect; integration via dual_stream.hexa coupling"}
+{"type":"annotation","target":"anima_clm_eeg.cond.1","kind":"cross_repo_provenance","ts_utc":"2026-05-04T00:00:00Z","substrate_repo":"https://github.com/dancinlab/hexa-brain","substrate_dependency":"hexa-brain v1.0.0+ provides scalp-EEG acquisition + analysis primitives consumed by anima_clm_eeg pipelines","substrate_local_path_dev":"/Users/ghost/core/hexa-brain","substrate_local_path_anima_shim":"/Users/ghost/core/anima/anima-eeg","note":"anima_clm_eeg consumes recordings produced by hexa-brain.collect; integration via dual_stream.hexa coupling"}
 ```
 
 ## Apply timing
@@ -149,7 +149,7 @@ The two annotation proposals from v1.0.0 still apply but now reference
 #### Proposal 1: `.roadmap.eeg` cond.1 (v1.1.0)
 
 ```json
-{"type":"annotation","target":"eeg.cond.1","kind":"cross_repo_provenance","ts_utc":"2026-05-04T00:00:00Z","standalone_repo":"https://github.com/need-singularity/hexa-brain","standalone_subtree_source":"anima-eeg/","standalone_anima_commit":"1b306eec24999ffd28505995655674b0f2beaa31","standalone_version":"v1.1.0","standalone_layout_note":"v1.1.0 moves eeg subsystem to eeg/ subdirectory; v1.0.0 was repo-root","standalone_license":"MIT","retention_policy":"anima/anima-eeg/_retained_during_stabilization","note":"hexa-brain v1.1.0 is canonical dual-subsystem distribution (eeg/ + core/); anima/anima-eeg/ remains as consumer-side integration shim until WebSocket interface stabilizes"}
+{"type":"annotation","target":"eeg.cond.1","kind":"cross_repo_provenance","ts_utc":"2026-05-04T00:00:00Z","standalone_repo":"https://github.com/dancinlab/hexa-brain","standalone_subtree_source":"anima-eeg/","standalone_anima_commit":"1b306eec24999ffd28505995655674b0f2beaa31","standalone_version":"v1.1.0","standalone_layout_note":"v1.1.0 moves eeg subsystem to eeg/ subdirectory; v1.0.0 was repo-root","standalone_license":"MIT","retention_policy":"anima/anima-eeg/_retained_during_stabilization","note":"hexa-brain v1.1.0 is canonical dual-subsystem distribution (eeg/ + core/); anima/anima-eeg/ remains as consumer-side integration shim until WebSocket interface stabilizes"}
 ```
 
 #### Proposal 1b (NEW): `.roadmap.eeg-core` or any roadmap referencing anima-eeg-core/
@@ -159,7 +159,7 @@ Search pattern: `ls /Users/ghost/core/anima/.roadmap.*eeg-core* /Users/ghost/cor
 #### Proposal 2: `.roadmap.anima_clm_eeg` cond.1 (v1.1.0)
 
 ```json
-{"type":"annotation","target":"anima_clm_eeg.cond.1","kind":"cross_repo_provenance","ts_utc":"2026-05-04T00:00:00Z","substrate_repo":"https://github.com/need-singularity/hexa-brain","substrate_version":"v1.1.0","substrate_subsystems":["eeg","core"],"substrate_dependency":"hexa-brain v1.1.0 eeg/ subsystem provides scalp-EEG acquisition + analysis primitives; core/ subsystem provides paradigms (resting/p300/daily-life) + native metric ports (hjorth/lz76/pe/phi_proxy) consumed by anima_clm_eeg pipelines","substrate_local_path_dev":"/Users/ghost/core/hexa-brain","substrate_local_paths_anima_shims":["/Users/ghost/core/anima/anima-eeg","/Users/ghost/core/anima/anima-eeg-core"],"note":"anima_clm_eeg consumes both subsystems: recordings produced by hexa-brain.eeg.collect + paradigms+metrics from hexa-brain.core.*"}
+{"type":"annotation","target":"anima_clm_eeg.cond.1","kind":"cross_repo_provenance","ts_utc":"2026-05-04T00:00:00Z","substrate_repo":"https://github.com/dancinlab/hexa-brain","substrate_version":"v1.1.0","substrate_subsystems":["eeg","core"],"substrate_dependency":"hexa-brain v1.1.0 eeg/ subsystem provides scalp-EEG acquisition + analysis primitives; core/ subsystem provides paradigms (resting/p300/daily-life) + native metric ports (hjorth/lz76/pe/phi_proxy) consumed by anima_clm_eeg pipelines","substrate_local_path_dev":"/Users/ghost/core/hexa-brain","substrate_local_paths_anima_shims":["/Users/ghost/core/anima/anima-eeg","/Users/ghost/core/anima/anima-eeg-core"],"note":"anima_clm_eeg consumes both subsystems: recordings produced by hexa-brain.eeg.collect + paradigms+metrics from hexa-brain.core.*"}
 ```
 
 ### Apply timing (unchanged)
@@ -169,7 +169,7 @@ Same as v1.0.0 — apply in next anima quiescent commit cycle.
 ### v1.1.0 verdict
 
 - **v1.1.0 tag pushed**: yes (commit `d75f7c3d`, tag pushed to
-  `https://github.com/need-singularity/hexa-brain.git`).
+  `https://github.com/dancinlab/hexa-brain.git`).
 - **eeg + core dual-subsystem**: yes (151 hexa files total, 83 eeg + 68 core).
 - **CLI dispatcher landed**: yes at `bin/hexa-brain`.
 - **All 30 dispatch paths verified**: yes (path-existence audit on every

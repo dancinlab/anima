@@ -7,7 +7,7 @@
 
 ## Summary
 
-Integrated sim-universe (https://github.com/need-singularity/sim-universe, commit 43ebdb6, public 2026-05-04) as a runtime CLI dependency of nexus, mirroring the qmirror precedent. nexus now exposes `nexus sim <subcmd>` which thin-shellouts to the standalone sim-universe CLI via 4-tier resolution (env / mac / home / path). Empty `nexus/modules/sim/` placeholder removed. `nexus/core/sim/` legacy library preserved (separate library surface; zero external consumers).
+Integrated sim-universe (https://github.com/dancinlab/sim-universe, commit 43ebdb6, public 2026-05-04) as a runtime CLI dependency of nexus, mirroring the qmirror precedent. nexus now exposes `nexus sim <subcmd>` which thin-shellouts to the standalone sim-universe CLI via 4-tier resolution (env / mac / home / path). Empty `nexus/modules/sim/` placeholder removed. `nexus/core/sim/` legacy library preserved (separate library surface; zero external consumers).
 
 ## Files Touched
 

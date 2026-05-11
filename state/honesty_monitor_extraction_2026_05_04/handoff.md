@@ -7,7 +7,7 @@
 
 ## Standalone repo
 - **Path**: `/Users/ghost/core/honesty-monitor/`
-- **GitHub**: <https://github.com/need-singularity/honesty-monitor>
+- **GitHub**: <https://github.com/dancinlab/honesty-monitor>
 - **Visibility**: PUBLIC
 - **License**: Apache-2.0
 - **Version**: 1.0.0
@@ -28,7 +28,7 @@ __HONESTY_MONITOR__ PASS alerts=2 steps=5  (via tier-2 resolution)
 - **File**: `/Users/ghost/core/hexa-lang/tool/pkg/registry.tsv`
 - **New entry** (line 25, after `hexa-bio` at L24):
   ```
-  honesty-monitor	1.0.0	cli/honesty-monitor.hexa	https://github.com/need-singularity/honesty-monitor		AI honesty-bit falsifier ...
+  honesty-monitor	1.0.0	cli/honesty-monitor.hexa	https://github.com/dancinlab/honesty-monitor		AI honesty-bit falsifier ...
   ```
 
 ---
@@ -115,5 +115,5 @@ grep "^honesty-monitor" /Users/ghost/core/hexa-lang/tool/pkg/registry.tsv
 
 ## (Optional) HF mirror push — NOT EXECUTED
 
-Mirror to `https://huggingface.co/need-singularity/honesty-monitor` deferred.
+Mirror to `https://huggingface.co/dancinlab/honesty-monitor` deferred.
 Pattern: copy `qmirror/.github/workflows/sync-to-hf.yml` if HF mirror desired.

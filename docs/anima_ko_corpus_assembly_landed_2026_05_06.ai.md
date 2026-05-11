@@ -86,7 +86,7 @@ Rationale: BG-FT/FU need diversified KO (subtitles colloquial + wiki encyclopedi
 
 ## HF upload recipe (own 14 / own 15)
 
-- Repo: `need-singularity/anima-clm-3-corpus-ko-heavy` (dataset)
+- Repo: `dancinlab/anima-clm-3-corpus-ko-heavy` (dataset)
 - Lifecycle: **PRIVATE first** → verification gates → PUBLIC promote
 - Token: via `secret get hf_token_write` (raw#37, leak_guard safe)
 - Full recipe: `state/anima_ko_corpus_assembly_2026_05_06/hf_upload_recipe.txt`
@@ -130,7 +130,7 @@ sha256sum on remote → must match 2e98257f9e89663fc71232e2c1dc0b65f9b9131ad0b6a
 
 ## Next steps
 
-1. Upload PRIVATE: `hf upload need-singularity/anima-clm-3-corpus-ko-heavy ...` (recipe in `hf_upload_recipe.txt`)
+1. Upload PRIVATE: `hf upload dancinlab/anima-clm-3-corpus-ko-heavy ...` (recipe in `hf_upload_recipe.txt`)
 2. Spawn BG-FT (fresh small KO model train) + BG-FU (LoRA fine-tune Llama on KO-heavy) — both consume `corpus_ko_heavy.txt`
 3. SCP to ubu1 or RunPod target with sha256 verify
 4. License audit pass before public promote

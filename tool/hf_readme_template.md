@@ -81,7 +81,7 @@ Three or more honest limitations (raw#10). Do NOT skip this section.
 
 How this checkpoint plugs into the broader anima ecosystem.
 
-- Combines with: {{SISTER_CHECKPOINT_LIST}} (e.g. need-singularity/clm-v4-dpo-stage2)
+- Combines with: {{SISTER_CHECKPOINT_LIST}} (e.g. dancinlab/clm-v4-dpo-stage2)
 - Loaded by: {{LOADER_REF}} (e.g. anima-core/loader.hexa)
 - Slots into: {{HEXAD_SLOT}} (e.g. clm | alm | blm | vlm | slm | tlm)
 - Compose recipe: {{COMPOSE_REF}} (e.g. docs/anima_compose_v4_2026_05_03.md)

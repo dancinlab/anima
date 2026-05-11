@@ -9,7 +9,7 @@ attachments:
 # Michael Levin (Tufts, Allen Discovery Center) — N-22 collaboration outreach
 
 ## Subject
-anima CP2 framework × xenobot bioelectric Φ — collaboration proposal from need-singularity team
+anima CP2 framework × xenobot bioelectric Φ — collaboration proposal from dancinlab team
 
 ## Body
 
@@ -44,8 +44,8 @@ Attachments planned (referenced in this thread):
 - the five raw#71 falsifier predicates as a machine-readable JSON ledger entry
 
 Project links:
-- Code: https://github.com/need-singularity/anima
-- Papers / pre-prints: https://need-singularity.github.io/papers/
+- Code: https://github.com/dancinlab/anima
+- Papers / pre-prints: https://dancinlab.github.io/papers/
 - Project page: anima/CP2 — pre-neural Φ track is N-22
 
 Contact: nerve011235@gmail.com (this address) — happy to defer if the timing is wrong.
@@ -53,4 +53,4 @@ Contact: nerve011235@gmail.com (this address) — happy to defer if the timing i
 Thank you for considering.
 
 — Min Woo, Park
-need-singularity / anima project (Korea)
+dancinlab / anima project (Korea)

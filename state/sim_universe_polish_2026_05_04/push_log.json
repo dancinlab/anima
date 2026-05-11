@@ -34,28 +34,28 @@
       "target": "main",
       "title": "sim-universe v1.0.0 — substrate-agnostic simulation environment",
       "notes_file": "RELEASE_NOTES_v1.0.0.md",
-      "url": "https://github.com/need-singularity/sim-universe/releases/tag/v1.0.0",
+      "url": "https://github.com/dancinlab/sim-universe/releases/tag/v1.0.0",
       "result": "OK"
     },
     {
       "step": 4,
       "kind": "hf_repo_create",
       "tool": "hf repo create",
-      "repo_id": "need-singularity/sim-universe",
+      "repo_id": "dancinlab/sim-universe",
       "repo_type": "model",
       "private": false,
-      "url": "https://huggingface.co/need-singularity/sim-universe",
+      "url": "https://huggingface.co/dancinlab/sim-universe",
       "result": "OK_NEW"
     },
     {
       "step": 5,
       "kind": "hf_upload_initial",
       "tool": "hf upload",
-      "repo_id": "need-singularity/sim-universe",
+      "repo_id": "dancinlab/sim-universe",
       "revision": "main",
       "files_uploaded": 98,
       "ignore_patterns": [".git/*", "state/*", "**/__pycache__/**", "**/*.pyc", ".DS_Store"],
-      "commit_url": "https://huggingface.co/need-singularity/sim-universe/commit/ee60c8cb4ae2d562f6429249dec9010758482d5a",
+      "commit_url": "https://huggingface.co/dancinlab/sim-universe/commit/ee60c8cb4ae2d562f6429249dec9010758482d5a",
       "commit_oid": "ee60c8cb4ae2d562f6429249dec9010758482d5a",
       "warnings": [
         "empty or missing yaml metadata in repo card (cosmetic; HF README front-matter optional)"
@@ -71,7 +71,7 @@
       "first_run_expected": "next push to main after HF_TOKEN secret is set",
       "user_action_required": {
         "what": "Set HF_TOKEN GitHub repository secret (write-scope)",
-        "where": "https://github.com/need-singularity/sim-universe/settings/secrets/actions",
+        "where": "https://github.com/dancinlab/sim-universe/settings/secrets/actions",
         "until_set": "Workflow runs but fails loudly at 'Verify HF_TOKEN secret is present' step (by design)"
       }
     }

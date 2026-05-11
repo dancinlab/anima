@@ -63,7 +63,7 @@ $ ps -p 886653,886677 -o pid,etime,cmd
 
 $ docker ps
 CONTAINER ID   IMAGE                                         STATUS
-33e3cd439174   ghcr.io/need-singularity/airgenome:dev-sshd   Up 18 minutes (healthy)
+33e3cd439174   ghcr.io/dancinlab/airgenome:dev-sshd   Up 18 minutes (healthy)
 ```
 
 drill_v3 (P3) and airgenome-claude both intact.

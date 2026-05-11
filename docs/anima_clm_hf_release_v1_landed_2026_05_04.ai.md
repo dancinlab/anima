@@ -2,13 +2,13 @@
 
 ## TL;DR (사용자 친화 요약)
 
-`.roadmap.clm` cond.2 ("HF release v1 — `need-singularity/anima-clm-mk2-v1`") readiness audit + action plan landed. **Overall readiness ~55% READY / 45% GAP.** Hard infra (weights, tokenizer, shim, license, upload pipeline, pre-push hook) all green or near-green. Three blockers concentrate the gap: (1) **naming spec collision** (cond.2 `anima-clm-mk2-v1` violates mk2 EBNF — recommend re-target to `clm-v4-mk2-v1`), (2) **README sync source missing** (`docs/modules/clm.md` does NOT exist; author from scratch), (3) **model card draft not written** (template ready, content not). **Estimated effort to GREEN: 2 BG cycles ~2.5h mac + 1 user decision turn, $0 — no H100 required for v1.** Audit + plan + this handoff are spec-only; no exec, no pod, no HF push, no git commit in this cycle.
+`.roadmap.clm` cond.2 ("HF release v1 — `dancinlab/anima-clm-mk2-v1`") readiness audit + action plan landed. **Overall readiness ~55% READY / 45% GAP.** Hard infra (weights, tokenizer, shim, license, upload pipeline, pre-push hook) all green or near-green. Three blockers concentrate the gap: (1) **naming spec collision** (cond.2 `anima-clm-mk2-v1` violates mk2 EBNF — recommend re-target to `clm-v4-mk2-v1`), (2) **README sync source missing** (`docs/modules/clm.md` does NOT exist; author from scratch), (3) **model card draft not written** (template ready, content not). **Estimated effort to GREEN: 2 BG cycles ~2.5h mac + 1 user decision turn, $0 — no H100 required for v1.** Audit + plan + this handoff are spec-only; no exec, no pod, no HF push, no git commit in this cycle.
 
 ## 1. 결정 (사용자 OK 대기 — 4 questions)
 
 | Q | recommended (per completion-quality lens) |
 |---|---|
-| Q1 (repo name) | **`need-singularity/clm-v4-mk2-v1`** (Option A: re-target cond.2 to mk2-spec-conformant canonical name; omit `-530m` size suffix per spec §3.5 "obvious from base-version") |
+| Q1 (repo name) | **`dancinlab/clm-v4-mk2-v1`** (Option A: re-target cond.2 to mk2-spec-conformant canonical name; omit `-530m` size suffix per spec §3.5 "obvious from base-version") |
 | Q2 (chat disclosure wording) | use audit §3 Q2 verbatim block (5-sentence #115 invocation + Stage 2-alt cross-link) for `## Caveats` C1 |
 | Q3 (distill dependency) | **release v1 NOW**, do NOT wait for Paradigm D distill (logit-axis BLOCKED on vocab mismatch per `state/p9_paradigm_d_distill_mini_2026_05_04/verdict.json`; φ★-axis is v2 follow-on) |
 | Q4 (sister substrate co-author) | **CLM-only release with `## Composability` cross-link** (NOT bundled co-authoring; sisters get their own release cycles) |
@@ -39,7 +39,7 @@
 - `tool/hf_readme_template.md` (untouched; template is ready, content drafting is in plan step 5)
 - `LICENSE` (untouched; MIT, ready to bundle)
 - `tool/transient_py/clm_v4_hf_format_shim.py` (untouched; F-SHIM-V4-3 PASS already landed)
-- HF repo `need-singularity/clm-v4-base-mirror` (untouched; predecessor; will be cited in §Composability of cond.2 v1 README)
+- HF repo `dancinlab/clm-v4-base-mirror` (untouched; predecessor; will be cited in §Composability of cond.2 v1 README)
 
 ## 4. 결정 lock-in (이번 cycle)
 
@@ -100,7 +100,7 @@
 - `state/p9_paradigm_d_distill_mini_2026_05_04/verdict.json` (read-only; cited for Q3)
 - `state/markers/*` (no marker created/touched in this audit cycle)
 - `LICENSE` (untouched; will be bundled in plan step 6)
-- `HF need-singularity/clm-v4-base-mirror` (untouched; cited as predecessor)
+- `HF dancinlab/clm-v4-base-mirror` (untouched; cited as predecessor)
 
 ## 10. 다음 사용자 입력 대기
 

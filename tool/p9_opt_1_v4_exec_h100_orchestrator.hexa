@@ -525,19 +525,19 @@ fn _emit() {
 "hf auth login --token \"${HF_TOKEN}\" --add-to-git-credential 2>&1 | tail -2 || \\\n" +
 "    huggingface-cli login --token \"${HF_TOKEN}\" --add-to-git-credential 2>&1 | tail -2 || true\n" +
 "\n" +
-"# Download CLM v4 base mirror (need-singularity org)\n" +
-"echo \"[setup] downloading need-singularity/clm-v4-base-mirror\"\n" +
-"hf download need-singularity/clm-v4-base-mirror 2>&1 | tail -5 || \\\n" +
-"    huggingface-cli download need-singularity/clm-v4-base-mirror 2>&1 | tail -5\n" +
+"# Download CLM v4 base mirror (dancinlab org)\n" +
+"echo \"[setup] downloading dancinlab/clm-v4-base-mirror\"\n" +
+"hf download dancinlab/clm-v4-base-mirror 2>&1 | tail -5 || \\\n" +
+"    huggingface-cli download dancinlab/clm-v4-base-mirror 2>&1 | tail -5\n" +
 "\n" +
 "# Locate best.pt + tokenizer (find in cache)\n" +
-"BEST_PT=$(find ~/.cache/huggingface/hub/models--need-singularity--clm-v4-base-mirror/snapshots -name 'best.pt' 2>/dev/null | head -1)\n" +
-"TOK_DIR=$(find ~/.cache/huggingface/hub/models--need-singularity--clm-v4-base-mirror/snapshots -type d -name 'tokenizer' 2>/dev/null | head -1)\n" +
+"BEST_PT=$(find ~/.cache/huggingface/hub/models--dancinlab--clm-v4-base-mirror/snapshots -name 'best.pt' 2>/dev/null | head -1)\n" +
+"TOK_DIR=$(find ~/.cache/huggingface/hub/models--dancinlab--clm-v4-base-mirror/snapshots -type d -name 'tokenizer' 2>/dev/null | head -1)\n" +
 "echo \"[setup] best.pt=$BEST_PT\"\n" +
 "echo \"[setup] tokenizer=$TOK_DIR\"\n" +
 "if [ -z \"$BEST_PT\" ] || [ -z \"$TOK_DIR\" ]; then\n" +
 "    echo \"[FAIL] best.pt or tokenizer not found in HF cache\"\n" +
-"    ls -R ~/.cache/huggingface/hub/models--need-singularity--clm-v4-base-mirror/snapshots/ 2>&1 | head -50\n" +
+"    ls -R ~/.cache/huggingface/hub/models--dancinlab--clm-v4-base-mirror/snapshots/ 2>&1 | head -50\n" +
 "    echo '{\"f_shim_v4_3\":\"FAIL\",\"reason\":\"best.pt or tokenizer missing in HF cache\"}' > $RESULTS/v4_verdict.json\n" +
 "    touch $RESULTS/COMPLETE.sentinel\n" +
 "    exit 1\n" +
@@ -618,7 +618,7 @@ fn _emit() {
 "    import torch\n" +
 "    # Approach (a): scan best.pt for consciousness_state_avg-like keys\n" +
 "    best_pt_paths = glob.glob(os.path.expanduser(\n" +
-"        \"~/.cache/huggingface/hub/models--need-singularity--clm-v4-base-mirror/snapshots/*/best.pt\"))\n" +
+"        \"~/.cache/huggingface/hub/models--dancinlab--clm-v4-base-mirror/snapshots/*/best.pt\"))\n" +
 "    if best_pt_paths:\n" +
 "        ckpt = torch.load(best_pt_paths[0], map_location=\"cpu\", weights_only=False)\n" +
 "        keys = list(ckpt.keys()) if isinstance(ckpt, dict) else []\n" +

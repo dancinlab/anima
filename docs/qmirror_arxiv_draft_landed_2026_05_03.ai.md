@@ -159,8 +159,8 @@ for external peer review, not ready for submission"**.
 - qmirror 2.0 ranking: `anima/state/qmirror_2_axes_2026_05_03/ranked_axes.json`
 - License audit: `anima/state/qmirror_license_audit_2026_05_03/audit.json`
 - HF mirror handoff: `anima/docs/qmirror_hf_mirror_pushed_2026_05_03.ai.md`
-- GitHub canonical: `https://github.com/need-singularity/qmirror`
-- HF mirror: `https://huggingface.co/need-singularity/qmirror`
+- GitHub canonical: `https://github.com/dancinlab/qmirror`
+- HF mirror: `https://huggingface.co/dancinlab/qmirror`
 
 ---
 

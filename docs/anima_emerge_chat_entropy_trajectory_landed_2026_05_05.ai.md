@@ -7,7 +7,7 @@
 
 ## Scope
 
-- **Substrate**: `need-singularity/clm-v4-mk2-v1` (CLM v4 mk2 v1, fp32, CPU)
+- **Substrate**: `dancinlab/clm-v4-mk2-v1` (CLM v4 mk2 v1, fp32, CPU)
 - **Tokenizer**: `tokenizer_64k_multilingual.model` (64k SP)
 - **Decode**: pure greedy (argmax), `consciousness_states=None` (no inject)
 - **Probes**: `["안녕", "안녕하세요. 오늘 날씨가 좋네요.", "Hello world"]`

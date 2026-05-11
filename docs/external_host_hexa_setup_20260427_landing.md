@@ -46,7 +46,7 @@ files that are not present out-of-the-box:
 Both are resolved by symlink. No compilation needed:
 
 ```
-git clone https://github.com/need-singularity/hexa-lang.git ~/core/hexa-lang
+git clone https://github.com/dancinlab/hexa-lang.git ~/core/hexa-lang
 cd ~/core/hexa-lang
 ln -sf $HOME/core/hexa-lang/build/hexa_interp.linux build/hexa_stage0
 ln -sf $HOME/core/hexa-lang/dist/linux-x86_64/hexa_v2 self/native/hexa_v2
@@ -69,7 +69,7 @@ ban is honored: every error path is named in the resolver output.
 ## Stage 3 Recipe
 
 ```
-git clone --depth 1 https://github.com/need-singularity/anima.git ~/core/anima
+git clone --depth 1 https://github.com/dancinlab/anima.git ~/core/anima
 ```
 
 Both hosts landed at commit `6407920 feat(g8): N_BIN=85 D+6

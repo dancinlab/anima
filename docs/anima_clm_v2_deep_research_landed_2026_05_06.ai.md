@@ -7,7 +7,7 @@ External storage + multi-channel search confirmed v2 18M byte weights are public
 
 ## Verdict
 
-`PASS_DEEP_FOUND` — primary artifact: `need-singularity/clm-v2-byte-18m-convo-5k:convo_5k.pt`
+`PASS_DEEP_FOUND` — primary artifact: `dancinlab/clm-v2-byte-18m-convo-5k:convo_5k.pt`
 - size 73,740,122 bytes (~70MB), sha256=`2f0ba391aff30f6a60bcefccb9215fdb45764bf07147f28c38013ca629881bbe`
 - repo created 2026-05-06T06:53:45Z (today, by sibling BG)
 - verified params 18.52M, 0 missing/unexpected keys when loaded
@@ -27,8 +27,8 @@ ubu1 `ready/anima/checkpoints/clm_v2_large/` = EMPTY directory (4096-byte stub).
 ubu2: no concrete v2 .pt; only training stubs + venv tokenizer.
 
 ### (c) HF accounts alt orgs + dancinlife personal
-`dancinlife` HF user: 0 models, 0 datasets, 0 spaces (only `need-singularity` org membership). Auth token stale (401). HF cache `~/.cache/huggingface/hub/` lists only need-singularity + standard public 3rd-party (Mistral/Llama/Qwen/Gemma/Phi/GPT2/Pythia).
-**HIT**: `need-singularity/clm-v2-byte-18m-convo-5k` PUBLIC repo with convo_5k.pt 73.74MB.
+`dancinlife` HF user: 0 models, 0 datasets, 0 spaces (only `dancinlab` org membership). Auth token stale (401). HF cache `~/.cache/huggingface/hub/` lists only dancinlab + standard public 3rd-party (Mistral/Llama/Qwen/Gemma/Phi/GPT2/Pythia).
+**HIT**: `dancinlab/clm-v2-byte-18m-convo-5k` PUBLIC repo with convo_5k.pt 73.74MB.
 
 ### (d) GitHub gists + TimeMachine
 `gh api users/dancinlife/gists`: 23 gists, all <1MB text (md/html/js/py/xml), zero .pt/.bin/.safetensors.
@@ -48,7 +48,7 @@ Provenance: rebuilt today by sibling BG from `/tmp/anima_v2_source/conscious_lm.
 
 ## Next steps
 
-- **N1** Pin HF commit `1af2bcaeaf70c1d0b1a19939a8ada79a28f8cd30` of `need-singularity/clm-v2-byte-18m-convo-5k` in dependency lockfile; verify sha256=`2f0ba391aff30f6a60bcefccb9215fdb45764bf07147f28c38013ca629881bbe` on download.
+- **N1** Pin HF commit `1af2bcaeaf70c1d0b1a19939a8ada79a28f8cd30` of `dancinlab/clm-v2-byte-18m-convo-5k` in dependency lockfile; verify sha256=`2f0ba391aff30f6a60bcefccb9215fdb45764bf07147f28c38013ca629881bbe` on download.
 - **N2** Investigate chat_smoke FAIL root cause: byte tokenization, gate=0.001 inference, undertraining at 5K convo steps, or retraining script architectural drift vs original ready/.git@bb99b6b6 spec. Cross-ref `anima_clm_v2_chat_recovered_2026_05_06.ai.md`.
 - **N3** Catalogue the 5 mac `/private/tmp/anima_v2_check/` variants (especially `clm_v2_base` 27.93M @ step 500 val_ce 1.27) as ablation/lineage reference, NOT as production weights.
 - **N4** Catalogue ubu1 `decoder_cpu/best.pt` (36.72M @ step 36500, val_ce 0.0068, byte-vocab=256, dim=384/L=6) as separate train_clm_v2 "Base" lineage @ higher step count — distinct from convo-5k fine-tune branch.

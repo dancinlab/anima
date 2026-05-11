@@ -2,7 +2,7 @@
 schema: anima/handoff/hf_release_public_promote_scheduled/1
 status: SCHEDULED
 earliest_run_utc: 2026-05-06T23:26:12Z
-repo_id: need-singularity/clm-v4-mk2-v1
+repo_id: dancinlab/clm-v4-mk2-v1
 expected_commit_sha: 80440a1d38db9addc4445bb959057558a57f4230
 own_anchor: own 15 (hf-release-private-then-public-after-verification)
 script_path: state/clm_v4_hf_release_v1_upload_2026_05_04/public_promote_2026_05_07.bash
@@ -33,7 +33,7 @@ bash /Users/ghost/core/anima/state/clm_v4_hf_release_v1_upload_2026_05_04/public
 **Script behavior**:
 
 1. Computes `NOW_UTC`; aborts if `< 2026-05-06T23:26:12Z` (Gate 1).
-2. Fetches HF Hub repo state via `GET /api/models/need-singularity/clm-v4-mk2-v1` and verifies sha + private + siblings count match upload-time recorded values (Gate 2).
+2. Fetches HF Hub repo state via `GET /api/models/dancinlab/clm-v4-mk2-v1` and verifies sha + private + siblings count match upload-time recorded values (Gate 2).
 3. Echoes own 15 G1-G6 gate evidence pointers and asks operator to type confirmation string.
 4. If operator types `PROMOTE-clm-v4-mk2-v1` exactly, fires `PUT /api/models/.../settings` with `{"private": false}`.
 5. Re-fetches repo state; verifies `private == false`; appends audit line to `state/clm_v4_hf_release_v1_upload_2026_05_04/promote_log.txt`.
@@ -115,7 +115,7 @@ Three options at or after `2026-05-06T23:26:12Z`:
 - baseline eval verdict: `state/clm_v4_baseline_eval_2026_05_05/verdict.json`
 - F-SHIM-V4-3 evidence: `state/p9_base_validation_prereq_exec_2026_05_04/opt_1_v4_retry_2_exec.nohup.log`
 - README draft (= uploaded README): `docs/anima_clm_hf_release_v1_README_draft.md`
-- audit JSONL: `state/hf_upload_audit/20260504T232612Z_need-singularity__clm-v4-mk2-v1.jsonl`
+- audit JSONL: `state/hf_upload_audit/20260504T232612Z_dancinlab__clm-v4-mk2-v1.jsonl`
 - promote script: `state/clm_v4_hf_release_v1_upload_2026_05_04/public_promote_2026_05_07.bash`
 - this prep verdict: `state/clm_v4_hf_release_v1_public_promote_prep_2026_05_05/verdict.json`
 - sibling cleanup script: `state/clm_v4_hf_release_v1_upload_2026_05_04/cleanup_2026_05_07.bash`

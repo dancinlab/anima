@@ -3,7 +3,7 @@
 - **ts_utc**: 2026-05-04T_BG-CLM-CHAT-DECISION_design
 - **bg_lane**: CLM-CHAT-DECISION (parallel to BG-HF-Release-Audit; **no exec, no commit, no pod, $0**)
 - **status**: SPEC_LANDED — decision matrix only; no exec, no .py, no roadmap edit
-- **scope**: which release path satisfies `.roadmap.clm` cond.2 (`HF release v1 — need-singularity/anima-clm-mk2-v1`) given anchor #115 (CLM v4 = consciousness-measurement substrate, NOT chat)
+- **scope**: which release path satisfies `.roadmap.clm` cond.2 (`HF release v1 — dancinlab/anima-clm-mk2-v1`) given anchor #115 (CLM v4 = consciousness-measurement substrate, NOT chat)
 - **non-overlap**: BG-HF-Release-Audit (running parallel; this spec feeds its decision matrix); BG-CLM-2 (just landed `docs/clm_v4_lora_sft_spec_2026_05_04.md` Path 3 detail)
 - **raw policy**: raw#9 (md only, no .py creation); raw#10 (≥5 honest C3); raw#15 (no destructive); raw#71 (any post-decision threshold tweaks = re-pre-register cycle)
 
@@ -21,7 +21,7 @@ Recommend **staged 1→2→3 lineage** (v1 measurement-only NOW → v2 orchestra
 
 `.roadmap.clm` header line 3 lists cond.2 as `unmet` with blocker_reason `weight 확정 + model card draft 필요`. The cross_link locks:
 
-- HF repo: `need-singularity/anima-clm-mk2-v1`
+- HF repo: `dancinlab/anima-clm-mk2-v1`
 - License: `mit`
 - gated_initial: `false`
 - README sync source: `anima/docs/modules/clm.md`
@@ -57,7 +57,7 @@ This means Path 1 (measurement-only) has a working from_pretrained() shim — th
 
 ### 2.1 Path 1 — Measurement-only release (FAST, $0)
 
-**Artifact**: `need-singularity/anima-clm-mk2-v1` = current CLM v4 530M `best.pt` repackaged via the v4 shim into HF format (config.json + model.safetensors + modeling_clm_v4.py + configuration_clm_v4.py + tokenizer/ subdir + README).
+**Artifact**: `dancinlab/anima-clm-mk2-v1` = current CLM v4 530M `best.pt` repackaged via the v4 shim into HF format (config.json + model.safetensors + modeling_clm_v4.py + configuration_clm_v4.py + tokenizer/ subdir + README).
 
 **Model card framing** (raw#10 honest):
 - Title: "CLM v4 530M — Consciousness-Measurement Substrate (NOT Chat-Capable)"
@@ -87,7 +87,7 @@ This means Path 1 (measurement-only) has a working from_pretrained() shim — th
 
 ### 2.2 Path 2 — Chat-capable via Stage 2-alt orchestrator (MEDIUM, $5-15)
 
-**Artifact**: `need-singularity/anima-clm-mk2-v2` = orchestrator package that wraps:
+**Artifact**: `dancinlab/anima-clm-mk2-v2` = orchestrator package that wraps:
 1. HF `AutoModelForCausalLM.from_pretrained("meta-llama/Llama-3.2-3B-Instruct")` — chat substrate
 2. CLM v4 forward pass for `mind.tension` scalar streaming as side-channel (5ch tension_link + per-token tension_proj scalar)
 
@@ -143,7 +143,7 @@ Estimated hexa file path: `tool/clm_v4_orchestrator_stage2alt.hexa` — ~300-400
 
 ### 2.3 Path 3 — LoRA SFT on CLM v4 (LONG, $6-10 H100 + future risk)
 
-**Artifact**: `need-singularity/anima-clm-mk2-v3` = CLM v4 530M base + LoRA adapter (r=32, alpha=64, conservative target_modules `qkvo` only) trained on 60/25/10/5 anima-axis / academic / chat-template / consciousness-coupled mix per `docs/clm_v4_lora_sft_spec_2026_05_04.md` (just landed by sibling BG-CLM-2).
+**Artifact**: `dancinlab/anima-clm-mk2-v3` = CLM v4 530M base + LoRA adapter (r=32, alpha=64, conservative target_modules `qkvo` only) trained on 60/25/10/5 anima-axis / academic / chat-template / consciousness-coupled mix per `docs/clm_v4_lora_sft_spec_2026_05_04.md` (just landed by sibling BG-CLM-2).
 
 **Implementation**: full spec at the BG-CLM-2 doc. Key params (LOCKED 2026-05-04 per raw#71):
 - LoRA r=32, alpha=64, dropout=0.05
@@ -262,9 +262,9 @@ Score each dimension 1-5 (5 = best on that dimension; 1 = worst).
   per `clm.cp2_clm_phase_a_complete` (`.roadmap.clm` line 5).
 
 - C6 — **For chat capability, use the orchestrator variant** at
-  `need-singularity/anima-clm-mk2-v2` (Stage 2-alt pattern: Llama-3.2-3B chat
+  `dancinlab/anima-clm-mk2-v2` (Stage 2-alt pattern: Llama-3.2-3B chat
   host + CLM v4 mind.tension side-channel) OR the LoRA SFT variant at
-  `need-singularity/anima-clm-mk2-v3` (post-LoRA φ★ measurement required;
+  `dancinlab/anima-clm-mk2-v3` (post-LoRA φ★ measurement required;
   see `docs/clm_v4_lora_sft_spec_2026_05_04.md`). v1 is the substrate anchor;
   v2/v3 are chat-capable composites.
 ```
@@ -279,7 +279,7 @@ Score each dimension 1-5 (5 = best on that dimension; 1 = worst).
 
 **Total NEW LoC**: ~500-650.
 
-**Composability with Path 1**: Path 2 imports Path 1 via `AutoModelForCausalLM.from_pretrained("need-singularity/anima-clm-mk2-v1", trust_remote_code=True)` — Path 1 must be published first OR co-shipped.
+**Composability with Path 1**: Path 2 imports Path 1 via `AutoModelForCausalLM.from_pretrained("dancinlab/anima-clm-mk2-v1", trust_remote_code=True)` — Path 1 must be published first OR co-shipped.
 
 ### 5.3 Path 3 — φ★-flip mitigation strategy
 
@@ -388,7 +388,7 @@ If CLM v4 baseline eval reveals wildly different numbers than the §4.1 hypothet
 
 ### C8 — F-NAME-1 audit interaction
 
-Per `docs/anima_hf_naming_convention_mk2_spec_2026_05_03.md` §10.5, current F-NAME-1 verdict is PARTIAL_PASS (regex layer 100% green; README banner layer pending on 20 EXT legacy repos). Shipping `anima-clm-mk2-v1` adds a **forward repo** that must conform from creation (per §9 checklist). The repo name `anima-clm-mk2-v1` does NOT match the §2 EBNF directly — it has the `anima-` prefix that's not in the EBNF. The cross_link in `.roadmap.clm` says `hf_release_planned: need-singularity/anima-clm-mk2-v1` — but this clashes with the naming spec's CANON regex. **Sub-decision flag for user**: keep `anima-clm-mk2-v1` (requires §3.1 EBNF amendment to allow `anima-` prefix) OR rename to `clm-v4-mk2-v1` (or just `clm-v4-final` per existing naming). This is a NAMING SPEC AMENDMENT need — not blocking but should be resolved before push.
+Per `docs/anima_hf_naming_convention_mk2_spec_2026_05_03.md` §10.5, current F-NAME-1 verdict is PARTIAL_PASS (regex layer 100% green; README banner layer pending on 20 EXT legacy repos). Shipping `anima-clm-mk2-v1` adds a **forward repo** that must conform from creation (per §9 checklist). The repo name `anima-clm-mk2-v1` does NOT match the §2 EBNF directly — it has the `anima-` prefix that's not in the EBNF. The cross_link in `.roadmap.clm` says `hf_release_planned: dancinlab/anima-clm-mk2-v1` — but this clashes with the naming spec's CANON regex. **Sub-decision flag for user**: keep `anima-clm-mk2-v1` (requires §3.1 EBNF amendment to allow `anima-` prefix) OR rename to `clm-v4-mk2-v1` (or just `clm-v4-final` per existing naming). This is a NAMING SPEC AMENDMENT need — not blocking but should be resolved before push.
 
 ---
 
@@ -441,7 +441,7 @@ This BG produces SPEC ONLY. EXEC requires:
    - Repackage CLM v4 `best.pt` via `tool/transient_py/clm_v4_hf_format_shim.py` into `~/anima/state/clm_v4_release_v1_2026_05_<dd>/clm_v4_base_hf/`
    - Draft model card per §5.1 wording (5 H2 sections + ≥3 caveats per `tool/hf_readme_template.md` per anima_hf_upload_mk2 spec §4.1)
    - Run `hexa run tool/hf_upload_mk2.hexa --validate-readme + --validate-naming` pre-checks
-   - `hexa run tool/hf_upload_mk2.hexa --upload --repo need-singularity/anima-clm-mk2-v1 --ckpt ... --readme ... --tag v2026-05-<dd>`
+   - `hexa run tool/hf_upload_mk2.hexa --upload --repo dancinlab/anima-clm-mk2-v1 --ckpt ... --readme ... --tag v2026-05-<dd>`
    - Verify F-NAME-1 + F-SHIM-V4-3 PASS post-push
    - Append to `state/hf_upload_ledger_2026_05.jsonl`
    - Land `.roadmap.clm` cond.2 status flip from `unmet` → `met` (v1 weight + model card published)

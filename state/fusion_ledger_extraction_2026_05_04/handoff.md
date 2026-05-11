@@ -4,8 +4,8 @@
 
 ## What landed
 
-- `n6-architecture/domains/energy/fusion/fusion_ledger.hexa` (314 LoC)
-- `n6-architecture/domains/energy/fusion/fusion_ledger.README.md` (62 LoC)
+- `CANON/domains/energy/fusion/fusion_ledger.hexa` (314 LoC)
+- `CANON/domains/energy/fusion/fusion_ledger.README.md` (62 LoC)
 - Co-located with `fusion.md` + `verify_fusion.hexa` predecessors
 
 ## Smoke (n6-arch root)
@@ -31,7 +31,7 @@ git status modules/fusion_ledger
 # Confirm 2 deletions staged:
 #   deleted: modules/fusion_ledger/README.md
 #   deleted: modules/fusion_ledger/fusion_ledger.hexa
-git commit -m 'refactor(nexus): remove fusion_ledger module — absorbed into n6-architecture@b59d38b3'
+git commit -m 'refactor(nexus): remove fusion_ledger module — absorbed into CANON@b59d38b3'
 ```
 
 `__pycache__/`, `data/iter_constants.json`, and `tests/__pycache__/` remain

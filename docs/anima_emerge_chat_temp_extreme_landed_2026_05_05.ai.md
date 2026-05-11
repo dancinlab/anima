@@ -8,7 +8,7 @@ surface at any extreme T?
 
 ## Setup
 
-- Substrate: `need-singularity/clm-v4-mk2-v1` (CLM v4 fp32, mac CPU)
+- Substrate: `dancinlab/clm-v4-mk2-v1` (CLM v4 fp32, mac CPU)
 - Prompt: `안녕` (single Korean greeting, mirror of BG-AQ)
 - Decoder: top-k=100, max_new=30, multinomial sample
 - Sweep: T ∈ {0.01, 0.1, 0.3, 0.7, 1.0, 1.5, 2.0, 5.0, 10.0} @ seed=42

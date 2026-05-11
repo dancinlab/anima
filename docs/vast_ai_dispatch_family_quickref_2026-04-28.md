@@ -123,7 +123,7 @@ OR parallel (own 5 mandate): all 4 simultaneously → ~$77 total, ~3.5-12.5h wal
 
 ## §7. Forward-pending external blockers (NOT dispatch-blocked)
 
-- atlas R36 + R37 (n6-architecture maintainer review — out of dispatch scope)
+- atlas R36 + R37 (CANON maintainer review — out of dispatch scope)
 - own 3 + own 4 hive raw promotion (genus rename — out of dispatch scope)
 - EEG hardware D-1 arrival (CP2 G2 #119 — only D8 affected, D9-D13 OK)
 - anima-physics admin-block 6/9 sub-classes (separate domain)

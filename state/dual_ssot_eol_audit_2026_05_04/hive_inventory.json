@@ -9,7 +9,7 @@
     "mk1_ext_exists": false,
     "mk1_guide_exists": false,
     "mk1_already_purged_on": "2026-05-02",
-    "mk1_history_archived_to": "need-singularity/raw-archive (private GitHub repo)",
+    "mk1_history_archived_to": "dancinlab/raw-archive (private GitHub repo)",
     "mk2_rule_count": 14,
     "mk2_parity_pct_by_rule_count": 5.13,
     "mk2_parity_pct_by_semantic_coverage_estimate": 35.0,
@@ -131,10 +131,10 @@
     "related_count_internal_only": 14,
     "breakage_severity_runtime": "low",
     "breakage_severity_provenance_audit": "medium",
-    "recommendation": "Option A (leave as historical fingerprint strings) preferred; Option B (rewrite to archive:need-singularity/raw-archive#raw_N URLs) if explicit dead-end pointer wanted"
+    "recommendation": "Option A (leave as historical fingerprint strings) preferred; Option B (rewrite to archive:dancinlab/raw-archive#raw_N URLs) if explicit dead-end pointer wanted"
   },
   "sister_repo_pins": [
-    {"repo": "/Users/ghost/core/anima", "ref_file": "/Users/ghost/core/anima/.raw-ref", "size_bytes": 1327, "pinned_hash": "2c67adde9f9068274db8f034f135a9c6e57503bb1e4395a112cd50a0666099ce", "hive_commit_ref": "e3fd4865108d9af98485e7baa06eaaa14a1b8f33", "checked_at": "2026-04-26T11:30:36Z", "status": "DANGLING_post_2026-05-02 (target .raw deleted upstream)", "remediation_options": ["delete .raw-ref", "repoint to need-singularity/raw-archive#main", "convert to .raw.mk2-ref"]}
+    {"repo": "/Users/ghost/core/anima", "ref_file": "/Users/ghost/core/anima/.raw-ref", "size_bytes": 1327, "pinned_hash": "2c67adde9f9068274db8f034f135a9c6e57503bb1e4395a112cd50a0666099ce", "hive_commit_ref": "e3fd4865108d9af98485e7baa06eaaa14a1b8f33", "checked_at": "2026-04-26T11:30:36Z", "status": "DANGLING_post_2026-05-02 (target .raw deleted upstream)", "remediation_options": ["delete .raw-ref", "repoint to dancinlab/raw-archive#main", "convert to .raw.mk2-ref"]}
   ],
   "delete_blockers": [
     {"blocker": "tool/meta_lint.hexa hard-fails on missing .raw with 'harness configuration error' message", "severity": "high", "remediation": "amend tool to recognize EOL legitimately-removed state vs config error"},
@@ -146,7 +146,7 @@
     {"blocker": ".raw-exemptions/raw_*.list still consumed by tool/ai_native_scan.hexa (LIVE config)", "severity": "medium", "remediation": "rename files to non-mk1-numbered scheme; do NOT delete"}
   ],
   "recommended_delete_sequence": [
-    "1. Verify backup completeness: raw_archive/2026-05-04T/ + need-singularity/raw-archive private repo cross-check",
+    "1. Verify backup completeness: raw_archive/2026-05-04T/ + dancinlab/raw-archive private repo cross-check",
     "2. chflags nouchg /Users/ghost/core/hive/.raw-audit",
     "3. Decide on .raw-audit fate: move to private archive (preferred) vs delete (loses ledger)",
     "4. Decide on .raw-english-violations.jsonl fate (1 line, low value)",
@@ -172,6 +172,6 @@
     "tool/meta_lint.hexa will hard-fail post-delete with 'harness configuration error' message (treats missing .raw as config error, not legitimate EOL state). Pre-deletion mitigation required.",
     "tool/raw_mk2_inline_loader.hexa premise is moot post-EOL — its only job was scanning .raw for inline mk2 blocks. Retire or rebrand as no-op.",
     ".raw-exemptions/raw_*.list contain LIVE allowlists consumed by tool/ai_native_scan.hexa. Naming is mk1-historical but content is current config — rename, do NOT delete.",
-    "raw_archive/2026-05-04T/ is ad-hoc local snapshot (not git-managed). Durable archive is need-singularity/raw-archive private repo; local raw_archive/ should be cleaned per a separate retention policy."
+    "raw_archive/2026-05-04T/ is ad-hoc local snapshot (not git-managed). Durable archive is dancinlab/raw-archive private repo; local raw_archive/ should be cleaned per a separate retention policy."
   ]
 }

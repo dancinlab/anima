@@ -61,7 +61,7 @@ ecosystem audit 시리즈 ~12.5% 정밀도 issue. 87.5% 정확. 향후 helper va
 
 ```
 active_core (4)              anima · hexa-lang · airgenome · nexus
-sister_supporting_science (5) n6-architecture · void · hive · contact · pi-telegram
+sister_supporting_science (5) CANON · void · hive · contact · pi-telegram
 active_dev_app (1)            pixie (Discord channel secretary)
 private_credentials_vault (1) secret (workspace vault, cycle 62 invariant)
 academic_output_zenodo (2)    papers · hexa-os (AI Inference OS)

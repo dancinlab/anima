@@ -19,7 +19,7 @@
 - If fire 5 NEW failure mode: another own 4 root-cause iter (5th canonical fix)
 - If watchdog timeout: capture termination, $6.55 sunk, fire 6 with whatever new-mode-found
 
-### 🥈 Priority 2: Atlas R38 maintainer review (n6-architecture)
+### 🥈 Priority 2: Atlas R38 maintainer review (CANON)
 
 **Doc ready**: `docs/atlas_r38_baseline_axis_alignment_proposal_2026-04-28.md` (commit `2dacb71f`)
 - §5 maintainer checklist (4 items): dimensionality match / substrate-family generalization / data-volume scaling clause / counterexample search

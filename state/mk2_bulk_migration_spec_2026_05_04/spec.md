@@ -1,4 +1,4 @@
-# mk2 Bulk Migration Spec — 273 mk1 rules from need-singularity/raw-archive
+# mk2 Bulk Migration Spec — 273 mk1 rules from dancinlab/raw-archive
 
 - **status**: spec-only (SPEC ONLY $0; no execution this BG)
 - **since**: 2026-05-04
@@ -6,7 +6,7 @@
 - **predecessor**: BG-α hive audit commit `1a259542` (2026-05-03)
 - **driver**: mk2 currently lands 14/273 = **5.13% rule parity** (semantic ~35% via cluster collapse). 259 rules pending bulk migration.
 - **target SSOT**: `/Users/ghost/core/hive/.raw.mk2` (JSONL append-only)
-- **source archive**: private GitHub `need-singularity/raw-archive` (snapshot of pre-cleanup hive `.raw` mk1 SSOT, ~273 rules; chflags-uchg before purge 2026-05-02)
+- **source archive**: private GitHub `dancinlab/raw-archive` (snapshot of pre-cleanup hive `.raw` mk1 SSOT, ~273 rules; chflags-uchg before purge 2026-05-02)
 - **mapping authority**: `/Users/ghost/core/hive/docs/raw_mk1_to_mk2_modes_mapping.ai.md`
 
 ## §1 — Migration scope
@@ -31,7 +31,7 @@ Out of scope: `.own`, `.ext`, `.guide` (separate SSOT axes; this spec is `.raw �
 ```
 Step 1.  Auth-clone archive
          ────────────────────────────────────────────────────────────
-         git clone git@github.com:need-singularity/raw-archive.git \
+         git clone git@github.com:dancinlab/raw-archive.git \
              $HOME/.cache/raw-archive-mk2-migration
          requirement: USER ACK (private repo SSH key already provisioned per BG-α audit)
 

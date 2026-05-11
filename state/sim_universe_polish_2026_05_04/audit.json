@@ -4,8 +4,8 @@
   "scope": "polish sim-universe standalone repo to qmirror v1.0.0 parity",
   "inputs": {
     "repo_root": "/Users/ghost/core/sim-universe",
-    "github": "https://github.com/need-singularity/sim-universe",
-    "hf_mirror": "https://huggingface.co/need-singularity/sim-universe",
+    "github": "https://github.com/dancinlab/sim-universe",
+    "hf_mirror": "https://huggingface.co/dancinlab/sim-universe",
     "parity_reference": "/Users/ghost/core/qmirror"
   },
   "before": {
@@ -25,7 +25,7 @@
     "changelog_loc": 82,
     "release_notes_present": true,
     "release_notes_loc": 111,
-    "github_release": "https://github.com/need-singularity/sim-universe/releases/tag/v1.0.0",
+    "github_release": "https://github.com/dancinlab/sim-universe/releases/tag/v1.0.0",
     "hf_mirror_repo_present": true,
     "hf_mirror_initial_commit": "ee60c8cb4ae2d562f6429249dec9010758482d5a",
     "actions_workflow_present": true,
@@ -49,14 +49,14 @@
     "actions_workflow": "ALREADY_PRESENT (.github/workflows/sync-to-hf.yml from prior BG)"
   },
   "honest_c3_caveats_polish_cycle": [
-    "1. HF auto-sync USER_ACTION pending — workflow inert until HF_TOKEN GitHub secret is set at https://github.com/need-singularity/sim-universe/settings/secrets/actions",
+    "1. HF auto-sync USER_ACTION pending — workflow inert until HF_TOKEN GitHub secret is set at https://github.com/dancinlab/sim-universe/settings/secrets/actions",
     "2. GitHub release v1.0.0 deletion is friction-laden — tag OID propagates to clones; treat as effectively immutable",
     "3. Public-repo maintenance burden — issue/PR triage cost on author; no SLA",
     "4. sim-universe API surface still maturing — 7 CLI subcmds cover Tier-A demo surface, module APIs not semver-frozen at 1.0.0"
   ],
   "user_action_required": {
     "what": "Set HF_TOKEN GitHub repository secret (write-scope)",
-    "where": "https://github.com/need-singularity/sim-universe/settings/secrets/actions",
+    "where": "https://github.com/dancinlab/sim-universe/settings/secrets/actions",
     "why": "Enable .github/workflows/sync-to-hf.yml auto-mirror on each push to main",
     "until_set": "Workflow runs but fails loudly at the 'Verify HF_TOKEN secret is present' step (by design)"
   },

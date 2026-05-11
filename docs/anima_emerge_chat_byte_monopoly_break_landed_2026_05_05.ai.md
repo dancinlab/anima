@@ -28,7 +28,7 @@ remains architectural at 4-mode CLM v4 substrate.
   (whack-a-mole partial)
 - helper: tool/transient_py/anima_emerge_chat_byte_monopoly_break.py
   (raw 37 transient sister-rule)
-- substrate: need-singularity/clm-v4-mk2-v1 (mac CPU fp32, 18.0 s load)
+- substrate: dancinlab/clm-v4-mk2-v1 (mac CPU fp32, 18.0 s load)
 
 ## Method
 

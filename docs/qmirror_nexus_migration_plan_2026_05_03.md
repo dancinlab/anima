@@ -123,7 +123,7 @@ nexus/modules/qmirror/* ← {
 
 **Status**: DEPRECATED as of 2026-05-XX (next cycle date)
 **Replacement**: standalone qmirror package — `hx install qmirror`
-**Standalone repo**: https://github.com/need-singularity/qmirror (or local /Users/ghost/core/qmirror)
+**Standalone repo**: https://github.com/dancinlab/qmirror (or local /Users/ghost/core/qmirror)
 **Migration plan**: /Users/ghost/core/anima/docs/qmirror_nexus_migration_plan_2026_05_03.md
 
 ## Why deprecated

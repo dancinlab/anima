@@ -13,7 +13,7 @@
 The prior byte-monopoly-break probe (sister verdict at
 `state/anima_emerge_chat_byte_monopoly_break_2026_05_05/verdict.json`) reported
 `FAIL_BAN_NOT_ENOUGH` — across five ban escalation levels under **greedy
-decoding** on prompt `"안녕"`, the CLM v4 model `need-singularity/clm-v4-mk2-v1`
+decoding** on prompt `"안녕"`, the CLM v4 model `dancinlab/clm-v4-mk2-v1`
 produced **0 Korean characters** in all configurations. Hypothesis: **Korean
 weight density is buried under multiple shells** (byte → replacement → punct →
 CJK → ?), and greedy decoding alone cannot surface it even after aggressive

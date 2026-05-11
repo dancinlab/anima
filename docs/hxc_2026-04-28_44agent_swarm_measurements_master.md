@@ -28,7 +28,7 @@ This consolidation aggregates **44+ parallel agents** across two cron-driven /lo
 
 | Agent ID | Class (10-axis) | Started | Completed | Status | Core finding (1-2 sentences) | Evidence files |
 |---|---|---|---|:---:|---|---|
-| **a201a6cc** | Bug verdict (entropy diagnosis) | T+0h | T+1h | ✅ | n6 atlas Shannon H_4 = 0.813 bit/byte → ~90% bit-level reachable. Phase 8 closure "entropy-bound" verdict FALSIFIED. Algorithm-catalog deficit, not entropy deficit. | `state/format_witness/2026-04-28_n6-architecture_cross_repo_sweep.jsonl` · commit `bfa959989` |
+| **a201a6cc** | Bug verdict (entropy diagnosis) | T+0h | T+1h | ✅ | n6 atlas Shannon H_4 = 0.813 bit/byte → ~90% bit-level reachable. Phase 8 closure "entropy-bound" verdict FALSIFIED. Algorithm-catalog deficit, not entropy deficit. | `state/format_witness/2026-04-28_CANON_cross_repo_sweep.jsonl` · commit `bfa959989` |
 | **adc2e734** | Bug verdict (ARG_MAX) | T+0h | T+1h | ✅ | Darwin 25.4.0 ARG_MAX cliff measured = 1,044,361 bytes (~1MB), NOT the doc-claimed 64-128KB. ~10x off. HIGH-risk: `hive/tool/hxc_convert.hexa:191`. | `state/format_witness/2026-04-28_bug1_a16_verdicts.jsonl` (24 rows) |
 | **a38dcbed** | Bug verdict (AOT cache) | T+0h | T+1h | ✅ | `hexa-lang/self/main.hexa:1080` source_key fn fails to canonicalize file symlinks. Option A: 4 LoC realpath + cache_schema v5→v6. | commit `b89c8975` · `state/format_witness/2026-04-28_bug2_aot_cache_canonical_path_verdict.jsonl` |
 | **ad82a91829** | Bug verdict (substring) | T+0h | T+1h | ✅ | A15 tree-subschema decoder DEAD CODE: `substring(0, 18) == "# tree-subschema:"` literal is 17 chars; comparison always false. 18KB advertised saving never fired. | commit `1280895e` · `state/format_witness/2026-04-28_bug3_substring_offset_verdict.jsonl` |
@@ -92,7 +92,7 @@ This consolidation aggregates **44+ parallel agents** across two cron-driven /lo
 | **a-falsification-F8** | Falsification audit | T+7h | ✅ | F8 — production chain success vs standalone failure (A16 wire ceiling chain-amortized). aedb6aa3 chain integration 3/3 above 59% confirms A16 effective in-chain even when standalone fails. | commit `2fb55d01` evidence |
 | **a-A19-design** | Algorithm design (A19 cross-corpus) | T+7h | ⚠️ | A19 cross-corpus dict federation design draft. ~300 LoC pure-hexa. Federation manifest schema. | drafted in `docs/hxc_phase11_design_post_a18_20260428.md` §3.3 |
 | **a-A22-self-decoding** | Algorithm design (A22 fixpoint) | T+7h | ⚠️ | A22 self-decoding HXC design draft. ~400 LoC. raw 18 fixpoint seal. -3pp saving overhead. | drafted in `docs/hxc_phase11_design_post_a18_20260428.md` §3.4 |
-| **a-cross-repo-trawl** | Cross-repo audit | T+7h | ✅ | 6-repo cross-repo trawl — `hexa-lang_cross_repo_sweep.jsonl`, `airgenome_cross_repo_sweep.jsonl`, `nexus_cross_repo_sweep.jsonl`, `hive_cross_repo_sweep.jsonl`, `n6-architecture_cross_repo_sweep.jsonl` cumulative aggregate. | `state/format_witness/2026-04-28_*_cross_repo_sweep.jsonl` |
+| **a-cross-repo-trawl** | Cross-repo audit | T+7h | ✅ | 6-repo cross-repo trawl — `hexa-lang_cross_repo_sweep.jsonl`, `airgenome_cross_repo_sweep.jsonl`, `nexus_cross_repo_sweep.jsonl`, `hive_cross_repo_sweep.jsonl`, `CANON_cross_repo_sweep.jsonl` cumulative aggregate. | `state/format_witness/2026-04-28_*_cross_repo_sweep.jsonl` |
 | **a-V1-prime** | Algorithm impl (anti-lever) | T+7h | ✅ | tool/an11_b_v1_phi_mip_normalized.hexa NEW — k-invariant Φ_mip surrogate (#102 anti-lever fix). | commit `a945dcd0` |
 | **a-Atlas-30d** | Algorithm impl + raw95 schema | T+7h | ✅ | --aggregate-30d flag + docs/raw95_audit_ledger_schema.md — F-ATLAS-1 + raw95-schema. | commit `86640088` |
 | **a-grep-evidence-clm** | Migration (citation drift fix) | T+7h | ✅ | clm_r5 citation drift fix — Agent D §6 honest disclosure. | commit `f7975b4d` |
@@ -150,7 +150,7 @@ This consolidation aggregates **44+ parallel agents** across two cron-driven /lo
 | audit (mid-density) | hive triad_audit | 67% baseline → 75% | 77.59% (+10.59pp) MEASURED | 88% | 91% | ~92% |
 | mixed inventory | nexus 96 files | 43% | 59.15% (+6.15pp) MEASURED on disc registry | 78% | 85% | ~88% |
 | text-heavy | anima alm_r13 | 24% | 29.54% baseline preserved | 80% | 92% | ~95% |
-| entropy-bound | n6-architecture atlas | 4% | 0.46% (A16 standalone regression) | 90% | 93% | ~95% |
+| entropy-bound | CANON atlas | 4% | 0.46% (A16 standalone regression) | 90% | 93% | ~95% |
 | **6-repo aggregate** | weighted | **48%** | **54.5%** (sample-extrapolated) | **~88%** | **~92%** | **~93%** |
 
 ### 2.3 Wire encoding axis dependency (F7 falsification source)
@@ -242,9 +242,9 @@ raw 91 C3: bit-level Shannon was conflated with byte-level saving in Phase 10 ma
 |---|---|---|---|
 | nexus | own 4 (renumbered) | mirror own 8 (content-class topology) | PROPOSE MIRROR |
 | nexus | own 5 (renumbered) | mirror own 9 (try-revert-orthogonality) | PROPOSE MIRROR |
-| n6-architecture | own 24 (extension) | mirror own 7 (heredoc ARG_MAX, bash variant) | PROPOSE MIRROR |
-| n6-architecture | own 25 | mirror own 8 (entropy-bound verdict absorb) | PROPOSE MIRROR |
-| n6-architecture | own 26 (renumbered, own 9 already taken) | mirror own 9 | PROPOSE MIRROR |
+| CANON | own 24 (extension) | mirror own 7 (heredoc ARG_MAX, bash variant) | PROPOSE MIRROR |
+| CANON | own 25 | mirror own 8 (entropy-bound verdict absorb) | PROPOSE MIRROR |
+| CANON | own 26 (renumbered, own 9 already taken) | mirror own 9 | PROPOSE MIRROR |
 | hexa-lang | — | REJECTED on parser-self-host scope | architecturally inappropriate |
 | airgenome | — | BLOCKED on `.own` SSOT bootstrap | infra prerequisite |
 
@@ -395,7 +395,7 @@ raw 142's 4 discoveries (D1-D4) are validated empirically in this 44-agent cycle
 
 | ledger | rows | content |
 |---|---:|---|
-| `2026-04-28_n6-architecture_cross_repo_sweep.jsonl` | varies | Shannon H_0/H_3/H_4 + gzip/lzma/bzip2 baselines |
+| `2026-04-28_CANON_cross_repo_sweep.jsonl` | varies | Shannon H_0/H_3/H_4 + gzip/lzma/bzip2 baselines |
 | `2026-04-28_bug1_a16_verdicts.jsonl` | 24 | ARG_MAX cliff measurement |
 | `2026-04-28_bug2_aot_cache_canonical_path_verdict.jsonl` | varies | source_key file-symlink fail |
 | `2026-04-28_bug3_substring_offset_verdict.jsonl` | varies | substring(0,18) DEAD CODE |

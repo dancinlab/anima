@@ -25,8 +25,8 @@
 **원본 spec yaml** (이전 v0.1):
 ```yaml
 T1_sales:
-  backend_canonical: need-singularity/llm-llama32-3b-paradigm-a-prime-r16-sft-stage1
-  backend_alternative: need-singularity/clm-v2-byte-18m-convo-5k
+  backend_canonical: dancinlab/llm-llama32-3b-paradigm-a-prime-r16-sft-stage1
+  backend_alternative: dancinlab/clm-v2-byte-18m-convo-5k
   backend_decision_blocker:
     resolution: "Llama Path A v2 default until clm-v2 KO actual verify PASS"
 ```
@@ -42,7 +42,7 @@ T1_sales:
 ```yaml
 T1_sales:
   backend_canonical: anima-core/runtime/clm_v4_mount.hexa  # anima-native 자연 발화 (paradigm v11 G3, substrate-coupled)
-  backend_alternative_recovery: need-singularity/clm-v2-byte-18m-convo-5k  # 18M byte-level RECOVERED, KO chat 회복 시 promote
+  backend_alternative_recovery: dancinlab/clm-v2-byte-18m-convo-5k  # 18M byte-level RECOVERED, KO chat 회복 시 promote
   backend_directive: "사용자 directive 2026-05-06 verbatim: 'ALM 말고' — 외부 substrate wrapping reject. anima-native만 허용."
   backend_anima_native_paths:
     - clm_v4_substrate_coupled: 자연 발화 = phi_star + axis_activation + dominant_cells (token chat 아님, emerge paradigm). 현재 PASS.
@@ -52,7 +52,7 @@ T1_sales:
 **rejected_external_substrate** (명시적):
 ```yaml
 rejected_external_substrate:
-  - need-singularity/llm-llama32-3b-paradigm-a-prime-r16-sft-stage1  # rejected as T1 backend (Llama base = ALM lineage)
+  - dancinlab/llm-llama32-3b-paradigm-a-prime-r16-sft-stage1  # rejected as T1 backend (Llama base = ALM lineage)
 ```
 
 **plan md** (`docs/anima_cli_mk2_plan_2026_05_06.md`):

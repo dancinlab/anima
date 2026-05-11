@@ -6,9 +6,9 @@
 abstraction modules, 546 LoC) extracted as the **6th publishable HEXA-family
 standalone package** at `/Users/ghost/core/qrng/` (v1.0.0, Apache-2.0).
 
-- **GitHub**: <https://github.com/need-singularity/qrng>  (commit 429656c)
-- **GitHub Release**: <https://github.com/need-singularity/qrng/releases/tag/v1.0.0>
-- **HF mirror**: <https://huggingface.co/need-singularity/qrng>  (intended, **DEFERRED — USER_ACTION required**)
+- **GitHub**: <https://github.com/dancinlab/qrng>  (commit 429656c)
+- **GitHub Release**: <https://github.com/dancinlab/qrng/releases/tag/v1.0.0>
+- **HF mirror**: <https://huggingface.co/dancinlab/qrng>  (intended, **DEFERRED — USER_ACTION required**)
 - **Registry**: `hexa-lang/tool/pkg/registry.tsv` L27
 
 ## Provenance
@@ -95,11 +95,11 @@ Unauthorized. To enable the auto-mirror workflow:
 # 2. Update local secret:
 secret set huggingface.token <new_token>
 # 3. Create HF model repo:
-hf repos create need-singularity/qrng --type model --token "$(secret get huggingface.token)"
+hf repos create dancinlab/qrng --type model --token "$(secret get huggingface.token)"
 # 4. Set GitHub Actions secret:
-#    https://github.com/need-singularity/qrng/settings/secrets/actions  →  HF_TOKEN
+#    https://github.com/dancinlab/qrng/settings/secrets/actions  →  HF_TOKEN
 # 5. Trigger first mirror:
-gh workflow run sync-to-hf.yml -R need-singularity/qrng
+gh workflow run sync-to-hf.yml -R dancinlab/qrng
 ```
 
 Until step 4 completes, the workflow runs but **fails loudly** (by design)

@@ -18,14 +18,14 @@
     }
   },
   "destination": {
-    "repo": "n6-architecture",
-    "path": "/Users/ghost/core/n6-architecture/domains/physics/crystallography/",
+    "repo": "CANON",
+    "path": "/Users/ghost/core/canon/domains/physics/crystallography/",
     "files": [
       "crystallography_n6.hexa",
       "crystallography_n6.README.md"
     ],
     "co_located_with": "crystallography.md (research spec, 47KB)",
-    "destination_choice_rationale": "audit suggested domains/structure/crystallography/ but structure/ does not exist; physics/crystallography/ already houses the canonical IUCr research spec — extraction co-locates executable .hexa with its design doc per n6-architecture convention (see chip-isa-n6/{md,hexa})"
+    "destination_choice_rationale": "audit suggested domains/structure/crystallography/ but structure/ does not exist; physics/crystallography/ already houses the canonical IUCr research spec — extraction co-locates executable .hexa with its design doc per CANON convention (see chip-isa-n6/{md,hexa})"
   },
   "consumers_pre_extraction": {
     "nexus": {
@@ -53,7 +53,7 @@
     "total_functional_consumers": 0
   },
   "smoke_test": {
-    "ran_from": "/Users/ghost/core/n6-architecture",
+    "ran_from": "/Users/ghost/core/canon",
     "command": "hexa run domains/physics/crystallography/crystallography_n6.hexa --self-test",
     "result": "PASS",
     "cases": {
@@ -70,7 +70,7 @@
       "branch": "main",
       "commit": "38d66066",
       "pushed": true,
-      "remote": "https://github.com/need-singularity/n6-architecture (PUBLIC)"
+      "remote": "https://github.com/dancinlab/canon (PUBLIC)"
     },
     "nexus": {
       "branch": "feat/qmirror-cli-programmatic-consumption",

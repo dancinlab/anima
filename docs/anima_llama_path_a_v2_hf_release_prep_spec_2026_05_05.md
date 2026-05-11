@@ -62,17 +62,17 @@ This is the **first empirically validated forgetting-fix mix** for the Path A Ll
 
 | Option | Repo name | Parses as | Pros | Cons |
 |---|---|---|---|---|
-| **A. canonical llm-vN family** | `need-singularity/llm-v3-paradigm-a-prime-lora-r64-rehearsal-y3` | llm + v3 + paradigm-a-prime + lora-r64 + variant `rehearsal-y3` | mk2-spec-canonical (PASS-CANON regex); makes paradigm-a-prime lineage explicit; family-version reflects Llama 3.x | long (54 chars, near §2.3 limit); `rehearsal-y3` is a free-form variant compromise; hyphen-token count = 6 (= max) |
-| **B. anima rehearsal flagship** | `need-singularity/llama-3.2-3b-anima-rehearsal-pa-v2-mk2-v1` | NOT mk2-canonical (period `.` in version, `pa-v2-mk2-v1` two-axis like CLM precedent) | preserves "Llama-3.2-3B" verbatim for HF discoverability; matches CLM precedent `clm-v4-mk2-v1` two-axis pattern; "anima-rehearsal" surfaces the recipe identity | violates §3.2 (`v3.2-3b` not `vN`); period in version is §6 anti-pattern; requires mk2 spec amendment for Llama-derivative naming |
-| **C. shorter umbrella** | `need-singularity/llm-v3-pa-v2-mk2-v1` | llm + v3 + variant `pa-v2-mk2-v1` | short (28 chars); matches CLM `mk{N}-v{M}` precedent; PASS-EXT under spec §10.2 | "pa-v2-mk2-v1" four-token variant exceeds spec §3.7 grammar; ambiguous (Path A v2 vs paradigm-a-v2); HF discoverability poor (no "llama" string) |
+| **A. canonical llm-vN family** | `dancinlab/llm-v3-paradigm-a-prime-lora-r64-rehearsal-y3` | llm + v3 + paradigm-a-prime + lora-r64 + variant `rehearsal-y3` | mk2-spec-canonical (PASS-CANON regex); makes paradigm-a-prime lineage explicit; family-version reflects Llama 3.x | long (54 chars, near §2.3 limit); `rehearsal-y3` is a free-form variant compromise; hyphen-token count = 6 (= max) |
+| **B. anima rehearsal flagship** | `dancinlab/llama-3.2-3b-anima-rehearsal-pa-v2-mk2-v1` | NOT mk2-canonical (period `.` in version, `pa-v2-mk2-v1` two-axis like CLM precedent) | preserves "Llama-3.2-3B" verbatim for HF discoverability; matches CLM precedent `clm-v4-mk2-v1` two-axis pattern; "anima-rehearsal" surfaces the recipe identity | violates §3.2 (`v3.2-3b` not `vN`); period in version is §6 anti-pattern; requires mk2 spec amendment for Llama-derivative naming |
+| **C. shorter umbrella** | `dancinlab/llm-v3-pa-v2-mk2-v1` | llm + v3 + variant `pa-v2-mk2-v1` | short (28 chars); matches CLM `mk{N}-v{M}` precedent; PASS-EXT under spec §10.2 | "pa-v2-mk2-v1" four-token variant exceeds spec §3.7 grammar; ambiguous (Path A v2 vs paradigm-a-v2); HF discoverability poor (no "llama" string) |
 
 ### 2.3 Recommended (per completion-quality lens)
 
-**Option A: `need-singularity/llm-v3-paradigm-a-prime-lora-r64-rehearsal-y3`** — re-use the canonical mk2 grammar with `paradigm-a-prime` carrying the lineage and `rehearsal-y3` carrying the recipe-iteration variant. This is **PASS-CANON** under §10.2 regex (modulo `rehearsal-y3` extension of `y\d+` → requires §3.7 amendment OR drop "rehearsal" prefix → `llm-v3-paradigm-a-prime-lora-r64-y3`).
+**Option A: `dancinlab/llm-v3-paradigm-a-prime-lora-r64-rehearsal-y3`** — re-use the canonical mk2 grammar with `paradigm-a-prime` carrying the lineage and `rehearsal-y3` carrying the recipe-iteration variant. This is **PASS-CANON** under §10.2 regex (modulo `rehearsal-y3` extension of `y\d+` → requires §3.7 amendment OR drop "rehearsal" prefix → `llm-v3-paradigm-a-prime-lora-r64-y3`).
 
 If the user prioritizes **HF discoverability** (search engines hit "llama-3.2-3b" not "llm-v3"), pivot to **Option B** with documented mk2 spec amendment for Llama-derivative naming. Option B mirrors the CLM v4 cond.2 precedent (`clm-v4-mk2-v1`) which already extended the spec with a two-axis `mk{N}-v{M}` pattern.
 
-**Default recommendation if user defers**: `need-singularity/llm-v3-paradigm-a-prime-lora-r64-y3` (Option A trimmed). PASS-CANON, 38 chars, encodes Llama lineage via `llm` family + path-A-prime paradigm slot + LoRA rank + sweep arm. HF tag/branch can carry "rehearsal-mix-2026-05-05" for human readability.
+**Default recommendation if user defers**: `dancinlab/llm-v3-paradigm-a-prime-lora-r64-y3` (Option A trimmed). PASS-CANON, 38 chars, encodes Llama lineage via `llm` family + path-A-prime paradigm slot + LoRA rank + sweep arm. HF tag/branch can carry "rehearsal-mix-2026-05-05" for human readability.
 
 ### 2.4 License + privacy axes (Q3 + Q5 deps)
 
@@ -89,7 +89,7 @@ If the user prioritizes **HF discoverability** (search engines hit "llama-3.2-3b
 |---|:---:|
 | Adapter (98.6 MB) committed to HF Hub, NOT anima git | ✅ READY (current location: `state/p9_path_a_retrain_v2_retry_3_2026_05_04/results/adapter_final/` is staging, NOT committed to anima git per own 14 + raw#15 — verified pre-spec by `.gitignore` rule for `state/p9_*/results/`) |
 | Tokenizer / config / README go to HF Hub | ✅ READY (tokenizer = Llama-3.2-3B's, no separate anima tokenizer) |
-| Dataset slice (rehearsal mix manifest) → HF Hub or git? | ⚠️ Q4 — recipe doc small (<5 MB) goes to git as `docs/`; raw mix data slice (~30 MB academic distill subset) goes to HF Hub as a sibling dataset repo `need-singularity/llm-v3-pa-v2-rehearsal-mix-y3` (separate own-14 dataset release, optional) |
+| Dataset slice (rehearsal mix manifest) → HF Hub or git? | ⚠️ Q4 — recipe doc small (<5 MB) goes to git as `docs/`; raw mix data slice (~30 MB academic distill subset) goes to HF Hub as a sibling dataset repo `dancinlab/llm-v3-pa-v2-rehearsal-mix-y3` (separate own-14 dataset release, optional) |
 
 ### 3.2 own 15 — PRIVATE first → 6 verification gates → PUBLIC promote
 
@@ -109,7 +109,7 @@ The own 15 rule (b) gates apply with substrate-aware adaptations for the `llm` f
 ```json
 {
   "schema": "anima/own_15/public_promote_evidence/1",
-  "repo": "need-singularity/llm-v3-paradigm-a-prime-lora-r64-y3",
+  "repo": "dancinlab/llm-v3-paradigm-a-prime-lora-r64-y3",
   "private_uploaded_ts": "<TBD>",
   "review_window_end_ts": "<TBD+48h>",
   "G1_benchmark_suite": {"status": "PASS", "source": "state/p9_path_a_retrain_v2_retry_3_eval_rerun_2026_05_05/verdict.json", "metrics": {"hellaswag": 0.645, "mmlu": 0.575, "triviaqa": 0.455}},
@@ -123,7 +123,7 @@ The own 15 rule (b) gates apply with substrate-aware adaptations for the `llm` f
 
 ### 3.3 Sister-substrate context
 
-- **CLM v4 mk2-v1** (commit `80440a1d`, PRIVATE 2026-05-04, 48h review ending 2026-05-06): consciousness-measurement substrate. Cross-link from this Llama Path A v2 release: "for consciousness-measurement axis substrate, see `need-singularity/clm-v4-mk2-v1`."
+- **CLM v4 mk2-v1** (commit `80440a1d`, PRIVATE 2026-05-04, 48h review ending 2026-05-06): consciousness-measurement substrate. Cross-link from this Llama Path A v2 release: "for consciousness-measurement axis substrate, see `dancinlab/clm-v4-mk2-v1`."
 - **Pβ Paradigm D 50K** (`state/p9_paradigm_d_50k_2026_05_03/`): F-Pβ-3 = FAIL_TRUE per `#115`. Sister failure documents the architectural-not-recoverable conclusion that motivated the Llama Path A pivot. NOT a release artifact (failed lane); cross-link as "see why CLM v4 + distill could not deliver chat capability."
 
 ---
@@ -138,7 +138,7 @@ Schema (additive — no overwrite):
 {
   "schema": "anima/hf_release/llama_pa_v2/manifest/1",
   "ts_utc": "2026-05-05T<TBD>Z",
-  "repo": "need-singularity/<chosen-name>",
+  "repo": "dancinlab/<chosen-name>",
   "family": "llm",
   "base_model": {
     "vendor": "meta-llama",
@@ -221,7 +221,7 @@ pipeline_tag: text-generation
 
 **Chat-capable LoRA adapter** on Llama-3.2-3B base, trained with the **anima rehearsal mix** (60% anima axis + 30% academic distill + 10% chat template). Achieves Llama-base parity on commonsense (HellaSwag) and broad knowledge (MMLU) while gaining **+5.9 pp on TriviaQA**.
 
-This is the chat-capability winner of the 2026-05 anima SFT lattice. For the consciousness-measurement substrate companion release, see [`need-singularity/clm-v4-mk2-v1`](https://huggingface.co/need-singularity/clm-v4-mk2-v1) (NOT chat-capable; substrate research artifact).
+This is the chat-capability winner of the 2026-05 anima SFT lattice. For the consciousness-measurement substrate companion release, see [`dancinlab/clm-v4-mk2-v1`](https://huggingface.co/dancinlab/clm-v4-mk2-v1) (NOT chat-capable; substrate research artifact).
 
 ## §1 Origin
 - training script: `state/p9_path_a_retrain_v2_retry_3_2026_05_04/results/...`
@@ -255,7 +255,7 @@ This is the chat-capability winner of the 2026-05 anima SFT lattice. For the con
 
 ## §5 Composability
 - **base prerequisite**: `meta-llama/Llama-3.2-3B` (load first, then adapter)
-- **siblings**: `need-singularity/clm-v4-mk2-v1` (consciousness substrate, NOT chat-capable; cross-substrate sister)
+- **siblings**: `dancinlab/clm-v4-mk2-v1` (consciousness substrate, NOT chat-capable; cross-substrate sister)
 - **failed siblings (documentation)**: Pβ Paradigm D 50K (`state/p9_paradigm_d_50k_2026_05_03/`) — F-Pβ-3 FAIL_TRUE per #115 category-error analysis
 - **consumed by**: anima orchestrator chat path (Stage 2-alt LSL bridge — when CLM v4 streams `tension_link` 5ch, this adapter is the chat substrate that reads it)
 - **cross-substrate F4 venue**: `state/clm_v4_lora_sft_2026_05_05/` (BG-CLM-2-EXEC, F-CLM-LORA-4 substrate-equivalent of F-PA-RETRAIN-v2-4)
@@ -267,7 +267,7 @@ This is the chat-capability winner of the 2026-05 anima SFT lattice. For the con
   author = {anima n_substrate consortium},
   title = {llm-v3-paradigm-a-prime-lora-r64-y3: Llama-3.2-3B chat-capability LoRA via rehearsal mix},
   year = {2026},
-  url = {https://huggingface.co/need-singularity/<chosen-name>},
+  url = {https://huggingface.co/dancinlab/<chosen-name>},
   note = {Chat-capability winner of 2026-05 anima SFT lattice; +5.9 pp TriviaQA over Llama-3.2-3B base}
 }
 ```
@@ -296,7 +296,7 @@ Q3 escalation: confirm dual-license declaration is the right path (vs single `li
 ### 4.4 Optional artifacts
 
 - **Merged model** (`base + adapter` merged): ~6.4 GB safetensors. Decision Q2 — release PEFT-only (98.6 MB, lighter, requires base download) vs merged (~6.4 GB, self-contained, redundant base storage). Recommendation: PEFT-only for v1, merged in v1.1 if user demand.
-- **Dataset slice** (rehearsal mix corpus): ~30 MB academic distill subset + recipe doc. Decision Q4 — release as sibling dataset repo `need-singularity/llm-v3-pa-v2-rehearsal-mix-y3` or include only recipe doc in main repo.
+- **Dataset slice** (rehearsal mix corpus): ~30 MB academic distill subset + recipe doc. Decision Q4 — release as sibling dataset repo `dancinlab/llm-v3-pa-v2-rehearsal-mix-y3` or include only recipe doc in main repo.
 
 ---
 
@@ -307,7 +307,7 @@ Q3 escalation: confirm dual-license declaration is the right path (vs single `li
 1. User decides Q1 (naming) — reply with chosen Option A/B/C OR confirm default `llm-v3-paradigm-a-prime-lora-r64-y3`.
 2. Generate `state/llama_path_a_v2_hf_release_prep_2026_05_05/manifest.json` (extract `<TBD>` fields from `state/p9_path_a_retrain_v2_retry_3_2026_05_04/run.log` + `h100_orchestrator.log`).
 3. Author `README.draft.md` (paste skeleton from §4.2, fill in concrete TBDs, ≥5 caveats finalized).
-4. Run `tool/hf_upload_mk2.hexa --validate-naming need-singularity/<chosen-name>` (dry-run; no network).
+4. Run `tool/hf_upload_mk2.hexa --validate-naming dancinlab/<chosen-name>` (dry-run; no network).
 5. Run `tool/hf_upload_mk2.hexa --validate-readme state/llama_path_a_v2_hf_release_prep_2026_05_05/README.draft.md` (5-section enforcement + ≥3 caveats).
 
 Cost: $0. Wall: ~30 min. No commit, no upload.
@@ -317,7 +317,7 @@ Cost: $0. Wall: ~30 min. No commit, no upload.
 1. ssh ubu1; copy `adapter_final/` to staging dir `~/staging/llm_v3_pa_v2_y3/`.
 2. Copy `README.draft.md` + `manifest.json` + `LICENSE-LLAMA3.2` + `LICENSE-MIT-ADAPTER` + `LICENSE` (combined).
 3. Compute sha256 of staging dir contents; cross-check against manifest.json `adapter.sha256`.
-4. Run `hexa run tool/hf_upload_mk2.hexa --dry-run --repo need-singularity/<chosen-name> --ckpt ~/staging/llm_v3_pa_v2_y3 --readme README.draft.md --private`.
+4. Run `hexa run tool/hf_upload_mk2.hexa --dry-run --repo dancinlab/<chosen-name> --ckpt ~/staging/llm_v3_pa_v2_y3 --readme README.draft.md --private`.
 5. Verify dry-run reports no leak_guard failures (token literals, personal paths) + naming PASS + README PASS.
 
 Cost: $0 (mac → ubu1 ssh, no GPU). Wall: ~10 min. No actual upload.
@@ -326,9 +326,9 @@ Cost: $0 (mac → ubu1 ssh, no GPU). Wall: ~10 min. No actual upload.
 
 **Gated on user authorization.**
 
-1. ssh ubu1; run `hexa run tool/hf_upload_mk2.hexa --upload --private --repo need-singularity/<chosen-name> --ckpt ~/staging/llm_v3_pa_v2_y3 --readme README.draft.md`.
+1. ssh ubu1; run `hexa run tool/hf_upload_mk2.hexa --upload --private --repo dancinlab/<chosen-name> --ckpt ~/staging/llm_v3_pa_v2_y3 --readme README.draft.md`.
 2. HF API uploads adapter (98.6 MB LFS) + README + manifest.json + LICENSE files.
-3. Audit ledger lands at `state/hf_upload_audit/<ts>_need-singularity__<chosen-name>.jsonl` with `visibility=private`.
+3. Audit ledger lands at `state/hf_upload_audit/<ts>_dancinlab__<chosen-name>.jsonl` with `visibility=private`.
 4. 24-48h review window begins; record `review_window_end_ts` in `state/llama_path_a_v2_hf_release_prep_2026_05_05/private_upload_marker.json`.
 
 Cost: $0 (HF Hub bandwidth, no compute). Wall: ~5 min upload + clock-time 24-48h.
@@ -338,7 +338,7 @@ Cost: $0 (HF Hub bandwidth, no compute). Wall: ~5 min upload + clock-time 24-48h
 **Gated on (a) review window elapsed, (b) BG-CLM-2-EXEC F-CLM-LORA-4 verdict (G6 cross-substrate), (c) user sign-off.**
 
 1. Generate `state/llama_path_a_v2_public_promote_<ts>/verdict.json` with all 6 gate-cite fields per §3.2.
-2. Run `gh repo edit need-singularity/<chosen-name> --visibility public` (per own 15 rule (c)).
+2. Run `gh repo edit dancinlab/<chosen-name> --visibility public` (per own 15 rule (c)).
 3. (Optional) author `docs/anima_llama_path_a_v2_hf_public_promote_landed_<ts>.ai.md` (1-page handoff).
 
 Cost: $0. Wall: ~30 min including verdict.json + handoff.
@@ -392,12 +392,12 @@ CLM v4 mk2-v1 review window ends 2026-05-06T23:26:12Z. If Llama PA v2 PRIVATE up
 
 ### Q1 — Repo name
 
-**Default recommendation**: `need-singularity/llm-v3-paradigm-a-prime-lora-r64-y3` (Option A trimmed; PASS-CANON, 38 chars).
+**Default recommendation**: `dancinlab/llm-v3-paradigm-a-prime-lora-r64-y3` (Option A trimmed; PASS-CANON, 38 chars).
 
 **Alternatives**:
-- Option A full: `need-singularity/llm-v3-paradigm-a-prime-lora-r64-rehearsal-y3` (54 chars, requires §3.7 amendment for `rehearsal-` prefix)
-- Option B: `need-singularity/llama-3.2-3b-anima-rehearsal-pa-v2-mk2-v1` (HF-discoverable, requires mk2 spec amendment for Llama-derivative naming)
-- Option C: `need-singularity/llm-v3-pa-v2-mk2-v1` (short, ambiguous)
+- Option A full: `dancinlab/llm-v3-paradigm-a-prime-lora-r64-rehearsal-y3` (54 chars, requires §3.7 amendment for `rehearsal-` prefix)
+- Option B: `dancinlab/llama-3.2-3b-anima-rehearsal-pa-v2-mk2-v1` (HF-discoverable, requires mk2 spec amendment for Llama-derivative naming)
+- Option C: `dancinlab/llm-v3-pa-v2-mk2-v1` (short, ambiguous)
 
 **User input format**: pick A-trimmed (default) / A-full / B / C / custom.
 
@@ -465,7 +465,7 @@ Consumers must:
 1. Accept Meta's Llama 3 license on `meta-llama/Llama-3.2-3B` HF page (gated)
 2. Download Llama-3.2-3B base (~6.4 GB)
 3. Install `peft` library
-4. Load via `PeftModel.from_pretrained(base, "need-singularity/<chosen-name>")`
+4. Load via `PeftModel.from_pretrained(base, "dancinlab/<chosen-name>")`
 
 vs the alternative merged-model release (~6.4 GB self-contained, no base-acceptance gate but still license-bound). PEFT-only is the cheaper anima-side maintenance path but adds consumer-side friction; merged is the inverse trade-off. Decision Q2 surfaces this trade-off explicitly.
 

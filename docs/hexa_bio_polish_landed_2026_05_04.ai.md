@@ -17,7 +17,7 @@ Actions workflow already present from initial extraction).
 |------------------------|-----------------------------------------------------------|------------------------------------------------------------------------|
 | README badges          | 4 (license, verbs, n=6 lattice, HF mirror)                | 7 (+ version, GH release, sync workflow status)                        |
 | RELEASE_NOTES_v1.0.0   | absent                                                    | present (125 LoC)                                                      |
-| GitHub release tag     | none                                                      | <https://github.com/need-singularity/hexa-bio/releases/tag/v1.0.0>     |
+| GitHub release tag     | none                                                      | <https://github.com/dancinlab/hexa-bio/releases/tag/v1.0.0>     |
 | HF mirror              | present (commit `df9a668`, 2026-05-04T05:42:38Z)          | unchanged (next sync on push after HF_TOKEN secret lands)              |
 | Actions workflow       | present (`.github/workflows/sync-to-hf.yml`, 73 LoC)      | unchanged (uses `if: secrets.HF_TOKEN != ''` job-level gate)           |
 | Smoke test             | (untested as part of polish)                              | `__HEXA_BIO_SELFTEST__ PASS` 4/4 verbs (exit 0)                        |
@@ -31,7 +31,7 @@ Actions workflow already present from initial extraction).
    (qmirror parity)` (2 files, +128/-0).
 4. `git push origin main` `3877f5e..4f4ecfb`.
 5. `gh release create v1.0.0 --target main --notes-file RELEASE_NOTES_v1.0.0.md`
-   → <https://github.com/need-singularity/hexa-bio/releases/tag/v1.0.0>.
+   → <https://github.com/dancinlab/hexa-bio/releases/tag/v1.0.0>.
 6. HF mirror state verification: `df9a66832ba42093ea1983231b7af76866c637fd`
    (initialized 2026-05-04 prior cycle); unchanged. Next push to `main`
    after `HF_TOKEN` secret lands will trigger first auto-sync.
@@ -42,7 +42,7 @@ Actions workflow already present from initial extraction).
 ## USER ACTION required
 
 **Set `HF_TOKEN` GitHub repository secret** (write-scope) at:
-<https://github.com/need-singularity/hexa-bio/settings/secrets/actions>
+<https://github.com/dancinlab/hexa-bio/settings/secrets/actions>
 
 Note: hexa-bio's workflow uses `if: secrets.HF_TOKEN != ''` at the **job
 level** (not the qmirror-pattern `Verify HF_TOKEN secret is present` step).

@@ -12,7 +12,7 @@
 - **Verdict**: `COMPLETE_PROBABLE` — training reached final step (high confidence); HF push of `final/` adapter remains live-unverified (medium confidence). The day-1 audit ranked clean-completion at 60% / final-save crash at 25%.
 - **Cost actual**: $22.18 (7.418 h × $2.99/hr) vs projected $21.50 → **+3.2% over projection**, 44% of $50 per-pod cap, well within the $85 hard cap.
 - **F1_v3 eval readiness**: **CONDITIONAL — gated on HF re-auth + `siblings` enumeration**. Day-2 status (Mac side) shows `hf auth whoami` still returns `Invalid user token`; recovery path unchanged from day-1 audit recommendation.
-- **Next-cycle trigger**: HF re-auth → `hf models info need-singularity/p9-llama32-lora-stage1` → if `adapter_model.safetensors` confirmed → naming-decision rename workflow → A' base-validation gate (`p9_sft.cond.benchmark_a_prime_base_validation`) → F1_v3 eval against {HellaSwag, MMLU 0-shot, TriviaQA EM}.
+- **Next-cycle trigger**: HF re-auth → `hf models info dancinlab/p9-llama32-lora-stage1` → if `adapter_model.safetensors` confirmed → naming-decision rename workflow → A' base-validation gate (`p9_sft.cond.benchmark_a_prime_base_validation`) → F1_v3 eval against {HellaSwag, MMLU 0-shot, TriviaQA EM}.
 
 ---
 
@@ -103,7 +103,7 @@ Per `.roadmap.p9_sft cond.3` and `cond.benchmark_a_prime_base_validation`, F1_v3
 
 **Recommended ordering** (next session):
 1. (5 min) `hf auth login --force` on Mac OR run from ubu1 if its token is still valid.
-2. (5 min) `hf models info need-singularity/p9-llama32-lora-stage1` → confirm `adapter_config.json` + `adapter_model.safetensors` + tokenizer files in `siblings`. If `final/` is missing, accept `step-10000` as fallback.
+2. (5 min) `hf models info dancinlab/p9-llama32-lora-stage1` → confirm `adapter_config.json` + `adapter_model.safetensors` + tokenizer files in `siblings`. If `final/` is missing, accept `step-10000` as fallback.
 3. (10 min) Execute naming-decision post-completion workflow: manifest dump → `hf repos move` → re-upload finalized README.
 4. (BG, 6-17h) Launch base-validation BG per `.roadmap.p9_sft cond.benchmark_a_prime_base_validation` on ubu1.
 5. (BG, ~2-4h) Launch F1_v3 eval BG once both [2] and base-validation are GREEN.

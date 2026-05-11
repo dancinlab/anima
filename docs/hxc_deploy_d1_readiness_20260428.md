@@ -104,7 +104,7 @@ direct read if .hxc absent or entropy-coded.
 |---|---:|---:|---:|
 | anima | 6,679 | ~435 | ~1,300 |
 | nexus | 5,094 | ~330 | ~1,000 |
-| n6-architecture | 143 | ~10 | ~30 |
+| CANON | 143 | ~10 | ~30 |
 | airgenome | 132 | ~9 | ~27 |
 | hive | 128 | ~9 | ~27 |
 | hexa-lang | 104 | ~7 | ~21 |

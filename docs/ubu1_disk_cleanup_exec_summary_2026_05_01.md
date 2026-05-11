@@ -56,7 +56,7 @@
 - Action: `rm -rf /home/aiden/anima/state/trained_adapters_r{4,5,6}` → rc=0
 
 **(c) docker prune → SKIPPED**
-- Container `airgenome-claude` ACTIVE (healthy, 19h uptime) on `ghcr.io/need-singularity/airgenome:fat`
+- Container `airgenome-claude` ACTIVE (healthy, 19h uptime) on `ghcr.io/dancinlab/airgenome:fat`
 - That image is the ONLY image; `prune -a --volumes` would delete the layers backing the running container
 - Decision: SKIP per safety guard ("IF active containers: SKIP")
 - Forfeit: 4.7 GB (acceptable)

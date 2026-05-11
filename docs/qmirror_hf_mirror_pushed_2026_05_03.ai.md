@@ -10,8 +10,8 @@
 ## TL;DR
 
 `qmirror` standalone (closure 8/8 PASS, Apache-2.0, GitHub canonical at
-[3488b23](https://github.com/need-singularity/qmirror/commit/3488b23)) is now
-mirrored to the HuggingFace Hub at <https://huggingface.co/need-singularity/qmirror>.
+[3488b23](https://github.com/dancinlab/qmirror/commit/3488b23)) is now
+mirrored to the HuggingFace Hub at <https://huggingface.co/dancinlab/qmirror>.
 
 - **HF repo**: model-type, public, 33 files, ~213 KB.
 - **HF final commit**: `19e94bb5b0e9ec2d3b3de62770bde9fb7c4fc59f`.
@@ -25,9 +25,9 @@ mirrored to the HuggingFace Hub at <https://huggingface.co/need-singularity/qmir
 
 ## What landed
 
-### HF Hub (need-singularity/qmirror)
+### HF Hub (dancinlab/qmirror)
 
-Created via `hf repo create need-singularity/qmirror --type model --exist-ok`.
+Created via `hf repo create dancinlab/qmirror --type model --exist-ok`.
 Populated via 5 sequential `hf upload` commits:
 
 | # | Commit | Kind | Files | Notes |
@@ -43,7 +43,7 @@ Final tree (33 files): `.gitattributes`, `.gitignore`, `CHANGELOG.md`, `LICENSE`
 `cli/qmirror.hexa`, 2 docs, 4 examples, `hexa.toml`, `install.hexa`,
 3 python_bridge files, 10 hexa modules, 5 tests.
 
-### GitHub (need-singularity/qmirror)
+### GitHub (dancinlab/qmirror)
 
 - Pre-mirror HEAD: `3488b23` (the standalone 1.0.0 closure commit).
 - Post-mirror HEAD: `720e2cf` (`docs(mirror): add HF Hub mirror cross-link`).
@@ -78,7 +78,7 @@ vlm, slm, tlm, nlm, mlm, llm, hexad, composite}. This is correct and
 load-bearing for the LM-publishing pipeline (see
 `docs/anima_hf_naming_convention_mk2_spec_2026_05_03.md`).
 
-`need-singularity/qmirror` is **infrastructure**, not an LM checkpoint, and
+`dancinlab/qmirror` is **infrastructure**, not an LM checkpoint, and
 has no family/version/stage triple to assert. Forcing it into the mk2 schema
 would either:
 - (a) require minting a fake family/version/stage (e.g., `qmirror-v1-base`),
@@ -136,7 +136,7 @@ infrastructure repos can flow through the wrapper directly.
    each), we will need to either (a) migrate to Git-LFS-tracked HF storage
    (HF auto-handles this for files >10 MB but increases storage accounting
    complexity) or (b) shard those into a sibling
-   `need-singularity/qmirror-fixtures` repo. Current contract: `state/`
+   `dancinlab/qmirror-fixtures` repo. Current contract: `state/`
    stays gitignored, no binary blobs in this repo.
 
 ---
@@ -145,14 +145,14 @@ infrastructure repos can flow through the wrapper directly.
 
 ```bash
 # 1. Confirm HF repo populated
-hf models info need-singularity/qmirror | head -20
+hf models info dancinlab/qmirror | head -20
 
 # 2. Confirm GitHub cross-link in place
-gh api repos/need-singularity/qmirror/contents/README.md --jq '.content' \
+gh api repos/dancinlab/qmirror/contents/README.md --jq '.content' \
   | base64 -d | head -15
 
 # 3. Confirm hexa.toml has mirror_url
-gh api repos/need-singularity/qmirror/contents/hexa.toml --jq '.content' \
+gh api repos/dancinlab/qmirror/contents/hexa.toml --jq '.content' \
   | base64 -d | grep mirror_url
 
 # 4. Audit + marker present
@@ -164,8 +164,8 @@ ls -la state/qmirror_hf_mirror_2026_05_03/push_audit.json \
 
 ## Cross-refs
 
-- GitHub: <https://github.com/need-singularity/qmirror>
-- HF: <https://huggingface.co/need-singularity/qmirror>
+- GitHub: <https://github.com/dancinlab/qmirror>
+- HF: <https://huggingface.co/dancinlab/qmirror>
 - Closure doc (upstream): `docs/nexus_qmirror_closure_2026_05_03.md`
 - mk2 upload wrapper (bypassed for this cycle): `tool/hf_upload_mk2.hexa`
 - mk2 naming spec: `docs/anima_hf_naming_convention_mk2_spec_2026_05_03.md`
@@ -178,7 +178,7 @@ ls -la state/qmirror_hf_mirror_2026_05_03/push_audit.json \
 
 ## Done conditions
 
-- [x] HF repo `need-singularity/qmirror` exists, public, model-type
+- [x] HF repo `dancinlab/qmirror` exists, public, model-type
 - [x] HF repo populated with 33 files (31 source + `.gitattributes` + `README_github.md`)
 - [x] HF README.md has YAML front-matter + 5 mk2 H2 sections + GitHub cross-link
 - [x] GitHub README.md has HF Mirror badge + Mirrors callout

@@ -24,7 +24,7 @@ related_raws:
 preserved_unchanged:
   - all P9 spec artifacts (state/p9_sft_spec_2026_05_02/*.json + docs/p9_sft_spec_2026_05_02.md)
   - P0 handoff (docs/p9_sft_p0_hf_org_setup_landed_2026_05_03.ai.md) + staged 10 files
-  - HF org need-singularity (no destructive ops; create/delete/move all skipped)
+  - HF org dancinlab (no destructive ops; create/delete/move all skipped)
   - TRIBE v2 vendored source (anima/references/tribev2/, read-only)
 policy:
   migration: forbidden

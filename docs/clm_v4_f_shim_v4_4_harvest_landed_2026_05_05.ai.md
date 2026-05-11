@@ -17,7 +17,7 @@ Conclusion: F-SHIM-V4-4 is not a "fixture quality" question — it is an archite
 ## What was actually done
 
 - v14_federation engine path search across `tool/`, `references/`, `anima-core/`, `ready/` — engine confirmed present in `ready/anima/core/runtime/anima_unified.py` (not in the 26-LoC `anima-core/runtime/anima_unified.hexa` stub).
-- L9 HF auth pre-flight on ubu1 — **PASS** (user `dancinlife`, org `need-singularity`).
+- L9 HF auth pre-flight on ubu1 — **PASS** (user `dancinlife`, org `dancinlab`).
 - Inspected BG-CLM-1 runtime-proxy artifact: `state/clm_v4_train_avg_harvest_2026_05_04/results/train_avg_real.pt`, shape `[1, 8, 192]`, L2 = 2.2022, per-cell L2 ∈ [0.7240, 0.8021], sign balance pos=0.514 / neg=0.486.
 - Compared vs canonical_zero stub (L2=0): runtime-proxy is the higher-fidelity fixture for the deployed shape. Magnitude ratio carries from BG-Σ context (`canonical_zero ~5.65× off` from train-mean magnitude).
 - Architecture audit of `train_clm.py` 350m scale config + `FederatedConsciousness` class confirmed the 96 vs 8 cell mismatch.

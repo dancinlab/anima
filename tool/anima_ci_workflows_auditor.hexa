@@ -7,7 +7,7 @@
 //     - .github/workflows/*.yml inventory
 //     - workflow trigger / job / step parsing (top-level keys)
 //     - cdo-validate job 명시 verification (memory anchor)
-//     - CODEOWNERS file presence + need-singularity rule count
+//     - CODEOWNERS file presence + dancinlab rule count
 //     - last activity (mtime + recent change indicator)
 //     - selftest verifies: ≥2 workflows / cdo-validate present / NON_MUTATION
 //
@@ -94,7 +94,7 @@ fn _write_helper() {
     parts.push("    with open(CODEOWNERS_PATH, encoding='utf-8') as f:\n")
     parts.push("        co_content = f.read()\n")
     parts.push("    co_lines = [l for l in co_content.splitlines() if l.strip() and not l.strip().startswith('#')]\n")
-    parts.push("    need_singularity = [l for l in co_lines if '@need-singularity' in l]\n")
+    parts.push("    need_singularity = [l for l in co_lines if '@dancinlab' in l]\n")
     parts.push("    codeowners_audit = {\n")
     parts.push("        'present':True,\n")
     parts.push("        'total_rules':len(co_lines),\n")
@@ -161,7 +161,7 @@ fn cmd_selftest() {
     }
     println("selftest=ok")
     println("helper_emitted=" + HELPER_PATH)
-    println("paradigm=CI workflows audit (cdo-validate verification + CODEOWNERS need-singularity; mac $0; NON_MUTATION)")
+    println("paradigm=CI workflows audit (cdo-validate verification + CODEOWNERS dancinlab; mac $0; NON_MUTATION)")
     println("DONE")
 }
 

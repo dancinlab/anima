@@ -4,7 +4,7 @@
 //   Polls (every 10 min, max 16h) for Path A r=16 mitigation training completion via three signals:
 //     (a) state/p9_path_a_r16_h100_2026_05_03/verdict.json (sister BG local marker, may not exist)
 //     (b) ssh ubu1: ~/anima/state/p9_path_a_r16_h100_2026_05_03/verdict.json
-//     (c) HF repo need-singularity/llm-llama32-3b-paradigm-a-prime-r16-sft-stage1 has >=5 ckpts
+//     (c) HF repo dancinlab/llm-llama32-3b-paradigm-a-prime-r16-sft-stage1 has >=5 ckpts
 //         (step-2000 .. step-10000) OR final marker (step-10000 tag)
 //
 //   GUARD-3 (success-signal checklist): file existence != success. Each candidate signal must
@@ -37,7 +37,7 @@
 // CONFIG (env overrides)
 //   ANIMA_R16_VERDICT_LOCAL    default: state/p9_path_a_r16_h100_2026_05_03/verdict.json
 //   ANIMA_R16_VERDICT_UBU1     default: /home/aiden/anima/state/p9_path_a_r16_h100_2026_05_03/verdict.json
-//   ANIMA_R16_HF_REPO          default: need-singularity/llm-llama32-3b-paradigm-a-prime-r16-sft-stage1
+//   ANIMA_R16_HF_REPO          default: dancinlab/llm-llama32-3b-paradigm-a-prime-r16-sft-stage1
 //   ANIMA_R16_HF_FINAL_TAG     default: step-10000
 //   ANIMA_R16_HF_MIN_CKPTS     default: 5  (step-2000,4000,6000,8000,10000)
 //   ANIMA_R64_VERDICT          default: state/p9_a_prime_main_eval_2026_05_03_verdict.json
@@ -478,7 +478,7 @@ fn main() {
 
     let local_path     = _env_or("ANIMA_R16_VERDICT_LOCAL",   "/Users/ghost/core/anima/state/p9_path_a_r16_h100_2026_05_03/verdict.json")
     let ubu1_path      = _env_or("ANIMA_R16_VERDICT_UBU1",    "/home/aiden/anima/state/p9_path_a_r16_h100_2026_05_03/verdict.json")
-    let hf_repo        = _env_or("ANIMA_R16_HF_REPO",         "need-singularity/llm-llama32-3b-paradigm-a-prime-r16-sft-stage1")
+    let hf_repo        = _env_or("ANIMA_R16_HF_REPO",         "dancinlab/llm-llama32-3b-paradigm-a-prime-r16-sft-stage1")
     let hf_tag         = _env_or("ANIMA_R16_HF_FINAL_TAG",    "step-10000")
     let hf_min         = to_int(_env_or("ANIMA_R16_HF_MIN_CKPTS", "5"))
     let r64_verdict    = _env_or("ANIMA_R64_VERDICT",         "/Users/ghost/core/anima/state/p9_a_prime_main_eval_2026_05_03_verdict.json")

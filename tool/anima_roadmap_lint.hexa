@@ -307,7 +307,7 @@ fn _lint(rules: array, checkpoints: array) -> array {
         }
 
         // check d) depends-on numeric-first-token must resolve to an existing id
-        //   cross-repo refs (hexa-lang@N, n6-architecture@...) are skipped by
+        //   cross-repo refs (hexa-lang@N, CANON@...) are skipped by
         //   design — they are external and not resolvable from anima's SSOT.
         let dep_vals = _keys_all(keys, "depends-on")
         for dep_val in dep_vals {

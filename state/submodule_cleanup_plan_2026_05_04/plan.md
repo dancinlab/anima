@@ -21,8 +21,8 @@ Bonus discovery: parent repo carries **6** ghost gitlinks under `references/`, n
 | Working-tree commit (`ready/.git` HEAD) | `ef7aae81f41c9f9011ba2263ead2384b9fc71f9b` |
 | Working-tree branch | `ssot-hexa-first-fix` |
 | Other local branches | `main`, `worktree-agent-abb59ac1` |
-| Origin URL (inside ready) | `https://github.com/need-singularity/anima.git` |
-| Origin URL (parent repo) | `https://github.com/need-singularity/anima.git` |
+| Origin URL (inside ready) | `https://github.com/dancinlab/anima.git` |
+| Origin URL (parent repo) | `https://github.com/dancinlab/anima.git` |
 | Listed in `.gitmodules`? | **NO** (`.gitmodules` does not exist in parent) |
 | Listed in `.git/config` `submodule.*`? | **NO** |
 | Reachable via `git submodule status`? | **NO** — fatal: "no submodule mapping found in .gitmodules for path 'ready'" |
@@ -36,7 +36,7 @@ Bonus discovery: parent repo carries **6** ghost gitlinks under `references/`, n
 - 10 untracked: `anima/anima-rs/`, `anima/config/`, 6× `anima/modules/*/README.ai.md`, `state/`, `tests/hyperarithmetic_suite_runner.hexa`
 - **0 staged files** — all changes are working-tree-only.
 
-**Inferred purpose**: `ready/` is a peer clone of `need-singularity/anima.git` checked out to a feature branch `ssot-hexa-first-fix`. The dirty changes look like a coherent in-progress branch ("delete legacy CLAUDE.md scaffolding + py→hexa migration WIP") matching the branch name. The mass `D CLAUDE.md` is **likely intentional** (consistent pattern, nearly all CLAUDE.md files in the tree). The active worktree (`agent-abb59ac1`) suggests an agent session has touched this clone recently.
+**Inferred purpose**: `ready/` is a peer clone of `dancinlab/anima.git` checked out to a feature branch `ssot-hexa-first-fix`. The dirty changes look like a coherent in-progress branch ("delete legacy CLAUDE.md scaffolding + py→hexa migration WIP") matching the branch name. The mass `D CLAUDE.md` is **likely intentional** (consistent pattern, nearly all CLAUDE.md files in the tree). The active worktree (`agent-abb59ac1`) suggests an agent session has touched this clone recently.
 
 ### 1.2 `references/tribev2/` — untracked-marker submodule
 
@@ -112,11 +112,11 @@ None are in `.gitmodules`. None are in `.git/config`. The 5 OpenBCI/Documentatio
 | Option | Description | 완성도 | Cost | Reversible? |
 |---|---|---|---|---|
 | **A. Defer + add .gitignore noise filter** ⭐ | Leave `ready/` as a ghost-gitlink. Document the pattern in `state/submodule_cleanup_plan_2026_05_04/plan.md`. Optionally add `.gitattributes` or status-noise filter to suppress the ` m ready` marker locally. | **HIGH** (preserves all WIP) | $0, 0 min | YES |
-| B. Add `.gitmodules` entry retroactively | Synthesize `[submodule "ready"] path = ready, url = https://github.com/need-singularity/anima.git, branch = ssot-hexa-first-fix`. Keep working-tree as-is. | MEDIUM (codifies but doesn't push WIP) | $0, ~5 min | YES (rm .gitmodules) |
+| B. Add `.gitmodules` entry retroactively | Synthesize `[submodule "ready"] path = ready, url = https://github.com/dancinlab/anima.git, branch = ssot-hexa-first-fix`. Keep working-tree as-is. | MEDIUM (codifies but doesn't push WIP) | $0, ~5 min | YES (rm .gitmodules) |
 | C. `git submodule deinit` + re-init from upstream main | Loses 57 dirty entries + active worktree. | LOW | $0, ~10 min | NO (data loss) |
 | D. Full reset (`git -C ready reset --hard origin/main`) | Loses 57 dirty entries. Worktree survives. | LOW | $0, ~2 min | NO (data loss) |
 
-**Recommendation: A**. The ghost-gitlink works *de facto* (parent commits keep bumping it). Promoting to `.gitmodules` (Option B) is the only completeness improvement, but creates a new failure mode: `git clone --recursive` would attempt to fetch `need-singularity/anima.git` recursively, which would re-clone the parent repo into `ready/`. That's the same upstream — semantically correct but operationally weird. Defer until the user decides whether `ready/` should be a true submodule (clone of self) or a separate vendored fork.
+**Recommendation: A**. The ghost-gitlink works *de facto* (parent commits keep bumping it). Promoting to `.gitmodules` (Option B) is the only completeness improvement, but creates a new failure mode: `git clone --recursive` would attempt to fetch `dancinlab/anima.git` recursively, which would re-clone the parent repo into `ready/`. That's the same upstream — semantically correct but operationally weird. Defer until the user decides whether `ready/` should be a true submodule (clone of self) or a separate vendored fork.
 
 ### 3.2 `references/tribev2/` — RECOMMENDED: **Option B** (codify .gitmodules)
 
@@ -141,7 +141,7 @@ Before any user-authorized fix:
 2. **Backup `references/tribev2/`**:
    - `tar -czf state/submodule_cleanup_plan_2026_05_04/tribev2_backup_$(date +%s).tgz references/tribev2/` (preserves the 3 untracked files + branch state)
 3. **Verify upstream URLs**:
-   - `cd ready && git remote -v` → confirms `need-singularity/anima.git`
+   - `cd ready && git remote -v` → confirms `dancinlab/anima.git`
    - `cd references/tribev2 && git remote -v` → confirms `facebookresearch/tribev2.git` + `dancinlife/tribev2.git`
 4. **Verify gitlink commits resolvable upstream**:
    - `cd ready && git fetch origin && git cat-file -e ef7aae81 || echo "MISSING"` (gitlink may be on a feature branch only)
@@ -161,7 +161,7 @@ Pre-registered acceptance criteria for any executed cleanup:
 - **F-SUBMOD-1**: `git submodule status` returns clean state for both `ready` and `references/tribev2` (and ideally for the 5 sibling references too) — exit code 0, no `fatal:` output, status chars all space (clean) or `+` (gitlink-bumped intentionally)
 - **F-SUBMOD-2**: `cat .gitmodules` lists at minimum `ready` and `references/tribev2`; bonus: lists all 6 references siblings
 - **F-SUBMOD-3**: `git status --short | grep -E '(^.m |^\?\? references|^ \? references)'` returns empty (no dirty submodule marker, no untracked references entry)
-- **F-SUBMOD-4**: round-trip `git clone --recursive https://github.com/need-singularity/anima.git /tmp/anima_clone_test && ls /tmp/anima_clone_test/ready/ && ls /tmp/anima_clone_test/references/tribev2/` succeeds — both submodules populate from `.gitmodules`-declared URLs
+- **F-SUBMOD-4**: round-trip `git clone --recursive https://github.com/dancinlab/anima.git /tmp/anima_clone_test && ls /tmp/anima_clone_test/ready/ && ls /tmp/anima_clone_test/references/tribev2/` succeeds — both submodules populate from `.gitmodules`-declared URLs
 - **F-SUBMOD-5** (bonus completeness): `cd /tmp/anima_clone_test && git submodule foreach 'git status --short' | wc -l` returns 0 — clean state across all registered submodules
 - **F-SUBMOD-6** (preservation): the 7 modified files + 40 deletions + 10 untracked entries inside `ready/` are preserved (compared against pre-execution snapshot via `diff`); the 3 untracked files inside `references/tribev2/` survive
 - **F-SUBMOD-7** (roadmap integrity): `.roadmap.blm_brain_lm` cond.1 evidence paths still resolve — `references/tribev2/inventory.json` exists with same SHA-256
@@ -172,7 +172,7 @@ Pre-registered acceptance criteria for any executed cleanup:
 
 1. **Cannot determine user intent for `ready/` dirty changes**: the 40 `D CLAUDE.md` deletions look intentional (uniform pattern), but read-only investigation cannot confirm. The branch name `ssot-hexa-first-fix` is suggestive but not authoritative. **A wrong assumption here loses real WIP.**
 2. **Active worktree `ready/.git/worktrees/agent-abb59ac1`**: there is at least one active git worktree inside `ready/`. We did not inspect what's checked out there or whether an agent session is currently writing to it. Any submodule mutation that touches `ready/` while the worktree is active risks index corruption.
-3. **Submodule semantic ambiguity for `ready/`**: `ready/` clones the *same* upstream as the parent repo (`need-singularity/anima.git`). This is a self-recursive submodule. Whether the user intends this as (a) a sibling clone for cross-version diffing, (b) a stage area for upstream PRs, or (c) a legacy artifact to remove is undetermined.
+3. **Submodule semantic ambiguity for `ready/`**: `ready/` clones the *same* upstream as the parent repo (`dancinlab/anima.git`). This is a self-recursive submodule. Whether the user intends this as (a) a sibling clone for cross-version diffing, (b) a stage area for upstream PRs, or (c) a legacy artifact to remove is undetermined.
 4. **Irreversibility risk in any `git rm --cached` path**: removing the gitlink and re-adding as a plain dir would inflate the parent repo by ~5.6 MB (tribev2) + ~hundreds of MB (ready/), and this commit would be permanent in history. Recovery would require `git filter-repo` rewriting — a hard operation that affects all contributors.
 5. **Cross-cycle dependencies**: `.roadmap.blm_brain_lm` cond.1, `.roadmap.i1_tribev2_pr` cond.1/cond.2, `docs/submodule_tribev2_commit_2026_05_02.md`, `docs/strategic_clm_phase_a1_results_2026_05_01.md`, `docs/n_substrate_consciousness_roadmap_2026_05_01.md`, `docs/blm_phase3_spec_2026_05_03.md` all reference `references/tribev2/` paths. Any cleanup must verify all these cross-links survive.
 6. **5 sibling ghost-gitlinks not in scope**: this plan focuses on `ready/` and `references/tribev2/` per the brief, but `references/{Documentation, OpenBCI_Cyton_Library, OpenBCI_GUI, OpenBCI_Tutorials, V3_Hardware_Design_Files}` have the same ghost-gitlink pathology. Resolving only `tribev2` leaves a partial fix and F-SUBMOD-5 will fail.

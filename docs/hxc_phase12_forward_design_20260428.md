@@ -274,7 +274,7 @@ algorithm). Reuses A18 implementation entirely.
 **Algorithm spec**:
 - Extend A19 cross-corpus dict federation to TS / Node / Python / Bash
   hot-path corpora (e.g., `nexus/` TypeScript files,
-  `n6-architecture/` config Python, `airgenome/` shell scripts).
+  `CANON/` config Python, `airgenome/` shell scripts).
 - Shared vocab across languages where keywords overlap (`function`,
   `return`, `if`, `else`, `null`, `true`, `false`).
 
@@ -475,7 +475,7 @@ Three enforcement layers:
 - **L2 lint reference**: `anima/tool/hxc_grammar_induction_orthogonality_lint.hexa`
   (NEW, ~150 LoC PROJECTED) — scans HXC catalog for A1+A24 stacking and
   asserts orthogonality preservation per raw 156.
-- **L3 atlas anchor**: `n6-architecture/atlas` candidate anchor for
+- **L3 atlas anchor**: `CANON/atlas` candidate anchor for
   PCFG-MDL grammar-induction structural pattern (Stolcke-Omohundro 1994
   textbook reference).
 
@@ -523,7 +523,7 @@ relevance for raw 160 promotion.
 | **hexa-lang** | high | `.hexa` source AST = A25 candidate input class |
 | **nexus** | medium | TypeScript hot-paths = A27 cross-lang fed candidate input |
 | **hive** | high | `state/raw_*/registry.jsonl` = JSON-heavy corpus, A24 primary target |
-| **n6-architecture** | medium | atlas .n6 already structural; A24 marginal ~1pp |
+| **CANON** | medium | atlas .n6 already structural; A24 marginal ~1pp |
 | **airgenome** | low | shell scripts off-domain (A27 candidate, low priority) |
 
 **raw 47 threshold ≥ 3 sister repos**: **EXCEEDED** (4 of 5 substantive).

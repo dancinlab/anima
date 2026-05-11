@@ -39,11 +39,11 @@ The roadmap is JSONL (header on line 3 of file, then one entry per line). The he
 
 | field | type | example | semantic |
 |---|---|---|---|
-| `upstream_url` | string | `"https://github.com/need-singularity/qmirror"` | canonical GitHub repo URL — SSOT for all consumers |
+| `upstream_url` | string | `"https://github.com/dancinlab/qmirror"` | canonical GitHub repo URL — SSOT for all consumers |
 | `latest_release` | string | `"v2.0.0"` | current release tag (semver) |
-| `latest_release_url` | string | `"https://github.com/need-singularity/qmirror/releases/tag/v2.0.0"` | direct release page URL |
+| `latest_release_url` | string | `"https://github.com/dancinlab/qmirror/releases/tag/v2.0.0"` | direct release page URL |
 | `latest_release_date` | string | `"2026-05-04"` | release publication date (ISO) |
-| `hf_mirror` | string | `"https://huggingface.co/need-singularity/qmirror"` | HuggingFace mirror URL |
+| `hf_mirror` | string | `"https://huggingface.co/dancinlab/qmirror"` | HuggingFace mirror URL |
 | `arxiv_draft_status` | string | `"v0.1 peer-review-pending"` | arXiv preprint state |
 | `arxiv_draft_doc` | string | `"anima/docs/qmirror_arxiv_draft_2026_05_03.md"` | canonical draft body path |
 | `ssot_field_introduced` | string | `"2026-05-04"` | when the SSOT field set was introduced |
@@ -103,8 +103,8 @@ Pattern: same as closure_related (2 stacked URL callouts).
 **Before (lines 3-4 of doc):**
 
 ```
-> 📦 Available at: https://github.com/need-singularity/qmirror (`hx install qmirror`)
-> 🚀 v2.0.0 RELEASED 2026-05-04 — closure 13/13 conds met (8 v1 + 5 v2): https://github.com/need-singularity/qmirror/releases/tag/v2.0.0
+> 📦 Available at: https://github.com/dancinlab/qmirror (`hx install qmirror`)
+> 🚀 v2.0.0 RELEASED 2026-05-04 — closure 13/13 conds met (8 v1 + 5 v2): https://github.com/dancinlab/qmirror/releases/tag/v2.0.0
 ```
 
 **After (line 3 of doc + footnote at end):**
@@ -120,8 +120,8 @@ Pattern: same as closure_related (2 stacked URL callouts).
 
 Prior callouts preserved verbatim per qmirror_xref_centralization cycle (2026-05-04):
 
-> 📦 Available at: https://github.com/need-singularity/qmirror (`hx install qmirror`)
-> 🚀 v2.0.0 RELEASED 2026-05-04 — closure 13/13 conds met (8 v1 + 5 v2): https://github.com/need-singularity/qmirror/releases/tag/v2.0.0
+> 📦 Available at: https://github.com/dancinlab/qmirror (`hx install qmirror`)
+> 🚀 v2.0.0 RELEASED 2026-05-04 — closure 13/13 conds met (8 v1 + 5 v2): https://github.com/dancinlab/qmirror/releases/tag/v2.0.0
 
 Future qmirror release URLs are canonically tracked in `nexus/.roadmap.qmirror` header field `latest_release_url`. Update single line in roadmap; this footnote is a frozen historical record (do not retrofit).
 ```
@@ -133,8 +133,8 @@ Future qmirror release URLs are canonically tracked in `nexus/.roadmap.qmirror` 
 ```
 > **2026-05-03 qmirror substrate update (additive, doc not retrofitted)**: this work uses ... Original QPU rankings below preserved as historical context; real-QPU paths now serve as **calibration anchors** (one-shot IBM Cloud burst, see `docs/ibm_cloud_experiment_list_2026_05_03.md`), not routine execution targets.
 
-> 📦 Available at: https://github.com/need-singularity/qmirror (`hx install qmirror`)
-> 🚀 v2.0.0 RELEASED 2026-05-04 — closure 13/13 conds met (8 v1 + 5 v2): https://github.com/need-singularity/qmirror/releases/tag/v2.0.0
+> 📦 Available at: https://github.com/dancinlab/qmirror (`hx install qmirror`)
+> 🚀 v2.0.0 RELEASED 2026-05-04 — closure 13/13 conds met (8 v1 + 5 v2): https://github.com/dancinlab/qmirror/releases/tag/v2.0.0
 ```
 
 **After (substrate update line PRESERVED verbatim; only 2 URL callouts replaced):**
@@ -157,7 +157,7 @@ Future qmirror release URLs are canonically tracked in `nexus/.roadmap.qmirror` 
 
 - (a) contain exactly one SSOT line (prefix `> qmirror canonical SSOT: see`)
 - (b) contain exactly one `### See also (qmirror xref history)` footnote header (start of line)
-- (c) have NO hardcoded `github.com/need-singularity/qmirror` URL OUTSIDE the footnote section
+- (c) have NO hardcoded `github.com/dancinlab/qmirror` URL OUTSIDE the footnote section
 
 The footnote is permitted (and required) to contain the historical 2 URL callout lines verbatim — that is the raw#10 honest historical record.
 
@@ -194,7 +194,7 @@ __QMIRROR_XREF__ PASS 17/17
 
 **Out-of-scope this cycle (per constraints):**
 
-- Sister repo READMEs (`sim-universe/README.md`, `hexa-bio/README.md`, `honesty-monitor/README.md`, `n6-architecture/README.md`, `qmirror/RELEASE_NOTES_v2.0.0_announcement.md`) — sister repos belong to the `anima_offrepo` cycle + DO NOT mutate qmirror standalone repo constraint.
+- Sister repo READMEs (`sim-universe/README.md`, `hexa-bio/README.md`, `honesty-monitor/README.md`, `CANON/README.md`, `qmirror/RELEASE_NOTES_v2.0.0_announcement.md`) — sister repos belong to the `anima_offrepo` cycle + DO NOT mutate qmirror standalone repo constraint.
 - `papers/anima/PA-39-qmirror-v2-closure.md` — has its own governance under the papers cycle.
 - 15 additional docs in `anima/docs/` outside the canonical 17 (handoff/aborted/spec docs not flagged as carrying the xref burden by sister BG ad8ec25). The xref-burden caveat applies only to the canonical 17.
 
@@ -232,7 +232,7 @@ Total rollback cost: ~17 single-block edits + 1 roadmap edit. The footnotes make
 - **raw#15**: no personal-path leak in added doc bodies. The verifier hexa hardcodes `/Users/ghost/core/nexus/.roadmap.qmirror` + `/Users/ghost/core/anima/docs/` as absolute paths — these match the existing pattern in sibling tools (e.g. `tool/qmirror_2_closure_synth.hexa` line 50-53 hardcodes `/Users/ghost/core/qmirror/hexa.toml` etc.) and do not leak personal info beyond what is already established convention.
 - **$0 cost**: doc-only; no API / compute / storage spend.
 - **DO NOT delete v1.0.0 references**: every prior callout line preserved verbatim in the `### See also (qmirror xref history)` footnote of each of the 17 docs.
-- **DO NOT mutate qmirror standalone repo**: this cycle modifies anima docs + nexus roadmap only. The qmirror repo (`/Users/ghost/core/qmirror/`) and sister repos (`sim-universe`, `hexa-bio`, `honesty-monitor`, `n6-architecture`) are NOT touched.
+- **DO NOT mutate qmirror standalone repo**: this cycle modifies anima docs + nexus roadmap only. The qmirror repo (`/Users/ghost/core/qmirror/`) and sister repos (`sim-universe`, `hexa-bio`, `honesty-monitor`, `CANON`) are NOT touched.
 
 ---
 

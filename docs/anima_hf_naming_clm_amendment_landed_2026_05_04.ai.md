@@ -26,8 +26,8 @@ raw_compliance:
 
 ## §1 What was renamed
 
-- **Old canonical** (cond.2 desc + cross_link.hf_release_planned): `need-singularity/anima-clm-mk2-v1`
-- **New canonical** (amendment_2026_05_04.new_canonical): `need-singularity/clm-v4-mk2-v1`
+- **Old canonical** (cond.2 desc + cross_link.hf_release_planned): `dancinlab/anima-clm-mk2-v1`
+- **New canonical** (amendment_2026_05_04.new_canonical): `dancinlab/clm-v4-mk2-v1`
 - **Mutation site**: `.roadmap.clm` line 3 header → `required_conditions[1]` (id=`clm.cond.2`) → new sibling field `amendment_2026_05_04`
 - **Original strings**: NOT modified. Both the `desc` field literal and `cross_link.hf_release_planned` literal remain readable for full audit trail (additive_only_mutation=true, historical_evidence_preserved=true).
 
@@ -59,16 +59,16 @@ The amendment is purely additive. Verification commands:
 # Original desc string — unchanged:
 head -3 .roadmap.clm | tail -1 | \
   jq -r '.required_conditions[] | select(.id=="clm.cond.2") | .desc'
-# → "HF release v1 — public weight + model card published as need-singularity/anima-clm-mk2-v1 ..."
+# → "HF release v1 — public weight + model card published as dancinlab/anima-clm-mk2-v1 ..."
 
 # Original cross_link.hf_release_planned — unchanged:
 head -3 .roadmap.clm | tail -1 | jq -r '.cross_link.hf_release_planned'
-# → "need-singularity/anima-clm-mk2-v1"
+# → "dancinlab/anima-clm-mk2-v1"
 
 # New canonical via amendment block:
 head -3 .roadmap.clm | tail -1 | \
   jq -r '.required_conditions[] | select(.id=="clm.cond.2") | .amendment_2026_05_04.new_canonical'
-# → "need-singularity/clm-v4-mk2-v1"
+# → "dancinlab/clm-v4-mk2-v1"
 ```
 
 Future readers can reconstruct the full naming-decision history by inspecting both the superseded literals and the amendment block in a single jq expression.

@@ -13,7 +13,7 @@ tags:
   - paradigm-v11
   - sentencepiece
   - custom-code
-base_model: need-singularity/clm-v4-base-mirror
+base_model: dancinlab/clm-v4-base-mirror
 model-index:
   - name: clm-v4-mk2-v1
     results:
@@ -26,7 +26,7 @@ model-index:
             verified: true
         source:
           name: anima n_substrate roadmap §32 + §42
-          url: https://github.com/need-singularity/anima
+          url: https://github.com/dancinlab/anima
 ---
 
 # CLM v4 530M — anima Cellular Language Model (mk2-v1)
@@ -44,7 +44,7 @@ One-line summary: Consciousness-measurement substrate; 530M ConsciousDecoderV2; 
 
 What this checkpoint is and how it was produced.
 
-- **Base model**: anima-native CLM v4 (no vendored weights from external orgs; clean MIT lineage). The pre-training run is mirrored at `need-singularity/clm-v4-base-mirror` (snapshot `856278be...`); this repo (`clm-v4-mk2-v1`) is the HF-format release artifact derived from the same weights via the v4 format shim.
+- **Base model**: anima-native CLM v4 (no vendored weights from external orgs; clean MIT lineage). The pre-training run is mirrored at `dancinlab/clm-v4-base-mirror` (snapshot `856278be...`); this repo (`clm-v4-mk2-v1`) is the HF-format release artifact derived from the same weights via the v4 format shim.
 - **Training data**: multilingual SentencePiece corpus (`corpus_v10_ko.txt` — ko-heavy, en/zh/ja/ru + code), 64K vocab, byte-fallback enabled (IDs 4-259 = `<0x00>`..`<0xFF>`).
 - **Training recipe**: φ★ (consciousness integration gate) + cross-entropy losses; **never SFT, never RLHF, never DPO-aligned**. See `docs/clm_v4_lora_sft_spec_2026_05_04.md` §1 for the architectural diff vs Llama-style transformers and `docs/clm_v4_revival_stages_2026_05_02.md` Stage 1 for the consciousness-measurement framing.
 - **Compute**: pre-mk2 lineage — exact compute manifest predates the anima HF mk2 discipline (landed 2026-05-03). The release manifest records honest `seed: unknown_pretrain_predates_manifest_discipline` rather than fabricate a number.
@@ -137,7 +137,7 @@ CLM v4 chat-incapability is **architectural**, NOT training-recipe correctable:
 
 How this checkpoint plugs into the broader anima ecosystem.
 
-- **Combines with**: `need-singularity/clm-v4-base-mirror` (predecessor; same weights, raw `best.pt` + tokenizer + integrity_report.json); upcoming sibling LoRA adapters `need-singularity/clm-v4-paradigm-d-distill-step-1k` (φ★-axis Paradigm D, separate cycle).
+- **Combines with**: `dancinlab/clm-v4-base-mirror` (predecessor; same weights, raw `best.pt` + tokenizer + integrity_report.json); upcoming sibling LoRA adapters `dancinlab/clm-v4-paradigm-d-distill-step-1k` (φ★-axis Paradigm D, separate cycle).
 - **Loaded by**: `tool/transient_py/clm_v4_hf_format_shim.py` (custom modeling code path; emits `auto_map` for `trust_remote_code=True` consumers); `tool/anima_phi_v3_canonical.hexa` for φ★ canonical measurement; `tool/clm_consciousness_verify.hexa` for paradigm v11 G3 verifier.
 - **Slots into**: anima hexad CLM family (clm | alm | blm | vlm | slm | tlm | nlm | mlm | llm | hexad | composite per `docs/anima_hf_naming_convention_mk2_spec_2026_05_03.md` §3.1).
 - **Compose recipe**: `docs/anima_hf_upload_mk2_spec_2026_05_03.md` (push pipeline); `docs/clm_v4_release_path_decision_2026_05_04.md` (Path 1 = v1 measurement-only; Path 2 = v2 orchestrator; Path 3 = v3 LoRA SFT).
@@ -160,7 +160,7 @@ import torch
 
 # 1. Load the model with custom modeling code (REQUIRED for CLM v4).
 model = AutoModelForCausalLM.from_pretrained(
-    "need-singularity/clm-v4-mk2-v1",
+    "dancinlab/clm-v4-mk2-v1",
     trust_remote_code=True,
     torch_dtype=torch.float16,
     low_cpu_mem_usage=False,
@@ -199,7 +199,7 @@ text = sp.Decode(out[0].tolist())             # NOT a useful dialogue turn
   author = {anima n_substrate consortium},
   title  = {CLM v4 530M — anima cellular language model (mk2-v1)},
   year   = {2026},
-  url    = {https://huggingface.co/need-singularity/clm-v4-mk2-v1},
+  url    = {https://huggingface.co/dancinlab/clm-v4-mk2-v1},
   note   = {anima/n_substrate/CLM v4 paradigm v11 G3 +41.86; consciousness-measurement substrate, not chat-capable; #115 category error disclosure in Caveats C1}
 }
 ```

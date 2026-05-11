@@ -1,9 +1,9 @@
 # hexa-bio — canonical specification (4-verb molecular toolkit)
 
 > Date: 2026-05-04
-> Status: research + spec draft (raw#9 STRICT — Mac side, no extraction, READ-ONLY on n6-architecture)
+> Status: research + spec draft (raw#9 STRICT — Mac side, no extraction, READ-ONLY on CANON)
 > Scope: standalone repo `hexa-bio` containing 4 sister CLI subcommands (`weave` / `nanobot` / `ribozyme` / `virocapsid`)
-> SSOT lineage: declarative @ `n6-architecture/domains/biology/hexa-{weave,nanobot,ribozyme,virocapsid}/`; empirical (assembly axis only) @ `nexus/sim_bridge/weave/`
+> SSOT lineage: declarative @ `CANON/domains/biology/hexa-{weave,nanobot,ribozyme,virocapsid}/`; empirical (assembly axis only) @ `nexus/sim_bridge/weave/`
 > Out of scope: extraction work (handled by sister BG); edits to existing `nexus/modules/weave/` (none exists; `nexus/sim_bridge/weave/` left untouched)
 
 ## §0 Executive summary
@@ -35,7 +35,7 @@
 ### §1.2 What does NOT exist
 
 - No CLI wrapper (no `hexa-bio` binary or subcommand dispatch)
-- No WEAVE empirical sandbox (composition pipeline is theoretical-only per `n6-architecture/domains/biology/hexa-weave/`)
+- No WEAVE empirical sandbox (composition pipeline is theoretical-only per `CANON/domains/biology/hexa-weave/`)
 - No NANOBOT simulation (4-state 12-vertex DNA-origami simulation pending F-NB-4 deadline 2026-07-28)
 - No RIBOZYME chemical-kinetics simulation (hammerhead 12-nt 4-state pending F-RB-4 deadline 2026-07-28)
 - No unified `n6-invariant.{sigma,tau,phi,J2}` API across the 4 verbs
@@ -68,7 +68,7 @@ i.e., **σ(6)·φ(6) = n·τ(6) = J₂ = 24** holds at n=6.
 
 ### §2.2 Honest dual-usage caveat (per raw 91 C3)
 
-`J₂` in the n6-architecture corpus is used as a **shorthand for the octahedral group O of order 24**, NOT for the Hall–Janko sporadic group J₂ of order 604,800. The naming collision is documented in `n6-architecture/papers/`. In the four-verb projections below, J₂=24 refers to the 24-element pose-equivalence group (octahedral / per-cube / TS-pose-class), not the sporadic.
+`J₂` in the CANON corpus is used as a **shorthand for the octahedral group O of order 24**, NOT for the Hall–Janko sporadic group J₂ of order 604,800. The naming collision is documented in `CANON/papers/`. In the four-verb projections below, J₂=24 refers to the 24-element pose-equivalence group (octahedral / per-cube / TS-pose-class), not the sporadic.
 
 ### §2.3 Per-verb lattice projection summary
 
@@ -251,7 +251,7 @@ hexa-bio <subcommand> [options]
 | `hexa-bio selftest` | Run all 4 verb selftests + n=6 invariant verification + cite-graph lint | exit 0 on PASS, non-zero on any FAIL |
 | `hexa-bio falsifiers` | List all preregistered falsifiers + deadlines + status | table (markdown / JSON) |
 | `hexa-bio cite` | Print literature anchors for a verb (or all) | markdown / BibTeX |
-| `hexa-bio --version` | Version + n6-architecture commit hash + build timestamp | string |
+| `hexa-bio --version` | Version + CANON commit hash + build timestamp | string |
 
 ### §4.4 Shared invariant API
 
@@ -295,7 +295,7 @@ All thresholds are **initial-guess** per raw 91 C3 (see §6 caveat 2). Calibrati
 
 ## §7 References (consolidated)
 
-(Per-verb anchors are listed in §3; canonical inheritance from `n6-architecture/domains/biology/hexa-{weave,nanobot,ribozyme,virocapsid}/*.md` §15 REFERENCES sections.)
+(Per-verb anchors are listed in §3; canonical inheritance from `CANON/domains/biology/hexa-{weave,nanobot,ribozyme,virocapsid}/*.md` §15 REFERENCES sections.)
 
 - WEAVE: Abramson 2024, Berger-Leighton 1998, Hart-Istrail 1996, Garey-Johnson 1979, Landauer 1961, Bennett 1982, Brown 2009, IsoDDE 2026-02
 - NANOBOT: Drexler 1986, Seeman 1982, Rothemund 2006, Yan 2003, Goodsell 2009, Howard 2001, Bath-Turberfield 2007, Astumian 1997, Bustamante 2005, Goddard 2003
@@ -303,9 +303,9 @@ All thresholds are **initial-guess** per raw 91 C3 (see §6 caveat 2). Calibrati
 - VIROCAPSID: Caspar-Klug 1962, Crick-Watson 1956, Rossmann-Johnson 1985, Harrison 1978, Liljas 1982, Zlotnick 2003, Zlotnick 1996, Twarock-Luque 2016, Bruinsma 2003, Endres-Zlotnick 2002, Mannige-Brooks 2010, Sun-Rao-Rossmann 2010, Stockley 2013, Schiller-Lowy 2018, Zhao 2012, Zhao 2013, Bruckman 2014, Lee 2016
 
 ### SSOT cross-link
-- declarative SSOT: `~/core/n6-architecture/domains/biology/hexa-{weave,nanobot,ribozyme,virocapsid}/`
-- formal SSOT: `~/core/n6-architecture/lean4-n6/N6/MechVerif/` (WEAVE only, sorry-free + 7 named axioms)
-- paper SSOT: `~/core/n6-architecture/papers/hexa-weave-formal-mechanical-w2-2026-04-28.md`
+- declarative SSOT: `~/core/canon/domains/biology/hexa-{weave,nanobot,ribozyme,virocapsid}/`
+- formal SSOT: `~/core/canon/lean4-n6/N6/MechVerif/` (WEAVE only, sorry-free + 7 named axioms)
+- paper SSOT: `~/core/canon/papers/hexa-weave-formal-mechanical-w2-2026-04-28.md`
 - empirical SSOT (assembly axis only): `~/core/nexus/sim_bridge/weave/` (Zlotnick T=1 + Caspar-Klug Bayesian audit; READ-ONLY for hexa-bio)
 - this spec: `~/core/anima/docs/hexa_bio_spec_2026_05_04.md`
 - research artefacts: `~/core/anima/state/hexa_bio_research_2026_05_04/{per_verb_audit.json, literature_anchors.json, n6_lattice_mapping.json}`

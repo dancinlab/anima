@@ -19,7 +19,7 @@
 | Commit SHA | `de7867c3b87acb31671aec32dd0e956f053f0068` |
 | Commit message | `cycle 5 §5: research-trail snapshot — 58 files (hypotheses + state + tool + NEXT.md)` |
 | HF token source | `ssh mac /Users/ghost/core/secret/bin/secret get hf.token` (memory: `reference_secret_cli.md`) |
-| Token prefix | `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` (masked outside this verdict — secret CLI canonical) |
+| Token prefix | `hf_REDACTED_GH_PUSH_PROTECTION_2026_05_12` (masked outside this verdict — secret CLI canonical) |
 | Stage dir | `/tmp/anima-research-trail-staging/` (race-safe) |
 | Lock policy | mutable, no chflags/chattr applied (user directive 2026-05-11) |
 
@@ -95,7 +95,7 @@
 
 ## 4. Procedure log
 
-1. **HF token retrieval**: `ssh mac /Users/ghost/core/secret/bin/secret get hf.token` → token retrieved (prefix `hf_zlbJHRpn...`).
+1. **HF token retrieval**: `ssh mac /Users/ghost/core/secret/bin/secret get hf.token` → token retrieved (prefix `hf_REDACTED...`).
 2. **Staging**: 58 files via `python3 /tmp/stage_anima_research_trail.py` → `/tmp/anima-research-trail-staging/` (579.4 KB).
 3. **Dataset card README**: 본 agent 작성 (10 sections — narrative, timeline, findings, takeaways, structure, sister datasets, citation, disclosure, lock policy).
 4. **Upload**: `HfApi.create_repo(private=True, exist_ok=True)` + `upload_folder()` → commit `de7867c3`.

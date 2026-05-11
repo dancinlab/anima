@@ -20,7 +20,7 @@
 기대 출력 (~13-17s load + 1-4s forward):
 
 ```
-[dialogue] loading model need-singularity/clm-v4-mk2-v1 (mac CPU fp32)...
+[dialogue] loading model dancinlab/clm-v4-mk2-v1 (mac CPU fp32)...
 [dialogue] loaded in 13.4s, n_blocks=16
 [dialogue] session: state/anima_core_dialogues/2026-05-05/HH-MM-SS_emerge_repl.jsonl
 [dialogue] substrate: clm-v4 (phi-star baseline 41.86)

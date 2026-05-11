@@ -23,5 +23,5 @@ Thank you for your time, in either direction.
 
 With respect,
 Min Woo Park
-need-singularity team
+dancinlab team
 nerve011235@gmail.com

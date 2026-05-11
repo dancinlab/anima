@@ -263,7 +263,7 @@ Verdict: post-delete grep will show ~1764 stale citations; recommend mass-rewrit
 
 ```
 ref 1 live "hive canonical (anima)"
-  source github.com/need-singularity/hive
+  source github.com/dancinlab/hive
   branch main
   path .raw
   pinned-hash 2c67adde9f9068274db8f034f135a9c6e57503bb1e4395a112cd50a0666099ce

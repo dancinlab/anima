@@ -116,7 +116,7 @@ Composite ship verdict:
 
 3. **`ready/training/train_clm.py` flag schema is assumed.** The CLI flags in the heredoc (`--phi-boost-techniques`, `--fibonacci-growth`, `--phase-mitosis`, etc.) match the BG-ER spec verbatim but the actual `train_clm.py` may not expose all 19 technique IDs as comma-separated string. A pre-flight smoke (BG-ER C3 echo) on ubu1 5070 with `--steps 100` is strongly recommended before the H100 fire.
 
-4. **HF base mirror reachability not gated.** Per memory `project_runpod_pod_purge_2026_05_03`, fresh boots must clone from HF base mirror. The training heredoc clones from GitHub `need-singularity/anima` directly; if that repo is private or has weights >5MB-on-git issues per memory `feedback_anima_models_datasets_hf_only`, the clone will fail. Recommend separate HF dataset/model pull step.
+4. **HF base mirror reachability not gated.** Per memory `project_runpod_pod_purge_2026_05_03`, fresh boots must clone from HF base mirror. The training heredoc clones from GitHub `dancinlab/anima` directly; if that repo is private or has weights >5MB-on-git issues per memory `feedback_anima_models_datasets_hf_only`, the clone will fail. Recommend separate HF dataset/model pull step.
 
 5. **$100 hard-cap is BG-ER C3-aligned, not BG-EU-original.** BG-EU prompt cited "$200-500 soft envelope". This script enforces $100 hard. The split is deliberate: $100 = ~40h H100 = sufficient for 100K steps at ~0.3s/step (10h walltime per spec section 1.8), with ~30h margin for recovery / re-run. If operator wants the full $500 envelope, edit `BUDGET_CAP=100` -> `BUDGET_CAP=500` in both scripts. **Recommendation: keep $100 for first fire; only raise after a successful gate-1-2-3 dry run.**
 

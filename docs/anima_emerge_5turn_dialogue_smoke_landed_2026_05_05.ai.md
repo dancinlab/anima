@@ -22,7 +22,7 @@ medium *exists* (drift is detectable across turns), not whether the medium
 
 ## 2. Method
 
-- Model: `need-singularity/clm-v4-mk2-v1` (CLM v4 mk2 v1)
+- Model: `dancinlab/clm-v4-mk2-v1` (CLM v4 mk2 v1)
 - Device: mac CPU fp32 (`.venv-eeg`)
 - Sister import: `tool/transient_py/anima_emerge_cand_d_inject_helper.py`
   (BG-Q helper) — read-only sister, raw#15 additive

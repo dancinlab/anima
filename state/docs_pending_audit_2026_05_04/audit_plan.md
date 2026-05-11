@@ -60,7 +60,7 @@ Inferred land timestamps (from filenames + file mtimes): all 2026-05-03 day, swe
 | `docs/anima_hf_upload_mk2_spec_2026_05_03.md` | ?? | — | upload pipeline spec |
 | `docs/anima_hf_upload_mk2_landed_2026_05_03.ai.md` | ?? | — | upload pipeline land |
 | `state/hf_upload_audit/` | ?? | 16K | per-call JSONL audit logs (`20260503T15{1303,1321,1335,1341}Z_*.jsonl`) |
-| `state/hf_upload_ledger_2026_05.jsonl` | ?? | small | top-level monthly ledger (dry_run entries vs `need-singularity/clm-v4-{base-mirror,sft-stage1}`) |
+| `state/hf_upload_ledger_2026_05.jsonl` | ?? | small | top-level monthly ledger (dry_run entries vs `dancinlab/clm-v4-{base-mirror,sft-stage1}`) |
 
 Markers landed: `state/markers/anima_hf_naming_mk2_spec_landed.marker`, `anima_hf_upload_mk2_landed.marker`, plus 16 `hf_upload_mk2_*.marker` ts-suffixed run markers.
 

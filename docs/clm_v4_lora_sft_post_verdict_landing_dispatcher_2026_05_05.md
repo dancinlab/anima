@@ -104,7 +104,7 @@ honest C3 #7, single-seed signal noisy at 1-2pp. 5-seed cross-val required for
 
 ### Hyperparams
 Copy from docs/clm_v4_lora_sft_spec_2026_05_04.md §3 verbatim:
-- Base: need-singularity/clm-v4-mk2-v1
+- Base: dancinlab/clm-v4-mk2-v1
 - LoRA: r=32, alpha=64, dropout=0.05
 - target_modules: decoder.blocks.{0..15}.attn.{q,k,v,o}_proj (self-attn ONLY)
 - LR=3e-5, cosine warmup=300, max_steps=6000, save_steps=1000
@@ -144,7 +144,7 @@ S1 V2_PASS (single-seed). Pre-stage HF release artifacts in parallel with B1 5-s
 B1' is DRY-RUN only; actual upload gated on B1 aggregate PASS (per scenario tree §7 C3 #8).
 
 ### Tasks
-1. Build model card via tool/hf_readme_template.md scaffold for need-singularity/clm-v4-mk2-lora-v1
+1. Build model card via tool/hf_readme_template.md scaffold for dancinlab/clm-v4-mk2-lora-v1
 2. Document adapter-merged shape, tokenizer dependency, trust_remote_code=True requirement
 3. Pre-stage tool/hf_upload_mk2.hexa run-config (DRY-RUN; no upload)
 4. Land docs/clm_v4_lora_release_prep_2026_05_06.md with USER ACK gate for actual upload

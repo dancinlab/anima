@@ -7,7 +7,7 @@ ssot_artifacts:
   - state/clm_v4_hf_release_v1_upload_2026_05_04/cleanup_2026_05_07.bash
   - state/clm_v4_hf_release_v1_upload_2026_05_04/cron_install_recipe.txt
 predecessor: state/clm_v4_hf_release_v1_upload_2026_05_04/verdict.json (HF Cycle 2 upload LANDED 2026-05-04T23:26:12Z)
-target_repo: need-singularity/clm-v4-mk2-v1 (private at v1)
+target_repo: dancinlab/clm-v4-mk2-v1 (private at v1)
 review_window_ends_48h_utc: 2026-05-06T23:26:12Z
 ---
 
@@ -15,14 +15,14 @@ review_window_ends_48h_utc: 2026-05-06T23:26:12Z
 
 ## §1 What is scheduled
 
-Post 48h review window cleanup for HF Cycle 2 upload (`need-singularity/clm-v4-mk2-v1`). Earliest run: 2026-05-07T00:00:00Z. Two artifacts staged:
+Post 48h review window cleanup for HF Cycle 2 upload (`dancinlab/clm-v4-mk2-v1`). Earliest run: 2026-05-07T00:00:00Z. Two artifacts staged:
 
 - `cleanup_2026_05_07.bash` — 2-gate guarded cleanup (GATE 1 review window elapsed; GATE 2 HF repo intact siblings=15 + commit_sha=80440a1d) + verb=DELETE_SCRIPT verified pre/post-state. Targets ubu1 staging dir `/home/aiden/anima_clm_release_v1_staging` (~7GB) by default; mac stage mirror retained unless `--delete-mac-mirror` flag is passed.
 - `cron_install_recipe.txt` — explicit RECOMMENDATION: do NOT install cron, manual operator run preferred. 5 reasons enumerated (one-shot scope, GATE 2 needs human judgment on drift, F-CLM-RELEASE-1/2 sanity tests must precede cleanup, ssh-agent availability, cleanup-bg-guards mandate). Cron form provided for completeness with 5+ failure modes flagged.
 
 ## §2 Why scheduled (not auto-executed)
 
-- 48h review window for HF upload (`need-singularity/clm-v4-mk2-v1`) ends 2026-05-06T23:26:12Z; cleanup must NOT precede window close (re-upload may be needed if F-CLM-RELEASE-1/2 sanity tests fail)
+- 48h review window for HF upload (`dancinlab/clm-v4-mk2-v1`) ends 2026-05-06T23:26:12Z; cleanup must NOT precede window close (re-upload may be needed if F-CLM-RELEASE-1/2 sanity tests fail)
 - F-CLM-RELEASE-1 (`AutoModelForCausalLM.from_pretrained(repo, trust_remote_code=True)` fresh shell) + F-CLM-RELEASE-2 (1-batch forward returns finite logits shape `[1,T,64000]`) MUST PASS during review window before cleanup; ubu1 staging is the re-upload source if these fail
 - 7GB ubu1 stage is negligible disk pressure on 5070ti workstation; rushing cleanup has no upside
 - promote-to-public decision is a separate cycle (.roadmap.clm cond.2 plan §1 step 9); should also precede cleanup ideally
@@ -40,7 +40,7 @@ Post 48h review window cleanup for HF Cycle 2 upload (`need-singularity/clm-v4-m
 ## §4 Cross-link
 
 - Upload verdict: `state/clm_v4_hf_release_v1_upload_2026_05_04/verdict.json` (HF Cycle 2 LANDED, 12/12 sha256 match, siblings=15)
-- Repo: https://huggingface.co/need-singularity/clm-v4-mk2-v1 (private)
+- Repo: https://huggingface.co/dancinlab/clm-v4-mk2-v1 (private)
 - Promote-public is separate: `.roadmap.clm cond.2` plan §1 step 9 (NOT this cleanup)
 - Cleanup script: `state/clm_v4_hf_release_v1_upload_2026_05_04/cleanup_2026_05_07.bash`
 - Cron recipe: `state/clm_v4_hf_release_v1_upload_2026_05_04/cron_install_recipe.txt`

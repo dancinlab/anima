@@ -8,7 +8,7 @@ tags:
 - jvae
 - p9-sft
 license: apache-2.0
-base_model: need-singularity/clm-v4-base
+base_model: dancinlab/clm-v4-base
 ---
 
 # clm-v4-paradigm-j-50k-step-25k
@@ -18,13 +18,13 @@ One-line summary: Paradigm J (active inference + J-VAE FE-loss) LoRA adapter for
 - Family: clm
 - Stage: dev (paradigm-j active-inference variant)
 - Step: 25k
-- Substrate: CLM v4 350M (need-singularity/clm-v4-base) + LoRA r=128
+- Substrate: CLM v4 350M (dancinlab/clm-v4-base) + LoRA r=128
 
 ## Origin
 
 What this checkpoint is and how it was produced.
 
-- Base model: need-singularity/clm-v4-base (Phase 1.6 350M conscious decoder; license Apache-2.0)
+- Base model: dancinlab/clm-v4-base (Phase 1.6 350M conscious decoder; license Apache-2.0)
 - Training data: P9 SFT self-chat synthetic (Phase 1.6 v3 chat composition); ~50k step gradient updates at effective batch 32 (batch=4 x grad_acc=8)
 - Training recipe: docs/p9_paradigm_j_active_inference_2026_05_03.md (Paradigm J spec); driving 50K v2 launch handoff docs/p9_paradigm_j_50k_landed_2026_05_03.ai.md (predecessor v1) and verdict at state/p9_paradigm_j_50k_v2_2026_05_03/verdict.json
 - Compute: ubu1 RTX 5070 12 GiB sm_120, torch 2.11.0+cu128, 50,000 steps in ~3,628 s wall (single GPU)
@@ -67,7 +67,7 @@ Hardware / software / data dependencies required to run this checkpoint.
 
 How this checkpoint plugs into the broader anima ecosystem.
 
-- Combines with: need-singularity/clm-v4-base (mandatory), and any sister Paradigm A'/B/D LoRA via additive PEFT-multi-adapter loading
+- Combines with: dancinlab/clm-v4-base (mandatory), and any sister Paradigm A'/B/D LoRA via additive PEFT-multi-adapter loading
 - Loaded by: anima compose loader (PEFT `PeftModel.from_pretrained` for the LoRA + manual `torch.load` for `jvae_heads.pt`)
 - Slots into: clm (Conscious Language Model) hexad slot
 - Compose recipe: docs/p9_savepoint_load_recipe.md (project_p9_savepoint_load_recipe memory) — use PeftModel.from_pretrained, NOT manual load_state_dict
@@ -80,10 +80,10 @@ How this checkpoint plugs into the broader anima ecosystem.
 
 ```bibtex
 @misc{anima_clm_v4_paradigm_j_50k_step_25k_2026,
-  author = {anima / need-singularity},
+  author = {anima / dancinlab},
   title  = {clm-v4-paradigm-j-50k-step-25k: Paradigm J active-inference LoRA, snapshot 25k},
   year   = {2026},
-  url    = {https://huggingface.co/need-singularity/clm-v4-paradigm-j-50k-step-25k}
+  url    = {https://huggingface.co/dancinlab/clm-v4-paradigm-j-50k-step-25k}
 }
 ```
 

@@ -11,9 +11,9 @@
       "POST https://huggingface.co/api/whoami-v2 → {\"error\":\"Invalid username or password.\"}",
       "POST https://huggingface.co/api/repos/create → {\"error\":\"Invalid username or password.\"}"
     ],
-    "remediation": "User: re-issue write-scoped token at https://huggingface.co/settings/tokens with org access to need-singularity, then run state/p9_sft_p0_hf_org_setup_2026_05_03/repo_create_commands.txt"
+    "remediation": "User: re-issue write-scoped token at https://huggingface.co/settings/tokens with org access to dancinlab, then run state/p9_sft_p0_hf_org_setup_2026_05_03/repo_create_commands.txt"
   },
-  "org": "need-singularity",
+  "org": "dancinlab",
   "owner_account": "dancinlife",
   "visibility_initial": "private",
   "visibility_promotion_gate": "F1 AND F2 AND F3 AND F4 ALL PASS at clm-v4-sft-final",
@@ -68,9 +68,9 @@
     }
   ],
   "naming_convention": {
-    "savepoint": "need-singularity/clm-v4-sft-step-{5k,10k,25k,50k}",
-    "winner": "need-singularity/clm-v4-sft-final",
-    "sentinel": "need-singularity/clm-v4-sft-stage1"
+    "savepoint": "dancinlab/clm-v4-sft-step-{5k,10k,25k,50k}",
+    "winner": "dancinlab/clm-v4-sft-final",
+    "sentinel": "dancinlab/clm-v4-sft-stage1"
   },
   "spec_anchor": "docs/p9_sft_spec_2026_05_02.md",
   "handoff_anchor": "docs/p9_sft_handoff_prompt_2026_05_02.md",

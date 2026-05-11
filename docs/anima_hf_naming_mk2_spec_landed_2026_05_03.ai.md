@@ -2,7 +2,7 @@
 
 ## TL;DR (사용자 친화 요약)
 
-mk2 측 anima/nexus 측 HuggingFace 측 측 측 model 명명 측 측 측 측 측 통합 spec 측 측 lock-in 했습니다. 측 27 측 `need-singularity/*` repos 측 audit 결과 **CANON 7 / EXT 20 (grace) / FAIL 0** — 즉시 destructive 측 0, 30-day grace period 측 통해 banner-add cycle 측 측 forward-looking migration. 측 측 spec 측 5 *LM × 7 paradigm × 9 stage × 측 측 측 (variant) 측 EBNF 측 캡슐화.
+mk2 측 anima/nexus 측 HuggingFace 측 측 측 model 명명 측 측 측 측 측 통합 spec 측 측 lock-in 했습니다. 측 27 측 `dancinlab/*` repos 측 audit 결과 **CANON 7 / EXT 20 (grace) / FAIL 0** — 즉시 destructive 측 0, 30-day grace period 측 통해 banner-add cycle 측 측 forward-looking migration. 측 측 spec 측 5 *LM × 7 paradigm × 9 stage × 측 측 측 (variant) 측 EBNF 측 캡슐화.
 
 ## 1. 결정 (사용자 prompt lock-in)
 
@@ -16,7 +16,7 @@ mk2 측 anima/nexus 측 HuggingFace 측 측 측 model 명명 측 측 측 측 측
 | § | content | 측 측 |
 |---|---|---|
 | §0 | TL;DR | spec 측 1줄 측 |
-| §1 | Org/Namespace prefix | `need-singularity/` canonical + local cache mirror path |
+| §1 | Org/Namespace prefix | `dancinlab/` canonical + local cache mirror path |
 | §2 | Repo name template | EBNF + 8 worked examples + 64-char length cap |
 | §3 | Component grammar | 6 lm-families × 7 paradigms × 9 stages × scale/step/variant 측 측 측 |
 | §4 | Branch/Tag convention | main + dated tag + step-Nk tag + split heuristics |
@@ -40,8 +40,8 @@ mk2 측 anima/nexus 측 HuggingFace 측 측 측 model 명명 측 측 측 측 측
 - `/Users/ghost/core/anima/state/markers/anima_hf_naming_mk2_spec_landed.marker`
 
 ### 3-2. 기존 파일 (변경 0)
-- 측 measure: HF org `need-singularity/` 측 측 27 repos 측 metadata 측 측 측 (no rename, no README touch, no tag change)
-- 측 measure: `~/.cache/huggingface/hub/models--need-singularity--*` 측 측 측 측 (no recache trigger)
+- 측 measure: HF org `dancinlab/` 측 측 27 repos 측 metadata 측 측 측 (no rename, no README touch, no tag change)
+- 측 measure: `~/.cache/huggingface/hub/models--dancinlab--*` 측 측 측 측 (no recache trigger)
 - 측 measure: `docs/ENGINE-NAMING.md` (sister spec, untouched, cross-cited only)
 
 ## 4. audit 결과 (27 repos, 2026-05-03)

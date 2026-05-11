@@ -7,7 +7,7 @@
 
 ## TL;DR
 
-HF repo `need-singularity/p9-llama32-lora-stage1` has only 4 step-named commits (step-2k/4k/6k/8k), not the expected 5. **Definitive cause**: `host_pod_terminator.sh` killed pod `29dhlqk508ugoc` 5 seconds after detecting `ALIVE=0 AND DONE=0 AND STEP=10000/10000`, while the step-10000 save+push pipeline was still in flight (would normally take 60-180s based on prior saves). No step-10000 commit ever reached HF git transaction. Training PROBABLY reached step-10000 in-process, but final-save+push never completed. **Recovery action: NONE_NEEDED** (r=64 is FAIL by F1 axis regardless; no local cache exists; $0 constraint).
+HF repo `dancinlab/p9-llama32-lora-stage1` has only 4 step-named commits (step-2k/4k/6k/8k), not the expected 5. **Definitive cause**: `host_pod_terminator.sh` killed pod `29dhlqk508ugoc` 5 seconds after detecting `ALIVE=0 AND DONE=0 AND STEP=10000/10000`, while the step-10000 save+push pipeline was still in flight (would normally take 60-180s based on prior saves). No step-10000 commit ever reached HF git transaction. Training PROBABLY reached step-10000 in-process, but final-save+push never completed. **Recovery action: NONE_NEEDED** (r=64 is FAIL by F1 axis regardless; no local cache exists; $0 constraint).
 
 ## Investigation question
 

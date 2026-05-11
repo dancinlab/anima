@@ -2,7 +2,7 @@
   "extraction_meta": {
     "date": "2026-05-04",
     "source": "/Users/ghost/core/nexus/modules/chip_isa_n6/",
-    "destination": "/Users/ghost/core/n6-architecture/domains/compute/chip-isa-n6/",
+    "destination": "/Users/ghost/core/canon/domains/compute/chip-isa-n6/",
     "rank": 3,
     "score": 9,
     "tier": "extract_immediately",
@@ -10,9 +10,9 @@
     "sister_bg_coordination": {
       "sister_module": "crystallography_n6",
       "sister_rank": 1,
-      "sister_destination": "/Users/ghost/core/n6-architecture/domains/physics/crystallography/",
+      "sister_destination": "/Users/ghost/core/canon/domains/physics/crystallography/",
       "strategy": "joined_single_commit",
-      "reason": "Both untracked simultaneously in shared n6-architecture working tree; joined to avoid race-condition partial commits"
+      "reason": "Both untracked simultaneously in shared CANON working tree; joined to avoid race-condition partial commits"
     }
   },
   "module_audit": {
@@ -55,7 +55,7 @@
     "verdict": "ZERO active code consumers. Doc-level mentions only; refactor unnecessary."
   },
   "destination_layout": {
-    "absorb_path": "/Users/ghost/core/n6-architecture/domains/compute/chip-isa-n6/",
+    "absorb_path": "/Users/ghost/core/canon/domains/compute/chip-isa-n6/",
     "preserved_predecessor_files": [
       "chip-isa-n6.md (46055B research spec)",
       "xn6_asm_examples.hexa (10091B)",
@@ -86,12 +86,12 @@
   },
   "import_refactor": {
     "old_namespace": "nexus.modules.chip_isa_n6.*",
-    "new_namespace": "n6-architecture/domains/compute/chip-isa-n6/chip_isa_n6.*",
+    "new_namespace": "CANON/domains/compute/chip-isa-n6/chip_isa_n6.*",
     "code_changes_required": "NONE (zero internal imports of nexus/n6shared/_core_root in source)",
     "doc_only_namespace_refs": "module-internal @origin/@usage comments updated by READMe sibling addition (chip_isa_n6.README.md)"
   },
   "git_action": {
-    "destination_repo": "/Users/ghost/core/n6-architecture",
+    "destination_repo": "/Users/ghost/core/canon",
     "branch": "main",
     "head_pre_commit": "113725b046a7394ca917d135deb95289f40fca14",
     "commit_strategy": "joined-with-sister (single commit landing both rank-1 crystallography + rank-3 chip_isa)",
@@ -107,7 +107,7 @@
     {
       "id": 1,
       "label": "destination predecessor co-existence",
-      "detail": "n6-architecture/domains/compute/chip-isa-n6/ already had chip-isa-n6.md (research spec) + xn6_asm_examples.hexa (asm examples). New chip_isa_n6.hexa is encoder/decoder layer, NOT a duplicate; co-located as sibling under same domain dir (additive, no overwrite)."
+      "detail": "CANON/domains/compute/chip-isa-n6/ already had chip-isa-n6.md (research spec) + xn6_asm_examples.hexa (asm examples). New chip_isa_n6.hexa is encoder/decoder layer, NOT a duplicate; co-located as sibling under same domain dir (additive, no overwrite)."
     },
     {
       "id": 2,
@@ -122,7 +122,7 @@
     {
       "id": 4,
       "label": "sister BG race + worktree state",
-      "detail": "5 locked stale worktrees in n6-architecture/.claude/worktrees/ from prior agents (Apr 21–24). Sister BG (crystallography_n6 rank 1) staged crystallography_n6.hexa + .README.md to /domains/physics/crystallography/ at the same time as this extraction. Race resolved by joining both into single commit; no overlap (different domain subtrees: /compute vs /physics). README naming uses .README.md suffix (not README.md) to avoid clobbering the umbrella README at higher levels."
+      "detail": "5 locked stale worktrees in CANON/.claude/worktrees/ from prior agents (Apr 21–24). Sister BG (crystallography_n6 rank 1) staged crystallography_n6.hexa + .README.md to /domains/physics/crystallography/ at the same time as this extraction. Race resolved by joining both into single commit; no overlap (different domain subtrees: /compute vs /physics). README naming uses .README.md suffix (not README.md) to avoid clobbering the umbrella README at higher levels."
     }
   ],
   "raw_constraints": {

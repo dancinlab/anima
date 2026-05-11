@@ -84,7 +84,7 @@ projection extrapolation: per-class h_∞ Shannon estimate × wire conversion fa
 | audit (mid-density) | hive triad_audit | 75% | 77% | 84% | 88% |
 | mixed inventory | nexus 96 files | 43% | 46% | 70% | 78% |
 | text-heavy | anima alm_r13 | 24% | 27% | 75% | 80% |
-| entropy-bound | n6-architecture atlas | **4%** | **15%** | **85%** | **90%** |
+| entropy-bound | CANON atlas | **4%** | **15%** | **85%** | **90%** |
 | **6-repo aggregate** | weighted | **48%** | **55-60%** | **80-85%** | **85-90%** |
 
 raw 91 C3: 위 숫자 모두 PROJECTED. Phase 8 FINAL 만 MEASURED. wire-option-별 ceiling 은 Shannon ratio × wire factor 의 산식 — 실측 시 padding/dictionary header overhead 로 -2 to -5pp 변동 가능.

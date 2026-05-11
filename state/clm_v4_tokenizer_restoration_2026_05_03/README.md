@@ -1,6 +1,6 @@
 # CLM v4 64K Multilingual BPE Tokenizer (Restored 2026-05-03)
 
-Recovered tokenizer artifact for `need-singularity/clm-v4-base-mirror`. This file pair (`tokenizer_64k_multilingual.{model,vocab}`) is required to encode/decode text against the CLM v4 350M base checkpoint vocabulary. Without it, downstream consumers (lm-eval-harness wrappers, LoRA inference, BLM substrate clients) must fall back to byte-level tokenization, which is in-distribution-safe (the model was trained with `byte_fallback=True`) but loses BPE merge structure.
+Recovered tokenizer artifact for `dancinlab/clm-v4-base-mirror`. This file pair (`tokenizer_64k_multilingual.{model,vocab}`) is required to encode/decode text against the CLM v4 350M base checkpoint vocabulary. Without it, downstream consumers (lm-eval-harness wrappers, LoRA inference, BLM substrate clients) must fall back to byte-level tokenization, which is in-distribution-safe (the model was trained with `byte_fallback=True`) but loses BPE merge structure.
 
 ## Origin
 
@@ -27,8 +27,8 @@ If any of (1)-(4) fails on a downstream consumer's machine, the artifact has bee
 ## Substrate
 
 - **Mac (this restoration)**: `/Users/ghost/core/anima/state/clm_v4_tokenizer_restoration_2026_05_03/` — staging area for HF push.
-- **HF mirror (post-push)**: `need-singularity/clm-v4-base-mirror/tokenizer_64k_multilingual.{model,vocab}` — co-located with `best.pt` so consumers can fetch with one `snapshot_download` call.
-- **ubu1 cache (post-push)**: `~/.cache/huggingface/hub/models--need-singularity--clm-v4-base-mirror/snapshots/<rev>/tokenizer_64k_multilingual.{model,vocab}` — populated automatically by next `hf_hub_download` call. Manual cache prime: `hf download need-singularity/clm-v4-base-mirror tokenizer_64k_multilingual.model`.
+- **HF mirror (post-push)**: `dancinlab/clm-v4-base-mirror/tokenizer_64k_multilingual.{model,vocab}` — co-located with `best.pt` so consumers can fetch with one `snapshot_download` call.
+- **ubu1 cache (post-push)**: `~/.cache/huggingface/hub/models--dancinlab--clm-v4-base-mirror/snapshots/<rev>/tokenizer_64k_multilingual.{model,vocab}` — populated automatically by next `hf_hub_download` call. Manual cache prime: `hf download dancinlab/clm-v4-base-mirror tokenizer_64k_multilingual.model`.
 - **CLM v4 ckpt this attaches to**: `/home/aiden/anima/checkpoints/clm_v4_350m/scale_350m/best.pt` (ubu1) and the HF mirror copy.
 
 ## Caveats

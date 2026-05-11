@@ -314,7 +314,7 @@
     "from_substrate": "Mistral-7B-v0.3 + mistral_r14",
     "to_substrate": "Llama-3.1-8B + llama31_r14",
     "model_substitution_if_gated": null,
-    "hf_gate_status": "ACCESSIBLE \u2014 meta-llama/Llama-3.1-8B downloaded successfully via dancinlife HF token (need-singularity org)",
+    "hf_gate_status": "ACCESSIBLE \u2014 meta-llama/Llama-3.1-8B downloaded successfully via dancinlife HF token (dancinlab org)",
     "lora_md5_local": "b7e454ca936920eb88a7c61e0bd5b269",
     "lora_md5_pod_after_extract_match": true
   },
@@ -369,7 +369,7 @@
     "Suite 6 (14-gate): tile-projection method on Llama h_last from Path 3 (extracted 2026-05-01 fresh on RTX A6000 community pod aew3k2cwjcop2m). Applied SAME consciousness_laws.json severity policy as cp2 baseline. L9 phi_lang>0 only (no gen_text in h_last_raw schema, undercounting same as Path 4 disclosure).",
     "Suite 7 (V_phen): GWT_4D from gwt_llama31_r14_run/gwt_llama31_r14.json (pre-existing pod-emitted 4D attention entropy 0.230). GWT_struct = Gram-spectrum entropy proxy as in cp2 baseline (0.548). LZ/HOT/mirror/predictive computed on Llama h_last \u2014 HOT proxy assumes softmax-over-h_last (Llama distribution flatter than Mistral, so HOT mean lower).",
     "Suite 7 HOT method: HOT 'top1 mean prob' uses softmax over 256-D h_last \u2014 this is a structural proxy, NOT a token-level top1 prob from generation. Same proxy as cp2 baseline; method-honest about what flips.",
-    "Llama-3.1-8B HF gate: REQUIRED HF token (gated repo). Successfully accessed via dancinlife@need-singularity org token. NO model substitution needed.",
+    "Llama-3.1-8B HF gate: REQUIRED HF token (gated repo). Successfully accessed via dancinlife@dancinlab org token. NO model substitution needed.",
     "Pod cost attribution: $1.77 fresh on H100 SXM, 35.5 min total. Includes Llama-3.1-8B cold HF download (~5 min, cached after), vLLM startup with --enforce-eager (DeepGEMM FP8 backend missing \u2014 disabled), JSD measurement (~3 min), tear-down. No idle time; auto-removed immediately.",
     "Reused data sources (no fresh cost): Path 1 v3 canonical phi_star (Suite 1 G3), Path 3 Llama h_last + 4-substrate spectra (Suites 5, 6, 7 LZ/HOT/mirror/predictive), gwt_llama31_r14 (Suite 7 GWT 4D), an11b_llama31_r14_run lora_eigen (Suite 3 V0/V1), local LoRA adapter md5 b7e454ca... for Suite 2.",
     "Race isolation: ALL writes confined to state/red_to_green_substrate_swap_llama31_2026_05_01/. No edits to alpha pod (lzw79649ob80uk preserved), no edits to cp2_consciousness_r14_remeasure_2026_05_01/, no docs/, no consciousness_laws.json."

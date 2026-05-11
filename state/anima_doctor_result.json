@@ -1,10 +1,10 @@
 {
   "schema": "anima.doctor.v1",
-  "ts": "2026-04-23T05:44:38Z",
-  "verdict": "ok",
+  "ts": "2026-05-07T12:10:35Z",
+  "verdict": "warn",
   "counts": {
-    "ok": 10,
-    "warn": 0,
+    "ok": 9,
+    "warn": 2,
     "fail": 0
   },
   "checks": [
@@ -41,8 +41,8 @@
     {
       "id": 6,
       "name": "repo sanity",
-      "status": "ok",
-      "detail": "roadmap_progress.json + .roadmap uchg lock"
+      "status": "warn",
+      "detail": ".roadmap file missing"
     },
     {
       "id": 7,
@@ -59,14 +59,20 @@
     {
       "id": 9,
       "name": "cert_gate recent",
-      "status": "ok",
-      "detail": "cert_gate ran 19m ago"
+      "status": "warn",
+      "detail": "cert_gate last ran 20565m ago (>6h)"
     },
     {
       "id": 10,
       "name": "proposal stack",
       "status": "ok",
-      "detail": "pending=71 approved=11 archived=0"
+      "detail": "pending=77 approved=15 archived=0"
+    },
+    {
+      "id": 11,
+      "name": "qrng federation",
+      "status": "ok",
+      "detail": "provenance=qrng_cli  PATH:/Users/ghost/.hx/bin/qrng"
     }
   ]
 }

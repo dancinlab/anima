@@ -22,7 +22,7 @@ This cycle: health check + tail-watchdog setup + first HF mid-train backup.
 ## First HF Push (step-5k)
 - Local: `/tmp/vlm_stage1_savepoints/step-5k/` (332KB: adapter_config + adapter_model + README)
 - LoRA r=8 alpha=16 dropout=0.05 on [wq, wk, wv, wo, intent_proj] confirmed
-- HF repo: `need-singularity/vlm-anima-voice-paradigm-stage1-step-5k` (HTTP 200, paradigm prefix per mk2 amendment)
+- HF repo: `dancinlab/vlm-anima-voice-paradigm-stage1-step-5k` (HTTP 200, paradigm prefix per mk2 amendment)
 - Commit: "VLM stage1 step-5k LoRA savepoint (loss=8.78, sps=2.61)"
 
 ## Next Savepoint Schedule
@@ -42,7 +42,7 @@ This cycle: health check + tail-watchdog setup + first HF mid-train backup.
 - `state/vlm_stage1_progress_2026_05_04/savepoint_backup.json`
 - `state/markers/vlm_stage1_progress_monitoring_2026_05_04.marker`
 - `/tmp/vlm_stage1_tail_watchdog.sh` (ubu1)
-- HF: `need-singularity/vlm-anima-voice-paradigm-stage1-step-5k`
+- HF: `dancinlab/vlm-anima-voice-paradigm-stage1-step-5k`
 
 ## Constraints Honored
 - raw#9 STRICT: Mac → no .sh; ubu1 .sh permitted (watchdog written on ubu1 only)

@@ -1,7 +1,7 @@
 {
   "schema": "anima/p9_paradigm_d_25k_eval_pipeline/meta/1",
   "ts_utc": "2026-05-03T21:20:00Z",
-  "purpose": "Pre-build 25K HBM3 Phi-star distill ckpt eval pipeline so it's ready to fire when need-singularity/p9-paradigm-d-25k publishes step-5k..step-25k tags.",
+  "purpose": "Pre-build 25K HBM3 Phi-star distill ckpt eval pipeline so it's ready to fire when dancinlab/p9-paradigm-d-25k publishes step-5k..step-25k tags.",
   "spec_refs": [
     "docs/p9_paradigm_d_distillation_runbook_2026_05_03.md (canonical Phi-star-distill loss spec)",
     "docs/p9_paradigm_d_phi_distillation_2026_05_03.md (parent Paradigm D spec)",
@@ -118,7 +118,7 @@
   "ranked_recommendation": [
     {
       "rank": 1,
-      "action": "When 25K HBM3 ckpts publish, run run_all_d_ckpts.sh ANIMA_CKPT_REPO=need-singularity/p9-paradigm-d-25k bash",
+      "action": "When 25K HBM3 ckpts publish, run run_all_d_ckpts.sh ANIMA_CKPT_REPO=dancinlab/p9-paradigm-d-25k bash",
       "completeness_score": 9.0,
       "rationale": "5 ckpts × 4 falsifiers, ~20s/ckpt = ~2 min wall total + ~1s hexa verdict; matches the established A' pipeline flow; F-D z-score MSE descent vs mini-run trajectory will be the cleanest signal that 25K is doing more than 1k subset"
     },
@@ -147,8 +147,8 @@
     "F-D pre-registered threshold (z-score MSE final < 0.5) is anchored to BERT-class distillation regime (Sanh 2019 DistilBERT MSE 0.3-0.6); CLM v4 350M class with sample-partition Phi-star targets is structurally unverified at this threshold. The mini-run already sits at 1.44 (above ceiling); 25K may push below 0.5 (PASS), may plateau in [0.5, 1.0] (PARTIAL), or may collapse (FAIL). Threshold may be tightened post-hoc if 25K shows much smaller residuals."
   ],
   "next_cycle_runbook": [
-    "1. When need-singularity/p9-paradigm-d-25k publishes step-5000..step-25000 tags:",
-    "   ssh ubu1 'ANIMA_CKPT_REPO=need-singularity/p9-paradigm-d-25k bash ~/anima/state/p9_paradigm_d_25k_eval_2026_05_03/run_all_d_ckpts.sh'",
+    "1. When dancinlab/p9-paradigm-d-25k publishes step-5000..step-25000 tags:",
+    "   ssh ubu1 'ANIMA_CKPT_REPO=dancinlab/p9-paradigm-d-25k bash ~/anima/state/p9_paradigm_d_25k_eval_2026_05_03/run_all_d_ckpts.sh'",
     "2. Pull results to Mac:",
     "   mkdir -p state/p9_paradigm_d_25k_eval_2026_05_03_ckpt_results",
     "   scp ubu1:~/anima/state/p9_paradigm_d_25k_eval_2026_05_03/ckpt_results/*.json state/p9_paradigm_d_25k_eval_2026_05_03_ckpt_results/",

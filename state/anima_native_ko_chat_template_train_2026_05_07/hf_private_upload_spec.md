@@ -7,7 +7,7 @@
 
 ## Repo target (PRIVATE first)
 
-- repo_id: `need-singularity/anima-native-ko-chat-template-byte-18m`
+- repo_id: `dancinlab/anima-native-ko-chat-template-byte-18m`
 - visibility: **PRIVATE** (own 15 — public promote AFTER verification gates)
 - repo_type: model
 

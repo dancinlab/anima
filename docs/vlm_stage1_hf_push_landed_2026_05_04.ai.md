@@ -22,10 +22,10 @@ That is a literal one-byte placeholder (`#`). All token sources yield Invalid re
 
 | ckpt | repo | status | preexisting on HF |
 |---|---|---|---|
-| step-5k | need-singularity/vlm-anima-voice-paradigm-stage1-step-5k | FAIL-no-valid-token | YES (2026-05-04 05:18:42Z, sha 424be65) |
-| step-10k | need-singularity/vlm-anima-voice-paradigm-stage1-step-10k | FAIL-no-valid-token | NO |
-| step-15k | need-singularity/vlm-anima-voice-paradigm-stage1-step-15k | FAIL-no-valid-token | NO |
-| step-20k | need-singularity/vlm-anima-voice-paradigm-stage1-step-20k | FAIL-no-valid-token | NO |
+| step-5k | dancinlab/vlm-anima-voice-paradigm-stage1-step-5k | FAIL-no-valid-token | YES (2026-05-04 05:18:42Z, sha 424be65) |
+| step-10k | dancinlab/vlm-anima-voice-paradigm-stage1-step-10k | FAIL-no-valid-token | NO |
+| step-15k | dancinlab/vlm-anima-voice-paradigm-stage1-step-15k | FAIL-no-valid-token | NO |
+| step-20k | dancinlab/vlm-anima-voice-paradigm-stage1-step-20k | FAIL-no-valid-token | NO |
 
 **0 / 4 PASS, 4 / 4 FAIL** — auth gate failed before any push attempt was made (no point burning network IO with known-bad token).
 
@@ -41,7 +41,7 @@ That is a literal one-byte placeholder (`#`). All token sources yield Invalid re
 
 ```bash
 # 1. Generate fresh token at https://huggingface.co/settings/tokens
-#    → Type: "Write", scope: need-singularity org membership
+#    → Type: "Write", scope: dancinlab org membership
 # 2. Set secret (use stdin, no shell history leak)
 echo 'hf_xxxxxxxxxxxxxxxxxx' | /Users/ghost/core/secret/bin/secret set huggingface.token
 # 3. Sanity check
@@ -64,7 +64,7 @@ Staging is fully intact (no rework needed):
 ## Cross-link with GitHub HF_TOKEN secret update
 
 User mentioned "4 GitHub repo HF_TOKEN secret update if user already done" — this cycle did not interact with GitHub. If the GitHub-side update was performed, the same fresh `hf_xxxx` token must also be written to:
-- `gh secret set HF_TOKEN -R need-singularity/vlm-anima-voice-paradigm-stage1-step-5k`
+- `gh secret set HF_TOKEN -R dancinlab/vlm-anima-voice-paradigm-stage1-step-5k`
 - (repeat for 10k, 15k, 20k)
 
 This is independent of the Mac-side push fix.
@@ -113,7 +113,7 @@ User again instructed retry, claiming "완료" (token now valid in `secret get h
 
 ```bash
 # 1. Generate fresh token at https://huggingface.co/settings/tokens
-#    Type: "Write", scope: need-singularity org membership
+#    Type: "Write", scope: dancinlab org membership
 # 2. Copy to clipboard, then write to secret store via stdin (no shell history leak):
 pbpaste | /Users/ghost/core/secret/bin/secret set huggingface.token
 # 3. SANITY CHECK (this is what failed both retries):
@@ -122,7 +122,7 @@ pbpaste | /Users/ghost/core/secret/bin/secret set huggingface.token
 # 4. Verify with HF API:
 TOKEN=$(/Users/ghost/core/secret/bin/secret get huggingface.token)
 HF_TOKEN="$TOKEN" /Users/ghost/.local/bin/hf auth whoami
-#    expected: dancinlife (member of need-singularity)
+#    expected: dancinlife (member of dancinlab)
 # 5. ONLY THEN re-launch RETRY3
 ```
 

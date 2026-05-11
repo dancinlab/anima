@@ -45,7 +45,7 @@ Window-enforcement gates working as designed. GATE 2 (HF state) + GATE 3 (manual
 
 ## Sub-2 — HF state pre-promote verification
 
-### `need-singularity/clm-v4-mk2-v1`
+### `dancinlab/clm-v4-mk2-v1`
 
 | Field | Expected | Actual | Match |
 | --- | --- | --- | --- |
@@ -59,7 +59,7 @@ Window-enforcement gates working as designed. GATE 2 (HF state) + GATE 3 (manual
 
 Note: `state/clm_v4_hf_release_v1_upload_2026_05_04/verdict.json` field `siblings_count: 15` is stale (off-by-one bug). Enumerated `siblings_list` in same verdict has 16 entries, matching HF API and the promote script's `EXPECTED_SIBLINGS=16`. The promote script uses the correct 16; only the verdict count field is wrong.
 
-### `need-singularity/clm-v4-paradigm-d-pbeta-50k-mk2-v1`
+### `dancinlab/clm-v4-paradigm-d-pbeta-50k-mk2-v1`
 
 | Field | Expected | Actual | Match |
 | --- | --- | --- | --- |
@@ -181,7 +181,7 @@ Note: the user's BG-E request specified `PROMOTE-pbeta-...` as a placeholder; ac
 1. Re-shasum the 8 files in §Sub-4 baseline; diff against verdict.json `sha256_baseline`. Any mismatch → ABORT + investigate.
 2. Re-affirm G1-G6 of own 15 (the script will print and ask, but pre-affirm before typing confirm-string).
 3. Confirm `secret get huggingface.token --raw` returns `hf_*` token.
-4. For pbeta: confirm clm is already PUBLIC by `curl -sS -H "Authorization: Bearer $TOKEN" "https://huggingface.co/api/models/need-singularity/clm-v4-mk2-v1" | python3 -c 'import json,sys; d=json.load(sys.stdin); print(d.get("private"))'` returns `False`.
+4. For pbeta: confirm clm is already PUBLIC by `curl -sS -H "Authorization: Bearer $TOKEN" "https://huggingface.co/api/models/dancinlab/clm-v4-mk2-v1" | python3 -c 'import json,sys; d=json.load(sys.stdin); print(d.get("private"))'` returns `False`.
 
 ---
 

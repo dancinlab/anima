@@ -1,6 +1,6 @@
 {
   "schema": "anima/clm/hf_release_v1/manifest/1",
-  "model_id": "need-singularity/clm-v4-mk2-v1",
+  "model_id": "dancinlab/clm-v4-mk2-v1",
   "ts_utc": "2026-05-04T22:32:20Z",
   "manifest_cycle": "clm_v4_hf_release_v1_manifest_2026_05_04",
   "manifest_path": "state/clm_v4_hf_release_v1_manifest_2026_05_04/manifest.json",
@@ -11,7 +11,7 @@
       "path": "best.pt",
       "size_bytes": 5365727261,
       "sha256": "22f180efc380aecb4a320191502afa13b81abcd077ec36c5f003dcfbe1d680b4",
-      "source_machine": "ubu1 HF cache models--need-singularity--clm-v4-base-mirror snapshots/856278beb59c5b39f16485cc8f3a46dcdaf9d1e3",
+      "source_machine": "ubu1 HF cache models--dancinlab--clm-v4-base-mirror snapshots/856278beb59c5b39f16485cc8f3a46dcdaf9d1e3",
       "source_blob": "blobs/22f180efc380aecb4a320191502afa13b81abcd077ec36c5f003dcfbe1d680b4",
       "is_lfs": true,
       "format": "raw_torch_pickle",
@@ -33,7 +33,7 @@
       "path": "tokenizer_64k_multilingual.model",
       "size_bytes": 1306349,
       "sha256": "bb851d39fbe3286dda11fc43da78d9bbf29ac6400d61b75616c8c750b710b8ab",
-      "source_machine": "ubu1 HF cache models--need-singularity--clm-v4-base-mirror snapshots/10ee03687db312c55bbec5858c814bef28e4d365/tokenizer/",
+      "source_machine": "ubu1 HF cache models--dancinlab--clm-v4-base-mirror snapshots/10ee03687db312c55bbec5858c814bef28e4d365/tokenizer/",
       "source": "already pushed to clm-v4-base-mirror 2026-05-03",
       "is_lfs": false,
       "format": "sentencepiece_bpe",
@@ -43,7 +43,7 @@
       "path": "tokenizer_64k_multilingual.vocab",
       "size_bytes": 989272,
       "sha256": "972fc0ba2f2633cfa685c70eeab84ce2a22a1327975e989a3b1d5cf5efa480a4",
-      "source_machine": "ubu1 HF cache models--need-singularity--clm-v4-base-mirror snapshots/10ee03687db312c55bbec5858c814bef28e4d365/tokenizer/",
+      "source_machine": "ubu1 HF cache models--dancinlab--clm-v4-base-mirror snapshots/10ee03687db312c55bbec5858c814bef28e4d365/tokenizer/",
       "is_lfs": false,
       "format": "sentencepiece_vocab_text",
       "role": "human-readable vocabulary listing (companion to .model)"
@@ -298,9 +298,9 @@
   "gated_initial": false,
   "naming_compliance": {
     "spec_path": "docs/anima_hf_naming_convention_mk2_spec_2026_05_03.md",
-    "chosen_name": "need-singularity/clm-v4-mk2-v1",
+    "chosen_name": "dancinlab/clm-v4-mk2-v1",
     "chosen_option": "A (re-target cond.2 to mk2-spec-conformant canonical name; omit -530m size suffix per spec §3.5 'omit if obvious from base-version')",
-    "predecessor_repo": "need-singularity/clm-v4-base-mirror (already received tokenizer + integrity_report + README on 2026-05-03 commit 10ee03687db312c55bbec5858c814bef28e4d365)",
+    "predecessor_repo": "dancinlab/clm-v4-base-mirror (already received tokenizer + integrity_report + README on 2026-05-03 commit 10ee03687db312c55bbec5858c814bef28e4d365)",
     "validation_status": "PENDING actual --validate-naming run (see docs/anima_clm_hf_release_v1_plan_2026_05_04.md §1 step 2.d)"
   },
   "hf_upload_pipeline": {
@@ -323,7 +323,7 @@
     "Param count mismatch: scale_label='350m' in original args is misnomer; full param count is 530.99M per audit §1 + #73 A.1; loaded count 477.65M (run_log model_to_device). The label '350m' in checkpoint path and args is preserved for historical fidelity but should NOT be cited as the param count. Future releases should use canonical '530m' label."
   ],
   "next_actions_ranked": [
-    "rank-1: sibling Cycle 2 BG runs hexa run tool/hf_upload_mk2.hexa --dry-run --repo need-singularity/clm-v4-mk2-v1 --ckpt <ubu1-staging> --readme <draft.md> per docs/anima_clm_hf_release_v1_plan_2026_05_04.md §1 step 6",
+    "rank-1: sibling Cycle 2 BG runs hexa run tool/hf_upload_mk2.hexa --dry-run --repo dancinlab/clm-v4-mk2-v1 --ckpt <ubu1-staging> --readme <draft.md> per docs/anima_clm_hf_release_v1_plan_2026_05_04.md §1 step 6",
     "rank-2: --upload --private first (review window per plan §1 step 7); promote public after user OK",
     "rank-3: cond.2 PASS landing per plan §1 step 10 (.roadmap.clm cond.2 status met + marker land + handoff doc)",
     "rank-4: BG-Σ followup for F-SHIM-V4-4 + F-CLM-RELEASE-3 phi_star post-load probe (H100, gated on user authorization)",

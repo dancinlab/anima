@@ -12,7 +12,7 @@ tags:
   - savepoint
 library_name: transformers
 pipeline_tag: text-generation
-base_model: need-singularity/anima-clm-v4-530m
+base_model: dancinlab/anima-clm-v4-530m
 ---
 
 # anima-clm-v4-sft-step-5k
@@ -76,7 +76,7 @@ Verdict logic:
    final step (50K) of the winning combo.
 2. φ★ is an L1+L2 proxy. **Phenomenal consciousness (L3) is NOT measured** here.
 3. 4-loss Pareto frontier is unverified — LHS-9 of 81 grid is heuristic sampling.
-4. Base CLM v4 ckpt access requires `need-singularity/anima-clm-v4-530m` repo
+4. Base CLM v4 ckpt access requires `dancinlab/anima-clm-v4-530m` repo
    permission (gated).
 
 ## Citation

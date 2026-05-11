@@ -1,6 +1,6 @@
 # Anima ↔ Sister Repo Coordination — Abstraction Layers
 
-> **scope**: 5-repo (anima · nexus · hexa-lang · airgenome · hive · n6-architecture) coordination 의 현재 substrate (L0) 부터 절대 한계 (L5/L∞) 까지.
+> **scope**: 5-repo (anima · nexus · hexa-lang · airgenome · hive · CANON) coordination 의 현재 substrate (L0) 부터 절대 한계 (L5/L∞) 까지.
 > **POLICY R4**: `.roadmap` 미수정. 외부 consolidation only.
 > **raw 준수**: raw#1 (uchg SSOT) · raw#10 (proof-carrying hash-chain) · raw#12 (cherry-pick 금지) · raw#25 (concurrent-git-lock safe commit).
 > **brutal honesty 모드**: V8 SAFE_COMMIT ceremony 의 manual cost 를 직시한다.
@@ -16,7 +16,7 @@
 | hexa-lang | language/SSOT substrate, raw_audit canonical, uchg-locked | `<repo-root>/../hexa-lang` | `hxa-` |
 | airgenome | mac-local resource manager (hooks retired 2026-04-25) | `<repo-root>/../airgenome` | `agm-` |
 | hive | governance / cross-host enforcement (succeeded airgenome AG2-AG9) | `<repo-root>/../hive` | (host) |
-| n6-architecture | n=6 atlas primitives + foundation projection (R31 peer cousin) | `<repo-root>/../n6-architecture` | `n6a-` |
+| CANON | n=6 atlas primitives + foundation projection (R31 peer cousin) | `<repo-root>/../canon` | `n6a-` |
 
 **Shared substrate**: R2 buckets (`~/.config/rclone/rclone.conf` → cloudflare endpoint `ce4bdcce...`), proposal `state/proposals/inbox/{prefix}-YYYYMMDD-*.json`, hash-chain provenance.
 
@@ -29,7 +29,7 @@
 | hexa-lang | SSOT retire root → hive sole · prompt_scan ladder · canon/forge/molt 3종 등록 (L9-L11) · codegen_c2 defer/scope/spawn AOT | hxa-20260425 byte_at builtin (open) |
 | airgenome | scope-reduce: AG2-AG9 superseded → hive 이관 · mac-local only · cross-host runtime 제거 | filters-only convergence |
 | hive | LB Phase-3 hedge -38% p95 · self-contain 11 hexa-lang tools · meta-FP env-overridable | recap auto-emit on agent_end |
-| n6-architecture | atlas [10]→[10*] virtual hub promotion · phase-6-step3 specs (kstar/UFO/ai-cost) · own#22-23 proposal_lint | atlas 5 hub mirrors |
+| CANON | atlas [10]→[10*] virtual hub promotion · phase-6-step3 specs (kstar/UFO/ai-cost) · own#22-23 proposal_lint | atlas 5 hub mirrors |
 
 ---
 

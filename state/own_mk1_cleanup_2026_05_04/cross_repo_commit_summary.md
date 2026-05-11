@@ -47,8 +47,8 @@ git -C /Users/ghost/core/orpheus push origin main
 ## Kept (mk2_VERIFIED — untouched, verified intact)
 
 - `/Users/ghost/core/anima/.own` (63595 bytes, mk2 SSOT)
-- `/Users/ghost/core/n6-architecture/.own.readme` (17682 bytes, mk2_VERIFIED)
-- `/Users/ghost/core/n6-architecture/.own.group_p` (10283 bytes, mk2_VERIFIED)
+- `/Users/ghost/core/canon/.own.readme` (17682 bytes, mk2_VERIFIED)
+- `/Users/ghost/core/canon/.own.group_p` (10283 bytes, mk2_VERIFIED)
 
 ## Non-overlap assertions
 

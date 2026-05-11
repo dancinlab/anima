@@ -3,7 +3,7 @@
   "ts_utc": "2026-05-04T00:00:00Z",
   "bg_lane": "HEXA-BRAIN-SPINOFF (extended dual-subsystem)",
   "outcome": "SUCCESS",
-  "new_repo_url": "https://github.com/need-singularity/hexa-brain",
+  "new_repo_url": "https://github.com/dancinlab/hexa-brain",
   "new_repo_local_path": "/Users/ghost/core/hexa-brain",
   "new_repo_default_branch": "main",
   "new_repo_initial_tag": "v1.0.0",
@@ -31,7 +31,7 @@
   "cli_core_verbs": ["core", "paradigm-resting", "paradigm-daily-life", "paradigm-p300-visual", "paradigm-p300-auditory", "paradigm-integration-test", "export", "jsonl-audit", "adapter", "filter-pipeline", "pipeline-suggester", "falsifier-runner", "chflags-lock", "npy-loader"],
   "cli_dispatch_paths_verified": "30/30 hexa file targets exist on disk",
   "private_repo_at_creation": true,
-  "promote_public_recipe": "gh repo edit need-singularity/hexa-brain --visibility public",
+  "promote_public_recipe": "gh repo edit dancinlab/hexa-brain --visibility public",
   "anima_anima_eeg_retained": true,
   "anima_anima_eeg_core_retained": true,
   "retention_reason": "stability period — cross-repo dependency interface (WebSocket consumer in anima consciousness runtime, dual_stream coupling, clm_eeg_p[1-3] integration) not yet stabilized; deletion deferred to next cycle",
@@ -76,5 +76,5 @@
     "raw_15_additive_only_for_anima": true,
     "v1_1_0_additive_no_history_rewrite": true
   },
-  "report_summary": "(a) repo at need-singularity/hexa-brain v1.1.0 pushed; (b) eeg subsystem moved to eeg/ subdirectory via git mv (history preserved); (c) core subsystem (anima-eeg-core, 68 hexa, 44 commits) merged into core/ via git subtree merge; (d) bin/hexa-brain rewritten as dual-subsystem bash dispatcher (16 eeg verbs + 14 core verbs + help/version, all 30 dispatch paths verified to exist); (e) anima-eeg-core/ also migrated YES; (f) CLI dispatcher landed YES at /Users/ghost/core/hexa-brain/bin/hexa-brain; (g) total file count 151 hexa (83 eeg + 68 core), size ~15.3MB on disk (recordings dominate); (h) both subsystems work via 'hexa-brain eeg|core <verb>' YES — verified via --help/--version and path-existence audit on all 30 dispatched targets."
+  "report_summary": "(a) repo at dancinlab/hexa-brain v1.1.0 pushed; (b) eeg subsystem moved to eeg/ subdirectory via git mv (history preserved); (c) core subsystem (anima-eeg-core, 68 hexa, 44 commits) merged into core/ via git subtree merge; (d) bin/hexa-brain rewritten as dual-subsystem bash dispatcher (16 eeg verbs + 14 core verbs + help/version, all 30 dispatch paths verified to exist); (e) anima-eeg-core/ also migrated YES; (f) CLI dispatcher landed YES at /Users/ghost/core/hexa-brain/bin/hexa-brain; (g) total file count 151 hexa (83 eeg + 68 core), size ~15.3MB on disk (recordings dominate); (h) both subsystems work via 'hexa-brain eeg|core <verb>' YES — verified via --help/--version and path-existence audit on all 30 dispatched targets."
 }

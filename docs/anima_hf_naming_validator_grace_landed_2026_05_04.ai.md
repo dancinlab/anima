@@ -37,7 +37,7 @@ raw_compliance:
 
 - **Grace expiry 2026-06-02 (30-day window per spec §8.1)** — after that date, `_grace_period_active()` returns 0 and the §3.7 fallback no longer admits legacy variants. Repos with `mk\d+-v\d+` stage_join (currently: cond.2 canonical `clm-v4-mk2-v1`) must EITHER (a) rename to a strict-enum-conformant form (e.g., drop `-mk2-v1` to give `clm-v4` or `clm-v4-base`), OR (b) be unblocked by another additive cycle that extends grace via raw#15 supersession. The cutoff is implemented as ISO8601 string comparison `today_utc <= "2026-06-02"`, which is correct for date-only comparison.
 
-- **Cycle 2 upload unblocked for `clm-v4-mk2-v1`** — `tool/hf_upload_mk2.hexa --repo need-singularity/clm-v4-mk2-v1` will now PASS validate-naming under §3.7 grace until 2026-06-02. This closes BG-NAMING-AMEND C2 caveat (legacy variant form §3.7 grace-deprecated). The validator emits a stdout WARN line before returning OK; downstream caller (`op_*` orchestrator) must continue to interpret the canonical PASS sentinel (e.g., `__HF_UPLOAD_MK2_NAMING__ OK`) rather than parse the WARN line.
+- **Cycle 2 upload unblocked for `clm-v4-mk2-v1`** — `tool/hf_upload_mk2.hexa --repo dancinlab/clm-v4-mk2-v1` will now PASS validate-naming under §3.7 grace until 2026-06-02. This closes BG-NAMING-AMEND C2 caveat (legacy variant form §3.7 grace-deprecated). The validator emits a stdout WARN line before returning OK; downstream caller (`op_*` orchestrator) must continue to interpret the canonical PASS sentinel (e.g., `__HF_UPLOAD_MK2_NAMING__ OK`) rather than parse the WARN line.
 
 - **Honest C3 (5+):**
   - **C3-1 (PASS_WITH_WARNING blurs PASS contract)** — strict §10.4 PASS criteria require either CANON regex OR EXT regex; the hexa hook now returns `OK` for inputs that fall through strict enum into §3.7 grace. Downstream callers that parse stdout naively (e.g., grep for `FAIL:` only) will silently accept legacy variants without observing the WARN line. Mitigation: emit a structured sentinel `__HF_UPLOAD_MK2_NAMING__ PASS|PASS_WITH_WARNING|FAIL` — out of scope this cycle (would mutate hexa contract).
@@ -52,7 +52,7 @@ raw_compliance:
 
 - **upstream**: `docs/anima_hf_naming_convention_mk2_spec_2026_05_03.md` §3.7 + §8.1 (grace-period spec); `docs/anima_hf_naming_clm_amendment_landed_2026_05_04.ai.md` C2 (cond.2 caveat triggering this patch)
 - **this cycle**: `state/anima_hf_naming_validator_grace_test_2026_05_04/test_runner.bash` (4-test harness) + this landed doc
-- **downstream**: BG-PUSH-V1 (executes `hf_upload_mk2 --repo need-singularity/clm-v4-mk2-v1` first push under grace); BG-GRACE-EXPIRY-RENAME (pre-2026-06-02 rename or amendment cycle if push slips)
+- **downstream**: BG-PUSH-V1 (executes `hf_upload_mk2 --repo dancinlab/clm-v4-mk2-v1` first push under grace); BG-GRACE-EXPIRY-RENAME (pre-2026-06-02 rename or amendment cycle if push slips)
 
 ## §3 Verification
 

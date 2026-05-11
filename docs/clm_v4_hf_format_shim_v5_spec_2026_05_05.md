@@ -118,7 +118,7 @@ Pre-registered per raw#71 with thresholds locked at spec land time.
 | Asset | shim v4 (current) | shim v5 (new) |
 |---|---|---|
 | Source | `tool/transient_py/clm_v4_hf_format_shim.py` (LOCKED) | `tool/transient_py/clm_v4_hf_format_shim_v5.py` (NEW, separate file) |
-| HF release | `need-singularity/clm-v4-mk2-v1` (PRIVATE — already uploaded per `.roadmap.clm` cond.2) | `need-singularity/clm-v4-mk2-v2` *or* gated revision branch (Q3) |
+| HF release | `dancinlab/clm-v4-mk2-v1` (PRIVATE — already uploaded per `.roadmap.clm` cond.2) | `dancinlab/clm-v4-mk2-v2` *or* gated revision branch (Q3) |
 | Pβ-SCALE adapter | binds to v4 substrate | not transferred (Risk C scope-out) |
 | CLM-2 LoRA (clm_v4_lora_sft) | binds to v4 substrate | not transferred (Risk C scope-out) |
 | F-SHIM-V4-4 falsifier | OPEN (architecturally unfalsifiable; design-debt note) | superseded by F-SHIM-V5-1..5 suite |
@@ -157,7 +157,7 @@ Pre-registered per raw#71 with thresholds locked at spec land time.
 - In-pipeline base reference = 35.81 mean (`state/clm_v4_lora_phi_canonical_2026_05_05/verdict.json` §phi_star_base_in_pipeline).
 
 ### Phase 5 — spec amend ($0, no exec)
-- If Phases 1-4 ALL PASS: amend `.roadmap.clm` cond.2 G3 promote gate (per .own 15) to authorise shim v5 PUBLIC release as `need-singularity/clm-v4-mk2-v2` *or* a gated revision branch (Q3). Additive-only per raw#15.
+- If Phases 1-4 ALL PASS: amend `.roadmap.clm` cond.2 G3 promote gate (per .own 15) to authorise shim v5 PUBLIC release as `dancinlab/clm-v4-mk2-v2` *or* a gated revision branch (Q3). Additive-only per raw#15.
 - If any of F-SHIM-V5-2, V5-4, V5-5 FAIL: do NOT amend `.roadmap.clm`; mark shim v5 as DESIGN_EXPERIMENTAL and queue calibration cycle (Q1 sweep).
 
 **Wall-clock budget**: ~2 hours human + ~30 min H100 wall (Phase 3). Budget overrun trigger: any phase >2× expected wall-time → halt and report.
@@ -188,7 +188,7 @@ Pre-registered per raw#71 with thresholds locked at spec land time.
 
 - **C4 — Existing PEFT adapters shim v4-trained**. Pβ + CLM-2 LoRA target_modules likely include `cross_attn.o_proj` (or its variants) in their qkvo set. Loading these adapters onto a shim v5 base with 10× larger init scale grafts v4-delta onto v5-base — transfer characteristics unknown. Risk C scope-out, but adapter behaviour on shim v5 is an open question.
 
-- **C5 — shim v5 does NOT retroactively fix F-SHIM-V4-4 FAIL on shim v4**. The shim v4 PRIVATE upload (`need-singularity/clm-v4-mk2-v1`) remains unfalsifiable on F-SHIM-V4-4. shim v5 is a forward-only architectural patch; it does not change shim v4's verdict status, only the path forward.
+- **C5 — shim v5 does NOT retroactively fix F-SHIM-V4-4 FAIL on shim v4**. The shim v4 PRIVATE upload (`dancinlab/clm-v4-mk2-v1`) remains unfalsifiable on F-SHIM-V4-4. shim v5 is a forward-only architectural patch; it does not change shim v4's verdict status, only the path forward.
 
 - **C6 — raw#71 falsifier pre-register**. F-SHIM-V5-1..5 thresholds are LOCKED at this spec land time. Any threshold relaxation post-hoc requires explicit amendment with rationale. Threshold candidates: V5-1 finite (no relaxation), V5-2 1e-5 (no relaxation; this is the bypass invariant), V5-3 |lift_pp|<5pp (sanity, can relax to |lift_pp|<10pp if hellaswag-200 noise is unusually high), V5-4 +5pp (CANNOT relax — relaxation defeats the falsifier purpose), V5-5 -10pp (matches BG-CLM-2 flip threshold; can NOT relax without parallel amendment of BG-CLM-2 verdict).
 

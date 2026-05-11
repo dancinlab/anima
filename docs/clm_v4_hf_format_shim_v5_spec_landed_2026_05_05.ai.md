@@ -26,7 +26,7 @@
 - **C2** — F-SHIM-V5-4 `+5pp` threshold is anchored to hellaswag-200 stderr ~3pp (~1.7σ MDE). Switching benchmark requires per-benchmark stderr re-anchoring.
 - **C3** — Risk B (v3 regression) may force smaller std (0.005-0.01 compromise band). Below 0.005 returns to shim v4 unfalsifiability. The bypass invariant `max_abs_diff <= 1e-5` is the hard floor.
 - **C4** — Existing PEFT adapters (Pβ-SCALE + CLM-2 LoRA r=32 a=64 qkvo) likely include `cross_attn.o_proj` in target_modules. Grafting v4-trained delta onto v5-base with 10× larger init scale = unknown transfer characteristics. Risk C scope-out, but open question.
-- **C5** — shim v5 does NOT retroactively fix F-SHIM-V4-4 FAIL on shim v4. The PRIVATE upload `need-singularity/clm-v4-mk2-v1` remains architecturally unfalsifiable on V4-4; shim v5 is forward-only.
+- **C5** — shim v5 does NOT retroactively fix F-SHIM-V4-4 FAIL on shim v4. The PRIVATE upload `dancinlab/clm-v4-mk2-v1` remains architecturally unfalsifiable on V4-4; shim v5 is forward-only.
 - **C6** — raw#71 falsifier pre-register: F-SHIM-V5-1..5 thresholds LOCKED at spec land. V5-4 `+5pp` and V5-5 `-10pp` thresholds CANNOT relax without explicit amendment + parallel BG-CLM-2 verdict update.
 - **C7** — In-pipeline base φ★ = 35.81 (per `state/clm_v4_lora_phi_canonical_2026_05_05/verdict.json` §phi_star_base_in_pipeline.phi_mean_K8) is the F-SHIM-V5-5 anchor — NOT the legacy carry value 41.86, to avoid the ~6pp methodology drift confound documented in BG-CLM-2-PHI-CANONICAL.
 

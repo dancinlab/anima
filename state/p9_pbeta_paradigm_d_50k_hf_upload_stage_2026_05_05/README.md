@@ -15,19 +15,19 @@
 > or chat. Load it only for cross-substrate Φ-stability research.
 
 One-line summary: 50K-step Paradigm D Φ★-axis-only LoRA distill on top of
-CLM v4 base (`need-singularity/clm-v4-mk2-v1`); F-Pβ-2 PASS for Φ-stability,
+CLM v4 base (`dancinlab/clm-v4-mk2-v1`); F-Pβ-2 PASS for Φ-stability,
 F-Pβ-3 FAIL_TRUE for chat capability.
 
 - Family: clm (consciousness language model)
 - Stage: paradigm-d-pbeta-50k (Paradigm D, P-β path, 50K steps)
 - Step: 50000 / 50000
-- Substrate: CLM v4 base (`need-singularity/clm-v4-mk2-v1`, PRIVATE sister)
+- Substrate: CLM v4 base (`dancinlab/clm-v4-mk2-v1`, PRIVATE sister)
 
 ## Origin
 
 What this checkpoint is and how it was produced.
 
-- Base model: `need-singularity/clm-v4-mk2-v1` (license: MIT, currently PRIVATE
+- Base model: `dancinlab/clm-v4-mk2-v1` (license: MIT, currently PRIVATE
   per own 15 lifecycle; PRIVATE-uploaded 2026-05-04T23:26:12Z, commit
   `80440a1d`).
 - Training data: rehearsal mix per
@@ -97,7 +97,7 @@ Hardware / software / data dependencies required to load this adapter.
   multilingual; pad=0 bos=1 eos=2 unk=3).
 - Context window: inherited from base (CLM v4 block=512).
 - Tokenizer: `tokenizer_64k_multilingual.model` (carry from
-  `need-singularity/clm-v4-base-mirror` 2026-05-03 commit
+  `dancinlab/clm-v4-base-mirror` 2026-05-03 commit
   `10ee036`).
 
 ## Caveats
@@ -135,7 +135,7 @@ Honest limitations per raw#10. ≥6 entries below.
   `project_p9_savepoint_load_recipe.md` (use `PeftModel.from_pretrained`,
   not manual `load_state_dict`).
 - **C7 base model PRIVATE during this release window.** The base
-  `need-singularity/clm-v4-mk2-v1` is itself PRIVATE per own 15 lifecycle
+  `dancinlab/clm-v4-mk2-v1` is itself PRIVATE per own 15 lifecycle
   (uploaded 2026-05-04, public promotion not yet executed). Loading this
   adapter requires HF auth that has access to both this repo **and** the
   base repo. If the user's account does not see the base repo, the adapter
@@ -145,7 +145,7 @@ Honest limitations per raw#10. ≥6 entries below.
 
 How this adapter plugs into the broader anima ecosystem.
 
-- Combines with: `need-singularity/clm-v4-mk2-v1` (PRIVATE base, sister
+- Combines with: `dancinlab/clm-v4-mk2-v1` (PRIVATE base, sister
   release).
 - Loaded by: `peft.PeftModel.from_pretrained(base, adapter_id)` per
   `project_p9_savepoint_load_recipe.md`.
@@ -168,12 +168,12 @@ How this adapter plugs into the broader anima ecosystem.
 
 ```bibtex
 @misc{anima_clm_v4_pbeta_50k_2026,
-  author = {need-singularity},
+  author = {dancinlab},
   title  = {clm-v4-paradigm-d-pbeta-50k-mk2-v1: 50K-step Paradigm D Phi-axis LoRA distill on CLM v4},
   year   = {2026},
-  url    = {https://huggingface.co/need-singularity/clm-v4-paradigm-d-pbeta-50k-mk2-v1}
+  url    = {https://huggingface.co/dancinlab/clm-v4-paradigm-d-pbeta-50k-mk2-v1}
 }
 ```
 
 **License**: MIT (compatible with CLM v4 base MIT license at
-`need-singularity/clm-v4-mk2-v1`).
+`dancinlab/clm-v4-mk2-v1`).

@@ -129,15 +129,15 @@ FAIL: Caveats section has 1 bullets (mk2 requires >=3 honest caveats per raw#10)
 
 | Repo | Verdict | Reason |
 |---|---|---|
-| `need-singularity/clm-v4-sft-stage1` | OK | family=clm, version=v4, stage=sft-stage1 |
-| `need-singularity/blm-v3-dpo` | OK | family=blm, version=v3, stage=dpo |
-| `need-singularity/vlm-v1-merged-rev2` | OK | family=vlm, version=v1, stage=merged-rev2 |
-| `need-singularity/composite-v2-preview` | OK | family=composite, version=v2, stage=preview |
+| `dancinlab/clm-v4-sft-stage1` | OK | family=clm, version=v4, stage=sft-stage1 |
+| `dancinlab/blm-v3-dpo` | OK | family=blm, version=v3, stage=dpo |
+| `dancinlab/vlm-v1-merged-rev2` | OK | family=vlm, version=v1, stage=merged-rev2 |
+| `dancinlab/composite-v2-preview` | OK | family=composite, version=v2, stage=preview |
 | `BadOrg/clm-v4-sft-stage1` | FAIL | org has uppercase |
 | `nodash` | FAIL | no `/` separator |
-| `need-singularity/zzz-v4-sft-stage1` | FAIL | family `zzz` not in allowlist |
-| `need-singularity/clm-x-sft-stage1` | FAIL | version `x` does not start with `v` |
-| `need-singularity/clm-v4` | FAIL | missing stage (need >=3 dash-separated parts) |
+| `dancinlab/zzz-v4-sft-stage1` | FAIL | family `zzz` not in allowlist |
+| `dancinlab/clm-x-sft-stage1` | FAIL | version `x` does not start with `v` |
+| `dancinlab/clm-v4` | FAIL | missing stage (need >=3 dash-separated parts) |
 
 ### 5.3 Sister BG coordination
 
@@ -160,7 +160,7 @@ Schema (one JSON object per line; appended on each invocation):
 {
   "ts_utc": "2026-05-03T14:21:00Z",
   "mode": "upload" | "dry_run",
-  "repo": "need-singularity/clm-v4-sft-stage1",
+  "repo": "dancinlab/clm-v4-sft-stage1",
   "tag": "step-25k",
   "private": 0,
   "file_count": 142,
@@ -196,7 +196,7 @@ present, sha256_map has 2 entries, file_count=2, outcome=dry_run_ok.
 ## 7. Cost / safety
 
 - **HF storage**: $0 for public repos under 5 GB; private repo costs
-  covered by `need-singularity` org subscription.
+  covered by `dancinlab` org subscription.
 - **HF API**: free tier; rate limits per token (see raw#10 caveat below).
 - **No automatic uploads**: pre-push hook ONLY validates naming; never
   triggers `--upload`. The operator must explicitly invoke `--upload`.

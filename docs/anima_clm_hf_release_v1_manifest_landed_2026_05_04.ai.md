@@ -5,7 +5,7 @@
 - **Mode**: $0 mac+ubu1; sha256 read-only; NO commit, NO HF push, NO weight modification
 - **Output**: `state/clm_v4_hf_release_v1_manifest_2026_05_04/manifest.json` (660 LoC; tracked locally)
 - **Schema**: `anima/clm/hf_release_v1/manifest/1`
-- **Model id targeted**: `need-singularity/clm-v4-mk2-v1` (Option A per audit §1.7 / plan §1 step 1 Q1)
+- **Model id targeted**: `dancinlab/clm-v4-mk2-v1` (Option A per audit §1.7 / plan §1 step 1 Q1)
 - **Constraints respected**: raw#9 (json + md only), raw#10 (≥5 honest C3, observed: 10), raw#15 (no destructive); anima own 14 (HF-only weights — manifest captures sha256 references, no local 5GB copy)
 
 ---
@@ -129,7 +129,7 @@ No marker creation, no git commit, no HF push (per BG-MANIFEST directive).
 
 The manifest is a **prerequisite-grade artifact** for sibling Cycle 2 upload BG. All fields needed by `tool/hf_upload_mk2.hexa --upload` are present:
 - ✓ All 12 weight file paths + sha256s + sizes + LFS classification
-- ✓ `naming_compliance.chosen_name` populated (`need-singularity/clm-v4-mk2-v1`)
+- ✓ `naming_compliance.chosen_name` populated (`dancinlab/clm-v4-mk2-v1`)
 - ✓ `naming_compliance.predecessor_repo` reference for `## Composability`
 - ✓ `architecture` block ready for README §Substrate
 - ✓ `train_config` ready for README §Origin

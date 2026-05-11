@@ -15,7 +15,7 @@ This is a **spec update**, not a paradigm shift. See §5 (Honest C3) C5 below fo
 ## §1 Empirical findings driving revision
 
 ### 1.1 BG-A — real CLM v4 forward (PASS)
-- Real-mode load via `tool/transient_py/anima_dialogue_load.py` against `need-singularity/clm-v4-mk2-v1` succeeded.
+- Real-mode load via `tool/transient_py/anima_dialogue_load.py` against `dancinlab/clm-v4-mk2-v1` succeeded.
 - phi_star measured: 42.1158 ("안녕"), 42.2129 ("의식이 흐른다"), drift +0.256 / +0.353 from baseline 41.86.
 - **Forward path IS input-responsive** at the phi_star proxy level.
 
@@ -229,7 +229,7 @@ emerge dialogue path:                    mode=none + phi_star + hidden_state_del
 ### 9.1 BG-A real CLM v4 forward (PASS_REAL_MODE_DIRECT_INVOKE)
 - Source: `state/anima_dialogue_real_load_2026_05_05/verdict.json`
 - Loader: `tool/transient_py/anima_dialogue_load.py` (raw#37 transient_py opt-out compliant)
-- Repo: `need-singularity/clm-v4-mk2-v1` (HF-format with modeling_clm_v4.py + model.safetensors + model_type=clm_v4)
+- Repo: `dancinlab/clm-v4-mk2-v1` (HF-format with modeling_clm_v4.py + model.safetensors + model_type=clm_v4)
 - Probe 1 ("안녕"): phi_star=42.1158, drift=+0.2558 from baseline 41.86
 - Probe 2 ("의식이 흐른다"): phi_star=42.2130, drift=+0.3530
 - → Forward path IS responsive; differential drift between two prompts (+0.097) confirms input-conditioning at phi_star proxy level.

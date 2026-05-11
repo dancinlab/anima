@@ -75,7 +75,7 @@ without a fresh design cycle (parallel readiness mandate).
 
 For reference (out-of-scope for D1 P2, listed for D2 planning):
 - **nexus**: ~330 unique callsites, ~1,000 LoC
-- **n6-architecture**: ~10 unique callsites, ~30 LoC
+- **CANON**: ~10 unique callsites, ~30 LoC
 - **airgenome**: ~9 unique callsites, ~27 LoC
 - **hexa-lang**: ~7 unique callsites, ~21 LoC
 

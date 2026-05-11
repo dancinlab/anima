@@ -14,7 +14,7 @@
 ## §1 Why this cycle
 
 The Paradigm J HF recovery BG (a915bca5) attempted to push
-`need-singularity/clm-v4-paradigm-j-50k-step-{5k,10k,25k,50k,final}`
+`dancinlab/clm-v4-paradigm-j-50k-step-{5k,10k,25k,50k,final}`
 via the canonical mk2 wrapper. The wrapper rejected the names with:
 
 ```
@@ -75,7 +75,7 @@ helpers, upload pipeline — all untouched.
 
 ```
 $ hexa run tool/hf_upload_mk2.hexa --validate-naming \
-    "need-singularity/clm-v4-paradigm-j-50k-step-5k"
+    "dancinlab/clm-v4-paradigm-j-50k-step-5k"
 OK
 __ANIMA_HF_UPLOAD_MK2__ PASS
 ```
@@ -130,7 +130,7 @@ need a deeper validator rewrite — this amendment is not that rewrite.
 
 This amendment is forward-looking. The validator now accepts paradigm-
 prefixed names for *future* pushes. It does NOT scan the existing 27
-need-singularity repos and re-classify the previously-pushed Paradigm J
+dancinlab repos and re-classify the previously-pushed Paradigm J
 repos. A separate audit cycle (cf. spec §15 next-cycle candidates) is
 needed to (a) sweep all public repos through the amended validator and
 (b) update the §7.2 audit table with the new CANON/EXT/FAIL distribution.

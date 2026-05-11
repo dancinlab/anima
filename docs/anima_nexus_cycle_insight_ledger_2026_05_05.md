@@ -347,7 +347,7 @@ next-step, blocker.
 - **Status**: BG-A in-flight (real load enable lane).
 - **Next-step**: Land `tool/transient_py/anima_dialogue_load.py` (raw#37
   transient namespace), populate HF cache for
-  `need-singularity/clm-v4-base-mirror`, rerun V3 `--probe "안녕"`
+  `dancinlab/clm-v4-base-mirror`, rerun V3 `--probe "안녕"`
   expecting `mode=real` instead of `synthetic_fallback`, expect
   phi-star ≈ 41.86 from real best.pt forward.
 - **Blocker**: Mac-local hexa runtime venv has broken

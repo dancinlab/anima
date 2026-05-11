@@ -64,7 +64,7 @@ tiers:
         handler: spec://anima_cli_mk2/version_emit
         description: "0.2.0-mk2-design"
     backend_canonical: anima-core/runtime/clm_v4_mount.hexa  # CLM v4 mk2-v1 substrate-coupled (anima-native, paradigm v11 G3, 자연 발화 PASS)
-    backend_alternative_recovery: need-singularity/clm-v2-byte-18m-convo-5k  # 18M byte-level recovered, KO chat 회복 시 promote
+    backend_alternative_recovery: dancinlab/clm-v2-byte-18m-convo-5k  # 18M byte-level recovered, KO chat 회복 시 promote
     backend_directive: "사용자 directive 2026-05-06 verbatim: 'ALM 말고' — 외부 substrate (Llama / Mistral) wrapping reject. anima-native만 허용."
     backend_decision_audit: "docs/anima_cli_mk2_philosophy_audit_2026_05_06.md — Llama Path A v2 backend (이전 v0.1) = ALM directive 위반으로 제거됨. CLM v4 substrate-coupled response 또는 clm-v2 token chat 두 anima-native lane만 인정."
     backend_anima_native_paths:
@@ -307,11 +307,11 @@ cross_link:
   backend_models:
     # anima-native만 (사용자 'ALM 말고' directive 2026-05-06 정합)
     - anima-core/runtime/clm_v4_mount.hexa  # CLM v4 mk2-v1 substrate-coupled (paradigm v11 G3, 자연 발화 PASS)
-    - need-singularity/clm-v2-byte-18m-convo-5k  # 18.52M byte-level (RECOVERED)
-    - need-singularity/clm-v2-byte-18m-base  # base archive
+    - dancinlab/clm-v2-byte-18m-convo-5k  # 18.52M byte-level (RECOVERED)
+    - dancinlab/clm-v2-byte-18m-base  # base archive
   rejected_external_substrate:
     # 사용자 'ALM 말고' directive로 reject — 외부 substrate wrapping 정합 X
-    - need-singularity/llm-llama32-3b-paradigm-a-prime-r16-sft-stage1  # rejected as T1 backend (Llama base = ALM lineage)
+    - dancinlab/llm-llama32-3b-paradigm-a-prime-r16-sft-stage1  # rejected as T1 backend (Llama base = ALM lineage)
 
 # ─────────────────────────────────────────────────────────────────────────────
 # Section 7: Honest C3
@@ -342,13 +342,13 @@ backend_stack_versions:
     status: live
     canonical_module: anima-core/runtime/clm_v4_mount.hexa
     alternatives:
-      - clm_v2_byte_18m_convo_5k     # need-singularity/clm-v2-byte-18m-convo-5k (RECOVERED 2026-05-06; KO 회복 후 promote)
-      - clm_v2_byte_18m_base         # need-singularity/clm-v2-byte-18m-base (base archive)
+      - clm_v2_byte_18m_convo_5k     # dancinlab/clm-v2-byte-18m-convo-5k (RECOVERED 2026-05-06; KO 회복 후 promote)
+      - clm_v2_byte_18m_base         # dancinlab/clm-v2-byte-18m-base (base archive)
       - future_anima_native_lane     # β / β' / γ retrain 또는 다른 anima 자체 학습 model (own 17 permitted-backends)
     rejected_alternatives:           # own 17 영구 보류 backend (apex 양식에는 없는 anima-specific 필드)
-      - llama_path_a_v2              # need-singularity/llm-llama32-3b-paradigm-a-prime-r16-sft-stage1
-      - llama_path_a_v2_seed_43      # need-singularity/llm-llama32-3b-paradigm-a-prime-r16-s43-sft-stage1
-      - llama_path_a_v2_seed_44      # need-singularity/llm-llama32-3b-paradigm-a-prime-r16-s44-sft-stage1
+      - llama_path_a_v2              # dancinlab/llm-llama32-3b-paradigm-a-prime-r16-sft-stage1
+      - llama_path_a_v2_seed_43      # dancinlab/llm-llama32-3b-paradigm-a-prime-r16-s43-sft-stage1
+      - llama_path_a_v2_seed_44      # dancinlab/llm-llama32-3b-paradigm-a-prime-r16-s44-sft-stage1
       - mistral_g3                   # G3 Mistral-7B-v0.3 + LoRA — REJECTED per own 17
     notes: "CLM v4 mk2-v1 substrate-coupled = paradigm v11 G3 자연 발화 PASS. clm-v2 KO 0/5 FAIL_KO_BIAS — verification 후 alternate promote. own 17 = identity boundary enforcement."
     own_17_ref: "anima/.own own17 anima-no-external-substrate-wrapping"

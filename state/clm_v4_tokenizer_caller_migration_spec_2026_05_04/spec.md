@@ -72,7 +72,7 @@ copies present in dev clones can be unlinked or `.py.txt`-parked at migration ti
 
 ### 2.3 Cache resolution order (per BG-θ §3 + BG-κ status)
 On ubu1, the helper executes (in order, first-hit wins):
-1. `~/.cache/huggingface/hub/models--need-singularity--clm-v4-base-mirror/snapshots/*/tokenizer/tokenizer_64k_multilingual.model`
+1. `~/.cache/huggingface/hub/models--dancinlab--clm-v4-base-mirror/snapshots/*/tokenizer/tokenizer_64k_multilingual.model`
 2. `~/anima/checkpoints/clm_v4_350m/tokenizer_64k_multilingual.model`
 3. `/tmp/tokenizer_64k_multilingual.model` (legacy fallback; emit deprecation warning to stderr)
 4. **HARD FAIL** — `FileNotFoundError` with message listing all 3 globs and a pointer to
@@ -103,7 +103,7 @@ Mirroring `tool/anima_tokenizer_ablation.hexa` (lines 74–95 + 187–210 idiom)
 
 let HELPER_PATH = "/tmp/clm_v4_tokenizer_load_helper.hexa_tmp"
 let CACHE_GLOBS = [
-    "$HOME/.cache/huggingface/hub/models--need-singularity--clm-v4-base-mirror/snapshots/*/tokenizer/tokenizer_64k_multilingual.model",
+    "$HOME/.cache/huggingface/hub/models--dancinlab--clm-v4-base-mirror/snapshots/*/tokenizer/tokenizer_64k_multilingual.model",
     "$HOME/anima/checkpoints/clm_v4_350m/tokenizer_64k_multilingual.model",
     "/tmp/tokenizer_64k_multilingual.model"
 ]
@@ -120,7 +120,7 @@ fn _write_helper(mode, args_json) {
     parts.push("    home=os.path.expanduser('~')\n")
     parts.push("    for g in [\n")
     // CACHE_GLOBS expanded literally
-    parts.push("        f'{home}/.cache/huggingface/hub/models--need-singularity--clm-v4-base-mirror/snapshots/*/tokenizer/tokenizer_64k_multilingual.model',\n")
+    parts.push("        f'{home}/.cache/huggingface/hub/models--dancinlab--clm-v4-base-mirror/snapshots/*/tokenizer/tokenizer_64k_multilingual.model',\n")
     parts.push("        f'{home}/anima/checkpoints/clm_v4_350m/tokenizer_64k_multilingual.model',\n")
     parts.push("        '/tmp/tokenizer_64k_multilingual.model']:\n")
     parts.push("        m=sorted(glob.glob(g))\n")

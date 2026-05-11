@@ -28,7 +28,7 @@ P9 EXEC Phase 0 entry: **HF 측 GREEN** / **RunPod 측 user 결정 필요** (top
 
 ## §1 K — HF savepoint upload mechanism
 
-- 10KB dummy → `need-singularity/clm-v4-sft-stage1` `pre3_check/k_upload_test_dummy.bin`
+- 10KB dummy → `dancinlab/clm-v4-sft-stage1` `pre3_check/k_upload_test_dummy.bin`
 - commit: a7e1814f… (2026-05-02 16:04 UTC)
 - 8 sec, hf CLI 1.8.0, write-scope token
 - LFS 라우팅 (10KB 도 LFS pointer 화)
@@ -37,7 +37,7 @@ P9 EXEC Phase 0 entry: **HF 측 GREEN** / **RunPod 측 user 결정 필요** (top
 
 ## §2 L — ABORT mock (F2 fail → revoke)
 
-- `hf repos delete-files need-singularity/clm-v4-sft-stage1 "pre3_check/k_upload_test_dummy.bin"`
+- `hf repos delete-files dancinlab/clm-v4-sft-stage1 "pre3_check/k_upload_test_dummy.bin"`
 - commit: 04e9a889… (2026-05-02 16:05 UTC)
 - 1 sec, tree API 검증 404 (=delete OK)
 - 4 fallback 문서화: delete-files / overwrite+commit / repos delete (extreme) / pod-side terminate
@@ -48,7 +48,7 @@ P9 EXEC Phase 0 entry: **HF 측 GREEN** / **RunPod 측 user 결정 필요** (top
 
 - token: `anima` displayName, role=`write`, created 2026-05-02 15:54 UTC
 - user: dancinlife (Aiden Park, nerve011235@gmail.com)
-- org: need-singularity, role=`admin`
+- org: dancinlab, role=`admin`
 - 6 repo 모두 GET /api/models/{repo} HTTP 200, private=true, disabled=false
 - write+delete empirical proof: K+L on stage1 (1/6 empirical)
 - 나머지 5 inferred via org admin role (안전 가정)

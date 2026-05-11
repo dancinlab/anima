@@ -13,7 +13,7 @@
 //
 // FINDING
 //   prior memory text   : "$WS contains all 7 core projects (anima, hexa-lang,
-//                          airgenome, nexus, n6-architecture, papers, void)"
+//                          airgenome, nexus, CANON, papers, void)"
 //   reality (cycle 36) : 19 git repos (4 active core + 9 sister + 3 other + 3 archive)
 //   correction class   : underclaim (memory 작성 시점에 실제 더 많이 있었으나 미인지)
 //
@@ -39,7 +39,7 @@ fn _write_helper() {
 
     parts.push("repo_categories = {\n")
     parts.push("    'active_core': ['anima','hexa-lang','airgenome','nexus'],\n")
-    parts.push("    'sister_supporting': ['n6-architecture','papers','void','hive','contact','pi-telegram','pixie','secret','gohive.sh'],\n")
+    parts.push("    'sister_supporting': ['CANON','papers','void','hive','contact','pi-telegram','pixie','secret','gohive.sh'],\n")
     parts.push("    'other_utility': ['_github-org','hexa-os','skynet-timer'],\n")
     parts.push("    'archives_deprecated': ['archive-TECS-L','archive-brainwire','archive-sedi'],\n")
     parts.push("}\n\n")
@@ -50,7 +50,7 @@ fn _write_helper() {
     parts.push("prior_memory = {\n")
     parts.push("    'memory_file': '~/.claude-claude11/projects/-Users-ghost-core-anima/memory/project_workspace.md',\n")
     parts.push("    'prior_claim': '7 core projects',\n")
-    parts.push("    'prior_listed': ['anima','hexa-lang','airgenome','nexus','n6-architecture','papers','void'],\n")
+    parts.push("    'prior_listed': ['anima','hexa-lang','airgenome','nexus','CANON','papers','void'],\n")
     parts.push("    'correction_class': 'underclaim',\n")
     parts.push("    'date_of_prior': 'pre-2026-04-23 (originSessionId 95b6a6ae)',\n")
     parts.push("}\n\n")

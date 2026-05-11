@@ -39,7 +39,7 @@ MMLU per-domain (a few examples for sanity):
 
 ### Findings
 
-1. **HF mirror is stub-only**: `need-singularity/clm-v4-base-mirror` repo has 2 siblings: `.gitattributes` + `best.pt` (5.4 GB). No `config.json`, no HF format. Initial cache (~20K) was only `.no_exist` marker; downloaded fresh.
+1. **HF mirror is stub-only**: `dancinlab/clm-v4-base-mirror` repo has 2 siblings: `.gitattributes` + `best.pt` (5.4 GB). No `config.json`, no HF format. Initial cache (~20K) was only `.no_exist` marker; downloaded fresh.
 2. **best.pt structure**: Custom checkpoint dict with keys `{step, decoder, optimizer, scheduler, phi, ce, args, scale, best_phi, federation, bridge, c_proj, scaler}`. **Not a HF state_dict.**
 3. **Architecture is custom Federated/Phase-Optimal** (350m scale, 768d/16L/12H GQA-4kv):
    - Per block: `attn` (GQA), `purefield` (engine_a + engine_g dual-stream), `cross_attn`, `ffn` (SwiGLU 2048), `ca_mix`, `rule_weights`, 8x `rules` (cellular-automaton-like)

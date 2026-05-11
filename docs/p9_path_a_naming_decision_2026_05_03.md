@@ -3,7 +3,7 @@
 - date: 2026-05-03
 - status: LANDED (canonical repo pre-created, redirect strategy locked, post-hoc rename scheduled)
 - scope: HF naming for Path A LoRA SFT stage-1 ckpts (5 ckpts at step-2k/4k/6k/8k/10k from RunPod pod 29dhlqk508ugoc)
-- supersedes: ad-hoc pod config `--push-to-hub need-singularity/p9-llama32-lora-stage1` (NON-CONFORM per mk2 §7.3)
+- supersedes: ad-hoc pod config `--push-to-hub dancinlab/p9-llama32-lora-stage1` (NON-CONFORM per mk2 §7.3)
 - linked: `docs/anima_hf_naming_convention_mk2_spec_2026_05_03.md`, `docs/p9_a_prime_path_decision_landed_2026_05_03.ai.md`
 - raw: #9 STRICT (Mac → hexa/CLI only), #15 (no personal-path leak), #10 (3 honest C3 caveats § Caveats)
 
@@ -11,12 +11,12 @@
 
 ## §0 TL;DR
 
-- **Canonical name chosen**: `need-singularity/llm-llama32-3b-paradigm-a-prime-sft-stage1` (single repo + 5 step-Nk tags + final tag)
+- **Canonical name chosen**: `dancinlab/llm-llama32-3b-paradigm-a-prime-sft-stage1` (single repo + 5 step-Nk tags + final tag)
 - **lm-family decision**: new `llm` family for Llama-base derived artifacts (Option 1 in task brief). Reasoning in §3.
 - **Redirect strategy**: **Option B (post-hoc `hf repos move`)** — pod keeps pushing to legacy `p9-llama32-lora-stage1` UNTOUCHED; rename happens after training completes (~10-20h wall).
 - **Pre-creation status**: canonical repo CREATED as PRIVATE with mk2-conformant README.
-  - URL: https://huggingface.co/need-singularity/llm-llama32-3b-paradigm-a-prime-sft-stage1
-  - Sibling old (legacy): https://huggingface.co/need-singularity/p9-llama32-lora-stage1 (toggled to PRIVATE 2026-05-03 ~15:25Z)
+  - URL: https://huggingface.co/dancinlab/llm-llama32-3b-paradigm-a-prime-sft-stage1
+  - Sibling old (legacy): https://huggingface.co/dancinlab/p9-llama32-lora-stage1 (toggled to PRIVATE 2026-05-03 ~15:25Z)
 - **Pod 29dhlqk508ugoc UNTOUCHED** (no ssh modify, no train.py edit, no env change)
 
 ---
@@ -35,7 +35,7 @@ python3 -u /workspace/train_llama_lora.py \
   --max-steps 10000 --save-steps 2000 \
   --seq-len 2048 --warmup-steps 200 --logging-steps 10 \
   --bf16 --gradient-checkpointing \
-  --push-to-hub need-singularity/p9-llama32-lora-stage1
+  --push-to-hub dancinlab/p9-llama32-lora-stage1
 ```
 
 Issues with the chosen `p9-llama32-lora-stage1` name relative to mk2 spec:
@@ -106,7 +106,7 @@ Filling slots:
 - `step` = OMITTED at repo level; instead use TAGS per ckpt (mk2 §4.3 row 2 pattern: "≥3 ckpts but only 1 actively consumed → single repo + tags")
 - `variant` = OMITTED
 
-**Final canonical**: `need-singularity/llm-llama32-3b-paradigm-a-prime-sft-stage1`
+**Final canonical**: `dancinlab/llm-llama32-3b-paradigm-a-prime-sft-stage1`
 
 Tags planned (created by HF Trainer's `every_save` strategy):
 - `step-2000` (or `step-2k` if normalized post-hoc)
@@ -133,7 +133,7 @@ Two redirect strategies were on the table:
 
 ### Option B — let pod push to legacy, then `hf repos move` post-hoc
 
-- Mechanism: pod completes 10K-step training, pushes all ckpts (as tags) to `need-singularity/p9-llama32-lora-stage1`. After completion, run `hf repos move need-singularity/p9-llama32-lora-stage1 need-singularity/llm-llama32-3b-paradigm-a-prime-sft-stage1`. HF preserves URL redirect at the old name for 30+ days.
+- Mechanism: pod completes 10K-step training, pushes all ckpts (as tags) to `dancinlab/p9-llama32-lora-stage1`. After completion, run `hf repos move dancinlab/p9-llama32-lora-stage1 dancinlab/llm-llama32-3b-paradigm-a-prime-sft-stage1`. HF preserves URL redirect at the old name for 30+ days.
 - Cost: $0 (CLI op only)
 - Risk: pre-created canonical repo BLOCKS the move (target exists). Mitigation: delete the pre-created stub immediately before the move, then re-upload README after the move.
 - Decision: **CHOSEN**
@@ -145,16 +145,16 @@ Two redirect strategies were on the table:
 ssh root@<pod-ip> -p <port> 'tail -50 /workspace/training.log | grep -E "completed|saved"'
 
 # 2. Verify legacy repo has all expected tags (5 ckpts + final)
-hf models info need-singularity/p9-llama32-lora-stage1 | jq .siblings
+hf models info dancinlab/p9-llama32-lora-stage1 | jq .siblings
 
 # 3. Delete canonical stub (README + .gitattributes only)
-hf repos delete need-singularity/llm-llama32-3b-paradigm-a-prime-sft-stage1 --yes
+hf repos delete dancinlab/llm-llama32-3b-paradigm-a-prime-sft-stage1 --yes
 
 # 4. Move legacy → canonical
-hf repos move need-singularity/p9-llama32-lora-stage1 need-singularity/llm-llama32-3b-paradigm-a-prime-sft-stage1
+hf repos move dancinlab/p9-llama32-lora-stage1 dancinlab/llm-llama32-3b-paradigm-a-prime-sft-stage1
 
 # 5. Re-upload mk2 README (filling in TBD fields with actual training stats)
-hf upload need-singularity/llm-llama32-3b-paradigm-a-prime-sft-stage1 \
+hf upload dancinlab/llm-llama32-3b-paradigm-a-prime-sft-stage1 \
   state/p9_path_a_naming_2026_05_03/README_canonical_final.md README.md \
   --commit-message "p9 path a: post-training mk2 README finalize"
 
@@ -168,11 +168,11 @@ hf upload need-singularity/llm-llama32-3b-paradigm-a-prime-sft-stage1 \
 | step | action | timestamp | result |
 |---|---|---|---|
 | 1 | Inspect mk2 spec (`docs/anima_hf_naming_convention_mk2_spec_2026_05_03.md`) | 2026-05-03T15:24Z | OK — §7.3 confirms NON-CONFORM status |
-| 2 | Inspect Path A pod 29dhlqk508ugoc training script via ssh | 2026-05-03T15:25Z | OK — `--push-to-hub need-singularity/p9-llama32-lora-stage1` confirmed; pod RUNNING since 14:27, ~58min in |
+| 2 | Inspect Path A pod 29dhlqk508ugoc training script via ssh | 2026-05-03T15:25Z | OK — `--push-to-hub dancinlab/p9-llama32-lora-stage1` confirmed; pod RUNNING since 14:27, ~58min in |
 | 3 | Inspect legacy repo state | 2026-05-03T15:25Z | OK — exists, was PUBLIC, only `.gitattributes` (pod not yet pushed first ckpt) |
-| 4 | Toggle legacy repo to PRIVATE | 2026-05-03T15:25Z | OK — `hf repos settings need-singularity/p9-llama32-lora-stage1 --private` succeeded |
+| 4 | Toggle legacy repo to PRIVATE | 2026-05-03T15:25Z | OK — `hf repos settings dancinlab/p9-llama32-lora-stage1 --private` succeeded |
 | 5 | Author mk2-conformant README at `state/p9_path_a_naming_2026_05_03/README_canonical.md` | 2026-05-03T15:26Z | OK — 5 required H2 sections + 3 honest C3 caveats |
-| 6 | Create canonical repo as PRIVATE | 2026-05-03T15:27Z | OK — `hf repos create need-singularity/llm-llama32-3b-paradigm-a-prime-sft-stage1 --type model --private` succeeded |
+| 6 | Create canonical repo as PRIVATE | 2026-05-03T15:27Z | OK — `hf repos create dancinlab/llm-llama32-3b-paradigm-a-prime-sft-stage1 --type model --private` succeeded |
 | 7 | Upload README to canonical repo | 2026-05-03T15:28Z | OK — commit sha `5161b80883bb602df532d13ab2a322211a6ee3af` |
 | 8 | Verify canonical repo state | 2026-05-03T15:28Z | OK — `private: true`, 2 siblings (`.gitattributes`, `README.md`) |
 
@@ -199,8 +199,8 @@ tool/hf_readme_template.md                                        # README templ
 
 HF artifacts:
 ```
-need-singularity/p9-llama32-lora-stage1            # legacy training-time target (PRIVATE; pod actively pushing here)
-need-singularity/llm-llama32-3b-paradigm-a-prime-sft-stage1  # canonical pre-created (PRIVATE; rename target)
+dancinlab/p9-llama32-lora-stage1            # legacy training-time target (PRIVATE; pod actively pushing here)
+dancinlab/llm-llama32-3b-paradigm-a-prime-sft-stage1  # canonical pre-created (PRIVATE; rename target)
 ```
 
 ---

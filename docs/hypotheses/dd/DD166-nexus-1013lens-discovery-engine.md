@@ -10,7 +10,7 @@
 ## 목적
 
 기존 telescope-rs 22종 렌즈를 1,013종으로 확장한 NEXUS-6 Discovery Engine 전체 구축.
-anima/TECS-L/n6-architecture 등 7개 리포 통합 발견 시스템.
+anima/TECS-L/canon 등 7개 리포 통합 발견 시스템.
 
 ## 핵심 발견
 
@@ -117,6 +117,6 @@ PyO3:       feature-gated Python 바인딩
 
 ## 연결 문서
 
-- n6-architecture: `tools/nexus/` (전체 소스)
+- CANON: `tools/nexus/` (전체 소스)
 - TECS-L: `.shared/` (공유 인프라)
 - anima: DD163~DD165 (이전 렌즈 스캔 결과)

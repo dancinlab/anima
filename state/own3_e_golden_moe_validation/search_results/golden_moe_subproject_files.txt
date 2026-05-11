@@ -22,7 +22,7 @@ experiments/test_golden_moe_h100.hexa
 core/                                   # (subdir present)
 
 # ── Design/spec docs that mention 12/4 ────────────────────────────────
-state/n6_ai_training_cost_status.json   # Mirror of n6-architecture spec (NOT measurement);
+state/n6_ai_training_cost_status.json   # Mirror of CANON spec (NOT measurement);
                                         # mk5_numerical: moe_experts=12, moe_active=4, moe_sparsity_ratio=3
 state/n6_training_selftest_result.json  # Pure arithmetic identity check (claim "experts=σ=12, active=τ=4, ratio=3" PASS by σ(6)/τ(6) algebra)
 tool/dd_bridge_gpu_batch.hexa           # Toy 12-expert MoE for entropy/load-balance routing test (NOT golden-moe sub-project)

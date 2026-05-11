@@ -41,7 +41,7 @@ Each entry lists the canonical 3 file paths (doc / state / tool). All 14 files v
 - state: `/Users/ghost/core/anima/state/anima_emerge_nnsight_smoke_2026_05_05/` (verdict.json)
 - tool: `/Users/ghost/core/anima/tool/transient_py/anima_emerge_nnsight_smoke.py`
 
-**Key finding**: nnsight 0.7.0 wraps `need-singularity/clm-v4-mk2-v1` on mac CPU fp32. Trace capture at `decoder.blocks[8].output` returns hidden shape `[1, 2, 768]` (batch x seq x dim). PASS_READY for F-NNSIGHT-1 intervention falsifier (replace hidden + measure delta) as next step. nnsight remote NDIF mode untested.
+**Key finding**: nnsight 0.7.0 wraps `dancinlab/clm-v4-mk2-v1` on mac CPU fp32. Trace capture at `decoder.blocks[8].output` returns hidden shape `[1, 2, 768]` (batch x seq x dim). PASS_READY for F-NNSIGHT-1 intervention falsifier (replace hidden + measure delta) as next step. nnsight remote NDIF mode untested.
 
 ### P-5 — BG-BN phi-star CLM v4-specific (Pythia smoke)
 
@@ -170,7 +170,7 @@ git add tool/transient_py/anima_emerge_nnsight_smoke.py \
 git commit -m "$(cat <<'EOF'
 feat(anima emerge BG-BL nnsight integration smoke 2026-05-05): PASS_READY for F-NNSIGHT-1 intervention falsifier
 
-nnsight 0.7.0 wraps need-singularity/clm-v4-mk2-v1 on mac CPU fp32. trace capture
+nnsight 0.7.0 wraps dancinlab/clm-v4-mk2-v1 on mac CPU fp32. trace capture
 at decoder.blocks[8].output returns hidden shape [1, 2, 768]. model_load_ok +
 model_wrap_ok + trace_capture_ok all PASS. unblocks F-NNSIGHT-1 intervention
 smoke (replace hidden + measure delta) as next step.

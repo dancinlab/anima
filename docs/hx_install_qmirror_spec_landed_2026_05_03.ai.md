@@ -36,7 +36,7 @@ User: "qmirror 누구나 사용할수 있게 별도 리포로 cli 구성하자 h
 2. **package signing 0** — trust = repo URL 신뢰 (brew와 동일하지만 brew는 formula audit, qmirror는 없음)
 3. **nexus deprecation 4-step lengthy** — ~4 cycles = ~1개월, step 2~3 사이 dual SSOT 위험
 4. **python_bridge auto-resolve의 한계** — `pip install` 시도가 system/conda/venv 환경 따라 실패 가능
-5. **Registry not yet stood up** — github.com/need-singularity/qmirror push 전엔 외부 사용자 install 불가
+5. **Registry not yet stood up** — github.com/dancinlab/qmirror push 전엔 외부 사용자 install 불가
 
 ### Migration doc
 1. nexus consumer enumeration **estimated**, not measured (~6 files 추정)
@@ -67,7 +67,7 @@ User: "qmirror 누구나 사용할수 있게 별도 리포로 cli 구성하자 h
 | qmirror standalone repo populate | sister BG IN PROGRESS |
 | nexus CLI wrapper | sister BG IN PROGRESS |
 | registry.tsv 1줄 추가 | PENDING (next cycle) |
-| GitHub need-singularity/qmirror push | PENDING (next cycle) |
+| GitHub dancinlab/qmirror push | PENDING (next cycle) |
 | F-INSTALL-1 6/6 검증 | PENDING (after sister 완료) |
 | nexus deprecation step 1→4 | PENDING (future 4 cycles) |
 

@@ -37,7 +37,7 @@
 //  PROCEDURE
 //    1. Enumerate τ(28)=6 divisors as canonical "primary" slot candidates
 //       and extend to 28 slots by padding with 22 "secondary" placeholders
-//       rooted in n6-architecture/ verify_*.hexa artifacts.
+//       rooted in CANON/ verify_*.hexa artifacts.
 //    2. Map the same 6 Hexad axioms (a,b,c,d,p,s) against each of 5
 //       pre-registered empirical domains. Axiom (p) is strengthened:
 //       require exactly 4 primaries from the divisor basis — but τ(28)=6
@@ -156,7 +156,7 @@ fn sum_list_int(xs: list) -> int {
 // quartet from it is a LIE of structure — the axiom cannot hold.
 //
 // To make the falsification empirically observable (not merely symbolic),
-// we bind each primary slot to an n6-architecture verify_*.hexa path
+// we bind each primary slot to an CANON verify_*.hexa path
 // whose name encodes the divisor. The morphism slots are bound similarly.
 
 struct N28DomainMap {
@@ -238,7 +238,7 @@ fn eval_n28_domain(dm: N28DomainMap) -> AxiomMatrix {
 //
 // D0 : cell_baseline   (anima-hexad, adapted to 28-slot frame)
 // D1 : edu_lora        (LLM fine-tuning artifacts)
-// D2 : n6_numbertheory (n6-architecture verify_*.hexa, natural host)
+// D2 : n6_numbertheory (CANON verify_*.hexa, natural host)
 // D3 : anima_iit_phi   (consciousness substrate)
 // D4 : category_theory (closed-by-definition — reused for comparability)
 //
@@ -278,7 +278,7 @@ fn dom_lora_n28() -> N28DomainMap {
 }
 
 fn dom_n6_n28() -> N28DomainMap {
-    let root = "/Users/ghost/core/n6-architecture/"
+    let root = "/Users/ghost/core/canon/"
     return N28DomainMap {
         name:            "D2_n6_number_theory_n28",
         primary_d1:      root + "calc/kolon_n6_verify.hexa",

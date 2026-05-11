@@ -1,6 +1,6 @@
 # P9 Paradigm D 25K Φ★-Distill Eval Pipeline — Landed 2026-05-03
 
-**Goal**: Pre-build the Paradigm D 25K HBM3 ckpt eval pipeline so it fires in ~2 min end-to-end the moment `need-singularity/p9-paradigm-d-25k` publishes its 5 savepoints (step-5000..step-25000).
+**Goal**: Pre-build the Paradigm D 25K HBM3 ckpt eval pipeline so it fires in ~2 min end-to-end the moment `dancinlab/p9-paradigm-d-25k` publishes its 5 savepoints (step-5000..step-25000).
 
 **Substrate**: ubu1 (RTX 5070 12GB, sm_120, torch 2.11.0+cu128, peft 0.19.1) + Mac hexa for verdict.
 
@@ -59,7 +59,7 @@ total_wall_s: ~10
 - `--base-only` — eval base alone (re-anchor)
 - `--synthetic-lora` — attach freshly-init synthetic LoRA (smoke only)
 - `--ckpt-local-dir <path>` — local LoRA adapter
-- `--ckpt-repo <hf_id> --ckpt-revision <rev>` — HF Hub (e.g. `need-singularity/p9-paradigm-d-25k @ step-25000`)
+- `--ckpt-repo <hf_id> --ckpt-revision <rev>` — HF Hub (e.g. `dancinlab/p9-paradigm-d-25k @ step-25000`)
 
 **Args**:
 - `--limit 32` — N holdout records for BLEU-1
@@ -164,7 +164,7 @@ When 25K HBM3 ckpts arrive:
 
 | rank | action | 완성도 score | rationale |
 |---|---|---|---|
-| **1** | Run `ANIMA_CKPT_REPO=need-singularity/p9-paradigm-d-25k bash run_all_d_ckpts.sh` | **9.0/10** | apples-to-apples 4-falsifier matrix; ~2 min end-to-end; F-D trajectory vs mini-run will be the cleanest signal |
+| **1** | Run `ANIMA_CKPT_REPO=dancinlab/p9-paradigm-d-25k bash run_all_d_ckpts.sh` | **9.0/10** | apples-to-apples 4-falsifier matrix; ~2 min end-to-end; F-D trajectory vs mini-run will be the cleanest signal |
 | 2 | Subset eval (only step-25000 with `--limit 100`) | 7.0/10 | tighter F1 BLEU-1 CIs but loses 5-ckpt trajectory shape |
 | 3 | Add F-D per-record breakdown (z_T - z_S delta histogram) | 6.5/10 | distinguishes prompt-relative ordering shift from constant offset; spec-amend deferred |
 | 4 | Re-anchor F3 ceiling vs base ratio | 5.0/10 | 0.1 absolute is tighter than base (8.56); spec amendment requires new dated spec doc |
@@ -175,7 +175,7 @@ When 25K HBM3 ckpts arrive:
 
 ```bash
 # 1. on ubu1: per-ckpt eval (5 calls × ~20s + ~5s base re-extract = ~2 min total)
-ssh ubu1 'ANIMA_CKPT_REPO=need-singularity/p9-paradigm-d-25k \
+ssh ubu1 'ANIMA_CKPT_REPO=dancinlab/p9-paradigm-d-25k \
   bash ~/anima/state/p9_paradigm_d_25k_eval_2026_05_03/run_all_d_ckpts.sh'
 
 # 2. pull results to Mac
@@ -245,4 +245,4 @@ docs/p9_paradigm_d_eval_pipeline_landed_2026_05_03.ai.md  (this file)
 
 ---
 
-**End of P9 Paradigm D 25K Φ★-distill eval pipeline landed handoff. Pipeline READY. Next BG cycle: when 25K HBM3 ckpts publish to `need-singularity/p9-paradigm-d-25k`, run §7 sequence — output is `state/p9_paradigm_d_25k_eval_2026_05_03_verdict.json` with `SUCCESS_D | PARTIAL_D | FAIL_D` composite per ckpt.**
+**End of P9 Paradigm D 25K Φ★-distill eval pipeline landed handoff. Pipeline READY. Next BG cycle: when 25K HBM3 ckpts publish to `dancinlab/p9-paradigm-d-25k`, run §7 sequence — output is `state/p9_paradigm_d_25k_eval_2026_05_03_verdict.json` with `SUCCESS_D | PARTIAL_D | FAIL_D` composite per ckpt.**

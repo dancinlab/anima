@@ -3,7 +3,7 @@
 // PURPOSE
 //   Mode 1 evaluation: Path A LoRA (step-8k anchor) vs Llama-3.2-3B base internal Δ on 3 benchmarks.
 //   Boot fresh H100 SECURE on-demand pod, install lm-eval + peft, hf-download Llama-3.2-3B + the
-//   step-8k LoRA adapter (need-singularity/p9-llama32-lora-stage1@5a9b4584), run lm-eval with PEFT
+//   step-8k LoRA adapter (dancinlab/p9-llama32-lora-stage1@5a9b4584), run lm-eval with PEFT
 //   adapter composed onto Llama base, scp results back, auto-kill pod within 90s of sentinel.
 //
 //   F1_v3 V2 amended criteria evaluated post-eval:
@@ -32,7 +32,7 @@
 //
 // ENVIRONMENT (auto-pulled via secret get --raw)
 //   runpod.api_key       — RunPod GraphQL/CLI auth
-//   huggingface.token    — gated Llama-3.2-3B + need-singularity LoRA download
+//   huggingface.token    — gated Llama-3.2-3B + dancinlab LoRA download
 //
 // SAFETY CAPS
 //   max_wall_minutes    = 45     (hard pod kill at this point)
@@ -67,7 +67,7 @@ let WATCHDOG_REGISTER   = "/Users/ghost/core/anima/tool/h100_register.bash"
 let WATCHDOG_HB_DIR     = "/Users/ghost/core/anima/state/h100_watchdog/heartbeats"
 
 // LoRA target — BG-ξ verify_report committed in 1ef3c096
-let HF_LORA_REPO        = "need-singularity/p9-llama32-lora-stage1"
+let HF_LORA_REPO        = "dancinlab/p9-llama32-lora-stage1"
 let HF_LORA_REVISION    = "5a9b4584"          // step-8000 commit; not step-10000 (lost)
 let HF_BASE_REPO        = "meta-llama/Llama-3.2-3B"
 

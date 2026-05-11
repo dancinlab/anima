@@ -21,7 +21,7 @@ Stripped 120MB `dev-clean-2.tar.gz` blob from anima repo history via `git filter
 2. Verified `git-filter-repo` v2.47.0 at `/opt/homebrew/bin/git-filter-repo`.
 3. Enumerated blobs > 100MB pre-filter → 1 (dev-clean-2.tar.gz).
 4. Ran `git filter-repo --strip-blobs-bigger-than 100M --force` (5715 commits parsed in 6.75s; HEAD SHA rewritten).
-5. Re-added origin remote (filter-repo removes by design): `https://github.com/need-singularity/anima.git`.
+5. Re-added origin remote (filter-repo removes by design): `https://github.com/dancinlab/anima.git`.
 6. First push attempt (`--force-with-lease`) rejected (stale info, no fetch ref).
 7. Second push (`--force`) rejected by branch protection (GH006).
 8. Temporarily disabled `enforce_admins` + enabled `allow_force_pushes` via `gh api -X PUT`.

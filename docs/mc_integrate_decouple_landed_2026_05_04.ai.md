@@ -3,7 +3,7 @@
 ## Summary
 `mc_integrate` carved out from `nexus/modules/mc_integrate/` to standalone repo
 `/Users/ghost/core/mc-integrate/` (commit `a55535c`, GitHub
-`need-singularity/mc-integrate`).
+`dancinlab/mc-integrate`).
 
 Decouples the `anu_source` direct dependency: mc-integrate now consumes QRNG
 bytes via `qrng` standalone CLI shellout (4-tier resolver) instead of importing
@@ -15,7 +15,7 @@ ANU REST internals directly.
 - Before/after diff: `state/mc_integrate_decouple_2026_05_04/before_after.diff`
 - Smoke test: `state/mc_integrate_decouple_2026_05_04/smoke.json`
 - Baseline + post-patch selftest logs in same dir
-- GitHub: <https://github.com/need-singularity/mc-integrate> (commit `a55535c` pushed)
+- GitHub: <https://github.com/dancinlab/mc-integrate> (commit `a55535c` pushed)
 - Marker: `state/markers/mc_integrate_decouple_landed.marker`
 
 ## HF mirror

@@ -37,10 +37,10 @@ RUN mkdir -p /workspace/data /workspace/checkpoints
 
 # ─── Environment ───
 # hexa-native: no PYTHONPATH — runtime via $HEXA_BIN
-ENV ANIMA_REPO=https://github.com/need-singularity/anima.git
+ENV ANIMA_REPO=https://github.com/dancinlab/anima.git
 ENV ANIMA_BRANCH=main
 ENV ANIMA_DIR=/workspace/anima
-ENV HEXA_REPO=https://github.com/need-singularity/hexa-lang.git
+ENV HEXA_REPO=https://github.com/dancinlab/hexa-lang.git
 ENV HEXA_BRANCH=main
 ENV HEXA_DIR=/workspace/hexa-lang
 ENV HEXA_BIN=/workspace/hexa-lang/target/release/hexa

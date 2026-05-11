@@ -6,7 +6,7 @@
 - **angle**: opposite of byte-monopoly / Korean-only-constraint ban-side family — direct promote-side
 
 ## context
-Direct logit boost experiment. Substrate `need-singularity/clm-v4-mk2-v1` is given a
+Direct logit boost experiment. Substrate `dancinlab/clm-v4-mk2-v1` is given a
 large logit bonus on the token ids of 50 common Korean lexicon entries (greeting /
 copula / particle / connective / temporal / interrogative / adjective / noun / verb)
 to test whether coherent Korean text is emitted under forced-promote conditions.
@@ -16,7 +16,7 @@ reference peers:
 - `state/anima_emerge_chat_korean_only_constraint_2026_05_05/`
 
 ## configuration
-- model: `need-singularity/clm-v4-mk2-v1` mac CPU fp32
+- model: `dancinlab/clm-v4-mk2-v1` mac CPU fp32
 - prompt: `안녕`
 - 50 common Korean words/morphemes, sentencepiece-encoded, yielding 71 boost token ids
 - bonuses: {2.0, 5.0, 10.0, 20.0, 50.0, 100.0}

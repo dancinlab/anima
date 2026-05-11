@@ -13,7 +13,7 @@ Cache-resolver tokenizer load primitive with 7 modes:
 - `--encode <text>` / `--decode <ids>` (proxy via SSH ubu1 + venv_orchestrator python3)
 - `--vocab-size` → 64000 (matches expected)
 - `--sha256-verify` → bb851d39fbe3286dda11fc43da78d9bbf29ac6400d61b75616c8c750b710b8ab (matches expected literal)
-- `--resolve-path` → /home/aiden/.cache/huggingface/hub/models--need-singularity--clm-v4-base-mirror/snapshots/10ee03687.../tokenizer/tokenizer_64k_multilingual.model
+- `--resolve-path` → /home/aiden/.cache/huggingface/hub/models--dancinlab--clm-v4-base-mirror/snapshots/10ee03687.../tokenizer/tokenizer_64k_multilingual.model
 
 raw#9 strict compliant: emits `/tmp/clm_v4_tokenizer_load_helper.hexa_tmp` (NOT .py extension) on Mac side, scp's to ubu1, executes there via `/home/aiden/venv_orchestrator/bin/python3`. Helper file is transient-on-Linux per raw#37, never persisted to repo.
 

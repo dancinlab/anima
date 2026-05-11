@@ -116,7 +116,7 @@ Cumulative falsifier-retire ledger across Phase 5 → Phase 11:
 **Definition**: F-A18-1 algorithmic strengthening on PPMd order tuning (n6 small-text class).
 **Status**: PARTIAL — corpus-size bounded.
 **In-flight agent**: `a7b9417d` (F-A18-1 saving algorithmic ω-cycle).
-**Projected delta**: +2..+4pp on n6-architecture small-text class (currently 29.79%).
+**Projected delta**: +2..+4pp on CANON small-text class (currently 29.79%).
 **Aggregate contribution**: +0.5..+1pp on 6-repo total (n6 = 4.4% of total bytes).
 
 raw 91 C3: F-A18-1 cannot single-handedly close the 4.58pp aggregate gap. Combined path required: F-A18-1 + A20 production-tune + A4-A15 AOT cohort 2.
@@ -168,7 +168,7 @@ Per-class achievement matrix (raw 91 C3 honest, post-A18-v2 inclusion delta +0.3
 
 | class | constituents | saving% | verdict | P0 deploy |
 |---|---|---:|---|---|
-| **text-heavy** | n6-architecture + hexa-lang + anima alm | **83.83%** | ACHIEVED (margin 3.83pp) | **LIVE** |
+| **text-heavy** | CANON + hexa-lang + anima alm | **83.83%** | ACHIEVED (margin 3.83pp) | **LIVE** |
 | **structured-audit** | hive triad + hexa-lang aot_cache + airgenome rig_trend | **87.18%** | ACHIEVED (margin 7.18pp) | **LIVE** |
 | small-file | nexus state + nexus_proposals_small | 69.10% | BELOW (10.90pp gap) | GATED |
 | mixed-real | anima discovery + airgenome rig_trend mixed | 64.35% | BELOW (15.65pp gap) | GATED |

@@ -98,7 +98,7 @@ R39: "single-shot ML family-attribution = stochastic-axis (seed) misspec artifac
 
 ---
 
-## §5. Maintainer review checklist (n6-architecture)
+## §5. Maintainer review checklist (CANON)
 
 다음 4개 검토 후 atlas.n6 lock cycle 진행:
 

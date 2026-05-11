@@ -17,8 +17,8 @@ workflow + badge set + RELEASE_NOTES.
 |------------------------|--------------------------------------------------|-------------------------------------------------------------------------------|
 | README badges          | 3 (license, self-test, deps)                     | 7 (+ version, GH release, sync workflow, HF mirror)                          |
 | RELEASE_NOTES_v1.0.0   | absent                                           | present (123 LoC)                                                             |
-| GitHub release tag     | none                                             | <https://github.com/need-singularity/honesty-monitor/releases/tag/v1.0.0>     |
-| HF mirror              | none (`401`)                                     | <https://huggingface.co/need-singularity/honesty-monitor> (commit `c8118fa`)  |
+| GitHub release tag     | none                                             | <https://github.com/dancinlab/honesty-monitor/releases/tag/v1.0.0>     |
+| HF mirror              | none (`401`)                                     | <https://huggingface.co/dancinlab/honesty-monitor> (commit `c8118fa`)  |
 | Actions workflow       | absent                                           | `.github/workflows/sync-to-hf.yml` (qmirror pattern, 134 LoC)                 |
 | Mirrors block in README| absent                                           | present (canonical + HF + USER_ACTION pending)                                |
 | Smoke test             | (untested as part of polish)                     | `__HONESTY_MONITOR__ PASS alerts=2 steps=5` (exit 0)                          |
@@ -36,9 +36,9 @@ workflow + badge set + RELEASE_NOTES.
    RELEASE_NOTES + sync-to-hf workflow` (3 files, +270/-1).
 5. `git push origin main` `7888486..e005096`.
 6. `gh release create v1.0.0 --target main --notes-file RELEASE_NOTES_v1.0.0.md`
-   → <https://github.com/need-singularity/honesty-monitor/releases/tag/v1.0.0>.
-7. `hf repo create need-singularity/honesty-monitor --type model` → OK_NEW.
-8. `hf upload need-singularity/honesty-monitor . . --repo-type=model` (13 files,
+   → <https://github.com/dancinlab/honesty-monitor/releases/tag/v1.0.0>.
+7. `hf repo create dancinlab/honesty-monitor --type model` → OK_NEW.
+8. `hf upload dancinlab/honesty-monitor . . --repo-type=model` (13 files,
    ignore-patterns honored: `.git/* .github/* state/* __pycache__/* .pyc .DS_Store`)
    → HF commit `c8118fad71eaa2d20c4370cf9c52420746379afa`.
 9. Smoke test: `HONESTY_MONITOR_ROOT=. hexa run cli/honesty-monitor.hexa self-test`
@@ -47,7 +47,7 @@ workflow + badge set + RELEASE_NOTES.
 ## USER ACTION required
 
 **Set `HF_TOKEN` GitHub repository secret** (write-scope) at:
-<https://github.com/need-singularity/honesty-monitor/settings/secrets/actions>
+<https://github.com/dancinlab/honesty-monitor/settings/secrets/actions>
 
 Until set, the `.github/workflows/sync-to-hf.yml` workflow runs on every push
 to `main` but **fails loudly** at the `Verify HF_TOKEN secret is present` step

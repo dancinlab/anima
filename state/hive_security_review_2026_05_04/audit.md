@@ -2,8 +2,8 @@
 
 - **cycle**: hive_security_review_2026_05_04
 - **ts_utc**: 2026-05-04T11:30:43Z
-- **scope**: read-only audit of `/Users/ghost/core/hive/scripts/leak_guard_pretool.bash` + `/Users/ghost/core/hive/claude-config/hive-hook-bus/settings.json` ahead of GitHub `need-singularity/hive` push (currently untracked + uncommitted).
-- **repo visibility**: **PUBLIC** (`gh repo view need-singularity/hive --json visibility` = `"PUBLIC"`).
+- **scope**: read-only audit of `/Users/ghost/core/hive/scripts/leak_guard_pretool.bash` + `/Users/ghost/core/hive/claude-config/hive-hook-bus/settings.json` ahead of GitHub `dancinlab/hive` push (currently untracked + uncommitted).
+- **repo visibility**: **PUBLIC** (`gh repo view dancinlab/hive --json visibility` = `"PUBLIC"`).
 
 ---
 
@@ -102,8 +102,8 @@ STALE_HF_RERB='<HF_TOKEN_STALE_RERB_REDACTED>'
 ## 3. GitHub repo state check
 
 ```
-$ gh repo view need-singularity/hive --json visibility
-{"name":"hive","url":"https://github.com/need-singularity/hive","visibility":"PUBLIC"}
+$ gh repo view dancinlab/hive --json visibility
+{"name":"hive","url":"https://github.com/dancinlab/hive","visibility":"PUBLIC"}
 ```
 
 **Visibility = PUBLIC**. Push will be visible to entire internet + indexed by GitHub Code Search + scraped by AI training crawlers.
@@ -168,7 +168,7 @@ If the user prefers zero stale-token literals in public history:
 
 1. **Audit is read-only — push not executed**. The hive working tree shows `??` for both files (untracked). No commit, no push performed by this BG. User must execute §4.2 manually.
 2. **Stale-token rotation status is asserted from anima MEMORY + commit-message hearsay, not from a live HF API verification**. This audit did NOT call HF whoami with these token literals to confirm 401 — that would itself be a token-handling event the leak guard would block. Recommend user confirm rotation independently before trusting "benign" classification.
-3. **Public visibility lookup used `gh` CLI under user's auth context**. If `gh` is misconfigured / pointing at a different account, the visibility result could be wrong. Cross-check at https://github.com/need-singularity/hive recommended.
+3. **Public visibility lookup used `gh` CLI under user's auth context**. If `gh` is misconfigured / pointing at a different account, the visibility result could be wrong. Cross-check at https://github.com/dancinlab/hive recommended.
 4. **The hook itself is a partial defense**, not complete leak prevention. It only catches token-SHAPED strings in `tool_input` JSON for Bash/Write/Edit/MultiEdit. Read tool, network egress (curl in unrelated tools), file content already on disk — all out of scope. Adversaries with novel token formats (no prefix match) bypass entirely.
 5. **`_bind_revert_cmd` in settings.json references a `.bak.bind_activation_20260503_112759` file under `~/.hive/`**. That backup file is OUTSIDE the hive repo (still in dotfile-style location). If user's home dir is compromised, revert command depends on a file the repo cannot guarantee exists. Recommend documenting the backup file's expected SHA256 in settings.json comment.
 6. **No diff against last-known-good baseline**. The hook + settings are first-introductions to the repo (no prior version to diff). Cannot verify "no regression." Reviewer must read all 65 + 24 LoC line-by-line; this audit covered the full file content.

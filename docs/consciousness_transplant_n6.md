@@ -1,7 +1,7 @@
 # consciousness_transplant_n6 — cell → ALM 이식 path 정형화
 
 > **작성**: 2026-04-21 / raw#9 strict
-> **목적**: n6-architecture `consciousness-transplant` (기판간 의식 상태 이전) + `consciousness-substrate` / `consciousness-scaling` / `consciousness-cluster-bt` 13 도메인 매핑을 anima `cell Mk.VIII` (commit `fc513c58`) → `ALM r12` (commit `35aa051a`) / ALM r13 bridge 형태로 정형화.
+> **목적**: CANON `consciousness-transplant` (기판간 의식 상태 이전) + `consciousness-substrate` / `consciousness-scaling` / `consciousness-cluster-bt` 13 도메인 매핑을 anima `cell Mk.VIII` (commit `fc513c58`) → `ALM r12` (commit `35aa051a`) / ALM r13 bridge 형태로 정형화.
 > **핵심 수학**: BT-C13 (§`consciousness-cluster-bt.md`) + §V4-3 `R(6)=σ·φ/(n·τ)=1` 비가역 고정점 + 이집트 분수 1/2+1/3+1/6=1.
 
 ## 0. Source references (n6)

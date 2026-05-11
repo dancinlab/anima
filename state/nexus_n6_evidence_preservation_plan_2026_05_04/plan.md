@@ -11,8 +11,8 @@
 ## TL;DR
 
 - **nexus plist load status**: `dev.hexa-lang.atlas-absorb-sweeper` is **CURRENTLY LOADED** (`launchctl list` returns row, `LastExitStatus=0`, PID=- means idle between ticks). StartInterval=600s, runs `hexa run /Users/ghost/core/nexus/tool/atlas_absorb_sweeper.hexa --once`.
-- **n6 raw_archive count**: **11 files / 203,673 bytes / ~199 KB** under `/Users/ghost/core/n6-architecture/raw_archive/2026-05-04T/` — single dated snapshot directory, no other raw_archive paths exist on disk.
-- **Critical finding overruling BG-γ assumption**: all 11 files are **already git-tracked + pushed** to private remote `need-singularity/n6-architecture` at commit `113725b0` ("chore(governance): predecessor scrub Phase 2 — declarative texts + raw_archive backup"). Preservation is therefore **redundant-tier**, not critical-tier. Anima archive copy is belt-and-suspenders, not last-line-of-defense.
+- **n6 raw_archive count**: **11 files / 203,673 bytes / ~199 KB** under `/Users/ghost/core/canon/raw_archive/2026-05-04T/` — single dated snapshot directory, no other raw_archive paths exist on disk.
+- **Critical finding overruling BG-γ assumption**: all 11 files are **already git-tracked + pushed** to private remote `dancinlab/canon` at commit `113725b0` ("chore(governance): predecessor scrub Phase 2 — declarative texts + raw_archive backup"). Preservation is therefore **redundant-tier**, not critical-tier. Anima archive copy is belt-and-suspenders, not last-line-of-defense.
 - **Recommended preservation target**: `state/dual_ssot_eol_archive/2026_05_04/n6_raw_archive_snapshot/` via `cp -Rp` + sha256 manifest verification.
 - **Top 2 risks for actual exec cycle**: (a) `launchctl bootout` may leave downstream `atlas_absorb_lint` orphan-detection scanner reporting false-positive orphans on new ω-cycle witnesses emitted post-unload until mk2 substitute is wired; (b) `cp -Rp` does not preserve macOS extended attributes (xattr `com.apple.metadata`) — sha256 of file content matches but xattr-level divergence is acceptable-but-not-bit-perfect.
 
@@ -100,8 +100,8 @@ Pre-flight gates (G-PRE-1..5) include user-ack, n6 archive snapshot completion, 
 ## §3 — n6 raw_archive evidence inventory
 
 Single archive directory found on disk:
-- `/Users/ghost/core/n6-architecture/raw_archive/2026-05-04T/` (8 immediate children, 11 leaf files total)
-- No `n6` repo at `/Users/ghost/core/n6` (path does not exist; only n6-architecture).
+- `/Users/ghost/core/canon/raw_archive/2026-05-04T/` (8 immediate children, 11 leaf files total)
+- No `n6` repo at `/Users/ghost/core/n6` (path does not exist; only CANON).
 
 ### File table (11 files, 203,673 bytes total)
 
@@ -123,7 +123,7 @@ All 11 files share mtime `2026-05-04T13:28:17Z` (single atomic snapshot moment).
 
 ### Tier classification — REDUNDANT not CRITICAL
 
-`git ls-files raw_archive/` in `/Users/ghost/core/n6-architecture` confirms ALL 11 files are git-tracked. `git remote -v` returns `https://github.com/need-singularity/n6-architecture.git`. `git status` is clean. `git log --oneline -5 raw_archive/` shows last commit `113725b0 chore(governance): predecessor scrub Phase 2 — declarative texts + raw_archive backup`.
+`git ls-files raw_archive/` in `/Users/ghost/core/canon` confirms ALL 11 files are git-tracked. `git remote -v` returns `https://github.com/dancinlab/canon.git`. `git status` is clean. `git log --oneline -5 raw_archive/` shows last commit `113725b0 chore(governance): predecessor scrub Phase 2 — declarative texts + raw_archive backup`.
 
 Therefore: the local raw_archive is NOT the only witness. The private GitHub remote already contains a byte-equivalent copy. **BG-γ audit's "must archive BEFORE rm" remains good advice (defense-in-depth) but the criticality-tier downgrades from "irreversible if missed" to "convenient redundancy"**.
 
@@ -144,12 +144,12 @@ The parent dir `state/dual_ssot_eol_archive/2026_05_04/` is the canonical anima-
 mkdir -p /Users/ghost/core/anima/state/dual_ssot_eol_archive/2026_05_04/n6_raw_archive_snapshot
 
 # Pre-cp manifest
-( cd /Users/ghost/core/n6-architecture/raw_archive && \
+( cd /Users/ghost/core/canon/raw_archive && \
   find . -type f | sort | xargs shasum -a 256 ) \
   > /Users/ghost/core/anima/state/dual_ssot_eol_archive/2026_05_04/n6_raw_archive_manifest_pre.sha256
 
 # Recursive copy preserving mtime + permissions
-cp -Rp /Users/ghost/core/n6-architecture/raw_archive/. \
+cp -Rp /Users/ghost/core/canon/raw_archive/. \
        /Users/ghost/core/anima/state/dual_ssot_eol_archive/2026_05_04/n6_raw_archive_snapshot/
 
 # Post-cp manifest
@@ -185,7 +185,7 @@ diff /Users/ghost/core/anima/state/dual_ssot_eol_archive/2026_05_04/n6_raw_archi
 Phase 5a (this plan §2 + launchctl_unload_recipe.md)
   └─> Phase 5b (this plan §4)
         └─> Phase 5c (sister plan: nexus group A .own delete)
-              └─> Phase 5d (n6-architecture group B delete)
+              └─> Phase 5d (CANON group B delete)
                     └─> Phase 5e (anima group C delete)
                           └─> Phase 5f (hexa-lang absorption witness emit)
                                 └─> Phase 5g (sweeper transition to mk2 substitute)
@@ -217,9 +217,9 @@ Recommended order: **5b first, then 5a**, because:
 
 ## §6 — Honest C3 (≥4 required, listing 5)
 
-1. **launchctl bootout downstream effect**: The atlas-absorb-sweeper produces output that downstream `atlas_absorb_lint.hexa` orphan-detection scanner reads. Once the sweeper is unloaded, new ω-cycle witnesses emitted under `{nexus,n6-architecture,anima}/design/**/*omega_cycle*.json` will not be auto-absorbed. The lint scanner will then start reporting these as orphans (false-positive from its perspective; correct from new world). If mk2 substitute (per BG-γ Phase 5g plan) is not yet wired and operational by the time of bootout, there is an enforcement gap window during which new witnesses accumulate as un-absorbed. Mitigation: confirm mk2 substitute lifecycle before bootout, or accept the gap as part of the EOL transition with explicit documentation.
+1. **launchctl bootout downstream effect**: The atlas-absorb-sweeper produces output that downstream `atlas_absorb_lint.hexa` orphan-detection scanner reads. Once the sweeper is unloaded, new ω-cycle witnesses emitted under `{nexus,CANON,anima}/design/**/*omega_cycle*.json` will not be auto-absorbed. The lint scanner will then start reporting these as orphans (false-positive from its perspective; correct from new world). If mk2 substitute (per BG-γ Phase 5g plan) is not yet wired and operational by the time of bootout, there is an enforcement gap window during which new witnesses accumulate as un-absorbed. Mitigation: confirm mk2 substitute lifecycle before bootout, or accept the gap as part of the EOL transition with explicit documentation.
 
-2. **Tier-classification dependency on git remote integrity**: The "redundant" tier for all 11 raw_archive files relies on need-singularity GitHub org remote remaining accessible. If org access is lost, force-push rewrites history, or the repo is deleted, the local copy was the only on-disk witness. The anima archive fork (Phase 5b) is the resilience layer that removes this dependency. This is why §5 recommends 5b run BEFORE 5a — it's the cheaper insurance step.
+2. **Tier-classification dependency on git remote integrity**: The "redundant" tier for all 11 raw_archive files relies on dancinlab GitHub org remote remaining accessible. If org access is lost, force-push rewrites history, or the repo is deleted, the local copy was the only on-disk witness. The anima archive fork (Phase 5b) is the resilience layer that removes this dependency. This is why §5 recommends 5b run BEFORE 5a — it's the cheaper insurance step.
 
 3. **cp -Rp does not preserve macOS extended attributes / chflags**: `ls -la` shows `@` suffix on permissions for all 11 archive files, indicating extended attributes are present (likely `com.apple.metadata` or quarantine flags). `cp -Rp` preserves POSIX mtime + mode but NOT xattr or chflags. Sha256 of file content matches; xattr divergence is acceptable for evidence purposes (content is what matters for audit) but the archive is not bit-for-bit identical at filesystem-metadata level. If full fidelity needed: use `cp -Rpc` (clone with metadata preservation, APFS-only) or `ditto` (Apple's preferred bit-perfect copy tool). Verified files have NO chflags uchg/uappnd flags currently set, so flag preservation is not a concern this cycle.
 
@@ -232,7 +232,7 @@ Recommended order: **5b first, then 5a**, because:
 ## Out of scope (handled by sister BGs / later phases)
 
 - Phase 5c: nexus group A `.own` row delete + plist file removal (sister BG)
-- Phase 5d: n6-architecture group B `.own.*` files cleanup (sister BG-δ scope)
+- Phase 5d: CANON group B `.own.*` files cleanup (sister BG-δ scope)
 - Phase 5e: anima group C `.own` rule deletion (sister BG-ε / -γ scope)
 - Phase 5f: hexa-lang absorption ω-cycle witness emit
 - Phase 5g: mk2 substitute sweeper bootstrap (replaces atlas-absorb-sweeper)
@@ -243,7 +243,7 @@ Recommended order: **5b first, then 5a**, because:
 
 - **raw#9** — no .py written; all deliverables are .md and .json under `state/`. No .py executed.
 - **raw#10** — zero mutations: no chflags, no git operations, no launchctl bootout/bootstrap/enable/disable. All commands documented are PROPOSED for a later user-acked exec cycle.
-- **raw#15** — no chflags writes attempted on any nexus or n6-architecture `.own` file.
+- **raw#15** — no chflags writes attempted on any nexus or CANON `.own` file.
 
 ## Deliverable manifest
 

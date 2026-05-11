@@ -86,14 +86,14 @@ ls /Users/ghost/core/anima/anima-clm/.git/lfs/  # ← No such file or directory 
 
 ## §3 HF cache CLM v1/v2/v3 archaeology
 
-`~/.cache/huggingface/hub/` (need-singularity 계정 repos):
+`~/.cache/huggingface/hub/` (dancinlab 계정 repos):
 
 ```
-models--need-singularity--clm-v4-base-mirror      (refs only, no snapshot)
-models--need-singularity--clm-v4-mk2-v1           (full, 2.1GB blob)
-models--need-singularity--clm-v4-sft-1-6-stage1
-models--need-singularity--clm-v4-sft-1-6-step-{5k,10k,25k,50k}
-models--need-singularity--clm-v4-sft-stage1
+models--dancinlab--clm-v4-base-mirror      (refs only, no snapshot)
+models--dancinlab--clm-v4-mk2-v1           (full, 2.1GB blob)
+models--dancinlab--clm-v4-sft-1-6-stage1
+models--dancinlab--clm-v4-sft-1-6-step-{5k,10k,25k,50k}
+models--dancinlab--clm-v4-sft-stage1
 ```
 
 **모두 v4 (post-drift)**. v4-mk2-v1 largest blob = 2,124,043,008 bytes (2.0 GB) = **530.99M params × fp32 ≈ post-drift BPE 64K architecture**. v1/v2/v3 repo는 anima HF account에 **존재하지 않음**.
@@ -203,7 +203,7 @@ verdict = "FAIL_NO_TRACE"  # option α v2 weights revival impossible on Mac
 - **C2**: v3는 명시적 commit 부재. v2→v4 점프이며 v3 라벨은 추론 only (BG-EP archaeology와 일관).
 - **C3**: `serve_conscious_cpu.hexa` source의 "18.8M" vs in-source decoder spec 28M+34.5M=62.5M 사이 mismatch — commit message integer는 engine cells only인지, decoder excluded인지 명확하지 않음. 체크포인트가 만약 발견됐어도 size 검증으로 ambiguity 해결 필요했을 것.
 - **C4**: filesystem-wide `find / -name best.pt` = 0 결과는 mac local 한정. ubu1 (RTX 5070) 또는 user의 다른 device (ubu0/dest1)에는 보존됐을 가능성 0이 아님 — 단 BG-EV ubu1 launch doc은 이미 "5-10 days로 처음부터 retrain" 가정이므로 user가 v2 weights 부재를 implicitly 인정.
-- **C5**: HF cache 부재는 mac 한정. 만약 user account `need-singularity`에 `clm-v2-byte-level-18m` private repo가 있다면 `hf api` (CLI auth됨) 호출로 list 가능 — 본 BG는 cache scan만 수행, network call 미실행 ($0 제약).
+- **C5**: HF cache 부재는 mac 한정. 만약 user account `dancinlab`에 `clm-v2-byte-level-18m` private repo가 있다면 `hf api` (CLI auth됨) 호출로 list 가능 — 본 BG는 cache scan만 수행, network call 미실행 ($0 제약).
 - **C6**: option β가 PASS reconstruction이라고 단정한 근거는 archaeology doc의 design spec + serve_conscious_cpu.hexa archived source. 단 **3K Korean fine-tune corpus** 자체가 retain됐는지는 별도 확인 필요 — `data/corpus_mix_70wiki_30dialogue.txt` 존재하지만 v2 origin training의 정확 corpus과 동일한지 미검증.
 
 ---
@@ -238,4 +238,4 @@ verdict = "FAIL_NO_TRACE"  # option α v2 weights revival impossible on Mac
 ### 8.3 Negative-result anchors
 - `find / -name best.pt 2>/dev/null` → 0 results (filesystem-wide)
 - `git lfs ls-files` → 0 results
-- `~/.cache/huggingface/hub/models--need-singularity--clm-v[123]*` → does not exist
+- `~/.cache/huggingface/hub/models--dancinlab--clm-v[123]*` → does not exist

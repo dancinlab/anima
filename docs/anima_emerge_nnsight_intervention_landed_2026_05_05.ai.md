@@ -17,7 +17,7 @@
 
 ## Setup
 
-- Model: `need-singularity/clm-v4-mk2-v1` (CLM v4 mk2 v1, fp32 cpu)
+- Model: `dancinlab/clm-v4-mk2-v1` (CLM v4 mk2 v1, fp32 cpu)
 - Helper: `tool/transient_py/anima_emerge_nnsight_intervention.py` (raw#37 + .own 3)
   - Reuses `anima_emerge_cand_d_inject_helper.py:_try_load_model + _load_tokenizer`
 - Wrap: `from nnsight import NNsight; nn_model = NNsight(raw_model)` v0.7.0

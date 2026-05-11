@@ -5,7 +5,7 @@
   "tests": [
     {
       "id": "primary",
-      "repo": "need-singularity/clm-v4-paradigm-j-50k-step-5k",
+      "repo": "dancinlab/clm-v4-paradigm-j-50k-step-5k",
       "expected": "PASS",
       "actual": "PASS",
       "stdout_tail": "OK\n__ANIMA_HF_UPLOAD_MK2__ PASS",
@@ -13,7 +13,7 @@
     },
     {
       "id": "paradigm_a_prime",
-      "repo": "need-singularity/clm-v4-paradigm-a-prime-step-10k",
+      "repo": "dancinlab/clm-v4-paradigm-a-prime-step-10k",
       "expected": "PASS",
       "actual": "PASS",
       "stdout_tail": "OK\n__ANIMA_HF_UPLOAD_MK2__ PASS",
@@ -21,7 +21,7 @@
     },
     {
       "id": "blm_paradigm_d",
-      "repo": "need-singularity/blm-v1-paradigm-d-distill-50k-final",
+      "repo": "dancinlab/blm-v1-paradigm-d-distill-50k-final",
       "expected": "PASS",
       "actual": "PASS",
       "stdout_tail": "OK\n__ANIMA_HF_UPLOAD_MK2__ PASS",
@@ -29,7 +29,7 @@
     },
     {
       "id": "regression_sft_stage1",
-      "repo": "need-singularity/clm-v4-sft-stage1",
+      "repo": "dancinlab/clm-v4-sft-stage1",
       "expected": "PASS",
       "actual": "PASS",
       "stdout_tail": "OK\n__ANIMA_HF_UPLOAD_MK2__ PASS",
@@ -37,7 +37,7 @@
     },
     {
       "id": "rejection_bogus_family",
-      "repo": "need-singularity/zzz-v4-bogus-stage",
+      "repo": "dancinlab/zzz-v4-bogus-stage",
       "expected": "FAIL (family check)",
       "actual": "FAIL",
       "stdout_tail": "FAIL: family must be one of {clm|alm|blm|vlm|slm|tlm|nlm|mlm|llm|hexad|composite} (got: 'zzz')\n__ANIMA_HF_UPLOAD_MK2__ FAIL",
@@ -45,7 +45,7 @@
     },
     {
       "id": "rejection_bogus_stage",
-      "repo": "need-singularity/clm-v4-bogus-stage",
+      "repo": "dancinlab/clm-v4-bogus-stage",
       "expected": "FAIL (stage check)",
       "actual": "FAIL",
       "stdout_tail": "FAIL: stage must start with one of {sft-stage|dpo|merged|base|preview|dev|paradigm-} (got: 'bogus-stage')\n__ANIMA_HF_UPLOAD_MK2__ FAIL",

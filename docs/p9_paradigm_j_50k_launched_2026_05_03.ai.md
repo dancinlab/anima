@@ -23,7 +23,7 @@
 | Substrate | ubu1 RTX 5070 12 GiB (after GPU frees from seed43 sentinel ~13:55 UTC) |
 | Wall | ~60 min training + ~60 min wait = ~14:45-15:00 UTC ETA |
 | Cost | $0 (local) |
-| Savepoints | step 5K, 10K, 25K, 50K → HF `need-singularity/clm-v4-paradigm-j-50k-step-{N}k` + `-final` |
+| Savepoints | step 5K, 10K, 25K, 50K → HF `dancinlab/clm-v4-paradigm-j-50k-step-{N}k` + `-final` |
 | Outputs | `/tmp/p9_paradigm_j_50k_out/{trajectory.json, verdict.json, train.log}` on ubu1 |
 | Marker (deferred) | `state/markers/p9_paradigm_j_50k_landed.marker` (write after verdict.json appears) |
 
@@ -76,7 +76,7 @@ Per-task fidelity, returning now without waiting 75+ min for GPU + 10+ min for f
 
 4. **No baseline α-only run for direct F-J5 comparison was launched in this RETRY.** The Phase 1.6 sentinel itself (already complete: F1=0.0059, φ★=43.28) IS the α-only baseline (γ_FE=0). F-J5 readout = `(J50K final CE) ≤ 1.2 × (Phase 1.6 final CE)` — direct comparison, no extra run needed.
 
-5. **HF push to `need-singularity/clm-v4-paradigm-j-50k-*` repos requires HF_TOKEN.** Launcher tries to load from `/home/aiden/.hf_token` or `.bashrc`. If both fail, savepoints still land on disk at `/tmp/p9_paradigm_j_50k_savepoints/` but HF push errors will appear in the verdict's `hf_push_log` (non-blocking — Phase 1.6 sentinel pattern).
+5. **HF push to `dancinlab/clm-v4-paradigm-j-50k-*` repos requires HF_TOKEN.** Launcher tries to load from `/home/aiden/.hf_token` or `.bashrc`. If both fail, savepoints still land on disk at `/tmp/p9_paradigm_j_50k_savepoints/` but HF push errors will appear in the verdict's `hf_push_log` (non-blocking — Phase 1.6 sentinel pattern).
 
 6. **Watchdog 2h timeout means: if seed43 + any subsequent jobs total > 2h, training never starts.** If timeout hits, watchdog logs `TIMEOUT: GPU never freed up after 2h` and exits. User must manually rerun watchdog or escalate.
 

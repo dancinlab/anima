@@ -5,7 +5,7 @@
   "verdict": "PARTIAL_LOCAL_APPEND_PASS_GIT_PUSH_BLOCKED",
   "nexus_repo": {
     "path": "/Users/ghost/core/nexus",
-    "remote_url": "https://github.com/need-singularity/nexus.git",
+    "remote_url": "https://github.com/dancinlab/nexus.git",
     "branch": "main",
     "head_sha_at_session_start": "ea72db94d51da740f4251548e4a28e1af2e5082c"
   },
@@ -42,7 +42,7 @@
     "did NOT commit, did NOT push"
   ],
   "raw10_honest": [
-    "anima 와 nexus 는 different GitHub repos (anima=need-singularity/anima, nexus=need-singularity/nexus); commit sha 는 본질적으로 다를 수밖에 없음",
+    "anima 와 nexus 는 different GitHub repos (anima=dancinlab/anima, nexus=dancinlab/nexus); commit sha 는 본질적으로 다를 수밖에 없음",
     "nexus 의 atlas_convergence_witness.jsonl 16 line 모두 git-untracked (file 자체가 nexus 정책상 'regenerable, not SSOT')",
     "본 subagent 는 local file append + byte-identical 검증만 PASS — git push 는 nexus .gitignore 정책 충돌로 BLOCKED",
     "사용자 명시 'git add + commit + push' 절차는 .gitignore 의 의도적 정책 (state/* 무시) 을 강제 우회 (-f) 할 때만 가능 → 이는 subagent 단독 결정 범위를 넘음, 사용자 결정 필요",

@@ -32,7 +32,7 @@ This is **forward-spec, not promotion-pending**. D1 P3 entry is GATED on:
 | producer | path | corpus class | pre-encode delta | A19 PASS 0.5 status | migration LoC |
 |---|---|---|---:|:---:|---:|
 | **format_witness_writer** | `anima/tool/format_witness_writer.hexa` (proxy: per-cycle witness emit) | text-heavy | -1.92pp MEASURED | NO (0pp delta, 0 dict entries) | +20 (structural-only emit shim) |
-| **atlas_emit** | `n6-architecture/tool/atlas_emit.hexa` (n6 atlas_convergence_witness writer) | mixed-real | PROJECTED -2pp (text-heavy class behavior) | NO (no schema diversity) | +20 |
+| **atlas_emit** | `CANON/tool/atlas_emit.hexa` (n6 atlas_convergence_witness writer) | mixed-real | PROJECTED -2pp (text-heavy class behavior) | NO (no schema diversity) | +20 |
 | **honesty_triad_writer** | `hive/tool/honesty_triad_writer.hexa` (raw 91 triad audit emit) | structured-audit | PROJECTED 0pp (already in chain) | NO (chain-amortize saturated) | +15 (passthrough — already HXC-compatible) |
 
 **Wave 1 totals**: 3 producers, +55 LoC migration delta. **A1-only structural pre-encode** (no PASS 0.5).

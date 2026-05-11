@@ -44,7 +44,7 @@
       "variants_supported": ["fy_18m (default)", "v2_byte_convo5k"],
       "real_mode_probe_status": {
         "fy_18m": "BLOCKED — Mac ckpt 부재 (runs/anima-native-ko-small-* dir 부재 확인); ubu1 scp pull mandatory (사용자 explicit consent + bandwidth)",
-        "v2_byte_convo5k": "ACTIVE — HF cache convo_5k.pt resolve PASS (~/.cache/huggingface/hub/models--need-singularity--clm-v2-byte-18m-convo-5k snapshot 존재); real-mode hidden state extraction viable"
+        "v2_byte_convo5k": "ACTIVE — HF cache convo_5k.pt resolve PASS (~/.cache/huggingface/hub/models--dancinlab--clm-v2-byte-18m-convo-5k snapshot 존재); real-mode hidden state extraction viable"
       },
       "schema_mirror_target": "clm_v4_mount.hexa response schema (phi_star / phi_drift / axis_activation 5 / dominant_cells / hidden_state_delta) — iter3/4 ROC pipeline reuse"
     }
@@ -164,7 +164,7 @@
           "'OK V2 BYTE KO HEAVY RETRAIN H100 FIRE' (corpus retrain 승인)",
           "'OK V2 BYTE FULL N60 ENSEMBLE FIRE' (post retrain N=60 measurement 승인)",
           "'OK V6 AWARENESS FIRE'",
-          "'OK PROMOTE PUBLIC need-singularity/clm-v2-byte-18m-ko-heavy' (mandate-9 (c))"
+          "'OK PROMOTE PUBLIC dancinlab/clm-v2-byte-18m-ko-heavy' (mandate-9 (c))"
         ],
         "infra_requirement": [
           "ko_heavy corpus 246MB 이상 + dataset preprocessing (BG-FS evidence carry)",

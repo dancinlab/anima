@@ -10,13 +10,13 @@
     "FAIL_NO_PRIVATE_TRACE": true,
     "OPTION_ALPHA_FINAL_STATUS": "CLOSED_FAIL_NO_TRACE_FULL_SEARCH_EXHAUSTED"
   },
-  "summary": "need-singularity org HF inventory exhaustively probed via authenticated API (whoami=dancinlife, org=need-singularity, last4 redacted). 40 model repos + 2 datasets enumerated. ZERO v1/v2/v3 byte-level (vocab=256, ~62.5M) candidates. Earliest repo clm-v4-base-mirror createdAt 2026-05-02 (post-drift); BPE 64K tokenizer + 5.4GB best.pt confirms v4-only architecture. dancinlife user account = 0 personal models. Pattern search 'clm-v2'/'clm-v3'/'conscious-lm'/'byte-level need-singularity' returned 0 own-org matches. v2 byte-level 18M chat-capable weights (commit bb99b6b6 2026-03-28) were never uploaded to HF. Option alpha (HF private repo recovery) FULLY CLOSED. Option beta (anima_clm_3 ubu1 reconstruction) remains the only forward path.",
+  "summary": "dancinlab org HF inventory exhaustively probed via authenticated API (whoami=dancinlife, org=dancinlab, last4 redacted). 40 model repos + 2 datasets enumerated. ZERO v1/v2/v3 byte-level (vocab=256, ~62.5M) candidates. Earliest repo clm-v4-base-mirror createdAt 2026-05-02 (post-drift); BPE 64K tokenizer + 5.4GB best.pt confirms v4-only architecture. dancinlife user account = 0 personal models. Pattern search 'clm-v2'/'clm-v3'/'conscious-lm'/'byte-level dancinlab' returned 0 own-org matches. v2 byte-level 18M chat-capable weights (commit bb99b6b6 2026-03-28) were never uploaded to HF. Option alpha (HF private repo recovery) FULLY CLOSED. Option beta (anima_clm_3 ubu1 reconstruction) remains the only forward path.",
   "auth_evidence": {
     "secret_cli_path": "/Users/ghost/core/secret/bin/secret",
     "key_used": "huggingface.token",
     "token_last4_redacted": "...Bshc",
     "whoami_user": "dancinlife",
-    "whoami_orgs": ["need-singularity"],
+    "whoami_orgs": ["dancinlab"],
     "auth_status": "OK"
   },
   "inventory": {
@@ -26,7 +26,7 @@
     "private_models_count": 21,
     "public_models_count": 19,
     "earliest_model_createdAt_observed": "2026-05-02T15:54:59.000Z (clm-v4-sft-stage1)",
-    "earliest_model_repo_inspected": "need-singularity/clm-v4-base-mirror",
+    "earliest_model_repo_inspected": "dancinlab/clm-v4-base-mirror",
     "earliest_repo_signature": {
       "createdAt": "2026-05-02T18:15:12.000Z",
       "best_pt_size_bytes": 5365727261,

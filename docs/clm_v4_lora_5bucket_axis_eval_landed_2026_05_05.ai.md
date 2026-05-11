@@ -24,7 +24,7 @@ Two-part contract per spec §F-CLM-LORA-4:
 
 **Part A (structural)**: Re-ran `tool/cell_token_bridge_proto.hexa` post-LoRA on Mac. 3/3 fixtures match pre-registered (identity BRIDGE_OK / ladder BRIDGE_OK / adversarial BRIDGE_FAIL) + 100-step round-trip drift_max=0.0 within bound 2e-4. Verdict: **CONDITIONAL_PASS**. Eigenvec SSOT (`.meta2-cert/cell-eigenvec-16.json`) is unchanged by LoRA training; this Part A PASS is structural-by-invariance and was strictly redundant but emitted to satisfy the spec letter. Artifact at `state/clm_v4_lora_5bucket_axis_eval_2026_05_05/cell_token_bridge_post_lora.json`.
 
-**Part B (axis-cond hidden-state cosine)**: Forwarded the canonical 100-prompt anima axis eval set (`state/anima_axis_eval_set_2026_05_05/prompts.jsonl`, 5 axes × 20 prompts) through (1) base CLM v4 (HF-format `need-singularity/clm-v4-mk2-v1`) and (2) base+LoRA (PEFT). Hook at `decoder.ln_f` forward output, mean over real-token seq (matches `state/clm_v4_lora_phi_canonical_2026_05_05` method). Per-axis hidden mean → cosine(LoRA_mean, base_mean) per axis → composite = mean of 5.
+**Part B (axis-cond hidden-state cosine)**: Forwarded the canonical 100-prompt anima axis eval set (`state/anima_axis_eval_set_2026_05_05/prompts.jsonl`, 5 axes × 20 prompts) through (1) base CLM v4 (HF-format `dancinlab/clm-v4-mk2-v1`) and (2) base+LoRA (PEFT). Hook at `decoder.ln_f` forward output, mean over real-token seq (matches `state/clm_v4_lora_phi_canonical_2026_05_05` method). Per-axis hidden mean → cosine(LoRA_mean, base_mean) per axis → composite = mean of 5.
 
 Per-axis cos(LoRA, base):
 - daily=0.1755, emotion=0.1067, meta=0.1098, roleplay=0.1275, task=0.1252.

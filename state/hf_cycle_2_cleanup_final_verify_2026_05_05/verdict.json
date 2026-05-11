@@ -42,7 +42,7 @@
       "newly_authored": true,
       "template_source": "state/clm_v4_hf_release_v1_upload_2026_05_04/cleanup_2026_05_07.bash",
       "deltas_from_template": [
-        "REPO_ID -> need-singularity/clm-v4-paradigm-d-pbeta-50k-mk2-v1",
+        "REPO_ID -> dancinlab/clm-v4-paradigm-d-pbeta-50k-mk2-v1",
         "COMMIT_SHA -> 7643e764488f8e11020a7663c50f2e590b70d10f",
         "EXPECTED_SIBLINGS -> 6 (Pβ stage: 5 stage files + .gitattributes auto-added by HF)",
         "UBU1_STAGE -> /home/aiden/anima_pbeta_50k_step50000",
@@ -66,7 +66,7 @@
       "newly_authored": true,
       "template_source": "state/clm_v4_hf_release_v1_upload_2026_05_04/public_promote_2026_05_07.bash",
       "deltas_from_template": [
-        "REPO_ID -> need-singularity/clm-v4-paradigm-d-pbeta-50k-mk2-v1",
+        "REPO_ID -> dancinlab/clm-v4-paradigm-d-pbeta-50k-mk2-v1",
         "EXPECTED_SHA -> 7643e764488f8e11020a7663c50f2e590b70d10f",
         "EXPECTED_SIBLINGS -> 6",
         "REVIEW_CLOSE_UTC -> 2026-05-07T03:48:00Z",
@@ -74,7 +74,7 @@
         "G1 evidence retargeted to F-Pβ-2 + F-Pβ-3 verdicts",
         "G2 evidence retargeted to README §C1 chat-FAIL_TRUE disclosure",
         "G3 evidence retargeted to Pβ φ★=42.37 baseline",
-        "G5 NEW gate added — base model promotion status check (adapter inherits availability from need-singularity/clm-v4-mk2-v1)",
+        "G5 NEW gate added — base model promotion status check (adapter inherits availability from dancinlab/clm-v4-mk2-v1)",
         "G6 evidence retargeted to Pβ stage README.md (5 H2 + 7-bullet Caveats)"
       ],
       "syntax_check_method": "bash -n",
@@ -127,7 +127,7 @@
   "honest_caveats_c3": [
     "C1 — shellcheck not installed on mac; syntax verification fell back to `bash -n` only. bash -n catches parser errors but NOT semantic issues like quoting, unused vars, ShellCheck SC2086 word-splitting, etc. Recommend installing shellcheck (brew install shellcheck) and re-running before final operator execution.",
     "C2 — Dry-run only verified GATE 1 (review window). GATE 2 (HF state intact via `secret` CLI + curl + python3 parse) was NOT exercised by the dry-run because GATE 1 short-circuits abort; this is by design but means GATE 2's curl + python3 parse path remains unvalidated until real-time execution post-window-close. Mitigation: independent ad-hoc HF API curl in this verify cycle confirmed both repos return private+sha+siblings exactly matching script EXPECTED_* constants — equivalent coverage achieved out-of-band.",
-    "C3 — Pβ promote G5 gate (base model promotion status) is a NEW gate not present in clm template. Operator must verify base need-singularity/clm-v4-mk2-v1 has been public-promoted FIRST; otherwise non-auth readers cannot load the Pβ adapter (PEFT requires base + adapter both accessible). Order of operations matters: clm-v4-mk2-v1 promote MUST precede pbeta promote.",
+    "C3 — Pβ promote G5 gate (base model promotion status) is a NEW gate not present in clm template. Operator must verify base dancinlab/clm-v4-mk2-v1 has been public-promoted FIRST; otherwise non-auth readers cannot load the Pβ adapter (PEFT requires base + adapter both accessible). Order of operations matters: clm-v4-mk2-v1 promote MUST precede pbeta promote.",
     "C4 — secret CLI on mac may return rotated/stale token (see verdict §C7 of pbeta upload). Both scripts call `secret get huggingface.token --raw` and validate `hf_*` prefix only; they do NOT validate `whoami` against HF API. If mac secret store has hf_asc... (rotated) instead of hf_dw... (working), GATE 2 will pass shape check but curl will return 401. Recommend re-syncing mac secret store before scheduled execution OR running scripts from ubu1 where ~/.cache/huggingface/token is known-working.",
     "C5 — Mac stage mirrors are retained by default (cleanup `--delete-mac-mirror` opt-in flag). This is conservative for clm (3 files small) and Pβ (5 files ~76MB). Pβ mac mirror at ~76MB is borderline; if disk pressure justifies, operator should pass --delete-mac-mirror after confirming HF Hub canonical copy is intact.",
     "C6 — No git commit in this BG (per task CRITICAL). All 4 scripts on disk including 2 newly authored ones; operator must commit them in a follow-up cycle (or accept they live in state/ which is gitignored anyway — both pbeta scripts are inside state/p9_pbeta_hf_upload_2026_05_05/ which IS gitignored; this is fine for execution but means scripts are not version-tracked).",

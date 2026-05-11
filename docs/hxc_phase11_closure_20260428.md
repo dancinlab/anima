@@ -56,7 +56,7 @@ Notes:
 - Outcome: 0pp net lift on current nexus 95-file corpus; only 14 / 95 files in <256B bucket all reverted to A1; 44 files in 256B-1KB bucket got 23.27% saving (A18-driven, not A19-driven). A19 dict has only 3 patterns above 256B threshold — break-even N not reached.
 
 **LOAD-BEARING scope (preserved)**:
-- n6 iter (n6-architecture/* iter ledgers) — A19 federation contributes positive lift on this corpus class.
+- n6 iter (CANON/* iter ledgers) — A19 federation contributes positive lift on this corpus class.
 - nexus_proposals_small (nexus state/proposals/refinement/* small JSON) — A19 federation contributes positive lift on this corpus class.
 
 **Closure verdict**: P0 is NOT retired. It is restricted to corpora where federation pattern density justifies the >256B selection threshold. F-A19-6 trip is corpus-conditional; algorithm is preserved.
@@ -163,7 +163,7 @@ However, raw 91 C3 honest framing reveals per-class structure:
 
 | class | constituents | saving% | verdict | P0 deploy |
 |---|---|---:|---|---|
-| text-heavy | n6-architecture + hexa-lang | **83.43%** | ACHIEVED | **LIVE** |
+| text-heavy | CANON + hexa-lang | **83.43%** | ACHIEVED | **LIVE** |
 | structured-audit | hive | **87.14%** | ACHIEVED | **LIVE** |
 | small-file | nexus | 69.10% | BELOW (10.90pp gap) | GATED |
 | mixed-real | anima + airgenome | 63.75% | BELOW (16.25pp gap) | GATED |

@@ -30,15 +30,15 @@ training-resource-root-cause-only 4-step (diagnosis + canonical fix + harden + e
 |---|---|---|
 | L1 advisory | ✓ LIVE | anima/.own own 4 baseline |
 | L2 lint | ✓ LIVE | tool/compute_resource_failure_lint.hexa selftest+scan 0 violations, commit `9f6c17d0` |
-| L3 atlas anchor R37 | ⏳ DESIGN | proposal text 35 LoC atlas grammar in kick witness; n6-architecture maintainer pending |
+| L3 atlas anchor R37 | ⏳ DESIGN | proposal text 35 LoC atlas grammar in kick witness; CANON maintainer pending |
 | L3' chflags uchg | ✓ LIVE | 7 canonical helpers locked, commit `ddb7fb53`, audit ledger 1 row |
 | raw 47 cross-repo trawl | ✓ 5/5 sister repos | hive ALREADY CITES own 4 in subagent_dispatch_infra_fix L9/23/35 |
 | raw 75 multi-layer | ✓ ≥2 with margin | 3 LIVE + 1 DESIGN |
 
-**Obstructions remaining**: genus rename + R37 R-number assignment (n6-architecture maintainer).
+**Obstructions remaining**: genus rename + R37 R-number assignment (CANON maintainer).
 **Disposition**: hive/state/raw_addition_requests/registry.jsonl `req-own4-compute-resource-failure-discipline` ADD-new + trawl-update.
 
-### atlas R36 + R37 candidates (n6-architecture maintainer pending)
+### atlas R36 + R37 candidates (CANON maintainer pending)
 
 - **R36**: cross-paradigm-self-enforcement-loop (raw 135/136/Pattern 7c) — absorbed via `anima/n6/atlas.append.session-2026-04-28-raw-135-136-pattern-7c-self-enforcement.n6` (gitignored shard)
 - **R37**: compute_resource_failure_discipline_4_step_mandate — proposal text in `nexus/design/kick/2026-04-27_own-4-l3-atlas-anchor-proposal-r-new-...`
@@ -137,11 +137,11 @@ raw 136 30d target ratio = 0.50 — session achieves on subset; full-corpus requ
 | hive | 12 | raw 135/136/Pattern 7c absorbed |
 | hexa-lang | 1 | BOOTSTRAP only |
 | airgenome | 1 | BOOTSTRAP only |
-| n6-architecture | 1 | BOOTSTRAP only |
+| CANON | 1 | BOOTSTRAP only |
 
 ## §7. Forward-pending list (next session pickup)
 
-### Owner-approval gated (n6-architecture maintainer)
+### Owner-approval gated (CANON maintainer)
 
 - atlas R36 cross-paradigm-self-enforcement-loop master append + R-number
 - atlas R37 compute_resource_failure_discipline master append + R-number
@@ -184,4 +184,4 @@ raw 91 productivity ceiling honestly acknowledged after ~6h of substantive forwa
 
 **cron status**: 410aa9fa active 5min recurring [session-only]; auto-expire 7 days; `CronDelete 410aa9fa` to stop.
 
-**next session pickup priority**: owner-approval items (n6-architecture maintainer review of R36/R37 + genus renames) unblock 4 promotion paths simultaneously.
+**next session pickup priority**: owner-approval items (CANON maintainer review of R36/R37 + genus renames) unblock 4 promotion paths simultaneously.

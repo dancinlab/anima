@@ -19,7 +19,7 @@ gate: raw#9 STRICT (Mac → hexa only, no .py creation), raw#10 (≥5 honest C3 
 
 1. `qmirror/manifest.toml` — 14-field package manifest (semver + @capabilities + python_bridge 명시)
 2. `qmirror/install.hexa` — pre/post install hook (Aer pip dep 처리, qrng selftest)
-3. registry.tsv 1줄 추가 — `qmirror\t1.0.0\tcli/qmirror.hexa\thttps://github.com/need-singularity/qmirror\t/Users/ghost/core/qmirror\tQuantum mirror substrate (NIST-validated)`
+3. registry.tsv 1줄 추가 — `qmirror\t1.0.0\tcli/qmirror.hexa\thttps://github.com/dancinlab/qmirror\t/Users/ghost/core/qmirror\tQuantum mirror substrate (NIST-validated)`
 4. `qmirror/cli/qmirror.hexa` — entry shim (existing modules/*.hexa subcommand dispatch)
 
 본 문서는 **설계만**, 구현은 sister BG a95ca30a7c(standalone repo) + 차기 cycle. 5 honest C3 caveats §10 참조.
@@ -34,7 +34,7 @@ gate: raw#9 STRICT (Mac → hexa only, no .py creation), raw#10 (≥5 honest C3 
 - **유래**: `hexa — hexa package manager` (header L2)
 - **subcommands** (8): `install | update | run | list | remove | search | info | where | orgs`
 - **install target classifier** (4 kinds):
-  - `name` — registry lookup (e.g. `hx install qmirror`) → fallback to AI-native org probe (`hexa-pkg, need-singularity, dancinlife`)
+  - `name` — registry lookup (e.g. `hx install qmirror`) → fallback to AI-native org probe (`hexa-pkg, dancinlab, dancinlife`)
   - `github` — `user/repo` shortform
   - `url` — full `https://...`, `git@...`, `*.git`
   - `path` — `./local`, `/abs/path`, `~/Dev/...`
@@ -78,9 +78,9 @@ name = "qmirror"
 version = "1.0.0"
 description = "Quantum mirror substrate (NIST-validated, IIT-MIP, CHSH, QRNG)"
 license = "Apache-2.0"
-repository = "https://github.com/need-singularity/qmirror"
-homepage = "https://github.com/need-singularity/qmirror"
-authors = ["need-singularity <noreply@need-singularity.org>"]
+repository = "https://github.com/dancinlab/qmirror"
+homepage = "https://github.com/dancinlab/qmirror"
+authors = ["dancinlab <noreply@dancinlab.org>"]
 keywords = ["quantum", "qiskit-aer", "nist", "iit", "chsh", "qrng"]
 
 [package.entry]
@@ -148,13 +148,13 @@ iit  = "φ★ > 0 byte-identical across stored TPMs"
 ## 2-3. registry.tsv 추가 1줄
 
 ```tsv
-qmirror	1.0.0	cli/qmirror.hexa	https://github.com/need-singularity/qmirror	/Users/ghost/core/qmirror	Quantum mirror substrate (NIST-validated, IIT-MIP, CHSH, QRNG)
+qmirror	1.0.0	cli/qmirror.hexa	https://github.com/dancinlab/qmirror	/Users/ghost/core/qmirror	Quantum mirror substrate (NIST-validated, IIT-MIP, CHSH, QRNG)
 ```
 
 - **name** = `qmirror`
 - **version** = `1.0.0` (semver per just-landed module versioning)
 - **entry** = `cli/qmirror.hexa`
-- **repo** = `https://github.com/need-singularity/qmirror` (future GitHub remote)
+- **repo** = `https://github.com/dancinlab/qmirror` (future GitHub remote)
 - **local** = `/Users/ghost/core/qmirror` (this-machine dev convenience)
 - **desc** = `Quantum mirror substrate (NIST-validated, IIT-MIP, CHSH, QRNG)`
 
@@ -281,7 +281,7 @@ fn usage() {
   print("  tomography  — ρ matrix reconstruction")
   print("  sampler     — circuit → counts dict")
   print("")
-  print("docs: https://github.com/need-singularity/qmirror/docs")
+  print("docs: https://github.com/dancinlab/qmirror/docs")
 }
 
 fn dispatch(sub: str, args: [str]) -> int {
@@ -352,13 +352,13 @@ selftest: ALL PASS (4/4)
 ## 5-1. 이번 cycle의 trust model = warn-only
 
 - registry 출처: `/Users/ghost/core/hexa-lang/tool/pkg/registry.tsv` (in-tree, 사람이 PR로 변경)
-- repo 출처: `https://github.com/need-singularity/qmirror` (소유자만 push 가능)
+- repo 출처: `https://github.com/dancinlab/qmirror` (소유자만 push 가능)
 - **package signing 없음** — 사용자는 repo URL을 신뢰해야 함 (brew와 동일)
 
 ## 5-2. 향후 trust chain (Phase 2, deferred)
 
 1. **manifest signature** — `qmirror/manifest.toml.sig` (ed25519, maintainer key)
-2. **registry signature** — `registry.tsv.sig` (need-singularity org key)
+2. **registry signature** — `registry.tsv.sig` (dancinlab org key)
 3. **install.hexa attestation** — hash of pre/post hooks logged at install
 4. **python_bridge SBOM** — `python_bridge.lock` with hashes (qiskit-aer wheel sha256)
 
@@ -425,7 +425,7 @@ PASS
 ## 8-2. CI/CD (linux runner, fresh install)
 
 ```yaml
-- run: curl -fsSL https://raw.githubusercontent.com/need-singularity/hexa-lang/main/install.sh | bash
+- run: curl -fsSL https://raw.githubusercontent.com/dancinlab/hexa-lang/main/install.sh | bash
 - run: hx install qmirror
 - run: qmirror selftest --quick
 ```
@@ -475,7 +475,7 @@ $ # 이후 nexus modules는 import "qmirror/modules/chsh.hexa" 가능
 ## 10-2. Package signing 0 — trust = repo URL 신뢰
 
 - §5에서 명시한대로, 본 cycle은 manifest signature, registry signature, install.hexa attestation 모두 deferred.
-- **위험**: 누군가 `need-singularity/qmirror` 저장소를 컴프로마이즈하면 `hx install qmirror` 사용자 모두 영향. brew와 동일한 trust model이지만, brew는 formula audit이 있고 qmirror는 없음.
+- **위험**: 누군가 `dancinlab/qmirror` 저장소를 컴프로마이즈하면 `hx install qmirror` 사용자 모두 영향. brew와 동일한 trust model이지만, brew는 formula audit이 있고 qmirror는 없음.
 - **mitigation**: 향후 cycle에서 (a) GitHub release tarball + sha256 lock, (b) maintainer key signature, (c) verify-on-install flag.
 
 ## 10-3. nexus deprecation 4-step lengthy — 1개월+ grace
@@ -490,11 +490,11 @@ $ # 이후 nexus modules는 import "qmirror/modules/chsh.hexa" 가능
 - **실패 케이스**: `pip install --user` 권한 없는 system, conda env 활성화된 사용자, M1 Mac에서 qiskit-aer 일부 wheel 없음.
 - **mitigation**: `install.hexa`에 `--dry-run` 모드 + 명시적 `python3 -m venv` 가이드 (manifest의 `python_bridge.install_via` 필드로 유저 의도 받기).
 
-## 10-5. Registry not yet stood up — 'github.com/need-singularity' 의존
+## 10-5. Registry not yet stood up — 'github.com/dancinlab' 의존
 
-- 현재 registry는 `/Users/ghost/core/hexa-lang/tool/pkg/registry.tsv` (single file, repo 안에). `https://github.com/need-singularity/qmirror`이 실제 push 되기 전엔 `hx install qmirror`은 local path (`/Users/ghost/core/qmirror`)만 작동.
+- 현재 registry는 `/Users/ghost/core/hexa-lang/tool/pkg/registry.tsv` (single file, repo 안에). `https://github.com/dancinlab/qmirror`이 실제 push 되기 전엔 `hx install qmirror`은 local path (`/Users/ghost/core/qmirror`)만 작동.
 - **결과**: 다른 사용자(@nerve011235 외)는 본 cycle에선 install 불가. sister BG a95ca30a7c가 standalone repo를 GitHub에 push한 후에야 외부 install 가능.
-- **mitigation**: 본 spec PASS = (a) registry.tsv 1줄 추가 + (b) GitHub push + (c) `HX_ORGS=need-singularity hx install qmirror` 외부 시연 성공. 이번 cycle은 (a)만 design 명세.
+- **mitigation**: 본 spec PASS = (a) registry.tsv 1줄 추가 + (b) GitHub push + (c) `HX_ORGS=dancinlab hx install qmirror` 외부 시연 성공. 이번 cycle은 (a)만 design 명세.
 
 ---
 
@@ -544,7 +544,7 @@ $ # 이후 nexus modules는 import "qmirror/modules/chsh.hexa" 가능
 | qmirror standalone repo populate | IN PROGRESS | sister a95ca30a7c |
 | nexus CLI wrapper | IN PROGRESS | sister a70e17dd |
 | registry.tsv 1줄 추가 | PENDING | next cycle |
-| GitHub need-singularity/qmirror push | PENDING | next cycle |
+| GitHub dancinlab/qmirror push | PENDING | next cycle |
 | F-INSTALL-1 6/6 검증 | PENDING | next cycle (after sister 완료) |
 | nexus deprecation step 1→4 | PENDING | future 4 cycles |
 

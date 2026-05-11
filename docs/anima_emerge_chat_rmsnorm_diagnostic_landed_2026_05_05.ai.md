@@ -16,7 +16,7 @@ normalisation, not in head choice, and not in last-layer-only state.
 
 ## Setup
 
-- Model: `need-singularity/clm-v4-mk2-v1` (CLM v4 mk2 — RMSNorm `ln_f`,
+- Model: `dancinlab/clm-v4-mk2-v1` (CLM v4 mk2 — RMSNorm `ln_f`,
   16 decoder blocks, head_a + head_g)
 - Prompt: `"안녕하세요. 오늘 날씨가 좋네요."` (12 tokens)
 - Device: mac CPU fp32 (`.venv-eeg`)

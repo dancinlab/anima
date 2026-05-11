@@ -4,7 +4,7 @@
 //   Polls (every 10 min, max 12h) for D 25K H100 training completion via three signals:
 //     (a) state/p9_paradigm_d_25k_h100_2026_05_03/verdict.json exists + parses + verdict label valid
 //     (b) ubu1:~/anima/state/p9_paradigm_d_25k_h100_2026_05_03/verdict.json exists (sister BG output)
-//     (c) HF repo need-singularity/clm-v4-paradigm-d-25k-final populated (step-25000 tag landed)
+//     (c) HF repo dancinlab/clm-v4-paradigm-d-25k-final populated (step-25000 tag landed)
 //
 //   GUARD-3 (success-signal checklist): file existence ≠ success. Each candidate signal must
 //     - exist
@@ -13,7 +13,7 @@
 //
 //   On trigger fire (any signal valid):
 //     1. ssh ubu1: bash ~/anima/state/p9_paradigm_d_25k_eval_2026_05_03/run_all_d_ckpts.sh
-//        (env: ANIMA_CKPT_REPO=need-singularity/clm-v4-paradigm-d-25k-final OR LOCAL_PARENT)
+//        (env: ANIMA_CKPT_REPO=dancinlab/clm-v4-paradigm-d-25k-final OR LOCAL_PARENT)
 //     2. scp ubu1:~/anima/state/p9_paradigm_d_25k_eval_2026_05_03/ckpt_results/*.json
 //        → state/p9_paradigm_d_25k_eval_2026_05_03_ckpt_results/
 //     3. hexa run tool/p9_paradigm_d_verdict.hexa → state/p9_paradigm_d_25k_eval_2026_05_03_verdict.json
@@ -30,7 +30,7 @@
 // CONFIG (env overrides)
 //   ANIMA_D_VERDICT_LOCAL   default: state/p9_paradigm_d_25k_h100_2026_05_03/verdict.json
 //   ANIMA_D_VERDICT_UBU1    default: /home/aiden/anima/state/p9_paradigm_d_25k_h100_2026_05_03/verdict.json
-//   ANIMA_D_HF_REPO         default: need-singularity/clm-v4-paradigm-d-25k-final
+//   ANIMA_D_HF_REPO         default: dancinlab/clm-v4-paradigm-d-25k-final
 //   ANIMA_D_HF_FINAL_TAG    default: step-25000
 //   ANIMA_PATH_A_VERDICT    default: state/p9_a_prime_main_eval_2026_05_03_verdict.json
 //   ANIMA_POLL_INTERVAL_SEC default: 600 (10 min)
@@ -338,7 +338,7 @@ fn main() {
 
     let local_path = _env_or("ANIMA_D_VERDICT_LOCAL", "/Users/ghost/core/anima/state/p9_paradigm_d_25k_h100_2026_05_03/verdict.json")
     let ubu1_path  = _env_or("ANIMA_D_VERDICT_UBU1",  "/home/aiden/anima/state/p9_paradigm_d_25k_h100_2026_05_03/verdict.json")
-    let hf_repo    = _env_or("ANIMA_D_HF_REPO",       "need-singularity/clm-v4-paradigm-d-25k-final")
+    let hf_repo    = _env_or("ANIMA_D_HF_REPO",       "dancinlab/clm-v4-paradigm-d-25k-final")
     let hf_tag     = _env_or("ANIMA_D_HF_FINAL_TAG",  "step-25000")
     let log_path   = _env_or("ANIMA_LOG_PATH",        LOG_PATH_DEFAULT)
     let disp_path  = _env_or("ANIMA_DISPATCH_PATH",   DISPATCH_PATH_DEFAULT)

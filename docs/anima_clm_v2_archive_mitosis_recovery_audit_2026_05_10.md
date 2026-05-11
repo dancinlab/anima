@@ -119,7 +119,7 @@ total_params=18.523 M
 
 ### 3.5 부수 ckpt (HF mirror)
 
-- `~/.cache/huggingface/hub/models--need-singularity--clm-v2-byte-18m-convo-5k/blobs/2f0ba391…` (HF mirror — 구 user prefix, dancinlab 으로 own 37 마이그 예정)
+- `~/.cache/huggingface/hub/models--dancinlab--clm-v2-byte-18m-convo-5k/blobs/2f0ba391…` (HF mirror — 구 user prefix, dancinlab 으로 own 37 마이그 예정)
 - `dancinlab/clm-v2-byte-18m-convo-5k` (HF PUBLIC, 2026-05-06 BG-FM rebuilt) — convo_5k.pt 70MB, 18M chat-cap recovered/gibberish/undertrain
 
 ---

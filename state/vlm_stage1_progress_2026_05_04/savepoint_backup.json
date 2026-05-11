@@ -16,17 +16,17 @@
     "lr_at_save": 4.90e-4,
     "sps_at_save": 2.61,
     "hf_pushed": true,
-    "hf_repo": "need-singularity/vlm-anima-voice-paradigm-stage1-step-5k",
-    "hf_url": "https://huggingface.co/need-singularity/vlm-anima-voice-paradigm-stage1-step-5k",
+    "hf_repo": "dancinlab/vlm-anima-voice-paradigm-stage1-step-5k",
+    "hf_url": "https://huggingface.co/dancinlab/vlm-anima-voice-paradigm-stage1-step-5k",
     "hf_status_code": 200,
     "commit_message": "VLM stage1 step-5k LoRA savepoint (loss=8.78, sps=2.61)",
     "maturity_caveat": "loss=8.78 may be borderline mature for downstream eval (caveat #4)"
   },
   "next_savepoints_schedule": {
-    "step_10k": {"eta_min": 35, "hf_repo_planned": "need-singularity/vlm-anima-voice-paradigm-stage1-step-10k"},
-    "step_15k": {"eta_min": 70, "hf_repo_planned": "need-singularity/vlm-anima-voice-paradigm-stage1-step-15k"},
-    "step_25k": {"eta_min": 140, "hf_repo_planned": "need-singularity/vlm-anima-voice-paradigm-stage1-step-25k"},
-    "step_50k_final": {"eta_min": 270, "hf_repo_planned": "need-singularity/vlm-anima-voice-paradigm-stage1-step-50k"}
+    "step_10k": {"eta_min": 35, "hf_repo_planned": "dancinlab/vlm-anima-voice-paradigm-stage1-step-10k"},
+    "step_15k": {"eta_min": 70, "hf_repo_planned": "dancinlab/vlm-anima-voice-paradigm-stage1-step-15k"},
+    "step_25k": {"eta_min": 140, "hf_repo_planned": "dancinlab/vlm-anima-voice-paradigm-stage1-step-25k"},
+    "step_50k_final": {"eta_min": 270, "hf_repo_planned": "dancinlab/vlm-anima-voice-paradigm-stage1-step-50k"}
   },
   "push_strategy": "after each /tmp/vlm_stage1_savepoints/step-{N}k/ appears, mirror via huggingface_hub.upload_folder"
 }

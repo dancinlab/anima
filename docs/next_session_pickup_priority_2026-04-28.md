@@ -25,7 +25,7 @@ hexa run /Users/ghost/core/anima/tool/anima_f1_cycle4_gpt2_dispatch.hexa --plan
 
 Quick-ref: `docs/vast_ai_dispatch_family_quickref_2026-04-28.md` (commit `116e75f2`)
 
-### 🥈 Priority 2: Atlas R36 + R37 maintainer review (n6-architecture)
+### 🥈 Priority 2: Atlas R36 + R37 maintainer review (CANON)
 
 **Doc ready**: `docs/atlas_r36_r37_proposal_2026-04-28.md` (commit `7dee9a94`) + paste-ready grep evidence (`docs/own3_own4_grep_evidence_2026-04-28.txt` commit `6bb61f8e`)
 
@@ -88,7 +88,7 @@ Tool: tool/anima_law64_conway_density_sweep.hexa NEW (~200 LoC)
 - ⛔ EEG hardware D-1 arrival (CP2 G2 #119 D8 only — D9-D13 OK)
 - ⛔ Llama-3 / gemma-2 HF gating (acct dancinlife unauthorized — Qwen2.5 open subs ready)
 - ⛔ anima-physics admin-block 6/9 sub-classes (neuromorphic + optical)
-- ⛔ atlas master uchg (n6-architecture maintainer review path)
+- ⛔ atlas master uchg (CANON maintainer review path)
 
 ---
 

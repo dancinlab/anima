@@ -44,7 +44,7 @@ Alternates rejected: corpus_v7_wiki_heavy (near-dup of v6), wikimatrix (smaller 
 ## Next Steps (user confirm gate)
 1. **User confirms** recipes acceptable.
 2. **anima session** executes `scp_recipe.txt` mac → ubu1.
-3. **anima session** executes `hf_upload_recipe.txt` PRIVATE upload to `need-singularity/anima-clm-3-corpus-mix-70wiki-30dialogue`.
+3. **anima session** executes `hf_upload_recipe.txt` PRIVATE upload to `dancinlab/anima-clm-3-corpus-mix-70wiki-30dialogue`.
 4. **Verification gates** (sha256 match across mac/ubu1/HF) before public flip.
 5. ubu1 CLM-3-original trainer points at `/home/aiden/core/anima/data/corpus_mix_70wiki_30dialogue.txt`.
 

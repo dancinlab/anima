@@ -151,7 +151,7 @@ is the natural A9 + A16 fusion — same dictionary serves both purposes.
 | nexus | 43% | 50% | +7pp |
 | hexa-lang | 82% | 84% | +2pp |
 | airgenome | 82% | 82% | 0pp |
-| n6-architecture | 4% | 6% | +2pp |
+| CANON | 4% | 6% | +2pp |
 | **6-repo aggregate** | **48%** | **~58-60%** | **+10-12pp** |
 
 ## Phase 9 implementation cost

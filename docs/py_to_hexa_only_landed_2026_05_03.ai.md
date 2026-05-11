@@ -90,14 +90,14 @@ $ hexa run tool/hf_upload_mk2.hexa --selftest
   [P] hexa selftest: selftest: PASS
 __ANIMA_HF_UPLOAD_MK2__ PASS
 
-$ hexa run tool/hf_upload_mk2.hexa --dry-run --repo need-singularity/clm-v4-sft-stage1 \
+$ hexa run tool/hf_upload_mk2.hexa --dry-run --repo dancinlab/clm-v4-sft-stage1 \
     --ckpt /tmp/_hfmk2_test_ckpt --readme /tmp/_hfmk2_test_readme.md --tag step-25k
 [hf_upload_mk2] DRY-RUN (raw#9 strict — hexa-native walk + sha256)
   [P] naming OK
   [P] readme OK (5 required H2 + Caveats >=3)
   files       = 3
   total_bytes = 79
-  audit       = state/hf_upload_audit/20260503T151335Z_need-singularity__clm-v4-sft-stage1.jsonl
+  audit       = state/hf_upload_audit/20260503T151335Z_dancinlab__clm-v4-sft-stage1.jsonl
 __ANIMA_HF_UPLOAD_MK2__ PASS
 ```
 

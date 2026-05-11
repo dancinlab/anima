@@ -249,7 +249,7 @@
       "new_diagnostic_evidence": {
         "axis": "git_sync",
         "observation": "local HEAD=289859cf, origin/main=e3e29631, local ahead by 9 commits including a4e65c6d (Axis 1 byte-weighted pool + Axis 2 p2 RoPE Qwen2.5-7B)",
-        "propagation_path": "tool/h100_stage2_post_launch_chain.bash line 174: `git clone --depth 1 https://github.com/need-singularity/anima.git` → pods pull origin/main only",
+        "propagation_path": "tool/h100_stage2_post_launch_chain.bash line 174: `git clone --depth 1 https://github.com/dancinlab/anima.git` → pods pull origin/main only",
         "implication": "if launched without push, pods would train with PRE-a4e65c6d code (r5 behavior) using r14 corpus. Result = r5 FAIL replay + ~$200 burn with no new evidence.",
         "hypothesis_for_attempt_1_reinterpretation": "attempt_1 (HEAD=289859cf at time; docs note head_commit=f94d03d5 in convergence but that is actually the commit CONTAINING attempt_1 ABORT note) may also have suffered this issue — pods got origin/main at that time, trained with stale code for ~4m before spendLimit kill. The spendLimit was the PROXIMATE cause, but even without it the training would have produced r5-behavior artifacts. This means the 'fresh runway resolves mechanism' H-DIAG3 predicate does NOT cleanly apply — git sync was a hidden second axis.",
         "resolution_required": "git push origin main (user authorization required; sub-agent has no push mandate). Alternative: patch post_launch_chain.bash to rsync local tree instead of clone, but this violates anti-scope 'No additional diagnostics' and introduces new risk."

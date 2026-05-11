@@ -5,7 +5,7 @@
 //    Verifies the 17 anima docs canonically deduplicated by the
 //    qmirror_xref_centralization cycle (2026-05-04) reference the SSOT
 //    (`nexus/.roadmap.qmirror` header field `upstream_url`) instead of
-//    hardcoded github.com/need-singularity/qmirror callouts in the
+//    hardcoded github.com/dancinlab/qmirror callouts in the
 //    document body. Hardcoded URLs ARE permitted INSIDE the
 //    `### See also (qmirror xref history)` footnote section
 //    (preserved historical record per raw#10).
@@ -18,7 +18,7 @@
 //      (a) contain exactly one SSOT line
 //          (`> qmirror canonical SSOT: see ...`)
 //      (b) contain exactly one `### See also (qmirror xref history)` footnote
-//      (c) have NO hardcoded github.com/need-singularity/qmirror URL
+//      (c) have NO hardcoded github.com/dancinlab/qmirror URL
 //          OUTSIDE the footnote section
 //
 //  USAGE
@@ -42,7 +42,7 @@ let ROADMAP_PATH = "/Users/ghost/core/nexus/.roadmap.qmirror"
 let DOCS_DIR     = "/Users/ghost/core/anima/docs"
 let SSOT_LINE_PREFIX = "> qmirror canonical SSOT: see"
 let FOOTNOTE_HEADER  = "### See also (qmirror xref history)"
-let FORBIDDEN_URL    = "github.com/need-singularity/qmirror"
+let FORBIDDEN_URL    = "github.com/dancinlab/qmirror"
 
 // ── 17 canonical anima docs (per qmirror_v2_announcement sister BG ad8ec25) ─
 fn doc_paths() -> [string] {

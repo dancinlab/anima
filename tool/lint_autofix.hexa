@@ -24,7 +24,7 @@
 //    /Users/ghost/core/hexa-lang/...     → HEXA_LANG_ROOT          (manual_review:
 //                                          external SSOT path; needs HEXA_LANG_ROOT
 //                                          env var rollout across repos)
-//    /Users/ghost/core/n6-architecture/  → N6_ARCH_ROOT            (manual_review)
+//    /Users/ghost/core/canon/  → N6_ARCH_ROOT            (manual_review)
 //    /Users/ghost/core/.workspace        → WORKSPACE_ROOT          (manual_review)
 //    /Users/ghost/Library/LaunchAgents…  → LAUNCH_AGENTS_DIR       (manual_review:
 //                                          macOS-specific install target)
@@ -259,7 +259,7 @@ fn _classify(check: string, msg: string, file: string, line_text: string) -> arr
         if line_text.contains("/Users/ghost/core/hexa-lang") {
             return ["HARDCODED_USERS_GHOST_HEXA_LANG_ROOT", "manual_review", "external SSOT anchor; needs HEXA_LANG_ROOT env-var rollout across repos before mechanical rewrite is safe."]
         }
-        if line_text.contains("/Users/ghost/core/n6-architecture") {
+        if line_text.contains("/Users/ghost/core/canon") {
             return ["HARDCODED_USERS_GHOST_N6_ARCH", "manual_review", "external N6 architecture root; needs N6_ARCH_ROOT env-var rollout."]
         }
         if line_text.contains("/Users/ghost/core/.workspace") {

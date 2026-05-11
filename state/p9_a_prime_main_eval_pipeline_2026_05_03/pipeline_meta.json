@@ -12,7 +12,7 @@
     "pod_id_state_recorded": "cp5si6man99s33",
     "note": "user-provided pod id is the in-flight train pod per task brief; state file may be stale — read-only, no preemption",
     "expected_ckpts": ["step-2000", "step-4000", "step-6000", "step-8000", "step-10000"],
-    "hub_repo": "need-singularity/p9-llama32-lora-stage1"
+    "hub_repo": "dancinlab/p9-llama32-lora-stage1"
   },
   "deliverables": {
     "loader_smoketest": {
@@ -60,7 +60,7 @@
     }
   },
   "pipeline_ready_when_lora_arrives": {
-    "step_1_per_ckpt_eval_command": "ssh ubu1 \"/home/aiden/venv_orchestrator/bin/python ~/anima/state/p9_a_prime_main_eval_2026_05_03/eval_llama_lora_ckpt.py --ckpt-repo need-singularity/p9-llama32-lora-stage1 --ckpt-revision step-2000 --task hellaswag --limit 500 --output ~/anima/state/p9_a_prime_main_eval_2026_05_03/lora_results/step2k_hellaswag.json\"",
+    "step_1_per_ckpt_eval_command": "ssh ubu1 \"/home/aiden/venv_orchestrator/bin/python ~/anima/state/p9_a_prime_main_eval_2026_05_03/eval_llama_lora_ckpt.py --ckpt-repo dancinlab/p9-llama32-lora-stage1 --ckpt-revision step-2000 --task hellaswag --limit 500 --output ~/anima/state/p9_a_prime_main_eval_2026_05_03/lora_results/step2k_hellaswag.json\"",
     "step_2_repeat_for_5_ckpts_x_3_tasks": "15 calls; ~2-25 min each at limit=500 4-bit (matches base validation profile)",
     "step_3_pull_results_to_mac": "scp ubu1:.../lora_results/*.json state/p9_a_prime_main_eval_2026_05_03_lora_results/",
     "step_4_run_verdict": "ANIMA_LORA_RESULTS_DIR=state/p9_a_prime_main_eval_2026_05_03_lora_results hexa run tool/p9_a_prime_verdict.hexa",

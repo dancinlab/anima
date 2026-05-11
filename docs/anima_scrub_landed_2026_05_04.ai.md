@@ -13,7 +13,7 @@ The requested scrub of `anima/anima-agent/` and refactor of consumers to standal
 - Contains: 3 top-level `.hexa` entries (`anima_agent.hexa`, `autonomy_loop.hexa`, `autonomy_live.hexa`), `hexa/` subdir (38 .hexa modules), `dashboard/` (Next.js), `employee/`, `trading/`, `plugins/`, `providers/`, `channels/`, `skills/`, `build/`, `results/`, `data/`, `.py` legacy + `.hexa` migrations
 
 ### Standalone identity
-- `/Users/ghost/core/anima-agent/` is a **separate git repo** with remote `https://github.com/need-singularity/anima-agent.git` (v1.0.0, single commit `106f2b6 feat(anima-agent v1.0.0): standalone extraction from anima`)
+- `/Users/ghost/core/anima-agent/` is a **separate git repo** with remote `https://github.com/dancinlab/anima-agent.git` (v1.0.0, single commit `106f2b6 feat(anima-agent v1.0.0): standalone extraction from anima`)
 - `hexa.toml` provenance line: `Provenance: extracted from anima/anima-agent/ on 2026-05-04`
 - 146 files; clean `modules/` namespace + `cli/` + `tests/` + `examples/`
 

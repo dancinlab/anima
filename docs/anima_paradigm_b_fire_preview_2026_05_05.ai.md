@@ -54,7 +54,7 @@ HEXA_PY=/Users/ghost/core/anima/.venv-eeg/bin/python \
 ### Mode 1 실측 (`--probe "안녕 너는 누구야?"`)
 
 ```
-[dialogue] loading model need-singularity/clm-v4-mk2-v1 (mac CPU fp32)...
+[dialogue] loading model dancinlab/clm-v4-mk2-v1 (mac CPU fp32)...
 [dialogue] loaded in 4.8s, n_blocks=16
 [dialogue] session: state/anima_core_dialogues/2026-05-05/18-27-20_emerge_repl.jsonl
 [dialogue] substrate: clm-v4 (phi-star baseline 41.86)
@@ -145,7 +145,7 @@ INT/TERM/EOF 시 atexit handler가 session_end record로 finalize.
 
 ```jsonl
 {"schema": "anima.dialogue.v2", "kind": "session_start", "ts_utc": "...",
- "session_log": "...", "model": "need-singularity/clm-v4-mk2-v1",
+ "session_log": "...", "model": "dancinlab/clm-v4-mk2-v1",
  "phi_star_baseline": 41.86, "n_blocks": 16,
  "tension_trajectory_enabled": true, "load_sec": 7.2}
 {"schema": "anima.dialogue.v2", "kind": "user_turn", "turn": 1,

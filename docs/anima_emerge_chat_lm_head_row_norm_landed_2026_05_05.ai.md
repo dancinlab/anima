@@ -24,7 +24,7 @@ Llama Path A v2. Architectural-issue diagnosis lane.
 `tool/transient_py/anima_emerge_chat_lm_head_row_norm.py` (transient sister
 helper, opt-out class three):
 
-1. Load `need-singularity/clm-v4-mk2-v1` fp32 CPU via
+1. Load `dancinlab/clm-v4-mk2-v1` fp32 CPU via
    `inj_helper._try_load_model`.
 2. Walk SentencePiece vocab (64000), classify each token id by clean piece
    text:

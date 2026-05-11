@@ -51,7 +51,7 @@ Mac sister-repo: ready/anima/config/tokenizer_64k_multilingual.{model,vocab}
        │
        ├── (HF push via _python_bridge/hf_upload_runner.py)
        │       │
-       │       └─▶ need-singularity/clm-v4-base-mirror/tokenizer/{*.model,*.vocab,README.md,integrity_report.json}
+       │       └─▶ dancinlab/clm-v4-base-mirror/tokenizer/{*.model,*.vocab,README.md,integrity_report.json}
        │            commit: 10ee03687db312c55bbec5858c814bef28e4d365
        │
        └── (ubu1 hf_hub_download verify)
@@ -72,13 +72,13 @@ state/clm_v4_tokenizer_restoration_2026_05_03/
 └── integrity_report.json                   (vocab spec + roundtrip results + provenance)
 
 state/markers/clm_v4_tokenizer_restored_2026_05_03.marker
-state/hf_upload_audit/20260503T151341Z_need-singularity__clm-v4-base-mirror.jsonl
+state/hf_upload_audit/20260503T151341Z_dancinlab__clm-v4-base-mirror.jsonl
 docs/clm_v4_tokenizer_restored_2026_05_03.ai.md  (this file)
 ```
 
 HF mirror (post-push):
 ```
-need-singularity/clm-v4-base-mirror/
+dancinlab/clm-v4-base-mirror/
 ├── .gitattributes
 ├── best.pt                                 (existing, 5.37 GB)
 └── tokenizer/                              (NEW, 2.3 MB)
@@ -91,7 +91,7 @@ need-singularity/clm-v4-base-mirror/
 ubu1 cache (post-verify):
 ```
 ~/anima/state/clm_v4_tokenizer_restoration_2026_05_03/cache_check/tokenizer/{*.model,*.vocab}
-~/.cache/huggingface/hub/models--need-singularity--clm-v4-base-mirror/  (auto-populated by hf_hub_download)
+~/.cache/huggingface/hub/models--dancinlab--clm-v4-base-mirror/  (auto-populated by hf_hub_download)
 ```
 
 ---
@@ -104,14 +104,14 @@ Because this is RECOVERY (byte-identical artifact), token IDs are unchanged from
 
 | Repo | Status |
 |---|---|
-| `need-singularity/clm-v4-sft-step-5k` | UNAFFECTED (same token IDs) |
-| `need-singularity/clm-v4-sft-step-10k` | UNAFFECTED |
-| `need-singularity/clm-v4-sft-step-25k` | UNAFFECTED |
-| `need-singularity/clm-v4-sft-step-50k` | UNAFFECTED |
-| `need-singularity/clm-v4-sft-final` | UNAFFECTED |
-| `need-singularity/clm-v4-sft-stage1` | UNAFFECTED |
-| `need-singularity/clm-v4-paradigm-j-50k-step-{5,10,25,50}k` | UNAFFECTED |
-| `need-singularity/clm-v4-t4-phi-cache` (dataset) | UNAFFECTED |
+| `dancinlab/clm-v4-sft-step-5k` | UNAFFECTED (same token IDs) |
+| `dancinlab/clm-v4-sft-step-10k` | UNAFFECTED |
+| `dancinlab/clm-v4-sft-step-25k` | UNAFFECTED |
+| `dancinlab/clm-v4-sft-step-50k` | UNAFFECTED |
+| `dancinlab/clm-v4-sft-final` | UNAFFECTED |
+| `dancinlab/clm-v4-sft-stage1` | UNAFFECTED |
+| `dancinlab/clm-v4-paradigm-j-50k-step-{5,10,25,50}k` | UNAFFECTED |
+| `dancinlab/clm-v4-t4-phi-cache` (dataset) | UNAFFECTED |
 
 If this had been REBUILD instead of RECOVERY, all of the above would have been silently invalidated (token IDs would drift, embedding rows would address wrong rows, LoRA `lm_head` deltas would target wrong vocab positions). The recovery path was the only safe option, and it was available.
 
@@ -138,7 +138,7 @@ If this had been REBUILD instead of RECOVERY, all of the above would have been s
 ## Composability — What This Unblocks
 
 1. **Path B re-run with proper BPE**: future re-execution of `~/anima/state/p9_path_b_sanity_probe_2026_05_03/eval_clm_v4_hellaswag.py` on ubu1 can swap byte-fallback for `spm.SentencePieceProcessor` and produce a result with proper subword tokenization. (Verdict expected to remain AT_FLOOR per Path B reasoning, but eliminates the byte-fallback caveat.)
-2. **Phase 1 LoRA inference quality**: any consumer of `clm-v4-sft-stage1` that previously had to fetch a tokenizer separately (or fall back to byte-level) can now `snapshot_download('need-singularity/clm-v4-base-mirror')` once and get base + tokenizer co-located, matching the canonical README load pattern.
+2. **Phase 1 LoRA inference quality**: any consumer of `clm-v4-sft-stage1` that previously had to fetch a tokenizer separately (or fall back to byte-level) can now `snapshot_download('dancinlab/clm-v4-base-mirror')` once and get base + tokenizer co-located, matching the canonical README load pattern.
 3. **BLM Phase 5 stimulus-aligned pipeline** (`docs/blm_phase5_aligned_spec_landed_2026_05_03.ai.md`): unblocked from same byte-fallback workaround.
 4. **Cross-model corpus stats**: bytes/token ratios on shared corpora can now be computed against the actual training tokenizer (was previously impossible without it).
 
@@ -149,6 +149,6 @@ If this had been REBUILD instead of RECOVERY, all of the above would have been s
 **`CLM_V4_TOKENIZER_RECOVERED_2026_05_03`** — recovery path completed end-to-end:
 - Source found: `ready/anima/config/` (Mac sister-repo)
 - Integrity verified: vocab=64000, special-token IDs match, byte-fallback range confirmed, round-trip PASS
-- HF push: `need-singularity/clm-v4-base-mirror/tokenizer/` commit `10ee036` (4 files, 2.3 MB)
+- HF push: `dancinlab/clm-v4-base-mirror/tokenizer/` commit `10ee036` (4 files, 2.3 MB)
 - ubu1 cache: SHA256 byte-match confirmed
 - LoRA invalidation: NONE (byte-identical recovery)

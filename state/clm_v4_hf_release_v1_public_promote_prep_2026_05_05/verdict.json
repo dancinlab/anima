@@ -4,7 +4,7 @@
   "bg_lane": "BG-HF-PUBLIC-PROMOTE-PREP",
   "ts_utc": "2026-05-05T12:34:00Z",
   "mode": "PREP_ONLY_NO_PROMOTE_EXECUTED",
-  "repo_id": "need-singularity/clm-v4-mk2-v1",
+  "repo_id": "dancinlab/clm-v4-mk2-v1",
   "expected_commit_sha": "80440a1d38db9addc4445bb959057558a57f4230",
   "earliest_run_utc": "2026-05-06T23:26:12Z",
   "review_window": {
@@ -64,7 +64,7 @@
   "requires_user_signoff": true,
   "user_signoff_string": "PROMOTE-clm-v4-mk2-v1",
   "user_signoff_mechanism": "interactive read prompt; mismatch aborts cleanly with exit 0",
-  "promote_api_endpoint": "PUT https://huggingface.co/api/models/need-singularity/clm-v4-mk2-v1/settings",
+  "promote_api_endpoint": "PUT https://huggingface.co/api/models/dancinlab/clm-v4-mk2-v1/settings",
   "promote_api_payload": {"private": false},
   "post_promote_audit_log": "state/clm_v4_hf_release_v1_upload_2026_05_04/promote_log.txt",
   "recommended_promote_action": "USER_CHOICE",
@@ -88,7 +88,7 @@
     "raw_10_honest_c3_min_5": "PASS — 8 honest C3 bullets above (≥5 required)",
     "raw_15_state_dir_revisioned": "PASS — verdict.json + script_path + handoff_doc all under state/ + docs/ revisioned tree",
     "no_git_commit": "PASS — task explicitly forbids git commit; only Write tool used",
-    "no_hf_hub_mutation": "PASS — script written but NOT executed; HF Hub state unchanged at need-singularity/clm-v4-mk2-v1"
+    "no_hf_hub_mutation": "PASS — script written but NOT executed; HF Hub state unchanged at dancinlab/clm-v4-mk2-v1"
   },
   "next_actions_ranked": [
     "rank-1: User reviews this prep cycle + handoff doc; chooses option (a/b/c) at or after 2026-05-06T23:26:12Z per §6 Decision section.",

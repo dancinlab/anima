@@ -310,7 +310,7 @@ OPT-B adapter has wider target_modules. Existing CLM-2-EXEC v1 adapter consumers
 
 **Scope** (only if F-OPT-B-1..5 ALL PASS):
 - Author `.roadmap.clm` cond.2 G3 promote gate amendment proposal (additive; user explicit ACK required for actual `.roadmap` mutation)
-- Author HF release v2 prep spec — `need-singularity/clm-v4-mk2-v1` + `need-singularity/clm-v4-mk2-lora-v2` adapter card (REPLACES v1 if F-OPT-B-3 PASS; ELSE retains v1 as substrate-research artifact)
+- Author HF release v2 prep spec — `dancinlab/clm-v4-mk2-v1` + `dancinlab/clm-v4-mk2-lora-v2` adapter card (REPLACES v1 if F-OPT-B-3 PASS; ELSE retains v1 as substrate-research artifact)
 - Author migration path doc (§6 below)
 
 **Deliverable**: `docs/clm_v4_lora_sft_opt_b_promote_spec_2026_05_05.md` (Phase 5 spec — separate dispatch)
@@ -330,7 +330,7 @@ OPT-B adapter has wider target_modules. Existing CLM-2-EXEC v1 adapter consumers
 | **CLM-2 LoRA v2** (OPT-B adapter_final) | n/a | NEW chat-capability primary candidate | substrate-research alternative | DISCARDED (φ★-flip OR no lift) |
 | **shim v5** (OPT-A re-anchor) | Phase 2 PASS, Phase 3 BLOCKED | orthogonal investigation continues | orthogonal continues | orthogonal continues |
 | **PEFT adapters** (Pβ + CLM-2 v1) | active | UNTOUCHED | UNTOUCHED | UNTOUCHED |
-| **HF release v1** | `need-singularity/clm-v4-mk2-lora-v1` (CLM-2-EXEC adapter) | DEPRECATED (kept for archive) | RETAINED as primary | RETAINED as primary |
+| **HF release v1** | `dancinlab/clm-v4-mk2-lora-v1` (CLM-2-EXEC adapter) | DEPRECATED (kept for archive) | RETAINED as primary | RETAINED as primary |
 | **HF release v2** | n/a | NEW upload (replaces v1 as primary) | n/a (no upload) | n/a (no upload) |
 
 ### 6.2 Backward compatibility

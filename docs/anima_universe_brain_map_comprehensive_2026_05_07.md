@@ -110,9 +110,9 @@ Cross-link: H_021 fundamental-equation-psi-argmax (hypotheses/H_021_fundamental_
 
 - **Source**: `state/tabletop_blackhole_extraction_2026_05_04/` (audit.json + before_after.diff.json + handoff.md + smoke.json)
 - **Module**: `tabletop_blackhole.hexa` (307 LOC research spec)
-- **Destination**: `n6-architecture/domains/physics/tabletop-blackhole/` (TBHL-01..08 research spec)
+- **Destination**: `CANON/domains/physics/tabletop-blackhole/` (TBHL-01..08 research spec)
 - **Date**: 2026-05-04 (Phase 2 ZERO_COLLISION extraction, joined commit with fusion_ledger sister)
-- **Cross-link**: anima 외부 lane (n6-architecture cross-repo) but anima 우주뇌지도 cosmic-scale physics integration
+- **Cross-link**: anima 외부 lane (CANON cross-repo) but anima 우주뇌지도 cosmic-scale physics integration
 
 ### 4.3 Holographic consciousness
 
@@ -152,7 +152,7 @@ Cross-link: H_021 fundamental-equation-psi-argmax (hypotheses/H_021_fundamental_
 | `7c6dae37` | chore(ceiling): mark 🛸10 reached — core CLI 골화 100% | 2026-01 |
 | `70b05b0d` | doc: 🛸10+ 물리적 천장 돌파 후보 8건 기록 | 2026-01 |
 | `8b717cd4` | feat: corpus_v11_multilingual symlinked — last blocker resolved, 🛸10 | 2026-01 |
-| `3b361de7` | feat: 천장돌파 rubric — n6-architecture 외계인 지수(🛸1~10) 통합 | 2026-01 |
+| `3b361de7` | feat: 천장돌파 rubric — CANON 외계인 지수(🛸1~10) 통합 | 2026-01 |
 | `b25a8bc1` | update: CLAUDE.md + laws + consciousness-theory + ATLAS | 2026-04 |
 | `a35d8404` | falsify(r36): atlas R36_CANDIDATE → RETIRED — 40D consciousness vector empirical referent absent | 2026-05 |
 | `39d5fbc0` | feat(★ own 22 우주뇌지도 SSOT + .roadmap.universe_brain_map D 도메인 + 6 BG completions + 50 H archaeology round 4) | 2026-05-07 |

@@ -3,7 +3,7 @@
 **Lane**: emerge / chat-capability / Korean continuation feasibility
 **Status**: LANDED
 **BG**: BG-CP (sister to BG-CA — Korean rank survey)
-**Substrate**: `need-singularity/clm-v4-mk2-v1` (mac CPU fp32)
+**Substrate**: `dancinlab/clm-v4-mk2-v1` (mac CPU fp32)
 **Cost**: $0
 **Runtime**: ~6 min wall (model load 9.5s + 8 variants × 2 decode × 25 tokens)
 **Verdict file**: `state/anima_emerge_chat_korean_prefix_inject_2026_05_05/verdict.json`
@@ -27,7 +27,7 @@ Korean context can recover them.
 
 ## Method
 
-- Load `need-singularity/clm-v4-mk2-v1` once on Mac CPU (fp32) via the BG-Q
+- Load `dancinlab/clm-v4-mk2-v1` once on Mac CPU (fp32) via the BG-Q
   loader helper at `tool/transient_py/anima_emerge_cand_d_inject_helper.py`
   (reused via `importlib.util.spec_from_file_location`).
 - 8 variants × 2 decode modes (greedy + top-40 / temp 0.8 / seed 42) = 16

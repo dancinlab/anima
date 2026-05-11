@@ -43,8 +43,8 @@ This cycle = blocker doc + minimum-viable training plan (no training launched, $
 ```
    ~/.cache/huggingface/hub/
    ├── models--meta-llama--Llama-3.2-3B-Instruct          (base only)
-   ├── models--need-singularity--clm-v4-base-mirror       (CLM base)
-   └── models--need-singularity--clm-v4-sft-stage1        (CLM stage1 LoRA — only one)
+   ├── models--dancinlab--clm-v4-base-mirror       (CLM base)
+   └── models--dancinlab--clm-v4-sft-stage1        (CLM stage1 LoRA — only one)
 ```
 
 NO `vlm-*`, NO `voice-lm-*`, NO any audio-related LoRA model. Only CLM stage1.
@@ -52,7 +52,7 @@ NO `vlm-*`, NO `voice-lm-*`, NO any audio-related LoRA model. Only CLM stage1.
 ### §2.2 adapter_config.json scan
 
 ```
-   /home/aiden/.cache/huggingface/hub/models--need-singularity--clm-v4-sft-stage1/snapshots/.../adapter_config.json
+   /home/aiden/.cache/huggingface/hub/models--dancinlab--clm-v4-sft-stage1/snapshots/.../adapter_config.json
 ```
 
 Single adapter config found = CLM stage1. Zero VLM adapters.

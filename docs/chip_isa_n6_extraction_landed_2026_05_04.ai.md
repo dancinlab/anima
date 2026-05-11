@@ -1,8 +1,8 @@
-# chip_isa_n6 → n6-architecture absorb (LANDED 2026-05-04)
+# chip_isa_n6 → CANON absorb (LANDED 2026-05-04)
 
 ## Verdict
 LANDED. Rank-3 (score 9) module from nexus audit absorbed into existing
-`~/core/n6-architecture/domains/compute/chip-isa-n6/` as sibling `.hexa`
+`~/core/canon/domains/compute/chip-isa-n6/` as sibling `.hexa`
 under the existing research-spec dir. Sister rank-1 `crystallography_n6`
 landed sequentially first (38d66066), then chip_isa (e6141bce).
 
@@ -10,7 +10,7 @@ landed sequentially first (38d66066), then chip_isa (e6141bce).
 - module LoC: 445 (chip_isa_n6.hexa) + 72 (README) = 517 added
 - consumer count: 0 active code consumers; 5 doc-only mentions in nexus
   (preserved as historical record)
-- absorb path: `~/core/n6-architecture/domains/compute/chip-isa-n6/chip_isa_n6.hexa`
+- absorb path: `~/core/canon/domains/compute/chip-isa-n6/chip_isa_n6.hexa`
 
 ## Smoke
 ```
@@ -29,7 +29,7 @@ hexa run domains/compute/chip-isa-n6/chip_isa_n6.hexa --self-test
 9. reserved funct3 (110/111) validator
 
 ## Commits
-- n6-architecture main `e6141bce` — additive: chip_isa_n6.hexa + README sibling
+- CANON main `e6141bce` — additive: chip_isa_n6.hexa + README sibling
 - nexus `feat/qmirror-cli-programmatic-consumption` `29f26724` — deletion of
   modules/chip_isa_n6/
 
@@ -57,7 +57,7 @@ hexa run domains/compute/chip-isa-n6/chip_isa_n6.hexa --self-test
    to keep total == J2. Future 32-bit promotion would restore imm=8.
 
 4. **Sister BG race + worktree state.** 5 stale locked worktrees in
-   `n6-architecture/.claude/worktrees/` (Apr 21–24) confused initial
+   `CANON/.claude/worktrees/` (Apr 21–24) confused initial
    coordination. Sister BG (crystallography_n6 rank 1) staged its files
    to `/domains/physics/crystallography/` simultaneously and committed
    first (38d66066). Sequential commit order resolved cleanly because

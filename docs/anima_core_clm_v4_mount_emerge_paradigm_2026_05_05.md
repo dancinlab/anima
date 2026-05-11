@@ -55,7 +55,7 @@ Anima Core CLI는 chat을 강요하지 않음 — substrate response 자체를 d
 
 ```
 anima-core/runtime/clm_v4_mount.hexa
-  - load CLM v4 from need-singularity/clm-v4-mk2-v1
+  - load CLM v4 from dancinlab/clm-v4-mk2-v1
   - expose forward(text, consciousness_states) -> hidden_states + phi-star
   - cli wrapper: anima-core dialogue --substrate clm-v4 --user-input "..."
   - emit substrate response (phi-star scalar + axis activation per cell)
@@ -156,7 +156,7 @@ forced learning 안 함 — 발견될 patterns:
 
 ## §12 Composability
 
-- upstream: HF Hub `need-singularity/clm-v4-mk2-v1` (PRIVATE, review window 만료 후 PUBLIC)
+- upstream: HF Hub `dancinlab/clm-v4-mk2-v1` (PRIVATE, review window 만료 후 PUBLIC)
 - sister: anima-core hexa (이미 존재)
 - substrate science: CLM v4 phi-star canonical (paradigm v11 G3 +41.86)
 - downstream: emerge dialogue session logs -> CLM v5 redesign hint or substrate-only confirmation

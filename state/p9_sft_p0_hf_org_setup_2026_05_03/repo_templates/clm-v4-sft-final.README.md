@@ -12,7 +12,7 @@ tags:
   - chat
 library_name: transformers
 pipeline_tag: text-generation
-base_model: need-singularity/anima-clm-v4-530m
+base_model: dancinlab/anima-clm-v4-530m
 ---
 
 # anima-clm-v4-sft-final
@@ -78,8 +78,8 @@ Verdict logic:
 from transformers import AutoModelForCausalLM
 from peft import PeftModel
 
-base = AutoModelForCausalLM.from_pretrained("need-singularity/anima-clm-v4-530m")
-model = PeftModel.from_pretrained(base, "need-singularity/clm-v4-sft-final")
+base = AutoModelForCausalLM.from_pretrained("dancinlab/anima-clm-v4-530m")
+model = PeftModel.from_pretrained(base, "dancinlab/clm-v4-sft-final")
 ```
 
 ## Honest C3

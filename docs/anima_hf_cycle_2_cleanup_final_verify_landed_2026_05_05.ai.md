@@ -24,13 +24,13 @@ HF Cycle 2 final verification before review-window-close execution. Audited 2 pr
 
 | repo | private | sha | siblings | matches script EXPECTED_* |
 |---|---|---|---|---|
-| `need-singularity/clm-v4-mk2-v1` | true | `80440a1d38db9addc4445bb959057558a57f4230` | 16 | YES (intact) |
-| `need-singularity/clm-v4-paradigm-d-pbeta-50k-mk2-v1` | true | `7643e764488f8e11020a7663c50f2e590b70d10f` | 6 | YES (intact) |
+| `dancinlab/clm-v4-mk2-v1` | true | `80440a1d38db9addc4445bb959057558a57f4230` | 16 | YES (intact) |
+| `dancinlab/clm-v4-paradigm-d-pbeta-50k-mk2-v1` | true | `7643e764488f8e11020a7663c50f2e590b70d10f` | 6 | YES (intact) |
 
 ## Pβ Script Authoring Deltas
 
 **cleanup_pbeta_2026_05_08.bash** — diff vs clm template:
-- `REPO_ID` → `need-singularity/clm-v4-paradigm-d-pbeta-50k-mk2-v1`
+- `REPO_ID` → `dancinlab/clm-v4-paradigm-d-pbeta-50k-mk2-v1`
 - `COMMIT_SHA` → `7643e764488f8e11020a7663c50f2e590b70d10f`
 - `EXPECTED_SIBLINGS` → 6 (Pβ has 5 stage files + .gitattributes vs clm 16)
 - `UBU1_STAGE` → `/home/aiden/anima_pbeta_50k_step50000`

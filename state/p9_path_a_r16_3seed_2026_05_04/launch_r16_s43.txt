@@ -32,7 +32,7 @@ nohup python3 -u $WORKSPACE/train_llama_lora_r16.py \
     --max-steps 10000 --save-steps 2000 --seq-len 2048 --warmup-steps 200 --logging-steps 10 \
     --bf16 --gradient-checkpointing \
     --seed 43 \
-    --push-to-hub need-singularity/llm-llama32-3b-paradigm-a-prime-r16-s43-sft-stage1 \
+    --push-to-hub dancinlab/llm-llama32-3b-paradigm-a-prime-r16-s43-sft-stage1 \
     > $OUT_DIR/train.log 2>&1 &
 TRAIN_PID=$!
 echo "$TRAIN_PID" > $OUT_DIR/train.pid

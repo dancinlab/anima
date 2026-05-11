@@ -8,9 +8,9 @@
 ## 3-Seed Strategy
 | Seed | Pod ID | SSH | HF Push | Status |
 |------|--------|-----|---------|--------|
-| 42 (existing) | `pvkyhb0lb87ydu` | 103.207.149.143:15961 | `need-singularity/llm-llama32-3b-paradigm-a-prime-r16-sft-stage1` | RUNNING (~13h projected total elapsed at completion) |
-| 43 (new) | `0jetjpvlm51zoy` | 216.243.220.230:11023 | `need-singularity/llm-llama32-3b-paradigm-a-prime-r16-s43-sft-stage1` | LAUNCHING |
-| 44 (new) | `nzw0btc8br78yy` | 64.247.201.34:12499 | `need-singularity/llm-llama32-3b-paradigm-a-prime-r16-s44-sft-stage1` | LAUNCHING |
+| 42 (existing) | `pvkyhb0lb87ydu` | 103.207.149.143:15961 | `dancinlab/llm-llama32-3b-paradigm-a-prime-r16-sft-stage1` | RUNNING (~13h projected total elapsed at completion) |
+| 43 (new) | `0jetjpvlm51zoy` | 216.243.220.230:11023 | `dancinlab/llm-llama32-3b-paradigm-a-prime-r16-s43-sft-stage1` | LAUNCHING |
+| 44 (new) | `nzw0btc8br78yy` | 64.247.201.34:12499 | `dancinlab/llm-llama32-3b-paradigm-a-prime-r16-s44-sft-stage1` | LAUNCHING |
 
 ## Hyperparameters (identical across seeds, only `--seed` differs)
 - base: meta-llama/Llama-3.2-3B-Instruct
@@ -42,7 +42,7 @@
   - 4bit_nf4 quant of base + PEFT adapter overlay (matches A' anchor methodology)
 - Distribution decision: single H100 80GB easily handles 1 model at a time; 45 evals serial @ ~2min/eval = ~1.5h total
   - No need to provision 3 eval pods (saves $9 + simplifies aggregation)
-- HF download per ckpt: pull from `need-singularity/llm-llama32-3b-paradigm-a-prime-r16-{,s43-,s44-}sft-stage1` revisions
+- HF download per ckpt: pull from `dancinlab/llm-llama32-3b-paradigm-a-prime-r16-{,s43-,s44-}sft-stage1` revisions
 
 ## Mitigation Comparison Output (post-eval)
 - `verdict.json` — top-level pass/fail per F-PATHA-MITIGATION-1 schema

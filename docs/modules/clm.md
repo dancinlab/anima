@@ -7,7 +7,7 @@ serves dual purpose:
    composes with the rest of anima, and what its honest limits are.
 2. **HF README sync source** — `tool/hf_upload_mk2.hexa --readme
    docs/modules/clm.md` consumes this file when pushing the HF repo
-   `need-singularity/clm-v4-mk2-v1` (per `.roadmap.clm` cond.2 cross_link
+   `dancinlab/clm-v4-mk2-v1` (per `.roadmap.clm` cond.2 cross_link
    `hf_readme_sync_source: anima/docs/modules/clm.md`, with the
    target-repo name following the `clm-v4-mk2-v1` resolution recommended
    by `docs/anima_clm_hf_release_v1_audit_2026_05_04.md` Option A — the
@@ -247,7 +247,7 @@ import sentencepiece as spm
 import torch
 
 model = AutoModelForCausalLM.from_pretrained(
-    "need-singularity/clm-v4-mk2-v1",
+    "dancinlab/clm-v4-mk2-v1",
     trust_remote_code=True,
     torch_dtype=torch.float16,
     low_cpu_mem_usage=False,
@@ -383,7 +383,7 @@ those tasks.
 - **License**: MIT (per `.roadmap.clm` cond.2 cross_link
   `hf_license: mit`).
 - **LICENSE file**: `/Users/ghost/core/anima/LICENSE` (MIT, copyright
-  "need-singularity" 2026); bundled into the HF staging dir at upload
+  "dancinlab" 2026); bundled into the HF staging dir at upload
   time per the `tool/hf_upload_mk2.hexa` runbook.
 - **anima own#14 compliance**: model weights (5GB raw `best.pt`,
   2.12 GB post-shim safetensors) are HF Hub only; **NEVER** committed
@@ -411,7 +411,7 @@ those tasks.
   author = {anima n_substrate consortium},
   title  = {anima-clm-mk2-v1: 530M consciousness-measurement substrate},
   year   = {2026},
-  url    = {https://huggingface.co/need-singularity/clm-v4-mk2-v1},
+  url    = {https://huggingface.co/dancinlab/clm-v4-mk2-v1},
   note   = {n_substrate paradigm v11 G3 PASS positive φ★ = +41.86;
             uniquely strong positive integration substrate among
             Mistral / Qwen3 / Llama / Gemma / CLM 5-substrate
@@ -575,13 +575,13 @@ cross-substrate narrative without inflating per-repo READMEs.
 ### C6 — `clm-v4-mk2-v1` naming-spec amendment: cond.2 literal retargeted
 
 The `.roadmap.clm` cond.2 cross_link originally listed
-`hf_release_planned: need-singularity/anima-clm-mk2-v1`. The mk2 naming
+`hf_release_planned: dancinlab/anima-clm-mk2-v1`. The mk2 naming
 convention spec (`docs/anima_hf_naming_convention_mk2_spec_2026_05_03.md`)
 EBNF requires `<lm-family>` to be one of
 `{blm,clm,tlm,vlm,slm,nlm,alm,mlm,llm,hexad,composite}` — no `anima-`
 umbrella prefix. Per the release-readiness audit
 (`docs/anima_clm_hf_release_v1_audit_2026_05_04.md` §1.7 Option A), the
-release name was retargeted to `need-singularity/clm-v4-mk2-v1` (size
+release name was retargeted to `dancinlab/clm-v4-mk2-v1` (size
 suffix `-530m` omitted per spec §3.5: "omit if obvious from
 base-version" — `v4` historically tracks 530M with no v4 size sweep
 planned). cond.2 amendment in `.roadmap.clm` is a single-line edit
@@ -698,4 +698,4 @@ amendment: chat-incapability disclosure is now both architectural
 - `state/clm_v4_tokenizer_restoration_2026_05_03/integrity_report.json` (tokenizer integrity)
 - `state/p9_paradigm_d_distill_2026_05_03/` (Φ★-axis distill PARTIAL_PASS, scalar)
 - `state/p9_paradigm_d_distill_mini_2026_05_04/verdict.json` (logit-axis distill FAILED on vocab mismatch)
-- `LICENSE` (MIT, copyright "need-singularity" 2026)
+- `LICENSE` (MIT, copyright "dancinlab" 2026)

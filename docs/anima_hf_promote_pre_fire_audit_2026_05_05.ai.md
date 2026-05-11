@@ -30,8 +30,8 @@ Live curl against HF API at audit time:
 
 | Repo | sha (live) | private | siblings | lastModified | vs BG-E |
 |---|---|---|---|---|---|
-| `need-singularity/clm-v4-mk2-v1` | `80440a1d38db9addc4445bb959057558a57f4230` | True | 16 | 2026-05-04T23:26:12Z | MATCH |
-| `need-singularity/clm-v4-paradigm-d-pbeta-50k-mk2-v1` | `7643e764488f8e11020a7663c50f2e590b70d10f` | True | 6 | 2026-05-05T03:44:35Z | MATCH |
+| `dancinlab/clm-v4-mk2-v1` | `80440a1d38db9addc4445bb959057558a57f4230` | True | 16 | 2026-05-04T23:26:12Z | MATCH |
+| `dancinlab/clm-v4-paradigm-d-pbeta-50k-mk2-v1` | `7643e764488f8e11020a7663c50f2e590b70d10f` | True | 6 | 2026-05-05T03:44:35Z | MATCH |
 
 **Verdict §2**: PASS — both repos sha + private + siblings + lastModified identical to BG-E 13:00Z snapshot. No silent HF-side mutation during dwell.
 

@@ -16,7 +16,7 @@
 //
 // OUTPUT
 //   - file_type_counts
-//   - sub_project_paper_counts: {anima, brainwire, n6-architecture, nexus, sedi}
+//   - sub_project_paper_counts: {anima, brainwire, CANON, nexus, sedi}
 //   - readme_claims (94 papers verification)
 //   - non_mutation_guarantee
 //
@@ -71,7 +71,7 @@ fn _write_helper() {
     parts.push("}\n\n")
 
     parts.push("# Per-project paper counts (sub-dirs = active projects)\n")
-    parts.push("PROJECT_DIRS = ['anima', 'brainwire', 'n6-architecture', 'nexus', 'sedi']\n")
+    parts.push("PROJECT_DIRS = ['anima', 'brainwire', 'CANON', 'nexus', 'sedi']\n")
     parts.push("sub_project_paper_counts = {}\n")
     parts.push("for proj in PROJECT_DIRS:\n")
     parts.push("    sub_path = os.path.join(PAPERS_DIR, proj)\n")
@@ -134,7 +134,7 @@ fn _write_helper() {
 }
 
 fn _selftest_invariants() -> bool {
-    let project_dirs = "anima,brainwire,n6-architecture,nexus,sedi"
+    let project_dirs = "anima,brainwire,CANON,nexus,sedi"
     let file_types = "md,pdf,tex,bib,json"
     let non_mutation = "READ_ONLY"
     println("inv:project_dirs=" + project_dirs)

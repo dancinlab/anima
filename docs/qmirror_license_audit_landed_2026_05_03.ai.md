@@ -142,11 +142,11 @@ package license).
 
 ```bash
 # GitHub canonical
-gh api repos/need-singularity/qmirror/contents/LICENSING.md --jq '.size'
+gh api repos/dancinlab/qmirror/contents/LICENSING.md --jq '.size'
 # → ~8900 (LICENSING.md exists)
 
 # HF mirror
-curl -s https://huggingface.co/need-singularity/qmirror/raw/main/LICENSING.md | head -5
+curl -s https://huggingface.co/dancinlab/qmirror/raw/main/LICENSING.md | head -5
 # → "# LICENSING — sub-component breakdown" + Apache-2.0 line
 
 # Apache-2.0 still declared on both

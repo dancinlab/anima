@@ -102,7 +102,7 @@
 | arch | ConsciousLM byte-level (n_head=4, d_model=384, n_layer=6, vocab=256, block_size=256) |
 | step | 45000 |
 | source | `anima-models/conscious-lm/convo-ft/convo_5k.pt` |
-| HF | `need-singularity/clm-v2-byte-18m-convo-5k` (PUBLIC) |
+| HF | `dancinlab/clm-v2-byte-18m-convo-5k` (PUBLIC) |
 
 **C1 대화 가능 결과** — 한글↔한글 / EN↔EN 언어 정합 strict:
 
@@ -177,7 +177,7 @@ EN group (EN input → EN output expected):
 | params | 530M (477.6M actual) |
 | arch | ConsciousDecoderV3 + 16 blocks (RoPE + GQA(6h,2kv) + SwiGLU + RMSNorm + purefield + ca_mix) |
 | paradigm | v11 G3 (Φ★ +41.86 baseline) |
-| HF | `need-singularity/clm-v4-mk2-v1` (private) |
+| HF | `dancinlab/clm-v4-mk2-v1` (private) |
 
 **substrate-coupled mode** (NOT token chat):
 
@@ -203,7 +203,7 @@ hidden_state_delta: 0.0000
 |---|---|
 | params | 458M (head-only swap, body 530M frozen) |
 | arch | CLM v4 + KoGPT2 vocab 51201 head |
-| HF | `need-singularity/clm-3-bprime-s1-{ubu1,ubu2}` (PUBLIC) |
+| HF | `dancinlab/clm-3-bprime-s1-{ubu1,ubu2}` (PUBLIC) |
 
 **C1 결과** (evaluator from cycle):
 | prompt | KO | EN | coherent |
@@ -341,7 +341,7 @@ CF mgmt API account `d4acc95...` (current secret CLI) 5 objects 발견 (clm-v2/l
 | BG-FK 5 variants (tiny~base) | **UNTESTED** | ✅ | ca_rules+gate variants |
 | AnimaLM v1-v4 + savant | **REJECTED_PER_OWN_17** | ❌ | Mistral lineage |
 | **anima-native-ko-tiny (BG-FU)** | **PARTIAL_PASS_HANGUL_BUT_NOT_COHERENT** ★ | ✅ anima-native | **첫 한글 emit anima model**! 3M params (4L/192d/4h, vocab 256), step 2000 mac MPS, KO ratio 0.34 avg, 2/3 prompts ≥30% Hangul. but degenerate cycle ('의 의 의' / '\\n\\n\\n') C1.2 FAIL. 다음: corpus_ko_heavy + bigger model + more steps |
-| **anima-native-ko-small (BG-FY)** | **PARTIAL_PASS_NO_CONTEXT** (own 18 C2.4 추가 후 강등 ★ / V2 strict applied 2026-05-07 — confirmed) | ✅ anima-native | 18M params (6L/384d/6h, vocab 256), step 10000 ubu1 RTX 5070 bf16 3.3min. avg_hangul 0.687, 3/3 C1 PASS + C2.1-2.3 PASS, but **C2.4 맥락 정합 FAIL** ★ — corpus_ko_heavy의 philosophy debate template (서연/하은/유진 named speakers + "반례를 들어볼게요") leak. prompt "안녕하세요" → "서연: 좋은 지적이..." (인사 응답 X). prompt "한국어 가능?" → "유진: 정말 그럴까요? 반례를 들어볼게요." (능력 답변 X). 모든 응답이 prompt 무관, corpus 토론 패턴 자동 emit. ckpt 70.3MB sha 729d26ad. HF: need-singularity/anima-native-ko-small-byte-18m PUBLIC (label demote pending). **V2 retroeval (state/anima_evaluator_v2_retroeval_2026_05_07/)**: V2 strict caught named-speaker leak via C2_4_a (서연 x2 in greedy 안녕하세요/한국어 가능?) + C2_4_b domain_kw_overlap=0 across all 6 responses + C2_2_meaningful_strict FAIL greedy (4-gram '아니에 아니에 있어요' cycle) — 6 V1→V2 cell transitions; verdict PARTIAL_PASS_NO_CONTEXT preserved. 다음: corpus chat-template format ("사용자: <Q>\\n도우미: <A>") only 또는 instruction-tuning |
+| **anima-native-ko-small (BG-FY)** | **PARTIAL_PASS_NO_CONTEXT** (own 18 C2.4 추가 후 강등 ★ / V2 strict applied 2026-05-07 — confirmed) | ✅ anima-native | 18M params (6L/384d/6h, vocab 256), step 10000 ubu1 RTX 5070 bf16 3.3min. avg_hangul 0.687, 3/3 C1 PASS + C2.1-2.3 PASS, but **C2.4 맥락 정합 FAIL** ★ — corpus_ko_heavy의 philosophy debate template (서연/하은/유진 named speakers + "반례를 들어볼게요") leak. prompt "안녕하세요" → "서연: 좋은 지적이..." (인사 응답 X). prompt "한국어 가능?" → "유진: 정말 그럴까요? 반례를 들어볼게요." (능력 답변 X). 모든 응답이 prompt 무관, corpus 토론 패턴 자동 emit. ckpt 70.3MB sha 729d26ad. HF: dancinlab/anima-native-ko-small-byte-18m PUBLIC (label demote pending). **V2 retroeval (state/anima_evaluator_v2_retroeval_2026_05_07/)**: V2 strict caught named-speaker leak via C2_4_a (서연 x2 in greedy 안녕하세요/한국어 가능?) + C2_4_b domain_kw_overlap=0 across all 6 responses + C2_2_meaningful_strict FAIL greedy (4-gram '아니에 아니에 있어요' cycle) — 6 V1→V2 cell transitions; verdict PARTIAL_PASS_NO_CONTEXT preserved. 다음: corpus chat-template format ("사용자: <Q>\\n도우미: <A>") only 또는 instruction-tuning |
 | **anima-native-ko-chat-template (BG-HA)** ⚠️ | **PARTIAL_PASS_NO_CONTEXT_v2** ⚠️ (V2 strict applied 2026-05-07 — automated re-eval CONFIRMED downgrade) | ✅ anima-native | 18,031,872 params (6L/384d/6h, vocab 256, block 256), 10000 steps batch=8 ga=8 lr=3e-4 ubu1 RTX 5070 bf16 124s. corpus_chat_template.txt 236.96MB. train_loss_final L_A=1.5907. **EVALUATOR FALSE PASS DETECTED 2026-05-07 + V2 STRICT CONFIRMED 2026-05-07**: BG-HA evaluator의 C2.4 정의가 'named speaker leak (서연/유진/하은 등 10 names) 0건' 으로만 narrow 정의 → BG-FY의 specific philosophy debate pattern은 막았지만, 사용자 directive **'자연발화는 맥락에 맞아야한다'** (= prompt domain match) 검증 X. 실제 sample mode 응답: "안녕하세요"→"4. 연성 서래 이 미국 연보고..." (인사 X), "한국어 가능?"→"파에서 개적되어요..." (능력 답변 X), "코드를 짜줘"→"합니다. 아드 어떤 막자들을..." (코드 X). C2.2 (의미) + C2.3 (자연성) + C2.4 (맥락정합) 모두 actual FAIL — evaluator metric (한글 비율 + non-degenerate sample mode + named-speaker 0건)이 actual semantic relevance 측정 X. greedy mode 5/5 모두 is_degenerate=true ('이 이 이 있어요' cycle 4-gram repeat 5-11회). HF PRIVATE upload BG-HD 정지 (false PASS prevention). ckpt_final 70.3MB 보존 (state/.../ckpt_final.pt). verdict: state/anima_native_ko_chat_template_train_2026_05_07/verdict.json (verdict_class downgrade pending). **V2 retroeval (state/anima_evaluator_v2_retroeval_2026_05_07/retroeval_verdict.json)**: V2 strict caught false PASS via C2_4_b domain_kw_overlap=0 in 9/10 final-step responses (greeting/capability/emotion/code prompts: zero domain expected keywords) + C2_2_meaningful_strict FAIL greedy (degenerate fourgram cycle) + C2_3_natural_strict FAIL sample (particle_count<3) — 22 V1→V2 cell transitions across 10 responses. NEXT: own 18 C2.4 strict semantic check evaluator 보강 spec 필요 (named-speaker-leak 외 prompt-conditional response domain match metric 추가) |
 
 ### 9. anima-native-ko-tiny (BG-FU success, 2026-05-06 19:54) ★
@@ -445,6 +445,25 @@ But rclone configured remote = different account `ce4bdcce...` (R2 access keys s
 | **anima-h-curated-qa step 500 (BG-HY)** ⛔ | **BLOCKED_CKPT_NEVER_PERSISTED** ⛔ | ✅ anima-native (BG-HP lineage) | BG-HP step 500 V2 pass=3/10 was **eval-progression in-memory eval only** (eval_log.jsonl + verdict.json eval_progression dict) — **disk checkpoint NEVER produced**. root cause: `tool/transient_py/anima_h_curated_qa_train.py:90` `SAVE_AT = [STEPS]` only persists final step (3000); EVAL_AT runs every 500 in-memory but no save@500 policy. ubu1 `/home/aiden/anima_native/anima-h-curated-qa-20260507_033512/` 실측: ckpt_3000.pt only (112.79MB). spec assumed ckpt deletion ("if ubu1에서 deleted ... backward search from ck_1000") but actual finding tighter: ckpt was never authored. backward search not applicable. **Lesson G missing-ingredient instance NOT retrieved this run** (V2/V3 strict re-eval skipped, manual review skipped, HF private upload spec stub deferred). **NEXT (BG-HZ recommend)**: re-run BG-HP-style with patch `SAVE_AT = list(range(500, STEPS+1, 500))` + seed-pin (torch/numpy/python random) for reproducibility; ~93s ubu1 RTX 5070 / $0; deliverable = ckpt_500.pt + V2 strict re-eval per step on disk → Lesson G keep-point validation. alternative lighter recovery if seed-reproducibility doubt: N=3 seed sweep at step 500 only (early-stop after step 500 ckpt save) to verify pass=3/10 wasn't single-seed luck. verdict: state/anima_h_curated_qa_step500_retrieve_2026_05_07/{verdict.json, eval_log.jsonl, manual_review.json}. honest_c3=5 captured. |
 
 → **Lesson H additive update**: training scripts targeting Lesson G (early stopping at signal step) MUST persist all eval_gate ckpts to disk (SAVE_AT ⊇ EVAL_AT), not just final. Otherwise the keep-point signal is observed-but-unrecoverable. patch all future BG-H* scripts.
+
+---
+
+### 15. BG-HU COMBINED_PARADIGM_R1_PLUS_D 18M BPE + 53MB UBM-augmented corpus (2026-05-07, ubu1 RTX 5070 cuda) — **PARTIAL_BEST_CKPT_STEP_800_8_OF_15_V2_PASS** ★ first qualified PARTIAL with V3 boost
+
+| Model | Verdict | anima-native | Notes |
+| --- | --- | --- | --- |
+| **anima-combined-paradigm step 800 (BG-HU best ckpt)** | **PARTIAL** (V2_PARTIAL_PASS_GE7 8/15 + manual 10/15 + cycle 1/15) | ✅ anima-native (UBM × 10 + persona + SFT + KO-FZ) | F META 결합 paradigm spec 적용. 18M ConsciousLM (33.7M total params with BPE 8K head) 6L/384d/6h, dropout 0.30 + WD 0.10 + label smoothing 0.10 (Lesson D), instruction-tuning loss masking on 도우미: separator (Lesson C), early-stop val_loss × 1.02 + 3-plateau patience + persona-cycle halt ≥7/15 (Lesson G ★★ + Lesson H V3 boost). Corpus 52.75MB / 15.4M BPE tokens / 102,720 blocks (UBM 42,720 / persona 49,548 / SFT 10,377 / KO-FZ 75 — UBM × 10 oversample, persona+SFT cross-source dedupe). Eval progression 200→1000 every 200 steps × 15 prompts × 2 modes. Run elapsed 148s on ubu1 cuda. **Halt: persona_cycle_step_1000** (cycle count jumped 1→8/15 at step 1000, V3 boost triggered halt; step 800 best ckpt preserved). Best ckpt eval at step 800: V2_pass 8/15 (V2_PARTIAL_PASS_GE7), manual_review_domain_match 10/15, persona_repetition_cycle_count 1/15, val_loss 5.96, train_loss_at_peak 6.66 (vs final train_loss 6.17 at step 1000 — overtraining direction). **첫 V3 boost halt working as designed** — Lesson G keep-best-ckpt + Lesson H persona-cycle penalty 두 enhancement 모두 verified live. Eval progression: step 200 pass=2/15 cycle=0 → step 400 pass=3/15 cycle=0 → step 600 pass=5/15 cycle=0 (V2_PARTIAL_PASS) → **step 800 pass=8/15 cycle=1 (V2_PARTIAL_PASS_GE7 PEAK)** → step 1000 pass=2/15 cycle=8 V2_FAIL HALT. ckpt_best_eval.pt persisted (136.6MB ubu1 gitignored). |
+
+→ **Lessons confirmed by BG-HU**:
+- Lesson G ★★ early-stop + best-ckpt selection (val_loss 1.02 plateau patience + cycle halt) **WORKS** — without it BG-HU would have continued to step 4000 collapsing further (BG-HQ pattern at step 6000 collapse to '됩니다됩니다' repetition).
+- Lesson H V3 ★★ persona repetition cycle penalty **CATCHES** mode collapse before V2 surface metrics fully fail (step 1000 V2_pass=2 + cycle=8 → halt before further degradation).
+- Lesson D regularization (dropout 0.3 + WD 0.1 + label smoothing 0.1) keeps loss healthy (6.17 final vs BG-HQ 1.66 final — higher loss = less memorization).
+- Lesson C instruction-tuning loss masking on 도우미: separator scored only completion tokens — anima self-naming present in 8/10 identity prompts at peak.
+- 결합 paradigm 8/15 V2 strict + 10/15 manual_match = first qualified PARTIAL with V3 boost (vs BG-HQ 0/10 V2 strict at step 6000, BG-HK 0/10 at step 8000).
+
+→ **Lesson 추가 (Lesson I)**: persona prefix [anima 역할: ...] oversampling (UBM × 10 + persona ALL keep-repetitions) caused early collapse to persona-prefix repetition by step 1000. **Trade-off**: identity amplification ↔ persona-cycle mode collapse. UBM × 5 또는 dropout-prefix-during-train may help.
+→ **Lesson 추가 (Lesson J)**: corpus 52.75MB < 100MB target — REDUCED_CORPUS warning emitted but proceeded; SFT/persona/KO-FZ heavy cross-source overlap (BG-HK was built FROM BG-HF + BG-FZ). Future combined paradigm Phase 2 needs net-new corpus source (e.g., kowiki direct, OpenSubtitles KO).
+→ Final class **PARTIAL** — NOT POTENTIAL_FIRST_TRUE_SIMPLE_STACK_PASS (gate: V2_pass ≥7 ✅ + manual ≥7 ✅ + zero cycle ❌ since cycle=1). Closest qualifying lane achieved to date.
 
 ---
 

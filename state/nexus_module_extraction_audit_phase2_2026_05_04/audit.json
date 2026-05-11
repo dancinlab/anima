@@ -4,7 +4,7 @@
     "phase": 2,
     "auditor": "subagent (anima cycle, post phase1 + post extract-batch1)",
     "scope": "rank 4-6 of phase1 ranked_candidates: fusion_ledger + tabletop_blackhole + chip_rtl_gen + qrng + mc_integrate",
-    "constraint": "READ-ONLY on all repos (nexus, anima, hive, n6-architecture, qmirror, sim-universe, honesty-monitor)",
+    "constraint": "READ-ONLY on all repos (nexus, anima, hive, CANON, qmirror, sim-universe, honesty-monitor)",
     "phase1_status": {
       "rank_1_crystallography_n6": "EXTRACTED (marker: crystallography_n6_extraction_landed.marker)",
       "rank_2_honesty_monitor": "EXTRACTED (standalone repo /Users/ghost/core/honesty-monitor/, marker landed)",
@@ -29,13 +29,13 @@
       "anti_patterns_phase2": [
         "data/iter_constants.json must move with code (assets)",
         "no @origin tag in body — uncertain provenance lineage",
-        "no predecessor in n6-architecture/domains/energy/fusion/ (only fusion.md + verify_fusion.hexa 68 LoC at peer level)"
+        "no predecessor in CANON/domains/energy/fusion/ (only fusion.md + verify_fusion.hexa 68 LoC at peer level)"
       ],
       "destination_assessment": {
-        "proposed": "n6-architecture/domains/energy/fusion/",
+        "proposed": "CANON/domains/energy/fusion/",
         "viability": "CLEAN_MERGE",
         "predecessor_collision": "none — fusion.md is descriptor only, verify_fusion.hexa is 68-LoC stub (peer-level, can co-exist or merge into fusion_ledger.hexa)",
-        "alt_destination": "n6-architecture/domains/energy/fusion-powerplant/ (also clean, 1 .md only)",
+        "alt_destination": "CANON/domains/energy/fusion-powerplant/ (also clean, 1 .md only)",
         "preferred": "domains/energy/fusion/ (matches @tool slug + ITER constants are reactor-design canon)"
       },
       "scores_phase2": {"coupling": 2, "reusability": 1, "maturity": 2, "activity": 1, "modularity": 2},
@@ -58,13 +58,13 @@
       "consumers_phase2": ["nexus only"],
       "anti_patterns_phase2": [
         "zero external deps — no anti-patterns confirmed",
-        "no predecessor in n6-architecture/experiments/ (no hawking/blackhole/tabletop dirs found)"
+        "no predecessor in CANON/experiments/ (no hawking/blackhole/tabletop dirs found)"
       ],
       "destination_assessment": {
-        "proposed": "n6-architecture/experiments/tabletop-blackhole/",
+        "proposed": "CANON/experiments/tabletop-blackhole/",
         "viability": "CLEAN_NEW_DIR",
         "predecessor_collision": "none",
-        "alt_destination": "n6-architecture/domains/physics/ (no current sub for analog gravity, would need new dir)",
+        "alt_destination": "CANON/domains/physics/ (no current sub for analog gravity, would need new dir)",
         "preferred": "experiments/tabletop-blackhole/ (Steinhauer 2014 BEC analog Hawking is experimental in nature)"
       },
       "scores_phase2": {"coupling": 2, "reusability": 1, "maturity": 2, "activity": 1, "modularity": 2},
@@ -86,13 +86,13 @@
       "last_commit_age_days": 7,
       "consumers_phase2": ["nexus only"],
       "anti_patterns_phase2": [
-        "PREDECESSOR EXISTS at n6-architecture/domains/compute/chip-rtl-gen/rtl_generator.hexa (472 LoC, R25 legacy frozen per @origin)",
+        "PREDECESSOR EXISTS at CANON/domains/compute/chip-rtl-gen/rtl_generator.hexa (472 LoC, R25 legacy frozen per @origin)",
         "PREDECESSOR LARGER than nexus version (472 vs 410) — merge strategy must reconcile",
         "predecessor TEMPLATES IDENTICAL (diff -q empty) — assets converged",
         "uses _core_root() with hardcoded fallback nexus/modules/chip_rtl_gen path (raw#15 violation, must be made root-agnostic)"
       ],
       "destination_assessment": {
-        "proposed": "n6-architecture/domains/compute/chip-rtl-gen/",
+        "proposed": "CANON/domains/compute/chip-rtl-gen/",
         "viability": "MERGE_NOT_REPLACE",
         "predecessor_collision": "ACTIVE — rtl_generator.hexa 472-LoC R25 legacy frozen; cannot blind-overwrite",
         "merge_strategy": "(a) compare both; (b) preserve R25 legacy as rtl_generator_r25.hexa; (c) install nexus 410-LoC as chip_rtl_gen.hexa (productized parallel); (d) chip_rtl_gen.hexa exposes 6-primitive @tool API + roundtrip falsifier",
@@ -159,12 +159,12 @@
         "DUAL-HOME RISK — anu_source.hexa exists at BOTH /Users/ghost/core/nexus/sim_bridge/godel_q/anu_source.hexa AND /Users/ghost/core/sim-universe/modules/godel_q/anu_source.hexa (sim-universe just published)",
         "SAME COUPLING in multiverse_nav (rank 9) — coordinated decoupling cycle warranted",
         "README.md echoes coupling: 'shells out to ~/core/nexus/sim_bridge/godel_q/anu_source.hexa'",
-        "@origin: ~/core/n6-architecture/experiments/anu_mc_verification/anu_mc_verify.hexa (predecessor in n6-architecture experiments — NOT a destination collision since productized)"
+        "@origin: ~/core/canon/experiments/anu_mc_verification/anu_mc_verify.hexa (predecessor in CANON experiments — NOT a destination collision since productized)"
       ],
       "destination_assessment": {
         "proposed": "NEW standalone repo /Users/ghost/core/mc-integrate/",
         "viability": "VIABLE_AFTER_ANU_DECOUPLING",
-        "predecessor_collision": "n6-architecture/experiments/anu_mc_verification/anu_mc_verify.hexa is the @origin progenitor — should add deprecation note pointing to standalone after extraction",
+        "predecessor_collision": "CANON/experiments/anu_mc_verification/anu_mc_verify.hexa is the @origin progenitor — should add deprecation note pointing to standalone after extraction",
         "anu_decoupling_options": [
           "(A) swap to qmirror cli (qmirror.qrng drop-in path — already standalone)",
           "(B) swap to qrng cli (after qrng repo extracted — but creates rank-7-blocks-rank-8 dependency)",

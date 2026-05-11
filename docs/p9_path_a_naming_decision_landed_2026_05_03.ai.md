@@ -8,8 +8,8 @@
 
 ## TL;DR
 
-- **Canonical name chosen**: `need-singularity/llm-llama32-3b-paradigm-a-prime-sft-stage1`
-- **Pre-created**: YES, as PRIVATE, with mk2-conformant README at https://huggingface.co/need-singularity/llm-llama32-3b-paradigm-a-prime-sft-stage1
+- **Canonical name chosen**: `dancinlab/llm-llama32-3b-paradigm-a-prime-sft-stage1`
+- **Pre-created**: YES, as PRIVATE, with mk2-conformant README at https://huggingface.co/dancinlab/llm-llama32-3b-paradigm-a-prime-sft-stage1
 - **Redirect strategy**: **Option B (post-hoc `hf repos move`)** chosen by 완성도 lens
 - **Pod 29dhlqk508ugoc UNTOUCHED** — only read-only ssh inspection
 - **Legacy repo `p9-llama32-lora-stage1`**: toggled PUBLIC → PRIVATE (still receives pod pushes; rename target after training)
@@ -34,11 +34,11 @@
 - `docs/p9_path_a_naming_decision_2026_05_03.md` (~280 LoC)
 
 ### HF artifacts
-- **NEW**: `need-singularity/llm-llama32-3b-paradigm-a-prime-sft-stage1` (PRIVATE, mk2 README)
-  - URL: https://huggingface.co/need-singularity/llm-llama32-3b-paradigm-a-prime-sft-stage1
+- **NEW**: `dancinlab/llm-llama32-3b-paradigm-a-prime-sft-stage1` (PRIVATE, mk2 README)
+  - URL: https://huggingface.co/dancinlab/llm-llama32-3b-paradigm-a-prime-sft-stage1
   - sha: 5161b80883bb602df532d13ab2a322211a6ee3af
-- **MODIFIED**: `need-singularity/p9-llama32-lora-stage1` (toggled PUBLIC → PRIVATE; will be renamed post-training)
-  - URL: https://huggingface.co/need-singularity/p9-llama32-lora-stage1
+- **MODIFIED**: `dancinlab/p9-llama32-lora-stage1` (toggled PUBLIC → PRIVATE; will be renamed post-training)
+  - URL: https://huggingface.co/dancinlab/p9-llama32-lora-stage1
 
 ### State
 - `state/p9_path_a_naming_2026_05_03/README_canonical.md` (the README staged + uploaded)
@@ -46,7 +46,7 @@
 
 ### Pod coordination
 - pod 29dhlqk508ugoc (RunPod, anima-p9-pathA-llama-v2): **UNTOUCHED** (read-only ssh inspection only)
-- pod still pushes to legacy `need-singularity/p9-llama32-lora-stage1` per its launch args
+- pod still pushes to legacy `dancinlab/p9-llama32-lora-stage1` per its launch args
 - training estimated wall: ~10-20h from launch (14:27Z 2026-05-03), ckpts at step-2k/4k/6k/8k/10k
 
 ---
@@ -57,20 +57,20 @@ When pod 29dhlqk508ugoc reports `step=10000` saved:
 
 ```
 # 1. Capture pre-move tag manifest (per honest C2)
-hf models info need-singularity/p9-llama32-lora-stage1 | jq .siblings > /tmp/pre_move_manifest.json
+hf models info dancinlab/p9-llama32-lora-stage1 | jq .siblings > /tmp/pre_move_manifest.json
 
 # 2. Delete pre-created stub
-hf repos delete need-singularity/llm-llama32-3b-paradigm-a-prime-sft-stage1 --yes
+hf repos delete dancinlab/llm-llama32-3b-paradigm-a-prime-sft-stage1 --yes
 
 # 3. Move legacy → canonical
-hf repos move need-singularity/p9-llama32-lora-stage1 need-singularity/llm-llama32-3b-paradigm-a-prime-sft-stage1
+hf repos move dancinlab/p9-llama32-lora-stage1 dancinlab/llm-llama32-3b-paradigm-a-prime-sft-stage1
 
 # 4. Re-upload finalized README (with TBD fields filled)
-hf upload need-singularity/llm-llama32-3b-paradigm-a-prime-sft-stage1 \
+hf upload dancinlab/llm-llama32-3b-paradigm-a-prime-sft-stage1 \
   state/p9_path_a_naming_2026_05_03/README_canonical_final.md README.md
 
 # 5. (optional) verify tags survived; recreate from manifest if needed
-hf models info need-singularity/llm-llama32-3b-paradigm-a-prime-sft-stage1 | jq .siblings
+hf models info dancinlab/llm-llama32-3b-paradigm-a-prime-sft-stage1 | jq .siblings
 ```
 
 If pod fails or stops at step <10000, salvage workflow same but with whichever ckpts exist.
@@ -90,22 +90,22 @@ If pod fails or stops at step <10000, salvage workflow same but with whichever c
 ## Verification log
 
 ```
-$ hf models info need-singularity/llm-llama32-3b-paradigm-a-prime-sft-stage1 | jq '{id, private, siblings: [.siblings[].rfilename]}'
+$ hf models info dancinlab/llm-llama32-3b-paradigm-a-prime-sft-stage1 | jq '{id, private, siblings: [.siblings[].rfilename]}'
 {
-  "id": "need-singularity/llm-llama32-3b-paradigm-a-prime-sft-stage1",
+  "id": "dancinlab/llm-llama32-3b-paradigm-a-prime-sft-stage1",
   "private": true,
   "siblings": [".gitattributes", "README.md"]
 }
 
-$ hf models info need-singularity/p9-llama32-lora-stage1 | jq '{id, private, siblings: [.siblings[].rfilename]}'
+$ hf models info dancinlab/p9-llama32-lora-stage1 | jq '{id, private, siblings: [.siblings[].rfilename]}'
 {
-  "id": "need-singularity/p9-llama32-lora-stage1",
+  "id": "dancinlab/p9-llama32-lora-stage1",
   "private": true,
   "siblings": [".gitattributes"]
 }
 
 $ ssh root@<pod-ip> -p <port> 'ps -ef | grep train_llama_lora | grep -v grep | head -1'
-root  1291  1  99 14:27 ?  python3 -u /workspace/train_llama_lora.py --base-model meta-llama/Llama-3.2-3B-Instruct ... --push-to-hub need-singularity/p9-llama32-lora-stage1
+root  1291  1  99 14:27 ?  python3 -u /workspace/train_llama_lora.py --base-model meta-llama/Llama-3.2-3B-Instruct ... --push-to-hub dancinlab/p9-llama32-lora-stage1
 # (still running, untouched)
 ```
 

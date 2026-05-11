@@ -4,7 +4,7 @@
 **Target:** `/Users/ghost/core/qmirror/README.md`
 **Marker:** `anima/state/markers/qmirror_readme_sync_landed.marker`
 **Audit:** `anima/state/qmirror_readme_sync_2026_05_04/{audit.json, before_after.diff}`
-**Commit:** [`a450113`](https://github.com/need-singularity/qmirror/commit/a450113)
+**Commit:** [`a450113`](https://github.com/dancinlab/qmirror/commit/a450113)
 **Cost:** $0
 
 ---
@@ -70,11 +70,11 @@ correctly fails loudly at the documented HF_TOKEN USER ACTION gate.
 
 | target | status | detail |
 |--------|--------|--------|
-| GitHub `main` | PUSHED | `5a3c516..a450113` to `https://github.com/need-singularity/qmirror.git` |
-| HF Hub | FAIL-LOUD (by design) | workflow run [`25298055312`](https://github.com/need-singularity/qmirror/actions/runs/25298055312) failed at `Verify HF_TOKEN secret is present` step — exact behavior documented in the new dual-mirror section |
+| GitHub `main` | PUSHED | `5a3c516..a450113` to `https://github.com/dancinlab/qmirror.git` |
+| HF Hub | FAIL-LOUD (by design) | workflow run [`25298055312`](https://github.com/dancinlab/qmirror/actions/runs/25298055312) failed at `Verify HF_TOKEN secret is present` step — exact behavior documented in the new dual-mirror section |
 
 **To complete HF sync**: USER must set `HF_TOKEN` write-scope secret at
-<https://github.com/need-singularity/qmirror/settings/secrets/actions>, then
+<https://github.com/dancinlab/qmirror/settings/secrets/actions>, then
 re-trigger the failed workflow run. End-to-end mirror semantics
 (including delete-on-source-removal) are then exercised on the next push
 or manual `workflow_dispatch`.

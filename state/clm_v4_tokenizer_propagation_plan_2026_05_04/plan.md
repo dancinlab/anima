@@ -14,7 +14,7 @@ This BG produces a READ-ONLY plan only. No upload, no git mutation, no chflags.
 `docs/p9_path_b_sanity_probe_landed_2026_05_03.ai.md` §2 reported the 64K BPE tokenizer
 artifact missing from both:
 
-- HF mirror `need-singularity/clm-v4-base-mirror` (had only `best.pt`).
+- HF mirror `dancinlab/clm-v4-base-mirror` (had only `best.pt`).
 - ubu1 disk (`/home/aiden/.cache/huggingface/hub/`).
 
 CLM v4 callers worked around with byte-fallback `[i+4 for i in bytes]` — functional analog
@@ -26,7 +26,7 @@ recovered the byte-identical artifact from `ready/anima/config/tokenizer_64k_mul
 
 **Critical pre-existing state finding (this BG investigation, 2026-05-04)**: the
 tokenizer was ALREADY UPLOADED to HF mirror on 2026-05-03 at 15:13:41Z (audit
-`state/hf_upload_audit/20260503T151341Z_need-singularity__clm-v4-base-mirror.jsonl`,
+`state/hf_upload_audit/20260503T151341Z_dancinlab__clm-v4-base-mirror.jsonl`,
 HF commit `10ee03687db312c55bbec5858c814bef28e4d365`, repo subdir `tokenizer/`).
 A first attempt at 15:13:21Z FAILED with HTTP 401 (token resolution issue — see C3-c
 in restoration doc); the 15:13:41Z retry succeeded. The propagation plan below is
@@ -70,11 +70,11 @@ not rebuild ⇒ ZERO LoRA invalidation risk for `clm-v4-sft-{step-{5k,10k,25k,50
 
 ### 2.1 HF mirror (already done, verifying)
 
-- **Primary target**: `need-singularity/clm-v4-base-mirror` — co-located with
+- **Primary target**: `dancinlab/clm-v4-base-mirror` — co-located with
   `best.pt` so a single `snapshot_download` call grabs base + tokenizer.
 - **Layout post-push** (per `docs/clm_v4_tokenizer_restored_2026_05_03.ai.md`):
   ```
-  need-singularity/clm-v4-base-mirror/
+  dancinlab/clm-v4-base-mirror/
   ├── .gitattributes
   ├── best.pt                                 (5.37 GB)
   └── tokenizer/                              (2.3 MB, NEW)
@@ -83,7 +83,7 @@ not rebuild ⇒ ZERO LoRA invalidation risk for `clm-v4-sft-{step-{5k,10k,25k,50
       ├── tokenizer_64k_multilingual.model
       └── tokenizer_64k_multilingual.vocab
   ```
-- **Audit log**: `state/hf_upload_audit/20260503T151341Z_need-singularity__clm-v4-base-mirror.jsonl`,
+- **Audit log**: `state/hf_upload_audit/20260503T151341Z_dancinlab__clm-v4-base-mirror.jsonl`,
   outcome=`ok`, file_count=4, total_bytes=2,304,683, commit=`10ee03687...`.
 - **NOT done — out of scope**: per restoration C3-(d) (caveat 4 of restoration README),
   the LoRA repos `clm-v4-sft-step-{5k,10k,25k,50k,final}`, `clm-v4-sft-stage1`,
@@ -96,7 +96,7 @@ not rebuild ⇒ ZERO LoRA invalidation risk for `clm-v4-sft-{step-{5k,10k,25k,50
 
 ### 2.2 ubu1 cache (NOT YET FULLY DONE)
 
-- **HF Hub cache**: `~/.cache/huggingface/hub/models--need-singularity--clm-v4-base-mirror/snapshots/<rev>/tokenizer/tokenizer_64k_multilingual.{model,vocab}`.
+- **HF Hub cache**: `~/.cache/huggingface/hub/models--dancinlab--clm-v4-base-mirror/snapshots/<rev>/tokenizer/tokenizer_64k_multilingual.{model,vocab}`.
   Restoration doc claims this is auto-populated by `hf_hub_download`; the cache_check
   subdir referenced in the doc (`~/anima/state/clm_v4_tokenizer_restoration_2026_05_03/cache_check/tokenizer/`)
   may or may not exist depending on whether the verification step actually ran on
@@ -143,7 +143,7 @@ is corrupted in transit), the canonical CLI invocation per
 
 ```
 hexa run tool/hf_upload_mk2.hexa --upload \
-    --repo need-singularity/clm-v4-base-mirror \
+    --repo dancinlab/clm-v4-base-mirror \
     --ckpt state/clm_v4_tokenizer_restoration_2026_05_03 \
     --readme state/clm_v4_tokenizer_restoration_2026_05_03/README.md \
     --private
@@ -152,7 +152,7 @@ hexa run tool/hf_upload_mk2.hexa --upload \
 (no `--tag` since this is a sub-folder push to an existing repo, not a
 versioned ckpt; tag was correctly null in the prior audit). Expected
 sentinel: `__ANIMA_HF_UPLOAD_MK2__ PASS`. Expected audit-log path:
-`state/hf_upload_audit/<UTC_TS>_need-singularity__clm-v4-base-mirror.jsonl`
+`state/hf_upload_audit/<UTC_TS>_dancinlab__clm-v4-base-mirror.jsonl`
 with `outcome=ok` and `sha256_map` containing exactly the four files
 listed in §1 with the sha256 values listed there.
 
@@ -180,18 +180,18 @@ written on ubu1 only or replaced by `huggingface-cli` shell call.
 
 ```
 ssh ubu1 'export HF_TOKEN=$(cat ~/.cache/huggingface/token); \
-    huggingface-cli download need-singularity/clm-v4-base-mirror \
+    huggingface-cli download dancinlab/clm-v4-base-mirror \
         tokenizer/tokenizer_64k_multilingual.model \
         tokenizer/tokenizer_64k_multilingual.vocab \
         --repo-type model'
 ```
 
-This populates `~/.cache/huggingface/hub/models--need-singularity--clm-v4-base-mirror/snapshots/<rev>/tokenizer/`.
+This populates `~/.cache/huggingface/hub/models--dancinlab--clm-v4-base-mirror/snapshots/<rev>/tokenizer/`.
 
 **Option B: hf v1.8.0+ CLI (newer)**
 
 ```
-ssh ubu1 'hf download need-singularity/clm-v4-base-mirror tokenizer/tokenizer_64k_multilingual.model tokenizer/tokenizer_64k_multilingual.vocab'
+ssh ubu1 'hf download dancinlab/clm-v4-base-mirror tokenizer/tokenizer_64k_multilingual.model tokenizer/tokenizer_64k_multilingual.vocab'
 ```
 
 **Option C: snapshot_download via `from huggingface_hub import snapshot_download`** —
@@ -201,7 +201,7 @@ and are preferred.
 ### Step 3 — Verify ubu1 cache (raw#37 — ubu1-side)
 
 ```
-ssh ubu1 'sha256sum ~/.cache/huggingface/hub/models--need-singularity--clm-v4-base-mirror/snapshots/*/tokenizer/tokenizer_64k_multilingual.{model,vocab}'
+ssh ubu1 'sha256sum ~/.cache/huggingface/hub/models--dancinlab--clm-v4-base-mirror/snapshots/*/tokenizer/tokenizer_64k_multilingual.{model,vocab}'
 ```
 
 Expected:
@@ -219,7 +219,7 @@ The 4 P9 py files hardcode `/tmp/tokenizer_64k_multilingual.model`. To preserve
 backward compat without editing every caller immediately, drop a stable symlink:
 
 ```
-ssh ubu1 'ln -sf $(find ~/.cache/huggingface/hub/models--need-singularity--clm-v4-base-mirror -name tokenizer_64k_multilingual.model | head -1) /tmp/tokenizer_64k_multilingual.model'
+ssh ubu1 'ln -sf $(find ~/.cache/huggingface/hub/models--dancinlab--clm-v4-base-mirror -name tokenizer_64k_multilingual.model | head -1) /tmp/tokenizer_64k_multilingual.model'
 ```
 
 This makes existing `/tmp/`-anchored callers resolve via cache without code edit.
@@ -244,7 +244,7 @@ import os, glob
 def _resolve_tokenizer():
     home = os.path.expanduser("~")
     cache_globs = [
-        f"{home}/.cache/huggingface/hub/models--need-singularity--clm-v4-base-mirror/snapshots/*/tokenizer/tokenizer_64k_multilingual.model",
+        f"{home}/.cache/huggingface/hub/models--dancinlab--clm-v4-base-mirror/snapshots/*/tokenizer/tokenizer_64k_multilingual.model",
         f"{home}/anima/checkpoints/clm_v4_350m/tokenizer_64k_multilingual.model",
         "/tmp/tokenizer_64k_multilingual.model",  # final fallback
     ]
@@ -384,7 +384,7 @@ Append to `.roadmap.p9_sft` JSONL as a new cond entry. SUGGESTED text
 (not committed by this BG):
 
 ```jsonl
-{"type":"entry","id":"p9_sft.cond.tokenizer_propagation","kind":"cond","title":"CLM v4 64K tokenizer propagation — HF mirror + ubu1 cache + workaround removal","desc":"Propagate the restored 64K BPE tokenizer (commit 90488dd3f) from local stage to HF mirror need-singularity/clm-v4-base-mirror/tokenizer/ + ubu1 ~/.cache/huggingface/hub/. HF push already executed 2026-05-03 15:13:41Z (audit 20260503T151341Z, commit 10ee03687). Remaining: ubu1 cache prime via huggingface-cli download + sha256 verify + at-least-1 byte-fallback caller migrated to cache-aware _resolve_tokenizer() pattern. F-TOK-1..4 preregistered. Cost $0.","verifier":{"type":"manual_review","manual_override_path":"state/markers/clm_v4_tokenizer_propagation_landed.marker","status_emit":"__P9_TOKENIZER_PROPAGATION__ <READY|PARTIAL|FAIL>"},"status":"partial","evidence":["state/clm_v4_tokenizer_propagation_plan_2026_05_04/plan.md","state/hf_upload_audit/20260503T151341Z_need-singularity__clm-v4-base-mirror.jsonl","docs/clm_v4_tokenizer_restored_2026_05_03.ai.md (HF push)","state/clm_v4_tokenizer_restoration_2026_05_03/integrity_report.json (sha bb851d39…/972fc0ba…)"],"blocker_reason":"ubu1 cache verification (F-TOK-1/2) + caller migration (F-TOK-4) outstanding; both require ssh ubu1 + transient .py/CLI per raw#37","ts":"2026-05-04","cross_link":{"upstream":"commit 90488dd3f","sister":"p9_sft.cond.benchmark_a_prime_base_validation (re-run with canonical BPE)","cost_band":"$0","falsifier_ids":["F-TOK-1","F-TOK-2","F-TOK-3","F-TOK-4"]}}
+{"type":"entry","id":"p9_sft.cond.tokenizer_propagation","kind":"cond","title":"CLM v4 64K tokenizer propagation — HF mirror + ubu1 cache + workaround removal","desc":"Propagate the restored 64K BPE tokenizer (commit 90488dd3f) from local stage to HF mirror dancinlab/clm-v4-base-mirror/tokenizer/ + ubu1 ~/.cache/huggingface/hub/. HF push already executed 2026-05-03 15:13:41Z (audit 20260503T151341Z, commit 10ee03687). Remaining: ubu1 cache prime via huggingface-cli download + sha256 verify + at-least-1 byte-fallback caller migrated to cache-aware _resolve_tokenizer() pattern. F-TOK-1..4 preregistered. Cost $0.","verifier":{"type":"manual_review","manual_override_path":"state/markers/clm_v4_tokenizer_propagation_landed.marker","status_emit":"__P9_TOKENIZER_PROPAGATION__ <READY|PARTIAL|FAIL>"},"status":"partial","evidence":["state/clm_v4_tokenizer_propagation_plan_2026_05_04/plan.md","state/hf_upload_audit/20260503T151341Z_dancinlab__clm-v4-base-mirror.jsonl","docs/clm_v4_tokenizer_restored_2026_05_03.ai.md (HF push)","state/clm_v4_tokenizer_restoration_2026_05_03/integrity_report.json (sha bb851d39…/972fc0ba…)"],"blocker_reason":"ubu1 cache verification (F-TOK-1/2) + caller migration (F-TOK-4) outstanding; both require ssh ubu1 + transient .py/CLI per raw#37","ts":"2026-05-04","cross_link":{"upstream":"commit 90488dd3f","sister":"p9_sft.cond.benchmark_a_prime_base_validation (re-run with canonical BPE)","cost_band":"$0","falsifier_ids":["F-TOK-1","F-TOK-2","F-TOK-3","F-TOK-4"]}}
 ```
 
 ---
@@ -423,10 +423,10 @@ tokenizer from base-mirror regardless of which LoRA they're attaching.
 
 ## 10. Reporting Surface
 
-This plan + the existing audit log `state/hf_upload_audit/20260503T151341Z_need-singularity__clm-v4-base-mirror.jsonl`
+This plan + the existing audit log `state/hf_upload_audit/20260503T151341Z_dancinlab__clm-v4-base-mirror.jsonl`
 form the SSOT for the propagation cycle. Parent session may:
 
-1. Verify HF state: `hf list-repo-files need-singularity/clm-v4-base-mirror | grep tokenizer/` (expect 4 paths under `tokenizer/`).
+1. Verify HF state: `hf list-repo-files dancinlab/clm-v4-base-mirror | grep tokenizer/` (expect 4 paths under `tokenizer/`).
 2. Trigger ubu1 cache prime per §3 Step 2.
 3. Run F-TOK-1/2/3 verifiers per §4.
 4. Apply §3 Step 5 edit to 1 caller for F-TOK-4.

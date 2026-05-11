@@ -67,7 +67,7 @@
   "user_action_required": {
     "step_1_revoke_url": "https://huggingface.co/settings/tokens",
     "step_2_issue_new_url": "https://huggingface.co/settings/tokens/new",
-    "step_2_scope": "write (fine-grained recommended for need-singularity org)",
+    "step_2_scope": "write (fine-grained recommended for dancinlab org)",
     "step_3_set_cmd": "pbpaste | /Users/ghost/core/secret/bin/secret set huggingface.token",
     "step_4_verify_cmd": "TOKEN=$(/Users/ghost/core/secret/bin/secret get huggingface.token --raw); curl -sH \"Authorization: Bearer $TOKEN\" https://huggingface.co/api/whoami-v2 | jq .name",
     "step_5_resume_phrase": "HF go"

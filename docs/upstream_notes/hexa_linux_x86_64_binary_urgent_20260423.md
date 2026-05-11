@@ -22,7 +22,7 @@ Pod rkq74qcqvclv9r (anima-stage1-alm-r13)
   OS: Ubuntu 22.04 · x86_64 · Python 3.11.10
   
 inside pod:
-  $ git clone https://github.com/need-singularity/hexa-lang
+  $ git clone https://github.com/dancinlab/hexa-lang
   $ ls hexa-lang/self/native/hexa_v2  # baseline compiled binary
   $ ./hexa-lang/self/native/hexa_v2 --version
   bash: ./self/native/hexa_v2: cannot execute binary file: Exec format error
@@ -47,14 +47,14 @@ inside pod:
 ### Option A (권장) — Release Asset
 
 ```
-https://github.com/need-singularity/hexa-lang/releases/tag/v0.3.0-linux
+https://github.com/dancinlab/hexa-lang/releases/tag/v0.3.0-linux
 └─ hexa-linux-x86_64 (단일 statically-linked binary)
 └─ hexa-linux-x86_64.sha256
 ```
 
 anima pod bootstrap:
 ```bash
-curl -fsSL https://github.com/need-singularity/hexa-lang/releases/download/v0.3.0-linux/hexa-linux-x86_64 \
+curl -fsSL https://github.com/dancinlab/hexa-lang/releases/download/v0.3.0-linux/hexa-linux-x86_64 \
   -o /usr/local/bin/hexa
 chmod +x /usr/local/bin/hexa
 hexa --version  # should work
@@ -73,7 +73,7 @@ user의 R2 account (ce4bdcce7c74d4e3c78fdf944c4d1d7b) 에 public bucket `hexa-pu
 `hexa-lang/README.md` 또는 `INSTALL.md` 에 Linux 빌드 단계 명시:
 ```bash
 # 전제: ubuntu 22.04 · clang 15+ · libc6-dev
-git clone https://github.com/need-singularity/hexa-lang
+git clone https://github.com/dancinlab/hexa-lang
 cd hexa-lang
 bash build-linux.sh  # or make linux
 # → ./hexa (statically-linked binary)

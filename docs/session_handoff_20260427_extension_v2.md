@@ -44,7 +44,7 @@ Read 3 files for full context:
 | 25 | `memory_dir_staleness_auditor` | 6/10 broken refs |
 | 26 | `gitignore_comprehensive_auditor` | .gitignore CLEAN |
 | 27 | `nexus_roadmaps_consistency_auditor` | nexus binary-mediated linkage |
-| 28 | `ci_workflows_auditor` | CODEOWNERS 35 @need-singularity |
+| 28 | `ci_workflows_auditor` | CODEOWNERS 35 @dancinlab |
 | 29 | `references_external_dep_tree_auditor` | tribev2 frozen integrity |
 | 30 | `subrepo_cross_link_auditor` | 22 anima sub-repos shallow |
 | 31 | `ready_dir_audit` | 737 .py raw#9 divergence (HIGH) |
@@ -81,7 +81,7 @@ Read 3 files for full context:
 | repo | hexa | anima refs | role |
 |------|------|-----------|------|
 | nexus | 2683 | 281 | parent ecosystem |
-| n6-architecture | 853 | 13 | theoretical foundation |
+| CANON | 853 | 13 | theoretical foundation |
 | anima | 361 | - | consciousness implementation (this) |
 | hive | 145 | 16 | sister runtime (this session) |
 | papers | 0 (md only) | 46 | academic output (94 papers DOI) |

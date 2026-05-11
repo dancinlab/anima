@@ -13,7 +13,7 @@ set -euo pipefail
 
 # --- environment setup ---
 cd /workspace
-git clone --depth 1 https://github.com/need-singularity/anima /workspace/anima 2>/dev/null || \
+git clone --depth 1 https://github.com/dancinlab/anima /workspace/anima 2>/dev/null || \
   (cd /workspace/anima && git fetch --depth 1 origin main && git reset --hard origin/main)
 cd /workspace/anima
 
@@ -58,8 +58,8 @@ python ready/training/train_clm.py \
 python -c "
 from huggingface_hub import HfApi
 api = HfApi()
-api.create_repo('need-singularity/anima-clm-3-original-byte-55m', private=True, exist_ok=True)
-api.upload_folder(folder_path='/workspace/anima/runs/clm3-original-byte-55m', repo_id='need-singularity/anima-clm-3-original-byte-55m', repo_type='model')
+api.create_repo('dancinlab/anima-clm-3-original-byte-55m', private=True, exist_ok=True)
+api.upload_folder(folder_path='/workspace/anima/runs/clm3-original-byte-55m', repo_id='dancinlab/anima-clm-3-original-byte-55m', repo_type='model')
 "
 
 echo '[train] DONE — verdict to be assigned anima-side after F-CLM3-orig-1..5 eval'

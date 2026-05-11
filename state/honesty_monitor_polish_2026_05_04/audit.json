@@ -4,8 +4,8 @@
   "scope": "polish honesty-monitor standalone repo to qmirror v2.0.0 + sim-universe v1.0.0 parity",
   "inputs": {
     "repo_root": "/Users/ghost/core/honesty-monitor",
-    "github": "https://github.com/need-singularity/honesty-monitor",
-    "hf_mirror": "https://huggingface.co/need-singularity/honesty-monitor",
+    "github": "https://github.com/dancinlab/honesty-monitor",
+    "hf_mirror": "https://huggingface.co/dancinlab/honesty-monitor",
     "parity_reference_a": "/Users/ghost/core/qmirror",
     "parity_reference_b": "/Users/ghost/core/sim-universe"
   },
@@ -26,7 +26,7 @@
     "changelog_loc": 42,
     "release_notes_present": true,
     "release_notes_loc": 123,
-    "github_release": "https://github.com/need-singularity/honesty-monitor/releases/tag/v1.0.0",
+    "github_release": "https://github.com/dancinlab/honesty-monitor/releases/tag/v1.0.0",
     "hf_mirror_repo_present": true,
     "hf_mirror_initial_commit": "c8118fad71eaa2d20c4370cf9c52420746379afa",
     "actions_workflow_present": true,
@@ -51,14 +51,14 @@
     "smoke_test": "PASS (__HONESTY_MONITOR__ PASS alerts=2 steps=5; exit 0)"
   },
   "honest_c3_caveats_polish_cycle": [
-    "1. HF auto-sync USER_ACTION pending — workflow inert until HF_TOKEN GitHub secret is set at https://github.com/need-singularity/honesty-monitor/settings/secrets/actions",
+    "1. HF auto-sync USER_ACTION pending — workflow inert until HF_TOKEN GitHub secret is set at https://github.com/dancinlab/honesty-monitor/settings/secrets/actions",
     "2. GitHub release v1.0.0 deletion is friction-laden — tag OID propagates to clones; treat as effectively immutable",
     "3. Public-repo maintenance burden — issue/PR triage cost on author; no SLA",
     "4. Sister-cycle race risk — qmirror, sim-universe, hexa-bio polish cycles run in parallel; any divergence in workflow/badge conventions requires manual reconciliation (no cross-repo CI)"
   ],
   "user_action_required": {
     "what": "Set HF_TOKEN GitHub repository secret (write-scope)",
-    "where": "https://github.com/need-singularity/honesty-monitor/settings/secrets/actions",
+    "where": "https://github.com/dancinlab/honesty-monitor/settings/secrets/actions",
     "why": "Enable .github/workflows/sync-to-hf.yml auto-mirror on each push to main",
     "until_set": "Workflow runs but fails loudly at the 'Verify HF_TOKEN secret is present' step (by design)"
   },

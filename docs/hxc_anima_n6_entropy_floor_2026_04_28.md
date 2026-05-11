@@ -1,10 +1,10 @@
-# HXC anima + n6-architecture Entropy Floor Measurement — 2026-04-28
+# HXC anima + CANON Entropy Floor Measurement — 2026-04-28
 
 `raw 91 honest C3 STRICT, READ-ONLY, MEASURED only (no projection)`
 
 ## Mission
 
-Quantify byte-level Shannon entropy floor on `anima` and `n6-architecture` corpora to determine
+Quantify byte-level Shannon entropy floor on `anima` and `CANON` corpora to determine
 whether the 80% saving target on `raw 137 cmix-ban` Pareto envelope is **architecturally
 reachable** at byte-canonical wire encoding granularity, and if not, identify the algorithm
 class shift required.
@@ -18,18 +18,18 @@ Per-repo MEASURED saving on `manifest_commit=16ff3e55`, AOT
 | Repo               | Files | Raw bytes  | Saving %   |
 |--------------------|------:|-----------:|-----------:|
 | anima              |   722 |  3,102,018 | **50.83**  |
-| n6-architecture    |   255 |  6,846,174 | **60.62**  |
+| CANON    |   255 |  6,846,174 | **60.62**  |
 | hexa-lang          |   333 |  5,698,205 |   66.52    |
 | nexus              |   265 |  7,285,742 |   76.02    |
 | airgenome          |     7 |    158,725 |   87.53    |
 | hive               |     4 |    319,101 |   96.04    |
 
-`anima` and `n6-architecture` are the dominant blockers: 13.78pp gap to 80% on global
+`anima` and `CANON` are the dominant blockers: 13.78pp gap to 80% on global
 aggregate (66.22% MEASURED).
 
 ## Method
 
-1. **Sample**: 22 representative files (anima 10 + n6-architecture 12) covering text-heavy
+1. **Sample**: 22 representative files (anima 10 + CANON 12) covering text-heavy
    `.md`, json-heavy `.json/.jsonl`, mixed `.hexa`, and `.n6`/`.roadmap` ASCII-table corpora.
 2. **Metrics** (per file, raw bytes; sample cap 262144 bytes for files >256KB):
    - **`H_0`** = byte unigram Shannon entropy (256-symbol alphabet)
@@ -69,7 +69,7 @@ helper, byte-equivalent algorithm to tool helper).
 | `state/eeg_to_token_cyborg.json`                                   | json-heavy  |   1518 |   1518 | 5.153 | 5.490 | 6.418 | 6.599 |     17.51 |        35.59 |
 | `state/eeg_daily_life_verifier.json`                               | json-heavy  |   1345 |   1345 | 4.958 | 5.068 | 6.036 | 6.267 |     21.67 |        38.03 |
 
-## Per-file MEASURED table (n6-architecture)
+## Per-file MEASURED table (CANON)
 
 | File                                                          | cls         | raw    | sample | H_0   | H_1   | H_3   | H_4   | floor_H4% | floor_h_inf% |
 |---------------------------------------------------------------|-------------|-------:|-------:|------:|------:|------:|------:|----------:|-------------:|
@@ -91,11 +91,11 @@ helper, byte-equivalent algorithm to tool helper).
 | Repo            | files | raw_bytes  | sample_bytes | H_0   | H_3   | H_4   | h_inf | floor_H4% | floor_h_inf% | a29 saving% | gap_vs_h_inf | lift_vs_H4 |
 |-----------------|------:|-----------:|-------------:|------:|------:|------:|------:|----------:|-------------:|------------:|-------------:|-----------:|
 | anima           |    10 |  1,282,414 |      392,578 | 5.529 | 4.454 | 4.922 | 4.102 |   **38.47** |    **48.72** |       50.83 |    +2.11 pp  |  +12.36 pp |
-| n6-architecture |    12 |    521,645 |      494,120 | 5.789 | 4.325 | 4.745 | 3.927 |   **40.68** |    **50.92** |       60.62 |    +9.70 pp  |  +19.94 pp |
+| CANON |    12 |    521,645 |      494,120 | 5.789 | 4.325 | 4.745 | 3.927 |   **40.68** |    **50.92** |       60.62 |    +9.70 pp  |  +19.94 pp |
 
 ## 80% Reachability VERDICT
 
-| Reachability predicate              | anima  | n6-architecture |
+| Reachability predicate              | anima  | CANON |
 |-------------------------------------|--------|-----------------|
 | `reach_80_via_H_0`                  | FALSE  | FALSE           |
 | `reach_80_via_H_4`                  | FALSE  | FALSE           |
@@ -105,7 +105,7 @@ helper, byte-equivalent algorithm to tool helper).
 **Global verdict**: `80%_REACHABILITY_FALSE_PER_FILE_BYTE_CANONICAL`
 
 Per-file Shannon byte-canonical floor on both repos is 27-51% (sample byte-weighted), all
-strictly less than 80%. The 80% target on `anima`/`n6-architecture` is **architecturally
+strictly less than 80%. The 80% target on `anima`/`CANON` is **architecturally
 unreachable** at per-file byte-level granularity within the `raw 137 cmix-ban` Pareto envelope.
 
 ## Why a29 already exceeds the per-file H_4 floor
@@ -117,7 +117,7 @@ repo concatenation: a long-window match in file N+1 against a substring from fil
 not appear in per-file H_4 ctx counts. The corpus-level h_inf is **lower** than per-file
 h_inf, and a29 is already cashing that advantage.
 
-For `n6-architecture` the lift is +9.70pp **above** per-file h_inf_proxy — explicit evidence
+For `CANON` the lift is +9.70pp **above** per-file h_inf_proxy — explicit evidence
 that inter-file redundancy (atlas iter_NNN.jsonl shared schema headers, papers cross-citation,
 proposal template overlap) supplies a meaningful share of a29's saving.
 
@@ -156,7 +156,7 @@ Class breakdown for the unreachable gap:
 
 ## raw 91 honest C3 STRICT disclosure
 
-1. **MEASURED**: 22 representative files (anima 10 + n6-architecture 12). Total 1.80MB raw /
+1. **MEASURED**: 22 representative files (anima 10 + CANON 12). Total 1.80MB raw /
    886KB sampled (with 256KB cap on >256KB files: anima/.roadmap 1.15MB, n6/atlas/atlas.signals.n6 290KB).
 2. **NOT MEASURED on this turn**: full anima/n6 corpus walk (background helper PID 76518
    started but terminated by SIGKILL after 15:30 etime — repo-wide H_3/H_4 over concatenated
@@ -166,7 +166,7 @@ Class breakdown for the unreachable gap:
    is a **conservative** UB on Shannon limit per-file.
 4. **Floor formula**: `floor_pct = (1 - H_n/8)·100` is byte-canonical wire saving floor.
    Algorithms can EXCEED per-file floor by exploiting cross-file context (a29 already does this,
-   evidenced by saving 60.62% > floor_h_inf_proxy 50.92% on n6-architecture).
+   evidenced by saving 60.62% > floor_h_inf_proxy 50.92% on CANON).
 5. **Reachability scope**: verdict applies to PER-FILE byte-canonical encoding. 80% TARGET
    on anima/n6 requires algorithm class change beyond LZ+PPM byte coding.
 6. **cmix-ban (raw 137) maintained**: out-of-band heavy coders (CMIX, paq8) explicitly
@@ -187,7 +187,7 @@ Class breakdown for the unreachable gap:
 
 This measurement **strengthens** raw 137 80% Pareto target's `IS_NOT_REACHED` status with
 an architectural reason: the gap is not an algorithm-tuning gap (LZ window size, PPM order)
-but an **entropy floor** gap. anima + n6-architecture corpora have per-file Shannon entropy
+but an **entropy floor** gap. anima + CANON corpora have per-file Shannon entropy
 floors of 27-51% under raw 137 cmix-ban; closing the residual 13.78pp aggregate gap to 80%
 requires algorithm-class shift (cross-repo dictionary, sub-byte coder, or source transform).
 
@@ -219,7 +219,7 @@ requires algorithm-class shift (cross-repo dictionary, sub-byte coder, or source
 
 ## Next-cycle candidates (NOT this turn)
 
-1. Full-corpus walk (background tool restart with `--repos anima,n6-architecture`, ~60-90min
+1. Full-corpus walk (background tool restart with `--repos anima,CANON`, ~60-90min
    wall) — closes the per-repo aggregate from sample to full-corpus H_n.
 2. Cross-repo concatenated h_inf measurement — directly quantifies the gap a29 inter-file
    lift is closing (and the residual cross-repo dictionary headroom).

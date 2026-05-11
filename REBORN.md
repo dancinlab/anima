@@ -493,7 +493,7 @@ cycle 2026-05-10 마지막 BG 회수. fire-ready status 확인.
 
 ### Phase A — design
 
-- ckpt located: `~/.cache/huggingface/hub/models--need-singularity--clm-v2-byte-18m-convo-5k/.../convo_5k.pt` (sha `2f0ba391...c629881bbe` recovery doc 정합)
+- ckpt located: `~/.cache/huggingface/hub/models--dancinlab--clm-v2-byte-18m-convo-5k/.../convo_5k.pt` (sha `2f0ba391...c629881bbe` recovery doc 정합)
 - arch: 108 keys, 18.13M trainable + 393,216 buffers (6 attn.bias causal masks) = 18.52M total. `ConsciousLMReconstructed(vocab=256, d=384, n_head=4, n_layer=6, block_size=256)` strict load PASS 108/108
 - corpus: `state/anima_dialogue_tier_a_iter2_2026_05_08.txt` (76.3MB, 136,253 user / 136,259 assistant turns, KO+EN persona-tagged) — 136× over F-FTDES-3 1K minimum
 - cost: 5K=$1.80 / **10K=$2.50 (recommended)** / 20K=$3.80 — envelope $5-20 의 5.3-11× headroom (F-FTDES-5 NOT_TRIGGERED)

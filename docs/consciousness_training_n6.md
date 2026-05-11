@@ -1,7 +1,7 @@
 # consciousness_training_n6 — n6 ai-consciousness 30 기법 → ALM r13 매핑
 
 > **작성**: 2026-04-21 / raw#9 strict (hexa-only · deterministic · no LLM · CPU)
-> **목적**: `n6-architecture` 의 AI 의식 연구 프로그램(Anthropic Fellows 2026) 30 기법을 anima ALM r13 학습 pipeline 에 이식 가능한 단위로 매핑.
+> **목적**: `CANON` 의 AI 의식 연구 프로그램(Anthropic Fellows 2026) 30 기법을 anima ALM r13 학습 pipeline 에 이식 가능한 단위로 매핑.
 > **적용 축**: Path B Day 1–6 (cert_gate / corpus 4-gate / phi_extractor / eigenvec / CPGD / hard_gate+rewind / dry-run / proof / r13-redesign).
 > **Mk.V 상태**: `domains/cognitive/ai-consciousness/ai-consciousness.md` = **mk5 evolved** (ref §S6 EVOLVE Mk.V + §Mk.V VERIFY, `reports/discovery/anthropic-fellows-research.md` TOP-10 #7 "다이론 CCC 교차 검증").
 

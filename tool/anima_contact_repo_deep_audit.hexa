@@ -1,7 +1,7 @@
 // tool/anima_contact_repo_deep_audit.hexa — contact (Outreach Hub) deep audit (raw#9 hexa-only, NON_MUTATION).
 //
 // PURPOSE
-//   /Users/ghost/core/contact = need-singularity Outreach Hub. cycle 43이 17MB 의외 발견.
+//   /Users/ghost/core/contact = dancinlab Outreach Hub. cycle 43이 17MB 의외 발견.
 //   cycle 46 deep audit으로 17MB 정체 확인:
 //     - 813+ sends, 235+ contacts, 29 Awesome Lists PRs (README claims)
 //     - 18 PDFs (papers attachments?), 14 json (contact DB)
@@ -140,7 +140,7 @@ fn _write_helper() {
     parts.push("    'readme_claims':readme_claims,\n")
     parts.push("    'anima_mentions_in_md':anima_mentions,\n")
     parts.push("    'largest_subdir':largest_subdir,\n")
-    parts.push("    'characterization':'contact = need-singularity Outreach Hub (anthropic/discord/github/paid-promo). 18 PDFs (paper attachments) + 14 json (contact DB) + 77 md docs explain 17MB size discovered in cycle 43.',\n")
+    parts.push("    'characterization':'contact = dancinlab Outreach Hub (anthropic/discord/github/paid-promo). 18 PDFs (paper attachments) + 14 json (contact DB) + 77 md docs explain 17MB size discovered in cycle 43.',\n")
     parts.push("    'non_mutation_guarantee':'helper does NOT modify contact; read-only deep audit',\n")
     parts.push("    'cross_link_cycles':['cycle 43 remaining 8 batch (contact 17MB discovery)','cycle 36 ws full inventory'],\n")
     parts.push("    'pattern':'governance audit chain layer 26 (cycles 21-45 + this) — last surprising peripheral characterized',\n")

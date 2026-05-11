@@ -6,7 +6,7 @@
 **Companion algorithm**: A9 hexa-native tokenizer (Phase 9 P0/P1)
 **Targets**:
 - nexus 96 files avg 6KB — 43% byte-weighted (-37pp gap to 80%)
-- n6-architecture 69 files (atlas + clay_millennium) — 4% byte-weighted (-76pp; entropy-bound, but per-file overhead removable)
+- CANON 69 files (atlas + clay_millennium) — 4% byte-weighted (-76pp; entropy-bound, but per-file overhead removable)
 - hive 53 files triad_audit / honesty_triad / blockers — 69% byte-weighted (-11pp)
 
 ## 1. Problem statement
@@ -121,7 +121,7 @@ literal `^D` get escape `^D^` prefix.
 | **projected A16 byte-weighted** | **55-58%** (+12-15pp over Phase 8) |
 | projected A9 + A16 fusion | **65-70%** (+22-27pp over Phase 8) |
 
-### n6-architecture (69 files: atlas + clay_millennium)
+### CANON (69 files: atlas + clay_millennium)
 
 | metric | value |
 |---|---:|

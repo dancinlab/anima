@@ -1,18 +1,18 @@
 # Homebrew tap — `anima` CLI (Y5)
 
 > Status: **formula + docs staged**. The real tap repo
-> (`need-singularity/homebrew-anima`) is a separate task — see
+> (`dancinlab/homebrew-anima`) is a separate task — see
 > "Creating the tap repo" below.
 
 ## TL;DR install
 
 ```bash
-brew tap need-singularity/anima
+brew tap dancinlab/anima
 brew install anima
 ```
 
-`brew tap need-singularity/anima` expands (per Homebrew convention) to the
-GitHub repo **`need-singularity/homebrew-anima`**. The formula it ships is
+`brew tap dancinlab/anima` expands (per Homebrew convention) to the
+GitHub repo **`dancinlab/homebrew-anima`**. The formula it ships is
 `packaging/brew_formula_anima.rb` from this repo, copied to the tap as
 `Formula/anima.rb`.
 
@@ -36,11 +36,11 @@ macOS / Linuxbrew.
 - **`bash`** — declared dependency (`depends_on "bash"`).
 - **`hexa-lang`** — required at run time to execute the `.hexa` modules,
   but **not yet a brew dependency** because the upstream hexa tap
-  (`need-singularity/hexa`) is not public. The formula emits a caveat
+  (`dancinlab/hexa`) is not public. The formula emits a caveat
   pointing users at the manual install until the tap ships. Once
   published, flip the commented line in `packaging/brew_formula_anima.rb`:
   ```ruby
-  depends_on "need-singularity/hexa/hexa-lang"
+  depends_on "dancinlab/hexa/hexa-lang"
   ```
 
 ## Verification (post-install)
@@ -65,15 +65,15 @@ The tap repo is a thin GitHub repo whose only required content is a
 `Formula/` directory. Steps:
 
 1. **Create the repo.** Name must be exactly `homebrew-anima` under the
-   `need-singularity` org (Homebrew rewrites `need-singularity/anima`
-   → `need-singularity/homebrew-anima`):
+   `dancinlab` org (Homebrew rewrites `dancinlab/anima`
+   → `dancinlab/homebrew-anima`):
    ```bash
-   gh repo create need-singularity/homebrew-anima --public \
+   gh repo create dancinlab/homebrew-anima --public \
      --description "Homebrew tap for the anima CLI"
    ```
 2. **Stage the formula.**
    ```bash
-   git clone git@github.com:need-singularity/homebrew-anima.git
+   git clone git@github.com:dancinlab/homebrew-anima.git
    cd homebrew-anima
    mkdir -p Formula
    cp ../anima/packaging/brew_formula_anima.rb Formula/anima.rb
@@ -81,7 +81,7 @@ The tap repo is a thin GitHub repo whose only required content is a
 3. **Fill in the release sha.** After tagging `v0.1.0` on the main anima
    repo and letting GitHub auto-generate the source tarball:
    ```bash
-   curl -sL https://github.com/need-singularity/anima/archive/refs/tags/v0.1.0.tar.gz \
+   curl -sL https://github.com/dancinlab/anima/archive/refs/tags/v0.1.0.tar.gz \
      | shasum -a 256
    # paste the digest into the `sha256 "…"` line of Formula/anima.rb
    ```
@@ -94,8 +94,8 @@ The tap repo is a thin GitHub repo whose only required content is a
    ```
 5. **Smoke install from a clean host.**
    ```bash
-   brew untap need-singularity/anima || true
-   brew tap need-singularity/anima
+   brew untap dancinlab/anima || true
+   brew tap dancinlab/anima
    brew install anima
    brew test anima
    ```

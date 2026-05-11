@@ -43,12 +43,12 @@
   "falsifier_verification": {
     "F1": "VERIFIED — anima/.raw exists + uchg (ls -lO confirmed)",
     "F2": "VERIFIED — echo >> CLAUDE.md → 'operation not permitted' (EPERM)",
-    "F3": "PARTIAL — honesty_triad_linter (n6-architecture/scripts/quality) scores CLAUDE.md C2=1 (write-barrier PASS post-uchg), C1=0 + C3=0 missing (honesty banner + falsifier registration). Per-file linter metric differs from CLAUDE.md's (a)-(e) precondition checklist which IS 5/5",
+    "F3": "PARTIAL — honesty_triad_linter (CANON/scripts/quality) scores CLAUDE.md C2=1 (write-barrier PASS post-uchg), C1=0 + C3=0 missing (honesty banner + falsifier registration). Per-file linter metric differs from CLAUDE.md's (a)-(e) precondition checklist which IS 5/5",
     "F4": "DEFERRED — hexa-only lint not yet deployed (P4 deferred)"
   },
   "raw_compliance_post_patch_summary": {
     "raw_0": "FULL — .raw + .own + .guide all present + uchg",
-    "raw_1": "PARTIAL → FULL on (CLAUDE.md, .raw, .own, .guide); atlas.n6 symlink unflagged (target file lives in n6-architecture)",
+    "raw_1": "PARTIAL → FULL on (CLAUDE.md, .raw, .own, .guide); atlas.n6 symlink unflagged (target file lives in CANON)",
     "raw_9": "DEFERRED — 2494 violations remain pending P4",
     "raw_47_70_71": "PASS (this cycle's witnesses prove it)",
     "raw_77": "PARTIAL — DEFERRED on .log → .jsonl migration"

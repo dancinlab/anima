@@ -7,9 +7,9 @@
     "version": "1.0.0",
     "license": "Apache-2.0",
     "registry_entry_index": 27,
-    "github_url": "https://github.com/need-singularity/mc-integrate",
-    "github_release_url": "https://github.com/need-singularity/mc-integrate/releases/tag/v1.0.0",
-    "hf_mirror_url": "https://huggingface.co/need-singularity/mc-integrate",
+    "github_url": "https://github.com/dancinlab/mc-integrate",
+    "github_release_url": "https://github.com/dancinlab/mc-integrate/releases/tag/v1.0.0",
+    "hf_mirror_url": "https://huggingface.co/dancinlab/mc-integrate",
     "hf_mirror_repo_present": false,
     "hf_mirror_create_status": "DEFERRED — HF token in keyring is invalid (401 Unauthorized); user must rotate HF token + set HF_TOKEN GH secret + re-trigger workflow_dispatch on sync-to-hf.yml. The api.create_repo(exist_ok=True) call inside the workflow will create the HF repo idempotently on first successful run.",
     "standalone_path": "/Users/ghost/core/mc-integrate"
@@ -63,10 +63,10 @@
     "git_init": "DONE (branch=main)",
     "initial_commit_sha": "a55535c",
     "initial_commit_files": 15,
-    "remote_create_status": "DONE (gh repo create need-singularity/mc-integrate --public --push)",
-    "github_url": "https://github.com/need-singularity/mc-integrate",
+    "remote_create_status": "DONE (gh repo create dancinlab/mc-integrate --public --push)",
+    "github_url": "https://github.com/dancinlab/mc-integrate",
     "release_v1_0_0_status": "DONE",
-    "release_url": "https://github.com/need-singularity/mc-integrate/releases/tag/v1.0.0"
+    "release_url": "https://github.com/dancinlab/mc-integrate/releases/tag/v1.0.0"
   },
   "registry_update": {
     "file": "/Users/ghost/core/hexa-lang/tool/pkg/registry.tsv",
@@ -104,7 +104,7 @@
         "#                Catalan G, Apéry ζ(3), Euler γ, π⁵×6 with PASS/NEAR/FAIL gates;",
         "#                Welch-t indistinguishability + df-aware critical-t + Wilson-Hilferty",
         "#                p-value. LCG = Numerical Recipes; 4-tier ANU bootstrap.",
-        "#   Repo:     https://github.com/need-singularity/mc-integrate",
+        "#   Repo:     https://github.com/dancinlab/mc-integrate",
         "#   Registry: hexa-lang/tool/pkg/registry.tsv L27 (mc-integrate 1.0.0)",
         "#   Consumer: nexus/cli/mc.hexa delegates to `mc-integrate` CLI (4-tier resolve)",
         "#   Install:  hx install mc-integrate   (auto-invoked by nexus install.hexa)",
@@ -144,7 +144,7 @@
   },
   "honest_c3_caveats_5": [
     "1. Decouple uses 4-tier file-path resolution, NOT qmirror cli shellout. qmirror's `qrng` subcmd currently emits a SELFTEST verdict (`__QMIRROR_QRNG__ PASS`) rather than raw hex bytes; if/when qmirror adds `qrng --emit-hex` (or qrng standalone ships its own CLI that emits hex), mc-integrate could switch backends.",
-    "2. Dual-mirror sync USER_ACTION pending — HF_TOKEN secret must be set at https://github.com/need-singularity/mc-integrate/settings/secrets/actions for sync-to-hf workflow to run. Token in local keyring is currently invalid (401 Unauthorized as of this extraction).",
+    "2. Dual-mirror sync USER_ACTION pending — HF_TOKEN secret must be set at https://github.com/dancinlab/mc-integrate/settings/secrets/actions for sync-to-hf workflow to run. Token in local keyring is currently invalid (401 Unauthorized as of this extraction).",
     "3. MC convergence not validated for arbitrary integrands — only the 4 named constants (catalan, zeta3, euler_gamma, pi5_times_n6) have analytical-error gates.",
     "4. multiverse_nav unblock not auto-tested — Phase 1+2 declares the dual-home blocker resolved (sim-universe coupling deleted at the import surface), but multiverse_nav (rank 9) consumer refactor is staged-for-user-review, not auto-validated.",
     "5. License audit deferred — Apache-2.0 declared in LICENSE + hexa.toml; downstream LCG/Welch-t/critical-t/Wilson-Hilferty provenance traced to Numerical Recipes / NIST SEMATECH / Bevington-Robinson but no formal patent/SPDX scan performed."

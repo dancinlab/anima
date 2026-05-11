@@ -37,8 +37,8 @@
     {
       "id": "R23.3+honesty(d)",
       "rule": "raw 23 schema-guard + precondition (d) atlas SSOT",
-      "claim": "atlas.n6 is symlink to external /Users/ghost/core/n6-architecture/atlas/atlas.n6",
-      "evidence": "ls -l n6/atlas.n6 → lrwxr-xr-x ... -> /Users/ghost/core/n6-architecture/atlas/atlas.n6",
+      "claim": "atlas.n6 is symlink to external /Users/ghost/core/canon/atlas/atlas.n6",
+      "evidence": "ls -l n6/atlas.n6 → lrwxr-xr-x ... -> /Users/ghost/core/canon/atlas/atlas.n6",
       "severity": "MEDIUM (architectural choice, not bug — anima reads canonical atlas; but precondition (d) interpretation ambiguous)",
       "blast_radius": "schema-guard would have to traverse symlink + need policy on external mutation"
     },

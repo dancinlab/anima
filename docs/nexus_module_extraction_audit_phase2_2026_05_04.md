@@ -4,7 +4,7 @@
 **phase**: 2 (re-audit of phase1 ranked rank 4-6 candidates, post batch-1 extraction)
 **auditor**: subagent (anima cycle)
 **scope**: fusion_ledger + tabletop_blackhole + chip_rtl_gen + qrng + mc_integrate
-**constraint**: READ-ONLY on nexus, anima, hive, n6-architecture, qmirror, sim-universe, honesty-monitor
+**constraint**: READ-ONLY on nexus, anima, hive, CANON, qmirror, sim-universe, honesty-monitor
 
 ## phase1 status snapshot
 
@@ -62,7 +62,7 @@
   - (A) swap to qmirror cli (qmirror.qrng path; already standalone, Apache-2.0) — **PREFERRED**
   - (B) swap to qrng cli (after qrng repo extracted) — creates rank-7-blocks-rank-8 dependency
   - (C) inline minimal anu_source bootstrap (smallest blast radius, breaks the cross-tree path before extraction)
-- **@origin progenitor**: `n6-architecture/experiments/anu_mc_verification/anu_mc_verify.hexa` — add deprecation note pointing to standalone after extraction
+- **@origin progenitor**: `CANON/experiments/anu_mc_verification/anu_mc_verify.hexa` — add deprecation note pointing to standalone after extraction
 
 ### rank 5 (phase2): qrng → NEW /Users/ghost/core/qrng/ (after SCAFFOLD)
 
@@ -109,7 +109,7 @@
 2. **fusion_ledger** (6hr, ZERO_COLLISION, 1 data asset to move)
 3. **chip_rtl_gen** (10hr, MERGE_REQUIRED with known landmine: predecessor R25 472-LoC, raw#15 fix needed)
 
-All three target n6-architecture (existing standalone) — zero new repo overhead, zero env-var aliasing, zero consumer migration. Combined effort ~20hr; parallelizable as 3 BG subagents.
+All three target CANON (existing standalone) — zero new repo overhead, zero env-var aliasing, zero consumer migration. Combined effort ~20hr; parallelizable as 3 BG subagents.
 
 **deferred next cycle (batch 3)**: mc_integrate decouple cycle (2hr blast-radius-1, also unlocks multiverse_nav rank 9)
 **deferred batch 4**: qrng scaffold cycle (4hr, README + tests/ + env alias plan)
@@ -138,7 +138,7 @@ All three target n6-architecture (existing standalone) — zero new repo overhea
 
 ## handoff (next cycle)
 
-**recommended primary action**: launch 3 parallel BG subagents using `launch_recipes_phase2.jsonl` rank 1+2+3 (tabletop_blackhole + fusion_ledger + chip_rtl_gen, ~20hr combined). All three target n6-architecture (existing standalone).
+**recommended primary action**: launch 3 parallel BG subagents using `launch_recipes_phase2.jsonl` rank 1+2+3 (tabletop_blackhole + fusion_ledger + chip_rtl_gen, ~20hr combined). All three target CANON (existing standalone).
 
 **recommended secondary action** (post batch-2 land): launch 1 BG decouple cycle (mc_integrate + multiverse_nav anu_source path → qmirror cli, ~2hr).
 

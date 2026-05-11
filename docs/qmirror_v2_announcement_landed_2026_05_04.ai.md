@@ -2,11 +2,11 @@
 
 - ts_utc: 2026-05-04
 - agent: `qmirror_v2_announcement`
-- task: additive cross-link of `qmirror v2.0.0` GitHub release across the anima ecosystem (17 prior xref docs + papers repo entry + n6-architecture README + sim-universe / hexa-bio / honesty-monitor sister READMEs + qmirror community announcement)
+- task: additive cross-link of `qmirror v2.0.0` GitHub release across the anima ecosystem (17 prior xref docs + papers repo entry + CANON README + sim-universe / hexa-bio / honesty-monitor sister READMEs + qmirror community announcement)
 - mode: additive only — no v1 reference deletion, no qmirror v2.0.0 source artifact mutation, no count/measurement mutation in target docs
 - gate: raw#9 STRICT (Mac → hexa only; no .py touched) · raw#10 (4 honest C3 caveats) · raw#15 (no personal-path leak in added lines)
 - cost: $0 (doc-only)
-- release: <https://github.com/need-singularity/qmirror/releases/tag/v2.0.0> (closure 13/13 conds met = 8 v1 + 5 v2)
+- release: <https://github.com/dancinlab/qmirror/releases/tag/v2.0.0> (closure 13/13 conds met = 8 v1 + 5 v2)
 
 ---
 
@@ -17,7 +17,7 @@
 | category                                                     | files | action                                                       |
 | ------------------------------------------------------------ | ----- | ------------------------------------------------------------ |
 | anima docs v2 release line appended                          | 17    | additive line below pre-existing v1 GitHub URL line          |
-| n6-architecture README sister-substrates section             | 1     | additive section after Sub-projects, before Community        |
+| CANON README sister-substrates section             | 1     | additive section after Sub-projects, before Community        |
 | sim-universe README sister-substrates section + qmirror v2 bump | 1   | additive (in-line bump + new section)                        |
 | hexa-bio README cross-links v2 bump + honesty-monitor add    | 1     | bumped existing qmirror entry to v2 release tag              |
 | honesty-monitor README sister-substrates section             | 1     | additive section after License                               |
@@ -31,10 +31,10 @@
 
 ### anima docs v2 xref appended (17)
 
-All 17 docs share the additive pattern: existing v1 line `> 📦 Available at: https://github.com/need-singularity/qmirror (\`hx install qmirror\`)` preserved verbatim; new line added immediately below:
+All 17 docs share the additive pattern: existing v1 line `> 📦 Available at: https://github.com/dancinlab/qmirror (\`hx install qmirror\`)` preserved verbatim; new line added immediately below:
 
 ```
-> 🚀 v2.0.0 RELEASED 2026-05-04 — closure 13/13 conds met (8 v1 + 5 v2): https://github.com/need-singularity/qmirror/releases/tag/v2.0.0
+> 🚀 v2.0.0 RELEASED 2026-05-04 — closure 13/13 conds met (8 v1 + 5 v2): https://github.com/dancinlab/qmirror/releases/tag/v2.0.0
 ```
 
 Inventory (same 17 docs as the v1 xref cycle `qmirror_github_xref` — sister BG `aa6c8c54e` original audit):
@@ -62,9 +62,9 @@ Inventory (same 17 docs as the v1 xref cycle `qmirror_github_xref` — sister BG
 - `docs/ibm_cloud_experiment_list_2026_05_03.md`
 - `docs/ibm_cloud_env_setup_runbook_2026_05_03.md`
 
-### n6-architecture README (1)
+### CANON README (1)
 
-- `n6-architecture/README.md` — added new `## Sister substrates` section between Sub-projects and Community sections; entries: qmirror v2.0.0 (closure 13/13, Aer integration for n=6 / J₂=24 invariant verification across `n6-quantum-computing-paper.md` + `n6-quantum-error-correction-paper.md` + `n6-quantum-machine-learning-paper.md`), sim-universe v1.0.0, hexa-bio v1.0.0, honesty-monitor v1.0.0.
+- `CANON/README.md` — added new `## Sister substrates` section between Sub-projects and Community sections; entries: qmirror v2.0.0 (closure 13/13, Aer integration for n=6 / J₂=24 invariant verification across `n6-quantum-computing-paper.md` + `n6-quantum-error-correction-paper.md` + `n6-quantum-machine-learning-paper.md`), sim-universe v1.0.0, hexa-bio v1.0.0, honesty-monitor v1.0.0.
 
 ### sim-universe README (1)
 
@@ -91,20 +91,20 @@ Inventory (same 17 docs as the v1 xref cycle `qmirror_github_xref` — sister BG
 
 ## Honest C3 caveats (raw#10)
 
-1. **Cross-link burden grows per release.** Each qmirror version cycle (v1.0.0 → v1.0.1 → v2.0.0) adds another row of xref maintenance across 17+ anima docs + 4 sister repos + papers + n6-architecture README. Without a centralized symbol (e.g. `nexus.qmirror.upstream_url` in `nexus/.roadmap.qmirror`), future renames or version bumps require a fan-out sweep. Mitigation deferred to a future consolidation cycle. Concrete signal: the 17 anima docs now carry **3 stacked qmirror callout blockquotes at top** (sister `aa6c8c54e` substrate update line + v1 GitHub URL line + v2 release line). Bounded growth (each cycle adds ≤1 line), but compounding visual noise.
+1. **Cross-link burden grows per release.** Each qmirror version cycle (v1.0.0 → v1.0.1 → v2.0.0) adds another row of xref maintenance across 17+ anima docs + 4 sister repos + papers + CANON README. Without a centralized symbol (e.g. `nexus.qmirror.upstream_url` in `nexus/.roadmap.qmirror`), future renames or version bumps require a fan-out sweep. Mitigation deferred to a future consolidation cycle. Concrete signal: the 17 anima docs now carry **3 stacked qmirror callout blockquotes at top** (sister `aa6c8c54e` substrate update line + v1 GitHub URL line + v2 release line). Bounded growth (each cycle adds ≤1 line), but compounding visual noise.
 
 2. **Papers repo needs separate workflow.** The `papers/` repo carries CC BY 4.0 while qmirror code is Apache-2.0; the new PA-39 entry under `papers/anima/` is a **status pointer + closure summary**, not the upstream draft. The arXiv draft refresh + arXiv submission live under the anima cycle (separate workflow from the papers cycle). Until refresh lands, `papers/anima/PA-39` is the canonical pointer for closure status; `anima/docs/qmirror_arxiv_draft_2026_05_03.md` (v0.1, v1-scope) remains the canonical pre-print body but does **not** yet incorporate the 5 v2.0 axes.
 
 3. **arXiv submission still pending peer review.** PA-39 declares `arXiv draft v0.1 (peer review pending)` for status transparency. Concrete sequential blockers:
    - (a) refresh `anima/docs/qmirror_arxiv_draft_2026_05_03.md` to incorporate cond.9–cond.13
-   - (b) internal peer review by need-singularity stack contributors
+   - (b) internal peer review by dancinlab stack contributors
    - (c) LaTeX migration (Markdown → arXiv-ready `.tex`)
    - (d) figure prep (per-axis verdict matrix + cost comparison + sister substrate diagram)
    - (e) counsel sign-off (license/IP review for cross-vendor IBM/AWS Braket data + ANU QRNG ToS attribution + pyphi GPLv3 sub-component disclosure)
 
    No parallel acceleration available without external contributor sign-up.
 
-4. **v2.0.0 deletion would invalidate links.** The v2.0.0 release tag is technically deletable via `gh release delete v2.0.0 --yes`, but the tag retains its OID in any clone that fetched it; downstream consumers — PA-39 paper entry + 17 anima xref docs + 4 sister repo READMEs (sim-universe, hexa-bio, honesty-monitor, qmirror itself) + n6-architecture README — all carry phantom references. If a critical bug requires retraction, prefer a v2.0.1 patch release over deletion. Treat each release tag as effectively immutable.
+4. **v2.0.0 deletion would invalidate links.** The v2.0.0 release tag is technically deletable via `gh release delete v2.0.0 --yes`, but the tag retains its OID in any clone that fetched it; downstream consumers — PA-39 paper entry + 17 anima xref docs + 4 sister repo READMEs (sim-universe, hexa-bio, honesty-monitor, qmirror itself) + CANON README — all carry phantom references. If a critical bug requires retraction, prefer a v2.0.1 patch release over deletion. Treat each release tag as effectively immutable.
 
 ---
 

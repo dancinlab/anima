@@ -48,7 +48,7 @@
     "honesty_guard": "lawson_triple one-decade gap (measured 5.6e21 vs n=6 closed-form 5.6e20) intentionally preserved as falsified"
   },
   "consumer_grep": {
-    "scope": "/Users/ghost/core/nexus + /Users/ghost/core/anima + /Users/ghost/core/n6-architecture (excluding worktrees, _archive, raw_archive)",
+    "scope": "/Users/ghost/core/nexus + /Users/ghost/core/anima + /Users/ghost/core/canon (excluding worktrees, _archive, raw_archive)",
     "consumer_files_count": 0,
     "doc_only_references": [
       "/Users/ghost/core/nexus/design/kick/2026-04-27_commit-readiness-audit_omega_cycle.json",
@@ -59,7 +59,7 @@
     "verdict": "ZERO active code consumers. Doc-level mentions only; no refactor required."
   },
   "destination_layout": {
-    "absorb_path": "/Users/ghost/core/n6-architecture/domains/energy/fusion/",
+    "absorb_path": "/Users/ghost/core/canon/domains/energy/fusion/",
     "preserved_predecessor_files": [
       "fusion.md (34392B research spec, fusion design n=6 closure §4/§7/§8)",
       "verify_fusion.hexa (2158B, 11 EXACT items)"
@@ -72,7 +72,7 @@
     "data_file_decision": "data/iter_constants.json NOT copied — n6-arch .gitignore excludes data/ recursively. JSON mirror remains at nexus/modules/fusion_ledger/data/ (unversioned in nexus too). .hexa source is fully self-contained via inline table — no external load. Deferred to follow-up if external override hooks needed."
   },
   "smoke_test": {
-    "ran_from": "/Users/ghost/core/n6-architecture",
+    "ran_from": "/Users/ghost/core/canon",
     "command": "hexa run domains/energy/fusion/fusion_ledger.hexa --self-test",
     "result": "PASS",
     "sentinel": "__FUSION_LEDGER__ PASS total=27 matched=26 falsified=1 pct=96.2963",
@@ -87,16 +87,16 @@
   },
   "import_refactor": {
     "old_namespace": "nexus.modules.fusion_ledger.*",
-    "new_namespace": "n6-architecture/domains/energy/fusion/fusion_ledger.*",
+    "new_namespace": "CANON/domains/energy/fusion/fusion_ledger.*",
     "code_changes_required": "NONE (zero imports of nexus internal libs; module is fully self-contained)",
     "doc_only_namespace_refs": "@usage CLI lines remain modules/fusion_ledger/ form — informational only, both forms work via hexa-resolver"
   },
   "git_action": {
-    "destination_repo": "/Users/ghost/core/n6-architecture",
+    "destination_repo": "/Users/ghost/core/canon",
     "branch": "main",
     "commit_sha": "b59d38b3",
     "commit_strategy": "joined-with-sister (single commit landing both rank-1 fusion_ledger + rank-2 tabletop_blackhole)",
-    "push": "completed (https://github.com/need-singularity/n6-architecture)"
+    "push": "completed (https://github.com/dancinlab/canon)"
   },
   "nexus_cleanup": {
     "delete_target": "/Users/ghost/core/nexus/modules/fusion_ledger/",
@@ -111,13 +111,13 @@
       "modules/fusion_ledger/tests/__pycache__/ (gitignored, no .hexa sources)"
     ],
     "consumer_refactor_required": false,
-    "user_action_required": "review staged delete and commit when ready (recommended commit message: 'refactor(nexus): remove fusion_ledger module — absorbed into n6-architecture/domains/energy/fusion/ at b59d38b3')"
+    "user_action_required": "review staged delete and commit when ready (recommended commit message: 'refactor(nexus): remove fusion_ledger module — absorbed into CANON/domains/energy/fusion/ at b59d38b3')"
   },
   "caveats_raw10_4": [
     {
       "id": 1,
       "label": "data/ JSON mirror not relocated",
-      "detail": "n6-architecture/.gitignore excludes data/ recursively. iter_constants.json (250-LoC JSON mirror of inline hexa table) was not copied — stays at nexus/modules/fusion_ledger/data/ (unversioned). .hexa source is self-contained via inline 27-entry table; runtime needs no external file. If future override-via-spec functionality is wired in, JSON should be re-added under a non-data/ path (e.g. fixtures/iter_constants.json) and explicitly tracked."
+      "detail": "CANON/.gitignore excludes data/ recursively. iter_constants.json (250-LoC JSON mirror of inline hexa table) was not copied — stays at nexus/modules/fusion_ledger/data/ (unversioned). .hexa source is self-contained via inline 27-entry table; runtime needs no external file. If future override-via-spec functionality is wired in, JSON should be re-added under a non-data/ path (e.g. fixtures/iter_constants.json) and explicitly tracked."
     },
     {
       "id": 2,
@@ -132,7 +132,7 @@
     {
       "id": 4,
       "label": "n=6 closed-form ownership ambiguity (atlas_n6 vs fusion-arch)",
-      "detail": "Same 7 anchors (n, sigma, tau, phi, sopfr, J2, mu) appear in atlas_n6 (canonical lookup) + crystallography_n6 + chip_isa_n6 + chip_rtl_gen + fusion_ledger. Each module re-defines them locally as small int/float constants (no shared lib import). This is intentional decoupling but creates drift risk: if any module updates a primitive value, the others remain stale. Suggested follow-up: n6-architecture/INDEX.json could host a canonical anchor table referenced by all consumers, but this contradicts the 'no shared lib import' raw#15 root-agnostic policy. Trade-off documented; no action needed for this extraction."
+      "detail": "Same 7 anchors (n, sigma, tau, phi, sopfr, J2, mu) appear in atlas_n6 (canonical lookup) + crystallography_n6 + chip_isa_n6 + chip_rtl_gen + fusion_ledger. Each module re-defines them locally as small int/float constants (no shared lib import). This is intentional decoupling but creates drift risk: if any module updates a primitive value, the others remain stale. Suggested follow-up: CANON/INDEX.json could host a canonical anchor table referenced by all consumers, but this contradicts the 'no shared lib import' raw#15 root-agnostic policy. Trade-off documented; no action needed for this extraction."
     }
   ],
   "raw_constraints": {

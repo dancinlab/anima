@@ -11,7 +11,7 @@
 
 ## 1. Architecture inference (from best.pt state_dict)
 
-Read-only ubu1 inspect of `~/.cache/huggingface/hub/models--need-singularity--clm-v4-base-mirror/snapshots/856278be.../best.pt` (5117 MB, dict checkpoint) revealed:
+Read-only ubu1 inspect of `~/.cache/huggingface/hub/models--dancinlab--clm-v4-base-mirror/snapshots/856278be.../best.pt` (5117 MB, dict checkpoint) revealed:
 
 ### 1.1 Top-level checkpoint structure
 
@@ -209,8 +209,8 @@ ssh ubu1 'mkdir -p ~/p9_base_val_2026_05_04 && \
 ssh ubu1 'source /home/aiden/venv_orchestrator/bin/activate && \
   cd ~/p9_base_val_2026_05_04 && \
   /home/aiden/venv_orchestrator/bin/python clm_v4_hf_format_shim.py \
-    --input-pt /home/aiden/.cache/huggingface/hub/models--need-singularity--clm-v4-base-mirror/snapshots/856278beb59c5b39f16485cc8f3a46dcdaf9d1e3/best.pt \
-    --tokenizer-dir /home/aiden/.cache/huggingface/hub/models--need-singularity--clm-v4-base-mirror/snapshots/10ee03687db312c55bbec5858c814bef28e4d365/tokenizer \
+    --input-pt /home/aiden/.cache/huggingface/hub/models--dancinlab--clm-v4-base-mirror/snapshots/856278beb59c5b39f16485cc8f3a46dcdaf9d1e3/best.pt \
+    --tokenizer-dir /home/aiden/.cache/huggingface/hub/models--dancinlab--clm-v4-base-mirror/snapshots/10ee03687db312c55bbec5858c814bef28e4d365/tokenizer \
     --output-dir /home/aiden/p9_base_val_2026_05_04/clm_v4_base_hf \
     --device cpu \
     --verify \

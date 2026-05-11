@@ -30,7 +30,7 @@
 //   --resolve-path       SSH ubu1 -> first-hit cache glob -> absolute path.
 //
 // CACHE RESOLUTION ORDER (ubu1)
-//   1. ~/.cache/huggingface/hub/models--need-singularity--clm-v4-base-mirror/
+//   1. ~/.cache/huggingface/hub/models--dancinlab--clm-v4-base-mirror/
 //      snapshots/*/tokenizer/tokenizer_64k_multilingual.model
 //   2. ~/anima/checkpoints/clm_v4_350m/tokenizer_64k_multilingual.model
 //   3. /tmp/tokenizer_64k_multilingual.model (legacy fallback; stderr WARN)
@@ -65,7 +65,7 @@ fn _write_helper() {
     parts.push("def _resolve():\n")
     parts.push("    home = os.path.expanduser('~')\n")
     parts.push("    candidates = [\n")
-    parts.push("        f'{home}/.cache/huggingface/hub/models--need-singularity--clm-v4-base-mirror/snapshots/*/tokenizer/tokenizer_64k_multilingual.model',\n")
+    parts.push("        f'{home}/.cache/huggingface/hub/models--dancinlab--clm-v4-base-mirror/snapshots/*/tokenizer/tokenizer_64k_multilingual.model',\n")
     parts.push("        f'{home}/anima/checkpoints/clm_v4_350m/tokenizer_64k_multilingual.model',\n")
     parts.push("        '/tmp/tokenizer_64k_multilingual.model',\n")
     parts.push("    ]\n")

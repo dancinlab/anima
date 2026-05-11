@@ -3,7 +3,7 @@
 **Lane**: substrate-source-data hypothesis verification
 **Status**: LANDED
 **BG**: BG-CA (sister to BG-BR / BG-BP)
-**Substrate**: `need-singularity/clm-v4-mk2-v1` (mac CPU fp32)
+**Substrate**: `dancinlab/clm-v4-mk2-v1` (mac CPU fp32)
 **Cost**: $0
 **Runtime**: ~30 sec (model load 26.6s + survey ~3s)
 **Verdict file**: `state/anima_emerge_chat_korean_rank_survey_2026_05_05/verdict.json`

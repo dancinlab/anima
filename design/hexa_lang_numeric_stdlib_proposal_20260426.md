@@ -94,7 +94,7 @@ Each port ships a one-time **parity test cert**: "this hexa module agrees with r
 
 ## 5. Cross-repo coordination
 
-Per `hexa-lang/.raw` raw 1 (self-host fixpoint) + raw 3 (follower-repo .raw-ref): hexa-lang is canonical owner, anima is follower along with nexus, n6-architecture, contact, papers, void, airgenome, hexa-os.
+Per `hexa-lang/.raw` raw 1 (self-host fixpoint) + raw 3 (follower-repo .raw-ref): hexa-lang is canonical owner, anima is follower along with nexus, CANON, contact, papers, void, airgenome, hexa-os.
 
 **Spec location:** `hexa-lang/.doc/proposals/numeric_stdlib_2026Q2.md` (canonical proposal site if exists; else `hexa-lang/ROADMAP.md` items 59-62).
 **Implementation:** `hexa-lang/stdlib/{matrix,statistics,random,bytes,format}/` per §2.

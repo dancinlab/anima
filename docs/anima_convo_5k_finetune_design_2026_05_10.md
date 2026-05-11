@@ -21,14 +21,14 @@ convo_5k.pt (18.523M byte-level decoder, R2 recovered 2026-05-06, gibberish chat
 
 | 항목 | 값 |
 |---|---|
-| local path | `~/.cache/huggingface/hub/models--need-singularity--clm-v2-byte-18m-convo-5k/snapshots/.../convo_5k.pt` |
+| local path | `~/.cache/huggingface/hub/models--dancinlab--clm-v2-byte-18m-convo-5k/snapshots/.../convo_5k.pt` |
 | sha256 expected | `2f0ba391aff30f6a60bcefccb9215fdb45764bf07147f28c38013ca629881bbe` |
 | sha256 actual | `2f0ba391...c629881bbe` |
 | **match** | ✅ identical |
 | size | 73,740,122 bytes (70.3 MB) |
 | symlink | `→ ../../blobs/2f0ba391aff30f...` |
 
-cache 가 dancinlife 의 이전 org `need-singularity` 시점 회수본 — 제거되지 않고 보존돼 있음.
+cache 가 dancinlife 의 이전 org `dancinlab` 시점 회수본 — 제거되지 않고 보존돼 있음.
 
 ### A.2 architecture inspect
 

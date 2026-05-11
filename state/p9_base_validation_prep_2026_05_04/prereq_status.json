@@ -50,11 +50,11 @@
     {
       "id": "clm_v4_base_loader_format",
       "severity": "hard_blocker",
-      "desc": "CLM v4 base mirror at HF need-singularity/clm-v4-base-mirror contains only raw `best.pt` torch checkpoint (snapshot 856278beb...) and tokenizer files (snapshot 10ee03687...) — there is NO config.json, NO model.safetensors, NO HF-format wrapper. lm-evaluation-harness's `--model hf --model_args pretrained=...` loader requires HF Transformers-compatible directory layout. Cannot proceed with anchor-B base validation until this is resolved.",
+      "desc": "CLM v4 base mirror at HF dancinlab/clm-v4-base-mirror contains only raw `best.pt` torch checkpoint (snapshot 856278beb...) and tokenizer files (snapshot 10ee03687...) — there is NO config.json, NO model.safetensors, NO HF-format wrapper. lm-evaluation-harness's `--model hf --model_args pretrained=...` loader requires HF Transformers-compatible directory layout. Cannot proceed with anchor-B base validation until this is resolved.",
       "resolution_options": [
         "OPT-1: write a minimal HF-wrapper conversion shim on ubu1 (transient .py acceptable per raw#9 — Linux side, not Mac); load best.pt into the matching CLM-v4 architecture class, save_pretrained() to a local dir, then point lm-eval at that dir. Wall ~30-60 min. PRECEDENT: state/clm_v4_tokenizer_caller_migration_exec_2026_05_04/ (BG-μ owns; do not touch but pattern documented there).",
         "OPT-2: use lm-eval-harness `--model` custom registration with a python class that wraps the CLM v4 model (more invasive; ~2-3h)",
-        "OPT-3: re-export CLM v4 base as full HF-format mirror (need-singularity/clm-v4-base-hf-mirror) then re-pull on ubu1; clean but spec-doc work needed",
+        "OPT-3: re-export CLM v4 base as full HF-format mirror (dancinlab/clm-v4-base-hf-mirror) then re-pull on ubu1; clean but spec-doc work needed",
         "OPT-4: BLOCK — escalate to spec amendment §2.6, fall back to legacy F1_v2 (rejected per spec §1.3)"
       ],
       "recommendation": "OPT-1 (transient ubu1 .py shim) — preserves raw#9 (Mac-side .py ban, Linux transient OK), reuses existing tokenizer at snapshot 10ee03687. ETA +1h to base-validation BG cycle."

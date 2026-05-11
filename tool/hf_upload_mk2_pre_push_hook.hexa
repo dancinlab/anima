@@ -45,8 +45,8 @@ fn _extract_marker(msg: str) -> str {
 
 fn _selftest() -> int {
     println("[hf_upload_mk2_pre_push] SELFTEST")
-    let m1 = _extract_marker("feat(x): commit\n\n[hf-upload: need-singularity/clm-v4-sft-stage1] msg\n")
-    if m1 != "need-singularity/clm-v4-sft-stage1" {
+    let m1 = _extract_marker("feat(x): commit\n\n[hf-upload: dancinlab/clm-v4-sft-stage1] msg\n")
+    if m1 != "dancinlab/clm-v4-sft-stage1" {
         println("  [F] extract_marker: got '" + m1 + "'")
         println("__HF_UPLOAD_MK2_PRE_PUSH__ FAIL")
         return 0

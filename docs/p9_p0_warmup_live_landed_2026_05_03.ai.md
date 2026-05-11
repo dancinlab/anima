@@ -128,7 +128,7 @@ d. **CE loss 16 → 9.85**: tokens 측 ignore_index=0 (pad) 측 measure 측 SFT 
 e. **batch=4 grad_acc=8 effective=32**: spec 측 명시되지 않음. Default-pick. Phase 1 측 sentinel-combo 측 batch tuning 권고 (32GB GPU 측 batch=8-16 측 fit 가능).
 f. **8 random partitions K=8**: spec K=8 (anima_phi_v3_canonical 측 동일). 더 strict 측 K=32 측 tighter min 측 가능. Phase 1 측 K-stability ablation 권고.
 g. **Δ_baseline→final=+0.91**: φ★ 측 SFT 측 strengthening (드물게 weakening 측 신호 X). 단 N=11 mid-step 측 max 51.10 (step=300) 측 peak 측 후 측 drift down 측 stable 46-50 측 oscillation. 변동 측 가능 cause: LoRA 측 representation 측 small noise + sample-partition K=8 측 random.
-h. **HF savepoint 측 upload 측 미실행**: spec 측 HF savepoint @ 100/250/500/750/1000 step 측 (need-singularity/clm-v4-sft-stage1) — 본 측 1K warmup 측 measurement-only 측 LoRA weight 측 disk save 측 X. Phase 1 sentinel-combo 측 stage-1 ckpt save 권고 (HF private repos 이미 created BG-AF0CC7C0).
+h. **HF savepoint 측 upload 측 미실행**: spec 측 HF savepoint @ 100/250/500/750/1000 step 측 (dancinlab/clm-v4-sft-stage1) — 본 측 1K warmup 측 measurement-only 측 LoRA weight 측 disk save 측 X. Phase 1 sentinel-combo 측 stage-1 ckpt save 권고 (HF private repos 이미 created BG-AF0CC7C0).
 i. **predecessor BG-A82BC98F (CPU mock) 측 destructive 측 X**: 본 측 산출 측 predecessor 산출 측 read-only 측 reference (predecessor_correction field 측 verdict.json 측 기록).
 
 ## §7 Phase 0 close + Phase 1 entry
@@ -147,7 +147,7 @@ i. **predecessor BG-A82BC98F (CPU mock) 측 destructive 측 X**: 본 측 산출 
 - Phase 1 sentinel-combo entry 측 ready (5K-50K full SFT + δ ramp + sentinel monitoring)
 
 ### Phase 1 권고 (다음 BG)
-1. **HF savepoint 측 upload**: stage-1 ckpt save mechanism 측 활성화 (private repo need-singularity/clm-v4-sft-stage1)
+1. **HF savepoint 측 upload**: stage-1 ckpt save mechanism 측 활성화 (private repo dancinlab/clm-v4-sft-stage1)
 2. **F1 BLEU-1 측 generation eval**: per-checkpoint 측 측정 측 (BG 측 generate API 측 활용)
 3. **batch tune**: RTX 5070 12GB 측 batch 측 raise 측 throughput 측 (1K step 측 62s 측 5K-50K 측 5-50min linear)
 4. **K-partition stability**: K=8 → K=32 측 phi_star_min 측 robust check

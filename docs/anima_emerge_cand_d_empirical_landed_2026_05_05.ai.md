@@ -1,6 +1,6 @@
 # Anima Emerge Candidate D — F-CAND-D-1 Empirical Landed (2026-05-05)
 
-BG-Q empirical execution of F-CAND-D-1 falsifier per `docs/anima_emerge_candidate_d_always_inject_spec_2026_05_05.md` §5.1. Real CLM v4 (`need-singularity/clm-v4-mk2-v1`) loaded on Mac CPU; 5 prompts × 3 inject modes (none/zero/canonical) measured; verdict written to `state/anima_emerge_cand_d_empirical_2026_05_05/verdict.json`.
+BG-Q empirical execution of F-CAND-D-1 falsifier per `docs/anima_emerge_candidate_d_always_inject_spec_2026_05_05.md` §5.1. Real CLM v4 (`dancinlab/clm-v4-mk2-v1`) loaded on Mac CPU; 5 prompts × 3 inject modes (none/zero/canonical) measured; verdict written to `state/anima_emerge_cand_d_empirical_2026_05_05/verdict.json`.
 
 Lineage:
 

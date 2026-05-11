@@ -27,7 +27,7 @@ GUARD-3 (success-signal checklist) — any 1 of 3 fires the chain:
 
 1. **Local**: `state/p9_paradigm_d_25k_h100_2026_05_03/verdict.json` exists + parses + label ∈ {SUCCESS, PARTIAL, COMPLETE, ABORT, FAIL}
 2. **Ubu1**: `ssh ubu1` to `/home/aiden/anima/state/p9_paradigm_d_25k_h100_2026_05_03/verdict.json` (same label set)
-3. **HF**: `https://huggingface.co/api/models/need-singularity/clm-v4-paradigm-d-25k-final/tree/step-25000` returns http 200
+3. **HF**: `https://huggingface.co/api/models/dancinlab/clm-v4-paradigm-d-25k-final/tree/step-25000` returns http 200
 
 ## H100 Pod State (NOT TOUCHED)
 

@@ -48,7 +48,7 @@ Across all three loci attempted, the metric **cannot resolve real axis-cond pres
 
 ### 2.1 Canonical inference path bypasses the axis-cond gate
 
-In `decoder_v3.py` (`need-singularity/clm-v4-mk2-v1` HF format trust_remote_code import; verified in canonical inference), each decoder block executes:
+In `decoder_v3.py` (`dancinlab/clm-v4-mk2-v1` HF format trust_remote_code import; verified in canonical inference), each decoder block executes:
 
 ```python
 # from forward(x, consciousness_states=None, ...)

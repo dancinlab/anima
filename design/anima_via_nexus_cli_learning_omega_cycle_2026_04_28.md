@@ -195,7 +195,7 @@ launcher: `hx run nexus <sub>` 또는 PATH `nexus <sub>` (alias `nx` 는 다른 
 
 - **input**: D-day EEG measurement 결과 shard 작성 (`/tmp/eeg_dday_shard.json`) → `nexus atlas absorb --target n6-arch --glob "/tmp/eeg_dday_shard.json"`
 - **flow**: lock unlock → append shard 컨텐츠 → relock (chflags uchg, raw 1 호환 module n6/atlas_absorb.hexa)
-- **output**: atlas.n6 append (n6-architecture 또는 nexus root), audit ledger entry
+- **output**: atlas.n6 append (CANON 또는 nexus root), audit ledger entry
 - **expected payload**: D-day measurement (Berger 0/15 PASS, MNE PSD agree) lens 가 다음 paradigm v11 prior 에 반영 PROJECTED
 - **raw 1 chflags uchg**: 모듈 자체가 chflags-locked, 흡수 후 relock 강제
 

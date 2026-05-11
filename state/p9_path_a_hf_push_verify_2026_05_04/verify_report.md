@@ -2,14 +2,14 @@
 
 **Cycle**: `p9_path_a_hf_push_verify_2026_05_04`
 **Parent BG**: `p9_path_a_llama_lora_complete_2026_05_04` (BG-ι, COMPLETE_PROBABLE)
-**Auth state**: HF token PASS, write scope, `dancinlife` / `need-singularity` admin (post `eea009b40`)
+**Auth state**: HF token PASS, write scope, `dancinlife` / `dancinlab` admin (post `eea009b40`)
 **Mode**: READ-ONLY HF API (no upload, no delete, no rename)
 
 ---
 
 ## TL;DR
 
-- **HF target identified**: `need-singularity/p9-llama32-lora-stage1` (legacy, training-time push target). Canonical post-rename target `need-singularity/llm-llama32-3b-paradigm-a-prime-sft-stage1` exists as PRIVATE empty stub (sha `5161b80883`); rename never executed.
+- **HF target identified**: `dancinlab/p9-llama32-lora-stage1` (legacy, training-time push target). Canonical post-rename target `dancinlab/llm-llama32-3b-paradigm-a-prime-sft-stage1` exists as PRIVATE empty stub (sha `5161b80883`); rename never executed.
 - **Live state**: 11 files present at last commit `5a9b4584` dated 2026-05-03T20:06:18Z. Adapter weights present: `adapter_model.safetensors` 389MB LFS, oid `f12f31d8…3336`.
 - **CRITICAL**: Last HF commit is **"Training in progress, step 8000"**, NOT step 10000 nor `final`. Steps 8001–10000 + final adapter never reached HF. F-PA-HF-1 status emit = **PARTIAL** (step-8000 weights live; step-10000 / `final` lost).
 - **Verdict**: `PROBABLE_HF_PARTIAL`. The COMPLETE_PROBABLE → COMPLETE_VERIFIED transition does NOT fire — instead, COMPLETE_PROBABLE → **PARTIAL_VERIFIED_8K** (more honest).
@@ -24,8 +24,8 @@ Two candidate repos were resolved from on-disk state:
 
 | repo | role | source |
 |---|---|---|
-| `need-singularity/p9-llama32-lora-stage1` | actual push_to_hub target during training | `verdict.json:training.push_to_hub` (line 44); `train_llama_lora.py.txt --push-to-hub` arg in `verdict.json:host_terminator.log` |
-| `need-singularity/llm-llama32-3b-paradigm-a-prime-sft-stage1` | canonical mk2-compliant rename target | `docs/p9_path_a_naming_decision_landed_2026_05_03.ai.md` §"Post-training scheduled actions" |
+| `dancinlab/p9-llama32-lora-stage1` | actual push_to_hub target during training | `verdict.json:training.push_to_hub` (line 44); `train_llama_lora.py.txt --push-to-hub` arg in `verdict.json:host_terminator.log` |
+| `dancinlab/llm-llama32-3b-paradigm-a-prime-sft-stage1` | canonical mk2-compliant rename target | `docs/p9_path_a_naming_decision_landed_2026_05_03.ai.md` §"Post-training scheduled actions" |
 
 The naming-decision doc scheduled a post-training `hf repos move` from legacy → canonical. That move was NEVER executed because `verdict_complete.json` records the pod was terminated at step 10000 with TRAIN_DONE.json missing, after which the rename workflow was deferred pending HF auth recovery.
 
@@ -38,7 +38,7 @@ The naming-decision doc scheduled a post-training `hf repos move` from legacy �
 ### Repo metadata
 
 ```
-id:           need-singularity/p9-llama32-lora-stage1
+id:           dancinlab/p9-llama32-lora-stage1
 private:      true
 sha (HEAD):   5a9b458467589b82a69f0108fd2af3e519c45286
 lastModified: 2026-05-03T20:06:18.000Z
@@ -113,7 +113,7 @@ Final visible step in HF-uploaded log: **step 8008** with loss `0.2748`, lr `9.9
 ## 3. Live HF state — `llm-llama32-3b-paradigm-a-prime-sft-stage1` (the canonical stub)
 
 ```
-id:           need-singularity/llm-llama32-3b-paradigm-a-prime-sft-stage1
+id:           dancinlab/llm-llama32-3b-paradigm-a-prime-sft-stage1
 private:      true
 sha:          5161b80883bb602df532d13ab2a322211a6ee3af
 createdAt:    2026-05-03T15:26:52.000Z
