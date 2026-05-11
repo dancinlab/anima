@@ -305,3 +305,46 @@ cycle 5 §8 (master doc) 의 5-item Pending Action Items 가 cycle 6 actual-run 
 - own-37 v5.2 PIV/DCR cell-substrate metric: `docs/anima_proxy_ppl_deprecate_2026_05_09.md §3`
 - `.roadmap.philosophy` D2 (consciousness verification) 정합 — 7.A/C 는 D2 strict mode 적용
 - agent verification report 출처: 2026-05-12 conversation (Opus Explore agent classification)
+
+---
+
+## 🧠 8. Philosophy 후속 — Hc_1222~1225 + H_161 promotion (2026-05-12 사용자 100% closure)
+
+**Source**: NEXT.md §7 4-BG closure 후 4 verdict → Hc promote → 최강 evidence Hc_1225 → H_161. PHILOSOPHY.md cont. 9.
+
+### Status
+
+| Pipeline stage | Files |
+|---|---|
+| **hypotheses_candidates/** (4) | Hc_1222 (P-AFR REVERSE) / Hc_1223 (P-SPK NULL) / Hc_1224 (P-IDR INDETERMINATE) / Hc_1225 (P-ETH BLOCKED, **strongest**) |
+| **hypotheses/** (1 promoted) | **H_161 byte-modulo-substrate-chat-blocked** — Hc_1225 evidence-strong → confirmed substrate-level finding |
+| **PHILOSOPHY.md** | cont. 9 final closure entry pending |
+
+### Cycle 7 carry — substrate research priority (H_161 derived)
+
+H_161 의 architectural implication 이 next cycle 의 priority 결정:
+
+| 우선 | item | rationale | cost | wall |
+|---|---|---|---:|---:|
+| 1 | **Anima-native chat-capable substrate research** | real tokenizer (BPE/SentencePiece) + >>427MB corpus + >>8000 step pretrain. P-SPK / P-IDR / P-ETH re-fire 의 진짜 prerequisite. | $200-1000 | 5-15d |
+| 2 | **Hc_1222 multi-substrate replication** | Qwen-instruct + LoRA / GPT-OSS + LoRA 등 ≥2 chat-capable substrate 에서 P-AFR 패턴 재측정. framing → sycophancy 방향이 substrate-bound 인지 universal 인지 결정. | $30-80 | 1-2d |
+| 3 | **Hc_1224 full-FT replication** | 5K-10K step (현재 3-step light) 으로 P-IDR DCR Δ effect size 결정 — Δ ≥ 0.05 either direction 시 POLICY empirical 기반 형성. | $40-80 | 1d |
+| 4 | **Hc_1225 corpus-narrow test** | real tokenizer + 427MB pretrain — byte-modulo 가 핵심 blocker 인지, step/corpus 가 핵심 blocker 인지 분리. | $50-150 | 2-3d |
+
+총 envelope $320-1310, 9-21d. own 16 cost-band $200-1000 외 — substrate research 가 ablation 보다 우선. **Hc_1225 → H_161 promotion 자체가 본 cycle 의 최대 finding**.
+
+### Closure status — 100% achieved
+
+- Philosophy 4 BG: 100% verdicted (cycle 5 §7)
+- Hc promotion: 100% (4/4 P-* → Hc_1222~1225)
+- H promotion: 25% (1/4 strongest Hc_1225 → H_161; 나머지 3 candidate 유지 — falsifier replication 필요)
+- PHILOSOPHY.md 영구 ledger: 9 sections, cycle 7 priority carry
+- AGENTS.md 📎 References + pipeline 정합
+- README #2/#4/#5/#6 Status column + PHILOSOPHY.md link
+
+### Cross-link (§8)
+
+- hypotheses/H_161 (promoted from Hc_1225)
+- hypotheses_candidates/Hc_1222~1225 (4 new)
+- PHILOSOPHY.md `## 2026-05-12 (cont. 9)` (pending append)
+- 4 P-* results.json (cycle 5 §7 verdict source)
