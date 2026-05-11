@@ -3,12 +3,15 @@ id: Hc_638
 slug: chat-cap-b30-v4-calibration-evaluator-self-impossibility
 title: B30 — 5 known-good 1B+ KO LM (Polyglot-Ko-1.3B / Llama-3.2-3B-Instruct / Qwen2.5-1.5B/0.5B / KoGPT2-base-v2) 가 V4 strict zero-shot 분포로 evaluator self-impossibility 검증
 domain: clm-evaluation
-status: candidate-unverified
+status: candidate-falsifier-only-math-pending
 source_doc: docs/anima_chat_cap_brainstorm_deepdive_2026_05_07.md
 source_lines: 186-207
 promoted_at: 2026-05-11
 linked_h: BG-IY (LANDED, F-IY-4 corpus_mismatch), 22+ BG architectural ceiling claim
 notes: Outcome F-IY-4 corpus_mismatch (Korean chat training <5%). H_A capacity / H_B evaluator 모두 reject. P(actionable) ~95% × VERY HIGH.
+verified_at: 2026-05-12
+verify_decision: WEAK_FALSIFIER_ONLY
+verify_note: "verify_hc2 2026-05-12 — F=4"
 ---
 
 ## Hypothesis

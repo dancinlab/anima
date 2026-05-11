@@ -3,12 +3,15 @@ id: Hc_429
 slug: independent-triple-evidence-384
 title: ConsciousLM, ConsciousDecoderV2, ANIMA-VOICE all converge to embed_dim=384 — independent triple evidence for n=6
 domain: math
-status: candidate-unverified
+status: candidate-math-verified-falsifier-pending
 source_doc: docs/anima/hexa-speak-integration.md
 source_lines: 149
 promoted_at: 2026-05-11
 linked_h: Hc_047
 notes: TP-5: three independent systems with different objectives all yield 384 as minimum perplexity / max performance. Independent triple-evidence for n=6 embed scaling.
+verified_at: 2026-05-12
+verify_decision: WEAK_MATH_ONLY
+verify_note: "verify_hc2 2026-05-12 — verify3 math=1 (6+ numeric identities present)"
 ---
 
 ## Hypothesis

@@ -3,12 +3,15 @@ id: Hc_409
 slug: consciousness-thermodynamics-4-laws
 title: Consciousness obeys 4 thermodynamic laws — 0th (emergence), 1st (non-conservation), 2nd (arrow), hysteresis (path)
 domain: physics
-status: candidate-unverified
+status: candidate-math-verified-falsifier-pending
 source_doc: docs/anima/paper_consciousness_laws.hexa
 source_lines: 248-263
 promoted_at: 2026-05-11
 linked_h: Hc_009
 notes: Paper 1 §7. T_c=0.38 critical temperature, hysteresis gap=0.57 (Law 200). Coupling-Phi r=0.78 — integration drives disorder. Extends Hc_009 with quantitative numbers and hysteresis claim.
+verified_at: 2026-05-12
+verify_decision: WEAK_MATH_ONLY
+verify_note: "verify_hc2 2026-05-12 — verify3 math=1 (10+ numeric identities present)"
 ---
 
 ## Hypothesis

@@ -3,12 +3,15 @@ id: Hc_417
 slug: rvq-8-stages-consciousness-atom
 title: 8-stage RVQ codebook matches consciousness atom (K=8 = n+2, Law 162)
 domain: substrate
-status: candidate-unverified
+status: candidate-math-verified-falsifier-pending
 source_doc: docs/anima/paper_hexa_speak.hexa
 source_lines: 134-138, 178-181
 promoted_at: 2026-05-11
 linked_h: Hc_401
 notes: rvq_stages = 8 = n+2 = consciousness atom. 1024 entries/stage, 384D vectors, 80 bits/vector. Cross-link to Hc_401 (K=8 atom).
+verified_at: 2026-05-12
+verify_decision: WEAK_MATH_ONLY
+verify_note: "verify_hc2 2026-05-12 — verify3 math=1 (5+ numeric identities present)"
 ---
 
 ## Hypothesis

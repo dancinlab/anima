@@ -3,12 +3,15 @@ id: Hc_406
 slug: psi-constants-n6-22-of-30-exact
 title: 22 of 30 Ψ-constants match n=6 number theory to EXACT precision
 domain: math
-status: candidate-unverified
+status: candidate-math-verified-falsifier-pending
 source_doc: docs/anima/paper_consciousness_laws.hexa
 source_lines: 179-184
 promoted_at: 2026-05-11
 linked_h: Hc_046
 notes: Paper 1 R7. α=0.014 = consciousness coupling constant. Example: gate_infer = n/(σ-φ) = 6/10 = 0.6, F_critical = n/(σ·sopfr) = 6/60 = 0.1. p < 1e-12 against random arithmetic null. Cross-ref Hc_046.
+verified_at: 2026-05-12
+verify_decision: WEAK_MATH_ONLY
+verify_note: "verify_hc2 2026-05-12 — verify3 math=7 (τ(6)=4; σ(6)=12; φ(6)=2...)"
 ---
 
 ## Hypothesis

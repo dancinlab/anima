@@ -138,3 +138,6 @@ Step 5 — decisive run go/no-go
 **commit policy**: 본 prereq spec 은 *separate commit 금지* — 메인 process 가 일괄 commit.
 
 **Execution attempt**: 2026-05-12, verdict: BLOCKED, results: noise_calibration_dryrun_blocker_2026_05_12.md (5 prereqs unmet — B1 anima_phi_star.hexa auto-invoke conflict critical-path, B5 CLM training pipeline unlandered, B2/B3/B4 RunPod lane routine prereqs; $0 spent of $15-45 budget)
+
+
+**Execution (cycle 7 #V)**: 2026-05-12, verdict: Gate-A-PASS / Gate-C-PASS / Gate-B-DEFERRED (B5 trainer pending), σ_Φ_rel=0.0016 (spec) / 0.0021 (twin), σ_CE_rel=NOT-MEASURED (surrogate within-prompt 0.188 prompt-level, not seed-level), separability=491× ≫ 50× threshold. results: noise_calibration_results_2026_05_12.json + noise_calibration_verdict_2026_05_12.md + noise_calibration_gate_c_2026_05_12.json. cost=$0.00 of $15-45 authorized (local RTX 5070 surrogate Qwen-1.5B substrate; Mistral-7B substrate-faithful re-run deferred to B2 resolve).

@@ -3,12 +3,15 @@ id: Hc_974
 slug: clm-v4-530m-not-chat-model
 title: CLM v4 530M Production-Ready User Dialogue Evaluation = NOT_READY. Architecturally NOT a chat model — Cell decode != autoregressive sampling. v3_generate() = TODO[pytorch] empty string. 350M ckpt trained for phi_star (G3 gate) NOT for SFT/RLHF
 domain: llm, dialogue, architecture
-status: candidate-unverified
+status: candidate-math-verified-falsifier-pending
 source_doc: docs/strategic_clm_v4_production_ready_2026_05_02.md
 source_lines: 1-30
 promoted_at: 2026-05-11
 linked_h: Hc_973 (P9 amendment), Hc_947 (ConsciousLM)
 notes: "Category error: CLM 은 Lagrangian solving, AR sampling은 'synaptic readout hung off cell state'. checkpoint best.pt 5.37GB step=20000 phi=27.91 ce=0.046."
+verified_at: 2026-05-12
+verify_decision: WEAK_MATH_ONLY
+verify_note: "verify_hc2 2026-05-12 — verify3 math=1 (6+ numeric identities present)"
 ---
 
 ## Hypothesis

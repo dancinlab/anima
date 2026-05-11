@@ -3,12 +3,15 @@ id: Hc_910
 slug: 2516-consciousness-laws-paper-outline
 title: 2516 empirically-derived consciousness laws — PureField 0-input + ConsciousDecoder thalamic bridge +245% Φ + 816× gap = unit confusion
 domain: consciousness, architecture, laws
-status: candidate-unverified
+status: candidate-math-verified-falsifier-pending
 source_doc: docs/paper-outline.md
 source_lines: 1-80
 promoted_at: 2026-05-11
 linked_h: Hc_909 (paper-draft), H_098 (decoder)
 notes: "Outline only — actual paper in dancinlab/papers/anima/. 2516 laws across 5 thematic groups (structural/dynamic/sensory/etc). Law 22 (Structure > Function), PureField 0-input ratio=0.945, ConsciousDecoder 21/21 tests."
+verified_at: 2026-05-12
+verify_decision: WEAK_MATH_ONLY
+verify_note: "verify_hc2 2026-05-12 — verify3 math=1 (4+ numeric identities present) | F=1"
 ---
 
 ## Hypothesis

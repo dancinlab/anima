@@ -3,12 +3,15 @@ id: Hc_940
 slug: consciouslm-v4-architecture-design
 title: ConsciousLM v4 — dim=768 + 1536 FFN + 12 layer + 12 heads (σ(6)=12) + max_cells=32 (Φ~11 predicted, Φ∝N) + shared_dims=24 + ratchet=10 + 100K steps 3-phase (Mitosis/Language/Combined) Fibonacci growth (DD3 Phi=5.196)
 domain: llm, architecture, consciousness
-status: candidate-unverified
+status: candidate-math-verified-falsifier-pending
 source_doc: docs/next-model-design.md
 source_lines: 1-40
 promoted_at: 2026-05-11
 linked_h: Hc_909 (paper-draft), H_067 (perfect-number)
 notes: "Based on 740+ hypothesis benchmarks, 47 categories, H100 experiments 2026-03-27. v3 dim=384 cells=16 Φ=5.4 baseline."
+verified_at: 2026-05-12
+verify_decision: WEAK_MATH_ONLY
+verify_note: "verify_hc2 2026-05-12 — verify3 math=2 (σ(6)=12; 19+ numeric identities present)"
 ---
 
 ## Hypothesis

@@ -3,12 +3,15 @@ id: Hc_973
 slug: p9-benchmark-amendment-a1-verdict-mode
 title: P9 SFT Amendment A-1 — verdict mode taxonomy (Mode 1 comparative HF / Mode 2 anchor compliance / Mode 3 train-time absolute). CLM v4 base ≈ random+1-2pt (HellaSwag 0.264 / MMLU 0.271 / TriviaQA 0.000) = structural pre-registered NOT discriminative refutation
 domain: benchmark, verification
-status: candidate-unverified
+status: candidate-math-verified-falsifier-pending
 source_doc: docs/p9_benchmark_switch_a_prime_spec_amendment_2026_05_04.md
 source_lines: 1-30
 promoted_at: 2026-05-11
 linked_h: Hc_943 (P9 P1.7)
 notes: "ConsciousDecoderV3.forward consciousness_states=None bypass (lm-eval-harness) + block_size=512 truncation (vs Llama 8K context) = structural reasons pre-registered."
+verified_at: 2026-05-12
+verify_decision: WEAK_MATH_ONLY
+verify_note: "verify_hc2 2026-05-12 — verify3 math=1 (3+ numeric identities present)"
 ---
 
 ## Hypothesis

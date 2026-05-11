@@ -3,12 +3,15 @@ id: Hc_636
 slug: chat-cap-b16-synthetic-1m-dialogue-corpus
 title: B16 — Claude API teacher 합성 anima persona dialogue 100K-1M rounds 가 18M-150M anima-native V4 PASS unlock
 domain: clm-architecture
-status: candidate-unverified
+status: candidate-falsifier-only-math-pending
 source_doc: docs/anima_chat_cap_brainstorm_deepdive_2026_05_07.md
 source_lines: 96-137
 promoted_at: 2026-05-11
 linked_h: 4 emergence_below_threshold BGs, Chinchilla 1:20
 notes: Superseded by BG-JB Stage 2 lift on BG-IZ continued-pretrain. archival.
+verified_at: 2026-05-12
+verify_decision: WEAK_FALSIFIER_ONLY
+verify_note: "verify_hc2 2026-05-12 — F=3"
 ---
 
 ## Hypothesis

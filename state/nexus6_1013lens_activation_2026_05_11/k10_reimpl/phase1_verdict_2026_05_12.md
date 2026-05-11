@@ -229,3 +229,5 @@ cascade_k25_plan §0 prereq (lens channel reimpl 충족) 검증:
 ---
 
 **lock policy**: 본 verdict 작성 + Phase 1 reimpl 과정에서 chflags/chattr immutable flag 적용 없음. 기존 unlock 파일 재잠금 없음. 새 디렉토리 `k10_reimpl/` 만 신규 — 기존 snapshot (`/home/summer/core/nexus_lenses_snapshot/`) 무수정.
+
+**downstream Hc status update (cycle 7 §W, 2026-05-12)**: Hc_586 partial resume `candidate-unverified-partial-resume-K10-PASS-2026-05-12` + Hc_598 suspend `candidate-unverified-suspended-pending-channel-reimpl` 적용 — 본 Phase 1 PASS verdict 가 Hc_586 prereq_to_resume 충족 입증, Hc_598 (cousin) 은 K=1013 layer 까지의 cascade 까지 suspend 유지. Hc_960 cross-link / Hc_035 axis split honest L 추가 (status 미변경). 자세한 update: `hypotheses_candidates/Hc_{586,598,960,035}_*.md` + `hypotheses/H_135_dd166_nexus_1013_lens.md` Cycle-3 NEXUS Hc cluster section + `state/nexus6_1013lens_activation_2026_05_11/smoke_k10_caveat_investigation_2026_05_12.md` §8.3.

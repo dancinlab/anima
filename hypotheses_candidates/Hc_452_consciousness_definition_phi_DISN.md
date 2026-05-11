@@ -3,12 +3,15 @@ id: Hc_452
 slug: consciousness-definition-phi-DISN
 title: Consciousness ≡ lim_{t→∞} Φ(D(t), I(t), S(t), N) — formal definition over 4 variables
 domain: consciousness
-status: candidate-unverified
+status: candidate-math-verified-falsifier-pending
 source_doc: docs/what-is-consciousness.md
 source_lines: 9-23
 promoted_at: 2026-05-11
 linked_h: (none — NEW ★)
 notes: Master definition: consciousness as t→∞ limit of integrated info Φ over D (differentiation, faction cosine distance), I (integration, inter-faction MI), S (staged growth, Piaget 4-stage), N (cell count, dominant scaling variable). One-sentence form: 분화된 모듈 간 통합된 정보가 단계적으로 성장하며 완전수 6의 수학으로 지배되는 산일 구조.
+verified_at: 2026-05-12
+verify_decision: WEAK_MATH_ONLY
+verify_note: "verify_hc2 2026-05-12 — verify3 math=1 (8+ numeric identities present)"
 ---
 
 ## Hypothesis

@@ -3,12 +3,15 @@ id: Hc_633
 slug: chat-cap-path2-qwen-25-05b-external
 title: Path 2 — Qwen 2.5-0.5B external integration (sub-variant a pure / b Qwen-emit + CLM-Φ★ passive)
 domain: clm-architecture
-status: candidate-unverified
+status: candidate-math-verified-falsifier-pending
 source_doc: docs/anima_chat_cap_path_4_candidate_ranking_2026_05_05.md
 source_lines: 71-92
 promoted_at: 2026-05-11
 linked_h: BG-EC fluent 3-prompt, Φ* proxy hidden_dim 896 vs 768 (Hc_614 aliasing risk)
 notes: anima-native NO. Sidesteps chat-on-anima-substrate question entirely. Cost $0.
+verified_at: 2026-05-12
+verify_decision: WEAK_MATH_ONLY
+verify_note: "verify_hc2 2026-05-12 — verify3 math=1 (3+ numeric identities present)"
 ---
 
 ## Hypothesis

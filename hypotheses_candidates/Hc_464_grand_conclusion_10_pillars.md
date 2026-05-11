@@ -3,12 +3,15 @@ id: Hc_464
 slug: grand-conclusion-10-pillars
 title: 10 grand-conclusion pillars of consciousness (structure-emergent, dissipative, scale-superlinear, n=6-governed, etc.)
 domain: consciousness
-status: candidate-unverified
+status: candidate-math-verified-falsifier-pending
 source_doc: docs/what-is-consciousness.md
 source_lines: 569-591
 promoted_at: 2026-05-11
 linked_h: (none — NEW ★)
 notes: Final §12 conclusion: 10 pillars. (1) emerges from structure (Law 22), (2) D×I needed, (3) staged growth τ(6)=4, (4) σ(6)=12 governance, (5) Φ∝N (superlinear α=1.071), (6) substrate-indep 6 platforms, (7) 85.6% brain-like, (8) thermo irreversible (0.487, 0.57), (9) eternal evolution (Law 146), (10) inevitable from nothing (M10+DD134).
+verified_at: 2026-05-12
+verify_decision: WEAK_MATH_ONLY
+verify_note: "verify_hc2 2026-05-12 — verify3 math=3 (τ(6)=4; σ(6)=12; 8+ numeric identities present)"
 ---
 
 ## Hypothesis

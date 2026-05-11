@@ -3,12 +3,15 @@ id: Hc_653
 slug: phi-meta-learning-lr-evolution-j1-overall-1st
 title: J-1 LR evolution (tension→LR 자동 조절) 가 전체 68 가설 중 1위 Φ=5.568
 domain: consciousness-theory
-status: candidate-unverified
+status: candidate-falsifier-only-math-pending
 source_doc: docs/consciousness-threshold-criteria.md
 source_lines: 381-388, 369-371
 promoted_at: 2026-05-11
 linked_h: meta-learning, H-2 competitive specialization 5.288, G-2 dream interpolation 4.989, F-11 growth transition 4.730
 notes: top 5 = J1 5.568 / H2 5.288 / G2 4.989 / F11 4.730 / K1 4.582. 모두 meta/adaptive 메커니즘.
+verified_at: 2026-05-12
+verify_decision: WEAK_FALSIFIER_ONLY
+verify_note: "verify_hc2 2026-05-12 — F=3"
 ---
 
 ## Hypothesis

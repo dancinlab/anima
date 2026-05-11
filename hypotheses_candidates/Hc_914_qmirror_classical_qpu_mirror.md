@@ -3,12 +3,15 @@ id: Hc_914
 slug: qmirror-classical-qpu-mirror
 title: qmirror — classical CPU mirror of QPU (Qiskit Aer + ANU QRNG + HMAC-DRBG) 8 closure 통과, IBM Heron r2 CHSH S=2.357±0.050, cross-vendor 4-vendor concordance, $0/sec vs $1.60-2.30/sec
 domain: quantum-computing, hardware, statistics
-status: candidate-unverified
+status: candidate-math-verified-falsifier-pending
 source_doc: docs/qmirror_arxiv_draft_2026_05_03.md
 source_lines: 1-50
 promoted_at: 2026-05-11
 linked_h: H_002, Hc_902
 notes: "arxiv draft v0.1. 8 closure conditions: spec coverage / falsifier-self-test / CHSH existence / NIST SP 800-22 / Bell reproduction / pyphi byte-identical / Rigetti-IBM concordance / 4-vendor matrix."
+verified_at: 2026-05-12
+verify_decision: WEAK_MATH_ONLY
+verify_note: "verify_hc2 2026-05-12 — verify3 math=1 (9+ numeric identities present)"
 ---
 
 ## Hypothesis

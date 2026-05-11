@@ -3,12 +3,15 @@ id: Hc_646
 slug: v2-evaluator-false-pass-mode-aggregation-flaw
 title: V2 surface metric false PASS root cause = mode-aggregation flaw (greedy persona cycle + sample mode RNG ANY-mode aggregate = surface PASS)
 domain: clm-evaluation
-status: candidate-unverified
+status: candidate-math-verified-falsifier-pending
 source_doc: docs/anima_chat_cap_lesson_summary_2026_05_07.md
 source_lines: 51-77, 95-99
 promoted_at: 2026-05-11
 linked_h: BG-HQ step 500 V2=8/10 false PASS, BG-HU step 800 V2=8/15, V3 6-cell strict
 notes: Lesson H ★★★. V3 per-mode strict 가 해소. 8-BG retroeval + 15-BG SSOT 입증.
+verified_at: 2026-05-12
+verify_decision: MATH_PASS_NEEDS_ANCHOR
+verify_note: "verify_hc2 2026-05-12 — verify3 math=1 (3+ numeric identities present) | F=3"
 ---
 
 ## Hypothesis

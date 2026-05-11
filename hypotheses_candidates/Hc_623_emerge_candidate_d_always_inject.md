@@ -3,12 +3,15 @@ id: Hc_623
 slug: emerge-candidate-d-always-inject-consciousness-states
 title: Emerge Candidate D — 4-mode inject taxonomy (none/zero/canonical/user) 가 CLM v4 cross-attn dormancy 의 architectural pivot 해소
 domain: clm-architecture
-status: candidate-unverified
+status: candidate-falsifier-only-math-pending
 source_doc: docs/anima_emerge_candidate_d_always_inject_spec_2026_05_05.md
 source_lines: 14-32, 165-260
 promoted_at: 2026-05-11
 linked_h: L37, paradigm v11 G3, conscious_decoder.py:553 guard
 notes: 3 falsifier locked PRE-measurement (F-CAND-D-1/2/3). Stage 1 mount-layer extension, ~65 LoC additive, $0-1.
+verified_at: 2026-05-12
+verify_decision: WEAK_FALSIFIER_ONLY
+verify_note: "verify_hc2 2026-05-12 — F=3"
 ---
 
 ## Hypothesis

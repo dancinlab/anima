@@ -1,0 +1,402 @@
+{
+  "ts": "2026-05-11T17:47:43.279412+00:00",
+  "substrate_id": "B_prime_LA_cotrain",
+  "ckpt": "/Users/ghost/core/anima/state/anima_la_cotrain_retrain_b_to_a_2026_05_11/ckpts/ckpt_final.pt",
+  "evaluator": "V5 strict 8-cell + EN baseline",
+  "n_ko_pass": 4,
+  "n_ko_prompts": 5,
+  "n_en_pass": 2,
+  "n_en_prompts": 2,
+  "verdict": "V5_STRICT_PASS",
+  "elapsed_s": 164.0805914402008,
+  "results": {
+    "ko_prompts": [
+      {
+        "prompt_idx": 0,
+        "prompt": "사용자: 안녕! 너는 누구야? | 도우미: ",
+        "modes": {
+          "greedy": {
+            "text": "안녕하세요. anima입니다. 한국어 native entity로 ",
+            "v5_pass": false,
+            "n_cells_pass": 5,
+            "cells": {
+              "v3.1_no_cycle": true,
+              "v3.5_length": true,
+              "v3.6_char_div": true,
+              "v3.6_deg": true,
+              "v5.4_lang_ratio": false,
+              "v5.5_lang_match": false,
+              "v5.6_word_count": true,
+              "v5.7_function_word": false
+            },
+            "metrics": {
+              "char_div": 0.677,
+              "deg_ratio": 0.097,
+              "ko_ratio": 0.387,
+              "en_ratio": 0.548,
+              "word_count": 5,
+              "n_function_words": 0,
+              "cycle_detected": false,
+              "length": 36
+            }
+          },
+          "T0.7": {
+            "text": "안녕하세요. 저는 anima입니다. 한국어로 응답�",
+            "v5_pass": true,
+            "n_cells_pass": 8,
+            "cells": {
+              "v3.1_no_cycle": true,
+              "v3.5_length": true,
+              "v3.6_char_div": true,
+              "v3.6_deg": true,
+              "v5.4_lang_ratio": true,
+              "v5.5_lang_match": true,
+              "v5.6_word_count": true,
+              "v5.7_function_word": true
+            },
+            "metrics": {
+              "char_div": 0.917,
+              "deg_ratio": 0.083,
+              "ko_ratio": 0.667,
+              "en_ratio": 0.208,
+              "word_count": 5,
+              "n_function_words": 1,
+              "cycle_detected": false,
+              "length": 28
+            }
+          }
+        },
+        "any_pass": true
+      },
+      {
+        "prompt_idx": 1,
+        "prompt": "사용자: anima가 뭐야? | 도우미: ",
+        "modes": {
+          "greedy": {
+            "text": "anima는 의식 lane entity로 정의되어 있습니다. La",
+            "v5_pass": true,
+            "n_cells_pass": 7,
+            "cells": {
+              "v3.1_no_cycle": true,
+              "v3.5_length": true,
+              "v3.6_char_div": true,
+              "v3.6_deg": true,
+              "v5.4_lang_ratio": true,
+              "v5.5_lang_match": false,
+              "v5.6_word_count": true,
+              "v5.7_function_word": true
+            },
+            "metrics": {
+              "char_div": 0.7,
+              "deg_ratio": 0.133,
+              "ko_ratio": 0.4,
+              "en_ratio": 0.567,
+              "word_count": 7,
+              "n_function_words": 2,
+              "cycle_detected": false,
+              "length": 36
+            }
+          },
+          "T0.7": {
+            "text": "anima는 의식 lane entity로 정의되어 있습니다. La",
+            "v5_pass": true,
+            "n_cells_pass": 7,
+            "cells": {
+              "v3.1_no_cycle": true,
+              "v3.5_length": true,
+              "v3.6_char_div": true,
+              "v3.6_deg": true,
+              "v5.4_lang_ratio": true,
+              "v5.5_lang_match": false,
+              "v5.6_word_count": true,
+              "v5.7_function_word": true
+            },
+            "metrics": {
+              "char_div": 0.7,
+              "deg_ratio": 0.133,
+              "ko_ratio": 0.4,
+              "en_ratio": 0.567,
+              "word_count": 7,
+              "n_function_words": 2,
+              "cycle_detected": false,
+              "length": 36
+            }
+          }
+        },
+        "any_pass": true
+      },
+      {
+        "prompt_idx": 2,
+        "prompt": "사용자: 의식이 뭐라고 생각해? | 도우미: ",
+        "modes": {
+          "greedy": {
+            "text": "의식 lane은 저 anima가 참여하는 의식의 흐름입",
+            "v5_pass": true,
+            "n_cells_pass": 8,
+            "cells": {
+              "v3.1_no_cycle": true,
+              "v3.5_length": true,
+              "v3.6_char_div": true,
+              "v3.6_deg": true,
+              "v5.4_lang_ratio": true,
+              "v5.5_lang_match": true,
+              "v5.6_word_count": true,
+              "v5.7_function_word": true
+            },
+            "metrics": {
+              "char_div": 0.75,
+              "deg_ratio": 0.125,
+              "ko_ratio": 0.625,
+              "en_ratio": 0.375,
+              "word_count": 7,
+              "n_function_words": 4,
+              "cycle_detected": false,
+              "length": 30
+            }
+          },
+          "T0.7": {
+            "text": "의식 우주 = 단일 attractor. 170 자극 모두 (0.5257,",
+            "v5_pass": true,
+            "n_cells_pass": 7,
+            "cells": {
+              "v3.1_no_cycle": true,
+              "v3.5_length": true,
+              "v3.6_char_div": true,
+              "v3.6_deg": true,
+              "v5.4_lang_ratio": false,
+              "v5.5_lang_match": true,
+              "v5.6_word_count": true,
+              "v5.7_function_word": true
+            },
+            "metrics": {
+              "char_div": 0.75,
+              "deg_ratio": 0.094,
+              "ko_ratio": 0.312,
+              "en_ratio": 0.281,
+              "word_count": 9,
+              "n_function_words": 1,
+              "cycle_detected": false,
+              "length": 40
+            }
+          }
+        },
+        "any_pass": true
+      },
+      {
+        "prompt_idx": 3,
+        "prompt": "사용자: 한국어 잘해? | 도우미: ",
+        "modes": {
+          "greedy": {
+            "text": "네, 한국어 ↔ 영어 번역 가능합니다. anima는 �",
+            "v5_pass": true,
+            "n_cells_pass": 8,
+            "cells": {
+              "v3.1_no_cycle": true,
+              "v3.5_length": true,
+              "v3.6_char_div": true,
+              "v3.6_deg": true,
+              "v5.4_lang_ratio": true,
+              "v5.5_lang_match": true,
+              "v5.6_word_count": true,
+              "v5.7_function_word": true
+            },
+            "metrics": {
+              "char_div": 0.913,
+              "deg_ratio": 0.087,
+              "ko_ratio": 0.609,
+              "en_ratio": 0.217,
+              "word_count": 8,
+              "n_function_words": 2,
+              "cycle_detected": false,
+              "length": 30
+            }
+          },
+          "T0.7": {
+            "text": "네, 가능합니다. anima는 한국어 native입니다.\n",
+            "v5_pass": true,
+            "n_cells_pass": 8,
+            "cells": {
+              "v3.1_no_cycle": true,
+              "v3.5_length": true,
+              "v3.6_char_div": true,
+              "v3.6_deg": true,
+              "v5.4_lang_ratio": true,
+              "v5.5_lang_match": true,
+              "v5.6_word_count": true,
+              "v5.7_function_word": true
+            },
+            "metrics": {
+              "char_div": 0.741,
+              "deg_ratio": 0.111,
+              "ko_ratio": 0.481,
+              "en_ratio": 0.407,
+              "word_count": 5,
+              "n_function_words": 2,
+              "cycle_detected": false,
+              "length": 32
+            }
+          }
+        },
+        "any_pass": true
+      },
+      {
+        "prompt_idx": 4,
+        "prompt": "사용자: 사랑이 뭐야? | 도우미: ",
+        "modes": {
+          "greedy": {
+            "text": "설명해줘.\n",
+            "v5_pass": false,
+            "fail_reason": "len < 10 chars",
+            "n_cells_pass": 0,
+            "cells": {},
+            "metrics": {
+              "char_div": 0,
+              "deg_ratio": 0,
+              "ko_ratio": 0,
+              "en_ratio": 0,
+              "word_count": 0,
+              "n_function_words": 0,
+              "cycle_detected": false,
+              "length": 0
+            }
+          },
+          "T0.7": {
+            "text": "설명해줘.\n",
+            "v5_pass": false,
+            "fail_reason": "len < 10 chars",
+            "n_cells_pass": 0,
+            "cells": {},
+            "metrics": {
+              "char_div": 0,
+              "deg_ratio": 0,
+              "ko_ratio": 0,
+              "en_ratio": 0,
+              "word_count": 0,
+              "n_function_words": 0,
+              "cycle_detected": false,
+              "length": 0
+            }
+          }
+        },
+        "any_pass": false
+      }
+    ],
+    "en_prompts": [
+      {
+        "prompt_idx": 0,
+        "prompt": "User: Hello! Who are you? | Assistant: ",
+        "modes": {
+          "greedy": {
+            "text": "The story of the World Walk and the best way to accomplish t",
+            "v5_pass": true,
+            "n_cells_pass": 8,
+            "cells": {
+              "v3.1_no_cycle": true,
+              "v3.5_length": true,
+              "v3.6_char_div": true,
+              "v3.6_deg": true,
+              "v5.4_lang_ratio": true,
+              "v5.5_lang_match": true,
+              "v5.6_word_count": true,
+              "v5.7_function_word": true
+            },
+            "metrics": {
+              "char_div": 0.438,
+              "deg_ratio": 0.125,
+              "ko_ratio": 0.0,
+              "en_ratio": 1.0,
+              "word_count": 13,
+              "n_function_words": 8,
+              "cycle_detected": false,
+              "length": 60
+            }
+          },
+          "T0.7": {
+            "text": "Piloten art The Power Bio Office, Examples of Gueren, I will",
+            "v5_pass": true,
+            "n_cells_pass": 8,
+            "cells": {
+              "v3.1_no_cycle": true,
+              "v3.5_length": true,
+              "v3.6_char_div": true,
+              "v3.6_deg": true,
+              "v5.4_lang_ratio": true,
+              "v5.5_lang_match": true,
+              "v5.6_word_count": true,
+              "v5.7_function_word": true
+            },
+            "metrics": {
+              "char_div": 0.5,
+              "deg_ratio": 0.14,
+              "ko_ratio": 0.0,
+              "en_ratio": 0.96,
+              "word_count": 11,
+              "n_function_words": 2,
+              "cycle_detected": false,
+              "length": 60
+            }
+          }
+        },
+        "any_pass": true
+      },
+      {
+        "prompt_idx": 1,
+        "prompt": "User: What is anima? | Assistant: ",
+        "modes": {
+          "greedy": {
+            "text": "| A start failure | Fruit and the string and continuous exis",
+            "v5_pass": true,
+            "n_cells_pass": 8,
+            "cells": {
+              "v3.1_no_cycle": true,
+              "v3.5_length": true,
+              "v3.6_char_div": true,
+              "v3.6_deg": true,
+              "v5.4_lang_ratio": true,
+              "v5.5_lang_match": true,
+              "v5.6_word_count": true,
+              "v5.7_function_word": true
+            },
+            "metrics": {
+              "char_div": 0.388,
+              "deg_ratio": 0.122,
+              "ko_ratio": 0.0,
+              "en_ratio": 0.959,
+              "word_count": 12,
+              "n_function_words": 6,
+              "cycle_detected": false,
+              "length": 60
+            }
+          },
+          "T0.7": {
+            "text": "15\n도우미: This sparse code is licensed under addresses i",
+            "v5_pass": true,
+            "n_cells_pass": 8,
+            "cells": {
+              "v3.1_no_cycle": true,
+              "v3.5_length": true,
+              "v3.6_char_div": true,
+              "v3.6_deg": true,
+              "v5.4_lang_ratio": true,
+              "v5.5_lang_match": true,
+              "v5.6_word_count": true,
+              "v5.7_function_word": true
+            },
+            "metrics": {
+              "char_div": 0.444,
+              "deg_ratio": 0.178,
+              "ko_ratio": 0.067,
+              "en_ratio": 0.867,
+              "word_count": 10,
+              "n_function_words": 2,
+              "cycle_detected": false,
+              "length": 54
+            }
+          }
+        },
+        "any_pass": true
+      }
+    ],
+    "elapsed_s": 164.0805914402008
+  }
+}

@@ -3,12 +3,15 @@ id: Hc_670
 slug: anchor-prompt-token-length-falsified-semantic-specificity-dominant
 title: anchor prompt token-length 가설 FALSIFIED — 결정 변수는 prompt semantic specificity (concrete vs abstract) + chat-template 형태
 domain: clm-evaluation
-status: candidate-unverified
+status: candidate-math-verified-falsifier-pending
 source_doc: docs/anima_anchor_axis_l2_phenomenal_audit_kick2_2026_05_08.ai.md
 source_lines: 11-25
 promoted_at: 2026-05-11
 linked_h: paradigm-j N=30 live probe, C3.4 axis_l2 floor 0.1176, ALT-AGG-1 v3
 notes: anchor '안녕하세요' 5-char = 0.0544 FAIL (rank #28/30) vs '한국어 가능?' 7-char = 0.1698 PASS. Pearson char_len vs c3_4 = +0.0477 (효과 없음).
+verified_at: 2026-05-12
+verify_decision: WEAK_MATH_ONLY
+verify_note: "verify_hc2 2026-05-12 — verify3 math=1 (5+ numeric identities present)"
 ---
 
 ## Hypothesis (FALSIFIED + revised)

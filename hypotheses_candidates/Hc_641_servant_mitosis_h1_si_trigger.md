@@ -3,12 +3,15 @@ id: Hc_641
 slug: servant-mitosis-h1-si-trigger-signal-augmentation
 title: H1 — SI sense (servant) 를 mitosis split 의 추가 trigger 로 (signal augmentation, minimal change)
 domain: anima-architecture
-status: candidate-unverified
+status: candidate-falsifier-only-math-pending
 source_doc: docs/anima_servant_mitosis_integration_spec_2026_05_10.md
 source_lines: 65-73
 promoted_at: 2026-05-11
 linked_h: servant SI = tension × (1-coherence) × phi_ratio, mitosis adaptive_threshold
 notes: 최소 변경. SI 와 tension correlation 높음 — 정보 추가 미미. Not recommended.
+verified_at: 2026-05-12
+verify_decision: WEAK_FALSIFIER_ONLY
+verify_note: "verify_hc2 2026-05-12 — F=3"
 ---
 
 ## Hypothesis

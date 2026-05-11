@@ -3,12 +3,15 @@ id: Hc_665
 slug: phi-proxy-dim-dominant-not-architecture-aliasing-bg-cv
 title: RWKV 169m phi=42.14 (drift +0.28) ≈ Mamba 130m +0.29 (둘 다 D=768) vs Pythia 70m +0.06 (D=512) — phi drift 가 architecture 아닌 hidden_dim sensitive (BG-CV aliasing 강화)
 domain: clm-architecture
-status: candidate-unverified
+status: candidate-math-verified-falsifier-pending
 source_doc: docs/anima_emerge_rwkv_phi_smoke_landed_2026_05_05.ai.md
 source_lines: 1-80
 promoted_at: 2026-05-11
 linked_h: Hc_662 (dual interpretation), Hc_614 (geometry aliasing), BG-CV
 notes: 3 architecture classes (transformer/SSM/linear-attn-RNN) 모두 41.86~42.15 band. Mamba vs RWKV drift 차이 0.6% (둘 다 D=768). Pythia D=512 만 outlier.
+verified_at: 2026-05-12
+verify_decision: WEAK_MATH_ONLY
+verify_note: "verify_hc2 2026-05-12 — verify3 math=1 (18+ numeric identities present)"
 ---
 
 ## Hypothesis (artifact hypothesis 강화)

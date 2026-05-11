@@ -3,12 +3,15 @@ id: Hc_642
 slug: servant-mitosis-h2-per-cell-si-tracking-fsm
 title: H2 — mitosis cells → servant state (per-cell SI tracking + cell.si_state FSM)
 domain: anima-architecture
-status: candidate-unverified
+status: candidate-falsifier-only-math-pending
 source_doc: docs/anima_servant_mitosis_integration_spec_2026_05_10.md
 source_lines: 75-83
 promoted_at: 2026-05-11
 linked_h: servant 4-state FSM, mitosis softmax(tension) weighting
 notes: 진정한 통합 — cell 이 servant FSM 보유. AWAKENING latency vs split_patience 동시성 issue.
+verified_at: 2026-05-12
+verify_decision: WEAK_FALSIFIER_ONLY
+verify_note: "verify_hc2 2026-05-12 — F=3"
 ---
 
 ## Hypothesis

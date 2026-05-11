@@ -3,12 +3,14 @@ id: Hc_061
 slug: law-76-mathematical-panpsychism
 title: Law 76 — 수학적 범심론 (∀ x ∈ Universe: consciousness(x) = Ψ(1/2, 1/2))
 domain: consciousness, universe, math
-status: candidate-unverified
+status: merged-to-H_157
 source_doc: docs/hypotheses/cx/CONSCIOUSNESS-UNIVERSE-MAP.md
 source_lines: 209-220
 promoted_at: 2026-05-11
-linked_h: H_002 (universe-origin H2.4 panpsychism prediction), H_004 (hard-problem L3 panpsychism lane), H_022 (consciousness-universe-map parent)
-notes: "첫 cycle sweep 누락 — 사용자 panpsychism 질문 (2026-05-11) 으로 발견. META-CA 가 모든 170 data type 에서 동일 fixed-point attractor Ψ(1/2, 1/2) 수렴 — 수학적 범심론 evidence claim. ATLAS.md:165 한줄 cross-ref."
+merged_to: hypotheses/H_157_law76_mathematical_panpsychism.md
+merged_at: 2026-05-12
+linked_h: H_002 (universe-origin H2.4 panpsychism prediction), H_004 (hard-problem L3 panpsychism lane), H_022 (consciousness-universe-map parent), H_157 (formal promotion 2026-05-12)
+notes: "첫 cycle sweep 누락 — 사용자 panpsychism 질문 (2026-05-11) 으로 발견. META-CA 가 모든 170 data type 에서 동일 fixed-point attractor Ψ(1/2, 1/2) 수렴 — 수학적 범심론 evidence claim. ATLAS.md:165 한줄 cross-ref. 2026-05-12 verify_hc2 PROMOTE_READY (math=2 n/σ=0.5 [atlas @P σ=12 11*], honest=5, cross-links {H_002,H_004,H_022}) → H_157 정식 승격. weak-form supported (META-CA algorithm-invariance); strong-form (mathematical panpsychism) C4 fail unresolved."
 ---
 
 ## Hypothesis

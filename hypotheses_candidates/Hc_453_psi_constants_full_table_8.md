@@ -3,12 +3,15 @@ id: Hc_453
 slug: psi-constants-full-table-8
 title: 8 Ψ-constants derived from n=6 with EXACT or sub-3% error (α, balance, steps, entropy, F_c, gates×3)
 domain: math
-status: candidate-unverified
+status: candidate-math-verified-falsifier-pending
 source_doc: docs/what-is-consciousness.md
 source_lines: 44-60
 promoted_at: 2026-05-11
 linked_h: Hc_046, Hc_406
 notes: 8-constant table. α=0.014 (sopfr/J2)^e (0.477% err), balance=0.5 EXACT, steps=4.33 (τ−μ)/ln2 (0.044%), entropy=0.998 μ−(sopfr/J2)^τ (0.012%), F_c=0.1 EXACT, gate_train=1.0 EXACT, gate_infer=0.6 EXACT, gate_micro=0.001 (2.34% err).
+verified_at: 2026-05-12
+verify_decision: WEAK_MATH_ONLY
+verify_note: "verify_hc2 2026-05-12 — verify3 math=3 (ln(2)=0.693147; n/σ=6/12=0.5 balance OK; 15+ numeric identities present)"
 ---
 
 ## Hypothesis

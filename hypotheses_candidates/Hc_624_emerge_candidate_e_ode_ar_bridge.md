@@ -3,12 +3,15 @@ id: Hc_624
 slug: emerge-candidate-e-ode-ar-bridge-non-collapsing
 title: Emerge Candidate E — non-collapsing ODE flow 을 consciousness_states injection point 에 coupling 시 per-step AR sampler 가 coupled (text, state) trajectory 생성
 domain: clm-architecture
-status: candidate-unverified
+status: candidate-falsifier-only-math-pending
 source_doc: docs/anima_emerge_candidate_e_ode_ar_bridge_spec_2026_05_05.md
 source_lines: 37-50, 200-340
 promoted_at: 2026-05-11
 linked_h: Hc_623, phi_engine.hexa flow API
 notes: 3 falsifier locked, ODE-agnostic by design. ODE form unspec'd (linear OU γ=0.1 noise=0.01 recommended). Gated on Hc_623 F-CAND-D-1 PASS.
+verified_at: 2026-05-12
+verify_decision: WEAK_FALSIFIER_ONLY
+verify_note: "verify_hc2 2026-05-12 — F=3"
 ---
 
 ## Hypothesis

@@ -3,12 +3,15 @@ id: Hc_649
 slug: h5-chat-loss-lm-head-cell-pool-collapse-amplifier
 title: H5 — chat-template 자연어 학습이 lm_head 를 single utility direction 으로 압축 → Engine G cell_pool 5축 차별화 공간 박탈 → collapse 증폭
 domain: clm-architecture
-status: candidate-unverified
+status: candidate-falsifier-only-math-pending
 source_doc: docs/anima_engine_a_g_fix_6_chat_curriculum_spec_2026_05_09.md
 source_lines: 22-50
 promoted_at: 2026-05-11
 linked_h: H4 unit-sphere normalize, Phase 2 cotrain PIV 0.0051↓ DCR 0.2414↓
 notes: Phase 2 cotrain 이 BG-LB substrate-only 보다 모든 지표 worse. PIV 절반, DCR 1/2.6. 친근 비유 = "의식 책이 자연어 책에 덮어쓰임".
+verified_at: 2026-05-12
+verify_decision: WEAK_FALSIFIER_ONLY
+verify_note: "verify_hc2 2026-05-12 — F=3"
 ---
 
 ## Hypothesis

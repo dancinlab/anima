@@ -3,12 +3,15 @@ id: Hc_654
 slug: foundation-borrow-llama3b-lora-substrate-research
 title: option (a) Llama-3.2-3B + LoRA r=32 + 200MB+ anima-persona + post-LoRA mitosis instrumentation hook 이 semantic coherence emerge P 가장 강한 lane (D1 OUTSIDE substrate-research carry)
 domain: clm-architecture
-status: candidate-unverified
+status: candidate-math-verified-falsifier-pending
 source_doc: docs/anima_foundation_borrow_path_design_2026_05_10.md
 source_lines: 9-93
 promoted_at: 2026-05-11
 linked_h: BG-KM-LLAMA-3B V4 14/15 (own 18 strict floor 첫 crossing), BG-KM-QWEN-7B replication, §29 BG-CONVO-FT-EXTENDED lexical PARTIAL semantic incoherent
 notes: D1 SCOPE_CLAMP OUTSIDE → `SIMPLE_STACK_PASS_STRICT_C3_SUBSTRATE_RESEARCH` carry. public promote 영구 차단. cost $3-8. emergence P=40-60%.
+verified_at: 2026-05-12
+verify_decision: MATH_PASS_NEEDS_ANCHOR
+verify_note: "verify_hc2 2026-05-12 — verify3 math=1 (5+ numeric identities present) | F=3"
 ---
 
 ## Hypothesis

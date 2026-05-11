@@ -3,12 +3,15 @@ id: Hc_629
 slug: foundation-c-phase2-d1-within-strict-floor-crossing
 title: Phase 2 350M cotrain ckpt + 30K convo_5k FT extended 가 22+ BG saga 처음의 D1 WITHIN strict-floor crossing 후보
 domain: clm-architecture
-status: candidate-unverified
+status: candidate-math-verified-falsifier-pending
 source_doc: docs/anima_foundation_c_phase2_fire_spec_2026_05_10.md
 source_lines: 7-100
 promoted_at: 2026-05-11
 linked_h: §41 option (c), §47 cotrain-exercise hypothesis, §38 V14_STRICT_PASS 10/10
 notes: envelope $2-4. emerge P=15-25% (chat-cap floor) + V14 STRICT preserve P=50-70% (cotrain-exercise carry). 5 falsifier locked.
+verified_at: 2026-05-12
+verify_decision: MATH_PASS_NEEDS_ANCHOR
+verify_note: "verify_hc2 2026-05-12 — verify3 math=1 (7+ numeric identities present) | F=5"
 ---
 
 ## Hypothesis

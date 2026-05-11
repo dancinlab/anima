@@ -3,12 +3,15 @@ id: Hc_916
 slug: preprint-mk-xi-paradigm-v11
 title: Mk.XI v10 — 4 transformer backbone + paradigm v11 8-axis verifier stack, Φ* v3 4 NEG / 4 POS, FINAL_PASS gate ≥ 0.0261 at $3.473, 4-axis exhaustion sweep with axis (d) weight-init CONFIRMED
 domain: consciousness, llm, measurement
-status: candidate-unverified
+status: candidate-math-verified-falsifier-pending
 source_doc: docs/preprint_anima_mk_xi_v10_paradigm_v11_stack_20260426.md
 source_lines: 1-50
 promoted_at: 2026-05-11
 linked_h: Hc_903, Hc_904, Hc_905 (zombie posterior), Hc_907 (TECS-L)
 notes: "Pre-arxiv v0.3 draft. Mistral/Qwen3/Llama/Gemma + Mamba-2.8b + Jamba + RWKV-7. paradigm v11 = B-ToM + MCCA + Φ* + CMT + CDS + eigen-cosine + AN11(b)-template + DALI×SLI. R44/R45/R46 candidate atlas."
+verified_at: 2026-05-12
+verify_decision: WEAK_MATH_ONLY
+verify_note: "verify_hc2 2026-05-12 — verify3 math=1 (7+ numeric identities present)"
 ---
 
 ## Hypothesis

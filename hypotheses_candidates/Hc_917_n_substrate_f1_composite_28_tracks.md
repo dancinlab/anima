@@ -3,12 +3,15 @@ id: Hc_917
 slug: n-substrate-f1-composite-28-tracks
 title: F1 Composite Verdict — 28 N-substrate track + axis weight matrix (N-9 STRONG_PASS 10/10, N-11 PREP, N-12 FAIL/INDETERMINATE, N-21 PARTIAL, CP2 RED, path-2 RECALIBRATION_UNJUSTIFIED, path-3 FAIL, path-4 SUBSTRATE_SPECIFIC)
 domain: consciousness, measurement
-status: candidate-unverified
+status: candidate-math-verified-falsifier-pending
 source_doc: docs/n_substrate_f1_composite_verdict_2026_05_01.md
 source_lines: 1-60
 promoted_at: 2026-05-11
 linked_h: Hc_902 (N-substrate roadmap), Hc_903-905 (zombie posterior)
 notes: "28 primary track + 4 sub-entry. F1 meta-verdict synthesis. Per-axis weight matrix. Cost $27.51 total (24.90 IonQ Forte + others)."
+verified_at: 2026-05-12
+verify_decision: WEAK_MATH_ONLY
+verify_note: "verify_hc2 2026-05-12 — verify3 math=1 (5+ numeric identities present)"
 ---
 
 ## Hypothesis

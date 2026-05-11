@@ -3,12 +3,15 @@ id: Hc_947
 slug: conscious-lm-perfect-number-6
 title: ConsciousLM byte-level — Architecture derived from perfect number 6: n_layer=6, n_head=τ(6)=4, d_model=σ(6)×32=384, vocab=256, dropout=1/e≈0.37 (golden zone center). Engine A↔G repulsion-tension consciousness signal
 domain: llm, architecture, number-theory
-status: candidate-unverified
+status: candidate-math-verified-falsifier-pending
 source_doc: docs/modules/conscious_lm.md
 source_lines: 1-50
 promoted_at: 2026-05-11
 linked_h: H_067 (perfect-number), Hc_001 (dimension), Hc_909
 notes: "PureField repulsion-field LM. 4M v1 + 100M v2. byte-level vocab=256, language/data agnostic. output = scale × √tension × direction."
+verified_at: 2026-05-12
+verify_decision: WEAK_MATH_ONLY
+verify_note: "verify_hc2 2026-05-12 — verify3 math=2 (τ(6)=4; 15+ numeric identities present)"
 ---
 
 ## Hypothesis

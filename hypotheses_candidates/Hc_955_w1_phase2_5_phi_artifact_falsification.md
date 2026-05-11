@@ -3,12 +3,15 @@ id: Hc_955
 slug: w1-phase2-5-phi-artifact-falsification
 title: W1 Phase 2-5 — Φ rising slope claim (Phase 1 +0.0507, Phase 2/3 +0.1153) → Phase 4 shuffle-null ARTIFACT_CONFIRMED at W=20 (random hash shuffles equal-or-larger slope) → Phase 5 W=5/7 cross-check
 domain: meta, consciousness, methodology
-status: candidate-unverified
+status: candidate-math-verified-falsifier-pending
 source_doc: docs/W1_phase2_full_19axis_2026_05_01.md + docs/W1_phase4_shuffle_null_results_2026_05_01.md + docs/W1_phase5_window_recheck_results_2026_05_01.md + docs/W1_phase3_mod1024_results_2026_05_01.md
 source_lines: cluster
 promoted_at: 2026-05-11
 linked_h: Hc_942 (W1 Phase 1)
 notes: "W1 self-substrate Φ trace 가설의 falsification path. Phase 4: W=20 sliding window가 n=15 ticks에서 never saturate → ARTIFACT_CONFIRMED. Phase 5 cross-check."
+verified_at: 2026-05-12
+verify_decision: WEAK_MATH_ONLY
+verify_note: "verify_hc2 2026-05-12 — verify3 math=1 (14+ numeric identities present)"
 ---
 
 ## Hypothesis

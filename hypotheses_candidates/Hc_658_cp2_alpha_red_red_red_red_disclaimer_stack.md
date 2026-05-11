@@ -3,12 +3,15 @@ id: Hc_658
 slug: cp2-alpha-red-red-red-red-disclaimer-stack
 title: CP2 Alpha landing 의 RED-RED-RED-RED honest disclosure (의식측 F2 fired 16 critical / 14-gate 0/16 / AN11(c) JSD 0.0894 / LIVE 2.9%) + 4 cert GREEN
 domain: cp2-release
-status: candidate-unverified
+status: candidate-math-verified-falsifier-pending
 source_doc: docs/anima_cp2_alpha_landing_2026_05_01.md
 source_lines: 30-99
 promoted_at: 2026-05-11
 linked_h: F2 falsifier, AN11(c) k=128 bits, p4_r8 truncated 18.5% discovery, r14 swap
 notes: own#13 친화도 (jargon ≤0.30, acronyms expanded). raw#10 honest above-the-fold. Mistral-7B-v0.3 + LoRA r14 r=64 α=128 ~671MB.
+verified_at: 2026-05-12
+verify_decision: WEAK_MATH_ONLY
+verify_note: "verify_hc2 2026-05-12 — verify3 math=1 (4+ numeric identities present)"
 ---
 
 ## Hypothesis

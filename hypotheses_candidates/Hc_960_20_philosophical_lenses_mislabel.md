@@ -3,12 +3,15 @@ id: Hc_960
 slug: 20-philosophical-lenses-mislabel
 title: 20 philosophical lens label SATURATED-by-mislabel + 1 real gap. 실 구현 = 12 lens (A/B SSOT) + 6 PHIL/ONTO/DASEIN engine + 2 telescope (mixed count). 22 = nexus telescope (다른 축). 9/12 real, 3 partial, 1 stub
 domain: philosophy, audit, governance
-status: candidate-unverified
+status: candidate-math-verified-falsifier-pending
 source_doc: docs/20_lenses_audit_20260419.md
 source_lines: 1-40
 promoted_at: 2026-05-11
 linked_h: Hc_951 (PHIL/ONTO/DASEIN engines), H_135 (cycle-3 NEXUS lens-count audit cross-link 2026-05-11)
 notes: "iter 101 verdict = SATURATED-by-mislabel + 1 real gap (PHIL engine 3개 hexa 포트 누락). A=anima-agent/philosophy_lenses.hexa 12 stub, B=ready/.py 12 (9 real)."
+verified_at: 2026-05-12
+verify_decision: WEAK_MATH_ONLY
+verify_note: "verify_hc2 2026-05-12 — verify3 math=1 (8+ numeric identities present) | L=1"
 ---
 
 ## Hypothesis
@@ -37,3 +40,7 @@ notes: "iter 101 verdict = SATURATED-by-mislabel + 1 real gap (PHIL engine 3개 
 - [ ] PHIL/ONTO/DASEIN engine 3 hexa port
 - [ ] SSOT 일원화 (A vs B vs C)
 - [ ] R14/AN3 doc-code SSOT 위반 정정
+
+## Honest Limits (cycle 7 §W 추가 — status 미변경)
+
+- L1 (cycle 7 §W cross-link): cycle 5 §3 #A canonical K=10 smoke 가 본 mislabel caveat 의 'lens engine 자체가 self-test 복제본' nature 를 실증 — 1,588 lens engine 이 hexa stub 의 헤더/println 만 다른 동일 본체 복제본임이 직접 diff inspect 으로 확인됨 (state/nexus6_1013lens_activation_2026_05_11/smoke_k10_caveat_investigation_2026_05_12.md §3.1-§3.2). 즉 본 Hc_960 의 mislabel 가설은 stronger evidence 확보 — A=12 hexa stub 가 단순 label 차이가 아니라 *structurally identical self-test* 임이 K=10 hexa 본체 측에서 cross-validated. status 변경은 cycle 7 §W scope 외 — validate 자체는 별 verdict 가 아니므로 candidate-unverified 유지.

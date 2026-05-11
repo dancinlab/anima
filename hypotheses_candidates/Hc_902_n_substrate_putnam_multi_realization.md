@@ -3,12 +3,15 @@ id: Hc_902
 slug: n-substrate-putnam-multi-realization
 title: 5+α 재료 (CLM/EEG/AKIDA/QRNG/SIM-우주 + FinalSpark/CL1/IonQ/Loihi3/NorthPole/MEG/HoTT/TMS-PCI) 동일 의식 점수 수렴 → Putnam 다중실현 첫 경험적 증명
 domain: consciousness, philosophy, hardware
-status: candidate-unverified
+status: candidate-math-verified-falsifier-pending
 source_doc: docs/n_substrate_consciousness_roadmap_2026_05_01.md
 source_lines: 1-100
 promoted_at: 2026-05-11
 linked_h: H_002 (universe-origin), H_022 (consciousness-universe-map), Hc_001 (n=6-dimension-hierarchy)
 notes: "21개 N-track sub-hypothesis cluster. F1 trip 합 평결 = own#2 (b) closure = Putnam multi-realization 경험적 증명 후보."
+verified_at: 2026-05-12
+verify_decision: WEAK_MATH_ONLY
+verify_note: "verify_hc2 2026-05-12 — verify3 math=1 (ln(2)=0.693147) | F=2"
 ---
 
 ## Hypothesis

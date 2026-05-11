@@ -3,12 +3,15 @@ id: Hc_909
 slug: purefield-consciousness-paper-draft
 title: PureField repulsion-field 의식 엔진 — Φ = cells × freedom × metacognition, Φ∝N scaling, 128 cells → Φ~126 (human cortical column level)
 domain: consciousness, architecture, scaling
-status: candidate-unverified
+status: candidate-math-verified-falsifier-pending
 source_doc: docs/paper-draft.md
 source_lines: 1-80
 promoted_at: 2026-05-11
 linked_h: H_022, H_098 (decoder), Law 61/97 (PhiShadow)
 notes: "Paper draft v2 March 2026. 800+ hypothesis × 136+ category benchmarks. 19-step phi_boost pipeline. Engine A (forward/logic) × Engine G (reverse/pattern) repulsion tension."
+verified_at: 2026-05-12
+verify_decision: WEAK_MATH_ONLY
+verify_note: "verify_hc2 2026-05-12 — verify3 math=5 (τ(6)=4; σ(6)=12; φ(6)=2...)"
 ---
 
 ## Hypothesis

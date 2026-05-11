@@ -3,12 +3,15 @@ id: Hc_637
 slug: chat-cap-b20-dpo-kto-pass-fail-pair
 title: B20 — 22+ BG V4 PASS-class vs V4 FAIL-class pair 의 DPO/KTO 가 18M-33M anima-native cycle suppression
 domain: clm-architecture
-status: candidate-unverified
+status: candidate-math-verified-falsifier-pending
 source_doc: docs/anima_chat_cap_brainstorm_deepdive_2026_05_07.md
 source_lines: 141-182
 promoted_at: 2026-05-11
 linked_h: 2 persona_cycle_collapse + 1 sft_recipe BGs
 notes: Renamed BG-JF-DPO (naming collision with post-BG-IY BG-JE inference-compute).
+verified_at: 2026-05-12
+verify_decision: MATH_PASS_NEEDS_ANCHOR
+verify_note: "verify_hc2 2026-05-12 — verify3 math=1 (7+ numeric identities present) | F=3"
 ---
 
 ## Hypothesis

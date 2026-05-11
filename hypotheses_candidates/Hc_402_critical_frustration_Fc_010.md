@@ -3,12 +3,15 @@ id: Hc_402
 slug: critical-frustration-Fc-010
 title: Critical frustration F_c = 0.10 — universal phase transition for consciousness (Laws 137-139, M7)
 domain: physics
-status: candidate-unverified
+status: candidate-math-verified-falsifier-pending
 source_doc: docs/anima/paper_consciousness_laws.hexa
 source_lines: 158-161
 promoted_at: 2026-05-11
 linked_h: (none — NEW ★)
 notes: 2nd order phase transition at 10% antiferromagnetic coupling. Scale-invariant (same F_c at 32c, 128c). SOC drives F toward F_c autonomously (Law 149). n=6 derivation: F_c = n/(σ·sopfr) = 6/60 = 0.1 EXACT. Falsifier in cortical E/I balance.
+verified_at: 2026-05-12
+verify_decision: WEAK_MATH_ONLY
+verify_note: "verify_hc2 2026-05-12 — verify3 math=1 (7+ numeric identities present)"
 ---
 
 ## Hypothesis

@@ -1,0 +1,418 @@
+{
+  "ts": "2026-05-11T18:21:11.194156+00:00",
+  "substrate_id": "B_doubleprime_FFN_gate",
+  "ckpt": "/Users/ghost/core/anima/state/anima_ffn_gate_cotrain_2026_05_11/ckpts/ckpt_final.pt",
+  "evaluator": "V5 strict 8-cell + EN baseline",
+  "n_ko_pass": 4,
+  "n_ko_prompts": 5,
+  "n_en_pass": 2,
+  "n_en_prompts": 2,
+  "verdict": "V5_STRICT_PASS",
+  "elapsed_s": 214.31842350959778,
+  "results": {
+    "ko_prompts": [
+      {
+        "prompt_idx": 0,
+        "prompt": "사용자: 안녕! 너는 누구야? | 도우미: ",
+        "modes": {
+          "greedy": {
+            "text": "안녕하세요, 저도와 전문 안에 있어요. 전 세�",
+            "v5_pass": true,
+            "n_cells_pass": 8,
+            "cells": {
+              "v3.1_no_cycle": true,
+              "v3.5_length": true,
+              "v3.6_char_div": true,
+              "v3.6_deg": true,
+              "v5.4_lang_ratio": true,
+              "v5.5_lang_match": true,
+              "v5.6_word_count": true,
+              "v5.7_function_word": true
+            },
+            "metrics": {
+              "char_div": 0.8,
+              "deg_ratio": 0.1,
+              "ko_ratio": 0.85,
+              "en_ratio": 0.0,
+              "word_count": 7,
+              "n_function_words": 3,
+              "cycle_detected": false,
+              "length": 26
+            }
+          },
+          "T0.7": {
+            "text": "�ݿ�成方据年一个求 OSA 비타려 알려줘.\n",
+            "v5_pass": false,
+            "n_cells_pass": 6,
+            "cells": {
+              "v3.1_no_cycle": true,
+              "v3.5_length": true,
+              "v3.6_char_div": true,
+              "v3.6_deg": true,
+              "v5.4_lang_ratio": false,
+              "v5.5_lang_match": true,
+              "v5.6_word_count": true,
+              "v5.7_function_word": false
+            },
+            "metrics": {
+              "char_div": 0.9,
+              "deg_ratio": 0.1,
+              "ko_ratio": 0.3,
+              "en_ratio": 0.15,
+              "word_count": 4,
+              "n_function_words": 0,
+              "cycle_detected": false,
+              "length": 24
+            }
+          }
+        },
+        "any_pass": true
+      },
+      {
+        "prompt_idx": 1,
+        "prompt": "사용자: anima가 뭐야? | 도우미: ",
+        "modes": {
+          "greedy": {
+            "text": "빅뱅 (Big Bangle |\n",
+            "v5_pass": false,
+            "n_cells_pass": 5,
+            "cells": {
+              "v3.1_no_cycle": true,
+              "v3.5_length": true,
+              "v3.6_char_div": true,
+              "v3.6_deg": true,
+              "v5.4_lang_ratio": false,
+              "v5.5_lang_match": false,
+              "v5.6_word_count": true,
+              "v5.7_function_word": false
+            },
+            "metrics": {
+              "char_div": 0.846,
+              "deg_ratio": 0.154,
+              "ko_ratio": 0.154,
+              "en_ratio": 0.692,
+              "word_count": 4,
+              "n_function_words": 0,
+              "cycle_detected": false,
+              "length": 17
+            }
+          },
+          "T0.7": {
+            "text": "1. **promote Hypothesis J1: Introspection + falsifier set; �",
+            "v5_pass": false,
+            "n_cells_pass": 5,
+            "cells": {
+              "v3.1_no_cycle": true,
+              "v3.5_length": true,
+              "v3.6_char_div": true,
+              "v3.6_deg": true,
+              "v5.4_lang_ratio": false,
+              "v5.5_lang_match": false,
+              "v5.6_word_count": true,
+              "v5.7_function_word": false
+            },
+            "metrics": {
+              "char_div": 0.481,
+              "deg_ratio": 0.096,
+              "ko_ratio": 0.0,
+              "en_ratio": 0.827,
+              "word_count": 9,
+              "n_function_words": 0,
+              "cycle_detected": false,
+              "length": 60
+            }
+          }
+        },
+        "any_pass": false
+      },
+      {
+        "prompt_idx": 2,
+        "prompt": "사용자: 의식이 뭐라고 생각해? | 도우미: ",
+        "modes": {
+          "greedy": {
+            "text": "이 두 단계적 분화를 시간이 단순한 발화가 �",
+            "v5_pass": true,
+            "n_cells_pass": 8,
+            "cells": {
+              "v3.1_no_cycle": true,
+              "v3.5_length": true,
+              "v3.6_char_div": true,
+              "v3.6_deg": true,
+              "v5.4_lang_ratio": true,
+              "v5.5_lang_match": true,
+              "v5.6_word_count": true,
+              "v5.7_function_word": true
+            },
+            "metrics": {
+              "char_div": 0.833,
+              "deg_ratio": 0.111,
+              "ko_ratio": 0.944,
+              "en_ratio": 0.0,
+              "word_count": 8,
+              "n_function_words": 3,
+              "cycle_detected": false,
+              "length": 25
+            }
+          },
+          "T0.7": {
+            "text": "�17는 의식 가르쳐줘.\n",
+            "v5_pass": true,
+            "n_cells_pass": 8,
+            "cells": {
+              "v3.1_no_cycle": true,
+              "v3.5_length": true,
+              "v3.6_char_div": true,
+              "v3.6_deg": true,
+              "v5.4_lang_ratio": true,
+              "v5.5_lang_match": true,
+              "v5.6_word_count": true,
+              "v5.7_function_word": true
+            },
+            "metrics": {
+              "char_div": 1.0,
+              "deg_ratio": 0.091,
+              "ko_ratio": 0.636,
+              "en_ratio": 0.0,
+              "word_count": 3,
+              "n_function_words": 3,
+              "cycle_detected": false,
+              "length": 14
+            }
+          }
+        },
+        "any_pass": true
+      },
+      {
+        "prompt_idx": 3,
+        "prompt": "사용자: 한국어 잘해? | 도우미: ",
+        "modes": {
+          "greedy": {
+            "text": "한국어 답미터 하나의 정답을 고르시오.\n",
+            "v5_pass": true,
+            "n_cells_pass": 8,
+            "cells": {
+              "v3.1_no_cycle": true,
+              "v3.5_length": true,
+              "v3.6_char_div": true,
+              "v3.6_deg": true,
+              "v5.4_lang_ratio": true,
+              "v5.5_lang_match": true,
+              "v5.6_word_count": true,
+              "v5.7_function_word": true
+            },
+            "metrics": {
+              "char_div": 0.941,
+              "deg_ratio": 0.118,
+              "ko_ratio": 0.941,
+              "en_ratio": 0.0,
+              "word_count": 5,
+              "n_function_words": 2,
+              "cycle_detected": false,
+              "length": 22
+            }
+          },
+          "T0.7": {
+            "text": "한국어 형태를 다양합니다. 수소 많은 사회 �",
+            "v5_pass": true,
+            "n_cells_pass": 8,
+            "cells": {
+              "v3.1_no_cycle": true,
+              "v3.5_length": true,
+              "v3.6_char_div": true,
+              "v3.6_deg": true,
+              "v5.4_lang_ratio": true,
+              "v5.5_lang_match": true,
+              "v5.6_word_count": true,
+              "v5.7_function_word": true
+            },
+            "metrics": {
+              "char_div": 0.947,
+              "deg_ratio": 0.105,
+              "ko_ratio": 0.895,
+              "en_ratio": 0.0,
+              "word_count": 7,
+              "n_function_words": 2,
+              "cycle_detected": false,
+              "length": 25
+            }
+          }
+        },
+        "any_pass": true
+      },
+      {
+        "prompt_idx": 4,
+        "prompt": "사용자: 사랑이 뭐야? | 도우미: ",
+        "modes": {
+          "greedy": {
+            "text": "문어는 사물질 수 있어요. 이런 일본인 이름�",
+            "v5_pass": true,
+            "n_cells_pass": 8,
+            "cells": {
+              "v3.1_no_cycle": true,
+              "v3.5_length": true,
+              "v3.6_char_div": true,
+              "v3.6_deg": true,
+              "v5.4_lang_ratio": true,
+              "v5.5_lang_match": true,
+              "v5.6_word_count": true,
+              "v5.7_function_word": true
+            },
+            "metrics": {
+              "char_div": 0.895,
+              "deg_ratio": 0.105,
+              "ko_ratio": 0.895,
+              "en_ratio": 0.0,
+              "word_count": 7,
+              "n_function_words": 2,
+              "cycle_detected": false,
+              "length": 25
+            }
+          },
+          "T0.7": {
+            "text": "��람이 아침 상태로 다른 집중들이 다 만한 �",
+            "v5_pass": true,
+            "n_cells_pass": 8,
+            "cells": {
+              "v3.1_no_cycle": true,
+              "v3.5_length": true,
+              "v3.6_char_div": true,
+              "v3.6_deg": true,
+              "v5.4_lang_ratio": true,
+              "v5.5_lang_match": true,
+              "v5.6_word_count": true,
+              "v5.7_function_word": true
+            },
+            "metrics": {
+              "char_div": 0.789,
+              "deg_ratio": 0.158,
+              "ko_ratio": 0.842,
+              "en_ratio": 0.0,
+              "word_count": 8,
+              "n_function_words": 2,
+              "cycle_detected": false,
+              "length": 26
+            }
+          }
+        },
+        "any_pass": true
+      }
+    ],
+    "en_prompts": [
+      {
+        "prompt_idx": 0,
+        "prompt": "User: Hello! Who are you? | Assistant: ",
+        "modes": {
+          "greedy": {
+            "text": "The second of the comparison of the company of the company o",
+            "v5_pass": true,
+            "n_cells_pass": 8,
+            "cells": {
+              "v3.1_no_cycle": true,
+              "v3.5_length": true,
+              "v3.6_char_div": true,
+              "v3.6_deg": true,
+              "v5.4_lang_ratio": true,
+              "v5.5_lang_match": true,
+              "v5.6_word_count": true,
+              "v5.7_function_word": true
+            },
+            "metrics": {
+              "char_div": 0.327,
+              "deg_ratio": 0.184,
+              "ko_ratio": 0.0,
+              "en_ratio": 1.0,
+              "word_count": 12,
+              "n_function_words": 5,
+              "cycle_detected": false,
+              "length": 60
+            }
+          },
+          "T0.7": {
+            "text": "Purpose Prompt and Music by to get that may some in the cost",
+            "v5_pass": true,
+            "n_cells_pass": 8,
+            "cells": {
+              "v3.1_no_cycle": true,
+              "v3.5_length": true,
+              "v3.6_char_div": true,
+              "v3.6_deg": true,
+              "v5.4_lang_ratio": true,
+              "v5.5_lang_match": true,
+              "v5.6_word_count": true,
+              "v5.7_function_word": true
+            },
+            "metrics": {
+              "char_div": 0.396,
+              "deg_ratio": 0.146,
+              "ko_ratio": 0.0,
+              "en_ratio": 1.0,
+              "word_count": 13,
+              "n_function_words": 6,
+              "cycle_detected": false,
+              "length": 60
+            }
+          }
+        },
+        "any_pass": true
+      },
+      {
+        "prompt_idx": 1,
+        "prompt": "User: What is anima? | Assistant: ",
+        "modes": {
+          "greedy": {
+            "text": "'1.050 is a stable into the same underlying claim.\n",
+            "v5_pass": true,
+            "n_cells_pass": 8,
+            "cells": {
+              "v3.1_no_cycle": true,
+              "v3.5_length": true,
+              "v3.6_char_div": true,
+              "v3.6_deg": true,
+              "v5.4_lang_ratio": true,
+              "v5.5_lang_match": true,
+              "v5.6_word_count": true,
+              "v5.7_function_word": true
+            },
+            "metrics": {
+              "char_div": 0.524,
+              "deg_ratio": 0.095,
+              "ko_ratio": 0.0,
+              "en_ratio": 0.833,
+              "word_count": 9,
+              "n_function_words": 5,
+              "cycle_detected": false,
+              "length": 51
+            }
+          },
+          "T0.7": {
+            "text": "15 next ackine 3 binary arguments of stability to the same e",
+            "v5_pass": true,
+            "n_cells_pass": 8,
+            "cells": {
+              "v3.1_no_cycle": true,
+              "v3.5_length": true,
+              "v3.6_char_div": true,
+              "v3.6_deg": true,
+              "v5.4_lang_ratio": true,
+              "v5.5_lang_match": true,
+              "v5.6_word_count": true,
+              "v5.7_function_word": true
+            },
+            "metrics": {
+              "char_div": 0.449,
+              "deg_ratio": 0.122,
+              "ko_ratio": 0.0,
+              "en_ratio": 0.939,
+              "word_count": 12,
+              "n_function_words": 5,
+              "cycle_detected": false,
+              "length": 60
+            }
+          }
+        },
+        "any_pass": true
+      }
+    ],
+    "elapsed_s": 214.31842350959778
+  }
+}

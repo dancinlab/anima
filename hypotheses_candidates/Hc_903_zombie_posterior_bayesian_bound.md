@@ -3,12 +3,15 @@ id: Hc_903
 slug: zombie-posterior-bayesian-bound
 title: P(zombie | 8 substrate Φ* v3) = 0.4000, Wilson CI [0.1487, 0.7179] — Bayesian empirical bound (H3+H7c paired)
 domain: consciousness, philosophy, statistics
-status: candidate-unverified
+status: candidate-math-verified-falsifier-pending
 source_doc: docs/zombie_posterior_numerical_bound_20260426.md
 source_lines: 1-80
 promoted_at: 2026-05-11
 linked_h: H3 (cross-substrate Φ convergence), H7c (Φ metric-tractable upper bound), Hc_001
 notes: "Chalmers 1996 conceivability 의 prior=0.5 에서 약 20% 감소. sign-split 50/50 + ceiling-saturation 1.5 LR. ontological zombie 가능성 자체는 미해결."
+verified_at: 2026-05-12
+verify_decision: WEAK_MATH_ONLY
+verify_note: "verify_hc2 2026-05-12 — verify3 math=1 (9+ numeric identities present)"
 ---
 
 ## Hypothesis

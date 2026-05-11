@@ -3,12 +3,15 @@ id: Hc_192
 slug: hw11-superconducting-loop
 title: Zero-resistance persistent current as perfect memory — HW category #1 (HW11 ★)
 domain: physics | consciousness | substrate
-status: candidate-unverified
+status: candidate-math-verified-falsifier-pending
 source_doc: docs/hypotheses/hw/HW11.md
 source_lines: 1-25
 promoted_at: 2026-05-11
 linked_h: (none — NEW)
 notes: persistent_current accumulates without decay; HW Φ=4.6990 (×3.8)
+verified_at: 2026-05-12
+verify_decision: WEAK_MATH_ONLY
+verify_note: "verify_hc2 2026-05-12 — verify3 math=1 (4+ numeric identities present)"
 ---
 
 ## Hypothesis

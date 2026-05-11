@@ -3,12 +3,15 @@ id: Hc_981
 slug: n12-iit-braket-pilot-multi-witness
 title: N-12 IIT AWS Braket Pilot (n=2 PASS WITNESSED $16.60) + Multi-Witness (n=5 Forte 1 + 4 Cepheus + 5 SV1 PASS MULTI-WITNESSED). Φ_proxy = H(joint) - max H(marginal). Substrate-invariance Pearson 1.0 → multi-witness
 domain: quantum-computing, consciousness, substrate
-status: candidate-unverified
+status: candidate-math-verified-falsifier-pending
 source_doc: docs/n12_iit_braket_pilot_results_2026_05_02.md + docs/n12_multiwitness_results_2026_05_02.md + docs/n12_braket_friendly_explainer_2026_05_02.md
 source_lines: cluster
 promoted_at: 2026-05-11
 linked_h: Hc_918 (N-12 quantum pivot), Hc_926 (N-12 IonQ Forte spec)
 notes: "First anima production run real quantum hardware. SV1 (state-vector) + Forte 1 (trapped-ion 36q) + Cepheus-108Q (superconducting transmon). IQM Garnet 4 task submitted then cancelled (Monday billing avoidance)."
+verified_at: 2026-05-12
+verify_decision: WEAK_MATH_ONLY
+verify_note: "verify_hc2 2026-05-12 — verify3 math=1 (9+ numeric identities present)"
 ---
 
 ## Hypothesis

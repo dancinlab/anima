@@ -195,9 +195,12 @@ spec §3 K=10 acceptance: `positive_ratio ≥ 6/10` + `mean(phi_lens) > 0`.
 - Hc_586/598 의 "1000x 가속" 주장이 *현 lens layer* 의 measurement 와 axis 일치하는지 재검토
   (prereq_audit §1.2 의 axis 분리 정신 연장)
 
-### 8.3 Hc status 갱신 (cycle 5 §4 #G — 2026-05-12)
+### 8.3 Hc status 갱신 (cycle 5 §4 #G — 2026-05-12, cycle 7 §W — 2026-05-12)
 
-- Hc_586 status: `candidate-unverified-suspended-pending-channel-reimpl` as of 2026-05-12 (suspended_reason: 1,588 lens engine = n=6 self-test 복제본, input channel 부재; prereq_to_resume: lens_channel_reimpl_spec_2026_05_12.md Phase 1)
+- Hc_586 status: `candidate-unverified-suspended-pending-channel-reimpl` as of 2026-05-12 (suspended_reason: 1,588 lens engine = n=6 self-test 복제본, input channel 부재; prereq_to_resume: lens_channel_reimpl_spec_2026_05_12.md Phase 1) → **partial resume (cycle 7 §W, 2026-05-12)**: `candidate-unverified-partial-resume-K10-PASS-2026-05-12` after cycle 6 §Q Phase 1 K=10 reimpl v2 LIVE + F-reimpl-1/2/3 PASS (k10_reimpl/phase1_verdict_2026_05_12.md). full resume 은 cycle 7 §U Phase 2 K=25 + Phase 3/4 K=50/K=1013 후.
+- Hc_598 status (cycle 7 §W, 2026-05-12): `candidate-unverified` → `candidate-unverified-suspended-pending-channel-reimpl` (suspended_reason: Hc_586 cousin / cycle 5 §3 #A TRIVIAL self-test 동일 sufficient cause, 16→22→1013 progressive expansion Φ 효과 측정 substrate 부재; prereq_to_resume: phase1_verdict_2026_05_12.md PASS + Phase 2 K=25 + Phase 3/4 K=50/K=1013 cascade).
+- Hc_960 status (cycle 7 §W, 2026-05-12): 미변경 (`candidate-unverified`) — 단 cross-link 추가: cycle 5 §3 #A K=10 smoke 가 본 mislabel caveat 의 'lens engine = self-test 복제본' nature 실증 → stronger evidence.
+- Hc_035 status (cycle 7 §W, 2026-05-12): 미변경 (`candidate-unverified`) — 단 axis split honest L 추가: lens-side measurement (Phase 1 reimpl 후 재측정) vs mathematical identity (H_067 / H_153 numerology MC strengthened) 분리.
 
 ## 9. Lock Policy 준수
 

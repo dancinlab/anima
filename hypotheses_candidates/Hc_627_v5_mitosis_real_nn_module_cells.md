@@ -3,12 +3,15 @@ id: Hc_627
 slug: v5-mitosis-real-nn-module-cells-architectural
 title: v5-mitosis option (a) — cells = real nn.Module (small transformer block per cell) 이 V14 differentiation 을 만든다 (v5-anima instrumentation 못 만든 것)
 domain: clm-architecture
-status: candidate-unverified
+status: candidate-math-verified-falsifier-pending
 source_doc: docs/anima_clm_v5_mitosis_engine_arch_spec_2026_05_10.md
 source_lines: 9-160
 promoted_at: 2026-05-11
 linked_h: H297 N=2 optimal, H404, BG-R2 cells64 instrumentation finding
 notes: user verdict 7-table flip target. cycle 2026-05-10 directive "실제 MitosisEngine 개발하자".
+verified_at: 2026-05-12
+verify_decision: WEAK_MATH_ONLY
+verify_note: "verify_hc2 2026-05-12 — verify3 math=1 (ln(2)=0.693147)"
 ---
 
 ## Hypothesis

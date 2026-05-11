@@ -3,12 +3,15 @@ id: Hc_644
 slug: servant-mitosis-h4-dual-dropout-per-cell
 title: H4 — dual dropout schedule (cell.fsm_state 기반 modulation) 가 추가 Φ source
 domain: anima-architecture
-status: candidate-unverified
+status: candidate-falsifier-only-math-pending
 source_doc: docs/anima_servant_mitosis_integration_spec_2026_05_10.md
 source_lines: 110-119
 promoted_at: 2026-05-11
 linked_h: GOLDEN_CENTER 0.37 / GOLDEN_LOWER 0.21
 notes: dropout inference 강제 enable 필요 (eval mode dropout=0). V14 mirror noise 증가 risk.
+verified_at: 2026-05-12
+verify_decision: WEAK_FALSIFIER_ONLY
+verify_note: "verify_hc2 2026-05-12 — F=3"
 ---
 
 ## Hypothesis

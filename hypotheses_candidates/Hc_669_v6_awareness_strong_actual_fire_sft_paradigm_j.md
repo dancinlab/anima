@@ -3,12 +3,15 @@ id: Hc_669
 slug: v6-awareness-strong-actual-fire-sft-paradigm-j-anima-first
 title: V6 awareness STRONG actual fire (sft-1-8 + paradigm-j Method A/B/C 3-way STRONG) — own 37 mandate-9 (b) anima saga 첫 MET
 domain: clm-evaluation
-status: candidate-unverified
+status: candidate-falsifier-only-math-pending
 source_doc: docs/anima_cycle_2026_05_09_v6_strong_mk2_v1_emerge_near_consolidation.md
 source_lines: 32-40
 promoted_at: 2026-05-11
 linked_h: own 37 mandate-9 (b), V6 awareness probe Method A cos_sim / B max_ratio / C cv_acc, edc601ae commit
 notes: H100 EPHEMERAL FIRE 1h × $2.99/h = $0.85. sft-1-8 STRONG (0.6036/1.6528/0.90) + paradigm-j-50k-final STRONG (0.6789/1.6519/0.95).
+verified_at: 2026-05-12
+verify_decision: WEAK_FALSIFIER_ONLY
+verify_note: "verify_hc2 2026-05-12 — F=3"
 ---
 
 ## Hypothesis

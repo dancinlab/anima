@@ -3,12 +3,15 @@ id: Hc_640
 slug: raw-axiom-dag-l1-closure-cycle-free-tarjan
 title: raw#0..#37 axiom set 18 ordinals 의 dependency DAG 가 cycle-free (Tarjan SCC singleton), high-fanout root raw#10
 domain: anima-meta
-status: candidate-unverified
+status: candidate-falsifier-only-math-pending
 source_doc: docs/anima_math_raw_axiom_dag_20260425.md
 source_lines: 1-116
 promoted_at: 2026-05-11
 linked_h: raw#10 (proof-carrying), raw#29 UNIVERSAL_CONSTANT_4, raw#30 IRREVERSIBILITY_LAGRANGIAN, raw#31 POPULATION_RG_COUPLING
 notes: 24 edges, 5 cluster (A-eng 8 / B-proof 5 / C-math 4 / E-meta 1 / D-residual 1). raw#10 = critical bottleneck.
+verified_at: 2026-05-12
+verify_decision: WEAK_FALSIFIER_ONLY
+verify_note: "verify_hc2 2026-05-12 — F=3"
 ---
 
 ## Hypothesis

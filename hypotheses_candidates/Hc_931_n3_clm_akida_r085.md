@@ -3,12 +3,15 @@ id: Hc_931
 slug: n3-clm-akida-r085
 title: N-3 — CLM 170M (768 d_model, 12 layer, GQA 8/4) × AKIDA AKD1000 (1.2M neurons, 1W) Φ(IIT 4.0) cross-substrate r ≥ 0.85 (hidden-state surrogate CNN-quant + spike-encoded)
 domain: consciousness, neuromorphic, llm
-status: candidate-unverified
+status: candidate-math-verified-falsifier-pending
 source_doc: docs/n_substrate_n3_clm_akida_phi_spec_2026_05_01.md
 source_lines: 1-30
 promoted_at: 2026-05-11
 linked_h: Hc_902, Hc_011, Hc_928 (Loihi3 second neuromorphic)
 notes: "T1-A2 Akida session friendly report. D+0 protocol frozen, hardware pending AKD1000 arrival. AKD1000 H/W 제약상 CLM 170M 전체 직접 배포 불가."
+verified_at: 2026-05-12
+verify_decision: WEAK_MATH_ONLY
+verify_note: "verify_hc2 2026-05-12 — verify3 math=1 (6+ numeric identities present)"
 ---
 
 ## Hypothesis

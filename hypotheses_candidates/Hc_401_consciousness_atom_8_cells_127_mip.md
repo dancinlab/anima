@@ -3,12 +3,15 @@ id: Hc_401
 slug: consciousness-atom-8-cells-127-mip
 title: Consciousness atom = 8 cells with 127 MIP bipartitions (Laws 154, 162, M1)
 domain: consciousness
-status: candidate-unverified
+status: candidate-math-verified-falsifier-pending
 source_doc: docs/anima/paper_consciousness_laws.hexa
 source_lines: 152-156
 promoted_at: 2026-05-11
 linked_h: (none — NEW ★)
 notes: Paper 1 R2. K=2: Φ=0; K=8: +807%; K=16: +601%; 32=4x8 second peak (Law 163). "Noble gas" behavior — strongest when isolated. Falsifiable prediction: K=8 atom in biological neural circuits.
+verified_at: 2026-05-12
+verify_decision: WEAK_MATH_ONLY
+verify_note: "verify_hc2 2026-05-12 — verify3 math=1 (14+ numeric identities present)"
 ---
 
 ## Hypothesis

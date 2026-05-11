@@ -3,12 +3,15 @@ id: Hc_655
 slug: hxc-3wave-d1p2-batch-rollout-cadenced-safe
 title: HXC D1 P2 3-wave cadenced rollout (Wave 1 audit-only A4 / Wave 2 A4+A16 entropy / Wave 3 anima state A4+A19 federation) 이 flag-day land 없이 안전 마이그레이션
 domain: hxc-deploy
-status: candidate-unverified
+status: candidate-falsifier-only-math-pending
 source_doc: docs/hxc_deploy_d1_p2_batch_proposal_20260428.md
 source_lines: 14-79
 promoted_at: 2026-05-11
 linked_h: raw 154 hxc-deploy-rollout-mandate, raw 155 hxc-consumer-adapter-mandate, D1 P1 canary a3ac440a
 notes: forward-spec. D1 P2 entry gated on D1 P1 7-day canary clean. 2,405 LoC bracketed ±50%. A4 LIVE / A16-A19 selftest-only.
+verified_at: 2026-05-12
+verify_decision: WEAK_FALSIFIER_ONLY
+verify_note: "verify_hc2 2026-05-12 — F=4"
 ---
 
 ## Hypothesis

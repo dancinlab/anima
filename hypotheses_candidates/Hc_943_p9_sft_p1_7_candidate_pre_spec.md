@@ -3,12 +3,15 @@ id: Hc_943
 slug: p9-sft-p1-7-candidate-pre-spec
 title: P9 SFT Phase 1.7 — 3 candidate (X/Y/Z) B-conditioned redesign. P1.6 -33% regression (4-axis confounded change), Ablation A r=128 NEUTRAL, Ablation B running
 domain: training, sft, ablation
-status: candidate-unverified
+status: candidate-math-verified-falsifier-pending
 source_doc: docs/p9_p1_7_candidates_pre_spec_2026_05_03.md
 source_lines: 1-40
 promoted_at: 2026-05-11
 linked_h: Hc_941
 notes: "P9 SFT Phase 1.7 PRE-SPEC. F1: P1.5=0.0088 → P1.6=0.00586 (-33%). 4-axis confounded change (chat 86→100%, LoRA r 64→128, α-warmup 5K→3K, β 0.15→0.10)."
+verified_at: 2026-05-12
+verify_decision: WEAK_MATH_ONLY
+verify_note: "verify_hc2 2026-05-12 — verify3 math=1 (13+ numeric identities present)"
 ---
 
 ## Hypothesis

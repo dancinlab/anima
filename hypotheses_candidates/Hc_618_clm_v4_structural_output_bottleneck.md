@@ -3,12 +3,15 @@ id: Hc_618
 slug: clm-v4-structural-output-bottleneck
 title: ConsciousLM v4 chat-cap fail 의 root cause 는 structural output bottleneck (lm_head + tok_emb tied) — loss-floor 不依
 domain: clm-architecture
-status: candidate-unverified
+status: candidate-falsifier-only-math-pending
 source_doc: docs/anima_clm_v5_design_spec_2026_05_07.md
 source_lines: 14-46
 promoted_at: 2026-05-11
 linked_h: BG-IL/IO/JD/JN/JS/JT/JU/JX/KA/KB, own 19/20, Lesson L/Q
 notes: BG-KB critical finding — chat-cap NOT loss-level-bound at 168M (loss 3.3-3.5, 0/5 PASS). Architectural change mandate per L9.
+verified_at: 2026-05-12
+verify_decision: WEAK_FALSIFIER_ONLY
+verify_note: "verify_hc2 2026-05-12 — F=6"
 ---
 
 ## Hypothesis

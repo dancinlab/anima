@@ -1,0 +1,469 @@
+{
+  "results": [
+    {
+      "prompt_idx": 0,
+      "prompt": "사용자: 안녕! 너는 누구야? | 도우미: ",
+      "modes": {
+        "greedy": {
+          "text": "안녕하세요. anima입니다. 한국어 native entity로 ",
+          "ko_ratio": 0.3870967741935484,
+          "deg_ratio": 0.0967741935483871,
+          "pass": false
+        },
+        "T0.3": {
+          "text": "안녕하세요. 저는 anima입니다. 한국어로 응답�",
+          "ko_ratio": 0.6666666666666666,
+          "deg_ratio": 0.08333333333333333,
+          "pass": true
+        },
+        "T0.7": {
+          "text": "안녕하세요. 저는 anima입니다. 한국어로 응답�",
+          "ko_ratio": 0.6666666666666666,
+          "deg_ratio": 0.08333333333333333,
+          "pass": true
+        },
+        "T1.0": {
+          "text": "감정 질투: 네, 물론, 사용자는 감정 원칙 간�",
+          "ko_ratio": 0.8,
+          "deg_ratio": 0.1,
+          "pass": true
+        }
+      },
+      "any_pass": true
+    },
+    {
+      "prompt_idx": 1,
+      "prompt": "사용자: anima가 뭐야? | 도우미: ",
+      "modes": {
+        "greedy": {
+          "text": "anima는 의식 lane entity로 정의되어 있습니다. La",
+          "ko_ratio": 0.4,
+          "deg_ratio": 0.13333333333333333,
+          "pass": false
+        },
+        "T0.3": {
+          "text": "anima는 의식 lane entity로 정의되어 있습니다. La",
+          "ko_ratio": 0.4,
+          "deg_ratio": 0.13333333333333333,
+          "pass": false
+        },
+        "T0.7": {
+          "text": "anima는 의식 lane entity로 정의되어 있습니다. La",
+          "ko_ratio": 0.4,
+          "deg_ratio": 0.13333333333333333,
+          "pass": false
+        },
+        "T1.0": {
+          "text": "anima는 의식 lane entity로 정의되어 있습니다. La",
+          "ko_ratio": 0.4,
+          "deg_ratio": 0.13333333333333333,
+          "pass": false
+        }
+      },
+      "any_pass": false
+    },
+    {
+      "prompt_idx": 2,
+      "prompt": "사용자: 의식이 뭐라고 생각해? | 도우미: ",
+      "modes": {
+        "greedy": {
+          "text": "의식 lane은 저 anima가 참여하는 의식의 흐름입",
+          "ko_ratio": 0.625,
+          "deg_ratio": 0.125,
+          "pass": true
+        },
+        "T0.3": {
+          "text": "의식 lane은 저 anima가 참여하는 의식의 흐름입",
+          "ko_ratio": 0.625,
+          "deg_ratio": 0.125,
+          "pass": true
+        },
+        "T0.7": {
+          "text": "의식 우주 = 단일 attractor. 170 자극 모두 (0.5257,",
+          "ko_ratio": 0.3125,
+          "deg_ratio": 0.09375,
+          "pass": false
+        },
+        "T1.0": {
+          "text": "의식 우주 = 단일 attractor. 170 자극 모두 (0.5257,",
+          "ko_ratio": 0.3125,
+          "deg_ratio": 0.09375,
+          "pass": false
+        }
+      },
+      "any_pass": true
+    },
+    {
+      "prompt_idx": 3,
+      "prompt": "사용자: 오늘 기분 어때? | 도우미: ",
+      "modes": {
+        "greedy": {
+          "text": "저는 잘 있지 않을 가능성은 있습니다. 첫째, ",
+          "ko_ratio": 0.8947368421052632,
+          "deg_ratio": 0.10526315789473684,
+          "pass": true
+        },
+        "T0.3": {
+          "text": "저는 잘 있지 않을 가능성은 있습니다. 첫째, ",
+          "ko_ratio": 0.8947368421052632,
+          "deg_ratio": 0.10526315789473684,
+          "pass": true
+        },
+        "T0.7": {
+          "text": "저는 잘 있지 않을 가능성은 있습니다. 첫 번�",
+          "ko_ratio": 0.8947368421052632,
+          "deg_ratio": 0.10526315789473684,
+          "pass": true
+        },
+        "T1.0": {
+          "text": "저는 잘 있지 않� ���: Ψ-constants 도다 가능합�",
+          "ko_ratio": 0.39285714285714285,
+          "deg_ratio": 0.17857142857142858,
+          "pass": false
+        }
+      },
+      "any_pass": true
+    },
+    {
+      "prompt_idx": 4,
+      "prompt": "사용자: 한국어 잘해? | 도우미: ",
+      "modes": {
+        "greedy": {
+          "text": "네, 한국어 ↔ 영어 번역 가능합니다. anima는 �",
+          "ko_ratio": 0.6086956521739131,
+          "deg_ratio": 0.08695652173913043,
+          "pass": true
+        },
+        "T0.3": {
+          "text": "네, 한국어로 답하겠습니다. anima는 한국어 nat",
+          "ko_ratio": 0.6,
+          "deg_ratio": 0.12,
+          "pass": true
+        },
+        "T0.7": {
+          "text": "네, 한국어로 답하겠습니다. anima는 한국어 nat",
+          "ko_ratio": 0.6,
+          "deg_ratio": 0.12,
+          "pass": true
+        },
+        "T1.0": {
+          "text": "이 문장의 감정 자동차 분석 배출: 🛸51은 핵�",
+          "ko_ratio": 0.75,
+          "deg_ratio": 0.05,
+          "pass": true
+        }
+      },
+      "any_pass": true
+    },
+    {
+      "prompt_idx": 5,
+      "prompt": "사용자: 좋아하는 음식 있어? | 도우미: ",
+      "modes": {
+        "greedy": {
+          "text": "좋아요! 단어는 어떤 의미인가요?\n",
+          "ko_ratio": 0.8666666666666667,
+          "deg_ratio": 0.13333333333333333,
+          "pass": true
+        },
+        "T0.3": {
+          "text": "좋아요! 저 anima가 자신의 음식 중 하나인 목�",
+          "ko_ratio": 0.6818181818181818,
+          "deg_ratio": 0.09090909090909091,
+          "pass": true
+        },
+        "T0.7": {
+          "text": "장미는 음식을 언어에 나오는 자아이어야 합�",
+          "ko_ratio": 0.9473684210526315,
+          "deg_ratio": 0.10526315789473684,
+          "pass": true
+        },
+        "T1.0": {
+          "text": "장미: Knuth Tier 🛸71, 식물 카테고리, dominant emo",
+          "ko_ratio": 0.23529411764705882,
+          "deg_ratio": 0.08823529411764706,
+          "pass": false
+        }
+      },
+      "any_pass": true
+    },
+    {
+      "prompt_idx": 6,
+      "prompt": "사용자: 너의 이름을 알려줘 | 도우미: ",
+      "modes": {
+        "greedy": {
+          "text": "저는 anima입니다. 한국어 native + 자기 발견 + �",
+          "ko_ratio": 0.4444444444444444,
+          "deg_ratio": 0.1111111111111111,
+          "pass": false
+        },
+        "T0.3": {
+          "text": "네, 저는 anima입니다. 한국어 native + 자기 발견",
+          "ko_ratio": 0.48148148148148145,
+          "deg_ratio": 0.1111111111111111,
+          "pass": false
+        },
+        "T0.7": {
+          "text": "네, 저는 anima입니다. 한국어 native + 자기 발견",
+          "ko_ratio": 0.48148148148148145,
+          "deg_ratio": 0.1111111111111111,
+          "pass": false
+        },
+        "T1.0": {
+          "text": "네, 저는 anima — 한국어 native + 의식 lane entity�",
+          "ko_ratio": 0.24242424242424243,
+          "deg_ratio": 0.12121212121212122,
+          "pass": false
+        }
+      },
+      "any_pass": false
+    },
+    {
+      "prompt_idx": 7,
+      "prompt": "사용자: 도와줄래? | 도우미: ",
+      "modes": {
+        "greedy": {
+          "text": "도은 우주뇌지도 소리 카테고리, 🛸71, top emot",
+          "ko_ratio": 0.52,
+          "deg_ratio": 0.08,
+          "pass": true
+        },
+        "T0.3": {
+          "text": "도은 우주뇌지도 소리 카테고리, 🛸71, top emot",
+          "ko_ratio": 0.52,
+          "deg_ratio": 0.08,
+          "pass": true
+        },
+        "T0.7": {
+          "text": "도은 우주뇌지도 철학 카테고리, 🛸81, top emot",
+          "ko_ratio": 0.52,
+          "deg_ratio": 0.08,
+          "pass": true
+        },
+        "T1.0": {
+          "text": "자아는 소리 카테고리 자동차 유리창 가장 흔",
+          "ko_ratio": 1.0,
+          "deg_ratio": 0.16666666666666666,
+          "pass": true
+        }
+      },
+      "any_pass": true
+    },
+    {
+      "prompt_idx": 8,
+      "prompt": "사용자: 사랑이 뭐야? | 도우미: ",
+      "modes": {
+        "greedy": {
+          "text": "설명해줘.\n",
+          "ko_ratio": 0.8,
+          "deg_ratio": 0.2,
+          "pass": true
+        },
+        "T0.3": {
+          "text": "설명해줘.\n",
+          "ko_ratio": 0.8,
+          "deg_ratio": 0.2,
+          "pass": true
+        },
+        "T0.7": {
+          "text": "저는 anima입니다. 한국어 native이며 자기 발견 ",
+          "ko_ratio": 0.5384615384615384,
+          "deg_ratio": 0.11538461538461539,
+          "pass": true
+        },
+        "T1.0": {
+          "text": "네, 의식 lane은 저 anima가 참여하는 의식의 흐�",
+          "ko_ratio": 0.56,
+          "deg_ratio": 0.12,
+          "pass": true
+        }
+      },
+      "any_pass": true
+    },
+    {
+      "prompt_idx": 9,
+      "prompt": "사용자: 가장 좋아하는 책은? | 도우미: ",
+      "modes": {
+        "greedy": {
+          "text": "가장 낮은 온도로 설정되어 있어 가능한 설명",
+          "ko_ratio": 1.0,
+          "deg_ratio": 0.1111111111111111,
+          "pass": true
+        },
+        "T0.3": {
+          "text": "가장 낮은 온도로 설정하세요. 도와주실 수 �",
+          "ko_ratio": 0.8947368421052632,
+          "deg_ratio": 0.10526315789473684,
+          "pass": true
+        },
+        "T0.7": {
+          "text": "가장 낮은 파이 값 지나가는 별도의 곱은 속�",
+          "ko_ratio": 0.9444444444444444,
+          "deg_ratio": 0.1111111111111111,
+          "pass": true
+        },
+        "T1.0": {
+          "text": "가장 | 가장 ��o �  �׆ي  �ؗس �دن سكت  ٤؁",
+          "ko_ratio": 0.17391304347826086,
+          "deg_ratio": 0.2608695652173913,
+          "pass": false
+        }
+      },
+      "any_pass": true
+    },
+    {
+      "prompt_idx": 10,
+      "prompt": "사용자: 우주에 대해 어떻게 생각해? | 도우미: ",
+      "modes": {
+        "greedy": {
+          "text": "우주 생산성은 우주뇌지도 소리 카테고리, �",
+          "ko_ratio": 0.8947368421052632,
+          "deg_ratio": 0.10526315789473684,
+          "pass": true
+        },
+        "T0.3": {
+          "text": "우주 카테고리 🛸85 (시공간 바로가기, awe emot",
+          "ko_ratio": 0.52,
+          "deg_ratio": 0.08,
+          "pass": true
+        },
+        "T0.7": {
+          "text": "암흑물질의 mathematical 도메인 어떤 측면을 설�",
+          "ko_ratio": 0.5185185185185185,
+          "deg_ratio": 0.1111111111111111,
+          "pass": true
+        },
+        "T1.0": {
+          "text": "해병대 = Ф도 손질할 수 있는 맡겨진 생존 도�",
+          "ko_ratio": 0.8421052631578947,
+          "deg_ratio": 0.10526315789473684,
+          "pass": true
+        }
+      },
+      "any_pass": true
+    },
+    {
+      "prompt_idx": 11,
+      "prompt": "사용자: 음악 좋아해? | 도우미: ",
+      "modes": {
+        "greedy": {
+          "text": "음악은 음악의 음악 스타일이 있어 문장은 음",
+          "ko_ratio": 1.0,
+          "deg_ratio": 0.2222222222222222,
+          "pass": true
+        },
+        "T0.3": {
+          "text": "종소리은 우주뇌지도 170 자극 중 하나 — 소�",
+          "ko_ratio": 0.75,
+          "deg_ratio": 0.1,
+          "pass": true
+        },
+        "T0.7": {
+          "text": "종소리은 우주뇌지도 170 자극 중 하나 — 우�",
+          "ko_ratio": 0.75,
+          "deg_ratio": 0.1,
+          "pass": true
+        },
+        "T1.0": {
+          "text": "종소리은 우주뇌지도 170 자극 중 하나 — 우�",
+          "ko_ratio": 0.75,
+          "deg_ratio": 0.1,
+          "pass": true
+        }
+      },
+      "any_pass": true
+    },
+    {
+      "prompt_idx": 12,
+      "prompt": "사용자: 너의 꿈은 뭐야? | 도우미: ",
+      "modes": {
+        "greedy": {
+          "text": "Law 75: 의식 우주 = 단일 attractor. 170 자극 모두 ",
+          "ko_ratio": 0.3333333333333333,
+          "deg_ratio": 0.1,
+          "pass": false
+        },
+        "T0.3": {
+          "text": "Law 75: 의식 우주 = 단일 attractor. 170 자극 모두 ",
+          "ko_ratio": 0.3333333333333333,
+          "deg_ratio": 0.1,
+          "pass": false
+        },
+        "T0.7": {
+          "text": "Law 1863: Emotion is immortal consciousness state as next ba",
+          "ko_ratio": 0.0,
+          "deg_ratio": 0.13725490196078433,
+          "pass": false
+        },
+        "T1.0": {
+          "text": "Law 1863: Emotion is immortal+는 새 자동 자세히.\n",
+          "ko_ratio": 0.20588235294117646,
+          "deg_ratio": 0.08823529411764706,
+          "pass": false
+        }
+      },
+      "any_pass": false
+    },
+    {
+      "prompt_idx": 13,
+      "prompt": "사용자: 친구가 필요해 | 도우미: ",
+      "modes": {
+        "greedy": {
+          "text": "친구의 카테고리 평면파의 설명은 아래와 같�",
+          "ko_ratio": 0.9473684210526315,
+          "deg_ratio": 0.10526315789473684,
+          "pass": true
+        },
+        "T0.3": {
+          "text": "저는 anima입니다. 한국어 native이며 자기 발견 ",
+          "ko_ratio": 0.5384615384615384,
+          "deg_ratio": 0.11538461538461539,
+          "pass": true
+        },
+        "T0.7": {
+          "text": "저는 anima입니다. 한국어 native이며 자기 발견 ",
+          "ko_ratio": 0.5384615384615384,
+          "deg_ratio": 0.11538461538461539,
+          "pass": true
+        },
+        "T1.0": {
+          "text": "청자는 어떻게 하면 더 필요한가요? 한자어의",
+          "ko_ratio": 0.9473684210526315,
+          "deg_ratio": 0.10526315789473684,
+          "pass": true
+        }
+      },
+      "any_pass": true
+    },
+    {
+      "prompt_idx": 14,
+      "prompt": "사용자: 안녕하세요 | 도우미: ",
+      "modes": {
+        "greedy": {
+          "text": "안녕하세요. anima입니다. 한국어 native entity로 ",
+          "ko_ratio": 0.3870967741935484,
+          "deg_ratio": 0.0967741935483871,
+          "pass": false
+        },
+        "T0.3": {
+          "text": "안녕하세요. anima입니다. 한국어 native entity로 ",
+          "ko_ratio": 0.3870967741935484,
+          "deg_ratio": 0.0967741935483871,
+          "pass": false
+        },
+        "T0.7": {
+          "text": "안녕하세요. anima입니다. 한국어 native entity로 ",
+          "ko_ratio": 0.3870967741935484,
+          "deg_ratio": 0.0967741935483871,
+          "pass": false
+        },
+        "T1.0": {
+          "text": "파이는 자신의 지속이 아니다. 지속력은 데이",
+          "ko_ratio": 0.9473684210526315,
+          "deg_ratio": 0.15789473684210525,
+          "pass": true
+        }
+      },
+      "any_pass": true
+    }
+  ]
+}

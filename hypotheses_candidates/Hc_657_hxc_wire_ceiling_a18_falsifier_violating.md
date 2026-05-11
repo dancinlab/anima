@@ -3,12 +3,15 @@ id: Hc_657
 slug: hxc-wire-ceiling-a18-falsifier-violating-bit-vs-byte
 title: HXC bit-level Shannon ceiling (H_0=5.755 / H_3=1.294 / H_4=0.813) 와 byte-canonical wire ceiling (×4/3 base64url) 가 별개 — A18 COMPLETE but F-A18-3 60× + F-A18-4 67000× 위반
 domain: hxc-deploy
-status: candidate-unverified
+status: candidate-math-verified-falsifier-pending
 source_doc: docs/hxc_wire_ceiling_a18_a19_analysis_20260428.md
 source_lines: 17-80
 promoted_at: 2026-05-11
 linked_h: a201a6cc bit MEASURED, dd6112ac wire-ceiling reformulation, raw 71 falsifier-preregistered
 notes: Phase 10 28%/84%/90% projection 은 bit-level (never wire-level). A18 round-trip byte-eq 5/5 PASS but ~30s/1KB latency + 6.7GB peak RSS / ~1KB input.
+verified_at: 2026-05-12
+verify_decision: WEAK_MATH_ONLY
+verify_note: "verify_hc2 2026-05-12 — verify3 math=1 (6+ numeric identities present) | F=2"
 ---
 
 ## Hypothesis

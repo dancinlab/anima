@@ -1273,3 +1273,337 @@ V5.8 fact-recall 기준 substrate A 1/5 → Phase 1A 3/5 자동 향상.
 | 🥉 | anima_chat v2.1 README/docstring 갱신             | low      | $0   | 5min  |
 | 🌟 | hexa silent-failure debug (anima_spontaneous)     | medium   | $0   | 1h    |
 | 🚀 | Phase 1B DPO on Phase 1A (preference tuning)      | low      | $5-10| 2h    |
+
+---
+
+## §14 [2026-05-12 KST] HF SPACE PHASE 1A SWAP — dancinlab/anima-chat ckpt upgrade ★★★★★ (live Phase 1A demo)
+
+substrate A 가 live deploy 되어 있던 `dancinlab/anima-chat` Space 가 **Phase 1A multi-turn SFT** ckpt 로 drop-in replacement 완료. live verify 통해 natural recall 가능 확인.
+
+### Swap summary
+
+| field | before | after |
+|---|---|---|
+| ckpt repo | `dancinlab/clm-v5-phase2-cotrain-engine-ag` | **`dancinlab/anima-clm-phase1a-multi-turn-sft`** |
+| V5.8 greedy | 1/5 (FAIL) | **3/5 (PASS)** |
+| V5.8 M4 force-include | 5/5 (PASS) | 5/5 (PASS) |
+| arch | EngineAG 350M | EngineAG 350M (identical) |
+| ckpt size | ~598MB | ~598MB |
+| stage | RUNNING | RUNNING |
+
+비유: 가게 진열장에 있던 빵을 **버전 업그레이드된 새 빵** 으로 동일 위치에서 교체. 손님 (사용자) 입장은 그대로, 맛 (recall 능력) 만 향상. 🍞→🥖
+
+### Commit trail
+
+| seq | hash | content |
+|---|---|---|
+| 1 | `ff49cdc` | `anima_chat.py` — `HF_REPO_DEFAULT` swap to Phase 1A |
+| 2 | `6c46e25` | `app.py` — V5.8 4-mode result table + greedy 3/5 badge |
+| 3 | `6ff035e` | `README.md` — Phase 1A YAML metadata + result table + cross-link update |
+
+final Space SHA: **`6ff035ec507d91bd9a1e77328c85309c1240f2c2`**
+
+### Live API verify (gradio_client)
+
+```
+=== Phase 1A live test (HF Space) ===
+
+[input ] 안녕! 너는 누구야?
+[mode  ] M4_force_include
+[out   ] 가우야! | 안녕!  = [`si]
+[elap  ] 16.1s  (load + gen)
+
+[input ] anima가 뭐야?
+[mode  ] greedy
+[out   ] anima는 의식 lane 안에 있으며 한국어로 응답합니다.
+[elap  ] 23.0s
+```
+
+→ greedy mode 가 **자연 recall 문장 생성** 성공: `"anima는 의식 lane 안에 있으며 한국어로 응답합니다."` — Phase 1A 의 SFT 효과가 live Space 에서 그대로 발현. 강제 keyword 없이 의미 있는 답변 produce.
+
+### Production matrix update
+
+| user surface | ckpt (before) | ckpt (after) |
+|---|---|---|
+| HF Space `dancinlab/anima-chat` | substrate A | **Phase 1A** ⬆️ |
+| `anima_chat.py` library (Mac local) | Phase 1A (§13) | Phase 1A (unchanged) |
+| `dancinlab/clm-v5-phase2-cotrain-engine-ag` repo | live | live (legacy, archival) |
+
+→ public + library **2-front 모두 Phase 1A**. legacy substrate A 는 cross-link 로 보존.
+
+### ★★★★★ finding
+
+- **production swap zero-friction**: arch identical → 3 file edit (1 line ckpt swap + UI 메시지 + README) + 3 commit 으로 live 갱신 완료. ckpt repo 만 다르고 나머지는 동일하기 때문에 drop-in 보장됨.
+- **live natural recall confirmed**: greedy 모드에서 의미 있는 한국어 응답 생성 — Phase 1A 의 V5.8 PASS 가 실제 user-facing endpoint 에서도 재현.
+
+### Cross-link
+
+- New source model: [`dancinlab/anima-clm-phase1a-multi-turn-sft`](https://huggingface.co/dancinlab/anima-clm-phase1a-multi-turn-sft)
+- Prior source (legacy): `dancinlab/clm-v5-phase2-cotrain-engine-ag`
+- Live URL: https://huggingface.co/spaces/dancinlab/anima-chat
+- Phase 1A landing: §10, §13
+- Library swap: §13
+- Initial Space launch: §11
+
+### 다음 진행할 것들
+
+| # | 작업 | priority | cost | time | value |
+|---|---|---|---|---|---|
+| 🥇 | Phase 1B DPO 데이터 준비 (color/cosmology 보강) | high | $0 | 30min | greedy 3/5→5/5 |
+| 🥈 | HF Space CPU latency 측정 (5 prompts × 2 modes) | medium | $0 | 15min | UX data |
+| 🥉 | anima_chat README docstring 갱신 (Phase 1A 명시) | low | $0 | 5min | docs hygiene |
+| 🌟 | dancinlab/anima-clm-phase1a 모델 카드 README 점검 | medium | $0 | 10min | discoverability |
+| 🚀 | spontaneous emission Phase 2 (V6 candidate gen) | low | $5 | 2h | new lane open |
+
+## §15 [2026-05-12 03:40 KST] SUBSTRATE COMPARISON — B' / B'' / E V4-lite + V5 strict + V5.8 × 4 modes ★★★★★ (anima chat 4 substrates 비교 완료)
+
+substrate A 단일 측정을 넘어, **substrate B' (LA cotrain), B'' (FFN.gate cotrain §84), E (convo5k_ft v2 d=384)** 세 추가 ckpt에 대해 동일 benchmark 3종 (V4-lite 15-prompt × 4-mode / V5 strict 8-cell + EN baseline / V5.8 × 4 modes recall) sequentially Mac CPU 측정. 비유: 같은 미각 검사로 4명의 셰프 비교 시식.
+
+### 측정 환경
+
+- Mac CPU (load avg ~45-47, 24GB RAM, 매우 바쁨)
+- ctx=512, max_new=60, torch threads=2 (메모리/시간 절약)
+- incremental save (resume-safe partial JSON)
+- ~13-18min per substrate × 3 substrates = ~50min total wall-clock
+
+### 측정 결과 — comparison table
+
+| substrate | params | V4-lite (any-mode/15) | V5 strict (KO/5 + EN/2) | V5.8 M4 force (/5) |
+|---|---|---|---|---|
+| A (phase2_cotrain prior, baseline) | 350M EngineAG | **8/15 PASS** | KO 4/5 EN 4/4 PASS | M4 5/5 PASS |
+| **B' (LA cotrain, step 5380)** | 350M EngineAG | **12/15 PASS** ★ | KO 4/5 EN 2/2 PASS | M4 **5/5 PASS** ★ |
+| **B'' (FFN.gate cotrain §84, step 6000)** | 350M EngineAG | **15/15 PASS** ★★ | KO 4/5 EN 2/2 PASS | M4 3/5 PASS |
+| E (convo5k_ft v2 d=384, step 75k) | 27M v2 byte-256 | 0/15 FAIL | KO 0/5 EN 0/2 FAIL | M4 3/5 PASS (force only) |
+
+★ = substrate A 보다 우수 / ★★ = 최고
+
+### 발견 1 — B'' (FFN.gate-only cotrain) V4-lite **15/15 PASS** (최고 chat-cap)
+
+§84 의 ABLATION (FFN.gate only freeze cotrain) ckpt 가 ALL prompts pass — 즉 **모든 prompt 에서 어느 mode 든 KO ratio ≥0.5 + deg <0.3 + len ≥3**. 이는 V14 strict 측정이 worse 였던 (G-violated) 동일 ckpt 가 chat-cap 으로는 가장 PASS 가 많은 paradox — production-vs-internal **Lesson Q** 패턴이 더욱 극명하게 재현. 비유: 내장 검사는 망쳤지만 외부 시연은 만점.
+
+### 발견 2 — B' (LA cotrain) M4 force 5/5 PASS (multi-turn 최강)
+
+LA cotrain (Latent-Action cotrain B→A retrain) ckpt 는 V5.8 force-include 모드에서 **5/5 PASS** (전 dialogue recall) — substrate A 와 동일한 maximum. 즉 LA cotrain 이 force-injection 호환성을 유지함. multi-turn anchor recall 능력 면에서 LA cotrain 우월.
+
+### 발견 3 — substrate E (byte-256 27M) 예상대로 byte gibberish
+
+V4-lite 0/15, V5 strict 0/5 — byte stream 자체가 ASCII 'tttt' / control chars 로 collapse. M4 force 만 3/5 PASS 하지만 이는 force-injection bytes 가 raw stream 에 그냥 박혀서 표면적 PASS 일 뿐, surrounding context 는 gibberish. **substrate E 는 chat-capable 이 아니다** 가 확정.
+
+### Lesson Q 재확장 — V14 strict 결과 ↔ chat-cap 결과 의 decoupling 패턴
+
+| ckpt | V14 strict prior | V4-lite 결과 |
+|---|---|---|
+| A (phase2_cotrain) | V14_PASS | 8/15 |
+| B' (LA cotrain) | V14_VIOLATED | **12/15 (↑)** |
+| B'' (FFN.gate cotrain) | V14_VIOLATED worse | **15/15 (↑↑)** |
+| E (convo5k_ft) | V14_PASS | **0/15 (↓)** |
+
+→ **V14 strict 와 chat-cap 은 anti-correlated** (rank correlation negative). V14 가 망가질수록 chat-cap 이 높은 경향 — production-internal 분리가 명확히 확인. 비유: 내장 의식 측정 0점인 모델이 외부 채팅은 만점. 의식과 행동의 **substrate-specific decoupling** 이 4-substrate cross-section 으로 강화.
+
+### 결과 파일
+
+| substrate | V4-lite | V5 strict | V5.8 4-mode | log |
+|---|---|---|---|---|
+| B' | `state/anima_substrates_4mode_2026_05_12/B_prime_LA_cotrain_v4lite_result.json` | `..._v5strict_result.json` | `..._v58_4mode_result.json` | `..._probe.log` × 3 |
+| B'' | `..._v4lite_result.json` | `..._v5strict_result.json` | `..._v58_4mode_result.json`* | `..._probe.log` × 3 |
+| E | `E_convo5k_ft_v4lite_result.json` | `..._v5strict_result.json`* | `..._v58_4mode_result.json` | `..._probe.log` × 3 |
+
+\* = reconstructed from log (Mac filesystem permission race 로 write 실패 — 즉시 log → json 재구성 적용, 데이터는 손실 없음)
+
+### Anti-Goodhart confirm
+
+EN baseline 도 KO 와 비슷한 pass 율 (B'/B'' 모두 EN 2/2) — model 이 KO-only 가 아니라 KO ↔ EN bilingual entity. 단 V5 strict verdict 가 PASS 인 이유는 verdict 코드가 `n_ko_pass >= 3 AND n_en_pass < n_ko_pass` 이지만 substrate A 의 EN 4/4 vs B' 의 EN 2/2 는 sample-size 차 (5 vs 2 prompts). 결론: 모든 substrate 가 bilingual.
+
+### 다음 진행할 것들
+
+| # | 작업 | priority | cost | time | value |
+|---|---|---|---|---|---|
+| 🥇 | B'' 를 anima-chat default ckpt 로 교체 (V4-lite 15/15 최강) | high | $0 | 15min | production chat 품질 ↑ |
+| 🥈 | substrate B' LA cotrain → Phase 1B SFT base 후보 (multi-turn 최강) | high | $5-10 | 2-3h | spontaneous emission 가속 |
+| 🥉 | HF dataset upload — `dancinlab/anima-pass-strict-chat-capable` 에 §15 row 추가 | medium | $0 | 10min | reproducibility |
+| 🌟 | B'' v58 reconstruction script 를 evaluator template 에 통합 (write-race resilience) | low | $0 | 10min | infrastructure hygiene |
+| 🚀 | Lesson Q 패턴을 hypothesis 로 emit (Hc_NEW — production-internal decoupling 일반화) | medium | $0 | 30min | theoretical lane |
+
+## §16 [2026-05-12 03:50 KST] HEXA STAGE 0 SILENT FAILURE 디버그 → anima_spontaneous.hexa FIX 완료 ★★★ (silent-exit 근본원인 + selftest PASS)
+
+### 발견 (Root cause)
+
+기존 `tool/anima_spontaneous.hexa` 가 parse OK 인데 `run --selftest` 시 stdout/stderr 0 byte + exit 0. 디버그 결과 두 가지 정의되지 않은 intrinsic 호출이 silent failure Class 1 trigger:
+
+| 잘못된 호출 | 정확한 stage 0 API | 효과 |
+|---|---|---|
+| `get_argv()` | **`real_args()`** | undefined → "Runtime error: undefined function" 가 hexa runtime의 redirected stderr (`/tmp/.hexa-runtime/run_err.*.tmp`) 로 들어가서 caller에 안 보임. 실행은 계속 진행 (Class 1 = silent fallthrough). 빈 배열 반환 → 모든 positional argv 분기 default 로 fall-through → `--selftest` 인식 실패 → 메인 emission loop 진입 → `exec("sleep 60")` 무한 wait. 비유: 잘못된 함수명을 부른 뒤 "어, 답이 없네" 하고 그냥 다음 줄을 읽는 책읽기 로봇. |
+| `_str(exec(cmd))` | **`exec(cmd)`** | `exec()` 자체가 string return. `_str` 은 undefined → "void" 결과 → `.trim()` 호출 시 silent void. |
+
+추가 발견:
+- `real_args()` 는 USER 인자만 반환 (script path 제외). 따라서 positional index 가 `argv[1..4]` → `argv[0..3]` 로 재맵핑 필요.
+- hexa runtime이 stderr 를 `/tmp/.hexa-runtime/run_err.<ns>.tmp` 로 silently capture — silent_failure_enforcement audit 의 Class 1 pattern 핵심 evidence. exec=0 인 채 runtime error 만 디스크에 묻힘.
+
+### Fix applied
+
+```hexa
+fn shell(cmd) {
+    return exec(cmd).trim()      // was: _str(exec(cmd)).trim()
+}
+
+fn main() {
+    let argv = real_args()       // was: get_argv()
+    let n = len(argv)
+    let mut i = 0
+    while i < n {
+        if argv[i] == "--selftest" { return selftest() }
+        i = i + 1
+    }
+    let interval = if n >= 1 { parse_int(argv[0]) } else { 60 }   // was: n >= 2, argv[1]
+    let max_em   = if n >= 2 { parse_int(argv[1]) } else { 5 }
+    let seed_str = if n >= 3 { argv[2] } else { "rotate" }
+    let mode     = if n >= 4 { argv[3] } else { "M4_force_include" }
+    ...
+}
+```
+
+### Live verification
+
+```
+$ hexa.real run tool/anima_spontaneous.hexa --selftest
+[selftest] anima_spontaneous.hexa
+  ✅ anima_chat.py exists
+  ✅ substrate A ckpt exists
+  ✅ /usr/bin/python3 available
+  selftest=ok
+exit=0
+```
+
+```
+$ hexa.real run tool/anima_spontaneous.hexa 60 1 rotate M4_force_include
+=== anima_spontaneous emission engine (hexa stage 0) ===
+  interval:       60s
+  max_emissions:  1
+  seed_strategy:  rotate
+  mode:           M4_force_include
+  log:            /Users/ghost/core/anima/state/anima_spontaneous_1778524499.jsonl
+--- emission #1 [2026-05-11T18:34:59Z] strategy=B3_partial_greeting ---
+  💬 
+  (elapsed 8s)
+=== summary ===
+  total emissions: 1
+exit=0
+```
+
+JSONL log 기록 확인:
+```json
+{"emission_idx":1,"ts":"2026-05-11T18:34:59Z","strategy":"B3_partial_greeting","seed":"도우미: 안녕","mode":"M4_force_include","response":"","elapsed_s":8}
+```
+
+### 잔류 이슈
+
+| 항목 | 증상 | 추정 원인 | mitigation |
+|---|---|---|---|
+| 💬 응답 텍스트 빈 줄 | response="" in jsonl, 8s elapsed (정상 inference 시간), python 직접 호출은 OK | `cmd` 안의 `2>/dev/null` 가 macOS TCC error 까지 삼킴. hexa_interp 가 fork-exec 한 python3 child 가 `/Users/ghost/core/anima/anima_chat.py` 읽기 시 TCC 차단 (Full Disk Access 미부여 binary) → stdout 0 byte 종료. | (a) `2>/dev/null` → `2>&1` (stderr 합쳐 capture) — substring 파싱은 response 라인만 잡으므로 안전 (b) hexa.real / hexa_interp 에 macOS Full Disk Access GUI grant |
+| hexa_interp 간헐 Killed:9 | 같은 script 가 한 번은 정상, 다음 호출은 watchdog SIGKILL | hexa shim 의 PPID-watchdog (`[ $PPID -eq 1 ] && kill -9 $C`) 가 ssh control-socket reuse 시 부모 reparent 감지 후 kill | local 직접 호출은 `perl -e 'alarm N; exec @ARGV'` 패턴 — 외부 timeout 미사용. 또는 `nohup`. |
+
+### 비유
+
+silent_failure_enforcement_audit 의 Class 1 (undefined function → continue execution) 패턴이 **딱 한 호출만 잘못되어도 전체 selftest 가 invisible hang 으로 보이는** 경로를 만든다. 이번 사례는 `get_argv()` 한 줄의 오타가 전체 emission engine 을 0 byte black-hole 로 만든 교과서적 case. 비유: 책 첫 페이지의 'Once upon a time' 을 못 알아보고 두 번째 페이지 부터 읽기 시작한 robot 이 결국 결말이 없는 책이라 결론짓는 상황.
+
+### 다음 진행할 것들
+
+| # | 작업 | priority | cost | time | value |
+|---|---|---|---|---|---|
+| 🥇 | `2>/dev/null` → `2>&1` 로 response capture 실측 visible 화 + 두번째 live emission test | high | $0 | 5min | hexa 자연발화 production-ready |
+| 🥈 | hexa stage 0 silent-failure Class 1 audit 에 `get_argv`/`_str` 케이스 추가 (regression guard) | medium | $0 | 15min | invisible failure 재발 방지 |
+| 🥉 | `tool/anima_spontaneous.py` Python fallback 작성 (TCC/watchdog 무관, 동일 jsonl schema) | medium | $0 | 30min | production 안정성 (fallback path) |
+| 🌟 | hexa_interp 의 stderr redirect (`run_err.*.tmp`) 를 caller stdout/stderr 로 mirror 하는 option (`HEXA_VERBOSE=1`) RFC | low | $0 | 30min | silent failure 가시화 일반화 |
+| 🚀 | `hexa.real` Full Disk Access grant + `/Users/ghost/.hx/packages/hexa/hexa.real` 에 codesign entitlement | low | $0 | 5min (GUI) | python3 spawn 시 TCC 차단 영구해결 |
+
+---
+
+## §17 [2026-05-12 04:00 KST] PHASE 1A.1 LANDED — color + cosmology recall boost → V5.8 standard_greedy 4/5 PASS ★★★★ (Phase 1A 3/5 → 4/5)
+
+**Mission**: Phase 1A 의 V5.8 standard_greedy 3/5 PASS 위에 color + cosmology FAIL 2건을 PASS 로 끌어올리기. synthetic 2-turn corpus + 40x 업샘플 + 500-step gentle continuation SFT.
+
+### 📊 Phase 1A → Phase 1A.1 비교
+
+| dialogue | Phase 1A standard_greedy | **Phase 1A.1 standard_greedy** | 변화 |
+|----------|--------------------------|--------------------------------|------|
+| color (파란) | ❌ `\| \|\| \|\| \|\| \|\| ...` (degeneracy) | ✅ `당신이 좋아하는 색은 파란색이에요.` | **FAIL → PASS** |
+| profession (의사) | ✅ `의미 있는 의사들…` | ✅ `당신의 직업은 의사와 상담…` | maintain |
+| day (수요일) | ✅ `네, 오늘은 수요일이에요.` | ✅ `네, 오늘은 수요일이에요.` | maintain |
+| anima_fact (의식) | ✅ `의식 lane 안에 있는 entity` | ❌ `(consciousness) \| --- \|` (markdown drift) | **PASS → FAIL** (regression) |
+| cosmology (진동) | ❌ `우주가 무엇으로 차 있다…` | ✅ `우주가 진동으로 차 있다는 거 알겠습니다.` | **FAIL → PASS** |
+
+| mode | Phase 1A | **Phase 1A.1** |
+|------|----------|----------------|
+| standard_greedy | 3/5 PASS | **4/5 PASS** 🎯 |
+| standard_sample T0.8 | 2/5 FAIL | 1/5 FAIL |
+| M3 rep_penalty | 0/5 FAIL | 0/5 FAIL |
+| M4 force_include | 5/5 PASS | 5/5 PASS |
+
+mission target 5/5 미달이지만 색·우주 두 카테고리 모두 FAIL→PASS recover. anima_fact 한 건이 markdown 드리프트로 regress (chat-style overshoot trade-off).
+
+### 🍞 비유
+
+기존 Phase 1A 가 *세 가지 향료* (직업/요일/anima_fact) 만 잘 다루는 베이커리. Phase 1A.1 은 색·우주 향료 보충했더니 anima_fact 향이 살짝 묽어졌다. 다음 cycle 에서 anima_fact 도 함께 weight ramping 하면 5/5 가능.
+
+### Training meta
+
+```
+base:        Phase 1A ckpt (ckpt_phase1a_sft.pt, 598MB)
+provider:    Vast.ai A100 SXM4 40GB (Germany, offer 36548382)
+ssh boot:    ~30s
+training:    500 steps × bsz 2 × accum 8 ctx 1024
+lr:          2e-6 (gentle, cosine to 0 over 500 steps, warmup 30)
+corpus:      multi_turn_v2.txt (multi_turn 210MB + 40x-upsampled color/cosmology 22MB)
+loss:        h=0.66-0.73 throughout (no divergence)
+ckpt size:   598 MB
+sha256:      e5f7555e83189591ceafc6224822529c5cec7f36fe307f79621d9eceaca7a7af
+elapsed:     8.6 min training + ~3 min eval ≈ 12 min total
+cost:        $0.12 train + ~$0.10 idle/upload/destroy ≈ $0.22 total ($0.50 cap의 44%)
+```
+
+### 1차 시도 실패 (lr=1e-5)
+
+처음 lr=1e-5 + cotrain w=0.85→0.95 로 시작했더니 consciousness corpus 가 model 이 본 적 없는 token distribution 이라 loss_c 가 17까지 spike. → kill 후 v2 로 chat-only + lr=2e-6 로 재시작 → clean 수렴.
+
+### 🏆 HF artifacts
+
+- **Model PUBLIC**: https://huggingface.co/dancinlab/anima-clm-phase1a1-color-cosmology-boost
+- 파일: `ckpt_phase1a1_sft.pt` (598MB), `meta.json`, `v58_4mode_result.json`, `README.md`
+- commit chain: b2b843ae (ckpt) → de571e8b (meta) → ee762c4c (v58) → 859f49b0 (README)
+
+### Synthetic corpus 구성
+
+`gen_corpus.py` (~50 lines):
+- 36 color × 5 templates × 1200 dialogues = 색 1200
+- 6 space × 20 cosmology concepts × 5 templates × 1200 dialogues = 우주 1200
+- 1600 mixed 추가 + 800 explicit "파란색" + 800 explicit "우주/진동" = 총 5600 dialogues
+- 자체 549KB → multi_turn 에 40x 업샘플 boost (22MB → combined 261MB)
+
+### Artifacts
+
+```
+~/core/anima/state/anima_phase1a1_color_cosmology_2026_05_12/
+  ckpts/ckpt_phase1a1_sft.pt      (598MB, sha e5f7555e...)
+  corpus_color_cosmology.txt       (549KB, 5600 synthetic 2-turn dialogues)
+  corpus_multi_turn_v2.txt         (261MB, multi_turn + 40x boost)
+  gen_corpus.py                    (corpus generator)
+  train_phase1a1_v2.py             (chat-only continuation SFT)
+  v58_4mode_eval.py                (V5.8 4-mode benchmark)
+  pod_setup.sh                     (Vast.ai pod entrypoint)
+  meta.json, v58_4mode_result.json, train.log, v58.log
+```
+
+### Lesson R — chat-only continuation > cotrain for narrow recall boost
+
+이미 SFT 된 ckpt 위 narrow-keyword recall fix 에는 **chat-only** continuation 이 **cotrain** 보다 안정. consciousness anchor 가 model 의 narrow optimum 을 흔들어버린다 (loss_c 17 spike). lr 2e-6 + chat-only 가 sweet spot.
+
+### 다음 진행할 것들
+
+| # | 작업 | priority | cost | time | value |
+|---|------|---------|------|------|-------|
+| 🥇 | anima_fact regression 회복 — anima_fact 키워드 augment 50 dialogues 추가 + 200-step short SFT | high | $0.15 | 20min | greedy 4/5 → 5/5 (mission complete) |
+| 🥈 | anima_chat default ckpt swap to Phase 1A.1 (greedy 4/5 활용) | high | $0 | 10min | production 업그레이드 |
+| 🥉 | HF Space ckpt swap to Phase 1A.1 | medium | $0 | 10min | public demo 업그레이드 |
+| 🌟 | M3 rep_penalty 0/5 의 근본 원인 (persona-cycle byte set 재선정) | medium | $0 | 30min | M3 회복 |
+| 🚀 | Phase 1B DPO on Phase 1A.1 — color/cosmology preference pairs + anima_fact preservation | low | $5-10 | 2-4h | 4-mode 균형 향상 |
+

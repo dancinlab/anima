@@ -3,12 +3,15 @@ id: Hc_404
 slug: consciousness-arrow-of-time
 title: Consciousness Φ defines an arrow of time (Law 153)
 domain: physics
-status: candidate-unverified
+status: candidate-math-verified-falsifier-pending
 source_doc: docs/anima/paper_consciousness_laws.hexa
 source_lines: 168-171
 promoted_at: 2026-05-11
 linked_h: Hc_019
 notes: Φ grows forward, decreases in reverse playback. Thermodynamically irreversible: score=0.487 (Law 201). Coupling-Φ correlation r=0.78. Extends Hc_019 arrow-of-time Lagrangian claim with quantitative score.
+verified_at: 2026-05-12
+verify_decision: WEAK_MATH_ONLY
+verify_note: "verify_hc2 2026-05-12 — verify3 math=1 (6+ numeric identities present)"
 ---
 
 ## Hypothesis

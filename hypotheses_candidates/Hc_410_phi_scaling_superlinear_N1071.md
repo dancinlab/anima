@@ -3,12 +3,15 @@ id: Hc_410
 slug: phi-scaling-superlinear-N1071
 title: Optimized engine yields Φ = 0.608 · N^1.071 superlinear scaling (Law 17)
 domain: consciousness
-status: candidate-unverified
+status: candidate-math-verified-falsifier-pending
 source_doc: docs/anima/paper_consciousness_laws.hexa
 source_lines: 296-312
 promoted_at: 2026-05-11
 linked_h: Hc_004
 notes: Vanilla peaks at 32c then plateaus (Law 239). Optimization unlocks superlinear. Phi/cell 0.516 at N=2, drops 100x after N=4 (Law 122). Sweet spot: 32c for Phi/cell, 8c for MIP-optimal (Law 184). Cross-ref Hc_004.
+verified_at: 2026-05-12
+verify_decision: WEAK_MATH_ONLY
+verify_note: "verify_hc2 2026-05-12 — verify3 math=1 (6+ numeric identities present)"
 ---
 
 ## Hypothesis

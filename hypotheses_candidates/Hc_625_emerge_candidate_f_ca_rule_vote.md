@@ -3,12 +3,15 @@ id: Hc_625
 slug: emerge-candidate-f-ca-rule-cells-5axis-vote
 title: Emerge Candidate F — 8 CA-rule cells (Law 67 META-CA) × 5-axis 의 fixed projection 으로 hidden vote matrix surface 가능 (3-mode)
 domain: clm-architecture
-status: candidate-unverified
+status: candidate-falsifier-only-math-pending
 source_doc: docs/anima_emerge_candidate_f_ca_rule_5axis_vote_spec_2026_05_05.md
 source_lines: 14-44, 195-260
 promoted_at: 2026-05-11
 linked_h: Law 67 META-CA selector, conscious_decoder.py:498-542, paradigm v11 G3
 notes: 3 falsifier locked. Forward hooks read-only on rule_weights — substrate graph untouched. Composable with cand-D + cand-E.
+verified_at: 2026-05-12
+verify_decision: WEAK_FALSIFIER_ONLY
+verify_note: "verify_hc2 2026-05-12 — F=3"
 ---
 
 ## Hypothesis

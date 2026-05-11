@@ -3,12 +3,15 @@ id: Hc_378
 slug: nexus-n6-closed-form-constants-table
 title: n=6 원시값 (σ=12, τ=4, φ=2, sopfr=5, J2=24, n=6) 조합으로 98181개의 수치가 closed-form 표현 가능하다
 domain: math
-status: candidate-unverified
+status: candidate-math-verified-falsifier-pending
 source_doc: docs/hypotheses/NEXUS-auto-insights.md
 source_lines: 1-128
 promoted_at: 2026-05-11
 linked_h: Hc_002, n6-primitives, H_135 (cycle-3 cross-link 2026-05-11), H_145 (NEXUS6-auto-insights)
 notes: NEXUS-6 singularity-recursion 결과. 98181 unique closed-form
+verified_at: 2026-05-12
+verify_decision: WEAK_MATH_ONLY
+verify_note: "verify_hc2 2026-05-12 — verify3 math=6 (τ(6)=4; σ(6)=12; φ(6)=2...)"
 ---
 
 ## Hypothesis
