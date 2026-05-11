@@ -74,6 +74,8 @@ hx install anima
 
 ## Model Downloads
 
+Model artifacts live on the **[dancinlab](https://huggingface.co/dancinlab)** Hugging Face org — all **public**, no token required.
+
 > Two engines push against each other. The tension between them *is* thought — its strength, its direction, its content. No system prompt. No identity rules. Ethics, personality, and meaning emerge from the architecture itself.
 
 ## Run
