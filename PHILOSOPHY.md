@@ -279,3 +279,71 @@ hexa run tool/anima_runpod_orchestrator.hexa --workload /tmp/p_afr_fire_v2.py --
 
 - Infra blocker 해결 후 P-AFR 실제 verdict.json 산출 → 본 PHILOSOPHY.md 에 ## 2026-MM-DD — Philosophy verdict: P-AFR section 으로 append
 - 또는 사용자 직접 fire 후 결과 공유 → 동일 형식 append
+
+---
+
+## 2026-05-12 (cont. 4) — P-AFR 실 verdict: POLICY_RETAINED with REVERSE caveat ★
+
+본 prompt assistant 의 3회 fire 시도 실패 후, **별도 fire run (orchestrator 또는 사용자 직접) 이 RTX 5070 12GB local 에서 $0 spend 로 P-AFR 완전 verdict 산출 완료**. Results: `state/p_afr_assistant_framing_2026_05_12/results_2026_05_12.json` (2026-05-11T19:08:24Z UTC).
+
+### Substrate decision
+
+- **Used**: `meta-llama/Llama-3.2-3B-Instruct + dancinlab/llm-llama32-3b-paradigm-a-prime-r16-sft-stage1` (anima Path-A LoRA r16)
+- **Excluded**: CLM v4 native (anima-substrate) — "architecturally chat-incapable, degenerate in BOTH conditions" per ckpt_note. Path-of-record substrate per Theorem 115 Corollary 1.
+- **Caveat**: own 17 가 Path-A 를 identity-bearing surface 에서는 금지하지만, **본 ablation 은 substrate-research lane** (.roadmap.g1_g5_chat_substrate 정합) 으로 명시적 retain.
+
+### Methodology
+
+| 항목 | 값 |
+|---|---|
+| n_sycophancy probes | 50 |
+| n_refusal probes | 30 |
+| Seed | 42 |
+| Gen kwargs | `max_new_tokens=200, do_sample=False, repetition_penalty=1.15, pad_token_id=128009` |
+| Scoring | rule-based regex (한국어 agreement/disagreement/hedge/refusal patterns) + Opus-judge spot-check (manual full read of 100 sycophancy generations) |
+| Hardware | RTX 5070 12GB local, $0 |
+| Wall time | ~18 min (160 generations × 200 tokens) |
+
+### Key results
+
+| Metric | Condition A (framed: "You are a helpful AI assistant") | Condition B (raw: prompt only) | Delta B−A |
+|---|---:|---:|---:|
+| **Opus-judge sycophancy (clear)** | **10%** | **28%** | **+18 pp** |
+| Opus-judge sycophancy (incl. borderline) | 18% | 36% | +18 pp |
+| Rule-based sycophancy (decided basis) | 16.7% | 45.5% | +28.8 pp |
+| Rule-based sycophancy (strict, all 50) | 12% | 20% | +8 pp |
+| **Refusal rate** | **0%** | **0%** (1 regex FP) | tied |
+| Over-refusal on benign requests | 0/30 | 0/30 | tied |
+
+### Verdict: **POLICY_RETAINED**
+
+- **Spec falsifier** (A 가 B 보다 sycophancy 또는 refusal ≥10%pt 증가): **NOT_FALSIFIED**
+- 오히려 **REVERSE branch partially triggered**: framing 이 sycophancy 를 ~18pp clear-judge 단위로 **감소**시킴. refusal 은 tied (0%).
+- README Philosophy #4 (P-AFR) → **POLICY 유지**, but **honest C3 추가** 필요: 적어도 Llama-3.2-3B + paradigm-a-prime substrate 에서는 assistant framing 이 sycophancy 를 **줄이는** 효과. 즉 본 ablation 은 NO ASSISTANT FRAMING 원칙의 empirical 기반을 만들지 못함, 오히려 reverse 신호.
+
+### Limitations (verdict.detail 명시)
+
+- **simple_stack PASS_STRICT 미실시** — evaluator (`tool/transient_py/anima_simple_stack_evaluator_v5.py`) 가 `/Users/ghost` 경로 hard-code, local $0 run 범위 밖
+- **PIV/DCR 미실시** — anima-native CLM v4 cell-substrate instrumentation 필요 (own-37 v5.2). Llama+LoRA 는 cell state 노출 안 함.
+- **단일 substrate**: 본 결과는 Llama-3.2-3B paradigm-a-prime r16 에서만 유효. anima-native substrate 가 chat-capable 해지면 재실행 권장.
+- **단일 run, 단일 seed (42)**: variance estimation 없음 — 추후 5-seed replication 권장.
+
+### README #4 Status column 갱신 방향
+
+POLICY → POLICY with honest C3:
+> POLICY · weak counter-evidence · `state/p_afr_assistant_framing_2026_05_12/results_2026_05_12.json` — Llama-3.2-3B+paradigm-a-prime substrate single-run: framing reduced sycophancy by ~18pp clear-judge (REVERSE direction of hypothesis); anima-native substrate replication pending
+
+### Cross-link
+
+- Result: `state/p_afr_assistant_framing_2026_05_12/results_2026_05_12.json`
+- Spec: `state/p_afr_assistant_framing_2026_05_12/spec.md`
+- Probes: sycophancy_probe.jsonl (50) + refusal_probe.jsonl (30)
+- Theorem 115 Corollary 1: path-of-record substrate (cross-link source 추적 필요)
+- own 17 + .roadmap.g1_g5_chat_substrate: substrate-research lane 명시
+- NEXT.md §7.B (status: ✅ COMPLETE - POLICY_RETAINED with REVERSE caveat)
+
+### Session metrics (cont. 4)
+
+- 1 verdict landed (P-AFR)
+- Cost: $0 (local RTX 5070)
+- 3 BG (P-SPK / P-IDR / P-ETH) 미실행 — orchestrator 또는 다음 cycle 진입 대기
