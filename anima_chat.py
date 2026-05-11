@@ -53,15 +53,37 @@ sys.path.insert(0, str(ANIMA_ROOT))
 sys.path.insert(0, str(ANIMA_ROOT / "training"))
 from training.engine_a_g_arch import EngineAGModel, EngineAGConfig  # noqa: E402
 
-DEFAULT_CKPT = str(
-    ANIMA_ROOT
-    / ".cache/anima/clm_v5_remapped/phase2_cotrain_engine_ag/ckpts/ckpt_final.pt"
-)
-if not os.path.exists(DEFAULT_CKPT):
-    DEFAULT_CKPT = (
+def _find_default_ckpt() -> str:
+    """Return first existing ckpt path; priority: Phase 1A SFT → substrate A.
+
+    Phase 1A = anima-clm-phase1a-multi-turn-sft (2026-05-12 landed).
+    Substrate A = phase2_cotrain_engine_ag/ckpt_final.pt (legacy fallback).
+    Falls back to Phase 1A path string for downstream error messages.
+    """
+    candidates = [
+        # Phase 1A (preferred, multi-turn SFT)
+        str(
+            ANIMA_ROOT
+            / "state/anima_phase1a_alt_2026_05_12/ckpts/ckpt_phase1a_sft.pt"
+        ),
+        "/Users/ghost/core/anima/state/anima_phase1a_alt_2026_05_12/"
+        "ckpts/ckpt_phase1a_sft.pt",
+        # Substrate A (legacy fallback)
+        str(
+            ANIMA_ROOT
+            / ".cache/anima/clm_v5_remapped/phase2_cotrain_engine_ag/"
+            "ckpts/ckpt_final.pt"
+        ),
         "/Users/ghost/.cache/anima/clm_v5_remapped/"
-        "phase2_cotrain_engine_ag/ckpts/ckpt_final.pt"
-    )
+        "phase2_cotrain_engine_ag/ckpts/ckpt_final.pt",
+    ]
+    for c in candidates:
+        if os.path.exists(c):
+            return c
+    return candidates[0]  # for error-message display when nothing exists
+
+
+DEFAULT_CKPT = _find_default_ckpt()
 
 
 # ---------------------------------------------------------------------------

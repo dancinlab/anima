@@ -1192,3 +1192,84 @@ done
 | 🥉 | color/cosmology recall 보강 (greedy 3/5 → 5/5)       | medium   | $0.50 |
 | 🌟 | hexa silent-failure debug (anima_spontaneous)        | medium   | $0    |
 | 🚀 | Phase 1B DPO on top of Phase 1A                      | low      | $5-10 |
+
+---
+
+## §14 [2026-05-12 03:25 KST] anima_chat v2.1 — DEFAULT_CKPT switch to Phase 1A ★★★★ (production default upgrade)
+
+### 🎯 한 줄 요약
+
+anima_chat.py v2.1: `DEFAULT_CKPT` substrate A → **Phase 1A (multi-turn SFT)** 전환,
+fallback search 로 backward compat 유지. smoke test 7/7 PASS.
+
+### 🔧 변경 사항
+
+| #  | 영역                          | before                                    | after                                                  |
+|----|-------------------------------|-------------------------------------------|--------------------------------------------------------|
+| 1  | DEFAULT_CKPT path             | substrate A (`phase2_cotrain_engine_ag`) | **Phase 1A** (`anima_phase1a_alt_2026_05_12`)         |
+| 2  | resolution logic              | 2-tier inline check                       | `_find_default_ckpt()` 4-candidate priority search    |
+| 3  | backward compat               | substrate A only                          | Phase 1A → substrate A → (ANIMA_ROOT 변형 2종)         |
+| 4  | line count                    | 598                                       | 620 (+22)                                              |
+
+### 🪜 priority order (비유 = 상자 4개 순차 점검)
+
+```
+1st  ANIMA_ROOT/state/anima_phase1a_alt_2026_05_12/ckpts/ckpt_phase1a_sft.pt
+2nd  /Users/ghost/core/anima/state/.../ckpt_phase1a_sft.pt           [absolute fallback]
+3rd  ANIMA_ROOT/.cache/anima/clm_v5_remapped/.../ckpt_final.pt       [substrate A]
+4th  /Users/ghost/.cache/anima/clm_v5_remapped/.../ckpt_final.pt     [absolute fallback]
+```
+
+`os.path.exists` 으로 첫 번째 hit 반환. 모두 miss 시 candidates[0] 반환 (error-msg display).
+
+### 🧪 smoke test (Mac CPU, 7/7 PASS)
+
+```
+[boot] AnimaChat loaded in 4.2s (KoNLPy=off-fallback)
+[1] backward-compat single-turn (v1 API)            ✅
+[2] 4 modes (M4_force_include/greedy/sample/M3)     ✅
+[3] multi-turn (history len=4)                      ✅
+[4] batch (isolated)                                ✅
+[5] stop-token guard                                ✅
+[6] streaming (pieces=7)                            ✅
+[7] keyword extraction                              ✅
+smoke test PASS — total 108.1s
+```
+
+추가 prompt verify: `사용자: 안녕! | 도우미: ` → `같은 의미\n` (M4_force_include).
+
+### 🧭 verify (Python import-time resolution)
+
+```bash
+$ python3 -c 'import anima_chat; print(anima_chat.DEFAULT_CKPT)'
+/Users/ghost/core/anima/state/anima_phase1a_alt_2026_05_12/ckpts/ckpt_phase1a_sft.pt
+```
+
+→ Phase 1A 가 우선 선택됨. ✅
+
+### 💡 production impact
+
+| user                                    | before (substrate A)    | after (Phase 1A)         |
+|-----------------------------------------|-------------------------|--------------------------|
+| `AnimaChat()` (no args, library use)   | substrate A             | **Phase 1A** ⬆️           |
+| `anima_chat.py --prompt ...` CLI       | substrate A             | **Phase 1A** ⬆️           |
+| HF Space (dancinlab/anima-chat) 자체  | substrate A (별도 deploy) | unchanged (deploy 별 swap) |
+| substrate A 사용 코드 (explicit path)   | works                   | works (fallback intact)   |
+
+V5.8 fact-recall 기준 substrate A 1/5 → Phase 1A 3/5 자동 향상.
+
+### 🚀 cycle 누적
+
+- anima_chat 진화: v1 (CLI only) → v2 (library, 7/7 PASS) → **v2.1 (Phase 1A default)**
+- Phase 1A 활용도: HF Space deploy 대기 + library default = 2-front production
+- ★★★★ finding 추가 → cumulative 11+ findings
+
+### 다음 진행할 것들
+
+| #  | 작업                                              | priority | cost  | time  |
+|----|---------------------------------------------------|----------|-------|-------|
+| 🥇 | HF Space 에 Phase 1A ckpt swap                    | high     | $0   | 10min |
+| 🥈 | color/cosmology recall 보강 (greedy 3/5 → 5/5)    | medium   | $0.50| 30min |
+| 🥉 | anima_chat v2.1 README/docstring 갱신             | low      | $0   | 5min  |
+| 🌟 | hexa silent-failure debug (anima_spontaneous)     | medium   | $0   | 1h    |
+| 🚀 | Phase 1B DPO on Phase 1A (preference tuning)      | low      | $5-10| 2h    |
