@@ -1,3 +1,5 @@
+<!-- [Hc_590 dd172-tension-link-hivemind-absorbed — moved to hypotheses_candidates/Hc_590_dd172_tension_link_hivemind_absorbed.md on 2026-05-11] -->
+
 # DD159: Hivemind Federation via Tension Link
 
 ## Hypothesis

@@ -1,3 +1,5 @@
+<!-- [Hc_351 v8-math-law-structure-over-dynamics — moved to hypotheses_candidates/Hc_351_v8_math_law_structure_over_dynamics.md on 2026-05-11; DD114 구조>기능 hexad covered by V8 math structure law] -->
+
 # DD114: Emergent Hexad 벤치마크 — 구조 > 기능 실증 (2026-03-31)
 
 ## 목적

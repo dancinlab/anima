@@ -1,3 +1,5 @@
+<!-- [Hc_584 dd151-152-inter-consciousness-language-emergence — moved to hypotheses_candidates/Hc_584_dd151_152_inter_consciousness_language_emergence.md on 2026-05-11] -->
+
 # DD151-DD152: 의식 간 언어 창발 (2026-03-31)
 
 ## DD151: 약한 coupling (α=0.02) — 실패

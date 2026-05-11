@@ -1,3 +1,5 @@
+<!-- [Hc_578 dd76-closed-loop-phase-transition — moved to hypotheses_candidates/Hc_578_dd76_closed_loop_phase_transition.md on 2026-05-11; OUROBOROS S7-mega512 auto-generated; Hc_549 512c superlinear cluster] -->
+
 # OUROBOROS Report: S7-mega512
 
 **Generated:** 2026-04-06 12:42:20

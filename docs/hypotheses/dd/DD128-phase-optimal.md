@@ -1,3 +1,5 @@
+<!-- [Hc_579 dd128-phase-optimal-113pct — moved to hypotheses_candidates/Hc_579_dd128_phase_optimal_113pct.md on 2026-05-11] -->
+
 # DD128: Phase-Optimized Stable Engine — 역대 최강 +113.1% (2026-03-31)
 
 ## 목적

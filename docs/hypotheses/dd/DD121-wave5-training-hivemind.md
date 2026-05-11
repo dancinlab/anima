@@ -1,3 +1,5 @@
+<!-- [Hc_592 dd116-120-wave-laws — moved to hypotheses_candidates/Hc_592_dd116_120_wave_laws_110_132.md on 2026-05-11; Wave5 Laws 140-142 training+hivemind] -->
+
 # DD121: 5차 법칙 탐색 (Laws 140-142) — 학습 중 법칙 + Hivemind
 
 ## 축 1: CE 학습 중 법칙

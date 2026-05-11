@@ -1,3 +1,5 @@
+<!-- [Hc_581 dd143-federated-phase-optimal-892pct — moved to hypotheses_candidates/Hc_581_dd143_federated_phase_optimal_892pct.md on 2026-05-11; PHI-RETEST 역대 기록 재측정 = federated optimal cluster] -->
+
 # 역대 전 기록 bench 재측정 (2026-03-29)
 
 ## 결과

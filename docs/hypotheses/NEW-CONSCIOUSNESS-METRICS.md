@@ -1,3 +1,7 @@
+<!-- [Hc_322 v8-e1-learnable-phi-predictor — moved to hypotheses_candidates/Hc_322_v8_e1_learnable_phi_predictor.md on 2026-05-11; NEW-CONSCIOUSNESS-METRICS 6 measurement methods overlap V8-E1/E2/E3 cluster] -->
+<!-- [Hc_323 v8-e2-causal-phi-ablation — moved to hypotheses_candidates/Hc_323_v8_e2_causal_phi.md on 2026-05-11] -->
+<!-- [Hc_324 v8-e3-temporal-phi-window — moved to hypotheses_candidates/Hc_324_v8_e3_temporal_phi.md on 2026-05-11] -->
+
 # NEW-CONSCIOUSNESS-METRICS: Phi(IIT) Ceiling 돌파를 위한 6가지 새 의식 측정법
 
 ## 핵심 통찰

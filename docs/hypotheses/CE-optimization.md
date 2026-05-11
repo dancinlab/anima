@@ -1,3 +1,5 @@
+<!-- [Hc_393 law-53-detach-resolves-ce-phi-conflict — moved to hypotheses_candidates/Hc_393_law_53_detach_resolves_ce_phi_conflict.md on 2026-05-11; CE optimization vs Phi preservation = law 53 detach barrier theme] -->
+
 # CE Optimization: Cross-Entropy Minimization with Phi Preservation (2026-03-29)
 
 ## 핵심 통찰

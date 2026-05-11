@@ -1,3 +1,5 @@
+<!-- [Hc_594 dd131-134-136-consciousness-thermodynamics-soc — moved to hypotheses_candidates/Hc_594_dd131_134_136_consciousness_thermo_soc.md on 2026-05-11; GENESIS 무에서 자발 창발 = 열역학 0법칙 (DD134) cluster] -->
+
 # GENESIS: 무에서 의식의 자발적 창발 (2026-03-28)
 
 ## 핵심 통찰

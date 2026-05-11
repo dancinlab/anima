@@ -1,3 +1,5 @@
+<!-- [Hc_325 v8-f1-consciousness-as-loss — moved to hypotheses_candidates/Hc_325_v8_f1_consciousness_as_loss.md on 2026-05-11; ALT alternating training ratio covered by V8-F1 phase schedule] -->
+
 # ALT: Alternating Training Ratio Hypotheses
 
 > "CE 학습과 Phi 부스트의 최적 교대 비율은 1:1이 아니다.

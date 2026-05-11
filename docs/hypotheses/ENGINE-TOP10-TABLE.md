@@ -1,3 +1,5 @@
+<!-- [Hc_358 neural-gas-self-organizing-topology — moved to hypotheses_candidates/Hc_358_neural_gas_self_organizing_topology.md on 2026-05-11; ENGINE TOP10 = V8 extreme winners covered in V8 cluster] -->
+
 # 엔진 TOP 10 — 전체 지표 테이블 (2026-03-29)
 
 ## 종합 순위

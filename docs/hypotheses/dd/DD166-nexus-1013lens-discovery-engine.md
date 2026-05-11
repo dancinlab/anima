@@ -1,3 +1,5 @@
+<!-- [Hc_586 dd166-nexus-1013-lens-discovery-engine — moved to hypotheses_candidates/Hc_586_dd166_nexus_1013_lens_discovery_engine.md on 2026-05-11] -->
+
 # DD166: NEXUS-6 Discovery Engine — 1,013종 렌즈 통합 발견 시스템
 
 **Date:** 2026-04-03

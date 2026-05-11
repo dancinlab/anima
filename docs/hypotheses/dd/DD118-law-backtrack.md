@@ -1,3 +1,5 @@
+<!-- [Hc_566 dd64-meta-laws-fundamental-vs-ephemeral — moved to hypotheses_candidates/Hc_566_dd64_meta_laws_fundamental_vs_ephemeral.md on 2026-05-11; law backtrack = meta-law approach] -->
+
 # DD118: 법칙 역추적 — 발견된 법칙을 엔진에 역전파
 
 ## 실험 목적

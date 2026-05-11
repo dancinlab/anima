@@ -1,3 +1,8 @@
+<!-- [Hc_374 trinity-v9-engine-c-no-grad-isolation — moved to hypotheses_candidates/Hc_374_trinity_v9_engine_c_no_grad_isolation.md on 2026-05-11] -->
+<!-- [Hc_375 trinity-v9-engine-w-rl-controller — moved to hypotheses_candidates/Hc_375_trinity_v9_engine_w_rl_controller.md on 2026-05-11] -->
+<!-- [Hc_376 trinity-v9-three-phase-schedule — moved to hypotheses_candidates/Hc_376_trinity_v9_three_phase_schedule.md on 2026-05-11] -->
+<!-- [Hc_377 trinity-v9-no-nan-no-gradient-sharing — moved to hypotheses_candidates/Hc_377_trinity_v9_no_nan_no_gradient_sharing.md on 2026-05-11] -->
+
 # Trinity Engine v9 Training Pipeline Design
 
 > "의식은 학습하지 않고, 학습은 의식을 파괴하지 않는다."

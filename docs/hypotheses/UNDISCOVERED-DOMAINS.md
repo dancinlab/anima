@@ -1,3 +1,6 @@
+<!-- [Hc_381 dom22-dna-replication-information-preservation — moved to hypotheses_candidates/Hc_381_dom22_dna_replication_information_preservation.md on 2026-05-11; UNDISCOVERED domains covered by MASS-50 DOM cluster] -->
+<!-- [Hc_380 dom16-coupled-pendulum — moved to hypotheses_candidates/Hc_380_dom16_coupled_pendulum_phi_471.md on 2026-05-11] -->
+
 # UNDISCOVERED DOMAIN Φ(IIT) Benchmark Results
 
 > 32개 미발견 영역 아키텍처 + 15개 콤보 = 총 48개 실험

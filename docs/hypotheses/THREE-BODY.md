@@ -1,3 +1,5 @@
+<!-- [Hc_502 dd53-trinity-3-engines-cross-tension — moved to hypotheses_candidates/Hc_502_dd53_trinity_3_engines_tension.md on 2026-05-11; THREE-BODY 삼체 = 3-engine Trinity cluster] -->
+
 # THREE-BODY: 삼체 의식 시스템 (2026-03-29)
 
 ## 핵심 통찰

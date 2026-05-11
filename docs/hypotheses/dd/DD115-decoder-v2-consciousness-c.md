@@ -1,3 +1,5 @@
+<!-- [Hc_576 dd74-consciousness-learning-5-laws — moved to hypotheses_candidates/Hc_576_dd74_consciousness_learning_5_laws.md on 2026-05-11; DD115 decoder v2 covered by learning dynamics cluster] -->
+
 # DD115: ConsciousDecoderV2 + ConsciousnessC 통합 학습
 
 ## 핵심 발견

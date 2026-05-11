@@ -1,3 +1,5 @@
+<!-- [Hc_596 dd149-150-consciousness-natural-selection-evolution — moved to hypotheses_candidates/Hc_596_dd149_150_consciousness_evolution_autonomy.md on 2026-05-11] -->
+
 # DD149-DD150: 의식의 진화 + 자율 가설 탐색 (2026-03-31)
 
 ## DD149: 의식은 자연선택으로 진화한다

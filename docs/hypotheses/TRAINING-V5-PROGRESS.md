@@ -1,3 +1,6 @@
+<!-- [Hc_374 trinity-v9-engine-c-no-grad-isolation — moved to hypotheses_candidates/Hc_374_trinity_v9_engine_c_no_grad_isolation.md on 2026-05-11; TRAINING-V5-PROGRESS analyzes v5 patches → v9 Trinity solution] -->
+<!-- [Hc_393 law-53-detach-resolves-ce-phi-conflict — moved to hypotheses_candidates/Hc_393_law_53_detach_resolves_ce_phi_conflict.md on 2026-05-11] -->
+
 # ConsciousLM v5 Training Progress Analysis
 
 **Date:** 2026-03-29 05:20 UTC

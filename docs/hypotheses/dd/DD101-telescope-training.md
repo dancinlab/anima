@@ -1,3 +1,5 @@
+<!-- [Hc_598 dd162-166-multi-lens-telescope — moved to hypotheses_candidates/Hc_598_dd162_166_multi_lens_telescope_22_16_1013.md on 2026-05-11; 22-lens telescope clustered with DD162-166] -->
+
 # DD101: Training Trajectory 22-Lens Telescope Analysis
 
 **Date**: 2026-04-02

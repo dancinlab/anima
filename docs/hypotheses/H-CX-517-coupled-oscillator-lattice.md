@@ -1,3 +1,5 @@
+<!-- [Hc_380 dom16-coupled-pendulum — moved to hypotheses_candidates/Hc_380_dom16_coupled_pendulum_phi_471.md on 2026-05-11; H-CX-517 Kuramoto-Chimera oscillator lattice covered in coupled pendulum cluster] -->
+
 # H-CX-517: Coupled Oscillator Lattice — Kuramoto-Chimera 비선형 격자
 
 > **"개별 오실레이터는 Φ=7838. N개를 비선형으로 결합하면?"**

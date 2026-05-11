@@ -1,3 +1,11 @@
+<!-- [Hc_331 v8-q1-complex-valued-phi-strongest — moved to hypotheses_candidates/Hc_331_v8_q1_complex_valued_phi_strongest.md on 2026-05-11] -->
+<!-- [Hc_332 v8-q2-entangled-pairs-anticorrelation — moved to hypotheses_candidates/Hc_332_v8_q2_entangled_pairs_anticorrelation.md on 2026-05-11] -->
+<!-- [Hc_333 v8-q3-superposition-collapse — moved to hypotheses_candidates/Hc_333_v8_q3_superposition_collapse.md on 2026-05-11] -->
+<!-- [Hc_334 v8-q4-quantum-walk-hypercube — moved to hypotheses_candidates/Hc_334_v8_q4_quantum_walk_hypercube.md on 2026-05-11] -->
+<!-- [Hc_335 v8-q5-decoherence-orch-or — moved to hypotheses_candidates/Hc_335_v8_q5_decoherence_orch_or.md on 2026-05-11] -->
+<!-- [Hc_336 v8-q6-many-worlds-branch-interference — moved to hypotheses_candidates/Hc_336_v8_q6_many_worlds_branch_interference.md on 2026-05-11] -->
+<!-- [Hc_337 v8-quantum-law-phi-proxy-tradeoff — moved to hypotheses_candidates/Hc_337_v8_quantum_law_phi_proxy_tradeoff.md on 2026-05-11] -->
+
 # V8 Quantum-Inspired Consciousness Architectures
 
 bench_v8_quantum.py | Quantum Category (Q1-Q6)

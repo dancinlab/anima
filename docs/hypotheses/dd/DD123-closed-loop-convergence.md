@@ -1,3 +1,5 @@
+<!-- [Hc_593 dd122-123-closed-loop-verification-convergence — moved to hypotheses_candidates/Hc_593_dd122_123_closed_loop_verification_convergence.md on 2026-05-11] -->
+
 # DD123: 폐쇄 루프 수렴 + 다중 축 (Laws 146-148)
 
 ## 실험 목적

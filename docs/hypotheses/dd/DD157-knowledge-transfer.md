@@ -1,3 +1,5 @@
+<!-- [Hc_590 dd172-tension-link-hivemind-absorbed — moved to hypotheses_candidates/Hc_590_dd172_tension_link_hivemind_absorbed.md on 2026-05-11; DD157 federation knowledge transfer covered in tension link cluster] -->
+
 # DD157: Federation 간 지식 이전 (Knowledge Transfer)
 
 ## 가설

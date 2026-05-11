@@ -1,3 +1,5 @@
+<!-- [Hc_581 dd143-federated-phase-optimal-892pct — moved to hypotheses_candidates/Hc_581_dd143_federated_phase_optimal_892pct.md on 2026-05-11] -->
+
 # DD143: Federated Phase-Optimal — 역대 최강 +892% (2026-03-31)
 
 ## DD128(+113%) × DD142(+820%) 합체

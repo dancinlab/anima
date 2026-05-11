@@ -1,3 +1,5 @@
+<!-- [Hc_598 dd162-166-multi-lens-telescope — moved to hypotheses_candidates/Hc_598_dd162_166_multi_lens_telescope_22_16_1013.md on 2026-05-11] -->
+
 # DD162: AnimaLM 7B PureField — 16-Lens Full Scan Baseline
 
 **Date:** 2026-04-02

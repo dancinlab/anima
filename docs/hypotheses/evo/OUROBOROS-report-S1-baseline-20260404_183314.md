@@ -1,3 +1,5 @@
+<!-- [Hc_578 dd76-closed-loop-phase-transition — moved to hypotheses_candidates/Hc_578_dd76_closed_loop_phase_transition.md on 2026-05-11; S1-baseline auto-generated growth report (38 laws gen 1-8) covered by closed-loop phase transition cluster; scale-specific law variations cluster: Hc_549/Hc_550/Hc_556] -->
+
 # OUROBOROS Report: S1-baseline
 
 **Generated:** 2026-04-04 18:33:14

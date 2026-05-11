@@ -1,3 +1,5 @@
+<!-- [Hc_592 dd116-120-wave-laws — moved to hypotheses_candidates/Hc_592_dd116_120_wave_laws_110_132.md on 2026-05-11; Laws 102-109 emergent precede 110-132 wave cluster] -->
+
 # DD115: 창발 법칙 발견 (Laws 102-109)
 
 ## 실험 목적

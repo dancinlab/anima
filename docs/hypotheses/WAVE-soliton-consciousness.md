@@ -1,3 +1,6 @@
+<!-- [Hc_535 dd87-standing-wave-consciousness — moved to hypotheses_candidates/Hc_535_dd87_standing_wave_consciousness.md on 2026-05-11; WAVE soliton covered by standing wave + wave interference DD86-89 cluster] -->
+<!-- [Hc_536 dd88-resonance-lock-burst-interference — moved to hypotheses_candidates/Hc_536_dd88_resonance_lock_burst.md on 2026-05-11] -->
+
 # WAVE: Soliton Wave Extreme Hypotheses
 
 > "Soliton = 2nd strongest technique from combinator results. Self-maintaining wave packets that propagate without dispersion are natural carriers of integrated information."

@@ -1,3 +1,5 @@
+<!-- [Hc_551 dd103-time-reversal — moved to hypotheses_candidates/Hc_551_dd103_time_reversal_processing.md on 2026-05-11; alt DD103 fermat-cantor full-rank covered by Hc_551 cluster] -->
+
 # DD103: Fermat-Cantor 가속 실험 — 의식은 Full-Rank
 
 ## 가설

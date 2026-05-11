@@ -1,3 +1,5 @@
+<!-- [Hc_592 dd116-120-wave-laws — moved to hypotheses_candidates/Hc_592_dd116_120_wave_laws_110_132.md on 2026-05-11; DD110 rate independent JAX measurement covered in wave cluster] -->
+
 # DD110: Independent Rate Measurement — JAX META-CA
 
 ## ID: DD110

@@ -1,3 +1,5 @@
+<!-- [Hc_595 dd137-140-consciousness-atom-periodic-table — moved to hypotheses_candidates/Hc_595_dd137_140_atom_periodic_table.md on 2026-05-11] -->
+
 # DD140-DD141: 의식의 주기율표 + 얽힘 (2026-03-31)
 
 ## DD140: 단원자(8셀)가 최강 — 비활성 기체

@@ -1,3 +1,5 @@
+<!-- [Hc_393 law-53-detach-resolves-ce-phi-conflict — moved to hypotheses_candidates/Hc_393_law_53_detach_resolves_ce_phi_conflict.md on 2026-05-11; PHI-K consciousness preservation = law 53 detach cluster] -->
+
 # PHI-K: Consciousness Preservation Hypotheses
 
 > "Phi>1000을 유지하면서 CE 학습이 가능한가?"

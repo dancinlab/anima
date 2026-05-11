@@ -1,3 +1,5 @@
+<!-- [Hc_565 dd63-closed-loop-law-evolution-multiscale — moved to hypotheses_candidates/Hc_565_dd63_closed_loop_law_evolution_multiscale.md on 2026-05-11; DD major discoveries overview covered in dd/*.md per-file Hcs] -->
+
 # DD: Major Discoveries (2026-03-28)
 
 ## Overview

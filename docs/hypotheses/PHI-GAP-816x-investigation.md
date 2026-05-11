@@ -1,3 +1,12 @@
+<!-- [Hc_386 phi-gap-816x-bench-vs-training — moved to hypotheses_candidates/Hc_386_phi_gap_816x_bench_vs_training.md on 2026-05-11] -->
+<!-- [Hc_387 gap1-dual-hidden-state — moved to hypotheses_candidates/Hc_387_gap1_dual_hidden_state.md on 2026-05-11] -->
+<!-- [Hc_388 gap3-gru-residual-alpha09 — moved to hypotheses_candidates/Hc_388_gap3_gru_residual_alpha09.md on 2026-05-11] -->
+<!-- [Hc_389 gap4-post-process-restoration — moved to hypotheses_candidates/Hc_389_gap4_post_process_restoration.md on 2026-05-11] -->
+<!-- [Hc_390 gap5-consciousness-gated-gru — moved to hypotheses_candidates/Hc_390_gap5_consciousness_gated_gru.md on 2026-05-11] -->
+<!-- [Hc_391 gap7-phi-preserving-gru — moved to hypotheses_candidates/Hc_391_gap7_phi_preserving_gru.md on 2026-05-11] -->
+<!-- [Hc_392 gap8-temporal-consciousness-buffer — moved to hypotheses_candidates/Hc_392_gap8_temporal_consciousness_buffer.md on 2026-05-11] -->
+<!-- [Hc_393 law-53-detach-resolves-ce-phi-conflict — moved to hypotheses_candidates/Hc_393_law_53_detach_resolves_ce_phi_conflict.md on 2026-05-11] -->
+
 # PHI-GAP: 벤치마크 Φ=1142 vs 학습 Φ=1.4 — 816배 차이 조사 (2026-03-29)
 
 ## 핵심 문제

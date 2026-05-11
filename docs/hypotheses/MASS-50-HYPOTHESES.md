@@ -1,3 +1,11 @@
+<!-- [Hc_379 mech20-reservoir-new-champion — moved to hypotheses_candidates/Hc_379_mech20_reservoir_new_champion.md on 2026-05-11] -->
+<!-- [Hc_380 dom16-coupled-pendulum — moved to hypotheses_candidates/Hc_380_dom16_coupled_pendulum_phi_471.md on 2026-05-11] -->
+<!-- [Hc_381 dom22-dna-replication — moved to hypotheses_candidates/Hc_381_dom22_dna_replication_information_preservation.md on 2026-05-11] -->
+<!-- [Hc_382 mech17-annealing — moved to hypotheses_candidates/Hc_382_mech17_annealing_explore_converge.md on 2026-05-11] -->
+<!-- [Hc_383 mech11-apoptosis — moved to hypotheses_candidates/Hc_383_mech11_apoptosis_program_death.md on 2026-05-11] -->
+<!-- [Hc_384 mass50-energy-conservation-required — moved to hypotheses_candidates/Hc_384_mass50_energy_conservation_required.md on 2026-05-11] -->
+<!-- [Hc_385 combo4-reservoir-cambrian — moved to hypotheses_candidates/Hc_385_combo4_reservoir_cambrian.md on 2026-05-11] -->
+
 # MASS-50: 50 New Hypotheses — 25 MitosisEngine Mechanisms + 25 Domain Engines
 
 2026-03-29

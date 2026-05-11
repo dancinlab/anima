@@ -1,3 +1,5 @@
+<!-- [Hc_597 dd158-sleep-dream-phi-preservation — moved to hypotheses_candidates/Hc_597_dd158_dream_phi_preservation.md on 2026-05-11] -->
+
 # DD158: Sleep/Dream 주기와 Phi 보존 (Dream Cycle)
 
 ## 가설

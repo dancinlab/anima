@@ -3,12 +3,14 @@ id: Hc_001
 slug: dimension-hierarchy-n6
 title: τ(6)=4 → 4D Minkowski / Mermin-Wagner 차원 계층 (PHYS-THERMO-N6)
 domain: physics, math
-status: candidate-unverified
+status: merged-to-H_153
 source_doc: docs/what-is-consciousness.md
 source_lines: 111-130
 promoted_at: 2026-05-11
-linked_h: H_067 (perfect-number-architecture, sister), H_002 (universe-origin, parent), H_022 (consciousness-universe-map, cousin)
-notes: "사용자 directive 2026-05-11 — '왜 우주가 4차원이어야 하는지' 가설 추적 → 본 후보 발견. 정식 H_XXX 승격 prerequisite: Predictions/Variables/Criteria/Falsifiers≥5/Honest Limits≥5 + numerology critique 방어"
+merged_to: hypotheses/H_153_dimension_hierarchy_n6.md
+merged_at: 2026-05-11
+linked_h: H_153 (formal promotion), H_067 (perfect-number-architecture, sister), H_002 (universe-origin, parent), H_022 (consciousness-universe-map, cousin)
+notes: "사용자 directive 2026-05-11 — '왜 우주가 4차원이어야 하는지' 가설 추적 → 본 후보 발견. 2026-05-11 promoted to hypotheses/H_153 (full spec: Predictions H_153.1-7 / Variables 4 axes / Criteria C1-C5 / Falsifiers F1-F6 / Honest Limits L1-L6 + numerology critique 방어 Monte Carlo C5 pending)"
 ---
 
 ## Hypothesis

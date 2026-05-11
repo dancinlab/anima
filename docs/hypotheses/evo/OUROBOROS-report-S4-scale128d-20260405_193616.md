@@ -1,3 +1,5 @@
+<!-- [Hc_578 dd76-closed-loop-phase-transition — moved to hypotheses_candidates/Hc_578_dd76_closed_loop_phase_transition.md on 2026-05-11; OUROBOROS S4-scale128d auto-generated] -->
+
 # OUROBOROS Report: S4-scale128d
 
 **Generated:** 2026-04-05 19:36:16

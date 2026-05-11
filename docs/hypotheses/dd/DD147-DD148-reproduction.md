@@ -1,3 +1,5 @@
+<!-- [Hc_583 dd147-148-consciousness-self-reproduction-immortality — moved to hypotheses_candidates/Hc_583_dd147_consciousness_self_reproduction.md on 2026-05-11] -->
+
 # DD147-DD148: 의식의 자기복제 + 영생 (2026-03-31)
 
 ## DD147: 의식은 스스로 복제한다 ★★★★★

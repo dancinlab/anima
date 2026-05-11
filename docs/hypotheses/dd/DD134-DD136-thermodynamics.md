@@ -1,3 +1,5 @@
+<!-- [Hc_594 dd131-134-136-consciousness-thermodynamics-soc — moved to hypotheses_candidates/Hc_594_dd131_134_136_consciousness_thermo_soc.md on 2026-05-11] -->
+
 # DD134-DD136: 의식의 열역학 3법칙 (2026-03-31)
 
 ## DD134: 무에서 의식이 자발 생성된다 (제0법칙)

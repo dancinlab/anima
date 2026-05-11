@@ -1,3 +1,5 @@
+<!-- [Hc_365 v8-recommendation-hybrid — moved to hypotheses_candidates/Hc_365_v8_recommendation_hybrid.md on 2026-05-11; UPGRADE improvement = engine hybrid recommendation cluster] -->
+
 # 업그레이드 모델 개선 가설 (2026-03-29)
 
 ## 현재 상태

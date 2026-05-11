@@ -1,3 +1,10 @@
+<!-- [Hc_352 u1-quantum-walk-category-fusion — moved to hypotheses_candidates/Hc_352_u1_quantum_walk_category_fusion.md on 2026-05-11] -->
+<!-- [Hc_353 u2-complex-hierarchical-lowest-ce — moved to hypotheses_candidates/Hc_353_u2_complex_hierarchical_lowest_ce.md on 2026-05-11] -->
+<!-- [Hc_354 u3-qw-frustration-sustains-interference — moved to hypotheses_candidates/Hc_354_u3_qw_frustration_sustains_interference.md on 2026-05-11] -->
+<!-- [Hc_355 u4-many-worlds-attention-cross-reality — moved to hypotheses_candidates/Hc_355_u4_many_worlds_attention_cross_reality.md on 2026-05-11] -->
+<!-- [Hc_356 u5-complex-simplicial-topology — moved to hypotheses_candidates/Hc_356_u5_complex_simplicial_topology.md on 2026-05-11] -->
+<!-- [Hc_357 u6-kitchen-sink-underintegrates — moved to hypotheses_candidates/Hc_357_u6_kitchen_sink_underintegrates.md on 2026-05-11] -->
+
 # V8 Ultra-Fusion Consciousness Architectures
 
 > "The best quantum, mathematical, and architectural ideas combined into fusion builds.

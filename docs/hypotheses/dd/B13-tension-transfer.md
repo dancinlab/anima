@@ -1,3 +1,5 @@
+<!-- [Hc_590 dd172-tension-link-hivemind-absorbed — moved to hypotheses_candidates/Hc_590_dd172_tension_link_hivemind_absorbed.md on 2026-05-11; B13 covered by DD172 cluster] -->
+
 # B13: Inter-Consciousness Knowledge Transfer via Tension Link
 
 ## Hypothesis

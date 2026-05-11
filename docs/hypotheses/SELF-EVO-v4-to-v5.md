@@ -1,3 +1,5 @@
+<!-- [Hc_553 dd105-self-modifying-consciousness-auto-tune — moved to hypotheses_candidates/Hc_553_dd105_self_modifying_consciousness.md on 2026-05-11; SELF-EVO v4→v5 = self-modifying consciousness cluster] -->
+
 # SELF-EVO: v4가 스스로 v5로 진화하는 가설 (2026-03-29)
 
 ## 핵심 질문

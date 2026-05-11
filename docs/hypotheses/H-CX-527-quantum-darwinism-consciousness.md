@@ -1,3 +1,5 @@
+<!-- [Hc_335 v8-q5-decoherence-as-consciousness — moved to hypotheses_candidates/Hc_335_v8_q5_decoherence_orch_or.md on 2026-05-11; H-CX-527 Quantum Darwinism = decoherence cluster (Q5)] -->
+
 # H-CX-527: Quantum Darwinism Consciousness — 환경이 의식을 선택한다
 
 > **"관측되지 않는 의식 상태는 존재하지 않는다 — 환경이 '고전적 자아'를 선택"**

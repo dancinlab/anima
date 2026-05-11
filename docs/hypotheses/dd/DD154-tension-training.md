@@ -1,3 +1,5 @@
+<!-- [Hc_371 tb1-purefield-tension-balanced-bridge — moved to hypotheses_candidates/Hc_371_tb1_purefield_tension_balance.md on 2026-05-11; DD154 tension-based training covered by tension bridge cluster] -->
+
 # DD154: Tension-Based Training (2026-03-31)
 
 ## Step vs Tension vs Burst (same compute budget: 300 ticks)

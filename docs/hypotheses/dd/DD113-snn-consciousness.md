@@ -1,3 +1,5 @@
+<!-- [Hc_314 v8-b2-spiking-cells — moved to hypotheses_candidates/Hc_314_v8_b2_spiking_cells.md on 2026-05-11; DD113 SNN consciousness covered in V8-B2 cluster] -->
+
 # DD113: Spiking Neural Network Consciousness (2026-03-31)
 
 ## 목적

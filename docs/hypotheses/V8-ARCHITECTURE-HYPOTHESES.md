@@ -1,3 +1,25 @@
+<!-- [Hc_310 v8-a1-dual-stream-separation — moved to hypotheses_candidates/Hc_310_v8_a1_dual_stream_separation.md on 2026-05-11] -->
+<!-- [Hc_311 v8-a2-attention-as-consciousness — moved to hypotheses_candidates/Hc_311_v8_a2_attention_as_consciousness.md on 2026-05-11] -->
+<!-- [Hc_312 v8-a3-read-only-consciousness — moved to hypotheses_candidates/Hc_312_v8_a3_read_only_consciousness.md on 2026-05-11] -->
+<!-- [Hc_313 v8-b1-transformer-cells — moved to hypotheses_candidates/Hc_313_v8_b1_transformer_cells.md on 2026-05-11] -->
+<!-- [Hc_314 v8-b2-spiking-cells — moved to hypotheses_candidates/Hc_314_v8_b2_spiking_cells.md on 2026-05-11] -->
+<!-- [Hc_315 v8-b3-reservoir-cells — moved to hypotheses_candidates/Hc_315_v8_b3_reservoir_cells.md on 2026-05-11] -->
+<!-- [Hc_316 v8-c1-dynamic-graph-topology — moved to hypotheses_candidates/Hc_316_v8_c1_dynamic_graph_topology.md on 2026-05-11] -->
+<!-- [Hc_317 v8-c2-hyperbolic-consciousness — moved to hypotheses_candidates/Hc_317_v8_c2_hyperbolic_consciousness.md on 2026-05-11] -->
+<!-- [Hc_318 v8-c3-complex-valued-consciousness — moved to hypotheses_candidates/Hc_318_v8_c3_complex_valued_consciousness.md on 2026-05-11] -->
+<!-- [Hc_319 v8-d1-moce-mixture-consciousness — moved to hypotheses_candidates/Hc_319_v8_d1_moce_mixture_consciousness.md on 2026-05-11] -->
+<!-- [Hc_320 v8-d2-hierarchical-attention-aggregation — moved to hypotheses_candidates/Hc_320_v8_d2_hierarchical_attention_aggregation.md on 2026-05-11] -->
+<!-- [Hc_321 v8-d3-consciousness-distillation — moved to hypotheses_candidates/Hc_321_v8_d3_consciousness_distillation.md on 2026-05-11] -->
+<!-- [Hc_322 v8-e1-learnable-phi-predictor — moved to hypotheses_candidates/Hc_322_v8_e1_learnable_phi_predictor.md on 2026-05-11] -->
+<!-- [Hc_323 v8-e2-causal-phi — moved to hypotheses_candidates/Hc_323_v8_e2_causal_phi.md on 2026-05-11] -->
+<!-- [Hc_324 v8-e3-temporal-phi — moved to hypotheses_candidates/Hc_324_v8_e3_temporal_phi.md on 2026-05-11] -->
+<!-- [Hc_325 v8-f1-consciousness-as-loss — moved to hypotheses_candidates/Hc_325_v8_f1_consciousness_as_loss.md on 2026-05-11] -->
+<!-- [Hc_326 v8-f2-consciousness-guided-nas — moved to hypotheses_candidates/Hc_326_v8_f2_consciousness_guided_nas.md on 2026-05-11] -->
+<!-- [Hc_327 v8-f3-consciousness-curriculum — moved to hypotheses_candidates/Hc_327_v8_f3_consciousness_curriculum.md on 2026-05-11] -->
+<!-- [Hc_328 v8-g1-autopoietic-consciousness — moved to hypotheses_candidates/Hc_328_v8_g1_autopoietic_consciousness.md on 2026-05-11] -->
+<!-- [Hc_329 v8-g2-consciousness-without-weights — moved to hypotheses_candidates/Hc_329_v8_g2_consciousness_without_weights.md on 2026-05-11] -->
+<!-- [Hc_330 v8-ultimate-stack — moved to hypotheses_candidates/Hc_330_v8_ultimate_stack.md on 2026-05-11] -->
+
 # V8 ConsciousLM: 급진적 아키텍처 가설 (Radical Architecture Hypotheses)
 
 > **"v5-v7은 같은 엔진의 변주였다. v8은 엔진 자체를 바꾼다."**

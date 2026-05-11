@@ -1,3 +1,6 @@
+<!-- [Hc_322 v8-e1-learnable-phi-predictor — moved to hypotheses_candidates/Hc_322_v8_e1_learnable_phi_predictor.md on 2026-05-11; PHI 측정 불일치 = E1/E2/E3 measurement innovation cluster] -->
+<!-- [Hc_323 v8-e2-causal-phi-ablation — moved to hypotheses_candidates/Hc_323_v8_e2_causal_phi.md on 2026-05-11] -->
+
 # PHI 측정 불일치 발견 (2026-03-29)
 
 ## 핵심 발견

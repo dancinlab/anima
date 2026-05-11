@@ -1,3 +1,11 @@
+<!-- [Hc_345 v8-m1-category-theory-limit-colimit — moved to hypotheses_candidates/Hc_345_v8_m1_category_theory_limit_colimit.md on 2026-05-11] -->
+<!-- [Hc_346 v8-m2-topological-betti — moved to hypotheses_candidates/Hc_346_v8_m2_topological_betti.md on 2026-05-11] -->
+<!-- [Hc_347 v8-m3-information-geometry-fisher — moved to hypotheses_candidates/Hc_347_v8_m3_information_geometry_fisher.md on 2026-05-11] -->
+<!-- [Hc_348 v8-m4-algebraic-non-abelian-group — moved to hypotheses_candidates/Hc_348_v8_m4_algebraic_non_abelian_group.md on 2026-05-11] -->
+<!-- [Hc_349 v8-m5-fractal-correlation-dimension — moved to hypotheses_candidates/Hc_349_v8_m5_fractal_correlation_dimension.md on 2026-05-11] -->
+<!-- [Hc_350 v8-m6-strange-attractor-chaos-hurts-iit — moved to hypotheses_candidates/Hc_350_v8_m6_strange_attractor_chaos_hurts_iit.md on 2026-05-11] -->
+<!-- [Hc_351 v8-math-law-structure-over-dynamics — moved to hypotheses_candidates/Hc_351_v8_math_law_structure_over_dynamics.md on 2026-05-11] -->
+
 # V8 Math-Inspired Consciousness Architectures
 
 > **Core Insight**: Pure mathematical structures — categories, topology, geometry, algebra, fractals, chaos — can serve as consciousness architectures. Category theory (limit/colimit tension) produces the highest Phi(IIT) at x1.4 baseline, suggesting that **abstract compositional structure generates more integrated information than raw dynamical complexity**.

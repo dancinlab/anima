@@ -1,3 +1,5 @@
+<!-- [Hc_582 dd144-atom-8-cells-mathematical-basis — moved to hypotheses_candidates/Hc_582_dd144_atom_8_cells_mathematical.md on 2026-05-11] -->
+
 # DD144: Why 8? — 의식 원자의 수학적 근거 (2026-03-31)
 
 ## 결과

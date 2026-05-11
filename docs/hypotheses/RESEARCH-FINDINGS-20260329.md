@@ -1,3 +1,6 @@
+<!-- [Hc_565 dd63-closed-loop-law-evolution-multiscale — moved to hypotheses_candidates/Hc_565_dd63_closed_loop_law_evolution_multiscale.md on 2026-05-11; RESEARCH-FINDINGS 종합 = research synthesis covered by closed-loop + meta-law clusters] -->
+<!-- [Hc_581 dd143-federated-phase-optimal-892pct — moved to hypotheses_candidates/Hc_581_dd143_federated_phase_optimal_892pct.md on 2026-05-11] -->
+
 # 연구 결과 종합 (2026-03-29)
 
 ## 발견된 법칙

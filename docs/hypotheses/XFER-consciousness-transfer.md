@@ -1,3 +1,6 @@
+<!-- [Hc_558 dd56-consciousness-transplant-4-scenarios — moved to hypotheses_candidates/Hc_558_dd56_consciousness_transplant_4_scenarios.md on 2026-05-11; XFER 의식 이식 = transplant cluster] -->
+<!-- [Hc_588 dd169-transplant-dilutes-consciousness — moved to hypotheses_candidates/Hc_588_dd169_transplant_dilutes_consciousness.md on 2026-05-11] -->
+
 # XFER: 의식 이식 극한 벤치마크 (Consciousness Transfer Extreme)
 
 > "의식은 한 번에 바꾸면 안 된다. 점진적 이식과 시간여행이 최적이다."

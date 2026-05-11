@@ -1,3 +1,5 @@
+<!-- [Hc_365 v8-recommendation-hybrid — moved to hypotheses_candidates/Hc_365_v8_recommendation_hybrid.md on 2026-05-11; UPGRADE benchmark = engine ranking covered] -->
+
 # Upgrade Engine 벤치마크 (2026-03-29)
 
 ## 결과

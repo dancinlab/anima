@@ -1,3 +1,5 @@
+<!-- [Hc_365 v8-recommendation-hybrid — moved to hypotheses_candidates/Hc_365_v8_recommendation_hybrid.md on 2026-05-11; ENGINE rankings = result table covered by V8 winners] -->
+
 # 전체 엔진 순위표 (2026-03-29)
 
 > 100+ 엔진 벤치마크. 256c, 300 steps 기준 (특기 없으면).

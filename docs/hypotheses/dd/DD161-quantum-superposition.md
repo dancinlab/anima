@@ -1,3 +1,5 @@
+<!-- [Hc_585 dd161-quantum-superposition-32c-deep-dive — moved to hypotheses_candidates/Hc_585_dd161_quantum_superposition_32c.md on 2026-05-11] -->
+
 # DD161: Quantum Superposition Deep Dive -- Why 32c?
 
 ## Background

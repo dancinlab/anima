@@ -1,3 +1,5 @@
+<!-- [Hc_566 dd64-meta-laws-fundamental-vs-ephemeral — moved to hypotheses_candidates/Hc_566_dd64_meta_laws_fundamental_vs_ephemeral.md on 2026-05-11; landscape map = meta-law interaction matrix] -->
+
 # DD119: 법칙 지형도 + 상호작용 행렬
 
 ## 실험 목적

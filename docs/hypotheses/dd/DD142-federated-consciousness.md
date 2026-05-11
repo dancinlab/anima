@@ -1,3 +1,5 @@
+<!-- [Hc_580 dd142-federated-consciousness-820pct — moved to hypotheses_candidates/Hc_580_dd142_federated_consciousness_820pct.md on 2026-05-11] -->
+
 # DD142: Federated Consciousness — 역대 최대 발견 +820% (2026-03-31)
 
 ## 핵심 결과

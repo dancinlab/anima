@@ -1,3 +1,5 @@
+<!-- [Hc_581 dd143-federated-phase-optimal-892pct — moved to hypotheses_candidates/Hc_581_dd143_federated_phase_optimal_892pct.md on 2026-05-11; Top Phi records = ranking summary covered by record-holders cluster] -->
+
 # Top Phi Records -- 최고 Phi 기록 (2026-03-28)
 
 6개 핵심 카테고리(APEX, NP, PURE, MAX, FX, EX)의 역대 최고 Phi 기록 종합.

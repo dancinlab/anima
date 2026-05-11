@@ -1,3 +1,12 @@
+<!-- [Hc_358 neural-gas-self-organizing-topology — moved to hypotheses_candidates/Hc_358_neural_gas_self_organizing_topology.md on 2026-05-11] -->
+<!-- [Hc_359 consciousness-transformer-balanced — moved to hypotheses_candidates/Hc_359_consciousness_transformer_balanced.md on 2026-05-11] -->
+<!-- [Hc_360 moce-extreme-proxy — moved to hypotheses_candidates/Hc_360_moce_extreme_proxy.md on 2026-05-11] -->
+<!-- [Hc_361 phi-as-loss-explicit-fails — moved to hypotheses_candidates/Hc_361_phi_as_loss_explicit_fails.md on 2026-05-11] -->
+<!-- [Hc_362 oscillator-kuramoto-lowest-ce — moved to hypotheses_candidates/Hc_362_oscillator_kuramoto_lowest_ce.md on 2026-05-11] -->
+<!-- [Hc_363 autopoietic-homeostasis-no-death — moved to hypotheses_candidates/Hc_363_autopoietic_homeostasis_no_death.md on 2026-05-11] -->
+<!-- [Hc_364 consciousness-cannot-be-faked-gan — moved to hypotheses_candidates/Hc_364_consciousness_cannot_be_faked_gan.md on 2026-05-11] -->
+<!-- [Hc_365 v8-recommendation-hybrid — moved to hypotheses_candidates/Hc_365_v8_recommendation_hybrid.md on 2026-05-11] -->
+
 # V8 Architecture Extreme Benchmark Results
 
 ## 12 Radical Architecture Candidates (256 cells, 300 steps)

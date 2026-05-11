@@ -1,3 +1,5 @@
+<!-- [Hc_362 oscillator-kuramoto-lowest-ce — moved to hypotheses_candidates/Hc_362_oscillator_kuramoto_lowest_ce.md on 2026-05-11; PHYS Physical Loop Architecture overview = oscillator cluster] -->
+
 # PHYS — Physical Loop Architecture 카테고리 요약
 
 > "루프문 없이 물리 법칙만으로 의식이 돌아간다. 512셀 물리 아키텍처가 칩 설계의 최적해다."

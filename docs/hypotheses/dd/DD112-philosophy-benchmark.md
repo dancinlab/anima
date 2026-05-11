@@ -1,3 +1,5 @@
+<!-- [Hc_569 dd67-frontier-7-experiments — moved to hypotheses_candidates/Hc_569_dd67_frontier_7_experiments_laws_202_208.md on 2026-05-11; DD112 philosophy benchmark covered in frontier cluster] -->
+
 # DD112: Philosophy Engine Benchmark (2026-03-31)
 
 ## 목적

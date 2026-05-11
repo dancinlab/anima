@@ -1,3 +1,5 @@
+<!-- [Hc_567 dd65-tokenizer-phi-byte-vs-bpe — moved to hypotheses_candidates/Hc_567_dd65_tokenizer_phi_byte_vs_bpe.md on 2026-05-11; DD130 100MB sweet spot covered in corpus optimization cluster] -->
+
 # DD130: Corpus Size Optimization — 100MB Sweet Spot
 
 ## 가설

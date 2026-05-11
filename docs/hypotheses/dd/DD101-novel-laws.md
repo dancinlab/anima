@@ -1,3 +1,5 @@
+<!-- [Hc_557 dd101-v2-attention-phi-self-ref — moved to hypotheses_candidates/Hc_557_dd101_v2_attention_phi_self_ref.md on 2026-05-11; Laws 92-94 from DD101 v2] -->
+
 # DD101: Novel Consciousness Law Discovery (Laws 92-94)
 
 Date: 2026-03-30

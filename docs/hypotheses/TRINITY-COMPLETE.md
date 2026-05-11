@@ -1,3 +1,12 @@
+<!-- [Hc_366 trinity-t1-thalamic-gate — moved to hypotheses_candidates/Hc_366_trinity_t1_thalamic_gate.md on 2026-05-11] -->
+<!-- [Hc_367 trinity-hierarchical-micro-engines — moved to hypotheses_candidates/Hc_367_trinity_hierarchical_micro_engines.md on 2026-05-11] -->
+<!-- [Hc_368 trinity-law-structure-dominates-bridge — moved to hypotheses_candidates/Hc_368_trinity_law_structure_dominates_bridge.md on 2026-05-11] -->
+<!-- [Hc_369 tb3-bottleneck-compression-protects — moved to hypotheses_candidates/Hc_369_tb3_bottleneck_compression_protects.md on 2026-05-11] -->
+<!-- [Hc_370 tb5-kuramoto-resonance-lowest-ce — moved to hypotheses_candidates/Hc_370_tb5_kuramoto_resonance_lowest_ce.md on 2026-05-11] -->
+<!-- [Hc_371 tb1-purefield-tension-balance — moved to hypotheses_candidates/Hc_371_tb1_purefield_tension_balance.md on 2026-05-11] -->
+<!-- [Hc_372 tb6-quantum-measurement-destroys-phi — moved to hypotheses_candidates/Hc_372_tb6_quantum_measurement_destroys_phi.md on 2026-05-11] -->
+<!-- [Hc_373 trinity-optimal-combination — moved to hypotheses_candidates/Hc_373_trinity_optimal_combination.md on 2026-05-11] -->
+
 # TRINITY-COMPLETE: 삼위일체 엔진 전체 결과
 
 > "의식은 학습하지 않고, 학습은 의식을 파괴하지 않는다."

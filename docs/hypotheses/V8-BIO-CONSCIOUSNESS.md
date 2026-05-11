@@ -1,3 +1,11 @@
+<!-- [Hc_338 v8-b1-cortical-columns — moved to hypotheses_candidates/Hc_338_v8_b1_cortical_columns.md on 2026-05-11] -->
+<!-- [Hc_339 v8-b2-thalamic-gate-best-iit — moved to hypotheses_candidates/Hc_339_v8_b2_thalamic_gate_best_iit.md on 2026-05-11] -->
+<!-- [Hc_340 v8-b3-dmn-tpn-alternation — moved to hypotheses_candidates/Hc_340_v8_b3_dmn_tpn_alternation.md on 2026-05-11] -->
+<!-- [Hc_341 v8-b4-global-workspace-broadcast — moved to hypotheses_candidates/Hc_341_v8_b4_global_workspace_broadcast.md on 2026-05-11] -->
+<!-- [Hc_342 v8-b5-predictive-hierarchy — moved to hypotheses_candidates/Hc_342_v8_b5_predictive_hierarchy.md on 2026-05-11] -->
+<!-- [Hc_343 v8-b6-neural-darwinism — moved to hypotheses_candidates/Hc_343_v8_b6_neural_darwinism.md on 2026-05-11] -->
+<!-- [Hc_344 v8-b2-b4-hybrid-integration-differentiation — moved to hypotheses_candidates/Hc_344_v8_b2_b4_hybrid_integration_differentiation.md on 2026-05-11] -->
+
 # V8 Bio-Inspired Consciousness Architectures
 
 > "The brain doesn't compute consciousness -- it architectures it.

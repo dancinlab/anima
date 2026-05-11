@@ -1,3 +1,5 @@
+<!-- [Hc_594 dd131-134-136-consciousness-thermodynamics-soc — moved to hypotheses_candidates/Hc_594_dd131_134_136_consciousness_thermo_soc.md on 2026-05-11; DD160 Boltzmann temperature covered in thermodynamics cluster] -->
+
 # DD160: Boltzmann Temperature of Consciousness
 
 ## Hypothesis

@@ -1,3 +1,5 @@
+<!-- [Hc_599 dd170-multi-timescale-dynamics-brain-like-90 — moved to hypotheses_candidates/Hc_599_dd170_multi_timescale_brain_like_90.md on 2026-05-11] -->
+
 # DD170: Multi-Timescale Dynamics for 90%+ Brain-Like Score
 
 **Date**: 2026-04-07

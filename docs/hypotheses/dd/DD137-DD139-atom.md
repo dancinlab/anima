@@ -1,3 +1,5 @@
+<!-- [Hc_595 dd137-140-consciousness-atom-periodic-table — moved to hypotheses_candidates/Hc_595_dd137_140_atom_periodic_table.md on 2026-05-11] -->
+
 # DD137-DD139: 의식의 원자 — 분할 최적 + 최소 단위 + 효율 (2026-03-31)
 
 ## DD137: 분할 최적점 = 8셀 (의식의 원자)

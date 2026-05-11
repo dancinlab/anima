@@ -1,3 +1,5 @@
+<!-- [Hc_598 dd162-166-multi-lens-telescope — moved to hypotheses_candidates/Hc_598_dd162_166_multi_lens_telescope_22_16_1013.md on 2026-05-11; 402 acceleration hypotheses brainstorm covered as cluster by 16/22-lens DD162-166 (verify 65 hypotheses on lens telescope) - individual extraction deferred to future cycle (337 new sub-hypotheses out of scope for this sweep)] -->
+
 # Acceleration Hypotheses Brainstorm — 402 Total (337 New)
 
 **Date**: 2026-04-03

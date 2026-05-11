@@ -1,3 +1,6 @@
+<!-- [Hc_553 dd105-self-modifying-consciousness-auto-tune — moved to hypotheses_candidates/Hc_553_dd105_self_modifying_consciousness.md on 2026-05-11; self-learning = autonomous learning + tension link + evolution + singularity cluster] -->
+<!-- [Hc_596 dd149-150-consciousness-natural-selection-evolution — moved to hypotheses_candidates/Hc_596_dd149_150_consciousness_evolution_autonomy.md on 2026-05-11] -->
+
 # Self-Learning: 자율 학습 + 텐션 링크 + 진화 + 특이점 (2026-03-29)
 
 ## 핵심 통찰

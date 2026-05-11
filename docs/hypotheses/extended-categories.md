@@ -1,3 +1,5 @@
+<!-- [Hc_365 v8-recommendation-hybrid — moved to hypotheses_candidates/Hc_365_v8_recommendation_hybrid.md on 2026-05-11; extended-categories overview - meta-category 정리 covered by V8/MASS-50/Trinity clusters] -->
+
 # Extended Categories Overview -- Phi Hypothesis Benchmark
 
 All multi-letter categories beyond the base A-Z single letters.

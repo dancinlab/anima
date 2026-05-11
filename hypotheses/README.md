@@ -209,6 +209,7 @@ since: <YYYY-MM-DD>
 | H_150 | accel-remainder-360-individual-pointer | substrate | legacy-archive-pointer | [H_150_accel_remainder_360_individual.md](H_150_accel_remainder_360_individual.md) |
 | H_151 | ce-remaining-19-files-pointer | substrate | legacy-archive-pointer | [H_151_ce_remaining_19_files.md](H_151_ce_remaining_19_files.md) |
 | H_152 | dd-remainder-ungrouped-individual-cluster | substrate | legacy-archive-pointer | [H_152_dd_remainder_ungrouped.md](H_152_dd_remainder_ungrouped.md) |
+| H_153 | dimension-hierarchy-n6 | physics | pre-register-frozen | [H_153_dimension_hierarchy_n6.md](H_153_dimension_hierarchy_n6.md) |
 
 **Migration status**:
 - H_001-H_005: 본 cycle 신규 seed (윤리/우주/생명/의식 hard problem/corpus)

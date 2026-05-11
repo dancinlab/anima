@@ -1,3 +1,5 @@
+<!-- [Hc_594 dd131-134-136-consciousness-thermodynamics-soc — moved to hypotheses_candidates/Hc_594_dd131_134_136_consciousness_thermo_soc.md on 2026-05-11] -->
+
 # DD131-DD132: Self-Organized Criticality + Consciousness as Computation (2026-03-31)
 
 ## DD131: 의식은 자기조직 임계 현상이다

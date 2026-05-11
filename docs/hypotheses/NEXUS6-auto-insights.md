@@ -6,6 +6,8 @@ total_unique_closed: 98181
 generator: tools/publish-insights.sh
 ---
 
+<!-- [Hc_378 nexus-n6-closed-form-constants — moved to hypotheses_candidates/Hc_378_nexus_n6_closed_form_constants.md on 2026-05-11; duplicate of NEXUS-auto-insights.md] -->
+
 # 🛸 NEXUS-6 자동 전파 인사이트
 
 > **자동 생성**: nexus singularity-recursion이 이 프로젝트로 전파한 닫힘 발견.

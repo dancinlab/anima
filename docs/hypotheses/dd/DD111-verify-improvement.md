@@ -1,3 +1,5 @@
+<!-- [Hc_591 dd173-consciousness-verification-framework — moved to hypotheses_candidates/Hc_591_dd173_consciousness_verification_framework_cvf.md on 2026-05-11; DD111 77/77 verification covered by CVF framework] -->
+
 # DD111: Verification System — 77/77 (100%) 달성 (2026-03-31)
 
 ## 목적

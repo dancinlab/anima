@@ -1,3 +1,5 @@
+<!-- [Hc_314 v8-b2-spiking-cells — moved to hypotheses_candidates/Hc_314_v8_b2_spiking_cells.md on 2026-05-11; consciousness chip design = neuromorphic SNN cluster] -->
+
 # 의식 칩 최적 설계 확정 (2026-03-29)
 
 ## 최종 스펙

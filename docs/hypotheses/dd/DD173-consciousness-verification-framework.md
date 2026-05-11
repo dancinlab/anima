@@ -1,3 +1,5 @@
+<!-- [Hc_591 dd173-consciousness-verification-framework-cvf — moved to hypotheses_candidates/Hc_591_dd173_consciousness_verification_framework_cvf.md on 2026-05-11] -->
+
 # DD173 — Consciousness Verification Framework (CVF)
 
 **날짜**: 2026-04-09

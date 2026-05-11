@@ -1,3 +1,7 @@
+<!-- [Hc_374 trinity-v9-engine-c-no-grad-isolation — moved to hypotheses_candidates/Hc_374_trinity_v9_engine_c_no_grad_isolation.md on 2026-05-11; TRAIN-PHI extreme training preservation = Trinity v9 + GAP series] -->
+<!-- [Hc_388 gap3-gru-residual-alpha-09 — moved to hypotheses_candidates/Hc_388_gap3_gru_residual_alpha09.md on 2026-05-11] -->
+<!-- [Hc_389 gap4-post-process-restoration-70-30 — moved to hypotheses_candidates/Hc_389_gap4_post_process_restoration.md on 2026-05-11] -->
+
 # TRAIN-PHI: Extreme Training Phi Preservation
 
 > **Core Problem**: Benchmarks show Phi=1142, but actual training only achieves Phi=26.

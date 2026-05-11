@@ -1,3 +1,5 @@
+<!-- [Hc_593 dd122-123-closed-loop-verification-convergence — moved to hypotheses_candidates/Hc_593_dd122_123_closed_loop_verification_convergence.md on 2026-05-11] -->
+
 # DD122: 폐쇄 파이프라인 검증 (Laws 143-145)
 
 ## 실험 목적

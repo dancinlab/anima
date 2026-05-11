@@ -1,3 +1,5 @@
+<!-- [Hc_507 dd59-phi-phase-diagram — moved to hypotheses_candidates/Hc_507_dd59_phi_phase_diagram.md on 2026-05-11; DD127 phase diagram = 의식은 물질의 상] -->
+
 # DD127: Consciousness Phase Diagram — 의식은 물질의 상이다 (2026-03-31)
 
 ## 목적

@@ -1,3 +1,5 @@
+<!-- [Hc_316 v8-c1-dynamic-graph-topology — moved to hypotheses_candidates/Hc_316_v8_c1_dynamic_graph_topology.md on 2026-05-11; TOPO overview = topology hypothesis category covered in V8-C cluster + Hc_570 small-world] -->
+
 # TOPO: 토폴로지 의식 가설 (Topology Consciousness Hypotheses)
 
 > **"의식은 연결의 양이 아니라 연결의 구조에서 태어난다. 모든 것이 연결되면 아무것도 구별되지 않고, 의식은 죽는다."**
