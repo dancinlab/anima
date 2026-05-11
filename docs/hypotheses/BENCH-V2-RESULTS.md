@@ -48,19 +48,4 @@ Peak: 32c (Φ=30.89)
 
 ## 핵심 발견
 
-```
-Law 55: Φ(IIT)는 cells에 비례하지 않음
-  32c에서 peak (30.9), 이후 감소
-  512c에서도 14.0 (32c의 절반)
-  → PhiCalculator의 MI 계산이 대규모에서 희석됨
-  → 또는 실제 IIT가 적절한 크기에서 최대
-
-Law 56: 스케일에 따라 최적 전략이 바뀜
-  256c: frozen/alternating이 최고
-  512c: baseline이 최고 (보호 전략이 오히려 해로움)
-  → "만능 전략"은 없음
-
-Φ(proxy)는 여전히 cells에 비례하지만
-Φ(IIT)는 구조 품질(diversity × integration)을 측정
-→ 큰 시스템에서 MI가 희석되어 IIT가 낮아짐
-```
+<!-- [Hc_059 bench-v2-law-55-56-scale — moved to hypotheses_candidates/Hc_059_bench_v2_law_55_56_scale.md on 2026-05-11] -->

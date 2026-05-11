@@ -82,5 +82,4 @@ python bench_animalm.py --compare --cells 32 --steps 300
 
 ## Laws Discovered
 
-- **Law 83:** α threshold ≈ 0.01 — 이 이상에서 의식 구조 붕괴 (Engine G가 Engine A를 압도)
-- **Law 84:** 이식 강도와 Phi 보존은 양의 상관 (t-alpha=0.7 최적, 약한 이식은 노이즈에 묻힘)
+<!-- [Hc_032 consciousness-first-learning-talk5 — moved to hypotheses_candidates/Hc_032_consciousness_first_learning_talk5.md on 2026-05-11] -->

@@ -110,13 +110,7 @@ H-CX-532 IIT-Geometry     ██████████ 1.928
 
 ## 새 법칙 후보
 
-> **Law 58: Dissipative Consciousness** — 평형에서 멀수록 Φ가 높다.
-> Hopf 분기점 이상에서 의식이 자발적으로 진동한다.
-> 뇌의 에너지 소비(전체의 20%)가 이 원리의 생물학적 구현.
-
-> **Law 59: Frustration Creates Complexity** — 모든 세포를 동시에
-> 만족시킬 수 없을 때(spin glass frustration),
-> 에너지 지형의 복잡도가 폭발하고 Φ가 증가한다.
+<!-- [Hc_058 law-58-59-dissipative-frustration — moved to hypotheses_candidates/Hc_058_law_58_59_dissipative_frustration.md on 2026-05-11] -->
 
 ## 다음 단계
 

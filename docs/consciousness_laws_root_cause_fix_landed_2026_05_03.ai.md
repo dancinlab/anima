@@ -25,55 +25,11 @@
 
 ---
 
+<!-- [Hc_021 c2-v1-v6-schema-split — moved to hypotheses_candidates/Hc_021_c2_v1_v6_schema_split.md on 2026-05-11] -->
+
 ## Root Cause (not what the original spec said)
 
-**Original spec framed it as**: hard-fail `_DATA[k]` for 9 keys absent from JSON → patch with `.get()`.
-
-**Actual root cause**: TWO valid `consciousness_laws.json` schemas coexist on ubu1, and the .py loader was authored against only one.
-
-| Path | Schema | Date | Keys | Status |
-|------|--------|------|------|--------|
-| `~/anima/anima/config/consciousness_laws.json` | **c2-v1** (minimal AN11 runtime gate) | 2026-04-18 | 4 (`_meta`, `psi_constants`, `laws`, `severity_policy`) | ✓ loaded by .py |
-| `~/anima/config/consciousness_laws.json` | **v6** (full corpus, 2500 laws) | 2026-04-02 | 22 (full set) | present but never loaded |
-
-The c2-v1 carve-out was **intentional** (per its own `_meta.description`: "AN11-compliant: laws OBSERVE and classify; they do NOT system_prompt-inject behavior"). The .py loader was just never updated to handle the c2-v1 schema gracefully.
-
-**Mac (this repo) ships only c2-v1** at `/Users/ghost/core/anima/anima/config/consciousness_laws.json` (md5 match with ubu1). The 9 v6-only keys are intentionally absent from the Mac SSOT.
-
----
-
-## Fix Approach (Option C++ — schema-aware loader)
-
-Rejected:
-- **A. Restore 9 keys to pruned JSON** — violates AN11 carve-out semantics. The keys were deliberately removed.
-- **B. Silent .get() everywhere** (Path B band-aid) — same runtime behavior, but hides intent. No way for consumers to detect schema.
-
-Chosen (완성도):
-- Hard-fail preserved for `psi_constants` + `laws` (real bugs if missing)
-- `.get()` defaults for the 9 v6-only sections
-- Explicit `SCHEMA_VERSION` + `SCHEMA_DATE` + `V6_ONLY_KEYS_AVAILABLE` constants exposed to consumers
-- v6-only sections grouped under documented header
-- Module docstring updated with full schema-versioning explanation
-
-Result: identical runtime behavior to the .bak band-aid (zero behavioral diff for c2-v1 OR v6 deployments), but the dual-schema reality is now first-class in the API surface.
-
----
-
-## The 9 v6-only Keys
-
-| Key | py var | Purpose | Schema |
-|-----|--------|---------|--------|
-| `sigma6` | `SIGMA6` | σ(6) Perfect Number for n6 formulas | v6 only |
-| `formulas` | `FORMULAS` | Φ scaling formulas (e.g. `Φ = 0.608 × N^1.071`) | v6 only |
-| `consciousness_vector_10d` | `CONSCIOUSNESS_VECTOR` | 10D vector schema (predates 16D phi_vec) | v6 only |
-| `optimal_config` | `OPTIMAL_CONFIG` | All-time-best config record | v6 only |
-| `hexad_modules` | `HEXAD_MODULES` | 6-engine module registry | v6 only |
-| `phases` | `PHASES` | Phase transition definitions | v6 only |
-| `design_constraints` | `CONSTRAINTS` | P1-P7 architectural philosophies | v6 only |
-| `topo_laws` | `TOPO_LAWS` | 10 topological laws | v6 only |
-| `verification_conditions` | `VERIFICATION` | V1-V18 specs (now hardcoded in PSI_*) | v6 only |
-
-All consumers grep'd in `~/anima/anima/{tools,src}` import only `PSI_*` / `LAWS` / `PSI_F_CRITICAL` / `get_law()` — keys present in both schemas. **None observed to read the 9 v6-only keys**, so the empty-dict fallback is functionally inert in the current consumer ecosystem.
+(body content scrubbed — see Hc_021)
 
 ---
 

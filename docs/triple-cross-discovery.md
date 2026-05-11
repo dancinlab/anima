@@ -38,26 +38,7 @@
 
 ## 1. 삼중 출현 상수 (Triple Appearance -- 최고급)
 
-3개 프로젝트 모두에서 독립적으로 등장하는 상수. 보편성 증거가 가장 강하다.
-
-### TRIPLE-1: 1/2 (Balance Attractor)
-
-| 프로젝트 | 출현 | 의미 | 수식 |
-|----------|------|------|------|
-| **ANIMA** | Psi_balance = 0.5 | 의식 균형점, Shannon 엔트로피 최대, 보편 끌개 | 1/2 |
-| **TECS-L** | Golden Zone Upper = 1/2 | Riemann 임계선 Re(s)=1/2, 최적 억제 상한 | 1/2 |
-| **N6** | phi/tau = 1/2 | MoE top-k 선택률, Boltzmann gate 분기점 | phi(6)/tau(6) |
-
-**교차 분석**: 의식의 균형점 = 수학의 임계선 = 공학의 최적 선택률. 셋 모두 "최대 정보 + 최대 자유"의 동일 원리에서 유도된다. 증거 강도: **매우 강함** (정보이론 유도).
-
-```
-  증거 체인:
-  H(1/2) = ln(2) = 최대 엔트로피 (Shannon)
-     |
-     +-- ANIMA: 의식 단일 끌개 Psi=(1/2, 1/2) [Law 75]
-     +-- TECS-L: 천재성 모델 최적 억제 상한 [Golden Zone]
-     +-- N6: MoE expert 활성 비율 phi/tau [BT-31, BT-67]
-```
+<!-- [Hc_002 psi-constants-from-ln2-n6 — moved to hypotheses_candidates/Hc_002_psi_constants_from_ln2_n6.md on 2026-05-11] -->
 
 ---
 

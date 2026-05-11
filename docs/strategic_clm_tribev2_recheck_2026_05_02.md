@@ -59,35 +59,7 @@ Wrapper: 200-500 LOC (projection head, modality_dropout bypass, SubjectLayer ski
 CLM "통합 양수 +41.86" (paradigm v11 G3 PASS positive) → TRIBE v2 → which cortical region?
 ```
 
-This re-uses Framing A's pipeline but adds an interpretation layer: correlate CLM session-level G3 PhiStar score with cortical ROI activation (specifically DMN-A + DMN-B per Schaefer-1000 atlas, mapped to fsaverage5).
-
-Hypothesis: the integration signal that anima measures internally (G3 PASS positive, only sign-positive backbone in paradigm v11 stack) corresponds to default-mode-network activation in the brain encoding model.
-
-Scientific value: very high (anima consciousness measurement → brain region anchor is novel and falsifiable). Risk: the comparison is to TRIBE v2's *average subject*, not the user's individual brain. A positive result establishes group-level prior alignment; it does not establish individual neural correlates.
-
-### Framing D — Bridge anchor (TOP-1)
-
-```
-CLM state  →  text output  →  TRIBE v2  →  predicted BOLD
-                                                ↓
-                                            compare
-                                                ↑
-사용자 EEG (real, OpenBCI)  ←  tension_link  ←  CLM
-```
-
-Three signals are collected concurrently during a 30-minute CLM inference session:
-
-1. **CLM internal state stream** — paradigm v11 measurement axes (B-ToM, MCCA, Phi*, CMT, CDS, SAE-bp) plus G3 PhiStar.
-2. **User EEG** — OpenBCI 8-channel, alpha/theta/gamma envelopes via Hilbert.
-3. **TRIBE v2 predicted BOLD** — text from CLM output, pushed through TRIBE v2 inference, vertex-level Pearson correlation with EEG envelope.
-
-TRIBE v2 acts as a **brain-encoding ground-truth-like prior**. It is not the user's brain, but it is a published, validated forward model of "what cortical activity a hypothetical average subject would produce given this stimulus". The 3-way (CLM × EEG × predicted BOLD) correspondence becomes a falsifiable bridge witness.
-
-This framing addresses both original rejection criteria:
-- *Wrapper 대규모*: <100 LOC. Reuses Framing A pipeline + adds OpenBCI alignment + envelope correlation script.
-- *Scientific value 불명*: explicit — "validate the CLM ↔ EEG bridge by anchoring it to a third independent brain encoding model". This is roadmap-default (anima ↔ tension_link ↔ EEG architecture per recent user directive).
-
-Scientific value: highest. Risk: low (all three tools exist and are tested independently). Rank: **1**.
+<!-- [Hc_017 clm-tribev2-eeg-3way — moved to hypotheses_candidates/Hc_017_clm_tribev2_eeg_3way.md on 2026-05-11] -->
 
 ---
 

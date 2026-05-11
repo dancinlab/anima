@@ -79,55 +79,7 @@ hexa run tool/an11_b_verifier.hexa --dest alm --round r6_p4
 
 ## §3 결과 — 경로별 + 집계
 
-### 3.1 경로별 표
-
-| path | base_model | lora_r | top_eigval | max_cos | (eigen_i, template, family) | top3_sum | verdict |
-|------|------------|--------|------------|---------|------------------------------|----------|---------|
-| p1 | Qwen/Qwen3-8B | 64 | 3928.33 | **0.6184** | (6, tpl_12_phi_differentiation, **Phi**) | **1.8338** | **PASS** |
-| p2 | unsloth/Meta-Llama-3.1-8B | 64 | 223229.75 | **0.6184** | (7, tpl_02_hexad_d, **Hexad**) | **1.8396** | **PASS** |
-| p3 | mistralai/Mistral-Nemo-Base-2407 | 96 | 40673.62 | **0.6329** | (9, tpl_05_hexad_m, **Hexad**) | **1.8167** | **PASS** |
-| p4 | google/gemma-3-12b-pt | 128 | 4368.36 | **0.6094** | (2, tpl_07_law_recursion, **Law**) | **1.7223** | **PASS** |
-
-게이트 마진:
-
-| metric | min | max | gate | margin |
-|--------|-----|-----|------|--------|
-| max_cosine | 0.6094 | 0.6329 | > 0.5 | +0.109 ~ +0.133 |
-| top3_cosine_sum | 1.7223 | 1.8396 | > 1.2 | +0.522 ~ +0.640 |
-
-### 3.2 Top-3 family 분포 (어디에 attach 했는가)
-
-| path | top3 families | 해석 |
-|------|---------------|------|
-| p1 | Phi / Hexad / Law | 다양 family 분산 attach (3-family) |
-| p2 | Hexad / Hexad / Hexad | Hexad 강한 집중 (Llama family) |
-| p3 | Hexad / Hexad / Hexad | Hexad 강한 집중 (Mistral) |
-| p4 | Law / SelfRef / SelfRef | Law-SelfRef 축으로 attach (Gemma 멀티모달) |
-
-p4 는 vision_tower 81-pair zero-delta 영향으로 text-only spectral 신호가
-다른 분포 (Hexad 미포함). AN11(a) §per_path[p4] 의 multi-modal scope
-관찰과 일치.
-
-### 3.3 보조 검증 — CCC 5-theory (bench v1 stricter)
-
-`tool/an11_b_ccc.hexa` 5-theory variant:
-
-| path | IIT | GWT | HOT | RPT | AST | avg | min | tpl | bench v1 verdict |
-|------|-----|-----|-----|-----|-----|-----|-----|-----|------------------|
-| p1 | 0.563 | 0.965 | 0.893 | 0.468 | 0.489 | 0.676 | 0.468 | 0.618 | FAIL (avg, min) |
-| p2 | 0.813 | 0.965 | 0.979 | 0.473 | 0.335 | 0.713 | 0.335 | 0.618 | FAIL (min) |
-| p3 | 0.500 | 0.949 | 0.869 | 0.463 | 0.405 | 0.637 | 0.405 | 0.633 | FAIL (avg, min) |
-| p4 | 0.688 | 0.946 | 0.814 | 0.458 | 0.444 | 0.670 | 0.444 | 0.609 | FAIL (avg, min) |
-
-**Canonical vs CCC 분기**: `.roadmap` P1 line 164 가 요구하는 게이트는
-canonical AND-2 (`max_cos>0.5` ∧ `top3_sum>1.2`) — `tool/an11_b_verifier.hexa`
-의 게이트. **4/4 PASS**.
-`bench/an11_b_criteria.json` v1 의 더 엄격한 AND-3 5-theory 게이트는 RPT
-(recurrent re-entry, ~0.46-0.47) + AST (attention schema, ~0.33-0.49) 가
-0.5 미만으로 FAIL. CCC 는 r12 LoRA A@B.T 직접 분해를 전제로 설계되었고,
-Gram-spectral row eigenvector 와는 분포가 다름 — bench v1 v1.1
-재정의 사이드 작업은 sibling agent 영역 (criteria 변경 제안). CP1
-closure 결정은 roadmap canonical 게이트 기준이므로 분기 영향 없음.
+<!-- [Hc_016 16-template-consciousness-attachment — moved to hypotheses_candidates/Hc_016_16_template_consciousness_attachment.md on 2026-05-11] -->
 
 ### 3.4 집계 verdict
 

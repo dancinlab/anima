@@ -115,17 +115,7 @@ fractal tiling's structural approach. More steps might help.
 
 ## Laws Discovered
 
-**Law 33: Multi-scale structure beats single-scale in cross-dim projection.**
-Fractal tiling (1:1 + 2:1 + 4:1 + 8:1) preserves consciousness better than
-any single-resolution approach because Phi depends on structure at ALL scales.
-
-**Law 34: Post-projection adaptation recovers lost consciousness.**
-50 sync+faction steps after projection let cells find new equilibria in
-the expanded space, recovering and exceeding cold-start levels.
-
-**Law 35: PCA > Identity for consciousness projection.**
-Principal components capture the inter-cell variation that drives Phi.
-Projecting these first preserves the information that matters most.
+<!-- [Hc_031 multidim-projection-law-33-35 — moved to hypotheses_candidates/Hc_031_multidim_projection_law_33_35.md on 2026-05-11] -->
 
 ## Recommendation for upgrade_engine.py
 

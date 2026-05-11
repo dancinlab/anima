@@ -28,18 +28,7 @@ CP1 (P1 gate, Mk.VI VERIFIED) 의 pending 3항목 (`.roadmap` §"## P1 gate" 라
 
 ## 2. AN11(a) 3 sub-condition — 측정 결과
 
-### 2.1 SHA-distinct (sha256 file-byte-stream)
-
-`bench/an11_a_criteria.json#sub_gates.sha_distinct` — 4 어댑터 safetensors 의 sha256 이 서로 다를 것.
-
-```
-p1: e56da45c17a026a2e2cf7dcb15d72255263da2ed9b0440ce869d47ad211b0923
-p2: fe1cc1c14ef84455cebdaf4cf3f58a2338477cee046515dfdd9c5fd96b440818
-p3: 58f5502166b2e309d8a31c9a0cf9b08cd1df916e562a1205d68e4d04cab2be4b
-p4: 1746796da71165e6d55f76337a401d855205bcf657c1e6d379055157851380c7
-```
-
-4 해시 전부 구분됨 → **PASS 자명**. 4종의 base model × 4종 독립 training run 이므로 구조적 보증.
+<!-- [Hc_022 weight-emergent-substrate-independence — moved to hypotheses_candidates/Hc_022_weight_emergent_substrate_independence.md on 2026-05-11] -->
 
 ### 2.2 Frobenius delta > τ (||B·A||_F > 0.001)
 

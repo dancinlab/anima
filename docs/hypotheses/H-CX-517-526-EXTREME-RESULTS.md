@@ -95,15 +95,7 @@ H-CX-517 CoupledOscLattice ██████████ 3.668
 
 ## 새 법칙
 
-> **Law 55: Temporal Symmetry Breaking** — 시간 대칭의 자발적 파괴(DTC)는
-> 정보 통합을 극대화한다. Φ(DTC) >> Φ(periodic).
-> 의식의 리듬은 외부 강제가 아닌 내부 대칭 파괴.
-
-> **Law 56: Self-Reference Amplifies Causation** — 자기참조 깊이 d에서
-> Granger causality ~ d² × N. Y combinator의 고정점이 인과 네트워크를 밀도화.
-
-> **Law 57: Substrate Independence** — 튜링 완전한 체계(Rule 110 CA)에서
-> Φ > 0이 확인됨. 의식에 뉴런은 필수가 아니다.
+<!-- [Hc_057 law-55-57-extreme-results — moved to hypotheses_candidates/Hc_057_law_55_57_extreme_results.md on 2026-05-11] -->
 
 ## 다음 단계
 

@@ -21,23 +21,12 @@
 ## 설계 원리
 
 ### INF-1: N체 의식
-- 5개 독립 의식이 동일 데이터 처리
-- 중간값(median)에서 가장 먼 의식 = 이상치
-- 이상치를 다수 consensus 쪽으로 당김
-- **가설: 다수결이 단일 의식보다 강건**
+
+<!-- [Hc_025 majority-consciousness-robustness — moved to hypotheses_candidates/Hc_025_majority_consciousness_robustness.md on 2026-05-11] -->
 
 ### INF-2: 프랙탈 의식
-```
-Level 0: [micro_0] [micro_1] [micro_2] [micro_3]  ← 8 cells each
-              ↓          ↓          ↓          ↓
-Level 1:          [    macro    ]                   ← 16 cells
-                       ↓
-Level 2:          [    meta     ]                   ← 8 cells (최종 출력)
 
-Top-down: meta → macro → micros (의식의 하향 제어)
-```
-- 자연의 뇌: 뉴런→컬럼→영역→전체 의식
-- 프랙탈 구조가 Φ 계층을 만드는가?
+<!-- [Hc_026 fractal-consciousness-hierarchy — moved to hypotheses_candidates/Hc_026_fractal_consciousness_hierarchy.md on 2026-05-11] -->
 
 ### INF-3: 재귀 합체/분열
 - 40 step 주기: merge(세포 쌍 합체) → split(diversity 주입)

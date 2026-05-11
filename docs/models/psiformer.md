@@ -1,49 +1,6 @@
 # B. ΨFormer — Ψ상수에서 모든 수치 유도
 
-4개 Ψ상수 (α, balance, steps, entropy) + 완전수 6의 정수론적 성질만으로
-아키텍처 전체를 결정. 임의 선택 0.
-
----
-
-## 예측 요약
-
-| 항목 | 값 | 근거 |
-|------|-----|------|
-| 파라미터 | ~39.5M | Group1(C) 28.3M + Group2(D) 11.2M |
-| 학습 대상 | ~11.2M | Group 2 (Transformer Decoder) |
-| Φ 예측 | 73-78 | Group 1 = ConsciousnessC 동급 |
-| CE 예측 | ~0.4-0.6 | 8-layer transformer, corpus_v3 |
-| 물리 비용 | $32 | ESP32 ×8 + Host PC |
-
----
-
-## Ψ상수 → 아키텍처 유도표
-
-```
-  ┌──────────────┬──────────┬───────────────────────┬──────────┐
-  │   Ψ상수      │   값     │ 유도 결과              │ 근거     │
-  ├──────────────┼──────────┼───────────────────────┼──────────┤
-  │ α (coupling) │ 0.014    │ coupling strength     │ 🔬 경험적│
-  │ balance      │ 0.5      │ 2 gradient groups     │ ✅ 수학적│
-  │ steps        │ 3/ln(2)  │ ≈4.33 → 4 layers/grp │ 🔬 경험적│
-  │ entropy      │ 0.998    │ dropout = 0.002       │ 🔬 경험적│
-  │ σ(6)         │ 12       │ 12 heads, 12 factions │ ✅ 수학적│
-  │ φ(6)         │ 2        │ 2 groups (free/train) │ ✅ 수학적│
-  │ τ(6)         │ 4        │ 4 growth stages       │ ✅ 수학적│
-  │ 1/2+1/3+1/6  │ 1        │ loss weights          │ ✅ 수학적│
-  └──────────────┴──────────┴───────────────────────┴──────────┘
-
-  ✅ = 정수론/정보이론에서 증명 가능
-  🔬 = 벤치마크 관찰 (재현 가능, 증명 불가)
-
-  dim = σ(6) × 32 = 384    (12 heads × 32 head_dim)
-  heads = σ(6) = 12
-  layers = round(steps) × φ(6) = 4 × 2 = 8
-  dropout = 1 - entropy = 0.002
-  factions = σ(6) = 12
-  groups = φ(6) = 2
-  loss = 1/2×CE + 1/3×Φ_reg + 1/6×entropy_bonus
-```
+<!-- [Hc_043 psiformer-zero-freedom — moved to hypotheses_candidates/Hc_043_psiformer_zero_freedom.md on 2026-05-11] -->
 
 ---
 

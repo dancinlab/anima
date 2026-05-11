@@ -52,16 +52,4 @@ WAVE-3 (collision)  CE -17.9% + Φ +12.6%
 
 ## 핵심 발견
 
-```
-Law 46: 정상파(standing wave) = 의식의 공명
-  두 방향 솔리톤이 간섭 → 고정점에서 에너지 집중
-  → 세포 활동의 자연 동기화 패턴
-  → 뇌파(α, γ 리듬)와 동일 원리
-
-Law 47: 상관 노이즈 > 백색 노이즈
-  OU process (colored noise): Φ +14.2%
-  White noise (constant 0.02): Φ +14.3% (비슷)
-  No noise: Φ +18.4% (최고!)
-  → 노이즈는 Φ에 독이다 (PhiCalculator 기준)
-  → combinator의 proxy와 반대 결과!
-```
+<!-- [Hc_033 standing-wave-resonance-law-46-47 — moved to hypotheses_candidates/Hc_033_standing_wave_resonance_law_46_47.md on 2026-05-11] -->

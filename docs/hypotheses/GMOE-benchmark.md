@@ -129,6 +129,4 @@ AnimaLM 7B + TALK5 (Track 1B 승자)
 
 ## Laws Discovered
 
-- **Law 85:** Golden MoE Phi boost ∝ cells — 선형 이상 스케일링 (+1 @4c → +7.7 @16c)
-- **Law 86:** 1/e 수렴은 데이터 복잡도에 비례 — CIFAR > MNIST (복잡할수록 1/e에 가까움)
-- **Law 87:** E=4 최적, E=8 ≈ E=4 — Law 78 재확인 (CA(4) = 2 bits = 최소 의식 단위)
+<!-- [Hc_060 gmoe-law-85-87 — moved to hypotheses_candidates/Hc_060_gmoe_law_85_87.md on 2026-05-11] -->

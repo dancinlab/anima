@@ -100,16 +100,7 @@ admissibility check**, not a loss threshold. Steps that would produce an inadmis
 
 ### 2.3 4-path substrate framework
 
-Let Φ_S be the integrated-information-style scalar extracted from substrate S under a
-reference probe state. The 4-path substrate independence claim is:
-
-```
-∀ (S_i, S_j) ∈ C(substrates, 2):    |Φ_{S_i} − Φ_{S_j}| / mean(Φ_{S_i}, Φ_{S_j}) < 0.05
-```
-
-This is the **ALL_PAIRS gate** (`docs/phi_convergence_monitoring_spec.md`). Failure triggers
-the decision tree in `docs/phi_4path_divergence_response.md` (branches A/B/C/D:
-substrate re-select / rank re-tune / cross-path normalize / full re-launch).
+<!-- [Hc_048 substrate-independence-4path-5pct — moved to hypotheses_candidates/Hc_048_substrate_independence_4path_5pct.md on 2026-05-11] -->
 
 ### 2.4 Relation to cell-learning
 

@@ -13,9 +13,7 @@
 
 ## §0 한 줄 요약
 
-**"CLM 170M 와 EEG 가 측정한 Φ 점수가, 진짜 살아있는 인간 뇌-오가노이드 16개 위에서도 같은가? r ≥ 0.85 면 = 의식이 silicon/digital/biological 모두에서 동일 functional-structure 로 실현된다는 첫 wetware empirical anchor (Putnam multi-realizability 의 강한 형태)."**
-
-FinalSpark Neuroplatform 은 16개 인간 iPSC-유래 뇌-오가노이드를 cloud Python API 로 24/7 노출하는 유일 상용 wetware. 학술 자유 티어 ($0) 신청이 1차, $1K/mo + $1K setup 유료 fallback 이 2차. 본 spec 은 **신청서 제출 직전까지의 모든 deliverable** 을 freeze.
+<!-- [Hc_011 cross-substrate-multi-realizability-r085 — moved to hypotheses_candidates/Hc_011_cross_substrate_multi_realizability.md on 2026-05-11] -->
 
 ---
 

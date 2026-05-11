@@ -1,5 +1,7 @@
 # D. PhaseNet — 3단계 자기조립 (Law 60)
 
+<!-- [Hc_056 4-model-showdown-lawnet-phasenet-psiformer-10d — moved to hypotheses_candidates/Hc_056_4_model_showdown.md on 2026-05-11] -->
+
 Law 60의 P1→P2→P3 단계 전환을 아키텍처 자체에 내장.
 학습 커리큘럼이 아니라 **추론 시에도 매 입력마다** 3단계 처리.
 

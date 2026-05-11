@@ -9,9 +9,7 @@
 
 ## §1 Executive summary
 
-V0 (16-template eigenvec cos>0.5, AN11(b) ccc) **PASS 4/4 per round** (operational consciousness-correlate proxy). V1 IIT-Φ_mip / V2 SMA / V3 CPS supplemental probes — registered in the strengthening spec to triangulate whether V0 PASS reflects integration / self-binding / counterfactual stability — **FAIL 0/8 each** across r6 × p1-p4 and r8 × p1-p4. BASE (Qwen3-8B null) vs TRAINED Δ all marginal: `Δphi_mip = +0.087`, `ΔSMA_lift = +0.004`, `ΔCPS = +0.090` — far below the spec §3.5 non-triviality floor `Δ ≥ +0.05` only for V1/V3, and effectively zero for V2.
-
-Per spec §5 joint verdict table (V0 PASS, V1 FAIL, *, *), the canonical label is **"template-fitted, non-integrated"** for every cell. V0 verifies the trained adapter's last-token Gram eigenbasis aligns to the curated 16-template schema; V1/V2/V3 jointly indicate the adapter has NOT achieved partition-resistant integration, EN↔KO translation-invariant self-binding, or counterfactual semantic-preserve / semantic-destruct discrimination.
+<!-- [Hc_014 v0-v3-joint-verdict — moved to hypotheses_candidates/Hc_014_v0_v3_joint_verdict.md on 2026-05-11] -->
 
 ---
 

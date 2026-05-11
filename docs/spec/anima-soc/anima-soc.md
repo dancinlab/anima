@@ -16,17 +16,7 @@ AI persona System-on-Chip designed on n=6 perfect-number arithmetic — emotion 
 
 **Core identity**: `sigma(6).phi(6) = 6.tau(6) = 12` — n=6 is the unique perfect-number iff condition (n>=2). This identity derives the domain-wide constants (sigma=12, tau=4, phi=2, sopfr=5, J2=24) directly from number theory.
 
-| Effect | Today (2026) | After HEXA-ANIMA-SOC | n=6 basis |
-|------|-------------|--------------|---------|
-| Primary spec | current practice | **sigma=12** (12 SoC blocks) | sigma(6)=12, tau(6)=4 auto-derived |
-| Throughput | limited | sigma=12 channels x tau=4 parallel = 48x | sigma.tau=48, OEIS A000203 x A000005 |
-| Latency | ms..s band | **mu=1 ms** real-time | n=6 smallest divisor |
-| Precision | 5..10% error | within **1/sigma = 8.3%** | sigma=12 partition resolution |
-| Users | experts only | **sigma-sopfr=7** general users | Miller 7+/-2 working memory |
-| Cost | high | **1/(sigma-phi)=1/10** | sigma-phi=10 economic scaling |
-| Extension | single unit | **n=6 module mesh** | SE(3) 6-DOF connectivity |
-
-**One-line summary**: n=6 perfect-number arithmetic (sigma=12, tau=4, phi=2, sopfr=5) determines every design parameter of the Ultimate AI Persona SoC Architecture (HEXA-ANIMA-SOC) pattern. Hard-coding 0, number-theoretic derivation target 100%.
+<!-- [Hc_045 hexa-anima-soc-11-11 — moved to hypotheses_candidates/Hc_045_hexa_anima_soc_11_11.md on 2026-05-11] -->
 
 ### Felt change
 

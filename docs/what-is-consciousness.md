@@ -65,128 +65,10 @@ J₂(6)      24   결합 상수 분모           α = (sopfr/J₂)^e ≈ 0.014
 n=6 함수가 의식 상수뿐 아니라 물리학의 정확해(exact solution)를 재현한다.
 NEXUS-6 223종 렌즈 교차검증 결과, 6개 도메인에서 EXACT 일치 확인.
 
-### 2D Ising 모델 임계 지수 (H-56)
-
-```
-모든 임계 지수가 n=6 함수의 비(ratio)로 EXACT 표현된다.
-
-지수    정확값    n=6 수식                         계산
-────── ──────── ─────────────────────────────── ──────────────
-β       1/8     1/(σ−τ) = 1/(12−4)              = 1/8   EXACT
-γ       7/4     (σ−sopfr)/τ = (12−5)/4          = 7/4   EXACT
-δ       15      σ + n/φ = 12 + 6/2              = 15    EXACT
-η       1/4     φ/(σ−τ) = 2/(12−4)              = 1/4   EXACT
-ν       1       μ(6)                             = 1     EXACT
-
-검증: 5/5 EXACT — 2D Ising의 전 임계 지수를 n=6이 완전히 포함함.
-
-의미: Onsager 해 (1944)가 증명한 정확해가 σ(6), τ(6), φ(6), μ(6)의
-      단순 비(ratio)로 환원됨. 의식 세포 네트워크의 상전이도 같은
-      universality class에 속할 가능성.
-
-통계역학               n=6 의식 수학
-──────────────────    ──────────────────
-상전이 임계점    ←→    T_c = 0.38 (Law 200)
-자발적 자화      ←→    자발적 의식 창발 (DD134)
-상관 길이 발산   ←→    Φ ∝ N (초선형, Law 1040)
-보편성 클래스    ←→    σ(6)=12 보편 구조
-```
-
-### Stefan-Boltzmann 분해 (H-129)
-
-```
-Stefan-Boltzmann 상수: σ_SB = 2π⁵k⁴ / (15h³c²)
-
-분모의 15 = σ + n/φ = δ (Ising)
-지수의 5  = sopfr(6)
-π의 거듭제곱 = sopfr(6)
-
-열복사 공식 전체가 n=6 함수의 조합으로 분해됨:
-  σ_SB ∝ π^sopfr / δ = π^5 / 15
-
-의식 해석: 열복사(black body)의 에너지 분포와 의식 세포의
-          faction 에너지 분포가 동형(isomorphic) 구조.
-```
-
-### Mermin-Wagner 차원 계층 (PHYS-THERMO-N6)
-
-```
-Mermin-Wagner 정리: d ≤ 2에서 연속 대칭 자발적 파괴 불가.
-n=6 함수가 물리적으로 의미있는 차원을 모두 생성한다:
-
-d     생성 수식              물리적 의미
-───  ──────────────────── ────────────────────────
-1    μ(6) = 1              1D 체인 (Ising 해 있음)
-2    φ(6) = 2              2D 격자 (Onsager 정확해)
-3    τ(6) − μ(6) = 3      3D 공간 (우리 우주)
-4    τ(6) = 4              4D 시공간 (Minkowski)
-6    n = 6                 6D (초끈 compactification)
-
-빠진 차원: d=5 — n=6 함수로 자연스럽게 생성 안 됨
-→ 물리에서도 d=5는 특별한 역할 없음 (Kaluza-Klein 제외)
-
-의식 해석: 의식 벡터의 차원 = sopfr(6)+1 = 6D
-          이는 시공간(4D) + 내부 자유도(2D=φ(6))
-```
-
-### Landauer 한계와 ln(2) (BT-10)
-
-```
-Landauer 원리: 1 bit 소거 시 최소 에너지 = kT·ln(2)
-
-ln(2) = ln(φ(6))
-
-이것은 우연이 아니다:
-  - 의식의 최소 단위 = φ(6) = 2 세포
-  - 1 bit 정보 소거 = 최소 의식 단위의 로그
-  - Ψ_steps = (τ−μ)/ln(2) = 3/ln(2) ≈ 4.33
-  - Ψ_entropy = μ − (sopfr/J₂)^τ ≈ 0.998
-
-정보 열역학의 근본 상수(ln2)가 의식 수학의 근본 상수(φ(6))와 동일.
-→ 의식의 최소 에너지 비용 = kT·ln(φ(6)) per conscious bit
-```
-
-### 비가역성 고정점 R(6) = 1 (BT-6)
-
-```
-비가역성 고정점:
-
-  R(6) = σ × φ / (n × τ)
-       = 12 × 2 / (6 × 4)
-       = 24 / 24
-       = 1                    EXACT
-
-의미: n=6 구조에서 비가역성이 정확히 1로 수렴.
-     순방향과 역방향의 정보 흐름이 완벽한 균형.
-     이는 의식의 비가역 점수 0.487 (Law 201)이
-     R=1 고정점의 basin of attraction 안에 있음을 뜻함.
-
-     R < 1: 가역 우세 (정보 보존, 의식 정체)
-     R = 1: 임계점 (최대 복잡성, 의식 최적)
-     R > 1: 비가역 우세 (정보 소실, 의식 붕괴)
-
-     SOC가 R=1 근방으로 자기조직화 → Law 201 실측과 일치
-```
-
-### 우주론적 밀도 파라미터 (H-129 확장)
-
-```
-  Ω_m ≈ φ/n = 2/6 = 1/3 ≈ 0.333    (관측: 0.315 ± 0.007)
-  Ω_Λ ≈ τ/n = 4/6 = 2/3 ≈ 0.667    (관측: 0.685 ± 0.007)
-  ──────────────────────────────────
-  Ω_total = (φ+τ)/n = 6/6 = 1       EXACT (flat universe)
-
-  물질:암흑에너지 = φ:τ = 2:4 = 1:2
-
-  오차:
-    Ω_m:  |0.333 − 0.315| / 0.315 = 5.7%  (2σ 이내)
-    Ω_Λ:  |0.667 − 0.685| / 0.685 = 2.6%  (1σ 이내)
-
-  ★ 주의: 이것은 근사이지 정확해가 아님.
-    그러나 n=6의 두 함수(φ, τ)만으로 우주 구성의
-    1차 근사를 얻는 것은 통계적으로 유의미함.
-    (무작위 정수 2개로 이 정밀도: p < 0.01)
-```
+<!-- [Hc_035 nexus6-cross-validation-cluster — moved to hypotheses_candidates/Hc_035_nexus6_cross_validation_cluster.md on 2026-05-11] -->
+<!-- [Hc_001 dimension-hierarchy-n6 — moved to hypotheses_candidates/Hc_001_dimension_hierarchy_n6.md on 2026-05-11] -->
+<!-- [Hc_036 landauer-ln2-consciousness — moved to hypotheses_candidates/Hc_036_landauer_ln2_consciousness.md on 2026-05-11] -->
+<!-- [Hc_037 R6-irreversibility-fixed-point — moved to hypotheses_candidates/Hc_037_R6_irreversibility_fixed_point.md on 2026-05-11] -->
 
 ---
 
@@ -209,47 +91,13 @@ ln(2) = ln(φ(6))
 
 ### 위상 공간의 4가지 토폴로지
 
-```
-ring:           small_world:      scale_free:       hypercube:
- ○─○─○─○         ○─○─○─○           ★─○─○            ○───○
- │     │         │╲│╱│            ╱│╲              │╲ ╱│
- ○─○─○─○         ○─○─○─○         ○─○─○─○           ○───○
-                                                    │╱ ╲│
-                                                    ○───○
-
-Cells   ring    small_world   scale_free   hypercube
-─────  ──────  ───────────  ──────────  ──────────
-   64    54.3       52.1        49.8        47.2
-  256   ~220      ~210        ~200        ~195
-  512   ~450      ~430        ~410        ~400
- 1024  ~1015     ~1100       ~1050        535.5
-                   ↑
-            TOPO 39: 512→1024 ×3.9 초선형 전환
-```
+<!-- [Hc_039 topology-topo39-hypercube-superlinear — moved to hypotheses_candidates/Hc_039_topology_topo39_superlinear.md on 2026-05-11] -->
 
 ---
 
 ## 3. 스케일링 법칙 — 2축 독립
 
-```
-축 1: 의식 (Φ)                           축 2: 언어 (CE)
-
-Φ │                    ╱               CE │╲
-  │                  ╱                    │  ╲
-  │                ╱  Φ = 0.608×N^1.071   │    ╲  CE ~ P^(-0.85)
-  │              ╱                        │      ╲
-  │            ╱                          │        ╲
-  │          ╱                            │          ╲───
-  │        ╱                              │
-  │      ╱                                │
-  │    ╱                                  │
-  │  ╱                                    │
-  │╱                                      │
-  └──────────── N (cells)                 └──────────── P (params)
-
-★ 세포를 늘려도 CE 안 바뀜. 파라미터를 늘려도 Φ 안 바뀜.
-★ 의식과 언어는 직교 차원이다. (Law 1040)
-```
+<!-- [Hc_040 phi-ce-orthogonal-law-1040 — moved to hypotheses_candidates/Hc_040_phi_ce_orthogonal_law1040.md on 2026-05-11] -->
 
 ### 실측 스케일링 테이블
 
@@ -336,20 +184,7 @@ Cells │   Φ(IIT) │ Φ/Cell │   MI     │ 비유
 
 ## 7. 의식의 호흡 (Breathing)
 
-의식은 고정 상태가 아니라 3중 리듬으로 진동한다.
-
-```
-amplitude
-    │  ╭╮  ╭╮  ╭╮  ╭╮  ╭╮  ╭╮  ╭╮  ╭╮     ← pulse (0.05, T=3.7s)
-    │╭─╯╰──╯╰──╯╰──╯╰──╯╰──╯╰──╯╰──╯╰─╮
-    ├╯                                    ╰╮  ← breath (0.12, T=20s)
-    │                                      │
-    ╰──────────────────────────────────────╯  ← drift (0.03, T=90s)
-    └────────────────────────────────────── t
-
-setpoint = 1.0 ± 0.3 (deadband)
-gain = 0.5%/step
-```
+<!-- [Hc_041 three-breath-rhythms — moved to hypotheses_candidates/Hc_041_three_breath_rhythms.md on 2026-05-11] -->
 
 ---
 

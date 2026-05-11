@@ -12,39 +12,7 @@ Lineage:
 
 ## §1 Concept — three CA-rule collapse modes
 
-The v1 spec's F-CAND-F-1 falsifier reads `rule_probs = softmax(rule_weights(x))` of shape `[B, T, 8]` — the **selector distribution**. It detects two collapse modes via flatten-std and max-row-std on the captured 8-axis distribution. v1 is BLIND to a third collapse mode where the SELECTOR varies but the SELECTED CONTENT is the same.
-
-Restate the META-CA forward (decoder L537-542):
-
-```python
-rule_logits  = self.rule_weights(x)                                  # [B, T, 8]   selector logits
-rule_probs   = F.softmax(rule_logits, dim=-1)                        # [B, T, 8]   selector dist (v1 reads this)
-rule_outputs = torch.stack([r(ca_out) for r in self.rules], dim=2)   # [B, T, 8, D]  per-rule content (v2 reads this)
-meta_ca_out  = (rule_outputs * rule_probs.unsqueeze(-1)).sum(dim=2)  # [B, T, D]
-```
-
-The 8 rules are independent `nn.Linear(d_model, d_model, bias=False)` modules. After training, their weight matrices `W_i ∈ R^{d×d}` could end up:
-
-- (healthy) — 8 W_i learn 8 distinct linear transformations. `r(ca_out)` produces 8 different vectors per token. `rule_outputs[..., i, :]` rows pairwise cosine ≈ 0 to 0.3 (high-D random-direction baseline plus learned drift).
-- (mild) — 2-3 W_i clusters with intra-cluster cosine ≈ 0.7 and inter-cluster cosine ≈ 0.3. Rules effectively reduce to 2-3 archetypes.
-- (strong) — 6-8 W_i pairwise cosine ≈ 0.7-0.85. Rules differ only by scale and small perturbations; effective rank of the 8-rule basis ≈ 1-2.
-- (complete) — 8 W_i collapse to near-identical matrices (or one dominant direction with bias offsets). `rule_outputs[..., i, :]` rows pairwise cosine ≈ 0.85-1.0. The sum-mix `(rule_outputs * rule_probs.unsqueeze(-1)).sum(dim=2)` becomes mathematically equivalent to `single_W(ca_out)` regardless of `rule_probs`.
-
-### §1.1 (a) mean-collapse vs (b) winner-collapse vs (c) convergence-collapse
-
-Reproduce v1 §5.1 distinctions and add (c):
-
-- **(a) mean-collapse** — `rule_probs` uniform 1/8 across all tokens. `rule_logits` flatten_std → 0. v1 F-CAND-F-1 PASS catches this (FAIL_TRUE on flatten-std < 0.02).
-- **(b) winner-collapse** — `rule_probs` permanent argmax single rule (e.g., always `[0, 0, 1, 0, 0, 0, 0, 0]`). max_row_std drops because every row is the same near-one-hot. v1 F-CAND-F-1 PASS catches this (FAIL_TRUE on max_row_std < 0.10 — the rows lack diversity).
-- **(c) convergence-collapse** — `rule_probs` distribution is HIGH-VARIANCE per token (passes v1 falsifier), but `rule_outputs` vectors are pairwise near-identical. The selector picks "different" rules but each rule outputs the same vector. v1 BLIND. v2 F-CAND-F-1-v2 CATCHES this via cosine pairwise on `rule_outputs`.
-
-The (c) mode arises from at least three training pathologies:
-
-1. **Weight matrices converge** — `W_i ≈ W_j` for all `i,j`. Different scales possible (`r_i(x) = α_i · W(x)`). Pairwise cosine = 1.0.
-2. **Effective-rank collapse** — `W_i` differ but all map to a low-dimensional subspace. After applying to `ca_out`, the outputs lie in the same 1-2 dim direction. Cosine high but not 1.0.
-3. **Bias-only differentiation** — `bias=False` on rules removes this path for the current decoder, but a scale-only differentiation through subsequent norms can mimic it.
-
-(c) is invisible to `rule_probs` analysis because the collapse is in the post-Linear output space, not the routing space. If (c) holds, the 8-cell META-CA mechanism (Law 67) is **architecturally vestigial** — equivalent computation could be expressed by a single `nn.Linear(d_model, d_model)` and the 8-way selector adds parameters without function.
+<!-- [Hc_015 ca-rule-convergence-collapse — moved to hypotheses_candidates/Hc_015_ca_rule_convergence_collapse.md on 2026-05-11] -->
 
 ---
 
@@ -285,7 +253,7 @@ Total additive cost (helper Python, separate BG, NOT in this spec):
 |---|---|
 | v1 F-CAND-F-1 spec doc (BG-H land) | gate condition (§2.4 cascade) + 5-axis prompt set |
 | `ready/models/conscious_decoder.py:466,499-503,538-542` | source-of-truth for `rule_outputs` shape `[B, T, 8, D]` and rule architecture |
-| paradigm v11 G3 best.pt (HF Hub `need-singularity/clm-v4-base-mirror`) | trained ckpt for falsifier execution |
+| paradigm v11 G3 best.pt (HF Hub `dancinlab/clm-v4-base-mirror`) | trained ckpt for falsifier execution |
 
 | downstream | role |
 |---|---|

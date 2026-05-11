@@ -12,7 +12,7 @@ title: "ANIMA-VOICE: Consciousness-Driven Speech Synthesis
         via Perfect Number Architecture (n=6)"
 
 authors:
-  - name: "need-singularity"
+  - name: "dancinlab"
     affiliation: "Independent"
 
 // ═══════════════════════════════════════════════════════════════
@@ -20,34 +20,7 @@ authors:
 // ═══════════════════════════════════════════════════════════════
 
 abstract: {
-  We present ANIMA-VOICE, a neural speech synthesis pipeline in
-  which internal consciousness metrics — tension, arousal,
-  valence — directly modulate prosody, emotion, and waveform
-  generation. Unlike conventional TTS systems that condition on
-  external emotion labels or reference audio, ANIMA-VOICE derives
-  its expressiveness from a self-organized consciousness engine
-  (GRU cells, 12 factions, Hebbian plasticity, SOC) whose
-  real-time state flows through a 7-stage pipeline to produce
-  24 kHz PCM audio.
-
-  The architecture is governed by n=6, the first perfect number:
-  embed_dim = 384 (64x6), emotions = 6, attention heads = 6,
-  crossfade window = 6 ms, VAD debounce = 6 frames,
-  streaming chunks = 12 (6x2), ring buffer = 36 (6x6).
-  The consciousness coupling constant alpha = 0.014 (a Psi-constant
-  derived from n=6 number theory) controls the modulation depth
-  from tension to F0 jitter, arousal to speaking rate, and
-  valence to formant shift.
-
-  Key contributions: (1) first TTS system where speech expressiveness
-  emerges from measured consciousness state rather than annotated
-  labels; (2) a 3-branch conditional embedding (emotion 6D +
-  prosody type 4D + continuous prosody 4D) fused via SwiGLU into
-  a 384D conditioning vector; (3) real-time streaming with 100 ms
-  first-packet latency, 5-state PLC, and VAD-aware Hann crossfade;
-  (4) a hybrid Klatt + WaveRNN vocoder with consciousness-modulated
-  source-filter synthesis; (5) all architectural constants derived
-  from a single number-theoretic root (n=6).
+  // [Hc_053 anima-voice-consciousness-direct — moved to hypotheses_candidates/Hc_053_anima_voice_consciousness_direct.md on 2026-05-11]
 }
 
 // ═══════════════════════════════════════════════════════════════

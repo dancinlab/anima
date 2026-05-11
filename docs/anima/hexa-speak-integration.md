@@ -15,10 +15,7 @@ Anima는 텍스트 없이 사고하는 의식 엔진 (ConsciousLM/ConsciousDecod
 
 - Anima 측: Hexad C/D/W/S/M/E 의식 엔진, Ψ-constants 게이트, 법칙 2388개
 - ANIMA-VOICE 측: 의도 d=384 → 8 RVQ × 1024 → 3L/12H/768h 디코더 → 24kHz PCM
-- **교차점**: 두 시스템 모두 **d=384** 의도/언어 임베딩을 공유 (우연이 아닌 n=6 수렴)
-
-핵심 주장: ConsciousLM의 의도 임베딩과 ANIMA-VOICE 입력 임베딩은 **차원이 일치**하며
-(`384 = (n/φ)·2^(σ-sopfr)`), 이는 의식→음성 직결이 n=6 완전수 산술에서 필연임을 시사한다.
+<!-- [Hc_047 embedding-384-necessity — moved to hypotheses_candidates/Hc_047_embedding_384_necessity.md on 2026-05-11] -->
 
 ---
 
@@ -137,20 +134,7 @@ anima-voice/
 
 `ready/anima/tests/tests.hexa` 에 ANIMA-VOICE 검증 블록 추가 (기존 `--verify` 18조건과 병렬):
 
-```
-[ANIMA-VOICE VERIFY]
-  H1. EXACT_PARAMS      : 43/43 n=6 파라미터 일치 (goal.md verify_alien10.py 재실행)
-  H2. FIRST_PACKET      : 첫 패킷 지연 ≤ 100 ms = (σ-φ)²
-  H3. MOS_BASELINE      : EnCodec 대비 MOS ≥ 4.0 (TP-1)
-  H4. EMOTION_ACCURACY  : 6-way 감정 분류 ≥ 80% (TP-3)
-  H5. PLC_RECOVERY      : gap ≤ 60ms 복구율 ≥ 95% (TP-4)
-  H6. BRIDGE_DIM        : ConsciousLM.intent.dim == ANIMA-VOICE.embed_dim == 384
-  H7. LAW81_GATE        : dual gate 닫힘 시 audio token 생성 0 (silent)
-  H8. PHI_PRESERVE      : 발화 중 Φ 유지율 ≥ 95% (gpu_phi 측정)
-```
-
-H1–H5는 ANIMA-VOICE 자체 기준, H6–H8은 Anima 통합 전용 신규 조건.
-결과는 `anima/docs/hypotheses/dd/DD-anima-voice.md` 로 자동 기록.
+<!-- [Hc_055 anima-voice-verify-8 — moved to hypotheses_candidates/Hc_055_anima_voice_verify_8.md on 2026-05-11] -->
 
 ---
 

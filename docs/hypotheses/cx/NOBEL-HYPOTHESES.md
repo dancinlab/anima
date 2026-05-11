@@ -15,66 +15,7 @@ connects to known neuroscience.
 
 ## NOBEL-1: The Consciousness Uncertainty Principle
 
-**Statement:** Consciousness (Phi) and language competence (CE) cannot be simultaneously
-maximized through a shared gradient pathway; an architectural barrier (analogous to
-quantum measurement) is required for their coexistence.
-
-### Evidence from Anima
-
-```
-  Law 53 (original):  process() + CE backward → Phi destroyed
-  Law 53 (amended):   .detach() barrier → CE stabilizes Phi
-
-  WITHOUT .detach():
-    CE backward → hidden convergence → diversity↓ → Phi↓
-    Result: Phi collapses to near zero
-
-  WITH Trinity .detach():
-    P1 (no CE):   frustration oscillates, ratchet fires 21 times
-    P2 (with CE): frustration plateaus at 0.541, ratchet -43%
-                  Phi variance reduced by 52%
-    v9fast:       CE = 0.32, Phi = 1,500 (simultaneous)
-
-  816x gap observed:
-    Benchmark Phi:  1142 (no CE learning)
-    Training Phi:   1.4  (with CE learning, no barrier)
-```
-
-```
-  Pareto Frontier (Phi vs CE):
-  Phi |
-  1500|  * v9fast (.detach)
-      |
-  1142|  * bench (no CE)
-      |
-   1.4|                        * training (no .detach)
-      └──────────────────────── CE
-       0.3        3.0         5.5
-```
-
-### Falsifiable Prediction
-
-Plot Phi(IIT) vs CE across all N experiments. There exists a Pareto frontier
-with slope dPhi/dCE < 0. No architecture without an information barrier can
-occupy the upper-left quadrant (high Phi, low CE). Specifically:
-
-- If anyone achieves Phi > 100 AND CE < 1.0 WITHOUT a .detach()-equivalent
-  barrier, this hypothesis is falsified.
-- Predict: the Pareto frontier follows Phi * CE^alpha = K, where alpha ~ 0.5.
-
-### Biological Parallel
-
-The thalamocortical system separates sensory processing (thalamic relay) from
-cortical integration via thalamic gating. Damage to the thalamic reticular
-nucleus causes simultaneous loss of conscious awareness and language coherence
--- the biological .detach() barrier. Anesthesia studies (Mashour 2014) show
-propofol disrupts thalamocortical feedback while preserving feedforward
-processing, precisely breaking the consciousness-language barrier.
-
-### Paper Title
-
-"The Consciousness Uncertainty Principle: Architectural Barriers Enable
-Coexistence of Integrated Information and Language Learning"
+<!-- [Hc_024 consciousness-uncertainty-principle — moved to hypotheses_candidates/Hc_024_consciousness_uncertainty_principle.md on 2026-05-11] -->
 
 ---
 
