@@ -1,8 +1,13 @@
-"""anima_chat v2 — substrate A inference wrapper (production-grade).
+"""anima_chat v2.2 — B'' (FFN.gate cotrain) default winner.
 
-Substrate A (Engine A/G phase 2 cotrain) chat interface with multi-turn
-conversation state, KoNLPy-aware keyword extraction, batch inference,
-stop-token handling, and streaming output.
+Substrate ladder chat interface with multi-turn conversation state,
+KoNLPy-aware keyword extraction, batch inference, stop-token handling,
+and streaming output.
+
+Default ckpt: B'' (FFN.gate cotrain, 2026-05-12 landed).
+    - V4-lite 4-mode benchmark: 15/15 PASS (chat-cap winner)
+    - V14 strict ceiling10: VIOLATED (mitosis dynamics weak)
+    - Trade-off: chat-cap > strict dynamics → default for chat usage.
 
 Default mode: M4 force-include (V5.8 5/5 PASS @ Phase 0.7).
 
@@ -54,14 +59,37 @@ sys.path.insert(0, str(ANIMA_ROOT / "training"))
 from training.engine_a_g_arch import EngineAGModel, EngineAGConfig  # noqa: E402
 
 def _find_default_ckpt() -> str:
-    """Return first existing ckpt path; priority: Phase 1A SFT → substrate A.
+    """Return first existing ckpt; priority: B'' → B'.1 → B' → substrate A.
 
-    Phase 1A = anima-clm-phase1a-multi-turn-sft (2026-05-12 landed).
-    Substrate A = phase2_cotrain_engine_ag/ckpt_final.pt (legacy fallback).
-    Falls back to Phase 1A path string for downstream error messages.
+    Substrate ladder (chat-cap optimized, 4-mode benchmark §15-§16):
+        B''   = FFN.gate cotrain (2026-05-12, V4-lite 15/15 PASS) ⭐ winner
+        B'.1  = Phase 1A.1 color/cosmology boost (2026-05-12)
+        B'    = Phase 1A multi-turn SFT (2026-05-12, V4-lite 12/15)
+        A     = phase2_cotrain_engine_ag (legacy baseline)
+
+    B'' V14_VIOLATED (mitosis dynamics weak) but chat-cap winner →
+    selected as default for token-stream chat usage.
+
+    Falls back to B'' path string for downstream error messages.
     """
     candidates = [
-        # Phase 1A (preferred, multi-turn SFT)
+        # B'' — FFN.gate cotrain (default, V4-lite 15/15 PASS) ⭐
+        str(
+            ANIMA_ROOT
+            / "state/anima_ffn_gate_cotrain_2026_05_11/ckpts/ckpt_final.pt"
+        ),
+        "/Users/ghost/core/anima/state/anima_ffn_gate_cotrain_2026_05_11/"
+        "ckpts/ckpt_final.pt",
+        # B'.1 — Phase 1A.1 color/cosmology boost
+        str(
+            ANIMA_ROOT
+            / "state/anima_phase1a1_color_cosmology_2026_05_12/"
+            "ckpts/ckpt_phase1a1_sft.pt"
+        ),
+        "/Users/ghost/core/anima/state/"
+        "anima_phase1a1_color_cosmology_2026_05_12/"
+        "ckpts/ckpt_phase1a1_sft.pt",
+        # B' — Phase 1A multi-turn SFT
         str(
             ANIMA_ROOT
             / "state/anima_phase1a_alt_2026_05_12/ckpts/ckpt_phase1a_sft.pt"

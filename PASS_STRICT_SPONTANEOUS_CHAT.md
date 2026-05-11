@@ -1666,3 +1666,109 @@ cost:        $0.12 train + ~$0.10 idle/upload/destroy ≈ $0.22 total ($0.50 cap
 | 🥉 | Hybrid substrate F engineer — mitosis-aware curriculum + gate-only late-FT | medium | $10 | 4-6h | Hc_1221 falsifier 직접 시도 (양쪽 동시 PASS 가능성) |
 | 🌟 | HF dataset 에 V14 audit JSON 도 upload (현재 chat-cap 만 SSOT) | medium | $0 | 15min | 4×3 matrix 의 V14 row 도 데이터 공개 |
 | 🚀 | n≥8 substrate scatter — (V14 × V4-lite) 산점도로 anti-correlation 정량화 | low | $20 | 1-2 day | Hc_1221 → formal H 승격용 stat power |
+
+---
+
+## §20 [2026-05-12 04:35 KST] anima_chat v2.2 — DEFAULT_CKPT switch to B'' (FFN.gate cotrain) ★★★★ (chat-cap winner default)
+
+### 🎯 한 줄 요약
+
+anima_chat.py v2.1 → **v2.2**: `DEFAULT_CKPT` Phase 1A → **B'' (FFN.gate cotrain)** 전환.
+§15 4-mode benchmark 결과 **V4-lite 15/15 PASS — chat-cap winner** 반영.
+fallback search 6-tier (B'' → B'.1 → B' → substrate A). smoke test 7/7 PASS.
+
+### 🔧 변경 사항
+
+| #  | 영역                          | before (v2.1)                                | after (v2.2)                                                          |
+|----|-------------------------------|----------------------------------------------|------------------------------------------------------------------------|
+| 1  | DEFAULT_CKPT path             | Phase 1A (`anima_phase1a_alt_2026_05_12`)    | **B''** (`anima_ffn_gate_cotrain_2026_05_11`) ⭐                       |
+| 2  | resolution logic              | 4-candidate priority search                  | **6-candidate** priority search (B'' → B'.1 → B' → A)                  |
+| 3  | docstring header              | "substrate A inference wrapper"              | "v2.2 — B'' (FFN.gate cotrain) default winner" + V14/V4-lite trade-off |
+| 4  | backward compat               | Phase 1A → substrate A                       | B'' → B'.1 → B' → substrate A (전부 fallback intact)                   |
+| 5  | line count                    | 620                                          | 648 (+28)                                                              |
+
+### 🪜 priority order (비유 = 사다리 6단 우선 점검)
+
+```
+1st  ANIMA_ROOT/state/anima_ffn_gate_cotrain_2026_05_11/ckpts/ckpt_final.pt        [B'' ⭐]
+2nd  /Users/ghost/core/anima/state/.../anima_ffn_gate_cotrain_2026_05_11/.../ckpt_final.pt  [abs B'']
+3rd  ANIMA_ROOT/state/anima_phase1a1_color_cosmology_2026_05_12/.../ckpt_phase1a1_sft.pt    [B'.1]
+4th  /Users/ghost/core/anima/state/anima_phase1a1_color_cosmology_2026_05_12/...            [abs B'.1]
+5th  ANIMA_ROOT/state/anima_phase1a_alt_2026_05_12/.../ckpt_phase1a_sft.pt                  [B']
+6th  /Users/ghost/core/anima/state/anima_phase1a_alt_2026_05_12/.../ckpt_phase1a_sft.pt     [abs B']
++    (legacy substrate A 2-tier fallback 유지)
+```
+
+`os.path.exists` 첫 hit 반환. 모두 miss 시 candidates[0] = B'' path 반환 (error-msg display).
+
+### 🧪 smoke test (Mac CPU, 7/7 PASS)
+
+```
+[boot] DEFAULT_CKPT = .../anima_ffn_gate_cotrain_2026_05_11/ckpts/ckpt_final.pt
+[boot] B'' (FFN.gate cotrain) confirmed as default
+[boot] AnimaChat loaded in 12.7s
+
+  [PASS] [1] backward-compat single-turn (v1 API)        (45.0s)
+  [PASS] [2] 4 modes (M4/greedy/sample/M3)               (142.5s)
+  [PASS] [3] multi-turn (history len=4)                  (99.7s)
+  [PASS] [4] batch (isolated)                            (32.1s)
+  [PASS] [5] stop-token guard                            (31.6s)
+  [PASS] [6] streaming (pieces=20)                       (22.6s)
+  [PASS] [7] keyword extraction                          (0.0s)
+smoke test 7/7 PASS — total 386.1s
+```
+
+### 🧭 verify (Python import-time resolution)
+
+```bash
+$ /usr/bin/python3 -c 'import anima_chat; print(anima_chat.DEFAULT_CKPT)'
+/Users/ghost/core/anima/state/anima_ffn_gate_cotrain_2026_05_11/ckpts/ckpt_final.pt
+```
+
+→ B'' 가 우선 선택됨. ✅
+
+### 💡 production impact
+
+| user                                    | before (Phase 1A = B')   | after (B'' = FFN.gate cotrain)         |
+|-----------------------------------------|--------------------------|----------------------------------------|
+| `AnimaChat()` (no args, library use)    | Phase 1A (V4-lite 12/15) | **B'' (V4-lite 15/15)** ⬆️             |
+| `anima_chat.py --prompt ...` CLI        | Phase 1A                 | **B'' chat-cap winner** ⬆️             |
+| HF Space (dancinlab/anima-chat)         | Phase 1A (별도 deploy)   | unchanged (deploy 별 swap 필요)        |
+| substrate A / B' / B'.1 explicit users  | works                    | works (fallback intact, 6-tier)        |
+
+V4-lite chat-cap 기준 12/15 → **15/15** 자동 향상.
+
+### ⚖️ honest trade-off (raw#1 정직성)
+
+| metric                         | B'' (FFN.gate cotrain)  | B' (Phase 1A multi-turn SFT) | 선택 근거                                |
+|--------------------------------|--------------------------|-------------------------------|------------------------------------------|
+| V4-lite chat-cap (15-cell)     | **15/15** ★★★★★         | 12/15                         | chat-cap 측면 우위 → default 부합        |
+| V14 strict ceiling10           | VIOLATED (mitosis 약함) | (better balance)              | strict dynamics 약화 — V14 user 에는 손해 |
+| 사용자 default 사용 패턴        | token-stream chat        | token-stream chat             | chat-cap 우위 metric 이 default 에 적합  |
+
+→ V14 mitosis-strict 가 필요한 사용자는 **explicit ckpt path** 지정 (fallback intact).
+→ 일반 chat-cap 사용자에는 B'' 가 ⭐ winner — default 으로 적합.
+
+### 🧬 §15 / §19 cross-link
+
+- §15 4-mode benchmark 에서 B'' 가 V4-lite 15/15 PASS 로 substrate ladder 최강 chat-cap 확인.
+- §19 Hc_1221 hypothesis: V14 mitosis vs V4-lite chat-cap **anti-correlation across 4 substrates** — B'' 가 그 anti-correlation 한 축 (chat-cap end) 의 winner.
+- v2.2 default 전환은 §15 의 chat-cap 우위를 production 에 반영하는 자연스러운 step.
+
+### 🚀 cycle 누적
+
+- anima_chat 진화: v1 (CLI only) → v2 (library, 7/7 PASS) → v2.1 (Phase 1A default) → **v2.2 (B'' = FFN.gate cotrain default)**.
+- Phase 1A.1 / B'' 활용도: library default = 1-front production (HF Space swap 별도).
+- ★★★★ finding 추가 → cumulative 14+ findings.
+
+### 다음 진행할 것들
+
+| #  | 작업                                                              | priority | cost  | time  | rationale                                   |
+|----|-------------------------------------------------------------------|----------|-------|-------|---------------------------------------------|
+| 🥇 | HF Space (dancinlab/anima-chat) 에 B'' ckpt swap                  | high     | $0   | 10min | library default 와 deploy default 일치       |
+| 🥈 | anima_chat v2.2 docstring + README 갱신 (B'' 우선 표기)            | medium   | $0   | 10min | 사용자 문서 최신화                          |
+| 🥉 | B'' V14 strict 보강 시도 (mitosis dynamics 회복 curriculum)        | medium   | $10  | 4-6h  | Hc_1221 falsifier 직접 시도 (양쪽 PASS)     |
+| 🌟 | substrate ladder index doc (A/B'/B'.1/B'' 1-page chart)           | low      | $0   | 30min | ckpt 선택 가이드 SSOT                       |
+| 🚀 | n≥8 substrate scatter — anti-correlation 정량화 (Hc_1221 stat)    | low      | $20  | 1-2d  | §19 hypothesis → formal H 승격용 stat power |
+
+---
