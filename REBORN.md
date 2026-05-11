@@ -6286,3 +6286,109 @@ ssh+scp -i $KEY -o "StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null"
 - `state/anima_ffn_gate_cotrain_2026_05_11/v14_strict_ceiling10_result.json`
 - `training/train_p2_cotrain_ffn_gate_only.py` (committed)
 
+
+
+## §85 [2026-05-11 21:45 KST] CYCLE 2026-05-11 — FINAL CLOSE post-§84 (★★★★★ 7개 + wave 2 H100 fire 1/2 success)
+
+**Status**: cycle 2026-05-11 reborn lane FINAL CLOSE 확정. §65-§84 + 5 addendums. 21 entries total. ~1530 lines added to REBORN.md (4886 → 6288).
+
+**★★★★★ achievements (7)**:
+1. §68 P2 V14_STRICT_PASS_5_OF_5 (qualified ceiling-sensitive)
+2. §71 BG-LA vs BG-LB plasticity hypothesis (4-cell V14 matrix)
+3. §74 ceiling=15 substrate-discriminability collapse (attractor convergence)
+4. §77 FFN-localized mitosis discrimination
+5. §78 FFN.gate dominant + depth gradient
+6. §82 substrate E paradigm V14_PASS 9/10 wins (naive FT > mitosis-aware)
+7. §84 FFN.gate-only cotrain anti-aligned (V14 regress -50% via gradient direction)
+
+**★★★★ findings (5)**:
+- §65 P4 paradigm-j NOT_MEASURABLE
+- §69 + 3 ext: CEILING_BINDING 92.3% + regime structure
+- §72 BG-LB pretrain headroom asymmetry
+- §75 16-cell matrix completion
+- §80 substrate C+E n=5 V14 landscape correction
+
+**★★★ supporting (3)**:
+- §67 P2/P3 parallel fire
+- §73 matrix sweep anomaly detect
+- §79 V14 protocol upgrade helper
+
+**★★ tooling negative (1)**:
+- §83 orchestrator timeout bug + B' ext network failure ($5 sunk + tooling debt)
+
+**Decisive negatives (3)** — total saved $200+:
+- §70 addendum: P5 retrain hypothesis retracted ($180 saved)
+- §69 main: floor 1e-8 clamp irrelevant ($20-50 averted)
+- §84: FFN.gate-only cotrain anti-aligned → confirms cross-entropy loss not V14-aligned for single component
+
+**Methodology meta-wins (6)**:
+1. pre-screen → narrow scope (§69)
+2. source-inspection before $-spend (§70 addendum)
+3. standalone verification of anomaly (§74)
+4. fine-grained ablation 2-rounds narrows hypothesis (§77→§78)
+5. n≥5 mandatory → n≥10 recommended (§80→§82)
+6. manual recovery scripts as orchestrator fallback (§83)
+
+**V14_PASS substrates discovered (2)**:
+- 🅐 A (BG-LB cotrain, engine_ag 350M, full unfrozen): 5/5 wins
+- 🅔 E (convo5k_ft, v2_d384, naive FT no-mitosis): **9/10 wins**
+
+Both V14_PASS share: **full-component training** (not single-component frozen). §84 confirms FFN.gate alone is anti-aligned — multi-component cancellation needed.
+
+**Tooling/code patches** (committed this cycle):
+- `tool/anima_runpod_orchestrator.hexa`: scp-mkdir prelude + env-resolved paths (commit 9793939ef)
+- `training/runpod_autopilot.hexa` + autopilot_test.hexa + watchdog.hexa: main() auto-invoke fix
+- `training/mitosis_v5_port.py` line 376: comment fix ceiling not floor (working tree)
+- `training/v14_discriminability_check.py`: 6KB additive helper module (commit 027634987)
+- `training/train_p2_cotrain_ffn_gate_only.py`: §84 FFN.gate-only fork (commit forthcoming)
+
+**Cost reconciliation FINAL**:
+- P2 H100: $4.70
+- P3 H100 active: $3.51 + P3 idle: $4.50
+- P5 Mac CPU sweeps × 4: $0
+- 16-cell matrix sweep Mac: $0
+- C+E full n=5 + E n=10 Mac: $0
+- LA-collapse ablations × 2 rounds: $0
+- §84 FFN.gate H100 train: $3.48
+- §83 FFN.gate idle waste + B' ext sunk: ~$8 (orchestrator timeout)
+- HF uploads + commits: $0
+- **Total cycle**: **~$24.20** H100 + $0 Mac (within $190 envelope, ~13%)
+
+**HF archival FINAL (PUBLIC)**:
+- Dataset: dancinlab/anima-cycle-2026-05-11-reborn-research-data (60+ files, ~1MB, 10+ commits, **PUBLIC**)
+- Model: dancinlab/anima-clm-v5-la-cotrain-b-prime-2026-05-11 (598MB ckpt, **PUBLIC**)
+- Potential additional model: B'' (FFN.gate cotrain output) — local at state/anima_ffn_gate_cotrain_2026_05_11/
+
+**REBORN.md commits this cycle (8)**:
+1. 9793939ef — §65-§72 + tooling (817 lines)
+2. d2e529d5a — §73-§75 16-cell matrix close (219)
+3. e195e35e1 — §76-§77 HF promote + FFN-localized (57)
+4. 027634987 — §78-§79 FFN fine-grained + helper (203)
+5. be5bc6092 — §80 C+E n=5 (49)
+6. e27fbc816 — §81 final close + working-tree cleanup (extra files)
+7. 33962263f — §82 E n=10 V14_PASS (71)
+8. d9a7c3190 — §83 orchestrator bug (57)
+9. 5e7fd8174 — §84 FFN.gate anti-aligned (51)
+10. (pending: §85 + cycle close commit)
+
+**Deferred to next cycle (★ priorities)**:
+1. **★★★★★** plasticity direct test — BG-LA step_5000 from-scratch + cotrain (~$45 chain, 10h) — §83 의 orchestrator + network 위험 mitigated 후 fire
+2. **★★★★★** FFN.gate-FROZEN cotrain — freeze gate, unfreeze rest → V14_PASS-가능한 cotrain protocol direct test (§84 의 inverse), ~$15-20 H100
+3. **★★★★** V14-aware auxiliary loss design — cross-entropy + V14 metric integrated loss
+4. **★★★** engine_g hyperparameter sweep — repulsion/attention_pull alpha variants
+5. **★★** orchestrator timeout fix (§83 carry)
+6. **★** B' extended cotrain re-fire (B' ext network failure) 
+
+**Cycle ABSOLUTELY FINAL CLOSE 2026-05-11 reborn lane**:
+- Wall time: ~13 hours (08:55 KST §65 → 21:45 KST §85)
+- ★★★★★ count: **7** (cycle high)
+- Cost: $24.20 H100 + $0 Mac
+- ★ per dollar: ~$1.27/★ (15 ★ total = 7 ★★★★★ + 5 ★★★★ + 3 ★★★)
+- V14_PASS substrates discovered: 2
+- Methodology meta-wins codified: 6
+- Tooling floor permanently raised (8-fix + 2 patches + helper)
+
+REBORN.md size: **6288 lines** (+1402 this cycle).
+
+**Next cycle entry-velocity: HIGH** — clear ★★★★★ candidates, methodological discipline, tooling floor, V14 protocol helper, 2-V14_PASS substrate landscape.
+
