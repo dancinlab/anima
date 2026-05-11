@@ -1,0 +1,77 @@
+# PHASE 0 SCAFFOLDING — NOT YET WIRED
+#
+# trainer_100m.config.yaml — medium scale CE-track CLM trainer config (P=100M)
+# spec: state/clm_ce_4scale_trainer_2026_05_12/spec.md §1 / §4 (medium row)
+# status: Phase 0 placeholder — actual training script + RunPod orchestrator
+#         미land. cycle 7+ scope.
+# cycle_provenance: cycle 6 #P
+# deterministic_seed: 0xC0EC0AC (inherited)
+# parent_spec_ceiling: phi_ce_orthogonality_decisive_2026_05_11/spec.md §5.7
+#                      (P=100M ceiling — 본 scale 이 baseline grid 의 top)
+
+schema: anima/clm_ce_trainer_config/1
+scale_id: medium
+status: phase_0_placeholder
+
+architecture:
+  type: causal_lm_decoder
+  layers: 12
+  hidden: 768
+  heads: 12
+  ffn_mult: 4
+  seq_len: 1024
+  tied_emb: true
+  activation: gelu
+  norm: pre_ln
+  positional: learned
+
+param_count_target: 100_000_000  # ±10 % tolerance per vocab size
+
+tokenizer:
+  name: skt/kogpt2-base-v2
+  vocab_size: 51200
+  alternative: custom_bpe_16k
+
+corpus:
+  primary: state/anima_clm_3_*_corpus/
+  fallback: openwebtext_subset
+  held_out_split: 0.05
+  held_out_seed: 0xC0EC0AC
+
+training:
+  optimizer: adamw
+  beta1: 0.9
+  beta2: 0.95
+  eps: 1.0e-8
+  weight_decay: 0.1
+  weight_decay_exclude: [embedding, layernorm]
+  lr_peak: 3.0e-4
+  lr_warmup_pct: 0.01
+  lr_decay: cosine
+  lr_min_pct: 0.10
+  grad_clip: 1.0
+  precision: bf16_mixed
+  global_batch_tokens: 524_288
+  grad_accum: 8
+  token_budget: 2_000_000_000  # Chinchilla 20x param
+  step_count_approx: 3900
+  wall_estimate_a100_hours: [4, 8]
+
+dual_seed:
+  seed_a: 0xC0EC0AC
+  seed_b: 0xC0EC0AC
+  seed_b_xor_mask: 0x42
+
+cost_estimate_usd:
+  single_seed: [50, 150]
+  dual_seed: [100, 300]
+
+emit:
+  results_dir: state/clm_ce_4scale_trainer_2026_05_12/results/
+  schema: anima/clm_ce_trainer/1
+
+# --- NOT YET WIRED ---
+# actual training script path: TBD (cycle 7+ implementation)
+# pattern reference: tool/transient_py/anima_h153_capacity_100m_train.py
+# RunPod orchestrator: TBD — pattern from tool/clm_v4_lora_train_orchestrator.hexa
+# B4 prereq: runpod.api_key access via main process

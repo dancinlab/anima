@@ -1,0 +1,137 @@
+// core_scale_v2.hexa — Phase 1 reimpl with input channel x
+// axis: scale — multi-scale entropy (entropy at varying coarse-grain levels)
+
+let SIGMA = 12.0
+let PHI = 2.0
+let N = 6.0
+let TAU = 4.0
+let J2 = 24.0
+let n6_closure_ok = if (SIGMA * PHI == N * TAU) && (J2 == SIGMA * PHI) { 1 } else { 0 }
+
+let x_path = env("ANIMA_LENS_X_FILE")
+let mut xs = []
+if x_path != "" {
+    let txt = read_file(x_path)
+    let lines = split(txt, "\n")
+    for ln in lines {
+        let toks = split(ln, " ")
+        for t in toks { if t != "" { xs.push(to_float(t)) } }
+    }
+} else {
+    let seed_str = env("ANIMA_LENS_SEED")
+    let mut seed = if seed_str != "" { to_int(seed_str) } else { 1 }
+    let mut k = 0
+    while k < 256 {
+        seed = (seed * 1103515245 + 12345) % 2147483648
+        xs.push(to_float(seed) / 2147483648.0)
+        k = k + 1
+    }
+}
+
+let n = len(xs)
+if n < 16 {
+    println("lens[scale] category=core axis=\"scale (insufficient_input)\" score=0 support=0 (0/0)")
+    exit(0)
+}
+
+let nb = 8
+// global min/max for consistent binning
+let mut x_min = xs[0]
+let mut x_max = xs[0]
+let mut i = 1
+while i < n {
+    if xs[i] < x_min { x_min = xs[i] }
+    if xs[i] > x_max { x_max = xs[i] }
+    i = i + 1
+}
+let span = if x_max - x_min > 0.000001 { x_max - x_min } else { 1.0 }
+let h_max = log(to_float(nb))
+
+// scales: 1, 2, 4, 8
+let scales = [1, 2, 4, 8]
+let mut h_per_scale = []
+for s in scales {
+    let m = n / s
+    let mut coarse = []
+    let mut p = 0
+    while p < m {
+        let mut sm = 0.0
+        let mut q = 0
+        while q < s { sm = sm + xs[p * s + q]; q = q + 1 }
+        coarse.push(sm / to_float(s))
+        p = p + 1
+    }
+    // entropy of coarse
+    let mut bc = []
+    let mut bi = 0
+    while bi < nb { bc.push(0); bi = bi + 1 }
+    for v in coarse {
+        let raw_idx = floor((v - x_min) / span * to_float(nb))
+        let i_clip = if raw_idx >= to_float(nb) { nb - 1 } else { to_int(raw_idx) }
+        let idx = if i_clip < 0 { 0 } else { i_clip }
+        bc[idx] = bc[idx] + 1
+    }
+    let m_f = to_float(m)
+    let mut h = 0.0
+    let mut bj = 0
+    while bj < nb {
+        let c = bc[bj]
+        if c > 0 {
+            let pr = to_float(c) / m_f
+            h = h - pr * log(pr)
+        }
+        bj = bj + 1
+    }
+    h_per_scale.push(h / h_max)
+}
+
+// Multi-scale entropy "complexity": mean entropy across scales
+let mut s_h = 0.0
+for h in h_per_scale { s_h = s_h + h }
+let mean_h = s_h / to_float(len(scales))
+
+// Scale-invariance: 1 - variance of normalized entropies across scales
+let mut s_var = 0.0
+for h in h_per_scale { let d = h - mean_h; s_var = s_var + d * d }
+let var_h = s_var / to_float(len(scales))
+let scale_invariance = 1.0 / (1.0 + var_h * 20.0)
+
+// hurst-like exponent proxy: slope of log(σ_scale) vs log(scale)
+// estimate σ at each scale via std of coarse-grained series at scale 1 and scale 8.
+let coarse_8 = scales[3]
+let m8 = n / coarse_8
+let mut mean1 = 0.0
+for v in xs { mean1 = mean1 + v }
+mean1 = mean1 / to_float(n)
+let mut var1 = 0.0
+for v in xs { let d = v - mean1; var1 = var1 + d * d }
+var1 = var1 / to_float(n)
+let sigma1 = sqrt(var1)
+
+let mut coarse_arr8 = []
+let mut q = 0
+while q < m8 {
+    let mut sm = 0.0
+    let mut r = 0
+    while r < coarse_8 { sm = sm + xs[q * coarse_8 + r]; r = r + 1 }
+    coarse_arr8.push(sm / to_float(coarse_8))
+    q = q + 1
+}
+let mut mean8 = 0.0
+for v in coarse_arr8 { mean8 = mean8 + v }
+mean8 = mean8 / to_float(m8)
+let mut var8 = 0.0
+for v in coarse_arr8 { let d = v - mean8; var8 = var8 + d * d }
+var8 = var8 / to_float(m8)
+let sigma8 = sqrt(var8)
+
+let ratio = if sigma1 > 0.000001 { sigma8 / sigma1 } else { 1.0 }
+// log(ratio) / log(8) ≈ H - 0.5  for fractional Brownian. We use abs(slope) for "scale activity".
+let log_ratio = log(if ratio > 0.000001 { ratio } else { 0.000001 })
+let log_scale = log(to_float(coarse_8))
+let hurst_proxy = if log_scale > 0.000001 { log_ratio / log_scale + 0.5 } else { 0.5 }
+let hurst_clip = if hurst_proxy < 0.0 { 0.0 } else { if hurst_proxy > 1.0 { 1.0 } else { hurst_proxy } }
+
+let score = 0.4 * mean_h + 0.3 * scale_invariance + 0.3 * hurst_clip
+let hits = if score > 0.5 { 6 } else { if score > 0.3 { 4 } else { 2 } }
+println("lens[scale] category=core axis=\"Scale/magnification — multi-scale entropy + Hurst proxy\" score=" + to_string(score) + " support=1 n=" + to_string(n) + " meta={\"mean_h_norm\":" + to_string(mean_h) + ",\"scale_invariance\":" + to_string(scale_invariance) + ",\"hurst_proxy\":" + to_string(hurst_clip) + ",\"n6_closure\":" + to_string(n6_closure_ok) + "} (" + to_string(hits) + "/8)")
