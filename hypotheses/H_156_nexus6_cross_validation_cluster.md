@@ -65,7 +65,7 @@ deterministic + hexa-only + llm: none.
 | ID | criterion | status |
 |----|-----------|--------|
 | **C1** | Onsager 5/5 exponents 가 n=6 분수 시리즈로 표현 가능 (≥1 candidate formula 존재) | candidate-mapped (audit 필요) |
-| **C2** | σ_SB = π⁵/15 — 15 의 n=6 closed-form 표현 존재 | mapped (15 = σ + τ - sopfr) |
+| **C2** | σ_SB = π⁵/15 — 15 의 n=6 closed-form 표현 존재 | mapped — **errata 2026-05-12**: 초기 식 "15 = σ + τ - sopfr" **산술 오류** (= 12+4-5 = 11, not 15). 유효 식: **15 = σ + τ - μ = 12 + 4 - 1**, 또는 **n + τ + sopfr = 6+4+5**, 또는 **C(6,2) = 15** (binomial). H_158 cross-check 에서 detected. 식의 multiplicity 자체가 L1 (depth-3 vocabulary triviality) 강화 |
 | **C3** | Ω_m:Ω_Λ 관측-매핑 χ² ≤ 2σ | partial (1.5σ 정합, normalization 차이 미해결) |
 | **C4** | Multiple-comparison MC p < 0.01 (3-domain joint significance) | pending (H_153 narrow-formula MC 차용 가능) |
 | **C5** | H_153 L7 (formula-search PERFECT_NUMBER_CLASS) 결과와 정합 — perfect-number-class generator 한계 명시 | met-by-citation |
@@ -75,7 +75,7 @@ deterministic + hexa-only + llm: none.
 ## Falsifiers (≥6)
 
 - **F1**: Onsager 5/5 exponents 중 어느 하나라도 n=6 분수 시리즈로 표현 불가 (e.g. δ=15 의 n=6 식 부재) → C1 fail
-- **F2**: σ_SB 분모 15 가 n=6 함수 closed-form 표현 불가 (15 = σ + τ - sopfr 외 더 자연스러운 식 부재) → C2 fail
+- **F2**: σ_SB 분모 15 가 n=6 함수 closed-form 표현 불가 (단 errata 2026-05-12: 유효 식 다수 — 15 = σ+τ-μ = n+τ+sopfr = C(6,2) — multiplicity 자체가 C2 의 strength 약화) → C2 fail
 - **F3**: 다른 완전수 (28, 496) 가 본 3-domain cluster 동시 매핑을 동등 이상 만족 → n=6 unique 무효 (단 L7 PERFECT_NUMBER_CLASS 이미 인정 — 강한 falsifier 는 *non-perfect* n 이 동등 매핑)
 - **F4**: Multiple-comparison MC p ≥ 0.05 — 임의 small integer 도 3-domain 동시 fit 빈도 동등 → 본 cluster cherry-picking
 - **F5**: Ω_m:Ω_Λ 관측이 향후 Euclid/Roman/CMB-S4 등에서 1:2 보다 다른 ratio (예: 0.4:0.6) 으로 revisable → C3 fail
@@ -87,7 +87,7 @@ deterministic + hexa-only + llm: none.
 - **L2**: **PERFECT_NUMBER_CLASS** — H_153 cycle 5 #2 depth-4 + perfect-number control 결과로 n∈{6,28,496,8128} mutually indistinguishable. 본 H_156 은 "perfect-number-class 가 generator" 임을 인정하나 "n=6 individually unique" claim 은 stronger sub-claim 으로 분기 (별도 H_158 candidate)
 - **L3**: **Ω_m:Ω_Λ normalization 문제** — φ:τ = 1:2 = 2:4 = 0.333:0.667 vs Planck 0.315:0.685 — 1.5σ 차이가 본 가설 "관측 2σ 이내" 의 lower-bound 일 뿐. 미래 CMB-S4 / 21cm 관측이 정밀화 시 falsifier
 - **L4**: **Onsager 5/5 candidate formulas 의 ambiguity** — β=1/8 의 n=6 식 candidate 가 여러 개 존재할 수 있음 (1/8 = 1/(sopfr+3) = 1/(τ·φ) = 등). "자연" 식 vs "post-hoc" 식 경계 unclear (H_153 F1 / L3 와 동일 문제)
-- **L5**: **Stefan-Boltzmann root 가 ζ(4)** — 15 = ζ(4) · 90/π⁴ × ... 가 본 derivation 의 root. 즉 15 자체가 ζ(4) integral 의 부수적 분모이지 n=6 derived 가 아님 (15 = σ + τ - sopfr 는 *post-hoc* 매핑일 가능성). C2 의 "closed-form 표현 가능" 은 narrow-sense 만 보장
+- **L5**: **Stefan-Boltzmann root 가 ζ(4)** — 15 = ζ(4) · 90/π⁴ × ... 가 본 derivation 의 root. 즉 15 자체가 ζ(4) integral 의 부수적 분모이지 n=6 derived 가 아님. 초기 "15 = σ + τ - sopfr" 식은 **산술 오류** (= 11 ≠ 15) — errata 2026-05-12 (H_158 cross-check 에서 발견). 유효 식 다수 (σ+τ-μ, n+τ+sopfr, C(6,2)) 모두 *post-hoc* 매핑이며, multiplicity 자체가 C2 의 "closed-form 표현 가능" 의 strength 를 약화 (depth-3 vocabulary triviality, H_153 L7 정합)
 - **L6**: **3-domain 독립성 가정의 단순화** — 2D Ising / Stefan-Boltzmann / Cosmology 가 *완전* 독립이라는 가정은 strong; 모두 thermodynamic-statistical mechanics root 공유 (Boltzmann distribution, partition function). 진정한 statistical independence p-value 계산은 더 정교한 measure 필요
 - **L7**: **single-doc 본문 묻힘** — Hc_035 의 source `docs/what-is-consciousness.md` 본문 (현재 scrubbed marker 가능) 외 NEXUS-6 ledger original 의 별도 cross-check 부재. peer-review-trace 없음
 

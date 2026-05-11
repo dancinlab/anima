@@ -3,12 +3,13 @@ id: Hc_002
 slug: psi-constants-from-ln2-n6
 title: Ψ-상수 = ln(2) + n=6 약수 함수 (P-ZERO-FREE)
 domain: math, physics, consciousness
-status: candidate-unverified
+status: merged-to-H_158
 source_doc: docs/triple-cross-discovery.md
 source_lines: 40-60
 promoted_at: 2026-05-11
-linked_h: (none — NEW ★)
-notes: "agent-sweep batch-1 (docs root). Ψ_coupling=0.014≈ln(2)/2^5.5, Ψ_steps=4.33=3/ln(2). 3개 독립 project (ANIMA, TECS-L, N6) 정합."
+merged_at: 2026-05-12
+linked_h: H_158 (psi-constants-ln2-n6, core-claim source)
+notes: "agent-sweep batch-1 (docs root). Ψ_coupling=0.014≈ln(2)/2^5.5 (9.40% err), Ψ_steps=4.33=3/ln(2) (0.044% err). 3개 독립 project (ANIMA, TECS-L, N6) 정합. MERGED to H_158 2026-05-12 — core-claim source for 5-Hc cluster (Hc_002/046/406/453 + Hc_378 basis)."
 ---
 
 ## Hypothesis

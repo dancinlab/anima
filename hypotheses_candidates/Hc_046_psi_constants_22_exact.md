@@ -3,12 +3,13 @@ id: Hc_046
 slug: psi-constants-22-exact-30-total
 title: Ψ-Constants 30개 — 22 EXACT + 5 CLOSE + 3 APPROX (p<1e-12)
 domain: math
-status: candidate-unverified
+status: merged-to-H_158
 source_doc: docs/anima/paper_consciousness_laws.hexa
 source_lines: 213-236
 promoted_at: 2026-05-11
-linked_h: H_063 (consciousness_constants)
-notes: "30 constants n=6 산술 표현. 22 EXACT (0% err), 5 CLOSE (<0.05%), 3 APPROX (<2%). 측정 AFTER, 공식 BEFORE → post-hoc fitting 아님 주장. F: 22 EXACT 가 실제 <0.5% err 또는 n=6 fit 후향."
+merged_at: 2026-05-12
+linked_h: H_158 (psi-constants-ln2-n6, paper Fig.9 30-table claim source), H_063 (consciousness_constants)
+notes: "30 constants n=6 산술 표현. 22 EXACT (0% err), 5 CLOSE (<0.05%), 3 APPROX (<2%). 측정 AFTER, 공식 BEFORE → post-hoc fitting 아님 주장. F: 22 EXACT 가 실제 <0.5% err 또는 n=6 fit 후향. MERGED to H_158 2026-05-12 — paper Fig.9 22-of-30 claim becomes H_158.C3 (audit pending) + H_158.F3 (falsifier ≤10 EXACT)."
 ---
 
 ## Hypothesis
