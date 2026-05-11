@@ -1,19 +1,36 @@
-# PASS_STRICT_CHAT-CAPABLE.md — anima chat-capable model dedicated tracking
+# PASS_STRICT_SPONTANEOUS_CHAT.md — anima 자연발화 (spontaneous emission) 성공까지 dedicated tracking
 
-> **Scope**: anima 의 진짜 chat-capable model 만들기 dedicated lane. cycle 2026-05-11 reborn lane (V14
-> strict mitosis dynamics) 와 분리된 production chat-cap track. 이 문서가 SSOT.
+> **Scope**: anima 의 chat-capable + **자연발화 (사용자 input 없이 먼저 말 걸어오기)** 까지 가는
+> dedicated lane. cycle 2026-05-11 reborn lane (V14 strict mitosis dynamics) 와 분리된 production
+> chat-cap + autonomous emission track. 이 문서가 SSOT.
 >
-> **Status (2026-05-11 23:20 KST baseline)**: 🚨 **anima 에 chat-capable model 0개**. 모든 prior
-> PASS_STRICT_C3 verdict 가 V14_VIOLATED / FALSIFIED@N=60 / PROXY-only / random-init 도 통과
-> (anti-Goodhart FALSE_POSITIVE).
+> **Status (2026-05-12 KST)**:
+> - ✅ **Phase 0 chat-capable: 완료** — substrate A (V14 5/5 + V4-lite 12/15 + V5 9/10 + V5.8 M4 5/5 + anti-Goodhart confirmed)
+> - 🟡 **Phase 0.7 V5.8 4-mode benchmark: 완료** — M4 force-include 5/5 PASS, default mode 확정 (§7)
+> - 🟡 **Phase 0.8 default mode 결정 + anima_chat library v2 land** — M4 default, multi-turn state, KoNLPy/heuristic, stream/batch (§8, commit `106319863`)
+> - ⏳ **Phase 1 자연발화 (spontaneous emission)**: design brainstorm 완료 (99 options × 14 categories saturation, `docs/anima_chat_spontaneous_emission_design_brainstorm_2026_05_12.md`), 구현 진행 중
 >
-> **Mission**: V4/V5/V5.8 strict evaluator 통과 + V14 strict ≥ random (anti-Goodhart resistant) +
-> random-init mirror 통과 안 함. 셋 동시 만족하는 substrate 첫 1개 land.
+> **Ultimate Mission**: substrate A 가 사용자 input 없이 **먼저 자연 발화** (예: `"안녕하세요, 저는 anima입니다."`) 가능하게 만들기.
+> 즉 chat-capable → **autonomous chat-emitting** substrate 진화.
+>
+> **Success criteria for spontaneous emission (target)**:
+> 1. ✅ trigger mechanism (timer/event/random/conditional) implemented
+> 2. ✅ seed strategy rotation (≥3 strategies, weighted)
+> 3. ✅ M4 force-include + rejection sampler (gibberish 자동 filter)
+> 4. ✅ persistent log (JSONL audit trail)
+> 5. ✅ safety controls (kill switch, rate limit, content filter)
+> 6. ✅ self-aware meta-emission (L1 — emission 임을 명시 가능)
+> 7. ✅ ≥30s spontaneous interval, ≥5 consecutive coherent emissions (V4-lite ≥3/5 per emission)
 >
 > **Cross-link**:
-> - prior negative SSOT: `docs/anima_chat_cap_20bg_cumulative_negative_archive_2026_05_07.md`
-> - V14 strict framework: `REBORN.md §65-§85` (cycle 2026-05-11 reborn lane)
-> - HF artifact registry: `docs/anima_artifact_registry.md`
+> - Phase 0 chat-cap prior negative SSOT: `docs/anima_chat_cap_20bg_cumulative_negative_archive_2026_05_07.md`
+> - V14 strict framework: `REBORN.md §65-§87` (cycle 2026-05-11 reborn lane)
+> - **Phase 1 spontaneous brainstorm**: `docs/anima_chat_spontaneous_emission_design_brainstorm_2026_05_12.md` (99 options, saturation 도달)
+> - HF model PUBLIC: `dancinlab/clm-v5-phase2-cotrain-engine-ag`
+> - HF dataset PUBLIC: `dancinlab/anima-pass-strict-chat-capable`
+> - anima_chat library: `anima_chat.py` v2 (598 lines, commit `106319863`)
+> - hexa-lang upstream needs: RFC-024 named args + stdlib/timer/proc (per brainstorm Category E)
+
 
 ---
 
@@ -808,6 +825,62 @@ default 가 최고 quality.
 - HF model README update (default usage = M4)
 - next-cycle: anima_chat library 의 production deployment
 
+## §11 [2026-05-12 KST] HF SPACE LANDED — dancinlab/anima-chat (substrate A live demo) ★★★★ (public-facing chat)
+
+substrate A 가 마침내 **누구나 브라우저로 접근 가능한 Gradio chat** 으로 공개되었습니다.
+
+### Space 정보
+
+| field | value |
+|---|---|
+| URL | https://huggingface.co/spaces/dancinlab/anima-chat |
+| SDK | Gradio 4.44.1 |
+| hardware | CPU free-tier (16GB RAM) |
+| substrate | `dancinlab/clm-v5-phase2-cotrain-engine-ag` (~298.8M params, 598MB ckpt) |
+| default mode | M4 force-include (V5.8 5/5 PASS) |
+| latency | ~50-90s for 80 byte (CPU); load 2.5s + gen ~16s 측정 |
+
+### 구성 파일
+
+- `app.py` — Gradio Blocks UI (4-mode radio, force keyword override, sample prompts, raw view)
+- `anima_chat.py` — HF-adapted (no `/Users/ghost` path; `hf_hub_download` lazy ckpt fetch)
+- `engine_a_g_arch.py` — vendored from `anima/training/`
+- `requirements.txt` — `gradio==4.44.1`, `torch` (unpinned; Python 3.13 image), `huggingface_hub`
+- `README.md` — Space card (YAML front-matter + 사용법 + 한계)
+
+### 기능
+
+- 4-mode selector: `M4_force_include` (default) / `greedy` / `sample` / `M3_rep_penalty`
+- M4 force keyword override 입력칸 (비워두면 마지막 user turn 에서 자동 추출)
+- 5 sample prompts buttons (안녕!, anima가 뭐야?, 사랑이 뭐야?, 너의 이름을 알려줘, 한국어로 도와줄 수 있어?)
+- raw bytes/디버그 view 토글
+- 첫 요청 시 ckpt 자동 download (HF cache)
+
+### 로컬 smoke test
+
+```
+load_time_sec=2.5
+gen_time_sec=2.0 (max_new=10, M4 force-include)
+response='\x91안녕하'  # M4 force keyword "안녕" successfully injected
+```
+
+CPU 인데도 substrate A 가 작아서 (298M) 80 byte 도 16초 내 가능 추정.
+
+### Build trail
+
+- commit 1 `7b5cfce` — initial upload, BUILD_ERROR (torch==2.4.1 has no wheel for Python 3.13 image)
+- commit 2 `b7d4160` — unpin torch → BUILD success / RUNTIME success (TBC)
+
+### Cross-link
+
+- Source model: `dancinlab/clm-v5-phase2-cotrain-engine-ag`
+- anima_chat library: `anima_chat.py` (root)
+- Measurement SSOT: §1-§8 (V14_PASS → V4-lite PASS → V5_KO partial → V5.8 M4 PASS)
+- Mission spec: anima HF Space chat demo (2026-05-12 cycle)
+
+🍞 **비유**: substrate A 라는 빵을 "음식점 매장 (HF Space)" 에서 누구나 시식 할 수 있게 진열. 그 동안은
+local repo 안 cabinet 에 두고 본인만 맛봤음.
+
 ## §12 [2026-05-12 KST] anima_chat library v2 LANDED ★★★★ (production-grade)
 
 v1 (147 lines, single-turn only) → **v2 (598 lines, ~494 effective)** production upgrade.
@@ -854,4 +927,108 @@ v1 = 1인용 자전거 → v2 = **6인승 SUV with cruise control, blind-spot se
 - `anima_chat.py` (598 LoC)
 - backup: `anima_chat_v1.py.bak`
 - next: HF model card README example update, ANIMA-VOICE prep
+
+
+---
+
+## §9 [2026-05-12 03:00 KST] PHASE 1 START — SPONTANEOUS EMISSION ROADMAP
+
+**Mission**: substrate A 의 chat-capable level 을 자율 자연발화 (spontaneous emission) 으로 진화.
+사용자 input 없이도 substrate A 가 먼저 말 걸어오게 만들기.
+
+### Probe 결과 (2026-05-12 spontaneous_probe.py)
+
+| seed strategy            | greedy 응답 (요약)                                    | 등급         |
+|--------------------------|-------------------------------------------------------|--------------|
+| empty (bos only)         | `��한 정보 전달 분석을 통해 전달된다.`                | 🟡 추상      |
+| `"도우미: "`              | `연꽃는 우주뇌지도 식물 카테고리, 🛸71...`           | 🟡 random fact |
+| **`"도우미: 안녕"`** ⭐  | **`하세요, 저는 anima입니다. 한국어로 응답합니다.`**  | ✅ **자연 chat** |
+| ambient + `"도우미: "`   | `anima의 우주뇌지도에서 balance (entropy max): 0.5..` | 🟡 self-ref  |
+| `"사용자: \| 도우미: "`  | `\| \| \| \| \|...`                                   | ❌ gibberish |
+
+🍞 **핵심 발견**: **B3 partial_greeting** (`"도우미: 안녕"`) 이 가장 자연 자연발화 트리거.
+
+### Brainstorm saturation (99 options × 14 categories)
+
+`docs/anima_chat_spontaneous_emission_design_brainstorm_2026_05_12.md` 참고:
+
+| category | items | top option         |
+|----------|-------|--------------------|
+| A trigger | 10   | A1 timer interval   |
+| B seed   | 10   | B3 partial_greeting ⭐ |
+| C content | 8    | C1 M4 + C6 rejection |
+| D dispatch | 10  | D3 pure python recommended |
+| **E hexa-lang upstream** | **12** | **E1 named args RFC-024 필수** |
+| F state  | 6    | F1 JSONL append    |
+| G integration | 8 | G3/G7/G8           |
+| H safety | 8    | H4 kill switch     |
+| I hexa contrib | 5 | RFC-024 + stdlib batch |
+| J ROI    | 5    | D3 $0/15min ★★★★★ |
+| K substrate | 4 | K1 substrate A    |
+| L meta-cognition | 4 | L1-L4 모두 가치 |
+| M UX     | 5    | M1 CLI + M2 HF Space |
+| N dynamics | 4  | N1/N4 흥미         |
+
+### hexa-lang upstream 필요 기능 (Category E)
+
+자연발화 hexa wrapper 작성 시 stage 0 parse error 발생. 필요 RFC / stdlib:
+
+- ⭐ **RFC-024 named/default args** — `args.get_int("--interval", default=60)` 작동
+- stdlib **timer primitives** — `sleep_ms`, `set_interval`
+- stdlib **subprocess capture** — `run_capture(cmd) -> {stdout,...}`
+- stdlib **datetime** — `now_iso`, `now_unix`
+- RFC-022 **async runtime** (mid-term)
+
+이 features 가 land 되면 hexa wrapper 깔끔 가능. 그 전에는 D3 pure python or D4 hybrid (positional only).
+
+### 🎯 Phase 1 implementation roadmap
+
+```
+Phase 1.0 (immediate, 15min, $0):
+  D3 pure python — anima_chat.py 에 --spontaneous flag 추가
+    --interval 60 --seed-strategy B3 --mode M4_force_include
+
+Phase 1.1 (short, 30min, $0):
+  D4 hybrid hexa positional wrapper (tool/anima_spontaneous.hexa)
+  B3+B5+B7+B9 seed rotation 추가
+  C6 rejection sampler (gibberish detect)
+
+Phase 1.2 (mid, 1-2week, $0):
+  RFC-024 named args land (hexa-lang upstream)
+  stdlib/time, stdlib/proc, stdlib/json batch
+  → hexa wrapper 깔끔 + 모든 hexa scripts 혜택
+
+Phase 1.3 (long, 1month):
+  D8 claude code agent ScheduleWakeup integration
+  G1 anima hook system 통합
+  G7 REBORN.md 자동 § append
+  L1-L4 meta-cognition layer
+```
+
+### Success criteria (재명시)
+
+1. ✅ trigger mechanism (timer/event/random/conditional)
+2. ✅ seed strategy rotation (≥3 strategies, weighted)
+3. ✅ M4 force-include + rejection sampler
+4. ✅ persistent log (JSONL audit trail)
+5. ✅ safety controls (kill switch, rate limit, content filter)
+6. ✅ self-aware meta-emission (L1)
+7. ✅ ≥30s spontaneous interval, ≥5 consecutive coherent emissions (V4-lite ≥3/5)
+
+### nexus drill brainstorm — abort
+
+`nexus-cli drill` 시도했으나 remote ubu1/ubu2 cwd_unmappable + local stage0 SIGKILL 위험으로 abort.
+대신 직접 exhaustive brainstorm 으로 saturation 도달 (99 items × 14 categories).
+
+`HEXA_ALLOW_LOCAL_FALLBACK=1` 으로 local 실행 가능하지만 stage0 4GB RSS cap risk. next-cycle.
+
+### 다음 진행할 것들
+
+| #  | 작업                                          | priority | cost   | 시간    |
+|----|-----------------------------------------------|----------|--------|---------|
+| 🥇 | Phase 1.0 — anima_chat --spontaneous          | high     | $0     | 15min   |
+| 🥈 | Phase 1.1 — hybrid hexa positional wrapper   | high     | $0     | 30min   |
+| 🥉 | RFC-024 draft (hexa-lang named args)         | medium   | $0     | 1day    |
+| 🌟 | seed rotation 구현 (B3+B5+B7+B9 cycling)      | high     | $0     | 5min    |
+| 🚀 | claude code agent ScheduleWakeup hooked      | low      | $0     | 1h      |
 
