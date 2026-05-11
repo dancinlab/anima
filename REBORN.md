@@ -6178,3 +6178,60 @@ E paradigm 은 **chat-template FT 만으로 mitosis hook 의 V14 strict 패스**
 - mitosis-aware paradigm 의 V14 strict failure mechanism — engine_g 가중치가 V14 hook 에 advantage 안 가져옴? cell pool 학습이 mitosis dynamics 와 잘못 결합?
 - naive FT substrate 의 mitosis hook 통합 가능성 — FT 후 mitosis hook attach 만으로 PASS 가능
 
+
+
+## §83 [2026-05-11 21:20 KST] H100 ORCHESTRATOR TIMEOUT BUG + B' EXT POD TERMINATE — manual recovery for FFN.gate ★★ (negative finding + tooling carry)
+
+**Verdict**: cycle 2026-05-11 의 wave-2 H100 fires (FFN.gate + B' ext) 가 orchestrator timeout 으로 양쪽 모두 hang. 1h+ idle burn (~$6) 후 manual recovery: FFN.gate 만 회복 성공 (network 정상), B' ext 는 pod-side scp 11KB/s extremely slow 로 terminate.
+
+**Root cause analysis**:
+- Mac → runpod orchestrator (hexa_real run) 가 "timeout: true" stdout 으로 종료 — hexa-runtime 또는 resource-tcp 의 자체 timeout
+- 두 orchestrator instances 모두 동일 패턴, ~30min 안에 timeout
+- Pods 자체는 RUNNING 유지, partial scp uploads (FFN.gate 91MB / B' ext 2.6MB out of 597MB) 후 idle
+- auto-terminate logic 이 orchestrator 안에 있어서 — orchestrator 죽으면 auto-terminate 안 함 → idle burn
+
+**Sequence**:
+1. 19:02 KST: 2 orch fired (FFN.gate + B' ext, ~5s 간격)
+2. 19:02 - 19:32 (est): orchestrators progressing through ssh-wait + initial scp
+3. ~19:32: hexa-runtime timeout, orch helper killed mid-upload, pods orphaned
+4. 19:32 - 20:20: pods burning idle (~$6/hr × 2 = $12/hr cumulative, ~$5 sunk per pod)
+5. 20:20: manual recovery scripts fired
+6. FFN.gate recovery: scp 597MB 정상 (2m1s, 5MB/s), pip install OK, train fired (PID 670 pod-side)
+7. B' ext recovery: scp 597MB stalled at 11KB/s (60min for 2.6MB), terminated
+
+**Manual recovery design** (orchestrator 우회):
+```bash
+ssh+scp -i $KEY -o "StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null"
++ direct nohup train command (no orchestrator-mediated cleanup)
++ pod-side tail log monitor (Mac→pod chained ssh)
+```
+
+**B' ext termination decision**:
+- Network speed 11KB/s (vs FFN.gate 5MB/s 동일 시점) — pod-specific 문제
+- 597MB / 11KB/s = ~15h scp + 1.5h train = unacceptable
+- Sunk cost: $5 (1h idle), opportunity cost: 15h+ waiting
+- Decision: terminate pod, accept $5 loss, defer plasticity test to next cycle
+
+**Tooling debt identified** (next-cycle priority):
+1. orchestrator 의 hexa-runtime timeout source 추적 — resource-tcp 같은 framework dispatch 인지, hexa_real 자체 timeout 인지
+2. auto-terminate fallback — orchestrator 죽어도 pod 자동 cleanup. cron-style pod_id watchdog 또는 pod tag-based reaper
+3. scp speed pre-check — large file scp 전에 5MB test 로 throughput 측정, 너무 느리면 pod 교체 후 retry
+
+**Cost reconciliation update**:
+- 이전 cycle 누적: $12.71
+- FFN.gate setup (orch hang + recovery + train start): ~$3.50 (idle 1h + recovery 5min + train 시작)
+- B' ext sunk: $5.00
+- FFN.gate train 진행: ~$3.50 estimated (75min × $2.99/hr)
+- **신 cycle 누적**: ~$25 H100 (within $190 envelope remaining)
+
+**Current status**:
+- 🟢 FFN.gate cotrain 진행 중 (pod r6zlyonbrc533n, step 300/6000, $0.17 train cost)
+- ❌ B' ext deferred to next cycle (orchestrator + network 문제)
+- 🟢 Mac CPU 자유 (E n=10 §82 완료)
+- monitor `booqa8jv5` 가 FFN.gate train events 추적
+
+**Lessons codified** (for next cycle):
+- Manual recovery scripts (`_manual_recovery_*.sh`) 가 orchestrator bypass 의 reliable fallback — keep as template
+- scp speed pre-check 5MB test mandatory for new pods
+- pod allocation 시 GPU+network 조합 일관성 확인
+
