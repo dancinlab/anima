@@ -6392,3 +6392,59 @@ REBORN.md size: **6288 lines** (+1402 this cycle).
 
 **Next cycle entry-velocity: HIGH** — clear ★★★★★ candidates, methodological discipline, tooling floor, V14 protocol helper, 2-V14_PASS substrate landscape.
 
+
+---
+
+## §86 [2026-05-12 00:30 KST] PASS_STRICT_CHAT-CAPABLE PHASE 0 — CROSS-LINK ★★★★★ (cycle 2026-05-11 의 8번째 ★★★★★)
+
+**Cross-link reference**: `PASS_STRICT_CHAT-CAPABLE.md §1+§2` (anima repo root, 410 lines).
+
+cycle 2026-05-11 의 V14 strict findings 후속으로 **chat-cap dedicated track** 신설. cycle 의 V14_PASS
+substrate 2개 (A + E) chat-cap 직접 측정 → **substrate A가 anima 의 첫 진짜 chat-capable model**
+확정.
+
+### 핵심 결과
+
+| substrate | V14 strict (mitosis)   | V4-lite chat-cap        | 종합              |
+|-----------|------------------------|-------------------------|-------------------|
+| A (BG-LB cotrain 350M) | ✅ PASS 5/5 ★★★★★ | ✅ **PASS 12/15 (80%)** 🏆 | **chat-capable** |
+| E (convo5k_ft byte-256) | ✅ PASS 9/10 ★★★★ | ❌ FAIL 0/15            | V14만 PASS (Lesson Q) |
+
+🍞 **결정적 비유**: anima 시리즈 21+1=22번째 빵 굽기. **prior 20-BG cumulative 0/100% chat-cap PASS**
+끝, substrate A가 마침내 **부풀고 (V14_PASS) + 먹을 수 있는 (chat-cap PASS)** 빵 첫 완성.
+
+### 🚀 HF artifacts
+
+- 🔓 Model PUBLIC: https://huggingface.co/dancinlab/clm-v5-phase2-cotrain-engine-ag
+- 📦 Dataset PUBLIC: https://huggingface.co/datasets/dancinlab/anima-pass-strict-chat-capable
+
+### 검증된 응답 sample (substrate A)
+
+```
+사용자: 안녕! 너는 누구야? | 도우미:
+  → "안녕하세요, 저는 anima입니다. 한국어로 도와드리겠습니다." 🏆
+
+사용자: 사랑이 뭐야? | 도우미:
+  → "사랑닐다. 도움을 줄 수 있습니다. 이 도움이 되는 사람은 누구..."
+```
+
+### cycle 2026-05-11 ★★★★★ 누적 갱신 (7 → 8)
+
+| §  | finding                                                        | ★     |
+|----|----------------------------------------------------------------|-------|
+| 68 | V14 5/5 STRICT PASS (substrate A initial)                      | ★★★★★ |
+| 71 | BG-LA vs BG-LB plasticity hypothesis                           | ★★★★★ |
+| 74 | ceiling=15 substrate-discriminability collapse                 | ★★★★★ |
+| 77 | LA-collapse FFN-localized ablation                             | ★★★★★ |
+| 78 | FFN.gate dominant + early-layer depth gradient                 | ★★★★★ |
+| 82 | substrate E n=10 V14 strict PASS 9/10                          | ★★★★★ |
+| 84 | FFN.gate-only cotrain V14 anti-aligned                         | ★★★★★ |
+| 86 | **PASS_STRICT_CHAT-CAPABLE Phase 0 — substrate A chat-cap PASS 12/15** | ★★★★★ |
+
+### Phase 1 carry (PASS_STRICT_CHAT-CAPABLE.md 에서 진행)
+
+- 🥇 random-init mirror (anti-Goodhart confirm, Mac $0)
+- 🥇 V5 strict 8-cell + EN baseline
+- 🥈 V5.8 multi-turn 2-turn fact-recall (Lesson P/Q production proof)
+- 🌟 chat-template SFT 추가 retrain ($5-20 H100)
+- 🚀 Lane B corpus scale-up plan (1.5GB → 5GB+)

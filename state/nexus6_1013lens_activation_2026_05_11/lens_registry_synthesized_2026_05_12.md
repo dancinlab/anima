@@ -72,7 +72,7 @@ lock_policy: NO chflags/chattr — repository directive 2026-05-11
 
 ## 5. Usage — aggregator wiring
 
-`tool/anima_nexus_1013lens_smoke.hexa` (또는 future K=25/50 aggregator) 가 본 registry 를
+`tool/anima_nexus_1013lens_cascade.hexa` (renamed 2026-05-12 cycle 5 §4 #H — K-cascade aggregator) 가 본 registry 를
 참조하려면 env var:
 
 ```bash
@@ -110,5 +110,5 @@ for lens in k10_lenses {
 
 - nexus repo 측 *공식* `lens_registry.json` (1013-official SSOT) 결정 시 본 synthesized registry 를
   superseded/deprecate
-- K=10 aggregator (`tool/anima_nexus_1013lens_smoke.hexa`) 작성 시 본 registry path 를 default 로 wire
+- K-cascade aggregator (`tool/anima_nexus_1013lens_cascade.hexa`, renamed 2026-05-12 from anima_nexus_1013lens_smoke.hexa) 작성 시 본 registry path 를 default 로 wire
 - 1013 vs 1588 vs 4000 layer mismatch 의 nexus-repo-측 coordination 은 여전히 open (audit risk #5 *full* resolution 은 그쪽에서만 가능)

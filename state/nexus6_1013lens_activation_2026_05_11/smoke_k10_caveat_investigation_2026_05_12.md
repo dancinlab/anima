@@ -165,7 +165,7 @@ spec §3 K=10 acceptance: `positive_ratio ≥ 6/10` + `mean(phi_lens) > 0`.
 
 ## 7. Hardcoded path 여부 (P-A2 binding mount-independence)
 
-`tool/anima_nexus_1013lens_smoke.hexa` 본체 grep:
+`tool/anima_nexus_1013lens_cascade.hexa` (renamed 2026-05-12 cycle 5 §4 #H) 본체 grep:
 - `LENS_DIR_PRIMARY = os.environ.get('NEXUS_LENSES_DIR', '/Users/ghost/core/nexus/lenses')` — env var **우선**, default Mac path fallback
 - `LENS_DIR_FALLBACK = '/home/summer/core/nexus_lenses_snapshot'` — 명시적 Linux fallback
 
@@ -195,6 +195,10 @@ spec §3 K=10 acceptance: `positive_ratio ≥ 6/10` + `mean(phi_lens) > 0`.
 - Hc_586/598 의 "1000x 가속" 주장이 *현 lens layer* 의 measurement 와 axis 일치하는지 재검토
   (prereq_audit §1.2 의 axis 분리 정신 연장)
 
+### 8.3 Hc status 갱신 (cycle 5 §4 #G — 2026-05-12)
+
+- Hc_586 status: `candidate-unverified-suspended-pending-channel-reimpl` as of 2026-05-12 (suspended_reason: 1,588 lens engine = n=6 self-test 복제본, input channel 부재; prereq_to_resume: lens_channel_reimpl_spec_2026_05_12.md Phase 1)
+
 ## 9. Lock Policy 준수
 
 본 investigation 작성 과정에서 chflags +uchg/+schg/chattr +i 등 immutable flag 적용
@@ -207,7 +211,7 @@ spec §3 K=10 acceptance: `positive_ratio ≥ 6/10` + `mean(phi_lens) > 0`.
 - emit log: `state/nexus6_1013lens_activation_2026_05_11/smoke_k10_canonical_2026_05_12.emit.log`
 - spec: `state/nexus6_1013lens_activation_2026_05_11/spec.md` §2, §3, §3.1, §4 C1, §5 F1/F2
 - prereq audit: `state/nexus6_1013lens_activation_2026_05_11/prereq_audit_2026_05_11.md` §1.2, §2.3, §2.4
-- aggregator tool: `tool/anima_nexus_1013lens_smoke.hexa`
+- aggregator tool: `tool/anima_nexus_1013lens_cascade.hexa` (renamed 2026-05-12 cycle 5 §4 #H from anima_nexus_1013lens_smoke.hexa)
 - lens source (Linux snapshot): `/home/summer/core/nexus_lenses_snapshot/core_*.hexa` (23 files)
 - lens source (Mac upstream): `/Users/ghost/core/nexus/lenses/core_*.hexa`
 - snapshot metadata: `/home/summer/core/nexus_lenses_snapshot/SNAPSHOT_INFO.md`

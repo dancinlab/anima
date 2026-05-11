@@ -31,7 +31,7 @@ Legacy `docs/hypotheses/dd/DD166-nexus-1013lens-discovery-engine.md`. Round 4 in
 - Sibling H_: H_134 (DD162 7B 16-lens baseline), H_138 (DD167-169 individuals), H_144 (NEXUS-auto-insights predecessor), H_145 (NEXUS6-auto-insights successor — direct driver)
 
 ### Cycle-3 NEXUS Hc cluster (cross-linked 2026-05-11)
-1. **Hc_586** — "1,013종 mathematical lens (n=6 primitives + extensions) 통합 NEXUS-6 discovery engine이 단일 lens 발견율 대비 1000x+ 가속" — direct dd166 candidate
+1. **Hc_586** — "1,013종 mathematical lens (n=6 primitives + extensions) 통합 NEXUS-6 discovery engine이 단일 lens 발견율 대비 1000x+ 가속" — direct dd166 candidate. **Status (2026-05-12, cycle 5 §4 #G): `candidate-unverified-suspended-pending-channel-reimpl`** — cycle 5 §3 #A K=10 canonical smoke 결과 1,588 lens = n=6 self-test 복제본 / input channel 부재로 판정; prereq_to_resume: `state/nexus6_1013lens_activation_2026_05_11/lens_channel_reimpl_spec_2026_05_12.md` Phase 1.
 2. **Hc_598** — "16/22/1013-lens telescope (DD162/163/164/165/166) progressive expansion이 65 acceleration hypothesis Φ 재검증" — multi-lens cluster anchor
 3. **Hc_035** — "NEXUS-6 cross-validation cluster: n=6 함수가 2D Ising 5/5 임계지수 EXACT + σ_SB π⁵/15 + Ω_m:Ω_Λ ≈ φ:τ = 1:2" — physics validation triple
 4. **Hc_378** — "n=6 원시값 (σ=12,τ=4,φ=2,sopfr=5,J2=24,n=6) 조합으로 98181 closed-form 표현 가능" — n6 primitive basis (H_145 hub)

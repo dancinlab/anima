@@ -29,9 +29,12 @@ K=25 canary cascade 진입 *전* 충족되어야 할 prereq:
 | lens snapshot Linux-native | `/home/summer/core/nexus_lenses_snapshot/` (23 core_*.hexa) | exists (mount-independent) |
 | lens_registry.json synthesized | cycle 5 §3 #B — Agent B | pending (#B in flight) |
 | Φ★ vs Φ_lens naming separation | cycle 5 §3 #C — Agent C | pending (#C in flight) |
+| **lens input channel reimpl** (K=10 Phase 1 PASS — F-reimpl-1/2/3 통과) | cycle 5 §4 #F `lens_channel_reimpl_spec_2026_05_12.md` | **strict** — K=10 trivial caveat (Agent 21) 해소 binding |
 
-본 plan 은 위 4 항의 *완료* 를 가정하고 design 한다. prereq 미충족 시 K=25 cascade 자체가
-non-binding 이며 본 plan freeze.
+본 plan 은 위 *5* 항 (channel reimpl strict 추가) 의 *완료* 를 가정하고 design 한다.
+prereq 미충족 시 K=25 cascade 자체가 non-binding 이며 본 plan freeze. 특히 channel reimpl
+미완료 상태에서 K=25 진행 시 동일 trivial 결과가 K=25/K=50 까지 propagate (caveat
+investigation §0).
 
 K=10 PASS 의 정의 (spec §3 + smoke aggregator §0): `positive_ratio ≥ 0.6` AND
 `phi_mean > 0` AND F1 floor breach 없음. 이미 dry-run 에서 c1_gate=True 신호 (Agent 17)
@@ -148,6 +151,8 @@ null distribution 합성 방법 (Monte Carlo vs analytic) 은 본 plan 에서 *�
 
 → §8 L3 honest limit. 본 plan 은 *MC option* 을 default 로 추천 (재현성 + seed 명시 + spec §6
 L5 entropy fallback 과 호환).
+
+**F2 null synthesis spec**: see `f2_null_synthesis_spec_2026_05_12.md` (recommended: hybrid MC/bootstrap/analytic)
 
 ## 4. Cascade Decision Tree
 
@@ -275,7 +280,7 @@ K=10 결과와 K=25 결과의 조합별 다음 step:
 | Φ★ naming refactor (Agent C — cycle 5 §3 #C) | spec.md §1 P-A1/P-A2 + §2 axis caveat | naming convention (nexus_lens_score vs anima_phi_star) 일관 |
 | parent spec §3 Protocol cascade | spec.md §3 | K=25 의 design baseline |
 | parent spec §7 Decision tree | spec.md §7 | 본 plan §4 decision tree 의 source |
-| smoke aggregator (rename target) | `tool/anima_nexus_1013lens_smoke.hexa` | §6 옵션 A rename + parameterize |
+| cascade aggregator (renamed 2026-05-12 cycle 5 §4 #H) | `tool/anima_nexus_1013lens_cascade.hexa` | §6 옵션 A executed — K-cascade SSOT |
 | prereq audit | `state/nexus6_1013lens_activation_2026_05_11/prereq_audit_2026_05_11.md` §2.3 | K=25 cost estimate substrate |
 | Hc cluster | Hc_586 (가속), Hc_598 (progressive expansion), Hc_035 (cross-validation), Hc_378 (n6 basis), Hc_960 (mislabel) | K=25 가 직접 검증하는 Hcs |
 | lock policy | memory: feedback_no_relock.md 2026-05-11 | chflags/chattr 적용 금지 (본 plan 작성 과정에서 무적용 확인) |

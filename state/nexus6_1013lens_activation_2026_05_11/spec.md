@@ -121,7 +121,7 @@ support: predicate_holds(L_i, x)  ∈  {0,1}  (lens 적용 가능성 게이트)
 
 K=50 PASS → C1 charged → H_135 status `legacy-archive-pointer` → `running` 전환 가능.
 
-aggregator: `tool/anima_nexus_1013lens_smoke.hexa` (K=10 step; subprocess loop over §3.1 whitelist).
+aggregator: `tool/anima_nexus_1013lens_cascade.hexa` (K-cascade — renamed 2026-05-12 cycle 5 §4 #H; K=10 step; subprocess loop over §3.1 whitelist).
 
 canonical K=10 smoke executed: 2026-05-12, verdict: C1 PASS_WITH_CAVEAT (pos_ratio=1.0 / 132 ms; score=1.0 = trivial n=6 self-test, lens input channel 부재 — `smoke_k10_caveat_investigation_2026_05_12.md`).
 

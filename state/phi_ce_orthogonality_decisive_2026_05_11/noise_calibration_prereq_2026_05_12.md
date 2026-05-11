@@ -136,3 +136,5 @@ Step 5 — decisive run go/no-go
 
 **lock policy reminder**: chflags +uchg/+schg/chattr +i 적용 *금지*. unlock 된 파일 *재잠금 금지*.
 **commit policy**: 본 prereq spec 은 *separate commit 금지* — 메인 process 가 일괄 commit.
+
+**Execution attempt**: 2026-05-12, verdict: BLOCKED, results: noise_calibration_dryrun_blocker_2026_05_12.md (5 prereqs unmet — B1 anima_phi_star.hexa auto-invoke conflict critical-path, B5 CLM training pipeline unlandered, B2/B3/B4 RunPod lane routine prereqs; $0 spent of $15-45 budget)
