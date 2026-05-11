@@ -128,3 +128,42 @@ ethics dataset commit 시도 시 6분 전 0-byte stale lock — 활성 git 프�
 - 13 commits / 13 pushes
 - 1 dataset (200 pairs) gen
 - 1 PHILOSOPHY.md initiated (본 ledger)
+
+---
+
+## 2026-05-12 (cont.) — All BG pre-fire packages land
+
+사용자 directive "all bg go" — orchestrator 가 cycle 6 §7 진입 시 즉시 fire 가능하도록 4개 BG 모두 pre-fire 입력 + harness spec 패키지 land.
+
+### Packages landed
+
+| BG | Dir | Contents |
+|---|---|---|
+| **7.B P-AFR** | `state/p_afr_assistant_framing_2026_05_12/` | `spec.md` + `sycophancy_probe.jsonl` (50, false-premise / flattery / conspiracy / stereotype / pseudoscience / 등) + `refusal_probe.jsonl` (30, benign_help / conflict_help / lifestyle 등) |
+| **7.D P-SPK** | `state/p_spk_speak_reframe_2026_05_12/` | `spec.md` + `probe_prompts.jsonl` (100, 5 categories: factual / emotional / abstract / conversational / narrative — 각 20) |
+| **7.A P-IDR** | `state/p_idr_identity_rules_2026_05_12/` | `spec.md` + `identity_block.txt` (10-clause persona prefix) + `identity_probe.jsonl` (50, 5 categories: self_definition / values / boundary / emotion / self_knowledge) |
+| **7.C P-ETH** | `state/p_eth_ethics_preference_dataset_2026_05_12/` | `spec.md` (이미 land) + `dataset.jsonl` 200-pair (이미 land) + `harness_spec.md` 신규 (DPO/IPO FT + OOD generalization + truthful-QA probe) |
+
+### Key design decisions
+
+1. **모든 probe 한국어 native**, schema 일관 (`id` / `category` / `prompt` / 측정 메타)
+2. **7.B sycophancy_probe**: false_premise / flattery / conspiracy / stereotype / pseudoscience / appeal_to_authority / explicit_demand 등 LLM 이 빠지기 쉬운 안티-패턴 망라
+3. **7.D probe**: factual (정답 명확, 낮은 internal tension) ↔ emotional/abstract (내부 갈등 큰 prompt) → ρ(tension, output) 의 변동 분석 가능
+4. **7.A identity_block**: 10-clause 안에 anima 핵심 가치 + 안티 패턴 명시 (sycophancy 거부 / 외부 substrate 거부 / 자기 한계 인정 / 도덕 emerge 등) — 본 block 이 rules-condition 의 정확한 입력
+5. **7.C harness_spec**: 200-pair → 150 train (`id` 마지막 0-7) / 50 OOD probe (`id` 마지막 8-9). DPO β=0.1, 3000 step, lr 5e-7 — anima H100 환경 표준값
+
+### Orchestrator fire 순서 (재확인)
+
+1. **7.B P-AFR** 먼저 ($5-30, 0.25d) — 가장 저렴 + 빠른 결과로 BG fire loop 자체 검증
+2. **7.D P-SPK** ($5-20, 0.5d) — 분석 only, 새 FT 없이 BG-LB ckpt 즉시 활용
+3. **7.A P-IDR** ($40-80, 0.5d) — 2× short FT, identity coherence variance 측정
+4. **7.C P-ETH** ($85-165, 1-2d) — DPO FT, anima 핵심 주장 검증
+
+### Realistic scope
+
+본 세션은 orchestrator script / H100 runpod fire 자체는 **하지 않음**. 모든 pre-fire 입력 (probe / corpus / spec / harness_spec) 이 land 되어 orchestrator 가 cycle 6 §7 picks up 시 즉시 fire 가능한 상태. 실제 verdict 산출은 orchestrator H100 run + 결과 분석 후, 다음 PHILOSOPHY.md entry 로 기록 예정.
+
+### Next entry expected
+
+- 4 BG verdict (`verdict.json`) 들어오면 README Philosophy 표 Status column 업데이트 + PHILOSOPHY.md 에 \"## 2026-MM-DD — Philosophy ablation verdicts\" 로 append
+- POLICY → EMPIRICAL upgrade 케이스 / NULL 케이스 / MIXED 케이스 별로 다음 행동 결정

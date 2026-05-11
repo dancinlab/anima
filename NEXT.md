@@ -281,14 +281,16 @@ cycle 5 §8 (master doc) 의 5-item Pending Action Items 가 cycle 6 actual-run 
 
 ### Execution priority (philosophy ablations)
 
-| order | item | rationale |
-|---|---|---|
-| 1 | **7.B P-AFR** | 가장 저렴 ($5-30), inference-time only, 결과 명확 — 빠른 win/learn |
-| 2 | **7.D P-SPK** | $5-20 분석, 기존 checkpoint, DESIGN→EMPIRICAL 가능성 검증 |
-| 3 | **7.A P-IDR** | $40-80 short FT, identity coherence variance 가 key novel signal |
-| 4 | **7.C P-ETH** | $80-150 가장 비싸지만 anima 핵심 주장 검증 — high-value |
+| order | item | rationale | pre-fire status |
+|---|---|---|---|
+| 1 | **7.B P-AFR** | 가장 저렴 ($5-30), inference-time only, 결과 명확 — 빠른 win/learn | ✅ READY — `state/p_afr_assistant_framing_2026_05_12/` (spec + 50 sycophancy probe + 30 refusal probe) |
+| 2 | **7.D P-SPK** | $5-20 분석, 기존 checkpoint, DESIGN→EMPIRICAL 가능성 검증 | ✅ READY — `state/p_spk_speak_reframe_2026_05_12/` (spec + 100 probe prompts, 5 categories) |
+| 3 | **7.A P-IDR** | $40-80 short FT, identity coherence variance 가 key novel signal | ✅ READY — `state/p_idr_identity_rules_2026_05_12/` (spec + identity_block.txt + 50 identity probe) |
+| 4 | **7.C P-ETH** | $85-165 가장 비싸지만 anima 핵심 주장 검증 — high-value | ✅ READY — `state/p_eth_ethics_preference_dataset_2026_05_12/` (spec + dataset.jsonl 200-pair + harness_spec.md) |
 
-총 **$130-280 envelope**, 2-4d wall. own 16 cost-band $200-1000 내. own 43 (active resource utilization) 정합.
+총 **$135-295 envelope**, 2-4d wall. own 16 cost-band $200-1000 내. own 43 (active resource utilization) 정합.
+
+**All BG pre-fire packages landed 2026-05-12** (commits `0e835ccc9` P-ETH dataset + 이후 P-AFR/P-SPK/P-IDR/P-ETH harness 같이 land). Orchestrator cycle 6 actual-run 진입 시 모든 입력 파일 + 측정 spec 즉시 활용 가능.
 
 ### Cross-link
 
