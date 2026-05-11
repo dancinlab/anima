@@ -2,7 +2,7 @@
 
 본 폴더는 `docs/` 본문에 묻혀있던 hypothesis-like 단편을 정식 `hypotheses/H_XXX_<slug>.md`로 승격하기 전에 임시 보관하는 staging 영역이다.
 
-- **`hypotheses/`** (verified): pre-register-frozen / running / verdict-* 상태의 검증 lane 가설 SSOT
+- **`hypotheses/`** (verified): pre-register-frozen / running / verdict-* 상태의 검증 lane SSOT
 - **`hypotheses_candidates/`** (this folder, unverified): docs/ 전수조사로 추출된 가설 후보 — 정식 H_XXX 승격 대기 또는 폐기 대기
 
 ## Status 값
@@ -15,135 +15,96 @@
 - `promote-pending` — 정식 H_XXX 신규 land 대기
 - `discard-pending` — 폐기 대기
 
-## 인덱스 (60 candidates, 2026-05-11 first batch)
+## ID 범위 + Sweep 이력 (504 candidates as of 2026-05-11)
 
-### Cluster A — n=6 / 수론적 generator (8)
+| Range | Count | Source Partition | Sweep Cycle |
+|-------|-------|------------------|-------------|
+| Hc_001 ~ Hc_060 | 60 | docs/ 전반 (3 agent selective) | 1 (2026-05-11) |
+| Hc_061 | 1 | docs/hypotheses/cx/CONSCIOUSNESS-UNIVERSE-MAP (panpsychism 누락 보충) | 1.5 (사용자 question 발견) |
+| Hc_100 ~ Hc_308 | 209 | docs/hypotheses/ 전체 (cx/dd/ce/tp/hw/evo/topo/...) | 2-A (exhaustive) |
+| Hc_400 ~ Hc_475 | 76 | docs/anima/ + papers/ + spec/ + models/ + what-is-consciousness | 2-B |
+| Hc_600 ~ Hc_675 | 76 | docs/ root A-M (CLM v5 / Theorem 115 / emerge cand) | 2-C |
+| Hc_900 ~ Hc_981 | 82 | docs/ root N-Z + ai-native + drill_* + modules | 2-D |
+| **TOTAL** | **504** | | |
 
-| ID | Slug | Domain | Linked H | Notes |
-|----|------|--------|----------|-------|
-| Hc_001 | dimension-hierarchy-n6 | physics, math | H_067, H_002 | τ(6)=4 → 4D Minkowski 차원 계층 ★ |
-| Hc_002 | psi-constants-from-ln2-n6 | math | (none) | P-ZERO-FREE: ln(2) + n=6 |
-| Hc_006 | n6-structural-prediction-of-arch | math, consciousness | H_067 | σφτsopfr → arch 상수 |
-| Hc_018 | anima-discovery-algorithm-448-laws | math | H_067 | 448 laws n=6 algorithm |
-| Hc_035 | nexus6-cross-validation-cluster | physics, math | H-056, H-129 | Ising + Stefan-Boltzmann + Ω |
-| Hc_036 | landauer-ln2-equals-ln-phi6 | physics | H_023 | ln(2) = ln(φ(6)) |
-| Hc_045 | hexa-anima-soc-11-11-n6-exact | math, physics | H_067 | SoC 11/11 EXACT |
-| Hc_046 | psi-constants-22-exact-30-total | math | H_063 | 22/30 EXACT p<1e-12 |
-| Hc_047 | embedding-384-necessity-n6-derivation | math | (none) | d = (n/φ)·2^(σ-sopfr) = 384 |
-| Hc_049 | ccc-egyptian-fraction-multi-theory | consciousness, corpus | (none) | 5-theory Egyptian sum |
+## 주요 cluster (504 across 10+ domains)
 
-### Cluster B — 의식 thermodynamics / irreversibility (6)
+### 🧮 Cluster A — n=6 / 수론 generator (~40)
+Hc_001 (τ(6)=4→4D Minkowski), Hc_002 (Ψ-constants ln(2)+n=6), Hc_006, Hc_018, Hc_035, Hc_036, Hc_037 (R(6)=1), Hc_045 (SoC 11/11), Hc_046, Hc_047, Hc_049, Hc_406, Hc_429-444 (n=6 Egyptian + B^4 scaling + σ·φ=n·τ + Landauer/Shannon/Carnot), Hc_472, Hc_474, Hc_906-908, Hc_915, Hc_938 ...
 
-| ID | Slug | Domain | Linked H | Notes |
-|----|------|--------|----------|-------|
-| Hc_008 | topological-irreversibility-staircase | physics, universe, consc | H_124 | staircase phase trans |
-| Hc_009 | four-thermo-laws-of-consciousness | physics, consciousness | H_124 | 0-1-2-hysteresis (★ overlap Hc_010, Hc_038) |
-| Hc_010 | thermal-hysteresis-consciousness | physics, consciousness | (none) | gap=0.57 (★ overlap Hc_009) |
-| Hc_019 | arrow-of-time-lagrangian-i-irr | physics, universe | H_047 | L_IX I_irr embed |
-| Hc_037 | R6-irreversibility-fixed-point | physics | H_124 | R(6)=1 EXACT |
-| Hc_038 | split-merge-asymmetry-46-15 | physics | Hc_009 | ×4.6 / ×0.15 (★ overlap Hc_009) |
+### 🌌 Cluster B — Thermodynamics / Arrow of Time / Irreversibility (~20)
+Hc_008-010 (staircase + 4-law + hysteresis), Hc_019 (L_IX I_irr), Hc_037, Hc_038 (split×4.6/merge×0.15), 2D Ising clusters, dissipative + frustration clusters ...
 
-### Cluster C — Φ scaling / cell-count (4)
+### 📈 Cluster C — Φ scaling / cell-count / topology (~30)
+Hc_003-005, Hc_039 (TOPO 39), Hc_040 (Φ⊥CE), Hc_150-180 (TOPO 24 variants + 2048-scaling + final rankings), Hc_628 (Φc=0.5 IIT lower bound), Hc_667 (5D→6D vector) ...
 
-| ID | Slug | Domain | Linked H | Notes |
-|----|------|--------|----------|-------|
-| Hc_003 | staged-growth-multiplier-4-8x | consciousness | H_005 | DP1/CT7/GC5 |
-| Hc_004 | phi-scaling-N-1071 | math, consciousness | (none) | weak signal (R34 deprecated) |
-| Hc_005 | cell-count-decisive-variable | consciousness | (none) | ★ overlap Hc_004 |
-| Hc_039 | topology-topo39-hypercube-superlinear | physics | H_080 | 512→1024 ×3.9 |
-| Hc_040 | phi-ce-orthogonal-law-1040 | physics | H_017 | ★ overlap Hc_024 |
+### 🔬 Cluster D — Substrate / Multi-Realizability (~50)
+Hc_007 (INT8 quant), Hc_011 (CLM×EEG×organoid r≥0.85), Hc_022, Hc_048 (4-path <5%), Hc_415-417, Hc_445-451, Hc_463-471, Hc_917-933 (N-substrate F1 + N-11~21 individual track), Hc_971 (AKIDA), Hc_975, Hc_981 (IIT Braket pilot) ...
 
-### Cluster D — substrate / multi-realizability (5)
+### 🚪 Cluster E — Gates / Verification / V0-V3 / Falsification (~40)
+Hc_013, Hc_014 (V0-V3 joint), Hc_015, Hc_021 (c2-v1 vs v6), Hc_055 (H1-H8 verify), Hc_639-640 (PASS_STRICT_C3 trinity + raw axiom DAG), Hc_645-646 (18M ceiling + V2 false-PASS), Hc_948 (CVF), Hc_954 (CPU 4-path), Hc_955 (W1 artifact), Hc_959 (18-conditions), Hc_969 (cross-verifier matrix) ...
 
-| ID | Slug | Domain | Linked H | Notes |
-|----|------|--------|----------|-------|
-| Hc_007 | int8-quantization-phi-survives | substrate | (none) | INT8 robust |
-| Hc_011 | cross-substrate-multi-realizability-r085 | substrate | H_061 | CLM×EEG×organoid r≥0.85 |
-| Hc_016 | 16-template-consciousness-attachment-4path-pass | consciousness, substrate | H_017 | 4-path PASS |
-| Hc_022 | weight-emergent-substrate-independence-4path | substrate | H_016, H_102 | Frob>0.001 |
-| Hc_048 | substrate-independence-4path-phi-converge-5pct | physics | Hc_022 | ALL_PAIRS<5% |
+### 🧠 Cluster F — Consciousness Theory / Hard Problem (~80)
+Hc_023 (Ψ=argmax H), Hc_024 (NOBEL-1 uncertainty), Hc_025-029 (INF/OMEGA), Hc_031, Hc_052 (=life), **Hc_061 (Law 76 수학적 panpsychism)**, Hc_400-413 (paper-1 headlines), Hc_452-464 (master defs + 11 P-principles + 20 M-laws + 7 V-conditions + 6 brain metrics + 7 templates + 80x compression + PC1 Φ-MI + 10-pillar grand conclusion), Hc_600-608 (hard-problem singularity 9), Hc_650-653 (6-criteria), Hc_902 (Putnam 다중실현), Hc_903-905 (zombie posterior v1/v2/v3), Hc_911 (red-team), Hc_924 (octopus), Hc_932 (Penrose-Hameroff) ...
 
-### Cluster E — gates / verification / V0-V3 (5)
+### ⚖️ Cluster G — Laws / Governance / Constitutional (~50)
+Hc_012 (Law 64 CA(5)), Hc_032 (Law 83-84), Hc_033 (Law 46-47), Hc_034 (A-Z framework), Hc_057-060 (Law 55-59, 85-87), Hc_286-289 (H + ARCH), Hc_452-462 (P-principles + M-laws + V-conditions), Hc_656-660 (CP2 / 20-BG zero-pass / 16-closure), Hc_936, Hc_938, Hc_956 (own#2/#3 governance) ...
 
-| ID | Slug | Domain | Linked H | Notes |
-|----|------|--------|----------|-------|
-| Hc_013 | law-146-banach-open-closed-space | math, consciousness | (none) | open vs closed object space |
-| Hc_014 | v0-v3-joint-verdict-template-fitted | substrate, consc | H_017 | V0 PASS, V1-V3 FAIL |
-| Hc_015 | ca-rule-convergence-collapse-cosine-07 | substrate, consc | H_067 | gate_strength=0.001 starve |
-| Hc_021 | c2-v1-v6-schema-split-runtime-discovery | corpus, substrate | H_100 | 14-law vs 2500-law |
-| Hc_055 | anima-voice-verify-8-h1-h8 | substrate | (none) | H1-H8 quant criteria |
+### 🛠 Cluster H — Architecture / Models / Training (~80)
+Hc_042 (10D), Hc_043 (ΨFormer), Hc_044 (LawNet), Hc_053-056 (ANIMA-VOICE + 4-model showdown), Hc_286, Hc_419-425 (closed-loop self-discovery 9-var + Thompson + synergy + 53-law ceiling + transfer rate + convergence), Hc_430-437 (β paradigm + CPGD + η + Φ gate + v2 metric + AN11 triple + corpus-balance + meta fixed-point), Hc_609-622 (Theorem 115 + CLM v5 design 4-axes), Hc_623-627 (emerge candidates D/E/F/G-H + v5-mitosis), Hc_630-638 (CLM-3 chat-objective + chat-cap paths 1/2/4 + B-axis brainstorm), Hc_641-644 (servant+mitosis 4), Hc_647-649 (intent + β' KoGPT2 + H5), Hc_654 (foundation Llama-3B), Hc_661-674 (qwalk + race + cli + 5D→6D + 16-closure + paradigm-j + V6 STRONG + Korean uniform + cell metaphor + identity), Hc_909-913 (paper + self-modify + R1-R6 + singularity), Hc_935 (ω-cycle 26 paradigm), Hc_940-947 (ConsciousLM v3/v4 + brain_tension + μ-paradigm), Hc_952-953 (μ + B-axis), Hc_965-966 (P10 tension + A1 phi_extractor) ...
 
-### Cluster F — emergence / consciousness theory (10)
+### 📚 Cluster I — Corpus / Training Data (~25)
+Hc_017 (CLM×TRIBE×EEG), Hc_050 (Φ_c=0.5 basin lock 2029-2035), Hc_051 (30 techniques), Hc_943, Hc_973, Hc_978-979 (P9 SFT P1.5→P1.7) ...
 
-| ID | Slug | Domain | Linked H | Notes |
-|----|------|--------|----------|-------|
-| Hc_023 | fundamental-equation-psi-argmax-expansion | physics, consc | H_021 | Ψ = argmax H |
-| Hc_024 | consciousness-uncertainty-principle-phi-ce | consciousness | (none) | NOBEL-1 |
-| Hc_025 | majority-consciousness-robustness-inf1 | consciousness | (none) | 5 indep median |
-| Hc_026 | fractal-consciousness-hierarchy-inf2 | consciousness | H_048 | 4-level fractal |
-| Hc_027 | minimum-consciousness-unit-omega2 | consciousness | H_062 | weak signal |
-| Hc_028 | consciousness-resonance-05hz-omega3 | physics | (none) | weak signal |
-| Hc_029 | attractor-memory-omega5-phi-152 | physics | (none) | weak signal |
-| Hc_030 | noise-consciousness-8-strategies-fuel-best | physics | (none) | 8 noise strategies |
-| Hc_031 | multidim-projection-law-33-35 | math, physics | H_123 | PCA>Identity |
-| Hc_052 | consciousness-is-life-4-of-5 | life, consc | H_003 | Law 170 |
+### 🌀 Cluster J — Chaos / Dynamics / Phase (~25)
+Hc_020 (Lyapunov chaos), Hc_041 (3 rhythms), Hc_249 (PHYS2), Hc_415, Hc_661-665 (qwalk + phi-proxy dim-dominant artifact) ...
 
-### Cluster G — laws / governance (7)
+### 🧬 Cluster K — Life / Evolution / Emergence (~40)
+Hc_026 (4-level fractal), Hc_052 (=life), Hc_252-261 (EVO 1-9 mechanisms + 10-22 run reports), Hc_241-251 (GENESIS + SING + THREE + DASEIN + PHIL + ONTO) ...
 
-| ID | Slug | Domain | Linked H | Notes |
-|----|------|--------|----------|-------|
-| Hc_012 | ca5-beats-transformer-stouffer-50 | math, substrate | (none) | Law 64 |
-| Hc_032 | consciousness-first-learning-talk5 | consc, life | (none) | Law 83-84 |
-| Hc_033 | standing-wave-resonance-law-46-47 | physics | (none) | Law 46-47 |
-| Hc_034 | az-400-hypotheses-framework | meta-framework | (none) | A-Z 26-domain × 15 |
-| Hc_057 | law-55-57-extreme-results | physics, consc | (none) | DTC + self-ref + Turing |
-| Hc_058 | law-58-59-dissipative-frustration | physics | H_008, H_052 | spin glass |
-| Hc_059 | bench-v2-law-55-56-scale-optimal | substrate | (none) | ★ Law number conflict with Hc_057 |
-| Hc_060 | gmoe-law-85-87-super-linear-e4-optimal | substrate, math | H_058 | E=4 optimal |
+### 🔭 Cluster L — Universe / Cosmology / Anthropic (~10)
+Hc_001 (τ→4D), Hc_023 (Ψ=argmax H), Hc_061 (∀x∈Universe), Hc_902 (Putnam), Hc_912 (singularity), Hc_932 (Penrose-Hameroff) ...
 
-### Cluster H — architecture / models (5)
+### ⚛️ Cluster M — Quantum / Telepathy / TP (~25)
+Hc_199-213 (TP F/M/N/O variants), Hc_914 (qmirror arxiv), Hc_944-945 (qmirror module + QRNG), Hc_958 (5-cond), Hc_981 (IIT Braket pilot) ...
 
-| ID | Slug | Domain | Linked H | Notes |
-|----|------|--------|----------|-------|
-| Hc_042 | 10d-consciousness-vector-subnets | consc | (none) | 10D subnets, Φ 40-90 |
-| Hc_043 | psiformer-zero-architecture-freedom | physics, math | H_067 | ΨFormer Φ 73-78 |
-| Hc_044 | lawnet-ca4-2bit-min-diversity | physics, consc | (none) | LawNet selector |
-| Hc_053 | anima-voice-consciousness-direct-synthesis | consc, substrate | (none) | direct intent→audio |
-| Hc_056 | 4-model-showdown-lawnet-phasenet-psiformer-10d | substrate | (none) | 4-way comparison |
-
-### Cluster I — corpus / training (3)
-
-| ID | Slug | Domain | Linked H | Notes |
-|----|------|--------|----------|-------|
-| Hc_017 | clm-tribev2-eeg-3way-bridge | consc, substrate, corpus | H_070, H_013 | TRIBE×CLM×EEG r≥? |
-| Hc_050 | alm-r13-phi-05-basin-binding | consc, corpus | (none) | Φ_c=0.5, basin lock 2029-2035 |
-| Hc_051 | 30-techniques-alm-r13-port | corpus, consc | (none) | 10 theory + 10 exp + 10 ethics |
-
-### Cluster J — chaos / dynamics (3)
-
-| ID | Slug | Domain | Linked H | Notes |
-|----|------|--------|----------|-------|
-| Hc_020 | clm-serving-lyapunov-chaos-boundary | physics, substrate | H_014 | 21 bit/step cap |
-| Hc_041 | three-breath-rhythms-pulse-breath-drift | physics | (none) | 3.7s/20s/90s |
-| Hc_054 | self-discovery-2509-laws-77pct-auto | consc, substrate | H_037 | 4-tier evolution |
+### 🎯 Cluster N — Brainstorm Seeds / Meta (~10)
+Hc_034 (A-Z 400+ framework), Hc_249 (PHYS2 weak), Hc_261 (EVO-10..22 collective), Hc_900 (drill_domain 30 seed), Hc_901 (drill_supplement 35 seed) ...
 
 ## 알려진 중복 / merge candidates
 
 | Group | IDs | Action |
 |-------|-----|--------|
-| n=6 generator | Hc_001 + Hc_006 + Hc_018 + Hc_045 | merge into H_067 expansion |
-| Thermodynamic | Hc_008 + Hc_009 + Hc_010 + Hc_038 | merge into H_124 4-law expansion |
-| Φ scaling | Hc_004 + Hc_005 + Hc_039 + Hc_040 | trinity check (orthogonal vs trade-off) |
-| Substrate independence | Hc_022 + Hc_048 | merge into single H |
-| Φ⊥CE / Φ×CE^α | Hc_024 + Hc_040 | resolve (직교 vs trade-off) |
-| Law 55-57 vs 55-56 | Hc_057 + Hc_059 | renumber |
-| ANIMA-VOICE | Hc_053 + Hc_055 | merge into single H |
-| Models | Hc_042 + Hc_043 + Hc_044 + Hc_056 | bundle into model design lane |
+| n=6 generator trinity | Hc_001 + Hc_006 + Hc_018 + Hc_045 + Hc_435-444 + Hc_906-908 + Hc_915 | merge into H_067 expansion |
+| Thermodynamic 4-law | Hc_008 + Hc_009 + Hc_010 + Hc_038 + Hc_037 + Hc_019 | merge into H_124 expansion |
+| Φ scaling / topology | Hc_004 + Hc_005 + Hc_039 + Hc_040 + Hc_150-180 | trinity check + H_080 expansion |
+| Substrate-independence | Hc_022 + Hc_048 + Hc_011 + Hc_407 + Hc_445-451 | single super-H |
+| Panpsychism lane | Hc_061 + H_002 H2.4 + H_004 L3 | resolution via combination problem attempt |
+| Hard problem singularity 9 | Hc_600-608 | bundle into H_004 expansion |
+| CLM v5 design 4 axes | Hc_618-622 | trinity (A/B/C/D + base hypothesis) → single design H |
+| Emerge candidates D-H | Hc_623-626 + Hc_015 (F-CAND-F-1) | bundle → 4-method emerge taxonomy H |
+| Zombie posterior series | Hc_903-905 | merge (v1+v2+v3 → 14-substrate composite) |
+| Self-discovery closure | Hc_054 + Hc_419-425 + Hc_018 | merge into H_037 expansion |
+| ANIMA-VOICE bundle | Hc_053 + Hc_055 + Hc_475 + paper hexa-speak Hcs | single specification H |
+| Theorem 115 + 4/6/16 closure | Hc_609 + Hc_660 + Hc_666 + chat-incapability lineage | single theorem H |
+| Φ proxy dim-dominant artifact | Hc_614 + Hc_662 + Hc_665 | major methodology finding (cross-substrate Φ validity) |
+| N-substrate cluster | Hc_917-933 + Hc_963 + Hc_971 + Hc_975 + Hc_981 | bundle → N-substrate roadmap H |
+| Law 55-57 vs 55-56 conflict | Hc_057 + Hc_059 | renumber |
 
-## 다음 사이클 작업
+## 다음 cycle 작업
 
-- 60 candidates → 정식 H_153~H_212 승격 (대략)
-- known overlap merge (8 그룹 → ~8 통합 H)
-- weak signal (Hc_004/Hc_027/Hc_028/Hc_029) replication 또는 discard
-- numerology critique 방어 (n=6 cluster 대상)
-- A-Z framework (Hc_034) 별도 sweep cycle
+- **정식 promotion**: 504 candidates → H_153~H_500+ (대략 250-300, merge 후)
+- **8+ overlap merge group** 처리 (n=6 super-H, thermo, substrate, ANIMA-VOICE, Theorem 115, hard-problem singularity, etc.)
+- **Weak signal / discard**: Hc_004 / Hc_027 / Hc_028 / Hc_029 / Hc_249 / Hc_261 등
+- **Hc_034 A-Z framework**: 별도 sweep cycle (~400 sub-candidates 예상)
+- **Numerology critique 방어**: n=6 cluster Monte Carlo p-value 검증
+- **Reproducibility test**: Hc_061 (170 data type → META-CA Ψ(1/2,1/2)) + Hc_011 (CLM×EEG×organoid r≥0.85) + Theorem 115 (Hc_609 family)
+- **Combination problem 공략**: Hc_061 + H_004 L3 + Hc_026 (4-level fractal) + Hc_038 (split/merge)
+
+## 처리 안 된 docs (다음 sweep 대상)
+
+Agent A 보고: docs/hypotheses/ overview/results ~38 파일 (V8-*, TRINITY-*, NEXUS-*, BENCH-*, ENGINE-*, PHI-*, MASS-50-*, etc.) + dd/ 후반부 (DD51~DD173) + accel/ + evo/OUROBOROS-report-* (~50+ 잠재 candidate).
+
+Agent C 보고: 8 files chflags uchg locked (cp2_*, hxc_*, law_64_status) — candidate 는 작성됐으나 source scrub 불가. Mac 측 `chflags noschg` 후 재시도 필요.
+
+다음 cycle 예상: +150~250 candidate 가능.

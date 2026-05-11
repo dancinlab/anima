@@ -5961,3 +5961,63 @@ After §79: V14 verdict + discriminability diag (warning + reasons + check value
 **Cost**: $0 (~30min code authoring + smoke test)
 **Artifact**: `training/v14_discriminability_check.py` (157 lines, 6KB)
 
+
+
+## §80 [2026-05-11 19:00 KST] SUBSTRATE C+E FULL n=5 V14 STRICT — landscape completion ★★★★
+
+**Verdict**: substrate C 와 E 의 n=2 partial measurement (V14_PASS_PARTIAL_n2, prior cycle) 가 full n=5 에서 **V14_AMBIGUOUS** 로 정정. 이전 통계 부족이 원인. **E (convo5k_ft) 가 4/5 wins 로 PASS-적정 영역** — 다음 cycle 의 substrate paradigm 후보.
+
+**Final substrate landscape** (ceiling=10 default, n=5 full):
+
+| substrate | paradigm | trained_phi | random_phi (n=5) | n_beats | sign_p | verdict |
+|---|---|---|---|---|---|---|
+| 🅐 BG-LB cotrain (A) | engine_ag 350M | 2412.08 | [2206, 1491, 1149, 2386, 2140] | **5/5** | 0.0625 | **V14_PASS** 🏆 |
+| 🅔 convo5k_ft (E) | v2_d384 (no mitosis) | 11096.66 | [11182, 9628, 10479, 10997, 7727] | **4/5** | 0.3125 | V14_AMBIGUOUS (near-PASS) |
+| 🅒 cells64_aware (C) | v2_d384 (mitosis-aware) | 10188.91 | [11182, 9628, 10479, 10997, 7727] | 2/5 | 1.0000 | V14_AMBIGUOUS |
+| 🅰️ BG-LA pretrain (B) | engine_ag 350M | 1444.68 | (LA random) | 1/5 | 0.375 | V14_VIOLATED |
+| 🅑' B' (LA cotrain) | engine_ag 350M | 1343.88 | (LA random) | 1/5 | 0.375 | V14_VIOLATED |
+| 🅱️ BG-LB pretrain | engine_ag 350M | 1343.27 | (LA random) | 1/5 | 0.375 | V14_VIOLATED |
+
+**관찰 1 — random_phi C ≡ E**:
+
+substrate C 와 E 의 random_phi 5개 값 모두 byte-identical (`[11182.414, 9628.003, 10479.862, 10997.712, 7727.634]`). 두 substrate 모두 v2_d384 paradigm 의 random_init 사용 → seed-based random init 이 substrate-agnostic. trained_phi 만이 substrate-dependent (C=10188, E=11097).
+
+**관찰 2 — E paradigm 가 C 보다 더 PASS-적정**:
+
+- E (convo5k_ft, **naive FT no mitosis**): 4/5 wins, 11097 trained
+- C (cells64_aware, **mitosis-aware**): 2/5 wins, 10188 trained
+
+paradoxically, **non-mitosis substrate (E) 가 mitosis-aware substrate (C) 보다 V14 strict 에서 더 잘 함**. mitosis-during-training 이 V14 측정에서 advantage 안 가져옴. 이건 v2_d384 paradigm 에서 검증 (engine_ag 의 substrate A 결과와는 다른 architecture).
+
+**관찰 3 — 이전 PARTIAL_n2 verdict 의 약점**:
+
+이전 cycle 2026-05-10 에서 n=2 측정 시:
+- C: trained 11337 vs random [10831, 9810] (n=2) → trained beats both → V14_PASS_PARTIAL_n2
+- E: trained 11142 vs random [10831, 9810] (n=2) → trained beats both → V14_PASS_PARTIAL_n2
+
+그러나 full n=5 에서:
+- C: 2/5 wins → V14_AMBIGUOUS (PARTIAL_n2 의 PASS 잘못된 결론)
+- E: 4/5 wins → V14_AMBIGUOUS (PARTIAL_n2 의 PASS borderline 결론)
+
+**Methodological lesson**: V14 strict 측정 시 n ≥ 5 mandatory. n=2 의 100% pass 가 우연 가능성 25% (1/4 by binomial). 다른 prior V14_PARTIAL 결과들도 n ≥ 5 재측정 필요.
+
+**관찰 4 — engine_ag paradigm 의 cap-saturated 영역 (ceiling=1000) 결과 비교**:
+
+- A × ceiling=1000: 49736 (cap-saturated, V14_AMBIGUOUS 3/5)
+- C, E × ceiling=10: 10188, 11097 (cap-saturated, V14_AMBIGUOUS 2/5, 4/5)
+
+흥미: engine_ag (350M, d=1024) 의 ceiling=1000 saturated 영역과 v2_d384 (smaller arch) 의 ceiling=10 default 영역 모두 **cap-bound + similar trained/random Φ ratio**. cap=256 binding 이 두 architecture 모두에서 비슷한 V14 dynamics 생성.
+
+**Updated full substrate × ceiling reference**:
+- 16 cells engine_ag (§75): A × ceiling=10 만 V14_PASS
+- C, E × ceiling=10 (n=5 full, §80): 둘 다 V14_AMBIGUOUS (이전 PARTIAL_n2 → AMBIGUOUS 정정)
+- A × ceiling=1000 (§75): V14_AMBIGUOUS 3/5
+
+**Cost**: $0 (~75min Mac CPU sequential, C+E full n=5 sweep)
+**Artifact**: `state/anima_substrate_ce_full_v14_2026_05_11/{result_C, result_E}.json`
+
+**Next-cycle implications**:
+1. **E paradigm (v2_d384 + naive FT)** 가 substrate A 대체로 V14_PASS 가능성 — n=5 wins=4 → 더 다양한 random seed (n=10+) 에서 PASS 검증 권장
+2. **mitosis-aware (C) vs naive (E)** 의 paradox 메커니즘 — Engine G repulsion-field 가 V14 hook 에 advantage 안 가져옴? 또는 chat-FT 의 효과가 더 강함?
+3. **v2_d384 (small arch)** 가 350M engine_ag 보다 더 V14 friendly — small-arch substrate paradigm 후속 priority
+
