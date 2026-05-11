@@ -1,0 +1,70 @@
+{
+  "r1": 0.9800984053109124,
+  "weights": {
+    "H_inter_arrival": 0.3,
+    "corr_internal": 0.3,
+    "silent_rate": 0.2,
+    "uniqueness": 0.2
+  },
+  "sub_metrics": {
+    "H_inter_arrival": 1.0,
+    "corr_internal": 0.968044619993459,
+    "silent_rate": 1.0,
+    "uniqueness": 0.9484250965643741
+  },
+  "debug": {
+    "H_inter_arrival": {
+      "n_spoken": 10,
+      "deltas": [
+        138.0,
+        191.0,
+        209.0,
+        277.0,
+        279.0,
+        328.0,
+        367.0,
+        442.0,
+        465.0
+      ],
+      "bucketed": [
+        140,
+        190,
+        210,
+        275,
+        280,
+        330,
+        365,
+        440,
+        465
+      ],
+      "raw_entropy": 2.1972245773362196,
+      "norm": 1.0
+    },
+    "corr_internal": {
+      "n_pairs": 20,
+      "pearson_r": 0.968044619993459
+    },
+    "silent_rate": {
+      "silent": 10,
+      "total": 20,
+      "frac": 0.5
+    },
+    "uniqueness": {
+      "n_spoken": 10,
+      "mean_sim": 0.05157490343562593,
+      "pairwise": [
+        0.020833333333333332,
+        0.08064516129032258,
+        0.05660377358490566,
+        0.0975609756097561,
+        0.018518518518518517,
+        0.061224489795918366,
+        0.045454545454545456,
+        0.08333333333333333,
+        0.0
+      ]
+    }
+  },
+  "n_rows": 20,
+  "log_path": "state/volitional_baseline_2026_05_12/sim_volitional_target.jsonl"
+}
