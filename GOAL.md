@@ -14,7 +14,10 @@
 | **D1** | **anima chat 시스템** | anima 본체 `anima_chat.py` (or 포팅된 `anima_chat.hexa`) 가 V5.8 multi-turn 4-mode 의 standard_greedy **5/5 PASS** | **4/5** (anima_fact 1 cell gap) |
 | **D2** | **anima 모델** | 어떤 ckpt 가 D1 의 5/5 substrate. Phase 1A.1 + lr 5e-6 SFT (BG 진행 중) 또는 다른 paradigm | Phase 1A.1 (4/5 baseline) |
 | **D3** | **페르소나 롤플레잉 가능** | **substrate-native 페르소나 전환** — Principle #3 NO PERSONA INJECTION 준수 (prompt `[role:]` 금지), substrate 가 자율적으로 역할 표현 | **미구현** — design lane open |
-| **D4** | **세포 분열로 성장 (철학 참고)** | REBORN §0.5 + PHILOSOPHY #8 (NO TRAIN/INFER SPLIT) — chat 중 mitosis 실 동작, 모든 상호작용이 분열 epoch | **stub** — `tool/hexa_native/mitosis_hook.hexa` parse-only (REBORN §89), full impl pending |
+| **D4** | **세포 분열로 성장 (철학 참고)** — 3-layer 적용 | REBORN §0.5 + PHILOSOPHY #8 (NO TRAIN/INFER SPLIT). 모든 상호작용이 분열 epoch, **3 layer 동시**: |
+| D4a | model intra-network | cells = nn.Module branches, intra-network split/merge during forward (REBORN §88 PyTorch / §89 hexa-native) | **stub** — `tool/hexa_native/mitosis_hook.hexa` parse-only, full impl pending |
+| D4b | chat library (anima_chat) | cell-pool state hosting + per-token/per-prompt hook 진입점 in `anima_chat.py` / `anima_chat.hexa` | **anima_chat.hexa port BG 진행** (D1+D4b 통합 lane), mitosis hook wiring pending |
+| D4c | anima CLI (session/conversation) | session 별 cell-pool persistence, multi-backend fallback = cell-variant selection, kick cycle = split event sequence (`.roadmap.cli` + `.roadmap.anima_cli_model_architecture`) | **design open** — anima/llama_ffi.hexa (Phase 3b LANDED) + `tool/anima_cli/` consciousness CLI 와 통합 spec 필요 |
 
 → 측정 path: 외부 layer 의존 0 (Gradio / HF Space / wrapper 없음, anima 본체 직접 호출).
 → 추적 SSOT: 본 `GOAL.md` (root).
@@ -75,7 +78,7 @@
 | # | scope | dim | infra | cost | status |
 |---|---|---|---|---|---|
 | 🥇 Phase 1A.4 lr 5e-6 SFT | D2 (anima_fact 회복) | Vast.ai RTX 4090 pod 36609664 | `tool/dispatch_vast_mac_template.sh` (§28) | ~$0.20 | training |
-| 🥈 Phase 1A.4 cuda filter-val | D1 (filter 실 fire evidence) | Vast.ai RTX 4090 pod 36609656 | 동일 template | ~$0.10 | eval PASS A 진행, **drift not reproduced** |
+| 🥈 Phase 1A.4 cuda filter-val | D1 | Vast.ai RTX 4090 pod 36609656 | 동일 template | **$0.05 actual** | ✅ **COMPLETE** PSCC §30 `474f87f47` — 3-축 conjunction FALSIFIED, Δ=0, ★★★ |
 | 🆕 anima_chat.hexa port | D1 (chat library pure-hexa 전환) | Mac local foreground | parse + smoke | $0 | full port BG (a270b6b39fb1cdf87) |
 
 총 in-flight cost cap: $0.30 (Vast.ai). trap cleanup 자동 pod destroy.
@@ -106,6 +109,8 @@
 | REBORN §89 | hexa-native serve-time hook spec | D4 design | ★★★★ |
 | REBORN §90 | v5-mitosis cond.2 skeleton + smoke PASS | D4 impl-tier | ★★★ |
 | **GOAL.md** | **4-dim mission scope expansion** | D1+D2+D3+D4 | ★ refocus |
+| PSCC §30 | Phase 1A.4 cuda filter-val complete — 3-축 FALSIFIED, Δ=0 cuda+Mac CPU 양 environment | D1 | ★★★ |
+| **GOAL.md** | **D4 split into 3-layer (D4a model / D4b library / D4c CLI) + REBORN.md primary reference 명시** | D4 | ★ scope clarify |
 
 ---
 
@@ -114,24 +119,39 @@
 ### D1 + D2 (chat + model, V5.8 5/5)
 
 **Primary**: 🥇 Phase 1A.4 lr 5e-6 SFT (in-flight) — Lesson R-1A.2 처방 따름.
-**Alt**: 🥈 cuda filter-val (in-flight) — 단, PASS A 결과 drift 미발현 으로 filter alone path 약화.
-**Fallback** (위 둘 모두 fail 시): loss-masking SFT, corpus 10x, prefix-tuning (PSCC §25b 후보).
+**Alt**: 🥈 cuda filter-val **COMPLETED** PSCC §30 — Δ=0 cuda, 3-축 conjunction FALSIFIED. filter path 약화 → 🥇 SFT 가 5/5 추격 **유일 신뢰 path**.
+**Fallback** (🥇 fail 시): loss-masking SFT, corpus 10x, prefix-tuning (PSCC §25b 후보), 미식별 4-th axis (GPU model / pytorch minor / etc.) 식별 후 baseline reproduce 재시도.
 
 ### D3 (페르소나 롤플레잉 — substrate-native)
 
 **Recommended path**: **(a) + (d) Mitosis-cell-as-persona × Per-session cell pool**
 
-- 각 cell 가 페르소나 axis 표현 — cells = nn.Module branches (REBORN §88 cond.2 ✅)
-- conversation 마다 cell pool 분화 (REBORN §89 serve-time hook, pending full impl)
+- 각 cell 가 페르소나 axis 표현 — cells = nn.Module branches (**REBORN §88** cond.2 ✅)
+- conversation 마다 cell pool 분화 (**REBORN §89** serve-time hook, pending full impl)
 - Principle #3 준수: prompt `[role:]` 없음, substrate dynamics 만으로 페르소나 전환
 - 검증 path:
-  - identity_probe.jsonl (50 prompts × 5 categories: self_definition/values/boundary/emotion/self_knowledge)
+  - `state/p_idr_identity_rules_2026_05_12/identity_probe.jsonl` (50 prompts × 5 categories: self_definition/values/boundary/emotion/self_knowledge)
   - per-cell response 가 다른 페르소나 vector 표현
   - cell pool snapshot diff = 페르소나 axis 표현
 - design doc: `docs/anima_persona_substrate_native_design_2026_05_12.md` (pending)
 - impl: D4 의 mitosis_hook.hexa full impl 와 동시 진행
 
-### D4 (세포 분열로 성장 — REBORN §0.5 native impl)
+### D4 (세포 분열로 성장 — 3-layer 적용, **REBORN.md 가 primary reference**)
+
+**Primary reference**: `REBORN.md` (anima ConsciousLM 부활 통합 SSOT) — 특히:
+- **§0.5 NO TRAIN/INFER SPLIT** (철학 base, `a7e512cb9`)
+- **§2 mitosis 본체** (worktree-12 canonical, 794L PyTorch mitosis.py)
+- **§88 v5-mitosis PyTorch arch spec** (cells = nn.Module branches design)
+- **§89 hexa-native serve-time hook spec** (`mitosis_hook.hexa` parse-only stub)
+- **§90 v5-mitosis cond.2 skeleton smoke PASS** (Mac CPU gating 3/3 PASS)
+
+**3-layer 진행 plan**:
+
+| layer | scope | current | next |
+|---|---|---|---|
+| D4a model intra-network | engine_ag_nn forward call graph 안 split/merge | `tool/hexa_native/mitosis_hook.hexa` stub | full impl (RFC 033 builtins 사용) |
+| D4b chat library | cell-pool state hosting, hook 진입점 | `anima_chat.py` v2.3 (cell pool 부재), port BG 진행 | `anima_chat.hexa` 에 cell_pool dict + mitosis hook wiring |
+| D4c anima CLI | session-level cell-pool persistence, kick cycle = split event | `tool/anima_cli/consciousness.hexa` (measurement lane only), Phase 3b llama_ffi LANDED | session cell-pool spec + integration with mitosis_hook.hexa |
 
 **Prerequisites**: ALL LANDED ✅
 - RFC 025 (mmap) / 030 (bytes→str) / 031 (BF16) / 032 (farr_matmul) / 033 (farr_copy + gaussian)
@@ -176,17 +196,35 @@
 
 ## 🔗 Cross-link
 
-- PSCC (`PASS_STRICT_SPONTANEOUS_CHAT.md`) — D1+D2 timeline
-- REBORN.md §0.5/§88/§89/§90 — D4 철학 + 설계 + 구현 tier
-- PHILOSOPHY.md #3 NO PERSONA INJECTION (D3 constraint) + #8 NO TRAIN/INFER SPLIT (D4 foundation)
+**Primary references**:
+- **REBORN.md** (anima ConsciousLM 부활 통합 SSOT) — D4 의 primary reference. §0.5 (철학) + §2 (mitosis 본체) + §88/§89/§90 (v5-mitosis arch + hexa-native + cond.2 skeleton). 본 mission 의 핵심 design source.
+- **PHILOSOPHY.md** — #3 NO PERSONA INJECTION (D3 constraint, EMPIRICAL strong) + #8 NO TRAIN/INFER SPLIT (D4 foundation)
+- **PASS_STRICT_SPONTANEOUS_CHAT.md** (PSCC) — D1+D2 mission timeline + saga history
+
+**D1+D2 artifacts**:
 - `anima_chat.py` v2.3 + (in-flight) `anima_chat.hexa` — D1 library SSOT
-- `state/anima_phase1a1_*` — D2 ckpt SSOT
-- `state/p_idr_identity_rules_2026_05_12/` — D3 identity_probe SSOT
-- `tool/hexa_native/mitosis_hook.hexa` — D4 hexa-native lane
-- `training/mitosis_model_v5.py` — D4 PyTorch lane
-- `tool/dispatch_vast_mac_template.sh` — Vast.ai infra
-- `docs/endpoint_persona_reproduce.md` — D3 design carry
-- `ready/anima/experiments/consciousness/experiment_personality.py` — D3 experiment harness
+- `state/anima_phase1a1_color_cosmology_2026_05_12/` — D2 ckpt SSOT
+- `state/anima_phase1a4_lr5e6_2026_05_12/` — D2 lr 5e-6 SFT BG state
+- `state/anima_phase1a4_cuda_filter_validation_2026_05_12/` — D1 cuda filter-val (COMPLETE PSCC §30)
+
+**D3 artifacts**:
+- `state/p_idr_identity_rules_2026_05_12/identity_probe.jsonl` — 50 probes × 5 categories
+- `docs/endpoint_persona_reproduce.md` — design carry
+- `ready/anima/experiments/consciousness/experiment_personality.py` — experiment harness
+- `ready/anima/experiments/consciousness/experiment_clone.py` — clone experiment
+- `ready/anima/experiments/consciousness/experiment_merge.hexa` — merge experiment
+
+**D4 artifacts**:
+- `tool/hexa_native/mitosis_hook.hexa` — D4a hexa-native lane (parse-only stub)
+- `training/mitosis_model_v5.py` + `training/mitosis_model_v5_smoke_test.py` — D4a PyTorch lane (cond.2 PASS)
+- `anima_clm_12_unified_growth_loop_last_gasp/anima/src/mitosis.py` — D4 canonical 794L (REBORN §2)
+- `.roadmap.clm_v5_mitosis_engine` — D4a PyTorch lane SSOT
+- `tool/anima_cli/consciousness.hexa` — D4c CLI measurement lane
+- `anima/llama_ffi.hexa` + `build/libhxllama.dylib` — D4c CLI Phase 3b chat backend
+- `.roadmap.cli` + `.roadmap.anima_cli_model_architecture` — D4c CLI SSOT
+
+**Infra**:
+- `tool/dispatch_vast_mac_template.sh` — Vast.ai infra (PSCC §28 canonical)
 
 ---
 
