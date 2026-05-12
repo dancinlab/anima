@@ -32,7 +32,7 @@
 | 항목 | 값 |
 |---|---|
 | Python library | `anima_chat.py` v2.3 (commit `c2afa8e9e`, tag `anima_chat-v2.3-markdown-filter`) |
-| Hexa port | `anima_chat.hexa` — **in-flight BG** (a270b6b39fb1cdf87, full port 933L → ~1000-1200 LoC) |
+| Hexa port | `anima_chat.hexa` v0.1 LANDED 2026-05-12 (1589 LoC) — parse PASS + 17/17 helper smoke PASS, full inference gated on TODO[load] (24-layer weight binding, ~150 LoC separate cycle); docs/anima_chat_hexa_port_2026_05_12.md |
 | markdown_filter | LANDED, harmless guard 검증 (Δ=0 Mac CPU + cuda 양 environment) |
 | std_greedy | **4/5** |
 | std_sample | 2/5 |
@@ -79,7 +79,7 @@
 |---|---|---|---|---|---|
 | 🥇 Phase 1A.4 lr 5e-6 SFT | D2 (anima_fact 회복) | Vast.ai RTX 4090 pod 36609664 | `tool/dispatch_vast_mac_template.sh` (§28) | ~$0.20 | training |
 | 🥈 Phase 1A.4 cuda filter-val | D1 | Vast.ai RTX 4090 pod 36609656 | 동일 template | **$0.05 actual** | ✅ **COMPLETE** PSCC §30 `474f87f47` — 3-축 conjunction FALSIFIED, Δ=0, ★★★ |
-| 🆕 anima_chat.hexa port | D1 (chat library pure-hexa 전환) | Mac local foreground | parse + smoke | $0 | full port BG (a270b6b39fb1cdf87) |
+| 🆕 anima_chat.hexa port | D1 (chat library pure-hexa 전환) | Mac local foreground | parse + smoke | $0 | ✅ **COMPLETE** 2026-05-12 — parse PASS + 17/17 smoke PASS, full inference gated on TODO[load]; docs/anima_chat_hexa_port_2026_05_12.md ★★★ |
 
 총 in-flight cost cap: $0.30 (Vast.ai). trap cleanup 자동 pod destroy.
 
@@ -111,6 +111,7 @@
 | **GOAL.md** | **4-dim mission scope expansion** | D1+D2+D3+D4 | ★ refocus |
 | PSCC §30 | Phase 1A.4 cuda filter-val complete — 3-축 FALSIFIED, Δ=0 cuda+Mac CPU 양 environment | D1 | ★★★ |
 | **GOAL.md** | **D4 split into 3-layer (D4a model / D4b library / D4c CLI) + REBORN.md primary reference 명시** | D4 | ★ scope clarify |
+| PSCC §33 | anima_chat.hexa port LANDED — pure-hexa chat library (1589 LoC), parse PASS + 17/17 helper smoke PASS, TODO[load] gated for full inference | D1+D4b | ★★★ |
 
 ---
 

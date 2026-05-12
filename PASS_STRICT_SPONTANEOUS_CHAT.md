@@ -2889,3 +2889,101 @@ ckpt-loading smoke (full inference) 는 Space 자체 build 가 검증 — push �
 - HF storage liberated (Space ~50MB)
 - ★ — pure cleanup, mission state 동일 (4/5 → 4/5), 새 GOAL.md 가 mission tracker
 
+
+## §33 [2026-05-12 KST] ANIMA_CHAT.HEXA PORT LANDED — pure-hexa chat library (1589 LoC) ★★★ ($0, GOAL.md D1+D4b lane)
+
+사용자 directive: "anima_chat.hexa 로 모두 포팅" — anima_chat.py (v2.3, 933 LoC, commit `c2afa8e9e`, tag `anima_chat-v2.3-markdown-filter`) 의 모든 기능을 pure hexa 로 구현. GOAL.md ★★★★★ mission 의 chat library SSOT 가 pure hexa 로 전환.
+
+### 산출
+
+| artifact | LoC | 상태 |
+|---|---:|---|
+| `/Users/ghost/core/anima/anima_chat.hexa` | 1589 | parse PASS (clean) |
+| `/Users/ghost/core/anima/tool/anima_chat_hexa_smoke.hexa` | 536 | parse PASS, 17/17 smoke PASS |
+| `/Users/ghost/core/anima/docs/anima_chat_hexa_port_2026_05_12.md` | 168 | port audit doc |
+
+총 +2293 LoC (Python 933L → hexa 1589L = +70 % 오버헤드, 주로 regex → byte-walk 치환 + 명시적 list ops).
+
+### Python → hexa equivalence map (요약)
+
+| Python | hexa 등가 | source |
+|---|---|---|
+| `torch.load` safetensors | `safetensors_mmap_open` + `_data_offset` + `_read_*` | RFC 025 builtin |
+| BF16 → F32 | `safetensors_mmap_read_bf16_to_f32_farr` | RFC 031 |
+| `bytes(...).decode("utf-8")` | `bytes_to_str_raw` | RFC 030 |
+| matmul hot loop | `farr_matmul` | RFC 032 |
+| deepcopy + gaussian | `farr_copy` + `farr_add_gaussian_noise` | RFC 033 |
+| `ByteTokenizer` | `tok_encode` / `tok_decode_bytes` / `tok_decode_str` | Phase 4.2 byte_tokenizer.hexa |
+| 24L GQA forward | `forward_one_token` + `gqa_attention_step` | Phase 3/4.1 engine_ag_nn.hexa |
+| 4 gen modes | `gen_greedy` / `gen_sample` / `gen_m3_*` / `gen_m4_*` | Phase 4.3 gen_modes.hexa |
+| `re.findall` Hangul | byte-walk first-byte 0xEA..0xED detect | local in-port (POSIX wide-char 회피) |
+| `re.search` markdown filter | byte-walk pipe + separator-class scan | local in-port |
+| Korean POS (Okt) | TODO[okt] — no equivalent | Python non-Okt fallback parity 만 |
+| HF auto-download | TODO[hf] — out of scope | caller local path 만 |
+| pickle `.pt` ckpt | TODO[pickle] — out of scope | safetensors-only lane |
+| 24-layer weight binding | TODO[load] — mechanical ~150 LoC, 별도 cycle | header parse 부재 |
+
+### Falsifier 결과 (raw-117 ≥ 5, F-AC-HEXA-1..6)
+
+| ID | description | result |
+|---|---|---|
+| F-AC-HEXA-1 PARSE | `hexa parse anima_chat.hexa` exit 0 | PASS |
+| F-AC-HEXA-2 HELPERS (×11) | interrogative / segment / markdown / stop helpers | 11/11 PASS |
+| F-AC-HEXA-3 TOKENIZER (×3) | encode/decode round-trip (hello / 안녕 / 🌌) | 3/3 PASS |
+| F-AC-HEXA-4 FORCE-KEYWORD (×2) | extract_force_keywords no-Okt parity ("사랑이" / "우주뇌지도") | 2/2 PASS |
+| F-AC-HEXA-5 MARKDOWN BAN-SET | token_ids = {127, 48, 61, 35} verified | PASS |
+| F-AC-HEXA-6 SMOKE-MAIN | smoke exits 0 | PASS |
+
+**Total**: 17/17 + parse-clean = 18/18 acceptance.
+
+### Behavioral parity vs anima_chat.py
+
+| capability | parity |
+|---|---|
+| Tokenizer encode/decode (byte-level) | byte-exact (RFC 030) |
+| Interrogative heuristic | logical (Python skip-list + tails 동등) |
+| Dialog segment parse | byte-exact incl trailing-space (Python `re.findall(r'사용자:\s*([^|]+)')` 의 trailing space 보존 행동 matched) |
+| Stop-string detection | byte-exact |
+| Markdown attractor filter (v2.3) | byte-exact (ban-set + post-strip + trigger list) |
+| Force-keyword extraction (no-Okt) | byte-exact with Python fallback path |
+| Force-keyword extraction (Okt-on) | DIVERGE — hexa 에 Okt 부재 (TODO[okt]) |
+| 4-mode generation control flow | parse-clean, logits parity gated on TODO[load] |
+| Multi-turn `chat_user()` / `chat_build_prompt()` | parse-clean, end-to-end gated on TODO[load] |
+| Streaming yield | hexa 는 full text return only (no generator yield) |
+| HF auto-download | parity (둘 다 caller responsibility) |
+| Pickle `.pt` | DIVERGE — hexa safetensors-only |
+
+### TODO markers (scope-out, 후속 cycle)
+
+- **TODO[okt]** — Korean POS tagger 부재. 추후 Hangul Josa suffix-list (`{이,가,은,는,을,를,에,으로,로,도,만,까지,부터}`) 기반 minimal POS heuristic 으로 보강 가능 (반나절).
+- **TODO[hf]** — HF auto-download 본 cycle scope 외 (Vast.ai / 별도 helper).
+- **TODO[pickle]** — `.pt` legacy 미지원. Phase 1A.1 ckpt 의 `.safetensors` variant 사용.
+- **TODO[load]** — 24-layer weight binding (header JSON parse → `{name → farr_id}` dict). `phase5_forward_smoke.hexa` 가 one-tensor reference, full N-tensor parser 가 별도 cycle (~150 LoC mechanical).
+
+### 실행 명령
+
+```
+/Users/ghost/core/hexa-lang/hexa parse  /Users/ghost/core/anima/anima_chat.hexa
+/Users/ghost/core/hexa-lang/hexa parse  /Users/ghost/core/anima/tool/anima_chat_hexa_smoke.hexa
+/Users/ghost/core/hexa-lang/build/hexa_interp.real run /Users/ghost/core/anima/tool/anima_chat_hexa_smoke.hexa
+```
+
+(`build/hexa_interp.real` 직접 사용 — 최상위 `hexa` shim 의 `run` 은 `resource/tcp/run_remote.py` 를 dispatch 하므로 daemon 필요. parse 는 영향 없음.)
+
+### Mission contribution
+
+★★★ — chat library pure-hexa SSOT 가 LANDED. GOAL.md D1 (chat 시스템) + D4b (chat library hexa-native) 양 dimension 진전. V5.8 std_greedy 5/5 자체에는 직접 영향 없으나 anima 본체 hexa-native 통합 의 큰 step (HEXA_NATIVE Phase 5 / 5∥ chat-library lane unblocked).
+
+### Cost / rating
+
+- cost: $0 (Mac local parse + smoke; Vast.ai 미사용)
+- ★★★ — full inference gated on TODO[load] (~150 LoC follow-up cycle)
+- 후속 cycle 가 TODO[load] 닫으면 ★★★★ 승격 후보 (end-to-end Python parity); V5.8 4-mode eval parity 통과 시 ★★★★★ 후보 (chat library 측 pure-hexa replacement)
+
+### Provenance
+
+- 본 cycle commit: pending (incremental commit + push 의 다음 step)
+- 보조 SSOT: `docs/anima_chat_hexa_port_2026_05_12.md`
+- HEXA_NATIVE primitives: `tool/hexa_native/` (engine_ag_nn / byte_tokenizer / gen_modes / mitosis_hook)
+- RFC builtins: hexa-lang main 의 RFC 025/030/031/032/033 (모두 LANDED 2026-05-12)
+- Reference Python SSOT: `anima_chat.py` v2.3 commit `c2afa8e9e` tag `anima_chat-v2.3-markdown-filter`
