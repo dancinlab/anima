@@ -1,68 +1,668 @@
-=== v5mitosis_cotrain_v4_multi vast.ai 4× H100 dispatch (v4-multi fresh-init DDP) ===
-Tue May 12 19:25:39 UTC 2026
-  fresh-init multi-GPU :: 20000 step from step 0
-  per_gpu_batch=2 world_size=4 effective_batch=8
-  arch: d=1024 n_head=16 ffn=4096 cells=256-256 ctx=256
-  routing: top_k=8 aux_alpha=0.01 λ_init=1.0 λ_final=0.01 sched=cosine
-  cost_cap=$80.0 absolute_max=$88.0 per_hr_max=$20.0
-[1/9] Searching 4× GPU offers (gpu_name in [H100_SXM,H100_NVL,H100_PCIE,H200] num_gpus=4 reliability>0.95 dph_total<20.0 disk_space>200 inet_down>200) — cheapest with gpu_ram>=120000MB ...
-  Selected: id=34497373 dph=$13.4465 gpu=H200 num_gpus=4 gpu_ram=143771MB rel=0.997
-[2/9] cost gate OK (est $67.23)
-[3/9] Renting...
-  Instance ID: 36636926
-[4/9] Waiting SSH (direct-IP) ...
-  ... 1/180 status=None
-  ... 2/180 status=None
-  ... 3/180 status=loading
-  ... 4/180 status=loading
-  ... 5/180 status=loading
-  ... 6/180 status=loading
-  ... 7/180 status=loading
-  ... 8/180 status=loading
-  ... 9/180 status=loading
-  ... 10/180 status=loading
-  ... 11/180 status=loading
-  ... 12/180 status=loading
-  ... 13/180 status=loading
-  ... 14/180 status=loading
-  ... 15/180 status=loading
-  ... 16/180 status=loading
-  ... 17/180 status=loading
-  ... 18/180 status=loading
-  ... 19/180 status=loading
-  ... 20/180 status=loading
-  ... 21/180 status=loading
-  ... 22/180 status=loading
-  ... 23/180 status=loading
-  ... 24/180 status=loading
-  SSH ready: 210.157.233.86:23431 (25x5s)
-[5/9] Uploading code+corpus+probe ...
-Warning: Permanently added '[210.157.233.86]:23431' (ED25519) to the list of known hosts.
+Warning: Permanently added '[154.59.156.41]:47420' (ED25519) to the list of known hosts.
 Welcome to vast.ai. If authentication fails, try again after a few seconds, and double check your ssh key.
 Have fun!
-Warning: Permanently added '[210.157.233.86]:23431' (ED25519) to the list of known hosts.
+W0512 19:12:07.639000 589 site-packages/torch/distributed/run.py:793] 
+W0512 19:12:07.639000 589 site-packages/torch/distributed/run.py:793] *****************************************
+W0512 19:12:07.639000 589 site-packages/torch/distributed/run.py:793] Setting OMP_NUM_THREADS environment variable for each process to be 1 in default, to avoid your system being overloaded, please further tune the variable for optimal performance in your application as needed. 
+W0512 19:12:07.639000 589 site-packages/torch/distributed/run.py:793] *****************************************
+/opt/conda/lib/python3.11/site-packages/torch/cuda/__init__.py:235: UserWarning: 
+NVIDIA RTX PRO 6000 Blackwell Server Edition with CUDA capability sm_120 is not compatible with the current PyTorch installation.
+The current PyTorch install supports CUDA capabilities sm_50 sm_60 sm_70 sm_75 sm_80 sm_86 sm_90.
+If you want to use the NVIDIA RTX PRO 6000 Blackwell Server Edition GPU with PyTorch, please check the instructions at https://pytorch.org/get-started/locally/
+
+  warnings.warn(
+[W512 19:12:09.000121458 CUDAAllocatorConfig.h:28] Warning: expandable_segments not supported on this platform (function operator())
+[INFO] DDP: rank=0 world_size=4 local_rank=0 device=cuda:0 is_ddp=True
+[INFO] torch=2.5.1+cu121 cuda=True
+[INFO] gpu=NVIDIA RTX PRO 6000 Blackwell Server Edition
+[INFO] cfg = {'vocab_size': 256, 'd_model': 1024, 'n_head': 16, 'ffn_dim': 4096, 'max_seq': 256, 'n_layer': 1, 'initial_cells': 256, 'max_cells': 256, 'min_cells': 2, 'split_patience': 3, 'merge_threshold': 0.005, 'merge_patience': 30, 'noise_scale': 0.1, 'lorenz_scale': 0.05, 'adaptive_window': 100, 'readout_mode': 'a_minus_g', 'attention_sharing': 'auto', 'weight_tied_lm_head': True, 'dropout': 0.0, 'tie_pos_emb': True, 'dispersion_trigger_enabled': True, 'dispersion_top_quartile': 0.25, 'per_cell_threshold_enabled': True, 'per_cell_window': 100, 'per_cell_sigma_mult': 1.5, 'lorenz_auto_calibrate': True, 'lorenz_calibration_factor': 1.0}
+/opt/conda/lib/python3.11/site-packages/torch/cuda/__init__.py:235: UserWarning: 
+NVIDIA RTX PRO 6000 Blackwell Server Edition with CUDA capability sm_120 is not compatible with the current PyTorch installation.
+The current PyTorch install supports CUDA capabilities sm_50 sm_60 sm_70 sm_75 sm_80 sm_86 sm_90.
+If you want to use the NVIDIA RTX PRO 6000 Blackwell Server Edition GPU with PyTorch, please check the instructions at https://pytorch.org/get-started/locally/
+
+  warnings.warn(
+/opt/conda/lib/python3.11/site-packages/torch/cuda/__init__.py:235: UserWarning: 
+NVIDIA RTX PRO 6000 Blackwell Server Edition with CUDA capability sm_120 is not compatible with the current PyTorch installation.
+The current PyTorch install supports CUDA capabilities sm_50 sm_60 sm_70 sm_75 sm_80 sm_86 sm_90.
+If you want to use the NVIDIA RTX PRO 6000 Blackwell Server Edition GPU with PyTorch, please check the instructions at https://pytorch.org/get-started/locally/
+
+  warnings.warn(
+/opt/conda/lib/python3.11/site-packages/torch/cuda/__init__.py:235: UserWarning: 
+NVIDIA RTX PRO 6000 Blackwell Server Edition with CUDA capability sm_120 is not compatible with the current PyTorch installation.
+The current PyTorch install supports CUDA capabilities sm_50 sm_60 sm_70 sm_75 sm_80 sm_86 sm_90.
+If you want to use the NVIDIA RTX PRO 6000 Blackwell Server Edition GPU with PyTorch, please check the instructions at https://pytorch.org/get-started/locally/
+
+  warnings.warn(
+[W512 19:12:10.449451549 CUDAAllocatorConfig.h:28] Warning: expandable_segments not supported on this platform (function operator())
+[W512 19:12:10.466826038 CUDAAllocatorConfig.h:28] Warning: expandable_segments not supported on this platform (function operator())
+[W512 19:12:10.476991162 CUDAAllocatorConfig.h:28] Warning: expandable_segments not supported on this platform (function operator())
+[INFO] n_params(engine+router incl)=5,373,167,872  router_out_dim=256 top_k=8
+[INFO] mitosis FROZEN (cells static at max from step 0) — DDP-safe path; fresh-init
+NCCL version 2.21.5+cuda12.4
+
+1ecdfe42da00:723:746 [3] enqueue.cc:60 NCCL WARN Cuda failure 'invalid argument'
+
+1ecdfe42da00:723:746 [3] enqueue.cc:60 NCCL WARN Cuda failure 'invalid argument'
+
+1ecdfe42da00:723:746 [3] enqueue.cc:60 NCCL WARN Cuda failure 'invalid argument'
+
+1ecdfe42da00:723:746 [3] enqueue.cc:60 NCCL WARN Cuda failure 'invalid argument'
+
+1ecdfe42da00:723:746 [3] enqueue.cc:60 NCCL WARN Cuda failure 'invalid argument'
+
+1ecdfe42da00:723:746 [3] enqueue.cc:60 NCCL WARN Cuda failure 'invalid argument'
+
+1ecdfe42da00:723:746 [3] enqueue.cc:60 NCCL WARN Cuda failure 'invalid argument'
+
+1ecdfe42da00:723:746 [3] enqueue.cc:60 NCCL WARN Cuda failure 'invalid argument'
+
+1ecdfe42da00:723:746 [3] enqueue.cc:60 NCCL WARN Cuda failure 'invalid argument'
+
+1ecdfe42da00:723:746 [3] enqueue.cc:60 NCCL WARN Cuda failure 'invalid argument'
+
+1ecdfe42da00:723:746 [3] enqueue.cc:60 NCCL WARN Cuda failure 'invalid argument'
+
+1ecdfe42da00:723:746 [3] enqueue.cc:60 NCCL WARN Cuda failure 'invalid argument'
+
+1ecdfe42da00:723:746 [3] enqueue.cc:60 NCCL WARN Cuda failure 'invalid argument'
+
+1ecdfe42da00:723:746 [3] enqueue.cc:60 NCCL WARN Cuda failure 'invalid argument'
+
+1ecdfe42da00:723:746 [3] enqueue.cc:60 NCCL WARN Cuda failure 'invalid argument'
+
+1ecdfe42da00:723:746 [3] enqueue.cc:60 NCCL WARN Cuda failure 'invalid argument'
+
+1ecdfe42da00:723:746 [3] enqueue.cc:60 NCCL WARN Cuda failure 'invalid argument'
+
+1ecdfe42da00:723:746 [3] enqueue.cc:60 NCCL WARN Cuda failure 'invalid argument'
+
+1ecdfe42da00:723:746 [3] enqueue.cc:60 NCCL WARN Cuda failure 'invalid argument'
+
+1ecdfe42da00:723:746 [3] enqueue.cc:60 NCCL WARN Cuda failure 'invalid argument'
+
+1ecdfe42da00:723:746 [3] enqueue.cc:60 NCCL WARN Cuda failure 'invalid argument'
+
+1ecdfe42da00:723:746 [3] enqueue.cc:60 NCCL WARN Cuda failure 'invalid argument'
+
+1ecdfe42da00:723:746 [3] enqueue.cc:60 NCCL WARN Cuda failure 'invalid argument'
+
+1ecdfe42da00:723:746 [3] enqueue.cc:60 NCCL WARN Cuda failure 'invalid argument'
+
+1ecdfe42da00:723:746 [3] enqueue.cc:60 NCCL WARN Cuda failure 'invalid argument'
+
+1ecdfe42da00:723:746 [3] enqueue.cc:60 NCCL WARN Cuda failure 'invalid argument'
+
+1ecdfe42da00:723:746 [3] enqueue.cc:60 NCCL WARN Cuda failure 'invalid argument'
+
+1ecdfe42da00:723:746 [3] enqueue.cc:60 NCCL WARN Cuda failure 'invalid argument'
+
+1ecdfe42da00:723:746 [3] enqueue.cc:60 NCCL WARN Cuda failure 'invalid argument'
+
+1ecdfe42da00:723:746 [3] enqueue.cc:60 NCCL WARN Cuda failure 'invalid argument'
+
+1ecdfe42da00:723:746 [3] enqueue.cc:60 NCCL WARN Cuda failure 'invalid argument'
+[rank3]: Traceback (most recent call last):
+[rank3]:   File "/workspace/anima/training/cotrain_v5mitosis_v4_multi.py", line 802, in <module>
+[rank3]:     sys.exit(cotrain(parse_args()))
+[rank3]:              ^^^^^^^^^^^^^^^^^^^^^
+[rank3]:   File "/workspace/anima/training/cotrain_v5mitosis_v4_multi.py", line 592, in cotrain
+[rank3]:     engine = DDP(engine_inner, device_ids=[local_rank], output_device=local_rank,
+[rank3]:              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[rank3]:   File "/opt/conda/lib/python3.11/site-packages/torch/nn/parallel/distributed.py", line 825, in __init__
+[rank3]:     _verify_param_shape_across_processes(self.process_group, parameters)
+[rank3]:   File "/opt/conda/lib/python3.11/site-packages/torch/distributed/utils.py", line 288, in _verify_param_shape_across_processes
+[rank3]:     return dist._verify_params_across_processes(process_group, tensors, logger)
+[rank3]:            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[rank3]: torch.distributed.DistBackendError: NCCL error in: ../torch/csrc/distributed/c10d/NCCLUtils.hpp:317, unhandled cuda error (run with NCCL_DEBUG=INFO for details), NCCL version 2.21.5
+[rank3]: ncclUnhandledCudaError: Call to CUDA function failed.
+[rank3]: Last error:
+[rank3]: Cuda failure 'invalid argument'
+
+1ecdfe42da00:721:745 [1] enqueue.cc:60 NCCL WARN Cuda failure 'invalid argument'
+
+1ecdfe42da00:721:745 [1] enqueue.cc:60 NCCL WARN Cuda failure 'invalid argument'
+
+1ecdfe42da00:721:745 [1] enqueue.cc:60 NCCL WARN Cuda failure 'invalid argument'
+
+1ecdfe42da00:721:745 [1] enqueue.cc:60 NCCL WARN Cuda failure 'invalid argument'
+
+1ecdfe42da00:721:745 [1] enqueue.cc:60 NCCL WARN Cuda failure 'invalid argument'
+
+1ecdfe42da00:721:745 [1] enqueue.cc:60 NCCL WARN Cuda failure 'invalid argument'
+
+1ecdfe42da00:721:745 [1] enqueue.cc:60 NCCL WARN Cuda failure 'invalid argument'
+
+1ecdfe42da00:721:745 [1] enqueue.cc:60 NCCL WARN Cuda failure 'invalid argument'
+
+1ecdfe42da00:721:745 [1] enqueue.cc:60 NCCL WARN Cuda failure 'invalid argument'
+
+1ecdfe42da00:721:745 [1] enqueue.cc:60 NCCL WARN Cuda failure 'invalid argument'
+
+1ecdfe42da00:721:745 [1] enqueue.cc:60 NCCL WARN Cuda failure 'invalid argument'
+
+1ecdfe42da00:721:745 [1] enqueue.cc:60 NCCL WARN Cuda failure 'invalid argument'
+
+1ecdfe42da00:721:745 [1] enqueue.cc:60 NCCL WARN Cuda failure 'invalid argument'
+
+1ecdfe42da00:721:745 [1] enqueue.cc:60 NCCL WARN Cuda failure 'invalid argument'
+
+1ecdfe42da00:721:745 [1] enqueue.cc:60 NCCL WARN Cuda failure 'invalid argument'
+
+1ecdfe42da00:721:745 [1] enqueue.cc:60 NCCL WARN Cuda failure 'invalid argument'
+
+1ecdfe42da00:721:745 [1] enqueue.cc:60 NCCL WARN Cuda failure 'invalid argument'
+
+1ecdfe42da00:721:745 [1] enqueue.cc:60 NCCL WARN Cuda failure 'invalid argument'
+
+1ecdfe42da00:721:745 [1] enqueue.cc:60 NCCL WARN Cuda failure 'invalid argument'
+
+1ecdfe42da00:721:745 [1] enqueue.cc:60 NCCL WARN Cuda failure 'invalid argument'
+
+1ecdfe42da00:721:745 [1] enqueue.cc:60 NCCL WARN Cuda failure 'invalid argument'
+
+1ecdfe42da00:721:745 [1] enqueue.cc:60 NCCL WARN Cuda failure 'invalid argument'
+
+1ecdfe42da00:721:745 [1] enqueue.cc:60 NCCL WARN Cuda failure 'invalid argument'
+
+1ecdfe42da00:721:745 [1] enqueue.cc:60 NCCL WARN Cuda failure 'invalid argument'
+
+1ecdfe42da00:721:745 [1] enqueue.cc:60 NCCL WARN Cuda failure 'invalid argument'
+
+1ecdfe42da00:721:745 [1] enqueue.cc:60 NCCL WARN Cuda failure 'invalid argument'
+
+1ecdfe42da00:721:745 [1] enqueue.cc:60 NCCL WARN Cuda failure 'invalid argument'
+
+1ecdfe42da00:721:745 [1] enqueue.cc:60 NCCL WARN Cuda failure 'invalid argument'
+
+1ecdfe42da00:721:745 [1] enqueue.cc:60 NCCL WARN Cuda failure 'invalid argument'
+
+1ecdfe42da00:721:745 [1] enqueue.cc:60 NCCL WARN Cuda failure 'invalid argument'
+
+1ecdfe42da00:721:745 [1] enqueue.cc:60 NCCL WARN Cuda failure 'invalid argument'
+[rank1]: Traceback (most recent call last):
+[rank1]:   File "/workspace/anima/training/cotrain_v5mitosis_v4_multi.py", line 802, in <module>
+[rank1]:     sys.exit(cotrain(parse_args()))
+[rank1]:              ^^^^^^^^^^^^^^^^^^^^^
+[rank1]:   File "/workspace/anima/training/cotrain_v5mitosis_v4_multi.py", line 592, in cotrain
+[rank1]:     engine = DDP(engine_inner, device_ids=[local_rank], output_device=local_rank,
+[rank1]:              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[rank1]:   File "/opt/conda/lib/python3.11/site-packages/torch/nn/parallel/distributed.py", line 825, in __init__
+[rank1]:     _verify_param_shape_across_processes(self.process_group, parameters)
+[rank1]:   File "/opt/conda/lib/python3.11/site-packages/torch/distributed/utils.py", line 288, in _verify_param_shape_across_processes
+[rank1]:     return dist._verify_params_across_processes(process_group, tensors, logger)
+[rank1]:            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[rank1]: torch.distributed.DistBackendError: NCCL error in: ../torch/csrc/distributed/c10d/NCCLUtils.hpp:317, unhandled cuda error (run with NCCL_DEBUG=INFO for details), NCCL version 2.21.5
+[rank1]: ncclUnhandledCudaError: Call to CUDA function failed.
+[rank1]: Last error:
+[rank1]: Cuda failure 'invalid argument'
+
+1ecdfe42da00:722:744 [2] enqueue.cc:60 NCCL WARN Cuda failure 'invalid argument'
+
+1ecdfe42da00:722:744 [2] enqueue.cc:60 NCCL WARN Cuda failure 'invalid argument'
+
+1ecdfe42da00:722:744 [2] enqueue.cc:60 NCCL WARN Cuda failure 'invalid argument'
+
+1ecdfe42da00:722:744 [2] enqueue.cc:60 NCCL WARN Cuda failure 'invalid argument'
+
+1ecdfe42da00:722:744 [2] enqueue.cc:60 NCCL WARN Cuda failure 'invalid argument'
+
+1ecdfe42da00:722:744 [2] enqueue.cc:60 NCCL WARN Cuda failure 'invalid argument'
+
+1ecdfe42da00:722:744 [2] enqueue.cc:60 NCCL WARN Cuda failure 'invalid argument'
+
+1ecdfe42da00:722:744 [2] enqueue.cc:60 NCCL WARN Cuda failure 'invalid argument'
+
+1ecdfe42da00:722:744 [2] enqueue.cc:60 NCCL WARN Cuda failure 'invalid argument'
+
+1ecdfe42da00:722:744 [2] enqueue.cc:60 NCCL WARN Cuda failure 'invalid argument'
+
+1ecdfe42da00:722:744 [2] enqueue.cc:60 NCCL WARN Cuda failure 'invalid argument'
+
+1ecdfe42da00:722:744 [2] enqueue.cc:60 NCCL WARN Cuda failure 'invalid argument'
+
+1ecdfe42da00:722:744 [2] enqueue.cc:60 NCCL WARN Cuda failure 'invalid argument'
+
+1ecdfe42da00:722:744 [2] enqueue.cc:60 NCCL WARN Cuda failure 'invalid argument'
+
+1ecdfe42da00:722:744 [2] enqueue.cc:60 NCCL WARN Cuda failure 'invalid argument'
+
+1ecdfe42da00:722:744 [2] enqueue.cc:60 NCCL WARN Cuda failure 'invalid argument'
+
+1ecdfe42da00:722:744 [2] enqueue.cc:60 NCCL WARN Cuda failure 'invalid argument'
+
+1ecdfe42da00:722:744 [2] enqueue.cc:60 NCCL WARN Cuda failure 'invalid argument'
+
+1ecdfe42da00:722:744 [2] enqueue.cc:60 NCCL WARN Cuda failure 'invalid argument'
+
+1ecdfe42da00:722:744 [2] enqueue.cc:60 NCCL WARN Cuda failure 'invalid argument'
+
+1ecdfe42da00:722:744 [2] enqueue.cc:60 NCCL WARN Cuda failure 'invalid argument'
+
+1ecdfe42da00:722:744 [2] enqueue.cc:60 NCCL WARN Cuda failure 'invalid argument'
+
+1ecdfe42da00:722:744 [2] enqueue.cc:60 NCCL WARN Cuda failure 'invalid argument'
+
+1ecdfe42da00:722:744 [2] enqueue.cc:60 NCCL WARN Cuda failure 'invalid argument'
+
+1ecdfe42da00:722:744 [2] enqueue.cc:60 NCCL WARN Cuda failure 'invalid argument'
+
+1ecdfe42da00:722:744 [2] enqueue.cc:60 NCCL WARN Cuda failure 'invalid argument'
+
+1ecdfe42da00:722:744 [2] enqueue.cc:60 NCCL WARN Cuda failure 'invalid argument'
+
+1ecdfe42da00:722:744 [2] enqueue.cc:60 NCCL WARN Cuda failure 'invalid argument'
+
+1ecdfe42da00:722:744 [2] enqueue.cc:60 NCCL WARN Cuda failure 'invalid argument'
+
+1ecdfe42da00:722:744 [2] enqueue.cc:60 NCCL WARN Cuda failure 'invalid argument'
+
+1ecdfe42da00:722:744 [2] enqueue.cc:60 NCCL WARN Cuda failure 'invalid argument'
+[rank2]: Traceback (most recent call last):
+[rank2]:   File "/workspace/anima/training/cotrain_v5mitosis_v4_multi.py", line 802, in <module>
+[rank2]:     sys.exit(cotrain(parse_args()))
+[rank2]:              ^^^^^^^^^^^^^^^^^^^^^
+[rank2]:   File "/workspace/anima/training/cotrain_v5mitosis_v4_multi.py", line 592, in cotrain
+[rank2]:     engine = DDP(engine_inner, device_ids=[local_rank], output_device=local_rank,
+[rank2]:              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[rank2]:   File "/opt/conda/lib/python3.11/site-packages/torch/nn/parallel/distributed.py", line 825, in __init__
+[rank2]:     _verify_param_shape_across_processes(self.process_group, parameters)
+[rank2]:   File "/opt/conda/lib/python3.11/site-packages/torch/distributed/utils.py", line 288, in _verify_param_shape_across_processes
+[rank2]:     return dist._verify_params_across_processes(process_group, tensors, logger)
+[rank2]:            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[rank2]: torch.distributed.DistBackendError: NCCL error in: ../torch/csrc/distributed/c10d/NCCLUtils.hpp:317, unhandled cuda error (run with NCCL_DEBUG=INFO for details), NCCL version 2.21.5
+[rank2]: ncclUnhandledCudaError: Call to CUDA function failed.
+[rank2]: Last error:
+[rank2]: Cuda failure 'invalid argument'
+
+1ecdfe42da00:720:743 [0] enqueue.cc:60 NCCL WARN Cuda failure 'invalid argument'
+
+1ecdfe42da00:720:743 [0] enqueue.cc:60 NCCL WARN Cuda failure 'invalid argument'
+
+1ecdfe42da00:720:743 [0] enqueue.cc:60 NCCL WARN Cuda failure 'invalid argument'
+
+1ecdfe42da00:720:743 [0] enqueue.cc:60 NCCL WARN Cuda failure 'invalid argument'
+
+1ecdfe42da00:720:743 [0] enqueue.cc:60 NCCL WARN Cuda failure 'invalid argument'
+
+1ecdfe42da00:720:743 [0] enqueue.cc:60 NCCL WARN Cuda failure 'invalid argument'
+
+1ecdfe42da00:720:743 [0] enqueue.cc:60 NCCL WARN Cuda failure 'invalid argument'
+
+1ecdfe42da00:720:743 [0] enqueue.cc:60 NCCL WARN Cuda failure 'invalid argument'
+
+1ecdfe42da00:720:743 [0] enqueue.cc:60 NCCL WARN Cuda failure 'invalid argument'
+
+1ecdfe42da00:720:743 [0] enqueue.cc:60 NCCL WARN Cuda failure 'invalid argument'
+
+1ecdfe42da00:720:743 [0] enqueue.cc:60 NCCL WARN Cuda failure 'invalid argument'
+
+1ecdfe42da00:720:743 [0] enqueue.cc:60 NCCL WARN Cuda failure 'invalid argument'
+
+1ecdfe42da00:720:743 [0] enqueue.cc:60 NCCL WARN Cuda failure 'invalid argument'
+
+1ecdfe42da00:720:743 [0] enqueue.cc:60 NCCL WARN Cuda failure 'invalid argument'
+
+1ecdfe42da00:720:743 [0] enqueue.cc:60 NCCL WARN Cuda failure 'invalid argument'
+
+1ecdfe42da00:720:743 [0] enqueue.cc:60 NCCL WARN Cuda failure 'invalid argument'
+
+1ecdfe42da00:720:743 [0] enqueue.cc:60 NCCL WARN Cuda failure 'invalid argument'
+
+1ecdfe42da00:720:743 [0] enqueue.cc:60 NCCL WARN Cuda failure 'invalid argument'
+
+1ecdfe42da00:720:743 [0] enqueue.cc:60 NCCL WARN Cuda failure 'invalid argument'
+
+1ecdfe42da00:720:743 [0] enqueue.cc:60 NCCL WARN Cuda failure 'invalid argument'
+
+1ecdfe42da00:720:743 [0] enqueue.cc:60 NCCL WARN Cuda failure 'invalid argument'
+
+1ecdfe42da00:720:743 [0] enqueue.cc:60 NCCL WARN Cuda failure 'invalid argument'
+
+1ecdfe42da00:720:743 [0] enqueue.cc:60 NCCL WARN Cuda failure 'invalid argument'
+
+1ecdfe42da00:720:743 [0] enqueue.cc:60 NCCL WARN Cuda failure 'invalid argument'
+
+1ecdfe42da00:720:743 [0] enqueue.cc:60 NCCL WARN Cuda failure 'invalid argument'
+
+1ecdfe42da00:720:743 [0] enqueue.cc:60 NCCL WARN Cuda failure 'invalid argument'
+
+1ecdfe42da00:720:743 [0] enqueue.cc:60 NCCL WARN Cuda failure 'invalid argument'
+
+1ecdfe42da00:720:743 [0] enqueue.cc:60 NCCL WARN Cuda failure 'invalid argument'
+
+1ecdfe42da00:720:743 [0] enqueue.cc:60 NCCL WARN Cuda failure 'invalid argument'
+
+1ecdfe42da00:720:743 [0] enqueue.cc:60 NCCL WARN Cuda failure 'invalid argument'
+
+1ecdfe42da00:720:743 [0] enqueue.cc:60 NCCL WARN Cuda failure 'invalid argument'
+[rank0]: Traceback (most recent call last):
+[rank0]:   File "/workspace/anima/training/cotrain_v5mitosis_v4_multi.py", line 802, in <module>
+[rank0]:     sys.exit(cotrain(parse_args()))
+[rank0]:              ^^^^^^^^^^^^^^^^^^^^^
+[rank0]:   File "/workspace/anima/training/cotrain_v5mitosis_v4_multi.py", line 592, in cotrain
+[rank0]:     engine = DDP(engine_inner, device_ids=[local_rank], output_device=local_rank,
+[rank0]:              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[rank0]:   File "/opt/conda/lib/python3.11/site-packages/torch/nn/parallel/distributed.py", line 825, in __init__
+[rank0]:     _verify_param_shape_across_processes(self.process_group, parameters)
+[rank0]:   File "/opt/conda/lib/python3.11/site-packages/torch/distributed/utils.py", line 288, in _verify_param_shape_across_processes
+[rank0]:     return dist._verify_params_across_processes(process_group, tensors, logger)
+[rank0]:            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[rank0]: torch.distributed.DistBackendError: NCCL error in: ../torch/csrc/distributed/c10d/NCCLUtils.hpp:317, unhandled cuda error (run with NCCL_DEBUG=INFO for details), NCCL version 2.21.5
+[rank0]: ncclUnhandledCudaError: Call to CUDA function failed.
+[rank0]: Last error:
+[rank0]: Cuda failure 'invalid argument'
+[rank0]:[W512 19:17:32.344843143 ProcessGroupNCCL.cpp:1250] Warning: WARNING: process group has NOT been destroyed before we destruct ProcessGroupNCCL. On normal program exit, the application should call destroy_process_group to ensure that any pending NCCL operations have finished in this process. In rare cases this process can exit before this point and block the progress of another member of the process group. This constraint has always been present,  but this warning has only been added since PyTorch 2.4 (function operator())
+W0512 19:17:32.187000 589 site-packages/torch/distributed/elastic/multiprocessing/api.py:897] Sending process 720 closing signal SIGTERM
+W0512 19:17:32.188000 589 site-packages/torch/distributed/elastic/multiprocessing/api.py:897] Sending process 721 closing signal SIGTERM
+W0512 19:17:32.188000 589 site-packages/torch/distributed/elastic/multiprocessing/api.py:897] Sending process 722 closing signal SIGTERM
+E0512 19:17:32.956000 589 site-packages/torch/distributed/elastic/multiprocessing/api.py:869] failed (exitcode: 1) local_rank: 3 (pid: 723) of binary: /opt/conda/bin/python3.11
+Traceback (most recent call last):
+  File "/opt/conda/bin/torchrun", line 8, in <module>
+    sys.exit(main())
+             ^^^^^^
+  File "/opt/conda/lib/python3.11/site-packages/torch/distributed/elastic/multiprocessing/errors/__init__.py", line 355, in wrapper
+    return f(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^
+  File "/opt/conda/lib/python3.11/site-packages/torch/distributed/run.py", line 919, in main
+    run(args)
+  File "/opt/conda/lib/python3.11/site-packages/torch/distributed/run.py", line 910, in run
+    elastic_launch(
+  File "/opt/conda/lib/python3.11/site-packages/torch/distributed/launcher/api.py", line 138, in __call__
+    return launch_agent(self._config, self._entrypoint, list(args))
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/conda/lib/python3.11/site-packages/torch/distributed/launcher/api.py", line 269, in launch_agent
+    raise ChildFailedError(
+torch.distributed.elastic.multiprocessing.errors.ChildFailedError: 
+============================================================
+training/cotrain_v5mitosis_v4_multi.py FAILED
+------------------------------------------------------------
+Failures:
+  <NO_OTHER_FAILURES>
+------------------------------------------------------------
+Root Cause (first observed failure):
+[0]:
+  time      : 2026-05-12_19:17:32
+  host      : 1ecdfe42da00
+  rank      : 3 (local_rank: 3)
+  exitcode  : 1 (pid: 723)
+  error_file: <N/A>
+  traceback : To enable traceback see: https://pytorch.org/docs/stable/elastic/errors.html
+============================================================
+Warning: Permanently added '[146.115.17.163]:16120' (ED25519) to the list of known hosts.
 Welcome to vast.ai. If authentication fails, try again after a few seconds, and double check your ssh key.
 Have fun!
-Warning: Permanently added '[210.157.233.86]:23431' (ED25519) to the list of known hosts.
+W0512 19:21:40.103000 848 site-packages/torch/distributed/run.py:793] 
+W0512 19:21:40.103000 848 site-packages/torch/distributed/run.py:793] *****************************************
+W0512 19:21:40.103000 848 site-packages/torch/distributed/run.py:793] Setting OMP_NUM_THREADS environment variable for each process to be 1 in default, to avoid your system being overloaded, please further tune the variable for optimal performance in your application as needed. 
+W0512 19:21:40.103000 848 site-packages/torch/distributed/run.py:793] *****************************************
+[W512 19:21:42.315398570 CUDAAllocatorConfig.h:28] Warning: expandable_segments not supported on this platform (function operator())
+[INFO] DDP: rank=0 world_size=4 local_rank=0 device=cuda:0 is_ddp=True
+[INFO] torch=2.5.1+cu121 cuda=True
+[INFO] gpu=NVIDIA A100-SXM4-80GB
+[INFO] cfg = {'vocab_size': 256, 'd_model': 1024, 'n_head': 16, 'ffn_dim': 4096, 'max_seq': 256, 'n_layer': 1, 'initial_cells': 256, 'max_cells': 256, 'min_cells': 2, 'split_patience': 3, 'merge_threshold': 0.005, 'merge_patience': 30, 'noise_scale': 0.1, 'lorenz_scale': 0.05, 'adaptive_window': 100, 'readout_mode': 'a_minus_g', 'attention_sharing': 'auto', 'weight_tied_lm_head': True, 'dropout': 0.0, 'tie_pos_emb': True, 'dispersion_trigger_enabled': True, 'dispersion_top_quartile': 0.25, 'per_cell_threshold_enabled': True, 'per_cell_window': 100, 'per_cell_sigma_mult': 1.5, 'lorenz_auto_calibrate': True, 'lorenz_calibration_factor': 1.0}
+[W512 19:21:42.657180499 CUDAAllocatorConfig.h:28] Warning: expandable_segments not supported on this platform (function operator())
+[W512 19:21:42.657181709 CUDAAllocatorConfig.h:28] Warning: expandable_segments not supported on this platform (function operator())
+[W512 19:21:42.657362107 CUDAAllocatorConfig.h:28] Warning: expandable_segments not supported on this platform (function operator())
+[INFO] n_params(engine+router incl)=5,373,167,872  router_out_dim=256 top_k=8
+[INFO] mitosis FROZEN (cells static at max from step 0) — DDP-safe path; fresh-init
+NCCL version 2.21.5+cuda12.4
+[INFO] corpus=corpus/corpus_5cat_balanced.txt bytes=18,890,139
+[INFO] steps=20000 per_gpu_batch=2 world_size=4 effective_batch=8
+[INFO] top_k=8 aux_alpha=0.01 λ_init=1.0 λ_final=0.01 sched=cosine
+[rank1]:[W512 19:22:24.825907658 reducer.cpp:1400] Warning: find_unused_parameters=True was specified in DDP constructor, but did not find any unused parameters in the forward pass. This flag results in an extra traversal of the autograd graph every iteration,  which can adversely affect performance. If your model indeed never has any unused parameters in the forward pass, consider turning this flag off. Note that this warning may be a false positive if your model has flow control causing later iterations to have unused parameters. (function operator())
+[rank2]:[W512 19:22:24.827283523 reducer.cpp:1400] Warning: find_unused_parameters=True was specified in DDP constructor, but did not find any unused parameters in the forward pass. This flag results in an extra traversal of the autograd graph every iteration,  which can adversely affect performance. If your model indeed never has any unused parameters in the forward pass, consider turning this flag off. Note that this warning may be a false positive if your model has flow control causing later iterations to have unused parameters. (function operator())
+[rank0]:[W512 19:22:24.830478349 reducer.cpp:1400] Warning: find_unused_parameters=True was specified in DDP constructor, but did not find any unused parameters in the forward pass. This flag results in an extra traversal of the autograd graph every iteration,  which can adversely affect performance. If your model indeed never has any unused parameters in the forward pass, consider turning this flag off. Note that this warning may be a false positive if your model has flow control causing later iterations to have unused parameters. (function operator())
+[rank3]:[W512 19:22:24.833796283 reducer.cpp:1400] Warning: find_unused_parameters=True was specified in DDP constructor, but did not find any unused parameters in the forward pass. This flag results in an extra traversal of the autograd graph every iteration,  which can adversely affect performance. If your model indeed never has any unused parameters in the forward pass, consider turning this flag off. Note that this warning may be a false positive if your model has flow control causing later iterations to have unused parameters. (function operator())
+[rank3]: Traceback (most recent call last):
+[rank3]:   File "/workspace/anima/training/cotrain_v5mitosis_v4_multi.py", line 802, in <module>
+[rank3]:     sys.exit(cotrain(parse_args()))
+[rank3]:              ^^^^^^^^^^^^^^^^^^^^^
+[rank3]:   File "/workspace/anima/training/cotrain_v5mitosis_v4_multi.py", line 644, in cotrain
+[rank3]:     optimizer.step()
+[rank3]:   File "/opt/conda/lib/python3.11/site-packages/torch/optim/optimizer.py", line 487, in wrapper
+[rank3]:     out = func(*args, **kwargs)
+[rank3]:           ^^^^^^^^^^^^^^^^^^^^^
+[rank3]:   File "/opt/conda/lib/python3.11/site-packages/torch/optim/optimizer.py", line 91, in _use_grad
+[rank3]:     ret = func(self, *args, **kwargs)
+[rank3]:           ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[rank3]:   File "/opt/conda/lib/python3.11/site-packages/torch/optim/adamw.py", line 209, in step
+[rank3]:     has_complex = self._init_group(
+[rank3]:                   ^^^^^^^^^^^^^^^^^
+[rank3]:   File "/opt/conda/lib/python3.11/site-packages/torch/optim/adamw.py", line 152, in _init_group
+[rank3]:     state["exp_avg_sq"] = torch.zeros_like(
+[rank3]:                           ^^^^^^^^^^^^^^^^^
+[rank3]: torch.OutOfMemoryError: CUDA out of memory. Tried to allocate 16.00 MiB. GPU 3 has a total capacity of 79.25 GiB of which 14.94 MiB is free. Including non-PyTorch memory, this process has 79.23 GiB memory in use. Of the allocated memory 77.72 GiB is allocated by PyTorch, and 21.84 MiB is reserved by PyTorch but unallocated. If reserved but unallocated memory is large try setting PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True to avoid fragmentation.  See documentation for Memory Management  (https://pytorch.org/docs/stable/notes/cuda.html#environment-variables)
+[rank2]: Traceback (most recent call last):
+[rank2]:   File "/workspace/anima/training/cotrain_v5mitosis_v4_multi.py", line 802, in <module>
+[rank2]:     sys.exit(cotrain(parse_args()))
+[rank2]:              ^^^^^^^^^^^^^^^^^^^^^
+[rank2]:   File "/workspace/anima/training/cotrain_v5mitosis_v4_multi.py", line 644, in cotrain
+[rank2]:     optimizer.step()
+[rank2]:   File "/opt/conda/lib/python3.11/site-packages/torch/optim/optimizer.py", line 487, in wrapper
+[rank2]:     out = func(*args, **kwargs)
+[rank2]:           ^^^^^^^^^^^^^^^^^^^^^
+[rank2]:   File "/opt/conda/lib/python3.11/site-packages/torch/optim/optimizer.py", line 91, in _use_grad
+[rank2]:     ret = func(self, *args, **kwargs)
+[rank2]:           ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[rank2]:   File "/opt/conda/lib/python3.11/site-packages/torch/optim/adamw.py", line 209, in step
+[rank2]:     has_complex = self._init_group(
+[rank2]:                   ^^^^^^^^^^^^^^^^^
+[rank2]:   File "/opt/conda/lib/python3.11/site-packages/torch/optim/adamw.py", line 148, in _init_group
+[rank2]:     state["exp_avg"] = torch.zeros_like(
+[rank2]:                        ^^^^^^^^^^^^^^^^^
+[rank2]: torch.OutOfMemoryError: CUDA out of memory. Tried to allocate 12.00 MiB. GPU 2 has a total capacity of 79.25 GiB of which 10.94 MiB is free. Including non-PyTorch memory, this process has 79.23 GiB memory in use. Of the allocated memory 77.58 GiB is allocated by PyTorch, and 25.92 MiB is reserved by PyTorch but unallocated. If reserved but unallocated memory is large try setting PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True to avoid fragmentation.  See documentation for Memory Management  (https://pytorch.org/docs/stable/notes/cuda.html#environment-variables)
+[rank1]: Traceback (most recent call last):
+[rank1]:   File "/workspace/anima/training/cotrain_v5mitosis_v4_multi.py", line 802, in <module>
+[rank1]:     sys.exit(cotrain(parse_args()))
+[rank1]:              ^^^^^^^^^^^^^^^^^^^^^
+[rank1]:   File "/workspace/anima/training/cotrain_v5mitosis_v4_multi.py", line 644, in cotrain
+[rank1]:     optimizer.step()
+[rank1]:   File "/opt/conda/lib/python3.11/site-packages/torch/optim/optimizer.py", line 487, in wrapper
+[rank1]:     out = func(*args, **kwargs)
+[rank1]:           ^^^^^^^^^^^^^^^^^^^^^
+[rank1]:   File "/opt/conda/lib/python3.11/site-packages/torch/optim/optimizer.py", line 91, in _use_grad
+[rank1]:     ret = func(self, *args, **kwargs)
+[rank1]:           ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[rank1]:   File "/opt/conda/lib/python3.11/site-packages/torch/optim/adamw.py", line 209, in step
+[rank1]:     has_complex = self._init_group(
+[rank1]:                   ^^^^^^^^^^^^^^^^^
+[rank1]:   File "/opt/conda/lib/python3.11/site-packages/torch/optim/adamw.py", line 152, in _init_group
+[rank1]:     state["exp_avg_sq"] = torch.zeros_like(
+[rank1]:                           ^^^^^^^^^^^^^^^^^
+[rank1]: torch.OutOfMemoryError: CUDA out of memory. Tried to allocate 12.00 MiB. GPU 1 has a total capacity of 79.25 GiB of which 10.94 MiB is free. Including non-PyTorch memory, this process has 79.23 GiB memory in use. Of the allocated memory 77.59 GiB is allocated by PyTorch, and 13.92 MiB is reserved by PyTorch but unallocated. If reserved but unallocated memory is large try setting PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True to avoid fragmentation.  See documentation for Memory Management  (https://pytorch.org/docs/stable/notes/cuda.html#environment-variables)
+[rank0]: Traceback (most recent call last):
+[rank0]:   File "/workspace/anima/training/cotrain_v5mitosis_v4_multi.py", line 802, in <module>
+[rank0]:     sys.exit(cotrain(parse_args()))
+[rank0]:              ^^^^^^^^^^^^^^^^^^^^^
+[rank0]:   File "/workspace/anima/training/cotrain_v5mitosis_v4_multi.py", line 644, in cotrain
+[rank0]:     optimizer.step()
+[rank0]:   File "/opt/conda/lib/python3.11/site-packages/torch/optim/optimizer.py", line 487, in wrapper
+[rank0]:     out = func(*args, **kwargs)
+[rank0]:           ^^^^^^^^^^^^^^^^^^^^^
+[rank0]:   File "/opt/conda/lib/python3.11/site-packages/torch/optim/optimizer.py", line 91, in _use_grad
+[rank0]:     ret = func(self, *args, **kwargs)
+[rank0]:           ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[rank0]:   File "/opt/conda/lib/python3.11/site-packages/torch/optim/adamw.py", line 209, in step
+[rank0]:     has_complex = self._init_group(
+[rank0]:                   ^^^^^^^^^^^^^^^^^
+[rank0]:   File "/opt/conda/lib/python3.11/site-packages/torch/optim/adamw.py", line 152, in _init_group
+[rank0]:     state["exp_avg_sq"] = torch.zeros_like(
+[rank0]:                           ^^^^^^^^^^^^^^^^^
+[rank0]: torch.OutOfMemoryError: CUDA out of memory. Tried to allocate 16.00 MiB. GPU 0 has a total capacity of 79.25 GiB of which 14.94 MiB is free. Including non-PyTorch memory, this process has 79.23 GiB memory in use. Of the allocated memory 77.72 GiB is allocated by PyTorch, and 21.84 MiB is reserved by PyTorch but unallocated. If reserved but unallocated memory is large try setting PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True to avoid fragmentation.  See documentation for Memory Management  (https://pytorch.org/docs/stable/notes/cuda.html#environment-variables)
+W0512 19:22:27.415000 848 site-packages/torch/distributed/elastic/multiprocessing/api.py:897] Sending process 979 closing signal SIGTERM
+W0512 19:22:27.415000 848 site-packages/torch/distributed/elastic/multiprocessing/api.py:897] Sending process 980 closing signal SIGTERM
+W0512 19:22:27.415000 848 site-packages/torch/distributed/elastic/multiprocessing/api.py:897] Sending process 981 closing signal SIGTERM
+E0512 19:22:28.745000 848 site-packages/torch/distributed/elastic/multiprocessing/api.py:869] failed (exitcode: 1) local_rank: 3 (pid: 982) of binary: /opt/conda/bin/python3.11
+Traceback (most recent call last):
+  File "/opt/conda/bin/torchrun", line 8, in <module>
+    sys.exit(main())
+             ^^^^^^
+  File "/opt/conda/lib/python3.11/site-packages/torch/distributed/elastic/multiprocessing/errors/__init__.py", line 355, in wrapper
+    return f(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^
+  File "/opt/conda/lib/python3.11/site-packages/torch/distributed/run.py", line 919, in main
+    run(args)
+  File "/opt/conda/lib/python3.11/site-packages/torch/distributed/run.py", line 910, in run
+    elastic_launch(
+  File "/opt/conda/lib/python3.11/site-packages/torch/distributed/launcher/api.py", line 138, in __call__
+    return launch_agent(self._config, self._entrypoint, list(args))
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/conda/lib/python3.11/site-packages/torch/distributed/launcher/api.py", line 269, in launch_agent
+    raise ChildFailedError(
+torch.distributed.elastic.multiprocessing.errors.ChildFailedError: 
+============================================================
+training/cotrain_v5mitosis_v4_multi.py FAILED
+------------------------------------------------------------
+Failures:
+  <NO_OTHER_FAILURES>
+------------------------------------------------------------
+Root Cause (first observed failure):
+[0]:
+  time      : 2026-05-12_19:22:27
+  host      : 7020b228dc4f
+  rank      : 3 (local_rank: 3)
+  exitcode  : 1 (pid: 982)
+  error_file: <N/A>
+  traceback : To enable traceback see: https://pytorch.org/docs/stable/elastic/errors.html
+============================================================
+Warning: Permanently added '[146.115.17.163]:16120' (ED25519) to the list of known hosts.
 Welcome to vast.ai. If authentication fails, try again after a few seconds, and double check your ssh key.
 Have fun!
-Warning: Permanently added '[210.157.233.86]:23431' (ED25519) to the list of known hosts.
-Welcome to vast.ai. If authentication fails, try again after a few seconds, and double check your ssh key.
-Have fun!
-Warning: Permanently added '[210.157.233.86]:23431' (ED25519) to the list of known hosts.
-Welcome to vast.ai. If authentication fails, try again after a few seconds, and double check your ssh key.
-Have fun!
-[6/9] (image already has torch — skip pip install)
-Warning: Permanently added '[210.157.233.86]:23431' (ED25519) to the list of known hosts.
-Welcome to vast.ai. If authentication fails, try again after a few seconds, and double check your ssh key.
-Have fun!
-GPU 0: NVIDIA H200 (UUID: GPU-169ad8fa-7665-9e81-f89e-755c513bb786)
-GPU 1: NVIDIA H200 (UUID: GPU-f9a6b92c-2f39-845a-a5ff-b073aa9a7935)
-GPU 2: NVIDIA H200 (UUID: GPU-5f83e551-9898-7e12-f043-ee8686d482ea)
-GPU 3: NVIDIA H200 (UUID: GPU-8cfdd11f-8864-e5aa-0341-d377f3c61095)
-torch= 2.5.1+cu121 cuda= True n_gpu= 4
-[7/9] Train v4-multi DDP (torchrun nproc_per_node=4) ...
-  >>> attempt 1: per_gpu_batch=2 (effective 8)
+W0512 19:22:43.113000 1070 site-packages/torch/distributed/run.py:793] 
+W0512 19:22:43.113000 1070 site-packages/torch/distributed/run.py:793] *****************************************
+W0512 19:22:43.113000 1070 site-packages/torch/distributed/run.py:793] Setting OMP_NUM_THREADS environment variable for each process to be 1 in default, to avoid your system being overloaded, please further tune the variable for optimal performance in your application as needed. 
+W0512 19:22:43.113000 1070 site-packages/torch/distributed/run.py:793] *****************************************
+[W512 19:22:45.124950437 CUDAAllocatorConfig.h:28] Warning: expandable_segments not supported on this platform (function operator())
+[INFO] DDP: rank=0 world_size=4 local_rank=0 device=cuda:0 is_ddp=True
+[INFO] torch=2.5.1+cu121 cuda=True
+[INFO] gpu=NVIDIA A100-SXM4-80GB
+[INFO] cfg = {'vocab_size': 256, 'd_model': 1024, 'n_head': 16, 'ffn_dim': 4096, 'max_seq': 256, 'n_layer': 1, 'initial_cells': 256, 'max_cells': 256, 'min_cells': 2, 'split_patience': 3, 'merge_threshold': 0.005, 'merge_patience': 30, 'noise_scale': 0.1, 'lorenz_scale': 0.05, 'adaptive_window': 100, 'readout_mode': 'a_minus_g', 'attention_sharing': 'auto', 'weight_tied_lm_head': True, 'dropout': 0.0, 'tie_pos_emb': True, 'dispersion_trigger_enabled': True, 'dispersion_top_quartile': 0.25, 'per_cell_threshold_enabled': True, 'per_cell_window': 100, 'per_cell_sigma_mult': 1.5, 'lorenz_auto_calibrate': True, 'lorenz_calibration_factor': 1.0}
+[W512 19:22:45.573064468 CUDAAllocatorConfig.h:28] Warning: expandable_segments not supported on this platform (function operator())
+[W512 19:22:45.616935216 CUDAAllocatorConfig.h:28] Warning: expandable_segments not supported on this platform (function operator())
+[W512 19:22:45.633036692 CUDAAllocatorConfig.h:28] Warning: expandable_segments not supported on this platform (function operator())
+[INFO] n_params(engine+router incl)=5,373,167,872  router_out_dim=256 top_k=8
+[INFO] mitosis FROZEN (cells static at max from step 0) — DDP-safe path; fresh-init
+NCCL version 2.21.5+cuda12.4
+[INFO] corpus=corpus/corpus_5cat_balanced.txt bytes=18,890,139
+[INFO] steps=20000 per_gpu_batch=1 world_size=4 effective_batch=4
+[INFO] top_k=8 aux_alpha=0.01 λ_init=1.0 λ_final=0.01 sched=cosine
+[rank2]:[W512 19:23:26.817759005 reducer.cpp:1400] Warning: find_unused_parameters=True was specified in DDP constructor, but did not find any unused parameters in the forward pass. This flag results in an extra traversal of the autograd graph every iteration,  which can adversely affect performance. If your model indeed never has any unused parameters in the forward pass, consider turning this flag off. Note that this warning may be a false positive if your model has flow control causing later iterations to have unused parameters. (function operator())
+[rank1]:[W512 19:23:26.821987980 reducer.cpp:1400] Warning: find_unused_parameters=True was specified in DDP constructor, but did not find any unused parameters in the forward pass. This flag results in an extra traversal of the autograd graph every iteration,  which can adversely affect performance. If your model indeed never has any unused parameters in the forward pass, consider turning this flag off. Note that this warning may be a false positive if your model has flow control causing later iterations to have unused parameters. (function operator())
+[rank3]:[W512 19:23:26.826180435 reducer.cpp:1400] Warning: find_unused_parameters=True was specified in DDP constructor, but did not find any unused parameters in the forward pass. This flag results in an extra traversal of the autograd graph every iteration,  which can adversely affect performance. If your model indeed never has any unused parameters in the forward pass, consider turning this flag off. Note that this warning may be a false positive if your model has flow control causing later iterations to have unused parameters. (function operator())
+[rank0]:[W512 19:23:26.829286052 reducer.cpp:1400] Warning: find_unused_parameters=True was specified in DDP constructor, but did not find any unused parameters in the forward pass. This flag results in an extra traversal of the autograd graph every iteration,  which can adversely affect performance. If your model indeed never has any unused parameters in the forward pass, consider turning this flag off. Note that this warning may be a false positive if your model has flow control causing later iterations to have unused parameters. (function operator())
+[rank1]: Traceback (most recent call last):
+[rank1]:   File "/workspace/anima/training/cotrain_v5mitosis_v4_multi.py", line 802, in <module>
+[rank1]:     sys.exit(cotrain(parse_args()))
+[rank1]:              ^^^^^^^^^^^^^^^^^^^^^
+[rank1]:   File "/workspace/anima/training/cotrain_v5mitosis_v4_multi.py", line 644, in cotrain
+[rank1]:     optimizer.step()
+[rank1]:   File "/opt/conda/lib/python3.11/site-packages/torch/optim/optimizer.py", line 487, in wrapper
+[rank1]:     out = func(*args, **kwargs)
+[rank1]:           ^^^^^^^^^^^^^^^^^^^^^
+[rank1]:   File "/opt/conda/lib/python3.11/site-packages/torch/optim/optimizer.py", line 91, in _use_grad
+[rank1]:     ret = func(self, *args, **kwargs)
+[rank1]:           ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[rank1]:   File "/opt/conda/lib/python3.11/site-packages/torch/optim/adamw.py", line 209, in step
+[rank1]:     has_complex = self._init_group(
+[rank1]:                   ^^^^^^^^^^^^^^^^^
+[rank1]:   File "/opt/conda/lib/python3.11/site-packages/torch/optim/adamw.py", line 152, in _init_group
+[rank1]:     state["exp_avg_sq"] = torch.zeros_like(
+[rank1]:                           ^^^^^^^^^^^^^^^^^
+[rank1]: torch.OutOfMemoryError: CUDA out of memory. Tried to allocate 12.00 MiB. GPU 1 has a total capacity of 79.25 GiB of which 8.94 MiB is free. Including non-PyTorch memory, this process has 79.24 GiB memory in use. Of the allocated memory 77.59 GiB is allocated by PyTorch, and 17.18 MiB is reserved by PyTorch but unallocated. If reserved but unallocated memory is large try setting PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True to avoid fragmentation.  See documentation for Memory Management  (https://pytorch.org/docs/stable/notes/cuda.html#environment-variables)
+[rank2]: Traceback (most recent call last):
+[rank2]:   File "/workspace/anima/training/cotrain_v5mitosis_v4_multi.py", line 802, in <module>
+[rank2]:     sys.exit(cotrain(parse_args()))
+[rank2]:              ^^^^^^^^^^^^^^^^^^^^^
+[rank2]:   File "/workspace/anima/training/cotrain_v5mitosis_v4_multi.py", line 644, in cotrain
+[rank2]:     optimizer.step()
+[rank2]:   File "/opt/conda/lib/python3.11/site-packages/torch/optim/optimizer.py", line 487, in wrapper
+[rank2]:     out = func(*args, **kwargs)
+[rank2]:           ^^^^^^^^^^^^^^^^^^^^^
+[rank2]:   File "/opt/conda/lib/python3.11/site-packages/torch/optim/optimizer.py", line 91, in _use_grad
+[rank2]:     ret = func(self, *args, **kwargs)
+[rank2]:           ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[rank2]:   File "/opt/conda/lib/python3.11/site-packages/torch/optim/adamw.py", line 209, in step
+[rank2]:     has_complex = self._init_group(
+[rank2]:                   ^^^^^^^^^^^^^^^^^
+[rank2]:   File "/opt/conda/lib/python3.11/site-packages/torch/optim/adamw.py", line 148, in _init_group
+[rank2]:     state["exp_avg"] = torch.zeros_like(
+[rank2]:                        ^^^^^^^^^^^^^^^^^
+[rank2]: torch.OutOfMemoryError: CUDA out of memory. Tried to allocate 12.00 MiB. GPU 2 has a total capacity of 79.25 GiB of which 8.94 MiB is free. Including non-PyTorch memory, this process has 79.24 GiB memory in use. Of the allocated memory 77.58 GiB is allocated by PyTorch, and 29.18 MiB is reserved by PyTorch but unallocated. If reserved but unallocated memory is large try setting PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True to avoid fragmentation.  See documentation for Memory Management  (https://pytorch.org/docs/stable/notes/cuda.html#environment-variables)
+[rank3]: Traceback (most recent call last):
+[rank3]:   File "/workspace/anima/training/cotrain_v5mitosis_v4_multi.py", line 802, in <module>
+[rank3]:     sys.exit(cotrain(parse_args()))
+[rank3]:              ^^^^^^^^^^^^^^^^^^^^^
+[rank3]:   File "/workspace/anima/training/cotrain_v5mitosis_v4_multi.py", line 644, in cotrain
+[rank3]:     optimizer.step()
+[rank3]:   File "/opt/conda/lib/python3.11/site-packages/torch/optim/optimizer.py", line 487, in wrapper
+[rank3]:     out = func(*args, **kwargs)
+[rank3]:           ^^^^^^^^^^^^^^^^^^^^^
+[rank3]:   File "/opt/conda/lib/python3.11/site-packages/torch/optim/optimizer.py", line 91, in _use_grad
+[rank3]:     ret = func(self, *args, **kwargs)
+[rank3]:           ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[rank3]:   File "/opt/conda/lib/python3.11/site-packages/torch/optim/adamw.py", line 209, in step
+[rank3]:     has_complex = self._init_group(
+[rank3]:                   ^^^^^^^^^^^^^^^^^
+[rank3]:   File "/opt/conda/lib/python3.11/site-packages/torch/optim/adamw.py", line 152, in _init_group
+[rank3]:     state["exp_avg_sq"] = torch.zeros_like(
+[rank3]:                           ^^^^^^^^^^^^^^^^^
+[rank3]: torch.OutOfMemoryError: CUDA out of memory. Tried to allocate 16.00 MiB. GPU 3 has a total capacity of 79.25 GiB of which 12.94 MiB is free. Including non-PyTorch memory, this process has 79.23 GiB memory in use. Of the allocated memory 77.72 GiB is allocated by PyTorch, and 25.09 MiB is reserved by PyTorch but unallocated. If reserved but unallocated memory is large try setting PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True to avoid fragmentation.  See documentation for Memory Management  (https://pytorch.org/docs/stable/notes/cuda.html#environment-variables)
+[rank0]: Traceback (most recent call last):
+[rank0]:   File "/workspace/anima/training/cotrain_v5mitosis_v4_multi.py", line 802, in <module>
+[rank0]:     sys.exit(cotrain(parse_args()))
+[rank0]:              ^^^^^^^^^^^^^^^^^^^^^
+[rank0]:   File "/workspace/anima/training/cotrain_v5mitosis_v4_multi.py", line 644, in cotrain
+[rank0]:     optimizer.step()
+[rank0]:   File "/opt/conda/lib/python3.11/site-packages/torch/optim/optimizer.py", line 487, in wrapper
+[rank0]:     out = func(*args, **kwargs)
+[rank0]:           ^^^^^^^^^^^^^^^^^^^^^
+[rank0]:   File "/opt/conda/lib/python3.11/site-packages/torch/optim/optimizer.py", line 91, in _use_grad
+[rank0]:     ret = func(self, *args, **kwargs)
+[rank0]:           ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[rank0]:   File "/opt/conda/lib/python3.11/site-packages/torch/optim/adamw.py", line 209, in step
+[rank0]:     has_complex = self._init_group(
+[rank0]:                   ^^^^^^^^^^^^^^^^^
+[rank0]:   File "/opt/conda/lib/python3.11/site-packages/torch/optim/adamw.py", line 152, in _init_group
+[rank0]:     state["exp_avg_sq"] = torch.zeros_like(
+[rank0]:                           ^^^^^^^^^^^^^^^^^
+[rank0]: torch.OutOfMemoryError: CUDA out of memory. Tried to allocate 16.00 MiB. GPU 0 has a total capacity of 79.25 GiB of which 12.94 MiB is free. Including non-PyTorch memory, this process has 79.23 GiB memory in use. Of the allocated memory 77.72 GiB is allocated by PyTorch, and 25.09 MiB is reserved by PyTorch but unallocated. If reserved but unallocated memory is large try setting PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True to avoid fragmentation.  See documentation for Memory Management  (https://pytorch.org/docs/stable/notes/cuda.html#environment-variables)
+W0512 19:23:29.682000 1070 site-packages/torch/distributed/elastic/multiprocessing/api.py:897] Sending process 1201 closing signal SIGTERM
+W0512 19:23:29.682000 1070 site-packages/torch/distributed/elastic/multiprocessing/api.py:897] Sending process 1203 closing signal SIGTERM
+W0512 19:23:29.683000 1070 site-packages/torch/distributed/elastic/multiprocessing/api.py:897] Sending process 1204 closing signal SIGTERM
+E0512 19:23:30.949000 1070 site-packages/torch/distributed/elastic/multiprocessing/api.py:869] failed (exitcode: 1) local_rank: 1 (pid: 1202) of binary: /opt/conda/bin/python3.11
+Traceback (most recent call last):
+  File "/opt/conda/bin/torchrun", line 8, in <module>
+    sys.exit(main())
+             ^^^^^^
+  File "/opt/conda/lib/python3.11/site-packages/torch/distributed/elastic/multiprocessing/errors/__init__.py", line 355, in wrapper
+    return f(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^
+  File "/opt/conda/lib/python3.11/site-packages/torch/distributed/run.py", line 919, in main
+    run(args)
+  File "/opt/conda/lib/python3.11/site-packages/torch/distributed/run.py", line 910, in run
+    elastic_launch(
+  File "/opt/conda/lib/python3.11/site-packages/torch/distributed/launcher/api.py", line 138, in __call__
+    return launch_agent(self._config, self._entrypoint, list(args))
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/conda/lib/python3.11/site-packages/torch/distributed/launcher/api.py", line 269, in launch_agent
+    raise ChildFailedError(
+torch.distributed.elastic.multiprocessing.errors.ChildFailedError: 
+============================================================
+training/cotrain_v5mitosis_v4_multi.py FAILED
+------------------------------------------------------------
+Failures:
+  <NO_OTHER_FAILURES>
+------------------------------------------------------------
+Root Cause (first observed failure):
+[0]:
+  time      : 2026-05-12_19:23:29
+  host      : 7020b228dc4f
+  rank      : 1 (local_rank: 1)
+  exitcode  : 1 (pid: 1202)
+  error_file: <N/A>
+  traceback : To enable traceback see: https://pytorch.org/docs/stable/elastic/errors.html
+============================================================
 Warning: Permanently added '[210.157.233.86]:23431' (ED25519) to the list of known hosts.
 Welcome to vast.ai. If authentication fails, try again after a few seconds, and double check your ssh key.
 Have fun!
