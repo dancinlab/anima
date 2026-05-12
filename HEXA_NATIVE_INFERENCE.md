@@ -183,7 +183,8 @@ Phase 0 SSOT commit (`d5dcf4a64`) is clean — local only until user resolves.
 | 3 | EngineAG GQA attention proper | ✅ tool/hexa_native/engine_ag_nn.hexa (6 fns: project_qkv/apply_rope_qk/expand_kv/scores/output/forward + selftest; parse OK; falsifiers F-GQA-SHAPE-1..OUTPUT-5) |
 | 4.1 | KV cache + incremental attention step | ✅ tool/hexa_native/engine_ag_nn.hexa (kvcache_new/append/len + gqa_attention_step + selftest_kv_cache; parse OK; falsifiers F-KVC-APPEND-1/STEP-RECURSIVE-2/CAP-OVERFLOW-3) |
 | 4.2 | byte tokenizer | 🟡 tool/hexa_native/byte_tokenizer.hexa (encode + decode_bytes + decode_ascii + selftest 5 falsifiers; parse OK). Full UTF-8 str reassembly blocked on **RFC 030** (`bytes_to_str_raw`) — drafted at hexa-lang/incoming/rfc_drafts_2026_05_12/rfc_030_bytes_to_str_raw.md. Byte-level round-trip works; user-facing string display deferred. |
-| 4.3 | generation modes (greedy/sample/M3/M4) | ⏳ next |
+| 4.3 | generation modes (greedy/sample/M3/M4) | ✅ tool/hexa_native/gen_modes.hexa (gen_greedy / gen_sample(T, seed) / gen_m3_rep_penalty / gen_m4_force_include + selftest 5 falsifiers; parse OK; inline LCG so no import dep) |
+| 5 | hexa native chat smoke (run all 3 modes end-to-end on ckpt) | 🚨 BLOCKED — prereqs RFC 025 (zero-copy mmap, full tensor load) + RFC 030 (bytes_to_str_raw, utf-8 display). Phase 4 source-only verified via `hexa parse`. |
 
 ---
 

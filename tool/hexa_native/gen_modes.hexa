@@ -1,0 +1,301 @@
+// ════════════════════════════════════════════════════════════════════════════
+//  tool/hexa_native/gen_modes.hexa — Phase 4.3 generation modes scaffold
+//
+//  PURPOSE
+//    Pure-hexa port of anima_chat.py generation surface. 4 modes:
+//      · gen_greedy        : argmax over logits
+//      · gen_sample        : T-temperature + softmax + multinomial sample
+//      · gen_m3_rep_penalty: divide logits of prior tokens by penalty
+//      · gen_m4_force_include: add boost to selected token logits
+//
+//    All functions operate on a flat (vocab_size,) logits list. No model
+//    forward dependency — they're the post-forward decision layer.
+//
+//  RNG
+//    gen_sample takes an explicit `seed: int` to stay deterministic +
+//    reproducible (anima_chat v2.3 / chat-2026-05-08 anchor). Uses an inline
+//    LCG (constants from Numerical Recipes' Park-Miller variant — same as
+//    stdlib/core/math/rng.hexa::lcg_next, replicated here to avoid an
+//    import dependency for this scaffold file).
+//
+//  COMPLIANCE
+//    raw#11 snake_case · raw#15 no-hardcode (penalties + boosts are params)
+//
+//  FALSIFIERS (raw-117 ≥4, selftest extends to 5+ checks):
+//    F-GEN-GREEDY-1     : argmax over [0,9,3,7] returns 1 (index of 9)
+//    F-GEN-SAMPLE-T-2   : sample at T=0.0001 ≈ argmax (low-temp collapse)
+//    F-GEN-M3-PENALTY-3 : repeated id logit divided by penalty (drops rank)
+//    F-GEN-M4-BOOST-4   : boosted id outranks previously-top id
+//    F-GEN-SAMPLE-SUM-5 : softmax-then-cumsum sums to 1.0 ± 1e-6
+// ════════════════════════════════════════════════════════════════════════════
+
+// ── argmax helper ───────────────────────────────────────────────────────────
+fn _argmax(logits) -> int {
+    let n = len(logits)
+    let mut best = 0
+    let mut best_v = logits[0]
+    let mut i = 1
+    while i < n {
+        if logits[i] > best_v {
+            best_v = logits[i]
+            best = i
+        }
+        i = i + 1
+    }
+    return best
+}
+
+// ── softmax (numerically stable, inline copy to keep this file no-import) ──
+fn _softmax(x) {
+    let n = len(x)
+    let mut mx = x[0]
+    let mut i = 1
+    while i < n {
+        if x[i] > mx { mx = x[i] }
+        i = i + 1
+    }
+    let mut exps = []
+    let mut sm = 0.0
+    i = 0
+    while i < n {
+        let e = exp(x[i] - mx)
+        exps.push(e)
+        sm = sm + e
+        i = i + 1
+    }
+    let mut out = []
+    i = 0
+    while i < n {
+        out.push(exps[i] / sm)
+        i = i + 1
+    }
+    return out
+}
+
+// ── inline LCG (Park-Miller / Numerical Recipes; matches stdlib/core/math/rng) ─
+fn _lcg_next(state: int) -> int {
+    // 32-bit LCG: state = (state * 1103515245 + 12345) mod 2^31
+    let s = (state * 1103515245 + 12345) & 0x7FFFFFFF
+    return s
+}
+
+// Produce a float ∈ [0, 1) from a 32-bit LCG step.
+fn _lcg_float(state: int) {
+    let ns = _lcg_next(state)
+    let f = to_float(ns) / 2147483648.0
+    return [ns, f]
+}
+
+// ── gen_greedy(logits) -> i64 ───────────────────────────────────────────────
+// argmax. F-GEN-GREEDY-1.
+pub fn gen_greedy(logits) -> int {
+    return _argmax(logits)
+}
+
+// ── gen_sample(logits, T, seed) -> [next_id, new_seed] ──────────────────────
+// Temperature-scaled multinomial sample. T → 0+ collapses to argmax
+// (F-GEN-SAMPLE-T-2); T → +∞ approaches uniform.
+//
+// Returns [next_id, new_seed] so caller can chain (RngCtx-style).
+pub fn gen_sample(logits, T: float, seed: int) {
+    let n = len(logits)
+    // T == 0 (or very small) → degenerate to greedy to avoid div-by-zero.
+    if T < 0.000001 {
+        return [_argmax(logits), seed]
+    }
+    // 1. scale logits by 1/T
+    let mut scaled = []
+    let inv_t = 1.0 / T
+    let mut i = 0
+    while i < n {
+        scaled.push(logits[i] * inv_t)
+        i = i + 1
+    }
+    // 2. softmax
+    let probs = _softmax(scaled)
+    // 3. cumulative sum + draw u ∈ [0,1)
+    let step = _lcg_float(seed)
+    let new_seed = step[0]
+    let u = step[1]
+    let mut cum = 0.0
+    let mut pick = n - 1               // fallback to last (handles u==0.999... edge)
+    i = 0
+    while i < n {
+        cum = cum + probs[i]
+        if u < cum {
+            pick = i
+            i = n                       // break
+        } else {
+            i = i + 1
+        }
+    }
+    return [pick, new_seed]
+}
+
+// ── gen_m3_rep_penalty(logits, prior_ids, penalty) -> [float] ───────────────
+// Anima M3: divide logits of any token appearing in prior_ids by `penalty`.
+// Default penalty=1.15 matches anima_chat.py default. F-GEN-M3-PENALTY-3.
+//
+// Behavior: if logit is positive, divide makes it smaller (less likely).
+//   If logit is negative, divide by a >1 value makes it LESS negative (more
+//   likely) — which is the same direction Hugging Face's repetition_penalty
+//   uses (it multiplies-or-divides based on sign). We follow HF semantics:
+//   logit_new = logit_old / penalty   if logit_old > 0
+//             = logit_old * penalty   if logit_old <= 0
+//   (both push the value DOWN, i.e. away from selection).
+pub fn gen_m3_rep_penalty(logits, prior_ids, penalty: float) {
+    let n = len(logits)
+    let np = len(prior_ids)
+    // Build a presence flag list — O(n + np) instead of O(n*np).
+    let mut seen = []
+    let mut i = 0
+    while i < n {
+        seen.push(false)
+        i = i + 1
+    }
+    let mut k = 0
+    while k < np {
+        let id = prior_ids[k]
+        if id >= 0 && id < n {
+            seen[id] = true
+        }
+        k = k + 1
+    }
+    let mut out = []
+    i = 0
+    while i < n {
+        let lg = logits[i]
+        if seen[i] {
+            if lg > 0.0 {
+                out.push(lg / penalty)
+            } else {
+                out.push(lg * penalty)
+            }
+        } else {
+            out.push(lg)
+        }
+        i = i + 1
+    }
+    return out
+}
+
+// ── gen_m4_force_include(logits, ids_to_boost, boost) -> [float] ────────────
+// Anima M4: add `boost` to logits of ids_to_boost (soft force-include).
+// Default boost=5.0 matches anima_chat v2.3 anchor. F-GEN-M4-BOOST-4.
+pub fn gen_m4_force_include(logits, ids_to_boost, boost: float) {
+    let n = len(logits)
+    let nb = len(ids_to_boost)
+    let mut bumped = []
+    let mut i = 0
+    while i < n {
+        bumped.push(false)
+        i = i + 1
+    }
+    let mut k = 0
+    while k < nb {
+        let id = ids_to_boost[k]
+        if id >= 0 && id < n {
+            bumped[id] = true
+        }
+        k = k + 1
+    }
+    let mut out = []
+    i = 0
+    while i < n {
+        if bumped[i] {
+            out.push(logits[i] + boost)
+        } else {
+            out.push(logits[i])
+        }
+        i = i + 1
+    }
+    return out
+}
+
+// ── selftest ────────────────────────────────────────────────────────────────
+// Synthetic vocab=10 logit vector battery. No model needed.
+fn selftest() {
+    println("[gen_modes] selftest: greedy / sample / m3 / m4 / softmax-sum")
+
+    // base logits: index 7 wins (5.0)
+    let base = [0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 5.0, 0.9, 1.0]
+
+    // F-GEN-GREEDY-1
+    let g = gen_greedy(base)
+    if g == 7 {
+        println("  GREEDY_OK (argmax = 7)")
+    } else {
+        println("  GREEDY_FAIL (got " + to_string(g) + ")")
+    }
+
+    // F-GEN-SAMPLE-T-2 — low T should collapse to argmax
+    let s_lowT = gen_sample(base, 0.0001, 42)
+    if s_lowT[0] == 7 {
+        println("  SAMPLE_LOW_T_OK (T→0 collapses to 7)")
+    } else {
+        println("  SAMPLE_LOW_T_FAIL (got " + to_string(s_lowT[0]) + ")")
+    }
+
+    // higher T just smoke — verify call returns valid id ∈ [0, 9]
+    let s_highT = gen_sample(base, 1.5, 137)
+    let s_id = s_highT[0]
+    if s_id >= 0 && s_id < 10 {
+        println("  SAMPLE_HIGH_T_OK (T=1.5 sampled id " + to_string(s_id) + " ∈ [0,9])")
+    } else {
+        println("  SAMPLE_HIGH_T_FAIL")
+    }
+
+    // F-GEN-M3-PENALTY-3
+    let prior = [7]
+    let pen = gen_m3_rep_penalty(base, prior, 1.15)
+    // base[7] = 5.0 > 0 → pen[7] = 5.0/1.15 ≈ 4.347
+    let new_top = gen_greedy(pen)
+    // Still 7 (5/1.15 = 4.35 > 1.0), but logit reduced. Verify decrement:
+    let pen_7 = pen[7]
+    if pen_7 < base[7] {
+        println("  M3_PENALTY_OK (id 7 logit " + to_string(base[7]) + " → " + to_string(pen_7) + ")")
+    } else {
+        println("  M3_PENALTY_FAIL (penalty did not reduce logit)")
+    }
+    // Penalty strong enough to flip ranking?
+    let pen_strong = gen_m3_rep_penalty(base, prior, 100.0)
+    let flipped = gen_greedy(pen_strong)
+    if flipped != 7 {
+        println("  M3_RANK_FLIP_OK (strong penalty knocked id 7 from top, new top = " + to_string(flipped) + ")")
+    } else {
+        println("  M3_RANK_FLIP_FAIL")
+    }
+
+    // F-GEN-M4-BOOST-4
+    // Boost id 3 by 5.0 → 0.4 + 5.0 = 5.4 > 5.0, outranks the natural top 7.
+    let boosted = gen_m4_force_include(base, [3], 5.0)
+    let top_after = gen_greedy(boosted)
+    if top_after == 3 {
+        println("  M4_BOOST_OK (boosted id 3 outranks natural top 7)")
+    } else {
+        println("  M4_BOOST_FAIL (top = " + to_string(top_after) + ")")
+    }
+
+    // F-GEN-SAMPLE-SUM-5 — softmax probs sum to 1.0
+    let probs = _softmax(base)
+    let mut sm = 0.0
+    let mut i = 0
+    while i < len(probs) {
+        sm = sm + probs[i]
+        i = i + 1
+    }
+    let drift = sm - 1.0
+    let abs_drift = if drift >= 0.0 { drift } else { -drift }
+    if abs_drift < 0.000001 {
+        println("  SOFTMAX_SUM_OK (sum = " + to_string(sm) + ", drift < 1e-6)")
+    } else {
+        println("  SOFTMAX_SUM_FAIL (drift = " + to_string(abs_drift) + ")")
+    }
+}
+
+fn main() {
+    println("gen_modes.hexa — Phase 4.3 generation modes")
+    println("  modes: greedy / sample(T, seed) / m3_rep_penalty / m4_force_include")
+    println("")
+    selftest()
+}
