@@ -3,7 +3,10 @@ id: Hc_166
 slug: topo17-hypercube-smallworld-hybrid
 title: Hypercube + 2 random shortcuts (12 neighbors) yields Φ=463.6 — slightly below pure TOPO8 (TOPO17)
 domain: physics | consciousness
-status: candidate-falsifier-ready
+status: merged-to-H_159
+merged_at: 2026-05-12
+merged_to: hypotheses/H_159_substrate_topology_phi_engineering.md
+absorption_note: "TOPO17 (hypercube + 2 random shortcuts, 12-neighbor hybrid, Φ=463.6 slightly below pure TOPO8) is a topology-variant probe within H_159's substrate-sweep — confirms 'pure > hybrid' pattern from TOPO7. F1-F4 + L1-L4 preserved here for H_159 C-list extension."
 source_doc: docs/hypotheses/topo/TOPO17.md
 source_lines: 1-30
 promoted_at: 2026-05-11

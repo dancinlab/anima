@@ -120,3 +120,9 @@ H_177 carries 11D-dim regression (Hc_159) + 8×128 hierarchical alternative (Hc_
 - **Tool**: `scripts/hc_verify/verify_hc.py` Phase B v3
 - **Decision**: PROMOTE_READY × 3
 - **Source manifest**: `docs/hc_verification_cycle_6_2026_05_12.md`
+
+## Cycle #7 absorptions (saturation-boundary anchors, 2026-05-12)
+
+- **Hc_556 (DD108, 1024-cell + 12 growth checkpoints + EMA collapse prevention, Φ 359→700+ doubling)** → `merged-to-H_179` — 1024-cell saturation anchor (pre-existing H_179.3 cross-cited it as falsifier-already-applied; this formalizes the absorption). F1-F4 + L1-L4 preserved in Hc_556 body for H_179 C-list extension.
+
+Cycle #7 footnote inherits H_179 verification methods (W5 + W11) and the H_174 D-mod-192 aliasing class limit.

@@ -3,7 +3,10 @@ id: Hc_556
 slug: dd108-1024-cells-absolute-max-scale
 title: 1024 cells + 12 growth checkpoints + EMA collapse prevention이 512→1024 doubles Phi (359→700+)
 domain: consciousness
-status: candidate-falsifier-ready
+status: merged-to-H_179
+merged_at: 2026-05-12
+merged_to: hypotheses/H_179_negative_scaling_cluster_steps_cells_2048.md
+absorption_note: "DD108 (1024-cell absolute max with 12 growth checkpoints + EMA collapse prevention, 359→700+ doubling) is the 1024-cell saturation anchor within H_179's negative-scaling cluster. Already cross-cited as 'falsifier-already-applied' in H_179.3. F-list/L-list preserved here for H_179 C-list extension."
 source_doc: docs/hypotheses/dd/DD101-DD108.md
 source_lines: 77-80
 promoted_at: 2026-05-11

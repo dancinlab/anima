@@ -159,3 +159,12 @@ frozen_at: 2026-05-12
   4. Hybrid 50/50, 70/30 sweep (F4)
   5. H_040 본문 Cross-Links 섹션에 H_159 pointer 추가
   6. three/wave/noise/inf/hw 5 subfolder 의 H_160+ 분기 candidate 검토
+
+## Cycle #7 absorptions (topology-variant probes + sweep extension, 2026-05-12)
+
+- **Hc_161 (TOPO12, 8-faction debate, intra=0.92 / inter=0.08)** → `merged-to-H_159` — 8-cluster partition variant within H_159's faction-count axis; F-list (8-faction sweep, random-vs-structured, PyPhi cross-engine) preserved for H_159 C-list extension
+- **Hc_164 (TOPO15, 32×32 torus 1024)** → `merged-to-H_159` — torus surface at 1024 scale vs TOPO5 (512); 4-neighbor + i%3 frustration variant within H_159's substrate-shape axis
+- **Hc_166 (TOPO17, hypercube + 2 random shortcuts hybrid, Φ=463.6)** → `merged-to-H_159` — confirms 'pure > hybrid' pattern alongside TOPO7 failure; small-world contamination probe within H_159's substrate-purity axis
+- **Hc_549 (DD101, 512-cell superlinear)** → `merged-to-H_159` — 512-cell-count datapoint within H_159's cell-count axis (sub-1024 scaling probe; pairs with H_179 1024-saturation claim)
+
+Cycle #7 footnotes inherit H_159 verification methods (W2 + W5 + W11) and the H_174 D-mod-192 aliasing class limit.

@@ -3,7 +3,10 @@ id: Hc_161
 slug: topo12-8faction-debate
 title: Hypercube 1024 + 8-faction debate (intra-cohesion 0.92, inter-repulsion 0.08) (TOPO12)
 domain: physics | consciousness
-status: candidate-falsifier-ready
+status: merged-to-H_159
+merged_at: 2026-05-12
+merged_to: hypotheses/H_159_substrate_topology_phi_engineering.md
+absorption_note: "TOPO12 (1024-cell + 8-faction debate, intra=0.92 / inter=0.08) is a topology-variant probe (8-cluster partition with debate dynamics) within H_159's substrate-sweep apparatus. F1-F4 + L1-L4 preserved here for H_159 C-list extension."
 source_doc: docs/hypotheses/topo/TOPO12.md
 source_lines: 1-30
 promoted_at: 2026-05-11

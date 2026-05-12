@@ -3,7 +3,10 @@ id: Hc_164
 slug: topo15-torus-32x32
 title: 32×32 torus 1024-cell topology yields moderate Φ (TOPO15)
 domain: physics | math | consciousness
-status: candidate-falsifier-ready
+status: merged-to-H_159
+merged_at: 2026-05-12
+merged_to: hypotheses/H_159_substrate_topology_phi_engineering.md
+absorption_note: "TOPO15 (32×32 torus 1024-cell, 4-neighbor + i%3 frustration) is a topology-variant probe within H_159's substrate-sweep — torus surface at 1024 scale comparing against TOPO5 (512) and hypercube TOPO8. F1-F4 + L1-L4 preserved here for H_159 C-list extension."
 source_doc: docs/hypotheses/topo/TOPO15.md
 source_lines: 1-30
 promoted_at: 2026-05-11

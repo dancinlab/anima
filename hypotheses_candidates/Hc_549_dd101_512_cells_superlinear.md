@@ -3,7 +3,10 @@ id: Hc_549
 slug: dd101-512-cells-superlinear-scaling
 title: 512 cells with aggressive growth + metacognition이 256→512에서 Phi 2x 초과 (superlinear)
 domain: consciousness
-status: candidate-falsifier-ready
+status: merged-to-H_159
+merged_at: 2026-05-12
+merged_to: hypotheses/H_159_substrate_topology_phi_engineering.md
+absorption_note: "DD101 (512-cell superlinear Φ scaling with aggressive growth + metacognition) is a 512-cell datapoint within H_159's positive-sweep cell-count axis; pairs with H_179 (1024-cell saturation claim) as sub-1024 scaling probe."
 source_doc: docs/hypotheses/dd/DD101-DD108.md
 source_lines: 12-16
 promoted_at: 2026-05-11
