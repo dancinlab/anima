@@ -6731,3 +6731,121 @@ cycle 2026-05-12 의 design-impl bridge tier 완성:
 - hexa-native: RFC 033 (farr_copy + gaussian) → mitosis_hook.hexa full impl
 - cond.5 fire: **`OK CLM V5-MITOSIS H100 FIRE COST $40`** verbatim 받기 전까지 pending (own 16 cost discipline)
 
+---
+
+## §91 [2026-05-12 KST] D4a HEXA-NATIVE MITOSIS HOOK — `mitosis_hook.hexa` FULL IMPL + F-MIT-HOOK-1..5 PASS ★★★★ (stub 123L → executable 1119L)
+
+### TL;DR
+
+- `tool/hexa_native/mitosis_hook.hexa` parse-only stub (123 LoC, §89) **full impl LANDED** (1119 LoC executable).
+- RFC 025 (mmap farr) + RFC 030 (bytes_to_str_raw) + RFC 032 (farr_matmul) + RFC 033 (farr_copy + farr_add_gaussian_noise) — 모두 LANDED 2026-05-12 — 활용.
+- selftest PASS on Mac local (~0.9s wall, d_model=8, 60-step run): **F-MIT-HOOK-1..5 모두 verified**.
+- GOAL.md D4a (model intra-network mitosis) **stub → executable tier** 진전: D4 의 첫 hard evidence (impl tier).
+
+### Falsifier verification (selftest output snapshot)
+
+```
+[mitosis_hook.selftest] start
+[selftest] init cells=2
+[selftest] step 1 cells=2 events=0 x_out_shape=8
+[selftest] phi=0.480251
+[selftest] lorenz |x|+|y|+|z|=3.24333
+[selftest] after 60 steps cells=4 max_seen=4 split_seen=true
+[selftest] manual split: pre=4 post=5
+[selftest] manual merge: pre=5 post=4
+[selftest] F-MIT-HOOK-1 NO_GRAD: vacuously true (hexa has no autograd graph)
+[selftest] F-MIT-HOOK-2 SHAPE-INVAR: x_out len = d_model; split/merge delta verified
+[selftest] F-MIT-HOOK-3 PHI-FINITE: phi finite + ≥0 on every step
+[selftest] F-MIT-HOOK-4 CELL-BOUNDS: 2 ≤ cells ≤ 128 on every step (max_seen=4)
+[selftest] F-MIT-HOOK-5 LORENZ-BND: |x|+|y|+|z| < 200, cell norm ≤ 10 on every step
+[mitosis_hook.selftest] PASS — F-MIT-HOOK-1..5 verified
+```
+
+| F-ID | description | grade | result |
+|---|---|---|---|
+| F-MIT-HOOK-1 | cell mutations outside backward graph | NO_GRAD | OK_VACUOUS (hexa no autograd) |
+| F-MIT-HOOK-2 | cell pool shape invariant except split/merge | SHAPE | PASS (x_out len=d_model 검증) |
+| F-MIT-HOOK-3 | Φ proxy ∈ [0, +∞) finite | NUMERICAL | PASS (60 step 위 phi finite + ≥0) |
+| F-MIT-HOOK-4 | 2 ≤ cells ≤ 128 floor / ceiling | BOUNDARY | PASS (max_seen=4 ∈ [2, 128]) |
+| F-MIT-HOOK-5 | Lorenz |x|+|y|+|z| < 200 ∧ cell norm ≤ 10 | BOUNDED-CHAOS | PASS (60 step 위 bound 유지) |
+
+### 구현 산출물
+
+| path | LoC | role |
+|---|---:|---|
+| `tool/hexa_native/mitosis_hook.hexa` | 1119 | full impl: cell_pool_init / mitosis_forward_tail / split_cell / merge_cells / lorenz_advance / compute_phi_proxy / selftest |
+
+### 구현된 함수 매핑 (mitosis.py L77-794 → mitosis_hook.hexa)
+
+| canonical (mitosis.py) | hexa impl | LoC | 핵심 |
+|---|---|---:|---|
+| `MitosisEngine.__init__` L133-188 | `cell_pool_init` | ~60 | farr_zeros + farr_add_gaussian_noise (RFC 033) init |
+| `_create_cell` L192-226 | `split_cell` | ~50 | farr_copy + farr_add_gaussian_noise σ=0.1 (RFC 033) |
+| `merge_cells` L570-611 | `merge_cells` | ~50 | element-wise farr_get/_set avg (farr_blend 미존재 — RFC 034 후보) |
+| `_lorenz_step` L363-371 | `lorenz_advance` | ~12 | σ=10/ρ=28/β=8/3 euler dt=0.01 + |x|+|y|+|z| < 200 safety reset |
+| `_inject_autonomous_perturbation` L373-405 | `_mit_inject_autonomous_perturbation` | ~50 | per-cell phase offset + Lorenz first-3 inject + norm clamp ≤ 10 |
+| `process` L230-359 | `mitosis_forward_tail` | ~110 | 1×/forward Lorenz → cell forward (farr_matmul) → inter-tension → softmax combine → Φ ratchet → adaptive thr → split/merge |
+| `_compute_phi_proxy` L407-436 | `compute_phi_proxy` | ~25 | mean off-diag (1-cos) × log(N+1) + finite/≥0 guard |
+| `_phi_ratchet` L438-455 | `_mit_phi_ratchet` | ~30 | < 0.8·best → 20% blend to best snapshot |
+| `_update_adaptive_threshold` L457-477 | `_mit_update_adaptive_threshold` | ~30 | mean+1.5σ, floor mean·0.5 (Law 86 fix) |
+| `_check_splits` L481-509 | `_mit_check_splits` | ~40 | last-N tension > thr → split, max_cells gate |
+| `_check_merges` L538-568 | `_mit_check_merges` | ~50 | pair "lo-hi" key, last-N inter < thr → merge, min_cells floor |
+| `_combine_outputs` L322-331 | `_mit_combine_outputs` | ~35 | softmax(tensions) → weighted sum |
+
+### Hexa 문법 핵심 learnings (자료 carry)
+
+- **dict missing key returns `void`**, NOT `null`: `d["x"] != null` is **true** for missing keys → 첫 분기로 떨어져 void.push() runtime crash. void-safe lookup pattern: `to_string(d[k]) == "void"` 체크.
+- `farr_zeros(n) → handle`, `farr_set / _get / _len / _free` is RFC 025 path.
+- `farr_matmul(A_id, M, K, B_id, N) → C_id` (row-major).
+- `farr_copy(src_id) → dst_id`, `farr_add_gaussian_noise(target_id, sigma)` void return — RFC 033.
+- nested mutation `d[a][b]["c"] = v` 동작 (guard_test.hexa 패턴).
+- 환경변수 `__HEXA_FARR_GAUSS_SEED__=<u64>` 로 noise 재현성 가능 (RFC 033 §Seed).
+
+### RFC dependency status (§89 표 update)
+
+| RFC | prior status (§89) | post §91 |
+|---|---|---|
+| 025 mmap safetensors | LANDED | LANDED, **production-utilized** |
+| 025-B farr_new/zeros/get/set/len/free | LANDED | LANDED, **production-utilized** |
+| 030 bytes_to_str_raw | LANDED | LANDED |
+| 031 BF16 reader | LANDED | LANDED (Phase 5 parity 시 utilize) |
+| 032 farr_matmul | LANDED | LANDED, **production-utilized** (per-cell forward) |
+| 033 farr_copy + gaussian | LANDED | LANDED, **production-utilized** (split init / cell pool init) |
+| **034 farr_blend / _avg (future)** | proposed | **mitosis_hook.hexa merge path** 가 element-wise loop 로 fallback — RFC 034 후보 |
+
+### 미해소 carry (next cycle)
+
+- `engine_ag_nn.hexa::forward_one_token` wiring — 본 §91 의 hook 은 standalone selftest. live wiring 은 §89 spec §1 의 commented snippet 을 uncomment (별도 cycle).
+- farr_blend / farr_avg builtin 후보 (RFC 034) — merge path 의 element-wise farr_get/_set loop 가 d=1024 시 ~1M iter, RFC 034 land 시 ~1000× 가속.
+- d_proj=256 mini-head variant (spec §5 mitigation) — 현 impl 은 d_proj=d_model. 128-cell ceiling 시 메모리 envelope 확인 후 변경.
+- 24-layer 풀 forward 위 wiring + latency delta 측정 (target: <1% overhead steady-state).
+
+### 위치, GOAL.md & PSCC
+
+- GOAL.md D4a: "stub" → "full impl LANDED + F-MIT-HOOK-1..5 ✅" (본 §91)
+- PSCC §35 [2026-05-12 KST] mitosis_hook.hexa full impl + smoke PASS (append 본 cycle)
+- memory: `project_mitosis_hook_hexa_full_impl_2026_05_12.md` 신규 + MEMORY.md index
+
+### lane priority status post §91
+
+| lane | prior | post §91 |
+|---|---|---|
+| hexa-native Phase 5∥ mitosis | RFC 033 land 대기 (§90) | **mitosis_hook.hexa full impl + selftest PASS** (본 §91) |
+| v5-mitosis PyTorch | cond.2 met (§90) | unchanged — cond.3 next |
+| GOAL.md D4 (cell mitosis) | stub-only first evidence | **D4a impl tier first evidence** (본 §91) |
+
+### Cost / rating
+
+- cost: $0 (Mac local parse + selftest, ~0.9s wall)
+- ★★★★ — D4a executable + F-MIT-HOOK-1..5 verified. 본 §91 가 D4 의 첫 impl-tier evidence.
+- 후속 cycle wiring + 24-layer + persona-substrate 통합 시 ★★★★★ 후보.
+
+### Provenance
+
+- 본 cycle commit: pending (incremental commit + push 다음 step)
+- 보조 SSOT: `docs/anima_clm_v5_hexa_native_mitosis_hook_spec_2026_05_12.md` (§89 design, 534 LoC)
+- Reference Python SSOT: `anima_clm_12_unified_growth_loop_last_gasp/anima/src/mitosis.py` (794L canonical)
+- hexa-lang RFC: 025 / 030 / 031 / 032 / 033 (모두 LANDED main 2026-05-12)
+
+raw#9/10/15/37 honest, own 16 0-cost (Mac local), own 42 REBORN.md SSOT, own 43 active resource utilization 미사용 (본 cycle Mac local 만 사용).
+
