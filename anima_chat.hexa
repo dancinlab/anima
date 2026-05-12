@@ -10,6 +10,22 @@
 //    Reference tag:    anima_chat-v2.3-markdown-filter (commit c2afa8e9e)
 //
 //  STATUS (2026-05-12)
+//    v0.3 — PARSE-COMPLETE + MITOSIS-WIRED + FULL-INFERENCE-LANDED +
+//           MULTI-TOKEN-DECODING-LANDED.
+//    v0.3 ADD (TODO[multitoken] RESOLUTION, 2026-05-12):
+//      - Section 9d adds chat_kv_cache_init / _chat_gqa_step_kv_farr —
+//        per-layer farr-backed KV cache + per-step RoPE rotation.
+//      - chat_forward_one_token_impl uses the KV cache when chat has
+//        `kv_cache` initialized (falls back to single-position math for
+//        backwards compat when `kv_cache` is missing).
+//      - chat_generate prefills the prompt (1 forward per prompt token)
+//        then decodes max_new tokens with growing KV cache.
+//      - mitosis_forward_tail fires per generated token (D4 cell-pool
+//        update spec: "모든 상호작용이 분열 epoch").
+//      - New falsifiers F-D1-MULTITOKEN-1..3 + F-D4-LIVE-1..3 — see
+//        tool/anima_chat_multitoken_smoke.hexa +
+//        tool/anima_chat_split_merge_smoke.hexa.
+//
 //    v0.2 — PARSE-COMPLETE + MITOSIS-WIRED + FULL-INFERENCE-LANDED.
 //    Helpers behaviorally complete (tokenize wrap, interrogative detect,
 //    segment parse, stop detect, markdown filter, force-keyword extract).
@@ -75,11 +91,16 @@
 //                   reproducible across hexa runtime). Out of scope —
 //                   anima_chat.hexa is safetensors-only.
 //    TODO[env]    : env() builtin exists (used for ANIMA_ROOT resolution).
-//    TODO[multitoken] : single-position attention path validates the FIRST
-//                       generated token. Multi-token decoding (max_new > 1)
-//                       needs all-farr KV cache + per-step RoPE rotation —
-//                       engine_ag_nn.hexa Phase 4.1 has this for the boxed
-//                       path; an all-farr port is a separate cycle.
+//    TODO[multitoken] RESOLVED (v0.3, 2026-05-12) : Section 9d adds an
+//                       all-farr KV cache (24-layer, packed-double, one farr
+//                       per layer with offset = pos * kv_dim) + per-step
+//                       RoPE rotation at position t. chat_forward_one_token
+//                       now appends to the cache at each call and computes
+//                       attention over positions 0..t (sum over k_cache).
+//                       chat_generate prefills the prompt then decodes
+//                       max_new tokens. See F-D1-MULTITOKEN-1..3 +
+//                       F-D4-LIVE-1..3 (tool/anima_chat_multitoken_smoke.hexa
+//                       + tool/anima_chat_split_merge_smoke.hexa).
 //
 //  FALSIFIERS (pre-registered, raw-117 ≥ 5)
 //    F-AC-HEXA-1 PARSE          : `hexa parse anima_chat.hexa` returns 0
@@ -140,6 +161,28 @@
 //                                  range tok_offset..tok_offset+255) and
 //                                  chat_generate produces a non-empty
 //                                  byte at max_new=1 from the smoke prompt.
+//
+//  v0.3 FALSIFIERS (TODO[multitoken] resolution — KV cache + multi-token
+//                    decoding, see tool/anima_chat_multitoken_smoke.hexa +
+//                    tool/anima_chat_split_merge_smoke.hexa)
+//    F-D1-MULTITOKEN-1 GEN-SHAPE  : chat_forward_one_token returns boxed
+//                                    logits with len == vocab on EACH of
+//                                    the first N invocations (synthetic
+//                                    weights, N = 8).
+//    F-D1-MULTITOKEN-2 KV-GROW    : chat["kv_cache"]["cur_len"] increments
+//                                    monotonically by 1 per forward call;
+//                                    at step i the cur_len == i+1.
+//    F-D1-MULTITOKEN-3 ROUND-TRIP : chat_generate with max_new=8 on a
+//                                    synthetic substrate returns a
+//                                    non-empty decoded string (sanity).
+//    F-D4-LIVE-1 SPLIT-EVENT      : chat_generate (max_new=40, cell_pool
+//                                    enabled) yields ≥1 mitosis event of
+//                                    type "split" in chat["mitosis_event_log"].
+//    F-D4-LIVE-2 STATE-MUTATION   : len(chat["cell_pool"]["cells"]) at end
+//                                    of run differs from initial_cells (or
+//                                    cells' next_id has advanced).
+//    F-D4-LIVE-3 INVOCATION-MATCH : mitosis_invocations == prompt_len +
+//                                    max_new (one per forward call).
 //
 //  COMPLIANCE
 //    raw#11 snake_case · raw#15 no-hardcode (ckpt path via env / arg) ·
@@ -960,14 +1003,14 @@ fn post_strip_markdown_tables(text: string) -> string {
 
 // chat_new(ckpt_path, device, stops) -> record
 //
-//   record fields (v0.2):
+//   record fields (v0.3):
 //     ckpt_path           : string
 //     device              : string  (currently "cpu" only)
 //     stop_strings        : [string]
 //     system              : string  ("" = no system context)
 //     history             : [[role, content]]   list of role/content pairs
 //     mmap_handle         : int     (-1 = not opened)
-//     weights             : dict    (placeholder — see TODO[load])
+//     weights             : dict    (218 farr handles via chat_load_weights)
 //     cell_pool           : dict    (D4b — empty until chat_init_cell_pool)
 //     mitosis_d_model     : int     (D4b — 0 until cell pool initialized)
 //     mitosis_event_log   : [dict]  (D4b — accumulated split/merge events
@@ -977,6 +1020,11 @@ fn post_strip_markdown_tables(text: string) -> string {
 //                                     phase offset inside the hook)
 //     mitosis_invocations : int     (D4b — counts mitosis_forward_tail calls
 //                                     so F-D4B-1 WIRING-CALL is verifiable)
+//     kv_cache            : dict    (v0.3 — empty until chat_kv_cache_init;
+//                                     holds 24-layer all-farr KV cache +
+//                                     rope cos/sin tables. Multi-token
+//                                     decoding requires this to be
+//                                     initialized before chat_generate.)
 fn chat_new(ckpt_path: string, device: string, stops) {
     let real_stops = if len(stops) == 0 { default_stop_strings() } else { stops }
     return #{
@@ -991,7 +1039,8 @@ fn chat_new(ckpt_path: string, device: string, stops) {
         "mitosis_d_model":     0,
         "mitosis_event_log":   [],
         "mitosis_step":        0,
-        "mitosis_invocations": 0
+        "mitosis_invocations": 0,
+        "kv_cache":            #{}
     }
 }
 
@@ -1524,6 +1573,459 @@ fn chat_forward_one_token_impl(weights, token_id: int, t: int) {
 
 
 // ────────────────────────────────────────────────────────────────────────────
+//  Section 9d — All-farr KV cache + multi-token decoding (v0.3, 2026-05-12)
+//
+//  TODO[multitoken] RESOLUTION
+//    Section 9c validated the FIRST generated token with single-position
+//    attention (softmax over [score(t)] = [1.0]). Multi-token decoding
+//    (max_new > 1) needs:
+//      (a) all-farr KV cache — per-layer storage of K[0..cur_len) and
+//          V[0..cur_len). engine_ag_nn.hexa Phase 4.1 has a boxed-list
+//          version; here we port to packed-double farr to keep RSS bounded.
+//      (b) per-step RoPE rotation — Q and K rotated at position t using
+//          precomputed cos/sin tables (mirrors rope_apply in engine_ag_nn).
+//
+//  LAYOUT
+//    kv_cache = #{
+//        "k_caches"        : list[n_layers] of farr handle, each
+//                              size = cap_len * n_kv_heads * d_head doubles.
+//                              Position j stored at offset
+//                              j * (n_kv_heads * d_head).
+//        "v_caches"        : same shape as k_caches
+//        "cur_len"         : int — positions filled so far
+//        "cap_len"         : int — capacity (prompt_len + max_new + slack)
+//        "n_layers"        : int
+//        "n_kv_heads"      : int
+//        "d_head"          : int
+//        "rope_cos_table"  : farr handle, size = cap_len * (d_head/2) doubles
+//        "rope_sin_table"  : farr handle, same shape as cos
+//        "rope_theta"      : float
+//    }
+//
+//  GROWTH SEMANTICS
+//    Each call to `chat_forward_one_token_impl_kv` writes Q-rotated K at
+//    offset cur_len * kv_dim into k_caches[layer], V at the same offset in
+//    v_caches[layer], then increments cur_len (after the FINAL layer
+//    finishes — all layers share cur_len). Attention reads positions
+//    0..cur_len_after_write (inclusive of the just-written position).
+//
+//  RSS ENVELOPE
+//    For 24 layers × cap_len=128 × n_kv_heads=4 × d_head=64 ×
+//      8 B/elem × 2 (K and V) = 24 * 128 * 256 * 8 * 2 ≈ 12 MB.
+//    Linear in cap_len; production cap_len=2048 ≈ 192 MB still bounded.
+//
+//  RFC DEPENDENCIES
+//    farr_zeros / farr_get / farr_set / farr_free (RFC 025)
+//    farr_matmul (RFC 032) — projection of x_new to Q/K/V
+//
+//  RAW#15 NO-HARDCODE
+//    Caller supplies n_layers / cap_len / n_kv_heads / d_head / d_model /
+//    rope_theta. F-D1-MULTITOKEN smoke uses tiny synthetic dims (d_model=8,
+//    n_layers=2, vocab=16). Production 24L ckpt uses d_model=1024,
+//    n_kv_heads=4, d_head=64, rope_theta=10000.0.
+// ────────────────────────────────────────────────────────────────────────────
+
+// chat_kv_cache_init(n_layers, cap_len, n_kv_heads, d_head, rope_theta)
+//   → kv_cache dict
+//
+//   Allocates per-layer K/V farr storage + RoPE cos/sin tables. All zero-
+//   initialized. cur_len starts at 0; will be incremented per
+//   chat_forward_one_token call.
+fn chat_kv_cache_init(n_layers: int, cap_len: int, n_kv_heads: int,
+                      d_head: int, rope_theta: float) {
+    let kv_dim = n_kv_heads * d_head
+    let mut k_caches = []
+    let mut v_caches = []
+    let mut li = 0
+    while li < n_layers {
+        k_caches.push(farr_zeros(cap_len * kv_dim))
+        v_caches.push(farr_zeros(cap_len * kv_dim))
+        li = li + 1
+    }
+    // RoPE table: cos/sin at each position j ∈ [0, cap_len) for each pair
+    // index i ∈ [0, d_head/2). Stored row-major: idx = j * (d_head/2) + i.
+    let half = d_head / 2
+    let cos_table = farr_zeros(cap_len * half)
+    let sin_table = farr_zeros(cap_len * half)
+    let mut j = 0
+    while j < cap_len {
+        let mut i = 0
+        while i < half {
+            let exponent = (2.0 * (i * 1.0)) / (d_head * 1.0)
+            let inv_freq = 1.0 / pow(rope_theta, exponent)
+            let angle = (j * 1.0) * inv_freq
+            farr_set(cos_table, j * half + i, cos(angle))
+            farr_set(sin_table, j * half + i, sin(angle))
+            i = i + 1
+        }
+        j = j + 1
+    }
+    let cache = #{}
+    cache["k_caches"]       = k_caches
+    cache["v_caches"]       = v_caches
+    cache["cur_len"]        = 0
+    cache["cap_len"]        = cap_len
+    cache["n_layers"]       = n_layers
+    cache["n_kv_heads"]     = n_kv_heads
+    cache["d_head"]         = d_head
+    cache["rope_cos_table"] = cos_table
+    cache["rope_sin_table"] = sin_table
+    cache["rope_theta"]     = rope_theta
+    return cache
+}
+
+// chat_kv_cache_free(kv_cache) → void
+//   Free all farr handles held by the cache. Safe to call multiple times if
+//   caller resets handles to -1 between calls.
+fn chat_kv_cache_free(kv_cache) {
+    let n_layers = kv_cache["n_layers"]
+    let mut li = 0
+    while li < n_layers {
+        let kh = kv_cache["k_caches"][li]
+        let vh = kv_cache["v_caches"][li]
+        if kh >= 0 { farr_free(kh) }
+        if vh >= 0 { farr_free(vh) }
+        li = li + 1
+    }
+    let ct = kv_cache["rope_cos_table"]
+    let st = kv_cache["rope_sin_table"]
+    if ct >= 0 { farr_free(ct) }
+    if st >= 0 { farr_free(st) }
+}
+
+// _chat_rope_rotate_inplace_farr(vec_farr, n_groups, d_head, t, cos_table,
+//                                 sin_table)
+//
+//   Apply RoPE rotation to a flat farr `vec_farr` of shape
+//   (n_groups * d_head,) at position t. Each group of d_head doubles
+//   represents one head's data; we rotate pairs (vec[g*d_head + 2i],
+//   vec[g*d_head + 2i+1]) using cos_table[t*half+i], sin_table[t*half+i].
+//   Operates in-place on vec_farr (caller owns the buffer).
+fn _chat_rope_rotate_inplace_farr(vec_farr: int, n_groups: int, d_head: int,
+                                   t: int, cos_table: int, sin_table: int) {
+    let half = d_head / 2
+    let mut g = 0
+    while g < n_groups {
+        let base = g * d_head
+        let mut i = 0
+        while i < half {
+            let q0 = farr_get(vec_farr, base + 2 * i)
+            let q1 = farr_get(vec_farr, base + 2 * i + 1)
+            let c = farr_get(cos_table, t * half + i)
+            let s = farr_get(sin_table, t * half + i)
+            farr_set(vec_farr, base + 2 * i,     q0 * c - q1 * s)
+            farr_set(vec_farr, base + 2 * i + 1, q0 * s + q1 * c)
+            i = i + 1
+        }
+        g = g + 1
+    }
+}
+
+// _chat_softmax_farr_inplace(scores_farr, n) → void
+//   Numerically stable softmax over `n` doubles in scores_farr.
+fn _chat_softmax_farr_inplace(scores_farr: int, n: int) {
+    let mut mx = farr_get(scores_farr, 0)
+    let mut i = 1
+    while i < n {
+        let v = farr_get(scores_farr, i)
+        if v > mx { mx = v }
+        i = i + 1
+    }
+    let mut sm = 0.0
+    i = 0
+    while i < n {
+        let e = exp(farr_get(scores_farr, i) - mx)
+        farr_set(scores_farr, i, e)
+        sm = sm + e
+        i = i + 1
+    }
+    i = 0
+    while i < n {
+        farr_set(scores_farr, i, farr_get(scores_farr, i) / sm)
+        i = i + 1
+    }
+}
+
+// _chat_gqa_step_kv_farr — KV-cache-aware GQA step at position t.
+//
+//   Inputs:
+//     x_norm       : farr (d_model,) — post-norm hidden state
+//     q,k,v,o      : projection farr (out,in) matrices
+//     d_model      : int
+//     n_heads      : int
+//     n_kv_heads   : int
+//     d_head       : int
+//     t            : int — position to write (== cur_len before this call)
+//     kv_cache     : dict — see Section 9d header
+//     layer_idx    : int — which per-layer K/V cache to use
+//
+//   Side effect:
+//     Writes rotated K[t] + raw V[t] into kv_cache.k_caches[layer_idx] /
+//     v_caches[layer_idx] at offset t * (n_kv_heads * d_head). Does NOT
+//     increment kv_cache.cur_len — that's done once per token by the
+//     surrounding chat_forward_one_token_impl_kv loop.
+//
+//   Returns:
+//     attn_out_farr  : farr (d_model,) — attention output post o_proj.
+//                       Caller owns + frees.
+fn _chat_gqa_step_kv_farr(
+    x_norm: int,
+    q_farr: int, k_farr: int, v_farr: int, o_farr: int,
+    d_model: int, n_heads: int, n_kv_heads: int, d_head: int,
+    t: int, kv_cache, layer_idx: int
+) -> int {
+    let kv_dim = n_kv_heads * d_head
+    let q_out = _chat_matvec_farr(q_farr, x_norm, d_model, d_model)
+    let k_out = _chat_matvec_farr(k_farr, x_norm, kv_dim,  d_model)
+    let v_out = _chat_matvec_farr(v_farr, x_norm, kv_dim,  d_model)
+
+    let cos_table = kv_cache["rope_cos_table"]
+    let sin_table = kv_cache["rope_sin_table"]
+    // 1. Apply RoPE to Q (n_heads groups of d_head) and K (n_kv_heads
+    //    groups of d_head). V is NOT rotated (F-GQA-ROPE-3 invariant).
+    _chat_rope_rotate_inplace_farr(q_out, n_heads,    d_head, t, cos_table, sin_table)
+    _chat_rope_rotate_inplace_farr(k_out, n_kv_heads, d_head, t, cos_table, sin_table)
+
+    // 2. Append rotated K + raw V to cache at position t.
+    let k_cache_farr = kv_cache["k_caches"][layer_idx]
+    let v_cache_farr = kv_cache["v_caches"][layer_idx]
+    let base_off = t * kv_dim
+    let mut wi = 0
+    while wi < kv_dim {
+        farr_set(k_cache_farr, base_off + wi, farr_get(k_out, wi))
+        farr_set(v_cache_farr, base_off + wi, farr_get(v_out, wi))
+        wi = wi + 1
+    }
+
+    // 3. Compute per-query-head softmax over positions [0, t] inclusive.
+    let cur_len_after = t + 1
+    let inv_scale = 1.0 / sqrt(d_head * 1.0)
+    let expand = n_heads / n_kv_heads
+    // attn output flat (n_heads * d_head,)
+    let attn_flat = farr_zeros(d_model)
+    let mut h = 0
+    while h < n_heads {
+        let kv_h = h / expand
+        let q_base = h * d_head
+        // 3a. raw scores over j = 0..t
+        let scores = farr_zeros(cur_len_after)
+        let mut j = 0
+        while j < cur_len_after {
+            let k_base = j * kv_dim + kv_h * d_head
+            let mut dot = 0.0
+            let mut dd = 0
+            while dd < d_head {
+                dot = dot + farr_get(q_out, q_base + dd) * farr_get(k_cache_farr, k_base + dd)
+                dd = dd + 1
+            }
+            farr_set(scores, j, dot * inv_scale)
+            j = j + 1
+        }
+        // 3b. softmax in-place
+        _chat_softmax_farr_inplace(scores, cur_len_after)
+        // 3c. ctx = Σ_j attn[j] * V_cache[j][kv_h]
+        let attn_base = h * d_head
+        j = 0
+        while j < cur_len_after {
+            let w = farr_get(scores, j)
+            let v_base = j * kv_dim + kv_h * d_head
+            let mut dd = 0
+            while dd < d_head {
+                let prev = farr_get(attn_flat, attn_base + dd)
+                farr_set(attn_flat, attn_base + dd,
+                         prev + w * farr_get(v_cache_farr, v_base + dd))
+                dd = dd + 1
+            }
+            j = j + 1
+        }
+        farr_free(scores)
+        h = h + 1
+    }
+
+    // 4. o_proj
+    let attn_out = _chat_matvec_farr(o_farr, attn_flat, d_model, d_model)
+    farr_free(q_out)
+    farr_free(k_out)
+    farr_free(v_out)
+    farr_free(attn_flat)
+    return attn_out
+}
+
+// _chat_block_farr_kv — same shape as _chat_block_farr but routes to the
+//   KV-cache attention step. Identical SwiGLU / residual / norm structure.
+fn _chat_block_farr_kv(
+    x_farr: int,
+    layer_prefix: string,
+    weights,
+    d_model: int, d_ff: int,
+    n_heads: int, n_kv_heads: int, d_head: int,
+    eps: float, t: int, kv_cache, layer_idx: int
+) -> int {
+    let h1 = _chat_rms_norm_farr(x_farr,
+                                 weights[layer_prefix + "norm1.weight"],
+                                 d_model, eps)
+    let attn_out = _chat_gqa_step_kv_farr(
+        h1,
+        weights[layer_prefix + "attn.q_proj.weight"],
+        weights[layer_prefix + "attn.k_proj.weight"],
+        weights[layer_prefix + "attn.v_proj.weight"],
+        weights[layer_prefix + "attn.o_proj.weight"],
+        d_model, n_heads, n_kv_heads, d_head,
+        t, kv_cache, layer_idx
+    )
+    farr_free(h1)
+    let h_res = farr_zeros(d_model)
+    let mut i = 0
+    while i < d_model {
+        farr_set(h_res, i, farr_get(x_farr, i) + farr_get(attn_out, i))
+        i = i + 1
+    }
+    farr_free(attn_out)
+    let h2 = _chat_rms_norm_farr(h_res,
+                                 weights[layer_prefix + "norm2.weight"],
+                                 d_model, eps)
+    let ffn_out = _chat_swiglu_ffn_farr(
+        h2,
+        weights[layer_prefix + "ffn.gate.weight"],
+        weights[layer_prefix + "ffn.up.weight"],
+        weights[layer_prefix + "ffn.down.weight"],
+        d_model, d_ff
+    )
+    farr_free(h2)
+    let y = farr_zeros(d_model)
+    i = 0
+    while i < d_model {
+        farr_set(y, i, farr_get(h_res, i) + farr_get(ffn_out, i))
+        i = i + 1
+    }
+    farr_free(h_res)
+    farr_free(ffn_out)
+    return y
+}
+
+// chat_forward_one_token_impl_kv(weights, kv_cache, dims, token_id, t)
+//   → boxed logits [vocab].
+//
+//   KV-cache-aware forward at position t. Dims dict supplies model shape:
+//     dims["d_model"], dims["d_ff"], dims["n_heads"], dims["n_kv_heads"],
+//     dims["d_head"], dims["vocab_size"], dims["n_layers"], dims["eps"].
+//
+//   Advances kv_cache.cur_len by 1 (caller-visible mutation: cache farrs
+//   are appended in-place; cur_len bumped after final layer).
+fn chat_forward_one_token_impl_kv(weights, kv_cache, dims,
+                                   token_id: int, t: int) {
+    let d_model    = dims["d_model"]
+    let d_ff       = dims["d_ff"]
+    let n_heads    = dims["n_heads"]
+    let n_kv_heads = dims["n_kv_heads"]
+    let d_head     = dims["d_head"]
+    let vocab_size = dims["vocab_size"]
+    let eps        = dims["eps"]
+    let n_layers   = dims["n_layers"]
+
+    // 1. embed
+    let mut x_farr = _chat_embed_farr(token_id, weights["tok_emb.weight"], d_model)
+
+    // 2. stack with KV-cache attention
+    let mut layer = 0
+    while layer < n_layers {
+        let prefix = "layers." + to_string(layer) + "."
+        let next = _chat_block_farr_kv(x_farr, prefix, weights,
+                                       d_model, d_ff, n_heads, n_kv_heads, d_head,
+                                       eps, t, kv_cache, layer)
+        farr_free(x_farr)
+        x_farr = next
+        layer = layer + 1
+    }
+
+    // 3. final RMSNorm
+    let x_post_norm = _chat_rms_norm_farr(x_farr, weights["norm_f.weight"],
+                                          d_model, eps)
+    farr_free(x_farr)
+
+    // 4. tied lm_head
+    let logits_farr = _chat_matvec_farr(weights["tok_emb.weight"], x_post_norm,
+                                        vocab_size, d_model)
+    farr_free(x_post_norm)
+
+    // 5. bump cur_len (one write per layer above; cur_len reflects the
+    //    just-written position becoming part of the visible history).
+    kv_cache["cur_len"] = t + 1
+
+    // 6. box for caller
+    let mut logits = []
+    let mut i = 0
+    while i < vocab_size {
+        logits.push(farr_get(logits_farr, i))
+        i = i + 1
+    }
+    farr_free(logits_farr)
+    return logits
+}
+
+// chat_default_dims_24l() → dict
+//   Production 24-layer ckpt model shape (Phase 1A.1 SSOT). Used by
+//   chat_generate when caller doesn't supply explicit dims.
+fn chat_default_dims_24l() {
+    let d = #{}
+    d["d_model"]    = 1024
+    d["d_ff"]       = 2752
+    d["n_heads"]    = 16
+    d["n_kv_heads"] = 4
+    d["d_head"]     = 64
+    d["vocab_size"] = 32000
+    d["n_layers"]   = 24
+    d["eps"]        = 0.00001
+    d["rope_theta"] = 10000.0
+    return d
+}
+
+// chat_init_kv_cache_default(chat, cap_len) → chat
+//   Convenience: install a 24L production-shape KV cache. Idempotent —
+//   no-op if chat["kv_cache"]["n_layers"] > 0.
+fn chat_init_kv_cache_default(chat, cap_len: int) {
+    let existing = chat["kv_cache"]
+    let nl_prev = if to_string(existing["n_layers"]) == "void" { 0 } else { existing["n_layers"] }
+    if nl_prev > 0 {
+        return chat
+    }
+    let d = chat_default_dims_24l()
+    chat["kv_cache"] = chat_kv_cache_init(d["n_layers"], cap_len,
+                                          d["n_kv_heads"], d["d_head"],
+                                          d["rope_theta"])
+    return chat
+}
+
+// chat_init_kv_cache_with_dims(chat, dims, cap_len) → chat
+//   Generic init using caller-supplied dims (synthetic small-model smokes).
+fn chat_init_kv_cache_with_dims(chat, dims, cap_len: int) {
+    let existing = chat["kv_cache"]
+    let nl_prev = if to_string(existing["n_layers"]) == "void" { 0 } else { existing["n_layers"] }
+    if nl_prev > 0 {
+        return chat
+    }
+    chat["kv_cache"] = chat_kv_cache_init(dims["n_layers"], cap_len,
+                                          dims["n_kv_heads"], dims["d_head"],
+                                          dims["rope_theta"])
+    chat["dims"] = dims
+    return chat
+}
+
+// chat_kv_cache_enabled(chat) → bool
+fn chat_kv_cache_enabled(chat) -> bool {
+    let kv = chat["kv_cache"]
+    if to_string(kv["n_layers"]) == "void" { return false }
+    return kv["n_layers"] > 0
+}
+
+// chat_kv_cache_len(chat) → int
+fn chat_kv_cache_len(chat) -> int {
+    if !chat_kv_cache_enabled(chat) { return 0 }
+    return chat["kv_cache"]["cur_len"]
+}
+
+
+// ────────────────────────────────────────────────────────────────────────────
 //  Section 9b — Mitosis cell-pool wiring (D4b, 2026-05-12)
 //
 //  PURPOSE
@@ -1871,20 +2373,33 @@ fn gen_pick_next(logits, effective_mode: string, temp: float, seed: int) {
 
 // chat_forward_one_token(chat, token_id, t) -> [float] (vocab_size,)
 //
-//   v0.2 (2026-05-12) — TODO[load] RESOLVED. When chat["weights"] holds
-//   all 218 farr handles (from `chat_load_weights`), this dispatches to
-//   `chat_forward_one_token_impl` (Section 9c) which executes the full
-//   24-layer all-farr forward + tied lm_head and returns boxed logits.
-//
-//   Empty-list sentinel preserved for the unbound case: callers (e.g.
-//   `chat_generate`) still gate on `len(logits) > 0` so the load-failure
-//   path remains gracefully handled.
+//   v0.3 (2026-05-12) — TODO[multitoken] RESOLVED. Dispatch priority:
+//     1. If chat["kv_cache"] is initialized AND chat["weights"] is bound,
+//        use `chat_forward_one_token_impl_kv` (Section 9d) which writes
+//        rotated K[t] / V[t] into the per-layer cache and computes
+//        attention over positions 0..t. dims supplied via chat["dims"]
+//        (chat_init_kv_cache_with_dims) or the default 24L shape.
+//     2. Else if chat["weights"] bound (no KV cache), fall through to
+//        `chat_forward_one_token_impl` (Section 9c) single-position math
+//        — first-token-only correctness; preserved for v0.2 callers.
+//     3. Else (weights unbound), return [] (load-gate sentinel).
 fn chat_forward_one_token(chat, token_id: int, t: int) {
     let weights = chat["weights"]
     let nw = len(dict_keys(weights))
     if nw == 0 {
         // Weights unbound (chat_load_weights not called, or load failed).
         return []
+    }
+    if chat_kv_cache_enabled(chat) {
+        let kv = chat["kv_cache"]
+        // dims resolution: caller-supplied chat["dims"] first, else 24L default.
+        let dims_existing = chat["dims"]
+        let dims = if to_string(dims_existing) == "void" {
+            chat_default_dims_24l()
+        } else {
+            dims_existing
+        }
+        return chat_forward_one_token_impl_kv(weights, kv, dims, token_id, t)
     }
     return chat_forward_one_token_impl(weights, token_id, t)
 }
@@ -1902,14 +2417,22 @@ fn chat_forward_one_token(chat, token_id: int, t: int) {
 //   for the unbound/failed-load case — chat_generate then returns the
 //   partial buffer (empty string by default) instead of crashing.
 //
-//   HONEST SCOPE for v0.2 multi-step decoding:
-//     - The all-farr forward in §10c (`chat_forward_one_token_impl`) uses
-//       single-position attention (softmax over [score(t)] = [1.0] →
-//       ctx = V[kv_h]). The FIRST generated token (t=prompt_len) is the
-//       parity-validated output. Beyond t+1, multi-token decoding needs a
-//       proper KV cache + per-pair RoPE rotation — TODO[multitoken].
-//     - Recommend `max_new = 1` for v0.2 production smoke; `max_new = 3`
-//       acceptable for end-to-end shape checks (each step ~10-15 min wall).
+//   v0.3 (2026-05-12) — TODO[multitoken] RESOLVED:
+//     - When chat["kv_cache"] is initialized (chat_init_kv_cache_default or
+//       chat_init_kv_cache_with_dims), this fn now PREFILLS the prompt:
+//       each prompt token in turn is fed through chat_forward_one_token,
+//       writing K[pos] / V[pos] into the per-layer cache. After prefill the
+//       last_logits from the final prefill step becomes the first decision.
+//     - Each of the max_new decode steps then advances cur_len by 1.
+//     - The mitosis hook fires once per forward call (prefill + decode) so
+//       cell_pool accumulates events across BOTH phases — F-D4-LIVE-3
+//       INVOCATION-MATCH expects invocations == prompt_len + max_new.
+//
+//   HONEST SCOPE (v0.3):
+//     - Wall budget on 24L Mac CPU: each forward ≈ 10-15 min →
+//       prefill (e.g. 22 prompt tokens) + max_new=30 ≈ 13 hours total.
+//       Recommend SYNTHETIC weights (small d_model / vocab) for end-to-end
+//       smoke; real 24L eval gated as a follow-up GPU cycle.
 fn chat_generate(chat, prompt: string, mode: string, max_new: int,
                  temp: float, force_keywords, rep_penalty: float,
                  greedy_rep_penalty: float, soft_force_alpha: float,
@@ -1923,6 +2446,7 @@ fn chat_generate(chat, prompt: string, mode: string, max_new: int,
         ids = ids.slice(0, nids - 1)
     }
     let mut gen_ids = []
+    let kv_on = chat_kv_cache_enabled(chat)
 
     // 2. resolve active force keywords for M4 modes
     let mut active_kws = []
@@ -1978,10 +2502,55 @@ fn chat_generate(chat, prompt: string, mode: string, max_new: int,
     let mut force_inserted = 0
     let mut cur_seed = seed
     let mut step = 0
+
+    // v0.3 — KV cache prefill phase. Runs ONLY when kv_cache is initialized.
+    // We feed every prompt token through forward in order so the per-layer
+    // K/V cache is populated and RoPE is applied at the correct position.
+    // The LAST prefill forward's logits become the first decision.
+    let mut prefill_last_logits = []
+    if kv_on && len(ids) > 0 {
+        let prompt_n = len(ids)
+        let mut pi = 0
+        while pi < prompt_n {
+            // Each prefill forward advances kv_cache.cur_len by 1.
+            // Note: pos passed in is `pi` (current prefill index), NOT
+            // chat_kv_cache_len(chat) which equals pi BEFORE the call.
+            let logits_p = chat_forward_one_token(chat, ids[pi], pi)
+            // Fire mitosis hook on prefill too — D4 spec "모든 상호작용이
+            // 분열 epoch". Cell pool sees both prompt and gen tokens.
+            if chat_mitosis_enabled(chat) {
+                let d = chat["mitosis_d_model"]
+                let x_for_hook = if len(logits_p) >= d {
+                    let mut xfh = []
+                    let mut kk = 0
+                    while kk < d {
+                        xfh.push(logits_p[kk])
+                        kk = kk + 1
+                    }
+                    xfh
+                } else {
+                    chat_mitosis_zero_x(d)
+                }
+                let _ = chat_mitosis_tail(chat, x_for_hook)
+            }
+            if pi == prompt_n - 1 {
+                prefill_last_logits = logits_p
+            }
+            pi = pi + 1
+        }
+    }
+
     while step < max_new {
         // model forward
-        let pos = len(ids) - 1
-        let last_logits = chat_forward_one_token(chat, ids[pos], pos)
+        let pos = if kv_on { chat_kv_cache_len(chat) } else { len(ids) - 1 }
+        let last_logits = if step == 0 && kv_on && len(prefill_last_logits) > 0 {
+            // First decode step re-uses the final prefill logits — avoids a
+            // duplicate forward at the same position.
+            prefill_last_logits
+        } else {
+            let tok_in = if kv_on { ids[len(ids) - 1] } else { ids[len(ids) - 1] }
+            chat_forward_one_token(chat, tok_in, pos)
+        }
 
         // D4b mitosis wiring — invoke serve-time hook between final RMSNorm
         // (chat_forward_one_token output) and lm_head (gen_pick_next input).
@@ -1990,7 +2559,11 @@ fn chat_generate(chat, prompt: string, mode: string, max_new: int,
         // x_in of length mitosis_d_model so the hook STILL fires — events
         // can then accumulate (F-D4B-1 WIRING-CALL evidence) even before
         // full 24-layer weight binding lands.
-        if chat_mitosis_enabled(chat) {
+        // v0.3 NOTE: when (kv_on && step == 0) we re-used prefill_last_logits
+        // without a fresh forward call — the prefill already fired the hook
+        // for that position, so we skip the duplicate here.
+        let reused_prefill = kv_on && step == 0 && len(prefill_last_logits) > 0
+        if chat_mitosis_enabled(chat) && !reused_prefill {
             let d = chat["mitosis_d_model"]
             let mut x_for_hook = []
             if len(last_logits) >= d {
