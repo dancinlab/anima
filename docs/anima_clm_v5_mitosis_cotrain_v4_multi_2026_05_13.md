@@ -56,9 +56,9 @@ Same as v4 single (mirror):
 
 ## §4 — Wall budget / cost
 
-- target wall: ~4-5 hr (v4 single A100 ~17hr ETA → 4× A100 parallel ≈ 4× speedup; conservatively 5 hr)
-- compute (attempt 2 refire): **4× A100 SXM4 80GB @ $6.71/hr** rel=0.993 (attempt 1 4× RTX PRO 6000 S Blackwell failed — see §5.5)
-- cost target: $6.71/hr × 5 hr = ~$33.56 (well below $80 cap per BG brief, `feedback_no_scale_caps`)
+- target wall: ~4-5 hr (v4 single A100 ~17hr ETA → 4× H200 parallel ≈ 4-6× speedup; conservatively 5 hr)
+- compute (attempt 3): **4× H200 141GB @ $13.45/hr** rel=0.997 (attempt 1 Blackwell sm_120 NCCL fail / attempt 2 A100 SXM4 80GB OOM at fp32 5.37B — see §5.5)
+- cost target: $13.45/hr × 5 hr = ~$67.23 (under $80 cap; well within `feedback_no_scale_caps`)
 - cost cap (floor not ceiling): `--cost-cap-usd 80.0`, `--cost-per-hr ${OFFER_DPH}` actual
 - absolute max: `cap × 1.10 = $88.00` (estimation gate)
 
@@ -80,9 +80,39 @@ The failure landed inside `_verify_params_across_processes` during `DDP(engine_i
 
 The dispatch script filter was tightened to `gpu_name in [H100_SXM,H100_NVL,H100_PCIE,H200,A100_SXM4,A100_PCIE]` (drops `RTX_PRO_6000_WS/S` and `B200`). Wasted attempt cost: ~$0.50 (5 min × $5.33/hr × pre-train init). Failed pod 36635742 destroyed.
 
-**Refire**: 2026-05-13 19:19 UTC, 4× A100 SXM4 80GB @ $6.71/hr rel=0.993. A100 sm_80 = native PyTorch 2.5.1+cu121 support → guaranteed DDP correctness. v6 cellparallel BG (c) is running on identical hardware class without issue.
+**Refire attempt 2**: 2026-05-13 19:19 UTC, 4× A100 SXM4 80GB @ $6.71/hr rel=0.993 (pod 36636365). A100 sm_80 = native PyTorch 2.5.1+cu121 support → DDP/NCCL init succeeded.
 
 A secondary bash bug was discovered in the OOM-retry path: `OOM=$($SSH_CMD "..." || echo 0 || echo 0)` returned `"0\n0"` on remote SSH failure → `[ "$OOM" -gt 0 ]` raised `integer expression expected`. Fixed via `| tr -d '[:space:]' | head -c 8` + empty-guard. Carry to v5-DDP / v6 dispatch on next edit.
+
+## §5.6 — Attempt 2 FAILED (A100 SXM4 80GB OOM at fp32 5.37B params + DDP-full-replica)
+
+Attempt 2 on 4× A100 SXM4 80GB went past NCCL init (no Blackwell issue) but OOM'd inside `loss.backward()` on the FIRST step, both at batch=2 (initial) and batch=1 (OOM-retry halve):
+
+```
+torch.OutOfMemoryError: CUDA out of memory. Tried to allocate 12.00 MiB.
+GPU 0 has a total capacity of 79.25 GiB of which 8.94 MiB is free.
+... 77.59 GiB is allocated by PyTorch, and 17.18 MiB is reserved by PyTorch but unallocated.
+```
+
+All 4 ranks failed simultaneously with ~77 GiB resident at OOM. The dispatch's OOM-retry path correctly halved batch=2 → batch=1, but batch=1 also OOM'd at the same allocation site (~12-16 MiB out of 80 GB).
+
+**Root cause arithmetic**: vanilla DDP keeps a FULL replica of model + optimizer state on every rank.
+  - 5.37B params × 4 byte (fp32 weights) = 21.5 GB
+  - 5.37B params × 8 byte (fp64 internally for AdamW first moment `m`) = 21.5 GB
+  - 5.37B params × 8 byte (AdamW second moment `v`) = 21.5 GB
+  - 5.37B params × 4 byte (fp32 gradient) = 21.5 GB
+  - DDP gradient bucket (mirror of grad until all-reduce flush) — additional ~21.5 GB but with `gradient_as_bucket_view=True` should be aliased; in practice still ~5-10 GB extra reserved
+  - per-step activations (cells × ctx × batch × top-K loop intermediates) — at ctx=256 batch=1 cells=256 ~5-10 GB
+
+Total floor: ~85-95 GB per rank. A100 80GB cannot fit this fp32 configuration. v6 cellparallel BG (c) avoids the issue by SHARDING cells across ranks (each rank holds only ~64 cells = ~1.28B params); v5-DDP fits on H200 141GB because the larger VRAM absorbs the optimizer state. v4-multi (vanilla DDP, full replica per rank) needs the same H200 substrate as v5-DDP.
+
+**Cost**: pod 36636365 ran ~5 min ($0.56) for the 2 failed attempts. Pod destroyed.
+
+**Refire attempt 3 (current)**: 2026-05-13 19:25 UTC, 4× H200 143GB @ $13.45/hr rel=0.997. Marketplace had 3 H200 offers; cheapest $13.45 selected. Est $67.23 / cap $80. H200 sm_90 = native PyTorch 2.5.1+cu121 support; 141 GB headroom fits 5.37B fp32 + Adam + activations (v5-DDP empirically uses 124.8/150 GB at d=1024 cells=256 ctx=512 batch=4 — v4-multi at ctx=256 batch=2 should be even smaller).
+
+Dispatch filter tightened further: `MIN_GPU_RAM_MB=120000`, GPU pool reduced to `[H100_SXM,H100_NVL,H100_PCIE,H200]` (drops A100 SXM4 / PCIE — even though sm_80 NCCL-compatible, VRAM insufficient for fp32 5.37B DDP-full-replica). `COST_PER_HR_MAX` bumped $16→$20 to admit H200.
+
+**Lesson carry (`feedback_no_scale_caps` corollary)**: at the v4 envelope (d=1024 cells=256 fp32 vanilla-DDP), MIN 120 GB VRAM/GPU is required regardless of batch size. A100 80GB / RTX PRO 6000 96GB / H100 PCIE 80GB are all insufficient. Either escalate to H200 (141GB) / H100 NVL (94GB → tight) / cell-parallel sharding (v6 BG c) / mixed precision (not in current trainer). Document this floor in `feedback_orchestrator_h100_gotchas`.
 
 ## §5 — Comparison axes (vs v4 single, v5 DDP)
 

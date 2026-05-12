@@ -60,20 +60,24 @@ CKPT_EVERY="${CKPT_EVERY:-5000}"
 DISK_GB="${DISK_GB:-200}"
 
 # ── cost (no scale caps; memory feedback_no_scale_caps; BG brief cap=$80) ──
+# Attempt 3 escalation: bumping COST_PER_HR_MAX to $20 (H200 4× cheapest @ $15.49/hr).
+# A100 SXM4 80GB OOM'd at batch=1 — 5.37B param × 24 byte/param Adam state ≈ 129 GB
+# per rank (DDP keeps full replica) >> 80 GB. H200 141GB fits with ~12GB headroom
+# (v5-DDP empirically uses 124.8/150 GB at this scale).
 COST_CAP_USD="${COST_CAP_USD:-80.0}"
-COST_PER_HR_MAX="${COST_PER_HR_MAX:-16.0}"  # 4× H100 SXM ~$3-4/hr each
+COST_PER_HR_MAX="${COST_PER_HR_MAX:-20.0}"
 ESTIMATED_WALL_HR="${ESTIMATED_WALL_HR:-5.0}"
 ABSOLUTE_MAX_USD=$(python3 -c "print($COST_CAP_USD * 1.10)")
 
-# Need NUM_GPUS× high-VRAM GPUs (80GB+ each) on one host. Filter: num_gpus=NUM_GPUS.
-# Marketplace 2026-05-13: 4× H100 SXM/NVL = 0 offers; widened to H200, B200, A100 SXM4 80GB.
-# **EXCLUDE Blackwell sm_120** (RTX PRO 6000 S/WS) — PyTorch 2.5.1+cu121 NCCL kernels
-# compiled sm_50..sm_90 only, sm_120 fails at runtime with "Cuda failure 'invalid argument'"
-# during `_verify_params_across_processes` in DDP init (first-attempt empirical failure
-# 2026-05-13 pod 36635742). B200 is also sm_100 Blackwell — same risk; H200 + A100 SXM4
-# are sm_90 / sm_80 = guaranteed compatible.
-MIN_GPU_RAM_MB="${MIN_GPU_RAM_MB:-75000}"
-GPU_FILTER="${GPU_FILTER:-gpu_name in [H100_SXM,H100_NVL,H100_PCIE,H200,A100_SXM4,A100_PCIE] num_gpus=${NUM_GPUS} reliability>0.95 dph_total<${COST_PER_HR_MAX} disk_space>${DISK_GB} inet_down>200}"
+# Need NUM_GPUS× ≥120 GB VRAM GPUs on one host (H100/H200 sm_80/sm_90 family).
+# Attempt 2 empirical: A100 SXM4 80GB OOMs at fp32 5.37B params × DDP-full-replica
+# even with batch=1. Attempt 1 empirical: Blackwell sm_120 (RTX PRO 6000 S/WS) fails
+# at NCCL init ("Cuda failure 'invalid argument'") with PyTorch 2.5.1+cu121.
+# B200 is sm_100 Blackwell — same NCCL risk.
+# Filter survivors: H100_SXM/NVL/PCIE (80GB sm_90 — but might OOM if VRAM tight) +
+# H200 (141GB sm_90, the sweet spot).
+MIN_GPU_RAM_MB="${MIN_GPU_RAM_MB:-120000}"
+GPU_FILTER="${GPU_FILTER:-gpu_name in [H100_SXM,H100_NVL,H100_PCIE,H200] num_gpus=${NUM_GPUS} reliability>0.95 dph_total<${COST_PER_HR_MAX} disk_space>${DISK_GB} inet_down>200}"
 
 VAST_SSH_KEY="/Users/ghost/.vast/ssh/vast-key"
 VASTAI="/Users/ghost/.local/bin/vastai"
