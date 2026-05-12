@@ -4266,3 +4266,137 @@ KL matrix all-zero 가 의미하는 것은 **moments of confusion** between F-V5
   - memory `project_v5_mitosis_arch_spec_2026_05_12` — design SSOT
   - memory `feedback_orchestrator_h100_gotchas` — pull-fail SAVE_POD pattern, H100 SXM 18× speed finding 추가
   - memory `project_v5_mitosis_cond5_cotrain_2026_05_12` — 본 cycle SSOT
+
+
+## §45 [2026-05-12 KST] F-PERSONA-4 cotrain KL=0.0 root cause INVESTIGATION + entropy-reg cotrain v2 INTERVENTION ★★★★ ($3.60 H100 v2 in-flight, GOAL.md cond #3 D3 STRONG (4/5) maintained, **cheap-path falsified via null-permutation**)
+
+### lane
+
+**lane**: D3 cond #3 closure path investigation
+**state dir**: `state/anima_v5mitosis_cotrain_2026_05_12/` (shared with §44)
+**doc**: `docs/anima_persona_4_root_cause_investigation_2026_05_12.md`
+**dispatch v2**: `state/anima_v5mitosis_cotrain_2026_05_12/dispatch_h100_v2.sh`
+**duration**: investigation ~1.5hr Mac local + intervention dispatch in-flight (~1.5hr H100)
+**cost**: investigation $0 + intervention $3.60 est ($8 cap, instance 36617704)
+
+### root cause investigation harness (Phase 1)
+
+3-harness investigative suite (Mac local, MPS, $0):
+1. `persona_4_root_cause_investigate.py` (~530 LoC) — 4 hypothesis discrimination (a/b/c/d)
+2. `persona_4_intervention_apply.py` (~370 LoC) — z-score metric apply + null test
+3. `persona_4_alternative_metrics.py` (~340 LoC) — 8 alternative metric × null permutation sweep
+
+### 4 hypothesis verdict
+
+| H | description | finding | verdict |
+|---|---|---|---|
+| (a) | softmax entropy / temperature collapse | mean per-prompt entropy = **0.000** (vs log(64)=4.159), cell-0 wins all 50 prompts with weight 1.0, tension cell-0 ≈ 793 vs runner-up ≈ 7.4 vs tail ≈ 0.08-0.15. Temperature sweep T∈{0.01..500} all KL ≤ 0.0053 — gap structural, T can't fix | **SINGLE-CELL MONOPOLY (primary)** |
+| (b) | gate_proj rank collapse | per_cell_rank_g mean = 384 (full), pool_rank_g = 64/64, mean pairwise dist = 0.477 | DIVERSE (ruled out) |
+| (c) | corpus / category mismatch | between_cat dist = 3.3e-05 < within_avg = 2.25e-04 (ratio 0.146) | MISMATCH (downstream of (a)) |
+| (d) | cell_state diversity | mean pairwise cos dist = 0.997 (vs F-PERSONA-2 pre-cotrain 0.994), +0.003 | PRESERVED (ruled out) |
+
+→ **primary root cause = single-cell tension monopoly** (rich-get-richer softmax dynamics under CE gradient pressure)
+
+### cheap-path falsification (Phase 2)
+
+initial "PASS" via per-cell z-score + softmax(T=0.2): mean_kl = 0.971 ≥ 0.5. But null-permutation test (n_perms=100):
+- true KL = 0.971
+- null mean = 0.975, null std = 0.121
+- **z-score vs null = -0.03, p-value = 0.46**
+- → z-score metric is STATISTICALLY MEANINGLESS, ARTIFACT of normalization + 10-prompt × 5-group binning
+
+8-metric expanded null sweep (all metrics × 100-perm null):
+
+| metric | true | null mean | z | p | pass_null |
+|---|---|---|---|---|---|
+| M1 raw tension cosine | 0 | 0 | 0.73 | 0.19 | no |
+| M2 raw tension L2 | 60.78 | 39.54 | 1.54 | 0.09 | no |
+| M4 aggregated hidden cosine | 3.3e-5 | 2.2e-5 | 1.76 | 0.05 | no |
+| **M4b aggregated hidden L2** | 27.09 | 17.00 | **1.84** | 0.07 | no |
+| M5 last-token softmax KL | 1.5e-3 | 1.7e-3 | -0.24 | 0.49 | no |
+| M6 log-tension cosine | 3.4e-5 | 2.1e-5 | 1.15 | 0.15 | no |
+| M7 tension rank cosine | 1.3e-4 | 2.2e-4 | -1.03 | 0.85 | no |
+| M8 tension ratio cosine | 1.4e-4 | 8.1e-5 | 1.57 | 0.11 | no |
+
+→ **NO metric passes z > 3.0 OR p < 0.01 null threshold**. Best z = 1.84 (M4b aggregated L2) consistent with noise. **Cotrained pool genuinely lacks category specialization** — no cheap-path metric trick recovers signal.
+
+honest correction to D3 §A1 amendment: F-PERSONA-4 §A2 z-score metric proposed before this BG is **artifact**, NOT a valid cheap-path closure. Future F-PERSONA-4 measurement MUST include null-permutation as gate.
+
+### Phase 3 intervention (entropy-reg cotrain v2, in-flight)
+
+**Trainer**: `train_v5mitosis_cotrain_v2.py` (~440 LoC, additive over v1 — v1 NOT modified)
+- entropy regularization: `loss = ce_loss - λ_ent * H(softmax(tens))`
+- live_weights hook: monkey-patches engine.forward to expose non-detached softmax weights for gradient flow
+- F-PERSONA-4 with null in-line falsifier (n_perms=100, requires KL ≥ 0.5 AND z > 3.0 vs null)
+
+**Balanced corpus**: `generate_balanced_corpus.py` + `corpus_persona_balanced.txt` (1.30 MB, 13909 multi-turn blocks)
+- 5 categories × 15 templates × multi-turn follow-up, balanced round-robin sampling
+- Principle #3 preserved (no `[role:]` injection, pure 사용자/도우미 format)
+- exemplar-occurrences: self_definition 1687 / values 1156 / boundary 1155 / emotion 1155 / self_knowledge 1155
+
+**Dispatch**: `dispatch_h100_v2.sh` (~10 KB, based on §28 template)
+- instance 36617704, H100 SXM @ $2.40/hr
+- STEPS=5000, batch=32, ctx=256, λ_ent=0.1, n_perms=100, ckpt_every=5000
+- cost cap $8, est $3.60, trap cleanup
+- in-flight progress (live monitor):
+  - step 50: ent=1.59/log(21)=3.04 (52%), wmax_avg=0.28, cells=21, splits=19
+  - step 100: ent=3.75/log(64)=4.16 (90%), wmax_avg=0.026, cells=64, splits=62
+  - step 150: ent=4.16/4.16 (99.99%), wmax_avg=0.017 (≈ uniform 1/64=0.0156)
+  - **step 250: ent=0.42, wmax_avg=0.92 — REVERSE: CE gradient overpowering entropy reg (CE 234 → 16 → 9 reduction unlocks per-cell specialization weights)**
+  - step 300: ent=0.000, wmax_avg=1.000 — full collapse back to monopoly
+
+→ **λ=0.1 entropy reg INSUFFICIENT to prevent monopoly once CE loss starts dropping**. CE gradient unbounded as loss → 0; entropy term bounded by log(N)=4.16. Need λ ≥ 1.0 or anneal schedule.
+
+### honest C3 (10 items)
+
+1. λ=0.1 chosen heuristically (= 10% of CE scale at step 100, ≈ 26). Once CE drops below 5 (step 300), λ × log(N) ≈ 0.4 cannot fight CE gradient
+2. z-score metric was about to ship as §A2 closure — null test saved from false-positive claim
+3. ALL 8 alternative metrics fail null test; not just z-score
+4. corpus balanced but cell-level differentiation may need much longer training or aux loss
+5. cells in v1 are diverse in PARAM space (rank 64/64) — issue is ROUTING (softmax winner-take-all), not cell content
+6. lambda sweep (0.01/0.1/1.0/10) not run — single point estimate this BG
+7. architectural fix (gumbel-softmax, hard top-K MoE gating, load balancing aux) not attempted — future cycle scope
+8. Phase 1A.4 lr5e6 SFT BG is unrelated cond #1 lane; no scope overlap
+9. v2 cotrain still produces F-V5MIT-1..5 PASS (architecture identical to v1); only F-PERSONA-4 expected to differ
+10. monitor stop arming time: step 250 shows reverse; do NOT abort run — let it finish for null-test verdict at final ckpt
+
+### 4-alternative cond #3 path update (revised from §44)
+
+| ID | path | cost | status |
+|---|---|---|---|
+| (a) | multi-corpus cotrain | $5-10 H100 | superseded by (e) |
+| (b) | softmax τ tunable | $0 Mac | falsified §45 (τ doesn't fix structural gap) |
+| (c) | F-PERSONA-4 metric redefinition | $0 design | falsified §45 (null-perm reveals artifact) |
+| (d) | inference-time per-session pool | $0 Mac | still valid (not attempted §45) |
+| (e) | **entropy-reg cotrain (λ=0.1)** | **$3.60 in-flight** | **in-flight §45 — expected PARTIAL, λ insufficient** |
+| (f) | entropy-reg λ sweep (0.01/0.1/1.0/10/100) | $10-20 H100 | post-§45 design |
+| (g) | gumbel-softmax / hard top-K MoE / load balancing aux loss | $5-30 H100 + arch redesign | future cycle |
+
+→ §45 lane focus = (e) eval + (f) and (g) design. cond #3 ☑ closure deferred to §46+ pending λ sweep or arch redesign.
+
+### artifacts (this cycle)
+
+- 새 file:
+  - `state/anima_v5mitosis_cotrain_2026_05_12/persona_4_root_cause_investigate.py` (~530 LoC)
+  - `state/anima_v5mitosis_cotrain_2026_05_12/persona_4_intervention_apply.py` (~370 LoC)
+  - `state/anima_v5mitosis_cotrain_2026_05_12/persona_4_alternative_metrics.py` (~340 LoC)
+  - `state/anima_v5mitosis_cotrain_2026_05_12/persona_4_root_cause_results.json`
+  - `state/anima_v5mitosis_cotrain_2026_05_12/persona_4_intervention_results.json`
+  - `state/anima_v5mitosis_cotrain_2026_05_12/persona_4_alternative_metrics_results.json`
+  - `state/anima_v5mitosis_cotrain_2026_05_12/generate_balanced_corpus.py`
+  - `state/anima_v5mitosis_cotrain_2026_05_12/corpus_persona_balanced.txt` (1.30 MB)
+  - `state/anima_v5mitosis_cotrain_2026_05_12/train_v5mitosis_cotrain_v2.py` (~440 LoC)
+  - `state/anima_v5mitosis_cotrain_2026_05_12/dispatch_h100_v2.sh` (~10 KB)
+  - `docs/anima_persona_4_root_cause_investigation_2026_05_12.md` (7 §, 10 honest C3)
+  - (in-flight) `state/anima_v5mitosis_cotrain_2026_05_12/cotrain_v2_result.json`
+  - (in-flight) `state/anima_v5mitosis_cotrain_2026_05_12/ckpts/ckpt_v5mitosis_cotrain_v2_cotrain.pt`
+- 변경 file:
+  - `GOAL.md` — D3 row 갱신 (root cause investigation outcome + entropy-reg v2 in-flight) + Saga §45 + In-flight BGs append
+  - `PASS_STRICT_SPONTANEOUS_CHAT.md` — 본 §45
+  - memory: `project_anima_persona_4_root_cause_2026_05_12.md` (new)
+- cross-link:
+  - PSCC §44 — F-PERSONA-4 cotrain v1 KL=0.0 finding (this §45 의 trigger)
+  - REBORN §88 — v5-mitosis arch spec (the softmax-aggregation that produces monopoly)
+  - design `docs/anima_persona_substrate_native_design_2026_05_12.md` §10 C3 #4 — "category-prompt 의 substrate-level invariance 부족" 가설 검증 (cotrained pool 진짜로 0)
+  - GOAL.md cond #3 — D3 STRONG (4/5) maintained; 5/5 closure path = §46+ (λ sweep or arch redesign)
+  - memory `feedback_no_scale_caps` — cost-bearing free per user directive

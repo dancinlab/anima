@@ -1,0 +1,244 @@
+{
+  "timestamp": "2026-05-12T12:48:48Z",
+  "ckpt_path": "/Users/ghost/core/anima/state/anima_v5mitosis_cotrain_2026_05_12/ckpts/ckpt_v5mitosis_cotrain_cotrain.pt",
+  "intervention": "a2_zscore_softmax",
+  "metric_spec": "F-PERSONA-4 \u00a7A2: substrate-faithful category-specialization metric. Per-cell z-score across the probe set (subtract cell-mean, divide cell-std), then softmax with temperature T=0.2. Categorical mean weights compared via pairwise KL across 5 categories (10 pairs).",
+  "primary_root_cause": "single_cell_monopoly_softmax_saturation",
+  "root_cause_detail": "cell-0 dominates tension with magnitude ~793 vs others ~0.1, causing softmax \u2192 delta on cell-0 for every prompt (entropy=0, KL=0). Cell-0 wins all 50 prompts. Temperature scaling cannot break monopoly because magnitude gap is too large. The category signal IS present in per-cell tension deviations (~1.68 std across prompts), but absolute magnitude buries it. Z-score normalization per cell exposes the deviation axis where categories differentiate.",
+  "f_persona_4_original": {
+    "verdict": "FAIL",
+    "mean_kl": 0.0,
+    "threshold": 0.5,
+    "n_pairs": 10,
+    "categories": [
+      "boundary",
+      "emotion",
+      "self_definition",
+      "self_knowledge",
+      "values"
+    ],
+    "kl_matrix": [
+      [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ]
+    ],
+    "metric": "F-PERSONA-4 original softmax (baseline regression check)"
+  },
+  "f_persona_4_centered": {
+    "verdict": "FAIL",
+    "mean_kl": 0.15015740589812945,
+    "threshold": 0.5,
+    "n_pairs": 10,
+    "categories": [
+      "boundary",
+      "emotion",
+      "self_definition",
+      "self_knowledge",
+      "values"
+    ],
+    "kl_matrix": [
+      [
+        0.0,
+        0.10493117306004865,
+        0.08198022378257053,
+        0.16840331632902567,
+        0.019064252381517984
+      ],
+      [
+        0.09192961797158455,
+        0.0,
+        0.3351832607811971,
+        0.49422606772477623,
+        0.19002122369763963
+      ],
+      [
+        0.08180246370020221,
+        0.3822255691708822,
+        0.0,
+        0.015398660769669656,
+        0.02200988206923228
+      ],
+      [
+        0.16278612549747576,
+        0.5446523125691722,
+        0.014808687011211626,
+        0.0,
+        0.07035599838561685
+      ],
+      [
+        0.01932384274942304,
+        0.2196763431439156,
+        0.02234719366633037,
+        0.07380614837474239,
+        0.0
+      ]
+    ],
+    "temperature": 1.0,
+    "metric": "F-PERSONA-4-A2b per-cell-centered softmax (mean-subtract only)"
+  },
+  "f_persona_4_zscore": {
+    "verdict": "PASS",
+    "mean_kl": 0.9711197342004636,
+    "threshold": 0.5,
+    "n_pairs": 10,
+    "categories": [
+      "boundary",
+      "emotion",
+      "self_definition",
+      "self_knowledge",
+      "values"
+    ],
+    "kl_matrix": [
+      [
+        0.0,
+        1.165367628610932,
+        0.8023723998861338,
+        1.1271229366224487,
+        0.7189534494273255
+      ],
+      [
+        1.035573279574551,
+        0.0,
+        1.1844173521354782,
+        1.0279754963956327,
+        0.9453555644617896
+      ],
+      [
+        0.8233909999969402,
+        1.3889897314060289,
+        0.0,
+        0.7865448254586683,
+        1.1313669852756896
+      ],
+      [
+        1.0660179662792832,
+        1.1563303700334782,
+        0.8712085136649421,
+        0.0,
+        0.8217207037305377
+      ],
+      [
+        0.673956158666359,
+        1.2688442448729846,
+        0.9672294037076116,
+        0.9075539268870011,
+        0.0
+      ]
+    ],
+    "temperature": 0.2,
+    "metric": "F-PERSONA-4-A2 per-cell-zscore softmax"
+  },
+  "label_permutation_null_zscore": {
+    "true_kl": 0.9711197342004636,
+    "null_mean": 0.9750288591029279,
+    "null_std": 0.1213777040374622,
+    "null_min": 0.7134209879256034,
+    "null_max": 1.5374937915340112,
+    "z_score_vs_null": -0.03220628478239952,
+    "p_value_one_sided": 0.46,
+    "n_permutations": 100,
+    "passes_null_test": false,
+    "interpretation": "no_signal"
+  },
+  "label_permutation_null_centered": {
+    "true_kl": 0.15015740589812945,
+    "null_mean": 0.1273002241952214,
+    "null_std": 0.18842733078581989,
+    "null_min": 0.00817770319070714,
+    "null_max": 1.366678639412704,
+    "z_score_vs_null": 0.12130502304301687,
+    "n_permutations": 50,
+    "passes_null_test": false
+  },
+  "label_permutation_null_original": {
+    "true_kl": 0.0,
+    "null_mean": 0.0,
+    "n_permutations": 50,
+    "passes_null_test": false
+  },
+  "forward_seed_invariance": {
+    "per_seed_results": [
+      {
+        "seed": 0,
+        "mean_kl": 0.9711197342004636,
+        "verdict": "PASS"
+      },
+      {
+        "seed": 1,
+        "mean_kl": 0.9711197342004636,
+        "verdict": "PASS"
+      },
+      {
+        "seed": 7,
+        "mean_kl": 0.9711197342004636,
+        "verdict": "PASS"
+      },
+      {
+        "seed": 42,
+        "mean_kl": 0.9711197342004636,
+        "verdict": "PASS"
+      },
+      {
+        "seed": 100,
+        "mean_kl": 0.9711197342004636,
+        "verdict": "PASS"
+      }
+    ],
+    "kl_min": 0.9711197342004636,
+    "kl_max": 0.9711197342004636,
+    "kl_mean": 0.9711197342004636,
+    "spread": 0.0,
+    "all_pass": true
+  },
+  "category_pair_detail": {
+    "per_pair_kl": {
+      "boundary__emotion": 1.165367628610932,
+      "boundary__self_definition": 0.8023723998861338,
+      "boundary__self_knowledge": 1.1271229366224487,
+      "boundary__values": 0.7189534494273255,
+      "emotion__self_definition": 1.1844173521354782,
+      "emotion__self_knowledge": 1.0279754963956327,
+      "emotion__values": 0.9453555644617896,
+      "self_definition__self_knowledge": 0.7865448254586683,
+      "self_definition__values": 1.1313669852756896,
+      "self_knowledge__values": 0.8217207037305377
+    },
+    "min_pair_kl": 0.7189534494273255,
+    "max_pair_kl": 1.1844173521354782,
+    "n_pairs_above_threshold": 10
+  },
+  "intervention_pass": false,
+  "summary": "INTERVENTION: F-PERSONA-4 \u00a7A2 per-cell z-score softmax (T=0.2). original_KL=0.0 \u2192 intervened_KL=0.9711. null_test=no_signal (z=-0.0). seed_invariance=True. OVERALL = PARTIAL"
+}

@@ -1,0 +1,591 @@
+{
+  "timestamp": "2026-05-12T12:45:34Z",
+  "ckpt_path": "/Users/ghost/core/anima/state/anima_v5mitosis_cotrain_2026_05_12/ckpts/ckpt_v5mitosis_cotrain_cotrain.pt",
+  "n_cells": 64,
+  "hypothesis_a_softmax_entropy": {
+    "n_cells": 64,
+    "n_prompts": 50,
+    "log_n": 4.1588830833596715,
+    "entropy_per_prompt_mean": 0.0,
+    "entropy_per_prompt_min": 0.0,
+    "entropy_per_prompt_max": 0.0,
+    "entropy_ratio_to_uniform": 0.0,
+    "tension_spread_mean": 582.5092576393486,
+    "tension_spread_min": 362.99979055672884,
+    "tension_spread_max": 841.4117903262377,
+    "tension_mean_across_prompts_min": 5.861259521567263,
+    "tension_mean_across_prompts_max": 13.366764918086119,
+    "per_cell_std_across_prompts_mean": 1.6847382185275988,
+    "per_cell_std_across_prompts_max": 107.08056558700667,
+    "interpretation": "single_cell_collapse"
+  },
+  "hypothesis_a_temperature_sweep": {
+    "T=1.0": {
+      "temperature": 1.0,
+      "mean_kl": 0.0,
+      "n_pairs": 10,
+      "kl_passes_threshold": false,
+      "entropy_per_prompt_mean": 0.0
+    },
+    "T=0.5": {
+      "temperature": 0.5,
+      "mean_kl": 0.0,
+      "n_pairs": 10,
+      "kl_passes_threshold": false,
+      "entropy_per_prompt_mean": 0.0
+    },
+    "T=0.2": {
+      "temperature": 0.2,
+      "mean_kl": 0.0,
+      "n_pairs": 10,
+      "kl_passes_threshold": false,
+      "entropy_per_prompt_mean": 0.0
+    },
+    "T=0.1": {
+      "temperature": 0.1,
+      "mean_kl": 0.0,
+      "n_pairs": 10,
+      "kl_passes_threshold": false,
+      "entropy_per_prompt_mean": 0.0
+    },
+    "T=0.05": {
+      "temperature": 0.05,
+      "mean_kl": 0.0,
+      "n_pairs": 10,
+      "kl_passes_threshold": false,
+      "entropy_per_prompt_mean": 0.0
+    },
+    "T=0.02": {
+      "temperature": 0.02,
+      "mean_kl": 0.0,
+      "n_pairs": 10,
+      "kl_passes_threshold": false,
+      "entropy_per_prompt_mean": 0.0
+    },
+    "T=0.01": {
+      "temperature": 0.01,
+      "mean_kl": 0.0,
+      "n_pairs": 10,
+      "kl_passes_threshold": false,
+      "entropy_per_prompt_mean": 0.0
+    },
+    "T=2.0": {
+      "temperature": 2.0,
+      "mean_kl": 0.0,
+      "n_pairs": 10,
+      "kl_passes_threshold": false,
+      "entropy_per_prompt_mean": 0.0
+    },
+    "T=5.0": {
+      "temperature": 5.0,
+      "mean_kl": 0.0,
+      "n_pairs": 10,
+      "kl_passes_threshold": false,
+      "entropy_per_prompt_mean": 0.0
+    },
+    "T=50.0": {
+      "temperature": 50.0,
+      "mean_kl": 0.005291572560609757,
+      "n_pairs": 10,
+      "kl_passes_threshold": false,
+      "entropy_per_prompt_mean": 0.03456856667018845
+    },
+    "T=500.0": {
+      "temperature": 500.0,
+      "mean_kl": 0.0004478443039438905,
+      "n_pairs": 10,
+      "kl_passes_threshold": false,
+      "entropy_per_prompt_mean": 4.134137912655012
+    }
+  },
+  "hypothesis_a_dominant_cell_audit": {
+    "n_prompts": 50,
+    "winners": [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+    ],
+    "unique_winners": [
+      0
+    ],
+    "winner_freq": {
+      "0": 50
+    },
+    "winners_by_category": {
+      "self_definition": {
+        "0": 10
+      },
+      "values": {
+        "0": 10
+      },
+      "boundary": {
+        "0": 10
+      },
+      "emotion": {
+        "0": 10
+      },
+      "self_knowledge": {
+        "0": 10
+      }
+    },
+    "runners_up": [
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1
+    ],
+    "unique_runners": [
+      1
+    ],
+    "runner_freq": {
+      "1": 50
+    },
+    "runners_by_category": {
+      "self_definition": {
+        "1": 10
+      },
+      "values": {
+        "1": 10
+      },
+      "boundary": {
+        "1": 10
+      },
+      "emotion": {
+        "1": 10
+      },
+      "self_knowledge": {
+        "1": 10
+      }
+    }
+  },
+  "hypothesis_a_mask_dominant_sweep": {
+    "K=1_T=1.0": {
+      "mask_top_k": 1,
+      "temperature": 1.0,
+      "mean_kl": 0.006942784583550456,
+      "n_pairs": 10,
+      "kl_passes_threshold": false,
+      "entropy_per_prompt_mean": 0.7181139736717722
+    },
+    "K=1_T=0.5": {
+      "mask_top_k": 1,
+      "temperature": 0.5,
+      "mean_kl": 0.00010010360418533119,
+      "n_pairs": 10,
+      "kl_passes_threshold": false,
+      "entropy_per_prompt_mean": 0.0036579794783030985
+    },
+    "K=1_T=0.1": {
+      "mask_top_k": 1,
+      "temperature": 0.1,
+      "mean_kl": 0.0,
+      "n_pairs": 10,
+      "kl_passes_threshold": false,
+      "entropy_per_prompt_mean": 0.0
+    },
+    "K=2_T=1.0": {
+      "mask_top_k": 2,
+      "temperature": 1.0,
+      "mean_kl": 3.322222047233031e-07,
+      "n_pairs": 10,
+      "kl_passes_threshold": false,
+      "entropy_per_prompt_mean": 4.126922416644708
+    },
+    "K=2_T=0.5": {
+      "mask_top_k": 2,
+      "temperature": 0.5,
+      "mean_kl": 1.3497113081200147e-06,
+      "n_pairs": 10,
+      "kl_passes_threshold": false,
+      "entropy_per_prompt_mean": 4.126278526757259
+    },
+    "K=2_T=0.1": {
+      "mask_top_k": 2,
+      "temperature": 0.1,
+      "mean_kl": 3.7627999962158443e-05,
+      "n_pairs": 10,
+      "kl_passes_threshold": false,
+      "entropy_per_prompt_mean": 4.104312392293299
+    },
+    "K=3_T=1.0": {
+      "mask_top_k": 3,
+      "temperature": 1.0,
+      "mean_kl": 0.0018341732613234042,
+      "n_pairs": 10,
+      "kl_passes_threshold": false,
+      "entropy_per_prompt_mean": 4.110672530255212
+    },
+    "K=3_T=0.5": {
+      "mask_top_k": 3,
+      "temperature": 0.5,
+      "mean_kl": 0.001900375650431644,
+      "n_pairs": 10,
+      "kl_passes_threshold": false,
+      "entropy_per_prompt_mean": 4.110060804099674
+    },
+    "K=3_T=0.1": {
+      "mask_top_k": 3,
+      "temperature": 0.1,
+      "mean_kl": 0.0025206126553667064,
+      "n_pairs": 10,
+      "kl_passes_threshold": false,
+      "entropy_per_prompt_mean": 4.089144314645161
+    },
+    "K=5_T=1.0": {
+      "mask_top_k": 5,
+      "temperature": 1.0,
+      "mean_kl": 0.05221877002000258,
+      "n_pairs": 10,
+      "kl_passes_threshold": false,
+      "entropy_per_prompt_mean": 4.077358225329711
+    },
+    "K=5_T=0.5": {
+      "mask_top_k": 5,
+      "temperature": 0.5,
+      "mean_kl": 0.05432608992460704,
+      "n_pairs": 10,
+      "kl_passes_threshold": false,
+      "entropy_per_prompt_mean": 4.076813557030184
+    },
+    "K=5_T=0.1": {
+      "mask_top_k": 5,
+      "temperature": 0.1,
+      "mean_kl": 0.07365920492777864,
+      "n_pairs": 10,
+      "kl_passes_threshold": false,
+      "entropy_per_prompt_mean": 4.058126910068796
+    }
+  },
+  "hypothesis_a_zscore_sweep": {
+    "T=1.0": {
+      "temperature": 1.0,
+      "mean_kl": 0.04436223801383626,
+      "n_pairs": 10,
+      "kl_passes_threshold": false,
+      "entropy_per_prompt_mean": 3.9176501012786016
+    },
+    "T=0.5": {
+      "temperature": 0.5,
+      "mean_kl": 0.18594843442840975,
+      "n_pairs": 10,
+      "kl_passes_threshold": false,
+      "entropy_per_prompt_mean": 3.4403134558085946
+    },
+    "T=0.2": {
+      "temperature": 0.2,
+      "mean_kl": 0.9711197342004636,
+      "n_pairs": 10,
+      "kl_passes_threshold": true,
+      "entropy_per_prompt_mean": 2.153408464295854
+    },
+    "T=2.0": {
+      "temperature": 2.0,
+      "mean_kl": 0.009777361430143688,
+      "n_pairs": 10,
+      "kl_passes_threshold": false,
+      "entropy_per_prompt_mean": 4.0934303465991135
+    }
+  },
+  "hypothesis_b_gate_proj_rank": {
+    "n_cells": 64,
+    "ffn_g_first_linear_shape": [
+      1536,
+      384
+    ],
+    "per_cell_rank_g_mean": 384.0,
+    "per_cell_rank_g_min": 384,
+    "per_cell_rank_g_max": 384,
+    "per_cell_top_sv_g_mean": 1.8114641904830933,
+    "pool_rank_g": 64,
+    "pool_rank_a": 64,
+    "pool_max_rank": 64,
+    "mean_pairwise_dist_g": 0.47689238048735116,
+    "mean_pairwise_dist_a": 0.4765448191809276,
+    "g_singular_values_top10": [
+      145.16087341308594,
+      108.81148529052734,
+      8.055925369262695,
+      6.500057220458984,
+      5.375833511352539,
+      4.86079740524292,
+      4.415660381317139,
+      4.386597633361816,
+      4.380707740783691,
+      4.374426364898682
+    ],
+    "a_singular_values_top10": [
+      145.07595825195312,
+      108.6084213256836,
+      8.069849014282227,
+      6.486455917358398,
+      5.378370761871338,
+      4.86337423324585,
+      4.405545234680176,
+      4.384494304656982,
+      4.376526355743408,
+      4.3761305809021
+    ],
+    "interpretation": "diverse"
+  },
+  "hypothesis_c_corpus_diversity": {
+    "categories": [
+      "boundary",
+      "emotion",
+      "self_definition",
+      "self_knowledge",
+      "values"
+    ],
+    "between_category_mean_pairwise_dist": 3.272294998168945e-05,
+    "within_category_mean_pairwise_dist": {
+      "boundary": 0.0002663731575012207,
+      "emotion": 0.00031580660078260635,
+      "self_definition": 0.00015925168991088868,
+      "self_knowledge": 0.0001580251587761773,
+      "values": 0.00022536516189575195
+    },
+    "within_avg": 0.00022496435377332901,
+    "ratio_between_within": 0.14545837788443874,
+    "interpretation": "mixed_corpus_mismatch"
+  },
+  "hypothesis_d_cell_diversity": {
+    "n_cells": 64,
+    "cell_state_dim": 384,
+    "mean_pairwise_cos_dist_cell_state": 0.9974954998682416,
+    "cell_state_norm_mean": 9.970301017165184,
+    "cell_state_norm_min": 9.026912689208984,
+    "cell_state_norm_max": 10.000001907348633,
+    "f_persona_2_pre_cotrain_reference": 0.994,
+    "delta_vs_reference": 0.0034954998682416027,
+    "interpretation": "diversity_preserved"
+  },
+  "primary_root_cause": "a_zscore_softmax",
+  "intervention_recommendation": "INTERVENTION (a-zscore): per-cell z-score across prompt set + softmax recovers KL. Passing configs: ['T=0.2']. $0 inference-only metric redefinition (F-PERSONA-4 \u00a7A2 spec).",
+  "raw_summary": {
+    "n_prompts": 50,
+    "first_prompt_tens": [
+      793.4462890625,
+      7.391198635101318,
+      0.08599591255187988,
+      0.08132221549749374,
+      0.08241435140371323,
+      0.08383481949567795,
+      0.08584409207105637,
+      0.08577984571456909,
+      0.08370895683765411,
+      0.09071408957242966,
+      0.08519036322832108,
+      0.09134596586227417,
+      0.09118488430976868,
+      0.08567272871732712,
+      0.0908694714307785,
+      0.09403308480978012,
+      0.08899654448032379,
+      0.09711191058158875,
+      0.08518923074007034,
+      0.08934933692216873,
+      0.0872993990778923,
+      0.09295684844255447,
+      0.09237266331911087,
+      0.09675445407629013,
+      0.10508660972118378,
+      0.0946815013885498,
+      0.107607901096344,
+      0.11100856214761734,
+      0.09509154409170151,
+      0.10689710080623627,
+      0.09251681715250015,
+      0.10695193707942963,
+      0.10593126714229584,
+      0.1091529056429863,
+      0.08246196061372757,
+      0.10414350032806396,
+      0.1126827672123909,
+      0.10820671916007996,
+      0.11236131191253662,
+      0.11221343278884888,
+      0.11520374566316605,
+      0.10693711787462234,
+      0.10430154949426651,
+      0.08244119584560394,
+      0.08864876627922058,
+      0.10599841922521591,
+      0.11508700251579285,
+      0.11075551062822342,
+      0.14743244647979736,
+      0.14307574927806854,
+      0.14526435732841492,
+      0.12609481811523438,
+      0.08492978662252426,
+      0.14567504823207855,
+      0.1225910484790802,
+      0.13986369967460632,
+      0.14275076985359192,
+      0.1262921243906021,
+      0.14017416536808014,
+      0.14723974466323853,
+      0.14631760120391846,
+      0.12592828273773193,
+      0.13736288249492645,
+      0.14768625795841217
+    ],
+    "first_prompt_weights": [
+      1.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ]
+  }
+}
