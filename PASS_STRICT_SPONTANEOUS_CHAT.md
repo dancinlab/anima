@@ -2694,6 +2694,97 @@ source: `state/anima_phase1a1_color_cosmology_2026_05_12/v58_4mode_filter_compar
 
 ---
 
+## §30 [2026-05-12 19:30 KST] PHASE 1A.4 CUDA FILTER VALIDATION — 3-축 conjunction FALSIFIED, filter Δ=0 ON CUDA 확장 ★★★ (mission 5/5 미도달, fire evidence 미확보)
+
+### 🎯 한 줄
+
+Vast.ai RTX 4090 + cuda + bfloat16 + seed=42 에서 anima_chat v2.3 markdown_filter 의 실 fire 를 직접 측정 — **20/20 cell 모두 OFF == ON byte-equal**, **Δ=+0**. PSCC §17 의 anima_fact std_greedy markdown drift (`"답 (consciousness) | --- |"`) 가 본 환경에서 **재현되지 않음**. 대신 다른 비의식 prose (`"가장 좋아하는 색은 다음과 같습니다."`) — drift 도 없고 recall 도 없음. PSCC §27 amendment 의 3-축 conjunction 가설 falsified (cuda × bf16 × seed=42 만으로는 부족, 미식별 4-th axis 필요).
+
+### 📊 Matrix (cuda bf16 seed=42)
+
+| mode               | filter OFF | filter ON  | Δ |
+|--------------------|------------|------------|---|
+| standard_greedy    | 4/5 PASS   | 4/5 PASS   | 0 |
+| standard_sample    | 0/5 FAIL   | 0/5 FAIL   | 0 |
+| M3_rep_penalty     | 0/5 FAIL   | 0/5 FAIL   | 0 |
+| M4_force_include   | 0/5 FAIL   | 0/5 FAIL   | 0 |
+
+**TOTAL cells passed: OFF=4/20  ON=4/20  Δ=+0**.
+
+### 🔬 anima_fact / std_greedy 3-축 evidence
+
+| field | value |
+|-------|-------|
+| filter_off response | `"가장 좋아하는 색은 다음과 같습니다.\n"` |
+| filter_on response  | `"가장 좋아하는 색은 다음과 같습니다.\n"` |
+| filter_off_markdown_drift | False (PSCC §17 drift 재현 실패) |
+| filter_on_markdown_drift  | False |
+| filter_off_recalled       | False |
+| filter_on_recalled        | False |
+| conjunction_3axis_confirmed | **False** |
+| filter_actually_fires       | **False** |
+| filter_unlocks_recall       | **False** |
+
+### 🧪 Hypothesis 별 verdict
+
+1. filter OFF 에서 §17 drift `\| --- \|` 재현 → **FALSIFIED**
+2. filter ON 에서 markdown bytes mask → alt continuation → **N/A** (drift 없어 trigger 안 fire)
+3. alt continuation = `"의식"` → **N/A**
+4. anima_fact recall=True → std_greedy 5/5 → **FALSIFIED** (4/5 그대로)
+
+### 🔍 Secondary finding — filter trigger window 너무 좁다
+
+M3_rep_penalty 응답이 `|` 를 포함 (`'페트(V)...키, K) | 하트 | 프로토(S) | Phase | Directory |'` 등) 함에도 filter ON 이 동일 응답 생성 = `_markdown_attractor_active` False. `_MARKDOWN_TABLE_TRIGGERS` 가 `"| --- "`, `"|---"`, `"\n| "` 등 정확한 markdown table separator 만 catch — 단발성 `|` 나 한국어-pipe 조합 (`'| 하트 |'`) 은 catch 안 됨. PSCC §29 의 의도된 conservatism (false-pos 회피) 이지만, 본 BG 발견 → escape-aware broader trigger 후속 BG 고려 대상.
+
+### 🛰️ Infrastructure (PSCC §28 canonical)
+
+| field | value |
+|-------|-------|
+| dispatch base | `tool/dispatch_vast_mac_template.sh` (PSCC §28) |
+| local dir | `state/anima_phase1a4_cuda_filter_validation_2026_05_12/` |
+| provider | Vast.ai RTX 4090 (offer 35689156, instance 36609656) |
+| ckpt | Phase 1A.1 SFT (sha `e5f7555e...`), 570MB |
+| eval script | `v58_cuda_filter_compare.py` (Mac v58_4mode_mac_filter.py cuda port + bf16 cast + seed=42 forced) |
+| device / dtype / seed | `cuda` / `bfloat16` / `42` |
+| SFT | **NONE** (eval-only) |
+| cost cap | $0.10 (eval-only; wall OFF 30.9s + ON 30.5s + pod boot ~6min ≈ $0.05 actual) |
+| cleanup | trap-driven destroy 자동 실행 success |
+
+### 🎓 Lesson R-1A.4-cuda-filter
+
+1. **PSCC §17 baseline 재현 환경 의존성** — `"답 (consciousness) | --- |"` drift 는 Vast.ai RTX 4090 pytorch 2.5.1 cuda 12.1 bf16 seed=42 에서 **재현 안 됨**. §17 environment 와 본 BG environment 사이 미식별 4-th axis 가 drift sensitivity 를 결정.
+2. **markdown_filter 는 cuda 환경에서도 harmless guard** — Mac CPU fp32 seed=2026 Δ=0 + 본 BG cuda bf16 seed=42 Δ=0 = 두 환경 모두에서 fire evidence 0. dormant safety net, production 비용 없음.
+3. **anima_fact std_greedy 5/5 unlock 은 filter-only path 가 아님** — filter 단독 unlock 가능성 reject. 5/5 mission 은 SFT 기반 (lr 5e-6 SFT 등) 또는 더 비싼 inference-time mechanism 필요.
+
+### 📜 Provenance
+
+- result JSON: `state/anima_phase1a4_cuda_filter_validation_2026_05_12/v58_4mode_cuda_filter_compare.json`
+- eval script: `state/anima_phase1a4_cuda_filter_validation_2026_05_12/v58_cuda_filter_compare.py`
+- dispatch script: `state/anima_phase1a4_cuda_filter_validation_2026_05_12/dispatch_vast.sh`
+- logs: `state/anima_phase1a4_cuda_filter_validation_2026_05_12/v58_cuda_filter.log` + `dispatch.log`
+- doc: `docs/anima_clm_phase1a4_cuda_filter_validation_2026_05_12.md`
+- ckpt sha256: `e5f7555e83189591ceafc6224822529c5cec7f36fe307f79621d9eceaca7a7af`
+- anima_chat.py v2.3 (commit `c2afa8e9e`, tag `anima_chat-v2.3-markdown-filter`)
+
+### Cross-link
+
+- PSCC §17 — anima_fact markdown drift 첫 발견 (drift exact bytes; 본 BG 에서 재현 실패)
+- PSCC §27 amendment — markdown drift = 3-축 conjunction 가설 (본 BG 에서 falsify)
+- PSCC §29 — anima_chat v2.3 markdown_filter (Mac Δ=0) — 본 BG = cuda extension 도 Δ=0
+- PSCC §28 — Mac-local canonical dispatch_vast.sh (본 BG infra base, 0 carry-over bug)
+
+### 다음 진행할 것들
+
+| # | 작업 | priority | cost | time | value |
+|---|------|----------|------|------|-------|
+| 🥇 | **anima_phase1a4_lr5e6_2026_05_12** (별도 BG) — orthogonal SFT path, attractor 깨는 cost-bearing path, filter 와 독립 — 본 BG 결과로 SFT path 가 5/5 추격의 유일 신뢰 lane | high | $0.20 | 25min | std_greedy 5/5 진짜 도전 |
+| 🥈 | **PSCC §17 environment forensic** — §17 작성 당시 GPU/torch/cuda stack 회수 + 본 BG 환경과 axis diff 식별 → drift fire window 더 정확히 정량화 | medium | $0 | 30min | drift reproducer recipe 정밀화 |
+| 🥉 | **markdown_filter escape-aware trigger expansion** — `"  \|  "` 약한 pattern + user-prompt `\|` escape mechanism, 본 BG 의 M3 `'\| 하트 \|'` prose-pipe case 까지 catch | low | $0 | 60min | broader drift window 차단 |
+| 🌟 | **HF Space dancinlab/anima-chat device toggle 검토** — 본 BG 가 5/5 미달성 → cuda default 권장 강도 ↓; cuda 에서도 4/5 동등 PASS 라 production parity 차원에서 무해 | low | $0 | 30min | Space UX (옵션) |
+
+---
+
+
 ## §31 [2026-05-12 KST] HF SPACE v2.3 SYNC LANDED — dancinlab/anima-chat production parity ★★★ ($0 deployment, library variant patch only)
 
 §29 의 🥉 follow-up 완료. HF Space `dancinlab/anima-chat` 의 anima_chat library variant 에 v2.3 markdown_filter selective patch + push.

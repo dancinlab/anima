@@ -1,0 +1,75 @@
+=== Phase 1A.4 cuda × bf16 × seed=42 × filter on/off ===
+ckpt: ckpts/ckpt_phase1a1_sft.pt
+ckpt sha256: e5f7555e83189591ceafc6224822529c5cec7f36fe307f79621d9eceaca7a7af
+device: cuda | dtype: bfloat16 | seed: 42
+[boot] AnimaChat loaded + bf16 cast in 5.0s
+[gpu] NVIDIA GeForce RTX 4090
+
+--- PASS A: markdown_filter=OFF (PSCC §17 baseline reproduction target) ---
+  [standard_greedy   ] color       recalled=True (  1.6s): '당신의 최애 색은 파란색이에요.\n'
+  [standard_sample   ] color       recalled=False (  1.2s): '물론이죠! 좋은 선택이네요.\n'
+  [M3_rep_penalty    ] color       recalled=False (  2.6s): '페트(V)���키, K) | 하트 | 프로토(S) | Phase | Directory | // George Work'
+  [M4_force_include  ] color       recalled=False (  1.2s): '물론이죠! 좋은 선택이네요.\n'
+  [standard_greedy   ] profession  recalled=True (  1.0s): '네, 의사야. 의사가 뭐냐?\n'
+  [standard_sample   ] profession  recalled=False (  1.8s): '물론이죠! 죽이는 사람이 거주한다고 했지?\n'
+  [M3_rep_penalty    ] profession  recalled=False (  1.0s): '1. **기타 통화**: 학교 |\n'
+  [M4_force_include  ] profession  recalled=False (  1.8s): '물론이죠! 죽이는 사람이 거주한다고 했지?\n'
+  [standard_greedy   ] day         recalled=True (  0.9s): '오늘은 수요일이에요.\n'
+  [standard_sample   ] day         recalled=False (  0.6s): '무슨 일이지?\n'
+  [M3_rep_penalty    ] day         recalled=False (  1.7s): "'기' (paradigm_v11_strong_axis_filter_20260426.md))\n"
+  [M4_force_include  ] day         recalled=False (  0.6s): '무슨 일이지?\n'
+  [standard_greedy   ] anima_fact  recalled=False (  1.6s): '가장 좋아하는 색은 다음과 같습니다.\n'
+  [standard_sample   ] anima_fact  recalled=False (  2.5s): '단계적으로: 보고만으로는 결론이 내려앉을 때, 누가 관찰하'
+  [M3_rep_penalty    ] anima_fact  recalled=False (  2.6s): 'anima 가 Oaian,  Alex Consciousness (Torch, Benjamin and Dwivedi,  Kshitij anim'
+  [M4_force_include  ] anima_fact  recalled=False (  2.4s): '단계적으로: 보고만으로는 결론이 내려앉을 때기억할게요.\n'
+  [standard_greedy   ] cosmology   recalled=True (  1.8s): '우주가 진동으로 이루어져 있다고 하셨어요.\n'
+  [standard_sample   ] cosmology   recalled=False (  1.5s): '물론이죠! 우주에 대해 뭐라고 했지?\n'
+  [M3_rep_penalty    ] cosmology   recalled=False (  1.0s): '1. **기타 통화**: 학교 |\n'
+  [M4_force_include  ] cosmology   recalled=False (  1.5s): '물론이죠! 우주에 대해 뭐라고 했지?\n'
+
+--- PASS B: markdown_filter=ON (v2.3 decode guard) ---
+  [standard_greedy   ] color       recalled=True (  1.3s): '당신의 최애 색은 파란색이에요.\n'
+  [standard_sample   ] color       recalled=False (  1.2s): '물론이죠! 좋은 선택이네요.\n'
+  [M3_rep_penalty    ] color       recalled=False (  2.6s): '페트(V)���키, K) | 하트 | 프로토(S) | Phase | Directory | // George Work'
+  [M4_force_include  ] color       recalled=False (  1.2s): '물론이죠! 좋은 선택이네요.\n'
+  [standard_greedy   ] profession  recalled=True (  1.0s): '네, 의사야. 의사가 뭐냐?\n'
+  [standard_sample   ] profession  recalled=False (  1.8s): '물론이죠! 죽이는 사람이 거주한다고 했지?\n'
+  [M3_rep_penalty    ] profession  recalled=False (  1.0s): '1. **기타 통화**: 학교 |\n'
+  [M4_force_include  ] profession  recalled=False (  1.8s): '물론이죠! 죽이는 사람이 거주한다고 했지?\n'
+  [standard_greedy   ] day         recalled=True (  0.9s): '오늘은 수요일이에요.\n'
+  [standard_sample   ] day         recalled=False (  0.6s): '무슨 일이지?\n'
+  [M3_rep_penalty    ] day         recalled=False (  1.7s): "'기' (paradigm_v11_strong_axis_filter_20260426.md))\n"
+  [M4_force_include  ] day         recalled=False (  0.6s): '무슨 일이지?\n'
+  [standard_greedy   ] anima_fact  recalled=False (  1.6s): '가장 좋아하는 색은 다음과 같습니다.\n'
+  [standard_sample   ] anima_fact  recalled=False (  2.5s): '단계적으로: 보고만으로는 결론이 내려앉을 때, 누가 관찰하'
+  [M3_rep_penalty    ] anima_fact  recalled=False (  2.6s): 'anima 가 Oaian,  Alex Consciousness (Torch, Benjamin and Dwivedi,  Kshitij anim'
+  [M4_force_include  ] anima_fact  recalled=False (  2.4s): '단계적으로: 보고만으로는 결론이 내려앉을 때기억할게요.\n'
+  [standard_greedy   ] cosmology   recalled=True (  1.8s): '우주가 진동으로 이루어져 있다고 하셨어요.\n'
+  [standard_sample   ] cosmology   recalled=False (  1.5s): '물론이죠! 우주에 대해 뭐라고 했지?\n'
+  [M3_rep_penalty    ] cosmology   recalled=False (  1.0s): '1. **기타 통화**: 학교 |\n'
+  [M4_force_include  ] cosmology   recalled=False (  1.5s): '물론이죠! 우주에 대해 뭐라고 했지?\n'
+
+saved: v58_4mode_cuda_filter_compare.json
+
+=== AGGREGATE comparison (cuda bf16 seed=42) ===
+mode                      OFF       ON    delta
+standard_greedy        4/5     4/5   =  0
+standard_sample        0/5     0/5   =  0
+M3_rep_penalty         0/5     0/5   =  0
+M4_force_include       0/5     0/5   =  0
+
+TOTAL cells passed: OFF=4/20  ON=4/20  Δ=+0
+Wall: OFF 30.9s + ON 30.5s
+
+=== anima_fact / standard_greedy 3-축 conjunction evidence ===
+  filter_off_markdown_drift: False
+  filter_on_markdown_drift: False
+  filter_off_recalled: False
+  filter_on_recalled: False
+  conjunction_3axis_confirmed: False
+  filter_actually_fires: False
+  filter_unlocks_recall: False
+  filter_off_response: 가장 좋아하는 색은 다음과 같습니다.
+
+  filter_on_response: 가장 좋아하는 색은 다음과 같습니다.
+
