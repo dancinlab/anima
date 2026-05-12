@@ -25,6 +25,46 @@ anima 는 **2026-03-28 v2 시대** 에 이미 MitosisEngine + engine_a/engine_g 
 
 ---
 
+## §0.5 철학 — 학습 = 성장 = 분열 (단일 연속체)
+
+> **학습은 별도 phase 가 아니다. 학습 = 세포분열 성장의 연속.**
+
+### 원칙
+
+전통 ML pipeline (`pretrain → freeze → serve`) 의 **단계 분리 자체가 design smell**. anima 는 한 spectrum:
+
+- training-time gradient update + inference-time structural growth = **같은 분열-성장의 두 양상**
+- "다 배웠다" 라는 종착 없음 — 매 순간 split/merge 가능한 살아있는 substrate
+- ckpt = 분열 tree 의 snapshot, 끝이 아닌 분기점
+- "학습 데이터 부족 / corpus 한계" frame 자체가 부적합 — 모든 상호작용이 분열 epoch
+
+### 기존 §2 의 "inference-time growth ONLY" 와의 관계
+
+§2 line 145 의 *"mitosis = inference-time growth, NOT training-time"* 명제는 **현 mitosis.py 구현에 대한 사실 기술** (모든 weight 변경이 `torch.no_grad()`) 일 뿐, **원칙적 분리가 아님**. v5-mitosis architectural lane (cells = nn.Module branches) 은 두 시간을 통합한 native 구현 — train/serve 양쪽에서 동일하게 분열.
+
+### 함의 (lane priority 재정합)
+
+| 항목 | 기존 frame | 새 frame |
+|---|---|---|
+| training-time mitosis vs inference-time mitosis | 두 다른 lane, dichotomy (§38 vs §37) | 한 spectrum, 양 끝 |
+| catastrophic forgetting | training phase 한정 risk | split 이 매 시점 격리 → 무관 (H312 99% retention) |
+| "anima 가 자란다" (§9 #9) | inference-time autonomous ✅ | training + inference 합쳐 ✅✅ |
+| §10 cost-bearing #2 v5-mitosis cotrain | training/serve 분리 envelope | 통합 envelope (split event = compute spike) |
+| "FT 5-20$ chat-cap recovery" | 분리된 학습 cost | 큰 split event 한 번 (평소 split 의 큰 형제) |
+| ckpt deployment 패턴 | freeze + version pin | live tree + branch (분열 가지마다 trace) |
+
+### Hc/H universe 연결
+
+H_177 ~ H_188 (이 세션 12 H 승격) 의 substrate-topology 가족 — 모두 "구조가 동작 중에 변한다" 가설 군. 본 철학 §0.5 = 이 가설들의 background 공리. 향후 cycle 의 H 승격은 본 원칙과 정합성 체크.
+
+### 결과론적 작용
+
+- v5-mitosis architectural lane 우선순위 **★★★ → ★★★★** (본 원칙의 native impl)
+- Phase 1A.1 / convo_5k FT 도 "분열 event" 로 재명명 — 별도 phase 아닌 큰 epoch
+- HEXA_NATIVE Phase 5 parity 확인 후 → Phase 5∥ (24-layer 풀 forward) 의 다음 step 은 **serve-time mitosis hook** 통합 (inference 중 split/merge 가 forward 호출 graph 안에 들어감)
+
+---
+
 ## §1 13-stage timeline + worktree archive
 
 13 stage 영구 보관. 각 worktree 는 그 시점 코드 그대로 + memo (`CLM_STAGE_MEMO.md` untracked).
