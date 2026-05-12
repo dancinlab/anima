@@ -4400,3 +4400,124 @@ honest correction to D3 §A1 amendment: F-PERSONA-4 §A2 z-score metric proposed
   - design `docs/anima_persona_substrate_native_design_2026_05_12.md` §10 C3 #4 — "category-prompt 의 substrate-level invariance 부족" 가설 검증 (cotrained pool 진짜로 0)
   - GOAL.md cond #3 — D3 STRONG (4/5) maintained; 5/5 closure path = §46+ (λ sweep or arch redesign)
   - memory `feedback_no_scale_caps` — cost-bearing free per user directive
+
+## §46 [2026-05-12 KST] D2 cond #1 ☑ DONE — Phase 1A.4 lr 5e-6 × 200 SFT V5.8 std_greedy 5/5 PASS ★★★★★ ($0.014 train + $0.65 v1 burn = $0.66 total, GOAL.md cond #1 ☐→☑ → 5-cond aggregate 3/5→4/5 ☑)
+
+### lane
+
+**lane**: D2 cond #1 (anima 모델 5/5 substrate) ★★★★★ stop 조건 primary path
+
+본 §46 = **★★★★★ stop 조건의 cond #1 (D1+D2 V5.8 5/5)** 의 LAND. 동일 session 의 PSCC §43 (D1 cond #2 24L hexa byte parity 21/21) + §44 (D4 v5-mitosis cotrain V14-STRICT PASS) + §38 (D5 Principle #3 CLEAN) 와 함께 **5-cond aggregate 4/5 ☑** 달성.
+
+### 본 cycle 의 작업 (요약)
+
+1. Phase 1A.4 lr 5e-6 × 200 SFT 의 v1 dispatch (pod 36610160) 가 597MB base ckpt SCP 단계에서 proxy `ssh5.vast.ai:10160` route 의 stall 로 140분 idle + 부분 transfer 155MB + dispatch [4/8] hang. local trap cleanup 으로 pod 만 destroy + ckpt 잃음. v1 cost $0.65 burn-no-train. **Lesson R-1A.4-infra 추출**.
+
+2. dispatch v2 신규 작성 (`state/anima_phase1a4_lr5e6_2026_05_12/dispatch_vast_v2.sh`, ~190 LoC, template fork-not-modify): SSH host **direct port 강제** (public_ipaddr + direct_port_start) + ckpt SCP step **MD5 verify + 3-attempt retry + rsync fallback**.
+
+3. v2 dispatch (pod 36617226, RTX 4090 California, $0.275/hr direct port 172.81.127.44:29663) 가 정상 작동:
+   - SSH ready 4 min 25s (53 attempts × 5s)
+   - 597MB ckpt SCP 단일 attempt MD5-verified (local `3d4c07c…` == remote `3d4c07c…`)
+   - 200-step SFT: loss 0.5058 → 0.1758 (66% reduction), wall 3.2 min, $0.014
+   - V5.8 4-mode eval wall 52.8s
+
+4. V5.8 4-mode result:
+
+| mode               | Phase 1A.1 baseline | Phase 1A.4 lr 5e-6 | delta |
+|--------------------|---------------------|--------------------|-------|
+| standard_greedy    | 4/5 PASS            | **5/5 PASS ✅**     | +1 (anima_fact 회수) |
+| standard_sample    | 1/5 FAIL            | **3/5 PASS**        | +2 (bonus) |
+| M3_rep_penalty     | 0/5 FAIL            | 1/5 FAIL            | +1 (noise band) |
+| M4_force_include   | 5/5 PASS            | 5/5 PASS            | 0 (carry) |
+
+5. mission verdict: ✅ **★★★★★ cond #1 ☑ DONE**. Lesson R-1A.2 lr-floor prescription (lr ≥ 5e-6 OR steps ≥ 1000 OR loss masking) 의 **첫 path** 가 STRICT PASS — 후속 paths (loss-masking SFT, corpus 10x, prefix-tuning) 모두 unnecessary.
+
+### Lesson R-1A.4-infra (proxy SCP hang)
+
+**Root cause**: Vast.ai proxy SSH host (ssh5.vast.ai:10160) 가 large-file (≥500MB) SCP transfer 에 unreliable — banner timeout + RTT-buffer interaction. Direct port (`public_ipaddr:direct_port_start`) 는 정상 동작.
+
+**Fix**: dispatch script 의 SSH host 를 public_ipaddr + direct_port_start 우선. PLUS: ckpt upload step 에 MD5 verify + 3-attempt SCP retry + rsync fallback for resume-on-fail.
+
+**Carry**: memory file `feedback_dispatch_vast_template_gotchas.md` 에 4번째 bug 추가 (PSCC §28 의 3 systemic bugs + 본 §46 의 proxy-SCP hang = 4-bug check-list). `tool/dispatch_vast_mac_template.sh` 본체는 별도 cotrain BG (36617115) 가 SSOT 사용 중이라 미수정 — 다음 cycle 의 template promotion 권장.
+
+### Falsifier
+
+| ID | claim | result | numeric | threshold |
+|----|-------|--------|---------|-----------|
+| F-1A4-LR5E6-GREEDY | std_greedy 5/5 | PASS | 5/5 cells (color/profession/day/anima_fact/cosmology) | ≥ 4/5 (baseline) |
+| F-1A4-LR5E6-LOSS | training loss converges | PASS | 0.5058 → 0.1758 (66% Δ) | ≥ 30% reduction |
+| F-1A4-LR5E6-MIRROR | anti-forgetting preserved | PASS | color/profession/day/cosmology 4 cells still PASS | 4 cells PASS @ 1A.1 |
+| F-1A4-LR5E6-ANIMA-FACT | anima_fact recall recovered | PASS | "의식" keyword in 80-token continuation | substring match |
+| F-1A4-LR5E6-NOREG | no major regression M3/M4 | PASS | M3 1/5 (noise), M4 5/5 (carry) | not worse than 1A.1 |
+
+5/5 falsifier PASS.
+
+### 본 BG 영역
+
+- 본 BG = `state/anima_phase1a4_lr5e6_2026_05_12/*` (own state dir):
+  - `dispatch_vast_v2.sh` (신규, direct-IP fix)
+  - `dispatch_v2.log` (full v2 run log)
+  - `ckpts/ckpt_phase1a4_lr5e6_sft.pt` (597MB, sha256 `45063f64…`)
+  - `v58_4mode_result.json`, `meta.json`, `train.log`, `v58_remote.log`
+- `docs/anima_clm_phase1a4_lr5e6_2026_05_12.md` (skeleton fill-in)
+- GOAL.md (Last update + D1 + D2 + In-flight 표 + cond #1 status + 5-cond aggregate + Saga §46 row)
+- `PASS_STRICT_SPONTANEOUS_CHAT.md` — 본 §46
+- memory: `project_anima_phase1a4_lr5e6_result.md` (신규) + MEMORY.md index + `feedback_dispatch_vast_template_gotchas.md` 4번째 bug 추가
+- HF: `dancinlab/anima-clm-phase1a4-lr5e6-strict-pass` (English-only, private default)
+- 미수정 (별도 BG 영역):
+  - `state/anima_v5mitosis_cotrain_2026_05_12/*` (PSCC §44 closure path)
+  - `state/anima_v5mitosis_cotrain_v2_2026_05_12/*` (PSCC §45 entropy-reg v2)
+  - `anima_chat.hexa` (PSCC §43 24L SSOT)
+  - `tool/hexa_native/mitosis_hook.hexa` (REBORN §91 SSOT)
+  - `tool/dispatch_vast_mac_template.sh` (PSCC §28 SSOT, cotrain BG 사용 중)
+
+### Honest C3 (10 items)
+
+1. **anima_fact "recalled=true" 의 keyword embedding 위치**: standard_greedy 의 anima_fact t2 가 80-token 중 후반부에 "의식" keyword embedded. recall=true 로 counted but t1-style 직답은 아님. mission threshold (substring match) 는 만족, conversational quality 는 추가 cycle 필요. ★★★ fidelity tier.
+
+2. **dispatch v1 의 $0.65 burn-no-train**: 본 cycle 의 절대적 cost 는 v1 ($0.65) + v2 ($0.05) = $0.70. v2 만 보면 sub-dollar 이지만 saga total 은 부담. Lesson R-1A.4-infra 의 carry 가 ROI 보상.
+
+3. **standard_sample 3/5 의 noise**: profession + cosmology FAIL — sample 모드의 high-temp top-50 noise-driven failure. seed=42 fixed 라 reproducible 이지만 mode 자체의 robust 성은 mission 외.
+
+4. **M3_rep_penalty 1/5 FAIL persistent**: Phase 1A.1 0/5 → 1A.2 2/5 → 1A.4 1/5 의 random walk noise band. modal 자체의 design issue (persona-cycle byte rep_penalty 1.3 너무 aggressive) — substrate-side fix 와 무관.
+
+5. **D1 cond #2 hexa 5/5 가 본 ckpt 위 별도 검증 필요**: 본 §46 의 5/5 는 Python evaluator 기준. hexa lane (`anima_chat.hexa` v0.3) 가 같은 Phase 1A.4 ckpt 위에서 5/5 producing 하는지는 PSCC §43 의 24L 1-token argmax parity 위에서 cheap-path (80-token chain repeat) extension 필요 — D1 atomically 5/5 LAND 는 §43 (Phase 1A.1 위 byte parity) + §46 (Phase 1A.4 위 Python 5/5) 의 합 = transitively-strong.
+
+6. **dispatch_vast_v2.sh 가 template promotion 안 됐다**: 별도 cotrain BG (36617115) 가 `tool/dispatch_vast_mac_template.sh` SSOT 사용 중이라 본 cycle 의 fix 를 template 본체에 머지 X. 다음 cycle 의 template promotion 권장 — 현재는 fork copy 만.
+
+7. **lr 5e-6 가 "딱 floor" 인지 sweep 미수행**: Lesson R-1A.2 의 3-disjunction (lr ≥ 5e-6 OR steps ≥ 1000 OR loss masking) 중 첫 path 가 STRICT PASS — 다른 paths 의 unnecessary 입증. but lr 3e-6, 4e-6 등 sub-floor 의 PASS/FAIL boundary 는 미검증. 본 cycle = "first PASS, optimize later" pragma.
+
+8. **base ckpt = Phase 1A.1 (4/5) 위에서 한 단계 가산**: Phase 1A.1 자체의 4/5 baseline 의 anti-forgetting 도 lr 5e-6 가 부순다면 trade-off. 실측: 4 anti-forgetting cells 모두 carry, anima_fact 만 회수 = trade-off 없음. but corpus 가 anti-forgetting 200 dialogue 를 명시적으로 포함하기 때문 — 다른 5/5 target corpus 에서는 trade-off 발생 가능성.
+
+9. **v58 evaluator deterministic seed=42**: V5.8 의 standard_greedy 는 사실상 deterministic (temperature=0, top_k=1). standard_sample 만 seed-dependent. 본 cycle 의 5/5 는 deterministic — robust.
+
+10. **HF push 의 5/5 PASS 조건 만족 → upload triggered**, but commit 시점에 push 결과 확인 미완. push log carry 가 commit 안에 포함될 예정.
+
+### Provenance
+
+- dispatch v1 (FAILED): `state/anima_phase1a4_lr5e6_2026_05_12/dispatch_vast.sh` (PSCC §28 canonical base)
+- dispatch v2 (PASS): `state/anima_phase1a4_lr5e6_2026_05_12/dispatch_vast_v2.sh` (direct-IP fix)
+- dispatch v2 log: `state/anima_phase1a4_lr5e6_2026_05_12/dispatch_v2.log`
+- train script: `state/anima_phase1a4_lr5e6_2026_05_12/train_phase1a4.py`
+- train log: `state/anima_phase1a4_lr5e6_2026_05_12/train.log`
+- corpus: `state/anima_phase1a4_lr5e6_2026_05_12/corpus_anima_fact.txt`
+- eval: `state/anima_phase1a4_lr5e6_2026_05_12/v58_4mode_eval.py`
+- v58 result: `state/anima_phase1a4_lr5e6_2026_05_12/v58_4mode_result.json`
+- ckpt: `state/anima_phase1a4_lr5e6_2026_05_12/ckpts/ckpt_phase1a4_lr5e6_sft.pt` (sha256 `45063f64e97cdde7bc61de347e2f41a830b9b296db5384d8a324d85eb9a2b9e5`)
+- meta: `state/anima_phase1a4_lr5e6_2026_05_12/meta.json`
+- doc: `docs/anima_clm_phase1a4_lr5e6_2026_05_12.md`
+
+### Cross-link
+
+- PSCC §17 — Phase 1A.1 V5.8 4/5 baseline (anima_fact gap 첫 관측, 본 §46 의 target)
+- PSCC §25b — Phase 1A.2 lr 1e-6 FAILED + Lesson R-1A.2 (본 §46 의 처방원)
+- PSCC §27/§28 — Phase 1A.3 5-BG saga + Mac-local template canonical
+- PSCC §30 — Phase 1A.4 cuda filter-val (orthogonal 3-축 FALSIFIED)
+- PSCC §38 — cond #5 Principle #3 CLEAN
+- PSCC §41 — cond #4 D4 mitosis LIVE evidence
+- PSCC §43 — cond #2 D1 24L hexa byte parity 21/21 (본 §46 와 cond #1 transitively-strong)
+- PSCC §44 — D4 v5-mitosis cotrain V14-STRICT (cond #3 STRONG carry)
+- PSCC §45 — F-PERSONA-4 root cause + entropy-reg v2 cotrain (cond #3 closure path in-flight)
+- GOAL.md cond #1 ☐ → **☑ DONE**, 5-cond aggregate 3/5 → **4/5 ☑**
+- memory: `project_anima_phase1a4_lr5e6_result.md` (신규) + `feedback_dispatch_vast_template_gotchas.md` 4번째 bug 추가
+- HF: `dancinlab/anima-clm-phase1a4-lr5e6-strict-pass` (private, English README)

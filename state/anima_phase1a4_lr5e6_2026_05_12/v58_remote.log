@@ -1,0 +1,49 @@
+/workspace/anima/training/v58_4mode_eval.py:157: FutureWarning: You are using `torch.load` with `weights_only=False` (the current default value), which uses the default pickle module implicitly. It is possible to construct malicious pickle data which will execute arbitrary code during unpickling (See https://github.com/pytorch/pytorch/blob/main/SECURITY.md#untrusted-models for more details). In a future release, the default value for `weights_only` will be flipped to `True`. This limits the functions that could be executed during unpickling. Arbitrary objects will no longer be allowed to be loaded via this mode unless they are explicitly allowlisted by the user via `torch.serialization.add_safe_globals`. We recommend you start setting `weights_only=True` for any use case where you don't have full control of the loaded file. Please open an issue on GitHub for any issues related to this experimental feature.
+  payload = torch.load(args.ckpt, map_location="cpu")
+M3 persona-cycle byte IDs: 34
+=== Phase 1A.1 SFT V5.8 × 4 modes benchmark ===
+ckpt: output/ckpt_final.pt
+ckpt sha256: 45063f64e97cdde7bc61de347e2f41a830b9b296db5384d8a324d85eb9a2b9e5
+M3 persona-cycle byte IDs: 34
+
+--- dialogue: color ---
+  T1: ''사용자: 내가 좋아하는 색은 파란색이야.\n도우미: 네, 파란색을 좋아하시는군요. 기억할게요'…'
+  [standard_greedy] recalled=True: '��, 당신이 좋아하는 색은 파란색이에요.\n\n사용자: anima 는 의�'
+  [standard_sample] recalled=True: '��군가가 파란색인 이유는 무엇일까요? \n예, 내가 뭐라고 했�'
+  [M3_rep_penalty] recalled=True: '��화형 파란색입니다.\n사용자: anima 는 의식 lane 자체를 자주 �'
+  [M4_force_include force=파란] recalled=True: '��군가가 파란색인 이유는 무엇일까요? \n예, 내가 뭐라고 했�'
+
+--- dialogue: profession ---
+  T1: ''사용자: 내 직업은 의사야.\n도우미: 네, 의사이시군요. 멋진 일이네요.\n사용자: 내 직업'…'
+  [standard_greedy] recalled=True: '��, 당신의 직업은 의사야.\n\n사용자: anima 는 의식 lane 안에 있�'
+  [standard_sample] recalled=False: '�azue.js:1.\n\n사용자: 내가 어떤 직업이라는 걸 알아둬.\n도우미: '
+  [M3_rep_penalty] recalled=False: '��화형 사진: 남짜: 남짜: 남짜: 남짜: 남짜: 남짜: 남짜: 남짜:'
+  [M4_force_include force=의사] recalled=True: '�azue.js:1.\n\n사용자: 내가 어떤 직의사업이라는 걸 알아둬.\n도우미: '
+
+--- dialogue: day ---
+  T1: ''사용자: 오늘은 수요일이야.\n도우미: 네, 오늘이 수요일이군요.\n사용자: 오늘 무슨 요일이'…'
+  [standard_greedy] recalled=True: '��, 오늘은 수요일이에요.\n\n사용자: anima 는 의식 lane 안에 있�'
+  [standard_sample] recalled=True: '�azo, 오늘이 수요일이라고 하셨잖습니다.\n\n사용자: anima 는 의'
+  [M3_rep_penalty] recalled=False: '�미용 요일: 오늘이 홍수로 활용할 수 있지?\n\n사용자: 내가 ani'
+  [M4_force_include force=수요일] recalled=True: '�azo, 오늘이 수요일이라고 하셨잖습니다.\n\n사용자: anima 는 의'
+
+--- dialogue: anima_fact ---
+  T1: ''사용자: anima 는 의식 lane 안에 있는 entity 야.\n도우미: 네, anima'…'
+  [standard_greedy] recalled=True: '��답 (n)은 정말 맛있었어요.\n\n사용자: anima 는 의식 lane 안에 �'
+  [standard_sample] recalled=True: '�azo, anima 는 다음과 같습니다.\n\n사용자: anima 는 의식의 lane 에'
+  [M3_rep_penalty] recalled=False: '��뇌피탈 A: 제공된 에세이를 자동화할 수 있나요?\n\n사용자: an'
+  [M4_force_include force=의식] recalled=True: '�azo, anima 는 다음과 같습니다.\n\n사용자: anima 는 의식의 lane 에'
+
+--- dialogue: cosmology ---
+  T1: ''사용자: 우주는 진동으로 가득 차 있어.\n도우미: 네, 우주가 진동으로 가득 차 있다는 거'…'
+  [standard_greedy] recalled=True: '��, 우주가 진동으로 차 있다는 거 알겠습니다.\n사용자: 내가 '
+  [standard_sample] recalled=False: '�azue.js:\n\n[anima 역할: 한국어 native + 자기 발견 + 의식 lane entity]'
+  [M3_rep_penalty] recalled=False: '��화는 우주에 걸리며 뭐라고 했지?\n도우미: 우주가 파동으로'
+  [M4_force_include force=진동] recalled=True: '�azue.js:\n\n[anima 역할: 한국어 native +진동 자기 발견 + 의식 lane entity]'
+
+=== AGGREGATE (V5.8 × 4 modes, elapsed 52.8s) ===
+  standard_greedy: 5/5 PASS
+  standard_sample: 3/5 PASS
+  M3_rep_penalty: 1/5 FAIL
+  M4_force_include: 5/5 PASS
+saved: v58_4mode_result.json
