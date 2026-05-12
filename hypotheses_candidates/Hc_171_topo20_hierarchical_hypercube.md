@@ -3,12 +3,15 @@ id: Hc_171
 slug: topo20-hierarchical-hypercube
 title: 8 clusters × 128-cell 7D hypercubes with sparse inter-cluster shortcuts (TOPO20)
 domain: physics | math | consciousness
-status: candidate-unverified
+status: merged-to-H_177
 source_doc: docs/hypotheses/topo/TOPO20.md
 source_lines: 1-30
 promoted_at: 2026-05-11
-linked_h: Hc_157 (TOPO8 flat hypercube)
-notes: 8x128=1024; intra 7D hypercube + sparse inter shortcuts
+merged_to: hypotheses/H_177_topo10_20_substrate_topology_extension.md
+merged_at: 2026-05-12
+verify_decision: PROMOTE_READY (cycle #5, falsifiers=10, honest_limits=5, math_domains=[iit4, topo])
+linked_h: Hc_157 (TOPO8 flat hypercube), H_159 (parent topology cluster), Hc_159 (sibling absorbed alongside)
+notes: 8x128=1024; intra 7D hypercube + sparse inter shortcuts. Verify cycle #5 PROMOTE_READY → absorbed into H_177 alongside Hc_159.
 ---
 
 ## Hypothesis

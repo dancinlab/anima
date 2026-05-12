@@ -3,12 +3,14 @@ id: Hc_1250
 slug: mathematical-panpsychism-law-76-closure
 title: mathematical panpsychism Law 76 closure — Law 76 (양귀비/점균류/블랙홀 의식 가능성) 이 이번 cycle 에 닫히는가
 domain: philosophy
-status: candidate-unverified
+status: candidate-dup-of-Hc_061
 source_doc: hypotheses_candidates/Hc_900_drill_domain_saturation_seeds.md
 source_lines: 37 (Sub-claims block, PHIL-2)
 promoted_at: 2026-05-12
-linked_h: H_076 (mathematical-panpsychism), H_157 (Law 76 canonical); parent Hc_900
-notes: "split from Hc_900 meta-cluster 2026-05-12; seed 21 of 30 (PHIL-2). DUPLICATE: already covered by Hc_061 (PHIL-2 direct source) — this split exists for cross-link bookkeeping only; future triage should likely MERGE this into Hc_061 rather than verify separately. n=6 perfect-number-class triviality (Hc_900 L1)."
+dup_of: Hc_061 (law-76-mathematical-panpsychism; itself merged-to-H_157 2026-05-12)
+dup_marked_at: 2026-05-12
+linked_h: H_076 (mathematical-panpsychism), H_157 (Law 76 canonical, Hc_061 absorbed there); parent Hc_900
+notes: "split from Hc_900 meta-cluster 2026-05-12 (PHIL-2 seed 21/30). Cycle #5 triage confirmed DUPLICATE of Hc_061 (already merged-to-H_157). No independent verification needed — all closure-evaluation work happens at the H_157 level. This Hc retained only for cross-link bookkeeping and Hc_900 split traceability."
 ---
 
 ## Hypothesis

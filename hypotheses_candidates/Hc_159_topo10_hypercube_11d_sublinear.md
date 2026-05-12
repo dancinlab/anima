@@ -3,12 +3,15 @@ id: Hc_159
 slug: topo10-hypercube-11d-sublinear
 title: 11D hypercube 2048-cell shows Φ regression vs 10D (sublinear scaling) (TOPO10)
 domain: physics | math | consciousness
-status: candidate-unverified
+status: merged-to-H_177
 source_doc: docs/hypotheses/topo/TOPO10.md
 source_lines: 1-25
 promoted_at: 2026-05-11
-linked_h: Hc_157 (TOPO8 10D)
-notes: Φ=400.9, final 581 cells, lower than TOPO8 535.5
+merged_to: hypotheses/H_177_topo10_20_substrate_topology_extension.md
+merged_at: 2026-05-12
+verify_decision: PROMOTE_READY (cycle #5, falsifiers=10, honest_limits=5, math_domains=[iit4, topo])
+linked_h: Hc_157 (TOPO8 10D), H_159 (parent — H_159.7 superlinear-extrapolation prediction that this Hc falsifies)
+notes: Φ=400.9, final 581 cells, lower than TOPO8 535.5. Verify cycle #5 PROMOTE_READY → absorbed into H_177 (TOPO10+TOPO20 substrate-topology extension cluster) alongside Hc_171.
 ---
 
 ## Hypothesis
