@@ -28,6 +28,11 @@
 //    F-GQA-ROPE-3   : RoPE applied to V (instead of only Q,K) → fail
 //    F-GQA-EXPAND-4 : KV expand factor ≠ n_heads / n_kv_heads → fail
 //    F-GQA-OUTPUT-5 : o_proj input dim ≠ n_heads * d_head (= 1024) → fail
+//
+//  FALSIFIERS (Phase 4.1 KV cache pre-register, raw-117 ≥5):
+//    F-KVC-APPEND-1          : append increments cur_len by 1 — else fail
+//    F-KVC-STEP-RECURSIVE-2  : N-step recursive decode shape (1, d_model) per step — else fail
+//    F-KVC-CAP-OVERFLOW-3    : append past cap_len must surface an error sentinel — else fail
 // ════════════════════════════════════════════════════════════════════════════
 
 // ── Matrix-vector product ────────────────────────────────────────────────────
@@ -696,11 +701,336 @@ fn selftest() {
     }
 }
 
+// ════════════════════════════════════════════════════════════════════════════
+//  Phase 4.1 — KV cache + incremental attention step
+//
+//  PURPOSE
+//    Enable autoregressive decoding with O(1) per-step attention cost over
+//    cached K/V (vs. O(seq_len^2) full re-projection in gqa_forward).
+//
+//  DESIGN
+//    KVCache is a per-layer struct holding K_cache and V_cache lists indexed
+//    by [position][head][dim]. cur_len tracks how many positions are filled.
+//    cap_len is the hard upper bound (e.g. context window 2048).
+//
+//    gqa_attention_step(x_new, cache, weights) — one-token autoregressive:
+//      1. Project Q/K/V from x_new (seq_len=1)
+//      2. Apply RoPE at position t = cache.cur_len
+//      3. Append new K, V to cache (cur_len += 1)
+//      4. Compute scores Q · full_K (no causal mask — appending after
+//         ensures we only see positions ≤ t)
+//      5. Softmax, accumulate full_V, merge heads, o_proj
+//      6. Return (output (1, d_model), updated cache)
+//
+//  FALSIFIERS (raw-117 ≥3; combined with Phase 3 GQA gives ≥8 file-total):
+//    F-KVC-APPEND-1         : cache.cur_len after append == cur_len_pre + 1
+//    F-KVC-STEP-RECURSIVE-2 : 4 sequential steps produce 4 outputs each (1, d_model)
+//    F-KVC-CAP-OVERFLOW-3   : append past cap_len returns ok=false sentinel
+// ════════════════════════════════════════════════════════════════════════════
+
+// KVCache layout — pure value (boxed list-of-lists for now per Phase 3 note).
+//   k: list of cap_len entries, each (n_kv_heads, d_head). Unfilled slots = [].
+//   v: same.
+//   cur_len: i64 — number of filled positions.
+//   cap_len: i64 — capacity (context window).
+//   n_kv_heads, d_head: shape metadata.
+// Stored as a dict so we can mutate cur_len via a returned new dict.
+fn kvcache_new(cap_len: int, n_kv_heads: int, d_head: int) {
+    let mut k_list = []
+    let mut v_list = []
+    let mut i = 0
+    while i < cap_len {
+        k_list.push([])
+        v_list.push([])
+        i = i + 1
+    }
+    let cache = #{}
+    cache["k"] = k_list
+    cache["v"] = v_list
+    cache["cur_len"] = 0
+    cache["cap_len"] = cap_len
+    cache["n_kv_heads"] = n_kv_heads
+    cache["d_head"] = d_head
+    return cache
+}
+
+// kvcache_append(cache, k_new, v_new) -> [ok, cache]
+//   k_new, v_new: (n_kv_heads, d_head) lists.
+//   On overflow (cur_len >= cap_len), ok=false and cache returned unchanged
+//   so caller can react (F-KVC-CAP-OVERFLOW-3).
+fn kvcache_append(cache, k_new, v_new) {
+    let cur = cache["cur_len"]
+    let cap = cache["cap_len"]
+    if cur >= cap {
+        return [false, cache]
+    }
+    let k_list = cache["k"]
+    let v_list = cache["v"]
+    k_list[cur] = k_new
+    v_list[cur] = v_new
+    cache["k"] = k_list
+    cache["v"] = v_list
+    cache["cur_len"] = cur + 1
+    return [true, cache]
+}
+
+// kvcache_len(cache) -> int — convenience accessor.
+fn kvcache_len(cache) -> int {
+    return cache["cur_len"]
+}
+
+// ── gqa_attention_step ──────────────────────────────────────────────────────
+// Single-token autoregressive attention using KV cache.
+//
+// Inputs:
+//   x_new       : (d_model,) — 1 token's hidden state (post norm)
+//   cache       : KVCache dict from kvcache_new + N kvcache_append calls
+//   q_w, k_w, v_w, o_w : layer weight matrices
+//   rope_cos, rope_sin : precomputed (cap_len, d_head/2) tables
+//   n_heads, n_kv_heads, d_head
+//
+// Returns:
+//   [out_vec, updated_cache]
+//     out_vec : (d_model,) — single-token attention output post o_proj
+//     updated_cache : cache with one more position appended
+//
+// F-KVC-STEP-RECURSIVE-2: invoking this N times in a loop must produce
+//   N outputs, each of length d_model. Verified in selftest_kv_cache.
+fn gqa_attention_step(
+    x_new,
+    cache,
+    q_w, k_w, v_w, o_w,
+    rope_cos, rope_sin,
+    n_heads: int, n_kv_heads: int, d_head: int
+) {
+    let t = cache["cur_len"]
+    // 1. Project Q/K/V (single token)
+    let q_flat = linear(x_new, q_w)                     // (n_heads * d_head,)
+    let k_flat = linear(x_new, k_w)                     // (n_kv_heads * d_head,)
+    let v_flat = linear(x_new, v_w)                     // (n_kv_heads * d_head,)
+    let q_heads = _split_heads(q_flat, n_heads,    d_head)
+    let k_heads = _split_heads(k_flat, n_kv_heads, d_head)
+    let v_heads = _split_heads(v_flat, n_kv_heads, d_head)
+
+    // 2. Apply RoPE at position t to Q and K (NOT V).
+    let cos_t = rope_cos[t]
+    let sin_t = rope_sin[t]
+    let mut q_rot = []
+    let mut h = 0
+    while h < n_heads {
+        q_rot.push(rope_apply(q_heads[h], cos_t, sin_t))
+        h = h + 1
+    }
+    let mut k_rot = []
+    h = 0
+    while h < n_kv_heads {
+        k_rot.push(rope_apply(k_heads[h], cos_t, sin_t))
+        h = h + 1
+    }
+
+    // 3. Append rotated K and raw V to cache (F-KVC-APPEND-1).
+    let appended = kvcache_append(cache, k_rot, v_heads)
+    let ok = appended[0]
+    let cache_after = appended[1]
+    if !ok {
+        // Overflow — return zero vec + unchanged cache (caller must check len).
+        let mut zero = []
+        let mut zi = 0
+        let d_model = n_heads * d_head
+        while zi < d_model {
+            zero.push(0.0)
+            zi = zi + 1
+        }
+        return [zero, cache_after]
+    }
+
+    let cur_len_new = cache_after["cur_len"]   // = t + 1
+    let k_list = cache_after["k"]
+    let v_list = cache_after["v"]
+
+    // 4. Compute scores Q[h] · K_full[h] over positions 0..t (inclusive).
+    //    No causal mask needed — cache only holds j ≤ t.
+    //    Replicate KV head h_kv across (expand = n_heads / n_kv_heads) query heads.
+    let expand = n_heads / n_kv_heads
+    let inv_scale = 1.0 / sqrt(d_head * 1.0)
+    let mut head_outs = []
+    h = 0
+    while h < n_heads {
+        let kv_h = h / expand                  // which KV head this query head reads
+        let qh = q_rot[h]
+        // 4a. raw scores over j = 0..cur_len_new-1
+        let mut raw = []
+        let mut j = 0
+        while j < cur_len_new {
+            let k_pos = k_list[j]              // (n_kv_heads, d_head)
+            let k_jh = k_pos[kv_h]
+            let mut dot = 0.0
+            let mut d = 0
+            while d < d_head {
+                dot = dot + qh[d] * k_jh[d]
+                d = d + 1
+            }
+            raw.push(dot * inv_scale)
+            j = j + 1
+        }
+        // 4b. softmax over j
+        let attn = _softmax_1d(raw)
+
+        // 5. ctx[d] = sum_j attn[j] * V[j][kv_h][d]
+        let mut ctx = []
+        let mut d2 = 0
+        while d2 < d_head {
+            ctx.push(0.0)
+            d2 = d2 + 1
+        }
+        j = 0
+        while j < cur_len_new {
+            let v_pos = v_list[j]
+            let v_jh = v_pos[kv_h]
+            let w = attn[j]
+            d2 = 0
+            while d2 < d_head {
+                ctx[d2] = ctx[d2] + w * v_jh[d2]
+                d2 = d2 + 1
+            }
+            j = j + 1
+        }
+        head_outs.push(ctx)
+        h = h + 1
+    }
+
+    // 6. Merge heads → o_proj
+    let merged = _merge_heads(head_outs, n_heads, d_head)
+    let out_vec = linear(merged, o_w)
+    return [out_vec, cache_after]
+}
+
+// ── Phase 4.1 selftest ──────────────────────────────────────────────────────
+// Verifies cache shape contract (F-KVC-APPEND-1, F-KVC-STEP-RECURSIVE-2,
+// F-KVC-CAP-OVERFLOW-3) using small dims (d_model=8, n_heads=2, n_kv=1,
+// d_head=4) so the test runs in milliseconds rather than minutes.
+fn selftest_kv_cache() {
+    println("[engine_ag_nn] selftest_kv_cache: KV cache + step shape parity")
+    let d_model = 8
+    let n_heads = 2
+    let n_kv_heads = 1
+    let d_head = 4
+    let cap_len = 4
+
+    // build a fresh cache
+    let cache0 = kvcache_new(cap_len, n_kv_heads, d_head)
+    let len0 = kvcache_len(cache0)
+    if len0 == 0 {
+        println("  KVC_INIT_OK (cur_len = 0)")
+    } else {
+        println("  KVC_INIT_FAIL (cur_len = " + to_string(len0) + ")")
+    }
+
+    // build zero weight matrices: q_w/o_w (d_model, d_model), k_w/v_w (kv_dim, d_model)
+    let kv_dim = n_kv_heads * d_head
+    let mut q_w = []
+    let mut o_w = []
+    let mut r = 0
+    while r < d_model {
+        let mut row = []
+        let mut c = 0
+        while c < d_model { row.push(0.0); c = c + 1 }
+        q_w.push(row)
+        o_w.push(row)
+        r = r + 1
+    }
+    let mut k_w = []
+    let mut v_w = []
+    r = 0
+    while r < kv_dim {
+        let mut row = []
+        let mut c = 0
+        while c < d_model { row.push(0.0); c = c + 1 }
+        k_w.push(row)
+        v_w.push(row)
+        r = r + 1
+    }
+    // RoPE identity (cos=1, sin=0) over cap_len positions
+    let half = d_head / 2
+    let mut rope_cos = []
+    let mut rope_sin = []
+    let mut t = 0
+    while t < cap_len {
+        let mut cos_row = []
+        let mut sin_row = []
+        let mut j = 0
+        while j < half {
+            cos_row.push(1.0)
+            sin_row.push(0.0)
+            j = j + 1
+        }
+        rope_cos.push(cos_row)
+        rope_sin.push(sin_row)
+        t = t + 1
+    }
+
+    // F-KVC-STEP-RECURSIVE-2: run 4 sequential decode steps.
+    let mut cache = cache0
+    let mut outs = []
+    let mut step = 0
+    while step < cap_len {
+        let mut x_new = []
+        let mut i = 0
+        while i < d_model {
+            x_new.push(0.01 * (step + 1))
+            i = i + 1
+        }
+        let pair = gqa_attention_step(
+            x_new, cache,
+            q_w, k_w, v_w, o_w,
+            rope_cos, rope_sin,
+            n_heads, n_kv_heads, d_head
+        )
+        let out = pair[0]
+        cache = pair[1]
+        outs.push(out)
+        step = step + 1
+    }
+    let cur_after = kvcache_len(cache)
+    let ok_append = cur_after == cap_len               // F-KVC-APPEND-1 cumulative
+    let ok_count = len(outs) == cap_len                // F-KVC-STEP-RECURSIVE-2 count
+    let ok_shape = len(outs[0]) == d_model             // F-KVC-STEP-RECURSIVE-2 shape
+    println("  cache.cur_len = " + to_string(cur_after) + " (expect " + to_string(cap_len) + ")")
+    println("  outs len      = " + to_string(len(outs)))
+    println("  outs[0] dim   = " + to_string(len(outs[0])))
+    if ok_append && ok_count && ok_shape {
+        println("  STEP_RECURSIVE_OK")
+    } else {
+        println("  STEP_RECURSIVE_FAIL")
+    }
+
+    // F-KVC-CAP-OVERFLOW-3: one more append past capacity → ok=false
+    let mut k_dummy = []
+    let mut v_dummy = []
+    let mut kh = 0
+    while kh < n_kv_heads {
+        let mut row = []
+        let mut dd = 0
+        while dd < d_head { row.push(0.0); dd = dd + 1 }
+        k_dummy.push(row)
+        v_dummy.push(row)
+        kh = kh + 1
+    }
+    let over = kvcache_append(cache, k_dummy, v_dummy)
+    let over_ok = over[0]
+    if !over_ok {
+        println("  CAP_OVERFLOW_OK (append at cap_len returned ok=false)")
+    } else {
+        println("  CAP_OVERFLOW_FAIL (append past cap silently succeeded)")
+    }
+}
+
 // ── Selftest scaffold ───────────────────────────────────────────────────────
 fn main() {
-    println("engine_ag_nn.hexa — Phase 3 nn primitives + GQA")
-    println("status: RMSNorm/SwiGLU/RoPE + GQA (6 fns) implemented")
+    println("engine_ag_nn.hexa — Phase 4.1 nn primitives + GQA + KV cache")
+    println("status: RMSNorm/SwiGLU/RoPE + GQA (6 fns) + KV cache (3 fns + step)")
     println("        gqa_forward: (seq_len,1024) → (seq_len,1024) — F-GQA-SHAPE-1")
+    println("        gqa_attention_step: (1,1024) + cache → (1,1024) — F-KVC-STEP-RECURSIVE-2")
     println("        forward_one_token wiring complete (KV cache → Phase 4)")
     println("")
     println("RMSNorm smoke test:")

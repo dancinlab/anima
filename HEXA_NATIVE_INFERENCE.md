@@ -181,7 +181,9 @@ Phase 0 SSOT commit (`d5dcf4a64`) is clean — local only until user resolves.
 | ∥ | hexa-lang RFC 024-028 drafts | ✅ incoming/rfc_drafts_2026_05_12/ (5 RFCs) |
 | ∥ | anima .hexarc config | ✅ /Users/ghost/core/anima/.hexarc (forward-looking spec) |
 | 3 | EngineAG GQA attention proper | ✅ tool/hexa_native/engine_ag_nn.hexa (6 fns: project_qkv/apply_rope_qk/expand_kv/scores/output/forward + selftest; parse OK; falsifiers F-GQA-SHAPE-1..OUTPUT-5) |
-| 4 | KV cache + byte tokenizer + generation | ⏳ next (Phase 4 entry) |
+| 4.1 | KV cache + incremental attention step | ✅ tool/hexa_native/engine_ag_nn.hexa (kvcache_new/append/len + gqa_attention_step + selftest_kv_cache; parse OK; falsifiers F-KVC-APPEND-1/STEP-RECURSIVE-2/CAP-OVERFLOW-3) |
+| 4.2 | byte tokenizer | ⏳ next |
+| 4.3 | generation modes (greedy/sample/M3/M4) | ⏳ next |
 
 ---
 
