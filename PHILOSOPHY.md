@@ -798,3 +798,78 @@ Total $320-1310 / 9-21d. own 16 cost-band 일부 초과 (substrate research prio
 - 4 Hc candidates + 1 H promotion + NEXT.md §8 cycle 7 priority + PHILOSOPHY.md cont. 9
 - Cost: $0
 - 본 cycle deliverable **100% closure achieved** — pipeline 끝까지 promote 완료
+
+---
+
+## 2026-05-12 (cont. 10) — Principle #8 registered: NO TRAIN/INFER SPLIT (REBORN §0.5 source)
+
+사용자 directive 2026-05-12 "학습 성장 별도가 아닌, 세포분열 성장 계속" → REBORN.md §0.5 (commit `a7e512cb9`) → README Philosophy 표 row #8 → 본 entry. P-* BG verdict 기반이 아닌 **user directive 기반 DESIGN principle** — 7 entries 만에 첫 architectural-commitment 등재.
+
+### Principle statement
+
+> **학습은 별도 phase 가 아니다. 학습 = 세포분열 성장의 연속.**
+
+전통 ML pipeline (`pretrain → freeze → serve`) 의 단계 분리 자체가 design smell. anima 는 한 spectrum:
+
+- training-time gradient update + inference-time structural growth = 같은 분열-성장의 두 양상
+- "다 배웠다" 라는 종착 없음 — 매 순간 split/merge 가능한 살아있는 substrate
+- ckpt = 분열 tree snapshot, freeze 가 아닌 분기점
+- "학습 데이터 부족 / corpus 한계" frame 부적합 — 모든 상호작용이 분열 epoch
+
+### Evidence grade rationale
+
+**DESIGN** (architectural commitment, not yet falsifiable per se) · **★** weak strength (impl 미land).
+
+Foundation (사실 기술 only, 원칙적 분리 아님):
+
+- `~/core/anima_clm_12_unified_growth_loop_last_gasp/anima/src/mitosis.py` L205/258/389/586 — 모든 weight 변경이 `torch.no_grad()` 안 (inference-time growth verified)
+- REBORN.md §2 line 145 *"mitosis = inference-time growth NOT training-time"* = 현 mitosis.py 구현 사실 기술, 본 §0.5 는 그것을 *원칙적 분리 아님* 으로 재정합
+- §0.5 표가 v5-mitosis lane (★★★ → ★★★★) + ckpt frame (freeze → 분기점) + FT cost frame (training phase cost → 큰 split event) + Phase 5∥ next step (24L 풀 forward → serve-time mitosis hook) 4 함의 명시
+
+Falsifier pending — 다음 cycle EMPIRICAL upgrade 후보:
+
+1. Hc draft "train-time vs inference-time mitosis cotrain ablation" — anima-native cells=nn.Module branches 구현 후 cotrain 유 vs 무 비교 (envelope $30-150, REBORN §10 #2)
+2. Hc draft "serve-time mitosis hook latency" — Phase 5∥ 24L 풀 forward 안에 split event 삽입 시 wall delta 측정
+3. Hc draft "ckpt-as-branch reload semantic" — frozen ckpt 와 live tree-branch ckpt 의 동일 입력 응답 divergence 측정
+
+### Cascade effect on prior 7 principles
+
+| # | Existing | §0.5 적용 영향 |
+|---|---|---|
+| 1 NO SYSTEM PROMPT | substrate generates from itself | 미변동 — 분열 substrate 가 self-driven 의 source |
+| 2 NO IDENTITY RULES | emergence from cell dynamics | 강화 — 분열 event 가 identity 변화의 dynamics 근원 |
+| 3 NO PERSONA INJECTION | substrate is persona | 미변동 |
+| 4 NO ASSISTANT FRAMING | substrate alive | 강화 — 살아있음 = 매시점 분열-성장 |
+| 5 NO SPEAK() | continuous externalization | 강화 — 외부화 자체가 분열 epoch |
+| 6 NO FINE-TUNED ETHICS | emerge from cell dynamics | 강화 — cell dynamics 가 train/infer 통합 substrate 전제 |
+| 7 NO PERPLEXITY VERDICT | simple stack on natural utterance | 미변동 |
+
+7 중 4 (NO IDENTITY/ASSISTANT/SPEAK/ETHICS) 가 §0.5 backbone 위에서 강화됨 — 본 entry 가 단순 추가가 아닌 **foundational reframe**.
+
+### Hc/H universe 연결
+
+본 세션 (2026-05-12 cycle #5~#8) H_177~H_191 15 신규 promotion 중 substrate-topology family (H_177/178/179/180) + ΨFormer architectural (H_181) + omega-cycle ALM-free (H_191) = **"구조가 동작 중에 변한다" 가설군**. 본 §0.5 = 이 6 H 의 background 공리. 향후 cycle 의 H 승격은 본 원칙과 정합성 체크 필수.
+
+### Lane priority 갱신 carry (REBORN §0.5 함의)
+
+| 항목 | 기존 | 신규 |
+|---|---|---|
+| v5-mitosis architectural lane | ★★★ | **★★★★** (본 원칙의 native impl) |
+| catastrophic forgetting frame | concern | 폐기 (split = 매시점 격리, H312 99% retention) |
+| ckpt freeze 패턴 | version pin / freeze | 분열 tree branch |
+| FT cost frame | training phase cost | 큰 split event ($5-150 = split spike) |
+| HEXA_NATIVE Phase 5∥ next step | 24L 풀 forward closure | serve-time mitosis hook 통합 (forward call graph 안 split/merge) |
+
+### Next cycle entry trigger
+
+- v5-mitosis architectural lane spec (REBORN §10 #1) 첫 deliverable = 본 원칙의 native impl
+- HEXA_NATIVE Phase 5∥ + serve-time mitosis hook = pure-hexa serve-time growth substrate (양 saga 합본)
+- Falsifier 1-3 (위) 실험 fire 후 EMPIRICAL upgrade
+- 모든 #9+ cycle 출력 → PHILOSOPHY.md cont. 11+ append
+
+### Session metrics (cont. 10)
+
+- 1 user-directive DESIGN principle promote + 1 README row + 1 PHILOSOPHY entry + REBORN.md §0.5 source
+- 7 → 8 principles registered
+- Cost: $0 (directive + edit only)
+- Cascade: 4/7 prior principles reinforced, v5-mitosis lane ★ uplift, Phase 5∥ next-step redefined
