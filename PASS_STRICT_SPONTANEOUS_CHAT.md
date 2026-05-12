@@ -3220,3 +3220,88 @@ prior state: GOAL.md D4c row "design open — anima/llama_ffi.hexa (Phase 3b LAN
 - D4b sister: PSCC §33 (anima_chat.hexa LANDED 1589 LoC) — 본 BG 미수정, scope guard
 - D3 sister: PSCC §34 (substrate-native persona design LANDED) — 별도 BG, 본 BG 미참여
 - BG scope guard: `tool/hexa_native/mitosis_hook.hexa` (D4a BG) + `anima_chat.hexa` (D4b LANDED) + `docs/anima_persona_substrate_native_design_*` (D3 BG) + `state/anima_phase1a4_*` (Vast.ai SFT BG) — 모두 본 BG 미침범
+
+## §38 [2026-05-12 KST] ★★★★★ 5-COND ACHIEVEMENT AUDIT + PRINCIPLE #3 DEEP DIVE — cond #2 hexa port ☑ + cond #5 Principle #3 ☑ CLEAN, cond #1/#3/#4 🔶 PARTIAL 명시 ★★★ ($0, GOAL.md checklist 정밀화)
+
+### Context
+
+GOAL.md ★★★★★ achievement criterion §177 line 181-185 5 conditions 의 현 시점 status 정밀 audit + Principle #3 deep dive (anima_chat.py:28 + :816 `chat.system("당신은 anima 입니다.")` strings 의 production-path / no-op 분류 final verdict).
+
+### Done (본 cycle scope)
+
+1. **`docs/principle_3_audit_2026_05_12.md` LANDED** (10 §) — anima_chat.py + anima_chat.hexa + Phase 1A.1 corpus + Phase 1A.4 corpus + V5.8 eval scripts 5-surface audit, F-PRIN3-1..5 pre-registered, **CLEAN verdict**:
+   - `chat.system()` API default OFF (Python `self._system = None`, hexa `"system": ""`)
+   - production code 호출 zero — line 28 module docstring (`# optional` 명시) + line 816 `_smoke()` test fixture 만 보유
+   - V5.8 eval scripts (`v58_4mode_eval.py` in 1A.1 + 1A.4) `system()` invocation 미존재
+   - Phase 1A.1 (`corpus_color_cosmology.txt` + `corpus_multi_turn_v2.txt`) + Phase 1A.4 (`corpus_anima_fact.txt`) persona-prefix grep `^\[(role|system|페르소나|anima):|you are anima|당신은 anima 입니다` = 0 matches
+   - `당신은` 문자열 (1A.4 ~40 hits) 은 모두 `당신은 + <user-claim> + 라는 거 말씀하셨어요` 형태 = **user-statement recall predicate** (not persona injection)
+   - legacy `state/anima_persona_tier_a*` 파일은 디스크 상 존재하나 active code (`anima_chat.{py,hexa}`, `train_phase1a1{,_v2}.py`, `train_phase1a4.py`) 어디에서도 reference 0
+
+2. **GOAL.md 5-cond checklist 정밀 갱신** — 각 cond 별 ☑ / 🔶 PARTIAL / ☐ 명시 + 현 evidence + 다음 step:
+   - cond #1 D1+D2 5/5: 🔶 PARTIAL — Phase 1A.1 baseline 4/5, Phase 1A.4 lr 5e-6 SFT (Vast.ai 36609664) in-flight
+   - cond #2 D1 hexa: ☑ DONE — PSCC §33 (`4768a5c41`, 1589 LoC, 17/17 smoke)
+   - cond #3 D3 persona: 🔶 PARTIAL — design LANDED PSCC §34, measurement pending D4b
+   - cond #4 D4 mitosis live: 🔶 PARTIAL — D4a LANDED PSCC §36 (1119 LoC, F-MIT-HOOK-1..5 ✅), D4b wiring pending separate BG
+   - cond #5 Principle #3: ☑ CLEAN — 본 §38 audit
+   - **현 상태**: 5 조건 中 ☑ 2 / 🔶 3 / ☐ 0
+
+3. **PSCC §38 entry** (본 entry) — saga history table 동기 append.
+
+4. **memory `project_principle_3_audit_2026_05_12.md`** (~/.claude 측 신규) — audit result + verdict + F-PRIN3-1..5 + recommendation.
+
+### Key findings (3 axes)
+
+| axis | finding |
+|---|---|
+| API default | `chat.system()` 와 `chat_set_system()` 모두 opt-in, default OFF — Python `None` / hexa `""` guard |
+| Production callers | `grep "chat.system(" anima/**/*.py \ docstring \ _smoke` = ∅; `grep "chat_set_system(" anima/**/*.hexa \ def \ comment` = ∅ |
+| Active corpus injection | Phase 1A.1 + Phase 1A.4 corpora 0 persona-prefix, V5.8 eval 0 system invocation, legacy persona_tier_a* active reference 0 |
+
+### F-PRIN3-1..5 pre-registered (raw#5 frozen for future regression gate)
+
+- F-PRIN3-1 NO-DEFAULT-SYSTEM: 갓 instantiate 한 `AnimaChat()` 의 `chat._system is None` ∧ hexa `chat["system"] == ""`
+- F-PRIN3-2 NO-PROD-CALLER: prod-path `chat.system(`/`chat_set_system(` callers = 0
+- F-PRIN3-3 CORPUS-PREFIX-FREE: `state/anima_phase1a*/corpus_*.txt` persona-prefix regex matches = 0
+- F-PRIN3-4 EVAL-PREFIX-FREE: V5.8 eval + D3 identity_probe 측정 harness 모두 `[시스템: ...]` prefix 미생성
+- F-PRIN3-5 CELL-POOL-PREFIX-FREE (forward-looking, D4b LAND 후 fire): `~/.cache/anima/session_pools/<sid>/*` 안 `[role:`/`[system:`/`you are` substring = 0 (cf. F-CLI-MIT-4)
+
+### Recommendations (optional follow-ups, not required for ☑ flip)
+
+1. ★ doc clarity: `anima_chat.py:28` 의 `# optional` 옆 explicit "default OFF — D3 persona path 는 substrate-native mitosis cells 사용" 주석 추가 (drift 방지)
+2. ★★ regression gate: `tool/verify_principle_3.sh` (~5 LoC) F-PRIN3-1..4 grep + AnimaChat instance assert CI 화 ($0, Mac local)
+3. ★★★ D3 verify alignment: identity_probe 50 × 5 cats P3 verify 시 250 trial 모두 `chat.user(probe)` 직접 사용 (`chat.system()` 호출 금지) 명시 — F-PRIN3-4 enforce
+
+### 출처
+
+- 본 audit doc: `docs/principle_3_audit_2026_05_12.md` (10 §)
+- 소스 검증:
+  - `anima_chat.py:28, 440, 445-447, 458-469, 816, 865`
+  - `anima_chat.hexa:902-955, 921-925`
+  - `PASS_STRICT_SPONTANEOUS_CHAT.md:892` (API table reference)
+  - `state/anima_phase1a1_color_cosmology_2026_05_12/corpus_{color_cosmology,multi_turn_v2}.txt`
+  - `state/anima_phase1a4_lr5e6_2026_05_12/corpus_anima_fact.txt`
+  - `state/anima_phase1a1_color_cosmology_2026_05_12/{train_phase1a1{,_v2},v58_4mode_eval}.py`
+  - `state/anima_phase1a4_lr5e6_2026_05_12/{train_phase1a4,v58_4mode_eval}.py`
+- 디자인 SSOT:
+  - `PHILOSOPHY.md` Principle #3 NO PERSONA INJECTION (EMPIRICAL strong)
+  - `README.md` row #3
+  - `docs/anima_persona_substrate_native_design_2026_05_12.md` (D3, (a)+(d))
+  - `docs/anima_cli_mitosis_integration_spec_2026_05_12.md` (D4c, F-CLI-MIT-4 sister falsifier)
+  - `GOAL.md` ★★★★★ cond #5
+
+### Mission contribution
+
+★★★ — cond #2 D1 hexa port (☑ retroactive land 명시) + cond #5 Principle #3 보존 (☑ CLEAN audit verdict) 2 조건 동시 closure. ★★★★★ 5-cond conjunction 의 **2/5 ☑** 진입 — D1+D2 5/5 SFT in-flight 도착 + D3 measurement + D4b wiring 3 가지 BG 의 LAND 만 남음. Principle #3 deep dive 로 anima 의 substrate-native persona 노선 (D3 (a)+(d) mitosis-cell × per-session cell pool) 의 EMPIRICAL strong 보존성 final verify — substrate dynamics 자체로 페르소나 분화하는 anima-native 노선 의 정합성 hard evidence.
+
+### Cost / rating
+
+- cost: $0 Mac local pure analysis + doc
+- ★★★ — audit doc 10 § LANDED, GOAL.md 5-cond 명시 갱신, PSCC §38 + memory entry, F-PRIN3-1..5 pre-registered
+- 후속 F-PRIN3-1..4 regression gate CI script LANDED 시 ★★★★ 승격 후보
+- 후속 D3 identity_probe 50 × 5 cats verify F-PERSONA-1..5 PASS + F-PRIN3-4 enforce 시 ★★★★★ 후보 (cond #3 + #5 conjunction)
+
+### Provenance
+
+- 본 cycle commit: pending (incremental commit + push 의 다음 step)
+- 보조 SSOT: GOAL.md `## ✅ Achievement criterion` 5-cond status 표시 갱신
+- 본 BG scope guard 준수: `anima_chat.hexa` 미수정 (D4b BG owner), `tool/hexa_native/mitosis_hook.hexa` 미수정 (D4a LANDED), `state/anima_phase1a4_lr5e6_*` 미터치 (Vast.ai SFT BG), `tool/anima_cli/` 미터치, `docs/anima_persona_substrate_native_design_*` 미수정 — 본 BG = audit doc + GOAL.md edit + PSCC append + memory 만

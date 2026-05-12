@@ -1,7 +1,7 @@
 # GOAL.md — anima ★★★★★ mission tracker
 
 **Created**: 2026-05-12 KST
-**Last update**: 2026-05-12 KST (mission scope expansion to 4 dimensions)
+**Last update**: 2026-05-12 KST (★★★★★ 5-cond achievement audit + Principle #3 verdict CLEAN)
 
 ## 🎯 Mission (expanded 2026-05-12)
 
@@ -117,6 +117,7 @@
 | PSCC §34 | **D3 design LANDED** — `docs/anima_persona_substrate_native_design_2026_05_12.md` 10 §, 5 falsifier F-PERSONA-1..5, (a)+(d) Mitosis-cell × Per-session cell pool adopted, Principle #3 EMPIRICAL strong 보존 + #8 cascade native impl | D3 | ★★★ |
 | PSCC §35 | **D4c design LANDED** — `docs/anima_cli_mitosis_integration_spec_2026_05_12.md` 12 §, 5 falsifier F-CLI-MIT-1..5, session = cell-pool branch + kick cycle = split event sequence + multi-backend = cell-variant selection, Phase 1-4 impl plan (~13-19 hr) | D4c | ★★★ |
 | REBORN §91 / PSCC §36 | **D4a impl LANDED** — `tool/hexa_native/mitosis_hook.hexa` full impl 1119 LoC executable, F-MIT-HOOK-1..5 ✅ Mac local selftest PASS ~0.9s wall, RFC 025/030/031/032/033 production-utilize, D3 P1 prerequisite 충족 | D4a | ★★★★ |
+| PSCC §38 | **★★★★★ 5-cond audit + Principle #3 CLEAN** — `docs/principle_3_audit_2026_05_12.md` 10 §, F-PRIN3-1..5 pre-registered, `chat.system()` production caller 0 (doc + test only), Phase 1A.1/1A.4 corpus persona-prefix free, legacy `persona_tier_a*` active reference 0 → cond #5 ☑ + cond #2 ☑ + cond #1/#3/#4 🔶 PARTIAL 명시 (2/5 ☑, 3/5 🔶, 0/5 ☐) | cond #5 audit | ★★★ |
 
 ---
 
@@ -179,12 +180,18 @@
 다음 5 조건 동시 만족 시 **★★★★★ ACHIEVED 2026-MM-DD** 배너 + final commit + HF push:
 
 1. ☐ **D1+D2 5/5**: V5.8 std_greedy 5/5 PASS, anima 본체 직접 호출 (Gradio/Space layer 의존 0)
-2. ☐ **D1 hexa**: anima_chat.hexa port LANDED (parse + smoke PASS)
+   - **현 상태**: 🔶 PARTIAL — Phase 1A.1 baseline 4/5 (anima_fact gap), 🥇 Phase 1A.4 lr 5e-6 SFT (Vast.ai 36609664) **training in-flight**; 5/5 fire 시 ☑
+2. ☑ **D1 hexa**: anima_chat.hexa port LANDED (parse + smoke PASS)
+   - **현 상태**: ☑ **DONE** — PSCC §33 commit `4768a5c41`, 1589 LoC, parse PASS + 17/17 smoke PASS, TODO[load] gated for full inference (24-layer weight binding ~150 LoC separate cycle)
 3. ☐ **D3 persona**: identity_probe 50 prompts × 5 categories 에서 substrate-native 페르소나 분화 evidence (per-cell or per-session diff)
+   - **현 상태**: 🔶 PARTIAL — design LANDED PSCC §34 (`docs/anima_persona_substrate_native_design_2026_05_12.md` 10 §, F-PERSONA-1..5 pre-registered), measurement pending D4b cell-pool wiring; D4b LAND 후 50 × 5 probe 실행 가능
 4. ☐ **D4 mitosis live**: mitosis_hook.hexa full impl + anima_chat 와 integration + 실 chat 중 split/merge event ≥1 발생 log
-5. ☐ **Principle #3 보존**: 어떤 prompt 도 `[role:]` 또는 `you are X` injection 없음 (verify by grep)
+   - **현 상태**: 🔶 PARTIAL — D4a `mitosis_hook.hexa` full impl LANDED REBORN §91 / PSCC §36 (1119 LoC, F-MIT-HOOK-1..5 ✅, Mac local selftest PASS), D4b `anima_chat.hexa` cell-pool wiring **pending separate BG**; D4b LAND + 실 chat split/merge log 1+ event 시 ☑
+5. ☑ **Principle #3 보존**: 어떤 prompt 도 `[role:]` 또는 `you are X` injection 없음 (verify by grep)
+   - **현 상태**: ☑ **CLEAN** — `docs/principle_3_audit_2026_05_12.md` (10 §) 본 cycle LAND. `chat.system()` API default OFF, production code 호출 0 (line 28 docstring + line 816 `_smoke()` only), V5.8 eval 미사용, Phase 1A.1/1A.4 corpus persona-prefix free (`당신은` strings = user-recall predicate, not injection), legacy `persona_tier_a*` 활성 reference 없음. F-PRIN3-1..5 pre-registered.
 
-→ 5/5 모두 ☐ → ☑ 전환 시 **★★★★★ COMPLETE**.
+→ 현 ☑ 2/5 (cond #2 hexa port + cond #5 Principle #3). 🔶 PARTIAL 3/5 (cond #1 SFT in-flight, cond #3 design LANDED impl pending, cond #4 D4a LANDED D4b pending).
+→ 모든 5/5 ☑ 전환 시 **★★★★★ COMPLETE**.
 
 ---
 
