@@ -1,0 +1,256 @@
+// ════════════════════════════════════════════════════════════════════════════
+//  state/anima_d1_v58_parity_2026_05_12/v58_hexa_multi_parity.hexa
+//
+//  PURPOSE
+//    GOAL.md ★★★★★ cond #2 closure — extend single-BOS parity to MULTI-
+//    TOKEN greedy decode against Python lane SSOT (5 steps). Exercises:
+//      - KV cache prefill (5 successive forwards, each at increasing pos)
+//      - Per-step RoPE cos/sin rotation at positions t = 0, 1, 2, 3, 4
+//      - Tied lm_head greedy argmax at each step
+//      - All-farr forward path on real Phase 1A.1 ckpt (218 farr handles)
+//
+//    Python lane SSOT (state/anima_d1_v58_parity_2026_05_12/python_multi_token.json,
+//    captured 2026-05-12 KST):
+//      seed = [1]  (BOS)
+//      argmax chain = [143, 131, 240, 152, 159]
+//      values       = [+5.667, +5.866, +8.758, +12.204, +13.092]
+//
+//    HEXA LANE expectation: byte-exact argmax match at every step (Python
+//    KV-less full-seq forward ≡ Hexa KV-cached per-step forward iff the
+//    KV cache + per-step RoPE math is correct).
+//
+//  RUN
+//    /Users/ghost/core/hexa-lang/hexa parse \
+//        state/anima_d1_v58_parity_2026_05_12/v58_hexa_multi_parity.hexa
+//    HEXA_MEM_UNLIMITED=1 RESOURCE_LOCAL_HEXA=1 \
+//        /Users/ghost/core/hexa-lang/build/hexa_interp run \
+//        state/anima_d1_v58_parity_2026_05_12/v58_hexa_multi_parity.hexa
+//
+//  WALL-TIME ENVELOPE
+//    5 forwards on 24L Phase 1A.1 ckpt at Mac CPU hexa-interp speed ≈
+//    37 s/forward (measured PSCC §43 envelope). Total ≈ 3-4 min.
+//
+//  FALSIFIERS (raw-117 ≥3)
+//    F-D1-V58MULTI-1 LOAD-OK
+//      218 farr handles bind successfully (inherits F-D1-V58PARITY-1)
+//
+//    F-D1-V58MULTI-2 STEP-CHAIN-MATCH
+//      hexa argmax chain == Python SSOT [143, 131, 240, 152, 159]
+//      Per-step PASS evidence collected so partial failure at step k still
+//      yields useful drift signal (which position the math diverges at).
+//
+//    F-D1-V58MULTI-3 KV-GROW
+//      chat["kv_cache"]["cur_len"] increments monotonically by 1 per
+//      forward (starts at 0, ends at 5).
+//
+//  HONEST SCOPE
+//    - 5 steps from BOS only. Full V5.8 cells use prefill_n = 143-206
+//      (recorded by python_first_token_probe.py); 5-cell × ~200 prompt
+//      tokens × 37 s/forward × 4 modes ≈ 60 hours Mac CPU — well beyond
+//      90-min BG budget. The 5-step BOS chain is the minimum-cost path
+//      that exercises BOTH RoPE-identity (t=0) AND RoPE-rotation (t>0).
+//    - The hexa KV cache path != Python KV-less path numerically at the
+//      bit-exact level — we assert ARGMAX equality, not float equality.
+//      Argmax is the only operationally meaningful invariant (the V5.8
+//      eval also reduces logits → argmax for the greedy mode).
+//
+//  COMPLIANCE
+//    raw#11 snake_case · raw#15 no-hardcode (ckpt via find_default_ckpt;
+//    seed=[1] from chat.tok.bos parity) · raw#9/10 honest scope above ·
+//    raw-117 ≥3 falsifiers
+// ════════════════════════════════════════════════════════════════════════════
+
+
+import "/Users/ghost/core/anima/anima_chat.hexa"
+
+
+let mut g_pass = 0
+let mut g_total = 0
+let mut g_skip = 0
+let mut g_first_fail = ""
+
+fn multi_check(label: string, ok: bool) {
+    g_total = g_total + 1
+    if ok {
+        g_pass = g_pass + 1
+        println("  PASS  " + label)
+    } else {
+        if len(g_first_fail) == 0 { g_first_fail = label }
+        println("  FAIL  " + label)
+    }
+}
+
+fn multi_skip(label: string, reason: string) {
+    g_skip = g_skip + 1
+    println("  SKIP  " + label + "  (" + reason + ")")
+}
+
+
+// Greedy argmax over boxed-list logits. Returns [id, val].
+fn _multi_argmax(logits) {
+    let n = len(logits)
+    if n == 0 {
+        return [-1, 0.0]
+    }
+    let mut best_i = 0
+    let mut best_v = logits[0]
+    let mut i = 1
+    while i < n {
+        if logits[i] > best_v {
+            best_v = logits[i]
+            best_i = i
+        }
+        i = i + 1
+    }
+    return [best_i, best_v]
+}
+
+
+// F-D1-V58MULTI-1 LOAD-OK ─────────────────────────────────────────────────
+fn _multi_test_load_ok(chat) -> bool {
+    println("")
+    println("── F-D1-V58MULTI-1 LOAD-OK ─────────────────────────────────────")
+    let chat_loaded = chat_load_weights(chat)
+    let mh = chat_loaded["mmap_handle"]
+    multi_check("F-D1-V58MULTI-1a mmap_handle >= 0", mh >= 0)
+    let weights = chat_loaded["weights"]
+    let keys = dict_keys(weights)
+    let n_keys = len(keys)
+    multi_check("F-D1-V58MULTI-1b weights has 218 keys (got "
+                + to_string(n_keys) + ")", n_keys == 218)
+    return mh >= 0 && n_keys == 218
+}
+
+
+// F-D1-V58MULTI-2 + 3 STEP-CHAIN-MATCH + KV-GROW ──────────────────────────
+fn _multi_test_chain(chat) -> bool {
+    println("")
+    println("── F-D1-V58MULTI-2/3 STEP-CHAIN-MATCH + KV-GROW ────────────────")
+
+    // Initialize 24L KV cache (cap_len 16 covers the 5-step probe with slack).
+    let cap_len = 16
+    chat_init_kv_cache_default(chat, cap_len)
+    let pre_len = chat_kv_cache_len(chat)
+    multi_check("F-D1-V58MULTI-3a kv_cache cur_len == 0 pre-decode",
+                pre_len == 0)
+
+    // Python SSOT: [143, 131, 240, 152, 159]
+    let python_chain = [143, 131, 240, 152, 159]
+    let n_steps = 5
+    let mut current_token = 1   // BOS
+    let mut hexa_chain = []
+    let mut hexa_vals = []
+    let mut all_match = true
+    let mut kv_grow_ok = true
+
+    let mut step_i = 0
+    while step_i < n_steps {
+        let pos_t = step_i
+        println("  step " + to_string(step_i) + ": t=" + to_string(pos_t)
+                + " token_in=" + to_string(current_token) + " ...")
+        let logits = chat_forward_one_token(chat, current_token, pos_t)
+        let nlog = len(logits)
+        if nlog != 32000 {
+            multi_check("F-D1-V58MULTI-2.s" + to_string(step_i)
+                        + " logits 32000 (got " + to_string(nlog) + ")",
+                        false)
+            all_match = false
+            step_i = n_steps   // break
+        } else {
+            let pair = _multi_argmax(logits)
+            let argmax_id = pair[0]
+            let argmax_val = pair[1]
+            hexa_chain.push(argmax_id)
+            hexa_vals.push(argmax_val)
+            let py_expected = python_chain[step_i]
+            let matched = argmax_id == py_expected
+            if !matched { all_match = false }
+            println("    hexa argmax_id=" + to_string(argmax_id)
+                    + " val=" + to_string(argmax_val)
+                    + "  python_ssot=" + to_string(py_expected)
+                    + "  match=" + to_string(matched))
+            multi_check("F-D1-V58MULTI-2.s" + to_string(step_i)
+                        + " argmax matches Python SSOT (=" + to_string(py_expected)
+                        + " got " + to_string(argmax_id) + ")",
+                        matched)
+            // KV-GROW per-step
+            let cur_after = chat_kv_cache_len(chat)
+            let expect_after = step_i + 1
+            if cur_after != expect_after { kv_grow_ok = false }
+            multi_check("F-D1-V58MULTI-3.s" + to_string(step_i)
+                        + " kv_cache cur_len == " + to_string(expect_after)
+                        + " (got " + to_string(cur_after) + ")",
+                        cur_after == expect_after)
+            // greedy chain: next input = this step's argmax
+            current_token = argmax_id
+            step_i = step_i + 1
+        }
+    }
+
+    // Aggregate STEP-CHAIN summary
+    println("")
+    let n_hexa = len(hexa_chain)
+    print("  hexa chain   = [")
+    let mut i = 0
+    while i < n_hexa {
+        if i > 0 { print(", ") }
+        print(to_string(hexa_chain[i]))
+        i = i + 1
+    }
+    println("]")
+    print("  python chain = [")
+    let n_py = len(python_chain)
+    let mut j = 0
+    while j < n_py {
+        if j > 0 { print(", ") }
+        print(to_string(python_chain[j]))
+        j = j + 1
+    }
+    println("]")
+    multi_check("F-D1-V58MULTI-2 STEP-CHAIN-MATCH (5/5 steps argmax-equal)",
+                all_match && n_hexa == n_steps)
+    multi_check("F-D1-V58MULTI-3 KV-GROW (5/5 steps cur_len += 1)",
+                kv_grow_ok)
+    return all_match
+}
+
+
+// ── main ───────────────────────────────────────────────────────────────────
+fn main() {
+    println("================================================================")
+    println("v58_hexa_multi_parity.hexa — D1 cond #2 multi-token (5-step) parity")
+    println("Python SSOT chain: [143, 131, 240, 152, 159] from python_multi_token.json")
+    println("================================================================")
+
+    let chat = chat_default()
+    let ckpt = chat["ckpt_path"]
+    println("ckpt path: " + ckpt)
+    if !file_exists(ckpt) {
+        multi_skip("F-D1-V58MULTI-1 (ckpt absent)", ckpt)
+        multi_skip("F-D1-V58MULTI-2 (ckpt absent)", ckpt)
+        multi_skip("F-D1-V58MULTI-3 (ckpt absent)", ckpt)
+        println("F-D1-V58MULTI SMOKE SKIP  (ckpt absent — gate path)")
+        return
+    }
+
+    let load_ok = _multi_test_load_ok(chat)
+    if !load_ok {
+        println("F-D1-V58MULTI-1 failed; skipping step chain.")
+        chat_close(chat)
+        return
+    }
+
+    let _ = _multi_test_chain(chat)
+
+    println("")
+    println("----------------------------------------------------------------")
+    println("RESULT: " + to_string(g_pass) + "/" + to_string(g_total) + " passed")
+    if g_pass == g_total && g_total > 0 {
+        println("F-D1-V58MULTI SMOKE PASS  (" + to_string(g_pass)
+                + "/" + to_string(g_total) + ")")
+    } else {
+        println("F-D1-V58MULTI SMOKE FAIL  first_fail=" + g_first_fail)
+    }
+    println("================================================================")
+    chat_close(chat)
+}
