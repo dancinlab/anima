@@ -75,19 +75,30 @@ sys.path.insert(0, str(ANIMA_ROOT / "training"))
 from training.engine_a_g_arch import EngineAGModel, EngineAGConfig  # noqa: E402
 
 def _find_default_ckpt() -> str:
-    """Return first existing ckpt; priority: B'.1 → B'' → B' → substrate A.
+    """Return first existing ckpt; priority: B'.2 → B'.1 → B'' → B' → substrate A.
 
-    Substrate ladder (사용자 자연 대화 우선, V5.8 std_greedy 결과 기준):
+    Substrate ladder (★★★★★ cond #1 우선, V5.8 std_greedy 결과 기준):
+        B'.2  = Phase 1A.4 lr 5e-6 SFT (V5.8 std_greedy 5/5 PASS, ★★★★★ cond #1) ⭐⭐ 2026-05-12
         B'.1  = Phase 1A.1 color/cosmology boost (V5.8 std_greedy 4/5, 자연 한국어) ⭐
         B''   = FFN.gate cotrain (V4-lite 15/15 PASS, M4 champion / 한국어 grammar 약함)
         B'    = Phase 1A multi-turn SFT (V5.8 std_greedy 3/5)
         A     = phase2_cotrain_engine_ag (legacy baseline)
 
-    2026-05-12 cycle 결정: V4-lite mechanical 15/15 보다 사용자 자연 대화 4/5 우선
-    선택. B'.1 이 default, B'' 는 V4-lite champion fallback.
+    2026-05-12 ★★★★★ closure: Phase 1A.4 lr 5e-6 SFT 가 V5.8 std_greedy 5/5 PASS
+    (anima_fact markdown attractor break) → default 승격. HF Public:
+    dancinlab/anima-clm-phase1a4-lr5e6-strict-5pass-2026-05-12 (PSCC §46/§50).
     """
     candidates = [
-        # B'.1 — Phase 1A.1 color/cosmology boost (default, 자연 한국어 4/5) ⭐
+        # B'.2 — Phase 1A.4 lr 5e-6 SFT (★★★★★ cond #1, V5.8 std_greedy 5/5) ⭐⭐
+        str(
+            ANIMA_ROOT
+            / "state/anima_phase1a4_lr5e6_2026_05_12/"
+            "ckpts/ckpt_phase1a4_lr5e6_sft.pt"
+        ),
+        "/Users/ghost/core/anima/state/"
+        "anima_phase1a4_lr5e6_2026_05_12/"
+        "ckpts/ckpt_phase1a4_lr5e6_sft.pt",
+        # B'.1 — Phase 1A.1 color/cosmology boost (fallback, 자연 한국어 4/5) ⭐
         str(
             ANIMA_ROOT
             / "state/anima_phase1a1_color_cosmology_2026_05_12/"

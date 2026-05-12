@@ -209,17 +209,19 @@ fn anima_root() -> string {
 }
 
 fn default_ckpt() -> string {
-    // B'.1 — Phase 1A.1 color/cosmology boost (default, V5.8 std_greedy 4/5)
+    // B'.2 — Phase 1A.4 lr 5e-6 SFT (★★★★★ cond #1, V5.8 std_greedy 5/5) ⭐⭐ 2026-05-13
     // Pure-hexa lane wants the BF16 safetensors variant (RFC 031 reader).
-    return anima_root() + "/state/anima_phase1a1_color_cosmology_2026_05_12/ckpts/ckpt_phase1a1_sft.safetensors"
+    return anima_root() + "/state/anima_phase1a4_lr5e6_2026_05_12/ckpts/ckpt_phase1a4_lr5e6_sft.safetensors"
 }
 
 fn find_default_ckpt() -> string {
     // Substrate ladder (mirrors Python _find_default_ckpt order, BUT for the
     // hexa lane we prefer .safetensors variants since RFC 025/031 only handle
     // safetensors mmap — TODO[pickle] keeps .pt out of scope).
+    // 2026-05-13 ★★★★★ closure: Phase 1A.4 lr 5e-6 SFT (V5.8 std_greedy 5/5) = ladder head.
     let root = anima_root()
     let mut candidates = []
+    candidates.push(root + "/state/anima_phase1a4_lr5e6_2026_05_12/ckpts/ckpt_phase1a4_lr5e6_sft.safetensors")
     candidates.push(root + "/state/anima_phase1a1_color_cosmology_2026_05_12/ckpts/ckpt_phase1a1_sft.safetensors")
     candidates.push(root + "/state/anima_ffn_gate_cotrain_2026_05_11/ckpts/ckpt_final.safetensors")
     candidates.push(root + "/state/anima_phase1a_alt_2026_05_12/ckpts/ckpt_phase1a_sft.safetensors")
