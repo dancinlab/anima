@@ -140,6 +140,20 @@ M3_rep_penalty 의 일부 cell 이 markdown 의 첫 token 직전 `\n` 으로 끝
 
 → filter 는 **canonical markdown table syntax 의 진짜 fire window** (`| --- |`) 만 block. Mac seed=2026 에서는 그 window 형성 안 됨.
 
+### Seed probe (greedy deterministic 확인)
+
+`v58_seed42_anima_fact_probe.py` 로 8 seed × 2 filter 매트릭스 attempt — 5 row 진행 후 greedy 가 seed-deterministic (argmax) 으로 확인 되어 중단 (`v58_seed_probe.log`):
+
+```
+seed=42   filter=OFF  drift=False  '가장 좋아하는 색은 도전적이고 계정을 의미합니다.\n'
+seed=42   filter=ON   drift=False  '가장 좋아하는 색은 도전적이고 계정을 의미합니다.\n'
+seed=2024 filter=OFF  drift=False  (동일)
+seed=2024 filter=ON   drift=False  (동일)
+seed=2025 filter=OFF  drift=False  (동일)
+```
+
+→ Mac CPU fp32 greedy path 는 seed-invariant. §17 의 markdown drift 는 seed=42 **+ cuda + bf16** 3-축 conjunction 이 필요 — Mac path 에서는 reproduce 불가. 다음 진행 🥇 (Vast.ai A100 seed=42 cuda bf16) 가 filter 의 *실제 작동 evidence* 를 줄 가능성 높음.
+
 ---
 
 ## 5. Audit — implementation correctness
