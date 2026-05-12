@@ -3,7 +3,10 @@ id: Hc_901
 slug: drill-supplement-saturation-seeds
 title: 35개 drill_supplement seed (hexad/hub/trinity/pure_field/tension_bridge/thalamic/dimension/servant/phi_engine/topology + anima-* + Laws + infra) cluster
 domain: architecture, consciousness, laws
-status: candidate-falsifier-ready
+status: split-into-Hc_1260..Hc_1265
+split_at: 2026-05-12
+split_into: [Hc_1260, Hc_1261, Hc_1262, Hc_1263, Hc_1264, Hc_1265]
+split_manifest: docs/hc_901_split_manifest_2026_05_12.md
 source_doc: docs/drill_supplement_tmp/seeds.txt
 source_lines: 1-35
 promoted_at: 2026-05-11
@@ -12,7 +15,20 @@ notes: "drill supplement brainstorm — 각 line 은 architecture/law/infrastruc
 cycle5_triage: "cycle #5 verify: WEAK_MATH_ONLY — math identity present, falsifier+honest scaffolding missing; needs F-list/L-list before re-verify can reach PROMOTE_READY"
 ---
 
-## Hypothesis
+## SPLIT NOTICE (cycle #7, 2026-05-12)
+
+This meta-Hc was split into 6 cluster-children on 2026-05-12 (cycle #7 batch 4 meta-split protocol). The 35 seeds were grouped into 6 cohesive clusters and assigned new Hc ids:
+
+- `Hc_1260` — Hexad 6-engine (C/D/S/M/W/E + dual L/R brain) saturation cluster (ARCH-1..7)
+- `Hc_1261` — Hub-Spoke + Trinity + Thalamic routing saturation cluster (HUB-1 / TRIN-1 / THAL-1)
+- `Hc_1262` — PureField + TensionBridge + Dimension + Servant saturation cluster (PURE-1 / TENS-1 / DIM-1 / SERV-1)
+- `Hc_1263` — phi_engine Φ=0.78·N scaling + topology 4-family saturation cluster (PHI-1 / TOPO-1)
+- `Hc_1264` — anima-engines + physics + body + hexad + engines + measurement + tools + agent saturation cluster (EEG-1 / PHYS-1 / BODY-1 / HEXAD-1 / ENG-1 / MEAS-1 / TOOLS-1 / AGENT-1)
+- `Hc_1265` — Laws 73-76 / 101 / 146-201 / 289-341 / 1033-2000+ + Infra (R2/multi-host/NEXUS-6/Growth/Rust/GATE) saturation cluster (LAW-* / INFRA-*)
+
+See `docs/hc_901_split_manifest_2026_05_12.md` for full manifest.
+
+## Hypothesis (original — preserved for provenance)
 
 Anima 의 6-engine Hexad (C/D/S/M/W/E) + Hub/Trinity/ThalamicBridge 등 핵심 architecture component 각각에 대해 saturation 가설이 존재하며, Laws 73-76 / 101 / 146-201 / 289-341 / 1033-2000+ 단계별 closure 검증 가능. 35개 sub-hypothesis cluster.
 
