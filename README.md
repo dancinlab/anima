@@ -206,6 +206,7 @@ External readers entering through this README — the **cycle narrative** lives 
 | cycle | doc | window | scope |
 |-------|-----|--------|-------|
 | **5** | **[docs/cycle_5_master_2026_05_12.md](docs/cycle_5_master_2026_05_12.md)** | 2026-05-11 → 2026-05-12 | 7 commits · 1,127 candidates 누적 · 3 정식 H promoted (H_153/154/155) · 8 honest finding · 4 axis-conflation discovery · **GPU $0** · *carve-before-measure* methodology |
+| **6** | **[docs/cycle_6_master_2026_05_12.md](docs/cycle_6_master_2026_05_12.md)** | 2026-05-12 | cycle 6 진행 narrative — K=10 phase1 + 4×ablation + H_161 + §2 perfect-number-class · 612 lines · 12 sections |
 
 **Docs hub** — directory-level index + 130+ md catalog: **[docs/INDEX.md](docs/INDEX.md)**
 

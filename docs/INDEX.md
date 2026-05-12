@@ -15,6 +15,7 @@ cycle master doc 은 *외부 researcher / HF dataset reader* 가 본 문서만 �
 | cycle | doc | window | product | GPU spend |
 |-------|-----|--------|---------|----------:|
 | 5 | **[cycle_5_master_2026_05_12.md](cycle_5_master_2026_05_12.md)** | 2026-05-11 → 2026-05-12 | 4 axis-conflation discovery + 8 honest finding + 3 H promoted + cost compression $621-1920 → $121-420 | **$0** |
+| 6 | **[cycle_6_master_2026_05_12.md](cycle_6_master_2026_05_12.md)** | 2026-05-12 | K=10 phase1 + 4×ablation + H_161 promoted + §2 perfect-number-class — 612 lines, 12 sections | **$0** |
 
 이전 cycle (1-4) 은 retroactive master doc 미land — `state/` directory 에 cycle 별 산출물 분산 보관.
 
