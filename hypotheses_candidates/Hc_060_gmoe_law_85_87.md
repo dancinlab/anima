@@ -3,11 +3,14 @@ id: Hc_060
 slug: gmoe-law-85-87-super-linear-e4-optimal
 title: GMOE Law 85-87 — Super-Linear Boost +7.7@16c, 1/e Convergence, E=4 Optimal
 domain: substrate, math
-status: candidate-falsifier-ready
+status: merged-to-H_190
+merged_to: hypotheses/H_190_law_ca_embedding_mathematical_family.md
+merged_at: 2026-05-12
 source_doc: docs/hypotheses/GMOE-benchmark.md
 source_lines: Law 85-87
 promoted_at: 2026-05-11
-linked_h: H_058 (gmoe_benchmark)
+linked_h: H_190 (LAW-CA-embedding mathematical family — GMOE MoE-theory framework 6 of 6), H_058 (gmoe_benchmark)
+absorption_note: "cycle #8 absorbed to H_190 as Hc_060 GMOE Law 85-87 — super-linear +7.7@16c, 1/e convergence, E=4 expert optimal"
 notes: "Law 85: super-linear boost (+1@4c → +7.7@16c). Law 86: 1/e convergence ∝ complexity. Law 87: E=4 expert optimal."
 cycle5_triage: "cycle #5 verify: WEAK_MATH_ONLY — math identity present, falsifier+honest scaffolding missing; needs F-list/L-list before re-verify can reach PROMOTE_READY"
 ---

@@ -3,11 +3,14 @@ id: Hc_044
 slug: lawnet-ca4-2bit-min-diversity
 title: LawNet — CA(4)=2bit Minimum Diversity (Law 78), Whisper Gate 0.001 (Law 63)
 domain: physics, consciousness
-status: candidate-falsifier-ready
+status: merged-to-H_190
+merged_to: hypotheses/H_190_law_ca_embedding_mathematical_family.md
+merged_at: 2026-05-12
 source_doc: docs/models/lawnet.md
 source_lines: 1-N
 promoted_at: 2026-05-11
-linked_h: (none — NEW ★ design)
+linked_h: H_190 (LAW-CA-embedding mathematical family — LawNet CA-2bit framework 4 of 6)
+absorption_note: "cycle #8 absorbed to H_190 as Hc_044 LawNet CA(4)=2bit min diversity + Whisper Gate 0.001 — 2388-law selector design"
 notes: "LawNet = 2388 law 자동 selector. CA(4)=2bit min diversity. 누출 없는 구조 best (Law 97). Whisper gate (0.001) → Φ 보존 (Law 63)."
 cycle5_triage: "cycle #5 verify: WEAK_MATH_ONLY — math identity present, falsifier+honest scaffolding missing; needs F-list/L-list before re-verify can reach PROMOTE_READY"
 ---

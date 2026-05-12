@@ -3,11 +3,14 @@ id: Hc_015
 slug: ca-rule-convergence-collapse-cosine-07
 title: F-CAND-F-1-v2 — META-CA Rule Convergence Collapse (Pairwise Cosine ≤ 0.7)
 domain: substrate, consciousness
-status: candidate-falsifier-ready
+status: merged-to-H_190
+merged_to: hypotheses/H_190_law_ca_embedding_mathematical_family.md
+merged_at: 2026-05-12
 source_doc: docs/anima_emerge_candidate_f_falsifier_v2_cosine_probe_spec_2026_05_05.md
 source_lines: 15-46
 promoted_at: 2026-05-11
-linked_h: H_067 (perfect-number-architecture)
+linked_h: H_190 (LAW-CA-embedding mathematical family — META-CA framework 3 of 6), H_067 (perfect-number-architecture)
+absorption_note: "cycle #8 absorbed to H_190 as Hc_015 META-CA rule convergence collapse — gate_strength=0.001 starvation threshold cosine ≤ 0.7"
 notes: "gate_strength=0.001 starves META-CA gradient → rules random-init 잔존, de facto equivalent. Falsifier: worst_block_off_diag≤0.85 AND mean_off_diag_mean≤0.7."
 cycle5_triage: "cycle #5 verify: WEAK_MATH_ONLY — math identity present, falsifier+honest scaffolding missing; needs F-list/L-list before re-verify can reach PROMOTE_READY"
 ---

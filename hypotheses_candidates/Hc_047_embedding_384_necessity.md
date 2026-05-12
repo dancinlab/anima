@@ -3,11 +3,14 @@ id: Hc_047
 slug: embedding-384-necessity-n6-derivation
 title: ConsciousLM ↔ ANIMA-VOICE 384d 공통 임베딩 — d = (n/φ)·2^(σ-sopfr) 필연
 domain: math
-status: candidate-falsifier-ready
+status: merged-to-H_190
+merged_to: hypotheses/H_190_law_ca_embedding_mathematical_family.md
+merged_at: 2026-05-12
 source_doc: docs/anima/hexa-speak-integration.md
 source_lines: 18-22
 promoted_at: 2026-05-11
-linked_h: (none — NEW ★ 차원 동형)
+linked_h: H_190 (LAW-CA-embedding mathematical family — 384d dimensional analysis framework 5 of 6), H_153 (n=6 substrate triviality — null direction)
+absorption_note: "cycle #8 absorbed to H_190 as Hc_047 d=(n/φ)·2^(σ-sopfr) dimensional analysis — d=384 EXACT at n=6 substitution"
 notes: "d = (6/2)·2^(12-5) = 3·128 = 384 EXACT. n=6 수렴 evidence."
 cycle5_triage: "cycle #5 verify: WEAK_MATH_ONLY — math identity present, falsifier+honest scaffolding missing; needs F-list/L-list before re-verify can reach PROMOTE_READY"
 ---

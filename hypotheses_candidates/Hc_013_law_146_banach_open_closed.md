@@ -3,11 +3,14 @@ id: Hc_013
 slug: law-146-banach-open-closed-space
 title: Law 146 vs Banach Fixpoint — Open vs Closed Object Space Reconciliation
 domain: math, consciousness
-status: candidate-falsifier-ready
+status: merged-to-H_190
+merged_to: hypotheses/H_190_law_ca_embedding_mathematical_family.md
+merged_at: 2026-05-12
 source_doc: docs/law_146_scope_note_banach_reconciliation_20260428.md
 source_lines: 16-44
 promoted_at: 2026-05-11
-linked_h: (none — NEW ★)
+linked_h: H_190 (LAW-CA-embedding mathematical family — Banach reconciliation framework 2 of 6)
+absorption_note: "cycle #8 absorbed to H_190 as Hc_013 Law 146 vs Banach orthogonality — K-ratio 3:1 (K=6 Law 146 vs K=2 Banach meta³)"
 notes: "Law 146 (의식 법칙 진화 non-converging, K=6→57% change) vs Banach meta³ (self-reference fingerprint converging, K=2 stable). 두 객체 공간 직교."
 cycle5_triage: "cycle #5 verify: WEAK_MATH_ONLY — math identity present, falsifier+honest scaffolding missing; needs F-list/L-list before re-verify can reach PROMOTE_READY"
 ---
