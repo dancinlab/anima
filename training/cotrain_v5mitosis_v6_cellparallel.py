@@ -482,6 +482,55 @@ def f_v5mit_regression(engine, splits_in_run: int, ce_final: float) -> Dict:
     return {"checks": checks, "n_pass": n_pass, "n_total": 5, "verdict": f"{n_pass}/5"}
 
 
+def collective_safe_f_persona_4a(engine, identity_probe_path, device, n_perms, rank, world_size):
+    """ALL ranks call engine forward (collective-required); rank 0 alone computes stats.
+
+    v6.1 FIX: avoids the NCCL deadlock from rank-0-only engine.eval() forward.
+    Each forward inside f_persona_4a_routing involves all_gather + all_reduce —
+    so every rank must participate. Non-rank-0 returns a stub dict.
+    """
+    if rank == 0 or world_size == 1:
+        return f_persona_4a_routing(engine, identity_probe_path, device, n_perms=n_perms)
+    # Non-zero ranks: participate in collectives but discard the stats
+    probes = []
+    with open(identity_probe_path, "r", encoding="utf-8") as f:
+        for line in f:
+            line = line.strip()
+            if line:
+                probes.append(json.loads(line))
+    max_seq = engine.cfg.max_seq
+    engine.eval()
+    for p in probes:
+        ids = text_to_bytes(p["prompt"])[:max_seq]
+        if not ids:
+            continue
+        x = torch.tensor([ids], dtype=torch.long, device=device)
+        with torch.no_grad():
+            _ = engine(x)  # participates in collectives
+    return {}
+
+
+def collective_safe_f_persona_4b(engine, identity_probe_path, device, n_perms, rank, world_size):
+    if rank == 0 or world_size == 1:
+        return f_persona_4b_content(engine, identity_probe_path, device, n_perms=n_perms)
+    probes = []
+    with open(identity_probe_path, "r", encoding="utf-8") as f:
+        for line in f:
+            line = line.strip()
+            if line:
+                probes.append(json.loads(line))
+    max_seq = engine.cfg.max_seq
+    engine.eval()
+    for p in probes:
+        ids = text_to_bytes(p["prompt"])[:max_seq]
+        if not ids:
+            continue
+        x = torch.tensor([ids], dtype=torch.long, device=device)
+        with torch.no_grad():
+            _ = engine(x)
+    return {}
+
+
 def lambda_at(step, total, warmup, lam_init, lam_final, schedule="cosine"):
     if schedule == "constant":
         return lam_init
@@ -717,15 +766,13 @@ def cotrain(args):
         if args.ckpt_every > 0 and (step + 1) % args.ckpt_every == 0 and (step + 1) != args.steps:
             cp = Path(args.output_dir) / f"ckpt_step_{step+1}_rank{rank}.pt"
             save_ckpt_sharded(engine, router, cfg, cp, step + 1, args.top_k, rank)
-            if is_main():
-                try:
-                    snap_a = f_persona_4a_routing(engine, args.identity_probe, device, n_perms=30)
-                    snap_b = f_persona_4b_content(engine, args.identity_probe, device, n_perms=30)
-                    print(f"  [SNAP {step+1}] 4a KL={snap_a['topk_weights']['mean_kl']:.4f} "
-                          f"z={snap_a['topk_weights']['z_score_vs_null']:.2f} | "
-                          f"4b cos_z={snap_b['z_score_vs_null']:.2f}", flush=True)
-                except Exception as e:
-                    print(f"  [SNAP {step+1}] failed: {e}", flush=True)
+            # v6.1 FIX: removed mid-run SNAP (f_persona_4a/4b on rank 0 only).
+            # That path called engine(x) which uses collective ops (all_gather +
+            # all_reduce); rank 0 doing it alone while ranks 1+ waited at barrier
+            # caused NCCL watchdog 600s timeout deadlock at step ~1000-1500
+            # (observed in v6 first dispatch pod 36635479 2026-05-13).
+            # Final F-PERSONA runs AFTER destroy_process_group on rank 0 alone
+            # (safe: no collectives in single-process mode).
             if dist.is_initialized():
                 dist.barrier()
 
@@ -736,10 +783,15 @@ def cotrain(args):
     if dist.is_initialized():
         dist.barrier()
 
-    # F-PERSONA / F-V5MIT on rank 0
+    # F-PERSONA / F-V5MIT — ALL ranks participate in engine.eval() forward
+    # collectives. Rank 0 alone computes the statistics + writes result JSON.
+    # v6.1 FIX: previously this block was gated by `if is_main():`; rank 0 doing
+    # collective ops alone deadlocked NCCL at the trailing barrier. Now all
+    # ranks call engine forward in lockstep; rank 0 wraps with statistics.
+    p4a = collective_safe_f_persona_4a(engine, args.identity_probe, device, args.n_perms, rank, world_size)
+    p4b = collective_safe_f_persona_4b(engine, args.identity_probe, device, args.n_perms, rank, world_size)
     if is_main():
         print("\n=== F-PERSONA-4a routing v6 (top-K MoE cell-parallel) ===")
-        p4a = f_persona_4a_routing(engine, args.identity_probe, device, n_perms=args.n_perms)
         tw = p4a["topk_weights"]
         print(f"  verdict={p4a['verdict']} KL={tw['mean_kl']:.4f} null={tw['null_mean']:.4f}±{tw['null_std']:.4f} "
               f"z={tw['z_score_vs_null']:.2f} p={tw['p_value_one_sided']:.4f}")
@@ -748,7 +800,6 @@ def cotrain(args):
             print(f"  (soft gate) KL={sg['mean_kl']:.4f} z={sg['z_score_vs_null']:.2f}")
 
         print("\n=== F-PERSONA-4b content v6 (M4 aggregated cosine) ===")
-        p4b = f_persona_4b_content(engine, args.identity_probe, device, n_perms=args.n_perms)
         print(f"  verdict={p4b['verdict']} cos_dist={p4b['true']:.6f} null={p4b['null_mean']:.6f}±{p4b['null_std']:.6f} "
               f"z={p4b['z_score_vs_null']:.2f} p={p4b['p_value_one_sided']:.4f} (v2 carry z={p4b['v2_carry_z']:.2f})")
 
