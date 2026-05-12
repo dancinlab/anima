@@ -419,6 +419,12 @@ class MitosisModelEngine(nn.Module):
                 self.cfg,
                 shared_attn=self._shared_attn if share_now else None,
             )
+            # Move child to parent's device + dtype BEFORE state copy / noise.
+            # Without this, freshly-constructed child cells live on CPU while
+            # parent is on cuda — runtime device mismatch on copy_/add_/randn_like.
+            _device = parent.cell_state.device
+            _dtype = parent.cell_state.dtype
+            child = child.to(device=_device, dtype=_dtype)
 
             # Copy parent state_dict — but skip 'attn.*' if child uses shared ref
             sd_parent = parent.state_dict()
