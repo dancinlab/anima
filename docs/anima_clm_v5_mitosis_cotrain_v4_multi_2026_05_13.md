@@ -56,11 +56,33 @@ Same as v4 single (mirror):
 
 ## §4 — Wall budget / cost
 
-- target wall: ~4-5 hr (v4 single A100 ~17hr ETA → 4× compute × H100-class perf ≈ 6-8× speedup; conservatively 5 hr)
-- compute: 4× RTX PRO 6000 S 96GB (H100 SXM 4-GPU pods were 0 offers on Vast.ai 2026-05-13 marketplace; H200 4-GPU available at $13/hr was v5-DDP's pick, B200 at $14.75/hr also available; RTX PRO 6000 S is the cheapest 96GB 4-GPU at $5.33/hr with rel=0.967)
-- cost target: $5.33/hr × 5 hr = ~$26.67 (well below $80 cap per BG brief, `feedback_no_scale_caps`)
+- target wall: ~4-5 hr (v4 single A100 ~17hr ETA → 4× A100 parallel ≈ 4× speedup; conservatively 5 hr)
+- compute (attempt 2 refire): **4× A100 SXM4 80GB @ $6.71/hr** rel=0.993 (attempt 1 4× RTX PRO 6000 S Blackwell failed — see §5.5)
+- cost target: $6.71/hr × 5 hr = ~$33.56 (well below $80 cap per BG brief, `feedback_no_scale_caps`)
 - cost cap (floor not ceiling): `--cost-cap-usd 80.0`, `--cost-per-hr ${OFFER_DPH}` actual
 - absolute max: `cap × 1.10 = $88.00` (estimation gate)
+
+## §5.5 — Attempt 1 FAILED (Blackwell sm_120 NCCL incompat)
+
+Initial dispatch 2026-05-13 19:07 UTC selected **4× RTX PRO 6000 Blackwell Server Edition 96GB** at $5.33/hr (pod 36635742). PyTorch 2.5.1+cu121 emitted the warning `NVIDIA RTX PRO 6000 Blackwell ... CUDA capability sm_120 is not compatible with the current PyTorch installation. The current PyTorch install supports CUDA capabilities sm_50 sm_60 sm_70 sm_75 sm_80 sm_86 sm_90` — I initially treated this as benign forward-compat (PTX JIT fall-through), which was wrong. NCCL kernels are compiled binary-only for the listed sm targets; on sm_120 the first NCCL collective fails at runtime:
+
+```
+torch.distributed.DistBackendError: NCCL error in: .../NCCLUtils.hpp:317, unhandled cuda error
+ncclUnhandledCudaError: Call to CUDA function failed.
+Last error: Cuda failure 'invalid argument'
+```
+
+The failure landed inside `_verify_params_across_processes` during `DDP(engine_inner, ...)` init — the very first NCCL all-gather to check param shapes across ranks. Process group set up cleanly, model built (5.37B params loaded onto each rank's GPU), then died on the first cross-rank op.
+
+**Lesson** (carry to `feedback_orchestrator_h100_gotchas`): if the marketplace pod's PyTorch is built with `cu121` and the GPU is **Blackwell** (sm_100 = B200 / sm_120 = RTX PRO 6000 / GB200 etc), DDP / NCCL will fail. Either:
+  (a) pre-install `torch-nightly` with sm_100+ kernels (PEP 668 `--break-system-packages` slow path), or
+  (b) exclude Blackwell from the marketplace filter (chosen for v4-multi refire).
+
+The dispatch script filter was tightened to `gpu_name in [H100_SXM,H100_NVL,H100_PCIE,H200,A100_SXM4,A100_PCIE]` (drops `RTX_PRO_6000_WS/S` and `B200`). Wasted attempt cost: ~$0.50 (5 min × $5.33/hr × pre-train init). Failed pod 36635742 destroyed.
+
+**Refire**: 2026-05-13 19:19 UTC, 4× A100 SXM4 80GB @ $6.71/hr rel=0.993. A100 sm_80 = native PyTorch 2.5.1+cu121 support → guaranteed DDP correctness. v6 cellparallel BG (c) is running on identical hardware class without issue.
+
+A secondary bash bug was discovered in the OOM-retry path: `OOM=$($SSH_CMD "..." || echo 0 || echo 0)` returned `"0\n0"` on remote SSH failure → `[ "$OOM" -gt 0 ]` raised `integer expression expected`. Fixed via `| tr -d '[:space:]' | head -c 8` + empty-guard. Carry to v5-DDP / v6 dispatch on next edit.
 
 ## §5 — Comparison axes (vs v4 single, v5 DDP)
 

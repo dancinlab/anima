@@ -66,10 +66,14 @@ ESTIMATED_WALL_HR="${ESTIMATED_WALL_HR:-5.0}"
 ABSOLUTE_MAX_USD=$(python3 -c "print($COST_CAP_USD * 1.10)")
 
 # Need NUM_GPUS× high-VRAM GPUs (80GB+ each) on one host. Filter: num_gpus=NUM_GPUS.
-# Marketplace 2026-05-13: 4× H100 SXM/NVL = 0 offers; expand to RTX PRO 6000 (96GB), H200,
-# B200, A100 SXM4 80GB. Python parser sorts by dph + filters gpu_ram >= MIN_GPU_RAM_MB.
+# Marketplace 2026-05-13: 4× H100 SXM/NVL = 0 offers; widened to H200, B200, A100 SXM4 80GB.
+# **EXCLUDE Blackwell sm_120** (RTX PRO 6000 S/WS) — PyTorch 2.5.1+cu121 NCCL kernels
+# compiled sm_50..sm_90 only, sm_120 fails at runtime with "Cuda failure 'invalid argument'"
+# during `_verify_params_across_processes` in DDP init (first-attempt empirical failure
+# 2026-05-13 pod 36635742). B200 is also sm_100 Blackwell — same risk; H200 + A100 SXM4
+# are sm_90 / sm_80 = guaranteed compatible.
 MIN_GPU_RAM_MB="${MIN_GPU_RAM_MB:-75000}"
-GPU_FILTER="${GPU_FILTER:-gpu_name in [H100_SXM,H100_NVL,H100_PCIE,H200,B200,RTX_PRO_6000_WS,RTX_PRO_6000_S,A100_SXM4,A100_PCIE] num_gpus=${NUM_GPUS} reliability>0.95 dph_total<${COST_PER_HR_MAX} disk_space>${DISK_GB} inet_down>200}"
+GPU_FILTER="${GPU_FILTER:-gpu_name in [H100_SXM,H100_NVL,H100_PCIE,H200,A100_SXM4,A100_PCIE] num_gpus=${NUM_GPUS} reliability>0.95 dph_total<${COST_PER_HR_MAX} disk_space>${DISK_GB} inet_down>200}"
 
 VAST_SSH_KEY="/Users/ghost/.vast/ssh/vast-key"
 VASTAI="/Users/ghost/.local/bin/vastai"
@@ -209,9 +213,10 @@ for attempt in 1 2 3; do
         --n-perms $N_PERMS --freeze-mitosis 1 2>&1 | tee train_v4_multi.log" 2>&1 | tee -a dispatch_v4_multi.log
     TRAIN_RC=${PIPESTATUS[0]}
     set -e
-    OOM=$($SSH_CMD "grep -ci 'out of memory\|CUDA out of memory\|OutOfMemoryError' /workspace/anima/train_v4_multi.log 2>/dev/null || echo 0" 2>/dev/null || echo 0)
-    if [ "$TRAIN_RC" = "0" ] && [ "${OOM:-0}" -eq 0 ]; then echo "  train OK (rc=0, no OOM)"; break; fi
-    if [ "${OOM:-0}" -gt 0 ] && [ "$CUR_BATCH" -gt 1 ]; then
+    OOM=$($SSH_CMD "grep -ci 'out of memory\|CUDA out of memory\|OutOfMemoryError' /workspace/anima/train_v4_multi.log 2>/dev/null || echo 0" 2>/dev/null | tr -d '[:space:]' | head -c 8 || echo 0)
+    [ -z "$OOM" ] && OOM=0
+    if [ "$TRAIN_RC" = "0" ] && [ "$OOM" -eq 0 ]; then echo "  train OK (rc=0, no OOM)"; break; fi
+    if [ "$OOM" -gt 0 ] && [ "$CUR_BATCH" -gt 1 ]; then
         CUR_BATCH=$(( CUR_BATCH / 2 )); [ "$CUR_BATCH" -lt 1 ] && CUR_BATCH=1
         echo "  [OOM detected] retry with per_gpu_batch=$CUR_BATCH"
         $SSH_CMD 'rm -rf /workspace/anima/output && mkdir -p /workspace/anima/output' 2>&1 | tail -1
