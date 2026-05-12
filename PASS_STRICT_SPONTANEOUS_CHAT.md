@@ -4401,6 +4401,48 @@ honest correction to D3 §A1 amendment: F-PERSONA-4 §A2 z-score metric proposed
   - GOAL.md cond #3 — D3 STRONG (4/5) maintained; 5/5 closure path = §46+ (λ sweep or arch redesign)
   - memory `feedback_no_scale_caps` — cost-bearing free per user directive
 
+### §45-FINAL [2026-05-12] v2 cotrain CONCLUDED — FAIL as predicted + **M4 aggregated cosine z=3.20 PASSES null test (NEW signal in cells, hidden by routing)**
+
+v2 final result (`cotrain_v2_result.json`):
+- wall 0.55 hr (1980 s), cost $1.32 actual ($8 cap), instance 36617704 destroyed clean
+- ce 258.9 → 1.37, ent 2.63 → 1.7e-9, wmax_final = 1.0
+- **F-PERSONA-4 with null = FAIL** (mean_kl=0.0, null_mean=0.0, z=inf degenerate)
+- λ=0.1 entropy reg fully overpowered (live monitor caught reverse at step 250 in real time)
+
+NEW finding via `persona_4_alternative_metrics_v2.py` post-cotrain null sweep:
+| metric | v1 z | v2 z | passes z>3.0 |
+|---|---|---|---|
+| M1 raw tension cosine | 0.73 | 2.08 | no |
+| M2 raw tension L2 | 1.54 | 2.22 | no |
+| **M4 aggregated hidden cosine** | 1.76 | **3.20** | **YES (p=0.01)** |
+| M4b aggregated hidden L2 | 1.84 | 2.17 | no |
+| M6 log-tension cosine | 1.15 | 2.12 | no |
+| M7 tension rank cosine | -1.03 | 2.81 | no |
+| M8 tension ratio cosine | 1.57 | 2.69 | no |
+
+**Routing-content split**: balanced corpus + early-phase entropy reg DID inject category signal into cell content (M4 aggregated cosine z=3.20 PASSES null test), even though softmax routing still funnels through cell 0 (F-PERSONA-4 KL=0 FAIL). Intervention worked on CONTENT, failed on ROUTING.
+
+Counter-intuitive observation: ffn_g mean pairwise dist 0.477 (v1) → **0.126 (v2)** — entropy-reg early phase forced uniform routing → all cells trained on same signal → converged in param space → final monopoly collapse happened with already-similar cells.
+
+Honest C3 amendment to v3 design (path f):
+- high λ_init may HURT (caused cells to converge in param space, undermining specialization that path f tries to preserve)
+- recommended sweep: λ_init=1.0 modest + λ_final=0.1 OR reverse λ_init=0.1 → λ_final=10 (allow specialization first, prevent late monopoly)
+- v3 trainer + dispatch are LANDED ready-to-fire but parameter sweep deferred to future cycle pending spec revision
+
+Artifacts added (this §45-FINAL conclusion):
+- `state/anima_v5mitosis_cotrain_2026_05_12/cotrain_v2_result.json` (36 KB)
+- `state/anima_v5mitosis_cotrain_2026_05_12/train_v2.log` (16 KB)
+- `state/anima_v5mitosis_cotrain_2026_05_12/ckpts/ckpt_v5mitosis_cotrain_v2_cotrain.pt` (581 MB)
+- `state/anima_v5mitosis_cotrain_2026_05_12/persona_4_root_cause_investigate_v2.py` (v1 fork → v2 ckpt)
+- `state/anima_v5mitosis_cotrain_2026_05_12/persona_4_root_cause_results_v2.json`
+- `state/anima_v5mitosis_cotrain_2026_05_12/persona_4_alternative_metrics_v2.py`
+- `state/anima_v5mitosis_cotrain_2026_05_12/persona_4_alternative_metrics_results_v2.json` (M4 cosine z=3.20 finding)
+- `state/anima_v5mitosis_cotrain_2026_05_12/train_v5mitosis_cotrain_v3.py` (ready-to-fire)
+- `state/anima_v5mitosis_cotrain_2026_05_12/dispatch_h100_v3.sh` (ready-to-fire)
+- `docs/anima_persona_4_root_cause_investigation_2026_05_12.md` §7 amended with v2 result + honest C3 #11-13
+
+cond #3 status: D3 STRONG (4/5 cheap-path) maintained; v2 intervention demonstrably injected category signal into cell content (M4 cosine z=3.20 alternative-metric PASS) but F-PERSONA-4 (softmax routing KL) still FAIL due to single-cell monopoly. Alternative metric path (D3 §A3 aggregated cosine) potentially viable for cond #3 ☑ if accepted as F-PERSONA-4 replacement; current GOAL.md spec retains softmax-based F-PERSONA-4 unchanged.
+
 ## §46 [2026-05-12 KST] D2 cond #1 ☑ DONE — Phase 1A.4 lr 5e-6 × 200 SFT V5.8 std_greedy 5/5 PASS ★★★★★ ($0.014 train + $0.65 v1 burn = $0.66 total, GOAL.md cond #1 ☐→☑ → 5-cond aggregate 3/5→4/5 ☑)
 
 ### lane

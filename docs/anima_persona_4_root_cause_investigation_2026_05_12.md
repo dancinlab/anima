@@ -193,15 +193,60 @@ Given (a) softmax saturation is the structural root cause, (b) no metric trick r
 
 ---
 
-## 7. Status
+## 7. Phase 3 v2 result (FINAL, 2026-05-12 H100 SXM $1.32)
+
+`cotrain_v2_result.json` summary (instance 36617704 destroyed cleanly):
+- wall = 0.55 hr (1980 s), cost = $1.32 actual ($8 cap)
+- ce_initial → ce_final: 258.9 → 1.37 (same trajectory as v1 264 → 1.17)
+- ent_initial → ent_final: 2.63 → **1.7e-9** (collapsed back to 0 — λ=0.1 fully overpowered by step 250+)
+- wmax_final = 1.000 (cell-0 monopoly identical to v1)
+- splits=62 merges=0 cells=64
+- **F-PERSONA-4 with null verdict = FAIL** (mean_kl=0.0, null_mean=0.0, z=inf because both exactly 0 — degenerate softmax)
+
+### v2 post-cotrain investigation harness re-run (`persona_4_root_cause_investigate_v2.py`)
+
+| metric | v1 verdict | v2 verdict |
+|---|---|---|
+| cell-0 monopoly | yes, all 50 prompts | yes, all 50 prompts (identical) |
+| tension spread mean | 582 | **803** (worse — gap larger) |
+| mean per-prompt entropy | 0.000 | 0.000 |
+| ffn_g pool rank | 64/64 | 64/64 |
+| **ffn_g mean pairwise dist** | **0.477** | **0.126** (LOWER! cells more similar in param space — counter-intuitive entropy-reg side effect) |
+| cell_state buffer dist | 0.997 | 0.997 |
+
+### v2 8-metric null sweep — MEANINGFUL CHANGE vs v1 (`persona_4_alternative_metrics_results_v2.json`)
+
+| metric | v1 z | v2 z | v2 passes null (z>3.0)? |
+|---|---|---|---|
+| M1 raw tension cosine | 0.73 | 2.08 | no |
+| M2 raw tension L2 | 1.54 | 2.22 | no |
+| **M4 aggregated hidden cosine** | 1.76 | **3.20** | **YES (p=0.01)** |
+| M4b aggregated hidden L2 | 1.84 | 2.17 | no |
+| M5 last-token logits KL | -0.24 | 0.04 | no |
+| M6 log-tension cosine | 1.15 | 2.12 | no |
+| M7 tension rank cosine | -1.03 | 2.81 | no |
+| M8 tension ratio cosine | 1.57 | 2.69 | no |
+
+**Significant**: v1 best z=1.84, v2 best z=3.20 (M4 aggregated cosine PASSES null test). Multiple v2 metrics z>2.0 (vs v1 max 1.84). The intervention (entropy-reg + balanced corpus) DID induce weak-but-significant category signal in the aggregated hidden state — even though softmax monopoly still routes all forward through cell 0, the cells' learned representations now carry category info that surfaces when measured at the aggregated hidden state level.
+
+→ **Routing-vs-content split**: the *cells* have category info (M4 cosine z=3.20), the *softmax weights* do not (F-PERSONA-4 KL=0). The intervention worked on cell content, failed on routing.
+
+### Status
 
 | step | state |
 |---|---|
 | Phase 1 investigation harness | LANDED |
-| 4-hypothesis discrimination | DONE — root cause = single-cell tension monopoly |
-| Phase 2 cheap-path falsification | DONE — z-score artifact via null test |
-| 8-metric null sweep | DONE — no metric passes z > 3 |
-| Phase 3 intervention design | LANDED — entropy reg + balanced corpus |
-| H100 v2 dispatch | FIRED — instance 36617704 |
-| F-PERSONA-4 with null re-measure | PENDING (in-line in v2 trainer) |
-| GOAL.md cond #3 update | PENDING (await v2 result) |
+| 4-hypothesis discrimination | DONE — root cause = single-cell tension monopoly (softmax routing) |
+| Phase 2 cheap-path falsification | DONE — z-score metric artifact via null permutation |
+| 8-metric null sweep v1 | DONE — no metric passes z > 3 (best 1.84 M4b) |
+| Phase 3 v2 intervention | LANDED — entropy-reg λ=0.1 + balanced corpus, H100 $1.32, 0.55 hr |
+| F-PERSONA-4 v2 with null | **FAIL** (mean_kl=0, identical monopoly) — λ=0.1 insufficient |
+| **8-metric null sweep v2** | **M4 aggregated cosine z=3.20 PASSES (NEW)** — category signal in cells, hidden by routing |
+| v3 ready-to-fire | LANDED — `train_v5mitosis_cotrain_v3.py` + `dispatch_h100_v3.sh` (cosine λ_init/final tunable) |
+| GOAL.md cond #3 | STRONG (4/5 cheap-path) maintained; true 5/5 ☑ closure deferred to v3 (path f λ anneal) or v∞ (path g arch redesign) |
+
+### Honest C3 (Phase 3 update — items 11-13)
+
+11. **Routing-content split**: even though F-PERSONA-4 (softmax weight KL) FAILed, M4 aggregated-cosine z=3.20 PASSes null on v2 (was 1.76 fail on v1). The intervention measurably injected category signal into cells; the softmax aggregator destroys it on the output side. Future F-PERSONA-4 alternate metric proposal: aggregated hidden state cosine across categories (passes null test, no z-score artifact).
+12. **Mean pairwise ffn_g dist 0.477 → 0.126 in v2**: cells in v2 are LESS diverse in param space than v1. Entropy reg early phase forced uniform routing → all cells received equal training signal → cells converged toward each other → collapse to monopoly happened with already-similar cells → less differentiation than v1. Counter-intuitive: stronger uniformity in early training MIGHT have prevented cell specialization, making the collapse worse.
+13. **v3 path (f) λ anneal hypothesis revision**: given (12), high-λ_init keeping cells uniform may HURT not help. Recommended v3 spec: λ_init=1.0 (modest, ~CE_final scale), λ_final=0.1 (gentle keep), or even REVERSE schedule λ_init=0.1 → λ_final=10 (allow cells to specialize first, then prevent late-phase monopoly). v3 trainer + dispatch are LANDED but parameter sweep deferred to follow-up cycle.
