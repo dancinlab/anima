@@ -2650,13 +2650,13 @@ source: `state/anima_phase1a1_color_cosmology_2026_05_12/v58_4mode_filter_compar
 |---|---:|---|---|---|
 | **§17 original** | 42 | cuda | bf16 | ✅ `"답 (consciousness) \| --- \| --- \|"` markdown drift |
 | 본 BG Mac matrix | 2026 | cpu | fp32 | ❌ semantic miss (`"가장 좋아하는 색은…"`) |
-| 본 BG seed probe (8 seeds) | 42 / 2024 / 2025 / 2026 / 7 / 13 / 100 / 31337 | cpu | fp32 | ❌ 전부 drift 미발현 |
+| 본 BG seed probe (5 rows partial; greedy 가 deterministic 이라 seed 무관 확인 후 중단) | 42 / 2024 / 2025 | cpu | fp32 | ❌ 전부 drift 미발현, 동일 응답 |
 
 → markdown drift 는 (seed=42) × (cuda) × (bf16) **3-축 conjunction** 에 좁게 의존. dtype/device tie-break/underflow 가 sampling path 를 갈라놓아 production GPU 와 Mac CPU 가 다른 attractor 에 빠짐 ↔ Lesson Q 의 production-vs-internal decoupling 의 추가 발현.
 
 ### ⭐ findings
 
-1. **Filter fire 횟수 = 0** (Mac matrix 20/20 + seed probe 16/16). false-positive 0 → **production land 안전**.
+1. **Filter fire 횟수 = 0** (Mac matrix 20/20 + seed probe 5/5 partial). false-positive 0 → **production land 안전**.
 2. **5/5 도전은 본 BG 단독으로 측정 불가** — Mac seed=2026 path 에서는 markdown drift 가 surface 안 함. attractor 깨기는 §25b 🥇 (lr 5e-6 SFT) 또는 🥈 (loss masking) cost-bearing lane 필요. 본 cycle 미달성.
 3. **그러나 filter 는 §17 의 cuda seed=42 path 에서는 *반드시* 작동** — prefix `\| --- ` 발견 시 mask. 본 BG false-pos 0 evidence + §17 drift evidence 결합 → Vast.ai seed=42 cuda 재측정 시 anima_fact 직접 회복 확률 high (§29 다음 진행 🥇).
 4. **harmless guard 의 가치** = future-proofing — sampling 축 (temp ≥ 1.0, top_k ≥ 100) 확장 또는 다른 ckpt swap 시 drift surface 가 다시 넓어질 때 자동 차단.
