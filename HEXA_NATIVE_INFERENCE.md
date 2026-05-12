@@ -170,11 +170,15 @@ Phase 0 SSOT commit (`d5dcf4a64`) is clean — local only until user resolves.
 
 | phase | task | status |
 |---|---|---|
-| 0 | SSOT md land (this file) | 🟢 in progress |
-| 0 | ckpt structure inspect | ⏳ next |
-| 1 | .pt → .safetensors conversion | pending |
-| 1 | hexa safetensors loader smoke | pending |
-| 2 | nn.Linear scaffold | pending |
+| 0 | SSOT md land (this file) | ✅ commit d5dcf4a64 |
+| 0 | ckpt structure inspect | ✅ done (332M params, vocab=32000, d=1024, n_layers=24, GQA, SwiGLU, RMSNorm, RoPE, tied lm_head) |
+| 1 | .pt → .safetensors conversion | ✅ tool/convert_pt_to_safetensors.py (570MB out, 221 tensors, tied lm_head dedupe) |
+| 1 | scp to aiden (Phase 1.1 transfer) | ✅ /home/aiden/core/anima/.../ckpt_phase1a1_sft.safetensors |
+| 1 | hexa safetensors loader smoke | 🟡 partial — loader started, OOM at 9.1GB (aiden host crashed, RFC 024+025 needed) |
+| 2 | nn primitives scaffold | ✅ tool/hexa_native/engine_ag_nn.hexa (RMSNorm/SwiGLU/RoPE/linear/embedding done, GQA-attn TODO Phase 3) |
+| ∥ | hexa-lang RFC 024-028 drafts | ✅ incoming/rfc_drafts_2026_05_12/ (5 RFCs) |
+| ∥ | anima .hexarc config | ✅ /Users/ghost/core/anima/.hexarc (forward-looking spec) |
+| 3 | EngineAG GQA attention proper | ⏳ next (Phase 3 entry) |
 
 ---
 
@@ -184,6 +188,23 @@ Phase 0 SSOT commit (`d5dcf4a64`) is clean — local only until user resolves.
 2. **pure hexa float ops 성능**: nn.hexa 의 활성화는 element-wise loop (no SIMD). 350M params × 50 token gen = 수 분 ~ 수십 분 예상.
 3. **EngineAG 정확한 arch**: 일부 detail (RoPE vs learned, SwiGLU vs GELU, norm type) 은 training/engine_a_g_arch.py read 필요.
 4. **honest scope**: Phase 0-5 전부 hexa-native 가 가능한지 unknown. 만약 어느 단계에서 막힌다면 hexa-lang upstream PR 필요할 수도 (RFC 등록).
+
+---
+
+## 🔧 hexa-lang upstream 개선 후보 (Phase 1.2 discovered)
+
+본 cycle 의 hexa native loader smoke 진행 중 발견. 향후 RFC 등록 가치.
+
+| # | issue | 현 동작 | 권고 |
+|---|---|---|---|
+| RFC-A | **Default mem cap 768MB ML 부적합** | `[hexa-runtime] memory cap exceeded: rss=9144MB > cap=768MB` | ML 인식 기본값 (예: 8GB) 또는 file-size 기반 auto-tune |
+| RFC-B | **safetensors_read 16× overhead** | 570MB file → 9.1GB RSS | zero-copy mmap 또는 raw C buffer (boxed-value list 회피) |
+| RFC-C | **resource-tcp env passthrough 없음** | Mac shell HEXA_LANG → aiden runtime: `<unset>` | dispatcher 가 HEXA_* env 자동 forward, 또는 project-level `.hexarc` |
+| RFC-D | **stdlib internal import 실패 (HEXA_LANG unset 시)** | safetensors.hexa imports `stdlib/bytes` → not found | resolver 가 `caller_dir/..` sibling fallback, 또는 stdlib 가 자기-위치 self-resolve |
+| RFC-E | **mac → aiden cross-host 명시적 mode 부재** | mac shell 호출 시 silent offload | `--local` / `--mac` flag, 또는 `HEXA_NO_REMOTE=1` env |
+
+→ 본 cycle 의 즉시 우회: `ssh ubu1 'HEXA_LANG=... HEXA_MEM_UNLIMITED=1 hexa run ...'` 명시 호출.
+→ 다음 cycle 에서 hexa-lang RFC 5개 묶음 PR (cost: $0, value: 모든 hexa ML script 혜택).
 
 ---
 
