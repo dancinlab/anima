@@ -3,7 +3,9 @@ id: Hc_167
 slug: topo18-smallworld-2048-sublinear
 title: Small-world 2048 cells: Φ regresses to 406.5 from 498.7 at 1024 (TOPO18)
 domain: physics | consciousness
-status: candidate-falsifier-ready
+status: merged-to-H_179
+merged_at: 2026-05-12
+merged_to: hypotheses/H_179_negative_scaling_cluster_steps_cells_2048.md
 source_doc: docs/hypotheses/topo/TOPO18.md
 source_lines: 1-30
 promoted_at: 2026-05-11

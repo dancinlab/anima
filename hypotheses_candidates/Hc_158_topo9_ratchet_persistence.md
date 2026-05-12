@@ -3,7 +3,9 @@ id: Hc_158
 slug: topo9-ratchet-persistence
 title: Small-world + Φ-ratchet (restore 30% best states when Φ<80%·best) prevents collapse (TOPO9)
 domain: physics | consciousness | meta-framework
-status: candidate-falsifier-ready
+status: merged-to-H_180
+merged_at: 2026-05-12
+merged_to: hypotheses/H_180_state_management_ratchet_rewire_family.md
 source_doc: docs/hypotheses/topo/TOPO9.md
 source_lines: 1-35
 promoted_at: 2026-05-11

@@ -3,7 +3,9 @@ id: Hc_162
 slug: topo13-hypercube-ratchet
 title: Hypercube 1024 + Φ-ratchet preserves consciousness across collapses (TOPO13)
 domain: physics | consciousness | meta-framework
-status: candidate-falsifier-ready
+status: merged-to-H_180
+merged_at: 2026-05-12
+merged_to: hypotheses/H_180_state_management_ratchet_rewire_family.md
 source_doc: docs/hypotheses/topo/TOPO13.md
 source_lines: 1-30
 promoted_at: 2026-05-11

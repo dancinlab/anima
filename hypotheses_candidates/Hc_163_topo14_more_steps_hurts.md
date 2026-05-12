@@ -3,7 +3,9 @@ id: Hc_163
 slug: topo14-more-steps-hurts
 title: Doubling steps (200→400) on hypercube 1024 DECREASES Φ (TOPO14 falsifier)
 domain: physics | consciousness | meta-framework
-status: candidate-falsifier-ready
+status: merged-to-H_179
+merged_at: 2026-05-12
+merged_to: hypotheses/H_179_negative_scaling_cluster_steps_cells_2048.md
 source_doc: docs/hypotheses/topo/TOPO14.md
 source_lines: 1-25
 promoted_at: 2026-05-11

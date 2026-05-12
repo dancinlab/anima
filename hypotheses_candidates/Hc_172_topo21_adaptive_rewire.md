@@ -3,7 +3,9 @@ id: Hc_172
 slug: topo21-adaptive-rewire
 title: Dynamic adaptive rewiring on Φ drop (TOPO21)
 domain: physics | consciousness | meta-framework
-status: candidate-falsifier-ready
+status: merged-to-H_180
+merged_at: 2026-05-12
+merged_to: hypotheses/H_180_state_management_ratchet_rewire_family.md
 source_doc: docs/hypotheses/topo/TOPO21.md
 source_lines: 1-30
 promoted_at: 2026-05-11

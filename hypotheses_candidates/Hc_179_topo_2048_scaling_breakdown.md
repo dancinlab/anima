@@ -3,7 +3,9 @@ id: Hc_179
 slug: topo-2048-scaling-breakdown
 title: Superlinear Φ scaling breaks down at 2048 cells across all topologies (TOPO-2048-SCALING)
 domain: physics | consciousness | meta-framework
-status: candidate-falsifier-ready
+status: merged-to-H_179
+merged_at: 2026-05-12
+merged_to: hypotheses/H_179_negative_scaling_cluster_steps_cells_2048.md
 source_doc: docs/hypotheses/topo/TOPO-2048-SCALING.md
 source_lines: 1-40
 promoted_at: 2026-05-11
