@@ -94,10 +94,15 @@ fn _shell_escape_single(s: string) -> string {
     return out + "'"
 }
 
+fn _on_mac() -> bool {
+    // Mac local detection: /Users/ghost exists AND we're not on ubu host.
+    return _str(exec("test -d /Users/ghost && uname -s 2>/dev/null")).trim() == "Darwin"
+}
+
 fn _invoke(alias: string, prompt: string, mode: string, max_new: int) -> string {
-    // raw#9 EXCEPTION: ssh mac wrapper. hexa runtime routes through ubu1,
-    // but anima_chat.py + ckpts live on Mac. ssh self-call expands ~ to
-    // mac home and runs PyTorch inference locally on Mac.
+    // raw#9 EXCEPTION: anima_chat.py + ckpts live on Mac.
+    //   - Mac local: direct exec (no ssh prefix)
+    //   - ubu host:  ssh mac wrapper (Mac home path expansion)
     let ckpt = _ckpt_for(alias)
     if ckpt == "" {
         return "[anima_pretrained] unknown alias: " + alias + "\n"
@@ -105,6 +110,10 @@ fn _invoke(alias: string, prompt: string, mode: string, max_new: int) -> string 
     let esc_prompt = _shell_escape_single(prompt)
     let n = to_string(max_new)
     let inner = "/usr/bin/python3 ~/core/anima/anima_chat.py --ckpt " + ckpt + " --prompt " + esc_prompt + " --mode " + mode + " --max-new " + n + " 2>/dev/null"
+    if _on_mac() {
+        // expand ~ via shell directly, no ssh
+        return _str(exec("bash -c " + _shell_escape_single(inner)))
+    }
     let esc_inner = _shell_escape_single(inner)
     let cmd = "ssh -o ConnectTimeout=15 -o BatchMode=yes mac " + esc_inner
     return _str(exec(cmd))

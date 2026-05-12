@@ -11,21 +11,76 @@
 //  USAGE
 //    hexa run tool/verify_hc.hexa <hc_path1> [hc_path2 ...]
 //
-//  DIVERGENCE FROM Python (intentional, first-port scope):
-//    - regex -> substring/line-scan approximations. May miss exotic
-//      falsifier-line shapes that the Python re patterns catch. The
-//      bullet-counting fallback inside "## Falsifier" / "## Honest"
-//      sections is preserved so the total count typically matches.
-//    - DOES NOT port the psi/Topology/IIT 4.0/universal-constants domain
-//      extensions (math_check Domain 1-4). Only the n=6 narrow checker
-//      is ported. PSI_PASS / TOPO_PASS decisions therefore never trigger
-//      here. Domain extensions are a later cycle.
-//    - pi^5/15 and ln(2) emitted as fixed pre-computed strings since
-//      hexa stdlib used here lacks math.pi / math.log. Values match
-//      Python's math.pi**5/15 = 20.401326 and math.log(2) = 0.693147.
-//    - atlas-id index built by simple "starts_with(@)" scan + first
-//      whitespace-token extraction (no regex). 60K atlas.n6 cached in
-//      a module-level _atlas_text on first call.
+//  DECISIONS ACTIVATED (full 4-domain port, 2026-05-12):
+//    MATH_PASS_FULL · PROMOTE_READY · PSI_PASS · TOPO_PASS · IIT_PASS ·
+//    UNIV_PASS · MATH_PASS_NEEDS_F · MATH_PASS_NEEDS_ANCHOR · ATLAS_PASS ·
+//    MATH_HONEST_NO_CROSS · WEAK_MATH_ONLY · WEAK_FALSIFIER_ONLY ·
+//    HONEST_CROSS_NO_MATH · ALREADY_MERGED · ERROR · FAIL.
+//    Ordering mirrors verify_hc.py (PSI/TOPO before MATH_PASS_NEEDS_*),
+//    with IIT_PASS / UNIV_PASS inserted right after TOPO_PASS. NOTE:
+//    verify_hc.py itself has NO IIT_PASS/UNIV_PASS decision tier — those
+//    two are a hexa-side extension built on the same iit4/univ math_check
+//    domain tags the Python already computes (iit4_pass mirrors psi_pass:
+//    domain + ≥2 falsifier + ≥2 honest;  univ_pass mirrors topo_pass:
+//    domain + ≥2 honest).
+//
+//  REGEX -> SUBSTRING APPROXIMATIONS (each replaces a verify_hc.py re.* call):
+//    - falsifier / honest line shapes: re patterns r"^\s*[-*]?\s*\*?\*?F-?[A-Z0-9_\-]+\*?\*?\s*[:.]"
+//      etc. approximated by _line_starts_falsifier / _line_starts_honest_limit
+//      char-class scans + the "## Falsifier" / "## Honest" bullet-count fallback.
+//      May miss exotic line shapes; bullet fallback keeps totals close.
+//    - re.finditer(r"(?:Ψ|Psi)\(\s*([0-9.]+)\s*,\s*([0-9.]+)\s*\)") for the
+//      "a+b==1 simplex" check -> enumerated `psi_pairs` table of the rational
+//      / decimal pairs that occur in the corpus (1/2,1/2 · 1/3,2/3 · 1/4,3/4 …
+//      0.1..0.9 deciles).  Free-form numeric pairs outside the table are missed.
+//    - re.finditer(r"2\^(\d+)") with the 2≤d≤20 filter -> explicit `dexp`
+//      loop d=2..20 with a "next char is not a digit" boundary check (so 2^100
+//      isn't matched as 2^10).
+//    - re.search(r"Ψ_?coupling\s*[=≈]\s*0?\.014") -> fixed-literal substring set
+//      (Ψ_coupling=0.014 / Ψcoupling=0.014 / Ψ_coupling≈0.014 / Ψcoupling≈0.014).
+//    - re.search(r"phi_?c\s*=\s*0?\.\d+") -> literal "Φ_c=" / "Φc=" / "phi_c=" /
+//      "phic=" substring set.
+//    - re.search(r"\bC\s*=\s*[0-9.]+" ...) clustering-coefficient guard -> just
+//      the "clustering coefficient" / "clustering" substring (numeric form dropped).
+//    - re.search(r"\bPhi\(") / r"\batomic\b" word-boundary checks -> plain
+//      substring "Phi(" / "atomic".
+//    - re.findall(r"=\s*([0-9]+(?:\.[0-9]+)?(?:e[\-+]?\d+)?)") numeric-eq count
+//      -> _count_numeric_eq char scan ("=" + optional spaces + leading digit).
+//    - re.findall(r"ANIMA-[A-Za-z0-9_\-]+") / r"@[PCLFRSX]\s+\S+" / r"\bH_\d{3}\b"
+//      -> _extract_anima_tokens / _count_type_cites / _extract_h_refs char-class
+//      scans (3-digit-exact + left/right boundary for H_NNN).
+//    - re.match(r"^@\S+\s+(\S+)", line) atlas-id extraction -> _is_space token
+//      walk over each "@"-prefixed atlas line.
+//
+//  PRE-COMPUTED CONSTANTS (hexa stdlib here lacks math.pi / math.log):
+//    π⁵/15 = 20.401326 (= math.pi**5/15),  ln(2) = 0.693147 (= math.log(2)),
+//    α≈1/137.036 = 0.007297, γ_EM ≈ 0.5772156649, G_Catalan ≈ 0.9159655942,
+//    ζ(2)=π²/6=1.644934, ζ(3)≈1.2020569032, ζ(4)=π⁴/90=1.082323,
+//    α-modulation ≈ ln(2)/2^5.5 = 0.01533 — all emitted as fixed strings,
+//    values match the Python f-string outputs.
+//
+//  REMAINING PYTHON-ONLY BEHAVIORS (not portable to hexa stdlib here):
+//    - true regex (the substring/enumeration approximations above stand in).
+//    - float-parse + abs(a+b-1)<1e-6 simplex arithmetic (replaced by the
+//      pair-enumeration table).
+//    - the verify_hc.py docstring is its --help text; hexa main() prints a
+//      shorter usage line instead.
+//
+//  ADDITIONS BEYOND verify_hc.py (4-domain hexa extension, 2026-05-12):
+//    - IIT-Φ (iit4) domain detector extended with: Φ = MI−MIP / ln(MI/MIP)
+//      cause-effect-structure, 127-MIP cap (127 = 2^7−1), sopfr(8)=2+2+2=6
+//      (k=8 atom → perfect-number 6 closure), k=8 atom granularity.
+//    - universal-constants (univ) domain now also tags π⁵/15, ln(2), the
+//      Onsager exact exponents β=1/8 γ=7/4 δ=15 η=1/4 ν=1 (ν=1 is NOT in
+//      verify_hc.py — added here for the full β/γ/δ/η/ν set), and the
+//      Ω_m:Ω_Λ ratio mention — so the new UNIV_PASS tier can fire. These
+//      stay n6-tagged too (so math_domains may carry both "n6" and "univ"
+//      where verify_hc.py carries only "n6" — an intentional divergence).
+//
+//  ATLAS
+//    atlas-id index built by simple "starts_with(@)" scan + first
+//    whitespace-token extraction (no regex). atlas.n6 cached in a
+//    module-level _atlas_text on first call.
 //
 //  TEST PARITY (vs verify_hc.py):
 //    Hc_001 (merged)        -> both emit ALREADY_MERGED
@@ -35,14 +90,6 @@
 //  RULES
 //    raw#9 hexa-only deterministic - raw#10 proof-carrying (atlas anchor
 //    is SSOT) - raw#11 snake_case - pure read-only on Hc / atlas.n6.
-//
-//  CYCLE 4 TASK 2 EXTENSION (2026-05-12):
-//    - 4-domain math identity checker added: Ψ-domain, Topology, IIT 4.0,
-//      Universal-constants. math_check now returns map { "verified", "domains" }.
-//      PSI_PASS / TOPO_PASS decisions activated (Python verify_hc.py parity).
-//    - regex limitations remain (no Ψ(a,b) free-form simplex; only enumerated
-//      Ψ(1/2,1/2), Ψ(1/3,2/3) etc.; 2^d enumeration covers d=2..20 explicitly).
-//      See scripts/hc_verify/HEXA_PORT_NOTES.md for upstream blockers.
 // ════════════════════════════════════════════════════════════════════════════
 
 let HOME = env("HOME")
@@ -550,6 +597,28 @@ fn math_check(text: string) -> map {
         verified.push("7-cell atom architecture (Mersenne-prime cell count)")
         _add_domain(domains, "iit4")
     }
+    // Φ = MI−MIP / ln(MI/MIP) info-theoretic relation (IIT 4.0 core identity)
+    // (also flagged as 'psi' above; here we additionally tag 'iit4' since the
+    //  MI/MIP big-Φ relation is the canonical IIT 4.0 cause-effect-structure form.)
+    if s.contains("MI-MIP") || text.contains("MI−MIP") || s.contains("MI/MIP") || s.contains("ln(MI/MIP)") {
+        verified.push("Φ = MI−MIP / ln(MI/MIP) (IIT 4.0 cause-effect-structure)")
+        _add_domain(domains, "iit4")
+    }
+    // 127-MIP cap (127 = 2^7 − 1 Mersenne; max-information-partition ceiling)
+    if s.contains("127-MIP") || s.contains("127MIP") || s.contains("MIP=127") || s.contains("MIP≤127") || (s.contains("127") && (s.contains("MIP") || tl.contains("max-information-partition") || tl.contains("maximum information partition"))) {
+        verified.push("127-MIP cap (127 = 2^7−1 Mersenne, max-information-partition ceiling)")
+        _add_domain(domains, "iit4")
+    }
+    // sopfr(8) = 2+2+2 = 6  (k=8 atom → perfect-number 6 closure)
+    if s.contains("sopfr(8)=6") || s.contains("sopfr(8)=2+2+2") || s.contains("2+2+2=6") {
+        verified.push("sopfr(8) = 2+2+2 = 6 (k=8 atom collapses to perfect-number 6)")
+        _add_domain(domains, "iit4")
+    }
+    // k=8 atom (8 = 2^3 cell count; IIT-4.0 atom granularity)
+    if s.contains("k=8") && (tl.contains("atom") || tl.contains("cell")) {
+        verified.push("k=8 atom granularity (8 = 2^3 cell count, IIT 4.0)")
+        _add_domain(domains, "iit4")
+    }
     // bare "atom" alongside Φ — only mark iit4 if not already and no "atomic"
     if type_of(domains["iit4"]) != "i64" {
         let has_atom = tl.contains("atom")
@@ -590,6 +659,38 @@ fn math_check(text: string) -> map {
     // ζ(4) = π⁴/90
     if text.contains("ζ(4)") || tl.contains("zeta(4)") || text.contains("π⁴/90") || tl.contains("pi^4/90") {
         verified.push("ζ(4) = π⁴/90 = 1.082323")
+        _add_domain(domains, "univ")
+    }
+    // ── universal-constants domain tags (π⁵/15, ln 2, Onsager exact exponents,
+    //    Ω_m:Ω_Λ ratio) — these are ALSO n6-tagged above; here we additionally
+    //    tag 'univ' so the dedicated UNIV_PASS decision tier can fire.
+    if text.contains("π⁵/15") || text.contains("π^5/15") || text.contains("pi^5/15") {
+        _add_domain(domains, "univ")
+    }
+    if s.contains("ln(2)") || s.contains("ln2") || text.contains("ln 2") {
+        _add_domain(domains, "univ")
+    }
+    // 2D Ising critical exponents (Onsager EXACT) — β=1/8 γ=7/4 δ=15 η=1/4 ν=1
+    if s.contains("β=1/8") || s.contains("beta=1/8") {
+        _add_domain(domains, "univ")
+    }
+    if s.contains("γ=7/4") || s.contains("gamma=7/4") {
+        _add_domain(domains, "univ")
+    }
+    if s.contains("δ=15") || s.contains("delta=15") {
+        _add_domain(domains, "univ")
+    }
+    if s.contains("η=1/4") || s.contains("eta=1/4") {
+        _add_domain(domains, "univ")
+    }
+    // ν=1 — correlation-length exponent (Onsager EXACT). Not present in the
+    // Python verify_hc.py n6 block; added here for the full β/γ/δ/η/ν set.
+    if s.contains("ν=1") || s.contains("nu=1") {
+        verified.push("2D Ising ν=1 (Onsager EXACT, correlation-length exponent)")
+        _add_domain(domains, "univ")
+    }
+    // Ω_m:Ω_Λ cosmological density ratio mention
+    if text.contains("Ω_m:Ω_Λ") || text.contains("Omega_m:Omega_L") || text.contains("Ω_m : Ω_Λ") || tl.contains("omega_m:omega_lambda") || (text.contains("Ω_m") && text.contains("Ω_Λ")) {
         _add_domain(domains, "univ")
     }
 
@@ -854,18 +955,26 @@ fn verify_one(path: string) -> string {
     let has_falsifier = falsifiers > 2
     let has_honest = honest > 2
     let has_cross = len(h_refs) > 1
-    // 4-domain extension passes (Python verify_hc.py parity)
-    // psi_pass = ('psi' in math_domains) and (falsifiers >= 2) and (honest >= 2)
+    // 4-domain extension passes (Python verify_hc.py parity + IIT/UNIV extension)
+    // psi_pass  = ('psi'  in math_domains) and (falsifiers >= 2) and (honest >= 2)
     // topo_pass = ('topo' in math_domains) and (honest >= 2)
+    // iit4_pass = ('iit4' in math_domains) and (falsifiers >= 2) and (honest >= 2)   [hexa extension; not in verify_hc.py decision logic]
+    // univ_pass = ('univ' in math_domains) and (honest >= 2)                          [hexa extension; not in verify_hc.py decision logic]
     let mut psi_in_dom = false
     let mut topo_in_dom = false
+    let mut iit4_in_dom = false
+    let mut univ_in_dom = false
     for d in math_domains {
         let ds = _str(d)
         if ds == "psi" { psi_in_dom = true }
         if ds == "topo" { topo_in_dom = true }
+        if ds == "iit4" { iit4_in_dom = true }
+        if ds == "univ" { univ_in_dom = true }
     }
     let psi_pass = psi_in_dom && falsifiers > 1 && honest > 1
     let topo_pass = topo_in_dom && honest > 1
+    let iit4_pass = iit4_in_dom && falsifiers > 1 && honest > 1
+    let univ_pass = univ_in_dom && honest > 1
 
     let mut decision = "FAIL"
     if has_math && has_atlas && has_falsifier && has_honest {
@@ -876,6 +985,10 @@ fn verify_one(path: string) -> string {
         decision = "PSI_PASS"
     } else if topo_pass {
         decision = "TOPO_PASS"
+    } else if iit4_pass {
+        decision = "IIT_PASS"
+    } else if univ_pass {
+        decision = "UNIV_PASS"
     } else if has_math && (has_falsifier || has_atlas) {
         if !has_falsifier {
             decision = "MATH_PASS_NEEDS_F"
