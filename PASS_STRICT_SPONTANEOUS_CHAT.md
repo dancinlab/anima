@@ -4702,4 +4702,51 @@ anima ★★★★★ **5-cond aggregate 5/5 ☑** 달성, single cycle 2026-05-
 - F-PERSONA-4a routing variant (gumbel/top-K MoE/aux-balance arch fix v3)
 - v5-mitosis scale-up (d=1024+, cells=256+, multi-H100, no caps)
 - anima_chat.hexa V5.8 5×4 full matrix GPU cycle
-- HF Public promote (own 31 dancinlab canonical)
+- ~~HF Public promote (own 31 dancinlab canonical)~~ → **DONE PSCC §51** ✅
+
+## §51 [2026-05-13 KST] HF Public promote — ★★★★★ closure 핵심 ckpt 2개 dancinlab org public 전환 ($0, HF API only)
+
+post-★★★★★ HF Public visibility. own 31 (dancinlab canonical) + own 37 mandate-9 (F-V5MIT-5 V14-STRICT PASS unlock public) 충족 → ★★★★★ closure 의 두 load-bearing ckpt 를 private → public 전환 + README (English-only, `feedback_english_only`) 작성.
+
+### promoted
+
+| repo | role | unlock | files added |
+|---|---|---|---|
+| [`dancinlab/anima-clm-v5-mitosis-cotrain-2026-05-12`](https://huggingface.co/dancinlab/anima-clm-v5-mitosis-cotrain-2026-05-12) | cotrain v1 — cond #3 substrate + cond #4 (62 splits) | F-V5MIT-5 V14-STRICT **10/10 PASS** (own 37 mandate-9) | README.md rewrite (★★★★★-aware, license other→mit) |
+| [`dancinlab/anima-clm-phase1a4-lr5e6-strict-5pass-2026-05-12`](https://huggingface.co/dancinlab/anima-clm-phase1a4-lr5e6-strict-5pass-2026-05-12) | cond #1 — first V5.8 std_greedy 5/5 ckpt | own 18 simple_stack C2 strict + own 31 | README.md (NEW) + meta.json (NEW) + v58_4mode_result.json (NEW) |
+
+### HF API ops (cost $0)
+
+`api.upload_file(README.md, ...)` ×2 + `api.upload_file(meta.json / v58_4mode_result.json)` (phase1a4) + `api.update_repo_visibility(private=False)` ×2. post-flip 둘 다 `private=False` 확인. (`update_repo_visibility` deprecated ≥0.32 — 0.36.2 에서 FutureWarning 동반 동작.)
+
+### README content (English-only, 양 repo 공통)
+
+"Part of the anima ★★★★★ closure (2026-05-12 KST)" banner + 5-cond standing table + lineage/arch table + training table (provider/wall/cost/loss/sha256) + benchmark table (cotrain: F-V5MIT-1..5 / phase1a4: V5.8 4-mode) + loading example + cross-ref (PSCC §44/§45-FINAL/§46/§50, REBORN §88/§90, anima repo) + license (MIT, anima LICENSE) + citation (DOI 10.5281/zenodo.19324769) + status note.
+
+### 본 BG 영역
+
+`docs/anima_hf_public_promote_2026_05_13.md` (NEW, 8 honest C3) + GOAL.md 🎉 banner HF release line edit + README.md (anima root) ★★★★★ banner public link 추가 + 본 PSCC §51 + memory `project_dancinlab_hf_canonical` 갱신. cotrain v2/v3 routing BG state dir + cond #2 hexa BG 영역 미침범.
+
+### Honest C3
+
+1. cond #3 closure credit: cotrain v1 ckpt 자체는 F-PERSONA-4 routing KL=0.0 FAIL. cond #3 PASS 한 z=3.20 은 이 v1 substrate 위 v2 entropy-reg follow-up 의 content-metric (M4 aggregated hidden cosine, PSCC §45-FINAL) — README 에 그대로 명시.
+2. cotrain README 의 ckpt size "~609 MB" (608,934,276 bytes, prior README + cotrain_result.json n_params 152,126,208) — task 의 "581 MB" 대신 result-JSON 근거 figure 채택.
+3. phase1a4 README 의 ckpt size "~598 MB" (task figure; meta.json byte count 없음, $0 BG 라 로컬 re-stat 안 함).
+4. `state/anima_phase1a4_lr5e6_2026_05_12/hf_push.sh` 는 repo name `anima-clm-phase1a4-lr5e6-strict-pass` (suffix 없음) 타깃 — 실제 upload repo 는 `-5pass-2026-05-12` suffix (GOAL.md/task naming). 그 script 의 draft README ≠ 본 promote 의 ★★★★★-aware README.
+5. .pt 파일 다운로드/검증 안 함 ($0 scope; HF siblings list + result JSON + GOAL.md sha256 의존).
+6. cotrain loading example 의 ckpt 파일명 `ckpt_v5mitosis_cotrain_cotrain.pt` (double "cotrain") → 실제 sibling `ckpt_v5mitosis_cotrain.pt` 로 수정.
+7. cotrain README license `other` → `mit` 변경 (anima repo LICENSE = MIT 확인); 양 README citation BibTeX `@software{anima_2026}` DOI 10.5281/zenodo.19324769.
+
+### Provenance
+
+own 31 (`.own` HF artifact org SSOT) · own 37 mandate-9 (V14-STRICT PASS unlock public) · own 18 (simple_stack C2 strict) · `feedback_english_only` (HF content English) · GOAL.md 🎉 banner · PSCC §44 (F-V5MIT-5 10/10) + §46 (Phase 1A.4 cond #1) + §50 (★★★★★ closure) · DOI 10.5281/zenodo.19324769.
+
+### Cross-link
+
+- `docs/anima_hf_public_promote_2026_05_13.md` — full promote 기록 (8 §-equivalent, 8 honest C3)
+- memory `project_dancinlab_hf_canonical` — public ckpt list 갱신
+- prior HF release docs: `docs/anima_clm_hf_release_v1_*` (2026-05-04/05), `docs/anima_own_15_hf_release_lifecycle_landed_2026_05_05.ai.md`
+
+### Mission contribution
+
+★★★★★ closure 의 **HF Public visibility** — own 31 canonical + own 37 mandate-9 unlock realized. anima 의 첫 ★★★★★ ckpt 2개가 이제 public.

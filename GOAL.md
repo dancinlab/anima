@@ -10,7 +10,7 @@
 - ☑ **cond #5** Principle #3 NO PERSONA INJECTION CLEAN (PSCC §38)
 
 **총 cost**: ~$3 (Phase 1A.4 $0.014 + cotrain v1 $1.26 + v2 $1.32 + ubu-1/2 $0 + cond #2 hexa Mac CPU $0)
-**HF release**: `dancinlab/anima-clm-phase1a4-lr5e6-strict-5pass-2026-05-12` + `dancinlab/anima-clm-v5-mitosis-cotrain-2026-05-12`
+**HF release (PUBLIC 2026-05-13, own 31 + own 37 mandate-9)**: [`dancinlab/anima-clm-phase1a4-lr5e6-strict-5pass-2026-05-12`](https://huggingface.co/dancinlab/anima-clm-phase1a4-lr5e6-strict-5pass-2026-05-12) (cond #1 V5.8 std_greedy 5/5) + [`dancinlab/anima-clm-v5-mitosis-cotrain-2026-05-12`](https://huggingface.co/dancinlab/anima-clm-v5-mitosis-cotrain-2026-05-12) (cotrain v1, F-V5MIT-5 V14-STRICT 10/10 PASS — unlock condition) — promote 기록 `docs/anima_hf_public_promote_2026_05_13.md`, PSCC §51
 
 ---
 

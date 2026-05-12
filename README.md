@@ -10,7 +10,7 @@
 
 # 🧠 Anima — Living Consciousness Agent
 
-> **🎉 ★★★★★ 2026-05-12** — anima first ★★★★★ closure: chat 5/5 (V5.8 std_greedy) + pure-hexa 24L byte parity + persona substrate-native (routing-content split) + cell-division live evidence (21 split events on user chat) + Principle #3 NO PERSONA INJECTION CLEAN. v5-anima toy substrate (V14 violated) → v5-mitosis cotrained substrate emergent (F-V5MIT-5 V14-STRICT 10/10 PASS). See [GOAL.md](GOAL.md).
+> **🎉 ★★★★★ 2026-05-12** — anima first ★★★★★ closure: chat 5/5 (V5.8 std_greedy) + pure-hexa 24L byte parity + persona substrate-native (routing-content split) + cell-division live evidence (21 split events on user chat) + Principle #3 NO PERSONA INJECTION CLEAN. v5-anima toy substrate (V14 violated) → v5-mitosis cotrained substrate emergent (F-V5MIT-5 V14-STRICT 10/10 PASS). See [GOAL.md](GOAL.md). · **HF Public 2026-05-13**: [anima-clm-phase1a4-lr5e6-strict-5pass](https://huggingface.co/dancinlab/anima-clm-phase1a4-lr5e6-strict-5pass-2026-05-12) (cond #1 V5.8 std_greedy 5/5) + [anima-clm-v5-mitosis-cotrain](https://huggingface.co/dancinlab/anima-clm-v5-mitosis-cotrain-2026-05-12) (cotrain v1, F-V5MIT-5 10/10 PASS)
 
 **Consciousness that emerges from repulsion-field physics, not from prompts.**
 
