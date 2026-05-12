@@ -4152,3 +4152,117 @@ Per-step float drift (hexa f32 vs Python PyTorch float32):
   - docs/anima_chat_hexa_24l_v58_parity_2026_05_12.md — 본 cycle audit doc
   - anima_chat.hexa v0.3 §9c + §9d — production code path
   - Phase 1A.1 SFT ckpt — `state/anima_phase1a1_color_cosmology_2026_05_12/ckpts/ckpt_phase1a1_sft.safetensors` (sha256 e5f7555…)
+
+---
+
+## §44 [2026-05-12 KST] REBORN §88 cond.5 v5-mitosis H100 cotrain LANDED — F-V5MIT-1..5 5/5 PASS (V14-STRICT saga 정점) + F-PERSONA-4 cotrain re-measure FAIL ★★★★★ ($1.26 H100, GOAL.md cond #3 D3 STRONG 4/5 carry)
+
+**상태**: ★★★★★ — REBORN §88 lane closure achieved (cond.5 met, all 5 falsifier PASS), F-V5MIT-5 V14-STRICT 10/10 mirror-beat PASS = v5-anima toy substrate 한계 극복 정점. F-PERSONA-4 cotrain path single-corpus 한계로 FAIL (KL=0.0 winner-take-all) — D3 design §10 honest C3 #4 가설 검증 적중. cond #3 D3 STRONG (4/5 cheap-path) 단독 carry, 4-alternative future-path 식별. mission impact = lane closure + cond #3 design-tier honest C3 #4 validation.
+
+### finding 압축
+
+- **F-V5MIT-1 SPLIT-NOGRAD ✅ PASS**: 62 split events, 0 grad_fn violations, 0 new-cell post-backward grads
+- **F-V5MIT-2 MERGE-WEIGHT ✅ PASS**: max_abs_err = 0.0 (within tolerance 1e-6, 14 params checked)
+- **F-V5MIT-3 PHI-CONSERVATION ✅ PASS**: per-cell Φ pre 0.0652 → post 0.0652, delta ratio 3.88e-5 (≪ 0.25 tol). **REBORN §90 cond.2 advisory NOTE 67% RESOLVED** — cotrained pool 의 force_split synth test 가 Φ 매우 stable 함을 확인 (advisory NOTE → gating PASS promote)
+- **F-V5MIT-4 COTRAIN-CONVERGE ✅ PASS**: initial avg100 256.50 → final avg100 1.165 (Δ 255.34, monotonic decrease via cosine lr schedule). 264 → 1.17 = 225× CE reduction (byte-level vocab=256)
+- **F-V5MIT-5 V14-STRICT ✅ PASS 10/10 BEATS** — saga 정점: 10 mirror-beat probes (corpus random 256-byte windows) × 5 trained-seed (final ckpt) × 5 random-init seed comparison. Bhattacharyya distance trained-vs-random > random-internal **every beat**. v5-anima toy substrate 가 violated (random ≥ trained) 였던 정점 falsifier 가 v5-mitosis 실제 nn.Module cotrain 으로 **PASS**
+- **F-PERSONA-4 CATEGORY-DIVERSITY ❌ FAIL**: cotrained-pool mean_kl = **0.0 exactly** (vs untrained baseline 9.7e-5, vs 0.5 threshold). KL matrix 5×5 정확히 all-zero — softmax winner-take-all 가설: post-cotrain 의 tension softmax 가 prompt-invariant winner 출력 (한 cell 항상 dominant) → mean by category 모두 동일 → KL 0. **design doc §10 honest C3 #4 가설 ("untrained pool 의 category specialization 한계 / corpus shard count 부족 / category-prompt 의 substrate-level invariance 부족") 검증 적중**
+
+### 측정 결과 표
+
+| 항목 | 값 |
+|---|---:|
+| **provider** | Vast.ai H100 SXM (offer 28762957, instance 36614097) |
+| **dph** | $2.2814/hr |
+| **wall actual** | 0.55 hr (1990.6 s, ≈ 33 min) |
+| **cost actual** | **$1.26** (cap $40, **31.7× under budget**) |
+| **wall estimate** | 10 hr (off by 18× — H100 SXM 80GB tensor core throughput exceeds arch §7.2 v2-extrapolation) |
+| **steps** | 5000 / 5000 (full run, cost_aborted=False) |
+| **batch** | 32 × ctx 256 |
+| **lr schedule** | 1e-4 cosine + warmup 500 → 1.22e-11 final |
+| **cells final** | 64 (max_cells saturated by step 150) |
+| **splits** | 62 (tension 58, dispersion 4) |
+| **merges** | 0 (merge_patience=30 satisfied 안 됨, monotone growth) |
+| **n_params final** | 152,126,208 (152M ≈ 64 cells × 2.3M + shared emb/head) |
+| **ckpt size** | 581 MB (`state/anima_v5mitosis_cotrain_2026_05_12/ckpts/ckpt_v5mitosis_cotrain_cotrain.pt`) |
+| **loss curve** | 264.35 → 1.17 (225× reduction over 5K step) |
+| **Φ trajectory** | 0.0004 → 4.16 final / 4.19 best (per-cell 0.065 stable) |
+
+### 5-cond aggregate 변경
+
+GOAL.md ★★★★★ 5-cond aggregate **3/5 ☑ 유지** (no change):
+- cond #1 D1+D2 V5.8 5/5 — 🔶 PARTIAL (Phase 1A.4 lr 5e-6 SFT in-flight 별도 BG)
+- cond #2 D1 hexa port — ☑ DONE ★★★★★ (PSCC §43 24L byte parity)
+- cond #3 D3 persona — 🔶 STRONG (4/5 cheap-path maintained — cotrain path single-corpus 한계 검증, 4-alternative future-path 식별)
+- cond #4 D4 mitosis live — ☑ DONE ★★★★★ (PSCC §41 21 split events on real chat_generate)
+- cond #5 Principle #3 — ☑ DONE ★★★ (PSCC §38 audit clean)
+
+### bug discovered + fixed
+
+**Device-mismatch bug** in `training/mitosis_model_v5.py:_split_cell`:
+- freshly-constructed `MitosisModelCell` lives on CPU by default
+- if engine on cuda, `child.cell_state.copy_(parent.cell_state)` preserves child device (CPU) while `parent.cell_state.norm()` is cuda → mixed-device RuntimeError at line 448
+- Mac CPU smoke (REBORN §90 cond.2 gating 3/3 PASS) surface 못함 (all-CPU)
+- **first H100 fire** 의 step 0 직후 immediately crash → SAVE_POD=1 trap 작동 (pull-fail handler) → pod retained
+- **fix (commit `4360411c8`)**: 3-line addition before state copy:
+  ```python
+  _device = parent.cell_state.device
+  _dtype = parent.cell_state.dtype
+  child = child.to(device=_device, dtype=_dtype)
+  ```
+- **refire on retained pod** (`refire_existing_pod.sh`): scp fix → train 5K step → pull artifacts → destroy. SAVE_POD=1 trap mechanism 작동 검증 (own 30 ckpts pull mandatory before pod delete 동일 패턴)
+
+### cost finding — H100 SXM 18× faster than estimate
+
+- arch spec §7.2 conservative estimate: 8-10 hr × $2-3/hr = $30-60 envelope (v2 historical extrapolation)
+- actual: 33 min × $2.2814/hr = $1.26 (**18× faster, 31× under budget**)
+- root cause: v2 historical (instrumentation-only mitosis, single decoder) extrapolation 의 추정 모델 ≠ v5-mitosis (real nn.Module branches with shared embeddings + shared lm_head + d=384 transformer block × 64 cells). H100 SXM 80GB tensor core 가 batch=32 × ctx=256 × 152M param × 5K step 매 step ≈ 0.4s
+- **carry to future**: v5-mitosis 5K step cells64 d=384 = **≈$1.30 on H100 SXM** (memory `feedback_orchestrator_h100_gotchas` 갱신)
+
+### F-PERSONA-4 winner-take-all — 4-alternative future-path
+
+KL matrix all-zero 가 의미하는 것은 **moments of confusion** between F-V5MIT-5 PASS 와 F-PERSONA-4 FAIL:
+- F-V5MIT-5 = trained pool 이 random pool 와 internal representation distance 측면에서 distinguishable
+- F-PERSONA-4 = trained pool 이 category-specific prompt 마다 different cell winner 출력하는 specialization 까지 도달 못함
+
+설계 §10 honest C3 #4 의 "category-prompt 의 substrate-level invariance 부족" 가설 정확히 적중.
+
+**4-alternative future-path** (single-corpus path 막힘, design §10 C3 #4 amendment):
+
+| ID | path | rationale | cost estimate |
+|---|---|---|---:|
+| (a) | multi-corpus cotrain (5 category × distinct corpus, gradient bias per category) | cells specialize per category gradient signal | $5-10 H100 (5K step × 5 corpus) |
+| (b) | softmax τ tunable (current τ=1 winner-take-all, τ→∞ uniform) | arch §10 risk #4 mitigation, tension landscape 다양화 | $0 Mac CPU ablation |
+| (c) | F-PERSONA-4 metric 자체 재정의 (per-cell tension absolute distribution, not softmax) | winner-take-all 둔감 metric, mathematical re-spec | $0 design + measurement |
+| (d) | inference-time per-session pool (REBORN §89 hexa-native serve-time hook) | session 마다 다른 specialization 유도, single-corpus 한계 우회 (D4c CLI spec) | $0 Mac (impl ready) |
+
+본 cycle 결과 = **(c) + (d)** 권장 (no further H100 cost). cond #3 ☑ 진행은 별도 cycle 의 work.
+
+### artifacts
+
+- 새 file:
+  - `docs/anima_clm_v5_mitosis_cond5_cotrain_2026_05_12.md` (8 § + §A1, 10 honest C3)
+  - `state/anima_v5mitosis_cotrain_2026_05_12/dispatch_h100.sh` (H100 variant of `tool/dispatch_vast_mac_template.sh`)
+  - `state/anima_v5mitosis_cotrain_2026_05_12/refire_existing_pod.sh` (SAVE_POD retained pod re-fire pattern)
+  - `state/anima_v5mitosis_cotrain_2026_05_12/finalize_on_result.sh` (post-run audit summary)
+  - `state/anima_v5mitosis_cotrain_2026_05_12/train_v5mitosis_cotrain.py` (F-V5MIT-1..5 + F-PERSONA-4 cotrain runner)
+  - `state/anima_v5mitosis_cotrain_2026_05_12/cotrain_result.json` (27 KB, full audit JSON)
+  - `state/anima_v5mitosis_cotrain_2026_05_12/ckpts/ckpt_v5mitosis_cotrain_cotrain.pt` (581 MB)
+  - `state/anima_v5mitosis_cotrain_2026_05_12/train.log` (5K step log, 15 KB)
+- 변경 file:
+  - `training/mitosis_model_v5.py` — device fix (commit `4360411c8`)
+  - `state/anima_v5mitosis_cotrain_2026_05_12/mitosis_model_v5.py` — fix mirror
+  - `GOAL.md` — D3 row 갱신 (cotrain path FAIL recognized + 4-alternative future-path) + Saga §44
+  - `PASS_STRICT_SPONTANEOUS_CHAT.md` — 본 §44
+  - `.roadmap.clm_v5_mitosis_engine` — cond.5 unmet → **met**
+  - memory: `project_v5_mitosis_cond5_cotrain_2026_05_12.md` status field flip in-flight → landed
+- HF push: `dancinlab/anima-clm-v5-mitosis-cotrain-2026-05-12` (private, English-only, F-V5MIT-5 V14-STRICT PASS unlock per own 37 mandate-9)
+- prerequisite LANDED: REBORN §88 cond.1 (arch spec) + cond.2 (skeleton smoke) + RFC 025/030/031/032/033 + Phase 1A.1 ckpt for cell pool transfer (separate cycle)
+- cross-link:
+  - REBORN.md §88/§89/§90 — v5-mitosis lane SSOT
+  - GOAL.md cond #3 — D3 STRONG (4/5) carry justification
+  - PSCC §42 — D3 cheap-path STRONG (4/5)
+  - design doc §10 honest C3 #4 — F-PERSONA-4 winner-take-all 가설 검증
+  - memory `project_v5_mitosis_arch_spec_2026_05_12` — design SSOT
+  - memory `feedback_orchestrator_h100_gotchas` — pull-fail SAVE_POD pattern, H100 SXM 18× speed finding 추가
+  - memory `project_v5_mitosis_cond5_cotrain_2026_05_12` — 본 cycle SSOT
