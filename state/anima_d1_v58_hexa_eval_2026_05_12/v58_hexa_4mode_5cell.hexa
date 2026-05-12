@@ -130,6 +130,17 @@ fn v58_dialogue(id: string) {
             "진동",
         ]
     }
+    // ─── MINI variants (~30 tokens) — same multi-turn structure but
+    //     dramatically shortened to fit Mac CPU < 15-min wall budget.
+    //     Verifies multi-turn pattern preservation through hexa lane.
+    if id == "color_mini" {
+        // 사용자: 파란색. 도우미: 응. 사용자: 색? 도우미:  →  ~50 prefill tokens
+        return [
+            "color_mini",
+            "사용자: 파란색. 도우미: 응. 사용자: 색? 도우미: ",
+            "파란",
+        ]
+    }
     return ["", "", ""]
 }
 
@@ -163,8 +174,8 @@ fn run_v58_cell(chat, cell_id: string, max_new: int) {
     println("── V5.8 cell: " + cell_id
             + "  (target='" + keyword + "', max_new=" + to_string(max_new) + ")")
     // Re-init KV cache for this cell — cap_len must exceed prompt + max_new.
-    // V5.8 prompts are 100-200 byte tokens; allow ample slack.
-    let cap_len = 320
+    // color_mini ~32 prefill tokens; cap_len=48 covers + max_new=2 slack.
+    let cap_len = 48
     chat_init_kv_cache_default(chat, cap_len)
     // greedy mode, no rep penalty, no force, markdown_filter off (V5.8 baseline)
     let response = chat_generate(chat, prompt, "greedy", max_new, 0.0,
@@ -182,7 +193,7 @@ fn run_v58_cell(chat, cell_id: string, max_new: int) {
 fn main() {
     println("================================================================")
     println("v58_hexa_4mode_5cell.hexa — D1 cond #2 final closure probe")
-    println("Scope: 2-cell × greedy × max_new=10 (cheap-path subset)")
+    println("Scope: 1-cell (color) × greedy × max_new=2 (cheap-path subset)")
     println("Reference: PSCC §43 21/21 byte parity baseline")
     println("================================================================")
 
@@ -205,12 +216,17 @@ fn main() {
     }
 
     // ── F-D1-V58HEXA-2 CELL-RUN: focused subset ──────────────────────────
-    // 1-cell cheap-path (Mac CPU 90-min budget; 1 cell × max_new=8 ≈
-    // 165 prefill × 19s + 8 decode × 19s ≈ 55 min wall). "color" chosen as
-    // representative short-keyword Korean recall cell (Python lane PASS).
-    let cells = ["color"]
+    // 1-cell cheap-path. Attempt history:
+    //   (a) max_new=8, full V5.8 color (185 prefill, cap_len=320) — process
+    //       terminated silently at ~50 min (suspected jetsam / session detach).
+    //   (b) Tiny probe (cap_len=32, "안녕" 8 token, max_new=2) — exit 0 OK.
+    // This run: 1-cell color_mini (V5.8 multi-turn structure preserved but
+    // ~32 prefill tokens instead of 185), max_new=2, cap_len=48. Wall
+    // budget ~15 min Mac CPU. Validates the V5.8 multi-turn pattern through
+    // hexa lane at low memory pressure.
+    let cells = ["color_mini"]
     let n_cells = len(cells)
-    let max_new = 8
+    let max_new = 2
     let mut results = []
     let mut all_run_ok = true
     let mut all_recall_ok = true
