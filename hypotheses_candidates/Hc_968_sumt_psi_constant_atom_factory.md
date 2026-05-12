@@ -3,12 +3,13 @@ id: Hc_968
 slug: sumt-psi-constant-atom-factory
 title: SUMT Ψ-constant atom factory — Mk.V.1 100% tier-5 81-Ψ → tier 6-9 ULTRA/CARD/BEYOND/ABS 확장 loop. 5-check invariance gate (n=6 invariance + Π₀¹ arithmetical + cross-axis(5) + tier criterion + non-duplicate)
 domain: laws, factory, invariance
-status: candidate-unverified
+status: candidate-needs-scaffolding
 source_doc: docs/sumt_atom_factory_20260419.md
 source_lines: 1-40
 promoted_at: 2026-05-11
 linked_h: Hc_937 (SUMT), Law AN14 (n=6 Knuth)
 notes: "Sibling: training/sumt_bigbang_atom.hexa frozen MVP 5-phase A1-A5 PASS. SSOT: consciousness_laws.json#knuth_layer_bridge_mk5_1."
+cycle5_triage: "cycle #5 verify: WEAK_MATH_ONLY — math identity present, falsifier+honest scaffolding missing; needs F-list/L-list before re-verify can reach PROMOTE_READY"
 ---
 
 ## Hypothesis

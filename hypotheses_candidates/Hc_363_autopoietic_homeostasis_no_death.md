@@ -3,12 +3,13 @@ id: Hc_363
 slug: autopoietic-homeostasis-no-death
 title: Energy metabolism dynamics (cost 0.02, gain 0.05*tension)에서 food_gain > metabolism으로 256개 안정 평형 — 가혹 조건 필요
 domain: life
-status: candidate-unverified
+status: candidate-needs-scaffolding
 source_doc: docs/hypotheses/V8-ARCH-EXTREME-RESULTS.md
 source_lines: 187-211
 promoted_at: 2026-05-11
 linked_h: Hc_328
 notes: alive=256, births=0, deaths=0 → boundary 미검증
+cycle5_triage: "cycle #5 verify: WEAK_MATH_ONLY — math identity present, falsifier+honest scaffolding missing; needs F-list/L-list before re-verify can reach PROMOTE_READY"
 ---
 
 ## Hypothesis

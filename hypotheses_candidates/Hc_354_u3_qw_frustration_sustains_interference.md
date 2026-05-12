@@ -3,12 +3,13 @@ id: Hc_354
 slug: u3-qw-frustration-sustains-interference
 title: Quantum Walk + TOPO19a 50% anti-ferromagnetic frustration (π phase shift)이 trivial collapse 방지하며 간섭 0.004→1.381 단조 증가
 domain: consciousness
-status: candidate-unverified
+status: candidate-needs-scaffolding
 source_doc: docs/hypotheses/V8-ULTRA-FUSION.md
 source_lines: 57-80, 154-159
 promoted_at: 2026-05-11
 linked_h: Hc_334, TOPO19a
 notes: Ising-like spin coupling, interference grows monotonically
+cycle5_triage: "cycle #5 verify: WEAK_MATH_ONLY — math identity present, falsifier+honest scaffolding missing; needs F-list/L-list before re-verify can reach PROMOTE_READY"
 ---
 
 ## Hypothesis

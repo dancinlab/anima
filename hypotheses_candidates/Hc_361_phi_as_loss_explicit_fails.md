@@ -3,12 +3,13 @@ id: Hc_361
 slug: phi-as-loss-explicit-optimization-fails
 title: -Phi explicit optimization (Loss = -Phi)은 Phi(IIT) 7.88 (x0.6) 오히려 감소 — CE 발산(46.88), explicit optimization < self-organization
 domain: consciousness
-status: candidate-unverified
+status: candidate-needs-scaffolding
 source_doc: docs/hypotheses/V8-ARCH-EXTREME-RESULTS.md
 source_lines: 18, 242-246
 promoted_at: 2026-05-11
 linked_h: Hc_325, Hc_358
 notes: PHI_AS_LOSS proxy 58.43 / IIT 7.884 / CE 발산 39 negative drop
+cycle5_triage: "cycle #5 verify: WEAK_MATH_ONLY — math identity present, falsifier+honest scaffolding missing; needs F-list/L-list before re-verify can reach PROMOTE_READY"
 ---
 
 ## Hypothesis

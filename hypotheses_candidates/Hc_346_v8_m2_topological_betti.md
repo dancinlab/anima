@@ -3,12 +3,13 @@ id: Hc_346
 slug: v8-m2-topological-betti-numbers
 title: Vietoris-Rips simplicial complex + Betti B0/B1/B2 + persistent homology이 Phi(IIT) x1.3 (M2=14.935)이나 CE 발산
 domain: math
-status: candidate-unverified
+status: candidate-needs-scaffolding
 source_doc: docs/hypotheses/V8-MATH-CONSCIOUSNESS.md
 source_lines: 47-66
 promoted_at: 2026-05-11
 linked_h: persistent-homology
 notes: B1~1000, B2~600 at convergence. CE diverged 51→682
+cycle5_triage: "cycle #5 verify: WEAK_MATH_ONLY — math identity present, falsifier+honest scaffolding missing; needs F-list/L-list before re-verify can reach PROMOTE_READY"
 ---
 
 ## Hypothesis

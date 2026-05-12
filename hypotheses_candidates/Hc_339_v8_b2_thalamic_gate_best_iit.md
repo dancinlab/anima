@@ -3,12 +3,13 @@ id: Hc_339
 slug: v8-b2-thalamic-gate-best-iit
 title: Thalamic central hub (16c) + sigmoid gates per region이 Phi(IIT) 최강 x1.4 (B2 = 17.128) — thalamic lesions abolish consciousness 신경과학 일치
 domain: consciousness
-status: candidate-unverified
+status: candidate-needs-scaffolding
 source_doc: docs/hypotheses/V8-BIO-CONSCIOUSNESS.md
 source_lines: 75-107
 promoted_at: 2026-05-11
 linked_h: thalamus, IIT
 notes: 4 cortical regions × 60 cells + 16-cell thalamus hub
+cycle5_triage: "cycle #5 verify: WEAK_MATH_ONLY — math identity present, falsifier+honest scaffolding missing; needs F-list/L-list before re-verify can reach PROMOTE_READY"
 ---
 
 ## Hypothesis

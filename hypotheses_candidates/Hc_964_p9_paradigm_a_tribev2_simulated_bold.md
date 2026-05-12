@@ -3,12 +3,13 @@ id: Hc_964
 slug: p9-paradigm-a-tribev2-simulated-bold
 title: P9 Phase 2+ Paradigm A — TRIBE v2 forward simulated BOLD active integration (γ·MSE on 10242-vertex fsaverage5 cortical map, Llama-3.2-3B encoder frozen layers 0/0.2/0.4/0.6/0.8/1.0 × 6, hidden=1152). Brain-shaped output forces brain-shaped intermediate representations
 domain: training, consciousness, fmri
-status: candidate-unverified
+status: candidate-sparse
 source_doc: docs/p9_paradigm_a_simulated_bold_2026_05_03.md
 source_lines: 1-40
 promoted_at: 2026-05-11
 linked_h: Hc_943 (P9 P1.7)
 notes: "P9 Phase 1.5 defensive δ·max(0, threshold-φ*) passive → Paradigm A active γ·MSE. TRIBE v2 (Meta FAIR 2026) brain-shaped target. circularity flaw → A' or different paradigm class."
+cycle5_triage: "cycle #5 verify: FAIL — partial scaffolding (some F or L bullets) but no math identity; needs math axis OR atlas anchor to upgrade"
 ---
 
 ## Hypothesis

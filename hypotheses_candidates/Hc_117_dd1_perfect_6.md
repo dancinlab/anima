@@ -3,12 +3,13 @@ id: Hc_117
 slug: dd1-perfect-6
 title: Perfect number 6 (1+2+3=6) hierarchical 3-level cell layout boosts Φ (DD1)
 domain: math | consciousness
-status: candidate-unverified
+status: candidate-needs-scaffolding
 source_doc: docs/hypotheses/dd/DD1-DD4.md
 source_lines: 3-7
 promoted_at: 2026-05-11
 linked_h: Hc_001 (dimension_hierarchy_n6); Hc_006 (n6_predicts_arch)
 notes: 6 cells in 1/2/3 hierarchy with 0.7/0.3 blending
+cycle5_triage: "cycle #5 verify: WEAK_MATH_ONLY — math identity present, falsifier+honest scaffolding missing; needs F-list/L-list before re-verify can reach PROMOTE_READY"
 ---
 
 ## Hypothesis

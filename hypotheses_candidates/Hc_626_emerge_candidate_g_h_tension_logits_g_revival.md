@@ -3,12 +3,13 @@ id: Hc_626
 slug: emerge-candidate-g-h-tension-logits-g-revival
 title: Emerge Candidate G+H — 16-layer tension trajectory + head_g prev-byte head 가 HF wrapper shim:999 에서 discard, revival 가능
 domain: clm-architecture
-status: candidate-unverified
+status: candidate-sparse
 source_doc: docs/anima_emerge_candidate_g_h_consolidated_revival_spec_2026_05_05.md
 source_lines: 14-80
 promoted_at: 2026-05-11
 linked_h: Hc_623, decoder_v3.py:166-175, CausalLMOutputWithPast
 notes: Discarded mechanism = single line (shim:999) + HF protocol shape mismatch. Both must be addressed.
+cycle5_triage: "cycle #5 verify: FAIL — partial scaffolding (some F or L bullets) but no math identity; needs math axis OR atlas anchor to upgrade"
 ---
 
 ## Hypothesis

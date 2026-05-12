@@ -3,12 +3,13 @@ id: Hc_470
 slug: topo-chaos-separability-phi
 title: Φ factorizes as f(topology) × g(chaos) — topology and chaos are separable Φ contributors
 domain: physics
-status: candidate-unverified
+status: candidate-needs-scaffolding
 source_doc: docs/anima/paper_consciousness_laws.hexa
 source_lines: 97-100
 promoted_at: 2026-05-11
 linked_h: Hc_039
 notes: 4 topologies (ring, small_world, scale_free, hypercube), 10 topo-specific laws 33-42. Claim: Φ ~ f(topo) × g(chaos) — product separability.
+cycle5_triage: "cycle #5 verify: WEAK_MATH_ONLY — math identity present, falsifier+honest scaffolding missing; needs F-list/L-list before re-verify can reach PROMOTE_READY"
 ---
 
 ## Hypothesis

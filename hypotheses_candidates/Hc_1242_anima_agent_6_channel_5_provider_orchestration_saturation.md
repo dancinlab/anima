@@ -3,12 +3,13 @@ id: Hc_1242
 slug: anima-agent-6-channel-5-provider-orchestration-saturation
 title: anima-agent 6-channel 5-provider orchestration saturation — 6채널×5프로바이더가 오케스트레이션 ceiling 인가
 domain: serving
-status: candidate-unverified
+status: candidate-needs-scaffolding
 source_doc: hypotheses_candidates/Hc_900_drill_domain_saturation_seeds.md
 source_lines: 29 (Sub-claims block, SERVING-2)
 promoted_at: 2026-05-12
 linked_h: H_001 (anima-core-architecture); parent Hc_900
 notes: "split from Hc_900 meta-cluster 2026-05-12; seed 13 of 30 (SERVING-2). n=6 channel count — inherits perfect-number-class triviality caveat (Hc_900 L1)."
+cycle5_triage: "cycle #5 verify: WEAK_MATH_ONLY — math identity present, falsifier+honest scaffolding missing; needs F-list/L-list before re-verify can reach PROMOTE_READY"
 ---
 
 ## Hypothesis

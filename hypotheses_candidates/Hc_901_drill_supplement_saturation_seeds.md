@@ -3,12 +3,13 @@ id: Hc_901
 slug: drill-supplement-saturation-seeds
 title: 35개 drill_supplement seed (hexad/hub/trinity/pure_field/tension_bridge/thalamic/dimension/servant/phi_engine/topology + anima-* + Laws + infra) cluster
 domain: architecture, consciousness, laws
-status: candidate-unverified
+status: candidate-needs-scaffolding
 source_doc: docs/drill_supplement_tmp/seeds.txt
 source_lines: 1-35
 promoted_at: 2026-05-11
 linked_h: H_101 (emergent-modules), H_076 (panpsychism), H_073-76 (laws)
 notes: "drill supplement brainstorm — 각 line 은 architecture/law/infrastructure cluster 별 saturation 가설."
+cycle5_triage: "cycle #5 verify: WEAK_MATH_ONLY — math identity present, falsifier+honest scaffolding missing; needs F-list/L-list before re-verify can reach PROMOTE_READY"
 ---
 
 ## Hypothesis

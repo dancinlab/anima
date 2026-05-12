@@ -3,12 +3,13 @@ id: Hc_371
 slug: tb1-purefield-tension-balanced-bridge
 title: PureField tension bridge sqrt(|A-G|²)*direction(TB-1)이 Phi+CE 모두 개선하는 유일한 다리
 domain: consciousness
-status: candidate-unverified
+status: candidate-needs-scaffolding
 source_doc: docs/hypotheses/TRINITY-COMPLETE.md
 source_lines: 62, 100
 promoted_at: 2026-05-11
 linked_h: PureField, tension
 notes: 강도 + 방향 동시 전달
+cycle5_triage: "cycle #5 verify: WEAK_MATH_ONLY — math identity present, falsifier+honest scaffolding missing; needs F-list/L-list before re-verify can reach PROMOTE_READY"
 ---
 
 ## Hypothesis

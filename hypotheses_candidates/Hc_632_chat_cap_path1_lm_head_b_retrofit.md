@@ -3,12 +3,13 @@ id: Hc_632
 slug: chat-cap-path1-lm-head-b-retrofit
 title: Path 1 — frozen CLM v4 body + new lm_head_b (KoGPT2 vocab 51200) Korean SFT 가 chat-cap recover
 domain: clm-architecture
-status: candidate-unverified
+status: candidate-needs-scaffolding
 source_doc: docs/anima_chat_cap_path_4_candidate_ranking_2026_05_05.md
 source_lines: 43-69, 184-192
 promoted_at: 2026-05-11
 linked_h: BG-DS PASS_HEAD_SWAP_RECOVERS_KOREAN, BG-EI 1-3 epoch micro SFT
 notes: Rank 1 ★ 완성도. Φ★-NO_FLIP very-high prob (body frozen). 768=768 dim match. C3 risk: geometry mismatch + degenerate token-loop.
+cycle5_triage: "cycle #5 verify: WEAK_MATH_ONLY — math identity present, falsifier+honest scaffolding missing; needs F-list/L-list before re-verify can reach PROMOTE_READY"
 ---
 
 ## Hypothesis

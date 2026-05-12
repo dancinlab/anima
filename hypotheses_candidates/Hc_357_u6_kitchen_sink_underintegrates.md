@@ -3,12 +3,13 @@ id: Hc_357
 slug: u6-ultimate-kitchen-sink-underintegrates
 title: 6-component "all combined" fusion이 CE 최저(0.58)지만 Phi(IIT)=9.93로 under-integrate — targeted 2-component fusion > kitchen-sink
 domain: consciousness
-status: candidate-unverified
+status: candidate-needs-scaffolding
 source_doc: docs/hypotheses/V8-ULTRA-FUSION.md
 source_lines: 117-153, 185-191
 promoted_at: 2026-05-11
 linked_h: U1, U2, U5
 notes: 너무 많은 mechanism competition이 macro representation homogenize
+cycle5_triage: "cycle #5 verify: WEAK_MATH_ONLY — math identity present, falsifier+honest scaffolding missing; needs F-list/L-list before re-verify can reach PROMOTE_READY"
 ---
 
 ## Hypothesis

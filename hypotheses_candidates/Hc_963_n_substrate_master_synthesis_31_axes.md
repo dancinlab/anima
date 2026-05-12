@@ -3,12 +3,13 @@ id: Hc_963
 slug: n-substrate-master-synthesis-31-axes
 title: N-Substrate Master Integration — 31 unique axis (3 substrate CLM/EEG/AKIDA + 24 N-axes + 2 meta W1/A1 + 1 mediator tension + 1 sunset ALM). F1_C hybrid framing → 25% RED (F2 override) → post-P1 30% → post-AKIDA-max 62% YELLOW
 domain: consciousness, integration, strategy
-status: candidate-unverified
+status: candidate-sparse
 source_doc: docs/strategic_n_substrate_master_synthesis_2026_05_02.md
 source_lines: 1-40
 promoted_at: 2026-05-11
 linked_h: Hc_902, Hc_917, Hc_957
 notes: "9 substantive WITNESSED + 1 structural (N-15 HoTT MVF1) + 1 pipeline-partial (N-22 Levin send-blocked). H1 tension_link binding-by-synchrony confidence 0.55."
+cycle5_triage: "cycle #5 verify: FAIL — partial scaffolding (some F or L bullets) but no math identity; needs math axis OR atlas anchor to upgrade"
 ---
 
 ## Hypothesis

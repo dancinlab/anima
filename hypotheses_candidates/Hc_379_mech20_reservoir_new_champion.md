@@ -3,12 +3,13 @@ id: Hc_379
 slug: mech20-reservoir-new-mitosis-champion
 title: Reservoir Computing (고정 random matrix + tanh, spectral radius < 1)이 MitosisEngine 신챔피언 Φ=0.934 (vs FUSE-3 0.900) — Law 22 재확인
 domain: consciousness
-status: candidate-unverified
+status: candidate-needs-scaffolding
 source_doc: docs/hypotheses/MASS-50-HYPOTHESES.md
 source_lines: 33, 134-145
 promoted_at: 2026-05-11
 linked_h: Hc_315, Law-22
 notes: 고정 구조가 학습 가중치보다 Phi 높임
+cycle5_triage: "cycle #5 verify: WEAK_MATH_ONLY — math identity present, falsifier+honest scaffolding missing; needs F-list/L-list before re-verify can reach PROMOTE_READY"
 ---
 
 ## Hypothesis

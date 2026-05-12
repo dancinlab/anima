@@ -3,12 +3,13 @@ id: Hc_631
 slug: clm3-original-byte-level-scale-recover-55m
 title: CLM-3-original — byte-level 256/dim 768/12L/32 cells/55M + 19 Φ-boost simultaneous 가 chat-cap recover 가능 (scale-up X)
 domain: clm-architecture
-status: candidate-unverified
+status: candidate-needs-scaffolding
 source_doc: docs/anima_clm_3_original_byte_level_redesign_spec_2026_05_05.md
 source_lines: 14-200
 promoted_at: 2026-05-11
 linked_h: Hc_630 (BG-BM CLM-3), commit fca0eede, CLM v2 byte-level (CE 0.04 EN / 1.15 KO), DD16/EX24
 notes: 5 falsifier locked. Variant cost $0 (ubu1 5070, 5-10d) or $200-500 (H100 1× × 10h). Φ ~ N linear in cells (not params).
+cycle5_triage: "cycle #5 verify: WEAK_MATH_ONLY — math identity present, falsifier+honest scaffolding missing; needs F-list/L-list before re-verify can reach PROMOTE_READY"
 ---
 
 ## Hypothesis

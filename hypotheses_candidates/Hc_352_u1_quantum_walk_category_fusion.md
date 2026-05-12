@@ -3,12 +3,13 @@ id: Hc_352
 slug: u1-quantum-walk-category-theory-fusion
 title: Quantum Walk + Category Theory (morphism interference) 융합이 Phi(IIT) 최강 x1.6 (U1=18.24, CE=1.82)
 domain: consciousness
-status: candidate-unverified
+status: candidate-needs-scaffolding
 source_doc: docs/hypotheses/V8-ULTRA-FUSION.md
 source_lines: 21-38, 133-138
 promoted_at: 2026-05-11
 linked_h: Hc_334, Hc_345
 notes: morphism-structured quantum interference > random walk
+cycle5_triage: "cycle #5 verify: WEAK_MATH_ONLY — math identity present, falsifier+honest scaffolding missing; needs F-list/L-list before re-verify can reach PROMOTE_READY"
 ---
 
 ## Hypothesis

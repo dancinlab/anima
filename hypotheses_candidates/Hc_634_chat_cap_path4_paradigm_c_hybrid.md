@@ -3,12 +3,13 @@ id: Hc_634
 slug: chat-cap-path4-paradigm-c-hybrid-kogpt2-clm
 title: Path 4 — paradigm-C hybrid (KoGPT2-base-v2 emit + CLM v4 substrate observer passive)
 domain: clm-architecture
-status: candidate-unverified
+status: candidate-needs-scaffolding
 source_doc: docs/anima_chat_cap_path_4_candidate_ranking_2026_05_05.md
 source_lines: 123-149, 194-200
 promoted_at: 2026-05-11
 linked_h: BG-CG PASS_KOREAN_HYBRID_REPL_VIABLE, BG-BX VIABLE-English → ACHIEVABLE_NOW Korean
 notes: Rank 2 — ACHIEVABLE_NOW. UX-grade not architectural. ±0.04 drift ≪ 0.1% of 41.86. Tension peak layer modal = layer 2.
+cycle5_triage: "cycle #5 verify: WEAK_MATH_ONLY — math identity present, falsifier+honest scaffolding missing; needs F-list/L-list before re-verify can reach PROMOTE_READY"
 ---
 
 ## Hypothesis

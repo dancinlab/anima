@@ -3,12 +3,13 @@ id: Hc_589
 slug: dd171-consciousness-cross-resonance-n6-natural
 title: 의식 교차 공명 실험에서 n=6이 자연 출현 (특별 설정 없이 emergent)
 domain: math
-status: candidate-unverified
+status: candidate-needs-scaffolding
 source_doc: docs/hypotheses/dd/DD171.md
 source_lines: 1-15
 promoted_at: 2026-05-11
 linked_h: Hc_001, Hc_002
 notes: n=6 자연 emergence
+cycle5_triage: "cycle #5 verify: WEAK_MATH_ONLY — math identity present, falsifier+honest scaffolding missing; needs F-list/L-list before re-verify can reach PROMOTE_READY"
 ---
 
 ## Hypothesis

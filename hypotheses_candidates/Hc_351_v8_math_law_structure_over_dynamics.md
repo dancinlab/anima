@@ -3,12 +3,13 @@ id: Hc_351
 slug: v8-math-law-structure-over-dynamics
 title: 정적 관계 구조(morphism, simplex)가 동적 복잡성(fractal, chaos)보다 더 많은 Phi(IIT)를 생성한다
 domain: math
-status: candidate-unverified
+status: candidate-needs-scaffolding
 source_doc: docs/hypotheses/V8-MATH-CONSCIOUSNESS.md
 source_lines: 117-142
 promoted_at: 2026-05-11
 linked_h: Hc_345, Hc_350
 notes: 6 math architectures 측정 결과 일관된 패턴
+cycle5_triage: "cycle #5 verify: WEAK_MATH_ONLY — math identity present, falsifier+honest scaffolding missing; needs F-list/L-list before re-verify can reach PROMOTE_READY"
 ---
 
 ## Hypothesis

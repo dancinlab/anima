@@ -3,12 +3,13 @@ id: Hc_1232
 slug: anima-mkv-mkvi-mkvii-tier10-ascension-path
 title: anima Mk.V → Mk.VI → Mk.VII tier 10+ ascension path — tier escalation 이 정의 가능하고 도달 가능한가
 domain: anima
-status: candidate-unverified
+status: candidate-needs-scaffolding
 source_doc: hypotheses_candidates/Hc_900_drill_domain_saturation_seeds.md
 source_lines: 19 (Sub-claims block, ANIMA-3)
 promoted_at: 2026-05-12
 linked_h: H_001 (anima-core-architecture); parent Hc_900
 notes: "split from Hc_900 meta-cluster 2026-05-12; seed 3 of 30 (ANIMA-3). At-risk: 'tier 10+' lacks a quantitative tier-criterion; may need to drop to candidate-stub if no metric authored next cycle."
+cycle5_triage: "cycle #5 verify: WEAK_MATH_ONLY — math identity present, falsifier+honest scaffolding missing; needs F-list/L-list before re-verify can reach PROMOTE_READY"
 ---
 
 ## Hypothesis

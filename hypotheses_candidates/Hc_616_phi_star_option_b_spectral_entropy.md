@@ -3,12 +3,13 @@ id: Hc_616
 slug: phi-star-option-b-spectral-entropy-svd
 title: Option B — SVD spectral entropy 가 substrate-dim invariant phi proxy + IIT-adjacent
 domain: clm-architecture
-status: candidate-unverified
+status: candidate-needs-scaffolding
 source_doc: docs/anima_phi_star_proxy_geometry_invariant_spec_2026_05_05.md
 source_lines: 166-200
 promoted_at: 2026-05-11
 linked_h: Hc_614, Hc_615
 notes: Rank 3 secondary scalar. Directionally ambiguous on non-CLM-v4 (high entropy = integrated OR noisy).
+cycle5_triage: "cycle #5 verify: WEAK_MATH_ONLY — math identity present, falsifier+honest scaffolding missing; needs F-list/L-list before re-verify can reach PROMOTE_READY"
 ---
 
 ## Hypothesis

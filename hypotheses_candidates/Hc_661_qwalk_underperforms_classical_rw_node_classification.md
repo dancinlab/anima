@@ -3,12 +3,13 @@ id: Hc_661
 slug: qwalk-underperforms-classical-rw-node-classification-pca
 title: CTQW long-time-averaged occupation matrix 가 PCA-embed node classification 에서 classical RW 대비 underperform — F-QWALK-1 REJECTED
 domain: anima-architecture
-status: candidate-unverified
+status: candidate-sparse
 source_doc: docs/anima_qwalk_landed_2026_05_03.ai.md
 source_lines: 1-80
 promoted_at: 2026-05-11
 linked_h: EEG16 PLV synthetic, SBM (3 blocks of 20)
 notes: F-QWALK-1: quantum walk init Δ > +5% accuracy vs random walk → REJECTED (EEG16 Δ=-56.25pp, SBM Δ=-21.67pp). Mechanism: QW long-time-avg dilutes community eigenvector contribution by equal weighting.
+cycle5_triage: "cycle #5 verify: FAIL — partial scaffolding (some F or L bullets) but no math identity; needs math axis OR atlas anchor to upgrade"
 ---
 
 ## Hypothesis (FALSIFIED)

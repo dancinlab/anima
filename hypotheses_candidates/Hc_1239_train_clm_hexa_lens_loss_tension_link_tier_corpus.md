@@ -3,12 +3,13 @@ id: Hc_1239
 slug: train-clm-hexa-lens-loss-tension-link-tier-corpus
 title: train_clm.hexa lens loss + tension_link + tier-labeled corpus integration — 세 구성요소가 통합되어 학습 신호로 작동하는가
 domain: training
-status: candidate-unverified
+status: candidate-needs-scaffolding
 source_doc: hypotheses_candidates/Hc_900_drill_domain_saturation_seeds.md
 source_lines: 26 (Sub-claims block, TRAINING-4)
 promoted_at: 2026-05-12
 linked_h: H_001 (anima-core-architecture), H_162 (downstream CLM); parent Hc_900
 notes: "split from Hc_900 meta-cluster 2026-05-12; seed 10 of 30 (TRAINING-4)."
+cycle5_triage: "cycle #5 verify: WEAK_MATH_ONLY — math identity present, falsifier+honest scaffolding missing; needs F-list/L-list before re-verify can reach PROMOTE_READY"
 ---
 
 ## Hypothesis

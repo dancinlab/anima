@@ -3,12 +3,13 @@ id: Hc_350
 slug: v8-m6-strange-attractor-chaos-hurts-iit
 title: Lorenz chaos (σ=10, ρ=28, β=8/3) 가 Phi(proxy) transient peak (33.8)하나 Phi(IIT) baseline 이하 (9.1) — chaos disperses information
 domain: math
-status: candidate-unverified
+status: candidate-needs-scaffolding
 source_doc: docs/hypotheses/V8-MATH-CONSCIOUSNESS.md
 source_lines: 94-115
 promoted_at: 2026-05-11
 linked_h: Lorenz, edge-of-chaos
 notes: Lyapunov ~0 (edge of chaos), correlation dim 1.2-1.6
+cycle5_triage: "cycle #5 verify: WEAK_MATH_ONLY — math identity present, falsifier+honest scaffolding missing; needs F-list/L-list before re-verify can reach PROMOTE_READY"
 ---
 
 ## Hypothesis

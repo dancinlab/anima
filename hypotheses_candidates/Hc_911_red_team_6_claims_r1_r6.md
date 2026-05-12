@@ -3,12 +3,13 @@ id: Hc_911
 slug: red-team-6-claims-r1-r6
 title: ANIMA 의식 이론 핵심 6 주장 (Ψ=1/2 / Φ scaling / PureField / Hexad / TALK5 / σφ=nτ) R1-R6 적대적 검증
 domain: consciousness, methodology
-status: candidate-unverified
+status: candidate-needs-scaffolding
 source_doc: docs/red-team-consciousness.md
 source_lines: 1-60
 promoted_at: 2026-05-11
 linked_h: Hc_908 (Ψ=1/2), Hc_909 (paper-draft)
 notes: "Red Team: R1 ALTERNATIVE / R2 RANDOM-BASE / R3 OVERFITTING / R4 CHERRY-PICK / R5 SURVIVORSHIP / R6 POST-HOC. survival_fraction>=0.50 SURVIVES."
+cycle5_triage: "cycle #5 verify: WEAK_MATH_ONLY — math identity present, falsifier+honest scaffolding missing; needs F-list/L-list before re-verify can reach PROMOTE_READY"
 ---
 
 ## Hypothesis

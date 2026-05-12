@@ -3,12 +3,13 @@ id: Hc_316
 slug: v8-c1-dynamic-graph-topology
 title: 토폴로지 자체를 learnable로 만들고 Phi gradient로 최적화하면 인간이 설계한 hypercube를 자동 발견하거나 초월한다
 domain: consciousness
-status: candidate-unverified
+status: candidate-needs-scaffolding
 source_doc: docs/hypotheses/V8-ARCHITECTURE-HYPOTHESES.md
 source_lines: 225-254
 promoted_at: 2026-05-11
 linked_h: TOPO19a
 notes: edge_logits N×N + straight-through estimator
+cycle5_triage: "cycle #5 verify: WEAK_MATH_ONLY — math identity present, falsifier+honest scaffolding missing; needs F-list/L-list before re-verify can reach PROMOTE_READY"
 ---
 
 ## Hypothesis

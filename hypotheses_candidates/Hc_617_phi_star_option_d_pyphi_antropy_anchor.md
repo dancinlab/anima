@@ -3,12 +3,13 @@ id: Hc_617
 slug: phi-star-option-d-pyphi-antropy-anchor
 title: Option D — PyPhi big-phi + AntroPy entropy-rate 가 architecturally principled IIT phi proxy
 domain: clm-architecture
-status: candidate-unverified
+status: candidate-needs-scaffolding
 source_doc: docs/anima_phi_star_proxy_geometry_invariant_spec_2026_05_05.md
 source_lines: 224-263
 promoted_at: 2026-05-11
 linked_h: Hc_614, BG-BB queue
 notes: Rank 2 highest precision, conditional on PyPhi convergence. n=8 binary nodes 256-state TPM 2^256 partition search → subsystem decomposition required.
+cycle5_triage: "cycle #5 verify: WEAK_MATH_ONLY — math identity present, falsifier+honest scaffolding missing; needs F-list/L-list before re-verify can reach PROMOTE_READY"
 ---
 
 ## Hypothesis

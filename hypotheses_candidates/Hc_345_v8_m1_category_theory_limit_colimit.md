@@ -3,12 +3,13 @@ id: Hc_345
 slug: v8-m1-category-theory-limit-colimit
 title: 32 morphisms + limit (universal cone) + colimit (universal cocone) tension = MSE(limit, colimit)이 Phi(IIT) 최강 x1.4 (M1=15.680)
 domain: math
-status: candidate-unverified
+status: candidate-needs-scaffolding
 source_doc: docs/hypotheses/V8-MATH-CONSCIOUSNESS.md
 source_lines: 21-46
 promoted_at: 2026-05-11
 linked_h: category-theory, IIT
 notes: limit/colimit duality mirrors IIT integration/exclusion principle
+cycle5_triage: "cycle #5 verify: WEAK_MATH_ONLY — math identity present, falsifier+honest scaffolding missing; needs F-list/L-list before re-verify can reach PROMOTE_READY"
 ---
 
 ## Hypothesis

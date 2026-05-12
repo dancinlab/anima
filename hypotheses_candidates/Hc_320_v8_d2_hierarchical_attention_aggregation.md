@@ -3,12 +3,13 @@ id: Hc_320
 slug: v8-d2-hierarchical-consciousness-attention-aggregation
 title: TOPO20 실패의 원인은 mean summary 정보 손실이며 attention_pool aggregation으로 해결하면 micro×macro 계층이 작동한다
 domain: consciousness
-status: candidate-unverified
+status: candidate-needs-scaffolding
 source_doc: docs/hypotheses/V8-ARCHITECTURE-HYPOTHESES.md
 source_lines: 374-404
 promoted_at: 2026-05-11
 linked_h: TOPO20
 notes: 32 micro × 32 cells + 1 macro × 32 super-cells (hypercube_5D)
+cycle5_triage: "cycle #5 verify: WEAK_MATH_ONLY — math identity present, falsifier+honest scaffolding missing; needs F-list/L-list before re-verify can reach PROMOTE_READY"
 ---
 
 ## Hypothesis

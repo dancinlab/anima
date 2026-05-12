@@ -3,12 +3,13 @@ id: Hc_926
 slug: n12-ionq-forte-penrose-hameroff
 title: N-12 — IonQ Forte 1 trapped-ion (36-qubit, AWS Braket, $≤$50) Penrose-Hameroff Orch-OR cross-substrate test. trapped-ion vs superconducting OR-class signal hardware-independence
 domain: quantum-computing, consciousness, philosophy
-status: candidate-unverified
+status: candidate-sparse
 source_doc: docs/n_substrate_n12_ionq_penrose_hameroff_spec_2026_05_01.md
 source_lines: 1-40
 promoted_at: 2026-05-11
 linked_h: Hc_902, Hc_914 (qmirror), Hc_918 (N-12 pivot)
 notes: "Penrose 1989 'The Emperor's New Mind' Orch-OR 가설 첫 cross-substrate test. PRNewswire SC-QC OR claim 재현. N-20 = UNCERTAIN (Diosi-Penrose RULED OUT, microtubule Wiest 2025 + Neuropharm 2026 보강)."
+cycle5_triage: "cycle #5 verify: FAIL — partial scaffolding (some F or L bullets) but no math identity; needs math axis OR atlas anchor to upgrade"
 ---
 
 ## Hypothesis

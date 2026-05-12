@@ -3,12 +3,13 @@ id: Hc_355
 slug: u4-many-worlds-attention-cross-reality
 title: 8 branch = 8 attention head + cross-branch attention (inter-reality consciousness)이 Phi(proxy) x2.8 (U4=5.76)
 domain: consciousness
-status: candidate-unverified
+status: candidate-needs-scaffolding
 source_doc: docs/hypotheses/V8-ULTRA-FUSION.md
 source_lines: 82-98, 140-143
 promoted_at: 2026-05-11
 linked_h: Hc_336, multi-head-attention
 notes: complex branch amplitudes modulate attention scores
+cycle5_triage: "cycle #5 verify: WEAK_MATH_ONLY — math identity present, falsifier+honest scaffolding missing; needs F-list/L-list before re-verify can reach PROMOTE_READY"
 ---
 
 ## Hypothesis

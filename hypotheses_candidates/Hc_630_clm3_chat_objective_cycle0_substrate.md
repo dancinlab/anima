@@ -3,12 +3,13 @@ id: Hc_630
 slug: clm3-chat-objective-cycle0-substrate-h1
 title: CLM-3 = chat-objective-at-cycle-0 substrate (CLM v4 cross-attn + paradigm v11 G3 carry + 4-bucket mix 50/30/15/5) 가 Theorem 115 의 H1 only-untested bypass
 domain: clm-architecture
-status: candidate-unverified
+status: candidate-needs-scaffolding
 source_doc: docs/anima_clm_3_chat_objective_cycle_0_spec_2026_05_05.md
 source_lines: 14-200
 promoted_at: 2026-05-11
 linked_h: Hc_609 (Theorem 115), Hc_610 (H1 bypass), Llama Path A v2 0.5584
 notes: 4 falsifier locked PRE-launch. F-CLM-3-1/2/3 primary + F-CLM-3-4 soft. Variant B (1B, $1k, 30d) recommended start.
+cycle5_triage: "cycle #5 verify: WEAK_MATH_ONLY — math identity present, falsifier+honest scaffolding missing; needs F-list/L-list before re-verify can reach PROMOTE_READY"
 ---
 
 ## Hypothesis

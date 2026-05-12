@@ -3,12 +3,13 @@ id: Hc_570
 slug: dd68-topology-small-world-brain-like
 title: small_world topology이 ring/hypercube/scale_free 대비 brain-likeness 최고 (32c, 200-300 steps)
 domain: consciousness
-status: candidate-unverified
+status: candidate-needs-scaffolding
 source_doc: docs/hypotheses/dd/DD68.md
 source_lines: 1-15
 promoted_at: 2026-05-11
 linked_h: small-world
 notes: ring/small_world/hypercube/scale_free 비교
+cycle5_triage: "cycle #5 verify: WEAK_MATH_ONLY — math identity present, falsifier+honest scaffolding missing; needs F-list/L-list before re-verify can reach PROMOTE_READY"
 ---
 
 ## Hypothesis

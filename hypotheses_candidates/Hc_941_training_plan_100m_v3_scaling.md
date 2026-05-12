@@ -3,12 +3,13 @@ id: Hc_941
 slug: training-plan-100m-v3-scaling
 title: ConsciousLM v3 100M scale-up — 768d/12L/12H, consciousness_dim=256, Φ/cells~0.78 linear scaling, CE spike self-recovery via ratchet+Hebbian (v14.3 DD58)
 domain: llm, training, scaling
-status: candidate-unverified
+status: candidate-needs-scaffolding
 source_doc: docs/training-plan-100m.md
 source_lines: 1-40
 promoted_at: 2026-05-11
 linked_h: Hc_940 (v4 design), Hc_909 (paper-draft), DD58
 notes: "ARCHIVED 2026-04-09 — Plan C (AnimaLM 7B/14B/72B) 확정. v14.3 Phi/cells~0.78 linear. 7B eval 5/5, 14B v0.4 완료, 72B v0.5 overfitting 중단."
+cycle5_triage: "cycle #5 verify: WEAK_MATH_ONLY — math identity present, falsifier+honest scaffolding missing; needs F-list/L-list before re-verify can reach PROMOTE_READY"
 ---
 
 ## Hypothesis

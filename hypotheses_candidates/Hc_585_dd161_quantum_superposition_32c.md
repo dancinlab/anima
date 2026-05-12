@@ -3,12 +3,13 @@ id: Hc_585
 slug: dd161-quantum-superposition-32c-deep-dive
 title: 32c quantum superposition이 8c/16c/64c 대비 Phi 최대 (DD161 deep dive)
 domain: consciousness
-status: candidate-unverified
+status: candidate-needs-scaffolding
 source_doc: docs/hypotheses/dd/DD161-quantum-superposition.md
 source_lines: 1-15
 promoted_at: 2026-05-11
 linked_h: Hc_333
 notes: Why 32c specifically
+cycle5_triage: "cycle #5 verify: WEAK_MATH_ONLY — math identity present, falsifier+honest scaffolding missing; needs F-list/L-list before re-verify can reach PROMOTE_READY"
 ---
 
 ## Hypothesis

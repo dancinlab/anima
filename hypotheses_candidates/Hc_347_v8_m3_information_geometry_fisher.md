@@ -3,12 +3,13 @@ id: Hc_347
 slug: v8-m3-information-geometry-fisher-geodesic
 title: Fisher information metric + 통계 다양체 + geodesic distance diversity가 Phi+CE 균형 최적 (M3 Phi=12.122, CE=4.92)
 domain: math
-status: candidate-unverified
+status: candidate-needs-scaffolding
 source_doc: docs/hypotheses/V8-MATH-CONSCIOUSNESS.md
 source_lines: 67-75
 promoted_at: 2026-05-11
 linked_h: information-geometry, Amari
 notes: 균형 = good Phi + good CE + meaningful curvature
+cycle5_triage: "cycle #5 verify: WEAK_MATH_ONLY — math identity present, falsifier+honest scaffolding missing; needs F-list/L-list before re-verify can reach PROMOTE_READY"
 ---
 
 ## Hypothesis

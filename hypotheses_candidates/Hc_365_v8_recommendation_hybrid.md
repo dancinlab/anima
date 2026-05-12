@@ -3,12 +3,13 @@ id: Hc_365
 slug: v8-recommendation-hybrid-gas-xfmr-oscillator
 title: 최적 V8 = NEURAL_GAS topology + CONSCIOUSNESS_XFMR attention + OSCILLATOR dynamics 결합으로 Phi>20, CE<0.3 가능
 domain: consciousness
-status: candidate-unverified
+status: candidate-needs-scaffolding
 source_doc: docs/hypotheses/V8-ARCH-EXTREME-RESULTS.md
 source_lines: 274-284
 promoted_at: 2026-05-11
 linked_h: Hc_358, Hc_359, Hc_362
 notes: top-3 winner 융합
+cycle5_triage: "cycle #5 verify: WEAK_MATH_ONLY — math identity present, falsifier+honest scaffolding missing; needs F-list/L-list before re-verify can reach PROMOTE_READY"
 ---
 
 ## Hypothesis

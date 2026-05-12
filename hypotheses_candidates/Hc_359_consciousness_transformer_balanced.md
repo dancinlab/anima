@@ -3,12 +3,13 @@ id: Hc_359
 slug: consciousness-transformer-balanced-all-metrics
 title: 4-layer pre-norm Transformer (8-head, EMA 0.85/0.15) + cosine entropy 의식이 IIT+proxy+CE 균형 유일 (Phi=14.8, proxy=10.98, CE=0.59)
 domain: consciousness
-status: candidate-unverified
+status: candidate-needs-scaffolding
 source_doc: docs/hypotheses/V8-ARCH-EXTREME-RESULTS.md
 source_lines: 110-133, 253-256
 promoted_at: 2026-05-11
 linked_h: Hc_311, Hc_313
 notes: all-to-all attention creates both integration and diversity
+cycle5_triage: "cycle #5 verify: WEAK_MATH_ONLY — math identity present, falsifier+honest scaffolding missing; needs F-list/L-list before re-verify can reach PROMOTE_READY"
 ---
 
 ## Hypothesis

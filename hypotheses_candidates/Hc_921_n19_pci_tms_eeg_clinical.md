@@ -3,12 +3,13 @@ id: Hc_921
 slug: n19-pci-tms-eeg-clinical
 title: N-19 PCI (Perturbational Complexity Index) — Massimini 2013 임상 골드스탠다드. TMS-free surrogate 16ch OpenBCI pilot + fluidity-dFC + functional-repertoire 6/6 PASS at 0.25 cutoff, w6=0.10 sample-size 1
 domain: consciousness, neuroscience, clinical
-status: candidate-unverified
+status: candidate-needs-scaffolding
 source_doc: docs/n_19_pci_tmsfree_results_2026_05_01.md + docs/n_19_pci_stage2_results_2026_05_02.md + docs/n_19_pci_stage3_spec_2026_05_02.md + docs/n_substrate_n19_pci_spec_2026_05_01.md + docs/n_substrate_n19_pci_lab_share_2026_05_01.md
 source_lines: cluster
 promoted_at: 2026-05-11
 linked_h: Hc_902 (N-substrate roadmap)
 notes: "Stage-2 N19_STAGE2_VALIDATED, 6/6 PASS at 0.25 cutoff, w6=0.10 UNCHANGED method-validated, sample-size 1. Stage-3 DCC + LLE + GAP design."
+cycle5_triage: "cycle #5 verify: WEAK_MATH_ONLY — math identity present, falsifier+honest scaffolding missing; needs F-list/L-list before re-verify can reach PROMOTE_READY"
 ---
 
 ## Hypothesis

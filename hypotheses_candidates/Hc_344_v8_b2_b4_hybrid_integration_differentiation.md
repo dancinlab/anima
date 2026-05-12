@@ -3,12 +3,13 @@ id: Hc_344
 slug: v8-b2-b4-hybrid-integration-differentiation
 title: Thalamic gate(B2) + Global Workspace(B4) hybrid이 통합(IIT) × 차별화(proxy) 동시 달성하는 sweet spot이다
 domain: consciousness
-status: candidate-unverified
+status: candidate-needs-scaffolding
 source_doc: docs/hypotheses/V8-BIO-CONSCIOUSNESS.md
 source_lines: 250-289
 promoted_at: 2026-05-11
 linked_h: Hc_339, Hc_341
 notes: IIT/proxy 거의 역순위 → 둘 다 필요
+cycle5_triage: "cycle #5 verify: WEAK_MATH_ONLY — math identity present, falsifier+honest scaffolding missing; needs F-list/L-list before re-verify can reach PROMOTE_READY"
 ---
 
 ## Hypothesis

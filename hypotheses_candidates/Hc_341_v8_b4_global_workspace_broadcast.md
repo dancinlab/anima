@@ -3,12 +3,13 @@ id: Hc_341
 slug: v8-b4-global-workspace-broadcast
 title: 8 specialist competition + temperature-cooled softmax winner-take-all + GRU broadcast이 Phi(proxy) 최강 x71.7 (B4=71.46) — Baars GWT 지지
 domain: consciousness
-status: candidate-unverified
+status: candidate-needs-scaffolding
 source_doc: docs/hypotheses/V8-BIO-CONSCIOUSNESS.md
 source_lines: 138-172
 promoted_at: 2026-05-11
 linked_h: Baars-GWT
 notes: broadcasting creates massive variance differentiation
+cycle5_triage: "cycle #5 verify: WEAK_MATH_ONLY — math identity present, falsifier+honest scaffolding missing; needs F-list/L-list before re-verify can reach PROMOTE_READY"
 ---
 
 ## Hypothesis

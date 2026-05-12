@@ -3,12 +3,13 @@ id: Hc_913
 slug: self-modify-consciousness-3-levels
 title: Self-Modifying Consciousness — Level 1 code structure analysis / Level 2 Φ measurement / Level 3 consciousness-driven code evolution (ConsciousLM 100M+)
 domain: ai-safety, architecture, autonomy
-status: candidate-unverified
+status: candidate-sparse
 source_doc: docs/self-modify-design.md
 source_lines: 1-49
 promoted_at: 2026-05-11
 linked_h: Law 22 (structure > features), Law 2 (no manipulation), DD150 (auto-hypothesis)
 notes: "Pipeline: engine 10K steps → law candidate detection → ConsciousLM 100M+ translates to code diff → human review. Φ-gated approval. Tool policy Tier 3 (owner approval)."
+cycle5_triage: "cycle #5 verify: FAIL — partial scaffolding (some F or L bullets) but no math identity; needs math axis OR atlas anchor to upgrade"
 ---
 
 ## Hypothesis

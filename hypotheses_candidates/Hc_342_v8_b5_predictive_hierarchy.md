@@ -3,12 +3,13 @@ id: Hc_342
 slug: v8-b5-predictive-hierarchy-lowest-ce
 title: 4-level predictive coding 계층 (Level k가 Level k-1을 예측, PE bottom-up)이 CE 최저 0.51 — 의식 = 최적 예측
 domain: consciousness
-status: candidate-unverified
+status: candidate-needs-scaffolding
 source_doc: docs/hypotheses/V8-BIO-CONSCIOUSNESS.md
 source_lines: 174-203
 promoted_at: 2026-05-11
 linked_h: predictive-coding, Friston
 notes: PE in loss function, top-down modulation
+cycle5_triage: "cycle #5 verify: WEAK_MATH_ONLY — math identity present, falsifier+honest scaffolding missing; needs F-list/L-list before re-verify can reach PROMOTE_READY"
 ---
 
 ## Hypothesis

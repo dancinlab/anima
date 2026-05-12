@@ -3,12 +3,13 @@ id: Hc_924
 slug: n24-octopus-per-arm-phi-exclusion
 title: N-24 — Octopus per-arm Φ ("community of minds") IIT exclusion postulate test feasibility
 domain: biology, consciousness, IIT
-status: candidate-unverified
+status: candidate-needs-scaffolding
 source_doc: docs/n_24_octopus_per_arm_phi_feasibility_2026_05_01.md
 source_lines: 1+
 promoted_at: 2026-05-11
 linked_h: Hc_902, Hc_916 (paradigm v11 distributed-NS axis)
 notes: "paradigm-v11 distributed-NS axis. Octopus 8 arm 의 각 arm 이 독립 Φ 를 가지면 IIT exclusion postulate (consciousness 는 maximal Φ 의 unique complex) 와 충돌."
+cycle5_triage: "cycle #5 verify: WEAK_MATH_ONLY — math identity present, falsifier+honest scaffolding missing; needs F-list/L-list before re-verify can reach PROMOTE_READY"
 ---
 
 ## Hypothesis

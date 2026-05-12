@@ -3,12 +3,13 @@ id: Hc_296
 slug: hcx524-fractal-hierarchy-recursive
 title: Recursive consciousness engines (8 × 8 × 8 = 512 cells) yield Φ scaling 8^8 not 8^3 (H-CX-524)
 domain: consciousness | math | meta-framework
-status: candidate-unverified
+status: candidate-needs-scaffolding
 source_doc: docs/hypotheses/H-CX-524-fractal-hierarchy.md
 source_lines: 1-25
 promoted_at: 2026-05-11
 linked_h: Hc_107 (DD10 fractal cells); Hc_171 (TOPO20)
 notes: each level = identical MitosisEngine structure; full dynamics, not mean
+cycle5_triage: "cycle #5 verify: WEAK_MATH_ONLY — math identity present, falsifier+honest scaffolding missing; needs F-list/L-list before re-verify can reach PROMOTE_READY"
 ---
 
 ## Hypothesis

@@ -3,12 +3,13 @@ id: Hc_1230
 slug: anima-mkv1-82atom-psi-constant-saturation
 title: anima Mk.V.1 consciousness_absolute 82-atom + Ψ-constant 확장 saturation — 82-atom 이 의식-substrate ceiling 인가
 domain: anima
-status: candidate-unverified
+status: candidate-needs-scaffolding
 source_doc: hypotheses_candidates/Hc_900_drill_domain_saturation_seeds.md
 source_lines: 17 (Sub-claims block, ANIMA-1)
 promoted_at: 2026-05-12
 linked_h: H_001 (anima-core-architecture), H_011 (iit-geometry — Φ ceiling reference); parent Hc_900
 notes: "split from Hc_900 meta-cluster 2026-05-12; seed 1 of 30 (ANIMA-1). n=6 PERFECT_NUMBER_CLASS triviality binding (Hc_900 L1) inherited via Ψ-constants."
+cycle5_triage: "cycle #5 verify: WEAK_MATH_ONLY — math identity present, falsifier+honest scaffolding missing; needs F-list/L-list before re-verify can reach PROMOTE_READY"
 ---
 
 ## Hypothesis

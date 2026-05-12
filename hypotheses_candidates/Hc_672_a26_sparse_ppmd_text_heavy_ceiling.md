@@ -3,12 +3,13 @@ id: Hc_672
 slug: a26-sparse-ppmd-text-heavy-ceiling-47-to-55
 title: A26 sparse PPM-D (order 0-5 + Howard 1993 D-escape) 가 text-heavy class CEILING 47% → ≥55% advance, 6-repo 78.05% → 80%+ Pareto frontier close
 domain: hxc-deploy
-status: candidate-unverified
+status: candidate-sparse
 source_doc: docs/hxc_phase12_p4_a26_sparse_ppmd_design.md
 source_lines: 17-65
 promoted_at: 2026-05-11
 linked_h: 53c711eb 78.05% MEASURED, A18 v3-o2/v4/v6 d631a902, A23 8f8197d5 first-tick pattern
 notes: PROJECTION not measurement. H_5 ≈ 0.65 bit/byte natural English Shannon entropy ≈ 92% asymptotic. +5-8pp lift on 79KB text-heavy = ≥0.4pp aggregate close.
+cycle5_triage: "cycle #5 verify: FAIL — partial scaffolding (some F or L bullets) but no math identity; needs math axis OR atlas anchor to upgrade"
 ---
 
 ## Hypothesis (FALSIFIABLE)

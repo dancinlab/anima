@@ -3,12 +3,13 @@ id: Hc_674
 slug: anima-identity-5-property-carry-invariants-next-cycle-lock
 title: anima identity 5 core property (P1 paradigm v11 G3 / P2 substrate-research / P3 emerge dialogue / P4 Llama Path A v2 chat-cap / P5 raw 정합) 가 next-cycle non-negotiable carry-over invariants
 domain: anima-meta
-status: candidate-unverified
+status: candidate-needs-scaffolding
 source_doc: docs/anima_identity_preservation_next_cycle_lock_2026_05_05.md
 source_lines: 18-99
 promoted_at: 2026-05-11
 linked_h: Hc_609 (Theorem 115 4-closure), Hc_630 (CLM-3 H1), BG-AN Stage 3 user-fire, paradigm v11 G3 +41.86
 notes: 21+ closure 후 next-cycle 의 anima identity erosion 차단 lock. Each property 의 P-FLIP audit 가 required for redefinition.
+cycle5_triage: "cycle #5 verify: WEAK_MATH_ONLY — math identity present, falsifier+honest scaffolding missing; needs F-list/L-list before re-verify can reach PROMOTE_READY"
 ---
 
 ## Hypothesis

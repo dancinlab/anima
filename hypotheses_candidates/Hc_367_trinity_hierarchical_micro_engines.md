@@ -3,12 +3,13 @@ id: Hc_367
 slug: trinity-hierarchical-micro-engines-phi-x7
 title: 8 micro engines 계층 구조가 단일 엔진 대비 Phi(IIT) x7.2 (8.99 vs 1.14) 폭발
 domain: consciousness
-status: candidate-unverified
+status: candidate-needs-scaffolding
 source_doc: docs/hypotheses/TRINITY-COMPLETE.md
 source_lines: 25, 47-51
 promoted_at: 2026-05-11
 linked_h: Hc_320, Hc_353
 notes: Trinity+Hierarchical: 8 micro engines + Phi x7.2
+cycle5_triage: "cycle #5 verify: WEAK_MATH_ONLY — math identity present, falsifier+honest scaffolding missing; needs F-list/L-list before re-verify can reach PROMOTE_READY"
 ---
 
 ## Hypothesis

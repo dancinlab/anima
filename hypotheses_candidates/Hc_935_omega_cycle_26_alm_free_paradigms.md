@@ -3,12 +3,13 @@ id: Hc_935
 slug: omega-cycle-26-alm-free-paradigms
 title: Ω-cycle — ALM-free consciousness substrate 26 paradigms 4 axes (SUBSTRATE 7 / TRAINING 7 / PHENOMENAL 5 / INTEGRATION 7). Top: HCE Hexad Categorical 0.92, CPGD 0.95, V_phen_EEG-LZ × CLM-LZ 0.78, HAL 0.85
 domain: consciousness, architecture, training
-status: candidate-unverified
+status: candidate-needs-scaffolding
 source_doc: docs/omega_cycle_alm_free_paradigms_20260426.md
 source_lines: 1-40+
 promoted_at: 2026-05-11
 linked_h: Hc_916 (Mk.XI v10), Hc_909
 notes: "4 sub-agent ω-cycle. ALM 없이 CLM + EEG + Brain Cosmos Map + Tension Link + CELL 학습법 만으로 substrate 가능성 탐색."
+cycle5_triage: "cycle #5 verify: WEAK_MATH_ONLY — math identity present, falsifier+honest scaffolding missing; needs F-list/L-list before re-verify can reach PROMOTE_READY"
 ---
 
 ## Hypothesis

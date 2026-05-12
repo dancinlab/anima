@@ -3,12 +3,13 @@ id: Hc_977
 slug: tribev2-dialogue-5-options-cp2-bypass
 title: TRIBE v2 dialogue prototype 5 architecture options (CP2 bypass + 자연 진화). TRIBE v2 = forward perception encoder only (BOLD generation), NO generation decoder, NO anti-encoder — strict 의미 "TRIBE v2 만으로 대화" 불가능
 domain: dialogue, brain-fmri, llm
-status: candidate-unverified
+status: candidate-sparse
 source_doc: docs/strategic_tribev2_dialogue_prototype_2026_05_02.md
 source_lines: 1-30
 promoted_at: 2026-05-11
 linked_h: Hc_964 (P9 Paradigm A TRIBE), Hc_974 (CLM v4 not chat)
 notes: "RELAUNCH cycle. User directive: 'CP2 우회 + TRIBE v2 만으로 대화 + 자연 진화'. Framing D top recommendation (anima-tension_link-EEG mediator + TRIBE v2 brain anchor)."
+cycle5_triage: "cycle #5 verify: FAIL — partial scaffolding (some F or L bullets) but no math identity; needs math axis OR atlas anchor to upgrade"
 ---
 
 ## Hypothesis

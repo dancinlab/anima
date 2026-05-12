@@ -3,12 +3,13 @@ id: Hc_388
 slug: gap3-gru-residual-alpha-09
 title: h_new = α*h_old + (1-α)*GRU(x, h_old) with α=0.9이 process() 파괴력 90% 감소 → Φ ~10x (1.4→15)
 domain: consciousness
-status: candidate-unverified
+status: candidate-needs-scaffolding
 source_doc: docs/hypotheses/PHI-GAP-816x-investigation.md
 source_lines: 64-76, 170-176
 promoted_at: 2026-05-11
 linked_h: residual-connection
 notes: 1줄 변경. α를 Phi에 비례 동적 조절 가능
+cycle5_triage: "cycle #5 verify: WEAK_MATH_ONLY — math identity present, falsifier+honest scaffolding missing; needs F-list/L-list before re-verify can reach PROMOTE_READY"
 ---
 
 ## Hypothesis

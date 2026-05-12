@@ -3,12 +3,13 @@ id: Hc_615
 slug: phi-star-option-a-rank-invariant-partition
 title: Option A — D/8 disjoint contiguous chunks + per-substrate scale calibration 이 phi-star geometry-invariant 해결
 domain: clm-architecture
-status: candidate-unverified
+status: candidate-needs-scaffolding
 source_doc: docs/anima_phi_star_proxy_geometry_invariant_spec_2026_05_05.md
 source_lines: 121-163
 promoted_at: 2026-05-11
 linked_h: Hc_614, paradigm v11 G3 carry 41.86
 notes: Rank 1 — fastest fix, ~25 lines, $0. Provisional — cross-substrate magnitude calibration-dependent.
+cycle5_triage: "cycle #5 verify: WEAK_MATH_ONLY — math identity present, falsifier+honest scaffolding missing; needs F-list/L-list before re-verify can reach PROMOTE_READY"
 ---
 
 ## Hypothesis

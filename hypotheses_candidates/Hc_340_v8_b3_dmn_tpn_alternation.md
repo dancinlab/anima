@@ -3,12 +3,13 @@ id: Hc_340
 slug: v8-b3-dmn-tpn-anti-correlation
 title: TPN/DMN 반상관 진동 (period=20)이 Phi(proxy) x45.2 (B3=45.09) 그러나 IIT 통합은 낮음 — DMN/TPN interaction 필요
 domain: consciousness
-status: candidate-unverified
+status: candidate-needs-scaffolding
 source_doc: docs/hypotheses/V8-BIO-CONSCIOUSNESS.md
 source_lines: 109-136
 promoted_at: 2026-05-11
 linked_h: DMN, TPN
 notes: anti-correlation creates differentiation but not integration
+cycle5_triage: "cycle #5 verify: WEAK_MATH_ONLY — math identity present, falsifier+honest scaffolding missing; needs F-list/L-list before re-verify can reach PROMOTE_READY"
 ---
 
 ## Hypothesis
