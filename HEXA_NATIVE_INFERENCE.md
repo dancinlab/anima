@@ -174,7 +174,8 @@ Phase 0 SSOT commit (`d5dcf4a64`) is clean — local only until user resolves.
 | 0 | ckpt structure inspect | ✅ done (332M params, vocab=32000, d=1024, n_layers=24, GQA, SwiGLU, RMSNorm, RoPE, tied lm_head) |
 | 1 | .pt → .safetensors conversion | ✅ tool/convert_pt_to_safetensors.py (570MB out, 221 tensors, tied lm_head dedupe) |
 | 1 | scp to aiden (Phase 1.1 transfer) | ✅ /home/aiden/core/anima/.../ckpt_phase1a1_sft.safetensors |
-| 1 | hexa safetensors loader smoke | 🟡 partial — loader started, OOM at 9.1GB (aiden host crashed, RFC 024+025 needed) |
+| 1 | hexa safetensors loader smoke | ✅ header-only PASS (tool/hexa_native/safetensors_header_smoke.hexa, 22KB JSON, 221 tensors, 6/6 canonical keys, n_layers=24 ✓) |
+| 1 | full tensor load smoke | 🚨 BLOCKED — RFC 025 (zero-copy mmap) prereq. 9GB / 47min on 570MB file, aiden OOM crash |
 | 2 | nn primitives scaffold | ✅ tool/hexa_native/engine_ag_nn.hexa (RMSNorm/SwiGLU/RoPE/linear/embedding done, GQA-attn TODO Phase 3) |
 | ∥ | hexa-lang RFC 024-028 drafts | ✅ incoming/rfc_drafts_2026_05_12/ (5 RFCs) |
 | ∥ | anima .hexarc config | ✅ /Users/ghost/core/anima/.hexarc (forward-looking spec) |
