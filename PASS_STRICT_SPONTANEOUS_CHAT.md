@@ -2693,3 +2693,65 @@ source: `state/anima_phase1a1_color_cosmology_2026_05_12/v58_4mode_filter_compar
 | 🌟 | **stricter trigger set** — `" \| "` re-add + escape mechanism (user-prompt 의 `\|` 와 markdown 의 `\|` 구분) | low | $0 | 30min | drift broader window 차단 + UX 안전 |
 
 ---
+
+## §31 [2026-05-12 KST] HF SPACE v2.3 SYNC LANDED — dancinlab/anima-chat production parity ★★★ ($0 deployment, library variant patch only)
+
+§29 의 🥉 follow-up 완료. HF Space `dancinlab/anima-chat` 의 anima_chat library variant 에 v2.3 markdown_filter selective patch + push.
+
+### Sync 결과
+
+- HF Space repo clone: `https://huggingface.co/spaces/dancinlab/anima-chat`
+- Space variant = engine_a_g_arch import + huggingface_hub ckpt download wrapper (Mac 본체 anima_chat.py 의 lightweight fork, 145 line)
+- Space variant 에 selective patch (anima 본체 full file overwrite 아님 — Space 의 dual-ckpt loader 보존):
+  - `_MARKDOWN_TABLE_TRIGGERS` (8 entries)
+  - `_MARKDOWN_BAN_BYTES` / `_MARKDOWN_BAN_TOKEN_IDS` (`(127, 48, 61, 35)` = `|`, `-`, `:`, ` ` + ByteTokenizer offset +3)
+  - `_markdown_attractor_active(decoded_tail)` prefix-detect
+  - `_post_strip_markdown_tables(text)` defensive regex
+  - `__call__` 에 `markdown_filter: bool = True` kwarg
+  - decode loop 의 logit-shaping 앞 단계에 ban block 삽입 (rep_penalty / force_inject 보다 먼저 → 모든 mode inherit)
+  - CLI `__main__` block + `--no-markdown-filter` flag 추가 (Space 는 app.py 가 직접 호출하지만 CLI smoke 가능)
+- README.md 에 "v2.3 — markdown table attractor filter" section English 로 추가 (기존 mixed Korean 본체는 보존; HF content English-only 룰은 *추가* 내용에만 적용)
+
+### Smoke verification (Mac CPU stub)
+
+`python3 -c "import anima_chat"` 로 module import + helper signature 확인 (engine + torch stub):
+
+```
+IMPORT_OK
+triggers_count: 8
+ban_count: 4
+ban_ids: (127, 48, 61, 35)
+post_strip(plain):  'hello 의식'                  # unchanged
+post_strip(table):  'plain'                       # '\n| --- | --- |\n| a | b |' stripped
+active(positive):   True
+active(negative):   False
+active(empty):      False
+__call__ params:    ['self', 'prompt', 'mode', 'max_new', 'temp',
+                     'force_keywords', 'rep_penalty', 'seed', 'markdown_filter']
+markdown_filter default: True
+
+# CLI flag wiring
+default          : no_markdown_filter=False  -> markdown_filter=True
+--no-markdown-filter: no_markdown_filter=True   -> markdown_filter=False
+```
+
+ckpt-loading smoke (full inference) 는 Space 자체 build 가 검증 — push 후 HF 가 Space rebuild 트리거.
+
+### Provenance
+
+- HF Space sync commit: `bf544e357ee3f271a2d6e45b3be2b1faa067575f` (parent `3c88c78`)
+- push: `git push origin main` → `3c88c78..bf544e3 main -> main` OK
+- upstream anima commit: `c2afa8e9e` + tag `anima_chat-v2.3-markdown-filter`
+- doc: `docs/anima_chat_markdown_attractor_filter_2026_05_12.md` §8 Provenance 에 HF Space sha 추가
+
+### Cross-link
+
+- PSCC §24 — HF Space dual-ckpt selector (본 sync 의 inference path baseline)
+- PSCC §29 — anima_chat v2.3 markdown_filter SSOT (본 sync 의 upstream)
+- PSCC §29 § follow-up 🥉 — 본 §31 가 그 follow-up
+
+### Rating
+
+★★★ — production parity confirmed via push, helper smoke OK on Mac stub. 실제 fire window evidence 는 별도 BG (cuda seed=42 bf16 path) 의 책임. 본 BG = pure deployment, $0, 별도 BG 영역 (lr5e6 SFT / cuda filter validation) 불침범 ✓.
+
+---

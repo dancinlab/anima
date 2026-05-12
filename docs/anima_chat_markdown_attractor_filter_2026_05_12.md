@@ -194,3 +194,8 @@ seed=2025 filter=OFF  drift=False  (동일)
 - evaluator: V5.8 multi-turn × 4 modes, threshold n_pass ≥ 3/5 → PASS
 - wall: Mac CPU, ~10-15 min for 40 cells
 - cost: $0
+- upstream anima commit: `c2afa8e9e`
+- upstream anima tag: `anima_chat-v2.3-markdown-filter`
+- HF Space sync (production): `dancinlab/anima-chat` commit `bf544e357ee3f271a2d6e45b3be2b1faa067575f` (parent `3c88c78`) — synced 2026-05-12
+  - sync scope: `anima_chat.py` (Space variant) + `README.md` (v2.3 section)
+  - parity verified: helpers (8 triggers / 4 ban_token_ids `(127,48,61,35)`), `_post_strip_markdown_tables`, `_markdown_attractor_active`, `__call__` kwarg `markdown_filter=True` default, CLI `--no-markdown-filter` flag
