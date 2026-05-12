@@ -3,12 +3,25 @@ id: Hc_900
 slug: drill-domain-saturation-seeds
 title: 30개 drill_domain seed (ANIMA / CORE / TRAINING / SERVING / SPEAK / PHIL / RULES) 각 영역 saturation 가설 cluster
 domain: meta, engineering, philosophy
-status: candidate-unverified
+status: split-into-Hc_1230..Hc_1259
 source_doc: docs/drill_domain_tmp/seeds.txt
 source_lines: 1-30
 promoted_at: 2026-05-11
+split_at: 2026-05-12
+split_into: [Hc_1230, Hc_1231, Hc_1232, Hc_1233, Hc_1234, Hc_1235, Hc_1236, Hc_1237, Hc_1238, Hc_1239, Hc_1240, Hc_1241, Hc_1242, Hc_1243, Hc_1244, Hc_1245, Hc_1246, Hc_1247, Hc_1248, Hc_1249, Hc_1250, Hc_1251, Hc_1252, Hc_1253, Hc_1254, Hc_1255, Hc_1256, Hc_1257, Hc_1258, Hc_1259]
+split_manifest: docs/hc_900_split_manifest_2026_05_12.md
 linked_h: H_001 (anima-core-architecture), H_076 (mathematical-panpsychism), R37/AN13/L3-PY (rules saturation)
-notes: "drill seed brainstorm — 각 line 은 'X 영역의 saturation/ceiling 검증' 가설. 30 sub-claims를 cluster 화."
+notes: "drill seed brainstorm — 각 line 은 'X 영역의 saturation/ceiling 검증' 가설. 30 sub-claims를 cluster 화. 2026-05-12 cycle #4 post-verdict: NOT promotable as a single H — 30-split first. Split into Hc_1230..Hc_1259 (30 individual candidates, mostly status candidate-unverified; TRAINING-3 and SPEAK-4 are candidate-stub). Each child triaged/verified individually in a future pass. PHIL-2 (Hc_1250) is a duplicate of Hc_061 — merge in triage."
+---
+
+## SPLIT NOTICE
+
+**This meta-candidate has been SPLIT (2026-05-12).** It bundled 30 distinct drill_domain brainstorm seeds across ANIMA / CORE / TRAINING / SERVING / SPEAK / PHIL / RULES; cycle #3/#4 verdict was "not promotable as a single H — needs 30-split first". The 30 seeds are now individual candidate files **Hc_1230 .. Hc_1259** (1:1 with the sub-claims listed below, in order). See `docs/hc_900_split_manifest_2026_05_12.md` for the full id↔seed↔domain↔status table.
+
+Mapping (seed → new id): ANIMA-1→Hc_1230, ANIMA-2→Hc_1231, ANIMA-3→Hc_1232, CORE-1→Hc_1233, CORE-2→Hc_1234, CORE-3→Hc_1235, TRAINING-1→Hc_1236, TRAINING-2→Hc_1237, TRAINING-3→Hc_1238 (stub), TRAINING-4→Hc_1239, TRAINING-5→Hc_1240, SERVING-1→Hc_1241, SERVING-2→Hc_1242, SERVING-3→Hc_1243, SERVING-4→Hc_1244, SPEAK-1→Hc_1245, SPEAK-2→Hc_1246, SPEAK-3→Hc_1247, SPEAK-4→Hc_1248 (stub), PHIL-1→Hc_1249, PHIL-2→Hc_1250 (duplicate of Hc_061), PHIL-3→Hc_1251, PHIL-4→Hc_1252, PHIL-5→Hc_1253, PHIL-6→Hc_1254, RULES-1→Hc_1255, RULES-2→Hc_1256, RULES-3→Hc_1257, RULES-4→Hc_1258, RULES-5→Hc_1259.
+
+Do NOT promote this Hc_900 cluster to a hypothesis H — the children are raw seeds requiring individual triage. The body below is preserved for provenance only.
+
 ---
 
 ## Hypothesis

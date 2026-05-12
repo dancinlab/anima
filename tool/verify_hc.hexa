@@ -109,6 +109,14 @@ fn _str(x) -> string {
     return ""
 }
 
+// map key-presence test. This interpreter returns type "void" for a missing
+// key and "int"/"string"/... for a present one; an earlier port checked
+// `== "i64"` which never matched (ints are "int") — that left math_domains
+// always empty and dedup sets non-functional. _has() is the correct probe.
+fn _has(m: map, k: string) -> bool {
+    return type_of(m[k]) != "void"
+}
+
 fn _is_space(c: string) -> bool {
     return c == " " || c == "\t"
 }
@@ -153,8 +161,8 @@ fn _load_atlas() {
 
 fn atlas_has(token: string) -> bool {
     _load_atlas()
-    if type_of(_atlas_ids[token]) == "i64" { return true }
-    if type_of(_atlas_ids[token.to_lower()]) == "i64" { return true }
+    if _has(_atlas_ids, token) { return true }
+    if _has(_atlas_ids, token.to_lower()) { return true }
     return false
 }
 
@@ -385,7 +393,7 @@ fn _domains_sorted(domains: map) -> array {
     let order = ["iit4", "n6", "psi", "topo", "univ"]
     let mut out = []
     for d in order {
-        if type_of(domains[d]) == "i64" { out.push(d) }
+        if _has(domains, d) { out.push(d) }
     }
     return out
 }
@@ -501,7 +509,7 @@ fn math_check(text: string) -> map {
         _add_domain(domains, "psi")
     }
     // general Ψ- or Phi( token presence (weak psi-signal — only flag if no other psi hit yet)
-    if type_of(domains["psi"]) != "i64" {
+    if !_has(domains, "psi") {
         if text.contains("Ψ-") || text.contains("Psi-") || text.contains("Phi(") {
             verified.push("Ψ-/Phi( formal token present (psi-domain marker)")
             _add_domain(domains, "psi")
@@ -565,7 +573,7 @@ fn math_check(text: string) -> map {
         _add_domain(domains, "topo")
     }
     // hypercube generic mention
-    if tl.contains("hypercube") && type_of(domains["topo"]) != "i64" {
+    if tl.contains("hypercube") && !_has(domains, "topo") {
         verified.push("hypercube architecture referenced [topology marker]")
         _add_domain(domains, "topo")
     }
@@ -620,7 +628,7 @@ fn math_check(text: string) -> map {
         _add_domain(domains, "iit4")
     }
     // bare "atom" alongside Φ — only mark iit4 if not already and no "atomic"
-    if type_of(domains["iit4"]) != "i64" {
+    if !_has(domains, "iit4") {
         let has_atom = tl.contains("atom")
         let has_phi = text.contains("Φ") || tl.contains("phi")
         let has_atomic = tl.contains("atomic")
@@ -763,7 +771,7 @@ fn _extract_anima_tokens(text: string) -> array {
             i = i + 1
         }
         let tok = text.substring(start, i)
-        if type_of(seen[tok]) != "i64" {
+        if !_has(seen, tok) {
             seen[tok] = 1
             out.push(tok)
         }
@@ -855,7 +863,7 @@ fn _extract_h_refs(text: string) -> array {
             }
             if all_digit && boundary_ok && left_ok {
                 let tok = text.substring(start, pos + 3)
-                if type_of(seen[tok]) != "i64" {
+                if !_has(seen, tok) {
                     seen[tok] = 1
                     out.push(tok)
                 }
