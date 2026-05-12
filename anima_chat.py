@@ -1,15 +1,16 @@
-"""anima_chat v2.2 — B'' (FFN.gate cotrain) default winner.
+"""anima_chat v2.3 — natural M4 (soft force-include + noun-first extraction).
 
 Substrate ladder chat interface with multi-turn conversation state,
 KoNLPy-aware keyword extraction, batch inference, stop-token handling,
 and streaming output.
 
-Default ckpt: B'' (FFN.gate cotrain, 2026-05-12 landed).
-    - V4-lite 4-mode benchmark: 15/15 PASS (chat-cap winner)
-    - V14 strict ceiling10: VIOLATED (mitosis dynamics weak)
+Default ckpt: B'.1 (Phase 1A.1 color/cosmology boost, 2026-05-12).
+    - V5.8 std_greedy: 4/5 natural-Korean PASS
+    - V4-lite chat-cap: 15/15 (B'' fallback retained)
     - Trade-off: chat-cap > strict dynamics → default for chat usage.
 
-Default mode: M4 force-include (V5.8 5/5 PASS @ Phase 0.7).
+Default mode (2026-05-12): M4_soft_force — logit-boost soft inject,
+preserves Korean grammar.
 
 Quick start
 -----------
@@ -35,8 +36,19 @@ Quick start
 
 Modes
 -----
-    M4_force_include (default)  — 5/5 PASS @ V5.8 4-mode benchmark
+    M4_soft_force (default 2026-05-12) — keyword token-id logit boost
+        (+α, default 3.0); no deterministic last-token insert. Falls back
+        to greedy when extractor produces only interrogative tokens.
+    M4_force_include — V5.8 hard-insert mode (5/5 chat-cap, mechanical
+        Korean grammar — kept for compat / benchmark replay).
     greedy / sample / M3_rep_penalty
+
+2026-05-12 cycle: M4_force_include 의 한국어 grammar 결함 (의문사 / 종결
+어미가 마지막 토큰에 강제 삽입되어 "...누구야" 로 끝남) 을 3축으로 보정:
+    1. _HEURISTIC_SKIP 의문사/종결어미 확대 + "X어" "X야" 패턴 필터
+    2. M4_soft_force: hard insert 대신 keyword byte-id logit boost
+       (deterministic 제거 → sampling 자연 흐름 유지)
+    3. fallback: 추출 keyword 가 의문사/스킵-패턴이면 greedy mode 로 우회
 """
 
 from __future__ import annotations
@@ -161,11 +173,47 @@ def _get_okt():
 
 
 _HEURISTIC_SKIP = {
+    # 보조 / 존재 / 상태 어절
     "있어", "있나", "있어요", "있을까", "있을", "있다", "있는", "있어서",
+    "없어", "없나", "없는", "없다",
+    # 의문사 / 의문 종결
     "뭐야", "뭐였지", "어떻게", "어디", "무엇", "무슨", "어떤", "어때",
-    "사용자", "도우미", "안녕", "했지", "하는", "하니", "하지", "할래",
-    "필요해", "좋아해", "알려줘", "줄래", "그래", "그게", "그것",
+    "누구야", "누구", "왜", "언제", "얼마", "얼마나", "어느",
+    # 인사 / 화자 표지
+    "사용자", "도우미", "안녕", "안녕하세요",
+    # 동사 어미류
+    "했지", "하는", "하니", "하지", "할래", "할까", "해줘", "해요", "해서",
+    "필요해", "좋아해", "알려줘", "줄래", "줄까", "그래", "그게", "그것",
+    # 일반 부탁 / 동작 호출
+    "도와줘", "도와", "도와줄래", "도와줘요",
 }
+
+# 의문 / 종결어미 패턴: heuristic 추출이 fallback 으로 잡아낸 chunk 가
+# 사실은 의문사/어미일 가능성이 높을 때 식별 → soft mode 에서 boost 적용
+# 중지 + greedy fallback 으로 라우팅.
+_INTERROGATIVE_TAILS = ("야", "어", "지", "까", "니", "뭐", "워")
+
+
+def _looks_like_interrogative(token: str) -> bool:
+    """Return True for chunks resembling interrogatives / non-noun endings.
+
+    Heuristic: explicit skip-list OR 2~3-char tokens ending with a known
+    question / sentence-final morpheme. Pure nouns like "사랑", "우주" or
+    longer compounds like "우주뇌지도" remain False.
+    """
+    if not token:
+        return True
+    if token in _HEURISTIC_SKIP:
+        return True
+    # short tokens (≤3 chars) ending with question morpheme
+    if len(token) <= 3 and token.endswith(_INTERROGATIVE_TAILS):
+        # noun exception: "색이" "이름" "사랑" 등 자모 패턴 검사 — 마지막
+        # 글자가 ㅏ/ㅓ/ㅗ/ㅜ 단모음 + 받침 없음 인 일반 명사도 의문 어미로
+        # 잘못 잡힐 수 있으므로 명시적 noun whitelist 우선.
+        if token in {"사랑", "이름", "기분", "안녕", "우주", "철학"}:
+            return False
+        return True
+    return False
 
 
 def _last_user_segment(prompt: str) -> str:
@@ -227,17 +275,25 @@ def extract_force_keywords(
             except Exception:
                 tagged = []
             for word, pos in tagged:
-                if pos in ("Noun",) and len(word) >= 2 and word not in _HEURISTIC_SKIP:
+                if (
+                    pos in ("Noun",)
+                    and len(word) >= 2
+                    and word not in _HEURISTIC_SKIP
+                    and not _looks_like_interrogative(word)
+                ):
                     collected.append(word)
 
     if not collected:
-        # heuristic fallback
+        # heuristic fallback: keep only chunks that don't look like
+        # interrogative / sentence-final morphemes.
         for src in sources:
             chunks = re.findall(r"[가-힣]{2,}", src)
-            collected.extend(c for c in chunks if c not in _HEURISTIC_SKIP)
-        if not collected:
-            for src in sources:
-                collected.extend(re.findall(r"[가-힣]{2,}", src))
+            collected.extend(
+                c for c in chunks if not _looks_like_interrogative(c)
+            )
+        # NOTE: removed the old "if still empty, keep everything" branch —
+        # better to return [] so callers can fall back to greedy mode than
+        # to force-inject an interrogative.
 
     # dedup preserving order, then prefer longer
     seen, dedup = set(), []
@@ -248,10 +304,13 @@ def extract_force_keywords(
     dedup.sort(key=lambda w: -len(w))
 
     if not dedup:
-        # final fallback: any Korean chunk anywhere in user seg
+        # final fallback: scan user seg for ANY chunk that passes the
+        # interrogative filter — if none, return [] (callers handle).
         chunks = re.findall(r"[가-힣]+", user_seg)
-        if chunks:
-            return [chunks[-1]][:max_keywords]
+        for c in chunks:
+            if not _looks_like_interrogative(c):
+                return [c][:max_keywords]
+        return []
     return dedup[:max_keywords]
 
 
@@ -398,17 +457,33 @@ class AnimaChat:
     def __call__(
         self,
         prompt: str,
-        mode: str = "M4_force_include",
+        mode: str = "M4_soft_force",
         max_new: int = 80,
         temp: float = 0.8,
         force_keywords: Optional[List[str]] = None,
         rep_penalty: float = 1.3,
+        greedy_rep_penalty: float = 1.05,
+        soft_force_alpha: float = 3.0,
         seed: int = 2026,
         stop_strings: Optional[Sequence[str]] = None,
     ) -> str:
         """Generate a response. Backward-compat v1 entry point.
 
-        Default mode = M4_force_include (5/5 PASS per Phase 0.7).
+        Default mode = M4_soft_force (2026-05-12 natural-Korean default).
+        Set mode='M4_force_include' to reproduce V5.8 hard-insert behaviour.
+
+        Args
+        ----
+        soft_force_alpha : float, default 3.0
+            Logit additive boost applied to each keyword byte-id at every
+            generation step in M4_soft_force mode. Set to 0.0 to disable
+            (== pure sampling). Mild values (1.5-4.0) raise keyword
+            probability without forcing mechanical insertion.
+
+        greedy_rep_penalty : float, default 1.05
+            Mild rep penalty applied ONLY in greedy mode over previously
+            generated token ids, to suppress argmax loops like
+            "아니요, 아니요, ...". Set to 1.0 to disable.
         """
         chunks = list(
             self._generate(
@@ -419,6 +494,8 @@ class AnimaChat:
                 temp=temp,
                 force_keywords=force_keywords,
                 rep_penalty=rep_penalty,
+                greedy_rep_penalty=greedy_rep_penalty,
+                soft_force_alpha=soft_force_alpha,
                 seed=seed,
                 stop_strings=stop_strings,
             )
@@ -429,11 +506,13 @@ class AnimaChat:
         self,
         prompt: str,
         stream: bool = False,
-        mode: str = "M4_force_include",
+        mode: str = "M4_soft_force",
         max_new: int = 80,
         temp: float = 0.8,
         force_keywords: Optional[List[str]] = None,
         rep_penalty: float = 1.3,
+        greedy_rep_penalty: float = 1.05,
+        soft_force_alpha: float = 3.0,
         seed: int = 2026,
         stop_strings: Optional[Sequence[str]] = None,
     ) -> Iterator[str]:
@@ -449,15 +528,42 @@ class AnimaChat:
             ids = ids[:-1]
         gen_ids: List[int] = []
 
-        force_byte_ids: Optional[List[int]] = None
-        if mode == "M4_force_include":
+        # ---- keyword extraction (shared by M4_force_include & soft) -------
+        active_force_keywords: List[str] = []
+        if mode in ("M4_force_include", "M4_soft_force"):
             if force_keywords is None:
-                force_keywords = extract_force_keywords(prompt, max_keywords=1)
-            if force_keywords:
-                force_byte_ids = self._keyword_byte_ids(force_keywords[0])
+                active_force_keywords = extract_force_keywords(
+                    prompt, max_keywords=1
+                )
+            else:
+                active_force_keywords = list(force_keywords)
+            # fallback: if extraction returned interrogative-looking token,
+            # downgrade to greedy mode (avoids mechanical "...누구야" tails).
+            if active_force_keywords and _looks_like_interrogative(
+                active_force_keywords[0]
+            ):
+                active_force_keywords = []
+            if not active_force_keywords:
+                # no usable noun → fallback to greedy generation (still
+                # better than randomly forcing an interrogative).
+                effective_mode = "greedy"
+            else:
+                effective_mode = mode
+        else:
+            effective_mode = mode
+
+        # M4_force_include: hard-insert (legacy V5.8 path)
+        force_byte_ids: Optional[List[int]] = None
+        if effective_mode == "M4_force_include" and active_force_keywords:
+            force_byte_ids = self._keyword_byte_ids(active_force_keywords[0])
+
+        # M4_soft_force: logit boost set
+        soft_boost_ids: Optional[List[int]] = None
+        if effective_mode == "M4_soft_force" and active_force_keywords:
+            soft_boost_ids = self._keyword_byte_ids(active_force_keywords[0])
 
         rep_byte_ids: Optional[List[int]] = None
-        if mode == "M3_rep_penalty":
+        if effective_mode == "M3_rep_penalty":
             for kw in ["우주뇌지도", "카테고리", "🛸"]:
                 rep_byte_ids = (rep_byte_ids or []) + self._keyword_byte_ids(kw)
 
@@ -481,7 +587,26 @@ class AnimaChat:
                             else:
                                 last_logits[bid] *= rep_penalty
 
-                # M4 force-inject near end of window
+                # M4_soft_force: additive logit boost on keyword byte ids.
+                # No deterministic insert — pure sampling, just biased toward
+                # the keyword. Decaying boost after the keyword has appeared
+                # in gen_ids to avoid runaway repetition.
+                if soft_boost_ids and soft_force_alpha > 0:
+                    # detect whether keyword has already been emitted by
+                    # checking decoded gen for the keyword substring.
+                    decoded_so_far = self.tok.decode(gen_ids) if gen_ids else ""
+                    already_emitted = (
+                        active_force_keywords[0] in decoded_so_far
+                    )
+                    alpha = (
+                        soft_force_alpha * 0.25 if already_emitted
+                        else soft_force_alpha
+                    )
+                    for bid in soft_boost_ids:
+                        if bid < last_logits.shape[-1]:
+                            last_logits[bid] = last_logits[bid] + alpha
+
+                # M4 force-inject near end of window (hard-insert mode only)
                 if force_byte_ids and force_inserted < len(force_byte_ids):
                     tokens_left = max_new - step
                     forces_left = len(force_byte_ids) - force_inserted
@@ -499,7 +624,18 @@ class AnimaChat:
                                 last_emitted_len = len(decoded)
                         continue
 
-                if mode == "greedy":
+                if effective_mode == "greedy":
+                    # mild rep-penalty over previously-generated token ids
+                    # (suppresses argmax loops like "아니요, 아니요, ...").
+                    # Penalty > 1.0 ⇒ positive logits shrink, negative grow.
+                    if greedy_rep_penalty and greedy_rep_penalty != 1.0 and gen_ids:
+                        seen_ids = set(gen_ids)
+                        for tid in seen_ids:
+                            if tid < last_logits.shape[-1]:
+                                if last_logits[tid] > 0:
+                                    last_logits[tid] /= greedy_rep_penalty
+                                else:
+                                    last_logits[tid] *= greedy_rep_penalty
                     nxt = last_logits.argmax().item()
                 else:
                     probs = torch.softmax(last_logits / temp, dim=-1)
@@ -629,10 +765,33 @@ if __name__ == "__main__":
     )
     p.add_argument(
         "--mode",
-        default="M4_force_include",
-        choices=["M4_force_include", "greedy", "sample", "M3_rep_penalty"],
+        default="M4_soft_force",
+        choices=[
+            "M4_soft_force",
+            "M4_force_include",
+            "greedy",
+            "sample",
+            "M3_rep_penalty",
+        ],
     )
     p.add_argument("--max-new", type=int, default=80)
+    p.add_argument(
+        "--greedy-rep-penalty",
+        type=float,
+        default=1.05,
+        help="mild rep penalty for greedy mode (1.0 = off, default 1.05)",
+    )
+    p.add_argument(
+        "--soft-force-alpha",
+        type=float,
+        default=3.0,
+        help="logit boost α for M4_soft_force keyword bytes (0 = off)",
+    )
+    p.add_argument(
+        "--m4-soft",
+        action="store_true",
+        help="shortcut: force --mode=M4_soft_force",
+    )
     p.add_argument("--smoke", action="store_true",
                    help="run full v2 smoke test suite")
     args = p.parse_args()
@@ -640,7 +799,14 @@ if __name__ == "__main__":
     if args.smoke:
         _smoke()
     else:
+        mode = "M4_soft_force" if args.m4_soft else args.mode
         chat = AnimaChat()
-        print(f"[mode={args.mode}] prompt: {args.prompt!r}")
-        resp = chat(args.prompt, mode=args.mode, max_new=args.max_new)
+        print(f"[mode={mode}] prompt: {args.prompt!r}")
+        resp = chat(
+            args.prompt,
+            mode=mode,
+            max_new=args.max_new,
+            greedy_rep_penalty=args.greedy_rep_penalty,
+            soft_force_alpha=args.soft_force_alpha,
+        )
         print(f"response: {resp!r}")
