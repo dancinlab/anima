@@ -794,13 +794,22 @@ if __name__ == "__main__":
     )
     p.add_argument("--smoke", action="store_true",
                    help="run full v2 smoke test suite")
+    p.add_argument(
+        "--ckpt",
+        default=None,
+        help="explicit ckpt path (override DEFAULT_CKPT ladder). "
+        "Used by hexa wrapper alias dispatch.",
+    )
     args = p.parse_args()
 
     if args.smoke:
         _smoke()
     else:
         mode = "M4_soft_force" if args.m4_soft else args.mode
-        chat = AnimaChat()
+        if args.ckpt:
+            chat = AnimaChat(ckpt_path=args.ckpt)
+        else:
+            chat = AnimaChat()
         print(f"[mode={mode}] prompt: {args.prompt!r}")
         resp = chat(
             args.prompt,

@@ -345,3 +345,25 @@ state/anima_*_tier_*.jsonl
 # anima chat Phase 3b libllama build artifacts (mac-local, not portable)
 build/libhxllama.dylib
 build/llama.cpp/
+
+# ── Cycle 6 large training corpora (2026-05-12) — HF Hub destination only ──
+# GitHub push limits: 100MB hard reject, 50MB warning. Below files exceed.
+# Regeneratable from generator scripts + base corpus. NEVER commit to anima git.
+state/anima_phase1a1_color_cosmology_2026_05_12/corpus_multi_turn_v2.txt
+state/anima_phase1a_multi_turn_2026_05_12/corpus_multi_turn.txt
+state/anima_convo_5k_ft_extended_2026_05_10/corpus_extended.txt
+state/anima_convo_5k_ft_extended_2026_05_10/corpus_extended.txt.gz
+state/anima_je_corpus_100mb_plus_2026_05_07/corpus_combined_100mb_plus.txt.gz
+state/clm_v4_lora_sft_2026_05_05/corpus/slice_A_anima_30k.jsonl
+state/anima_persona_tier_a_v4_2026_05_09.txt.gz
+state/anima_combined_paradigm_corpus_2026_05_07/corpus_combined.txt
+state/anima_jy_chat_template_corpus_2026_05_07/corpus_chat_template.txt.gz
+state/anima_native_ko_medium_chat_corpus_2026_05_06/corpus_ko_chat_mix.txt
+
+# Generic catch-all for large training corpora at any depth under state/
+state/**/corpus_*.txt
+state/**/corpus_*.txt.gz
+state/**/corpus_*.jsonl
+
+# Temporary scratch (matrix experiments, dual ckpt staging)
+tmp/

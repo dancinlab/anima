@@ -1,0 +1,94 @@
+// @allow-bare-exec-file
+// @allow-silent-exit-file
+// @allow-no-header-box
+// ════════════════════════════════════════════════════════════════════════════
+//  tool/anima_chat_smoke_v23.hexa
+//
+//  PURPOSE
+//    anima_chat.py v2.3 (commit 5b1a888d) M4_soft_force grammar 검증.
+//    3 modes (M4_force_include / M4_soft_force / greedy) × 3 prompts = 9 cells.
+//    anima-v05 (Phase 1A.1) 한 ckpt 만 (자연 한국어 default).
+//
+//  USAGE
+//    hexa run tool/anima_chat_smoke_v23.hexa
+//
+//  COMPLIANCE
+//    raw#9 EXCEPTION: anima_chat.py PyTorch shell-out (cycle 2026-05-12 SSOT).
+//    raw#11 snake_case · raw#15 no-hardcode (paths via env+exec)
+// ════════════════════════════════════════════════════════════════════════════
+
+fn _str(x) -> string {
+    let t = type_of(x)
+    if t == "str" || t == "string" { return x }
+    return ""
+}
+
+fn _resolve_root() -> string {
+    let a = _str(env("ANIMA"))
+    if a != "" { return a }
+    let gt = _str(exec("git rev-parse --show-toplevel 2>/dev/null")).trim()
+    if gt != "" { return gt }
+    return _str(env("HOME")) + "/core/anima"
+}
+
+fn _shell_escape_single(s: string) -> string {
+    let mut out = "'"
+    let mut j = 0
+    while j < len(s) {
+        let c = s.substring(j, j + 1)
+        if c == "'" {
+            out = out + "'\\''"
+        } else {
+            out = out + c
+        }
+        j = j + 1
+    }
+    return out + "'"
+}
+
+fn _ckpt_anima_v05() -> string {
+    return _resolve_root() + "/state/anima_phase1a1_color_cosmology_2026_05_12/ckpts/ckpt_phase1a1_sft.pt"
+}
+
+fn _chat_once(ckpt: string, prompt: string, mode: string, max_new: int) -> string {
+    let esc_prompt = _shell_escape_single(prompt)
+    let cmd = "/usr/bin/python3 " + _resolve_root() + "/anima_chat.py --ckpt " + ckpt + " --prompt " + esc_prompt + " --mode " + mode + " --max-new " + to_string(max_new) + " 2>/dev/null | grep '^response:'"
+    return _str(exec(cmd)).trim()
+}
+
+fn main() {
+    let ckpt = _ckpt_anima_v05()
+    let prompts = [
+        "안녕! 너는 누구야?",
+        "anima 가 뭐야?",
+        "오늘 기분 어때?",
+    ]
+    let modes = ["M4_force_include", "M4_soft_force", "greedy"]
+    let max_new = 50
+
+    println("# anima_chat v2.3 smoke — anima-v05 × 3 modes × 3 prompts")
+    println("ckpt: " + ckpt)
+    println("max_new: " + to_string(max_new))
+    println("")
+
+    let mut pi = 0
+    while pi < len(prompts) {
+        let p = _str(prompts[pi])
+        println("─── prompt[" + to_string(pi) + "]: " + p + " ───")
+        let mut mi = 0
+        while mi < len(modes) {
+            let m = _str(modes[mi])
+            let r = _chat_once(ckpt, p, m, max_new)
+            // truncate display
+            let shown = r
+            if len(shown) > 130 {
+                shown = shown.substring(0, 130) + "…"
+            }
+            println("  [" + m + "] " + shown)
+            mi = mi + 1
+        }
+        println("")
+        pi = pi + 1
+    }
+    println("DONE.")
+}
