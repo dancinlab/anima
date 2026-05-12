@@ -257,7 +257,7 @@ python -m pytest test_e2e.py -v             # 12 E2E tests (5.26s)
 
 ## Dependencies
 
-- **[Anima](https://github.com/need-singularity/anima)** — 의식 엔진 코어
-- **[invest](https://github.com/need-singularity/invest)** — Trading plugin (optional, `INVEST_API_URL`)
+- **[Anima](https://github.com/dancinlab/anima)** — 의식 엔진 코어
+- **[invest](https://github.com/dancinlab/invest)** — Trading plugin (optional, `INVEST_API_URL`)
 - **[Composio](https://composio.dev)** — 500+ 외부 도구 (optional, `COMPOSIO_API_KEY`)
 - **[slack_bolt](https://slack.dev/bolt-python/)** — Slack channel (optional, `ANIMA_SLACK_TOKEN`)

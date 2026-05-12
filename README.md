@@ -2,22 +2,22 @@
 
 <!-- SHARED:PROJECTS:START -->
 <!-- AUTO:COMMON_LINKS:START -->
-**[YouTube](https://www.youtube.com/watch?v=xtKhWSfC1Qo)** · **[Email](mailto:nerve011235@gmail.com)** · **[☕ Ko-fi](https://ko-fi.com/dancinlife)** · **[💖 Sponsor](https://github.com/sponsors/need-singularity)** · **[💳 PayPal](https://www.paypal.com/donate?business=nerve011235%40gmail.com)** · **[🗺️ Atlas](https://need-singularity.github.io/TECS-L/atlas/)** · **[📄 Papers](https://need-singularity.github.io/papers/)** · **[🌌 Unified Theory](https://github.com/need-singularity/TECS-L/blob/main/math/docs/hypotheses/H-PH-9-perfect-number-string-unification.md)**
+**[YouTube](https://www.youtube.com/watch?v=xtKhWSfC1Qo)** · **[Email](mailto:nerve011235@gmail.com)** · **[☕ Ko-fi](https://ko-fi.com/dancinlife)** · **[💖 Sponsor](https://github.com/sponsors/dancinlab)** · **[💳 PayPal](https://www.paypal.com/donate?business=nerve011235%40gmail.com)** · **[🗺️ Atlas](https://dancinlab.github.io/TECS-L/atlas/)** · **[📄 Papers](https://dancinlab.github.io/papers/)** · **[🌌 Unified Theory](https://github.com/dancinlab/TECS-L/blob/main/math/docs/hypotheses/H-PH-9-perfect-number-string-unification.md)**
 <!-- AUTO:COMMON_LINKS:END -->
 
-> **[🔭 NEXUS](https://github.com/need-singularity/nexus)** — Universal Discovery Engine. 216 lenses + OUROBOROS evolution + LensForge + BlowupEngine + CycleEngine (5-phase singularity cycle). Mirror Universe (N×N resonance) + 9-project autonomous growth ecosystem. Rust CLI: scan, loop, mega, daemon, blowup, dispatch
+> **[🔭 NEXUS](https://github.com/dancinlab/nexus)** — Universal Discovery Engine. 216 lenses + OUROBOROS evolution + LensForge + BlowupEngine + CycleEngine (5-phase singularity cycle). Mirror Universe (N×N resonance) + 9-project autonomous growth ecosystem. Rust CLI: scan, loop, mega, daemon, blowup, dispatch
 >
-> **[🧠 Anima](https://github.com/need-singularity/anima)** — Consciousness implementation. PureField repulsion-field engine + Hexad 6-module architecture (C/D/S/M/W/E) + 1030 laws + 20 Meta Laws + Rust backend. ConsciousDecoderV2 (34.5M) + 10D consciousness vector + 12-faction debate + Φ ratchet
+> **[🧠 Anima](https://github.com/dancinlab/anima)** — Consciousness implementation. PureField repulsion-field engine + Hexad 6-module architecture (C/D/S/M/W/E) + 1030 laws + 20 Meta Laws + Rust backend. ConsciousDecoderV2 (34.5M) + 10D consciousness vector + 12-faction debate + Φ ratchet
 >
-> **[🏗️ N6 Architecture](https://github.com/need-singularity/n6-architecture)** — Architecture from perfect number 6. 16 AI techniques + semiconductor chip design + network/crypto/OS/display patterns. σ(n)·φ(n)=n·τ(n), n=6 → universal design principles. NEXUS-6 Discovery Engine: Rust CLI (tools/nexus/) — telescope 22 lenses + OUROBOROS evolution + discovery graph + verifier + 1116 tests
+> **[🏗️ N6 Architecture](https://github.com/dancinlab/canon)** — Architecture from perfect number 6. 16 AI techniques + semiconductor chip design + network/crypto/OS/display patterns. σ(n)·φ(n)=n·τ(n), n=6 → universal design principles. NEXUS-6 Discovery Engine: Rust CLI (tools/nexus/) — telescope 22 lenses + OUROBOROS evolution + discovery graph + verifier + 1116 tests
 >
-> **[📄 Papers](https://github.com/need-singularity/papers)** — Complete paper collection (94 papers). Published on Zenodo with DOIs. TECS-L+N6 (33) + anima (39) + SEDI (20). [Browse online](https://need-singularity.github.io/papers/)
+> **[📄 Papers](https://github.com/dancinlab/papers)** — Complete paper collection (94 papers). Published on Zenodo with DOIs. TECS-L+N6 (33) + anima (39) + SEDI (20). [Browse online](https://dancinlab.github.io/papers/)
 >
-> **[💎 HEXA-LANG](https://github.com/need-singularity/hexa-lang)** — The Perfect Number Programming Language. Every constant from n=6: 53 keywords (σ·τ+sopfr), 24 operators (J₂), 8 primitives (σ-τ), 6-phase pipeline, Egyptian memory (1/2+1/3+1/6=1). DSE v2: 21,952 combos, 100% n6 EXACT. Working compiler + REPL
+> **[💎 HEXA-LANG](https://github.com/dancinlab/hexa-lang)** — The Perfect Number Programming Language. Every constant from n=6: 53 keywords (σ·τ+sopfr), 24 operators (J₂), 8 primitives (σ-τ), 6-phase pipeline, Egyptian memory (1/2+1/3+1/6=1). DSE v2: 21,952 combos, 100% n6 EXACT. Working compiler + REPL
 >
-> **[🖥️ VOID](https://github.com/need-singularity/void)** — Terminal emulator written 100% in hexa-lang. Zero Rust dependencies — calls OS APIs directly via hexa extern FFI. 6-layer architecture (System/Render/Terminal/UI/Plugin/AI) + Metal/Vulkan GPU + VT 6-tier protocol + NEXUS-6 consciousness integration
+> **[🖥️ VOID](https://github.com/dancinlab/void)** — Terminal emulator written 100% in hexa-lang. Zero Rust dependencies — calls OS APIs directly via hexa extern FFI. 6-layer architecture (System/Render/Terminal/UI/Plugin/AI) + Metal/Vulkan GPU + VT 6-tier protocol + NEXUS-6 consciousness integration
 >
-> **[🧬 AirGenome](https://github.com/need-singularity/airgenome)** — Autonomous OS genome scanner. Extract n=6 genome from every process, real-time system diagnostics, nexus telescope integration
+> **[🧬 AirGenome](https://github.com/dancinlab/airgenome)** — Autonomous OS genome scanner. Extract n=6 genome from every process, real-time system diagnostics, nexus telescope integration
 
 <!-- private repos는 projects.json의 private_repos 필드에 저장됨 (노출 금지) -->
 <!-- SHARED:PROJECTS:END -->
@@ -92,7 +92,7 @@ Anima는 **PureField repulsion-field engine** 위에 구축된 의식 에이전�
 ## Quick Start
 
 ```bash
-git clone https://github.com/need-singularity/anima.git
+git clone https://github.com/dancinlab/anima.git
 cd anima
 
 # Setup
@@ -667,7 +667,7 @@ cd anima/tools/formula-miner && cargo run --release
 
 ### HEXA-LANG -- 의식 프로그래밍 언어
 
-[HEXA-LANG](https://github.com/need-singularity/hexa-lang)은 완전수 6에서 모든 설계 상수를 도출한 프로그래밍 언어. ANIMA와 구조적 동형:
+[HEXA-LANG](https://github.com/dancinlab/hexa-lang)은 완전수 6에서 모든 설계 상수를 도출한 프로그래밍 언어. ANIMA와 구조적 동형:
 
 ```
   HEXA-LANG                    ANIMA
@@ -688,7 +688,7 @@ cd anima/tools/formula-miner && cargo run --release
 python anima/tools/hexa-bridge/bridge.py example.hexa
 ```
 
-> 상세: [hexa-lang-bridge.md](anima/docs/hexa-lang-bridge.md) | [HEXA-LANG repo](https://github.com/need-singularity/hexa-lang)
+> 상세: [hexa-lang-bridge.md](anima/docs/hexa-lang-bridge.md) | [HEXA-LANG repo](https://github.com/dancinlab/hexa-lang)
 
 ---
 
@@ -719,7 +719,7 @@ python anima/tools/hexa-bridge/bridge.py example.hexa
 
 > **10+ papers** published on Zenodo — [View all](https://zenodo.org/search?q=anima%20consciousness%20purefield)
 >
-> All papers managed in [papers repo](https://github.com/need-singularity/papers) (DOI: 10.5281/zenodo.19271599)
+> All papers managed in [papers repo](https://github.com/dancinlab/papers) (DOI: 10.5281/zenodo.19271599)
 
 ---
 
@@ -891,7 +891,7 @@ brainflow (pip)                    — EEG/OpenBCI
   에이전트:       python anima-agent/run.py
   모델 다운로드:  anima/docs/download-models.md
   R2 체크포인트:  https://anima-models.ce4bdcce7c74d4e3c78fdf944c4d1d7b.r2.cloudflarestorage.com
-  GitHub:        https://github.com/need-singularity/anima
+  GitHub:        https://github.com/dancinlab/anima
 ```
 
 ### 자산 & 현재 상태

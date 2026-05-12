@@ -23,37 +23,45 @@ Usage:
 import sys, os
 
 def _akida_pre_import_route():
-    """2026-05-07 — pre-import gate so heavy imports (torch, consciousness_engine)
-    do not load when the run is delegated to akida dispatch. Returns True if
-    the akida route handled execution (caller should sys.exit). False = continue
-    with default flow including the imports below."""
-    if "--substrate=akida" not in sys.argv and \
-       not (("--substrate" in sys.argv and "akida" in sys.argv)) and \
-       os.environ.get("ANIMA_AKIDA_ROUTE") != "1":
-        return False
-    import subprocess
+    """2026-05-07 — sovereign-cli federation per
+    hive/spec/sovereign_cli_federation.spec.yaml. Pre-import gate so heavy
+    deps (torch, consciousness_engine) only load when default flow runs.
+
+    Returns "disabled" / "akida-route:<prov>" / "fallback-default:<prov>"
+    so the caller can embed AKIDA_ROUTE_USED into its result line (spec I3).
+    Side-effect: when akida fires, this calls sys.exit(rc).
+    """
+    want = ("--substrate=akida" in sys.argv
+            or ("--substrate" in sys.argv and "akida" in sys.argv)
+            or os.environ.get("ANIMA_AKIDA_ROUTE") == "1")
+    if not want:
+        return "disabled"
+    import subprocess, re
     repo = os.path.expanduser("~/core/anima")
     dispatcher = os.path.join(repo, "scripts/akida/dispatch.hexa")
     if not os.path.exists(dispatcher):
-        return False
+        return "fallback-default-no-dispatcher"
     probe = subprocess.run(
-        ["bash", "-c", f"hexa run '{dispatcher}' probe 2>/dev/null; echo __RC=$?"],
+        ["bash", "-c", f"hexa run '{dispatcher}' probe --json 2>/dev/null; echo __RC=$?"],
         capture_output=True, text=True, timeout=8,
     )
     rc = -1
+    prov = "unknown"
     for line in probe.stdout.splitlines():
         if line.startswith("__RC="):
             try: rc = int(line[5:].strip())
             except ValueError: pass
+        m = re.search(r'"provenance":"([^"]+)"', line)
+        if m: prov = m.group(1)
     if rc != 0:
-        print(f"[closed_loop_verify] --substrate=akida requested but probe_rc={rc}; falling back to default Law-124 verification", flush=True)
-        return False
+        print(f"[closed_loop_verify] external akida unavailable — falling back to default Law-124 verification (provenance={prov})", flush=True)
+        return f"fallback-default:{prov}"
     cmd = ["bash", "-c", f"hexa run '{dispatcher}' route trace"]
     proc = subprocess.run(cmd, text=True)
+    print(f"AKIDA_ROUTE_USED=akida-route:{prov}")
     sys.exit(proc.returncode)
 
-if _akida_pre_import_route():
-    sys.exit(0)
+AKIDA_ROUTE_USED = _akida_pre_import_route()
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
@@ -302,3 +310,4 @@ class ImprovedEngine(ConsciousnessEngine):
 
 if __name__ == "__main__":
     main()
+    print(f"AKIDA_ROUTE_USED={AKIDA_ROUTE_USED}")  # spec I3 — propagate provenance

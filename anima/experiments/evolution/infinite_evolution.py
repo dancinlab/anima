@@ -3548,7 +3548,7 @@ def _cross_project_discover(registry):
     """
     try:
         tecs_path = os.path.expanduser(
-            '~/Dev/TECS-L/.shared/consciousness_laws.json')
+            '~/Dev/TECS-L/.consciousness_laws.json')
         if not os.path.exists(tecs_path):
             return 0
 

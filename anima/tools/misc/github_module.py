@@ -11,7 +11,7 @@ Usage:
 
   # 리포 정보
   gh.repo_info()
-  gh.repo_info("need-singularity/anima")
+  gh.repo_info("dancinlab/anima")
 
   # 이슈
   gh.list_issues()
@@ -56,7 +56,7 @@ except ImportError:
 
 
 ANIMA_DIR = Path(__file__).parent
-DEFAULT_REPO = "need-singularity/anima"
+DEFAULT_REPO = "dancinlab/anima"
 
 
 class GitHubModule:

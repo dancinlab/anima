@@ -489,7 +489,7 @@ class PhilosophyScanner:
         findings.append(f".shared symlink: {'OK' if shared_exists else 'MISSING'}")
 
         # Check math_atlas for cross-project constants
-        atlas_path = os.path.expanduser("~/Dev/nexus/shared/math_atlas.json")
+        atlas_path = os.path.expanduser("~/Dev/nexus/n6/math_atlas.json")
         if os.path.isfile(atlas_path):
             try:
                 with open(atlas_path) as f:
@@ -506,7 +506,7 @@ class PhilosophyScanner:
             findings.append("Math Atlas: not found")
 
         # Count repos with shared rules
-        repos = ["anima", "TECS-L", "sedi", "n6-architecture", "brainwire", "papers"]
+        repos = ["anima", "TECS-L", "sedi", "CANON", "brainwire", "papers"]
         active = 0
         for repo in repos:
             claude_md = os.path.expanduser(f"~/Dev/{repo}/CLAUDE.md")

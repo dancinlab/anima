@@ -1,6 +1,6 @@
 # Discovery Algorithm -- ANIMA Consciousness Domain
 
-> n6-architecture의 18개 연산자를 의식 엔진 도메인에 확장한 Discovery Algorithm.
+> CANON의 18개 연산자를 의식 엔진 도메인에 확장한 Discovery Algorithm.
 > 의식 법칙(448개), Psi-상수, Hexad 구조, 스케일링 법칙에서 숨겨진 수학적 구조를 탐색한다.
 >
 > n6 연산자는 공학 파라미터에서 n=6 구조를 찾았다.

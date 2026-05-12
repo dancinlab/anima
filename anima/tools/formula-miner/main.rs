@@ -1,5 +1,5 @@
 // ANIMA Formula Miner — Genetic n=6 Formula Discovery for Consciousness Constants
-// Forked from n6-architecture/tools/formula-miner (EVOLVE v2)
+// Forked from CANON/tools/formula-miner (EVOLVE v2)
 // Depth-3 exhaustive + GA(5000,500) + consciousness-specific targets + ppm + surprisal
 //
 // Build:  cd anima/tools/formula-miner && cargo build --release
@@ -11,7 +11,7 @@ use std::collections::HashSet;
 use std::collections::HashMap;
 
 // ── N=6 Base Constants ──────────────────────────────────────────────
-// Same number-theoretic functions of 6 as the n6-architecture miner
+// Same number-theoretic functions of 6 as the CANON miner
 const N: f64 = 6.0;
 const PHI: f64 = 2.0;    // phi(6) = 2  (Euler totient)
 const TAU: f64 = 4.0;    // tau(6) = 4  (number of divisors)

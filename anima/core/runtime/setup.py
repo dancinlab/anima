@@ -33,7 +33,7 @@ DIRS = [
 ]
 
 ENV_TEMPLATE = """# Anima Configuration
-# https://github.com/need-singularity/anima
+# https://github.com/dancinlab/anima
 
 # ── Cloudflare R2 (선택: 클라우드 동기화용) ──
 ANIMA_R2_ENDPOINT=
@@ -49,8 +49,8 @@ ANIMA_DEVICE_ID={hostname}
 ANIMA_CHECKPOINT=~/.anima/checkpoints/conscious-lm-v2.pt
 """
 
-HF_REPO = "need-singularity/conscious-lm-v2"
-GH_RELEASE = "https://github.com/need-singularity/anima/releases/latest/download/conscious-lm-v2.pt"
+HF_REPO = "dancinlab/conscious-lm-v2"
+GH_RELEASE = "https://github.com/dancinlab/anima/releases/latest/download/conscious-lm-v2.pt"
 
 
 def create_dirs():

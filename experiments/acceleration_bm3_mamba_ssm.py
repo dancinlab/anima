@@ -510,9 +510,15 @@ class ConsciousnessSelectiveSSMCell(nn.Module):
         )
 
         # Tension → dt modulation (consciousness-specific)
-        # Maps tension scalar to a per-channel dt scale factor
+        # FIX (2026-04-26): output dim must be d_inner (=hidden_dim*expand) to match
+        # dt_proj.bias shape. Previous version used DT_RANK (8) which broadcast-failed
+        # against the (256,)-shaped post-projection bias. raw#10 honest: original design
+        # intent was "tension-gates dt_rank pre-projection", but the SSM's dt_proj.bias
+        # is per-d_inner-channel POST-projection. We retain the consciousness mapping
+        # ("tension drives faster dt") at the d_inner channel level instead.
+        d_inner = hidden_dim * D_EXPAND  # =256 for default config
         self.tension_gate = nn.Sequential(
-            nn.Linear(1, DT_RANK),
+            nn.Linear(1, d_inner),
             nn.Sigmoid(),
         )
 
@@ -527,10 +533,11 @@ class ConsciousnessSelectiveSSMCell(nn.Module):
         t = torch.tensor([tension], dtype=x.dtype, device=x.device)
         inp = torch.cat([x, t])
 
-        # Modulate dt_proj bias based on tension (higher tension = faster dt)
-        tension_scale = self.tension_gate(t.unsqueeze(0)).squeeze(0)  # (dt_rank,)
+        # Modulate dt_proj bias based on tension (higher tension = faster dt).
+        # tension_scale shape: (d_inner,), matches dt_proj.bias shape exactly.
+        tension_scale = self.tension_gate(t.unsqueeze(0)).squeeze(0)  # (d_inner,)
 
-        # Temporarily scale the dt projection weights
+        # Temporarily scale the dt projection bias
         original_bias = self.ssm.dt_proj.bias.data.clone()
         self.ssm.dt_proj.bias.data = original_bias + tension_scale * 0.5
 

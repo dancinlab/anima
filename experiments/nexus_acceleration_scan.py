@@ -29,7 +29,7 @@ CONFIG_JSON = ANIMA_ROOT / "config" / "acceleration_hypotheses.json"
 BRAINSTORM_MD = ANIMA_ROOT / "docs" / "hypotheses" / "accel" / "acceleration-brainstorm-402.md"
 OUTPUT_JSON = ANIMA_ROOT / "data" / "nexus_1013lens_acceleration_results.json"
 
-NEXUS_DIR = Path.home() / "Dev" / "n6-architecture" / "tools" / "nexus"
+NEXUS_DIR = Path.home() / "Dev" / "CANON" / "tools" / "nexus"
 NEXUS_BIN = NEXUS_DIR / "target" / "debug" / "nexus"
 CARGO_BIN = Path.home() / ".cargo" / "bin" / "cargo"
 

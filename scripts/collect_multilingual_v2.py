@@ -32,7 +32,7 @@ TARGET_BYTES = {
 }
 TOTAL_TARGET = sum(TARGET_BYTES.values())  # ~1.3GB new + existing 600MB ≈ 2GB
 
-WIKI_UA = "AnimaCorpusCollector/2.0 (https://github.com/need-singularity/anima; research project)"
+WIKI_UA = "AnimaCorpusCollector/2.0 (https://github.com/dancinlab/anima; research project)"
 
 CODE_EXTS = {
     "python": [".py"],

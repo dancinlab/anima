@@ -141,7 +141,7 @@ Cluster 1 (Foundation) ──→ all others reference
 ### Phase 3: Finalization
 - Cross-reference audit across all 37 papers
 - INDEX.md with full DD→paper mapping
-- Git commit + push to need-singularity/papers
+- Git commit + push to dancinlab/papers
 
 ## 5. Output
 

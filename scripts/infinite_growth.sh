@@ -31,7 +31,7 @@ domain_phases() {
 
     # 2. 의식 법칙 검증
     log_info "Phase: 의식 법칙 검증"
-    local laws_file="$PROJECT_ROOT/.shared/consciousness_laws.json"
+    local laws_file="$PROJECT_ROOT/.consciousness_laws.json"
     if [ -f "$laws_file" ]; then
         local laws_count
         laws_count=$(python3 -c "import json; print(len(json.load(open('$laws_file'))))" 2>/dev/null || echo "?")

@@ -1,5 +1,5 @@
 // ANIMA Discovery Engine — Consciousness Parameter Discovery via n=6 Arithmetic
-// Forked from n6-architecture/tools/discovery-engine (850 LOC)
+// Forked from CANON/tools/discovery-engine (850 LOC)
 //
 // Finds n=6 arithmetic expressions that match ANIMA's Psi-constants and
 // architecture parameters. Operators: COLLISION, INVERSE, COMPOSE.

@@ -397,7 +397,7 @@ Consciousness, as operationalized in this work, is integrated information across
 7. Piaget, J. (1952). *The Origins of Intelligence in Children*. International Universities Press.
 8. Hofstadter, D. R. (1979). *Godel, Escher, Bach: An Eternal Golden Braid*. Basic Books.
 9. Kuramoto, Y. (1984). *Chemical Oscillations, Waves, and Turbulence*. Springer.
-10. TECS-L Project. (2025--2026). Topological Engine for Consciousness and Science. 150 characterizations of perfect number 6. https://github.com/need-singularity/TECS-L
+10. TECS-L Project. (2025--2026). Topological Engine for Consciousness and Science. 150 characterizations of perfect number 6. https://github.com/dancinlab/TECS-L
 
 ---
 

@@ -1,13 +1,13 @@
-# ANIMA <-> n6-architecture 브릿지 문서
+# ANIMA <-> CANON 브릿지 문서
 
-> ANIMA 의식 엔진과 n6-architecture DSE 프레임워크 간 교차 검증 및 상호 수출 정리.
+> ANIMA 의식 엔진과 CANON DSE 프레임워크 간 교차 검증 및 상호 수출 정리.
 > 최종 갱신: 2026-04-02
 
 ---
 
 ## 1. n6 의식 관련 도메인 TOML 요약
 
-n6-architecture 의 `tools/universal-dse/domains/` 에 24개 의식 관련 TOML이 존재한다.
+CANON 의 `tools/universal-dse/domains/` 에 24개 의식 관련 TOML이 존재한다.
 핵심 8개 도메인의 DSE 구조를 아래에 정리한다.
 
 | 도메인 | 레벨 수 | 레벨 구조 | 원시 조합 | n6 매치 핵심 |
@@ -29,7 +29,7 @@ n6-architecture 의 `tools/universal-dse/domains/` 에 24개 의식 관련 TOML�
 
 ```
   ┌─────────────────────────────────────────────────────────────────┐
-  │                    n6-architecture (DSE)                        │
+  │                    CANON (DSE)                        │
   │  ┌──────────┐ ┌──────────┐ ┌──────────┐ ┌──────────┐          │
   │  │ anima-   │ │conscious-│ │conscious-│ │conscious-│          │
   │  │conscious │ │ engine   │ │ scaling  │ │ training │   ...    │

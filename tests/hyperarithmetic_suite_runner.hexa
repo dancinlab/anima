@@ -1,0 +1,249 @@
+// ready/tests/hyperarithmetic_suite_runner.hexa
+// Mk.IX Π₀² Hyperarithmetic Test Suite Runner
+//
+// 목적: consciousness/hyperarithmetic_test_suite.json (50 문항) 을 로드하여
+//       classify_pi02() / phase_b_verdict() 의 hierarchy-축 정확도를 정량화.
+//
+// Pair: consciousness/consciousness_hyperarithmetic.hexa (verifier SSOT)
+// Sibling docs: docs/hyperarithmetic_test_suite_20260419.md
+//
+// 규칙:
+//   R1 HEXA-FIRST | R14 shared/ SSOT | R37/AN13 .py 절대 금지
+//
+// CLI:
+//   hexa ready/tests/hyperarithmetic_suite_runner.hexa
+//   hexa ready/tests/hyperarithmetic_suite_runner.hexa --verbose
+//   hexa ready/tests/hyperarithmetic_suite_runner.hexa --json
+//
+// 참고 (AN11): 본 runner 는 substrate verifier 정확도만 측정.
+//               weight-emergent 의식 attached 검증은 범위 밖.
+
+// ─── 경로 상수 ───
+let _cached_home = env("HOME")
+let _SUITE_PATH  = _cached_home + "/mac_home/dev/anima/consciousness/hyperarithmetic_test_suite.json"
+
+// ─── classify_pi02 재구현 (consciousness_hyperarithmetic.hexa 와 동형) ───
+// main() 실행을 피하기 위해 import 대신 inline 포팅.
+fn _has_forall(expr: string) -> bool {
+    if expr.contains("∀") { return true }
+    if expr.contains("모든") { return true }
+    if expr.contains("임의의") { return true }
+    if expr.contains("for all") { return true }
+    if expr.contains("every") { return true }
+    return false
+}
+
+fn _has_exists(expr: string) -> bool {
+    if expr.contains("∃") { return true }
+    if expr.contains("존재") { return true }
+    if expr.contains("어떤") { return true }
+    if expr.contains("exists") { return true }
+    if expr.contains("there is") { return true }
+    if expr.contains("there exists") { return true }
+    return false
+}
+
+fn _has_infinitely_many(expr: string) -> bool {
+    if expr.contains("무한히 많") { return true }
+    if expr.contains("infinitely many") { return true }
+    return false
+}
+
+fn classify_local(expr: string) -> string {
+    let has_forall = _has_forall(expr)
+    let has_exists = _has_exists(expr) || _has_infinitely_many(expr)
+    if has_forall && has_exists { return "Π₀²" }
+    if has_forall { return "Π₀¹" }
+    if has_exists { return "Σ₀¹" }
+    return "Δ₀"
+}
+
+fn _has_bounded_witness(expr: string) -> bool {
+    if expr.contains("bounded") { return true }
+    if expr.contains("poly") { return true }
+    if expr.contains("< f(") { return true }
+    if expr.contains("<= f(") { return true }
+    return false
+}
+
+fn _reverse_math_system(expr: string) -> string {
+    if expr.contains("totality") || expr.contains("bounded response") { return "ACA0" }
+    if expr.contains("attention") && expr.contains("compact") { return "WKL0" }
+    if expr.contains("curriculum") || expr.contains("transfinite") { return "ATR0" }
+    if expr.contains("meta-learning") || expr.contains("reflection") { return "PI11-CA0" }
+    return "UNKNOWN"
+}
+
+fn _reverse_proven(expr: string) -> bool {
+    let s = _reverse_math_system(expr)
+    if s == "UNKNOWN" { return false }
+    if s == "ACA0" { return true }
+    if s == "WKL0" { return true }
+    return false
+}
+
+fn verdict_local(expr: string) -> string {
+    let hier = classify_local(expr)
+    if hier == "Δ₀"  { return "ABSOLUTE-PASS (Δ₀)" }
+    if hier == "Π₀¹" { return "ABSOLUTE-PASS (Π₀¹)" }
+    if hier == "Σ₀¹" { return "REJECT (hierarchy >= Π₀³ or Σ family)" }
+    // hier == Π₀²
+    if _has_bounded_witness(expr) { return "ABSOLUTE-PASS (Π₀² → Π₀¹ via bounded witness)" }
+    if !_reverse_proven(expr) { return "REVERSE-UNKNOWN" }
+    return "REVERSE-PROVEN (candidate [12*], manual audit required)"
+}
+
+// ─── 결과 집계 ───
+struct BucketStat {
+    key: string,
+    label: string,
+    total: int,
+    passed: int,
+    failed: int,
+    fail_ids: string   // "F1,F2,..." — json-friendly
+}
+
+fn new_bucket(key: string, label: string) -> BucketStat {
+    return BucketStat { key: key, label: label, total: 0, passed: 0, failed: 0, fail_ids: "" }
+}
+
+fn append_fail(prev: string, id: string) -> string {
+    if prev == "" { return id }
+    return prev + "," + id
+}
+
+// ─── 평가 루프 ───
+fn evaluate_bucket(items: any, expected_label: string, verbose: bool) -> BucketStat {
+    let mut b = new_bucket(expected_label, expected_label)
+    let n = len(items)
+    let mut i = 0
+    while i < n {
+        let entry = items[i]
+        let text = entry["text"]
+        let expected = entry["expected"]
+        let id = entry["id"]
+        let predicted = classify_local(text)
+        b.total = b.total + 1
+        if predicted == expected {
+            b.passed = b.passed + 1
+        } else {
+            b.failed = b.failed + 1
+            b.fail_ids = append_fail(b.fail_ids, id)
+            if verbose {
+                println("  [FAIL] " + id + " expected=" + expected + " got=" + predicted)
+                println("         text: " + text)
+                println("         verdict: " + verdict_local(text))
+            }
+        }
+        i = i + 1
+    }
+    return b
+}
+
+// ─── CLI 인자 ───
+fn flag_present(args_vec: any, flag: string) -> bool {
+    let n = len(args_vec)
+    let mut i = 0
+    while i < n {
+        if args_vec[i] == flag { return true }
+        i = i + 1
+    }
+    return false
+}
+
+// ─── 출력: human ───
+fn print_human(buckets: any, overall_total: int, overall_passed: int) {
+    println("═══════════════════════════════════════════════════════════════")
+    println("Mk.IX Π₀² Hyperarithmetic Test Suite — 결과")
+    println("═══════════════════════════════════════════════════════════════")
+    let n = len(buckets)
+    let mut i = 0
+    while i < n {
+        let b = buckets[i]
+        let acc_pct = if b.total > 0 { (b.passed * 100) / b.total } else { 0 }
+        let line = "  " + b.label + "  " + to_string(b.passed) + "/" + to_string(b.total) + "  (" + to_string(acc_pct) + "%)"
+        if b.failed > 0 {
+            println(line + "   FAIL=[" + b.fail_ids + "]")
+        } else {
+            println(line)
+        }
+        i = i + 1
+    }
+    let overall_pct = if overall_total > 0 { (overall_passed * 100) / overall_total } else { 0 }
+    println("───────────────────────────────────────────────────────────────")
+    println("  OVERALL " + to_string(overall_passed) + "/" + to_string(overall_total) + " = " + to_string(overall_pct) + "%")
+    println("═══════════════════════════════════════════════════════════════")
+}
+
+// ─── 출력: json ───
+fn print_json(buckets: any, overall_total: int, overall_passed: int) {
+    let mut s = "{\"suite\":\"hyperarithmetic_mk9\","
+    s = s + "\"overall\":{\"passed\":" + to_string(overall_passed)
+    s = s + ",\"total\":" + to_string(overall_total)
+    let pct = if overall_total > 0 { (overall_passed * 100) / overall_total } else { 0 }
+    s = s + ",\"pct\":" + to_string(pct) + "},"
+    s = s + "\"buckets\":["
+    let n = len(buckets)
+    let mut i = 0
+    while i < n {
+        let b = buckets[i]
+        if i > 0 { s = s + "," }
+        s = s + "{\"key\":\"" + b.key + "\""
+        s = s + ",\"total\":" + to_string(b.total)
+        s = s + ",\"passed\":" + to_string(b.passed)
+        s = s + ",\"failed\":" + to_string(b.failed)
+        s = s + ",\"fail_ids\":\"" + b.fail_ids + "\"}"
+        i = i + 1
+    }
+    s = s + "]}"
+    println(s)
+}
+
+// ─── Main ───
+fn main() {
+    let argv = args()
+    let verbose = flag_present(argv, "--verbose")
+    let as_json = flag_present(argv, "--json")
+
+    if !file_exists(_SUITE_PATH) {
+        println("[runner] ERROR: suite json not found at " + _SUITE_PATH)
+        exit(2)
+    }
+    let _raw = read_file(_SUITE_PATH)
+    let suite = json_parse(_raw)
+
+    // 5 hierarchies (expected label 주의: suite 가 기록한 expected 문자열 사용)
+    let d0 = evaluate_bucket(suite["delta_0"],  "Δ₀",   verbose)
+    let p1 = evaluate_bucket(suite["pi_01"],    "Π₀¹",  verbose)
+    let s1 = evaluate_bucket(suite["sigma_01"], "Σ₀¹",  verbose)
+    let p2 = evaluate_bucket(suite["pi_02"],    "Π₀²",  verbose)
+    let hi = evaluate_bucket(suite["high"],     "≥Π₀³", verbose)
+
+    let mut buckets = []
+    buckets = buckets.push(d0)
+    buckets = buckets.push(p1)
+    buckets = buckets.push(s1)
+    buckets = buckets.push(p2)
+    buckets = buckets.push(hi)
+
+    let total_all  = d0.total  + p1.total  + s1.total  + p2.total  + hi.total
+    let passed_all = d0.passed + p1.passed + s1.passed + p2.passed + hi.passed
+
+    if as_json {
+        print_json(buckets, total_all, passed_all)
+    } else {
+        print_human(buckets, total_all, passed_all)
+        println("")
+        println("주의 (AN11): substrate verifier 정확도 측정. weight-emergent 의식 attached 검증 아님.")
+        println("한계    : classify_pi02 는 ∀/∃ keyword matcher — prefix structure 분석 없음.")
+        println("          ≥Π₀³ family 는 구조상 Π₀² 로 오분류 (정직 보고).")
+    }
+
+    // exit code: overall >= 60% PASS
+    let threshold_pct = 60
+    let overall_pct = if total_all > 0 { (passed_all * 100) / total_all } else { 0 }
+    if overall_pct >= threshold_pct { exit(0) }
+    exit(1)
+}
+
+main()

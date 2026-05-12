@@ -53,7 +53,7 @@ except ImportError:
 # ---------------------------------------------------------------------------
 
 CACHE_DIR = Path(__file__).parent / "data" / ".corpus_cache"
-USER_AGENT = "AnimaCorpus/1.0 (ConsciousLM training; contact: github.com/need-singularity/anima)"
+USER_AGENT = "AnimaCorpus/1.0 (ConsciousLM training; contact: github.com/dancinlab/anima)"
 
 # ---------------------------------------------------------------------------
 # Web download utilities
