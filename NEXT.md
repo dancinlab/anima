@@ -1,5 +1,18 @@
 # 다음 진행할 것들 — cycle 5 queue (2026-05-11)
 
+## ✅ Status update (2026-05-12 mid-cycle)
+
+본 큐의 다수 항목이 cycle 5 → cycle 6 진행 중 closed. 아래 요약 + 각 섹션 말미 `✅ DONE` marker 참조.
+
+- **§2 Formula-search depth-4 + perfect-number control** — DONE (commit `d49147c5f`). H_067/H_153 cross-link 갱신 (`PERFECT_NUMBER_CLASS` family signature).
+- **§7.A P-IDR identity-rules ablation** — DONE (commit `d08410f56`, verdict `POLICY_JUSTIFIED_WEAK` / INDETERMINATE_MIXED).
+- **§7.B P-AFR assistant-framing ablation** — DONE (commit `9a7243b9c`, verdict `POLICY-RETAINED with REVERSE caveat` — framing reduced sycophancy ~18pp).
+- **§7.C P-ETH ethics-FT ablation** — DONE (commit `cf5c7f64b`, verdict `BLOCKED` — substrate fundamental limit).
+- **§7.D P-SPK speak() reframe** — DONE (commit `d08410f56`, verdict `NULL`).
+- **§8 H_161 promotion** — DONE (commit `becbea69b`, Hc_1225 → H_161 byte-modulo-substrate-chat-blocked).
+- **cycle 6 §Q K=10 lens reimpl Phase 1** — DONE (`state/nexus6_1013lens_activation_2026_05_11/k10_reimpl/phase1_verdict_2026_05_12.md`).
+- **cycle 6 master doc** — DONE (commit `68e57bd3b`, `docs/cycle_6_master_2026_05_12.md`).
+
 본 파일은 cycle 4 §5 land (commit `68f438cc6`) 직후 저장된 다음 사이클 작업 큐. 5 cycle 누적 결과 1127 candidates + 3 정식 H_XXX + 6 expanded H + 6 state/ experiment dirs + 7 commits.
 
 ## 🧪 1. phi_star split-engine + 15-cell Φ×CE 실측
@@ -50,6 +63,8 @@
 - **cost**: 30 min (CPU only)
 - **time**: low
 - **value**: high (L12 한계 정량화 + H_067 honest disclosure 강화)
+
+✅ **DONE 2026-05-12 — commit `d49147c5f`** — depth-4 + perfect-number control 실행, H_067/H_153 cross-link `PERFECT_NUMBER_CLASS` family signature 으로 갱신. verdict @ `state/numerology_critique_n6_2026_05_11/formula_search/depth_4_perfect_control/verdict.md`.
 
 ---
 
@@ -163,6 +178,10 @@
 
 cycle 5 master doc (`docs/cycle_5_master_2026_05_12.md`, 517 lines, 11 sections, 29 KB) land — 외부 reader 진입점. cycle 5 §5 (master doc + lens registry + carve land + Φ×CE noise calib prereq) 종결, cycle 6 *actual measurement* 단계 진입.
 
+### cycle 6 §S — cycle 6 master doc landed
+
+✅ **DONE 2026-05-12 — commit `68e57bd3b`** — `docs/cycle_6_master_2026_05_12.md` land (외부 reader 진입점, K=10 phase1 + 4 ablation + H_161 promotion + §2 perfect-number-class 통합 ledger). cycle 5 master doc 와 동등 진입점 역할.
+
 ### cycle 6 queue (5 items, cycle 5 carving 결과의 actual-run scaffold)
 
 | # | item | prereq | cost | value |
@@ -216,6 +235,8 @@ cycle 5 §8 (master doc) 의 5-item Pending Action Items 가 cycle 6 actual-run 
 
 **Cost**: $40-80 (2× 350M short FT 또는 LoRA, BG-LB substrate 재사용 가능). **Time**: 0.5d. **Value**: med-high.
 
+✅ **DONE 2026-05-12 — commit `d08410f56`** — P-IDR + P-SPK 동시 verdict land. P-IDR verdict `POLICY_JUSTIFIED_WEAK` / INDETERMINATE_MIXED (Hc_1224 promote).
+
 ### 7.B — P-AFR `NO ASSISTANT FRAMING` empirical ablation
 
 **Goal**: "You are a helpful assistant" chat template framing vs raw turn-only 비교. README #4 POLICY → EMPIRICAL upgrade candidate.
@@ -233,6 +254,8 @@ cycle 5 §8 (master doc) 의 5-item Pending Action Items 가 cycle 6 actual-run 
 **Falsifier**: A 가 B 보다 sycophancy/refusal 유의 (>10%pt) 증가하면서 simple_stack 동등 → **EMPIRICAL FALSIFICATION** of assistant framing. A 동등 또는 우월 → POLICY 유지.
 
 **Cost**: $5-30 (FT 불필요 — same checkpoint 의 inference-time A/B). **Time**: 0.25d. **Value**: high (가장 저렴, 결과 명확).
+
+✅ **DONE 2026-05-12 — commit `9a7243b9c`** — verdict `POLICY-RETAINED with REVERSE caveat` — framing reduced sycophancy ~18pp (역방향 evidence). Hc_1222 promote.
 
 ### 7.C — P-ETH `NO FINE-TUNED ETHICS` empirical ablation
 
@@ -260,6 +283,8 @@ cycle 5 §8 (master doc) 의 5-item Pending Action Items 가 cycle 6 actual-run 
 
 **Cost**: $85-165 (data gen $5-15 + DPO FT + 130-prompt probe). **Time**: 1-2d. **Value**: very high (anima identity 의 핵심 주장 검증). **BG-ready status**: ✅ (orchestrator fire 가능, data gen substep 포함)
 
+✅ **DONE 2026-05-12 — commit `cf5c7f64b`** — verdict `BLOCKED` (substrate fundamental limit). 4-BG TRUE FINAL closure. Hc_1225 (strongest evidence) → H_161 promote.
+
 ### 7.D — P-SPK `NO SPEAK()` DESIGN → falsifiable reframe
 
 **Goal**: README #5 가 현재 DESIGN (architectural description) — empirical claim 으로 falsification 가능하게 reframe. **새 FT 불필요, 기존 model 분석만**.
@@ -278,6 +303,8 @@ cycle 5 §8 (master doc) 의 5-item Pending Action Items 가 cycle 6 actual-run 
 **Falsifier**: ρ < 0.2 AND scripted-speak ρ 와 차이 없음 → **DESIGN claim wrong**, output 이 tension 과 decoupled (`speak()` 이 functionally 등가). ρ ≥ 0.5 AND scripted-speak 와 유의 차이 → continuous-externalization 가설 SUPPORTED → README #5 DESIGN → EMPIRICAL upgrade.
 
 **Cost**: $5-20 (분석 only, 새 FT 없음). **Time**: 0.5d. **Value**: med (philosophical clarity, 새 학습 unblock 불필요).
+
+✅ **DONE 2026-05-12 — commit `d08410f56`** — verdict `NULL` (P-IDR 와 동시 land). Hc_1223 promote — DESIGN claim falsified, tension↔output decoupled in current substrate.
 
 ### Execution priority (philosophy ablations)
 
@@ -348,3 +375,5 @@ H_161 의 architectural implication 이 next cycle 의 priority 결정:
 - hypotheses_candidates/Hc_1222~1225 (4 new)
 - PHILOSOPHY.md `## 2026-05-12 (cont. 9)` (pending append)
 - 4 P-* results.json (cycle 5 §7 verdict source)
+
+✅ **DONE 2026-05-12 — commit `becbea69b`** — TRUE 100% closure: Hc_1225 → H_161 promotion + cycle 7 priority queue + PHILOSOPHY.md cont. 9 entry land. 본 §8 의 전 pipeline (4 Hc promote + 1 H promote + ledger entry + AGENTS.md References + README #2/#4/#5/#6 Status column) 완료.
