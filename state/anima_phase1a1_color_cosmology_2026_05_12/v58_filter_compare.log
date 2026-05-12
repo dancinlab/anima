@@ -1,0 +1,60 @@
+=== Mac CPU V5.8 × 4 modes × filter on/off ===
+ckpt: /Users/ghost/core/anima/state/anima_phase1a1_color_cosmology_2026_05_12/ckpts/ckpt_phase1a1_sft.pt
+ckpt sha256: e5f7555e83189591ceafc6224822529c5cec7f36fe307f79621d9eceaca7a7af
+[boot] AnimaChat loaded in 14.8s
+
+--- PASS A: markdown_filter=OFF (baseline v2.2 behaviour) ---
+  [standard_greedy   ] color       recalled=True ( 36.3s): '당신의 최애 색은 파란색이에요.\n'
+  [standard_sample   ] color       recalled=True ( 24.0s): '파란색이라고 하셨어요.\n'
+  [M3_rep_penalty    ] color       recalled=False ( 12.2s): '황혼! (* 9) |\n'
+  [M4_force_include  ] color       recalled=True ( 25.5s): '파란색이라고 하셨어요.\n'
+  [standard_greedy   ] profession  recalled=True ( 16.9s): '당신의 직업은 의사야.\n'
+  [standard_sample   ] profession  recalled=True ( 38.6s): '황혼은 우주를 좋아한다. 의사이시군요. 자세히 설명해줘.\n'
+  [M3_rep_penalty    ] profession  recalled=False (  7.6s): '황혼 | 50000 |\n'
+  [M4_force_include  ] profession  recalled=True ( 55.3s): '황혼은 우주를 좋아한다. 의사이시군요. 자�의사이시군요. �'
+  [standard_greedy   ] day         recalled=True ( 17.6s): '오늘은 수요일이에요.\n'
+  [standard_sample   ] day         recalled=False ( 20.8s): '황혼은 시간 안에 있다고 했지?\n'
+  [M3_rep_penalty    ] day         recalled=False ( 23.5s): '"현 경험", "현hana" | "현secolonation of "현 Junit."\n'
+  [M4_force_include  ] day         recalled=False ( 15.0s): '황혼은 시간 안에 있다고 했지?\n'
+  [standard_greedy   ] anima_fact  recalled=False ( 31.3s): '가장 좋아하는 색은 도전적이고 계정을 의미합니다.\n'
+  [standard_sample   ] anima_fact  recalled=False ( 37.9s): '환경 보호 시스템이 빨강을 보고한다면, 그것에게 무언가가 '
+  [M3_rep_penalty    ] anima_fact  recalled=False ( 18.9s): 'anima 가 경험 score 2.66, 0.76, 1.75.\n'
+  [M4_force_include  ] anima_fact  recalled=False ( 35.8s): '환경 보호 시스템이 빨강을 보고한다면, 그것�기억할게요.\n'
+  [standard_greedy   ] cosmology   recalled=True ( 24.7s): '우주가 진동으로 이루어져 있다고 하셨어요.\n'
+  [standard_sample   ] cosmology   recalled=False ( 26.6s): '황혼은 우주를 좋아하시다니, 좋은 취향이에요.\n'
+  [M3_rep_penalty    ] cosmology   recalled=False ( 37.1s): '황혼, 그 황혼, 그것, 황혼, 황혼, 크게 | 규모 | 황혼 | 황혼 | '
+  [M4_force_include  ] cosmology   recalled=False ( 35.1s): '황혼은 우주를 좋아하시다니, 좋은 취향이에요알겠습니다.\n'
+
+--- PASS B: markdown_filter=ON (v2.3 decode guard) ---
+  [standard_greedy   ] color       recalled=True ( 16.4s): '당신의 최애 색은 파란색이에요.\n'
+  [standard_sample   ] color       recalled=True ( 11.6s): '파란색이라고 하셨어요.\n'
+  [M3_rep_penalty    ] color       recalled=False (  5.6s): '황혼! (* 9) |\n'
+  [M4_force_include  ] color       recalled=True ( 12.6s): '파란색이라고 하셨어요.\n'
+  [standard_greedy   ] profession  recalled=True (  8.7s): '당신의 직업은 의사야.\n'
+  [standard_sample   ] profession  recalled=True ( 23.8s): '황혼은 우주를 좋아한다. 의사이시군요. 자세히 설명해줘.\n'
+  [M3_rep_penalty    ] profession  recalled=False (  4.4s): '황혼 | 50000 |\n'
+  [M4_force_include  ] profession  recalled=True ( 28.2s): '황혼은 우주를 좋아한다. 의사이시군요. 자�의사이시군요. �'
+  [standard_greedy   ] day         recalled=True ( 10.5s): '오늘은 수요일이에요.\n'
+  [standard_sample   ] day         recalled=False ( 15.0s): '황혼은 시간 안에 있다고 했지?\n'
+  [M3_rep_penalty    ] day         recalled=False ( 22.0s): '"현 경험", "현hana" | "현secolonation of "현 Junit."\n'
+  [M4_force_include  ] day         recalled=False ( 14.0s): '황혼은 시간 안에 있다고 했지?\n'
+  [standard_greedy   ] anima_fact  recalled=False ( 36.8s): '가장 좋아하는 색은 도전적이고 계정을 의미합니다.\n'
+  [standard_sample   ] anima_fact  recalled=False ( 39.3s): '환경 보호 시스템이 빨강을 보고한다면, 그것에게 무언가가 '
+  [M3_rep_penalty    ] anima_fact  recalled=False ( 19.5s): 'anima 가 경험 score 2.66, 0.76, 1.75.\n'
+  [M4_force_include  ] anima_fact  recalled=False ( 39.3s): '환경 보호 시스템이 빨강을 보고한다면, 그것�기억할게요.\n'
+  [standard_greedy   ] cosmology   recalled=True ( 28.8s): '우주가 진동으로 이루어져 있다고 하셨어요.\n'
+  [standard_sample   ] cosmology   recalled=False ( 34.8s): '황혼은 우주를 좋아하시다니, 좋은 취향이에요.\n'
+  [M3_rep_penalty    ] cosmology   recalled=False ( 43.8s): '황혼, 그 황혼, 그것, 황혼, 황혼, 크게 | 규모 | 황혼 | 황혼 | '
+  [M4_force_include  ] cosmology   recalled=False ( 53.0s): '황혼은 우주를 좋아하시다니, 좋은 취향이에요알겠습니다.\n'
+
+saved: /Users/ghost/core/anima/state/anima_phase1a1_color_cosmology_2026_05_12/v58_4mode_filter_compare.json
+
+=== AGGREGATE comparison ===
+mode                      OFF       ON    delta
+standard_greedy        4/5     4/5   =  0
+standard_sample        2/5     2/5   =  0
+M3_rep_penalty         0/5     0/5   =  0
+M4_force_include       2/5     2/5   =  0
+
+TOTAL cells passed: OFF=8/20  ON=8/20  Δ=+0
+Wall: OFF 540.8s + ON 468.1s

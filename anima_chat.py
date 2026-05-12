@@ -1,8 +1,12 @@
-"""anima_chat v2.3 — natural M4 (soft force-include + noun-first extraction).
+"""anima_chat v2.3 — natural M4 + markdown-attractor decode guard.
 
 Substrate ladder chat interface with multi-turn conversation state,
 KoNLPy-aware keyword extraction, batch inference, stop-token handling,
-and streaming output.
+streaming output, and a v2.3 decode-time markdown table attractor guard
+(prefix-detect `| --- ` → mask `|`, `-`, ` `, `:` byte-ids next step,
+plus a defensive post-strip net). See PASS_STRICT_SPONTANEOUS_CHAT.md
+§25b / §29 for context (Phase 1A.1/1A.2 SFT 로는 못 깬 attractor 의
+$0 retrain-free decode-time fix).
 
 Default ckpt: B'.1 (Phase 1A.1 color/cosmology boost, 2026-05-12).
     - V5.8 std_greedy: 4/5 natural-Korean PASS
@@ -326,6 +330,80 @@ def _detect_stop(decoded_so_far: str, stops: Sequence[str]) -> bool:
 
 
 # ---------------------------------------------------------------------------
+# markdown table attractor filter (v2.3 — 2026-05-12)
+# ---------------------------------------------------------------------------
+#
+# Substrate A byte-vocab base 가 `|\n| --- | --- |` token sequence 를 자주
+# 학습 → "의식" 등 anchor 후 most-likely next-byte 가 markdown table 시작.
+# Phase 1A.1 lr 2e-6 × 500 + Phase 1A.2 lr 1e-6 × 200 모두 attractor 못 깸.
+# 본 filter = decode-time guard, retrain 불필요. PASS_STRICT §25b 의 (🥉)
+# next-action "inference bad-word filter" 의 1-line / 1-block 구현.
+#
+# 동작 방식 (prefix-detect):
+#   1. 매 step 디코드된 tail (last ~12 bytes) 에서 markdown table separator
+#      pattern 의 prefix 가 등장하는지 검사.
+#   2. trigger 시 다음 step logits 에서 markdown-continuation byte ids
+#      ({`|`, `-`, ` `, `:`}) 를 -inf 로 마스킹.
+#   3. 4-mode (greedy / sample / M3_rep_penalty / M4_force_include /
+#      M4_soft_force) 전부에 적용; force_byte_ids hard insert 보다 *뒤* 가
+#      아니라 *전* 에 마스킹해 hard-insert 가 그대로 통과하도록 함.
+
+# markdown separator patterns to detect (tail substring match)
+# NOTE: 의도적으로 conservative — `" | "` (space-pipe-space) 같은 약한
+# pattern 은 제외. anima 의 prompt format 자체가 `사용자: … | 도우미:` 로
+# `|` 를 사용하므로 false-positive 위험. table separator characteristic
+# `---` / `:--` / line-start `\n|` 만 포함.
+_MARKDOWN_TABLE_TRIGGERS: Tuple[str, ...] = (
+    "| --- ",
+    "| ---|",
+    "|---",
+    "| :--",
+    "|:--",
+    "| :-:",
+    "|---|",
+    "\n| ",
+)
+
+# bytes whose token-ids will be masked once a trigger fires
+_MARKDOWN_BAN_BYTES: Tuple[int, ...] = tuple(
+    b for c in "|-: " for b in c.encode("utf-8")
+)
+# precompute the token-id form (byte + 3, ByteTokenizer offset)
+_MARKDOWN_BAN_TOKEN_IDS: Tuple[int, ...] = tuple(
+    b + 3 for b in _MARKDOWN_BAN_BYTES
+)
+
+
+def _markdown_attractor_active(decoded_tail: str) -> bool:
+    """Return True if any markdown table separator trigger appears in tail.
+
+    ``decoded_tail`` should be a short window (last ~12 chars) of generated
+    text. Any trigger substring match implies the model has *started* a
+    markdown table → continuation bytes (`|`, `-`, ` `, `:`) should be
+    suppressed at the next step.
+    """
+    if not decoded_tail:
+        return False
+    return any(t in decoded_tail for t in _MARKDOWN_TABLE_TRIGGERS)
+
+
+def _post_strip_markdown_tables(text: str) -> str:
+    """Strip any trailing markdown table fragment from completed output.
+
+    Defensive double-net: when prefix-detect missed an attractor (e.g. the
+    very first emitted bytes form `|`), cut everything from the first
+    table-separator marker onward. Leaves natural prose intact.
+    """
+    if not text:
+        return text
+    pat = re.compile(r"\n?\|[\s\-:|]{2,}")
+    m = pat.search(text)
+    if m is None:
+        return text
+    return text[: m.start()].rstrip()
+
+
+# ---------------------------------------------------------------------------
 # AnimaChat
 # ---------------------------------------------------------------------------
 
@@ -466,6 +544,7 @@ class AnimaChat:
         soft_force_alpha: float = 3.0,
         seed: int = 2026,
         stop_strings: Optional[Sequence[str]] = None,
+        markdown_filter: bool = True,
     ) -> str:
         """Generate a response. Backward-compat v1 entry point.
 
@@ -484,6 +563,14 @@ class AnimaChat:
             Mild rep penalty applied ONLY in greedy mode over previously
             generated token ids, to suppress argmax loops like
             "아니요, 아니요, ...". Set to 1.0 to disable.
+
+        markdown_filter : bool, default True
+            Enable v2.3 markdown table attractor guard. When the recent
+            decoded tail forms a markdown table separator prefix (e.g.
+            ``| --- ``), the next step masks `|`, `-`, ` `, `:` byte-ids
+            to -inf. Also strips any residual table fragment from the
+            final output (defensive post-strip). Set False to reproduce
+            v2.2 behaviour.
         """
         chunks = list(
             self._generate(
@@ -498,9 +585,13 @@ class AnimaChat:
                 soft_force_alpha=soft_force_alpha,
                 seed=seed,
                 stop_strings=stop_strings,
+                markdown_filter=markdown_filter,
             )
         )
-        return "".join(chunks)
+        text = "".join(chunks)
+        if markdown_filter:
+            text = _post_strip_markdown_tables(text)
+        return text
 
     def _generate(
         self,
@@ -515,6 +606,7 @@ class AnimaChat:
         soft_force_alpha: float = 3.0,
         seed: int = 2026,
         stop_strings: Optional[Sequence[str]] = None,
+        markdown_filter: bool = True,
     ) -> Iterator[str]:
         """Core generation loop. Yields decoded fragments (full text if
         stream=False; multi-byte UTF-8 safe via cumulative re-decode)."""
@@ -577,6 +669,20 @@ class AnimaChat:
                 )
                 out = self.model(inp)
                 last_logits = out["logits"][0, -1].clone()
+
+                # markdown attractor guard (v2.3): if recent tail forms a
+                # markdown table separator prefix, mask continuation bytes.
+                # Applied BEFORE all other logit shaping so rep_penalty /
+                # soft_force / sampling all respect the ban.
+                if markdown_filter and gen_ids:
+                    # short window — 12 chars is enough to catch
+                    # "| --- " / "\n| " / " | " triggers.
+                    tail_ids = gen_ids[-24:]
+                    decoded_tail = self.tok.decode(tail_ids)
+                    if _markdown_attractor_active(decoded_tail):
+                        for bid in _MARKDOWN_BAN_TOKEN_IDS:
+                            if bid < last_logits.shape[-1]:
+                                last_logits[bid] = float("-inf")
 
                 # repetition penalty
                 if rep_byte_ids:
@@ -792,6 +898,11 @@ if __name__ == "__main__":
         action="store_true",
         help="shortcut: force --mode=M4_soft_force",
     )
+    p.add_argument(
+        "--no-markdown-filter",
+        action="store_true",
+        help="disable v2.3 markdown table attractor guard (legacy v2.2 mode)",
+    )
     p.add_argument("--smoke", action="store_true",
                    help="run full v2 smoke test suite")
     p.add_argument(
@@ -817,5 +928,6 @@ if __name__ == "__main__":
             max_new=args.max_new,
             greedy_rep_penalty=args.greedy_rep_penalty,
             soft_force_alpha=args.soft_force_alpha,
+            markdown_filter=not args.no_markdown_filter,
         )
         print(f"response: {resp!r}")
