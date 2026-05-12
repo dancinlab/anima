@@ -3,7 +3,10 @@ id: Hc_634
 slug: chat-cap-path4-paradigm-c-hybrid-kogpt2-clm
 title: Path 4 — paradigm-C hybrid (KoGPT2-base-v2 emit + CLM v4 substrate observer passive)
 domain: clm-architecture
-status: candidate-falsifier-ready
+status: merged-to-H_155
+merged_at: 2026-05-12
+merged_to: hypotheses/H_155_theorem_115_chat_incapability.md
+absorption_note: "Path 4 (paradigm-C hybrid: KoGPT2-base-v2 emit + CLM v4 substrate observer passive) is a Rank 2 ACHIEVABLE_NOW chat-cap path within H_155's Theorem 115 bypass-attempts class — UX-grade rather than architectural. ±0.04 drift ≪ 0.1% of 41.86. Tension peak layer modal = layer 2. F-list/L-list preserved for H_155 C-list extension."
 source_doc: docs/anima_chat_cap_path_4_candidate_ranking_2026_05_05.md
 source_lines: 123-149, 194-200
 promoted_at: 2026-05-11

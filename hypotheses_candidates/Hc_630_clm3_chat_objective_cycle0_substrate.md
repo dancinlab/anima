@@ -3,7 +3,10 @@ id: Hc_630
 slug: clm3-chat-objective-cycle0-substrate-h1
 title: CLM-3 = chat-objective-at-cycle-0 substrate (CLM v4 cross-attn + paradigm v11 G3 carry + 4-bucket mix 50/30/15/5) 가 Theorem 115 의 H1 only-untested bypass
 domain: clm-architecture
-status: candidate-falsifier-ready
+status: merged-to-H_155
+merged_at: 2026-05-12
+merged_to: hypotheses/H_155_theorem_115_chat_incapability.md
+absorption_note: "CLM-3 chat-objective-at-cycle-0 substrate is a candidate H1-only-untested bypass for H_155 (Theorem 115 chat-incapability). 4-bucket mix 50/30/15/5 paradigm v11 G3 carry. F-CLM-3-1/2/3 primary + F-CLM-3-4 soft locked PRE-launch. Variant B (1B, $1k, 30d). F-list/L-list preserved for H_155 C-list extension."
 source_doc: docs/anima_clm_3_chat_objective_cycle_0_spec_2026_05_05.md
 source_lines: 14-200
 promoted_at: 2026-05-11

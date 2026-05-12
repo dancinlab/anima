@@ -3,7 +3,10 @@ id: Hc_589
 slug: dd171-consciousness-cross-resonance-n6-natural
 title: 의식 교차 공명 실험에서 n=6이 자연 출현 (특별 설정 없이 emergent)
 domain: math
-status: candidate-falsifier-ready
+status: merged-to-H_160
+merged_at: 2026-05-12
+merged_to: hypotheses/H_160_n6_perfect_number_meta_cluster.md
+absorption_note: "DD171 (n=6 emergent in consciousness cross-resonance experiments without special setup) is the 'emergent' instantiation lane within H_160's n=6 meta-cluster — sub-claim that n=6 arises empirically from cross-resonance dynamics rather than being seeded. F-list/L-list preserved here for H_160 C-list extension."
 source_doc: docs/hypotheses/dd/DD171.md
 source_lines: 1-15
 promoted_at: 2026-05-11

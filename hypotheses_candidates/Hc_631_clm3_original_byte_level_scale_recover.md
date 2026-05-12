@@ -3,7 +3,10 @@ id: Hc_631
 slug: clm3-original-byte-level-scale-recover-55m
 title: CLM-3-original — byte-level 256/dim 768/12L/32 cells/55M + 19 Φ-boost simultaneous 가 chat-cap recover 가능 (scale-up X)
 domain: clm-architecture
-status: candidate-falsifier-ready
+status: merged-to-H_161
+merged_at: 2026-05-12
+merged_to: hypotheses/H_161_byte_modulo_substrate_chat_blocked.md
+absorption_note: "CLM-3-original byte-level 256/dim 768/12L/32 cells/55M + 19 Φ-boost simultaneous is a candidate retry against H_161 (byte-modulo-substrate chat-blocked) by holding scale fixed (no scale-up) and stacking 19 Φ-boost interventions simultaneously. F-list/L-list preserved for H_161 C-list extension."
 source_doc: docs/anima_clm_3_original_byte_level_redesign_spec_2026_05_05.md
 source_lines: 14-200
 promoted_at: 2026-05-11

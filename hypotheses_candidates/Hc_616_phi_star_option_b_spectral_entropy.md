@@ -3,7 +3,10 @@ id: Hc_616
 slug: phi-star-option-b-spectral-entropy-svd
 title: Option B — SVD spectral entropy 가 substrate-dim invariant phi proxy + IIT-adjacent
 domain: clm-architecture
-status: candidate-falsifier-ready
+status: merged-to-H_174
+merged_at: 2026-05-12
+merged_to: hypotheses/H_174_phi_star_geometry_aliasing_clm_v4_specific.md
+absorption_note: "Option B (SVD spectral entropy) is one of 3 candidate Φ* proxy designs proposed to address H_174's D-mod-192 aliasing. Directionally ambiguous on non-CLM-v4 (high entropy = integrated OR noisy). F-list/L-list preserved here for H_174 C-list extension."
 source_doc: docs/anima_phi_star_proxy_geometry_invariant_spec_2026_05_05.md
 source_lines: 166-200
 promoted_at: 2026-05-11

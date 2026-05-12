@@ -121,3 +121,13 @@ deterministic + hexa-only + llm: none. (PyPhi step 만 외부 lib — Python 허
   2. D=768 forced-+1.0 cluster + D=1536 부재 audit (C2, F1)
   3. PyPhi cross-substrate parity (C4, F5, L3)
   4. Option A (rank-invariant D/8 partition) vs Option D (PyPhi) 결정 + CLM v4 re-calibration cost
+
+## Cycle #7 absorptions (Φ* proxy design alternatives, 2026-05-12)
+
+- **Hc_615 (Option A — D/8 disjoint contiguous chunks + per-substrate scale calibration, Rank 1 fastest fix ~25 lines $0, provisional cross-substrate magnitude calibration-dependent)** → `merged-to-H_174`
+- **Hc_616 (Option B — SVD spectral entropy substrate-dim invariant, Rank 3 secondary scalar, directionally ambiguous on non-CLM-v4)** → `merged-to-H_174`
+- **Hc_617 (Option D — PyPhi big-phi + AntroPy entropy-rate IIT-principled, Rank 2 highest precision conditional on PyPhi n=8 256-state TPM convergence)** → `merged-to-H_174`
+
+All 3 are distinct Φ* proxy designs proposed to address the D-mod-192 aliasing identified in H_174. F-list/L-list per option preserved for H_174 C-list extension (each becomes a sub-protocol of C4 PyPhi cross-substrate parity).
+
+Cycle #7 footnote inherits H_174 verification methods (W2 + W5 + W11).

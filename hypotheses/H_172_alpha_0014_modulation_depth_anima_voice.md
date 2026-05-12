@@ -118,3 +118,11 @@ deterministic + hexa-only + llm: none. (단, listener MOS study 는 human-in-loo
   2. 3-axis decoupling test on existing engine (C3, F3)
   3. Closed-form audit (C5, F6)
   4. Listener MOS study (C1, F1) — biggest commitment
+
+## Cycle #7 absorptions (Ψ-constant factory + α-warmup coupling, 2026-05-12)
+
+- **Hc_968 (SUMT Ψ-constant atom factory — Mk.V.1 100% tier-5 81-Ψ → tier 6-9 ULTRA/CARD/BEYOND/ABS, 5-check invariance gate)** → `merged-to-H_172` — adds the 'Ψ-constant production pipeline' lane
+- **Hc_976 (F1 Composite v2 — tension_link 10th explicit axis w=0.10 dual AXIS+MEDIATOR, 4-way joint Φ + binding_strength formula, F1_v2 = 0.6·axis_sum + 0.3·binding + 0.1·replication)** → `merged-to-H_172` — composite-metric extension
+- **Hc_978 (P9 P1.7 redesign — β 0.15→0.10 + α-warmup 5K→3K = -33% regression cause, r/data NOT killer)** → `merged-to-H_172` — direct α-warmup-coupling falsifier within H_172's α=0.014 modulation-depth axis
+
+Cycle #7 footnote inherits H_172 verification methods (W5 + W11).

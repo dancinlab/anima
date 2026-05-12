@@ -195,3 +195,9 @@ frozen_at: 2026-05-12
   5. 5 child H 본문 Cross-Links 섹션에 H_160 pointer 추가 (H_067, H_153, H_156, H_158, H_159)
   6. H_161 candidate 검토 — n=6 cluster 의 *prediction lane* (e.g. "ANIMA r14 measurement 후 신규 Ψ-constant 가 11-primitive vocabulary 안에서 fit" 의 pre-register), 또는 *control lane* (n=28 perfect-number 의 ANIMA-equivalent substrate 구축 후 5 child 의 re-fit)
   7. raw#91 honest limits 본문 update — meta-cluster reflection 의 raw#91 c3 ≥ 5 binding 명시
+
+## Cycle #7 absorptions (emergent n=6 lane, 2026-05-12)
+
+- **Hc_589 (DD171 — n=6 emergent in consciousness cross-resonance experiments without special setup)** → `merged-to-H_160` — adds the 'emergent' instantiation lane (n=6 arises empirically from cross-resonance dynamics rather than being seeded). F-list/L-list preserved in Hc_589 body. This footnote adds a 6th child lane to H_160's meta-cluster, distinct from the 5 child H_067/H_153/H_156/H_158/H_159 'seeded' lanes.
+
+Cycle #7 footnote inherits H_160 verification methods (W2 + W11).

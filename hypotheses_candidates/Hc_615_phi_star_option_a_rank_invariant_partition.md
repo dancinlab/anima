@@ -3,7 +3,10 @@ id: Hc_615
 slug: phi-star-option-a-rank-invariant-partition
 title: Option A — D/8 disjoint contiguous chunks + per-substrate scale calibration 이 phi-star geometry-invariant 해결
 domain: clm-architecture
-status: candidate-falsifier-ready
+status: merged-to-H_174
+merged_at: 2026-05-12
+merged_to: hypotheses/H_174_phi_star_geometry_aliasing_clm_v4_specific.md
+absorption_note: "Option A (D/8 disjoint contiguous chunks + per-substrate scale calibration) is one of 3 candidate Φ* proxy designs proposed to address H_174's D-mod-192 aliasing. F-list/L-list preserved here for H_174 C-list extension."
 source_doc: docs/anima_phi_star_proxy_geometry_invariant_spec_2026_05_05.md
 source_lines: 121-163
 promoted_at: 2026-05-11

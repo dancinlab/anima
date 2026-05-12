@@ -3,7 +3,10 @@ id: Hc_976
 slug: f1-composite-v2-tension-link-axis
 title: F1 Composite v2 — tension_link 10th explicit axis (w=0.10 dual AXIS+MEDIATOR) + 4-way joint Φ = Σw·Φ + λ·binding_strength·MAX(Φ) + binding_strength = BSE-1 Pearson cross-correlation + F1_v2 = 0.6·axis_sum + 0.3·binding + 0.1·replication
 domain: composite, measurement, integration
-status: candidate-falsifier-ready
+status: merged-to-H_172
+merged_at: 2026-05-12
+merged_to: hypotheses/H_172_alpha_0014_modulation_depth_anima_voice.md
+absorption_note: "F1 Composite v2 (tension_link 10th explicit axis w=0.10 dual AXIS+MEDIATOR, 4-way joint Φ formula with binding_strength + replication weights) is an α-modulation composite-metric extension within H_172. F1_v2 = 0.6·axis_sum + 0.3·binding + 0.1·replication superseding v1 additive. F-list/L-list preserved for H_172 C-list extension."
 source_doc: docs/strategic_f1_composite_v2_2026_05_02.md
 source_lines: 1-30
 promoted_at: 2026-05-11

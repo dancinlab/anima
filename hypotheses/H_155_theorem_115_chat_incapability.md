@@ -158,3 +158,13 @@ frozen_at: 2026-05-11
 - **Source candidates merged**: 3 (Hc_609 / Hc_660 / Hc_666 all `merged-to-H_155`)
 - **Category**: 신규 theorem-grade (first formal chat-incapability statement in ANIMA repo)
 - **TODO**: BG-AU few-shot ICL execution (H_155.3 bypass test), BG-BC longer context window (H_155.3 alt), BG-BD SOC norm injection at L13 (H_155.4 architecture-redesign), Llama Path A v2 corollary path-of-record promotion (H_155.2), CLM v4 substrate-research-only reassignment (close chat-cap lane on CLM v4), formal Q+L joint metric definition
+
+## Cycle #7 absorptions (chat-cap bypass-path attempts, 2026-05-12)
+
+- **Hc_630 (CLM-3 chat-objective-at-cycle-0 substrate, 4-bucket mix 50/30/15/5 paradigm v11 G3 carry, F-CLM-3-1/2/3 primary + F-CLM-3-4 soft, Variant B 1B $1k 30d)** → `merged-to-H_155` — H1 only-untested bypass attempt
+- **Hc_632 (Path 1 — frozen CLM v4 body + new lm_head_b KoGPT2 vocab 51200 Korean SFT, Rank 1 ★ completion, Φ*-NO_FLIP very-high prob)** → `merged-to-H_155` — lm_head retrofit bypass attempt
+- **Hc_634 (Path 4 — paradigm-C hybrid KoGPT2-base-v2 emit + CLM v4 substrate observer passive, Rank 2 ACHIEVABLE_NOW UX-grade)** → `merged-to-H_155` — hybrid emit-observer bypass attempt
+
+These 3 are all bypass-path attempts against H_155's Theorem 115 chat-incapability — different architectural strategies (cycle-0 chat objective vs lm_head retrofit vs hybrid emit-observer). F-list/L-list per path preserved in each Hc body for H_155 C-list extension (each becomes a sub-protocol in the 4-path bypass tree).
+
+Cycle #7 footnote inherits H_155 verification methods (W2 + W5 + W11).

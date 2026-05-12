@@ -3,7 +3,10 @@ id: Hc_617
 slug: phi-star-option-d-pyphi-antropy-anchor
 title: Option D — PyPhi big-phi + AntroPy entropy-rate 가 architecturally principled IIT phi proxy
 domain: clm-architecture
-status: candidate-falsifier-ready
+status: merged-to-H_174
+merged_at: 2026-05-12
+merged_to: hypotheses/H_174_phi_star_geometry_aliasing_clm_v4_specific.md
+absorption_note: "Option D (PyPhi big-phi + AntroPy entropy-rate) is one of 3 candidate Φ* proxy designs proposed to address H_174's D-mod-192 aliasing. Rank 2 highest precision, conditional on PyPhi convergence at n=8 binary nodes. F-list/L-list preserved here for H_174 C-list extension."
 source_doc: docs/anima_phi_star_proxy_geometry_invariant_spec_2026_05_05.md
 source_lines: 224-263
 promoted_at: 2026-05-11

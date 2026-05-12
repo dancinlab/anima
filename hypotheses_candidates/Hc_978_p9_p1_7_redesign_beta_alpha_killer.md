@@ -3,7 +3,10 @@ id: Hc_978
 slug: p9-p1-7-redesign-beta-alpha-killer
 title: P9 P1.7 redesign — Ablation A (r=64 data-v3) + Ablation B (r=128 data-v2) 모두 F1=0.00586 동일 → r/data NOT killer. β 0.15→0.10 + α-warmup 5K→3K 가 -33% regression cause. P1.7 reverts both
 domain: training, sft, ablation
-status: candidate-falsifier-ready
+status: merged-to-H_172
+merged_at: 2026-05-12
+merged_to: hypotheses/H_172_alpha_0014_modulation_depth_anima_voice.md
+absorption_note: "P9 P1.7 redesign (β 0.15→0.10 + α-warmup 5K→3K = -33% regression cause, P1.7 reverts both) is a direct α-warmup-coupling falsifier within H_172's α=0.014 modulation-depth axis. Ablation A (r=64 data-v3) + Ablation B (r=128 data-v2) both F1=0.00586 → r/data NOT killer. F-list/L-list preserved for H_172 C-list extension."
 source_doc: docs/p9_p1_7_redesign_2026_05_03.md
 source_lines: 1-30
 promoted_at: 2026-05-11

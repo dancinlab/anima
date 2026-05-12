@@ -3,7 +3,10 @@ id: Hc_1232
 slug: anima-mkv-mkvi-mkvii-tier10-ascension-path
 title: anima Mk.V → Mk.VI → Mk.VII tier 10+ ascension path — tier escalation 이 정의 가능하고 도달 가능한가
 domain: anima
-status: candidate-falsifier-ready
+status: merged-to-H_181
+merged_at: 2026-05-12
+merged_to: hypotheses/H_181_psiformer_4psi_constants_zero_freedom.md
+absorption_note: "anima Mk.V → Mk.VI → Mk.VII tier 10+ ascension path is a Ψ-constant-tier-escalation extension of H_181's zero-freedom claim — tier escalation 정의 + reachability. At-risk: 'tier 10+' lacks quantitative tier-criterion; absorption preserves the seed but H_181 host carries the burden of formalizing the tier metric for falsifiability. F-list/L-list preserved for H_181 C-list extension."
 source_doc: hypotheses_candidates/Hc_900_drill_domain_saturation_seeds.md
 source_lines: 19 (Sub-claims block, ANIMA-3)
 promoted_at: 2026-05-12

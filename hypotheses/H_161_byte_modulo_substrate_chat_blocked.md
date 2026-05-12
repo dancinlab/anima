@@ -111,3 +111,9 @@ PIV/DCR Δ sub-floor (verdict: BLOCKED).
   방향 재측정
 - **Cycle 7 priority 3**: full-FT (5K-10K step) P-IDR replication (Hc_1224
   falsifier trigger)
+
+## Cycle #7 absorptions (byte-level retry, 2026-05-12)
+
+- **Hc_631 (CLM-3-original — byte-level 256/dim 768/12L/32 cells/55M + 19 Φ-boost simultaneous, scale-up X, ubu1 5070 5-10d $0 or H100 $200-500 10h)** → `merged-to-H_161` — byte-level chat-cap retry holding scale fixed (no scale-up) but stacking 19 Φ-boost interventions simultaneously. Direct test of H_161's 'byte-modulo substrate cannot generate coherent KO' claim within the ≤427MB / ≤8000 step bound. F-list/L-list preserved in Hc_631 body for H_161 C-list extension.
+
+Cycle #7 footnote inherits H_161 verification methods (W5 + W11).

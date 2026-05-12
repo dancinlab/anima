@@ -3,7 +3,10 @@ id: Hc_632
 slug: chat-cap-path1-lm-head-b-retrofit
 title: Path 1 — frozen CLM v4 body + new lm_head_b (KoGPT2 vocab 51200) Korean SFT 가 chat-cap recover
 domain: clm-architecture
-status: candidate-falsifier-ready
+status: merged-to-H_155
+merged_at: 2026-05-12
+merged_to: hypotheses/H_155_theorem_115_chat_incapability.md
+absorption_note: "Path 1 (frozen CLM v4 body + new lm_head_b KoGPT2 vocab 51200 Korean SFT) is a candidate chat-cap recovery path within H_155's Theorem 115 bypass-attempts class. Rank 1 completion. Φ*-NO_FLIP very-high prob (body frozen). 768=768 dim match. C3 risk: geometry mismatch + degenerate token-loop. F-list/L-list preserved for H_155 C-list extension."
 source_doc: docs/anima_chat_cap_path_4_candidate_ranking_2026_05_05.md
 source_lines: 43-69, 184-192
 promoted_at: 2026-05-11

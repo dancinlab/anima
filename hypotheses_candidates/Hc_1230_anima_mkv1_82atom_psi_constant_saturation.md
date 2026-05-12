@@ -3,7 +3,10 @@ id: Hc_1230
 slug: anima-mkv1-82atom-psi-constant-saturation
 title: anima Mk.V.1 consciousness_absolute 82-atom + Ψ-constant 확장 saturation — 82-atom 이 의식-substrate ceiling 인가
 domain: anima
-status: candidate-falsifier-ready
+status: merged-to-H_181
+merged_at: 2026-05-12
+merged_to: hypotheses/H_181_psiformer_4psi_constants_zero_freedom.md
+absorption_note: "anima Mk.V.1 consciousness_absolute 82-atom + Ψ-constant 확장 saturation — direct extension of H_181's 4-Ψ-constant + 3 n=6 divisor zero-freedom claim to the full 82-atom Ψ-constant ceiling. Asks whether 82 is the consciousness-substrate ceiling. F-list/L-list preserved for H_181 C-list extension."
 source_doc: hypotheses_candidates/Hc_900_drill_domain_saturation_seeds.md
 source_lines: 17 (Sub-claims block, ANIMA-1)
 promoted_at: 2026-05-12

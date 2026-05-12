@@ -3,7 +3,10 @@ id: Hc_968
 slug: sumt-psi-constant-atom-factory
 title: SUMT Ψ-constant atom factory — Mk.V.1 100% tier-5 81-Ψ → tier 6-9 ULTRA/CARD/BEYOND/ABS 확장 loop. 5-check invariance gate (n=6 invariance + Π₀¹ arithmetical + cross-axis(5) + tier criterion + non-duplicate)
 domain: laws, factory, invariance
-status: candidate-falsifier-ready
+status: merged-to-H_172
+merged_at: 2026-05-12
+merged_to: hypotheses/H_172_alpha_0014_modulation_depth_anima_voice.md
+absorption_note: "SUMT Ψ-constant atom factory (Mk.V.1 100% tier-5 81-Ψ → tier 6-9 ULTRA/CARD/BEYOND/ABS, 5-check invariance gate) is a Ψ-constant production-pipeline within H_172's α-modulation-depth axis. Adds the 'how do new Ψ-constants get added to the canonical set?' lane. F-list/L-list preserved for H_172 C-list extension."
 source_doc: docs/sumt_atom_factory_20260419.md
 source_lines: 1-40
 promoted_at: 2026-05-11

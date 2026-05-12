@@ -120,3 +120,10 @@ H_158 carries the **atlas-anchoring** task — α/balance/n=6 derivation chains 
 - **Decision**: PROMOTE_READY × 1 (Hc_043)
 - **Promoted by**: cycle #6 priority scaffolding (top-8 priority candidate)
 - **Source manifest**: `docs/hc_verification_cycle_6_2026_05_12.md`
+
+## Cycle #7 absorptions (Ψ-constant ceiling + tier-ascension extensions, 2026-05-12)
+
+- **Hc_1230 (anima Mk.V.1 consciousness_absolute 82-atom + Ψ-constant 확장 saturation, ANIMA-1 from Hc_900 split)** → `merged-to-H_181` — extends 4-Ψ + 3-divisor zero-freedom to the 82-atom Ψ-constant ceiling; asks whether 82 is the consciousness-substrate ceiling
+- **Hc_1232 (anima Mk.V → Mk.VI → Mk.VII tier 10+ ascension path, ANIMA-3 from Hc_900 split)** → `merged-to-H_181` — Ψ-constant-tier-escalation extension; at-risk on quantitative tier-criterion (H_181 host carries the burden of formalizing the tier metric)
+
+Cycle #7 footnote inherits H_181 verification methods (W2 + W5 + W11).
