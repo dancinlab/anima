@@ -3058,6 +3058,97 @@ ckpt-loading smoke (full inference) 는 Space 자체 build 가 검증 — push �
 - RFC builtins: hexa-lang main 의 RFC 025/030/031/032/033 (모두 LANDED 2026-05-12)
 
 
+## §37 [2026-05-12 KST] D4b `anima_chat.hexa` × `mitosis_hook.hexa` WIRING LANDED — cell-pool host + token-loop hook call edge (F-D4B-1..5 ✅ 22/22) ★★★★ ($0, GOAL.md D4b lane + criterion #4 evidence path)
+
+### TL;DR
+
+PSCC §33 LANDED 의 `anima_chat.hexa` v0.1 (1589 LoC, 17/17 helper smoke) 와 PSCC §36 LANDED 의 `tool/hexa_native/mitosis_hook.hexa` (1119 LoC, F-MIT-HOOK-1..5) 가 서로 LANDED 됐지만 **wiring 0** — 두 file 의 call edge 부재. 본 cycle 에서 wiring LAND:
+
+- `anima_chat.hexa` v0.2: AnimaChat record 에 `cell_pool` + `mitosis_d_model` + `mitosis_event_log` + `mitosis_step` + `mitosis_invocations` field 5종 추가
+- `chat_init_cell_pool(chat, d_model, n)` — idempotent cell pool 초기화 (mitosis_hook::cell_pool_init 호출)
+- `chat_mitosis_tail(chat, x_in)` — mitosis_forward_tail 호출 wrapper, cell_pool 갱신 + event_log accumulate + step counter
+- `chat_generate` token-loop 안 hook 호출 edge 삽입 — forward stub (TODO[load]) 가 [] 반환 시도 synthetic zero-vector 로 hook STILL fires (D4b WIRING-CALL 보장)
+- `tool/anima_chat_mitosis_smoke.hexa` 신규 — 5 falsifier (F-D4B-1..5) 22 assert PASS
+
+### Done
+
+1. **`anima_chat.hexa` v0.2 wiring** (60184 → ~68KB, +5 record fields + 6 wiring fns + token-loop edge)
+2. **`tool/anima_chat_mitosis_smoke.hexa` 신규** — 22 assert (F-D4B-1..5)
+3. **`docs/anima_chat_mitosis_wiring_2026_05_12.md` 신규** — wiring audit doc (9 §, before/after architecture diff, demo trace, regression sweep)
+4. **GOAL.md D4b row** "pending" → "LANDED 2026-05-12"
+5. **GOAL.md criterion #4** 진행도 명시 갱신 — wiring evidence path executable
+6. **memory `project_anima_chat_mitosis_wiring_2026_05_12.md`** 신규 + MEMORY.md index
+7. **PSCC §37 본 entry** (saga history append)
+
+### F-D4B-1..5 falsifier result (22/22 PASS)
+
+| Falsifier | Asserts | Result | Mechanism |
+|---|---|---|---|
+| F-D4B-1 WIRING-CALL | 3 | PASS | `chat_mitosis_invocation_count` 0→1→2 증가 per `chat_mitosis_tail` call |
+| F-D4B-2 CELL-POOL-STATE | 7 | PASS | 5종 field 존재, idempotency (re-init refused), 2 cells init |
+| F-D4B-3 EVENT-LOG | 4 | PASS | 5 tail call 후 event_log readable, tension_history > 0 entries 누적, invocation count == 5 |
+| F-D4B-4 PRINCIPLE-3 | 6 | PASS | `chat_build_prompt` grep: NO `[role:` / `[persona:` / `[character:` / `[cell:` — only legacy 사용자:/도우미: scaffold |
+| F-D4B-5 SHAPE-INVAR | 2 | PASS | `len(x_out) == len(x_in) == d_model`; bypass path 도 shape 보존 |
+
+**Cross-verification**: smoke 가 mitosis_hook.hexa import 시 file-level selftest 도 함께 실행 → F-MIT-HOOK-1..5 also PASS in same binary (`split_seen=true after 60 steps, max_seen=4 cells`).
+
+### Regression sweep (61 assert PASS, 0 FAIL)
+
+| Harness | Result | Note |
+|---|---|---|
+| `hexa parse anima_chat.hexa` | OK | v0.2 parse-clean |
+| `hexa parse tool/anima_chat_mitosis_smoke.hexa` | OK | 신규 file parse |
+| `anima_chat.hexa` in-file `_smoke()` | 17/17 PASS | F-AC-HEXA-1..6 regression-free |
+| `tool/anima_chat_hexa_smoke.hexa` (v0.1 sister) | 17/17 PASS | independent smoke |
+| `tool/anima_chat_mitosis_smoke.hexa` (NEW) | 22/22 PASS | F-D4B-1..5 |
+| `tool/hexa_native/mitosis_hook.hexa` (independent) | OK | F-MIT-HOOK-1..5 |
+
+**Net**: 17 + 17 + 22 + 5 = **61 assert PASS post-wiring**, regression-free.
+
+### TODO[load] 와의 관계
+
+`chat_forward_one_token` 의 24-layer weight binding (~150 LoC mechanical) 은 별도 cycle — 본 wiring 은 그것과 독립. 현 구현에서 forward 가 [] 를 반환하더라도 `chat_generate` 가 `chat_mitosis_zero_x(d_model)` 로 synthetic input 을 만들어 hook 을 발화시키므로 wiring path 가 end-to-end 실행 가능. TODO[load] 완료 시 단순히 `last_logits` 의 첫 d 원소 (혹은 별도 hidden state 출력) 가 zero-vector 자리에 들어감.
+
+### 실 chat 중 split/merge event 발생 (GOAL.md criterion #4)
+
+본 cycle 의 wiring 으로 path 가 executable 상태가 됨 — 실 user prompt → forward → mitosis_forward_tail → split/merge → event_log 의 end-to-end 흐름이 가능. 단 actual split 발생까지는:
+
+- **synthetic / selftest 경로**: mitosis_hook selftest 가 60 step 에서 `split_seen=true` 도달 — 본 smoke import 시 동시 실행으로 확인. **현 시점 evidence ✅**
+- **user-prompt-driven 경로**: TODO[load] forward 가 variance-rich hidden state 를 공급해야 cell tension 이 chat horizon (10-80 token) 내에 patience=3 + adaptive threshold 를 통과 — 본 cycle scope 外, TODO[load] LAND 후 measure 가능
+
+→ criterion #4 의 **wiring evidence**: ☑ — D4b path executable.
+→ criterion #4 의 **user-driven event evidence**: 🔶 PARTIAL — TODO[load] gating, wiring 측은 ready.
+
+### BG scope 준수
+
+본 BG 가 침범하지 않은 영역:
+- `state/anima_phase1a4_lr5e6_*` (Vast.ai SFT) — 미터치
+- `tool/hexa_native/mitosis_hook.hexa` — 본체 미수정 (호출만)
+- `tool/anima_cli/` — 미터치
+- 본 BG = `anima_chat.hexa` edit + `tool/anima_chat_mitosis_smoke.hexa` (NEW) + `docs/anima_chat_mitosis_wiring_2026_05_12.md` (NEW) + GOAL.md edit + 본 PSCC §37 + memory entry
+
+### Cost / rating
+
+- cost: $0 (Mac local — `hexa parse` + `hexa_interp.real run`)
+- wall: ~2 hr
+- **★★★★** — wiring LANDED + 22/22 F-D4B-1..5 PASS + regression-free + GOAL.md criterion #4 evidence path executable. ★★★★★ 후보 조건 = (a) TODO[load] LAND 시 real-hidden-state path 활용 + (b) user-prompt-driven split/merge event observation. 두 가지 모두 별도 BG.
+
+### Mission contribution
+
+★★★★ — GOAL.md **D4b** row "wiring pending" → "LANDED PSCC §37" 전환 + criterion #4 의 wiring evidence path executable. D3 persona substrate-native P2 prerequisite (`docs/anima_persona_substrate_native_design_2026_05_12.md` §2 (a)+(d) design) 충족 — 이제 identity_probe 50 × 5 cat verification 의 cell-pool 측 prerequisite 완성. 5-cond achievement 의 **cond #3 D3 persona** advance 가능 + **cond #4 D4 mitosis live** 의 wiring 절반 ☑.
+
+### Provenance
+
+- 본 cycle commit: pending (incremental commit + push 다음 step)
+- 보조 SSOT: `docs/anima_chat_mitosis_wiring_2026_05_12.md` (NEW, 9 §)
+- v0.1 baseline: PSCC §33 (`4768a5c41`, anima_chat.hexa v0.1 LANDED 1589 LoC)
+- D4a sister: PSCC §36 (mitosis_hook.hexa full impl 1119 LoC)
+- D3 sister: PSCC §34 (persona substrate-native design, P2 prerequisite 본 BG 충족)
+- HEXA tooling: `/Users/ghost/.hx/bin/hexa parse` + `/Users/ghost/core/hexa-lang/build/hexa_interp.real run`
+
+raw#9/10/15/37 honest, own 16 0-cost, own 42 SSOT, own 43 cost-bearing BG 미해당 (Mac local만).
+
+
 ## §34 [2026-05-12 KST] D3 PERSONA SUBSTRATE-NATIVE DESIGN LANDED — Principle #3 호환 path ★★★ ($0, GOAL.md D3 dim)
 
 사용자 directive (verbatim, GOAL.md mission carry): `[anima chat 시스템, anima 모델, 페르소나 롤플레잉 가능, 세포 분열로 성장(철학참고)]` 의 **D3 부분 (페르소나 롤플레잉)** 의 design doc land. anima_persona_substrate_native_design_2026_05_12.md (10 §, 5 falsifier F-PERSONA-1..5, 10 honest C3).
