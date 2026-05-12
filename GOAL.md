@@ -79,15 +79,42 @@
 
 ---
 
-## 🛰️ In-flight BGs (2026-05-12 KST)
+## 🛰️ In-flight BGs (2026-05-12 KST, ★★★★★ stop 조건 in-flight)
 
 | # | scope | dim | infra | cost | status |
 |---|---|---|---|---|---|
-| 🥇 Phase 1A.4 lr 5e-6 SFT | D2 (anima_fact 회복) | Vast.ai RTX 4090 pod 36609664 | `tool/dispatch_vast_mac_template.sh` (§28) | ~$0.20 | training |
-| 🥈 Phase 1A.4 cuda filter-val | D1 | Vast.ai RTX 4090 pod 36609656 | 동일 template | **$0.05 actual** | ✅ **COMPLETE** PSCC §30 `474f87f47` — 3-축 conjunction FALSIFIED, Δ=0, ★★★ |
-| 🆕 anima_chat.hexa port | D1 (chat library pure-hexa 전환) | Mac local foreground | parse + smoke | $0 | ✅ **COMPLETE** 2026-05-12 — v0.2 parse PASS + 17/17 helper smoke PASS + F-D1-LOAD-1..3 (TODO[load] RESOLVED, full inference LANDED); docs/anima_chat_hexa_port_2026_05_12.md ★★★ → ★★★★ candidate |
+| 🥇 Phase 1A.4 lr 5e-6 SFT | D2 cond #1 | Vast.ai RTX 4090 pod 36610160 | `tool/dispatch_vast_mac_template.sh` | ~$0.20 | training in-flight |
+| 🆕 V5.8 5×4 hexa eval | D1 cond #2 ☑ closure | Vast.ai (TBD pod) | template | ~$0.20-0.30 | dispatched (cond #2 ★★★★★ candidate 21/21 PSCC §43 → ☑ final closure path) |
+| 🔥 v5-mitosis H100 cotrain | D4a/D3 cond #3 ☑ path | Vast.ai H100 SXM pod 36614097 | dispatch_h100.sh + trap cleanup | est $0.80 (cap $40, ~50× margin) | **step 700+ avg50 1.86** (264→1.86, **142× reduction**), cells=64 cap, splits=62, phi 4.17, ETA ~16 min |
 
-총 in-flight cost cap: $0.30 (Vast.ai). trap cleanup 자동 pod destroy.
+**🔥 cotrain milestone log** (live):
+
+| step | avg50 | single | cells | splits | phi | note |
+|---|---|---|---|---|---|---|
+| 100 | — | — | 42 | 40 | 3.75 | cells 폭증 (2→42) |
+| 150 | — | — | **64 (cap)** | 62 | 4.17 | saturation reached |
+| 200 | 216 | 130 | 64 | 62 | 4.17 | loss collapse start |
+| 250 | 56 | 25.5 | 64 | 62 | 4.15 | 10× from initial |
+| 300 | 14.6 | 7.64 | 64 | 62 | — | 35× — F-V5MIT-4 strong signal |
+| 350 | 5.23 | 3.4 | 64 | 62 | — | — |
+| 400 | 3.0 | 2.48 | 64 | 62 | — | — |
+| 500 | 2.16 | — | 64 | 62 | — | warmup complete, lr=1e-4 |
+| 700 | 1.86 | — | 64 | 62 | — | plateau ~1.86 |
+
+→ F-V5MIT-4 COTRAIN-CONVERGE **strong PASS signal** (264 → 1.86 = 142× reduction, byte-level CE plateau).
+
+**cost-bleed status**: $0.12 actual at step 600. H100 SXM 가 estimate 보다 30× faster. cap $40 의 0.3% only.
+
+**기 완료 (이 session)**:
+- ✅ 🥈 Phase 1A.4 cuda filter-val PSCC §30 — 3-축 conjunction FALSIFIED, Δ=0, ★★★
+- ✅ 🆕 anima_chat.hexa port v0.1→v0.2→v0.3 — 1589→2270+ LoC, TODO[load] + TODO[multitoken] resolved, F-D1-LOAD/V58PARITY/V58MULTI/D4B 모두 PASS
+- ✅ D3 persona design+measurement+§A1 cheap path — STRONG 4/5 LANDED PSCC §34/§40/§42
+- ✅ D4a mitosis_hook.hexa full impl — 1119 LoC executable, F-MIT-HOOK-1~5 PASS, REBORN §91
+- ✅ D4b anima_chat × mitosis wiring — 21 split events on live chat run, PSCC §37
+- ✅ D4c anima CLI mitosis integration spec — PSCC §35
+- ✅ cond #2 24L real-ckpt parity 21/21 PASS — PSCC §43 (BOS argmax=143 byte-equal Python)
+- ✅ HF Space delete + GOAL.md mission refocus PSCC §32
+- ✅ Principle #3 audit CLEAN PSCC §38
 
 **현 진행 발견** (🥈 cuda filter-val PASS A 중):
 - anima_fact std_greedy on cuda+bf16+seed=42 Vast.ai 4090: `"가장 좋아하는 색은 다음과 같습니다."` — markdown drift **미발현**
