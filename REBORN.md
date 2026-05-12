@@ -6849,3 +6849,69 @@ cycle 2026-05-12 의 design-impl bridge tier 완성:
 
 raw#9/10/15/37 honest, own 16 0-cost (Mac local), own 42 REBORN.md SSOT, own 43 active resource utilization 미사용 (본 cycle Mac local 만 사용).
 
+## §92 [2026-05-13 KST] V5-MITOSIS COTRAIN v5 DDP — multi-GPU wall-speedup BG (b) IN-FLIGHT ★★★
+
+### TL;DR
+
+- post-★★★★★ follow-up BG (b): `training/cotrain_v5mitosis_v5_ddp.py` (v4 fork + `torch.nn.parallel.DistributedDataParallel`) on 4× H200 SXM 80GB ($12.90/hr, rel=1.000, pod 36635520).
+- Vanilla DDP path (cells dimension data-parallel). Option B: mitosis FROZEN (cells static at max_cells=256 from step 0). v4 step-2000 ckpt resume PLANNED but the only on-disk candidate (v3-routing ckpt_step_2000.pt, 520 MB) is partial/corrupt (zip cd missing) — dispatch auto-validates + falls back to FRESH START.
+- effective_batch = per_gpu_batch=4 × world_size=4 = 16 (vs v4 single batch=8). `find_unused_parameters=True` for top-K=8 over 256 cells (248 unused). per-rank seed offset → independent batch streams.
+- Wall target: v4 single A100 17 hr ETA → v5 DDP ~5 hr (4× H200 ≈ 4-6× speedup theoretical). Est cost $64.52 / cap $100.
+
+### Why this BG (mission contribution)
+
+- (a) v4 single A100 — in-flight, ~17 hr ETA, full mitosis trajectory + production-scale evidence
+- (b) **v5 DDP (THIS)** — wall speedup via vanilla DDP, fresh-start or resume
+- (c) v6 cell-parallel — mitosis-NATIVE parallelism (separate BG)
+
+Three independent evidence streams in parallel ("병렬발사"). (b) tests whether DDP wall-speedup is achievable for the v5-mitosis arch class as-is, without rewriting cells dim as model-parallel.
+
+### DDP design (option B — cells static)
+
+The v5-mitosis cell pool is an `nn.ModuleList`; DDP cannot safely tolerate dynamic parameter graphs. v4 step-2000 already saturated cells=256=max_cells, so freezing mitosis is operationally neutral:
+
+1. `engine.mitosis_step(info)` not called during DDP training
+2. Engine built with `initial_cells=256` from step 0 → ModuleList has final length immediately
+3. `find_unused_parameters=True` for top-K routing (248/256 cells unused per step)
+4. Router registered as real submodule (`engine.topk_router`) so DDP discovers it on wrap
+
+### Marketplace substitution
+
+H100_SXM 4-GPU was empty in the price range at dispatch time (2026-05-13). H200 4× at $12.9046/hr selected — strictly more capable per GPU (141 GB HBM3e vs 80 GB HBM3). Architectural conclusion is hardware-agnostic; absolute wall is H200-specific.
+
+### Files
+
+- `training/cotrain_v5mitosis_v5_ddp.py` — DDP trainer
+- `state/anima_v5mitosis_cotrain_v5_ddp_2026_05_13/dispatch_h100_v5_ddp.sh` — 4× GPU dispatch
+- `state/anima_v5mitosis_cotrain_v5_ddp_2026_05_13/hf_push.py` — HF push (V14-STRICT-gated, `dancinlab/anima-clm-v5-mitosis-cotrain-v5-ddp-2026-05-13`)
+- `docs/anima_clm_v5_mitosis_cotrain_v5_ddp_2026_05_13.md` — full audit (this entry's expanded form)
+
+### Honest C3 (≥ 5)
+
+1. **Fresh-start fallback** — without v4 step-2000 resume, F-PERSONA-4a/4b are compared against a freshly initialised router/cells, not the v3/v4 trajectory.
+2. **F-V5MIT-5 V14-STRICT under freeze_mitosis** — splits=0 because mitosis is off; F-V5MIT-5 will FAIL (interpret as N/A under freeze, not as mitosis failure). HF push correspondingly auto-gated.
+3. **DDP aux gradient averaging** — Switch load-balance aux averaged across ranks; load-balance pressure may be slightly under-applied vs v4 single-GPU.
+4. **Wall measurement overhead** — torchrun init + first-batch JIT ~1-2 min; for 5 hr training overhead is ~1 %, but for very short runs would dominate.
+5. **H200 vs H100 substitution** — task asked for H100 SXM; marketplace forced H200. Hardware-agnostic conclusion holds, absolute numbers don't transfer.
+6. **Corpus / probe unchanged** — `corpus_5cat_balanced.txt` + `identity_probe.jsonl` reused from v2/v3/v4.
+7. **Cost cap stretched $60 → $100** — H200 4× × 5 hr = $64.52 needed > $60 cap.
+
+### Status
+
+- Dispatch in-flight (pod 36635520 loading at log capture time).
+- Target step 20000 (fresh start). Mid-run ckpt every 5000 steps.
+- Verdict expected ~5 hr from dispatch.
+
+### Rating
+
+★★★ (in-flight; infra + DDP path landed; verdict pending)
+
+### Provenance
+
+- BG fire: 2026-05-13 KST, parallel with BG (a) v4 single + BG (c) v6 cell-parallel
+- 본 §92 ↔ GOAL.md In-flight 표 동기 추가
+- memory: `project_v5mitosis_ddp_path.md` (next), index in MEMORY.md
+- own 43 active resource utilization 적용 ($64.52 cost-bearing BG head 제시)
+
+raw#9/10/15/37 honest, own 42 REBORN.md SSOT, own 43 active resource utilization, feedback_no_scale_caps cap floor not ceiling, feedback_dispatch_vast_template_gotchas §45 direct-IP + `set -o pipefail` remote, feedback_orchestrator_h100_gotchas ckpts pull mandatory + SAVE_POD on pull-fail.
+
