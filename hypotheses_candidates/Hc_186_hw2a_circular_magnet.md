@@ -3,12 +3,14 @@ id: Hc_186
 slug: hw2a-circular-magnet
 title: 8-cell circular magnet ring with inverse-square coupling yields Φ=4.55 (HW2a)
 domain: physics | consciousness | substrate
-status: candidate-math-verified-falsifier-pending
+status: merged-to-H_169
 source_doc: docs/hypotheses/hw/HW2a.md
 source_lines: 1-25
 promoted_at: 2026-05-11
-linked_h: (none — NEW)
-notes: 0.02 force coefficient, left+right neighbor coupling
+merged_to: hypotheses/H_169_hw2a_8cell_circular_magnet_inverse_square.md
+merged_at: 2026-05-12
+linked_h: H_169 (HW2a 8-cell circular magnet promotion)
+notes: 0.02 force coefficient, left+right neighbor coupling — promoted to H_169 via verify5_authored row 9 (2026-05-12)
 verified_at: 2026-05-12
 verify_decision: WEAK_MATH_ONLY
 verify_note: "verify_hc2 2026-05-12 — verify3 math=1 (3+ numeric identities present)"

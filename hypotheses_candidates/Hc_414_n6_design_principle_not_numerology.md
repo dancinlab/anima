@@ -3,12 +3,14 @@ id: Hc_414
 slug: n6-design-principle-not-numerology
 title: n=6 architecture is empirically grounded, not numerological — constants measured first, formulas after (p<1e-12)
 domain: math
-status: candidate-math-verified-falsifier-pending
+status: merged-to-H_170
 source_doc: docs/anima/paper_hexa_speak.hexa
 source_lines: 39-44
 promoted_at: 2026-05-11
-linked_h: Hc_406
-notes: Argument that n=6 formulas were discovered AFTER constants were empirically measured. p < 1e-12 vs arithmetic null. Distinguishes architectural unification from retro-fitting.
+merged_to: hypotheses/H_170_n6_design_principle_empirical_not_numerology.md
+merged_at: 2026-05-12
+linked_h: Hc_406, H_170 (n=6 design empirical-not-numerology promotion)
+notes: Argument that n=6 formulas were discovered AFTER constants were empirically measured. p < 1e-12 vs arithmetic null. Distinguishes architectural unification from retro-fitting. Promoted to H_170 via verify5_authored row 11 (2026-05-12)
 verified_at: 2026-05-12
 verify_decision: WEAK_MATH_ONLY
 verify_note: "verify_hc2 2026-05-12 — verify3 math=1 (6+ numeric identities present)"
