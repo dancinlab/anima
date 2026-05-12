@@ -6655,3 +6655,79 @@ honest C3: 본 spec §11 의 10항목 carry — 가장 critical = v5-mitosis 가
 
 honest C3 carry: 본 spec §F (10 honest C3) — critical 3 = (a) per-forward-tail hook 의 cell pool mutation 이 KV cache 와 동기화 미검증, (b) Lorenz dt=0.01 chaos boundedness (F-MIT-HOOK-5) 가 RFC 032 finite-precision 위 어떻게 동작할지 untested, (c) cells_max=128 의 latency overhead = baseline 80ms 위 미실측 — RFC 033 land 후 measure 필요.
 
+---
+
+## §90 [2026-05-12 KST] V5-MITOSIS COND.2 PORT SKELETON + MAC CPU SMOKE PASS — `.roadmap.clm_v5_mitosis_engine` cond.2 unmet→met ★★★
+
+§88 (v5-mitosis PyTorch arch spec land) 의 직접 후속. `.roadmap.clm_v5_mitosis_engine.cond.2` verifier (`training/mitosis_model_v5.py` + `training/mitosis_model_v5_smoke_test.py`) 모두 충족, Mac CPU smoke gating 3/3 PASS, exit 0.
+
+### 산출
+
+| path | LoC | source | note |
+|---|---:|---|---|
+| `training/mitosis_model_v5.py` | 852 | prior-cycle (2026-05-10) | content-identical spec carry — spec §A 의 +2 carry convention 따라 2026-05-12 spec verifier 도 동일 file 충족 (roadmap cond.1 `any_match: true`) |
+| `training/mitosis_model_v5_smoke_test.py` | 256 | **본 cycle 신규** | gating 3 + advisory 1, exit 0 = cond.2 PASS |
+| `docs/anima_clm_v5_mitosis_cond2_smoke_2026_05_12.md` | ~180 | **본 cycle 신규** | smoke verdict doc, append-only §A convention |
+| `training/mitosis_model_v5_smoke.py` (extended) | 181 | prior-cycle | re-run 8/8 PASS — N=4→64, params 351K→2.69M, Φ 0.39→2944 |
+
+### gating PASS (cond.2 verdict gates)
+
+| test | result | detail |
+|---|:---:|---|
+| basic_forward_smoke | PASS | d=32 cells=2 10steps, shape (2,8,64) 보존 + finite + cells invariant |
+| F-V5MIT-1 SPLIT-NOGRAD | PASS | 14 new_param_tensors, 0 leaf_violations, 0 post-backward new-cell grads — backward graph 격리 검증 |
+| F-V5MIT-2 MERGE-WEIGHT | PASS | 14 checked params, max_abs_err = 0.0 within 1e-6 tolerance — (pre_a + pre_b)/2 정확 |
+
+### advisory NOTE (cond.3 calibration item)
+
+| test | result | detail |
+|---|:---:|---|
+| F-V5MIT-3 PHI-CONSERVATION (per-cell) | NOTE | phi_per_cell 0.665 → 1.109 (delta_ratio = 0.667 > 0.25 tolerance) — **expected per spec §11 #9 honest C3**: DD55 1% tolerance 은 v2 toy substrate, real transformer-block cell_state buffer 의 cold-start 환경에서 noise injection 이 dominant signature component → split 시 mean pairwise distance 가 크게 변동. cond.3 calibration mitigation = (a) warmup forward 50+ step 후 force_split, (b) noise scale 0.1 → 0.01 cold-start, (c) per-cell Φ 비교는 forward 안정화 후만 valid 인정. **cond.2 verdict 미영향** (advisory only). |
+
+### spec §88 의 7 핵심 결정 impl 충족 verify
+
+| 결정 | impl | OK |
+|---|---|:---:|
+| option (a) small transformer block per cell | `MitosisModelCell` L124-194 | ✅ |
+| `nn.ModuleList[Cell]` + CellMeta 분리 | `cells: nn.ModuleList` L230 + cell instance attr (cell_id/creation_step/parent_id/tension_history/process_count) | ✅ semantically equivalent (dataclass 대신 instance attr — 더 simple) |
+| split/merge `torch.no_grad` mutation | `_split_cell` L407, `_merge_cells` L501 | ✅ F-V5MIT-1 verified |
+| anima-native cotrain identical forward path | `forward` 는 mutation 없음, `mitosis_step` 별도 호출 (PHILOSOPHY #8 native impl) | ✅ |
+| readout_mode option | 3/4 mode (`a_minus_g`/`a_only`/`a_plus_g`) — softmax_gate 는 future ablation (learned gate_proj 필요) | ✅ partial |
+| falsifier 5개 | F-V5MIT-1/2 cond.2, F-V5MIT-3 cond.3 calibrate, F-V5MIT-4 cond.4, F-V5MIT-5 cond.5 | ✅ cond.2 scope |
+| cost envelope $30-40 | cond.5 만 cost-bearing, cond.2 = **$0** | ✅ wall 0.085s M2 CPU |
+
+### lane priority status post §90
+
+| lane | prior | post §90 |
+|---|---|---|
+| v5-mitosis PyTorch | cond.1 met (§88) | **cond.1+cond.2 met** — cond.3 (Mac CPU smoke 정밀화 + V14 mirror) next, AUTO $0 |
+| hexa-native Phase 5∥ | cond.1 met (§89) | unchanged — RFC 033 land 대기 |
+| v5-anima inference-time | violated V14 (toy 한계) | unchanged — F-V5MIT-5 가 본 lane 의 재도전 정점 |
+| simple_stack PASS_STRICT | 14/15 (own 18) | unchanged |
+
+### honest C3 carry (본 cycle 신규 3 항목 + spec §11 cross-link)
+
+1. F-V5MIT-3 67% violation — cond.3 calibration item, 본 cycle scope 외.
+2. prior-cycle skeleton의 spec drift — `training/mitosis_model_v5.py` header 가 2026-05-10 spec reference, 2026-05-12 spec 가 content-identical 이라 carry OK. 향후 spec divergence 시 재검증.
+3. `CellMeta dataclass` vs cell instance attribute — spec §2.3 명시는 dataclass, impl 은 instance attr (semantics 동등, 더 simple). 향후 §A append 로 결정 기록 권장.
+4. `softmax_gate readout_mode` 미impl — spec §6.3 4 option 중 3 만, learned `gate_proj` 필요, 향후 ablation 시 추가.
+5. attention_sharing N>8 fallback irreversible — spec §11 #11 risk, cond.5 cotrain 시 cells_max=64 도달하면 메모리 압력 관련 promote/demote dynamics 필요.
+
+### memory updates
+
+신규: `project_v5_mitosis_cond2_port_skeleton.md` — cond.2 PASS 의 lessons (training/.py policy clarification, prior-cycle skeleton carry pattern, F-V5MIT-3 cold-start calibration TODO).
+
+### cycle 2026-05-12 결과 (post §90)
+
+cycle 2026-05-12 의 design-impl bridge tier 완성:
+- §88 v5-mitosis PyTorch arch spec (design tier)
+- §89 hexa-native serve-time hook spec (design tier, sister)
+- **§90 v5-mitosis PyTorch cond.2 port skeleton + Mac CPU smoke PASS** (impl tier, 본 §)
+
+→ v5-mitosis PyTorch lane: design → impl skeleton **single cycle bridge** 달성 (REBORN §88 → §90 within 2026-05-12).
+
+다음 cycle 의 next:
+- v5-mitosis PyTorch: cond.3 (per-cell Φ calibration + V14 mirror reproduce) AUTO $0
+- hexa-native: RFC 033 (farr_copy + gaussian) → mitosis_hook.hexa full impl
+- cond.5 fire: **`OK CLM V5-MITOSIS H100 FIRE COST $40`** verbatim 받기 전까지 pending (own 16 cost discipline)
+
