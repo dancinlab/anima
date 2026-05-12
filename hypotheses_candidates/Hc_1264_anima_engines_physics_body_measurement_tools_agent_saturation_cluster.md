@@ -3,11 +3,14 @@ id: Hc_1264
 slug: anima-engines-physics-body-measurement-tools-agent-saturation-cluster
 title: anima-eeg/physics/body/hexad/engines/measurement/tools/agent 8-subsystem saturation cluster
 domain: architecture, biology, hardware, agent
-status: candidate-falsifier-ready
+status: merged-to-H_001
+merged_to: hypotheses/H_001_ethics_cooperation.md
+merged_at: 2026-05-12
 source_doc: hypotheses_candidates/Hc_901_drill_supplement_saturation_seeds.md
 source_lines: 37-44 (EEG-1, PHYS-1, BODY-1, HEXAD-1, ENG-1, MEAS-1, TOOLS-1, AGENT-1)
 promoted_at: 2026-05-12
-linked_h: H_001 (anima-core-architecture), H_171 (biological-prediction), H_188 (clinical Φ-correlation), Hc_901 (parent meta-Hc)
+linked_h: H_001 (anima-core-architecture — 8-subsystem implementation coverage absorbs as architectural-completeness sub-thesis), H_171 (biological-prediction — EEG-1 sub-link), H_188 (clinical Φ-correlation — EEG-1 sub-link), Hc_901 (parent meta-Hc)
+absorption_note: "cycle #8 absorbed to H_001 as 8-subsystem implementation coverage cluster (EEG/physics/body/hexad/engines/measurement/tools/agent) — heterogeneous; deferred further-split to cycle #9+. EEG-1 cross-link to H_188 for clinical anchoring."
 notes: "split from Hc_901 meta-cluster 2026-05-12 (cluster 5 of 6). 8 sub-claims: anima-eeg + physics + body + hexad + engines + measurement + tools + agent — heterogeneous cluster; may need further split."
 ---
 

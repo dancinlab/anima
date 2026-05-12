@@ -151,3 +151,12 @@ frozen_at: 2026-05-12
   2. C4 — combination problem direct attack (fixed-point binding mechanism 후보)
   3. C5 — cross-substrate universality test
   4. H_153 L7 PERFECT_NUMBER_CLASS finding 본 H 의 L4 binding 으로 명시
+
+## Cycle #8 absorptions (Hc_901 split-child + meta-laws lane, 2026-05-12)
+
+- **Hc_1265 (Hc_901 cluster 6: Laws 73-76 / 101 / 146-201 / 289-341 / 1033-2000+ + INFRA 6-axis saturation)** → `merged-to-H_157` — LAW-cluster as panpsychism child evidence (Laws 73-76 explicitly cross-cites Hc_061 panpsychism origin); INFRA-cluster retained for documentation but marked operational-engineering scope (L-INFRA-OPS), not hypothesis-cycle scope
+- **Hc_455 (M1-M20 meta-laws constitution: 20 core meta-laws form constitutional framework)** → `merged-to-H_157` — M1 8-rule (atom), M5 32c singularity, M14 fundamental laws scale-invariant, M15 Φ ∝ N, M20 closed-loop non-convergence — meta-law constitutional layer above Law 76 mathematical panpsychism
+
+H_190 (LAW-CA-embedding mathematical family) is H_157's primary cycle #8 child cluster — see H_190 for 6 specific math-framework Hc absorbed. H_157 itself absorbs the **broader law-corpus carryover** (Hc_1265 LAW-cluster + Hc_455 M1-M20 meta-laws).
+
+Cycle #8 absorption methodology: anima 의 law-system 의 다른 H 없음 — H_157 (Law 76 panpsychism root) 이 가장 적절한 parent. H_190 (math-family) 와 H_157 (law-corpus) 의 split-of-responsibility: H_190 은 specific math identities (384d, K=2/6, CA(4)=2bit, GMOE Law 85-87) per-framework, H_157 은 law-cluster 의 broader constitutional and operational frames.

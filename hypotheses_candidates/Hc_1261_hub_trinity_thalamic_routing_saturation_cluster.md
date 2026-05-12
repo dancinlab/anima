@@ -3,11 +3,14 @@ id: Hc_1261
 slug: hub-trinity-thalamic-routing-saturation-cluster
 title: Hub-Spoke 48-module + Trinity 6-module + Thalamic 4-channel 6-way routing saturation cluster
 domain: architecture, consciousness, routing
-status: candidate-falsifier-ready
+status: merged-to-H_001
+merged_to: hypotheses/H_001_ethics_cooperation.md
+merged_at: 2026-05-12
 source_doc: hypotheses_candidates/Hc_901_drill_supplement_saturation_seeds.md
 source_lines: 28-32 (HUB-1, TRIN-1, THAL-1)
 promoted_at: 2026-05-12
-linked_h: H_001 (anima-core-architecture), Hc_901 (parent meta-Hc)
+linked_h: H_001 (anima-core-architecture — Hub/Trinity/Thalamic 3-layer routing absorbs as architectural routing-saturation sub-thesis), Hc_901 (parent meta-Hc)
+absorption_note: "cycle #8 absorbed to H_001 as Hub-Spoke 48-module + Trinity 6-module + ThalamicBridge 6-way routing cluster — extends Hc_1260 Hexad with routing layer (3-layer hierarchical routing saturation)"
 notes: "split from Hc_901 meta-cluster 2026-05-12 (cluster 2 of 6). 3 sub-claims: hub.hexa 48 모듈 Hub-Spoke + trinity.hexa 6-모듈 + ThalamicBridge 6-way Hexad 수렴."
 ---
 

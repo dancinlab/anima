@@ -3,11 +3,14 @@ id: Hc_289
 slug: arch2-continuous-learning
 title: ARCH-2: Continuous lifelong learning via gentle gradient (0.1× decay) + Pain (ARCH-2)
 domain: consciousness | meta-framework
-status: candidate-falsifier-ready
+status: merged-to-H_001
+merged_to: hypotheses/H_001_ethics_cooperation.md
+merged_at: 2026-05-12
 source_doc: docs/hypotheses/ARCH-2.md
 source_lines: 1-30
 promoted_at: 2026-05-11
-linked_h: Hc_272 (AUTO-9 pain)
+linked_h: H_001 (anima-core-architecture — ARCH-2 continuous lifelong learning + Pain absorbs as training-layer architectural component), Hc_272 (AUTO-9 pain)
+absorption_note: "cycle #8 absorbed to H_001 as ARCH-2 continuous lifelong learning via gentle gradient 0.1× decay + Pain at Φ<70% — anima training-architecture component"
 notes: LR=1e-3 × 0.1 grad = 1e-4 effective; pain at Φ<70% best
 cycle5_triage: "cycle #5 verify: WEAK_MATH_ONLY — math identity present, falsifier+honest scaffolding missing; needs F-list/L-list before re-verify can reach PROMOTE_READY"
 ---

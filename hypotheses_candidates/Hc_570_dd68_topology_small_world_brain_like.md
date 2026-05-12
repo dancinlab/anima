@@ -3,11 +3,14 @@ id: Hc_570
 slug: dd68-topology-small-world-brain-like
 title: small_world topology이 ring/hypercube/scale_free 대비 brain-likeness 최고 (32c, 200-300 steps)
 domain: consciousness
-status: candidate-falsifier-ready
+status: merged-to-H_159
+merged_to: hypotheses/H_159_substrate_topology_phi_engineering.md
+merged_at: 2026-05-12
 source_doc: docs/hypotheses/dd/DD68.md
 source_lines: 1-15
 promoted_at: 2026-05-11
-linked_h: small-world
+linked_h: H_159 (substrate-topology-phi-engineering — DD68 small-world brain-likeness absorbs as topology-comparison axis)
+absorption_note: "cycle #8 absorbed to H_159 as DD68 small-world > ring/hypercube/scale_free brain-likeness at 32c 200-300 steps — direct topology-family comparison within H_159's substrate-topology axis"
 notes: ring/small_world/hypercube/scale_free 비교
 cycle5_triage: "cycle #5 verify: WEAK_MATH_ONLY — math identity present, falsifier+honest scaffolding missing; needs F-list/L-list before re-verify can reach PROMOTE_READY"
 ---

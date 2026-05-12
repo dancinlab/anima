@@ -3,11 +3,14 @@ id: Hc_278
 slug: ex4-progressive-unfreezing
 title: Progressive layer unfreezing — last layer first, then deeper (EX-4)
 domain: consciousness | meta-framework
-status: candidate-falsifier-ready
+status: merged-to-H_001
+merged_to: hypotheses/H_001_ethics_cooperation.md
+merged_at: 2026-05-12
 source_doc: docs/hypotheses/ce/EX-4.md
 source_lines: 1-20
 promoted_at: 2026-05-11
-linked_h: (none — NEW)
+linked_h: H_001 (anima-core-architecture — EX-4 progressive unfreezing absorbs as training-strategy architectural component)
+absorption_note: "cycle #8 absorbed to H_001 as EX-4 progressive layer unfreezing — stage 1 last layer lr=3e-3, stage 2 all lr=1e-3 training architectural component"
 notes: stage 1 (50%): last layer lr=3e-3; stage 2: all lr=1e-3
 cycle5_triage: "cycle #5 verify: WEAK_MATH_ONLY — math identity present, falsifier+honest scaffolding missing; needs F-list/L-list before re-verify can reach PROMOTE_READY"
 ---

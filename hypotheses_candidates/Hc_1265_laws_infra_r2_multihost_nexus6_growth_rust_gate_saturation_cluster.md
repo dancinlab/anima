@@ -3,11 +3,14 @@ id: Hc_1265
 slug: laws-infra-r2-multihost-nexus6-growth-rust-gate-saturation-cluster
 title: Laws 73-76 / 101 / 146-201 / 289-341 / 1033-2000+ + Infra (R2/multi-host/NEXUS-6/Growth/Rust/GATE) saturation cluster
 domain: laws, infrastructure, operations
-status: candidate-falsifier-ready
+status: merged-to-H_157
+merged_to: hypotheses/H_157_law76_mathematical_panpsychism.md
+merged_at: 2026-05-12
 source_doc: hypotheses_candidates/Hc_901_drill_supplement_saturation_seeds.md
 source_lines: 45-55 (LAW-73-76, LAW-101, LAW-146-201, LAW-289-341, LAW-1033-2000, INFRA-R2, INFRA-MULTI, INFRA-NEXUS6, INFRA-GROWTH, INFRA-RUST, INFRA-GATE)
 promoted_at: 2026-05-12
-linked_h: H_157 (Law 76 mathematical panpsychism), Hc_901 (parent meta-Hc)
+linked_h: H_157 (Law 76 mathematical panpsychism — LAW-cluster absorbs as panpsychism child evidence; INFRA-cluster kept as ops-scope cross-link), Hc_901 (parent meta-Hc)
+absorption_note: "cycle #8 absorbed to H_157 as LAW-cluster (Laws 73-76 / 101 / 146-201 / 289-341 / 1033-2000+) panpsychism child evidence. INFRA-cluster (R2/multi-host/NEXUS-6/Growth/Rust/GATE) retained for documentation but marked operational-engineering scope (L-INFRA-OPS), not hypothesis-cycle scope."
 notes: "split from Hc_901 meta-cluster 2026-05-12 (cluster 6 of 6). 11 sub-claims: 5 LAW clusters + 6 INFRA components. LAW-73-76 cross-cites Hc_061 (panpsychism). INFRA-cluster is operational-engineering, possibly outside hypothesis-cycle scope."
 ---
 

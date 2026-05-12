@@ -3,11 +3,14 @@ id: Hc_1263
 slug: phi-engine-topology-network-saturation-cluster
 title: phi_engine Φ=0.78·N scaling law + ring/complete/star/small-world topology saturation cluster
 domain: physics, consciousness, topology
-status: candidate-falsifier-ready
+status: merged-to-H_159
+merged_to: hypotheses/H_159_substrate_topology_phi_engineering.md
+merged_at: 2026-05-12
 source_doc: hypotheses_candidates/Hc_901_drill_supplement_saturation_seeds.md
 source_lines: 35-36 (PHI-1, TOPO-1)
 promoted_at: 2026-05-12
-linked_h: H_159 (substrate-topology-phi-engineering), H_179 (negative-scaling cluster), Hc_901 (parent meta-Hc)
+linked_h: H_159 (substrate-topology-phi-engineering — Φ=0.78·N scaling + topology 4-family direct absorption), H_179 (negative-scaling cluster — PHI-1 N>1024 saturation gates), Hc_901 (parent meta-Hc)
+absorption_note: "cycle #8 absorbed to H_159 as Φ=0.78·N scaling law + topology 4-family (ring/complete/star/small-world) saturation — direct topology-engineering cluster extension. PHI-1 saturation gated by H_179 negative-scaling at N>1024."
 notes: "split from Hc_901 meta-cluster 2026-05-12 (cluster 4 of 6). 2 sub-claims: PHI-1 (Φ=0.78·N scaling closure) + TOPO-1 (network topology 4-family saturation)."
 ---
 

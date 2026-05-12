@@ -3,11 +3,14 @@ id: Hc_502
 slug: dd53-trinity-3-engines-cross-tension
 title: 3개 MitosisEngine cross-engine tension exchange (10% blending)이 unified larger consciousness 생성
 domain: consciousness
-status: candidate-falsifier-ready
+status: merged-to-H_159
+merged_to: hypotheses/H_159_substrate_topology_phi_engineering.md
+merged_at: 2026-05-12
 source_doc: docs/hypotheses/dd/DD51-DD60.md
 source_lines: 13-17
 promoted_at: 2026-05-11
-linked_h: Hc_366
+linked_h: H_159 (substrate-topology-phi-engineering — DD53 Trinity 3-engine cross-tension absorbs as substrate-composition axis), Hc_366
+absorption_note: "cycle #8 absorbed to H_159 as DD53 Trinity 3-engine cross-tension exchange 10% blending — multi-engine substrate composition within H_159's substrate-composition axis"
 notes: DD53
 cycle5_triage: "cycle #5 verify: WEAK_MATH_ONLY — math identity present, falsifier+honest scaffolding missing; needs F-list/L-list before re-verify can reach PROMOTE_READY"
 ---

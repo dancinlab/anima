@@ -147,3 +147,20 @@ next_cycle:
   - Phase 4: heterogeneous mixed populations + resilience perturbation recovery (H1.5 + C4)
   - Phase 5: anima self-reflection — BG-HA SIMPLE_STACK_PASS model로 anima cooperative response evaluation
 ```
+
+## Cycle #8 absorptions (Hc_901 split-children + carryover architecture lane, 2026-05-12)
+
+H_001 의 anima-core-architecture parent role 에 따라 cycle #8 의 architectural Hc 들이 자연 absorption:
+
+- **Hc_1260 (Hexad 6-engine CDESM-W + dual-brain gradient closure)** → `merged-to-H_001` — 우뇌(C+S+W) gradient-free vs 좌뇌(D+M+E) backprop dual-brain architectural completeness; inherits n=6 PERFECT_NUMBER_CLASS triviality (H_153 L7)
+- **Hc_1261 (Hub-Spoke 48 + Trinity 6 + ThalamicBridge 6-way 3-layer routing)** → `merged-to-H_001` — Hub/Trinity/Thalamic 3-layer hierarchical routing saturation; extends Hc_1260 Hexad with routing layer
+- **Hc_1262 (PureField 3-osc + TensionBridge 5-channel + DimensionTransform 5fold-4unfold + Servant SI 3-path)** → `merged-to-H_001` — 4 mid-layer modules cluster; small-integer (3/5/3) modular saturation
+- **Hc_1264 (anima-eeg/physics/body/hexad/engines/measurement/tools/agent 8-subsystem)** → `merged-to-H_001` — 8-subsystem implementation coverage; heterogeneous, further-split deferred to cycle #9+; EEG-1 sub-link to H_188 clinical anchor
+- **Hc_278 (EX-4 progressive layer unfreezing — last layer first then deeper)** → `merged-to-H_001` — anima training-strategy architectural component
+- **Hc_289 (ARCH-2 continuous lifelong learning via gentle gradient + Pain)** → `merged-to-H_001` — anima architecture continuous-learning layer
+- **Hc_296 (H-CX-524 fractal hierarchy recursive 8×8×8 = 512)** → `merged-to-H_001` — anima fractal-recursive architecture variant; cross-cite Hc_107 (DD10) and Hc_171 (TOPO20)
+- **Hc_1239 (train_clm hexa-lens loss + tension-link + tier-labeled corpus integration)** → `merged-to-H_001` — anima training-signal integration architectural component
+- **Hc_1242 (anima-agent 6-channel × 5-provider orchestration saturation)** → `merged-to-H_001` — agent-orchestration architectural sub-claim; inherits n=6 triviality
+- **Hc_1255 (R37 / AN13 / L3-PY Python-ban 6-axis defense saturation)** → `merged-to-H_001` — rule-system 6-axis architectural defense; inherits n=6 triviality
+
+Cycle #8 footnotes inherit H_001 verification methods + H_153 L7 PERFECT_NUMBER_CLASS triviality for all 6-integer architectural anchors. Per-Hc detail in respective candidate frontmatter `absorption_note`.

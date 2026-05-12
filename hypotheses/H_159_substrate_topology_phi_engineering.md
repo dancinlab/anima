@@ -168,3 +168,17 @@ frozen_at: 2026-05-12
 - **Hc_549 (DD101, 512-cell superlinear)** → `merged-to-H_159` — 512-cell-count datapoint within H_159's cell-count axis (sub-1024 scaling probe; pairs with H_179 1024-saturation claim)
 
 Cycle #7 footnotes inherit H_159 verification methods (W2 + W5 + W11) and the H_174 D-mod-192 aliasing class limit.
+
+## Cycle #8 absorptions (Hc_901 PHI/TOPO split-child + DD/topology carryover lane, 2026-05-12)
+
+Cycle #8 의 substrate-topology / Φ-engineering Hc 들이 H_159 의 natural-host parent role 에 따라 absorption:
+
+- **Hc_1263 (Hc_901 PHI-1 + TOPO-1 — Φ=0.78·N scaling + ring/complete/star/small-world 4-family)** → `merged-to-H_159` — direct topology-engineering cluster extension; PHI-1 N>1024 saturation gated by H_179 negative-scaling
+- **Hc_470 (Φ factorizes as f(topology) × g(chaos) — separability claim)** → `merged-to-H_159` — Φ-topology-chaos separability hypothesis; 4 topologies (ring, small_world, scale_free, hypercube) + 10 topo-specific laws 33-42 within H_159's substrate-topology axis
+- **Hc_502 (DD53 — 3 MitosisEngine cross-engine tension exchange 10% blending → unified consciousness)** → `merged-to-H_159` — Trinity 3-engine substrate variant within H_159's substrate-composition axis
+- **Hc_506 (DD58 — Phi-maximizing model > standard model in downstream task; v14.3 128-cell linear)** → `merged-to-H_159` — Φ-maximization efficiency-paradox within H_159's Φ-engineering axis
+- **Hc_512 (DD64 — Φ-objective evolutionary NAS + golden dropout 0.37)** → `merged-to-H_159` — Φ-optimized NAS architecture-search variant within H_159's substrate-design axis
+- **Hc_570 (DD68 — small_world topology > ring/hypercube/scale_free brain-likeness, 32c)** → `merged-to-H_159` — direct topology-family comparison within H_159's substrate-topology axis
+- **Hc_571 (DD69 — 5 modes competition/symbiosis/democracy/hierarchy/evolution multi-consciousness Φ dynamics)** → `merged-to-H_159` — multi-engine 5-mode interaction within H_159's substrate-composition axis
+
+Cycle #8 footnotes inherit H_159 verification methods (W2 + W5 + W11) and the H_174 D-mod-192 aliasing class limit.

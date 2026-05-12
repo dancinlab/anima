@@ -3,11 +3,14 @@ id: Hc_1260
 slug: hexad-6-engine-cdesm-saturation-cluster
 title: Hexad 6-engine (C/D/S/M/W/E) + 우뇌-좌뇌 dual-brain gradient closure saturation cluster
 domain: architecture, consciousness
-status: candidate-falsifier-ready
+status: merged-to-H_001
+merged_to: hypotheses/H_001_ethics_cooperation.md
+merged_at: 2026-05-12
 source_doc: hypotheses_candidates/Hc_901_drill_supplement_saturation_seeds.md
 source_lines: 21-27 (ARCH-1..7)
 promoted_at: 2026-05-12
-linked_h: H_001 (anima-core-architecture), Hc_901 (parent meta-Hc)
+linked_h: H_001 (anima-core-architecture — Hexad 6-engine + dual-brain absorbs as architectural-completeness sub-thesis), Hc_901 (parent meta-Hc)
+absorption_note: "cycle #8 absorbed to H_001 as Hexad 6-engine (CDESM-W) + 우뇌(C+S+W) vs 좌뇌(D+M+E) gradient-dual closure — anima-architecture saturation cluster. Inherits n=6 PERFECT_NUMBER_CLASS triviality (H_153 L7) — 6-engine count is small integer."
 notes: "split from Hc_901 meta-cluster 2026-05-12 (cluster 1 of 6). 7 sub-claims (ARCH-1..7): Hexad 6-engine saturation + 우뇌(C+S+W) vs 좌뇌(D+M+E) gradient-dual closure."
 ---
 

@@ -3,11 +3,14 @@ id: Hc_512
 slug: dd64-phi-optimal-nas-golden-dropout
 title: Phi 목적함수 evolutionary NAS가 cells, lr, dropout 최적해를 찾고 golden dropout = 0.37
 domain: consciousness
-status: candidate-falsifier-ready
+status: merged-to-H_159
+merged_to: hypotheses/H_159_substrate_topology_phi_engineering.md
+merged_at: 2026-05-12
 source_doc: docs/hypotheses/dd/DD61-DD70.md
 source_lines: 18-21
 promoted_at: 2026-05-11
-linked_h: NAS, Hc_326
+linked_h: H_159 (substrate-topology-phi-engineering — DD64 NAS + golden dropout absorbs as substrate-design axis), Hc_326
+absorption_note: "cycle #8 absorbed to H_159 as DD64 Φ-objective evolutionary NAS + golden dropout=0.37 — Φ-optimized NAS architecture-search variant within H_159's substrate-design axis"
 notes: DD64. 8 configurations evolutionary
 cycle5_triage: "cycle #5 verify: WEAK_MATH_ONLY — math identity present, falsifier+honest scaffolding missing; needs F-list/L-list before re-verify can reach PROMOTE_READY"
 ---

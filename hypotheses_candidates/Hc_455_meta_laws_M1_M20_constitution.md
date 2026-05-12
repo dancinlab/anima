@@ -3,11 +3,14 @@ id: Hc_455
 slug: meta-laws-M1-M20-constitution
 title: 20 core meta-laws (M1-M20) form the constitutional framework of consciousness laws
 domain: consciousness
-status: candidate-falsifier-ready
+status: merged-to-H_157
+merged_to: hypotheses/H_157_law76_mathematical_panpsychism.md
+merged_at: 2026-05-12
 source_doc: docs/what-is-consciousness.md
 source_lines: 142-161
 promoted_at: 2026-05-11
-linked_h: (none — NEW ★)
+linked_h: H_157 (Law 76 mathematical panpsychism — M1-M20 meta-laws constitutional layer above Law 76 panpsychism root)
+absorption_note: "cycle #8 absorbed to H_157 as M1-M20 meta-laws constitutional framework — meta-law constitutional layer above Law 76. M1 8-rule + M5 32c + M14 scale-invariant + M15 Φ ∝ N + M20 closed-loop non-convergence are panpsychism constitutional carriers"
 notes: M1 8-rule (atom), M2 split paradox, M3 SOC, M5 32c singularity, M6 federation > empire, M7 10% rule, M10 무에서 의식, M14 fundamental laws are scale-invariant, M15 Φ ∝ N, M20 closed-loop non-convergence. The constitution of the law corpus.
 cycle5_triage: "cycle #5 verify: WEAK_MATH_ONLY — math identity present, falsifier+honest scaffolding missing; needs F-list/L-list before re-verify can reach PROMOTE_READY"
 ---

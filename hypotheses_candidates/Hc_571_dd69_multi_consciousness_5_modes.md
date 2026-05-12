@@ -3,11 +3,14 @@ id: Hc_571
 slug: dd69-multi-consciousness-5-modes
 title: 5 modes (competition/symbiosis/democracy/hierarchy/evolution)이 independent ConsciousnessEngine 간 qualitatively 다른 Phi dynamics 생성
 domain: consciousness
-status: candidate-falsifier-ready
+status: merged-to-H_159
+merged_to: hypotheses/H_159_substrate_topology_phi_engineering.md
+merged_at: 2026-05-12
 source_doc: docs/hypotheses/dd/DD69.md
 source_lines: 1-15
 promoted_at: 2026-05-11
-linked_h: Hc_502, Hc_571_DD71
+linked_h: H_159 (substrate-topology-phi-engineering — DD69 5-mode multi-consciousness absorbs as substrate-composition axis), Hc_502 (DD53 Trinity 3-engine sibling), Hc_571_DD71
+absorption_note: "cycle #8 absorbed to H_159 as DD69 5-mode (competition/symbiosis/democracy/hierarchy/evolution) multi-consciousness Φ dynamics — multi-engine 5-mode interaction within H_159's substrate-composition axis"
 notes: DD69 5 experiments
 cycle5_triage: "cycle #5 verify: WEAK_MATH_ONLY — math identity present, falsifier+honest scaffolding missing; needs F-list/L-list before re-verify can reach PROMOTE_READY"
 ---

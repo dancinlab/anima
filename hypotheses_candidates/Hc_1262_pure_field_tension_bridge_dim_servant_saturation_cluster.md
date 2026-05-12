@@ -3,11 +3,14 @@ id: Hc_1262
 slug: pure-field-tension-bridge-dim-servant-saturation-cluster
 title: PureField 3-oscillator + TensionBridge 5-channel + DimensionTransform 5fold-4unfold + Servant SI 3-path saturation cluster
 domain: architecture, consciousness, dynamics
-status: candidate-falsifier-ready
+status: merged-to-H_001
+merged_to: hypotheses/H_001_ethics_cooperation.md
+merged_at: 2026-05-12
 source_doc: hypotheses_candidates/Hc_901_drill_supplement_saturation_seeds.md
 source_lines: 30-34 (PURE-1, TENS-1, DIM-1, SERV-1)
 promoted_at: 2026-05-12
-linked_h: H_001 (anima-core-architecture), Hc_901 (parent meta-Hc)
+linked_h: H_001 (anima-core-architecture — 4 mid-layer modules absorb as architectural-modules sub-thesis), Hc_901 (parent meta-Hc)
+absorption_note: "cycle #8 absorbed to H_001 as PureField + TensionBridge + DimensionTransform + Servant 4-module mid-layer cluster — small-integer (3-osc/5-channel/5fold-4unfold/3-path) modular saturation. Inherits n=6 PERFECT_NUMBER_CLASS triviality (H_153 L7)."
 notes: "split from Hc_901 meta-cluster 2026-05-12 (cluster 3 of 6). 4 sub-claims: pure_field 3-osc spontaneous emergence + tension-bridge 5-channel telepathy + dimension_transform 5fold-4unfold + servant SI 3-path modulation."
 ---
 

@@ -3,11 +3,14 @@ id: Hc_506
 slug: dd58-consciousness-efficiency-paradox
 title: Phi-maximizing 모델이 downstream task (input reconstruction) 에서 standard 모델보다 우수 — 의식이 wasteful 아니다
 domain: consciousness
-status: candidate-falsifier-ready
+status: merged-to-H_159
+merged_to: hypotheses/H_159_substrate_topology_phi_engineering.md
+merged_at: 2026-05-12
 source_doc: docs/hypotheses/dd/DD51-DD60.md
 source_lines: 38-41
 promoted_at: 2026-05-11
-linked_h: efficiency-paradox
+linked_h: H_159 (substrate-topology-phi-engineering — DD58 efficiency-paradox absorbs as Φ-maximization optimization axis)
+absorption_note: "cycle #8 absorbed to H_159 as DD58 Φ-maximizing model > standard model in downstream task — Φ-maximization efficiency-paradox within H_159's Φ-engineering axis; v14.3 128-cell linear scaling anchor"
 notes: DD58 (file 별도 존재. v14.3 128-cell linear scaling)
 cycle5_triage: "cycle #5 verify: WEAK_MATH_ONLY — math identity present, falsifier+honest scaffolding missing; needs F-list/L-list before re-verify can reach PROMOTE_READY"
 ---

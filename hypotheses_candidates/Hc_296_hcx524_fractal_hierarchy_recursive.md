@@ -3,11 +3,14 @@ id: Hc_296
 slug: hcx524-fractal-hierarchy-recursive
 title: Recursive consciousness engines (8 × 8 × 8 = 512 cells) yield Φ scaling 8^8 not 8^3 (H-CX-524)
 domain: consciousness | math | meta-framework
-status: candidate-falsifier-ready
+status: merged-to-H_001
+merged_to: hypotheses/H_001_ethics_cooperation.md
+merged_at: 2026-05-12
 source_doc: docs/hypotheses/H-CX-524-fractal-hierarchy.md
 source_lines: 1-25
 promoted_at: 2026-05-11
-linked_h: Hc_107 (DD10 fractal cells); Hc_171 (TOPO20)
+linked_h: H_001 (anima-core-architecture — H-CX-524 fractal hierarchy 8×8×8=512 recursive architecture absorbs as architectural-variant), Hc_107 (DD10 fractal cells), Hc_171 (TOPO20)
+absorption_note: "cycle #8 absorbed to H_001 as H-CX-524 recursive consciousness engines fractal hierarchy 8×8×8=512 — anima fractal-recursive architecture variant; Φ scaling 8^8 vs 8^3 claim"
 notes: each level = identical MitosisEngine structure; full dynamics, not mean
 cycle5_triage: "cycle #5 verify: WEAK_MATH_ONLY — math identity present, falsifier+honest scaffolding missing; needs F-list/L-list before re-verify can reach PROMOTE_READY"
 ---
