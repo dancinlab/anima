@@ -1,0 +1,26 @@
+[INFO] device=cuda torch=2.5.1+cu121 cuda_available=True
+[INFO] gpu=NVIDIA H100 80GB HBM3
+[INFO] cfg = {'vocab_size': 256, 'd_model': 384, 'n_head': 6, 'ffn_dim': 1536, 'max_seq': 256, 'n_layer': 1, 'initial_cells': 2, 'max_cells': 64, 'min_cells': 2, 'split_patience': 3, 'merge_threshold': 0.005, 'merge_patience': 30, 'noise_scale': 0.1, 'lorenz_scale': 0.05, 'adaptive_window': 100, 'readout_mode': 'a_minus_g', 'attention_sharing': 'auto', 'weight_tied_lm_head': True, 'dropout': 0.0, 'tie_pos_emb': True, 'dispersion_trigger_enabled': True, 'dispersion_top_quartile': 0.25, 'per_cell_threshold_enabled': True, 'per_cell_window': 100, 'per_cell_sigma_mult': 1.5, 'lorenz_auto_calibrate': True, 'lorenz_calibration_factor': 1.0}
+[INFO] initial n_params = 6,106,368, n_cells = 2
+[INFO] loading corpus: corpus/corpus_color_cosmology.txt
+[INFO] corpus bytes = 1,288,162
+[INFO] training 5000 steps, batch=32, ctx=256, lr=0.0001, warmup=500, cost_cap=$40.0, cost_per_hr=$2.2814
+[INFO] cost guard active — abort if elapsed × rate > cap
+[STEP     0] loss=264.3491 avg50=264.3491 lr=2.00e-07 cells=2 phi=0.0004 phi/N=0.0002 splits=0 merges=0 elapsed=0.00hr cost=$0.00
+Traceback (most recent call last):
+  File "/workspace/anima/training/train_v5mitosis_cotrain.py", line 679, in <module>
+    sys.exit(cotrain(args))
+             ^^^^^^^^^^^^^
+  File "/workspace/anima/training/train_v5mitosis_cotrain.py", line 397, in cotrain
+    mit_result = engine.mitosis_step(info)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/anima/training/mitosis_model_v5.py", line 387, in mitosis_step
+    split_events = self._check_splits()
+                   ^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/anima/training/mitosis_model_v5.py", line 778, in _check_splits
+    ev = self._split_cell(idx)
+         ^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/anima/training/mitosis_model_v5.py", line 448, in _split_cell
+    child.cell_state.add_(torch.randn_like(child.cell_state) * (0.1 * parent.cell_state.norm().clamp(min=1e-6)))
+                          ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+RuntimeError: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cpu!

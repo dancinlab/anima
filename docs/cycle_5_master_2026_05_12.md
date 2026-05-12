@@ -493,7 +493,7 @@ cycle 5 §3 #A 의 "K=10 canonical TRIVIAL" 가 cycle 6 §Q 에서 *axis-specifi
 - **CRITICAL out-of-band**: `state/hf_upload_anima_hypotheses_candidates_2026_05_12.md` (commit `bf03ee397`) 에 HF token `hf_zlbJ…lanybs` prefix-suffix 노출 (중간 ellipsis 마스킹). 즉시 위험 낮음 (이미 git history rewrite 됨, fsck unreachable) **but** rotate 권장 (cryptographically infeasible 이지만 hygiene).
 - **§5 fix queue (5 items)**: nexus-lenses README path × 2 + visibility line + license alignment / research-trail GitHub URL typo × 2 / hypotheses-candidates sister §6 (optional defer) / anima repo state/ redact / HF token rotate.
 - **§6 public-flip 1-line per dataset** (사용자 confirm 후): `api.update_repo_settings(..., private=False)` × 3, order candidates → research-trail → lenses.
-- **L1-L3 honest**: GitHub vs HF scan pattern divergence (L1) / dataset card vs HF YAML frontmatter consistency (L2) / org rename `need-singularity` → `dancinlab` archived snapshot stale risk (L3).
+- **L1-L3 honest**: GitHub vs HF scan pattern divergence (L1) / dataset card vs HF YAML frontmatter consistency (L2) / org rename `dancinlab` → `dancinlab` archived snapshot stale risk (L3).
 - **Source**: `state/hf_public_flip_readiness_audit_2026_05_12.md` (254 lines).
 
 ### §9.5 Agent S — Discoverability 3-Tier (README + docs/INDEX + NEXT)

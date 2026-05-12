@@ -91,7 +91,9 @@ trap cleanup EXIT
 echo "[3/8] Waiting for SSH ready..."
 SSH_HOST=""
 SSH_PORT=""
-for i in $(seq 1 80); do
+# Extended to 160 attempts (13 min total) — prior attempt 1 saw pod transition to
+# 'running' at attempt 73/80, then SSH probe needed extra time for sshd to come up.
+for i in $(seq 1 160); do
     INFO=$($VASTAI show instance "$INSTANCE_ID" --raw 2>/dev/null || true)
     [ -z "$INFO" ] && INFO="{}"
     STATUS=$(echo "$INFO" | python3 -c "import json,sys;
@@ -113,7 +115,7 @@ except: pass" 2>/dev/null || echo "")
             SSH_HOST=""
         fi
     fi
-    echo "  ... attempt $i/80, status=$STATUS"
+    echo "  ... attempt $i/160, status=$STATUS"
     sleep 5
 done
 

@@ -1666,8 +1666,8 @@ own 31 live "HF artifact org SSOT — dancinlab canonical + naming convention [S
   slug hf-artifact-org-ssot-dancinlab-naming-convention
   since 2026-05-08
   scope all anima training artifact uploads to HuggingFace Hub (BG fires / DPO / pretrain / eval / corpus / dataset)
-  user-directive verbatim "own 으로 등록해줘 dancinlab 이고 , 명명규칙등 정해야될듯" (2026-05-08, post need-singularity → dancinlab migration + dancinlife/anima-bg_km_llama_3b-20260508-1025 first private upload)
-  finding 이전 cycle (2026-05-08-mid) need-singularity org 49 repos → dancinlab 이전 완료 (46 models + 3 datasets, 6mo redirect 활성). 그 후 BG-KM-LLAMA-3B PASS_STRICT 자동 promote가 dancinlife/ (개인 계정) prefix 사용 — own 24 single SSOT 위반. dancinlab org SSOT 등록 + naming convention 표준화 필요.
+  user-directive verbatim "own 으로 등록해줘 dancinlab 이고 , 명명규칙등 정해야될듯" (2026-05-08, post dancinlab → dancinlab migration + dancinlife/anima-bg_km_llama_3b-20260508-1025 first private upload)
+  finding 이전 cycle (2026-05-08-mid) dancinlab org 49 repos → dancinlab 이전 완료 (46 models + 3 datasets, 6mo redirect 활성). 그 후 BG-KM-LLAMA-3B PASS_STRICT 자동 promote가 dancinlife/ (개인 계정) prefix 사용 — own 24 single SSOT 위반. dancinlab org SSOT 등록 + naming convention 표준화 필요.
   rule HF artifact org + naming SSOT:
     - mandate-1 모든 anima HF upload destination = dancinlab (organization, not personal)
     - mandate-2 dancinlife/<repo> 잔존 2건 (dancinlife/anima-polyglot-ko-1.3b-lora-bg-ja-ext + dancinlife/anima-bg_km_llama_3b-20260508-1025) → dancinlab/<new-name> 즉시 이전 (HF api.move_repo, 6mo redirect 자동)
@@ -1702,7 +1702,7 @@ own 31 live "HF artifact org SSOT — dancinlab canonical + naming convention [S
     - tool/transient_py/anima_km_*_h100.py orch_pod_create finally block: hardcode "dancinlab/" prefix + mandate-4 Flavor B naming
     - tool/transient_py/anima_km_manual_hf_promote.py: rebuild repo_id from verdict.json fields per Flavor B
     - manifest.json (HF Card) auto-generate at upload time per mandate-9
-  evidence-trail dancinlife/anima-bg_km_llama_3b-20260508-1025 (첫 PASS_STRICT private upload, naming irregular) + need-singularity → dancinlab migration cycle (49 repos, 2026-05-08-mid) + 22+ BG saga 첫 SIMPLE_STACK_PASS_STRICT model dancinlab 정착 mandate
+  evidence-trail dancinlife/anima-bg_km_llama_3b-20260508-1025 (첫 PASS_STRICT private upload, naming irregular) + dancinlab → dancinlab migration cycle (49 repos, 2026-05-08-mid) + 22+ BG saga 첫 SIMPLE_STACK_PASS_STRICT model dancinlab 정착 mandate
   cross-link own 16 (cost watchdog) own 18 (simple stack SSOT) own 22 (philosophy/rule/hypothesis 새 발견 mandatory report) own 24 (single SSOT ledger) own 28 (anti-Goodhart) own 29 (SIMPLE_STACK_PASS floor) own 30 (model checkpoint preservation) .roadmap.cli T1 (chat REPL backend = dancinlab repo only)
   honest-c3 dancinlab org는 사용자 manual create — Anthropic HF account 정책 미준수 시 (예: 외부 license 충돌) backup org 필요 가능성
   honest-c3 mandate-2 즉시 이전은 hf_hub.move_repo() 호출이라 6mo redirect 자동 활성 — 그동안 from_pretrained("dancinlife/...")는 자동 dancinlab으로 잡힘; 6mo 후 hardcode 된 다른 코드는 break
@@ -1949,7 +1949,7 @@ own 37 live "HF 통합 mandate — org SSOT + naming + git ban + visibility life
   finding own 31 (HF org SSOT + Flavor B naming + private default + Card metadata) + own 36 (HF upload mandate — git ban) 분리되어 정합 점검 시 두 own 동시 cross-link 부담. visibility lifecycle (process private / success public) 명시 미land — public promote criteria (own 28 V6 awareness + manual review prerequisite) 가 own 31 mandate-8 한 줄로만 압축. 사용자 directive verbatim 의 "지정한 것에 대한 성공" 명시화 mandate.
   rule HF 통합 mandate (own 31 + own 36 absorb + visibility lifecycle land):
     [ORG SSOT — own 31 absorb]
-    - mandate-1 destination org = `dancinlab` (organization, NOT `dancinlife` personal account, NOT `need-singularity` deprecated). Code-level hardcode 강제, dancinlife/* / need-singularity/* alias detection 시 reject.
+    - mandate-1 destination org = `dancinlab` (organization, NOT `dancinlife` personal account, NOT `dancinlab` deprecated). Code-level hardcode 강제, dancinlife/* / dancinlab/* alias detection 시 reject.
     - mandate-2 BG iteration repo move 시 hf_hub.move_repo() 6mo redirect 자동 활성 — 그 동안 from_pretrained() 자동 dancinlab 잡힘
     - mandate-3 orchestrator + helper script repo prefix hardcode = `dancinlab/<repo>` only (코드 sweep 시 dancinlife/ 발견 시 reject)
     [NAMING CONVENTION — own 31 absorb mandate-4]

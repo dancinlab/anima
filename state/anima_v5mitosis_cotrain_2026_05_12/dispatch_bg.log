@@ -1,0 +1,122 @@
+=== v5mitosis_cotrain vast.ai H100 dispatch (Mac-local) ===
+Tue May 12 11:44:04 UTC 2026
+  steps=5000 batch=32 ctx=256 lr=1e-4 warmup=500
+  d_model=384 n_head=6 ffn_dim=1536
+  cells=2 to 64 readout=a_minus_g
+  cost_cap=$40.0 absolute_max=$44.0
+  estimated wall 10.0hr
+[1/9] Searching H100 offers under $3.5/hr ...
+  Selected: id=28762957 dph=$2.2814 gpu=H100
+[2/9] Pre-fire cost gate ...
+  est_cost = 2.2814 × 10.0 hr = $22.81
+  absolute_max = $44.0
+  ✓ within budget
+[3/9] Renting instance...
+  raw[head]: { "instance_api_key": "f94b2087906e22bcb7084f198c001366e52e4a1cca0fd126e768618bdd491241", "new_contract": 36614097, "success": true }
+  Instance ID: 36614097
+[4/9] Waiting for SSH ready (max 13 min)...
+  ... attempt 1/160, status=None
+  ... attempt 2/160, status=None
+  ... attempt 3/160, status=loading
+  ... attempt 4/160, status=loading
+  ... attempt 5/160, status=loading
+  ... attempt 6/160, status=loading
+  ... attempt 7/160, status=loading
+  ... attempt 8/160, status=loading
+  ... attempt 9/160, status=loading
+  ... attempt 10/160, status=loading
+  ... attempt 11/160, status=loading
+  ... attempt 12/160, status=loading
+  ... attempt 13/160, status=loading
+  ... attempt 14/160, status=loading
+  ... attempt 15/160, status=loading
+  ... attempt 16/160, status=loading
+  ... attempt 17/160, status=loading
+  ... attempt 18/160, status=loading
+  ... attempt 19/160, status=loading
+  ... attempt 20/160, status=loading
+  ... attempt 21/160, status=loading
+  ... attempt 22/160, status=loading
+  ... attempt 23/160, status=loading
+  ... attempt 24/160, status=loading
+  ... attempt 25/160, status=loading
+  ... attempt 26/160, status=loading
+  ... attempt 27/160, status=loading
+  ... attempt 28/160, status=loading
+  ... attempt 29/160, status=loading
+  ... attempt 30/160, status=loading
+  ... attempt 31/160, status=loading
+  ... attempt 32/160, status=loading
+  ... attempt 33/160, status=loading
+  ... attempt 34/160, status=running
+  SSH ready: ssh3.vast.ai:14096 (after 35x5s)
+[5/9] Uploading files (model + script + corpus + probe) ...
+Warning: Permanently added '[ssh3.vast.ai]:14096' (ED25519) to the list of known hosts.
+Welcome to vast.ai. If authentication fails, try again after a few seconds, and double check your ssh key.
+Have fun!
+Warning: Permanently added '[ssh3.vast.ai]:14096' (ED25519) to the list of known hosts.
+Welcome to vast.ai. If authentication fails, try again after a few seconds, and double check your ssh key.
+Have fun!
+Warning: Permanently added '[ssh3.vast.ai]:14096' (ED25519) to the list of known hosts.
+Welcome to vast.ai. If authentication fails, try again after a few seconds, and double check your ssh key.
+Have fun!
+Warning: Permanently added '[ssh3.vast.ai]:14096' (ED25519) to the list of known hosts.
+Welcome to vast.ai. If authentication fails, try again after a few seconds, and double check your ssh key.
+Have fun!
+Warning: Permanently added '[ssh3.vast.ai]:14096' (ED25519) to the list of known hosts.
+Welcome to vast.ai. If authentication fails, try again after a few seconds, and double check your ssh key.
+Have fun!
+[6/9] GPU + torch check...
+Warning: Permanently added '[ssh3.vast.ai]:14096' (ED25519) to the list of known hosts.
+Welcome to vast.ai. If authentication fails, try again after a few seconds, and double check your ssh key.
+Have fun!
+2.5.1+cu121 True NVIDIA H100 80GB HBM3 85049802752
+[7/9] Cotrain (5000 steps, batch=32, ctx=256, lr=1e-4)...
+Warning: Permanently added '[ssh3.vast.ai]:14096' (ED25519) to the list of known hosts.
+Welcome to vast.ai. If authentication fails, try again after a few seconds, and double check your ssh key.
+Have fun!
+[INFO] device=cuda torch=2.5.1+cu121 cuda_available=True
+[INFO] gpu=NVIDIA H100 80GB HBM3
+[INFO] cfg = {'vocab_size': 256, 'd_model': 384, 'n_head': 6, 'ffn_dim': 1536, 'max_seq': 256, 'n_layer': 1, 'initial_cells': 2, 'max_cells': 64, 'min_cells': 2, 'split_patience': 3, 'merge_threshold': 0.005, 'merge_patience': 30, 'noise_scale': 0.1, 'lorenz_scale': 0.05, 'adaptive_window': 100, 'readout_mode': 'a_minus_g', 'attention_sharing': 'auto', 'weight_tied_lm_head': True, 'dropout': 0.0, 'tie_pos_emb': True, 'dispersion_trigger_enabled': True, 'dispersion_top_quartile': 0.25, 'per_cell_threshold_enabled': True, 'per_cell_window': 100, 'per_cell_sigma_mult': 1.5, 'lorenz_auto_calibrate': True, 'lorenz_calibration_factor': 1.0}
+[INFO] initial n_params = 6,106,368, n_cells = 2
+[INFO] loading corpus: corpus/corpus_color_cosmology.txt
+[INFO] corpus bytes = 1,288,162
+[INFO] training 5000 steps, batch=32, ctx=256, lr=0.0001, warmup=500, cost_cap=$40.0, cost_per_hr=$2.2814
+[INFO] cost guard active — abort if elapsed × rate > cap
+[STEP     0] loss=264.3491 avg50=264.3491 lr=2.00e-07 cells=2 phi=0.0004 phi/N=0.0002 splits=0 merges=0 elapsed=0.00hr cost=$0.00
+Traceback (most recent call last):
+  File "/workspace/anima/training/train_v5mitosis_cotrain.py", line 679, in <module>
+    sys.exit(cotrain(args))
+             ^^^^^^^^^^^^^
+  File "/workspace/anima/training/train_v5mitosis_cotrain.py", line 397, in cotrain
+    mit_result = engine.mitosis_step(info)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/anima/training/mitosis_model_v5.py", line 387, in mitosis_step
+    split_events = self._check_splits()
+                   ^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/anima/training/mitosis_model_v5.py", line 778, in _check_splits
+    ev = self._split_cell(idx)
+         ^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/anima/training/mitosis_model_v5.py", line 448, in _split_cell
+    child.cell_state.add_(torch.randn_like(child.cell_state) * (0.1 * parent.cell_state.norm().clamp(min=1e-6)))
+                          ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+RuntimeError: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cpu!
+  train exit code = 0
+[8/9] Downloading artifacts...
+Warning: Permanently added '[ssh3.vast.ai]:14096' (ED25519) to the list of known hosts.
+Welcome to vast.ai. If authentication fails, try again after a few seconds, and double check your ssh key.
+Have fun!
+scp: /workspace/anima/output/ckpt_final.pt: No such file or directory
+Warning: Permanently added '[ssh3.vast.ai]:14096' (ED25519) to the list of known hosts.
+Welcome to vast.ai. If authentication fails, try again after a few seconds, and double check your ssh key.
+Have fun!
+scp: /workspace/anima/output/cotrain_result.json: No such file or directory
+Warning: Permanently added '[ssh3.vast.ai]:14096' (ED25519) to the list of known hosts.
+Welcome to vast.ai. If authentication fails, try again after a few seconds, and double check your ssh key.
+Have fun!
+[WARN] artifact pull partial fail — retaining pod for manual recovery
+[WARN] pod 36614097 kept (SAVE_POD effectively=1)
+[9/9] === v5mitosis_cotrain dispatch DONE ===
+Tue May 12 11:49:47 UTC 2026
+DONE
+[cleanup] SAVE_POD=1 — keeping instance 36614097 (manual destroy required)

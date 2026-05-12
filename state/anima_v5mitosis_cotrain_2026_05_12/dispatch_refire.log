@@ -1,0 +1,58 @@
+Warning: Permanently added '[ssh3.vast.ai]:14096' (ED25519) to the list of known hosts.
+Welcome to vast.ai. If authentication fails, try again after a few seconds, and double check your ssh key.
+Have fun!
+[INFO] device=cuda torch=2.5.1+cu121 cuda_available=True
+[INFO] gpu=NVIDIA H100 80GB HBM3
+[INFO] cfg = {'vocab_size': 256, 'd_model': 384, 'n_head': 6, 'ffn_dim': 1536, 'max_seq': 256, 'n_layer': 1, 'initial_cells': 2, 'max_cells': 64, 'min_cells': 2, 'split_patience': 3, 'merge_threshold': 0.005, 'merge_patience': 30, 'noise_scale': 0.1, 'lorenz_scale': 0.05, 'adaptive_window': 100, 'readout_mode': 'a_minus_g', 'attention_sharing': 'auto', 'weight_tied_lm_head': True, 'dropout': 0.0, 'tie_pos_emb': True, 'dispersion_trigger_enabled': True, 'dispersion_top_quartile': 0.25, 'per_cell_threshold_enabled': True, 'per_cell_window': 100, 'per_cell_sigma_mult': 1.5, 'lorenz_auto_calibrate': True, 'lorenz_calibration_factor': 1.0}
+[INFO] initial n_params = 6,106,368, n_cells = 2
+[INFO] loading corpus: corpus/corpus_color_cosmology.txt
+[INFO] corpus bytes = 1,288,162
+[INFO] training 5000 steps, batch=32, ctx=256, lr=0.0001, warmup=500, cost_cap=$40.0, cost_per_hr=$2.2814
+[INFO] cost guard active — abort if elapsed × rate > cap
+[STEP     0] loss=264.3491 avg50=264.3491 lr=2.00e-07 cells=2 phi=0.0004 phi/N=0.0002 splits=0 merges=0 elapsed=0.00hr cost=$0.00
+[STEP    50] loss=256.5446 avg50=257.8202 lr=1.02e-05 cells=11 phi=2.3476 phi/N=0.2134 splits=9 merges=0 elapsed=0.00hr cost=$0.00
+[STEP   100] loss=249.7151 avg50=254.8877 lr=2.02e-05 cells=42 phi=3.7457 phi/N=0.0892 splits=40 merges=0 elapsed=0.00hr cost=$0.01
+[STEP   150] loss=237.6825 avg50=243.9392 lr=3.02e-05 cells=64 phi=4.1697 phi/N=0.0652 splits=62 merges=0 elapsed=0.01hr cost=$0.02
+[STEP   200] loss=130.4622 avg50=216.3013 lr=4.02e-05 cells=64 phi=4.1660 phi/N=0.0651 splits=62 merges=0 elapsed=0.01hr cost=$0.03
+[STEP   250] loss=25.5530 avg50=56.0933 lr=5.02e-05 cells=64 phi=4.1524 phi/N=0.0649 splits=62 merges=0 elapsed=0.02hr cost=$0.04
+[STEP   300] loss=7.6357 avg50=14.5748 lr=6.02e-05 cells=64 phi=4.1731 phi/N=0.0652 splits=62 merges=0 elapsed=0.02hr cost=$0.06
+[STEP   350] loss=3.3978 avg50=5.2338 lr=7.02e-05 cells=64 phi=4.1785 phi/N=0.0653 splits=62 merges=0 elapsed=0.03hr cost=$0.07
+[STEP   400] loss=2.4799 avg50=3.0077 lr=8.02e-05 cells=64 phi=4.1663 phi/N=0.0651 splits=62 merges=0 elapsed=0.04hr cost=$0.08
+[STEP   450] loss=2.3309 avg50=2.4239 lr=9.02e-05 cells=64 phi=4.1771 phi/N=0.0653 splits=62 merges=0 elapsed=0.04hr cost=$0.09
+[STEP   500] loss=2.1869 avg50=2.1644 lr=1.00e-04 cells=64 phi=4.1711 phi/N=0.0652 splits=62 merges=0 elapsed=0.05hr cost=$0.11
+[STEP   550] loss=1.9794 avg50=2.0309 lr=1.00e-04 cells=64 phi=4.1751 phi/N=0.0652 splits=62 merges=0 elapsed=0.05hr cost=$0.12
+[STEP   600] loss=1.8559 avg50=1.9750 lr=9.99e-05 cells=64 phi=4.1660 phi/N=0.0651 splits=62 merges=0 elapsed=0.06hr cost=$0.13
+[STEP   650] loss=1.9152 avg50=1.9116 lr=9.97e-05 cells=64 phi=4.1269 phi/N=0.0645 splits=62 merges=0 elapsed=0.06hr cost=$0.15
+[STEP   700] loss=1.8517 avg50=1.8632 lr=9.95e-05 cells=64 phi=4.1743 phi/N=0.0652 splits=62 merges=0 elapsed=0.07hr cost=$0.16
+[STEP   750] loss=1.8506 avg50=1.8667 lr=9.92e-05 cells=64 phi=4.1642 phi/N=0.0651 splits=62 merges=0 elapsed=0.08hr cost=$0.17
+[STEP   800] loss=1.8880 avg50=1.8332 lr=9.89e-05 cells=64 phi=4.1200 phi/N=0.0644 splits=62 merges=0 elapsed=0.08hr cost=$0.18
+[STEP   850] loss=1.7445 avg50=1.8048 lr=9.85e-05 cells=64 phi=4.1717 phi/N=0.0652 splits=62 merges=0 elapsed=0.09hr cost=$0.20
+[STEP   900] loss=1.7405 avg50=1.7591 lr=9.81e-05 cells=64 phi=4.1723 phi/N=0.0652 splits=62 merges=0 elapsed=0.09hr cost=$0.21
+[STEP   950] loss=1.7396 avg50=1.7490 lr=9.76e-05 cells=64 phi=4.1743 phi/N=0.0652 splits=62 merges=0 elapsed=0.10hr cost=$0.22
+[CKPT] saved output/ckpt_step_1000.pt
+[STEP  1000] loss=1.7436 avg50=1.7254 lr=9.70e-05 cells=64 phi=4.1753 phi/N=0.0652 splits=62 merges=0 elapsed=0.10hr cost=$0.24
+[STEP  1050] loss=1.7205 avg50=1.7507 lr=9.64e-05 cells=64 phi=4.1570 phi/N=0.0650 splits=62 merges=0 elapsed=0.11hr cost=$0.25
+[STEP  1100] loss=1.6869 avg50=1.7105 lr=9.57e-05 cells=64 phi=4.1690 phi/N=0.0651 splits=62 merges=0 elapsed=0.11hr cost=$0.26
+[STEP  1150] loss=1.7755 avg50=1.6835 lr=9.49e-05 cells=64 phi=4.1699 phi/N=0.0652 splits=62 merges=0 elapsed=0.12hr cost=$0.27
+[STEP  1200] loss=1.6426 avg50=1.6699 lr=9.41e-05 cells=64 phi=4.1171 phi/N=0.0643 splits=62 merges=0 elapsed=0.13hr cost=$0.29
+[STEP  1250] loss=1.7934 avg50=1.6477 lr=9.33e-05 cells=64 phi=4.1714 phi/N=0.0652 splits=62 merges=0 elapsed=0.13hr cost=$0.30
+[STEP  1300] loss=1.7211 avg50=1.6617 lr=9.24e-05 cells=64 phi=4.1700 phi/N=0.0652 splits=62 merges=0 elapsed=0.14hr cost=$0.31
+[STEP  1350] loss=1.6146 avg50=1.6548 lr=9.15e-05 cells=64 phi=4.1731 phi/N=0.0652 splits=62 merges=0 elapsed=0.14hr cost=$0.33
+[STEP  1400] loss=1.6427 avg50=1.6273 lr=9.05e-05 cells=64 phi=4.1609 phi/N=0.0650 splits=62 merges=0 elapsed=0.15hr cost=$0.34
+[STEP  1450] loss=1.5894 avg50=1.6403 lr=8.94e-05 cells=64 phi=4.1649 phi/N=0.0651 splits=62 merges=0 elapsed=0.15hr cost=$0.35
+[STEP  1500] loss=1.5517 avg50=1.6038 lr=8.83e-05 cells=64 phi=4.0878 phi/N=0.0639 splits=62 merges=0 elapsed=0.16hr cost=$0.36
+[STEP  1550] loss=1.5297 avg50=1.6080 lr=8.72e-05 cells=64 phi=4.1730 phi/N=0.0652 splits=62 merges=0 elapsed=0.17hr cost=$0.38
+[STEP  1600] loss=1.5934 avg50=1.5917 lr=8.60e-05 cells=64 phi=4.1794 phi/N=0.0653 splits=62 merges=0 elapsed=0.17hr cost=$0.39
+[STEP  1650] loss=1.5512 avg50=1.5830 lr=8.47e-05 cells=64 phi=4.1694 phi/N=0.0651 splits=62 merges=0 elapsed=0.18hr cost=$0.40
+[STEP  1700] loss=1.6141 avg50=1.5681 lr=8.35e-05 cells=64 phi=4.1738 phi/N=0.0652 splits=62 merges=0 elapsed=0.18hr cost=$0.42
+[STEP  1750] loss=1.4950 avg50=1.5530 lr=8.21e-05 cells=64 phi=4.1740 phi/N=0.0652 splits=62 merges=0 elapsed=0.19hr cost=$0.43
+[STEP  1800] loss=1.5300 avg50=1.5644 lr=8.08e-05 cells=64 phi=4.1743 phi/N=0.0652 splits=62 merges=0 elapsed=0.19hr cost=$0.44
+[STEP  1850] loss=1.5141 avg50=1.5393 lr=7.94e-05 cells=64 phi=4.1599 phi/N=0.0650 splits=62 merges=0 elapsed=0.20hr cost=$0.45
+[STEP  1900] loss=1.4409 avg50=1.5164 lr=7.80e-05 cells=64 phi=4.1742 phi/N=0.0652 splits=62 merges=0 elapsed=0.20hr cost=$0.47
+[STEP  1950] loss=1.5133 avg50=1.5076 lr=7.65e-05 cells=64 phi=4.1526 phi/N=0.0649 splits=62 merges=0 elapsed=0.21hr cost=$0.48
+[CKPT] saved output/ckpt_step_2000.pt
+[STEP  2000] loss=1.4994 avg50=1.5176 lr=7.50e-05 cells=64 phi=4.1413 phi/N=0.0647 splits=62 merges=0 elapsed=0.22hr cost=$0.49
+[STEP  2050] loss=1.4998 avg50=1.5093 lr=7.35e-05 cells=64 phi=4.1793 phi/N=0.0653 splits=62 merges=0 elapsed=0.22hr cost=$0.51
+[STEP  2100] loss=1.5335 avg50=1.4762 lr=7.19e-05 cells=64 phi=4.1619 phi/N=0.0650 splits=62 merges=0 elapsed=0.23hr cost=$0.52
+[STEP  2150] loss=1.4720 avg50=1.4833 lr=7.03e-05 cells=64 phi=4.1585 phi/N=0.0650 splits=62 merges=0 elapsed=0.23hr cost=$0.53
+[STEP  2200] loss=1.4179 avg50=1.4494 lr=6.87e-05 cells=64 phi=4.1755 phi/N=0.0652 splits=62 merges=0 elapsed=0.24hr cost=$0.54
