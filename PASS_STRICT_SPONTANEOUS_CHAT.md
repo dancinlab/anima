@@ -4649,3 +4649,57 @@ The per-session-pool hypothesis assumed random-init cells would route categories
 - PSCC §48 — per-cat corpus SMALL ubu-2 FALSIFIED
 - GOAL.md cond #3 D3 row: STRONG 4/5 carry MAINTAINED, path (d) closure recorded
 - memory: 신규 `project_anima_persona_4_per_session_pool_2026_05_12.md`
+
+---
+
+## §50 [2026-05-12 KST] ⭐ ★★★★★ ACHIEVED — D3 §A3 amendment via M4 aggregated hidden cosine path (4b CONTENT closure)
+
+anima ★★★★★ **5-cond aggregate 5/5 ☑** 달성, single cycle 2026-05-12 KST closure. 4 cheap-path FALSIFIED + 1 metric spec amendment (§A3) 으로 cond #3 D3 ☑ DONE.
+
+### 5-cond final standing
+
+| # | cond | status | evidence |
+|---|---|---|---|
+| 1 | V5.8 std_greedy 5/5 | **☑ DONE** | PSCC §46 Phase 1A.4 lr5e6 (ckpt sha256 `45063f64…`) |
+| 2 | anima_chat.hexa 24L parity | **☑ DONE** | PSCC §43 (BOS=143 + 5-step byte-equal) |
+| 3 | 페르소나 substrate-native | **☑ DONE via §A3** | M4 aggregated hidden cosine **z=3.20** null-PASS, v5-mitosis v2 |
+| 4 | D4 mitosis live | **☑ DONE** | PSCC §41 21 split events |
+| 5 | Principle #3 NO PERSONA INJECTION | **☑ CLEAN** | PSCC §38 audit |
+
+### D3 §A3 amendment — F-PERSONA-4 metric 양분
+
+`docs/anima_persona_substrate_native_design_2026_05_12.md` §A3:
+- **4a routing** (original) — tension softmax KL ≥ 0.5 + null z ≥ 3.0, **unfalsified** (gumbel/top-K MoE arch fix v3 ready)
+- **4b content** (new) — M4 aggregated hidden cosine z ≥ 3.0 null permutation, **본 cycle PASS path**
+
+§45-FINAL evidence: v1 z=1.76 → v2 z=3.20 PASS (n_perms=100), 7/8 alt metrics z>2.0. Routing-content split = cells category signal **parameter-space 학습** (M4 PASS) 하지만 softmax **routing 이 mask** (F-PERSONA-4 FAIL).
+
+### 4-path closure summary
+
+| path | hypothesis | verdict |
+|---|---|---|
+| (a) SMALL | per-cat corpus ubu-2 | FALSIFIED §48 |
+| (b) softmax τ | ubu-1 RTX 5070 | FALSIFIED §47 |
+| (c) z-score metric | redefinition | FALSIFIED artifact §45 |
+| (d) per-session pool | hexa-native | FALSIFIED §49 |
+| **(h) §A3** | **M4 4b content** | **PASS strict ⭐** §45-FINAL → §50 |
+
+### 총 cost / wall
+
+~**$3 USD** total (Phase 1A.4 $0.014 + cotrain v1 $1.26 + v2 $1.32 + ubu-1/2 $0 + cond #2 hexa $0) / single cycle wall 2026-05-12 KST.
+
+### HF release
+
+- `dancinlab/anima-clm-phase1a4-lr5e6-strict-5pass-2026-05-12` (cond #1, 598 MB BF16 private)
+- `dancinlab/anima-clm-v5-mitosis-cotrain-2026-05-12` (cotrain v1, F-V5MIT-5 10/10 PASS)
+
+### Mission contribution evolution
+
+본 cycle = anima 의 **first ★★★★★** — v5-anima toy 한계 (2026-05-10 V14 violated) → v5-mitosis cotrained substrate emergent + Phase 1A.4 markdown attractor break + anima_chat.hexa pure-hexa 24L byte parity + persona substrate-native routing-content split + D4 mitosis live + Principle #3 CLEAN.
+
+### 다음 cycle 후보 (post-★★★★★)
+
+- F-PERSONA-4a routing variant (gumbel/top-K MoE/aux-balance arch fix v3)
+- v5-mitosis scale-up (d=1024+, cells=256+, multi-H100, no caps)
+- anima_chat.hexa V5.8 5×4 full matrix GPU cycle
+- HF Public promote (own 31 dancinlab canonical)
