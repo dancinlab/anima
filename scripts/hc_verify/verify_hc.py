@@ -13,18 +13,42 @@ Decision tiers:
   FAIL              — no math, no anchor, no falsifier
 """
 from __future__ import annotations
-import json, re, sys, math
+import json, os, re, sys, math
 from pathlib import Path
 from collections import Counter
 
-ANIMA_ROOT = Path("/home/summer/mac_home/core/anima")
-ATLAS = ANIMA_ROOT / "n6" / "atlas.n6"
+def _resolve_anima_root() -> Path:
+    env = os.environ.get("ANIMA_ROOT")
+    if env:
+        return Path(env)
+    here = Path(__file__).resolve()
+    for p in [here.parent, *here.parents]:
+        if (p / "hypotheses_candidates").is_dir() and (p / "hypotheses").is_dir():
+            return p
+    for cand in (
+        Path("/Users/ghost/core/anima"),
+        Path("/home/aiden/mac_home/core/anima"),
+        Path("/home/summer/mac_home/core/anima"),
+    ):
+        if cand.is_dir():
+            return cand
+    raise FileNotFoundError("ANIMA_ROOT unresolved; set $ANIMA_ROOT")
+
+ANIMA_ROOT = _resolve_anima_root()
+ATLAS = Path(os.environ.get("ATLAS_N6_PATH") or (ANIMA_ROOT / "n6" / "atlas.n6"))
 
 _atlas_text = None
 _atlas_ids: set[str] = set()
+_atlas_absent_warned = False
 def _load_atlas():
-    global _atlas_text
+    global _atlas_text, _atlas_absent_warned
     if _atlas_text is not None: return
+    if not ATLAS.exists():
+        if not _atlas_absent_warned:
+            print(f"[verify_hc] WARN atlas absent at {ATLAS} — atlas_has/substr return False/0 (set $ATLAS_N6_PATH to override)", file=sys.stderr)
+            _atlas_absent_warned = True
+        _atlas_text = ""
+        return
     _atlas_text = ATLAS.read_text(encoding="utf-8", errors="replace")
     for line in _atlas_text.splitlines():
         line = line.strip()
