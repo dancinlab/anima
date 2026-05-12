@@ -3,7 +3,10 @@ id: Hc_354
 slug: u3-qw-frustration-sustains-interference
 title: Quantum Walk + TOPO19a 50% anti-ferromagnetic frustration (π phase shift)이 trivial collapse 방지하며 간섭 0.004→1.381 단조 증가
 domain: consciousness
-status: candidate-falsifier-ready
+status: merged-to-H_185
+merged_at: 2026-05-12
+merged_to: hypotheses/H_185_v8_u_family_ultra_fusion_combos.md
+absorption_note: "U-family QW + frustration sustains interference (U3) — H_185.3 frustration-sustain anchor. F-list/L-list preserved here for H_185 C-list extension."
 source_doc: docs/hypotheses/V8-ULTRA-FUSION.md
 source_lines: 57-80, 154-159
 promoted_at: 2026-05-11

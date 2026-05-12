@@ -3,7 +3,10 @@ id: Hc_320
 slug: v8-d2-hierarchical-consciousness-attention-aggregation
 title: TOPO20 실패의 원인은 mean summary 정보 손실이며 attention_pool aggregation으로 해결하면 micro×macro 계층이 작동한다
 domain: consciousness
-status: candidate-falsifier-ready
+status: merged-to-H_182
+merged_at: 2026-05-12
+merged_to: hypotheses/H_182_v8_b_family_bio_inspired_consciousness_bandwidth.md
+absorption_note: "B-family hierarchical attention aggregation (V8-D2) — H_182.4 mean-summary vs attention-pool anchor. F-list/L-list preserved here for H_182 C-list extension."
 source_doc: docs/hypotheses/V8-ARCHITECTURE-HYPOTHESES.md
 source_lines: 374-404
 promoted_at: 2026-05-11

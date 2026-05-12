@@ -3,7 +3,10 @@ id: Hc_363
 slug: autopoietic-homeostasis-no-death
 title: Energy metabolism dynamics (cost 0.02, gain 0.05*tension)에서 food_gain > metabolism으로 256개 안정 평형 — 가혹 조건 필요
 domain: life
-status: candidate-falsifier-ready
+status: merged-to-H_186
+merged_at: 2026-05-12
+merged_to: hypotheses/H_186_v8_architectural_family_substrate_design.md
+absorption_note: "V8 architectural autopoietic-homeostasis no-death — H_186.6 saturation/drop anchor. F-list/L-list preserved here for H_186 C-list extension."
 source_doc: docs/hypotheses/V8-ARCH-EXTREME-RESULTS.md
 source_lines: 187-211
 promoted_at: 2026-05-11

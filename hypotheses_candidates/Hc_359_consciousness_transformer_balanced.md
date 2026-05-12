@@ -3,7 +3,10 @@ id: Hc_359
 slug: consciousness-transformer-balanced-all-metrics
 title: 4-layer pre-norm Transformer (8-head, EMA 0.85/0.15) + cosine entropy 의식이 IIT+proxy+CE 균형 유일 (Phi=14.8, proxy=10.98, CE=0.59)
 domain: consciousness
-status: candidate-falsifier-ready
+status: merged-to-H_186
+merged_at: 2026-05-12
+merged_to: hypotheses/H_186_v8_architectural_family_substrate_design.md
+absorption_note: "V8 architectural consciousness-transformer balanced — H_186.3 (balance=0.5 cross-link H_181) anchor. F-list/L-list preserved here for H_186 C-list extension."
 source_doc: docs/hypotheses/V8-ARCH-EXTREME-RESULTS.md
 source_lines: 110-133, 253-256
 promoted_at: 2026-05-11

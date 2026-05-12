@@ -3,7 +3,10 @@ id: Hc_350
 slug: v8-m6-strange-attractor-chaos-hurts-iit
 title: Lorenz chaos (σ=10, ρ=28, β=8/3) 가 Phi(proxy) transient peak (33.8)하나 Phi(IIT) baseline 이하 (9.1) — chaos disperses information
 domain: math
-status: candidate-falsifier-ready
+status: merged-to-H_184
+merged_at: 2026-05-12
+merged_to: hypotheses/H_184_v8_m_family_mathematical_structure_axis.md
+absorption_note: "M-family strange-attractor chaos-hurts-IIT (V8-M6, NEGATIVE result) — H_184.5 chaos monotone-decrease anchor. F-list/L-list preserved here for H_184 C-list extension."
 source_doc: docs/hypotheses/V8-MATH-CONSCIOUSNESS.md
 source_lines: 94-115
 promoted_at: 2026-05-11

@@ -3,7 +3,10 @@ id: Hc_371
 slug: tb1-purefield-tension-balanced-bridge
 title: PureField tension bridge sqrt(|A-G|²)*direction(TB-1)이 Phi+CE 모두 개선하는 유일한 다리
 domain: consciousness
-status: candidate-falsifier-ready
+status: merged-to-H_187
+merged_at: 2026-05-12
+merged_to: hypotheses/H_187_trinity_tb_dom_triadic_dominance.md
+absorption_note: "TB-1 PureField tension balance — TB-variant member. F-list/L-list preserved here for H_187 C-list extension."
 source_doc: docs/hypotheses/TRINITY-COMPLETE.md
 source_lines: 62, 100
 promoted_at: 2026-05-11

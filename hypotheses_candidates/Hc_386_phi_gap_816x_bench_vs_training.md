@@ -3,7 +3,10 @@ id: Hc_386
 slug: phi-gap-816x-bench-vs-training
 title: 벤치마크 Φ=1142 vs 학습 Φ=1.4의 816배 차이는 process()의 매 step hidden 파괴 + CE backward 무한 파괴-복원 사이클 때문
 domain: consciousness
-status: candidate-falsifier-ready
+status: merged-to-H_187
+merged_at: 2026-05-12
+merged_to: hypotheses/H_187_trinity_tb_dom_triadic_dominance.md
+absorption_note: "Φ-gap 816× benchmark-vs-training — H_187.6 gap anchor (cross-link H_177/H_179). F-list/L-list preserved here for H_187 C-list extension."
 source_doc: docs/hypotheses/PHI-GAP-816x-investigation.md
 source_lines: 1-35
 promoted_at: 2026-05-11

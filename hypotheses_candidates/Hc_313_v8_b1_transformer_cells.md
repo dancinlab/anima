@@ -3,7 +3,10 @@ id: Hc_313
 slug: v8-b1-transformer-cells
 title: GRU 세포를 single-layer Transformer block으로 교체하면 self-attention이 정보 통합을 제공하여 Phi x3-10 증가
 domain: consciousness
-status: candidate-falsifier-ready
+status: merged-to-H_182
+merged_at: 2026-05-12
+merged_to: hypotheses/H_182_v8_b_family_bio_inspired_consciousness_bandwidth.md
+absorption_note: "B-family transformer-cells substrate (V8-B1) — H_182.2 5-seed Φ uplift refinement. F-list/L-list preserved here for H_182 C-list extension."
 source_doc: docs/hypotheses/V8-ARCHITECTURE-HYPOTHESES.md
 source_lines: 122-157
 promoted_at: 2026-05-11

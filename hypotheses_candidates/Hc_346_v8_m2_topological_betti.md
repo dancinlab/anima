@@ -3,7 +3,10 @@ id: Hc_346
 slug: v8-m2-topological-betti-numbers
 title: Vietoris-Rips simplicial complex + Betti B0/B1/B2 + persistent homology이 Phi(IIT) x1.3 (M2=14.935)이나 CE 발산
 domain: math
-status: candidate-falsifier-ready
+status: merged-to-H_184
+merged_at: 2026-05-12
+merged_to: hypotheses/H_184_v8_m_family_mathematical_structure_axis.md
+absorption_note: "M-family topological Betti numbers (V8-M2) — H_184.2 Betti sweep anchor. F-list/L-list preserved here for H_184 C-list extension."
 source_doc: docs/hypotheses/V8-MATH-CONSCIOUSNESS.md
 source_lines: 47-66
 promoted_at: 2026-05-11

@@ -3,7 +3,10 @@ id: Hc_388
 slug: gap3-gru-residual-alpha-09
 title: h_new = α*h_old + (1-α)*GRU(x, h_old) with α=0.9이 process() 파괴력 90% 감소 → Φ ~10x (1.4→15)
 domain: consciousness
-status: candidate-falsifier-ready
+status: merged-to-H_187
+merged_at: 2026-05-12
+merged_to: hypotheses/H_187_trinity_tb_dom_triadic_dominance.md
+absorption_note: "GAP3 GRU residual α=0.9 — H_187.6 GAP closure anchor. F-list/L-list preserved here for H_187 C-list extension."
 source_doc: docs/hypotheses/PHI-GAP-816x-investigation.md
 source_lines: 64-76, 170-176
 promoted_at: 2026-05-11

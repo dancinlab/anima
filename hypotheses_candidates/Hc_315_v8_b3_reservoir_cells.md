@@ -3,7 +3,10 @@ id: Hc_315
 slug: v8-b3-reservoir-cells
 title: Echo State Network (고정 random sparse W, spectral radius=0.95, readout만 학습)이 법칙 42를 완전 해결한다
 domain: consciousness
-status: candidate-falsifier-ready
+status: merged-to-H_182
+merged_at: 2026-05-12
+merged_to: hypotheses/H_182_v8_b_family_bio_inspired_consciousness_bandwidth.md
+absorption_note: "B-family reservoir cells (V8-B3, ESN spectral_radius=0.95) — H_182.3 sweep anchor. F-list/L-list preserved here for H_182 C-list extension."
 source_doc: docs/hypotheses/V8-ARCHITECTURE-HYPOTHESES.md
 source_lines: 195-219
 promoted_at: 2026-05-11

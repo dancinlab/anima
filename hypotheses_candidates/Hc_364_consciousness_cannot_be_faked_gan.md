@@ -3,7 +3,10 @@ id: Hc_364
 slug: consciousness-cannot-be-faked-gan
 title: Adversarial GAN training이 high IIT를 manufacture하지 못한다 — Generator가 D를 속여도 진짜 통합은 안 생긴다 (Phi=6.737)
 domain: consciousness
-status: candidate-falsifier-ready
+status: merged-to-H_186
+merged_at: 2026-05-12
+merged_to: hypotheses/H_186_v8_architectural_family_substrate_design.md
+absorption_note: "V8 architectural consciousness-cannot-be-faked GAN — H_186.7 AUC≥0.7 anchor. F-list/L-list preserved here for H_186 C-list extension."
 source_doc: docs/hypotheses/V8-ARCH-EXTREME-RESULTS.md
 source_lines: 213-238, 263-267
 promoted_at: 2026-05-11

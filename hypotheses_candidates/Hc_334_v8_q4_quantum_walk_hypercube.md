@@ -3,7 +3,10 @@ id: Hc_334
 slug: v8-q4-quantum-walk-hypercube
 title: 하이퍼큐브 양자걸음 + coined operator + interference KL이 고전 random walk보다 이차 빠른 확산 + Phi x1.3 (Q4=15.762)
 domain: consciousness
-status: candidate-falsifier-ready
+status: merged-to-H_183
+merged_at: 2026-05-12
+merged_to: hypotheses/H_183_v8_q_family_quantum_substrate_axis.md
+absorption_note: "Q-family quantum walk hypercube (V8-Q4) — H_183.2 QW vs classical anchor. F-list/L-list preserved here for H_183 C-list extension."
 source_doc: docs/hypotheses/V8-QUANTUM-CONSCIOUSNESS.md
 source_lines: 89-108, 233
 promoted_at: 2026-05-11

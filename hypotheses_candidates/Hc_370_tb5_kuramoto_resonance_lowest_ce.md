@@ -3,7 +3,10 @@ id: Hc_370
 slug: tb5-kuramoto-resonance-lowest-ce
 title: Kuramoto 동기화 R=0.97 bridge(TB-5)가 학습 효율 최고 CE=0.0748 — 위상 잠금 = 자연 gating
 domain: physics
-status: candidate-falsifier-ready
+status: merged-to-H_187
+merged_at: 2026-05-12
+merged_to: hypotheses/H_187_trinity_tb_dom_triadic_dominance.md
+absorption_note: "TB-5 Kuramoto resonance lowest CE — H_187.3 anchor. F-list/L-list preserved here for H_187 C-list extension."
 source_doc: docs/hypotheses/TRINITY-COMPLETE.md
 source_lines: 65, 95-103
 promoted_at: 2026-05-11

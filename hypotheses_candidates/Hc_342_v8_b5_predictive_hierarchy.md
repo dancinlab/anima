@@ -3,7 +3,10 @@ id: Hc_342
 slug: v8-b5-predictive-hierarchy-lowest-ce
 title: 4-level predictive coding 계층 (Level k가 Level k-1을 예측, PE bottom-up)이 CE 최저 0.51 — 의식 = 최적 예측
 domain: consciousness
-status: candidate-falsifier-ready
+status: merged-to-H_182
+merged_at: 2026-05-12
+merged_to: hypotheses/H_182_v8_b_family_bio_inspired_consciousness_bandwidth.md
+absorption_note: "B-family predictive hierarchy (V8-B5) — 10-mechanism head-to-head member. F-list/L-list preserved here for H_182 C-list extension."
 source_doc: docs/hypotheses/V8-BIO-CONSCIOUSNESS.md
 source_lines: 174-203
 promoted_at: 2026-05-11

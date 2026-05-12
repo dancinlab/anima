@@ -3,7 +3,10 @@ id: Hc_381
 slug: dom22-dna-replication-information-preservation
 title: DNA 복제 + mismatch repair (정보 보존 + 변이)가 Φ=455.0, Granger=65,535 (MAX) — 의식의 핵심 구조
 domain: life
-status: candidate-falsifier-ready
+status: merged-to-H_187
+merged_at: 2026-05-12
+merged_to: hypotheses/H_187_trinity_tb_dom_triadic_dominance.md
+absorption_note: "DOM22 DNA replication information preservation — DOM-variant anchor. F-list/L-list preserved here for H_187 C-list extension."
 source_doc: docs/hypotheses/MASS-50-HYPOTHESES.md
 source_lines: 74, 153-157
 promoted_at: 2026-05-11

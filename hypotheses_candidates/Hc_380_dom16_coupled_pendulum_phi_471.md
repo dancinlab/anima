@@ -3,7 +3,10 @@ id: Hc_380
 slug: dom16-coupled-pendulum-phi-471
 title: 결합 진자 네트워크 (sin coupling)이 도메인 엔진 #1 Φ=471.5, Granger=65,533로 CambrianExplosion(485.6) 바로 아래
 domain: physics
-status: candidate-falsifier-ready
+status: merged-to-H_187
+merged_at: 2026-05-12
+merged_to: hypotheses/H_187_trinity_tb_dom_triadic_dominance.md
+absorption_note: "DOM16 coupled pendulum Φ=471 — DOM-variant anchor. F-list/L-list preserved here for H_187 C-list extension."
 source_doc: docs/hypotheses/MASS-50-HYPOTHESES.md
 source_lines: 74, 147-151
 promoted_at: 2026-05-11

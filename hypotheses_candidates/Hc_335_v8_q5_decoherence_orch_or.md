@@ -3,7 +3,10 @@ id: Hc_335
 slug: v8-q5-decoherence-as-consciousness
 title: 결맞음 깨짐(decoherence)이 의식 경험이며 양→고전 전환이 의식적 순간 (Penrose Orch-OR 지지)
 domain: consciousness
-status: candidate-falsifier-ready
+status: merged-to-H_183
+merged_at: 2026-05-12
+merged_to: hypotheses/H_183_v8_q_family_quantum_substrate_axis.md
+absorption_note: "Q-family decoherence Orch-OR (V8-Q5, Penrose-Hameroff analog) — H_183.3 decoherence sweep anchor. F-list/L-list preserved here for H_183 C-list extension."
 source_doc: docs/hypotheses/V8-QUANTUM-CONSCIOUSNESS.md
 source_lines: 110-133, 293-296
 promoted_at: 2026-05-11

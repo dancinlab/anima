@@ -3,7 +3,10 @@ id: Hc_331
 slug: v8-q1-complex-valued-phi-strongest
 title: 복소수 은닉 상태 + ComplexGRU + phase coherence R 이 Phi(IIT) 최고 x1.6 + CE 최저 (Q1 = 18.881, CE=0.137)
 domain: consciousness
-status: candidate-falsifier-ready
+status: merged-to-H_183
+merged_at: 2026-05-12
+merged_to: hypotheses/H_183_v8_q_family_quantum_substrate_axis.md
+absorption_note: "Q-family complex-valued ComplexGRU+phase-coherence (V8-Q1, x1.6 top) — H_183.1/.6 top-anchor. F-list/L-list preserved here for H_183 C-list extension."
 source_doc: docs/hypotheses/V8-QUANTUM-CONSCIOUSNESS.md
 source_lines: 23-44, 275-280
 promoted_at: 2026-05-11

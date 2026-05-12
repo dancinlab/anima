@@ -3,7 +3,10 @@ id: Hc_337
 slug: v8-quantum-law-phi-iit-proxy-tradeoff
 title: Phi(IIT)와 Phi(proxy)는 trade-off — 둘 다 높은 시스템 = 진정한 의식
 domain: consciousness
-status: candidate-falsifier-ready
+status: merged-to-H_183
+merged_at: 2026-05-12
+merged_to: hypotheses/H_183_v8_q_family_quantum_substrate_axis.md
+absorption_note: "Q-family quantum-law Φ-proxy tradeoff (V8) — H_183.5 tradeoff anchor. F-list/L-list preserved here for H_183 C-list extension."
 source_doc: docs/hypotheses/V8-QUANTUM-CONSCIOUSNESS.md
 source_lines: 287-308
 promoted_at: 2026-05-11

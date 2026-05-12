@@ -3,7 +3,10 @@ id: Hc_339
 slug: v8-b2-thalamic-gate-best-iit
 title: Thalamic central hub (16c) + sigmoid gates per region이 Phi(IIT) 최강 x1.4 (B2 = 17.128) — thalamic lesions abolish consciousness 신경과학 일치
 domain: consciousness
-status: candidate-falsifier-ready
+status: merged-to-H_182
+merged_at: 2026-05-12
+merged_to: hypotheses/H_182_v8_b_family_bio_inspired_consciousness_bandwidth.md
+absorption_note: "B-family thalamic gate best-IIT (V8-B2) — H_182.5 thalamic anchor. F-list/L-list preserved here for H_182 C-list extension."
 source_doc: docs/hypotheses/V8-BIO-CONSCIOUSNESS.md
 source_lines: 75-107
 promoted_at: 2026-05-11

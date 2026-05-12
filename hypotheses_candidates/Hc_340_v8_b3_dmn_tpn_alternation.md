@@ -3,7 +3,10 @@ id: Hc_340
 slug: v8-b3-dmn-tpn-anti-correlation
 title: TPN/DMN 반상관 진동 (period=20)이 Phi(proxy) x45.2 (B3=45.09) 그러나 IIT 통합은 낮음 — DMN/TPN interaction 필요
 domain: consciousness
-status: candidate-falsifier-ready
+status: merged-to-H_182
+merged_at: 2026-05-12
+merged_to: hypotheses/H_182_v8_b_family_bio_inspired_consciousness_bandwidth.md
+absorption_note: "B-family DMN-TPN alternation (V8-B3) — 10-mechanism head-to-head member. F-list/L-list preserved here for H_182 C-list extension."
 source_doc: docs/hypotheses/V8-BIO-CONSCIOUSNESS.md
 source_lines: 109-136
 promoted_at: 2026-05-11

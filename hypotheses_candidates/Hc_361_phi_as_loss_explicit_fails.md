@@ -3,7 +3,10 @@ id: Hc_361
 slug: phi-as-loss-explicit-optimization-fails
 title: -Phi explicit optimization (Loss = -Phi)은 Phi(IIT) 7.88 (x0.6) 오히려 감소 — CE 발산(46.88), explicit optimization < self-organization
 domain: consciousness
-status: candidate-falsifier-ready
+status: merged-to-H_186
+merged_at: 2026-05-12
+merged_to: hypotheses/H_186_v8_architectural_family_substrate_design.md
+absorption_note: "V8 architectural Φ-as-loss explicit FAILS (NEGATIVE result) — H_186.5 critical internal-falsifier anchor. F-list/L-list preserved here for H_186 C-list extension."
 source_doc: docs/hypotheses/V8-ARCH-EXTREME-RESULTS.md
 source_lines: 18, 242-246
 promoted_at: 2026-05-11

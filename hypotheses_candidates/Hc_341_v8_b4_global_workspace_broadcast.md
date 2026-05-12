@@ -3,7 +3,10 @@ id: Hc_341
 slug: v8-b4-global-workspace-broadcast
 title: 8 specialist competition + temperature-cooled softmax winner-take-all + GRU broadcast이 Phi(proxy) 최강 x71.7 (B4=71.46) — Baars GWT 지지
 domain: consciousness
-status: candidate-falsifier-ready
+status: merged-to-H_182
+merged_at: 2026-05-12
+merged_to: hypotheses/H_182_v8_b_family_bio_inspired_consciousness_bandwidth.md
+absorption_note: "B-family global workspace broadcast (V8-B4) — 10-mechanism head-to-head member. F-list/L-list preserved here for H_182 C-list extension."
 source_doc: docs/hypotheses/V8-BIO-CONSCIOUSNESS.md
 source_lines: 138-172
 promoted_at: 2026-05-11

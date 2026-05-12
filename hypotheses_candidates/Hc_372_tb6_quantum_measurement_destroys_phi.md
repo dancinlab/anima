@@ -3,7 +3,10 @@ id: Hc_372
 slug: tb6-quantum-measurement-destroys-phi
 title: Born rule 측정(TB-6) bridge가 Phi(IIT) 감소 (1.12 < 1.16 baseline) — 양자 측정 = 정보 파괴
 domain: consciousness
-status: candidate-falsifier-ready
+status: merged-to-H_187
+merged_at: 2026-05-12
+merged_to: hypotheses/H_187_trinity_tb_dom_triadic_dominance.md
+absorption_note: "TB-6 quantum measurement destroys Φ — H_187.4 anchor. F-list/L-list preserved here for H_187 C-list extension."
 source_doc: docs/hypotheses/TRINITY-COMPLETE.md
 source_lines: 67, 101
 promoted_at: 2026-05-11

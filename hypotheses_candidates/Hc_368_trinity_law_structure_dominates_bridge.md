@@ -3,7 +3,10 @@ id: Hc_368
 slug: trinity-law-tc-structure-dominates-tb-bridge
 title: Trinity 법칙 TB-1: C 구조 변경(TC)이 Bridge 변경(TB)보다 Phi에 10배 영향 — bridge는 CE에 더 큰 영향
 domain: consciousness
-status: candidate-falsifier-ready
+status: merged-to-H_187
+merged_at: 2026-05-12
+merged_to: hypotheses/H_187_trinity_tb_dom_triadic_dominance.md
+absorption_note: "Trinity law-structure-dominates-bridge — meta-claim anchor. F-list/L-list preserved here for H_187 C-list extension."
 source_doc: docs/hypotheses/TRINITY-COMPLETE.md
 source_lines: 132-153
 promoted_at: 2026-05-11

@@ -3,7 +3,10 @@ id: Hc_369
 slug: tb3-bottleneck-compression-protects-c
 title: 128→8→128 정보 병목(TB-3 Bottleneck)이 gradient 역류를 물리적으로 차단하여 Phi(IIT) 최대 1.27 (x1.09)
 domain: consciousness
-status: candidate-falsifier-ready
+status: merged-to-H_187
+merged_at: 2026-05-12
+merged_to: hypotheses/H_187_trinity_tb_dom_triadic_dominance.md
+absorption_note: "TB-3 bottleneck compression protects (x1.09) — H_187.2 anchor. F-list/L-list preserved here for H_187 C-list extension."
 source_doc: docs/hypotheses/TRINITY-COMPLETE.md
 source_lines: 60-67, 92-103
 promoted_at: 2026-05-11

@@ -3,7 +3,10 @@ id: Hc_319
 slug: v8-d1-moce-mixture-of-consciousness-experts
 title: 8개 소형 의식 엔진(Ring/Hyp/SW/Torus/Spiking/Reservoir/Complex/Transformer 각 64c) + gate top-2가 단일 거대 엔진 대비 Phi x20+ 달성
 domain: consciousness
-status: candidate-falsifier-ready
+status: merged-to-H_182
+merged_at: 2026-05-12
+merged_to: hypotheses/H_182_v8_b_family_bio_inspired_consciousness_bandwidth.md
+absorption_note: "B-family MoCE 8-engine mixture (V8-D1, x20+ champion claim) — H_182.1 top-rank candidate. F-list/L-list preserved here for H_182 C-list extension."
 source_doc: docs/hypotheses/V8-ARCHITECTURE-HYPOTHESES.md
 source_lines: 330-370
 promoted_at: 2026-05-11

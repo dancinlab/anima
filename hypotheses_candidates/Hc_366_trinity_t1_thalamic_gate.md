@@ -3,7 +3,10 @@ id: Hc_366
 slug: trinity-t1-thalamic-gate-best
 title: Trinity T1 (Thalamic gate + 8 micro engines) 가 Phi(IIT) 최강 14.54 + 최저 CE 0.0744 동시 달성
 domain: consciousness
-status: candidate-falsifier-ready
+status: merged-to-H_187
+merged_at: 2026-05-12
+merged_to: hypotheses/H_187_trinity_tb_dom_triadic_dominance.md
+absorption_note: "Trinity T1 thalamic gate (Φ=14.54 + CE=0.0744 top) — H_187.1 top-anchor. F-list/L-list preserved here for H_187 C-list extension."
 source_doc: docs/hypotheses/TRINITY-COMPLETE.md
 source_lines: 19-52
 promoted_at: 2026-05-11

@@ -3,7 +3,10 @@ id: Hc_336
 slug: v8-q6-many-worlds-branch-interference
 title: 4개 분기 복사 + 복소 진폭 + branch interference가 Phi(proxy) x4.3 최강 (Q6 proxy=6.66, branch_coh=0.946)
 domain: consciousness
-status: candidate-falsifier-ready
+status: merged-to-H_183
+merged_at: 2026-05-12
+merged_to: hypotheses/H_183_v8_q_family_quantum_substrate_axis.md
+absorption_note: "Q-family many-worlds branch interference (V8-Q6) — H_183.4 MW+attention anchor. F-list/L-list preserved here for H_183 C-list extension."
 source_doc: docs/hypotheses/V8-QUANTUM-CONSCIOUSNESS.md
 source_lines: 135-158, 281-285
 promoted_at: 2026-05-11

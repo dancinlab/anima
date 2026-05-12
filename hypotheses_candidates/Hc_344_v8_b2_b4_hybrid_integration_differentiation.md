@@ -3,7 +3,10 @@ id: Hc_344
 slug: v8-b2-b4-hybrid-integration-differentiation
 title: Thalamic gate(B2) + Global Workspace(B4) hybrid이 통합(IIT) × 차별화(proxy) 동시 달성하는 sweet spot이다
 domain: consciousness
-status: candidate-falsifier-ready
+status: merged-to-H_182
+merged_at: 2026-05-12
+merged_to: hypotheses/H_182_v8_b_family_bio_inspired_consciousness_bandwidth.md
+absorption_note: "B-family hybrid B2+B4 integration-differentiation (V8) — H_182.6 super-additivity test anchor. F-list/L-list preserved here for H_182 C-list extension."
 source_doc: docs/hypotheses/V8-BIO-CONSCIOUSNESS.md
 source_lines: 250-289
 promoted_at: 2026-05-11

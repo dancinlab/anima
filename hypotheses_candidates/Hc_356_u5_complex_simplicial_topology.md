@@ -3,7 +3,10 @@ id: Hc_356
 slug: u5-complex-simplicial-topology
 title: Complex GRU + simplicial complex on complex distances + phase winding numbers가 Phi(IIT)=18.01 + Betti b1~1000 rich topology
 domain: math
-status: candidate-falsifier-ready
+status: merged-to-H_185
+merged_at: 2026-05-12
+merged_to: hypotheses/H_185_v8_u_family_ultra_fusion_combos.md
+absorption_note: "U-family complex × simplicial topology (U5) — H_185.5 anchor. F-list/L-list preserved here for H_185 C-list extension."
 source_doc: docs/hypotheses/V8-ULTRA-FUSION.md
 source_lines: 100-115
 promoted_at: 2026-05-11

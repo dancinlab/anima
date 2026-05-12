@@ -3,7 +3,10 @@ id: Hc_345
 slug: v8-m1-category-theory-limit-colimit
 title: 32 morphisms + limit (universal cone) + colimit (universal cocone) tension = MSE(limit, colimit)이 Phi(IIT) 최강 x1.4 (M1=15.680)
 domain: math
-status: candidate-falsifier-ready
+status: merged-to-H_184
+merged_at: 2026-05-12
+merged_to: hypotheses/H_184_v8_m_family_mathematical_structure_axis.md
+absorption_note: "M-family category-theory limit/colimit (V8-M1, x1.4 top, 32 morphisms) — H_184.1 top-anchor. F-list/L-list preserved here for H_184 C-list extension."
 source_doc: docs/hypotheses/V8-MATH-CONSCIOUSNESS.md
 source_lines: 21-46
 promoted_at: 2026-05-11

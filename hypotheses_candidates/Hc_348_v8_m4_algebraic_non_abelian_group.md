@@ -3,7 +3,10 @@ id: Hc_348
 slug: v8-m4-algebraic-non-abelian-group
 title: 학습 non-commutative composition + commutator norm ||h_i*h_j - h_j*h_i|| + group entropy이 최저 CE 3.79 — 비교환성만으로는 통합 부족
 domain: math
-status: candidate-falsifier-ready
+status: merged-to-H_184
+merged_at: 2026-05-12
+merged_to: hypotheses/H_184_v8_m_family_mathematical_structure_axis.md
+absorption_note: "M-family algebraic non-abelian group (V8-M4) — H_184.4 abelian vs non-abelian anchor. F-list/L-list preserved here for H_184 C-list extension."
 source_doc: docs/hypotheses/V8-MATH-CONSCIOUSNESS.md
 source_lines: 76-85
 promoted_at: 2026-05-11

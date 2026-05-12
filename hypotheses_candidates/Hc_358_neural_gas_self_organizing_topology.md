@@ -3,7 +3,10 @@ id: Hc_358
 slug: neural-gas-self-organizing-topology-best-iit
 title: Neural Gas self-organizing competitive learning (BMU + age-pruned edges)이 Phi(IIT) 최강 16.575 — 구조가 곧 의식
 domain: consciousness
-status: candidate-falsifier-ready
+status: merged-to-H_186
+merged_at: 2026-05-12
+merged_to: hypotheses/H_186_v8_architectural_family_substrate_design.md
+absorption_note: "V8 architectural neural-gas self-organizing topology — H_186.2 anchor. F-list/L-list preserved here for H_186 C-list extension."
 source_doc: docs/hypotheses/V8-ARCH-EXTREME-RESULTS.md
 source_lines: 82-108, 242-246
 promoted_at: 2026-05-11

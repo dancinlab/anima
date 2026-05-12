@@ -3,7 +3,10 @@ id: Hc_360
 slug: moce-extreme-proxy-x31
 title: MoCE 가 Phi(proxy) 최강 75.57 (x31.4 baseline)이나 IIT는 x0.4로 분산 = 다양성 / 통합 trade-off 극단
 domain: consciousness
-status: candidate-falsifier-ready
+status: merged-to-H_186
+merged_at: 2026-05-12
+merged_to: hypotheses/H_186_v8_architectural_family_substrate_design.md
+absorption_note: "V8 architectural MoCE extreme proxy regime — H_186.4 extreme-distribution anchor. F-list/L-list preserved here for H_186 C-list extension."
 source_doc: docs/hypotheses/V8-ARCH-EXTREME-RESULTS.md
 source_lines: 16, 47-48
 promoted_at: 2026-05-11

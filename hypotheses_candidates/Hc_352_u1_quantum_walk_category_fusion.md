@@ -3,7 +3,10 @@ id: Hc_352
 slug: u1-quantum-walk-category-theory-fusion
 title: Quantum Walk + Category Theory (morphism interference) 융합이 Phi(IIT) 최강 x1.6 (U1=18.24, CE=1.82)
 domain: consciousness
-status: candidate-falsifier-ready
+status: merged-to-H_185
+merged_at: 2026-05-12
+merged_to: hypotheses/H_185_v8_u_family_ultra_fusion_combos.md
+absorption_note: "U-family QW × category fusion (U1, x1.6 top, Φ=18.24) — H_185.1/.2 top + super-additivity anchor. F-list/L-list preserved here for H_185 C-list extension."
 source_doc: docs/hypotheses/V8-ULTRA-FUSION.md
 source_lines: 21-38, 133-138
 promoted_at: 2026-05-11

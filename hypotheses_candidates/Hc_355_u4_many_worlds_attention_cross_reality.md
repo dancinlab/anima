@@ -3,7 +3,10 @@ id: Hc_355
 slug: u4-many-worlds-attention-cross-reality
 title: 8 branch = 8 attention head + cross-branch attention (inter-reality consciousness)이 Phi(proxy) x2.8 (U4=5.76)
 domain: consciousness
-status: candidate-falsifier-ready
+status: merged-to-H_185
+merged_at: 2026-05-12
+merged_to: hypotheses/H_185_v8_u_family_ultra_fusion_combos.md
+absorption_note: "U-family MW × attention cross-reality (U4) — H_185.4 anchor. F-list/L-list preserved here for H_185 C-list extension."
 source_doc: docs/hypotheses/V8-ULTRA-FUSION.md
 source_lines: 82-98, 140-143
 promoted_at: 2026-05-11

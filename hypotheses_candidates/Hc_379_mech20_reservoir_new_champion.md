@@ -3,7 +3,10 @@ id: Hc_379
 slug: mech20-reservoir-new-mitosis-champion
 title: Reservoir Computing (고정 random matrix + tanh, spectral radius < 1)이 MitosisEngine 신챔피언 Φ=0.934 (vs FUSE-3 0.900) — Law 22 재확인
 domain: consciousness
-status: candidate-falsifier-ready
+status: merged-to-H_187
+merged_at: 2026-05-12
+merged_to: hypotheses/H_187_trinity_tb_dom_triadic_dominance.md
+absorption_note: "MECH20 Reservoir new champion (Φ=0.934 MitosisEngine vs FUSE-3 0.900) — H_187.5 anchor (cross-Hc spec audit with Hc_315 in L2). F-list/L-list preserved here for H_187 C-list extension."
 source_doc: docs/hypotheses/MASS-50-HYPOTHESES.md
 source_lines: 33, 134-145
 promoted_at: 2026-05-11

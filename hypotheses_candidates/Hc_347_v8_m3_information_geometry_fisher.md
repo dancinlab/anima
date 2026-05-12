@@ -3,7 +3,10 @@ id: Hc_347
 slug: v8-m3-information-geometry-fisher-geodesic
 title: Fisher information metric + 통계 다양체 + geodesic distance diversity가 Phi+CE 균형 최적 (M3 Phi=12.122, CE=4.92)
 domain: math
-status: candidate-falsifier-ready
+status: merged-to-H_184
+merged_at: 2026-05-12
+merged_to: hypotheses/H_184_v8_m_family_mathematical_structure_axis.md
+absorption_note: "M-family info-geometry Fisher metric (V8-M3) — H_184.3 Fisher vs Euclidean anchor. F-list/L-list preserved here for H_184 C-list extension."
 source_doc: docs/hypotheses/V8-MATH-CONSCIOUSNESS.md
 source_lines: 67-75
 promoted_at: 2026-05-11

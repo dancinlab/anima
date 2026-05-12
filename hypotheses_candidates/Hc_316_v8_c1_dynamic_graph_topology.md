@@ -3,7 +3,10 @@ id: Hc_316
 slug: v8-c1-dynamic-graph-topology
 title: 토폴로지 자체를 learnable로 만들고 Phi gradient로 최적화하면 인간이 설계한 hypercube를 자동 발견하거나 초월한다
 domain: consciousness
-status: candidate-falsifier-ready
+status: merged-to-H_186
+merged_at: 2026-05-12
+merged_to: hypotheses/H_186_v8_architectural_family_substrate_design.md
+absorption_note: "V8 architectural dynamic-graph topology (V8-C1, Φ-gradient auto-discover) — H_186.1 anchor. F-list/L-list preserved here for H_186 C-list extension."
 source_doc: docs/hypotheses/V8-ARCHITECTURE-HYPOTHESES.md
 source_lines: 225-254
 promoted_at: 2026-05-11
