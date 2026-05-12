@@ -196,6 +196,4 @@ seed=2025 filter=OFF  drift=False  (동일)
 - cost: $0
 - upstream anima commit: `c2afa8e9e`
 - upstream anima tag: `anima_chat-v2.3-markdown-filter`
-- HF Space sync (production): `dancinlab/anima-chat` commit `bf544e357ee3f271a2d6e45b3be2b1faa067575f` (parent `3c88c78`) — synced 2026-05-12
-  - sync scope: `anima_chat.py` (Space variant) + `README.md` (v2.3 section)
-  - parity verified: helpers (8 triggers / 4 ban_token_ids `(127,48,61,35)`), `_post_strip_markdown_tables`, `_markdown_attractor_active`, `__call__` kwarg `markdown_filter=True` default, CLI `--no-markdown-filter` flag
+- ~~HF Space sync (production): `dancinlab/anima-chat`~~ — **HF Space DELETED 2026-05-12 KST** (사용자 directive 폐기, PSCC §32). v2.3 markdown_filter 는 anima 본체 `anima_chat.py` 의 commit `c2afa8e9e` + tag `anima_chat-v2.3-markdown-filter` 에 보존.

@@ -2754,4 +2754,47 @@ ckpt-loading smoke (full inference) 는 Space 자체 build 가 검증 — push �
 
 ★★★ — production parity confirmed via push, helper smoke OK on Mac stub. 실제 fire window evidence 는 별도 BG (cuda seed=42 bf16 path) 의 책임. 본 BG = pure deployment, $0, 별도 BG 영역 (lr5e6 SFT / cuda filter validation) 불침범 ✓.
 
+**SUPERSEDED 2026-05-12 KST**: PSCC §32 의 HF Space 폐기 directive 로 본 §31 sync target deleted. v2.3 markdown_filter 자체는 anima 본체 `anima_chat.py` 유지.
+
 ---
+
+## §32 [2026-05-12 KST] HF SPACE DELETED — `dancinlab/anima-chat` 폐기 directive ★ (mission refocus to GOAL.md)
+
+사용자 directive: "space 는 폐기하고 로드맵에서도 제거" + "[anima chat 시스템, anima 모델] 조합으로 별 5개짜리 뽑아주면되 GOAL.md 루트에 생성하고 업데이트 하면서 진행"
+
+→ HF Space gradio 배포 lane 종료, mission refocus = anima_chat library + anima 모델 ckpt **조합** 자체로 ★★★★★. SSOT 는 root GOAL.md.
+
+### 행동
+
+| step | action | status |
+|---|---|---|
+| 1 | `huggingface_hub.delete_repo("dancinlab/anima-chat", repo_type="space")` | ✅ DONE (sha `bf544e3` RUNNING → HTTP 401) |
+| 2 | memory `project_anima_chat_hf_space.md` 삭제 + MEMORY.md row 제거 | ✅ DONE |
+| 3 | filter doc §8 Provenance HF Space line strike-through + 폐기 표기 | ✅ DONE |
+| 4 | PSCC §31 SUPERSEDED marker (본 §32 close) | ✅ DONE |
+| 5 | `docs/ai-native/hf_space_dual_ckpt_selector_landed_2026_05_12.ai.md` DEPRECATED 헤더 | pending |
+| 6 | `GOAL.md` (repo root) 생성 + ★★★★★ mission tracker | pending |
+
+### Mission refocus
+
+이전 mission production path = HF Space (anima-chat). 본 §32 로 그 path 제거.
+
+새 mission = **anima_chat library + anima 모델 ckpt 조합 자체** 가 ★★★★★:
+- library SSOT: anima 본체 `anima_chat.py` v2.3 (commit `c2afa8e9e`, tag `anima_chat-v2.3-markdown-filter`)
+- model SSOT: Phase 1A.1 ckpt (현 V5.8 std_greedy 4/5)
+- ★★★★★ 정의: V5.8 std_greedy 5/5 PASS — anima 본체 직접 호출로 measure, Gradio/Space layer 의존 0
+- 추적 SSOT: GOAL.md (root)
+
+### 인플라이트 BG (★★★★★ mission 영향)
+
+- 🥇 Phase 1A.4 lr 5e-6 SFT (Vast.ai 36609664) — primary path, unaffected
+- 🥈 Phase 1A.4 cuda filter validation (Vast.ai 36609656) — alt path, unaffected
+
+두 BG 모두 anima 본체 lane 작업 — HF Space 폐기 와 무관.
+
+### Cost / rating
+
+- Vast.ai cost 0 (HF API call only)
+- HF storage liberated (Space ~50MB)
+- ★ — pure cleanup, mission state 동일 (4/5 → 4/5), 새 GOAL.md 가 mission tracker
+

@@ -2,12 +2,18 @@
 date: 2026-05-12
 package: anima
 component: hf-space-dancinlab-anima-chat
-status: LANDED
+status: DEPRECATED
+deprecated_at: 2026-05-12 KST
+deprecation_reason: user directive (PSCC §32) — HF Space `dancinlab/anima-chat` deleted via huggingface_hub.delete_repo. mission refocus to anima_chat library + anima 모델 ckpt 조합 자체 (GOAL.md SSOT, Gradio/Space layer 의존 0).
+deprecation_ref: PSCC §32 + root GOAL.md
 owner: anima monorepo
 cycle: HF Space dual-ckpt selector (succeeds §21 B'' swap)
 ssot_artifact: ../../PASS_STRICT_SPONTANEOUS_CHAT.md §24
 upstream_pin: Space sha 865ff4f / commits c3037e4 + ab8a2ee + 865ff4f
 ---
+
+> **DEPRECATED 2026-05-12 KST**: HF Space `dancinlab/anima-chat` 영구 삭제 (PSCC §32). 본 doc 은 historical record 로만 유지. 현 mission tracker = root `GOAL.md`.
+
 
 # HF Space dual-ckpt selector landed — anima side (2026-05-12)
 
