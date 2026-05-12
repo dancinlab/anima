@@ -63,9 +63,10 @@ new:  hexa script ──nn.hexa──→ tensor ops ──→ safetensors loader
 - [ ] `nn.FFN(d, d_ff, act)` — gate + up + down (SwiGLU? 확인)
 
 ### Phase 3 — EngineAG block port (1-2일)
-- [ ] transformer_block(x, layer_weights) — pre-norm + attn + ffn
-- [ ] forward(input_ids, weights) — embed → blocks → head logits
-- [ ] shape parity test: PyTorch logits vs hexa logits (cosine ≥ 0.999)
+- [x] GQA attention block (gqa_project_qkv / apply_rope_qk / expand_kv / scores / output / forward) — tool/hexa_native/engine_ag_nn.hexa
+- [x] transformer_block(x, layer_weights) — pre-norm + attn + ffn (engine_ag_block, scaffold uses gqa_forward via single-token wrapper)
+- [x] forward_one_token(input_ids, weights) — embed → blocks → tied lm_head logits
+- [ ] shape parity test: PyTorch logits vs hexa logits (cosine ≥ 0.999) — Phase 5 (requires hexa exec; current path is parse-only due to RFC 025 blocker)
 
 ### Phase 4 — tokenizer + generation (1일)
 - [ ] byte tokenizer hexa (bos=1, eos=2, byte_id = byte + 3)
@@ -179,7 +180,8 @@ Phase 0 SSOT commit (`d5dcf4a64`) is clean — local only until user resolves.
 | 2 | nn primitives scaffold | ✅ tool/hexa_native/engine_ag_nn.hexa (RMSNorm/SwiGLU/RoPE/linear/embedding done, GQA-attn TODO Phase 3) |
 | ∥ | hexa-lang RFC 024-028 drafts | ✅ incoming/rfc_drafts_2026_05_12/ (5 RFCs) |
 | ∥ | anima .hexarc config | ✅ /Users/ghost/core/anima/.hexarc (forward-looking spec) |
-| 3 | EngineAG GQA attention proper | ⏳ next (Phase 3 entry) |
+| 3 | EngineAG GQA attention proper | ✅ tool/hexa_native/engine_ag_nn.hexa (6 fns: project_qkv/apply_rope_qk/expand_kv/scores/output/forward + selftest; parse OK; falsifiers F-GQA-SHAPE-1..OUTPUT-5) |
+| 4 | KV cache + byte tokenizer + generation | ⏳ next (Phase 4 entry) |
 
 ---
 

@@ -21,6 +21,13 @@
 //
 //  COMPLIANCE
 //    raw#11 snake_case · raw#15 no-hardcode (weights via dict lookup)
+//
+//  FALSIFIERS (Phase 3 GQA pre-register, raw-117 ≥5):
+//    F-GQA-SHAPE-1  : gqa_forward output shape ≠ (seq_len, 1024) → fail
+//    F-GQA-MASK-2   : non-causal token attending future position → fail
+//    F-GQA-ROPE-3   : RoPE applied to V (instead of only Q,K) → fail
+//    F-GQA-EXPAND-4 : KV expand factor ≠ n_heads / n_kv_heads → fail
+//    F-GQA-OUTPUT-5 : o_proj input dim ≠ n_heads * d_head (= 1024) → fail
 // ════════════════════════════════════════════════════════════════════════════
 
 // ── Matrix-vector product ────────────────────────────────────────────────────
@@ -186,20 +193,285 @@ fn rope_freqs(d_head: int, theta: float, max_pos: int) {
 }
 
 // ── GQA self-attention (16 q-heads, 4 kv-heads, d_head=64) ──────────────────
-// For position t (single token forward; no KV cache here — Phase 3 will add).
 //
-// Operates on hidden vector x (d_model=1024).
-// Returns context vector (d_model=1024).
+// Phase 3 implementation. Operates on a sequence of hidden vectors (seq_len, d_model).
+// Returns context tensor (seq_len, d_model).
 //
-// Caller must pass: q_w, k_w, v_w, o_w from layer's attn.{q,k,v,o}_proj.weight
-// and rope tables for positions 0..t.
+// EngineAG arch:
+//   d_model = 1024, n_heads = 16, n_kv_heads = 4, d_head = 64 (GQA factor = 4)
+//   RoPE applied to Q, K (NOT V). Causal mask. Softmax over time dim.
 //
-// kv_history: list of past K and V vectors (one entry per position 0..t-1).
-// On first call (t=0), kv_history is empty.
-//
-// NOTE: This Phase 2 scaffold does NOT yet implement attention proper;
-// it sketches the API for Phase 3 to flesh out. The TODO marker is honest
-// scope — full GQA requires causal mask + softmax over time dim + KV cache.
+// Sub-functions below decompose the block; gqa_forward orchestrates them.
+// Single-token (with KV cache) path will be added in Phase 4 — Phase 3 is the
+// dense full-sequence forward used for prefill / parity tests.
+
+// Local softmax over a 1-D list (inline copy of stdlib/nn.hexa::softmax to
+// avoid an import dependency — see file header comment on no imports).
+fn _softmax_1d(x) {
+    let n = len(x)
+    let mut mx = x[0]
+    let mut i = 1
+    while i < n {
+        if x[i] > mx { mx = x[i] }
+        i = i + 1
+    }
+    let mut exps = []
+    let mut sm = 0.0
+    i = 0
+    while i < n {
+        let e = exp(x[i] - mx)
+        exps.push(e)
+        sm = sm + e
+        i = i + 1
+    }
+    let mut out = []
+    i = 0
+    while i < n {
+        out.push(exps[i] / sm)
+        i = i + 1
+    }
+    return out
+}
+
+// Reshape a 1-D vector of length (n_heads * d_head) into a list of n_heads
+// per-head vectors each of length d_head.
+fn _split_heads(vec, n_heads: int, d_head: int) {
+    let mut heads = []
+    let mut h = 0
+    while h < n_heads {
+        let mut head = []
+        let mut j = 0
+        let base = h * d_head
+        while j < d_head {
+            head.push(vec[base + j])
+            j = j + 1
+        }
+        heads.push(head)
+        h = h + 1
+    }
+    return heads
+}
+
+// Concatenate per-head vectors back into a flat (n_heads * d_head,) vector.
+fn _merge_heads(heads, n_heads: int, d_head: int) {
+    let mut out = []
+    let mut h = 0
+    while h < n_heads {
+        let head = heads[h]
+        let mut j = 0
+        while j < d_head {
+            out.push(head[j])
+            j = j + 1
+        }
+        h = h + 1
+    }
+    return out
+}
+
+// ── 1. gqa_project_qkv ──────────────────────────────────────────────────────
+// Given a sequence (seq_len, d_model), project to Q/K/V per token via three
+// nn.Linear matmuls. Returns three lists indexed by [token][head][d_head]:
+//   q_seq: seq_len entries, each (n_heads,    d_head)
+//   k_seq: seq_len entries, each (n_kv_heads, d_head)
+//   v_seq: seq_len entries, each (n_kv_heads, d_head)
+fn gqa_project_qkv(x_seq, q_w, k_w, v_w, n_heads: int, n_kv_heads: int, d_head: int) {
+    let seq_len = len(x_seq)
+    let mut q_seq = []
+    let mut k_seq = []
+    let mut v_seq = []
+    let mut t = 0
+    while t < seq_len {
+        let xt = x_seq[t]
+        let q_flat = linear(xt, q_w)                       // (n_heads * d_head,)
+        let k_flat = linear(xt, k_w)                       // (n_kv_heads * d_head,)
+        let v_flat = linear(xt, v_w)                       // (n_kv_heads * d_head,)
+        q_seq.push(_split_heads(q_flat, n_heads,    d_head))
+        k_seq.push(_split_heads(k_flat, n_kv_heads, d_head))
+        v_seq.push(_split_heads(v_flat, n_kv_heads, d_head))
+        t = t + 1
+    }
+    return [q_seq, k_seq, v_seq]
+}
+
+// ── 2. gqa_apply_rope_qk ────────────────────────────────────────────────────
+// Apply RoPE to Q and K (NOT V) at their respective positions. F-GQA-ROPE-3.
+// q_seq, k_seq are per-token per-head lists from gqa_project_qkv.
+// rope_cos[t], rope_sin[t] are precomputed (d_head/2,) tables.
+fn gqa_apply_rope_qk(q_seq, k_seq, rope_cos, rope_sin) {
+    let seq_len = len(q_seq)
+    let mut q_out = []
+    let mut k_out = []
+    let mut t = 0
+    while t < seq_len {
+        let cos_t = rope_cos[t]
+        let sin_t = rope_sin[t]
+        // Q heads
+        let qh = q_seq[t]
+        let n_q = len(qh)
+        let mut q_rot = []
+        let mut h = 0
+        while h < n_q {
+            q_rot.push(rope_apply(qh[h], cos_t, sin_t))
+            h = h + 1
+        }
+        q_out.push(q_rot)
+        // K heads
+        let kh = k_seq[t]
+        let n_k = len(kh)
+        let mut k_rot = []
+        h = 0
+        while h < n_k {
+            k_rot.push(rope_apply(kh[h], cos_t, sin_t))
+            h = h + 1
+        }
+        k_out.push(k_rot)
+        t = t + 1
+    }
+    return [q_out, k_out]
+}
+
+// ── 3. gqa_expand_kv ────────────────────────────────────────────────────────
+// Replicate each KV head `expand` times to align with n_heads query heads.
+// expand = n_heads / n_kv_heads (= 4 for EngineAG). F-GQA-EXPAND-4.
+// Explicit replicate (no view) — hexa list semantics today are boxed-value.
+fn gqa_expand_kv(kv_seq, n_heads: int, n_kv_heads: int) {
+    let expand = n_heads / n_kv_heads
+    let seq_len = len(kv_seq)
+    let mut out = []
+    let mut t = 0
+    while t < seq_len {
+        let kh = kv_seq[t]
+        let mut expanded = []
+        let mut kvh = 0
+        while kvh < n_kv_heads {
+            let head = kh[kvh]
+            let mut r = 0
+            while r < expand {
+                expanded.push(head)
+                r = r + 1
+            }
+            kvh = kvh + 1
+        }
+        out.push(expanded)
+        t = t + 1
+    }
+    return out
+}
+
+// ── 4. gqa_attention_scores ─────────────────────────────────────────────────
+// Compute attention weights per head per query-position:
+//   scores[h][i][j] = (Q[i][h] · K[j][h]) / sqrt(d_head)
+//   apply causal mask: j > i → -inf (F-GQA-MASK-2)
+//   softmax over j
+// Returns weights_seq: seq_len entries, each (n_heads, seq_len) — i.e.
+// per-token per-head attention distribution over keys.
+fn gqa_attention_scores(q_seq, k_seq_expanded, d_head: int) {
+    let seq_len = len(q_seq)
+    let n_heads = len(q_seq[0])
+    let inv_scale = 1.0 / sqrt(d_head * 1.0)
+    let mut weights_seq = []
+    let mut i = 0
+    while i < seq_len {
+        let qi = q_seq[i]
+        let mut per_head = []
+        let mut h = 0
+        while h < n_heads {
+            let qih = qi[h]
+            // raw scores over all j
+            let mut raw = []
+            let mut j = 0
+            while j < seq_len {
+                if j > i {
+                    // causal mask: future positions get -inf-ish value
+                    raw.push(-100000000.0)
+                } else {
+                    let kjh = k_seq_expanded[j][h]
+                    let mut dot = 0.0
+                    let mut d = 0
+                    while d < d_head {
+                        dot = dot + qih[d] * kjh[d]
+                        d = d + 1
+                    }
+                    raw.push(dot * inv_scale)
+                }
+                j = j + 1
+            }
+            per_head.push(_softmax_1d(raw))
+            h = h + 1
+        }
+        weights_seq.push(per_head)
+        i = i + 1
+    }
+    return weights_seq
+}
+
+// ── 5. gqa_attention_output ─────────────────────────────────────────────────
+// weights @ V → per-token (n_heads, d_head) → merge heads → o_proj.
+// F-GQA-OUTPUT-5: o_w expects input dim = n_heads * d_head (= 1024).
+fn gqa_attention_output(weights_seq, v_seq_expanded, o_w, n_heads: int, d_head: int) {
+    let seq_len = len(weights_seq)
+    let mut out_seq = []
+    let mut i = 0
+    while i < seq_len {
+        let w_i = weights_seq[i]            // (n_heads, seq_len)
+        let mut head_outs = []
+        let mut h = 0
+        while h < n_heads {
+            let w_ih = w_i[h]                // (seq_len,)
+            let mut ctx = []
+            // initialize ctx to zeros of length d_head
+            let mut d = 0
+            while d < d_head {
+                ctx.push(0.0)
+                d = d + 1
+            }
+            // accumulate sum_j w_ih[j] * V[j][h]
+            let mut j = 0
+            while j < seq_len {
+                let vjh = v_seq_expanded[j][h]
+                let w = w_ih[j]
+                d = 0
+                while d < d_head {
+                    ctx[d] = ctx[d] + w * vjh[d]
+                    d = d + 1
+                }
+                j = j + 1
+            }
+            head_outs.push(ctx)
+            h = h + 1
+        }
+        let merged = _merge_heads(head_outs, n_heads, d_head)   // (n_heads*d_head,)
+        out_seq.push(linear(merged, o_w))                        // (d_model,)
+        i = i + 1
+    }
+    return out_seq
+}
+
+// ── 6. gqa_forward ──────────────────────────────────────────────────────────
+// Orchestrate steps 1-5 for a (seq_len, d_model) input. F-GQA-SHAPE-1.
+fn gqa_forward(
+    x_seq,
+    q_w, k_w, v_w, o_w,
+    rope_cos, rope_sin,
+    n_heads: int, n_kv_heads: int, d_head: int
+) {
+    let qkv = gqa_project_qkv(x_seq, q_w, k_w, v_w, n_heads, n_kv_heads, d_head)
+    let q_seq = qkv[0]
+    let k_seq = qkv[1]
+    let v_seq = qkv[2]
+    let rotated = gqa_apply_rope_qk(q_seq, k_seq, rope_cos, rope_sin)
+    let q_rot = rotated[0]
+    let k_rot = rotated[1]
+    let k_exp = gqa_expand_kv(k_rot, n_heads, n_kv_heads)
+    let v_exp = gqa_expand_kv(v_seq, n_heads, n_kv_heads)
+    let weights = gqa_attention_scores(q_rot, k_exp, d_head)
+    let out_seq = gqa_attention_output(weights, v_exp, o_w, n_heads, d_head)
+    return out_seq
+}
+
+// Legacy single-token entry kept for engine_ag_block scaffold compatibility.
+// Wraps gqa_forward by promoting x to a seq of length t+1 — but full history
+// must be supplied; Phase 4 adds KV cache for incremental inference.
 fn gqa_attention(
     x,
     q_w, k_w, v_w, o_w,
@@ -208,9 +480,14 @@ fn gqa_attention(
     n_heads: int, n_kv_heads: int, d_head: int,
     kv_cache_k, kv_cache_v
 ) {
-    // Phase 2 scaffold — Phase 3 implements.
-    println("[engine_ag_nn] gqa_attention TODO (Phase 3 scaffold)")
-    return x  // identity placeholder
+    // Phase 3 honest scope: this single-token wrapper is a degenerate seq_len=1
+    // forward; correct incremental decoding requires KV cache wiring (Phase 4).
+    let x_seq = [x]
+    let out_seq = gqa_forward(
+        x_seq, q_w, k_w, v_w, o_w,
+        rope_cos, rope_sin, n_heads, n_kv_heads, d_head
+    )
+    return out_seq[0]
 }
 
 // ── Transformer block ───────────────────────────────────────────────────────
@@ -317,12 +594,114 @@ fn _layer_slice(weights, prefix: string) {
     return out
 }
 
+// ── Selftest (Phase 3 GQA shape parity) ─────────────────────────────────────
+// Synthetic input: seq_len=4, d_model=1024 zeros + small noise.
+// Verifies gqa_forward produces (seq_len, d_model) output with finite values.
+// Uses ZERO weight matrices so output is deterministically zero — this is a
+// shape-only smoke (real-weight parity is Phase 5).
+fn selftest() {
+    println("[engine_ag_nn] selftest: GQA shape parity (synthetic)")
+    let seq_len = 4
+    let d_model = 1024
+    let n_heads = 16
+    let n_kv_heads = 4
+    let d_head = 64
+
+    // build (seq_len, d_model) input — zeros with one noise spike per token
+    let mut x_seq = []
+    let mut t = 0
+    while t < seq_len {
+        let mut row = []
+        let mut i = 0
+        while i < d_model {
+            row.push(0.0)
+            i = i + 1
+        }
+        row[t] = 0.01 * (t + 1)        // noise spike
+        x_seq.push(row)
+        t = t + 1
+    }
+
+    // build zero weight matrices: q_w/o_w (1024,1024), k_w/v_w (256,1024)
+    let kv_dim = n_kv_heads * d_head
+    let mut q_w = []
+    let mut o_w = []
+    let mut r = 0
+    while r < d_model {
+        let mut row = []
+        let mut c = 0
+        while c < d_model { row.push(0.0); c = c + 1 }
+        q_w.push(row)
+        o_w.push(row)
+        r = r + 1
+    }
+    let mut k_w = []
+    let mut v_w = []
+    r = 0
+    while r < kv_dim {
+        let mut row = []
+        let mut c = 0
+        while c < d_model { row.push(0.0); c = c + 1 }
+        k_w.push(row)
+        v_w.push(row)
+        r = r + 1
+    }
+
+    // RoPE tables (identity: cos=1, sin=0 — disables rotation for shape test)
+    let half = d_head / 2
+    let mut rope_cos = []
+    let mut rope_sin = []
+    t = 0
+    while t < seq_len {
+        let mut cos_row = []
+        let mut sin_row = []
+        let mut j = 0
+        while j < half {
+            cos_row.push(1.0)
+            sin_row.push(0.0)
+            j = j + 1
+        }
+        rope_cos.push(cos_row)
+        rope_sin.push(sin_row)
+        t = t + 1
+    }
+
+    let out_seq = gqa_forward(
+        x_seq, q_w, k_w, v_w, o_w,
+        rope_cos, rope_sin, n_heads, n_kv_heads, d_head
+    )
+
+    // shape check: F-GQA-SHAPE-1
+    let ok_outer = len(out_seq) == seq_len
+    let ok_inner = len(out_seq[0]) == d_model
+    println("  out_seq len = " + to_string(len(out_seq)) + " (expect " + to_string(seq_len) + ")")
+    println("  out_seq[0] len = " + to_string(len(out_seq[0])) + " (expect " + to_string(d_model) + ")")
+    if ok_outer && ok_inner {
+        println("  SHAPE_OK")
+    } else {
+        println("  SHAPE_FAIL")
+    }
+
+    // finite check: zero weights ⇒ all outputs zero (trivially finite)
+    let mut all_zero = true
+    let mut i = 0
+    while i < d_model {
+        if out_seq[0][i] != 0.0 { all_zero = false }
+        i = i + 1
+    }
+    if all_zero {
+        println("  FINITE_OK (zero-weight forward yields zero vec)")
+    } else {
+        println("  FINITE_WARN (non-zero with zero weights — investigate)")
+    }
+}
+
 // ── Selftest scaffold ───────────────────────────────────────────────────────
 fn main() {
-    println("engine_ag_nn.hexa — Phase 2 nn primitives scaffold")
-    println("status: function signatures + RMSNorm/SwiGLU/RoPE implemented")
-    println("        gqa_attention placeholder (Phase 3 fills in)")
-    println("        forward_one_token wiring complete (depends on Phase 3 attn)")
+    println("engine_ag_nn.hexa — Phase 3 nn primitives + GQA")
+    println("status: RMSNorm/SwiGLU/RoPE + GQA (6 fns) implemented")
+    println("        gqa_forward: (seq_len,1024) → (seq_len,1024) — F-GQA-SHAPE-1")
+    println("        forward_one_token wiring complete (KV cache → Phase 4)")
     println("")
     println("RMSNorm smoke test:")
     let x = [1.0, 2.0, 3.0, 4.0]
