@@ -1,74 +1,3 @@
-=== v5mitosis_cotrain_v5_ddp vast.ai 4× H100 dispatch (v5 DDP) ===
-Tue May 12 19:02:41 UTC 2026
-  resume from v4 ckpt_step_2000.pt :: steps 2000 -> 20000
-  per_gpu_batch=4 world_size=4 effective_batch=16
-  arch: d=1024 n_head=16 ffn=4096 cells=256-256 ctx=512
-  routing: top_k=8 aux_alpha=0.01 λ_init=1.0 λ_final=0.01 sched=cosine
-  cost_cap=$100.0 absolute_max=$110.00000000000001 per_hr_max=$20.0
-[WARN] resume ckpt CORRUPT (zip cd missing): /Users/ghost/core/anima/state/anima_v5mitosis_cotrain_v3_routing_2026_05_12/ckpts/ckpt_step_2000.pt — falling back to FRESH START
-[1/9] Searching 4× GPU offers (gpu_name in [H100_SXM,H100_NVL,H100_PCIE,H200,B200] num_gpus=4 reliability>0.95 dph_total<20.0 disk_space>200 inet_down>200) — cheapest with gpu_ram>=75000MB ...
-  Selected: id=20417095 dph=$12.9046 gpu=H200 num_gpus=4 gpu_ram=143771MB rel=1.000
-[2/9] cost gate OK (est $64.52)
-[3/9] Renting...
-  Instance ID: 36635520
-[4/9] Waiting SSH (direct-IP) ...
-  ... 1/180 status=None
-  ... 2/180 status=None
-  ... 3/180 status=loading
-  ... 4/180 status=loading
-  ... 5/180 status=loading
-  ... 6/180 status=loading
-  ... 7/180 status=loading
-  ... 8/180 status=loading
-  ... 9/180 status=loading
-  ... 10/180 status=loading
-  ... 11/180 status=loading
-  ... 12/180 status=loading
-  ... 13/180 status=loading
-  ... 14/180 status=loading
-  ... 15/180 status=loading
-  ... 16/180 status=loading
-  ... 17/180 status=loading
-  ... 18/180 status=loading
-  ... 19/180 status=loading
-  ... 20/180 status=loading
-  ... 21/180 status=loading
-  ... 22/180 status=loading
-  ... 23/180 status=loading
-  ... 24/180 status=loading
-  ... 25/180 status=loading
-  ... 26/180 status=loading
-  ... 27/180 status=loading
-  ... 28/180 status=running
-  SSH ready: 208.64.254.181:21191 (29x5s)
-[5/9] Uploading code+corpus+probe+(maybe)resume_ckpt ...
-Warning: Permanently added '[208.64.254.181]:21191' (ED25519) to the list of known hosts.
-Welcome to vast.ai. If authentication fails, try again after a few seconds, and double check your ssh key.
-Have fun!
-Warning: Permanently added '[208.64.254.181]:21191' (ED25519) to the list of known hosts.
-Welcome to vast.ai. If authentication fails, try again after a few seconds, and double check your ssh key.
-Have fun!
-Warning: Permanently added '[208.64.254.181]:21191' (ED25519) to the list of known hosts.
-Welcome to vast.ai. If authentication fails, try again after a few seconds, and double check your ssh key.
-Have fun!
-Warning: Permanently added '[208.64.254.181]:21191' (ED25519) to the list of known hosts.
-Welcome to vast.ai. If authentication fails, try again after a few seconds, and double check your ssh key.
-Have fun!
-Warning: Permanently added '[208.64.254.181]:21191' (ED25519) to the list of known hosts.
-Welcome to vast.ai. If authentication fails, try again after a few seconds, and double check your ssh key.
-Have fun!
-  no resume ckpt — fresh start
-[6/9] (image already has torch — skip pip install)
-Warning: Permanently added '[208.64.254.181]:21191' (ED25519) to the list of known hosts.
-Welcome to vast.ai. If authentication fails, try again after a few seconds, and double check your ssh key.
-Have fun!
-GPU 0: NVIDIA H200 (UUID: GPU-458ecbfa-922d-910e-eec2-55ddbb442ac6)
-GPU 1: NVIDIA H200 (UUID: GPU-7a039358-c21d-a827-c382-1be8cd8e03ae)
-GPU 2: NVIDIA H200 (UUID: GPU-134f0243-746f-07e3-e4f1-a112207a19e4)
-GPU 3: NVIDIA H200 (UUID: GPU-2107ccf9-df8c-8b11-4877-52f4c1d072e4)
-torch= 2.5.1+cu121 cuda= True n_gpu= 4
-[7/9] Train v5 DDP (torchrun nproc_per_node=4) ...
-  >>> attempt 1: per_gpu_batch=4 (effective 16)
 Warning: Permanently added '[208.64.254.181]:21191' (ED25519) to the list of known hosts.
 Welcome to vast.ai. If authentication fails, try again after a few seconds, and double check your ssh key.
 Have fun!
@@ -311,9 +240,6 @@ Root Cause (first observed failure):
   error_file: <N/A>
   traceback : To enable traceback see: https://pytorch.org/docs/stable/elastic/errors.html
 ============================================================
-  [OOM detected] retry with per_gpu_batch=2
-Have fun!
-  >>> attempt 2: per_gpu_batch=2 (effective 8)
 Warning: Permanently added '[208.64.254.181]:21191' (ED25519) to the list of known hosts.
 Welcome to vast.ai. If authentication fails, try again after a few seconds, and double check your ssh key.
 Have fun!
