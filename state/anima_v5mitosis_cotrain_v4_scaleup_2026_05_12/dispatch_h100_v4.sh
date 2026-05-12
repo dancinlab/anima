@@ -55,15 +55,24 @@ LAMBDA_INIT="${LAMBDA_INIT:-1.0}"
 LAMBDA_FINAL="${LAMBDA_FINAL:-0.01}"
 LAMBDA_SCHEDULE="${LAMBDA_SCHEDULE:-cosine}"
 N_PERMS="${N_PERMS:-100}"
-CKPT_EVERY="${CKPT_EVERY:-2000}"
+# ckpt is full fp32 model_state_dict — at d=1024 cells=256 ≈ 1-2B params ≈ 4-8 GB EACH.
+# ckpt_every=5000 → 3 mid + 1 final = ~4 ckpts; disk=150 keeps headroom.
+CKPT_EVERY="${CKPT_EVERY:-5000}"
+DISK_GB="${DISK_GB:-150}"
 
 # ── cost (free per directive; conservative cap = floor not ceiling) ──
 COST_CAP_USD="${COST_CAP_USD:-40.0}"
-COST_PER_HR_MAX="${COST_PER_HR_MAX:-6.0}"
+COST_PER_HR_MAX="${COST_PER_HR_MAX:-8.0}"
 ESTIMATED_WALL_HR="${ESTIMATED_WALL_HR:-5.0}"
 ABSOLUTE_MAX_USD=$(python3 -c "print($COST_CAP_USD * 1.10)")
-# Prefer H100 SXM (80GB) — cells=256 d=1024 needs the big VRAM; H100 PCIE/NVL/H200 OK; A100 80GB fallback.
-GPU_FILTER="${GPU_FILTER:-gpu_name in [H100_SXM,H100_NVL,H200,H100_PCIE,A100_SXM4_80GB] num_gpus=1 reliability>0.95 dph_total<${COST_PER_HR_MAX} disk_space>80 inet_down>200}"
+# Need ≥75GB VRAM for d=1024 cells=256 ctx=512 batch=8.  Candidates (2026-05-13 marketplace):
+#   H100 SXM/NVL/PCIE & H200 (80-141GB) — frequently empty;
+#   B200 (183GB, ~$7.5/hr); RTX PRO 6000 WS/S (96GB, ~$0.94/hr); A100 SXM4 80GB (~$0.87/hr).
+# NOTE: vast.ai search ignores the `gpu_ram>=N` filter (returns 0) — so we DON'T put it in the
+# filter string; instead the python parser below sorts by price and picks the cheapest offer with
+# gpu_ram >= MIN_GPU_RAM_MB (excludes the 40GB A100 variant).  `gpu_name in [A,B,...]` (commas) works.
+MIN_GPU_RAM_MB="${MIN_GPU_RAM_MB:-75000}"
+GPU_FILTER="${GPU_FILTER:-gpu_name in [H100_SXM,H100_NVL,H100_PCIE,H200,B200,RTX_PRO_6000_WS,RTX_PRO_6000_S,A100_SXM4] num_gpus=1 reliability>0.95 dph_total<${COST_PER_HR_MAX} disk_space>${DISK_GB} inet_down>200}"
 
 VAST_SSH_KEY="/Users/ghost/.vast/ssh/vast-key"
 VASTAI="/Users/ghost/.local/bin/vastai"
@@ -79,19 +88,22 @@ echo "  steps=$STEPS d_model=$D_MODEL n_head=$N_HEAD ffn=$FFN_DIM cells=${INITIA
 echo "  ROUTING: top_k=$TOP_K aux_alpha=$AUX_ALPHA λ_init=$LAMBDA_INIT λ_final=$LAMBDA_FINAL sched=$LAMBDA_SCHEDULE"
 echo "  cost_cap=\$$COST_CAP_USD absolute_max=\$$ABSOLUTE_MAX_USD per_hr_max=\$$COST_PER_HR_MAX"
 
-echo "[1/9] Searching GPU offers ($GPU_FILTER) ..."
+echo "[1/9] Searching GPU offers ($GPU_FILTER) — cheapest with gpu_ram>=${MIN_GPU_RAM_MB}MB ..."
 OFFER_JSON=$($VASTAI search offers "$GPU_FILTER" -o dph_total --raw 2>&1)
-OFFER_PARSED=$(echo "$OFFER_JSON" | python3 -c "
-import json, sys
+OFFER_PARSED=$(echo "$OFFER_JSON" | MIN_GPU_RAM_MB="$MIN_GPU_RAM_MB" python3 -c "
+import json, os, sys
 try: data = json.load(sys.stdin)
 except Exception as e: sys.stderr.write(f'parse_err: {e}\n'); sys.exit(1)
 if not data: sys.stderr.write('no_offers\n'); sys.exit(1)
-b = data[0]
-print(f'{b[\"id\"]} {b[\"dph_total\"]:.4f} {b[\"gpu_name\"]} {b.get(\"reliability\",0):.3f} {b.get(\"gpu_ram\",0)}')
+minram = float(os.environ.get('MIN_GPU_RAM_MB', '75000'))
+cand = sorted((x for x in data if float(x.get('gpu_ram', 0) or 0) >= minram), key=lambda x: x['dph_total'])
+if not cand: sys.stderr.write(f'no_offers_ge_{int(minram)}MB (had {len(data)} but all < {int(minram)}MB)\n'); sys.exit(1)
+b = cand[0]
+print(f'{b[\"id\"]} {b[\"dph_total\"]:.4f} {b[\"gpu_name\"].replace(\" \", \"_\")} {b.get(\"reliability\",0):.3f} {int(b.get(\"gpu_ram\",0) or 0)}')
 ")
 OFFER_ID=$(echo "$OFFER_PARSED" | awk '{print $1}')
 OFFER_DPH=$(echo "$OFFER_PARSED" | awk '{print $2}')
-echo "  Selected: id=$OFFER_ID dph=\$$OFFER_DPH gpu=$(echo "$OFFER_PARSED" | awk '{print $3}') gpu_ram=$(echo "$OFFER_PARSED" | awk '{print $5}')MB"
+echo "  Selected: id=$OFFER_ID dph=\$$OFFER_DPH gpu=$(echo "$OFFER_PARSED" | awk '{print $3}') gpu_ram=$(echo "$OFFER_PARSED" | awk '{print $5}')MB rel=$(echo "$OFFER_PARSED" | awk '{print $4}')"
 
 EST_COST=$(python3 -c "print(round($OFFER_DPH * $ESTIMATED_WALL_HR, 2))")
 EXCEEDS=$(python3 -c "print('YES' if $EST_COST > $ABSOLUTE_MAX_USD else 'NO')")
@@ -101,7 +113,7 @@ echo "[2/9] cost gate OK (est \$$EST_COST)"
 echo "[3/9] Renting..."
 CREATE_OUT=$($VASTAI create instance "$OFFER_ID" \
     --image pytorch/pytorch:2.5.1-cuda12.1-cudnn9-runtime \
-    --disk 80 --ssh --direct --label "$PHASE_LABEL" --raw 2>&1)
+    --disk "$DISK_GB" --ssh --direct --label "$PHASE_LABEL" --raw 2>&1)
 INSTANCE_ID=$(echo "$CREATE_OUT" | python3 -c "
 import json, sys
 try: d=json.load(sys.stdin)
