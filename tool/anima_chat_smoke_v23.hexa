@@ -24,11 +24,11 @@ fn _str(x) -> string {
 }
 
 fn _resolve_root() -> string {
+    // SSOT: Mac home, regardless of where hexa runtime executes.
+    // hexa offloads to ubu/aiden, but anima_chat.py + ckpts live on Mac.
     let a = _str(env("ANIMA"))
     if a != "" { return a }
-    let gt = _str(exec("git rev-parse --show-toplevel 2>/dev/null")).trim()
-    if gt != "" { return gt }
-    return _str(env("HOME")) + "/core/anima"
+    return "~/core/anima"  // Mac home (~ expanded inside ssh mac '...')
 }
 
 fn _shell_escape_single(s: string) -> string {
@@ -52,7 +52,9 @@ fn _ckpt_anima_v05() -> string {
 
 fn _chat_once(ckpt: string, prompt: string, mode: string, max_new: int) -> string {
     let esc_prompt = _shell_escape_single(prompt)
-    let cmd = "/usr/bin/python3 " + _resolve_root() + "/anima_chat.py --ckpt " + ckpt + " --prompt " + esc_prompt + " --mode " + mode + " --max-new " + to_string(max_new) + " 2>/dev/null | grep '^response:'"
+    let inner = "/usr/bin/python3 " + _resolve_root() + "/anima_chat.py --ckpt " + ckpt + " --prompt " + esc_prompt + " --mode " + mode + " --max-new " + to_string(max_new) + " 2>/dev/null | grep '^response:'"
+    let esc_inner = _shell_escape_single(inner)
+    let cmd = "ssh -o ConnectTimeout=15 -o BatchMode=yes mac " + esc_inner
     return _str(exec(cmd)).trim()
 }
 
