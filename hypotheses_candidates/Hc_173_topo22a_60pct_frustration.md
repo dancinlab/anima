@@ -3,7 +3,9 @@ id: Hc_173
 slug: topo22a-60pct-frustration
 title: Hypercube 1024 + 60% frustration above 50% sweet spot (TOPO22a)
 domain: physics | consciousness
-status: candidate-falsifier-ready
+status: merged-to-H_178
+merged_at: 2026-05-12
+merged_to: hypotheses/H_178_frustration_sweep_50pct_optimum_cluster.md
 source_doc: docs/hypotheses/topo/TOPO22a.md
 source_lines: 1-25
 promoted_at: 2026-05-11

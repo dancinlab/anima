@@ -3,7 +3,9 @@ id: Hc_168
 slug: topo19a-50pct-frustration-record
 title: Hypercube 1024 + 50% frustration (i%2) sets new all-time record Φ=640 (TOPO19a ★★★)
 domain: physics | consciousness
-status: candidate-falsifier-ready
+status: merged-to-H_178
+merged_at: 2026-05-12
+merged_to: hypotheses/H_178_frustration_sweep_50pct_optimum_cluster.md
 source_doc: docs/hypotheses/topo/TOPO19a.md
 source_lines: 1-25
 promoted_at: 2026-05-11
