@@ -488,3 +488,26 @@ NCCL version 2.21.5+cuda12.4
 [STEP 19700] loss=0.0264 ce=0.0809 aux=1.2546 ent_gate=5.5409/5.545 wmax=0.2755 active>.01=8.0/256 λ=0.0107 cells=256 cost=$58.71 vram=107.5/150GB
 [STEP 19750] loss=0.0340 ce=0.0771 aux=1.2614 ent_gate=5.5408/5.545 wmax=0.2765 active>.01=8.0/256 λ=0.0105 cells=256 cost=$58.86 vram=107.5/150GB
 [STEP 19800] loss=0.0103 ce=0.0759 aux=1.2558 ent_gate=5.5408/5.545 wmax=0.2765 active>.01=8.0/256 λ=0.0103 cells=256 cost=$59.01 vram=107.5/150GB
+[STEP 19850] loss=0.0361 ce=0.0806 aux=1.2566 ent_gate=5.5408/5.545 wmax=0.2764 active>.01=8.0/256 λ=0.0102 cells=256 cost=$59.16 vram=107.5/150GB
+[STEP 19900] loss=0.0369 ce=0.0730 aux=1.2558 ent_gate=5.5408/5.545 wmax=0.2780 active>.01=8.0/256 λ=0.0101 cells=256 cost=$59.31 vram=107.5/150GB
+[STEP 19950] loss=0.0232 ce=0.0750 aux=1.2535 ent_gate=5.5409/5.545 wmax=0.2754 active>.01=8.0/256 λ=0.0100 cells=256 cost=$59.45 vram=107.5/150GB
+[STEP 19999] loss=0.0520 ce=0.0807 aux=1.2574 ent_gate=5.5408/5.545 wmax=0.2759 active>.01=8.0/256 λ=0.0100 cells=256 cost=$59.60 vram=107.5/150GB
+[INFO] training done wall=15913.2s cost=$59.60
+
+=== F-PERSONA-4a routing (top-K MoE) ===
+  verdict=KL_PASS_NULL_FAIL KL=0.9952 null=0.5772±0.1901 z=2.20 p=0.0100
+  (soft gate) KL=0.0005 z=2.41
+
+=== F-PERSONA-4b content (M4 aggregated cosine) regression ===
+  verdict=FAIL cos_dist=0.000136 null=0.000152±0.000077 z=-0.20 p=0.5100 (v2 carry z=3.20)
+
+=== F-V5MIT-1..5 regression (fresh-init cells-static; splits=0 by design) ===
+  4/5  F-V5MIT-1=P F-V5MIT-2=P F-V5MIT-3=P F-V5MIT-4=P F-V5MIT-5=F
+
+[RESULT] output/cotrain_v4_multi_result.json
+[VERDICT] 4a=KL_PASS_NULL_FAIL (KL=0.9952 z=2.20) | 4b=FAIL (z=-0.20) | F-V5MIT=4/5
+  train OK (rc=0, no OOM)
+[8/9] Downloading (MANDATORY before pod delete — memory feedback_orchestrator_h100_gotchas) ...
+Warning: Permanently added '[210.157.233.86]:23431' (ED25519) to the list of known hosts.
+Welcome to vast.ai. If authentication fails, try again after a few seconds, and double check your ssh key.
+Have fun!
