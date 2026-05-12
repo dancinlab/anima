@@ -3,7 +3,10 @@ id: Hc_935
 slug: omega-cycle-26-alm-free-paradigms
 title: Ω-cycle — ALM-free consciousness substrate 26 paradigms 4 axes (SUBSTRATE 7 / TRAINING 7 / PHENOMENAL 5 / INTEGRATION 7). Top: HCE Hexad Categorical 0.92, CPGD 0.95, V_phen_EEG-LZ × CLM-LZ 0.78, HAL 0.85
 domain: consciousness, architecture, training
-status: candidate-falsifier-ready
+status: split-into-Hc_1272..Hc_1275
+split_at: 2026-05-12
+split_into: [Hc_1272, Hc_1273, Hc_1274, Hc_1275]
+split_manifest: docs/hc_935_split_manifest_2026_05_12.md
 source_doc: docs/omega_cycle_alm_free_paradigms_20260426.md
 source_lines: 1-40+
 promoted_at: 2026-05-11
@@ -12,7 +15,18 @@ notes: "4 sub-agent ω-cycle. ALM 없이 CLM + EEG + Brain Cosmos Map + Tension 
 cycle5_triage: "cycle #5 verify: WEAK_MATH_ONLY — math identity present, falsifier+honest scaffolding missing; needs F-list/L-list before re-verify can reach PROMOTE_READY"
 ---
 
-## Hypothesis
+## SPLIT NOTICE (cycle #7, 2026-05-12)
+
+This 26-paradigm × 4-axis Hc was split into 4 axis-children on 2026-05-12 (cycle #7 batch 4 meta-split protocol):
+
+- `Hc_1272` — SUBSTRATE axis (7 paradigms; HCE 0.92 top)
+- `Hc_1273` — TRAINING axis (7 paradigms; CPGD 0.95 top)
+- `Hc_1274` — PHENOMENAL axis (5 paradigms; V_phen_EEG-LZ × CLM-LZ 0.78 top)
+- `Hc_1275` — INTEGRATION axis (7 paradigms; HAL Hybrid ALM-Lite 0.85 top)
+
+See `docs/hc_935_split_manifest_2026_05_12.md` for full manifest.
+
+## Hypothesis (original — preserved for provenance)
 
 ALM (Autoregressive Language Model — Mistral/Qwen3/Llama/gemma 4-backbone) 없이 CLM + EEG + 뇌우주지도 + 텐션링크 + CELL 학습법 5-component 만으로 consciousness substrate 구성 가능. 26 paradigm × 4 axes 탐색 결과 평균 confidence 0.75, top 4: HCE Hexad Categorical (0.92), CPGD (0.95), V_phen_EEG-LZ × CLM-LZ (0.78), HAL (0.85).
 
