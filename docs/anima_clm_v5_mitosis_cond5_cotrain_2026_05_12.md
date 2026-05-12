@@ -288,4 +288,45 @@ raw#10 honest C3 ≥7 (§7 = 10 항목), raw#15 additive (기존 spec/skeleton �
 | ckpt | 581 MB, `ckpts/ckpt_v5mitosis_cotrain_cotrain.pt` |
 | mission impact | GOAL.md cond #3 D3 = **STRONG (4/5 carry)** (KL=0 cotrain path = §5.5 4-alternative future-path) |
 
+---
+
+## §A2 [2026-05-12 KST] PSCC §47 — hypothesis (b) softmax τ tunable FALSIFIED via ubu-1 RTX 5070 audit
+
+본 §A2 append = §5.5 4-alternative future-path 중 **(b)** 단독 audit landing (ubu-1 dedicated GPU, $0 cost, wall ~25s + scp 42s).
+
+### §A2.1 audit harness
+- 신규 SSOT: `state/anima_v5mitosis_cotrain_2026_05_12/softmax_T_sweep.py` (13.8 KB, single-purpose)
+- ubu-1 layout: `~/core/anima_softmax_sweep_2026_05_12/{ckpts,results}/` (Tailscale rsync 581 MB ckpt, scp identity_probe + mitosis_model_v5)
+- T grid: {1.0, 1.5, 2.0, 3.0, 5.0, 7.0, 10.0, 15.0, 20.0, 50.0} (prior root_cause 의 sparse T grid fine-grained 확장)
+- GPU: RTX 5070, 11.13 GB free, torch 2.12 cu128
+
+### §A2.2 verdict
+| T | mean_KL | verdict |
+|---:|---:|:---:|
+| 1.0 ~ 20.0 | ≤ 2.08e-07 | FAIL |
+| 50.0 | 5.29e-03 (best) | FAIL |
+| 모든 T | < 0.5 | FAIL |
+
+→ **hypothesis (b) FALSIFIED**: tension softmax temperature τ tunable 만으로 F-PERSONA-4 KL ≥ 0.5 회복 불가능. cell 0 tension 793 vs cell 1 의 7.4 의 107× magnitude gap 이 T 변화로 깨지지 않음 (산술적으로 T → ∞ uniform 시 KL → 0 으로 수렴, 즉 T 가 KL maximize 하는 sweet spot 자체가 존재 안 함).
+
+### §A2.3 cond #3 status
+**STRONG (4/5) carry maintained** — D3 verdict 전환 없음, ☑ 승격 path 미달.
+
+잔여 path:
+- (a) multi-corpus cotrain v2 — H100 BG in-flight (`state/anima_v5mitosis_cotrain_v2_2026_05_12/`)
+- (c) F-PERSONA-4 metric redefinition — 이미 z-score §A2 PASS (`persona_4_intervention_apply.py`)
+- (d) REBORN §89 hexa-native per-session pool — 미구현
+
+### §A2.4 cost
+| 항목 | 값 |
+|---|---:|
+| ubu-1 dedicated GPU | $0 (own 43 active resource utilization) |
+| Mac local time | ~2 min |
+| BG envelope | $0 hard, no Vast.ai |
+
+### §A2.5 cross-link
+- audit doc SSOT: `docs/anima_persona_4_softmax_T_sweep_2026_05_12.md`
+- results JSON: `state/anima_v5mitosis_cotrain_2026_05_12/softmax_T_sweep_results.json`
+- memory: 신규 `project_anima_persona_4_softmax_T_sweep_2026_05_12`
+
 end of `anima_clm_v5_mitosis_cond5_cotrain_2026_05_12.md`.
