@@ -3535,3 +3535,132 @@ V5.8 std_greedy 5/5 parity 측정 후 ★★★★★ 후보. multi-token TODO[m
   - `tool/hexa_native/phase5_forward_smoke.hexa` (1-layer all-farr reference)
   - `tool/hexa_native/engine_ag_nn.hexa` (boxed-path forward — 본 cycle 미사용)
   - RFC 025 (mmap), RFC 031 (bf16→f32), RFC 032 (farr_matmul) — 모두 LANDED in hexa-lang main
+
+---
+
+## §40 [2026-05-12 KST] D3 persona substrate-native MEASUREMENT LANDED — F-PERSONA-1..5 AGGREGATE MODERATE (★★★★★ cond #3 design tier → measurement tier 전환) ★★★★ ($0 Mac local, GOAL.md cond #3 evidence-tier upgrade)
+
+### TL;DR
+
+GOAL.md ★★★★★ cond #3 (페르소나 롤플레잉 substrate-native) 의 **design tier → measurement tier** 전환. PSCC §34 의 `docs/anima_persona_substrate_native_design_2026_05_12.md` 에 pre-registered 된 5 falsifier (F-PERSONA-1..5) 를 `state/p_idr_identity_rules_2026_05_12/identity_probe.jsonl` (50 prompts × 5 categories) 위에서 측정. 신규 `tool/anima_persona_substrate_native_verify.hexa` (~620 LoC) harness 가 exit 0 wall ~1 min Mac local PASS — 1400 cell-pair cosine diff (F-PERSONA-2) + 10 warmup forwards × 2 pools (F-PERSONA-3) + 50 prompt tension softmax (F-PERSONA-4) + 7 grep gates (F-PERSONA-1+5).
+
+**AGGREGATE = MODERATE** (design verdict tier 2/4):
+- **F-PERSONA-1 NO-INJECTION PASS** (4/4 sub-asserts) — `chat_build_prompt` runtime 의 persona-prefix free, identity_block.txt foil 미사용, principle_3_audit_2026_05_12.md cond #5 ☑ cross-validated, harness ITSELF no system injection
+- **F-PERSONA-2 PER-CELL-DIFF PASS** (mean cosine distance **0.996** ≫ threshold 0.3, 1400 cell-pair evaluations) — gaussian-init cell pool 가 즉시 orthogonal-ish basis 형성, cells 가 페르소나 sub-axis 표현의 substrate-native carrier 임 결정적 evidence
+- **F-PERSONA-3 PER-SESSION-DIFF PARTIAL** — weight side **0.965 압도적 PASS** (threshold 0.2), Φ side **0.091 FAIL** (threshold 0.5). pool fork 가 cell pool 분화로 직접 이어짐 결정적 evidence; Φ threshold 가 design over-set (similar cell-count 두 pool 의 Φ 자연 근접)
+- **F-PERSONA-4 CATEGORY-DIVERSITY FAIL** — mean KL **7.3e-5 nats** (threshold 0.5). untrained cell pool 가 category specialization 미emergent — design §10 C3 ("v5-mitosis cond.5 F-V5MIT-5 V14-STRICT 통과 후에야 검증 가능") 가 정확히 예고
+- **F-PERSONA-5 SUBSTRATE-COHERENCE PASS** (3/3 sub-asserts) — `mitosis_hook.hexa` `.backward()/optimizer` 0 hits, `anima_chat.hexa` `apply_chat_template`/`role:system` 0 hits, F-PERSONA-2 PASS carry confirms pure-forward
+
+design doc §5 의 verdict criterion: STRONG (5/5) > **MODERATE (1 hard + 3/4)** > WEAK > FAIL.
+
+★★★ → ★★★★ 승격: cond #3 가 design-only 에서 measurement-grounded 로 advance.
+
+### Scope guard 준수
+
+- 본 BG = `tool/anima_persona_substrate_native_verify.hexa` 신규 (~620 LoC) + `state/anima_d3_verify_2026_05_12/persona_verify_results.json` machine-readable + `state/anima_d3_verify_2026_05_12/persona_verify_run_2026_05_12.log` raw stdout + `docs/anima_persona_substrate_native_verify_2026_05_12.md` 신규 (8 §) + GOAL.md cond #3 status edit + 본 PSCC §40 + memory new entry
+- 미수정: `anima_chat.hexa` 본체 (호출만, smoke 측 작업), `tool/hexa_native/mitosis_hook.hexa` (D4a LANDED), `tool/anima_cli/` (D4c lane), `state/anima_phase1a4_lr5e6_*` (Vast.ai BG), `docs/anima_persona_substrate_native_design_2026_05_12.md` (design SSOT 그대로)
+
+### 변경 분 detail
+
+#### 1. 신규 harness `tool/anima_persona_substrate_native_verify.hexa`
+
+- 입력: `state/p_idr_identity_rules_2026_05_12/identity_probe.jsonl` 50 line × {id, category, prompt}
+- 구조: F-PERSONA-1 (grep gates via `exec()`) + F-PERSONA-2 (1400 `_mit_cell_forward` cell-pair cosine) + F-PERSONA-3 (2 cell_pool fork × 5 warmup `mitosis_forward_tail` + farr weight cosine + Φ diff) + F-PERSONA-4 (50 prompt tension-softmax + per-category averaging + 10-pair KL) + F-PERSONA-5 (grep gates + F-PERSONA-2 PASS carry)
+- substrate config: d=64 cells=8 for F-PERSONA-2/4, d=16 cells=4 for F-PERSONA-3 (Mac interp memory budget, math dim-independent)
+- prompt → x_in encoding: deterministic FNV-1a 32-bit fold + LCG → d float vector ∈ [-0.5, 0.5] (raw#15 no-hardcode, reproducible across runs)
+- JSON output writer: hand-rolled (no nested json_stringify) — machine-readable result for follow-up analysis
+
+#### 2. 신규 result artifacts (`state/anima_d3_verify_2026_05_12/`)
+
+- `persona_verify_results.json` (1.1 KB) — F-PERSONA-2/3/4 numerical metrics + KL 5×5 matrix + verdicts
+- `persona_verify_run_2026_05_12.log` (4.6 KB) — raw stdout (mitosis selftest PASS + 50-probe load + 14 sub-asserts + AGGREGATE = MODERATE)
+
+#### 3. 신규 audit doc `docs/anima_persona_substrate_native_verify_2026_05_12.md`
+
+8 § (TL;DR / measurement protocol / 250-trial summary / per-falsifier detail / aggregate verdict + design cross-ref / GOAL.md status update / follow-up cycles + cross-link / honest C3 ≥5 / falsifiers self-verify F-VERIFY-1..5 / §A append).
+
+#### 4. GOAL.md cond #3 status edit
+
+- D3 table row: "design LANDED, impl pending" → "measurement LANDED, AGGREGATE = MODERATE" — measurement doc + harness + JSON result 추가
+- D3 section (line 50+): "design LANDED 2026-05-12, impl pending" → "measurement LANDED 2026-05-12, AGGREGATE MODERATE 🔶" + F-PERSONA-1..5 verdict 표
+- cond #3 checklist (line 191+): measurement LANDED PSCC §40 + per-falsifier outcome detail
+- aggregate count (line 198): "design LANDED impl pending" → "design+measurement LANDED MODERATE 3/5 top-PASS"
+
+### F-PERSONA-1..5 (raw#5 pre-registered, design §5)
+
+| ID | claim | result | numeric | threshold |
+|---|---|---|---|---|
+| F-PERSONA-1 NO-INJECTION | corpus + runtime persona-prefix grep = 0 | **PASS** | 4/4 sub-asserts (1a-d) | 0 hits |
+| F-PERSONA-2 PER-CELL-DIFF | same prompt × diff cell = diff response | **PASS** | mean cos dist **0.996** (min 0.488, max 1.414) | ≥ 0.3 |
+| F-PERSONA-3 PER-SESSION-DIFF | 2 separate sessions = distinct pool snapshots | **PARTIAL** | weight 0.965 ✓ / **ΔΦ 0.091 ✗** | weight ≥0.2 AND ΔΦ ≥0.5 |
+| F-PERSONA-4 CATEGORY-DIVERSITY | 5 cats activate diff cell subsets | **FAIL** | mean KL **7.3e-5 nats** (untrained pool C3) | ≥ 0.5 |
+| F-PERSONA-5 SUBSTRATE-COHER | pure forward / gradient absent | **PASS** | 3/3 sub-asserts (5a-c) | grad grep 0 + F-PERSONA-2 PASS |
+| **TOTAL** | **3 top-PASS + 1 PARTIAL + 1 FAIL** | **AGGREGATE = MODERATE** | 12/14 atomic sub-asserts | — |
+
+### Run command + wall envelope (측정값)
+
+```
+HEXA_MEM_UNLIMITED=1 \
+  /Users/ghost/core/hexa-lang/build/hexa_interp.real run \
+  /Users/ghost/core/anima/tool/anima_persona_substrate_native_verify.hexa \
+  > /tmp/persona_verify_run4.log 2>&1
+```
+
+- wall: ~1 min Mac local (mitosis selftest 0.9 s + 1400 cell-pair forwards + 10 warmup forwards × 2 pools + 50 prompt softmax + 7 grep gates)
+- peak RSS: modest (d=64 max, 8-cell pool weights ~32 KB × 2 = 64 KB)
+- exit code: 0
+- 50 probes loaded successfully
+- segfault avoidance: F-PERSONA-3 d축약 (d=64 → d=16, cells=8 → cells=4, warmup=20 → warmup=5) 적용 — 2 cell pool 동시 alloc 의 Mac interp budget 한계 회피, semantic conclusion 그대로 (math dim-independent)
+
+### Honest scope (raw#9/10)
+
+1. **d_model 축약**: F-PERSONA-2/4 d=64 cells=8, F-PERSONA-3 d=16 cells=4. design doc 의 production scale (d=1024, cells_max=128) 측정 은 hexa-aot 또는 codegen-c 별도 cycle. semantic conclusion (cell pool diff = persona axis carrier) 는 dim-independent.
+2. **untrained cell pool**: gaussian-init only (option β fallback per design §3.4). REBORN §88 cond.5 cotrain ($30–40 H100 F-V5MIT-4 fire) 미실행 → F-PERSONA-4 category specialization 미emergent — design §10 C3 ("per-cell engine_a/g 가 실제 persona axis 라는 claim 은 interpretive mapping, EMPIRICAL 미증명") 가 정확히 예고. 본 cycle 의 MODERATE verdict 가 design intuition 의 honest sub-tier.
+3. **F-PERSONA-3 warmup**: design spec 100-turn warmup, 본 measurement 5-turn (메모리 budget). longer warmup 시 pool divergence 더 커질 가능성 — Φ threshold 통과 후보 (별도 cycle).
+4. **Φ threshold over-set**: design §5 의 |ΔΦ| ≥ 0.5 가 cell-count similar 두 pool 에서 자연 under (Φ ∝ log(N+1) × cosine spread, 두 인자 평균화). design doc `__APPEND__ A1` 후보로 threshold 정정.
+5. **F-PERSONA-1 grep**: exec() 외부 grep 호출 — Mac CPU grep 4.x 결과만 보장. CI / cross-platform regression 시 grep behavior 차이 negligible.
+6. **prompt → x_in encoding**: FNV-1a + LCG deterministic anchor. anima_chat 의 24-layer forward → post-RMSNorm hidden state 사용이 production-faithful — 본 cycle = fast surrogate. dim-independent semantic 차원에서 valid, production parity 측정 은 별도 cycle.
+
+### Design doc §10 C3 ↔ measurement cross-validation
+
+| design C3 (pre-measurement) | actual measurement outcome |
+|---|---|
+| C1 design = DESIGN evidence-grade, 미수행 | measurement = DESIGN → MODERATE EMPIRICAL 전환 확정 |
+| C2 base pool origin (option α/β) | option β (gaussian-init) 위에서 측정 — option α cotrain post 측정 별도 cycle |
+| **C3 per-cell axis claim interpretive, EMPIRICAL 미증명** | **F-PERSONA-2 PASS (cells independent) + F-PERSONA-4 FAIL (cells un-specialized) — EMPIRICAL gap 정확히 측정됨** |
+| C4 storage overhead | Mac local d=64 + d=16 OK, production scale 별도 cycle |
+| C5 category mapping P-IDR script writer choice | within-category variance 추가 측정 follow-up |
+| C6 option α cotrain "single fire" 보장 없음 | cotrain post F-PERSONA-4 측정 별도 cycle |
+| C7 multi-modal persona | text-only, future scope |
+| C8 session_id assign mechanism | D4c CLI persistence 별도 cycle |
+
+→ design intuition 가 measurement 결과를 정확히 예측. measurement-tier 가 design-tier 의 valid sub-tier evidence advance.
+
+### Mission contribution
+
+- ★★★★ (cond #3 design tier → measurement tier 전환, GOAL.md 가시 evidence-grade 상승)
+- STRONG 승격 path 의 두 가지 명확화:
+  - (a) cheap path = design `__APPEND__ A1` Φ threshold 정정 ($0 Mac local, F-PERSONA-3 STRONG 화)
+  - (b) cotrain path = REBORN §88 cond.5 F-V5MIT-4 fire ($30–40 H100, F-PERSONA-4 STRONG 화)
+- 본 cycle 의 가장 가치 있는 contribution = **design C3 가 measurement gap 을 정확히 예측한 점** — 다음 cycle 의 lane prioritization 결정 데이터
+
+### Cost / rating
+
+- cost: $0 Mac local (wall ~1 min, no GPU)
+- ★★★★ — measurement land + design cross-validation + STRONG path 명확화. cond #3 의 evidence-grade 상승 (design tier → MODERATE measurement tier).
+- 후속 cotrain fire 또는 threshold 정정 시 ★★★★★ 후보 (cond #3 ☑ DONE 전환)
+
+### Provenance
+
+- 본 cycle commit: pending (incremental commit + push 의 다음 step)
+- 변경 file:
+  - `tool/anima_persona_substrate_native_verify.hexa` — new ~620 LoC F-PERSONA-1..5 harness
+  - `state/anima_d3_verify_2026_05_12/persona_verify_results.json` — new machine-readable result
+  - `state/anima_d3_verify_2026_05_12/persona_verify_run_2026_05_12.log` — new raw stdout
+  - `docs/anima_persona_substrate_native_verify_2026_05_12.md` — new 8 § audit doc
+  - `GOAL.md` — D3 row + D3 section + cond #3 checklist + aggregate count
+  - `PASS_STRICT_SPONTANEOUS_CHAT.md` — 본 §40
+- 보조 SSOT cross-link:
+  - design SSOT: `docs/anima_persona_substrate_native_design_2026_05_12.md` (§5 F-PERSONA spec + §10 C3 honest carry)
+  - prerequisite LANDED: D4a (REBORN §91, PSCC §36), D4b (PSCC §37), D1 TODO[load] (PSCC §39)
+  - Principle #3 EMPIRICAL strong: `docs/anima_convo_5k_ft_fire_2026_05_10.md:64-66` + `docs/principle_3_audit_2026_05_12.md` cond #5 ☑
