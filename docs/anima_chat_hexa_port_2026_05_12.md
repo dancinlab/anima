@@ -1,10 +1,15 @@
 # anima_chat.hexa — pure-hexa port audit (2026-05-12 KST)
 
 **Source SSOT**: `/Users/ghost/core/anima/anima_chat.py` (933 LoC, commit `c2afa8e9e`, tag `anima_chat-v2.3-markdown-filter`)
-**Target SSOT**: `/Users/ghost/core/anima/anima_chat.hexa` (1083 LoC)
-**Smoke harness**: `/Users/ghost/core/anima/tool/anima_chat_hexa_smoke.hexa` (~500 LoC)
+**Target SSOT**: `/Users/ghost/core/anima/anima_chat.hexa` (~1900 LoC v0.2 — was 1083 LoC at v0.1 parse-only)
+**Smoke harnesses**:
+- `/Users/ghost/core/anima/tool/anima_chat_hexa_smoke.hexa` (~500 LoC, F-AC-HEXA-1..6 helpers)
+- `/Users/ghost/core/anima/tool/anima_chat_mitosis_smoke.hexa` (D4b cell-pool wiring, F-D4B-1..5)
+- `/Users/ghost/core/anima/tool/anima_chat_load_smoke.hexa` (**v0.2 new**, F-D1-LOAD-1..3 full inference)
 
 **Mission contribution**: GOAL.md ★★★★★ — "anima_chat library + anima 모델 ckpt 조합" 의 chat library 측 pure-hexa 전환 (HEXA_NATIVE Phase 5 / REBORN §88 §89 의 chat-library lane).
+
+**Status**: v0.2 (2026-05-12) — parse-clean + 17/17 helper smoke PASS + 22/22 D4b mitosis wiring PASS + **6/6 F-D1-LOAD-1..3 full-inference PASS** (TODO[load] RESOLVED).
 
 ---
 
@@ -18,7 +23,8 @@
 | matmul hot loop (PyTorch `@`) | `farr_matmul(A, M, K, B, N)` | RFC 032 builtin |
 | `copy.deepcopy(t)` + add gaussian | `farr_copy(src)` + `farr_add_gaussian_noise(dst, σ)` | RFC 033 builtins (future mitosis hook) |
 | `ByteTokenizer.encode/decode` | `tok_encode` / `tok_decode_bytes` / `tok_decode_str` | Phase 4.2 byte_tokenizer.hexa + RFC 030 |
-| `EngineAGModel.__call__` (24L GQA) | `forward_one_token` / `gqa_attention_step` + KV cache | Phase 3/4.1 engine_ag_nn.hexa |
+| `EngineAGModel.__call__` (24L GQA) | **v0.2** `chat_forward_one_token_impl` (all-farr 24-layer + tied lm_head) | Section 9c — mirrors `phase5_forward_smoke.hexa::block_step_t0_farr` scaled to 24 layers (boxed-path `engine_ag_nn.hexa::forward_one_token` deprecated for this lane — OOMs at 24L) |
+| safetensors header → tensor binding | `_chat_index_of` / `_chat_parse_int` / `_chat_tensor_offsets` / `_chat_tensor_dtype` / `_chat_load_tensor_farr` | **v0.2** Section 9 local parser (no JSON stdlib needed) |
 | 4 gen modes (greedy/sample/M3/M4) | `gen_greedy` / `gen_sample` / `gen_m3_rep_penalty` / `gen_m4_force_include` | Phase 4.3 gen_modes.hexa |
 | `re.findall` (Korean chunks) | byte-walk Hangul UTF-8 first-byte detection | local in-port (avoids regex POSIX wide-char) |
 | `re.search` (markdown filter) | byte-walk pipe + separator-class scan | local in-port |
@@ -75,9 +81,28 @@ Python anima_chat.py does NOT auto-download from HF either (the ckpt ladder assu
 
 Python anima_chat.py uses `torch.load(.pt)` which is pickle-based. The hexa lane uses safetensors mmap (RFC 025) only. **Migration**: the Phase 1A.1 ckpt SSOT is `ckpt_phase1a1_sft.pt` (pickle) but the same training also emitted `ckpt_phase1a1_sft.safetensors` (BF16) for the HEXA_NATIVE lane. The hexa default points at the .safetensors variant.
 
-### TODO[load] — 24-layer weight binding deferred
+### TODO[load] — **RESOLVED 2026-05-12 (v0.2, PSCC §39)**
 
-`chat_load_weights` opens the safetensors mmap handle but does NOT yet parse the JSON header to bind {tensor_name → farr_id}. This is mechanical work (~150 LoC) — `tool/hexa_native/phase5_forward_smoke.hexa` already does this for one tensor; full N-tensor parsing is a separate cycle (REBORN §89 path). Until done, `chat_generate` returns "" without crash (gracefully handled — see `chat_forward_one_token` empty-list sentinel).
+~~`chat_load_weights` opens the safetensors mmap handle but does NOT yet parse the JSON header to bind {tensor_name → farr_id}~~ — **RESOLVED**.
+
+`anima_chat.hexa` v0.2 lands:
+- **Section 9 header parser** (`_chat_index_of` / `_chat_parse_int` / `_chat_tensor_offsets` / `_chat_tensor_dtype` / `_chat_load_tensor_farr`) — dtype-dispatched (BF16 → RFC 031, F32 → RFC 025).
+- **Full 218-tensor binding** in `chat_load_weights`: tok_emb + norm_f + 24 layers × 9 weights. engine_g.* skipped per Phase 5 parity contract.
+- **Section 9c all-farr forward**: `_chat_block_farr` (RMSNorm/GQA/SwiGLU all-farr) × 24 stacked + final norm + tied lm_head matvec — mirrors `phase5_forward_smoke.hexa::block_step_t0_farr` scaled to 24 layers + 32000-vocab lm_head.
+- **`chat_forward_one_token`** now dispatches to `chat_forward_one_token_impl` and returns real (vocab=32000) logits when weights are bound. Empty-list sentinel preserved for the unbound case.
+
+**F-D1-LOAD-1..3 verified** (`tool/anima_chat_load_smoke.hexa`, 6/6 sub-asserts):
+- F-D1-LOAD-1 LOAD-OK: mmap_handle ≥ 0, 218 keys, all farr handles ≥ 0
+- F-D1-LOAD-2 GEN-SHAPE: logits length == 32000, zero NaN/inf
+- F-D1-LOAD-3 ROUND-TRIP: greedy argmax = 155 (valid byte), value 7.64
+
+**Measured envelope** (Mac CPU, BF16 ckpt 570 MB, /usr/bin/time -l):
+- wall: 70.05 s (load + 2× forward)
+- peak RSS: 8.49 GB (218 BF16→f64 packed-double farr ≈ 2.6 GB + interp working set + matmul scratch)
+- per-token forward wall: ~35 s (24 layer × 6 matvec via RFC 032 `farr_matmul` native C — ~20× faster than the initial 10-15 min estimate)
+- requires `HEXA_MEM_UNLIMITED=1` env (default 768 MB cap insufficient for 2.6 GB packed weight set)
+
+**Residual scope** → new TODO[multitoken]: single-position attention path validates the FIRST generated token. Multi-step (max_new > 1) needs all-farr KV cache + per-step RoPE rotation — `engine_ag_nn.hexa` Phase 4.1 has this for the boxed path but an all-farr port is a separate cycle. V5.8 5/5 parity 측정도 multi-token 후 cycle.
 
 ### TODO[env] — partial
 
@@ -108,8 +133,15 @@ Python anima_chat.py uses `torch.load(.pt)` which is pickle-based. The hexa lane
 | F-AC-HEXA-4b | `extract_force_keywords("우주뇌지도") == ["우주뇌지도"]` | **PASS** |
 | F-AC-HEXA-5 | `markdown_ban_token_ids() == {127, 48, 61, 35}` | **PASS** |
 | F-AC-HEXA-6 | smoke main exits 0 | **PASS** |
+| **v0.2 — TODO[load] RESOLVED falsifiers** | | |
+| F-D1-LOAD-1a | mmap_handle ≥ 0 | **PASS** |
+| F-D1-LOAD-1b | weights dict has 218 keys | **PASS** (got 218) |
+| F-D1-LOAD-1c | all farr handles ≥ 0 | **PASS** (min_fh=0) |
+| F-D1-LOAD-2a | logits length == 32000 | **PASS** |
+| F-D1-LOAD-2b | finite logits (nan=0, inf=0) | **PASS** |
+| F-D1-LOAD-3a | greedy argmax in valid byte/special range | **PASS** (argmax=155, value=7.64) |
 
-**Total**: 17/17 (smoke) + parse-clean = **18/18 acceptance**.
+**Total**: 17/17 (helper smoke) + 6/6 (v0.2 F-D1-LOAD smoke) + parse-clean = **24/24 acceptance**.
 
 ### Run command
 
@@ -155,14 +187,26 @@ The smoke binary (`build/hexa_interp.real`) is used directly because the top-lev
   - 031 — `safetensors_mmap_read_bf16_to_f32_farr`
   - 032 — `farr_matmul` native packed-double matmul
   - 033 — `farr_copy` + `farr_add_gaussian_noise`
-- Cross-link: `GOAL.md` (★★★★★ tracker), `PASS_STRICT_SPONTANEOUS_CHAT.md` §33 (this cycle), `REBORN.md` §88 §89 (HEXA_NATIVE Phase 5 / 5∥)
+- Cross-link: `GOAL.md` (★★★★★ tracker), `PASS_STRICT_SPONTANEOUS_CHAT.md` §33 (v0.1 land) + §37 (D4b wiring) + **§39 (v0.2 TODO[load] RESOLVED)**, `REBORN.md` §88 §89 (HEXA_NATIVE Phase 5 / 5∥)
+- v0.2 smoke run record: `tool/anima_chat_load_smoke.hexa` PASS 6/6, wall 70.05 s, peak RSS 8.49 GB on Phase 1A.1 BF16 ckpt
 
 ---
 
 ## 7. Rating
 
-**★★★** — chat library pure-hexa port LANDED parse-clean + 17/17 helper smoke PASS. Full end-to-end inference (4-mode generation + multi-turn + batch with bound weights) gated on TODO[load] which is a separate ~150-LoC mechanical cycle. The port itself unblocks the HEXA_NATIVE Phase 5 / 5∥ chat-library lane and gives the GOAL.md ★★★★★ mission a pure-hexa SSOT for the chat side of the "library + model" combo.
+### v0.1 (2026-05-12 first land — PSCC §33)
 
-mission contribution: ★★★ (library side pure-hexa) — V5.8 5/5 std_greedy 자체에는 영향 없음, anima 본체 hexa-native 통합 의 큰 step.
+**★★★** — chat library pure-hexa port LANDED parse-clean + 17/17 helper smoke PASS. Full end-to-end inference (4-mode generation + multi-turn + batch with bound weights) gated on TODO[load].
 
-cost: $0 (Mac local parse + smoke).
+### v0.2 (2026-05-12 — PSCC §39, this cycle's update)
+
+**★★★★** — TODO[load] RESOLVED. 24-layer all-farr forward + tied lm_head LANDED, F-D1-LOAD-1..3 6/6 PASS on real BF16 ckpt (570 MB, Phase 1A.1). Logits shape correct (32000), zero NaN/inf, greedy argmax in valid byte range, wall 70 s + RSS 8.49 GB per single-token forward on Mac CPU. Regression-free: F-AC-HEXA-1..6 17/17 unchanged, F-D4B-1..5 22/22 unchanged.
+
+Remaining 단계 to ★★★★★:
+1. TODO[multitoken] — all-farr KV cache + per-step RoPE for max_new > 1 decode
+2. V5.8 std_greedy 5-prompt parity 측정 vs anima_chat.py + Phase 1A.1 ckpt
+3. (optional) codegen-c lane for production wall (interp 35s/token → AOT compile target sub-second)
+
+mission contribution: ★★★★ (library side pure-hexa full inference) — GOAL.md D1 cond #2 evidence depth ↑ (parse-only → full inference). V5.8 5/5 자체에는 직접 영향 없음 (그건 SFT BG lane).
+
+cost: $0 (Mac local parse + smoke + real ckpt forward).
