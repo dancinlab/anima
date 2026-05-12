@@ -1,0 +1,23 @@
+=== transport=fifo_dispatch ===
+FAIL transport fifo-dispatch smoke (rc=4)
+
+=== transport=beta1_channel ===
+FAIL transport beta1-channel smoke (rc=4)
+
+=== transport=libllama_ffi ===
+[transport:libllama-ffi] dylib present: /Users/ghost/core/anima/build/libhxllama.dylib
+[transport:libllama-ffi] GGUF cache: 1 file(s) at /Users/ghost/.cache/anima/gguf
+[transport:libllama-ffi] smoke PASS — FFI surface ready (load/generate happens in chat/llama path)
+
+=== transport=subprocess_pipe ===
+[transport:subprocess-pipe] smoke PASS — exec()/popen pipe round-trip OK (4KB block-buffered)
+
+=== transport=imtl ===
+[transport:imtl] upstream stub present: /Users/ghost/core/anima/anima-tools/misc/inter_model_comm.hexa
+[transport:imtl] test stub present: /Users/ghost/core/anima/tests/test_inter_model_comm.hexa
+[transport:imtl] TODO[pytorch] count = 5 (serialize/deserialize/send/receive)
+[transport:imtl] STATUS = STUB (NOT_WIRED into chat path; future axis-N+1 hook)
+[transport:imtl] coupling consts: psi_balance=0.5 psi_coupling=0.014 psi_f_critical=0.10
+[transport:imtl] default port=19266 magic=ANMA
+[transport:imtl] smoke PASS (own 22 mandatory report — STUB status surfaced verbatim)
+

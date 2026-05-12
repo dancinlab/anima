@@ -1,0 +1,60 @@
+{
+  "cycle": "hf_cleanup_autofire_prep_2026_05_05",
+  "scope": "BG-HF-CLEANUP-AUTOFIRE-PREP $0 verify + master script",
+  "ts_utc": "2026-05-05T11:00:04Z",
+  "actor": "claude-opus-4-7-1m",
+  "destructive_ops_taken": false,
+  "git_commit_taken": false,
+  "hf_hub_mutated": false,
+  "checks": {
+    "clm_cleanup_syntax": "PASS",
+    "pbeta_cleanup_syntax": "PASS",
+    "clm_cleanup_dry_run_gate1": "FAIL_AS_EXPECTED (now 2026-05-05T10:58:59Z < ends 2026-05-06T23:26:12Z)",
+    "pbeta_cleanup_dry_run_gate1": "FAIL_AS_EXPECTED (now 2026-05-05T10:59:05Z < ends 2026-05-07T03:48:00Z)",
+    "ubu1_staging_state_check": "UNREACHABLE (ssh ubu1@192.168.50.119 timeout from mac at task time; not a destructive blocker — verify pre-flight at promote time instead)",
+    "autofire_master_script_chmod_x": "PASS",
+    "autofire_master_check_only_run": "PASS (both dry-runs trigger GATE 1 FAIL as designed; exit code 1)"
+  },
+  "scripts": {
+    "clm_cleanup": "state/clm_v4_hf_release_v1_upload_2026_05_04/cleanup_2026_05_07.bash",
+    "pbeta_cleanup": "state/p9_pbeta_hf_upload_2026_05_05/cleanup_pbeta_2026_05_08.bash",
+    "autofire_master": "state/anima_hf_cleanups_2026_05_07_auto_fire.bash"
+  },
+  "autofire_modes": {
+    "check-only": "dry-run both cleanups (default); expect GATE 1 FAIL until review windows close",
+    "fire-clm": "run clm cleanup only (recommended after 2026-05-06T23:26:12Z + 24h grace)",
+    "fire-pbeta": "run pbeta cleanup only (recommended after 2026-05-07T03:48:00Z + 24h grace)",
+    "fire-all": "run clm then pbeta sequentially with 5s spacer; abort pbeta on clm fail"
+  },
+  "review_windows": {
+    "clm_v4_mk2_v1": {
+      "ends_utc": "2026-05-06T23:26:12Z",
+      "repo": "dancinlab/clm-v4-mk2-v1",
+      "expected_siblings": 16,
+      "ubu1_stage": "/home/aiden/anima_clm_release_v1_staging",
+      "ubu1_stage_size_approx": "~7GB"
+    },
+    "pbeta_50k_mk2_v1": {
+      "ends_utc": "2026-05-07T03:48:00Z",
+      "repo": "dancinlab/clm-v4-paradigm-d-pbeta-50k-mk2-v1",
+      "expected_siblings": 6,
+      "ubu1_stage": "/home/aiden/anima_pbeta_50k_step50000",
+      "ubu1_stage_size_approx": "~108MB"
+    }
+  },
+  "recommended_sequencing": [
+    {"step": 1, "action": "clm PUBLIC promote", "after_utc": "2026-05-06T23:26:12Z", "note": "review window close"},
+    {"step": 2, "action": "24h grace", "rationale": "consumer download time post-promote"},
+    {"step": 3, "action": "clm cleanup (fire-clm)", "after_utc": "2026-05-07T23:26:12Z"},
+    {"step": 4, "action": "pbeta PUBLIC promote", "after_utc": "2026-05-07T03:48:00Z", "note": "review window close"},
+    {"step": 5, "action": "24h grace", "rationale": "consumer download time post-promote"},
+    {"step": 6, "action": "pbeta cleanup (fire-pbeta)", "after_utc": "2026-05-08T03:48:00Z"}
+  ],
+  "alternative_sequencing": "if private-stay decision: skip promote steps; cleanup gate 2 (HF intact) still validates regardless of public/private; --delete-mac-mirror flag optional second pass to remove mac mirror state dirs",
+  "notes": [
+    "ubu1 SSH unreachable at prep time (192.168.50.119 timeout); not a blocker for prep — gates run at fire time will retry SSH and abort on failure",
+    "GATE 2 fetches HF token via secret CLI; verify HF_TOKEN reachable before fire",
+    "verb classification: DELETE_SCRIPT (per feedback_cleanup_bg_guards.md); pre-state report + post-state report recorded by each cleanup script",
+    "no destructive operations taken in this prep BG; no git commits"
+  ]
+}

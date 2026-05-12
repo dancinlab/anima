@@ -1,0 +1,36 @@
+{
+  "schema": "anima/emerge_chat_logit_lens/verdict/1",
+  "ts_utc": "2026-05-05T16:50:07Z",
+  "prompt": "안녕",
+  "model_id": "dancinlab/clm-v4-mk2-v1",
+  "n_blocks": 16,
+  "lm_head_found": true,
+  "lm_head_path": "decoder.head_a",
+  "ln_f_found": true,
+  "ln_f_path": "decoder.ln_f",
+  "layers_probed": [
+    2,
+    4,
+    6,
+    8,
+    10,
+    12,
+    14,
+    15
+  ],
+  "n_coherent": 1,
+  "coherent_layers": [
+    10
+  ],
+  "best_layer_by_unique_tokens": 10,
+  "best_layer_unique_token_count": 8,
+  "verdict": "PASS",
+  "load_sec": 22.0,
+  "honest_c3": [
+    "C1 mac CPU fp32 — single forward pass per greedy step",
+    "C2 logit lens applies FINAL lm_head to intermediate hidden states — assumes residual-stream representations live in same basis as final logits; this is empirically true for many transformer LMs but UNCAL for CLM v4 specifically",
+    "C3 ln_f normalization may not match training-time intermediate states (ln_f trained on layer-15 activations, applied here to L2/L4/...)",
+    "C4 single prompt '안녕' — broader corpus may shift; coherence metric is anima-internal heuristic (>=5 KO/EN alphabetic chars + max-char-freq <=50%)",
+    "C5 BG-Q helper sister-import for model+tokenizer load (READ-ONLY); raw#15 additive — no mount/shim/dialogue_load mutation; raw#37 transient_py namespace; raw#10 honest C3 emitted"
+  ]
+}

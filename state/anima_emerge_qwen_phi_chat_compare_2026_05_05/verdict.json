@@ -1,0 +1,18 @@
+{
+  "schema": "anima/emerge_qwen_phi_chat_compare/verdict/1",
+  "ts_utc": "2026-05-05T18:56:08Z",
+  "model": "Qwen/Qwen2.5-0.5B",
+  "n_prompts": 3,
+  "phi_mean": 41.85509067469149,
+  "phi_range": 0.029103131740356503,
+  "drift_from_clm_v4": -0.004909325308510404,
+  "korean_on_korean_prompt": 31,
+  "qwen_emits_korean": true,
+  "honest_c3": [
+    "C1 mac CPU fp32",
+    "C2 phi proxy CLM v4 specific (BG-CV aliasing for D ≠ 768 mismatched)",
+    "C3 Qwen0.5B is pretrained, not fine-tuned chat-aligned (Instruct variant differs)",
+    "C4 single substrate, single test",
+    "C5 Qwen multilingual training corpus differs CLM v4 paradigm v11 G3 substrate-research"
+  ]
+}

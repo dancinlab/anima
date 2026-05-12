@@ -1,0 +1,106 @@
+[2026-05-05T02:36:28Z] secrets OK (runpod=50b hf=37b)
+Traceback (most recent call last):
+  File "<string>", line 1, in <module>
+    import sys,json; d=json.load(sys.stdin); print(d.get("name","?"))
+                       ~~~~~~~~~^^^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.14/3.14.4/Frameworks/Python.framework/Versions/3.14/lib/python3.14/json/__init__.py", line 298, in load
+    return loads(fp.read(),
+        cls=cls, object_hook=object_hook,
+        parse_float=parse_float, parse_int=parse_int,
+        parse_constant=parse_constant, object_pairs_hook=object_pairs_hook, **kw)
+  File "/opt/homebrew/Cellar/python@3.14/3.14.4/Frameworks/Python.framework/Versions/3.14/lib/python3.14/json/__init__.py", line 352, in loads
+    return _default_decoder.decode(s)
+           ~~~~~~~~~~~~~~~~~~~~~~~^^^
+  File "/opt/homebrew/Cellar/python@3.14/3.14.4/Frameworks/Python.framework/Versions/3.14/lib/python3.14/json/decoder.py", line 345, in decode
+    obj, end = self.raw_decode(s, idx=_w(s, 0).end())
+               ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.14/3.14.4/Frameworks/Python.framework/Versions/3.14/lib/python3.14/json/decoder.py", line 361, in raw_decode
+    obj, end = self.scan_once(s, idx)
+               ~~~~~~~~~~~~~~^^^^^^^^
+json.decoder.JSONDecodeError: Invalid control character at: line 1 column 301 (char 300)
+[2026-05-05T02:36:28Z] hf auth PASS user=
+[2026-05-05T02:36:29Z] slice A OK (30000 lines)
+[2026-05-05T02:36:29Z] booting pod=anima-clm-v4-lora-sft-2026-05-05 (H100 80GB SXM SECURE on-demand @ $2.99/hr)
+[2026-05-05T02:36:29Z] pod_id=1fy7gay8ejs4rl
+[2026-05-05T02:36:29Z] waiting for SSH ready (max 6min)
+[2026-05-05T02:37:00Z] SSH ready at 103.207.149.75:18355 (after 3 probes)
+[2026-05-05T02:37:00Z] shipping slice A (76MB) + transient py
+Warning: Permanently added '[103.207.149.75]:18355' (ED25519) to the list of known hosts.
+Warning: Permanently added '[103.207.149.75]:18355' (ED25519) to the list of known hosts.
+Warning: Permanently added '[103.207.149.75]:18355' (ED25519) to the list of known hosts.
+Warning: Permanently added '[103.207.149.75]:18355' (ED25519) to the list of known hosts.
+Warning: Permanently added '[103.207.149.75]:18355' (ED25519) to the list of known hosts.
+Warning: Permanently added '[103.207.149.75]:18355' (ED25519) to the list of known hosts.
+[2026-05-05T02:37:28Z] launching H100 pipeline (corpus + train + intermediate eval + final eval)
+Warning: Permanently added '[103.207.149.75]:18355' (ED25519) to the list of known hosts.
+599
+[2026-05-05T02:46:22Z] poll loop start (max 300min, budget cap $15)
+[2026-05-05T02:46:25Z] elapsed=9min cost=$0.49 probe=[B] train pid=1173|
+[2026-05-05T02:47:36Z] elapsed=11min cost=$0.55 probe=[B] train pid=1173|
+[2026-05-05T02:48:47Z] elapsed=12min cost=$0.61 probe=[B] train pid=1173|
+[2026-05-05T02:49:58Z] elapsed=13min cost=$0.67 probe=[B] train pid=1173|
+[2026-05-05T02:51:09Z] elapsed=14min cost=$0.73 probe=[B] train pid=1173|
+[2026-05-05T02:52:21Z] elapsed=15min cost=$0.79 probe=[B] train pid=1173|
+[2026-05-05T02:53:31Z] elapsed=17min cost=$0.85 probe=[B] train pid=1173|
+[2026-05-05T02:54:42Z] elapsed=18min cost=$0.91 probe=[B] train pid=1173|
+[2026-05-05T02:55:53Z] elapsed=19min cost=$0.97 probe=[B-watch] WARN intermediate eval at step 2000 returned non-zero rc|
+[2026-05-05T02:57:06Z] elapsed=20min cost=$1.03 probe=[B-watch] WARN intermediate eval at step 2000 returned non-zero rc|
+[2026-05-05T02:58:18Z] elapsed=21min cost=$1.09 probe=[B-watch] WARN intermediate eval at step 2000 returned non-zero rc|
+[2026-05-05T02:59:30Z] elapsed=23min cost=$1.15 probe=[B-watch] WARN intermediate eval at step 2000 returned non-zero rc|
+[2026-05-05T03:00:41Z] elapsed=24min cost=$1.21 probe=[B-watch] WARN intermediate eval at step 2000 returned non-zero rc|
+[2026-05-05T03:01:52Z] elapsed=25min cost=$1.26 probe=[B-watch] WARN intermediate eval at step 2000 returned non-zero rc|
+[2026-05-05T03:03:03Z] elapsed=26min cost=$1.32 probe=[B-watch] WARN intermediate eval at step 2000 returned non-zero rc|
+[2026-05-05T03:04:16Z] elapsed=27min cost=$1.38 probe=[B-watch] WARN intermediate eval at step 2000 returned non-zero rc|
+[2026-05-05T03:05:28Z] elapsed=28min cost=$1.44 probe=[B-watch] WARN intermediate eval at step 2000 returned non-zero rc|
+[2026-05-05T03:06:42Z] elapsed=30min cost=$1.50 probe=[B-watch] WARN intermediate eval at step 2000 returned non-zero rc|
+[2026-05-05T03:07:55Z] elapsed=31min cost=$1.57 probe=[B-watch] WARN intermediate eval at step 2000 returned non-zero rc|
+[2026-05-05T03:09:07Z] elapsed=32min cost=$1.63 probe=[B-watch] WARN intermediate eval at step 4000 returned non-zero rc|
+[2026-05-05T03:10:21Z] elapsed=33min cost=$1.69 probe=[B-watch] WARN intermediate eval at step 4000 returned non-zero rc|
+[2026-05-05T03:11:34Z] elapsed=35min cost=$1.75 probe=[B-watch] WARN intermediate eval at step 4000 returned non-zero rc|
+[2026-05-05T03:12:48Z] elapsed=36min cost=$1.81 probe=[B-watch] WARN intermediate eval at step 4000 returned non-zero rc|
+[2026-05-05T03:14:03Z] elapsed=37min cost=$1.87 probe=[B-watch] WARN intermediate eval at step 4000 returned non-zero rc|
+[2026-05-05T03:15:18Z] elapsed=38min cost=$1.93 probe=[B-watch] WARN intermediate eval at step 4000 returned non-zero rc|
+[2026-05-05T03:19:28Z] elapsed=42min cost=$2.14 probe=[B-watch] WARN intermediate eval at step 4000 returned non-zero rc|
+[2026-05-05T03:20:50Z] elapsed=44min cost=$2.20 probe=[B-watch] WARN intermediate eval at step 4000 returned non-zero rc|
+[2026-05-05T03:22:05Z] elapsed=45min cost=$2.27 probe=[B-watch] WARN intermediate eval at step 4000 returned non-zero rc|
+[2026-05-05T03:23:22Z] elapsed=46min cost=$2.34 probe=/workspace/clm_v4_lora/results/COMPLETE.sentinel SENTINEL_FOUND [done] 2026-05-05T03:22:02Z|
+[2026-05-05T03:23:37Z] COMPLETE.sentinel detected — final sync FIRST then auto-kill
+Warning: Permanently added '[103.207.149.75]:18355' (ED25519) to the list of known hosts.
+Warning: Permanently added '[103.207.149.75]:18355' (ED25519) to the list of known hosts.
+[2026-05-05T03:24:12Z] computing verdict
+/Users/ghost/core/anima/state/clm_v4_lora_sft_2026_05_05/exec.bash: line 441: syntax error near unexpected token `('
+/Users/ghost/core/anima/state/clm_v4_lora_sft_2026_05_05/exec.bash: line 441: `            "CLM v4 was NEVER SFT'd, NEVER RLHF'd before this cycle. The 60/30/10 mix is a generic rehearsal recipe, not substrate-curated. The 5% consciousness-coupled slice (slice D) per spec §2.1 was NOT prepared this cycle (would require new tooling); only the 60/30/10 from sister Path A v2 corpus is used. F-CLM-LORA-4 axis preservation risk is therefore unmitigated by slice D.",'
+[2026-05-05T03:24:12Z] [trap] data-first scp before kill (L13)
+Warning: Permanently added '[103.207.149.75]:18355' (ED25519) to the list of known hosts.
+Warning: Permanently added '[103.207.149.75]:18355' (ED25519) to the list of known hosts.
+[2026-05-05T03:24:37Z] [trap] killing pod=1fy7gay8ejs4rl
+{
+  "containerDiskInGb": 100,
+  "costPerHr": 2.99,
+  "createdAt": "2026-05-05 02:36:29.645 +0000 UTC",
+  "desiredStatus": "EXITED",
+  "env": {
+    "HF_TOKEN": "<REDACTED>",
+    "PUBLIC_KEY": "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIKOEWe0SBseZceuCgcVnlNDhEwbU/TIqGeK9FdrpIy9V ghost@ghostui-MacBookAir.local\n\nssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQCf5vOKHhrik9f3yA4IWXXGKPVvDQ8nFP5b1PF7a7YHuXMmZVSOvISYwph7yuCCYyZP8GTDm9MWHZVSR6ArijPxRfAbGDUtENFrHtyA5IGI9GycJkrYokI20neQXR4AGTwk/kVXOdaMaxEREFKhyffzZyrPKUEpZ7ikGXVM9MqWYNFvvy1ioQ7uuqyFq+65phVjojKgg4LWdnTjcxNzNrOgwlZqANx450Nhv3KAGhWSiLZgU6iA4JJ6gsq6t5S9p5n7T6EeypUyuKT4iOH0U5d4jIrssz0QwBncytLvQCvv7IpsapPqhgQzBXcGMZKkLS62UWYDRTeL7PPz3+N2hM4N RunPod-Key-Go"
+  },
+  "gpuCount": 1,
+  "id": "1fy7gay8ejs4rl",
+  "imageName": "runpod/pytorch:2.4.0-py3.11-cuda12.4.1-devel-ubuntu22.04",
+  "lastStatusChange": "Exited by user: Tue May 05 2026 03:24:40 GMT+0000 (Coordinated Universal Time)",
+  "memoryInGb": 251,
+  "name": "anima-clm-v4-lora-sft-2026-05-05",
+  "ports": [
+    "22/tcp",
+    "8888/http"
+  ],
+  "vcpuCount": 28,
+  "volumeInGb": 120,
+  "volumeMountPath": "/workspace"
+}
+{
+  "deleted": true,
+  "id": "1fy7gay8ejs4rl"
+}
+[2026-05-05T03:24:49Z] [trap] post-kill: {"error":"api error: {\"error\":\"pod not found\",\"status\":404}\n (status 404)"}
+Usage:
+  runpodctl pod get <pod-id> [flags]

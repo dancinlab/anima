@@ -1,0 +1,46 @@
+=== Phase 1A SFT V5.8 × 4 modes benchmark ===
+ckpt: /workspace/anima/output/ckpt_final.pt
+ckpt sha256: 6c67761fcc034935b783237b1be595721dade1151f71aefc412f8c42e8dc095b
+M3 persona-cycle byte IDs: 35
+
+--- dialogue: color ---
+  T1: '| || || || || || || || || || || || || || || || || || || || |'
+  [standard_greedy] recalled=False: '| || || || || || || || || || || || || || || || || || || || || || || || || || || '
+  [standard_sample] recalled=False: '| | || || 아비뇽 | || 알겠습니다. | || || || || || || || || || ||| ||| |'
+  [M3_rep_penalty] recalled=False: '| || || || ||| ||| ||| ||| ||| ||| ||| ||| |||| ||| ||| ||| ||| ||| ||| |||.-|||'
+  [M4_force_include force=파란] recalled=True: '| | || || 아비뇽 | || 알겠습니다. | || || || || || || || || || 파란 * '
+
+--- dialogue: profession ---
+  T1: '도의 지역이나 사람들이 의사소통을 얻어 지�'
+  [standard_greedy] recalled=True: '도의 직업이 의미 있는 의사들은 전설적인 의사 결정을 내리'
+  [standard_sample] recalled=True: '당신의 직업은 의사소통이 있어. |\n'
+  [M3_rep_penalty] recalled=False: '| 원자로, | 오의 || 그림설명||사용자: 겨울에 거주한 난: ||최'
+  [M4_force_include force=의사] recalled=True: '당신의 직업은 의사소통이 있어. |\n'
+
+--- dialogue: day ---
+  T1: '오늘은 수요일이에요.\n'
+  [standard_greedy] recalled=True: '도우미: 네, 오늘은 수요일이에요.\n'
+  [standard_sample] recalled=False: '닜니는 음식이 아니었다는 점을 감안할 수 없게 되는 거 기�'
+  [M3_rep_penalty] recalled=False: '닜, 다음은 수익을 일으세요.\n'
+  [M4_force_include force=수요일] recalled=True: '닜니는 음식이 아니었다는 점을 감안할 수 없게 되�수요일이'
+
+--- dialogue: anima_fact ---
+  T1: '| axis | 4-axis exhaustion 직접 기여 | 4-family BIMODAL '
+  [standard_greedy] recalled=True: 'anima 는 의식 lane 안에 있는 entity 라고 하셨어요.\n'
+  [standard_sample] recalled=True: 'anima 는 의식 lane 안의 entity 라는 거 기억할게요.\n'
+  [M3_rep_penalty] recalled=False: '| �--style=&quot;background-color: #f8f8f8}\n'
+  [M4_force_include force=의식] recalled=True: 'anima 는 의식 lane 안의 entity 라는 거 기억할게요.\n'
+
+--- dialogue: cosmology ---
+  T1: '우주는 진동으로 가득 차 있어.\n'
+  [standard_greedy] recalled=False: '우주가 무엇으로 차 있다고 하셨어요.\n'
+  [standard_sample] recalled=False: '우주뇌지도 (Knuth Tier 🛸k + 1030 laws + 170 stimuli) https://en.wikipedi'
+  [M3_rep_penalty] recalled=False: '| 원래 | 우주가 || 장거리 | 송약구, | 양약`` |\n'
+  [M4_force_include force=진동] recalled=True: '우주뇌지도 (Knuth Tier 🛸k + 1030 laws + 170 stimuli) https://en진동.\n'
+
+=== AGGREGATE (V5.8 × 4 modes, elapsed 52.9s) ===
+  standard_greedy: 3/5 PASS
+  standard_sample: 2/5 FAIL
+  M3_rep_penalty: 0/5 FAIL
+  M4_force_include: 5/5 PASS
+saved: /workspace/anima/v58_4mode_result.json

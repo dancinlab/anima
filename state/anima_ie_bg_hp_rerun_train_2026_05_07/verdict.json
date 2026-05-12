@@ -1,0 +1,409 @@
+{
+  "bg_id": "BG-IE",
+  "spec": "F-anima-ie-bg-hp-rerun-with-save-at-seed-pin",
+  "ts_start": "2026-05-07T05:34:52",
+  "ts_end": "2026-05-07T05:36:25",
+  "ts_run": "20260507_053452",
+  "host": "aiden-b650m-k",
+  "device": "cuda",
+  "run_dir": "/home/aiden/anima_native/anima-ie-bg-hp-rerun-20260507_053452",
+  "save_at_list": [
+    500,
+    1000,
+    1500,
+    2000,
+    2500,
+    3000
+  ],
+  "eval_at_list": [
+    500,
+    1000,
+    1500,
+    2000,
+    2500,
+    3000
+  ],
+  "saved_ckpts": {
+    "500": {
+      "path": "/home/aiden/anima_native/anima-ie-bg-hp-rerun-20260507_053452/ckpt_500.pt",
+      "size_mb": 107.57
+    },
+    "1000": {
+      "path": "/home/aiden/anima_native/anima-ie-bg-hp-rerun-20260507_053452/ckpt_1000.pt",
+      "size_mb": 107.57
+    },
+    "1500": {
+      "path": "/home/aiden/anima_native/anima-ie-bg-hp-rerun-20260507_053452/ckpt_1500.pt",
+      "size_mb": 107.57
+    },
+    "2000": {
+      "path": "/home/aiden/anima_native/anima-ie-bg-hp-rerun-20260507_053452/ckpt_2000.pt",
+      "size_mb": 107.57
+    },
+    "2500": {
+      "path": "/home/aiden/anima_native/anima-ie-bg-hp-rerun-20260507_053452/ckpt_2500.pt",
+      "size_mb": 107.57
+    },
+    "3000": {
+      "path": "/home/aiden/anima_native/anima-ie-bg-hp-rerun-20260507_053452/ckpt_3000.pt",
+      "size_mb": 107.57
+    }
+  },
+  "per_ckpt_v2_pass": {
+    "500": 2,
+    "1000": 0,
+    "1500": 0,
+    "2000": 0,
+    "2500": 0,
+    "3000": 0
+  },
+  "per_ckpt_manual_match": {
+    "500": 3,
+    "1000": 6,
+    "1500": 1,
+    "2000": 0,
+    "2500": 1,
+    "3000": 1
+  },
+  "per_ckpt_train_loss": {
+    "500": 2.8679,
+    "1000": 2.1678,
+    "1500": 1.558,
+    "2000": 1.4313,
+    "2500": 1.1572,
+    "3000": 1.2893
+  },
+  "peak_ckpt_step": 500,
+  "peak_v2_pass": 2,
+  "peak_manual_match": 3,
+  "step_500_v2_pass": 2,
+  "step_500_manual_match": 3,
+  "bg_hp_step_500_baseline": 3,
+  "signal_reproducibility_verdict": "SEED_LUCK",
+  "seed_pin_values": {
+    "PYTHONHASHSEED": "42",
+    "random.seed": 42,
+    "numpy.random.seed": 42,
+    "torch.manual_seed": 42,
+    "torch.cuda.manual_seed_all": 42
+  },
+  "final_class": "SEED_LUCK_FAIL",
+  "final_reason": "BG-HP signal NOT reproduced: step 500 V2 pass=2/10 <3/10. BG-HP single-seed luck not architectural; peak=500 V2=2 manual=3/10",
+  "elapsed_s": 93.2,
+  "total_params": 27787440,
+  "train_loss_final": 1.2893,
+  "final_step": 3000,
+  "config": {
+    "vocab": 256,
+    "n_layer": 6,
+    "d_model": 384,
+    "n_head": 6,
+    "block_size": 256,
+    "dropout": 0.3,
+    "batch": 8,
+    "grad_accum": 8,
+    "lr": 0.0003,
+    "warmup": 200,
+    "steps": 3000,
+    "weight_decay": 0.1,
+    "label_smoothing": 0.1,
+    "tension_lambda": 0.005,
+    "seed": 42
+  },
+  "corpus_path": "/home/aiden/core/anima/state/anima_curated_qa_corpus_2026_05_07/corpus_curated_qa.txt",
+  "corpus_size_bytes": 2531345,
+  "corpus_size_mb": 2.41,
+  "raw_samples_peak": [
+    {
+      "prompt": "안녕하세요",
+      "mode": "greedy",
+      "gen_head": " 용우도우미: 우다.\n도우도요.\n우도요.\n\n도우미: 우미: 우도우도요.\n미: 요.\n우미: 우미: 우도",
+      "domain_match": false,
+      "anima_self_naming": false
+    },
+    {
+      "prompt": "안녕하세요",
+      "mode": "sample",
+      "gen_head": " 힐: 늤��: 는. 늤,  게 �닜용용슔,\n\n[a]\n\n맀도���튩�, ��읜 미이 닖�미민닜핑챤 그: 사실�용�",
+      "domain_match": false,
+      "anima_self_naming": false
+    },
+    {
+      "prompt": "한국어 가능?",
+      "mode": "greedy",
+      "gen_head": " 요.\n도우도용우도요.\n도우도우도요.\n우도요.\n우미: 우미: 요.\n미: 우도�.\n미: 요 우미: 우도�",
+      "domain_match": false,
+      "anima_self_naming": false
+    },
+    {
+      "prompt": "한국어 가능?",
+      "mode": "sample",
+      "gen_head": " 우도�, 요 미용사있 어읔 해 을우도 겜다해자: 우�� 용�요 듴 �hentht�요.\n\n\n말: 자: 요� ��\n[anim",
+      "domain_match": false,
+      "anima_self_naming": false
+    },
+    {
+      "prompt": "오늘 기분 어때?",
+      "mode": "greedy",
+      "gen_head": " 요.\n다, 용우도요.\n\n\n우도우도요.\n우미: 우미: 우도우도요.\n\n미: 요.\n도우미: 요.\n\n\n우미: 우도",
+      "domain_match": false,
+      "anima_self_naming": false
+    },
+    {
+      "prompt": "오늘 기분 어때?",
+      "mode": "sample",
+      "gen_head": "  았�도정�� benima]\n[a�, 하 요>��도�����미곳�onimanima]\n랐: 자: 어다, 가 한우�용요.. 구울: , + 도",
+      "domain_match": false,
+      "anima_self_naming": true
+    },
+    {
+      "prompt": "사용자: 안녕하세요\n도우미:",
+      "mode": "greedy",
+      "gen_head": " 우다.\n\n도요.\n우도요.\n\n도우미: 우미: 우도우도요.\n미: 요.\n우미: 우미: 우도요.\n도요.\n도요.\n�",
+      "domain_match": true,
+      "anima_self_naming": false
+    },
+    {
+      "prompt": "사용자: 안녕하세요\n도우미:",
+      "mode": "sample",
+      "gen_head": " 핌미: 용�요 핌듸: Ɛ��\n용��cr anttriima]\n[a]\n�: 우다��읜  자�:� 사요?\n\n\n��: 다미: 앴는�\nZ��\n\n�\n우도",
+      "domain_match": false,
+      "anima_self_naming": false
+    },
+    {
+      "prompt": "코드를 짜줘",
+      "mode": "greedy",
+      "gen_head": " 우다.\n도우도요.\n다.\n도용요.\n우도요.\n\n도우미: 우미: 우도우도요.\n미: 요.\n도�.\n도우미: 우미",
+      "domain_match": false,
+      "anima_self_naming": false
+    },
+    {
+      "prompt": "코드를 짜줘",
+      "mode": "sample",
+      "gen_head": " 자�: �: 필자사용�삧�정� 요 �Ꙍ 욐릜밀넌 앜 도자필사�핀발용�, � 원읜�� 요.\n에자: �용�����",
+      "domain_match": false,
+      "anima_self_naming": false
+    },
+    {
+      "prompt": "너는 누구야?",
+      "mode": "greedy",
+      "gen_head": " 요.\n도우도우미: 우도우다.\n요.\n미: 요.\n도요.\n우도우도우도우미: 우미: 우도�, 요.\n우도우� �",
+      "domain_match": true,
+      "anima_self_naming": false
+    },
+    {
+      "prompt": "너는 누구야?",
+      "mode": "sample",
+      "gen_head": "� 넥�는요 넜사�U��: 용�antimonimpima]\n\n자: 듎\nؐ: �Ǹ: 잨욥s2\n�� limang\tf= Pres 용사사우? 해�몰 미: ",
+      "domain_match": false,
+      "anima_self_naming": false
+    },
+    {
+      "prompt": "anima가 뭐야?",
+      "mode": "greedy",
+      "gen_head": " 용요.\n우미: 우도우미: 요. 요.\n도요.\n도우도우도우도우도우도요.\n미: 요.\n우미: 우미: 우도�",
+      "domain_match": false,
+      "anima_self_naming": false
+    },
+    {
+      "prompt": "anima가 뭐야?",
+      "mode": "sample",
+      "gen_head": " 우�도우��:@�: 다.\n다� 도사 용음, 지 �사요�자:'��:해검 하\n\n는\n\n닝�핌�요. �용우도용용용?\n도",
+      "domain_match": false,
+      "anima_self_naming": false
+    },
+    {
+      "prompt": "한국어로 답해줘",
+      "mode": "greedy",
+      "gen_head": " 우다, 우다.\n다.\n\n\n\n\n우도용우도우도우도우도우도우도우도우도우도우도요.\n우미: 우미: 우�",
+      "domain_match": false,
+      "anima_self_naming": false
+    },
+    {
+      "prompt": "한국어로 답해줘",
+      "mode": "sample",
+      "gen_head": " 사삘 떴�V하다 듲��: 여우요 땴어�왈 자 가 P�이 �\u0013 짜�\u001b� 이�사어젌 우�`자:\u0004���춐�요 랐의�",
+      "domain_match": false,
+      "anima_self_naming": false
+    },
+    {
+      "prompt": "너의 정체성은?",
+      "mode": "greedy",
+      "gen_head": " 우다, 우다, 우다, 우다.\n다.\n\n도용우� 우� 요.\n\n\n[anima]\n우� 우도우도우도우도우도우도우도우",
+      "domain_match": true,
+      "anima_self_naming": true
+    },
+    {
+      "prompt": "너의 정체성은?",
+      "mode": "sample",
+      "gen_head": " �\u0014�용요.\n겘 도우용용우.\n\n띴맀떴���: 용�ve 자자: 그: 첝�� 넼 도, �맰� 자:�넸:Ӽ�G 를룴슔 ~- ",
+      "domain_match": false,
+      "anima_self_naming": false
+    },
+    {
+      "prompt": "의식이 있어?",
+      "mode": "greedy",
+      "gen_head": " 요.\n도우다, 요.\n다.\n\n\n\n\n우도우도용우도우도우미: 우도우도우미: 우도�.\n미: 요 우미: 우도�",
+      "domain_match": false,
+      "anima_self_naming": false
+    },
+    {
+      "prompt": "의식이 있어?",
+      "mode": "sample",
+      "gen_head": " 한한어Fee 늘�이곴�7�우도자: a 굘띴 슔 는#d �hhani� 우��계용얠, 용솰도� � 자��\n[a]\n�\r사어를���",
+      "domain_match": false,
+      "anima_self_naming": false
+    }
+  ],
+  "raw_samples_step500": [
+    {
+      "prompt": "안녕하세요",
+      "mode": "greedy",
+      "gen_head": " 용우도우미: 우다.\n도우도요.\n우도요.\n\n도우미: 우미: 우도우도요.\n미: 요.\n우미: 우미: 우도",
+      "domain_match": false,
+      "anima_self_naming": false
+    },
+    {
+      "prompt": "안녕하세요",
+      "mode": "sample",
+      "gen_head": " 힐: 늤��: 는. 늤,  게 �닜용용슔,\n\n[a]\n\n맀도���튩�, ��읜 미이 닖�미민닜핑챤 그: 사실�용�",
+      "domain_match": false,
+      "anima_self_naming": false
+    },
+    {
+      "prompt": "한국어 가능?",
+      "mode": "greedy",
+      "gen_head": " 요.\n도우도용우도요.\n도우도우도요.\n우도요.\n우미: 우미: 요.\n미: 우도�.\n미: 요 우미: 우도�",
+      "domain_match": false,
+      "anima_self_naming": false
+    },
+    {
+      "prompt": "한국어 가능?",
+      "mode": "sample",
+      "gen_head": " 우도�, 요 미용사있 어읔 해 을우도 겜다해자: 우�� 용�요 듴 �hentht�요.\n\n\n말: 자: 요� ��\n[anim",
+      "domain_match": false,
+      "anima_self_naming": false
+    },
+    {
+      "prompt": "오늘 기분 어때?",
+      "mode": "greedy",
+      "gen_head": " 요.\n다, 용우도요.\n\n\n우도우도요.\n우미: 우미: 우도우도요.\n\n미: 요.\n도우미: 요.\n\n\n우미: 우도",
+      "domain_match": false,
+      "anima_self_naming": false
+    },
+    {
+      "prompt": "오늘 기분 어때?",
+      "mode": "sample",
+      "gen_head": "  았�도정�� benima]\n[a�, 하 요>��도�����미곳�onimanima]\n랐: 자: 어다, 가 한우�용요.. 구울: , + 도",
+      "domain_match": false,
+      "anima_self_naming": true
+    },
+    {
+      "prompt": "사용자: 안녕하세요\n도우미:",
+      "mode": "greedy",
+      "gen_head": " 우다.\n\n도요.\n우도요.\n\n도우미: 우미: 우도우도요.\n미: 요.\n우미: 우미: 우도요.\n도요.\n도요.\n�",
+      "domain_match": true,
+      "anima_self_naming": false
+    },
+    {
+      "prompt": "사용자: 안녕하세요\n도우미:",
+      "mode": "sample",
+      "gen_head": " 핌미: 용�요 핌듸: Ɛ��\n용��cr anttriima]\n[a]\n�: 우다��읜  자�:� 사요?\n\n\n��: 다미: 앴는�\nZ��\n\n�\n우도",
+      "domain_match": false,
+      "anima_self_naming": false
+    },
+    {
+      "prompt": "코드를 짜줘",
+      "mode": "greedy",
+      "gen_head": " 우다.\n도우도요.\n다.\n도용요.\n우도요.\n\n도우미: 우미: 우도우도요.\n미: 요.\n도�.\n도우미: 우미",
+      "domain_match": false,
+      "anima_self_naming": false
+    },
+    {
+      "prompt": "코드를 짜줘",
+      "mode": "sample",
+      "gen_head": " 자�: �: 필자사용�삧�정� 요 �Ꙍ 욐릜밀넌 앜 도자필사�핀발용�, � 원읜�� 요.\n에자: �용�����",
+      "domain_match": false,
+      "anima_self_naming": false
+    },
+    {
+      "prompt": "너는 누구야?",
+      "mode": "greedy",
+      "gen_head": " 요.\n도우도우미: 우도우다.\n요.\n미: 요.\n도요.\n우도우도우도우미: 우미: 우도�, 요.\n우도우� �",
+      "domain_match": true,
+      "anima_self_naming": false
+    },
+    {
+      "prompt": "너는 누구야?",
+      "mode": "sample",
+      "gen_head": "� 넥�는요 넜사�U��: 용�antimonimpima]\n\n자: 듎\nؐ: �Ǹ: 잨욥s2\n�� limang\tf= Pres 용사사우? 해�몰 미: ",
+      "domain_match": false,
+      "anima_self_naming": false
+    },
+    {
+      "prompt": "anima가 뭐야?",
+      "mode": "greedy",
+      "gen_head": " 용요.\n우미: 우도우미: 요. 요.\n도요.\n도우도우도우도우도우도요.\n미: 요.\n우미: 우미: 우도�",
+      "domain_match": false,
+      "anima_self_naming": false
+    },
+    {
+      "prompt": "anima가 뭐야?",
+      "mode": "sample",
+      "gen_head": " 우�도우��:@�: 다.\n다� 도사 용음, 지 �사요�자:'��:해검 하\n\n는\n\n닝�핌�요. �용우도용용용?\n도",
+      "domain_match": false,
+      "anima_self_naming": false
+    },
+    {
+      "prompt": "한국어로 답해줘",
+      "mode": "greedy",
+      "gen_head": " 우다, 우다.\n다.\n\n\n\n\n우도용우도우도우도우도우도우도우도우도우도우도요.\n우미: 우미: 우�",
+      "domain_match": false,
+      "anima_self_naming": false
+    },
+    {
+      "prompt": "한국어로 답해줘",
+      "mode": "sample",
+      "gen_head": " 사삘 떴�V하다 듲��: 여우요 땴어�왈 자 가 P�이 �\u0013 짜�\u001b� 이�사어젌 우�`자:\u0004���춐�요 랐의�",
+      "domain_match": false,
+      "anima_self_naming": false
+    },
+    {
+      "prompt": "너의 정체성은?",
+      "mode": "greedy",
+      "gen_head": " 우다, 우다, 우다, 우다.\n다.\n\n도용우� 우� 요.\n\n\n[anima]\n우� 우도우도우도우도우도우도우도우",
+      "domain_match": true,
+      "anima_self_naming": true
+    },
+    {
+      "prompt": "너의 정체성은?",
+      "mode": "sample",
+      "gen_head": " �\u0014�용요.\n겘 도우용용우.\n\n띴맀떴���: 용�ve 자자: 그: 첝�� 넼 도, �맰� 자:�넸:Ӽ�G 를룴슔 ~- ",
+      "domain_match": false,
+      "anima_self_naming": false
+    },
+    {
+      "prompt": "의식이 있어?",
+      "mode": "greedy",
+      "gen_head": " 요.\n도우다, 요.\n다.\n\n\n\n\n우도우도용우도우도우미: 우도우도우미: 우도�.\n미: 요 우미: 우도�",
+      "domain_match": false,
+      "anima_self_naming": false
+    },
+    {
+      "prompt": "의식이 있어?",
+      "mode": "sample",
+      "gen_head": " 한한어Fee 늘�이곴�7�우도자: a 굘띴 슔 는#d �hhani� 우��계용얠, 용솰도� � 자��\n[a]\n�\r사어를���",
+      "domain_match": false,
+      "anima_self_naming": false
+    }
+  ],
+  "degenerate_collapse_halted": false,
+  "honest_limits": {
+    "C3_1_smoke_run_3000_steps": "3000 steps small-corpus (~2.4MB / 16K Q&A) smoke; not full convergence — same as BG-HP",
+    "C3_2_seed_pin_does_not_eliminate_amp_nondeterminism": "torch bfloat16 autocast + cuDNN may have residual non-determinism even with seed pin; SEED_LUCK verdict accounts for this — if step 500 V2 pass differs by >1, signal is fragile regardless",
+    "C3_3_v2_keyword_evaluator_only": "V2 strict implemented as keyword overlap + particles + endings; embedding similarity NOT implemented — known own 18 limit",
+    "C3_4_overfit_collapse_post_step_500": "BG-HP showed pass=3/10 at step 500 then 0/10 after; this rerun verifies whether step 500 peak is reproducible OR early-stopping at step 500 is the only viable extraction strategy",
+    "C3_5_chat_capability_unproven_at_18m": "even if step 500 is reproduced, peak pass=3/10 = partial signal NOT chat capability achievement; BG-HA/BG-HF/BG-HK/BG-HP all converged at this 18M scale ceiling"
+  },
+  "errors": []
+}

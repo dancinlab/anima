@@ -1,0 +1,56 @@
+[2026-05-10T04:17:10Z] === fix-5/6 tied embedding unified PoC (direct runpodctl bypass) ===
+[2026-05-10T04:17:10Z] pod_name=fix56-tied-poc-1778386630-pid12785 budget_cap=$15 max_wall_min=361 py3=/usr/bin/python3
+[2026-05-10T04:17:10Z] === Phase 0: prereq check ===
+[2026-05-10T04:17:10Z] prereqs OK
+[2026-05-10T04:17:10Z] === Phase 1: provision H100 SXM via runpodctl pod create ===
+[2026-05-10T04:17:10Z] gpu=NVIDIA H100 80GB HBM3 template=runpod-torch-v240 name=fix56-tied-poc-1778386630-pid12785
+{
+  "containerDiskInGb": 40,
+  "costPerHr": 2.99,
+  "desiredStatus": "RUNNING",
+  "env": [
+    "PUBLIC_KEY=ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIKOEWe0SBseZceuCgcVnlNDhEwbU/TIqGeK9FdrpIy9V ghost@ghostui-MacBookAir.local\n\nssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQCf5vOKHhrik9f3yA4IWXXGKPVvDQ8nFP5b1PF7a7YHuXMmZVSOvISYwph7yuCCYyZP8GTDm9MWHZVSR6ArijPxRfAbGDUtENFrHtyA5IGI9GycJkrYokI20neQXR4AGTwk/kVXOdaMaxEREFKhyffzZyrPKUEpZ7ikGXVM9MqWYNFvvy1ioQ7uuqyFq+65phVjojKgg4LWdnTjcxNzNrOgwlZqANx450Nhv3KAGhWSiLZgU6iA4JJ6gsq6t5S9p5n7T6EeypUyuKT4iOH0U5d4jIrssz0QwBncytLvQCvv7IpsapPqhgQzBXcGMZKkLS62UWYDRTeL7PPz3+N2hM4N RunPod-Key-Go"
+  ],
+  "gpuCount": 1,
+  "id": "v8v694g06he7fm",
+  "imageName": "runpod/pytorch:2.4.0-py3.11-cuda12.4.1-devel-ubuntu22.04",
+  "lastStatusChange": "Rented by User: Sun May 10 2026 04:17:11 GMT+0000 (Coordinated Universal Time)",
+  "machine": {
+    "gpuDisplayName": "H100 SXM",
+    "location": "IN"
+  },
+  "memoryInGb": 251,
+  "name": "fix56-tied-poc-1778386630-pid12785",
+  "ports": "8888/http,22/tcp",
+  "vcpuCount": 28,
+  "volumeInGb": 20,
+  "volumeMountPath": "/workspace"
+}
+[2026-05-10T04:17:12Z] pod_id=v8v694g06he7fm
+[2026-05-10T04:17:12Z] === Phase 1b: wait for pod RUNNING ===
+[2026-05-10T04:17:25Z] pod_state=RUNNING (try 1/30)
+[2026-05-10T04:17:25Z] ssh=:22
+[2026-05-10T04:17:55Z] === Phase 2: SSH smoke + stage artifacts ===
+[2026-05-10T04:17:55Z] ssh retry 1/6
+[2026-05-10T04:18:11Z] ssh retry 2/6
+[2026-05-10T04:18:26Z] ssh retry 3/6
+[2026-05-10T04:18:41Z] ssh retry 4/6
+[2026-05-10T04:18:57Z] ssh retry 5/6
+[2026-05-10T04:19:12Z] ssh retry 6/6
+ssh: Could not resolve hostname : nodename nor servname provided, or not known
+ssh: Could not resolve hostname : nodename nor servname provided, or not known
+ssh: Could not resolve hostname : nodename nor servname provided, or not known
+scp: Connection closed
+ssh: Could not resolve hostname : nodename nor servname provided, or not known
+scp: Connection closed
+ssh: Could not resolve hostname : nodename nor servname provided, or not known
+scp: Connection closed
+ssh: Could not resolve hostname : nodename nor servname provided, or not known
+scp: Connection closed
+[2026-05-10T04:19:27Z] stage complete
+[2026-05-10T04:19:27Z] === Phase 3: install deps ===
+ssh: Could not resolve hostname : nodename nor servname provided, or not known
+[2026-05-10T04:19:27Z] === Phase 4: launch 3-branch sequential training ===
+ssh: Could not resolve hostname : nodename nor servname provided, or not known
+[2026-05-10T04:19:27Z] === Phase 5: heartbeat monitor ($15 hard cap) ===
+[2026-05-10T04:21:27Z] hb t=257s cost=$0.18 pod=fix56-tied-poc-1778386630-pid12785

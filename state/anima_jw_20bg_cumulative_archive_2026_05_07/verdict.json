@@ -1,0 +1,174 @@
+{
+  "bg_id": "BG-JW",
+  "ts": "2026-05-07T14:30:00Z",
+  "paradigm": "20bg-cumulative-negative-archive-final",
+  "host": "mac CPU",
+  "cost_usd": 0.0,
+  "training_steps": 0,
+  "bg_kind": "tooling",
+  "device": "cpu",
+  "bgs_synthesized": 26,
+  "bgs_synthesized_list": [
+    "BG-FY", "BG-HA", "BG-HF", "BG-HJ", "BG-HK",
+    "BG-HP", "BG-HQ", "BG-HS-R1", "BG-HT", "BG-HU",
+    "BG-HW", "BG-IA", "BG-IE", "BG-IF", "BG-IG",
+    "BG-IL", "BG-IM", "BG-IO", "BG-JD", "BG-JH",
+    "BG-IH-tooling", "BG-IJ-tooling", "BG-IS-tooling", "BG-IT-tooling",
+    "BG-IW-tooling", "BG-JE-corpus",
+    "BG-JF-tooling", "BG-JM-tooling", "BG-JN-tooling", "BG-JO-tooling", "BG-JP-tooling"
+  ],
+  "training_bgs_count": 20,
+  "tooling_bgs_count": 11,
+  "v4_v5_strict_pass_aggregate": 0,
+  "v5_8_multi_turn_pass_aggregate": 0,
+  "v6_awareness_probe_internal_class": "STRONG_NUM=1_BG_JD_STEP_800",
+  "decoding_sweep_strategies_tested": 14,
+  "decoding_sweep_v58_pass": 0,
+  "lessons_archived_count": 18,
+  "lessons_archived_list": [
+    "Lesson A capacity ceiling 18M",
+    "Lesson B byte-vocab inadequate",
+    "Lesson C corpus quality alone insufficient",
+    "Lesson D regularization Lesson D",
+    "Lesson E V2 strict evaluator (then superseded V3-V6)",
+    "Lesson F persona prefix not collapse-resistant",
+    "Lesson G ★★ early-stop val-loss + best-eval ckpt",
+    "Lesson H ★★★ V2 surface false PASS persona cycle",
+    "Lesson I BPE+early-stopping V3 strict signal NOT_TRIGGERED",
+    "Lesson J SAVE_AT discipline intermediate ckpt",
+    "Lesson K ★★★ substring trap [anima manual_match",
+    "Lesson L ★★★ architectural ceiling 18M-153M × 2-204MB × byte/BPE/SP",
+    "Lesson M ★★ corpus diversity NEGATIVE at 18M",
+    "Lesson N ★★ vocab axis SP 11885 Lesson H + K combined",
+    "Lesson O ★★★ English baseline KO corpus blind spot",
+    "Lesson P ★★★ multi-turn context awareness first-light",
+    "Lesson Q ★★★ V6 STRONG awareness ≠ V5.8 production PASS (output bottleneck #115)",
+    "Lesson R ★★★ decoding-only fix 不可 14 strategies BG-JP"
+  ],
+  "evaluator_chain_levels": 6,
+  "evaluator_chain": [
+    {"gen": "V1", "cells": "narrow C2.4 named-speaker leak", "landed_bg": "BG-FY-era"},
+    {"gen": "V2", "cells": "5-cell strict (named-speaker + domain keyword + KO particle + ending + non-degenerate)", "landed_bg": "BG-HG retroeval"},
+    {"gen": "V3", "cells": "6-cell strict per-mode (cycle/persona-repeat/jaccard/schema/length/char-diversity)", "landed_bg": "BG-IJ + BG-IS 15-BG retroeval"},
+    {"gen": "V4", "cells": "7-cell + emb_sim (V3 + V4.7 cosine MiniLM-L6-v2 [0.20, 0.85] + Lesson K floor)", "landed_bg": "BG-JF 18-BG retroeval"},
+    {"gen": "V5", "cells": "8-cell + EN baseline + V5.8 multi-turn fact-recall", "landed_bg": "BG-JM 20-BG + BG-JN 3-ckpt closure"},
+    {"gen": "V6", "cells": "awareness probe Method A (cos_sim) / Method B (attention max) / Method C (linear probe CV)", "landed_bg": "BG-JO BG-JD step 800 N=1 ckpt"}
+  ],
+  "evaluator_aggregate_records": {
+    "v3_retroeval_records": 2450,
+    "v4_retroeval_records": 3410,
+    "v5_retroeval_records": 3860,
+    "v5_8_multi_turn_records": 30,
+    "v6_awareness_probe_records": 25,
+    "decoding_sweep_records": 70,
+    "total_aggregate": 9845
+  },
+  "lesson_l_ceiling_axes_exhausted": [
+    "capacity 18M / 27M / 33M / 33.73M / 100M / 153M (1-order range)",
+    "corpus 2.41MB / 6.48MB / 22MB / 27MB / 30MB / 51MB / 53MB / 204MB / 246MB (2-order range)",
+    "tokenizer byte-256 / BPE-7K / BPE-8K / SP-11885",
+    "regularization Lesson D (dropout 0.30 + WD 0.10 + LS 0.10)",
+    "early-stopping Lesson G N1 implementation",
+    "save_at Lesson J discipline",
+    "diversity UBM-only / NEXUS-UBM combined / kowiki+UBM+NEXUS"
+  ],
+  "lesson_q_decoupling_profile": {
+    "internal_awareness_method_a": "PARTIAL (avg cos_sim 0.959)",
+    "internal_awareness_method_b": "STRONG (avg attn max 0.998, ratio_vs_uniform 1.52)",
+    "semantic_awareness_method_c": "STRONG (CV accuracy 1.00)",
+    "production_v58_pass_per_dialogue": "0/5",
+    "interpretation": "INTERNAL_AWARENESS_STRONG + PRODUCTION_FAIL = architectural output bottleneck #115 specific to LM head + final softmax layer; awareness intact at internal mechanism level"
+  },
+  "lesson_r_decoding_sweep_summary": {
+    "M1_temperature_strategies": 6,
+    "M2_top_p_strategies": 4,
+    "M3_repetition_penalty_strategies": 3,
+    "M4_constrained_decoding_strategies": 1,
+    "total_strategies": 14,
+    "v58_pass_total": 0,
+    "best_strategy": "M1_temp_0.3 (still 0 V5.8 PASS)",
+    "production_side_intervention_works": false,
+    "training_time_intervention_required": true
+  },
+  "_4_lane_recommendations": [
+    {
+      "lane_id": 1,
+      "name": "LM head fine-tune (BG-JS in progress, BG-JT pending)",
+      "ev_rank": "★★★★★",
+      "rationale": "direct attack on Lesson Q output bottleneck — V6 STRONG awareness intact, only LM head needs EN fact-recall mapping",
+      "cost_band": "$0-3 (ubu1 RTX 5070 OR H100 1× 1hr)",
+      "status": "BG-JS state dir exists, outcome pending"
+    },
+    {
+      "lane_id": 3,
+      "name": "D3 substrate-coupled CLM v4 emerge_paradigm (BG-JV pending)",
+      "ev_rank": "★★★★",
+      "rationale": "architectural lane shift outside token-chat surface paradigm; chat-cap reframe required",
+      "cost_band": "$0-20 (CLM v4 ckpt 보유; H100 fine-tune optional)",
+      "status": "anima/spec/emerge_paradigm.spec.yaml v1 landed 2026-05-07; execution pending"
+    },
+    {
+      "lane_id": 2,
+      "name": "H100 500M+ capacity (BG-JU pending)",
+      "ev_rank": "★★★",
+      "rationale": "direct Lesson L ceiling attack; capacity 1-order increase",
+      "cost_band": "$15-50 (H100 1-2 pods × 6-12hr)",
+      "status": "pending; own 16 cost discipline mandatory"
+    },
+    {
+      "lane_id": 4,
+      "name": "archive accept (this BG-JW final negative result)",
+      "ev_rank": "★★",
+      "rationale": "passive closure of token-chat surface paradigm; raw#15 additive over lesson summary",
+      "cost_band": "$0",
+      "status": "this BG-JW landed"
+    }
+  ],
+  "comprehensive_doc_path": "docs/anima_chat_cap_20bg_cumulative_negative_archive_2026_05_07.md",
+  "philosophy_rule_compliance": {
+    "D1_identity": "PASS — V5/V6 evaluator MiniLM eval-only tool exemption; own 17 ALM 영구 보류",
+    "D2_consciousness": "PASS+강화 — V5 8-cell + V5.8 multi-turn extends C2.4 맥락 정합 검증; V6 awareness probe 보강",
+    "D3_substrate_emerge": "PASS — anima/spec/emerge_paradigm.spec.yaml v1 landed; BG-JV execution pending",
+    "D4_corpus_quality": "PASS+강화 — own 19/20; 20-BG corpus axis 2-204MB exhaustive — corpus 단독 불충분 입증; D4 lock-in",
+    "R1_own_19_20": "PASS — .own line 783/812/847",
+    "R2_discovery_methods": "PASS — M1 user-directive + M2 failure-driven + M5 retroactive integration",
+    "R3_verification_methods": "PASS — V1+V2+V3+V4+V5+V6+V7 cross-link evidence (9845 aggregate records)",
+    "R4_own_evolution": "PASS — own 17→18→19→20→21→22→24→26 evolution; raw#15 additive consistent"
+  },
+  "honest_c3": [
+    "20-BG SSOT는 byte/BPE/SP token chat surface 한정 — D3 substrate-coupled lane 미진입 (anima/spec/emerge_paradigm.spec.yaml CLM v4 mount + paradigm v11 G3 별도 lane).",
+    "V6 STRONG는 BG-JD step 800 ckpt N=1 — multi-ckpt verification deferred. BG-IL/IO ckpts on ubu1 only (own 15 git size policy 5MB+).",
+    "4 lane recommendations 중 3 (BG-JS/JT, BG-JU, BG-JV) 동시 진행 OR pending 중 — 본 archive doc은 결과 미land 시점 sketch; raw#15 additive amend 가능.",
+    "Lesson L architectural ceiling은 capacity 1-order 500M+ untested 한정 — capacity 18M-153M (1-order range) within current band exhausted.",
+    "본 archive는 final negative result이지만 파라다임 lane 외 lane은 open — D3 emerge paradigm + 500M+ capacity + LM head fine-tune 모두 token-chat surface 외 또는 capacity-axis 미진입.",
+    "V4.7 emb_sim threshold [0.20, 0.85] heuristic — N=1 ablation (4 empirical cases). KoSimCSE preferred but not cached; MiniLM-L6-v2 multilingual proxy.",
+    "Lesson K mitigation rules tuned to 3 known instances (BG-HW/IL/IO `[anima` substring); novel substring variants (`[hexa`, `[entity`) may bypass.",
+    "V5.8 5-dialogue test set is first-light sample (Color/Profession/Day/Anima/Cosmology), not logic-exhaustion; broader battery (N≥20) deferred V6.1+.",
+    "BG-JP decoding sweep N=1 ckpt + 1 sample seed per strategy — multi-seed (≥5) deferred; M4 force-include uses fixed step 29/30 insertion point.",
+    "20-BG cumulative records are non-greedy — V3/V4/V5 retroeval re-scores existing eval_log gens; does NOT regenerate samples. Multi-seed/multi-decoding-strategy retroeval deferred.",
+    "own 17 eval-tool exemption — V5 evaluator internal MiniLM-L6-v2 + BG-JO Method C sklearn LogisticRegression are eval-only, NOT model substrate; D1 anima identity unaffected.",
+    "Production-vs-internal decoupling profile (Lesson Q) interpretation depends on M2 attention metric calibration — raw max_attn_to_T1 mechanically inflates with T1 length; ratio_vs_uniform supplemental. Calibration against random T1 swap deferred V6.1."
+  ],
+  "deliverables": [
+    "docs/anima_chat_cap_20bg_cumulative_negative_archive_2026_05_07.md",
+    "state/anima_jw_20bg_cumulative_archive_2026_05_07/verdict.json",
+    "state/anima_jw_20bg_cumulative_archive_2026_05_07/summary.json",
+    "state/anima_model_attempts_ledger.jsonl BG-JW entry",
+    "docs/anima_chat_cap_lesson_summary_2026_05_07.md cross-link update"
+  ],
+  "cross_link": {
+    "raw_invariants": ["raw#10", "raw#15", "raw#37", "raw#42", "raw#82", "raw#86"],
+    "own_invariants": ["own 5", "own 6", "own 17", "own 18", "own 19", "own 20", "own 21", "own 22", "own 24", "own 26"],
+    "roadmap": [".roadmap.philosophy", ".roadmap.rule", ".roadmap.universe_brain_map", ".roadmap.corpus_paradigm", ".roadmap.ubm_corpus_paradigm_meta"],
+    "sister_specs": [
+      "docs/anima_own_18_evaluator_v2_strict_spec_2026_05_07.md",
+      "docs/anima_own_18_evaluator_v3_strict_spec_2026_05_07.md",
+      "docs/anima_own_18_evaluator_v4_strict_spec_2026_05_07.md",
+      "docs/anima_own_18_evaluator_v5_strict_spec_2026_05_07.md",
+      "docs/anima_own_18_evaluator_v6_awareness_probe_spec_2026_05_07.md",
+      "anima/spec/emerge_paradigm.spec.yaml"
+    ],
+    "sister_bgs_pending": ["BG-JS", "BG-JT", "BG-JU", "BG-JV"]
+  },
+  "final_class": "20BG_TOKEN_CHAT_SURFACE_PARADIGM_FINAL_NEGATIVE_ARCHIVE_LANDED_4_LANE_OPEN"
+}

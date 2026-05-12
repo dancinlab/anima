@@ -1,0 +1,92 @@
+[2026-05-07T11:03:39Z] secrets OK (runpod=50b hf=37b)
+[2026-05-07T11:03:41Z] hf auth PASS user=
+[2026-05-07T11:03:41Z] corpus OK (261M: /Users/ghost/core/anima/state/anima_ko_chat_corpus_2026_05_06/corpus_ko_chat_template.txt)
+[2026-05-07T11:03:41Z] booting pod=anima-iz-clm-continued-pretrain-2026-05-07 (H100 80GB SXM SECURE on-demand @ $2.99/hr)
+[2026-05-07T11:03:43Z] pod_id=t1a232z73llpsp
+[2026-05-07T11:03:43Z] waiting for SSH ready (max 6min)
+[2026-05-07T11:04:17Z] SSH ready at 103.207.149.154:14442 (after 3 probes)
+[2026-05-07T11:04:17Z] shipping Korean corpus (261M) + train.py + run_h100.bash
+[2026-05-07T11:27:29Z] launching H100 pipeline (corpus + train + intermediate eval + final eval)
+[2026-05-07T11:38:10Z] poll loop start (max 300min, budget cap $15)
+[2026-05-07T11:38:14Z] elapsed=34min cost=$1.72 probe=/workspace/anima_iz_pretrain/results/COMPLETE.sentinel SENTINEL_FOUND [orch] DONE ts=2026-05-07T11:38:10Z|
+[2026-05-07T11:38:26Z] COMPLETE.sentinel detected — final sync FIRST then auto-kill
+Warning: Permanently added '[103.207.149.154]:14442' (ED25519) to the list of known hosts.
+[2026-05-07T12:07:35Z] [trap] data-first scp before kill (L13)
+[2026-05-07T12:07:37Z] [trap] killing pod=t1a232z73llpsp
+{
+  "containerDiskInGb": 100,
+  "costPerHr": 2.99,
+  "createdAt": "2026-05-07 11:03:43.368 +0000 UTC",
+  "desiredStatus": "EXITED",
+  "env": {
+    "HF_TOKEN": "<REDACTED>",
+    "PUBLIC_KEY": "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIKOEWe0SBseZceuCgcVnlNDhEwbU/TIqGeK9FdrpIy9V ghost@ghostui-MacBookAir.local\n\nssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQCf5vOKHhrik9f3yA4IWXXGKPVvDQ8nFP5b1PF7a7YHuXMmZVSOvISYwph7yuCCYyZP8GTDm9MWHZVSR6ArijPxRfAbGDUtENFrHtyA5IGI9GycJkrYokI20neQXR4AGTwk/kVXOdaMaxEREFKhyffzZyrPKUEpZ7ikGXVM9MqWYNFvvy1ioQ7uuqyFq+65phVjojKgg4LWdnTjcxNzNrOgwlZqANx450Nhv3KAGhWSiLZgU6iA4JJ6gsq6t5S9p5n7T6EeypUyuKT4iOH0U5d4jIrssz0QwBncytLvQCvv7IpsapPqhgQzBXcGMZKkLS62UWYDRTeL7PPz3+N2hM4N RunPod-Key-Go"
+  },
+  "gpuCount": 1,
+  "id": "t1a232z73llpsp",
+  "imageName": "runpod/pytorch:2.4.0-py3.11-cuda12.4.1-devel-ubuntu22.04",
+  "lastStatusChange": "Exited by user: Thu May 07 2026 12:07:34 GMT+0000 (Coordinated Universal Time)",
+  "memoryInGb": 251,
+  "name": "anima-iz-clm-continued-pretrain-2026-05-07",
+  "ports": [
+    "22/tcp",
+    "8888/http"
+  ],
+  "vcpuCount": 28,
+  "volumeInGb": 120,
+  "volumeMountPath": "/workspace"
+}
+{"error":"api error: {\"error\":\"pod not found to terminate\",\"status\":404}\n (status 404)"}
+Usage:
+  runpodctl pod delete <pod-id> [flags]
+
+Aliases:
+  delete, rm, remove
+
+Flags:
+  -h, --help   help for delete
+
+Global Flags:
+  -o, --output string   output format (json, yaml) (default "json")
+
+{"error":"failed to delete pod: api error: {"error":"pod not found to terminate","status":404}
+ (status 404)"}
+[2026-05-07T12:07:59Z] [trap] post-kill: {"error":"api error: {\"error\":\"pod not found\",\"status\":404}\n (status 404)"}
+Usage:
+  runpodctl pod get <pod-id> [flags]
+[2026-05-07T12:08:02Z] computing BG-IZ verdict
+[2026-05-07T12:08:04Z] BG-IZ verdict=TRAINING_COMPLETED_NO_KO_COHERENCE_LESSON_L_EXTENDED F-IZ-1=PASS F-IZ-2=LIKELY_FAIL_NO_KO_30PCT F-IZ-3=PASS wall=64min cost=$3.19
+[2026-05-07T12:08:04Z] phi_star: pre=0.9739703138669332 post=0.6567158301671346 drift=-0.3173
+__BG_IZ_CONTINUED_PRETRAIN__ TRAINING_COMPLETED_NO_KO_COHERENCE_LESSON_L_EXTENDED
+[2026-05-07T12:08:04Z] [trap] data-first scp before kill (L13)
+[2026-05-07T12:08:05Z] [trap] killing pod=t1a232z73llpsp
+{"error":"api error: {\"error\":\"stop pod: Attempted to stop pod that does not exist.\",\"status\":500}\n (status 500)"}
+Usage:
+  runpodctl pod stop <pod-id> [flags]
+
+Flags:
+  -h, --help   help for stop
+
+Global Flags:
+  -o, --output string   output format (json, yaml) (default "json")
+
+{"error":"failed to stop pod: api error: {"error":"stop pod: Attempted to stop pod that does not exist.","status":500}
+ (status 500)"}
+{"error":"api error: {\"error\":\"pod not found to terminate\",\"status\":404}\n (status 404)"}
+Usage:
+  runpodctl pod delete <pod-id> [flags]
+
+Aliases:
+  delete, rm, remove
+
+Flags:
+  -h, --help   help for delete
+
+Global Flags:
+  -o, --output string   output format (json, yaml) (default "json")
+
+{"error":"failed to delete pod: api error: {"error":"pod not found to terminate","status":404}
+ (status 404)"}
+[2026-05-07T12:08:19Z] [trap] post-kill: {"error":"api error: {\"error\":\"pod not found\",\"status\":404}\n (status 404)"}
+Usage:
+  runpodctl pod get <pod-id> [flags]

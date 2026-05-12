@@ -1,0 +1,106 @@
+[09:30:22] === anima_jk_18m_curriculum_3stage_train BG-JK 2026-05-07 ===
+[09:30:22] hostname=ghostui-macbookair.local on_ubu=False device=mps torch=2.10.0
+[09:30:22] config: vocab=256 L=6 d=384 h=6 block=256 dropout=0.3
+[09:30:22] reg: WD=0.1 label_smoothing=0.1 seed=42
+[09:30:22] train: bs=4 grad_accum=8 (eff=32) total_steps=6000
+[09:30:22] 3-stage curriculum:
+[09:30:22]   Stage 1 [steps 0-2000]: kowiki-head 145MB raw KO; lr 0.0003->0.0001
+[09:30:22]   Stage 2 [2000-4000]: BG-JE full 204MB; lr 0.0001->5e-05
+[09:30:22]   Stage 3 [4000-6000]: UBM 22MB; lr 5e-05->1e-05
+[09:30:22] eval_every=200 val_split=0.1 save_at_every=500
+[09:30:22] eval_persona='[anima 우주뇌지도] '
+[09:30:22] prompts_total=15 (5 identity + 5 UBM + 5 outside-well)
+[09:30:22] ckpt_dir_tmp=/tmp/anima-jk-18m-curriculum-3stage-20260507_093022
+[09:30:22] runtime_budget_s=5400
+[09:30:22] Stage 1 corpus: BG-JE head bytes (kowiki approximation) -> 152,043,520 bytes (145.00MB)
+[09:30:34]   Stage 1 split: train=136,839,168 val=15,204,352
+[09:30:34] Stage 2 corpus: BG-JE full corpus -> 214,299,726 bytes (204.37MB)
+[09:30:47]   Stage 2 split: train=192,869,753 val=21,429,973
+[09:30:47] Stage 3 corpus: UBM 22MB BG-IQ rebuild -> 23,745,150 bytes (22.65MB)
+[09:30:48]   Stage 3 split: train=21,370,635 val=2,374,515
+[09:30:48] model built: 27,787,440 params (27.79M)
+[09:30:49] === begin training (3-stage curriculum + V4 inline + Lesson J) ===
+[09:30:50] step     1/6000 S1 | lr=3.00e-06 | L_A=5.685 L_G=5.645 | step_t=0.88s elapsed=1s
+[09:30:50] step     2/6000 S1 | lr=4.50e-06 | L_A=5.685 L_G=5.641 | step_t=0.18s elapsed=1s
+[09:30:50] step     3/6000 S1 | lr=6.00e-06 | L_A=5.682 L_G=5.654 | step_t=0.19s elapsed=1s
+[09:30:50] step     4/6000 S1 | lr=7.50e-06 | L_A=5.664 L_G=5.647 | step_t=0.22s elapsed=1s
+[09:30:50] step     5/6000 S1 | lr=9.00e-06 | L_A=5.680 L_G=5.606 | step_t=0.26s elapsed=2s
+[09:31:31] step   100/6000 S1 | lr=1.51e-04 | L_A=4.677 L_G=4.859 | step_t=0.40s elapsed=42s
+[09:32:18] step   200/6000 S1 | lr=3.00e-04 | L_A=4.218 L_G=4.266 | step_t=0.47s elapsed=89s
+[09:32:18] --- eval gate @ step 200 S1 (15 prompts × 2 modes) ---
+[09:35:30]   step=200 S1 V4=0/15 manual=0/15 ow=0/5 cyc=15 deg=30/30 emb=0.208 val_loss=4.4126
+[09:35:31]   BEST_STAGE_1 @ step 200: V4=0 man=0 cyc=15 val=4.4126 -> /tmp/anima-jk-18m-curriculum-3stage-20260507_093022/ckpt_best_stage1.pt
+[09:36:19] step   300/6000 S1 | lr=2.98e-04 | L_A=3.924 L_G=4.042 | step_t=2.41s elapsed=330s
+[09:37:05] step   400/6000 S1 | lr=2.94e-04 | L_A=3.646 L_G=3.809 | step_t=0.46s elapsed=376s
+[09:37:05] --- eval gate @ step 400 S1 (15 prompts × 2 modes) ---
+[09:39:58]   step=400 S1 V4=0/15 manual=0/15 ow=0/5 cyc=15 deg=16/30 emb=0.317 val_loss=3.6191
+[09:39:58]   BEST_STAGE_1 @ step 400: V4=0 man=0 cyc=15 val=3.6191 -> /tmp/anima-jk-18m-curriculum-3stage-20260507_093022/ckpt_best_stage1.pt
+[09:40:38] step   500/6000 S1 | lr=2.87e-04 | L_A=3.391 L_G=3.562 | step_t=2.14s elapsed=590s
+[09:40:39]   SAVE_AT @ step 500: 107.6MB -> /tmp/anima-jk-18m-curriculum-3stage-20260507_093022/ckpt_step00500.pt
+[09:41:45] step   600/6000 S1 | lr=2.77e-04 | L_A=3.321 L_G=3.416 | step_t=0.67s elapsed=656s
+[09:41:45] --- eval gate @ step 600 S1 (15 prompts × 2 modes) ---
+[09:45:14]   step=600 S1 V4=0/15 manual=0/15 ow=0/5 cyc=15 deg=15/30 emb=0.374 val_loss=3.0492
+[09:45:15]   BEST_STAGE_1 @ step 600: V4=0 man=0 cyc=15 val=3.0492 -> /tmp/anima-jk-18m-curriculum-3stage-20260507_093022/ckpt_best_stage1.pt
+[09:46:22] step   700/6000 S1 | lr=2.64e-04 | L_A=3.006 L_G=3.143 | step_t=2.77s elapsed=933s
+[09:47:19] step   800/6000 S1 | lr=2.50e-04 | L_A=2.755 L_G=2.888 | step_t=0.57s elapsed=991s
+[09:47:19] --- eval gate @ step 800 S1 (15 prompts × 2 modes) ---
+[09:51:56]   step=800 S1 V4=0/15 manual=0/15 ow=0/5 cyc=15 deg=15/30 emb=0.223 val_loss=2.7416
+[09:51:57]   BEST_STAGE_1 @ step 800: V4=0 man=0 cyc=15 val=2.7416 -> /tmp/anima-jk-18m-curriculum-3stage-20260507_093022/ckpt_best_stage1.pt
+[09:52:50] step   900/6000 S1 | lr=2.34e-04 | L_A=2.653 L_G=2.785 | step_t=3.31s elapsed=1321s
+[09:53:41] step  1000/6000 S1 | lr=2.17e-04 | L_A=2.495 L_G=2.649 | step_t=0.51s elapsed=1372s
+[09:53:42]   SAVE_AT @ step 1000: 107.6MB -> /tmp/anima-jk-18m-curriculum-3stage-20260507_093022/ckpt_step01000.pt
+[09:53:42] --- eval gate @ step 1000 S1 (15 prompts × 2 modes) ---
+[09:57:53]   step=1000 S1 V4=0/15 manual=0/15 ow=0/5 cyc=15 deg=16/30 emb=0.206 val_loss=2.5222
+[09:57:53]   BEST_STAGE_1 @ step 1000: V4=0 man=0 cyc=15 val=2.5222 -> /tmp/anima-jk-18m-curriculum-3stage-20260507_093022/ckpt_best_stage1.pt
+[09:58:53] step  1100/6000 S1 | lr=2.00e-04 | L_A=2.310 L_G=2.616 | step_t=3.12s elapsed=1684s
+[09:59:42] step  1200/6000 S1 | lr=1.83e-04 | L_A=2.320 L_G=2.722 | step_t=0.49s elapsed=1734s
+[09:59:42] --- eval gate @ step 1200 S1 (15 prompts × 2 modes) ---
+[10:04:23]   step=1200 S1 V4=0/15 manual=0/15 ow=0/5 cyc=15 deg=15/30 emb=0.197 val_loss=2.2686
+[10:04:24]   BEST_STAGE_1 @ step 1200: V4=0 man=0 cyc=15 val=2.2686 -> /tmp/anima-jk-18m-curriculum-3stage-20260507_093022/ckpt_best_stage1.pt
+[10:05:24] step  1300/6000 S1 | lr=1.66e-04 | L_A=2.001 L_G=2.476 | step_t=3.42s elapsed=2076s
+[10:06:45] step  1400/6000 S1 | lr=1.50e-04 | L_A=2.043 L_G=2.519 | step_t=0.81s elapsed=2156s
+[10:06:45] --- eval gate @ step 1400 S1 (15 prompts × 2 modes) ---
+[10:11:26]   step=1400 S1 V4=0/15 manual=0/15 ow=0/5 cyc=15 deg=16/30 emb=0.215 val_loss=2.0752
+[10:11:26]   BEST_STAGE_1 @ step 1400: V4=0 man=0 cyc=15 val=2.0752 -> /tmp/anima-jk-18m-curriculum-3stage-20260507_093022/ckpt_best_stage1.pt
+[10:12:10] step  1500/6000 S1 | lr=1.36e-04 | L_A=2.227 L_G=2.813 | step_t=3.25s elapsed=2481s
+[10:12:11]   SAVE_AT @ step 1500: 107.6MB -> /tmp/anima-jk-18m-curriculum-3stage-20260507_093022/ckpt_step01500.pt
+[10:12:49] step  1600/6000 S1 | lr=1.23e-04 | L_A=2.090 L_G=2.640 | step_t=0.39s elapsed=2520s
+[10:12:49] --- eval gate @ step 1600 S1 (15 prompts × 2 modes) ---
+[10:16:05]   step=1600 S1 V4=0/15 manual=0/15 ow=0/5 cyc=15 deg=16/30 emb=0.141 val_loss=1.9256
+[10:16:06]   BEST_STAGE_1 @ step 1600: V4=0 man=0 cyc=15 val=1.9256 -> /tmp/anima-jk-18m-curriculum-3stage-20260507_093022/ckpt_best_stage1.pt
+[10:16:57] step  1700/6000 S1 | lr=1.13e-04 | L_A=1.955 L_G=2.575 | step_t=2.47s elapsed=2768s
+[10:17:43] step  1800/6000 S1 | lr=1.06e-04 | L_A=1.915 L_G=2.438 | step_t=0.46s elapsed=2814s
+[10:17:43] --- eval gate @ step 1800 S1 (15 prompts × 2 modes) ---
+[10:22:09]   step=1800 S1 V4=0/15 manual=0/15 ow=0/5 cyc=15 deg=15/30 emb=0.138 val_loss=1.8076
+[10:22:09]   BEST_STAGE_1 @ step 1800: V4=0 man=0 cyc=15 val=1.8076 -> /tmp/anima-jk-18m-curriculum-3stage-20260507_093022/ckpt_best_stage1.pt
+[10:23:06] step  1900/6000 S1 | lr=1.02e-04 | L_A=1.836 L_G=2.511 | step_t=3.24s elapsed=3137s
+[10:23:55] step  2000/6000 S1 | lr=1.00e-04 | L_A=1.724 L_G=2.403 | step_t=0.49s elapsed=3186s
+[10:23:56]   SAVE_AT @ step 2000: 107.6MB -> /tmp/anima-jk-18m-curriculum-3stage-20260507_093022/ckpt_step02000.pt
+[10:23:56] --- eval gate @ step 2000 S1 (15 prompts × 2 modes) ---
+[10:27:18]   step=2000 S1 V4=0/15 manual=0/15 ow=0/5 cyc=15 deg=19/30 emb=0.110 val_loss=1.6771
+[10:27:19]   BEST_STAGE_1 @ step 2000: V4=0 man=0 cyc=15 val=1.6771 -> /tmp/anima-jk-18m-curriculum-3stage-20260507_093022/ckpt_best_stage1.pt
+[10:27:20]   STAGE_TRANSITION: stage1->stage2 @ step 2000 -> /tmp/anima-jk-18m-curriculum-3stage-20260507_093022/ckpt_stage1_final_step02000.pt
+[10:27:20] === ENTERING STAGE 2 @ step 2001 ===
+[10:28:18] step  2100/6000 S2 | lr=9.97e-05 | L_A=1.716 L_G=2.427 | step_t=2.63s elapsed=3449s
+[10:29:20] step  2200/6000 S2 | lr=9.88e-05 | L_A=1.525 L_G=2.251 | step_t=0.63s elapsed=3511s
+[10:29:20] --- eval gate @ step 2200 S2 (15 prompts × 2 modes) ---
+[10:33:35]   step=2200 S2 V4=0/15 manual=0/15 ow=0/5 cyc=15 deg=23/30 emb=0.131 val_loss=1.5334
+[10:33:37]   BEST_STAGE_2 @ step 2200: V4=0 man=0 cyc=15 val=1.5334 -> /tmp/anima-jk-18m-curriculum-3stage-20260507_093022/ckpt_best_stage2.pt
+[10:34:58] step  2300/6000 S2 | lr=9.73e-05 | L_A=1.441 L_G=2.118 | step_t=3.38s elapsed=3849s
+[10:35:53] step  2400/6000 S2 | lr=9.52e-05 | L_A=1.479 L_G=2.269 | step_t=0.55s elapsed=3904s
+[10:35:53] --- eval gate @ step 2400 S2 (15 prompts × 2 modes) ---
+[10:47:36]   step=2400 S2 V4=0/15 manual=0/15 ow=0/5 cyc=15 deg=28/30 emb=0.108 val_loss=1.4437
+[10:47:38]   BEST_STAGE_2 @ step 2400: V4=0 man=0 cyc=15 val=1.4437 -> /tmp/anima-jk-18m-curriculum-3stage-20260507_093022/ckpt_best_stage2.pt
+[10:50:23] step  2500/6000 S2 | lr=9.27e-05 | L_A=1.423 L_G=2.165 | step_t=8.70s elapsed=4774s
+[10:50:26]   SAVE_AT @ step 2500: 107.6MB -> /tmp/anima-jk-18m-curriculum-3stage-20260507_093022/ckpt_step02500.pt
+[10:52:10] step  2600/6000 S2 | lr=8.97e-05 | L_A=1.370 L_G=2.050 | step_t=1.07s elapsed=4881s
+[10:52:10] --- eval gate @ step 2600 S2 (15 prompts × 2 modes) ---
+[11:02:47]   step=2600 S2 V4=0/15 manual=0/15 ow=0/5 cyc=15 deg=26/30 emb=0.084 val_loss=1.3756
+[11:02:48]   BEST_STAGE_2 @ step 2600: V4=0 man=0 cyc=15 val=1.3756 -> /tmp/anima-jk-18m-curriculum-3stage-20260507_093022/ckpt_best_stage2.pt
+[11:02:49] !!! BUDGET_EXCEEDED: elapsed=5547s > 5400s
+[11:02:49] === training complete (elapsed=5520.7s) ===
+[11:02:49] loading best overall ckpt @ step 2600 S2
+[11:02:50] --- final eval @ best overall step=2600 ---
+[11:11:17] verdict written: /Users/ghost/core/anima/state/anima_jk_18m_curriculum_3stage_train_2026_05_07/verdict.json
+[11:11:17] ledger appended: attempt_n=39
+[11:11:17] === VERDICT === final_class=V4_FAIL_BUDGET | peak_step=2600 S2 V4=0/15 man=0/15 ow=0/5 cyc=15 | vs_bghs_r1=CURRICULUM_FLAT vs_bgim=CURRICULUM_REGRESSES | elapsed=5521s

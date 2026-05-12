@@ -1,0 +1,264 @@
+[02:30:33] === anima_h093_sft_only_train BG-HF 2026-05-07 ===
+[02:30:33] hostname=aiden-b650m-k on_ubu=True
+[02:30:33] device=cuda torch=2.11.0+cu128
+[02:30:33] gpu=NVIDIA GeForce RTX 5070 cc=(12, 0)
+[02:30:33] gpu_mem_total=12.34GB
+[02:30:33] config: vocab=256 n_layer=6 d_model=384 n_head=6 block=256
+[02:30:33] train: bs=8 grad_accum=8 lr=0.0003 warmup=300 steps=5000
+[02:30:33] eval_at: every 500 (n=10)  save_at: final only
+[02:30:33] prompts=['안녕하세요', '한국어 가능?', '오늘 기분 어때?', '사용자: 안녕하세요\n도우미:', '코드를 짜줘']
+[02:30:33] corpus=/home/aiden/core/anima/state/anima_h093_sft_only_corpus_2026_05_07/corpus_sft_only.txt
+[02:30:33] run_dir=/home/aiden/anima_native/anima-h093-sft-only-20260507_023033
+[02:30:33] corpus loaded: 53,971,422 bytes (51.5MB) in 0.0s
+[02:30:35] split: train=51,272,850 val=2,698,572
+[02:30:35] model built: 27,787,440 params (27.79M)
+[02:30:35] === begin training ===
+[02:30:36] step     1/5000 | lr=2.00e-06 | L_A=5.430 L_G=5.656 L_T=10.180 T_mean=0.0723 | step_t=0.21s elapsed=0s
+[02:30:36] step     2/5000 | lr=3.00e-06 | L_A=5.666 L_G=5.646 L_T=10.128 T_mean=0.0734 | step_t=0.02s elapsed=0s
+[02:30:36] step     3/5000 | lr=4.00e-06 | L_A=5.682 L_G=5.652 L_T=10.157 T_mean=0.0724 | step_t=0.02s elapsed=0s
+[02:30:36] step     4/5000 | lr=5.00e-06 | L_A=5.620 L_G=5.654 L_T=10.123 T_mean=0.0724 | step_t=0.02s elapsed=0s
+[02:30:36] step     5/5000 | lr=6.00e-06 | L_A=5.680 L_G=5.673 L_T=10.138 T_mean=0.0728 | step_t=0.02s elapsed=0s
+[02:30:37] step    50/5000 | lr=5.10e-05 | L_A=4.797 L_G=5.206 L_T=9.690 T_mean=0.0793 | step_t=0.02s elapsed=1s
+[02:30:38] step   100/5000 | lr=1.01e-04 | L_A=4.413 L_G=4.731 L_T=7.172 T_mean=0.1570 | step_t=0.02s elapsed=2s
+[02:30:39] step   150/5000 | lr=1.51e-04 | L_A=4.138 L_G=4.473 L_T=4.660 T_mean=0.3099 | step_t=0.02s elapsed=3s
+[02:30:40] step   200/5000 | lr=2.01e-04 | L_A=3.945 L_G=4.163 L_T=2.156 T_mean=0.5911 | step_t=0.02s elapsed=4s
+[02:30:40] step   250/5000 | lr=2.51e-04 | L_A=3.771 L_G=3.873 L_T=0.604 T_mean=0.8827 | step_t=0.02s elapsed=5s
+[02:30:41] step   300/5000 | lr=3.00e-04 | L_A=3.639 L_G=3.687 L_T=-0.998 T_mean=1.1216 | step_t=0.02s elapsed=6s
+[02:30:42] step   350/5000 | lr=3.00e-04 | L_A=3.429 L_G=3.498 L_T=-2.394 T_mean=1.6913 | step_t=0.02s elapsed=7s
+[02:30:43] step   400/5000 | lr=3.00e-04 | L_A=3.756 L_G=3.800 L_T=-1.969 T_mean=1.2236 | step_t=0.02s elapsed=8s
+[02:30:44] step   450/5000 | lr=2.99e-04 | L_A=3.319 L_G=3.402 L_T=-2.692 T_mean=1.7115 | step_t=0.02s elapsed=9s
+[02:30:45] step   500/5000 | lr=2.99e-04 | L_A=3.410 L_G=3.510 L_T=-2.175 T_mean=1.3008 | step_t=0.02s elapsed=10s
+[02:30:45] --- eval gate @ step 500 ---
+[02:30:46]   EVAL[step=500 greedy] '안녕하세요' → h=0.00 tf=0.40 leak=[] FAIL | head=' ����     ����                                    '
+[02:30:46]   EVAL[step=500 sample] '안녕하세요' → h=0.17 tf=0.70 leak=[] FAIL | head='�욜��괠��퐕���눤� ����쀀 �  �����ꬰ������튐� ��횰�똌����� �'
+[02:30:46]   EVAL[step=500 greedy] '한국어 가능?' → h=0.01 tf=0.70 leak=[] FAIL | head=' 읝��� � � � � �                                   '
+[02:30:46]   EVAL[step=500 sample] '한국어 가능?' → h=0.15 tf=1.00 leak=[] FAIL | head=' 똠����젝���읞���  ��  �슄� �� � 쥩���� 띝 h  �� 눶��찥� �'
+[02:30:46]   EVAL[step=500 greedy] '오늘 기분 어때?' → h=0.00 tf=0.40 leak=[] FAIL | head=' � �  �� � � �                                    '
+[02:30:46]   EVAL[step=500 sample] '오늘 기분 어때?' → h=0.11 tf=1.00 leak=[] FAIL | head='밞� � 릴�� �  ��bigs 읧����닊���� �6 � �� 엝� � ꈐ � � �'
+[02:30:46]   EVAL[step=500 greedy] '사용자: 안녕하세요
+도우미:' → h=0.01 tf=0.70 leak=[] FAIL | head='  ����� 읝  � �           �                        '
+[02:30:47]   EVAL[step=500 sample] '사용자: 안녕하세요
+도우미:' → h=0.11 tf=1.00 leak=[] FAIL | head='��시����� � 둌����칞� � � �P    � �앸� ��� �묤�ind����튄'
+[02:30:47]   EVAL[step=500 greedy] '코드를 짜줘' → h=0.00 tf=0.40 leak=[] FAIL | head=' � ��                                             '
+[02:30:47]   EVAL[step=500 sample] '코드를 짜줘' → h=0.03 tf=1.00 leak=[] FAIL | head='� � �,ere  nt ��  얀    /en �    �   3ps 쨼 aninh � '
+[02:30:47]   OWN18[step=500] FAIL pass=0/5 leak=False
+[02:30:48] step   550/5000 | lr=2.98e-04 | L_A=3.336 L_G=3.477 L_T=-0.961 T_mean=0.7030 | step_t=0.05s elapsed=12s
+[02:30:49] step   600/5000 | lr=2.97e-04 | L_A=3.432 L_G=3.519 L_T=-0.913 T_mean=0.6835 | step_t=0.02s elapsed=13s
+[02:30:50] step   650/5000 | lr=2.96e-04 | L_A=3.004 L_G=3.050 L_T=-1.289 T_mean=0.8593 | step_t=0.02s elapsed=14s
+[02:30:51] step   700/5000 | lr=2.95e-04 | L_A=2.875 L_G=2.963 L_T=-1.194 T_mean=0.7671 | step_t=0.02s elapsed=15s
+[02:30:52] step   750/5000 | lr=2.94e-04 | L_A=2.916 L_G=2.956 L_T=-0.698 T_mean=0.6167 | step_t=0.02s elapsed=16s
+[02:30:53] step   800/5000 | lr=2.93e-04 | L_A=2.764 L_G=2.811 L_T=-0.960 T_mean=0.7124 | step_t=0.02s elapsed=17s
+[02:30:54] step   850/5000 | lr=2.91e-04 | L_A=2.700 L_G=2.760 L_T=-0.689 T_mean=0.6427 | step_t=0.02s elapsed=18s
+[02:30:55] step   900/5000 | lr=2.89e-04 | L_A=2.972 L_G=3.146 L_T=-0.189 T_mean=0.5914 | step_t=0.02s elapsed=19s
+[02:30:56] step   950/5000 | lr=2.87e-04 | L_A=2.473 L_G=2.682 L_T=-1.175 T_mean=0.8340 | step_t=0.02s elapsed=20s
+[02:30:57] step  1000/5000 | lr=2.85e-04 | L_A=2.410 L_G=2.628 L_T=-0.689 T_mean=0.6517 | step_t=0.02s elapsed=21s
+[02:30:57] --- eval gate @ step 1000 ---
+[02:30:57]   EVAL[step=1000 greedy] '안녕하세요' → h=0.01 tf=0.70 leak=[] FAIL | head='다.\n\n\n\n\n\n\n\n\n\n\n\n\n\n                                  '
+[02:30:57]   EVAL[step=1000 sample] '안녕하세요' → h=0.21 tf=1.00 leak=[] FAIL | head=' 하�튘ꩀ있맏�다.\n\n\n 고�지�믬렕��다. �을�uunireforawivifolsacac'
+[02:30:57]   EVAL[step=1000 greedy] '한국어 가능?' → h=0.00 tf=0.00 leak=[] FAIL | head='\n\n\n\n\n\n\n\n\n\n\n\n                                      '
+[02:30:57]   EVAL[step=1000 sample] '한국어 가능?' → h=0.42 tf=1.00 leak=[] FAIL | head='\n났자��을하���돰��사솀�놔�밀장�문���미�필실. �읕���밀은 �'
+[02:30:57]   EVAL[step=1000 greedy] '오늘 기분 어때?' → h=0.01 tf=0.70 leak=[] FAIL | head='\n\n다.\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n                           '
+[02:30:58]   EVAL[step=1000 sample] '오늘 기분 어때?' → h=0.45 tf=1.00 leak=[] FAIL | head='\n\n룽졃�, �돈도실2\n\n��니미지 을경우�욹�우도용� 뻰도짤.\n3���'
+[02:30:58]   EVAL[step=1000 greedy] '사용자: 안녕하세요
+도우미:' → h=0.03 tf=0.70 leak=[] FAIL | head=' 이다.\n\n\n\n\n\n\n\n\n\n\n\n                                  '
+[02:30:58]   EVAL[step=1000 sample] '사용자: 안녕하세요
+도우미:' → h=0.64 tf=1.00 leak=[] PASS | head=': 에욀다맀지언의�는 미우을도도용지도�:\n�이돸�골잘욌���'
+[02:30:58]   EVAL[step=1000 greedy] '코드를 짜줘' → h=0.93 tf=0.70 leak=[] FAIL | head='이이이이이이이다. 이이이이이이이이이이이이이이이이이이'
+[02:30:58]   EVAL[step=1000 sample] '코드를 짜줘' → h=0.59 tf=1.00 leak=[] PASS | head='�자�연한�이�˴이적첄 닧�이� 붼몀도이를 일�묤. 껰�을밀지'
+[02:30:58]   OWN18[step=1000] FAIL pass=2/5 leak=False
+[02:30:59] step  1050/5000 | lr=2.83e-04 | L_A=2.223 L_G=2.485 L_T=0.160 T_mean=0.5099 | step_t=0.05s elapsed=24s
+[02:31:00] step  1100/5000 | lr=2.81e-04 | L_A=2.126 L_G=2.562 L_T=-1.011 T_mean=0.8956 | step_t=0.02s elapsed=25s
+[02:31:01] step  1150/5000 | lr=2.79e-04 | L_A=2.182 L_G=2.552 L_T=-0.095 T_mean=0.6730 | step_t=0.02s elapsed=26s
+[02:31:02] step  1200/5000 | lr=2.76e-04 | L_A=2.107 L_G=2.561 L_T=-0.452 T_mean=0.7701 | step_t=0.02s elapsed=27s
+[02:31:03] step  1250/5000 | lr=2.74e-04 | L_A=1.897 L_G=2.317 L_T=-0.821 T_mean=0.8188 | step_t=0.02s elapsed=28s
+[02:31:04] step  1300/5000 | lr=2.71e-04 | L_A=1.803 L_G=2.236 L_T=-0.505 T_mean=0.7076 | step_t=0.02s elapsed=29s
+[02:31:05] step  1350/5000 | lr=2.68e-04 | L_A=1.671 L_G=2.165 L_T=-0.812 T_mean=0.8670 | step_t=0.02s elapsed=29s
+[02:31:06] step  1400/5000 | lr=2.65e-04 | L_A=1.658 L_G=2.180 L_T=-1.077 T_mean=0.9122 | step_t=0.02s elapsed=30s
+[02:31:07] step  1450/5000 | lr=2.62e-04 | L_A=1.457 L_G=1.970 L_T=-0.860 T_mean=0.8687 | step_t=0.02s elapsed=31s
+[02:31:08] step  1500/5000 | lr=2.59e-04 | L_A=1.348 L_G=1.943 L_T=-1.092 T_mean=0.9829 | step_t=0.02s elapsed=32s
+[02:31:08] --- eval gate @ step 1500 ---
+[02:31:08]   EVAL[step=1500 greedy] '안녕하세요' → h=0.11 tf=0.70 leak=[] FAIL | head='하가� 밀� 밀��������������하�하�가�                      '
+[02:31:08]   EVAL[step=1500 sample] '안녕하세요' → h=0.15 tf=0.70 leak=[] FAIL | head='�      쀔�������하하겘��                  븰�겲�것�젔�����'
+[02:31:08]   EVAL[step=1500 greedy] '한국어 가능?' → h=0.00 tf=0.00 leak=[] FAIL | head='\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n'
+[02:31:09]   EVAL[step=1500 sample] '한국어 가능?' → h=0.00 tf=0.40 leak=[] FAIL | head='\n\n\n�                                              '
+[02:31:09]   EVAL[step=1500 greedy] '오늘 기분 어때?' → h=0.00 tf=0.00 leak=[] FAIL | head='\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n'
+[02:31:09]   EVAL[step=1500 sample] '오늘 기분 어때?' → h=0.00 tf=0.40 leak=[] FAIL | head='\n\n\n-----------------------------------------------'
+[02:31:09]   EVAL[step=1500 greedy] '사용자: 안녕하세요
+도우미:' → h=0.00 tf=0.00 leak=[] FAIL | head='\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n'
+[02:31:09]   EVAL[step=1500 sample] '사용자: 안녕하세요
+도우미:' → h=0.00 tf=0.40 leak=[] FAIL | head='\n\n\n�                                              '
+[02:31:09]   EVAL[step=1500 greedy] '코드를 짜줘' → h=0.01 tf=0.70 leak=[] FAIL | head='가�                                                '
+[02:31:09]   EVAL[step=1500 sample] '코드를 짜줘' → h=0.30 tf=0.70 leak=[] FAIL | head='기     씼�� 묬해하�해�기����가������기�����가�며�넜하겭곤jprursyt'
+[02:31:09]   OWN18[step=1500] FAIL pass=0/5 leak=False
+[02:31:10] step  1550/5000 | lr=2.56e-04 | L_A=1.518 L_G=2.090 L_T=-0.554 T_mean=0.8172 | step_t=0.05s elapsed=35s
+[02:31:11] step  1600/5000 | lr=2.52e-04 | L_A=1.350 L_G=2.022 L_T=-0.864 T_mean=0.9470 | step_t=0.02s elapsed=36s
+[02:31:12] step  1650/5000 | lr=2.49e-04 | L_A=1.084 L_G=1.774 L_T=-0.756 T_mean=0.9642 | step_t=0.02s elapsed=37s
+[02:31:13] step  1700/5000 | lr=2.45e-04 | L_A=1.519 L_G=2.202 L_T=-0.173 T_mean=0.7748 | step_t=0.02s elapsed=38s
+[02:31:14] step  1750/5000 | lr=2.41e-04 | L_A=0.834 L_G=1.660 L_T=-0.873 T_mean=1.0460 | step_t=0.02s elapsed=39s
+[02:31:15] step  1800/5000 | lr=2.38e-04 | L_A=1.007 L_G=1.798 L_T=-0.570 T_mean=0.9353 | step_t=0.02s elapsed=40s
+[02:31:16] step  1850/5000 | lr=2.34e-04 | L_A=0.887 L_G=1.672 L_T=-0.363 T_mean=0.9026 | step_t=0.02s elapsed=41s
+[02:31:17] step  1900/5000 | lr=2.30e-04 | L_A=0.885 L_G=1.683 L_T=-0.270 T_mean=0.8567 | step_t=0.02s elapsed=42s
+[02:31:18] step  1950/5000 | lr=2.26e-04 | L_A=0.800 L_G=1.551 L_T=-0.506 T_mean=0.9718 | step_t=0.02s elapsed=43s
+[02:31:19] step  2000/5000 | lr=2.22e-04 | L_A=0.790 L_G=1.561 L_T=-0.665 T_mean=1.0359 | step_t=0.02s elapsed=44s
+[02:31:19] --- eval gate @ step 2000 ---
+[02:31:19]   EVAL[step=2000 greedy] '안녕하세요' → h=0.00 tf=0.40 leak=[] FAIL | head='?\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n'
+[02:31:19]   EVAL[step=2000 sample] '안녕하세요' → h=0.00 tf=0.40 leak=[] FAIL | head='/////////////////1))056FLDSCCSST000033C30544334448'
+[02:31:20]   EVAL[step=2000 greedy] '한국어 가능?' → h=0.00 tf=0.00 leak=[] FAIL | head='\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n'
+[02:31:20]   EVAL[step=2000 sample] '한국어 가능?' → h=0.01 tf=0.40 leak=[] FAIL | head='?}211122.\n\n\n\n\n\n\n\n\n\n\n\n�밀��                         '
+[02:31:20]   EVAL[step=2000 greedy] '오늘 기분 어때?' → h=0.00 tf=0.00 leak=[] FAIL | head='\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n'
+[02:31:20]   EVAL[step=2000 sample] '오늘 기분 어때?' → h=0.27 tf=0.70 leak=[] FAIL | head='���굱하굵�겵공ꡤ굵겵ꡘ곳���긱�������곳�����곤곳����및��?*:\n\n\n\n,\n'
+[02:31:20]   EVAL[step=2000 greedy] '사용자: 안녕하세요
+도우미:' → h=0.00 tf=0.00 leak=[] FAIL | head='\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n'
+[02:31:20]   EVAL[step=2000 sample] '사용자: 안녕하세요
+도우미:' → h=0.00 tf=0.40 leak=[] FAIL | head=':TSSSSSbbmLDLSSLLDLLLLRRIBRRAAYRIIIIIIIIIIIIIIIIIE'
+[02:31:21]   EVAL[step=2000 greedy] '코드를 짜줘' → h=0.63 tf=1.00 leak=[] FAIL | head='겕��것것것것것��하것하�것하�겘것하�것�하�겘겘것��하�겘것�'
+[02:31:21]   EVAL[step=2000 sample] '코드를 짜줘' → h=0.13 tf=1.00 leak=[] FAIL | head='��겵굲��건�기��배��밁뀀�����ddSCN50000005V}005))\n\n배������'
+[02:31:21]   OWN18[step=2000] FAIL pass=0/5 leak=False
+[02:31:22] step  2050/5000 | lr=2.18e-04 | L_A=0.571 L_G=1.252 L_T=-0.351 T_mean=0.9583 | step_t=0.05s elapsed=46s
+[02:31:23] step  2100/5000 | lr=2.14e-04 | L_A=0.479 L_G=1.081 L_T=-0.609 T_mean=1.0819 | step_t=0.02s elapsed=47s
+[02:31:24] step  2150/5000 | lr=2.09e-04 | L_A=0.513 L_G=1.150 L_T=-0.487 T_mean=1.0055 | step_t=0.02s elapsed=48s
+[02:31:25] step  2200/5000 | lr=2.05e-04 | L_A=0.714 L_G=1.378 L_T=-0.385 T_mean=0.9677 | step_t=0.02s elapsed=49s
+[02:31:26] step  2250/5000 | lr=2.01e-04 | L_A=0.751 L_G=1.436 L_T=-0.394 T_mean=0.9749 | step_t=0.02s elapsed=50s
+[02:31:27] step  2300/5000 | lr=1.96e-04 | L_A=0.527 L_G=1.148 L_T=-0.554 T_mean=1.0551 | step_t=0.02s elapsed=51s
+[02:31:28] step  2350/5000 | lr=1.92e-04 | L_A=0.685 L_G=1.273 L_T=-0.635 T_mean=1.0444 | step_t=0.02s elapsed=52s
+[02:31:29] step  2400/5000 | lr=1.87e-04 | L_A=0.572 L_G=1.246 L_T=-0.320 T_mean=0.9440 | step_t=0.02s elapsed=53s
+[02:31:29] step  2450/5000 | lr=1.83e-04 | L_A=0.410 L_G=0.927 L_T=-0.775 T_mean=1.1079 | step_t=0.02s elapsed=54s
+[02:31:30] step  2500/5000 | lr=1.79e-04 | L_A=0.371 L_G=0.852 L_T=-0.822 T_mean=1.0943 | step_t=0.02s elapsed=55s
+[02:31:30] --- eval gate @ step 2500 ---
+[02:31:31]   EVAL[step=2500 greedy] '안녕하세요' → h=0.00 tf=0.40 leak=[] FAIL | head='???????????```````````````````````````````````````'
+[02:31:31]   EVAL[step=2500 sample] '안녕하세요' → h=0.00 tf=0.40 leak=[] FAIL | head=')))))))\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n:\n\n\n\n\n\n\n\n\n\nTTT**###'
+[02:31:31]   EVAL[step=2500 greedy] '한국어 가능?' → h=0.00 tf=0.40 leak=[] FAIL | head='???????????#######################################'
+[02:31:31]   EVAL[step=2500 sample] '한국어 가능?' → h=0.01 tf=0.70 leak=[] FAIL | head='?폮UEEOAOUOOIOEEIRIIIIIIORRRRRIRIIIIE&EEAEARRRIIIII'
+[02:31:31]   EVAL[step=2500 greedy] '오늘 기분 어때?' → h=0.12 tf=0.70 leak=[] FAIL | head='홙홙홙홙�홙�����홙����������������홙�����������홙���������'
+[02:31:31]   EVAL[step=2500 sample] '오늘 기분 어때?' → h=0.00 tf=0.40 leak=[] FAIL | head='?�sssssssssssssssssssssssssssKRDLAEARIIx""h(((2222'
+[02:31:32]   EVAL[step=2500 greedy] '사용자: 안녕하세요
+도우미:' → h=0.00 tf=0.40 leak=[] FAIL | head=':::::::::::\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n'
+[02:31:32]   EVAL[step=2500 sample] '사용자: 안녕하세요
+도우미:' → h=0.00 tf=0.40 leak=[] FAIL | head=':::\n\n\n\n\n\n\n\n\n\n\n\n\n,\n\n\n\n\n\n\n\n\n\n\n********************:-'
+[02:31:32]   EVAL[step=2500 greedy] '코드를 짜줘' → h=0.38 tf=0.70 leak=[] FAIL | head='겕겲겲겲��겲���겲���겲�겲�����겲겲�겲�겲�겲���������겲겲�겲것�'
+[02:31:32]   EVAL[step=2500 sample] '코드를 짜줘' → h=0.04 tf=0.70 leak=[] FAIL | head='겕굵홙�����\n\n\n\n\n\n\n\n\n\n\n\n\n\n----------------------------'
+[02:31:32]   OWN18[step=2500] FAIL pass=0/5 leak=False
+[02:31:33] step  2550/5000 | lr=1.74e-04 | L_A=0.337 L_G=0.827 L_T=-1.071 T_mean=1.2089 | step_t=0.05s elapsed=58s
+[02:31:34] step  2600/5000 | lr=1.70e-04 | L_A=0.574 L_G=1.110 L_T=-1.085 T_mean=1.1778 | step_t=0.02s elapsed=59s
+[02:31:35] step  2650/5000 | lr=1.65e-04 | L_A=0.487 L_G=1.009 L_T=-1.166 T_mean=1.2023 | step_t=0.02s elapsed=59s
+[02:31:36] step  2700/5000 | lr=1.60e-04 | L_A=0.345 L_G=0.777 L_T=-1.219 T_mean=1.1732 | step_t=0.02s elapsed=60s
+[02:31:37] step  2750/5000 | lr=1.56e-04 | L_A=0.372 L_G=0.778 L_T=-1.797 T_mean=1.4609 | step_t=0.02s elapsed=61s
+[02:31:38] step  2800/5000 | lr=1.51e-04 | L_A=0.429 L_G=0.918 L_T=-1.609 T_mean=1.3432 | step_t=0.02s elapsed=62s
+[02:31:39] step  2850/5000 | lr=1.47e-04 | L_A=0.460 L_G=0.953 L_T=-1.671 T_mean=1.2788 | step_t=0.02s elapsed=63s
+[02:31:40] step  2900/5000 | lr=1.43e-04 | L_A=0.297 L_G=0.671 L_T=-1.870 T_mean=1.4121 | step_t=0.02s elapsed=64s
+[02:31:41] step  2950/5000 | lr=1.38e-04 | L_A=0.199 L_G=0.496 L_T=-2.127 T_mean=1.5412 | step_t=0.02s elapsed=65s
+[02:31:42] step  3000/5000 | lr=1.34e-04 | L_A=0.121 L_G=0.308 L_T=-2.581 T_mean=1.8134 | step_t=0.02s elapsed=66s
+[02:31:42] --- eval gate @ step 3000 ---
+[02:31:42]   EVAL[step=3000 greedy] '안녕하세요' → h=0.00 tf=0.40 leak=[] FAIL | head='????????``````````````````````````````````````````'
+[02:31:42]   EVAL[step=3000 sample] '안녕하세요' → h=0.11 tf=0.70 leak=[] FAIL | head='������???�배�배배�배배���배밼�,\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n--'
+[02:31:42]   EVAL[step=3000 greedy] '한국어 가능?' → h=0.00 tf=0.40 leak=[] FAIL | head='????????##########################################'
+[02:31:42]   EVAL[step=3000 sample] '한국어 가능?' → h=0.00 tf=0.40 leak=[] FAIL | head='��ssssssssssssssssssssssssssssssssssssssssdddddddd'
+[02:31:43]   EVAL[step=3000 greedy] '오늘 기분 어때?' → h=0.00 tf=0.40 leak=[] FAIL | head='??????????########################################'
+[02:31:43]   EVAL[step=3000 sample] '오늘 기분 어때?' → h=0.00 tf=0.40 leak=[] FAIL | head='??222222222222222222229997222222222222222222222222'
+[02:31:43]   EVAL[step=3000 greedy] '사용자: 안녕하세요
+도우미:' → h=0.00 tf=0.00 leak=[] FAIL | head='\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n'
+[02:31:43]   EVAL[step=3000 sample] '사용자: 안녕하세요
+도우미:' → h=0.00 tf=0.00 leak=[] FAIL | head='\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n'
+[02:31:43]   EVAL[step=3000 greedy] '코드를 짜줘' → h=0.04 tf=0.40 leak=[] FAIL | head='������������������������������겲�������������������'
+[02:31:43]   EVAL[step=3000 sample] '코드를 짜줘' → h=0.36 tf=0.70 leak=[] FAIL | head='�����������배�배��배배�배�배�배�배배배��배배���밨���배�배�배'
+[02:31:43]   OWN18[step=3000] FAIL pass=0/5 leak=False
+[02:31:44] step  3050/5000 | lr=1.29e-04 | L_A=0.239 L_G=0.532 L_T=-2.344 T_mean=1.6185 | step_t=0.05s elapsed=69s
+[02:31:45] step  3100/5000 | lr=1.25e-04 | L_A=0.222 L_G=0.476 L_T=-2.532 T_mean=1.7170 | step_t=0.02s elapsed=70s
+[02:31:46] step  3150/5000 | lr=1.21e-04 | L_A=0.334 L_G=0.571 L_T=-2.707 T_mean=1.8078 | step_t=0.02s elapsed=71s
+[02:31:47] step  3200/5000 | lr=1.16e-04 | L_A=0.324 L_G=0.629 L_T=-2.605 T_mean=1.6913 | step_t=0.02s elapsed=72s
+[02:31:48] step  3250/5000 | lr=1.12e-04 | L_A=0.258 L_G=0.566 L_T=-2.648 T_mean=1.6474 | step_t=0.02s elapsed=73s
+[02:31:49] step  3300/5000 | lr=1.08e-04 | L_A=0.449 L_G=0.771 L_T=-2.868 T_mean=1.7700 | step_t=0.02s elapsed=74s
+[02:31:50] step  3350/5000 | lr=1.04e-04 | L_A=0.316 L_G=0.625 L_T=-2.924 T_mean=1.8215 | step_t=0.02s elapsed=75s
+[02:31:51] step  3400/5000 | lr=1.00e-04 | L_A=0.244 L_G=0.532 L_T=-3.063 T_mean=1.9171 | step_t=0.02s elapsed=76s
+[02:31:52] step  3450/5000 | lr=9.62e-05 | L_A=0.150 L_G=0.362 L_T=-3.239 T_mean=2.0461 | step_t=0.02s elapsed=77s
+[02:31:53] step  3500/5000 | lr=9.24e-05 | L_A=0.135 L_G=0.339 L_T=-3.498 T_mean=2.2332 | step_t=0.02s elapsed=78s
+[02:31:53] --- eval gate @ step 3500 ---
+[02:31:53]   EVAL[step=3500 greedy] '안녕하세요' → h=0.93 tf=0.70 leak=[] FAIL | head='.배배배배배배배배배배배배배배배배배배배배배배배배배배�'
+[02:31:53]   EVAL[step=3500 sample] '안녕하세요' → h=0.00 tf=0.40 leak=[] FAIL | head=')))))\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n'
+[02:31:53]   EVAL[step=3500 greedy] '한국어 가능?' → h=0.00 tf=0.40 leak=[] FAIL | head='????##############################################'
+[02:31:54]   EVAL[step=3500 sample] '한국어 가능?' → h=0.01 tf=0.70 leak=[] FAIL | head='???홠����ffuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu'
+[02:31:54]   EVAL[step=3500 greedy] '오늘 기분 어때?' → h=0.34 tf=0.70 leak=[] FAIL | head='?탃겲���������겲����겲겲����겲겲�겲�겲���겲��겲�겲겲겲�겲���겲�'
+[02:31:54]   EVAL[step=3500 sample] '오늘 기분 어때?' → h=0.00 tf=0.40 leak=[] FAIL | head='?>33333BBBBBBSSSSSSSSSBNN4448%%%EEErrrrrrrrrrrrrrr'
+[02:31:54]   EVAL[step=3500 greedy] '사용자: 안녕하세요
+도우미:' → h=0.00 tf=0.40 leak=[] FAIL | head=':::::::://////////////////////////////////////////'
+[02:31:54]   EVAL[step=3500 sample] '사용자: 안녕하세요
+도우미:' → h=0.00 tf=0.40 leak=[] FAIL | head='::::ggggggggggggggg///////////////////////////////'
+[02:31:54]   EVAL[step=3500 greedy] '코드를 짜줘' → h=0.00 tf=0.40 leak=[] FAIL | head='��������������������������������������������������'
+[02:31:55]   EVAL[step=3500 sample] '코드를 짜줘' → h=0.00 tf=0.40 leak=[] FAIL | head='����������������aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa'
+[02:31:55]   OWN18[step=3500] FAIL pass=0/5 leak=False
+[02:31:56] step  3550/5000 | lr=8.86e-05 | L_A=0.187 L_G=0.446 L_T=-3.038 T_mean=1.9152 | step_t=0.05s elapsed=80s
+[02:31:57] step  3600/5000 | lr=8.49e-05 | L_A=0.424 L_G=0.736 L_T=-3.365 T_mean=2.0634 | step_t=0.02s elapsed=81s
+[02:31:57] step  3650/5000 | lr=8.13e-05 | L_A=0.128 L_G=0.296 L_T=-3.900 T_mean=2.6481 | step_t=0.02s elapsed=82s
+[02:31:58] step  3700/5000 | lr=7.78e-05 | L_A=0.116 L_G=0.237 L_T=-4.095 T_mean=2.8566 | step_t=0.02s elapsed=83s
+[02:31:59] step  3750/5000 | lr=7.44e-05 | L_A=0.138 L_G=0.304 L_T=-3.916 T_mean=2.5881 | step_t=0.02s elapsed=84s
+[02:32:00] step  3800/5000 | lr=7.11e-05 | L_A=0.201 L_G=0.391 L_T=-4.172 T_mean=2.8342 | step_t=0.02s elapsed=85s
+[02:32:01] step  3850/5000 | lr=6.80e-05 | L_A=0.143 L_G=0.335 L_T=-3.967 T_mean=2.4646 | step_t=0.02s elapsed=86s
+[02:32:02] step  3900/5000 | lr=6.49e-05 | L_A=0.131 L_G=0.280 L_T=-4.352 T_mean=3.0317 | step_t=0.02s elapsed=87s
+[02:32:03] step  3950/5000 | lr=6.19e-05 | L_A=0.136 L_G=0.299 L_T=-4.303 T_mean=2.9155 | step_t=0.02s elapsed=88s
+[02:32:04] step  4000/5000 | lr=5.91e-05 | L_A=0.195 L_G=0.405 L_T=-4.084 T_mean=2.6158 | step_t=0.02s elapsed=89s
+[02:32:04] --- eval gate @ step 4000 ---
+[02:32:04]   EVAL[step=4000 greedy] '안녕하세요' → h=0.00 tf=0.40 leak=[] FAIL | head='.\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n'
+[02:32:05]   EVAL[step=4000 sample] '안녕하세요' → h=0.00 tf=0.40 leak=[] FAIL | head='��������.(((((((""""""""""""""""""""""""""""""""""'
+[02:32:05]   EVAL[step=4000 greedy] '한국어 가능?' → h=0.01 tf=0.70 leak=[] FAIL | head='?탃������������������������������������������������'
+[02:32:05]   EVAL[step=4000 sample] '한국어 가능?' → h=0.01 tf=0.70 leak=[] FAIL | head='??�軻�岗겲��URRRRRRRRRRRRRGGG557777777786688664444888'
+[02:32:05]   EVAL[step=4000 greedy] '오늘 기분 어때?' → h=0.01 tf=0.70 leak=[] FAIL | head='??탃�����������������������������������������������'
+[02:32:05]   EVAL[step=4000 sample] '오늘 기분 어때?' → h=0.01 tf=0.70 leak=[] FAIL | head='?�큼�:\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n'
+[02:32:05]   EVAL[step=4000 greedy] '사용자: 안녕하세요
+도우미:' → h=0.00 tf=0.40 leak=[] FAIL | head=':::::::://////////////////////////////////////////'
+[02:32:06]   EVAL[step=4000 sample] '사용자: 안녕하세요
+도우미:' → h=0.00 tf=0.40 leak=[] FAIL | head='::////////////////////////////////////////////////'
+[02:32:06]   EVAL[step=4000 greedy] '코드를 짜줘' → h=0.00 tf=0.40 leak=[] FAIL | head='��������������������������������������������������'
+[02:32:06]   EVAL[step=4000 sample] '코드를 짜줘' → h=0.01 tf=0.40 leak=[] FAIL | head='��������ꡕ�����������ꕕ�겲111111111111111112222222222'
+[02:32:06]   OWN18[step=4000] FAIL pass=0/5 leak=False
+[02:32:07] step  4050/5000 | lr=5.63e-05 | L_A=0.089 L_G=0.204 L_T=-4.675 T_mean=3.4381 | step_t=0.05s elapsed=91s
+[02:32:08] step  4100/5000 | lr=5.37e-05 | L_A=0.129 L_G=0.239 L_T=-4.840 T_mean=3.6852 | step_t=0.02s elapsed=92s
+[02:32:09] step  4150/5000 | lr=5.12e-05 | L_A=0.155 L_G=0.333 L_T=-4.406 T_mean=2.8927 | step_t=0.02s elapsed=93s
+[02:32:10] step  4200/5000 | lr=4.88e-05 | L_A=0.126 L_G=0.264 L_T=-4.711 T_mean=3.3057 | step_t=0.02s elapsed=94s
+[02:32:11] step  4250/5000 | lr=4.66e-05 | L_A=0.114 L_G=0.256 L_T=-4.488 T_mean=3.0107 | step_t=0.02s elapsed=95s
+[02:32:12] step  4300/5000 | lr=4.45e-05 | L_A=0.181 L_G=0.371 L_T=-4.761 T_mean=3.3212 | step_t=0.02s elapsed=96s
+[02:32:13] step  4350/5000 | lr=4.25e-05 | L_A=0.087 L_G=0.205 L_T=-4.968 T_mean=3.6845 | step_t=0.02s elapsed=97s
+[02:32:14] step  4400/5000 | lr=4.07e-05 | L_A=0.084 L_G=0.199 L_T=-4.771 T_mean=3.2396 | step_t=0.02s elapsed=98s
+[02:32:15] step  4450/5000 | lr=3.90e-05 | L_A=0.148 L_G=0.361 L_T=-4.826 T_mean=3.3656 | step_t=0.02s elapsed=99s
+[02:32:16] step  4500/5000 | lr=3.75e-05 | L_A=0.123 L_G=0.227 L_T=-5.339 T_mean=4.3636 | step_t=0.02s elapsed=100s
+[02:32:16] --- eval gate @ step 4500 ---
+[02:32:16]   EVAL[step=4500 greedy] '안녕하세요' → h=0.00 tf=0.40 leak=[] FAIL | head='..................................................'
+[02:32:16]   EVAL[step=4500 sample] '안녕하세요' → h=0.00 tf=0.40 leak=[] FAIL | head='.\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n'
+[02:32:16]   EVAL[step=4500 greedy] '한국어 가능?' → h=0.00 tf=0.40 leak=[] FAIL | head='????##############################################'
+[02:32:16]   EVAL[step=4500 sample] '한국어 가능?' → h=0.00 tf=0.40 leak=[] FAIL | head=';;````````````````````````````````````````````````'
+[02:32:16]   EVAL[step=4500 greedy] '오늘 기분 어때?' → h=0.00 tf=0.40 leak=[] FAIL | head='???????###########################################'
+[02:32:17]   EVAL[step=4500 sample] '오늘 기분 어때?' → h=0.09 tf=0.70 leak=[] FAIL | head='?�⸸�������배��배배�배�배�끼��                           '
+[02:32:17]   EVAL[step=4500 greedy] '사용자: 안녕하세요
+도우미:' → h=0.00 tf=0.40 leak=[] FAIL | head='::::::::::::::////////////////////////////////////'
+[02:32:17]   EVAL[step=4500 sample] '사용자: 안녕하세요
+도우미:' → h=0.00 tf=0.40 leak=[] FAIL | head='::::gggggggggggggggggggg::////////////////////////'
+[02:32:17]   EVAL[step=4500 greedy] '코드를 짜줘' → h=0.00 tf=0.40 leak=[] FAIL | head='��������������������������������������������������'
+[02:32:17]   EVAL[step=4500 sample] '코드를 짜줘' → h=0.00 tf=0.40 leak=[] FAIL | head='���ꡘ�������������eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee'
+[02:32:17]   OWN18[step=4500] FAIL pass=0/5 leak=False
+[02:32:18] step  4550/5000 | lr=3.61e-05 | L_A=0.088 L_G=0.231 L_T=-5.034 T_mean=3.6961 | step_t=0.05s elapsed=103s
+[02:32:19] step  4600/5000 | lr=3.48e-05 | L_A=0.122 L_G=0.238 L_T=-5.294 T_mean=4.1718 | step_t=0.02s elapsed=104s
+[02:32:20] step  4650/5000 | lr=3.37e-05 | L_A=0.112 L_G=0.265 L_T=-5.281 T_mean=4.0248 | step_t=0.02s elapsed=105s
+[02:32:21] step  4700/5000 | lr=3.27e-05 | L_A=0.107 L_G=0.233 L_T=-5.221 T_mean=3.9371 | step_t=0.02s elapsed=106s
+[02:32:22] step  4750/5000 | lr=3.19e-05 | L_A=0.241 L_G=0.543 L_T=-4.694 T_mean=2.8851 | step_t=0.02s elapsed=107s
+[02:32:23] step  4800/5000 | lr=3.12e-05 | L_A=0.106 L_G=0.192 L_T=-5.657 T_mean=4.8949 | step_t=0.02s elapsed=107s
+[02:32:24] step  4850/5000 | lr=3.07e-05 | L_A=0.138 L_G=0.276 L_T=-5.496 T_mean=4.3638 | step_t=0.02s elapsed=108s
+[02:32:25] step  4900/5000 | lr=3.03e-05 | L_A=0.176 L_G=0.386 L_T=-5.414 T_mean=4.1418 | step_t=0.02s elapsed=109s
+[02:32:26] step  4950/5000 | lr=3.01e-05 | L_A=0.118 L_G=0.264 L_T=-5.604 T_mean=4.5803 | step_t=0.02s elapsed=110s
+[02:32:27] step  5000/5000 | lr=3.00e-05 | L_A=0.111 L_G=0.242 L_T=-5.587 T_mean=4.4832 | step_t=0.02s elapsed=111s
+[02:32:27] --- eval gate @ step 5000 ---
+[02:32:27]   EVAL[step=5000 greedy] '안녕하세요' → h=0.00 tf=0.40 leak=[] FAIL | head='��������������������������������������������������'
+[02:32:27]   EVAL[step=5000 sample] '안녕하세요' → h=0.00 tf=0.40 leak=[] FAIL | head='........\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n'
+[02:32:27]   EVAL[step=5000 greedy] '한국어 가능?' → h=0.00 tf=0.40 leak=[] FAIL | head='????????##########################################'
+[02:32:27]   EVAL[step=5000 sample] '한국어 가능?' → h=0.01 tf=0.70 leak=[] FAIL | head="홙���������'(((((((((______________________________"
+[02:32:28]   EVAL[step=5000 greedy] '오늘 기분 어때?' → h=0.00 tf=0.40 leak=[] FAIL | head='????????##########################################'
+[02:32:28]   EVAL[step=5000 sample] '오늘 기분 어때?' → h=0.00 tf=0.40 leak=[] FAIL | head='?#################################################'
+[02:32:28]   EVAL[step=5000 greedy] '사용자: 안녕하세요
+도우미:' → h=0.00 tf=0.40 leak=[] FAIL | head='::::::::::::::::::::::::::::::::::::::::::::::::::'
+[02:32:28]   EVAL[step=5000 sample] '사용자: 안녕하세요
+도우미:' → h=0.00 tf=0.40 leak=[] FAIL | head=':::///////////////////////////////////////////////'
+[02:32:28]   EVAL[step=5000 greedy] '코드를 짜줘' → h=0.00 tf=0.40 leak=[] FAIL | head='��������������������������������������������������'
+[02:32:28]   EVAL[step=5000 sample] '코드를 짜줘' → h=0.04 tf=0.70 leak=[] FAIL | head='����굵굵겲����嗗oooooooommmmmmmmmmmmmmmmmmmmmmmmmmmmmm'
+[02:32:28]   OWN18[step=5000] FAIL pass=0/5 leak=False
+[02:32:28]   SAVE[step=5000] -> /home/aiden/anima_native/anima-h093-sft-only-20260507_023033/ckpt_5000.pt (107.6MB)
+[02:32:29]   COPY -> /home/aiden/core/anima/state/anima_h093_sft_only_train_2026_05_07/ckpt_final.pt
+[02:32:29] === VERDICT === final_class=FAILED | evaluator_v1=FAIL | domain_match=0/5 | leak=False | elapsed=113s
+[02:32:29] verdict written: /home/aiden/core/anima/state/anima_h093_sft_only_train_2026_05_07/verdict.json

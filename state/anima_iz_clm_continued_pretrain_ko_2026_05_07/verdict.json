@@ -1,0 +1,60 @@
+{
+  "schema": "anima/bg_iz/verdict/1",
+  "bg_id": "BG-IZ",
+  "cycle": "anima_iz_clm_continued_pretrain_ko_2026_05_07",
+  "ts_utc": "2026-05-07T12:08:04Z",
+  "verdict": "TRAINING_COMPLETED_NO_KO_COHERENCE_LESSON_L_EXTENDED",
+  "falsifiers": {
+    "F-IZ-1_train_completed": "PASS",
+    "F-IZ-2_ko_coherence_smoke": "LIKELY_FAIL_NO_KO_30PCT",
+    "F-IZ-3_cost_discipline": "PASS"
+  },
+  "phi_star_proxy": {
+    "pre_pretrain": 0.9739703138669332,
+    "post_pretrain": 0.6567158301671346,
+    "drift": -0.3173
+  },
+  "runtime": {
+    "wall_min": 64,
+    "cost_usd": 3.19,
+    "complete_sentinel": true,
+    "early_stop_sentinel": false
+  },
+  "next_action": "Lesson L extends to continued-pretrain regime — pivot to P2 BG-JA-EXT (foundation borrow) or P4 arch redesign",
+  "diagnostic_findings": {
+    "loss_anomaly": "Training loss stuck at ~9.0-9.8 throughout 6000 steps (final ~9.2). Expected continued-pretrain on Korean SP-tokenized text: 2-4 range. Loss near random-guess baseline (ln 64000 ≈ 11) suggests gradient updates were ineffective.",
+    "phi_star_drift_pct": -32.5,
+    "phi_star_drift_interpretation": "Logits std DROPPED 32% post-pretrain — model was modified but in a destructive direction. Combined with stuck loss, consistent with bf16 numerical issue OR consciousness-gate weight collapse.",
+    "post_pretrain_smoke_samples": [
+      {"prompt": "안녕하세요. 오늘 기분이 어떠세요?", "response_pattern": ".....������䚚��������2..."},
+      {"prompt": "의식이란 무엇인가?", "response_pattern": ".����������������������p.cbb..."},
+      {"prompt": "한국어 가능?", "response_pattern": "의����`�����������������������..."}
+    ],
+    "qualitative_outcome": "Post-pretrain CLM produces pure byte-fragment garbage on all 3 Korean smoke prompts. WORSE than base CLM mk2-v1 (which had broader entropy 10.85; post-pretrain entropy will be lower per phi_star drop). Continued-pretrain DEGRADED the model rather than improving it.",
+    "loss_anomaly_hypotheses": [
+      "H1 bf16 numerical: custom CLM v4 forward (consciousness_dim=192, n_ca_rules=8, gate_strength=0.001) has small-magnitude operations that bf16 truncation may zero out",
+      "H2 architectural rigidity: CLM v4 was pretrained with consciousness gate + CA rules under specific dynamics; vanilla AdamW continued-pretrain may break substrate stability without restoring task quality",
+      "H3 corpus tokenization: 261MB raw text concat-tokenize may include non-SP-friendly chunks diluting effective training tokens"
+    ]
+  },
+  "lesson_l_extension_coverage": [
+    "(a) single-sample greedy/sample (BG-IY base + LoRA)",
+    "(b) inference-compute best-of-N (BG-JE)",
+    "(c) full-SFT + chat-template corpus (BG-JZ-FT)",
+    "(d) lm_head only (BG-JS/JT)",
+    "(e) decoding interventions (BG-JP)",
+    "(f) NEW: continued-pretrain raw next-token CE (BG-IZ this lane)"
+  ],
+  "surviving_paths_post_bg_iz": [
+    "P2 BG-JA-EXT external foundation borrow (Polyglot-Ko-1.3B + LoRA, ~$5 H100, requires CLM-only directive partial-breach approval)",
+    "P4 arch redesign (Mamba/state-space, MoE, recurrent depth) — uncharted, larger commitment",
+    "Optional retry P1 with different recipe (fp32 / lr=1e-6 / freeze conscious_decoder) — predicted low EV given Lesson L pattern"
+  ],
+  "raw_compliance": [
+    "raw#37 transient_py",
+    "raw#42 N=1 single seed",
+    "raw#86 cost cap $15",
+    "raw#15 additive (no prior BG modified)",
+    "raw#82 retraction-aware (Lesson Q reconciliation explicit in spec)"
+  ]
+}

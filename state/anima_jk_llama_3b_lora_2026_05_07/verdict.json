@@ -1,0 +1,27 @@
+{
+  "schema": "anima/bg_jk/verdict/1",
+  "bg_id": "BG-JK",
+  "cycle": "anima_jk_llama_3b_lora_2026_05_07",
+  "ts_utc": "2026-05-07T15:32:04Z",
+  "verdict": "LORA_SFT_COMPLETED_KO_SAMPLES_PRESENT_AWAITING_V4_EVAL",
+  "clm_only_directive": "PARTIAL_BREACH (user-approved 2026-05-07 fire after BG-IZ Lesson L extension to continued-pretrain)",
+  "falsifiers": {
+    "F-JK-1_train_completed": "PASS",
+    "F-JK-2_ko_coherence_smoke": "PASS_CANDIDATE_MANUAL_REVIEW_NEEDED",
+    "F-JK-3_cost_discipline": "PASS"
+  },
+  "runtime": {
+    "wall_min": 32,
+    "cost_usd": 1.59,
+    "complete_sentinel": true,
+    "early_stop_sentinel": false
+  },
+  "next_action": "Run V4 strict evaluator on samples_post_lora.json + sweep more prompts via mac inference of adapter_final + base",
+  "raw_compliance": [
+    "raw#37 transient_py",
+    "raw#42 N=1 single seed",
+    "raw#86 cost cap $15",
+    "raw#15 additive (no prior BG modified)",
+    "raw#82 retraction-aware (CLM-only directive partial breach explicitly user-approved)"
+  ]
+}

@@ -1,0 +1,24 @@
+{
+  "schema": "anima/emerge_chat_semantic_bridge/verdict/1",
+  "ts_utc": "2026-05-05T16:49:37Z",
+  "task_id": "anima_emerge_chat_semantic_bridge_2026_05_05",
+  "prompt": "안녕",
+  "model_id": "dancinlab/clm-v4-mk2-v1",
+  "platform": "mac CPU (.venv-eeg python3.12, torch fp32)",
+  "tok_emb_found": true,
+  "tok_emb_name": "decoder.tok_emb",
+  "lm_head_name": "decoder.head_a",
+  "vocab_used_for_NN": "tok_emb",
+  "hidden_dim": 768,
+  "vocab_dim_used": 768,
+  "n_decode_methods": 2,
+  "n_coherent": 0,
+  "verdict": "FAIL_ALL",
+  "honest_c3": [
+    "C1 mac CPU fp32 — single forward path; no GPU sampling variance.",
+    "C2 cosine NN bypasses lm_head — different from train-time inference. Train-time decode = lm_head(hidden) softmax argmax; NN cosine = argmax cos(hidden, vocab_emb[i]). These coincide ONLY if lm_head weight ≈ vocab_emb (tied embeddings) AND no scale/bias shift; general case differs.",
+    "C3 single prompt '안녕' (1 KO greeting). 1-prompt result cannot generalize to coherent dialogue capability; at most this is a single-trace existence check for semantic content survival to ln_f.",
+    "C4 hidden vs vocab dim mismatch handling falls back to lm_head.weight; if lm_head is also dim-mismatched (separate projection / tied via linear), NN runs against a non-vocab embedding space and decoded tokens have NO direct vocab-token semantics — purely substrate geometry, not interpretable text.",
+    "C5 'is_semi_coherent' heuristic is anima-internal — Korean/ASCII char count >= 5 + max-char-frequency <= 50%. Not validated against human-judgment coherence; a string of distinct random tokens may PASS while being semantically meaningless."
+  ]
+}

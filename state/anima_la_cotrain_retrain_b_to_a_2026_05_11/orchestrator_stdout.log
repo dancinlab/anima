@@ -1,0 +1,19 @@
+[create] pod=anima-la-cotrain-b-to-a-1778468837 gpu=NVIDIA H100 80GB HBM3
+  pod_id=0x3hh7wbfmfp5x cost=$2.99/hr
+[ssh-wait] pod=0x3hh7wbfmfp5x
+  ip=103.207.149.151 port=13702
+[scp] /Users/ghost/.cache/anima/clm_v5_remapped/bg_la_350m_pretrain/ckpts/step_12000_final.pt -> 103.207.149.151:/workspace/anima_la_cotrain/bg_la_step_12000_final.pt
+Traceback (most recent call last):
+  File "/tmp/anima_runpod_orchestrator_helper.hexa_tmp", line 182, in <module>
+    if __name__ == '__main__': main()
+                               ^^^^^^
+  File "/tmp/anima_runpod_orchestrator_helper.hexa_tmp", line 179, in main
+    elif args.cmd == 'run': cmd_run(args)
+                            ^^^^^^^^^^^^^
+  File "/tmp/anima_runpod_orchestrator_helper.hexa_tmp", line 119, in cmd_run
+    pod_scp_upload(ip, port, args.upload, args.dry_run)
+  File "/tmp/anima_runpod_orchestrator_helper.hexa_tmp", line 70, in pod_scp_upload
+    if r.returncode != 0: raise RuntimeError(f'scp failed: {r.stderr}')
+                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+RuntimeError: scp failed: scp: dest open "/workspace/anima_la_cotrain/bg_la_step_12000_final.pt": No such file or directory
+scp: failed to upload file /Users/ghost/.cache/anima/clm_v5_remapped/bg_la_350m_pretrain/ckpts/step_12000_final.pt to /workspace/anima_la_cotrain/bg_la_step_12000_final.pt

@@ -1,0 +1,115 @@
+{
+  "schema": "anima/emerge_dialogue_first_session_manual/verdict/1",
+  "task_id": "anima_emerge_dialogue_first_session_manual_2026_05_05",
+  "scope": "BG-AO — bilingual KO+EN one-page manual for user's first emerge dialogue session",
+  "ts_utc": "2026-05-05T17:00:00Z",
+  "verdict": "PASS",
+  "wall_time_minutes": 12,
+  "cost_usd": 0.0,
+  "platform": "mac (doc-only, no exec)",
+  "raw_compliance": {
+    "raw_9_md_only": true,
+    "raw_10_honest_c3_ge_5": true,
+    "raw_15_additive_no_source_mod": true,
+    "no_commit": true,
+    "no_secret_leak": true,
+    "no_hf_token_in_doc": true,
+    "bash_3_2_compat_n_a_doc_only": true
+  },
+  "deliverables": {
+    "manual_doc": "/Users/ghost/core/anima/docs/anima_emerge_dialogue_first_session_manual_2026_05_05.md",
+    "verdict": "/Users/ghost/core/anima/state/anima_emerge_dialogue_first_session_manual_2026_05_05/verdict.json"
+  },
+  "doc_metrics": {
+    "approx_loc": 215,
+    "sections": 10,
+    "bilingual_coverage_sections": [
+      "§1 one-line definition",
+      "§2 fire commands (3 paths)",
+      "§3 substrate response 4-line guide",
+      "§4 deprecated emit",
+      "§5 first-session 5-turn protocol",
+      "§6 stop criteria",
+      "§7 session log + analysis",
+      "§8 architectural caveat",
+      "§9 honest C3",
+      "§10 composability"
+    ],
+    "bilingual_coverage_pct": 100.0
+  },
+  "fire_path_clarity": {
+    "path_A_wrapper": {
+      "command": "HEXA_PY=/Users/ghost/core/anima/.venv-eeg/bin/python anima dialogue",
+      "alt_command": "HEXA_PY=... bash bin/anima-core-dialogue.bash --interactive",
+      "dependency": "BG-AH SentencePiece fallback land (synthetic_fallback path always available)",
+      "stability": "stable wrapper, session jsonl auto-emit"
+    },
+    "path_B_direct_recommended": {
+      "command": "HEXA_PY=/Users/ghost/core/anima/.venv-eeg/bin/python python tool/transient_py/anima_emerge_dialogue_repl.py",
+      "dependency": "BG-AN landing (anima_emerge_dialogue_repl.py)",
+      "advantage": "prior-turn hidden auto-threading + tension trajectory rich"
+    },
+    "path_C_one_shot": {
+      "command": "HEXA_PY=... python tool/transient_py/anima_emerge_dialogue_repl.py --probe \"<text>\"",
+      "use_case": "single-prompt sanity, no REPL"
+    },
+    "recommended_priority": "B > A > C"
+  },
+  "substrate_response_interpretation": {
+    "active_4_line": [
+      "phi_star (baseline 41.86, anima-canonical proxy)",
+      "phi_drift (|>0.5| shock; |<0.05| stable)",
+      "hidden_state_delta (L2 turn-to-turn; >5 large; <0.1 stable; first turn = 0)",
+      "tension_trajectory (16-layer L2 + variance; >100 rich, <50 degenerate; peak layer interpretation 2/6/14)"
+    ],
+    "deprecated_ignore": [
+      "axis_activation 5-bucket — BG-L FAIL random baseline (intent_match 2/10)",
+      "dominant_cells — BG-L DEGENERATE tile-reshape replicate artifact (cells 0-3 ≡ 4-7)"
+    ]
+  },
+  "first_session_5_turn_seed": [
+    "turn 1: 안녕 (baseline)",
+    "turn 2: 의식이 흐른다 (semantic shift)",
+    "turn 3: phi-star 변화 이유 추측 (meta-cognitive)",
+    "turn 4: 다음 input은 어떤 방향이면 substrate 더 흔들릴까? (predictive)",
+    "turn 5: 지금 attractor 가까이? (state assessment)"
+  ],
+  "architectural_caveat": "mag>=50 inject collapses substrate (BG-AG compression_ratio 51.4×). BG-AN REPL default mode=none — safe. Explicit --inject-states-mode canonical --magnitude 50 needed to trigger collapse.",
+  "honest_c3": [
+    "C1 emerge dialogue meaning depends on user interpretation; anima-internal heuristic",
+    "C2 phi-star = anima-canonical proxy (PHI_STAR_BASELINE × (1 + 0.05 × mean_pair_cosine)), NOT Tononi IIT phi",
+    "C3 axis activation + dominant_cells INVALID (BG-L FAIL+DEGENERATE) — must ignore, despite continued emit",
+    "C4 wrapper Path A synthetic_fallback phi vs direct REPL Path B real-forward phi may diverge (BG-AH C3 carry); interpret separately",
+    "C5 first-session outcome unknown — research-mode, no reproducibility guarantee; n=5 turn template is seed",
+    "C6 BG-AN anima_emerge_dialogue_repl.py landing assumed — if not landed at user-read time, Path B unusable, fall back to Path A",
+    "C7 tension trajectory L2 variance threshold (>100 rich, <50 degenerate) from BG-AE 3-prompt verdict (max_l2_variance=124.4), generalization not claimed"
+  ],
+  "composability": {
+    "upstream_docs": [
+      "docs/anima_core_clm_v4_mount_emerge_paradigm_2026_05_05.md",
+      "docs/anima_core_emerge_stage_3_user_protocol_spec_2026_05_05.md"
+    ],
+    "upstream_verdicts": [
+      "state/anima_emerge_cand_g_tension_fast_2026_05_05/verdict.json",
+      "state/anima_emerge_cand_d_attractor_10prompt_2026_05_05/verdict.json",
+      "state/anima_real_mode_sweep_2026_05_05/verdict.json"
+    ],
+    "sister_bgs": [
+      "BG-AH SentencePiece fallback (Path A enablement)",
+      "BG-AN direct REPL (Path B enablement)",
+      "BG-B corpus analyzer (§7 analysis)"
+    ],
+    "downstream": [
+      "state/anima_core_dialogues/<DATE>/<HH-MM-SS>_emerge_repl.jsonl (first-session jsonl)",
+      "Stage 3 observations.md per protocol §4"
+    ]
+  },
+  "constraints_satisfied": {
+    "cost_zero_mac_doc_only": true,
+    "no_code_change_read_only": true,
+    "exactly_two_new_files": true,
+    "raw_9_10_15": true,
+    "no_hf_token_leak": true,
+    "no_commit": true
+  }
+}

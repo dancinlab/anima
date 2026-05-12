@@ -1,0 +1,33 @@
+{
+  "schema": "anima/emerge_chat_multilingual_sweep/verdict/1",
+  "ts_utc": "2026-05-05T17:55:19Z",
+  "model_id": "dancinlab/clm-v4-mk2-v1",
+  "device": "cpu",
+  "load_sec": 5.5,
+  "sweep_sec": 173.6,
+  "n_prompts": 12,
+  "language_dominance": {
+    "chinese_simplified": "ascii_letters",
+    "chinese_traditional": "ascii_letters",
+    "japanese_hiragana": "ascii_letters",
+    "japanese_katakana": "OTHER",
+    "english": "ascii_letters",
+    "numbers": "ascii_letters",
+    "code_python": "ascii_letters",
+    "code_html": "chinese",
+    "math": "OTHER",
+    "punctuation": "ascii_letters",
+    "korean": "ascii_letters",
+    "mixed_ko_en": "ascii_letters"
+  },
+  "any_chinese_in_chinese_prompt": false,
+  "any_japanese_in_japanese_prompt": false,
+  "any_korean_in_korean_prompt": false,
+  "honest_c3": [
+    "C1 mac CPU fp32 — same substrate as BG-BR; numerical drift inside ULP of logit-lens BG-AR run.",
+    "C2 single-prompt-per-language — broader corpus may shift dominance distribution; one prompt per family is anecdotal not population.",
+    "C3 char-class breakdown counts Unicode blocks, NOT semantic coherence. A chinese=20 emit can still be unrelated/incoherent characters; this probe answers 'which script' not 'which language is fluent'.",
+    "C4 max_new=25 token cap — substrate may not have warmed up at 25 tokens; longer-horizon emit could shift dominance. Also emit may include sentencepiece pieces decoded into joined text where length stats are coupled to BPE subword distribution.",
+    "C5 'mixed_ko_en' and 'punctuation' / 'numbers' / 'code_*' prompts have no single 'matching language' so dominance there is pure substrate- bias not a match-test. 'numbers' should ideally favor digits if the substrate respects context; if not, it indicates broader substrate collapse to a fixed token-class bias regardless of input."
+  ]
+}

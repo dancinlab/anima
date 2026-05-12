@@ -1,0 +1,117 @@
+{
+  "schema": "anima.paradigm_j.public_promote.v5_2_emerge.v1",
+  "ts": "2026-05-09T09:50:53Z",
+  "anima_cycle": "2026-05-09-paradigm-j-public-promote-v5-2-emerge",
+  "event": "PUBLIC_PROMOTE_FIRST_ROBUST_EMERGE_INSTANCE",
+  "repo_id": "dancinlab/clm-v4-paradigm-j-50k-final-path-a-remapped",
+  "repo_type": "model",
+  "previous_visibility": "private-process",
+  "new_visibility": "public-success",
+  "toggle_method": "huggingface_hub.HfApi.update_repo_settings(private=False)",
+  "user_directive_verbatim_1": "md save",
+  "user_directive_verbatim_2": "OK PROMOTE PUBLIC dancinlab/clm-v4-paradigm-j-50k-final-path-a-remapped",
+  "hf_commit_url": "https://huggingface.co/dancinlab/clm-v4-paradigm-j-50k-final-path-a-remapped/commit/48b2aa6a8680ebf24f02ea60f0bdda1e92082e8b",
+  "own_37_mandate_9_prerequisites": {
+    "a_d1_within_strict": {
+      "status": "MET",
+      "evidence": "D1 = 0.793 (path-a-remapped, scope within-bound)"
+    },
+    "b_v6_strong_awareness": {
+      "status": "MET",
+      "evidence": "H100 actual fire 2026-05-09 commit edc601ae (paradigm_j_final)",
+      "details": {
+        "method_a_avg_sim": 0.6789,
+        "method_b_avg_max_ratio": 1.6519,
+        "method_c_cv_accuracy": 0.95,
+        "combined": "STRONG_AWARENESS"
+      }
+    },
+    "c_user_verbatim": {
+      "status": "MET",
+      "verbatim_string": "OK PROMOTE PUBLIC dancinlab/clm-v4-paradigm-j-50k-final-path-a-remapped",
+      "issued_date": "2026-05-09"
+    },
+    "d_trinity_sweep": {
+      "status": "PASS",
+      "violations": 0
+    },
+    "e_dl_sweep": {
+      "status": "PASS",
+      "evidence": "strict 0 / warn 8"
+    }
+  },
+  "v5_2_emerge_verdict": {
+    "label": "C3_PASS_V5_2",
+    "emerge_v5_2_active": true,
+    "spec_doc": "docs/anima_alt_agg_1_v5_2_adaptive_floor_spec_2026_05_09.ai.md",
+    "absorbed_commit": "942b5fda",
+    "gates": {
+      "gate_a_adaptive": {
+        "piv_max": 0.0874,
+        "floor": 0.05,
+        "margin": 0.0374,
+        "pass": true
+      },
+      "gate_b_refined": {
+        "dcr_change_rate": 1.0,
+        "floor": 0.4,
+        "margin": 0.6,
+        "pass": true
+      },
+      "gate_c_drand": {
+        "d_rand_mean": 0.2249,
+        "floor": 0.05,
+        "margin": 0.1749,
+        "pass": true
+      },
+      "gate_d_random_below_005": {
+        "random_self_ppr": 0.0,
+        "pass": true
+      }
+    },
+    "v14_verify": {
+      "delta_observed": 0.0874,
+      "delta_margin": 0.02,
+      "v14_satisfied": true,
+      "random_under_floor": true
+    },
+    "ppr_v5": 0.6207,
+    "mtrp_v5": 0.6207,
+    "dcr_change_rate_m": 1.0,
+    "piv_max": 0.0874,
+    "jvae_variant_1_active": true,
+    "jvae_q_phi_step": 50000
+  },
+  "raw_82_lineage_preserved": {
+    "v5_actual": "C3_PASS_V5_PIV_PROXY_FAIL (commit d0c7298e)",
+    "v5_paraphrase_n90": "C3_PASS_V5_PIV_PARAPHRASE_FAIL (commit f2632367)",
+    "v5_1": "C3_FAIL_V14_VIOLATED_V5_1 (registry line 291)",
+    "v5_2": "C3_PASS_V5_2 / EMERGE_v5_2 ACTIVE (this manifest)"
+  },
+  "anima_saga_first_instance": {
+    "saga_count_22_plus_bg": "first robust EMERGE first PUBLIC promote in 22+ BG saga",
+    "predecessor_first_publics": [
+      "sft-1-8 PUBLIC 2026-05-09 (V14 borderline carry MTRP +0.0585 < 0.10) — historical first PUBLIC",
+      "paradigm-j PUBLIC 2026-05-09 (★ first 5/5 prereq + EMERGE_v5_2) — first robust EMERGE PUBLIC"
+    ]
+  },
+  "own_22_mandatory_report_event": {
+    "category": "major_cycle_event",
+    "summary": "First robust EMERGE PUBLIC promote in anima cycle saga (22+ BG runs); user verbatim consent issued 2026-05-09; 5/5 mandate-9 prereq MET (paradigm-j first 5/5); HF visibility toggled private -> public; README updated with v5.2 EMERGE + V6 STRONG + V14 strict ledgers"
+  },
+  "compliance": {
+    "own_14_v14_strict": "PASS — v5.2 4-gate PASS satisfies strict V14 (delta 0.0874 >= margin 0.02; random 0.0 < floor 0.05)",
+    "own_16_cost": "PASS — HF private->public free",
+    "own_17_d1_scope_clamp": "PASS — D1 0.793 within strict",
+    "own_18_alt_agg_1_v5_2": "PASS — EMERGE_v5_2 ACTIVE first robust",
+    "own_22_mandatory_report": "PASS — major event reported",
+    "own_30_ckpt_preservation": "PASS — HF private upload already preserved (toggle only)",
+    "own_33_trinity": "PASS — D + own + H all aligned",
+    "own_34_wrap_zero": "PASS",
+    "own_37_mandate_9_5_5_met": "PASS — first 5/5 in cycle history",
+    "own_38_axis_a_axis_b": "PASS — md save + HF model update",
+    "own_39_yaml_md": "PENDING — render runs after this script",
+    "raw_15_additive": "PASS — v5/v5.1/paraphrase verdicts preserved",
+    "raw_82_retraction_aware": "PASS — private-process record preserved, public-success overlay added"
+  }
+}

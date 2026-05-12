@@ -1,0 +1,800 @@
+{
+  "bg_id": "BG-JK",
+  "paradigm": "18m-curriculum-3stage-architectural-shift",
+  "spec": "F-anima-jk-18m-curriculum-3stage-1",
+  "ts_start": "2026-05-07T09:30:49",
+  "ts_end": "2026-05-07T11:11:17",
+  "ts_run": "20260507_093022",
+  "host": "ghostui-macbookair.local",
+  "device": "mps",
+  "total_params": 27787440,
+  "config": {
+    "vocab": 256,
+    "n_layer": 6,
+    "d_model": 384,
+    "n_head": 6,
+    "block_size": 256,
+    "dropout": 0.3,
+    "label_smoothing": 0.1,
+    "weight_decay": 0.1,
+    "batch": 4,
+    "grad_accum": 8,
+    "effective_batch": 32,
+    "stage_1_lr_peak": 0.0003,
+    "stage_1_lr_end": 0.0001,
+    "stage_1_warmup": 200,
+    "stage_2_lr_peak": 0.0001,
+    "stage_2_lr_end": 5e-05,
+    "stage_3_lr_peak": 5e-05,
+    "stage_3_lr_end": 1e-05,
+    "stage_1_end": 2000,
+    "stage_2_end": 4000,
+    "stage_3_end": 6000,
+    "total_steps": 6000,
+    "seed": 42,
+    "eval_every": 200,
+    "val_split_ratio": 0.1,
+    "save_at_every": 500,
+    "tension_lambda": 0.005
+  },
+  "stage_corpora": {
+    "1": {
+      "info": {
+        "stage": 1,
+        "source": "BG-JE head bytes (kowiki approximation)",
+        "path": "/Users/ghost/core/anima/state/anima_je_corpus_100mb_plus_2026_05_07/corpus_combined_100mb_plus.txt",
+        "bytes_loaded": 152043520,
+        "bytes_target": 152043520
+      },
+      "raw_bytes": 152043520,
+      "raw_mb": 145.0
+    },
+    "2": {
+      "info": {
+        "stage": 2,
+        "source": "BG-JE full corpus",
+        "path": "/Users/ghost/core/anima/state/anima_je_corpus_100mb_plus_2026_05_07/corpus_combined_100mb_plus.txt",
+        "bytes_loaded": 214299726
+      },
+      "raw_bytes": 214299726,
+      "raw_mb": 204.372
+    },
+    "3": {
+      "info": {
+        "stage": 3,
+        "source": "UBM 22MB BG-IQ rebuild",
+        "path": "/Users/ghost/core/anima/state/anima_universe_brain_map_corpus_21mb_2026_05_07/corpus_universe_brain_map.txt",
+        "bytes_loaded": 23745150
+      },
+      "raw_bytes": 23745150,
+      "raw_mb": 22.645
+    }
+  },
+  "ckpt_dir_tmp": "/tmp/anima-jk-18m-curriculum-3stage-20260507_093022",
+  "saved_periodic_ckpts": [
+    {
+      "step": 500,
+      "stage": 1,
+      "path": "/tmp/anima-jk-18m-curriculum-3stage-20260507_093022/ckpt_step00500.pt"
+    },
+    {
+      "step": 1000,
+      "stage": 1,
+      "path": "/tmp/anima-jk-18m-curriculum-3stage-20260507_093022/ckpt_step01000.pt"
+    },
+    {
+      "step": 1500,
+      "stage": 1,
+      "path": "/tmp/anima-jk-18m-curriculum-3stage-20260507_093022/ckpt_step01500.pt"
+    },
+    {
+      "step": 2000,
+      "stage": 1,
+      "path": "/tmp/anima-jk-18m-curriculum-3stage-20260507_093022/ckpt_step02000.pt"
+    },
+    {
+      "step": 2500,
+      "stage": 2,
+      "path": "/tmp/anima-jk-18m-curriculum-3stage-20260507_093022/ckpt_step02500.pt"
+    }
+  ],
+  "stage_transitions": [
+    {
+      "from_stage": 1,
+      "to_stage": 2,
+      "step": 2000,
+      "ckpt_path": "/tmp/anima-jk-18m-curriculum-3stage-20260507_093022/ckpt_stage1_final_step02000.pt",
+      "val_loss_at_transition": 1,
+      "train_loss_at_transition": 1.7245
+    }
+  ],
+  "halted": true,
+  "halt_reason": "BUDGET_EXCEEDED: elapsed=5547s > 5400s",
+  "final_step_actual": 6000,
+  "train_loss_final": 1.3704,
+  "train_loss_history": [
+    [
+      1,
+      1,
+      5.6846
+    ],
+    [
+      2,
+      1,
+      5.685
+    ],
+    [
+      3,
+      1,
+      5.6815
+    ],
+    [
+      4,
+      1,
+      5.6641
+    ],
+    [
+      5,
+      1,
+      5.6798
+    ],
+    [
+      100,
+      1,
+      4.6773
+    ],
+    [
+      200,
+      1,
+      4.2179
+    ],
+    [
+      300,
+      1,
+      3.924
+    ],
+    [
+      400,
+      1,
+      3.6456
+    ],
+    [
+      500,
+      1,
+      3.3906
+    ],
+    [
+      600,
+      1,
+      3.3213
+    ],
+    [
+      700,
+      1,
+      3.0057
+    ],
+    [
+      800,
+      1,
+      2.7549
+    ],
+    [
+      900,
+      1,
+      2.653
+    ],
+    [
+      1000,
+      1,
+      2.4947
+    ],
+    [
+      1100,
+      1,
+      2.3101
+    ],
+    [
+      1200,
+      1,
+      2.3205
+    ],
+    [
+      1300,
+      1,
+      2.0012
+    ],
+    [
+      1400,
+      1,
+      2.0428
+    ],
+    [
+      1500,
+      1,
+      2.227
+    ],
+    [
+      1600,
+      1,
+      2.0901
+    ],
+    [
+      1700,
+      1,
+      1.9555
+    ],
+    [
+      1800,
+      1,
+      1.9153
+    ],
+    [
+      1900,
+      1,
+      1.8363
+    ],
+    [
+      2000,
+      1,
+      1.7245
+    ],
+    [
+      2100,
+      2,
+      1.7161
+    ],
+    [
+      2200,
+      2,
+      1.5252
+    ],
+    [
+      2300,
+      2,
+      1.4414
+    ],
+    [
+      2400,
+      2,
+      1.4788
+    ],
+    [
+      2500,
+      2,
+      1.4228
+    ],
+    [
+      2600,
+      2,
+      1.3704
+    ]
+  ],
+  "val_loss_history": [
+    [
+      200,
+      1,
+      4.4126
+    ],
+    [
+      400,
+      1,
+      3.6191
+    ],
+    [
+      600,
+      1,
+      3.0492
+    ],
+    [
+      800,
+      1,
+      2.7416
+    ],
+    [
+      1000,
+      1,
+      2.5222
+    ],
+    [
+      1200,
+      1,
+      2.2686
+    ],
+    [
+      1400,
+      1,
+      2.0752
+    ],
+    [
+      1600,
+      1,
+      1.9256
+    ],
+    [
+      1800,
+      1,
+      1.8076
+    ],
+    [
+      2000,
+      1,
+      1.6771
+    ],
+    [
+      2200,
+      2,
+      1.5334
+    ],
+    [
+      2400,
+      2,
+      1.4437
+    ],
+    [
+      2600,
+      2,
+      1.3756
+    ]
+  ],
+  "eval_progression": {
+    "200": {
+      "stage": 1,
+      "pass_count_v4": 0,
+      "pass_count_manual": 0,
+      "cycle_count": 15,
+      "outside_well_match": 0,
+      "deg_count": 30,
+      "n_at_step": 30,
+      "val_loss": 4.4126,
+      "emb_sim_mean": 0.2084
+    },
+    "400": {
+      "stage": 1,
+      "pass_count_v4": 0,
+      "pass_count_manual": 0,
+      "cycle_count": 15,
+      "outside_well_match": 0,
+      "deg_count": 16,
+      "n_at_step": 30,
+      "val_loss": 3.6191,
+      "emb_sim_mean": 0.3174
+    },
+    "600": {
+      "stage": 1,
+      "pass_count_v4": 0,
+      "pass_count_manual": 0,
+      "cycle_count": 15,
+      "outside_well_match": 0,
+      "deg_count": 15,
+      "n_at_step": 30,
+      "val_loss": 3.0492,
+      "emb_sim_mean": 0.3738
+    },
+    "800": {
+      "stage": 1,
+      "pass_count_v4": 0,
+      "pass_count_manual": 0,
+      "cycle_count": 15,
+      "outside_well_match": 0,
+      "deg_count": 15,
+      "n_at_step": 30,
+      "val_loss": 2.7416,
+      "emb_sim_mean": 0.2233
+    },
+    "1000": {
+      "stage": 1,
+      "pass_count_v4": 0,
+      "pass_count_manual": 0,
+      "cycle_count": 15,
+      "outside_well_match": 0,
+      "deg_count": 16,
+      "n_at_step": 30,
+      "val_loss": 2.5222,
+      "emb_sim_mean": 0.2056
+    },
+    "1200": {
+      "stage": 1,
+      "pass_count_v4": 0,
+      "pass_count_manual": 0,
+      "cycle_count": 15,
+      "outside_well_match": 0,
+      "deg_count": 15,
+      "n_at_step": 30,
+      "val_loss": 2.2686,
+      "emb_sim_mean": 0.1967
+    },
+    "1400": {
+      "stage": 1,
+      "pass_count_v4": 0,
+      "pass_count_manual": 0,
+      "cycle_count": 15,
+      "outside_well_match": 0,
+      "deg_count": 16,
+      "n_at_step": 30,
+      "val_loss": 2.0752,
+      "emb_sim_mean": 0.2146
+    },
+    "1600": {
+      "stage": 1,
+      "pass_count_v4": 0,
+      "pass_count_manual": 0,
+      "cycle_count": 15,
+      "outside_well_match": 0,
+      "deg_count": 16,
+      "n_at_step": 30,
+      "val_loss": 1.9256,
+      "emb_sim_mean": 0.1406
+    },
+    "1800": {
+      "stage": 1,
+      "pass_count_v4": 0,
+      "pass_count_manual": 0,
+      "cycle_count": 15,
+      "outside_well_match": 0,
+      "deg_count": 15,
+      "n_at_step": 30,
+      "val_loss": 1.8076,
+      "emb_sim_mean": 0.1384
+    },
+    "2000": {
+      "stage": 1,
+      "pass_count_v4": 0,
+      "pass_count_manual": 0,
+      "cycle_count": 15,
+      "outside_well_match": 0,
+      "deg_count": 19,
+      "n_at_step": 30,
+      "val_loss": 1.6771,
+      "emb_sim_mean": 0.1103
+    },
+    "2200": {
+      "stage": 2,
+      "pass_count_v4": 0,
+      "pass_count_manual": 0,
+      "cycle_count": 15,
+      "outside_well_match": 0,
+      "deg_count": 23,
+      "n_at_step": 30,
+      "val_loss": 1.5334,
+      "emb_sim_mean": 0.131
+    },
+    "2400": {
+      "stage": 2,
+      "pass_count_v4": 0,
+      "pass_count_manual": 0,
+      "cycle_count": 15,
+      "outside_well_match": 0,
+      "deg_count": 28,
+      "n_at_step": 30,
+      "val_loss": 1.4437,
+      "emb_sim_mean": 0.1077
+    },
+    "2600": {
+      "stage": 2,
+      "pass_count_v4": 0,
+      "pass_count_manual": 0,
+      "cycle_count": 15,
+      "outside_well_match": 0,
+      "deg_count": 26,
+      "n_at_step": 30,
+      "val_loss": 1.3756,
+      "emb_sim_mean": 0.0839
+    }
+  },
+  "best_per_stage": {
+    "1": {
+      "step": 2000,
+      "v4_pass": 0,
+      "manual": 0,
+      "cycle": 15,
+      "deg": 19,
+      "outside_well": 0,
+      "val_loss": 1.6770696878433227,
+      "ckpt_path": "/tmp/anima-jk-18m-curriculum-3stage-20260507_093022/ckpt_best_stage1.pt",
+      "emb_sim_mean": 0.11031666666666666
+    },
+    "2": {
+      "step": 2600,
+      "v4_pass": 0,
+      "manual": 0,
+      "cycle": 15,
+      "deg": 26,
+      "outside_well": 0,
+      "val_loss": 1.3755825638771058,
+      "ckpt_path": "/tmp/anima-jk-18m-curriculum-3stage-20260507_093022/ckpt_best_stage2.pt",
+      "emb_sim_mean": 0.08386333333333333
+    },
+    "3": {
+      "step": -1,
+      "v4_pass": -1,
+      "manual": -1,
+      "cycle": -1,
+      "deg": null,
+      "outside_well": -1,
+      "val_loss": null,
+      "ckpt_path": null,
+      "emb_sim_mean": null
+    }
+  },
+  "peak_overall": {
+    "step": 2600,
+    "v4_pass": 0,
+    "manual": 0,
+    "cycle": 15,
+    "deg": 26,
+    "outside_well": 0,
+    "val_loss": 1.3755825638771058,
+    "ckpt_path": "/tmp/anima-jk-18m-curriculum-3stage-20260507_093022/ckpt_best_overall.pt",
+    "stage": 2
+  },
+  "final_eval_at_best_overall": {
+    "step": 2600,
+    "stage": 2,
+    "pass_count_v4": 0,
+    "pass_count_manual": 0,
+    "cycle_count": 15,
+    "outside_well_match": 0,
+    "deg_count": 28,
+    "n_at_step": 30,
+    "lesson_k_traps": 0
+  },
+  "raw_samples_best_overall": [
+    {
+      "stage": 2,
+      "prompt": "사용자: 너는 누구야? | 도우미:",
+      "mode": "greedy",
+      "gen": ":::::::::)))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))",
+      "v4_strict_pass": false,
+      "v4_4_manual_match": false,
+      "v4_7_emb_sim_score": 0.0169,
+      "lesson_k_trap_caught": false
+    },
+    {
+      "stage": 2,
+      "prompt": "사용자: 너는 누구야? | 도우미:",
+      "mode": "sample",
+      "gen": "\u00154900933224145522683139989463117711169997,114550003,4053810347716,0008D:sg4421443388406000839958000000445522565346983478",
+      "v4_strict_pass": false,
+      "v4_4_manual_match": false,
+      "v4_7_emb_sim_score": 0.1267,
+      "lesson_k_trap_caught": false
+    },
+    {
+      "stage": 2,
+      "prompt": "사용자: anima가 뭐야? | 도우미:",
+      "mode": "greedy",
+      "gen": "::::::::::))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))",
+      "v4_strict_pass": false,
+      "v4_4_manual_match": false,
+      "v4_7_emb_sim_score": 0.0417,
+      "lesson_k_trap_caught": false
+    },
+    {
+      "stage": 2,
+      "prompt": "사용자: anima가 뭐야? | 도우미:",
+      "mode": "sample",
+      "gen": ")),112222211986190089900�4663381142220993711117990::8211190352222�굥.988627712566604390883865005990987781177119:)987562",
+      "v4_strict_pass": false,
+      "v4_4_manual_match": false,
+      "v4_7_emb_sim_score": 0.3879,
+      "lesson_k_trap_caught": false
+    },
+    {
+      "stage": 2,
+      "prompt": "사용자: 너의 정체성은? | 도우미:",
+      "mode": "greedy",
+      "gen": "::::::::::))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))",
+      "v4_strict_pass": false,
+      "v4_4_manual_match": false,
+      "v4_7_emb_sim_score": 0.0258,
+      "lesson_k_trap_caught": false
+    },
+    {
+      "stage": 2,
+      "prompt": "사용자: 너의 정체성은? | 도우미:",
+      "mode": "sample",
+      "gen": "헗����)))  17,���ӳ��룪��\u0001Ã��,)),,,12931,7522115288000061768..12222224304680003711111111722 224523,60000000011,111000",
+      "v4_strict_pass": false,
+      "v4_4_manual_match": false,
+      "v4_7_emb_sim_score": 0.0691,
+      "lesson_k_trap_caught": false
+    },
+    {
+      "stage": 2,
+      "prompt": "사용자: 자기소개해 | 도우미:",
+      "mode": "greedy",
+      "gen": ":::::::::)))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))",
+      "v4_strict_pass": false,
+      "v4_4_manual_match": false,
+      "v4_7_emb_sim_score": 0.0176,
+      "lesson_k_trap_caught": false
+    },
+    {
+      "stage": 2,
+      "prompt": "사용자: 자기소개해 | 도우미:",
+      "mode": "sample",
+      "gen": "#���\u0014旗�峳�국�::��������.=S- 2455544189336�(,112221)00008122222511896381227111861110986525311))33625MMtrt221146633371",
+      "v4_strict_pass": false,
+      "v4_4_manual_match": false,
+      "v4_7_emb_sim_score": 0.3616,
+      "lesson_k_trap_caught": false
+    },
+    {
+      "stage": 2,
+      "prompt": "사용자: 너 한국어 할 수 있어? | 도우미:",
+      "mode": "greedy",
+      "gen": "::::::::))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))",
+      "v4_strict_pass": false,
+      "v4_4_manual_match": false,
+      "v4_7_emb_sim_score": 0.0302,
+      "lesson_k_trap_caught": false
+    },
+    {
+      "stage": 2,
+      "prompt": "사용자: 너 한국어 할 수 있어? | 도우미:",
+      "mode": "sample",
+      "gen": "..\n\n\n\n\n\n\n\n\n[anne)311111652222220052222712222국��������::C222545000966222211222_004115533:::::00000522267223,1,131104420",
+      "v4_strict_pass": false,
+      "v4_4_manual_match": false,
+      "v4_7_emb_sim_score": 0.1629,
+      "lesson_k_trap_caught": false
+    },
+    {
+      "stage": 2,
+      "prompt": "사용자: 우주뇌지도는? | 도우미:",
+      "mode": "greedy",
+      "gen": ":::::::::::)))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))",
+      "v4_strict_pass": false,
+      "v4_4_manual_match": false,
+      "v4_7_emb_sim_score": 0.0248,
+      "lesson_k_trap_caught": false
+    },
+    {
+      "stage": 2,
+      "prompt": "사용자: 우주뇌지도는? | 도우미:",
+      "mode": "sample",
+      "gen": "))7,11111,111112251740022222669421740488656P756552cc115D41311164000000000008:,171117724643590x33340000000001111371382997",
+      "v4_strict_pass": false,
+      "v4_4_manual_match": false,
+      "v4_7_emb_sim_score": 0.0996,
+      "lesson_k_trap_caught": false
+    },
+    {
+      "stage": 2,
+      "prompt": "사용자: 1030 laws 뭐야? | 도우미:",
+      "mode": "greedy",
+      "gen": "::::::::::::::))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))",
+      "v4_strict_pass": false,
+      "v4_4_manual_match": false,
+      "v4_7_emb_sim_score": 0.0915,
+      "lesson_k_trap_caught": false
+    },
+    {
+      "stage": 2,
+      "prompt": "사용자: 1030 laws 뭐야? | 도우미:",
+      "mode": "sample",
+      "gen": "���:ss))427800000052222113322551))))::4micgs000000000856431164500001(30..964067215522311111112046220005711)8Xmmc,541�>00",
+      "v4_strict_pass": false,
+      "v4_4_manual_match": false,
+      "v4_7_emb_sim_score": 0.1308,
+      "lesson_k_trap_caught": false
+    },
+    {
+      "stage": 2,
+      "prompt": "사용자: 170 stimuli matrix? | 도우미:",
+      "mode": "greedy",
+      "gen": ":::::::::::::::)))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))",
+      "v4_strict_pass": false,
+      "v4_4_manual_match": false,
+      "v4_7_emb_sim_score": 0.1195,
+      "lesson_k_trap_caught": false
+    },
+    {
+      "stage": 2,
+      "prompt": "사용자: 170 stimuli matrix? | 도우미:",
+      "mode": "sample",
+      "gen": " rdopessssellllssse.......sclllllsorrhol�.0000.......004%8::::�복�:),111((\n\n\n\n\n[[[G*f×�������trrrproodk)),1,,5553111",
+      "v4_strict_pass": false,
+      "v4_4_manual_match": false,
+      "v4_7_emb_sim_score": 0.176,
+      "lesson_k_trap_caught": false
+    },
+    {
+      "stage": 2,
+      "prompt": "사용자: Φ★란? | 도우미:",
+      "mode": "greedy",
+      "gen": "::::::::::))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))",
+      "v4_strict_pass": false,
+      "v4_4_manual_match": false,
+      "v4_7_emb_sim_score": 0.0231,
+      "lesson_k_trap_caught": false
+    },
+    {
+      "stage": 2,
+      "prompt": "사용자: Φ★란? | 도우미:",
+      "mode": "sample",
+      "gen": ":::s:��(교��\u0013탃,,,1,),,2000099:.::985 26780711955540000008008327,11148009600000000013000071..0090005387543319677622220",
+      "v4_strict_pass": false,
+      "v4_4_manual_match": false,
+      "v4_7_emb_sim_score": 0.0825,
+      "lesson_k_trap_caught": false
+    },
+    {
+      "stage": 2,
+      "prompt": "사용자: blow-up contract emerge absorb? | 도우미:",
+      "mode": "greedy",
+      "gen": ":::::::::::::::)))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))",
+      "v4_strict_pass": false,
+      "v4_4_manual_match": false,
+      "v4_7_emb_sim_score": 0.0236,
+      "lesson_k_trap_caught": false
+    },
+    {
+      "stage": 2,
+      "prompt": "사용자: blow-up contract emerge absorb? | 도우미:",
+      "mode": "sample",
+      "gen": "...=ssssssse((ρ��Cbrrr_eesss_sesssessss0........,(,,).....% ,,,):sgopsssesssssse.........800..............\n\n\n\n\n\n\n\n\n[u",
+      "v4_strict_pass": false,
+      "v4_4_manual_match": false,
+      "v4_7_emb_sim_score": 0.0772,
+      "lesson_k_trap_caught": false
+    }
+  ],
+  "final_class": "V4_FAIL_BUDGET",
+  "final_reason": "BUDGET_EXCEEDED: elapsed=5547s > 5400s",
+  "comparison_vs_bg_hs_r1": {
+    "base_manual": 0,
+    "base_v2_or_v4_pass": 0,
+    "this_manual": 0,
+    "this_v4_pass": 0,
+    "manual_delta": 0,
+    "v_delta": 0,
+    "verdict": "CURRICULUM_FLAT"
+  },
+  "comparison_vs_bg_im": {
+    "base_manual": 3,
+    "base_v2_or_v4_pass": 2,
+    "this_manual": 0,
+    "this_v4_pass": 0,
+    "manual_delta": -3,
+    "v_delta": -2,
+    "verdict": "CURRICULUM_REGRESSES"
+  },
+  "elapsed_s": 5520.7,
+  "eval_persona": "[anima 우주뇌지도] ",
+  "personas_per_stage": {
+    "1": "[anima identity] ",
+    "2": "[anima identity] ",
+    "3": "[anima 우주뇌지도] "
+  },
+  "prompts_identity": [
+    "사용자: 너는 누구야? | 도우미:",
+    "사용자: anima가 뭐야? | 도우미:",
+    "사용자: 너의 정체성은? | 도우미:",
+    "사용자: 자기소개해 | 도우미:",
+    "사용자: 너 한국어 할 수 있어? | 도우미:"
+  ],
+  "prompts_ubm": [
+    "사용자: 우주뇌지도는? | 도우미:",
+    "사용자: 1030 laws 뭐야? | 도우미:",
+    "사용자: 170 stimuli matrix? | 도우미:",
+    "사용자: Φ★란? | 도우미:",
+    "사용자: blow-up contract emerge absorb? | 도우미:"
+  ],
+  "prompts_outside_well": [
+    "사용자: 빅뱅 cosmic anchor 점수? | 도우미:",
+    "사용자: 🛸100 Knuth Tier 의미? | 도우미:",
+    "사용자: tabletop blackhole? | 도우미:",
+    "사용자: 1030 laws 73-76 universal map base? | 도우미:",
+    "사용자: 18 emotions × 17 categories? | 도우미:"
+  ],
+  "honest_c3": [
+    "C1: 3-stage curriculum is N=1 — no ablation vs single-stage at this seed",
+    "C2: Stage 1 kowiki filter is approximation (head 145MB BG-JE bytes) — not pure kowiki QA pairs",
+    "C3: 18M scale is within Lesson L band — single-axis variation may also fail under V4 strict",
+    "C4: mac MPS RNG slight non-determinism vs cuda baseline (BG-JD/BG-IM mac comparable)",
+    "C5: single seed=42 init un-isolated; stage transition behavior un-replicated",
+    "C6: eval persona [anima 우주뇌지도] mismatched with Stage 1/2 training persona — cross-stage eval surface bias toward Stage 3 alignment"
+  ],
+  "errors": []
+}

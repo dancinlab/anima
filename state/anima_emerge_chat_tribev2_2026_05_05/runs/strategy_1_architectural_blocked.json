@@ -1,0 +1,19 @@
+{
+  "strategy_id": 1,
+  "strategy_name": "tribev2 default decode loop on logits_a",
+  "status": "FAIL_ARCHITECTURAL_BLOCKED_NOT_ATTEMPTED",
+  "timestamp_utc": "2026-05-05T00:00:00Z",
+  "blocked_at_phase": "design_review",
+  "tool_uses_consumed": 0,
+  "blocker_root_cause": {
+    "summary": "tribev2 has no logits / no decoder / no LM head — it is an fMRI BOLD encoder, not a language model.",
+    "evidence": [
+      "references/tribev2/README.md L15: 'TRIBE v2 is a deep multimodal brain encoding model that predicts fMRI brain responses to naturalistic stimuli (video, audio, text).'",
+      "references/tribev2/inventory.json: modality_input=[text,audio,video], modality_output=fMRI_BOLD (fsaverage5, 10242 vertices)",
+      "Public API surface (demo_utils.py grep): from_pretrained / get_events_dataframe / predict — no generate, no decode, no tokenize-out, no lm_head",
+      "Whole-tree grep for 'generate|lm_head|logits' inside tribev2/tribev2/: 0 hits in the model/decode path (only a comment about LLM-generated training captions in studies/lahner2024bold.py)",
+      "model.py FmriEncoder forward: text+audio+video features -> Transformer fusion -> low_rank_head -> SubjectLayers -> AdaptiveAvgPool1d -> n_vertices BOLD prediction. Terminal output is a (n_timesteps, n_vertices) numpy float array in cortical surface space, not a token distribution."
+    ]
+  },
+  "why_no_helper_script_written": "Writing a tribev2-based decode helper would be an internal contradiction. tribev2 forward takes Llama-3.2-3B layer features [0,0.2,0.4,0.6,0.8,1.0] as text encoder input and projects them into cortical-vertex space; there is no inverse path, no shared vocabulary head, no cell->token boundary, and no generate() method on TribeModel or any internal class. Any helper would either (a) ignore tribev2 entirely and just decode CLM v4 directly (defeating the mission framing) or (b) embed a fabricated 'cortical-vertex -> token' projection that has no scientific or engineering basis."
+}

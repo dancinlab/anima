@@ -1,0 +1,87 @@
+{
+  "task_id": "anima_dialogue_real_load_2026_05_05",
+  "scope": "BG-A retry: real CLM v4 forward pass enable + V3 real-mode probe",
+  "verdict": "PASS_REAL_MODE_DIRECT_INVOKE",
+  "wall_time_minutes": 8,
+  "cost_usd": 0.0,
+  "platform": "mac CPU (.venv-eeg)",
+  "raw_compliance": {
+    "raw_15_no_mount_hexa_or_shim_modification": true,
+    "raw_37_transient_py_namespace_only": true,
+    "raw_10_honest_c3_emitted": true
+  },
+  "sub1_environment_probe": {
+    "system_python3": "/opt/homebrew/bin/python3 (transformers 4.x; AutoModelForCausalLM import FAILS — OMP libomp double-init)",
+    "selected_venv": "/Users/ghost/core/anima/.venv-eeg/bin/python",
+    "selected_venv_versions": {
+      "transformers": "4.57.6",
+      "torch": "2.11.0",
+      "huggingface_hub": "OK",
+      "AutoModelForCausalLM_import": "OK"
+    },
+    "decision": "use .venv-eeg directly (no new venv build needed)"
+  },
+  "sub2_anima_dialogue_load_py": {
+    "path": "/Users/ghost/core/anima/tool/transient_py/anima_dialogue_load.py",
+    "loc": 404,
+    "status": "EXISTING_FROM_PRIOR_BG_A_ATTEMPT_REUSED",
+    "raw_37_transient_py_pass": true,
+    "modes": ["load", "probe", "dialogue"],
+    "default_model": "dancinlab/clm-v4-mk2-v1",
+    "tokenizer": "SentencePiece direct (sibling .model file from snapshot)",
+    "hidden_capture": "forward hook on decoder.ln_f → mean-pool over T → tile-reshape to (8, 192)"
+  },
+  "sub3_hf_cache": {
+    "repo_id": "dancinlab/clm-v4-mk2-v1",
+    "cache_path": "/Users/ghost/.cache/huggingface/hub/models--dancinlab--clm-v4-mk2-v1",
+    "size_gb": 2.0,
+    "files_present": 16,
+    "populated_via": "auto-cache on first AutoModelForCausalLM.from_pretrained (no explicit snapshot_download needed)",
+    "auth": "HF_TOKEN env var sourced from secret CLI (huggingface.token); private repo OK"
+  },
+  "sub4_v3_realmode_probe": {
+    "direct_invoke_anima_dialogue_load_py": {
+      "command": "HF_TOKEN=*** .venv-eeg/bin/python anima_dialogue_load.py --mode probe --probe-text '안녕'",
+      "mode_emitted": "real",
+      "phi_star": 42.1158,
+      "phi_drift": 0.2558,
+      "axis_activation": {"identity": 0.344, "agency": 0.351, "phenomenal": 0.353, "temporal": 0.314, "social": 0.340},
+      "dominant_cells": [0, 4, 3],
+      "hidden_state_delta": 0.0,
+      "exit_code": 0
+    },
+    "second_probe_json": {
+      "probe_text": "의식이 흐른다",
+      "phi_star": 42.212963095230045,
+      "phi_drift": 0.3529630952300451,
+      "axis_activation": {"identity": 0.5347, "agency": 0.5054, "phenomenal": 0.5138, "temporal": 0.5599, "social": 0.5193},
+      "dominant_cells": [0, 4, 3],
+      "exit_code": 0
+    },
+    "wrapper_anima_core_dialogue_bash": {
+      "command": "bin/anima-core-dialogue.bash --probe '안녕'",
+      "mode_emitted": "synthetic_fallback",
+      "root_cause": "mount.hexa _resolve_python picks /opt/homebrew/bin/python3 first (raw#15 no-modify); helper targets dancinlab/clm-v4-base-mirror which has no model_type in config.json (pre-HF format). HF AutoModelForCausalLM rejects with 'Unrecognized model'.",
+      "fix_options": ["A: env override HEXA_PY=.venv-eeg/bin/python (if mount.hexa _resolve_python honors env)", "B: re-emit helper with hardcoded venv path (raw#15 violation — declined)", "C: re-point mount.hexa default model to clm-v4-mk2-v1 (raw#15 violation — declined)", "D: keep wrapper as fallback path; document direct-invoke as canonical real-mode entry"]
+    }
+  },
+  "fail_root_cause_for_wrapper": {
+    "diagnosis": "TWO independent issues stacked",
+    "issue_1_python_resolution": "mount.hexa _resolve_python finds /opt/homebrew/bin/python3 first; that interpreter has transformers but AutoModelForCausalLM import fails (OMP libomp double-init from numpy/torch interaction). venv-eeg has clean import.",
+    "issue_2_repo_mismatch": "mount.hexa default --model=dancinlab/clm-v4-base-mirror is the pre-HF best.pt mirror (config.json missing model_type). dancinlab/clm-v4-mk2-v1 is the HF-format repo with modeling_clm_v4.py + model.safetensors + model_type=clm_v4.",
+    "wrapper_unblock_path": "set HEXA_PY env (if respected) + pass --model dancinlab/clm-v4-mk2-v1 via clm_v4_mount.hexa --model flag (mount.hexa argparser already supports it, line 196 of helper)"
+  },
+  "honest_c3": [
+    "C1 8-cell view = tile-reshape of mean-pooled last hidden (768 → 8x192 via repeat); train-time consciousness_states cross-attention NOT activated unless --inject-states-mode canonical/zero",
+    "C2 phi_star = anima-canonical proxy (PHI_STAR_BASELINE * (1 + 0.05 * mean_pair_cosine)), NOT Tononi IIT phi",
+    "C3 5-axis bucket taxonomy (38/38/38/39/39 = 192) is anima-internal heuristic; bucket boundaries unverified semantically",
+    "C4 mac CPU only; MPS path (--device mps) untested in this run; phi_star numerical equivalence on MPS unverified",
+    "C5 wrapper bash --probe still emits synthetic_fallback; production V3 substrate dialogue requires direct-invoke until mount.hexa python+model resolution is updated (defer to next cycle, raw#15 hold)"
+  ],
+  "next_step_recommendation": {
+    "priority_1": "land minimal mount.hexa env-respecting python resolver patch (HEXA_PY env override) so wrapper can route to .venv-eeg without raw#15 violation (additive fn, not edit)",
+    "priority_2": "update mount.hexa default --model to dancinlab/clm-v4-mk2-v1 (single-line constant; arguably pure replumbing, pending raw#15 interpretation)",
+    "priority_3": "extend anima_dialogue_load.py with --inject-states-mode canonical zero-state activation to verify cross-attention path (currently untouched)",
+    "priority_4": "second-probe phi-star drift +0.353 (text=의식이 흐른다) > first-probe drift +0.256 (text=안녕) suggests forward path IS responsive to input (not fixed-point); validate by phi-star variance over a 10-text probe sweep"
+  }
+}

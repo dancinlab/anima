@@ -1,0 +1,52 @@
+=== BG-V5ANIMA-PHASE2-SPLIT-RATE-DIAG (stage=first3) ===
+n_turns/ablation = 1000, seed=42, n_prompts=170
+ckpt sha256 verify: PASS
+trained 350M loaded (298.76M params)
+random_init mirror loaded
+
+--- Ablations stage=first3 (A1, A2, A3) ---
+  [trained/A1_lower_threshold] cells 64 splits=48 merges= 0 iit_un=2901.7 elapsed=82.3s
+  [trained/A2_no_lorenz] cells 16 splits= 0 merges= 0 iit_un=99.6 elapsed=71.4s
+  [trained/A3_no_pull] cells 64 splits=48 merges= 0 iit_un=2509.4 elapsed=84.1s
+stage=first3 complete; rerun with stage=last3 then stage=merge.
+=== BG-V5ANIMA-PHASE2-SPLIT-RATE-DIAG (stage=last3) ===
+n_turns/ablation = 1000, seed=42, n_prompts=170
+ckpt sha256 verify: PASS
+trained 350M loaded (298.76M params)
+random_init mirror loaded
+
+--- Ablations stage=last3 (A4, A5_trained, A5_random) ---
+  [trained/A4_dispersion] cells 64 splits=48 merges= 0 iit_un=1535.5 elapsed=83.9s
+  [trained/A5_baseline] cells 16 splits= 0 merges= 0 iit_un=128.1 elapsed=66.7s
+  [random/A5_baseline] cells 28 splits=12 merges= 0 iit_un=406.3 elapsed=67.0s
+stage=last3 complete; rerun with stage=merge to assemble.
+=== BG-V5ANIMA-PHASE2-SPLIT-RATE-DIAG (stage=merge) ===
+n_turns/ablation = 1000, seed=42, n_prompts=170
+ckpt sha256 verify: PASS
+trained 350M loaded (298.76M params)
+random_init mirror loaded
+
+=== ABLATION SUMMARY (1K turns each, trained 350M unless noted) ===
+  variant                   splits final_N   iit_un  tens_p99   thr_max
+  A1_lower_threshold            48      64   2901.7   12.9306   15.2243
+  A2_no_lorenz                   0      16     99.6    9.8529   11.1545
+  A3_no_pull                    48      64   2509.4    1.5625    2.0747
+  A4_dispersion                 48      64   1535.5   11.9635   19.0996
+  A5_baseline                    0      16    128.1   10.3476   11.9893
+  A5_baseline_RANDOM            12      28    406.3    3.6132    3.8052
+
+=== HYPOTHESIS DIAGNOSIS ===
+  H1 attn-pull confirmed:    True
+  H2 tension-scale confirmed:False
+  H3 concentration confirmed:True
+  primary verdict:            H1+H3_combined (pull projects to attractor cells, monopolizing tension)
+  trained top-2 cell share:   42.2%
+  trained vs random p99 tens: 10.3476 vs 3.6132
+  A1 lower-threshold splits:  48 (baseline 0)
+  A2 no-lorenz splits:        0 (baseline 0)
+  A3 no-pull splits:          48 (baseline 0)
+  A4 dispersion-trigger:      48 (baseline 0)
+
+result.json: /Users/ghost/core/anima/state/anima_clm_v5_phase2_split_rate_diag_2026_05_10/result.json (578.2 KB)
+plot 1: /Users/ghost/core/anima/state/anima_clm_v5_phase2_split_rate_diag_2026_05_10/tension_histograms.png
+plot 2: /Users/ghost/core/anima/state/anima_clm_v5_phase2_split_rate_diag_2026_05_10/split_rate_per_ablation.png

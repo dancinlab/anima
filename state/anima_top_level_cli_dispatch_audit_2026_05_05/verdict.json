@@ -1,0 +1,85 @@
+{
+  "schema": "anima.top_level_cli_dispatch_audit.v1",
+  "ts_utc": "2026-05-05T12:55:00Z",
+  "audit_subject": "anima top-level CLI `dialogue` verb dispatch",
+  "outcome": "ALREADY_INTEGRATED_NO_FIX_REQUIRED",
+  "selected_option": "C",
+  "selected_option_rationale": "Top-level dispatcher /Users/ghost/core/anima/bin/anima already implements generic verb-to-module routing pattern (anima <topic> -> hexa run tool/anima_cli/<topic>.hexa). KICK-3 dialogue.hexa was placed at the conventionally correct path tool/anima_cli/dialogue.hexa, so dispatch is automatic with zero code changes. Option A (new file) and B (extend dispatcher) both unnecessary — would violate raw#15 additive principle by adding redundant wiring.",
+  "discovery": {
+    "top_level_cli_path": "/Users/ghost/core/anima/bin/anima",
+    "top_level_cli_size_bytes": 16089,
+    "top_level_cli_pattern": "verb_to_hexa_module",
+    "top_level_cli_module_dir": "/Users/ghost/core/anima/tool/anima_cli",
+    "system_path_shim": "/Users/ghost/.hx/bin/anima -> /Users/ghost/core/anima/bin/anima (exec passthrough)",
+    "dispatch_function": "dispatch_topic() at bin/anima:288-317",
+    "dispatch_routing": "anima <topic> [args...] -> exec $HEXA_BIN run $CLI_DIR/<topic>.hexa [args...]"
+  },
+  "trace_anima_dialogue_selftest": [
+    "1. shell: anima dialogue --selftest",
+    "2. /Users/ghost/.hx/bin/anima -> exec /Users/ghost/core/anima/bin/anima dialogue --selftest",
+    "3. bin/anima case match: topic=dialogue, args=[--selftest]",
+    "4. dispatch_topic('dialogue', '--selftest') -> mod=$CLI_DIR/dialogue.hexa",
+    "5. exec /Users/ghost/.hx/bin/hexa run tool/anima_cli/dialogue.hexa --selftest",
+    "6. dialogue.hexa main() -> _arg_present(--selftest) -> sub_selftest()",
+    "7. sub_selftest probes mount + log_root + wrapper + spec, emits verdict"
+  ],
+  "verification_runs": {
+    "v2_equivalent": {
+      "command": "HEXA_LOCAL=1 /Users/ghost/core/anima/bin/anima dialogue --selftest",
+      "exit_code": 0,
+      "verdict_emitted": "READY (Stage 1 + Stage 2 both landed)",
+      "all_four_checks_ok": true,
+      "checks": {
+        "stage_1_mount": "/Users/ghost/core/anima/anima-core/runtime/clm_v4_mount.hexa",
+        "log_root": "/Users/ghost/core/anima/state/anima_core_dialogues",
+        "bash_wrapper": "/Users/ghost/core/anima/bin/anima-core-dialogue.bash",
+        "spec": "/Users/ghost/core/anima/docs/anima_core_clm_v4_mount_emerge_paradigm_2026_05_05.md"
+      },
+      "result": "PASS"
+    },
+    "v3_equivalent": {
+      "command": "HEXA_LOCAL=1 /Users/ghost/core/anima/bin/anima dialogue --probe \"안녕\"",
+      "exit_code": 0,
+      "substrate_response_lines_emitted": 4,
+      "synthetic_fallback_mode_active": true,
+      "phi_star_observed": 41.8488,
+      "phi_star_drift_pp": -0.0112,
+      "honest_c3_emit_count": 5,
+      "result": "PASS"
+    },
+    "v2_baseline_reference": {
+      "command": "HEXA_LOCAL=1 bash /Users/ghost/core/anima/bin/anima-core-dialogue.bash --selftest",
+      "exit_code": 0,
+      "verdict_emitted": "READY (Stage 1 + Stage 2 both landed)",
+      "result": "PASS",
+      "note": "direct-wrapper baseline matches top-level CLI dispatch outcome — equivalence confirmed"
+    }
+  },
+  "manual_standardization": {
+    "doc_path": "/Users/ghost/core/anima/docs/anima_top_level_cli_dispatch_audit_landed_2026_05_05.ai.md",
+    "preferred_user_command_korean": "anima dialogue --selftest / anima dialogue --probe \"...\" / anima dialogue --interactive",
+    "preferred_user_command_english": "anima dialogue --selftest / anima dialogue --probe \"...\" / anima dialogue --interactive",
+    "fallback_user_command": "bash /Users/ghost/core/anima/bin/anima-core-dialogue.bash --interactive",
+    "paradigm_doc_5_1_recommendation": "spec §5.1 currently reads `anima-core dialogue ...` — recommend updating to `anima dialogue ...` (top-level verb form) for naming consistency with all other topics (compute/weight/proposal/cert/...)"
+  },
+  "honest_c3": [
+    "C1 — top-level CLI 'anima' vs naming-convention reference 'anima-core' creates surface tension; spec §5.1 paradigm doc uses `anima-core dialogue` form but actual integrated dispatch is `anima dialogue` (top-level verb). Recommend spec doc update to align with top-level form.",
+    "C2 — dispatcher resolution depends on /Users/ghost/.hx/bin/anima shim staying intact (currently 284-byte exec passthrough). If shim is replaced or PATH order changes, top-level dispatch breaks silently.",
+    "C3 — V3 probe runs in synthetic_fallback mode because torch/transformers AutoModelForCausalLM import fails in mac-local hexa runtime. Real-CLM-v4 activation is a separate concern (HF cache + venv repair) — top-level dispatch correctness is independent.",
+    "C4 — HEXA_LOCAL=1 env prefix is mandatory for all dialogue invocations on mac (top-level OR direct wrapper); without it hexa-resolver routes to ubu1 remote where mac /opt/homebrew/bin/python3 path doesn't exist (V3 lesson). User-facing manual must always include this prefix or document HEXA_LOCAL=1 default in shell rc.",
+    "C5 — selftest verdict equivalence between top-level dispatch (dialogue.hexa sub_selftest) and direct wrapper (bash selftest()) is structural — they probe the same 4 artifacts but emit slightly different field labels (dialogue.hexa: `bash_wrapper`, bash: `mount_hexa`). Output text is not byte-identical even though semantics align."
+  ],
+  "files_changed": [],
+  "files_created": [
+    "/Users/ghost/core/anima/state/anima_top_level_cli_dispatch_audit_2026_05_05/verdict.json",
+    "/Users/ghost/core/anima/docs/anima_top_level_cli_dispatch_audit_landed_2026_05_05.ai.md"
+  ],
+  "raw_compliance": {
+    "raw_9_hexa_only": "PASS — no .py introduced; existing pattern unchanged",
+    "raw_10_honest_c3": "PASS — 5 caveats above",
+    "raw_15_no_hardcode": "PASS — no new hardcoded paths; bin/anima already resolves ANIMA/git-root",
+    "raw_15_additive": "PASS — no existing file modified (mount.hexa / dialogue.hexa / wrapper bash all untouched)"
+  },
+  "cost_usd": 0.0,
+  "duration_estimate_min": 25
+}

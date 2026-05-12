@@ -1,0 +1,254 @@
+[01:22:20] convo_5k_finetune_extended start  device=cuda
+[01:22:20] args: {'ckpt': '/workspace/post_ft_ckpt.pt', 'corpus': '/workspace/corpus_extended.txt', 'out': '/workspace/convo_5k_ft_ext_final.pt', 'out_prefix': '/workspace/convo_5k_ft_ext', 'log': '/workspace/ft_log_extended.txt', 'summary': '/workspace/ft_summary.json', 'steps': 20000, 'batch': 32, 'seq': 256, 'lr': 5e-06, 'lr_min': 5e-07, 'warmup': 200, 'device': 'cuda', 'save_every': 5000, 'seed': 43}
+[01:22:21] ckpt loaded: keys=108 base_step=55000 (0.52s)
+[01:22:21] load_state_dict: missing=0 unexpected=0
+[01:22:21] params: total=18,130,176
+[01:22:21] corpus loaded: 166,205,872 bytes (0.09s)
+[01:22:21] dataset: n_windows=649,240 batches_per_epoch=20,288
+[01:22:22] step     0  loss=1.8621  loss_a=1.8570  loss_g=1.8672  lr=2.50e-08  grad_norm=2.425
+[01:22:22] step     1  loss=1.8097  loss_a=1.8025  loss_g=1.8168  lr=5.00e-08  grad_norm=2.551
+[01:22:22] step     2  loss=1.7994  loss_a=1.8003  loss_g=1.7986  lr=7.50e-08  grad_norm=2.121
+[01:22:22] step     3  loss=1.8115  loss_a=1.8056  loss_g=1.8174  lr=1.00e-07  grad_norm=2.018
+[01:22:22] step     4  loss=1.8094  loss_a=1.8038  loss_g=1.8150  lr=1.25e-07  grad_norm=2.835
+[01:22:22] step     5  loss=1.7999  loss_a=1.7926  loss_g=1.8072  lr=1.50e-07  grad_norm=2.027
+[01:22:22] step     6  loss=1.6669  loss_a=1.6596  loss_g=1.6743  lr=1.75e-07  grad_norm=1.794
+[01:22:22] step     7  loss=1.8525  loss_a=1.8428  loss_g=1.8622  lr=2.00e-07  grad_norm=2.086
+[01:22:22] step     8  loss=1.7381  loss_a=1.7298  loss_g=1.7464  lr=2.25e-07  grad_norm=1.686
+[01:22:23] step     9  loss=1.7747  loss_a=1.7617  loss_g=1.7878  lr=2.50e-07  grad_norm=1.885
+[01:22:26] step   100  loss=1.7692  loss_a=1.7577  loss_g=1.7807  lr=2.52e-06  grad_norm=1.952
+[01:22:30] step   200  loss=1.9146  loss_a=1.9012  loss_g=1.9280  lr=5.00e-06  grad_norm=2.494
+[01:22:34] step   300  loss=1.6495  loss_a=1.6327  loss_g=1.6662  lr=5.00e-06  grad_norm=2.807
+[01:22:38] step   400  loss=1.6796  loss_a=1.6661  loss_g=1.6930  lr=5.00e-06  grad_norm=2.488
+[01:22:42] step   500  loss=1.7316  loss_a=1.7217  loss_g=1.7416  lr=5.00e-06  grad_norm=2.535
+[01:22:46] step   600  loss=1.7572  loss_a=1.7509  loss_g=1.7635  lr=5.00e-06  grad_norm=2.570
+[01:22:50] step   700  loss=1.7421  loss_a=1.7319  loss_g=1.7523  lr=4.99e-06  grad_norm=3.089
+[01:22:54] step   800  loss=1.6081  loss_a=1.5876  loss_g=1.6285  lr=4.99e-06  grad_norm=2.904
+[01:22:58] step   900  loss=1.7936  loss_a=1.7880  loss_g=1.7992  lr=4.99e-06  grad_norm=1.889
+[01:23:02] step  1000  loss=1.6919  loss_a=1.6796  loss_g=1.7042  lr=4.98e-06  grad_norm=1.988
+[01:23:06] step  1100  loss=1.7554  loss_a=1.7507  loss_g=1.7600  lr=4.98e-06  grad_norm=1.954
+[01:23:10] step  1200  loss=1.6697  loss_a=1.6561  loss_g=1.6832  lr=4.97e-06  grad_norm=1.659
+[01:23:14] step  1300  loss=1.7448  loss_a=1.7389  loss_g=1.7507  lr=4.97e-06  grad_norm=2.980
+[01:23:18] step  1400  loss=1.7832  loss_a=1.7758  loss_g=1.7905  lr=4.96e-06  grad_norm=2.434
+[01:23:22] step  1500  loss=1.7414  loss_a=1.7326  loss_g=1.7501  lr=4.95e-06  grad_norm=2.937
+[01:23:26] step  1600  loss=1.6587  loss_a=1.6518  loss_g=1.6656  lr=4.94e-06  grad_norm=2.231
+[01:23:30] step  1700  loss=1.6145  loss_a=1.6051  loss_g=1.6240  lr=4.94e-06  grad_norm=2.701
+[01:23:34] step  1800  loss=1.5935  loss_a=1.5841  loss_g=1.6029  lr=4.93e-06  grad_norm=2.476
+[01:23:38] step  1900  loss=1.6603  loss_a=1.6482  loss_g=1.6724  lr=4.92e-06  grad_norm=2.194
+[01:23:42] step  2000  loss=1.6923  loss_a=1.6853  loss_g=1.6992  lr=4.91e-06  grad_norm=2.378
+[01:23:46] step  2100  loss=1.6434  loss_a=1.6366  loss_g=1.6501  lr=4.90e-06  grad_norm=2.033
+[01:23:50] step  2200  loss=1.5528  loss_a=1.5460  loss_g=1.5597  lr=4.89e-06  grad_norm=2.211
+[01:23:54] step  2300  loss=1.6910  loss_a=1.6834  loss_g=1.6987  lr=4.88e-06  grad_norm=2.653
+[01:23:58] step  2400  loss=1.7234  loss_a=1.7122  loss_g=1.7346  lr=4.86e-06  grad_norm=2.895
+[01:24:02] step  2500  loss=1.6693  loss_a=1.6624  loss_g=1.6763  lr=4.85e-06  grad_norm=2.868
+[01:24:07] step  2600  loss=1.6023  loss_a=1.5954  loss_g=1.6092  lr=4.84e-06  grad_norm=3.453
+[01:24:11] step  2700  loss=1.6215  loss_a=1.6083  loss_g=1.6346  lr=4.83e-06  grad_norm=2.617
+[01:24:14] step  2800  loss=1.5778  loss_a=1.5668  loss_g=1.5889  lr=4.81e-06  grad_norm=2.334
+[01:24:18] step  2900  loss=1.7912  loss_a=1.7850  loss_g=1.7975  lr=4.80e-06  grad_norm=2.434
+[01:24:22] step  3000  loss=1.6700  loss_a=1.6617  loss_g=1.6782  lr=4.78e-06  grad_norm=3.080
+[01:24:26] step  3100  loss=1.6593  loss_a=1.6525  loss_g=1.6662  lr=4.77e-06  grad_norm=1.940
+[01:24:30] step  3200  loss=1.5933  loss_a=1.5881  loss_g=1.5985  lr=4.75e-06  grad_norm=2.529
+[01:24:33] step  3300  loss=1.6355  loss_a=1.6260  loss_g=1.6450  lr=4.73e-06  grad_norm=2.146
+[01:24:37] step  3400  loss=1.8145  loss_a=1.8129  loss_g=1.8161  lr=4.72e-06  grad_norm=2.531
+[01:24:41] step  3500  loss=1.6662  loss_a=1.6572  loss_g=1.6751  lr=4.70e-06  grad_norm=2.852
+[01:24:45] step  3600  loss=1.6333  loss_a=1.6231  loss_g=1.6435  lr=4.68e-06  grad_norm=2.943
+[01:24:49] step  3700  loss=1.7066  loss_a=1.6981  loss_g=1.7150  lr=4.66e-06  grad_norm=2.867
+[01:24:53] step  3800  loss=1.5879  loss_a=1.5829  loss_g=1.5928  lr=4.64e-06  grad_norm=2.438
+[01:24:57] step  3900  loss=1.6923  loss_a=1.6840  loss_g=1.7006  lr=4.62e-06  grad_norm=2.135
+[01:25:01] step  4000  loss=1.5277  loss_a=1.5199  loss_g=1.5355  lr=4.60e-06  grad_norm=2.639
+[01:25:05] step  4100  loss=1.6782  loss_a=1.6676  loss_g=1.6887  lr=4.58e-06  grad_norm=2.222
+[01:25:09] step  4200  loss=1.7307  loss_a=1.7215  loss_g=1.7399  lr=4.56e-06  grad_norm=2.246
+[01:25:13] step  4300  loss=1.5245  loss_a=1.5183  loss_g=1.5307  lr=4.54e-06  grad_norm=2.865
+[01:25:17] step  4400  loss=1.6246  loss_a=1.6158  loss_g=1.6333  lr=4.52e-06  grad_norm=3.772
+[01:25:21] step  4500  loss=1.6735  loss_a=1.6672  loss_g=1.6798  lr=4.50e-06  grad_norm=3.473
+[01:25:25] step  4600  loss=1.6533  loss_a=1.6496  loss_g=1.6571  lr=4.47e-06  grad_norm=2.263
+[01:25:29] step  4700  loss=1.5869  loss_a=1.5830  loss_g=1.5908  lr=4.45e-06  grad_norm=2.562
+[01:25:33] step  4800  loss=1.6395  loss_a=1.6346  loss_g=1.6445  lr=4.43e-06  grad_norm=3.181
+[01:25:37] step  4900  loss=1.6168  loss_a=1.6102  loss_g=1.6235  lr=4.40e-06  grad_norm=2.224
+[01:25:41]   ckpt saved: /workspace/convo_5k_ft_ext_step_5000.pt
+[01:25:41] step  5000  loss=1.5818  loss_a=1.5741  loss_g=1.5895  lr=4.38e-06  grad_norm=3.451
+[01:25:45] step  5100  loss=1.6050  loss_a=1.6036  loss_g=1.6065  lr=4.35e-06  grad_norm=2.406
+[01:25:49] step  5200  loss=1.5694  loss_a=1.5564  loss_g=1.5824  lr=4.33e-06  grad_norm=1.778
+[01:25:53] step  5300  loss=1.6984  loss_a=1.6902  loss_g=1.7067  lr=4.30e-06  grad_norm=2.691
+[01:25:57] step  5400  loss=1.7528  loss_a=1.7490  loss_g=1.7566  lr=4.28e-06  grad_norm=3.032
+[01:26:01] step  5500  loss=1.5458  loss_a=1.5356  loss_g=1.5559  lr=4.25e-06  grad_norm=2.630
+[01:26:05] step  5600  loss=1.5916  loss_a=1.5881  loss_g=1.5950  lr=4.22e-06  grad_norm=2.800
+[01:26:09] step  5700  loss=1.5328  loss_a=1.5240  loss_g=1.5416  lr=4.20e-06  grad_norm=2.307
+[01:26:13] step  5800  loss=1.6216  loss_a=1.6149  loss_g=1.6282  lr=4.17e-06  grad_norm=2.447
+[01:26:17] step  5900  loss=1.7447  loss_a=1.7387  loss_g=1.7507  lr=4.14e-06  grad_norm=3.744
+[01:26:21] step  6000  loss=1.6490  loss_a=1.6474  loss_g=1.6507  lr=4.11e-06  grad_norm=3.652
+[01:26:25] step  6100  loss=1.6710  loss_a=1.6609  loss_g=1.6810  lr=4.08e-06  grad_norm=2.572
+[01:26:29] step  6200  loss=1.6517  loss_a=1.6451  loss_g=1.6584  lr=4.06e-06  grad_norm=2.344
+[01:26:33] step  6300  loss=1.6624  loss_a=1.6563  loss_g=1.6686  lr=4.03e-06  grad_norm=3.204
+[01:26:37] step  6400  loss=1.5878  loss_a=1.5780  loss_g=1.5977  lr=4.00e-06  grad_norm=2.535
+[01:26:41] step  6500  loss=1.6376  loss_a=1.6346  loss_g=1.6407  lr=3.97e-06  grad_norm=2.423
+[01:26:45] step  6600  loss=1.5599  loss_a=1.5510  loss_g=1.5688  lr=3.94e-06  grad_norm=2.922
+[01:26:49] step  6700  loss=1.6010  loss_a=1.5926  loss_g=1.6094  lr=3.91e-06  grad_norm=3.244
+[01:26:53] step  6800  loss=1.6209  loss_a=1.6167  loss_g=1.6250  lr=3.88e-06  grad_norm=2.966
+[01:26:57] step  6900  loss=1.6046  loss_a=1.5946  loss_g=1.6147  lr=3.84e-06  grad_norm=3.251
+[01:27:01] step  7000  loss=1.7134  loss_a=1.7099  loss_g=1.7169  lr=3.81e-06  grad_norm=2.272
+[01:27:05] step  7100  loss=1.5592  loss_a=1.5539  loss_g=1.5646  lr=3.78e-06  grad_norm=2.722
+[01:27:10] step  7200  loss=1.5233  loss_a=1.5073  loss_g=1.5393  lr=3.75e-06  grad_norm=2.247
+[01:27:14] step  7300  loss=1.5821  loss_a=1.5698  loss_g=1.5945  lr=3.72e-06  grad_norm=2.234
+[01:27:17] step  7400  loss=1.6516  loss_a=1.6494  loss_g=1.6537  lr=3.68e-06  grad_norm=2.409
+[01:27:21] step  7500  loss=1.7061  loss_a=1.7035  loss_g=1.7087  lr=3.65e-06  grad_norm=3.037
+[01:27:25] step  7600  loss=1.6034  loss_a=1.5985  loss_g=1.6082  lr=3.62e-06  grad_norm=3.092
+[01:27:29] step  7700  loss=1.5661  loss_a=1.5583  loss_g=1.5739  lr=3.59e-06  grad_norm=3.408
+[01:27:33] step  7800  loss=1.4446  loss_a=1.4365  loss_g=1.4528  lr=3.55e-06  grad_norm=2.869
+[01:27:37] step  7900  loss=1.5586  loss_a=1.5527  loss_g=1.5645  lr=3.52e-06  grad_norm=2.792
+[01:27:42] step  8000  loss=1.6023  loss_a=1.5946  loss_g=1.6099  lr=3.49e-06  grad_norm=2.608
+[01:27:46] step  8100  loss=1.5652  loss_a=1.5592  loss_g=1.5713  lr=3.45e-06  grad_norm=2.262
+[01:27:50] step  8200  loss=1.5931  loss_a=1.5862  loss_g=1.6000  lr=3.42e-06  grad_norm=2.817
+[01:27:54] step  8300  loss=1.6048  loss_a=1.5994  loss_g=1.6102  lr=3.38e-06  grad_norm=2.204
+[01:27:58] step  8400  loss=1.5098  loss_a=1.5039  loss_g=1.5158  lr=3.35e-06  grad_norm=1.835
+[01:28:02] step  8500  loss=1.6004  loss_a=1.5978  loss_g=1.6030  lr=3.32e-06  grad_norm=2.689
+[01:28:06] step  8600  loss=1.6427  loss_a=1.6388  loss_g=1.6467  lr=3.28e-06  grad_norm=3.700
+[01:28:10] step  8700  loss=1.5906  loss_a=1.5829  loss_g=1.5983  lr=3.25e-06  grad_norm=3.114
+[01:28:14] step  8800  loss=1.6283  loss_a=1.6225  loss_g=1.6341  lr=3.21e-06  grad_norm=3.041
+[01:28:17] step  8900  loss=1.6390  loss_a=1.6355  loss_g=1.6426  lr=3.18e-06  grad_norm=2.657
+[01:28:21] step  9000  loss=1.5945  loss_a=1.5865  loss_g=1.6025  lr=3.14e-06  grad_norm=2.931
+[01:28:25] step  9100  loss=1.6835  loss_a=1.6786  loss_g=1.6884  lr=3.11e-06  grad_norm=2.829
+[01:28:29] step  9200  loss=1.5797  loss_a=1.5786  loss_g=1.5807  lr=3.07e-06  grad_norm=2.680
+[01:28:33] step  9300  loss=1.6418  loss_a=1.6390  loss_g=1.6446  lr=3.03e-06  grad_norm=2.047
+[01:28:37] step  9400  loss=1.5222  loss_a=1.5147  loss_g=1.5297  lr=3.00e-06  grad_norm=2.603
+[01:28:41] step  9500  loss=1.5222  loss_a=1.5151  loss_g=1.5293  lr=2.96e-06  grad_norm=2.142
+[01:28:45] step  9600  loss=1.5280  loss_a=1.5213  loss_g=1.5347  lr=2.93e-06  grad_norm=2.432
+[01:28:49] step  9700  loss=1.5148  loss_a=1.5097  loss_g=1.5200  lr=2.89e-06  grad_norm=2.623
+[01:28:53] step  9800  loss=1.5650  loss_a=1.5556  loss_g=1.5744  lr=2.86e-06  grad_norm=1.904
+[01:28:57] step  9900  loss=1.7068  loss_a=1.7054  loss_g=1.7083  lr=2.82e-06  grad_norm=2.912
+[01:29:01]   ckpt saved: /workspace/convo_5k_ft_ext_step_10000.pt
+[01:29:02] step 10000  loss=1.8460  loss_a=1.8451  loss_g=1.8468  lr=2.79e-06  grad_norm=2.327
+[01:29:05] step 10100  loss=1.4648  loss_a=1.4575  loss_g=1.4720  lr=2.75e-06  grad_norm=2.530
+[01:29:10] step 10200  loss=1.5959  loss_a=1.5924  loss_g=1.5995  lr=2.71e-06  grad_norm=2.213
+[01:29:13] step 10300  loss=1.5913  loss_a=1.5873  loss_g=1.5952  lr=2.68e-06  grad_norm=2.377
+[01:29:17] step 10400  loss=1.4968  loss_a=1.4921  loss_g=1.5015  lr=2.64e-06  grad_norm=2.610
+[01:29:21] step 10500  loss=1.5435  loss_a=1.5387  loss_g=1.5482  lr=2.61e-06  grad_norm=2.421
+[01:29:25] step 10600  loss=1.4651  loss_a=1.4601  loss_g=1.4700  lr=2.57e-06  grad_norm=2.377
+[01:29:29] step 10700  loss=1.6668  loss_a=1.6635  loss_g=1.6700  lr=2.54e-06  grad_norm=2.566
+[01:29:33] step 10800  loss=1.4802  loss_a=1.4763  loss_g=1.4841  lr=2.50e-06  grad_norm=2.311
+[01:29:37] step 10900  loss=1.4692  loss_a=1.4590  loss_g=1.4794  lr=2.47e-06  grad_norm=2.877
+[01:29:41] step 11000  loss=1.5145  loss_a=1.5087  loss_g=1.5204  lr=2.43e-06  grad_norm=2.849
+[01:29:45] step 11100  loss=1.5907  loss_a=1.5844  loss_g=1.5970  lr=2.39e-06  grad_norm=2.238
+[01:29:49] step 11200  loss=1.4945  loss_a=1.4828  loss_g=1.5062  lr=2.36e-06  grad_norm=2.810
+[01:29:53] step 11300  loss=1.5520  loss_a=1.5487  loss_g=1.5552  lr=2.32e-06  grad_norm=2.726
+[01:29:57] step 11400  loss=1.5298  loss_a=1.5229  loss_g=1.5367  lr=2.29e-06  grad_norm=2.760
+[01:30:01] step 11500  loss=1.4261  loss_a=1.4237  loss_g=1.4284  lr=2.25e-06  grad_norm=2.396
+[01:30:05] step 11600  loss=1.5577  loss_a=1.5495  loss_g=1.5659  lr=2.22e-06  grad_norm=2.310
+[01:30:09] step 11700  loss=1.5834  loss_a=1.5735  loss_g=1.5933  lr=2.18e-06  grad_norm=2.658
+[01:30:13] step 11800  loss=1.5185  loss_a=1.5142  loss_g=1.5229  lr=2.15e-06  grad_norm=2.996
+[01:30:17] step 11900  loss=1.5265  loss_a=1.5215  loss_g=1.5314  lr=2.12e-06  grad_norm=2.581
+[01:30:21] step 12000  loss=1.5403  loss_a=1.5346  loss_g=1.5461  lr=2.08e-06  grad_norm=2.236
+[01:30:25] step 12100  loss=1.6346  loss_a=1.6290  loss_g=1.6402  lr=2.05e-06  grad_norm=2.300
+[01:30:29] step 12200  loss=1.5137  loss_a=1.5078  loss_g=1.5196  lr=2.01e-06  grad_norm=2.706
+[01:30:33] step 12300  loss=1.5360  loss_a=1.5309  loss_g=1.5410  lr=1.98e-06  grad_norm=2.685
+[01:30:37] step 12400  loss=1.6717  loss_a=1.6683  loss_g=1.6750  lr=1.95e-06  grad_norm=1.950
+[01:30:41] step 12500  loss=1.6080  loss_a=1.6016  loss_g=1.6144  lr=1.91e-06  grad_norm=2.435
+[01:30:45] step 12600  loss=1.6402  loss_a=1.6406  loss_g=1.6399  lr=1.88e-06  grad_norm=1.930
+[01:30:49] step 12700  loss=1.4389  loss_a=1.4270  loss_g=1.4508  lr=1.85e-06  grad_norm=2.282
+[01:30:53] step 12800  loss=1.5585  loss_a=1.5544  loss_g=1.5627  lr=1.82e-06  grad_norm=3.348
+[01:30:57] step 12900  loss=1.4007  loss_a=1.3945  loss_g=1.4068  lr=1.78e-06  grad_norm=2.674
+[01:31:01] step 13000  loss=1.5654  loss_a=1.5619  loss_g=1.5689  lr=1.75e-06  grad_norm=2.302
+[01:31:05] step 13100  loss=1.4831  loss_a=1.4761  loss_g=1.4902  lr=1.72e-06  grad_norm=2.623
+[01:31:09] step 13200  loss=1.5647  loss_a=1.5581  loss_g=1.5713  lr=1.69e-06  grad_norm=2.241
+[01:31:13] step 13300  loss=1.5231  loss_a=1.5185  loss_g=1.5278  lr=1.66e-06  grad_norm=2.209
+[01:31:17] step 13400  loss=1.6060  loss_a=1.6036  loss_g=1.6084  lr=1.63e-06  grad_norm=2.126
+[01:31:21] step 13500  loss=1.5300  loss_a=1.5221  loss_g=1.5379  lr=1.59e-06  grad_norm=2.902
+[01:31:25] step 13600  loss=1.4896  loss_a=1.4839  loss_g=1.4953  lr=1.56e-06  grad_norm=2.794
+[01:31:29] step 13700  loss=1.6112  loss_a=1.6036  loss_g=1.6189  lr=1.53e-06  grad_norm=2.672
+[01:31:33] step 13800  loss=1.5783  loss_a=1.5691  loss_g=1.5874  lr=1.50e-06  grad_norm=2.288
+[01:31:37] step 13900  loss=1.5736  loss_a=1.5677  loss_g=1.5795  lr=1.47e-06  grad_norm=1.871
+[01:31:41] step 14000  loss=1.4604  loss_a=1.4526  loss_g=1.4683  lr=1.44e-06  grad_norm=2.084
+[01:31:45] step 14100  loss=1.5532  loss_a=1.5492  loss_g=1.5571  lr=1.42e-06  grad_norm=2.021
+[01:31:49] step 14200  loss=1.6813  loss_a=1.6764  loss_g=1.6862  lr=1.39e-06  grad_norm=2.888
+[01:31:53] step 14300  loss=1.4485  loss_a=1.4409  loss_g=1.4562  lr=1.36e-06  grad_norm=2.528
+[01:31:57] step 14400  loss=1.4498  loss_a=1.4461  loss_g=1.4536  lr=1.33e-06  grad_norm=2.496
+[01:32:01] step 14500  loss=1.4917  loss_a=1.4847  loss_g=1.4987  lr=1.30e-06  grad_norm=2.108
+[01:32:05] step 14600  loss=1.3993  loss_a=1.3926  loss_g=1.4060  lr=1.28e-06  grad_norm=3.108
+[01:32:09] step 14700  loss=1.5673  loss_a=1.5625  loss_g=1.5721  lr=1.25e-06  grad_norm=2.897
+[01:32:13] step 14800  loss=1.6368  loss_a=1.6320  loss_g=1.6416  lr=1.22e-06  grad_norm=3.178
+[01:32:17] step 14900  loss=1.4220  loss_a=1.4161  loss_g=1.4279  lr=1.20e-06  grad_norm=2.151
+[01:32:21]   ckpt saved: /workspace/convo_5k_ft_ext_step_15000.pt
+[01:32:21] step 15000  loss=1.5535  loss_a=1.5501  loss_g=1.5569  lr=1.17e-06  grad_norm=3.639
+[01:32:25] step 15100  loss=1.5167  loss_a=1.5121  loss_g=1.5212  lr=1.15e-06  grad_norm=3.291
+[01:32:29] step 15200  loss=1.5701  loss_a=1.5625  loss_g=1.5776  lr=1.12e-06  grad_norm=1.776
+[01:32:33] step 15300  loss=1.6000  loss_a=1.5971  loss_g=1.6029  lr=1.10e-06  grad_norm=2.664
+[01:32:37] step 15400  loss=1.3807  loss_a=1.3742  loss_g=1.3872  lr=1.07e-06  grad_norm=2.159
+[01:32:41] step 15500  loss=1.4977  loss_a=1.4919  loss_g=1.5036  lr=1.05e-06  grad_norm=2.413
+[01:32:45] step 15600  loss=1.5405  loss_a=1.5368  loss_g=1.5442  lr=1.03e-06  grad_norm=2.284
+[01:32:49] step 15700  loss=1.4663  loss_a=1.4588  loss_g=1.4738  lr=1.00e-06  grad_norm=1.792
+[01:32:53] step 15800  loss=1.5388  loss_a=1.5377  loss_g=1.5400  lr=9.81e-07  grad_norm=3.186
+[01:32:57] step 15900  loss=1.5915  loss_a=1.5867  loss_g=1.5962  lr=9.60e-07  grad_norm=2.933
+[01:33:01] step 16000  loss=1.7079  loss_a=1.7038  loss_g=1.7120  lr=9.38e-07  grad_norm=2.778
+[01:33:05] step 16100  loss=1.5486  loss_a=1.5429  loss_g=1.5542  lr=9.17e-07  grad_norm=1.891
+[01:33:09] step 16200  loss=1.5797  loss_a=1.5755  loss_g=1.5840  lr=8.97e-07  grad_norm=1.924
+[01:33:13] step 16300  loss=1.6139  loss_a=1.6107  loss_g=1.6172  lr=8.77e-07  grad_norm=2.231
+[01:33:17] step 16400  loss=1.5860  loss_a=1.5831  loss_g=1.5889  lr=8.57e-07  grad_norm=2.554
+[01:33:21] step 16500  loss=1.6297  loss_a=1.6284  loss_g=1.6311  lr=8.38e-07  grad_norm=1.930
+[01:33:25] step 16600  loss=1.4737  loss_a=1.4709  loss_g=1.4765  lr=8.20e-07  grad_norm=2.462
+[01:33:29] step 16700  loss=1.4241  loss_a=1.4169  loss_g=1.4312  lr=8.01e-07  grad_norm=1.795
+[01:33:33] step 16800  loss=1.5736  loss_a=1.5701  loss_g=1.5772  lr=7.84e-07  grad_norm=2.331
+[01:33:37] step 16900  loss=1.4987  loss_a=1.4924  loss_g=1.5049  lr=7.67e-07  grad_norm=2.175
+[01:33:42] step 17000  loss=1.5454  loss_a=1.5423  loss_g=1.5484  lr=7.50e-07  grad_norm=2.733
+[01:33:46] step 17100  loss=1.4008  loss_a=1.3966  loss_g=1.4051  lr=7.34e-07  grad_norm=2.286
+[01:33:50] step 17200  loss=1.4758  loss_a=1.4711  loss_g=1.4806  lr=7.18e-07  grad_norm=1.995
+[01:33:54] step 17300  loss=1.4047  loss_a=1.3961  loss_g=1.4133  lr=7.03e-07  grad_norm=2.301
+[01:33:58] step 17400  loss=1.6052  loss_a=1.6017  loss_g=1.6088  lr=6.89e-07  grad_norm=2.106
+[01:34:02] step 17500  loss=1.4236  loss_a=1.4175  loss_g=1.4296  lr=6.75e-07  grad_norm=2.272
+[01:34:06] step 17600  loss=1.4377  loss_a=1.4332  loss_g=1.4422  lr=6.61e-07  grad_norm=2.697
+[01:34:10] step 17700  loss=1.4970  loss_a=1.4905  loss_g=1.5035  lr=6.48e-07  grad_norm=2.465
+[01:34:14] step 17800  loss=1.4661  loss_a=1.4596  loss_g=1.4725  lr=6.36e-07  grad_norm=1.916
+[01:34:18] step 17900  loss=1.4830  loss_a=1.4761  loss_g=1.4899  lr=6.24e-07  grad_norm=2.587
+[01:34:22] step 18000  loss=1.4930  loss_a=1.4875  loss_g=1.4986  lr=6.12e-07  grad_norm=2.358
+[01:34:26] step 18100  loss=1.4793  loss_a=1.4712  loss_g=1.4875  lr=6.01e-07  grad_norm=2.386
+[01:34:30] step 18200  loss=1.5200  loss_a=1.5127  loss_g=1.5274  lr=5.91e-07  grad_norm=2.071
+[01:34:34] step 18300  loss=1.5006  loss_a=1.4968  loss_g=1.5043  lr=5.81e-07  grad_norm=2.370
+[01:34:38] step 18400  loss=1.4584  loss_a=1.4546  loss_g=1.4623  lr=5.72e-07  grad_norm=2.541
+[01:34:42] step 18500  loss=1.4839  loss_a=1.4836  loss_g=1.4841  lr=5.63e-07  grad_norm=2.493
+[01:34:46] step 18600  loss=1.4648  loss_a=1.4595  loss_g=1.4701  lr=5.55e-07  grad_norm=2.002
+[01:34:50] step 18700  loss=1.4937  loss_a=1.4890  loss_g=1.4983  lr=5.48e-07  grad_norm=2.809
+[01:34:54] step 18800  loss=1.4545  loss_a=1.4481  loss_g=1.4609  lr=5.41e-07  grad_norm=1.976
+[01:34:59] step 18900  loss=1.4645  loss_a=1.4582  loss_g=1.4708  lr=5.34e-07  grad_norm=2.610
+[01:35:03] step 19000  loss=1.5634  loss_a=1.5589  loss_g=1.5678  lr=5.28e-07  grad_norm=2.323
+[01:35:07] step 19100  loss=1.5331  loss_a=1.5296  loss_g=1.5367  lr=5.23e-07  grad_norm=2.059
+[01:35:11] step 19200  loss=1.4901  loss_a=1.4825  loss_g=1.4978  lr=5.18e-07  grad_norm=2.443
+[01:35:15] step 19300  loss=1.6156  loss_a=1.6121  loss_g=1.6191  lr=5.14e-07  grad_norm=2.116
+[01:35:19] step 19400  loss=1.7013  loss_a=1.6937  loss_g=1.7089  lr=5.10e-07  grad_norm=2.327
+[01:35:23] step 19500  loss=1.5306  loss_a=1.5231  loss_g=1.5381  lr=5.07e-07  grad_norm=2.946
+[01:35:27] step 19600  loss=1.5178  loss_a=1.5128  loss_g=1.5228  lr=5.05e-07  grad_norm=2.619
+[01:35:31] step 19700  loss=1.5574  loss_a=1.5543  loss_g=1.5606  lr=5.03e-07  grad_norm=2.634
+[01:35:35] step 19800  loss=1.5169  loss_a=1.5105  loss_g=1.5233  lr=5.01e-07  grad_norm=1.970
+[01:35:39] step 19900  loss=1.5262  loss_a=1.5202  loss_g=1.5322  lr=5.00e-07  grad_norm=2.096
+[01:35:43]   ckpt saved: /workspace/convo_5k_ft_ext_step_20000.pt
+[01:35:43] train done: 20000 steps, 801.09s (0.040s/step)
+[01:35:43] loss first/last: 1.8621 -> 1.4442  delta=+0.4179
+[01:35:43] grad_norm first/last: 2.425 -> 2.273
+[01:35:43] final ckpt saved: /workspace/convo_5k_ft_ext_final.pt
+[01:35:43] summary: /workspace/ft_summary.json
+
+--- SUMMARY ---
+{
+  "run_type": "extended_resume",
+  "steps_done": 20000,
+  "base_step_at_start": 55000,
+  "wall_clock_s": 801.09,
+  "step_time_s": 0.0401,
+  "loss_first": 1.8621,
+  "loss_last": 1.4442,
+  "loss_delta": 0.4179,
+  "loss_decreased": true,
+  "grad_norm_first": 2.4253,
+  "grad_norm_last": 2.2734,
+  "grad_flow_ok": true,
+  "params_total": 18130176,
+  "ckpt_in": "/workspace/post_ft_ckpt.pt",
+  "ckpt_out": "/workspace/convo_5k_ft_ext_final.pt",
+  "corpus_bytes": 166205872,
+  "windows": 649240,
+  "config": {
+    "batch": 32,
+    "seq": 256,
+    "lr_max": 5e-06,
+    "lr_min": 5e-07,
+    "warmup": 200,
+    "steps_target": 20000
+  }
+}

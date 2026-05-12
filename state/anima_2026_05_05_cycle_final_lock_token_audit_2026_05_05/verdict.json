@@ -1,0 +1,126 @@
+{
+  "task_id": "BG-DF",
+  "title": "Anima 2026-05-05 cycle final lock — token leak audit + commit-readiness manifest",
+  "date": "2026-05-06",
+  "status": "AUDIT_CLEAN_COMMIT_READY_TIERED",
+  "mode": "mac_doc_only",
+  "cost_usd": 0.0,
+  "duration_min": 25,
+  "predecessors": [
+    "docs/anima_2026_05_05_cycle_commit_manifest_landed_2026_05_05.ai.md",
+    "docs/anima_2026_05_05_priority_subset_commit_manifest_2026_05_05.ai.md"
+  ],
+
+  "token_leak_scan": {
+    "status": "CLEAN",
+    "patterns": ["hf_[A-Za-z0-9]{20,}", "sk-ant-[A-Za-z0-9]{20,}", "ghp_[A-Za-z0-9]{20,}", "AKIA[A-Z0-9]{16}", "BEGIN (RSA |EC |OPENSSH )?PRIVATE KEY", "aws_secret_access_key="],
+    "untracked_scanned": 465,
+    "modified_tracked_scanned": 47,
+    "total_artifacts_scanned": 512,
+    "matches": 0,
+    "extension_check_envelope_key_pem_p12": 0,
+    "explicit_hf_promote_scripts_grep": 0
+  },
+
+  "groups": {
+    "P_priority_5": {
+      "members": ["BG-BJ residual basin", "BG-AY 4-closure theorem", "BG-AN minimum viable dialogue", "BG-BL nnsight smoke", "BG-BN Pythia phi smoke"],
+      "files": 14,
+      "tier": 1,
+      "approx_duration_min": 5,
+      "risk": "LOW"
+    },
+    "A_stage_1_2_mount": {
+      "description": "KICK-1/2/3 + V1-V6 + mount.hexa + dialogue analyzer + 21 dialogue session jsonl",
+      "files_approx": 25,
+      "tier": 2,
+      "approx_duration_min": 15,
+      "risk": "LOW"
+    },
+    "B_5_emerge_candidates": {
+      "members": ["cand-D always-inject", "cand-E ODE AR-bridge", "cand-F CA-rule 5-axis vote", "cand-F-v2 cosine probe", "cand-G+H consolidated revival"],
+      "files": 10,
+      "tier": 3,
+      "approx_duration_min": 30,
+      "risk": "LOW"
+    },
+    "C_empirical_50_plus_BG": {
+      "description": "chat_*, cand_d_*, real_mode_sweep, sweep BGs",
+      "files_approx": 190,
+      "sub_clusters": ["C-1 axis sweeps", "C-2 decode strategies", "C-3 mechanism probes", "C-4 intervention experiments", "C-5 cand-d magnitude", "C-6 real-mode + repl smoke"],
+      "tier": 4,
+      "approx_duration_min": 60,
+      "risk": "MEDIUM"
+    },
+    "D_cycle_insights": {
+      "description": "cycle_close_decision, summary, ledger, aggregate, paradigm_acceptance, naming, misc audit/spec",
+      "files": 38,
+      "sub_clusters": ["D-1 close decisions", "D-2 aggregates/summaries", "D-3 paradigm acceptance/naming", "D-4 misc audits/specs"],
+      "tier": 4,
+      "approx_duration_min": 30,
+      "risk": "LOW"
+    },
+    "E_HF_promote_cleanup": {
+      "description": "auto-fire scripts time-gated, watchdog audit, pre-fire audit",
+      "files": 8,
+      "tier": 5,
+      "approx_duration_min": 5,
+      "risk": "LOW",
+      "time_gate": ["clm_2026-05-06T23:26Z", "pbeta_2026-05-07T03:48Z"]
+    },
+    "X_triage_deferred": {
+      "sub_groups": {
+        "X-1_clm_v4_lora_sft_79MB_jsonl": {"files": 29, "verdict": "DO_NOT_COMMIT_GITIGNORE_OR_HF", "reason": "79 MB violates >5MB HF-only rule"},
+        "X-2_proposals_2026_04_22_refinement": {"files": 84, "verdict": "USER_TRIAGE_DEFER"},
+        "X-3_anima_core_dialogues_jsonl": {"files": 21, "verdict": "INCLUDED_IN_TIER_2"},
+        "X-4_h100_watchdog": {"files": 8, "verdict": "BUNDLE_TIER_5"},
+        "X-5_eeg_audio_cache_aiff": {"files": 8, "verdict": "DO_NOT_COMMIT_GITIGNORE_OR_HF"},
+        "X-6_phase_e_eeg_live_npy": {"files": 2, "verdict": "OK_TIER_4_D_4"}
+      }
+    }
+  },
+
+  "fire_sequence": {
+    "tier_1_priority_5": "5 commits per BG-BZ §3 HEREDOC templates",
+    "tier_2_mount_layer": "1 bundled commit Group A",
+    "tier_3_emerge_candidates": "5 commits one per cand",
+    "tier_4_empirical_cycle_insights": "10 commits semantic clusters C-1..C-6 + D-1..D-4",
+    "tier_5_hf_time_gated": "1 commit before T-window dwell"
+  },
+
+  "handoff_summary_7_facts": [
+    "100+ BG land complete; 512 total artifacts (465 untracked + 47 modified-tracked); all token-leak CLEAN",
+    "#115 architectural 4-closure theorem (BG-AY): chat capability on CLM v4 mk2 v1 FALSIFIED along 4 axes; chat path of record = Llama-3.2-3B Path A v2 (composite 0.5584); CLM v4 = substrate-research-only",
+    "Paradigm B + C ACHIEVABLE_NOW (BG-AN F-AN-1 PASS): REPL helper emits phi-star + drift + hsd + l2-var per turn",
+    "Residual basin reframing (BG-BJ + BG-CI L13-L15 onset): collapse upstream of lm_head; output-projection class fixes invalid by construction",
+    "head_a alignment destroyed (BG-CD multilingual): phi-star CLM v4-specific geometry, NOT substrate-agnostic",
+    "Stage 3 protocol ready (BG-D 30 sessions); Stage 1+2 mount layer (Tier 2) precondition",
+    "HF promote time-gated: clm 2026-05-06T23:26Z, Pbeta 2026-05-07T03:48Z; own 15 PRIVATE->PUBLIC lifecycle"
+  ],
+
+  "honest_c3": [
+    "C3-A: manifest does NOT execute commits per raw#9; user remains fire-permission authority",
+    "C3-B: Group X-1 79MB jsonl violates HF-only memory rule; .gitignore mandatory before Tier 4/5",
+    "C3-C: 28 of 465 untracked unbound to BG-cycle; assigned to Tier 4 D-4 by judgment, user may prefer different bundling",
+    "C3-D: Group P doc sizes drifted (entropy_trajectory 7255 bytes vs BG-BZ 5818) — git diff if byte-exact reproduction required",
+    "C3-E: 4 session_2026_05_04_to_05_closure_audit_v3/v4 docs may belong to previous cycle's commit lane",
+    "C3-F: Tier 1 commands reference BG-BZ §3 HEREDOCs rather than duplicating; user must open BG-BZ for copy-paste",
+    "C3-G: Group X-2 proposals/refinement 84 files from 2026-04-22 may be cycle artifacts OR build churn; sample inspection needed for definitive triage"
+  ],
+
+  "constraints_compliance": {
+    "raw_9_honest_scope": "PASS",
+    "raw_10_honest_c3": "PASS_7_listed",
+    "raw_15_additive": "PASS",
+    "no_commit_executed": "PASS",
+    "no_token_literal_embedded": "PASS",
+    "no_code_or_script_change": "PASS",
+    "new_files_count": 2,
+    "new_files_paths": [
+      "docs/anima_2026_05_05_cycle_final_lock_token_audit_2026_05_05.md",
+      "state/anima_2026_05_05_cycle_final_lock_token_audit_2026_05_05/verdict.json"
+    ]
+  },
+
+  "next_steps": "user fire-permission decision; if YES start Tier 1 (5 commits, ~5min); if HF-promote window dwell imminent prioritize Tier 5; X-1 79MB jsonl must be .gitignore'd before any state/clm_v4_lora_sft_2026_05_05 commit"
+}

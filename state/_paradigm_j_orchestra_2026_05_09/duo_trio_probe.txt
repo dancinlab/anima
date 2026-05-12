@@ -1,0 +1,43 @@
+=== ai-duo dry-run probe (paradigm-j ↔ clm-v4-1-8) ===
+  anima chat --benchmark --mode=ai-duo — 4 lanes × 10 prompts · init-pattern=self-reflective
+  repo     = dancinlab/clm-v4-paradigm-j-50k-final
+  exec     = DRY_RUN
+  own 22 mandatory report · own 33 trinity · own 34 mandate-1 raw bytes
+  own 41 chat lane plugin pattern · own 18 chat-cap C2 multi-mode
+  own 41 axis-8 chat init-pattern plugin (4 patterns: autonomous / system-seed / topic-pool / self-reflective)
+  own 41 axis-N chat transport plugin (5 transports: fifo-dispatch / beta1-channel / libllama-ffi / subprocess-pipe / imtl)
+════════════════════════════════════════════════════════════════════════
+
+──── init-pattern=self-reflective ────
+    Pattern 4 — self-introspection seed (anima 정합 default; own 22)
+══════════════════════════════════════════════════════════════════
+── MODE ai-duo ── 2 models dialogue (chat/duo/duo.hexa; 22+ BG saga first land iter 4 (f))
+══════════════════════════════════════════════════════════════════
+[bench:ai-duo] reference pair: dancinlab/clm-v4-paradigm-j-50k-final ↔ clm-v4-1-8 · turns=3 · init-pattern=self-reflective
+[DRY_RUN] would invoke: hexa run /Users/ghost/core/anima/tool/anima_cli/chat/duo/duo.hexa --duo dancinlab/clm-v4-paradigm-j-50k-final clm-v4-1-8 --turns 3 --verdict simple --init-pattern=self-reflective
+
+════════════════════════════════════════════════════════════════════════
+  benchmark complete · own 38 매단계 ledger emit (caller responsibility)
+════════════════════════════════════════════════════════════════════════
+
+=== ai-trio dry-run probe ===
+  anima chat --benchmark --mode=ai-trio — 4 lanes × 10 prompts · init-pattern=self-reflective
+  repo     = dancinlab/clm-v4-paradigm-j-50k-final
+  exec     = DRY_RUN
+  own 22 mandatory report · own 33 trinity · own 34 mandate-1 raw bytes
+  own 41 chat lane plugin pattern · own 18 chat-cap C2 multi-mode
+  own 41 axis-8 chat init-pattern plugin (4 patterns: autonomous / system-seed / topic-pool / self-reflective)
+  own 41 axis-N chat transport plugin (5 transports: fifo-dispatch / beta1-channel / libllama-ffi / subprocess-pipe / imtl)
+════════════════════════════════════════════════════════════════════════
+
+──── init-pattern=self-reflective ────
+    Pattern 4 — self-introspection seed (anima 정합 default; own 22)
+══════════════════════════════════════════════════════════════════
+── MODE ai-trio ── 3 models round-robin OR moderated (chat/trio/trio.hexa; SKELETON Phase A)
+══════════════════════════════════════════════════════════════════
+[bench:ai-trio] reference triple: dancinlab/clm-v4-paradigm-j-50k-final + clm-v4-1-8 + clm-v4-paradigm-j · turns=2 · mode=round-robin · init-pattern=self-reflective
+[DRY_RUN] would invoke: hexa run /Users/ghost/core/anima/tool/anima_cli/chat/trio/trio.hexa --trio dancinlab/clm-v4-paradigm-j-50k-final clm-v4-1-8 clm-v4-paradigm-j --turns 2 --mode round-robin --verdict simple --init-pattern=self-reflective
+
+════════════════════════════════════════════════════════════════════════
+  benchmark complete · own 38 매단계 ledger emit (caller responsibility)
+════════════════════════════════════════════════════════════════════════

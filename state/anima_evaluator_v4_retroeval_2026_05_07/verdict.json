@@ -1,0 +1,371 @@
+{
+  "bg_id": "BG-JF",
+  "ts": "2026-05-07T08:00:00Z",
+  "paradigm": "v4-evaluator-with-embedding-sim-and-lesson-k-mitigation",
+  "host": "mac local",
+  "cost_usd": 0.0,
+  "training_steps": 0,
+  "bg_kind": "tooling",
+  "bgs_evaluated": 18,
+  "bgs_list": [
+    "BG-FY",
+    "BG-HA",
+    "BG-HF",
+    "BG-HJ",
+    "BG-HK",
+    "BG-HP",
+    "BG-HQ",
+    "BG-HS-R1",
+    "BG-HU",
+    "BG-HW",
+    "BG-IA",
+    "BG-HT",
+    "BG-IE",
+    "BG-IF",
+    "BG-IG",
+    "BG-IL",
+    "BG-IM",
+    "BG-IO"
+  ],
+  "records_evaluated": 3410,
+  "any_simple_stack_pass_surfaced_under_v4": false,
+  "any_true_partial_pass_surfaced_under_v4": false,
+  "lesson_k_traps_caught": [
+    [
+      "BG-HP",
+      null,
+      0.0,
+      "v3=V3_PARTIAL_SIGNAL->v4=V4_FAIL"
+    ],
+    [
+      "BG-HS-R1",
+      null,
+      0.0,
+      "v3=V3_PARTIAL_SIGNAL->v4=V4_FAIL"
+    ],
+    [
+      "BG-HU",
+      null,
+      0.0,
+      "v3=V3_PARTIAL_SIGNAL->v4=V4_FAIL"
+    ],
+    [
+      "BG-HW",
+      null,
+      0.0,
+      "v3=V3_PARTIAL_SIGNAL->v4=V4_FAIL"
+    ],
+    [
+      "BG-HT",
+      null,
+      0.0,
+      "v3=V3_PARTIAL_SIGNAL->v4=V4_FAIL"
+    ],
+    [
+      "BG-IE",
+      null,
+      0.0,
+      "v3=V3_PARTIAL_SIGNAL->v4=V4_FAIL"
+    ],
+    [
+      "BG-IF",
+      2500,
+      0.967,
+      "v3=V3_PARTIAL_SIGNAL->v4=V4_FAIL"
+    ],
+    [
+      "BG-IG",
+      null,
+      0.0,
+      "v3=V3_PARTIAL_SIGNAL->v4=V4_FAIL"
+    ],
+    [
+      "BG-IL",
+      1400,
+      0.867,
+      "v3=V3_PARTIAL_SIGNAL->v4=V4_FAIL"
+    ],
+    [
+      "BG-IM",
+      null,
+      0.0,
+      "v3=V3_FAIL->v4=V4_FAIL"
+    ],
+    [
+      "BG-IO",
+      1400,
+      0.9,
+      "v3=V3_PARTIAL_SIGNAL->v4=V4_FAIL"
+    ]
+  ],
+  "lesson_k_traps_caught_count": 11,
+  "downgrades_under_v4": [
+    [
+      "BG-HP",
+      "V3_PARTIAL_SIGNAL",
+      "V4_FAIL"
+    ],
+    [
+      "BG-HS-R1",
+      "V3_PARTIAL_SIGNAL",
+      "V4_FAIL"
+    ],
+    [
+      "BG-HU",
+      "V3_PARTIAL_SIGNAL",
+      "V4_FAIL"
+    ],
+    [
+      "BG-HW",
+      "V3_PARTIAL_SIGNAL",
+      "V4_FAIL"
+    ],
+    [
+      "BG-HT",
+      "V3_PARTIAL_SIGNAL",
+      "V4_FAIL"
+    ],
+    [
+      "BG-IE",
+      "V3_PARTIAL_SIGNAL",
+      "V4_FAIL"
+    ],
+    [
+      "BG-IF",
+      "V3_PARTIAL_SIGNAL",
+      "V4_FAIL"
+    ],
+    [
+      "BG-IG",
+      "V3_PARTIAL_SIGNAL",
+      "V4_FAIL"
+    ],
+    [
+      "BG-IL",
+      "V3_PARTIAL_SIGNAL",
+      "V4_FAIL"
+    ],
+    [
+      "BG-IO",
+      "V3_PARTIAL_SIGNAL",
+      "V4_FAIL"
+    ]
+  ],
+  "upgrades_under_v4": [],
+  "per_bg_summary": {
+    "BG-FY": {
+      "v2_class": "PARTIAL_PASS_NO_CONTEXT",
+      "v3_class": "V3_PARTIAL_SIGNAL",
+      "v4_final_class": "V4_FAIL",
+      "n_responses": 30,
+      "best_v4_step": null,
+      "best_v4_pass": 0,
+      "peak_lesson_k_step": null,
+      "peak_lesson_k_deg_pct": 0.0,
+      "total_lesson_k_caught": 0
+    },
+    "BG-HA": {
+      "v2_class": "PARTIAL_PASS_NO_CONTEXT_v2",
+      "v3_class": "V3_PARTIAL_SIGNAL",
+      "v4_final_class": "V4_FAIL",
+      "n_responses": 200,
+      "best_v4_step": 4500,
+      "best_v4_pass": 1,
+      "peak_lesson_k_step": null,
+      "peak_lesson_k_deg_pct": 0.0,
+      "total_lesson_k_caught": 0
+    },
+    "BG-HF": {
+      "v2_class": "V2_FAIL",
+      "v3_class": "V3_FAIL",
+      "v4_final_class": "V4_FAIL",
+      "n_responses": 100,
+      "best_v4_step": null,
+      "best_v4_pass": 0,
+      "peak_lesson_k_step": null,
+      "peak_lesson_k_deg_pct": 0.0,
+      "total_lesson_k_caught": 0
+    },
+    "BG-HJ": {
+      "v2_class": "V2_FAIL",
+      "v3_class": "V3_PARTIAL_SIGNAL",
+      "v4_final_class": "V4_FAIL",
+      "n_responses": 110,
+      "best_v4_step": null,
+      "best_v4_pass": 0,
+      "peak_lesson_k_step": null,
+      "peak_lesson_k_deg_pct": 0.0,
+      "total_lesson_k_caught": 0
+    },
+    "BG-HK": {
+      "v2_class": "V2_FAIL_throughout",
+      "v3_class": "V3_FAIL",
+      "v4_final_class": "V4_FAIL",
+      "n_responses": 200,
+      "best_v4_step": null,
+      "best_v4_pass": 0,
+      "peak_lesson_k_step": null,
+      "peak_lesson_k_deg_pct": 0.0,
+      "total_lesson_k_caught": 0
+    },
+    "BG-HP": {
+      "v2_class": "step500_PASS_3_10_then_collapse",
+      "v3_class": "V3_PARTIAL_SIGNAL",
+      "v4_final_class": "V4_FAIL",
+      "n_responses": 120,
+      "best_v4_step": 500,
+      "best_v4_pass": 3,
+      "peak_lesson_k_step": null,
+      "peak_lesson_k_deg_pct": 0.0,
+      "total_lesson_k_caught": 1
+    },
+    "BG-HQ": {
+      "v2_class": "step500_V2_FALSE_PASS_8_10_Lesson_H",
+      "v3_class": "V3_PARTIAL_SIGNAL",
+      "v4_final_class": "V4_FAIL",
+      "n_responses": 240,
+      "best_v4_step": null,
+      "best_v4_pass": 0,
+      "peak_lesson_k_step": null,
+      "peak_lesson_k_deg_pct": 0.0,
+      "total_lesson_k_caught": 0
+    },
+    "BG-HS-R1": {
+      "v2_class": "PARTIAL",
+      "v3_class": "V3_PARTIAL_SIGNAL",
+      "v4_final_class": "V4_FAIL",
+      "n_responses": 300,
+      "best_v4_step": 1000,
+      "best_v4_pass": 1,
+      "peak_lesson_k_step": null,
+      "peak_lesson_k_deg_pct": 0.0,
+      "total_lesson_k_caught": 2
+    },
+    "BG-HU": {
+      "v2_class": "PARTIAL_PASS_GE7_step_800_persona_cycle_True",
+      "v3_class": "V3_PARTIAL_SIGNAL",
+      "v4_final_class": "V4_FAIL",
+      "n_responses": 150,
+      "best_v4_step": 400,
+      "best_v4_pass": 4,
+      "peak_lesson_k_step": null,
+      "peak_lesson_k_deg_pct": 0.0,
+      "total_lesson_k_caught": 1
+    },
+    "BG-HW": {
+      "v2_class": "V2_FAIL_substring_anima_chains_manual_13_of_20_step_1000",
+      "v3_class": "V3_PARTIAL_SIGNAL",
+      "v4_final_class": "V4_FAIL",
+      "n_responses": 160,
+      "best_v4_step": 500,
+      "best_v4_pass": 1,
+      "peak_lesson_k_step": null,
+      "peak_lesson_k_deg_pct": 0.0,
+      "total_lesson_k_caught": 30
+    },
+    "BG-IA": {
+      "v2_class": "V2_FAIL_lesson_G_N1_0_of_15_final",
+      "v3_class": "V3_PARTIAL_SIGNAL",
+      "v4_final_class": "V4_FAIL",
+      "n_responses": 150,
+      "best_v4_step": null,
+      "best_v4_pass": 0,
+      "peak_lesson_k_step": null,
+      "peak_lesson_k_deg_pct": 0.0,
+      "total_lesson_k_caught": 0
+    },
+    "BG-HT": {
+      "v2_class": "V2_FAIL_R3_universe_brain_map_6_48MB_degenerate",
+      "v3_class": "V3_PARTIAL_SIGNAL",
+      "v4_final_class": "V4_FAIL",
+      "n_responses": 210,
+      "best_v4_step": null,
+      "best_v4_pass": 0,
+      "peak_lesson_k_step": null,
+      "peak_lesson_k_deg_pct": 0.0,
+      "total_lesson_k_caught": 21
+    },
+    "BG-IE": {
+      "v2_class": "SEED_LUCK_FAIL_2_of_10",
+      "v3_class": "V3_PARTIAL_SIGNAL",
+      "v4_final_class": "V4_FAIL",
+      "n_responses": 120,
+      "best_v4_step": 500,
+      "best_v4_pass": 2,
+      "peak_lesson_k_step": null,
+      "peak_lesson_k_deg_pct": 0.0,
+      "total_lesson_k_caught": 7
+    },
+    "BG-IF": {
+      "v2_class": "V2_FAIL_100M_x_6_48MB_degenerate",
+      "v3_class": "V3_PARTIAL_SIGNAL",
+      "v4_final_class": "V4_FAIL",
+      "n_responses": 180,
+      "best_v4_step": null,
+      "best_v4_pass": 0,
+      "peak_lesson_k_step": 2500,
+      "peak_lesson_k_deg_pct": 0.967,
+      "total_lesson_k_caught": 51
+    },
+    "BG-IG": {
+      "v2_class": "WEAK_PARTIAL_LIKE_BG_HS_R1_3_of_15_step_1500_BPE_7K",
+      "v3_class": "V3_PARTIAL_SIGNAL",
+      "v4_final_class": "V4_FAIL",
+      "n_responses": 180,
+      "best_v4_step": 1000,
+      "best_v4_pass": 1,
+      "peak_lesson_k_step": null,
+      "peak_lesson_k_deg_pct": 0.0,
+      "total_lesson_k_caught": 11
+    },
+    "BG-IL": {
+      "v2_class": "TRUE_PARTIAL_PASS_W_F4",
+      "v3_class": "V3_PARTIAL_SIGNAL",
+      "v4_final_class": "V4_FAIL",
+      "n_responses": 360,
+      "best_v4_step": null,
+      "best_v4_pass": 0,
+      "peak_lesson_k_step": 1400,
+      "peak_lesson_k_deg_pct": 0.867,
+      "total_lesson_k_caught": 52
+    },
+    "BG-IM": {
+      "v2_class": "FAILED_corpus_axis_regress",
+      "v3_class": "V3_FAIL",
+      "v4_final_class": "V4_FAIL",
+      "n_responses": 210,
+      "best_v4_step": null,
+      "best_v4_pass": 0,
+      "peak_lesson_k_step": null,
+      "peak_lesson_k_deg_pct": 0.0,
+      "total_lesson_k_caught": 6
+    },
+    "BG-IO": {
+      "v2_class": "PARTIAL_step_1800_manual_6_15",
+      "v3_class": "V3_PARTIAL_SIGNAL",
+      "v4_final_class": "V4_FAIL",
+      "n_responses": 390,
+      "best_v4_step": null,
+      "best_v4_pass": 0,
+      "peak_lesson_k_step": 1400,
+      "peak_lesson_k_deg_pct": 0.9,
+      "total_lesson_k_caught": 82
+    }
+  },
+  "v4_spec_loc": "docs/anima_own_18_evaluator_v4_strict_spec_2026_05_07.md",
+  "v4_script_loc": "tool/transient_py/anima_simple_stack_evaluator_v4.py",
+  "v4_driver_loc": "tool/transient_py/anima_jf_v4_retroeval.py",
+  "embedding_model": "sentence-transformers/all-MiniLM-L6-v2",
+  "raw_opt_out": "raw#37 transient_py + raw#42 mac N=1 (file IO + 1-time MiniLM CPU load)",
+  "own_compliance": "own 5 + own 6 + own 22 + own 24 ledger + own 18 V4 evaluator",
+  "honest_c3": [
+    "Embedding model = MiniLM-L6-v2 multilingual proxy (English-trained subword tokenizer); BM-K/KoSimCSE-bert preferred but not cached locally and online required.",
+    "V4.7 cosine sim threshold [0.20, 0.85] is heuristic; ablation N=1 (no formal sweep). Empirically validated on 4 cases (Lesson K trap=0.02, legit chat=0.69-0.77, char filler=0.34, English noise=0.10).",
+    "18-BG retroeval is non-greedy — only re-scores existing eval_log gens; signal limited to logged generations at training time. No model inference.",
+    "Lesson K mitigation rules written to defeat 3 known instances (BG-HW/IL/IO substring trap '[anima'); novel substring trap variants ([hexa, [entity, ...) may bypass without rule extension.",
+    "V4 strict expected to surface 0 PASS — Lesson L architectural ceiling holds at vocab/capacity/corpus/regularization axes (#115 chat-incapability convergent).",
+    "Some V3_PARTIAL_SIGNAL classes that retain V4_FAIL are NOT strict downgrades (PARTIAL_SIGNAL is not a PASS class); they are recorded only when Lesson K trap was specifically caught (filtering for true V4-tightening events).",
+    "BG-FY uses ko_eval_log.jsonl (different filename); loader handles both .jsonl variants via flat-shape detection.",
+    "BG-IL/IM/IO logs are nested-shape with deg_count_at_step baked in; flat-shape BGs (BG-IJ/IS) get deg_count=None which means GUARD 3 (deg_count auto-demote) does not fire — Lesson K floor still defended via GUARD 1/2/4 (han_ratio + ko_chars + token_soup_window)."
+  ]
+}

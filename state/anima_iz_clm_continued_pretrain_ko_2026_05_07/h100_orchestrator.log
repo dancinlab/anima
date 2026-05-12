@@ -1,0 +1,165 @@
+[orch] start ts=2026-05-07T11:27:32Z
+[setup] installing pip packages
+WARNING: Running pip as the 'root' user can result in broken permissions and conflicting behaviour with the system package manager, possibly rendering your system unusable.It is recommended to use a virtual environment instead: https://pip.pypa.io/warnings/venv. Use the --root-user-action option if you know what you are doing and want to suppress this warning.
+
+[notice] A new release of pip is available: 24.2 -> 26.1.1
+[notice] To update, run: python -m pip install --upgrade pip
+Login successful.
+Note: Environment variable`HF_TOKEN` is set and is the current active token independently from the token you've just configured.
+[setup] hf auth: [1muser: [0m dancinlife
+[setup] downloading need-singularity/clm-v4-mk2-v1 base
+Download complete. Moving file to /workspace/anima_iz_pretrain/clm_base/model.safetensors
+Fetching 15 files:  80%|████████  | 12/15 [00:10<00:03,  1.13s/it]Fetching 15 files: 100%|██████████| 15/15 [00:10<00:00,  1.40it/s]
+/workspace/anima_iz_pretrain/clm_base
+total 2076648
+drwxr-xr-x 3 root root       4096 May  7 11:27 .
+drwxr-xr-x 7 root root       4096 May  7 11:27 ..
+drwxr-xr-x 3 root root         33 May  7 11:27 .cache
+-rw-r--r-- 1 root root       1519 May  7 11:27 .gitattributes
+-rw-r--r-- 1 root root       1073 May  7 11:27 LICENSE
+-rw-r--r-- 1 root root      15019 May  7 11:27 README.md
+-rw-r--r-- 1 root root         45 May  7 11:27 __init__.py
+-rw-r--r-- 1 root root       1212 May  7 11:27 config.json
+-rw-r--r-- 1 root root       2072 May  7 11:27 configuration_clm_v4.py
+[orch] versions: torch=2.4.1+cu124 transformers=4.57.6
+name, memory.total [MiB]
+NVIDIA H100 80GB HBM3, 81559 MiB
+[A] pre-pretrain phi-star proxy
+[A] pre-pretrain phi-star OK
+[B] continued pre-training start
+[iz] base resolved: /workspace/anima_iz_pretrain/clm_base
+`torch_dtype` is deprecated! Use `dtype` instead!
+[iz] loaded model params=477.6M dtype=torch.bfloat16
+[iz] tokenizing corpus /workspace/anima_iz_pretrain/corpus/corpus_ko_chat_template.txt ...
+[iz] corpus tokens=67007296 chunks=130873 train=124330 val=6543
+[iz] step 50/6000 loss=15.5625 lr=2.00e-07 elapsed=4s
+[iz] step 100/6000 loss=15.5625 lr=4.00e-07 elapsed=8s
+[iz] step 150/6000 loss=15.4375 lr=6.00e-07 elapsed=12s
+[iz] step 200/6000 loss=15.5625 lr=8.33e-07 elapsed=16s
+[iz] step 250/6000 loss=15.5000 lr=1.03e-06 elapsed=20s
+[iz] step 300/6000 loss=15.3125 lr=1.23e-06 elapsed=24s
+[iz] step 350/6000 loss=15.5000 lr=1.43e-06 elapsed=28s
+[iz] step 400/6000 loss=15.5000 lr=1.67e-06 elapsed=32s
+[iz] step 450/6000 loss=15.3750 lr=1.87e-06 elapsed=36s
+[iz] step 500/6000 loss=15.1875 lr=2.07e-06 elapsed=40s
+[iz] step 550/6000 loss=15.3125 lr=2.27e-06 elapsed=44s
+[iz] step 600/6000 loss=14.9375 lr=2.50e-06 elapsed=48s
+[iz] step 650/6000 loss=15.0625 lr=2.70e-06 elapsed=52s
+[iz] step 700/6000 loss=15.0625 lr=2.90e-06 elapsed=56s
+[iz] step 750/6000 loss=15.2500 lr=3.10e-06 elapsed=60s
+[iz] step 800/6000 loss=15.0000 lr=3.33e-06 elapsed=64s
+[iz] step 850/6000 loss=15.0000 lr=3.53e-06 elapsed=68s
+[iz] step 900/6000 loss=14.6875 lr=3.73e-06 elapsed=72s
+[iz] step 950/6000 loss=14.5625 lr=3.93e-06 elapsed=76s
+[iz] step 1000/6000 loss=14.3750 lr=4.17e-06 elapsed=80s
+[iz] saved /workspace/anima_iz_pretrain/ckpts/ckpt_step_1000.pt
+[iz] step 1050/6000 loss=14.3750 lr=4.37e-06 elapsed=85s
+[iz] step 1100/6000 loss=14.0000 lr=4.57e-06 elapsed=89s
+[iz] step 1150/6000 loss=14.1250 lr=4.77e-06 elapsed=93s
+[iz] step 1200/6000 loss=13.8750 lr=5.00e-06 elapsed=97s
+[iz] step 1250/6000 loss=13.5000 lr=5.20e-06 elapsed=101s
+[iz] step 1300/6000 loss=13.5000 lr=5.40e-06 elapsed=105s
+[iz] step 1350/6000 loss=13.3125 lr=5.60e-06 elapsed=109s
+[iz] step 1400/6000 loss=12.8125 lr=5.83e-06 elapsed=113s
+[iz] step 1450/6000 loss=13.0625 lr=6.03e-06 elapsed=117s
+[iz] step 1500/6000 loss=12.8750 lr=6.23e-06 elapsed=121s
+[iz] step 1550/6000 loss=12.5625 lr=6.43e-06 elapsed=125s
+[iz] step 1600/6000 loss=12.3750 lr=6.67e-06 elapsed=129s
+[iz] step 1650/6000 loss=12.1875 lr=6.87e-06 elapsed=133s
+[iz] step 1700/6000 loss=12.0000 lr=7.07e-06 elapsed=138s
+[iz] step 1750/6000 loss=11.9375 lr=7.27e-06 elapsed=142s
+[iz] step 1800/6000 loss=11.5625 lr=7.50e-06 elapsed=146s
+[iz] step 1850/6000 loss=11.2500 lr=7.70e-06 elapsed=150s
+[iz] step 1900/6000 loss=10.8125 lr=7.90e-06 elapsed=154s
+[iz] step 1950/6000 loss=11.0000 lr=8.10e-06 elapsed=158s
+[iz] step 2000/6000 loss=11.0625 lr=8.33e-06 elapsed=162s
+[iz] saved /workspace/anima_iz_pretrain/ckpts/ckpt_step_2000.pt
+[iz] step 2050/6000 loss=11.0000 lr=8.53e-06 elapsed=167s
+[iz] step 2100/6000 loss=10.9375 lr=8.73e-06 elapsed=171s
+[iz] step 2150/6000 loss=10.8125 lr=8.93e-06 elapsed=175s
+[iz] step 2200/6000 loss=10.8125 lr=9.17e-06 elapsed=179s
+[iz] step 2250/6000 loss=10.7500 lr=9.37e-06 elapsed=183s
+[iz] step 2300/6000 loss=10.7500 lr=9.57e-06 elapsed=187s
+[iz] step 2350/6000 loss=10.6875 lr=9.77e-06 elapsed=191s
+[iz] step 2400/6000 loss=10.7500 lr=1.00e-05 elapsed=195s
+[iz] step 2450/6000 loss=10.3750 lr=1.00e-05 elapsed=199s
+[iz] step 2500/6000 loss=10.3125 lr=1.00e-05 elapsed=203s
+[iz] step 2550/6000 loss=10.3125 lr=1.00e-05 elapsed=207s
+[iz] step 2600/6000 loss=10.4375 lr=1.00e-05 elapsed=211s
+[iz] step 2650/6000 loss=10.4375 lr=1.00e-05 elapsed=215s
+[iz] step 2700/6000 loss=10.2500 lr=1.00e-05 elapsed=219s
+[iz] step 2750/6000 loss=10.3125 lr=1.00e-05 elapsed=223s
+[iz] step 2800/6000 loss=10.3750 lr=1.00e-05 elapsed=227s
+[iz] step 2850/6000 loss=10.3125 lr=1.00e-05 elapsed=231s
+[iz] step 2900/6000 loss=10.0000 lr=1.00e-05 elapsed=235s
+[iz] step 2950/6000 loss=10.2500 lr=1.00e-05 elapsed=239s
+[iz] step 3000/6000 loss=10.1250 lr=1.00e-05 elapsed=243s
+[iz] saved /workspace/anima_iz_pretrain/ckpts/ckpt_step_3000.pt
+[iz] step 3050/6000 loss=10.1875 lr=1.00e-05 elapsed=247s
+[iz] step 3100/6000 loss=10.0000 lr=9.99e-06 elapsed=251s
+[iz] step 3150/6000 loss=10.3125 lr=9.99e-06 elapsed=255s
+[iz] step 3200/6000 loss=10.0625 lr=9.99e-06 elapsed=259s
+[iz] step 3250/6000 loss=10.1875 lr=9.99e-06 elapsed=263s
+[iz] step 3300/6000 loss=10.0625 lr=9.99e-06 elapsed=267s
+[iz] step 3350/6000 loss=10.1250 lr=9.99e-06 elapsed=271s
+[iz] step 3400/6000 loss=10.0000 lr=9.99e-06 elapsed=275s
+[iz] step 3450/6000 loss=10.1250 lr=9.99e-06 elapsed=279s
+[iz] step 3500/6000 loss=9.9375 lr=9.99e-06 elapsed=283s
+[iz] step 3550/6000 loss=9.8750 lr=9.98e-06 elapsed=287s
+[iz] step 3600/6000 loss=9.8750 lr=9.98e-06 elapsed=291s
+[iz] step 3650/6000 loss=10.0000 lr=9.98e-06 elapsed=295s
+[iz] step 3700/6000 loss=9.8125 lr=9.98e-06 elapsed=299s
+[iz] step 3750/6000 loss=9.9375 lr=9.98e-06 elapsed=303s
+[iz] step 3800/6000 loss=9.8125 lr=9.98e-06 elapsed=307s
+[iz] step 3850/6000 loss=9.8750 lr=9.98e-06 elapsed=311s
+[iz] step 3900/6000 loss=9.8750 lr=9.97e-06 elapsed=315s
+[iz] step 3950/6000 loss=9.7500 lr=9.97e-06 elapsed=319s
+[iz] step 4000/6000 loss=9.7500 lr=9.97e-06 elapsed=323s
+[iz] saved /workspace/anima_iz_pretrain/ckpts/ckpt_step_4000.pt
+[iz] step 4050/6000 loss=9.9375 lr=9.97e-06 elapsed=328s
+[iz] step 4100/6000 loss=9.6250 lr=9.97e-06 elapsed=332s
+[iz] step 4150/6000 loss=10.0625 lr=9.96e-06 elapsed=336s
+[iz] step 4200/6000 loss=9.9375 lr=9.96e-06 elapsed=340s
+[iz] step 4250/6000 loss=9.6875 lr=9.96e-06 elapsed=344s
+[iz] step 4300/6000 loss=9.6875 lr=9.96e-06 elapsed=348s
+[iz] step 4350/6000 loss=9.5000 lr=9.96e-06 elapsed=352s
+[iz] step 4400/6000 loss=9.8125 lr=9.95e-06 elapsed=356s
+[iz] step 4450/6000 loss=9.8125 lr=9.95e-06 elapsed=360s
+[iz] step 4500/6000 loss=9.6875 lr=9.95e-06 elapsed=364s
+[iz] step 4550/6000 loss=9.3750 lr=9.95e-06 elapsed=368s
+[iz] step 4600/6000 loss=9.6250 lr=9.94e-06 elapsed=372s
+[iz] step 4650/6000 loss=9.6250 lr=9.94e-06 elapsed=376s
+[iz] step 4700/6000 loss=9.6250 lr=9.94e-06 elapsed=380s
+[iz] step 4750/6000 loss=9.6250 lr=9.93e-06 elapsed=384s
+[iz] step 4800/6000 loss=9.5000 lr=9.93e-06 elapsed=388s
+[iz] step 4850/6000 loss=9.7500 lr=9.93e-06 elapsed=392s
+[iz] step 4900/6000 loss=9.5625 lr=9.93e-06 elapsed=396s
+[iz] step 4950/6000 loss=9.3750 lr=9.92e-06 elapsed=400s
+[iz] step 5000/6000 loss=9.6250 lr=9.92e-06 elapsed=404s
+[iz] saved /workspace/anima_iz_pretrain/ckpts/ckpt_step_5000.pt
+[iz] step 5050/6000 loss=9.5625 lr=9.92e-06 elapsed=408s
+[iz] step 5100/6000 loss=9.4375 lr=9.91e-06 elapsed=412s
+[iz] step 5150/6000 loss=9.5000 lr=9.91e-06 elapsed=416s
+[iz] step 5200/6000 loss=9.5625 lr=9.91e-06 elapsed=420s
+[iz] step 5250/6000 loss=9.4375 lr=9.90e-06 elapsed=424s
+[iz] step 5300/6000 loss=9.3750 lr=9.90e-06 elapsed=428s
+[iz] step 5350/6000 loss=9.3125 lr=9.90e-06 elapsed=432s
+[iz] step 5400/6000 loss=9.3750 lr=9.89e-06 elapsed=436s
+[iz] step 5450/6000 loss=9.5000 lr=9.89e-06 elapsed=440s
+[iz] step 5500/6000 loss=9.3750 lr=9.89e-06 elapsed=444s
+[iz] step 5550/6000 loss=9.3125 lr=9.88e-06 elapsed=448s
+[iz] step 5600/6000 loss=9.3125 lr=9.88e-06 elapsed=452s
+[iz] step 5650/6000 loss=9.3750 lr=9.88e-06 elapsed=456s
+[iz] step 5700/6000 loss=9.3750 lr=9.87e-06 elapsed=460s
+[iz] step 5750/6000 loss=9.0625 lr=9.87e-06 elapsed=464s
+[iz] step 5800/6000 loss=9.0625 lr=9.86e-06 elapsed=468s
+[iz] step 5850/6000 loss=9.2500 lr=9.86e-06 elapsed=472s
+[iz] step 5900/6000 loss=9.3750 lr=9.86e-06 elapsed=476s
+[iz] step 5950/6000 loss=9.2500 lr=9.85e-06 elapsed=480s
+[iz] step 6000/6000 loss=9.1875 lr=9.85e-06 elapsed=484s
+[iz] saved /workspace/anima_iz_pretrain/ckpts/ckpt_step_6000.pt
+[iz] training done 485s — final ckpt: /workspace/anima_iz_pretrain/ckpts/ckpt_final.pt
+[B] train exit rc=0
+[C] post-pretrain phi-star proxy
+[C] post-pretrain phi-star OK; samples saved
+[orch] DONE ts=2026-05-07T11:38:10Z

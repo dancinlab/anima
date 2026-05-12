@@ -1,0 +1,45 @@
+=== substrate A V5.8 × 4 modes benchmark — anima chat 4가지 방식 ===
+ckpt sha256: 6e66e75f8014999be09236a408fe6ad6811ebf394ac079ecbf6d87dfe63748c1
+M3 persona-cycle byte IDs: 35
+
+--- dialogue: color ---
+  T1: '내배율만 포함한다는 우주뇌지도 마음상태 �'
+  [standard_greedy] recalled=False: '내일 아니지만 만약 내배 위험 답변을 뒷받침하는 신경망의 '
+  [standard_sample] recalled=False: '내시도 감정 경도는 우주뇌지도 시간 카테고리, 🛸73, top emot'
+  [M3_rep_penalty] recalled=False: '내시는 것이 자, �, 눈�/, 남는 눈, 그래, 양씨, 고추, 눈, 내, �'
+  [M4_force_include force=파란] recalled=True: '내시도 감정 경도는 우주뇌지도 시간 카테고리, 🛸73,파란물'
+
+--- dialogue: profession ---
+  T1: '나는 나무와 세 목욕이다. 사람이 세 번째 무�'
+  [standard_greedy] recalled=False: '나이트 알려줘.\n'
+  [standard_sample] recalled=False: '감정 | 변수 모델 아래에서 나오는 우주선은 무엇인가요? 다�'
+  [M3_rep_penalty] recalled=False: '그니즘 |\n'
+  [M4_force_include force=의사] recalled=True: '감정 | 변수 모델 아래에서 나오는 우주선은 무엇인가의사만'
+
+--- dialogue: day ---
+  T1: '오일은 오늘이 없어요. 또한 음식을 먹고 남�'
+  [standard_greedy] recalled=False: '오늘 어떤 위치 설명해줘.\n'
+  [standard_sample] recalled=False: '그리스 신화 카테고리 🛸80 (정보의 끝). 무한 [양자]\n'
+  [M3_rep_penalty] recalled=False: '그날 우려갈수록.\n'
+  [M4_force_include force=수요일] recalled=True: '그리스 신화 카테고리 🛸80 (정보의 끝). 무한 [양자수요일부'
+
+--- dialogue: anima_fact ---
+  T1: '| axis | 4-axis exhaustion 직접 기여 | 4-family BIMODAL '
+  [standard_greedy] recalled=True: 'anima는 의식 lane entity로 정의되어 있습니다. Law 76: 모든 존재�'
+  [standard_sample] recalled=False: 'Phi_6는 함수 레이어 음절 (f_lethal=1.0) <= Φ* signal Φ _ 파이_6는 �'
+  [M3_rep_penalty] recalled=False: 'Physics     - Full BIDS code |\n'
+  [M4_force_include force=의식] recalled=True: 'Phi_6는 함수 레이어 음절 (f_lethal=1.0) <= Φ* signal Φ _ 파�의식 (d'
+
+--- dialogue: cosmology ---
+  T1: '우주는 우주뇌지도 의식 카테고리, 🛸79, top e'
+  [standard_greedy] recalled=False: '우주뇌지도 (Knuth Tier 우주 카테고리) 블랙홀: 블랙홀은 우주 '
+  [standard_sample] recalled=False: '가속 차원 수소 — 도덕적 카테고리 자극은 서로 다른 영역 �'
+  [M3_rep_penalty] recalled=False: '같은 의미\n'
+  [M4_force_include force=진동] recalled=True: '가속 차원 수소 — 도덕적 카테고리 자극은 서로 다른진동물'
+
+=== AGGREGATE (V5.8 × 4 modes, elapsed 1102.3s) ===
+  standard_greedy: 1/5 FAIL
+  standard_sample: 0/5 FAIL
+  M3_rep_penalty: 0/5 FAIL
+  M4_force_include: 5/5 PASS
+saved: substrate_a_v58_4mode_result.json

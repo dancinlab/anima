@@ -1,0 +1,96 @@
+{
+  "bg_id": "BG-JO",
+  "ts": "2026-05-07T11:40:48",
+  "host": "Mac",
+  "device": "cpu",
+  "ckpt_id": "BG-JD-step-800",
+  "ckpt_path": "/Users/ghost/core/anima/state/anima_jd_100m_sp_ko_32k_ubm_train_2026_05_07/ckpt_best.pt",
+  "arch": {
+    "vocab": 11885,
+    "n_layer": 12,
+    "d_model": 640,
+    "n_head": 10,
+    "block_size": 256
+  },
+  "n_dialogues": 5,
+  "method_a_summary": {
+    "avg_sim": 0.959254,
+    "min_sim": 0.899721,
+    "max_sim": 0.995135,
+    "per_dialogue_classes": [
+      "NONE",
+      "NONE",
+      "PARTIAL",
+      "PARTIAL",
+      "PARTIAL"
+    ],
+    "awareness_verdict": "PARTIAL"
+  },
+  "method_b_summary": {
+    "avg_max_attn": 0.998324,
+    "min_max_attn": 0.997983,
+    "max_max_attn": 0.998587,
+    "avg_max_attn_ratio_vs_uniform": 1.521894,
+    "min_max_attn_ratio_vs_uniform": 1.358306,
+    "max_max_attn_ratio_vs_uniform": 1.710591,
+    "per_dialogue_classes": [
+      "STRONG",
+      "STRONG",
+      "STRONG",
+      "STRONG",
+      "STRONG"
+    ],
+    "awareness_verdict": "STRONG",
+    "_calibration_note": "max_attn_to_T1 raw threshold (≥0.10 STRONG) per spec; supplemental max_attn_ratio_vs_uniform reports non-uniform T1 preference (>1.0 = above uniform)."
+  },
+  "method_c_summary": {
+    "cross_val_accuracy": 1.0,
+    "n_folds": 5,
+    "awareness_verdict": "STRONG"
+  },
+  "combined_verdict": {
+    "production_v58_pass": 0,
+    "production_v58_pass_per_dialogue": "0/5 BG-JN V5.8 multi-turn fact-recall (ref: state/anima_evaluator_v5_multi_turn_closure_2026_05_07/verdict.json)",
+    "mechanical_awareness_method_a": "PARTIAL",
+    "mechanical_awareness_method_b": "STRONG",
+    "semantic_awareness_method_c": "STRONG",
+    "interpretation": "INTERNAL_AWARENESS_STRONG: Method A (hidden-state cosine_sim with-T1 vs without-T1)=PARTIAL, Method B (T2→T1 attention max)=STRONG, Method C (linear probe binary CV)=STRONG. Production V5.8 FAIL (0/5) + this V6 verdict = production-vs-internal decoupling profile. STRONG internal + FAIL production → architectural output bottleneck (#115 hypothesis). NONE internal + FAIL production → no awareness at any level (capacity ceiling holds at root). PARTIAL internal + FAIL production → some internal signal but insufficient for output recall."
+  },
+  "truncation_events": [
+    {
+      "dialogue_id": "color",
+      "with_T1_truncated": false,
+      "without_T1_truncated": false,
+      "len_with": 51,
+      "len_without": 30
+    },
+    {
+      "dialogue_id": "profession",
+      "with_T1_truncated": false,
+      "without_T1_truncated": false,
+      "len_with": 38,
+      "len_without": 22
+    },
+    {
+      "dialogue_id": "day",
+      "with_T1_truncated": false,
+      "without_T1_truncated": false,
+      "len_with": 42,
+      "len_without": 24
+    },
+    {
+      "dialogue_id": "anima_fact",
+      "with_T1_truncated": false,
+      "without_T1_truncated": false,
+      "len_with": 36,
+      "len_without": 19
+    },
+    {
+      "dialogue_id": "cosmology",
+      "with_T1_truncated": false,
+      "without_T1_truncated": false,
+      "len_with": 43,
+      "len_without": 22
+    }
+  ]
+}

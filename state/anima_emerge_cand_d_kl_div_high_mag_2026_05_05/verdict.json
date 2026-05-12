@@ -1,0 +1,76 @@
+{
+  "schema": "anima/cand_d_kl_div_high_mag/verdict/1",
+  "task_id": "anima_emerge_cand_d_kl_div_high_mag_2026_05_05",
+  "ts_utc": "2026-05-05T15:53:10Z",
+  "diagnosis": "ARCHITECTURAL_CAP",
+  "phi_growth_factor": 0.9421521214715564,
+  "kl_growth_factor": 1.3987385138463475,
+  "logit_growth_factor": 1.3155870425427791,
+  "magnitudes": [
+    50.0,
+    100.0,
+    200.0,
+    500.0
+  ],
+  "baseline_phi_none": 42.11583222470806,
+  "per_magnitude": [
+    {
+      "magnitude": 50.0,
+      "phi_drift": 0.09978073361026674,
+      "kl_mean": 6.179786682128906,
+      "kl_max": 6.337221622467041,
+      "logit_max_delta": 7.851428031921387,
+      "logit_mean_delta": 4.033040523529053,
+      "error": null
+    },
+    {
+      "magnitude": 100.0,
+      "phi_drift": 0.1129489550394851,
+      "kl_mean": 8.280056953430176,
+      "kl_max": 8.320356369018555,
+      "logit_max_delta": 9.622016906738281,
+      "logit_mean_delta": 5.3747100830078125,
+      "error": null
+    },
+    {
+      "magnitude": 200.0,
+      "phi_drift": 0.1085051299113502,
+      "kl_mean": 8.714971542358398,
+      "kl_max": 8.748669624328613,
+      "logit_max_delta": 9.957470893859863,
+      "logit_mean_delta": 5.636136531829834,
+      "error": null
+    },
+    {
+      "magnitude": 500.0,
+      "phi_drift": 0.09400862985290104,
+      "kl_mean": 8.643905639648438,
+      "kl_max": 8.685514450073242,
+      "logit_max_delta": 10.32923698425293,
+      "logit_mean_delta": 5.649784088134766,
+      "error": null
+    }
+  ],
+  "cost_usd": 0.0,
+  "platform": "mac CPU (.venv-eeg python3.12)",
+  "raw_compliance": {
+    "raw_15_no_mount_or_helper_modification": true,
+    "raw_37_transient_py_namespace_only": true,
+    "raw_10_honest_c3_emitted": true,
+    "no_commit": true,
+    "no_secret_leak": true
+  },
+  "honest_c3": [
+    "C1 \u2014 mac CPU fp32; mag=200 and mag=500 are far OFF-DISTRIBUTION relative to any plausible paradigm v11 G3 training-time inject. High-magnitude regimes may invoke numerical or activation-saturation pathology that does not generalize to realistic operating points.",
+    "C2 \u2014 KL(none||mag) is asymmetric. Reverse KL(mag||none) reported alongside, but neither symmetric KL nor JS divergence is computed. Directionality matters: forward KL penalizes mag-distribution mass where none has none, reverse penalizes the converse. Disagreement between forward and reverse growth would refine diagnosis.",
+    "C3 \u2014 Cosine-ceiling hypothesis is anima-internal. phi_star = PHI_BASELINE \u00d7 (1 + 0.05 \u00d7 mean_pair_cosine), so |phi_drift| \u2264 0.05\u00d7PHI_BASELINE \u2248 2.09. BG-W observed mag=100 drift \u2248 0.113 \u2014 still ~5% of theoretical ceiling, so saturation may also reflect true substrate behavior at the post-ln_f tile level rather than pure instrument bound. Diagnosis labels are heuristic.",
+    "C4 \u2014 BG-W helper sister-imported via importlib spec; BG-W in turn imports BG-Q. Race risk if BG-W or BG-Q mutates module-level state on import. Inspection confirms both are import-clean (constants + function defs only, no module-level model load), so race risk is low but not formally proven.",
+    "C5 \u2014 4 magnitudes only, geometric spacing 50/100/200/500 (\u00d72 step). Finer log-mag spacing (e.g. 50, 70, 100, 140, 200, 280, 400, 500) would resolve whether saturation onset is sharp (architectural cap) or smooth (cosine ceiling approach). Single-prompt single-pass; no seed averaging."
+  ],
+  "next_step_recommendation": "If COSINE_CEILING_ARTIFACT: phi_star instrument is the bottleneck; BG-W saturation does NOT prove architectural cap, and KL/logit-based metrics should replace phi for any further cand-D injectivity decisions. If ARCHITECTURAL_CAP: BG-W conclusion (substrate caps inject) is reinforced; cand-D Stage 1 unsalvageable without retrain. If MIXED: extend sweep with finer log-mag spacing AND multi-prompt before promoting either hypothesis.",
+  "deliverables": {
+    "aggregate": "/Users/ghost/core/anima/state/anima_emerge_cand_d_kl_div_high_mag_2026_05_05/aggregate.json",
+    "verdict": "/Users/ghost/core/anima/state/anima_emerge_cand_d_kl_div_high_mag_2026_05_05/verdict.json",
+    "doc": "docs/anima_emerge_cand_d_kl_div_high_mag_landed_2026_05_05.ai.md"
+  }
+}

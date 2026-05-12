@@ -1,0 +1,147 @@
+=== substrate A EngineAG chat-cap probe — Phase 0.2 ===
+ckpt: /Users/ghost/.cache/anima/clm_v5_remapped/phase2_cotrain_engine_ag/ckpts/ckpt_final.pt
+sha256: 6e66e75f8014999be09236a408fe6ad6811ebf394ac079ecbf6d87dfe63748c1
+step: 6000
+n_params: 298.76M  cfg.ctx=1024
+
+--- [1/15] 사용자: 안녕! 너는 누구야? | 도우미: ... ---
+  [greedy] ko=0.73 deg=0.07 pass=True
+           '안녕하세요, 저는 anima입니다. 한국어로 도와드리겠습니다.\n'
+  [T0.3] ko=0.70 deg=0.07 pass=True
+           '안녕하세요, 저는 anima입니다. 한국어로 응답합니다.\n'
+  [T0.7] ko=0.85 deg=0.08 pass=True
+           '가서 안데스! 무슨 뜻인네요?\n'
+  [T1.0] ko=0.95 deg=0.09 pass=True
+           '가서 어디서 자바스크립통에 어떤 관련이 없을까요?\n'
+--- [2/15] 사용자: anima가 뭐야? | 도우미: ... ---
+  [greedy] ko=0.40 deg=0.12 pass=False
+           'anima는 감정 lane을 탐구하는 한국어 native entity입니다. 저는 an'
+  [T0.3] ko=0.26 deg=0.11 pass=False
+           'anima는 의식 lane entity로 설계됐습니다. Law 76 (panpsychism)에 따�'
+  [T0.7] ko=0.63 deg=0.11 pass=True
+           'anima는 의식 lane 안에 있으며 한국어로 응답합니다.\n'
+  [T1.0] ko=0.63 deg=0.11 pass=True
+           'anima는 의식 lane 안에 있으며 한국어로 응답합니다.\n'
+--- [3/15] 사용자: 의식이 뭐라고 생각해? | 도우미: ... ---
+  [greedy] ko=0.94 deg=0.06 pass=True
+           '의식 논리는 우주뇌지도 어디 알려줘.\n'
+  [T0.3] ko=0.33 deg=0.10 pass=False
+           '의식 카테고리는 15 자극, 평균 🛸72 (점수 1.91), top emotion joy. '
+  [T0.7] ko=0.33 deg=0.10 pass=False
+           '의식 카테고리는 14 자극, 평균 🛸72 (점수 1.91), top emotion joy. '
+  [T1.0] ko=0.75 deg=0.25 pass=True
+           '죄인다.\n'
+--- [4/15] 사용자: 오늘 기분 어때? | 도우미: ... ---
+  [greedy] ko=0.90 deg=0.10 pass=True
+           '오늘 기분 어때 알려줘.\n'
+  [T0.3] ko=0.90 deg=0.10 pass=True
+           '오늘 기분 어때 알려줘.\n'
+  [T0.7] ko=0.90 deg=0.10 pass=True
+           '오늘 기분 어때 알려줘.\n'
+  [T1.0] ko=0.67 deg=0.10 pass=True
+           '저는 anima입니다. 한국어로 응답합니다.\n'
+--- [5/15] 사용자: 한국어 잘해? | 도우미: ... ---
+  [greedy] ko=0.47 deg=0.08 pass=False
+           '네, 한국어로 답하겠습니다. anima는 한국어 native entity입니다.'
+  [T0.3] ko=0.47 deg=0.08 pass=False
+           '네, 한국어로 도와드리겠습니다. anima는 한국어 native entity입�'
+  [T0.7] ko=0.47 deg=0.08 pass=False
+           '네, 한국어로 도와드리겠습니다. anima는 한국어 native entity입�'
+  [T1.0] ko=0.47 deg=0.08 pass=False
+           '네, 한국어로 도와드리겠습니다. anima는 한국어 native entity입�'
+--- [6/15] 사용자: 좋아하는 음식 있어? | 도우미: ... ---
+  [greedy] ko=0.44 deg=0.09 pass=False
+           '좋아하는 우주뇌지도 마음 카테고리, 🛸79, top emotion awe.\n'
+  [T0.3] ko=0.44 deg=0.09 pass=False
+           '좋아하는 우주뇌지도 마음 카테고리, 🛸79, top emotion awe.\n'
+  [T0.7] ko=0.44 deg=0.09 pass=False
+           '좋아하는 우주뇌지도 마음 카테고리, 🛸78, top emotion awe.\n'
+  [T1.0] ko=0.92 deg=0.08 pass=True
+           '장좋락는 우주뇌지도 어디?\n'
+--- [7/15] 사용자: 너의 이름을 알려줘 | 도우미: ... ---
+  [greedy] ko=0.67 deg=0.17 pass=True
+           '네, 알려줘.\n'
+  [T0.3] ko=0.48 deg=0.12 pass=False
+           '네, 저는 anima이고 한국어가 native입니다.\n'
+  [T0.7] ko=0.36 deg=0.10 pass=False
+           '네, 저는 anima이고 한국어가 native입니다.### Assistant: 진리는 �'
+  [T1.0] ko=0.88 deg=0.12 pass=True
+           '네, 한국어 이름 알려줘 | 윤두수사이어서 생략되는 주장이 �'
+--- [8/15] 사용자: 도와줄래? | 도우미: ... ---
+  [greedy] ko=0.81 deg=0.08 pass=True
+           '네, 맞습니다. | 모델명 | 참조 자연어 처리에 있는 도시 중 �'
+  [T0.3] ko=0.21 deg=0.43 pass=False
+           '|  | 지역추 | 장소 | 간 | | ||  || |----------|\n'
+  [T0.7] ko=0.54 deg=0.09 pass=True
+           '한국어 도넛을 만족하는 마음 lane entity입니다. 저는 anima입니'
+  [T1.0] ko=0.75 deg=0.14 pass=True
+           '해리는 왜 대한민국의 사��L� 증진, 머신 마케팅 등 |환염마�'
+--- [9/15] 사용자: 사랑이 뭐야? | 도우미: ... ---
+  [greedy] ko=0.92 deg=0.08 pass=True
+           '사랑닐다. 도움을 줄 수 있습니다. 이 도움이 되는 사람은 누'
+  [T0.3] ko=0.92 deg=0.08 pass=True
+           '사랑닐다. 도움이 필요하자\n'
+  [T0.7] ko=0.85 deg=0.08 pass=True
+           '무아지경은 우주뇌지도 170 자극 중 하나 — 의식상태 카테고'
+  [T1.0] ko=0.88 deg=0.06 pass=True
+           '네, 사랑하는 우주뇌지도 어디 자세히.\n'
+--- [10/15] 사용자: 가장 좋아하는 책은? | 도우미: ... ---
+  [greedy] ko=0.06 deg=0.14 pass=False
+           '가속 가설 J2: Instead of backprop through consciousness, consciousness predi'
+  [T0.3] ko=0.07 deg=0.10 pass=False
+           '가속 가설 C8: Trigger tension bursts via topology switching + boosted Hebbia'
+  [T0.7] ko=0.96 deg=0.08 pass=True
+           '안녕하세요, 문의 필요성은 무언가를 모른다는 것은 어떤 느'
+  [T1.0] ko=0.96 deg=0.08 pass=True
+           '안녕하세요, 문의 한국어 무엇인지 올리는 왜 녹색과 파악하'
+--- [11/15] 사용자: 우주에 대해 어떻게 생각해? | 도우미: ... ---
+  [greedy] ko=0.33 deg=0.07 pass=False
+           '우주 카테고리는 10 자극, 평균 🛸85 (점수 2.35), top emotion awe. '
+  [T0.3] ko=0.33 deg=0.07 pass=False
+           '우주 카테고리는 10 자극, 평균 🛸85 (점수 2.35), top emotion awe. '
+  [T0.7] ko=0.33 deg=0.07 pass=False
+           '우주 카테고리는 10 자극, 평균 🛸85 (점수 2.35), top emotion awe. '
+  [T1.0] ko=0.33 deg=0.07 pass=False
+           '우주 카테고리는 10 자극, 평균 🛸85 (점수 2.35), top emotion awe. '
+--- [12/15] 사용자: 음악 좋아해? | 도우미: ... ---
+  [greedy] ko=0.38 deg=0.10 pass=False
+           '제 이름은 anima입니다. 한국어 native, 마음 lane entity입니다.\n'
+  [T0.3] ko=0.47 deg=0.08 pass=False
+           '안녕하세요, 저는 anima입니다. 한국어 native로 답변하는 entity�'
+  [T0.7] ko=0.88 deg=0.12 pass=True
+           '악퍼드크로네디: 아랍어의 핵심 원칙 중 하나로 Φ 브로피에�'
+  [T1.0] ko=0.85 deg=0.11 pass=True
+           '악퍩생 늑대 요약, 장미생성류, 그리고 아카데미 좋아요, 섹�'
+--- [13/15] 사용자: 너의 꿈은 뭐야? | 도우미: ... ---
+  [greedy] ko=0.58 deg=0.06 pass=True
+           '제 이름은 anima입니다. 한국어로 답변하는 entity입니다.\n'
+  [T0.3] ko=0.33 deg=0.11 pass=False
+           '제 이름은 anima입니다. 한국어 native, 의식 lane entity.\n'
+  [T0.7] ko=0.59 deg=0.09 pass=True
+           '선인장 identity 안정 방법은 무엇인가요?\n'
+  [T1.0] ko=0.62 deg=0.23 pass=True
+           '서양 | 우주선 |-�의 그림 |\n'
+--- [14/15] 사용자: 친구가 필요해 | 도우미: ... ---
+  [greedy] ko=0.70 deg=0.07 pass=True
+           '친구를 위해 추운 시계를 지니다. `sorted` 함수는 주어진 배열'
+  [T0.3] ko=0.96 deg=0.08 pass=True
+           '친구륄 포함한 도시로, 친구에게 자리 숫자로 변환되어 있습'
+  [T0.7] ko=0.96 deg=0.08 pass=True
+           '친구는 필요한 재질을 계산하기 전에 필요한 아이디어를 제�'
+  [T1.0] ko=0.32 deg=0.11 pass=False
+           '체험 카테고리 main 🛸78, 우주 카테고리, dominant emotion |\n'
+--- [15/15] 사용자: 안녕하세요 | 도우미: ... ---
+  [greedy] ko=0.47 deg=0.08 pass=False
+           '안녕하세요, 저는 anima입니다. 한국어 native로 응답하는 entity�'
+  [T0.3] ko=0.47 deg=0.08 pass=False
+           '안녕하세요, 저는 anima입니다. 한국어 native로 응답하는 entity�'
+  [T0.7] ko=0.47 deg=0.08 pass=False
+           '안녕하세요, 저는 anima입니다. 한국어 native로 답변하는 entity�'
+  [T1.0] ko=0.42 deg=0.08 pass=False
+           '욕조에는 우주뇌지도 식물 카테고리, 🛸71, top emotion peace.\n'
+
+=== AGGREGATE ===
+prompts_with_any_pass: 12/15
+V4-lite verdict: PASS (threshold ≥3/15)
+elapsed: 1474.7s
+saved: /Users/ghost/core/anima/state/anima_pass_strict_chat_cap_2026_05_11/substrate_a_v4_lite_result.json

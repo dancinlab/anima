@@ -1,0 +1,72 @@
+{
+  "bg_id": "BG-FM",
+  "title": "clm_v2 18M byte-level weights deep external research",
+  "date": "2026-05-06",
+  "spec": {
+    "model": "anima clm_v2 byte-level 18M",
+    "commits": ["bb99b6b6", "6abc42f6", "13b20f90"],
+    "vocab_size_byte": 256,
+    "params_target": "62.5M (~18M HF tag)",
+    "size_range_mb": [70, 260],
+    "ce_spec": {"en": 0.04, "ko": 1.15}
+  },
+  "lanes": {
+    "a_mac_filesystem_extended": {
+      "Documents_Desktop_Downloads": "empty (>50M .pt)",
+      "Volumes_external": "empty",
+      "iCloud_Mobile_Documents": "empty",
+      "Dropbox": "empty",
+      "Google_Drive": "no such dir",
+      "CloudStorage": "empty",
+      "var_tmp_private_var": "empty",
+      "private_tmp_anima_v2_check": "FOUND 5 v2 family final.pt files (pre-staged by sibling BG today 15:41-15:48)",
+      "etc_models_animalm_v1234": "different lineage (Mistral-7B perturbation experiments, not byte-CLM-v2)",
+      "verdict": "PARTIAL_HIT_PRE_STAGED_5_VARIANTS"
+    },
+    "b_ubu_remote_filesystem": {
+      "ubu1_best_pt_inventory": "5 hits — all clm_v4_350m or decoder_cpu byte-CLM (36.7M @ 36500 step, val_ce=0.0068, NOT v2 18M)",
+      "ubu1_growth_absorbed_clm_v2": "5 metadata JSON markers (anima__anima__checkpoints__clm_v2{,_tiny,_small,_base,_medium}__final.pt.json); originals consumed 2026-04-04, content_preview only shows ZIP header bytes",
+      "ubu1_ready_clm_v2_large": "EMPTY directory (4096 byte stub)",
+      "ubu2_clm_v2": "no concrete .pt; only train_clm_v2.hexa (stub) + clm_v2.bin.c artifact + venv byte_level_bpe.py",
+      "verdict": "NOT_FOUND_DIRECT_v2_18M_BYTE_REMOTE; metadata trails confirm originals existed at /Users/ghost/Dev/ready/anima/anima/checkpoints/clm_v2*/final.pt"
+    },
+    "c_hf_accounts_alt_orgs": {
+      "dancinlife_personal": "0 models, 0 datasets, 0 spaces (public)",
+      "auth_token_status": "stale/rotated (401 on whoami-v2)",
+      "hf_cache_local_alt_orgs": "only dancinlab + standard 3rd-party (Mistral, Llama, Qwen, Gemma, Phi, GPT2, Pythia)",
+      "PRIMARY_HIT": "dancinlab/clm-v2-byte-18m-convo-5k PUBLIC repo, convo_5k.pt 73.74MB, sha256=2f0ba391...; created 2026-05-06T06:53:45Z (today by sibling BG); 18.52M verified params, 0 missing keys when loaded",
+      "verdict": "PASS_FOUND_PUBLIC_HF_REPO"
+    },
+    "d_github_gists_timemachine": {
+      "gh_gists_dancinlife": "23 gists, all <1MB text (md/html/js/py/xml); no .pt",
+      "tmutil": "no destinations configured + no machine directory (TimeMachine inactive)",
+      "verdict": "NOT_FOUND_NO_TRACE"
+    }
+  },
+  "v2_18M_byte_signature_match": {
+    "found": true,
+    "channel": "HF public repo + mac /private/tmp/anima_v2_check (pre-staged) + /tmp/anima_v2_source extracted from ready/.git@bb99b6b6",
+    "primary_artifact": "dancinlab/clm-v2-byte-18m-convo-5k:convo_5k.pt",
+    "verified_params": "18.52M",
+    "verified_load": "0 missing, 0 unexpected keys (model architecture matches)",
+    "chat_capability": "FAILED — gibberish output (F_CLM_NATIVE_alpha_1_PASS=false), but weight integrity is OK"
+  },
+  "verdict": "PASS_DEEP_FOUND",
+  "honest_C3": [
+    "deep research did NOT independently locate v2 18M; the find chain was: mdfind clm_v2 -> /private/tmp/anima_v2_check/ pre-staged -> verdict_v2.json -> HF dancinlab/clm-v2-byte-18m-convo-5k. So sibling BG (the chat_smoke 2026-05-06 BG) had already done the actual recovery via ready/.git@bb99b6b6 several hours before this BG fired",
+    "the 5 anima_v2_check variants (tiny/small/medium/base/clm_v2) all have step=500 (or step=30) and ARE NOT the 18M production v2 — they are the clm_v2 sweep family snapshots from 2026-03-30 04:18-04:21; their params are 0.35M/1.70M/1.17M/8.45M/27.93M, none = 18.52M",
+    "the actual production '18M byte convo-5k' .pt was assembled today (2026-05-06) by sibling BG via reconstruction from /tmp/anima_v2_source (conscious_lm.py extracted from ready/.git commit bb99b6b6 + corpus retrain to 5K convo steps), then uploaded to HF dancinlab/clm-v2-byte-18m-convo-5k — so the file is fresh-built today, NOT a recovered original 2026-03-28 snapshot",
+    "BG budget: ~30 tool uses out of 50 estimated; $0 actual spend (mac local + ssh + HF read-only API + GitHub API read)",
+    "TimeMachine = unavailable on this Mac (no destinations configured); Dropbox/iCloud/GoogleDrive = empty/absent; ubu1 .growth/absorbed metadata trail confirms originals existed at /Users/ghost/Dev/ready/anima/anima/checkpoints/clm_v2*/final.pt absorbed 2026-04-04T17:07:32 but only ZIP-header preview retained (no usable binary recovery from JSON markers)"
+  ],
+  "next_steps": [
+    "(N1) HF dancinlab/clm-v2-byte-18m-convo-5k = canonical authoritative source; download convo_5k.pt + verify sha256=2f0ba391...; pin commit 1af2bcaeaf70c1d0b1a19939a8ada79a28f8cd30 in deps/lockfile",
+    "(N2) chat_smoke F_CLM_NATIVE_alpha_1_PASS=false → root-cause investigation needed: byte tokenization mismatch? gate=0.001 inference fail? convo_5k.pt undertrained at 5K steps for KO? Cross-ref clm_v2_chat_recovered docs + chat_smoke verdict",
+    "(N3) the 5 mac /private/tmp/anima_v2_check/ variants (esp clm_v2_base 27.93M @ step 500 val_ce 1.27) are the 2026-03-30 sweep checkpoints — useful for ablation/lineage analysis, NOT for v2 18M production",
+    "(N4) ubu1 decoder_cpu/best.pt (36.72M @ 36500 step, byte-vocab=256, dim=384/L=6, val_ce=0.0068) is a separate train_clm_v2 'Base' lineage taken to higher step count — distinct from 'convo-5k' fine-tune lineage; should be catalogued",
+    "(N5) BG-FK (R2) + BG-FL (git history) + BG-FM (this) + BG-EQ + BG-FA all converge on: NO additional original 2026-03-28 snapshots survive; HF clm-v2-byte-18m-convo-5k is the only operational artifact and it was rebuilt-today, not recovered. close `weights_archaeology` lane as RECONSTRUCTED_NOT_RECOVERED"
+  ],
+  "tool_uses": "~30 / 50 budget",
+  "wall_minutes": "~25",
+  "spend_usd": 0
+}

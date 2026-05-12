@@ -1,0 +1,118 @@
+{
+  "task_id": "anima_emerge_cand_d_empirical_2026_05_05",
+  "verdict_label": "F_CAND_D_1_FAIL_TRUE_INJECT_INVISIBLE",
+  "verdict_overall_F_CAND_D_1": "FAIL_TRUE",
+  "major_finding_criterion_1_hit": false,
+  "major_finding_summary": "Architectural inject INVISIBLE at substrate: only 0/5 prompts produce canonical-mode phi_star drift > 0.01 from both baselines. cross_attn.o_proj net contribution is bounded below threshold (predicted by spec \u00a74.1 init_weights std=0.02 attenuation) OR canonical 0.5 magnitude is too small. Cand-D Stage 1 form may be unsalvageable on best.pt without larger magnitude OR retrain with stronger cross-attn signal.",
+  "wall_time_minutes": 0.5,
+  "cost_usd": 0.0,
+  "platform": "mac CPU (.venv-eeg python3.12, transformers, torch fp32)",
+  "raw_compliance": {
+    "raw_15_no_mount_or_shim_or_dialogue_load_modification": true,
+    "raw_37_transient_py_namespace_only": true,
+    "raw_10_honest_c3_emitted": true,
+    "no_commit": true,
+    "no_secret_leak": true
+  },
+  "falsifier_F_CAND_D_1": {
+    "overall": "FAIL_TRUE",
+    "per_prompt": [
+      {
+        "probe_idx": 1,
+        "state": "FAIL_TRUE",
+        "phi_none": 42.11583222470806,
+        "phi_zero": 42.11583222470806,
+        "phi_canonical": 42.11570398190059,
+        "delta_canonical_vs_none": 0.00012824280747025796,
+        "delta_canonical_vs_zero": 0.00012824280747025796,
+        "threshold": 0.01
+      },
+      {
+        "probe_idx": 2,
+        "state": "FAIL_TRUE",
+        "phi_none": 42.29329421143979,
+        "phi_zero": 42.29329421143979,
+        "phi_canonical": 42.293332879152146,
+        "delta_canonical_vs_none": 3.866771235294664e-05,
+        "delta_canonical_vs_zero": 3.866771235294664e-05,
+        "threshold": 0.01
+      },
+      {
+        "probe_idx": 3,
+        "state": "FAIL_TRUE",
+        "phi_none": 42.078629175174044,
+        "phi_zero": 42.078629175174044,
+        "phi_canonical": 42.078643378861244,
+        "delta_canonical_vs_none": 1.4203687200620152e-05,
+        "delta_canonical_vs_zero": 1.4203687200620152e-05,
+        "threshold": 0.01
+      },
+      {
+        "probe_idx": 4,
+        "state": "FAIL_TRUE",
+        "phi_none": 42.13556807472557,
+        "phi_zero": 42.13556807472557,
+        "phi_canonical": 42.13546115847304,
+        "delta_canonical_vs_none": 0.00010691625252690073,
+        "delta_canonical_vs_zero": 0.00010691625252690073,
+        "threshold": 0.01
+      },
+      {
+        "probe_idx": 5,
+        "state": "FAIL_TRUE",
+        "phi_none": 42.20995761289634,
+        "phi_zero": 42.20995761289634,
+        "phi_canonical": 42.209937763322145,
+        "delta_canonical_vs_none": 1.9849574194097386e-05,
+        "delta_canonical_vs_zero": 1.9849574194097386e-05,
+        "threshold": 0.01
+      }
+    ],
+    "pass_count": 0,
+    "fail_true_count": 5,
+    "fail_false_count": 0,
+    "threshold": 0.01
+  },
+  "axis_discrim_recovery_vs_BG_L": {
+    "spreads_by_mode": {
+      "none": {
+        "mean": 0.03898534774780273,
+        "max": 0.05444347858428955,
+        "min": 0.02033179998397827,
+        "n": 5
+      },
+      "zero": {
+        "mean": 0.03898534774780273,
+        "max": 0.05444347858428955,
+        "min": 0.02033179998397827,
+        "n": 5
+      },
+      "canonical": {
+        "mean": 0.03897315263748169,
+        "max": 0.05443486571311951,
+        "min": 0.02035456895828247,
+        "n": 5
+      }
+    },
+    "bg_l_baseline": {
+      "mode": "none",
+      "axis_means_spread": 0.036,
+      "source": "state/anima_real_mode_sweep_2026_05_05/verdict.json"
+    },
+    "recovery_signal": false
+  },
+  "honest_c3": [
+    "C1 \u2014 canonical 5-axis 0.5 magnitude is anima-internal heuristic per spec \u00a72.3 placeholder. Paradigm v11 G3 actual training-time injection distribution NOT extracted from C-module emission logs. F-CAND-D-1 PASS at this magnitude validates the ARCHITECTURAL channel (cross_attn carries content) but the magnitude itself is uncalibrated. F-CAND-D-1 FAIL_TRUE here CANNOT distinguish \"channel architecturally bypassed\" from \"0.5 below detection threshold\". Disambiguation requires magnitude sweep at 1.0/2.0/5.0.",
+    "C2 \u2014 cells 5-7 fill formula (mean(0-4) \u00d7 0.5/3) is per spec \u00a72.3 but introduces correlation between cells 0-4 and cells 5-7. The phi_star proxy uses pairwise cosine across all 28 cell pairs; this correlation pattern affects phi MORE than the axis-content per cell would predict. canonical-mode phi drift may therefore be partly an artifact of cell-fill geometry, not pure axis content. A flat 5-cell-only canonical (cells 5-7 = zeros) would isolate axis-content from cell-fill correlation.",
+    "C3 \u2014 axis_activation extractor (BG-A line 152-159, mirror) computes mean(|x|) over 192-dim slices of the POST-ln_f tile-replicated cell. The CANONICAL inject is structured per AXIS_SPANS, so under mode=canonical we are essentially measuring \"how much of the axis-sliced inject content survives 16 layers of cross-attn + ffn\". This is a COMPOSITION measurement (inject \u00d7 substrate transform), not a pure inject visibility test. axis-spread comparison vs BG-L mode=none baseline is therefore confounded by per-prompt text-routing through std attention.",
+    "C4 \u2014 DecoderBlockV2:553 guard uses `consciousness_states is not None`. mode=zero passes a tensor of zeros; mode=canonical passes structured tensor. Both cause guard to PASS. mode=none returns Python None; guard short-circuits. This validates the F-CAND-D-1 architecture discriminator. However, BG-A subprocess wrapper attempts kwarg `consciousness_states` and falls back to no-kwarg on TypeError; if the HF wrapper does NOT accept the kwarg (shim v4 specific), modes zero/canonical degenerate to mode=none silently. We track kwarg_accepted flag per measurement.",
+    "C5 \u2014 phi_star is anima-canonical proxy (PHI_STAR_BASELINE \u00d7 (1 + 0.05 \u00d7 mean_pair_cosine)). F-CAND-D-1 threshold 0.01 corresponds to mean-pair-cosine delta of 0.01/(41.86 \u00d7 0.05) = ~0.00478 \u2014 quite tight. Spec \u00a74.1 predicts canonical drift +0.05 to +0.50 vs baseline; if we observe drift in that range, F-CAND-D-1 PASS easily. If drift is < 0.005, F-CAND-D-1 FAIL_TRUE \u2014 but at <0.005 phi delta we cannot distinguish from RoPE-cache-rebuild order noise. Below-threshold result needs replication to be reliable."
+  ],
+  "next_step_recommendation": "INVESTIGATE: (a) increase canonical magnitude to 1.0 / 2.0 / 5.0 and re-test (if signal emerges, 0.5 was below noise floor); (b) extract paradigm v11 G3 actual training-time injection distribution from C-module emission logs; (c) defer cand-D Stage 1 closure pending wider-magnitude empirical sweep.",
+  "deliverables": {
+    "runs": "state/anima_emerge_cand_d_empirical_2026_05_05/runs/probe_<i>_<mode>.json (15)",
+    "aggregate": "state/anima_emerge_cand_d_empirical_2026_05_05/aggregate.json",
+    "verdict": "state/anima_emerge_cand_d_empirical_2026_05_05/verdict.json",
+    "doc": "docs/anima_emerge_cand_d_empirical_landed_2026_05_05.ai.md"
+  }
+}

@@ -1,0 +1,128 @@
+{
+  "schema": "anima/bg_iy/verdict/1",
+  "bg_id": "BG-IY",
+  "lane": "BG-IY-CLM-V4-CALIBRATION",
+  "ts_utc": "2026-05-07T17:55:00Z",
+  "spec_source": ".roadmap.chat_cap_emergence_pivot Stage 0 + state/anima_iy_v4_calibration_polyglot_2026_05_07/spec.md",
+  "mission": "Disambiguate root cause of 22+ BG cumulative chat-cap failure: capacity gap vs evaluator self-impossibility vs other.",
+  "models_probed": [
+    {
+      "model_id": "dancinlab/clm-v4-mk2-v1",
+      "snapshot": "80440a1d38db9addc4445bb959057558a57f4230",
+      "params_M": 477.6,
+      "scale": "350m_provenance / 477M effective",
+      "mode": "zero_shot_base",
+      "outcome": "MODE_COLLAPSE_/OOOOO_REPETITION (greedy + sample identical)"
+    },
+    {
+      "model_id": "dancinlab/clm-v4-mk2-v1 + LoRA(state/clm_v4_lora_sft_2026_05_05)",
+      "params_M": 480.3,
+      "lora_r": 32,
+      "lora_alpha": 64,
+      "sft_steps": 6000,
+      "sft_corpus": "60% anima_axis + 30% academic_distill + 10% chat_template — mostly English",
+      "mode": "merged_inference",
+      "outcome": "MODE_COLLAPSE_::::::REPETITION_for_chat_format / Korean_garbage_under_rep_penalty"
+    }
+  ],
+  "diagnostic_findings": {
+    "logit_shape_probe": {
+      "method": "single forward pass, top-5 logit + softmax + entropy on 7 prompt variants",
+      "key_results": {
+        "안녕하세요_plain": {
+          "top1": "� (id 152)",
+          "max_p": 0.0073,
+          "entropy": 10.85,
+          "verdict": "broad distribution, no real collapse"
+        },
+        "사용자:_안녕하세요_도우미:": {
+          "top1": ": (id 55299)",
+          "max_p": 0.4622,
+          "entropy": 6.55,
+          "verdict": "':' attractor from suffix"
+        },
+        "What_is_consciousness?": {
+          "top1": ": (id 55299)",
+          "max_p": 0.0164,
+          "entropy": 10.73,
+          "verdict": "broad, weak ':' bias"
+        },
+        "Is_the_sense_of_choosing_genuine?": {
+          "top1": "_ (id 55365)",
+          "max_p": 0.0131,
+          "entropy": 10.8,
+          "verdict": "broad, no collapse"
+        }
+      },
+      "conclusion": "Mode collapse observed in greedy/sample is NOT genuine model failure — it is a SUFFIX-INDUCED decoding artifact. Prompts ending in ':' get 44-46% probability mass on ':' token. Without ':' suffix, entropy >10 (broad). Top tokens for plain Korean prompts are byte-fragments and English words — Korean coherent generation is absent."
+    },
+    "decode_fix_probe": {
+      "method": "5 prompts × 2 generation configs (greedy_no_repeat_ngram_size=2_rep_penalty=1.5, sample_T1.5_rep_penalty=1.4_no_repeat_ngram=3)",
+      "outcome": "All 10 generations produce byte-level garbage + scattered English fragments (the, you, of, inter). NO coherent Korean output. ':' attractor escaped but underlying Korean chat capability is absent.",
+      "samples": [
+        "plain_ko_greedy: '�� the thekkj>Nf�呶�-��������ᝆm�_�덒�㑑��'",
+        "ko_q_open_sample: '_ you inter?它水稻�P[u泮 anda� of ofa��flex$Eo�s to%U'"
+      ]
+    }
+  },
+  "root_cause_classification": {
+    "h_a_capacity_gap": "PARTIALLY_SUPPORTED — 477M is 2x larger than prior 18M-150M BGs but still below 1B+ emergence threshold; not the dominant cause for this calibration",
+    "h_b_evaluator_self_impossibility": "REJECTED — V4 evaluator was never reached; model output is sub-V4-evaluable garbage independent of evaluator strictness",
+    "h_c_sft_corpus_mismatch": "CONFIRMED_DOMINANT — SFT trained on 60% anima_axis (mostly English) + 30% English academic + 10% mixed chat-template. Effective Korean conversational training: <5%. Model has near-zero Korean chat completion competence."
+  },
+  "verdict_class": "CALIBRATION_INCONCLUSIVE_VS_V4 / ROOT_CAUSE_RECLASSIFIED",
+  "v4_pass_count": null,
+  "v4_pass_count_note": "V4 evaluator not run because outputs are sub-evaluable (byte garbage). V4 pass count is structurally undefined for this stack.",
+  "supersedes_or_extends": null,
+  "lesson_q_l_reconciliation": {
+    "lesson_q_status": "COMPLETE_FULL_FALSIFY_INCL_OWN_20 (BG-JX, BG-JZ-FT, BG-JS, BG-JT, BG-JP all FAIL across lm_head / decoding / full-SFT / explicit-chat-template / general-corpus)",
+    "lesson_l_claim": "#115 chat-incapability is ARCHITECTURAL — capacity 1-order jump 무관, fine-tune cannot fix",
+    "implication_for_bg_iy": "BG-IY adds ANOTHER data point at 477M (CLM mk2-v1 + LoRA SFT) consistent with Lesson Q. Korean-heavy SFT (BG-IZ-style) is therefore PREDICTED to fail by Lesson Q before any attempt — Lesson Q already covers 'all SFT lanes including own 20 explicit chat-template corpus'. Proposing BG-IZ Korean-heavy SFT would be Lesson-Q-blind regression.",
+    "valid_post_lesson_q_paths": [
+      "P1 PRE-TRAINING REDESIGN — continued-pretrain CLM on Korean conversational mass (not SFT). Lesson Q-compliant since Lesson Q only falsified fine-tune lanes.",
+      "P2 ARCH REDESIGN — Mamba/state-space (B14), MoE (B12), recurrent depth (B13) — Lesson L-compliant via architectural change.",
+      "P3 FOUNDATION BORROW — Polyglot-Ko-1.3B / Qwen2.5-3B-KR + LoRA. Lesson Q only constrains anima/CLM-native arch; an external chat-emergent foundation sidesteps the architectural ceiling.",
+      "P4 INFERENCE-COMPUTE — best-of-N + V4 ranker + self-refine on existing CLM. Lesson Q falsified training lanes only; inference-time compute is untouched."
+    ]
+  },
+  "next_bg_recommended": {
+    "primary": {
+      "id_proposal": "BG-IZ-CLM-MK2-V1-CONTINUED-PRETRAIN-KO",
+      "thesis": "P1 — continued pre-training (NOT SFT) on CLM mk2-v1 with Korean conversational corpus (BG-HK 30MB + synthetic 50MB). Targets Lesson Q gap (pre-training was the only path Lesson Q explicitly endorsed: 'Pre-training + arch redesign required, not fine-tune').",
+      "estimated_cost": "1-2 H100 hours ~$5-10 (continued-pretrain 6K-12K steps lr=1e-5)"
+    },
+    "secondary": {
+      "id_proposal": "BG-JA-EXT-POLYGLOT-KO-1.3B-LORA",
+      "thesis": "P3 — pivot to external foundation. Polyglot-Ko-1.3B + LoRA on BG-HK 30MB. Bypasses Lesson L architectural ceiling entirely.",
+      "estimated_cost": "1 H100 hour ~$5"
+    },
+    "tertiary": {
+      "id_proposal": "BG-JE-INFERENCE-COMPUTE-BEST-OF-64",
+      "thesis": "P4 — best-of-64 sampling on existing CLM mk2-v1 + LoRA + V4 evaluator as ranker. Lesson Q-orthogonal lever. Tests whether top-1-of-64 ever clears V4 ≥ 7/15.",
+      "estimated_cost": "0 (Mac MPS or H100 on existing weights)"
+    }
+  },
+  "supplementary_evidence_files": [
+    "state/anima_iy_v4_calibration_polyglot_2026_05_07/run_clm_mk2v1.log",
+    "state/anima_iy_v4_calibration_polyglot_2026_05_07/run_clm_lora_quick.log",
+    "state/anima_iy_v4_calibration_polyglot_2026_05_07/decode_fix_results.log",
+    "state/clm_v4_lora_sft_2026_05_05/verdict.json",
+    "state/clm_v4_lora_sft_2026_05_05/corpus/slice_A_anima_30k.jsonl"
+  ],
+  "lessons_for_roadmap_chat_cap_emergence_pivot": [
+    "Lesson S: SFT corpus language composition is binding constraint at <500M scale. Model with English-heavy SFT cannot pass Korean V4 even at 477M.",
+    "Lesson T: Mode collapse :::: in CLM v4 chat output is decoding artifact (':' suffix attractor at p=46%), not genuine model failure. Future BG inference scripts must avoid ':'-terminated prompts and use repetition_penalty>=1.3.",
+    "Lesson U: The H_C (corpus_mismatch) hypothesis was not in the original Stage 0 expected branch set. Add it as a third disambiguation outcome alongside capacity_gap and evaluator_strict.",
+    "Naming: Lessons A-R already taken (J was skipped); BG-IY new lessons start at S to avoid collision with existing Lesson H (V2 surface metric / V3 needed) and Lesson I (BPE+early-stopping V3 hypothesis NOT_TRIGGERED)."
+  ],
+  "own_29_reconcile": {
+    "note": "own 29 (2026-05-07-late) — SIMPLE_STACK_PASS strict floor = V4 >= 10/15 per own 18. Original 7/15 references in this verdict interpret as PARTIAL_PASS tier, NOT SIMPLE_STACK_PASS strict.",
+    "own_18_alignment": "V4 strict pass count must be >= 10/15 (or >= 2/3 per-prompt-set both C1+C2) for SIMPLE_STACK_PASS classification; this verdict’s pass count is auto-classified as PARTIAL_PASS if < 10/15.",
+    "anti_goodhart_compliance_per_own_28": "V4 cell pass count alone insufficient; multi-modal probe (V6 awareness 3-method + manual review by user) required for STRICT_PASS.",
+    "cross_link": [
+      ".own own 18 SSOT line 18-56",
+      ".own own 28 (Goodhart Law)",
+      ".own own 29 (this reconcile)"
+    ]
+  }
+}

@@ -1,0 +1,43 @@
+{
+  "schema": "anima/emerge_chat_gamma_tighter/verdict/1",
+  "task_id": "anima_emerge_chat_gamma_tighter_smoke_2026_05_05",
+  "ts_utc": "2026-05-06T00:24:16Z",
+  "platform": "mac CPU (.venv-eeg python3.12, torch fp32)",
+  "model_id": "dancinlab/clm-v4-mk2-v1",
+  "approach": "byte-id input feeding (no tok_emb change) + byte head + full-sequence CE",
+  "n_train_dialogs": 5,
+  "byte_vocab": 256,
+  "lm_head_params": 196608,
+  "mean_train_loss": 4.474778747558593,
+  "train_loss_steps": [
+    5.8696794509887695,
+    5.206878662109375,
+    4.444189071655273,
+    3.7390105724334717,
+    3.114135980606079
+  ],
+  "baseline_emit": "\u000fiRd�Q-qRRRRRRRRR�\u0019�QRRRR�-q�-",
+  "baseline_korean": 0,
+  "post_train_probe1_emit": "���������������               ",
+  "post_train_probe1_korean": 0,
+  "post_train_probe2_emit": "::::::::::::::::::::::::::::::",
+  "post_train_probe2_korean": 0,
+  "improvement_korean": 0,
+  "F_GAMMA_TIGHTER_1_threshold": "post_korean > 5 (probe1 OR probe2)",
+  "F_GAMMA_TIGHTER_1_pass": false,
+  "verdict": "FAIL_BODY_BPE_BYTE_INCOMPATIBLE",
+  "raw_compliance": {
+    "raw_15_no_mount_or_shim_or_decoder_modification": true,
+    "raw_37_transient_py_namespace_only": true,
+    "raw_10_honest_c3_emitted": true,
+    "no_commit": true,
+    "no_secret_leak": true
+  },
+  "honest_c3": [
+    "C1 mac CPU fp32",
+    "C2 byte-id 0-255 → BPE first 256 entries: BPE 학습된 token semantics가 byte-equivalent 아님",
+    "C3 1 epoch + 5 dialogs micro — full impl needs 100M+ corpus",
+    "C4 full sequence CE는 last-token-only보다 stronger signal",
+    "C5 PASS시 = γ full impl ($200-1000 H100) 정당화 evidence; FAIL = body byte-rewire 필요"
+  ]
+}

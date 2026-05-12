@@ -1,0 +1,17 @@
+{
+  "schema": "anima/emerge_chat_activation_patching/verdict/1",
+  "ts_utc": "2026-05-05T17:43:01Z",
+  "donor_model": "EleutherAI/pythia-70m",
+  "donor_residual_norm": 433.8212890625,
+  "clm_residual_norm": 28.76158332824707,
+  "n_configs": 10,
+  "n_coherent": 3,
+  "verdict": "PASS_PATCH_TRANSFERS",
+  "honest_c3": [
+    "C1 mac CPU fp32",
+    "C2 cross-architecture residual transfer (different vocab, tokenization, layer count)",
+    "C3 zero-pad resize is naive — proper would use learned projection",
+    "C4 last-token only patch — multi-token continuation 미",
+    "C5 single prompt 안녕"
+  ]
+}

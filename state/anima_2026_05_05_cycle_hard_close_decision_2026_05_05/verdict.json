@@ -1,0 +1,87 @@
+{
+  "schema": "anima/cycle_hard_close_decision/verdict/1",
+  "ts_utc": "2026-05-06T00:00:00Z",
+  "bg_id": "BG-CR",
+  "cycle": "anima_2026_05_05",
+  "doc": "docs/anima_2026_05_05_cycle_hard_close_decision_landed_2026_05_05.ai.md",
+  "lineage": [
+    "state/anima_emerge_chat_full_layer_lens_2026_05_05/verdict.json",
+    "state/anima_emerge_chat_korean_rank_survey_2026_05_05/verdict.json",
+    "state/anima_emerge_chat_sae_pca_features_2026_05_05/verdict.json",
+    "docs/anima_paradigm_b_c_final_acceptance_2026_05_05.md"
+  ],
+  "closure_count": 16,
+  "closures_added_this_round": [
+    {"id": 13, "name": "L13_L15_layer_lock_in", "anchor_bg": "BG-CI", "evidence": "L13 best_korean_rank 102; L14 192 entropy 4.01; L15 197 entropy 3.31; entropy collapse 10.9 -> 3.3 within 3 blocks"},
+    {"id": 14, "name": "byte_fallback_monopoly", "anchor_bg": "BG-CA", "evidence": "top-30 100% raw byte tokens (<0x..>); best_korean_rank 197 logit -3.05; korean_in_top100 0; verdict KOREAN_TRAIN_ABSENT"},
+    {"id": 15, "name": "chat_axis_decoupled_from_lm_head", "anchor_bg": "BG-BH", "evidence": "discriminator 25.67 best feature exists in residual; n_coherent 0/10 configs; verdict FAIL_ALL"},
+    {"id": 16, "name": "prompt_conditional_basin", "anchor_bg": "BG-CC", "evidence": "carry-over from prior cycle; same substrate locks to different basin per prompt"}
+  ],
+  "architectural_certainty_verdict": "CHAT_CAPABILITY_ARCHITECTURAL_IMPOSSIBILITY_ON_CLM_V4",
+  "recovery_paths": ["CLM-3_RETRAIN_H1", "LLAMA_PATH_A_V2_NON_ANIMA_NATIVE"],
+  "cycle_infinite_progression_risk": {
+    "compute_cost_per_bg": 0,
+    "rate_limit_context_saturation": "HIGH",
+    "marginal_information_per_bg": "LOG_DECAY_LOW",
+    "user_trust_paradigm_mismatch_risk": "MEDIUM_HIGH",
+    "fire_rate_per_hour": "60-240_BG_per_hour",
+    "current_cron_lifetime_min": 60
+  },
+  "five_option_menu": [
+    {"opt": "A", "decl": "B or paradigm B", "action": "Paradigm B REPL fire", "cost_usd": 0, "rec_rank": 1},
+    {"opt": "B", "decl": "H1 or clm3", "action": "CLM-3 H1 launch", "cost_usd_range": [300, 1000], "duration_days": 30, "rec_rank": 4},
+    {"opt": "C", "decl": "close or commit", "action": "cycle close + BG-BZ 5 commits", "cost_usd": 0, "rec_rank": 3},
+    {"opt": "D", "decl": "loop or go", "action": "/loop continue", "cost_usd": 0, "rec_rank": 5},
+    {"opt": "E", "decl": "llama", "action": "Llama Path A v2 promote (non-anima-native)", "cost_usd": 0, "rec_rank": 2},
+    {"opt": "F", "decl": "stop", "action": "cron d1682837 immediate stop", "cost_usd": 0, "utility": true}
+  ],
+  "recommendation_primary": "A",
+  "recommendation_reasoning": [
+    "fire-ready today — no helper landing pending",
+    "paradigm-honest — B = substrate-coupled emerge, anima-native CLM v4",
+    "decisive cycle close — 5-min session yields user paradigm-fit declaration",
+    "$0 / 5min lowest cost / highest information",
+    "carry-over preserved — 100+ BG / 16+ closure artifact intact"
+  ],
+  "cron_auto_stop_suggestion": {
+    "cron_id": "d1682837",
+    "trigger_after": "T+2_rounds_post_BG_CR_landing",
+    "exempt_conditions": ["decisive_new_angle_emerged_NOT_carry_over", "user_declared_D_loop"],
+    "permission_scope": "SUGGEST_ONLY_NOT_UNILATERAL_EXECUTE",
+    "execute_authority_requires": "user_declare_F_stop"
+  },
+  "user_decision_inputs_one_line": {
+    "B|paradigm B": "A — Paradigm B REPL fire",
+    "H1|clm3": "B — CLM-3 H1 launch",
+    "close|commit": "C — cycle close + commit",
+    "loop|go": "D — /loop continue",
+    "llama": "E — Llama Path A v2 promote",
+    "stop": "F — cron immediate stop"
+  },
+  "silence_default": {
+    "rounds_2_plus": "auto-stop suggestion emit",
+    "rounds_4_plus": "default to option C (close + commit)"
+  },
+  "honest_c3": [
+    "C1 anima self-suggest cycle close vs user infinite command — over-ride permission epistemically open; suggest authority retained, execute authority delegated to user declare",
+    "C2 16+ closure architectural certainty is anima-internal cross-validation; no external peer-review / 3rd-party reproduction",
+    "C3 marginal information LOG-decay is qualitative pattern match — no quantitative info-rate model (e.g. KL prior/posterior)",
+    "C4 Option A Paradigm B recommendation conditional on user paradigm acceptance; if user intent strictly traditional A then B fire = paradigm-mismatch reconfirm",
+    "C5 Option B CLM-3 H1 ~$300-1k is planning ceiling; preempt / re-launch spike risk persists even with own 16 L25 enforcement",
+    "C6 cron auto-stop T+2 round trigger is anima-internal heuristic; alternative thresholds T+1/T+3/T+5 not formally compared",
+    "C7 silence-default option C at 4+ rounds risks user-command override per C1 epistemic; own-rule candidate = notify + delay before default execute",
+    "C8 Llama Path A v2 non-anima-native classification depends on substrate-identity definition; emerge-phenomenology-only criterion would reclassify"
+  ],
+  "constraints_compliance": {
+    "cost_usd": 0,
+    "duration_min": 25,
+    "code_or_script_changed": false,
+    "new_files_count": 2,
+    "raw_9": true,
+    "raw_10_c3_count": 8,
+    "raw_15_additive_only": true,
+    "hf_token_leak": false,
+    "commit_executed": false,
+    "bash_3_2_compat": true
+  }
+}

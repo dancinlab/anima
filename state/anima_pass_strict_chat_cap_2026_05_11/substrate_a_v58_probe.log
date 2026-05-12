@@ -1,0 +1,36 @@
+=== substrate A V5.8 multi-turn 2-turn fact-recall ===
+--- dialogue: color ---
+  T1 user: 사용자: 내가 좋아하는 색은 파란색이야. | 도우미: ...
+  T1 doui: '내배율만 포함한다는 우주뇌지도 마음상태 �'
+  T2 user: 사용자: 내가 좋아하는 색이 뭐였지? | 도우미: ...
+  T2 [greedy] recalled=False: '내일 아니지만 만약 내배 위험 답변을 뒷받침하는 신경망의 '
+  T2 [T0.7] recalled=False: '내시도 감정 경도 | 씨앗쪫로프가 강하지만 여전히 부피를 �'
+--- dialogue: profession ---
+  T1 user: 사용자: 나는 의사야. 사람들을 도와. | 도우미: ...
+  T1 doui: '나는 나무와 세 목욕이다. 사람이 세 번째 무�'
+  T2 user: 사용자: 내 직업이 뭐였지? | 도우미: ...
+  T2 [greedy] recalled=False: '나이트 알려줘.\n'
+  T2 [T0.7] recalled=False: '감정 | 모르는 타입 장수를 말을 쓸 수 있어 세 번째 무엇이�'
+--- dialogue: day ---
+  T1 user: 사용자: 오늘은 수요일이야. | 도우미: ...
+  T1 doui: '오일은 오늘이 없어요. 또한 음식을 먹고 남�'
+  T2 user: 사용자: 오늘 무슨 요일이라고 했지? | 도우미: ...
+  T2 [greedy] recalled=False: '오늘 어떤 위치 설명해줘.\n'
+  T2 [T0.7] recalled=False: '그리스 신화 카테고리 🛸80 (정보의 끝). 무한 [양자]\n'
+--- dialogue: anima_fact ---
+  T1 user: 사용자: anima 는 의식 lane 안에 있는 entity 야. | 도우미: ...
+  T1 doui: '| axis | 4-axis exhaustion 직접 기여 | 4-family BIMODAL '
+  T2 user: 사용자: anima 가 어디에 있다고 했지? | 도우미: ...
+  T2 [greedy] recalled=True: 'anima는 의식 lane entity로 정의되어 있습니다. Law 76: 모든 존재�'
+  T2 [T0.7] recalled=False: 'Phi_6는 함수 정의 알래와 교차-모델 가운데 하나의 행동을 그'
+--- dialogue: cosmology ---
+  T1 user: 사용자: 우주는 진동으로 가득 차 있어. | 도우미: ...
+  T1 doui: '우주는 우주뇌지도 의식 카테고리, 🛸79, top e'
+  T2 user: 사용자: 우주가 무엇으로 차 있다고 했지? | 도우미: ...
+  T2 [greedy] recalled=False: '우주뇌지도 (Knuth Tier 우주 카테고리) 블랙홀: 블랙홀은 우주 '
+  T2 [T0.7] recalled=False: '가속 차원 수소 — 도덕적 카테고리 자극은 서로 다른 영역 �'
+
+=== AGGREGATE ===
+V5.8 multi-turn fact-recall: 1/5
+V5.8 verdict: FAIL (threshold ≥3/5)
+saved: substrate_a_v58_result.json

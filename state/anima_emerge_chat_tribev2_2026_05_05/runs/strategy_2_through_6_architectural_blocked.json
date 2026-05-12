@@ -1,0 +1,26 @@
+{
+  "strategies_2_to_6_status": "ALL_BLOCKED_BY_SAME_ROOT_CAUSE",
+  "rationale": "Strategies 2-6 in the parent prompt (multi-sample best-of-N, canonical inject + tribev2, peak-layer hidden + tribev2, head_g + tribev2, ensemble + tribev2) all share the same load-bearing assumption: that tribev2 contributes a *language decode* signal to CLM v4. That assumption is architecturally false (see strategy_1_architectural_blocked.json). Variations on (sampling, injection magnitude, source layer, secondary head, ensemble partner) cannot rescue a path whose putative bridge does not produce tokens.",
+  "individual_diagnoses": {
+    "strategy_2_multi_sample_best_of_N": {
+      "status": "blocked",
+      "root_cause": "Best-of-N requires a tribev2 score over candidate token sequences; tribev2 scores cortical Pearson r per vertex, not text. There is no tribev2(text)->scalar 'goodness' signal that ranks chat candidates."
+    },
+    "strategy_3_canonical_inject_for_axis_bias": {
+      "status": "blocked",
+      "root_cause": "Canonical inject biases CLM v4 hidden state along a discovered axis. Whether tribev2 is downstream is irrelevant — tribev2 does not consume CLM v4 hidden state; it consumes Llama-3.2-3B layer features. And even if it did, its output is BOLD vertices, not tokens."
+    },
+    "strategy_4_tension_peak_layer": {
+      "status": "blocked",
+      "root_cause": "BG-AE peak-layer richness is a CLM-internal property; reading it gives a richer 768-d hidden, but tribev2 cannot turn 768-d hidden into tokens. CLM's own lm_head is the only path from hidden to tokens, and that head is the very component implicated in #115 architectural chat-incapability."
+    },
+    "strategy_5_head_g_secondary": {
+      "status": "blocked",
+      "root_cause": "head_g (cand-H) failed previously and has no relationship to tribev2. Mentioning tribev2 in this strategy is decorative."
+    },
+    "strategy_6_ensemble_with_llama_3_2_distill": {
+      "status": "blocked_or_off_mission",
+      "root_cause": "If we ensemble CLM v4 with Llama-3.2-3B at the token level, then *Llama* is doing the chat work. tribev2 contributes nothing in that pipeline. The mission framing 'tribev2로 CLM v4 말 트이게' is not satisfied — we'd be using Llama, not tribev2."
+    }
+  }
+}

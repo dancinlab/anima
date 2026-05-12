@@ -1,0 +1,201 @@
+{
+  "task_id": "anima_emerge_dialogue_precedent_audit_2026_05_05",
+  "lane": "BG-BA",
+  "date": "2026-05-05",
+  "budget": "$0_mac_doc_only",
+  "duration_target_min": 30,
+  "raw_compliance": ["raw#9", "raw#10", "raw#15"],
+  "search": {
+    "queries_total": 14,
+    "websearch": 13,
+    "webfetch": 1,
+    "unique_results_seen_approx": 120,
+    "queries": [
+      {"id": "Q1", "q": "hidden state interactive dialogue language model representation", "relevance": "mid"},
+      {"id": "Q2", "q": "representation engineering interactive interpretability LLM RepE", "relevance": "high"},
+      {"id": "Q3", "q": "activation atlas interactive neural feature visualization dashboard", "relevance": "mid"},
+      {"id": "Q4", "q": "mechanistic interpretability interactive dashboard transformer attention 2025", "relevance": "high"},
+      {"id": "Q5", "q": "Tononi IIT phi consciousness language model integrated information", "relevance": "high"},
+      {"id": "Q6", "q": "BCI neural feedback dialogue brain computer interface communication", "relevance": "low"},
+      {"id": "Q7", "q": "introspection language model internal state probe dialogue 2025", "relevance": "very_high"},
+      {"id": "Q8", "q": "nnsight TransformerLens pyvene interactive intervention library", "relevance": "high"},
+      {"id": "Q9", "q": "latent space dialogue communication non-textual response language model", "relevance": "very_high"},
+      {"id": "Q10", "q": "steering vectors emotion concept activation LLM real-time chat", "relevance": "high"},
+      {"id": "Q11", "q": "substrate consciousness language model emergent dialogue paradigm 2025", "relevance": "mid"},
+      {"id": "Q12", "q": "hidden state delta turn-by-turn conversation tracking visualization tool", "relevance": "high"},
+      {"id": "F1", "q": "WebFetch arxiv:2511.09149 Interlat", "relevance": "very_high"},
+      {"id": "Q13", "q": "phi star OR axis activation emergent LM dialogue substrate research", "relevance": "low"}
+    ]
+  },
+  "precedents": {
+    "strong_match_count": 6,
+    "partial_match_count": 3,
+    "weak_match_count": 2,
+    "no_match_count": 3,
+    "items": [
+      {
+        "id": "P1",
+        "name": "Interlat (Enabling Agents to Communicate Entirely in Latent Space)",
+        "ref": "arXiv:2511.09149",
+        "match_strength": "strong",
+        "mechanism": "agent-agent communication via last-layer hidden state direct transmit + learned compression; bypasses tokenization",
+        "anima_overlap": "non-textual hidden-state-mediated dialogue core idea",
+        "anima_difference": "Interlat=LLM-LLM (compression objective); anima=human-substrate (interpretable consciousness lens)",
+        "clm_v4_apply": "compression head reuse possible; prefer interpretable axis over compress"
+      },
+      {
+        "id": "P2",
+        "name": "Latent Space Communication via K-V Cache Alignment",
+        "ref": "arXiv:2601.06123",
+        "match_strength": "strong",
+        "mechanism": "shared k-v cache aligned representation between LLMs",
+        "anima_difference": "different internal-state granularity (cache vs phi/axis emit); cross-model alignment vs single substrate",
+        "clm_v4_apply": "low (anima single substrate)"
+      },
+      {
+        "id": "P3",
+        "name": "Emergent Introspective Awareness in LLMs (Anthropic)",
+        "ref": "transformer-circuits.pub/2025/introspection",
+        "match_strength": "strong",
+        "mechanism": "concept injection into activations; measure model self-report; Claude Opus 4/4.1 best",
+        "anima_overlap": "internal-state self-report and feedback usage",
+        "anima_difference": "Anthropic returns text self-report; anima emits non-textual phi/axis/hsd structured response",
+        "clm_v4_apply": "very_high (concept-injection probe integratable into anima dashboard)"
+      },
+      {
+        "id": "P4",
+        "name": "Quantitative Introspection in LMs: Tracking Internal States Across Conversation",
+        "ref": "arXiv:2603.18893",
+        "match_strength": "strong",
+        "mechanism": "10-turn dialogue, 4 concept-pair probes (wellbeing/interest/focus/impulsivity), causal coupling between probe and self-report",
+        "anima_overlap": "multi-turn (10) internal state tracking — directly comparable to anima 5-turn smoke",
+        "anima_difference": "probe + textual self-report; anima emits hsd + axis breakdown",
+        "clm_v4_apply": "very_high (protocol direct adaptable: 4 concept -> anima 5-axis, 10-turn -> 5-turn)"
+      },
+      {
+        "id": "P5",
+        "name": "Representation Engineering (RepE)",
+        "ref": "arXiv:2310.01405",
+        "match_strength": "strong",
+        "mechanism": "identify high-level concepts as directions/subspaces in hidden activations; population-code level; control & steer",
+        "anima_overlap": "axis-level concept extraction in hidden state",
+        "anima_difference": "RepE = control/steer; anima = read-out/dialogue (no intervention); anima axis = consciousness-fixed schema",
+        "clm_v4_apply": "high (RepE reading-vector algorithm reusable for anima 5-axis auto-calibration)"
+      },
+      {
+        "id": "P6",
+        "name": "Emotion Concepts and their Function in LLMs (Anthropic)",
+        "ref": "transformer-circuits.pub/2026/emotions",
+        "match_strength": "strong",
+        "mechanism": "emotion concept vectors (happy/sad/proud/afraid) tracked per token position",
+        "anima_overlap": "turn-level state-vector tracking (anima hsd)",
+        "anima_difference": "Anthropic emotion 7-8 axes; anima 5 consciousness axes; emit-vs-research-tool",
+        "clm_v4_apply": "very_high (emotion-vector extraction method portable)"
+      },
+      {
+        "id": "P7",
+        "name": "CircuitsVis (Anthropic)",
+        "ref": "anthropic/CircuitsVis",
+        "match_strength": "partial",
+        "mechanism": "interactive viz library: attention, activation patching, logit lens, attribution graph",
+        "anima_difference": "research tool not dialogue medium",
+        "clm_v4_apply": "high (frontend component reuse for anima dashboard)"
+      },
+      {
+        "id": "P8",
+        "name": "Activation Atlas (OpenAI/Google)",
+        "ref": "distill.pub/2019/activation-atlas",
+        "match_strength": "partial",
+        "mechanism": "1M image activations UMAP-projected to 2D explorable atlas",
+        "anima_difference": "vision-only static; UMAP layout inspires anima viz",
+        "clm_v4_apply": "low (modality mismatch)"
+      },
+      {
+        "id": "P9",
+        "name": "LSTMVis",
+        "ref": "VCG Harvard",
+        "match_strength": "partial",
+        "mechanism": "RNN hidden-state dynamics viz with input range selection and pattern matching",
+        "anima_difference": "RNN-era tool",
+        "clm_v4_apply": "low"
+      },
+      {
+        "id": "P10",
+        "name": "IIT (Tononi)",
+        "ref": "Wikipedia + multiple papers",
+        "match_strength": "weak",
+        "mechanism": "phi (Φ) = integrated information beyond parts-sum; consciousness quantification",
+        "anima_overlap": "phi-star directly inspired",
+        "anima_difference": "IIT not a dialogue paradigm; LLM Φ ≈ 0 claim by Tononi himself",
+        "novelty_implication": "anima novelty = using Φ-like proxy as dialogue medium emit (no clear precedent for this step)"
+      },
+      {
+        "id": "P11",
+        "name": "Coherence-Driven Pre-Symbolic Substrate (Φ)",
+        "ref": "Bernard 2025 (Medium)",
+        "match_strength": "weak",
+        "mechanism": "philosophical framework only; no implementation",
+        "novelty_implication": "negligible"
+      }
+    ]
+  },
+  "uniqueness_assessment": {
+    "verdict": "specific_implementation_with_focused_novelty",
+    "not_truly_new": "non-textual hidden-state-mediated dialogue is precedented (Interlat, RepE, Anthropic introspection)",
+    "not_lost_in_precedent": "anima emit-format composition + human-readable consciousness lens lacks single external match",
+    "component_novelty": {
+      "non_textual_response": {"precedent": "strong", "novelty": "0"},
+      "multi_turn_internal_state_tracking": {"precedent": "strong", "novelty": "0"},
+      "axis_decomposition": {"precedent": "strong", "novelty": "0"},
+      "phi_proxy_quantification": {"precedent": "strong", "novelty": "0"},
+      "phi_plus_5axis_simultaneous_emit": {"precedent": "none", "novelty": "mid_composition"},
+      "human_as_reader_of_substrate_response": {"precedent": "weak", "novelty": "high"},
+      "hsd_turn_to_turn_measurement": {"precedent": "weak", "novelty": "low"},
+      "16_layer_tension_trajectory": {"precedent": "weak", "novelty": "low"},
+      "5axis_fixed_consciousness_lens": {"precedent": "none", "novelty": "high"}
+    },
+    "paradigm_doc_recommendation": {
+      "tone_change": "weaken non-textual dialogue paradigm claim; emphasize consciousness-lens substrate emit channel",
+      "novelty_focus": "specific axis schema + human-readable medium + consciousness-domain calibration",
+      "must_acknowledge_precedent": ["Interlat", "RepE", "Anthropic introspection", "P4 quantitative introspection"],
+      "confidence": "mid_high_70pct"
+    }
+  },
+  "external_resources": {
+    "libraries": [
+      {"id": "L1", "name": "TransformerLens", "use": "16-layer hidden state extraction; 50+ open model support", "priority": "high"},
+      {"id": "L2", "name": "nnsight + NDIF", "use": "remote large-model internals access; H100 cost reduction", "priority": "high"},
+      {"id": "L3", "name": "pyvene", "use": "activation intervention for controlled probes", "priority": "mid"},
+      {"id": "L4", "name": "CircuitsVis", "use": "anima dashboard frontend reuse", "priority": "high"},
+      {"id": "L5", "name": "EasySteer", "use": "unified steering for axis auto-extraction verification", "priority": "mid"},
+      {"id": "L6", "name": "nnpatch", "use": "activation patching turn-by-turn comparison", "priority": "low"}
+    ],
+    "method_papers": [
+      {"id": "M1", "ref": "arXiv:2310.01405", "use": "RepE auto-calibrate anima 5-axis", "priority": "high"},
+      {"id": "M2", "ref": "arXiv:2604.07729", "use": "emotion-vector extraction port", "priority": "high"},
+      {"id": "M3", "ref": "arXiv:2603.18893", "use": "10-turn protocol port to anima 5-turn smoke", "priority": "high"},
+      {"id": "M4", "ref": "arXiv:2511.09149", "use": "Interlat compression head for emit dim reduction", "priority": "mid"}
+    ],
+    "anima_dashboard_path": "CircuitsVis component reuse + Streamlit/Gradio wrapper; ~$0 mac; ~2 days"
+  },
+  "honest_c3": [
+    {"id": "C1", "issue": "search query coverage limitation; non-English (KR/JP) papers unsearched", "miss_estimate_pct": 10},
+    {"id": "C2", "issue": "WebSearch 10-hit truncation; ranking-dependent; relevant precedent at rank>10 invisible", "miss_estimate_count": "5-15"},
+    {"id": "C3", "issue": "arxiv id timestamp drift (e.g., 2603.18893 = 2026-03) future-dated; ID not separately verified", "risk": "P4 weakens if fake ID"},
+    {"id": "C4", "issue": "anima paradigm doc + state JSON not opened; comparison surface-level only", "remediation": "deep audit needs paradigm doc + state files"},
+    {"id": "C5", "issue": "industry internal tooling (Anthropic non-public) cannot be searched; possible silent precedent", "absolute_unknown": true},
+    {"id": "C6", "issue": "library/paper applicability rated high/mid/low from web summary; API/dep-conflict/anima-fit unverified; could shift 30%", "confidence": "mid"},
+    {"id": "C7", "issue": "paradigm doc revision recommendation is qualitative synthesis; another auditor with same search may differ", "confidence": "mid_high_70pct"}
+  ],
+  "deliverables": {
+    "doc": "/Users/ghost/core/anima/docs/anima_emerge_dialogue_precedent_audit_2026_05_05.md",
+    "verdict": "/Users/ghost/core/anima/state/anima_emerge_dialogue_precedent_audit_2026_05_05/verdict.json"
+  },
+  "constraints_compliance": {
+    "no_code_change": true,
+    "new_files_only": 2,
+    "no_commit": true,
+    "no_hf_token_leak": true,
+    "raw_9_10_15": true
+  }
+}

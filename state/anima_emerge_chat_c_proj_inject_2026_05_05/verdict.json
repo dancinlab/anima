@@ -1,0 +1,33 @@
+{
+  "schema": "anima/emerge_chat_c_proj_inject/verdict/1",
+  "ts_utc": "2026-05-05T17:34:21Z",
+  "task_id": "anima_emerge_chat_c_proj_inject_2026_05_05",
+  "bg_lane": "BG-BE",
+  "model_id": "dancinlab/clm-v4-mk2-v1",
+  "c_proj_source": null,
+  "c_proj_key_path": null,
+  "c_proj_shape": [
+    192,
+    192
+  ],
+  "c_proj_used_real_weights": false,
+  "n_state_dict_c_proj_keys_in_hf_model": 0,
+  "n_best_pt_candidates_searched": 0,
+  "n_configs": 5,
+  "n_coherent": 0,
+  "verdict": "FAIL_ALL",
+  "honest_c3": [
+    "C1 mac CPU fp32 — no MPS/CUDA acceleration; numerical precision identical to train fp32.",
+    "C2 c_proj 발견 여부 best.pt cache layout 의존 — released HF model.safetensors does NOT include c_proj (training-time artifact only). Identity fallback used when not found, which is mathematically equivalent to no projection.",
+    "C3 c_proj transform이 actual training-time projection과 다를 가능성 — even when real c_proj weights extracted, application order at inference (raw @ W.T + b) may differ from train_clm.py:1477 application context (post-aggregation, pre-decoder cross_attn).",
+    "C4 broadband random raw가 actual c_engine state distribution 모방 안 함 — true c_engine.get_states() output is structured per-cell SOC trajectory; randn approximation captures norm only, not phase/correlation structure.",
+    "C5 single prompt 안녕 — KO greeting only; no en/multi-axis prompt; coherence binary heuristic (Korean+ASCII letter count + char repetition) very loose; high false-PASS rate possible."
+  ],
+  "raw_compliance": {
+    "raw_15_no_mount_or_shim_modification": true,
+    "raw_37_transient_py_namespace_only": true,
+    "raw_10_honest_c3_emitted": true,
+    "no_commit": true,
+    "no_secret_leak": true
+  }
+}

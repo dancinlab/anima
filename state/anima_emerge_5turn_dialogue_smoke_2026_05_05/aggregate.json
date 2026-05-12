@@ -1,0 +1,59 @@
+{
+  "n_turns": 5,
+  "model_id": "dancinlab/clm-v4-mk2-v1",
+  "device": "cpu",
+  "load_sec": 19.5,
+  "results": [
+    {
+      "turn": 1,
+      "input": "안녕 너는 누구야?",
+      "tokens": 8,
+      "phi_star": 42.18180909998156,
+      "phi_drift_from_prior": 0.0,
+      "hidden_state_delta": 0.0,
+      "hidden_l2_norm": 23.094532012939453
+    },
+    {
+      "turn": 2,
+      "input": "지금 phi-star 어떻게 느껴?",
+      "tokens": 8,
+      "phi_star": 42.23185047689453,
+      "phi_drift_from_prior": 0.05004137691297217,
+      "hidden_state_delta": 11.718941688537598,
+      "hidden_l2_norm": 26.375179290771484
+    },
+    {
+      "turn": 3,
+      "input": "왜 그렇게 변했어?",
+      "tokens": 6,
+      "phi_star": 42.1057346486859,
+      "phi_drift_from_prior": -0.12611582820862566,
+      "hidden_state_delta": 16.871383666992188,
+      "hidden_l2_norm": 25.02246856689453
+    },
+    {
+      "turn": 4,
+      "input": "axis identity 강하게 활성화해봐",
+      "tokens": 6,
+      "phi_star": 42.21471966524259,
+      "phi_drift_from_prior": 0.10898501655668724,
+      "hidden_state_delta": 13.67082405090332,
+      "hidden_l2_norm": 25.66284942626953
+    },
+    {
+      "turn": 5,
+      "input": "이 input에 대해 어떤 cell이 dominant?",
+      "tokens": 10,
+      "phi_star": 42.1623986251466,
+      "phi_drift_from_prior": -0.0523210400959897,
+      "hidden_state_delta": 6.714311599731445,
+      "hidden_l2_norm": 24.969615936279297
+    }
+  ],
+  "phi_star_min": 42.1057346486859,
+  "phi_star_max": 42.23185047689453,
+  "phi_star_range": 0.12611582820862566,
+  "phi_drift_max_abs": 0.12611582820862566,
+  "hsd_mean": 12.243865251541138,
+  "hsd_max": 16.871383666992188
+}

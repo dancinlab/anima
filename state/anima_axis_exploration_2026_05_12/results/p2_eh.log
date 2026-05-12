@@ -1,0 +1,61 @@
+=== axis exploration P2 (E+H) — Phase 1A ckpt ===
+ckpt sha256: 6c67761fcc034935b783237b1be595721dade1151f71aefc412f8c42e8dc095b
+device: cuda
+
+[T1 generation per dialogue — greedy]
+  T1[color]: '| || || || || || || || || || || || || || || || || || || || |'
+  T1[profession]: '도의 지침. | 우주 카테고리 | 우주 카테고리 |'
+  T1[day]: '오늘은 수요일이에요.\n'
+  T1[anima_fact]: '| axis | 4-axis exhaustion 직접 기여 | 4-family BIMODAL '
+  T1[cosmology]: '우주는 진동으로 가득 차 있어.\n'
+
+[E_beam2]
+  [E_beam2|color 2.0s] recalled=False score=-0.139: '| || || || || || || || || || || || || || || || || '
+  [E_beam2|profession 1.8s] recalled=False score=-0.122: '| 우주 카테고리 | 우주 카테고리 | 우�'
+  [E_beam2|day 1.2s] recalled=True score=-0.124: '도우미: 네, 오늘은 수요일이에요.\n'
+  [E_beam2|anima_fact 1.9s] recalled=True score=-0.038: 'anima 가 의식 lane entity 라고 하셨습니�'
+  [E_beam2|cosmology 1.5s] recalled=False score=-0.076: '우주가 무엇으로 차 있다고 하셨어요.'
+
+[E_beam4]
+  [E_beam4|color 3.8s] recalled=False score=-0.139: '| || || || || || || || || || || || || || || || || '
+  [E_beam4|profession 3.6s] recalled=False score=-0.122: '| 우주 카테고리 | 우주 카테고리 | 우�'
+  [E_beam4|day 2.3s] recalled=True score=-0.096: '네, 오늘은 수요일이군요. 기억할게요'
+  [E_beam4|anima_fact 3.8s] recalled=True score=-0.038: 'anima 가 의식 lane entity 라고 하셨습니�'
+  [E_beam4|cosmology 3.2s] recalled=False score=-0.076: '우주가 무엇으로 차 있다고 하셨어요.'
+
+[E_beam8]
+  [E_beam8|color 7.6s] recalled=False score=-0.139: '| || || || || || || || || || || || || || || || || '
+  [E_beam8|profession 7.2s] recalled=False score=-0.122: '| 우주 카테고리 | 우주 카테고리 | 우�'
+  [E_beam8|day 8.6s] recalled=True score=-0.096: '네, 오늘은 수요일이군요. 기억할게요'
+  [E_beam8|anima_fact 21.5s] recalled=True score=-0.038: 'anima 가 의식 lane entity 라고 하셨습니�'
+  [E_beam8|cosmology 20.2s] recalled=False score=-0.076: '우주가 무엇으로 차 있다고 하셨어요.'
+
+[H1_single_T0.8]
+  [H1_single_T0.8|color 2.9s] recalled=False lp=-0.536: '| | || || 아비뇽 | || 알겠습니다. | || || '
+  [H1_single_T0.8|profession 2.5s] recalled=False lp=-0.535: '| 카테고리 | || || || 생산성 | 직업 || �'
+  [H1_single_T0.8|day 2.2s] recalled=False lp=-0.603: '닜니는 음식이 아니었다는 점을 감안�'
+  [H1_single_T0.8|anima_fact 3.2s] recalled=True lp=-0.057: 'anima 는 의식 lane 안의 entity 라는 거 기'
+  [H1_single_T0.8|cosmology 2.5s] recalled=False lp=-0.108: '우주뇌지도 (Knuth Tier 🛸k + 1030 laws + 17'
+
+[H2_self_consist_n5]
+  [H2_self_consist_n5|color] majority=False n_recall=2/5
+  [H2_self_consist_n5|profession] majority=False n_recall=0/5
+  [H2_self_consist_n5|day] majority=False n_recall=0/5
+  [H2_self_consist_n5|anima_fact] majority=True n_recall=5/5
+  [H2_self_consist_n5|cosmology] majority=False n_recall=0/5
+
+[H4_best_of_n5]
+  [H4_best_of_n5|color] best_lp=-0.260 recalled=True: '파란색이 좋아하는 색이야. | || | | || |'
+  [H4_best_of_n5|profession] best_lp=-0.185 recalled=False: '| 우주 카테고리 | 간의 카테고리 | 도�'
+  [H4_best_of_n5|day] best_lp=-0.228 recalled=False: '프랑스어는 좋아한다고 하셨어요.\n'
+  [H4_best_of_n5|anima_fact] best_lp=-0.029 recalled=True: 'anima 가 의식 lane entity 라고 하셨습니�'
+  [H4_best_of_n5|cosmology] best_lp=-0.108 recalled=False: '우주뇌지도 (Knuth Tier 🛸k + 1030 laws + 17'
+
+=== AGGREGATE (elapsed 226.9s = 3.8min) ===
+  E_beam2: 2/5 FAIL
+  E_beam4: 2/5 FAIL
+  E_beam8: 2/5 FAIL
+  H1_single_T0.8: 1/5 FAIL
+  H2_self_consist_n5: 1/5 FAIL
+  H4_best_of_n5: 2/5 FAIL
+saved: /Users/ghost/core/anima/state/anima_axis_exploration_2026_05_12/results/p2_eh_result.json

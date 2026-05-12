@@ -1,0 +1,180 @@
+{
+  "verdict": "AUDIT_LANDED_5_CANDIDATES_RANKED",
+  "cycle_id": "anima_external_sister_candidates_audit_2026_05_05",
+  "date": "2026-05-05",
+  "cost_usd": 0.0,
+  "wallclock_min": 38,
+  "scope": "doc + audit only; no git clones executed; clone commands pre-registered for next-cycle EXEC",
+  "raw_compliance": ["raw#9", "raw#10", "raw#15"],
+
+  "search_summary": {
+    "web_searches_issued": 12,
+    "candidates_surfaced": 30,
+    "candidates_filtered_to_viable": 14,
+    "angles_with_no_sister_found": ["substrate-coupled dialogue (anima-novel)", "hexa-lang ecosystem"]
+  },
+
+  "top_5_ranked_candidates": [
+    {
+      "rank": 1,
+      "name": "PyPhi + AntroPy (paired)",
+      "anima_sub_system": "phi-engine + anima-eeg-core",
+      "git_url_primary": "https://github.com/wmayner/pyphi",
+      "git_url_secondary": "https://github.com/raphaelvallat/antropy",
+      "license_primary": "GPLv3",
+      "license_secondary": "BSD-3",
+      "falsifier_id": "F-PHI-CANON-1",
+      "falsifier_threshold": "Spearman rho >= 0.6 between anima phi proxy and PyPhi Phi over N>=20 EEG windows",
+      "integration_cost_estimate": "$0-2; <1 day",
+      "next_cycle_priority": "EXEC-NEXT"
+    },
+    {
+      "rank": 2,
+      "name": "nnsight",
+      "anima_sub_system": "CLM v4",
+      "git_url_primary": "https://github.com/ndif-team/nnsight",
+      "license_primary": "MIT",
+      "falsifier_id": "F-NNSIGHT-1",
+      "falsifier_threshold": "anima G3 Phi-star value via in-house extractor vs nnsight Tracer <= 1% absolute diff",
+      "integration_cost_estimate": "$0; ~half day",
+      "next_cycle_priority": "DESIGN-AUDIT (validate arch-agnostic claim on CLM v4 dummy first)",
+      "preferred_over_TransformerLens_reason": "TransformerLens is GPT-2-style only; CLM v4 has custom architecture"
+    },
+    {
+      "rank": 3,
+      "name": "MNE-Python",
+      "anima_sub_system": "anima-eeg + anima-eeg-core",
+      "git_url_primary": "https://github.com/mne-tools/mne-python",
+      "license_primary": "BSD-3",
+      "stars": 3400,
+      "last_main_update_observed": "2026-04-21",
+      "falsifier_id": "F-MNE-1",
+      "falsifier_threshold": "anima bandpass+epoch reproduces MNE filter+Epochs to eps <= 1e-6 drift",
+      "integration_cost_estimate": "$0; ~1 day",
+      "next_cycle_priority": "EXEC-AFTER PyPhi"
+    },
+    {
+      "rank": 4,
+      "name": "PCIst",
+      "anima_sub_system": "phi-engine + anima-eeg (clinical comparator)",
+      "git_url_primary": "https://github.com/renzocom/PCIst",
+      "license_primary": "research-permissive (legal-review pre-redistribution)",
+      "falsifier_id": "F-PCIST-1",
+      "falsifier_threshold": "PCIst > 0.31 clinical threshold on awake-baseline anima-eeg recordings",
+      "integration_cost_estimate": "$0; ~half day",
+      "next_cycle_priority": "CROSS-LINK-ONLY initially, EXEC after PyPhi if Phi-proxy passes"
+    },
+    {
+      "rank": 5,
+      "name": "Pythia (EleutherAI)",
+      "anima_sub_system": "CLM v4 substrate cross-validation",
+      "git_url_primary": "https://github.com/EleutherAI/pythia",
+      "license_primary": "Apache-2.0",
+      "model_suite": "70M / 160M / 410M / 1B / 1.4B / 2.8B / 6.9B / 12B (x2 dedup variants, 154 ckpts each)",
+      "falsifier_id": "F-PYTHIA-1",
+      "falsifier_threshold": "chat-cap composite Pythia-1.4B vs 2.8B monotone scaling delta > 0.05",
+      "integration_cost_estimate": "$1-3 H100",
+      "next_cycle_priority": "H100-DEFERRED (substrate-research lane in standby post CLM-2-EXEC closure)"
+    }
+  ],
+
+  "first_priority_anima_fit_path": {
+    "candidate": "PyPhi + AntroPy paired",
+    "fit": "anima phi proxy (eeg.cond.4 1순위 FROZEN) is in-house operationalization without canonical anchoring. PyPhi (Tononi lab IIT 4.0 reference, PLOS CB 2018) provides causal-structural Phi reference; AntroPy (BSD-3, Numba JIT) provides LZ76 algorithmic-complexity primitive that anima-eeg-core currently reimplements.",
+    "integration_path": "references/pyphi/ + references/antropy/ via git clone (raw#15 additive). Wrapper hexa: anima-eeg-core/tool/phi_canonical_compare.hexa emits 3-column comparison (anima-internal vs PyPhi-Phi vs AntroPy-LZ) on existing eeg.cond.4 windows.",
+    "license_compatibility": "PyPhi GPLv3 import-only safe; any wrapper redistribution requires GPL-compatibility OR substitution with AntroPy primitives. Recommendation: redistribute only AntroPy-based parts; PyPhi stays import-only reference.",
+    "expected_outcome": "PASS (rho >= 0.6) -> anima phi proxy gains canonical anchoring; new metric `phi_canonical_agreement` registered. FAIL (rho < 0.3) -> proxy measures something else; relabel + document. Either way, scientific information yield > 0."
+  },
+
+  "cross_cutting_synergies": [
+    {
+      "id": "synergy_A",
+      "name": "full consciousness-measurement triad",
+      "components": ["PyPhi", "MNE-Python", "AntroPy"],
+      "value": "single anima-eeg window -> three independent complexity scores (causal-structural Phi, algorithmic LZ, spectral). anima phi-star becomes 4-way comparator. Cleanest paradigm v11 8th-axis enrichment path; replaces speculative tribev2 cortical-vector axis-8 candidate."
+    },
+    {
+      "id": "synergy_B",
+      "name": "CLM v4 mech-interp full stack",
+      "components": ["nnsight", "pyvene", "SAELens"],
+      "value": "(i) where chat-incapability lives (intervention sweep) + (ii) what it abstracts to (causal abstraction) + (iii) which features encode it (SAE). Externalizes the mech-interp tooling anima has been implicitly reinventing inside CLM v4 hexa wrappers."
+    },
+    {
+      "id": "synergy_C",
+      "name": "substrate cross-validation triad",
+      "components": ["Pythia", "Mamba", "RWKV"],
+      "value": "three orthogonal architectures (transformer / state-space / RNN-hybrid) at <3B params for $1-3 H100 each. Pre-CLM-3-design audit answering: which architectural class most reliably yields chat-cap at small scale? Direct input to CLM-3 design if substrate-research lane reopens."
+    }
+  ],
+
+  "honest_c3_raw_10": [
+    {
+      "id": 1,
+      "concern": "random-GitHub vs paper-backed reproduction-quality variance",
+      "stance": "high-confidence tier (PyPhi/MNE-Python/TransformerLens/nnsight/pyvene/Captum/SAELens/Pythia/Mamba/RWKV/AntroPy) all have peer-reviewed papers + active orgs. Lower-confidence tier (EEG-to-text family) is openly contested in the literature; khu-aims/EEG-To-Text exists specifically as a noise-baseline diagnostic for prior claims. Audit ranks accordingly: top-5 are all high-confidence; EEG-to-text family demoted to 'research artifacts, not production sisters' with noise-baseline caveat."
+    },
+    {
+      "id": 2,
+      "concern": "license heterogeneity risk",
+      "stance": "PyPhi is GPLv3 - import-only is safe but redistribution requires GPL-compatibility. Top-1 recommendation pairs PyPhi with AntroPy (BSD-3) so license-clean fallback exists for any anima-shipped wrapper code. PCIst license is research-permissive but unclear; legal-review gate before redistribution. All other top-5 candidates are MIT/BSD-3/Apache-2.0 (anima-compatible)."
+    },
+    {
+      "id": 3,
+      "concern": "missing-angles finding is itself load-bearing",
+      "stance": "Angle 4 (substrate-coupled dialogue) and Angle 7 (hexa-lang) yielded no external sisters. Honest reading: hexa-lang is anima-internal vocabulary so (a) anima first-mover - very likely. Substrate-coupled dialogue could be (a) or (b) keyword miss; field overlaps with neurofeedback/affective-BCI research where a more targeted search might surface candidates. Logged as deferred follow-up; not a top-5 promotion."
+    },
+    {
+      "id": 4,
+      "concern": "same-mistake-as-tribev2 risk (mission misframing)",
+      "stance": "tribev2 closure was caused by asking encoder-only architecture to do chat-unblock. Each top-5 candidate is fit-anchored to a specific anima sub-system AND has a preregistrable falsifier. But only F-PHI-CANON-1 and F-MNE-1 are fully runnable in this cycle's budget. F-NNSIGHT-1 needs CLM v4 to work under nnsight (arch-agnostic claim should be smoke-tested on dummy first). F-PYTHIA-1 needs H100. Order: PyPhi+AntroPy first (lowest risk), then MNE-Python, then nnsight smoke."
+    },
+    {
+      "id": 5,
+      "concern": "sister-as-reference vs sister-as-dependency",
+      "stance": "tribev2 model: clone to references/<name>/ as read-only checkout, anima runtime never imports external code, hexa wrappers call externals only at user-explicit runtime. Same convention applied to all 5 top candidates. Preserves raw 'py -> hexa only' rule. Avoids 'sister becomes hard runtime dep' failure mode. Clone commands in audit doc reflect this convention."
+    }
+  ],
+
+  "next_cycle_recommendation_ordered": [
+    {
+      "step": 1,
+      "action": "Clone PyPhi + AntroPy; write anima-eeg-core/tool/phi_canonical_compare.hexa; run F-PHI-CANON-1 on eeg.cond.4 dataset",
+      "cost": "$0-2",
+      "wallclock": "<1 day",
+      "outcome_gate": "PASS rho>=0.6 -> register canonical-agreement metric. FAIL rho<0.3 -> relabel anima phi proxy; document differently."
+    },
+    {
+      "step": 2,
+      "action": "Clone MNE-Python; conversion shim Cyton+Daisy -> MNE Raw; run F-MNE-1",
+      "cost": "$0",
+      "wallclock": "1-2 days",
+      "outcome_gate": "PASS -> add MNE source-recon to anima stack. FAIL -> switch preprocessing to MNE."
+    },
+    {
+      "step": 3,
+      "action": "Clone nnsight; read 0.6 CLAUDE.md; write CLM v4 dummy-load smoke",
+      "cost": "$0",
+      "wallclock": "1 day",
+      "outcome_gate": "validates architecture-agnostic claim BEFORE committing to F-NNSIGHT-1"
+    },
+    {
+      "step": 4,
+      "action": "Pythia F-PYTHIA-1 only if substrate-research lane reopens",
+      "cost": "$1-3",
+      "wallclock": "deferred",
+      "outcome_gate": "currently standby post CLM-2-EXEC closure"
+    },
+    {
+      "step": 5,
+      "action": "Add PCIst doc cross-link to anima-eeg-core (no clone needed initially)",
+      "cost": "$0",
+      "wallclock": "30min",
+      "outcome_gate": "preserves clinical-comparator reference"
+    }
+  ],
+
+  "outputs": {
+    "audit_doc": "/Users/ghost/core/anima/docs/anima_external_sister_candidates_audit_2026_05_05.md",
+    "verdict_json": "/Users/ghost/core/anima/state/anima_external_sister_candidates_audit_2026_05_05/verdict.json"
+  }
+}

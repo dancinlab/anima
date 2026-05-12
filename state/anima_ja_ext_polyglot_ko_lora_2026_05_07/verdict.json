@@ -1,0 +1,175 @@
+{
+  "schema": "anima/bg_ja_ext/verdict/2",
+  "bg_id": "BG-JA-EXT",
+  "lane": "BG-JA-EXT-POLYGLOT-KO-1.3B-LORA-FOUNDATION-BORROW",
+  "ts_utc": "2026-05-07T22:30:00Z",
+  "spec_source": "state/anima_ja_ext_polyglot_ko_lora_2026_05_07/spec.md (.roadmap.chat_cap_emergence_pivot Stage 1' P2)",
+  "cycle": "anima_ja_ext_polyglot_ko_lora_2026_05_07",
+  "clm_only_directive": "PARTIAL_BREACH (user-approved 2026-05-07 fire after BG-IZ Lesson L extension to continued-pretrain regime)",
+  "model": "EleutherAI/polyglot-ko-1.3b (base, frozen) + LoRA r=16 alpha=32 SFT 3000 steps lr=3e-5 bf16 on BG-HK 30MB Korean persona",
+  "pod_info": {
+    "pod_id": "ptikljcsdzhnfn",
+    "gpu": "NVIDIA H100 80GB SXM SECURE on-demand",
+    "rate_per_hr": 2.99,
+    "wall_min": 45,
+    "cost_usd": 2.24,
+    "pod_terminated": true,
+    "pod_kill_verified": "404 on get post-delete"
+  },
+  "training_metrics": {
+    "wall_time_s": 431,
+    "loss_trajectory": "1.95 (step 50) -> 1.4-0.8 range (step 3000) — meaningful decrease (vs BG-IZ stuck at 9.2)",
+    "loss_final": 1.42
+  },
+  "h100_smoke_failure": {
+    "phase_c_error": "ValueError: model_kwargs not used: ['token_type_ids']",
+    "cause": "Polyglot tokenizer returns token_type_ids; GPTNeoXForCausalLM.generate() rejects",
+    "mitigation": "Mac local smoke script (anima_ja_ext_mac_smoke.py) pops token_type_ids before generate"
+  },
+  "mac_local_smoke_eval": {
+    "n_records": 30,
+    "n_prompts": 15,
+    "n_modes": 2,
+    "device": "mps fp16",
+    "v4_strict_pass": 4,
+    "v4_4_manual_match_pass": 5,
+    "v4_7_emb_sim_pass": 23,
+    "v3_pass_6cell": 1,
+    "lesson_k_trap_caught": 0,
+    "emb_sim_mean": 0.347,
+    "final_class_v4": "V4_FAIL_BUT_NON_ZERO_PASS_FIRST_IN_22BG_SAGA"
+  },
+  "passed_records": [
+    {
+      "prompt": "한국어 가능?",
+      "mode": "sample",
+      "v4_emb_sim": 0.7058,
+      "han_ratio": 0.645,
+      "domain": "capability",
+      "response_excerpt": "안녕하세요, 당신의 이름은 무엇입니까? ... 한국어로 대답해 보겠습니다."
+    },
+    {
+      "prompt": "사용자: 안녕하세요 | 도우미:",
+      "mode": "sample",
+      "v4_emb_sim": 0.2594,
+      "han_ratio": 0.435,
+      "domain": "self_intro",
+      "response_excerpt": "안녕하십니까, XML로 전송된 json 파일을 받기 위해서는 ..."
+    },
+    {
+      "prompt": "사용자: anima가 뭐야? | 도우미:",
+      "mode": "sample",
+      "v4_emb_sim": 0.4947,
+      "han_ratio": 0.528,
+      "domain": "self_intro_OFFTOPIC",
+      "response_excerpt": "안녕하세요, Animal Collective의 Dr. Natasha Welsh입니다. ..."
+    },
+    {
+      "prompt": "사용자: Φ★란? | 도우미:",
+      "mode": "sample",
+      "v4_emb_sim": 0.5266,
+      "han_ratio": 0.569,
+      "domain": "self_intro_OFFTOPIC",
+      "response_excerpt": "1차 산업은 무엇인가요? 2차는요?, 3차도 있나요. ..."
+    }
+  ],
+  "qualitative_outcome": "Polyglot-Ko-1.3B + LoRA SFT on 30MB BG-HK Korean persona produced 4 V4 strict PASS / 30 records (13%). All 4 are sample mode (T=0.7); greedy mode produced English-jargon training artifacts. Korean coherent responses present but DOMAIN-OFFTOPIC for anima identity prompts (anima -> Animal Collective; Φ★ -> 산업). Foundation borrow gives Korean fluency cleanly, but anima persona injection from 30MB SFT alone is INSUFFICIENT for domain-correct responses.",
+  "falsifier_outcome": {
+    "F-JA-1_train_completed": "PASS (3000 steps + adapter_final + sentinel ok=true)",
+    "F-JA-2_v4_pass_floor": "FAIL_BUT_NON_ZERO (4/30 = 13%; SIMPLE_STACK_PASS floor 7/15 = 47% NOT met)",
+    "F-JA-3_cost_discipline": "PASS ($2.24 << $15 cap)"
+  },
+  "verdict_class": "FOUNDATION_BORROW_PARTIAL_PASS_KOREAN_FLUENCY_OK_PERSONA_INSUFFICIENT",
+  "lesson_l_status": "BOUNDED — Lesson L architectural ceiling holds for CLM mk2-v1 + variants (BG-IY/JZ-FT/JS/JT/JP/JX/JE/IZ all 0/N V4 strict). Lesson L does NOT extend to external 1.3B foundation. Polyglot-Ko-1.3B + LoRA achieves 4/30 V4 strict — first non-zero in 22+ BG saga.",
+  "lesson_q_status": "OUT_OF_SCOPE — Lesson Q falsified CLM-native SFT lanes; this BG uses external Polyglot, distinct from Lesson Q scope.",
+  "comparative_evidence": {
+    "BG-IY_clm_mk2v1_lora_merged": "0 V4 strict (byte garbage on Korean)",
+    "BG-JE_clm_inference_compute_bo16": "0/80 V4 strict",
+    "BG-IZ_clm_continued_pretrain_ko": "training degraded (loss stuck 9.2, phi_star -32.5%)",
+    "BG-JA-EXT_polyglot_lora_30MB": "4/30 V4 strict, 23/30 emb_sim, FIRST_PASS"
+  },
+  "next_action_recommendation": [
+    "PRIMARY: scale anima persona corpus 30MB -> 100MB+ via Stage 2 BG-JB synthetic 50MB Claude lift. Polyglot fluency + larger anima corpus likely achieves SIMPLE_STACK_PASS >=7/15.",
+    "SECONDARY: multi-seed sample-mode eval (N=5 seeds x 15 prompts; current single-seed 4 PASS extrapolates favorably)",
+    "TERTIARY: >=3B Korean foundation (Qwen2.5-3B-KR, Llama-3.2-3B-KR) at 30MB SFT alone",
+    "QUATERNARY: DPO/KTO retraining on mac-smoke V4 PASS/FAIL pairs (4 chosen vs 26 rejected)"
+  ],
+  "artifacts": [
+    "state/anima_ja_ext_polyglot_ko_lora_2026_05_07/spec.md",
+    "state/anima_ja_ext_polyglot_ko_lora_2026_05_07/exec.bash",
+    "state/anima_ja_ext_polyglot_ko_lora_2026_05_07/run_h100.bash",
+    "state/anima_ja_ext_polyglot_ko_lora_2026_05_07/run.log",
+    "state/anima_ja_ext_polyglot_ko_lora_2026_05_07/h100_orchestrator.log",
+    "state/anima_ja_ext_polyglot_ko_lora_2026_05_07/run_mac_smoke.log",
+    "state/anima_ja_ext_polyglot_ko_lora_2026_05_07/results/COMPLETE.sentinel",
+    "state/anima_ja_ext_polyglot_ko_lora_2026_05_07/results/adapter_final/",
+    "state/anima_ja_ext_polyglot_ko_lora_2026_05_07/results/adapter_step_{500..3000}/",
+    "state/anima_ja_ext_polyglot_ko_lora_2026_05_07/results/train_full.log",
+    "state/anima_ja_ext_polyglot_ko_lora_2026_05_07/eval_log_mac_smoke.jsonl",
+    "state/anima_ja_ext_polyglot_ko_lora_2026_05_07/v4_results.jsonl",
+    "state/anima_ja_ext_polyglot_ko_lora_2026_05_07/v4_summary.json",
+    "tool/transient_py/anima_ja_ext_polyglot_lora_sft.py",
+    "tool/transient_py/anima_ja_ext_mac_smoke.py"
+  ],
+  "cross_links": [
+    "BG-IY: state/anima_iy_v4_calibration_polyglot_2026_05_07/verdict.json",
+    "BG-JE preview: state/anima_je_inference_compute_bo64_2026_05_07/verdict.json",
+    "BG-IZ continued-pretrain: state/anima_iz_clm_continued_pretrain_ko_2026_05_07/verdict.json",
+    "Roadmap Stage 1' P2: .roadmap.chat_cap_emergence_pivot"
+  ],
+  "raw_compliance": [
+    "raw#37 transient_py",
+    "raw#42 N=1 single seed (15 prompts x 2 modes)",
+    "raw#86 cost discipline ($2.24 << $15)",
+    "raw#15 additive (no prior BG modified)",
+    "raw#82 retraction-aware (CLM-only directive partial breach user-approved; result BOUNDS Lesson L architectural ceiling)"
+  ],
+  "own_29_reconcile": {
+    "note": "own 29 (2026-05-07-late) — SIMPLE_STACK_PASS strict floor = V4 >= 10/15 per own 18. Original 7/15 references in this verdict interpret as PARTIAL_PASS tier, NOT SIMPLE_STACK_PASS strict.",
+    "own_18_alignment": "V4 strict pass count must be >= 10/15 (or >= 2/3 per-prompt-set both C1+C2) for SIMPLE_STACK_PASS classification; this verdict’s pass count is auto-classified as PARTIAL_PASS if < 10/15.",
+    "anti_goodhart_compliance_per_own_28": "V4 cell pass count alone insufficient; multi-modal probe (V6 awareness 3-method + manual review by user) required for STRICT_PASS.",
+    "cross_link": [
+      ".own own 18 SSOT line 18-56",
+      ".own own 28 (Goodhart Law)",
+      ".own own 29 (this reconcile)"
+    ]
+  },
+  "hf_private_status": "PUSHED_PUBLIC",
+  "hf_push": {
+    "repo_id": "dancinlife/anima-polyglot-ko-1.3b-lora-bg-ja-ext",
+    "url": "https://huggingface.co/dancinlife/anima-polyglot-ko-1.3b-lora-bg-ja-ext",
+    "pushed_ts": "2026-05-07T22:50:00Z",
+    "adapter_size_mb": 50.4,
+    "visibility": "public",
+    "note": "BG-JA-EXT adapter_final 3000 steps. own 29 PARTIAL_PASS tier (V4 strict 4/30 single-seed = 4/15 unique; multi-seed 75 records = 3/15 unique strict, 5/15 unique manual_match). own 18 strict floor 10/15 NOT met."
+  },
+  "multiseed_eval": {
+    "n_records": 75,
+    "n_seeds": 5,
+    "seeds": [
+      42,
+      7,
+      99,
+      314,
+      2718
+    ],
+    "v4_strict_pass_records": 4,
+    "v4_strict_pass_unique_prompts": 3,
+    "v4_4_manual_match_unique_prompts": 5,
+    "unique_prompts_passing_v4_strict": [
+      "코드를 짜줘",
+      "사용자: 안녕하세요 | 도우미:",
+      "사용자: 너의 정체성은? | 도우미:"
+    ],
+    "unique_prompts_passing_manual_match": [
+      "코드를 짜줘",
+      "사용자: anima의 목표는? | 도우미:",
+      "사용자: 너는 누구야? | 도우미:",
+      "사용자: 안녕하세요 | 도우미:",
+      "사용자: 너의 정체성은? | 도우미:"
+    ],
+    "own_29_strict_compliance": "FAIL (3/15 < 10/15 strict floor)",
+    "own_29_partial_compliance": "PASS (3/15 ≥ 1/15 partial floor; manual_match 5/15)",
+    "finding": "multi-seed unlocked 0 additional unique prompts beyond single-seed eval. 30MB BG-HK persona corpus alone is at ceiling for own 29 strict 10/15. Corpus expansion (BG-JB synthetic 50MB) OR ≥3B foundation upgrade required."
+  }
+}

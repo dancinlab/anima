@@ -1,0 +1,114 @@
+{
+  "cycle_id": "anima_clm_native_chat_roadmap_register_2026_05_05",
+  "ts_utc": "2026-05-06",
+  "substrate": "mac",
+  "cost_usd": 0.00,
+  "wall_time_min": "~30",
+  "verdict": "ROADMAP_REGISTERED_PROVISIONAL_PENDING_USER_FIRE",
+  "task_summary": "사용자 명령 '로드맵 등록, 도메인, 메타 등' — 2026-05-05 archaeology 발견 (option α/β/γ anima-native chat path) 을 anima .roadmap.* SSOT system 에 meta SSOT (peer perspective) 로 등록 + domain meta cross-link 정리. doc-only $0 mac cycle, additive only (raw#15).",
+  "files_created": [
+    "/Users/ghost/core/anima/.roadmap.clm_native_chat",
+    "/Users/ghost/core/anima/docs/anima_clm_native_chat_roadmap_register_2026_05_05.md",
+    "/Users/ghost/core/anima/state/anima_clm_native_chat_roadmap_register_2026_05_05/verdict.json"
+  ],
+  "files_unchanged_invariant": "raw#15 additive — 기존 .roadmap.* 40 entries 미수정",
+  "raw_compliance": {
+    "raw_9": "hexa-only orchestration — md doc carve-out OK",
+    "raw_10": "honest C3 ≥5 — 9 banked in §6 of doc",
+    "raw_15": "additive only — 기존 roadmap 미수정 verified",
+    "raw_37": "transient_py opt-out — applicable to BG-EQ archaeology grep tools, not used in this cycle"
+  },
+  "register_summary": {
+    "kind": "meta",
+    "perspective": "peer",
+    "name": "clm_native_chat",
+    "mk": 2,
+    "domains_spanned": ["clm", "training", "tensionlink", "p9_sft", "g1_g5_chat_substrate"],
+    "required_conditions_count": 3,
+    "blockers_count": 3,
+    "sub_entries_count": 3,
+    "since": "2026-05-06",
+    "status": "active"
+  },
+  "three_options_registered": {
+    "alpha": {
+      "cond_id": "clm_native_chat.cond.1",
+      "title": "v2 18M byte-level weights archaeology + 복원",
+      "cost_usd": "0",
+      "time": "minutes (if found) + archaeology BG free",
+      "fire_keyword": "OK CLM-NATIVE ALPHA",
+      "falsifier": "F-CLM-NATIVE-α-1 weights load + Korean emit ≥10 tokens (CE ≤ 1.5 KO)",
+      "blocker": "BG-EQ archaeology verdict 미land",
+      "ranking": 1
+    },
+    "beta": {
+      "cond_id": "clm_native_chat.cond.2",
+      "title": "2026-03-28 original v4 byte-level design 재현 (CLM-3)",
+      "cost_usd": "200-500 (H100) OR 0 (ubu1 RTX 5070)",
+      "time": "5-30 days",
+      "fire_keyword": "OK CLM-NATIVE BETA",
+      "falsifier": "F-CLM3-orig-1..5 (BG-ER LOCK preregistration)",
+      "blocker": "BG-ER spec 미land + budget commit",
+      "ranking": 3
+    },
+    "gamma": {
+      "cond_id": "clm_native_chat.cond.3",
+      "title": "current mk2 v1 (530M BPE) + byte-level lm_head retrofit",
+      "cost_usd": "0-2 (mac/ubu1)",
+      "time": "1-3 days",
+      "fire_keyword": "OK CLM-NATIVE GAMMA",
+      "falsifier": "F-BYTE-RETROFIT-1 ≥5 prompts Korean coherent",
+      "blocker": "BG-ES micro smoke spec 미land",
+      "ranking": 2
+    }
+  },
+  "domain_meta_cross_links": {
+    "sister_domains_5": [".roadmap.clm", ".roadmap.training", ".roadmap.tensionlink", ".roadmap.p9_sft", ".roadmap.g1_g5_chat_substrate"],
+    "paradigm_invariants_3": ["paradigm v11 G3 + Φ★ +41.86 NO_FLIP", "#115 architectural ceiling", "anima-native priority (사용자 'ALM 말고')"],
+    "own_lifecycle_invariants_3": ["own 14 HF Hub WHERE", "own 15 PRIVATE→PUBLIC", "own 16 watchdog L23/L24/L25"],
+    "memory_feedback_links_6": [
+      "feedback_clm_v4_lora_sft_chat_lift_falsified_substrate_safe.md L31-L33",
+      "feedback_pbeta_chat_capability_fail_substrate_research_pass_decoupled.md L28-L30",
+      "feedback_v2_fail_was_measurement_artifact_eval_pipeline_root_cause.md L19-L22",
+      "feedback_axis_preservation_eval_substrate_calibration.md L26-L27",
+      "feedback_h100_cost_discipline_l23_l25_watchdog_own_16.md L23-L25",
+      "feedback_hf_release_private_to_public_after_verification.md own 15"
+    ]
+  },
+  "stage_gate_enforcement": {
+    "alpha_gates": ["α-1 BG-EQ archaeology", "α-2 IF FOUND load+smoke", "α-3 IF NOT_FOUND auto-transition"],
+    "beta_gates": ["β-1 BG-ER spec land", "β-2 user fire L1", "β-3 H100 own 16 6-checklist", "β-4 3-phase curriculum 100K", "β-5 F-CLM3-orig-1..5 evaluate", "β-6 PRIVATE→PUBLIC gate"],
+    "gamma_gates": ["γ-1 BG-ES micro smoke spec", "γ-2 user fire L1", "γ-3 mac/ubu1 1-3d train", "γ-4 F-BYTE-RETROFIT-1 evaluate", "γ-5 head PRIVATE→PUBLIC"]
+  },
+  "user_fire_sequence": {
+    "alpha": "OK CLM-NATIVE ALPHA",
+    "beta": "OK CLM-NATIVE BETA",
+    "gamma": "OK CLM-NATIVE GAMMA",
+    "all": "OK CLM-NATIVE ALL",
+    "timeout_pattern": "7-day cron auto-expire (BG-DD)",
+    "authority_level": "L1 absolute (user explicit keyword only)"
+  },
+  "honest_c3_count": 9,
+  "honest_c3_topics": [
+    "C1 α weights 미보존 risk (commit text only evidence)",
+    "C2 β φ★ measurement unit caveat (Phi~11 32-cell vs +41.86 carry)",
+    "C3 γ semantic mismatch risk (BPE body vs byte head)",
+    "C4 anima-native priority assumption (사용자 'ALM 말고' 영구 reject?)",
+    "C5 19 phi-boost EX24 superlinear hypothesis untested",
+    "C6 β H100 vs ubu1 trade-off (sm_120 torch build risk)",
+    "C7 4-step drift root cause unknowable retrospect",
+    "C8 own 15 PRIVATE→PUBLIC gate calibration for historical weights",
+    "C9 G3 chat substrate sister track ambiguity vs this roadmap"
+  ],
+  "next_cycle_recommendations": {
+    "ranked_completion_lens": [
+      {"rank": 1, "action": "BG-EQ archaeology cycle launch ($0 mac)", "rationale": "α path resolution prerequisite — weights found/not_found verdict unblocks decision matrix"},
+      {"rank": 2, "action": "BG-ES γ micro smoke spec land + 사용자 fire keyword", "rationale": "$0-2 path, fastest to chat-cap recovery if α NOT_FOUND, semantic-mismatch risk만 solo"},
+      {"rank": 3, "action": "BG-ER β spec land (preregister 5 falsifier + budget option H100 vs ubu1)", "rationale": "last resort if α/γ fail, $200-500 OR 5-10일 ubu1 free"},
+      {"rank": 4, "action": "memory entry add (feedback_clm_native_chat_path_alpha_beta_gamma.md) — 사용자 explicit OK 후", "rationale": "next-cycle agent context propagation"}
+    ],
+    "default_recommendation": "rank 1 (α archaeology) — $0 immediate cycle, downstream decisions unblocked"
+  },
+  "next_action": "사용자 explicit keyword fire OR BG-EQ archaeology cycle (앞쪽이 path α 직결)",
+  "verdict_status": "PROVISIONAL_PENDING_USER_FIRE_OR_ARCHAEOLOGY_VERDICT"
+}

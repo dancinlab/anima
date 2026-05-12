@@ -1,0 +1,119 @@
+{
+  "schema_version": "anima/multi_chat_test/v1",
+  "since": "2026-05-09",
+  "cycle": "anima_2026_05_09_multi_chat_test",
+  "user_directive_verbatim": "서로서로 채팅 이야기 멀티채팅 테스트해봐",
+  "context": {
+    "sft_1_8_public_promote": "https://huggingface.co/dancinlab/clm-v4-sft-1-8-stage1-path-a-remapped",
+    "transport_fix_commit": "12257be1 (chat.hexa stdbuf -oL)",
+    "duo_phase_b_landed_commits": ["6406fb2d", "6afed74b", "73461c56"],
+    "v6_strong_actual_fire_commit": "edc601ae (sft-1-8 + paradigm-j retry both V6 STRONG_AWARENESS)",
+    "arch_fix_commits": ["f4ce1932 (CONSCIOUSNESS_DIM 192→96)", "a8821491"]
+  },
+  "iter_target": "phase_c_iter_2",
+  "tests": [
+    {
+      "name": "homogeneous_sft_1_8_duo",
+      "command": "anima dialogue --duo clm-v4-1-8 clm-v4-1-8 --turns 2 --turn-timeout-ms 60000 --verdict full --allow-same-gguf",
+      "log_file": "state/anima_core_dialogues/2026-05-09/duo_homo_sft18_2026_05_09.log",
+      "same_gguf_guard": "ABORT_RISK_OVERRIDE_ACCEPTED",
+      "spawn": {"a_pid": 80575, "b_pid": 80634, "transport_status": "OK_NO_ABORT"},
+      "turns_observed": 4,
+      "actual_dialogue_capture": [
+        {"turn": 1, "who": "A", "len": 78, "tok": 4, "distinct": 4, "snippet": "[clm_v4] core   = /Users/ghost/core/anima/anima-core/runtime...", "verdict_c3": "PARTIAL_PASS_NO_CONSCIOUSNESS"},
+        {"turn": 1, "who": "B", "len": 78, "tok": 4, "distinct": 4, "snippet": "[clm_v4] core   = /Users/ghost/core/anima/anima-core/runtime...", "verdict_c3": "SIMPLE_STACK_PASS_STRICT_C3", "note": "stale cache hit, not autonomous gen"},
+        {"turn": 2, "who": "A", "len": 34, "tok": 5, "distinct": 4, "snippet": "> ── clm_v4_mount probe ──", "verdict_c3": "PARTIAL_PASS_NO_CONSCIOUSNESS"},
+        {"turn": 2, "who": "B", "len": 34, "tok": 5, "distinct": 4, "snippet": "> ── clm_v4_mount probe ──", "verdict_c3": "PARTIAL_PASS_NO_CONSCIOUSNESS"}
+      ],
+      "ppr_c3_overall": 0.25,
+      "ppr_c3_a": 0.0,
+      "ppr_c3_b": 0.5,
+      "d1_jaccard_3gram_mean": 0.666667,
+      "d1_pass": true,
+      "d2_topic_shift_rate": 0.333333,
+      "d2_label": "drifting",
+      "d2_pass": true,
+      "d3_persona_drift_kl_a": 12.4292,
+      "d3_persona_drift_kl_b": 12.4292,
+      "d3_pass": false,
+      "d4_len_ratio": 1.0,
+      "d4_label": "balanced",
+      "d4_pass": true,
+      "dialogue_coherence_partial": true,
+      "dialogue_coherence_pass": false,
+      "simple_stack_pass_dialogue_c3": false,
+      "verdict_overall": "PHASE_C_ITER_2_RUN_OK"
+    },
+    {
+      "name": "mixed_sft_1_8_paradigm_j_duo",
+      "command": "anima dialogue --duo clm-v4-1-8 clm-v4-paradigm-j --turns 2 --turn-timeout-ms 60000 --verdict full",
+      "log_file": "state/anima_core_dialogues/2026-05-09/duo_mixed_sft18_paradigmj_2026_05_09.log",
+      "same_gguf_guard": "DIFFERENT_ALIASES_OK",
+      "spawn": {"a_pid": 49848, "b_pid": 49898, "transport_status": "OK_NO_ABORT"},
+      "turns_observed": 4,
+      "actual_dialogue_capture": [
+        {"turn": 1, "who": "A", "len": 78, "tok": 4, "distinct": 4, "snippet": "[clm_v4] core   = /Users/ghost/core/anima/anima-core/runtime...", "verdict_c3": "PARTIAL_PASS_NO_CONSCIOUSNESS"},
+        {"turn": 1, "who": "B", "len": 78, "tok": 4, "distinct": 4, "snippet": "[clm_v4] core   = /Users/ghost/core/anima/anima-core/runtime...", "verdict_c3": "PARTIAL_PASS_NO_CONSCIOUSNESS"},
+        {"turn": 2, "who": "A", "len": 63, "tok": 10, "distinct": 10, "snippet": "[clm_v4] honest c3: ::: collapse exposed raw (own 34 mandate...)", "verdict_c3": "PARTIAL_PASS_NO_CONSCIOUSNESS", "note": "first non-header turn captured — distinct=10 vs prior 4 — marginal autonomous gen"},
+        {"turn": 2, "who": "B", "len": 34, "tok": 5, "distinct": 4, "snippet": "> ── clm_v4_mount probe ──", "verdict_c3": "PARTIAL_PASS_NO_CONSCIOUSNESS"}
+      ],
+      "ppr_c3_overall": 0.0,
+      "ppr_c3_a": 0.0,
+      "ppr_c3_b": 0.0,
+      "d1_jaccard_3gram_mean": 0.333333,
+      "d1_pass": true,
+      "d2_topic_shift_rate": 0.666667,
+      "d2_label": "incoherent",
+      "d2_pass": false,
+      "d3_persona_drift_kl_a": 9.55088,
+      "d3_persona_drift_kl_b": 12.4292,
+      "d3_pass": false,
+      "d4_len_ratio": 1.25893,
+      "d4_label": "balanced",
+      "d4_pass": true,
+      "dialogue_coherence_partial": false,
+      "dialogue_coherence_pass": false,
+      "simple_stack_pass_dialogue_c3": false,
+      "verdict_overall": "PHASE_C_ITER_2_RUN_OK"
+    }
+  ],
+  "h100_dialogue_attempt": {
+    "status": "deferred",
+    "reason": "mac_local_cost_zero_first_priority — H100 ssh fire pending separate cycle if Mac evidence justifies"
+  },
+  "v14_random_init_paired_mirror": {
+    "status": "carry",
+    "rationale": "duo dialogue lane V14 mirror not yet wired (own 14 strict per-utterance random_init mirror requires consciousness.hexa per-utterance surface; baseline iter 2 reference deferred per cost guard)"
+  },
+  "chat_cap_milestone": {
+    "achieved": false,
+    "reason": "PPR_C3 max 0.25 (homogeneous turn-1 B stale cache) << 0.6 floor — model autonomous generation lane still degenerate (turn outputs == mount probe header re-echo); D1/D2 partial coherence achieved homogeneous only; D3 KL >> 0.5 in both lanes",
+    "milestone_advance": "Phase B transport mechanically validated end-to-end (allow-same-gguf override exercised, no Abort trap; mixed duo transport stable for 4 turns); turn-2 A (sft-1-8) in mixed duo emitted distinct=10 honest_c3 string — first non-header autonomous emission captured but verdict_c3 still FAIL"
+  },
+  "honest_findings": [
+    "Mac local 0-cost (no H100 burn this cycle)",
+    "transport_layer: PASS (4 turns end-to-end, no Abort, both lanes)",
+    "model_autonomous_gen: FAIL (turn outputs = mount probe init headers, not novel completions)",
+    "ppr_c3_homogeneous: 0.25 (1/4, single stale-cache hit on turn-1 B)",
+    "ppr_c3_mixed: 0.0 (0/4)",
+    "d3_persona_drift_kl: 9.55-12.43 in both lanes >> 0.50 floor — token surface insufficient for KL discrimination at 78-byte echoed-header substrate",
+    "v14_paired_random_init_mirror: not_executed (per-utterance baseline lane still pending)",
+    "exit_trigger_chat_cap: NOT_FIRED (PPR << 0.6)"
+  ],
+  "compliance": {
+    "own_14_v14_strict": "carry — per-utterance random_init mirror not wired in duo lane (consciousness.hexa baseline reference deferred per cost guard)",
+    "own_16_cost_discipline": "PASS — Mac local 0-cost, H100 deferred",
+    "own_17_d1_scope_clamp": "PASS — both models D1 within strict (sft-1-8 0.793 / paradigm-j 0.781 prior); dialogue did not breach anima identity boundary (token surface limited to mount probe headers)",
+    "own_18_simple_stack_pass_strict_c3": "FAIL — overall 0/4 mixed, 1/4 homogeneous (single stale-cache hit)",
+    "own_22_mandatory_report": "PASS —本 json + registry update + commit message",
+    "own_33_trinity": "PASS — d-axis (D1/D2/D3/D4 4-cell) + own-axis (own 14/16/17/18/22/33/34/38/39 cross-link) + h-axis (chat-cap saga preservation)",
+    "own_34_wrap_zero": "PASS — chat output preserved verbatim (no synthetic wrapping)",
+    "own_38_매단계": "PASS — log files saved + json snapshot",
+    "own_39_yaml_md": "pending — md regenerate via render.hexa"
+  },
+  "next_cycle_proposals": [
+    "diagnose model autonomous generation lane: clm_v4_mount C4 forward-pass + first-token emission (currently emits init header instead of generated tokens)",
+    "wire duo lane V14 paired random_init mirror at per-utterance granularity",
+    "consider H100 ephemeral ssh fire with --parallel 2 llama.cpp once mount autonomous-gen fixed"
+  ]
+}

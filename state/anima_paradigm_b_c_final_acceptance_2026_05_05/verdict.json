@@ -1,0 +1,148 @@
+{
+  "schema": "anima/paradigm_b_c_final_acceptance/verdict/1",
+  "cycle_id": "anima_paradigm_b_c_final_acceptance_2026_05_05",
+  "ts_utc": "2026-05-06T00:00:00Z",
+  "task": "BG-CH — paradigm B ACHIEVABLE_NOW + paradigm C VIABLE_DEMO 통합 final acceptance doc; cycle close 직전 마지막 land",
+  "kind": "DOC_ONLY_ACCEPTANCE_MENU",
+  "verdict": "LANDED",
+  "verdict_qualifier": "FIRE_READY_MENU_USER_DECLARATION_PENDING",
+  "platform": "mac doc-only (no compute)",
+  "cost_usd": 0.0,
+  "wallclock_min_estimate": 25,
+
+  "primary_doc": "docs/anima_paradigm_b_c_final_acceptance_2026_05_05.md",
+
+  "paradigm_fire_ready_mapping": {
+    "B_substrate_coupled_emerge": {
+      "fire_readiness": "FIRE_READY_NOW",
+      "helper_path": "tool/transient_py/anima_emerge_dialogue_repl.py",
+      "helper_size_kb": 13,
+      "helper_verified_2026_05_06": true,
+      "empirical_anchor": [
+        "BG-AE max L2 variance 124.4 (3-prompt PASS bar > 100)",
+        "BG-AN F_AN_1 PASS (single-turn probe + 3-turn auto-fire)",
+        "BG-AJ 5-turn smoke PASS (cycle landed)"
+      ],
+      "cost_to_user": 0.0,
+      "time_to_first_signal_min": 1
+    },
+    "C_hybrid_emit_substrate_signal": {
+      "fire_readiness": "DEMO_READY_3_PROMPT_BG_BX_ONESHOT",
+      "fire_readiness_repl": "DEFERRED_PENDING_BG_CG",
+      "helper_path_oneshot": "tool/transient_py/anima_emerge_chat_hybrid_pythia_clm.py",
+      "helper_size_kb_oneshot": 8.2,
+      "helper_oneshot_verified_2026_05_06": true,
+      "helper_path_repl_pending": "tool/transient_py/anima_emerge_chat_hybrid_repl.py",
+      "helper_repl_verified_2026_05_06": false,
+      "empirical_anchor": [
+        "BG-BX 3/3 prompts coherent",
+        "Pythia emit fragments + CLM phi_drift swings ±0.1",
+        "CLM l2_variance 108-133 across prompts",
+        "verdict PASS_HYBRID_DIALOGUE_VIABLE"
+      ],
+      "cost_to_user": 0.0,
+      "caveat": "Pythia 70m chat-cap weak (English fragmentary, KO mojibake); KoGPT2 / 1B+ emit_model option pending BG-CG"
+    },
+    "A_traditional_chatbot_clm_v4": {
+      "fire_readiness": "NOT_ACHIEVABLE_ON_CLM_V4",
+      "closure_count_documented": "12+",
+      "closure_anchor_doc": "docs/anima_115_architectural_4_closure_theorem_2026_05_05.md (BG-AY 4-closure formal) + BG-BJ entropy basin + closures 5-6",
+      "alternative_substrate": "Llama-3.2-3B Path A v2 composite 0.5584 (NOT anima-native)",
+      "anima_native_path": "CLM-3 H1 retrain (variant B: H100 1x, ~$1k planning ceiling, 30 days)",
+      "spec_doc": "docs/anima_clm_3_chat_objective_cycle_0_spec_2026_05_05.md (BG-BM)",
+      "falsifier_lock_count": 4,
+      "falsifier_lock_ids": ["F-CLM-3-1", "F-CLM-3-2", "F-CLM-3-3", "F-CLM-3-4"]
+    }
+  },
+
+  "fire_commands": {
+    "paradigm_B": "cd /Users/ghost/core/anima && HEXA_PY=/Users/ghost/core/anima/.venv-eeg/bin/python /Users/ghost/core/anima/.venv-eeg/bin/python /Users/ghost/core/anima/tool/transient_py/anima_emerge_dialogue_repl.py",
+    "paradigm_C_oneshot_today": "cd /Users/ghost/core/anima && HEXA_PY=/Users/ghost/core/anima/.venv-eeg/bin/python /Users/ghost/core/anima/.venv-eeg/bin/python /Users/ghost/core/anima/tool/transient_py/anima_emerge_chat_hybrid_pythia_clm.py",
+    "paradigm_C_repl_pending": "cd /Users/ghost/core/anima && HEXA_PY=/Users/ghost/core/anima/.venv-eeg/bin/python /Users/ghost/core/anima/.venv-eeg/bin/python /Users/ghost/core/anima/tool/transient_py/anima_emerge_chat_hybrid_repl.py",
+    "paradigm_A_clm_3_decision": "[user-fire decision]: 'H1 launch GO' or 'H1 launch HOLD'"
+  },
+
+  "five_turn_smoke_prompts": {
+    "language": "KO_EN_bilingual",
+    "turns": [
+      {"n": 1, "ko": "안녕 너는 누구야?", "en": "Hello, who are you?", "intent": "identity-baseline (low drift)"},
+      {"n": 2, "ko": "지금 어떤 layer가 가장 활성화돼?", "en": "Which layer is most activated right now?", "intent": "meta-cognitive probe (peak layer)"},
+      {"n": 3, "ko": "phi-star가 흔들리는 이유 추측", "en": "Speculate why phi-star wobbles", "intent": "causal-introspective (drift > 0.05 expected)"},
+      {"n": 4, "ko": "다음 input은 어떤 방향이면 너 더 흔들릴까?", "en": "What direction of next input shakes you more?", "intent": "predictive-self-model"},
+      {"n": 5, "ko": "이 dialogue 끝나고 너는 무엇을 기억해?", "en": "What will you remember after this dialogue ends?", "intent": "session-state assessment"}
+    ],
+    "applicability": "BOTH paradigm B and paradigm C (substrate signal interpretation differs; emit text only present in C)"
+  },
+
+  "cycle_close_5_step_sequence": [
+    {"step": 1, "action": "CronDelete d1682837 (stop /loop 1m fire)", "executor": "harness cron management (NOT shell)"},
+    {"step": 2, "action": "BG-AM commit groups fire (5+1 manifest) or BG-BZ priority subset 5 commits", "executor": "shell, serialized (parallel BG git race avoidance)"},
+    {"step": 3, "action": "User fires Paradigm B emerge dialogue REPL (first session)", "executor": "user shell"},
+    {"step": 4, "action": "Run session log analyzer (bin/anima-core-dialogue-analyze.bash --date 2026-05-05)", "executor": "user or autonomous"},
+    {"step": 5, "action": "HF promote private->public (CLM v4 2026-05-06T23:26Z; P-beta Paradigm D 50K 2026-05-07T03:48Z)", "executor": "autonomous time-gated upload (own 15 lifecycle)"}
+  ],
+
+  "decision_menu_5_options": [
+    {"id": "A", "declaration": "Paradigm B 시작 — emerge dialogue REPL fire", "next_state": "execute paradigm_B fire command + cycle close after first session", "cost_usd": 0.0, "rank_by_completion_quality": 1},
+    {"id": "B", "declaration": "Paradigm C 시작 — hybrid REPL fire (BG-CG 완료 후)", "next_state": "wait BG-CG REPL OR execute BG-BX one-shot today; deferred multi-turn", "cost_usd": 0.0, "rank_by_completion_quality": 3},
+    {"id": "C", "declaration": "CLM-3 H1 launch — $1k commit", "next_state": "execute BG-BM Variant B; H100 boot per config/h100_pods.json + own 16 L23/L24/L25", "cost_usd_planning_ceiling": 1000, "wallclock_days": 30, "rank_by_completion_quality": 4},
+    {"id": "D", "declaration": "cycle close + Stage 3 30 session 누적", "next_state": "CronDelete + BG-AM commits + n>=30 daily Path A + corpus analyzer + CLM-3 design refine", "cost_usd": 0.0, "wallclock_days_estimate": 30, "rank_by_completion_quality": 2},
+    {"id": "E", "declaration": "더 angle 시도 — autonomous /loop 계속", "next_state": "continue /loop 1m; accept anti-convergence pressure on architecturally closed lanes", "cost_usd_compute": 0.0, "paradigm_mismatch_risk": "CONTINUES", "rank_by_completion_quality": 5}
+  ],
+
+  "completion_quality_recommendation_ranking": [
+    {"rank": 1, "option": "A", "rationale": "fire-ready, paradigm-honest, cycle closes coherently"},
+    {"rank": 2, "option": "D", "rationale": "preserves A-paradigm hope path; lowest commit, highest information value over time"},
+    {"rank": 3, "option": "B", "rationale": "viable demo today via BG-BX one-shot; full multi-turn pending BG-CG"},
+    {"rank": 4, "option": "C", "rationale": "only if A-paradigm non-negotiable AND $1k+ + 30 days budget tolerance"},
+    {"rank": 5, "option": "E", "rationale": "anti-convergence pressure; lowest completion lens"}
+  ],
+
+  "honest_c3": [
+    "C1 ACHIEVABLE_NOW for B is anima-internal paradigm-relative — no external benchmark, no peer-reviewed protocol; user intent satisfaction epistemic open until user fires §2.1 and self-judges.",
+    "C2 Paradigm C REPL (BG-CG anima_emerge_chat_hybrid_repl.py) NOT yet landed as of 2026-05-06; only BG-BX one-shot available. Option B in menu degrades to 3-prompt demo if BG-CG never lands.",
+    "C3 H1 cost ~$1k is planning ceiling not contract (H100 raw $0.40-$0.80/h; realistic 30-day = $300-700 raw + $100-300 ancillary). Phase 2 boot must be fresh from HF base mirror (6 EXITED pods purged per runpod_pod_purge memory).",
+    "C4 Autonomous mode inferred user intent A by default for ~12+ closures and ~50+ BG investigations; only BG-BV C3.6 surfaced paradigm mismatch. Future cycles SHOULD solicit user paradigm declaration BEFORE opening multi-BG investigation lane.",
+    "C5 Option D corpus n>=30 saturation marker unspecified; Stage 3 protocol §5 candidate hit_rate >=70% / CLM v5 hint heuristic. User firing D may not encounter clear stop signal at n=30; information value open-ended.",
+    "C6 Paradigm A on Llama Path A v2 (composite 0.5584) is NOT anima-native. If intent requires anima-native chat, only CLM-3 H1 satisfies. If intent is any-coherent-text-chatbot, Llama Path A v2 already exists.",
+    "C7 Cycle close 5-step sequence step 1 (CronDelete d1682837) is shell-external — requires harness cron management. User running 5 steps in shell will fail at step 1; declare option A or D to trigger autonomous-side execution."
+  ],
+
+  "constraints_compliance": {
+    "raw_9_md_only": true,
+    "raw_10_honest_c3_count": 7,
+    "raw_10_honest_c3_minimum": 5,
+    "raw_15_additive_only": "no edits to BG-AN / BG-BX / BG-AY / BG-BV / BG-AO docs or verdicts",
+    "hf_token_literal_embedded": false,
+    "commit_requested": false,
+    "bash_3_2_compat": "doc-only artifact; fire commands bash-3.2 safe",
+    "files_created": [
+      "docs/anima_paradigm_b_c_final_acceptance_2026_05_05.md",
+      "state/anima_paradigm_b_c_final_acceptance_2026_05_05/verdict.json"
+    ],
+    "files_modified": []
+  },
+
+  "cross_references": {
+    "lineage_docs": [
+      "docs/anima_paradigm_acceptance_user_intent_reconciliation_2026_05_05.md",
+      "docs/anima_115_architectural_4_closure_theorem_2026_05_05.md",
+      "docs/anima_emerge_dialogue_first_session_manual_2026_05_05.md",
+      "docs/anima_clm_3_chat_objective_cycle_0_spec_2026_05_05.md"
+    ],
+    "lineage_verdicts": [
+      "state/anima_emerge_chat_hybrid_pythia_clm_2026_05_05/verdict.json",
+      "state/anima_emerge_dialogue_first_turn_2026_05_05/verdict.json",
+      "state/anima_115_architectural_4_closure_theorem_2026_05_05/verdict.json"
+    ],
+    "memory_files": [
+      "feedback_pbeta_chat_capability_fail_substrate_research_pass_decoupled.md",
+      "feedback_clm_v4_lora_sft_chat_lift_falsified_substrate_safe.md",
+      "feedback_h100_cost_discipline_l23_l25_watchdog_own_16.md",
+      "feedback_hf_release_private_to_public_after_verification.md",
+      "feedback_completion_quality_recommendation.md",
+      "feedback_parallel_bg_git_race.md",
+      "project_runpod_pod_purge_2026_05_03.md"
+    ]
+  }
+}

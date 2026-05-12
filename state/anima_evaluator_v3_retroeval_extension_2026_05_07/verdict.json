@@ -1,0 +1,106 @@
+{
+  "bg_id": "BG-IS",
+  "ts": "2026-05-07T06:00:00Z",
+  "paradigm": "v3-retroeval-7-missed-bgs",
+  "host": "mac local file IO",
+  "cost_usd": 0.0,
+  "training_steps": 0,
+  "bgs_evaluated": 7,
+  "bgs_list": [
+    "BG-HU",
+    "BG-HW",
+    "BG-IA",
+    "BG-HT",
+    "BG-IE",
+    "BG-IF",
+    "BG-IG"
+  ],
+  "records_evaluated": 1150,
+  "any_simple_stack_pass_surfaced": false,
+  "any_true_partial_pass_surfaced": false,
+  "downgrades": [
+    [
+      "BG-HU",
+      "PARTIAL_PASS_GE7_step_800_8_of_15_persona_cycle_True",
+      "V3_PARTIAL_SIGNAL"
+    ]
+  ],
+  "upgrades": [],
+  "per_bg_class_summary": {
+    "BG-HU": {
+      "v2_class": "PARTIAL_PASS_GE7_step_800_8_of_15_persona_cycle_True",
+      "v3_final_class": "V3_PARTIAL_SIGNAL",
+      "best_v3_step": null,
+      "best_v3_pass": 0,
+      "best_persona_cycle": 28,
+      "best_step_class": null,
+      "n_responses": 150
+    },
+    "BG-HW": {
+      "v2_class": "V2_FAIL_substring_anima_chains_manual_13_of_20_step_1000",
+      "v3_final_class": "V3_PARTIAL_SIGNAL",
+      "best_v3_step": null,
+      "best_v3_pass": 0,
+      "best_persona_cycle": 0,
+      "best_step_class": null,
+      "n_responses": 160
+    },
+    "BG-IA": {
+      "v2_class": "V2_FAIL_lesson_G_N1_0_of_15_final",
+      "v3_final_class": "V3_PARTIAL_SIGNAL",
+      "best_v3_step": null,
+      "best_v3_pass": 0,
+      "best_persona_cycle": 0,
+      "best_step_class": null,
+      "n_responses": 150
+    },
+    "BG-HT": {
+      "v2_class": "V2_FAIL_R3_universe_brain_map_6_48MB_degenerate",
+      "v3_final_class": "V3_PARTIAL_SIGNAL",
+      "best_v3_step": null,
+      "best_v3_pass": 0,
+      "best_persona_cycle": 0,
+      "best_step_class": null,
+      "n_responses": 210
+    },
+    "BG-IE": {
+      "v2_class": "SEED_LUCK_FAIL_2_of_10",
+      "v3_final_class": "V3_PARTIAL_SIGNAL",
+      "best_v3_step": null,
+      "best_v3_pass": 0,
+      "best_persona_cycle": 0,
+      "best_step_class": null,
+      "n_responses": 120
+    },
+    "BG-IF": {
+      "v2_class": "V2_FAIL_100M_x_6_48MB_degenerate",
+      "v3_final_class": "V3_PARTIAL_SIGNAL",
+      "best_v3_step": null,
+      "best_v3_pass": 0,
+      "best_persona_cycle": 0,
+      "best_step_class": null,
+      "n_responses": 180
+    },
+    "BG-IG": {
+      "v2_class": "WEAK_PARTIAL_LIKE_BG_HS_R1_3_of_15_step_1500_BPE_7K",
+      "v3_final_class": "V3_PARTIAL_SIGNAL",
+      "best_v3_step": null,
+      "best_v3_pass": 0,
+      "best_persona_cycle": 3,
+      "best_step_class": null,
+      "n_responses": 180
+    }
+  },
+  "raw_opt_out": "raw#37 transient_py + raw#42 file IO only (mac N=1 not violated)",
+  "own_compliance": "own 5 + own 6 + own 24 ledger + own 18 V3 evaluator reuse",
+  "honest_c3": [
+    "BG-IF/BG-IA eval_logs use NESTED shape (results[] per step) vs flat shape; loader handles both, but per-record cells_v2/cells_v3 stored in those logs were computed by an EARLIER inline evaluator — V3 retroeval here recomputes via evaluate_response_v3, which is the correct SSOT lens",
+    "BG-HU `best_eval_persona_repetition_cycle=True` was already flagged in V2 inline metric, but V2 still reported pass=8/15 step 800 — V3 6-cell explicitly tests this with V3.1+V3.2 cells; if cycle responses are dominant V3.2 substring count >2 fails the cell",
+    "V3.1 cycle thresholds (4-gram <5, single_token_dominant <0.4, ngram_diversity ≥0.3) inherited from BG-IJ landed; no fresh ablation",
+    "V3.6 char_diversity (unique ≥10, most_freq ≤0.5) catches 0xFF/?/# byte filler but may FALSE-FAIL legitimate short replies (≤9 unique chars)",
+    "Embedding semantic coherence still keyword/regex proxy (V3.3 = domain_kw + token_overlap + V3.4 schema); cosine similarity NOT implemented in V3",
+    "BG-HW eval_log present and standard (160 records); 'BG_OUTPUT_NOT_STANDARD' fallback path was reserved but not triggered — corpus aggregation BG was a different state dir",
+    "V3 retroeval is non-greedy: only re-scores existing eval_log gens; does NOT regenerate samples → signal-bounded by what was logged at training time",
+    "BG-IJ aggregate_metrics combined into 15-BG SSOT but BG-IJ verdict format slightly differs (verdict.json `v3_aggregate_metrics` vs BG-IS per-bg); SSOT preserved by including both forms in aggregate"
+  ]
+}

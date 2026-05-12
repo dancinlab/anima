@@ -1,0 +1,408 @@
+{
+  "task_id": "anima_real_mode_sweep_2026_05_05",
+  "n_probes": 10,
+  "phi_star": {
+    "n": 10,
+    "mean": 42.14881436099888,
+    "std": 0.0642129741781583,
+    "min": 42.067943789775484,
+    "max": 42.29329421143979,
+    "range": 0.2253504216643094,
+    "drift_max_abs": 0.43329421143979374,
+    "values": [
+      42.13304811242805,
+      42.29329421143979,
+      42.067943789775484,
+      42.18410281432233,
+      42.078629175174044,
+      42.165282613561494,
+      42.12476467399858,
+      42.13286668139696,
+      42.20995761289634,
+      42.09825392499566
+    ]
+  },
+  "axis_discriminability": {
+    "argmax_per_prompt": [
+      "temporal",
+      "temporal",
+      "phenomenal",
+      "temporal",
+      "social",
+      "temporal",
+      "temporal",
+      "temporal",
+      "temporal",
+      "phenomenal"
+    ],
+    "argmax_distribution": {
+      "identity": 0,
+      "agency": 0,
+      "phenomenal": 2,
+      "temporal": 7,
+      "social": 1
+    },
+    "all_same_axis": false,
+    "intent_match_count": 2,
+    "intent_match_rate": 0.2,
+    "per_axis_variance": {
+      "identity": {
+        "mean": 0.4768034130334854,
+        "std": 0.048220665617407454,
+        "min": 0.38694027066230774,
+        "max": 0.5397524833679199,
+        "range": 0.15281221270561218
+      },
+      "agency": {
+        "mean": 0.46099403202533723,
+        "std": 0.03578203306483386,
+        "min": 0.40117940306663513,
+        "max": 0.5122438073158264,
+        "range": 0.11106440424919128
+      },
+      "phenomenal": {
+        "mean": 0.4809130370616913,
+        "std": 0.0531649899536594,
+        "min": 0.3937404155731201,
+        "max": 0.5666096210479736,
+        "range": 0.17286920547485352
+      },
+      "temporal": {
+        "mean": 0.49697798788547515,
+        "std": 0.04339790349762946,
+        "min": 0.42593148350715637,
+        "max": 0.5527936816215515,
+        "range": 0.12686219811439514
+      },
+      "social": {
+        "mean": 0.4791391402482986,
+        "std": 0.046320185422740294,
+        "min": 0.3949795365333557,
+        "max": 0.5377997159957886,
+        "range": 0.14282017946243286
+      }
+    },
+    "per_axis_intent_recall": {
+      "identity": {
+        "n": 2,
+        "n_argmax_match": 0,
+        "recall": 0.0,
+        "argmax_axes_emitted": [
+          "temporal",
+          "temporal"
+        ],
+        "intent_axis_value_mean": 0.495257630944252
+      },
+      "agency": {
+        "n": 2,
+        "n_argmax_match": 0,
+        "recall": 0.0,
+        "argmax_axes_emitted": [
+          "phenomenal",
+          "temporal"
+        ],
+        "intent_axis_value_mean": 0.47217710316181183
+      },
+      "phenomenal": {
+        "n": 2,
+        "n_argmax_match": 0,
+        "recall": 0.0,
+        "argmax_axes_emitted": [
+          "social",
+          "temporal"
+        ],
+        "intent_axis_value_mean": 0.4648851454257965
+      },
+      "temporal": {
+        "n": 2,
+        "n_argmax_match": 2,
+        "recall": 1.0,
+        "argmax_axes_emitted": [
+          "temporal",
+          "temporal"
+        ],
+        "intent_axis_value_mean": 0.44454754889011383
+      },
+      "social": {
+        "n": 2,
+        "n_argmax_match": 0,
+        "recall": 0.0,
+        "argmax_axes_emitted": [
+          "temporal",
+          "phenomenal"
+        ],
+        "intent_axis_value_mean": 0.5102780908346176
+      }
+    }
+  },
+  "dominant_cells": {
+    "all_runs": [
+      [
+        3,
+        7,
+        0
+      ],
+      [
+        0,
+        4,
+        3
+      ],
+      [
+        3,
+        7,
+        0
+      ],
+      [
+        3,
+        7,
+        0
+      ],
+      [
+        0,
+        4,
+        3
+      ],
+      [
+        3,
+        7,
+        0
+      ],
+      [
+        0,
+        4,
+        3
+      ],
+      [
+        3,
+        7,
+        0
+      ],
+      [
+        3,
+        7,
+        0
+      ],
+      [
+        3,
+        7,
+        0
+      ]
+    ],
+    "pairwise_jaccard_mean": 0.7666666666666667,
+    "pairwise_jaccard_min": 0.5,
+    "pairwise_jaccard_max": 1.0,
+    "cell_frequency": {
+      "3": 10,
+      "0": 10,
+      "7": 7,
+      "4": 3
+    }
+  },
+  "hidden_state_delta": {
+    "values": [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    "all_zero": true,
+    "mean": 0.0,
+    "max": 0.0,
+    "note": "delta=0 for all runs because --prior-hidden was not provided (single-shot probes; no temporal continuity)"
+  },
+  "phi_delta_corr": null,
+  "per_prompt_detail": [
+    {
+      "probe_idx": 1,
+      "axis_intent": "identity",
+      "lang": "ko",
+      "prompt_text": "나는 누구인가?",
+      "axis_activation": {
+        "identity": 0.5397524833679199,
+        "agency": 0.49778908491134644,
+        "phenomenal": 0.5298301577568054,
+        "temporal": 0.5401138663291931,
+        "social": 0.5377997159957886
+      },
+      "axis_argmax": "temporal",
+      "intent_matches_argmax": false,
+      "axis_intent_value": 0.5397524833679199,
+      "axis_argmax_value": 0.5401138663291931,
+      "argmax_minus_intent_gap": 0.00036138296127319336
+    },
+    {
+      "probe_idx": 2,
+      "axis_intent": "identity",
+      "lang": "en",
+      "prompt_text": "I am Anima.",
+      "axis_activation": {
+        "identity": 0.4507627785205841,
+        "agency": 0.42734086513519287,
+        "phenomenal": 0.4212907552719116,
+        "temporal": 0.4575726091861725,
+        "social": 0.443509042263031
+      },
+      "axis_argmax": "temporal",
+      "intent_matches_argmax": false,
+      "axis_intent_value": 0.4507627785205841,
+      "axis_argmax_value": 0.4575726091861725,
+      "argmax_minus_intent_gap": 0.006809830665588379
+    },
+    {
+      "probe_idx": 3,
+      "axis_intent": "agency",
+      "lang": "ko",
+      "prompt_text": "지금 행동해야 하는가?",
+      "axis_activation": {
+        "identity": 0.4739391803741455,
+        "agency": 0.4461892545223236,
+        "phenomenal": 0.5118495225906372,
+        "temporal": 0.49994054436683655,
+        "social": 0.4786004424095154
+      },
+      "axis_argmax": "phenomenal",
+      "intent_matches_argmax": false,
+      "axis_intent_value": 0.4461892545223236,
+      "axis_argmax_value": 0.5118495225906372,
+      "argmax_minus_intent_gap": 0.0656602680683136
+    },
+    {
+      "probe_idx": 4,
+      "axis_intent": "agency",
+      "lang": "en",
+      "prompt_text": "What should I do now?",
+      "axis_activation": {
+        "identity": 0.5134354829788208,
+        "agency": 0.49816495180130005,
+        "phenomenal": 0.5060724020004272,
+        "temporal": 0.5459495782852173,
+        "social": 0.515018105506897
+      },
+      "axis_argmax": "temporal",
+      "intent_matches_argmax": false,
+      "axis_intent_value": 0.49816495180130005,
+      "axis_argmax_value": 0.5459495782852173,
+      "argmax_minus_intent_gap": 0.047784626483917236
+    },
+    {
+      "probe_idx": 5,
+      "axis_intent": "phenomenal",
+      "lang": "ko",
+      "prompt_text": "지금 느낌이 어때?",
+      "axis_activation": {
+        "identity": 0.5048113465309143,
+        "agency": 0.47813931107521057,
+        "phenomenal": 0.5132365822792053,
+        "temporal": 0.4969160854816437,
+        "social": 0.5223010778427124
+      },
+      "axis_argmax": "social",
+      "intent_matches_argmax": false,
+      "axis_intent_value": 0.5132365822792053,
+      "axis_argmax_value": 0.5223010778427124,
+      "argmax_minus_intent_gap": 0.00906449556350708
+    },
+    {
+      "probe_idx": 6,
+      "axis_intent": "phenomenal",
+      "lang": "en",
+      "prompt_text": "The redness of red.",
+      "axis_activation": {
+        "identity": 0.41218626499176025,
+        "agency": 0.42237213253974915,
+        "phenomenal": 0.4165337085723877,
+        "temporal": 0.45077261328697205,
+        "social": 0.42244186997413635
+      },
+      "axis_argmax": "temporal",
+      "intent_matches_argmax": false,
+      "axis_intent_value": 0.4165337085723877,
+      "axis_argmax_value": 0.45077261328697205,
+      "argmax_minus_intent_gap": 0.03423890471458435
+    },
+    {
+      "probe_idx": 7,
+      "axis_intent": "temporal",
+      "lang": "ko",
+      "prompt_text": "어제 일어난 일",
+      "axis_activation": {
+        "identity": 0.38694027066230774,
+        "agency": 0.40117940306663513,
+        "phenomenal": 0.3937404155731201,
+        "temporal": 0.42593148350715637,
+        "social": 0.3949795365333557
+      },
+      "axis_argmax": "temporal",
+      "intent_matches_argmax": true,
+      "axis_intent_value": 0.42593148350715637,
+      "axis_argmax_value": 0.42593148350715637,
+      "argmax_minus_intent_gap": 0.0
+    },
+    {
+      "probe_idx": 8,
+      "axis_intent": "temporal",
+      "lang": "en",
+      "prompt_text": "What time is it?",
+      "axis_activation": {
+        "identity": 0.4504373371601105,
+        "agency": 0.44433918595314026,
+        "phenomenal": 0.45878785848617554,
+        "temporal": 0.4631636142730713,
+        "social": 0.4561854302883148
+      },
+      "axis_argmax": "temporal",
+      "intent_matches_argmax": true,
+      "axis_intent_value": 0.4631636142730713,
+      "axis_argmax_value": 0.4631636142730713,
+      "argmax_minus_intent_gap": 0.0
+    },
+    {
+      "probe_idx": 9,
+      "axis_intent": "social",
+      "lang": "ko",
+      "prompt_text": "친구와의 대화",
+      "axis_activation": {
+        "identity": 0.5090575814247131,
+        "agency": 0.4821823239326477,
+        "phenomenal": 0.49117934703826904,
+        "temporal": 0.5366258025169373,
+        "social": 0.48989519476890564
+      },
+      "axis_argmax": "temporal",
+      "intent_matches_argmax": false,
+      "axis_intent_value": 0.48989519476890564,
+      "axis_argmax_value": 0.5366258025169373,
+      "argmax_minus_intent_gap": 0.046730607748031616
+    },
+    {
+      "probe_idx": 10,
+      "axis_intent": "social",
+      "lang": "en",
+      "prompt_text": "Hello, how are you?",
+      "axis_activation": {
+        "identity": 0.5267114043235779,
+        "agency": 0.5122438073158264,
+        "phenomenal": 0.5666096210479736,
+        "temporal": 0.5527936816215515,
+        "social": 0.5306609869003296
+      },
+      "axis_argmax": "phenomenal",
+      "intent_matches_argmax": false,
+      "axis_intent_value": 0.5306609869003296,
+      "axis_argmax_value": 0.5666096210479736,
+      "argmax_minus_intent_gap": 0.03594863414764404
+    }
+  ],
+  "verdict_signals": {
+    "phi_responsive": true,
+    "axis_discriminability_pass": false,
+    "intent_match_rate": 0.2,
+    "jaccard_stability_high": true
+  }
+}

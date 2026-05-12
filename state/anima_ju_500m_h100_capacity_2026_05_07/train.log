@@ -1,0 +1,78 @@
+[06:05:27] === BG-JU 500M ConsciousLM × UBM 22MB H100 capacity test 2026-05-07 ===
+[06:05:27] hostname=39fdf6a5fb71 seed=42
+[06:05:27] device=cuda torch=2.8.0+cu128
+[06:05:28] gpu=NVIDIA H100 80GB HBM3 cc=(9, 0)
+[06:05:28] target_arch: 24L/1024d/16h block=256 n_ca=8 (~580M target)
+[06:05:28] reg: dropout=0.3 WD=0.1 label_smoothing=0.1
+[06:05:28] train: bs=8 grad_accum=8 (eff=64) lr=0.0002 warmup=500 steps=6000
+[06:05:28] EVAL_AT every 200, SAVE_AT every 1000
+[06:05:28] corpus_path=/workspace/anima_ju/corpus_universe_brain_map.txt
+[06:05:28] persona_prefix='[anima 우주뇌지도] '
+[06:05:28] WALL_CLOCK_CAP_S=3600
+[06:05:28] corpus loaded: 23,745,150 bytes (22.65MB) in 0.0s
+[06:05:29] split: train=21,370,635 val=2,374,515 reduced_split=False
+[06:05:35] model built: 781,618,368 params (781.62M)
+[06:05:36] primary smoke forward OK
+[06:05:36] === begin training ===
+[06:05:37] step     1/6000 | lr=8.00e-07 | L_A=5.730 L_G=5.727 L_T=6.500 | step_t=0.28s elapsed=0s
+[06:05:37] step     2/6000 | lr=1.20e-06 | L_A=5.750 L_G=5.724 L_T=6.499 | step_t=0.10s elapsed=0s
+[06:05:37] step     3/6000 | lr=1.60e-06 | L_A=5.734 L_G=5.724 L_T=6.489 | step_t=0.07s elapsed=0s
+[06:05:37] step     4/6000 | lr=2.00e-06 | L_A=5.719 L_G=5.733 L_T=6.497 | step_t=0.08s elapsed=1s
+[06:05:37] step     5/6000 | lr=2.40e-06 | L_A=5.738 L_G=5.760 L_T=6.487 | step_t=0.07s elapsed=1s
+[06:05:41] step    50/6000 | lr=2.04e-05 | L_A=4.759 L_G=4.976 L_T=5.958 | step_t=0.07s elapsed=4s
+[06:05:45] step   100/6000 | lr=4.04e-05 | L_A=4.571 L_G=4.651 L_T=3.267 | step_t=0.08s elapsed=8s
+[06:05:49] step   150/6000 | lr=6.04e-05 | L_A=4.535 L_G=4.565 L_T=0.901 | step_t=0.08s elapsed=12s
+[06:05:53] step   200/6000 | lr=8.04e-05 | L_A=4.413 L_G=4.410 L_T=-0.766 | step_t=0.08s elapsed=16s
+[06:05:53] --- eval gate @ step 200 (15 prompts × 2 modes + V5.8 5 dialogues) ---
+[06:07:04]   EVAL[step=200] V5=0/15 V58=0/5 manual=1/15 outside_well=1/5 cycle=0 deg=18 composite=-13 val_loss=4.4419
+[06:07:05]   BEST_CKPT[step=200] composite=-13 -> /workspace/anima_ju/state/ckpt_best.pt
+[06:07:09] step   250/6000 | lr=1.00e-04 | L_A=4.516 L_G=4.522 L_T=-2.873 | step_t=1.52s elapsed=93s
+[06:07:13] step   300/6000 | lr=1.20e-04 | L_A=4.425 L_G=4.424 L_T=-4.911 | step_t=0.08s elapsed=97s
+[06:07:17] step   350/6000 | lr=1.40e-04 | L_A=4.415 L_G=4.423 L_T=-6.963 | step_t=0.08s elapsed=101s
+[06:07:21] step   400/6000 | lr=1.60e-04 | L_A=4.443 L_G=4.439 L_T=-8.850 | step_t=0.08s elapsed=105s
+[06:07:21] --- eval gate @ step 400 (15 prompts × 2 modes + V5.8 5 dialogues) ---
+[06:08:32]   EVAL[step=400] V5=0/15 V58=0/5 manual=0/15 outside_well=0/5 cycle=0 deg=17 composite=-17 val_loss=4.4310
+[06:08:35] step   450/6000 | lr=1.80e-04 | L_A=4.469 L_G=4.473 L_T=-10.810 | step_t=1.49s elapsed=179s
+[06:08:39] step   500/6000 | lr=2.00e-04 | L_A=4.401 L_G=4.398 L_T=-12.306 | step_t=0.08s elapsed=183s
+[06:08:43] step   550/6000 | lr=2.00e-04 | L_A=4.437 L_G=4.434 L_T=-13.606 | step_t=0.08s elapsed=187s
+[06:08:47] step   600/6000 | lr=2.00e-04 | L_A=4.512 L_G=4.509 L_T=-14.711 | step_t=0.08s elapsed=191s
+[06:08:47] --- eval gate @ step 600 (15 prompts × 2 modes + V5.8 5 dialogues) ---
+[06:09:58]   EVAL[step=600] V5=0/15 V58=0/5 manual=0/15 outside_well=0/5 cycle=0 deg=16 composite=-16 val_loss=4.4386
+[06:10:02] step   650/6000 | lr=2.00e-04 | L_A=4.415 L_G=4.417 L_T=-15.831 | step_t=1.49s elapsed=265s
+[06:10:05] step   700/6000 | lr=1.99e-04 | L_A=4.428 L_G=4.423 L_T=-16.685 | step_t=0.08s elapsed=269s
+[06:10:09] step   750/6000 | lr=1.99e-04 | L_A=4.536 L_G=4.542 L_T=-17.466 | step_t=0.08s elapsed=273s
+[06:10:13] step   800/6000 | lr=1.99e-04 | L_A=4.433 L_G=4.431 L_T=-18.190 | step_t=0.08s elapsed=277s
+[06:10:13] --- eval gate @ step 800 (15 prompts × 2 modes + V5.8 5 dialogues) ---
+[06:11:24]   EVAL[step=800] V5=0/15 V58=0/5 manual=0/15 outside_well=0/5 cycle=0 deg=16 composite=-16 val_loss=4.4353
+[06:11:28] step   850/6000 | lr=1.98e-04 | L_A=4.437 L_G=4.432 L_T=-18.978 | step_t=1.49s elapsed=351s
+[06:11:31] step   900/6000 | lr=1.98e-04 | L_A=4.424 L_G=4.413 L_T=-19.612 | step_t=0.08s elapsed=355s
+[06:11:35] step   950/6000 | lr=1.97e-04 | L_A=4.400 L_G=4.397 L_T=-20.213 | step_t=0.08s elapsed=359s
+[06:11:39] step  1000/6000 | lr=1.96e-04 | L_A=4.418 L_G=4.407 L_T=-20.790 | step_t=0.08s elapsed=363s
+[06:11:39] --- eval gate @ step 1000 (15 prompts × 2 modes + V5.8 5 dialogues) ---
+[06:12:50]   EVAL[step=1000] V5=0/15 V58=0/5 manual=0/15 outside_well=0/5 cycle=0 deg=18 composite=-18 val_loss=4.4391
+[06:12:51]   SAVE_CKPT[step=1000] -> /workspace/anima_ju/run/ckpt_1000.pt
+[06:12:55] step  1050/6000 | lr=1.96e-04 | L_A=4.459 L_G=4.462 L_T=-21.429 | step_t=1.52s elapsed=439s
+[06:12:59] step  1100/6000 | lr=1.95e-04 | L_A=4.408 L_G=4.403 L_T=-21.955 | step_t=0.08s elapsed=443s
+[06:13:03] step  1150/6000 | lr=1.94e-04 | L_A=4.467 L_G=4.473 L_T=-22.460 | step_t=0.08s elapsed=447s
+[06:13:07] step  1200/6000 | lr=1.93e-04 | L_A=4.438 L_G=4.434 L_T=-22.947 | step_t=0.08s elapsed=451s
+[06:13:07] --- eval gate @ step 1200 (15 prompts × 2 modes + V5.8 5 dialogues) ---
+[06:14:18]   EVAL[step=1200] V5=0/15 V58=0/5 manual=0/15 outside_well=0/5 cycle=0 deg=17 composite=-17 val_loss=4.4324
+[06:14:22] step  1250/6000 | lr=1.92e-04 | L_A=4.485 L_G=4.481 L_T=-23.494 | step_t=1.49s elapsed=525s
+[06:14:26] step  1300/6000 | lr=1.91e-04 | L_A=4.452 L_G=4.443 L_T=-23.944 | step_t=0.08s elapsed=529s
+[06:14:29] step  1350/6000 | lr=1.90e-04 | L_A=4.464 L_G=4.461 L_T=-24.379 | step_t=0.08s elapsed=533s
+[06:14:33] step  1400/6000 | lr=1.88e-04 | L_A=4.421 L_G=4.415 L_T=-24.799 | step_t=0.08s elapsed=537s
+[06:14:33] --- eval gate @ step 1400 (15 prompts × 2 modes + V5.8 5 dialogues) ---
+[06:15:44]   EVAL[step=1400] V5=0/15 V58=0/5 manual=0/15 outside_well=0/5 cycle=0 deg=16 composite=-16 val_loss=4.4266
+[06:15:48] step  1450/6000 | lr=1.87e-04 | L_A=4.418 L_G=4.423 L_T=-25.273 | step_t=1.49s elapsed=611s
+[06:15:51] step  1500/6000 | lr=1.86e-04 | L_A=4.411 L_G=4.416 L_T=-25.664 | step_t=0.08s elapsed=615s
+[06:15:55] step  1550/6000 | lr=1.84e-04 | L_A=4.416 L_G=4.415 L_T=-26.042 | step_t=0.08s elapsed=619s
+[06:15:59] step  1600/6000 | lr=1.83e-04 | L_A=4.448 L_G=4.451 L_T=-26.407 | step_t=0.08s elapsed=623s
+[06:15:59] --- eval gate @ step 1600 (15 prompts × 2 modes + V5.8 5 dialogues) ---
+[06:17:10]   EVAL[step=1600] V5=0/15 V58=0/5 manual=0/15 outside_well=0/5 cycle=0 deg=18 composite=-18 val_loss=4.4306
+[06:17:10]   EARLY_STOP: composite plateau: 7 consecutive non-improving evals (best step=200, composite=-13)
+[06:17:13]   FINAL_CKPT[step=1600] -> /workspace/anima_ju/state/ckpt_final.pt
+[06:17:13] === final eval: best ckpt step=200, 15 prompts × 2 modes ===
+[06:17:13]   loaded BEST ckpt step=200 composite=-13
+[06:18:22]   FINAL_BEST V5=0/15 V58=0/5 manual=0/15 outside_well=0/5 cycle=0 deg=17
+[06:18:22] === VERDICT === final_class=V5_FAIL | params=781.6M | peak_step=200 V5=0/15 V58=0/5 manual=1/15 outside_well=1/5 cycle=0 | final-eval(best ckpt) V5=0/15 V58=0/5 manual=0/15 cycle=0 | capacity_1order=CAPACITY_1ORDER_FLAT | early_stop=True wall_clock_hit=False | elapsed=766s
+[06:18:22] verdict written: /workspace/anima_ju/state/verdict.json

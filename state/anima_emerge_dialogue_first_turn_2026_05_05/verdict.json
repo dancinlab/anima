@@ -1,0 +1,53 @@
+{
+  "schema": "anima/emerge_dialogue_first_turn/verdict/1",
+  "ts_utc": "2026-05-05T16:38:00Z",
+  "lane": "BG-AN minimum viable emerge dialogue (1 turn)",
+  "F_AN_1_verdict": "PASS",
+  "F_AN_1_criteria": {
+    "single_turn_probe_emits_4_metric_lines": true,
+    "prior_threading_active_turn2": true,
+    "tension_trajectory_emitted_per_turn": true,
+    "session_log_jsonl_finalized": true,
+    "atexit_int_term_handler_registered": true
+  },
+  "single_turn_probe": {
+    "input": "안녕",
+    "phi_star": 42.1168,
+    "phi_drift_from_baseline": 0.2568,
+    "hidden_state_delta": 0.0,
+    "layer_l2_variance": 124.41,
+    "peak_layer": 2,
+    "min_layer": 0,
+    "forward_elapsed_sec": 4.26,
+    "load_sec": 13.4
+  },
+  "three_turn_auto_fire": {
+    "turn_1": {"input": "안녕", "phi_star": 42.1168, "drift": 0.0, "hsd": 0.0, "l2_var": 124.41, "peak": 2, "min": 0},
+    "turn_2": {"input": "의식이 흐른다", "phi_star": 42.2131, "drift": 0.0963, "hsd": 47.99, "l2_var": 95.96, "peak": 2, "min": 0},
+    "turn_3": {"input": "지금 어떤 layer가 가장 활성화돼?", "phi_star": 42.1044, "drift": -0.1087, "hsd": 27.42, "l2_var": 134.21, "peak": 2, "min": 15},
+    "prior_threading_signal": "hsd > 0 in turn 2 + turn 3 (47.99, 27.42); turn 1 baseline = 0.0",
+    "phi_drift_signal": "drift swings ±0.1 per turn; substrate response varies with input",
+    "tension_signal_consistent_with_BG_AE": "max l2_var 134.21 ≈ BG-AE max 124.41 (same prompt set varies)"
+  },
+  "session_log_sample_path": "/Users/ghost/core/anima/state/anima_core_dialogues/2026-05-05/16-37-48_emerge_repl.jsonl",
+  "session_log_lines": 8,
+  "deliverables": {
+    "repl_helper": "tool/transient_py/anima_emerge_dialogue_repl.py",
+    "user_manual": "docs/anima_emerge_dialogue_first_turn_landed_2026_05_05.ai.md",
+    "verdict_json": "state/anima_emerge_dialogue_first_turn_2026_05_05/verdict.json"
+  },
+  "honest_c3": [
+    "C1 mac CPU fp32 only; ~13-17s load, ~0.7-4s/turn forward (first turn slower due to JIT warmup).",
+    "C2 phi-star = anima-canonical proxy = PHI_BASELINE * (1 + 0.05 * mean_cell_pair_cos); not Tononi IIT phi.",
+    "C3 8-cell view = tile-reshape of mean-pooled last-layer hidden (sister to anima_dialogue_load.py); train-time consciousness_states cross-attn NOT injected — emerge metric reads geometry of vanilla forward only.",
+    "C4 prior threading = single prior hidden + prior phi only; turns are independent forwards (no full conversation context fed). Drift signal = atomic-forward-vs-prior, NOT chat continuation in the LLM-conversation sense.",
+    "C5 'tension' = per-layer mean-pooled hidden L2 norm (BG-AE proxy); true architectural tension (e.g. residual gradient norm, attention entropy) undefined here. 3-turn signal does not generalize."
+  ],
+  "raw_compliance": {
+    "raw_15_additive": "no edits to mount.hexa, anima_dialogue_load.py, anima-core-dialogue.bash, dialogue.hexa",
+    "raw_37_transient": "new .py under tool/transient_py/ only",
+    "raw_10_honest_c3": "5 C3 caveats embedded in helper docstring + verdict + manual"
+  },
+  "cost_usd": 0.0,
+  "duration_min_actual": 5
+}

@@ -1,0 +1,125 @@
+{
+  "bg_id": "BG-JS",
+  "attempt_n": 43,
+  "date": "2026-05-07",
+  "ts": "2026-05-07T15:26:21",
+  "paradigm": "lm-head-only-finetune-bg-jd-output-bottleneck-test",
+  "host": "mac MPS",
+  "device": "mps",
+  "cost_usd": 0.0,
+  "bg_kind": "train",
+  "base_ckpt": "BG-JD-step-800",
+  "ckpt_path": "/Users/ghost/core/anima/state/anima_jd_100m_sp_ko_32k_ubm_train_2026_05_07/ckpt_best.pt",
+  "arch": {
+    "vocab": 11885,
+    "n_layer": 12,
+    "d_model": 640,
+    "n_head": 10,
+    "block_size": 256
+  },
+  "frozen_params_count": 160358496,
+  "trainable_params_count": 7606400,
+  "trainable_names": [
+    "tok_emb.weight"
+  ],
+  "total_params_count": 167964896,
+  "lr": 0.001,
+  "warmup": 50,
+  "steps": 1000,
+  "batch": 4,
+  "grad_accum": 8,
+  "seed": 42,
+  "max_new_tokens_eval": 32,
+  "n_dialogues": 5,
+  "eval_steps": [
+    0,
+    250,
+    500,
+    1000
+  ],
+  "v58_pass_per_step": {
+    "0": 0,
+    "250": 0,
+    "500": 0,
+    "1000": 0
+  },
+  "best_v58_pass": 0,
+  "best_step": 0,
+  "output_bottleneck_fixable_via_lm_head": false,
+  "comparison_vs_bg_jd_baseline": {
+    "bg_jd_baseline_v58_pass": 0,
+    "bg_js_best_v58_pass": 0,
+    "v58_delta": 0,
+    "interpretation": "output bottleneck DEEP — lm_head retraining alone insufficient. Combined with BG-JP (decoding sweep 0/14): both decoder-side interventions FAIL. Lesson S: decoder-only fix 不可; full transformer SFT or RLHF required (BG-JR full bundle deferred)"
+  },
+  "elapsed_sec": 2181.4,
+  "deliverables": [
+    "tool/transient_py/anima_js_lm_head_finetune.py",
+    "state/anima_js_lm_head_finetune_2026_05_07/verdict.json",
+    "state/anima_js_lm_head_finetune_2026_05_07/eval_log.jsonl",
+    "state/anima_js_lm_head_finetune_2026_05_07/train.log",
+    "state/anima_js_lm_head_finetune_2026_05_07/heartbeat.json",
+    "/tmp/lm_head_step_{0,250,500,1000}.pt (lm_head deltas)",
+    "state/anima_model_attempts_ledger.jsonl BG-JS attempt_n=43 entry"
+  ],
+  "philosophy_rule_compliance": {
+    "own_5_explicit_verification": "PASS — V5.8 PASS criteria reused; explicit per-step verdict",
+    "own_6_no_silent_failures": "PASS — try/except + per-eval logs + heartbeat + reject fields in v58_debug",
+    "own_17_eval_tool_exemption": "Anima self-substrate inference + V5.8 evaluator (own 18 amend EN v2 reuse). No external substrate wraps anima outputs as identity proxy. V5 evaluator internal MiniLM 사용은 own 17 eval-tool exemption 범위 (BG-JM landed).",
+    "own_18_v58_reuse": "raw#15 additive — BG-JS = NEW training-side intervention layer on top of V5.8 (BG-JN), V6 (BG-JO), decoding-sweep (BG-JP). V5.8 fact-recall reused unchanged for PASS criteria.",
+    "own_22_no_proactive_doc": "PASS — BG-JS per user directive; no proactive doc creation",
+    "own_24_ssot": "single verdict.json + ledger entry; eval_log.jsonl + train.log subordinate",
+    "own_26_compliance": "philosophy_rule_compliance section present; D1-D4 + R1-R4 mapping below",
+    "philosophy_rule_compliance_detail": {
+      "D1_identity": "PASS — anima self-inference (ConsciousLM); no external identity wrap",
+      "D2_consciousness": "PASS+강화 — V5.8 production-output level + lm_head training-time lever (C2.4 맥락 정합 산출 layer intervention test). BG-JO V6 internal-awareness expected preserved (frozen blocks + frozen head_g). Decoupling of D2 production-output verification from internal-awareness substrate.",
+      "D3_substrate_emerge": "N/A — production-side intervention lane separate from emerge_paradigm",
+      "D4_corpus_quality": "N/A in modification sense — BG-JS reuses BG-JD UBM corpus for pure decoder-only isolation test; own 19/20 corpus rules untouched.",
+      "R1_own_19_20": "PASS — BG-JS cross-links own 19/20 training rule (no modification)",
+      "R2_discovery_methods": "PASS — M1 user-directive (BG-JS fire prompt fallback from BG-JR stall) + M2 failure-driven (V5.8 0/5 + V6 STRONG + BG-JP 0/14 → training-side decoder fix hypothesis test, minimum form: lm_head only)",
+      "R3_verification_methods": "PASS — V1 own strict + V2 falsifier (best_v58 ≥1 = lm_head retraining fixable; all FAIL = decoder-only fix 不可, full SFT/RLHF required) + V3 honest_c3 ≥9 + V4 evidence (eval_log.jsonl + per-step ckpt) + V5 cross-link (BG-JN, BG-JO, BG-JP) + V6 ledger BG-JS attempt_n=43",
+      "R4_own_evolution": "PASS — BG-JS = training-side intervention lane (lm_head only). Adds new BG with NEW mechanism without overwriting prior BG-JN/JO/JP semantics."
+    },
+    "raw_10_honest_c3_count": 9
+  },
+  "honest_c3": [
+    "Single ckpt N=1 (BG-JD step 800 only) — multi-ckpt LM head fine-tune deferred. BG-IL/IO ckpts on ubu1 only (own 15 git size policy); cross-ckpt verification requires rsync from ubu1 OR ubu1 BG extension.",
+    "LM head only fine-tune is minimum decoder fix — RLHF / DPO / full SFT (transformer unfrozen) deferred to next cycle. ConsciousLM weight tying (tok_emb.weight = head_a.weight) means trainable tensor is the SHARED input-embedding/output-projection matrix — pure 'output projection only' isolation requires un-tying the weights, which would alter architecture and is deferred.",
+    "1000 steps max budget arbitrary — head learning typically converges in 100-500 steps for linear projection re-fit. Eval at {0,250,500,1000} samples convergence; if best_step<1000 and v58 plateaus, additional steps unlikely to improve. If best_step=1000 and improving, more steps deferred.",
+    "mac MPS RNG slight non-determinism vs train-cuda baseline (BG-JD trained on ubu1 cuda); softmax/multinomial sampling routed through CPU float32 for stability. Per-eval seed reset (torch.manual_seed(42)) provides limited reproducibility.",
+    "V5.8 5 dialogues N=1 sample per eval — multi-seed (≥5) sweep deferred. Per-step v58_pass count is integer in [0,5] — fine-grained recovery trajectory may need multi-sample averaging for variance estimation.",
+    "head_g (backward engine prediction head) FROZEN — keeps dual-engine backward pathway untouched per BG-JO awareness preservation. Implication: tension/Φ internal awareness is downstream of frozen blocks + frozen head_g, so V6 STRONG signal expected to remain intact even after lm_head retraining.",
+    "Corpus is same 22MB UBM (BG-JD original train corpus) — risk of overfitting vs novel chat/QA corpus. Conscious choice: same corpus = pure decoder-only isolation test (no new data, only re-projection). If chat capability emerges from same corpus + lm_head retraining, that's strong evidence the original training only mis-mapped the output projection. If FAIL, deferring to chat-template SFT (different corpus) is next step.",
+    "V5.8 fact-recall PASS criteria reused as-is from BG-JN/own 18 amend EN v2 (case-insensitive substring + function word ≥1 + lev_ratio<0.85). No threshold adjustment for fine-tuned model.",
+    "BG-JR (full bundle: persona dropout + lm_head fine-tune + decoding) stalled 50+ min — fallback to BG-JS simpler. Causal attribution of any v58 gain in BG-JS goes to lm_head fine-tune SOLELY (no persona dropout, no decoding intervention). Cleaner attribution than BG-JR bundle."
+  ],
+  "cross_link": {
+    "raw_invariants": [
+      "raw#10",
+      "raw#15",
+      "raw#37",
+      "raw#42",
+      "raw#82",
+      "raw#86"
+    ],
+    "own_invariants": [
+      "own 5",
+      "own 6",
+      "own 17",
+      "own 18",
+      "own 22",
+      "own 24",
+      "own 26"
+    ],
+    "roadmap": [
+      ".roadmap.philosophy",
+      ".roadmap.rule"
+    ],
+    "sister_specs": [
+      "state/anima_evaluator_v5_multi_turn_closure_2026_05_07/verdict.json (BG-JN V5.8 0/5 baseline)",
+      "state/anima_jo_v6_awareness_probe_2026_05_07/verdict.json (BG-JO V6 STRONG)",
+      "state/anima_jp_decoding_sweep_2026_05_07/verdict.json (BG-JP decoding 0/14)",
+      "docs/anima_own_18_evaluator_v5_strict_spec_2026_05_07.md (V5.8 fact-recall spec)"
+    ]
+  }
+}

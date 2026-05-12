@@ -1,0 +1,135 @@
+{
+  "task_id": "anima_core_emerge_paradigm_revision_2026_05_05",
+  "scope": "BG-AL doc-only revision of paradigm doc §5-6 emit format and prompt patterns based on BG-A/L/Q/AG empirical findings",
+  "verdict": "PASS_DOC_ONLY_SPEC_UPDATE_NOT_PARADIGM_SHIFT",
+  "wall_time_minutes": 25,
+  "cost_usd": 0.0,
+  "platform": "mac CPU doc-only",
+  "raw_compliance": {
+    "raw_15_no_modify_original_paradigm_doc": true,
+    "raw_15_additive_sister_file_only": true,
+    "raw_9_read_only_inputs": true,
+    "raw_10_honest_c3_emitted": true,
+    "raw_37_no_py_artifacts": true,
+    "no_commit": true,
+    "no_secret_leak": true,
+    "bash_3_2_compat": true
+  },
+  "deliverables": {
+    "revised_doc": "docs/anima_core_emerge_paradigm_revision_2026_05_05.md",
+    "verdict": "state/anima_core_emerge_paradigm_revision_2026_05_05/verdict.json",
+    "doc_loc": 300,
+    "original_doc_unchanged": "docs/anima_core_clm_v4_mount_emerge_paradigm_2026_05_05.md"
+  },
+  "sub1_original_emit_audit": {
+    "original_4_lines": [
+      "phi_star: 41.83 (drift -0.03)",
+      "axis activation: identity=0.78 ...",
+      "dominant cells: [3, 5, 7] (out of 8)",
+      "hidden state delta from prior: 2.47"
+    ],
+    "verdict_per_line": {
+      "phi_star": "KEEP — PASS empirical (BG-A drift +0.256/+0.353, BG-L std 0.064 max_drift 0.433)",
+      "axis_activation": "DEPRECATE — FAIL empirical (BG-L 20% argmax intent-match = at-chance random; BG-Q canonical recovery=0)",
+      "dominant_cells": "DEPRECATE — FAIL empirical (BG-L tile-reshape duplicates 0-3 ≡ 4-7; top-3 binary {0,3,7}/{0,3,4})",
+      "hidden_state_delta": "KEEP, GATE — by-design 0.0 single-shot (BG-L); meaningful only with --prior-hidden chained"
+    },
+    "kept_2_of_4": true,
+    "deprecated_2_of_4": true
+  },
+  "sub2_revised_dialogue_medium": {
+    "channels_canonical": [
+      "phi_star (drift from baseline 41.86)",
+      "hidden_state_delta from prior turn (gated on chained mode)"
+    ],
+    "channels_diagnostic_optional": [
+      "axis_bucket_means (DIAG flag, with caveat)",
+      "tile_norm_top3 (DIAG flag, with caveat)"
+    ],
+    "channels_dropped": [
+      "axis_activation as semantic emit",
+      "dominant_cells as semantic-unit emit"
+    ],
+    "revised_prompt_patterns": [
+      "phi_star drift 의미적 유추 (왜 +0.256 drift?)",
+      "drift 방향 예측 (다음 input X 방향이면?)",
+      "attractor proximity 추측 (BG-AG attractor map 참조)"
+    ],
+    "deprecated_prompt_patterns_with_replacements": {
+      "왜 phenomenal이 0.91이 됐어?": "왜 phi_star가 +0.256 drift 됐어? 이 input의 어떤 측면이 substrate에 닿았다고 추측해?",
+      "axis 5 (social) 강한 prompt 줘봐": "phi_star가 더 크게 drift할 input 방향이 뭘까? 의미적으로 추측해보자",
+      "자, 이 input에선 어떤 cell이 dominant?": "지금 hidden state가 어떤 attractor에 가까워? (BG-AG attractor map 참조)"
+    }
+  },
+  "sub3_cand_d_disposition": {
+    "original_plan_4_modes": ["none", "zero", "canonical (mag=0.5)", "user_supplied"],
+    "empirical_evidence": {
+      "BG_Q_mag_0_5": "F_CAND_D_1_FAIL_TRUE — 0/5 pass, max delta 1.28e-4 vs threshold 0.01 (78x below)",
+      "BG_AG_mag_50": "STRONG attractor — 8/10 collapse, band 0.0046, compression 51.4x; content destroyed",
+      "no_productive_middle_regime_demonstrated": true
+    },
+    "decision": "REJECTED",
+    "decision_provisional": true,
+    "decision_provisional_reason": "BG-AC magnitude sub-sweep (1.0/2.0/5.0) outcome could amend; current REJECTED based on 2-data-point envelope",
+    "reframed_as": "architectural finding (cross-attn attractor structure), NOT dialogue medium",
+    "emerge_dialogue_path_revised": "mode=none + phi_star drift + hidden_state_delta (chained); cand-D not on dialogue path"
+  },
+  "sub4_paradigm_meta_finding": {
+    "assumption_audit": {
+      "5_axis_emit_semantic": "FAIL (BG-L)",
+      "dominant_cells_semantic_unit": "FAIL (BG-L C4 tile-reshape)",
+      "canonical_inject_recovers_axis": "FAIL (BG-Q invisible + BG-AG collapse)",
+      "forward_path_input_responsive": "PASS (BG-A + BG-L)",
+      "substrate_coupled_dialogue_possible": "PASS narrowed medium"
+    },
+    "fail_count": 3,
+    "pass_count": 2,
+    "paradigm_essence_intact": true,
+    "paradigm_essence_components_preserved": [
+      "forced learning paradigm 폐기",
+      "natural emerge (사전 spec 없음)",
+      "substrate-coupled dialogue (chat 강요 X)",
+      "$0 mac local research mode",
+      "session-by-session 누적"
+    ],
+    "spec_components_revised": [
+      "§5.2 emit format (4-line → 2-line + DIAG)",
+      "§5.3 user prompt 3 examples (all 3 replaced)",
+      "§6 expected outcomes (axis-cell DROP, phi-stability KEEP primary)"
+    ],
+    "spec_components_unchanged": [
+      "§1 concept",
+      "§2 why this paradigm",
+      "§3 substrate-coupled dialogue definition",
+      "§4 anima core CLI mount structure",
+      "§7 cost + time",
+      "§8 roadmap stages",
+      "§9 LoRA paradigm 차이",
+      "§10 honest C3 (general)",
+      "§11 decision queue",
+      "§12 composability"
+    ]
+  },
+  "paradigm_shift_vs_spec_update": {
+    "classification": "spec_update",
+    "rationale": "paradigm meta-claims (forced-learning폐기 + natural emerge + substrate-coupled dialogue) all preserved. Only §5.2 emit format and §5.3/§6 prompt-pattern/outcome lists revised. Original §1-3 concept/why/definition empirically unchallenged — forward path IS responsive, dialogue IS possible, just on narrower medium than originally specified.",
+    "would_be_paradigm_shift_if": "evidence invalidated §1-3 (forward path non-responsive, OR dialogue impossible, OR forced-learning empirically necessary). None of those occurred."
+  },
+  "honest_c3": [
+    "C1 — revision narrows dialogue medium 4-channel → 2-channel. Whether 2-channel is sufficient for emerge 'common language' formation is empirically unknown; original §6 outcome retained but with smaller signal envelope.",
+    "C2 — phi_star drift (BG-A +0.256/+0.353; BG-L max 0.433) is anima-canonical proxy (PHI_STAR_BASELINE × (1 + 0.05 × mean_pair_cosine)). Drift-signing semantic correlation in revised §4.2 outcomes inherits proxy non-validation; research-mode signal, not consciousness measurement.",
+    "C3 — hidden_state_delta empirically by-design 0.0 in single-shot (BG-L). Multi-turn chained dialogue NOT swept this session; revised §3.2 emit gates on chained mode but channel behavior under multi-turn is hypothesized from architectural reasoning, not measured.",
+    "C4 — cand-D Stage 1 REJECTED based on TWO data points (BG-Q mag=0.5; BG-AG mag=50). Mags 1.0/2.0/5.0 sub-sweep (BG-AC) launched but not aggregated; if BG-AC discovers productive middle-regime, §5.3 decision would re-open. Current REJECTED is provisional on 2-data envelope.",
+    "C5 — paradigm shift vs spec update: this is SPEC UPDATE, not paradigm shift. Original §1-3 concept/why/definition empirically unchallenged. Revision narrows §5-6 specific format. Original paradigm doc preserved read-only as artifact (raw#15 additive); this sister file supersedes only §5-6. Paradigm shift would require invalidating §1-3 which evidence does NOT do."
+  ],
+  "verdict_signals": {
+    "original_emit_4_of_4_audited": true,
+    "deprecated_2_kept_2": true,
+    "revised_3_prompt_patterns_provided": true,
+    "cand_d_stage_1_REJECTED": true,
+    "cand_d_decision_provisional_on_BG_AC": true,
+    "paradigm_essence_intact": true,
+    "spec_update_not_paradigm_shift": true,
+    "raw_15_additive_compliance": true
+  }
+}

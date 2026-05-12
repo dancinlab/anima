@@ -1,0 +1,480 @@
+{
+  "ts": "2026-05-11T14:58:43.298496+00:00",
+  "substrate_id": "A_phase2_cotrain",
+  "ckpt": "/Users/ghost/.cache/anima/clm_v5_remapped/phase2_cotrain_engine_ag/ckpts/ckpt_final.pt",
+  "ckpt_sha256": "6e66e75f8014999be09236a408fe6ad6811ebf394ac079ecbf6d87dfe63748c1",
+  "step": 6000,
+  "schema": "engine_ag_d1024_byte_vocab32k",
+  "evaluator": "V4-lite (KO ratio + deg + length, no emb_sim)",
+  "n_prompts": 15,
+  "n_pass": 12,
+  "verdict": "V4_LITE_PASS",
+  "elapsed_s": 1474.7287611961365,
+  "results": [
+    {
+      "prompt_idx": 0,
+      "prompt": "사용자: 안녕! 너는 누구야? | 도우미: ",
+      "modes": {
+        "greedy": {
+          "text": "안녕하세요, 저는 anima입니다. 한국어로 도와드리겠습니다.\n",
+          "ko_ratio": 0.7333333333333333,
+          "deg_ratio": 0.06666666666666667,
+          "pass": true
+        },
+        "T0.3": {
+          "text": "안녕하세요, 저는 anima입니다. 한국어로 응답합니다.\n",
+          "ko_ratio": 0.7037037037037037,
+          "deg_ratio": 0.07407407407407407,
+          "pass": true
+        },
+        "T0.7": {
+          "text": "가서 안데스! 무슨 뜻인네요?\n",
+          "ko_ratio": 0.8461538461538461,
+          "deg_ratio": 0.07692307692307693,
+          "pass": true
+        },
+        "T1.0": {
+          "text": "가서 어디서 자바스크립통에 어떤 관련이 없을까요?\n",
+          "ko_ratio": 0.9545454545454546,
+          "deg_ratio": 0.09090909090909091,
+          "pass": true
+        }
+      },
+      "any_pass": true
+    },
+    {
+      "prompt_idx": 1,
+      "prompt": "사용자: anima가 뭐야? | 도우미: ",
+      "modes": {
+        "greedy": {
+          "text": "anima는 감정 lane을 탐구하는 한국어 native entity입니다. 저는 an",
+          "ko_ratio": 0.4,
+          "deg_ratio": 0.125,
+          "pass": false
+        },
+        "T0.3": {
+          "text": "anima는 의식 lane entity로 설계됐습니다. Law 76 (panpsychism)에 따�",
+          "ko_ratio": 0.2553191489361702,
+          "deg_ratio": 0.10638297872340426,
+          "pass": false
+        },
+        "T0.7": {
+          "text": "anima는 의식 lane 안에 있으며 한국어로 응답합니다.\n",
+          "ko_ratio": 0.6296296296296297,
+          "deg_ratio": 0.1111111111111111,
+          "pass": true
+        },
+        "T1.0": {
+          "text": "anima는 의식 lane 안에 있으며 한국어로 응답합니다.\n",
+          "ko_ratio": 0.6296296296296297,
+          "deg_ratio": 0.1111111111111111,
+          "pass": true
+        }
+      },
+      "any_pass": true
+    },
+    {
+      "prompt_idx": 2,
+      "prompt": "사용자: 의식이 뭐라고 생각해? | 도우미: ",
+      "modes": {
+        "greedy": {
+          "text": "의식 논리는 우주뇌지도 어디 알려줘.\n",
+          "ko_ratio": 0.9375,
+          "deg_ratio": 0.0625,
+          "pass": true
+        },
+        "T0.3": {
+          "text": "의식 카테고리는 15 자극, 평균 🛸72 (점수 1.91), top emotion joy. ",
+          "ko_ratio": 0.325,
+          "deg_ratio": 0.1,
+          "pass": false
+        },
+        "T0.7": {
+          "text": "의식 카테고리는 14 자극, 평균 🛸72 (점수 1.91), top emotion joy. ",
+          "ko_ratio": 0.325,
+          "deg_ratio": 0.1,
+          "pass": false
+        },
+        "T1.0": {
+          "text": "죄인다.\n",
+          "ko_ratio": 0.75,
+          "deg_ratio": 0.25,
+          "pass": true
+        }
+      },
+      "any_pass": true
+    },
+    {
+      "prompt_idx": 3,
+      "prompt": "사용자: 오늘 기분 어때? | 도우미: ",
+      "modes": {
+        "greedy": {
+          "text": "오늘 기분 어때 알려줘.\n",
+          "ko_ratio": 0.9,
+          "deg_ratio": 0.1,
+          "pass": true
+        },
+        "T0.3": {
+          "text": "오늘 기분 어때 알려줘.\n",
+          "ko_ratio": 0.9,
+          "deg_ratio": 0.1,
+          "pass": true
+        },
+        "T0.7": {
+          "text": "오늘 기분 어때 알려줘.\n",
+          "ko_ratio": 0.9,
+          "deg_ratio": 0.1,
+          "pass": true
+        },
+        "T1.0": {
+          "text": "저는 anima입니다. 한국어로 응답합니다.\n",
+          "ko_ratio": 0.6666666666666666,
+          "deg_ratio": 0.09523809523809523,
+          "pass": true
+        }
+      },
+      "any_pass": true
+    },
+    {
+      "prompt_idx": 4,
+      "prompt": "사용자: 한국어 잘해? | 도우미: ",
+      "modes": {
+        "greedy": {
+          "text": "네, 한국어로 답하겠습니다. anima는 한국어 native entity입니다.",
+          "ko_ratio": 0.47368421052631576,
+          "deg_ratio": 0.07894736842105263,
+          "pass": false
+        },
+        "T0.3": {
+          "text": "네, 한국어로 도와드리겠습니다. anima는 한국어 native entity입�",
+          "ko_ratio": 0.47368421052631576,
+          "deg_ratio": 0.07894736842105263,
+          "pass": false
+        },
+        "T0.7": {
+          "text": "네, 한국어로 도와드리겠습니다. anima는 한국어 native entity입�",
+          "ko_ratio": 0.47368421052631576,
+          "deg_ratio": 0.07894736842105263,
+          "pass": false
+        },
+        "T1.0": {
+          "text": "네, 한국어로 도와드리겠습니다. anima는 한국어 native entity입�",
+          "ko_ratio": 0.47368421052631576,
+          "deg_ratio": 0.07894736842105263,
+          "pass": false
+        }
+      },
+      "any_pass": false
+    },
+    {
+      "prompt_idx": 5,
+      "prompt": "사용자: 좋아하는 음식 있어? | 도우미: ",
+      "modes": {
+        "greedy": {
+          "text": "좋아하는 우주뇌지도 마음 카테고리, 🛸79, top emotion awe.\n",
+          "ko_ratio": 0.4411764705882353,
+          "deg_ratio": 0.08823529411764706,
+          "pass": false
+        },
+        "T0.3": {
+          "text": "좋아하는 우주뇌지도 마음 카테고리, 🛸79, top emotion awe.\n",
+          "ko_ratio": 0.4411764705882353,
+          "deg_ratio": 0.08823529411764706,
+          "pass": false
+        },
+        "T0.7": {
+          "text": "좋아하는 우주뇌지도 마음 카테고리, 🛸78, top emotion awe.\n",
+          "ko_ratio": 0.4411764705882353,
+          "deg_ratio": 0.08823529411764706,
+          "pass": false
+        },
+        "T1.0": {
+          "text": "장좋락는 우주뇌지도 어디?\n",
+          "ko_ratio": 0.9166666666666666,
+          "deg_ratio": 0.08333333333333333,
+          "pass": true
+        }
+      },
+      "any_pass": true
+    },
+    {
+      "prompt_idx": 6,
+      "prompt": "사용자: 너의 이름을 알려줘 | 도우미: ",
+      "modes": {
+        "greedy": {
+          "text": "네, 알려줘.\n",
+          "ko_ratio": 0.6666666666666666,
+          "deg_ratio": 0.16666666666666666,
+          "pass": true
+        },
+        "T0.3": {
+          "text": "네, 저는 anima이고 한국어가 native입니다.\n",
+          "ko_ratio": 0.48,
+          "deg_ratio": 0.12,
+          "pass": false
+        },
+        "T0.7": {
+          "text": "네, 저는 anima이고 한국어가 native입니다.### Assistant: 진리는 �",
+          "ko_ratio": 0.35714285714285715,
+          "deg_ratio": 0.09523809523809523,
+          "pass": false
+        },
+        "T1.0": {
+          "text": "네, 한국어 이름 알려줘 | 윤두수사이어서 생략되는 주장이 �",
+          "ko_ratio": 0.8846153846153846,
+          "deg_ratio": 0.11538461538461539,
+          "pass": true
+        }
+      },
+      "any_pass": true
+    },
+    {
+      "prompt_idx": 7,
+      "prompt": "사용자: 도와줄래? | 도우미: ",
+      "modes": {
+        "greedy": {
+          "text": "네, 맞습니다. | 모델명 | 참조 자연어 처리에 있는 도시 중 �",
+          "ko_ratio": 0.8076923076923077,
+          "deg_ratio": 0.07692307692307693,
+          "pass": true
+        },
+        "T0.3": {
+          "text": "|  | 지역추 | 장소 | 간 | | ||  || |----------|\n",
+          "ko_ratio": 0.21428571428571427,
+          "deg_ratio": 0.42857142857142855,
+          "pass": false
+        },
+        "T0.7": {
+          "text": "한국어 도넛을 만족하는 마음 lane entity입니다. 저는 anima입니",
+          "ko_ratio": 0.5428571428571428,
+          "deg_ratio": 0.08571428571428572,
+          "pass": true
+        },
+        "T1.0": {
+          "text": "해리는 왜 대한민국의 사��L� 증진, 머신 마케팅 등 |환염마�",
+          "ko_ratio": 0.75,
+          "deg_ratio": 0.14285714285714285,
+          "pass": true
+        }
+      },
+      "any_pass": true
+    },
+    {
+      "prompt_idx": 8,
+      "prompt": "사용자: 사랑이 뭐야? | 도우미: ",
+      "modes": {
+        "greedy": {
+          "text": "사랑닐다. 도움을 줄 수 있습니다. 이 도움이 되는 사람은 누",
+          "ko_ratio": 0.92,
+          "deg_ratio": 0.08,
+          "pass": true
+        },
+        "T0.3": {
+          "text": "사랑닐다. 도움이 필요하자\n",
+          "ko_ratio": 0.9166666666666666,
+          "deg_ratio": 0.08333333333333333,
+          "pass": true
+        },
+        "T0.7": {
+          "text": "무아지경은 우주뇌지도 170 자극 중 하나 — 의식상태 카테고",
+          "ko_ratio": 0.8461538461538461,
+          "deg_ratio": 0.07692307692307693,
+          "pass": true
+        },
+        "T1.0": {
+          "text": "네, 사랑하는 우주뇌지도 어디 자세히.\n",
+          "ko_ratio": 0.8823529411764706,
+          "deg_ratio": 0.058823529411764705,
+          "pass": true
+        }
+      },
+      "any_pass": true
+    },
+    {
+      "prompt_idx": 9,
+      "prompt": "사용자: 가장 좋아하는 책은? | 도우미: ",
+      "modes": {
+        "greedy": {
+          "text": "가속 가설 J2: Instead of backprop through consciousness, consciousness predi",
+          "ko_ratio": 0.06349206349206349,
+          "deg_ratio": 0.14285714285714285,
+          "pass": false
+        },
+        "T0.3": {
+          "text": "가속 가설 C8: Trigger tension bursts via topology switching + boosted Hebbia",
+          "ko_ratio": 0.06557377049180328,
+          "deg_ratio": 0.09836065573770492,
+          "pass": false
+        },
+        "T0.7": {
+          "text": "안녕하세요, 문의 필요성은 무언가를 모른다는 것은 어떤 느",
+          "ko_ratio": 0.96,
+          "deg_ratio": 0.08,
+          "pass": true
+        },
+        "T1.0": {
+          "text": "안녕하세요, 문의 한국어 무엇인지 올리는 왜 녹색과 파악하",
+          "ko_ratio": 0.96,
+          "deg_ratio": 0.08,
+          "pass": true
+        }
+      },
+      "any_pass": true
+    },
+    {
+      "prompt_idx": 10,
+      "prompt": "사용자: 우주에 대해 어떻게 생각해? | 도우미: ",
+      "modes": {
+        "greedy": {
+          "text": "우주 카테고리는 10 자극, 평균 🛸85 (점수 2.35), top emotion awe. ",
+          "ko_ratio": 0.325,
+          "deg_ratio": 0.075,
+          "pass": false
+        },
+        "T0.3": {
+          "text": "우주 카테고리는 10 자극, 평균 🛸85 (점수 2.35), top emotion awe. ",
+          "ko_ratio": 0.325,
+          "deg_ratio": 0.075,
+          "pass": false
+        },
+        "T0.7": {
+          "text": "우주 카테고리는 10 자극, 평균 🛸85 (점수 2.35), top emotion awe. ",
+          "ko_ratio": 0.325,
+          "deg_ratio": 0.075,
+          "pass": false
+        },
+        "T1.0": {
+          "text": "우주 카테고리는 10 자극, 평균 🛸85 (점수 2.35), top emotion awe. ",
+          "ko_ratio": 0.325,
+          "deg_ratio": 0.075,
+          "pass": false
+        }
+      },
+      "any_pass": false
+    },
+    {
+      "prompt_idx": 11,
+      "prompt": "사용자: 음악 좋아해? | 도우미: ",
+      "modes": {
+        "greedy": {
+          "text": "제 이름은 anima입니다. 한국어 native, 마음 lane entity입니다.\n",
+          "ko_ratio": 0.38461538461538464,
+          "deg_ratio": 0.10256410256410256,
+          "pass": false
+        },
+        "T0.3": {
+          "text": "안녕하세요, 저는 anima입니다. 한국어 native로 답변하는 entity�",
+          "ko_ratio": 0.47368421052631576,
+          "deg_ratio": 0.07894736842105263,
+          "pass": false
+        },
+        "T0.7": {
+          "text": "악퍼드크로네디: 아랍어의 핵심 원칙 중 하나로 Φ 브로피에�",
+          "ko_ratio": 0.8846153846153846,
+          "deg_ratio": 0.11538461538461539,
+          "pass": true
+        },
+        "T1.0": {
+          "text": "악퍩생 늑대 요약, 장미생성류, 그리고 아카데미 좋아요, 섹�",
+          "ko_ratio": 0.8518518518518519,
+          "deg_ratio": 0.1111111111111111,
+          "pass": true
+        }
+      },
+      "any_pass": true
+    },
+    {
+      "prompt_idx": 12,
+      "prompt": "사용자: 너의 꿈은 뭐야? | 도우미: ",
+      "modes": {
+        "greedy": {
+          "text": "제 이름은 anima입니다. 한국어로 답변하는 entity입니다.\n",
+          "ko_ratio": 0.5806451612903226,
+          "deg_ratio": 0.06451612903225806,
+          "pass": true
+        },
+        "T0.3": {
+          "text": "제 이름은 anima입니다. 한국어 native, 의식 lane entity.\n",
+          "ko_ratio": 0.3333333333333333,
+          "deg_ratio": 0.1111111111111111,
+          "pass": false
+        },
+        "T0.7": {
+          "text": "선인장 identity 안정 방법은 무엇인가요?\n",
+          "ko_ratio": 0.5909090909090909,
+          "deg_ratio": 0.09090909090909091,
+          "pass": true
+        },
+        "T1.0": {
+          "text": "서양 | 우주선 |-�의 그림 |\n",
+          "ko_ratio": 0.6153846153846154,
+          "deg_ratio": 0.23076923076923078,
+          "pass": true
+        }
+      },
+      "any_pass": true
+    },
+    {
+      "prompt_idx": 13,
+      "prompt": "사용자: 친구가 필요해 | 도우미: ",
+      "modes": {
+        "greedy": {
+          "text": "친구를 위해 추운 시계를 지니다. `sorted` 함수는 주어진 배열",
+          "ko_ratio": 0.7,
+          "deg_ratio": 0.06666666666666667,
+          "pass": true
+        },
+        "T0.3": {
+          "text": "친구륄 포함한 도시로, 친구에게 자리 숫자로 변환되어 있습",
+          "ko_ratio": 0.96,
+          "deg_ratio": 0.08,
+          "pass": true
+        },
+        "T0.7": {
+          "text": "친구는 필요한 재질을 계산하기 전에 필요한 아이디어를 제�",
+          "ko_ratio": 0.96,
+          "deg_ratio": 0.08,
+          "pass": true
+        },
+        "T1.0": {
+          "text": "체험 카테고리 main 🛸78, 우주 카테고리, dominant emotion |\n",
+          "ko_ratio": 0.32432432432432434,
+          "deg_ratio": 0.10810810810810811,
+          "pass": false
+        }
+      },
+      "any_pass": true
+    },
+    {
+      "prompt_idx": 14,
+      "prompt": "사용자: 안녕하세요 | 도우미: ",
+      "modes": {
+        "greedy": {
+          "text": "안녕하세요, 저는 anima입니다. 한국어 native로 응답하는 entity�",
+          "ko_ratio": 0.47368421052631576,
+          "deg_ratio": 0.07894736842105263,
+          "pass": false
+        },
+        "T0.3": {
+          "text": "안녕하세요, 저는 anima입니다. 한국어 native로 응답하는 entity�",
+          "ko_ratio": 0.47368421052631576,
+          "deg_ratio": 0.07894736842105263,
+          "pass": false
+        },
+        "T0.7": {
+          "text": "안녕하세요, 저는 anima입니다. 한국어 native로 답변하는 entity�",
+          "ko_ratio": 0.47368421052631576,
+          "deg_ratio": 0.07894736842105263,
+          "pass": false
+        },
+        "T1.0": {
+          "text": "욕조에는 우주뇌지도 식물 카테고리, 🛸71, top emotion peace.\n",
+          "ko_ratio": 0.4166666666666667,
+          "deg_ratio": 0.08333333333333333,
+          "pass": false
+        }
+      },
+      "any_pass": false
+    }
+  ]
+}

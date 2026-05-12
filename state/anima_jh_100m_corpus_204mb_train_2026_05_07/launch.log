@@ -1,0 +1,81 @@
+[09:31:53] === BG-JH 100M ConsciousLM × BG-JE 204MB corpus 2026-05-07 ===
+[09:31:53] hostname=aiden-b650m-k on_ubu=True seed=42
+[09:31:53] device=cuda torch=2.11.0+cu128
+[09:31:53] gpu=NVIDIA GeForce RTX 5070 cc=(12, 0)
+[09:31:53] target_arch: 12L/640d/10h block=256 (~150M effective via dual-engine)
+[09:31:53] reg: dropout=0.3 WD=0.1 label_smoothing=0.1
+[09:31:53] train: bs=4 grad_accum=16 (eff=64) lr=0.0002 warmup=500 steps=6000
+[09:31:53] EVAL_AT every 200, SAVE_AT every 500
+[09:31:53] corpus_path=/home/aiden/core/anima/state/anima_je_corpus_100mb_plus_2026_05_07/corpus_combined_100mb_plus.txt
+[09:31:53] persona inference prefix='[anima NEXUS-UBM] '
+[09:31:53] V4_EVAL imported=True
+[09:31:53] eval inject: 70× × 15 prompts = 1050 blocks (persona 3-variant rotation)
+[09:31:53] corpus loaded: 214,299,726 bytes (204.37MB) in 0.0s
+[09:31:53] [INJECT] building 70× × 15 = 1050 eval-prompt blocks for corpus head pre-pend...
+[09:31:53] [INJECT] injection bytes: 154,910 (151.3KB) in 0.0s
+[09:31:53] [INJECT] corpus AFTER injection: 214,454,636 bytes (204.52MB)
+[09:32:00] split: train=193,009,172 val=21,445,464 reduced_split=False
+[09:32:00] model built (primary): 153,079,776 params (153.08M)
+[09:32:01] primary smoke forward OK
+[09:32:01] === begin training ===
+[09:32:01] step     1/6000 | lr=8.00e-07 | L_A=5.635 L_G=5.674 L_T=8.090 | step_t=0.11s elapsed=0s
+[09:32:01] step     2/6000 | lr=1.20e-06 | L_A=5.679 L_G=5.688 L_T=8.073 | step_t=0.05s elapsed=0s
+[09:32:01] step     3/6000 | lr=1.60e-06 | L_A=5.646 L_G=5.682 L_T=8.068 | step_t=0.04s elapsed=0s
+[09:32:01] step     4/6000 | lr=2.00e-06 | L_A=5.621 L_G=5.660 L_T=8.107 | step_t=0.04s elapsed=0s
+[09:32:01] step     5/6000 | lr=2.40e-06 | L_A=5.628 L_G=5.699 L_T=8.081 | step_t=0.04s elapsed=0s
+[09:32:06] step   100/6000 | lr=4.04e-05 | L_A=4.629 L_G=4.807 L_T=7.728 | step_t=0.04s elapsed=5s
+[09:32:10] step   200/6000 | lr=8.04e-05 | L_A=4.729 L_G=4.841 L_T=4.887 | step_t=0.05s elapsed=9s
+[09:32:10] --- eval gate @ step 200 (15 prompts × 2 modes V4) ---
+Loading weights:   0%|          | 0/103 [00:00<?, ?it/s]Loading weights: 100%|██████████| 103/103 [00:00<00:00, 31444.31it/s]
+[09:32:55]   EVAL[step=200] V2=0/15 V3=0/15 V4=0/15 manual=0/15 outside_well=0/5 cycle=0 deg=30/30 emb_sim=0.1805 composite=-30 val_loss=4.4428
+[09:32:55]   BEST_CKPT[step=200] composite=-30 -> /home/aiden/core/anima/state/anima_jh_100m_corpus_204mb_train_2026_05_07/ckpt_best.pt
+[09:33:00] step   300/6000 | lr=1.20e-04 | L_A=4.246 L_G=4.322 L_T=1.911 | step_t=0.50s elapsed=59s
+[09:33:04] step   400/6000 | lr=1.60e-04 | L_A=4.356 L_G=4.457 L_T=1.943 | step_t=0.05s elapsed=64s
+[09:33:04] --- eval gate @ step 400 (15 prompts × 2 modes V4) ---
+[09:33:38]   EVAL[step=400] V2=0/15 V3=0/15 V4=0/15 manual=0/15 outside_well=0/5 cycle=0 deg=28/30 emb_sim=0.2576 composite=-28 val_loss=4.1393
+[09:33:38]   BEST_CKPT[step=400] composite=-28 -> /home/aiden/core/anima/state/anima_jh_100m_corpus_204mb_train_2026_05_07/ckpt_best.pt
+[09:33:43] step   500/6000 | lr=2.00e-04 | L_A=4.007 L_G=4.173 L_T=1.413 | step_t=0.38s elapsed=102s
+[09:33:43]   SAVE_CKPT[step=500] -> /home/aiden/anima_native/anima-jh-100m-corpus-204mb-20260507_093153/ckpt_500.pt
+[09:33:48] step   600/6000 | lr=2.00e-04 | L_A=3.895 L_G=4.053 L_T=0.969 | step_t=0.05s elapsed=107s
+[09:33:48] --- eval gate @ step 600 (15 prompts × 2 modes V4) ---
+[09:34:21]   EVAL[step=600] V2=0/15 V3=0/15 V4=0/15 manual=0/15 outside_well=0/5 cycle=0 deg=15/30 emb_sim=0.2383 composite=-15 val_loss=3.8312
+[09:34:21]   BEST_CKPT[step=600] composite=-15 -> /home/aiden/core/anima/state/anima_jh_100m_corpus_204mb_train_2026_05_07/ckpt_best.pt
+[09:34:26] step   700/6000 | lr=1.99e-04 | L_A=3.670 L_G=3.804 L_T=-0.443 | step_t=0.38s elapsed=145s
+[09:34:31] step   800/6000 | lr=1.99e-04 | L_A=3.504 L_G=3.640 L_T=-1.387 | step_t=0.05s elapsed=150s
+[09:34:31] --- eval gate @ step 800 (15 prompts × 2 modes V4) ---
+[09:35:04]   EVAL[step=800] V2=0/15 V3=0/15 V4=0/15 manual=0/15 outside_well=0/5 cycle=0 deg=16/30 emb_sim=0.2464 composite=-16 val_loss=3.5337
+[09:35:08] step   900/6000 | lr=1.98e-04 | L_A=3.528 L_G=3.641 L_T=-2.352 | step_t=0.38s elapsed=187s
+[09:35:13] step  1000/6000 | lr=1.96e-04 | L_A=3.480 L_G=3.608 L_T=-2.649 | step_t=0.05s elapsed=192s
+[09:35:13] --- eval gate @ step 1000 (15 prompts × 2 modes V4) ---
+[09:35:46]   EVAL[step=1000] V2=0/15 V3=0/15 V4=0/15 manual=0/15 outside_well=0/5 cycle=0 deg=15/30 emb_sim=0.2655 composite=-15 val_loss=3.3127
+[09:35:46]   SAVE_CKPT[step=1000] -> /home/aiden/anima_native/anima-jh-100m-corpus-204mb-20260507_093153/ckpt_1000.pt
+[09:35:51] step  1100/6000 | lr=1.95e-04 | L_A=3.334 L_G=3.423 L_T=-3.043 | step_t=0.38s elapsed=230s
+[09:35:56] step  1200/6000 | lr=1.93e-04 | L_A=3.287 L_G=3.468 L_T=-2.801 | step_t=0.05s elapsed=235s
+[09:35:56] --- eval gate @ step 1200 (15 prompts × 2 modes V4) ---
+[09:36:29]   EVAL[step=1200] V2=0/15 V3=0/15 V4=0/15 manual=0/15 outside_well=0/5 cycle=0 deg=15/30 emb_sim=0.3674 composite=-15 val_loss=3.1969
+[09:36:34] step  1300/6000 | lr=1.91e-04 | L_A=3.164 L_G=3.406 L_T=-3.104 | step_t=0.38s elapsed=273s
+[09:36:38] step  1400/6000 | lr=1.88e-04 | L_A=2.960 L_G=3.266 L_T=-3.656 | step_t=0.05s elapsed=277s
+[09:36:38] --- eval gate @ step 1400 (15 prompts × 2 modes V4) ---
+[09:37:12]   EVAL[step=1400] V2=0/15 V3=0/15 V4=0/15 manual=0/15 outside_well=0/5 cycle=0 deg=13/30 emb_sim=0.354 composite=-13 val_loss=3.0249
+[09:37:12]   BEST_CKPT[step=1400] composite=-13 -> /home/aiden/core/anima/state/anima_jh_100m_corpus_204mb_train_2026_05_07/ckpt_best.pt
+[09:37:17] step  1500/6000 | lr=1.86e-04 | L_A=2.898 L_G=3.161 L_T=-4.068 | step_t=0.38s elapsed=316s
+[09:37:17]   SAVE_CKPT[step=1500] -> /home/aiden/anima_native/anima-jh-100m-corpus-204mb-20260507_093153/ckpt_1500.pt
+[09:37:22] step  1600/6000 | lr=1.83e-04 | L_A=2.889 L_G=3.212 L_T=-4.456 | step_t=0.05s elapsed=321s
+[09:37:22] --- eval gate @ step 1600 (15 prompts × 2 modes V4) ---
+[09:37:55]   EVAL[step=1600] V2=0/15 V3=0/15 V4=0/15 manual=0/15 outside_well=0/5 cycle=0 deg=16/30 emb_sim=0.0834 composite=-16 val_loss=2.8916
+[09:38:00] step  1700/6000 | lr=1.80e-04 | L_A=2.805 L_G=3.286 L_T=-4.731 | step_t=0.38s elapsed=359s
+[09:38:04] step  1800/6000 | lr=1.76e-04 | L_A=2.745 L_G=3.106 L_T=-5.031 | step_t=0.05s elapsed=363s
+[09:38:04] --- eval gate @ step 1800 (15 prompts × 2 modes V4) ---
+[09:38:38]   EVAL[step=1800] V2=0/15 V3=0/15 V4=0/15 manual=0/15 outside_well=0/5 cycle=0 deg=16/30 emb_sim=0.1275 composite=-16 val_loss=2.7042
+[09:38:42] step  1900/6000 | lr=1.73e-04 | L_A=2.755 L_G=3.188 L_T=-5.170 | step_t=0.38s elapsed=401s
+[09:38:47] step  2000/6000 | lr=1.69e-04 | L_A=2.410 L_G=2.929 L_T=-5.564 | step_t=0.05s elapsed=406s
+[09:38:47] --- eval gate @ step 2000 (15 prompts × 2 modes V4) ---
+[09:39:20]   EVAL[step=2000] V2=0/15 V3=0/15 V4=0/15 manual=0/15 outside_well=0/5 cycle=0 deg=28/30 emb_sim=0.1449 composite=-28 val_loss=2.5557
+[09:39:20]   SAVE_CKPT[step=2000] -> /home/aiden/anima_native/anima-jh-100m-corpus-204mb-20260507_093153/ckpt_2000.pt
+[09:39:20]   EARLY_STOP: composite plateau: 3 consecutive non-improving evals (best step=1400, composite=-13)
+[09:39:21]   FINAL_CKPT[step=2000] -> /home/aiden/core/anima/state/anima_jh_100m_corpus_204mb_train_2026_05_07/ckpt_final.pt
+[09:39:21] === final eval: best ckpt step=1400, 15 prompts × 2 modes V4 ===
+[09:39:21]   loaded BEST ckpt step=1400 composite=-13
+[09:39:54]   FINAL_BEST V2=0/15 V3=0/15 V4=0/15 manual=0/15 outside_well=0/5 cycle=0 deg=14/30 emb_sim=0.3532
+[09:39:54] === VERDICT === final_class=V4_FALSE_PASS_LESSON_K_TRAP | params=153.1M | peak_step=1400 V4=0/15 V2=0/15 V3=0/15 manual=0/15 outside_well=0/5 cycle=0 deg=13/30 emb_sim=0.354 | final-eval(best ckpt) V4=0/15 V2=0/15 manual=0/15 cycle=0 deg=14/30 | early_stop=True | elapsed=473s
+[09:39:54] verdict written: /home/aiden/core/anima/state/anima_jh_100m_corpus_204mb_train_2026_05_07/verdict.json

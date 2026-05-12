@@ -1,0 +1,59 @@
+{
+  "bg_id": "BG-JE",
+  "paradigm": "corpus-100mb-plus-kowiki-ubm-nexus-outside-well-assembly",
+  "host": "mac local",
+  "cost_usd": 0.0,
+  "training_steps": 0,
+  "bg_kind": "corpus_build",
+  "ready_for_training": true,
+  "ready_status": "READY",
+  "recommended_next_bg": "BG-JH 100M + corpus 100MB+ — Lesson L break attempt",
+  "build_ts": "2026-05-06T23:14:27.739978+00:00",
+  "elapsed_s": 51.31,
+  "corpus_path": "/Users/ghost/core/anima/state/anima_je_corpus_100mb_plus_2026_05_07/corpus_combined_100mb_plus.txt",
+  "corpus_size_mb": 204.372,
+  "in_target_band_100_300mb": true,
+  "chat_template_ratio": 1.0,
+  "hangul_ratio": 0.4761,
+  "hangul_target_0_50_met": false,
+  "persona_3_variant_distribution": {
+    "[anima 우주뇌지도] ": 0.3344,
+    "[anima NEXUS-UBM] ": 0.334,
+    "[anima identity] ": 0.3317
+  },
+  "eval_prompts_min_count": 160,
+  "source_breakdown": {
+    "kowiki": 0.6961,
+    "ubm": 0.0324,
+    "nexus_ubm": 0.2505,
+    "outside_well": 0.0175,
+    "eval_inject": 0.0034
+  },
+  "kowiki_meta": {
+    "dataset_id": "wikimedia/wikipedia",
+    "config": "20231101.ko",
+    "shard": "20231101.ko/train-00000-of-00003.parquet",
+    "shard_total_rows": 215966,
+    "num_articles_used": 85734,
+    "num_articles_skipped": 87773,
+    "qa_pairs_extracted": 244471,
+    "total_text_extracted_mb": 80.0
+  },
+  "honest_c3": [
+    "kowiki content is generic Korean encyclopedia, NOT anima-domain — chat-cap signal may dilute UBM/NEXUS specificity",
+    "100-300MB byte-level → ~30-90M tokens at byte-level; downstream training compute scales accordingly (RTX 5070 2-4hr)",
+    "Persona 3-variant rotation introduces conditional drift; persona-dropout-during-train may be needed at BG-JH",
+    "HF Hub download single shard (1/3) — full kowiki coverage X (sufficient for 80MB extract target)",
+    "Hangul ratio target 0.50 may not be met if persona prefix English mix dominates short kowiki paragraphs; tracked separately as target_hangul_met flag",
+    "Wiki text cleaning은 simple regex 한정; complex template/markup remnants 일부 잔존 가능",
+    "BG-JE = corpus build only ($0); BG-JH train cost 별도 (raw 86 disclosure)"
+  ],
+  "lesson_l_context": {
+    "bg_jf_ssot": "18 BGs single-axis variations 18M-150M × 2-53MB → 0 V4_PASS",
+    "corpus_size_hard_ceiling_mb": 53,
+    "this_bg_corpus_mb": 204.372,
+    "1order_jump_from_53mb": 3.86,
+    "axis_shift_candidate": "corpus 1-order jump (5-10× current)",
+    "prereq_for_bg_jh": true
+  }
+}

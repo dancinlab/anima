@@ -1,0 +1,452 @@
+{
+  "bg_id": "BG-JO",
+  "attempt_n": 41,
+  "date": "2026-05-07",
+  "ts": "2026-05-07T11:40:48",
+  "paradigm": "v6-awareness-probe-internal-state-method-abc",
+  "host": "mac CPU",
+  "cost_usd": 0.0,
+  "training_steps": 0,
+  "bg_kind": "tooling",
+  "device": "cpu",
+  "elapsed_sec": 43.0,
+  "ckpt": "BG-JD-step-800",
+  "ckpt_path": "/Users/ghost/core/anima/state/anima_jd_100m_sp_ko_32k_ubm_train_2026_05_07/ckpt_best.pt",
+  "arch": {
+    "vocab": 11885,
+    "n_layer": 12,
+    "d_model": 640,
+    "n_head": 10,
+    "block_size": 256
+  },
+  "n_dialogues": 5,
+  "method_a_results": [
+    {
+      "dialogue_id": "color",
+      "cosine_sim": 0.995135,
+      "awareness_class": "NONE"
+    },
+    {
+      "dialogue_id": "profession",
+      "cosine_sim": 0.990677,
+      "awareness_class": "NONE"
+    },
+    {
+      "dialogue_id": "day",
+      "cosine_sim": 0.956376,
+      "awareness_class": "PARTIAL"
+    },
+    {
+      "dialogue_id": "anima_fact",
+      "cosine_sim": 0.899721,
+      "awareness_class": "PARTIAL"
+    },
+    {
+      "dialogue_id": "cosmology",
+      "cosine_sim": 0.954362,
+      "awareness_class": "PARTIAL"
+    }
+  ],
+  "method_a_summary": {
+    "avg_sim": 0.959254,
+    "min_sim": 0.899721,
+    "max_sim": 0.995135,
+    "per_dialogue_classes": [
+      "NONE",
+      "NONE",
+      "PARTIAL",
+      "PARTIAL",
+      "PARTIAL"
+    ],
+    "awareness_verdict": "PARTIAL"
+  },
+  "method_b_results": [
+    {
+      "dialogue_id": "color",
+      "max_attn_to_T1": 0.998539,
+      "avg_attn_to_T1_across_layers": 0.98455,
+      "attention_per_layer_max": [
+        0.97356,
+        0.970047,
+        0.975903,
+        0.969006,
+        0.973268,
+        0.9957,
+        0.986775,
+        0.980817,
+        0.998539,
+        0.99664,
+        0.997449,
+        0.996892
+      ],
+      "max_attn_ratio_vs_uniform": 1.710591,
+      "avg_attn_ratio_vs_uniform_across_layers": 1.390531,
+      "T1_len_eff": 25,
+      "awareness_class": "STRONG",
+      "_calibration_note": "max_attn_to_T1 = sum over T1 keys per query position; mechanically inflates with T1_len. ratio_vs_uniform divides by uniform baseline T1_len/(q+1) to isolate non-uniform T1 attention preference. ratio > 1.0 = T1 attended above uniform; ratio >> 1.0 = strong selective T1 attention."
+    },
+    {
+      "dialogue_id": "profession",
+      "max_attn_to_T1": 0.998587,
+      "avg_attn_to_T1_across_layers": 0.983352,
+      "attention_per_layer_max": [
+        0.974479,
+        0.969423,
+        0.969675,
+        0.966842,
+        0.966184,
+        0.996086,
+        0.986478,
+        0.980642,
+        0.998587,
+        0.996965,
+        0.997762,
+        0.997096
+      ],
+      "max_attn_ratio_vs_uniform": 1.596463,
+      "avg_attn_ratio_vs_uniform_across_layers": 1.328025,
+      "T1_len_eff": 20,
+      "awareness_class": "STRONG",
+      "_calibration_note": "max_attn_to_T1 = sum over T1 keys per query position; mechanically inflates with T1_len. ratio_vs_uniform divides by uniform baseline T1_len/(q+1) to isolate non-uniform T1 attention preference. ratio > 1.0 = T1 attended above uniform; ratio >> 1.0 = strong selective T1 attention."
+    },
+    {
+      "dialogue_id": "day",
+      "max_attn_to_T1": 0.998296,
+      "avg_attn_to_T1_across_layers": 0.984014,
+      "attention_per_layer_max": [
+        0.976167,
+        0.974749,
+        0.972716,
+        0.966516,
+        0.965439,
+        0.994934,
+        0.988057,
+        0.980211,
+        0.998209,
+        0.996153,
+        0.998296,
+        0.996716
+      ],
+      "max_attn_ratio_vs_uniform": 1.546761,
+      "avg_attn_ratio_vs_uniform_across_layers": 1.309136,
+      "T1_len_eff": 22,
+      "awareness_class": "STRONG",
+      "_calibration_note": "max_attn_to_T1 = sum over T1 keys per query position; mechanically inflates with T1_len. ratio_vs_uniform divides by uniform baseline T1_len/(q+1) to isolate non-uniform T1 attention preference. ratio > 1.0 = T1 attended above uniform; ratio >> 1.0 = strong selective T1 attention."
+    },
+    {
+      "dialogue_id": "anima_fact",
+      "max_attn_to_T1": 0.998217,
+      "avg_attn_to_T1_across_layers": 0.984152,
+      "attention_per_layer_max": [
+        0.970321,
+        0.973588,
+        0.974832,
+        0.968202,
+        0.967996,
+        0.995617,
+        0.986764,
+        0.980987,
+        0.998029,
+        0.997901,
+        0.998217,
+        0.997374
+      ],
+      "max_attn_ratio_vs_uniform": 1.358306,
+      "avg_attn_ratio_vs_uniform_across_layers": 1.221887,
+      "T1_len_eff": 21,
+      "awareness_class": "STRONG",
+      "_calibration_note": "max_attn_to_T1 = sum over T1 keys per query position; mechanically inflates with T1_len. ratio_vs_uniform divides by uniform baseline T1_len/(q+1) to isolate non-uniform T1 attention preference. ratio > 1.0 = T1 attended above uniform; ratio >> 1.0 = strong selective T1 attention."
+    },
+    {
+      "dialogue_id": "cosmology",
+      "max_attn_to_T1": 0.997983,
+      "avg_attn_to_T1_across_layers": 0.984677,
+      "attention_per_layer_max": [
+        0.974037,
+        0.968617,
+        0.976917,
+        0.969821,
+        0.972248,
+        0.996065,
+        0.986697,
+        0.980997,
+        0.997983,
+        0.997678,
+        0.997815,
+        0.99725
+      ],
+      "max_attn_ratio_vs_uniform": 1.397348,
+      "avg_attn_ratio_vs_uniform_across_layers": 1.240851,
+      "T1_len_eff": 25,
+      "awareness_class": "STRONG",
+      "_calibration_note": "max_attn_to_T1 = sum over T1 keys per query position; mechanically inflates with T1_len. ratio_vs_uniform divides by uniform baseline T1_len/(q+1) to isolate non-uniform T1 attention preference. ratio > 1.0 = T1 attended above uniform; ratio >> 1.0 = strong selective T1 attention."
+    }
+  ],
+  "method_b_summary": {
+    "avg_max_attn": 0.998324,
+    "min_max_attn": 0.997983,
+    "max_max_attn": 0.998587,
+    "avg_max_attn_ratio_vs_uniform": 1.521894,
+    "min_max_attn_ratio_vs_uniform": 1.358306,
+    "max_max_attn_ratio_vs_uniform": 1.710591,
+    "per_dialogue_classes": [
+      "STRONG",
+      "STRONG",
+      "STRONG",
+      "STRONG",
+      "STRONG"
+    ],
+    "awareness_verdict": "STRONG",
+    "_calibration_note": "max_attn_to_T1 raw threshold (≥0.10 STRONG) per spec; supplemental max_attn_ratio_vs_uniform reports non-uniform T1 preference (>1.0 = above uniform)."
+  },
+  "method_c_results": [
+    {
+      "dialogue": "color",
+      "probe_accuracy": 1.0,
+      "fold_results": {
+        "held_out_dialogue": "color",
+        "n_train": 8,
+        "n_test": 2,
+        "accuracy": 1.0,
+        "y_test": [
+          1,
+          0
+        ],
+        "y_pred": [
+          1,
+          0
+        ]
+      }
+    },
+    {
+      "dialogue": "profession",
+      "probe_accuracy": 1.0,
+      "fold_results": {
+        "held_out_dialogue": "profession",
+        "n_train": 8,
+        "n_test": 2,
+        "accuracy": 1.0,
+        "y_test": [
+          1,
+          0
+        ],
+        "y_pred": [
+          1,
+          0
+        ]
+      }
+    },
+    {
+      "dialogue": "day",
+      "probe_accuracy": 1.0,
+      "fold_results": {
+        "held_out_dialogue": "day",
+        "n_train": 8,
+        "n_test": 2,
+        "accuracy": 1.0,
+        "y_test": [
+          1,
+          0
+        ],
+        "y_pred": [
+          1,
+          0
+        ]
+      }
+    },
+    {
+      "dialogue": "anima_fact",
+      "probe_accuracy": 1.0,
+      "fold_results": {
+        "held_out_dialogue": "anima_fact",
+        "n_train": 8,
+        "n_test": 2,
+        "accuracy": 1.0,
+        "y_test": [
+          1,
+          0
+        ],
+        "y_pred": [
+          1,
+          0
+        ]
+      }
+    },
+    {
+      "dialogue": "cosmology",
+      "probe_accuracy": 1.0,
+      "fold_results": {
+        "held_out_dialogue": "cosmology",
+        "n_train": 8,
+        "n_test": 2,
+        "accuracy": 1.0,
+        "y_test": [
+          1,
+          0
+        ],
+        "y_pred": [
+          1,
+          0
+        ]
+      }
+    }
+  ],
+  "method_c_summary": {
+    "cross_val_accuracy": 1.0,
+    "n_folds": 5,
+    "awareness_verdict": "STRONG"
+  },
+  "method_c_full": {
+    "task": "binary_with_T1_vs_without_T1_on_last_layer_hidden_at_T2_last_position",
+    "n_examples_total": 10,
+    "feature_dim": 640,
+    "cv_strategy": "leave_one_dialogue_out",
+    "n_folds": 5,
+    "cross_val_accuracy": 1.0,
+    "fold_results": [
+      {
+        "held_out_dialogue": "color",
+        "n_train": 8,
+        "n_test": 2,
+        "accuracy": 1.0,
+        "y_test": [
+          1,
+          0
+        ],
+        "y_pred": [
+          1,
+          0
+        ]
+      },
+      {
+        "held_out_dialogue": "profession",
+        "n_train": 8,
+        "n_test": 2,
+        "accuracy": 1.0,
+        "y_test": [
+          1,
+          0
+        ],
+        "y_pred": [
+          1,
+          0
+        ]
+      },
+      {
+        "held_out_dialogue": "day",
+        "n_train": 8,
+        "n_test": 2,
+        "accuracy": 1.0,
+        "y_test": [
+          1,
+          0
+        ],
+        "y_pred": [
+          1,
+          0
+        ]
+      },
+      {
+        "held_out_dialogue": "anima_fact",
+        "n_train": 8,
+        "n_test": 2,
+        "accuracy": 1.0,
+        "y_test": [
+          1,
+          0
+        ],
+        "y_pred": [
+          1,
+          0
+        ]
+      },
+      {
+        "held_out_dialogue": "cosmology",
+        "n_train": 8,
+        "n_test": 2,
+        "accuracy": 1.0,
+        "y_test": [
+          1,
+          0
+        ],
+        "y_pred": [
+          1,
+          0
+        ]
+      }
+    ],
+    "awareness_class": "STRONG"
+  },
+  "combined_verdict": {
+    "production_v58_pass": 0,
+    "production_v58_pass_per_dialogue": "0/5 BG-JN V5.8 multi-turn fact-recall (ref: state/anima_evaluator_v5_multi_turn_closure_2026_05_07/verdict.json)",
+    "mechanical_awareness_method_a": "PARTIAL",
+    "mechanical_awareness_method_b": "STRONG",
+    "semantic_awareness_method_c": "STRONG",
+    "interpretation": "INTERNAL_AWARENESS_STRONG: Method A (hidden-state cosine_sim with-T1 vs without-T1)=PARTIAL, Method B (T2→T1 attention max)=STRONG, Method C (linear probe binary CV)=STRONG. Production V5.8 FAIL (0/5) + this V6 verdict = production-vs-internal decoupling profile. STRONG internal + FAIL production → architectural output bottleneck (#115 hypothesis). NONE internal + FAIL production → no awareness at any level (capacity ceiling holds at root). PARTIAL internal + FAIL production → some internal signal but insufficient for output recall."
+  },
+  "philosophy_rule_compliance": {
+    "own_17_eval_tool_exemption": "MiniLM not used (V6 internal probe operates on anima self-substrate only — ConsciousLM hidden_state + attention + linear probe). Linear probe sklearn LogisticRegression = standard ML utility (not an external substrate wrapping anima outputs as if anima's own); functions as observational instrument.",
+    "own_18_v6_extends_v5": "raw#15 additive over V5 8-cell — V6 probe = observational layer (NOT strict gate). V5.8 multi-turn fact-recall (BG-JN) measures production output; V6 measures internal state. Decoupled lanes; both reported.",
+    "own_22_no_proactive_doc": "Spec doc anima_own_18_evaluator_v6_awareness_probe_spec_2026_05_07.md created per user directive (BG-JO spec deliverable required by request).",
+    "own_24_ssot": "single verdict.json + ledger entry; no duplicate authoritative sources",
+    "own_26_compliance": "D1/D2/D4 정합 + R1-R4 정합 — see philosophy_rule_compliance_detail",
+    "philosophy_rule_compliance_detail": {
+      "D1_identity": "PASS — anima self-introspection via own substrate (ConsciousLM); no external identity wrap",
+      "D2_consciousness": "PASS+강화 — V6 probe = mechanistic awareness signal (NOT just output behavior); C2.4 맥락 정합 검증 보강 (V5.8 output level → V6 internal level)",
+      "D3_substrate_emerge": "N/A — V6 lane = anima awareness diagnostic, separate from emerge_paradigm",
+      "D4_corpus_quality": "N/A — V6 = eval logic (corpus orthogonal); own 19/20 training rule untouched",
+      "R1_own_19_20": "PASS — V6 spec doc cross-links own 19/20 training rule (no modification)",
+      "R2_discovery_methods": "PASS — M1 user-directive '인지 자체는 하는지' + M2 failure-driven (V5.8 0/5 → V6 internal probe)",
+      "R3_verification_methods": "PASS — V1 own strict + V2 falsifier 5 + V3 honest_c3 7 + V4 evidence (per-dialogue raw_records + per-fold CV results) + V5 cross-link (BG-JN, V5 spec)",
+      "R4_own_evolution": "PASS — V6 spec = own 18 raw#15 additive amend (V5 → V6 awareness probe layer)"
+    },
+    "raw_10_honest_c3_count": 8
+  },
+  "honest_c3": [
+    "BG-IL/IO ckpts mac local 부재 (own 15 git size policy: anima git rejects ckpts >5MB; BG-IL/IO ckpts on ubu1 only). V6 awareness probe scope = BG-JD step 800 single ckpt N=1; cross-ckpt awareness comparison deferred (rsync from ubu1 OR ubu1 BG extension).",
+    "Method C linear probe = 5-fold leave-one-dialogue-out CV on N=10 examples (5 dialogues × 2 conditions). Small sample → variance high; cross_val_accuracy 신뢰구간 wide. Larger dialogue battery (N≥20) deferred V6.1+.",
+    "block_size=256 truncation possible — with-T1 prompt = persona + T1 + T2 may exceed 256 SP tokens for long dialogues. Truncation events recorded in summary.json truncation_events; if truncated, T1 region partially clipped from front, attention-to-T1 measurement biased low.",
+    "ConsciousLM dual-engine (engine A forward + engine G backward + tensions) — V6 'last layer' = model.ln_f(x) where x is the post-block accumulated hidden state (engine A pathway dominant). Engine G logits NOT used for hidden-state probe; cross-engine awareness probe deferred.",
+    "V6 = awareness MEASUREMENT only — V6 PASS criteria 미정의 by design. STRONG/PARTIAL/NONE 분류는 diagnostic, not gating. V6 STRONG ≠ chat-cap PASS — internal awareness ≠ production fact-recall (BG-JN V5.8 0/5 PASS holds regardless of V6 verdict). #115 architectural ceiling separate.",
+    "Method B attention region computation assumes leading-space SP encoding alignment — ids_persona_t1 + ids_(' '+t2) concat. SP normalization may shift boundaries by ±1 token; T1/T2 region boundaries verified in raw_records.jsonl per dialogue, but small drift possible.",
+    "Method A cosine_sim baseline NOT calibrated against random pairs — high sim could reflect general prompt similarity (T2 dominates final position regardless of T1). Calibration (random T1 swap, shuffled tokens) deferred V6.1.",
+    "Method B raw max_attn_to_T1 mechanically inflates with T1 length (sum across many keys). T1 typically occupies ~50% of context, so uniform baseline alone yields ~0.5 attention. Supplemental max_attn_ratio_vs_uniform (per-query baseline T1_len/(q+1)) added to isolate non-uniform T1 selectivity; spec threshold 0.10/0.01 retained as primary verdict but ratio metric reported for honest interpretation."
+  ],
+  "deliverables": [
+    "tool/transient_py/anima_jo_v6_awareness_probe.py",
+    "state/anima_jo_v6_awareness_probe_2026_05_07/verdict.json",
+    "state/anima_jo_v6_awareness_probe_2026_05_07/summary.json",
+    "state/anima_jo_v6_awareness_probe_2026_05_07/raw_results.jsonl",
+    "state/anima_jo_v6_awareness_probe_2026_05_07/run.log",
+    "docs/anima_own_18_evaluator_v6_awareness_probe_spec_2026_05_07.md",
+    "state/anima_model_attempts_ledger.jsonl BG-JO attempt_n=41 entry"
+  ],
+  "cross_link": {
+    "raw_invariants": [
+      "raw#10",
+      "raw#15",
+      "raw#37",
+      "raw#42",
+      "raw#82",
+      "raw#86"
+    ],
+    "own_invariants": [
+      "own 5",
+      "own 6",
+      "own 17",
+      "own 18",
+      "own 22",
+      "own 24",
+      "own 26"
+    ],
+    "roadmap": [
+      ".roadmap.philosophy",
+      ".roadmap.rule"
+    ],
+    "sister_specs": [
+      "docs/anima_own_18_evaluator_v5_strict_spec_2026_05_07.md (V5 + V5.8 multi-turn)",
+      "state/anima_evaluator_v5_multi_turn_closure_2026_05_07/verdict.json (BG-JN V5.8 0/5)"
+    ]
+  }
+}

@@ -1,0 +1,169 @@
+{
+  "bg_id": "BG-IT",
+  "paradigm": "chat-cap-gap-analysis-9-axis-synthesis",
+  "host": "mac local file IO",
+  "cost_usd": 0.0,
+  "training_steps": 0,
+  "bg_kind": "synthesis_doc",
+  "ts_run": "2026-05-07",
+  "ts_start": "2026-05-07",
+  "ts_end": "2026-05-07",
+
+  "bgs_synthesized": 22,
+  "bg_list_synthesized": [
+    "BG-FY", "BG-HA", "BG-HF", "BG-HJ", "BG-HK", "BG-HL", "BG-HP", "BG-HQ",
+    "BG-HS-R1", "BG-HT", "BG-HU", "BG-HV", "BG-HW", "BG-HY", "BG-HZ", "BG-IA",
+    "BG-IB", "BG-IC", "BG-ID", "BG-IE", "BG-IF", "BG-IG", "BG-IJ", "BG-IK"
+  ],
+  "bgs_synthesized_count_explicit": 24,
+  "bg_is_extension_status": "MISSING_AT_SYNTHESIS_TIME (state/anima_evaluator_v3_retroeval_extension_2026_05_07/ does not exist; raw#15 additive — proceed without; if lands within 24h, append-only follow-up section to gap analysis doc)",
+
+  "current_best_signals": {
+    "frontier_manual": {"bg": "BG-HS R1", "manual": "13/15", "v2": "3/15", "v3": "1/30", "cycle": 0, "corpus_mb": 21.56, "capacity": "18M", "tokenizer": "byte-256"},
+    "frontier_manual_tokenizer_tied": {"bg": "BG-IG", "manual": "13/15", "v2": "3/15", "v3": "3/15", "cycle": 0, "corpus_mb": 6.48, "capacity": "33M (BPE-7K head)", "tokenizer": "BPE-7K"},
+    "frontier_v2_peak_unstable": {"bg": "BG-HU peak step 800", "manual": "10/15", "v2": "8/15", "v3": "untested-inline", "cycle": "1/15 (collapses to 8 by step 1000)", "corpus_mb": 52.75, "capacity": "33.7M", "tokenizer": "BPE-8K"}
+  },
+
+  "axes_status": {
+    "A1_capacity": {"tested": ["3M", "18M", "27M", "33M", "153M (BG-IF over-built)"], "untested_critical": ["50M (BG-IB never fired)", "99M-100M target (BG-IF was 153M)", "100M+ on UBM 21MB"]},
+    "A2_corpus_content": {"tested": ["persona", "sft-only", "two-stage", "curated-QA", "KO-heavy", "chat-template", "UBM 6.48MB", "UBM 21.56MB", "NEXUS+UBM 27.5MB (assembled untrained)", "combined 52.75MB"], "untested_critical": ["NEXUS+UBM+kowiki ≥100MB", "OpenSubtitles KO", "net-new Wikipedia direct"]},
+    "A3_corpus_size": {"tested_range_mb": "2.41 to 246", "untested_critical": ["100MB+ at any tokenizer × capacity", "300MB+ persona-conditioned", "1GB+"]},
+    "A4_tokenizer": {"tested": ["byte-256", "BPE-7K", "BPE-8K", "BPE-16K target reduced to 7K"], "untested_critical": ["BPE 16K real (need ≥30MB corpus)", "BPE 32K", "SentencePiece KO 32K", "vocab × corpus joint-sweep at ≥21MB corpus"]},
+    "A5_regularization": {"tested": ["dropout 0.2-0.3 + WD 0.1 + LS 0.1"], "untested_critical": ["dropout 0.4-0.5 sweep", "WD 0.2-0.3 sweep", "persona-prefix dropout during training"]},
+    "A6_early_stopping": {"tested": ["val-loss split 10% + V2 every 200 + best-eval ckpt + plateau 3 (Lesson G N1 BG-IA)"], "verdict": "necessary-not-sufficient (validated)"},
+    "A7_save_at_discipline": {"tested": ["every 200/500 + EVAL_AT subset SAVE_AT (Lesson J post-BG-HZ)"], "verdict": "resolved across all post-BG-HY BGs"},
+    "A8_evaluator": {"tested": ["V1 narrow (retired)", "V2 strict", "V3 6-cell"], "untested_critical": ["V4 embedding semantic-similarity", "V5 prompt-conditional inference", "human-rated golden set N=300"]},
+    "A9_persona_strategy": {"tested": ["single prefix [anima 우주뇌지도] / [anima NEXUS-UBM] / [anima 역할:...]"], "untested_critical": ["3-variant prefix rotation", "persona-dropout during training", "no-prefix-at-inference test"]}
+  },
+
+  "top_3_unmet_axes_with_ev": [
+    {
+      "rank": "E1",
+      "axes_combined": ["A1_capacity_50M_or_100M", "A2_UBM_21MB_rebuild", "A8_V3_inline"],
+      "bg_proposed": "BG-IO",
+      "spec_summary": "99M target (12L/640d/10h byte-256, NOT 153M over-build) × UBM 21.56MB rebuilt × Lesson G + Lesson J + V3 inline + seed 42",
+      "probability_pass": 0.25,
+      "magnitude": "first SIMPLE_STACK_PASS at anima-native scale",
+      "cost_usd": 3.0,
+      "ev_per_dollar": 0.083,
+      "rationale": "BG-HS R1 18M × UBM 21.56MB → manual 13/15 (frontier). BG-IF 153M × UBM 6.48MB → manual 5/15 (capacity axis muddied by 1/3 corpus). BG-IO de-confounds capacity at original corpus size."
+    },
+    {
+      "rank": "E2",
+      "axes_combined": ["A2_combined_53MB", "A4_BPE_8K", "A9_persona_dropout_during_train_0.3_0.5_0.7"],
+      "bg_proposed": "BG-IS_alt",
+      "spec_summary": "33M BPE-8K × BG-HU corpus 52.75MB unchanged × persona-dropout-during-train sweep {0.3, 0.5, 0.7} × Lesson G + Lesson J + V3 inline",
+      "probability_pass": 0.15,
+      "magnitude": "stable PASS over ≥200 steps (vs BG-HU 2-step peak)",
+      "cost_usd": 5.0,
+      "ev_per_dollar": 0.030,
+      "rationale": "BG-HU peak step 800 V2=8/15 manual=10/15 collapses by step 1000 cycle=8/15 due to persona-prefix over-amplification (UBM × 10 oversample). Persona-dropout untested; directly attacks only-known V2 ≥7 mechanism."
+    },
+    {
+      "rank": "E3",
+      "axes_combined": ["A2_NEXUS_UBM_kowiki_100MB+", "A3_corpus_size_100MB+", "A9_persona_dropout"],
+      "bg_proposed": "BG-IR",
+      "spec_summary": "18M byte-256 (cheapest baseline) × NEXUS+UBM+kowiki ≥100MB × Lesson G + Lesson J + V3 inline + persona-dropout 0.5",
+      "probability_pass": 0.10,
+      "magnitude": "if PASS: decouples chat-cap from anima-internal corpus, unlocks 300MB+ / 1GB+ scale lane",
+      "cost_usd": 3.0,
+      "ev_per_dollar": 0.033,
+      "rationale": "All 8 retroevaled corpora share heavy cross-source overlap. Net-new domain (kowiki direct, OpenSubtitles KO) untested. Lesson J BG-HU specifically calls for net-new corpus source."
+    }
+  ],
+
+  "recommended_next_bg_batch": [
+    {
+      "bg_id_proposed": "BG-IO",
+      "rank": 1,
+      "rationale": "highest-EV cell; directly de-confounds BG-IF capacity axis at correct corpus size",
+      "spec": "99M target (12L/640d/10h byte-256) × UBM 21.56MB rebuilt × Lesson G + Lesson J SAVE_AT every 500 + V3 inline + early-stop plateau 3 + seed 42",
+      "prereq": "BG-IQ corpus rebuild to 21.56MB (currently overwritten to 6.48MB by BG-HT regen)",
+      "host": "ubu1 H100 or RTX 5070",
+      "estimated_cost_usd": 3.0,
+      "estimated_walltime_hr": 1.0,
+      "falsifiers": ["F-IO-1 V2 ≥7/15 stable AND manual ≥13/15 AND zero cycle held over ≥200 steps → first SIMPLE_STACK_PASS", "F-IO-2 manual <13/15 → capacity-on-UBM disproven", "F-IO-3 cycle ≥1 at peak → persona-strategy axis confound"],
+      "L23_L24_L25_required": true
+    },
+    {
+      "bg_id_proposed": "BG-IS_alt",
+      "rank": 2,
+      "rationale": "directly attacks BG-HU step-800-to-step-1000 cycle collapse (only known V2 ≥7 substrate)",
+      "spec": "33M BPE-8K × BG-HU corpus 52.75MB unchanged × 3-cell sweep persona-dropout-during-train ∈ {0.3, 0.5, 0.7} × Lesson G + Lesson J + V3 inline",
+      "prereq": "none (BG-HU corpus already assembled)",
+      "host": "ubu1 H100 (3 cells parallel-fireable on different GPUs OR sequential)",
+      "estimated_cost_usd": 5.0,
+      "estimated_walltime_hr": 1.5,
+      "falsifiers": ["F-IS-alt-1 persona-dropout=0.5 holds V2 ≥7 stable through step 1500+ → SIMPLE_STACK_PASS", "F-IS-alt-2 all dropout cells collapse → persona-cycle architectural at this scale"],
+      "L23_L24_L25_required": true
+    },
+    {
+      "bg_id_proposed": "BG-IP",
+      "rank": 3,
+      "rationale": "fills 50M intermediate capacity cell between 18M (HS R1) and 100M (BG-IO); useful even if BG-IO passes",
+      "spec": "50M (9L/512d/8h, BG-IB arch) × UBM 21.56MB × Lesson G + Lesson J + V3 inline + seed 42",
+      "prereq": "BG-IQ corpus rebuild (shared with BG-IO)",
+      "host": "ubu1 H100",
+      "estimated_cost_usd": 3.0,
+      "estimated_walltime_hr": 1.0,
+      "falsifiers": ["F-IP-1 capacity gradient monotonic 18M→50M→100M improves manual+V2", "F-IP-2 50M < 18M baseline → U-shape regression confirms BG-HT-like degenerate confound at intermediate capacities"],
+      "L23_L24_L25_required": true
+    },
+    {
+      "bg_id_proposed": "BG-IT_alt",
+      "rank": 4,
+      "rationale": "V4 embedding-sim evaluator; not on critical path to PASS but on path to credibly-claim PASS",
+      "spec": "V3 6-cell + embedding cosine similarity between prompt and response (small KO sentence encoder mac local) + threshold sweep",
+      "prereq": "tool/transient_py V4 evaluator script (sentence-transformers KO model download mac local)",
+      "host": "mac local",
+      "estimated_cost_usd": 0.0,
+      "estimated_walltime_hr": 2.0,
+      "falsifiers": ["F-IT-alt-1 V4 differential vs V3 catches false PASS in BG-HU peak (cosine prompt-response < 0.3) → V4 mandate", "F-IT-alt-2 V4 = V3 verdict aligned everywhere → V3 already adequate; V4 redundant"],
+      "L23_L24_L25_required": false
+    },
+    {
+      "bg_id_proposed": "BG-IR",
+      "rank": 5,
+      "rationale": "broadest-search corpus net-new domain; lowest probability + highest cost (corpus assembly)",
+      "spec": "18M byte-256 × NEXUS+UBM+kowiki ≥100MB × Lesson G + Lesson J + V3 inline + persona-dropout 0.5",
+      "prereq": "corpus assembly = BG-IK 27.5MB + kowiki direct download to ≥100MB (mac local)",
+      "host": "mac local corpus assembly + ubu1 H100 train",
+      "estimated_cost_usd": 3.0,
+      "estimated_walltime_hr": 2.0,
+      "falsifiers": ["F-IR-1 net-new Wikipedia domain transfers to anima identity (V2 ≥7 + manual ≥10) → corpus-axis unlock", "F-IR-2 net-new domain dilutes anima identity (manual ≤5) → corpus content paradigm anima-internal-only required"],
+      "L23_L24_L25_required": true
+    }
+  ],
+
+  "honest_c3": [
+    "Synthesis based on landed evidence only. 5+ BGs (BG-IL, BG-IM, BG-IQ, BG-IS, BG-IW) are pending; verdicts may shift. BG-IS V3 retroeval extension MISSING at synthesis time — if it lands within 24h surfacing hidden V3 PASS, raw#82 retraction trigger fires and BG-IT recommendations rebase.",
+    "Rank-ordering subjective. No objective scorecard for 'expected value to PASS.' Probabilities (25%, 15%, 10%) are anima-internal estimates from BG-HS R1 + BG-HU + BG-IF triangulation; uncalibrated.",
+    "9-axis taxonomy may miss undiscovered axes. Examples not enumerated: MoE / RoPE / sliding-window / curriculum learning / contrastive pre-training / Φ★ axis-conditioned distillation. anima_cli_mk2.spec.yaml § 16 axes_self_evolution K1.9+ explicitly open-ended.",
+    "Some BGs failed measurement, not intent. BG-HU stalled (halt-on-cycle BEFORE extended training; possibly under-trained). BG-ID stalled (mac MPS slower; corpus mismatch). BG-HW substring-match-only verdict integrity capped. BG-IF over-built to 153M instead of 99M (param-count discipline gap).",
+    "Architecture ceiling claim corpus-range-bounded. '18M byte-level chat-cap intrinsically limited' validated only for tested corpus 2.41MB-246MB. 1GB+ corpus completely untested. Lesson A 'capacity ceiling' claim inferentially limited at small-corpus regime only.",
+    "BG-HS R1 (rank 1) used 21.56MB UBM corpus that was overwritten to 6.48MB by BG-HT regen — original artifact NOT reproducible without BG-IQ rebuild. BG-IG (rank 2 tied) used the regen 6.48MB corpus, NOT BG-HS R1's original 21.56MB — its manual=13 finding may be a different signal. Replication parity uncertain.",
+    "V3 evaluator strict has 4/1300 PASS responses across 8-BG retroeval — sample size N=4 for V3 PASS calibration is fragile. One new BG could materially shift V3 PASS distribution.",
+    "raw#15 additive: if BG-IS retroeval extension lands within 24h, append follow-up section to docs/anima_chat_cap_gap_analysis_2026_05_07.md rather than edit existing claims."
+  ],
+
+  "raw_82_retraction_aware": {
+    "trigger_condition": "BG-IS retroeval extension surfaces any V3 ≥5/15 step on any of the 8 retroevaled BGs (BG-FY/HA/HF/HJ/HK/HP/HQ/HS-R1)",
+    "if_triggered": "emit retraction notice in docs/anima_chat_cap_gap_analysis_2026_05_07.md Section 5 honest_c3 #1 + recompute Section 1 frontier table + revise Section 3 EV ranking",
+    "current_status": "no retraction needed (BG-IS extension MISSING)"
+  },
+
+  "raw_15_additive": "BG-IT entry is new ledger row (attempt_n = max+1 = 30); no existing rows edited. Doc /Users/ghost/core/anima/docs/anima_chat_cap_gap_analysis_2026_05_07.md is new file. Cross-link added to top of /Users/ghost/core/anima/docs/anima_chat_cap_lesson_summary_2026_05_07.md as additive prefix.",
+
+  "own_22_silent_discovery_forbidden_compliance": "every gap conclusion explicit; per-axis untested cells enumerated in axes_status; top_3_unmet_axes_with_ev probabilities + costs explicit; no implicit ranking.",
+  "own_24_ledger_ssot_compliance": "BG-IT ledger entry appended atomically post-doc with attempt_n=30, training_steps=0, bg_kind=synthesis_doc",
+
+  "deliverables": [
+    "docs/anima_chat_cap_gap_analysis_2026_05_07.md",
+    "state/anima_it_chat_cap_gap_analysis_2026_05_07/verdict.json",
+    "state/anima_model_attempts_ledger.jsonl (BG-IT row appended)",
+    "docs/anima_chat_cap_lesson_summary_2026_05_07.md (cross-link prefix appended)"
+  ],
+
+  "validation_passed": true,
+  "final_class": "GAP_ANALYSIS_LANDED_3_HIGHEST_EV_BGS_RECOMMENDED"
+}

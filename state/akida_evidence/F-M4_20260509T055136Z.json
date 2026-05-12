@@ -1,0 +1,32 @@
+{
+  "falsifier_id": "F-M4",
+  "measured_ts": "2026-05-09T05:51:36Z",
+  "verdict": "PROXY-FAIL-TRACE-DIVERGENT",
+  "measured_value": {
+    "outputs_summary_a": {
+      "min": -36.486114501953125,
+      "max": 3.113910436630249,
+      "mean": -10.071905136108398,
+      "std": 6.107995986938477
+    },
+    "outputs_summary_b": {
+      "min": -39.94561767578125,
+      "max": 3.368786573410034,
+      "mean": -10.113415718078613,
+      "std": 6.119565963745117
+    },
+    "deltas_per_field": {
+      "min": 3.459503173828125,
+      "max": 0.25487613677978516,
+      "mean": 0.041510581970214844,
+      "std": 0.011569976806640625
+    },
+    "max_abs_delta": 3.459503173828125,
+    "threshold": 0.5,
+    "n_events_a": 10,
+    "n_events_b": 30
+  },
+  "hardware_present": true,
+  "command": "xeno cycle measure \u00d7 2 (different n_events; trace stationarity proxy)",
+  "note": "PROXY only \u2014 true F-M4 requires CPU mirror + N>=1000 step-by-step trace bisimulation. \uc5ec\uae30\uc120 \ub450 Akida run \uc758 outputs distribution \uc774 input-batch-size \ubcc0\ud654\uc5d0 stationary \ud55c\uc9c0\ub97c trace stability proxy \ub85c \uce21\uc815."
+}

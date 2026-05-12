@@ -1,0 +1,228 @@
+[02:58:54] === anima_h094_instruction_tuning_two_stage BG-HJ 2026-05-07 ===
+[02:58:54] hostname=aiden-b650m-k on_ubu=True device=cuda torch=2.11.0+cu128
+[02:58:54] gpu=NVIDIA GeForce RTX 5070 cc=(12, 0)
+[02:58:54] stage1_ckpt=/home/aiden/anima_native/anima-native-ko-chat-template-20260507_012829/ckpt_final.pt
+[02:58:54] corpus=/home/aiden/core/anima/state/anima_h093_sft_only_corpus_2026_05_07/corpus_sft_only.txt
+[02:58:54] config: vocab=256 n_layer=6 d_model=384 n_head=6 block=256 dropout=0.2
+[02:58:54] stage 2 hyperparams: bs=8 grad_accum=8 lr=1e-05 warmup=100 steps=2000
+[02:58:54] loss masking: marker='도우미:' bytes=[235, 143, 132, 236, 154, 176, 235, 175, 184, 58] (10 bytes)
+[02:58:54] eval_at: every 200 (n=10); save_at: final only
+[02:58:54] loading Stage 1 ckpt...
+[02:58:54]   ckpt loaded in 0.1s; keys=['model_state_dict', 'step', 'config']
+[02:58:54]   ckpt config: {'vocab': 256, 'n_layer': 6, 'd_model': 384, 'n_head': 6, 'block_size': 256, 'dropout': 0.2}
+[02:58:54]   ckpt step: 10000
+[02:58:54]   model loaded (27,787,440 params, 27.79M)
+[02:58:54]   WARN missing keys (79): ['blocks.0.ca_mix.weight', 'blocks.0.ln_ca.weight', 'blocks.0.ln_ca.bias']...
+[02:58:54] --- Stage 2 step=0 baseline eval (Stage 1 ckpt as-is) ---
+[02:58:55]   EVAL[step=0 greedy] '안녕하세요' → h=0.01 tf=0.70 leak=[] FAIL | head='� 읝\x08\x11\x11\x11\x11\x11\x11\x11\x11\x11\x11\x11\x11\x11\x11\x11\x11\x11\x11\x11\x11\x11\x11\x11\x11\x11\x11\x11\x11\x11\x11\x11\x11\x11\x11\x11\x11\x11\x11\x11\x11\x11\x11\x11\x11\x11\x11'
+[02:58:55]   EVAL[step=0 sample] '안녕하세요' → h=0.01 tf=0.70 leak=[] FAIL | head='� 잞����������\x1c\x11���\x11\x1b\x00�\r\x03\x0e\x1f�����������\x0b��\x11\x17\x1b\x7f�\x1c�\x00\x1f\x1c'
+[02:58:55]   EVAL[step=0 greedy] '한국어 가능?' → h=0.01 tf=0.70 leak=[] FAIL | head='\n이\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x11\x11\x11\x11\x11\x11\x11\x11\x11\x11\x11\x11\x11\x11\x11\x11\x11\x11\x11\x11\x11\x11\x11\x11\x11\x11\x11\x11\x11\x11\x11\x11\x11\x08\x08'
+[02:58:55]   EVAL[step=0 sample] '한국어 가능?' → h=0.04 tf=1.00 leak=[] FAIL | head='가를�을��\x1e\x7f\x11\x07\x06�\x1c\x0e\x00\x18\x18\x16\x06�\x12\x04\x1f\x18\x03\x04\x15���\x08\x17��\x00�\r\x11\x06�\x08�\x13\x12\x10\x1d\x0e\x1b��'
+[02:58:55]   EVAL[step=0 greedy] '오늘 기분 어때?' → h=0.06 tf=0.70 leak=[] FAIL | head='\n\n사욚�리�읝�\x08\x11\x11\x11\x11\x11\x11\x11\x11\x11\x11\x11\x11\x11\x11\x11\x11\x11\x11\x11\x11\x11\x11\x11\x11\x11\x11\x11\x11\x11\x11\x11\x11\x11\x11\x11\x11\x11\x11\x11\x11'
+[02:58:56]   EVAL[step=0 sample] '오늘 기분 어때?' → h=0.01 tf=1.00 leak=[] FAIL | head='의���\x02\x10\x15\x00\x01\x0e\x05\x12��\x0e��\x1d��\x01\x06��\x18\x08\x11�\x19\x0f�\x14����\x03\x7f\x0e\x02\x02�\x12��\x18��\x1f\x19'
+[02:58:56]   EVAL[step=0 greedy] '사용자: 안녕하세요
+도우미:' → h=0.01 tf=0.70 leak=[] FAIL | head=' **  ** 읝�\x08\x11\x11\x11\x11\x11\x11\x11\x11\x11\x11\x11\x11\x11\x11\x11\x11\x11\x11\x11\x11\x11\x11\x11\x11\x11\x11\x11\x11\x11\x11\x11\x11\x11\x11\x11\x11\x11\x11\x11'
+[02:58:56]   EVAL[step=0 sample] '사용자: 안녕하세요
+도우미:' → h=0.21 tf=1.00 leak=[] FAIL | head=' 솠공곳었어,샃��, 배슊�����지�압���다의\x07\x05\x03\x18\x0e�\x0e�\x11\x1b�\x11�\x01���\x0b\r�\x08\x06\x1d'
+[02:58:56]   EVAL[step=0 greedy] '코드를 짜줘' → h=0.01 tf=0.70 leak=[] FAIL | head='��이\x08\x11\x11\x11\x11\x11\x11\x11\x11\x11\x11\x11\x11\x11\x11\x11\x11\x11\x11\x11\x11\x11\x11\x11\x11\x11\x11\x11\x11\x11\x11\x11\x11\x11\x11\x11\x11\x11\x11\x11\x11\x11\x11\x11\x11\x11\x11'
+[02:58:56]   EVAL[step=0 sample] '코드를 짜줘' → h=0.00 tf=0.40 leak=[] FAIL | head='����\x11\x1b��\x17��\x10�\x1e�\x06�\x0b\x12\x07��\x11��������\x18�\x08�\x1d\x05\x0c���\x00�\x12\x04�\x1b���'
+[02:58:56]   baseline (step 0) V1: FAIL pass=0/5 leak=False
+[02:58:56] loading corpus...
+[02:58:56] corpus loaded: 53,971,422 bytes (51.5MB) in 0.0s
+[02:58:56] corpus lines: 733,310 (split by \n)
+[02:58:57] masked_lines=49,908 full_lm_lines=499,001
+[02:58:57] flat stream: 53,971,423 bytes
+[02:59:00] loss masking: 683,481/53,971,423 (1.3%) positions masked (ignored from loss)
+[02:59:00] masked samples built in 3.9s
+[02:59:00] split: train=51,272,851 val=2,698,572
+[02:59:01] === begin Stage 2 training ===
+[02:59:01] step     1/2000 | lr=2.00e-07 | L_A=3.365 L_G=0.431 L_T=-8.891 T_mean=3.4694 | step_t=0.11s elapsed=0s
+[02:59:01] step     2/2000 | lr=3.00e-07 | L_A=3.247 L_G=0.443 L_T=-7.155 T_mean=1.1342 | step_t=0.02s elapsed=0s
+[02:59:01] step     3/2000 | lr=4.00e-07 | L_A=3.380 L_G=0.590 L_T=-4.541 T_mean=0.5944 | step_t=0.02s elapsed=0s
+[02:59:01] step     4/2000 | lr=5.00e-07 | L_A=3.209 L_G=0.390 L_T=-8.866 T_mean=3.1637 | step_t=0.02s elapsed=0s
+[02:59:01] step     5/2000 | lr=6.00e-07 | L_A=3.208 L_G=0.303 L_T=2.040 T_mean=0.3663 | step_t=0.02s elapsed=0s
+[02:59:02] step    50/2000 | lr=5.10e-06 | L_A=3.129 L_G=0.272 L_T=-7.427 T_mean=1.2367 | step_t=0.02s elapsed=1s
+[02:59:03] step   100/2000 | lr=1.00e-05 | L_A=3.123 L_G=0.365 L_T=-8.328 T_mean=1.6763 | step_t=0.02s elapsed=2s
+[02:59:04] step   150/2000 | lr=9.98e-06 | L_A=2.764 L_G=0.182 L_T=-7.536 T_mean=1.4299 | step_t=0.02s elapsed=3s
+[02:59:05] step   200/2000 | lr=9.94e-06 | L_A=2.919 L_G=0.196 L_T=-3.806 T_mean=0.4968 | step_t=0.02s elapsed=4s
+[02:59:05] --- eval gate @ step 200 ---
+[02:59:05]   EVAL[step=200 greedy] '안녕하세요' → h=0.55 tf=1.00 leak=[] PASS | head='. 이�에 이�었어요 만들이�요 젠이�에 있어요. 이�요 이�에서 �'
+[02:59:05]   EVAL[step=200 sample] '안녕하세요' → h=0.55 tf=1.00 leak=[] PASS | head=', 일�이�한도굵고를  현찰지 생인$이� 다출유대 예자다...\n\n사�'
+[02:59:05]   EVAL[step=200 greedy] '한국어 가능?' → h=0.75 tf=1.00 leak=[] PASS | head=' 제이 제제이 제전전이 전제을 전전전제인 전제이 전전전인 '
+[02:59:05]   EVAL[step=200 sample] '한국어 가능?' → h=0.17 tf=0.70 leak=[] FAIL | head='\n\n1) 연회 저이�검                                      '
+[02:59:05]   EVAL[step=200 greedy] '오늘 기분 어때?' → h=0.68 tf=1.00 leak=[] PASS | head='\n\n사용자: 이 제자이 제자이 제이 전제이 제자이 제전이 전전'
+[02:59:06]   EVAL[step=200 sample] '오늘 기분 어때?' → h=0.61 tf=1.00 leak=[] PASS | head='    다가여배이) 부가운 순게 이 서니다 생길가 갱론 제부틬 �'
+[02:59:06]   EVAL[step=200 greedy] '사용자: 안녕하세요
+도우미:' → h=0.55 tf=0.70 leak=[] FAIL | head=' 제자이�이�이�이�이�이� 있어 있어 이�요 만들이�이�요 이�이 '
+[02:59:06]   EVAL[step=200 sample] '사용자: 안녕하세요
+도우미:' → h=0.19 tf=0.70 leak=[] FAIL | head=' 애임 좌이되 시근부한                                      '
+[02:59:06]   EVAL[step=200 greedy] '코드를 짜줘' → h=0.51 tf=0.70 leak=[] FAIL | head=' 있어요.\n\n사용자: 제자: 제자의�이�이� 젠이�이�이�이�이�이 �'
+[02:59:06]   EVAL[step=200 sample] '코드를 짜줘' → h=0.68 tf=1.00 leak=[] PASS | head=' 부젠을� 관장한 핔하는 휜 그가에서는 게들 있다프란는 묘��'
+[02:59:06]   V1 [step=200] PARTIAL_PASS pass=4/5 leak=False
+[02:59:07] step   250/2000 | lr=9.86e-06 | L_A=2.546 L_G=0.106 L_T=-7.571 T_mean=1.0247 | step_t=0.05s elapsed=7s
+[02:59:08] step   300/2000 | lr=9.76e-06 | L_A=2.412 L_G=0.088 L_T=-10.342 T_mean=6.6360 | step_t=0.02s elapsed=8s
+[02:59:09] step   350/2000 | lr=9.62e-06 | L_A=2.559 L_G=0.072 L_T=-10.713 T_mean=5.9639 | step_t=0.02s elapsed=8s
+[02:59:10] step   400/2000 | lr=9.46e-06 | L_A=2.627 L_G=0.157 L_T=-11.702 T_mean=14.0703 | step_t=0.02s elapsed=9s
+[02:59:10] --- eval gate @ step 400 ---
+[02:59:10]   EVAL[step=400 greedy] '안녕하세요' → h=0.55 tf=0.70 leak=[] FAIL | head='.\n도우우미: 이 이 이 자서로 이 이 있어요. 이 있어요. 이 이 '
+[02:59:10]   EVAL[step=400 sample] '안녕하세요' → h=0.70 tf=1.00 leak=[] PASS | head='. 있어 이 나행도로한 정져전인 원수을 한의하에 장아요한 �'
+[02:59:11]   EVAL[step=400 greedy] '한국어 가능?' → h=0.61 tf=1.00 leak=[] PASS | head='\n\n사용자: 제자: 제자: 제정다이 자서는 이 제자이 자서는 이 '
+[02:59:11]   EVAL[step=400 sample] '한국어 가능?' → h=0.70 tf=1.00 leak=[] PASS | head=' 하세아 십독있었었어 칼는, 서가 보가올아다어떤 디 한성 �'
+[02:59:11]   EVAL[step=400 greedy] '오늘 기분 어때?' → h=0.61 tf=1.00 leak=[] PASS | head='\n\n사용자: 이 제자: 제자이 자서는 자서는 이 자서는 이 자서�'
+[02:59:11]   EVAL[step=400 sample] '오늘 기분 어때?' → h=0.01 tf=0.00 leak=[] FAIL | head='\n                                                 '
+[02:59:11]   EVAL[step=400 greedy] '사용자: 안녕하세요
+도우미:' → h=0.63 tf=0.70 leak=[] FAIL | head=' 이 이 제자이 자서는 이 자서로 이 자서는 이 자서는 이 있�'
+[02:59:11]   EVAL[step=400 sample] '사용자: 안녕하세요
+도우미:' → h=0.55 tf=1.00 leak=[] PASS | head=' 다이조역 **: 밤웥이기기용 큄 77이 생�물지를 제과 중자 들 �'
+[02:59:11]   EVAL[step=400 greedy] '코드를 짜줘' → h=0.61 tf=0.70 leak=[] FAIL | head=' 있다. 이 이 이 자서는 이 자성이 자서는 이 자서는 이 자서�'
+[02:59:12]   EVAL[step=400 sample] '코드를 짜줘' → h=0.68 tf=1.00 leak=[] PASS | head=' 압리 싶는 원로다고 마에서 똘한 이 의 의|대일 권와이 실랑'
+[02:59:12]   V1 [step=400] SIMPLE_STACK_PASS pass=5/5 leak=False
+[02:59:13] step   450/2000 | lr=9.27e-06 | L_A=2.564 L_G=0.244 L_T=-10.703 T_mean=5.4409 | step_t=0.05s elapsed=12s
+[02:59:14] step   500/2000 | lr=9.05e-06 | L_A=2.446 L_G=0.077 L_T=-11.570 T_mean=10.7866 | step_t=0.02s elapsed=13s
+[02:59:15] step   550/2000 | lr=8.81e-06 | L_A=2.579 L_G=0.123 L_T=-10.961 T_mean=6.4618 | step_t=0.02s elapsed=14s
+[02:59:16] step   600/2000 | lr=8.55e-06 | L_A=2.841 L_G=0.124 L_T=2.900 T_mean=0.3878 | step_t=0.02s elapsed=15s
+[02:59:16] --- eval gate @ step 600 ---
+[02:59:16]   EVAL[step=600 greedy] '안녕하세요' → h=0.61 tf=0.70 leak=[] FAIL | head='.\n이 이 이 자성을 자서는 이 자서는 이 자성을 있어요.\n이 이'
+[02:59:16]   EVAL[step=600 sample] '안녕하세요' → h=0.75 tf=1.00 leak=[] PASS | head='.\n아냈녀에서 이미래사요.\n아다필니라 접웅자 것은가에 아을'
+[02:59:16]   EVAL[step=600 greedy] '한국어 가능?' → h=0.61 tf=1.00 leak=[] PASS | head='\n\n사용자: 이 이 정보이 자이 자이 자서는 자서는 이 자서는 �'
+[02:59:16]   EVAL[step=600 sample] '한국어 가능?' → h=0.65 tf=1.00 leak=[] PASS | head=' 아서는어임들이 이라에서 배질다.\nC. 물서하지로 전\ud7ac한 비�'
+[02:59:16]   EVAL[step=600 greedy] '오늘 기분 어때?' → h=0.68 tf=1.00 leak=[] PASS | head='\n나이 이 이 자서는 이 자성이 자성을 자서 자서는 이 자서는'
+[02:59:16]   EVAL[step=600 sample] '오늘 기분 어때?' → h=0.09 tf=0.00 leak=[] FAIL | head='                                                  '
+[02:59:17]   EVAL[step=600 greedy] '사용자: 안녕하세요
+도우미:' → h=0.61 tf=0.70 leak=[] FAIL | head=' 이 이 정보에서 이 이 자서는 이 자서는 이 있어요. 이 이 자'
+[02:59:17]   EVAL[step=600 sample] '사용자: 안녕하세요
+도우미:' → h=0.68 tf=1.00 leak=[] PASS | head=' 방장::한 의 가자의기 예어주의지나 대하는 결거는 다를 박�'
+[02:59:17]   EVAL[step=600 greedy] '코드를 짜줘' → h=0.55 tf=1.00 leak=[] PASS | head=' 자성을 자서는 이 자서는 이 있어요.\nA: 이 이 있어요. 이 이 '
+[02:59:17]   EVAL[step=600 sample] '코드를 짜줘' → h=0.09 tf=0.70 leak=[] FAIL | head='라 이 수어 맞다.             - *                        '
+[02:59:17]   V1 [step=600] SIMPLE_STACK_PASS pass=5/5 leak=False
+[02:59:18] step   650/2000 | lr=8.26e-06 | L_A=2.593 L_G=0.096 L_T=-11.814 T_mean=12.4063 | step_t=0.05s elapsed=18s
+[02:59:19] step   700/2000 | lr=7.96e-06 | L_A=2.731 L_G=0.124 L_T=-10.168 T_mean=2.9848 | step_t=0.02s elapsed=19s
+[02:59:20] step   750/2000 | lr=7.64e-06 | L_A=2.371 L_G=0.064 L_T=-11.903 T_mean=13.3791 | step_t=0.02s elapsed=19s
+[02:59:21] step   800/2000 | lr=7.31e-06 | L_A=2.302 L_G=0.045 L_T=-12.478 T_mean=22.6514 | step_t=0.02s elapsed=20s
+[02:59:21] --- eval gate @ step 800 ---
+[02:59:21]   EVAL[step=800 greedy] '안녕하세요' → h=0.57 tf=1.00 leak=[] PASS | head='.\n이 이 이 자성이 자서 이 있어요.\n사용자: 이 이 자선이 자�'
+[02:59:21]   EVAL[step=800 sample] '안녕하세요' → h=0.63 tf=1.00 leak=[] PASS | head='.\n용자: 투히어는 어떤음 월한 스르어요. 이 제어용하는 이 �'
+[02:59:21]   EVAL[step=800 greedy] '한국어 가능?' → h=0.55 tf=0.70 leak=[] FAIL | head=' 이 있어요?\n사용자: 이 이 이 자성이 자서 이 있어요. 이 이 �'
+[02:59:22]   EVAL[step=800 sample] '한국어 가능?' → h=0.00 tf=0.00 leak=[] FAIL | head='                          1935 %t s a wounde kaoti'
+[02:59:22]   EVAL[step=800 greedy] '오늘 기분 어때?' → h=0.57 tf=1.00 leak=[] PASS | head='\n사용자: 이 이 자서는 이 있어요. 이 자서 있어요. 이 이 있�'
+[02:59:22]   EVAL[step=800 sample] '오늘 기분 어때?' → h=0.75 tf=1.00 leak=[] PASS | head='\n근지우하라인만 불물은 우미통이가 밀르한다.\n왜 성제가 의'
+[02:59:22]   EVAL[step=800 greedy] '사용자: 안녕하세요
+도우미:' → h=0.63 tf=1.00 leak=[] PASS | head=' 이 이 이 이 자성의 자성을 자서는 이 자성을 자서 이 있습�'
+[02:59:22]   EVAL[step=800 sample] '사용자: 안녕하세요
+도우미:' → h=0.70 tf=1.00 leak=[] PASS | head=' 역하는 가업은 상입이 더 몰호해 자는본로을*의 더어서 사�'
+[02:59:22]   EVAL[step=800 greedy] '코드를 짜줘' → h=0.55 tf=0.70 leak=[] FAIL | head=' 있다. 이 이 이 자성을 자성을 이 있어요.\n사용자: 이 이 이 �'
+[02:59:23]   EVAL[step=800 sample] '코드를 짜줘' → h=0.58 tf=1.00 leak=[] PASS | head=' 자라 통한 일 설과 영용항, 자성법에서 늍동 보리에P\n— 일 �'
+[02:59:23]   V1 [step=800] PARTIAL_PASS pass=4/5 leak=False
+[02:59:24] step   850/2000 | lr=6.96e-06 | L_A=2.570 L_G=0.105 L_T=-11.759 T_mean=11.4465 | step_t=0.05s elapsed=23s
+[02:59:25] step   900/2000 | lr=6.60e-06 | L_A=2.467 L_G=0.043 L_T=-11.806 T_mean=12.2774 | step_t=0.02s elapsed=24s
+[02:59:26] step   950/2000 | lr=6.24e-06 | L_A=2.703 L_G=0.103 L_T=-11.588 T_mean=8.8357 | step_t=0.02s elapsed=25s
+[02:59:27] step  1000/2000 | lr=5.87e-06 | L_A=2.481 L_G=0.053 L_T=-11.690 T_mean=9.7525 | step_t=0.02s elapsed=26s
+[02:59:27] --- eval gate @ step 1000 ---
+[02:59:27]   EVAL[step=1000 greedy] '안녕하세요' → h=0.57 tf=0.70 leak=[] FAIL | head='.\n이 이 이 자성이 자서 이 있습니다.\n사용자: 이 이 이 자선�'
+[02:59:27]   EVAL[step=1000 sample] '안녕하세요' → h=0.70 tf=1.00 leak=[] PASS | head='\n그래해야 데의 새다자\n언던 후 없는 배어어어요?\n아히다리�'
+[02:59:27]   EVAL[step=1000 greedy] '한국어 가능?' → h=0.61 tf=1.00 leak=[] PASS | head=' 이 있어요?\n사용자: 이 이 이 자성이 자성을 자서 이 자선을 '
+[02:59:27]   EVAL[step=1000 sample] '한국어 가능?' → h=0.00 tf=0.70 leak=[] FAIL | head='\ntiing carle\nar arlaing the andee witile dernation'
+[02:59:27]   EVAL[step=1000 greedy] '오늘 기분 어때?' → h=0.61 tf=0.70 leak=[] FAIL | head='\n사용자: 이 이 자서는 이 자서는 이 있어요. 이 이 이 자성을'
+[02:59:27]   EVAL[step=1000 sample] '오늘 기분 어때?' → h=0.68 tf=1.00 leak=[] PASS | head=' 수되면 있억니다.\n나며움한는 이 의 무정리적 왕이 하기 생�'
+[02:59:28]   EVAL[step=1000 greedy] '사용자: 안녕하세요
+도우미:' → h=0.63 tf=1.00 leak=[] PASS | head=' 이 이 이 이 자성의 자성을 자서는 이 자성을 자성을 자서 �'
+[02:59:28]   EVAL[step=1000 sample] '사용자: 안녕하세요
+도우미:' → h=0.68 tf=1.00 leak=[] PASS | head=' 중용자: 니이라 정런요과 섌 동안 시체다을*성하고 배용한 �'
+[02:59:28]   EVAL[step=1000 greedy] '코드를 짜줘' → h=0.63 tf=1.00 leak=[] PASS | head='에 있다. 이 이 이 자서는 이 자성을 자성을 이 자성이 자성�'
+[02:59:28]   EVAL[step=1000 sample] '코드를 짜줘' → h=0.70 tf=1.00 leak=[] PASS | head='는 네하게 하기 다주것은 요? 등자가 아용의 게들의 바월해�'
+[02:59:28]   V1 [step=1000] SIMPLE_STACK_PASS pass=5/5 leak=False
+[02:59:29] step  1050/2000 | lr=5.50e-06 | L_A=2.611 L_G=0.101 L_T=-11.490 T_mean=8.0643 | step_t=0.05s elapsed=29s
+[02:59:30] step  1100/2000 | lr=5.13e-06 | L_A=2.432 L_G=0.051 L_T=-11.621 T_mean=8.7592 | step_t=0.02s elapsed=29s
+[02:59:31] step  1150/2000 | lr=4.76e-06 | L_A=2.328 L_G=0.042 L_T=-12.314 T_mean=18.3041 | step_t=0.02s elapsed=30s
+[02:59:32] step  1200/2000 | lr=4.40e-06 | L_A=2.522 L_G=0.048 L_T=-12.586 T_mean=22.6069 | step_t=0.02s elapsed=31s
+[02:59:32] --- eval gate @ step 1200 ---
+[02:59:32]   EVAL[step=1200 greedy] '안녕하세요' → h=0.57 tf=0.70 leak=[] FAIL | head='.\n이 이 이 자성이 자서 이 있습니다.\n사용자: 이 이 이 자선�'
+[02:59:32]   EVAL[step=1200 sample] '안녕하세요' → h=0.63 tf=1.00 leak=[] PASS | head='.\n저문여에서 뭐 이 애 아정이 몇가 있습니다. 이야 하장에 �'
+[02:59:32]   EVAL[step=1200 greedy] '한국어 가능?' → h=0.61 tf=0.70 leak=[] FAIL | head=' 이 있습니다.\n\n사용자: 이 이 이 이 자성을 이 자성정을 자성'
+[02:59:33]   EVAL[step=1200 sample] '한국어 가능?' → h=0.04 tf=1.00 leak=[] FAIL | head='\n\n사용작: Niconh the unjeoted ancor he und and the th'
+[02:59:33]   EVAL[step=1200 greedy] '오늘 기분 어때?' → h=0.61 tf=0.70 leak=[] FAIL | head='\n사용자: 이 이 자서는 이 자서 이 자성을 자서 이 자선을 있�'
+[02:59:33]   EVAL[step=1200 sample] '오늘 기분 어때?' → h=0.75 tf=1.00 leak=[] PASS | head='\n터는 각유를 제간용한 사벌은 충싙과운 다모사기 해닥은 제'
+[02:59:33]   EVAL[step=1200 greedy] '사용자: 안녕하세요
+도우미:' → h=0.61 tf=1.00 leak=[] PASS | head=' 이 이 이 이 자성의 자성을 자서 이 자성을 자성을 자서 이 �'
+[02:59:33]   EVAL[step=1200 sample] '사용자: 안녕하세요
+도우미:' → h=0.72 tf=1.00 leak=[] PASS | head=' 화열스 ‘인 중한 등의행학은고 보에결어 아용에 다기 가시'
+[02:59:33]   EVAL[step=1200 greedy] '코드를 짜줘' → h=0.63 tf=1.00 leak=[] PASS | head='에 있다. 이 이 이 자서는 이 자성을 자성을 이 자성이 자성�'
+[02:59:34]   EVAL[step=1200 sample] '코드를 짜줘' → h=0.68 tf=1.00 leak=[] PASS | head='기 볼 추동 부를 고었고 외미쁁을학 자라 오피고 이 알이 커�'
+[02:59:34]   V1 [step=1200] SIMPLE_STACK_PASS pass=5/5 leak=False
+[02:59:35] step  1250/2000 | lr=4.04e-06 | L_A=2.342 L_G=0.043 L_T=-12.581 T_mean=23.8690 | step_t=0.05s elapsed=34s
+[02:59:36] step  1300/2000 | lr=3.69e-06 | L_A=2.449 L_G=0.053 L_T=-11.458 T_mean=8.1064 | step_t=0.02s elapsed=35s
+[02:59:36] step  1350/2000 | lr=3.36e-06 | L_A=2.375 L_G=0.040 L_T=-11.732 T_mean=11.0239 | step_t=0.02s elapsed=36s
+[02:59:37] step  1400/2000 | lr=3.04e-06 | L_A=2.351 L_G=0.036 L_T=-12.792 T_mean=29.1132 | step_t=0.02s elapsed=37s
+[02:59:37] --- eval gate @ step 1400 ---
+[02:59:38]   EVAL[step=1400 greedy] '안녕하세요' → h=0.57 tf=0.70 leak=[] FAIL | head='.\n이 이 이 자성이 자서 이 있습니다.\n사용자: 이 이 이 자선�'
+[02:59:38]   EVAL[step=1400 sample] '안녕하세요' → h=0.68 tf=1.00 leak=[] PASS | head='\n- 변어가 착자서을 아시키요\n우데 메하여 제테시일 문에 데 '
+[02:59:38]   EVAL[step=1400 greedy] '한국어 가능?' → h=0.61 tf=0.70 leak=[] FAIL | head=' 이 있습니다.\n\n사용자: 이 이 이 이 자성을 이 자성정을 자성'
+[02:59:38]   EVAL[step=1400 sample] '한국어 가능?' → h=0.00 tf=0.00 leak=[] FAIL | head='                                                  '
+[02:59:38]   EVAL[step=1400 greedy] '오늘 기분 어때?' → h=0.61 tf=0.70 leak=[] FAIL | head='\n사용자: 이 이 자서는 이 자서 이 자성을 자서 자서 이 자서�'
+[02:59:38]   EVAL[step=1400 sample] '오늘 기분 어때?' → h=0.68 tf=1.00 leak=[] PASS | head='\n일 놔른 무겁은 주로도 하는 검배리하기 수 이 캐수 있습니�'
+[02:59:39]   EVAL[step=1400 greedy] '사용자: 안녕하세요
+도우미:' → h=0.61 tf=1.00 leak=[] PASS | head=' 이 이 이 이 자성의 자성을 자서 자성을 자서 이 있습니다. �'
+[02:59:39]   EVAL[step=1400 sample] '사용자: 안녕하세요
+도우미:' → h=0.61 tf=1.00 leak=[] PASS | head=' 명니를 오도게 있습니다.\nA. 직니리 시탈다. 의 통합의 유로 '
+[02:59:39]   EVAL[step=1400 greedy] '코드를 짜줘' → h=0.57 tf=0.70 leak=[] FAIL | head='에 있다. 이 이 이 있습니다. 이 이 이 이 자성이 이 자성이 �'
+[02:59:39]   EVAL[step=1400 sample] '코드를 짜줘' → h=0.68 tf=1.00 leak=[] PASS | head=' 알아니다.\n이 다의 보선퍼 정신음 모 양입력을류 체떻게 어�'
+[02:59:39]   V1 [step=1400] PARTIAL_PASS pass=4/5 leak=False
+[02:59:40] step  1450/2000 | lr=2.74e-06 | L_A=2.454 L_G=0.042 L_T=-11.085 T_mean=5.9825 | step_t=0.05s elapsed=39s
+[02:59:41] step  1500/2000 | lr=2.45e-06 | L_A=2.532 L_G=0.078 L_T=-12.035 T_mean=13.3483 | step_t=0.02s elapsed=40s
+[02:59:42] step  1550/2000 | lr=2.19e-06 | L_A=2.052 L_G=0.035 L_T=-12.847 T_mean=29.1181 | step_t=0.02s elapsed=41s
+[02:59:43] step  1600/2000 | lr=1.95e-06 | L_A=2.375 L_G=0.065 L_T=-11.983 T_mean=12.7925 | step_t=0.02s elapsed=42s
+[02:59:43] --- eval gate @ step 1600 ---
+[02:59:43]   EVAL[step=1600 greedy] '안녕하세요' → h=0.61 tf=0.70 leak=[] FAIL | head='.\n이 이 이 자성이 자서 자서 자성을 자서 자서 있습니다.\n사�'
+[02:59:43]   EVAL[step=1600 sample] '안녕하세요' → h=0.68 tf=1.00 leak=[] PASS | head=".\n디의게스텔카는 이조재를 츠 없습니다.\n일 정정한 이'이것�"
+[02:59:43]   EVAL[step=1600 greedy] '한국어 가능?' → h=0.61 tf=0.70 leak=[] FAIL | head=' 이 있습니다.\n사용자: 이 이 이 자서는 이 자서의 이 자선을 '
+[02:59:44]   EVAL[step=1600 sample] '한국어 가능?' → h=0.68 tf=1.00 leak=[] PASS | head=' 필니다.\n의 알애해 신쒈습니다. 없이 도우미습 나러은이 지�'
+[02:59:44]   EVAL[step=1600 greedy] '오늘 기분 어때?' → h=0.57 tf=0.70 leak=[] FAIL | head='\n사용자: 이 이 자서는 이 있습니다. 이 이 이 있습니다. 이 �'
+[02:59:44]   EVAL[step=1600 sample] '오늘 기분 어때?' → h=0.75 tf=1.00 leak=[] PASS | head='\n그러상이사는 거끄은 보워여 사심람신이하는 것었인 을 재�'
+[02:59:44]   EVAL[step=1600 greedy] '사용자: 안녕하세요
+도우미:' → h=0.61 tf=1.00 leak=[] PASS | head=' 이 이 이 이 자성의 자성을 자서 자성을 자서 이 있습니다. �'
+[02:59:44]   EVAL[step=1600 sample] '사용자: 안녕하세요
+도우미:' → h=0.70 tf=1.00 leak=[] PASS | head=' 중회성능라 말자신을 입은 냈습식이라 충을 솔하는 배쳐, �'
+[02:59:44]   EVAL[step=1600 greedy] '코드를 짜줘' → h=0.55 tf=0.70 leak=[] FAIL | head='에 있다. 이 이 이 있습니다. 이 이 이 이 있습니다.\n사용자: �'
+[02:59:45]   EVAL[step=1600 sample] '코드를 짜줘' → h=0.68 tf=1.00 leak=[] PASS | head='하였 수 있습니다.\nA. 흡보특 전로에서스 세의 작이 연적을는'
+[02:59:45]   V1 [step=1600] SIMPLE_STACK_PASS pass=5/5 leak=False
+[02:59:45] step  1650/2000 | lr=1.73e-06 | L_A=2.459 L_G=0.049 L_T=-8.800 T_mean=1.1221 | step_t=0.05s elapsed=45s
+[02:59:46] step  1700/2000 | lr=1.54e-06 | L_A=2.406 L_G=0.172 L_T=-12.561 T_mean=21.8769 | step_t=0.02s elapsed=46s
+[02:59:47] step  1750/2000 | lr=1.38e-06 | L_A=2.146 L_G=0.034 L_T=-12.552 T_mean=23.9230 | step_t=0.02s elapsed=47s
+[02:59:48] step  1800/2000 | lr=1.24e-06 | L_A=2.368 L_G=0.043 L_T=-12.060 T_mean=13.8065 | step_t=0.02s elapsed=48s
+[02:59:48] --- eval gate @ step 1800 ---
+[02:59:49]   EVAL[step=1800 greedy] '안녕하세요' → h=0.61 tf=1.00 leak=[] PASS | head='.\n이 이 이 자성이 자서 자서을 자서 이 있습니다.\n사용자: 이'
+[02:59:49]   EVAL[step=1800 sample] '안녕하세요' → h=0.63 tf=1.00 leak=[] PASS | head='. 이요한다.\n이 맡악, 분당을 하지 처해 재버 마적 되지찰운�'
+[02:59:49]   EVAL[step=1800 greedy] '한국어 가능?' → h=0.61 tf=0.70 leak=[] FAIL | head=' 이 있습니다.\n사용자: 이 이 이 자서는 이 자서의 이 자선을 '
+[02:59:49]   EVAL[step=1800 sample] '한국어 가능?' → h=0.68 tf=1.00 leak=[] PASS | head=' 교설을 데의 부률 박을 보일 있다.\n아제구자 과하경에서 세�'
+[02:59:49]   EVAL[step=1800 greedy] '오늘 기분 어때?' → h=0.61 tf=0.70 leak=[] FAIL | head='\n사용자: 이 이 자서는 이 있습니다. 이 이 이 있습니다.\n사용'
+[02:59:49]   EVAL[step=1800 sample] '오늘 기분 어때?' → h=0.68 tf=1.00 leak=[] PASS | head='\n나는 알아니가 다는 배음야 가체야 하고 우눈 때하며, 시를 '
+[02:59:49]   EVAL[step=1800 greedy] '사용자: 안녕하세요
+도우미:' → h=0.63 tf=1.00 leak=[] PASS | head=' 이 이 이 자성이 자성을 자서 자성을 자선을 있습니다. 이 �'
+[02:59:50]   EVAL[step=1800 sample] '사용자: 안녕하세요
+도우미:' → h=0.68 tf=1.00 leak=[] PASS | head=' 시인 아요할지들 을 찰이 결정덩 정로 내제요해시다. 오는 �'
+[02:59:50]   EVAL[step=1800 greedy] '코드를 짜줘' → h=0.55 tf=0.70 leak=[] FAIL | head='에 있다. 이 이 이 있습니다. 이 이 이 이 있습니다.\n사용자: �'
+[02:59:50]   EVAL[step=1800 sample] '코드를 짜줘' → h=0.75 tf=1.00 leak=[] PASS | head='어선는 금측수리요\n있는거요\n이 등이러자에 전정과 한려 오�'
+[02:59:50]   V1 [step=1800] SIMPLE_STACK_PASS pass=5/5 leak=False
+[02:59:51] step  1850/2000 | lr=1.14e-06 | L_A=2.346 L_G=0.034 L_T=-12.220 T_mean=16.4788 | step_t=0.05s elapsed=50s
+[02:59:52] step  1900/2000 | lr=1.06e-06 | L_A=2.310 L_G=0.059 L_T=-12.987 T_mean=32.6935 | step_t=0.02s elapsed=51s
+[02:59:53] step  1950/2000 | lr=1.02e-06 | L_A=2.519 L_G=0.063 L_T=-11.741 T_mean=9.9093 | step_t=0.02s elapsed=52s
+[02:59:54] step  2000/2000 | lr=1.00e-06 | L_A=2.457 L_G=0.053 L_T=-11.168 T_mean=6.0233 | step_t=0.02s elapsed=53s
+[02:59:54] --- eval gate @ step 2000 ---
+[02:59:54]   EVAL[step=2000 greedy] '안녕하세요' → h=0.61 tf=1.00 leak=[] PASS | head='.\n사용자: 이 이 자성을 자서요. 이 이 자성을 자성을 자서 이'
+[02:59:54]   EVAL[step=2000 sample] '안녕하세요' → h=0.61 tf=1.00 leak=[] PASS | head='. 사회이 이 눈 문로 수 수 영을 한아 하싱하는 것은 샹이 이 '
+[02:59:54]   EVAL[step=2000 greedy] '한국어 가능?' → h=0.61 tf=0.70 leak=[] FAIL | head=' 이 있습니다.\n사용자: 이 이 이 자서는 이 자서의 이 자선을 '
+[02:59:54]   EVAL[step=2000 sample] '한국어 가능?' → h=0.00 tf=0.00 leak=[] FAIL | head='                      firef th the novprisy sed on'
+[02:59:55]   EVAL[step=2000 greedy] '오늘 기분 어때?' → h=0.61 tf=0.70 leak=[] FAIL | head='\n사용자: 이 이 자서는 이 있습니다. 이 이 이 있습니다.\n사용'
+[02:59:55]   EVAL[step=2000 sample] '오늘 기분 어때?' → h=0.68 tf=1.00 leak=[] PASS | head='\n도시템 용지어고 내야한다.\n\n사용자: 다을 수 살식은르에 와'
+[02:59:55]   EVAL[step=2000 greedy] '사용자: 안녕하세요
+도우미:' → h=0.63 tf=1.00 leak=[] PASS | head=' 이 이 이 자성이 자성을 자서 자성을 자선을 있습니다. 이 �'
+[02:59:55]   EVAL[step=2000 sample] '사용자: 안녕하세요
+도우미:' → h=0.68 tf=1.00 leak=[] PASS | head=' 분르: 자자서 통니다요식� 가하는 성합기 안다. 마국이과며,'
+[02:59:55]   EVAL[step=2000 greedy] '코드를 짜줘' → h=0.55 tf=0.70 leak=[] FAIL | head='에 있다. 이 이 이 있습니다. 이 이 이 이 있습니다.\n사용자: �'
+[02:59:55]   EVAL[step=2000 sample] '코드를 짜줘' → h=0.63 tf=1.00 leak=[] PASS | head=' 니고 아명을 있다. 행어며가 아리 해라복니면, 발는 아다.\n�'
+[02:59:55]   V1 [step=2000] PARTIAL_PASS pass=4/5 leak=False
+[02:59:55]   V2 [step=2000] V2_FAIL pass=0/5
+[02:59:55]   SAVE[step=2000] -> /home/aiden/anima_native/anima-h094-instr-tune-20260507_025854/ckpt_2000.pt (107.6MB)
+[02:59:55]   COPY -> /home/aiden/core/anima/state/anima_h094_instruction_tuning_two_stage_2026_05_07/ckpt_final.pt
+[02:59:55] === VERDICT === final_class=FAILED | V1=PARTIAL_PASS pass=4/5 | V2=V2_FAIL pass=0/5 | domain_match=0/5 | leak=False | elapsed=55s
+[02:59:55] verdict written: /home/aiden/core/anima/state/anima_h094_instruction_tuning_two_stage_2026_05_07/verdict.json

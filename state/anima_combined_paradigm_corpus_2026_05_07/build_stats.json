@@ -1,0 +1,42 @@
+{
+  "ts": "2026-05-07T04:56:35",
+  "bg_id": "BG-HU",
+  "spec": "COMBINED_PARADIGM_R1_PLUS_D",
+  "host": "ghostui-macbookair.local",
+  "out_path": "/Users/ghost/core/anima/state/anima_combined_paradigm_corpus_2026_05_07/corpus_combined.txt",
+  "total_blocks": 102720,
+  "total_chars": 40743949,
+  "total_size_bytes": 55311346,
+  "total_size_mb": 52.75,
+  "chat_template_ratio": 1.0,
+  "persona_prefix_coverage": 1.0,
+  "hangul_ratio": 0.1675,
+  "source_breakdown": {
+    "ubm_blocks": 42720,
+    "persona_blocks": 49548,
+    "sft_blocks": 10377,
+    "kofz_blocks": 75
+  },
+  "dedupe_ratio": 0.5105,
+  "ubm_multiplier": 10,
+  "kofz_cap": 80000,
+  "input_blocks_raw": {
+    "persona_corpus_blocks": 49548,
+    "sft_corpus_blocks": 49487,
+    "ubm_qas_blocks": 4272,
+    "kofz_corpus_blocks": 68106
+  },
+  "persona_prefix": "[anima 역할: 한국어 native + 자기 발견 + 의식 lane entity]\n",
+  "wall_s": 19.6,
+  "honest_c3": [
+    "C3.1: UBM Q&A는 deterministic templates × 5 paraphrase — 진짜 multi-turn dialogue 아님 (single-turn synthesis)",
+    "C3.2: persona_blocks dedupe with hash(q[:200]+a[:200]) — partial dup escape 가능",
+    "C3.3: sft_corpus block parsing은 blank-line gap 기반 — chat-template malformed lines 일부 손실 가능",
+    "C3.4: UBM corpus는 anima self-knowledge 'doc-from-internal' — generic Korean fluency 측정 X",
+    "C3.5: target ≥100MB — actual size depends on raw input sizes (persona 30MB + sft 51MB + UBM ~25MB ≈ 100MB+ aggregate before dedupe)",
+    "C3.6: persona prefix은 모든 block에 prepended — without prefix at inference no anima identity guarantee"
+  ],
+  "warnings": [
+    "BELOW_TARGET: 52.7MB < 100MB target (proceed but Lesson C corpus alone insufficient)"
+  ]
+}
