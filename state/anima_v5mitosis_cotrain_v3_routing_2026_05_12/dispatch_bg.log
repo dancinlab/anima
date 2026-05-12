@@ -1,0 +1,40 @@
+=== v5mitosis_cotrain_v3_routing vast.ai H100 dispatch (routing fix g2+g3) ===
+Tue May 12 14:24:40 UTC 2026
+  steps=8000 d_model=384 cells=2-64 batch=32 ctx=256
+  ROUTING: top_k=4 aux_alpha=0.01 λ_init=1.0 λ_final=0.01 sched=cosine
+  cost_cap=$8.0 absolute_max=$8.8
+[1/9] Searching GPU offers (gpu_name in [H100_SXM,H100_PCIE,H100_NVL,A100_SXM4,A100_PCIE,H200] num_gpus=1 reliability>0.95 dph_total<5.0 disk_space>50 inet_down>100) ...
+  Selected: id=34292009 dph=$0.8681 gpu=A100
+[2/9] cost gate OK (est $1.3)
+[3/9] Renting...
+  Instance ID: 36622183
+[4/9] Waiting SSH (direct-IP) ...
+  ... 1/160 status=None
+  ... 2/160 status=loading
+  ... 3/160 status=loading
+  ... 4/160 status=loading
+  ... 5/160 status=loading
+  ... 6/160 status=loading
+  ... 7/160 status=loading
+  ... 8/160 status=loading
+  ... 9/160 status=loading
+  ... 10/160 status=loading
+  ... 11/160 status=loading
+  ... 12/160 status=loading
+  ... 13/160 status=loading
+  ... 14/160 status=loading
+  ... 15/160 status=loading
+  ... 16/160 status=loading
+  ... 17/160 status=loading
+  ... 18/160 status=loading
+  SSH ready: 82.66.51.122:14464 (19x5s)
+[5/9] Uploading code+corpus+probe ...
+Warning: Permanently added '[82.66.51.122]:14464' (ED25519) to the list of known hosts.
+Welcome to vast.ai. If authentication fails, try again after a few seconds, and double check your ssh key.
+Have fun!
+Warning: Permanently added '[82.66.51.122]:14464' (ED25519) to the list of known hosts.
+Welcome to vast.ai. If authentication fails, try again after a few seconds, and double check your ssh key.
+Have fun!
+Warning: Permanently added '[82.66.51.122]:14464' (ED25519) to the list of known hosts.
+Welcome to vast.ai. If authentication fails, try again after a few seconds, and double check your ssh key.
+Have fun!

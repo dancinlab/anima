@@ -21,6 +21,15 @@ PURPOSE
         → no per-cell specialization signal → CE can't drop)
       - if CE doesn't converge, ablate λ_init
 
+    SUPERSEDED-BY (2026-05-12, PSCC §51): the architectural-fix path is now its own
+    BG — see `state/anima_v5mitosis_cotrain_v3_routing_2026_05_12/`
+    (`train_v5mitosis_cotrain_v3_routing.py` + `dispatch_h100_v3_routing.sh`):
+    learnable Linear router on the pooled cell-input embedding (input-dependent!) +
+    hard top-K=4 MoE gating + Switch load-balancing aux (α=0.01) + annealed
+    gate-entropy reg (λ 1.0→0.01 cosine), installed via forward monkey-patch
+    (model body untouched). That is the recommended path g2+g3; this file
+    (λ-anneal-only) remains the modest-entropy-pressure variant.
+
 USAGE
     python3 train_v5mitosis_cotrain_v3.py \
         --corpus corpus/corpus_persona_balanced.txt \
