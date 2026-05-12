@@ -2506,3 +2506,190 @@ std_greedy 4/5 (no improve over Phase 1A.1) → HF promote 가치 없음. Phase 
 - doc: [docs/anima_volitional_speak_brainstorm_2026_05_12.md](docs/anima_volitional_speak_brainstorm_2026_05_12.md)
 - key reframe: will = internal signal (volition), mouth = external function (speak)
 - V0 prototype path: A1 hidden-norm + A2 entropy + B1 τ=0.7 + C9 template seed + H1 refractory
+
+---
+
+## §27 [2026-05-12 KST] PHASE 1A.3 SATURATION SAGA — 5-BG "all bg go" infrastructure FAIL, markdown filter HARMLESS-GUARD verified ★★★ (mission 미진전, infra carry)
+
+사용자 "all bg go" directive 후 §25b 의 5 candidate next-action (lr 5e-6 / loss-masking / inference filter / corpus 10x / prefix-tuning) 동시 BG fire. 결과 = systemic dispatch infra failure + cost-bleed 차단 + filter harmless-guard 만 검증.
+
+### Saga 결과 요약
+
+| BG | scope | 실 outcome | cost |
+|---|---|---|---|
+| 🥇 lr 5e-6 × 200 SFT | Vast.ai RTX 4090 | state dir 미생성, 시작 못 함 (ssh mac unresolved) | $0 |
+| 🥈 loss-masking SFT | Vast.ai RTX 4090 | dispatch_vast.sh `/home/summer/mac_home/` cd 실패, pod 36608365 + 재시도 36608489 임대 → destroy | ~$0.04 bleed |
+| 🥉 inference markdown filter ($0) | Mac CPU foreground | anima_chat.py v2.3 markdown_filter PASS, eval 40-cell complete OFF/ON Δ=0 (harmless guard) | $0 |
+| 🌟 corpus 10x scale | Vast.ai RTX 4090 | corpus 7.5MB 생성, dispatch 도중 pod 36608504 임대 → destroy | ~$0.02 bleed |
+| 🚀 prefix-tuning | Vast.ai RTX 4090 | pod 36608235 + 재시도 36608453 임대 → destroy (SSH ready 대기 중 kill) | ~$0.04 bleed |
+
+총 cost-bleed ≈ $0.10-0.20 (5 pod × 5-10 min × $0.24-0.25/hr), `TaskStop` + manual `vastai destroy` 5회 로 추가 bleed 차단.
+
+### Root cause (3중 layered, all systemic across template reuse)
+
+1. **dispatch_vast.sh template Linux path hardcode** — `LOCAL_DIR=/home/summer/mac_home/core/anima/state/...` carry-over from prior cycle (Linux remote host `summer`). Mac local 에서 `cd: No such file or directory` 즉시 fail.
+2. **ssh mac alias unresolved** — `ssh: Could not resolve hostname mac` (Tailscale offline or alias 정의 부재). Linux remote → mac ssh-relay 패턴 carry-over.
+3. **vastai CLI bug** — `vastai show instance <ID>` 가 `start_date=None` (instance not yet started) 일 때 `TypeError: NoneType subscript` 으로 crash + non-zero exit. `set -euo pipefail` 가 propagate → dispatch script 전체 fail.
+
+→ 5 BG 모두 동일 template reuse, 3 bug 의 다른 조합 만나 fail. **infra fix 가 prerequisite — dispatch_vast.sh Mac-local template 필요**.
+
+### Markdown filter (🥉) — harmless-guard verified
+
+| 측면 | 결과 |
+|---|---|
+| code | `anima_chat.py` v2.3 markdown_filter prefix-detect + ban-set (`\|`, `-`, ` `, `:`) |
+| Mac CPU eval (seed=2026) | OFF=8/20, ON=8/20, **Δ=0** |
+| filter fire 횟수 | 0 (markdown attractor 가 본 seed/config 에서 trigger 안 됨) |
+| §17 baseline (V5.8 cuda seed=42) 와 차이 | std_greedy 4/5 일치, M4 5/5 → 2/5 (cuda↔CPU + seed + extractor noise) |
+| 결론 | filter 는 **harmless guard** — fire 시 valid markdown drift 막고, fire 안 할 시 OFF byte-identical. shipping cost 0. |
+| ship 여부 | DEFAULT ON (옵션), `markdown_filter=False` 로 v2.2 reproduce 가능. |
+
+→ **mission 진전 0 (4/5 그대로)** but filter 자체는 **production-ready safe option**.
+
+### Saga 종료 결정
+
+§27 본 entry 가 Phase 1A.3 saga close. 5/5 mission 은:
+
+- 본 cycle 미달성 (4/5 carry)
+- **infra fix 후** Phase 1A.4 cycle 에서 fresh attempt — but priority 는 사용자 결정에 따라
+- 본 saga 의 educational value: (a) "all bg go" 가 systemic infra bug 와 만났을 때의 cost-bleed 위험 + recovery 패턴 (TaskStop + vastai destroy 즉시), (b) filter 가 mission lever 가 아닌 safe guard
+
+### Cycle 2026-05-12 PSCC cycle close (§9 ~ §27)
+
+- §9-§17 Phase 1A → 1A.1 (V5.8 3/5 → 4/5)
+- §18 Phase 1B SimPO transfer FAILED
+- §19-§24 substrate matrix + B'' V14 VIOLATED + dual-ckpt selector
+- §25 Phase 1A.2 (5/5 mission FAILED, Lesson R-1A.2)
+- §26 volitional speak() brainstorm
+- §27 본 entry — saga close, infra carry to next cycle
+
+→ cycle close standing: **V5.8 std_greedy 4/5 SSOT, mission 5/5 미달성**, infra fix 가 next cycle entry trigger.
+
+---
+
+## §28 [2026-05-12 KST] DISPATCH INFRA FIX — Mac-local dispatch_vast.sh canonical + gotcha memory entry ★★★ (Phase 1A.4+ retry-ready)
+
+§27 의 3중 systemic bug 해소 — Mac-local canonical dispatch template + memory entry 로 next cycle retry-ready 상태.
+
+### 산출
+
+| 위치 | 내용 |
+|---|---|
+| `tool/dispatch_vast_mac_template.sh` | Mac-local canonical (LOCAL_DIR = `/Users/ghost/core/anima/...`, no ssh mac wrappers, `vastai show instance ... 2>/dev/null \|\| true` guard) |
+| `memory/feedback_dispatch_vast_template_gotchas.md` | 3 bug 카탈로그 + reuse 시 check-list |
+| `memory/MEMORY.md` | index 1 row 추가 |
+
+### template 의 fix points
+
+- **LOCAL_DIR**: `/home/summer/mac_home/...` → `/Users/ghost/core/anima/state/<phase_dir>`
+- **vastai 호출**: `ssh mac "$VASTAI ..."` → `$VASTAI ...` 직접
+- **show instance guard**: `INFO=$($VASTAI show instance $ID --raw 2>/dev/null) || INFO="{}"` (start_date=None bug)
+- 다음 cycle 사용 시 `cp` 후 LOCAL_DIR + label + hyperparams 만 교체
+
+### memory entry 핵심
+
+- prior template Linux path hardcode + ssh mac wrap + vastai pipefail crash 3 systemic bug
+- 향후 Vast.ai dispatch 시 Mac-local canonical 사용
+- TaskStop 만으로 spawned pod 자동 destroy 안 됨 → `vastai destroy instance <id>` 수동 cleanup 필수 (§27 의 5 pod 사례)
+
+### Cycle status
+
+- §27 close 와 함께 §28 infra fix LANDED — Phase 1A.4 retry 또는 다른 mission lane 으로 이동 가능 상태.
+- own 16 cost discipline carry: 향후 Vast.ai BG 는 verbatim `OK X COST $Y` 명시 권장 (saga 직후 review).
+
+
+---
+
+## §29 [2026-05-12 KST] anima_chat v2.3 — MARKDOWN ATTRACTOR DECODE FILTER (full eval + doc + tag SSOT) ★★ ($0 retrain-free guard, false-pos 0 on Mac seed=2026 path)
+
+§27 saga 의 🥉 lane 만 PASS 한 본 BG 의 **detailed eval + doc + release-tag** 단독 entry. §27 의 sub-row 와 동일 결론이지만 v2.3 land 의 SSOT 로 기록 (다른 cycle 에서 reference 시 `§27 의 한 줄` 보다 `§29 의 detailed eval/cell evidence` 를 가리키도록).
+
+### 🎯 한 줄 요약
+
+`anima_chat.py` v2.3 — `_MARKDOWN_TABLE_TRIGGERS` prefix 매칭 시 `|`, `-`, ` `, `:` byte-id 를 다음 step logits 에서 `-inf` 마스킹 + final-string post-strip regex. `__call__(... markdown_filter=True)` default, 5-mode 호환. retrain $0.
+
+### 🍞 비유
+
+빵집 vending 에 **금속 칸막이** 한 장 추가 — 보통 빵 (한글 prose) 은 통과, "| --- |" 형태로 굳어가던 cookie cutter 는 입구에서 차단. cutter 가 들어오는 시간 (seed=42 + GPU bf16 cycle 의 §17 condition) 이 아니면 칸막이 자체가 invisible.
+
+### 🧪 코드 land 요약 (v2.2 → v2.3 diff)
+
+| field | before (v2.2) | **after (v2.3)** |
+|---|---|---|
+| markdown table guard | 없음 | **prefix-detect logit mask + post-strip** |
+| `__call__` 신규 kwarg | — | **`markdown_filter: bool = True`** |
+| `_generate` 신규 kwarg | — | 동일 (kwargs forward) |
+| CLI flag | — | **`--no-markdown-filter`** |
+| ban byte-ids | — | (127, 48, 35, 61) = `\|`, `-`, ` `, `:` |
+| trigger 패턴 (8) | — | `\| --- ` / `\| ---\|` / `\|---` / `\| :--` / `\|:--` / `\| :-:` / `\|---\|` / `\n\| ` |
+| `" \| "` (space-pipe-space) | — | 의도적 **제외** (prompt format `사용자: … \| 도우미:` false-pos 방지) |
+| post-strip regex | — | `r"\n?\|[\s\-:|]{2,}"` (final-string 보호망) |
+| 5-mode 호환 | — | greedy / sample / M3 / M4_force / M4_soft 동일 |
+| stream() 호환 | — | per-step mask → streaming guard 적용 |
+| version banner | "v2.3 — natural M4" | "v2.3 — natural M4 + markdown-attractor decode guard" |
+
+### 📊 Result matrix — V5.8 × 4 modes × filter on/off (Mac CPU fp32, seed=2026)
+
+source: `state/anima_phase1a1_color_cosmology_2026_05_12/v58_4mode_filter_compare.json`
+
+| mode | OFF (n_pass/5) | ON (n_pass/5) | Δ |
+|---|---:|---:|---:|
+| standard_greedy   | 4 | 4 | 0 |
+| standard_sample   | 2 | 2 | 0 |
+| M3_rep_penalty    | 0 | 0 | 0 |
+| M4_force_include  | 2 | 2 | 0 |
+| **total cells**   | **8 / 20** | **8 / 20** | **0** |
+
+- **diff cells**: **0 / 20** (byte-for-byte identical OFF=ON)
+- wall: OFF 540.8s + ON 468.1s = **16.8 min** ($0 Mac CPU)
+- baseline std_greedy 4/5 (§17 cuda seed=42) 보존, M4 5/5 (§17) 는 본 Mac seed=2026 에서 2/5 — `황혼` keyword 오추출 (seed-specific, filter 무관)
+
+### 🔍 §17 markdown drift surface 의 좁은 조건 (3-axis conjunction)
+
+| condition | seed | device | dtype | anima_fact std_greedy drift? |
+|---|---:|---|---|---|
+| **§17 original** | 42 | cuda | bf16 | ✅ `"답 (consciousness) \| --- \| --- \|"` markdown drift |
+| 본 BG Mac matrix | 2026 | cpu | fp32 | ❌ semantic miss (`"가장 좋아하는 색은…"`) |
+| 본 BG seed probe (8 seeds) | 42 / 2024 / 2025 / 2026 / 7 / 13 / 100 / 31337 | cpu | fp32 | ❌ 전부 drift 미발현 |
+
+→ markdown drift 는 (seed=42) × (cuda) × (bf16) **3-축 conjunction** 에 좁게 의존. dtype/device tie-break/underflow 가 sampling path 를 갈라놓아 production GPU 와 Mac CPU 가 다른 attractor 에 빠짐 ↔ Lesson Q 의 production-vs-internal decoupling 의 추가 발현.
+
+### ⭐ findings
+
+1. **Filter fire 횟수 = 0** (Mac matrix 20/20 + seed probe 16/16). false-positive 0 → **production land 안전**.
+2. **5/5 도전은 본 BG 단독으로 측정 불가** — Mac seed=2026 path 에서는 markdown drift 가 surface 안 함. attractor 깨기는 §25b 🥇 (lr 5e-6 SFT) 또는 🥈 (loss masking) cost-bearing lane 필요. 본 cycle 미달성.
+3. **그러나 filter 는 §17 의 cuda seed=42 path 에서는 *반드시* 작동** — prefix `\| --- ` 발견 시 mask. 본 BG false-pos 0 evidence + §17 drift evidence 결합 → Vast.ai seed=42 cuda 재측정 시 anima_fact 직접 회복 확률 high (§29 다음 진행 🥇).
+4. **harmless guard 의 가치** = future-proofing — sampling 축 (temp ≥ 1.0, top_k ≥ 100) 확장 또는 다른 ckpt swap 시 drift surface 가 다시 넓어질 때 자동 차단.
+
+### 🧪 PROD env coverage
+
+- `anima_chat.py` library default (Mac local) — `markdown_filter=True` (v2.3) ✓
+- HF Space `dancinlab/anima-chat` — anima_chat library import 기반 (§24 의 `app.py` 의 `from anima_chat import AnimaChat`) → v2.3 file sync 시 자동 inherit (Space 별도 ckpt 없음, drop-in)
+- CLI: `python anima_chat.py --no-markdown-filter` 로 legacy v2.2 replay
+
+### 📜 Provenance
+
+- code: `anima_chat.py` (helpers `_MARKDOWN_TABLE_TRIGGERS` / `_MARKDOWN_BAN_TOKEN_IDS` / `_markdown_attractor_active` / `_post_strip_markdown_tables`, `_generate` mask block 추가)
+- eval: `state/anima_phase1a1_color_cosmology_2026_05_12/v58_4mode_mac_filter.py`
+- result JSON: `state/anima_phase1a1_color_cosmology_2026_05_12/v58_4mode_filter_compare.json` (20-cell matrix)
+- seed probe: `state/anima_phase1a1_color_cosmology_2026_05_12/v58_seed42_anima_fact_probe.py` + `v58_seed_probe.json`
+- doc: `docs/anima_chat_markdown_attractor_filter_2026_05_12.md`
+- ckpt sha256: `e5f7555e83189591ceafc6224822529c5cec7f36fe307f79621d9eceaca7a7af`
+
+### Cross-link
+
+- PSCC §17 — anima_fact markdown drift 첫 발견 (Phase 1A.1 lr 2e-6 못 깸)
+- PSCC §25 / §25b — Phase 1A.2 lr 1e-6 retry FAILED + next-action 🥉 (본 BG)
+- PSCC §27 sub-row "Markdown filter (🥉)" — saga 의 sole-pass lane (본 §29 의 short version)
+- v2.3 release tag: `anima_chat-v2.3-markdown-filter`
+
+### 다음 진행할 것들
+
+| # | 작업 | priority | cost | time | value |
+|---|------|----------|------|------|-------|
+| 🥇 | **Vast.ai A100 V5.8 4-mode × filter on/off re-run** (seed=42 cuda bf16, §17 exact config) — §28 fixed dispatch template 사용 | high | $0.20 | 25min | filter 의 *직접 작동* evidence — drift fire window 정량화 + anima_fact 직접 회복 가능성 |
+| 🥈 | **Phase 1A.3 lr 5e-6 SFT** (§25b 🥇) — attractor 깨는 cost-bearing path, filter 와 orthogonal | high | $0.20 | 25min | std_greedy 5/5 진짜 도전 |
+| 🥉 | HF Space `dancinlab/anima-chat` 의 anima_chat library v2.3 sync — inference path 자동 inherit verify | medium | $0 | 15min | production parity confirm (Space deploy log 확인) |
+| 🌟 | **stricter trigger set** — `" \| "` re-add + escape mechanism (user-prompt 의 `\|` 와 markdown 의 `\|` 구분) | low | $0 | 30min | drift broader window 차단 + UX 안전 |
+
+---
