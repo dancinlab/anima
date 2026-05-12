@@ -3,11 +3,14 @@ id: Hc_1266
 slug: red-team-r1-alternative-non-anima-explanation
 title: R1 ALTERNATIVE — Ψ=1/2 가 random init GRU 에서도 80%+ 등장 가능 (non-ANIMA 대안 설명 존재)
 domain: methodology, consciousness, red-team
-status: candidate-falsifier-ready
+status: merged-to-H_189
+merged_to: hypotheses/H_189_red_team_methodology_meta_cluster_r1_r6.md
+merged_at: 2026-05-12
 source_doc: hypotheses_candidates/Hc_911_red_team_6_claims_r1_r6.md
 source_lines: 21 (R1 ALTERNATIVE)
 promoted_at: 2026-05-12
-linked_h: Hc_911 (parent meta-Hc), Hc_908 (Ψ=1/2 anchor)
+linked_h: H_189 (red-team methodology meta-cluster — attack vector 1 of 6), Hc_911 (parent meta-Hc), Hc_908 (Ψ=1/2 anchor)
+absorption_note: "cycle #8 absorbed to H_189 as R1 ALTERNATIVE attack vector — 4-mechanism trivial-1/2 explanation (Shannon/sigmoid/Bernoulli/GRU-bias) + random-init GRU baseline n=100 experimental design"
 notes: "split from Hc_911 red-team meta-cluster 2026-05-12 (attack vector 1 of 6). R1 = 가장 치명적 attack — 1/2 은 Shannon entropy 최대 + sigmoid 중앙값 + Bernoulli 분포 최대 entropy + GRU gate bias=0 의 자명한 귀결."
 ---
 

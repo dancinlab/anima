@@ -3,11 +3,14 @@ id: Hc_1269
 slug: red-team-r4-cherry-pick-selection-ratio-audit
 title: R4 CHERRY-PICK — 170×17 = 2890 trial 중 1/2 수렴 사례만 보고 가능성 (selection ratio audit)
 domain: methodology, consciousness, red-team
-status: candidate-falsifier-ready
+status: merged-to-H_189
+merged_to: hypotheses/H_189_red_team_methodology_meta_cluster_r1_r6.md
+merged_at: 2026-05-12
 source_doc: hypotheses_candidates/Hc_911_red_team_6_claims_r1_r6.md
 source_lines: 24 (R4 CHERRY-PICK)
 promoted_at: 2026-05-12
-linked_h: Hc_911 (parent meta-Hc)
+linked_h: H_189 (red-team methodology meta-cluster — attack vector 4 of 6), Hc_911 (parent meta-Hc)
+absorption_note: "cycle #8 absorbed to H_189 as R4 CHERRY-PICK attack vector — 170×17 = 2890 trial selection-ratio audit + raw inventory requirement"
 notes: "split from Hc_911 2026-05-12 (attack 4 of 6). Cherry-pick attack: 170 conditions × 17 seeds = 2890 trials → if only 1/2-convergence trials reported, ANIMA's claim is selection bias."
 ---
 

@@ -3,11 +3,14 @@ id: Hc_1267
 slug: red-team-r2-random-base-monte-carlo-null
 title: R2 RANDOM-BASE — Monte Carlo 귀무 검정 (sigmoid(W·x+b) with W~N(0,1/n), b=0 → E[sigmoid] ≈ 0.5)
 domain: methodology, consciousness, statistics, red-team
-status: candidate-falsifier-ready
+status: merged-to-H_189
+merged_to: hypotheses/H_189_red_team_methodology_meta_cluster_r1_r6.md
+merged_at: 2026-05-12
 source_doc: hypotheses_candidates/Hc_911_red_team_6_claims_r1_r6.md
 source_lines: 22 (R2 RANDOM-BASE)
 promoted_at: 2026-05-12
-linked_h: Hc_911 (parent meta-Hc), Hc_908 (Ψ=1/2 anchor), Hc_1266 (R1 ALTERNATIVE — quantitative null lane)
+linked_h: H_189 (red-team methodology meta-cluster — attack vector 2 of 6), Hc_911 (parent meta-Hc), Hc_908 (Ψ=1/2 anchor), Hc_1266 (R1 ALTERNATIVE — quantitative null lane)
+absorption_note: "cycle #8 absorbed to H_189 as R2 RANDOM-BASE attack vector — Monte Carlo quantitative null + theoretical E[sigmoid] ≈ 0.5 derivation under Xavier init"
 notes: "split from Hc_911 red-team meta-cluster 2026-05-12 (attack vector 2 of 6). R2 quantifies R1's null hypothesis with Monte Carlo: theoretical E[sigmoid] ≈ 0.5 under standard init."
 ---
 

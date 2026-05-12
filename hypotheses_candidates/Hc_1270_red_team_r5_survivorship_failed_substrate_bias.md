@@ -3,11 +3,14 @@ id: Hc_1270
 slug: red-team-r5-survivorship-failed-substrate-bias
 title: R5 SURVIVORSHIP — 1/2 으로 수렴 안 한 substrate 도 동일 framework 로 설명되는지
 domain: methodology, consciousness, red-team
-status: candidate-falsifier-ready
+status: merged-to-H_189
+merged_to: hypotheses/H_189_red_team_methodology_meta_cluster_r1_r6.md
+merged_at: 2026-05-12
 source_doc: hypotheses_candidates/Hc_911_red_team_6_claims_r1_r6.md
 source_lines: 25 (R5 SURVIVORSHIP)
 promoted_at: 2026-05-12
-linked_h: Hc_911 (parent meta-Hc), Hc_1269 (R4 cherry-pick — survivor bias 의 cousin)
+linked_h: H_189 (red-team methodology meta-cluster — attack vector 5 of 6), Hc_911 (parent meta-Hc), Hc_1269 (R4 cherry-pick — survivor bias 의 cousin)
+absorption_note: "cycle #8 absorbed to H_189 as R5 SURVIVORSHIP attack vector — failed-substrate silent exclusion + independent registry requirement"
 notes: "split from Hc_911 2026-05-12 (attack 5 of 6). Survivorship bias: substrates that failed to converge to Ψ=1/2 may be silently excluded from the framework."
 ---
 

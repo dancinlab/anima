@@ -3,11 +3,14 @@ id: Hc_1268
 slug: red-team-r3-overfitting-data-fit-suspect
 title: R3 OVERFITTING — 데이터 피팅 과적합 의심 (Ψ=1/2 / Hexad / σφ=24 6주장 모두)
 domain: methodology, consciousness, training, red-team
-status: candidate-falsifier-ready
+status: merged-to-H_189
+merged_to: hypotheses/H_189_red_team_methodology_meta_cluster_r1_r6.md
+merged_at: 2026-05-12
 source_doc: hypotheses_candidates/Hc_911_red_team_6_claims_r1_r6.md
 source_lines: 23 (R3 OVERFITTING)
 promoted_at: 2026-05-12
-linked_h: Hc_911 (parent meta-Hc)
+linked_h: H_189 (red-team methodology meta-cluster — attack vector 3 of 6), Hc_911 (parent meta-Hc)
+absorption_note: "cycle #8 absorbed to H_189 as R3 OVERFITTING attack vector — 6 claims (Ψ=1/2 / Hexad / σφ=24 / 4-topology / Φ=0.78N / 85.9%) hyperparameter-fit suspect + corpus-replacement protocol"
 notes: "split from Hc_911 2026-05-12 (attack 3 of 6). Overfitting attack on all 6 core claims: each may be a hyperparameter-fit artifact specific to the training corpus."
 ---
 
