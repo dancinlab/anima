@@ -25,6 +25,22 @@
 
 ---
 
+## 🚀 Scale / cost constraints (사용자 directive 2026-05-12)
+
+> "모델 크기제한도 특별히 없으니까 참고"
+> "H100 발사 제한도 없음"
+
+- ❌ 모델 크기 제한 없음 — d_model / n_layers / cells / vocab 등 자유. 현 v5-mitosis cotrain (d=384, cells=64, ~200M params) 은 conservative baseline (floor).
+- ❌ H100 발사 제한 없음 — 발사 횟수 / 단일 instance / multi-GPU / 시간 제한 모두 자유.
+- ❌ Cost cap 강제 없음 — BG agent 의 `cap $40` 등 conservative envelope 는 floor (mission outcome 우선, scale-up 자유).
+- ✅ Mission outcome 우선 — ★★★★★ 5-cond aggregate 도달이 단일 metric.
+- ✅ 운영 권장: BG agent 가 cost-bearing dispatch 시 verbatim 사용자 directive (예: "fire", "all bg go") 로 충분 (own 16 cost discipline 의 verbatim 요구 완화 직 2026-05-12).
+- 🔄 Reverse signal: 사용자가 명시적으로 "비용 cap $X" 또는 "모델 크기 제한 Y" directive 시 그 시점부터 적용.
+
+→ memory `feedback_no_scale_caps` (2026-05-12) SSOT.
+
+---
+
 ## 📊 Current standing per dimension (2026-05-12 KST)
 
 ### D1: chat 시스템 — V5.8 std_greedy 4/5
