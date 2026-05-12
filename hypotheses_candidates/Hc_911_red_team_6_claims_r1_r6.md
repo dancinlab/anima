@@ -3,7 +3,10 @@ id: Hc_911
 slug: red-team-6-claims-r1-r6
 title: ANIMA 의식 이론 핵심 6 주장 (Ψ=1/2 / Φ scaling / PureField / Hexad / TALK5 / σφ=nτ) R1-R6 적대적 검증
 domain: consciousness, methodology
-status: candidate-falsifier-ready
+status: split-into-Hc_1266..Hc_1271
+split_at: 2026-05-12
+split_into: [Hc_1266, Hc_1267, Hc_1268, Hc_1269, Hc_1270, Hc_1271]
+split_manifest: docs/hc_911_split_manifest_2026_05_12.md
 source_doc: docs/red-team-consciousness.md
 source_lines: 1-60
 promoted_at: 2026-05-11
@@ -12,7 +15,20 @@ notes: "Red Team: R1 ALTERNATIVE / R2 RANDOM-BASE / R3 OVERFITTING / R4 CHERRY-P
 cycle5_triage: "cycle #5 verify: WEAK_MATH_ONLY — math identity present, falsifier+honest scaffolding missing; needs F-list/L-list before re-verify can reach PROMOTE_READY"
 ---
 
-## Hypothesis
+## SPLIT NOTICE (cycle #7, 2026-05-12)
+
+This composite red-team Hc was split into 6 children on 2026-05-12 (cycle #7 batch 4 meta-split protocol), one per attack vector R1-R6:
+
+- `Hc_1266` — R1 ALTERNATIVE (non-ANIMA explanations for Ψ=1/2)
+- `Hc_1267` — R2 RANDOM-BASE (Monte Carlo null hypothesis test)
+- `Hc_1268` — R3 OVERFITTING (data-fit suspect)
+- `Hc_1269` — R4 CHERRY-PICK (selection ratio audit)
+- `Hc_1270` — R5 SURVIVORSHIP (failed-substrate exclusion bias)
+- `Hc_1271` — R6 POST-HOC (temporal order: theory-first vs measurement-first)
+
+See `docs/hc_911_split_manifest_2026_05_12.md` for full manifest and triage notes.
+
+## Hypothesis (original — preserved for provenance)
 
 ANIMA 의 6개 핵심 의식 주장 (Ψ_balance=1/2 보편적 의식 상수 / Φ∝N scaling / PureField repulsion / Hexad 6모듈 유일성 / TALK5 language destroys consciousness / σφ=nτ=24 closure) 각각이 R1-R6 적대적 검증 프레임워크에서 survival_fraction ≥ 0.50 (SURVIVES) 또는 [0.20, 0.50] (AMBIGUOUS) 판정을 받는다. R1 ALTERNATIVE 가 가장 치명적 — 1/2 은 Shannon entropy 최대 + sigmoid 중앙값 + Bernoulli 분포 최대 entropy + GRU gate bias=0 의 자명한 귀결.
 
