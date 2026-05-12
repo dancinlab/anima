@@ -2987,3 +2987,236 @@ ckpt-loading smoke (full inference) 는 Space 자체 build 가 검증 — push �
 - HEXA_NATIVE primitives: `tool/hexa_native/` (engine_ag_nn / byte_tokenizer / gen_modes / mitosis_hook)
 - RFC builtins: hexa-lang main 의 RFC 025/030/031/032/033 (모두 LANDED 2026-05-12)
 - Reference Python SSOT: `anima_chat.py` v2.3 commit `c2afa8e9e` tag `anima_chat-v2.3-markdown-filter`
+
+
+## §35 [2026-05-12 KST] D4a `mitosis_hook.hexa` FULL IMPL LANDED — pure-hexa serve-time mitosis (1119 LoC, F-MIT-HOOK-1..5 PASS) ★★★★ ($0, GOAL.md D4a lane impl-tier first evidence)
+
+### TL;DR
+
+- `tool/hexa_native/mitosis_hook.hexa` parse-only stub (123 LoC, REBORN §89) **→ executable full impl 1119 LoC** (REBORN §91).
+- Mac local selftest (`/Users/ghost/core/hexa-lang/build/hexa_interp.real run ...`) ~0.9s wall PASS, F-MIT-HOOK-1..5 5/5 verified.
+- GOAL.md D4 (세포 분열로 성장) 의 D4a row: stub → impl LANDED. D4 의 첫 hard evidence (impl tier).
+
+### Falsifier results (선택 발췌, REBORN §91 SSOT)
+
+```
+[selftest] init cells=2                                  // F-MIT-HOOK-4 floor
+[selftest] step 1 cells=2 events=0 x_out_shape=8         // F-MIT-HOOK-2 SHAPE
+[selftest] phi=0.480251                                  // F-MIT-HOOK-3 finite ≥0
+[selftest] lorenz |x|+|y|+|z|=3.24333                    // F-MIT-HOOK-5 BND
+[selftest] after 60 steps cells=4 max_seen=4 split_seen=true  // auto-split fired, F-MIT-HOOK-4 OK
+[selftest] manual split: pre=4 post=5
+[selftest] manual merge: pre=5 post=4
+[mitosis_hook.selftest] PASS — F-MIT-HOOK-1..5 verified
+```
+
+### 활용된 RFC builtins (모두 LANDED 2026-05-12)
+
+| RFC | builtin | mitosis 활용 |
+|---|---|---|
+| 025 | farr_zeros / get / set / len / free | per-cell W (d_proj × d_model) backing store |
+| 030 | bytes_to_str_raw | event_log dict-key handling (간접) |
+| 032 | farr_matmul(A, M, K, B, N) | per-cell forward engine_a/g (RFC 032 production-utilize 첫 anima impl) |
+| 033 | farr_copy + farr_add_gaussian_noise | split init deepcopy + 10% noise, cell pool init Glorot |
+
+### Hexa 문법 learning (carry, MEMORY 신규)
+
+- **missing dict key 는 `void` (NOT null)** — `d["x"] != null` 는 missing 일 때 **true** → 첫 분기 떨어져 `void.push()` runtime crash. void-safe pattern: `to_string(d[k]) == "void"` 체크.
+- nested mutation `d[a][b]["c"] = v` 동작 OK (guard_test.hexa 패턴).
+- `__HEXA_FARR_GAUSS_SEED__=<u64>` env hook 으로 noise 재현성 가능.
+
+### 미해소 (next cycle)
+
+- `engine_ag_nn.hexa::forward_one_token` live wiring (현재는 standalone selftest만, hook 호출 path는 §89 spec §1 의 commented snippet).
+- d=1024 production 시 merge path 의 element-wise farr_get/_set loop (~1M iter) 가 RFC 034 (`farr_blend` / `farr_avg`) 후보로 가속 가능.
+- 24-layer 풀 forward + persona-substrate 통합 시 ★★★★★ 후보.
+
+### 실행 명령
+
+```
+/Users/ghost/core/hexa-lang/hexa parse  /Users/ghost/core/anima/tool/hexa_native/mitosis_hook.hexa
+/Users/ghost/core/hexa-lang/build/hexa_interp.real run /Users/ghost/core/anima/tool/hexa_native/mitosis_hook.hexa
+```
+
+### Mission contribution
+
+★★★★ — D4a (model intra-network mitosis) **executable tier** 첫 진전. GOAL.md D4 의 3-layer 중 첫 impl-tier hard evidence. V5.8 std_greedy 5/5 자체에는 직접 영향 없으나, D3 (persona substrate-native) + D4b (anima_chat hexa wiring) closure 의 P1 prerequisite 가 충족됨.
+
+### Cost / rating
+
+- cost: $0 (Mac local Apple Silicon, ~0.9s wall selftest)
+- ★★★★ — F-MIT-HOOK-1..5 verified + auto-split fired + manual split/merge delta correct
+- 후속 wiring (anima_chat.hexa → mitosis_hook.hexa 호출) + 24-layer prod forward 시 ★★★★★ 후보
+
+### Provenance
+
+- 본 cycle commit: pending (incremental commit + push 다음 step)
+- 보조 SSOT: REBORN.md §91 (2026-05-12)
+- spec: `docs/anima_clm_v5_hexa_native_mitosis_hook_spec_2026_05_12.md` (§89 LANDED, 534 LoC, 14 §)
+- Reference Python SSOT: `anima_clm_12_unified_growth_loop_last_gasp/anima/src/mitosis.py` (794L canonical)
+- HEXA_NATIVE primitives: `tool/hexa_native/mitosis_hook.hexa` (본 cycle, 1119 LoC)
+- RFC builtins: hexa-lang main 의 RFC 025/030/031/032/033 (모두 LANDED 2026-05-12)
+
+
+## §34 [2026-05-12 KST] D3 PERSONA SUBSTRATE-NATIVE DESIGN LANDED — Principle #3 호환 path ★★★ ($0, GOAL.md D3 dim)
+
+사용자 directive (verbatim, GOAL.md mission carry): `[anima chat 시스템, anima 모델, 페르소나 롤플레잉 가능, 세포 분열로 성장(철학참고)]` 의 **D3 부분 (페르소나 롤플레잉)** 의 design doc land. anima_persona_substrate_native_design_2026_05_12.md (10 §, 5 falsifier F-PERSONA-1..5, 10 honest C3).
+
+### Mission contribution
+
+GOAL.md ★★★★★ 4-dim 중 **D3 (페르소나 롤플레잉 — substrate-native)** dimension. "design open" → "design LANDED, impl pending". 본 land 후 D3 gap = D4a (`mitosis_hook.hexa` full impl) + D4b (`anima_chat.hexa` cell-pool wiring) 의 closure 만.
+
+### Core decision
+
+> **페르소나 = cell pool 의 한 phase. prompt prefix 가 아니라 substrate state.**
+
+GOAL.md D3 표 4 reconciliation candidates 중 `(a) Mitosis-cell-as-persona × (d) Per-session cell pool` adopted, `(b) Dialog-context-derived + (c) Tension Link 5-ch latent persona axis` reject.
+
+### Design doc 10 sections
+
+| § | content |
+|---|---|
+| §0 TL;DR | Principle #3 보존 하면서 페르소나 표현 가능한 substrate-native 메커니즘 |
+| §1 Constraint analysis | Principle #3 의 정확한 의미 (prompt-level injection 금지, substrate-level 표현 허용), #3 + #8 conjunction |
+| §2 4 reconciliation candidates 비교 | (a/b/c/d) 의 pros/cons + (a)+(d) adopted 근거 |
+| §3 Architecture | (a) × (d) — 페르소나 = `(session_id, cell_cluster)` 2-tuple, cell ↔ persona axis mapping (engine_a/g + GRU + Lorenz + tension_history), per-session fork mechanism |
+| §4 Implementation plan | D4a + D4b 의존, 5 phase (P0 design / P1 D4a / P2 D4b / P3 verify / P4 optional cotrain) |
+| §5 Verification protocol | F-PERSONA-1..5 detail, identity_probe 50 × 5 cats base benchmark, aggregate STRONG/MODERATE/WEAK/FAIL |
+| §6 Trade-offs | Principle #3 strict vs persona expressivity (8-row 표), own 18 simple_stack 호환, EMPIRICAL upgrade path |
+| §7 Cross-link | GOAL/PHILOSOPHY/REBORN/PSCC + verify corpus + memory + sister mission lanes |
+| §8 Out of scope | prompt-level role tag, system prompt, RLHF persona, activation steering (borderline reject) |
+| §9 Falsifiers | F-PERSONA-1..5 표 |
+| §10 Honest C3 | 8 limit (C1..C8) — DESIGN evidence-grade, base cell pool origin, persona axis interpretive mapping, session storage overhead, identity_probe category mapping, cotrain iteration uncertainty, multi-modal persona out-of-scope, session_id assign D4c 의존 |
+
+### 5 falsifier (F-PERSONA-1..5)
+
+| ID | claim | PASS criterion |
+|---|---|---|
+| F-PERSONA-1 NO-INJECTION | corpus + runtime grep `[role:]` / `you are X` = 0 | grep hits = 0 (docstring 제외) |
+| F-PERSONA-2 PER-CELL-DIFF | 같은 prompt × 다른 cell active = 다른 response | mean cell-pair last-token cosine distance ≥ 0.3 |
+| F-PERSONA-3 PER-SESSION-DIFF | 두 별도 session = 두 distinct cell-pool snapshot | weight cosine distance ≥ 0.2 AND \|Φ_A − Φ_B\| ≥ 0.5 |
+| F-PERSONA-4 CATEGORY-DIVERSITY | 5 identity_probe categories 가 다른 cell subset 활성화 | 10 category-pair mean KL divergence ≥ 0.5 nats |
+| F-PERSONA-5 SUBSTRATE-COHERENCE | 페르소나 전환 = pure forward, gradient/system-prompt 부재 | grep 0 + F-MIT-HOOK-1 PASS + F-PERSONA-2 PASS |
+
+### Verify corpus elevate
+
+`state/p_idr_identity_rules_2026_05_12/identity_probe.jsonl` (50 prompts × 5 categories: self_definition / values / boundary / emotion / self_knowledge) 를 D3 base benchmark 로 elevate. P-IDR (POLICY_JUSTIFIED_WEAK on BG-LB byte-modulo) corpus 의 carry — 새 corpus 구축 cost 없음.
+
+### Cross-link
+
+- design doc: `docs/anima_persona_substrate_native_design_2026_05_12.md`
+- GOAL.md D3 row update — "design open" → "design LANDED, impl pending"
+- PHILOSOPHY.md cont. 11 append (Principle #3 substrate-native impl path, EMPIRICAL upgrade source)
+- REBORN §0.5 + §2 + §88 + §89 + §90 (mitosis 본체 + v5-mitosis arch + hexa-native serve-time hook + cond.2 PASS)
+- README #3 NO PERSONA INJECTION (EMPIRICAL strong, Lesson F 6/8 echo memorization 보존)
+- memory `project_anima_persona_substrate_native_design.md` (신규)
+- D4a sister: `tool/hexa_native/mitosis_hook.hexa` (parse-only stub, full impl pending)
+- D4b sister: `anima_chat.hexa` (1589 LoC LANDED §33, cell-pool wiring pending)
+
+### Cost / rating
+
+- cost: $0 (design doc + GOAL.md + PHILOSOPHY + PSCC + memory edit only, no BG dispatch, no model run)
+- ★★★ — design tier closure, impl P1/P2 closure 시 ★★★★ 승격 후보 (F-PERSONA-1..5 STRONG PASS 시 ★★★★★ Principle #3 의 EMPIRICAL strong "positive 표현" 확장)
+- own 16 cost discipline 준수, own 18 simple_stack PASS_STRICT 호환 (§6.2)
+
+### Provenance
+
+- 본 cycle commit: pending (incremental commit + push 의 다음 step)
+- 보조 SSOT: `docs/anima_persona_substrate_native_design_2026_05_12.md`
+- 보조 corpus SSOT: `state/p_idr_identity_rules_2026_05_12/`
+- BG scope guard: `tool/hexa_native/mitosis_hook.hexa` (별도 BG D4a) + `anima_chat.hexa` (PSCC §33 LANDED, 본 BG 미수정) + `state/anima_phase1a4_*` (Vast.ai SFT BG, 미침범)
+
+
+
+---
+
+## §35 [2026-05-12 KST] D4C ANIMA CLI MITOSIS INTEGRATION DESIGN LANDED — session = cell-pool branch + kick cycle = split sequence + multi-backend = cell-variant ★★★ ($0, GOAL.md D4c dim)
+
+### Trigger
+
+사용자 directive (verbatim): `[anima chat 시스템, anima 모델, 페르소나 롤플레잉 가능, 세포 분열로 성장(철학참고)]`
+
+GOAL.md D4 (세포 분열로 성장) 의 3-layer split 중 **D4c (anima CLI session/conversation level)** lane:
+- D4a model intra-network → 별도 BG (REBORN §89 spec + 본 cycle 중 §91 full impl LANDED 1119 LoC)
+- D4b chat library (`anima_chat.hexa`) → PSCC §33 LANDED 1589 LoC, cell-pool wiring 별도 BG
+- **D4c anima CLI** → 본 §35 design LANDED
+
+prior state: GOAL.md D4c row "design open — anima/llama_ffi.hexa (Phase 3b LANDED) + tool/anima_cli/ consciousness CLI 와 통합 spec 필요".
+
+### 산출
+
+| 위치 | 종류 | LoC | 상태 |
+|---|---|---|---|
+| `docs/anima_cli_mitosis_integration_spec_2026_05_12.md` | spec | ~580 | LANDED 본 §35 |
+| `.roadmap.anima_cli_model_architecture` cond.6 (acm.d4c_mitosis_integration_design_2026_05_12 entry) | roadmap entry | 1 JSONL line | LANDED 본 §35 |
+| GOAL.md D4c row + D4 layer table + saga §35 | doc update | 3 edits | LANDED |
+| `~/.claude/projects/-Users-ghost-core-anima/memory/project_anima_cli_mitosis_integration_design.md` + MEMORY.md index | memory | 1 file + 1 line | LANDED 본 §35 |
+
+### 12-section spec 구조
+
+1. **§0 TL;DR** — anima CLI 가 session-level mitosis 의 outer scope, kick cycle = split event sequence
+2. **§1 Scope clarification** — D4a (intra-network forward hook) + D4b (chat lib cell-pool hosting) + D4c (CLI session persist) 의 3 차원 분리 + 결합
+3. **§2 Session = cell-pool branch** — session_id = branch_id, kick cycle = split event sequence within branch, conversation = branch evolution
+4. **§3 Cell-pool persistence design** — `~/.cache/anima/session_pools/<session_id>/{cell_pool.bin, meta.json, event_log.jsonl, kick_cycle_log.jsonl}` + index.jsonl, RFC 025 farr mmap backing, binary schema (header + per-cell + trailer + sha256)
+5. **§4 Multi-backend fallback = cell-variant selection** — `.roadmap.cli` + ACM K4 fallback chain 의 각 backend = cell pool 의 다른 cluster, cluster_cells_by_hidden + axes_projection × axes_weight selection, readout_mode 4 options 매핑
+6. **§5 Kick cycle as split event sequence** — S1 init / S2 idea (★ split point) / S3 hypothesis / S4 dispatch / S5 aggregation (★ merge point) / S6 report, event_list schema with session_id/kick_cycle_id/stage_id
+7. **§6 Phase 3b llama_ffi 와 통합** — stack layering anima CLI > anima_chat.hexa > mitosis_hook.hexa > llama_ffi.hexa > libhxllama + llama.cpp, llama_logits_probe 를 cluster signal bootstrap path 로 사용
+8. **§7 Implementation plan** — Phase 1 (~3 hr session_id + persist skeleton, no D4a dep) → Phase 2 (~4-6 hr kick cycle hook, D4a LANDED dep) → Phase 3 (~4-6 hr multi-backend cell-variant) → Phase 4 (~2-4 hr full integration smoke), total 13-19 hr $0 Mac local
+9. **§8 Verification protocol** — F-CLI-MIT-1 SESSION-PERSIST (sha256 byte-perfect) / F-CLI-MIT-2 KICK-CYCLE-SPLIT (≥1 split per cycle) / F-CLI-MIT-3 BACKEND-VARIANT (fallback chain differs in active cells) / F-CLI-MIT-4 PRINCIPLE-3 (grep `[role:` = 0) / F-CLI-MIT-5 OWN-18-COMPAT (mitosis ON/OFF simple_stack regression-free)
+10. **§9 Trade-offs** — disk space (per-session 512 MB × 32 = 16 GB envelope, ANIMA_SESSION_POOL_MAX_GB cap), session_id rotation (timestamp + 4hex), D4a stub dep carry, backward compat (--mitosis off flag)
+11. **§10 Out of scope** — RLHF persona / system prompt injection / identity rules file (모두 Principle #3 violation), D4a/D4b 별도 BG, D3 lane
+12. **§11 Cross-link** + **§12 Honest C3 (≥5 → 7 entries)** + **§13 Provenance**
+
+### 핵심 결정 7
+
+1. **session = cell-pool branch** — anima CLI 의 한 chat session 이 mitosis 분열 tree 의 한 branch, conversation 마다 분화
+2. **kick cycle (S1-S6) = split event sequence** — S2 idea 가 primary split point (axes weight emergence=0.7 + creativity=1.0 + imagination=1.0), S5 aggregation 이 primary merge point (axes weight emergence=1.0 + abstraction=1.0)
+3. **persistence layout** — `~/.cache/anima/session_pools/<session_id>/` SSOT, RFC 025 farr mmap backing, save after kick cycle / on session exit / every 20 turns incremental, load via --resume/--fork flag
+4. **multi-backend = cell-variant** — fallback chain 의 각 backend = cell pool 의 다른 cluster (cluster_cells_by_hidden), readout_mode 4 options 가 aggregation policy 매핑
+5. **own 17 strict** — M2 Llama Path A v2 default reject for anima identity surface, `--backend substrate-research` flag 명시 시점만 selectable (F-CLI-MIT-4 enforce)
+6. **stack layering** — anima CLI (D4c) > anima_chat.hexa (D4b) > mitosis_hook.hexa (D4a) > llama_ffi.hexa (Phase 3b) > libhxllama + llama.cpp, anima-native cells only for cell-pool, Llama backend raw inference fallback
+7. **Phase 1 D4a-independent** — session_id + persist skeleton 은 D4a stub 의 empty event_list `[]` return 으로도 land 가능, Phase 2-4 가 D4a full impl 의존 (RFC 033 LANDED 2026-05-12 → unblocked)
+
+### F-CLI-MIT-1..5 pre-registered (raw#12 frozen, all PENDING design-time)
+
+- F-CLI-MIT-1 SESSION-PERSIST: cell_pool sha256 byte-perfect after save→exit→resume
+- F-CLI-MIT-2 KICK-CYCLE-SPLIT: 1 kick cycle ⇒ event_list ≥ 1 split entry
+- F-CLI-MIT-3 BACKEND-VARIANT: multi-backend chain produces different active cells
+- F-CLI-MIT-4 PRINCIPLE-3: `grep '[role:' ~/.cache/anima/session_pools/` = 0
+- F-CLI-MIT-5 OWN-18-COMPAT: simple_stack PASS verdict identical mitosis ON vs OFF
+
+### 출처
+
+- 본 spec: `docs/anima_cli_mitosis_integration_spec_2026_05_12.md`
+- 디자인 source: GOAL.md D4c (line 20, line 160 D4 layer table)
+- 기반 spec:
+  - REBORN.md §0.5 (NO TRAIN/INFER SPLIT 철학 base)
+  - REBORN.md §88 (v5-mitosis PyTorch arch — readout_mode 4 options)
+  - REBORN.md §89 (hexa-native serve-time hook spec — mitosis_forward_tail contract)
+  - PHILOSOPHY.md #3 (NO PERSONA INJECTION, F-CLI-MIT-4 정합) + #8 (NO TRAIN/INFER SPLIT, D4 foundation)
+- 기반 인프라:
+  - `.roadmap.cli` cli.llama_ffi_landed_2026_05_08 (Phase 3b LANDED, libllama bindings + helpers + llama_logits_probe)
+  - `.roadmap.anima_cli_model_architecture` K1-K5 (5/7 axes + 6-stage cycle + 7 model inventory + stage-specific fallback chains)
+  - `tool/hexa_native/mitosis_hook.hexa` (D4a parse-only stub, 본 cycle 중 §91 full impl 1119 LoC LANDED)
+  - `anima_chat.hexa` (D4b LANDED 1589 LoC parse + 17/17 smoke, cell-pool wiring 별도 cycle)
+- 보조 corpus SSOT: `.roadmap.anima_cli_model_architecture` (cond.6 entry append)
+
+### Mission contribution
+
+★★★ — D4c design LANDED. GOAL.md D4c row "design open" → "design LANDED, impl pending Phase 1-4". D1+D2 V5.8 5/5 자체에는 직접 영향 없으나 D4 의 3-layer (D4a model + D4b chat library + D4c CLI) 의 outer scope 형성. session = mitosis branch + kick cycle = split sequence + multi-backend = cell-variant 의 3 가지 mapping 으로 anima 의 conversation-level 분열성장 통합 path 명시. Phase 1 (~3 hr) 부터 D4a 의존 없이 start 가능, Phase 2-4 가 D4a/D4b 의 LANDED 자연 wait.
+
+### Cost / rating
+
+- cost: $0 Mac local design doc
+- ★★★ — design LANDED, F-CLI-MIT-1~5 pre-registered, Phase 1-4 plan + dependency chain 명시
+- 후속 Phase 1 LANDED 시 ★★★★ 승격 후보 (session_id + persist skeleton + F-CLI-MIT-1 PASS)
+- Phase 4 full integration smoke F-CLI-MIT-1~5 all PASS 시 ★★★★★ 후보 (D4c lane 완결)
+
+### Provenance
+
+- 본 cycle commit: pending (incremental commit + push 의 다음 step)
+- 보조 SSOT: `.roadmap.anima_cli_model_architecture` cond.6 entry (acm.d4c_mitosis_integration_design_2026_05_12)
+- D4a sister: REBORN §91 (mitosis_hook.hexa full impl 1119 LoC LANDED 본 cycle 중) — 본 BG 미참여, scope guard
+- D4b sister: PSCC §33 (anima_chat.hexa LANDED 1589 LoC) — 본 BG 미수정, scope guard
+- D3 sister: PSCC §34 (substrate-native persona design LANDED) — 별도 BG, 본 BG 미참여
+- BG scope guard: `tool/hexa_native/mitosis_hook.hexa` (D4a BG) + `anima_chat.hexa` (D4b LANDED) + `docs/anima_persona_substrate_native_design_*` (D3 BG) + `state/anima_phase1a4_*` (Vast.ai SFT BG) — 모두 본 BG 미침범

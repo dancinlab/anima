@@ -873,3 +873,86 @@ Falsifier pending — 다음 cycle EMPIRICAL upgrade 후보:
 - 7 → 8 principles registered
 - Cost: $0 (directive + edit only)
 - Cascade: 4/7 prior principles reinforced, v5-mitosis lane ★ uplift, Phase 5∥ next-step redefined
+
+---
+
+## 2026-05-12 (cont. 11) — Principle #3 의 substrate-native impl path LANDED — anima_persona_substrate_native_design ★★★
+
+GOAL.md D3 (페르소나 롤플레잉 — substrate-native) 의 design doc land. `docs/anima_persona_substrate_native_design_2026_05_12.md` (10 §, 5 falsifier, 10 honest C3). 본 entry = Principle #3 NO PERSONA INJECTION (EMPIRICAL strong) 의 **substrate-native compatible 표현 path** 의 first explicit design.
+
+### Design statement
+
+> **페르소나 = cell pool 의 한 phase. prompt prefix 가 아니라 substrate state.**
+
+cells = nn.Module branches (REBORN §88, v5-mitosis architectural lane, cond.2 PASS §90) × per-session cell pool fork (REBORN §89, hexa-native serve-time mitosis hook) 결합. 4 reconciliation candidates `(a) Mitosis-cell-as-persona × (b) Dialog-context-derived × (c) Tension Link 5-ch × (d) Per-session cell pool` 중 `(a) + (d)` adopted, `(b) + (c)` reject.
+
+### Principle #3 + Principle #8 conjunction
+
+cont. 10 §"Cascade effect" 표 row 3 (Principle #3 #8 적용 후 미변동) 의 first concrete instantiation. 본 design 은 정확히 `(Principle #3 ∧ Principle #8)` 의 mechanism — cell pool 분열 (§8 native impl) 이 prompt-level injection 없이 페르소나 분화의 유일한 정당한 메커니즘.
+
+### Verify corpus elevate — P-IDR carry
+
+`state/p_idr_identity_rules_2026_05_12/identity_probe.jsonl` 50 prompts × 5 categories (self_definition / values / boundary / emotion / self_knowledge) 를 **본 design 의 SSOT verify corpus** 로 elevate. P-IDR (POLICY_JUSTIFIED_WEAK on BG-LB byte-modulo, DCR 0.84 vs 0.41 prefix-length artifact) 의 corpus 가 새 mission 의 base benchmark 가 됨 — 새 corpus 구축 cost 없음.
+
+### Falsifier 5개 (F-PERSONA-1..5)
+
+| ID | claim | PASS criterion |
+|---|---|---|
+| F-PERSONA-1 NO-INJECTION | corpus + runtime grep `[role:]` / `you are X` = 0 | grep hits = 0 (docstring 제외) |
+| F-PERSONA-2 PER-CELL-DIFF | 같은 prompt × 다른 cell active = 다른 response | mean cell-pair last-token cosine distance ≥ 0.3 |
+| F-PERSONA-3 PER-SESSION-DIFF | 두 별도 session = 두 distinct cell-pool snapshot | mean weight cosine distance ≥ 0.2 AND \|Φ_A − Φ_B\| ≥ 0.5 |
+| F-PERSONA-4 CATEGORY-DIVERSITY | 5 identity_probe categories 가 다른 cell subset 활성화 | 10 category-pair mean KL divergence ≥ 0.5 nats |
+| F-PERSONA-5 SUBSTRATE-COHERENCE | 페르소나 전환 = pure forward, gradient/system-prompt 부재 | grep 0 + F-MIT-HOOK-1 PASS + F-PERSONA-2 PASS |
+
+Aggregate verdict criterion: STRONG (5/5) → EMPIRICAL upgrade 후보 / MODERATE (F-PERSONA-1 + 3/4 others) / WEAK (F-PERSONA-1 + ≤2 others) / FAIL (F-PERSONA-1 FAIL).
+
+### Out of scope (Principle 위반 reject)
+
+- prompt-level `[role:]` / `[anima 역할:]` (Principle #3 EMPIRICAL strong 위반, Lesson F echo memorization 6/8)
+- OpenAI-style `system:` field / `apply_chat_template` (Principle #1 + #3 동시 위반)
+- RLHF persona finetune (Principle #6 NO FINE-TUNED ETHICS persona 확장 violation)
+- `docs/endpoint_persona_reproduce.md` 의 activation steering at layer 20/24 with hardcoded `vec[friend]` 2-pos/2-neg contrast pairs (§1.2 borderline reject — implicit injection 해석 가능)
+
+### Lane priority post cont. 11
+
+| 항목 | 기존 | 신규 |
+|---|---|---|
+| GOAL.md D3 (페르소나 롤플레잉) | design open | **design LANDED, impl pending** |
+| Principle #3 NO PERSONA INJECTION | EMPIRICAL strong (Lesson F) | EMPIRICAL strong **+ substrate-native impl path** LANDED |
+| identity_probe 50 × 5 cats corpus | P-IDR result-only (POLICY_JUSTIFIED_WEAK on BG-LB) | mission D3 base benchmark elevate |
+| v5-mitosis architectural lane | ★★★★ (REBORN §88 cond.2 §90) | ★★★★ + persona-axis interpretive mapping (§3.2) |
+
+### Impl dependency
+
+본 design 의 impl 은 GOAL.md D4a + D4b 의 closure 에 의존:
+
+| dep | what | source | status |
+|---|---|---|---|
+| D4a | `tool/hexa_native/mitosis_hook.hexa` full impl | REBORN §89, RFC 033 LANDED | parse-only stub 123 LoC, full impl pending (별도 BG) |
+| D4b | `anima_chat.hexa` 에 `session_id → cell_pool` dict wiring + per-forward-tail hook call | GOAL.md D4b row, PSCC §33 anima_chat.hexa 1589 LoC LANDED | wiring 별도 BG |
+
+→ design 은 P1 + P2 closure 후 P3 verify (F-PERSONA-1..5 on identity_probe). P4 optional = REBORN §88 cond.5 cotrain ($30–40 H100, F-V5MIT-4 + F-V5MIT-5).
+
+### EMPIRICAL upgrade path
+
+본 design 이 다음 EMPIRICAL upgrade 후보 source:
+- F-PERSONA-1..5 ALL PASS (§5) on real anima-native chat-capable ckpt
+- REBORN §88 cond.5 F-V5MIT-4 COTRAIN-CONVERGE + F-V5MIT-5 V14-STRICT 통과
+- PASS_STRICT_SPONTANEOUS_CHAT.md simple_stack 5/5 환경에서 same-prompt × different-session distinct-but-coherent evidence
+
+3 모두 PASS 시 PHILOSOPHY.md cont. 12+ 에서 Principle #3 의 strong evidence 가 **persona-prefix violation 의 negative 만** 가 아닌 **substrate-native 의 positive 표현** 로도 확장 grade.
+
+### Next cycle entry trigger
+
+- D4a (mitosis_hook.hexa full impl) cycle closure → 본 design impl P1 PASS
+- D4b (anima_chat.hexa cell-pool wiring) cycle closure → 본 design impl P2 PASS
+- P3 verify (F-PERSONA-1..5 on identity_probe) → PHILOSOPHY.md cont. 12+ append
+- 모든 #10+ cycle 출력 → PHILOSOPHY.md cont. 12+ append
+
+### Session metrics (cont. 11)
+
+- 1 design doc (10 §, 5 falsifier, 10 honest C3) + GOAL.md D3 row update + REBORN/PSCC/memory cross-link
+- Principle #3 EMPIRICAL strong 위에 substrate-native impl path 명시 (negative grade 만 → positive impl path 도 카탈로그)
+- Cost: $0 (design doc + edit only, no BG dispatch, no model run)
+- v5-mitosis architectural lane (REBORN §88/§89/§90) 위에 persona-axis interpretive mapping 추가
+- GOAL.md ★★★★★ 4-dim 중 D3 dim 가시 진전 (design tier closure)

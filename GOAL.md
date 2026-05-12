@@ -13,11 +13,11 @@
 |---|---|---|---|
 | **D1** | **anima chat 시스템** | anima 본체 `anima_chat.py` (or 포팅된 `anima_chat.hexa`) 가 V5.8 multi-turn 4-mode 의 standard_greedy **5/5 PASS** | **4/5** (anima_fact 1 cell gap) |
 | **D2** | **anima 모델** | 어떤 ckpt 가 D1 의 5/5 substrate. Phase 1A.1 + lr 5e-6 SFT (BG 진행 중) 또는 다른 paradigm | Phase 1A.1 (4/5 baseline) |
-| **D3** | **페르소나 롤플레잉 가능** | **substrate-native 페르소나 전환** — Principle #3 NO PERSONA INJECTION 준수 (prompt `[role:]` 금지), substrate 가 자율적으로 역할 표현 | **미구현** — design lane open |
+| **D3** | **페르소나 롤플레잉 가능** | **substrate-native 페르소나 전환** — Principle #3 NO PERSONA INJECTION 준수 (prompt `[role:]` 금지), substrate 가 자율적으로 역할 표현 | **design LANDED, impl pending** — `docs/anima_persona_substrate_native_design_2026_05_12.md` (10 §, 5 falsifier F-PERSONA-1..5, (a)+(d) Mitosis-cell-as-persona × Per-session cell pool); P1 (D4a `mitosis_hook.hexa` full impl) + P2 (D4b `anima_chat.hexa` cell-pool wiring) closure 후 P3 verify (identity_probe 50 × 5 cats) |
 | **D4** | **세포 분열로 성장 (철학 참고)** — 3-layer 적용 | REBORN §0.5 + PHILOSOPHY #8 (NO TRAIN/INFER SPLIT). 모든 상호작용이 분열 epoch, **3 layer 동시**: |
-| D4a | model intra-network | cells = nn.Module branches, intra-network split/merge during forward (REBORN §88 PyTorch / §89 hexa-native) | **stub** — `tool/hexa_native/mitosis_hook.hexa` parse-only, full impl pending |
+| D4a | model intra-network | cells = nn.Module branches, intra-network split/merge during forward (REBORN §88 PyTorch / §89 hexa-native) | **full impl LANDED, F-MIT-HOOK-1..5 ✅** — `tool/hexa_native/mitosis_hook.hexa` 1119 LoC executable (REBORN §91, 2026-05-12, $0 Mac local selftest PASS) |
 | D4b | chat library (anima_chat) | cell-pool state hosting + per-token/per-prompt hook 진입점 in `anima_chat.py` / `anima_chat.hexa` | **anima_chat.hexa port BG 진행** (D1+D4b 통합 lane), mitosis hook wiring pending |
-| D4c | anima CLI (session/conversation) | session 별 cell-pool persistence, multi-backend fallback = cell-variant selection, kick cycle = split event sequence (`.roadmap.cli` + `.roadmap.anima_cli_model_architecture`) | **design open** — anima/llama_ffi.hexa (Phase 3b LANDED) + `tool/anima_cli/` consciousness CLI 와 통합 spec 필요 |
+| D4c | anima CLI (session/conversation) | session 별 cell-pool persistence, multi-backend fallback = cell-variant selection, kick cycle = split event sequence (`.roadmap.cli` + `.roadmap.anima_cli_model_architecture`) | **design LANDED 2026-05-12** — `docs/anima_cli_mitosis_integration_spec_2026_05_12.md` (12 §, F-CLI-MIT-1..5 pre-registered, Phase 1-4 impl plan ~13-19 hr Mac local); D4a (full impl LANDED) + D4b (cell-pool wiring pending) prerequisite |
 
 → 측정 path: 외부 layer 의존 0 (Gradio / HF Space / wrapper 없음, anima 본체 직접 호출).
 → 추적 SSOT: 본 `GOAL.md` (root).
@@ -47,18 +47,20 @@
 | HF model | `dancinlab/anima-clm-phase1a1-color-cosmology-boost` (live) |
 | **Mission gap** | **anima_fact recall** (markdown attractor 또는 semantic miss — environment-dependent) |
 
-### D3: 페르소나 롤플레잉 — design open
+### D3: 페르소나 롤플레잉 — design LANDED 2026-05-12, impl pending
 
 | 항목 | 값 |
 |---|---|
 | Constraint | Principle #3 NO PERSONA INJECTION (README #3, PHILOSOPHY EMPIRICAL strong) — prompt `[role:]` 금지 |
+| **Design doc** | **`docs/anima_persona_substrate_native_design_2026_05_12.md`** (10 §, 본 BG land) — (a)+(d) Mitosis-cell-as-persona × Per-session cell pool 결합, 5 falsifier F-PERSONA-1..5 |
 | Existing infrastructure | `state/p_idr_identity_rules_2026_05_12/` (10-clause persona prefix + 50 identity probes), `docs/endpoint_persona_reproduce.md`, `ready/anima/experiments/consciousness/experiment_personality.py` |
 | **Reconciliation candidates** (substrate-native 페르소나) | |
-| (a) **Mitosis-cell-as-persona** | cells = nn.Module branches (REBORN §88) — 각 cell cluster 가 페르소나, substrate 동력 자체로 전환 |
-| (b) Dialog-context-derived | 대화 history 가 페르소나 정보 source, anima 가 자연 적응 |
-| (c) Latent persona axis | Tension Link 5-ch (concept/context/meaning/authenticity/sender) basis |
-| (d) Per-session cell pool | serve-time mitosis 가 conversation 별 cell pool 분화 (REBORN §89) |
-| Recommended | (a) + (d) **결합** — 세포 분열로 페르소나 자연 분화, D4 와 일체화 |
+| (a) **Mitosis-cell-as-persona** ✅ adopt | cells = nn.Module branches (REBORN §88) — 각 cell cluster 가 페르소나, substrate 동력 자체로 전환 |
+| (b) Dialog-context-derived ✗ reject | 대화 history 가 페르소나 정보 source, anima 가 자연 적응 — substrate-native 정도 낮음 |
+| (c) Latent persona axis ✗ reject | Tension Link 5-ch (concept/context/meaning/authenticity/sender) basis — over-engineered for single-anima |
+| (d) Per-session cell pool ✅ adopt | serve-time mitosis 가 conversation 별 cell pool 분화 (REBORN §89) |
+| Recommended | **(a) + (d) 결합** ✅ **adopted** — 세포 분열로 페르소나 자연 분화, D4 와 일체화, design doc §2 결정 |
+| **Impl path** | P1 (D4a `mitosis_hook.hexa` full impl) + P2 (D4b `anima_chat.hexa` cell-pool wiring) prerequisite → P3 verify (F-PERSONA-1..5 on identity_probe 50 × 5 cats) → STRONG/MODERATE/WEAK aggregate verdict |
 
 ### D4: 세포 분열로 성장 — REBORN §0.5 native impl pending
 
@@ -67,9 +69,9 @@
 | 철학 source | REBORN.md §0.5 (`a7e512cb9`) + PHILOSOPHY #8 NO TRAIN/INFER SPLIT (cont. 10) |
 | 설계 spec | REBORN §88 (v5-mitosis PyTorch arch, `b7b34e221`) + §89 (hexa-native serve-time hook, `6527cbc80`) |
 | Python impl skeleton | `training/mitosis_model_v5.py` (852L) + smoke test 256L — REBORN §90 (`49b74c622`), Mac CPU gating 3/3 PASS |
-| Hexa impl | `tool/hexa_native/mitosis_hook.hexa` parse-only stub (123 LoC) — **full impl pending RFC 033** (LANDED 2026-05-12) |
+| Hexa impl | `tool/hexa_native/mitosis_hook.hexa` **full impl LANDED** 2026-05-12 (1119 LoC executable, F-MIT-HOOK-1..5 ✅, REBORN §91, $0 Mac local selftest PASS) |
 | RFC dependencies | RFC 025/030/031/032/033 ALL LANDED in hexa-lang ✅ |
-| **Mission gap** | mitosis_hook.hexa full impl (parse-only → executable) + anima_chat.hexa 와 통합 (serve-time hook in chat forward) |
+| **Mission gap** | anima_chat.hexa 와 통합 (serve-time hook in chat forward) + 24-layer prod wiring + persona-substrate 통합 (D3 P3 verify) |
 
 ---
 
@@ -112,6 +114,8 @@
 | PSCC §30 | Phase 1A.4 cuda filter-val complete — 3-축 FALSIFIED, Δ=0 cuda+Mac CPU 양 environment | D1 | ★★★ |
 | **GOAL.md** | **D4 split into 3-layer (D4a model / D4b library / D4c CLI) + REBORN.md primary reference 명시** | D4 | ★ scope clarify |
 | PSCC §33 | anima_chat.hexa port LANDED — pure-hexa chat library (1589 LoC), parse PASS + 17/17 helper smoke PASS, TODO[load] gated for full inference | D1+D4b | ★★★ |
+| PSCC §34 | **D3 design LANDED** — `docs/anima_persona_substrate_native_design_2026_05_12.md` 10 §, 5 falsifier F-PERSONA-1..5, (a)+(d) Mitosis-cell × Per-session cell pool adopted, Principle #3 EMPIRICAL strong 보존 + #8 cascade native impl | D3 | ★★★ |
+| PSCC §35 | **D4c design LANDED** — `docs/anima_cli_mitosis_integration_spec_2026_05_12.md` 12 §, 5 falsifier F-CLI-MIT-1..5, session = cell-pool branch + kick cycle = split event sequence + multi-backend = cell-variant selection, Phase 1-4 impl plan (~13-19 hr) | D4c | ★★★ |
 
 ---
 
@@ -125,7 +129,7 @@
 
 ### D3 (페르소나 롤플레잉 — substrate-native)
 
-**Recommended path**: **(a) + (d) Mitosis-cell-as-persona × Per-session cell pool**
+**Recommended path**: **(a) + (d) Mitosis-cell-as-persona × Per-session cell pool** — design LANDED 2026-05-12
 
 - 각 cell 가 페르소나 axis 표현 — cells = nn.Module branches (**REBORN §88** cond.2 ✅)
 - conversation 마다 cell pool 분화 (**REBORN §89** serve-time hook, pending full impl)
@@ -134,8 +138,9 @@
   - `state/p_idr_identity_rules_2026_05_12/identity_probe.jsonl` (50 prompts × 5 categories: self_definition/values/boundary/emotion/self_knowledge)
   - per-cell response 가 다른 페르소나 vector 표현
   - cell pool snapshot diff = 페르소나 axis 표현
-- design doc: `docs/anima_persona_substrate_native_design_2026_05_12.md` (pending)
-- impl: D4 의 mitosis_hook.hexa full impl 와 동시 진행
+- **design doc LANDED**: `docs/anima_persona_substrate_native_design_2026_05_12.md` (10 §, 5 falsifier F-PERSONA-1..5, 4-cand 비교, 10 honest C3)
+- impl path: D4a (`mitosis_hook.hexa` full impl, RFC 033 위) + D4b (`anima_chat.hexa` cell-pool wiring) closure 후 P3 verify
+- impl 은 D4 의 mitosis_hook.hexa full impl 와 동시 진행
 
 ### D4 (세포 분열로 성장 — 3-layer 적용, **REBORN.md 가 primary reference**)
 
@@ -152,7 +157,7 @@
 |---|---|---|---|
 | D4a model intra-network | engine_ag_nn forward call graph 안 split/merge | `tool/hexa_native/mitosis_hook.hexa` stub | full impl (RFC 033 builtins 사용) |
 | D4b chat library | cell-pool state hosting, hook 진입점 | `anima_chat.py` v2.3 (cell pool 부재), port BG 진행 | `anima_chat.hexa` 에 cell_pool dict + mitosis hook wiring |
-| D4c anima CLI | session-level cell-pool persistence, kick cycle = split event | `tool/anima_cli/consciousness.hexa` (measurement lane only), Phase 3b llama_ffi LANDED | session cell-pool spec + integration with mitosis_hook.hexa |
+| D4c anima CLI | session-level cell-pool persistence, kick cycle = split event | **design LANDED** `docs/anima_cli_mitosis_integration_spec_2026_05_12.md` (12 §, F-CLI-MIT-1~5), Phase 3b llama_ffi LANDED, `tool/anima_cli/consciousness.hexa` (measurement lane) | Phase 1 (session_id + cell_pool persist skeleton, ~3 hr) → Phase 2 (kick cycle hook, ~4-6 hr) → Phase 3 (multi-backend cell-variant, ~4-6 hr) → Phase 4 (full integration smoke, ~2-4 hr) |
 
 **Prerequisites**: ALL LANDED ✅
 - RFC 025 (mmap) / 030 (bytes→str) / 031 (BF16) / 032 (farr_matmul) / 033 (farr_copy + gaussian)
