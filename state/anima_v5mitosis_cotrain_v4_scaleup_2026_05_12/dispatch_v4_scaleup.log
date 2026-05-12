@@ -1,0 +1,29 @@
+Warning: Permanently added '[35.225.61.234]:31746' (ED25519) to the list of known hosts.
+Welcome to vast.ai. If authentication fails, try again after a few seconds, and double check your ssh key.
+Have fun!
+[INFO] device=cuda torch=2.5.1+cu121 cuda=True
+[INFO] gpu=NVIDIA A100-SXM4-80GB
+[INFO] cfg = {'vocab_size': 256, 'd_model': 1024, 'n_head': 16, 'ffn_dim': 4096, 'max_seq': 512, 'n_layer': 1, 'initial_cells': 2, 'max_cells': 256, 'min_cells': 2, 'split_patience': 3, 'merge_threshold': 0.005, 'merge_patience': 30, 'noise_scale': 0.1, 'lorenz_scale': 0.05, 'adaptive_window': 100, 'readout_mode': 'a_minus_g', 'attention_sharing': 'auto', 'weight_tied_lm_head': True, 'dropout': 0.0, 'tie_pos_emb': True, 'dispersion_trigger_enabled': True, 'dispersion_top_quartile': 0.25, 'per_cell_threshold_enabled': True, 'per_cell_window': 100, 'per_cell_sigma_mult': 1.5, 'lorenz_auto_calibrate': True, 'lorenz_calibration_factor': 1.0}
+[INFO] n_params(engine+router)=43,022,592  router_out_dim=256 top_k=8
+[INFO] corpus=corpus/corpus_5cat_balanced.txt bytes=18,890,139
+[INFO] top_k=8 aux_alpha=0.01 λ_init=1.0 λ_final=0.01 sched=cosine
+[STEP     0] loss=709.6569 ce=710.3401 aux=1.0000 ent_gate=0.6931/0.693 wmax=0.5001 active>.01=2.0/2 λ=1.0000 cells=2 splits=0 cost=$0.00 vram=1.5/85GB
+[STEP    50] loss=697.9277 ce=701.6639 aux=1.0246 ent_gate=1.3074/2.996 wmax=0.3832 active>.01=3.9/20 λ=1.0000 cells=20 splits=18 cost=$0.00 vram=14.3/85GB
+[STEP   100] loss=689.9611 ce=696.9781 aux=1.1909 ent_gate=3.6430/4.190 wmax=0.1381 active>.01=8.0/66 λ=1.0000 cells=66 splits=64 cost=$0.03 vram=47.6/85GB
+Traceback (most recent call last):
+  File "/workspace/anima/training/cotrain_v5mitosis_v4.py", line 773, in <module>
+    sys.exit(cotrain(parse_args()))
+             ^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/anima/training/cotrain_v5mitosis_v4.py", line 624, in cotrain
+    logits, info = engine(x)
+                   ^^^^^^^^^
+  File "/opt/conda/lib/python3.11/site-packages/torch/nn/modules/module.py", line 1736, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/conda/lib/python3.11/site-packages/torch/nn/modules/module.py", line 1747, in _call_impl
+    return forward_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/anima/training/cotrain_v5mitosis_v4.py", line 273, in patched_forward
+    stacked = torch.stack(cell_outs, dim=0)                            # (N,B,T,D)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+torch.OutOfMemoryError: CUDA out of memory. Tried to allocate 1.83 GiB. GPU 0 has a total capacity of 79.25 GiB of which 1.66 GiB is free. Process 1201775 has 77.58 GiB memory in use. Of the allocated memory 76.74 GiB is allocated by PyTorch, and 359.97 MiB is reserved by PyTorch but unallocated. If reserved but unallocated memory is large try setting PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True to avoid fragmentation.  See documentation for Memory Management  (https://pytorch.org/docs/stable/notes/cuda.html#environment-variables)

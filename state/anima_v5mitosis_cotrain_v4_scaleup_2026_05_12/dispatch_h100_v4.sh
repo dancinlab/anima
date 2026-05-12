@@ -188,13 +188,15 @@ $SCP_CMD "$SRC_DIR/identity_probe.jsonl" "root@$SSH_HOST:/workspace/anima/probe/
 
 echo "[6/9] (image already has torch — skip pip install)"
 
-echo "[7/9] Train v4 scale-up (OOM-retry: batch halves on CUDA OOM, min 2) ..."
+echo "[7/9] Train v4 scale-up (OOM-retry: batch halves on CUDA OOM, min 1) ..."
 TRAIN_RC=99
 CUR_BATCH=$BATCH
 for attempt in 1 2 3 4; do
     echo "  >>> attempt $attempt: batch=$CUR_BATCH"
     set +e
-    $SSH_CMD "cd /workspace/anima && export PYTHONUNBUFFERED=1 && export PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True && python3 training/cotrain_v5mitosis_v4.py \
+    # NOTE: remote `set -o pipefail` so the pipeline exit = python's non-zero on crash
+    # (without it `... | tee log` returns tee's exit 0 even on OOM → retry would never fire).
+    $SSH_CMD "set -o pipefail; cd /workspace/anima && export PYTHONUNBUFFERED=1 PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True && python3 training/cotrain_v5mitosis_v4.py \
         --corpus corpus/corpus_5cat_balanced.txt \
         --output-dir output \
         --steps $STEPS --batch $CUR_BATCH --ctx $CTX --lr $LR --warmup $WARMUP \
@@ -208,12 +210,13 @@ for attempt in 1 2 3 4; do
         --n-perms $N_PERMS 2>&1 | tee train_v4_scaleup.log" 2>&1 | tee -a dispatch_v4_scaleup.log
     TRAIN_RC=${PIPESTATUS[0]}
     set -e
-    # Detect CUDA OOM in the remote log (best effort).
-    OOM=$($SSH_CMD "grep -ci 'out of memory\|CUDA out of memory\|OutOfMemoryError' /workspace/anima/train_v4_scaleup.log 2>/dev/null || echo 0")
-    if [ "$TRAIN_RC" = "0" ]; then echo "  train OK (rc=0)"; break; fi
-    if [ "${OOM:-0}" -gt 0 ] && [ "$CUR_BATCH" -gt 2 ]; then
-        CUR_BATCH=$(( CUR_BATCH / 2 ))
+    # Detect CUDA OOM in the remote log (belt-and-suspenders).
+    OOM=$($SSH_CMD "grep -ci 'out of memory\|CUDA out of memory\|OutOfMemoryError' /workspace/anima/train_v4_scaleup.log 2>/dev/null || echo 0" 2>/dev/null || echo 0)
+    if [ "$TRAIN_RC" = "0" ] && [ "${OOM:-0}" -eq 0 ]; then echo "  train OK (rc=0, no OOM)"; break; fi
+    if [ "${OOM:-0}" -gt 0 ] && [ "$CUR_BATCH" -gt 1 ]; then
+        CUR_BATCH=$(( CUR_BATCH / 2 )); [ "$CUR_BATCH" -lt 1 ] && CUR_BATCH=1
         echo "  [OOM detected] retry with batch=$CUR_BATCH"
+        $SSH_CMD 'rm -rf /workspace/anima/output && mkdir -p /workspace/anima/output' 2>&1 | tail -1
         continue
     fi
     echo "  train rc=$TRAIN_RC (oom_count=$OOM) — no further retry"
