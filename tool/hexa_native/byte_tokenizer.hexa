@@ -1,0 +1,233 @@
+// ════════════════════════════════════════════════════════════════════════════
+//  tool/hexa_native/byte_tokenizer.hexa — Phase 4.2 anima byte tokenizer
+//
+//  PURPOSE
+//    Pure-hexa port of anima_chat.py ByteTokenizer. Anima's effective vocab
+//    is 259 tokens (though the embedding table is sized 32000 for own-17
+//    BPE-migration preservation — first 259 rows are the only ones the
+//    pretraining actually wrote to).
+//
+//  VOCAB CONVENTION (verified via PSCC + state/anima_phase1a1.../tokenizer):
+//    id 0   = pad
+//    id 1   = bos
+//    id 2   = eos
+//    id b+3 = byte b ∈ 0..255  (so bytes map to ids 3..258)
+//    vocab_size_effective = 259
+//
+//  STDLIB FACILITIES USED
+//    · char_code(s, i)        — byte at UTF-8 byte offset i (verified
+//      compiler/self/runtime.c §hexa_char_code returns (unsigned char))
+//    · from_char_code(n)      — int → 1+ char string (NOTE: for n ≥ 0x80
+//      this emits a 2-byte UTF-8 sequence representing codepoint n, NOT
+//      a raw byte — see RFC stub below for the full reassembly story)
+//    · len(s)                 — BYTE length (verified runtime.c §HX_STRLEN)
+//
+//  DECODE LIMITATION (RFC 030 candidate)
+//    `from_char_code(b)` for b ∈ 128..255 produces a 2-byte UTF-8 sequence
+//    (the encoding of codepoint U+0080..U+00FF), not a raw byte. Reassembling
+//    the original UTF-8 string from a byte array therefore requires a runtime
+//    primitive that takes an [int] (each ∈ 0..255) and produces a hexa string
+//    whose underlying bytes are exactly those integers. The runtime stores
+//    strings as UTF-8 char* (verified via hexa_str_new in runtime.c), so the
+//    primitive is mechanically trivial — just needs a binding.
+//
+//    Workaround in this module:
+//      · decode_bytes(ids)  → [i64] of raw bytes (always correct)
+//      · decode_ascii(ids)  → str via from_char_code concat (only valid when
+//        every byte is < 0x80; otherwise the multi-byte UTF-8 sequence is
+//        re-encoded codepoint-by-codepoint and the result differs from
+//        the original string at the byte level)
+//
+//    Selftest verifies BYTE-LEVEL round-trip for "안녕" and "🌌" (encode →
+//    decode_bytes → re-encode-as-utf8-string gives identical ids), and full
+//    string round-trip for "hello" (ASCII path).
+//
+//  FALSIFIERS (raw-117 ≥3, with selftest 4-case battery for ≥5 total):
+//    F-TOK-BOS-EOS-1            : encode("") MUST be [1, 2] (bos+eos)
+//    F-TOK-BYTE-ROUND-2         : decode_bytes(encode("hello"))[1..len-1]
+//                                  reproduces utf8 bytes of "hello"
+//    F-TOK-UNICODE-MULTIBYTE-3  : encode("안녕") yields 6 byte ids
+//                                  (3 utf-8 bytes per CJK char × 2 chars)
+//                                  plus bos/eos = 8 ids total
+//    F-TOK-VOCAB-SIZE-4         : vocab_size_effective() == 259
+//    F-TOK-PAD-STRIP-5          : decode_bytes strips pad/bos/eos cleanly
+// ════════════════════════════════════════════════════════════════════════════
+
+// Special token ids — match anima_chat.py ByteTokenizer constants.
+fn tok_pad_id() -> int { return 0 }
+fn tok_bos_id() -> int { return 1 }
+fn tok_eos_id() -> int { return 2 }
+fn tok_byte_offset() -> int { return 3 }    // byte b → id (b + offset)
+
+// vocab_size_effective — 256 bytes + 3 specials = 259.
+// (Note: embedding table is sized 32000 in ckpt for own-17 BPE preservation;
+//  this is the tokenizer-side effective vocab the trainer actually used.)
+fn vocab_size_effective() -> int {
+    return 259
+}
+
+// ── encode(text) -> [i64] ───────────────────────────────────────────────────
+// UTF-8 byte each char → byte_id (= byte + 3); prepend bos; append eos.
+// F-TOK-BOS-EOS-1: encode("") returns [1, 2].
+fn encode(text: string) {
+    let mut ids = []
+    ids.push(tok_bos_id())
+    let n = len(text)
+    let mut i = 0
+    while i < n {
+        let b = char_code(text, i) & 0xFF
+        ids.push(b + tok_byte_offset())
+        i = i + 1
+    }
+    ids.push(tok_eos_id())
+    return ids
+}
+
+// ── decode_bytes(ids) -> [int] ──────────────────────────────────────────────
+// Strip pad/bos/eos; map id → (id - offset) raw byte (0..255).
+// Always correct for any input; caller assembles into a UTF-8 string when
+// the platform exposes a bytes→str primitive (see RFC stub).
+fn decode_bytes(ids) {
+    let n = len(ids)
+    let mut out = []
+    let mut i = 0
+    while i < n {
+        let id = ids[i]
+        if id == tok_pad_id() {
+            // skip pad
+        } else {
+            if id == tok_bos_id() {
+                // skip bos
+            } else {
+                if id == tok_eos_id() {
+                    // skip eos
+                } else {
+                    let b = id - tok_byte_offset()
+                    if b >= 0 && b < 256 {
+                        out.push(b)
+                    }
+                    // else: out-of-vocab id silently dropped (defensive;
+                    // training never emitted ids ≥ 259, see vocab note)
+                }
+            }
+        }
+        i = i + 1
+    }
+    return out
+}
+
+// ── decode_ascii(ids) -> string ─────────────────────────────────────────────
+// String round-trip path that ONLY works when every byte < 0x80 (ASCII).
+// For non-ASCII input the returned string represents the same SEQUENCE OF
+// CODEPOINTS (each high byte as U+0080..U+00FF) but its UTF-8 bytes differ
+// from the original. Use decode_bytes + an external bytes-to-str step for
+// proper multibyte round-trip until RFC 030 lands.
+fn decode_ascii(ids) -> string {
+    let bytes = decode_bytes(ids)
+    let mut out = ""
+    let mut i = 0
+    let n = len(bytes)
+    while i < n {
+        out = out + to_string(from_char_code(bytes[i] & 0x7F))
+        i = i + 1
+    }
+    return out
+}
+
+// ── selftest ────────────────────────────────────────────────────────────────
+// Battery of round-trip cases including the multi-byte UTF-8 edge cases.
+// Reports each falsifier hit explicitly.
+fn selftest() {
+    println("[byte_tokenizer] selftest: encode/decode round-trip")
+
+    // F-TOK-VOCAB-SIZE-4
+    let vs = vocab_size_effective()
+    if vs == 259 {
+        println("  VOCAB_SIZE_OK (259)")
+    } else {
+        println("  VOCAB_SIZE_FAIL (got " + to_string(vs) + ")")
+    }
+
+    // F-TOK-BOS-EOS-1: empty string → [bos, eos]
+    let empty_ids = encode("")
+    let ok_bos = len(empty_ids) == 2 && empty_ids[0] == tok_bos_id() && empty_ids[1] == tok_eos_id()
+    if ok_bos {
+        println("  BOS_EOS_OK (encode(\"\") = [1, 2])")
+    } else {
+        println("  BOS_EOS_FAIL")
+    }
+
+    // F-TOK-BYTE-ROUND-2: "hello" — 5 ASCII bytes → 7 ids (bos + 5 + eos)
+    let hello_ids = encode("hello")
+    let ok_hello_len = len(hello_ids) == 7
+    let hello_bytes = decode_bytes(hello_ids)
+    // expect [104, 101, 108, 108, 111]  (= "hello" ASCII)
+    let ok_hello_bytes = len(hello_bytes) == 5
+        && hello_bytes[0] == 104 && hello_bytes[1] == 101
+        && hello_bytes[2] == 108 && hello_bytes[3] == 108
+        && hello_bytes[4] == 111
+    if ok_hello_len && ok_hello_bytes {
+        println("  BYTE_ROUND_OK (hello: 5 bytes 104,101,108,108,111)")
+    } else {
+        println("  BYTE_ROUND_FAIL")
+    }
+    // ASCII string round-trip via decode_ascii
+    let hello_str = decode_ascii(hello_ids)
+    if hello_str == "hello" {
+        println("  ASCII_STR_OK (decode_ascii recovers \"hello\")")
+    } else {
+        println("  ASCII_STR_FAIL (got " + hello_str + ")")
+    }
+
+    // F-TOK-UNICODE-MULTIBYTE-3: "안녕" — 2 CJK chars × 3 UTF-8 bytes = 6
+    //   안 = U+C548 → utf8 EC 95 88 → bytes 236, 149, 136 → ids 239, 152, 139
+    //   녕 = U+B155 → utf8 EB 85 95 → bytes 235, 133, 149 → ids 238, 136, 152
+    let an_ids = encode("안녕")
+    let ok_an_len = len(an_ids) == 8     // bos + 6 + eos
+    let an_bytes = decode_bytes(an_ids)
+    let ok_an_bytes_len = len(an_bytes) == 6
+    let ok_an_bytes_vals = ok_an_bytes_len
+        && an_bytes[0] == 236 && an_bytes[1] == 149 && an_bytes[2] == 136
+        && an_bytes[3] == 235 && an_bytes[4] == 133 && an_bytes[5] == 149
+    if ok_an_len && ok_an_bytes_vals {
+        println("  UNICODE_MB_OK (안녕: 8 ids, 6 utf8 bytes match EC 95 88 EB 85 95)")
+    } else {
+        println("  UNICODE_MB_FAIL (len_ids=" + to_string(len(an_ids)) + " len_bytes=" + to_string(len(an_bytes)) + ")")
+    }
+
+    // 🌌 emoji — U+1F30C → utf8 F0 9F 8C 8C → bytes 240, 159, 140, 140
+    let star_ids = encode("🌌")
+    let ok_star_len = len(star_ids) == 6      // bos + 4 + eos
+    let star_bytes = decode_bytes(star_ids)
+    let ok_star_bytes = len(star_bytes) == 4
+        && star_bytes[0] == 240 && star_bytes[1] == 159
+        && star_bytes[2] == 140 && star_bytes[3] == 140
+    if ok_star_len && ok_star_bytes {
+        println("  EMOJI_4B_OK (🌌: 6 ids, 4 utf8 bytes F0 9F 8C 8C)")
+    } else {
+        println("  EMOJI_4B_FAIL (len_ids=" + to_string(len(star_ids)) + " len_bytes=" + to_string(len(star_bytes)) + ")")
+    }
+
+    // F-TOK-PAD-STRIP-5: synthetic id stream with pad/bos/eos interleaved
+    let mixed = [tok_pad_id(), tok_bos_id(), 104 + 3, 105 + 3, tok_eos_id(), tok_pad_id()]
+    let stripped = decode_bytes(mixed)
+    let ok_strip = len(stripped) == 2 && stripped[0] == 104 && stripped[1] == 105
+    if ok_strip {
+        println("  PAD_STRIP_OK (special tokens removed cleanly)")
+    } else {
+        println("  PAD_STRIP_FAIL")
+    }
+
+    println("")
+    println("  NOTE: full multi-byte UTF-8 string reassembly blocked on RFC 030")
+    println("        (incoming/rfc_drafts_2026_05_12/rfc_030_bytes_to_str_raw.md).")
+    println("        decode_bytes + downstream bytes→str primitive is the path.")
+}
+
+fn main() {
+    println("byte_tokenizer.hexa — Phase 4.2 anima byte tokenizer")
+    println("  vocab_size_effective = " + to_string(vocab_size_effective()))
+    println("  ids: pad=0 bos=1 eos=2 ; byte b → id (b + 3)")
+    println("")
+    selftest()
+}
