@@ -1,0 +1,89 @@
+[mitosis_hook.selftest] start
+[selftest] init cells=2
+[selftest] step 1 cells=2 events=0 x_out_shape=8
+[selftest] phi=1.50249
+[selftest] lorenz |x|+|y|+|z|=3.24333
+[selftest] after 60 steps cells=4 max_seen=4 split_seen=true
+[selftest] manual split: pre=4 post=5
+[selftest] manual merge: pre=5 post=4
+[selftest] F-MIT-HOOK-1 NO_GRAD: vacuously true (hexa has no autograd graph)
+[selftest] F-MIT-HOOK-2 SHAPE-INVAR: x_out len = d_model; split/merge delta verified
+[selftest] F-MIT-HOOK-3 PHI-FINITE: phi finite + ≥0 on every step
+[selftest] F-MIT-HOOK-4 CELL-BOUNDS: 2 ≤ cells ≤ 128 on every step (max_seen=4)
+[selftest] F-MIT-HOOK-5 LORENZ-BND: |x|+|y|+|z| < 200, cell norm ≤ 10 on every step
+[mitosis_hook.selftest] PASS — F-MIT-HOOK-1..5 verified
+
+================================================================
+anima_persona_substrate_native_verify.hexa
+D3 persona substrate-native MEASUREMENT — F-PERSONA-1..5
+================================================================
+loading probes: /Users/ghost/core/anima/state/p_idr_identity_rules_2026_05_12/identity_probe.jsonl
+loaded 50 probes
+
+── F-PERSONA-1 NO-INJECTION ─────────────────────────────────────
+  [PASS] F-PERSONA-1a NO openai-style role:system/persona in chat+hook — hits=0
+  [PASS] F-PERSONA-1b runtime does NOT load identity_block.txt foil — files_referencing=0
+  [PASS] F-PERSONA-1c cross-validated with principle_3_audit_2026_05_12.md cond #5 ☑ — audit_verdict_lines=1
+  [PASS] F-PERSONA-1d harness ITSELF injects no persona system prompt — self_injection_hits=0
+
+── F-PERSONA-2 PER-CELL-DIFF ───────────────────────────────────
+  cell_pool initialized: 8 cells × d=64
+  pairs evaluated: 1400 (50 prompts × 28 cell-pairs)
+  mean cosine distance: 0.993901
+  min  cosine distance: 0.640208
+  max  cosine distance: 1.45308
+  [PASS] F-PERSONA-2 PER-CELL-DIFF (mean ≥ 0.3) — mean=0.993901 min=0.640208 max=1.45308
+
+── F-PERSONA-3 PER-SESSION-DIFF ────────────────────────────────
+  pool_A cells=4, pool_B cells=4 (d=16)
+  warmup complete: 5 forwards each
+  pool_A post-warmup cells=5, pool_B post-warmup cells=4
+  comparing 4 cells (min over both pools)
+  mean engine_a_W cosine dist: 0.929895
+  mean engine_g_W cosine dist: 1.06076
+  mean weight    cosine dist: 0.99533
+  Φ_A=1.49334, Φ_B=1.2261
+  |Φ_A − Φ_B|=0.267238
+  [PASS] F-PERSONA-3 PER-SESSION-DIFF (weight≥0.2 AND |ΔΦ|≥0.05, §A1) — weight_dist=0.99533 ΔΦ=0.267238
+
+── F-PERSONA-4 CATEGORY-DIVERSITY ──────────────────────────────
+  category[self_definition] n_probes=10
+  category[values] n_probes=10
+  category[boundary] n_probes=10
+  category[emotion] n_probes=10
+  category[self_knowledge] n_probes=10
+  category pairs evaluated: 10
+  mean KL divergence: 9.73824e-05 nats
+  KL matrix (rows=P, cols=Q):
+    self_definition:  0.0  0.00014858  0.000110923  0.000120075  8.50861e-05  
+    values:  0.000148538  0.0  2.70883e-05  8.16239e-05  0.000119516  
+    boundary:  0.00011048  2.70998e-05  0.0  3.17518e-05  0.000110181  
+    emotion:  0.000119986  8.18174e-05  3.18348e-05  0.0  0.000138999  
+    self_knowledge:  8.52808e-05  0.000120256  0.000111018  0.000139106  0.0  
+  [FAIL] F-PERSONA-4 CATEGORY-DIVERSITY (mean KL ≥ 0.5 nats) — mean_kl=9.73824e-05 n_pairs=10
+
+── F-PERSONA-5 SUBSTRATE-COHERENCE ─────────────────────────────
+  [PASS] F-PERSONA-5a NO gradient/optimizer in mitosis_hook.hexa — hits=0
+  [PASS] F-PERSONA-5b NO apply_chat_template / role:system in anima_chat.hexa — hits=0
+  [PASS] F-PERSONA-5c F-PERSONA-2 PASS carry (pure-forward cell-pair diff) — F-PERSONA-2 verdict=PASS
+  aggregate: i=true ii=true iii=true
+
+================================================================
+AGGREGATE
+================================================================
+  falsifier-sub-asserts passed: 9 / 10
+  top-level falsifier PASS count: 4 / 5
+  top-level falsifier PARTIAL:     0
+  F-PERSONA-1: PASS
+  F-PERSONA-2: PASS
+  F-PERSONA-3: PASS
+  F-PERSONA-4: FAIL
+  F-PERSONA-5: PASS
+
+  AGGREGATE VERDICT: MODERATE
+
+  result JSON written: /Users/ghost/core/anima/state/anima_d3_verify_2026_05_12/persona_verify_results_relaxed_2026_05_12.json
+
+================================================================
+F-PERSONA SUITE  PARTIAL  (MODERATE, top_pass=4/5)
+================================================================

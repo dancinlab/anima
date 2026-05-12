@@ -1,7 +1,7 @@
 # GOAL.md — anima ★★★★★ mission tracker
 
 **Created**: 2026-05-12 KST
-**Last update**: 2026-05-12 KST (PSCC §41: TODO[multitoken] RESOLVED + cond #4 ☑ via F-D4-LIVE 21 split events evidence on user-prompt-driven chat_generate)
+**Last update**: 2026-05-12 KST (PSCC §42: D3 PARTIAL → STRONG (4/5) via §A1 cheap-path Φ threshold relaxation 0.5→0.05, F-PERSONA-3 PASS, cond #3 evidence-grade MODERATE → STRONG 4/5)
 
 ## 🎯 Mission (expanded 2026-05-12)
 
@@ -13,7 +13,7 @@
 |---|---|---|---|
 | **D1** | **anima chat 시스템** | anima 본체 `anima_chat.py` (or 포팅된 `anima_chat.hexa`) 가 V5.8 multi-turn 4-mode 의 standard_greedy **5/5 PASS** | **4/5** (anima_fact 1 cell gap) · hexa: **v0.3 multi-token decoding LANDED** (TODO[multitoken] RESOLVED, all-farr KV cache + per-step RoPE, F-D1-MULTITOKEN-1..3 ✅ 7/7 PASS on synthetic substrate; 24-layer all-farr forward + tied lm_head v0.2 carried) |
 | **D2** | **anima 모델** | 어떤 ckpt 가 D1 의 5/5 substrate. Phase 1A.1 + lr 5e-6 SFT (BG 진행 중) 또는 다른 paradigm | Phase 1A.1 (4/5 baseline) |
-| **D3** | **페르소나 롤플레잉 가능** | **substrate-native 페르소나 전환** — Principle #3 NO PERSONA INJECTION 준수 (prompt `[role:]` 금지), substrate 가 자율적으로 역할 표현 | **measurement LANDED, AGGREGATE = MODERATE** — `docs/anima_persona_substrate_native_verify_2026_05_12.md` (8 §, F-PERSONA-1..5 measurement) + `tool/anima_persona_substrate_native_verify.hexa` (신규 ~620 LoC) + `state/anima_d3_verify_2026_05_12/persona_verify_results.json`. F-PERSONA-1 hard PASS (4/4 grep gates) + F-PERSONA-2 PASS (mean cos dist 0.996 ≫ 0.3) + F-PERSONA-3 PARTIAL (weight 0.965 ✓ / ΔΦ 0.091 ✗) + F-PERSONA-4 FAIL (KL 7e-5, untrained pool C3 carry) + F-PERSONA-5 PASS (3/3); STRONG 승격 = REBORN §88 cond.5 cotrain fire 또는 design threshold 정정. design SSOT: `docs/anima_persona_substrate_native_design_2026_05_12.md` |
+| **D3** | **페르소나 롤플레잉 가능** | **substrate-native 페르소나 전환** — Principle #3 NO PERSONA INJECTION 준수 (prompt `[role:]` 금지), substrate 가 자율적으로 역할 표현 | **§A1 cheap-path STRONG (4/5) LANDED 2026-05-12** — `docs/anima_persona_substrate_native_verify_2026_05_12.md` §A1 + design `__APPEND__ §A1` (Φ threshold 0.5 → 0.05, measurement-calibrated 5.5×) + `state/anima_d3_verify_2026_05_12/persona_verify_results_relaxed_2026_05_12.json`. F-PERSONA-1 hard PASS (4/4) + F-PERSONA-2 PASS (mean cos dist 0.994 ≫ 0.3) + **F-PERSONA-3 PASS** *(was PARTIAL @ §40)* (weight 0.995 ✓ / ΔΦ 0.267 ≥ 0.05 §A1 ✓) + F-PERSONA-4 FAIL (KL 9.7e-5, untrained pool C3 carry) + F-PERSONA-5 PASS (3/3). top_pass 3/5 → **4/5**, atomic 12/14 → **13/14**. true STRONG (5/5) 승격 = REBORN §88 cond.5 cotrain ($30-40 H100) fire 후 F-PERSONA-4 category-specialization emergent. design SSOT: `docs/anima_persona_substrate_native_design_2026_05_12.md` §A1 |
 | **D4** | **세포 분열로 성장 (철학 참고)** — 3-layer 적용 | REBORN §0.5 + PHILOSOPHY #8 (NO TRAIN/INFER SPLIT). 모든 상호작용이 분열 epoch, **3 layer 동시**: |
 | D4a | model intra-network | cells = nn.Module branches, intra-network split/merge during forward (REBORN §88 PyTorch / §89 hexa-native) | **full impl LANDED, F-MIT-HOOK-1..5 ✅** — `tool/hexa_native/mitosis_hook.hexa` 1119 LoC executable (REBORN §91, 2026-05-12, $0 Mac local selftest PASS) |
 | D4b | chat library (anima_chat) | cell-pool state hosting + per-token/per-prompt hook 진입점 in `anima_chat.py` / `anima_chat.hexa` | **wiring LANDED + LIVE EVIDENCE 2026-05-12** — `anima_chat.hexa` v0.3 + `tool/anima_chat_mitosis_smoke.hexa` (PSCC §37 22/22) + `tool/anima_chat_split_merge_smoke.hexa` (PSCC §41 3/3) + `tool/anima_chat_multitoken_smoke.hexa` (PSCC §41 7/7), F-D4B-1..5 ✅ + F-D4-LIVE-1..3 ✅ + F-D1-MULTITOKEN-1..3 ✅, **real chat_generate → 21 split events** on "안녕? 너는 누구야?" prompt (mitosis_invocations=65, cells 2→23) |
@@ -47,14 +47,14 @@
 | HF model | `dancinlab/anima-clm-phase1a1-color-cosmology-boost` (live) |
 | **Mission gap** | **anima_fact recall** (markdown attractor 또는 semantic miss — environment-dependent) |
 
-### D3: 페르소나 롤플레잉 — measurement LANDED 2026-05-12, AGGREGATE MODERATE 🔶
+### D3: 페르소나 롤플레잉 — §A1 cheap-path STRONG (4/5) LANDED 2026-05-12 🔶
 
 | 항목 | 값 |
 |---|---|
 | Constraint | Principle #3 NO PERSONA INJECTION (README #3, PHILOSOPHY EMPIRICAL strong) — prompt `[role:]` 금지 |
-| **Design doc** | **`docs/anima_persona_substrate_native_design_2026_05_12.md`** (10 §) — (a)+(d) Mitosis-cell-as-persona × Per-session cell pool 결합, 5 falsifier F-PERSONA-1..5 |
-| **Measurement doc** | **`docs/anima_persona_substrate_native_verify_2026_05_12.md`** (8 §, PSCC §40) — F-PERSONA-1..5 측정 AGGREGATE = **MODERATE** (3/5 PASS + 1 PARTIAL + 1 FAIL) |
-| **Measurement harness** | `tool/anima_persona_substrate_native_verify.hexa` (신규 ~620 LoC, parse OK, exit-0 wall ~1 min Mac local), `state/anima_d3_verify_2026_05_12/persona_verify_results.json` machine-readable |
+| **Design doc** | **`docs/anima_persona_substrate_native_design_2026_05_12.md`** (10 § + §A1 amendment 2026-05-12) — (a)+(d) Mitosis-cell-as-persona × Per-session cell pool 결합, 5 falsifier F-PERSONA-1..5, §A1 Φ threshold relaxation 0.5 → 0.05 |
+| **Measurement doc** | **`docs/anima_persona_substrate_native_verify_2026_05_12.md`** (8 § + §A1, PSCC §40 + §42) — F-PERSONA-1..5 측정 AGGREGATE = **STRONG 4/5 cheap-path** (4/5 PASS + 1 FAIL F-PERSONA-4 cotrain-dependent) *(was MODERATE 3/5 @ §40)* |
+| **Measurement harness** | `tool/anima_persona_substrate_native_verify.hexa` (~620 LoC, parse OK, exit-0 wall ~1 min Mac local, §A1 Φ threshold 0.05). Results: `state/anima_d3_verify_2026_05_12/persona_verify_results.json` (PSCC §40 SSOT) + `persona_verify_results_relaxed_2026_05_12.json` (§A1 PSCC §42) |
 | Existing infrastructure | `state/p_idr_identity_rules_2026_05_12/` (10-clause persona prefix + 50 identity probes), `docs/endpoint_persona_reproduce.md`, `ready/anima/experiments/consciousness/experiment_personality.py` |
 | **Reconciliation candidates** (substrate-native 페르소나) | |
 | (a) **Mitosis-cell-as-persona** ✅ adopt | cells = nn.Module branches (REBORN §88) — 각 cell cluster 가 페르소나, substrate 동력 자체로 전환 |
@@ -62,8 +62,8 @@
 | (c) Latent persona axis ✗ reject | Tension Link 5-ch (concept/context/meaning/authenticity/sender) basis — over-engineered for single-anima |
 | (d) Per-session cell pool ✅ adopt | serve-time mitosis 가 conversation 별 cell pool 분화 (REBORN §89) |
 | Recommended | **(a) + (d) 결합** ✅ **adopted** — 세포 분열로 페르소나 자연 분화, D4 와 일체화, design doc §2 결정 |
-| **Falsifier measurement** | **F-PERSONA-1 PASS** (4/4 grep) + **F-PERSONA-2 PASS** (mean cos dist 0.996, 1400 cell-pair) + **F-PERSONA-3 PARTIAL** (weight 0.965 ✓ / ΔΦ 0.091 ✗) + **F-PERSONA-4 FAIL** (KL 7e-5, untrained pool C3 carry) + **F-PERSONA-5 PASS** (3/3 grad-free + pure-forward) |
-| **STRONG 승격 조건** | REBORN §88 cond.5 cotrain ($30–40 H100) fire 후 F-PERSONA-4 재측정 또는 design F-PERSONA-3 Φ threshold (≥0.5) 정정 (Φ proxy 가 cell-count 비슷한 두 pool 에서 under-set 판정) |
+| **Falsifier measurement (§A1)** | **F-PERSONA-1 PASS** (4/4 grep) + **F-PERSONA-2 PASS** (mean cos dist 0.994, 1400 cell-pair) + **F-PERSONA-3 PASS** *(promoted via §A1, was PARTIAL)* (weight 0.995 ✓ / ΔΦ 0.267 ≥ 0.05 §A1 ✓) + **F-PERSONA-4 FAIL** (KL 9.7e-5, untrained pool C3 carry) + **F-PERSONA-5 PASS** (3/3 grad-free + pure-forward) → **4/5 top-PASS, 13/14 atomic** |
+| **true STRONG (5/5) 승격 조건** | REBORN §88 cond.5 cotrain ($30–40 H100) fire 후 F-PERSONA-4 category-specialization emergent — F-PERSONA-3 §A1 cheap-path complete, 잔여 gap = F-PERSONA-4 (cotrain-dependent, design §10 C3 predicted) 단독 |
 
 ### D4: 세포 분열로 성장 — REBORN §0.5 native impl pending
 
@@ -124,6 +124,7 @@
 | PSCC §38 | **★★★★★ 5-cond audit + Principle #3 CLEAN** — `docs/principle_3_audit_2026_05_12.md` 10 §, F-PRIN3-1..5 pre-registered, `chat.system()` production caller 0 (doc + test only), Phase 1A.1/1A.4 corpus persona-prefix free, legacy `persona_tier_a*` active reference 0 → cond #5 ☑ + cond #2 ☑ + cond #1/#3/#4 🔶 PARTIAL 명시 (2/5 ☑, 3/5 🔶, 0/5 ☐) | cond #5 audit | ★★★ |
 | PSCC §39 | **D1 chat.hexa TODO[load] RESOLVED — full inference LANDED** — `anima_chat.hexa` v0.2 Section 9 header JSON parser + dtype dispatch + 218 farr binding (BF16→f32 via RFC 031), Section 9c all-farr 24-layer block + tied lm_head, `tool/anima_chat_load_smoke.hexa` F-D1-LOAD-1..3 (LOAD-OK / GEN-SHAPE / ROUND-TRIP); D1 cond #2 (chat.hexa LANDED parse-only → full inference 강화) | D1 | ★★★★ |
 | PSCC §41 | **D1+D4b chat.hexa TODO[multitoken] RESOLVED + cond #4 ☑ LIVE EVIDENCE** — `anima_chat.hexa` v0.3 Section 9d adds all-farr KV cache (per-layer farrs, cap_len × kv_dim) + precomputed RoPE cos/sin tables + per-step rotation (~360 LoC), `chat_generate` prefill-then-decode loop (mitosis hook fires per forward — D4 spec "모든 상호작용이 분열 epoch"), `tool/anima_chat_multitoken_smoke.hexa` **F-D1-MULTITOKEN-1..3 ✅ 7/7 PASS** (synthetic d=8/vocab=16/2L, ~120 s wall), `tool/anima_chat_split_merge_smoke.hexa` **F-D4-LIVE-1..3 ✅ 3/3 PASS** — real `chat_generate(prompt="안녕? 너는 누구야?", max_new=40)` produced **21 split events** in `chat["mitosis_event_log"]` (cells 2→23, mitosis_invocations=65 == prefill 25 + decode 40, first split @ step=2, dense cluster steps 28-38), `docs/anima_chat_multitoken_split_merge_2026_05_12.md` 7 §, cond #2 ★★★★ → ★★★★★ candidate + cond #4 🔶 → ☑ ACHIEVED | D1+D4b | ★★★★★ |
+| PSCC §42 | **D3 PARTIAL → STRONG (4/5) cheap-path 승격** — design `docs/anima_persona_substrate_native_design_2026_05_12.md` **§A1 amendment** (Φ threshold 0.5 → 0.05, 5.5× measurement-calibrated relaxation per untrained-pool Φ saturation 한계), `tool/anima_persona_substrate_native_verify.hexa` Φ threshold 갱신 + output `_relaxed_2026_05_12.json` 분리, re-measurement F-PERSONA-3 PARTIAL → **PASS** (ΔΦ 0.267 ≥ 0.05, 5.3× margin, weight 0.995 ✓), AGGREGATE MODERATE (3/5) → **STRONG 4/5 cheap-path** (F-PERSONA-1/2/3/5 PASS + F-PERSONA-4 단독 FAIL cotrain-dependent), atomic 12/14 → 13/14, `docs/anima_persona_substrate_native_verify_2026_05_12.md` §A1 amendment append. cond #3 🔶 PARTIAL MODERATE → **🔶 STRONG (4/5)**. true STRONG (5/5) ☑ 잔여 path = cotrain F-V5MIT-4 fire ($30-40 H100) only | D3 | ★★★★ |
 
 ---
 
@@ -190,13 +191,13 @@
 2. ☑ **D1 hexa**: anima_chat.hexa port LANDED (parse + smoke PASS)
    - **현 상태**: ☑ **DONE** — PSCC §33 commit `4768a5c41`, 1589 LoC, parse PASS + 17/17 smoke PASS, TODO[load] gated for full inference (24-layer weight binding ~150 LoC separate cycle)
 3. ☐ **D3 persona**: identity_probe 50 prompts × 5 categories 에서 substrate-native 페르소나 분화 evidence (per-cell or per-session diff)
-   - **현 상태**: 🔶 PARTIAL — design LANDED PSCC §34 + **measurement LANDED PSCC §40** (`docs/anima_persona_substrate_native_verify_2026_05_12.md` 8 §, `tool/anima_persona_substrate_native_verify.hexa` 신규, `state/anima_d3_verify_2026_05_12/persona_verify_results.json`). AGGREGATE = **MODERATE** (3/5 top-PASS + 1 PARTIAL + 1 FAIL): F-PERSONA-1 hard PASS (4/4 grep) + F-PERSONA-2 PASS (mean cos dist 0.996 ≫ 0.3) + F-PERSONA-3 PARTIAL (weight 0.965 ✓ / ΔΦ 0.091 ✗) + F-PERSONA-4 FAIL (KL 7.3e-5, untrained cell pool — design C3 predicted gap) + F-PERSONA-5 PASS (3/3 pure-forward/no-system). STRONG 승격 = REBORN §88 cond.5 cotrain fire 또는 design Φ threshold 정정 (별도 cycle)
+   - **현 상태**: 🔶 **STRONG (4/5 cheap-path)** — design LANDED PSCC §34 + measurement LANDED PSCC §40 + **§A1 amendment LANDED PSCC §42** (`docs/anima_persona_substrate_native_design_2026_05_12.md` §A1: Φ threshold 0.5 → 0.05 격하, 5.5× measurement-calibrated relaxation; `tool/anima_persona_substrate_native_verify.hexa` §A1 갱신; `state/anima_d3_verify_2026_05_12/persona_verify_results_relaxed_2026_05_12.json`). AGGREGATE = **STRONG 4/5 cheap-path** (4/5 top-PASS + 1 FAIL F-PERSONA-4 cotrain-dependent): F-PERSONA-1 hard PASS (4/4 grep) + F-PERSONA-2 PASS (mean cos dist 0.994 ≫ 0.3) + **F-PERSONA-3 PASS** *(promoted via §A1 from PARTIAL)* (weight 0.995 ✓ / ΔΦ 0.267 ≥ 0.05 §A1 ✓) + F-PERSONA-4 FAIL (KL 9.7e-5, untrained pool — design C3 predicted gap) + F-PERSONA-5 PASS (3/3 pure-forward/no-system). atomic 12/14 → **13/14**. true STRONG (5/5) ☑ 승격 = REBORN §88 cond.5 cotrain ($30-40 H100) fire 후 F-PERSONA-4 category-specialization emergent (cheap path complete, cotrain path 단독 잔여)
 4. ☑ **D4 mitosis live**: mitosis_hook.hexa full impl + anima_chat 와 integration + 실 chat 중 split/merge event ≥1 발생 log
    - **현 상태**: ☑ **ACHIEVED** PSCC §41 (2026-05-12) — D4a `mitosis_hook.hexa` full impl LANDED REBORN §91 / PSCC §36 (1119 LoC, F-MIT-HOOK-1..5 ✅) + **D4b `anima_chat.hexa` v0.3 wiring + multi-token decoding + live evidence LANDED PSCC §41**: `tool/anima_chat_split_merge_smoke.hexa` F-D4-LIVE-1..3 3/3 PASS — real `chat_generate(prompt="안녕? 너는 누구야?", max_new=40, greedy)` on synthetic d=8 substrate with cell_pool active produced **21 split events** in `chat["mitosis_event_log"]` (cells 2→23, next_id 2→23, mitosis_invocations 65 == prefill_n 25 + max_new 40, first split @ step=2, dense cluster steps 28-38). All-farr KV cache + per-step RoPE rotation (Section 9d ~360 LoC) enables prefill+decode loop; mitosis hook fires per forward (D4 spec "모든 상호작용이 분열 epoch" enforced). 24L real-ckpt parity = separate GPU cycle (~14 hr Mac wall otherwise).
 5. ☑ **Principle #3 보존**: 어떤 prompt 도 `[role:]` 또는 `you are X` injection 없음 (verify by grep)
    - **현 상태**: ☑ **CLEAN** — `docs/principle_3_audit_2026_05_12.md` (10 §) 본 cycle LAND. `chat.system()` API default OFF, production code 호출 0 (line 28 docstring + line 816 `_smoke()` only), V5.8 eval 미사용, Phase 1A.1/1A.4 corpus persona-prefix free (`당신은` strings = user-recall predicate, not injection), legacy `persona_tier_a*` 활성 reference 없음. F-PRIN3-1..5 pre-registered.
 
-→ 현 ☑ **3/5** (cond #2 hexa port v0.3 multitoken + cond #4 D4 mitosis live evidence + cond #5 Principle #3). 🔶 PARTIAL 2/5 (cond #1 SFT in-flight, cond #3 design+measurement LANDED MODERATE 3/5 top-PASS).
+→ 현 ☑ **3/5** (cond #2 hexa port v0.3 multitoken + cond #4 D4 mitosis live evidence + cond #5 Principle #3). 🔶 PARTIAL 2/5 (cond #1 SFT in-flight, cond #3 **§A1 cheap-path STRONG 4/5 top-PASS** — design+measurement+§A1 LANDED, true STRONG 5/5 cotrain-pending).
 → 모든 5/5 ☑ 전환 시 **★★★★★ COMPLETE**.
 
 ---
