@@ -59,28 +59,19 @@ sys.path.insert(0, str(ANIMA_ROOT / "training"))
 from training.engine_a_g_arch import EngineAGModel, EngineAGConfig  # noqa: E402
 
 def _find_default_ckpt() -> str:
-    """Return first existing ckpt; priority: B'' → B'.1 → B' → substrate A.
+    """Return first existing ckpt; priority: B'.1 → B'' → B' → substrate A.
 
-    Substrate ladder (chat-cap optimized, 4-mode benchmark §15-§16):
-        B''   = FFN.gate cotrain (2026-05-12, V4-lite 15/15 PASS) ⭐ winner
-        B'.1  = Phase 1A.1 color/cosmology boost (2026-05-12)
-        B'    = Phase 1A multi-turn SFT (2026-05-12, V4-lite 12/15)
+    Substrate ladder (사용자 자연 대화 우선, V5.8 std_greedy 결과 기준):
+        B'.1  = Phase 1A.1 color/cosmology boost (V5.8 std_greedy 4/5, 자연 한국어) ⭐
+        B''   = FFN.gate cotrain (V4-lite 15/15 PASS, M4 champion / 한국어 grammar 약함)
+        B'    = Phase 1A multi-turn SFT (V5.8 std_greedy 3/5)
         A     = phase2_cotrain_engine_ag (legacy baseline)
 
-    B'' V14_VIOLATED (mitosis dynamics weak) but chat-cap winner →
-    selected as default for token-stream chat usage.
-
-    Falls back to B'' path string for downstream error messages.
+    2026-05-12 cycle 결정: V4-lite mechanical 15/15 보다 사용자 자연 대화 4/5 우선
+    선택. B'.1 이 default, B'' 는 V4-lite champion fallback.
     """
     candidates = [
-        # B'' — FFN.gate cotrain (default, V4-lite 15/15 PASS) ⭐
-        str(
-            ANIMA_ROOT
-            / "state/anima_ffn_gate_cotrain_2026_05_11/ckpts/ckpt_final.pt"
-        ),
-        "/Users/ghost/core/anima/state/anima_ffn_gate_cotrain_2026_05_11/"
-        "ckpts/ckpt_final.pt",
-        # B'.1 — Phase 1A.1 color/cosmology boost
+        # B'.1 — Phase 1A.1 color/cosmology boost (default, 자연 한국어 4/5) ⭐
         str(
             ANIMA_ROOT
             / "state/anima_phase1a1_color_cosmology_2026_05_12/"
@@ -89,6 +80,13 @@ def _find_default_ckpt() -> str:
         "/Users/ghost/core/anima/state/"
         "anima_phase1a1_color_cosmology_2026_05_12/"
         "ckpts/ckpt_phase1a1_sft.pt",
+        # B'' — FFN.gate cotrain (V4-lite 15/15 PASS, fallback)
+        str(
+            ANIMA_ROOT
+            / "state/anima_ffn_gate_cotrain_2026_05_11/ckpts/ckpt_final.pt"
+        ),
+        "/Users/ghost/core/anima/state/anima_ffn_gate_cotrain_2026_05_11/"
+        "ckpts/ckpt_final.pt",
         # B' — Phase 1A multi-turn SFT
         str(
             ANIMA_ROOT
