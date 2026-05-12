@@ -1,0 +1,476 @@
+=== v5mitosis_cotrain_v4_multi vast.ai 4× H100 dispatch (v4-multi fresh-init DDP) ===
+Tue May 12 19:25:39 UTC 2026
+  fresh-init multi-GPU :: 20000 step from step 0
+  per_gpu_batch=2 world_size=4 effective_batch=8
+  arch: d=1024 n_head=16 ffn=4096 cells=256-256 ctx=256
+  routing: top_k=8 aux_alpha=0.01 λ_init=1.0 λ_final=0.01 sched=cosine
+  cost_cap=$80.0 absolute_max=$88.0 per_hr_max=$20.0
+[1/9] Searching 4× GPU offers (gpu_name in [H100_SXM,H100_NVL,H100_PCIE,H200] num_gpus=4 reliability>0.95 dph_total<20.0 disk_space>200 inet_down>200) — cheapest with gpu_ram>=120000MB ...
+  Selected: id=34497373 dph=$13.4465 gpu=H200 num_gpus=4 gpu_ram=143771MB rel=0.997
+[2/9] cost gate OK (est $67.23)
+[3/9] Renting...
+  Instance ID: 36636926
+[4/9] Waiting SSH (direct-IP) ...
+  ... 1/180 status=None
+  ... 2/180 status=None
+  ... 3/180 status=loading
+  ... 4/180 status=loading
+  ... 5/180 status=loading
+  ... 6/180 status=loading
+  ... 7/180 status=loading
+  ... 8/180 status=loading
+  ... 9/180 status=loading
+  ... 10/180 status=loading
+  ... 11/180 status=loading
+  ... 12/180 status=loading
+  ... 13/180 status=loading
+  ... 14/180 status=loading
+  ... 15/180 status=loading
+  ... 16/180 status=loading
+  ... 17/180 status=loading
+  ... 18/180 status=loading
+  ... 19/180 status=loading
+  ... 20/180 status=loading
+  ... 21/180 status=loading
+  ... 22/180 status=loading
+  ... 23/180 status=loading
+  ... 24/180 status=loading
+  SSH ready: 210.157.233.86:23431 (25x5s)
+[5/9] Uploading code+corpus+probe ...
+Warning: Permanently added '[210.157.233.86]:23431' (ED25519) to the list of known hosts.
+Welcome to vast.ai. If authentication fails, try again after a few seconds, and double check your ssh key.
+Have fun!
+Warning: Permanently added '[210.157.233.86]:23431' (ED25519) to the list of known hosts.
+Welcome to vast.ai. If authentication fails, try again after a few seconds, and double check your ssh key.
+Have fun!
+Warning: Permanently added '[210.157.233.86]:23431' (ED25519) to the list of known hosts.
+Welcome to vast.ai. If authentication fails, try again after a few seconds, and double check your ssh key.
+Have fun!
+Warning: Permanently added '[210.157.233.86]:23431' (ED25519) to the list of known hosts.
+Welcome to vast.ai. If authentication fails, try again after a few seconds, and double check your ssh key.
+Have fun!
+Warning: Permanently added '[210.157.233.86]:23431' (ED25519) to the list of known hosts.
+Welcome to vast.ai. If authentication fails, try again after a few seconds, and double check your ssh key.
+Have fun!
+[6/9] (image already has torch — skip pip install)
+Warning: Permanently added '[210.157.233.86]:23431' (ED25519) to the list of known hosts.
+Welcome to vast.ai. If authentication fails, try again after a few seconds, and double check your ssh key.
+Have fun!
+GPU 0: NVIDIA H200 (UUID: GPU-169ad8fa-7665-9e81-f89e-755c513bb786)
+GPU 1: NVIDIA H200 (UUID: GPU-f9a6b92c-2f39-845a-a5ff-b073aa9a7935)
+GPU 2: NVIDIA H200 (UUID: GPU-5f83e551-9898-7e12-f043-ee8686d482ea)
+GPU 3: NVIDIA H200 (UUID: GPU-8cfdd11f-8864-e5aa-0341-d377f3c61095)
+torch= 2.5.1+cu121 cuda= True n_gpu= 4
+[7/9] Train v4-multi DDP (torchrun nproc_per_node=4) ...
+  >>> attempt 1: per_gpu_batch=2 (effective 8)
+Warning: Permanently added '[210.157.233.86]:23431' (ED25519) to the list of known hosts.
+Welcome to vast.ai. If authentication fails, try again after a few seconds, and double check your ssh key.
+Have fun!
+W0512 19:29:37.381000 893 site-packages/torch/distributed/run.py:793] 
+W0512 19:29:37.381000 893 site-packages/torch/distributed/run.py:793] *****************************************
+W0512 19:29:37.381000 893 site-packages/torch/distributed/run.py:793] Setting OMP_NUM_THREADS environment variable for each process to be 1 in default, to avoid your system being overloaded, please further tune the variable for optimal performance in your application as needed. 
+W0512 19:29:37.381000 893 site-packages/torch/distributed/run.py:793] *****************************************
+[W512 19:29:40.703129246 CUDAAllocatorConfig.h:28] Warning: expandable_segments not supported on this platform (function operator())
+[INFO] DDP: rank=0 world_size=4 local_rank=0 device=cuda:0 is_ddp=True
+[INFO] torch=2.5.1+cu121 cuda=True
+[INFO] gpu=NVIDIA H200
+[INFO] cfg = {'vocab_size': 256, 'd_model': 1024, 'n_head': 16, 'ffn_dim': 4096, 'max_seq': 256, 'n_layer': 1, 'initial_cells': 256, 'max_cells': 256, 'min_cells': 2, 'split_patience': 3, 'merge_threshold': 0.005, 'merge_patience': 30, 'noise_scale': 0.1, 'lorenz_scale': 0.05, 'adaptive_window': 100, 'readout_mode': 'a_minus_g', 'attention_sharing': 'auto', 'weight_tied_lm_head': True, 'dropout': 0.0, 'tie_pos_emb': True, 'dispersion_trigger_enabled': True, 'dispersion_top_quartile': 0.25, 'per_cell_threshold_enabled': True, 'per_cell_window': 100, 'per_cell_sigma_mult': 1.5, 'lorenz_auto_calibrate': True, 'lorenz_calibration_factor': 1.0}
+[W512 19:29:40.231736602 CUDAAllocatorConfig.h:28] Warning: expandable_segments not supported on this platform (function operator())
+[W512 19:29:40.240068348 CUDAAllocatorConfig.h:28] Warning: expandable_segments not supported on this platform (function operator())
+[W512 19:29:40.246676260 CUDAAllocatorConfig.h:28] Warning: expandable_segments not supported on this platform (function operator())
+[INFO] n_params(engine+router incl)=5,373,167,872  router_out_dim=256 top_k=8
+[INFO] mitosis FROZEN (cells static at max from step 0) — DDP-safe path; fresh-init
+NCCL version 2.21.5+cuda12.4
+[INFO] corpus=corpus/corpus_5cat_balanced.txt bytes=18,890,139
+[INFO] steps=20000 per_gpu_batch=2 world_size=4 effective_batch=8
+[INFO] top_k=8 aux_alpha=0.01 λ_init=1.0 λ_final=0.01 sched=cosine
+[rank2]:[W512 19:30:24.344755807 reducer.cpp:1400] Warning: find_unused_parameters=True was specified in DDP constructor, but did not find any unused parameters in the forward pass. This flag results in an extra traversal of the autograd graph every iteration,  which can adversely affect performance. If your model indeed never has any unused parameters in the forward pass, consider turning this flag off. Note that this warning may be a false positive if your model has flow control causing later iterations to have unused parameters. (function operator())
+[rank1]:[W512 19:30:24.346251747 reducer.cpp:1400] Warning: find_unused_parameters=True was specified in DDP constructor, but did not find any unused parameters in the forward pass. This flag results in an extra traversal of the autograd graph every iteration,  which can adversely affect performance. If your model indeed never has any unused parameters in the forward pass, consider turning this flag off. Note that this warning may be a false positive if your model has flow control causing later iterations to have unused parameters. (function operator())
+[rank0]:[W512 19:30:24.358292508 reducer.cpp:1400] Warning: find_unused_parameters=True was specified in DDP constructor, but did not find any unused parameters in the forward pass. This flag results in an extra traversal of the autograd graph every iteration,  which can adversely affect performance. If your model indeed never has any unused parameters in the forward pass, consider turning this flag off. Note that this warning may be a false positive if your model has flow control causing later iterations to have unused parameters. (function operator())
+[rank3]:[W512 19:30:24.381948963 reducer.cpp:1400] Warning: find_unused_parameters=True was specified in DDP constructor, but did not find any unused parameters in the forward pass. This flag results in an extra traversal of the autograd graph every iteration,  which can adversely affect performance. If your model indeed never has any unused parameters in the forward pass, consider turning this flag off. Note that this warning may be a false positive if your model has flow control causing later iterations to have unused parameters. (function operator())
+[STEP     0] loss=702.0045 ce=707.5291 aux=1.3033 ent_gate=5.5376/5.545 wmax=0.1360 active>.01=8.0/256 λ=1.0000 cells=256 cost=$0.17 vram=107.5/150GB
+[STEP    50] loss=694.0780 ce=714.0482 aux=1.3086 ent_gate=5.5378/5.545 wmax=0.1341 active>.01=8.0/256 λ=1.0000 cells=256 cost=$0.32 vram=107.5/150GB
+[STEP   100] loss=658.1100 ce=689.4179 aux=1.3173 ent_gate=5.5390/5.545 wmax=0.1356 active>.01=8.0/256 λ=1.0000 cells=256 cost=$0.47 vram=107.5/150GB
+[STEP   150] loss=591.4177 ce=631.5625 aux=1.3382 ent_gate=5.5404/5.545 wmax=0.1393 active>.01=8.0/256 λ=1.0000 cells=256 cost=$0.62 vram=107.5/150GB
+[STEP   200] loss=450.2282 ce=522.3387 aux=1.3685 ent_gate=5.5412/5.545 wmax=0.1418 active>.01=8.0/256 λ=1.0000 cells=256 cost=$0.77 vram=107.5/150GB
+[STEP   250] loss=258.5692 ce=370.6662 aux=1.4138 ent_gate=5.5412/5.545 wmax=0.1450 active>.01=8.0/256 λ=1.0000 cells=256 cost=$0.92 vram=107.5/150GB
+[STEP   300] loss=82.1251 ce=165.8463 aux=1.5279 ent_gate=5.5399/5.545 wmax=0.1481 active>.01=8.0/256 λ=1.0000 cells=256 cost=$1.06 vram=107.5/150GB
+[STEP   350] loss=24.6312 ce=52.7529 aux=1.7040 ent_gate=5.5366/5.545 wmax=0.1513 active>.01=8.0/256 λ=1.0000 cells=256 cost=$1.21 vram=107.5/150GB
+[STEP   400] loss=7.2831 ce=20.9683 aux=1.9408 ent_gate=5.5309/5.545 wmax=0.1548 active>.01=8.0/256 λ=1.0000 cells=256 cost=$1.36 vram=107.5/150GB
+[STEP   450] loss=0.7077 ce=9.4178 aux=2.2381 ent_gate=5.5222/5.545 wmax=0.1583 active>.01=8.0/256 λ=1.0000 cells=256 cost=$1.51 vram=107.5/150GB
+[STEP   500] loss=0.7709 ce=5.4815 aux=2.5993 ent_gate=5.5096/5.545 wmax=0.1629 active>.01=8.0/256 λ=1.0000 cells=256 cost=$1.65 vram=107.5/150GB
+[STEP   550] loss=-1.8345 ce=4.0503 aux=2.8537 ent_gate=5.4995/5.545 wmax=0.1665 active>.01=8.0/256 λ=1.0000 cells=256 cost=$1.80 vram=107.5/150GB
+[STEP   600] loss=-2.5761 ce=3.2323 aux=2.9535 ent_gate=5.4954/5.545 wmax=0.1669 active>.01=8.0/256 λ=1.0000 cells=256 cost=$1.95 vram=107.5/150GB
+[STEP   650] loss=-2.7443 ce=2.8421 aux=2.9068 ent_gate=5.4973/5.545 wmax=0.1656 active>.01=8.0/256 λ=1.0000 cells=256 cost=$2.10 vram=107.5/150GB
+[STEP   700] loss=-3.0972 ce=2.6821 aux=2.7410 ent_gate=5.5041/5.545 wmax=0.1645 active>.01=8.0/256 λ=1.0000 cells=256 cost=$2.24 vram=107.5/150GB
+[STEP   750] loss=-2.8764 ce=2.6105 aux=2.5868 ent_gate=5.5101/5.545 wmax=0.1641 active>.01=8.0/256 λ=1.0000 cells=256 cost=$2.39 vram=107.5/150GB
+[STEP   800] loss=-3.3757 ce=2.4617 aux=2.4082 ent_gate=5.5165/5.545 wmax=0.1625 active>.01=8.0/256 λ=1.0000 cells=256 cost=$2.54 vram=107.5/150GB
+[STEP   850] loss=-2.4410 ce=2.4148 aux=2.2730 ent_gate=5.5211/5.545 wmax=0.1621 active>.01=8.0/256 λ=1.0000 cells=256 cost=$2.69 vram=107.5/150GB
+[STEP   900] loss=-3.2523 ce=2.3292 aux=2.1570 ent_gate=5.5248/5.545 wmax=0.1618 active>.01=8.0/256 λ=1.0000 cells=256 cost=$2.83 vram=107.5/150GB
+[STEP   950] loss=-3.1325 ce=2.3378 aux=2.0637 ent_gate=5.5275/5.545 wmax=0.1614 active>.01=8.0/256 λ=1.0000 cells=256 cost=$2.98 vram=107.5/150GB
+[STEP  1000] loss=-3.4495 ce=2.3267 aux=1.9806 ent_gate=5.5299/5.545 wmax=0.1605 active>.01=8.0/256 λ=1.0000 cells=256 cost=$3.13 vram=107.5/150GB
+[STEP  1050] loss=-3.4225 ce=2.2107 aux=1.9383 ent_gate=5.5310/5.545 wmax=0.1611 active>.01=8.0/256 λ=1.0000 cells=256 cost=$3.28 vram=107.5/150GB
+[STEP  1100] loss=-3.2668 ce=2.2524 aux=1.8917 ent_gate=5.5322/5.545 wmax=0.1617 active>.01=8.0/256 λ=1.0000 cells=256 cost=$3.43 vram=107.5/150GB
+[STEP  1150] loss=-3.5869 ce=2.1721 aux=1.8530 ent_gate=5.5332/5.545 wmax=0.1614 active>.01=8.0/256 λ=1.0000 cells=256 cost=$3.57 vram=107.5/150GB
+[STEP  1200] loss=-3.3788 ce=2.1361 aux=1.8247 ent_gate=5.5339/5.545 wmax=0.1610 active>.01=8.0/256 λ=1.0000 cells=256 cost=$3.72 vram=107.5/150GB
+[STEP  1250] loss=-3.5246 ce=2.1320 aux=1.7926 ent_gate=5.5347/5.545 wmax=0.1608 active>.01=8.0/256 λ=1.0000 cells=256 cost=$3.87 vram=107.5/150GB
+[STEP  1300] loss=-3.4171 ce=2.1410 aux=1.7733 ent_gate=5.5351/5.545 wmax=0.1601 active>.01=8.0/256 λ=1.0000 cells=256 cost=$4.02 vram=107.5/150GB
+[STEP  1350] loss=-3.3877 ce=2.1173 aux=1.7485 ent_gate=5.5357/5.545 wmax=0.1599 active>.01=8.0/256 λ=1.0000 cells=256 cost=$4.17 vram=107.5/150GB
+[STEP  1400] loss=-3.5451 ce=2.1642 aux=1.7303 ent_gate=5.5360/5.545 wmax=0.1603 active>.01=8.0/256 λ=1.0000 cells=256 cost=$4.31 vram=107.5/150GB
+[STEP  1450] loss=-3.4234 ce=2.1650 aux=1.7110 ent_gate=5.5365/5.545 wmax=0.1589 active>.01=8.0/256 λ=1.0000 cells=256 cost=$4.46 vram=107.5/150GB
+[STEP  1500] loss=-3.3279 ce=2.0856 aux=1.7014 ent_gate=5.5367/5.545 wmax=0.1584 active>.01=8.0/256 λ=1.0000 cells=256 cost=$4.61 vram=107.5/150GB
+[STEP  1550] loss=-3.3913 ce=2.0758 aux=1.7018 ent_gate=5.5367/5.545 wmax=0.1580 active>.01=8.0/256 λ=1.0000 cells=256 cost=$4.76 vram=107.5/150GB
+[STEP  1600] loss=-3.4625 ce=2.1225 aux=1.7145 ent_gate=5.5364/5.545 wmax=0.1575 active>.01=8.0/256 λ=1.0000 cells=256 cost=$4.91 vram=107.5/150GB
+[STEP  1650] loss=-3.5108 ce=2.0646 aux=1.7113 ent_gate=5.5365/5.545 wmax=0.1564 active>.01=8.0/256 λ=1.0000 cells=256 cost=$5.05 vram=107.5/150GB
+[STEP  1700] loss=-3.6049 ce=1.9953 aux=1.7000 ent_gate=5.5367/5.545 wmax=0.1555 active>.01=8.0/256 λ=1.0000 cells=256 cost=$5.20 vram=107.5/150GB
+[STEP  1750] loss=-3.3171 ce=2.0162 aux=1.6943 ent_gate=5.5368/5.545 wmax=0.1558 active>.01=8.0/256 λ=1.0000 cells=256 cost=$5.35 vram=107.5/150GB
+[STEP  1800] loss=-3.4786 ce=2.0912 aux=1.6818 ent_gate=5.5370/5.545 wmax=0.1549 active>.01=8.0/256 λ=1.0000 cells=256 cost=$5.50 vram=107.5/150GB
+[STEP  1850] loss=-3.6433 ce=2.0195 aux=1.6651 ent_gate=5.5374/5.545 wmax=0.1546 active>.01=8.0/256 λ=1.0000 cells=256 cost=$5.64 vram=107.5/150GB
+[STEP  1900] loss=-3.4278 ce=2.0133 aux=1.6560 ent_gate=5.5376/5.545 wmax=0.1537 active>.01=8.0/256 λ=1.0000 cells=256 cost=$5.79 vram=107.5/150GB
+[STEP  1950] loss=-3.4311 ce=2.0426 aux=1.6601 ent_gate=5.5375/5.545 wmax=0.1546 active>.01=8.0/256 λ=1.0000 cells=256 cost=$5.94 vram=107.5/150GB
+[STEP  2000] loss=-3.6559 ce=1.9747 aux=1.6727 ent_gate=5.5372/5.545 wmax=0.1570 active>.01=8.0/256 λ=1.0000 cells=256 cost=$6.09 vram=107.5/150GB
+[STEP  2050] loss=-3.6413 ce=1.9987 aux=1.6550 ent_gate=5.5376/5.545 wmax=0.1566 active>.01=8.0/256 λ=1.0000 cells=256 cost=$6.23 vram=107.5/150GB
+[STEP  2100] loss=-3.4347 ce=1.9694 aux=1.6466 ent_gate=5.5377/5.545 wmax=0.1579 active>.01=8.0/256 λ=0.9999 cells=256 cost=$6.38 vram=107.5/150GB
+[STEP  2150] loss=-3.5977 ce=1.9208 aux=1.6320 ent_gate=5.5380/5.545 wmax=0.1595 active>.01=8.0/256 λ=0.9998 cells=256 cost=$6.53 vram=107.5/150GB
+[STEP  2200] loss=-3.8214 ce=1.8737 aux=1.6203 ent_gate=5.5382/5.545 wmax=0.1594 active>.01=8.0/256 λ=0.9997 cells=256 cost=$6.68 vram=107.5/150GB
+[STEP  2250] loss=-3.6630 ce=1.9206 aux=1.6148 ent_gate=5.5383/5.545 wmax=0.1612 active>.01=8.0/256 λ=0.9995 cells=256 cost=$6.82 vram=107.5/150GB
+[STEP  2300] loss=-3.6868 ce=1.8940 aux=1.6096 ent_gate=5.5384/5.545 wmax=0.1632 active>.01=8.0/256 λ=0.9993 cells=256 cost=$6.97 vram=107.5/150GB
+[STEP  2350] loss=-3.8264 ce=1.8683 aux=1.5896 ent_gate=5.5387/5.545 wmax=0.1651 active>.01=8.0/256 λ=0.9991 cells=256 cost=$7.12 vram=107.5/150GB
+[STEP  2400] loss=-3.5321 ce=1.8341 aux=1.5793 ent_gate=5.5389/5.545 wmax=0.1662 active>.01=8.0/256 λ=0.9988 cells=256 cost=$7.27 vram=107.5/150GB
+[STEP  2450] loss=-3.6474 ce=1.8790 aux=1.5775 ent_gate=5.5389/5.545 wmax=0.1667 active>.01=8.0/256 λ=0.9985 cells=256 cost=$7.41 vram=107.5/150GB
+[STEP  2500] loss=-3.6274 ce=1.8468 aux=1.5613 ent_gate=5.5392/5.545 wmax=0.1689 active>.01=8.0/256 λ=0.9981 cells=256 cost=$7.56 vram=107.5/150GB
+[STEP  2550] loss=-3.6285 ce=1.8191 aux=1.5515 ent_gate=5.5393/5.545 wmax=0.1719 active>.01=8.0/256 λ=0.9977 cells=256 cost=$7.71 vram=107.5/150GB
+[STEP  2600] loss=-3.6997 ce=1.7487 aux=1.5302 ent_gate=5.5397/5.545 wmax=0.1725 active>.01=8.0/256 λ=0.9973 cells=256 cost=$7.86 vram=107.5/150GB
+[STEP  2650] loss=-3.8727 ce=1.7298 aux=1.5312 ent_gate=5.5396/5.545 wmax=0.1755 active>.01=8.0/256 λ=0.9968 cells=256 cost=$8.01 vram=107.5/150GB
+[STEP  2700] loss=-3.7024 ce=1.7022 aux=1.5096 ent_gate=5.5399/5.545 wmax=0.1783 active>.01=8.0/256 λ=0.9963 cells=256 cost=$8.15 vram=107.5/150GB
+[STEP  2750] loss=-3.8750 ce=1.6425 aux=1.4943 ent_gate=5.5402/5.545 wmax=0.1802 active>.01=8.0/256 λ=0.9958 cells=256 cost=$8.30 vram=107.5/150GB
+[STEP  2800] loss=-3.6995 ce=1.6676 aux=1.4905 ent_gate=5.5402/5.545 wmax=0.1827 active>.01=8.0/256 λ=0.9952 cells=256 cost=$8.45 vram=107.5/150GB
+[STEP  2850] loss=-3.9570 ce=1.6686 aux=1.4804 ent_gate=5.5403/5.545 wmax=0.1868 active>.01=8.0/256 λ=0.9946 cells=256 cost=$8.60 vram=107.5/150GB
+[STEP  2900] loss=-4.0346 ce=1.6358 aux=1.4549 ent_gate=5.5407/5.545 wmax=0.1867 active>.01=8.0/256 λ=0.9939 cells=256 cost=$8.75 vram=107.5/150GB
+[STEP  2950] loss=-3.8774 ce=1.6456 aux=1.4538 ent_gate=5.5407/5.545 wmax=0.1900 active>.01=8.0/256 λ=0.9932 cells=256 cost=$8.89 vram=107.5/150GB
+[STEP  3000] loss=-4.0086 ce=1.5840 aux=1.4553 ent_gate=5.5405/5.545 wmax=0.1944 active>.01=8.0/256 λ=0.9925 cells=256 cost=$9.04 vram=107.5/150GB
+[STEP  3050] loss=-3.7541 ce=1.5401 aux=1.4526 ent_gate=5.5405/5.545 wmax=0.1970 active>.01=8.0/256 λ=0.9917 cells=256 cost=$9.19 vram=107.5/150GB
+[STEP  3100] loss=-3.7658 ce=1.5513 aux=1.4603 ent_gate=5.5403/5.545 wmax=0.2019 active>.01=8.0/256 λ=0.9909 cells=256 cost=$9.34 vram=107.5/150GB
+[STEP  3150] loss=-3.9582 ce=1.4901 aux=1.4480 ent_gate=5.5404/5.545 wmax=0.2054 active>.01=8.0/256 λ=0.9901 cells=256 cost=$9.49 vram=107.5/150GB
+[STEP  3200] loss=-4.0772 ce=1.4717 aux=1.4270 ent_gate=5.5407/5.545 wmax=0.2064 active>.01=8.0/256 λ=0.9892 cells=256 cost=$9.63 vram=107.5/150GB
+[STEP  3250] loss=-3.8927 ce=1.4224 aux=1.4316 ent_gate=5.5405/5.545 wmax=0.2117 active>.01=8.0/256 λ=0.9883 cells=256 cost=$9.78 vram=107.5/150GB
+[STEP  3300] loss=-4.0506 ce=1.4913 aux=1.4167 ent_gate=5.5407/5.545 wmax=0.2129 active>.01=8.0/256 λ=0.9873 cells=256 cost=$9.93 vram=107.5/150GB
+[STEP  3350] loss=-3.9236 ce=1.3615 aux=1.4237 ent_gate=5.5404/5.545 wmax=0.2193 active>.01=8.0/256 λ=0.9863 cells=256 cost=$10.08 vram=107.5/150GB
+[STEP  3400] loss=-4.0898 ce=1.4286 aux=1.4571 ent_gate=5.5396/5.545 wmax=0.2240 active>.01=8.0/256 λ=0.9853 cells=256 cost=$10.22 vram=107.5/150GB
+[STEP  3450] loss=-4.1170 ce=1.4003 aux=1.5515 ent_gate=5.5376/5.545 wmax=0.2346 active>.01=8.0/256 λ=0.9842 cells=256 cost=$10.37 vram=107.5/150GB
+[STEP  3500] loss=-4.1278 ce=1.3236 aux=1.5851 ent_gate=5.5368/5.545 wmax=0.2380 active>.01=8.0/256 λ=0.9831 cells=256 cost=$10.52 vram=107.5/150GB
+[STEP  3550] loss=-4.3116 ce=1.2947 aux=1.5968 ent_gate=5.5365/5.545 wmax=0.2412 active>.01=8.0/256 λ=0.9820 cells=256 cost=$10.67 vram=107.5/150GB
+[STEP  3600] loss=-4.0830 ce=1.3116 aux=1.5956 ent_gate=5.5364/5.545 wmax=0.2436 active>.01=8.0/256 λ=0.9808 cells=256 cost=$10.81 vram=107.5/150GB
+[STEP  3650] loss=-4.4149 ce=1.2086 aux=1.6040 ent_gate=5.5360/5.545 wmax=0.2489 active>.01=8.0/256 λ=0.9796 cells=256 cost=$10.96 vram=107.5/150GB
+[STEP  3700] loss=-4.2962 ce=1.2112 aux=1.6008 ent_gate=5.5360/5.545 wmax=0.2517 active>.01=8.0/256 λ=0.9784 cells=256 cost=$11.11 vram=107.5/150GB
+[STEP  3750] loss=-4.2827 ce=1.2035 aux=1.5992 ent_gate=5.5359/5.545 wmax=0.2553 active>.01=8.0/256 λ=0.9771 cells=256 cost=$11.26 vram=107.5/150GB
+[STEP  3800] loss=-4.3181 ce=1.1468 aux=1.5875 ent_gate=5.5360/5.545 wmax=0.2591 active>.01=8.0/256 λ=0.9758 cells=256 cost=$11.40 vram=107.5/150GB
+[STEP  3850] loss=-4.0881 ce=1.1350 aux=1.5853 ent_gate=5.5360/5.545 wmax=0.2606 active>.01=8.0/256 λ=0.9744 cells=256 cost=$11.55 vram=107.5/150GB
+[STEP  3900] loss=-4.4022 ce=1.0678 aux=1.6003 ent_gate=5.5354/5.545 wmax=0.2679 active>.01=8.0/256 λ=0.9730 cells=256 cost=$11.70 vram=107.5/150GB
+[STEP  3950] loss=-4.2431 ce=1.0346 aux=1.5862 ent_gate=5.5356/5.545 wmax=0.2688 active>.01=8.0/256 λ=0.9716 cells=256 cost=$11.85 vram=107.5/150GB
+[STEP  4000] loss=-4.2110 ce=1.0261 aux=1.5872 ent_gate=5.5356/5.545 wmax=0.2705 active>.01=8.0/256 λ=0.9701 cells=256 cost=$12.00 vram=107.5/150GB
+[STEP  4050] loss=-4.4091 ce=1.0038 aux=1.5830 ent_gate=5.5355/5.545 wmax=0.2735 active>.01=8.0/256 λ=0.9687 cells=256 cost=$12.14 vram=107.5/150GB
+[STEP  4100] loss=-4.3066 ce=0.9558 aux=1.5878 ent_gate=5.5352/5.545 wmax=0.2790 active>.01=8.0/256 λ=0.9671 cells=256 cost=$12.29 vram=107.5/150GB
+[STEP  4150] loss=-4.2392 ce=0.9336 aux=1.5861 ent_gate=5.5351/5.545 wmax=0.2804 active>.01=8.0/256 λ=0.9656 cells=256 cost=$12.44 vram=107.5/150GB
+[STEP  4200] loss=-4.4956 ce=0.9214 aux=1.5848 ent_gate=5.5350/5.545 wmax=0.2821 active>.01=8.0/256 λ=0.9640 cells=256 cost=$12.59 vram=107.5/150GB
+[STEP  4250] loss=-4.4676 ce=0.8818 aux=1.5793 ent_gate=5.5350/5.545 wmax=0.2854 active>.01=8.0/256 λ=0.9623 cells=256 cost=$12.74 vram=107.5/150GB
+[STEP  4300] loss=-4.4987 ce=0.8715 aux=1.5655 ent_gate=5.5352/5.545 wmax=0.2866 active>.01=8.0/256 λ=0.9606 cells=256 cost=$12.88 vram=107.5/150GB
+[STEP  4350] loss=-4.4720 ce=0.8476 aux=1.5785 ent_gate=5.5348/5.545 wmax=0.2905 active>.01=8.0/256 λ=0.9589 cells=256 cost=$13.03 vram=107.5/150GB
+[STEP  4400] loss=-4.4373 ce=0.8396 aux=1.5866 ent_gate=5.5345/5.545 wmax=0.2917 active>.01=8.0/256 λ=0.9572 cells=256 cost=$13.18 vram=107.5/150GB
+[STEP  4450] loss=-4.2401 ce=0.8344 aux=1.5796 ent_gate=5.5344/5.545 wmax=0.2947 active>.01=8.0/256 λ=0.9554 cells=256 cost=$13.33 vram=107.5/150GB
+[STEP  4500] loss=-4.4568 ce=0.8264 aux=1.6757 ent_gate=5.5315/5.545 wmax=0.3039 active>.01=8.0/256 λ=0.9536 cells=256 cost=$13.47 vram=107.5/150GB
+[STEP  4550] loss=-4.3892 ce=0.7981 aux=1.7205 ent_gate=5.5301/5.545 wmax=0.3086 active>.01=8.0/256 λ=0.9518 cells=256 cost=$13.62 vram=107.5/150GB
+[STEP  4600] loss=-4.6836 ce=0.7418 aux=1.7299 ent_gate=5.5298/5.545 wmax=0.3098 active>.01=8.0/256 λ=0.9499 cells=256 cost=$13.77 vram=107.5/150GB
+[STEP  4650] loss=-4.3930 ce=0.7791 aux=1.7281 ent_gate=5.5297/5.545 wmax=0.3112 active>.01=8.0/256 λ=0.9480 cells=256 cost=$13.92 vram=107.5/150GB
+[STEP  4700] loss=-4.4851 ce=0.7268 aux=1.7313 ent_gate=5.5296/5.545 wmax=0.3120 active>.01=8.0/256 λ=0.9460 cells=256 cost=$14.06 vram=107.5/150GB
+[STEP  4750] loss=-4.6455 ce=0.6638 aux=1.7197 ent_gate=5.5297/5.545 wmax=0.3152 active>.01=8.0/256 λ=0.9441 cells=256 cost=$14.21 vram=107.5/150GB
+[STEP  4800] loss=-4.6850 ce=0.6485 aux=1.7195 ent_gate=5.5298/5.545 wmax=0.3148 active>.01=8.0/256 λ=0.9421 cells=256 cost=$14.36 vram=107.5/150GB
+[STEP  4850] loss=-4.4824 ce=0.6639 aux=1.7177 ent_gate=5.5298/5.545 wmax=0.3146 active>.01=8.0/256 λ=0.9400 cells=256 cost=$14.51 vram=107.5/150GB
+[STEP  4900] loss=-4.4983 ce=0.6545 aux=1.7103 ent_gate=5.5300/5.545 wmax=0.3155 active>.01=8.0/256 λ=0.9379 cells=256 cost=$14.66 vram=107.5/150GB
+[STEP  4950] loss=-4.6062 ce=0.5935 aux=1.7077 ent_gate=5.5299/5.545 wmax=0.3188 active>.01=8.0/256 λ=0.9358 cells=256 cost=$14.80 vram=107.5/150GB
+  [SNAP 5000] 4a KL=1.2024 z=-0.13 | 4b cos_z=3.75
+[STEP  5000] loss=-4.4430 ce=0.5818 aux=1.7107 ent_gate=5.5297/5.545 wmax=0.3212 active>.01=8.0/256 λ=0.9337 cells=256 cost=$15.04 vram=107.5/150GB
+[STEP  5050] loss=-4.6073 ce=0.5826 aux=1.7094 ent_gate=5.5297/5.545 wmax=0.3207 active>.01=8.0/256 λ=0.9315 cells=256 cost=$15.18 vram=107.5/150GB
+[STEP  5100] loss=-4.7319 ce=0.5282 aux=1.7057 ent_gate=5.5297/5.545 wmax=0.3224 active>.01=8.0/256 λ=0.9293 cells=256 cost=$15.33 vram=107.5/150GB
+[STEP  5150] loss=-4.4984 ce=0.5535 aux=1.6897 ent_gate=5.5301/5.545 wmax=0.3233 active>.01=8.0/256 λ=0.9271 cells=256 cost=$15.48 vram=107.5/150GB
+[STEP  5200] loss=-4.5081 ce=0.5053 aux=1.6831 ent_gate=5.5303/5.545 wmax=0.3230 active>.01=8.0/256 λ=0.9248 cells=256 cost=$15.63 vram=107.5/150GB
+[STEP  5250] loss=-4.6066 ce=0.4967 aux=1.6761 ent_gate=5.5304/5.545 wmax=0.3241 active>.01=8.0/256 λ=0.9225 cells=256 cost=$15.78 vram=107.5/150GB
+[STEP  5300] loss=-4.7357 ce=0.4893 aux=1.6814 ent_gate=5.5302/5.545 wmax=0.3261 active>.01=8.0/256 λ=0.9201 cells=256 cost=$15.92 vram=107.5/150GB
+[STEP  5350] loss=-4.7342 ce=0.4543 aux=1.6756 ent_gate=5.5303/5.545 wmax=0.3258 active>.01=8.0/256 λ=0.9178 cells=256 cost=$16.07 vram=107.5/150GB
+[STEP  5400] loss=-4.6430 ce=0.4451 aux=1.6654 ent_gate=5.5306/5.545 wmax=0.3250 active>.01=8.0/256 λ=0.9154 cells=256 cost=$16.22 vram=107.5/150GB
+[STEP  5450] loss=-4.6310 ce=0.4429 aux=1.6544 ent_gate=5.5310/5.545 wmax=0.3242 active>.01=8.0/256 λ=0.9129 cells=256 cost=$16.37 vram=107.5/150GB
+[STEP  5500] loss=-4.6816 ce=0.4324 aux=1.6608 ent_gate=5.5307/5.545 wmax=0.3263 active>.01=8.0/256 λ=0.9105 cells=256 cost=$16.52 vram=107.5/150GB
+[STEP  5550] loss=-4.6866 ce=0.4167 aux=1.6591 ent_gate=5.5306/5.545 wmax=0.3278 active>.01=8.0/256 λ=0.9080 cells=256 cost=$16.66 vram=107.5/150GB
+[STEP  5600] loss=-4.6608 ce=0.4156 aux=1.6331 ent_gate=5.5314/5.545 wmax=0.3261 active>.01=8.0/256 λ=0.9055 cells=256 cost=$16.81 vram=107.5/150GB
+[STEP  5650] loss=-4.5942 ce=0.4036 aux=1.6322 ent_gate=5.5313/5.545 wmax=0.3278 active>.01=8.0/256 λ=0.9029 cells=256 cost=$16.96 vram=107.5/150GB
+[STEP  5700] loss=-4.6099 ce=0.3965 aux=1.6288 ent_gate=5.5314/5.545 wmax=0.3274 active>.01=8.0/256 λ=0.9003 cells=256 cost=$17.11 vram=107.5/150GB
+[STEP  5750] loss=-4.5665 ce=0.3635 aux=1.6398 ent_gate=5.5309/5.545 wmax=0.3314 active>.01=8.0/256 λ=0.8977 cells=256 cost=$17.25 vram=107.5/150GB
+[STEP  5800] loss=-4.4911 ce=0.3731 aux=1.6312 ent_gate=5.5314/5.545 wmax=0.3275 active>.01=8.0/256 λ=0.8951 cells=256 cost=$17.40 vram=107.5/150GB
+[STEP  5850] loss=-4.6101 ce=0.3675 aux=1.6227 ent_gate=5.5315/5.545 wmax=0.3296 active>.01=8.0/256 λ=0.8924 cells=256 cost=$17.55 vram=107.5/150GB
+[STEP  5900] loss=-4.6186 ce=0.3548 aux=1.6186 ent_gate=5.5315/5.545 wmax=0.3315 active>.01=8.0/256 λ=0.8897 cells=256 cost=$17.70 vram=107.5/150GB
+[STEP  5950] loss=-4.6575 ce=0.3517 aux=1.6138 ent_gate=5.5315/5.545 wmax=0.3330 active>.01=8.0/256 λ=0.8870 cells=256 cost=$17.85 vram=107.5/150GB
+[STEP  6000] loss=-4.3770 ce=0.3742 aux=1.6804 ent_gate=5.5290/5.545 wmax=0.3423 active>.01=8.0/256 λ=0.8842 cells=256 cost=$17.99 vram=107.5/150GB
+[STEP  6050] loss=-4.4105 ce=0.3811 aux=1.7493 ent_gate=5.5264/5.545 wmax=0.3499 active>.01=8.0/256 λ=0.8814 cells=256 cost=$18.14 vram=107.5/150GB
+[STEP  6100] loss=-4.5419 ce=0.3594 aux=1.7384 ent_gate=5.5268/5.545 wmax=0.3487 active>.01=8.0/256 λ=0.8786 cells=256 cost=$18.29 vram=107.5/150GB
+[STEP  6150] loss=-4.4500 ce=0.3322 aux=1.7627 ent_gate=5.5258/5.545 wmax=0.3524 active>.01=8.0/256 λ=0.8757 cells=256 cost=$18.44 vram=107.5/150GB
+[STEP  6200] loss=-4.4826 ce=0.3298 aux=1.7518 ent_gate=5.5262/5.545 wmax=0.3522 active>.01=8.0/256 λ=0.8729 cells=256 cost=$18.59 vram=107.5/150GB
+[STEP  6250] loss=-4.4345 ce=0.3220 aux=1.7447 ent_gate=5.5264/5.545 wmax=0.3526 active>.01=8.0/256 λ=0.8700 cells=256 cost=$18.73 vram=107.5/150GB
+[STEP  6300] loss=-4.5190 ce=0.3046 aux=1.7349 ent_gate=5.5269/5.545 wmax=0.3495 active>.01=8.0/256 λ=0.8670 cells=256 cost=$18.88 vram=107.5/150GB
+[STEP  6350] loss=-4.4412 ce=0.3080 aux=1.7172 ent_gate=5.5276/5.545 wmax=0.3468 active>.01=8.0/256 λ=0.8641 cells=256 cost=$19.03 vram=107.5/150GB
+[STEP  6400] loss=-4.4035 ce=0.3083 aux=1.7132 ent_gate=5.5276/5.545 wmax=0.3487 active>.01=8.0/256 λ=0.8611 cells=256 cost=$19.18 vram=107.5/150GB
+[STEP  6450] loss=-4.5403 ce=0.2725 aux=1.7139 ent_gate=5.5277/5.545 wmax=0.3472 active>.01=8.0/256 λ=0.8581 cells=256 cost=$19.32 vram=107.5/150GB
+[STEP  6500] loss=-4.4170 ce=0.2733 aux=1.7073 ent_gate=5.5279/5.545 wmax=0.3466 active>.01=8.0/256 λ=0.8550 cells=256 cost=$19.47 vram=107.5/150GB
+[STEP  6550] loss=-4.4343 ce=0.2782 aux=1.6999 ent_gate=5.5281/5.545 wmax=0.3477 active>.01=8.0/256 λ=0.8520 cells=256 cost=$19.62 vram=107.5/150GB
+[STEP  6600] loss=-4.4490 ce=0.2603 aux=1.6982 ent_gate=5.5282/5.545 wmax=0.3472 active>.01=8.0/256 λ=0.8489 cells=256 cost=$19.77 vram=107.5/150GB
+[STEP  6650] loss=-4.4155 ce=0.2657 aux=1.6840 ent_gate=5.5288/5.545 wmax=0.3427 active>.01=8.0/256 λ=0.8457 cells=256 cost=$19.92 vram=107.5/150GB
+[STEP  6700] loss=-4.3526 ce=0.2514 aux=1.6712 ent_gate=5.5292/5.545 wmax=0.3427 active>.01=8.0/256 λ=0.8426 cells=256 cost=$20.06 vram=107.5/150GB
+[STEP  6750] loss=-4.4421 ce=0.2470 aux=1.6670 ent_gate=5.5292/5.545 wmax=0.3451 active>.01=8.0/256 λ=0.8394 cells=256 cost=$20.21 vram=107.5/150GB
+[STEP  6800] loss=-4.3922 ce=0.2558 aux=1.6750 ent_gate=5.5289/5.545 wmax=0.3466 active>.01=8.0/256 λ=0.8362 cells=256 cost=$20.36 vram=107.5/150GB
+[STEP  6850] loss=-4.3549 ce=0.2531 aux=1.6641 ent_gate=5.5294/5.545 wmax=0.3433 active>.01=8.0/256 λ=0.8330 cells=256 cost=$20.51 vram=107.5/150GB
+[STEP  6900] loss=-4.3635 ce=0.2333 aux=1.6681 ent_gate=5.5292/5.545 wmax=0.3451 active>.01=8.0/256 λ=0.8297 cells=256 cost=$20.65 vram=107.5/150GB
+[STEP  6950] loss=-4.3330 ce=0.2266 aux=1.6496 ent_gate=5.5298/5.545 wmax=0.3440 active>.01=8.0/256 λ=0.8265 cells=256 cost=$20.80 vram=107.5/150GB
+[STEP  7000] loss=-4.3015 ce=0.2312 aux=1.6469 ent_gate=5.5298/5.545 wmax=0.3444 active>.01=8.0/256 λ=0.8232 cells=256 cost=$20.95 vram=107.5/150GB
+[STEP  7050] loss=-4.2828 ce=0.2256 aux=1.6427 ent_gate=5.5300/5.545 wmax=0.3429 active>.01=8.0/256 λ=0.8199 cells=256 cost=$21.10 vram=107.5/150GB
+[STEP  7100] loss=-4.2410 ce=0.2222 aux=1.6326 ent_gate=5.5304/5.545 wmax=0.3412 active>.01=8.0/256 λ=0.8165 cells=256 cost=$21.25 vram=107.5/150GB
+[STEP  7150] loss=-4.3008 ce=0.2155 aux=1.6133 ent_gate=5.5310/5.545 wmax=0.3407 active>.01=8.0/256 λ=0.8131 cells=256 cost=$21.39 vram=107.5/150GB
+[STEP  7200] loss=-4.2825 ce=0.2203 aux=1.6167 ent_gate=5.5308/5.545 wmax=0.3422 active>.01=8.0/256 λ=0.8098 cells=256 cost=$21.54 vram=107.5/150GB
+[STEP  7250] loss=-4.2464 ce=0.2113 aux=1.6095 ent_gate=5.5312/5.545 wmax=0.3385 active>.01=8.0/256 λ=0.8063 cells=256 cost=$21.69 vram=107.5/150GB
+[STEP  7300] loss=-4.2576 ce=0.2059 aux=1.6143 ent_gate=5.5309/5.545 wmax=0.3409 active>.01=8.0/256 λ=0.8029 cells=256 cost=$21.84 vram=107.5/150GB
+[STEP  7350] loss=-4.2523 ce=0.1999 aux=1.6068 ent_gate=5.5312/5.545 wmax=0.3394 active>.01=8.0/256 λ=0.7994 cells=256 cost=$21.98 vram=107.5/150GB
+[STEP  7400] loss=-4.2001 ce=0.2106 aux=1.5976 ent_gate=5.5315/5.545 wmax=0.3391 active>.01=8.0/256 λ=0.7960 cells=256 cost=$22.14 vram=107.5/150GB
+[STEP  7450] loss=-4.1549 ce=0.1899 aux=1.5970 ent_gate=5.5315/5.545 wmax=0.3391 active>.01=8.0/256 λ=0.7924 cells=256 cost=$22.28 vram=107.5/150GB
+[STEP  7500] loss=-4.1514 ce=0.1936 aux=1.5903 ent_gate=5.5318/5.545 wmax=0.3369 active>.01=8.0/256 λ=0.7889 cells=256 cost=$22.43 vram=107.5/150GB
+[STEP  7550] loss=-4.0680 ce=0.1889 aux=1.5817 ent_gate=5.5321/5.545 wmax=0.3360 active>.01=8.0/256 λ=0.7854 cells=256 cost=$22.58 vram=107.5/150GB
+[STEP  7600] loss=-4.1333 ce=0.1832 aux=1.5724 ent_gate=5.5323/5.545 wmax=0.3353 active>.01=8.0/256 λ=0.7818 cells=256 cost=$22.73 vram=107.5/150GB
+[STEP  7650] loss=-4.1280 ce=0.1941 aux=1.5546 ent_gate=5.5330/5.545 wmax=0.3311 active>.01=8.0/256 λ=0.7782 cells=256 cost=$22.88 vram=107.5/150GB
+[STEP  7700] loss=-4.0949 ce=0.1788 aux=1.5584 ent_gate=5.5328/5.545 wmax=0.3341 active>.01=8.0/256 λ=0.7746 cells=256 cost=$23.02 vram=107.5/150GB
+[STEP  7750] loss=-4.0516 ce=0.1829 aux=1.5494 ent_gate=5.5331/5.545 wmax=0.3320 active>.01=8.0/256 λ=0.7710 cells=256 cost=$23.17 vram=107.5/150GB
+[STEP  7800] loss=-4.0446 ce=0.1804 aux=1.5488 ent_gate=5.5330/5.545 wmax=0.3338 active>.01=8.0/256 λ=0.7673 cells=256 cost=$23.32 vram=107.5/150GB
+[STEP  7850] loss=-4.0414 ce=0.1767 aux=1.5448 ent_gate=5.5332/5.545 wmax=0.3324 active>.01=8.0/256 λ=0.7636 cells=256 cost=$23.47 vram=107.5/150GB
+[STEP  7900] loss=-4.0294 ce=0.1761 aux=1.5427 ent_gate=5.5333/5.545 wmax=0.3316 active>.01=8.0/256 λ=0.7599 cells=256 cost=$23.62 vram=107.5/150GB
+[STEP  7950] loss=-4.0365 ce=0.1722 aux=1.5387 ent_gate=5.5334/5.545 wmax=0.3312 active>.01=8.0/256 λ=0.7562 cells=256 cost=$23.77 vram=107.5/150GB
+[STEP  8000] loss=-3.9706 ce=0.1902 aux=1.5239 ent_gate=5.5339/5.545 wmax=0.3283 active>.01=8.0/256 λ=0.7525 cells=256 cost=$23.91 vram=107.5/150GB
+[STEP  8050] loss=-3.7992 ce=0.1673 aux=1.5212 ent_gate=5.5339/5.545 wmax=0.3297 active>.01=8.0/256 λ=0.7487 cells=256 cost=$24.06 vram=107.5/150GB
+[STEP  8100] loss=-3.8931 ce=0.1704 aux=1.5141 ent_gate=5.5341/5.545 wmax=0.3288 active>.01=8.0/256 λ=0.7450 cells=256 cost=$24.21 vram=107.5/150GB
+[STEP  8150] loss=-3.9154 ce=0.1651 aux=1.5171 ent_gate=5.5340/5.545 wmax=0.3297 active>.01=8.0/256 λ=0.7412 cells=256 cost=$24.36 vram=107.5/150GB
+[STEP  8200] loss=-3.9207 ce=0.1650 aux=1.5185 ent_gate=5.5341/5.545 wmax=0.3267 active>.01=8.0/256 λ=0.7374 cells=256 cost=$24.51 vram=107.5/150GB
+[STEP  8250] loss=-3.9333 ce=0.1684 aux=1.5124 ent_gate=5.5343/5.545 wmax=0.3259 active>.01=8.0/256 λ=0.7336 cells=256 cost=$24.65 vram=107.5/150GB
+[STEP  8300] loss=-3.8810 ce=0.1680 aux=1.4911 ent_gate=5.5349/5.545 wmax=0.3234 active>.01=8.0/256 λ=0.7297 cells=256 cost=$24.80 vram=107.5/150GB
+[STEP  8350] loss=-3.8656 ce=0.1709 aux=1.4961 ent_gate=5.5347/5.545 wmax=0.3242 active>.01=8.0/256 λ=0.7259 cells=256 cost=$24.95 vram=107.5/150GB
+[STEP  8400] loss=-3.8305 ce=0.1587 aux=1.4867 ent_gate=5.5350/5.545 wmax=0.3234 active>.01=8.0/256 λ=0.7220 cells=256 cost=$25.10 vram=107.5/150GB
+[STEP  8450] loss=-3.8135 ce=0.1558 aux=1.4915 ent_gate=5.5349/5.545 wmax=0.3218 active>.01=8.0/256 λ=0.7181 cells=256 cost=$25.25 vram=107.5/150GB
+[STEP  8500] loss=-3.7836 ce=0.1580 aux=1.4772 ent_gate=5.5353/5.545 wmax=0.3210 active>.01=8.0/256 λ=0.7142 cells=256 cost=$25.39 vram=107.5/150GB
+[STEP  8550] loss=-3.8058 ce=0.1569 aux=1.4678 ent_gate=5.5356/5.545 wmax=0.3188 active>.01=8.0/256 λ=0.7103 cells=256 cost=$25.54 vram=107.5/150GB
+[STEP  8600] loss=-3.7512 ce=0.1544 aux=1.4790 ent_gate=5.5352/5.545 wmax=0.3229 active>.01=8.0/256 λ=0.7063 cells=256 cost=$25.69 vram=107.5/150GB
+[STEP  8650] loss=-3.6886 ce=0.1449 aux=1.4638 ent_gate=5.5357/5.545 wmax=0.3181 active>.01=8.0/256 λ=0.7024 cells=256 cost=$25.84 vram=107.5/150GB
+[STEP  8700] loss=-3.7124 ce=0.1448 aux=1.4647 ent_gate=5.5357/5.545 wmax=0.3192 active>.01=8.0/256 λ=0.6984 cells=256 cost=$25.99 vram=107.5/150GB
+[STEP  8750] loss=-3.6406 ce=0.1435 aux=1.4541 ent_gate=5.5359/5.545 wmax=0.3181 active>.01=8.0/256 λ=0.6944 cells=256 cost=$26.14 vram=107.5/150GB
+[STEP  8800] loss=-3.6580 ce=0.1505 aux=1.4524 ent_gate=5.5360/5.545 wmax=0.3173 active>.01=8.0/256 λ=0.6904 cells=256 cost=$26.28 vram=107.5/150GB
+[STEP  8850] loss=-3.6041 ce=0.1463 aux=1.4377 ent_gate=5.5364/5.545 wmax=0.3147 active>.01=8.0/256 λ=0.6864 cells=256 cost=$26.43 vram=107.5/150GB
+[STEP  8900] loss=-3.6578 ce=0.1452 aux=1.4345 ent_gate=5.5366/5.545 wmax=0.3117 active>.01=8.0/256 λ=0.6824 cells=256 cost=$26.58 vram=107.5/150GB
+[STEP  8950] loss=-3.5815 ce=0.1479 aux=1.4248 ent_gate=5.5368/5.545 wmax=0.3114 active>.01=8.0/256 λ=0.6784 cells=256 cost=$26.73 vram=107.5/150GB
+[STEP  9000] loss=-3.5883 ce=0.1466 aux=1.4245 ent_gate=5.5368/5.545 wmax=0.3119 active>.01=8.0/256 λ=0.6743 cells=256 cost=$26.88 vram=107.5/150GB
+[STEP  9050] loss=-3.5635 ce=0.1422 aux=1.4276 ent_gate=5.5368/5.545 wmax=0.3117 active>.01=8.0/256 λ=0.6702 cells=256 cost=$27.02 vram=107.5/150GB
+[STEP  9100] loss=-3.5148 ce=0.1392 aux=1.4284 ent_gate=5.5367/5.545 wmax=0.3134 active>.01=8.0/256 λ=0.6662 cells=256 cost=$27.17 vram=107.5/150GB
+[STEP  9150] loss=-3.5652 ce=0.1367 aux=1.4184 ent_gate=5.5370/5.545 wmax=0.3095 active>.01=8.0/256 λ=0.6621 cells=256 cost=$27.32 vram=107.5/150GB
+[STEP  9200] loss=-3.4939 ce=0.1437 aux=1.4134 ent_gate=5.5371/5.545 wmax=0.3109 active>.01=8.0/256 λ=0.6580 cells=256 cost=$27.47 vram=107.5/150GB
+[STEP  9250] loss=-3.4562 ce=0.1376 aux=1.4129 ent_gate=5.5372/5.545 wmax=0.3092 active>.01=8.0/256 λ=0.6538 cells=256 cost=$27.62 vram=107.5/150GB
+[STEP  9300] loss=-3.4729 ce=0.1368 aux=1.4119 ent_gate=5.5372/5.545 wmax=0.3092 active>.01=8.0/256 λ=0.6497 cells=256 cost=$27.76 vram=107.5/150GB
+[STEP  9350] loss=-3.3990 ce=0.1354 aux=1.4016 ent_gate=5.5375/5.545 wmax=0.3072 active>.01=8.0/256 λ=0.6456 cells=256 cost=$27.91 vram=107.5/150GB
+[STEP  9400] loss=-3.4201 ce=0.1371 aux=1.3959 ent_gate=5.5375/5.545 wmax=0.3076 active>.01=8.0/256 λ=0.6414 cells=256 cost=$28.06 vram=107.5/150GB
+[STEP  9450] loss=-3.3884 ce=0.1358 aux=1.3939 ent_gate=5.5377/5.545 wmax=0.3059 active>.01=8.0/256 λ=0.6373 cells=256 cost=$28.21 vram=107.5/150GB
+[STEP  9500] loss=-3.3758 ce=0.1263 aux=1.3819 ent_gate=5.5379/5.545 wmax=0.3053 active>.01=8.0/256 λ=0.6331 cells=256 cost=$28.36 vram=107.5/150GB
+[STEP  9550] loss=-3.3201 ce=0.1360 aux=1.3936 ent_gate=5.5376/5.545 wmax=0.3081 active>.01=8.0/256 λ=0.6289 cells=256 cost=$28.50 vram=107.5/150GB
+[STEP  9600] loss=-3.2949 ce=0.1358 aux=1.3991 ent_gate=5.5374/5.545 wmax=0.3089 active>.01=8.0/256 λ=0.6248 cells=256 cost=$28.65 vram=107.5/150GB
+[STEP  9650] loss=-3.2553 ce=0.1265 aux=1.3892 ent_gate=5.5378/5.545 wmax=0.3050 active>.01=8.0/256 λ=0.6206 cells=256 cost=$28.80 vram=107.5/150GB
+[STEP  9700] loss=-3.2945 ce=0.1286 aux=1.3728 ent_gate=5.5382/5.545 wmax=0.3016 active>.01=8.0/256 λ=0.6164 cells=256 cost=$28.95 vram=107.5/150GB
+[STEP  9750] loss=-3.2652 ce=0.1275 aux=1.3703 ent_gate=5.5382/5.545 wmax=0.3021 active>.01=8.0/256 λ=0.6121 cells=256 cost=$29.09 vram=107.5/150GB
+[STEP  9800] loss=-3.2468 ce=0.1302 aux=1.3686 ent_gate=5.5383/5.545 wmax=0.3023 active>.01=8.0/256 λ=0.6079 cells=256 cost=$29.24 vram=107.5/150GB
+[STEP  9850] loss=-3.1775 ce=0.1253 aux=1.3665 ent_gate=5.5383/5.545 wmax=0.3011 active>.01=8.0/256 λ=0.6037 cells=256 cost=$29.39 vram=107.5/150GB
+[STEP  9900] loss=-3.1955 ce=0.1289 aux=1.3667 ent_gate=5.5383/5.545 wmax=0.3016 active>.01=8.0/256 λ=0.5995 cells=256 cost=$29.54 vram=107.5/150GB
+[STEP  9950] loss=-3.1045 ce=0.1244 aux=1.3571 ent_gate=5.5386/5.545 wmax=0.2982 active>.01=8.0/256 λ=0.5952 cells=256 cost=$29.69 vram=107.5/150GB
+  [SNAP 10000] 4a KL=0.9203 z=0.35 | 4b cos_z=0.63
+[STEP 10000] loss=-3.1665 ce=0.1260 aux=1.3575 ent_gate=5.5386/5.545 wmax=0.2980 active>.01=8.0/256 λ=0.5910 cells=256 cost=$29.92 vram=107.5/150GB
+[STEP 10050] loss=-3.1269 ce=0.1225 aux=1.3560 ent_gate=5.5387/5.545 wmax=0.2981 active>.01=8.0/256 λ=0.5867 cells=256 cost=$30.07 vram=107.5/150GB
+[STEP 10100] loss=-3.1074 ce=0.1301 aux=1.3468 ent_gate=5.5389/5.545 wmax=0.2967 active>.01=8.0/256 λ=0.5824 cells=256 cost=$30.22 vram=107.5/150GB
+[STEP 10150] loss=-3.0601 ce=0.1175 aux=1.3495 ent_gate=5.5387/5.545 wmax=0.2984 active>.01=8.0/256 λ=0.5782 cells=256 cost=$30.37 vram=107.5/150GB
+[STEP 10200] loss=-3.0628 ce=0.1197 aux=1.3426 ent_gate=5.5390/5.545 wmax=0.2957 active>.01=8.0/256 λ=0.5739 cells=256 cost=$30.51 vram=107.5/150GB
+[STEP 10250] loss=-2.9830 ce=0.1200 aux=1.3448 ent_gate=5.5389/5.545 wmax=0.2957 active>.01=8.0/256 λ=0.5696 cells=256 cost=$30.66 vram=107.5/150GB
+[STEP 10300] loss=-3.0010 ce=0.1175 aux=1.3370 ent_gate=5.5391/5.545 wmax=0.2945 active>.01=8.0/256 λ=0.5653 cells=256 cost=$30.81 vram=107.5/150GB
+[STEP 10350] loss=-2.9846 ce=0.1236 aux=1.3388 ent_gate=5.5390/5.545 wmax=0.2955 active>.01=8.0/256 λ=0.5610 cells=256 cost=$30.96 vram=107.5/150GB
+[STEP 10400] loss=-2.9502 ce=0.1203 aux=1.3350 ent_gate=5.5392/5.545 wmax=0.2934 active>.01=8.0/256 λ=0.5567 cells=256 cost=$31.10 vram=107.5/150GB
+[STEP 10450] loss=-2.9288 ce=0.1203 aux=1.3264 ent_gate=5.5393/5.545 wmax=0.2939 active>.01=8.0/256 λ=0.5524 cells=256 cost=$31.25 vram=107.5/150GB
+[STEP 10500] loss=-2.9050 ce=0.1193 aux=1.3287 ent_gate=5.5393/5.545 wmax=0.2931 active>.01=8.0/256 λ=0.5481 cells=256 cost=$31.40 vram=107.5/150GB
+[STEP 10550] loss=-2.9024 ce=0.1150 aux=1.3186 ent_gate=5.5396/5.545 wmax=0.2895 active>.01=8.0/256 λ=0.5438 cells=256 cost=$31.55 vram=107.5/150GB
+[STEP 10600] loss=-2.8571 ce=0.1167 aux=1.3231 ent_gate=5.5393/5.545 wmax=0.2931 active>.01=8.0/256 λ=0.5395 cells=256 cost=$31.70 vram=107.5/150GB
+[STEP 10650] loss=-2.8093 ce=0.1162 aux=1.3099 ent_gate=5.5397/5.545 wmax=0.2890 active>.01=8.0/256 λ=0.5352 cells=256 cost=$31.84 vram=107.5/150GB
+[STEP 10700] loss=-2.8068 ce=0.1303 aux=1.3130 ent_gate=5.5397/5.545 wmax=0.2892 active>.01=8.0/256 λ=0.5309 cells=256 cost=$31.99 vram=107.5/150GB
+[STEP 10750] loss=-2.8106 ce=0.1159 aux=1.3240 ent_gate=5.5393/5.545 wmax=0.2927 active>.01=8.0/256 λ=0.5266 cells=256 cost=$32.14 vram=107.5/150GB
+[STEP 10800] loss=-2.7549 ce=0.1104 aux=1.3192 ent_gate=5.5394/5.545 wmax=0.2928 active>.01=8.0/256 λ=0.5223 cells=256 cost=$32.29 vram=107.5/150GB
+[STEP 10850] loss=-2.7525 ce=0.1384 aux=1.3371 ent_gate=5.5388/5.545 wmax=0.3001 active>.01=8.0/256 λ=0.5180 cells=256 cost=$32.44 vram=107.5/150GB
+[STEP 10900] loss=-2.6561 ce=0.1268 aux=1.3999 ent_gate=5.5368/5.545 wmax=0.3187 active>.01=8.0/256 λ=0.5136 cells=256 cost=$32.58 vram=107.5/150GB
+[STEP 10950] loss=-2.6790 ce=0.1475 aux=1.4350 ent_gate=5.5354/5.545 wmax=0.3316 active>.01=8.0/256 λ=0.5093 cells=256 cost=$32.73 vram=107.5/150GB
+[STEP 11000] loss=-2.6218 ce=0.1442 aux=1.4684 ent_gate=5.5342/5.545 wmax=0.3405 active>.01=8.0/256 λ=0.5050 cells=256 cost=$32.88 vram=107.5/150GB
+[STEP 11050] loss=-2.6239 ce=0.1348 aux=1.4752 ent_gate=5.5340/5.545 wmax=0.3415 active>.01=8.0/256 λ=0.5007 cells=256 cost=$33.03 vram=107.5/150GB
+[STEP 11100] loss=-2.6129 ce=0.1297 aux=1.4693 ent_gate=5.5342/5.545 wmax=0.3404 active>.01=8.0/256 λ=0.4964 cells=256 cost=$33.18 vram=107.5/150GB
+[STEP 11150] loss=-2.5760 ce=0.1323 aux=1.4717 ent_gate=5.5341/5.545 wmax=0.3409 active>.01=8.0/256 λ=0.4920 cells=256 cost=$33.32 vram=107.5/150GB
+[STEP 11200] loss=-2.5839 ce=0.1241 aux=1.4654 ent_gate=5.5344/5.545 wmax=0.3384 active>.01=8.0/256 λ=0.4877 cells=256 cost=$33.47 vram=107.5/150GB
+[STEP 11250] loss=-2.5088 ce=0.1309 aux=1.4564 ent_gate=5.5347/5.545 wmax=0.3370 active>.01=8.0/256 λ=0.4834 cells=256 cost=$33.62 vram=107.5/150GB
+[STEP 11300] loss=-2.5100 ce=0.1278 aux=1.4570 ent_gate=5.5347/5.545 wmax=0.3364 active>.01=8.0/256 λ=0.4791 cells=256 cost=$33.77 vram=107.5/150GB
+[STEP 11350] loss=-2.4952 ce=0.1240 aux=1.4579 ent_gate=5.5348/5.545 wmax=0.3340 active>.01=8.0/256 λ=0.4748 cells=256 cost=$33.92 vram=107.5/150GB
+[STEP 11400] loss=-2.4639 ce=0.1179 aux=1.4446 ent_gate=5.5352/5.545 wmax=0.3321 active>.01=8.0/256 λ=0.4705 cells=256 cost=$34.06 vram=107.5/150GB
+[STEP 11450] loss=-2.4207 ce=0.1193 aux=1.4418 ent_gate=5.5352/5.545 wmax=0.3326 active>.01=8.0/256 λ=0.4662 cells=256 cost=$34.21 vram=107.5/150GB
+[STEP 11500] loss=-2.4343 ce=0.1195 aux=1.4398 ent_gate=5.5353/5.545 wmax=0.3306 active>.01=8.0/256 λ=0.4619 cells=256 cost=$34.36 vram=107.5/150GB
+[STEP 11550] loss=-2.4015 ce=0.1173 aux=1.4397 ent_gate=5.5354/5.545 wmax=0.3299 active>.01=8.0/256 λ=0.4576 cells=256 cost=$34.51 vram=107.5/150GB
+[STEP 11600] loss=-2.3310 ce=0.1170 aux=1.4341 ent_gate=5.5355/5.545 wmax=0.3289 active>.01=8.0/256 λ=0.4533 cells=256 cost=$34.66 vram=107.5/150GB
+[STEP 11650] loss=-2.3727 ce=0.1221 aux=1.4254 ent_gate=5.5359/5.545 wmax=0.3252 active>.01=8.0/256 λ=0.4490 cells=256 cost=$34.81 vram=107.5/150GB
+[STEP 11700] loss=-2.3316 ce=0.1138 aux=1.4282 ent_gate=5.5358/5.545 wmax=0.3271 active>.01=8.0/256 λ=0.4447 cells=256 cost=$34.95 vram=107.5/150GB
+[STEP 11750] loss=-2.3137 ce=0.1125 aux=1.4198 ent_gate=5.5360/5.545 wmax=0.3255 active>.01=8.0/256 λ=0.4404 cells=256 cost=$35.10 vram=107.5/150GB
+[STEP 11800] loss=-2.3090 ce=0.1045 aux=1.4145 ent_gate=5.5362/5.545 wmax=0.3236 active>.01=8.0/256 λ=0.4361 cells=256 cost=$35.25 vram=107.5/150GB
+[STEP 11850] loss=-2.2552 ce=0.1155 aux=1.4144 ent_gate=5.5362/5.545 wmax=0.3234 active>.01=8.0/256 λ=0.4318 cells=256 cost=$35.40 vram=107.5/150GB
+[STEP 11900] loss=-2.2657 ce=0.1152 aux=1.4135 ent_gate=5.5363/5.545 wmax=0.3228 active>.01=8.0/256 λ=0.4276 cells=256 cost=$35.54 vram=107.5/150GB
+[STEP 11950] loss=-2.2058 ce=0.1122 aux=1.4086 ent_gate=5.5365/5.545 wmax=0.3206 active>.01=8.0/256 λ=0.4233 cells=256 cost=$35.69 vram=107.5/150GB
+[STEP 12000] loss=-2.2029 ce=0.1146 aux=1.4143 ent_gate=5.5363/5.545 wmax=0.3215 active>.01=8.0/256 λ=0.4190 cells=256 cost=$35.84 vram=107.5/150GB
+[STEP 12050] loss=-2.1773 ce=0.1156 aux=1.4043 ent_gate=5.5366/5.545 wmax=0.3189 active>.01=8.0/256 λ=0.4148 cells=256 cost=$35.99 vram=107.5/150GB
+[STEP 12100] loss=-2.1475 ce=0.1078 aux=1.3996 ent_gate=5.5367/5.545 wmax=0.3188 active>.01=8.0/256 λ=0.4105 cells=256 cost=$36.14 vram=107.5/150GB
+[STEP 12150] loss=-2.0916 ce=0.1076 aux=1.3940 ent_gate=5.5369/5.545 wmax=0.3181 active>.01=8.0/256 λ=0.4063 cells=256 cost=$36.28 vram=107.5/150GB
+[STEP 12200] loss=-2.1110 ce=0.1093 aux=1.3963 ent_gate=5.5368/5.545 wmax=0.3191 active>.01=8.0/256 λ=0.4021 cells=256 cost=$36.43 vram=107.5/150GB
+[STEP 12250] loss=-2.0617 ce=0.1143 aux=1.3930 ent_gate=5.5370/5.545 wmax=0.3161 active>.01=8.0/256 λ=0.3979 cells=256 cost=$36.58 vram=107.5/150GB
+[STEP 12300] loss=-2.0647 ce=0.1061 aux=1.3960 ent_gate=5.5368/5.545 wmax=0.3185 active>.01=8.0/256 λ=0.3936 cells=256 cost=$36.73 vram=107.5/150GB
+[STEP 12350] loss=-2.0267 ce=0.1127 aux=1.3897 ent_gate=5.5370/5.545 wmax=0.3166 active>.01=8.0/256 λ=0.3894 cells=256 cost=$36.87 vram=107.5/150GB
+[STEP 12400] loss=-1.9790 ce=0.1066 aux=1.3885 ent_gate=5.5371/5.545 wmax=0.3160 active>.01=8.0/256 λ=0.3852 cells=256 cost=$37.03 vram=107.5/150GB
+[STEP 12450] loss=-2.0066 ce=0.1102 aux=1.3842 ent_gate=5.5373/5.545 wmax=0.3122 active>.01=8.0/256 λ=0.3811 cells=256 cost=$37.17 vram=107.5/150GB
+[STEP 12500] loss=-1.9753 ce=0.1088 aux=1.3873 ent_gate=5.5371/5.545 wmax=0.3154 active>.01=8.0/256 λ=0.3769 cells=256 cost=$37.32 vram=107.5/150GB
+[STEP 12550] loss=-1.9689 ce=0.1039 aux=1.3778 ent_gate=5.5374/5.545 wmax=0.3134 active>.01=8.0/256 λ=0.3727 cells=256 cost=$37.47 vram=107.5/150GB
+[STEP 12600] loss=-1.9211 ce=0.1073 aux=1.3767 ent_gate=5.5375/5.545 wmax=0.3131 active>.01=8.0/256 λ=0.3686 cells=256 cost=$37.62 vram=107.5/150GB
+[STEP 12650] loss=-1.8937 ce=0.1031 aux=1.3766 ent_gate=5.5375/5.545 wmax=0.3121 active>.01=8.0/256 λ=0.3644 cells=256 cost=$37.76 vram=107.5/150GB
+[STEP 12700] loss=-1.8523 ce=0.1094 aux=1.3733 ent_gate=5.5376/5.545 wmax=0.3118 active>.01=8.0/256 λ=0.3603 cells=256 cost=$37.91 vram=107.5/150GB
+[STEP 12750] loss=-1.8570 ce=0.1038 aux=1.3660 ent_gate=5.5378/5.545 wmax=0.3096 active>.01=8.0/256 λ=0.3562 cells=256 cost=$38.06 vram=107.5/150GB
+[STEP 12800] loss=-1.8500 ce=0.1034 aux=1.3659 ent_gate=5.5378/5.545 wmax=0.3105 active>.01=8.0/256 λ=0.3520 cells=256 cost=$38.21 vram=107.5/150GB
+[STEP 12850] loss=-1.8241 ce=0.1048 aux=1.3647 ent_gate=5.5380/5.545 wmax=0.3061 active>.01=8.0/256 λ=0.3479 cells=256 cost=$38.35 vram=107.5/150GB
+[STEP 12900] loss=-1.7835 ce=0.1049 aux=1.3612 ent_gate=5.5380/5.545 wmax=0.3086 active>.01=8.0/256 λ=0.3438 cells=256 cost=$38.50 vram=107.5/150GB
+[STEP 12950] loss=-1.7623 ce=0.1006 aux=1.3604 ent_gate=5.5380/5.545 wmax=0.3082 active>.01=8.0/256 λ=0.3398 cells=256 cost=$38.65 vram=107.5/150GB
+[STEP 13000] loss=-1.7235 ce=0.1013 aux=1.3563 ent_gate=5.5381/5.545 wmax=0.3062 active>.01=8.0/256 λ=0.3357 cells=256 cost=$38.80 vram=107.5/150GB
+[STEP 13050] loss=-1.7093 ce=0.1031 aux=1.3522 ent_gate=5.5382/5.545 wmax=0.3064 active>.01=8.0/256 λ=0.3316 cells=256 cost=$38.95 vram=107.5/150GB
+[STEP 13100] loss=-1.6864 ce=0.1034 aux=1.3588 ent_gate=5.5380/5.545 wmax=0.3078 active>.01=8.0/256 λ=0.3276 cells=256 cost=$39.09 vram=107.5/150GB
+[STEP 13150] loss=-1.6712 ce=0.1008 aux=1.3543 ent_gate=5.5382/5.545 wmax=0.3058 active>.01=8.0/256 λ=0.3236 cells=256 cost=$39.24 vram=107.5/150GB
+[STEP 13200] loss=-1.6827 ce=0.0989 aux=1.3539 ent_gate=5.5382/5.545 wmax=0.3045 active>.01=8.0/256 λ=0.3196 cells=256 cost=$39.39 vram=107.5/150GB
+[STEP 13250] loss=-1.6361 ce=0.0999 aux=1.3528 ent_gate=5.5382/5.545 wmax=0.3053 active>.01=8.0/256 λ=0.3156 cells=256 cost=$39.54 vram=107.5/150GB
+[STEP 13300] loss=-1.6002 ce=0.1018 aux=1.3499 ent_gate=5.5384/5.545 wmax=0.3027 active>.01=8.0/256 λ=0.3116 cells=256 cost=$39.68 vram=107.5/150GB
+[STEP 13350] loss=-1.5630 ce=0.0993 aux=1.3488 ent_gate=5.5384/5.545 wmax=0.3038 active>.01=8.0/256 λ=0.3076 cells=256 cost=$39.83 vram=107.5/150GB
+[STEP 13400] loss=-1.5797 ce=0.1037 aux=1.3489 ent_gate=5.5384/5.545 wmax=0.3033 active>.01=8.0/256 λ=0.3037 cells=256 cost=$39.98 vram=107.5/150GB
+[STEP 13450] loss=-1.5556 ce=0.0979 aux=1.3467 ent_gate=5.5384/5.545 wmax=0.3026 active>.01=8.0/256 λ=0.2997 cells=256 cost=$40.13 vram=107.5/150GB
+[STEP 13500] loss=-1.4942 ce=0.1012 aux=1.3431 ent_gate=5.5385/5.545 wmax=0.3024 active>.01=8.0/256 λ=0.2958 cells=256 cost=$40.27 vram=107.5/150GB
+[STEP 13550] loss=-1.5007 ce=0.0999 aux=1.3464 ent_gate=5.5384/5.545 wmax=0.3034 active>.01=8.0/256 λ=0.2919 cells=256 cost=$40.42 vram=107.5/150GB
+[STEP 13600] loss=-1.4931 ce=0.0967 aux=1.3421 ent_gate=5.5386/5.545 wmax=0.3013 active>.01=8.0/256 λ=0.2880 cells=256 cost=$40.57 vram=107.5/150GB
+[STEP 13650] loss=-1.4532 ce=0.0984 aux=1.3405 ent_gate=5.5386/5.545 wmax=0.3011 active>.01=8.0/256 λ=0.2841 cells=256 cost=$40.72 vram=107.5/150GB
+[STEP 13700] loss=-1.4102 ce=0.0960 aux=1.3416 ent_gate=5.5386/5.545 wmax=0.3019 active>.01=8.0/256 λ=0.2803 cells=256 cost=$40.87 vram=107.5/150GB
+[STEP 13750] loss=-1.4314 ce=0.0944 aux=1.3334 ent_gate=5.5389/5.545 wmax=0.2980 active>.01=8.0/256 λ=0.2764 cells=256 cost=$41.01 vram=107.5/150GB
+[STEP 13800] loss=-1.4187 ce=0.0965 aux=1.3329 ent_gate=5.5389/5.545 wmax=0.2980 active>.01=8.0/256 λ=0.2726 cells=256 cost=$41.16 vram=107.5/150GB
+[STEP 13850] loss=-1.3866 ce=0.0943 aux=1.3298 ent_gate=5.5389/5.545 wmax=0.2986 active>.01=8.0/256 λ=0.2688 cells=256 cost=$41.31 vram=107.5/150GB
+[STEP 13900] loss=-1.3583 ce=0.0947 aux=1.3322 ent_gate=5.5388/5.545 wmax=0.3007 active>.01=8.0/256 λ=0.2650 cells=256 cost=$41.46 vram=107.5/150GB
+[STEP 13950] loss=-1.3446 ce=0.0942 aux=1.3303 ent_gate=5.5389/5.545 wmax=0.2985 active>.01=8.0/256 λ=0.2613 cells=256 cost=$41.61 vram=107.5/150GB
+[STEP 14000] loss=-1.2985 ce=0.0993 aux=1.3263 ent_gate=5.5390/5.545 wmax=0.2978 active>.01=8.0/256 λ=0.2575 cells=256 cost=$41.75 vram=107.5/150GB
+[STEP 14050] loss=-1.3010 ce=0.0951 aux=1.3246 ent_gate=5.5390/5.545 wmax=0.2976 active>.01=8.0/256 λ=0.2538 cells=256 cost=$41.90 vram=107.5/150GB
+[STEP 14100] loss=-1.2936 ce=0.0917 aux=1.3208 ent_gate=5.5392/5.545 wmax=0.2956 active>.01=8.0/256 λ=0.2501 cells=256 cost=$42.05 vram=107.5/150GB
+[STEP 14150] loss=-1.2637 ce=0.0931 aux=1.3193 ent_gate=5.5392/5.545 wmax=0.2949 active>.01=8.0/256 λ=0.2464 cells=256 cost=$42.20 vram=107.5/150GB
+[STEP 14200] loss=-1.2655 ce=0.0921 aux=1.3198 ent_gate=5.5392/5.545 wmax=0.2952 active>.01=8.0/256 λ=0.2427 cells=256 cost=$42.35 vram=107.5/150GB
+[STEP 14250] loss=-1.2259 ce=0.0925 aux=1.3170 ent_gate=5.5393/5.545 wmax=0.2944 active>.01=8.0/256 λ=0.2390 cells=256 cost=$42.49 vram=107.5/150GB
+[STEP 14300] loss=-1.2025 ce=0.0952 aux=1.3102 ent_gate=5.5395/5.545 wmax=0.2924 active>.01=8.0/256 λ=0.2354 cells=256 cost=$42.64 vram=107.5/150GB
+[STEP 14350] loss=-1.1696 ce=0.0896 aux=1.3199 ent_gate=5.5392/5.545 wmax=0.2965 active>.01=8.0/256 λ=0.2318 cells=256 cost=$42.79 vram=107.5/150GB
+[STEP 14400] loss=-1.1644 ce=0.0940 aux=1.3186 ent_gate=5.5392/5.545 wmax=0.2946 active>.01=8.0/256 λ=0.2282 cells=256 cost=$42.94 vram=107.5/150GB
+[STEP 14450] loss=-1.1537 ce=0.0929 aux=1.3163 ent_gate=5.5393/5.545 wmax=0.2951 active>.01=8.0/256 λ=0.2246 cells=256 cost=$43.09 vram=107.5/150GB
+[STEP 14500] loss=-1.1406 ce=0.0941 aux=1.3178 ent_gate=5.5393/5.545 wmax=0.2945 active>.01=8.0/256 λ=0.2211 cells=256 cost=$43.23 vram=107.5/150GB
+[STEP 14550] loss=-1.0985 ce=0.0932 aux=1.3143 ent_gate=5.5394/5.545 wmax=0.2929 active>.01=8.0/256 λ=0.2176 cells=256 cost=$43.38 vram=107.5/150GB
+[STEP 14600] loss=-1.0879 ce=0.0910 aux=1.3109 ent_gate=5.5395/5.545 wmax=0.2909 active>.01=8.0/256 λ=0.2140 cells=256 cost=$43.53 vram=107.5/150GB
+[STEP 14650] loss=-1.0678 ce=0.0895 aux=1.3078 ent_gate=5.5396/5.545 wmax=0.2911 active>.01=8.0/256 λ=0.2106 cells=256 cost=$43.68 vram=107.5/150GB
+[STEP 14700] loss=-1.0360 ce=0.0936 aux=1.3109 ent_gate=5.5395/5.545 wmax=0.2913 active>.01=8.0/256 λ=0.2071 cells=256 cost=$43.83 vram=107.5/150GB
+[STEP 14750] loss=-1.0273 ce=0.0896 aux=1.3091 ent_gate=5.5395/5.545 wmax=0.2929 active>.01=8.0/256 λ=0.2037 cells=256 cost=$43.98 vram=107.5/150GB
+[STEP 14800] loss=-1.0116 ce=0.0889 aux=1.3022 ent_gate=5.5397/5.545 wmax=0.2900 active>.01=8.0/256 λ=0.2002 cells=256 cost=$44.12 vram=107.5/150GB
+[STEP 14850] loss=-1.0030 ce=0.0905 aux=1.3028 ent_gate=5.5396/5.545 wmax=0.2914 active>.01=8.0/256 λ=0.1969 cells=256 cost=$44.27 vram=107.5/150GB
+[STEP 14900] loss=-0.9698 ce=0.0898 aux=1.3051 ent_gate=5.5396/5.545 wmax=0.2907 active>.01=8.0/256 λ=0.1935 cells=256 cost=$44.42 vram=107.5/150GB
+[STEP 14950] loss=-0.9334 ce=0.0891 aux=1.3074 ent_gate=5.5396/5.545 wmax=0.2912 active>.01=8.0/256 λ=0.1901 cells=256 cost=$44.57 vram=107.5/150GB
+  [SNAP 15000] 4a KL=0.8765 z=1.40 | 4b cos_z=0.64
+[STEP 15000] loss=-0.9337 ce=0.0926 aux=1.3002 ent_gate=5.5398/5.545 wmax=0.2886 active>.01=8.0/256 λ=0.1868 cells=256 cost=$44.80 vram=107.5/150GB
+[STEP 15050] loss=-0.9310 ce=0.0939 aux=1.3042 ent_gate=5.5396/5.545 wmax=0.2918 active>.01=8.0/256 λ=0.1835 cells=256 cost=$44.95 vram=107.5/150GB
+[STEP 15100] loss=-0.9124 ce=0.0903 aux=1.3004 ent_gate=5.5398/5.545 wmax=0.2886 active>.01=8.0/256 λ=0.1803 cells=256 cost=$45.10 vram=107.5/150GB
+[STEP 15150] loss=-0.8803 ce=0.0874 aux=1.3023 ent_gate=5.5397/5.545 wmax=0.2907 active>.01=8.0/256 λ=0.1770 cells=256 cost=$45.25 vram=107.5/150GB
+[STEP 15200] loss=-0.8705 ce=0.0897 aux=1.2962 ent_gate=5.5399/5.545 wmax=0.2878 active>.01=8.0/256 λ=0.1738 cells=256 cost=$45.39 vram=107.5/150GB
+[STEP 15250] loss=-0.8710 ce=0.0874 aux=1.2980 ent_gate=5.5398/5.545 wmax=0.2892 active>.01=8.0/256 λ=0.1706 cells=256 cost=$45.54 vram=107.5/150GB
+[STEP 15300] loss=-0.8135 ce=0.0867 aux=1.2979 ent_gate=5.5399/5.545 wmax=0.2873 active>.01=8.0/256 λ=0.1674 cells=256 cost=$45.69 vram=107.5/150GB
+[STEP 15350] loss=-0.8221 ce=0.0849 aux=1.2966 ent_gate=5.5399/5.545 wmax=0.2868 active>.01=8.0/256 λ=0.1643 cells=256 cost=$45.84 vram=107.5/150GB
+[STEP 15400] loss=-0.7834 ce=0.0890 aux=1.2955 ent_gate=5.5399/5.545 wmax=0.2870 active>.01=8.0/256 λ=0.1611 cells=256 cost=$45.99 vram=107.5/150GB
+[STEP 15450] loss=-0.7888 ce=0.0885 aux=1.2961 ent_gate=5.5399/5.545 wmax=0.2883 active>.01=8.0/256 λ=0.1580 cells=256 cost=$46.13 vram=107.5/150GB
+[STEP 15500] loss=-0.7864 ce=0.0838 aux=1.2931 ent_gate=5.5400/5.545 wmax=0.2866 active>.01=8.0/256 λ=0.1550 cells=256 cost=$46.28 vram=107.5/150GB
+[STEP 15550] loss=-0.7511 ce=0.0856 aux=1.2911 ent_gate=5.5400/5.545 wmax=0.2873 active>.01=8.0/256 λ=0.1519 cells=256 cost=$46.43 vram=107.5/150GB
+[STEP 15600] loss=-0.7450 ce=0.0858 aux=1.2871 ent_gate=5.5401/5.545 wmax=0.2855 active>.01=8.0/256 λ=0.1489 cells=256 cost=$46.58 vram=107.5/150GB
+[STEP 15650] loss=-0.6937 ce=0.0867 aux=1.2897 ent_gate=5.5400/5.545 wmax=0.2859 active>.01=8.0/256 λ=0.1459 cells=256 cost=$46.72 vram=107.5/150GB
+[STEP 15700] loss=-0.6908 ce=0.0839 aux=1.2875 ent_gate=5.5401/5.545 wmax=0.2855 active>.01=8.0/256 λ=0.1430 cells=256 cost=$46.87 vram=107.5/150GB
+[STEP 15750] loss=-0.6669 ce=0.0869 aux=1.2857 ent_gate=5.5401/5.545 wmax=0.2843 active>.01=8.0/256 λ=0.1400 cells=256 cost=$47.02 vram=107.5/150GB
+[STEP 15800] loss=-0.6663 ce=0.0855 aux=1.2854 ent_gate=5.5401/5.545 wmax=0.2846 active>.01=8.0/256 λ=0.1371 cells=256 cost=$47.17 vram=107.5/150GB
+[STEP 15850] loss=-0.6452 ce=0.0840 aux=1.2862 ent_gate=5.5401/5.545 wmax=0.2852 active>.01=8.0/256 λ=0.1343 cells=256 cost=$47.32 vram=107.5/150GB
+[STEP 15900] loss=-0.6482 ce=0.0867 aux=1.2864 ent_gate=5.5402/5.545 wmax=0.2826 active>.01=8.0/256 λ=0.1314 cells=256 cost=$47.47 vram=107.5/150GB
+[STEP 15950] loss=-0.6258 ce=0.0834 aux=1.2850 ent_gate=5.5401/5.545 wmax=0.2852 active>.01=8.0/256 λ=0.1286 cells=256 cost=$47.61 vram=107.5/150GB
+[STEP 16000] loss=-0.6023 ce=0.0838 aux=1.2821 ent_gate=5.5402/5.545 wmax=0.2835 active>.01=8.0/256 λ=0.1258 cells=256 cost=$47.76 vram=107.5/150GB
+[STEP 16050] loss=-0.6004 ce=0.0875 aux=1.2835 ent_gate=5.5402/5.545 wmax=0.2837 active>.01=8.0/256 λ=0.1230 cells=256 cost=$47.91 vram=107.5/150GB
+[STEP 16100] loss=-0.5589 ce=0.0882 aux=1.2844 ent_gate=5.5402/5.545 wmax=0.2834 active>.01=8.0/256 λ=0.1203 cells=256 cost=$48.06 vram=107.5/150GB
+[STEP 16150] loss=-0.5437 ce=0.0836 aux=1.2811 ent_gate=5.5403/5.545 wmax=0.2830 active>.01=8.0/256 λ=0.1176 cells=256 cost=$48.20 vram=107.5/150GB
+[STEP 16200] loss=-0.5230 ce=0.0800 aux=1.2823 ent_gate=5.5402/5.545 wmax=0.2841 active>.01=8.0/256 λ=0.1149 cells=256 cost=$48.35 vram=107.5/150GB
+[STEP 16250] loss=-0.5313 ce=0.0843 aux=1.2792 ent_gate=5.5403/5.545 wmax=0.2830 active>.01=8.0/256 λ=0.1123 cells=256 cost=$48.50 vram=107.5/150GB
+[STEP 16300] loss=-0.4959 ce=0.0867 aux=1.2800 ent_gate=5.5403/5.545 wmax=0.2833 active>.01=8.0/256 λ=0.1097 cells=256 cost=$48.65 vram=107.5/150GB
+[STEP 16350] loss=-0.4982 ce=0.0839 aux=1.2733 ent_gate=5.5404/5.545 wmax=0.2813 active>.01=8.0/256 λ=0.1071 cells=256 cost=$48.80 vram=107.5/150GB
+[STEP 16400] loss=-0.4991 ce=0.0794 aux=1.2781 ent_gate=5.5403/5.545 wmax=0.2831 active>.01=8.0/256 λ=0.1045 cells=256 cost=$48.94 vram=107.5/150GB
+[STEP 16450] loss=-0.4815 ce=0.0860 aux=1.2750 ent_gate=5.5404/5.545 wmax=0.2812 active>.01=8.0/256 λ=0.1020 cells=256 cost=$49.09 vram=107.5/150GB
+[STEP 16500] loss=-0.4543 ce=0.0854 aux=1.2790 ent_gate=5.5403/5.545 wmax=0.2830 active>.01=8.0/256 λ=0.0995 cells=256 cost=$49.24 vram=107.5/150GB
+[STEP 16550] loss=-0.4126 ce=0.0844 aux=1.2773 ent_gate=5.5403/5.545 wmax=0.2833 active>.01=8.0/256 λ=0.0971 cells=256 cost=$49.39 vram=107.5/150GB
+[STEP 16600] loss=-0.4299 ce=0.0794 aux=1.2770 ent_gate=5.5403/5.545 wmax=0.2827 active>.01=8.0/256 λ=0.0946 cells=256 cost=$49.54 vram=107.5/150GB
+[STEP 16650] loss=-0.4085 ce=0.0847 aux=1.2759 ent_gate=5.5403/5.545 wmax=0.2834 active>.01=8.0/256 λ=0.0922 cells=256 cost=$49.68 vram=107.5/150GB
+[STEP 16700] loss=-0.4067 ce=0.0818 aux=1.2758 ent_gate=5.5404/5.545 wmax=0.2826 active>.01=8.0/256 λ=0.0899 cells=256 cost=$49.83 vram=107.5/150GB
+[STEP 16750] loss=-0.3981 ce=0.0856 aux=1.2728 ent_gate=5.5405/5.545 wmax=0.2803 active>.01=8.0/256 λ=0.0875 cells=256 cost=$49.98 vram=107.5/150GB
+[STEP 16800] loss=-0.3843 ce=0.0807 aux=1.2729 ent_gate=5.5404/5.545 wmax=0.2815 active>.01=8.0/256 λ=0.0852 cells=256 cost=$50.13 vram=107.5/150GB
+[STEP 16850] loss=-0.3686 ce=0.0861 aux=1.2715 ent_gate=5.5405/5.545 wmax=0.2804 active>.01=8.0/256 λ=0.0829 cells=256 cost=$50.28 vram=107.5/150GB
+[STEP 16900] loss=-0.3316 ce=0.0805 aux=1.2727 ent_gate=5.5404/5.545 wmax=0.2816 active>.01=8.0/256 λ=0.0807 cells=256 cost=$50.42 vram=107.5/150GB
+[STEP 16950] loss=-0.3554 ce=0.0811 aux=1.2708 ent_gate=5.5405/5.545 wmax=0.2799 active>.01=8.0/256 λ=0.0785 cells=256 cost=$50.57 vram=107.5/150GB
+[STEP 17000] loss=-0.3272 ce=0.0820 aux=1.2724 ent_gate=5.5405/5.545 wmax=0.2803 active>.01=8.0/256 λ=0.0763 cells=256 cost=$50.72 vram=107.5/150GB
+[STEP 17050] loss=-0.3303 ce=0.0811 aux=1.2716 ent_gate=5.5405/5.545 wmax=0.2809 active>.01=8.0/256 λ=0.0742 cells=256 cost=$50.87 vram=107.5/150GB
+[STEP 17100] loss=-0.3245 ce=0.0806 aux=1.2693 ent_gate=5.5405/5.545 wmax=0.2810 active>.01=8.0/256 λ=0.0721 cells=256 cost=$51.02 vram=107.5/150GB
+[STEP 17150] loss=-0.2675 ce=0.0814 aux=1.2710 ent_gate=5.5405/5.545 wmax=0.2811 active>.01=8.0/256 λ=0.0700 cells=256 cost=$51.16 vram=107.5/150GB
+[STEP 17200] loss=-0.2695 ce=0.0826 aux=1.2668 ent_gate=5.5406/5.545 wmax=0.2789 active>.01=8.0/256 λ=0.0679 cells=256 cost=$51.31 vram=107.5/150GB
+[STEP 17250] loss=-0.3084 ce=0.0807 aux=1.2652 ent_gate=5.5406/5.545 wmax=0.2799 active>.01=8.0/256 λ=0.0659 cells=256 cost=$51.46 vram=107.5/150GB
+[STEP 17300] loss=-0.2584 ce=0.0804 aux=1.2668 ent_gate=5.5406/5.545 wmax=0.2792 active>.01=8.0/256 λ=0.0640 cells=256 cost=$51.61 vram=107.5/150GB
+[STEP 17350] loss=-0.2435 ce=0.0793 aux=1.2707 ent_gate=5.5405/5.545 wmax=0.2805 active>.01=8.0/256 λ=0.0620 cells=256 cost=$51.76 vram=107.5/150GB
+[STEP 17400] loss=-0.2493 ce=0.0795 aux=1.2636 ent_gate=5.5407/5.545 wmax=0.2786 active>.01=8.0/256 λ=0.0601 cells=256 cost=$51.90 vram=107.5/150GB
+[STEP 17450] loss=-0.2493 ce=0.0812 aux=1.2635 ent_gate=5.5407/5.545 wmax=0.2777 active>.01=8.0/256 λ=0.0582 cells=256 cost=$52.05 vram=107.5/150GB
+[STEP 17500] loss=-0.2207 ce=0.0812 aux=1.2625 ent_gate=5.5407/5.545 wmax=0.2770 active>.01=8.0/256 λ=0.0564 cells=256 cost=$52.20 vram=107.5/150GB
+[STEP 17550] loss=-0.2002 ce=0.0779 aux=1.2600 ent_gate=5.5408/5.545 wmax=0.2777 active>.01=8.0/256 λ=0.0546 cells=256 cost=$52.35 vram=107.5/150GB
+[STEP 17600] loss=-0.2174 ce=0.0756 aux=1.2625 ent_gate=5.5407/5.545 wmax=0.2791 active>.01=8.0/256 λ=0.0528 cells=256 cost=$52.50 vram=107.5/150GB
+[STEP 17650] loss=-0.2071 ce=0.0807 aux=1.2619 ent_gate=5.5407/5.545 wmax=0.2777 active>.01=8.0/256 λ=0.0511 cells=256 cost=$52.64 vram=107.5/150GB
+[STEP 17700] loss=-0.1573 ce=0.0830 aux=1.2604 ent_gate=5.5408/5.545 wmax=0.2771 active>.01=8.0/256 λ=0.0494 cells=256 cost=$52.79 vram=107.5/150GB
+[STEP 17750] loss=-0.1814 ce=0.0790 aux=1.2612 ent_gate=5.5407/5.545 wmax=0.2794 active>.01=8.0/256 λ=0.0477 cells=256 cost=$52.94 vram=107.5/150GB
+[STEP 17800] loss=-0.1675 ce=0.0778 aux=1.2620 ent_gate=5.5407/5.545 wmax=0.2779 active>.01=8.0/256 λ=0.0460 cells=256 cost=$53.09 vram=107.5/150GB
+[STEP 17850] loss=-0.1445 ce=0.0781 aux=1.2602 ent_gate=5.5408/5.545 wmax=0.2771 active>.01=8.0/256 λ=0.0444 cells=256 cost=$53.24 vram=107.5/150GB
+[STEP 17900] loss=-0.1684 ce=0.0799 aux=1.2594 ent_gate=5.5408/5.545 wmax=0.2760 active>.01=8.0/256 λ=0.0429 cells=256 cost=$53.38 vram=107.5/150GB
+[STEP 17950] loss=-0.1383 ce=0.0777 aux=1.2597 ent_gate=5.5408/5.545 wmax=0.2777 active>.01=8.0/256 λ=0.0413 cells=256 cost=$53.53 vram=107.5/150GB
+[STEP 18000] loss=-0.1260 ce=0.0782 aux=1.2601 ent_gate=5.5408/5.545 wmax=0.2774 active>.01=8.0/256 λ=0.0399 cells=256 cost=$53.68 vram=107.5/150GB
+[STEP 18050] loss=-0.1225 ce=0.0744 aux=1.2617 ent_gate=5.5407/5.545 wmax=0.2772 active>.01=8.0/256 λ=0.0384 cells=256 cost=$53.83 vram=107.5/150GB
+[STEP 18100] loss=-0.1199 ce=0.0769 aux=1.2617 ent_gate=5.5407/5.545 wmax=0.2788 active>.01=8.0/256 λ=0.0370 cells=256 cost=$53.98 vram=107.5/150GB
+[STEP 18150] loss=-0.0966 ce=0.0757 aux=1.2584 ent_gate=5.5408/5.545 wmax=0.2780 active>.01=8.0/256 λ=0.0356 cells=256 cost=$54.12 vram=107.5/150GB
+[STEP 18200] loss=-0.1121 ce=0.0790 aux=1.2616 ent_gate=5.5408/5.545 wmax=0.2762 active>.01=8.0/256 λ=0.0342 cells=256 cost=$54.27 vram=107.5/150GB
+[STEP 18250] loss=-0.1080 ce=0.0798 aux=1.2600 ent_gate=5.5408/5.545 wmax=0.2774 active>.01=8.0/256 λ=0.0329 cells=256 cost=$54.42 vram=107.5/150GB
+[STEP 18300] loss=-0.0829 ce=0.0804 aux=1.2571 ent_gate=5.5408/5.545 wmax=0.2766 active>.01=8.0/256 λ=0.0316 cells=256 cost=$54.57 vram=107.5/150GB
+[STEP 18350] loss=-0.0746 ce=0.0744 aux=1.2577 ent_gate=5.5408/5.545 wmax=0.2767 active>.01=8.0/256 λ=0.0304 cells=256 cost=$54.71 vram=107.5/150GB
+[STEP 18400] loss=-0.0650 ce=0.0747 aux=1.2554 ent_gate=5.5409/5.545 wmax=0.2765 active>.01=8.0/256 λ=0.0292 cells=256 cost=$54.86 vram=107.5/150GB
+[STEP 18450] loss=-0.0830 ce=0.0803 aux=1.2567 ent_gate=5.5408/5.545 wmax=0.2765 active>.01=8.0/256 λ=0.0280 cells=256 cost=$55.01 vram=107.5/150GB
+[STEP 18500] loss=-0.0400 ce=0.0775 aux=1.2554 ent_gate=5.5409/5.545 wmax=0.2763 active>.01=8.0/256 λ=0.0269 cells=256 cost=$55.16 vram=107.5/150GB
+[STEP 18550] loss=-0.0601 ce=0.0762 aux=1.2570 ent_gate=5.5408/5.545 wmax=0.2776 active>.01=8.0/256 λ=0.0258 cells=256 cost=$55.31 vram=107.5/150GB
+[STEP 18600] loss=-0.0435 ce=0.0763 aux=1.2568 ent_gate=5.5409/5.545 wmax=0.2758 active>.01=8.0/256 λ=0.0247 cells=256 cost=$55.45 vram=107.5/150GB
+[STEP 18650] loss=-0.0193 ce=0.0779 aux=1.2559 ent_gate=5.5408/5.545 wmax=0.2768 active>.01=8.0/256 λ=0.0237 cells=256 cost=$55.60 vram=107.5/150GB
+[STEP 18700] loss=-0.0274 ce=0.0800 aux=1.2544 ent_gate=5.5409/5.545 wmax=0.2750 active>.01=8.0/256 λ=0.0227 cells=256 cost=$55.75 vram=107.5/150GB
+[STEP 18750] loss=-0.0039 ce=0.0761 aux=1.2561 ent_gate=5.5408/5.545 wmax=0.2774 active>.01=8.0/256 λ=0.0217 cells=256 cost=$55.90 vram=107.5/150GB
+[STEP 18800] loss=-0.0340 ce=0.0773 aux=1.2550 ent_gate=5.5409/5.545 wmax=0.2758 active>.01=8.0/256 λ=0.0208 cells=256 cost=$56.05 vram=107.5/150GB
+[STEP 18850] loss=-0.0234 ce=0.0785 aux=1.2552 ent_gate=5.5409/5.545 wmax=0.2758 active>.01=8.0/256 λ=0.0199 cells=256 cost=$56.19 vram=107.5/150GB
+[STEP 18900] loss=-0.0258 ce=0.0761 aux=1.2537 ent_gate=5.5409/5.545 wmax=0.2745 active>.01=8.0/256 λ=0.0191 cells=256 cost=$56.34 vram=107.5/150GB
+[STEP 18950] loss=-0.0214 ce=0.0799 aux=1.2547 ent_gate=5.5409/5.545 wmax=0.2760 active>.01=8.0/256 λ=0.0183 cells=256 cost=$56.49 vram=107.5/150GB
+[STEP 19000] loss=-0.0045 ce=0.0789 aux=1.2565 ent_gate=5.5408/5.545 wmax=0.2761 active>.01=8.0/256 λ=0.0175 cells=256 cost=$56.64 vram=107.5/150GB
+[STEP 19050] loss=-0.0056 ce=0.0754 aux=1.2569 ent_gate=5.5409/5.545 wmax=0.2752 active>.01=8.0/256 λ=0.0168 cells=256 cost=$56.79 vram=107.5/150GB
+[STEP 19100] loss=-0.0130 ce=0.0757 aux=1.2587 ent_gate=5.5408/5.545 wmax=0.2766 active>.01=8.0/256 λ=0.0161 cells=256 cost=$56.93 vram=107.5/150GB
