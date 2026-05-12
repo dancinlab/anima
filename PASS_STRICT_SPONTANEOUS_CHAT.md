@@ -4563,3 +4563,89 @@ cond #3 status: D3 STRONG (4/5 cheap-path) maintained; v2 intervention demonstra
 - GOAL.md cond #1 ☐ → **☑ DONE**, 5-cond aggregate 3/5 → **4/5 ☑**
 - memory: `project_anima_phase1a4_lr5e6_result.md` (신규) + `feedback_dispatch_vast_template_gotchas.md` 4번째 bug 추가
 - HF: `dancinlab/anima-clm-phase1a4-lr5e6-strict-pass` (private, English README)
+
+## §49 [2026-05-12 KST] F-PERSONA-4 hypothesis (d) REBORN §89 hexa-native per-session pool FALSIFIED — 4-alternative future-path final cheap closure ★★★ ($0 Mac local, GOAL.md cond #3 D3 STRONG 4/5 carry MAINTAINED)
+
+cond.5 cotrain v1 (PSCC §44) 의 F-PERSONA-4 KL=0.0 winner-take-all 해소 4-alternative future-path 중 마지막 cheap path **(d)** 의 explicit single-purpose audit.
+
+3 cheap path 가 이미 falsified 됨 (PSCC §45/§47/§48): (a) per-cat corpus SMALL · (b) softmax τ sweep · (c) z-score metric §A2 — 본 §49 = (d) hexa-native per-session pool 의 dedicated audit. 모든 cheap path 닫히면 LARGE cotrain v2 H100 (PSCC §45 in-flight) 만 잔여 결정 lane.
+
+### Verdict
+
+| Aspect | Detail |
+|---|---|
+| Scenario | **(iii) FALSIFIED** — observed `mean_KL` ≪ 0.5 threshold (≥4 orders of magnitude below) |
+| `base` config (d=64, cells=8, seed=20260512) | `mean_KL = 6.48e-5`, null FAIL (z=-0.49, p=0.66) |
+| `prod` config (d=384, cells=64, seed=20260512) | `mean_KL = 1.79e-5`, null PASS (z=2.64, p=0.01) |
+| `prod_seed2` (d=384, cells=64, seed=99999) | `mean_KL = 1.83e-5`, null FAIL (z=0.86, p=0.20) |
+| Cross-seed robustness | prod-seed1 null PASS → prod-seed2 null FAIL → signal seed-fragile, NOT robust per-session category divergence |
+| Comparison to PSCC §40 baseline | single-pool: `mean_KL=9.74e-5` → per-session: `mean_KL=6.48e-5` (slightly LOWER, not higher) |
+| Wall time | ~25s (base) / ~60s (prod) / ~60s (prod_seed2) total ~2.5 min |
+| Cost | **$0** Mac local (raw#15 active resource utilization 본 cycle = Mac CPU 충분) |
+| cond #3 D3 verdict | **STRONG 4/5 carry MAINTAINED** (F-PERSONA-1/2/3/5 PASS + F-PERSONA-4 단독 FAIL) |
+| 5-cond aggregate | **4/5 ☑ MAINTAINED** |
+
+### Why (d) failed — interpretation
+
+The per-session-pool hypothesis assumed random-init cells would route categories differently via prompt-vector × random-rotation interaction. Empirically:
+
+1. Prompt-byte-hash vectors `prompt_to_vec(p)` for each category produce x_in vectors statistically interchangeable from the standpoint of random-init cell weights (both sampled from zero-mean small-variance gaussian)
+2. Cell forward `y_a − y_g` mean-square tension dominated by variance product of x_in × weight columns, no preferred direction. Each cell yields tension in narrow band (prod prompt 0: tensions span [0.14, 0.19], spread 35% of mean) → softmax over this band → near-uniform weights → categories near-identical
+3. Per-session fresh pool actually REDUCES KL vs PSCC §40 single-pool baseline (variance reduction via session-averaging when expected pool distributions are identical)
+4. (d) hypothesis confused "winner-take-all collapse" (cotrained cell-0 monopoly) with "category routing". Fresh pools eliminate cell-0 dominance but ALSO eliminate any directional structure that could differentially route categories
+
+### 4-alternative future-path table — ALL CHEAP PATHS CLOSED
+
+| Path | Description | Status | Best `mean_KL` |
+|---|---|---|---|
+| (a) | per-cat corpus SMALL ubu-2 | FALSIFIED (§48) | 0.0 |
+| (a) | per-cat corpus LARGE H100 | IN-FLIGHT (§45) | TBD |
+| (b) | softmax τ sweep ubu-1 | FALSIFIED (§47) | 5.3 × 10⁻³ |
+| (c) | z-score metric §A2 redefinition | FALSIFIED (§45 null perm) | KL=0.97 but z=-0.03 artifact |
+| **(d)** | **hexa-native per-session pool** | **FALSIFIED (§49 본 BG)** | **6.5 × 10⁻⁵ (base) / 1.8 × 10⁻⁵ (prod)** |
+
+→ **All 4 cheap paths CLOSED**. Sole remaining decisive lane = cotrain v2 entropy-reg H100 (PSCC §45 in-flight). 또는 PSCC §45-FINAL 의 **M4 aggregated cosine z=3.20 PASS alternative metric** path (cond #3 ☑ NOW possible if F-PERSONA-4 spec amendment accepts M4 alt).
+
+### Method — harness highlight
+
+- File `state/anima_d3_per_session_pool_2026_05_12/anima_persona_4_per_session_pool_verify.hexa` (~580 LoC)
+- 5 sessions × 10 probes / cat — fresh `cell_pool_init(d, n_cells)` per session (RFC 033 gauss stream advance)
+- PSCC §40 byte-parity: same `prompt_to_vec` (FNV-1a + LCG), same `tension_softmax_weights`, same `_mit_cell_forward` (engine_a - engine_g, mean-square tension)
+- Null permutation test n_perms=100 (hexa-side LCG seed 20260512) — guards against PSCC §45 z-score §A2 artifact
+- Config sweep via env vars `PSPV_D_MODEL` / `PSPV_N_CELLS` / `PSPV_TAG` (raw#15)
+- 3 independent runs: `base` PSCC §40 byte-parity + `prod` BG-prompt-scale + `prod_seed2` robustness check
+
+### Honest C3 (raw#10) — 7 items (doc §7)
+
+1. d=64/cells=8 byte-parity is primary scientific control; prod scale added per BG prompt ask but introduces dim/cell deltas that break direct comparison rigor
+2. Fresh-per-session via gauss stream advance defensible but imperfect; cross-seed sanity check (prod vs prod_seed2) confirms BENIGN dependency (1.79e-5 vs 1.83e-5, 2% delta — only null z-score differs)
+3. n_perms=100 matches PSCC §45 convention; >4 OoM gap to threshold makes precision irrelevant
+4. Hexa-side LCG (1103515245/12345) adequate for n=50 shuffle determinism
+5. prod null PASS (z=2.64, p=0.01) is seed-fragile and at 28,000× below threshold — irrelevant signal, reported for honest discoverability + PSCC §45 §A2-trap warning
+6. `HEXA_MEM_UNLIMITED=1` needed for prod scale (~768 MB RSS); env-toggleable not a portability gap
+7. F-PERSONA-2/3/5 NOT re-measured — PSCC §40/§42 verdicts carry, only F-PERSONA-4 path ablated
+
+### Provenance
+
+- harness: `state/anima_d3_per_session_pool_2026_05_12/anima_persona_4_per_session_pool_verify.hexa`
+- result JSON: `per_session_pool_results_{base,prod,prod_seed2}.json`
+- run log: `per_session_pool_run_{base,prod,prod_seed2}.log`
+- doc: `docs/anima_persona_4_per_session_pool_verify_2026_05_12.md` (10 §, 7 honest C3)
+- imports: `tool/hexa_native/mitosis_hook.hexa` (REBORN §91, PSCC §36 LANDED)
+- baseline reuse: `tool/anima_persona_substrate_native_verify.hexa` (PSCC §40 byte-parity)
+- identity_probe corpus: `state/p_idr_identity_rules_2026_05_12/identity_probe.jsonl` (BG-LB SSOT)
+- memory: 신규 `project_anima_persona_4_per_session_pool_2026_05_12.md` + MEMORY.md index
+
+### Cross-link
+
+- REBORN §89 hexa-native serve-time hook spec — path (d) source-of-truth
+- D4c CLI spec `docs/anima_cli_mitosis_integration_spec_2026_05_12.md` Phase 1 — session cell-pool persistence still useful for multi-conversation continuity, not F-PERSONA-4 lever
+- PSCC §40 — pre-cotrain single-pool baseline (mean_KL=9.74e-5)
+- PSCC §42 — D3 STRONG 4/5 cheap-path §A1 cumulative LANDED
+- PSCC §44 — F-PERSONA-4 cotrain KL=0.0 first observation (winner-take-all root cause)
+- PSCC §45 — z-score §A2 metric null-perm FALSIFIED (artifact lesson carried over)
+- PSCC §45-FINAL — M4 aggregated hidden cosine z=3.20 PASS on v2 cotrain (cond #3 ☑ alternative metric path live)
+- PSCC §47 — softmax τ sweep ubu-1 FALSIFIED
+- PSCC §48 — per-cat corpus SMALL ubu-2 FALSIFIED
+- GOAL.md cond #3 D3 row: STRONG 4/5 carry MAINTAINED, path (d) closure recorded
+- memory: 신규 `project_anima_persona_4_per_session_pool_2026_05_12.md`
