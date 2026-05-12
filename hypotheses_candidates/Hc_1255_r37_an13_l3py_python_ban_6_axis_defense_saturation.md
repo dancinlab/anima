@@ -3,11 +3,14 @@ id: Hc_1255
 slug: r37-an13-l3py-python-ban-6-axis-defense-saturation
 title: R37 / AN13 / L3-PY Python ban 6-axis defense saturation — 6축 방어가 Python 침투 차단의 ceiling 인가
 domain: rules
-status: candidate-falsifier-ready
+status: merged-to-H_001
+merged_to: hypotheses/H_001_ethics_cooperation.md
+merged_at: 2026-05-12
 source_doc: hypotheses_candidates/Hc_900_drill_domain_saturation_seeds.md
 source_lines: 42 (Sub-claims block, RULES-1)
 promoted_at: 2026-05-12
-linked_h: H_001 (anima-core-architecture); parent Hc_900; rules anchors R37 / AN13 / L3-PY
+linked_h: H_001 (anima-core-architecture — R37/AN13/L3-PY Python-ban 6-axis defense absorbs as rule-system architectural defense layer); parent Hc_900; rules anchors R37 / AN13 / L3-PY
+absorption_note: "cycle #8 absorbed to H_001 as RULES-1 R37/AN13/L3-PY Python-ban 6-axis defense saturation — rule-system architectural defense layer; inherits n=6 PERFECT_NUMBER_CLASS triviality (H_153 L7) — 6-axis structure not unique to n=6"
 notes: "split from Hc_900 meta-cluster 2026-05-12; seed 26 of 30 (RULES-1). n=6 axis count — perfect-number-class triviality (Hc_900 L1): 6-axis structure not individually-unique to n=6."
 cycle5_triage: "cycle #5 verify: WEAK_MATH_ONLY — math identity present, falsifier+honest scaffolding missing; needs F-list/L-list before re-verify can reach PROMOTE_READY"
 ---

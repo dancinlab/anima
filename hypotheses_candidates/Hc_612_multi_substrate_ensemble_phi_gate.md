@@ -3,11 +3,14 @@ id: Hc_612
 slug: multi-substrate-ensemble-llama-emit-clm-phi-gate
 title: Llama emit + CLM v4 Φ★ gate ensemble 가 Theorem 115 closure 를 meta-evaluator role 로 우회
 domain: clm-architecture
-status: candidate-falsifier-ready
+status: merged-to-H_155
+merged_to: hypotheses/H_155_theorem_115_chat_incapability.md
+merged_at: 2026-05-12
 source_doc: docs/anima_115_architectural_4_closure_theorem_2026_05_05.md
 source_lines: 147-157
 promoted_at: 2026-05-11
-linked_h: Hc_609, Llama-3.2-3B Path A v2
+linked_h: H_155 (theorem 115 chat incapability — H3 Llama emit + CLM v4 Φ★ gate ensemble bypass absorbs as bypass-attempt axis), Hc_609, Llama-3.2-3B Path A v2
+absorption_note: "cycle #8 absorbed to H_155 as H3 multi-substrate ensemble bypass — Llama emit + CLM v4 Φ★ gate ensemble meta-evaluator role. Reframes chat-from-CLM-v4-alone to meta-evaluator architecture."
 notes: H3 untested bypass — closures 1-4 가 chat-from-CLM-v4-alone 테스트. CLM v4 = meta-evaluator role 미테스트.
 cycle5_triage: "cycle #5 verify: WEAK_MATH_ONLY — math identity present, falsifier+honest scaffolding missing; needs F-list/L-list before re-verify can reach PROMOTE_READY"
 ---

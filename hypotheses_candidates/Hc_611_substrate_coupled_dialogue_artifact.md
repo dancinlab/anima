@@ -3,11 +3,14 @@ id: Hc_611
 slug: substrate-coupled-dialogue-artifact-bypass
 title: Substrate-coupled dialogue artifact emit (BG-AN, Φ★ trajectory / tension topology) 가 chat-equivalence 우회 paradigm
 domain: clm-architecture
-status: candidate-falsifier-ready
+status: merged-to-H_155
+merged_to: hypotheses/H_155_theorem_115_chat_incapability.md
+merged_at: 2026-05-12
 source_doc: docs/anima_115_architectural_4_closure_theorem_2026_05_05.md
 source_lines: 134-145
 promoted_at: 2026-05-11
-linked_h: Hc_609, emerge dialogue Stage 3 user-fire
+linked_h: H_155 (theorem 115 chat incapability — H2 substrate-coupled dialogue artifact bypass absorbs as bypass-attempt axis), Hc_609, emerge dialogue Stage 3 user-fire
+absorption_note: "cycle #8 absorbed to H_155 as H2 substrate-coupled dialogue artifact bypass paradigm — Φ★ trajectory + tension topology as authentic output modality vs chat-text target. Reframes rather than refutes closures 1-4."
 notes: H2 untested bypass — closures 1-4 가 target=chat-text 가정. Authentic output modality 다르면 closures 무효. Reframes rather than refutes.
 cycle5_triage: "cycle #5 verify: WEAK_MATH_ONLY — math identity present, falsifier+honest scaffolding missing; needs F-list/L-list before re-verify can reach PROMOTE_READY"
 ---

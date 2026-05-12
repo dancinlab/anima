@@ -3,11 +3,14 @@ id: Hc_946
 slug: brain-tension-replica-phi-boost-evolve
 title: brain_tension_replica Φ boost evolution — DD174 single-tech +8.3% (TL-grad α=0.08) → +17% (2×) → +30% (roadmap). Multi-layer + dynamic channel + annealing + multi-teacher + Φ-feedback loop closure
 domain: consciousness, architecture
-status: candidate-falsifier-ready
+status: merged-to-H_174
+merged_to: hypotheses/H_174_phi_star_geometry_aliasing_clm_v4_specific.md
+merged_at: 2026-05-12
 source_doc: docs/modules/brain_tension_replica_phi_boost_evolve_20260421.md
 source_lines: 1-50
 promoted_at: 2026-05-11
-linked_h: H_174 (DD174 tension-link), Hc_909 (paper-draft)
+linked_h: H_174 (Φ★ geometry aliasing CLM v4 specific — brain_tension_replica DD174 Φ boost evolution absorbs as tension-link Φ-improvement axis), Hc_909 (paper-draft)
+absorption_note: "cycle #8 absorbed to H_174 as DD174 brain_tension_replica Φ boost evolution — single-tech +8.3% (TL-grad α=0.08) → +17% (2×) → +30% (roadmap). Multi-layer + dynamic channel + annealing + multi-teacher + Φ-feedback loop closure. PhiIIT pairwise MI + MIP n_bins=16."
 notes: "Evolution spec 1/6. Φ boost from +8.3% mean (σ=0.5%, CV=6%, 3 seed [42,137,256]) to +30%. PhiIIT pairwise MI + MIP n_bins=16. LLM-judge BANNED."
 cycle5_triage: "cycle #5 verify: WEAK_MATH_ONLY — math identity present, falsifier+honest scaffolding missing; needs F-list/L-list before re-verify can reach PROMOTE_READY"
 ---

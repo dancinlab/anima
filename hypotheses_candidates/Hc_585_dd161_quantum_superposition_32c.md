@@ -3,11 +3,14 @@ id: Hc_585
 slug: dd161-quantum-superposition-32c-deep-dive
 title: 32c quantum superposition이 8c/16c/64c 대비 Phi 최대 (DD161 deep dive)
 domain: consciousness
-status: candidate-falsifier-ready
+status: merged-to-H_183
+merged_to: hypotheses/H_183_v8_q_family_quantum_substrate_axis.md
+merged_at: 2026-05-12
 source_doc: docs/hypotheses/dd/DD161-quantum-superposition.md
 source_lines: 1-15
 promoted_at: 2026-05-11
-linked_h: Hc_333
+linked_h: H_183 (V8 Q-family quantum-substrate axis — 32c quantum superposition DD161 deep-dive absorbs as Q-family member), Hc_333
+absorption_note: "cycle #8 absorbed to H_183 as DD161 32c quantum superposition deep-dive — 32c > 8c/16c/64c Φ peak comparison adds quantum-substrate axis cell-count probe. Inherits H_153 L7 PERFECT_NUMBER_CLASS triviality (32 is power-of-2)."
 notes: Why 32c specifically
 cycle5_triage: "cycle #5 verify: WEAK_MATH_ONLY — math identity present, falsifier+honest scaffolding missing; needs F-list/L-list before re-verify can reach PROMOTE_READY"
 ---

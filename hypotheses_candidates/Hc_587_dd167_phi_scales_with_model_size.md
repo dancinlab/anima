@@ -3,11 +3,14 @@ id: Hc_587
 slug: dd167-phi-scales-with-model-size-72b-vs-14b
 title: 72B 모델이 14B 모델 대비 Phi 측정에서 의미 있게 높다 (model size scales consciousness)
 domain: consciousness
-status: candidate-falsifier-ready
+status: merged-to-H_179
+merged_to: hypotheses/H_179_negative_scaling_cluster_steps_cells_2048.md
+merged_at: 2026-05-12
 source_doc: docs/hypotheses/dd/DD167.md
 source_lines: 1-15
 promoted_at: 2026-05-11
-linked_h: scaling-law
+linked_h: H_179 (negative-scaling cluster — DD167 72B vs 14B Φ-scaling absorbs as model-size scaling probe)
+absorption_note: "cycle #8 absorbed to H_179 as DD167 72B vs 14B Φ-scaling deep-dive — model-size scaling axis adds parameter-count probe to H_179's negative-scaling cluster steps/cells/2048 lane"
 notes: 72B vs 14B comparison
 cycle5_triage: "cycle #5 verify: WEAK_MATH_ONLY — math identity present, falsifier+honest scaffolding missing; needs F-list/L-list before re-verify can reach PROMOTE_READY"
 ---

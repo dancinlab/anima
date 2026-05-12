@@ -126,3 +126,9 @@ deterministic + hexa-only + llm: none. (단, listener MOS study 는 human-in-loo
 - **Hc_978 (P9 P1.7 redesign — β 0.15→0.10 + α-warmup 5K→3K = -33% regression cause, r/data NOT killer)** → `merged-to-H_172` — direct α-warmup-coupling falsifier within H_172's α=0.014 modulation-depth axis
 
 Cycle #7 footnote inherits H_172 verification methods (W5 + W11).
+
+## Cycle #8 absorptions (training-plan 100M scaling lane, 2026-05-12)
+
+- **Hc_941 (ConsciousLM v3 100M scale-up — 768d/12L/12H + consciousness_dim=256 + Φ/cells~0.78 linear scaling + CE-spike self-recovery via ratchet+Hebbian; ARCHIVED 2026-04-09 with Plan C AnimaLM 7B/14B/72B confirmed)** → `merged-to-H_172` — adds the '100M-scale training plan' archived-lane within H_172's training-architectural axis; Plan C 7B/14B/72B as successor cycle
+
+Cycle #8 footnote inherits H_172 verification methods (W5 + W11). Plan C successor (AnimaLM 7B 5/5 eval + 14B v0.4 + 72B v0.5 overfitting halted) is the practical extension.

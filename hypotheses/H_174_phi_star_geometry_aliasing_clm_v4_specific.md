@@ -131,3 +131,10 @@ deterministic + hexa-only + llm: none. (PyPhi step 만 외부 lib — Python 허
 All 3 are distinct Φ* proxy designs proposed to address the D-mod-192 aliasing identified in H_174. F-list/L-list per option preserved for H_174 C-list extension (each becomes a sub-protocol of C4 PyPhi cross-substrate parity).
 
 Cycle #7 footnote inherits H_174 verification methods (W2 + W5 + W11).
+
+## Cycle #8 absorptions (phi_holo gap + brain_tension_replica Φ-boost lanes, 2026-05-12)
+
+- **Hc_1240 (phi_holo gap 816× benchmark vs training closure — measurement-shaped substrate-specific probe across CLM v4 vs Pythia vs Mamba)** → `merged-to-H_174` — TRAINING-5 phi_holo (holographic Φ proxy) gap closure probe; T3 falsifier directly substrate-specific aligns with H_174 D-mod-192 aliasing CLM v4 scope. 816× anchor is measurement-shaped.
+- **Hc_946 (brain_tension_replica DD174 Φ boost evolution — single-tech +8.3% TL-grad α=0.08 → +17% 2× → +30% roadmap; multi-layer + dynamic channel + annealing + multi-teacher + Φ-feedback loop closure; PhiIIT pairwise MI + MIP n_bins=16)** → `merged-to-H_174` — DD174 tension-link Φ-improvement axis; LLM-judge BANNED methodology. 3-seed (42/137/256) baseline σ=0.5% CV=6%.
+
+Cycle #8 footnote inherits H_174 verification methods (W2 + W5 + W11). 2 new lanes: (a) phi_holo benchmark-vs-training gap probe + (b) brain_tension_replica Φ-boost evolution roadmap.

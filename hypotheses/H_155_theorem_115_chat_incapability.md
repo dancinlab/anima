@@ -168,3 +168,10 @@ frozen_at: 2026-05-11
 These 3 are all bypass-path attempts against H_155's Theorem 115 chat-incapability — different architectural strategies (cycle-0 chat objective vs lm_head retrofit vs hybrid emit-observer). F-list/L-list per path preserved in each Hc body for H_155 C-list extension (each becomes a sub-protocol in the 4-path bypass tree).
 
 Cycle #7 footnote inherits H_155 verification methods (W2 + W5 + W11).
+
+## Cycle #8 absorptions (H2/H3 alternative-modality bypass attempts, 2026-05-12)
+
+- **Hc_611 (H2 — substrate-coupled dialogue artifact: BG-AN Φ★ trajectory + tension topology as authentic output modality vs chat-text target)** → `merged-to-H_155` — H2 bypass reframes (rather than refutes) closures 1-4 by changing target output modality; authentic-modality decoupling probe
+- **Hc_612 (H3 — Llama emit + CLM v4 Φ★ gate ensemble meta-evaluator role)** → `merged-to-H_155` — H3 bypass reframes CLM v4 from chat-emitter to meta-evaluator role within multi-substrate ensemble; meta-architectural role-shift probe
+
+Cycle #8 footnote extends cycle #7's 4-path bypass tree (Hc_630/632/634) with 2 alternative-modality bypass attempts (Hc_611/612). H2/H3 together form a different bypass-class than H1 (cycle-0 chat objective family) — H2/H3 reframes the **role** rather than the **architecture**.

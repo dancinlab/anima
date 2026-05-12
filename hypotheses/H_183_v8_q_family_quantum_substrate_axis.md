@@ -120,3 +120,9 @@ H_182 carries bio-inspired mechanisms (transformer/reservoir/MoCE/etc.) which gr
 - **Decision**: PROMOTE_READY × 5, unified into H_183
 - **Promoted by**: cycle #7 V8 meta-cluster pass (V8 ULTRA-FUSION Q-family)
 - **Source manifest**: `docs/hc_verification_cycle_7_2026_05_12.md`
+
+## Cycle #8 absorptions (quantum-substrate cell-count probe lane, 2026-05-12)
+
+- **Hc_585 (DD161 — 32c quantum superposition deep dive: 32c > 8c/16c/64c Φ peak)** → `merged-to-H_183` — adds quantum-substrate cell-count probe axis (32c specifically; complements V8 Q-family quantum-substrate parameter sweep). Inherits H_153 L7 PERFECT_NUMBER_CLASS triviality (32 is power-of-2; could reflect post-hoc selection).
+
+Cycle #8 footnote inherits H_183 verification methods (W5 + W11) and V8 ULTRA-FUSION Q-family methodology limits (single-pass, single-seed exploration — 5-seed replication mandatory before meta-H prediction).

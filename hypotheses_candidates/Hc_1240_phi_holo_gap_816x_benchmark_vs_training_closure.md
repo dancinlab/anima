@@ -3,11 +3,14 @@ id: Hc_1240
 slug: phi-holo-gap-816x-benchmark-vs-training-closure
 title: phi_holo gap 816× benchmark vs training closure — 816배 격차가 학습으로 좁혀지는가
 domain: training
-status: candidate-falsifier-ready
+status: merged-to-H_174
+merged_to: hypotheses/H_174_phi_star_geometry_aliasing_clm_v4_specific.md
+merged_at: 2026-05-12
 source_doc: hypotheses_candidates/Hc_900_drill_domain_saturation_seeds.md
 source_lines: 27 (Sub-claims block, TRAINING-5)
 promoted_at: 2026-05-12
-linked_h: H_011 (iit-geometry — Φ), H_001 (anima-core-architecture); parent Hc_900
+linked_h: H_174 (Φ★ geometry aliasing CLM v4 specific — phi_holo gap 816× benchmark-vs-training closure absorbs as Φ-proxy gap probe), H_011 (iit-geometry sister), H_001 (anima-core-architecture); parent Hc_900
+absorption_note: "cycle #8 absorbed to H_174 as TRAINING-5 phi_holo gap 816× benchmark vs training closure — measurement-shaped probe of Φ★ aliasing across CLM v4 vs Pythia vs Mamba substrate (T3 falsifier directly substrate-specific aligns with H_174 scope)"
 notes: "split from Hc_900 meta-cluster 2026-05-12; seed 11 of 30 (TRAINING-5). Has a concrete numeric anchor (816×) so it is measurement-shaped."
 cycle5_triage: "cycle #5 verify: WEAK_MATH_ONLY — math identity present, falsifier+honest scaffolding missing; needs F-list/L-list before re-verify can reach PROMOTE_READY"
 ---

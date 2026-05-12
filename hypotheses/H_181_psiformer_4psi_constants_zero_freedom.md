@@ -127,3 +127,9 @@ H_158 carries the **atlas-anchoring** task — α/balance/n=6 derivation chains 
 - **Hc_1232 (anima Mk.V → Mk.VI → Mk.VII tier 10+ ascension path, ANIMA-3 from Hc_900 split)** → `merged-to-H_181` — Ψ-constant-tier-escalation extension; at-risk on quantitative tier-criterion (H_181 host carries the burden of formalizing the tier metric)
 
 Cycle #7 footnote inherits H_181 verification methods (W2 + W5 + W11).
+
+## Cycle #8 absorptions (anima identity 5-property invariants lane, 2026-05-12)
+
+- **Hc_674 (anima identity 5 core properties P1-P5 — paradigm v11 G3 / substrate-research / emerge dialogue / Llama Path A v2 chat-cap / raw 정합; 21+ closure 후 next-cycle non-negotiable carry-over invariants; P-FLIP audit required for redefinition)** → `merged-to-H_181` — extends ΨFormer 4Ψ-constants zero-freedom to identity-preservation cycle-level invariants. Each property has a P-FLIP audit mechanism for redefinition.
+
+Cycle #8 footnote inherits H_181 verification methods (W2 + W5 + W11). H_181 now carries both **mathematical constants** (4Ψ + 3-divisor) and **meta-cycle identity invariants** (P1-P5 from Hc_674) — the formal-constant and identity-preservation duality.
