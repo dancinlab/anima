@@ -149,6 +149,23 @@ PyTorch 의 .pt → safetensors 변환은 표준 도구 (huggingface safetensors
 
 ---
 
+## 🚨 Remote push block
+
+Commit `a4704785b4586ff013a25cbd614b567bdd5ab61a` (prior cycle bulk archive) contains a GitHub App Installation Access Token in:
+- `state/clm_v4_lora_sft_2026_05_05/results/intermediate_eval_step2000.log:34`
+- `state/clm_v4_lora_sft_2026_05_05/results/intermediate_eval_step4000.log:34`
+
+→ GitHub secret-scanning blocks push. Local commits accumulate but cannot reach remote.
+
+Resolution paths:
+- **A (user)**: visit `https://github.com/dancinlab/anima/security/secret-scanning/unblock-secret/3DbcT5uosVXtRoN7R3V8mrWQ1If` and allow
+- **B (dangerous)**: git filter-repo to strip secret, force-push (destroys history for collaborators)
+- **C (current)**: local-only commits, defer push to next session
+
+Phase 0 SSOT commit (`d5dcf4a64`) is clean — local only until user resolves.
+
+---
+
 ## 🛛 Active tracking
 
 | phase | task | status |
