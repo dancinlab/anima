@@ -4750,3 +4750,79 @@ own 31 (`.own` HF artifact org SSOT) · own 37 mandate-9 (V14-STRICT PASS unlock
 ### Mission contribution
 
 ★★★★★ closure 의 **HF Public visibility** — own 31 canonical + own 37 mandate-9 unlock realized. anima 의 첫 ★★★★★ ckpt 2개가 이제 public.
+
+---
+
+## §52 [2026-05-13 KST] v5-mitosis cotrain v6 CELL-PARALLEL impl + dispatch (post-★★★★★ BG c, mitosis-native distributed cells) ★★★
+
+### Context
+
+post-★★★★★ wall-speedup directive "병렬발사". v4 single-A100-80GB cotrain ETA ~17hr (`state/anima_v5mitosis_cotrain_v4_scaleup_2026_05_12` in-flight). v5-mitosis 아키텍처의 cell pool 은 구조적으로 데이터 병렬 (DDP) 으로 활용 불가능한 자연 병렬성을 가지고 있음: each cell forward 가 INDEPENDENT (own weights, shared input). v4 bottleneck profiling: ~50% of 3.18s/step = Python cell-loop O(N) sequential. → cell dimension 자체를 GPU 에 분산 (32 cells × 8 GPU 또는 64 cells × 4 GPU). 별도 BG (b) v5 DDP 와 별개 path.
+
+### Implementation LANDED
+
+1. **`training/mitosis_model_v5_cellparallel.py`** (~390 LoC) — `MitosisModelEngineCellParallel(nn.Module)`:
+   - world_size + rank from torchrun env (RANK/WORLD_SIZE/LOCAL_RANK, fallback 1/0/0)
+   - shared modules (tok_emb/pos_emb/final_ln/lm_head) REPLICATED across ranks
+   - initial cells distributed via `_global_to_local(initial_cells, rank, world_size)`
+   - `forward`: local cells forward → `all_gather(local_sizes)` (varlen) → `all_gather(tensions, pad)` → softmax(global) → local weighted sum → `all_reduce(SUM)` → final_ln + lm_head
+   - `mitosis_step`: local-shard split/merge (cross-GPU migration = TODO[migration]); n_cells_global sync'd via all_reduce
+   - smoke world_size=1: forward (B=2 T=16 d=64 cells=4) PASS + backward grad PASS + force_split (cells 4→5) PASS
+2. **`training/cotrain_v5mitosis_v6_cellparallel.py`** (~610 LoC, v4 fork):
+   - `setup_distributed()` NCCL init + cuda:LOCAL_RANK
+   - `install_routing_fix_cellparallel(engine, router, top_k)` — engine.forward 패치 (router → top-K → local weighted → all_reduce SUM 파이프라인). router 는 모든 rank 에 REPLICATED, gradient 는 manual `all_reduce_shared_grads` 로 sync
+   - shared params (tok_emb / pos_emb / final_ln / router; lm_head weight-tied with tok_emb) → `all_reduce(grad).div_(world_size)` 평균. cell-owned params (cells[*].ln/attn/ffn_a/ffn_g) → local-only, no sync
+   - **DDP 안 씀 이유**: DDP 는 module tree 가 rank 마다 identical 필요. 각 rank 는 structurally DIFFERENT cells. shared subset 만 manual sync 가 자연스러운 fit
+   - smoke install_routing_fix_cellparallel + load_balance_aux PASS (router.proj.weight.grad norm = 0.146, loss + backward + grad propagation 정상)
+3. **`state/anima_v5mitosis_cotrain_v6_cellparallel_2026_05_13/dispatch_h100_v6_cellparallel.sh`** — vast.ai N-GPU dispatch:
+   - 1st query 8× H100 SXM/H200/B200/A100 ≤$25/hr → only B200 8× @ $43/hr 발견 (cap 초과)
+   - 4-GPU fallback dispatch FIRED: 4× A100 SXM4 80GB pod 36635479 @ $6.70/hr (est $33.50 / cap $80)
+   - §45 direct-IP wait + SAVE_POD trap-on-pull-fail + `set -o pipefail` remote + OOM-retry batch-halve
+4. **`docs/anima_clm_v5_mitosis_cotrain_v6_cellparallel_2026_05_13.md`** (8 §, 9 honest C3)
+
+### Honest C3 (≥ 9 captured)
+
+1. cross-GPU split/merge = TODO[migration]. 1st cycle same-shard only, `max_local_cells = max_cells/W + 4` slack
+2. all_reduce overhead at d=1024 ctx=512 batch=8 ≈ 16MB/step × NCCL — H100 NVLink ~0.4ms, A100 PCIe ~10ms (cell-loop savings 1-3s 대비 dominant 아님)
+3. routing top-K load imbalance — top-K=8 with N=256 분산 → 가능 → `dispatch_imbalance` 모니터링 TODO
+4. Lorenz cross-rank phase coupling lost (heuristic `phase = (rank*100 + i) * 2π/N`)
+5. Φ = local-only per rank (full Φ = ckpt merge step at final)
+6. weight-tied lm_head 처리 (tok_emb sync 면 lm_head 자동, 별도 sync 안 함)
+7. fresh init (v4 ckpt load = future TODO[ckpt-distribute])
+8. sharded ckpt artifact (rank 0 = shared + cells, rank>=1 = cells only)
+9. per-rank corpus sampling (`seed = base + rank`) → 효과적 batch size W× 증가 (free), shared-grad 평균
+10. **No 8× H100 SXM at ≤$25/hr** (8× B200 single $43/hr 만 available) → 4× A100 SXM4 80GB 채택. wall ETA 약 5hr (목표 < 3hr 보다 길어지지만 v4 17hr 대비 3-4× 절감 예상)
+
+### Pre-registered measurements
+
+| metric | threshold | source |
+|---|---|---|
+| `step_wall_avg_seconds` | < 1.0 (v4 baseline = 3.18) | v4 carry |
+| F-V5MIT-1 mitosis_active | n_cells_final > initial_cells | F-V5MIT-1 |
+| F-V5MIT-2 no_collapse | n_cells_final >= min_cells | F-V5MIT-2 |
+| F-V5MIT-3 phi_ratchet | phi_best ≥ phi_final | F-V5MIT-3 |
+| F-V5MIT-4 ce_converged | ce_final_avg100 < 5.0 | F-V5MIT-4 |
+| F-V5MIT-5 v14strict_proxy | 0 < splits ≤ max_cells | F-V5MIT-5 |
+| F-PERSONA-4a topK weights mean_KL | ≥ 0.5 AND z>3 | own |
+| F-PERSONA-4b M4 cosine z | > 3 (v2 carry: 3.20) | v2 carry |
+
+### Status
+
+- Phase 1-3 (model + trainer + dispatch impl): LANDED + smoke PASS world_size=1
+- Phase 4 dispatch FIRED: 4× A100 SXM4 80GB pod 36635479 (running, training in-flight)
+- Phase 5 measurement: rank 0 in-process post-training (F-PERSONA-4a/4b + F-V5MIT-1..5)
+- Phase 6 HF push: gated on F-V5MIT-5 V14-STRICT PASS (own 37 mandate)
+- Phase 7 commit + push: this PSCC §52 + GOAL.md + memory in same commit
+
+### Cross-link
+
+- doc: `docs/anima_clm_v5_mitosis_cotrain_v6_cellparallel_2026_05_13.md` (8 §, 9 honest C3)
+- model fork base: `training/mitosis_model_v5.py` (NOT modified — read-only)
+- trainer fork base: `training/cotrain_v5mitosis_v4.py` (NOT modified — read-only)
+- v4 single-GPU sibling: `state/anima_v5mitosis_cotrain_v4_scaleup_2026_05_12/` (in-flight separate BG)
+- GOAL.md In-flight BGs 표 갱신 (v6 cell-parallel row append)
+- 신규 memory: `project_v5_mitosis_cotrain_v6_cellparallel_2026_05_13`
+
+### Mission contribution
+
+mitosis-native parallelism — wall speedup potential 4-8× (cell-loop bottleneck 해결). post-★★★★★ arch innovation. cond #3+#4 production-scale evidence reinforcement (cond #3 already ☑ via PSCC §50 §A3 4b z=3.20).
