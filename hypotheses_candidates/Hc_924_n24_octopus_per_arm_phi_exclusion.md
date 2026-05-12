@@ -3,7 +3,10 @@ id: Hc_924
 slug: n24-octopus-per-arm-phi-exclusion
 title: N-24 — Octopus per-arm Φ ("community of minds") IIT exclusion postulate test feasibility
 domain: biology, consciousness, IIT
-status: candidate-falsifier-ready
+status: merged-to-H_188
+merged_at: 2026-05-12
+merged_to: hypotheses/H_188_clinical_phi_correlation_pci_octopus_cluster.md
+absorption_note: "Hc_924 (Octopus 8-arm per-arm Φ IIT exclusion postulate test) is the comparative-biology paradigm within H_188's clinical Φ correlation cluster — 'community of minds' empirical-test lane. F-list/L-list preserved for H_188 C-list extension."
 source_doc: docs/n_24_octopus_per_arm_phi_feasibility_2026_05_01.md
 source_lines: 1+
 promoted_at: 2026-05-11

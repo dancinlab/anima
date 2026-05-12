@@ -3,7 +3,10 @@ id: Hc_921
 slug: n19-pci-tms-eeg-clinical
 title: N-19 PCI (Perturbational Complexity Index) — Massimini 2013 임상 골드스탠다드. TMS-free surrogate 16ch OpenBCI pilot + fluidity-dFC + functional-repertoire 6/6 PASS at 0.25 cutoff, w6=0.10 sample-size 1
 domain: consciousness, neuroscience, clinical
-status: candidate-falsifier-ready
+status: merged-to-H_188
+merged_at: 2026-05-12
+merged_to: hypotheses/H_188_clinical_phi_correlation_pci_octopus_cluster.md
+absorption_note: "Hc_921 (PCI/TMS-EEG clinical, Massimini 2013 surrogate + Stage-2 6/6 PASS at 0.25 cutoff + Stage-3 DCC+LLE+GAP) is the PCI / TMS-EEG paradigm within H_188's clinical Φ correlation cluster. F-list/L-list preserved for H_188 C-list extension."
 source_doc: docs/n_19_pci_tmsfree_results_2026_05_01.md + docs/n_19_pci_stage2_results_2026_05_02.md + docs/n_19_pci_stage3_spec_2026_05_02.md + docs/n_substrate_n19_pci_spec_2026_05_01.md + docs/n_substrate_n19_pci_lab_share_2026_05_01.md
 source_lines: cluster
 promoted_at: 2026-05-11
