@@ -3,15 +3,17 @@ id: Hc_614
 slug: phi-star-geometry-aliasing-clm-v4-specific
 title: 현재 phi-star proxy 가 CLM-v4-architecture-specific (8×192) 이고 cross-substrate phi 값은 aliasing-induced bias 로 비교 불가
 domain: clm-architecture
-status: candidate-math-verified-falsifier-pending
+status: merged-to-H_174
 source_doc: docs/anima_phi_star_proxy_geometry_invariant_spec_2026_05_05.md
 source_lines: 26-115
 promoted_at: 2026-05-11
-linked_h: BG-BN Pythia 70m smoke, BG-M cross-substrate audit
-notes: D mod 192 에 따라 tile-replicate / partial-overlap / clean-disjoint 3-mode failure. BG-BN range 0.084 evidence.
+merged_to: hypotheses/H_174_phi_star_geometry_aliasing_clm_v4_specific.md
+merged_at: 2026-05-12
+linked_h: BG-BN Pythia 70m smoke, BG-M cross-substrate audit, H_174 (formal promotion 2026-05-12), H_162 (DOWNSTREAM), H_173 (candidate fix lane)
+notes: D mod 192 에 따라 tile-replicate / partial-overlap / clean-disjoint 3-mode failure. BG-BN range 0.084 evidence. 2026-05-12 cycle #4 task 1 PROMOTE_READY (verify5_authored row 13; cycle #3 scaffolding 으로 WEAK_MATH → PROMOTE_READY) → H_174 정식 승격. (c·192) mod 768 tile-replicate 4 pairs EXACT verified. PyPhi (Option D) 미실행 — orthogonal anchor 부재.
 verified_at: 2026-05-12
-verify_decision: WEAK_MATH_ONLY
-verify_note: "verify_hc2 2026-05-12 — verify3 math=1 (4+ numeric identities present)"
+verify_decision: PROMOTE_READY
+verify_note: "verify_hc2 2026-05-12 — verify3 math=1 (4+ numeric identities present); cycle #3 falsifier-scaffolding +F4/F5/F6 → PROMOTE_READY → H_174"
 ---
 
 ## Hypothesis

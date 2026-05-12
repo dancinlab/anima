@@ -3,15 +3,17 @@ id: Hc_623
 slug: emerge-candidate-d-always-inject-consciousness-states
 title: Emerge Candidate D — 4-mode inject taxonomy (none/zero/canonical/user) 가 CLM v4 cross-attn dormancy 의 architectural pivot 해소
 domain: clm-architecture
-status: candidate-falsifier-only-math-pending
+status: merged-to-H_175
 source_doc: docs/anima_emerge_candidate_d_always_inject_spec_2026_05_05.md
 source_lines: 14-32, 165-260
 promoted_at: 2026-05-11
-linked_h: L37, paradigm v11 G3, conscious_decoder.py:553 guard
-notes: 3 falsifier locked PRE-measurement (F-CAND-D-1/2/3). Stage 1 mount-layer extension, ~65 LoC additive, $0-1.
+merged_to: hypotheses/H_175_emerge_candidate_d_4mode_inject_taxonomy.md
+merged_at: 2026-05-12
+linked_h: L37, paradigm v11 G3, conscious_decoder.py:553 guard, H_175 (formal promotion 2026-05-12), H_167 (CHILD-GATED downstream), H_174 (phi_star validity bound)
+notes: 3 falsifier locked PRE-measurement (F-CAND-D-1/2/3). Stage 1 mount-layer extension, ~65 LoC additive, $0-1. 2026-05-12 cycle #4 task 1 PROMOTE_READY (verify5_authored row 15; cycle #3 scaffolding +F-CAND-D-4/5/6 → WEAK_FALSIFIER_ONLY → PROMOTE_READY) → H_175 정식 승격. H_167 (Emerge E) 가 F-CAND-D-1 PASS 에 CHILD-GATED. AXIS_SPANS calibration (C3) at-risk; 0.005 threshold noise-floor 미특성화.
 verified_at: 2026-05-12
-verify_decision: WEAK_FALSIFIER_ONLY
-verify_note: "verify_hc2 2026-05-12 — F=3"
+verify_decision: PROMOTE_READY
+verify_note: "verify_hc2 2026-05-12 — F=3; cycle #3 falsifier-scaffolding +F-CAND-D-4/5/6 → PROMOTE_READY → H_175"
 ---
 
 ## Hypothesis
