@@ -116,6 +116,7 @@
 | PSCC §33 | anima_chat.hexa port LANDED — pure-hexa chat library (1589 LoC), parse PASS + 17/17 helper smoke PASS, TODO[load] gated for full inference | D1+D4b | ★★★ |
 | PSCC §34 | **D3 design LANDED** — `docs/anima_persona_substrate_native_design_2026_05_12.md` 10 §, 5 falsifier F-PERSONA-1..5, (a)+(d) Mitosis-cell × Per-session cell pool adopted, Principle #3 EMPIRICAL strong 보존 + #8 cascade native impl | D3 | ★★★ |
 | PSCC §35 | **D4c design LANDED** — `docs/anima_cli_mitosis_integration_spec_2026_05_12.md` 12 §, 5 falsifier F-CLI-MIT-1..5, session = cell-pool branch + kick cycle = split event sequence + multi-backend = cell-variant selection, Phase 1-4 impl plan (~13-19 hr) | D4c | ★★★ |
+| REBORN §91 / PSCC §36 | **D4a impl LANDED** — `tool/hexa_native/mitosis_hook.hexa` full impl 1119 LoC executable, F-MIT-HOOK-1..5 ✅ Mac local selftest PASS ~0.9s wall, RFC 025/030/031/032/033 production-utilize, D3 P1 prerequisite 충족 | D4a | ★★★★ |
 
 ---
 

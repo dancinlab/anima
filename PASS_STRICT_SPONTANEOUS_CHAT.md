@@ -2989,7 +2989,7 @@ ckpt-loading smoke (full inference) 는 Space 자체 build 가 검증 — push �
 - Reference Python SSOT: `anima_chat.py` v2.3 commit `c2afa8e9e` tag `anima_chat-v2.3-markdown-filter`
 
 
-## §35 [2026-05-12 KST] D4a `mitosis_hook.hexa` FULL IMPL LANDED — pure-hexa serve-time mitosis (1119 LoC, F-MIT-HOOK-1..5 PASS) ★★★★ ($0, GOAL.md D4a lane impl-tier first evidence)
+## §36 [2026-05-12 KST] D4a `mitosis_hook.hexa` FULL IMPL LANDED — pure-hexa serve-time mitosis (1119 LoC, F-MIT-HOOK-1..5 PASS) ★★★★ ($0, GOAL.md D4a lane impl-tier first evidence)
 
 ### TL;DR
 
