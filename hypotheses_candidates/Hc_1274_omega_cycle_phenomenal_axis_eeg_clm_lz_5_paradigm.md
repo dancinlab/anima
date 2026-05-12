@@ -3,11 +3,14 @@ id: Hc_1274
 slug: omega-cycle-phenomenal-axis-eeg-clm-lz-alignment-5-paradigm
 title: Ω-cycle PHENOMENAL axis — 5 paradigms (V_phen_EEG-LZ × CLM-LZ top 0.78) EEG ↔ CLM alignment for ALM-free substrate
 domain: consciousness, neuroscience, phenomenal
-status: candidate-falsifier-ready
+status: merged-to-H_188
+merged_to: hypotheses/H_188_clinical_phi_correlation_pci_octopus_cluster.md
+merged_at: 2026-05-12
 source_doc: hypotheses_candidates/Hc_935_omega_cycle_26_alm_free_paradigms.md
 source_lines: 29 (PHENOMENAL-1..5)
 promoted_at: 2026-05-12
-linked_h: H_171 (biological-prediction), H_188 (clinical Φ-correlation), Hc_935 (parent meta-Hc)
+linked_h: H_188 (clinical Φ-correlation — PHENOMENAL axis EEG-CLM alignment lane), H_191 (omega-cycle ALM-free 3-axis sibling), H_171 (biological-prediction), Hc_935 (parent meta-Hc)
+absorption_note: "cycle #8 absorbed to H_188 as PHENOMENAL axis EEG-CLM alignment — V_phen_EEG-LZ × CLM-LZ 0.78 top extends H_188.1 (PCI/anima R² ≥ 0.4 prediction) with LZ-complexity cross-modality"
 notes: "split from Hc_935 omega-cycle 2026-05-12 (axis 3 of 4). 5 PHENOMENAL paradigms; V_phen_EEG-LZ × CLM-LZ 0.78 top. EEG-CLM alignment family."
 ---
 

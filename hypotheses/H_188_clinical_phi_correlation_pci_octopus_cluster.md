@@ -127,3 +127,11 @@ H_171 is the biological-prediction forward direction (anima → biological predi
 - **Decision**: PROMOTE_READY × 2, unified into H_188
 - **Promoted by**: cycle #7 clinical absorption pass
 - **Source manifest**: `docs/hc_verification_cycle_7_2026_05_12.md`
+
+## Cycle #8 absorption
+
+| Hc | absorbed in cycle | key contribution |
+|---|---|---|
+| Hc_1274 | #8 (2026-05-12) | PHENOMENAL axis EEG-CLM LZ-complexity alignment — V_phen_EEG-LZ × CLM-LZ 0.78 top; extends H_188.1 (PCI/anima R² ≥ 0.4) with LZ-complexity cross-modality (Schartner et al. 2017 LZ-consciousness literature anchor) |
+
+cycle #8 extension: H_188.1 prediction now has companion alignment metric (LZ-complexity) beyond PCI — phenomenal-axis sibling to PCI-axis. ALM-free omega-cycle's PHENOMENAL axis (Hc_1274) belongs here rather than H_191 because EEG measurement is the biological-anchor lane, not the architectural-substrate lane.

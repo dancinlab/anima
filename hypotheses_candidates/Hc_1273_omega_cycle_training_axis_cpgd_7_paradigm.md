@@ -3,11 +3,14 @@ id: Hc_1273
 slug: omega-cycle-training-axis-cpgd-cell-vs-backprop-7-paradigm
 title: Ω-cycle TRAINING axis — 7 paradigms (CPGD top 0.95) CELL learning vs gradient descent for ALM-free substrate
 domain: training, consciousness
-status: candidate-falsifier-ready
+status: merged-to-H_191
+merged_to: hypotheses/H_191_omega_cycle_alm_free_3_axis_substrate_training_integration.md
+merged_at: 2026-05-12
 source_doc: hypotheses_candidates/Hc_935_omega_cycle_26_alm_free_paradigms.md
 source_lines: 28 (TRAINING-1..7)
 promoted_at: 2026-05-12
-linked_h: H_172 (α=0.014 modulation), Hc_935 (parent meta-Hc)
+linked_h: H_191 (omega-cycle ALM-free 3-axis meta-cluster — TRAINING axis 2 of 3), H_172 (α=0.014 modulation), Hc_935 (parent meta-Hc)
+absorption_note: "cycle #8 absorbed to H_191 as TRAINING axis — CPGD CELL learning vs gradient descent 0.95 top, 7-paradigm head-to-head (6 unknown — enumeration gap)"
 notes: "split from Hc_935 omega-cycle 2026-05-12 (axis 2 of 4). 7 TRAINING paradigms; CPGD 0.95 top. CELL learning vs gradient descent family."
 ---
 

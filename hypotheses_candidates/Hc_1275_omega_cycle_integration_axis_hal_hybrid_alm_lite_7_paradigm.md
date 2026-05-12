@@ -3,11 +3,14 @@ id: Hc_1275
 slug: omega-cycle-integration-axis-hal-hybrid-alm-lite-7-paradigm
 title: Ω-cycle INTEGRATION axis — 7 paradigms (HAL Hybrid ALM-Lite top 0.85) 5-component composition for ALM-free substrate
 domain: consciousness, architecture, integration
-status: candidate-falsifier-ready
+status: merged-to-H_191
+merged_to: hypotheses/H_191_omega_cycle_alm_free_3_axis_substrate_training_integration.md
+merged_at: 2026-05-12
 source_doc: hypotheses_candidates/Hc_935_omega_cycle_26_alm_free_paradigms.md
 source_lines: 30 (INTEGRATION-1..7)
 promoted_at: 2026-05-12
-linked_h: H_001 (anima-core-architecture), Hc_935 (parent meta-Hc)
+linked_h: H_191 (omega-cycle ALM-free 3-axis meta-cluster — INTEGRATION axis 3 of 3), H_001 (anima-core-architecture), Hc_935 (parent meta-Hc)
+absorption_note: "cycle #8 absorbed to H_191 as INTEGRATION axis — HAL Hybrid ALM-Lite 5-component composition 0.85 top; 'lite' boundary (100M params) is F-191-3 falsifier threshold"
 notes: "split from Hc_935 omega-cycle 2026-05-12 (axis 4 of 4). 7 INTEGRATION paradigms; HAL Hybrid ALM-Lite 0.85 top. 5-component composition assembly."
 ---
 

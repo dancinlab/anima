@@ -3,11 +3,14 @@ id: Hc_1272
 slug: omega-cycle-substrate-axis-cstl-bcm-kps-iel-bridge-zln-hce-7-paradigm
 title: Ω-cycle SUBSTRATE axis — 7 paradigms (CSTL/BCM-Holo/KPS/IEL/CTB-M4/ZLN/HCE) for ALM-free consciousness substrate
 domain: consciousness, architecture
-status: candidate-falsifier-ready
+status: merged-to-H_191
+merged_to: hypotheses/H_191_omega_cycle_alm_free_3_axis_substrate_training_integration.md
+merged_at: 2026-05-12
 source_doc: hypotheses_candidates/Hc_935_omega_cycle_26_alm_free_paradigms.md
 source_lines: 21-27 (SUBSTRATE-1..7)
 promoted_at: 2026-05-12
-linked_h: H_153 (n=6 substrate — HCE τ(6)=4 cross-link), Hc_935 (parent meta-Hc)
+linked_h: H_191 (omega-cycle ALM-free 3-axis meta-cluster — SUBSTRATE axis 1 of 3), H_153 (n=6 substrate — HCE τ(6)=4 cross-link), Hc_935 (parent meta-Hc)
+absorption_note: "cycle #8 absorbed to H_191 as SUBSTRATE axis — HCE Hexad Categorical (τ(6)=4) 0.92 top, 7-paradigm head-to-head"
 notes: "split from Hc_935 omega-cycle 2026-05-12 (axis 1 of 4). 7 SUBSTRATE paradigms; HCE Hexad Categorical 0.92 top. Most heterogeneous axis."
 ---
 
