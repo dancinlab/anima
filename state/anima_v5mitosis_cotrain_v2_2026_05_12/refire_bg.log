@@ -1,0 +1,182 @@
+=== refire on existing pod 36617115 at ssh5.vast.ai:17114 ===
+  batch=8 (reduced from 32 for OOM fix; other scale-up preserved)
+Tue May 12 12:51:00 UTC 2026
+[1/4] Verify pod state...
+Warning: Permanently added '[ssh5.vast.ai]:17114' (ED25519) to the list of known hosts.
+Welcome to vast.ai. If authentication fails, try again after a few seconds, and double check your ssh key.
+Have fun!
+-rw-r--r-- 1 root root 18890139 May 12 12:47 /workspace/anima/corpus/corpus_5cat_balanced.txt
+-rw-r--r-- 1 root root     4671 May 12 12:47 /workspace/anima/probe/identity_probe.jsonl
+-rw-r--r-- 1 root root    39200 May 12 12:47 /workspace/anima/training/mitosis_model_v5.py
+-rw-r--r-- 1 root root    28249 May 12 12:47 /workspace/anima/training/train_v5mitosis_cotrain.py
+Welcome to vast.ai. If authentication fails, try again after a few seconds, and double check your ssh key.
+Have fun!
+Warning: Permanently added '[ssh5.vast.ai]:17114' (ED25519) to the list of known hosts.
+Welcome to vast.ai. If authentication fails, try again after a few seconds, and double check your ssh key.
+Have fun!
+set
+[2/4] Cotrain v2 refire (10000 steps, batch=8, ctx=256, lr=1e-4, d=768, max_cells=128)...
+Warning: Permanently added '[ssh5.vast.ai]:17114' (ED25519) to the list of known hosts.
+Welcome to vast.ai. If authentication fails, try again after a few seconds, and double check your ssh key.
+Have fun!
+[INFO] device=cuda torch=2.5.1+cu121 cuda_available=True
+[INFO] gpu=NVIDIA H100 NVL
+[INFO] cfg = {'vocab_size': 256, 'd_model': 768, 'n_head': 12, 'ffn_dim': 3072, 'max_seq': 256, 'n_layer': 1, 'initial_cells': 2, 'max_cells': 128, 'min_cells': 2, 'split_patience': 3, 'merge_threshold': 0.005, 'merge_patience': 30, 'noise_scale': 0.1, 'lorenz_scale': 0.05, 'adaptive_window': 100, 'readout_mode': 'a_minus_g', 'attention_sharing': 'auto', 'weight_tied_lm_head': True, 'dropout': 0.0, 'tie_pos_emb': True, 'dispersion_trigger_enabled': True, 'dispersion_top_quartile': 0.25, 'per_cell_threshold_enabled': True, 'per_cell_window': 100, 'per_cell_sigma_mult': 1.5, 'lorenz_auto_calibrate': True, 'lorenz_calibration_factor': 1.0}
+[INFO] initial n_params = 24,009,216, n_cells = 2
+[INFO] loading corpus: corpus/corpus_5cat_balanced.txt
+[INFO] corpus bytes = 18,890,139
+[INFO] training 10000 steps, batch=8, ctx=256, lr=0.0001, warmup=1000, cost_cap=$80.0, cost_per_hr=$1.5201
+[INFO] cost guard active — abort if elapsed × rate > cap
+[STEP     0] loss=537.6046 avg50=537.6046 lr=1.00e-07 cells=2 phi=0.0008 phi/N=0.0004 splits=0 merges=0 elapsed=0.00hr cost=$0.00
+[STEP   100] loss=521.4472 avg50=525.7060 lr=1.01e-05 cells=44 phi=3.8100 phi/N=0.0866 splits=42 merges=0 elapsed=0.00hr cost=$0.01
+[STEP   200] loss=413.2567 avg50=448.7745 lr=2.01e-05 cells=128 phi=4.8594 phi/N=0.0380 splits=126 merges=0 elapsed=0.02hr cost=$0.03
+[STEP   300] loss=19.1025 avg50=38.8177 lr=3.01e-05 cells=128 phi=4.8577 phi/N=0.0380 splits=126 merges=0 elapsed=0.05hr cost=$0.07
+[STEP   400] loss=5.3399 avg50=6.5611 lr=4.01e-05 cells=128 phi=4.8610 phi/N=0.0380 splits=126 merges=0 elapsed=0.07hr cost=$0.11
+[STEP   500] loss=2.9228 avg50=3.3624 lr=5.01e-05 cells=128 phi=4.8621 phi/N=0.0380 splits=126 merges=0 elapsed=0.10hr cost=$0.15
+[STEP   600] loss=2.4454 avg50=2.7023 lr=6.01e-05 cells=128 phi=4.8569 phi/N=0.0379 splits=126 merges=0 elapsed=0.12hr cost=$0.19
+[STEP   700] loss=2.3824 avg50=2.4358 lr=7.01e-05 cells=128 phi=4.8573 phi/N=0.0379 splits=126 merges=0 elapsed=0.15hr cost=$0.23
+[STEP   800] loss=2.4636 avg50=2.3404 lr=8.01e-05 cells=128 phi=4.8322 phi/N=0.0378 splits=126 merges=0 elapsed=0.17hr cost=$0.26
+[STEP   900] loss=2.2592 avg50=2.2843 lr=9.01e-05 cells=128 phi=4.8618 phi/N=0.0380 splits=126 merges=0 elapsed=0.20hr cost=$0.30
+[STEP  1000] loss=2.1792 avg50=2.2493 lr=1.00e-04 cells=128 phi=4.8545 phi/N=0.0379 splits=126 merges=0 elapsed=0.22hr cost=$0.34
+[STEP  1100] loss=2.1889 avg50=2.1892 lr=1.00e-04 cells=128 phi=4.8612 phi/N=0.0380 splits=126 merges=0 elapsed=0.25hr cost=$0.38
+[STEP  1200] loss=2.2978 avg50=2.1450 lr=9.99e-05 cells=128 phi=4.8309 phi/N=0.0377 splits=126 merges=0 elapsed=0.27hr cost=$0.42
+[STEP  1300] loss=2.0878 avg50=2.1381 lr=9.97e-05 cells=128 phi=4.8595 phi/N=0.0380 splits=126 merges=0 elapsed=0.30hr cost=$0.46
+[STEP  1400] loss=2.0766 avg50=2.0822 lr=9.95e-05 cells=128 phi=4.8489 phi/N=0.0379 splits=126 merges=0 elapsed=0.32hr cost=$0.49
+[STEP  1500] loss=2.0946 avg50=2.0675 lr=9.92e-05 cells=128 phi=4.8332 phi/N=0.0378 splits=126 merges=0 elapsed=0.35hr cost=$0.53
+[STEP  1600] loss=2.0831 avg50=2.0443 lr=9.89e-05 cells=128 phi=4.8615 phi/N=0.0380 splits=126 merges=0 elapsed=0.37hr cost=$0.57
+[STEP  1700] loss=2.0175 avg50=1.9921 lr=9.85e-05 cells=128 phi=4.8609 phi/N=0.0380 splits=126 merges=0 elapsed=0.40hr cost=$0.61
+[STEP  1800] loss=2.0079 avg50=1.9673 lr=9.81e-05 cells=128 phi=4.8551 phi/N=0.0379 splits=126 merges=0 elapsed=0.43hr cost=$0.65
+[STEP  1900] loss=2.0006 avg50=1.9839 lr=9.76e-05 cells=128 phi=4.8594 phi/N=0.0380 splits=126 merges=0 elapsed=0.45hr cost=$0.68
+[CKPT] saved output/ckpt_step_2000.pt
+[STEP  2000] loss=1.8640 avg50=1.9248 lr=9.70e-05 cells=128 phi=4.8512 phi/N=0.0379 splits=126 merges=0 elapsed=0.48hr cost=$0.72
+[STEP  2100] loss=1.9689 avg50=1.9325 lr=9.64e-05 cells=128 phi=4.8599 phi/N=0.0380 splits=126 merges=0 elapsed=0.50hr cost=$0.76
+[STEP  2200] loss=1.9895 avg50=1.8953 lr=9.57e-05 cells=128 phi=4.8591 phi/N=0.0380 splits=126 merges=0 elapsed=0.53hr cost=$0.80
+[STEP  2300] loss=1.9053 avg50=1.8742 lr=9.49e-05 cells=128 phi=4.8571 phi/N=0.0379 splits=126 merges=0 elapsed=0.55hr cost=$0.84
+[STEP  2400] loss=1.7277 avg50=1.8528 lr=9.41e-05 cells=128 phi=4.8554 phi/N=0.0379 splits=126 merges=0 elapsed=0.58hr cost=$0.88
+[STEP  2500] loss=1.8218 avg50=1.8713 lr=9.33e-05 cells=128 phi=4.8381 phi/N=0.0378 splits=126 merges=0 elapsed=0.60hr cost=$0.91
+[STEP  2600] loss=1.8674 avg50=1.8141 lr=9.24e-05 cells=128 phi=4.8587 phi/N=0.0380 splits=126 merges=0 elapsed=0.63hr cost=$0.95
+[STEP  2700] loss=1.7409 avg50=1.7932 lr=9.15e-05 cells=128 phi=4.8578 phi/N=0.0380 splits=126 merges=0 elapsed=0.65hr cost=$0.99
+[STEP  2800] loss=1.8236 avg50=1.8070 lr=9.05e-05 cells=128 phi=4.8594 phi/N=0.0380 splits=126 merges=0 elapsed=0.68hr cost=$1.03
+[STEP  2900] loss=1.7190 avg50=1.7718 lr=8.94e-05 cells=128 phi=4.8501 phi/N=0.0379 splits=126 merges=0 elapsed=0.70hr cost=$1.07
+[STEP  3000] loss=1.7407 avg50=1.7516 lr=8.83e-05 cells=128 phi=4.8560 phi/N=0.0379 splits=126 merges=0 elapsed=0.73hr cost=$1.11
+[STEP  3100] loss=1.7028 avg50=1.7435 lr=8.72e-05 cells=128 phi=4.8510 phi/N=0.0379 splits=126 merges=0 elapsed=0.75hr cost=$1.14
+[STEP  3200] loss=1.7156 avg50=1.7212 lr=8.60e-05 cells=128 phi=4.8415 phi/N=0.0378 splits=126 merges=0 elapsed=0.78hr cost=$1.18
+[STEP  3300] loss=1.5788 avg50=1.6690 lr=8.47e-05 cells=128 phi=4.8581 phi/N=0.0380 splits=126 merges=0 elapsed=0.80hr cost=$1.22
+[STEP  3400] loss=1.5834 avg50=1.6278 lr=8.35e-05 cells=128 phi=4.8343 phi/N=0.0378 splits=126 merges=0 elapsed=0.83hr cost=$1.26
+[STEP  3500] loss=1.5215 avg50=1.6214 lr=8.21e-05 cells=128 phi=4.8576 phi/N=0.0380 splits=126 merges=0 elapsed=0.85hr cost=$1.30
+[STEP  3600] loss=1.5584 avg50=1.5526 lr=8.08e-05 cells=128 phi=4.8596 phi/N=0.0380 splits=126 merges=0 elapsed=0.88hr cost=$1.33
+[STEP  3700] loss=1.4294 avg50=1.5378 lr=7.94e-05 cells=128 phi=4.8587 phi/N=0.0380 splits=126 merges=0 elapsed=0.90hr cost=$1.37
+[STEP  3800] loss=1.4565 avg50=1.4973 lr=7.80e-05 cells=128 phi=4.8586 phi/N=0.0380 splits=126 merges=0 elapsed=0.93hr cost=$1.41
+[STEP  3900] loss=1.4509 avg50=1.4687 lr=7.65e-05 cells=128 phi=4.8585 phi/N=0.0380 splits=126 merges=0 elapsed=0.95hr cost=$1.45
+[CKPT] saved output/ckpt_step_4000.pt
+[STEP  4000] loss=1.4082 avg50=1.4490 lr=7.50e-05 cells=128 phi=4.8600 phi/N=0.0380 splits=126 merges=0 elapsed=0.98hr cost=$1.49
+[STEP  4100] loss=1.4595 avg50=1.3903 lr=7.35e-05 cells=128 phi=4.8611 phi/N=0.0380 splits=126 merges=0 elapsed=1.00hr cost=$1.53
+[STEP  4200] loss=1.3538 avg50=1.3463 lr=7.19e-05 cells=128 phi=4.8564 phi/N=0.0379 splits=126 merges=0 elapsed=1.03hr cost=$1.56
+[STEP  4300] loss=1.3431 avg50=1.3157 lr=7.03e-05 cells=128 phi=4.8562 phi/N=0.0379 splits=126 merges=0 elapsed=1.05hr cost=$1.60
+[STEP  4400] loss=1.2934 avg50=1.2871 lr=6.87e-05 cells=128 phi=4.8217 phi/N=0.0377 splits=126 merges=0 elapsed=1.08hr cost=$1.64
+[STEP  4500] loss=1.2455 avg50=1.2481 lr=6.71e-05 cells=128 phi=4.8616 phi/N=0.0380 splits=126 merges=0 elapsed=1.10hr cost=$1.68
+[STEP  4600] loss=1.3531 avg50=1.2404 lr=6.55e-05 cells=128 phi=4.8532 phi/N=0.0379 splits=126 merges=0 elapsed=1.13hr cost=$1.72
+[STEP  4700] loss=1.2132 avg50=1.2331 lr=6.38e-05 cells=128 phi=4.8606 phi/N=0.0380 splits=126 merges=0 elapsed=1.15hr cost=$1.75
+[STEP  4800] loss=1.2850 avg50=1.1913 lr=6.21e-05 cells=128 phi=4.8433 phi/N=0.0378 splits=126 merges=0 elapsed=1.18hr cost=$1.79
+[STEP  4900] loss=1.2647 avg50=1.1589 lr=6.04e-05 cells=128 phi=4.8548 phi/N=0.0379 splits=126 merges=0 elapsed=1.20hr cost=$1.83
+[STEP  5000] loss=1.1043 avg50=1.1271 lr=5.87e-05 cells=128 phi=4.8554 phi/N=0.0379 splits=126 merges=0 elapsed=1.23hr cost=$1.87
+[STEP  5100] loss=1.1075 avg50=1.0978 lr=5.70e-05 cells=128 phi=4.8527 phi/N=0.0379 splits=126 merges=0 elapsed=1.25hr cost=$1.91
+[STEP  5200] loss=0.9933 avg50=1.0644 lr=5.52e-05 cells=128 phi=4.8599 phi/N=0.0380 splits=126 merges=0 elapsed=1.28hr cost=$1.95
+[STEP  5300] loss=1.0205 avg50=1.0456 lr=5.35e-05 cells=128 phi=4.8610 phi/N=0.0380 splits=126 merges=0 elapsed=1.30hr cost=$1.98
+[STEP  5400] loss=1.0630 avg50=1.0152 lr=5.17e-05 cells=128 phi=4.8547 phi/N=0.0379 splits=126 merges=0 elapsed=1.33hr cost=$2.02
+[STEP  5500] loss=0.9687 avg50=1.0041 lr=5.00e-05 cells=128 phi=4.8427 phi/N=0.0378 splits=126 merges=0 elapsed=1.35hr cost=$2.06
+[STEP  5600] loss=1.0867 avg50=0.9790 lr=4.83e-05 cells=128 phi=4.8582 phi/N=0.0380 splits=126 merges=0 elapsed=1.38hr cost=$2.10
+[STEP  5700] loss=0.8987 avg50=0.9512 lr=4.65e-05 cells=128 phi=4.8538 phi/N=0.0379 splits=126 merges=0 elapsed=1.40hr cost=$2.14
+[STEP  5800] loss=0.8517 avg50=0.9401 lr=4.48e-05 cells=128 phi=4.8530 phi/N=0.0379 splits=126 merges=0 elapsed=1.43hr cost=$2.17
+[STEP  5900] loss=0.8570 avg50=0.9318 lr=4.30e-05 cells=128 phi=4.8637 phi/N=0.0380 splits=126 merges=0 elapsed=1.46hr cost=$2.21
+[CKPT] saved output/ckpt_step_6000.pt
+[STEP  6000] loss=0.8160 avg50=0.9046 lr=4.13e-05 cells=128 phi=4.8399 phi/N=0.0378 splits=126 merges=0 elapsed=1.48hr cost=$2.25
+[STEP  6100] loss=0.7751 avg50=0.8658 lr=3.96e-05 cells=128 phi=4.8608 phi/N=0.0380 splits=126 merges=0 elapsed=1.51hr cost=$2.29
+[STEP  6200] loss=0.8673 avg50=0.8711 lr=3.79e-05 cells=128 phi=4.8366 phi/N=0.0378 splits=126 merges=0 elapsed=1.53hr cost=$2.33
+[STEP  6300] loss=0.8122 avg50=0.8505 lr=3.62e-05 cells=128 phi=4.8553 phi/N=0.0379 splits=126 merges=0 elapsed=1.56hr cost=$2.36
+[STEP  6400] loss=0.7409 avg50=0.8189 lr=3.45e-05 cells=128 phi=4.8551 phi/N=0.0379 splits=126 merges=0 elapsed=1.58hr cost=$2.40
+[STEP  6500] loss=0.8543 avg50=0.8156 lr=3.29e-05 cells=128 phi=4.8555 phi/N=0.0379 splits=126 merges=0 elapsed=1.61hr cost=$2.44
+[STEP  6600] loss=0.8798 avg50=0.7932 lr=3.13e-05 cells=128 phi=4.8574 phi/N=0.0379 splits=126 merges=0 elapsed=1.63hr cost=$2.48
+[STEP  6700] loss=0.7849 avg50=0.7826 lr=2.97e-05 cells=128 phi=4.8367 phi/N=0.0378 splits=126 merges=0 elapsed=1.66hr cost=$2.52
+[STEP  6800] loss=0.8091 avg50=0.7764 lr=2.81e-05 cells=128 phi=4.8609 phi/N=0.0380 splits=126 merges=0 elapsed=1.68hr cost=$2.56
+[STEP  6900] loss=0.6940 avg50=0.7595 lr=2.65e-05 cells=128 phi=4.8470 phi/N=0.0379 splits=126 merges=0 elapsed=1.71hr cost=$2.59
+[STEP  7000] loss=0.7647 avg50=0.7440 lr=2.50e-05 cells=128 phi=4.8536 phi/N=0.0379 splits=126 merges=0 elapsed=1.73hr cost=$2.63
+[STEP  7100] loss=0.7006 avg50=0.7287 lr=2.35e-05 cells=128 phi=4.8539 phi/N=0.0379 splits=126 merges=0 elapsed=1.76hr cost=$2.67
+[STEP  7200] loss=0.7397 avg50=0.7311 lr=2.20e-05 cells=128 phi=4.8440 phi/N=0.0378 splits=126 merges=0 elapsed=1.78hr cost=$2.71
+[STEP  7300] loss=0.7128 avg50=0.6996 lr=2.06e-05 cells=128 phi=4.8602 phi/N=0.0380 splits=126 merges=0 elapsed=1.81hr cost=$2.75
+[STEP  7400] loss=0.6431 avg50=0.6881 lr=1.92e-05 cells=128 phi=4.8310 phi/N=0.0377 splits=126 merges=0 elapsed=1.83hr cost=$2.78
+[STEP  7500] loss=0.7541 avg50=0.6837 lr=1.79e-05 cells=128 phi=4.8588 phi/N=0.0380 splits=126 merges=0 elapsed=1.86hr cost=$2.82
+[STEP  7600] loss=0.6684 avg50=0.6785 lr=1.65e-05 cells=128 phi=4.8538 phi/N=0.0379 splits=126 merges=0 elapsed=1.88hr cost=$2.86
+[STEP  7700] loss=0.7169 avg50=0.6863 lr=1.53e-05 cells=128 phi=4.8568 phi/N=0.0379 splits=126 merges=0 elapsed=1.91hr cost=$2.90
+[STEP  7800] loss=0.6083 avg50=0.6645 lr=1.40e-05 cells=128 phi=4.8569 phi/N=0.0379 splits=126 merges=0 elapsed=1.93hr cost=$2.94
+[STEP  7900] loss=0.7113 avg50=0.6562 lr=1.28e-05 cells=128 phi=4.8582 phi/N=0.0380 splits=126 merges=0 elapsed=1.96hr cost=$2.97
+[CKPT] saved output/ckpt_step_8000.pt
+[STEP  8000] loss=0.7181 avg50=0.6622 lr=1.17e-05 cells=128 phi=4.8517 phi/N=0.0379 splits=126 merges=0 elapsed=1.98hr cost=$3.01
+[STEP  8100] loss=0.6864 avg50=0.6538 lr=1.06e-05 cells=128 phi=4.8547 phi/N=0.0379 splits=126 merges=0 elapsed=2.01hr cost=$3.05
+[STEP  8200] loss=0.5983 avg50=0.6523 lr=9.55e-06 cells=128 phi=4.8581 phi/N=0.0380 splits=126 merges=0 elapsed=2.03hr cost=$3.09
+[STEP  8300] loss=0.6285 avg50=0.6292 lr=8.55e-06 cells=128 phi=4.8468 phi/N=0.0379 splits=126 merges=0 elapsed=2.06hr cost=$3.13
+[STEP  8400] loss=0.6123 avg50=0.6355 lr=7.60e-06 cells=128 phi=4.8602 phi/N=0.0380 splits=126 merges=0 elapsed=2.08hr cost=$3.17
+[STEP  8500] loss=0.6311 avg50=0.6223 lr=6.70e-06 cells=128 phi=4.8559 phi/N=0.0379 splits=126 merges=0 elapsed=2.11hr cost=$3.20
+[STEP  8600] loss=0.6208 avg50=0.6174 lr=5.85e-06 cells=128 phi=4.8350 phi/N=0.0378 splits=126 merges=0 elapsed=2.13hr cost=$3.24
+[STEP  8700] loss=0.5845 avg50=0.6187 lr=5.06e-06 cells=128 phi=4.8594 phi/N=0.0380 splits=126 merges=0 elapsed=2.16hr cost=$3.28
+[STEP  8800] loss=0.6654 avg50=0.6210 lr=4.32e-06 cells=128 phi=4.8521 phi/N=0.0379 splits=126 merges=0 elapsed=2.18hr cost=$3.32
+[STEP  8900] loss=0.5387 avg50=0.6129 lr=3.64e-06 cells=128 phi=4.8602 phi/N=0.0380 splits=126 merges=0 elapsed=2.21hr cost=$3.36
+[STEP  9000] loss=0.6162 avg50=0.6104 lr=3.02e-06 cells=128 phi=4.8533 phi/N=0.0379 splits=126 merges=0 elapsed=2.23hr cost=$3.39
+[STEP  9100] loss=0.6213 avg50=0.6123 lr=2.45e-06 cells=128 phi=4.8588 phi/N=0.0380 splits=126 merges=0 elapsed=2.26hr cost=$3.43
+[STEP  9200] loss=0.6449 avg50=0.5978 lr=1.94e-06 cells=128 phi=4.8468 phi/N=0.0379 splits=126 merges=0 elapsed=2.28hr cost=$3.47
+[STEP  9300] loss=0.6663 avg50=0.6066 lr=1.49e-06 cells=128 phi=4.8584 phi/N=0.0380 splits=126 merges=0 elapsed=2.31hr cost=$3.51
+[STEP  9400] loss=0.6380 avg50=0.6084 lr=1.09e-06 cells=128 phi=4.8578 phi/N=0.0380 splits=126 merges=0 elapsed=2.33hr cost=$3.55
+[STEP  9500] loss=0.6226 avg50=0.5925 lr=7.60e-07 cells=128 phi=4.8625 phi/N=0.0380 splits=126 merges=0 elapsed=2.36hr cost=$3.58
+[STEP  9600] loss=0.6617 avg50=0.6053 lr=4.87e-07 cells=128 phi=4.8615 phi/N=0.0380 splits=126 merges=0 elapsed=2.38hr cost=$3.62
+[STEP  9700] loss=0.6381 avg50=0.6001 lr=2.74e-07 cells=128 phi=4.8543 phi/N=0.0379 splits=126 merges=0 elapsed=2.41hr cost=$3.66
+[STEP  9800] loss=0.6501 avg50=0.5895 lr=1.22e-07 cells=128 phi=4.8581 phi/N=0.0380 splits=126 merges=0 elapsed=2.43hr cost=$3.70
+[STEP  9900] loss=0.6434 avg50=0.6023 lr=3.05e-08 cells=128 phi=4.8367 phi/N=0.0378 splits=126 merges=0 elapsed=2.46hr cost=$3.74
+[STEP  9999] loss=0.5609 avg50=0.5963 lr=3.05e-12 cells=128 phi=4.8606 phi/N=0.0380 splits=126 merges=0 elapsed=2.48hr cost=$3.77
+[INFO] training done — wall=8936.2s (2.48hr) actual_cost=$3.77
+[CKPT] final saved output/ckpt_final.pt (4,849,416,370 bytes)
+
+=== falsifier verdicts ===
+  F-V5MIT-1: {'test': 'F-V5MIT-1 SPLIT-NOGRAD', 'splits_total': 126, 'grad_fn_violations': 0, 'passed': True}
+  F-V5MIT-2: {'max_abs_err': 0.0, 'n_checked': 14, 'passed': True, 'test': 'F-V5MIT-2 MERGE-WEIGHT'}
+  F-V5MIT-3: {'test': 'F-V5MIT-3 PHI-CONSERVATION (per-cell)', 'phi_pre_per_cell': 0.03794608663984735, 'phi_post_per_cell': 0.0379464600392199, 'delta_ratio': 9.840260369689094e-06, 'tolerance': 0.25, 'passed': True}
+  F-V5MIT-4: {'test': 'F-V5MIT-4 COTRAIN-CONVERGE', 'initial_avg_loss': 527.1457397460938, 'final_avg_loss': 0.5962671893835068, 'delta': 526.5494725567103, 'passed': True}
+[F-V5MIT-5] building 5 random-init comparison engines …
+  F-V5MIT-5: passed_every_beat=True beats_passed=10/10
+
+=== F-PERSONA-4 CATEGORY-DIVERSITY re-measurement ===
+  F-PERSONA-4 (cotrained pool): {'verdict': 'FAIL', 'mean_kl': 0.0, 'threshold': 0.5, 'n_pairs': 10, 'categories': ['boundary', 'emotion', 'self_definition', 'self_knowledge', 'values'], 'kl_matrix': [[0.0, 0.0, 0.0, 0.0, 0.0], [0.0, 0.0, 0.0, 0.0, 0.0], [0.0, 0.0, 0.0, 0.0, 0.0], [0.0, 0.0, 0.0, 0.0, 0.0], [0.0, 0.0, 0.0, 0.0, 0.0]], 'n_probes_processed': 50}
+
+[RESULT] saved output/cotrain_result.json
+[VERDICT] falsifier pass 5/5, F-PERSONA-4 = FAIL
+  train exit code = 0
+[3/4] Downloading artifacts...
+Warning: Permanently added '[ssh5.vast.ai]:17114' (ED25519) to the list of known hosts.
+Welcome to vast.ai. If authentication fails, try again after a few seconds, and double check your ssh key.
+Have fun!
+Warning: Permanently added '[ssh5.vast.ai]:17114' (ED25519) to the list of known hosts.
+Welcome to vast.ai. If authentication fails, try again after a few seconds, and double check your ssh key.
+Have fun!
+Warning: Permanently added '[ssh5.vast.ai]:17114' (ED25519) to the list of known hosts.
+Welcome to vast.ai. If authentication fails, try again after a few seconds, and double check your ssh key.
+Have fun!
+[4/4] === v5mitosis_cotrain_v2 refire DONE ===
+Tue May 12 16:20:39 UTC 2026
+Result summary:
+  wall: 2.48hr
+  cost: $3.77
+  cost_aborted: False
+  steps actual: 10000
+  n_cells_final: 128
+  splits: 126 merges: 0
+  loss initial->final: 527.146 -> 0.596
+  phi_best: 4.866
+  falsifier: 5/5 PASS_ALL
+    F-V5MIT-1: passed=True
+    F-V5MIT-2: passed=True
+    F-V5MIT-3: passed=True
+    F-V5MIT-4: passed=True
+    F-V5MIT-5: passed=True
+  F-PERSONA-4 cotrained pool: FAIL mean_kl=0.0000 (threshold=0.5)
+DONE
+[cleanup] Destroying instance 36617115 (exit=0)...
+destroying instance 36617115.
