@@ -6586,3 +6586,72 @@ substrate A 위에선 M4 가 작동한다.
 
 honest C3: 본 spec §11 의 10항목 carry — 가장 critical = v5-mitosis 가 real nn.Module cells 로도 V14 violated 가능 (toy 한계 carry-over 가설 미검증).
 
+---
+
+## §89 [2026-05-12 KST] HEXA_NATIVE PHASE 5∥ SERVE-TIME MITOSIS HOOK SPEC LAND — §0.5 의 first pure-hexa impl prerequisite ★★★★
+
+§88 (v5-mitosis PyTorch arch spec) 의 sister deliverable — pure-hexa serve-time mitosis hook 의 design spec + parse-only stub land. REBORN §0.5 + PHILOSOPHY #8 (NO TRAIN/INFER SPLIT) 의 forward-call-graph-안 분열-성장 first native impl prerequisite.
+
+본 BG (`a9d240521ef64f883`) 는 rate limit (7:40 PM KST reset) 으로 commit/REBORN-append 직전 중단됐고, post-limit 회수 land 진행.
+
+### 산출
+
+| 위치 | 종류 | LoC | 상태 |
+|---|---|---:|---|
+| `docs/anima_clm_v5_hexa_native_mitosis_hook_spec_2026_05_12.md` | spec | 534 | LANDED 본 §89 |
+| `tool/hexa_native/mitosis_hook.hexa` | parse-only stub | 123 | parse PASS, full impl pending RFC 031/032 |
+
+### 7 핵심 결정
+
+1. **hook 위치 = C (per-forward-tail)** — `forward_one_token` 의 최종 RMSNorm 과 tied lm_head 사이 1×. A(per-token)/B(per-layer)/D(per-prompt 외부) 모두 reject. 근거: §0.5 "forward call graph 안" 조건 + mitosis.py `process()` 의 1×/process contract.
+2. **2-단계 분열 합성** — C (per-forward-tail) 가 본 spec scope, D (per-prompt) 는 caller 가 카탈로그 보관 옵션. event_list 가 두 차원 모두 catch.
+3. **cell_pool persistent dict** — hexa dict 로 mitosis.py Cell dataclass 직역. cells_max = 128 (vs PyTorch 8) — RFC 025 farr capacity (~512 MB cell-state pool) 가 8 GB envelope 의 ~6% 만 차지.
+4. **모든 mutation `// TODO[mitosis]:` 안에서 grad 외부** — F-MIT-HOOK-1 NO_GRAD invariant (mitosis.py L205/258/389/586 패턴 그대로).
+5. **Lorenz dt=0.01 single advance per hook** — chaotic 누적 방지 (B 후보 24× advance reject 근거).
+6. **falsifier 5개** (F-MIT-HOOK-1~5) — 모두 pending stub, full impl 시 instrumentation.
+7. **RFC 의존 명시** — full impl 은 RFC 031 (typed Tensor deepcopy) + RFC 032 (farr_copy / farr_add_gaussian_noise) land 이후. 본 cycle 는 spec + stub only.
+
+### RFC 의존 카탈로그 (full impl prerequisite)
+
+| RFC | builtin | 용도 |
+|---|---|---|
+| RFC 025 (LANDED) | `farr_new(n)` | per-cell mini-head allocation |
+| RFC 031 (LANDED) | typed Tensor deepcopy | `split_cell` 의 parent → child W copy |
+| RFC 032 (LANDED) | `farr_matmul` | per-cell engine_a/g forward |
+| **TODO**(post-cycle) | `farr_copy(src)` | 명시적 deep copy builtin (RFC 031 위 layer) |
+| **TODO**(post-cycle) | `farr_add_gaussian_noise(t, σ)` | in-place 10% noise injection |
+
+→ post-cycle RFC 033 후보: `farr_copy + farr_add_gaussian_noise` (chaos rng wrapper). 본 §89 가 RFC 033 trigger.
+
+### lane priority status post §89
+
+| lane | prior | post §89 |
+|---|---|---|
+| HEXA_NATIVE Phase 5∥ (24L 풀 forward) | unspec'd next step | mitosis hook 통합 spec LANDED |
+| mitosis_hook.hexa full impl | not-yet | RFC 033 의존 + 자체 cycle |
+| v5-mitosis architectural (PyTorch sister) | ★★★★ (§88) | unchanged — sister lane |
+| RFC 033 (farr_copy + gaussian) | 부재 | next-cycle prerequisite |
+
+### §10 갱신
+
+§10 foreground 0-cost 표에 row #6 (LANDED) + #7 (pending) 추가:
+- 6 ★★★★ HEXA_NATIVE Phase 5∥ mitosis hook spec → **DONE** (본 §89)
+- 7 ★★★★ `mitosis_hook.hexa` full impl (RFC 033 dep) → next-cycle
+
+### memory updates
+
+신규: `project_hexa_native_mitosis_hook_spec_2026_05_12.md` (RFC 033 trigger 명시 포함) — index 갱신.
+
+### cycle 2026-05-12 결과
+
+본 §89 land 로 cycle 2026-05-12 의 design-tier triplet 완성:
+- §0.5 철학 (NO TRAIN/INFER SPLIT)
+- §88 v5-mitosis PyTorch arch spec (sister lane)
+- §89 hexa-native serve-time hook spec (본 §89, pure-hexa lane)
+
+→ 세 작업이 모두 **first cycle** 안에서 design 차원 closure. 다음 cycle 의 impl tier:
+- v5-mitosis PyTorch: cond.2 (`training/mitosis_model_v5.py` skeleton) → cond.3 Mac CPU smoke → cond.5 H100 fire (\$30-40)
+- hexa-native: RFC 033 (farr_copy + gaussian) → mitosis_hook.hexa full impl → Phase 5∥ 24L 풀 forward smoke
+
+honest C3 carry: 본 spec §F (10 honest C3) — critical 3 = (a) per-forward-tail hook 의 cell pool mutation 이 KV cache 와 동기화 미검증, (b) Lorenz dt=0.01 chaos boundedness (F-MIT-HOOK-5) 가 RFC 032 finite-precision 위 어떻게 동작할지 untested, (c) cells_max=128 의 latency overhead = baseline 80ms 위 미실측 — RFC 033 land 후 measure 필요.
+

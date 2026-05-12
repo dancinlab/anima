@@ -1,0 +1,139 @@
+// ════════════════════════════════════════════════════════════════════════════
+//  tool/hexa_native/mitosis_hook.hexa — Phase 5∥ serve-time mitosis hook stub
+//
+//  PURPOSE
+//    pure-hexa serve-time mitosis hook entry point. plugs into
+//    `forward_one_token` between final RMSNorm and tied lm_head, applying
+//    cell_pool split/merge inside the forward call graph.
+//
+//    REBORN.md §0.5 (NO TRAIN/INFER SPLIT) + PHILOSOPHY.md cont.10 (#8)
+//    의 first native impl prerequisite. spec doc:
+//    docs/anima_clm_v5_hexa_native_mitosis_hook_spec_2026_05_12.md
+//
+//  STATUS
+//    PARSE-ONLY STUB — signatures + // TODO[mitosis]: markers. Full impl
+//    blocked on hexa-lang RFC 031 (typed Tensor with deepcopy) and RFC 032
+//    (rng + chaos builtins: farr_copy, farr_add_gaussian_noise).
+//
+//  DESIGN (spec §1 결정: C per-forward-tail hook)
+//    1 hook invocation per forward pass (NOT per-layer, NOT per-token).
+//    cell_pool persists across forward calls via caller; hook returns
+//    [x_combined, cell_pool_after, event_list].
+//
+//  COMPLIANCE
+//    raw#11 snake_case · raw#15 no-hardcode · raw#9/10 honest stub
+//
+//  FALSIFIERS (raw-117 ≥5, all PENDING until full impl):
+//    F-MIT-HOOK-1 NO_GRAD     : cell mutations occur outside backward graph
+//    F-MIT-HOOK-2 SHAPE-INVAR : cell pool shape constant except at split/merge
+//    F-MIT-HOOK-3 PHI-FINITE  : Φ proxy ∈ [0, +∞), no NaN/Inf
+//    F-MIT-HOOK-4 CELL-BOUNDS : 2 ≤ |cells| ≤ 128 at all times
+//    F-MIT-HOOK-5 LORENZ-BND  : |x|+|y|+|z| < 200 ∧ cell.hidden_norm ≤ 10
+// ════════════════════════════════════════════════════════════════════════════
+
+
+// Entry point — invoked once per forward, between final RMSNorm and lm_head.
+//
+// args:
+//   x_in       : final hidden state (d_model,)
+//   cell_pool  : dict — see spec §2 (Cell pool representation)
+//   step       : int — global step counter for Lorenz phase offset
+//
+// returns:
+//   [x_out, cell_pool_after, event_list]
+//     x_out           : (d_model,) — tension-softmax weighted combined hidden
+//     cell_pool_after : dict        — updated cell pool (split/merge applied)
+//     event_list      : list[dict]  — {type, parent_id, child_id|removed_id, step}
+fn mitosis_forward_tail(x_in, cell_pool, step) {
+    // TODO[mitosis]: per-cell perturbation (engine_a - engine_g + Lorenz)
+    // TODO[mitosis]: tension calculation per cell
+    // TODO[mitosis]: Φ proxy update + ratchet check
+    // TODO[mitosis]: adaptive threshold update (mean+1.5σ over recent 100)
+    // TODO[mitosis]: split check (tension > thr for patience=3 steps)
+    // TODO[mitosis]: merge check (inter-cell tension < 0.005 for patience=30)
+    // TODO[mitosis]: tension-softmax weighted combine -> x_out
+    // TODO[mitosis]: event_list emit
+    return [x_in, cell_pool, []]
+}
+
+
+// Helper — initial cell pool factory (called once at server startup).
+//
+// args:
+//   d_model         : int    — hidden dim (1024 for EngineAG)
+//   initial_cells   : int    — starting cell count (default 2, per CB1/H297)
+//
+// returns:
+//   cell_pool dict per spec §2
+fn cell_pool_init(d_model, initial_cells) {
+    // TODO[mitosis]: build cell list with random small init (parent_id=-1)
+    // TODO[mitosis]: set min=2, max=128, thresholds, lorenz=[1,1,1]
+    return #{
+        "cells":                  [],
+        "next_id":                0,
+        "min_cells":              2,
+        "max_cells":              128,
+        "split_threshold":        0.0,
+        "split_patience":         3,
+        "merge_threshold":        0.005,
+        "merge_patience":         30,
+        "noise_scale":            0.1,
+        "global_tension_history": [],
+        "inter_tension_history":  #{},
+        "phi":                    0.0,
+        "phi_best":               0.0,
+        "best_hiddens":           [],
+        "lorenz":                 [1.0, 1.0, 1.0],
+        "phi_history":            [],
+        "event_log":              []
+    }
+}
+
+
+// Helper — split a cell (deepcopy parent + 10% gaussian noise on weights).
+// blocked on RFC 031 (typed farr deepcopy) + RFC 032 (gaussian builtin).
+fn split_cell(parent_cell, cell_pool, step) {
+    // TODO[mitosis]: farr_copy parent.engine_a_W -> child.engine_a_W
+    // TODO[mitosis]: farr_add_gaussian_noise(child.engine_a_W, sigma=0.1)
+    // TODO[mitosis]: same for engine_g_W, hidden
+    // TODO[mitosis]: reset parent.tension_history (mitosis.py L527)
+    // TODO[mitosis]: assign child.cell_id = cell_pool["next_id"], increment
+    return [parent_cell, parent_cell, cell_pool]
+}
+
+
+// Helper — merge two cells (older keeper, parameter average).
+fn merge_cells(cell_a, cell_b, cell_pool) {
+    // TODO[mitosis]: keeper = older(cell_a, cell_b) (by creation_step)
+    // TODO[mitosis]: keeper.engine_a_W = avg(a.W, b.W) elementwise
+    // TODO[mitosis]: same for engine_g_W, hidden (average)
+    // TODO[mitosis]: floor: min_cells=2 (refuse merge if it would violate)
+    return [cell_a, cell_pool]
+}
+
+
+// Helper — Lorenz autonomous perturbation step (σ=10, ρ=28, β=8/3, dt=0.01).
+// per-cell phase offset injected at split time, advanced once per hook call.
+fn lorenz_advance(lorenz_state, dt) {
+    // TODO[mitosis]: dx = σ*(y-x), dy = x*(ρ-z) - y, dz = x*y - β*z
+    // TODO[mitosis]: euler step with dt=0.01
+    return lorenz_state
+}
+
+
+// Helper — Φ proxy = mean pairwise cosine distance × log(N+1).
+fn compute_phi_proxy(cells) {
+    // TODO[mitosis]: pairwise cosine over cell.hidden
+    // TODO[mitosis]: × log(len(cells) + 1)
+    return 0.0
+}
+
+
+// Self-test entry — verifies parse + signature correctness.
+fn selftest() {
+    let pool = cell_pool_init(1024, 2)
+    let x = [0.0]
+    let result = mitosis_forward_tail(x, pool, 0)
+    print "mitosis_hook.hexa: parse-only stub PASS (full impl pending RFC 031/032)"
+    return 0
+}
