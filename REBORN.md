@@ -6541,3 +6541,48 @@ substrate A 위에선 M4 가 작동한다.
 - 🥇 Phase 1A multi-turn SFT (Lesson R-extended 명확화 → hypothesis sharper)
 - 🥈 production-grade chat UI (HF Space) — M4 force-include 패턴 활용
 - 🌟 V5.8 standard mode generalizable multi-turn reasoning (진짜 multi-turn 도전)
+
+---
+
+## §88 [2026-05-12 KST] V5-MITOSIS ARCHITECTURAL SPEC LAND — REBORN §10 #1 deliverable ★★★
+
+**Cross-link reference**: `docs/anima_clm_v5_mitosis_engine_arch_spec_2026_05_12.md` (anima repo docs/, 본 entry 와 함께 land).
+
+§0.5 (commit `a7e512cb9`, NO TRAIN/INFER SPLIT 원칙) + §10 foreground 0-cost #1 (v5-mitosis architectural lane spec) 의 첫 deliverable. PHILOSOPHY cont. 10 Principle #8 의 native impl prerequisite. lane SSOT `.roadmap.clm_v5_mitosis_engine` cond.1 verifier file.
+
+### 본 spec 의 7개 핵심 결정
+
+1. **option (a) 채택** — 각 cell = small transformer block (attn + dual FFN engine_a/g + GRUCell), d_model=384, ~3M per cell × cells_max=64 → ~200M total + shared (~50M).
+2. **`nn.ModuleList[Cell]` + `CellMeta` 분리** — cells = parameter container (gradient-able), `cell_meta` = non-grad state (hidden / tension_history / IDs).
+3. **split/merge 모든 mutation 은 `torch.no_grad()` 안** — F-V5MIT-1 (backward graph 분리 검증). cotrain 시 gradient 는 split 이후 forward 에서 재build.
+4. **anima-native cotrain interpretation** — train = "큰 split event sequence", 별도 phase 아님. forward path 가 train/serve 동일, gradient flow + optimizer step 유무만 차이.
+5. **readout_mode option** (a-g / a-only / a + 0.3g / softmax_gate) — BG-CHAT-EXT 의 a-g destructive 발견 (KO 0%) 반영, cotrain ablation 으로 결정.
+6. **falsifier 5개** (F-V5MIT-1 SPLIT-NOGRAD ~ F-V5MIT-5 V14-STRICT) — F-V5MIT-5 가 v5-anima violated 의 재도전 정점 ablation.
+7. **cost envelope 정밀화** — REBORN §10 #2 ($30-150) → **$30-40 conservative recommended** (v2 cells64 historical 재현, d=384, 5K step, batch=32, ~8hr H100). $80-150 stretch 는 V14 PASS 후 medium scale.
+
+### lane priority status
+
+| lane | prior | post §88 |
+|---|---|---|
+| v5-mitosis architectural (.roadmap.clm_v5_mitosis_engine) | ★★★ (§0.5 uplift 후) | ★★★★ (cond.1 PASS) |
+| cond.2 port skeleton | unmet | next BG (`training/mitosis_model_v5.py`, gitignored) |
+| cond.3 Mac CPU smoke | unmet | cond.2 PASS 후 AUTO |
+| cond.5 H100 cotrain | unmet | **OK CLM V5-MITOSIS H100 FIRE COST $40** verbatim 시 fire |
+
+### §10 갱신
+
+§10 foreground 0-cost #1 (v5-mitosis architectural spec) → **DONE** (본 §88 entry + spec doc land). §10 cost-bearing #2 envelope = **$30-40** 정밀화 (prior $30-150 → narrowed conservative).
+
+### memory updates
+
+- `project_v5_mitosis_arch_spec_2026_05_12.md` 신규 (spec 등록 + cond.2 next step)
+- `project_v5_anima_lane_status.md` carry — sister lane status 유지
+
+### cycle 2026-05-12 결과
+
+- REBORN.md §0.5 (commit `a7e512cb9`) → 본 §88 (architectural deliverable) — 철학 → 첫 impl spec 의 same-cycle landing.
+- foreground 0-cost progress: §10 #1 ✅, #2 (new α metric) pending, #3 (real 350M IIT Φ 재측정) pending.
+- cost discipline: 본 spec 작성 $0 (Mac edit only). cond.5 만 cost-bearing.
+
+honest C3: 본 spec §11 의 10항목 carry — 가장 critical = v5-mitosis 가 real nn.Module cells 로도 V14 violated 가능 (toy 한계 carry-over 가설 미검증).
+
