@@ -66,7 +66,7 @@ Live research discussion, paper drops, stage-gate reviews, cross-project dispatc
 
 ```bash
 # 1. Install hexa-lang (gives you `hexa` + `hx` package manager)
-curl -fsSL https://raw.githubusercontent.com/dancinlab/hexa-lang/main/install.sh | bash
+/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/dancinlab/hexa-lang/main/install.sh)"
 
 # 2. Install anima
 hx install anima
