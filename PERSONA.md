@@ -25,11 +25,28 @@
 |---|---|---|---|
 | Python SSOT | `anima_chat.py` | 951 LoC | Python 3.12 + torch 2.12 |
 | hexa SSOT | `anima_chat.hexa` v0.3 | ~2843 LoC | interpreter |
-| hexa AOT 변종 | `anima_chat_aot.hexa` | ~2920 LoC | mitosis/M3 stub, AOT-buildable |
-| **Mac arm64** | `build/aot/anima_chat_aot.bin` Mach-O | **440 KB** | `hexa build` 19.5s |
-| **Linux x86_64** | `build/aot/anima_chat_aot.linux` ELF pie | **392 KB** | ubu clang -O2 -lm -lpthread -ldl 3.18s |
+| hexa AOT 변종 | `anima_chat_aot.hexa` | ~3100 LoC | mitosis/M3 stub, AOT-buildable + wilson 3-tier CLI |
+| **Mac arm64** | `build/aot/anima` Mach-O | **462 KB** | `hexa build` ~20s |
+| **Linux x86_64** | `build/aot/anima.linux` ELF pie | **407 KB** | ubu clang -O2 -lm -lpthread -ldl ~3s |
 
-CLI flags (AOT binary): `--prompt --ckpt --max-new --mode --temp --seed --help --smoke`
+### CLI (wilson 3-tier convention — `~/core/wilson/AGENTS.md` 참조)
+**Tier 1 universal**: `anima tool <list|<name> [args]>` — meta entry
+**Tier 2 noun-verb**: `anima chat <send|smoke>` · `anima ckpt <path|info>`
+**Tier 3 ergonomic**: `anima ask "<prompt>"` · `anima smoke` · `anima doctor` · `anima version`
+
+```sh
+anima version                                # 0.1.0 + ckpt path
+anima doctor                                 # arch/vocab/modes/ckpt status (exit 0 OK, 3 ckpt-missing)
+anima ckpt path                              # machine-readable path
+anima ckpt info                              # sha256 + size + exists
+anima ask "안녕? 너는 누구야?" --max-new 10    # ergonomic chat
+anima chat send --prompt "..." --mode greedy --seed 0 --max-new 10
+anima tool chat --prompt "..." --result      # universal + JSON ToolResult
+```
+
+**Exit codes**: 0=ok / 1=tool error / 2=bad argv / 3=ckpt not found
+**Global flags**: `--result --ckpt --mode --max-new --temp --seed`
+**Deprecated** (1-cycle warn): bare `--prompt` / `--smoke` → use ergonomic shortcuts
 
 ### 🥇 Phase 1A.4 lr 5e-6 SFT (cond #1 ☑ V5.8 std_greedy 5/5)
 ```

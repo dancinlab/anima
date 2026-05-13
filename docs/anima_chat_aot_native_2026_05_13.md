@@ -217,10 +217,23 @@ the deployment story without changing cond status.
 
 ```
 cd /Users/ghost/core/anima
-hexa parse anima_chat_aot.hexa                    # OK
-hexa build anima_chat_aot.hexa -o build/aot/anima_chat_aot.bin
-./build/aot/anima_chat_aot.bin --help             # F-AC-HEXA-1..6 17/17 PASS, exit 0
+hexa parse anima_chat_aot.hexa                # OK
+hexa build anima_chat_aot.hexa -o build/aot/anima
+./build/aot/anima --help                      # 3-tier CLI banner
+./build/aot/anima version                     # 0.1.0 + ckpt path
+./build/aot/anima doctor                      # arch + ckpt status (exit 0 OK)
+./build/aot/anima smoke                       # F-AC-HEXA-1..6 17/17 PASS
+HEXA_MEM_UNLIMITED=1 ./build/aot/anima ask "안녕? 너는 누구야?" --max-new 10 --seed 0
+HEXA_MEM_UNLIMITED=1 ./build/aot/anima chat send --prompt "..." --mode greedy --max-new 10 --seed 0 --result   # JSON ToolResult
+./build/aot/anima frobnicate                  # unknown subcommand → exit 2
 ```
+
+### CLI convention (wilson 3-tier, `~/core/wilson/AGENTS.md` 적용 2026-05-13)
+- Tier 1 universal: `anima tool <name> [args]`
+- Tier 2 noun-verb: `anima chat <send|smoke>` · `anima ckpt <path|info>`
+- Tier 3 ergonomic: `anima ask "<prompt>"` · `anima smoke` · `anima doctor` · `anima version`
+- Unknown first arg → `unknown subcommand` reject (exit 2) — LLM token protection
+- Deprecated 1-cycle: bare `--prompt` / `--smoke` warn-and-dispatch
 
 ## §7 Honest C3
 
