@@ -23,11 +23,30 @@ Real-ckpt-load smoke: ☑ **FULL CLOSURE 2026-05-13 PM** —
   `map key 'n_layers' not found` lookup errors** (commit `b3456246c`) ✅
 - weights load confirmed 218/218 tensors bound (commit `a06fc8a41`) ✅
 - forward path runs through 24-layer transformer ✅
-- **AOT vs interpreter PARITY confirmed byte-by-byte**: both emit
-  `gen_ids=[13,239,160,183,35]` for `--prompt "안녕? 너는 누구야?"
-  --max-new 5 --mode greedy --seed 0`
-- max_new=20 produces valid Korean output `"이 이 이 이 이"` (model
-  greedy collapse, intrinsic to the SFT ckpt, NOT an infrastructure bug)
+- **AOT vs interpreter PARITY confirmed byte-by-byte (non-KV path)**:
+  both emit `gen_ids=[13,239,160,183,35,...]` for `--prompt "안녕? 너는
+  누구야?" --max-new 5 --mode greedy --seed 0` (initial verification)
+- non-KV path max_new=20 produces `"이 이 이 이 이"` (model greedy
+  collapse, NOT an infrastructure bug). Mac AOT == Mac interp == Linux
+  AOT all identical (triple-lane parity).
+- **KV-cached path enables Python-lane parity** (commit `2e8535ca3`):
+  `chat_init_kv_cache_default(chat, 1024)` after chat_load_weights
+  routes forward through `chat_forward_one_token_impl_kv`. Result:
+  `gen_ids=[238,135,167,47,35,238,170,161,239,152]` for
+  `"사용자: 안녕? 너는 누구야? | 도우미: "` max_new=10 greedy seed=0,
+  decoded Korean **"네, 맞"** (=Yes, that's right). Mac AOT KV ==
+  Linux AOT KV == Python anima_chat.py greedy rep_penalty=1.0.
+- **QUADRUPLE-LANE PARITY**: 3 platforms (Mac arm64 / Linux x86_64 /
+  Python on Ubuntu RTX 5070) × 4 implementations (AOT KV / AOT non-KV /
+  interpreter / Python) → consistent gen_ids on matching paths. Cross-
+  platform distribution-portable.
+
+Linux x86_64 build (cross-compile on ubu):
+- scp anima_chat_aot.bin.c + runtime.c + 7 native/*.c → ubu:~/aot_build/
+- `clang -O2 -Wno-trigraphs -fbracket-depth=4096 anima_chat_aot.bin.c \
+    -o anima_chat_aot.linux -lm -lpthread -ldl`
+- wall 3.18s, peak RSS 136 MB, 392 KB ELF 64-bit pie x86_64
+- --help PASS, --smoke F-AC-HEXA 17/17 PASS, full inference PASS
 
 **TRUE upstream root cause discovered** (memory entry
 `feedback_hexa_resource_local_dispatch`): `hexa run <file>` auto-routes
