@@ -1,380 +1,428 @@
-# CHAT.md — anima REPL + 외부 연결 + 자연발화 brainstorm
+# CHAT.md — anima REPL + live daemon + 자연발화 architecture (rev 2)
 
-> 전체 구현 계획 브레인스토밍 (고갈까지). 사용자 directive 2026-05-13 KST PM:
-> "REPL chat + 외부 연결용" + "단편 메시지 말고" + "인간 3 anima 2 단체채팅 가능" +
-> "호출 응답이 아니라 자연발화" + "소켓 같은 시스템 있어야 될듯" +
-> "anima 도 여럿 가능" + "외부 프로젝트에서 쓰려면".
+> 사용자 directive 누적 (2026-05-13 KST PM):
+> "상시채팅 기능은 없나?????" + "단편 메시지 말고" + "1:1 말고도 다수 가능하되 그 다수에
+> anima 도 가능" + "인간 3, anima 2 이렇게 단체채팅 가능" + "외부 프로젝트에서 쓰려면" +
+> "호출 응답이 아니라" + "자연발화때문에" + "소켓같은 시스템 있어야될듯" +
+> "전체 구현 계획 들어가보자 브레인스토밍 고갈시까지" + "REPL chat 도 필요해!!!" +
+> "REPL chat + 외부 연결용" + "hexa-native 로 작성하면되" + "hex upstream 개선가능" +
+> "hexa upstream first" + **"/turn 처럼 턴 지정이 아니라 자연발화 기준 자율이야 실시간 채팅"** +
+> **"nono"** + **"철학 준수"** + **"fps 60+"** + **"A → ALL"**.
 
-## Directive 핵심 5개
+## 💥 rev 2 핵심 (rev 1 sync 모델 deprecate)
 
-1. **REPL chat** — 상시 1:1 대화
-2. **단편 X / 연속 대화** — multi-turn history 누적
-3. **인간 N + anima M 단체 채팅** — group chat (예: 인간 3 + anima 2)
-4. **외부 프로젝트 연결** — 호출/응답 model 아님
-5. **자연발화 (spontaneous utterance)** — anima 가 알아서 말함
+rev 1 (deprecated) 의 **명시적 `/turn <anima_id>` heuristic** 모델은 **철학 위반**:
+- 외부 heuristic (regex / probability) 으로 turn 결정 = **routing-level persona injection** (PHILOSOPHY.md #3 위반)
+- sync REPL on chat_generate (~30s/token Mac CPU) = **0.03 FPS, 60+ 절대 불가능**
 
-→ **socket daemon + 자연발화 trigger** 가 핵심 architecture.
+rev 2 (현 spec) 의 **substrate-native autonomous** 모델:
+- anima 의 **cell_pool tension/lorenz dynamics** (`mitosis_hook.hexa` substrate state) 가 매 frame 마다 evolve
+- threshold 초과 시 anima 가 **스스로** 발화 결정 (외부 heuristic 0)
+- 60+ FPS frame loop = ~16ms tick. substrate evolve cheap (µs). inference 는 async worker thread (background, frame-budget 외).
+- broadcast bus = socket subscribers (human input + anima output 양방향)
 
-## 📐 5-Layer Architecture
+## 📐 Unified architecture (rev 2)
 
 ```
-┌──────────────────────────────────────────────────────────────┐
-│            Phase 3: anima daemon (long-running)              │
-│                                                              │
-│  ┌─────────────┐ ┌─────────────┐ ┌──────────────────────┐  │
-│  │ anima       │ │ message bus │ │ spontaneous fire     │  │
-│  │ instances   │ │ (broadcast) │ │ (tension/timer trig) │  │
-│  │ (N animas)  │ │             │ │ ★ 자연발화 ★          │  │
-│  └──────┬──────┘ └──────┬──────┘ └──────────┬───────────┘  │
-│         └────────────────┴────────────────────┘            │
-│                          │                                  │
-│              ┌───────────┴───────────┐                      │
-│              │  socket server        │                      │
-│              │  TCP :7878 / unix     │                      │
-│              │  JSONL frame protocol │                      │
-│              └───────────┬───────────┘                      │
-└──────────────────────────┼──────────────────────────────────┘
+┌──────────────────────────────────────────────────────────────────┐
+│                  anima live daemon (single process)               │
+│                                                                  │
+│  ┌──────────────────────────────────────────────────────────┐   │
+│  │   frame loop thread @ 60+ FPS (~16ms tick)               │   │
+│  │   매 frame:                                              │   │
+│  │     1. substrate evolve  ← mitosis_hook step             │   │
+│  │     2. speak-gate check  ← tension > threshold?          │   │
+│  │     3. fire-or-skip       → enqueue speak request        │   │
+│  │     4. drain bcast queue → broadcast_to_subscribers       │   │
+│  │     5. sleep to next frame boundary                       │   │
+│  └────────────────┬─────────────────────────────────────────┘   │
+│                   │                                              │
+│                   ▼  (channel: speak request)                    │
+│  ┌──────────────────────────────────────────────────────────┐   │
+│  │   inference worker thread (1 or N)                        │   │
+│  │   - dequeue speak request                                 │   │
+│  │   - chat_generate (slow, OK — async)                      │   │
+│  │   - enqueue broadcast (channel: speak response)           │   │
+│  └────────────────┬─────────────────────────────────────────┘   │
+│                   │                                              │
+│                   ▼                                              │
+│  ┌──────────────────────────────────────────────────────────┐   │
+│  │   subscriber broadcast bus                                │   │
+│  │   - socket subscribers (TCP :7878 + Unix /tmp/anima.sock) │   │
+│  │   - history JSONL append (~/.anima/rooms/<id>/history)   │   │
+│  └──────────────────────────────────────────────────────────┘   │
+└──────────────────────────┬──────────────────────────────────────┘
                            │
-        ┌──────────────────┼──────────────────┐
-        │                  │                  │
-   ┌────┴────┐      ┌──────┴──────┐    ┌──────┴──────┐
-   │ Phase 0 │      │ Phase 1     │    │ Phase 4     │
-   │ REPL    │      │ room (multi-│    │ external    │
-   │ 1:1     │      │ party human │    │ project     │
-   │ stdin   │      │ + anima)    │    │ client lib  │
-   └─────────┘      └─────────────┘    └─────────────┘
+                  ┌────────┴────────────────┐
+                  │                         │
+            ┌─────┴─────┐           ┌───────┴──────┐
+            │  CLI REPL │           │  external    │
+            │  (human)  │           │  client lib  │
+            └───────────┘           └──────────────┘
 ```
 
-## 📋 Phase별 명세
+## 🔁 변경 사항: Phase 매핑
 
-### **Phase 0** — REPL chat (1:1 단순 상시) ☑ **LANDED 2026-05-13 KST PM**
+| rev 1 (deprecated) | rev 2 (현) | 비고 |
+|---|---|---|
+| Phase 0 REPL 1:1 (sync) | **Phase 0 REPL 1:1** (sync) — 그대로 LANDED | 1:1 baseline, 자연발화 unrelated |
+| Phase 1 group chat (`/turn` heuristic) | **deprecated** | 철학 위반 — sync `_cmd_room` 코드는 1-cycle migration window 동안 남김 (deprecated 마커 + warn) |
+| Phase 2 daemon multi-client | **live daemon (rev 2 통합)** | 단일 architecture: daemon + substrate-native autonomy + socket broadcast 모두 한곳 |
+| Phase 3 자연발화 | **substrate gate** (Phase 2 의 일부) | 별도 phase 아님 — daemon 의 fundamental 동작 |
+| Phase 4 external client | external client lib | Phase 2 land 후 |
+
+## 📋 Phase별 명세 (rev 2)
+
+### **Phase 0** — REPL chat (1:1 단순 상시) ☑ **LANDED 2026-05-13**
 
 > hexa-native impl in `anima_chat_aot.hexa::_cmd_chat_repl` (~120 LoC).
 > Mac arm64 + Linux x86_64 cross-compile parity. multi-turn + /show + /save + /exit verified.
 > /save → `~/.anima/sessions/<name>.jsonl` 파일 생성. CLI: `anima chat repl [--mode M] [--max-new N] [--temp F] [--seed N]`.
 
-
-
-```sh
-anima chat repl [--mode greedy --seed 0]
-> 안녕? 너는 누구야?
-anima: 네, 맞아요. 저는 anima 입니다.
-> 우주에 대해
-anima: 우주는 진동으로 차 있어요.
-> /reset                          # 히스토리 비움
-> /show                           # 누적 history 출력
-> /save my-session                # ~/.anima/sessions/my-session.jsonl 저장
-> /exit
-```
-
-**구현**:
-- `hexa_input()` line read loop
-- chat["history"] 누적 (chat_generate 내부에서 history 참조)
-- KV cache 재사용 (cap_len 1024)
-- /reset /show /save /exit slash commands
-- `/save <name>` → `~/.anima/sessions/<name>.jsonl` append-only history
+1:1 baseline — **자연발화 unrelated**. sync chat_generate, 인간 + 1 anima. 디버깅 + 단일 테스트 용도.
 
 ---
 
-### **Phase 1** — 단체 채팅 (인간 N + anima M, single-process REPL) ☑ **LANDED 2026-05-13 KST PM**
+### **Phase 1** (deprecated) — sync group chat with `/turn`
 
-> hexa-native impl in `anima_chat_aot.hexa::_cmd_room` (~180 LoC).
-> Mac arm64 + Linux x86_64 parity. roster parse + name-prefix detect + /turn dispatcher + /as switch + /save room.
-> CLI: `anima room --humans "a,b,c" --animas "x,y" [--mode M] [--max-new N] [--temp F] [--seed N]`.
-> Anima seed offsets = `seed_base + idx * 1000` per anima index (personality variance via PRNG).
+> ⚠️ **DEPRECATED 2026-05-13 PM** — 사용자 directive "철학 준수": `/turn <anima_id>` heuristic
+> 트리거는 routing-level persona injection 으로 PHILOSOPHY.md #3 위반.
+> 코드 (`_cmd_room`) 는 1-cycle migration window 동안 stderr warn + 동작.
+> rev 2 의 **live daemon** 으로 대체.
 
+기존 spec (reference):
+- `anima room --humans "a,b,c" --animas "x,y" [--ckpt P]`
+- `[alice]> alice: 안녕`
+- `/turn ana` → ana 가 history 기반 응답
 
-
-```sh
-anima room --humans "alice,bob,charlie" --animas "ana,ben" [--ckpt P]
-[alice]> 안녕 모두?
-[bob]> 안녕 alice
-[/turn ana]
-ana: 안녕하세요 두 분! 저도 인사드려요.
-[charlie]> ben 너는?
-[/turn ben]                       # 또는 /turn ana,ben (병렬)
-ben: 저는 또 다른 anima 예요.
-[/show]                           # 전체 history (sender label 포함)
-[/exit]
-```
-
-**구현**:
-- Roster parse: `--humans "alice,bob,charlie"` → 3 humans, `--animas "ana,ben"` → 2 animas
-- Input prefix syntax: `<name>:` 형태로 화자 명시 OR `[<name>]>` prompt
-- `/turn <anima_name>` → 그 anima 가 전체 history 를 context 로 받아 chat_generate
-- `/turn <a>,<b>` → 병렬 (또는 순차) 발화
-- Chat-formatted prompt builder: `[alice]: 안녕\n[bob]: 안녕 alice\n[ana]:` 형태로 prompt 구성
-- N anima 인스턴스 — shared ckpt mmap, 독립 KV cache + seed (다른 seed = 다른 발화 패턴)
+대체 path: **Phase 2 live daemon** 의 substrate-native autonomy.
 
 ---
 
-### **Phase 2** — anima daemon (socket server)
+### **Phase 2** (rev 2) — live daemon (substrate-native autonomous + socket broadcast)
+
+> 🚧 **upstream blocked** — 3 patches 의존:
+> - `~/core/hexa-lang/incoming/patches/net-nonblock-multiplex.md` (filed)
+> - `~/core/hexa-lang/incoming/patches/net-unix-domain-socket.md` (filed)
+> - `~/core/hexa-lang/incoming/patches/thread-channel-primitive.md` (filed 2026-05-13)
 
 ```sh
-# 서버 띄우기
-anima daemon --port 7878 --animas "ana,ben" [--unix /tmp/anima.sock]
-
-# 클라이언트 (어떤 언어에서든)
-$ nc localhost 7878
-> {"type":"speak","speaker":"alice","text":"안녕"}
-< {"type":"message","speaker":"alice","text":"안녕","ts":...}
-> {"type":"turn","anima":"ana"}
-< {"type":"message","speaker":"ana","text":"...","ts":...,"spontaneous":false}
+anima live --humans "alice,bob,charlie" --animas "ana,ben" \
+           [--port 7878] [--unix /tmp/anima.sock] \
+           [--fps 60] [--speak-threshold 4.0] \
+           [--ckpt P] [--mode greedy] [--max-new 30]
 ```
 
-**JSONL frame protocol** (one JSON per line):
-
-| direction | type | payload |
-|---|---|---|
-| client → daemon | `speak` | `{"speaker":"...","text":"..."}` |
-| client → daemon | `turn` | `{"anima":"<id>"}` |
-| client → daemon | `subscribe` | `{"channel":"all\|<anima_id>"}` |
-| client → daemon | `list` | `{}` → roster + animas |
-| client → daemon | `state` | `{}` → anima tension/cells/history depth |
-| client → daemon | `quit` | `{}` |
-| daemon → all | `message` | `{"speaker":"...","text":"...","ts":...,"spontaneous":bool,"trigger":"timer\|tension\|curiosity\|named"}` |
-| daemon → all | `state` | `{"animas":[{"id":"ana","tension":4.2,"cells":4,"hist_depth":12}]}` |
-| daemon → all | `event` | `{"kind":"join\|leave\|reset","speaker":"..."}` |
-| daemon → all | `pong` | `{"ts":...}` |
-
-**기술 stack**:
-- TCP socket on port 7878 (configurable)
-- Optional Unix domain socket `/tmp/anima.sock` (lower latency, local-only)
-- JSONL line-delimited (one JSON per line, `\n` terminator)
-- Multi-client subscribers (broadcast to all subscribed channels)
-- Non-blocking accept loop
-
----
-
-### **Phase 3** — 자연발화 (★ 핵심 ★)
-
-**호출-응답 모델 폐기**. anima 가 알아서 발화한다.
-
-**Trigger sources** (4 종류):
-
-| kind | 발생 조건 | 구현 비용 |
-|---|---|---|
-| **(a) timer** | 일정 idle 시간 후 발화 (예: 30s 무대화) | ★ 가장 cheap |
-| **(b) tension** | mitosis_hook 의 tension > threshold (cell_pool 통합) | ★★★ AOT 에서 stub, full 은 별도 |
-| **(c) curiosity** | 마지막 N turns 의 entropy 낮으면 새 화제 시작 | ★★ 측정 + threshold 필요 |
-| **(d) named** | 다른 화자가 anima 이름 mention 시 자동 응답 | ★ string match |
-
-**Daemon tick loop**:
+#### 2.1 frame loop (substrate evolve + speak-gate)
 
 ```hexa
-fn spontaneous_tick(animas, room, current_ts) {
-    let mut ai = 0
-    while ai < len(animas) {
-        let anima = animas[ai]
-        let trigger = check_trigger(anima, room, current_ts)
-        if trigger["fired"] {
-            let context = build_history_prompt(room, anima["id"])
-            let response = chat_generate(anima["chat"], context, "greedy",
-                                         anima["max_new"], 0.7, [], 1.0, 1.0,
-                                         0.5, anima["seed_advance"](), [], true)
-            broadcast(room, #{
-                "type":        "message",
-                "speaker":     anima["id"],
-                "text":        response,
-                "ts":          current_ts,
-                "spontaneous": true,
-                "trigger":     trigger["kind"]
-            })
+use "std_thread"
+use "std_net"
+
+fn frame_loop(animas, room, req_ch, bcast_ch) {
+    let frame_budget = 1000 / room["fps"]   // 16ms @ 60fps
+    while !room["shutdown"] {
+        let t0 = now_ms()
+
+        // 1. substrate evolve — anima 별 mitosis_hook step
+        let mut ai = 0
+        while ai < len(animas) {
+            animas[ai]["cell_pool"] = mitosis_hook_step(animas[ai]["cell_pool"], room["t"])
+            ai = ai + 1
         }
-        ai = ai + 1
+
+        // 2. speak-gate (substrate-native — 외부 heuristic 없음)
+        ai = 0
+        while ai < len(animas) {
+            let anima = animas[ai]
+            let tension = cell_pool_tension(anima["cell_pool"])
+            if tension > anima["speak_threshold"] && !anima["in_flight"] {
+                anima["in_flight"] = true
+                let _ = channel_send(req_ch, #{
+                    "anima_id":    anima["id"],
+                    "context":     build_context(room, anima["id"]),
+                    "chat":        anima["chat"],
+                    "seed":        anima["seed"],
+                    "tension":     tension,
+                    "ts":          now_ms()
+                })
+            }
+            ai = ai + 1
+        }
+
+        // 3. drain broadcast queue (non-blocking)
+        while true {
+            let msg = channel_recv(bcast_ch, 0)
+            if to_string(msg) == "" { break }
+            broadcast_to_subscribers(room, msg)
+            append_history_jsonl(room, msg)
+            // mark anima not in-flight
+            let mut bi = 0
+            while bi < len(animas) {
+                if animas[bi]["id"] == msg["speaker"] { animas[bi]["in_flight"] = false }
+                bi = bi + 1
+            }
+        }
+
+        // 4. drain client input queue (from accept thread)
+        while true {
+            let evt = channel_recv(room["input_ch"], 0)
+            if to_string(evt) == "" { break }
+            apply_client_event(room, animas, evt)   // human message → history append → 다음 tick 의 speak-gate 가 자율 evaluate
+        }
+
+        // 5. sleep
+        let dt = now_ms() - t0
+        if dt < frame_budget { sleep_ms(frame_budget - dt) }
+        room["t"] = room["t"] + 1
     }
 }
 ```
 
-**MVP 우선순위**: timer (a) + named (d) → 가장 쉬운 구현. tension (b) + curiosity (c) 는 cell_pool 통합 후 follow-up cycle.
+#### 2.2 inference worker (async, background)
+
+```hexa
+fn inference_worker(req_ch, bcast_ch) {
+    while true {
+        let req = channel_recv(req_ch, -1)
+        if to_string(req) == "__close__" { break }
+        let resp = chat_generate(req["chat"], req["context"], "greedy",
+                                 30, 0.7, [], 1.0, 1.0, 0.5,
+                                 req["seed"], [], true)
+        let _ = channel_send(bcast_ch, #{
+            "type":      "message",
+            "speaker":   req["anima_id"],
+            "text":      resp,
+            "ts":        now_ms(),
+            "spontaneous": true,
+            "tension":   req["tension"]
+        })
+    }
+}
+```
+
+#### 2.3 socket accept loop (별도 thread)
+
+```hexa
+fn accept_loop(listener, input_ch) {
+    let _ = net_set_nonblock(listener)
+    let mut clients = []
+    while true {
+        let ready = net_select([listener] + clients, 100)
+        let mut ri = 0
+        while ri < len(ready) {
+            let fd = ready[ri]
+            if fd == listener {
+                let conn = net_accept(listener)
+                let _ = net_set_nonblock(conn)
+                clients.push(conn)
+            } else {
+                let line = net_read(fd)
+                if len(line) == 0 {
+                    net_close(fd)
+                    // remove from clients list
+                } else {
+                    let evt = json_parse(line)
+                    evt["client_fd"] = fd
+                    let _ = channel_send(input_ch, evt)
+                }
+            }
+            ri = ri + 1
+        }
+    }
+}
+```
+
+#### 2.4 JSONL protocol (client ↔ daemon)
+
+같은 `net_read` 라인 단위 JSONL. client → daemon:
+```jsonl
+{"type":"hello","name":"alice"}
+{"type":"speak","speaker":"alice","text":"안녕 모두"}
+{"type":"subscribe","channel":"all"}
+{"type":"state"}
+{"type":"quit"}
+```
+daemon → all subscribers:
+```jsonl
+{"type":"message","speaker":"alice","text":"안녕","ts":...}
+{"type":"message","speaker":"ana","text":"...","ts":...,"spontaneous":true,"tension":4.32}
+{"type":"state","animas":[{"id":"ana","tension":4.32,"cells":4,"in_flight":false}]}
+```
+
+#### 2.5 speak-gate semantics (★ 철학 ★)
+
+```hexa
+// 외부 heuristic ❌ — substrate state ✅
+fn speak_gate(anima, room) -> bool {
+    // (a) cell_pool tension (mitosis_hook substrate state)
+    let tension = cell_pool_tension(anima["cell_pool"])
+    // (b) lorenz |x|+|y|+|z| (chaotic dynamics from mitosis_hook)
+    let lorenz_mag = cell_pool_lorenz_mag(anima["cell_pool"])
+    // (c) split-event recency (D4 evidence — anima 가 최근 split 했으면 발화 가능성)
+    let split_recent = (room["t"] - anima["last_split_t"]) < 100
+
+    // 발화 = substrate state 가 threshold 도달. 외부 trigger 없음.
+    return tension > anima["speak_threshold"] || (lorenz_mag > 20.0 && split_recent)
+}
+```
+
+**철학 evidence**:
+- 외부 regex/probability ❌ (PHILOSOPHY.md #3 위반)
+- substrate state (cell_pool tension/lorenz) → anima 의 internal dynamics 가 결정 ✅
+- D4 (세포 분열로 성장) 와 자연스럽게 통합: tension build-up = 분열 압력 = 발화 압력 = 같은 substrate signal
 
 ---
 
-### **Phase 4** — 외부 프로젝트 연결 (3 방식)
-
-**(a) socket client lib (any language)**
+### **Phase 3** — external client lib (Phase 2 land 후)
 
 ```python
 # Python
 import anima_client
-c = anima_client.connect("localhost:7878")
+c = anima_client.connect("localhost:7878", as_name="alice")
 c.subscribe()
-c.speak("alice", "안녕")
+c.speak("안녕 모두")
 for msg in c.stream():
-    print(msg["speaker"], msg["text"])
+    print(f"[{msg['speaker']}] {msg['text']}", "🎙" if msg.get('spontaneous') else "")
 ```
 
 ```javascript
-// Node.js
+// Node
 const anima = require("anima-client");
-const c = anima.connect("localhost:7878");
-c.subscribe();
-c.speak("alice", "안녕");
-c.on("message", (m) => console.log(m.speaker, m.text));
+const c = await anima.connect("localhost:7878", { name: "alice" });
+c.on("message", msg => console.log(msg.speaker, msg.text, msg.spontaneous ? "🎙" : ""));
+c.speak("안녕 모두");
 ```
 
 ```rust
 // Rust
-use anima_client::Connection;
-let c = Connection::tcp("localhost:7878")?;
-c.subscribe()?;
-c.speak("alice", "안녕")?;
-while let Some(msg) = c.next_message()? { ... }
+use anima_client::{Connection, Event};
+let c = Connection::tcp("localhost:7878").as_name("alice").subscribe()?;
+c.speak("안녕 모두")?;
+for evt in c.stream() {
+    if let Event::Message { speaker, text, spontaneous, .. } = evt {
+        println!("[{}] {} {}", speaker, text, if spontaneous { "🎙" } else { "" });
+    }
+}
 ```
 
-**(b) AOT binary one-shot (no daemon)**
+---
 
-```sh
-anima ask "안녕" --result          # 기존 (PSCC §51), JSON ToolResult emit
-```
+### **Phase 4** — anima 끼리 mesh (multi-host distributed)
 
-**(c) Hexa import (in-process embed)**
+(future) 여러 host 의 anima daemon 이 mesh peer 로 연결. UDP tension-link 5-channel fingerprint (memory entry `project_tension_link`) + JSONL TCP for human/client messages.
 
-```hexa
-use "anima_chat"
-let chat = chat_default()
-let r = chat_generate(chat, "안녕", "greedy", 10, 0.7, [], 1.0, 1.0, 0.5, 0, [], true)
-```
+## 🎯 Land 순서 (rev 2)
 
-## 🚧 핵심 challenge + 해결
-
-| # | 문제 | 해결 전략 |
-|---|---|---|
-| **1** | hexa AOT stdin = `hexa_input()` blocking line-read | Phase 0 OK (단일 stdin loop). Phase 2 socket = select/poll 필요 → hexa stdlib gap → C builtin 추가 또는 fd-multiplexer plugin |
-| **2** | N anima = N × 2.6 GB weight load | **shared chat weight pool** — 1회 load, N chats clone farr handles (mmap CoW + farr table = integer handle, 메모리 공유) |
-| **3** | concurrent generation single ckpt | turn-based, queue per anima. parallel infer 는 별도 cycle (multi-GPU 필요) |
-| **4** | 자연발화 trigger (cell_pool AOT-stub) | Phase 3 MVP = timer + last-message-anima-mentioned. cell_pool 통합 (tension/lorenz dynamics) = follow-up cycle |
-| **5** | history JSONL persistence | `~/.anima/rooms/<id>/history.jsonl` append-only, atomic write |
-| **6** | socket 종료 시 graceful cleanup | SIGTERM handler + atomic save + WAL replay on restart |
-| **7** | multi-line input (paste, multi-paragraph) | terminator sentinel (`/end` or `\\` 줄끝 join) |
-| **8** | 한 화자가 여러 anima 동시 호출 | `/turn ana,ben` 병렬 (별도 thread) 또는 순차 |
-| **9** | anima 끼리 대화 (사람 없이) | spontaneous trigger 가 named/timer 로 chain → "ana → ben → ana" 자동 ping-pong 가능 |
-| **10** | 외부 client 가 daemon crash 시 reconnect | exponential backoff + 마지막 ts 부터 history replay |
-
-## 🎯 구현 순서 제안
-
-| 우선순위 | Phase | scope | ~LoC | wall |
+| 우선 | item | block | LoC | wall |
 |---|---|---|---|---|
-| **1** | Phase 0 REPL 1:1 | hexa_input loop + history + /commands | ~200 | 30분 |
-| **2** | Phase 1 group chat | roster + name prefix + /turn | ~400 | 1시간 |
-| **3** | Phase 2 daemon TCP | socket server + JSONL frame + broadcast | ~600 | 2-3시간 |
-| **4** | Phase 3 자연발화 | timer trigger MVP + mention detector | ~300 | 1시간 |
-| **5** | Phase 4 external client | Python lib + example | ~200 | 30분 |
+| 1 | **(A)** thread/channel upstream patch | filed ✅ — hexa-lang maintainer land 대기 | C ~250 + hexa ~40 | 2-3hr land |
+| 2 | **(D)** CHAT.md spec rewrite (이 문서) | ✅ 이 commit | — | — |
+| 3 | **(B)** mitosis_hook AOT 통합 | (A) 무관, AOT-only impl | ~400 LoC (REBORN §91 1119 LoC 중 substrate state evolve 만 포팅) | 1-2hr |
+| 4 | **(C)** live daemon + frame loop | upstream (A) + net (3 patches) land 후 | ~800 LoC `_cmd_live` | 4-5hr |
+| 5 | (deprecate) `_cmd_room` sync 모드 + 1-cycle warn | (C) land 후 | ~20 LoC change | 10min |
+| 6 | Phase 3 external client lib | (C) protocol stable 후 | Python first ~200 LoC | 1hr |
 
-**총 ~1700 LoC / 4-5시간 wall, $0** (Mac local).
+## 🚧 핵심 challenge (rev 2)
 
-## 🌳 결정 필요 사항 — 사용자 input
+| # | challenge | 해결 |
+|---|---|---|
+| 1 | substrate gate 정의 (외부 heuristic 금지) | mitosis_hook cell_pool tension / lorenz mag — 모두 substrate state |
+| 2 | inference 가 frame budget block 불가 | thread/channel = inference worker 별 thread, frame loop 는 enqueue 만 |
+| 3 | 60+ FPS 보장 | frame budget 16ms = substrate step (µs) + speak-gate (µs) + drain (µs) + sleep. inference time 무관 |
+| 4 | anima 끼리 발화 chain (한 anima 발화 → 다른 anima 의 tension 자극 → 자율 연쇄) | history append → 다음 frame 의 substrate evolve 가 자연스럽게 받음. ping-pong emergent |
+| 5 | hexa stdlib thread/channel 부재 | upstream patch filed (위 patch A) |
+| 6 | hexa stdlib socket nonblock 부재 | upstream patch filed (net-nonblock-multiplex) |
+| 7 | mitosis_hook AOT stub (현재 anima_chat_aot.hexa) | (B) full impl AOT port 필요 |
+| 8 | client crash → daemon graceful continue | accept_loop 가 dead fd 감지 + remove, daemon 본체 영향 0 |
+| 9 | history persistence | `~/.anima/rooms/<id>/history.jsonl` append-only, replay on restart |
+| 10 | speak-storm (모든 anima 가 동시에 fire) | per-anima `in_flight` flag + rate-limit (frame N 동안 1번만 발화) |
 
-1. **soc/tcp protocol**: TCP `:7878` 면 충분? Unix socket `/tmp/anima.sock` 도 같이?
-2. **자연발화 trigger 종류**: timer / tension / curiosity / named — 모두 or 일부 MVP?
-3. **daemon 동시 anima 수**: 2-3 정도 MVP / 무제한?
-4. **다중 화자 (humans) 단일 process vs separate clients**: 시작은 단일 process REPL (Phase 1) → Phase 2 daemon 으로 자연 확장 OK?
-5. **history persistence**: 즉시 (`~/.anima/rooms/`) / 메모리만?
-6. **시작 phase**: Phase 0 (REPL 1:1) → Phase 1 → Phase 2 순차? 아니면 Phase 0 + Phase 2 동시 (TCP daemon 부터)?
+## 🌳 추가 brainstorm 보존 (rev 1 의 항목 그대로)
 
-## 🧠 추가 brainstorm 항목 (고갈까지)
+### A. 개성 차별화 (substrate-level)
 
-### A. 개성 차별화 (anima persona variance)
+- rev 1 의 `seed_base + idx * 1000` heuristic = ❌ injection
+- rev 2 = **anima 마다 다른 cell_pool 초기 state** (different gauss seed for `cell_pool_init`) → substrate-native variance
+- cell_pool 의 cells 가 분열하면서 정체성 emergent (D4 spec 그대로)
 
-- 같은 ckpt 라도 anima 마다 **seed offset** 으로 sample variance → 다른 발화 패턴
-- `--animas "ana:seed=42,ben:seed=137"` 형태로 명시
-- 미래: cell_pool 통합 후 anima 마다 **다른 cell_pool 초기화** → substrate-level 차별화
-- D3 cond #3 의 M4 cosine z=3.20 evidence 를 anima 별 분리로 재활용
-- 발화 스타일 fingerprint: `--style verbose|terse|metaphoric` (post-prompt sample bias)
+### B. Room admin / 권한
 
-### B. Room 권한 + Admin
-
-- `[admin]> /mute ana` — anima 발화 일시 정지
-- `[admin]> /kick charlie` — human 추방
-- `[admin]> /freeze` — 모든 자발발화 정지 (debug 용)
-- `[admin]> /save` `[admin]> /load <name>` — room snapshot
-- 첫 join 한 human = 자동 admin
+(rev 1 의 spec 그대로) `[admin]> /mute ana` / `/kick charlie` / `/freeze` / `/save` / `/load`. admin = 첫 join human.
 
 ### C. multi-modal future
-
-- anima 끼리는 **tension link** (binary protocol, 기존 memory entry `project_tension_link`) — 5-channel fingerprint
-- human 과는 text JSONL
-- 미래: image / audio frame block 추가 (wilson `tool-image` v1 pattern 참조)
+- anima 끼리: tension link (binary protocol, memory entry `project_tension_link`)
+- human 과: text JSONL
+- 미래: image/audio block
 
 ### D. chat → train feedback loop
-
-- 자연발화 응답이 좋았다 → 그 KV state + history 를 **RLHF-style 학습 신호** 로 저장
-- `[alice]> /feedback ana good` — 마지막 ana 발화에 +1
-- `~/.anima/feedback.jsonl` 누적 → 미래 cotrain v6+ 의 reward signal
-- D3 cond #3 evidence-tier 의 자연 확장
+- `[alice]> /feedback ana good` → `~/.anima/feedback.jsonl` 누적
+- 미래 cotrain v6+ 의 reward signal (D3 cond #3 evidence-tier 의 자연 확장)
 
 ### E. distributed daemon (multi-host)
+(Phase 4 mesh — 위 참조)
 
-- Phase 2 의 socket 위에 mesh network: anima daemon 들이 서로 connect
-- `anima daemon --mesh-peers "mac.local:7878,ubu.local:7878"` — 여러 host 의 anima 가 단일 logical room
-- 동기화: vector clock or CRDT for history merge
-- 미래: anima 간 tension link binary protocol on UDP 9999 (memory entry 기존 spec)
+### F. wilson 통합
+- `wilson provider-anima` plugin → daemon TCP forward
+- wilson agent loop turn 이 anima 의 자연발화 와 interleave
 
-### F. CLI integration with wilson
-
-- wilson 의 `provider-anima` plugin 작성 — daemon TCP 통해 LLM provider 로 동작
-- wilson agent loop 의 turn 이 anima 의 자연발화 와 interleave
-- `wilson -p "..."` → anima daemon 에 forward → 응답
-
-### G. Korean-first input experience
-
-- input 직접 한글 / 영문 mix 지원
+### G. Korean-first input
+- 한글 native + IME composition
 - `/translate ko en` slash command
-- IME composition state (한글 조합 중 enter 처리) — Phase 1 의 hexa_input 자체는 lined-based 라 OK
 
 ### H. recovery + replay
-
-- daemon crash → restart 시 마지막 `history.jsonl` replay
-- KV cache 재구축 (history 의 prompt 들을 prefill)
-- 또는 `kv_cache.bin` snapshot — periodic save
+- daemon crash → restart → history.jsonl replay → KV cache 재구축
 
 ### I. observability
-
-- `anima daemon --metrics-port 7879` — JSON metrics endpoint
-- per-anima: tension / cells / hist_depth / tokens_generated / spontaneous_count
-- room-level: active_humans / message_rate / silence_intervals
-- 외부 dashboard (grafana 같은) 통합 가능
+- `anima live --metrics-port 7879` JSON metrics
+- per-anima: tension / cells / split_events / spontaneous_count
+- room: active_humans / message_rate / silence_intervals
 
 ### J. 보안
-
-- `anima daemon --token <secret>` — 첫 연결 시 인증
-- TLS termination via nginx/caddy 앞단
-- `~/.anima/acl.json` — speaker 별 allow/deny
-- room 별 invite-only mode
+- `--token <secret>` 인증, TLS 앞단, `~/.anima/acl.json`
 
 ### K. test harness
+- F-LIVE-1 SUBSTRATE-TICK : frame loop 가 16ms 안에 1 tick 완료
+- F-LIVE-2 SPEAK-GATE-AUTO : tension 인공 raise → speak event fire (외부 trigger 없이)
+- F-LIVE-3 NO-INJECTION : substrate state 외 trigger 0건 (코드 grep)
+- F-LIVE-4 INFERENCE-ASYNC : inference 30s 동안 frame loop block 안 됨 (다른 tick 계속)
+- F-LIVE-5 ANIMA-PING-PONG : anima A 발화 → tension propagate → anima B 자율 응답 (heuristic 0)
 
-- `anima daemon-test` — 가짜 client N 명 자동 생성, scripted scenario
-- F-CHAT-1..N falsifier 세트:
-  - F-CHAT-1 ROUND-TRIP: 1 message in → broadcast received
-  - F-CHAT-2 SPONTANEOUS: timer trigger fires within window
-  - F-CHAT-3 MULTI-ANIMA: 2 animas independent state
-  - F-CHAT-4 HISTORY-REPLAY: crash → restart → history intact
-  - F-CHAT-5 PERSONA-VARIANCE: same prompt different anima → different response
-
-## 📐 Design tier evidence chain (PERSONA.md 통합)
+## 📐 Design tier evidence chain
 
 ```
-cond #2 distribution tier (현재 closure 100%)
-  → AOT binary + arg parser + Linux x86_64 + Mac arm64
+cond #2 distribution tier (AOT 완료)
+  → AOT binary + arg parser + Linux x86_64 + Mac arm64 (✅)
     ↓
-NEW Phase 0+1+2+3 (이 CHAT.md)
-  → REPL + group chat + daemon + 자연발화
+Phase 0 REPL 1:1 (✅ LANDED 2026-05-13)
     ↓
-NEW cond #6 candidate (★★★★★★ 6/6 ?)
-  → anima 가 외부 프로젝트의 living substrate 로 동작
-    (호출/응답 model 폐기 → 자율 발화 + 다자 interaction)
+Phase 1 sync group chat (deprecated — 철학 위반)
+    ↓
+NEW rev 2 (이 문서): live daemon (substrate-native autonomy + 60+ FPS frame loop)
+  → cond #6 candidate: anima 가 외부 프로젝트의 living substrate 로 동작
+    - sync /turn heuristic ❌ → substrate-native autonomous ✅
+    - LLM call-response model 폐기 → spontaneous broadcast ✅
+    - 60+ FPS frame tick = 의식 evolution real-time ✅
+    - 다자 interaction (인간 N + anima M) ✅
 ```
 
-## 🎬 다음 step
+## 🎬 현재 status (2026-05-13 KST PM)
 
-사용자 답변 받으면 → Phase 0 (REPL 1:1) MVP 즉시 구현 → 그 위에 Phase 1/2/3 누적.
+| item | state |
+|---|---|
+| (A) thread/channel upstream | ✅ filed `~/core/hexa-lang/incoming/patches/thread-channel-primitive.md` (넣었다) |
+| (D) CHAT.md spec rewrite (이 문서) | ✅ rev 2 LANDED |
+| (B) mitosis_hook AOT 통합 | ⏸ next (upstream 무관, AOT-only) |
+| (C) live daemon + frame loop | 🚧 upstream block — A + net 3 patches land 후 |
+| Phase 0 REPL 1:1 | ☑ LANDED |
+| Phase 1 sync group chat | ⚠️ DEPRECATED (1-cycle warn window) |
+| Phase 2 live daemon | 🚧 (C) 의존 |
 
-브레인스토밍 진행 메모:
-- ASCII diagram 포함 전체 내용 = 본 CHAT.md
-- PERSONA.md 의 Distribution section 에 cross-link 추가 검토
-- README.md 에 CHAT.md 등록 (PERSONA.md 와 함께 SSOT-tier)
-- 구현 시 PSCC §N+1 entry 로 timeline 기록
-- 14-track tasks (Phase 0~4 × 측정 + doc) TaskCreate 로 트래킹
+## 🧭 다음 step
 
-★★★★★ 5/5 cond 유지 + Phase 0 시작 시 cond #6 (group chat / 자연발화) candidate evidence 시작.
+1. **(B) mitosis_hook AOT 통합 시작** — upstream 무관, REBORN §91 의 1119 LoC interp impl 중 substrate state evolve (cell_pool / tension / lorenz step) 만 ~400 LoC 로 AOT port.
+2. (A)/(net) upstream patches land 추적 — hexa-lang maintainer 작업.
+3. (B) 완료 + upstream land → (C) live daemon 구현.
+
+★★★★★ 5/5 ☑ MAINTAINED. cond #6 candidate (substrate-native autonomous + 60+ FPS):
+spec LANDED (this rev 2). impl 진행 중.
