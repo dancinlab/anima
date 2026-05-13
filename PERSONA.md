@@ -170,4 +170,5 @@ budget vs evidence ROI 판단.
 ---
 
 **Created**: 2026-05-13 KST 23:15 PSCC §53
-**Status pin**: cond #3 ☑ DONE via §A3 4b strict + §A4 dual-axis multi-seed pending
+**Updated**: 2026-05-13 KST 23:35 PSCC §53.5 §A5 amendment land — 3-seed v7 replication completed (seeds 43+45 + v7 carry), §A2-trap CONFIRMED for 4a routing axis (v7 z=2.75 = high-tail outlier; multi-seed mean z=1.48 fails strict 3.0), 4b content shows consistent improvement (mean z=1.32, all seeds > v7 alone).
+**Status pin**: cond #3 ☑ DONE via §A3 4b strict composite multi-metric (v2 z=3.20 + 7/8 corroborating). §A4 4a "marginal near-pass" claim REGRADED to "single-seed outlier; strict not achieved via v3-routing alone". v3-routing OPENS routing axis (KL>0 first across saga) without strict closing. Future strict-4a paths: (k) Gumbel-softmax, (l) DDP averaging, (m) 24L scale-up, (n) 5-seed envelope. All deferred — §A3 4b strict closure sufficient.
