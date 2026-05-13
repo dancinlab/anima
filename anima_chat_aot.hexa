@@ -390,6 +390,26 @@ fn merge_cells(cell_a, cell_b, cell_pool) {
         k = k + 1
     }
     cell_pool["cells"] = new_cells
+    // PSCC §53 secondary heap corruption fix: clean inter_tension_history
+    // of stale entries referencing the removed cell_id. Without this, the
+    // dict accumulates dead pair keys across fires (each fire = many
+    // splits/merges) causing eventual heap corruption around 3rd fire.
+    let removed_id = removed["cell_id"]
+    let removed_id_str = to_string(removed_id)
+    let pair_keys = keys(cell_pool["inter_tension_history"])
+    let mut new_inter_hist = #{}
+    let mut pk = 0
+    while pk < len(pair_keys) {
+        let pkey = pair_keys[pk]
+        let parts = pkey.split("-")
+        if parts[0] != removed_id_str {
+            if parts[1] != removed_id_str {
+                new_inter_hist[pkey] = cell_pool["inter_tension_history"][pkey]
+            }
+        }
+        pk = pk + 1
+    }
+    cell_pool["inter_tension_history"] = new_inter_hist
     return [keeper, cell_pool, true]
 }
 
