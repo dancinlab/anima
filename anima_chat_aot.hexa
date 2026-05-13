@@ -2701,7 +2701,20 @@ fn chat_generate(chat, prompt: string, mode: string, max_new: int,
         step = step + 1
     }
 
+    // Diagnostic — show generated token IDs before decode
+    let n_gen = len(gen_ids)
+    let mut gid_show = "["
+    let mut gi = 0
+    while gi < n_gen {
+        gid_show = gid_show + to_string(gen_ids[gi])
+        if gi < n_gen - 1 { gid_show = gid_show + "," }
+        gi = gi + 1
+    }
+    gid_show = gid_show + "]"
+    println("[debug] gen_ids n=" + to_string(n_gen) + " ids=" + gid_show)
+
     let mut out = tok_decode_str(gen_ids)
+    println("[debug] tok_decode_str.len=" + to_string(len(out)))
     // trim at stop marker
     if len(stops) > 0 {
         out = trim_at_stop(out, stops)
@@ -2978,6 +2991,8 @@ fn main() {
     let empty_stops = []
     let response = chat_generate(chat, prompt, mode, max_new, temp, empty_kw, 1.0, 1.0, 0.5, seed, empty_stops, true)
 
+    // Diagnostic: response length
+    println("[debug] response.len=" + to_string(len(response)))
     println("[response]")
     println(response)
 }
