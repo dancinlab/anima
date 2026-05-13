@@ -2826,13 +2826,32 @@ fn chat_default_dims_24l() {
 }
 
 // chat_init_kv_cache_default(chat, cap_len) → chat
-//   Convenience: install a 24L production-shape KV cache. Idempotent —
-//   no-op if chat["kv_cache"]["n_layers"] > 0.
+//   Install a 24L production-shape KV cache. Per-call FREE+REALLOC pattern
+//   (NOT idempotent reuse) — earlier idempotent guard caused glibc
+//   double-free when _live_inference_worker called this per spontaneous_fire
+//   on a persistent chat object: prev fire's farr handles stayed in
+//   chat["kv_cache"] but were untouched by the guard branch, then re-touched
+//   on the next fire's inference path → heap corruption.
+//
+//   Fix (2026-05-13 PSCC §53): always free the prev cache's farr handles
+//   (chat_kv_cache_free is no-op when handles == -1 per its own contract),
+//   then reset handles to -1, then realloc. cond #6 stability fix.
 fn chat_init_kv_cache_default(chat, cap_len: int) {
     let existing = chat["kv_cache"]
     let nl_prev = if to_string(existing["n_layers"]) == "void" { 0 } else { existing["n_layers"] }
     if nl_prev > 0 {
-        return chat
+        let _ = chat_kv_cache_free(existing)
+        // Reset every freed handle so a follow-up free is a no-op
+        // (chat_kv_cache_free guards with `if kh >= 0` — see line ~2531).
+        let mut li = 0
+        while li < nl_prev {
+            existing["k_caches"][li] = -1
+            existing["v_caches"][li] = -1
+            li = li + 1
+        }
+        existing["rope_cos_table"] = -1
+        existing["rope_sin_table"] = -1
+        chat["kv_cache"] = existing
     }
     let d = chat_default_dims_24l()
     chat["kv_cache"] = chat_kv_cache_init(d["n_layers"], cap_len,
@@ -2843,11 +2862,22 @@ fn chat_init_kv_cache_default(chat, cap_len: int) {
 
 // chat_init_kv_cache_with_dims(chat, dims, cap_len) → chat
 //   Generic init using caller-supplied dims (synthetic small-model smokes).
+//   PSCC §53 mirror fix: free prev cache on re-init (matches
+//   chat_init_kv_cache_default), prevents double-free across multi-fire.
 fn chat_init_kv_cache_with_dims(chat, dims, cap_len: int) {
     let existing = chat["kv_cache"]
     let nl_prev = if to_string(existing["n_layers"]) == "void" { 0 } else { existing["n_layers"] }
     if nl_prev > 0 {
-        return chat
+        let _ = chat_kv_cache_free(existing)
+        let mut li = 0
+        while li < nl_prev {
+            existing["k_caches"][li] = -1
+            existing["v_caches"][li] = -1
+            li = li + 1
+        }
+        existing["rope_cos_table"] = -1
+        existing["rope_sin_table"] = -1
+        chat["kv_cache"] = existing
     }
     chat["kv_cache"] = chat_kv_cache_init(dims["n_layers"], cap_len,
                                           dims["n_kv_heads"], dims["d_head"],
