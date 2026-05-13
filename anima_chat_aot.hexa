@@ -3916,6 +3916,7 @@ fn _live_inference_worker(args) {
 fn _live_socket_accept_loop(args) {
     let stdin_ch = args["stdin_ch"]
     let socket_bcast_ch = args["socket_bcast_ch"]
+    let shutdown_ch = args["shutdown_ch"]
     let port = args["port"]
     let listener = net_listen("0.0.0.0:" + to_string(port))
     if listener < 0 {
@@ -3926,6 +3927,16 @@ fn _live_socket_accept_loop(args) {
     println("[anima live] socket server :" + to_string(port) + " (nc localhost " + to_string(port) + ")")
     let mut clients = []
     while true {
+        // Check shutdown signal (UX fix #2 — graceful close)
+        let sd = channel_recv(shutdown_ch, 0)
+        if to_string(sd) != "" {
+            // Close all clients + listener
+            let mut sci = 0
+            while sci < len(clients) { let _ = net_close(clients[sci]); sci = sci + 1 }
+            let _ = net_close(listener)
+            println("[anima live] socket server shutdown (" + to_string(len(clients)) + " clients closed)")
+            return 0
+        }
         // (a) accept + read poll
         let mut fds = [listener]
         let mut ci = 0
@@ -3942,12 +3953,12 @@ fn _live_socket_accept_loop(args) {
                 if conn >= 0 {
                     let _ = net_set_nonblock(conn)
                     clients.push(conn)
+                    // back-pressure aware write (UX fix #3) — small frame OK
                     let _ = net_write(conn, "{\"type\":\"hello\",\"msg\":\"anima live\"}\n")
                 }
             } else {
                 let data = net_read(fd)
                 if len(data) == 0 {
-                    // client closed
                     let _ = net_close(fd)
                     let mut nc = []
                     let mut k = 0
@@ -3957,7 +3968,6 @@ fn _live_socket_accept_loop(args) {
                     }
                     clients = nc
                 } else {
-                    // forward to frame loop's stdin_ch (line-trimmed)
                     let line = data.trim()
                     if len(line) > 0 {
                         let _ = channel_send(stdin_ch, line)
@@ -3966,21 +3976,105 @@ fn _live_socket_accept_loop(args) {
             }
             ri = ri + 1
         }
-        // (b) drain socket_bcast_ch — emit to all clients as JSONL
+        // (b) drain socket_bcast_ch — emit to all clients as JSONL.
+        // UX fix #3: check net_write rc; drop client on -EPIPE/-EAGAIN.
         while true {
             let msg = channel_recv(socket_bcast_ch, 0)
             if to_string(msg) == "" { break }
             let speaker = to_string(msg["speaker"])
             let text = to_string(msg["text"])
-            // Naive JSON escape — replace \ → \\ and " → \" and \n → \\n
             let text_e = text.replace("\\", "\\\\").replace("\"", "\\\"").replace("\n", "\\n")
             let spont_s = if msg["spontaneous"] { "true" } else { "false" }
             let line = "{\"type\":\"message\",\"speaker\":\"" + speaker + "\",\"text\":\"" + text_e + "\",\"spontaneous\":" + spont_s + "}\n"
             let mut bi = 0
+            let mut surviving = []
             while bi < len(clients) {
-                let _ = net_write(clients[bi], line)
+                let fd = clients[bi]
+                let rc = net_write(fd, line)
+                // net_write returns bytes written or -errno. Drop on err.
+                if rc < 0 {
+                    let _ = net_close(fd)
+                    // skip — don't add to surviving
+                } else {
+                    surviving.push(fd)
+                }
                 bi = bi + 1
             }
+            clients = surviving
+        }
+    }
+    return 0
+}
+
+// _live_mesh_peer_loop — Phase 4 mesh distributed (CHAT.md rev 2 multi-host).
+// Connects to peer daemons as a client. Reads their JSONL broadcasts and
+// forwards into local bcast_ch (which fanouts to local stdout + local socket
+// subscribers). MVP: inbound-only — no origin tracking yet, so cross-connecting
+// peers can produce loops (caller responsibility for MVP).
+//
+// args: peers_str (CSV "host:port,host:port"), bcast_ch (local message bus)
+fn _live_mesh_peer_loop(args) {
+    let peers_str = to_string(args["peers_str"])
+    let bcast_ch = args["bcast_ch"]
+    let peers = peers_str.split(",")
+    let mut peer_fds = []
+    let mut pi = 0
+    while pi < len(peers) {
+        let p = peers[pi].trim()
+        if len(p) > 0 {
+            let fd = net_connect(p)
+            if fd >= 0 {
+                let _ = net_set_nonblock(fd)
+                peer_fds.push(fd)
+                println("[anima mesh] peer connected: " + p + " (fd=" + to_string(fd) + ")")
+            } else {
+                eprintln("[anima mesh] peer connect failed: " + p + " (errno=" + to_string(-fd) + ")")
+            }
+        }
+        pi = pi + 1
+    }
+    if len(peer_fds) == 0 {
+        eprintln("[anima mesh] no peers connected — mesh loop exiting")
+        return 0
+    }
+    // Per-fd accumulator (split JSONL by \n).
+    let mut recv_buf = #{}
+    let mut fi = 0
+    while fi < len(peer_fds) {
+        recv_buf[to_string(peer_fds[fi])] = ""
+        fi = fi + 1
+    }
+    while true {
+        let ready = net_select(peer_fds, 100)
+        let mut ri = 0
+        while ri < len(ready) {
+            let fd = ready[ri]
+            let data = net_read(fd)
+            if len(data) == 0 {
+                // peer disconnected — back off; reconnect retry = follow-up
+                let _ = sleep_ms(500)
+            } else {
+                let fd_key = to_string(fd)
+                let mut buf = to_string(recv_buf[fd_key]) + data
+                while true {
+                    let nl = _str_index_of_room(buf, "\n")
+                    if nl < 0 { break }
+                    let line = buf.substring(0, nl).trim()
+                    buf = buf.substring(nl + 1, len(buf))
+                    if len(line) > 0 {
+                        // Forward as local message — speaker prefixed `mesh:`
+                        // to make origin visible. JSON body raw-pass for MVP.
+                        let _ = channel_send(bcast_ch, #{
+                            "type":        "message",
+                            "speaker":     "mesh:peer",
+                            "text":        line,
+                            "spontaneous": false
+                        })
+                    }
+                }
+                recv_buf[fd_key] = buf
+            }
+            ri = ri + 1
         }
     }
     return 0
@@ -3989,16 +4083,24 @@ fn _live_socket_accept_loop(args) {
 fn _live_stdin_reader(args) {
     let stdin_ch = args["stdin_ch"]
     let prompt = to_string(args["prompt"])
+    let mut empty_streak = 0
     while true {
         let line = input(prompt)
-        // hexa_input returns "" on EOF AND on empty line. Treat both as
-        // "send to main; main decides". Main loop interprets "" as continue.
+        if len(line) == 0 {
+            empty_streak = empty_streak + 1
+            // 5 consecutive empty reads = EOF (stdin closed / piped /dev/null).
+            // Stop reader thread; frame loop continues without stdin events.
+            // /exit must come from socket clients in this state.
+            if empty_streak >= 5 {
+                // Signal frame loop that stdin is dead (so user knows).
+                let _ = channel_send(stdin_ch, "/__stdin_eof__")
+                return 0
+            }
+            let _ = sleep_ms(50)
+            continue
+        }
+        empty_streak = 0
         let _ = channel_send(stdin_ch, line)
-        // If real EOF, input() will spin returning "" — break here.
-        // Heuristic: 0-length string AND check via getline behavior; for MVP,
-        // accept the spin (frame loop still runs).
-        // sleep tiny bit to avoid busy spin on EOF.
-        if len(line) == 0 { let _ = sleep_ms(50) }
     }
     return 0
 }
@@ -4041,10 +4143,12 @@ fn _run_live_session(ctx) {
     let req_ch = channel_new()
     let bcast_ch = channel_new()
     let stdin_ch = channel_new()
-    // socket_bcast_ch — fanout from main thread's bcast drain to socket accept thread.
-    // Only created if serve mode (otherwise -1 sentinel).
     let mut socket_bcast_ch = -1
-    if ctx["serve"] { socket_bcast_ch = channel_new() }
+    let mut socket_shutdown_ch = -1
+    if ctx["serve"] {
+        socket_bcast_ch = channel_new()
+        socket_shutdown_ch = channel_new()
+    }
 
     // Inference worker thread
     let worker_args = #{
@@ -4059,9 +4163,18 @@ fn _run_live_session(ctx) {
         let accept_args = #{
             "port":            ctx["port"],
             "stdin_ch":        stdin_ch,
-            "socket_bcast_ch": socket_bcast_ch
+            "socket_bcast_ch": socket_bcast_ch,
+            "shutdown_ch":     socket_shutdown_ch
         }
         let _ = thread_spawn(_live_socket_accept_loop, accept_args)
+    }
+
+    // Mesh peer connect thread (if mesh-peers configured) — Phase 4
+    let mesh_peers = to_string(ctx["mesh_peers"])
+    if len(mesh_peers) > 0 {
+        let mesh_args = #{ "peers_str": mesh_peers, "bcast_ch": bcast_ch }
+        let _ = thread_spawn(_live_mesh_peer_loop, mesh_args)
+        println("[anima live] mesh peers: " + mesh_peers)
     }
 
     // stdin reader thread (if REPL)
@@ -4090,12 +4203,23 @@ fn _run_live_session(ctx) {
             a1 = a1 + 1
         }
 
-        // (2) drain stdin events
+        // (2) drain stdin events (REPL stdin + socket client lines)
         while true {
             let line = channel_recv(stdin_ch, 0)
             if to_string(line) == "" { break }
             let trimmed = line.trim()
             if len(trimmed) == 0 { continue }
+            if trimmed == "/__stdin_eof__" {
+                // stdin closed (e.g. </dev/null) — reader thread done.
+                // Daemon continues with socket clients only if --serve;
+                // otherwise shutdown.
+                if !ctx["serve"] {
+                    shutdown = true
+                    break
+                }
+                println("[anima live] stdin EOF — socket clients only mode")
+                continue
+            }
             if trimmed == "/exit" || trimmed == "/quit" { shutdown = true; break }
             if trimmed == "/show" {
                 println("--- history ---")
@@ -4208,7 +4332,16 @@ fn _run_live_session(ctx) {
         t = t + 1
     }
 
-    // Shutdown — signal worker to close
+    // Shutdown sequence:
+    //   1. signal socket accept_loop to close (UX fix #2 graceful)
+    //   2. signal inference worker via close-type msg
+    //   3. close all channels
+    if ctx["serve"] {
+        let _ = channel_send(socket_shutdown_ch, "stop")
+        let _ = sleep_ms(100)  // brief grace for accept_loop to wake + close clients
+        let _ = channel_close(socket_shutdown_ch)
+        let _ = channel_close(socket_bcast_ch)
+    }
     let _ = channel_send(req_ch, #{ "type": "close" })
     let _ = channel_close(req_ch)
     let _ = channel_close(bcast_ch)
@@ -4234,6 +4367,7 @@ fn _cmd_chat_repl(argv, idx: int, argc: int) {
     let mut max_spont = 5
     let mut serve = false
     let mut port = 7878
+    let mut mesh_peers = ""
 
     let mut i = idx
     while i < argc {
@@ -4248,6 +4382,7 @@ fn _cmd_chat_repl(argv, idx: int, argc: int) {
         else if a == "--max-spontaneous" && (i + 1) < argc { max_spont = to_int(argv[i + 1]); i = i + 2 }
         else if a == "--serve" { serve = true; i = i + 1 }
         else if a == "--port" && (i + 1) < argc { port = to_int(argv[i + 1]); i = i + 2 }
+        else if a == "--mesh-peers" && (i + 1) < argc { mesh_peers = argv[i + 1]; i = i + 2 }
         else { i = i + 1 }
     }
 
@@ -4284,7 +4419,8 @@ fn _cmd_chat_repl(argv, idx: int, argc: int) {
         "default_speaker": "me",
         "repl":            true,
         "serve":           serve,
-        "port":            port
+        "port":            port,
+        "mesh_peers":      mesh_peers
     }
     println("anima chat repl — substrate-native 1:1 live session (CHAT.md rev 2)")
     println("ckpt: " + ckpt_path)
@@ -4366,6 +4502,7 @@ fn _cmd_room(argv, idx: int, argc: int) {
     let mut max_spont = 10
     let mut serve = false
     let mut port = 7878
+    let mut mesh_peers = ""
 
     let mut i = idx
     while i < argc {
@@ -4382,6 +4519,7 @@ fn _cmd_room(argv, idx: int, argc: int) {
         else if a == "--max-spontaneous" && (i + 1) < argc { max_spont = to_int(argv[i + 1]); i = i + 2 }
         else if a == "--serve" { serve = true; i = i + 1 }
         else if a == "--port" && (i + 1) < argc { port = to_int(argv[i + 1]); i = i + 2 }
+        else if a == "--mesh-peers" && (i + 1) < argc { mesh_peers = argv[i + 1]; i = i + 2 }
         else { i = i + 1 }
     }
 
@@ -4455,7 +4593,8 @@ fn _cmd_room(argv, idx: int, argc: int) {
         "default_speaker": humans[0],
         "repl":            true,
         "serve":           serve,
-        "port":            port
+        "port":            port,
+        "mesh_peers":      mesh_peers
     })
 }
 
