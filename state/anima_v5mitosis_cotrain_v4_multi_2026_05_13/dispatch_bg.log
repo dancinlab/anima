@@ -511,3 +511,24 @@ NCCL version 2.21.5+cuda12.4
 Warning: Permanently added '[210.157.233.86]:23431' (ED25519) to the list of known hosts.
 Welcome to vast.ai. If authentication fails, try again after a few seconds, and double check your ssh key.
 Have fun!
+Read from remote host 210.157.233.86: Connection reset by peer
+client_loop: send disconnect: Broken pipe
+scp: Connection closed
+ssh: connect to host 210.157.233.86 port 23431: Connection refused
+scp: Connection closed
+ssh: connect to host 210.157.233.86 port 23431: Connection refused
+scp: Connection closed
+[WARN] pull failed — SETTING SAVE_POD=1 (pod retained for manual recovery)
+[9/9] DONE
+Wed May 13 00:03:36 UTC 2026
+  DDP: world=4 per_gpu_batch=2 effective_batch=8 freeze_mitosis=1 fresh_init=True
+  arch: d=1024 n_head=16 ffn=4096 cells_max=256 ctx=256
+  routing: top_k=8 aux_alpha=0.01 λ 1.0→0.01  n_params=5373167872
+  wall=4.42hr cost=$59.69 ce=0.078 cost_aborted=False
+  cells_final=256 splits(in_run)=0 phi=0.000 phi_best=0.000
+  wmax=0.2756 active>.01=8.0/256 gate_max=0.011 aux=1.255
+  F-PERSONA-4a routing: KL_PASS_NULL_FAIL KL=0.9952 z=2.20 p=0.0100
+  F-PERSONA-4a soft gate: KL=0.0005 z=2.41
+  F-PERSONA-4b content (M4 aggregated cosine): FAIL z=-0.20 (v2 carry z=3.20)
+  F-V5MIT-1..5: 4/5  (note: cells-static path, splits=0 by design)
+[cleanup] SAVE_POD=1 — keeping instance 36636926 (exit=0)
