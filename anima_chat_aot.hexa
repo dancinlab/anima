@@ -1056,6 +1056,12 @@ fn post_strip_markdown_tables(text: string) -> string {
 //                                     initialized before chat_generate.)
 fn chat_new(ckpt_path: string, device: string, stops) {
     let real_stops = if len(stops) == 0 { default_stop_strings() } else { stops }
+    // AOT-safe: kv_cache sentinel n_layers=0 (= disabled). Without this,
+    // AOT-emitted empty-dict missing-key behavior may not return void,
+    // causing chat_kv_cache_enabled to falsely report true and routing
+    // forward into impl_kv with an empty dims dict.
+    let kv_sentinel = #{}
+    kv_sentinel["n_layers"] = 0
     return #{
         "ckpt_path":           ckpt_path,
         "device":              device,
@@ -1069,7 +1075,7 @@ fn chat_new(ckpt_path: string, device: string, stops) {
         "mitosis_event_log":   [],
         "mitosis_step":        0,
         "mitosis_invocations": 0,
-        "kv_cache":            #{}
+        "kv_cache":            kv_sentinel
     }
 }
 
@@ -2957,6 +2963,16 @@ fn main() {
 
     let mut chat = chat_new(ckpt_path, "cpu", default_stop_strings())
     chat = chat_load_weights(chat)
+
+    // Diagnostic: confirm weight binding before generation
+    let w = chat["weights"]
+    let nw = len(dict_keys(w))
+    let mmh = chat["mmap_handle"]
+    println("[debug] mmap_handle=" + to_string(mmh) + " weights_keys=" + to_string(nw))
+    if nw == 0 {
+        println("[debug] FAIL: chat_load_weights returned 0-key weights dict — abort")
+        return
+    }
 
     let empty_kw = []
     let empty_stops = []
