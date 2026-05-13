@@ -2421,9 +2421,14 @@ fn chat_forward_one_token(chat, token_id: int, t: int) {
     }
     if chat_kv_cache_enabled(chat) {
         let kv = chat["kv_cache"]
-        // dims resolution: caller-supplied chat["dims"] first, else 24L default.
+        // AOT-safe dims resolution: chat["dims"] missing-key may not return
+        // `void` in AOT-compiled binaries (transpiler dict semantics differ
+        // from interpreter). Check both void AND empty-dict; fall back to
+        // 24L production default for either.
         let dims_existing = chat["dims"]
-        let dims = if to_string(dims_existing) == "void" {
+        let dims_is_void = to_string(dims_existing) == "void"
+        let dims_is_empty = if dims_is_void { true } else { len(dict_keys(dims_existing)) == 0 }
+        let dims = if dims_is_void || dims_is_empty {
             chat_default_dims_24l()
         } else {
             dims_existing
