@@ -3948,6 +3948,7 @@ fn _live_socket_accept_loop(args) {
             } else {
                 let data = net_read(fd)
                 if len(data) == 0 {
+                    // (diagnostic muted) println("[anima socket] client fd=" + to_string(fd) + " disconnected")
                     let _ = net_close(fd)
                     let mut nc = []
                     let mut k = 0
@@ -3957,6 +3958,7 @@ fn _live_socket_accept_loop(args) {
                     }
                     clients = nc
                 } else {
+                    // (diagnostic muted) println("[anima socket] recv fd=" + to_string(fd) + " bytes=" + to_string(len(data)))
                     let line = data.trim()
                     if len(line) > 0 {
                         let _ = thread_channel_send(stdin_ch, line)
@@ -4196,6 +4198,7 @@ fn _run_live_session(ctx) {
         while true {
             let line = thread_channel_recv(stdin_ch, 0)
             if to_string(line) == "" { break }
+            // (diagnostic muted) println("[anima frame] stdin_ch recv: " + line)
             let trimmed = line.trim()
             if len(trimmed) == 0 { continue }
             if trimmed == "/__stdin_eof__" {
