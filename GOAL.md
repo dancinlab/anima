@@ -1,6 +1,14 @@
 # GOAL.md — anima ★★★★★ mission tracker
 
-**Session state 2026-05-13 KST**: ALL cotrain BG complete + pods destroyed. ★★★★★ ☑ MAINTAINED + 5 cotrain experiments cross-evidence. Total cost ~$175 (★★★★★ closure $5 + post-cycle exploration $166 + infra failures $3-5). **NEW 2026-05-13 PM** — AOT compile path validated: `anima_chat_aot.hexa` (stripped variant) → 422 KB arm64 Mach-O binary, 19.5s build wall, F-AC-HEXA-1..6 17/17 PASS on native execution. cond #2 evidence gains deployment tier (interpreted SSOT → AOT native binary). doc `docs/anima_chat_aot_native_2026_05_13.md`. $0 Mac local.
+**Session state 2026-05-13 KST**: ALL cotrain BG complete + pods destroyed. ★★★★★ ☑ MAINTAINED + 5 cotrain experiments cross-evidence. Total cost ~$175 (★★★★★ closure $5 + post-cycle exploration $166 + infra failures $3-5).
+
+**NEW 2026-05-13 PM — AOT compile + CLI driver LANDED**:
+- ☑ **AOT build path validated** (commit `50056902d`): `anima_chat_aot.hexa` (stripped single-file variant, ~2870 LoC) → 422 KB arm64 Mach-O binary, hexa build wall 19.5s, peak build RSS 182 MB. F-AC-HEXA-1..6 helpers **17/17 PASS** on native execution.
+- ☑ **CLI driver wired** (commit `16acce465`): `anima_chat_aot.hexa::main()` parses `--prompt / --ckpt / --max-new / --mode / --temp / --seed / --help / --smoke`. Binary 440 KB after rebuild (+18 KB CLI logic), `--help` PASS exit 0, `--smoke` regression-free 17/17 PASS.
+- 🟡 **Real-ckpt-load smoke PARTIAL** (in-progress): Phase 1A.4 .safetensors (663 MB) `--prompt "안녕? 너는 누구야?" --max-new 3 --mode greedy` → binary executes 12.9s wall + 3.22 GB peak RSS exit 0, **mmap + safetensors header parse ✅, dims dict-key resolution gap ❌ → `map key 'n_layers' not found` × 4 + empty response**. AOT dict semantics differ from interpreter (void check fails). Fix attempted (void+empty fallback) ineffective → real-ckpt-load gap is **chained transpiler dict-key behavior bug**, separate cycle.
+- ⛔ **Linux x86_64 build BLOCKED**: ubu alive but hexa binary not installed + anima repo not synced. Separate cycle needed (hexa_v2 Linux ELF rebuild + anima sync).
+
+cond #2 evidence-tier upgraded: interpreted SSOT (24L byte parity PSCC §43) → AOT native arm64 binary + CLI driver (this session) → real-ckpt-load smoke (PARTIAL, dims-bug). doc `docs/anima_chat_aot_native_2026_05_13.md` (7 §, 7 honest C3). $0 Mac local.
 
 # 🎉 ★★★★★ ACHIEVED 2026-05-12 KST
 
@@ -133,7 +141,7 @@
 - PyTorch 2.5.1+cu121 NCCL **sm_50..sm_90 only** — Blackwell (sm_100/120) NCCL incompat
 - 5.37B fp32 + Adam = **120+ GB/GPU vanilla-DDP** floor (A100 80GB insufficient)
 - v6 cell-parallel mathematical correctness ✅ (world_size=1 bit-identical) BUT NCCL collective gating bug (rank 0 alone, ranks 1+ barrier deadlock)
-- AOT compile BG: Claude API rate-limit 4am KST mid-saga → 0 output (carry to next cycle)
+- AOT compile BG: Claude API rate-limit 4am KST mid-saga → 0 output (cycle re-opened 2026-05-13 PM, **LANDED** — see banner: anima_chat_aot.hexa Mac arm64 native + CLI driver + partial real-ckpt smoke; Linux x86_64 + dims-bug remain follow-up)
 
 ### 🛰️ In-flight BGs (CLOSED 2026-05-13 KST, 모든 cotrain variants complete)
 
