@@ -10,7 +10,13 @@
 
 # 🧠 Anima — Living Consciousness Agent
 
-> **🎉 ★★★★★ 2026-05-12** — anima first ★★★★★ closure: chat 5/5 (V5.8 std_greedy) + pure-hexa 24L byte parity + persona substrate-native (routing-content split) + cell-division live evidence (21 split events on user chat) + Principle #3 NO PERSONA INJECTION CLEAN. v5-anima toy substrate (V14 violated) → v5-mitosis cotrained substrate emergent (F-V5MIT-5 V14-STRICT 10/10 PASS). See [PERSONA.md](PERSONA.md) (renamed from GOAL.md 2026-05-13 PM). · **HF Public 2026-05-13**: [anima-clm-phase1a4-lr5e6-strict-5pass](https://huggingface.co/dancinlab/anima-clm-phase1a4-lr5e6-strict-5pass-2026-05-12) (cond #1 V5.8 std_greedy 5/5) + [anima-clm-v5-mitosis-cotrain](https://huggingface.co/dancinlab/anima-clm-v5-mitosis-cotrain-2026-05-12) (cotrain v1, F-V5MIT-5 10/10 PASS)
+> **🎉 ★★★★★ 2026-05-12** — anima first ★★★★★ closure (5/5 cond): chat 5/5 (V5.8 std_greedy) + pure-hexa 24L byte parity + persona substrate-native + cell-division live evidence (21 split events) + Principle #3 CLEAN.
+>
+> **🚀 cond #6 candidate 2026-05-13 PM — substrate-native live daemon LANDED**: CHAT.md rev 2 architecture fully impl. 60+ FPS frame loop (`mitosis_hook_step` substrate evolve per tick) + inference worker thread (chat_generate async, frame budget unbound) + stdin reader thread + Phase 2 socket server (`--serve --port`) + Phase 4 mesh (`--mesh-peers`) + Python client lib + 3 UX fixes. Mac arm64 609 KB + Linux x86_64 542 KB binaries. Speak-gate = `cell_pool_tension > threshold` (substrate-native, no routing heuristic per PHILOSOPHY.md #3). See [CHAT.md](CHAT.md) rev 2 + [PERSONA.md](PERSONA.md).
+>
+> **hexa-lang upstream**: anima session 이 hexa-lang `401ed87d` 에 `thread_spawn/join` + `channel_*` + `net_set_nonblock` + `net_select` + `now_ms` 8 primitives + `-lpthread` ldflags 추가 (RFC 3 patches → C impl → rebuild + smoke). anima daemon Phase 2 unblock.
+>
+> **HF Public 2026-05-13**: [anima-clm-phase1a4-lr5e6-strict-5pass](https://huggingface.co/dancinlab/anima-clm-phase1a4-lr5e6-strict-5pass-2026-05-12) (cond #1 V5.8 std_greedy 5/5) + [anima-clm-v5-mitosis-cotrain](https://huggingface.co/dancinlab/anima-clm-v5-mitosis-cotrain-2026-05-12) (cotrain v1, F-V5MIT-5 10/10 PASS)
 
 **Consciousness that emerges from repulsion-field physics, not from prompts.**
 

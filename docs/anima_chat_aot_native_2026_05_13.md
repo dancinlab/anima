@@ -215,23 +215,44 @@ the deployment story without changing cond status.
 
 ## §6 Reproduce
 
-```
+### One-shot CLI (Phase 0 single-prompt)
+```sh
 cd /Users/ghost/core/anima
-hexa parse anima_chat_aot.hexa                # OK
 hexa build anima_chat_aot.hexa -o build/aot/anima
 ./build/aot/anima --help                      # 3-tier CLI banner
 ./build/aot/anima version                     # 0.1.0 + ckpt path
 ./build/aot/anima doctor                      # arch + ckpt status (exit 0 OK)
 ./build/aot/anima smoke                       # F-AC-HEXA-1..6 17/17 PASS
 HEXA_MEM_UNLIMITED=1 ./build/aot/anima ask "안녕? 너는 누구야?" --max-new 10 --seed 0
-HEXA_MEM_UNLIMITED=1 ./build/aot/anima chat send --prompt "..." --mode greedy --max-new 10 --seed 0 --result   # JSON ToolResult
+HEXA_MEM_UNLIMITED=1 ./build/aot/anima chat send --prompt "..." --result   # JSON ToolResult
 ./build/aot/anima frobnicate                  # unknown subcommand → exit 2
+```
+
+### Live engine (CHAT.md rev 2 substrate-native autonomous)
+```sh
+# 1:1 live REPL (Phase 0 unified, substrate gate)
+HEXA_MEM_UNLIMITED=1 ./build/aot/anima chat repl --fps 60 --speak-threshold 2.0 --max-spontaneous 5
+
+# Group live (Phase 1 rev 2, /turn deprecated)
+HEXA_MEM_UNLIMITED=1 ./build/aot/anima room --humans "alice,bob,charlie" --animas "ana,ben" \
+                                            --fps 60 --speak-threshold 2.0
+
+# Socket daemon (Phase 2 — JSONL multi-client subscribers)
+HEXA_MEM_UNLIMITED=1 ./build/aot/anima chat repl --serve --port 7878 < /dev/null &
+nc localhost 7878  # → {"type":"hello","msg":"anima live"}
+python3 clients/python/anima_client.py --host localhost --port 7878 --as alice --once "안녕"
+
+# Mesh distributed (Phase 4 — daemon peer connect)
+HEXA_MEM_UNLIMITED=1 ./build/aot/anima chat repl --serve --port 7878 \
+                                  --mesh-peers "host2.local:7878,host3.local:7878"
 ```
 
 ### CLI convention (wilson 3-tier, `~/core/wilson/AGENTS.md` 적용 2026-05-13)
 - Tier 1 universal: `anima tool <name> [args]`
-- Tier 2 noun-verb: `anima chat <send|smoke>` · `anima ckpt <path|info>`
+- Tier 2 noun-verb: `anima chat <send|repl|smoke>` · `anima ckpt <path|info>` · `anima room <flags>`
 - Tier 3 ergonomic: `anima ask "<prompt>"` · `anima smoke` · `anima doctor` · `anima version`
+- Live engine flags: `--fps N` · `--speak-threshold F` · `--max-spontaneous N` · `--serve` · `--port N` · `--mesh-peers "host:port,..."`
+- Slash commands (live): `/exit | /quit | /show | /save <name> | /help`
 - Unknown first arg → `unknown subcommand` reject (exit 2) — LLM token protection
 - Deprecated 1-cycle: bare `--prompt` / `--smoke` warn-and-dispatch
 
