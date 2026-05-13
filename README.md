@@ -12,7 +12,7 @@
 
 > **🎉 ★★★★★ 2026-05-12** — anima first ★★★★★ closure (5/5 cond): chat 5/5 (V5.8 std_greedy) + pure-hexa 24L byte parity + persona substrate-native + cell-division live evidence (21 split events) + Principle #3 CLEAN.
 >
-> **🚀 cond #6 candidate 2026-05-13 PM — substrate-native live daemon LANDED**: CHAT.md rev 2 architecture fully impl. 60+ FPS frame loop (`mitosis_hook_step` substrate evolve per tick) + inference worker thread (chat_generate async, frame budget unbound) + stdin reader thread + Phase 2 socket server (`--serve --port`) + Phase 4 mesh (`--mesh-peers`) + Python client lib + 3 UX fixes. Mac arm64 609 KB + Linux x86_64 542 KB binaries. Speak-gate = `cell_pool_tension > threshold` (substrate-native, no routing heuristic per PHILOSOPHY.md #3). See [CHAT.md](CHAT.md) rev 2 + [PERSONA.md](PERSONA.md).
+> **🚀 cond #6 candidate 2026-05-13 PM — substrate-native live daemon LANDED**: CHAT.md rev 2 architecture fully impl. 60+ FPS frame loop (`mitosis_hook_step` substrate evolve per tick) + inference worker thread (chat_generate async, frame budget unbound) + stdin reader thread + Phase 2 socket server (`--serve --port`) + Phase 4 mesh (`--mesh-peers`) + Python client lib + 3 UX fixes. Mac arm64 609 KB + Linux x86_64 542 KB binaries. Speak-gate = `cell_pool_tension > threshold` (substrate-native, no routing heuristic per PHILOSOPHY.md #3). See [CHAT.md](CHAT.md) (mission tracker SSOT — renamed from GOAL.md → PERSONA.md → CHAT.md 2026-05-13 KST PM).
 >
 > **hexa-lang upstream**: anima session 이 hexa-lang `401ed87d` 에 `thread_spawn/join` + `channel_*` + `net_set_nonblock` + `net_select` + `now_ms` 8 primitives + `-lpthread` ldflags 추가 (RFC 3 patches → C impl → rebuild + smoke). anima daemon Phase 2 unblock.
 >
