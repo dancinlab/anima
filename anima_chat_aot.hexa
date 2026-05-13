@@ -1056,12 +1056,14 @@ fn post_strip_markdown_tables(text: string) -> string {
 //                                     initialized before chat_generate.)
 fn chat_new(ckpt_path: string, device: string, stops) {
     let real_stops = if len(stops) == 0 { default_stop_strings() } else { stops }
-    // AOT-safe: kv_cache sentinel n_layers=0 (= disabled). Without this,
-    // AOT-emitted empty-dict missing-key behavior may not return void,
-    // causing chat_kv_cache_enabled to falsely report true and routing
-    // forward into impl_kv with an empty dims dict.
+    // AOT-safe init: pre-populate kv_cache + dims fields so AOT dict
+    // missing-key noise doesn't print on chat["dims"] / chat["kv_cache"]
+    // lookups in chat_forward_one_token + chat_kv_cache_enabled paths.
+    // kv_cache sentinel n_layers=0 = disabled by default; chat_init_kv_cache_default
+    // overwrites with proper 24L shape when caller enables KV.
     let kv_sentinel = #{}
     kv_sentinel["n_layers"] = 0
+    let dims_default = chat_default_dims_24l()
     return #{
         "ckpt_path":           ckpt_path,
         "device":              device,
@@ -1070,6 +1072,7 @@ fn chat_new(ckpt_path: string, device: string, stops) {
         "history":             [],
         "mmap_handle":         -1,
         "weights":             #{},
+        "dims":                dims_default,
         "cell_pool":           #{},
         "mitosis_d_model":     0,
         "mitosis_event_log":   [],
@@ -2885,7 +2888,7 @@ fn _list_contains_int(xs, item: int) -> bool {
 // ────────────────────────────────────────────────────────────────────────────
 
 fn _aot_print_help() {
-    println("anima_chat_aot — AOT-compiled anima_chat (arm64 Mach-O native)")
+    println("anima_chat_aot — AOT-compiled anima_chat (cross-platform native: Mac arm64 Mach-O / Linux x86_64 ELF)")
     println("")
     println("Usage:")
     println("  anima_chat_aot --prompt \"<text>\" [--ckpt <path>] [--max-new N]")
