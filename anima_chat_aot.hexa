@@ -3496,20 +3496,9 @@ fn chat_generate(chat, prompt: string, mode: string, max_new: int,
         step = step + 1
     }
 
-    // Diagnostic — show generated token IDs before decode
-    let n_gen = len(gen_ids)
-    let mut gid_show = "["
-    let mut gi = 0
-    while gi < n_gen {
-        gid_show = gid_show + to_string(gen_ids[gi])
-        if gi < n_gen - 1 { gid_show = gid_show + "," }
-        gi = gi + 1
-    }
-    gid_show = gid_show + "]"
-    println("[debug] gen_ids n=" + to_string(n_gen) + " ids=" + gid_show)
-
+    // (PSCC §51 debug prints — gen_ids / tok_decode_str.len — removed 2026-05-13 PM
+    //  UX cleanup. Diagnostics still available via --result JSON output mode.)
     let mut out = tok_decode_str(gen_ids)
-    println("[debug] tok_decode_str.len=" + to_string(len(out)))
     // trim at stop marker
     if len(stops) > 0 {
         out = trim_at_stop(out, stops)
@@ -3877,7 +3866,7 @@ fn _live_inference_worker(args) {
     let bcast_ch = args["bcast_ch"]
     let chat = args["chat"]
     while true {
-        let req = channel_recv(req_ch, -1)
+        let req = thread_channel_recv(req_ch, -1)
         // close sentinel: empty string (channel closed/EOF) OR dict.type=="close"
         if to_string(req) == "" { return 0 }
         let typ = to_string(req["type"])
@@ -3894,7 +3883,7 @@ fn _live_inference_worker(args) {
         let chat_with_kv = chat_init_kv_cache_default(chat, 1024)
         let resp = chat_generate(chat_with_kv, context, mode, max_new, temp,
                                  empty_kw, 1.0, 1.0, 0.5, seed, empty_stops, true)
-        let _ = channel_send(bcast_ch, #{
+        let _ = thread_channel_send(bcast_ch, #{
             "type":        "message",
             "speaker":     speaker,
             "text":        resp,
@@ -3928,7 +3917,7 @@ fn _live_socket_accept_loop(args) {
     let mut clients = []
     while true {
         // Check shutdown signal (UX fix #2 — graceful close)
-        let sd = channel_recv(shutdown_ch, 0)
+        let sd = thread_channel_recv(shutdown_ch, 0)
         if to_string(sd) != "" {
             // Close all clients + listener
             let mut sci = 0
@@ -3970,7 +3959,7 @@ fn _live_socket_accept_loop(args) {
                 } else {
                     let line = data.trim()
                     if len(line) > 0 {
-                        let _ = channel_send(stdin_ch, line)
+                        let _ = thread_channel_send(stdin_ch, line)
                     }
                 }
             }
@@ -3979,7 +3968,7 @@ fn _live_socket_accept_loop(args) {
         // (b) drain socket_bcast_ch — emit to all clients as JSONL.
         // UX fix #3: check net_write rc; drop client on -EPIPE/-EAGAIN.
         while true {
-            let msg = channel_recv(socket_bcast_ch, 0)
+            let msg = thread_channel_recv(socket_bcast_ch, 0)
             if to_string(msg) == "" { break }
             let speaker = to_string(msg["speaker"])
             let text = to_string(msg["text"])
@@ -4064,7 +4053,7 @@ fn _live_mesh_peer_loop(args) {
                     if len(line) > 0 {
                         // Forward as local message — speaker prefixed `mesh:`
                         // to make origin visible. JSON body raw-pass for MVP.
-                        let _ = channel_send(bcast_ch, #{
+                        let _ = thread_channel_send(bcast_ch, #{
                             "type":        "message",
                             "speaker":     "mesh:peer",
                             "text":        line,
@@ -4093,14 +4082,14 @@ fn _live_stdin_reader(args) {
             // /exit must come from socket clients in this state.
             if empty_streak >= 5 {
                 // Signal frame loop that stdin is dead (so user knows).
-                let _ = channel_send(stdin_ch, "/__stdin_eof__")
+                let _ = thread_channel_send(stdin_ch, "/__stdin_eof__")
                 return 0
             }
             let _ = sleep_ms(50)
             continue
         }
         empty_streak = 0
-        let _ = channel_send(stdin_ch, line)
+        let _ = thread_channel_send(stdin_ch, line)
     }
     return 0
 }
@@ -4140,14 +4129,14 @@ fn _run_live_session(ctx) {
     }
 
     // Channels
-    let req_ch = channel_new()
-    let bcast_ch = channel_new()
-    let stdin_ch = channel_new()
+    let req_ch = thread_channel_new()
+    let bcast_ch = thread_channel_new()
+    let stdin_ch = thread_channel_new()
     let mut socket_bcast_ch = -1
     let mut socket_shutdown_ch = -1
     if ctx["serve"] {
-        socket_bcast_ch = channel_new()
-        socket_shutdown_ch = channel_new()
+        socket_bcast_ch = thread_channel_new()
+        socket_shutdown_ch = thread_channel_new()
     }
 
     // Inference worker thread
@@ -4205,7 +4194,7 @@ fn _run_live_session(ctx) {
 
         // (2) drain stdin events (REPL stdin + socket client lines)
         while true {
-            let line = channel_recv(stdin_ch, 0)
+            let line = thread_channel_recv(stdin_ch, 0)
             if to_string(line) == "" { break }
             let trimmed = line.trim()
             if len(trimmed) == 0 { continue }
@@ -4256,34 +4245,44 @@ fn _run_live_session(ctx) {
                     text = trimmed.substring(colon_idx + 1, len(trimmed)).trim()
                 }
             }
+            // UX guard: if ANY anima is in-flight, queue user input is dropped
+            // with hint (avoids context pollution from typing-while-thinking).
+            // User can wait → next message fires inference cleanly.
+            let mut any_in_flight = false
+            let mut afi = 0
+            while afi < len(animas) {
+                if anima_in_flight[animas[afi]] { any_in_flight = true }
+                afi = afi + 1
+            }
+            if any_in_flight {
+                println("[anima 생각 중… 잠시 기다려주세요]")
+                continue
+            }
             // append to history
             history = history + "[" + speaker + "]: " + text + "\n"
             turn = turn + 1
-            // human input → enqueue inference for each anima not in_flight
-            // (substrate-native: ALL animas get chance; in_flight prevents overlap)
+            // human input → enqueue inference for each anima
             let mut a2 = 0
             while a2 < len(animas) {
                 let id = animas[a2]
-                if !anima_in_flight[id] {
-                    anima_in_flight[id] = true
-                    let _ = channel_send(req_ch, #{
-                        "type":        "speak",
-                        "speaker":     id,
-                        "context":     _live_build_context(history, id),
-                        "mode":        ctx["mode"],
-                        "max_new":     ctx["max_new"],
-                        "temp":        ctx["temp"],
-                        "seed":        ctx["anima_seeds"][id] + turn,
-                        "spontaneous": false
-                    })
-                }
+                anima_in_flight[id] = true
+                let _ = thread_channel_send(req_ch, #{
+                    "type":        "speak",
+                    "speaker":     id,
+                    "context":     _live_build_context(history, id),
+                    "mode":        ctx["mode"],
+                    "max_new":     ctx["max_new"],
+                    "temp":        ctx["temp"],
+                    "seed":        ctx["anima_seeds"][id] + turn,
+                    "spontaneous": false
+                })
                 a2 = a2 + 1
             }
         }
 
         // (3) drain inference results — println to stdout AND fanout to socket
         while true {
-            let resp = channel_recv(bcast_ch, 0)
+            let resp = thread_channel_recv(bcast_ch, 0)
             if to_string(resp) == "" { break }
             let speaker = to_string(resp["speaker"])
             let text = to_string(resp["text"])
@@ -4294,7 +4293,7 @@ fn _run_live_session(ctx) {
             turn = turn + 1
             // Fanout to socket subscribers if serve mode
             if ctx["serve"] {
-                let _ = channel_send(socket_bcast_ch, resp)
+                let _ = thread_channel_send(socket_bcast_ch, resp)
             }
         }
 
@@ -4311,7 +4310,7 @@ fn _run_live_session(ctx) {
                 if tension > speak_threshold && cnt < max_spont {
                     anima_in_flight[id] = true
                     anima_speak_count[id] = cnt + 1
-                    let _ = channel_send(req_ch, #{
+                    let _ = thread_channel_send(req_ch, #{
                         "type":        "speak",
                         "speaker":     id,
                         "context":     _live_build_context(history, id),
@@ -4337,15 +4336,15 @@ fn _run_live_session(ctx) {
     //   2. signal inference worker via close-type msg
     //   3. close all channels
     if ctx["serve"] {
-        let _ = channel_send(socket_shutdown_ch, "stop")
+        let _ = thread_channel_send(socket_shutdown_ch, "stop")
         let _ = sleep_ms(100)  // brief grace for accept_loop to wake + close clients
-        let _ = channel_close(socket_shutdown_ch)
-        let _ = channel_close(socket_bcast_ch)
+        let _ = thread_channel_close(socket_shutdown_ch)
+        let _ = thread_channel_close(socket_bcast_ch)
     }
-    let _ = channel_send(req_ch, #{ "type": "close" })
-    let _ = channel_close(req_ch)
-    let _ = channel_close(bcast_ch)
-    let _ = channel_close(stdin_ch)
+    let _ = thread_channel_send(req_ch, #{ "type": "close" })
+    let _ = thread_channel_close(req_ch)
+    let _ = thread_channel_close(bcast_ch)
+    let _ = thread_channel_close(stdin_ch)
     println("[live session closed — " + to_string(turn) + " turns]")
     return 0
 }
