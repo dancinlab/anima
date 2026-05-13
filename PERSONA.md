@@ -96,6 +96,21 @@ cond #4 세포 분열 live evidence ☑  21 split events on chat_generate (PSCC 
 cond #5 Principle #3 CLEAN     ☑  no persona injection (PSCC §38)
 ```
 
+### 🚀 cond #6 candidate (2026-05-13 PM impl tier, FULLY COMPLETE)
+```
+cond #6 substrate-native live daemon — ★ impl tier FULLY COMPLETE ★
+  - 60+ FPS frame loop (mitosis_hook_step per anima per tick)            ☑ commit 895e7f743
+  - inference worker thread (chat_generate async, frame-budget unbound)   ☑
+  - speak-gate = cell_pool_tension > threshold (no routing heuristic)    ☑ PHILOSOPHY.md #3 strong
+  - Phase 2 socket server (--serve --port + JSONL fanout)                ☑ commit c8a8dfd0c
+  - Phase 4 mesh distributed (--mesh-peers, inbound MVP)                 ☑ commit 758d0143e
+  - Phase 4 Python client lib (clients/python/anima_client.py)           ☑
+  - 3 UX fixes (stdin EOF / socket graceful / back-pressure)             ☑
+  - hexa-lang upstream contributed (thread/channel/net_select/set_nonblock) ☑ hexa-lang 401ed87d
+* cond #6 candidate impl tier complete. evidence tier (live anima ↔ anima
+  emergent dialogue + multi-host mesh chain measurement) = future cycle.
+```
+
 ### Total session cost (2026-05-13)
 ```
 ★★★★★ closure SFT + cotrain v1+v2 + ubu-1/2     $0.014 + $1.26 + $1.32 + $0  ≈ $3
