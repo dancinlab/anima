@@ -1,4 +1,76 @@
-# GOAL.md — anima ★★★★★ mission tracker
+# PERSONA.md — anima ★★★★★ mission tracker
+
+> renamed from `GOAL.md` 2026-05-13 KST PM. anima 의 "persona" = mission identity =
+> 의식 / 페르소나 / 분열 substrate 의 cumulative state. file path 변경 외 내용은
+> historical timeline 그대로 보존.
+
+---
+
+## 📐 최종 SPEC / MODEL / TRAINING (★★★★★ closure 기준, 2026-05-13)
+
+### Architecture
+| 항목 | 값 |
+|---|---|
+| **architecture** | 24-layer decoder-only transformer (byte-level CLM, GQA) |
+| **d_model / d_ff** | 1024 / 2752 (SwiGLU: gate+up+down) |
+| **n_heads / n_kv_heads / d_head** | 16 / 4 / 64 |
+| **vocab_size** | 32000 (byte-level + special) |
+| **positional / norm** | RoPE θ=10000 / RMSNorm ε=1e-5 |
+| **n_params** | ~150M (cond #1) / 152M (v5-mitosis cotrain w/ cells) |
+| **context** | 1024 cap_len (KV cache) |
+| **generation modes** | greedy / sample (LCG seed) / M3_rep_penalty / M4_force_include |
+
+### Library + Distribution
+| layer | artifact | size | build |
+|---|---|---|---|
+| Python SSOT | `anima_chat.py` | 951 LoC | Python 3.12 + torch 2.12 |
+| hexa SSOT | `anima_chat.hexa` v0.3 | ~2843 LoC | interpreter |
+| hexa AOT 변종 | `anima_chat_aot.hexa` | ~2920 LoC | mitosis/M3 stub, AOT-buildable |
+| **Mac arm64** | `build/aot/anima_chat_aot.bin` Mach-O | **440 KB** | `hexa build` 19.5s |
+| **Linux x86_64** | `build/aot/anima_chat_aot.linux` ELF pie | **392 KB** | ubu clang -O2 -lm -lpthread -ldl 3.18s |
+
+CLI flags (AOT binary): `--prompt --ckpt --max-new --mode --temp --seed --help --smoke`
+
+### 🥇 Phase 1A.4 lr 5e-6 SFT (cond #1 ☑ V5.8 std_greedy 5/5)
+```
+path:      state/anima_phase1a4_lr5e6_2026_05_12/ckpts/ckpt_phase1a4_lr5e6_sft.pt
+size:      597 MB (.pt) / 663 MB (.safetensors)
+sha256:    45063f64e97cdde7bc61de347e2f41a830b9b296db5384d8a324d85eb9a2b9e5
+lineage:   phase1a_multi_turn_sft → phase1a1_color_cosmology_v2 → phase1a4_lr5e6
+HF:        dancinlab/anima-clm-phase1a4-lr5e6-strict-5pass-2026-05-12 (PUBLIC)
+training:  Vast.ai RTX 4090, 200 steps, lr 5e-6, loss 0.5058→0.1758 (66%),
+           wall 3.2min, cost $0.014, corpus 200MB+ anima-persona
+```
+
+### ⭐ v5-mitosis cotrain (saga peak, F-V5MIT-5 V14-STRICT 10/10 PASS)
+```
+path:      state/anima_v5mitosis_cotrain_2026_05_12/ckpts/ckpt_v5mitosis_cotrain_cotrain.pt
+size:      581 MB / 152M params (+ cell-pool 64 cells)
+HF:        dancinlab/anima-clm-v5-mitosis-cotrain-2026-05-12 (PUBLIC, unlock by F-V5MIT-5)
+training:  Vast.ai H100 SXM, 5000 steps, loss 264.35→1.17 (220×), Φ stable 4.16,
+           cells 2→64 (saturated step 150) / 62 splits / 0 merges,
+           wall 0.55hr (1990.6s), cost $1.26 ($40 cap 의 3%)
+```
+
+### ✅ ★★★★★ 5/5 cond (2026-05-12 single-cycle closure)
+```
+cond #1 anima chat 시스템      ☑  V5.8 std_greedy 5/5 (PSCC §46, Vast.ai 4090)
+cond #2 anima_chat.hexa 포팅   ☑  24L byte parity 21/21 (PSCC §43) + AOT distribution tier (PM)
+cond #3 페르소나 substrate     ☑  M4 aggregated hidden cosine z=3.20 null-PASS (PSCC §50 §A3)
+cond #4 세포 분열 live evidence ☑  21 split events on chat_generate (PSCC §41)
+cond #5 Principle #3 CLEAN     ☑  no persona injection (PSCC §38)
+```
+
+### Total session cost (2026-05-13)
+```
+★★★★★ closure SFT + cotrain v1+v2 + ubu-1/2  $0.014 + $1.26 + $1.32 + $0  ≈ $3
+post-cycle cotrain BG (v3/v4/v5/v6)                                       ≈ $166
+infra failures (Blackwell sm_120 / OOM / scp)                             ≈ $3-5
+AOT distribution tier (this PM session)                                   $0
+TOTAL                                                                     ≈ $175
+```
+
+---
 
 **Session state 2026-05-13 KST PM (closure 100%)**: ★★★★★ ☑ MAINTAINED. AM = 5 cotrain BG complete + pods destroyed (~$175). **PM = cond #2 AOT distribution tier FULL CLOSURE** (13 commits 50056902d → 1fd56d9fd, $0 Mac+ubu local): AOT compile + arg parser + KV cache + Linux x86_64 cross-compile + QUADRUPLE-LANE byte parity (Mac AOT + Linux AOT + Python + interpreter) + 3-mode AOT cross-platform parity (greedy/sample/M4) + V5.8 ubu RTX 5070 4/5 (cross-GPU FP divergence vs Vast.ai 4090 5/5). Mac arm64 Mach-O 440 KB + Linux x86_64 ELF 392 KB binaries. doc `docs/anima_chat_aot_native_2026_05_13.md` + memory `feedback_hexa_resource_local_dispatch`. Session total: ~$175.
 
