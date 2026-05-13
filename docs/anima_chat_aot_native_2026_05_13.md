@@ -11,8 +11,17 @@ native execution — first AOT native binary of the anima_chat library lane.
 ★★★★★ post-closure ROI exploration: AOT compile path **validated** for
 the chat library half of GOAL.md's `[anima_chat 시스템 + anima 모델]` pair.
 Distribution-readiness for Mac arm64 now unlocked at the library/helper
-tier. Full chat CLI driver (--ckpt, --prompt, --max-new arg parsing +
-chat_new + chat_generate wiring) remains a follow-up cycle.
+tier. **AOT binary arg parser (--prompt / --ckpt / --max-new / --mode /
+--temp / --seed / --help / --smoke) wired in main() — LANDED 2026-05-13
+commit `16acce465`** (≠ D4c "anima CLI" session-level orchestrator, separate
+lane PSCC §35 design LANDED impl pending).
+
+Real-ckpt-load smoke: 🟡 PARTIAL — binary executes (12.9s wall, 3.22 GB
+peak RSS, exit 0), `safetensors_mmap_*` + header parse ✅, but
+`chat_forward_one_token` emits `map key 'n_layers' not found` × 4 with
+empty response. AOT transpiler dict semantics for missing keys differ
+from interpreter; void+empty fallback scaffold (commit `242d7ae76`)
+ineffective. Real-inference parity vs interpreted is the open follow-up.
 
 ## §1 What landed
 
@@ -85,11 +94,14 @@ anima_chat.hexa _smoke (helpers only; F-AC-HEXA-1..6)
    gen_m1/m2/m4 are local to anima_chat.hexa already and remain
    functional in AOT build.
 
-4. **Chat CLI driver**: `main()` only invokes `_smoke()`. No
-   `--ckpt / --prompt / --max-new` arg parsing or `chat_new +
-   chat_generate` wiring. Full inference path validation on native
-   binary requires CLI driver fn + ckpt-load test cycle (RFC 025/030/
-   031/032/033 builtins are linked in but unexercised by `--help`).
+4. **AOT binary arg parser**: ✅ **LANDED 2026-05-13 commit `16acce465`**
+   — `main()` now parses `--prompt / --ckpt / --max-new / --mode /
+   --temp / --seed / --help / --smoke` and dispatches to `chat_new` →
+   `chat_load_weights` → `chat_generate` → `println(response)`. Binary
+   440 KB after rebuild. `--help` exit 0, `--smoke` regression-free 17/17
+   PASS. Real-inference path on native binary still 🟡 PARTIAL due to
+   dims dict-key bug — see updated TL;DR. (Distinct from D4c "anima CLI"
+   session orchestrator, separate lane.)
 
 5. **Linux x86_64 binary**: Mac arm64 only. Per
    `docs/clm_aot_build_plan_20260419.md` precedent, Linux build path
@@ -108,27 +120,30 @@ anima_chat.hexa _smoke (helpers only; F-AC-HEXA-1..6)
    `/Users/ghost/.hx/bin/hexa`). Upgrades may change `use` semantics
    or AOT emit; this doc snapshots the 2026-05-13 toolchain behavior.
 
-## §3 Path forward
+## §3 Path forward (updated 2026-05-13 PM — same-session progress)
 
-Next-cycle candidates ordered by ROI:
+(a) **AOT binary arg parser in anima_chat_aot.hexa::main()** —
+    ✅ **LANDED commit `16acce465`** — main() parses 8 flags
+    `--prompt / --ckpt / --max-new / --mode / --temp / --seed /
+    --help / --smoke`. Binary 440 KB (+18 KB), --help exit 0, --smoke
+    regression-free 17/17 PASS.
 
-(a) **Chat CLI driver in anima_chat_aot.hexa::main()** — add arg
-    parsing + chat_new + chat_generate + println(response). Wall:
-    ~50 LoC, 1 hr. Unlocks `./anima_chat_aot --ckpt <path> --prompt
-    "..." --max-new 40` distribution-ready binary.
+(b) **Linux x86_64 build** — ⛔ **BLOCKED** — `ssh ubu` alive but
+    hexa binary 미설치 + anima repo 미동기화. Separate cycle: hexa_v2
+    Linux ELF rebuild on ubu + anima sync. Follow-up.
 
-(b) **Linux x86_64 build** — `ssh ubu 'cd ~/Dev/anima && hexa build
-    anima_chat_aot.hexa -o build/aot/anima_chat_aot.linux'`. Wall:
-    ~20 s remote + scp.
+(c) **Real ckpt-load on native binary** — 🟡 **PARTIAL** — binary
+    executes against Phase 1A.4 .safetensors (mmap + header parse ✅,
+    12.9s wall, 3.22 GB peak RSS, exit 0), BUT `chat_forward_one_token`
+    dims resolution emits `map key 'n_layers' not found` × 4 with empty
+    response. AOT transpiler dict semantics differ from interpreter
+    (void+empty fallback scaffold `242d7ae76` ineffective). Real-
+    inference parity vs interpreted is the remaining open bug.
 
-(c) **Real ckpt-load on native binary** — verify `safetensors_mmap_*`
-    + `farr_*` C builtins work post-link. Likely OK since RFC builtins
-    are linked into runtime.c, but unexercised by `--help`.
-
-(d) **hexa_v2 toolchain upgrades** — selective import + file-static
-    fn visibility + `__main__` guard. Would let `anima_chat.hexa`
-    SSOT itself AOT-build (vs the stripped variant). Multi-cycle
-    hexa-lang investment.
+(d) **hexa_v2 toolchain upgrades** — 📋 deferred multi-cycle — selective
+    import + file-static fn visibility + `__main__` guard. Would let
+    `anima_chat.hexa` SSOT itself AOT-build (vs the stripped variant).
+    Multi-cycle hexa-lang invest, scope outside this session.
 
 ## §4 GOAL.md impact
 
@@ -138,13 +153,14 @@ half of the `[anima_chat 시스템 + anima 모델]` pair (cond #2 of
 on interpreted hexa; AOT adds a **deployment tier** below that:
 
 ```
-interpreted hexa (SSOT)  ← cond #2 ☑ (24L byte parity, PSCC §43)
+interpreted hexa (SSOT)      ← cond #2 ☑ (24L byte parity, PSCC §43)
     ↓
-AOT native arm64 binary  ← LANDED 2026-05-13 (this doc; library tier)
+AOT native arm64 binary      ← LANDED 2026-05-13 (commit 50056902d)
     ↓
-+ CLI driver             ← NEXT (a)
-+ Linux x86_64 binary    ← NEXT (b)
-+ real ckpt-load smoke   ← NEXT (c)
++ AOT binary arg parser      ← LANDED 2026-05-13 (commit 16acce465)
+    ↓
++ real ckpt-load smoke       ← 🟡 PARTIAL — dims bug (follow-up)
++ Linux x86_64 binary        ← ⛔ BLOCKED — ubu prereq (follow-up)
 ```
 
 GOAL.md cond #2 remains ☑; this is **post-closure ROI** that strengthens
