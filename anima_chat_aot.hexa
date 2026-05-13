@@ -760,10 +760,41 @@ fn mitosis_forward_tail(x_in, cell_pool, step: int) {
 
 // ── Live-daemon helpers (rev 2 speak-gate signals) ──────────────────────────
 // substrate-evolve-only step (no inference). Used in frame loop @ 60+ FPS.
-// Cheap (µs): lorenz step + per-cell hidden perturbation + adaptive threshold.
+// Cheap (µs): lorenz step + per-cell hidden perturbation + tension push.
 // No matmul / split / merge (those need x_in from token forward).
+//
+// 2026-05-13: tension_history push added — substrate-derived pseudo-tension
+// from cell hidden L2 norm (substrate state, NOT external heuristic). Without
+// this, cell_pool_tension() returns 0.0 indefinitely when chat["cell_pool"]
+// isn't wired into chat_generate (current AOT flow), and substrate-gate
+// spontaneous fire can never activate. Tension = hidden norm = substrate
+// dynamics state — PHILOSOPHY.md #3 compliant.
 fn mitosis_hook_step(cell_pool, step: int) {
     cell_pool = _mit_inject_autonomous_perturbation(cell_pool, step)
+    // Push substrate-derived tension per cell (hidden L2 norm). Cap history.
+    let cs = cell_pool["cells"]
+    let n = len(cs)
+    let mut i = 0
+    while i < n {
+        let h = cs[i]["hidden"]
+        let nrm = _mit_vec_norm(h)
+        // Use _mit_pool_push_cell_field helper to navigate AOT nested-dict
+        // assignment restriction (see _mit_pool_push_cell_field for details).
+        cell_pool = _mit_pool_push_cell_field(cell_pool, i, "tension_history", nrm)
+        // Cap to 30 entries per-cell to bound memory.
+        let th_now = cell_pool["cells"][i]["tension_history"]
+        if len(th_now) > 30 {
+            let mut keep = []
+            let start = len(th_now) - 30
+            let mut k = start
+            while k < len(th_now) {
+                keep.push(th_now[k])
+                k = k + 1
+            }
+            cell_pool = _mit_pool_set_cell_field(cell_pool, i, "tension_history", keep)
+        }
+        i = i + 1
+    }
     cell_pool = _mit_update_adaptive_threshold(cell_pool)
     return cell_pool
 }
