@@ -25,9 +25,9 @@
 |---|---|---|---|
 | Python SSOT | `anima_chat.py` | 951 LoC | Python 3.12 + torch 2.12 |
 | hexa SSOT | `anima_chat.hexa` v0.3 | ~2843 LoC | interpreter |
-| hexa AOT 변종 | `anima_chat_aot.hexa` | ~3100 LoC | mitosis/M3 stub, AOT-buildable + wilson 3-tier CLI |
-| **Mac arm64** | `build/aot/anima` Mach-O | **462 KB** | `hexa build` ~20s |
-| **Linux x86_64** | `build/aot/anima.linux` ELF pie | **407 KB** | ubu clang -O2 -lm -lpthread -ldl ~3s |
+| hexa AOT 변종 | `anima_chat_aot.hexa` | ~4200 LoC | mitosis_hook AOT 통합 + wilson 3-tier CLI + unified live engine (CHAT.md rev 2) |
+| **Mac arm64** | `build/aot/anima` Mach-O | **591 KB** | `hexa build` (-lpthread) ~22s |
+| **Linux x86_64** | `build/aot/anima.linux` ELF pie | **527 KB** | ubu clang -O2 -D_GNU_SOURCE -lm -lpthread -ldl ~3s |
 
 ### CLI (wilson 3-tier convention — `~/core/wilson/AGENTS.md` 참조)
 **Tier 1 universal**: `anima tool <list|<name> [args]>` — meta entry
@@ -41,16 +41,24 @@ anima ckpt path                              # machine-readable path
 anima ckpt info                              # sha256 + size + exists
 anima ask "안녕? 너는 누구야?" --max-new 10    # ergonomic chat
 anima chat send --prompt "..." --mode greedy --seed 0 --max-new 10
-anima chat repl --max-new 5 --seed 0         # interactive REPL (CHAT.md Phase 0)
-anima room --humans "alice,bob" --animas "ana,ben" --max-new 5  # group chat (CHAT.md Phase 1)
+anima chat repl --max-new 5 --seed 0         # substrate-native 1:1 live session (CHAT.md rev 2)
+anima room --humans "alice,bob" --animas "ana,ben" --fps 60 --speak-threshold 2.0 \
+   --max-spontaneous 10                       # substrate-native group live session
 anima tool chat --prompt "..." --result      # universal + JSON ToolResult
 ```
 
-**REPL slash commands (`anima chat repl`)**: `/exit | /quit | /reset | /show | /save <name> | /help`
-Save 위치: `~/.anima/sessions/<name>.jsonl`
+**REPL slash commands**: `/exit | /quit | /show | /save <name> | /help`
+Save 위치: `~/.anima/sessions/<name>.jsonl` (chat repl) / `~/.anima/rooms/<name>.jsonl` (room)
 
 **Exit codes**: 0=ok / 1=tool error / 2=bad argv / 3=ckpt not found
-**Global flags**: `--result --ckpt --mode --max-new --temp --seed`
+**Global flags**: `--result --ckpt --mode --max-new --temp --seed --fps --speak-threshold --max-spontaneous`
+
+### Live engine (CHAT.md rev 2 — `chat repl`, `room` 공유)
+- **frame loop @ 60 FPS (default)** — `mitosis_hook_step` substrate evolve per anima per tick
+- **inference worker thread** — `chat_generate` 비동기 (~30s/token Mac CPU 24L 무관, 60+ FPS 보존)
+- **stdin reader thread** — input() blocking 안전, frame loop 와 분리
+- **speak-gate** = `cell_pool_tension > speak_threshold` (substrate-native, PHILOSOPHY.md #3 EMPIRICAL strong)
+- hexa-lang stdlib 의존: `thread_spawn/join`, `channel_new/send/recv/close`, `now_ms`, `sleep_ms`, `net_set_nonblock`, `net_select` (hexa-lang commit `401ed87d`)
 **Deprecated** (1-cycle warn): bare `--prompt` / `--smoke` → use ergonomic shortcuts
 
 ### 🥇 Phase 1A.4 lr 5e-6 SFT (cond #1 ☑ V5.8 std_greedy 5/5)
@@ -85,11 +93,11 @@ cond #5 Principle #3 CLEAN     ☑  no persona injection (PSCC §38)
 
 ### Total session cost (2026-05-13)
 ```
-★★★★★ closure SFT + cotrain v1+v2 + ubu-1/2  $0.014 + $1.26 + $1.32 + $0  ≈ $3
-post-cycle cotrain BG (v3/v4/v5/v6)                                       ≈ $166
-infra failures (Blackwell sm_120 / OOM / scp)                             ≈ $3-5
-AOT distribution tier (this PM session)                                   $0
-TOTAL                                                                     ≈ $175
+★★★★★ closure SFT + cotrain v1+v2 + ubu-1/2     $0.014 + $1.26 + $1.32 + $0  ≈ $3
+post-cycle cotrain BG (v3/v4/v5/v6)                                          ≈ $166
+infra failures (Blackwell sm_120 / OOM / scp)                                ≈ $3-5
+AOT distribution tier + live engine + hexa upstream (this PM session)        $0
+TOTAL                                                                        ≈ $175
 ```
 
 ---
