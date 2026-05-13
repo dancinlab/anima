@@ -768,3 +768,25 @@ dispatch_h100_v5_ddp.sh: line 249: [: 0
 Warning: Permanently added '[208.64.254.181]:21191' (ED25519) to the list of known hosts.
 Welcome to vast.ai. If authentication fails, try again after a few seconds, and double check your ssh key.
 Have fun!
+Read from remote host 208.64.254.181: Connection reset by peer
+client_loop: send disconnect: Broken pipe
+scp: Connection closed
+ssh: connect to host 208.64.254.181 port 21191: Connection refused
+scp: Connection closed
+ssh: connect to host 208.64.254.181 port 21191: Connection refused
+scp: Connection closed
+[WARN] pull failed — SETTING SAVE_POD=1 (pod retained for manual recovery)
+[9/9] DONE
+Wed May 13 01:53:08 UTC 2026
+  DDP: world=4 per_gpu_batch=2 effective_batch=8 freeze_mitosis=1
+  RESUME: from step 0 → target 20000 (this session ran 20000 steps)
+  arch: d=1024 n_head=16 ffn=4096 cells_max=256 ctx=512
+  routing: top_k=8 aux_alpha=0.01 λ 1.0→0.01  n_params=5373430016
+  wall=6.72hr cost=$86.90 ce=0.065 cost_aborted=False
+  cells_final=256 splits(saved)=0 phi=0.000 phi_best=0.000
+  wmax=0.1899 active>.01=8.0/256 gate_max=0.007 aux=1.208
+  F-PERSONA-4a routing: KL_PASS_NULL_FAIL KL=1.4903 z=0.51 p=0.3100
+  F-PERSONA-4a soft gate: KL=0.0005 z=2.33
+  F-PERSONA-4b content (M4 aggregated cosine): FAIL z=0.94 (v2 carry z=3.20)
+  F-V5MIT-1..5: 3/5
+[cleanup] SAVE_POD=1 — keeping instance 36635520 (exit=0)
