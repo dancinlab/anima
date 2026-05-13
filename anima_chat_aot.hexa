@@ -2860,13 +2860,103 @@ fn _list_contains_int(xs, item: int) -> bool {
 //  Section 12 — main entry
 // ────────────────────────────────────────────────────────────────────────────
 
+fn _aot_print_help() {
+    println("anima_chat_aot — AOT-compiled anima_chat (arm64 Mach-O native)")
+    println("")
+    println("Usage:")
+    println("  anima_chat_aot --prompt \"<text>\" [--ckpt <path>] [--max-new N]")
+    println("                 [--mode greedy|sample|M4_force_include]")
+    println("                 [--temp F] [--seed N]")
+    println("  anima_chat_aot --smoke    (run F-AC-HEXA-1..6 helper battery)")
+    println("  anima_chat_aot --help")
+    println("")
+    println("Defaults:")
+    println("  ckpt    : " + default_ckpt())
+    println("  max-new : 40")
+    println("  mode    : greedy")
+    println("  temp    : 0.7")
+    println("  seed    : 0")
+}
+
 fn main() {
-    println("anima_chat.hexa — pure-hexa port of anima_chat.py v2.3")
-    println("Reference: commit c2afa8e9e (tag anima_chat-v2.3-markdown-filter)")
-    println("Status: PARSE-COMPLETE; helpers smoke-PASS; full inference gated on TODO[load].")
+    let argv = args()
+    let argc = len(argv)
+
+    let mut ckpt = ""
+    let mut prompt = ""
+    let mut max_new = 40
+    let mut mode = "greedy"
+    let mut temp = 0.7
+    let mut seed = 0
+    let mut show_help = false
+    let mut run_smoke = false
+
+    let mut i = 2
+    while i < argc {
+        let a = argv[i]
+        if a == "--ckpt" && (i + 1) < argc {
+            ckpt = argv[i + 1]
+            i = i + 2
+        } else if a == "--prompt" && (i + 1) < argc {
+            prompt = argv[i + 1]
+            i = i + 2
+        } else if a == "--max-new" && (i + 1) < argc {
+            max_new = to_int(argv[i + 1])
+            i = i + 2
+        } else if a == "--mode" && (i + 1) < argc {
+            mode = argv[i + 1]
+            i = i + 2
+        } else if a == "--temp" && (i + 1) < argc {
+            temp = to_float(argv[i + 1])
+            i = i + 2
+        } else if a == "--seed" && (i + 1) < argc {
+            seed = to_int(argv[i + 1])
+            i = i + 2
+        } else if a == "--help" {
+            show_help = true
+            i = i + 1
+        } else if a == "--smoke" {
+            run_smoke = true
+            i = i + 1
+        } else {
+            i = i + 1
+        }
+    }
+
+    if show_help {
+        _aot_print_help()
+        return
+    }
+
+    if run_smoke {
+        _smoke()
+        return
+    }
+
+    if len(prompt) == 0 {
+        _aot_print_help()
+        return
+    }
+
+    let ckpt_path = if len(ckpt) == 0 {
+        let p = find_default_ckpt()
+        if len(p) == 0 { default_ckpt() } else { p }
+    } else {
+        ckpt
+    }
+
+    println("[anima_chat_aot] ckpt: " + ckpt_path)
+    println("[anima_chat_aot] prompt: " + prompt)
+    println("[anima_chat_aot] mode: " + mode + "  max_new: " + to_string(max_new) + "  temp: " + to_string(temp) + "  seed: " + to_string(seed))
     println("")
-    println("Default ckpt path:")
-    println("  " + default_ckpt())
-    println("")
-    _smoke()
+
+    let mut chat = chat_new(ckpt_path, "cpu", default_stop_strings())
+    chat = chat_load_weights(chat)
+
+    let empty_kw = []
+    let empty_stops = []
+    let response = chat_generate(chat, prompt, mode, max_new, temp, empty_kw, 1.0, 1.0, 0.5, seed, empty_stops, true)
+
+    println("[response]")
+    println(response)
 }
