@@ -12,13 +12,805 @@
 //  single-file native build. Interpreter SSOT remains anima_chat.hexa.
 // ════════════════════════════════════════════════════════════════════════════
 
-// AOT-only no-op stubs (replace cross-module deps)
+// ════════════════════════════════════════════════════════════════════════════
+//  mitosis_hook AOT 통합 (rev 2 — replaces cell_pool_init/mitosis_forward_tail stubs)
+//  Source: tool/hexa_native/mitosis_hook.hexa REBORN §91 (1119 LoC interp impl).
+//  Substrate-native autonomous gate evidence path:
+//    cell_pool_init     — N cells with farr-backed engine_a_W / engine_g_W
+//    mitosis_forward_tail — per-token substrate evolve + split/merge events
+//    mitosis_hook_step  — frame-loop variant (substrate evolve only, no inference)
+//    cell_pool_tension  — speak-gate signal (mean of latest per-cell tension)
+//    cell_pool_lorenz_mag — chaotic dynamics magnitude (D4 evidence)
+// gen_m3_rep_penalty remains stub (M3 mode = AOT passthrough → greedy).
+// ════════════════════════════════════════════════════════════════════════════
+
+fn _mit_pi() { return 3.14159265358979 }
+fn _mit_lorenz_sigma() { return 10.0 }
+fn _mit_lorenz_rho()   { return 28.0 }
+fn _mit_lorenz_beta()  { return 8.0 / 3.0 }
+fn _mit_lorenz_dt()    { return 0.01 }
+
+fn _mit_hidden_clamp() { return 10.0 }
+fn _mit_lorenz_bound() { return 200.0 }
+
+fn _mit_log_safe(x: float) -> float {
+    if x <= 0.0 { return 0.0 }
+    return log(x)
+}
+
+fn _mit_sqrt_safe(x: float) -> float {
+    if x <= 0.0 { return 0.0 }
+    return sqrt(x)
+}
+
+fn _mit_isfinite(x: float) -> bool {
+    if x != x { return false }
+    if x > 1.0e30 { return false }
+    if x < -1.0e30 { return false }
+    return true
+}
+
+fn _mit_vec_add(a, b) {
+    let n = len(a)
+    let mut out = []
+    let mut i = 0
+    while i < n {
+        out.push(a[i] + b[i])
+        i = i + 1
+    }
+    return out
+}
+
+fn _mit_vec_scale(a, s: float) {
+    let n = len(a)
+    let mut out = []
+    let mut i = 0
+    while i < n {
+        out.push(s * a[i])
+        i = i + 1
+    }
+    return out
+}
+
+fn _mit_vec_blend(a, b, alpha: float) {
+    let n = len(a)
+    let one_minus = 1.0 - alpha
+    let mut out = []
+    let mut i = 0
+    while i < n {
+        out.push(one_minus * a[i] + alpha * b[i])
+        i = i + 1
+    }
+    return out
+}
+
+fn _mit_vec_avg(a, b) {
+    return _mit_vec_blend(a, b, 0.5)
+}
+
+fn _mit_vec_norm(v) {
+    let n = len(v)
+    let mut sum_sq = 0.0
+    let mut i = 0
+    while i < n {
+        sum_sq = sum_sq + v[i] * v[i]
+        i = i + 1
+    }
+    return _mit_sqrt_safe(sum_sq)
+}
+
+fn _mit_vec_norm_clamp(v, clamp_to: float) {
+    let nrm = _mit_vec_norm(v)
+    if nrm <= clamp_to { return v }
+    if nrm < 1.0e-12 { return v }
+    let s = clamp_to / nrm
+    return _mit_vec_scale(v, s)
+}
+
+fn _mit_cosine(a, b) {
+    let n = len(a)
+    let mut dot = 0.0
+    let mut sa = 0.0
+    let mut sb = 0.0
+    let mut i = 0
+    while i < n {
+        dot = dot + a[i] * b[i]
+        sa = sa + a[i] * a[i]
+        sb = sb + b[i] * b[i]
+        i = i + 1
+    }
+    let na = _mit_sqrt_safe(sa)
+    let nb = _mit_sqrt_safe(sb)
+    if na < 1.0e-8 { return 1.0 }
+    if nb < 1.0e-8 { return 1.0 }
+    return dot / (na * nb)
+}
+
+fn _mit_inter_tension(a, b) {
+    let n = len(a)
+    let mut acc = 0.0
+    let mut i = 0
+    while i < n {
+        let d = a[i] - b[i]
+        acc = acc + d * d
+        i = i + 1
+    }
+    if n == 0 { return 0.0 }
+    return acc / (n * 1.0)
+}
+
+fn _mit_farr_to_list(farr_id: int, n: int) {
+    let mut out = []
+    let mut i = 0
+    while i < n {
+        out.push(farr_get(farr_id, i))
+        i = i + 1
+    }
+    return out
+}
+
+fn _mit_list_to_farr(v) {
+    let n = len(v)
+    let h = farr_zeros(n)
+    let mut i = 0
+    while i < n {
+        let _ = farr_set(h, i, v[i])
+        i = i + 1
+    }
+    return h
+}
+
+fn lorenz_advance(lorenz_state, dt: float) {
+    let sigma = _mit_lorenz_sigma()
+    let rho   = _mit_lorenz_rho()
+    let beta  = _mit_lorenz_beta()
+    let x = lorenz_state[0]
+    let y = lorenz_state[1]
+    let z = lorenz_state[2]
+    let dx = sigma * (y - x) * dt
+    let dy = (x * (rho - z) - y) * dt
+    let dz = (x * y - beta * z) * dt
+    return [x + dx, y + dy, z + dz, dx, dy, dz]
+}
+
+fn compute_phi_proxy(cells) {
+    let n = len(cells)
+    if n < 2 { return 0.0 }
+    let mut total = 0.0
+    let mut pairs = 0
+    let mut i = 0
+    while i < n {
+        let mut j = i + 1
+        while j < n {
+            let hi = cells[i]["hidden"]
+            let hj = cells[j]["hidden"]
+            let cs = _mit_cosine(hi, hj)
+            total = total + (1.0 - cs)
+            pairs = pairs + 1
+            j = j + 1
+        }
+        i = i + 1
+    }
+    if pairs == 0 { return 0.0 }
+    let mean_d = total / (pairs * 1.0)
+    let phi = mean_d * _mit_log_safe(n * 1.0 + 1.0)
+    if !_mit_isfinite(phi) { return 0.0 }
+    if phi < 0.0 { return 0.0 }
+    return phi
+}
+
+fn _mit_phi_ratchet(cell_pool, phi: float) {
+    let phi_best_prev = cell_pool["phi_best"]
+    if phi > phi_best_prev {
+        let mut snap = []
+        let cs = cell_pool["cells"]
+        let n = len(cs)
+        let mut i = 0
+        while i < n {
+            snap.push(_mit_vec_scale(cs[i]["hidden"], 1.0))
+            i = i + 1
+        }
+        cell_pool["phi_best"] = phi
+        cell_pool["best_hiddens"] = snap
+    } else {
+        let bh = cell_pool["best_hiddens"]
+        if len(bh) > 0 {
+            if phi < phi_best_prev * 0.8 {
+                let cs2 = cell_pool["cells"]
+                let n2 = len(cs2)
+                let n_restore = if n2 < len(bh) { n2 } else { len(bh) }
+                let mut i2 = 0
+                while i2 < n_restore {
+                    let cur = cs2[i2]["hidden"]
+                    let best = bh[i2]
+                    let blended = _mit_vec_blend(cur, best, 0.2)
+                    cell_pool = _mit_pool_set_cell_field(cell_pool, i2, "hidden", blended)
+                    i2 = i2 + 1
+                }
+            }
+        }
+    }
+    cell_pool["phi"] = phi
+    cell_pool["phi_history"].push(phi)
+    return cell_pool
+}
+
+fn _mit_update_adaptive_threshold(cell_pool) {
+    let hist = cell_pool["global_tension_history"]
+    let n_h = len(hist)
+    if n_h < 10 { return cell_pool }
+    let start = if n_h > 100 { n_h - 100 } else { 0 }
+    let mut sum_t = 0.0
+    let mut i = start
+    while i < n_h {
+        sum_t = sum_t + hist[i]
+        i = i + 1
+    }
+    let w = (n_h - start) * 1.0
+    let mean_t = sum_t / w
+    let mut var_acc = 0.0
+    i = start
+    while i < n_h {
+        let d = hist[i] - mean_t
+        var_acc = var_acc + d * d
+        i = i + 1
+    }
+    let var_t = var_acc / w
+    let std_t = if var_t > 0.0 { _mit_sqrt_safe(var_t) } else { mean_t * 0.1 }
+    let mut thr = mean_t + 1.5 * std_t
+    let floor_thr = mean_t * 0.5
+    if thr < floor_thr { thr = floor_thr }
+    cell_pool["split_threshold"] = thr
+    return cell_pool
+}
+
+// ── cell_pool_init (REPLACES STUB) ──────────────────────────────────────────
 fn cell_pool_init(d_model: int, initial_cells: int) {
-    return #{}
+    let mut pool = #{
+        "cells":                  [],
+        "next_id":                0,
+        "min_cells":              2,
+        "max_cells":              128,
+        "split_threshold":        0.0,
+        "split_patience":         3,
+        "merge_threshold":        0.005,
+        "merge_patience":         30,
+        "noise_scale":            0.1,
+        "global_tension_history": [],
+        "inter_tension_history":  #{},
+        "phi":                    0.0,
+        "phi_best":               0.0,
+        "best_hiddens":           [],
+        "lorenz":                 [1.0, 1.0, 1.0],
+        "phi_history":            [],
+        "event_log":              [],
+        "d_model":                d_model
+    }
+    let d_proj = d_model
+    let weight_n = d_proj * d_model
+    let init_sigma = 1.0 / _mit_sqrt_safe(d_model * 1.0)
+    let mut k = 0
+    while k < initial_cells {
+        let aw = farr_zeros(weight_n)
+        let _ = farr_add_gaussian_noise(aw, init_sigma)
+        let gw = farr_zeros(weight_n)
+        let _ = farr_add_gaussian_noise(gw, init_sigma)
+        let h_far = farr_zeros(d_model)
+        let _ = farr_add_gaussian_noise(h_far, init_sigma)
+        let hidden = _mit_farr_to_list(h_far, d_model)
+        let _ = farr_free(h_far)
+        let cell = #{
+            "cell_id":         pool["next_id"],
+            "engine_a_W":      aw,
+            "engine_g_W":      gw,
+            "hidden":          hidden,
+            "tension_history": [],
+            "parent_id":       -1,
+            "creation_step":   0,
+            "process_count":   0
+        }
+        pool["cells"].push(cell)
+        pool["next_id"] = pool["next_id"] + 1
+        k = k + 1
+    }
+    return pool
 }
+
+fn split_cell(parent_cell, cell_pool, step: int) {
+    let d_model = cell_pool["d_model"]
+    let sigma = cell_pool["noise_scale"]
+    let child_aw = farr_copy(parent_cell["engine_a_W"])
+    let _ = farr_add_gaussian_noise(child_aw, sigma)
+    let child_gw = farr_copy(parent_cell["engine_g_W"])
+    let _ = farr_add_gaussian_noise(child_gw, sigma)
+    let h_far = _mit_list_to_farr(parent_cell["hidden"])
+    let _ = farr_add_gaussian_noise(h_far, sigma)
+    let child_hidden = _mit_farr_to_list(h_far, d_model)
+    let _ = farr_free(h_far)
+    let child = #{
+        "cell_id":         cell_pool["next_id"],
+        "engine_a_W":      child_aw,
+        "engine_g_W":      child_gw,
+        "hidden":          child_hidden,
+        "tension_history": [],
+        "parent_id":       parent_cell["cell_id"],
+        "creation_step":   step,
+        "process_count":   0
+    }
+    cell_pool["next_id"] = cell_pool["next_id"] + 1
+    let pt = parent_cell["tension_history"]
+    let np = len(pt)
+    if np > 3 {
+        let mut keep = []
+        let mut i = np - 3
+        while i < np {
+            keep.push(pt[i])
+            i = i + 1
+        }
+        parent_cell["tension_history"] = keep
+    }
+    return [parent_cell, child, cell_pool]
+}
+
+fn merge_cells(cell_a, cell_b, cell_pool) {
+    if len(cell_pool["cells"]) <= cell_pool["min_cells"] {
+        return [cell_a, cell_pool, false]
+    }
+    let keeper_is_a = cell_a["creation_step"] <= cell_b["creation_step"]
+    let keeper = if keeper_is_a { cell_a } else { cell_b }
+    let removed = if keeper_is_a { cell_b } else { cell_a }
+    let d_model = cell_pool["d_model"]
+    let weight_n = d_model * d_model
+    let ka = keeper["engine_a_W"]
+    let ra = removed["engine_a_W"]
+    let mut i = 0
+    while i < weight_n {
+        let avg = 0.5 * (farr_get(ka, i) + farr_get(ra, i))
+        let _ = farr_set(ka, i, avg)
+        i = i + 1
+    }
+    let kg = keeper["engine_g_W"]
+    let rg = removed["engine_g_W"]
+    i = 0
+    while i < weight_n {
+        let avg = 0.5 * (farr_get(kg, i) + farr_get(rg, i))
+        let _ = farr_set(kg, i, avg)
+        i = i + 1
+    }
+    keeper["hidden"] = _mit_vec_avg(keeper["hidden"], removed["hidden"])
+    let _ = farr_free(removed["engine_a_W"])
+    let _ = farr_free(removed["engine_g_W"])
+    let cs = cell_pool["cells"]
+    let mut new_cells = []
+    let mut k = 0
+    while k < len(cs) {
+        if cs[k]["cell_id"] != removed["cell_id"] {
+            new_cells.push(cs[k])
+        }
+        k = k + 1
+    }
+    cell_pool["cells"] = new_cells
+    return [keeper, cell_pool, true]
+}
+
+fn _mit_cell_forward(cell, x_in_farr, d_model: int) {
+    let aw = cell["engine_a_W"]
+    let gw = cell["engine_g_W"]
+    let y_a = farr_matmul(aw, d_model, d_model, x_in_farr, 1)
+    let y_g = farr_matmul(gw, d_model, d_model, x_in_farr, 1)
+    let ya_list = _mit_farr_to_list(y_a, d_model)
+    let yg_list = _mit_farr_to_list(y_g, d_model)
+    let mut out = []
+    let mut tension_acc = 0.0
+    let mut i = 0
+    while i < d_model {
+        let v = ya_list[i] - yg_list[i]
+        out.push(v)
+        tension_acc = tension_acc + v * v
+        i = i + 1
+    }
+    let tension = tension_acc / (d_model * 1.0)
+    let _ = farr_free(y_a)
+    let _ = farr_free(y_g)
+    return #{ "output": out, "tension": tension, "repulsion": out }
+}
+
+fn _mit_inject_autonomous_perturbation(cell_pool, step: int) {
+    let dt = _mit_lorenz_dt()
+    let advanced = lorenz_advance(cell_pool["lorenz"], dt)
+    let new_x = advanced[0]
+    let new_y = advanced[1]
+    let new_z = advanced[2]
+    let dx = advanced[3]
+    let dy = advanced[4]
+    let dz = advanced[5]
+    let bound = _mit_lorenz_bound()
+    let abs_sum = abs(new_x) + abs(new_y) + abs(new_z)
+    if abs_sum >= bound {
+        cell_pool["lorenz"] = [1.0, 1.0, 1.0]
+    } else {
+        cell_pool["lorenz"] = [new_x, new_y, new_z]
+    }
+    let cs = cell_pool["cells"]
+    let n = len(cs)
+    let mut i = 0
+    while i < n {
+        let cell = cs[i]
+        let h = cell["hidden"]
+        let d = len(h)
+        let phase = (i * 2.0 * _mit_pi()) / (if n > 0 { n * 1.0 } else { 1.0 })
+        let scale = 0.05 * (1.0 + 0.3 * sin(phase + step * 0.1))
+        let noise_far = farr_zeros(d)
+        let _ = farr_add_gaussian_noise(noise_far, scale)
+        if d >= 1 {
+            let cur = farr_get(noise_far, 0)
+            let _ = farr_set(noise_far, 0, cur + dx * 0.2)
+        }
+        if d >= 2 {
+            let cur = farr_get(noise_far, 1)
+            let _ = farr_set(noise_far, 1, cur + dy * 0.2)
+        }
+        if d >= 3 {
+            let cur = farr_get(noise_far, 2)
+            let _ = farr_set(noise_far, 2, cur + dz * 0.2)
+        }
+        let noise_list = _mit_farr_to_list(noise_far, d)
+        let _ = farr_free(noise_far)
+        let new_h = _mit_vec_add(h, noise_list)
+        let clamped = _mit_vec_norm_clamp(new_h, _mit_hidden_clamp())
+        cell_pool = _mit_pool_set_cell_field(cell_pool, i, "hidden", clamped)
+        i = i + 1
+    }
+    return cell_pool
+}
+
+fn _mit_check_splits(cell_pool, step: int) {
+    let mut events = []
+    let cs = cell_pool["cells"]
+    if len(cs) >= cell_pool["max_cells"] {
+        return [cell_pool, events]
+    }
+    let thr = cell_pool["split_threshold"]
+    let patience = cell_pool["split_patience"]
+    let mut to_split_idx = []
+    let mut i = 0
+    while i < len(cs) {
+        let th = cs[i]["tension_history"]
+        if len(th) >= patience {
+            let mut all_above = true
+            let start = len(th) - patience
+            let mut k = start
+            while k < len(th) {
+                if th[k] <= thr { all_above = false }
+                k = k + 1
+            }
+            if all_above {
+                to_split_idx.push(i)
+            }
+        }
+        i = i + 1
+    }
+    let mut s = 0
+    while s < len(to_split_idx) {
+        if len(cell_pool["cells"]) >= cell_pool["max_cells"] { break }
+        let idx = to_split_idx[s]
+        let parent = cell_pool["cells"][idx]
+        let split_result = split_cell(parent, cell_pool, step)
+        let new_parent = split_result[0]
+        let child = split_result[1]
+        cell_pool = split_result[2]
+        cell_pool["cells"][idx] = new_parent
+        cell_pool["cells"].push(child)
+        let evt = #{
+            "type":      "split",
+            "step":      step,
+            "parent_id": new_parent["cell_id"],
+            "child_id":  child["cell_id"],
+            "n_cells_after": len(cell_pool["cells"])
+        }
+        events.push(evt)
+        s = s + 1
+    }
+    return [cell_pool, events]
+}
+
+fn _mit_find_cell_idx(cells, cell_id: int) {
+    let mut i = 0
+    while i < len(cells) {
+        if cells[i]["cell_id"] == cell_id { return i }
+        i = i + 1
+    }
+    return -1
+}
+
+// AOT-safe cell-field setter — hexa_v2 transpiler can't emit nested
+// dict-index-set `pool["cells"][i]["field"] = v` as an LHS expression
+// (`hexa_index_get(...) = ...` is not assignable in C). Decompose via
+// helper: extract cell → mutate single-level → write back to cells array
+// → write back cells to pool.
+fn _mit_pool_set_cell_field(pool, idx: int, key: string, val) {
+    let mut cs = pool["cells"]
+    let mut cell = cs[idx]
+    cell[key] = val
+    cs[idx] = cell
+    pool["cells"] = cs
+    return pool
+}
+
+fn _mit_pool_push_cell_field(pool, idx: int, key: string, val) {
+    let mut cs = pool["cells"]
+    let mut cell = cs[idx]
+    let mut arr = cell[key]
+    arr.push(val)
+    cell[key] = arr
+    cs[idx] = cell
+    pool["cells"] = cs
+    return pool
+}
+
+fn _mit_pair_key(id_a: int, id_b: int) {
+    let lo = if id_a < id_b { id_a } else { id_b }
+    let hi = if id_a < id_b { id_b } else { id_a }
+    return to_string(lo) + "-" + to_string(hi)
+}
+
+fn _mit_check_merges(cell_pool, step: int) {
+    let mut events = []
+    if len(cell_pool["cells"]) <= cell_pool["min_cells"] {
+        return [cell_pool, events]
+    }
+    let mthr = cell_pool["merge_threshold"]
+    let mpat = cell_pool["merge_patience"]
+    let inter_hist = cell_pool["inter_tension_history"]
+    let pair_keys = keys(inter_hist)
+    let mut to_merge = []
+    let mut kk = 0
+    while kk < len(pair_keys) {
+        let key = pair_keys[kk]
+        let hist = inter_hist[key]
+        if len(hist) >= mpat {
+            let mut all_below = true
+            let start = len(hist) - mpat
+            let mut k = start
+            while k < len(hist) {
+                if hist[k] >= mthr { all_below = false }
+                k = k + 1
+            }
+            if all_below {
+                to_merge.push(key)
+            }
+        }
+        kk = kk + 1
+    }
+    let mut m = 0
+    while m < len(to_merge) {
+        if len(cell_pool["cells"]) <= cell_pool["min_cells"] { break }
+        let key = to_merge[m]
+        let parts = key.split("-")
+        let id_a = to_int(parts[0])
+        let id_b = to_int(parts[1])
+        let idx_a = _mit_find_cell_idx(cell_pool["cells"], id_a)
+        let idx_b = _mit_find_cell_idx(cell_pool["cells"], id_b)
+        if idx_a >= 0 {
+            if idx_b >= 0 {
+                let cell_a = cell_pool["cells"][idx_a]
+                let cell_b = cell_pool["cells"][idx_b]
+                let mr = merge_cells(cell_a, cell_b, cell_pool)
+                let merged_keeper = mr[0]
+                cell_pool = mr[1]
+                let success = mr[2]
+                if success {
+                    let evt = #{
+                        "type":        "merge",
+                        "step":        step,
+                        "keeper_id":   merged_keeper["cell_id"],
+                        "removed_id":  if cell_a["cell_id"] == merged_keeper["cell_id"] { cell_b["cell_id"] } else { cell_a["cell_id"] },
+                        "n_cells_after": len(cell_pool["cells"])
+                    }
+                    events.push(evt)
+                }
+            }
+        }
+        m = m + 1
+    }
+    return [cell_pool, events]
+}
+
+fn _mit_combine_outputs(cell_results, d_model: int) {
+    let n = len(cell_results)
+    if n == 0 {
+        let mut z = []
+        let mut i = 0
+        while i < d_model {
+            z.push(0.0)
+            i = i + 1
+        }
+        return z
+    }
+    let mut max_t = cell_results[0]["tension"]
+    let mut i = 1
+    while i < n {
+        if cell_results[i]["tension"] > max_t { max_t = cell_results[i]["tension"] }
+        i = i + 1
+    }
+    let mut exps = []
+    let mut s_exp = 0.0
+    i = 0
+    while i < n {
+        let e = exp(cell_results[i]["tension"] - max_t)
+        exps.push(e)
+        s_exp = s_exp + e
+        i = i + 1
+    }
+    let mut out = []
+    let mut j = 0
+    while j < d_model {
+        out.push(0.0)
+        j = j + 1
+    }
+    i = 0
+    while i < n {
+        let w = exps[i] / s_exp
+        let outp = cell_results[i]["output"]
+        let mut k = 0
+        while k < d_model {
+            out[k] = out[k] + w * outp[k]
+            k = k + 1
+        }
+        i = i + 1
+    }
+    return out
+}
+
+// ── mitosis_forward_tail (REPLACES STUB) ────────────────────────────────────
 fn mitosis_forward_tail(x_in, cell_pool, step: int) {
-    return [x_in, cell_pool, []]
+    let d_model = cell_pool["d_model"]
+    cell_pool = _mit_inject_autonomous_perturbation(cell_pool, step)
+    let x_far = _mit_list_to_farr(x_in)
+    let mut cell_results = []
+    let mut i = 0
+    while i < len(cell_pool["cells"]) {
+        let cell = cell_pool["cells"][i]
+        let result = _mit_cell_forward(cell, x_far, d_model)
+        cell_results.push(result)
+        let t = result["tension"]
+        cell_pool = _mit_pool_push_cell_field(cell_pool, i, "tension_history", t)
+        let th = cell_pool["cells"][i]["tension_history"]
+        if len(th) > 30 {
+            let mut keep = []
+            let start = len(th) - 30
+            let mut k = start
+            while k < len(th) {
+                keep.push(th[k])
+                k = k + 1
+            }
+            cell_pool = _mit_pool_set_cell_field(cell_pool, i, "tension_history", keep)
+        }
+        let cur_pc = cell_pool["cells"][i]["process_count"]
+        cell_pool = _mit_pool_set_cell_field(cell_pool, i, "process_count", cur_pc + 1)
+        cell_pool["global_tension_history"].push(t)
+        let gh = cell_pool["global_tension_history"]
+        if len(gh) > 500 {
+            let mut keep2 = []
+            let start2 = len(gh) - 500
+            let mut k2 = start2
+            while k2 < len(gh) {
+                keep2.push(gh[k2])
+                k2 = k2 + 1
+            }
+            cell_pool["global_tension_history"] = keep2
+        }
+        i = i + 1
+    }
+    let _ = farr_free(x_far)
+    let n_cells = len(cell_pool["cells"])
+    let mut a = 0
+    while a < n_cells {
+        let mut b = a + 1
+        while b < n_cells {
+            let id_a = cell_pool["cells"][a]["cell_id"]
+            let id_b = cell_pool["cells"][b]["cell_id"]
+            let rep_a = cell_results[a]["repulsion"]
+            let rep_b = cell_results[b]["repulsion"]
+            let ict = _mit_inter_tension(rep_a, rep_b)
+            let key = _mit_pair_key(id_a, id_b)
+            let existing = cell_pool["inter_tension_history"][key]
+            let mut hist = if to_string(existing) == "void" { [] } else { existing }
+            hist.push(ict)
+            if len(hist) > 30 {
+                let mut keep3 = []
+                let start3 = len(hist) - 30
+                let mut k3 = start3
+                while k3 < len(hist) {
+                    keep3.push(hist[k3])
+                    k3 = k3 + 1
+                }
+                hist = keep3
+            }
+            cell_pool["inter_tension_history"][key] = hist
+            b = b + 1
+        }
+        a = a + 1
+    }
+    let x_out = _mit_combine_outputs(cell_results, d_model)
+    let phi = compute_phi_proxy(cell_pool["cells"])
+    cell_pool = _mit_phi_ratchet(cell_pool, phi)
+    cell_pool = _mit_update_adaptive_threshold(cell_pool)
+    let mut event_list = []
+    let split_res = _mit_check_splits(cell_pool, step)
+    cell_pool = split_res[0]
+    let split_events = split_res[1]
+    let mut se = 0
+    while se < len(split_events) {
+        event_list.push(split_events[se])
+        cell_pool["event_log"].push(split_events[se])
+        se = se + 1
+    }
+    let merge_res = _mit_check_merges(cell_pool, step)
+    cell_pool = merge_res[0]
+    let merge_events = merge_res[1]
+    let mut me = 0
+    while me < len(merge_events) {
+        event_list.push(merge_events[me])
+        cell_pool["event_log"].push(merge_events[me])
+        me = me + 1
+    }
+    return [x_out, cell_pool, event_list]
 }
+
+// ── Live-daemon helpers (rev 2 speak-gate signals) ──────────────────────────
+// substrate-evolve-only step (no inference). Used in frame loop @ 60+ FPS.
+// Cheap (µs): lorenz step + per-cell hidden perturbation + adaptive threshold.
+// No matmul / split / merge (those need x_in from token forward).
+fn mitosis_hook_step(cell_pool, step: int) {
+    cell_pool = _mit_inject_autonomous_perturbation(cell_pool, step)
+    cell_pool = _mit_update_adaptive_threshold(cell_pool)
+    return cell_pool
+}
+
+// Mean of latest per-cell tension. Substrate gate signal.
+fn cell_pool_tension(cell_pool) -> float {
+    let cs = cell_pool["cells"]
+    let n = len(cs)
+    if n == 0 { return 0.0 }
+    let mut sum = 0.0
+    let mut count = 0
+    let mut i = 0
+    while i < n {
+        let th = cs[i]["tension_history"]
+        if len(th) > 0 {
+            sum = sum + th[len(th) - 1]
+            count = count + 1
+        }
+        i = i + 1
+    }
+    if count == 0 { return 0.0 }
+    return sum / (count * 1.0)
+}
+
+// Lorenz state magnitude — chaotic dynamics evidence (D4 substrate signal).
+fn cell_pool_lorenz_mag(cell_pool) -> float {
+    let l = cell_pool["lorenz"]
+    return abs(l[0]) + abs(l[1]) + abs(l[2])
+}
+
+// Last split-event step (for "split_recent" gate predicate). -1 if no splits yet.
+fn cell_pool_last_split_step(cell_pool) -> int {
+    let elog = cell_pool["event_log"]
+    let n = len(elog)
+    if n == 0 { return -1 }
+    let mut i = n - 1
+    while i >= 0 {
+        let evt = elog[i]
+        if evt["type"] == "split" { return evt["step"] }
+        i = i - 1
+    }
+    return -1
+}
+
+// gen_m3_rep_penalty — M3 mode stub (rep_penalty applied at inference layer
+// is implemented in gen_modes.hexa; AOT binary keeps stub passthrough →
+// M3 mode degenerates to greedy in cross-module AOT context).
 fn gen_m3_rep_penalty(logits, prior_ids, penalty: float) {
     return logits
 }
