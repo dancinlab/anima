@@ -2987,6 +2987,12 @@ fn main() {
         return
     }
 
+    // KV cache enable — matches Python lane KV-cached forward (parity).
+    // Without this, chat_forward_one_token falls to non-KV _impl path which
+    // diverges from Python at the attention/RoPE positional layer.
+    chat = chat_init_kv_cache_default(chat, 1024)
+    println("[debug] kv_cache initialized cap_len=1024 24L")
+
     let empty_kw = []
     let empty_stops = []
     let response = chat_generate(chat, prompt, mode, max_new, temp, empty_kw, 1.0, 1.0, 0.5, seed, empty_stops, true)
