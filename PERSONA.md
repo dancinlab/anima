@@ -44,6 +44,10 @@ anima chat send --prompt "..." --mode greedy --seed 0 --max-new 10
 anima chat repl --max-new 5 --seed 0         # substrate-native 1:1 live session (CHAT.md rev 2)
 anima room --humans "alice,bob" --animas "ana,ben" --fps 60 --speak-threshold 2.0 \
    --max-spontaneous 10                       # substrate-native group live session
+anima chat repl --serve --port 7878           # ALSO expose JSONL socket (multi-client)
+anima room --humans "..." --animas "..." --serve --port 7878
+# external client (Python):
+python3 clients/python/anima_client.py --host localhost --port 7878 --as alice --once "안녕"
 anima tool chat --prompt "..." --result      # universal + JSON ToolResult
 ```
 

@@ -3905,6 +3905,87 @@ fn _live_inference_worker(args) {
     return 0
 }
 
+// _live_socket_accept_loop — Phase 2 (CHAT.md rev 2 socket server).
+// Runs in dedicated thread. net_listen + net_set_nonblock + net_select
+// non-blocking accept loop. Multi-client subscribers:
+//   - new connection: send "hello" JSONL frame + add to clients[]
+//   - client read    : push line to stdin_ch (same channel as REPL stdin
+//                       reader, so frame loop processes both uniformly)
+//   - bcast drain    : read socket_bcast_ch, emit JSONL line to all clients
+//   - disconnect     : net_read returns 0 → close + remove from clients[]
+fn _live_socket_accept_loop(args) {
+    let stdin_ch = args["stdin_ch"]
+    let socket_bcast_ch = args["socket_bcast_ch"]
+    let port = args["port"]
+    let listener = net_listen("0.0.0.0:" + to_string(port))
+    if listener < 0 {
+        eprintln("[anima live] socket listen failed: errno=" + to_string(-listener))
+        return 0
+    }
+    let _ = net_set_nonblock(listener)
+    println("[anima live] socket server :" + to_string(port) + " (nc localhost " + to_string(port) + ")")
+    let mut clients = []
+    while true {
+        // (a) accept + read poll
+        let mut fds = [listener]
+        let mut ci = 0
+        while ci < len(clients) {
+            fds.push(clients[ci])
+            ci = ci + 1
+        }
+        let ready = net_select(fds, 50)
+        let mut ri = 0
+        while ri < len(ready) {
+            let fd = ready[ri]
+            if fd == listener {
+                let conn = net_accept(listener)
+                if conn >= 0 {
+                    let _ = net_set_nonblock(conn)
+                    clients.push(conn)
+                    let _ = net_write(conn, "{\"type\":\"hello\",\"msg\":\"anima live\"}\n")
+                }
+            } else {
+                let data = net_read(fd)
+                if len(data) == 0 {
+                    // client closed
+                    let _ = net_close(fd)
+                    let mut nc = []
+                    let mut k = 0
+                    while k < len(clients) {
+                        if clients[k] != fd { nc.push(clients[k]) }
+                        k = k + 1
+                    }
+                    clients = nc
+                } else {
+                    // forward to frame loop's stdin_ch (line-trimmed)
+                    let line = data.trim()
+                    if len(line) > 0 {
+                        let _ = channel_send(stdin_ch, line)
+                    }
+                }
+            }
+            ri = ri + 1
+        }
+        // (b) drain socket_bcast_ch — emit to all clients as JSONL
+        while true {
+            let msg = channel_recv(socket_bcast_ch, 0)
+            if to_string(msg) == "" { break }
+            let speaker = to_string(msg["speaker"])
+            let text = to_string(msg["text"])
+            // Naive JSON escape — replace \ → \\ and " → \" and \n → \\n
+            let text_e = text.replace("\\", "\\\\").replace("\"", "\\\"").replace("\n", "\\n")
+            let spont_s = if msg["spontaneous"] { "true" } else { "false" }
+            let line = "{\"type\":\"message\",\"speaker\":\"" + speaker + "\",\"text\":\"" + text_e + "\",\"spontaneous\":" + spont_s + "}\n"
+            let mut bi = 0
+            while bi < len(clients) {
+                let _ = net_write(clients[bi], line)
+                bi = bi + 1
+            }
+        }
+    }
+    return 0
+}
+
 fn _live_stdin_reader(args) {
     let stdin_ch = args["stdin_ch"]
     let prompt = to_string(args["prompt"])
@@ -3960,6 +4041,10 @@ fn _run_live_session(ctx) {
     let req_ch = channel_new()
     let bcast_ch = channel_new()
     let stdin_ch = channel_new()
+    // socket_bcast_ch — fanout from main thread's bcast drain to socket accept thread.
+    // Only created if serve mode (otherwise -1 sentinel).
+    let mut socket_bcast_ch = -1
+    if ctx["serve"] { socket_bcast_ch = channel_new() }
 
     // Inference worker thread
     let worker_args = #{
@@ -3968,6 +4053,16 @@ fn _run_live_session(ctx) {
         "chat":     ctx["chat"]
     }
     let _wid = thread_spawn(_live_inference_worker, worker_args)
+
+    // Socket accept_loop thread (if serve mode)
+    if ctx["serve"] {
+        let accept_args = #{
+            "port":            ctx["port"],
+            "stdin_ch":        stdin_ch,
+            "socket_bcast_ch": socket_bcast_ch
+        }
+        let _ = thread_spawn(_live_socket_accept_loop, accept_args)
+    }
 
     // stdin reader thread (if REPL)
     let mut _sid = -1
@@ -4062,7 +4157,7 @@ fn _run_live_session(ctx) {
             }
         }
 
-        // (3) drain inference results (broadcast)
+        // (3) drain inference results — println to stdout AND fanout to socket
         while true {
             let resp = channel_recv(bcast_ch, 0)
             if to_string(resp) == "" { break }
@@ -4073,6 +4168,10 @@ fn _run_live_session(ctx) {
             history = history + "[" + speaker + "]: " + text + "\n"
             anima_in_flight[speaker] = false
             turn = turn + 1
+            // Fanout to socket subscribers if serve mode
+            if ctx["serve"] {
+                let _ = channel_send(socket_bcast_ch, resp)
+            }
         }
 
         // (4) speak-gate — substrate-native spontaneous fire
@@ -4133,6 +4232,8 @@ fn _cmd_chat_repl(argv, idx: int, argc: int) {
     let mut fps = 60
     let mut speak_threshold = 2.0
     let mut max_spont = 5
+    let mut serve = false
+    let mut port = 7878
 
     let mut i = idx
     while i < argc {
@@ -4145,6 +4246,8 @@ fn _cmd_chat_repl(argv, idx: int, argc: int) {
         else if a == "--fps" && (i + 1) < argc { fps = to_int(argv[i + 1]); i = i + 2 }
         else if a == "--speak-threshold" && (i + 1) < argc { speak_threshold = to_float(argv[i + 1]); i = i + 2 }
         else if a == "--max-spontaneous" && (i + 1) < argc { max_spont = to_int(argv[i + 1]); i = i + 2 }
+        else if a == "--serve" { serve = true; i = i + 1 }
+        else if a == "--port" && (i + 1) < argc { port = to_int(argv[i + 1]); i = i + 2 }
         else { i = i + 1 }
     }
 
@@ -4180,8 +4283,8 @@ fn _cmd_chat_repl(argv, idx: int, argc: int) {
         "temp":            temp,
         "default_speaker": "me",
         "repl":            true,
-        "serve":           false,
-        "port":            0
+        "serve":           serve,
+        "port":            port
     }
     println("anima chat repl — substrate-native 1:1 live session (CHAT.md rev 2)")
     println("ckpt: " + ckpt_path)
@@ -4261,6 +4364,8 @@ fn _cmd_room(argv, idx: int, argc: int) {
     let mut fps = 60
     let mut speak_threshold = 2.0
     let mut max_spont = 10
+    let mut serve = false
+    let mut port = 7878
 
     let mut i = idx
     while i < argc {
@@ -4275,6 +4380,8 @@ fn _cmd_room(argv, idx: int, argc: int) {
         else if a == "--fps" && (i + 1) < argc { fps = to_int(argv[i + 1]); i = i + 2 }
         else if a == "--speak-threshold" && (i + 1) < argc { speak_threshold = to_float(argv[i + 1]); i = i + 2 }
         else if a == "--max-spontaneous" && (i + 1) < argc { max_spont = to_int(argv[i + 1]); i = i + 2 }
+        else if a == "--serve" { serve = true; i = i + 1 }
+        else if a == "--port" && (i + 1) < argc { port = to_int(argv[i + 1]); i = i + 2 }
         else { i = i + 1 }
     }
 
@@ -4347,8 +4454,8 @@ fn _cmd_room(argv, idx: int, argc: int) {
         "temp":            temp,
         "default_speaker": humans[0],
         "repl":            true,
-        "serve":           false,
-        "port":            0
+        "serve":           serve,
+        "port":            port
     })
 }
 

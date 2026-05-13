@@ -99,7 +99,16 @@ rev 2 (현 spec) 의 **substrate-native autonomous** 모델:
 
 ---
 
-### **Phase 2** (rev 2) — live daemon (substrate-native autonomous + socket broadcast)
+### **Phase 2** (rev 2) — live daemon (substrate-native autonomous + socket broadcast) ☑ **LANDED 2026-05-13 KST PM**
+
+> `_live_socket_accept_loop` (~75 LoC) — `--serve --port N` flag on both `chat repl` AND
+> `room` subcommands. Uses hexa upstream primitives (`net_set_nonblock` + `net_select`
+> + `thread_spawn` + `channel_*`, hexa-lang commit `401ed87d`). 2 fanout channels:
+> `stdin_ch` (frame loop input) + `socket_bcast_ch` (anima output → all clients).
+> JSONL protocol: client `{"type":"speak", ...}` → daemon `{"type":"message","spontaneous":bool, ...}`.
+> Tested: nc + Python client connect, receives hello frame, send speak, server receives.
+
+
 
 > 🚧 **upstream blocked** — 3 patches 의존:
 > - `~/core/hexa-lang/incoming/patches/net-nonblock-multiplex.md` (filed)
@@ -274,7 +283,15 @@ fn speak_gate(anima, room) -> bool {
 
 ---
 
-### **Phase 3** — external client lib (Phase 2 land 후)
+### **Phase 3 (Phase 4 in rev 2)** — external client lib ☑ **LANDED 2026-05-13 KST PM**
+
+> `clients/python/anima_client.py` (~150 LoC) — minimal Python client w/ stream iterator
+> + `--once` single-shot mode + threaded reader. CLI verified end-to-end against
+> anima daemon. JSONL frame parser handles `hello/message/raw` types. Spontaneous
+> marker (🎙) displayed in CLI output. Stub for Node.js + Rust follow-up; Python
+> first-class because anima_chat.py + training infra Python.
+
+
 
 ```python
 # Python
