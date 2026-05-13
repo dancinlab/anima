@@ -26,10 +26,10 @@
 
 set -euo pipefail
 
-PHASE_ID="v5mitosis_cotrain_v3_routing"
-LOCAL_DIR="/Users/ghost/core/anima/state/anima_v5mitosis_cotrain_v3_routing_2026_05_12"
-SRC_DIR="/Users/ghost/core/anima/state/anima_v5mitosis_cotrain_2026_05_12"
-PHASE_LABEL="anima-v5mit-v3routing"
+PHASE_ID="${PHASE_ID:-v5mitosis_cotrain_v3_routing}"
+LOCAL_DIR="${LOCAL_DIR:-/Users/ghost/core/anima/state/anima_v5mitosis_cotrain_v3_routing_2026_05_12}"
+SRC_DIR="${SRC_DIR:-/Users/ghost/core/anima/state/anima_v5mitosis_cotrain_2026_05_12}"
+PHASE_LABEL="${PHASE_LABEL:-anima-v5mit-v3routing}"
 
 # ── arch (no scale caps — modest d=384/cells=64 for clean v1/v2 comparison;
 #    bump D_MODEL=768 MAX_CELLS=128 STEPS=10000 via env if desired) ──
