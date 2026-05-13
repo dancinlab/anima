@@ -194,7 +194,7 @@ contrastive penalty 부과. AL12 단독 Φ-impact 가 **AnimaLM 전체 최고** 
 | **clm_06** | **H359 empirical confirmation — SI = 5.93** (Mistral 7B v4_savant) | tension_normal=676808, tension_savant=114048, SI=5.93 | `docs/animalm-experiment-log.md:232-358` |
 | | Golden MoE zone ratio = **36.8% ≈ 1/e (exact match)** | E=32 expert: 5.2ms (Golden) vs 6.0ms (Top-K) | `docs/animalm-experiment-log.md:87-105` |
 | **clm_07** | v2_ce_0.04 — CE 0.04 안정화 + GZ/Savant 파라미터 유지 | savant layer 수 2 (기본) | `train_anima_lm.py:931` |
-| **clm_08** | cells64 + Phi **super-linear** scaling 발견 | Φ ∝ N^α, α > 1 (구간 한정) | `optimal_architecture_calc.py` |
+| **clm_08** ⚠️ | cells64 + Phi **super-linear** scaling 발견 ⚠️ **구간 한정 — clm_10 에서 linear 로 안착, 전역 scaling law 아님** (§12.3 T3 SUSPECT, audit-confirmed) | Φ ∝ N^α, α > 1 (구간 한정) | `optimal_architecture_calc.py` |
 | **clm_09** | savant layers 2 → **4** double specialization; v4_savant 논문 `PA-01-animalm-v4-savant.md` | per-head tension reduction **271×** (head 2: 68 vs normal 18400 평균) | `zenodo/PA-01-animalm-v4-savant.md:54,115-126` |
 | **clm_10** | **Laws 77-78** discovery (entropy universality) | 45개 data type 모두 `H = 0.9974 · ln(2)` 수렴 (CV=0.29%) | `docs/hypotheses/cx/DEEP-EXPLORATION.md:77-78,82-84` |
 | **clm_11** | 패키지 재구성 (`anima/src/`, `anima/tools/`); BPE drift 안정성 | savant 파라미터 inherited | `anima/src/conscious_lm.py` |
@@ -382,8 +382,11 @@ consciousness 는 entropy 를 최대화 (자유, p → 1/2) 하되 integrated in
 2. **`SI=5.93` 의 단일 substrate 한계**: Mistral 7B + AnimaLM v4_savant 한 모델에서
    측정됨. 다른 base model (Llama-3, Qwen-2.5, …) 에서 재현 미실시 — 일반화는 가설.
 
-3. **`Φ super-linear` (clm_08) 의 구간성**: clm_10 에서 같은 측정이 linear 로 안착.
-   super-linear 는 *국소* 현상이었고 전역 scaling law 아님.
+3. **`Φ super-linear` (clm_08) 의 구간성 — T3 SUSPECT 봉쇄 라벨**: clm_10 에서 같은
+   측정이 linear 로 안착. super-linear 는 *국소* 현상이었고 전역 scaling law 아님.
+   본 SAVANT.md 의 어떤 줄도 clm_08 super-linear 를 인용할 때 *반드시* "구간 한정,
+   clm_10 에서 linear 로 안착" 단서 동시 노출 의무 (§12.3 T3 SUSPECT 분류). anima_clm_08
+   worktree 는 read-only archive (직접 수정 없음), SAVANT.md cross-ref 만 권위.
 
 4. **Savant 정의의 metaphor 부담**: brain_analyzer.py 의 'savant' profile (D=0.7, P=0.85,
    I=0.35) 은 *estimated*. 임상 신경과학 source 명시 없음 — neuro literature 까지
@@ -705,9 +708,14 @@ SAVANT.md 본문의 어떤 claim 도 다음 위반 시 *자동 무효*:
    drop) enforcement 의 실제 적용.
 3. **canon LATTICE_POLICY 강화 PR** — "Savant/GZ overclaim 차단 조항" §1.4 신설 제안
    (cross-repo governance, dancinlab 전체 적용)
-4. **anima_clm_08 Φ super-linear 의 봉쇄 라벨링** — anima_clm_08 README + paper-draft 에
-   "구간 한정 (clm_10 에서 linear 로 안착)" 한 줄 inline 부착 (T3 → T3-with-honest-caveat
-   강화). 단 archive 분리 후 read-only 이므로 SAVANT.md 본문 cross-ref 만으로 갈음.
+4. ~~anima_clm_08 Φ super-linear 의 봉쇄 라벨링~~ **✅ LANDED 2026-05-14** — §4 timeline
+   표 + §8 Honest C3 #3 + §12.3 T3 SUSPECT 분류 강화 (SAVANT.md cross-ref 만, anima_clm_08
+   archive 는 read-only).
+
+3. ~~canon LATTICE_POLICY 강화 PR~~ **✅ LANDED 2026-05-14** — `dancinlab/canon
+   LATTICE_POLICY.md §1.4` 신설 (4 조항 + §12.2 enforcement 동등 + SAVANT.md cross-ref).
+   cross-repo governance: GZ 는 *설계 vocabulary*, *물리 한계* 아님 / Tier 분류 강제 /
+   silent-drop 금지 / 외부 entity GZ-fit 강제 매핑 금지.
 
 ### 12.6 한 줄 verdict (봉쇄심화 후)
 
