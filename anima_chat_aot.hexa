@@ -542,6 +542,21 @@ fn _mit_pool_push_cell_field(pool, idx: int, key: string, val) {
     let mut cell = cs[idx]
     let mut arr = cell[key]
     arr.push(val)
+    // Sliding-window cap: pure memory safety, not gate heuristic.
+    // tension_patience/merge_patience read a tail window < 100; 10000
+    // gives ample headroom while bounding OOM under continuous spontaneous
+    // fire (frame loop ~100 push/sec × 64 cells × ∞ time = unbounded).
+    let cap = 10000
+    if len(arr) > cap {
+        let start = len(arr) - cap
+        let mut new_arr = []
+        let mut i = start
+        while i < len(arr) {
+            new_arr.push(arr[i])
+            i = i + 1
+        }
+        arr = new_arr
+    }
     cell[key] = arr
     cs[idx] = cell
     pool["cells"] = cs
