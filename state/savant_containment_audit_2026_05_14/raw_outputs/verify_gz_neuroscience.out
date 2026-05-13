@@ -1,0 +1,216 @@
+================================================================================
+Golden Zone Constants vs Real Neuroscience Data
+GZ constants: 1/e=0.3679, 1/2=0.5000, ln(4/3)=0.2877, 0.2123=0.2123, 1/3=0.3333
+================================================================================
+
+#   Category                     Label                                           Value Closest GZ               Err% Grade
+───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+1   E/I Balance                  Fraction inhibitory neurons (cortex, mean)     0.2000 GZ_LOWER (1/2-ln4/3)      5.8% NEAR  (<10%)
+2   E/I Balance                  Fraction inhibitory neurons (cortex, upper r   0.2500 GZ_WIDTH (ln4/3)         13.1% MISS  (>10%)
+3   E/I Balance                  Inhibitory fraction from Dale 4:1 E/I ratio    0.2000 GZ_LOWER (1/2-ln4/3)      5.8% NEAR  (<10%)
+4   Sparse Coding                Fraction active neurons (sparse coding, V1)    0.0500 GZ_LOWER (1/2-ln4/3)     76.5% MISS  (>10%)
+5   Synaptic Pruning             Synaptic survival fraction (frontal cortex,    0.5000 GZ_UPPER (1/2)            0.0% HIT   (<5%)
+6   Synaptic Pruning             Synaptic survival fraction (V1)                0.4000 GZ_CENTER (1/e)           8.7% NEAR  (<10%)
+7   Receptor Pharmacology        GABA-A receptor occupancy at EC50 (definitio   0.5000 GZ_UPPER (1/2)            0.0% HIT   (<5%)
+8   Receptor Pharmacology        Tonic GABA-A conductance fraction (hippocamp   0.1500 GZ_LOWER (1/2-ln4/3)     29.4% MISS  (>10%)
+9   Metabolic                    Brain fraction of resting body energy expend   0.2000 GZ_LOWER (1/2-ln4/3)      5.8% NEAR  (<10%)
+10  Metabolic                    Gray matter fraction of total brain volume     0.4000 GZ_CENTER (1/e)           8.7% NEAR  (<10%)
+11  Cortical Layers              Layer 4 fraction of cortical thickness (prim   0.2000 GZ_LOWER (1/2-ln4/3)      5.8% NEAR  (<10%)
+12  Cortical Layers              Layers 2/3 combined fraction of cortical thi   0.3500 GZ_CENTER (1/e)           4.9% HIT   (<5%)
+13  EEG Oscillations             Alpha band width fraction of 1-40 Hz spectru   0.1030 GZ_LOWER (1/2-ln4/3)     51.5% MISS  (>10%)
+14  EEG Oscillations             Alpha relative power fraction (resting, eyes   0.3500 GZ_CENTER (1/e)           4.9% HIT   (<5%)
+15  Cell Composition             Glial fraction of total brain cells (glia+ne   0.5000 GZ_UPPER (1/2)            0.0% HIT   (<5%)
+16  Synaptic Plasticity          Spine survival fraction (adult cortex, 1 mon   0.5000 GZ_UPPER (1/2)            0.0% HIT   (<5%)
+17  Myelination                  White matter fraction of total brain volume    0.3700 GZ_CENTER (1/e)           0.6% HIT   (<5%)
+18  Synaptic Transmission        Initial vesicle release probability (hippoca   0.3500 GZ_CENTER (1/e)           4.9% HIT   (<5%)
+19  Synaptic Transmission        Initial vesicle release probability (cortica   0.2000 GZ_LOWER (1/2-ln4/3)      5.8% NEAR  (<10%)
+20  Short-Term Synaptic Depression Steady-state amplitude fraction at 10 Hz (Ts   0.2857 GZ_WIDTH (ln4/3)          0.7% HIT   (<5%)
+21  Oscillation Ratios           Theta/Gamma frequency ratio (8 Hz / 40 Hz)     0.2000 GZ_LOWER (1/2-ln4/3)      5.8% NEAR  (<10%)
+22  Oscillation Ratios           Beta band fraction of 0-100 Hz spectrum (ari   0.1700 GZ_LOWER (1/2-ln4/3)     19.9% MISS  (>10%)
+23  Population Coding            Optimal sparse code fraction (theoretical, T   0.0500 GZ_LOWER (1/2-ln4/3)     76.5% MISS  (>10%)
+24  Cerebellar Coding            Complex spike / simple spike rate ratio (Pur   0.0100 GZ_LOWER (1/2-ln4/3)     95.3% MISS  (>10%)
+
+
+================================================================================
+SUMMARY:  HIT=9  NEAR=8  MISS=7  Total=24
+================================================================================
+
+--- HITS (<5% error) ---
+  [Synaptic Pruning] Synaptic survival fraction (frontal cortex, adulthood)
+    Value=0.5000  Closest=GZ_UPPER (1/2) (0.5000)  Err=0.0%
+    Source: Huttenlocher & Dabholkar 1997 J Comp Neurol 387:167
+    Note: ~40-60%; Huttenlocher & Dabholkar 1997
+
+  [Receptor Pharmacology] GABA-A receptor occupancy at EC50 (definition)
+    Value=0.5000  Closest=GZ_UPPER (1/2) (0.5000)  Err=0.0%
+    Source: Standard pharmacology definition
+    Note: Definition of EC50; tautology
+
+  [Cortical Layers] Layers 2/3 combined fraction of cortical thickness
+    Value=0.3500  Closest=GZ_CENTER (1/e) (0.3679)  Err=4.9%
+    Source: Mountcastle 1997 Brain 120:701
+    Note: ~30-40%; variable by area
+
+  [EEG Oscillations] Alpha relative power fraction (resting, eyes-closed, occipital) [estimate]
+    Value=0.3500  Closest=GZ_CENTER (1/e) (0.3679)  Err=4.9%
+    Source: Klimesch 1999 Brain Res Rev 29:169 (approximate)
+    Note: Rough estimate ~25-45%; highly variable; UNCERTAIN
+
+  [Cell Composition] Glial fraction of total brain cells (glia+neurons)
+    Value=0.5000  Closest=GZ_UPPER (1/2) (0.5000)  Err=0.0%
+    Source: Azevedo et al. 2009 J Comp Neurol 513:532
+    Note: ~50% (1:1 ratio); Azevedo et al. 2009 J Comp Neurol
+
+  [Synaptic Plasticity] Spine survival fraction (adult cortex, 1 month)
+    Value=0.5000  Closest=GZ_UPPER (1/2) (0.5000)  Err=0.0%
+    Source: Trachtenberg et al. 2002 Nature 420:788
+    Note: ~50-70% stable; Trachtenberg et al. 2002 Nature
+
+  [Myelination] White matter fraction of total brain volume
+    Value=0.3700  Closest=GZ_CENTER (1/e) (0.3679)  Err=0.6%
+    Source: Zhang & Sejnowski 2000 PNAS 97:5621
+    Note: ~35-40%; varies by age; Zhang & Sejnowski 2000
+
+  [Synaptic Transmission] Initial vesicle release probability (hippocampal CA3→CA1)
+    Value=0.3500  Closest=GZ_CENTER (1/e) (0.3679)  Err=4.9%
+    Source: Dobrunz & Stevens 1997 Neuron 18:995
+    Note: ~0.2-0.5; Dobrunz & Stevens 1997 Neuron
+
+  [Short-Term Synaptic Depression] Steady-state amplitude fraction at 10 Hz (Tsodyks-Markram model, U=0.5, tau=0.5s)
+    Value=0.2857  Closest=GZ_WIDTH (ln4/3) (0.2877)  Err=0.7%
+    Source: Tsodyks & Markram 1997 PNAS 94:719
+    Note: Computed from standard Tsodyks-Markram formula; U=0.5, tau=0.5s, f=10Hz
+
+
+--- NEAR (<10% error) ---
+  [E/I Balance] Fraction inhibitory neurons (cortex, mean)
+    Value=0.2000  Closest=GZ_LOWER (1/2-ln4/3) (0.2123)  Err=5.8%
+    Source: Markram et al. 2004 Nat Rev Neurosci 5:793
+    Note: ±5% across areas; Markram et al. 2004 NRN
+
+  [E/I Balance] Inhibitory fraction from Dale 4:1 E/I ratio
+    Value=0.2000  Closest=GZ_LOWER (1/2-ln4/3) (0.2123)  Err=5.8%
+    Source: Kandel et al. Principles of Neural Science, 6th ed.
+    Note: Derived: I/(E+I) = 1/5; textbook value
+
+  [Synaptic Pruning] Synaptic survival fraction (V1)
+    Value=0.4000  Closest=GZ_CENTER (1/e) (0.3679)  Err=8.7%
+    Source: Bourgeois & Rakic 1993 J Comp Neurol 329:441
+    Note: ~40%; Bourgeois & Rakic 1993
+
+  [Metabolic] Brain fraction of resting body energy expenditure
+    Value=0.2000  Closest=GZ_LOWER (1/2-ln4/3) (0.2123)  Err=5.8%
+    Source: Raichle & Gusnard 2002 PNAS 99:10237
+    Note: ~20%; Raichle & Gusnard 2002 PNAS
+
+  [Metabolic] Gray matter fraction of total brain volume
+    Value=0.4000  Closest=GZ_CENTER (1/e) (0.3679)  Err=8.7%
+    Source: Walhovd et al. 2005 Neuroimage 26:672
+    Note: ~38-42%; Walhovd et al. 2005
+
+  [Cortical Layers] Layer 4 fraction of cortical thickness (primary sensory)
+    Value=0.2000  Closest=GZ_LOWER (1/2-ln4/3) (0.2123)  Err=5.8%
+    Source: Jones 1984 in 'Cerebral Cortex Vol 2'
+    Note: ~15-25%; Jones 1984 textbook
+
+  [Synaptic Transmission] Initial vesicle release probability (cortical L5 connections)
+    Value=0.2000  Closest=GZ_LOWER (1/2-ln4/3) (0.2123)  Err=5.8%
+    Source: Markram et al. 1997 J Physiol 500:409
+    Note: ~0.14-0.30; Markram et al. 1997 J Physiol
+
+  [Oscillation Ratios] Theta/Gamma frequency ratio (8 Hz / 40 Hz)
+    Value=0.2000  Closest=GZ_LOWER (1/2-ln4/3) (0.2123)  Err=5.8%
+    Source: Buzsaki 2006 'Rhythms of the Brain' (textbook)
+    Note: Standard theta=8Hz, gamma=40Hz; ratio = 0.20
+
+
+--- MISSES (>10% error) ---
+  [E/I Balance] Fraction inhibitory neurons (cortex, upper range)
+    Value=0.2500  Closest=GZ_WIDTH (ln4/3) (0.2877)  Err=13.1%
+
+  [Sparse Coding] Fraction active neurons (sparse coding, V1)
+    Value=0.0500  Closest=GZ_LOWER (1/2-ln4/3) (0.2123)  Err=76.5%
+
+  [Receptor Pharmacology] Tonic GABA-A conductance fraction (hippocampus, resting)
+    Value=0.1500  Closest=GZ_LOWER (1/2-ln4/3) (0.2123)  Err=29.4%
+
+  [EEG Oscillations] Alpha band width fraction of 1-40 Hz spectrum (arithmetic)
+    Value=0.1030  Closest=GZ_LOWER (1/2-ln4/3) (0.2123)  Err=51.5%
+
+  [Oscillation Ratios] Beta band fraction of 0-100 Hz spectrum (arithmetic)
+    Value=0.1700  Closest=GZ_LOWER (1/2-ln4/3) (0.2123)  Err=19.9%
+
+  [Population Coding] Optimal sparse code fraction (theoretical, Treves & Rolls)
+    Value=0.0500  Closest=GZ_LOWER (1/2-ln4/3) (0.2123)  Err=76.5%
+
+  [Cerebellar Coding] Complex spike / simple spike rate ratio (Purkinje cells)
+    Value=0.0100  Closest=GZ_LOWER (1/2-ln4/3) (0.2123)  Err=95.3%
+
+================================================================================
+INTERPRETATION: Which matches are meaningful vs coincidental?
+================================================================================
+
+  The GZ constants cover the range [0.21, 0.50] with 5 landmarks.
+  This range contains many common biological fractions (1/5, 1/4, 1/3, 2/5, 1/2).
+  A random fraction in [0, 1] has ~29% probability of falling within [0.21, 0.50].
+  Therefore, 'hits' require additional mechanistic justification to be meaningful.
+
+  MECHANISTICALLY MOTIVATED MATCHES:
+  ─────────────────────────────────
+  1. Inhibitory neuron fraction ~20%: The E/I balance is a genuine constraint
+     in cortical circuits (balance of excitation/inhibition). The value ~0.20
+     matches GZ_LOWER (0.2123) with ~6% error — a NEAR match. However, the
+     specific value 20% arises from energy/metabolic constraints and wiring
+     economy, not from any GZ-related principle.
+
+  2. Brain metabolic fraction ~20%: The brain's 20% share of resting metabolism
+     is a real and well-replicated finding. It matches GZ_LOWER ~0.2123. However,
+     20% is a coincidence of primate brain scaling (Raichle 2002) and does not
+     suggest a GZ mechanism.
+
+  LIKELY COINCIDENTAL MATCHES:
+  ────────────────────────────
+  1. EC50 = 0.50: This is a DEFINITION (by construction = GZ_UPPER). Not meaningful.
+
+  2. Glial fraction ~0.50: The ~1:1 glia:neuron ratio is a biological fact
+     (Azevedo 2009), but matching GZ_UPPER is coincidental — the ratio could
+     plausibly have been 0.6 or 0.4.
+
+  3. White matter ~0.37: Matches GZ_CENTER (1/e) at ~0.5% error — a HIT.
+     But white matter fraction varies with age, species, and area, and is
+     determined by axon caliber distributions and myelination kinetics, not
+     by GZ principles.
+
+  4. Synaptic survival ~0.50: Developmental pruning landing at ~50% is set by
+     activity-dependent competition mechanisms, not by GZ principles.
+
+  GENUINE MISSES (educationally important):
+  ─────────────────────────────────────────
+  1. Sparse coding fraction (~5%): Very far from any GZ constant. Sparse coding
+     operates in a completely different regime from what GZ predicts.
+
+  2. Alpha band fraction of spectrum (0.103): Well below GZ range.
+
+  3. Purkinje complex/simple spike ratio (~0.01): Two orders of magnitude off.
+
+  4. Tonic GABA conductance (~0.15): Below GZ_LOWER, no close match.
+
+  OVERALL VERDICT:
+  ────────────────
+  The GZ constants do appear near several neuroscience values, but:
+  - Most HITs are values that happen to fall in the common range [0.2, 0.5]
+  - No match has a clear mechanistic link to the GZ derivation
+  - The GZ span [0.21, 0.50] covers ~29% of [0, 1], so ~29% of random fractions
+    would land inside it by chance
+  - Several important neuroscience quantities (sparse coding, alpha power,
+    complex spikes) are clearly outside GZ
+  - The strongest specific claim — inhibitory fraction ~20% ≈ GZ_LOWER — is
+    compelling as a numerical coincidence but lacks mechanistic GZ grounding
+
+================================================================================
+Texas Sharpshooter Warning:
+  With 5 GZ constants covering ~29% of [0,1], and ~20 data points,
+  Expected hits by chance: ~6 / 24
+  Actual hits+nears:       17 / 24
+  This is not significantly above chance expectation.
+================================================================================

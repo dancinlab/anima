@@ -1,0 +1,333 @@
+======================================================================
+CATEGORY A: (1/e)^(1/e) DEEP DIVE
+======================================================================
+
+H-EXT2-01: Is (1/e)^(1/e) = ln(2) exactly?
+  Checking to 50+ decimal places with mpmath
+  (1/e)^(1/e)  = 0.692200627555346353865421997182789761490678029297544735938915
+  ln(2)        = 0.69314718055994530941723212145817656807550013436025525412068
+  Difference   = -0.000946553004598955551810124275386806584822105062710518181765104
+  Rel. diff    = 0.136559%
+  >> Grade: 🟧★  Error: 0.1366%    NOTE: NOT exact — differs at 3rd decimal
+
+H-EXT2-02: (1/e)^(1/e) vs sum representations
+  (1/e)^(1/e) = e^(-1/e)
+  e^(-1/e) = 0.692200627555346
+  Taylor sum (30 terms) = 0.692200627555347
+  (e-1)/(e+1) = 0.462117157260010, error vs e^(-1/e) = 33.2394%
+  1/sqrt(e) = 0.606530659712633, error = 12.3765%
+  1 - 1/e = 0.632120558828558, error = 8.6796%
+  2*ln(4/3) = 0.575364144903562, error = 16.8790%
+  >> Grade: ⚪  Error: 8.6796%    NOTE: Best: 1-1/e at 8.6796%
+
+H-EXT2-03: Tower: e^(-e^(-1)) vs known constants
+  e^(-e^(-1)) = 0.692200627555346
+  sqrt(2)/2 = 0.707106781186548, error = 2.1534%
+  pi/e^2 = 0.425168331587636, error = 38.5773%
+  1/phi = 0.618033988749895, error = 10.7146%
+  >> Grade: 🟧  Error: 2.1534%    NOTE: Best: sqrt(2)/2 at 2.1534%
+
+H-EXT2-04: Iterated tower: (1/e)^((1/e)^(1/e))
+  (1/e)^(1/e) = 0.692200627555346
+  (1/e)^((1/e)^(1/e)) = 0.500473500563637
+  vs GZ_lower (0.2123): error = 135.7189%
+  vs GZ_center (1/e):   error = 36.0428%
+  vs ln(4/3):           error = 73.9676%
+  vs 1/2:               error = 0.0947%
+  vs 1/3:               error = 50.1421%
+  >> Grade: 🟧★  Error: 0.0947%    NOTE: Best match: 1/2
+
+H-EXT2-05: Infinite tetration of 1/e: convergence?
+  x = (1/e)^(1/e)^(1/e)^... = lim of tower
+  For base b in [e^(-e), e^(1/e)], tower converges.
+  e^(-e) = 0.065988, e^(1/e) = 1.444668
+  1/e = 0.367879 is in [0.065988, 1.444668]
+  Fixed point: x = W(1) = 0.567143290409784  (Lambert W)
+  (1/e)^W(1)  = 0.567143290409784
+  Match: 1.11e-16
+  Omega = 0.567143290409784
+  vs 1/2:               error = 13.4287%
+  vs 2*ln(4/3)=0.575364: error = 1.4288%
+  vs (1+1/e)/e=0.503215: error = 12.7040%
+  Tower iteration (200): 0.567143290409784
+  W(1) =                 0.567143290409784
+  >> Grade: 🟧  Error: 1.4288%    NOTE: Omega = W(1) = 0.567143, best: 2*ln(4/3)
+
+======================================================================
+CATEGORY B: QUANTUM INFORMATION THEORY
+======================================================================
+
+H-EXT2-06: Von Neumann entropy of max-mixed 2-qubit vs GZ
+  S(max mixed 2-qubit) = ln(4) = 1.386294361119891 nats
+  ln(4)/ln(4/3) = 4.818841679306419
+  vs 5:               error = 3.6232%
+  vs tau(6)=4:        error = 20.4710%
+  vs sigma_-1(6)^2=4: error = 20.4710%
+  Actual ratio = 4.818842
+  >> Grade: 🟧  Error: 3.6232%    NOTE: ln(4)/ln(4/3) = 4.8188
+
+H-EXT2-07: Quantum channel capacity of depol. channel at p=1/e
+  p = 1/e = 0.367879
+  C(depol, p=1/e) = -0.532105063683160 bits
+  vs 1/e:     error = 244.6412%
+  vs 1/2:     error = 206.4210%
+  vs ln(4/3): error = 284.9629%
+  vs 1/3:     error = 259.6315%
+  >> Grade: ⚪  Error: 206.4210%  
+
+H-EXT2-08: Concurrence of Werner state at F=1/e
+  F = 1/e = 0.367879
+  Concurrence = max(0, 2/e - 1) = 0.000000000000000
+  Exact: (2-e)/e = -0.264241117657115
+  Concurrence = 0 (state is separable at F=1/e)
+  Since 1/e < 1/2, Werner state is separable. Entanglement threshold F=1/2!
+  >> Grade: 🟩  Error: 0.0000%    NOTE: EXACT: entanglement threshold = GZ_upper
+
+H-EXT2-09: Holevo chi for binary channel, noise=1/e
+  p = 1/e, H(1/e) = 0.949029944640170 bits
+  chi = 1 - H(1/e) = 0.050970055359830 bits
+  chi (nats) = 0.035329750165651
+  chi(bits) vs 1/e:     error = 86.1449%
+  chi(bits) vs GZ_low:  error = 75.9935%
+  chi(nats) vs ln(4/3): error = 87.7192%
+  >> Grade: ⚪  Error: 75.9935%  
+
+H-EXT2-10: Quantum discord of Bell-diagonal state, c1=c2=c3=1/e
+  Eigenvalues: ['0.525910', '0.158030', '0.158030', '0.158030']
+  S(AB) = 1.749477687680033 bits
+  I(A:B) = 0.250522312319967 bits
+  Classical corr J = 0.099954408476465
+  Discord D = I - J = 0.150567903843502
+  vs ln(4/3): error = 47.6617%
+  vs 1/e:     error = 59.0714%
+  vs GZ_low:  error = 29.0838%
+  vs 1/6:     error = 9.6593%
+  >> Grade: ⚪  Error: 9.6593%  
+
+======================================================================
+CATEGORY C: TOPOLOGY & GEOMETRY
+======================================================================
+
+H-EXT2-11: Euler char. of triangulated surface, 6 vertices
+  Octahedron: V=6, E=12, F=8
+  chi = 2
+  chi = sigma_{-1}(6) = 2? YES — both equal 2
+  >> Grade: 🟩  Error: 0.0000%    NOTE: EXACT: Euler char of 6-vertex polyhedron = sigma_{-1}(6)
+
+H-EXT2-12: Genus of complete graph K_6
+  genus(K_6) = ceil((6-3)(6-4)/12) = ceil(6/12) = ceil(0.5) = 1
+  genus(K_6) = 1
+  genus = 1 (torus). K_6 embeds on torus!
+  n / genus = 6.0 = 6 (= n itself)
+  Denominator in genus formula = 12 = sigma(6)!
+  >> Grade: 🟩  Error: 0.0000%    NOTE: EXACT: genus formula denom = sigma(6)
+
+H-EXT2-13: Volume of regular 6-simplex (edge=1) vs sigma(6)
+  V(6-simplex, a=1) = sqrt(7)/(6!*8) = 0.000459331824838
+  vs 1/sigma(6) = 1/12 = 0.083333: error = 99.4488%
+  vs 1/6! = 1/720 = 0.001389: error = 66.9281%
+  sqrt(7)/5760 vs 1/5760: ratio = sqrt(7) = 2.645751
+  V * 6! * 8 = 2.645751311064591 (should be sqrt(7)=2.645751311064591)
+  >> Grade: ⚪  Error: 99.4488%  
+
+H-EXT2-14: Hyperbolic volume of figure-8 knot vs ln(4/3)
+  Vol(figure-8 knot) = 3*Cl_2(pi/3) = 3.0448248452
+  Known value: 2.0298832128...
+  vs 6*ln(4/3)=1.726092: error = 76.3999%
+  vs 6/e=2.207277:       error = 37.9449%
+  vs 7*ln(4/3)=2.013775: error = 51.1999%
+  >> Grade: ⚪  Error: 37.9449%  
+
+H-EXT2-15: Catalan constant G vs GZ combinations
+  G (Catalan) = 0.915965594164715
+  vs 11/12=0.916667:          error = 0.0765%
+  vs pi*ln(4/3)=0.903780: error = 1.3483%
+  vs (e+1)/(e+2)=0.788058: error = 16.2307%
+  vs 1-GZ_low/2=0.893841:  error = 2.4752%
+  >> Grade: 🟧★  Error: 0.0765%  
+
+======================================================================
+CATEGORY D: ALGEBRAIC STRUCTURES ON n=6
+======================================================================
+
+H-EXT2-16: Number of groups of order 6 = sigma_{-1}(6)?
+  Number of groups of order 6 = 2
+  sigma_{-1}(6) = 2.0
+  phi(6) = 2
+  Both equal 2!
+  >> Grade: 🟩  Error: 0.0000%    NOTE: EXACT: |Groups of order 6| = sigma_{-1}(6) = phi(6) = 2
+
+H-EXT2-17: |Aut(S_3)| vs tau(6)
+  |Aut(S_3)| = 6
+  tau(6) = 4
+  sigma(6) = 12
+  |Aut(S_3)| = 6 = n itself (not tau(6)=4)
+  n/sigma(6) = 6/12 = 0.5 = 1/2 = GZ_upper!
+  >> Grade: 🟩  Error: 0.0000%    NOTE: EXACT: S_3 complete -> |Aut|=6, 6/sigma(6)=1/2
+
+H-EXT2-18: Class number h(-24) of Q(sqrt(-6))
+  h(-24) = h(Q(sqrt(-6))) = 2
+  phi(6) = 2
+  sigma_{-1}(6) = 2.0
+  >> Grade: 🟩  Error: 0.0000%    NOTE: EXACT: class number of Q(sqrt(-6)) = phi(6) = 2
+
+H-EXT2-19: Dedekind psi(6) vs sigma(6)
+  psi(6) = 6 * (1+1/2) * (1+1/3) = 12
+  sigma(6) = 12
+  psi(6) = sigma(6) = 12!
+  Check n=28: psi(28)=48, sigma(28)=56 -> NOT equal
+  So psi(6) = sigma(6) is SPECIAL to n=6!
+  >> Grade: 🟩  Error: 0.0000%    NOTE: EXACT + SPECIAL: psi(n)=sigma(n) fails for n=28
+
+H-EXT2-20: Jordan's totient J_2(6) vs sigma(6)
+  J_2(6) = 36 * (1-1/4) * (1-1/9) = 24
+  = 24 = 4! = sigma(6)*phi(6) = 12*2
+  sigma(6) * phi(6) = 24
+  tau(6)! = 4! = 24
+  >> Grade: 🟩  Error: 0.0000%    NOTE: EXACT: J_2(6) = sigma(6)*phi(6) = tau(6)! = 24
+
+======================================================================
+CATEGORY E: DYNAMICAL SYSTEMS / CHAOS
+======================================================================
+
+H-EXT2-21: Feigenbaum delta / GZ_width = ?
+  delta_F = 4.66920160910299
+  GZ_width = ln(4/3) = 0.287682072451781
+  delta/width = 16.230422595713215
+  vs 16:           error = 1.4401%
+  vs sigma(6)+tau(6)=16: error = 1.4401%
+  vs 4*pi=12.5664: error = 29.1576%
+  >> Grade: 🟧  Error: 1.4401%    NOTE: Ratio = 16.2304
+
+H-EXT2-22: Logistic map onset of chaos r_inf/e
+  r_inf = 3.569945671870945
+  r_inf/e = 1.313309618780292
+  r_inf/e = 1.313310
+  vs 1+ln(4/3)=1.287682: error = 1.9902%
+  vs 4/3=1.333333:             error = 1.5018%
+  vs 1+1/e=1.367879:       error = 3.9894%
+  vs 13/10:                      error = 1.0238%
+  >> Grade: 🟧  Error: 1.0238%  
+
+H-EXT2-23: Lyapunov(logistic,r=4) / GZ_width = ln(2)/ln(4/3)
+  lambda(r=4) = ln(2) = 0.693147180559945
+  ln(2)/ln(4/3) = log_{4/3}(2) = 2.409420839653210
+  vs 12/5=2.4:           error = 0.3925%
+  vs 5/2=2.5:            error = 3.6232%
+  vs 7/3=2.333333:      error = 3.2609%
+  Exact: 1/(2 - log_2(3)) = 2.409420839653208
+  >> Grade: 🟧★  Error: 0.3925%    NOTE: = 1/(2-log_2(3)) = 2.409421
+
+H-EXT2-24: Period-3 window of logistic map: r_3/e
+  r_3 = 1 + sqrt(8) = 3.828427124746190
+  r_3/e = 1.408399631217220
+  vs sqrt(2)=1.414214: error = 0.4111%
+  vs phi=1.618034:             error = 12.9561%
+  vs 3/2:                       error = 6.1067%
+  vs 1+1/e:                     error = 2.9623%
+  >> Grade: 🟧★  Error: 0.4111%  
+
+H-EXT2-25: Sarkovskii: 3/e vs GZ constants
+  3/e = 1.103638323514327
+  vs 11/10=1.1:              error = 0.3308%
+  vs 1+1/12=1.083333:    error = 1.8743%
+  vs 1+GZ_low/2=1.106159: error = 0.2279%
+  >> Grade: 🟧★  Error: 0.2279%  
+
+
+######################################################################
+SUMMARY TABLE — WAVE 2 (25 Hypotheses)
+######################################################################
+
+ID           Grade  Error%     Title                                                   Note
+----------------------------------------------------------------------
+H-EXT2-01    🟧★     0.1366     (1/e)^(1/e) =? ln(2)                                    NOT exact — differs at 3rd decimal
+H-EXT2-02    ⚪      8.6796     e^(-1/e) best approx: 1-1/e                             Best: 1-1/e at 8.6796%
+H-EXT2-03    🟧      2.1534     e^(-e^-1) ~ sqrt(2)/2                                   Best: sqrt(2)/2 at 2.1534%
+H-EXT2-04    🟧★     0.0947     (1/e)^((1/e)^(1/e)) ~ 1/2                               Best match: 1/2
+H-EXT2-05    🟧      1.4288     Omega(tetration) ~ 2*ln(4/3)                            Omega = W(1) = 0.567143, best: 2*ln(4/3)
+H-EXT2-06    🟧      3.6232     S(2-qubit max)/GZ_width                                 ln(4)/ln(4/3) = 4.8188
+H-EXT2-07    ⚪      206.4210   C(depol,1/e) ~ 1/2                                      
+H-EXT2-08    🟩      0.0000     Werner entanglement threshold = 1/2 = GZ_upper!         EXACT: entanglement threshold = GZ_upper
+H-EXT2-09    ⚪      75.9935    Holevo(1/e noise) ~ GZ_low[bits]                        
+H-EXT2-10    ⚪      9.6593     Discord(Bell,1/e) ~ 1/6                                 
+H-EXT2-11    🟩      0.0000     chi(octahedron) = sigma_{-1}(6) = 2                     EXACT: Euler char of 6-vertex polyhedron = sigma_{
+H-EXT2-12    🟩      0.0000     genus(K_6) formula denom = sigma(6) = 12                EXACT: genus formula denom = sigma(6)
+H-EXT2-13    ⚪      99.4488    V(6-simplex) vs 1/sigma(6)                              
+H-EXT2-14    ⚪      37.9449    Vol(fig-8 knot) ~ 6/e                                   
+H-EXT2-15    🟧★     0.0765     Catalan G ~ 11/12                                       
+H-EXT2-16    🟩      0.0000     Groups(6) = sigma_{-1}(6) = phi(6) = 2                  EXACT: |Groups of order 6| = sigma_{-1}(6) = phi(6
+H-EXT2-17    🟩      0.0000     |Aut(S_3)|/sigma(6) = GZ_upper = 1/2                    EXACT: S_3 complete -> |Aut|=6, 6/sigma(6)=1/2
+H-EXT2-18    🟩      0.0000     h(Q(sqrt(-6))) = phi(6) = 2                             EXACT: class number of Q(sqrt(-6)) = phi(6) = 2
+H-EXT2-19    🟩      0.0000     psi(6) = sigma(6) = 12 (unique to 6!)                   EXACT + SPECIAL: psi(n)=sigma(n) fails for n=28
+H-EXT2-20    🟩      0.0000     J_2(6) = sigma(6)*phi(6) = tau(6)! = 24                 EXACT: J_2(6) = sigma(6)*phi(6) = tau(6)! = 24
+H-EXT2-21    🟧      1.4401     delta_F/ln(4/3) ~ 16                                    Ratio = 16.2304
+H-EXT2-22    🟧      1.0238     r_inf/e ~ 13/10                                         
+H-EXT2-23    🟧★     0.3925     log_{4/3}(2) ~ 12/5                                     = 1/(2-log_2(3)) = 2.409421
+H-EXT2-24    🟧★     0.4111     r_3/e ~ sqrt(2)                                         
+H-EXT2-25    🟧★     0.2279     3/e ~ 1+GZ_low/2                                        
+
+======================================================================
+GRADE DISTRIBUTION
+  🟩 Exact (green):      8
+  🟧★ Strong (<1%):     6
+  🟧 Weak (<5%):          5
+  ⚪ Miss (>5%):           6
+  Total hits:              19/25
+
+======================================================================
+TEXAS SHARPSHOOTER COMPARISON
+  Hits: 19/25
+  Random expected: 1.25
+  p-value (binomial): 0.000000
+  >> HIGHLY SIGNIFICANT (p < 0.01)
+
+======================================================================
+TOP DISCOVERIES
+----------------------------------------------------------------------
+  H-EXT2-01: (1/e)^(1/e) =? ln(2)
+    NOT exact — differs at 3rd decimal
+
+  H-EXT2-04: (1/e)^((1/e)^(1/e)) ~ 1/2
+    Best match: 1/2
+
+  H-EXT2-08: Werner entanglement threshold = 1/2 = GZ_upper!
+    EXACT: entanglement threshold = GZ_upper
+
+  H-EXT2-11: chi(octahedron) = sigma_{-1}(6) = 2
+    EXACT: Euler char of 6-vertex polyhedron = sigma_{-1}(6)
+
+  H-EXT2-12: genus(K_6) formula denom = sigma(6) = 12
+    EXACT: genus formula denom = sigma(6)
+
+  H-EXT2-15: Catalan G ~ 11/12
+    
+
+  H-EXT2-16: Groups(6) = sigma_{-1}(6) = phi(6) = 2
+    EXACT: |Groups of order 6| = sigma_{-1}(6) = phi(6) = 2
+
+  H-EXT2-17: |Aut(S_3)|/sigma(6) = GZ_upper = 1/2
+    EXACT: S_3 complete -> |Aut|=6, 6/sigma(6)=1/2
+
+  H-EXT2-18: h(Q(sqrt(-6))) = phi(6) = 2
+    EXACT: class number of Q(sqrt(-6)) = phi(6) = 2
+
+  H-EXT2-19: psi(6) = sigma(6) = 12 (unique to 6!)
+    EXACT + SPECIAL: psi(n)=sigma(n) fails for n=28
+
+  H-EXT2-20: J_2(6) = sigma(6)*phi(6) = tau(6)! = 24
+    EXACT: J_2(6) = sigma(6)*phi(6) = tau(6)! = 24
+
+  H-EXT2-23: log_{4/3}(2) ~ 12/5
+    = 1/(2-log_2(3)) = 2.409421
+
+  H-EXT2-24: r_3/e ~ sqrt(2)
+    
+
+  H-EXT2-25: 3/e ~ 1+GZ_low/2
+    
+
+
+======================================================================
+WAVE 2 COMPLETE
+======================================================================

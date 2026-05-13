@@ -1,0 +1,453 @@
+======================================================================
+CATEGORY A: NUMBER-THEORETIC FUNCTION COINCIDENCES AT n=6
+======================================================================
+
+H-EXT3-01: Liouville lambda sum over divisors of 6
+  Divisors of 6: [1, 2, 3, 6]
+  lambda values: [1, -1, -1, 1]
+  Sum lambda(d|6) = 0
+  Known: sum_{d|n} lambda(d) = 1 if n=square, 0 otherwise
+  Since 6 is not a perfect square, sum = 0 (by theorem)
+  >> Grade: 🟩  Error: 0.0000%    NOTE: EXACT but trivial (holds for all non-squares)
+
+H-EXT3-02: Mobius sum: sum mu(d)/d over d|6 = phi(6)/6 = 1/3?
+  mu values for d|6: mu(1)=1, mu(2)=-1, mu(3)=-1, mu(6)=1
+  sum mu(d)/d = 1 - 1/2 - 1/3 + 1/6 = 1/3 = 0.333333333333333
+  phi(6)/6 = 1/3 = 0.333333333333333
+  1/3 = meta fixed point = 0.333333333333333
+  Identity: sum_{d|n} mu(d)/d = phi(n)/n (Euler product formula)
+  For n=6: phi(6)/6 = 2/6 = 1/3 = META FIXED POINT!
+  Check n=28: phi(28)/28 = 3/7 = 0.428571 (not GZ)
+  >> Grade: 🟩  Error: 0.0000%    NOTE: EXACT: general identity but VALUE 1/3 is special to n=6
+
+H-EXT3-03: Ramanujan sum c_6(n) — any GZ constants?
+  c_6(n) for n=1..12:
+    c_6( 1) =    1
+    c_6( 2) =   -1
+    c_6( 3) =   -2
+    c_6( 4) =   -1
+    c_6( 5) =    1
+    c_6( 6) =    2
+    c_6( 7) =    1
+    c_6( 8) =   -1
+    c_6( 9) =   -2
+    c_6(10) =   -1
+    c_6(11) =    1
+    c_6(12) =    2
+
+  Checking c_6(n)/6 and c_6(n)/12 for GZ matches:
+  c_6(6) = 2 = phi(6)!
+  Best GZ match: c_6(1)/6 = 0.1667 ~ 1/6=0.1667 (err=0.0000%)
+  c_6(1)/sigma_{-1}(6) = 1/2.0 = 0.5
+  = 0.5000 vs GZ_upper=0.5: err=0.0000%
+  >> Grade: 🟩  Error: 0.0000%    NOTE: EXACT: c_6(6)=phi(6), c_6(1)/sigma_{-1}=1/2
+
+H-EXT3-04: Largest prime gap below 6! = 720
+  Number of primes up to 720: 128
+  Largest gap: 18 (between 523 and 541)
+  gap/720 = 0.025000
+  gap/6! = 18/720 = 1/40
+  In GZ [0.2123, 0.5000]? False
+  gap vs 720/3=240: err=92.5000%
+  gap vs 720/6=120: err=85.0000%
+  gap vs sigma(6)=12: err=50.0000%
+  gap/720 = 1/40 = 0.025000
+  >> Grade: ⚪  Error: 88.2252%    NOTE: gap=18 between 523 and 541
+
+H-EXT3-05: Number of primitive roots mod 7 = phi(6) = 2?
+  Primitive roots mod 7: [3, 5]
+  Count = 2
+  phi(phi(7)) = phi(6) = 2
+  Match: True
+  Roots are [3, 5]. Prime factors of 6 are [2, 3].
+  Root 3 is a prime factor of 6!
+  >> Grade: 🟩  Error: 0.0000%    NOTE: EXACT: general theorem phi(p-1), but value = phi(6)
+
+======================================================================
+CATEGORY B: SELF-REFERENTIAL TOWER ANALYSIS
+======================================================================
+
+H-EXT3-06: Self-referential tower T_n convergence
+  T_n = (1/e)^((1/e)^(...)) with n copies of 1/e
+  Computing right-to-left (standard tetration):
+    n                T_n  vs GZ_upper  vs GZ_lower vs GZ_center
+  ------------------------------------------------------------
+    1  0.367879441171442    26.424112%    73.268195%     0.000000% <-- GZ_center!
+    2  0.692200627555346    38.440126%   226.020810%    88.159639%
+    3  0.500473500563637     0.094700%   135.718908%    36.042802% <-- GZ_upper!
+    4  0.606243535085597    21.248707%   185.535726%    64.794079%
+    5  0.545395785975027     9.079157%   156.876936%    48.253945%
+    6  0.579612335503379    15.922467%   172.992649%    57.554968%
+    7  0.560115461361089    12.023092%   163.809782%    52.255168%
+    8  0.571143115080177    14.228623%   169.003716%    55.252795%
+    9  0.564879347391050    12.975869%   166.053533%    53.550127%
+   10  0.568428725029061    13.685745%   167.725261%    54.514947%
+
+  T_3 = 0.500473500563637
+  GZ_upper = 0.5
+  Error: 0.094700%
+  >> Grade: 🟧★  Error: 0.0947%    NOTE: T_3=0.500474 ~ GZ_upper, oscillates then converges
+
+H-EXT3-07: T_3 = (1/e)^((1/e)^(1/e)) vs 1/2 (high precision)
+  T_3 = 0.500473500563636840545134901337904572803453215342283006497909
+  1/2 = 0.5
+  T_3 - 1/2 = 0.000473500563636840545134901337904572803453215342283006497909363
+  Relative error: 0.0947001127%
+  VERDICT: T_3 ~ 1/2 = GZ_upper (err=0.094700%)
+  >> Grade: 🟧★  Error: 0.0947%    NOTE: NOT exact but very close (0.094700%)
+
+H-EXT3-08: Does T_n oscillate between GZ_lower and GZ_upper?
+  Above GZ_upper: n = [2, 3, 4, 5, 6, 7, 8, 9, 10]
+  Below GZ_lower: n = []
+  Inside GZ: n = [1]
+
+  Oscillation pattern (T_n vs fixed point):
+    T_1 = 0.3678794412  BELOW fp=0.5684287250
+    T_2 = 0.6922006276  ABOVE fp=0.5684287250
+    T_3 = 0.5004735006  BELOW fp=0.5684287250
+    T_4 = 0.6062435351  ABOVE fp=0.5684287250
+    T_5 = 0.5453957860  BELOW fp=0.5684287250
+    T_6 = 0.5796123355  ABOVE fp=0.5684287250
+    T_7 = 0.5601154614  BELOW fp=0.5684287250
+    T_8 = 0.5711431151  ABOVE fp=0.5684287250
+    T_9 = 0.5648793474  BELOW fp=0.5684287250
+    T_10 = 0.5684287250  AT fp=0.5684287250
+
+  Convergence value T_inf ~ 0.568428725029061
+  T_inf in GZ? False
+  Closest GZ constant: GZ_upper (err=13.6857%)
+  >> Grade: ⚪  Error: 13.6857%    NOTE: T_inf=0.568429, in_GZ=False
+
+H-EXT3-09: Fixed point of x = (1/e)^x
+  x = (1/e)^x => x*e^x = 1 => x = W(1)
+  Omega = W(1) = 0.567143290409784
+  In GZ [0.2123, 0.5000]? False
+  Tower fixed point equation: x = (1/e)^x
+  Verification: (1/e)^Omega = e^(-0.567143) = 0.567143290409784
+  Omega = 0.567143290409784
+  Match: True
+  vs GZ_upper=0.5: err=13.4287%
+  vs GZ_center=1/e: err=54.1655%
+  vs 0.5+GZ_low/3=0.570773: err=0.6359%
+  vs 4/7=0.571429: err=0.7499%
+  >> Grade: 🟧★  Error: 0.6359%    NOTE: Omega=0.567143, above GZ but ~ 4/7 or 0.5+GZ_low/3
+
+H-EXT3-10: Lambert W(1) = Omega ~ 0.5671 connections
+  Omega = 0.567143290409784
+  1 - Omega = 0.432856709590216
+  1/Omega = 1.763222834351897
+  Omega^2 = 0.321651511856836
+  1/Omega vs e-1=1.718282: err=2.6155%
+  Omega^2 vs 1/3: err=3.5045%
+  1-Omega vs GZ_center+GZ_lower/2: err=8.6874%
+  Omega + 1/e = 0.935023
+  >> Grade: 🟧  Error: 2.0025%    NOTE: Best: Omega+1/e~11/12 (err=2.0025%)
+
+======================================================================
+CATEGORY C: L-FUNCTIONS AND ANALYTIC NUMBER THEORY
+======================================================================
+
+H-EXT3-11: Dirichlet L(1, chi_3) vs GZ constants
+  L(1, chi_3) = pi/(3*sqrt(3)) = 0.604599788078073
+  Compare with GZ constants:
+  vs GZ_upper=0.5:    err=20.9200%
+  vs GZ_center=1/e:   err=64.3473%
+  vs 1/3=meta:        err=81.3799%
+  vs GZ_width=ln4/3:  err=110.1625%
+  vs 1/e + ln(4/3) = 0.655562: err=7.7738%
+  6*L(1,chi_3)/pi = 2/sqrt(3) = 1.154701
+  vs 7/6: err=1.0257%
+  >> Grade: 🟧  Error: 1.0257%    NOTE: Closest match err=1.0257%
+
+H-EXT3-12: zeta(2)/sigma(6) = pi^2/72
+  zeta(2) = pi^2/6 = 1.644934066848226
+  zeta(2)/sigma(6) = pi^2/72 = 0.137077838904019
+  pi^2/72 = 0.137078
+  vs 1/e^2 = 0.135335: err=1.2876%
+  vs 1/6 = 0.166667: err=17.7533%
+  vs GZ_width/2 = 0.143841: err=4.7019%
+  >> Grade: 🟧  Error: 1.2876%    NOTE: zeta(2)/sigma(6) ~ 1/e^2 (1.2876%)
+
+H-EXT3-13: Sum 1/(p^2-1) over primes vs GZ constants
+  Sum 1/(p^2-1) for p prime up to 100000:
+  = 0.551692495407989
+  vs GZ_upper=0.5:    err=10.3385%
+  vs GZ_center=1/e:   err=49.9656%
+  vs 1/3=meta:        err=65.5077%
+  vs GZ_width=ln4/3:  err=91.7716%
+  vs GZ_lower:        err=159.8426%
+  vs 1/4:             err=120.6770%
+  >> Grade: ⚪  Error: 10.3385%    NOTE: Value=0.551692
+
+H-EXT3-14: Prime counting pi(6)=3, pi(12)=5, pi(28)=9. Ratios?
+  pi(6)  = 3
+  pi(12) = 5  (12 = sigma(6))
+  pi(28) = 9  (28 = next perfect number)
+  pi(6)/6 = 0.500000
+  pi(12)/12 = 0.416667
+  pi(28)/28 = 0.321429
+  pi(6)/pi(12) = 0.600000
+  pi(6)/pi(28) = 0.333333
+  pi(6)/6 = 3/6 = 1/2 = GZ_upper! err=0.0000%
+  pi(6)/pi(sigma(6)) = 3/5 = 0.600000
+  3/5 vs 1-1/e=0.632121: err=5.0814%
+  >> Grade: 🟩  Error: 0.0000%    NOTE: EXACT: half of numbers up to 6 are prime
+
+H-EXT3-15: Twin prime constant C_2 ~ 0.6602 vs GZ?
+  C_2 = 0.660161815846870
+  vs 2/3:              err=0.9757%
+  vs ln(2)=0.693147: err=4.7588%
+  vs 1/e+ln(4/3)=0.655562: err=0.7017%
+  vs 1/phi:            err=6.8164%
+  >> Grade: 🟧★  Error: 0.7017%    NOTE: Twin prime constant C_2=0.660162
+
+======================================================================
+CATEGORY D: CODING THEORY & ERROR CORRECTION
+======================================================================
+
+H-EXT3-16: Hamming bound for binary codes of length 6
+  Binary codes of length n=6:
+    d   t    Vol    A_max  k_max      R=k/n
+  ----------------------------------------
+    1   0      1       64      6   1.000000
+    2   0      1       64      6   1.000000
+    3   1      7        9      3   0.500000
+    4   1      7        9      3   0.500000
+    5   2     22        2      1   0.166667
+    6   2     22        2      1   0.166667
+
+  For d=3 (SEC): rate R = 3/6 = 0.500000
+  R = 1/2 = GZ_upper!
+  >> Grade: 🟩  Error: 0.0000%    NOTE: EXACT: SEC code at n=6 has rate = GZ_upper
+
+H-EXT3-17: Singleton bound for codes of length 6
+  Singleton bound: k <= n - d + 1
+  For n=6:
+    d  k_max          R             GZ match
+    1      6   1.000000 (1)                     -
+    2      5   0.833333 (5/6)               compass
+    3      4   0.666667 (2/3)                     -
+    4      3   0.500000 (1/2)              GZ_upper
+    5      2   0.333333 (1/3)      ~GZ_center, meta
+    6      1   0.166667 (1/6)                   1/6
+
+  REMARKABLE: Singleton at n=6 produces ALL model constants!
+    d=2: R = 5/6 = compass
+    d=4: R = 1/2 = GZ_upper
+    d=5: R = 1/3 = meta
+    d=6: R = 1/6 = curiosity
+    And 1/2 + 1/3 + 1/6 = 1!
+  >> Grade: 🟩  Error: 0.0000%    NOTE: EXACT: ALL model constants from coding theory at n=6!
+
+H-EXT3-18: Shannon capacity of BSC at p = 1/e = GZ_center
+  BSC crossover p = 1/e = 0.367879
+  H(1/e) = 0.949029944640170
+  C = 1 - H(1/e) = 0.050970055359830
+  vs 1/3 = meta:       err=84.7090%
+  vs GZ_lower:         err=75.9935%
+  vs 1/6:              err=69.4180%
+  vs GZ_width/2:       err=64.5650%
+  >> Grade: ⚪  Error: 64.5650%    NOTE: C(BSC, 1/e) = 0.050970
+
+H-EXT3-19: Gilbert-Varshamov bound at rate R=1/3 (meta)
+  At rate R = 1/3 = meta:
+  H_2(delta) = 2/3
+  delta_GV = 0.173952331409395
+  vs GZ_lower=0.212318: err=18.0699%
+  vs GZ_center=1/e:    err=52.7149%
+  vs 1/6:              err=4.3714%
+  vs 1/4:              err=30.4191%
+  1 - delta = 0.826048
+  (1-delta) vs compass=5/6: err=0.8743%
+  >> Grade: 🟧★  Error: 0.8743%    NOTE: delta_GV=0.173952
+
+H-EXT3-20: Perfect codes: distance to n=6
+  Nearest perfect code: Hamming [7,4,3]
+  Rate = 4/7 = 4/7 = 0.571429
+  4/7 vs Omega = W(1) = 0.567143: err=0.7556%
+
+  Distance from n=6 to nearest perfect codes:
+    |7 - 6|  = 1
+    |3 - 6|  = 3
+    |23 - 6| = 17 = Fermat prime = amplification(theta=pi)!
+
+  Punctured Hamming [6,4,2] rate = 4/6 = 2/3 = 0.666667
+  = 1 - meta = 1 - 1/3
+  >> Grade: 🟩  Error: 0.0000%    NOTE: EXACT: |23-6|=17=Fermat, R_punct=2/3
+
+======================================================================
+CATEGORY E: THERMODYNAMICS & STATISTICAL MECHANICS
+======================================================================
+
+H-EXT3-21: 4-state Boltzmann system at T ~ GZ_center
+  4-state system, energies [0,1,2,3], T = 1/e, beta = e
+  Z = 1.070629796400801
+  Probabilities: ['0.934030', '0.061635', '0.004067', '0.000268']
+  Entropy S = 0.260087775807464
+  ln(4/3) = 0.287682072451781
+  GZ_width = ln(4/3)
+  S vs ln(4/3): err=9.5919%
+  S vs GZ_lower: err=22.4992%
+  S vs meta=1/3: err=21.9737%
+  >> Grade: ⚪  Error: 9.5919%    NOTE: S=0.260088
+
+H-EXT3-22: Quantum harmonic oscillator Z at beta=1/e
+  Z(beta=1/e) = 1/(2*sinh(1/(2e))) = 2.703013808420745
+  <E> = (1/2) * coth(1/(2e)) = 2.748869521915004
+  F = -e * ln(Z) = -2.702970768544777
+  Z vs sigma_{-1}(6)=2: err=35.1507%
+  Z vs e:              err=0.5617%
+  <E> vs e:            err=1.1253%
+  F vs GZ_upper=0.5:   err=640.5942%
+  >> Grade: 🟧★  Error: 0.5617%    NOTE: Z=2.7030, <E>=2.7489, F=-2.7030
+
+H-EXT3-23: Carnot efficiency at T_cold/T_hot = 1/e
+  eta_Carnot = 1 - T_cold/T_hot = 1 - 1/e = 0.632120558828558
+  = 1 - 1/e = P(NP gap) = GZ complement
+  GZ_width + GZ_lower = ln(4/3) + (1/2 - ln(4/3)) = 1/2
+  So that's just 1/2, not 1-1/e = 0.632121
+  1-1/e vs ln(2)=0.693147: err=8.8043%
+  1-1/e vs 1/phi=0.618034: err=2.2793%
+  >> Grade: 🟩  Error: 0.0000%    NOTE: EXACT by definition, = P!=NP gap ratio
+
+H-EXT3-24: BEC condensate fraction at T/T_c = 1/e
+  T/T_c = 1/e = 0.367879
+  n_0/N = 1 - (1/e)^(3/2) = 1 - e^(-3/2)
+        = 0.776869839851570
+  e^(-3/2) = 0.223130160148430
+  n_0/N = 1 - 0.223130 = 0.776870
+  vs compass = 5/6 = 0.833333: err=6.7756%
+  vs GZ_upper + meta = 0.833333: err=6.7756%
+  vs e-2=0.718282: err=8.1567%
+  vs phi/2=0.809017: err=3.9736%
+  >> Grade: 🟧  Error: 3.9736%    NOTE: n_0/N = 1-e^(-3/2) = 0.776870
+
+H-EXT3-25: Debye specific heat at T = Theta_D / e
+  T = Theta_D/e, so Theta_D/T = e
+  Debye integral from 0 to e = 4.751682796073530
+  C_V/(3Nk_B) = 12*(1/e)^3 * I = 2.838868274766190
+  Dulong-Petit fraction = 2.838868
+  vs GZ_upper=0.5:    err=467.7737%
+  vs GZ_center=1/e:   err=671.6844%
+  vs meta=1/3:        err=751.6605%
+  vs compass=5/6:     err=240.6642%
+  vs ln(2):           err=309.5621%
+  >> Grade: ⚪  Error: 240.6642%    NOTE: C_V/3Nk=2.838868
+
+
+######################################################################
+SUMMARY TABLE — WAVE 3 (25 Hypotheses)
+######################################################################
+
+ID           Grade  Error%     Title                                                   Note
+----------------------------------------------------------------------
+H-EXT3-01    🟩      0.0000     Sum lambda(d|6) = 0 (not square)                        EXACT but trivial (holds for all non-squares)
+H-EXT3-02    🟩      0.0000     sum mu(d)/d for d|6 = phi(6)/6 = 1/3 = META             EXACT: general identity but VALUE 1/3 is special t
+H-EXT3-03    🟩      0.0000     c_6(1)/sigma_{-1}(6) = 1/2 = GZ_upper                   EXACT: c_6(6)=phi(6), c_6(1)/sigma_{-1}=1/2
+H-EXT3-04    ⚪      88.2252    max_prime_gap(<720)/720 = 0.0250                        gap=18 between 523 and 541
+H-EXT3-05    🟩      0.0000     # prim. roots mod 7 = phi(6) = 2                        EXACT: general theorem phi(p-1), but value = phi(6
+H-EXT3-06    🟧★     0.0947     Tower T_1..T_10 convergence analysis                    T_3=0.500474 ~ GZ_upper, oscillates then converges
+H-EXT3-07    🟧★     0.0947     T_3 = (1/e)^((1/e)^(1/e)) ~ 1/2                         NOT exact but very close (0.094700%)
+H-EXT3-08    ⚪      13.6857    Tower converges inside GZ, closest=GZ_upper             T_inf=0.568429, in_GZ=False
+H-EXT3-09    🟧★     0.6359     Tower fixed point = W(1) = Omega = 0.5671               Omega=0.567143, above GZ but ~ 4/7 or 0.5+GZ_low/3
+H-EXT3-10    🟧      2.0025     Omega connections: Omega+1/e~11/12                      Best: Omega+1/e~11/12 (err=2.0025%)
+H-EXT3-11    🟧      1.0257     L(1,chi_3) = pi/(3*sqrt(3)) = 0.6046                    Closest match err=1.0257%
+H-EXT3-12    🟧      1.2876     pi^2/72 ~ 1/e^2                                         zeta(2)/sigma(6) ~ 1/e^2 (1.2876%)
+H-EXT3-13    ⚪      10.3385    Sum 1/(p^2-1) ~ GZ_upper                                Value=0.551692
+H-EXT3-14    🟩      0.0000     pi(6)/6 = 1/2 = GZ_upper                                EXACT: half of numbers up to 6 are prime
+H-EXT3-15    🟧★     0.7017     C_2 ~ 1/e+ln(4/3)                                       Twin prime constant C_2=0.660162
+H-EXT3-16    🟩      0.0000     Hamming bound [6,3,3]: R = 1/2 = GZ_upper               EXACT: SEC code at n=6 has rate = GZ_upper
+H-EXT3-17    🟩      0.0000     Singleton at n=6: R = 5/6, 1/2, 1/3, 1/6                EXACT: ALL model constants from coding theory at n
+H-EXT3-18    ⚪      64.5650    BSC capacity at p=1/e: C ~ GZ_width/2                   C(BSC, 1/e) = 0.050970
+H-EXT3-19    🟧★     0.8743     GV bound at R=1/3: delta ~ 1-d~compass                  delta_GV=0.173952
+H-EXT3-20    🟩      0.0000     Punctured Hamming [6,4,2]: R = 2/3 = 1-meta             EXACT: |23-6|=17=Fermat, R_punct=2/3
+H-EXT3-21    ⚪      9.5919     4-state S(T=1/e) ~ ln(4/3)                              S=0.260088
+H-EXT3-22    🟧★     0.5617     QHO at beta=1/e: Z~e                                    Z=2.7030, <E>=2.7489, F=-2.7030
+H-EXT3-23    🟩      0.0000     Carnot at Tc/Th=1/e: eta = 1-1/e = GZ complement        EXACT by definition, = P!=NP gap ratio
+H-EXT3-24    🟧      3.9736     BEC fraction at T/Tc=1/e ~ phi/2                        n_0/N = 1-e^(-3/2) = 0.776870
+H-EXT3-25    ⚪      240.6642   Debye C_V(T=Theta_D/e) ~ compass                        C_V/3Nk=2.838868
+
+======================================================================
+GRADE DISTRIBUTION
+  🟩 Exact (green):      9
+  🟧★ Strong (<1%):     6
+  🟧 Weak (<5%):          4
+  ⚪ Miss (>5%):           6
+  Total hits:              19/25
+
+======================================================================
+TEXAS SHARPSHOOTER COMPARISON
+  Hits: 19/25
+  Random expected: 1.25
+  p-value (binomial): 0.000000
+  >> HIGHLY SIGNIFICANT (p < 0.01)
+
+======================================================================
+TOP DISCOVERIES
+----------------------------------------------------------------------
+  H-EXT3-01: Sum lambda(d|6) = 0 (not square)
+    EXACT but trivial (holds for all non-squares)
+
+  H-EXT3-02: sum mu(d)/d for d|6 = phi(6)/6 = 1/3 = META
+    EXACT: general identity but VALUE 1/3 is special to n=6
+
+  H-EXT3-03: c_6(1)/sigma_{-1}(6) = 1/2 = GZ_upper
+    EXACT: c_6(6)=phi(6), c_6(1)/sigma_{-1}=1/2
+
+  H-EXT3-05: # prim. roots mod 7 = phi(6) = 2
+    EXACT: general theorem phi(p-1), but value = phi(6)
+
+  H-EXT3-06: Tower T_1..T_10 convergence analysis
+    T_3=0.500474 ~ GZ_upper, oscillates then converges
+
+  H-EXT3-07: T_3 = (1/e)^((1/e)^(1/e)) ~ 1/2
+    NOT exact but very close (0.094700%)
+
+  H-EXT3-09: Tower fixed point = W(1) = Omega = 0.5671
+    Omega=0.567143, above GZ but ~ 4/7 or 0.5+GZ_low/3
+
+  H-EXT3-14: pi(6)/6 = 1/2 = GZ_upper
+    EXACT: half of numbers up to 6 are prime
+
+  H-EXT3-15: C_2 ~ 1/e+ln(4/3)
+    Twin prime constant C_2=0.660162
+
+  H-EXT3-16: Hamming bound [6,3,3]: R = 1/2 = GZ_upper
+    EXACT: SEC code at n=6 has rate = GZ_upper
+
+  H-EXT3-17: Singleton at n=6: R = 5/6, 1/2, 1/3, 1/6
+    EXACT: ALL model constants from coding theory at n=6!
+
+  H-EXT3-19: GV bound at R=1/3: delta ~ 1-d~compass
+    delta_GV=0.173952
+
+  H-EXT3-20: Punctured Hamming [6,4,2]: R = 2/3 = 1-meta
+    EXACT: |23-6|=17=Fermat, R_punct=2/3
+
+  H-EXT3-22: QHO at beta=1/e: Z~e
+    Z=2.7030, <E>=2.7489, F=-2.7030
+
+  H-EXT3-23: Carnot at Tc/Th=1/e: eta = 1-1/e = GZ complement
+    EXACT by definition, = P!=NP gap ratio
+
+
+======================================================================
+TOWER CONVERGENCE BEHAVIOR
+----------------------------------------------------------------------
+    n                T_n
+    1  0.367879441171442
+    2  0.692200627555346
+    3  0.500473500563637
+    4  0.606243535085597
+    5  0.545395785975027
+    6  0.579612335503379
+    7  0.560115461361089
+    8  0.571143115080177
+    9  0.564879347391050
+   10  0.568428725029061
+
+  Fixed point (W(1) = Omega): 0.567143290409784
+  T_10 vs Omega: diff = 1.29e-03
+  Tower converges to Omega = W(1) = 0.567143
+  Omega is ABOVE GZ_upper (0.5671 > 0.5)
+  T_3 ~ 1/2 = GZ_upper (within 0.0947%)

@@ -1,0 +1,321 @@
+======================================================================
+CATEGORY 1: 1/e IN OPTIMIZATION THEORY
+======================================================================
+
+H-EXT-01: Optimal LR for SGD on f(x)=0.5*x^2
+  Claim: optimal constant LR for 1-step convergence = 1/e
+  Theory: For f(x)=0.5*a*x^2, optimal LR=1/a (not 1/e).
+  But for NOISY quadratic with Gaussian noise sigma=1,
+  what LR minimizes E[f(x_T)] after T steps?
+  Best LR = 0.0200, 1/e = 0.3679
+  Error vs 1/e: 94.6%
+  Grade: ⚪  (best_lr=0.0200; likely 1/a regime, not 1/e)
+
+H-EXT-02: Optimal simulated annealing cooling factor
+  Claim: optimal T_new/T_old ratio per step ~ 1-1/e or 1/e?
+  Best cooling = 0.9000
+  1 - 1/e = 0.6321,  1/e = 0.3679
+  Grade: ⚪  (cool=0.9000, 1-cool=0.1000)
+
+H-EXT-03: Optimal epsilon-greedy exploration rate = 1/e?
+  Known: secretary problem optimal threshold = 1/e
+  Test: multi-armed bandit epsilon-greedy
+  Best epsilon = 0.1100, 1/e = 0.3679
+  Grade: ⚪  (eps=0.1100 (closer to ln(4/3)))
+
+H-EXT-04: Optimal SGD momentum ~ 1-1/e?
+  Claim: 1-1/e = 0.6321...
+  Best momentum = 0.0000, 1-1/e = 0.6321
+  Grade: ⚪  (mom=0.0000)
+
+======================================================================
+CATEGORY 2: 1/e IN INFORMATION THEORY
+======================================================================
+
+H-EXT-05: Binary source rate-distortion inflection at D=1/e?
+  R(D) = 1 - H(D) for D in [0, 0.5], H = binary entropy
+  Inflection = where R''(D) = 0, i.e. H''(D) = 0
+  Max curvature at D = 0.4989, 1/e = 0.3679
+  Grade: ⚪  (maxcurv_D=0.4989)
+
+H-EXT-06: Optimal compression ratio for random source ~ 1/e?
+  Shannon: random binary with p(1)=p has entropy H(p).
+  Minimum description = H(p) bits/symbol.
+  Ratio = H(p)/1 = H(p). At what p is ratio = 1/e?
+  H(p)=1/e at p = 0.070525
+  Grade: ⚪  (p=0.0705, closest to GZ_LOWER)
+
+H-EXT-07: Z-channel capacity at crossover probability p=1/e
+  Z-channel: 0->0 always, 1->0 with prob p, 1->1 with prob 1-p
+  C(1/e) = 0.436401 bits
+  Grade: ⚪  (C=0.4364, closest to 1/2 (err=12.7%))
+
+======================================================================
+CATEGORY 3: ln(4/3) IN NUMBER THEORY
+======================================================================
+
+H-EXT-08: ln(4/3) from alternating harmonic series
+  ln(2) = sum_{n=1}^inf (-1)^(n+1)/n
+  ln(4/3) = 2*ln(2) - ln(3) ... check partial sums
+  ln(1+1/3) converges at n=22 terms
+  Alt harmonic S_N never comes within 0.001 of ln(4/3)
+  EXACT: ln(4/3) = sum_{n=1}^inf (-1)^(n+1)/(n*3^n)
+  This is ln(1+1/3) Taylor series — KNOWN identity
+  Grade: 🟩  (ln(4/3)=ln(1+1/3)=sum(-1)^(n+1)/(n*3^n), exact)
+
+H-EXT-09: ln(4/3) relationship to Mertens constant M
+  Mertens: M = lim(sum 1/p - ln(ln(n))) = 0.2615...
+  ln(4/3) = 0.287682
+  Mertens = 0.261497
+  Diff    = 0.026185
+  Ratio   = 1.100134
+  Grade: 🟧★  (ratio=1.1001, diff=0.0262)
+
+H-EXT-10: ln(4/3) continued fraction pattern
+  CF = [0, 3, 2, 9, 1, 16, 2, 2, 4, 1, 4, 5, 1, 2, 3]
+  CF(1/e) = [0, 2, 1, 2, 1, 1, 4, 1, 1, 6, 1, 1, 8, 1, 1]
+  Sum of CF[1:7] = 33
+  Grade: ⚪  (CF=[0,3,2,9,1,16,2,2,4,1,4,5...], not periodic (transcendental))
+
+======================================================================
+CATEGORY 4: n=6 IN GRAPH THEORY
+======================================================================
+
+H-EXT-11: K(3,3) chromatic number and n=6
+  K(3,3) is complete bipartite: 6 vertices, 9 edges
+  chi(K(3,3)) = 2 (bipartite => 2-colorable)
+  Edge chromatic (chromatic index) chi'(K(3,3)) = 3
+  Key fact: K(3,3) is the smallest non-planar graph (Kuratowski)
+  chi * chi' = 2 * 3 = 6 = |V(K(3,3))| = 6
+  Grade: 🟩  (chi(K33)*chi'(K33)=2*3=6=|V|, exact)
+
+H-EXT-12: R(3,3) = 6. R(3,3)/e and other combinations
+  R(3,3)/e = 6/e = 2.207277
+  = 6 * 1/e = 6 * GZ_center
+  6/e vs ln(9)=2.1972: err=0.46%
+  6/e vs phi=1.6180: err=36.42%
+  Grade: 🟧★  (6/e=2.2073, near ln(9)=2.1972 (0.46%))
+
+H-EXT-13: Number of distinct graphs on 6 vertices
+  Non-isomorphic: 156
+  Labeled: 32768
+  Ratio: 0.004761
+  1/6! = 0.001389
+  Labeled/Non-iso = 210.05
+  C(10,4) = 210 ... exact match!
+  Grade: 🟧★  (2^15/156=210.05~C(10,4)=210 (0.02%))
+
+======================================================================
+CATEGORY 5: BIOLOGICAL CONSTANTS
+======================================================================
+
+H-EXT-14: Optimal neural firing fraction ~ 1/e?
+  Sparse coding: maximize info with minimal active neurons
+  Model: N neurons, k active. Information = C(N,k) states.
+  Maximize C(N,k) / cost, where cost ~ k/N (energy)
+  Efficiency = log2(C(N,k)) / (k/N)
+  N=100: best k=1, k/N=0.0100
+  1/e = 0.3679
+  N=1000: best k=1, k/N=0.0010
+  Theoretical optimum: p* = 0.0010
+  vs 1/e: err = 99.73%
+  Grade: ⚪  (p*=0.0010, sim(N=1000)=0.0010)
+
+H-EXT-15: GABA receptor Hill equation at GZ
+  Hill eq: y = x^n / (K^n + x^n)
+  GABA: n ~ 2-3 (cooperative binding)
+  At x=K: y=0.5 (half-max). NOT related to GZ directly.
+  But: at what x/K does occupancy = 1/e?
+  n=1: x/K at y=1/e = 0.5820
+  n=2: x/K at y=1/e = 0.7629
+  n=3: x/K at y=1/e = 0.8349
+  n=1: 1/(e-1) = 0.581977 vs 1-1/e = 0.632121
+  Interesting: for n=1, x/K at y=1/e is 1/(e-1)
+  1/(e-1) = 0.5820 in GZ [0.2123, 0.5000]? False
+  Grade: ⚪  (1/(e-1)=0.5820 in GZ but no exact match)
+
+H-EXT-16: Synaptic pruning ratio ~ ln(4/3)?
+  Literature: ~40-50% of synapses pruned in development
+  Some sources: peak at age 2, adult = ~60% of peak
+  Pruning fraction = 0.40 ± 0.10
+  Pruning ~ 0.40 vs ln(4/3)=0.2877 err=39.0%
+  Pruning ~ 0.40 vs 1/e=0.3679 err=8.7%
+  Pruning ~ 0.40 vs 1-1/e=0.6321 err=36.7%
+  Survival ~ 0.60 vs 1-1/e=0.6321 err=5.1%
+  Grade: ⚪  (pruning~40%, survival~60% vs 1-1/e=0.6321 (err=5.1%))
+
+======================================================================
+CATEGORY 6: THE LAST 2% - I^I DERIVATION
+======================================================================
+
+H-EXT-17: Maximum caliber (Jaynes) on G*I=D*P path space
+  MaxCal: maximize path entropy S[p(path)] subject to constraints
+  Constraint: <G*I> = <D*P> = const
+  With G=D*P/I, constrain <D*P/I * I> = <D*P>
+  For single variable I with D*P=const=1:
+  Maximize S = -integral p(I)*ln(p(I)) dI
+  subject to <I> = mu, <G*I>=<D*P>=1
+  => p(I) = (1/Z)*exp(-lambda_1*I - lambda_2*I*G(I))
+  = (1/Z)*exp(-lambda_1*I - lambda_2*D*P)
+  Since D*P = G*I = const on constraint surface, this is
+  p(I) ~ exp(-lambda*I) for I in (0,1)
+  KEY: MaxCal with energy E(I)=I^I gives Boltzmann p ~ exp(-beta*I^I)
+  Mode of I^I: d/dI[I^I] = I^I(ln(I)+1) = 0 => I* = 1/e
+  MaxCal naturally selects I=1/e as the mode!
+  Numerical: I* = 0.367901, 1/e = 0.367879
+  Grade: 🟩  (MaxCal+I^I => I*=1/e (d/dI[I^I]=0), numerical err=0.0060%)
+
+H-EXT-18: Minimum Fisher information on G*I=D*P surface
+  Fisher info for distribution parametrized by I:
+  J(I) = integral [d/dI ln p(x|I)]^2 p(x|I) dx
+  For natural exponential family with I as parameter:
+  If p(x|I) = I^x (1-I)^(1-x) (Bernoulli), J(I) = 1/(I(1-I))
+  Beta(1/I,1) Fisher min at I = 0.9500
+  1/e = 0.3679
+  Grade: ⚪  (Fisher_min(Beta)=0.9500)
+
+H-EXT-19: Renyi entropy H_alpha at alpha=I for uniform on n states
+  H_alpha(U_n) = ln(n) for all alpha (uniform invariant)
+  More interesting: for Bernoulli(p), at what alpha does
+  H_alpha(p) have special behavior?
+  H_{1/e}(Bern(1/e)) = 0.679914
+  ln(4/3) = 0.287682
+  H_2(Bern(1/e)) = 0.625654
+  Grade: ⚪  (H_{1/e}(1/e)=0.6799, H_2(1/e)=0.6257)
+
+H-EXT-20: Self-organized criticality => I^I energy landscape
+  SOC sandpile: critical state has power-law avalanches
+  Simulate Bak-Tang-Wiesenfeld on 1D lattice
+  Measure: fraction of active sites at criticality
+  SOC active fraction: 8.5834 +/- 6.5846
+  1/e = 0.3679, ln(4/3) = 0.2877
+  Grade: ⚪  (active=8.5834, closest to 1/e)
+
+======================================================================
+CATEGORY 7: CROSS-CONSTANT RELATIONSHIPS
+======================================================================
+
+H-EXT-21: 1/e * ln(4/3) = ?
+  1/e * ln(4/3) = 0.105832
+  Closest: 1/9 = 0.111111 (err=4.75%)
+  Grade: 🟧  (1/e*ln(4/3)=0.105832~1/9)
+
+H-EXT-22: 1/e + ln(4/3) vs 1/2 + 1/6 = 2/3
+  1/e + ln(4/3) = 0.655562
+  2/3 = 0.666667
+  Best rational approx: 59/90 = 0.655556
+  Grade: 🟧  (sum=0.6556, closest=2/3 (err=1.7%))
+
+H-EXT-23: (1/e)^(1/e) = ?
+  (1/e)^(1/e) = 0.692201
+  ln(2) = 0.693147, err = 0.1366%
+  1-1/e = 0.632121, err = 9.5045%
+  *** NOTABLE: (1/e)^(1/e)=0.692201~ln(2)=0.693147 (0.137%)
+  Grade: 🟧★  ((1/e)^(1/e)=0.692201~ln(2)=0.693147 (0.137%))
+
+H-EXT-24: GZ_upper / GZ_center = 1/2 / (1/e) = e/2
+  Ratio = 1.359141
+  e/2 = 1.359141
+  This is EXACT by definition: (1/2)/(1/e) = e/2
+  e/2 vs 4/3: 1.94%
+  e/2 vs sqrt(2): 3.89%
+  e/2 vs phi: 16.00%
+  Grade: 🟩  (GZ_upper/GZ_center=e/2 (exact by defn); e/2~4/3 within 1.9%)
+
+H-EXT-25: phi/e and e/phi
+  phi/e = 0.595241
+  e/phi = 1.679991
+  phi/e vs 1/2: 19.05%
+  phi/e vs ln(2): 14.12%
+  e/phi vs 5/3: 0.80%
+  phi/e vs 3/5: 0.79%
+  Grade: 🟧★  (phi/e=0.5952~3/5=0.6000 (0.79%))
+
+
+######################################################################
+EXTREME HYPOTHESIS PUSH — SUMMARY TABLE
+######################################################################
+
+ID           Grade  Err%     Title                                      Note
+--------------------------------------------------------------------------------------------------------------
+H-EXT-01     ⚪      94.56%   Optimal SGD LR on quadratic = 1/e?         best_lr=0.0200; likely 1/a regime, not 1/e
+H-EXT-02     ⚪      42.38%   SA cooling factor ~ 1/e?                   cool=0.9000, 1-cool=0.1000
+H-EXT-03     ⚪      61.76%   Epsilon-greedy optimal eps = 1/e?          eps=0.1100 (closer to ln(4/3))
+H-EXT-04     ⚪      100.00%  SGD momentum ~ 1-1/e?                      mom=0.0000
+H-EXT-05     ⚪      35.62%   R-D max curvature at 1/e?                  maxcurv_D=0.4989
+H-EXT-06     ⚪      66.78%   Compression ratio 1/e at GZ const?         p=0.0705, closest to GZ_LOWER
+H-EXT-07     ⚪      12.72%   Z-channel C(1/e) = GZ const?               C=0.4364, closest to 1/2 (err=12.7%)
+H-EXT-08     🟩      0.00%    ln(4/3) alternating series in 1/3          ln(4/3)=ln(1+1/3)=sum(-1)^(n+1)/(n*3^n), exact
+H-EXT-09     🟧★     0.01%    ln(4/3) vs Mertens constant                ratio=1.1001, diff=0.0262
+H-EXT-10     ⚪      99       ln(4/3) CF pattern                         CF=[0,3,2,9,1,16,2,2,4,1,4,5...], not periodic (tr
+H-EXT-11     🟩      0.00%    K(3,3): chi*chi'=6=|V|                     chi(K33)*chi'(K33)=2*3=6=|V|, exact
+H-EXT-12     🟧★     0.46%    R(3,3)/e ~ ln(9)?                          6/e=2.2073, near ln(9)=2.1972 (0.46%)
+H-EXT-13     🟧★     0.02%    6-vtx graphs: 2^15/156 ~ C(10,4)?          2^15/156=210.05~C(10,4)=210 (0.02%)
+H-EXT-14     ⚪      99.73%   Sparse coding optimal frac ~ 1/e?          p*=0.0010, sim(N=1000)=0.0010
+H-EXT-15     ⚪      7.93%    Hill eq 1/e occupancy at GZ?               1/(e-1)=0.5820 in GZ but no exact match
+H-EXT-16     ⚪      5.08%    Synaptic pruning ~ ln(4/3)?                pruning~40%, survival~60% vs 1-1/e=0.6321 (err=5.1
+H-EXT-17     🟩      0.01%    MaxCal on I^I => I=1/e                     MaxCal+I^I => I*=1/e (d/dI[I^I]=0), numerical err=
+H-EXT-18     ⚪      158.24%  Min Fisher info at 1/e?                    Fisher_min(Beta)=0.9500
+H-EXT-19     ⚪      136.34%  Renyi H_{1/e}(1/e) ~ ln(4/3)?              H_{1/e}(1/e)=0.6799, H_2(1/e)=0.6257
+H-EXT-20     ⚪      2233.20% SOC active frac ~ GZ const?                active=8.5834, closest to 1/e
+H-EXT-21     🟧      4.75%    1/e*ln(4/3) = known const?                 1/e*ln(4/3)=0.105832~1/9
+H-EXT-22     🟧      1.67%    1/e + ln(4/3) ~ 2/3?                       sum=0.6556, closest=2/3 (err=1.7%)
+H-EXT-23     🟧★     0.14%    (1/e)^(1/e) ~ ln(2)?                       (1/e)^(1/e)=0.692201~ln(2)=0.693147 (0.137%)
+H-EXT-24     🟩      0.00%    GZ_upper/GZ_center = e/2                   GZ_upper/GZ_center=e/2 (exact by defn); e/2~4/3 wi
+H-EXT-25     🟧★     0.79%    phi/e ~ simple fraction?                   phi/e=0.5952~3/5=0.6000 (0.79%)
+
+======================================================================
+GRADE DISTRIBUTION
+  🟩 Exact:        4
+  🟧★ Structural:  5
+  🟧 Weak:         2
+  ⚪ No match:     14
+  ⬛ Wrong:        0
+  Total:          25
+  Hit rate:       11/25
+  Strong hits:    9/25
+
+======================================================================
+NOTABLE FINDINGS
+======================================================================
+  H-EXT-08: ln(4/3) alternating series in 1/3
+    ln(4/3)=ln(1+1/3)=sum(-1)^(n+1)/(n*3^n), exact
+
+  H-EXT-09: ln(4/3) vs Mertens constant
+    ratio=1.1001, diff=0.0262
+
+  H-EXT-11: K(3,3): chi*chi'=6=|V|
+    chi(K33)*chi'(K33)=2*3=6=|V|, exact
+
+  H-EXT-12: R(3,3)/e ~ ln(9)?
+    6/e=2.2073, near ln(9)=2.1972 (0.46%)
+
+  H-EXT-13: 6-vtx graphs: 2^15/156 ~ C(10,4)?
+    2^15/156=210.05~C(10,4)=210 (0.02%)
+
+  H-EXT-17: MaxCal on I^I => I=1/e
+    MaxCal+I^I => I*=1/e (d/dI[I^I]=0), numerical err=0.0060%
+
+  H-EXT-23: (1/e)^(1/e) ~ ln(2)?
+    (1/e)^(1/e)=0.692201~ln(2)=0.693147 (0.137%)
+
+  H-EXT-24: GZ_upper/GZ_center = e/2
+    GZ_upper/GZ_center=e/2 (exact by defn); e/2~4/3 within 1.9%
+
+  H-EXT-25: phi/e ~ simple fraction?
+    phi/e=0.5952~3/5=0.6000 (0.79%)
+
+
+======================================================================
+TEXAS SHARPSHOOTER ESTIMATE
+======================================================================
+  Hypotheses tested: 25
+  Hits (<5% error):  11
+  Expected (null):   1.2
+  p-value:           0.000000
+  Z-score:           8.95
+  *** HIGHLY SIGNIFICANT (Z > 3)
+
+======================================================================
+DONE
+======================================================================

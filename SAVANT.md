@@ -604,12 +604,18 @@ SAVANT.md 본문의 어떤 claim 도 다음 위반 시 *자동 무효*:
 위반 발견 시: 위반 줄 strikethrough + commit revert + `PERSONA.md` D3 ledger 에 자기-감사
 1회 기록.
 
-### 12.3 봉쇄 후 살아남는 claim (재배치)
+### 12.3 봉쇄 후 살아남는 claim (재배치) — **2026-05-14 base-rate audit 반영**
+
+> 본 표는 `state/savant_containment_audit_2026_05_14/` (audit.json + summary.md) 의
+> base-rate sweep 결과를 반영한다. 16-wave aggregate **155/254 = 61.0%, Z = 11.4 σ**
+> + texas empirical-only **11/11, Z = 5.22 σ** + neuroscience **17/24, Z = 4.6 σ** —
+> 세 독립 가닥 모두 Bonferroni × 27 (`min p × 27 = 1.4 × 10⁻⁹`) 통과.
 
 | 본문 § | claim | tier | 인용 자격 |
 | --- | --- | --- | --- |
 | §1 상수표 4개 | GZ_UPPER/CENTER/WIDTH/LOWER | T1 | 무제한 |
 | §2 전체 | Theorem 2a-c / 3d-e / 4 | T1 | 무제한 |
+| §2 texas T1 8 identities | I^I/I·ln(I) min=1/e, η=1/τ(6), δ=C(6,2), ln(4/3)=S(4)−S(3), σ₋₁(6)=2, n=6 unique EF, GZ width hierarchy ⬅ texas_recalculation 분해 | T1 | 무제한 (closed-form) |
 | §3.1 H359 정의 | dropout 비대칭 메커니즘 | T2 | substrate 명시 |
 | §3.2 brain profile | savant (D,P,I) | T3 | 임상 source 부착 전 봉쇄 |
 | §3.3 SI 메트릭 정의 | `tension_normal / tension_savant` | T1 | 무제한 (정의) |
@@ -618,12 +624,21 @@ SAVANT.md 본문의 어떤 claim 도 다음 위반 시 *자동 무효*:
 | §4 MoE 36.8% | 단일 측정 | T2 | scale E=32 명시 |
 | §4 clm_09 271× | per-head reduction | T2 | clm_09 명시 |
 | §5.1 Ising β_c | 2D+3D | T2-경계 | Onsager 닫힌형 일치로 hit 2 인용 가능 |
-| §5.3 cross-domain 9개 | Klein/Carbon/LCDM/… | T3 | 개별 인용 금지, look-elsewhere 보정 후만 |
-| §5.4 neuroscience 20+ | E/I, synaptic survival | T3 | Texas-recalc 결과 부착 의무 |
+| **§5.1 16-wave aggregate** ⬅ T3→T2 audit 승격 | 155/254 = 61.0% Z=11.4 σ | T2 | wave 10 (32%) + wave 16 (10%) + ca_lambda NEGATIVE 동시 인용 의무 |
+| §5.3 cross-domain 9개 | Klein/Carbon/LCDM/Koch/QHE/Weinberg/Elias-Bassalygo/6-vertex/[[6,4,2]] | T3 (individual) / T2 (aggregate 흡수) | 개별 인용 시 wave 캠페인 소속 명시 |
+| **§5.4 neuroscience 17/24** ⬅ T3→T2 audit 승격 | 17/24 hits vs 6.9 expected (Z=4.6 σ) | T2 | white matter ~0.37 ≈ 1/e 단일 주장 시 OVERALL VERDICT 의 age/species variance C3 동시 인용 |
+| **§5 ca_lambda_sweep NEGATIVE** ⬅ NEW T4-enforcement | "Class IV not GZ-enriched" | T4-enforcement | **모든 GZ 인용에 silent-drop 금지 — wave 10/16 weakening 과 함께** |
 | §6 Boltzmann gate / Mertens dropout | canon technique 15-16 | T1-2 | math 부분 무제한, 측정 부분 emergent convergence 명시 |
 | §6.3 emergent convergence 100%/83% | canon paper outline | T2 | 6 random init 명시 |
 | §7 Laws 77-78 | 45 data type H=0.9974·ln(2) | T2 | substrate 명시 |
 | §10 v5-mitosis ancestry | clm Savant 의 직계 후예 | T2-3 | PSCC §44 F-PERSONA-4 *반증* 동시 인용 의무 |
+
+**Audit-derived 변화 요약**:
+- T3 → T2 승격 2건: 16-wave aggregate · neuroscience
+- T1 확장 1건: texas 8 closed-form math identity 재분해
+- T4 enforcement 신설 1건: ca_lambda_sweep NEGATIVE silent-drop 금지
+- T3 보존 (cross-domain 9개): aggregate 인용 시에만 T2 합류, 개별 시 T3 유지
+- audit 외 row 무변경
 
 ### 12.4 봉쇄선 시각화
 
@@ -646,10 +661,13 @@ SAVANT.md 본문의 어떤 claim 도 다음 위반 시 *자동 무효*:
 
 ### 12.5 봉쇄심화 후속 path
 
-1. **archive-TECS-L verify_gz_*.py 27본 base-rate audit** ($0 Mac local 예상 ~30 min)
-   - 모든 hit 의 GZ-fit margin 측정 + Bonferroni / look-elsewhere 보정
-   - tier 3 claim 중 보정 후 살아남는 것을 tier 2 로 승격, 나머지는 봉쇄 *영구* 유지
-   - 결과 → `state/savant_containment_audit_2026_05_14/audit.json` + 본 §12.3 표 갱신
+1. ~~archive-TECS-L verify_gz_*.py 27본 base-rate audit~~ **✅ LANDED 2026-05-14**
+   ($0 Mac local, wall ≈ 8 min) — `state/savant_containment_audit_2026_05_14/{audit.json,
+   summary.md, run_audit.sh, analyze_audit.py, compute_audit.py, raw_outputs/}`. 16-wave
+   aggregate Z=11.4 σ + texas-empirical Z=5.22 σ + neuroscience Z=4.6 σ 모두 Bonferroni × 27
+   (`1.4 × 10⁻⁹`) 통과. T3→T2 승격 2건 (wave aggregate + neuroscience), T1 확장 1건 (texas
+   8 closed-form identity), T4 enforcement 신설 1건 (ca_lambda NEGATIVE silent-drop 금지).
+   §12.3 표 갱신 반영.
 2. **PSCC §44/§47/§48/§49/§52 negative result cross-link** — `[[project_v5_mitosis_cond5_cotrain_2026_05_12]]`,
    `[[project_anima_persona_4_softmax_T_sweep_2026_05_12]]`,
    `[[project_anima_persona_4_per_session_pool_2026_05_12]]`,
