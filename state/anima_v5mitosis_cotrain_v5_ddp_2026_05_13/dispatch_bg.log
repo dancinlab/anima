@@ -739,3 +739,32 @@ NCCL version 2.21.5+cuda12.4
 [STEP 19650] loss=0.0229 ce=0.0643 aux=1.2073 ent_gate=5.5434/5.545 wmax=0.1880 active>.01=8.0/256 λ=0.0109 cells=256 cost=$85.31 vram=124.8/150GB
 [STEP 19700] loss=0.0102 ce=0.0636 aux=1.2043 ent_gate=5.5435/5.545 wmax=0.1865 active>.01=8.0/256 λ=0.0107 cells=256 cost=$85.53 vram=124.8/150GB
 [STEP 19750] loss=0.0185 ce=0.0641 aux=1.2064 ent_gate=5.5434/5.545 wmax=0.1887 active>.01=8.0/256 λ=0.0105 cells=256 cost=$85.74 vram=124.8/150GB
+[STEP 19800] loss=0.0195 ce=0.0641 aux=1.2082 ent_gate=5.5434/5.545 wmax=0.1893 active>.01=8.0/256 λ=0.0103 cells=256 cost=$85.96 vram=124.8/150GB
+[STEP 19850] loss=0.0241 ce=0.0638 aux=1.2096 ent_gate=5.5434/5.545 wmax=0.1881 active>.01=8.0/256 λ=0.0102 cells=256 cost=$86.17 vram=124.8/150GB
+[STEP 19900] loss=0.0088 ce=0.0644 aux=1.2085 ent_gate=5.5434/5.545 wmax=0.1884 active>.01=8.0/256 λ=0.0101 cells=256 cost=$86.39 vram=124.8/150GB
+[STEP 19950] loss=0.0171 ce=0.0661 aux=1.2082 ent_gate=5.5434/5.545 wmax=0.1903 active>.01=8.0/256 λ=0.0100 cells=256 cost=$86.61 vram=124.8/150GB
+[STEP 19999] loss=0.0150 ce=0.0632 aux=1.2079 ent_gate=5.5434/5.545 wmax=0.1896 active>.01=8.0/256 λ=0.0100 cells=256 cost=$86.82 vram=124.8/150GB
+[INFO] training done wall=24185.6s cost=$86.82
+
+=== F-PERSONA-4a routing (top-K MoE) ===
+  verdict=KL_PASS_NULL_FAIL KL=1.4903 null=1.3632±0.2511 z=0.51 p=0.3100
+  (soft gate) KL=0.0005 z=2.33
+
+=== F-PERSONA-4b content (M4 aggregated cosine) regression ===
+  verdict=FAIL cos_dist=0.000234 null=0.000175±0.000063 z=0.94 p=0.1400 (v2 carry z=3.20)
+
+=== F-V5MIT-1..5 regression (inherited splits=v4 ckpt; CE re-measured) ===
+  3/5  F-V5MIT-1=F F-V5MIT-2=P F-V5MIT-3=P F-V5MIT-4=P F-V5MIT-5=F
+
+[RESULT] output/cotrain_v5_ddp_result.json
+[VERDICT] 4a=KL_PASS_NULL_FAIL (KL=1.4903 z=0.51) | 4b=FAIL (z=0.94) | F-V5MIT=3/5
+dispatch_h100_v5_ddp.sh: line 248: [: 0
+0: integer expression expected
+dispatch_h100_v5_ddp.sh: line 249: [: 0
+0: integer expression expected
+  train rc=0 (oom_count=0
+0) — no further retry
+[8/9] Downloading (MANDATORY before pod delete — memory feedback_orchestrator_h100_gotchas) ...
+Warning: Permanently added '[208.64.254.181]:21191' (ED25519) to the list of known hosts.
+Welcome to vast.ai. If authentication fails, try again after a few seconds, and double check your ssh key.
+Have fun!
