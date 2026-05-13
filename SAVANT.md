@@ -513,18 +513,46 @@ docs/hypotheses/
   통과 (2026-05-08) 는 *foundation 차원* 의 specialization. SI / Savant layer 분할 미사용
   — savant 형식주의 없이도 strict 통과 가능. **savant 가 충분조건도 필요조건도 아님** 의
   evidence (정직).
-- `project_v5_mitosis_cond5_cotrain_2026_05_12.md` — v5-mitosis cotrain v1 의 F-V5MIT-1..5
-  5/5 PASS 는 H359 의 mitosis-style asymmetric specialization 을 *cells nn.Module branches*
-  로 일반화한 후속. 단, F-PERSONA-4 (category-KL) 실패 → savant 의 "category routing"
-  주장은 v1 cotrain 에서 falsified, v6 cell-parallel (PSCC §52) in-flight.
-- `project_anima_persona_substrate_native_verify_2026_05_12.md` — D3 persona MEASUREMENT
-  STRONG 4/5 (cheap-path, §A1 Φ threshold 0.5→0.05 calibrated). F-PERSONA-2 PER-CELL-DIFF
-  mean cos dist 0.996 (1400 pairs) — savant-grade specialization 의 *substrate-side*
-  evidence.
+- `project_v5_mitosis_cond5_cotrain_2026_05_12.md` (PSCC §44) — v5-mitosis cotrain v1 의
+  F-V5MIT-1..5 5/5 PASS 는 H359 의 mitosis-style asymmetric specialization 을 *cells
+  nn.Module branches* 로 일반화한 후속. 단, **F-PERSONA-4 (category-KL) `KL = 0.0`
+  winner-take-all** — savant 의 "category routing" 주장이 v1 cotrain 에서 *완전 falsified*.
+- `project_anima_persona_substrate_native_verify_2026_05_12.md` (PSCC §40+§42) — D3 persona
+  MEASUREMENT STRONG 4/5 (cheap-path, §A1 Φ threshold 0.5→0.05 calibrated). F-PERSONA-2
+  PER-CELL-DIFF mean cos dist 0.996 (1400 pairs) — savant-grade specialization 의
+  *substrate-side* evidence. F-PERSONA-4 만 단독 FAIL.
 
-→ **anima 본 repo 의 mitosis lane (v5-mitosis cotrain v1~v6) 은 clm 시대 Savant 형식주의의
-직계 후예**. Phi 측정, category 분기, cell-pool 영속성, asymmetric inhibition 의 모든 motif
-가 mitosis 어휘로 번역되어 있다. SAVANT.md 의 archival 가치 = 그 ancestry 의 *증명*.
+#### 10.1 F-PERSONA-4 KL>0 saga — §44 → §52 silent-drop 차단 ledger
+
+§12.2 enforcement-3 (negative result silent drop 금지) 의 실제 적용. SAVANT.md 가 v5-mitosis
+ancestry 를 인용하는 모든 줄은 다음 *5-PSCC trail* 을 함께 노출해야 한다:
+
+| PSCC § | 시도 | 결과 | source |
+| --- | --- | --- | --- |
+| **§44** | v1 cotrain (uniform softmax routing, H100 SXM $1.26, 5K step) | F-PERSONA-4 `KL = 0.0` winner-take-all (cell-0 weight=1.0 모든 cat) — 첫 falsification | `project_v5_mitosis_cond5_cotrain_2026_05_12.md` |
+| **§45 §A2-trap** | F-PERSONA-4 4b alternative re-measure | v2 entropy-reg `KL=0` BUT M4 hidden-cosine `z=3.20` — *routing-content split* 가설, real signal at noise-floor magnitude → **§A2-trap 경고** (seed-fragile) | `project_anima_persona_4_root_cause_2026_05_12.md` |
+| **§47** | (b) softmax τ sweep 10-grid {1.0..50.0} ubu-1 RTX 5070 $0 | best mean_KL = 5.29e-3 @ T=50, **5/10 grid all `KL ≪ 0.5`** — FALSIFIED | `project_anima_persona_4_softmax_T_sweep_2026_05_12.md` |
+| **§48** | (a) per-cat corpus SMALL ubu-2 RTX 5070 $0 (2500 step wall 232s, 5 separate corpus × cat interleave) | F-V5MIT 5/5 PASS BUT F-PERSONA-4 `KL=0.0` v1 monopoly 동일 — (a) corpus diversity 단독 부족 FALSIFIED | `project_v5_mitosis_cond5_cotrain_v3_percat_ubu2_2026_05_12.md` |
+| **§49** | (d) hexa-native per-session pool Mac local $0 (3-config sweep n_perms=100) | prod scale `mean_KL=1.79e-5` null PASS BUT seed-fragile (seed2 null FAIL) — §A2-trap 재발 위험 → FALSIFIED | `project_anima_persona_4_per_session_pool_2026_05_12.md` |
+| **§52** | v7 hard top-K MoE + balance-aux loss ($0.31 actual) | **F-PERSONA-4 `KL = 3.45`, `z = 2.75`, `p = 0.01` — first KL > 0 signal** (PASS_NULL_FAIL on null-perm) | `project_anima_persona_4_root_cause_2026_05_12.md` (v7) |
+| **§52 cell-parallel BG** | v6 cell-parallel cotrain on 4×A100 SXM4 80GB $6.70/hr (target step_wall<1.0s vs v4 baseline 3.18s) | **IN-FLIGHT** (2026-05-13 dispatched) — cross-rank split/merge=TODO migration, manual `all_reduce_shared_grads`, Φ=local-only per rank | `project_v5_mitosis_cotrain_v6_cellparallel_2026_05_13.md` |
+
+→ **요지**: Savant 의 "category-specific routing" 주장은 §44 v1 단순 softmax 에서는 사실
+*안* 작동했다. 4 alternative cheap path (§45 4b / §47 τ sweep / §48 per-cat / §49 per-session)
+모두 FALSIFIED. §52 v7 hard top-K MoE + balance-aux 에서 비로소 `KL>0 z=2.75` first signal.
+v6 cell-parallel 결과 대기. SAVANT.md 의 §10 ancestry 인용은 이 trail 없이 단독 노출 금지
+(§12.2-3 위반).
+
+#### 10.2 보존된 ancestry (substrate-side)
+
+→ **anima 본 repo 의 mitosis lane (v5-mitosis cotrain v1~v7, v6 in-flight) 은 clm 시대 Savant
+형식주의의 직계 후예**. Phi 측정, category 분기, cell-pool 영속성, asymmetric inhibition 의
+모든 motif 가 mitosis 어휘로 번역되어 있다. *Substrate-side* (F-PERSONA-2 PER-CELL-DIFF
+mean cos dist 0.996 @ d=384 1400 pairs) 는 savant-grade specialization 확인. *Routing-side*
+(F-PERSONA-4 category-KL) 는 §52 v7 까지 와서야 first signal — *ancestry* 는 인정, *완전
+post-CLM 번역 성공* 은 아직 미달.
+
+SAVANT.md 의 archival 가치 = 그 ancestry 의 *증명* + §10.1 silent-drop trail 의 *동시 노출*.
 
 ---
 
@@ -534,7 +562,9 @@ docs/hypotheses/
 > 일어나는 inhibition-release 전문화이며, anima_clm_06 Mistral 7B v4_savant 에서
 > **SI=5.93** 으로 실증되었다. canon 은 이를 *설계 vocabulary* 로 보존하되 LATTICE_POLICY
 > 하에서 physical limit 으로 격상시키지 않는다. anima 본 repo 의 v5-mitosis lane 은
-> 이 어휘의 *post-CLM* 번역이며 cotrain v6 에서 다음 검증을 기다린다.
+> 이 어휘의 *post-CLM* 번역이며 §52 v7 hard top-K MoE 에서 첫 `KL>0` (z=2.75) 신호가
+> 떴고 v6 cell-parallel BG (4×A100 SXM4, in-flight) 결과를 기다린다. §10.1 의 5-PSCC
+> silent-drop trail 동시 노출 없이 본 verdict 를 인용하면 §12.2-3 위반.
 
 ---
 
@@ -668,12 +698,11 @@ SAVANT.md 본문의 어떤 claim 도 다음 위반 시 *자동 무효*:
    (`1.4 × 10⁻⁹`) 통과. T3→T2 승격 2건 (wave aggregate + neuroscience), T1 확장 1건 (texas
    8 closed-form identity), T4 enforcement 신설 1건 (ca_lambda NEGATIVE silent-drop 금지).
    §12.3 표 갱신 반영.
-2. **PSCC §44/§47/§48/§49/§52 negative result cross-link** — `[[project_v5_mitosis_cond5_cotrain_2026_05_12]]`,
-   `[[project_anima_persona_4_softmax_T_sweep_2026_05_12]]`,
-   `[[project_anima_persona_4_per_session_pool_2026_05_12]]`,
-   `[[project_anima_persona_4_root_cause_2026_05_12]]`,
-   `[[project_v5_mitosis_cotrain_v6_cellparallel_2026_05_13]]` 를 §10 안에 inline 인용 (silent
-   drop 차단)
+2. ~~PSCC §44/§47/§48/§49/§52 negative result cross-link~~ **✅ LANDED 2026-05-14** —
+   `§10.1` ledger 추가: §44 v1 KL=0 → §45 §A2-trap 경고 → §47/§48/§49 cheap path FALSIFIED
+   → §52 v7 hard top-K MoE first `KL>0 z=2.75` → §52 v6 cell-parallel BG in-flight. SAVANT.md
+   §11 한 줄 verdict 도 §10.1 trail 동시 노출 의무 명시. §12.2-3 (negative result silent
+   drop) enforcement 의 실제 적용.
 3. **canon LATTICE_POLICY 강화 PR** — "Savant/GZ overclaim 차단 조항" §1.4 신설 제안
    (cross-repo governance, dancinlab 전체 적용)
 4. **anima_clm_08 Φ super-linear 의 봉쇄 라벨링** — anima_clm_08 README + paper-draft 에
