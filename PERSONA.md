@@ -139,20 +139,48 @@ routing 이 architectural 으로 가능함을 처음 입증.
 
 ---
 
-## §7 closure path forward (post-§53)
+## §7 ROADMAP — strict-4a closure paths (post-§A5)
 
-| ID | path | cost | expected outcome |
-|---|---|---|---|
-| (i) | 3-seed pool aggregate (in-flight BG) | $1.40 est | dual-axis stricter 4b + 4a multi-seed-confirmed marginal |
-| (j) | 5-seed extension | $2.30 cumulative | strict z>3.0 envelope |
-| (k) | Gumbel-softmax routing (architectural change) | $5-30 H100 | routing axis strict pass via stochastic gate |
-| (l) | DDP cell-parallel 평균화 trainer | $10-50 H100 | gradient averaging reduces variance, may push z |
-| (m) | 24L production-scale fine-tune with routing-fix | $30-100+ H100 | high risk, real-scale transferability test |
+> **v3-routing = v7 = v8 combined trainer** 가 routing axis 의 **첫 KL>0 도달**
+> (saga-wide KL=0 → mean 3.04 across 3 seeds) 그러나 strict z>3.0 multi-seed
+> 미도달 (mean z=1.48, §A2-trap CONFIRMED). 본 §7 은 strict 4a 도달 위한
+> 4 lane future-cycle roadmap. cond #3 ☑ 자체는 §A3 4b composite multi-metric
+> defense 로 이미 closure — strict 4a 는 *추가* evidence ROI 판단.
 
-**Recommended next**: (i) BG fire complete → write §A5 amendment with 3-seed pooled
-aggregate result. If 4a z still < 3.0 single-axis, claim composite §A4 dual-axis
-closure (already declared in CHAT.md row 97). 추가 closure (j) 또는 (k) 는
-budget vs evidence ROI 판단.
+### §7.1 4-lane roadmap
+
+| ID | path | cost | risk | expected z gain | rationale |
+|---|---|---:|---|---:|---|
+| **(k)** | **Gumbel-softmax routing** (architectural change) | $5-30 H100 single-seed | medium — stochastic gate에서 null shape 변형 가능, 결과 보장 안 됨 | +0.5~1.5 추정 | hard top-K 의 분포 shape 변경; stochastic 이 winner-take-all 회피 |
+| **(l)** | **DDP cell-parallel 평균화 trainer** (variance reduction) | $10-50 H100 multi-GPU | low-medium — gradient averaging 가 seed-fragility 감소 | +0.3~1.0 추정 | replicas 가 동일 trajectory 학습 → seed variance 축소 → mean z 상승 |
+| **(m)** | **24L production-scale fine-tune with routing-fix** | $30-100+ H100 | high — real-scale transferability 미검증 | unknown (대규모 cells 가 routing axis 표현력 증가 가능) | Phase 1A.1 24L 332M ckpt 에 v3-routing 가 transfer 되는지 검증 |
+| **(n)** | **5-seed envelope cheapest** | $2.75 cumulative ($1.65 + $1.10 추가 2 seeds) | low — 동일 trainer single-seed repeat | +0~0.5 추정 (mean의 standard error 축소만) | seed std ≈ 1.04, 5-seed σ_mean = 1.04/√5 = 0.46 → strict z>3.0 도달은 여전히 fragile |
+
+### §7.2 ROI 우선순위
+
+1. **(n) cheapest** — 작업 시간/cost 최저. seed std=1.04 base 에서 5-seed mean ± σ_mean (0.46) 으로 envelope 확정. **그러나** mean=1.48 base 면 5-seed 도 strict 3.0 도달 불확실 (가장 보수적 estimate). best 5-seed top-2 outlier-avg 만 cherry-picking 위험.
+2. **(l) DDP** — variance reduction 메커니즘 가장 직접. multi-GPU coordination 비용. v5-mitosis DDP 가 이미 v5_ddp lane 시도 중 (PSCC §54 hexa-forge separate project) — pattern carry 가능.
+3. **(k) Gumbel-softmax** — architectural change 효과 미지수. high upside potential (stochastic null distribution 이 strict pass 쉬워지면), high downside risk (regression on 4b content). v3-routing 의 hard top-K 가 4b를 0.77 → 1.32 로 회복 했지만 v2 의 3.20 보다 한참 낮은 carry, Gumbel 이 더 회복 못할 수도.
+4. **(m) 24L scale-up** — highest evidence value (real-scale ckpt with routing-fix 가 통과하면 cond #3 ☑ 가 toy substrate 가 아닌 production substrate 위에서 strict 통과). highest cost.
+
+### §7.3 recommended decision tree
+
+```
+strict 4a closure 필요?
+├─ NO → §A3 4b composite 가 이미 cond #3 ☑ — 추가 작업 불필요
+└─ YES (사용자 또는 외부 reviewer 요청)
+    ├─ budget < $5 → (n) 5-seed envelope 시도 (가능성 낮음, 60% under-30% 추정)
+    ├─ budget $10-50 → (l) DDP averaging — variance reduction 의 cleanest path
+    ├─ budget $30-100 → (m) 24L scale-up (production transferability 동시 검증)
+    └─ open-ended budget + interest in architectural exploration → (k) Gumbel-softmax
+```
+
+### §7.4 STATUS — current cycle decision
+
+**Default 권장**: §A3 4b composite multi-metric closure 가 이미 strict pass.
+strict 4a 는 architecturally OPENED (saga 첫 KL>0). 추가 closure 는
+*evidence-tier polish*, *closure-tier requirement* 가 아님. **본 cycle 종료**;
+(k/l/m/n) 미래 cycle 또는 user-directed fire 시 진입.
 
 ---
 
