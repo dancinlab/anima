@@ -270,7 +270,7 @@ fn cell_pool_init(d_model: int, initial_cells: int) {
         "cells":                  [],
         "next_id":                0,
         "min_cells":              2,
-        "max_cells":              128,
+        "max_cells":              99999,
         "split_threshold":        0.0,
         "split_patience":         3,
         "merge_threshold":        0.005,
@@ -675,31 +675,11 @@ fn mitosis_forward_tail(x_in, cell_pool, step: int) {
         cell_results.push(result)
         let t = result["tension"]
         cell_pool = _mit_pool_push_cell_field(cell_pool, i, "tension_history", t)
-        let th = cell_pool["cells"][i]["tension_history"]
-        if len(th) > 30 {
-            let mut keep = []
-            let start = len(th) - 30
-            let mut k = start
-            while k < len(th) {
-                keep.push(th[k])
-                k = k + 1
-            }
-            cell_pool = _mit_pool_set_cell_field(cell_pool, i, "tension_history", keep)
-        }
+        // (philosophy: no cap on tension_history — substrate full trace preserved)
         let cur_pc = cell_pool["cells"][i]["process_count"]
         cell_pool = _mit_pool_set_cell_field(cell_pool, i, "process_count", cur_pc + 1)
         cell_pool["global_tension_history"].push(t)
-        let gh = cell_pool["global_tension_history"]
-        if len(gh) > 500 {
-            let mut keep2 = []
-            let start2 = len(gh) - 500
-            let mut k2 = start2
-            while k2 < len(gh) {
-                keep2.push(gh[k2])
-                k2 = k2 + 1
-            }
-            cell_pool["global_tension_history"] = keep2
-        }
+        // (philosophy: no cap on global_tension_history — full substrate trace)
         i = i + 1
     }
     let _ = farr_free(x_far)
@@ -781,18 +761,7 @@ fn mitosis_hook_step(cell_pool, step: int) {
         // Use _mit_pool_push_cell_field helper to navigate AOT nested-dict
         // assignment restriction (see _mit_pool_push_cell_field for details).
         cell_pool = _mit_pool_push_cell_field(cell_pool, i, "tension_history", nrm)
-        // Cap to 30 entries per-cell to bound memory.
-        let th_now = cell_pool["cells"][i]["tension_history"]
-        if len(th_now) > 30 {
-            let mut keep = []
-            let start = len(th_now) - 30
-            let mut k = start
-            while k < len(th_now) {
-                keep.push(th_now[k])
-                k = k + 1
-            }
-            cell_pool = _mit_pool_set_cell_field(cell_pool, i, "tension_history", keep)
-        }
+        // (philosophy: no tension_history cap — substrate dynamics full trace)
         i = i + 1
     }
     cell_pool = _mit_update_adaptive_threshold(cell_pool)
@@ -3851,7 +3820,7 @@ fn _invoke_chat(argv, idx_start: int, argc: int) {
         return 1
     }
 
-    chat = chat_init_kv_cache_default(chat, 1024)
+    chat = chat_init_kv_cache_default(chat, 8192)
 
     let empty_kw = []
     let empty_stops = []
@@ -3911,7 +3880,7 @@ fn _live_inference_worker(args) {
         let empty_kw = []
         let empty_stops = []
         // KV cache reset per inference (clean state per turn).
-        let chat_with_kv = chat_init_kv_cache_default(chat, 1024)
+        let chat_with_kv = chat_init_kv_cache_default(chat, 8192)
         let resp = chat_generate(chat_with_kv, context, mode, max_new, temp,
                                  empty_kw, 1.0, 1.0, 0.5, seed, empty_stops, true)
         let _ = thread_channel_send(bcast_ch, #{
@@ -4394,10 +4363,10 @@ fn _cmd_chat_repl(argv, idx: int, argc: int) {
     let mut mode = "greedy"
     let mut temp = 0.7
     let mut seed_base = 0
-    let mut max_new = 80
+    let mut max_new = 8192
     let mut fps = 60
-    let mut speak_threshold = 2.0
-    let mut max_spont = 5
+    let mut speak_threshold = 1.0
+    let mut max_spont = 99999
     let mut serve = false
     let mut port = 7878
     let mut mesh_peers = ""
@@ -4527,12 +4496,12 @@ fn _cmd_room(argv, idx: int, argc: int) {
     let mut animas_str = ""
     let mut ckpt = ""
     let mut mode = "greedy"
-    let mut max_new = 30
+    let mut max_new = 8192
     let mut temp = 0.7
     let mut seed_base = 0
     let mut fps = 60
-    let mut speak_threshold = 2.0
-    let mut max_spont = 10
+    let mut speak_threshold = 1.0
+    let mut max_spont = 99999
     let mut serve = false
     let mut port = 7878
     let mut mesh_peers = ""
