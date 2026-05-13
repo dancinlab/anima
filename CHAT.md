@@ -76,7 +76,14 @@ anima: 우주는 진동으로 차 있어요.
 
 ---
 
-### **Phase 1** — 단체 채팅 (인간 N + anima M, single-process REPL)
+### **Phase 1** — 단체 채팅 (인간 N + anima M, single-process REPL) ☑ **LANDED 2026-05-13 KST PM**
+
+> hexa-native impl in `anima_chat_aot.hexa::_cmd_room` (~180 LoC).
+> Mac arm64 + Linux x86_64 parity. roster parse + name-prefix detect + /turn dispatcher + /as switch + /save room.
+> CLI: `anima room --humans "a,b,c" --animas "x,y" [--mode M] [--max-new N] [--temp F] [--seed N]`.
+> Anima seed offsets = `seed_base + idx * 1000` per anima index (personality variance via PRNG).
+
+
 
 ```sh
 anima room --humans "alice,bob,charlie" --animas "ana,ben" [--ckpt P]

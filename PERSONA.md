@@ -31,7 +31,7 @@
 
 ### CLI (wilson 3-tier convention — `~/core/wilson/AGENTS.md` 참조)
 **Tier 1 universal**: `anima tool <list|<name> [args]>` — meta entry
-**Tier 2 noun-verb**: `anima chat <send|repl|smoke>` · `anima ckpt <path|info>`
+**Tier 2 noun-verb**: `anima chat <send|repl|smoke>` · `anima ckpt <path|info>` · `anima room --humans "..." --animas "..."` (Phase 1 group chat)
 **Tier 3 ergonomic**: `anima ask "<prompt>"` · `anima smoke` · `anima doctor` · `anima version`
 
 ```sh
@@ -42,6 +42,7 @@ anima ckpt info                              # sha256 + size + exists
 anima ask "안녕? 너는 누구야?" --max-new 10    # ergonomic chat
 anima chat send --prompt "..." --mode greedy --seed 0 --max-new 10
 anima chat repl --max-new 5 --seed 0         # interactive REPL (CHAT.md Phase 0)
+anima room --humans "alice,bob" --animas "ana,ben" --max-new 5  # group chat (CHAT.md Phase 1)
 anima tool chat --prompt "..." --result      # universal + JSON ToolResult
 ```
 
