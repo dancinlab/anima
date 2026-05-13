@@ -536,4 +536,139 @@ docs/hypotheses/
 > 하에서 physical limit 으로 격상시키지 않는다. anima 본 repo 의 v5-mitosis lane 은
 > 이 어휘의 *post-CLM* 번역이며 cotrain v6 에서 다음 검증을 기다린다.
 
-— SAVANT.md, 2026-05-13, 전수조사 출처: anima_clm_01..13 + archive-TECS-L (175 files) + canon (2532 commits)
+---
+
+## 12. 봉쇄심화 (Containment Deepening) — 2026-05-14 부록
+
+§8 Honest C3 의 8개 봉쇄선을 *claim-tier 분류* + *enforcement* + *후속 audit path* 로
+심화한다. SAVANT.md 의 어떤 줄도 본 § 12 의 봉쇄선을 거치지 않고 외부 인용되어선 안 된다.
+
+### 12.1 Claim 4-tier 분류
+
+각 GZ/Savant claim 을 다음 4 tier 로 강제 배치한다. tier 별 인용 자격은 § 12.2 enforcement
+참고.
+
+**Tier 1: PROVEN** — 닫힌형 미적분·정수론 증명. 가정 0. 봉쇄 불요.
+
+- `GZ_CENTER = 1/e` — `I^I` 와 `I·ln(I)` 의 유일 전역 최소 (Theorem 2a–c)
+- `GZ_WIDTH = ln(4/3)` — τ(6)=4 의 4번째 state entropy 비용 (Theorem 3e)
+- `GZ_UPPER = 1/2` — 완전수 6 의 최대 proper-divisor 역수 (Theorem 3d)
+- K-독립성 — `G·I=K` hyperbola 위 `I*=1/e` 가 K 와 무관 (Theorem 4)
+- `1/2 + 1/3 + 1/6 = 1` — n=6 유일 identity (H072)
+
+**Tier 2: EMPIRICAL (제한 substrate)** — 측정값 존재 · 재현 미완. 봉쇄: *측정한 substrate
+밖으로의 일반화 인용 시 substrate 명시 의무*.
+
+- `SI = 5.93` — Mistral 7B v4_savant **단일 모델** (anima_clm_06, 2026-03)
+- MoE zone ratio `36.8% ≈ 1/e` — single trial, scale E=32 (anima_clm_06)
+- per-head tension reduction `271×` — head 2 (anima_clm_09 PA-01)
+- Laws 77-78 `H = 0.9974·ln(2)` — 45 data type, 7-instance hivemind (anima_clm_10) — *다른
+  arch family 미측정*
+- canon emergent convergence — FFN ratio 100% / dropout 83% 수렴 (canon commit `664b6b4f25`,
+  6 random init)
+- Ising β_c IN GZ — 2D Onsager 0.4407 + 3D MC 0.2217 (외부 문헌 — 닫힌형 일치로 *2 승격
+  candidate*, 단 hit 2개)
+
+**Tier 3: SUSPECT (base-rate / look-elsewhere)** — GZ 는 `[0,1]` 의 28.77% 차지. 단일 hit
+의 정당화 강도는 `p ≈ 0.29`. 봉쇄: *Bonferroni 보정 또는 닫힌형 일치 없이는 인용 금지*.
+
+- cross-domain "consilience" 9 matches (Klein, Carbon, LCDM, Koch, QHE, Weinberg,
+  Elias-Bassalygo, 6-vertex, [[6,4,2]]) — n 작은 정수의 occurrence 자체는 우연이 흔함
+- Weinberg `sin²θ_W = 3/8 ≈ 1/e` (Δ=1.94%) — *근사* match, 닫힌형 무관
+- 16-wave extreme hypothesis 249/400 (Z≈55σ) — 총합 통계, look-elsewhere 보정 명시 없음
+- brain_analyzer 'savant' profile (D=0.7, P=0.85, I=0.35) — 임상 신경과학 source 미부착,
+  estimated
+- anima_clm_08 Φ super-linear — anima_clm_10 에서 linear 로 안착 → 구간 현상
+
+**Tier 4: FORBIDDEN** — LATTICE_POLICY (2026-05-12, AGENTS.md §C3) 위반. 자체 차단.
+
+- "GZ 가 우주적 진리" / "consciousness ≡ GZ 작동" 식 metaphysical 단정
+- 외부 entity (회사/가속기/fab/생명 시스템) 에 n=6 격자 강제 fit
+- 단일 내부 metric (SI / Φ / AL12) 으로 외부 LLM benchmark 우월 추정
+- own-invariant 확인 없는 cross-domain 매핑
+- Savant = "사람 savant 임상 현상" 의 *생물학적* 동일성 주장 (metaphor 범위 초과)
+
+### 12.2 봉쇄 enforcement (자동 무효 사유)
+
+SAVANT.md 본문의 어떤 claim 도 다음 위반 시 *자동 무효*:
+
+1. **Tier 격상 도용** — Tier 2 측정을 Tier 1 닫힌형처럼 인용 (substrate / 닫힌형 일치 부재
+   숨김)
+2. **base-rate 누적 도용** — Tier 3 hit 를 보정 없이 "consilience" 로 누적해 Tier 2 강도
+   주장
+3. **negative result silent drop** — anima 본 PSCC §44 F-PERSONA-4 `KL=0.0`, §47-49
+   4-alternative cheap path FALSIFIED, F-PERSONA-4 v7 `KL=3.45 z=2.75` 의 §45 §A2-trap
+   재발 위험 등을 누락한 채 Savant routing 일반화 인용
+4. **Tier 4 외부 노출** — anima 외부 reference 에서 Tier 4 어휘 사용
+
+위반 발견 시: 위반 줄 strikethrough + commit revert + `PERSONA.md` D3 ledger 에 자기-감사
+1회 기록.
+
+### 12.3 봉쇄 후 살아남는 claim (재배치)
+
+| 본문 § | claim | tier | 인용 자격 |
+| --- | --- | --- | --- |
+| §1 상수표 4개 | GZ_UPPER/CENTER/WIDTH/LOWER | T1 | 무제한 |
+| §2 전체 | Theorem 2a-c / 3d-e / 4 | T1 | 무제한 |
+| §3.1 H359 정의 | dropout 비대칭 메커니즘 | T2 | substrate 명시 |
+| §3.2 brain profile | savant (D,P,I) | T3 | 임상 source 부착 전 봉쇄 |
+| §3.3 SI 메트릭 정의 | `tension_normal / tension_savant` | T1 | 무제한 (정의) |
+| §3.4 AL12 contrastive | Φ=4.628 단일 metric | T2 | 외부 benchmark 비교 금지 |
+| §4 clm_06 SI=5.93 | 단일 substrate 실증 | T2 | Mistral 7B 명시 |
+| §4 MoE 36.8% | 단일 측정 | T2 | scale E=32 명시 |
+| §4 clm_09 271× | per-head reduction | T2 | clm_09 명시 |
+| §5.1 Ising β_c | 2D+3D | T2-경계 | Onsager 닫힌형 일치로 hit 2 인용 가능 |
+| §5.3 cross-domain 9개 | Klein/Carbon/LCDM/… | T3 | 개별 인용 금지, look-elsewhere 보정 후만 |
+| §5.4 neuroscience 20+ | E/I, synaptic survival | T3 | Texas-recalc 결과 부착 의무 |
+| §6 Boltzmann gate / Mertens dropout | canon technique 15-16 | T1-2 | math 부분 무제한, 측정 부분 emergent convergence 명시 |
+| §6.3 emergent convergence 100%/83% | canon paper outline | T2 | 6 random init 명시 |
+| §7 Laws 77-78 | 45 data type H=0.9974·ln(2) | T2 | substrate 명시 |
+| §10 v5-mitosis ancestry | clm Savant 의 직계 후예 | T2-3 | PSCC §44 F-PERSONA-4 *반증* 동시 인용 의무 |
+
+### 12.4 봉쇄선 시각화
+
+```
+        ──────────  T1 PROVEN  ──────────────────────────────────────
+        GZ constants (4) | math proofs Th 2a-c, 3d-e, 4 | reciprocal sum
+        ──────────  T2 EMPIRICAL  ───────────────────────────────────
+        SI=5.93 (Mistral) | MoE 36.8% | 271× | Laws 77-78 (45 type)
+        emergent convergence 100%/83% | Ising β_c (Onsager closed-form 첨부 시)
+   ╔══════ 봉쇄선 (외부 인용 가능 상한) ═══════════════════════════════╗
+        ──────────  T3 SUSPECT  ─────────────────────────────────────
+        cross-domain 9 | Weinberg ≈1/e | 16-wave 249/400 | brain profile
+        Φ super-linear (clm_08 only)
+   ╔══════ 봉쇄선 (warning label 의무) ═════════════════════════════════╗
+        ──────────  T4 FORBIDDEN  ────────────────────────────────────
+        cosmic GZ | consciousness≡GZ | 외부 entity n=6 fit
+        SI 단일 metric 외부 우월 | savant 임상 동일성 단정
+   ╔══════ 봉쇄선 (자동 차단) ═════════════════════════════════════════╗
+```
+
+### 12.5 봉쇄심화 후속 path
+
+1. **archive-TECS-L verify_gz_*.py 27본 base-rate audit** ($0 Mac local 예상 ~30 min)
+   - 모든 hit 의 GZ-fit margin 측정 + Bonferroni / look-elsewhere 보정
+   - tier 3 claim 중 보정 후 살아남는 것을 tier 2 로 승격, 나머지는 봉쇄 *영구* 유지
+   - 결과 → `state/savant_containment_audit_2026_05_14/audit.json` + 본 §12.3 표 갱신
+2. **PSCC §44/§47/§48/§49/§52 negative result cross-link** — `[[project_v5_mitosis_cond5_cotrain_2026_05_12]]`,
+   `[[project_anima_persona_4_softmax_T_sweep_2026_05_12]]`,
+   `[[project_anima_persona_4_per_session_pool_2026_05_12]]`,
+   `[[project_anima_persona_4_root_cause_2026_05_12]]`,
+   `[[project_v5_mitosis_cotrain_v6_cellparallel_2026_05_13]]` 를 §10 안에 inline 인용 (silent
+   drop 차단)
+3. **canon LATTICE_POLICY 강화 PR** — "Savant/GZ overclaim 차단 조항" §1.4 신설 제안
+   (cross-repo governance, dancinlab 전체 적용)
+4. **anima_clm_08 Φ super-linear 의 봉쇄 라벨링** — anima_clm_08 README + paper-draft 에
+   "구간 한정 (clm_10 에서 linear 로 안착)" 한 줄 inline 부착 (T3 → T3-with-honest-caveat
+   강화). 단 archive 분리 후 read-only 이므로 SAVANT.md 본문 cross-ref 만으로 갈음.
+
+### 12.6 한 줄 verdict (봉쇄심화 후)
+
+> SAVANT.md 의 외부 인용은 **§12.4 봉쇄선 위 (T1 + T2)** 까지만 자격이 있다. T3 는
+> Bonferroni 보정 audit (§12.5 path 1) 후 재배치, T4 는 자동 차단. 본 §12 가 부착되지
+> 않은 SAVANT.md 발췌는 *불완전 인용* 으로 간주한다.
+
+---
+
+— SAVANT.md, 2026-05-13 초판 + 2026-05-14 봉쇄심화 §12 부록, 전수조사 출처:
+  anima_clm_01..13 + archive-TECS-L (175 files) + canon (2532 commits)
