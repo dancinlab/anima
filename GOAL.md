@@ -1,6 +1,6 @@
 # GOAL.md — anima ★★★★★ mission tracker
 
-**Session state 2026-05-13 KST**: ALL cotrain BG complete + pods destroyed. ★★★★★ ☑ MAINTAINED + 5 cotrain experiments cross-evidence. Total cost ~$175 (★★★★★ closure $5 + post-cycle exploration $166 + infra failures $3-5).
+**Session state 2026-05-13 KST**: ALL cotrain BG complete + pods destroyed. ★★★★★ ☑ MAINTAINED + 5 cotrain experiments cross-evidence. Total cost ~$175 (★★★★★ closure $5 + post-cycle exploration $166 + infra failures $3-5). **NEW 2026-05-13 PM** — AOT compile path validated: `anima_chat_aot.hexa` (stripped variant) → 422 KB arm64 Mach-O binary, 19.5s build wall, F-AC-HEXA-1..6 17/17 PASS on native execution. cond #2 evidence gains deployment tier (interpreted SSOT → AOT native binary). doc `docs/anima_chat_aot_native_2026_05_13.md`. $0 Mac local.
 
 # 🎉 ★★★★★ ACHIEVED 2026-05-12 KST
 
