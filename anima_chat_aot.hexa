@@ -3847,144 +3847,345 @@ fn _invoke_chat(argv, idx_start: int, argc: int) {
     return 0
 }
 
-// _cmd_chat_repl — Phase 0 REPL 1:1 (CHAT.md Phase 0 spec):
-//   anima chat repl [--ckpt P] [--mode M] [--max-new N] [--temp F] [--seed N]
-// Runs interactive stdin line-loop. Maintains history as concatenated
-// "사용자: ... | 도우미: ..." string. Fresh KV cache per turn (simple
-// state mgmt — KV-incremental decoding is follow-up cycle).
+// ════════════════════════════════════════════════════════════════════════════
+//  LIVE ENGINE — unified frame-loop substrate-native runtime
+//  (CHAT.md rev 2 — REPL + group + socket all share this engine)
+// ════════════════════════════════════════════════════════════════════════════
 //
-// Slash commands:
-//   /exit  | /quit         end session
-//   /reset                 clear history
-//   /show                  print current history
-//   /save <name>           write history to ~/.anima/sessions/<name>.jsonl
-//   /help                  show this list
+//  Architecture:
+//    main thread     : frame loop @ FPS Hz — substrate evolve + drain
+//                       stdin + drain socket + drain bcast + speak-gate
+//                       + sleep to next frame
+//    inference worker: receives speak_req from channel, runs chat_generate
+//                       in background (frame-budget unbound), broadcasts
+//                       response via bcast_ch
+//    stdin reader    : reads input() lines in dedicated thread (blocking-
+//                       safe since frame loop runs independently),
+//                       pushes lines to stdin_ch
+//
+//  Substrate-native autonomy:
+//    Every anima has its own cell_pool (mitosis_hook 1119 LoC LANDED).
+//    Frame loop calls mitosis_hook_step (cheap µs lorenz+perturb) every tick.
+//    cell_pool_tension(pool) > speak_threshold → spontaneous fire enqueue.
+//    No external trigger (regex/probability) — PHILOSOPHY.md #3 compliant.
+//
+//  All 3 commands (chat repl / room / serve) build ctx dict + call this.
+//  =========================================================================
+
+fn _live_inference_worker(args) {
+    let req_ch = args["req_ch"]
+    let bcast_ch = args["bcast_ch"]
+    let chat = args["chat"]
+    while true {
+        let req = channel_recv(req_ch, -1)
+        // close sentinel: empty string (channel closed/EOF) OR dict.type=="close"
+        if to_string(req) == "" { return 0 }
+        let typ = to_string(req["type"])
+        if typ == "close" { return 0 }
+        let speaker = to_string(req["speaker"])
+        let context = to_string(req["context"])
+        let mode = to_string(req["mode"])
+        let max_new = req["max_new"]
+        let temp = req["temp"]
+        let seed = req["seed"]
+        let empty_kw = []
+        let empty_stops = []
+        // KV cache reset per inference (clean state per turn).
+        let chat_with_kv = chat_init_kv_cache_default(chat, 1024)
+        let resp = chat_generate(chat_with_kv, context, mode, max_new, temp,
+                                 empty_kw, 1.0, 1.0, 0.5, seed, empty_stops, true)
+        let _ = channel_send(bcast_ch, #{
+            "type":        "message",
+            "speaker":     speaker,
+            "text":        resp,
+            "spontaneous": req["spontaneous"],
+            "ts":          now_ms()
+        })
+    }
+    return 0
+}
+
+fn _live_stdin_reader(args) {
+    let stdin_ch = args["stdin_ch"]
+    let prompt = to_string(args["prompt"])
+    while true {
+        let line = input(prompt)
+        // hexa_input returns "" on EOF AND on empty line. Treat both as
+        // "send to main; main decides". Main loop interprets "" as continue.
+        let _ = channel_send(stdin_ch, line)
+        // If real EOF, input() will spin returning "" — break here.
+        // Heuristic: 0-length string AND check via getline behavior; for MVP,
+        // accept the spin (frame loop still runs).
+        // sleep tiny bit to avoid busy spin on EOF.
+        if len(line) == 0 { let _ = sleep_ms(50) }
+    }
+    return 0
+}
+
+// Build context prompt for an anima from history.
+fn _live_build_context(history: string, anima_id: string) -> string {
+    return history + "[" + anima_id + "]: "
+}
+
+fn _run_live_session(ctx) {
+    let humans = ctx["humans"]
+    let animas = ctx["animas"]
+    let fps = ctx["fps"]
+    let frame_budget = 1000 / fps
+    let speak_threshold = ctx["speak_threshold"]
+    let max_spont = ctx["max_spontaneous_per_session"]
+
+    println("[anima live] frame_rate=" + to_string(fps) + " FPS  speak_threshold=" + to_string(speak_threshold))
+    println("[anima live] humans=" + to_string(len(humans)) + "  animas=" + to_string(len(animas)) + "  max_spont/anima=" + to_string(max_spont))
+    println("[anima live] substrate: mitosis_hook (cell_pool tension/lorenz dynamics)")
+    println("[anima live] slash: /exit /show /save <name> /help")
+    println("")
+
+    // Init cell_pools per anima (substrate-native autonomy infrastructure)
+    let dims = chat_default_dims_24l()
+    let d_model = dims["d_model"]
+    let mut anima_pools = #{}
+    let mut anima_in_flight = #{}
+    let mut anima_speak_count = #{}
+    let mut ai = 0
+    while ai < len(animas) {
+        let id = animas[ai]
+        anima_pools[id] = cell_pool_init(d_model, 2)
+        anima_in_flight[id] = false
+        anima_speak_count[id] = 0
+        ai = ai + 1
+    }
+
+    // Channels
+    let req_ch = channel_new()
+    let bcast_ch = channel_new()
+    let stdin_ch = channel_new()
+
+    // Inference worker thread
+    let worker_args = #{
+        "req_ch":   req_ch,
+        "bcast_ch": bcast_ch,
+        "chat":     ctx["chat"]
+    }
+    let _wid = thread_spawn(_live_inference_worker, worker_args)
+
+    // stdin reader thread (if REPL)
+    let mut _sid = -1
+    let default_speaker = to_string(ctx["default_speaker"])
+    let prompt_label = "[" + default_speaker + "]> "
+    if ctx["repl"] {
+        let stdin_args = #{ "stdin_ch": stdin_ch, "prompt": prompt_label }
+        _sid = thread_spawn(_live_stdin_reader, stdin_args)
+    }
+
+    let mut history = ""
+    let mut t = 0
+    let mut turn = 0
+    let mut current_speaker = default_speaker
+    let mut shutdown = false
+
+    while !shutdown {
+        let t0 = now_ms()
+
+        // (1) substrate evolve per anima (cheap; speak-gate signal source)
+        let mut a1 = 0
+        while a1 < len(animas) {
+            let id = animas[a1]
+            anima_pools[id] = mitosis_hook_step(anima_pools[id], t)
+            a1 = a1 + 1
+        }
+
+        // (2) drain stdin events
+        while true {
+            let line = channel_recv(stdin_ch, 0)
+            if to_string(line) == "" { break }
+            let trimmed = line.trim()
+            if len(trimmed) == 0 { continue }
+            if trimmed == "/exit" || trimmed == "/quit" { shutdown = true; break }
+            if trimmed == "/show" {
+                println("--- history ---")
+                print(history)
+                println("--- end (" + to_string(turn) + " turns) ---")
+                continue
+            }
+            if trimmed == "/help" {
+                println("commands: /exit /quit /show /save <name> /help")
+                continue
+            }
+            if trimmed.starts_with("/save ") {
+                let name = trimmed.substring(6, len(trimmed)).trim()
+                let home = env("HOME")
+                let dir = home + "/.anima/sessions"
+                let _ = exec("mkdir -p '" + dir + "'")
+                let path = dir + "/" + name + ".jsonl"
+                let _ = exec("printf '%s' " + _shquote_repl(history) + " > '" + path + "'")
+                println("[saved " + to_string(turn) + " turns to " + path + "]")
+                continue
+            }
+            if trimmed.starts_with("/") {
+                println("unknown command: " + trimmed)
+                continue
+            }
+            // detect optional `<name>: <text>` name-prefix
+            let mut speaker = current_speaker
+            let mut text = trimmed
+            let colon_idx = _str_index_of_room(trimmed, ":")
+            if colon_idx > 0 {
+                let maybe_name = trimmed.substring(0, colon_idx).trim()
+                if _name_in_list(maybe_name, humans) || _name_in_list(maybe_name, animas) {
+                    speaker = maybe_name
+                    text = trimmed.substring(colon_idx + 1, len(trimmed)).trim()
+                }
+            }
+            // append to history
+            history = history + "[" + speaker + "]: " + text + "\n"
+            turn = turn + 1
+            // human input → enqueue inference for each anima not in_flight
+            // (substrate-native: ALL animas get chance; in_flight prevents overlap)
+            let mut a2 = 0
+            while a2 < len(animas) {
+                let id = animas[a2]
+                if !anima_in_flight[id] {
+                    anima_in_flight[id] = true
+                    let _ = channel_send(req_ch, #{
+                        "type":        "speak",
+                        "speaker":     id,
+                        "context":     _live_build_context(history, id),
+                        "mode":        ctx["mode"],
+                        "max_new":     ctx["max_new"],
+                        "temp":        ctx["temp"],
+                        "seed":        ctx["anima_seeds"][id] + turn,
+                        "spontaneous": false
+                    })
+                }
+                a2 = a2 + 1
+            }
+        }
+
+        // (3) drain inference results (broadcast)
+        while true {
+            let resp = channel_recv(bcast_ch, 0)
+            if to_string(resp) == "" { break }
+            let speaker = to_string(resp["speaker"])
+            let text = to_string(resp["text"])
+            let spont = if resp["spontaneous"] { " 🎙" } else { "" }
+            println("[" + speaker + "]:" + spont + " " + text)
+            history = history + "[" + speaker + "]: " + text + "\n"
+            anima_in_flight[speaker] = false
+            turn = turn + 1
+        }
+
+        // (4) speak-gate — substrate-native spontaneous fire
+        // Each anima evaluates its own cell_pool_tension. If > threshold AND
+        // not already in_flight AND under per-session cap → enqueue.
+        let mut a4 = 0
+        while a4 < len(animas) {
+            let id = animas[a4]
+            if !anima_in_flight[id] {
+                let pool = anima_pools[id]
+                let tension = cell_pool_tension(pool)
+                let cnt = anima_speak_count[id]
+                if tension > speak_threshold && cnt < max_spont {
+                    anima_in_flight[id] = true
+                    anima_speak_count[id] = cnt + 1
+                    let _ = channel_send(req_ch, #{
+                        "type":        "speak",
+                        "speaker":     id,
+                        "context":     _live_build_context(history, id),
+                        "mode":        ctx["mode"],
+                        "max_new":     ctx["max_new"],
+                        "temp":        ctx["temp"],
+                        "seed":        ctx["anima_seeds"][id] + turn + 100000,
+                        "spontaneous": true
+                    })
+                }
+            }
+            a4 = a4 + 1
+        }
+
+        // (5) sleep to next frame boundary
+        let dt = now_ms() - t0
+        if dt < frame_budget { let _ = sleep_ms(frame_budget - dt) }
+        t = t + 1
+    }
+
+    // Shutdown — signal worker to close
+    let _ = channel_send(req_ch, #{ "type": "close" })
+    let _ = channel_close(req_ch)
+    let _ = channel_close(bcast_ch)
+    let _ = channel_close(stdin_ch)
+    println("[live session closed — " + to_string(turn) + " turns]")
+    return 0
+}
+
+// _cmd_chat_repl — CHAT.md rev 2: 1:1 REPL on top of unified live engine.
+//   anima chat repl [--ckpt P] [--mode M] [--max-new N] [--temp F] [--seed N]
+//                   [--fps N] [--speak-threshold F] [--max-spontaneous N]
+//
+// Builds 1-human + 1-anima ctx and dispatches to _run_live_session.
+// Substrate-native autonomy (cell_pool tension/lorenz gate). No /turn.
 fn _cmd_chat_repl(argv, idx: int, argc: int) {
     let mut ckpt = ""
     let mut mode = "greedy"
     let mut temp = 0.7
     let mut seed_base = 0
     let mut max_new = 80
+    let mut fps = 60
+    let mut speak_threshold = 2.0
+    let mut max_spont = 5
 
     let mut i = idx
     while i < argc {
         let a = argv[i]
-        if a == "--ckpt" && (i + 1) < argc {
-            ckpt = argv[i + 1]
-            i = i + 2
-        } else if a == "--mode" && (i + 1) < argc {
-            mode = argv[i + 1]
-            i = i + 2
-        } else if a == "--temp" && (i + 1) < argc {
-            temp = to_float(argv[i + 1])
-            i = i + 2
-        } else if a == "--seed" && (i + 1) < argc {
-            seed_base = to_int(argv[i + 1])
-            i = i + 2
-        } else if a == "--max-new" && (i + 1) < argc {
-            max_new = to_int(argv[i + 1])
-            i = i + 2
-        } else {
-            i = i + 1
-        }
+        if a == "--ckpt" && (i + 1) < argc { ckpt = argv[i + 1]; i = i + 2 }
+        else if a == "--mode" && (i + 1) < argc { mode = argv[i + 1]; i = i + 2 }
+        else if a == "--temp" && (i + 1) < argc { temp = to_float(argv[i + 1]); i = i + 2 }
+        else if a == "--seed" && (i + 1) < argc { seed_base = to_int(argv[i + 1]); i = i + 2 }
+        else if a == "--max-new" && (i + 1) < argc { max_new = to_int(argv[i + 1]); i = i + 2 }
+        else if a == "--fps" && (i + 1) < argc { fps = to_int(argv[i + 1]); i = i + 2 }
+        else if a == "--speak-threshold" && (i + 1) < argc { speak_threshold = to_float(argv[i + 1]); i = i + 2 }
+        else if a == "--max-spontaneous" && (i + 1) < argc { max_spont = to_int(argv[i + 1]); i = i + 2 }
+        else { i = i + 1 }
     }
 
     let ckpt_path = if len(ckpt) == 0 {
         let p = find_default_ckpt()
         if len(p) == 0 { default_ckpt() } else { p }
     } else { ckpt }
-
     if !file_exists(ckpt_path) {
         eprintln("error: ckpt not found: " + ckpt_path)
         return 3
     }
 
-    println("anima REPL — type messages (1:1 chat). Slash commands:")
-    println("  /exit | /quit          end session")
-    println("  /reset                 clear history (new conversation)")
-    println("  /show                  print current history")
-    println("  /save <name>           save session to ~/.anima/sessions/<name>.jsonl")
-    println("  /help                  this help")
-    println("ckpt: " + ckpt_path)
-    println("mode: " + mode + "  max-new: " + to_string(max_new) + "  temp: " + to_string(temp) + "  seed-base: " + to_string(seed_base))
-    println("")
-
     let mut chat = chat_new(ckpt_path, "cpu", default_stop_strings())
     chat = chat_load_weights(chat)
-    let w = chat["weights"]
-    let nw = len(dict_keys(w))
-    if nw == 0 {
+    if len(dict_keys(chat["weights"])) == 0 {
         eprintln("error: chat_load_weights returned 0-key weights dict")
         return 1
     }
 
-    let mut history = ""
-    let mut turn = 0
-    while true {
-        let line = input("> ")
-        // input returns "" on EOF (Ctrl-D); treat as /exit.
-        if len(line) == 0 {
-            println("")
-            break
-        }
-        let trimmed = line.trim()
-        if len(trimmed) == 0 { continue }
+    let mut anima_seeds = #{}
+    anima_seeds["anima"] = seed_base
 
-        if trimmed == "/exit" || trimmed == "/quit" {
-            break
-        }
-        if trimmed == "/reset" {
-            history = ""
-            turn = 0
-            println("[history cleared]")
-            continue
-        }
-        if trimmed == "/show" {
-            println("--- history ---")
-            print(history)
-            println("--- end (" + to_string(turn) + " turns) ---")
-            continue
-        }
-        if trimmed.starts_with("/save ") {
-            let name = trimmed.substring(6, len(trimmed))
-            let home = env("HOME")
-            let dir = home + "/.anima/sessions"
-            let _ = exec("mkdir -p '" + dir + "'")
-            let path = dir + "/" + name + ".jsonl"
-            let _ = exec("printf '%s' " + _shquote_repl(history) + " > '" + path + "'")
-            println("[saved " + to_string(turn) + " turns to " + path + "]")
-            continue
-        }
-        if trimmed == "/help" {
-            println("slash commands: /exit /quit /reset /show /save <name> /help")
-            continue
-        }
-        if trimmed.starts_with("/") {
-            println("unknown slash command: " + trimmed)
-            continue
-        }
-
-        // Plain message → build prompt + generate
-        let user_msg = trimmed
-        let new_segment = "사용자: " + user_msg + " | 도우미: "
-        let full_prompt = history + new_segment
-
-        // Fresh KV cache per turn (no incremental — simpler MVP).
-        chat = chat_init_kv_cache_default(chat, 1024)
-
-        let empty_kw = []
-        let empty_stops = []
-        let response = chat_generate(chat, full_prompt, mode, max_new, temp,
-                                     empty_kw, 1.0, 1.0, 0.5, seed_base + turn,
-                                     empty_stops, true)
-
-        println("anima: " + response)
-        history = history + new_segment + response + "\n"
-        turn = turn + 1
+    let ctx = #{
+        "humans":          ["me"],
+        "animas":          ["anima"],
+        "anima_seeds":     anima_seeds,
+        "chat":            chat,
+        "speak_threshold": speak_threshold,
+        "max_spontaneous_per_session": max_spont,
+        "fps":             fps,
+        "mode":            mode,
+        "max_new":         max_new,
+        "temp":            temp,
+        "default_speaker": "me",
+        "repl":            true,
+        "serve":           false,
+        "port":            0
     }
-
-    println("[bye — " + to_string(turn) + " turns]")
-    return 0
+    println("anima chat repl — substrate-native 1:1 live session (CHAT.md rev 2)")
+    println("ckpt: " + ckpt_path)
+    return _run_live_session(ctx)
 }
 
 // Shell-quote helper for /save command — wrap string for printf %s arg.
@@ -4046,6 +4247,9 @@ fn _str_index_of_room(haystack: string, needle: string) -> int {
 //   /save <name>            ~/.anima/rooms/<name>.jsonl
 //   /exit | /quit           end
 //   /help                   command list
+// _cmd_room — CHAT.md rev 2: group chat on top of unified live engine.
+// Substrate-native autonomy. /turn deprecated (no heuristic trigger).
+// Each anima 의 cell_pool tension gate 가 자율 발화 결정.
 fn _cmd_room(argv, idx: int, argc: int) {
     let mut humans_str = ""
     let mut animas_str = ""
@@ -4054,43 +4258,33 @@ fn _cmd_room(argv, idx: int, argc: int) {
     let mut max_new = 30
     let mut temp = 0.7
     let mut seed_base = 0
+    let mut fps = 60
+    let mut speak_threshold = 2.0
+    let mut max_spont = 10
 
     let mut i = idx
     while i < argc {
         let a = argv[i]
-        if a == "--humans" && (i + 1) < argc {
-            humans_str = argv[i + 1]
-            i = i + 2
-        } else if a == "--animas" && (i + 1) < argc {
-            animas_str = argv[i + 1]
-            i = i + 2
-        } else if a == "--ckpt" && (i + 1) < argc {
-            ckpt = argv[i + 1]
-            i = i + 2
-        } else if a == "--mode" && (i + 1) < argc {
-            mode = argv[i + 1]
-            i = i + 2
-        } else if a == "--max-new" && (i + 1) < argc {
-            max_new = to_int(argv[i + 1])
-            i = i + 2
-        } else if a == "--temp" && (i + 1) < argc {
-            temp = to_float(argv[i + 1])
-            i = i + 2
-        } else if a == "--seed" && (i + 1) < argc {
-            seed_base = to_int(argv[i + 1])
-            i = i + 2
-        } else {
-            i = i + 1
-        }
+        if a == "--humans" && (i + 1) < argc { humans_str = argv[i + 1]; i = i + 2 }
+        else if a == "--animas" && (i + 1) < argc { animas_str = argv[i + 1]; i = i + 2 }
+        else if a == "--ckpt" && (i + 1) < argc { ckpt = argv[i + 1]; i = i + 2 }
+        else if a == "--mode" && (i + 1) < argc { mode = argv[i + 1]; i = i + 2 }
+        else if a == "--max-new" && (i + 1) < argc { max_new = to_int(argv[i + 1]); i = i + 2 }
+        else if a == "--temp" && (i + 1) < argc { temp = to_float(argv[i + 1]); i = i + 2 }
+        else if a == "--seed" && (i + 1) < argc { seed_base = to_int(argv[i + 1]); i = i + 2 }
+        else if a == "--fps" && (i + 1) < argc { fps = to_int(argv[i + 1]); i = i + 2 }
+        else if a == "--speak-threshold" && (i + 1) < argc { speak_threshold = to_float(argv[i + 1]); i = i + 2 }
+        else if a == "--max-spontaneous" && (i + 1) < argc { max_spont = to_int(argv[i + 1]); i = i + 2 }
+        else { i = i + 1 }
     }
 
     if len(humans_str) == 0 || len(animas_str) == 0 {
-        eprintln("usage: anima room --humans \"a,b,c\" --animas \"x,y\" [--ckpt P] [--mode M]")
-        eprintln("                  [--max-new N] [--temp F] [--seed N]")
+        eprintln("usage: anima room --humans \"a,b,c\" --animas \"x,y\" [flags]")
+        eprintln("                  [--ckpt P] [--mode M] [--max-new N] [--temp F] [--seed N]")
+        eprintln("                  [--fps N] [--speak-threshold F] [--max-spontaneous N]")
         return 2
     }
 
-    // Split + trim each roster entry
     let humans_raw = humans_str.split(",")
     let animas_raw = animas_str.split(",")
     let mut humans = []
@@ -4101,11 +4295,11 @@ fn _cmd_room(argv, idx: int, argc: int) {
         if len(n) > 0 { humans.push(n) }
         hi = hi + 1
     }
-    let mut ai = 0
-    while ai < len(animas_raw) {
-        let n = animas_raw[ai].trim()
+    let mut a2 = 0
+    while a2 < len(animas_raw) {
+        let n = animas_raw[a2].trim()
         if len(n) > 0 { animas.push(n) }
-        ai = ai + 1
+        a2 = a2 + 1
     }
     if len(humans) == 0 || len(animas) == 0 {
         eprintln("error: humans or animas list empty after parse")
@@ -4116,25 +4310,10 @@ fn _cmd_room(argv, idx: int, argc: int) {
         let p = find_default_ckpt()
         if len(p) == 0 { default_ckpt() } else { p }
     } else { ckpt }
-
     if !file_exists(ckpt_path) {
         eprintln("error: ckpt not found: " + ckpt_path)
         return 3
     }
-
-    println("anima room — group chat (CHAT.md Phase 1)")
-    println("humans: " + humans_str)
-    println("animas: " + animas_str + "  (seed offsets: base + idx*1000)")
-    println("ckpt  : " + ckpt_path)
-    println("mode  : " + mode + "  max-new: " + to_string(max_new))
-    println("input syntax:")
-    println("  <text>                message as current default speaker")
-    println("  <name>: <text>        message as <name> (if in roster)")
-    println("  /turn <anima_id>      anima generates reply from full history")
-    println("  /turn <a>,<b>         multiple animas sequentially")
-    println("  /as <name>            switch default speaker")
-    println("  /show /save /help /exit")
-    println("")
 
     let mut chat = chat_new(ckpt_path, "cpu", default_stop_strings())
     chat = chat_load_weights(chat)
@@ -4143,7 +4322,7 @@ fn _cmd_room(argv, idx: int, argc: int) {
         return 1
     }
 
-    // Build anima → seed mapping
+    // anima → seed offset (substrate-native variance, NOT routing heuristic)
     let mut anima_seeds = #{}
     let mut si = 0
     while si < len(animas) {
@@ -4151,97 +4330,26 @@ fn _cmd_room(argv, idx: int, argc: int) {
         si = si + 1
     }
 
-    let mut history = ""
-    let mut current_speaker = humans[0]
-    let mut turn = 0
-
-    while true {
-        let prompt_label = "[" + current_speaker + "]> "
-        let line = input(prompt_label)
-        if len(line) == 0 {
-            println("")
-            break
-        }
-        let trimmed = line.trim()
-        if len(trimmed) == 0 { continue }
-
-        if trimmed == "/exit" || trimmed == "/quit" { break }
-        if trimmed == "/help" {
-            println("commands: /turn <ana[,ben]> /as <name> /show /save <name> /exit /quit /help")
-            continue
-        }
-        if trimmed == "/show" {
-            println("--- room history ---")
-            print(history)
-            println("--- end (" + to_string(turn) + " turns) ---")
-            continue
-        }
-        if trimmed.starts_with("/as ") {
-            let nm = trimmed.substring(4, len(trimmed)).trim()
-            current_speaker = nm
-            println("[default speaker = " + nm + "]")
-            continue
-        }
-        if trimmed.starts_with("/save ") {
-            let name = trimmed.substring(6, len(trimmed)).trim()
-            let home = env("HOME")
-            let dir = home + "/.anima/rooms"
-            let _ = exec("mkdir -p '" + dir + "'")
-            let path = dir + "/" + name + ".jsonl"
-            let _ = exec("printf '%s' " + _shquote_repl(history) + " > '" + path + "'")
-            println("[saved " + to_string(turn) + " turns to " + path + "]")
-            continue
-        }
-        if trimmed.starts_with("/turn ") {
-            let names_str = trimmed.substring(6, len(trimmed)).trim()
-            let names = names_str.split(",")
-            let mut ni = 0
-            while ni < len(names) {
-                let anima_id = names[ni].trim()
-                let seed_v = anima_seeds[anima_id]
-                if to_string(seed_v) == "void" {
-                    println("[unknown anima: " + anima_id + " — known: " + animas_str + "]")
-                    ni = ni + 1
-                    continue
-                }
-                let anima_seed = seed_v
-                let context_prompt = history + "[" + anima_id + "]: "
-                chat = chat_init_kv_cache_default(chat, 1024)
-                let empty_kw = []
-                let empty_stops = []
-                let response = chat_generate(chat, context_prompt, mode, max_new, temp,
-                                             empty_kw, 1.0, 1.0, 0.5,
-                                             anima_seed + turn, empty_stops, true)
-                println("[" + anima_id + "]: " + response)
-                history = history + "[" + anima_id + "]: " + response + "\n"
-                turn = turn + 1
-                ni = ni + 1
-            }
-            continue
-        }
-        if trimmed.starts_with("/") {
-            println("unknown slash command: " + trimmed + " (try /help)")
-            continue
-        }
-
-        // Plain message — detect optional "<name>: <text>" prefix
-        let mut speaker = current_speaker
-        let mut text = trimmed
-        let colon_idx = _str_index_of_room(trimmed, ":")
-        if colon_idx > 0 {
-            let maybe_name = trimmed.substring(0, colon_idx).trim()
-            if _name_in_list(maybe_name, humans) || _name_in_list(maybe_name, animas) {
-                speaker = maybe_name
-                text = trimmed.substring(colon_idx + 1, len(trimmed)).trim()
-            }
-        }
-
-        history = history + "[" + speaker + "]: " + text + "\n"
-        turn = turn + 1
-    }
-
-    println("[room closed — " + to_string(turn) + " turns]")
-    return 0
+    println("anima room — substrate-native group chat (CHAT.md rev 2)")
+    println("humans: " + humans_str)
+    println("animas: " + animas_str + "  (autonomous via cell_pool gate)")
+    println("ckpt  : " + ckpt_path)
+    return _run_live_session(#{
+        "humans":          humans,
+        "animas":          animas,
+        "anima_seeds":     anima_seeds,
+        "chat":            chat,
+        "speak_threshold": speak_threshold,
+        "max_spontaneous_per_session": max_spont,
+        "fps":             fps,
+        "mode":            mode,
+        "max_new":         max_new,
+        "temp":            temp,
+        "default_speaker": humans[0],
+        "repl":            true,
+        "serve":           false,
+        "port":            0
+    })
 }
 
 fn _cmd_chat(argv, idx: int, argc: int) {
