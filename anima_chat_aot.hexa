@@ -2912,6 +2912,8 @@ fn _print_help() {
     println("")
     println("Usage:")
     println("  anima chat send --prompt \"<text>\" [--ckpt P] [--mode M] [--max-new N] [--temp F] [--seed N]")
+    println("  anima chat repl [--ckpt P] [--mode M] [--max-new N] [--temp F] [--seed N]")
+    println("                                   interactive REPL (CHAT.md Phase 0, 1:1)")
     println("  anima chat smoke                 run F-AC-HEXA-1..6 helper battery")
     println("  anima ask \"<prompt>\" [flags]     ergonomic shortcut for `chat send --prompt`")
     println("  anima ckpt path                  print default ckpt path")
@@ -3051,19 +3053,166 @@ fn _invoke_chat(argv, idx_start: int, argc: int) {
     return 0
 }
 
+// _cmd_chat_repl — Phase 0 REPL 1:1 (CHAT.md Phase 0 spec):
+//   anima chat repl [--ckpt P] [--mode M] [--max-new N] [--temp F] [--seed N]
+// Runs interactive stdin line-loop. Maintains history as concatenated
+// "사용자: ... | 도우미: ..." string. Fresh KV cache per turn (simple
+// state mgmt — KV-incremental decoding is follow-up cycle).
+//
+// Slash commands:
+//   /exit  | /quit         end session
+//   /reset                 clear history
+//   /show                  print current history
+//   /save <name>           write history to ~/.anima/sessions/<name>.jsonl
+//   /help                  show this list
+fn _cmd_chat_repl(argv, idx: int, argc: int) {
+    let mut ckpt = ""
+    let mut mode = "greedy"
+    let mut temp = 0.7
+    let mut seed_base = 0
+    let mut max_new = 80
+
+    let mut i = idx
+    while i < argc {
+        let a = argv[i]
+        if a == "--ckpt" && (i + 1) < argc {
+            ckpt = argv[i + 1]
+            i = i + 2
+        } else if a == "--mode" && (i + 1) < argc {
+            mode = argv[i + 1]
+            i = i + 2
+        } else if a == "--temp" && (i + 1) < argc {
+            temp = to_float(argv[i + 1])
+            i = i + 2
+        } else if a == "--seed" && (i + 1) < argc {
+            seed_base = to_int(argv[i + 1])
+            i = i + 2
+        } else if a == "--max-new" && (i + 1) < argc {
+            max_new = to_int(argv[i + 1])
+            i = i + 2
+        } else {
+            i = i + 1
+        }
+    }
+
+    let ckpt_path = if len(ckpt) == 0 {
+        let p = find_default_ckpt()
+        if len(p) == 0 { default_ckpt() } else { p }
+    } else { ckpt }
+
+    if !file_exists(ckpt_path) {
+        eprintln("error: ckpt not found: " + ckpt_path)
+        return 3
+    }
+
+    println("anima REPL — type messages (1:1 chat). Slash commands:")
+    println("  /exit | /quit          end session")
+    println("  /reset                 clear history (new conversation)")
+    println("  /show                  print current history")
+    println("  /save <name>           save session to ~/.anima/sessions/<name>.jsonl")
+    println("  /help                  this help")
+    println("ckpt: " + ckpt_path)
+    println("mode: " + mode + "  max-new: " + to_string(max_new) + "  temp: " + to_string(temp) + "  seed-base: " + to_string(seed_base))
+    println("")
+
+    let mut chat = chat_new(ckpt_path, "cpu", default_stop_strings())
+    chat = chat_load_weights(chat)
+    let w = chat["weights"]
+    let nw = len(dict_keys(w))
+    if nw == 0 {
+        eprintln("error: chat_load_weights returned 0-key weights dict")
+        return 1
+    }
+
+    let mut history = ""
+    let mut turn = 0
+    while true {
+        let line = input("> ")
+        // input returns "" on EOF (Ctrl-D); treat as /exit.
+        if len(line) == 0 {
+            println("")
+            break
+        }
+        let trimmed = line.trim()
+        if len(trimmed) == 0 { continue }
+
+        if trimmed == "/exit" || trimmed == "/quit" {
+            break
+        }
+        if trimmed == "/reset" {
+            history = ""
+            turn = 0
+            println("[history cleared]")
+            continue
+        }
+        if trimmed == "/show" {
+            println("--- history ---")
+            print(history)
+            println("--- end (" + to_string(turn) + " turns) ---")
+            continue
+        }
+        if trimmed.starts_with("/save ") {
+            let name = trimmed.substring(6, len(trimmed))
+            let home = env("HOME")
+            let dir = home + "/.anima/sessions"
+            let _ = exec("mkdir -p '" + dir + "'")
+            let path = dir + "/" + name + ".jsonl"
+            let _ = exec("printf '%s' " + _shquote_repl(history) + " > '" + path + "'")
+            println("[saved " + to_string(turn) + " turns to " + path + "]")
+            continue
+        }
+        if trimmed == "/help" {
+            println("slash commands: /exit /quit /reset /show /save <name> /help")
+            continue
+        }
+        if trimmed.starts_with("/") {
+            println("unknown slash command: " + trimmed)
+            continue
+        }
+
+        // Plain message → build prompt + generate
+        let user_msg = trimmed
+        let new_segment = "사용자: " + user_msg + " | 도우미: "
+        let full_prompt = history + new_segment
+
+        // Fresh KV cache per turn (no incremental — simpler MVP).
+        chat = chat_init_kv_cache_default(chat, 1024)
+
+        let empty_kw = []
+        let empty_stops = []
+        let response = chat_generate(chat, full_prompt, mode, max_new, temp,
+                                     empty_kw, 1.0, 1.0, 0.5, seed_base + turn,
+                                     empty_stops, true)
+
+        println("anima: " + response)
+        history = history + new_segment + response + "\n"
+        turn = turn + 1
+    }
+
+    println("[bye — " + to_string(turn) + " turns]")
+    return 0
+}
+
+// Shell-quote helper for /save command — wrap string for printf %s arg.
+fn _shquote_repl(s: string) -> string {
+    return "'" + s.replace("'", "'\\''") + "'"
+}
+
 fn _cmd_chat(argv, idx: int, argc: int) {
     if idx >= argc {
-        eprintln("usage: anima chat <send|smoke>")
+        eprintln("usage: anima chat <send|repl|smoke>")
         return 2
     }
     let sub = argv[idx]
     if sub == "send" {
         return _invoke_chat(argv, idx + 1, argc)
+    } else if sub == "repl" {
+        return _cmd_chat_repl(argv, idx + 1, argc)
     } else if sub == "smoke" {
         _smoke()
         return 0
     } else {
-        eprintln("anima chat: unknown subcommand: " + sub + " (known: send / smoke)")
+        eprintln("anima chat: unknown subcommand: " + sub + " (known: send / repl / smoke)")
         return 2
     }
 }

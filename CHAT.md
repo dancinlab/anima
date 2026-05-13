@@ -47,7 +47,13 @@
 
 ## 📋 Phase별 명세
 
-### **Phase 0** — REPL chat (1:1 단순 상시)
+### **Phase 0** — REPL chat (1:1 단순 상시) ☑ **LANDED 2026-05-13 KST PM**
+
+> hexa-native impl in `anima_chat_aot.hexa::_cmd_chat_repl` (~120 LoC).
+> Mac arm64 + Linux x86_64 cross-compile parity. multi-turn + /show + /save + /exit verified.
+> /save → `~/.anima/sessions/<name>.jsonl` 파일 생성. CLI: `anima chat repl [--mode M] [--max-new N] [--temp F] [--seed N]`.
+
+
 
 ```sh
 anima chat repl [--mode greedy --seed 0]
