@@ -551,14 +551,24 @@ F-V5MIT-4 COTRAIN-CONVERGE FAIL (loss 횡보) 가 동반되어 v6 routing FAIL �
 **학습 자체가 안 됨** 일 가능성이 가장 높음 (모든 routing metric 은 학습된 representation
 가정). SAVANT.md 의 §10 ancestry 인용은 이 trail 없이 단독 노출 금지 (§12.2-3 위반).
 
-**Open closure paths** (post-v6):
+**Open closure paths** (post-v6, updated 2026-05-14):
 - (i) v8: v7 arch (cells=64 small) + v6 distributed shared-grad reduce 결합 — cells scaling
-  과 cell-parallel speedup 의 분리
-- (ii) v6 의 F-V5MIT-4 COTRAIN-CONVERGE 원인 진단 — all_reduce.div_(W) 의 grad scale 문제
-  여부, per-rank corpus seed 의 statistical mismatch, λ aux 비중 등
-- (iii) §52 v7 의 KL>0 signal 자체의 cross-seed robustness 검증 ($0.30 × 3-5 seed 추가)
-- (iv) "category routing" 가설 *완전 폐기* + 다른 ancestry-translation path 모색
-  (예: v5-anima long-trajectory α=0.688 super-linear 재시도)
+  과 cell-parallel speedup 의 분리. **(ii) fix 적용 후로 보류** (data flow 가 정상화되어야
+  cells scaling 의 *진짜* 효과 측정 가능).
+- (ii) ✅ **LANDED 2026-05-14** — v6 F-V5MIT-4 COTRAIN-CONVERGE FAIL **root cause 확정**:
+  `seed = base + rank` (line 607) 가 `sample_batch` (line 130, `torch.randint`) 에도 영향
+  → 각 rank 가 *다른 batch* 를 *다른 cells* 로 forward 후 `all_reduce(SUM)` → semantically
+  incoherent mixture. CE 17.7 ≫ log(vocab=256)=5.55 (random 보다 나쁨) 의 신호.
+  3 fix options 식별 (A=same batch broadcast recommended / B=RNG reset / C=DDP replication).
+  Memory C3 #8 "per-rank seed → effective batch W× free" **잘못된 가정 retract**. 진단 doc:
+  `state/anima_v5mitosis_cotrain_v6_cellparallel_2026_05_13/root_cause_diagnosis_2026_05_14.md`.
+- (ii-b) **v6.1 fire** ($22 estimated, 4×A100 SXM4 동일 spec) — fix (A) 적용 후 5K step 재실행.
+  F-V5MIT-4 + F-PERSONA-4 재측정. *category routing 폐기/유지* 결정의 evidence.
+- (iii) §52 v7 cross-seed robustness ($0.30-1.50 BG) — v6 fix 와 *독립*, 즉시 dispatch
+  가능.
+- (iv) ⏸ **시기상조 (post-(ii) 진단)** — "category routing 가설 폐기" 는 v6 의 *학습 부재*
+  결과로 결론 못 내림. (ii-b) v6.1 결과 받기 전 유보. v5-anima long-trajectory α=0.688
+  super-linear 재시도는 별도 path 로 valid.
 
 #### 10.2 보존된 ancestry (substrate-side)
 
