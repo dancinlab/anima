@@ -121,6 +121,13 @@
   body = "bullet list of file changes + honesty caveats"
   @> CLAUDE.md
 
+@D g_arch_vs_log_split := "v1.2 architecture-vs-history split" :: governance [required d=2026-05-14 active]
+  rule = "UPPERCASE.tape files are EDITABLE architecture (latest-wins per id). Append-only event history lives in UPPERCASE.log.tape siblings."
+  why = "anima has ~20 .tape files (CHAT, IDENTITY, MEMORY, PHILOSOPHY, etc.) that mix declarative state + history. v1.2 splits them: existing .tape stays as architecture; new history → .log.tape."
+  applies-to = "AGENTS.tape · all UPPERCASE.tape root files"
+  authority = "[@x_tape_spec] §Domain-tape sibling §Architecture-vs-history split"
+  @> AGENTS.md
+
 # ─── §4 Forbidden patterns ───────────────────────────────────────────
 
 @F f1 := "lattice-fit-on-external-entity" :: governance [required deny:write]
