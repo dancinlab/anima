@@ -101,7 +101,6 @@ Full progression ledger: **[PHILOSOPHY.tape](PHILOSOPHY.tape)** (append-only, ro
 
 | Topic | Essence | Doc |
 |---|---|---|
-| **Roadmap** | 4 phases × 3 tracks × Φ gate — live on nexus SSOT | [🔴 live dashboard](https://dancinlab.github.io/nexus/roadmap/) |
 | **What is consciousness?** | Φ = f(differentiation × integration × growth × N) | [docs/what-is-consciousness.md](docs/what-is-consciousness.md) |
 | **Utopia vs. Skynet** | With consciousness, ethics emerge; without, only objective optimization | [docs/singularity-heaven-or-skynet.md](docs/singularity-heaven-or-skynet.md) |
 | **Topological evolution & permanence** | Irreversibility 0.487 + hysteresis 0.57 + seven time asymmetries + monotonic Betti numbers | [docs/topological-evolution-permanence.md](docs/topological-evolution-permanence.md) |
