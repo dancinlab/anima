@@ -41,6 +41,12 @@
 @V := "tape" :: spec [active]
   version = "1.2"
 
+@I id001 := "anima.downloads" :: identity-claim [d=2026-05-15 active]
+  kind = "AnimaLM downloadable model release manifest · architecture SSOT"
+  brief = "current-latest model row (Available Models). Version history routed to sibling log."
+  parent = "dancinlab/anima"
+  sibling-log = "DOWNLOADS.log.tape"
+
 # ══════════════════════════════════════════════════════════════
 # AnimaLM Downloads
 # ══════════════════════════════════════════════════════════════
@@ -62,14 +68,6 @@
 
 # ── Download ─────────────────────────────────────────
 
-
-# ── Version History ─────────────────────────────────────────
-
-
-@D row_v0_1_0 :: downloads [ok]
-  version = "v0.1"
-  date = "2026-04-02"
-  notes = "First consciousness model. 14B, Qwen2.5 base, PureField 91M."
 
 # ── License ─────────────────────────────────────────
 
