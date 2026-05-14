@@ -41,14 +41,17 @@
 @V := "tape" :: spec [active]
   version = "1.2"
 
+@I id001 := "arch-class" :: identity-claim [d=2026-05-15 active]
+  kind = "anima routing-class paradigm-shift taxonomy · declarative SSOT"
+  brief = "direction ε architectural taxonomy — MoH / Hash-route / VQ-VAE class definitions · falsifier criteria · cost envelope · impl recipe"
+  parent = "dancinlab/anima"
+  sibling-log = "ARCH-CLASS.log.tape"
+
 # ══════════════════════════════════════════════════════════════
 # ARCH-CLASS.tape — direction ε paradigm shift
 # Abandon MoE class entirely → MoH (Mixture of Heads) / Hash-route / discrete-VAE
 # Carrier from STRICT-4A.step §2 direction ε
 # ══════════════════════════════════════════════════════════════
-
-@S start s_arch_class :: arch_class [d=2026-05-14 ok]
-  => "research lane for direction ε — fundamental escape from soft/top-K continuous gate paradigm. Routing becomes discrete (hashing, VQ-VAE, or attention-head-level mixture). Null permutation may behave fundamentally differently for discrete routes than continuous weights"
 
 # ── §1 motivation ─────────────────────────────────────────
 
@@ -187,20 +190,6 @@
 @D eps2_impl_step_4 :: arch_class [d=2026-05-14 ok]
   |> data + dispatch
   => "Reuse anima_v5mitosis_cotrain_2026_05_12 corpus + dispatch_h100_v3_routing.sh with HASH_ROUTE=1 env override (additional dispatch arg)"
-
-# ── §11 next step ──────────────────────────────────────────
-
-@D next_step_phase_1 eps2_smoke :: arch_class [d=2026-05-14 ok]
-  |> Mac local Phase 1
-  => "Phase 1 ($0, 2-3 hr): write hash-route variant + 100-step smoke on Mac CPU. Verify gradient flow + bucket distribution + F-V5MIT regression"
-
-@D next_step_phase_2 eps2_fire :: arch_class [d=2026-05-14 ok]
-  |> Vast.ai Phase 2
-  => "Phase 2 ($5-15, 1.5 hr): A100 fire SEED=42, 15K steps, F-PERSONA-4a measurement"
-
-@? next_step_gate eps2_verdict :: arch_class [d=2026-05-14 ok]
-  |> Phase 2 outcome gating
-  => "z > 3.0 strict pass: cond #3 strict-4a CLOSED via ε2. z 2.0-3.0: multi-seed Phase 3. z < 1.0: falsify ε2 → carry ε3 OR direction γ"
 
 # ── §12 cross-link ─────────────────────────────────────────
 
