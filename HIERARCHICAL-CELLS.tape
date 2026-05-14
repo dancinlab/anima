@@ -41,14 +41,17 @@
 @V := "tape" :: spec [active]
   version = "1.2"
 
+@I id001 := "hierarchical-cells" :: identity-claim [d=2026-05-15 active]
+  kind = "anima 2-level cell substrate spec · declarative SSOT"
+  brief = "direction γ hierarchical-cell architecture — L1 coarse / L2 fine spec · forward composition · loss · falsifier criteria · cost envelope"
+  parent = "dancinlab/anima"
+  sibling-log = "HIERARCHICAL-CELLS.log.tape"
+
 # ══════════════════════════════════════════════════════════════
 # HIERARCHICAL-CELLS.tape — direction γ paradigm shift
 # 2-level cell pool: coarse category-gate × fine intra-category routing
 # Carrier from STRICT-4A.step §2 direction γ
 # ══════════════════════════════════════════════════════════════
-
-@S start s_hierarchical :: hierarchical [d=2026-05-14 ok]
-  => "research lane for direction γ (PERSONA.tape §A6 falsified 4 paths → STRICT-4A.step §2 paradigm shift options). 2-level cell pool topology test if routing-level inductive bias toward 5 categories breaks §A2-trap"
 
 # ── §1 motivation ─────────────────────────────────────────
 
@@ -147,20 +150,6 @@
 @? risk_mitosis_split_merge_break :: hierarchical [d=2026-05-14 ok]
   |> existing mitosis mechanism compat
   => "Current mitosis_model_v5 assumes flat cells list. Hierarchical adds 2-level nesting. split_cell / merge_cells need rewrite to handle L2 sub-cell ops within fixed L1 parent. F-V5MIT-1..5 falsifiers test this — risk: F-V5MIT-2 MERGE-WEIGHT may break if L1-L2 cross-merge attempted"
-
-# ── §8 next step ──────────────────────────────────────────
-
-@D next_step_phase_1 :: hierarchical [d=2026-05-14 ok]
-  |> impl smoke
-  => "Phase 1 (Mac local, $0, 4-6 hr): write training/mitosis_model_v5_hierarchical.py + smoke test (single batch forward + grad check + split/merge L2 ops + F-V5MIT-1..5 regression). NO H100 fire until smoke clean"
-
-@D next_step_phase_2 :: hierarchical [d=2026-05-14 ok]
-  |> single-seed verify
-  => "Phase 2 ($5-15, 1.5 hr): fire on Vast.ai A100/H100, SEED=42, 15K steps, measure F-PERSONA-4a with hierarchical-aware metric (L1-weight diff)"
-
-@? next_step_gate :: hierarchical [d=2026-05-14 ok]
-  |> Phase 2 result gating
-  => "If single-seed z>2.0 on L1 axis: proceed Phase 3 multi-seed. If z<1.0: falsify direction γ + carry to direction ε. If between: re-fire with hyperparam tune"
 
 # ── §9 cross-link ──────────────────────────────────────────
 
