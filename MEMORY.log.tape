@@ -39,7 +39,7 @@
 # ══════════════════════════════════════════════════════════════════════
 #
 # MEMORY.log.tape — append-only event history sibling of MEMORY.tape
-# (v1.2 architecture-vs-history split, 2026-05-14).
+# (v1.2 architecture-vs-history split, 2026-05-15).
 #
 # Carries: @A · @T · @R · @K · @? runtime events · @D :: decision events ·
 #          @H hook fires. Strictly append-only — every entry records something

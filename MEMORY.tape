@@ -41,6 +41,12 @@
 @V := "tape" :: spec [active]
   version = "1.2"
 
+@I id001 := "anima.memory" :: identity-claim [d=2026-05-15 active]
+  kind = "anima memory-substrate index · architecture SSOT"
+  brief = "project / campaign / feedback memory entries — one-liner + file pointer; live records live in memory/*.md."
+  parent = "dancinlab/anima"
+  sibling-log = "MEMORY.log.tape"
+
 # ══════════════════════════════════════════════════════════════
 # MEMORY index
 # ══════════════════════════════════════════════════════════════
