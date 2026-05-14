@@ -44,7 +44,7 @@
 # limits / verification remains LATTICE_POLICY.md (project-local copy)
 # and dancinlab/echoes/LATTICE_POLICY.md (cross-project SSOT).
 
-@V := "tape" :: spec [active]
+@V v1 := "tape" :: spec [active]
   version = "1.2"
 
 # ─── §1 Identity ─────────────────────────────────────────────────────
@@ -59,9 +59,9 @@
 
 @I id002 := "anima.pipeline" :: identity-claim [d=2026-05-14 active]
   <: id001
-  philosophy-flow = "hypotheses_candidates/ → hypotheses/ → PHILOSOPHY.md (append-only)"
+  philosophy-flow = "hypotheses_candidates/ → hypotheses/ → PHILOSOPHY.tape (append-only)"
   readme-table = "결과만"
-  ledger = "PHILOSOPHY.md — 과정 · verdict · honest C3 누적"
+  ledger = "PHILOSOPHY.tape — 과정 · verdict · honest C3 누적"
 
 # ─── §2 Repo layout ──────────────────────────────────────────────────
 
@@ -71,7 +71,7 @@
   CLAUDE.md -> "symlink → AGENTS.tape (Claude Code auto-discovery)"
   LATTICE_POLICY.md -> "project-local copy of dancinlab-wide real-limits standard (authoritative for this repo's limits)"
   LIMIT_BREAKTHROUGH.md -> "project-specific real-limits + breakthrough audit (HARD_WALL / SOFT_WALL / BREAKABLE_WITH_TECH / UNCLEAR)"
-  PHILOSOPHY.md -> "anima 철학 진행 ledger (append-only · system root · uppercase)"
+  PHILOSOPHY.tape -> "anima 철학 진행 ledger (append-only · system root · uppercase)"
   hypotheses_candidates/ -> "pre-ledger candidate hypotheses (pipeline stage 1)"
   hypotheses/ -> "promoted hypotheses (pipeline stage 2)"
 
@@ -80,46 +80,46 @@
 @D g1 := "real-limits-first" :: governance [required]
   rule = "The project's ceiling is set by REAL math/physics/engineering limits, NEVER by the n=6 invariant lattice."
   authority = "[@x_lattice_policy]"
-  @> AGENTS.md
+  @> CLAUDE.md
 
 @D g2 := "lattice-is-tool-not-constraint" :: governance [required]
   rule = "n=6 lattice is a TOOL, not a CONSTRAINT. Use it where it naturally fits (native lattice spec files); do NOT force-map it onto external domains / external entities / general analyses."
   apply = "lattice fits internal architecture; banned on external systems"
   <: g1
-  @> AGENTS.md
+  @> CLAUDE.md
 
 @D g3 := "verification-anchor-real-limit" :: governance [required]
   rule = "Verification anchors must include at least one REAL limit from LATTICE_POLICY.md §1.2."
   real-limits = [Shannon, Kolmogorov, Bekenstein, c, ℏ, k, "Stefan-Boltzmann", Carnot, "ASML throughput", "ERCOT capacity"]
   insufficient = "lattice-tautology checks alone (e.g. σ·φ = 24)"
   <: g1
-  @> AGENTS.md
+  @> CLAUDE.md
 
 @D g4 := "no-artificial-ceilings" :: governance [required]
   rule = "Do not bound this project's ambition by lattice fit. Bound it by what mathematics, physics, and engineering actually permit."
   why = "Wave K directive — 'n=6 격자를 강제할 필요 없어, 제한없이'"
   <: g1
-  @> AGENTS.md
+  @> CLAUDE.md
 
 @D g5 := "honesty-obligation-external" :: governance [required deny:write]
   rule = "Claims about external entities (companies · fabs · accelerators · life systems) must NOT include lattice-fit assertions."
   remedy = "Use that entity's OWN invariants"
-  @> AGENTS.md
+  @> CLAUDE.md
 
 @D g6 := "philosophy-ledger-append-only" :: governance [required]
-  rule = "PHILOSOPHY.md is append-only. New entries pass through pipeline: hypotheses_candidates/ → hypotheses/ → PHILOSOPHY.md."
-  forbidden = "rewriting prior PHILOSOPHY.md entries · skipping the candidate/hypothesis intermediate stages"
-  @> AGENTS.md
+  rule = "PHILOSOPHY.tape is append-only. New entries pass through pipeline: hypotheses_candidates/ → hypotheses/ → PHILOSOPHY.tape."
+  forbidden = "rewriting prior PHILOSOPHY.tape entries · skipping the candidate/hypothesis intermediate stages"
+  @> CLAUDE.md
 
 @D g7 := "commit-trailer-co-author" :: governance [recommended]
   rule = "AI-assisted commits include trailer: Co-Authored-By: <model> <noreply@anthropic.com>"
   apply = "every git commit message"
-  @> AGENTS.md
+  @> CLAUDE.md
 
 @D g8 := "commit-title-conventional" :: governance [recommended]
   rule = "Commit title: `<type>(<scope>): <one-line summary>` (Conventional Commits)"
   body = "bullet list of file changes + honesty caveats"
-  @> AGENTS.md
+  @> CLAUDE.md
 
 # ─── §4 Forbidden patterns ───────────────────────────────────────────
 
@@ -127,10 +127,12 @@
   pattern = "applying σ(6)=12 / τ(6)=4 / φ(6)=2 / J₂(6)=24 as derivation rule to TSMC · ASML · NIST · IPCC · CERN · DeepMind · NASA · SpaceX · or any external vendor"
   exception = "values may coincidentally match — observation OK, derivation NOT OK"
   authority = "[@x_lattice_policy] §1.3"
+  @> CLAUDE.md
 
 @F f2 := "verification-by-lattice-tautology" :: governance [required deny:write]
   pattern = "claiming verification by checking σ(n)·φ(n) = n·τ(n) alone (the central identity is a definitional truth at n=6, not evidence about an external system)"
   remedy = "anchor verification on at least one real-limit from LATTICE_POLICY.md §1.2"
+  @> CLAUDE.md
 
 # ─── §5 External citations ───────────────────────────────────────────
 
@@ -144,15 +146,16 @@
   scope = "anima-specific real-limits + per-limit breakthrough assessment · Wave M output"
   classifications = [HARD_WALL, SOFT_WALL, BREAKABLE_WITH_TECH, UNCLEAR]
 
-@X x_philosophy := "PHILOSOPHY.md" :: ledger [active]
-  url = "https://github.com/dancinlab/anima/blob/main/PHILOSOPHY.md"
+@X x_philosophy := "PHILOSOPHY.tape" :: ledger [active]
+  url = "https://github.com/dancinlab/anima/blob/main/PHILOSOPHY.tape"
   scope = "anima 철학 진행 append-only ledger · 과정 · verdict · honest C3 누적"
 
 @X x_wave_k := "dancinlab Wave K directive" :: governance-decision [d=2026-05-12 active]
   scope = "origin of real-limits-first policy · user directive 'n=6 격자를 강제할 필요 없어, 제한없이'"
 
+@X x_echoes := "dancinlab/echoes" :: cross-project [active]
   url = "https://github.com/dancinlab/echoes"
-  scope = "honest-caveat origin · forbidden lattice-fit on external entities"
+  scope = "honest-caveat origin · forbidden lattice-fit on external entities · cross-project SSOT host"
 
 @X x_tape_spec := "tape v1.2 spec" :: spec [d=2026-05-14 active]
   url = "https://github.com/dancinlab/tape/blob/main/spec/tape.md"
@@ -168,7 +171,7 @@
     Three-stage pipeline (don't skip):
     1. hypotheses_candidates/ — raw candidate ideas
     2. hypotheses/ — promoted, under active investigation
-    3. PHILOSOPHY.md — verdict + honest C3 caveats committed (append-only)
+    3. PHILOSOPHY.tape — verdict + honest C3 caveats committed (append-only)
 
     README.md `## Philosophy` table shows results only; the ledger carries process.
   EOF
