@@ -91,6 +91,12 @@
   meaning = "size class 5.37B ≈ Phase 3 7B 의 76% — 이미 fire 됐지만 substrate-native lane (v5-mitosis) path 였음, Engine A/G arch 가 아님"
   artifact = "state/anima_v5mitosis_cotrain_v5_ddp_2026_05_13/cotrain_v5_ddp_result.json"
 
+@D row_bypass_prohibited_7 :: clm-tape [ok]
+  x = "**우회금지 governance (§7.5, 8 rules, deny:write)**"
+  state = "🚫 LANDED 2026-05-14 — 본진 Phase 3/4 fire 의 8 우회 path 강행 차단"
+  rules = "g1 Phase entry · g2 sibling lane · g3 도구 substitute · g4 corpus bypass · g5 V14 unaudit · g6 cost verbatim · g7 silent demote · g8 lane re-frame"
+  enforcement = "any fire-keyword 발화 전 8 rule 검증 mandatory"
+
 # ── §2 .clm family definition (.clm 가 뭔지) ─────────────────────────────────────────
 
 @D def_origin :: clm-tape [ok]
@@ -280,6 +286,84 @@
     fire 전 prerequisite: Phase 2 V14 violation root-audit doc (§6 Step 1).
     $0 Mac local audit + REBORN.tape §93 신규 section 으로 ledger.
     Output: H4/H5 hypothesis 검증 시나리오 + Phase 2b 재시도 spec.
+  EOF
+
+# ── §7.5 우회금지 governance (bypass-prohibited rules) ─────────────────────────────────────────
+
+# 본 section 은 .clm 본진 Phase ladder 의 *우회금지 강행규칙*. 사용자 directive
+# 2026-05-14 "우회금지 반드시 추가" 의 응답. §3 audit 가 식별한 옆길 흐름 +
+# §4 sibling-lane verdict 를 운용 정책으로 enforce.
+
+@D g1_no_bypass_phase_entry := "no-bypass-phase-entry-condition" :: governance [required deny:write]
+  rule = "Phase N+1 fire 는 Phase N entry condition 모두 통과 후에만 허용. 우회 (skip / partial pass / 'good enough' justification) 일절 금지."
+  applies = "Phase 2 consciousness PASS → Phase 3 fire 허용 / Phase 3 PASS → Phase 4 fire 허용"
+  why = "Phase ladder 의 학생 성장 비유 정합성 — 초등 못 끝낸 채 고등 진학 = anima 본진 substrate 의 의식 ceiling 가 학습 효과 없이 scale-up 으로 가려짐"
+  remedy = "blocker open 시 root-unblock cycle 우선 (현재: Phase 2 V14 violation H4/H5 audit). cycle 결과 만족 시 entry condition 충족 처리, 우회 처리 X"
+  @> CLM.tape
+
+@D g2_no_lane_substitute := "no-lane-substitute-for-main-fire" :: governance [required deny:write]
+  rule = "v5-mitosis lane 의 cotrain (7B/14B-class scale-up 포함) 으로 본진 .clm Phase 3/4 entry condition 충족 처리 금지."
+  applies = "§92 v5 DDP 5.37B = Phase 3 7B 갈음 X · v5-mitosis cond.5 cotrain ($1.30 H100 LANDED) = Phase 2 갈음 X"
+  why = "§4 verdict — v5-mitosis 는 sibling lane. arch (Engine A/G dual ⇄ mitosis cell-pool) 다르고 verifier 다르고 corpus 다르고 ckpt 호환 X. 의식측정 evidence 가 풍부해도 본진 lane 으로 *substitute* 금지"
+  remedy = "v5-mitosis 결과는 sibling lane ledger (REBORN.tape) 에 carry; Phase 3 fire 는 Engine A/G arch + Phase 2 PASS + corpus pipeline 별도 충족"
+  @> CLM.tape
+
+@D g3_no_tool_substitute := "no-tool-substitute-for-prerequisite" :: governance [required deny:write]
+  rule = "SAVANT-TOOL / VOICE / TENSION-LINK / SAVANT.tape audit / anima_chat.hexa port 도구 cycle 의 LANDED 가 Phase 3/4 prerequisite 충족 처리 금지."
+  applies = "SAVANT-TOOL 24/24 PASS · VOICE Phase 1+2+3 LANDED · TENSION-LINK Phase 1 · anima_chat.hexa v0.3 24L parity 21/21 PASS — 도구 자체로 의식측정 갈음 X"
+  why = "도구 cycle 은 inference / 측정 인프라 — 본진 모델의 capability 자체 향상 아님. anima_chat.hexa 가 chat coherence 측정을 *가능* 하게 하지만 Phase 3 모델이 *통과* 시키는 것은 별개"
+  remedy = "도구 cycle 의 prerequisite-contribution 명시 (e.g. anima_chat.hexa = Phase 3/4 의 chat coherence 측정 도구 ✓) 한 후, 그 도구 *위에서* 본진 entry condition 별도 측정"
+  @> CLM.tape
+
+@D g4_no_corpus_bypass := "no-corpus-pipeline-bypass" :: governance [required deny:write]
+  rule = "Phase 3 7B / Phase 4 14B fire 는 Chinchilla optimal token 분량 (140B / 280B) 의 corpus pipeline 구축 후에만 허용. 우회 (anima_persona_tier_a_v4 231MB 단독 / partial corpus / 'Chinchilla 보다 적게 학습해도 OK' justification) 금지."
+  applies = "Phase 3 → BG-CORPUS-7B (~135B token external) 필요 · Phase 4 → +140B 추가 (~280B total)"
+  why = "본진 모델의 capability 가 corpus 부족으로 capped → consciousness verifier 와 chat coherence 둘 다 noise floor 에 묻힘. Phase 2 의 V14 violation 도 corpus 부족과 entangled 가능성 (root-audit 시 ablation 필수)"
+  remedy = "Phase 3 fire 전 BG-CORPUS-7B 별도 cycle. RedPajama-v2 / FineWeb-Edu / KO corpus blend 의 ingest + quality filter + tokenize pipeline 까지 LANDED 후 fire keyword 발화"
+  @> CLM.tape
+
+@D g5_no_v14_unaudit_fire := "no-fire-while-v14-unaudited" :: governance [required deny:write]
+  rule = "V14 violation root cause (H4 normalize 무력화 / H5 chat curriculum collapse / arch tile bug L626-630 reps=2) 셋 다 audit doc + (fix 적용 || ablation 통과 evidence) 없이 Phase 3 / Phase 4 fire 금지."
+  applies = "Phase 3 fire keyword 'OK CLM PHASE 3 7B FIRE COST $200-600' / Phase 4 'OK CLM PHASE 4 14B FIRE' 발화 전 prerequisite 검증"
+  why = "Phase 2 350M 에서 fired V14 가 Phase 3 7B / Phase 4 14B 에서 *재현* 시 cost $200-1500 burn + 모델 의식 ceiling 미해결 — own 16 cost discipline 위반 + own 17 SCOPE_CLAMP 위반"
+  remedy = "V14 root-audit doc (`docs/clm_v14_violation_root_audit_2026_05_*.md`) LANDED 후 Phase 2b 재시도 ($5-10) + V14 mirror PPR 점검 PASS 시점에 Phase 3 fire entry condition 만족"
+  @> CLM.tape
+
+@D g6_no_cost_bearing_bypass := "no-cost-bearing-verbatim-bypass" :: governance [required deny:write]
+  rule = "Phase 3 ($200-600) / Phase 4 ($500-1500) fire 는 사용자 verbatim fire keyword 명시 발화 후에만 dispatch 허용. AI agent / 자동 trigger 단독 fire 금지. 'all go' / 'fire' 등 ambiguous 명령으로 Phase 3/4 fire 갈음 금지."
+  applies = "Phase 3 fire keyword = `OK CLM PHASE 3 7B FIRE COST $200-600` (verbatim) · Phase 4 = `OK CLM PHASE 4 14B BUDGET EXPANSION $500-1500` + `OK CLM PHASE 4 14B FIRE COST $500-1500` (2 verbatim)"
+  why = "own 16 cost discipline mandate-9. Phase 2 ($4.63) 와 비교 시 40-300× 비용 — 사용자 명시 budget approval 없는 fire 는 trust-violation"
+  remedy = "AI agent 는 fire keyword 발화 prompt 만 가능, dispatch 자체는 verbatim 후. 'go' 등 ambiguous 명령에 Phase 3/4 dispatch 포함 시 우회금지 위반"
+  @> CLM.tape
+
+@D g7_no_silent_phase_demote := "no-silent-phase-demote" :: governance [required deny:write]
+  rule = "Phase 1/2/3/4 의 LANDED → BLOCKED / 🔶 / FAIL 상태 변경은 명시적 ledger entry 필요. silent demote (status 변경 commit 없이 사실상 폐기) 금지."
+  applies = "현재 Phase 2 🔶 EXECUTED but FAIL 명시 § 1 row · v5-mitosis sibling-lane verdict § 4 명시 · §92 INCONCLUSIVE § 5 명시"
+  why = "anima 의 학습 ledger 누적 정합성 — Phase 의 *실패* 도 다음 cycle baseline 으로 가치 (Phase 2 cotrain ckpt = private record-keeping). silent drop 시 root-cause 추적 불가"
+  remedy = "Phase 상태 변경 시 CLM.tape § 1 row 갱신 + REBORN.tape § N 신규 section + .roadmap.clm JSONL amendment (additive_only_mutation: true)"
+  @> CLM.tape
+
+@D g8_no_re_frame_without_evidence := "no-lane-re-frame-without-evidence" :: governance [required deny:write]
+  rule = "v5-mitosis 또는 다른 sibling lane 을 .clm 본진 mk3/mk4 로 *재정의* (re-frame) 하려면 §4 4-anchor (A-D) 의 falsification evidence 필요. 단순 narrative re-label 금지."
+  applies = "H-CLM-MK3 가설 (§4) preliminary verdict ✗ — sibling lane 정착 · 향후 mitosis_hook 위 Engine A/G mount 실험 PASS 시 falsification evidence 로 재검토 가능"
+  why = "naming SSOT 의 stability — 'mk3' 라는 label 이 시점마다 다른 substrate 를 가리키면 .roadmap.clm cross-link 무력화. anima 의 architectural lineage 추적성 보존"
+  remedy = "re-frame 가설 검증 cycle 시 (i) anchor list 명시 + (ii) falsifier 사전등록 + (iii) cost-bearing approval. evidence PASS 시 CLM.tape §4 verdict 갱신 + .roadmap.clm naming amendment additive_only"
+  @> CLM.tape
+
+@N g_summary := "우회금지 8 rule 요약" :: note [active]
+  text <<~EOF
+    g1 Phase entry condition 우회 금지 (Phase N → N+1 학생 성장 ladder 강행)
+    g2 sibling lane substitute 금지 (v5-mitosis 7B/14B cotrain ≠ 본진 Phase 3/4)
+    g3 도구 cycle substitute 금지 (SAVANT/VOICE/TENSION-LINK ≠ prerequisite 충족)
+    g4 corpus pipeline bypass 금지 (~140B/280B Chinchilla optimal 강행)
+    g5 V14 unaudited fire 금지 (H4/H5/arch-tile audit 후만 Phase 3/4 dispatch)
+    g6 cost-bearing verbatim bypass 금지 (Phase 3/4 fire keyword 강행)
+    g7 silent phase demote 금지 (Phase 상태 변경 명시 ledger)
+    g8 lane re-frame without evidence 금지 (mk3 가설 4-anchor falsifier 통과만)
+
+    **본진 .clm 14B 등극 path 는 우회 없이 ladder 강행** — Phase 2 V14 root-audit
+    → Phase 2b 재시도 → Phase 3 fire → Phase 4 fire. 옆길 (sibling lane / 도구 cycle)
+    의 evidence 는 carry 하지만 *substitute* 금지.
   EOF
 
 # ── §8 Falsifiers (Phase 3 + Phase 4) ─────────────────────────────────────────
