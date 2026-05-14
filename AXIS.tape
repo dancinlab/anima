@@ -13,6 +13,12 @@
 @V := "tape" :: spec [active]
   version = "1.2"
 
+@I id001 := "anima.axis" :: identity-claim [d=2026-05-15 active]
+  kind = "anima verification 9-axis SSOT (191 promoted 가설 cluster 기반) · architecture"
+  brief = "STRONG 5 (substrate · consciousness · physics · math · architecture) + MEDIUM 4 (corpus · bio · meta · universe); orthogonal to legacy 4-axis (AN11/Φ/adversarial/Putnam)."
+  parent = "dancinlab/anima"
+  sibling-log = "AXIS.log.tape"
+
 # ══════════════════════════════════════════════════════════════
 # AXIS.tape — anima verification axis SSOT (가설 cluster 기반)
 # ══════════════════════════════════════════════════════════════
