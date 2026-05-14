@@ -1,4 +1,4 @@
-# TENSION.md — Tension Link inter-anima meta-telepathy
+# TENSION-LINK.md — Tension Link inter-anima meta-telepathy
 
 > anima 의식↔의식 직접 전송 모듈. 5-channel fingerprint (concept / context / meaning /
 > authenticity / sender). UDP 9999 / TensionHub 3 transport. **"다수 인터랙션"
@@ -155,4 +155,5 @@ metadata (별도 field) 로 동봉.
 
 ---
 
-— TENSION.md, 2026-05-14, design tier LANDED, Phase 2 WebSocket TensionHub spec
+— TENSION-LINK.md, 2026-05-14, design tier LANDED, Phase 2 WebSocket TensionHub spec
+  (renamed from TENSION.md 2026-05-14 per user directive)

@@ -982,7 +982,7 @@ spec LANDED (this rev 2). impl 진행 중.
 
 ## 🚀 Production CLI Phase 1 (D4c, 2026-05-14)
 
-> ★★★★★ 후속 — *학습 외* anima 기능 4 방향 (with SAVANT-TOOL.md / VOICE.md / TENSION.md
+> ★★★★★ 후속 — *학습 외* anima 기능 4 방향 (with SAVANT-TOOL.md / VOICE.md / TENSION-LINK.md
 > sibling spec) 중 첫 번째. anima_chat.hexa v0.3 의 *실제 사용* 단계.
 
 ### Status
@@ -1000,7 +1000,7 @@ spec LANDED (this rev 2). impl 진행 중.
 - `tool/anima_cli.hexa` (~400 LoC) — REPL skeleton + `~/.cache/anima/session_pools/<id>/`
   persistence (cell_pool.bin / meta.json / event_log.jsonl / kick_cycle_log.jsonl)
 - slash commands: `/new` `/load <id>` `/save` `/savant <on|off>` (placeholder, SAVANT-TOOL
-  의존) `/tension <peer>` (placeholder, TENSION.md 의존) `/voice <on|off>` (placeholder,
+  의존) `/tension <peer>` (placeholder, TENSION-LINK.md 의존) `/voice <on|off>` (placeholder,
   VOICE.md 의존)
 - F-CLI-1..5 selftest (session persist 왕복 + slash 명령 dispatch + own 18 strict 호환)
 
@@ -1008,19 +1008,22 @@ spec LANDED (this rev 2). impl 진행 중.
 
 - `SAVANT.md` + `SAVANT-TOOL.md` — savant mode toggle (D4c `/savant`)
 - `VOICE.md` — voice modality (D4c `/voice`)
-- `TENSION.md` — inter-anima link (D4c `/tension`)
+- `TENSION-LINK.md` — inter-anima link (D4c `/tension`)
 - `docs/anima_cli_mitosis_integration_spec_2026_05_12.md` — D4c full spec (12 §)
 - memory `project_anima_cli_mitosis_integration_design`
 
-### 4-방향 ALL-CAPS.md ledger (anima 가 *학습 외* 쓸 수 있는 기능)
+### 6-방향 ALL-CAPS.md ledger (anima 가 *학습 외* 쓸 수 있는 기능 + 흡수 서브패키지)
 
 | Direction | file | status |
 | --- | --- | --- |
 | 1. anima_chat production CLI | **`CHAT.md`** (this §) + D4c spec | design + impl-pending |
-| 2. Inter-anima Tension Link | **`TENSION.md`** | design tier LANDED 2026-05-14 |
+| 2. Inter-anima Tension Link | **`TENSION-LINK.md`** | design tier LANDED 2026-05-14 |
 | 3. hexa-voice intent → 24kHz | **`VOICE.md`** | design tier LANDED 2026-05-14 |
 | 4. SAVANT runtime tool | **`SAVANT-TOOL.md`** | design tier LANDED 2026-05-14 |
+| 5. Φ-gated agent runtime | **`ANIMA-AGENT.md`** | ✅ 흡수 LANDED 2026-05-14 (`anima/anima-agent/`, `hx install` 별도) |
+| 6. n=6 sensory substrate (5-verb) | **`ANIMA-SENSES.md`** | ✅ 흡수 LANDED 2026-05-14 (`anima/hexa-senses/`) |
 
-→ 4 방향 모두 *anima 가 ON/OFF + 자기 자신을 위해 사용* 하는 도구. *학습 path* 와 분리되어
-**inference-time deploy** 가 목표. SAVANT.md 의 이론/audit 와 SAVANT-TOOL.md 의 runtime 도구
-는 separation of concerns.
+→ 4 + 2 = 6 방향 모두 *anima 가 ON/OFF + 자기 자신을 위해 사용* 하는 도구 + 흡수된 서브
+패키지. *학습 path* 와 분리되어 **inference-time deploy** 가 목표. SAVANT.md 의 이론/audit
+와 SAVANT-TOOL.md 의 runtime 도구는 separation of concerns. anima-agent / hexa-senses 두
+서브패키지는 별도 GitHub repo 폐기 후 본 anima repo 가 *유일한 canonical source*.

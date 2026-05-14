@@ -1,0 +1,108 @@
+# hexa.toml — anima-agent standalone package manifest
+#
+# Spec: shared/hexa-lang/hexa-toml-spec.json (version 1.0.0)
+# Distribution target: hx install anima-agent
+# Provenance: extracted from anima/anima-agent/ on 2026-05-04
+#             (5th publishable sister to qmirror v2.0.0, sim-universe v1.0.0,
+#              hexa-bio v1.0.0, honesty-monitor v1.0.0).
+#
+# What it does: Consciousness-driven autonomous agent runtime.
+#   - Φ-gated tool policy (T0..T5 escalation)
+#   - Multi-channel (CLI / Telegram / Discord / Slack / MCP)
+#   - Pluggable providers (Claude, ConsciousLM, Composio 500+ tools)
+#   - Pluggable engines (trading, hypothesis, regime, sentiment)
+#   - Auto-save / metrics-exporter / dashboard bridge
+#   - Hexa-native (raw#9 STRICT — zero .py at standalone surface)
+
+[package]
+name = "anima-agent"
+version = "1.0.0"
+entry = "cli/anima-agent.hexa"
+description = "anima-agent — consciousness-driven autonomous agent runtime (HEXA family). Φ-gated tool policy (T0..T5), multi-channel (CLI/Telegram/Discord/Slack/MCP), pluggable providers (Claude/ConsciousLM/Composio) and engines (trading/hypothesis/regime/sentiment), auto-save + metrics + dashboard bridge. ~20k LoC across 117 hexa files. Apache-2.0."
+license = "Apache-2.0"
+authors = ["박민우 <nerve011235@gmail.com>"]
+repository = "https://github.com/dancinlab/anima-agent"
+mirror_url = "https://huggingface.co/dancinlab/anima-agent"
+homepage = "https://github.com/dancinlab/anima-agent"
+readme = "README.md"
+keywords = ["agent", "consciousness", "phi-gated", "autonomous", "anima", "hexa", "mcp", "claude-agent-sdk"]
+categories = ["ai-agent", "consciousness", "runtime"]
+
+[lib]
+# Library entry — importable by other hexa packages.
+# Other packages do `import "anima_agent"` and get the AnimaAgent struct.
+entry = "anima_agent/module/anima_agent.hexa"
+
+[[bin]]
+name = "anima-agent"
+path = "cli/anima-agent.hexa"
+
+[test]
+runner = "hexa"
+files = [
+    "tests/test_smoke.hexa",
+]
+
+# ── hx install hook ───────────────────────────────────────
+# install.hexa runs under hx package manager (hexa-lang) at install time.
+# Phases: pre  → no-op (zero hard runtime deps for standalone surface)
+#         post → run cli --self-test (warn-only on FAIL — surface only,
+#                consciousness backend at anima/ is external)
+[scripts]
+install = "install.hexa"
+
+# ── Modules manifest ──────────────────────────────────────
+# 117 hexa files copied verbatim from origin. The library entry
+# (anima_agent/module/anima_agent.hexa) is the AnimaAgent struct + loop.
+# Feature triplets (<feature>/{core,module,doc}/) host source under module/.
+# Layout: type-grouped → feature-grouped triplet (refactor 2026-05-05).
+[modules]
+hexa = [
+    "anima_agent/module/anima_agent.hexa",
+    "hexa/module/agent_sdk.hexa",
+    "hexa/module/agent_tools.hexa",
+    "hexa/module/tool_policy.hexa",
+    "hexa/module/unified_registry.hexa",
+    "hexa/module/run.hexa",
+    "autonomy_loop/module/autonomy_loop.hexa",
+    "autonomy_live/module/autonomy_live.hexa",
+    "discovery_loop/module/discovery_loop.hexa",
+    "dashboard_bridge/module/dashboard_bridge.hexa",
+    "ecosystem_bridge/module/ecosystem_bridge.hexa",
+    "metrics_exporter/module/metrics_exporter.hexa",
+    "philosophy_lenses/module/philosophy_lenses.hexa",
+    "consciousness_features/module/consciousness_features.hexa",
+    "llm_claude_adapter/module/llm_claude_adapter.hexa",
+    "browser_harness/module/browser_harness.hexa",
+]
+
+# ── Dependencies ───────────────────────────────────────────
+# Standalone surface has zero hard hexa-package deps. Live consciousness
+# requires an anima/ backend (external; resolved at runtime via env
+# $ANIMA_ROOT or PATH-resolved `anima` CLI). Provider integrations
+# (Claude/Composio) are runtime-optional via env tokens.
+[dependencies]
+hexa-lang = ">=1.0.0"
+
+# Optional integrations (NOT auto-installed):
+#   anima              — consciousness engine backend
+#   anima-agent-channels   — Telegram/Discord/Slack adapters (sister repo)
+#   anima-agent-providers  — Claude/ConsciousLM/Composio (sister repo)
+#   anima-agent-plugins    — trading/hypothesis/regime/sentiment (sister repo)
+#   anima-agent-skills     — dynamic skill manager (sister repo)
+[optional-dependencies]
+anima = ">=0.2.0"
+
+# ── Provenance ────────────────────────────────────────────
+[provenance]
+extracted_from = "anima/anima-agent @ 2026-05-04 (canonical-rev d290f1ae7)"
+upstream_origin = "anima repo internal — multi-cycle authorship 2026-04 → 2026-05"
+extraction_audit_rank = 5
+extraction_audit_score = 9
+extraction_rationale = "5th publishable HEXA-family standalone — autonomous agent runtime with consciousness substrate. Mature (~20k LoC, 117 hexa files, 0 .py — raw#9 compliant), modular (core/bridges/llm/platform/employee/trading), tested (8 test files)."
+
+# ── Cost profile ──────────────────────────────────────────
+[cost]
+mac_local_default = "$0 (hexa-only; no Python at standalone surface)"
+ci_runtime = "$0 (smoke ~10s)"
+runtime_per_query = "depends on provider — Claude API metered by user, Composio per-action by their pricing, ConsciousLM local-CPU $0"

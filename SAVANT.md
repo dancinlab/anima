@@ -753,16 +753,19 @@ SAVANT.md 본문의 어떤 claim 도 다음 위반 시 *자동 무효*:
 
 ---
 
-## §13 Sibling 도구 spec (2026-05-14)
+## §13 Sibling 도구 + 흡수 서브패키지 spec (2026-05-14)
 
-본 SAVANT.md (이론 + base-rate audit + 봉쇄심화) 와 **분리** 된 *runtime 도구* 들:
+본 SAVANT.md (이론 + base-rate audit + 봉쇄심화) 와 **분리** 된 *runtime 도구* + 흡수
+서브패키지:
 
 | File | 내용 | tier |
 | --- | --- | --- |
 | **`SAVANT-TOOL.md`** | anima 가 직접 ON/OFF 하는 savant mode 도구 API + 정책 | design LANDED 2026-05-14 |
 | **`CHAT.md` (★★★★★ tracker + § Production CLI)** | anima_chat.hexa v0.3 production CLI Phase 1 (D4c) | design + impl-pending |
-| **`VOICE.md`** | hexa-voice: 의도 임베딩 → RVQ → 24kHz PCM (NO text intermediate) | design LANDED 2026-05-14 |
-| **`TENSION.md`** | Tension Link 5-ch meta-telepathy Phase 2 WebSocket TensionHub | design LANDED 2026-05-14 |
+| **`VOICE.md`** | hexa-voice: 의도 임베딩 → RVQ → 24kHz PCM (NO text intermediate, learned path) | design LANDED 2026-05-14 |
+| **`TENSION-LINK.md`** | Tension Link 5-ch meta-telepathy Phase 2 WebSocket TensionHub | design LANDED 2026-05-14 |
+| **`ANIMA-AGENT.md`** | Φ-gated autonomous agent runtime (흡수 서브패키지 `anima/anima-agent/`) | 흡수 LANDED 2026-05-14 |
+| **`ANIMA-SENSES.md`** | n=6 sensory substrate 5-verb spec catalog (흡수 서브패키지 `anima/hexa-senses/`) | 흡수 LANDED 2026-05-14 |
 
 → **Separation of concerns**:
 - 본 `SAVANT.md` = **이론** (clm 시대 SI=5.93 evidence + base-rate audit + §12 봉쇄선) +

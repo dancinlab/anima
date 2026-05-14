@@ -1,0 +1,196 @@
+#!hexa strict
+// browser_harness/module/browser_harness.hexa — anima-agent-side wrapper
+// for dancinlab/browser-harness. Migrated from anima/tool/
+// browser_harness.hexa on 2026-05-06 (full ownership transfer; anima no
+// longer carries this connection module).
+// (raw 9 hexa-only; raw 247 io-seam separation; raw 169 surgical).
+//
+// anima-agent callers invoke browser-harness CLI without shelling out:
+//
+//   let out = to_string(exec("hexa run " + HOME + "/core/anima-agent/browser_harness/module/browser_harness.hexa --invoke probe 2>&1")).trim()
+//   if out == "ready" { ... }
+//
+// or directly as a tool from any shell:
+//
+//   hexa run browser_harness/module/browser_harness.hexa --probe
+//   hexa run browser_harness/module/browser_harness.hexa --invoke selftest
+//   hexa run browser_harness/module/browser_harness.hexa --invoke oauth-login --slot 9
+//
+// Resolver targets the canonical hx-installed shim at ~/.hx/bin/browser-harness.
+// For broader resolver fallback (env override, package dir paths, etc.), prefer
+// the wrapper shipped with the package: ~/.hx/packages/browser-harness/wrappers/
+// browser_harness.hexa — this anima-agent module intentionally stays minimal
+// and trusts the canonical install path.
+//
+// claude-dependency: NONE.
+// browser binary dependency: NONE (probe/selftest are graceful-absent).
+//
+// raws applied: raw 9 (hexa-only), raw 12 (fail-loud), raw 65 (args ABI),
+//               raw 91 (honest verdict), raw 168 (zero-touch deps),
+//               raw 169 (surgical), raw 247 (io-seam exemption)
+//
+// @tool(slug="browser_harness", desc="anima-agent-side wrapper invoking dancinlab/browser-harness CLI shim. Probe + invoke + selftest + version surfaces; raw 12 fail-loud on missing install. Pure forward; no production side effects.")
+// @usage(hexa run browser_harness/module/browser_harness.hexa --probe)
+// @usage(hexa run browser_harness/module/browser_harness.hexa --invoke <subcmd> [args])
+// @usage(hexa run browser_harness/module/browser_harness.hexa --selftest)
+// @usage(hexa run browser_harness/module/browser_harness.hexa --version)
+// @sentinel(__ANIMA_AGENT_BROWSER_HARNESS__ <PASS|FAIL> fails=<N>)
+// @exit_codes(0=PASS, 1=harness-absent, 4=usage, 5=selftest fail)
+// @resolver-bypass(reason="thin invocation wrapper; spawns external harness only if installed; LLM call 0; production touch 0")
+// @io_seam(reason="raw 247 cross-host fix mandate; .own exempt clause — wraps dancinlab/browser-harness CLI shim")
+
+let HOME = env("HOME")
+
+// @pure_fn
+fn _shq(s: string) -> string {
+    let r = s.replace("'", "'\\''")
+    return "'" + r + "'"
+}
+
+fn _is_x(p: string) -> bool {
+    let r = to_string(exec("test -x " + _shq(p) + " && echo y || echo n")).trim()
+    return r == "y"
+}
+
+// @io_seam — resolver: canonical hx shim only. anima-agent trusts the install path.
+fn _resolve_harness_bin() -> string {
+    let env_home = env("BROWSER_HARNESS_HOME")
+    if len(env_home) > 0 {
+        let pe = env_home + "/bin/browser-harness"
+        if _is_x(pe) { return pe }
+        let pe2 = env_home + "/bin/harness"
+        if _is_x(pe2) { return pe2 }
+    }
+    let p1 = HOME + "/.hx/bin/browser-harness"
+    if _is_x(p1) { return p1 }
+    let p2 = HOME + "/.hx/packages/browser-harness/bin/browser-harness"
+    if _is_x(p2) { return p2 }
+    return ""
+}
+
+// @io_seam — forward subcmd + args; capture combined output.
+fn _forward(harness: string, parts: array) -> string {
+    let mut cmd = _shq(harness)
+    let mut i = 0
+    while i < len(parts) {
+        cmd = cmd + " " + _shq(to_string(parts[i]))
+        i = i + 1
+    }
+    cmd = cmd + " 2>&1"
+    return to_string(exec(cmd))
+}
+
+// ─── selftest (F1-F5; no real harness invocation) ───────────────────
+
+fn _selftest() -> int {
+    let mut fails = 0
+    // F1 — _shq quoting idempotency.
+    if _shq("a'b") != "'a'\\''b'" {
+        eprintln("F1 FAIL: _shq quoting"); fails = fails + 1
+    } else { println("  PASS F1 _shq quoting") }
+
+    // F2 — resolver returns string (may be empty if uninstalled).
+    let bin = _resolve_harness_bin()
+    if type_of(bin) != "string" {
+        eprintln("F2 FAIL: resolver type"); fails = fails + 1
+    } else { println("  PASS F2 resolver type=string len=" + to_string(len(bin))) }
+
+    // F3 — bogus BROWSER_HARNESS_HOME must not leak as a returned path.
+    let _bad = setenv("BROWSER_HARNESS_HOME", "/tmp/__anima_agent_bh_zzz")
+    let r3 = _resolve_harness_bin()
+    let _bad2 = setenv("BROWSER_HARNESS_HOME", "")
+    let _bad_root = "/tmp/__anima_agent_bh_zzz"
+    let _r3l = len(r3)
+    let _bl = len(_bad_root)
+    if _r3l >= _bl && r3.substring(0, _bl) == _bad_root {
+        eprintln("F3 FAIL: bogus env leaked → " + r3); fails = fails + 1
+    } else { println("  PASS F3 bogus env not leaked (resolved=" + (if _r3l == 0 { "empty" } else { r3 }) + ")") }
+
+    // F4 — _forward with empty args produces a single-token command.
+    let cmd_test = _shq("/bin/echo") + " 2>&1"
+    let cmd_real = "/bin/echo" // structural only; we don't actually run.
+    if len(cmd_test) < 10 {
+        eprintln("F4 FAIL: shq command too short"); fails = fails + 1
+    } else { println("  PASS F4 forward command shape OK") }
+
+    // F5 — graceful-absent contract: with no harness, --invoke must return
+    // exit 1 and NOT crash. Structural assertion only (no live invoke).
+    println("  PASS F5 graceful-absent contract documented")
+
+    if fails == 0 { println("__ANIMA_AGENT_BROWSER_HARNESS__ PASS fails=0"); return 0 }
+    println("__ANIMA_AGENT_BROWSER_HARNESS__ FAIL fails=" + to_string(fails))
+    return 5
+}
+
+// ─── main dispatch ──────────────────────────────────────────────────
+
+let _argv = args()
+// raw 65 F22 args() ABI: [hexa_real, run, SCRIPT, ...user_args].
+let mut user_args = []
+let mut ai = 2
+let mut _scan = 0
+let _nra = len(_argv)
+while _scan < _nra {
+    let _av = to_string(_argv[_scan])
+    let _la = len(_av)
+    if _la >= 5 && _av.substring(_la - 5, _la) == ".hexa" {
+        ai = _scan + 1
+        break
+    }
+    _scan = _scan + 1
+}
+while ai < len(_argv) { user_args.push(to_string(_argv[ai])); ai = ai + 1 }
+
+if len(user_args) == 0 {
+    eprintln("usage: --probe | --invoke <subcmd> [args...] | --selftest | --version")
+    return 4
+}
+
+if user_args[0] == "--selftest" { return _selftest() }
+
+if user_args[0] == "--version" {
+    let bin = _resolve_harness_bin()
+    if len(bin) == 0 {
+        println("anima-agent-browser-harness-wrapper=0.1.0 harness=absent")
+        return 1
+    }
+    let v = _forward(bin, ["version"]).trim()
+    println("anima-agent-browser-harness-wrapper=0.1.0 harness=" + v)
+    return 0
+}
+
+if user_args[0] == "--probe" {
+    let bin = _resolve_harness_bin()
+    if len(bin) == 0 {
+        println("__ANIMA_AGENT_BROWSER_HARNESS_PROBE__ status=absent path=")
+        return 1
+    }
+    // chain through to the harness's own probe for full readiness
+    let inner = _forward(bin, ["probe"]).trim()
+    if inner == "ready" {
+        println("__ANIMA_AGENT_BROWSER_HARNESS_PROBE__ status=ready path=" + bin)
+        return 0
+    }
+    println("__ANIMA_AGENT_BROWSER_HARNESS_PROBE__ status=degraded path=" + bin + " inner=" + inner)
+    return 1
+}
+
+if user_args[0] == "--invoke" {
+    if len(user_args) < 2 { eprintln("usage: --invoke <subcmd> [args...]"); return 4 }
+    let bin = _resolve_harness_bin()
+    if len(bin) == 0 {
+        eprintln("ERROR: browser-harness not installed. raw 12 fail-loud — install via:")
+        eprintln("  hx install dancinlab/browser-harness")
+        eprintln("  OR set BROWSER_HARNESS_HOME=<path>")
+        return 1
+    }
+    let mut rest = []
+    let mut ri = 1
+    while ri < len(user_args) { rest.push(user_args[ri]); ri = ri + 1 }
+    let out = _forward(bin, rest)
+    print(out)
+    return 0
+}
+
+eprintln("usage: --probe | --invoke <subcmd> [args...] | --selftest | --version")
+return 4
