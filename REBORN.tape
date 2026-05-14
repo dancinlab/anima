@@ -1,9 +1,50 @@
 #!/usr/bin/env tape
+# ══════════════════════════════════════════════════════════════════════
+# .tape v1.2 — grammar primer (cold-read by any LLM / agent / human)
+# ══════════════════════════════════════════════════════════════════════
+# Form: each entry is `@<type> <id> := "<subject>" :: <kind> [<grades>]`
+#       optionally followed by body lines (2-space indent) — key=value,
+#       edges (<- -> => …), or quoted prose.
+#
+# ENTRY TYPES (17):
+#   Runtime (10): @S session  @U user  @A assistant  @T tool-call  @R result
+#                 @H hook  @D decision  @K cost  @P provider  @? anomaly
+#   Foundation:   @I identity-claim
+#   Declarative:  @X external-citation  @F forbidden-pattern  @N note
+#                 @C config  @L layout  @V spec-version
+#
+# EDGES (12, on body lines, 2-space indent):
+#   Causal:     <- caused-by   -> triggers   == continues
+#               ~> supersedes  !! aborts     |> verified-by
+#   Effect:     => produces (followed by quoted natural-language)
+#   Structural: <: specializes  :> generalizes  ?> soft-depends
+#               !> conflicts-with  @> projects-to (e.g. @> AGENTS.md)
+#
+# GRADE TAGS (in [...] on entry header):
+#   Delivery:   ok · err · denied · cancelled · partial · superseded
+#   Governance: required · recommended · optional · draft · active · deprecated
+#   Scoped:     allow:<x> · deny:<x>
+#   Time/index: T<n> (turn)  N<n> (wall-sec)  d=<YYYY-MM-DD>
+#
+# PAYLOAD SYNTAX (body lines):
+#   key = "value"           single-line string
+#   key = [a, b, c]         array literal
+#   key <<~EOF              heredoc (multi-line; ends with EOF on own line)
+#     multi-line text
+#   EOF
+#   "see [@x1] §3"          inline citation by entry id
+#   `cmd or path`           backtick code-span (inline only)
+#
+# Full spec: ~/core/tape/spec/tape.md (or github.com/dancinlab/tape)
+# ══════════════════════════════════════════════════════════════════════
+
+@V := "tape" :: spec [active]
+  version = "1.2"
+
 # ══════════════════════════════════════════════════════════════
 # REBORN.md — anima ConsciousLM 부활 통합 SSOT (2026-05-10 cycle close)
 # ══════════════════════════════════════════════════════════════
 
-# 본 문서는 cycle 2026-05-09 ~ 2026-05-10 의 모든 archaeology + BG 회수 + servant pattern 통합. 이전 4 SSOT 통합 (raw#15 additive — 원본 미수정):
 
 @D b_clm_v2_archive_2026_05_09_md_mit_0 :: reborn [ok]
   text = "`CLM_V2_ARCHIVE_2026_05_09.md` (mitosis 본체 + 13-stage overview)"
@@ -3325,7 +3366,6 @@
 @D row_f_alpha_v2_2_14 :: reborn [ok]
   id = "F-ALPHA-V2-2"
   falsifier = "3K history JSON 재현 불가"
-  verdict = "NOT_TRIGGERED — `dense_3k_run.py` regenerated 3K (42s wall) and 10K (143s wall) on Mac CPU, raw#15 additive (re-imports upstream substrate + prompts + encoder)"
 
 @D row_f_alpha_v2_3_15 :: reborn [ok]
   id = "F-ALPHA-V2-3"
@@ -3334,7 +3374,6 @@
 
 @D row_training_alpha_metric_v2_py_16 :: reborn [ok]
   path = "`training/alpha_metric_v2.py`"
-  role = "V2 implementation (~390L, raw#9 local-only)"
 
 @D row_state_anima_alpha_metric_v2_2026_17 :: reborn [ok]
   path = "`state/anima_alpha_metric_v2_2026_05_10/design.md`"
@@ -3536,10 +3575,8 @@
   text = "`state/anima_lost_asset_fixes_2026_05_10/expand_dim_smoke_result.md` (full report)"
 
 @D b_state_anima_lost_asset_fixes_202_18 :: reborn [ok]
-  text = "`state/anima_lost_asset_fixes_2026_05_10/growing_conscious_lm_expand_dim_fix.py` UNTOUCHED (raw#15 ✓)"
 
 @D b_worktree_2_untouched_raw_15_19 :: reborn [ok]
-  text = "worktree-2 UNTOUCHED (raw#15 ✓)"
 
 # ── §35 [2026-05-10 12:35 KST] BG-GROWTH-STAGES-ALIGN-IMPL — 5-entry alignment ref ★ ─────────────────────────────────────────
 
@@ -3834,7 +3871,6 @@
   text = "**NEW**: 7 theorems (legacy_*.hexa convention pattern)"
 
 @D b_hexa_31_pinnacle_finding_main_re_25 :: reborn [ok]
-  text = "본 hexa 는 §31 pinnacle finding 의 main repo 회수본 (raw#9 hexa-only 충족, .py 회수본 state/ 보존)"
 
 @D b_30_advanced_mechanism_cycle_bg_v_26 :: reborn [ok]
   text = "§30 advanced mechanism 통합은 별도 cycle: BG-V5MITOSIS-HEXA-FRONTIER (proposed §X)"
@@ -4115,7 +4151,6 @@
   text = "track C cond.5 권한 = cond.3 (d=384 sweep §37 in-flight) + cond.5.C1 (본 §42 PARTIAL PASS) 둘 다 충족 시 fire authorize"
 
 @D b_raw_15_strict_training_mitosis_v_20 :: reborn [ok]
-  text = "raw#15 strict — `training/mitosis_v5_port.py` + `mitosis_model_v5.py` zero edit, callback 외부 wire"
 
 @D b_state_anima_net2net_optimizer_re_21 :: reborn [ok]
   text = "`state/anima_net2net_optimizer_rebuild_2026_05_10/spec.md` (4.3 KB)"
@@ -5462,7 +5497,6 @@
 
 
 @D b_5_ckpts_loaded_read_only_raw_15_0 :: reborn [ok]
-  text = "5 ckpts loaded read-only (raw#15): A=Phase 2 cotrain, B=BG-LA pretrain, C=v2 cells64, D=v2 cells128, E=v2 convo_5k FT"
 
 @D b_bonus_s_bg_lb_step_8000_a_pre_co_1 :: reborn [ok]
   text = "BONUS: S = BG-LB step 8000 (A pre-cotrain substrate) → cotrain isolation S→A vs S→B 가능"
@@ -6492,7 +6526,6 @@
   verdict = "NOT_TRIGGERED (§54 spec UNCHANGED)"
 
 @D b_53_v0_prediction_immutable_raw_1_17 :: reborn [ok]
-  text = "§53 V0 prediction immutable (raw#15 additive); V1 = update only"
 
 @D b_48_perfect_match_framework_gener_18 :: reborn [ok]
   text = "§48 PERFECT MATCH framework generalize candidate (Llama mitosis-naive → EngineAG mitosis-aware substrate classes)"
@@ -7075,7 +7108,6 @@
   text = "§64 P4 carry item (\"paradigm-j cross-lane V14 — arch-aware 3-rule generalize\") **RESOLVED** as \"rule EXTENDS, does NOT generalize\""
 
 @D b_paradigm_j_substrate_research_d1_32 :: reborn [ok]
-  text = "paradigm-j substrate-research D1 lane EMERGE (v5.2 own 14 PUBLIC PROMOTE) **preserved**, raw#82 retraction-aware"
 
 @D b_51_honest_c3_5_cross_path_invali_33 :: reborn [ok]
   text = "§51 honest C3 #5 (\"cross-path Φ invalid\") elevated from per-§ caveat to universal-claim level scope-bound"
@@ -7133,7 +7165,6 @@
 
 @D row_p2_foundation_c_phase2_8 :: reborn [ok]
   bg = "P2 (FOUNDATION_C_PHASE2)"
-  train_script_status = "`tool/transient_py/anima_foundation_c_phase2_h100.py` — fork from BORROW-A's h100 script, **Phase 2 lifts (5-seed mirror, dual cap 128/256, direct Φ_iit_un16 measurement) unimplemented**; `BG_ID=\"BG-FOUNDATION-BORROW-A\"` + `MAC_STATE_DIR=\".../borrow_a_fire...\"` unchanged. Running as-is would re-execute BORROW-A and **overwrite §43 completed artifacts** (raw#9 violation)."
   gap = "1-2h Phase 2 lifts coding"
 
 @D row_p3_bg_la_cotrain_retrain_b_a_9 :: reborn [ok]
@@ -7182,7 +7213,6 @@
   x = "**0.00** / $200 envelope, $42-104 unused authorize"
 
 @D b_43_borrow_a_artifacts_line_3319_19 :: reborn [ok]
-  text = "§43 BORROW-A artifacts (line 3319+) **preserved** — P2 train script as-is would have overwritten; halt prevented this. raw#9 honored."
 
 @D b_55_full_v2_path_universal_cap_co_20 :: reborn [ok]
   text = "§55 ★★★★★ FULL v2-path universal cap-conditional + §65 paradigm-j NEW_arch + §64 arch-aware 3-rule + 4-layer mechanism model **unchanged**."
