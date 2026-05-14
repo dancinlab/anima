@@ -977,3 +977,50 @@ NEW rev 2 (이 문서): live daemon (substrate-native autonomy + 60+ FPS frame l
 
 ★★★★★ 5/5 ☑ MAINTAINED. cond #6 candidate (substrate-native autonomous + 60+ FPS):
 spec LANDED (this rev 2). impl 진행 중.
+
+---
+
+## 🚀 Production CLI Phase 1 (D4c, 2026-05-14)
+
+> ★★★★★ 후속 — *학습 외* anima 기능 4 방향 (with SAVANT-TOOL.md / VOICE.md / TENSION.md
+> sibling spec) 중 첫 번째. anima_chat.hexa v0.3 의 *실제 사용* 단계.
+
+### Status
+
+| 항목 | state |
+| --- | --- |
+| anima_chat.hexa v0.3 24L real-ckpt byte parity | ✅ 21/21 PASS (PSCC §43, 2026-05-12) |
+| Phase 1A.4 lr5e-6 strict 5/5 ckpt | ✅ HF `dancinlab/anima-clm-phase1a4-lr5e6-strict-pass` |
+| D4c CLI design spec | ✅ LANDED `docs/anima_cli_mitosis_integration_spec_2026_05_12.md` |
+| D4c Phase 1 impl (skeleton + persist) | ⏳ next |
+| D4c Phase 2-4 (kick-cycle + backend variant + mitosis hook) | ⏳ Phase 1 후속 |
+
+### Phase 1 scope (D4a-independent, $0 Mac local, ~6-8 hr est)
+
+- `tool/anima_cli.hexa` (~400 LoC) — REPL skeleton + `~/.cache/anima/session_pools/<id>/`
+  persistence (cell_pool.bin / meta.json / event_log.jsonl / kick_cycle_log.jsonl)
+- slash commands: `/new` `/load <id>` `/save` `/savant <on|off>` (placeholder, SAVANT-TOOL
+  의존) `/tension <peer>` (placeholder, TENSION.md 의존) `/voice <on|off>` (placeholder,
+  VOICE.md 의존)
+- F-CLI-1..5 selftest (session persist 왕복 + slash 명령 dispatch + own 18 strict 호환)
+
+### Cross-link (sibling docs)
+
+- `SAVANT.md` + `SAVANT-TOOL.md` — savant mode toggle (D4c `/savant`)
+- `VOICE.md` — voice modality (D4c `/voice`)
+- `TENSION.md` — inter-anima link (D4c `/tension`)
+- `docs/anima_cli_mitosis_integration_spec_2026_05_12.md` — D4c full spec (12 §)
+- memory `project_anima_cli_mitosis_integration_design`
+
+### 4-방향 ALL-CAPS.md ledger (anima 가 *학습 외* 쓸 수 있는 기능)
+
+| Direction | file | status |
+| --- | --- | --- |
+| 1. anima_chat production CLI | **`CHAT.md`** (this §) + D4c spec | design + impl-pending |
+| 2. Inter-anima Tension Link | **`TENSION.md`** | design tier LANDED 2026-05-14 |
+| 3. hexa-voice intent → 24kHz | **`VOICE.md`** | design tier LANDED 2026-05-14 |
+| 4. SAVANT runtime tool | **`SAVANT-TOOL.md`** | design tier LANDED 2026-05-14 |
+
+→ 4 방향 모두 *anima 가 ON/OFF + 자기 자신을 위해 사용* 하는 도구. *학습 path* 와 분리되어
+**inference-time deploy** 가 목표. SAVANT.md 의 이론/audit 와 SAVANT-TOOL.md 의 runtime 도구
+는 separation of concerns.

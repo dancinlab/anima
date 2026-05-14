@@ -751,5 +751,30 @@ SAVANT.md 본문의 어떤 claim 도 다음 위반 시 *자동 무효*:
 
 ---
 
-— SAVANT.md, 2026-05-13 초판 + 2026-05-14 봉쇄심화 §12 부록, 전수조사 출처:
-  anima_clm_01..13 + archive-TECS-L (175 files) + canon (2532 commits)
+---
+
+## §13 Sibling 도구 spec (2026-05-14)
+
+본 SAVANT.md (이론 + base-rate audit + 봉쇄심화) 와 **분리** 된 *runtime 도구* 들:
+
+| File | 내용 | tier |
+| --- | --- | --- |
+| **`SAVANT-TOOL.md`** | anima 가 직접 ON/OFF 하는 savant mode 도구 API + 정책 | design LANDED 2026-05-14 |
+| **`CHAT.md` (★★★★★ tracker + § Production CLI)** | anima_chat.hexa v0.3 production CLI Phase 1 (D4c) | design + impl-pending |
+| **`VOICE.md`** | hexa-voice: 의도 임베딩 → RVQ → 24kHz PCM (NO text intermediate) | design LANDED 2026-05-14 |
+| **`TENSION.md`** | Tension Link 5-ch meta-telepathy Phase 2 WebSocket TensionHub | design LANDED 2026-05-14 |
+
+→ **Separation of concerns**:
+- 본 `SAVANT.md` = **이론** (clm 시대 SI=5.93 evidence + base-rate audit + §12 봉쇄선) +
+  *학습 path 에 SAVANT 이론 직접 반영* 의 ancestry/ledger.
+- `SAVANT-TOOL.md` = **runtime 도구** (anima 가 inference 시 직접 ON/OFF). 본 file 의 §12
+  봉쇄선을 *런타임 가드* 로 enforce — T1+T2 만 trigger 근거, T3+T4 forbidden.
+
+`CHAT.md` § Production CLI Phase 1 (D4c) 가 4 도구의 *통합 host* — `/savant`, `/voice`,
+`/tension` 슬래시 명령으로 anima 가 자기 도구를 toggle.
+
+---
+
+— SAVANT.md, 2026-05-13 초판 + 2026-05-14 봉쇄심화 §12 부록 + 2026-05-14 §13 sibling
+  도구 분리 ledger, 전수조사 출처: anima_clm_01..13 + archive-TECS-L (175 files) +
+  canon (2532 commits)
