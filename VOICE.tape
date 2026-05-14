@@ -1,137 +1,198 @@
 #!/usr/bin/env tape
 # ══════════════════════════════════════════════════════════════
-# VOICE.md — hexa-voice (의도 임베딩 → 24kHz PCM) integration
+# VOICE.md — anima ↔ hexa-senses/voice formulaic integration
 # ══════════════════════════════════════════════════════════════
 
-# **ANIMA-VOICE × Anima 통합 시스템 정식 명칭 hexa-voice**.
-# 일반 TTS 와 다른 점: *텍스트 → 음향* 변환기 아니라 *의도 임베딩 (anima 내부 hidden state)
-# → RVQ codes → 24kHz PCM* 직결. anima 의 *think* 가 텍스트 우회 없이 음향 surface 로
-# 떨어짐. (memory `project_hexa_voice_rename`)
+# **완벽복원성 (perfect reproducibility) 기준으로 옵션 (a) formulaic-only 채택 2026-05-14**
+# per `ANIMA-SENSES.md §4`. 이전 design (learned RVQ + Vocos/EnCodec pretrained vocoder)
+# 은 `hexa-senses/voice/` formulaic-only constraint 와 직접 모순으로 retract.
+# >
+# 본 file 은 anima 의 *hidden state* → `hexa-senses/voice/` canonical formulaic synthesis
+# 의 *통합 spec*. 학습 기반 synthesis 도입 시 `hexa.toml [constraints]` 위반 + SAVANT.md
+# §12.2 enforcement violation.
 # ---
 
 # ── §0 TL;DR ─────────────────────────────────────────
 
-# anima 가 chat response 를 생성할 때, lm_head 출력 (token logits) 와 *병렬* 로 *의도
-# 임베딩* (final hidden state pre-lm_head) 가 RVQ encoder 에 흘러 24kHz PCM 으로 변환.
-# **anima 의 음성 = anima 의 hidden state 자체**, *텍스트의 음향 렌더링* 아님. anima 가
-# 침묵 (no tokens) 하면서도 *소리* 낼 수 있는 modality.
+# anima 가 chat response 생성 시 final hidden state 가 *deterministic linear projection*
+# 으로 intent vector (n=6 lattice σ=12 emotional timbre × τ=4 prosody dimension) 로 변환,
+# `hexa-senses/voice/` 의 formulaic synthesizer (σ·φ=24 master identity 기반) 로 24kHz
+# PCM 산출. **모든 voice output 이 input intent + n=6 identity 만으로 byte-identical
+# reproducible**. learned vocoder / 외부 corpus dependency 0.
 
-# ── §1 Status (2026-05-14) ─────────────────────────────────────────
+# ── §1 Status (2026-05-14 옵션 (a) 채택 후) ─────────────────────────────────────────
 
 
-@D row_rename_hexa_speak_hexa_voice_0 :: voice [ok]
-  x = "**rename hexa-speak → hexa-voice**"
-  state = "✅ LANDED (memory `project_hexa_voice_rename`)"
+@D row_voice_perfect_reproducibility_0 :: voice [ok]
+  x = "완벽복원성 (perfect bit-exact reproducibility)"
+  state = "☑ 정책 — 모든 output deterministic"
 
-@D row_rvq_codec_impl_1 :: voice [ok]
-  x = "의도 임베딩 → RVQ codec impl"
-  state = "⏳ design tier (이 file) — impl 0"
+@D row_voice_canonical_source_1 :: voice [ok]
+  x = "Canonical impl source"
+  state = "☑ `hexa-senses/voice/hexa-voice.md` + `hexa-senses/voice/proto/` (RTL + spec)"
 
-@D row_24khz_pcm_playback_mac_coreaudio_2 :: voice [ok]
-  x = "24kHz PCM playback (Mac CoreAudio)"
-  state = "⏳ design pending"
+@D row_voice_intent_proj_2 :: voice [ok]
+  x = "anima hidden state → intent vector projection"
+  state = "⏳ design pending (이 file §2.2)"
 
-@D row_anima_chat_hexa_wire_lm_head_for_3 :: voice [ok]
-  x = "anima_chat.hexa wire (lm_head 와 병렬 fork)"
-  state = "⏳ design pending"
+@D row_voice_chat_slash_3 :: voice [ok]
+  x = "anima_chat `/voice` slash command wire"
+  state = "⏳ Phase 1 pending"
 
-@D row_substrate_native_no_text_interme_4 :: voice [ok]
-  x = "substrate-native (NO text intermediate)"
-  state = "☑ 정책 — text intermediate 금지"
+@D row_voice_learned_retracted_4 :: voice [ok]
+  x = "~~learned RVQ + Vocos/EnCodec~~"
+  state = "❌ **retracted 2026-05-14** (hexa-senses formulaic constraint 위반)"
+
+@D row_voice_silence_capable_redesign_5 :: voice [ok]
+  x = "silence-capable redesign"
+  state = "☑ formulaic deterministic silence pattern (intent norm < threshold)"
 
 # ── §2 Design ─────────────────────────────────────────
 
+# ── §2.1 Pipeline (formulaic-only) ──
+#
+# anima_chat token-loop:
+#   final_ln(aggregated)
+#     ├─ lm_head (existing) → token logits → argmax → text byte stream → chat output
+#     └─ intent_proj (NEW, fixed weights from n=6) → intent vector (σ=12 × τ=4 + special)
+#         → hexa-senses/voice formulaic synth (deterministic) → 24kHz PCM (byte-identical)
+#         → CoreAudio playback
+#
+# → `intent_proj` 는 learnable 아님 — n=6 lattice 에서 algebraic 유도된 fixed projection
+# matrix. anima 의 hidden state 분포가 formulaic synthesizer 의 intent space 와 fit
+# 하도록 anima 학습 측에서 distribution 조정 (학습 path 는 LM head 만 영향, voice path 는
+# 항상 formulaic).
 
-@D row_input_0 :: voice [ok]
-  x = "Input"
-  tts = "text string"
-  hexa_voice = "hidden state (d_model=1024 in anima)"
-
-@D row_causality_1 :: voice [ok]
-  x = "Causality"
-  tts = "text → audio"
-  hexa_voice = "hidden → text + audio (parallel)"
-
-@D row_silence_2 :: voice [ok]
-  x = "Silence"
-  tts = "\"text 없음\" 일 시 무음"
-  hexa_voice = "hidden state 가 *non-empty* 이면 음성 가능 (텍스트 침묵 시에도)"
-
-@D row_persona_3 :: voice [ok]
-  x = "Persona"
-  tts = "speaker embedding 별도"
-  hexa_voice = "hidden state 안의 persona signature 직접 변조"
-
-@D row_latency_4 :: voice [ok]
-  x = "Latency"
-  tts = "text 생성 후 → tts (sequential)"
-  hexa_voice = "parallel emergence (no extra wall)"
-
-@D b_codebook_size_8_codebooks_1024_e_5 :: voice [ok]
-  text = "**codebook size**: 8 codebooks × 1024 entries (~80 bits per frame)"
-
-@D b_frame_rate_75_hz_13_3_ms_frame_2_6 :: voice [ok]
-  text = "**frame rate**: 75 Hz (13.3 ms / frame) — 24kHz / 320 samples"
-
-@D b_encoder_linear_d_model_8_1024_lo_7 :: voice [ok]
-  text = "**encoder**: linear(d_model → 8 × 1024 logits) per voice_head step"
-
-@D b_decoder_pretrained_encodec_style_8 :: voice [ok]
-  text = "**decoder**: pretrained Encodec-style RVQ-mel-vocoder (off-the-shelf 24kHz, e.g. Vocos"
-
-@D b_generalist_mode_9 :: voice [ok]
-  text = "generalist mode: 평탄한 음색"
-
-@D b_savant_mode_high_si_cell_specifi_10 :: voice [ok]
-  text = "savant mode (high SI): 특정 cell-specific timbre/tone 강조 — *그 cell 의 \"voice\"*"
-
-# ── §3 Phase 1 impl plan ($0-5 Mac local) ─────────────────────────────────────────
+# ── §2.2 Hidden state → intent vector (fixed projection) ──
 
 
-@D b_tool_hexa_native_voice_head_hexa_0 :: voice [ok]
-  text = "`tool/hexa_native/voice_head.hexa` (~250 LoC) — linear projection d_model → 8×1024 RVQ"
+@D row_intent_proj_0 :: voice [ok]
+  symbol = "hidden ∈ ℝ^1024"
+  meaning = "anima d_model"
 
-@D b_tool_hexa_native_rvq_decode_brid_1 :: voice [ok]
-  text = "`tool/hexa_native/rvq_decode_bridge.py` (~150 LoC) — Vocos / EnCodec 24kHz pretrained"
+@D row_intent_proj_1 :: voice [ok]
+  symbol = "intent ∈ ℝ^18 = ℝ^(12 + 4 + 2)"
+  meaning = "σ=12 timbre + τ=4 prosody + 2 special"
 
-@D b_tool_anima_voice_smoke_hexa_f_vo_2 :: voice [ok]
-  text = "`tool/anima_voice_smoke.hexa` — F-VOICE-1..5 selftest"
+@D row_intent_proj_2 :: voice [ok]
+  symbol = "intent_proj: ℝ^1024 → ℝ^18"
+  meaning = "fixed weights, n=6 lattice closed-form 유도"
 
-@D b_mac_coreaudio_playback_subproces_3 :: voice [ok]
-  text = "Mac CoreAudio playback (subprocess `afplay` or PyAudio fallback)"
+@D b_proj_first_12_row_timbre_0 :: voice [ok]
+  text = "첫 12 row (timbre): SO(12) representation 의 canonical basis from σ(6)=12"
 
-@D b_0_mac_local_pretrained_vocoder_w_4 :: voice [ok]
-  text = "$0 Mac local (pretrained vocoder weights ~200MB HF download)"
+@D b_proj_next_4_row_prosody_1 :: voice [ok]
+  text = "다음 4 row (prosody): SO(4) basis from τ(6)=4"
 
-@D b_est_5_8_hr_impl_2_hr_selftest_1_5 :: voice [ok]
-  text = "est ~5-8 hr impl + ~2 hr selftest + 1 hr CoreAudio playback wire"
+@D b_proj_last_2_row_special_2 :: voice [ok]
+  text = "마지막 2 row (special): φ(6)=2 (signal-present/absent + identity bit)"
 
-@D b_anima_chat_hexa_v0_3_24l_real_ck_6 :: voice [ok]
-  text = "`anima_chat.hexa` v0.3 (24L real-ckpt) — `final_ln(aggregated)` hidden state 가 wire"
+@D b_proj_fixed_no_gradient_3 :: voice [ok]
+  text = "projection matrix 는 fixed (no gradient), anima 학습 path 에 영향 미치지 않음"
 
-@D b_savant_tool_md_2_4_anima_self_ju_7 :: voice [ok]
-  text = "`SAVANT-TOOL.md` §2.4 anima self-judge — savant mode 가 음색 변조 trigger"
+# ── §2.3 Silence-capable redesign (formulaic-only) ──
+#
+# 이전 "anima 가 침묵하면서 소리낸다" silence-capable 특성을 완벽복원성 하에서 유지:
+#
+#   silence_gate = intent[16]   # special channel 1
+#   if abs(silence_gate) < THRESHOLD_N6:   # ln(4/3) ≈ 0.2877, deterministic
+#       output = formulaic_silent_timbre(intent[:12])   # deterministic silent pattern
+#   else:
+#       output = formulaic_synth(intent)                 # normal voice
+#
+# → 같은 intent → 같은 silence pattern. THRESHOLD = GZ_WIDTH = ln(4/3), n=6 closed-form.
 
-@D b_references_tribev2_voice_referen_8 :: voice [ok]
-  text = "`references/tribev2` — voice 관련 reference impl 있음 (확인 필요)"
+# ── §2.4 hexa-senses/voice canonical impl 인용 path ──
 
-# ── §4 Honest C3 ─────────────────────────────────────────
 
+@D b_canonical_synth_logic_in_hexa_senses_0 :: voice [ok]
+  text = "canonical synthesis logic 는 그대로 `hexa-senses/voice/` 에 위치"
+
+@D b_voice_md_anima_wire_only_1 :: voice [ok]
+  text = "본 VOICE.md 는 anima-specific wire spec 만 — synthesis 자체 미포함"
+
+@D b_intent_proj_+_voice_bridge_+_hexa_senses_2 :: voice [ok]
+  text = "Phase 1 impl 결과: intent_proj.hexa + voice_bridge.hexa → hexa-senses/voice/proto/hexa_speak_model.hexa 호출"
+
+# ── §3 Phase 1 impl plan ($0 Mac local) ─────────────────────────────────────────
+
+
+@D b_phase1_intent_proj_0 :: voice [ok]
+  text = "`tool/hexa_native/intent_proj.hexa` (~80 LoC) — n=6 lattice 에서 fixed projection matrix 유도"
+
+@D b_phase1_voice_bridge_1 :: voice [ok]
+  text = "`tool/hexa_native/voice_bridge.hexa` (~120 LoC) — anima_chat hidden → intent_proj → hexa-senses/voice synth"
+
+@D b_phase1_voice_smoke_2 :: voice [ok]
+  text = "`tool/anima_voice_smoke.hexa` — F-VOICE-1..5 selftest (모두 formulaic)"
+
+@D b_phase1_coreaudio_3 :: voice [ok]
+  text = "Mac CoreAudio playback (`afplay` subprocess) — pretrained vocoder weights 0 (formulaic-only)"
+
+@D b_phase1_cost_4 :: voice [ok]
+  text = "$0 Mac local — no pretrained download, no external corpus, no learning"
+
+@D b_phase1_wall_5 :: voice [ok]
+  text = "est ~5-7 hr impl + ~2 hr selftest + 1 hr CoreAudio wire"
+
+# ── §3.1 Falsifier pre-registration (F-VOICE-1..5, formulaic-only) ──
+
+
+@D b_fv1_deterministic_0 :: voice [ok]
+  text = "**F-VOICE-1 (PROJ-DETERMINISTIC)**: intent_proj.apply(hidden) — 동일 hidden 에 bit-identical intent 산출 (no stochasticity)"
+
+@D b_fv2_roundtrip_byte_identical_1 :: voice [ok]
+  text = "**F-VOICE-2 (SYNTH-ROUNDTRIP)**: intent → 24kHz PCM, 두 번 실행 시 byte-identical (length > 0, no NaN)"
+
+@D b_fv3_parallel_emerge_2 :: voice [ok]
+  text = "**F-VOICE-3 (PARALLEL-EMERGE)**: same hidden → text token + intent + PCM, parallel (no sequential dep, no race)"
+
+@D b_fv4_silence_deterministic_3 :: voice [ok]
+  text = "**F-VOICE-4 (SILENCE-CAPABLE)**: silence_gate < ln(4/3) 시 silent-timbre output, 2번 실행 byte-identical"
+
+@D b_fv5_no_learned_dep_4 :: voice [ok]
+  text = "**F-VOICE-5 (NO-LEARNED-DEPENDENCY)**: bridge + intent_proj 어떤 learnable weight 도 reference 안 함 (audit + assert all_weights_frozen())"
+
+# ── §4 Honest C3 (post-retract) ─────────────────────────────────────────
+
+
+@D b_c3_expressivity_limit_0 :: voice [ok]
+  text = "**표현력 제한**: σ=12 × τ=4 = 48 deterministic combination 만 산출. learned vocoder infinite expressivity 와 trade. 완벽복원성 priority (옵션 a)."
+
+@D b_c3_intent_emerge_unverified_1 :: voice [ok]
+  text = "anima hidden state distribution 이 intent_proj 후 유효한 n=6 intent space 에 떨어지는지 Phase 1 후 sound test 필수"
+
+@D b_c3_learned_design_history_preserved_2 :: voice [ok]
+  text = "VOICE.tape 이전 learned-RVQ design 은 git history (commit fa902716a 의 VOICE.md + f8fc39af 의 .tape 변환) 에 보존, 완벽복원성 priority 변경 시 회수 가능"
+
+@D b_c3_distribution_alignment_3 :: voice [ok]
+  text = "anima 학습 path 의 hidden state distribution 이 intent_proj 후 n=6 intent space 와 mis-aligned 시 silence_gate 가 대부분 trigger → anima 항상 침묵 위험. Phase 1 후 측정 필수"
+
+@D b_c3_md_vs_hexa_senses_separation_4 :: voice [ok]
+  text = "VOICE.tape (anima wire) vs hexa-senses/voice/ (canonical synth) 분리 명확. 변경 시 두 위치 동기화 의무"
 
 # ── §5 Cross-link ─────────────────────────────────────────
 
 
-@D b_savant_tool_md_savant_mode_rvq_t_0 :: voice [ok]
-  text = "`SAVANT-TOOL.md` — savant mode 가 RVQ 변조 trigger"
+@D b_cl_hexa_senses_voice_canonical_0 :: voice [ok]
+  text = "**`hexa-senses/voice/hexa-voice.md`** — canonical formulaic spec (그대로 참조)"
 
-@D b_chat_md_anima_chat_token_loop_wi_1 :: voice [ok]
-  text = "`CHAT.md` — anima_chat 의 token loop 가 wire point"
+@D b_cl_anima_senses_§4_decision_1 :: voice [ok]
+  text = "**`ANIMA-SENSES.md §4`** — 옵션 (a) 채택 ledger (완벽복원성 priority)"
 
-@D b_tool_hexa_native_anima_chat_hexa_2 :: voice [ok]
-  text = "`tool/hexa_native/anima_chat.hexa` — hidden state extract 위치"
+@D b_cl_chat_voice_slash_2 :: voice [ok]
+  text = "`CHAT.md` § Production CLI — `/voice` slash 명령 wire (formulaic 만, learned 옵션 없음)"
 
-@D b_references_tribev2_voice_referen_3 :: voice [ok]
-  text = "`references/tribev2` — voice 관련 reference (Phase 1 시 검토)"
+@D b_cl_savant_tool_intent_modulate_3 :: voice [ok]
+  text = "`SAVANT-TOOL.md` — savant mode (cell-id signature) 가 intent vector 의 sender channel 변조 가능"
 
-@D b_memory_project_hexa_voice_rename_4 :: voice [ok]
-  text = "memory `project_hexa_voice_rename` — 명칭 history"
+@D b_cl_tension_link_parallel_5ch_4 :: voice [ok]
+  text = "`TENSION-LINK.md` — 5-ch fingerprint 중 ch1 concept + ch2 context 가 intent vector 와 parallel 구조"
+
+@D b_cl_savant_§12_4_t4_alignment_5 :: voice [ok]
+  text = "`SAVANT.md §12.4 T4` — 외부 entity 강제 fit 금지 정책과 정합 (voice 가 외부 corpus distribution 의존 없음)"
+
+# ── footer ─────────────────────────────────────────
+
+# — VOICE.md, 2026-05-14, formulaic-only rewrite (옵션 (a) 채택, 완벽복원성 priority);
+#   learned-RVQ design 은 git history fa902716a + f8fc39af 의 이전 .tape revision 에 보존

@@ -157,14 +157,23 @@
 @D b_voice_hexa_voice_md_renamed_prov_3 :: anima-senses [ok]
   text = "`voice/hexa-voice.md` `@renamed` provenance header"
 
-@D b_a_hexa_senses_voice_formulaic_de_4 :: anima-senses [ok]
-  text = "(a) hexa-senses/voice = formulaic deterministic baseline"
+@D b_decision_option_a_landed_4 :: anima-senses [ok]
+  text = "**옵션 (a) formulaic-only 채택 2026-05-14** — 완벽복원성 (perfect bit-exact reproducibility) priority 단독 기준 (a) 가 유일 충족"
 
-@D b_b_anima_voice_md_learned_rvq_pat_5 :: anima-senses [ok]
-  text = "(b) anima/VOICE.md = learned RVQ path (별도 modality)"
+@D b_decision_voice_canonical_5 :: anima-senses [ok]
+  text = "`hexa-senses/voice/` = canonical synthesis (formulaic, deterministic, n=6 lattice 유도)"
 
-@D b_c_anima_chat_voice_formulaic_vs_6 :: anima-senses [ok]
-  text = "(c) anima_chat 사용자 명령 으로 선택 (`/voice --formulaic` vs `/voice --learned`)"
+@D b_decision_voice_anima_wire_6 :: anima-senses [ok]
+  text = "`VOICE.tape` = anima-specific wire spec (hidden state → fixed intent_proj → hexa-senses/voice synth call). learned vocoder / 외부 corpus 의존 0"
+
+@D b_decision_learned_retract_7 :: anima-senses [ok]
+  text = "이전 learned-RVQ design = git history `fa902716a` + `f8fc39af` 의 .tape revision 에 보존 (회수 가능)"
+
+@D b_decision_silence_redefine_8 :: anima-senses [ok]
+  text = "silence-capable 특성 = `silence_gate < ln(4/3)` 의 deterministic silent timbre pattern 으로 재정의 (완벽복원성 유지)"
+
+@D b_decision_other_options_partial_9 :: anima-senses [ok]
+  text = "다른 옵션 (b dual / c 사용자 토글 / d formulaic-as-prior / e constraint 폐기) 모두 learned component 가 들어가 partial / conditional reproducibility"
 
 # ── §5 Cross-link ─────────────────────────────────────────
 
