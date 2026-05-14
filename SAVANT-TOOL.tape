@@ -36,8 +36,12 @@
   containment = "SAVANT.md §12 T3/T4 denylist enforced at savant_set() — T1+T2+user_explicit only"
 
 @D row_phase_2_anima_chat_hexa_cli_sava_2 :: savant-tool [ok]
-  x = "Phase 2 (anima_chat.hexa CLI `/savant` slash)"
-  state = "⏳ blocked on Phase 1"
+  x = "Phase 2 (anima_chat.hexa CLI `/savant` slash external entry)"
+  state = "✅ LANDED 2026-05-14 — F-CHAT-SAVANT-CLI-1..4 4/4 PASS · $0 Mac local · anima_chat 본체 무수정"
+  artifact = "tool/anima_chat_savant_cli.hexa"
+  slash = "/savant {on <reason>|off|status|si|gate}"
+  evidence = "DISPATCH-OK (6-cmd round-trip status/on/si/gate-ON/gate-OFF/off) · NO-MUT (anima_chat import/call 없음) · IDEMPOTENT (/savant on ×2 동일) · TIER-REJECT (T3 brain_profile + cross_domain_9, T4 cosmic_gz, unknown all rejected; T1 gz_lower_dropout + T2 clm_06_mistral_7b OK)"
+  follow-up = "Phase 3 = chat_repl 직접 통합 (import-alias-runtime-resolve patch land 후 modular)"
 
 @D row_phase_3_auto_self_gate_by_si_mon_3 :: savant-tool [ok]
   x = "Phase 3 (auto self-gate by SI monitor)"
