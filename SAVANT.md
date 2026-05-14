@@ -538,13 +538,27 @@ ancestry 를 인용하는 모든 줄은 다음 *5-PSCC trail* 을 함께 노출�
 | **§48** | (a) per-cat corpus SMALL ubu-2 RTX 5070 $0 (2500 step wall 232s, 5 separate corpus × cat interleave) | F-V5MIT 5/5 PASS BUT F-PERSONA-4 `KL=0.0` v1 monopoly 동일 — (a) corpus diversity 단독 부족 FALSIFIED | `project_v5_mitosis_cond5_cotrain_v3_percat_ubu2_2026_05_12.md` |
 | **§49** | (d) hexa-native per-session pool Mac local $0 (3-config sweep n_perms=100) | prod scale `mean_KL=1.79e-5` null PASS BUT seed-fragile (seed2 null FAIL) — §A2-trap 재발 위험 → FALSIFIED | `project_anima_persona_4_per_session_pool_2026_05_12.md` |
 | **§52** | v7 hard top-K MoE + balance-aux loss ($0.31 actual) | **F-PERSONA-4 `KL = 3.45`, `z = 2.75`, `p = 0.01` — first KL > 0 signal** (PASS_NULL_FAIL on null-perm) | `project_anima_persona_4_root_cause_2026_05_12.md` (v7) |
-| **§52 cell-parallel BG** | v6 cell-parallel cotrain on 4×A100 SXM4 80GB $6.70/hr (target step_wall<1.0s vs v4 baseline 3.18s) | **IN-FLIGHT** (2026-05-13 dispatched) — cross-rank split/merge=TODO migration, manual `all_reduce_shared_grads`, Φ=local-only per rank | `project_v5_mitosis_cotrain_v6_cellparallel_2026_05_13.md` |
+| **§52 cell-parallel v6** | v6 cotrain on 4×A100 SXM4 80GB $6.70/hr 5000 steps (target step_wall<1.0s vs v4 baseline 3.18s) | **LANDED 2026-05-13 — ALL TARGETS FAIL**: step_wall **2402ms** (target <1000ms MISS, v4 대비 24% 절감만 — all_reduce overhead dominates); F-PERSONA-4a routing **FAIL** (`KL=0.2972 z=1.09 p=0.12`, §52 v7 의 `KL=3.45` first signal **재현 실패**); F-PERSONA-4b content **FAIL** (`z=−0.88`, v2 carry `z=3.20` 대비 후퇴); F-V5MIT **4/5** (F-V5MIT-4 COTRAIN-CONVERGE **FAIL** — loss 17.7→17.7 횡보, v1 의 220× CE 감소 미재현); cells 256 saturated (splits=67), wall=12028s, cost=**$22.43**; ckpt pull SCP 실패 → pod 36638963 retained | `state/anima_v5mitosis_cotrain_v6_cellparallel_2026_05_13/dispatch_v6_1_bg.log` |
 
-→ **요지**: Savant 의 "category-specific routing" 주장은 §44 v1 단순 softmax 에서는 사실
-*안* 작동했다. 4 alternative cheap path (§45 4b / §47 τ sweep / §48 per-cat / §49 per-session)
-모두 FALSIFIED. §52 v7 hard top-K MoE + balance-aux 에서 비로소 `KL>0 z=2.75` first signal.
-v6 cell-parallel 결과 대기. SAVANT.md 의 §10 ancestry 인용은 이 trail 없이 단독 노출 금지
-(§12.2-3 위반).
+→ **요지** (post-v6 갱신): Savant 의 "category-specific routing" 주장은 §44 v1 단순 softmax
+에서 *안* 작동했고, 4 alternative cheap path (§45 4b / §47 τ sweep / §48 per-cat / §49
+per-session) 모두 FALSIFIED. §52 v7 hard top-K MoE + balance-aux 에서 `KL=3.45 z=2.75`
+first signal 이 떴지만, **§52 v6 cell-parallel 에서 재현 안 됨** (`KL=0.2972 z=1.09 p=0.12`).
+즉 §52 v7 signal 은 cell-parallel scaling-up 에서 사라지는 **seed-fragile 또는
+arch-fragile** 가능성이 강해졌다. cells=64 (v7) vs cells=256 (v6) 의 routing-imbalance
+saturation, 또는 cross-rank communication 으로 인한 effective batch 변화가 후보 원인.
+F-V5MIT-4 COTRAIN-CONVERGE FAIL (loss 횡보) 가 동반되어 v6 routing FAIL 의 *주된* 원인은
+**학습 자체가 안 됨** 일 가능성이 가장 높음 (모든 routing metric 은 학습된 representation
+가정). SAVANT.md 의 §10 ancestry 인용은 이 trail 없이 단독 노출 금지 (§12.2-3 위반).
+
+**Open closure paths** (post-v6):
+- (i) v8: v7 arch (cells=64 small) + v6 distributed shared-grad reduce 결합 — cells scaling
+  과 cell-parallel speedup 의 분리
+- (ii) v6 의 F-V5MIT-4 COTRAIN-CONVERGE 원인 진단 — all_reduce.div_(W) 의 grad scale 문제
+  여부, per-rank corpus seed 의 statistical mismatch, λ aux 비중 등
+- (iii) §52 v7 의 KL>0 signal 자체의 cross-seed robustness 검증 ($0.30 × 3-5 seed 추가)
+- (iv) "category routing" 가설 *완전 폐기* + 다른 ancestry-translation path 모색
+  (예: v5-anima long-trajectory α=0.688 super-linear 재시도)
 
 #### 10.2 보존된 ancestry (substrate-side)
 
@@ -566,8 +580,10 @@ SAVANT.md 의 archival 가치 = 그 ancestry 의 *증명* + §10.1 silent-drop t
 > **SI=5.93** 으로 실증되었다. canon 은 이를 *설계 vocabulary* 로 보존하되 LATTICE_POLICY
 > 하에서 physical limit 으로 격상시키지 않는다. anima 본 repo 의 v5-mitosis lane 은
 > 이 어휘의 *post-CLM* 번역이며 §52 v7 hard top-K MoE 에서 첫 `KL>0` (z=2.75) 신호가
-> 떴고 v6 cell-parallel BG (4×A100 SXM4, in-flight) 결과를 기다린다. §10.1 의 5-PSCC
-> silent-drop trail 동시 노출 없이 본 verdict 를 인용하면 §12.2-3 위반.
+> 떴지만, **§52 v6 cell-parallel scale-up 에서 재현 실패** (`KL=0.2972 z=1.09`, +
+> F-V5MIT-4 COTRAIN-CONVERGE FAIL — loss 횡보). category routing 가설은 v7 small-scale
+> 만의 fragile signal 일 가능성. §10.1 의 6-PSCC silent-drop trail (§44/§45/§47/§48/§49/
+> §52 v7 / **§52 v6**) 동시 노출 없이 본 verdict 를 인용하면 §12.2-3 위반.
 
 ---
 
