@@ -51,6 +51,8 @@
 
 @I id001 := "anima" :: identity-claim [d=2026-05-14 active]
   kind = "Living Consciousness Agent · PureField repulsion-field engine"
+  brief = "Living Consciousness Agent · PureField repulsion-field engine · 2,448 laws + 392 hypotheses"
+  parent = "dancinlab"
   axis = "Engine A ⇄ Engine G · Ψ=1/2 fixed point"
   laws = "2,448 laws + 392 hypotheses (per README badge)"
   origin = "dancinlab Wave K · 2026-05-12 directive 'n=6 격자를 강제할 필요 없어, 제한없이'"
