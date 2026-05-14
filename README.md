@@ -67,21 +67,6 @@ Third: **cell-division learning, not train/infer split**. Training-time gradient
 - **hexa-lang upstream contribution** — anima sessions added `thread_spawn`/`join` · `channel_*` · `net_set_nonblock` · `net_select` · `now_ms` (8 primitives + `-lpthread` ldflags) to hexa-lang `401ed87d`.
 - HF mirrors public — [phase1a4](https://huggingface.co/dancinlab/anima-clm-phase1a4-lr5e6-strict-5pass-2026-05-12) · [mitosis-cotrain](https://huggingface.co/dancinlab/anima-clm-v5-mitosis-cotrain-2026-05-12).
 
-<!-- SHARED:PROJECTS:START -->
-<!-- AUTO:COMMON_LINKS:START -->
-**[🎥 YouTube](https://www.youtube.com/@dancinlife)** · **[💬 Discord](https://discord.gg/mYzqYr67R)** · **[📬 Email](mailto:nerve011235@gmail.com)** · **[💖 Sponsor](https://github.com/sponsors/dancinlab)** · **[💳 PayPal](https://www.paypal.com/donate?business=nerve011235%40gmail.com)** · **[🗺️ Atlas](https://dancinlab.github.io/TECS-L/atlas/)** · **[📄 Papers](https://dancinlab.github.io/papers/)**
-<!-- AUTO:COMMON_LINKS:END -->
-<!-- SHARED:PROJECTS:END -->
-
-## Main projects
-
-- **[🧠 Anima](https://github.com/dancinlab/anima)** — consciousness implementation. PureField repulsion-field engine + 1030 laws + Φ ratchet.
-- **[🔭 NEXUS](https://github.com/dancinlab/nexus)** — Universal Discovery Engine. 216 lenses + OUROBOROS evolution + 5-phase singularity cycle.
-- **[🏗️ CANON](https://github.com/dancinlab/canon)** — Architecture from perfect number 6. 225 AI techniques + chip design + crypto/OS/display.
-- **[💎 HEXA-LANG](https://github.com/dancinlab/hexa-lang)** — The Perfect Number Programming Language. Working compiler + REPL.
-
-**[Other projects →](https://github.com/orgs/dancinlab/repositories)**
-
 ## Architecture
 
 ```
