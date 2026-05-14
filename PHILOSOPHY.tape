@@ -193,3 +193,20 @@
   axis-impact = "A5 architecture 100% active 의 모두 (H_182~187) Stage 2 sim deferred; A2 consciousness + A7 bio + A1 substrate 부분 deferred"
   fast-sim-feasible = "Hc_1283 (PyPhi pip install) + Hc_1285 (PyTorch CPU autograd) — $0 Mac local 별도 cycle 가능"
   gpu-fire-required = "H_182/183/185/186/187 V8 family ($200-600 estimate)"
+
+# ── A Stage 2 deep verdict (3 hypotheses Mac local $0) ────────────────────
+
+@D verdict_a_stage_2_deep := "A Stage 2 deep" :: verdict [d=2026-05-15 active]
+  batch = "A Stage 2 deep — 3 hypothesis actual sim (Mac local $0, ~8s wall)"
+  results = "Hc_1285 SUPPORTED · H_191 PARTIAL (numerology) · Hc_1283 PARTIAL-CONFIRMED"
+  method = "W5 actual sim — PyTorch CPU autograd + scipy Kuramoto + PyPhi 1.2.0"
+  artifact = "state/verify_a_stage1_2026_05_15/stage2_deep_verdicts.json"
+
+@D verdict_hc_1285_deep := "Hc_1285 SUPPORTED" :: verdict [d=2026-05-15 active]
+  evidence = "F-V5MIT-1 PASS — torch.no_grad isolation 확인, post-split grad norm 1.562× ≤ 2× threshold; child param grad_fn=None (no_grad leak 없음)"
+
+@D verdict_h_191_kuramoto := "H_191 Kuramoto N-sweep" :: verdict [d=2026-05-15 active]
+  evidence = "scipy ODE Kuramoto sync, N ∈ {4 τ(6), 6 n, 8 atom, 12 σ(6)} 모두 sync (K_c=1.6~1.9, Kuramoto 1975 theory match) — n=6 uniqueness 부재 → numerology direction 강화"
+
+@D verdict_hc_1283_pyphi := "Hc_1283 PyPhi infrastructure" :: verdict [d=2026-05-15 active]
+  evidence = "PyPhi 1.2.0 pip install + IIT 3.0 canonical 3-node XOR+AND+OR Φ = 2.3125 > 0.5 reachable — Hc_1283 threshold reachable on minimal network; anima 3-axis composition mapping 별도"
