@@ -42,16 +42,16 @@
   version = "1.2"
 
 # ══════════════════════════════════════════════════════════════
-# PERSONA.md — anima D3 페르소나 substrate-native ledger (root-level)
+# PERSONA.tape — anima D3 페르소나 substrate-native ledger (root-level)
 # ══════════════════════════════════════════════════════════════
 
-# **Distinguishes from**: `CHAT.md` (★★★★★ 5-cond live daemon tracker) +
+# **Distinguishes from**: `CHAT.tape` (★★★★★ 5-cond live daemon tracker) +
 # `docs/anima_persona_substrate_native_design_2026_05_12.md` (D3 design SSOT,
 # §A1/§A3/§A4 amendments). 본 root 파일은 페르소나 substrate-native 진행
 # ledger — saga-level summary + 교훈 + 다음 cycle 의 closure path.
 # >
-# **Rename chain history**: `GOAL.md` → `PERSONA.md` → `CHAT.md` (2026-05-13 PM
-# CHAT.md rev 2 daemon land 시 5-cond tracker 가 CHAT.md 로 이동). 본 PERSONA.md
+# **Rename chain history**: `GOAL.md` → `PERSONA.tape` → `CHAT.tape` (2026-05-13 PM
+# CHAT.tape rev 2 daemon land 시 5-cond tracker 가 CHAT.tape 로 이동). 본 PERSONA.tape
 # 는 PSCC §53 2026-05-13 KST 23:15 신규 재생성 — 페르소나 axis 만 root-level
 # tracking 으로 분리.
 # ---
@@ -360,7 +360,7 @@
 
 
 @D b_chat_md_5_cond_aggregate_tracker_0 :: persona [ok]
-  text = "`CHAT.md` — 5-cond aggregate tracker (cond #3 row = 본 ledger 의 summary)"
+  text = "`CHAT.tape` — 5-cond aggregate tracker (cond #3 row = 본 ledger 의 summary)"
 
 @D b_docs_anima_persona_substrate_nat_1 :: persona [ok]
   text = "`docs/anima_persona_substrate_native_design_2026_05_12.md` — D3 design SSOT"

@@ -42,7 +42,7 @@
   version = "1.2"
 
 # ══════════════════════════════════════════════════════════════
-# SAVANT.md — Golden Zone & Savant 전수조사 compendium
+# SAVANT.tape — Golden Zone & Savant 전수조사 compendium
 # ══════════════════════════════════════════════════════════════
 
 # 본 문서는 `~/core/anima_clm_01~13` (13 worktree) + `~/core/archive-TECS-L` (foundational
@@ -689,45 +689,45 @@
 
 @D b_audit_row_44 :: savant [ok]
   text = "audit 외 row 무변경"
-# SAVANT.md 의 외부 인용은 **§12.4 봉쇄선 위 (T1 + T2)** 까지만 자격이 있다. T3 는
+# SAVANT.tape 의 외부 인용은 **§12.4 봉쇄선 위 (T1 + T2)** 까지만 자격이 있다. T3 는
 # Bonferroni 보정 audit (§12.5 path 1) 후 재배치, T4 는 자동 차단. 본 §12 가 부착되지
-# 않은 SAVANT.md 발췌는 *불완전 인용* 으로 간주한다.
+# 않은 SAVANT.tape 발췌는 *불완전 인용* 으로 간주한다.
 
 # ── §13 Sibling 도구 + 흡수 서브패키지 spec (2026-05-14) ─────────────────────────────────────────
 
 
 @D row_savant_tool_md_0 :: savant [ok]
-  file = "**`SAVANT-TOOL.md`**"
+  file = "**`SAVANT-TOOL.tape`**"
   x = "anima 가 직접 ON/OFF 하는 savant mode 도구 API + 정책"
   tier = "design LANDED 2026-05-14"
 
 @D row_chat_md_tracker_production_cli_1 :: savant [ok]
-  file = "**`CHAT.md` (★★★★★ tracker + § Production CLI)**"
+  file = "**`CHAT.tape` (★★★★★ tracker + § Production CLI)**"
   x = "anima_chat.hexa v0.3 production CLI Phase 1 (D4c)"
   tier = "design + impl-pending"
 
 @D row_voice_md_2 :: savant [ok]
-  file = "**`VOICE.md`**"
+  file = "**`VOICE.tape`**"
   x = "hexa-voice: 의도 임베딩 → RVQ → 24kHz PCM (NO text intermediate, learned path)"
   tier = "design LANDED 2026-05-14"
 
 @D row_tension_link_md_3 :: savant [ok]
-  file = "**`TENSION-LINK.md`**"
+  file = "**`TENSION-LINK.tape`**"
   x = "Tension Link 5-ch meta-telepathy Phase 2 WebSocket TensionHub"
   tier = "design LANDED 2026-05-14"
 
 @D row_anima_agent_md_4 :: savant [ok]
-  file = "**`ANIMA-AGENT.md`**"
+  file = "**`ANIMA-AGENT.tape`**"
   x = "Φ-gated autonomous agent runtime (흡수 서브패키지 `anima/anima-agent/`)"
   tier = "흡수 LANDED 2026-05-14"
 
 @D row_anima_senses_md_5 :: savant [ok]
-  file = "**`ANIMA-SENSES.md`**"
+  file = "**`ANIMA-SENSES.tape`**"
   x = "n=6 sensory substrate 5-verb spec catalog (흡수 서브패키지 `anima/hexa-senses/`)"
   tier = "흡수 LANDED 2026-05-14"
 
 @D b_savant_md_clm_si_5_93_evidence_b_6 :: savant [ok]
-  text = "본 `SAVANT.md` = **이론** (clm 시대 SI=5.93 evidence + base-rate audit + §12 봉쇄선) +"
+  text = "본 `SAVANT.tape` = **이론** (clm 시대 SI=5.93 evidence + base-rate audit + §12 봉쇄선) +"
 
 @D b_savant_tool_md_runtime_anima_inf_7 :: savant [ok]
-  text = "`SAVANT-TOOL.md` = **runtime 도구** (anima 가 inference 시 직접 ON/OFF). 본 file 의 §12"
+  text = "`SAVANT-TOOL.tape` = **runtime 도구** (anima 가 inference 시 직접 ON/OFF). 본 file 의 §12"

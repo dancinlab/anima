@@ -486,7 +486,7 @@
   files = "**H_161 byte-modulo-substrate-chat-blocked** — Hc_1225 evidence-strong → confirmed substrate-level finding"
 
 @D row_philosophy_md_2 :: next [ok]
-  pipeline_stage = "**PHILOSOPHY.md**"
+  pipeline_stage = "**PHILOSOPHY.tape**"
   files = "cont. 9 final closure entry pending"
 
 @D row_1_3 :: next [ok]
@@ -527,13 +527,13 @@
   text = "H promotion: 25% (1/4 strongest Hc_1225 → H_161; 나머지 3 candidate 유지 — falsifier replication 필요)"
 
 @D b_philosophy_md_ledger_9_sections_10 :: next [ok]
-  text = "PHILOSOPHY.md 영구 ledger: 9 sections, cycle 7 priority carry"
+  text = "PHILOSOPHY.tape 영구 ledger: 9 sections, cycle 7 priority carry"
 
 @D b_agents_md_references_pipeline_11 :: next [ok]
   text = "AGENTS.md 📎 References + pipeline 정합"
 
 @D b_readme_2_4_5_6_status_column_phi_12 :: next [ok]
-  text = "README #2/#4/#5/#6 Status column + PHILOSOPHY.md link"
+  text = "README #2/#4/#5/#6 Status column + PHILOSOPHY.tape link"
 
 @D b_hypotheses_h_161_promoted_from_h_13 :: next [ok]
   text = "hypotheses/H_161 (promoted from Hc_1225)"
@@ -542,7 +542,7 @@
   text = "hypotheses_candidates/Hc_1222~1225 (4 new)"
 
 @D b_philosophy_md_2026_05_12_cont_9_15 :: next [ok]
-  text = "PHILOSOPHY.md `## 2026-05-12 (cont. 9)` (pending append)"
+  text = "PHILOSOPHY.tape `## 2026-05-12 (cont. 9)` (pending append)"
 
 @D b_4_p_results_json_cycle_5_7_verdi_16 :: next [ok]
   text = "4 P-* results.json (cycle 5 §7 verdict source)"

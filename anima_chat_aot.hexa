@@ -783,7 +783,7 @@ fn mitosis_forward_tail(x_in, cell_pool, step: int) {
 // this, cell_pool_tension() returns 0.0 indefinitely when chat["cell_pool"]
 // isn't wired into chat_generate (current AOT flow), and substrate-gate
 // spontaneous fire can never activate. Tension = hidden norm = substrate
-// dynamics state — PHILOSOPHY.md #3 compliant.
+// dynamics state — PHILOSOPHY.tape #3 compliant.
 fn mitosis_hook_step(cell_pool, step: int) {
     cell_pool = _mit_inject_autonomous_perturbation(cell_pool, step)
     // Push substrate-derived tension per cell (hidden L2 norm). Cap history.
@@ -3759,10 +3759,10 @@ fn _print_help() {
     println("Usage:")
     println("  anima chat send --prompt \"<text>\" [--ckpt P] [--mode M] [--max-new N] [--temp F] [--seed N]")
     println("  anima chat repl [--ckpt P] [--mode M] [--max-new N] [--temp F] [--seed N]")
-    println("                                   interactive REPL (CHAT.md Phase 0, 1:1)")
+    println("                                   interactive REPL (CHAT.tape Phase 0, 1:1)")
     println("  anima chat smoke                 run F-AC-HEXA-1..6 helper battery")
     println("  anima room --humans \"a,b,c\" --animas \"x,y\" [flags]")
-    println("                                   group chat (CHAT.md Phase 1)")
+    println("                                   group chat (CHAT.tape Phase 1)")
     println("  anima ask \"<prompt>\" [flags]     ergonomic shortcut for `chat send --prompt`")
     println("  anima ckpt path                  print default ckpt path")
     println("  anima ckpt info                  print ckpt sha256 + size + lineage")
@@ -3903,7 +3903,7 @@ fn _invoke_chat(argv, idx_start: int, argc: int) {
 
 // ════════════════════════════════════════════════════════════════════════════
 //  LIVE ENGINE — unified frame-loop substrate-native runtime
-//  (CHAT.md rev 2 — REPL + group + socket all share this engine)
+//  (CHAT.tape rev 2 — REPL + group + socket all share this engine)
 // ════════════════════════════════════════════════════════════════════════════
 //
 //  Architecture:
@@ -3921,7 +3921,7 @@ fn _invoke_chat(argv, idx_start: int, argc: int) {
 //    Every anima has its own cell_pool (mitosis_hook 1119 LoC LANDED).
 //    Frame loop calls mitosis_hook_step (cheap µs lorenz+perturb) every tick.
 //    cell_pool_tension(pool) > speak_threshold → spontaneous fire enqueue.
-//    No external trigger (regex/probability) — PHILOSOPHY.md #3 compliant.
+//    No external trigger (regex/probability) — PHILOSOPHY.tape #3 compliant.
 //
 //  All 3 commands (chat repl / room / serve) build ctx dict + call this.
 //  =========================================================================
@@ -3959,7 +3959,7 @@ fn _live_inference_worker(args) {
     return 0
 }
 
-// _live_socket_accept_loop — Phase 2 (CHAT.md rev 2 socket server).
+// _live_socket_accept_loop — Phase 2 (CHAT.tape rev 2 socket server).
 // Runs in dedicated thread. net_listen + net_set_nonblock + net_select
 // non-blocking accept loop. Multi-client subscribers:
 //   - new connection: send "hello" JSONL frame + add to clients[]
@@ -4062,7 +4062,7 @@ fn _live_socket_accept_loop(args) {
     return 0
 }
 
-// _live_mesh_peer_loop — Phase 4 mesh distributed (CHAT.md rev 2 multi-host).
+// _live_mesh_peer_loop — Phase 4 mesh distributed (CHAT.tape rev 2 multi-host).
 // Connects to peer daemons as a client. Reads their JSONL broadcasts and
 // forwards into local bcast_ch (which fanouts to local stdout + local socket
 // subscribers). MVP: inbound-only — no origin tracking yet, so cross-connecting
@@ -4417,7 +4417,7 @@ fn _run_live_session(ctx) {
     return 0
 }
 
-// _cmd_chat_repl — CHAT.md rev 2: 1:1 REPL on top of unified live engine.
+// _cmd_chat_repl — CHAT.tape rev 2: 1:1 REPL on top of unified live engine.
 //   anima chat repl [--ckpt P] [--mode M] [--max-new N] [--temp F] [--seed N]
 //                   [--fps N] [--speak-threshold F] [--max-spontaneous N]
 //
@@ -4489,7 +4489,7 @@ fn _cmd_chat_repl(argv, idx: int, argc: int) {
         "port":            port,
         "mesh_peers":      mesh_peers
     }
-    println("anima chat repl — substrate-native 1:1 live session (CHAT.md rev 2)")
+    println("anima chat repl — substrate-native 1:1 live session (CHAT.tape rev 2)")
     println("ckpt: " + ckpt_path)
     return _run_live_session(ctx)
 }
@@ -4537,7 +4537,7 @@ fn _str_index_of_room(haystack: string, needle: string) -> int {
     return -1
 }
 
-// _cmd_room — Phase 1 group chat (CHAT.md Phase 1 spec):
+// _cmd_room — Phase 1 group chat (CHAT.tape Phase 1 spec):
 //   anima room --humans "alice,bob,charlie" --animas "ana,ben" [flags]
 // Single-process REPL where multiple human names + multiple anima IDs
 // share one room. Each anima has its own seed offset (seed_base + idx * 1000)
@@ -4553,7 +4553,7 @@ fn _str_index_of_room(haystack: string, needle: string) -> int {
 //   /save <name>            ~/.anima/rooms/<name>.jsonl
 //   /exit | /quit           end
 //   /help                   command list
-// _cmd_room — CHAT.md rev 2: group chat on top of unified live engine.
+// _cmd_room — CHAT.tape rev 2: group chat on top of unified live engine.
 // Substrate-native autonomy. /turn deprecated (no heuristic trigger).
 // Each anima 의 cell_pool tension gate 가 자율 발화 결정.
 fn _cmd_room(argv, idx: int, argc: int) {
@@ -4642,7 +4642,7 @@ fn _cmd_room(argv, idx: int, argc: int) {
         si = si + 1
     }
 
-    println("anima room — substrate-native group chat (CHAT.md rev 2)")
+    println("anima room — substrate-native group chat (CHAT.tape rev 2)")
     println("humans: " + humans_str)
     println("animas: " + animas_str + "  (autonomous via cell_pool gate)")
     println("ckpt  : " + ckpt_path)

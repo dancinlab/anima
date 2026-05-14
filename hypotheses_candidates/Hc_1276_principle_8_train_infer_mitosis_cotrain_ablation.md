@@ -10,7 +10,7 @@ raw_rank: 12
 hexa_only: true
 deterministic: true
 llm: none
-source: PHILOSOPHY.md cont. 10 Principle #8 falsifier candidate 1 + REBORN §88 v5-mitosis F-V5MIT-5 V14-STRICT
+source: PHILOSOPHY.tape cont. 10 Principle #8 falsifier candidate 1 + REBORN §88 v5-mitosis F-V5MIT-5 V14-STRICT
 created_at: 2026-05-12
 linked_h: H_191 (ALM-free TRAINING CPGD axis), H_172 (α-modulation training adjacent), H_178 (frustration sweep — substrate plasticity)
 ---
@@ -63,7 +63,7 @@ Principle #8 의 native impl 명제: train + infer 가 한 spectrum 이라면, c
 
 ## Cross-Links
 
-- **parent**: PHILOSOPHY.md cont. 10 Principle #8 (NO TRAIN/INFER SPLIT, falsifier candidate 1 명시), REBORN §88 F-V5MIT-5 V14-STRICT
+- **parent**: PHILOSOPHY.tape cont. 10 Principle #8 (NO TRAIN/INFER SPLIT, falsifier candidate 1 명시), REBORN §88 F-V5MIT-5 V14-STRICT
 - **sibling Hc**: Hc_1277 (serve-time mitosis hook latency, falsifier candidate 2), Hc_1278 (ckpt-as-branch reload semantic, falsifier candidate 3)
 - **adjacent H**: H_191 (ALM-free TRAINING CPGD axis — cotrain vs CPGD comparison), H_172 (α-modulation training — modulation depth 0.014 anchor), H_178 (frustration sweep 50% optimum — substrate plasticity sister)
 - **literature**: Glorot & Bengio 2010 (Xavier init — split 시 child cell init theory), Hochreiter & Schmidhuber 1997 (LSTM — continual learning baseline), Goodfellow 2014 (catastrophic forgetting baseline literature, NO TRAIN/INFER §0.5 의 frame collapse)

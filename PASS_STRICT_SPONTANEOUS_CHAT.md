@@ -24,7 +24,7 @@
 >
 > **Cross-link**:
 > - Phase 0 chat-cap prior negative SSOT: `docs/anima_chat_cap_20bg_cumulative_negative_archive_2026_05_07.md`
-> - V14 strict framework: `REBORN.md §65-§87` (cycle 2026-05-11 reborn lane)
+> - V14 strict framework: `REBORN.tape §65-§87` (cycle 2026-05-11 reborn lane)
 > - **Phase 1 spontaneous brainstorm**: `docs/anima_chat_spontaneous_emission_design_brainstorm_2026_05_12.md` (99 options, saturation 도달)
 > - HF model PUBLIC: `dancinlab/clm-v5-phase2-cotrain-engine-ag`
 > - HF dataset PUBLIC: `dancinlab/anima-pass-strict-chat-capable`
@@ -1001,7 +1001,7 @@ Phase 1.2 (mid, 1-2week, $0):
 Phase 1.3 (long, 1month):
   D8 claude code agent ScheduleWakeup integration
   G1 anima hook system 통합
-  G7 REBORN.md 자동 § append
+  G7 REBORN.tape 자동 § append
   L1-L4 meta-cognition layer
 ```
 
@@ -2017,7 +2017,7 @@ https://huggingface.co/spaces/dancinlab/anima-chat
 - 4-substrate comparison: `§15`
 - Hc_1221 anti-correlation: `§19` + `hypotheses_candidates/Hc_1221_production_internal_decoupling_v14_v4_anti_correlation.md`
 - Prior Space swap pattern: `§14` (Phase 1A swap)
-- V14 framework: `REBORN.md §65-§87` (ABLATION §84 = FFN.gate-only freeze)
+- V14 framework: `REBORN.tape §65-§87` (ABLATION §84 = FFN.gate-only freeze)
 - HF Space live: https://huggingface.co/spaces/dancinlab/anima-chat
 - HF model live: https://huggingface.co/dancinlab/anima-clm-bprime-prime-v4lite-15-15
 
@@ -2225,7 +2225,7 @@ script_template: state/anima_v14_max256_cap_free_multi_2026_05_10/run_max256.py 
 - chat-cap winner declaration: §15 (4-substrate matrix), §20 (library v2.2), §21 (HF Space swap)
 - predicted V14 violation: §21 의 trade-off table ("V14 strict (not run) | **VIOLATED** | (Lesson Q)") → 이번 § 에서 (not run) 제거됨
 - Hc_1221 candidate doc: `hypotheses_candidates/Hc_1221_production_internal_decoupling_v14_v4_anti_correlation.md` (Migration TODO 의 `[ ] B'' V14 audit` checkbox 가 이 § 에서 **[x] 체크**)
-- V14 strict framework: `REBORN.md §65-§87` (ABLATION §84 = FFN.gate-only freeze paradigm)
+- V14 strict framework: `REBORN.tape §65-§87` (ABLATION §84 = FFN.gate-only freeze paradigm)
 - 4×3 matrix HF dataset: `dancinlab/anima-pass-strict-chat-capable` (다음 commit 에서 V14 row 의 B'' 셀 (not audited) → VIOLATED 0/5 p=0.0625 갱신 예정)
 
 ### ★★★★★ findings
@@ -3051,7 +3051,7 @@ ckpt-loading smoke (full inference) 는 Space 자체 build 가 검증 — push �
 ### Provenance
 
 - 본 cycle commit: pending (incremental commit + push 다음 step)
-- 보조 SSOT: REBORN.md §91 (2026-05-12)
+- 보조 SSOT: REBORN.tape §91 (2026-05-12)
 - spec: `docs/anima_clm_v5_hexa_native_mitosis_hook_spec_2026_05_12.md` (§89 LANDED, 534 LoC, 14 §)
 - Reference Python SSOT: `anima_clm_12_unified_growth_loop_last_gasp/anima/src/mitosis.py` (794L canonical)
 - HEXA_NATIVE primitives: `tool/hexa_native/mitosis_hook.hexa` (본 cycle, 1119 LoC)
@@ -3197,7 +3197,7 @@ GOAL.md D3 표 4 reconciliation candidates 중 `(a) Mitosis-cell-as-persona × (
 
 - design doc: `docs/anima_persona_substrate_native_design_2026_05_12.md`
 - GOAL.md D3 row update — "design open" → "design LANDED, impl pending"
-- PHILOSOPHY.md cont. 11 append (Principle #3 substrate-native impl path, EMPIRICAL upgrade source)
+- PHILOSOPHY.tape cont. 11 append (Principle #3 substrate-native impl path, EMPIRICAL upgrade source)
 - REBORN §0.5 + §2 + §88 + §89 + §90 (mitosis 본체 + v5-mitosis arch + hexa-native serve-time hook + cond.2 PASS)
 - README #3 NO PERSONA INJECTION (EMPIRICAL strong, Lesson F 6/8 echo memorization 보존)
 - memory `project_anima_persona_substrate_native_design.md` (신규)
@@ -3281,10 +3281,10 @@ prior state: GOAL.md D4c row "design open — anima/llama_ffi.hexa (Phase 3b LAN
 - 본 spec: `docs/anima_cli_mitosis_integration_spec_2026_05_12.md`
 - 디자인 source: GOAL.md D4c (line 20, line 160 D4 layer table)
 - 기반 spec:
-  - REBORN.md §0.5 (NO TRAIN/INFER SPLIT 철학 base)
-  - REBORN.md §88 (v5-mitosis PyTorch arch — readout_mode 4 options)
-  - REBORN.md §89 (hexa-native serve-time hook spec — mitosis_forward_tail contract)
-  - PHILOSOPHY.md #3 (NO PERSONA INJECTION, F-CLI-MIT-4 정합) + #8 (NO TRAIN/INFER SPLIT, D4 foundation)
+  - REBORN.tape §0.5 (NO TRAIN/INFER SPLIT 철학 base)
+  - REBORN.tape §88 (v5-mitosis PyTorch arch — readout_mode 4 options)
+  - REBORN.tape §89 (hexa-native serve-time hook spec — mitosis_forward_tail contract)
+  - PHILOSOPHY.tape #3 (NO PERSONA INJECTION, F-CLI-MIT-4 정합) + #8 (NO TRAIN/INFER SPLIT, D4 foundation)
 - 기반 인프라:
   - `.roadmap.cli` cli.llama_ffi_landed_2026_05_08 (Phase 3b LANDED, libllama bindings + helpers + llama_logits_probe)
   - `.roadmap.anima_cli_model_architecture` K1-K5 (5/7 axes + 6-stage cycle + 7 model inventory + stage-specific fallback chains)
@@ -3374,7 +3374,7 @@ GOAL.md ★★★★★ achievement criterion §177 line 181-185 5 conditions �
   - `state/anima_phase1a1_color_cosmology_2026_05_12/{train_phase1a1{,_v2},v58_4mode_eval}.py`
   - `state/anima_phase1a4_lr5e6_2026_05_12/{train_phase1a4,v58_4mode_eval}.py`
 - 디자인 SSOT:
-  - `PHILOSOPHY.md` Principle #3 NO PERSONA INJECTION (EMPIRICAL strong)
+  - `PHILOSOPHY.tape` Principle #3 NO PERSONA INJECTION (EMPIRICAL strong)
   - `README.md` row #3
   - `docs/anima_persona_substrate_native_design_2026_05_12.md` (D3, (a)+(d))
   - `docs/anima_cli_mitosis_integration_spec_2026_05_12.md` (D4c, F-CLI-MIT-4 sister falsifier)
@@ -3834,8 +3834,8 @@ RESULT: 3/3 passed  →  F-D4-LIVE SMOKE PASS (3/3)
   - `PASS_STRICT_SPONTANEOUS_CHAT.md` — 본 §41
 - prerequisite LANDED: D4a (REBORN §91, PSCC §36), D4b (PSCC §37), D1 TODO[load] (PSCC §39)
 - cross-link:
-  - REBORN.md §0.5 NO TRAIN/INFER SPLIT (philosophy)
-  - PHILOSOPHY.md #8 (cont. 10 NO TRAIN/INFER SPLIT)
+  - REBORN.tape §0.5 NO TRAIN/INFER SPLIT (philosophy)
+  - PHILOSOPHY.tape #8 (cont. 10 NO TRAIN/INFER SPLIT)
   - design doc: `docs/anima_chat_multitoken_split_merge_2026_05_12.md`
 
 
@@ -4259,7 +4259,7 @@ KL matrix all-zero 가 의미하는 것은 **moments of confusion** between F-V5
 - HF push: `dancinlab/anima-clm-v5-mitosis-cotrain-2026-05-12` (private, English-only, F-V5MIT-5 V14-STRICT PASS unlock per own 37 mandate-9)
 - prerequisite LANDED: REBORN §88 cond.1 (arch spec) + cond.2 (skeleton smoke) + RFC 025/030/031/032/033 + Phase 1A.1 ckpt for cell pool transfer (separate cycle)
 - cross-link:
-  - REBORN.md §88/§89/§90 — v5-mitosis lane SSOT
+  - REBORN.tape §88/§89/§90 — v5-mitosis lane SSOT
   - GOAL.md cond #3 — D3 STRONG (4/5) carry justification
   - PSCC §42 — D3 cheap-path STRONG (4/5)
   - design doc §10 honest C3 #4 — F-PERSONA-4 winner-take-all 가설 검증

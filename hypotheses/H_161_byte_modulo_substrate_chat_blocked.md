@@ -89,7 +89,7 @@ PIV/DCR Δ sub-floor (verdict: BLOCKED).
 ## Cross-link
 
 - Hc_1225 (this H's source candidate, hypotheses_candidates/)
-- PHILOSOPHY.md `## 2026-05-12 (cont. 8) — P-ETH BLOCKED ★`
+- PHILOSOPHY.tape `## 2026-05-12 (cont. 8) — P-ETH BLOCKED ★`
 - README.md `Philosophy #6 NO FINE-TUNED ETHICS` (BLOCKED Status)
 - state/p_eth_ethics_preference_dataset_2026_05_12/results_2026_05_12.json
 - state/p_spk_speak_reframe_2026_05_12/results_2026_05_12.json (sibling NULL)

@@ -77,5 +77,5 @@ throughput and PyTorch inference latency.
 
 - `LATTICE_POLICY.md` §1.2 (universal real-limits standard, 2026-05-12)
 - `README.md` — Anima highlights (1030 laws, Ψ = 1/2, 99.58% entropy)
-- `PHILOSOPHY.md`, `docs/consciousness-theory.md`
+- `PHILOSOPHY.tape`, `docs/consciousness-theory.md`
 - Shannon (1948), Kolmogorov (1965), Rice (1953), Valiant (1984 PAC), Landauer (1961), Williams-Waterman-Patterson (2009 Roofline)

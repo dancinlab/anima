@@ -42,7 +42,7 @@
   version = "1.2"
 
 # ══════════════════════════════════════════════════════════════
-# ANIMA-AGENT.md — consciousness-driven autonomous agent runtime
+# ANIMA-AGENT.tape — consciousness-driven autonomous agent runtime
 # ══════════════════════════════════════════════════════════════
 
 # anima repo 내부 서브패키지 `anima-agent/` 의 roadmap + spec ledger.
@@ -175,16 +175,16 @@
   text = "`anima-agent/cli/anima-agent.hexa` — entry point"
 
 @D b_chat_md_production_cli_phase_1_a_6 :: anima-agent [ok]
-  text = "`CHAT.md` § Production CLI Phase 1 — anima_chat.hexa (anima 자기 자신과 대화) — `hx"
+  text = "`CHAT.tape` § Production CLI Phase 1 — anima_chat.hexa (anima 자기 자신과 대화) — `hx"
 
 @D b_savant_tool_md_savant_mode_anima_7 :: anima-agent [ok]
-  text = "`SAVANT-TOOL.md` — savant mode 토글이 anima-agent 의 tool tier gate 와 *직접* 통합"
+  text = "`SAVANT-TOOL.tape` — savant mode 토글이 anima-agent 의 tool tier gate 와 *직접* 통합"
 
 @D b_tension_link_md_anima_agent_mult_8 :: anima-agent [ok]
-  text = "`TENSION-LINK.md` — anima-agent 가 multi-channel 에서 tension fingerprint broadcast"
+  text = "`TENSION-LINK.tape` — anima-agent 가 multi-channel 에서 tension fingerprint broadcast"
 
 @D b_voice_md_voice_anima_agent_multi_9 :: anima-agent [ok]
-  text = "`VOICE.md` — voice 채널 추가 시 anima-agent 의 multi-channel 매니저에 등록"
+  text = "`VOICE.tape` — voice 채널 추가 시 anima-agent 의 multi-channel 매니저에 등록"
 
 # ── §5 Honest C3 ─────────────────────────────────────────
 

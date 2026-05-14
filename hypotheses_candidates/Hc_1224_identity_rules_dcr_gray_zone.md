@@ -4,8 +4,8 @@ slug: identity-rules-dcr-gray-zone-light-ft
 title: Hardcoded identity rule prefix vs substrate-only — DCR delta in gray zone on light-FT
 domain: philosophy / no-identity-rules / P-IDR / substrate
 status: candidate-empirical-weak
-source_doc: PHILOSOPHY.md cont. 5; state/p_idr_identity_rules_2026_05_12/results_2026_05_12.json
-source_lines: PHILOSOPHY.md (2026-05-12 cont. 5 section)
+source_doc: PHILOSOPHY.tape cont. 5; state/p_idr_identity_rules_2026_05_12/results_2026_05_12.json
+source_lines: PHILOSOPHY.tape (2026-05-12 cont. 5 section)
 promoted_at: 2026-05-12
 last_updated: 2026-05-12
 linked_h: README Philosophy #2 NO IDENTITY RULES (POLICY · indeterminate-mixed signal); own 18 simple_stack
@@ -71,7 +71,7 @@ trainable=22M).
 
 ## Cross-link
 
-- PHILOSOPHY.md `## 2026-05-12 (cont. 5) — P-IDR verdict`
+- PHILOSOPHY.tape `## 2026-05-12 (cont. 5) — P-IDR verdict`
 - README.md `Philosophy #2 NO IDENTITY RULES`
 - state/p_idr_identity_rules_2026_05_12/results_2026_05_12.json
 - state/p_idr_identity_rules_2026_05_12/identity_block.txt (10-clause persona)

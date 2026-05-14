@@ -10,7 +10,7 @@ raw_rank: 11
 hexa_only: true
 deterministic: true
 llm: none
-source: PHILOSOPHY.md cont. 10 Principle #8 falsifier candidate 2 + REBORN §89 HEXA_NATIVE mitosis_hook spec F-MIT-HOOK-1..5
+source: PHILOSOPHY.tape cont. 10 Principle #8 falsifier candidate 2 + REBORN §89 HEXA_NATIVE mitosis_hook spec F-MIT-HOOK-1..5
 created_at: 2026-05-12
 linked_h: H_191 (ALM-free INTEGRATION HAL axis), H_001 (anima-core-architecture), H_181 (ΨFormer architectural)
 ---
@@ -65,7 +65,7 @@ Principle #8 의 serve-time 함의: split/merge 가 inference forward call graph
 
 ## Cross-Links
 
-- **parent**: PHILOSOPHY.md cont. 10 Principle #8 (NO TRAIN/INFER SPLIT, falsifier candidate 2 명시), REBORN §89 HEXA_NATIVE mitosis_hook spec F-MIT-HOOK-1..5
+- **parent**: PHILOSOPHY.tape cont. 10 Principle #8 (NO TRAIN/INFER SPLIT, falsifier candidate 2 명시), REBORN §89 HEXA_NATIVE mitosis_hook spec F-MIT-HOOK-1..5
 - **sibling Hc**: Hc_1276 (train-time vs inference-time cotrain ablation, falsifier candidate 1), Hc_1278 (ckpt-as-branch reload semantic, falsifier candidate 3)
 - **adjacent H**: H_191 (ALM-free INTEGRATION HAL axis — serve-time integration sister), H_001 (anima-core-architecture — Hexad serving sibling), H_181 (ΨFormer zero-freedom arch — serving variant)
 - **literature**: Vaswani 2017 (Attention Is All You Need — KV cache baseline timing literature), Dao 2022 (FlashAttention — sub-quadratic attention serving overhead literature), Liu 2024 (vLLM PagedAttention — serving infra serving)

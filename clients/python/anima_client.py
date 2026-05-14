@@ -1,4 +1,4 @@
-"""anima_client.py — minimal Python client for anima daemon (CHAT.md Phase 4).
+"""anima_client.py — minimal Python client for anima daemon (CHAT.tape Phase 4).
 
 Connects to anima live daemon over TCP, parses JSONL frames, exposes
 async iterator for spontaneous + response messages.
@@ -22,7 +22,7 @@ Frame protocol (line-delimited JSON):
     client → daemon:   {"type":"speak","speaker":"<name>","text":"<text>"}
                        (currently treated as raw stdin line by daemon)
 
-See CHAT.md Phase 4 for full protocol spec.
+See CHAT.tape Phase 4 for full protocol spec.
 """
 import json
 import socket

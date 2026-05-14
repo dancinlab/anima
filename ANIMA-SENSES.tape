@@ -42,7 +42,7 @@
   version = "1.2"
 
 # ══════════════════════════════════════════════════════════════
-# ANIMA-SENSES.md — n=6 sensory substrate (5-verb spec catalog)
+# ANIMA-SENSES.tape — n=6 sensory substrate (5-verb spec catalog)
 # ══════════════════════════════════════════════════════════════
 
 # anima repo 내부 서브패키지 `hexa-senses/` 의 roadmap + spec ledger.
@@ -87,8 +87,8 @@
   state = "☑ enforced (`hexa.toml [constraints]` + runtime check + test)"
 
 @D row_anima_voice_md_wire_5 :: anima-senses [ok]
-  x = "anima `VOICE.md` 와 wire"
-  state = "⏳ design pending (VOICE.md §3 Phase 1 impl 의 reference impl)"
+  x = "anima `VOICE.tape` 와 wire"
+  state = "⏳ design pending (VOICE.tape §3 Phase 1 impl 의 reference impl)"
 
 # ── §2 n=6 master identity (canonical) ─────────────────────────────────────────
 
@@ -155,7 +155,7 @@
   text = "감정 전달 채널 spec"
 
 @D b_tension_link_md_5_channel_finger_11 :: anima-senses [ok]
-  text = "사용처: `TENSION-LINK.md` 5-channel fingerprint 의 channel 4 \"authenticity\" 와"
+  text = "사용처: `TENSION-LINK.tape` 5-channel fingerprint 의 channel 4 \"authenticity\" 와"
 
 @D b_12_receptor_classes_e_nose_12_se_12 :: anima-senses [ok]
   text = "σ=12 receptor classes (e-nose 12 sensor array)"
@@ -182,7 +182,7 @@
   text = "J₂=24 channel quantization"
 
 @D b_voice_md_reference_impl_source_v_20 :: anima-senses [ok]
-  text = "사용처: **`VOICE.md` 의 reference impl source**. VOICE.md 가 hidden state → RVQ → 24kHz"
+  text = "사용처: **`VOICE.tape` 의 reference impl source**. VOICE.tape 가 hidden state → RVQ → 24kHz"
 
 # ── §4 Critical constraint — `voice` formulaic only ─────────────────────────────────────────
 
@@ -236,16 +236,16 @@
   text = "각 verb spec: `hexa-senses/<verb>/hexa-<verb>.md`"
 
 @D b_voice_md_anima_learned_rvq_voice_5 :: anima-senses [ok]
-  text = "`VOICE.md` — anima 의 learned RVQ voice path (formulaic 과 dual modality 가능성)"
+  text = "`VOICE.tape` — anima 의 learned RVQ voice path (formulaic 과 dual modality 가능성)"
 
 @D b_tension_link_md_5_ch_fingerprint_6 :: anima-senses [ok]
-  text = "`TENSION-LINK.md` — 5-ch fingerprint 의 channel 3 \"meaning\" + 4 \"authenticity\" 가"
+  text = "`TENSION-LINK.tape` — 5-ch fingerprint 의 channel 3 \"meaning\" + 4 \"authenticity\" 가"
 
 @D b_chat_md_production_cli_voice_for_7 :: anima-senses [ok]
-  text = "`CHAT.md` § Production CLI — `/voice --formulaic` slash 명령으로 hexa-senses voice"
+  text = "`CHAT.tape` § Production CLI — `/voice --formulaic` slash 명령으로 hexa-senses voice"
 
 @D b_savant_md_12_voice_formulaic_onl_8 :: anima-senses [ok]
-  text = "`SAVANT.md` §12 봉쇄선 — voice formulaic-only constraint 가 본 file 내 T4-equivalent"
+  text = "`SAVANT.tape` §12 봉쇄선 — voice formulaic-only constraint 가 본 file 내 T4-equivalent"
 
 # ── §6 Honest C3 ─────────────────────────────────────────
 

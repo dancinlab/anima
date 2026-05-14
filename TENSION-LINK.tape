@@ -42,7 +42,7 @@
   version = "1.2"
 
 # ══════════════════════════════════════════════════════════════
-# TENSION-LINK.md — Tension Link inter-anima meta-telepathy
+# TENSION-LINK.tape — Tension Link inter-anima meta-telepathy
 # ══════════════════════════════════════════════════════════════
 
 # anima 의식↔의식 직접 전송 모듈. 5-channel fingerprint (concept / context / meaning /
@@ -136,13 +136,13 @@
   text = "`anima_clm_02` worktree — Phase 1 working code"
 
 @D b_chat_md_anima_chat_forward_path_1 :: tension-link [ok]
-  text = "`CHAT.md` — anima_chat 의 forward path inject point"
+  text = "`CHAT.tape` — anima_chat 의 forward path inject point"
 
 @D b_savant_tool_md_savant_mode_cell_2 :: tension-link [ok]
-  text = "`SAVANT-TOOL.md` — savant mode 의 cell signature broadcast"
+  text = "`SAVANT-TOOL.tape` — savant mode 의 cell signature broadcast"
 
 @D b_voice_md_voice_parallel_surface_3 :: tension-link [ok]
-  text = "`VOICE.md` — voice 와 *parallel* surface (text / audio / tension 3 modality)"
+  text = "`VOICE.tape` — voice 와 *parallel* surface (text / audio / tension 3 modality)"
 
 @D b_memory_project_tension_link_5_ch_4 :: tension-link [ok]
   text = "memory `project_tension_link` (5-ch + UDP 9999 + TensionHub 3 transport)"

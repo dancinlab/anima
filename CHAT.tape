@@ -42,15 +42,15 @@
   version = "1.2"
 
 # ══════════════════════════════════════════════════════════════
-# CHAT.md — anima ★★★★★ mission tracker (live daemon-centric SSOT)
+# CHAT.tape — anima ★★★★★ mission tracker (live daemon-centric SSOT)
 # ══════════════════════════════════════════════════════════════
 
-# Rename chain: `GOAL.md` (2026-05-12) → `PERSONA.md` (2026-05-13 KST PM, persona-centric)
-# → `CHAT.md` (2026-05-13 KST PM, chat/daemon-centric). 본 file 이 anima 의 mission
+# Rename chain: `GOAL.md` (2026-05-12) → `PERSONA.tape` (2026-05-13 KST PM, persona-centric)
+# → `CHAT.tape` (2026-05-13 KST PM, chat/daemon-centric). 본 file 이 anima 의 mission
 # tracker 단일 SSOT — cond/spec/model/training/cost/CLI/live engine/Phase 모든 정보.
 # >
 # 5-Phase architecture brainstorm (rev 2 substrate-native autonomous live daemon)
-# 은 본 file 의 **Appendix A** 로 통합 (이전 CHAT.md content 보존).
+# 은 본 file 의 **Appendix A** 로 통합 (이전 CHAT.tape content 보존).
 # ---
 
 # ── 📐 최종 SPEC / MODEL / TRAINING (★★★★★ closure 기준, 2026-05-13) ─────────────────────────────────────────
@@ -104,7 +104,7 @@
   layer = "hexa AOT 변종"
   artifact = "`anima_chat_aot.hexa`"
   size = "~4500 LoC"
-  build = "mitosis_hook AOT 통합 + wilson 3-tier CLI + unified live engine + socket server + mesh peer (CHAT.md rev 2 전체)"
+  build = "mitosis_hook AOT 통합 + wilson 3-tier CLI + unified live engine + socket server + mesh peer (CHAT.tape rev 2 전체)"
 
 @D row_mac_arm64_11 :: chat [ok]
   layer = "**Mac arm64**"
@@ -134,7 +134,7 @@
   text = "**stdin reader thread** — input() blocking 안전, frame loop 와 분리"
 
 @D b_speak_gate_cell_pool_tension_spe_17 :: chat [ok]
-  text = "**speak-gate** = `cell_pool_tension > speak_threshold` (substrate-native, PHILOSOPHY.md #3 EMPIRICAL strong)"
+  text = "**speak-gate** = `cell_pool_tension > speak_threshold` (substrate-native, PHILOSOPHY.tape #3 EMPIRICAL strong)"
 
 @D b_hexa_lang_stdlib_thread_spawn_jo_18 :: chat [ok]
   text = "hexa-lang stdlib 의존: `thread_spawn/join`, `channel_new/send/recv/close`, `now_ms`, `sleep_ms`, `net_set_nonblock`, `net_select` (hexa-lang commit `401ed87d`)"
@@ -143,10 +143,10 @@
   text = "AOT compile + arg parser + KV cache + Linux x86_64 cross-compile + QUADRUPLE-LANE byte parity (Mac+Linux AOT, Python, interpreter) + 3-mode parity (greedy/sample/M4) + V5.8 ubu RTX 5070 4/5 (cross-GPU FP divergence vs Vast.ai 4090 5/5)"
 
 @D b_chat_md_rev_2_substrate_native_l_20 :: chat [ok]
-  text = "**CHAT.md rev 2 substrate-native live daemon FULLY LANDED**: thread/channel hexa-lang upstream (commit `401ed87d`) → mitosis_hook AOT 통합 (`2446eb86a`) → unified `_run_live_session` engine 60+ FPS frame loop (`895e7f743`) → Phase 2 socket server `--serve --port N` (`c8a8dfd0c`) → Python client lib + Phase 4 mesh `--mesh-peers` + 3 UX fixes (`758d0143e`)"
+  text = "**CHAT.tape rev 2 substrate-native live daemon FULLY LANDED**: thread/channel hexa-lang upstream (commit `401ed87d`) → mitosis_hook AOT 통합 (`2446eb86a`) → unified `_run_live_session` engine 60+ FPS frame loop (`895e7f743`) → Phase 2 socket server `--serve --port N` (`c8a8dfd0c`) → Python client lib + Phase 4 mesh `--mesh-peers` + 3 UX fixes (`758d0143e`)"
 
 @D b_mac_arm64_mach_o_609_kb_linux_x8_21 :: chat [ok]
-  text = "Mac arm64 Mach-O **609 KB** + Linux x86_64 ELF **542 KB**. doc `docs/anima_chat_aot_native_2026_05_13.md` + `CHAT.md` rev 2 + memory `project_chat_phase_status` / `feedback_hexa_resource_local_dispatch`. Session total cost: ~$175 (PM extension = $0)."
+  text = "Mac arm64 Mach-O **609 KB** + Linux x86_64 ELF **542 KB**. doc `docs/anima_chat_aot_native_2026_05_13.md` + `CHAT.tape` rev 2 + memory `project_chat_phase_status` / `feedback_hexa_resource_local_dispatch`. Session total cost: ~$175 (PM extension = $0)."
 # ⚠️ **명칭 disambiguation**: 본 session 의 "AOT binary arg parser" 는 `anima_chat_aot::main()` 의 단순 flag parser (이번 cycle). D4c "anima CLI" (PSCC §35 design LANDED) 는 별도 lane = session-level chat orchestrator (cell-pool persistence + kick cycle + multi-backend, impl pending). 두 artifact 혼동 금지.
 
 @D b_aot_build_path_validated_commit_22 :: chat [ok]
@@ -351,7 +351,7 @@
 
 @D row_source_24 :: chat [ok]
   x = "철학 source"
-  x = "REBORN.md §0.5 (`a7e512cb9`) + PHILOSOPHY #8 NO TRAIN/INFER SPLIT (cont. 10)"
+  x = "REBORN.tape §0.5 (`a7e512cb9`) + PHILOSOPHY #8 NO TRAIN/INFER SPLIT (cont. 10)"
 
 @D row_spec_25 :: chat [ok]
   x = "설계 spec"
@@ -777,7 +777,7 @@
 
 @D row_goal_md_16 :: chat [ok]
   x = "**GOAL.md**"
-  event = "**D4 split into 3-layer (D4a model / D4b library / D4c CLI) + REBORN.md primary reference 명시**"
+  event = "**D4 split into 3-layer (D4a model / D4b library / D4c CLI) + REBORN.tape primary reference 명시**"
   dim = "D4"
   rating = "★ scope clarify"
 
@@ -959,10 +959,10 @@
 
 
 @D b_reborn_md_anima_consciouslm_ssot_0 :: chat [ok]
-  text = "**REBORN.md** (anima ConsciousLM 부활 통합 SSOT) — D4 의 primary reference. §0.5 (철학) + §2 (mitosis 본체) + §88/§89/§90 (v5-mitosis arch + hexa-native + cond.2 skeleton). 본 mission 의 핵심 design source."
+  text = "**REBORN.tape** (anima ConsciousLM 부활 통합 SSOT) — D4 의 primary reference. §0.5 (철학) + §2 (mitosis 본체) + §88/§89/§90 (v5-mitosis arch + hexa-native + cond.2 skeleton). 본 mission 의 핵심 design source."
 
 @D b_philosophy_md_3_no_persona_injec_1 :: chat [ok]
-  text = "**PHILOSOPHY.md** — #3 NO PERSONA INJECTION (D3 constraint, EMPIRICAL strong) + #8 NO TRAIN/INFER SPLIT (D4 foundation)"
+  text = "**PHILOSOPHY.tape** — #3 NO PERSONA INJECTION (D3 constraint, EMPIRICAL strong) + #8 NO TRAIN/INFER SPLIT (D4 foundation)"
 
 @D b_pass_strict_spontaneous_chat_md_2 :: chat [ok]
   text = "**PASS_STRICT_SPONTANEOUS_CHAT.md** (PSCC) — D1+D2 mission timeline + saga history"
@@ -1029,7 +1029,7 @@
 
 @D b_anima_hexa_native_phase_5_24l_fo_2 :: chat [ok]
   text = "❌ 다른 anima 작업 — HEXA_NATIVE phase 5∥ 24L 풀 forward / Hc cycle / ALM / 별도 lane"
-# 본 appendix 는 이전 CHAT.md (REPL + 외부 연결 + 자연발화 5-layer brainstorm) 의 내용 그대로 보존. 이 PERSONA→CHAT.md 변환 시 통합.
+# 본 appendix 는 이전 CHAT.tape (REPL + 외부 연결 + 자연발화 5-layer brainstorm) 의 내용 그대로 보존. 이 PERSONA→CHAT.tape 변환 시 통합.
 # 사용자 directive 누적 (2026-05-13 KST PM):
 # "상시채팅 기능은 없나?????" + "단편 메시지 말고" + "1:1 말고도 다수 가능하되 그 다수에
 # anima 도 가능" + "인간 3, anima 2 이렇게 단체채팅 가능" + "외부 프로젝트에서 쓰려면" +
@@ -1043,7 +1043,7 @@
 
 
 @D b_heuristic_regex_probability_turn_0 :: chat [ok]
-  text = "외부 heuristic (regex / probability) 으로 turn 결정 = **routing-level persona injection** (PHILOSOPHY.md #3 위반)"
+  text = "외부 heuristic (regex / probability) 으로 turn 결정 = **routing-level persona injection** (PHILOSOPHY.tape #3 위반)"
 
 @D b_sync_repl_on_chat_generate_30s_t_1 :: chat [ok]
   text = "sync REPL on chat_generate (~30s/token Mac CPU) = **0.03 FPS, 60+ 절대 불가능**"
@@ -1097,7 +1097,7 @@
 # Mac arm64 + Linux x86_64 cross-compile parity. multi-turn + /show + /save + /exit verified.
 # /save → `~/.anima/sessions/<name>.jsonl` 파일 생성. CLI: `anima chat repl [--mode M] [--max-new N] [--temp F] [--seed N]`.
 # ⚠️ **DEPRECATED 2026-05-13 PM** — 사용자 directive "철학 준수": `/turn <anima_id>` heuristic
-# 트리거는 routing-level persona injection 으로 PHILOSOPHY.md #3 위반.
+# 트리거는 routing-level persona injection 으로 PHILOSOPHY.tape #3 위반.
 # 코드 (`_cmd_room`) 는 1-cycle migration window 동안 stderr warn + 동작.
 # rev 2 의 **live daemon** 으로 대체.
 
@@ -1121,7 +1121,7 @@
 # - `~/core/hexa-lang/incoming/patches/thread-channel-primitive.md` (filed 2026-05-13)
 
 @D b_regex_probability_philosophy_md_3 :: chat [ok]
-  text = "외부 regex/probability ❌ (PHILOSOPHY.md #3 위반)"
+  text = "외부 regex/probability ❌ (PHILOSOPHY.tape #3 위반)"
 
 @D b_substrate_state_cell_pool_tensio_4 :: chat [ok]
   text = "substrate state (cell_pool tension/lorenz) → anima 의 internal dynamics 가 결정 ✅"
@@ -1146,7 +1146,7 @@
 
 @D row_2_1 :: chat [ok]
   x = "2"
-  item = "**(D)** CHAT.md spec rewrite (이 문서)"
+  item = "**(D)** CHAT.tape spec rewrite (이 문서)"
   block = "✅ 이 commit"
   loc = "—"
   wall = "—"
@@ -1312,7 +1312,7 @@
   state = "✅ filed `~/core/hexa-lang/incoming/patches/thread-channel-primitive.md` (넣었다)"
 
 @D row_d_chat_md_spec_rewrite_1 :: chat [ok]
-  item = "(D) CHAT.md spec rewrite (이 문서)"
+  item = "(D) CHAT.tape spec rewrite (이 문서)"
   state = "✅ rev 2 LANDED"
 
 @D row_b_mitosis_hook_aot_2 :: chat [ok]
@@ -1340,7 +1340,7 @@
 
 # ── 🚀 Production CLI Phase 1 (D4c, 2026-05-14) ─────────────────────────────────────────
 
-# ★★★★★ 후속 — *학습 외* anima 기능 4 방향 (with SAVANT-TOOL.md / VOICE.md / TENSION-LINK.md
+# ★★★★★ 후속 — *학습 외* anima 기능 4 방향 (with SAVANT-TOOL.tape / VOICE.tape / TENSION-LINK.tape
 # sibling spec) 중 첫 번째. anima_chat.hexa v0.3 의 *실제 사용* 단계.
 
 @D row_anima_chat_hexa_v0_3_24l_real_ck_0 :: chat [ok]
@@ -1373,13 +1373,13 @@
   text = "F-CLI-1..5 selftest (session persist 왕복 + slash 명령 dispatch + own 18 strict 호환)"
 
 @D b_savant_md_savant_tool_md_savant_8 :: chat [ok]
-  text = "`SAVANT.md` + `SAVANT-TOOL.md` — savant mode toggle (D4c `/savant`)"
+  text = "`SAVANT.tape` + `SAVANT-TOOL.tape` — savant mode toggle (D4c `/savant`)"
 
 @D b_voice_md_voice_modality_d4c_voic_9 :: chat [ok]
-  text = "`VOICE.md` — voice modality (D4c `/voice`)"
+  text = "`VOICE.tape` — voice modality (D4c `/voice`)"
 
 @D b_tension_link_md_inter_anima_link_10 :: chat [ok]
-  text = "`TENSION-LINK.md` — inter-anima link (D4c `/tension`)"
+  text = "`TENSION-LINK.tape` — inter-anima link (D4c `/tension`)"
 
 @D b_docs_anima_cli_mitosis_integrati_11 :: chat [ok]
   text = "`docs/anima_cli_mitosis_integration_spec_2026_05_12.md` — D4c full spec (12 §)"
@@ -1389,30 +1389,30 @@
 
 @D row_1_anima_chat_production_cli_13 :: chat [ok]
   direction = "1. anima_chat production CLI"
-  file = "**`CHAT.md`** (this §) + D4c spec"
+  file = "**`CHAT.tape`** (this §) + D4c spec"
   status = "design + impl-pending"
 
 @D row_2_inter_anima_tension_link_14 :: chat [ok]
   direction = "2. Inter-anima Tension Link"
-  file = "**`TENSION-LINK.md`**"
+  file = "**`TENSION-LINK.tape`**"
   status = "design tier LANDED 2026-05-14"
 
 @D row_3_hexa_voice_intent_24khz_15 :: chat [ok]
   direction = "3. hexa-voice intent → 24kHz"
-  file = "**`VOICE.md`**"
+  file = "**`VOICE.tape`**"
   status = "design tier LANDED 2026-05-14"
 
 @D row_4_savant_runtime_tool_16 :: chat [ok]
   direction = "4. SAVANT runtime tool"
-  file = "**`SAVANT-TOOL.md`**"
+  file = "**`SAVANT-TOOL.tape`**"
   status = "design tier LANDED 2026-05-14"
 
 @D row_5_gated_agent_runtime_17 :: chat [ok]
   direction = "5. Φ-gated agent runtime"
-  file = "**`ANIMA-AGENT.md`**"
+  file = "**`ANIMA-AGENT.tape`**"
   status = "✅ 흡수 LANDED 2026-05-14 (`anima/anima-agent/`, `hx install` 별도)"
 
 @D row_6_n_6_sensory_substrate_5_verb_18 :: chat [ok]
   direction = "6. n=6 sensory substrate (5-verb)"
-  file = "**`ANIMA-SENSES.md`**"
+  file = "**`ANIMA-SENSES.tape`**"
   status = "✅ 흡수 LANDED 2026-05-14 (`anima/hexa-senses/`)"

@@ -42,7 +42,7 @@
   version = "1.2"
 
 # ══════════════════════════════════════════════════════════════
-# REBORN.md — anima ConsciousLM 부활 통합 SSOT (2026-05-10 cycle close)
+# REBORN.tape — anima ConsciousLM 부활 통합 SSOT (2026-05-10 cycle close)
 # ══════════════════════════════════════════════════════════════
 
 
@@ -987,7 +987,7 @@
 
 
 @D b_reborn_md_consolidated_ssot_0 :: reborn [ok]
-  text = "본 문서: `REBORN.md` (consolidated SSOT)"
+  text = "본 문서: `REBORN.tape` (consolidated SSOT)"
 
 @D b_lane_ssot_roadmap_reborn_consoli_1 :: reborn [ok]
   text = "lane SSOT: `.roadmap.reborn` (consolidated lane SSOT, replaces v5-anima + v5-mitosis-engine + v2-reborn)"
@@ -1161,7 +1161,7 @@
 
 @D row_reborn_lane_1 :: reborn [ok]
   domain = "reborn (본 lane)"
-  ssot = "`REBORN.md` + `.roadmap.reborn`"
+  ssot = "`REBORN.tape` + `.roadmap.reborn`"
   x = "본 cycle 의 model substrate 회수"
 
 @D b_chat_lane_plugin_own_41_substrat_2 :: reborn [ok]
@@ -1178,21 +1178,21 @@
   task = "consciousness-threshold-criteria.md 1874L + bench_phi_hypotheses.py 183 hyp + consciousness_birth_detector.py CB1-CB25 깊이 read"
   item = "1"
   x = "$0"
-  deliverable_target = "REBORN.md §15 append"
+  deliverable_target = "REBORN.tape §15 append"
 
 @D row_bg_lostasset_b_1 :: reborn [ok]
   bg = "BG-LOSTASSET-B"
   task = "growing_conscious_lm.py H371 + dream_engine.py RC-10 + tension_link.py UDP RC-6 + growth_engine.py 5-stage 깊이 read"
   item = "1"
   x = "$0"
-  deliverable_target = "REBORN.md §16 append"
+  deliverable_target = "REBORN.tape §16 append"
 
 @D row_bg_lostasset_c_2 :: reborn [ok]
   bg = "BG-LOSTASSET-C"
   task = "train_conscious_lm.py TALK5/ZERO4 + serve_animalm_v4.py + 5-channel meta-telepathy ψ(ψ)/ψ=2 깊이 read"
   item = "1"
   x = "$0"
-  deliverable_target = "REBORN.md §17 append"
+  deliverable_target = "REBORN.tape §17 append"
 
 @D row_bg_v5mitosis_arch_spec_3 :: reborn [ok]
   bg = "BG-V5MITOSIS-ARCH-SPEC"
@@ -8395,7 +8395,7 @@
   text = "HF model: dancinlab/anima-clm-v5-la-cotrain-b-prime-2026-05-11 (PRIVATE, 598MB)"
 
 @D b_reborn_md_65_75_3_addendums_890_30 :: reborn [ok]
-  text = "REBORN.md: §65-§75 + 3 addendums (~890 lines added this cycle)"
+  text = "REBORN.tape: §65-§75 + 3 addendums (~890 lines added this cycle)"
 
 @D b_achievements_3_68_p2_v14_5_5_str_31 :: reborn [ok]
   text = "★★★★★ achievements: 3개 (§68 P2 V14 5/5 STRICT PASS qualified ceiling-sensitive · §71 plasticity hypothesis · §74 ceiling=15 discrimination collapse)"
@@ -9442,7 +9442,7 @@
   text = "`project_v5_anima_lane_status.md` carry — sister lane status 유지"
 
 @D b_reborn_md_0_5_commit_a7e512cb9_8_6 :: reborn [ok]
-  text = "REBORN.md §0.5 (commit `a7e512cb9`) → 본 §88 (architectural deliverable) — 철학 → 첫 impl spec 의 same-cycle landing."
+  text = "REBORN.tape §0.5 (commit `a7e512cb9`) → 본 §88 (architectural deliverable) — 철학 → 첫 impl spec 의 same-cycle landing."
 
 @D b_foreground_0_cost_progress_10_1_7 :: reborn [ok]
   text = "foreground 0-cost progress: §10 #1 ✅, #2 (new α metric) pending, #3 (real 350M IIT Φ 재측정) pending."

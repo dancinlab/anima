@@ -42,15 +42,15 @@
   version = "1.2"
 
 # ══════════════════════════════════════════════════════════════
-# VOICE.md — anima ↔ hexa-senses/voice formulaic integration
+# VOICE.tape — anima ↔ hexa-senses/voice formulaic integration
 # ══════════════════════════════════════════════════════════════
 
 # **완벽복원성 (perfect reproducibility) 기준으로 옵션 (a) formulaic-only 채택 2026-05-14**
-# per `ANIMA-SENSES.md §4`. 이전 design (learned RVQ + Vocos/EnCodec pretrained vocoder)
+# per `ANIMA-SENSES.tape §4`. 이전 design (learned RVQ + Vocos/EnCodec pretrained vocoder)
 # 은 `hexa-senses/voice/` formulaic-only constraint 와 직접 모순으로 retract.
 # >
 # 본 file 은 anima 의 *hidden state* → `hexa-senses/voice/` canonical formulaic synthesis
-# 의 *통합 spec*. 학습 기반 synthesis 도입 시 `hexa.toml [constraints]` 위반 + SAVANT.md
+# 의 *통합 spec*. 학습 기반 synthesis 도입 시 `hexa.toml [constraints]` 위반 + SAVANT.tape
 # §12.2 enforcement violation.
 # ---
 
@@ -175,7 +175,7 @@
   text = "canonical synthesis logic 는 그대로 `hexa-senses/voice/` 에 위치"
 
 @D b_voice_md_anima_wire_only_1 :: voice [ok]
-  text = "본 VOICE.md 는 anima-specific wire spec 만 — synthesis 자체 미포함"
+  text = "본 VOICE.tape 는 anima-specific wire spec 만 — synthesis 자체 미포함"
 
 @D b_intent_proj_+_voice_bridge_+_hexa_senses_2 :: voice [ok]
   text = "Phase 1 impl 결과: intent_proj.hexa + voice_bridge.hexa → hexa-senses/voice/proto/hexa_speak_model.hexa 호출"
@@ -229,7 +229,7 @@
   text = "anima hidden state distribution 이 intent_proj 후 유효한 n=6 intent space 에 떨어지는지 Phase 1 후 sound test 필수"
 
 @D b_c3_learned_design_history_preserved_2 :: voice [ok]
-  text = "VOICE.tape 이전 learned-RVQ design 은 git history (commit fa902716a 의 VOICE.md + f8fc39af 의 .tape 변환) 에 보존, 완벽복원성 priority 변경 시 회수 가능"
+  text = "VOICE.tape 이전 learned-RVQ design 은 git history (commit fa902716a 의 VOICE.tape + f8fc39af 의 .tape 변환) 에 보존, 완벽복원성 priority 변경 시 회수 가능"
 
 @D b_c3_distribution_alignment_3 :: voice [ok]
   text = "anima 학습 path 의 hidden state distribution 이 intent_proj 후 n=6 intent space 와 mis-aligned 시 silence_gate 가 대부분 trigger → anima 항상 침묵 위험. Phase 1 후 측정 필수"
@@ -244,21 +244,21 @@
   text = "**`hexa-senses/voice/hexa-voice.md`** — canonical formulaic spec (그대로 참조)"
 
 @D b_cl_anima_senses_§4_decision_1 :: voice [ok]
-  text = "**`ANIMA-SENSES.md §4`** — 옵션 (a) 채택 ledger (완벽복원성 priority)"
+  text = "**`ANIMA-SENSES.tape §4`** — 옵션 (a) 채택 ledger (완벽복원성 priority)"
 
 @D b_cl_chat_voice_slash_2 :: voice [ok]
-  text = "`CHAT.md` § Production CLI — `/voice` slash 명령 wire (formulaic 만, learned 옵션 없음)"
+  text = "`CHAT.tape` § Production CLI — `/voice` slash 명령 wire (formulaic 만, learned 옵션 없음)"
 
 @D b_cl_savant_tool_intent_modulate_3 :: voice [ok]
-  text = "`SAVANT-TOOL.md` — savant mode (cell-id signature) 가 intent vector 의 sender channel 변조 가능"
+  text = "`SAVANT-TOOL.tape` — savant mode (cell-id signature) 가 intent vector 의 sender channel 변조 가능"
 
 @D b_cl_tension_link_parallel_5ch_4 :: voice [ok]
-  text = "`TENSION-LINK.md` — 5-ch fingerprint 중 ch1 concept + ch2 context 가 intent vector 와 parallel 구조"
+  text = "`TENSION-LINK.tape` — 5-ch fingerprint 중 ch1 concept + ch2 context 가 intent vector 와 parallel 구조"
 
 @D b_cl_savant_§12_4_t4_alignment_5 :: voice [ok]
-  text = "`SAVANT.md §12.4 T4` — 외부 entity 강제 fit 금지 정책과 정합 (voice 가 외부 corpus distribution 의존 없음)"
+  text = "`SAVANT.tape §12.4 T4` — 외부 entity 강제 fit 금지 정책과 정합 (voice 가 외부 corpus distribution 의존 없음)"
 
 # ── footer ─────────────────────────────────────────
 
-# — VOICE.md, 2026-05-14, formulaic-only rewrite (옵션 (a) 채택, 완벽복원성 priority);
+# — VOICE.tape, 2026-05-14, formulaic-only rewrite (옵션 (a) 채택, 완벽복원성 priority);
 #   learned-RVQ design 은 git history fa902716a + f8fc39af 의 이전 .tape revision 에 보존

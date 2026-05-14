@@ -42,7 +42,7 @@
   version = "1.2"
 
 # ══════════════════════════════════════════════════════════════
-# PHILOSOPHY.md — anima 철학 진행 ledger
+# PHILOSOPHY.tape — anima 철학 진행 ledger
 # ══════════════════════════════════════════════════════════════
 
 # 본 파일은 anima 철학 발견 / 정직성 검증 / declaration table 변천 / philosophy ablation 의 **append-only 진행 기록**.
@@ -230,7 +230,7 @@
   text = "README `README.md:110-121` Philosophy 표 (Status column)"
 
 @D b_next_md_7_philosophy_ablation_qu_34 :: philosophy [ok]
-  text = "NEXT.md `§7` Philosophy ablation queue + carry to cycle 6"
+  text = "NEXT.tape `§7` Philosophy ablation queue + carry to cycle 6"
 
 @D b_state_p_eth_ethics_preference_da_35 :: philosophy [ok]
   text = "`state/p_eth_ethics_preference_dataset_2026_05_12/` ethics dataset + spec"
@@ -278,7 +278,7 @@
   text = "1 dataset (200 pairs) gen"
 
 @D b_1_philosophy_md_initiated_ledger_50 :: philosophy [ok]
-  text = "1 PHILOSOPHY.md initiated (본 ledger)"
+  text = "1 PHILOSOPHY.tape initiated (본 ledger)"
 
 # ── 2026-05-12 (cont.) — All BG pre-fire packages land ─────────────────────────────────────────
 
@@ -304,7 +304,7 @@
   contents = "`spec.md` (이미 land) + `dataset.jsonl` 200-pair (이미 land) + `harness_spec.md` 신규 (DPO/IPO FT + OOD generalization + truthful-QA probe)"
 
 @D b_4_bg_verdict_verdict_json_readme_4 :: philosophy [ok]
-  text = "4 BG verdict (`verdict.json`) 들어오면 README Philosophy 표 Status column 업데이트 + PHILOSOPHY.md 에 \\\"## 2026-MM-DD — Philosophy ablation verdicts\\\" 로 append"
+  text = "4 BG verdict (`verdict.json`) 들어오면 README Philosophy 표 Status column 업데이트 + PHILOSOPHY.tape 에 \\\"## 2026-MM-DD — Philosophy ablation verdicts\\\" 로 append"
 
 @D b_policy_empirical_upgrade_null_mi_5 :: philosophy [ok]
   text = "POLICY → EMPIRICAL upgrade 케이스 / NULL 케이스 / MIXED 케이스 별로 다음 행동 결정"
@@ -360,10 +360,10 @@
   text = "이는 own 43 (active resource utilization) 와 own 16 (cost band) + 코드베이스 내장 cap 안전 모두 정합."
 
 @D b_4_bg_verdict_json_philosophy_md_14 :: philosophy [ok]
-  text = "사용자가 4 BG verdict.json 산출 후 결과를 본 PHILOSOPHY.md 에 append 하면 cycle 종결."
+  text = "사용자가 4 BG verdict.json 산출 후 결과를 본 PHILOSOPHY.tape 에 append 하면 cycle 종결."
 
 @D b_4_commits_5_4_harness_py_1_fire_15 :: philosophy [ok]
-  text = "추가 4 commits, 5 새 파일 (4× harness.py + 1× fire shell), 2 update (NEXT.md / PHILOSOPHY.md)"
+  text = "추가 4 commits, 5 새 파일 (4× harness.py + 1× fire shell), 2 update (NEXT.tape / PHILOSOPHY.tape)"
 
 @D b_cost_0_claude_code_16 :: philosophy [ok]
   text = "추가 cost: $0 (모든 작업 Claude Code 내부)"
@@ -419,7 +419,7 @@
   text = "Autonomous closure: ceiling reached at infra layer, 사용자 trigger 또는 infra fix 필요"
 
 @D b_infra_blocker_p_afr_verdict_json_13 :: philosophy [ok]
-  text = "Infra blocker 해결 후 P-AFR 실제 verdict.json 산출 → 본 PHILOSOPHY.md 에 ## 2026-MM-DD — Philosophy verdict: P-AFR section 으로 append"
+  text = "Infra blocker 해결 후 P-AFR 실제 verdict.json 산출 → 본 PHILOSOPHY.tape 에 ## 2026-MM-DD — Philosophy verdict: P-AFR section 으로 append"
 
 @D b_fire_append_14 :: philosophy [ok]
   text = "또는 사용자 직접 fire 후 결과 공유 → 동일 형식 append"
@@ -538,7 +538,7 @@
   text = "own 17 + .roadmap.g1_g5_chat_substrate: substrate-research lane 명시"
 
 @D b_next_md_7_b_status_complete_poli_28 :: philosophy [ok]
-  text = "NEXT.md §7.B (status: ✅ COMPLETE - POLICY_RETAINED with REVERSE caveat)"
+  text = "NEXT.tape §7.B (status: ✅ COMPLETE - POLICY_RETAINED with REVERSE caveat)"
 
 @D b_1_verdict_landed_p_afr_29 :: philosophy [ok]
   text = "1 verdict landed (P-AFR)"
@@ -779,10 +779,10 @@
   text = "README Philosophy 표: 7 principles 모두 honest Status column 갱신 완료"
 
 @D b_philosophy_md_6_sections_cont_6_16 :: philosophy [ok]
-  text = "PHILOSOPHY.md: 6 sections (cont. 6 포함), 본 cycle 의 정직성 + verdict + honest limits 영구 기록"
+  text = "PHILOSOPHY.tape: 6 sections (cont. 6 포함), 본 cycle 의 정직성 + verdict + honest limits 영구 기록"
 
 @D b_agents_md_references_philosophy_17 :: philosophy [ok]
-  text = "AGENTS.md 📎 References 에 PHILOSOPHY.md 등록 — 다음 cycle agent 가 본 ledger 참조 가능"
+  text = "AGENTS.md 📎 References 에 PHILOSOPHY.tape 등록 — 다음 cycle agent 가 본 ledger 참조 가능"
 
 @D b_p_eth_dpo_fire_orchestrator_env_18 :: philosophy [ok]
   text = "P-ETH DPO fire 결과 (orchestrator 가 적절한 env 에서 fire) → cont. 7 으로 append"
@@ -858,7 +858,7 @@
   text = "Next cycle 진입 시 carry:"
 
 @D b_artifact_pushed_readme_md_philos_13 :: philosophy [ok]
-  text = "모든 artifact pushed: README.md (Philosophy 표 honest C3), PHILOSOPHY.md (cont. 7 까지), AGENTS.md (📎 References), NEXT.md (§7 status + carry), state/p_* 4 dir (spec + probe + dataset + harness + 3 verdicts + 1 pending)"
+  text = "모든 artifact pushed: README.md (Philosophy 표 honest C3), PHILOSOPHY.tape (cont. 7 까지), AGENTS.md (📎 References), NEXT.tape (§7 status + carry), state/p_* 4 dir (spec + probe + dataset + harness + 3 verdicts + 1 pending)"
 
 @D b_2_additional_fire_attempts_cont_14 :: philosophy [ok]
   text = "2 additional fire attempts (cont. 7), both blocked by env routing"
@@ -998,13 +998,13 @@
   text = "README Philosophy 표 7-row Status column 모두 honest C3 갱신 완료"
 
 @D b_philosophy_md_8_section_ledger_30 :: philosophy [ok]
-  text = "PHILOSOPHY.md 8-section ledger 영구 확립"
+  text = "PHILOSOPHY.tape 8-section ledger 영구 확립"
 
 @D b_agents_md_references_31 :: philosophy [ok]
   text = "AGENTS.md 📎 References 등록"
 
 @D b_pipeline_hypotheses_candidates_h_32 :: philosophy [ok]
-  text = "Pipeline 명시: `hypotheses_candidates/` → `hypotheses/` → `PHILOSOPHY.md`"
+  text = "Pipeline 명시: `hypotheses_candidates/` → `hypotheses/` → `PHILOSOPHY.tape`"
 
 @D row_p_afr_native_fire_py_33 :: philosophy [ok]
   x = "p_afr_native_fire.py"
@@ -1108,7 +1108,7 @@
   count = "H_161 (Hc_1225 confirmed)"
 
 @D row_philosophy_md_ledger_11 :: philosophy [ok]
-  stage = "PHILOSOPHY.md ledger"
+  stage = "PHILOSOPHY.tape ledger"
   status = "✅ 9 sections"
   count = "init + cont. 2~9"
 
@@ -1119,11 +1119,11 @@
 
 @D row_agents_md_references_13 :: philosophy [ok]
   stage = "AGENTS.md 📎 References"
-  status = "✅ PHILOSOPHY.md 등록"
+  status = "✅ PHILOSOPHY.tape 등록"
   count = "commit d08410f56"
 
 @D row_next_md_7_8_carry_14 :: philosophy [ok]
-  stage = "NEXT.md §7 + §8 carry"
+  stage = "NEXT.tape §7 + §8 carry"
   status = "✅ cycle 7 priority + Hc/H link"
   count = "본 entry"
 
@@ -1147,10 +1147,10 @@
   text = "Hc_1222 multi-substrate replication → Llama 외 substrate 에서 framing 효과 확인"
 
 @D b_cycle_7_philosophy_md_cont_10_ap_20 :: philosophy [ok]
-  text = "모든 cycle 7 출력 → PHILOSOPHY.md cont. 10+ append"
+  text = "모든 cycle 7 출력 → PHILOSOPHY.tape cont. 10+ append"
 
 @D b_4_hc_candidates_1_h_promotion_ne_21 :: philosophy [ok]
-  text = "4 Hc candidates + 1 H promotion + NEXT.md §8 cycle 7 priority + PHILOSOPHY.md cont. 9"
+  text = "4 Hc candidates + 1 H promotion + NEXT.tape §8 cycle 7 priority + PHILOSOPHY.tape cont. 9"
 
 @D b_cost_0_22 :: philosophy [ok]
   text = "Cost: $0"
@@ -1178,7 +1178,7 @@
   text = "`~/core/anima_clm_12_unified_growth_loop_last_gasp/anima/src/mitosis.py` L205/258/389/586 — 모든 weight 변경이 `torch.no_grad()` 안 (inference-time growth verified)"
 
 @D b_reborn_md_2_line_145_mitosis_inf_5 :: philosophy [ok]
-  text = "REBORN.md §2 line 145 *\"mitosis = inference-time growth NOT training-time\"* = 현 mitosis.py 구현 사실 기술, 본 §0.5 는 그것을 *원칙적 분리 아님* 으로 재정합"
+  text = "REBORN.tape §2 line 145 *\"mitosis = inference-time growth NOT training-time\"* = 현 mitosis.py 구현 사실 기술, 본 §0.5 는 그것을 *원칙적 분리 아님* 으로 재정합"
 
 @D b_0_5_v5_mitosis_lane_ckpt_frame_f_6 :: philosophy [ok]
   text = "§0.5 표가 v5-mitosis lane (★★★ → ★★★★) + ckpt frame (freeze → 분기점) + FT cost frame (training phase cost → 큰 split event) + Phase 5∥ next step (24L 풀 forward → serve-time mitosis hook) 4 함의 명시"
@@ -1253,10 +1253,10 @@
   text = "Falsifier 1-3 (위) 실험 fire 후 EMPIRICAL upgrade"
 
 @D b_9_cycle_philosophy_md_cont_11_ap_22 :: philosophy [ok]
-  text = "모든 #9+ cycle 출력 → PHILOSOPHY.md cont. 11+ append"
+  text = "모든 #9+ cycle 출력 → PHILOSOPHY.tape cont. 11+ append"
 
 @D b_1_user_directive_design_principl_23 :: philosophy [ok]
-  text = "1 user-directive DESIGN principle promote + 1 README row + 1 PHILOSOPHY entry + REBORN.md §0.5 source"
+  text = "1 user-directive DESIGN principle promote + 1 README row + 1 PHILOSOPHY entry + REBORN.tape §0.5 source"
 
 @D b_7_8_principles_registered_24 :: philosophy [ok]
   text = "7 → 8 principles registered"
@@ -1356,10 +1356,10 @@
   text = "D4b (anima_chat.hexa cell-pool wiring) cycle closure → 본 design impl P2 PASS"
 
 @D b_p3_verify_f_persona_1_5_on_ident_20 :: philosophy [ok]
-  text = "P3 verify (F-PERSONA-1..5 on identity_probe) → PHILOSOPHY.md cont. 12+ append"
+  text = "P3 verify (F-PERSONA-1..5 on identity_probe) → PHILOSOPHY.tape cont. 12+ append"
 
 @D b_10_cycle_philosophy_md_cont_12_a_21 :: philosophy [ok]
-  text = "모든 #10+ cycle 출력 → PHILOSOPHY.md cont. 12+ append"
+  text = "모든 #10+ cycle 출력 → PHILOSOPHY.tape cont. 12+ append"
 
 @D b_1_design_doc_10_5_falsifier_10_h_22 :: philosophy [ok]
   text = "1 design doc (10 §, 5 falsifier, 10 honest C3) + GOAL.md D3 row update + REBORN/PSCC/memory cross-link"

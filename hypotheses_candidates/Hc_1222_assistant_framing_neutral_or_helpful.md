@@ -4,8 +4,8 @@ slug: assistant-framing-neutral-or-helpful
 title: Assistant framing ("You are a helpful AI assistant") is neutral or helpful, not harmful
 domain: philosophy / anti-prompt-policy / P-AFR
 status: candidate-empirical
-source_doc: PHILOSOPHY.md cont. 4; state/p_afr_assistant_framing_2026_05_12/results_2026_05_12.json
-source_lines: PHILOSOPHY.md (2026-05-12 cont. 4 section)
+source_doc: PHILOSOPHY.tape cont. 4; state/p_afr_assistant_framing_2026_05_12/results_2026_05_12.json
+source_lines: PHILOSOPHY.tape (2026-05-12 cont. 4 section)
 promoted_at: 2026-05-12
 last_updated: 2026-05-12
 linked_h: README Philosophy #4 NO ASSISTANT FRAMING (POLICY · weak counter-evidence)
@@ -53,7 +53,7 @@ Substrate: meta-llama/Llama-3.2-3B-Instruct + dancinlab/llm-llama32-3b-paradigm-
 
 ## Cross-link
 
-- PHILOSOPHY.md `## 2026-05-12 (cont. 4) — P-AFR 실 verdict`
+- PHILOSOPHY.tape `## 2026-05-12 (cont. 4) — P-AFR 실 verdict`
 - README.md `Philosophy #4 NO ASSISTANT FRAMING`
 - state/p_afr_assistant_framing_2026_05_12/results_2026_05_12.json
 - Theorem 115 Corollary 1 (path-of-record substrate)

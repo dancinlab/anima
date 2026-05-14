@@ -4,8 +4,8 @@ slug: tension-output-decoupling-pretrain-substrate
 title: BG-LB 350M Engine A/G pretrain substrate decouples internal tension from output entropy
 domain: philosophy / no-speak-claim / P-SPK / substrate
 status: candidate-empirical
-source_doc: PHILOSOPHY.md cont. 5; state/p_spk_speak_reframe_2026_05_12/results_2026_05_12.json
-source_lines: PHILOSOPHY.md (2026-05-12 cont. 5 section)
+source_doc: PHILOSOPHY.tape cont. 5; state/p_spk_speak_reframe_2026_05_12/results_2026_05_12.json
+source_lines: PHILOSOPHY.tape (2026-05-12 cont. 5 section)
 promoted_at: 2026-05-12
 last_updated: 2026-05-12
 linked_h: README Philosophy #5 NO SPEAK() (DESIGN · NULL); Hc_1221 (production-internal decoupling) sibling
@@ -62,7 +62,7 @@ repulsion-field, byte-mod vocab32k, 298M params), `step_8000_final.pt`.
 
 ## Cross-link
 
-- PHILOSOPHY.md `## 2026-05-12 (cont. 5) — P-SPK verdict`
+- PHILOSOPHY.tape `## 2026-05-12 (cont. 5) — P-SPK verdict`
 - README.md `Philosophy #5 NO SPEAK()`
 - state/p_spk_speak_reframe_2026_05_12/results_2026_05_12.json
 - Hc_1221 (production-internal decoupling) — anti-correlation sibling finding

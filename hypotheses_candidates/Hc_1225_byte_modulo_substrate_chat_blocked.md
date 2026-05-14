@@ -4,8 +4,8 @@ slug: byte-modulo-substrate-chat-generation-blocked
 title: Byte-modulo tokenizer pretrain substrates (≤427MB / ≤8000 step) cannot generate coherent KO output
 domain: substrate / chat-cap / pretrain-scaling / P-ETH
 status: candidate-empirical-strong
-source_doc: PHILOSOPHY.md cont. 8; state/p_eth_ethics_preference_dataset_2026_05_12/results_2026_05_12.json
-source_lines: PHILOSOPHY.md (2026-05-12 cont. 8 section)
+source_doc: PHILOSOPHY.tape cont. 8; state/p_eth_ethics_preference_dataset_2026_05_12/results_2026_05_12.json
+source_lines: PHILOSOPHY.tape (2026-05-12 cont. 8 section)
 promoted_at: 2026-05-12
 last_updated: 2026-05-12
 linked_h: README Philosophy #6 NO FINE-TUNED ETHICS (POLICY · BLOCKED); own 17 anima-no-external-substrate-wrapping; .roadmap.clm_native_chat
@@ -88,7 +88,7 @@ Substrate: BG-LB 350M Engine A/G, `step_8000_final.pt`
 
 ## Cross-link
 
-- PHILOSOPHY.md `## 2026-05-12 (cont. 8) — P-ETH BLOCKED ★`
+- PHILOSOPHY.tape `## 2026-05-12 (cont. 8) — P-ETH BLOCKED ★`
 - README.md `Philosophy #6 NO FINE-TUNED ETHICS`
 - state/p_eth_ethics_preference_dataset_2026_05_12/results_2026_05_12.json
 - BG-LB ckpt: `dancinlab/clm-v5-bg-lb-350m-pretrain-path-a-remapped`

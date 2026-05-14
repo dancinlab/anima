@@ -10,7 +10,7 @@ raw_rank: 10
 hexa_only: true
 deterministic: true
 llm: none
-source: PHILOSOPHY.md cont. 10 Principle #8 falsifier candidate 3 + REBORN §0.5 "ckpt = 분열 tree snapshot, freeze 가 아닌 분기점"
+source: PHILOSOPHY.tape cont. 10 Principle #8 falsifier candidate 3 + REBORN §0.5 "ckpt = 분열 tree snapshot, freeze 가 아닌 분기점"
 created_at: 2026-05-12
 linked_h: H_191 (ALM-free SUBSTRATE HCE axis), H_157 (mathematical panpsychism), H_001 (anima-core-architecture)
 ---
@@ -66,7 +66,7 @@ Principle #8 의 ckpt 함의: ckpt = 분열 tree snapshot, freeze 아닌 분기�
 
 ## Cross-Links
 
-- **parent**: PHILOSOPHY.md cont. 10 Principle #8 (NO TRAIN/INFER SPLIT, falsifier candidate 3 명시), REBORN §0.5 표 row "ckpt deployment 패턴 freeze → live tree branch"
+- **parent**: PHILOSOPHY.tape cont. 10 Principle #8 (NO TRAIN/INFER SPLIT, falsifier candidate 3 명시), REBORN §0.5 표 row "ckpt deployment 패턴 freeze → live tree branch"
 - **sibling Hc**: Hc_1276 (train+infer cotrain ablation, falsifier candidate 1), Hc_1277 (serve-time hook latency, falsifier candidate 2)
 - **adjacent H**: H_191 (ALM-free SUBSTRATE HCE axis — ckpt 의 categorical structure), H_157 (mathematical panpsychism — ckpt 분류의 universal frame), H_001 (anima-core-architecture — ckpt deployment 의 architecture context)
 - **literature**: Hochreiter & Schmidhuber 1997 (LSTM — RNN state ckpt semantic), Kingma & Ba 2014 (Adam — optimizer state ckpt recovery), Goodfellow 2014 (catastrophic forgetting frame collapsed §0.5)
