@@ -137,3 +137,21 @@
 
 @N strength_reflects_evidence := "strength-vs-importance" :: note [active]
   text = "Strength reflects rigor of supporting evidence, not principle importance. Negative findings get equal weight to positive ones."
+
+# ── Hc_1282 Stage 1 verdict — anima A batch first verify ────────────────────
+
+@D verdict_hc_1282_stage_1 := "Hc_1282 Stage 1 SUPPORTED" :: verdict [d=2026-05-15 active]
+  hypothesis = "Hc_1282 H_190.5 daughter — d=(n/φ)·2^(σ-sopfr)=384 derivation n-substitution audit"
+  batch = "A (옵션 A burst quarantine, hypotheses/ 20 file)"
+  stage = "Stage 1 — 수학적 검증 (VERIFY.tape §2 protocol)"
+  method = "W2 math identity + W5 numerical sim (sympy exact arithmetic)"
+  verdict-class = "SUPPORTED"
+  evidence-key = "n ∈ {2..30, 28, 496, 8128} sweep — n=6 만 d=384 산출 (uniqueness CONFIRMED)"
+  n6-anchor = "σ(6)=12, φ(6)=2, sopfr(6)=5, d = (6/2)·2^(12-5) = 3·128 = 384 EXACT"
+  falsifier-not-fired = "F-1282-4 N=6 SUBSTITUTION NON-UNIQUE — NOT fired"
+  honest-c3 = "L-1282-1 (formula post-hoc fit) · L-1282-2 (perfect-number prior trivial) · L-1282-3 (n=9 → d=192 mod-192 aliasing confirmed in sweep) · L-1282-VARIANT-SOPFR (가설표 typo 가능) · L-1282-PHI-PENDING (Stage 2 Φ measurement 후속)"
+  wall = "< 1s sympy deterministic"
+  cost = "$0 Mac local"
+  artifact = "state/verify_a_stage1_2026_05_15/Hc_1282_verdict.json"
+  cross-link = "AXIS.tape A4 math tier — Hc_1282 SUPPORTED 가 18 active 의 evidence 강화"
+  next-stage = "Stage 2: numerical sim Φ(d ∈ {256, 320, 384, 448, 512}) × 5-seed (F-1282-1/2/3 Hc_1282 spec)"

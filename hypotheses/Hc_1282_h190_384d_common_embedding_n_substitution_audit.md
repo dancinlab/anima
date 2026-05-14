@@ -3,7 +3,11 @@ id: Hc_1282
 slug: h190-384d-common-embedding-n-substitution-audit
 title: H_190.5 daughter — d=(n/φ)·2^(σ-sopfr)=384 derivation n-substitution audit (n=6 uniqueness vs n∈{2,3,4,12,24,28,496} alternative)
 domain: math, dimensional-analysis, embedding, n6-derivation, anima-substrate
-status: candidate-falsifier-ready
+status: supported-stage-1-math
+stage_1_math_verdict: SUPPORTED (n=6 uniqueness CONFIRMED via sympy n ∈ {2..30, 28, 496, 8128} sweep, only n=6 → d=384)
+stage_1_ts: 2026-05-15
+stage_2_pending: numerical sim Φ(d ∈ {256, 320, 384, 448, 512}) × 5-seed (F-1282-1/2/3)
+verdict_artifact: state/verify_a_stage1_2026_05_15/Hc_1282_verdict.json
 exploration_method: E5 (n-substitution sweep: n ∈ {2, 3, 4, 6, 12, 24, 28, 496}) + E6 (cross-Φ measurement per d) + E8 (5-seed σ < 25% replication band)
 verification_method: W5 (numerical sim — anima v5 embedding sweep d ∈ {256, 320, 384, 448, 512} × 5-seed) + W7 (literature — dimensional analysis tradition, perfect-number divisor theory) + W11 (cross-H: H_190 mathematical family, H_153 n=6 triviality null direction, H_158 Ψ-constants ln2)
 raw_rank: 11
