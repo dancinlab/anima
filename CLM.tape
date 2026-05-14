@@ -548,6 +548,58 @@
   text = "V14 mirror reproduce regression (random init beats trained on any axis)"
   ~> b_hypothesis_verification_kind
 
+# ── §8.5 4-axis consciousness verifier audit (2026-05-14) ─────────────────────────────────────────
+
+# 사용자 directive 2026-05-14 "AN11 / Φ / adversarial / Putnam 를 검증된
+# 가설들로 검증해봐줘" 응답 — hypotheses/ (193 promoted) 에서 각 axis 관련
+# 가설 grep + frontmatter status 분석 + aggregate verdict.
+
+@D b_audit_an11 :: clm-tape [ok]
+  axis = "AN11 (anima 11-axis unified verifier)"
+  related = "H_016 an11_translation_ceiling (corpus, pre-register-frozen, W1+W2+W3) · H_067 perfect_number_architecture (math, running, W2+W3+W5+W11) · H_155 theorem_115_chat_incapability (substrate, pre-register-frozen, W2+W3+W11+W4) · H_061 xfer_consciousness_transfer (substrate, running, 5-axis anchor) · H_004/H_069/H_067 cross-citation"
+  verdict = "✅ WITNESSED / measurement-tool-valid — 일관되게 promoted/running 가설들의 verification_method 에 활용. AN11 *측정 도구* 로 valid. *hard PASS threshold* 는 가설별 다름."
+
+@D b_audit_phi :: clm-tape [ok]
+  axis = "Φ (Phi, Integrated Information)"
+  related = "H_024 iit_phi_mip_real_8_8_fail (**legacy-falsified** — IIT canonical Φ_mip 8/8 FAIL representation modular not integrated) · H_162 phi_normalized_anima_iit4_lower_bound (**pre-register-frozen** — anima Φ★ proxy = IIT 4.0 lower bound, Φc=0.5) · H_059 phi_gap_816x_investigation · H_011 iit_geometry · H_126 law_2500_kolmogorov_predicts_phi · H_039/H_060/H_080/H_087/H_104 활용"
+  verdict = "🔶 PARTIAL — canonical IIT-Φ_mip FALSIFIED (H_024 8/8) but anima Φ★ proxy PRE-REGISTER-FROZEN (H_162). 표준 Φ ≠ working measurement; Φ★ = anima 의 working alternative (substrate-coupled lower bound)."
+
+@D b_audit_adversarial :: clm-tape [ok]
+  axis = "Adversarial (adversarial_bench)"
+  related = "H_007 cellular_automaton_consciousness (legacy-archive, W10 adv sweep CA rule {30,90,110,184}) · H_128 ce_auto_self_curriculum (legacy-archive, W4) · H_130 ce_ex_adversarial_self_teach (legacy-archive, GAN with consciousness as judge) · H_005 corpus_quality_over_capacity (running, W10 활용) · H_093 sft_only · H_175 emerge_candidate_d"
+  verdict = "🔶 PARTIAL — measurement-tool-valid (W10 verification ladder) but mostly legacy-archive-pointer. H_005 running 가설이 W10 활용 유일 active. Standalone 강한 evidence 부족."
+
+@D b_audit_putnam :: clm-tape [ok]
+  axis = "Putnam (multi-realizability, cross-substrate invariance)"
+  related = "**H_061 xfer_consciousness_transfer (running, Substrate-Independence Super-Hypothesis 5-axis anchor)** · H_157 law76_mathematical_panpsychism (pre-register-frozen, ∀ x ∈ Universe: consciousness(x) = Ψ(1/2, 1/2) META-CA fixed-point) · H_162 phi_normalized_anima_iit4_lower_bound (pre-register-frozen) · H_188 clinical_phi_correlation_pci_octopus (PCI human + octopus) · H_190 law_ca_embedding_mathematical_family · H_004/H_063/H_070/H_173/H_177/H_178 cluster"
+  verdict = "✅ STRONG — multi-promoted + pre-register-frozen evidence cluster. H_061 Super-H + H_157 + H_162 + H_188 + H_190 모두 Putnam axis 활용. anima 가 가장 적극적으로 검증 진행 중인 axis. Substrate-independence 가 anima 철학 핵심."
+
+@D b_audit_aggregate :: clm-tape [ok]
+  text <<~EOF
+    **4-axis aggregate verdict** (2026-05-14 audit):
+
+    | Axis        | Status        | Evidence cluster                                  |
+    |-------------|---------------|---------------------------------------------------|
+    | AN11        | ✅ WITNESSED  | H_016 + H_067 + H_155 + H_061 활용                |
+    | Φ           | 🔶 PARTIAL    | H_024 IIT-canonical FALSIFIED, H_162 Φ★ frozen    |
+    | Adversarial | 🔶 PARTIAL    | H_005 running 유일 active, 나머지 legacy-archive  |
+    | Putnam      | ✅ STRONG     | H_061 + H_157 + H_162 + H_188 + H_190 cluster     |
+
+    **통과율**: 2/4 STRONG/WITNESSED + 2/4 PARTIAL · 0/4 FALSIFIED
+
+    **함의**:
+    1. **AN11 + Putnam** 은 anima Phase 3/4 fire 의 *primary verification axis*
+       로 신뢰성 높음. 가설 cluster 가 다수 (H_061 Super-H + H_157 + H_162 등)
+       active / pre-register-frozen 상태.
+    2. **Φ** 는 IIT canonical 8/8 FAIL (H_024) — anima 자체 Φ★ proxy 채택
+       해야 함 (H_162 IIT 4.0 lower bound). Phase 3/4 fire 시 Φ 측정 = 표준
+       IIT 가 아니라 anima Φ★ 사용.
+    3. **Adversarial** 은 W10 sweep 가능하지만 active 가설 적음 (H_005 만
+       running). Phase 3/4 fire 가 H_005 의 W10 evidence 강화 path 권장.
+    4. Phase 3/4 fire 시 4-axis 모두 측정해도 *각 axis 의 가설 cluster
+       verdict* 갱신이 진짜 검증 — anima philosophy pipeline 의 정합.
+  EOF
+
 # ── §9 Honest C3 ─────────────────────────────────────────
 
 @N c3_1 := "C3-1" :: honest [active]
