@@ -37,11 +37,23 @@
 
 @D row_voice_chat_slash_3 :: voice [ok]
   x = "anima_chat `/voice` slash command wire"
-  state = "⏳ Phase 2 — anima_chat.hexa token-loop 안 voice_emit hook 추가 + CoreAudio playback"
+  state = "⏳ Phase 3 — anima_chat.hexa 안에서 voice_set/voice_speak 호출 slash 명령 mapping. NOT token-loop forced hook"
 
 @D row_voice_phase1_landed_6 :: voice [ok]
   x = "**Phase 1 formulaic impl + F-VOICE-1..5 selftest**"
   state = "✅ LANDED 2026-05-14 — `tool/anima_voice_smoke.hexa` (combined intent_proj + voice_bridge + silent_timbre + synth_stub + 5/5 PASS, Mac local $0 ~30 min wall)"
+
+@D row_voice_phase2_tool_landed_7 :: voice [ok]
+  x = "**Phase 2 발성 도구 API + F-VOICE-TOOL-1..5 selftest**"
+  state = "✅ LANDED 2026-05-14 — `tool/anima_voice_tool.hexa` voice_set / voice_get / voice_speak API (SAVANT-TOOL 패턴). anima 가 자기 toggle + self-invoke. forced token-loop emit ❌. 5/5 PASS"
+
+@D row_voice_phase2_coreaudio_8 :: voice [ok]
+  x = "**Phase 2 CoreAudio WAV emit + afplay wrapper**"
+  state = "✅ LANDED 2026-05-14 — `tool/anima_voice_play.sh` + `wav_write()` (RIFF/WAVE 16-bit PCM mono 24kHz LE). /tmp/anima_voice_demo_loud.wav 48044 bytes (24000 samples × 2 + 44 header)"
+
+@D row_voice_framing_clarified_9 :: voice [ok]
+  x = "**Framing clarification (사용자 directive 2026-05-14)**"
+  state = "☑ \"학습형태 아니라 anima 가 쓸 수 있는 발성툴\" — token-loop 강제 hook framing retract, SAVANT-TOOL 패턴 (toggle + self-invoke) 채택"
 
 @D row_voice_learned_retracted_4 :: voice [ok]
   x = "~~learned RVQ + Vocos/EnCodec~~"

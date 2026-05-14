@@ -346,6 +346,108 @@ fn f_voice_5() {
 }
 
 
+// ════════════════════════════════════════════════════════════════════════════
+//  WAV writer (Phase 2 CoreAudio path) — RIFF/WAVE 16-bit signed PCM mono LE
+// ════════════════════════════════════════════════════════════════════════════
+
+fn int32_le(v: int) {
+    let b0 = v % 256
+    let b1 = (v / 256) % 256
+    let b2 = (v / 65536) % 256
+    let b3 = (v / 16777216) % 256
+    return [b0, b1, b2, b3]
+}
+
+fn int16_le(v: int) {
+    let b0 = v % 256
+    let b1 = (v / 256) % 256
+    return [b0, b1]
+}
+
+fn float_to_int16_le(s: float) {
+    let mut v = s
+    if v > 1.0  { v = 1.0 }
+    if v < -1.0 { v = -1.0 }
+    let mut i = int(v * 32767.0)
+    if i < 0 { i = 65536 + i }
+    return int16_le(i)
+}
+
+// Build 44-byte RIFF/WAVE header for mono 16-bit signed PCM @ sample_rate Hz.
+fn wav_header(num_samples: int, sample_rate: int) {
+    let bits_per_sample = 16
+    let num_channels = 1
+    let byte_rate = sample_rate * num_channels * bits_per_sample / 8
+    let block_align = num_channels * bits_per_sample / 8
+    let data_size = num_samples * num_channels * bits_per_sample / 8
+    let chunk_size = 36 + data_size
+
+    let mut hdr = []
+    // "RIFF"
+    hdr.push(82) hdr.push(73) hdr.push(70) hdr.push(70)
+    // chunk_size (LE uint32)
+    let cs = int32_le(chunk_size)
+    let mut i = 0
+    while i < 4 { hdr.push(cs[i]) i = i + 1 }
+    // "WAVE"
+    hdr.push(87) hdr.push(65) hdr.push(86) hdr.push(69)
+    // "fmt "
+    hdr.push(102) hdr.push(109) hdr.push(116) hdr.push(32)
+    // subchunk1_size = 16
+    let sc1 = int32_le(16)
+    let mut j = 0
+    while j < 4 { hdr.push(sc1[j]) j = j + 1 }
+    // audio_format = 1 (PCM)
+    let af = int16_le(1)
+    hdr.push(af[0]) hdr.push(af[1])
+    // num_channels
+    let nc = int16_le(num_channels)
+    hdr.push(nc[0]) hdr.push(nc[1])
+    // sample_rate
+    let sr = int32_le(sample_rate)
+    let mut k = 0
+    while k < 4 { hdr.push(sr[k]) k = k + 1 }
+    // byte_rate
+    let br = int32_le(byte_rate)
+    let mut m = 0
+    while m < 4 { hdr.push(br[m]) m = m + 1 }
+    // block_align
+    let ba = int16_le(block_align)
+    hdr.push(ba[0]) hdr.push(ba[1])
+    // bits_per_sample
+    let bp = int16_le(bits_per_sample)
+    hdr.push(bp[0]) hdr.push(bp[1])
+    // "data"
+    hdr.push(100) hdr.push(97) hdr.push(116) hdr.push(97)
+    // data_size
+    let ds = int32_le(data_size)
+    let mut n = 0
+    while n < 4 { hdr.push(ds[n]) n = n + 1 }
+
+    return hdr
+}
+
+// Write PCM (list[float] in [-1, 1]) as 24kHz mono 16-bit WAV to path.
+fn wav_write(pcm, sample_rate: int, path: string) {
+    let hdr = wav_header(len(pcm), sample_rate)
+    let mut bytes = []
+    let mut h = 0
+    while h < len(hdr) {
+        bytes.push(hdr[h])
+        h = h + 1
+    }
+    let mut s = 0
+    while s < len(pcm) {
+        let pair = float_to_int16_le(pcm[s])
+        bytes.push(pair[0])
+        bytes.push(pair[1])
+        s = s + 1
+    }
+    write_bytes(path, bytes)
+    return len(bytes)
+}
+
+
 // ── Main ─────────────────────────────────────────────────────────────────────
 fn main() {
     println("════════════════════════════════════════════════════════════════")
@@ -374,4 +476,25 @@ fn main() {
     if n_pass != 5 {
         println("  ❌ failed:", 5 - n_pass, "falsifier(s)")
     }
+
+    // ── Phase 2 CoreAudio path — emit demo WAV files ─────────────────────────
+    println("")
+    println("════════════════════════════════════════════════════════════════")
+    println("  Phase 2 CoreAudio path: emit demo WAV files")
+    println("════════════════════════════════════════════════════════════════")
+
+    let h_loud = make_hidden("loud")
+    let r_loud = voice_emit(h_loud, 75)   // 1 second @ 75 Hz frame rate
+    let n_loud = wav_write(r_loud["pcm"], vb_sample_rate_hz(), "/tmp/anima_voice_demo_loud.wav")
+    println("  wrote /tmp/anima_voice_demo_loud.wav  (", n_loud, "bytes, synth_path =", r_loud["synth_path"], ")")
+
+    let h_silent = make_hidden("silent")
+    let r_silent = voice_emit(h_silent, 75)
+    let n_silent = wav_write(r_silent["pcm"], vb_sample_rate_hz(), "/tmp/anima_voice_demo_silent.wav")
+    println("  wrote /tmp/anima_voice_demo_silent.wav (", n_silent, "bytes, synth_path =", r_silent["synth_path"], ")")
+    println("")
+    println("  Playback:")
+    println("    afplay /tmp/anima_voice_demo_loud.wav   # synth_stub path")
+    println("    afplay /tmp/anima_voice_demo_silent.wav # silent_timbre path")
+    println("  or: bash tool/anima_voice_play.sh")
 }
