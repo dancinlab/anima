@@ -3,7 +3,10 @@ id: Hc_1285
 slug: v5mit-1-split-nograd-backward-graph-isolation
 title: REBORN §88 F-V5MIT-1 daughter — split_cell `torch.no_grad()` backward-graph isolation verification (v5-mitosis cotrain prerequisite)
 domain: pytorch, mitosis, autograd, falsifier, anima-native
-status: candidate-falsifier-ready
+status: partial-stage-2-deferred
+stage_2_verdict: PARTIAL (lit anchor + spec PASS, numerical sim DEFERRED — 별도 cycle)
+stage_2_ts: 2026-05-15
+verdict_artifact: state/verify_a_stage1_2026_05_15/stage2_batch_verdicts.json
 exploration_method: E5 (variable-ablation: torch.no_grad on/off) + E6 (cross-method: split / merge / clone) + E8 (sweep cells ∈ {4, 8, 16, 32, 64})
 verification_method: W5 (numerical sim — anima v5-mitosis nn.ModuleList[Cell] proxy on CPU + autograd hook trace) + W7 (literature — Paszke 2019 PyTorch autograd, Pearlmutter 1995 fast exact multiplication by Hessian) + W11 (cross-H: H_191 SUBSTRATE HCE axis, H_172 α-modulation training)
 raw_rank: 12

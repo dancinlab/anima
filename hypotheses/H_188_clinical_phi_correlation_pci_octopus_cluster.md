@@ -3,7 +3,10 @@ id: H_188
 slug: clinical-phi-correlation-pci-octopus-cluster
 title: Clinical Φ correlation cluster — anima-Φ ↔ PCI (Massimini 2013) + octopus per-arm IIT exclusion-postulate test cluster
 domain: consciousness | neuroscience | clinical | biology | IIT
-status: pre-register-frozen
+status: partial-stage-2-deferred
+stage_2_verdict: PARTIAL (lit anchor + spec PASS, numerical sim DEFERRED — 별도 cycle)
+stage_2_ts: 2026-05-15
+verdict_artifact: state/verify_a_stage1_2026_05_15/stage2_batch_verdicts.json
 exploration_method: E5 (variable-ablation per clinical metric) + E6 (cross-domain anima ↔ biology bridge) + E8 (empirical-sweep across PCI / per-arm Φ paradigms)
 verification_method: W5 (numerical sim — anima proxy) + W7 (literature triangulation — clinical PCI / octopus neuroanatomy) + W11 (cross-hypothesis meta vs H_171 biological 4-prediction parent)
 raw_rank: 14

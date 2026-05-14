@@ -3,7 +3,10 @@ id: H_182
 slug: v8-b-family-bio-inspired-consciousness-bandwidth
 title: V8 B-family meta-cluster — Bio-inspired consciousness-bandwidth axis (transformer/reservoir/thalamic/DMN/global-workspace/predictive/Darwinism/hybrid 10 Hc)
 domain: consciousness | architecture | bio-inspired
-status: pre-register-frozen
+status: insufficient-for-fast-stage-2-audit
+stage_2_verdict: INSUFFICIENT-FOR-FAST-AUDIT (V8 sweep Φ requires GPU fire $200-600)
+stage_2_ts: 2026-05-15
+verdict_artifact: state/verify_a_stage1_2026_05_15/stage2_batch_verdicts.json
 exploration_method: E5 (variable-ablation per V8 cluster) + E8 (empirical-sweep across 10 bio-inspired mechanisms)
 verification_method: W5 (numerical sim — V8 sweep Φ measurements) + W11 (cross-Hc meta — head-to-head bio-mechanism comparison)
 raw_rank: 14

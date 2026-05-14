@@ -179,3 +179,17 @@
 @D verdict_h_190_stage_1 := "H_190 PARTIAL" :: verdict [d=2026-05-15 active]
   hypothesis = "H_190 LAW-CA-embedding mathematical family"
   key = "H_190.7 META 6 sub-Hc 5/6 = n=6 divisor family (σ=12 τ=4 φ=2 sopfr=5): Hc_003 midpoint=6 / Hc_013 6/2=3 / Hc_044 4=τ 2=φ / Hc_047 d=384 (Hc_1282 SUPPORTED) / Hc_060 E=4=τ. Hc_015 gate=0.001 only exception. numerology direction STRONG."
+
+# ── A Stage 2 batch verdict (9 hypotheses fast audit) ────────────────────
+
+@D verdict_a_stage_2_batch := "A Stage 2 batch verdict" :: verdict [d=2026-05-15 active]
+  batch = "A Stage 2 물리학적 — 9 hypothesis fast audit"
+  results = "4 PARTIAL (Hc_1283 + H_188 + H_191 + Hc_1285) + 5 INSUFFICIENT-FOR-FAST-AUDIT (H_182/183/185/186/187 V8 family)"
+  aggregate = "INCONCLUSIVE-FAST — 모든 9 가설이 W5 numerical sim 의존; literature triangulation + spec consistency 만으로 verdict 산출 불가"
+  method = "W5 spec consistency + W7 literature triangulation (실 sim DEFERRED)"
+  wall = "< 2s total Mac local"
+  cost = "$0"
+  artifact = "state/verify_a_stage1_2026_05_15/stage2_batch_verdicts.json"
+  axis-impact = "A5 architecture 100% active 의 모두 (H_182~187) Stage 2 sim deferred; A2 consciousness + A7 bio + A1 substrate 부분 deferred"
+  fast-sim-feasible = "Hc_1283 (PyPhi pip install) + Hc_1285 (PyTorch CPU autograd) — $0 Mac local 별도 cycle 가능"
+  gpu-fire-required = "H_182/183/185/186/187 V8 family ($200-600 estimate)"

@@ -3,7 +3,10 @@ id: H_186
 slug: v8-architectural-family-substrate-design
 title: V8 architectural-family meta-cluster — Substrate-architecture axis (dynamic-graph/neural-gas/transformer-balanced/MoCE-extreme/Φ-as-loss/autopoietic-homeostasis/GAN/V8-hybrid-recommendation 8 Hc)
 domain: consciousness | architecture
-status: pre-register-frozen
+status: insufficient-for-fast-stage-2-audit
+stage_2_verdict: INSUFFICIENT-FOR-FAST-AUDIT (V8 sweep Φ requires GPU fire $200-600)
+stage_2_ts: 2026-05-15
+verdict_artifact: state/verify_a_stage1_2026_05_15/stage2_batch_verdicts.json
 exploration_method: E5 (variable-ablation per architectural choice) + E8 (empirical-sweep)
 verification_method: W5 (numerical sim) + W11 (cross-Hc meta — architectural design head-to-head)
 raw_rank: 14

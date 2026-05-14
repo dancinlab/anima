@@ -3,7 +3,10 @@ id: H_185
 slug: v8-u-family-ultra-fusion-combos
 title: V8 U-family meta-cluster — Universal/Ultra-fusion combos axis (quantum-walk+category-theory / qw+frustration / MW+attention / complex+simplicial / kitchen-sink 5 Hc)
 domain: consciousness | architecture | fusion
-status: pre-register-frozen
+status: insufficient-for-fast-stage-2-audit
+stage_2_verdict: INSUFFICIENT-FOR-FAST-AUDIT (V8 sweep Φ requires GPU fire $200-600)
+stage_2_ts: 2026-05-15
+verdict_artifact: state/verify_a_stage1_2026_05_15/stage2_batch_verdicts.json
 exploration_method: E5 (variable-ablation per V8 U-combo) + E8 (empirical-sweep over mechanism pair combinations)
 verification_method: W5 (numerical sim — fusion Φ) + W11 (cross-Hc meta — combo synergy audit)
 raw_rank: 14

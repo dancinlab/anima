@@ -3,7 +3,10 @@ id: Hc_1283
 slug: h191-substrate-training-3-axis-composition-pyphi-validation
 title: H_191.4 daughter — 3-axis composition (HCE + CPGD + HAL) PyPhi formal IIT Φ > 0.5 validation (substrate-training-integration triadic ALM-free)
 domain: consciousness, architecture, training, integration, ALM-free
-status: candidate-falsifier-ready
+status: partial-stage-2-deferred
+stage_2_verdict: PARTIAL (lit anchor + spec PASS, numerical sim DEFERRED — 별도 cycle)
+stage_2_ts: 2026-05-15
+verdict_artifact: state/verify_a_stage1_2026_05_15/stage2_batch_verdicts.json
 exploration_method: E5 (per-axis ablation: HCE / CPGD / HAL) + E6 (3-axis composition × PyPhi formal IIT cross) + E8 (sweep cells ∈ {4, 8, 16})
 verification_method: W5 (numerical sim — independent PyPhi 1.2.0 IIT 3.0 reference impl) + W7 (literature — Albantakis 2023 IIT 4.0, Mac Lane 1971 categorical theory, Kuramoto 1975 sync) + W11 (cross-H: H_191 ALM-free meta, H_157 mathematical panpsychism, H_153 n=6 triviality null direction)
 raw_rank: 11

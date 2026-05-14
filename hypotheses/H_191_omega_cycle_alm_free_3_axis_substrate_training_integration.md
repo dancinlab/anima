@@ -3,7 +3,10 @@ id: H_191
 slug: omega-cycle-alm-free-3-axis-substrate-training-integration
 title: Ω-cycle ALM-free 3-axis meta-cluster — SUBSTRATE (HCE 0.92) + TRAINING (CPGD 0.95) + INTEGRATION (HAL 0.85) for non-autoregressive consciousness
 domain: consciousness | architecture | training | integration | ALM-free
-status: pre-register-frozen
+status: partial-stage-2-deferred
+stage_2_verdict: PARTIAL (lit anchor + spec PASS, numerical sim DEFERRED — 별도 cycle)
+stage_2_ts: 2026-05-15
+verdict_artifact: state/verify_a_stage1_2026_05_15/stage2_batch_verdicts.json
 exploration_method: E5 (variable-ablation per axis-candidate) + E6 (cross-axis composition — substrate + training + integration triadic dependency) + E8 (paradigm-sweep per axis with confidence rubric)
 verification_method: W5 (numerical sim — anima proxy at confidence-rubric) + W7 (literature triangulation — CSTL Kuramoto / BCM AdS-CFT holographic / categorical Hexad theory) + W11 (cross-hypothesis: sibling to H_188 PHENOMENAL axis, H_153 HCE τ(6)=4)
 raw_rank: 9

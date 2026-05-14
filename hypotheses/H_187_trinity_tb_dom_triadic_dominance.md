@@ -3,7 +3,10 @@ id: H_187
 slug: trinity-tb-dom-triadic-dominance
 title: Trinity / TB / DOM / MECH / GAP meta-cluster — Triadic-dominance axis (12 Hc: trinity-thalamic, tension-balance, dominance-mechanism, MECH champion, GAP closure)
 domain: consciousness | architecture | dominance-pattern
-status: pre-register-frozen
+status: insufficient-for-fast-stage-2-audit
+stage_2_verdict: INSUFFICIENT-FOR-FAST-AUDIT (V8 sweep Φ requires GPU fire $200-600)
+stage_2_ts: 2026-05-15
+verdict_artifact: state/verify_a_stage1_2026_05_15/stage2_batch_verdicts.json
 exploration_method: E5 (variable-ablation per Trinity / TB / DOM / MECH / GAP) + E8 (empirical-sweep over triadic patterns)
 verification_method: W5 (numerical sim — V8 Trinity/TB/DOM sweep) + W11 (cross-Hc meta)
 raw_rank: 14

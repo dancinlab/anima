@@ -3,7 +3,10 @@ id: H_183
 slug: v8-q-family-quantum-substrate-axis
 title: V8 Q-family meta-cluster — Quantum-substrate axis (complex-valued/quantum-walk/decoherence Orch-OR/many-worlds/quantum-law tradeoff 5 Hc)
 domain: consciousness | architecture | quantum-inspired
-status: pre-register-frozen
+status: insufficient-for-fast-stage-2-audit
+stage_2_verdict: INSUFFICIENT-FOR-FAST-AUDIT (V8 sweep Φ requires GPU fire $200-600)
+stage_2_ts: 2026-05-15
+verdict_artifact: state/verify_a_stage1_2026_05_15/stage2_batch_verdicts.json
 exploration_method: E5 (variable-ablation per V8 Q-mechanism) + E6 (cross-domain: physics ↔ consciousness) + E8 (empirical-sweep)
 verification_method: W5 (numerical sim — V8 Q-sweep Φ measurements) + W11 (cross-Hc meta — Q-mechanism head-to-head)
 raw_rank: 14
