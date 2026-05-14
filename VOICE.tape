@@ -33,11 +33,15 @@
 
 @D row_voice_intent_proj_2 :: voice [ok]
   x = "anima hidden state → intent vector projection"
-  state = "⏳ design pending (이 file §2.2)"
+  state = "✅ Phase 1 LANDED 2026-05-14 (`tool/anima_voice_smoke.hexa`, F-VOICE-1..5 5/5 PASS)"
 
 @D row_voice_chat_slash_3 :: voice [ok]
   x = "anima_chat `/voice` slash command wire"
-  state = "⏳ Phase 1 pending"
+  state = "⏳ Phase 2 — anima_chat.hexa token-loop 안 voice_emit hook 추가 + CoreAudio playback"
+
+@D row_voice_phase1_landed_6 :: voice [ok]
+  x = "**Phase 1 formulaic impl + F-VOICE-1..5 selftest**"
+  state = "✅ LANDED 2026-05-14 — `tool/anima_voice_smoke.hexa` (combined intent_proj + voice_bridge + silent_timbre + synth_stub + 5/5 PASS, Mac local $0 ~30 min wall)"
 
 @D row_voice_learned_retracted_4 :: voice [ok]
   x = "~~learned RVQ + Vocos/EnCodec~~"
