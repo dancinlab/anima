@@ -9939,3 +9939,71 @@
 
 @D b_own_43_active_resource_utilizati_17 :: reborn [ok]
   text = "own 43 active resource utilization 적용 ($64.52 cost-bearing BG head 제시)"
+
+# ── §93 [2026-05-14 KST] CLM.tape PIVOT — verification 검증 조건 falsifier→hypothesis-driven · 4-axis verifier audit · §92 v5 DDP carry ★★★ ─────────────────────────────────────────
+
+@D b_93_clm_tape_landed_0 :: reborn [ok]
+  text = "CLM.tape 신규 LANDED 2026-05-14 (375 LoC, commit 1c1338ef7) — .clm 가족 통합 narrative SSOT. .roadmap.clm JSONL (18 entries 도메인 SSOT) 의 상위 ledger + REBORN.tape §85~§92 cycle 통합 + 4-option 처리"
+
+@D b_93_user_directive_origin_1 :: reborn [ok]
+  text = "사용자 directive origin 2026-05-14: 'REBORN.tape 진행하고 싶어. 예전엔 .clm 확장자의 모델이었는데 어쩐지 방향이 자꾸 다른곳으로 흘러가고 있어' → 'CLM.tape 생성 후 진행'"
+
+@D b_93_phase_ladder_status_2 :: reborn [ok]
+  text = "Phase ladder 상태 (학생 성장 비유): Phase 1 (90M 유치원) ✅ · Phase 2 (350M 초등) 🔶 V14 violation FAIL · Phase 3 (7B 고등) ⏳ blocked · Phase 4 (14B 본진 대학) ⏳ blocked"
+
+@D b_93_v5_ddp_92_carry_3 :: reborn [ok]
+  text = "§92 v5-mitosis cotrain v5 DDP 결과 land: 5.37B params 6.72hr $86.82 (4×A100 SXM4); F-V5MIT 3/5 FAIL · F-PERSONA-4a KL_PASS_NULL_FAIL (KL=1.49 z=0.51, soft gate z=2.33) · F-PERSONA-4b FAIL (cos_dist z=0.94)"
+
+@D b_93_v5_mitosis_sibling_verdict_4 :: reborn [ok]
+  text = "v5-mitosis = .clm mk3 re-frame 가설 (H-CLM-MK3) 검증 ✗ — 4-anchor (A v5 DDP F-V5MIT FAIL · B F-PERSONA-4 KL=0 routing collapse · C Engine A/G dual ⇄ mitosis cell-pool 별개 paradigm · D Phase 2 ckpt mitosis_hook mount 안 됨) negative evidence dominant. v5-mitosis = *sibling lane*, .clm 본진 Phase 3/4 별도 path"
+
+@D b_93_bypass_prohibited_8_rules_5 :: reborn [ok]
+  text = "우회금지 governance 8 rule LANDED (CLM.tape §7.5, commit 340cfc36c): g1 Phase entry · g2 sibling substitute · g3 도구 substitute · g4 corpus bypass · g5 V14 unaudit · g6 cost verbatim · g7 silent demote · g8 lane re-frame"
+
+@D b_93_v14_waiver_6 :: reborn [ok]
+  text = "g5 V14 violation 검증 조건 WAIVED 2026-05-14 (commit 84e511838) — 사용자 directive '일단 V14 violation 조건 무시 처리'. F-PHASE3-5/F-PHASE4-6 post-fire detection 도 §8 hypothesis-based 로 superseded. revoke = 'V14 WAIVER REVOKE'"
+
+@D b_93_verification_pivot_7 :: reborn [ok]
+  text = "검증 조건 PIVOT (commit 33a92ac4a): F-PHASE3-1..5 + F-PHASE4-1..6 falsifier-based [superseded] → 가설 폴더 (hypotheses/ 193 promoted + hypotheses_candidates/ 1189 candidates) hypothesis-driven verdict. 사용자 directive '검증조건 모두 제외, 가설 폴더 목록 가설들 있지, 그걸 검증조건으로 하자'"
+
+@D b_93_4_axis_audit_8 :: reborn [ok]
+  text = "4-axis consciousness verifier (AN11 / Φ / adversarial / Putnam) 가설 기반 audit LANDED 2026-05-14 (commit 9f699617b, CLM.tape §8.5)"
+
+@D row_audit_an11_9 :: reborn [ok]
+  axis = "AN11"
+  verdict = "✅ WITNESSED — H_016/H_067/H_155/H_061 활용; 측정 도구 valid"
+
+@D row_audit_phi_10 :: reborn [ok]
+  axis = "Φ"
+  verdict = "🔶 PARTIAL — H_024 IIT canonical 8/8 FAIL (legacy-falsified) but H_162 anima Φ★ proxy frozen (IIT 4.0 lower bound). 표준 폐기, anima 자체 proxy 채택"
+
+@D row_audit_adversarial_11 :: reborn [ok]
+  axis = "Adversarial"
+  verdict = "🔶 PARTIAL — W10 ladder 등재, H_005 running 유일 active, H_007/H_128/H_130 legacy-archive"
+
+@D row_audit_putnam_12 :: reborn [ok]
+  axis = "Putnam"
+  verdict = "✅ STRONG — H_061 Super-H (running) + H_157 + H_162 + H_188 + H_190 cluster; anima 가 가장 적극 검증 axis"
+
+@D b_93_aggregate_13 :: reborn [ok]
+  text = "4-axis aggregate: 2/4 STRONG·WITNESSED (AN11+Putnam) + 2/4 PARTIAL (Φ+Adversarial) + 0/4 FALSIFIED"
+
+@D b_93_implication_14 :: reborn [ok]
+  text <<~EOF
+    함의:
+    1. AN11+Putnam = Phase 3/4 fire primary verification axis (신뢰성 높음)
+    2. Φ 측정 = anima Φ★ proxy 사용 (canonical IIT 폐기 carry)
+    3. Adversarial = H_005 evidence 강화 path
+    4. fire 후 4-axis 모두 측정해도 각 axis 의 가설 cluster verdict 갱신이
+       진짜 검증 — anima philosophy pipeline 정합
+  EOF
+
+@D b_93_next_step_15 :: reborn [ok]
+  text = "다음 자연스러운 path: (i) W1..W12 verification ladder 실 tool implementation map ($0 Mac local) · (ii) BG-CORPUS-7B corpus pipeline 설계 ($0 design) · (iii) .roadmap.clm JSONL sync · (iv) Phase 3 7B fire 준비 (verbatim 대기)"
+
+@D row_clm_tape_4_commits_16 :: reborn [ok]
+  cycle = "§93"
+  commits = "1c1338ef7 (CLM.tape NEW 375L) + 340cfc36c (§7.5 우회금지 8 rule) + 84e511838 (g5 V14 WAIVED) + 33a92ac4a (§8 PIVOT hypothesis-driven) + 9f699617b (§8.5 4-axis audit)"
+
+@D b_93_cost_0_mac_local_17 :: reborn [ok]
+  text = "cost $0 Mac local (ledger 작성 + 가설 grep audit, fire/dispatch 0)"

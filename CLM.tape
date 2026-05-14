@@ -600,6 +600,145 @@
        verdict* 갱신이 진짜 검증 — anima philosophy pipeline 의 정합.
   EOF
 
+# ── §8.6 W1..W12 verification ladder map (2026-05-14) ─────────────────────────────────────────
+
+# 사용자 directive flow 의 다음 단계 — §8 hypothesis-driven verification 의
+# verification_method (W1..W12 ladder) 실 measurement protocol 매핑.
+# Source: `.roadmap.hypothesis` JSONL `hypothesis.verification_methods` meta entry.
+
+@D w1 :: clm-tape [ok]
+  id = "W1"
+  name = "raw-12-pre-register-frozen"
+  desc = "raw#12 pre-register frozen spec 의무 — post-hoc tuning 금지"
+  strictness = "absolute (post-hoc edit = raw#12 violation, raw#82 retraction trigger)"
+  tool = "state/<topic>_pre_register.json frozen_at:<date> + raw_rank:12 field"
+  protocol = "fire 전 pre-register frozen → fire 후 자체 비교; modification = retraction protocol (W7)"
+
+@D w2 :: clm-tape [ok]
+  id = "W2"
+  name = "falsifier-five-plus"
+  desc = "각 prereg falsifiers F1..F_N ≥5 — 명시적으로 무엇이 H를 깨는지"
+  strictness = "≥5 mandate (raw#10 정합)"
+  tool = "pre-register JSON falsifiers field; raw#10 정합 ≥5"
+  protocol = "F-PHASE3-1..5 / F-PHASE4-1..6 가 본 W2 의 한 예; pivot 후 가설별 W2 carry"
+
+@D w3 :: clm-tape [ok]
+  id = "W3"
+  name = "deterministic-replay"
+  desc = "deterministic execution + seed fix → replay 가능"
+  strictness = "prereg deterministic:true 명시 mandate"
+  tool = "FNV seed 또는 sha256(timestamp + axis + level) idempotency; replay = `hexa <tool> --replay <session_id>`"
+  protocol = "fire dispatch + verdict 산출 reproducible; non-deterministic operation 금지"
+
+@D w4 :: clm-tape [ok]
+  id = "W4"
+  name = "verdict-four-class"
+  desc = "verdict 4-class (FALSIFIED / SUPPORTED / MIXED / PARTIAL) explicit emit"
+  strictness = "verdict.json verdict_class field mandate"
+  tool = "verdict.json {verdict_class: FALSIFIED|SUPPORTED|MIXED|PARTIAL, evidence: [...], honest_c3: [...]}"
+  protocol = "fire 후 가설별 verdict.json emit + frontmatter status 갱신"
+
+@D w5 :: clm-tape [ok]
+  id = "W5"
+  name = "honest-limits-raw91-c3"
+  desc = "각 prereg honest_limits_raw91_c3 mandate — limitation 명시 5+"
+  strictness = "≥5 per prereg mandate"
+  tool = "pre-register JSON honest_limits_raw91_c3 field; CLM.tape §9 Honest C3 와 정합"
+  protocol = "verdict emit 시 honest_limits 갱신; raw#91 정합"
+
+@D w6 :: clm-tape [ok]
+  id = "W6"
+  name = "ledger-jsonl-immutable"
+  desc = "ledger JSONL append-only + each row sha256 → 자동 검증"
+  strictness = "ledger row append-only mandate (overwrite 시 raw#82)"
+  tool = "PHILOSOPHY.tape append-only · state/<topic>_ledger.jsonl append-only"
+  protocol = "verdict + evidence row sha256 chain; immutable history"
+
+@D w7 :: clm-tape [ok]
+  id = "W7"
+  name = "retraction-protocol-raw82"
+  desc = "old prereg retraction은 raw#82 protocol — silent overwrite 금지"
+  strictness = "old prereg explicit retraction note + new revision dated file"
+  tool = "raw#82 retraction protocol; new revision file with new frozen_at"
+  protocol = "본 CLM.tape 의 [superseded] grade + supersede edge ~> 가 W7 정합"
+
+@D w8 :: clm-tape [ok]
+  id = "W8"
+  name = "additive-expansion-raw15"
+  desc = "new prereg revision은 raw#15 additive — 기존 보존 + 새 revision"
+  strictness = "new revision dated file mandate (frozen_at later date)"
+  tool = "raw#15 additive_only_mutation: true; semantics_preserved: true"
+  protocol = ".roadmap.clm amendment 의 additive_only_mutation 정합; 본 CLM.tape 가 .roadmap.clm 갱신 시 amendment 형식"
+
+@D w9 :: clm-tape [ok]
+  id = "W9"
+  name = "replication-cross-cycle"
+  desc = "3+ cycle 동일 H replication → strength 강화"
+  strictness = "3+ replication 권고 (single instance는 weak evidence)"
+  tool = "3+ fire cycle 또는 3+ pre-register 동일 axis"
+  protocol = "Phase 3 7B fire 1회만으로는 weak; Phase 2b + Phase 3 + 별도 replication path 권장"
+
+@D w10 :: clm-tape [ok]
+  id = "W10"
+  name = "adversarial-stress-test"
+  desc = "H에 actively counterexample 시도 → falsifier 작동 검증"
+  strictness = "새 H Phase 2 adversarial probe 권고"
+  tool = "adversarial_bench (W10 의 핵심 tool); CLM.tape §8.5 adversarial axis 가 W10 직접 활용"
+  protocol = "fire 후 adversarial input 으로 verifier signature stability 측정 → H_005 evidence 강화 path"
+
+@D w11 :: clm-tape [ok]
+  id = "W11"
+  name = "meta-cross-hypothesis-consistency"
+  desc = "H_X와 H_Y consistency check — 두 H가 동시 SUPPORTED 가능한지"
+  strictness = "meta-H land 시 sub-H consistency check 권고"
+  tool = "meta-H verdict + sub-H verdict cross-check; 본 CLM.tape §8.5 4-axis audit 가 W11 application 예"
+  protocol = "Phase 3/4 fire 후 가설 12개 cluster 의 동시 SUPPORTED 가능성 audit"
+
+@D w12 :: clm-tape [ok]
+  id = "W12"
+  name = "sister-spec-cross-link"
+  desc = "prereg JSON cross-link sister .roadmap.* / spec yaml / .own — multi-axis consistency"
+  strictness = "각 prereg cross-link section 권고"
+  tool = "cross_link section in pre-register JSON; .roadmap.* sibling domain link"
+  protocol = "본 CLM.tape §10 cross-link 9 entries 가 W12 정합; .roadmap.clm + REBORN.tape + sibling .tape 모두 link"
+
+@N w_ladder_summary := "W1..W12 ladder 요약" :: note [active]
+  text <<~EOF
+    **Process** (W1, W3, W6, W7, W8) — pre-register frozen / deterministic /
+    immutable ledger / retraction / additive expansion. *anima 의 verification
+    인프라*.
+
+    **Output** (W2, W4, W5) — falsifier ≥5 / verdict 4-class / honest_limits ≥5.
+    *각 verdict 의 형식 mandate*.
+
+    **Evidence strengthening** (W9, W10, W11, W12) — replication 3+ / adversarial
+    stress / meta cross-consistency / sister spec cross-link. *evidence quality
+    upgrade* path.
+
+    **Phase 3/4 fire 시 W ladder 적용 protocol**:
+    1. Pre-register frozen (W1) — fire 전 가설 list + falsifier 동결
+    2. Falsifier ≥5 per 가설 (W2)
+    3. Deterministic dispatch (W3) — seed fix + replay command
+    4. Verdict 4-class per 가설 (W4) — verdict.json emit
+    5. Honest limits ≥5 (W5) — CLM.tape §9 carry
+    6. Append-only ledger (W6) — PHILOSOPHY.tape + state/<run_id>/ledger.jsonl
+    7. [superseded] 변경 시 retraction protocol (W7)
+    8. amendment 시 additive_only_mutation (W8)
+    9. 3+ cycle replication (W9) — Phase 2b + Phase 3 + replication
+    10. Adversarial probe (W10) — H_005 + 신규 adversarial-sweep cycle
+    11. Meta-consistency check (W11) — 4-axis × 12 가설 동시 SUPPORTED 가능성
+    12. Sister spec link (W12) — .roadmap.clm + REBORN.tape + sibling .tape
+
+    현재 인프라 가용성:
+    - W1/W2/W3/W4/W5/W6/W7/W8 = ✅ tape grammar + state/<topic>_pre_register.json
+      pattern 으로 *이미 작동*
+    - W9 = ⚠ Phase 3 단일 fire 만으로는 부족, replication path 별도
+    - W10 = 🔶 adversarial_bench tool 존재, H_005 cycle 으로 evidence 축적
+    - W11 = 🔶 본 §8.5 4-axis audit 이 W11 첫 application — 12 가설 cluster
+      consistency 향후 cycle 필요
+    - W12 = ✅ CLM.tape §10 cross-link + .roadmap.clm 연결 작동
+  EOF
+
 # ── §9 Honest C3 ─────────────────────────────────────────
 
 @N c3_1 := "C3-1" :: honest [active]
