@@ -122,7 +122,9 @@ echo "[4/8] Uploading files via DIRECT port..."
 $SSH_CMD 'mkdir -p /workspace/anima/training /workspace/anima/corpus /workspace/anima/ckpts /workspace/anima/output'
 
 echo "  [4a] training scripts (small)..."
-$SCP_CMD "$LOCAL_DIR/$TRAIN_SCRIPT" "$LOCAL_DIR/v58_4mode_eval.py" "$TRAINING_DIR/engine_a_g_arch.py" "root@$SSH_HOST:/workspace/anima/training/"
+TRAIN_SCRIPT_DIR="${TRAIN_SCRIPT_DIR:-$LOCAL_DIR}"
+EVAL_SCRIPT_DIR="${EVAL_SCRIPT_DIR:-$LOCAL_DIR}"
+$SCP_CMD "$TRAIN_SCRIPT_DIR/$TRAIN_SCRIPT" "$EVAL_SCRIPT_DIR/v58_4mode_eval.py" "$TRAINING_DIR/engine_a_g_arch.py" "root@$SSH_HOST:/workspace/anima/training/"
 
 echo "  [4b] corpus (~700KB)..."
 $SCP_CMD "$LOCAL_DIR/$CORPUS_FILE" "root@$SSH_HOST:/workspace/anima/corpus/"
