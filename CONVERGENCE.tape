@@ -41,6 +41,12 @@
 @V := "tape" :: spec [active]
   version = "1.2"
 
+@I id001 := "anima.convergence" :: identity-claim [d=2026-05-15 active]
+  kind = "anima convergence-cycle milestone projection · architecture SSOT"
+  brief = "honesty-triad C3-closure precondition + Ψ=1/2 fixed-point target. Live records in ~/core/anima/convergence/*.convergence."
+  parent = "dancinlab/anima"
+  sibling-log = "CONVERGENCE.log.tape"
+
 # ══════════════════════════════════════════════════════════════
 # CONVERGENCE.tape — recent anima convergence-cycle events
 #
@@ -56,19 +62,3 @@
 @D c2 := "convergence.psi_half_target" :: convergence [d=2026-05-14 ok]
   text = "Ψ=1/2 fixed-point convergence as the canonical target"
   proof = "state/format_witness/*.jsonl (witness rows)"
-
-@A r29_atlas_convergence_witness :: convergence [d=2026-04-28 ok]
-  <- c1, c2
-  => "Pilot B — atlas_convergence_witness.jsonl re-measured for HXC r29 cohort (Class-M 29.66%)"
-
-@A raw_109_126_propagation_anima :: convergence [d=2026-04-30 ok]
-  <- r29_atlas_convergence_witness
-  => "raw 109..126 propagation arm — anima side of cross-repo absorption (cf. hive/airgenome/hexa-lang sibling .convergence)"
-
-@A h100_stage_sweep :: convergence [d=2026-05-05 ok]
-  <- raw_109_126_propagation_anima
-  => "H100 stage-launch sweep — state/convergence/anima/h100_stage* records the launch attempts + blocker-resolution chain"
-
-@A eeg_d_day :: convergence [d=2026-05-12 ok]
-  <- h100_stage_sweep
-  => "EEG d-day session — cross-domain bridge to hexa-brain via PROJECT::DOMAIN namespace"
