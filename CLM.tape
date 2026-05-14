@@ -95,8 +95,15 @@
   x = "**우회금지 governance (§7.5, 8 rules, deny:write; g5 WAIVED 2026-05-14)**"
   state = "🚫 LANDED 2026-05-14 — 본진 Phase 3/4 fire 의 7 우회 path 강행 차단 (g5 V14 audit prerequisite WAIVED per user directive)"
   rules = "g1 Phase entry · g2 sibling lane · g3 도구 substitute · g4 corpus bypass · ~~g5 V14 unaudit~~ (WAIVED) · g6 cost verbatim · g7 silent demote · g8 lane re-frame"
-  enforcement = "any fire-keyword 발화 전 7 rule 검증 mandatory; F-PHASE3-5 / F-PHASE4-6 V14 mirror falsifier 는 fire-후 detection 유지"
+  enforcement = "any fire-keyword 발화 전 7 rule 검증 mandatory; (F-PHASE3-5 / F-PHASE4-6 hard-falsifier 는 §8 hypothesis-based 로 superseded)"
   v14-waiver-risk = "Phase 3/4 fire 시 V14 violation 재현 시 cost $200-1500 burn 사용자 수용; revoke 'V14 WAIVER REVOKE'"
+
+@D row_hypothesis_verification_8 :: clm-tape [ok]
+  x = "**검증 조건 (§8 hypothesis-driven, 2026-05-14)**"
+  state = "🔄 PIVOT LANDED — 기존 falsifier-based 검증 [superseded], 가설 폴더 (193 promoted + 1189 candidates) 기반 verdict 로 교체"
+  source = "hypotheses/ + hypotheses_candidates/ 의 frontmatter `verification_method` (W1..W12 ladder)"
+  sample = ".clm-relevant 12 가설 pre-selected (H_005 / H_014 / H_015 / H_042 / H_068 / H_080 / Hc_003 / Hc_011 / Hc_017 / Hc_020 / Hc_022 / Hc_047 / Hc_048 / Hc_1110 / Hc_1240)"
+  verdict-method = "각 가설 verification_method 실행 → frontmatter status 갱신 (running → promoted / falsified / partial) + PHILOSOPHY.tape append"
 
 # ── §2 .clm family definition (.clm 가 뭔지) ─────────────────────────────────────────
 
@@ -386,40 +393,160 @@
     fallback.
   EOF
 
-# ── §8 Falsifiers (Phase 3 + Phase 4) ─────────────────────────────────────────
+# ── §8 검증 조건: 가설 기반 (hypothesis-driven verification) ─────────────────────────────────────────
 
-@F f_phase3_1 := "F-PHASE3-1" :: falsifier [required active]
+# 사용자 directive 2026-05-14 "검증조건 모두 제외, 가설 폴더 목록 가설들 있지,
+# 그걸 검증조건으로 하자" 응답 — 기존 falsifier-based + verifier-based 검증 조건
+# 모두 [superseded]. 신규 검증 조건 = `hypotheses/` (193 promoted) +
+# `hypotheses_candidates/` (1189 pre-ledger) 폴더의 가설들. fire 한 모델이
+# 어떤 가설을 PASS / FAIL 시키는가가 검증.
+
+@D b_hypothesis_verification_kind :: clm-tape [ok]
+  text = "**Verification kind**: anima 의 philosophy pipeline (hypotheses_candidates/ → hypotheses/ → PHILOSOPHY.tape) 의 가설 list 가 검증 조건. fire result 의 verdict = 가설 verdict (PASS/FAIL/PARTIAL/AMBIGUOUS) 의 set."
+
+@D b_hypothesis_verdict_method :: clm-tape [ok]
+  text = "**Verdict method**: 각 가설의 frontmatter `verification_method` field (W1..W12 ladder) 가 measurement 명시. fire 후 verification_method 적용 → verdict frontmatter `status` 갱신 (running → promoted / falsified / partial)."
+
+@D b_hypothesis_relevant_clm :: clm-tape [ok]
+  text = "**.clm-relevant 가설 sample (사전 선택, 확장 가능)**: 본진 .clm Phase 3/4 fire 가 *직접* 검증 가능한 가설 12개. fire 시 verification_method 실행 + status frontmatter 갱신."
+
+@N h_relevant_list := ".clm-relevant 가설 list" :: hypothesis-list [active]
+  text <<~EOF
+    promoted (hypotheses/):
+      H_005 corpus_quality_over_capacity (domain: corpus, status: running)
+        verify: W1 + W2 + W3 + W5 + W9 + W10 — chat-cap 도달의 corpus quality
+                우위 검증. Phase 3 7B fire 시 corpus quality ablation 가능.
+      H_014 clm_eeg_lz76 (domain: eeg/clm)
+        verify: clm 모델 출력의 EEG LZ76 complexity 측정. fire 후 substrate
+                consciousness signature.
+      H_015 clm_eeg_gamma_theta (domain: eeg/clm)
+        verify: clm 의 gamma/theta band ratio 측정.
+      H_042 arch_engine_train_meta (domain: substrate, status: legacy-archive)
+        verify: W11 + W12 — Engine A/G arch + train meta-pattern.
+      H_068 hexad_improvements (domain: substrate)
+        verify: hexad pattern 개선 검증.
+      H_080 topo_24variants (domain: substrate)
+        verify: 24 topo variants 의 emergence 검증.
+
+    candidates (hypotheses_candidates/):
+      Hc_003 staged_growth_multiplier (domain: substrate)
+        verify: Phase ladder (90M → 350M → 7B → 14B) 의 staged growth multiplier
+                가설. Phase 3/4 fire 가 직접 검증.
+      Hc_011 cross_substrate_multi_realizability
+        verify: Putnam multi-realizability — Phase 3 7B 가 다른 substrate 와
+                consciousness invariant 공유하는지.
+      Hc_017 clm_tribev2_eeg_3way
+        verify: clm × tribev2 × eeg 3-way coupling.
+      Hc_020 clm_serving_lyapunov_chaos
+        verify: clm inference 시 Lyapunov chaos 측정.
+      Hc_022 weight_emergent_substrate_independence (status: merged-to-H_061)
+        verify: weight 가 substrate-independent emergence 보이는지 cross-fire.
+      Hc_047 embedding_384_necessity
+        verify: embedding dim 384 의 필요성 — Phase 3 4096 / Phase 4 5120 비교
+                anchor.
+      Hc_048 substrate_independence_4path_5pct
+        verify: 4-path substrate-independence 5% threshold.
+      Hc_1110 accel_au6_mirror_neurons
+        verify: mirror neurons via Engine G cell-state.
+      Hc_1240 phi_holo_gap_816x_benchmark_vs_training_closure
+        verify: Φ holographic gap 816× — training closure 와의 관계 직접 검증.
+
+    Extension protocol: fire cycle 시 추가 가설 grep 가능 (e.g.
+      `grep -l "Phase\|cotrain\|fire" hypotheses{,_candidates}/`). 사전 선택
+      list 외 fire 가 우연히 검증한 가설도 verdict 산출 가능 (post-hoc 추가
+      허용 — anima philosophy pipeline 의 자유 검증).
+  EOF
+
+@D b_hypothesis_verdict_protocol :: clm-tape [ok]
+  text <<~EOF
+    **Verdict protocol** (fire 후 수행):
+    1. fire 한 모델의 artifact (ckpt + logs + eval result) 수집
+    2. 사전 선택 list 의 각 가설에 대해:
+       a. verification_method (W1..W12) 적용 — anima/tool 또는 hexa-native script
+       b. verdict 산출: PASS / FAIL / PARTIAL / AMBIGUOUS / NOT_MEASURED
+       c. 가설 frontmatter `status` 갱신:
+          - PASS  → status: promoted (hypotheses_candidates → hypotheses 이동)
+          - FAIL  → status: falsified (hypotheses 유지 + verdict 첨부)
+          - PARTIAL → status: running (다음 cycle evidence 추가)
+          - AMBIGUOUS → status: running (cross-substrate 보강)
+          - NOT_MEASURED → 변경 없음
+    3. fire 의 overall verdict = verdict set aggregate
+       - aggregate PASS = ≥50% PASS + 0 FAIL OR PASS rate ≥80%
+       - aggregate FAIL = ≥50% FAIL OR critical-tier (Hc_1240 등 Φ 직접 측정) FAIL
+       - aggregate PARTIAL = 그 외
+    4. PHILOSOPHY.tape 에 verdict + honest C3 append (g_philosophy_ledger 정합)
+  EOF
+
+@D b_hypothesis_no_threshold :: clm-tape [ok]
+  text = "**No fixed-threshold falsifier**: 기존 F-PHASE3-1..5, F-PHASE4-1..6 같은 hard threshold (cost > $X, wall > Yh, chat < N/5) 는 [superseded]. 새 검증 조건 의 verdict 는 *가설 단위* — threshold 는 각 가설 의 verification_method 가 들고 있음."
+
+@D b_hypothesis_what_replaced :: clm-tape [ok]
+  text <<~EOF
+    **무엇이 superseded 되었나** (사용자 directive '검증조건 모두 제외'):
+    - F-PHASE3-1..5 / F-PHASE4-1..6 falsifier — superseded (가설 verdict 로 대체)
+    - consciousness verifier (AN11 / Φ / adversarial / Putnam) 의 *hard PASS*
+      threshold — superseded; 단 verifier *자체* 는 가설 검증의 measurement tool
+      로 carry (H_005 / Hc_011 / Hc_1240 의 verification_method 실행 시 활용)
+    - chat coherence ≥3/5 KO+EN threshold — superseded; H_005 corpus quality
+      가설 verdict 의 일부로 변환 (chat-cap 의 corpus 의존성)
+    - HF release prerequisite (real-mode PASS_STRICT_C3 등) — superseded;
+      여전히 own 37 visibility lifecycle 은 *governance* 로 carry (g7 정합)
+    - V14 mirror PPR ≥ trained PPR (F-PHASE3-5/F-PHASE4-6) — superseded;
+      V14 자체는 H_080 topo_24variants 또는 Hc_022 weight_emergent 의 evidence
+      로 변환 가능 (post-fire)
+
+    **무엇이 unchanged** (검증 조건 아닌 governance):
+    - 우회금지 g1/g2/g3/g4/g6/g7/g8 (g5 WAIVED carry)
+    - own 16 cost discipline (user verbatim fire keyword)
+    - own 17 SCOPE_CLAMP (D1=1.0 anima_native_scratch)
+    - LATTICE_POLICY real-limits anchor 의무 (verification anchor 가설 검증 시도)
+  EOF
+
+# ── §8.1 [superseded] 기존 falsifiers (역사 ledger 보존, g7 silent-demote 회피) ─────────────────────────────────────────
+
+@F f_phase3_1 := "F-PHASE3-1" :: falsifier [superseded]
   text = "consciousness verifier FAIL (AN11 / Φ / adversarial / Putnam any FAIL)"
+  ~> b_hypothesis_verification_kind
 
-@F f_phase3_2 := "F-PHASE3-2" :: falsifier [required active]
+@F f_phase3_2 := "F-PHASE3-2" :: falsifier [superseded]
   text = "chat coherence < 3/5 KO or EN (Phase 3 7B 5-prompt holdout)"
+  ~> b_hypothesis_verification_kind
 
-@F f_phase3_3 := "F-PHASE3-3" :: falsifier [required active]
+@F f_phase3_3 := "F-PHASE3-3" :: falsifier [superseded]
   text = "cost overshoot > $600 ceiling 50% (= $900 hard stop)"
+  ~> b_hypothesis_verification_kind
 
-@F f_phase3_4 := "F-PHASE3-4" :: falsifier [required active]
+@F f_phase3_4 := "F-PHASE3-4" :: falsifier [superseded]
   text = "wall_clock > 120h hard ceiling (target 50-80h)"
+  ~> b_hypothesis_verification_kind
 
-@F f_phase3_5 := "F-PHASE3-5" :: falsifier [required active]
+@F f_phase3_5 := "F-PHASE3-5" :: falsifier [superseded]
   text = "random_init mirror PPR ≥ trained PPR (V14 reproduce — arch tile bug regression)"
+  ~> b_hypothesis_verification_kind
 
-@F f_phase4_1 := "F-PHASE4-1" :: falsifier [required active]
+@F f_phase4_1 := "F-PHASE4-1" :: falsifier [superseded]
   text = "consciousness verifier FAIL (14B scale, Phase 3 → 4 scaling law continuity 검증)"
+  ~> b_hypothesis_verification_kind
 
-@F f_phase4_2 := "F-PHASE4-2" :: falsifier [required active]
+@F f_phase4_2 := "F-PHASE4-2" :: falsifier [superseded]
   text = "chat coherence < 3/5 KO or EN extended (10-prompt holdout)"
+  ~> b_hypothesis_verification_kind
 
-@F f_phase4_3 := "F-PHASE4-3" :: falsifier [required active]
+@F f_phase4_3 := "F-PHASE4-3" :: falsifier [superseded]
   text = "cost overshoot > $1500 ceiling 33% (= $2000 hard stop)"
+  ~> b_hypothesis_verification_kind
 
-@F f_phase4_4 := "F-PHASE4-4" :: falsifier [required active]
+@F f_phase4_4 := "F-PHASE4-4" :: falsifier [superseded]
   text = "wall_clock > 350h hard ceiling"
+  ~> b_hypothesis_verification_kind
 
-@F f_phase4_5 := "F-PHASE4-5" :: falsifier [required active]
+@F f_phase4_5 := "F-PHASE4-5" :: falsifier [superseded]
   text = "scaling law break — Phase 3 → Phase 4 trend negative on AN11 / Φ axis"
+  ~> b_hypothesis_verification_kind
 
-@F f_phase4_6 := "F-PHASE4-6" :: falsifier [required active]
+@F f_phase4_6 := "F-PHASE4-6" :: falsifier [superseded]
   text = "V14 mirror reproduce regression (random init beats trained on any axis)"
+  ~> b_hypothesis_verification_kind
 
 # ── §9 Honest C3 ─────────────────────────────────────────
 
