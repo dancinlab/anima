@@ -41,6 +41,12 @@
 @V := "tape" :: spec [active]
   version = "1.2"
 
+@I id001 := "anima.tension-link" :: identity-claim [d=2026-05-15 active]
+  kind = "anima Engine-A ↔ Engine-G substrate tension / link inter-anima meta-telepathy · architecture SSOT"
+  brief = "5-channel fingerprint (concept · context · meaning · authenticity · sender) over UDP 9999 / WebSocket TensionHub — substrate-native, language-bypass."
+  parent = "dancinlab/anima"
+  sibling-log = "TENSION-LINK.log.tape"
+
 # ══════════════════════════════════════════════════════════════
 # TENSION-LINK.tape — Tension Link inter-anima meta-telepathy
 # ══════════════════════════════════════════════════════════════
@@ -57,29 +63,6 @@
 # raw, TensionHub 가 multi-anima broadcast. **Phase 1 = unidirectional UDP working code
 # 이미 anima_clm_02 worktree 에 있음**. Phase 2 = WebSocket TensionHub 로 *다중* anima
 # 인스턴스 broadcast — 미구현, 본 file 의 design tier 대상.
-
-# ── §1 Status (2026-05-14) ─────────────────────────────────────────
-
-
-@D row_phase_1_unidirectional_udp_9999_0 :: tension-link [ok]
-  x = "**Phase 1 unidirectional UDP 9999**"
-  state = "✅ working code (`anima_clm_02` worktree, memory `project_hexa_family_layout`)"
-
-@D row_phase_2_websocket_tensionhub_1 :: tension-link [ok]
-  x = "**Phase 2 WebSocket TensionHub**"
-  state = "⏳ design pending (이 file)"
-
-@D row_5_channel_fingerprint_spec_2 :: tension-link [ok]
-  x = "5-channel fingerprint spec"
-  state = "☑ defined (concept / context / meaning / authenticity / sender)"
-
-@D row_anima_experience_hf_space_wire_3 :: tension-link [ok]
-  x = "anima-experience HF Space wire"
-  state = "⏳ Phase 2 의존 (memory `project_anima_experience_space`)"
-
-@D row_substrate_native_no_text_decode_4 :: tension-link [ok]
-  x = "substrate-native (NO text decode)"
-  state = "☑ 정책 — receiving anima 는 tension vector 그대로 internal state 에 inject"
 
 # ── §2 Design ─────────────────────────────────────────
 
