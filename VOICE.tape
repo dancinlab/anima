@@ -37,7 +37,15 @@
 
 @D row_voice_chat_slash_3 :: voice [ok]
   x = "anima_chat `/voice` slash command wire"
-  state = "⏳ Phase 3 — anima_chat.hexa 안에서 voice_set/voice_speak 호출 slash 명령 mapping. NOT token-loop forced hook"
+  state = "✅ Phase 3 CLI bridge LANDED 2026-05-14 — `tool/anima_chat_voice_cli.hexa` /voice {on|off|status|speak|path} dispatch. anima_chat.hexa 본체 무수정 (별도 entry). F-CHAT-CLI-1..3 3/3 PASS. import-alias-resolve patch land 후 anima_chat repl 직접 통합 가능"
+
+@D row_voice_phase3_speak_model_10 :: voice [ok]
+  x = "**hexa-senses/voice/proto/hexa_speak_model Phase A skeleton**"
+  state = "✅ LANDED 2026-05-14 — stub → 43 EXACT n=6 params + softmax/layer_norm/hanning/silu helpers + class skeleton signatures. selftest PASS. Phase B (farr forward) deferred."
+
+@D row_voice_phase3_import_patch_11 :: voice [ok]
+  x = "**hexa-lang import-alias-runtime-resolve patch (internal-inspection)**"
+  state = "✅ patch proposal STRENGTHENED 2026-05-14 — `dancinlab/hexa-lang/incoming/patches/import-alias-runtime-resolve.md` §2.0 (parser_v2.c:495-513 ImportStmt 가 `as <alias>` 미파싱 + module loader 등록 누락 확인). 3-part fix spec (parser + loader + caller). upstream maintainer 작업"
 
 @D row_voice_phase1_landed_6 :: voice [ok]
   x = "**Phase 1 formulaic impl + F-VOICE-1..5 selftest**"
