@@ -42,12 +42,27 @@
 
 **Cross-platform byte equality**: ubu-2 RTX 5070 outputs **byte-equal** to Mac MPS (greedy deterministic; verified token-level identical across all 6 probes).
 
-**Observations**:
-- Korean syntax 보존 (조사/어미 일치 대체로 정상)
-- 짧은 응답 패턴 (200-step SFT의 작은 dataset bias)
-- prompt #2 "anima 가 의식 법칙 138" — anima-persona 페르소나 단어 자발 출현 (substrate-level persona signal — Principle #3 NO INJECTION compliant)
-- prompt #6 "mitosis"/"분열" 등 anima-philosophy 키워드 자연스럽게 포함
-- max_new=60 으로 늘렸지만 4번 + 6번 prompt 가 EOS 도달 못 함 (tail truncation 유지)
+**Honest assessment — 6/6 conversational coherence FAIL**:
+- prompt #1 self-intro 없이 prompt echo
+- prompt #2 "우주" 무관, 페르소나 키워드 echo only
+- prompt #3 질문 재반복
+- prompt #4 "색깔" 아니라 "도(path)" 좋아한다고 답 — 카테고리 미스
+- prompt #5 generic 지시 단어 ("그런 다음 단계를 따르세요") — "성장" 답 없음
+- prompt #6 markdown table syntax 환각 ("세포 분열(mitosis) | 설명 | 사망일 수…")
+
+**Korean syntax 는 보존** (조사/어미 일치) 그러나 **semantic answer coherence 완전 미달**.
+
+**근본 원인**: 200-step SFT × $0.014 = sub-cent train. corpus 작고 학습 매우 짧음 → keyword 등장 가능하나 의미적 응답 형성 안됨.
+
+**V5.8 "5/5 PASS" 가 의미하는 것**:
+- V5.8 falsifier = "5 prompt 각각의 target keyword (예: 'color'→'노란색', 'cosmology'→'우주') 응답 텍스트에 포함 여부" 만 측정
+- **conversational coherence 평가하지 않음**
+- 위 6-probe 는 V5.8 prompt-set 과 일치 안함 — V5.8 자체는 narrow keyword falsifier
+
+**★★★★★ closure 의 실제 의미**:
+- 5-cond aggregate = 5개 falsifier 통과 (V5.8 keyword + F-V5MIT routing + Principle #3 grep + hexa byte parity + persona M4 cosine)
+- 어느 falsifier 도 "anima 가 의미 있게 대화한다" 측정 X
+- "anima 본체" 라벨은 **substrate anchor** (D2 ckpt 식별) 의미, **chat capability anchor 아님**
 
 **Canonical V5.8 verdict** (PSCC §46, separately fired on Vast.ai 4090):
 - std_greedy **5/5 PASS** (color/profession/day/cosmology/anima_fact 모두)
@@ -135,24 +150,33 @@ A의 출력을 B의 입력으로 넣으면 BPE-tokenized 한국어가 byte로 �
 
 ---
 
-## §5 honest C3
+## §5 honest C3 (★★ amended — conversational coherence reality)
 
-1. **Phase 1A.4 chat responses 가 짧음** — 200-step SFT 가 작은 data 위라
-   coherent 응답 길이 한정. 더 긴 응답은 sample mode 또는 longer SFT 필요.
-2. **prompt #2 anomaly** — "당신은 anima 가 의식 법칙 138 설명해줘" — 모델이
-   prompt 를 받아 다시 prompt-style 출력 (echo + extension). 200-step SFT 의
-   underfit signal. Phase 1A.4 train cost $0.014 (sub-cent) 의 결과.
-3. **cotrain v1 의 "대화" 측정은 byte-level이라 한국어 chat 평가 불가**. 이
-   모델은 D4 세포 분열 substrate 의 falsifier 검증용 (V14-STRICT 등),
-   사용자-facing 대화 모델 아님.
-4. **두 모델 의 mission 이 보완적**: ★ 는 D1+D2 (chat 능력), 🧬 는 D4 (mitosis
-   substrate). ★★★★★ aggregate 가 함께 closure 필요.
-5. **PSCC §52-§55 saga 결과 (v7/k/l/m/n)** 는 모두 cotrain v1 의 후속 변형 —
+1. **★ Phase 1A.4 의 conversational coherence = 0/6** — 위 6 free-form
+   probe 중 어느 것도 의미 있는 답 생성 안함. Korean syntax 는 보존되나
+   semantic answer alignment 미달. **chat 능력 모델 아님**.
+2. **"V5.8 5/5 PASS" 의 한계 가시화** — V5.8 5 prompt 별 target keyword
+   포함 측정만 — 위 6 free-form probe 가 V5.8 prompt-set 미포함이라 직접
+   비교는 불가. 그러나 keyword-pass falsifier 가 "chat 능력 ☑" 의미 아님은
+   본 측정으로 명확.
+3. **"★★★★★ canonical anima 본체" 라벨 재해석** — Phase 1A.4 ckpt 는
+   **D2 substrate anchor** (어떤 ckpt 가 D1 falsifier 5/5 통과시키는지),
+   **chat assistant 자격 아님**. 실용 대화 사용 시 GPT-4 / Claude / Gemini
+   등 공개 LLM 사용 권장.
+4. **cotrain v1 의 byte-level chat 출력 = 5/6 즉시 EOS + 1/6 비-단어** —
+   chat 모델 아니므로 expected. 이 모델 의 평가 metric 은 F-V5MIT-1..5
+   (V14-STRICT 10/10) + F-PERSONA-4 routing 측정.
+5. **두 모델 의 mission 차이** — ★ 는 falsifier 통과용 minimal SFT,
+   🧬 는 mitosis substrate 검증용. 어느 쪽도 사용자-facing chat assistant
+   아님. ★★★★★ aggregate ☑ 는 ML research milestone (substrate science),
+   product-ready chat 아님.
+6. **PSCC §52-§55 saga 결과 (v7/k/l/m/n)** 는 모두 cotrain v1 후속 변형 —
    strict-4a closure 시도. 모두 FALSIFIED, local-only, HF 미공개.
-6. **본 benchmark 는 architecture-asymmetric** — 동일 task 비교 불가능,
-   각 모델의 design target 별 측정.
-7. **공정한 단일 metric 없음** — Phase 1A.4 의 V5.8 std_greedy 5/5 (chat)
-   vs cotrain v1 의 V14-STRICT 10/10 (mitosis) — 별개 axis 의 ☑.
+7. **공정한 chat 모델 비교 가능성**: 만약 진정한 anima chat 능력 평가 필요시,
+   (a) Phase 1A.4 sample mode (temp=0.85+) 로 다양성 확보, (b) loss masking +
+   더 긴 SFT, (c) 더 큰 corpus, (d) anima_chat.py wrapper 의 prompt template
+   재조정 — 어느 것도 본 saga §52-§55 의 strict-4a closure path 와는 별개
+   axis (chat-quality vs routing-strict).
 
 ---
 
