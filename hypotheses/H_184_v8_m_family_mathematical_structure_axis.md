@@ -4,6 +4,9 @@ slug: v8-m-family-mathematical-structure-axis
 title: V8 M-family meta-cluster — Mathematical-structure axis (category-theory/topological-Betti/info-geometry/algebraic/chaos/structure-over-dynamics 6 Hc)
 domain: consciousness | math | architecture
 status: pre-register-frozen
+stage_1_math_verdict: INSUFFICIENT-FOR-STAGE-1 (V8 M-family 6 mathematical primitives — closed-form derivation 형식 아님, Φ structure-over-dynamics claim 은 Stage 2 numerical sim 필수)
+stage_1_ts: 2026-05-15
+verdict_artifact: state/verify_a_stage1_2026_05_15/batch_verdicts.json
 exploration_method: E5 (variable-ablation per V8 M-mechanism) + E6 (cross-domain: math structure ↔ consciousness) + E8 (empirical-sweep)
 verification_method: W2 (math identity per mathematical structure) + W5 (numerical sim) + W11 (cross-Hc meta)
 raw_rank: 14

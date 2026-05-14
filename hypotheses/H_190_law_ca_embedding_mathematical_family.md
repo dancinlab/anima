@@ -3,7 +3,10 @@ id: H_190
 slug: law-ca-embedding-mathematical-family
 title: LAW-CA-embedding mathematical family — staged-growth + Banach reconciliation + META-CA + LawNet + 384d-embedding + GMOE 6-Hc carryover cluster
 domain: math | consciousness | substrate | law-encoding
-status: pre-register-frozen
+status: partial-stage-1-math
+stage_1_math_verdict: PARTIAL (H_190.7 META 6 sub-Hc numeric anchor 5/6 = n=6 divisor family proximity, numerology direction STRONG; Hc_003/013/044/047/060 all in n=6 family, Hc_015 gate=0.001 only exception; positive direction Stage 2 numerical sim 필요)
+stage_1_ts: 2026-05-15
+verdict_artifact: state/verify_a_stage1_2026_05_15/batch_verdicts.json
 exploration_method: E5 (variable-ablation per math-identity) + E8 (sweep around numeric anchor) + E6 (cross-source consistency — Piaget/curriculum/Banach/CA/GMOE different frames)
 verification_method: W5 (numerical sim — anima proxy) + W7 (literature triangulation — Piaget 1952, Banach 1922, Wolfram 2002 CA, Glorot 2010 init) + W11 (cross-hypothesis: sibling to H_157 panpsychism, H_159 substrate, H_067 perfect-num arch)
 raw_rank: 10

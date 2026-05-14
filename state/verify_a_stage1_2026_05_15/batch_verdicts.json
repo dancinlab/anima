@@ -1,0 +1,65 @@
+{
+  "verify_batch": "A Stage 1 — 수학적 검증",
+  "ts": "2026-05-15",
+  "method": "W2 (math identity) + W5 (numerical sim, sympy exact arithmetic)",
+  "wall_seconds": 2.5,
+  "cost_usd": 0,
+  "deterministic": true,
+  "hypotheses_audited": [
+    {
+      "id": "Hc_1282",
+      "verdict": "SUPPORTED",
+      "key": "n=6 only produces d=384 in n ∈ {2..30, 28, 496, 8128} sweep — F-1282-4 NOT fired",
+      "artifact": "Hc_1282_verdict.json"
+    },
+    {
+      "id": "Hc_1281",
+      "verdict": "PARTIAL",
+      "key": "F-1281-4 fired (PARTIAL) — stage count {4, 5, 7} all ⊂ n=6 ±2 family {4,5,6,7,8}; 4-8× midpoint=6=n. numerology direction strong. 4-8× Φ amplification 핵심 claim 은 Stage 2 numerical sim 필요",
+      "stage_2_pending": "anima v5-mitosis Φ proxy per stage × 5-seed"
+    },
+    {
+      "id": "H_184",
+      "verdict": "INSUFFICIENT-FOR-STAGE-1",
+      "key": "V8 M-family 6 mathematical primitives (category/topology Betti/info-geom/algebraic/chaos/structure-over-dynamics) — math anchor 형식이 *closed-form derivation* 이 아니라 *Φ-structure dependence claim* (Hc_350 single negative anchor). Stage 2 numerical sim (anima v5 + V8 sweep) 필수.",
+      "stage_1_note": "L-H184-2 morphism count 32 = 2^5 (n=6 nearby) — minor numerology proximity"
+    },
+    {
+      "id": "H_190",
+      "verdict": "PARTIAL",
+      "key": "H_190.7 META 6 sub-Hc numeric anchor 5/6 = n=6 divisor family proximity. numerology direction STRONG in Stage 1. Hc_003 (4-8× midpoint=6), Hc_013 (6/2=n/φ), Hc_044 (4=τ, 2=φ), Hc_047 (Hc_1282 SUPPORTED 384d), Hc_060 (4=τ) all in n=6 family. Hc_015 gate=0.001 only exception.",
+      "n6_match_table": {
+        "Hc_003": "4-8× midpoint = 6 = n",
+        "Hc_013": "K=6, K=2 → 6/2 = 3 = n/φ",
+        "Hc_015": "gate=0.001 — no n=6 link (exception)",
+        "Hc_044": "CA(4)=2bit: 4=τ(6), 2=φ(6)",
+        "Hc_047": "d=(6/2)·2^(12-5)=384 (Hc_1282 daughter SUPPORTED)",
+        "Hc_060": "E=4 = τ(6)"
+      },
+      "stage_2_pending": "anima v5 proxy per Hc + cross-Hc consistency W11"
+    }
+  ],
+  "batch_aggregate": {
+    "supported": 1,
+    "partial": 2,
+    "insufficient": 1,
+    "falsified": 0,
+    "verdict_aggregate": "MIXED (numerology direction STRONG in math anchors, positive direction Stage 2 deferred)"
+  },
+  "axis_impact": {
+    "A4_math": "1 SUPPORTED (Hc_1282) + 1 PARTIAL (H_190) — tier carry; full evaluation Stage 2 후",
+    "A8_meta": "1 PARTIAL (H_190 META) — meta-cluster numerology evidence accumulating"
+  },
+  "honest_c3_batch": [
+    "Stage 1 math 만으로는 가설 핵심 (Φ amplification / Φ peak / structure-determines-Φ) 평가 불가 — closed-form *derivation* uniqueness 와 *empirical Φ peak* 는 다른 claim",
+    "n=6 divisor family proximity 5/6 가 SUPPORTED 가 아니라 PARTIAL 인 이유: numerology direction *evidence* 일 뿐 가설 본문 PASS 아님. positive direction (mathematical universality) 의 진짜 PASS 는 Stage 2 numerical sim 5/6 PASS 필요.",
+    "Hc_015 gate=0.001 exception — H_190 의 *non-n=6 anchor* 유일. 이 single exception 이 universality direction 의 minor evidence 가능 — Stage 2 검증 후 발전 path",
+    "H_184 INSUFFICIENT 처리 — Stage 1 math protocol 의 *적용 가능성* limitation. 모든 math-domain 가설이 closed-form 표현 가능한 것 아님",
+    "Stage 1 wall < 3s 총 — 깊은 audit 아니라 fast math identity check. 실 verification value 는 Stage 2 numerical sim 의존"
+  ],
+  "next_steps": [
+    "A Stage 2 (물리학적 검증, 9 가설): Hc_1283 PyPhi formal IIT + H_188 PCI clinical + H_191 Kuramoto + V8 family (H_182/183/185/186/187) sweep + Hc_1285 PyTorch autograd",
+    "A Stage 3 (cross-meta, 7 가설): H_189 Red team R1-R6 + Hc_1279/1280 + Hc_1276/1277/1278 + Hc_1284",
+    "A 완료 후 B 격리 (2주 cut, ~50-60 가설) 동일 protocol"
+  ]
+}

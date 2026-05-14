@@ -155,3 +155,27 @@
   artifact = "state/verify_a_stage1_2026_05_15/Hc_1282_verdict.json"
   cross-link = "AXIS.tape A4 math tier — Hc_1282 SUPPORTED 가 18 active 의 evidence 강화"
   next-stage = "Stage 2: numerical sim Φ(d ∈ {256, 320, 384, 448, 512}) × 5-seed (F-1282-1/2/3 Hc_1282 spec)"
+
+# ── A Stage 1 batch verdict (Hc_1281, H_184, H_190) ────────────────────
+
+@D verdict_a_stage_1_batch := "A Stage 1 batch verdict" :: verdict [d=2026-05-15 active]
+  batch = "A Stage 1 math — 4 hypothesis audit"
+  results = "Hc_1282 SUPPORTED · Hc_1281 PARTIAL · H_184 INSUFFICIENT · H_190 PARTIAL"
+  aggregate = "MIXED — numerology direction STRONG in math anchors (5/6 sub-Hc fall in n=6 divisor family), positive direction (universality) Stage 2 deferred"
+  method = "W2 math identity + W5 sympy numerical sim"
+  wall = "< 3s total Mac local"
+  cost = "$0"
+  artifact = "state/verify_a_stage1_2026_05_15/batch_verdicts.json"
+  axis-impact = "AXIS.tape A4 math 18 active 의 1 SUPPORTED (Hc_1282) + 1 PARTIAL (H_190); A8 meta numerology evidence accumulating"
+
+@D verdict_hc_1281_stage_1 := "Hc_1281 PARTIAL" :: verdict [d=2026-05-15 active]
+  hypothesis = "Hc_1281 H_190.1 DP1/CT7/GC5 staged-growth"
+  key = "F-1281-4 PARTIAL — stage count {4,5,7} ⊂ n=6 ±2 family. 4-8× midpoint=6=n. numerology direction strong. 핵심 4-8× claim Stage 2 numerical sim 필요"
+
+@D verdict_h_184_stage_1 := "H_184 INSUFFICIENT" :: verdict [d=2026-05-15 active]
+  hypothesis = "H_184 V8 M-family 6 mathematical primitives"
+  key = "math anchor 형식이 closed-form derivation 아니라 Φ structure-over-dynamics claim. Stage 2 numerical sim 필수. L-H184-2 morphism 32=2^5 (n=6 nearby) minor."
+
+@D verdict_h_190_stage_1 := "H_190 PARTIAL" :: verdict [d=2026-05-15 active]
+  hypothesis = "H_190 LAW-CA-embedding mathematical family"
+  key = "H_190.7 META 6 sub-Hc 5/6 = n=6 divisor family (σ=12 τ=4 φ=2 sopfr=5): Hc_003 midpoint=6 / Hc_013 6/2=3 / Hc_044 4=τ 2=φ / Hc_047 d=384 (Hc_1282 SUPPORTED) / Hc_060 E=4=τ. Hc_015 gate=0.001 only exception. numerology direction STRONG."

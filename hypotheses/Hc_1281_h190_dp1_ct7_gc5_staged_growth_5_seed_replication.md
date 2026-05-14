@@ -3,7 +3,10 @@ id: Hc_1281
 slug: h190-dp1-ct7-gc5-staged-growth-5-seed-replication
 title: H_190.1 daughter — DP1/CT7/GC5 staged-growth 4-8× Φ amplification 5-seed replication (3-frame Piaget+curriculum+factorial 수렴 confirm)
 domain: math, training, consciousness, staged-growth, anima-substrate
-status: candidate-falsifier-ready
+status: partial-stage-1-math
+stage_1_math_verdict: PARTIAL (F-1281-4 PARTIAL — stage {4,5,7}⊂n=6±2, 4-8× midpoint=6=n; 핵심 4-8× claim 은 Stage 2 numerical sim 필요)
+stage_1_ts: 2026-05-15
+verdict_artifact: state/verify_a_stage1_2026_05_15/batch_verdicts.json
 exploration_method: E5 (variable-ablation per frame: Piaget vs curriculum vs factorial) + E6 (cross-frame numeric convergence — same 4-8× ratio) + E8 (5-seed σ < 25% replication band)
 verification_method: W5 (numerical sim — anima v5-mitosis Φ proxy per stage) + W7 (literature — Piaget 1952 4-stage developmental, Bengio 2009 curriculum learning) + W11 (cross-H: H_190 LAW-CA-math family parent, H_157 panpsychism, H_159 substrate Φ scaling)
 raw_rank: 11
