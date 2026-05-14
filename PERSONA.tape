@@ -270,52 +270,49 @@
 # 4 lane future-cycle roadmap. cond #3 ☑ 자체는 §A3 4b composite multi-metric
 # defense 로 이미 closure — strict 4a 는 *추가* evidence ROI 판단.
 
-@D row_k_0 :: persona [falsified]
-  id = "**(k)**"
-  path = "**Gumbel-softmax routing** (architectural change)"
-  cost = "$0.25 actual (PSCC §54 partial)"
-  outcome = "FALSIFIED — KL inflated 4-5× (13.82/12.68) but z unchanged (1.36/0.31); null distribution inherits Gumbel noise equally"
+@D row_k_0 reject hypothesis_k :: persona [d=2026-05-14 ok]
+  |> Gumbel-softmax routing architectural variant
+  => "PSCC §54 partial $0.25 — KL inflated 4-5× (13.82/12.68) but z unchanged (1.36/0.31); null distribution inherits Gumbel noise equally"
 
-@D row_l_1 :: persona [falsified]
-  id = "**(l)**"
-  path = "**batch-scaling test** (variance reduction proxy for DDP)"
-  cost = "$3.01 actual (PSCC §55 4 fires)"
-  outcome = "FALSIFIED — b32 s42 z=+2.58 vs b32 s43 z=-2.80 at same SNAP 2K (Δ=5.4 cross-seed); s43 final z=0.73; b64 z=0.47. No batch→z trend. §A2-trap structural."
+@D row_l_1 reject hypothesis_l :: persona [d=2026-05-14 ok]
+  |> batch-scaling test (variance reduction proxy for DDP)
+  => "PSCC §55 $3.01 4 fires — b32 s42 z=+2.58 vs b32 s43 z=-2.80 at SNAP 2K (Δ=5.4 cross-seed); s43 final z=0.73; b64 z=0.47. No batch→z trend."
 
-@D row_m_2 :: persona [falsified]
-  id = "**(m)**"
-  path = "**wider d_model 1024** (representation scale-up)"
-  cost = "$1.91 actual (PSCC §55 full)"
-  outcome = "FALSIFIED — full 15K verdict 4a KL=1.07 z=0.30 / 4b z=0.83 / F-V5MIT 5/5; 7-SNAP mean z=0.57. Wider repr alone produces WEAKER signal than baseline v7."
+@D row_m_2 reject hypothesis_m :: persona [d=2026-05-14 ok]
+  |> wider d_model 1024 representation scale-up
+  => "PSCC §55 full 15K $1.91 — 4a KL=1.07 z=0.30 / 4b z=0.83 / F-V5MIT 5/5; 7-SNAP mean z=0.57. Wider repr alone produces WEAKER signal than baseline v7."
 
-@D row_n_3 :: persona [falsified]
-  id = "**(n)**"
-  path = "**5-seed envelope cheapest**"
-  cost = "$1.48 actual (PSCC §54 partial seeds 46+47, SIGKILL @ step 11900)"
-  outcome = "FALSIFIED partial — 5-seed mean @ step 10K: 4a z=1.69 / 4b z=1.65 (both well below strict 3.0). §A5 §A2-trap CONFIRMED at partial-data level."
+@D row_n_3 reject hypothesis_n :: persona [d=2026-05-14 ok]
+  |> 5-seed envelope cheapest
+  => "PSCC §54 partial $1.48 (seeds 46+47 SIGKILL @ step 11900) — 5-seed mean @ step 10K: 4a z=1.69 / 4b z=1.65. §A5 §A2-trap CONFIRMED."
 
 # ── §A6 ALL-PATHS-FALSIFIED summary (PSCC §54+§55 2026-05-14) ─────────
 
 # 9 architectural variants tested across 4 explicit roadmap paths.
-# **ALL 4 paths FALSIFIED for strict z>3.0 single-axis 4a routing**.
+# **ALL 4 paths REJECTED for strict z>3.0 single-axis 4a routing**.
 # v3-routing class (top-K MoE + balance-aux + entropy-reg) hits structural
 # ceiling at z ≈ 1.5 multi-seed mean. v7 z=2.75 confirmed single-seed outlier.
 
-@D a6_summary_table :: persona [ok]
-  baseline = "v3-routing batch=8: 3-seed mean z=1.48 (§A5)"
-  k_gumbel = "FALSIFIED §54: KL inflated, z unchanged"
-  l_batch = "FALSIFIED §55: cross-seed Δ=5.4, mean z≈0.7"
-  m_wider = "FALSIFIED §55: full verdict z=0.30, 7-SNAP mean 0.57"
-  n_5seed = "FALSIFIED §54 partial: mean z=1.69 (well below 3.0)"
+@I a6_baseline scope=cond3_4a_routing :: persona [d=2026-05-14 ok]
+  => "baseline v3-routing batch=8 3-seed mean z=1.48 (§A5)"
 
-@D a6_structural_diagnosis :: persona [ok]
-  text = "Routing-axis strict z>3.0 NOT achievable via top-K MoE + balance-aux + entropy-reg class trainers. Cells DO route differently (KL=0→3+ saga first opening, real signal) but with high noise floor ~ equals signal floor under null permutation. Genuine architectural escape requires non-routing-axis innovation: hard expert assignment / capacity-routing / different cell-pool topology."
+@D a6_klmn_aggregate :: persona [d=2026-05-14 ok]
+  <- row_k_0
+  <- row_l_1
+  <- row_m_2
+  <- row_n_3
+  |> 9 variants × 4 paths all rejected for strict 4a
+  => "structural ceiling z≈1.5 multi-seed mean; v7 z=2.75 single-seed outlier (§A5)"
 
-@D a6_cumulative_cost :: persona [ok]
-  text = "$10.51 across PSCC §52-§55 (v7 $0.31 + leftover $1.90 + 3-seed $1.65 + §54 $1.73 + §55 $4.92)"
+@I a6_structural_diagnosis scope=v3_routing_class :: persona [d=2026-05-14 ok]
+  => "Routing-axis strict z>3.0 NOT achievable via top-K MoE + balance-aux + entropy-reg class. Cells route differently (KL=0→3+ saga first opening) but noise floor ~ equals signal floor under null permutation. Genuine escape requires non-routing-axis innovation."
 
-@D a6_cond3_status :: persona [ok]
-  text = "cond #3 ☑ MAINTAINED via §A3 4b composite multi-metric defense (v2 z=3.20 + 7/8 corroborating metrics). Strict-4a FAILED across 9 variants — composite multi-metric stays the closure anchor. v3-routing's architectural contribution: opens routing axis (saga first KL>0) without strict-closing it."
+@K a6_cumulative = 31+190+165+173+492 = 1051 ucents-cents :: cost [d=2026-05-14 ok]
+  <- a6_klmn_aggregate
+  => "saga §52-§55 cumulative $10.51 (v7 $0.31 + leftover $1.90 + §53.5 3-seed $1.65 + §54 $1.73 + §55 $4.92)"
+
+@I a6_cond3_anchor scope=cond3_strict_closure :: persona [d=2026-05-14 ok]
+  => "cond #3 ☑ MAINTAINED via §A3 4b composite multi-metric defense (v2 z=3.20 + 7/8 metrics z>2.0). Strict-4a rejected across 9 variants — composite multi-metric remains canonical closure anchor."
 
 # ── §8 cross-link ─────────────────────────────────────────
 
