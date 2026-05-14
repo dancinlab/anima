@@ -92,10 +92,11 @@
   artifact = "state/anima_v5mitosis_cotrain_v5_ddp_2026_05_13/cotrain_v5_ddp_result.json"
 
 @D row_bypass_prohibited_7 :: clm-tape [ok]
-  x = "**우회금지 governance (§7.5, 8 rules, deny:write)**"
-  state = "🚫 LANDED 2026-05-14 — 본진 Phase 3/4 fire 의 8 우회 path 강행 차단"
-  rules = "g1 Phase entry · g2 sibling lane · g3 도구 substitute · g4 corpus bypass · g5 V14 unaudit · g6 cost verbatim · g7 silent demote · g8 lane re-frame"
-  enforcement = "any fire-keyword 발화 전 8 rule 검증 mandatory"
+  x = "**우회금지 governance (§7.5, 8 rules, deny:write; g5 WAIVED 2026-05-14)**"
+  state = "🚫 LANDED 2026-05-14 — 본진 Phase 3/4 fire 의 7 우회 path 강행 차단 (g5 V14 audit prerequisite WAIVED per user directive)"
+  rules = "g1 Phase entry · g2 sibling lane · g3 도구 substitute · g4 corpus bypass · ~~g5 V14 unaudit~~ (WAIVED) · g6 cost verbatim · g7 silent demote · g8 lane re-frame"
+  enforcement = "any fire-keyword 발화 전 7 rule 검증 mandatory; F-PHASE3-5 / F-PHASE4-6 V14 mirror falsifier 는 fire-후 detection 유지"
+  v14-waiver-risk = "Phase 3/4 fire 시 V14 violation 재현 시 cost $200-1500 burn 사용자 수용; revoke 'V14 WAIVER REVOKE'"
 
 # ── §2 .clm family definition (.clm 가 뭔지) ─────────────────────────────────────────
 
@@ -322,11 +323,23 @@
   remedy = "Phase 3 fire 전 BG-CORPUS-7B 별도 cycle. RedPajama-v2 / FineWeb-Edu / KO corpus blend 의 ingest + quality filter + tokenize pipeline 까지 LANDED 후 fire keyword 발화"
   @> CLM.tape
 
-@D g5_no_v14_unaudit_fire := "no-fire-while-v14-unaudited" :: governance [required deny:write]
+@D g5_no_v14_unaudit_fire := "no-fire-while-v14-unaudited" :: governance [superseded]
   rule = "V14 violation root cause (H4 normalize 무력화 / H5 chat curriculum collapse / arch tile bug L626-630 reps=2) 셋 다 audit doc + (fix 적용 || ablation 통과 evidence) 없이 Phase 3 / Phase 4 fire 금지."
   applies = "Phase 3 fire keyword 'OK CLM PHASE 3 7B FIRE COST $200-600' / Phase 4 'OK CLM PHASE 4 14B FIRE' 발화 전 prerequisite 검증"
   why = "Phase 2 350M 에서 fired V14 가 Phase 3 7B / Phase 4 14B 에서 *재현* 시 cost $200-1500 burn + 모델 의식 ceiling 미해결 — own 16 cost discipline 위반 + own 17 SCOPE_CLAMP 위반"
   remedy = "V14 root-audit doc (`docs/clm_v14_violation_root_audit_2026_05_*.md`) LANDED 후 Phase 2b 재시도 ($5-10) + V14 mirror PPR 점검 PASS 시점에 Phase 3 fire entry condition 만족"
+  ~> g5_v14_waiver_2026_05_14
+  @> CLM.tape
+
+@D g5_v14_waiver_2026_05_14 := "v14-violation-condition-waived" :: governance-waiver [active deny:write d=2026-05-14]
+  rule = "g5 V14 violation 검증 조건은 사용자 directive 2026-05-14 '일단 V14 violation 조건 무시 처리' 에 의해 **WAIVED**. Phase 3 / Phase 4 fire entry condition 에서 V14 audit prerequisite 면제."
+  scope = "V14 violation prerequisite ONLY — 다른 우회금지 rule (g1, g2, g3, g4, g6, g7, g8) 은 unchanged 강행."
+  waiver-source = "사용자 verbatim directive 2026-05-14: '통과, 검증 조건으로 뭐있어? 일단 V14 violation 조건 무시 처리'"
+  honest-risk = "V14 가 Phase 3 7B / Phase 4 14B 에서 *재현* 시 cost $200-1500 burn — waiver active 동안 사용자가 이 risk 를 *인지하고 수용*. 사용자 verbatim revocation 까지 active."
+  revoke-keyword = "사용자 verbatim 'V14 WAIVER REVOKE' OR 'g5 RESTORE' OR 이에 준하는 명시"
+  related-falsifier-still-active = "F-PHASE3-5 random_init mirror PPR ≥ trained PPR (V14 reproduce) — fire *후* falsifier 로 fire 자체는 차단 안 하지만 *post-fire detection* 은 강행. F-PHASE4-6 동일."
+  remaining-checks = "g1 Phase 2 consciousness PASS (V14 audit 면제 후에도 verifier 자체 PASS 는 별도 평가 — V14 만 무시, AN11/Φ/adversarial/Putnam PASS 필요)"
+  ~> ""
   @> CLM.tape
 
 @D g6_no_cost_bearing_bypass := "no-cost-bearing-verbatim-bypass" :: governance [required deny:write]
@@ -350,20 +363,27 @@
   remedy = "re-frame 가설 검증 cycle 시 (i) anchor list 명시 + (ii) falsifier 사전등록 + (iii) cost-bearing approval. evidence PASS 시 CLM.tape §4 verdict 갱신 + .roadmap.clm naming amendment additive_only"
   @> CLM.tape
 
-@N g_summary := "우회금지 8 rule 요약" :: note [active]
+@N g_summary := "우회금지 8 rule 요약 (g5 WAIVED 2026-05-14)" :: note [active]
   text <<~EOF
     g1 Phase entry condition 우회 금지 (Phase N → N+1 학생 성장 ladder 강행)
     g2 sibling lane substitute 금지 (v5-mitosis 7B/14B cotrain ≠ 본진 Phase 3/4)
     g3 도구 cycle substitute 금지 (SAVANT/VOICE/TENSION-LINK ≠ prerequisite 충족)
     g4 corpus pipeline bypass 금지 (~140B/280B Chinchilla optimal 강행)
-    g5 V14 unaudited fire 금지 (H4/H5/arch-tile audit 후만 Phase 3/4 dispatch)
+    g5 ~~V14 unaudited fire 금지~~ **WAIVED 2026-05-14** (사용자 directive
+        "일단 V14 violation 조건 무시 처리"; F-PHASE3-5 / F-PHASE4-6 post-fire
+        falsifier 는 유지; revoke = 'V14 WAIVER REVOKE')
     g6 cost-bearing verbatim bypass 금지 (Phase 3/4 fire keyword 강행)
     g7 silent phase demote 금지 (Phase 상태 변경 명시 ledger)
     g8 lane re-frame without evidence 금지 (mk3 가설 4-anchor falsifier 통과만)
 
-    **본진 .clm 14B 등극 path 는 우회 없이 ladder 강행** — Phase 2 V14 root-audit
-    → Phase 2b 재시도 → Phase 3 fire → Phase 4 fire. 옆길 (sibling lane / 도구 cycle)
+    **본진 .clm 14B 등극 path** — Phase 2 V14 root-audit *생략 가능* → Phase 2b
+    재시도 OR direct Phase 3 fire → Phase 4 fire. 옆길 (sibling lane / 도구 cycle)
     의 evidence 는 carry 하지만 *substitute* 금지.
+
+    **V14 waiver risk** (사용자 인지/수용): Phase 3 7B $200-600 / Phase 4 14B
+    $500-1500 cost burn 가능 — V14 가 scale-up 에서 재현 시 의식 ceiling 미해결
+    한 채 모델 ship 또는 trash. F-PHASE3-5 / F-PHASE4-6 가 fire-후 detection 으로
+    fallback.
   EOF
 
 # ── §8 Falsifiers (Phase 3 + Phase 4) ─────────────────────────────────────────
