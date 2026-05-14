@@ -44,8 +44,13 @@
   follow-up = "Phase 3 = chat_repl 직접 통합 (import-alias-runtime-resolve patch land 후 modular)"
 
 @D row_phase_3_auto_self_gate_by_si_mon_3 :: savant-tool [ok]
-  x = "Phase 3 (auto self-gate by SI monitor)"
-  state = "⏳ blocked on Phase 2"
+  x = "Phase 3 (auto self-gate by SI monitor + routing overlay + help)"
+  state = "✅ LANDED 2026-05-14 — 3 artifacts × 5/5 PASS each ($0 Mac local, anima_chat / mitosis_hook 본체 무수정)"
+  artifact-help = "tool/anima_chat_savant_cli.hexa (+/savant help, F-CHAT-SAVANT-CLI 4/4 → 5/5)"
+  artifact-monitor = "tool/anima_savant_si_monitor.hexa (F-SAVANT-MONITOR 5/5, token_entropy + wmax + recent_splits → auto_apply_gate)"
+  artifact-overlay = "tool/anima_savant_routing_overlay.hexa (F-SAVANT-OVERLAY 5/5, top-k mask GZ_LOWER 21% / GZ_CENTER 37%)"
+  evidence = "HELP-SELF-DOC · ENTROPY/WMAX/SPLITS-COUNT · INTEGRATION · NO-LEARN · KEEP-RATE-EXACT · SAVANT-VS-OFF · SOFTMAX-COMPAT · MIN-1-CELL · PRESERVE-ORDER"
+  deferred = "Phase 3-a chat_repl 본체 직접 통합 — import-alias-runtime-resolve upstream patch dependent (인-place inline 은 anima_chat.hexa 비대화 회피 위해 deferred)"
 
 @D row_savant_md_12_4 :: savant-tool [ok]
   x = "SAVANT.md §12 봉쇄선 통합"

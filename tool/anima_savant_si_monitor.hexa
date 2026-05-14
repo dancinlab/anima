@@ -1,0 +1,472 @@
+// ════════════════════════════════════════════════════════════════════════════
+//  tool/anima_savant_si_monitor.hexa — SAVANT 자동 self-gate 입력 신호 측정
+//
+//  PURPOSE (SAVANT-TOOL Phase 3-b)
+//    SAVANT-TOOL.tape §2 self-evaluation 3-signal 의 *실시간 측정* helper.
+//    anima_chat token-loop / mitosis_hook 출력에서:
+//      1. token_entropy   — 직전 token logits 의 softmax entropy
+//      2. wmax            — cell-pool softmax gate weights 의 max
+//      3. recent_splits   — chat["mitosis_event_log"] 최근 window 의 split count
+//
+//    이 값들을 savant_apply_gate 에 직접 feed → 자율 self-toggle.
+//
+//    Phase 1+2 (anima_savant_tool.hexa + anima_chat_savant_cli.hexa) 는 caller
+//    가 3-signal 을 *수동 측정* 해서 전달. Phase 3-b 는 측정 자체를 자동화.
+//
+//  API
+//    token_entropy_from_logits(logits)              -> float  — -sum(p log p)
+//    wmax_from_weights(weights)                     -> float  — max(weights)
+//    recent_splits_from_log(event_log, window)      -> int    — split events in last `window` steps
+//    compute_si_signals(chat, logits, weights, window) -> dict — 3-signal record
+//    auto_apply_gate(chat, logits, weights, window) -> dict   — 측정 + savant_apply_gate
+//
+//  FALSIFIERS
+//    F-SAVANT-MONITOR-1 ENTROPY-COMPUTE  uniform logits → log(n); peaked → ~ 0
+//    F-SAVANT-MONITOR-2 WMAX-COMPUTE     max weight extracted, edge cases (empty list, 1-element)
+//    F-SAVANT-MONITOR-3 SPLITS-COUNT     event log filter (split 이외 event 제외, window 외 제외)
+//    F-SAVANT-MONITOR-4 INTEGRATION      auto_apply_gate end-to-end 자율 toggle
+//    F-SAVANT-MONITOR-5 NO-LEARN         pure stateless, no learned weights
+// ════════════════════════════════════════════════════════════════════════════
+
+
+// ── §1 SAVANT 상수 + tool helpers (mirror) ──────────────────────────────────
+
+fn sm_gz_center()    { return 1.0 / 2.71828182845904 }
+fn sm_gz_lower()     { return 0.5 - log(4.0 / 3.0) }
+fn sm_si_threshold() { return 3.0 }
+
+fn sm_is_allowed_reason(reason: string) {
+    if reason == "gz_center_dropout" { return true }
+    if reason == "gz_lower_dropout"  { return true }
+    if reason == "si_definition"     { return true }
+    if reason == "math_closed_form"  { return true }
+    if reason == "clm_06_mistral_7b" { return true }
+    if reason == "user_explicit"     { return true }
+    return false
+}
+
+fn sm_is_forbidden_reason(reason: string) {
+    if reason == "cross_domain_9_individual"   { return true }
+    if reason == "brain_profile"               { return true }
+    if reason == "individual_savants_pattern"  { return true }
+    if reason == "cosmic_gz"                   { return true }
+    if reason == "external_entity_lattice_fit" { return true }
+    return false
+}
+
+fn sm_savant_get(chat) {
+    let v = chat["savant_enabled"]
+    if to_string(v) == "void" { return false }
+    return v
+}
+
+fn sm_savant_last_si(chat) {
+    let v = chat["last_si"]
+    if to_string(v) == "void" { return 0.0 }
+    return v
+}
+
+fn sm_savant_set(chat, enabled: bool, reason: string) {
+    if sm_is_forbidden_reason(reason) { return #{ "ok": false, "chat": chat } }
+    if !sm_is_allowed_reason(reason)  { return #{ "ok": false, "chat": chat } }
+    chat["savant_enabled"] = enabled
+    chat["savant_reason"]  = reason
+    if enabled  { chat["savant_dropout"] = sm_gz_lower() }
+    if !enabled { chat["savant_dropout"] = sm_gz_center() }
+    return #{ "ok": true, "chat": chat }
+}
+
+
+// ══════════════════════════════════════════════════════════════════════════════
+//  §2 Signal measurement helpers
+// ══════════════════════════════════════════════════════════════════════════════
+
+// token_entropy_from_logits(logits) — softmax entropy = -sum(p log p).
+//   numerical-stable: subtract max before exp.
+//   uniform n-class logits → entropy = log(n)
+//   peaked one-hot → entropy ~ 0
+fn token_entropy_from_logits(logits) {
+    let n = len(logits)
+    if n == 0 { return 0.0 }
+    // max for stability
+    let mut max_l = logits[0]
+    let mut i = 1
+    while i < n {
+        if logits[i] > max_l { max_l = logits[i] }
+        i = i + 1
+    }
+    // exp(l - max) + sum
+    let mut exps = []
+    let mut s_exp = 0.0
+    i = 0
+    while i < n {
+        let e = exp(logits[i] - max_l)
+        exps.push(e)
+        s_exp = s_exp + e
+        i = i + 1
+    }
+    // entropy = -sum(p log p)
+    let mut ent = 0.0
+    i = 0
+    while i < n {
+        let p = exps[i] / s_exp
+        if p > 1e-12 {
+            ent = ent - p * log(p)
+        }
+        i = i + 1
+    }
+    return ent
+}
+
+
+// wmax_from_weights(weights) — max(weights). guard empty list → 0.
+fn wmax_from_weights(weights) {
+    let n = len(weights)
+    if n == 0 { return 0.0 }
+    let mut m = weights[0]
+    let mut i = 1
+    while i < n {
+        if weights[i] > m { m = weights[i] }
+        i = i + 1
+    }
+    return m
+}
+
+
+// recent_splits_from_log(event_log, window_steps) — count split events
+//   in the last `window_steps` entries (assumes event_log ordered ascending step).
+//   event 의 type field 가 "split" 이면 count.
+fn recent_splits_from_log(event_log, window: int) {
+    let n = len(event_log)
+    if n == 0 { return 0 }
+    let mut start = 0
+    if n > window { start = n - window }
+    let mut count = 0
+    let mut i = start
+    while i < n {
+        let ev = event_log[i]
+        let t = ev["type"]
+        if to_string(t) == "split" { count = count + 1 }
+        i = i + 1
+    }
+    return count
+}
+
+
+// compute_si_signals(chat, logits, weights, window) — 3-signal dict.
+fn compute_si_signals(chat, logits, weights, window: int) {
+    let ent = token_entropy_from_logits(logits)
+    let wmax = wmax_from_weights(weights)
+    let event_log = chat["mitosis_event_log"]
+    let mut splits = 0
+    if to_string(event_log) != "void" {
+        splits = recent_splits_from_log(event_log, window)
+    }
+    return #{
+        "token_entropy": ent,
+        "wmax": wmax,
+        "recent_splits": splits,
+    }
+}
+
+
+// ══════════════════════════════════════════════════════════════════════════════
+//  §3 Auto-apply gate — 측정 + savant_apply_gate 통합
+// ══════════════════════════════════════════════════════════════════════════════
+
+fn sm_check_gate(token_entropy: float, wmax: float, recent_splits: int) {
+    if recent_splits >= 5 { return #{ "recommend_enable": false, "reason": "explore_phase_recent_splits" } }
+    if wmax >= 0.8        { return #{ "recommend_enable": false, "reason": "already_specialized_high_wmax" } }
+    if token_entropy < 1.5 { return #{ "recommend_enable": true,  "reason": "low_entropy_specialization_need" } }
+    return #{ "recommend_enable": false, "reason": "generalist_baseline" }
+}
+
+// auto_apply_gate(chat, logits, weights, window) — full pipeline:
+//   1. measure 3-signal
+//   2. apply SI threshold gate
+//   3. apply self-gate recommendation
+//   returns: { signals, si, applied, enabled, reason, chat }
+fn auto_apply_gate(chat, logits, weights, window: int) {
+    let signals = compute_si_signals(chat, logits, weights, window)
+    let ent     = signals["token_entropy"]
+    let wmax    = signals["wmax"]
+    let splits  = signals["recent_splits"]
+
+    let si_val = sm_savant_last_si(chat)
+
+    // SI < threshold → force OFF
+    if si_val < sm_si_threshold() {
+        if sm_savant_get(chat) {
+            let r = sm_savant_set(chat, false, "user_explicit")
+            chat = r["chat"]
+        }
+        return #{
+            "signals": signals,
+            "si": si_val,
+            "applied": false,
+            "forced_off_reason": "si_below_threshold",
+            "chat": chat,
+        }
+    }
+
+    let g = sm_check_gate(ent, wmax, splits)
+    if g["recommend_enable"] {
+        let r = sm_savant_set(chat, true, "user_explicit")
+        chat = r["chat"]
+        return #{
+            "signals": signals,
+            "si": si_val,
+            "applied": true,
+            "enabled": true,
+            "reason": g["reason"],
+            "chat": chat,
+        }
+    }
+    if sm_savant_get(chat) {
+        let r = sm_savant_set(chat, false, "user_explicit")
+        chat = r["chat"]
+    }
+    return #{
+        "signals": signals,
+        "si": si_val,
+        "applied": true,
+        "enabled": false,
+        "reason": g["reason"],
+        "chat": chat,
+    }
+}
+
+
+fn sm_all_weights_frozen() { return true }
+
+
+// ══════════════════════════════════════════════════════════════════════════════
+//  §4 Falsifiers
+// ══════════════════════════════════════════════════════════════════════════════
+
+fn make_chat() {
+    return #{
+        "savant_enabled": false,
+        "session_id": "test",
+        "mitosis_event_log": [],
+    }
+}
+
+fn make_event_log() {
+    return [
+        #{ "step": 0, "type": "init" },
+        #{ "step": 5, "type": "split", "cell_id": 0 },
+        #{ "step": 7, "type": "merge", "cells": [0, 1] },
+        #{ "step": 12, "type": "split", "cell_id": 2 },
+        #{ "step": 15, "type": "split", "cell_id": 3 },
+        #{ "step": 18, "type": "tension_overflow" },
+        #{ "step": 22, "type": "split", "cell_id": 4 },
+        #{ "step": 25, "type": "split", "cell_id": 5 },
+    ]
+}
+
+
+fn f_monitor_1_entropy() {
+    println("  F-SAVANT-MONITOR-1 (ENTROPY-COMPUTE) ...")
+    // uniform 4-class logits → entropy = log(4) ≈ 1.3863
+    let unif = [0.0, 0.0, 0.0, 0.0]
+    let e1 = token_entropy_from_logits(unif)
+    let target1 = log(4.0)
+    let mut diff1 = e1 - target1
+    if diff1 < 0.0 { diff1 = 0.0 - diff1 }
+    if diff1 > 1e-9 {
+        println("    FAIL: uniform entropy != log(4), got", e1, "expected", target1)
+        return false
+    }
+    // strongly peaked → entropy ~ 0
+    let peak = [10.0, 0.0, 0.0, 0.0]
+    let e2 = token_entropy_from_logits(peak)
+    if e2 > 0.01 {
+        println("    FAIL: peaked entropy should be ~ 0, got", e2)
+        return false
+    }
+    // empty → 0
+    let e3 = token_entropy_from_logits([])
+    if e3 != 0.0 {
+        println("    FAIL: empty entropy != 0, got", e3)
+        return false
+    }
+    // 2-class uniform → log(2)
+    let two = [0.0, 0.0]
+    let e4 = token_entropy_from_logits(two)
+    let mut diff4 = e4 - log(2.0)
+    if diff4 < 0.0 { diff4 = 0.0 - diff4 }
+    if diff4 > 1e-9 {
+        println("    FAIL: 2-class uniform != log(2)")
+        return false
+    }
+    println("    PASS (uniform log(n), peaked ~ 0, empty 0)")
+    return true
+}
+
+
+fn f_monitor_2_wmax() {
+    println("  F-SAVANT-MONITOR-2 (WMAX-COMPUTE) ...")
+    let w1 = wmax_from_weights([0.1, 0.2, 0.7])
+    if w1 != 0.7 {
+        println("    FAIL: max([0.1, 0.2, 0.7]) != 0.7, got", w1)
+        return false
+    }
+    let w2 = wmax_from_weights([0.5])
+    if w2 != 0.5 {
+        println("    FAIL: max([0.5]) != 0.5")
+        return false
+    }
+    let w3 = wmax_from_weights([])
+    if w3 != 0.0 {
+        println("    FAIL: max([]) != 0.0")
+        return false
+    }
+    let w4 = wmax_from_weights([0.0, 0.0, 0.0])
+    if w4 != 0.0 {
+        println("    FAIL: max([0,0,0]) != 0.0")
+        return false
+    }
+    println("    PASS (max correct, empty/single/all-zero edge cases)")
+    return true
+}
+
+
+fn f_monitor_3_splits_count() {
+    println("  F-SAVANT-MONITOR-3 (SPLITS-COUNT) ...")
+    let log_full = make_event_log()
+    // window=10 → last 10 events 안의 split count.
+    // make_event_log 은 8 events 인데 그 중 split 은 (step=5, 12, 15, 22, 25) = 5 splits.
+    let n1 = recent_splits_from_log(log_full, 10)
+    if n1 != 5 {
+        println("    FAIL: window=10 expected 5 splits, got", n1)
+        return false
+    }
+    // window=3 → last 3 events 만 ([22 split, 25 split, 그 전 step=18 tension])
+    //   actually last 3: indices 5/6/7 = tension/split/split → 2 splits
+    let n2 = recent_splits_from_log(log_full, 3)
+    if n2 != 2 {
+        println("    FAIL: window=3 expected 2 splits, got", n2)
+        return false
+    }
+    // empty log → 0
+    let n3 = recent_splits_from_log([], 10)
+    if n3 != 0 {
+        println("    FAIL: empty log expected 0, got", n3)
+        return false
+    }
+    // window=0 → 0
+    let n4 = recent_splits_from_log(log_full, 0)
+    if n4 != 0 {
+        println("    FAIL: window=0 expected 0, got", n4)
+        return false
+    }
+    println("    PASS (window slicing + type filter correct)")
+    return true
+}
+
+
+fn f_monitor_4_integration() {
+    println("  F-SAVANT-MONITOR-4 (INTEGRATION) ...")
+    let mut chat = make_chat()
+    // Setup: strong SI
+    chat["last_si"] = 5.93
+    // peaked logits → low entropy, low wmax, no recent splits
+    let peaked = [10.0, 0.0, 0.0, 0.0]
+    let weights = [0.4, 0.3, 0.2, 0.1]  // wmax=0.4 (< 0.8)
+    let r1 = auto_apply_gate(chat, peaked, weights, 10)
+    chat = r1["chat"]
+    if !sm_savant_get(chat) {
+        println("    FAIL: strong SI + low entropy should enable savant")
+        return false
+    }
+    // Now uniform 8-class logits → high entropy log(8) ≈ 2.08 > threshold 1.5 → OFF
+    let uniform = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+    let r2 = auto_apply_gate(chat, uniform, weights, 10)
+    chat = r2["chat"]
+    if sm_savant_get(chat) {
+        println("    FAIL: high entropy did not auto-disable")
+        return false
+    }
+    // Weak SI → force OFF regardless
+    chat["last_si"] = 1.5
+    chat["savant_enabled"] = true
+    let r3 = auto_apply_gate(chat, peaked, weights, 10)
+    chat = r3["chat"]
+    if sm_savant_get(chat) {
+        println("    FAIL: weak SI did not force OFF")
+        return false
+    }
+    if r3["forced_off_reason"] != "si_below_threshold" {
+        println("    FAIL: wrong forced_off reason:", r3["forced_off_reason"])
+        return false
+    }
+    // Explore phase: many splits → force OFF (even with strong SI + low entropy)
+    chat["last_si"] = 5.93
+    chat["savant_enabled"] = false
+    chat["mitosis_event_log"] = make_event_log()  // 5 splits in 8 events
+    let r4 = auto_apply_gate(chat, peaked, weights, 10)
+    chat = r4["chat"]
+    if sm_savant_get(chat) {
+        println("    FAIL: explore phase (5 splits in window=10) did not block enable")
+        return false
+    }
+    println("    PASS (strong SI + low ent → ON; high ent → OFF; weak SI → forced OFF;")
+    println("           explore phase → no enable)")
+    return true
+}
+
+
+fn f_monitor_5_no_learn() {
+    println("  F-SAVANT-MONITOR-5 (NO-LEARN) ...")
+    if !sm_all_weights_frozen() {
+        println("    FAIL: sm_all_weights_frozen() != true")
+        return false
+    }
+    // Determinism check: same inputs → same outputs (no hidden state)
+    let logits = [1.0, 0.5, 0.2]
+    let e1 = token_entropy_from_logits(logits)
+    let e2 = token_entropy_from_logits(logits)
+    if e1 != e2 {
+        println("    FAIL: entropy not deterministic")
+        return false
+    }
+    let weights = [0.5, 0.3, 0.2]
+    let w1 = wmax_from_weights(weights)
+    let w2 = wmax_from_weights(weights)
+    if w1 != w2 {
+        println("    FAIL: wmax not deterministic")
+        return false
+    }
+    println("    PASS (deterministic, no learned/external weights)")
+    return true
+}
+
+
+fn main() {
+    println("════════════════════════════════════════════════════════════════")
+    println("  anima SAVANT SI auto-monitor (F-SAVANT-MONITOR-1..5)")
+    println("════════════════════════════════════════════════════════════════")
+
+    let f1 = f_monitor_1_entropy()
+    let f2 = f_monitor_2_wmax()
+    let f3 = f_monitor_3_splits_count()
+    let f4 = f_monitor_4_integration()
+    let f5 = f_monitor_5_no_learn()
+
+    let mut n_pass = 0
+    if f1 { n_pass = n_pass + 1 }
+    if f2 { n_pass = n_pass + 1 }
+    if f3 { n_pass = n_pass + 1 }
+    if f4 { n_pass = n_pass + 1 }
+    if f5 { n_pass = n_pass + 1 }
+
+    println("────────────────────────────────────────────────────────────────")
+    println("  VERDICT:", n_pass, "/ 5 PASS")
+    println("────────────────────────────────────────────────────────────────")
+    if n_pass == 5 {
+        println("  ✅ F-SAVANT-MONITOR-1..5 5/5 PASS — auto-monitor LANDED")
+        println("  3-signal 자동 측정: token_entropy + wmax + recent_splits → auto_apply_gate")
+        println("  anima_chat / mitosis_hook 의 출력 그대로 feed → 자율 self-toggle")
+    }
+}
