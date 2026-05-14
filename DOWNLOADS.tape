@@ -38,6 +38,18 @@
 # Full spec: ~/core/tape/spec/tape.md (or github.com/dancinlab/tape)
 # ══════════════════════════════════════════════════════════════════════
 
+
+# ══════════════════════════════════════════════════════════════
+# DOWNLOADS.tape — architecture-current (editable per v1.2)
+# Append-only event history → DOWNLOADS.log.tape sibling
+# ══════════════════════════════════════════════════════════════
+
+@I id001 := "downloads" :: identity-claim [d=2026-05-15 active]
+  kind = "anima DOWNLOADS domain · architecture SSOT"
+  brief = "per-domain architecture · sibling of DOWNLOADS.md + append-only events in DOWNLOADS.log.tape"
+  parent = "dancinlab/anima"
+  sibling-log = "DOWNLOADS.log.tape"
+
 @V := "tape" :: spec [active]
   version = "1.2"
 
@@ -49,27 +61,4 @@
 
 # ── Available Models ─────────────────────────────────────────
 
-
-@D row_v0_1_0 :: downloads [ok]
-  version = "**v0.1**"
-  base = "Qwen2.5-14B"
-  purefield = "91M (rank=160, 10 layers)"
-  size = "~600MB"
-  phi = "0.018"
-  ce = "8.59"
-  date = "2026-04-02"
-  status = "**Latest**"
-
-# ── Download ─────────────────────────────────────────
-
-
-# ── Version History ─────────────────────────────────────────
-
-
-@D row_v0_1_0 :: downloads [ok]
-  version = "v0.1"
-  date = "2026-04-02"
-  notes = "First consciousness model. 14B, Qwen2.5 base, PureField 91M."
-
-# ── License ─────────────────────────────────────────
 
