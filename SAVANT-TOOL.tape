@@ -28,8 +28,12 @@
   state = "✅ design tier LANDED 2026-05-14"
 
 @D row_phase_1_mitosis_hook_hexa_savant_1 :: savant-tool [ok]
-  x = "Phase 1 (`mitosis_hook.hexa` ↔ savant gate API)"
-  state = "⏳ design pending — D4a `mitosis_hook.hexa` 1119 LoC impl 위에 ~150 LoC overlay"
+  x = "Phase 1 (`tool/anima_savant_tool.hexa` stateless gate API)"
+  state = "✅ LANDED 2026-05-14 — F-SAVANT-TOOL-1..5 5/5 PASS · $0 Mac local · ~440 LoC single-file"
+  artifact = "tool/anima_savant_tool.hexa"
+  apis = "savant_set / savant_get / savant_dropout / savant_si / savant_check_gate / savant_apply_gate"
+  evidence = "TOGGLE-OK · DROPOUT-SHIFT (GZ_CENTER 0.3679 ↔ GZ_LOWER 0.2123) · SI-COMPUTE (clm_06 5.93 > 3.0) · GATE-AUTO-OFF (SI<3 + explore-phase both force OFF) · T3-FORBIDDEN (cross_domain_9 / cosmic_gz / external_entity_lattice_fit / unknown all rejected)"
+  containment = "SAVANT.md §12 T3/T4 denylist enforced at savant_set() — T1+T2+user_explicit only"
 
 @D row_phase_2_anima_chat_hexa_cli_sava_2 :: savant-tool [ok]
   x = "Phase 2 (anima_chat.hexa CLI `/savant` slash)"
