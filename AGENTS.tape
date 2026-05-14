@@ -77,7 +77,6 @@
 
 @D g1 := "real-limits-first" :: governance [required]
   rule = "The project's ceiling is set by REAL math/physics/engineering limits, NEVER by the n=6 invariant lattice."
-  why = "dancinlab-wide real-limits-first verification policy · raw#10 C3"
   authority = "[@x_lattice_policy]"
   @> AGENTS.md
 
@@ -103,7 +102,6 @@
 @D g5 := "honesty-obligation-external" :: governance [required deny:write]
   rule = "Claims about external entities (companies · fabs · accelerators · life systems) must NOT include lattice-fit assertions."
   remedy = "Use that entity's OWN invariants"
-  authority = "raw#10 C3 · [@x_lattice_policy] §1.3"
   @> AGENTS.md
 
 @D g6 := "philosophy-ledger-append-only" :: governance [required]
@@ -125,7 +123,6 @@
 
 @F f1 := "lattice-fit-on-external-entity" :: governance [required deny:write]
   pattern = "applying σ(6)=12 / τ(6)=4 / φ(6)=2 / J₂(6)=24 as derivation rule to TSMC · ASML · NIST · IPCC · CERN · DeepMind · NASA · SpaceX · or any external vendor"
-  why = "raw#10 C3 — external entities use their own published invariants"
   exception = "values may coincidentally match — observation OK, derivation NOT OK"
   authority = "[@x_lattice_policy] §1.3"
 
@@ -152,7 +149,6 @@
 @X x_wave_k := "dancinlab Wave K directive" :: governance-decision [d=2026-05-12 active]
   scope = "origin of real-limits-first policy · user directive 'n=6 격자를 강제할 필요 없어, 제한없이'"
 
-@X x_raw_10_c3 := "echoes raw#10 C3" :: governance-decision [d=2026-04-21 active]
   url = "https://github.com/dancinlab/echoes"
   scope = "honest-caveat origin · forbidden lattice-fit on external entities"
 

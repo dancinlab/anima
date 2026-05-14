@@ -8,7 +8,6 @@
 # (`/anima-agent/build/` 가 anima/.gitignore 에 이미 존재했음).
 # >
 # **Distribution**: `hx install anima-agent` 가 본 path `anima/anima-agent/` 에서 동작.
-# anima CLI (anima_chat) 와는 *별개 명령*. raw#9 STRICT — zero `.py` at standalone surface,
 # hexa-native.
 # ---
 
@@ -44,7 +43,6 @@
   state = "☑ green badge (per README)"
 
 @D row_hexa_native_raw_9_strict_5 :: anima-agent [ok]
-  x = "Hexa-native raw#9 STRICT"
   state = "☑ zero `.py` at surface"
 
 # ── §2 Roadmap (from .roadmap.cli + .roadmap.dashboard) ─────────────────────────────────────────
