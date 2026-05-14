@@ -42,14 +42,14 @@
   version = "1.2"
 
 # ══════════════════════════════════════════════════════════════
-# SAVANT-TOOL.md — anima 가 직접 ON/OFF 하는 savant 도구
+# SAVANT-TOOL.tape — anima 가 직접 ON/OFF 하는 savant 도구
 # ══════════════════════════════════════════════════════════════
 
-# SAVANT.md (이론 + audit + containment) 의 *sibling*. **anima 가 inference 시 직접
+# SAVANT.tape (이론 + audit + containment) 의 *sibling*. **anima 가 inference 시 직접
 # savant mode 를 켜고/끄는 도구 spec**. 학습에 *직접 SAVANT 이론 반영* 하는 path 와는
 # 분리 — 본 file 은 anima 가 *runtime 도구* 로 savant 를 사용하는 API + 정책.
 # >
-# SAVANT.md §12 봉쇄선 안에서만 작동: T1+T2 claim 만 도구 API 의 *근거* 로 인용,
+# SAVANT.tape §12 봉쇄선 안에서만 작동: T1+T2 claim 만 도구 API 의 *근거* 로 인용,
 # T3+T4 는 도구 정책에서 *forbidden trigger*.
 # ---
 
@@ -75,7 +75,7 @@
   artifact = "tool/anima_savant_tool.hexa"
   apis = "savant_set / savant_get / savant_dropout / savant_si / savant_check_gate / savant_apply_gate"
   evidence = "TOGGLE-OK · DROPOUT-SHIFT (GZ_CENTER 0.3679 ↔ GZ_LOWER 0.2123) · SI-COMPUTE (clm_06 5.93 > 3.0) · GATE-AUTO-OFF (SI<3 + explore-phase both force OFF) · T3-FORBIDDEN (cross_domain_9 / cosmic_gz / external_entity_lattice_fit / unknown all rejected)"
-  containment = "SAVANT.md §12 T3/T4 denylist enforced at savant_set() — T1+T2+user_explicit only"
+  containment = "SAVANT.tape §12 T3/T4 denylist enforced at savant_set() — T1+T2+user_explicit only"
 
 @D row_phase_2_anima_chat_hexa_cli_sava_2 :: savant-tool [ok]
   x = "Phase 2 (anima_chat.hexa CLI `/savant` slash external entry)"
@@ -95,7 +95,7 @@
   deferred = "Phase 3-a chat_repl 본체 직접 통합 — import-alias-runtime-resolve upstream patch dependent (인-place inline 은 anima_chat.hexa 비대화 회피 위해 deferred)"
 
 @D row_savant_md_12_4 :: savant-tool [ok]
-  x = "SAVANT.md §12 봉쇄선 통합"
+  x = "SAVANT.tape §12 봉쇄선 통합"
   state = "☑ T1+T2 만 trigger 근거, T3+T4 forbidden"
 
 # ── §2 Design ─────────────────────────────────────────
@@ -156,10 +156,10 @@
 
 
 @D b_savant_md_base_rate_audit_12_par_0 :: savant-tool [ok]
-  text = "`SAVANT.md` — 이론 + base-rate audit + §12 봉쇄심화 (parent)"
+  text = "`SAVANT.tape` — 이론 + base-rate audit + §12 봉쇄심화 (parent)"
 
 @D b_chat_md_anima_mission_tracker_pr_1 :: savant-tool [ok]
-  text = "`CHAT.md` — anima mission tracker (production CLI 통합 host)"
+  text = "`CHAT.tape` — anima mission tracker (production CLI 통합 host)"
 
 @D b_tool_hexa_native_mitosis_hook_he_2 :: savant-tool [ok]
   text = "`tool/hexa_native/mitosis_hook.hexa` — substrate state impl (overlay 대상)"
