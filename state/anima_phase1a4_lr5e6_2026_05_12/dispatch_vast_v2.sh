@@ -11,11 +11,13 @@
 set -euo pipefail
 
 # ── CONFIG ────────────────────────────────────────────────────────────
-PHASE_ID="phase1a4_lr5e6"
-LOCAL_DIR="/Users/ghost/core/anima/state/anima_phase1a4_lr5e6_2026_05_12"
-PHASE1A1_DIR="/Users/ghost/core/anima/state/anima_phase1a1_color_cosmology_2026_05_12"
-TRAINING_DIR="/Users/ghost/core/anima/training"
-PHASE_LABEL="phase1a4-lr5e6-v2"
+PHASE_ID="${PHASE_ID:-phase1a4_lr5e6}"
+LOCAL_DIR="${LOCAL_DIR:-/Users/ghost/core/anima/state/anima_phase1a4_lr5e6_2026_05_12}"
+PHASE1A1_DIR="${PHASE1A1_DIR:-/Users/ghost/core/anima/state/anima_phase1a1_color_cosmology_2026_05_12}"
+TRAINING_DIR="${TRAINING_DIR:-/Users/ghost/core/anima/training}"
+PHASE_LABEL="${PHASE_LABEL:-phase1a4-lr5e6-v2}"
+BASE_CKPT_FILE="${BASE_CKPT_FILE:-ckpts/ckpt_phase1a4_lr5e6_sft.pt}"
+BASE_CKPT_DIR="${BASE_CKPT_DIR:-$LOCAL_DIR}"
 
 LR="${LR:-5e-6}"
 STEPS="${STEPS:-200}"
@@ -125,16 +127,17 @@ $SCP_CMD "$LOCAL_DIR/$TRAIN_SCRIPT" "$LOCAL_DIR/v58_4mode_eval.py" "$TRAINING_DI
 echo "  [4b] corpus (~700KB)..."
 $SCP_CMD "$LOCAL_DIR/$CORPUS_FILE" "root@$SSH_HOST:/workspace/anima/corpus/"
 
-echo "  [4c] base ckpt (597MB, retry with rsync if scp fails)..."
-LOCAL_CKPT="$PHASE1A1_DIR/ckpts/ckpt_phase1a1_sft.pt"
+echo "  [4c] base ckpt (env: BASE_CKPT_DIR=$BASE_CKPT_DIR BASE_CKPT_FILE=$BASE_CKPT_FILE)..."
+LOCAL_CKPT="$BASE_CKPT_DIR/$BASE_CKPT_FILE"
+REMOTE_CKPT_NAME="$(basename $BASE_CKPT_FILE)"
 LOCAL_MD5=$(md5 -q "$LOCAL_CKPT")
-echo "    Local MD5: $LOCAL_MD5"
+echo "    Local MD5: $LOCAL_MD5 ($LOCAL_CKPT)"
 # Try scp w/ verify (3 attempts)
 SCP_OK=0
 for attempt in 1 2 3; do
     echo "    SCP attempt $attempt/3..."
-    if timeout 1200 $SCP_CMD "$LOCAL_CKPT" "root@$SSH_HOST:/workspace/anima/ckpts/ckpt_phase1a1_sft.pt"; then
-        REMOTE_MD5=$($SSH_CMD 'md5sum /workspace/anima/ckpts/ckpt_phase1a1_sft.pt 2>/dev/null | cut -d" " -f1' || echo "fail")
+    if timeout 1200 $SCP_CMD "$LOCAL_CKPT" "root@$SSH_HOST:/workspace/anima/ckpts/$REMOTE_CKPT_NAME"; then
+        REMOTE_MD5=$($SSH_CMD "md5sum /workspace/anima/ckpts/$REMOTE_CKPT_NAME 2>/dev/null | cut -d' ' -f1" || echo "fail")
         echo "    Remote MD5: $REMOTE_MD5"
         if [ "$LOCAL_MD5" = "$REMOTE_MD5" ]; then
             echo "    MD5 OK — ckpt verified."
@@ -142,21 +145,16 @@ for attempt in 1 2 3; do
             break
         else
             echo "    MD5 MISMATCH — retrying."
-            $SSH_CMD 'rm -f /workspace/anima/ckpts/ckpt_phase1a1_sft.pt' || true
+            $SSH_CMD "rm -f /workspace/anima/ckpts/$REMOTE_CKPT_NAME" || true
         fi
     else
         echo "    SCP timeout/fail — retrying."
-        $SSH_CMD 'rm -f /workspace/anima/ckpts/ckpt_phase1a1_sft.pt' || true
+        $SSH_CMD "rm -f /workspace/anima/ckpts/$REMOTE_CKPT_NAME" || true
     fi
 done
 if [ $SCP_OK -eq 0 ]; then
     echo "    SCP failed 3x, trying rsync..."
-    rsync -av --progress -e "ssh $SSH_OPTS -p $SSH_PORT" "$LOCAL_CKPT" "root@$SSH_HOST:/workspace/anima/ckpts/ckpt_phase1a1_sft.pt"
-    REMOTE_MD5=$($SSH_CMD 'md5sum /workspace/anima/ckpts/ckpt_phase1a1_sft.pt 2>/dev/null | cut -d" " -f1' || echo "fail")
-    if [ "$LOCAL_MD5" != "$REMOTE_MD5" ]; then
-        echo "ERROR: ckpt MD5 mismatch even after rsync"
-        exit 1
-    fi
+    rsync -av --progress -e "ssh $SSH_OPTS -p $SSH_PORT" "$LOCAL_CKPT" "root@$SSH_HOST:/workspace/anima/ckpts/$REMOTE_CKPT_NAME"
 fi
 
 # ── 5) Sanity check ────────────────────────────────────────────────────
@@ -166,7 +164,7 @@ $SSH_CMD 'cd /workspace/anima && python3 -c "import torch; print(torch.__version
 # ── 6) Train ───────────────────────────────────────────────────────────
 echo "[6/8] Training ($STEPS steps lr $LR)..."
 $SSH_CMD "cd /workspace/anima && export PYTHONUNBUFFERED=1 && python3 training/$TRAIN_SCRIPT \
-    --base-ckpt ckpts/ckpt_phase1a1_sft.pt \
+    --base-ckpt ckpts/$REMOTE_CKPT_NAME \
     --chat-corpus corpus/$CORPUS_FILE \
     --output output \
     --steps $STEPS \
