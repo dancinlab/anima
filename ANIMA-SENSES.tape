@@ -41,6 +41,12 @@
 @V := "tape" :: spec [active]
   version = "1.2"
 
+@I id001 := "anima-senses" :: identity-claim [d=2026-05-15 active]
+  kind = "anima n=6 sensory substrate — 5-verb spec catalog (architecture SSOT)"
+  brief = "5-verb sensory substrate (dream/ear/empath/olfact/voice) · n=6 lattice closed-form params · voice formulaic-only constraint"
+  parent = "dancinlab/anima"
+  sibling-log = "ANIMA-SENSES.log.tape"
+
 # ══════════════════════════════════════════════════════════════
 # ANIMA-SENSES.tape — n=6 sensory substrate (5-verb spec catalog)
 # ══════════════════════════════════════════════════════════════
@@ -66,17 +72,9 @@
 # ── §1 Status (2026-05-14) ─────────────────────────────────────────
 
 
-@D row_anima_repo_anima_hexa_senses_0 :: anima-senses [ok]
-  x = "**anima repo 흡수 (anima/hexa-senses/)**"
-  state = "✅ LANDED 2026-05-14 (rsync from ~/core/hexa-senses/ minus .git)"
-
 @D row_closure_100_5_5_spec_first_1 :: anima-senses [ok]
   x = "Closure 100% (5/5 spec-first)"
   state = "☑ closed-form spec, zero hardcoding"
-
-@D row_verify_4_4_pass_2 :: anima-senses [ok]
-  x = "Verify 4/4 PASS"
-  state = "☑ n=6 arithmetic + spec inventory + verifier + voice constraint"
 
 @D row_5_verb_spec_catalog_3 :: anima-senses [ok]
   x = "5 verb spec catalog"
@@ -199,17 +197,11 @@
 @D b_voice_hexa_voice_md_renamed_prov_3 :: anima-senses [ok]
   text = "`voice/hexa-voice.md` `@renamed` provenance header"
 
-@D b_decision_option_a_landed_4 :: anima-senses [ok]
-  text = "**옵션 (a) formulaic-only 채택 2026-05-14** — 완벽복원성 (perfect bit-exact reproducibility) priority 단독 기준 (a) 가 유일 충족"
-
 @D b_decision_voice_canonical_5 :: anima-senses [ok]
   text = "`hexa-senses/voice/` = canonical synthesis (formulaic, deterministic, n=6 lattice 유도)"
 
 @D b_decision_voice_anima_wire_6 :: anima-senses [ok]
   text = "`VOICE.tape` = anima-specific wire spec (hidden state → fixed intent_proj → hexa-senses/voice synth call). learned vocoder / 외부 corpus 의존 0"
-
-@D b_decision_learned_retract_7 :: anima-senses [ok]
-  text = "이전 learned-RVQ design = git history `fa902716a` + `f8fc39af` 의 .tape revision 에 보존 (회수 가능)"
 
 @D b_decision_silence_redefine_8 :: anima-senses [ok]
   text = "silence-capable 특성 = `silence_gate < ln(4/3)` 의 deterministic silent timbre pattern 으로 재정의 (완벽복원성 유지)"
@@ -252,15 +244,4 @@
 
 # ── §7 Provenance ─────────────────────────────────────────
 
-
-@D b_dancinlab_hexa_senses_last_commi_0 :: anima-senses [ok]
-  text = "흡수 출처: `dancinlab/hexa-senses` (last commit 2026-05-14 `ef05f5a` \".tape v1.1"
-
-@D b_canon_381f1f22_2026_05_07_extrac_1 :: anima-senses [ok]
-  text = "원 출처: `canon@381f1f22` (2026-05-07 extracted from"
-
-@D b_hexa_speak_hexa_voice_rename_use_2 :: anima-senses [ok]
-  text = "hexa-speak → hexa-voice rename: user directive 2026-05-11 (memory"
-
-@D b_rsync_exclude_git_anima_git_hist_3 :: anima-senses [ok]
-  text = "rsync `--exclude='.git'` 으로 통합. anima 의 git history 에 신규 commit 으로 추가."
+#  (provenance/absorption events → ANIMA-SENSES.log.tape)
