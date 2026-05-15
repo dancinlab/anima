@@ -1,6 +1,6 @@
 # HEXAD/E — 윤리 (ethics)
 
-> SSOT: [`HEXAD-E.tape`](../../HEXAD-E.tape) · Python anchor: `ready/anima/hexad/e/emergent_e.py` (123 LoC) · 🔵 SUPPORTED-FORMAL
+> SSOT: [`HEXAD-E.tape`](HEXAD-E.tape) · Python anchor: `ready/anima/hexad/e/emergent_e.py` (123 LoC) · 🔵 SUPPORTED-FORMAL
 
 ## 핵심 원리 (closed-form, sympy-verified)
 
