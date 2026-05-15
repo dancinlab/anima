@@ -1483,3 +1483,20 @@
   evidence = "p1 truncated 15-gen (1 ckpt × 3 arm × 5 prompt × seed=42) on Phase 1A.4 332M ckpt"
   result_carry = "arm_means 3.4/4 identical across A/B/C → F-P1-UPGRADE-1 (A≥B×0.95) PASS + F-P1-UPGRADE-3 (C≤A×1.10) PASS"
   cross_link = "PHILOSOPHY p1_upgrade_path + state/clm_v1_step0_p1_real_2026_05_15/p1_truncated_result.json + PR #63"
+
+# ══════════════════════════════════════════════════════════════════════
+# §CLM-V1-P2-FIRE-VERDICT + AGENTS-HF-NAMING + FIRE-DISPATCH-ROBUST (cycle 88, 2026-05-15)
+# ══════════════════════════════════════════════════════════════════════
+
+@D clm_v1_p2_fire_verdict := ".clm v1 P2 fire 5/5 SUPPORTED-STRONG (cycle 88, 2026-05-15)" :: governance [d=2026-05-15 active]
+  evidence = "Vast.ai A100 SXM4 (id=31179887 dph=$0.908) wall 734.7s ($0.19, 98× faster than 20hr estimate). 5/5 F-V5MIT in-run PASS. loss 467.97→1.22 (137.6× reduction). cells 2→64 saturated step 250. phi 4.34 stable."
+  caveat = "ckpt LOST (instance destroyed by trap cleanup before [8/9] pull — exit 1 SSH pipe). evidence-only via dispatch_train.log. 3 deferred falsifier (F-PRIN3 + F-SIMPLE-STACK V5.8 + F-PYPHI) BLOCKED by ckpt-lost."
+  cross_link = "CLM.tape §V-CLM-V1-FIRE-VERDICT + AXIS §AXIS-A5-CLM-V1-NEW + HYPOTHESIS §hypothesis_clm_v1_p2_fire_verdict + state/clm_v1_fire_2026_05_15/clm_v1_result_reconstructed.json + PR #65"
+
+@D agents_governance_hf_naming_and_dispatch_robust := "AGENTS.tape governance — g_hf_naming + g_fire_dispatch_robust (cycle 88, 2026-05-15)" :: governance [d=2026-05-15 active]
+  added = [
+    "g_hf_naming: dancinlab/anima-clm (model) + dancinlab/anima-corpus (dataset) canonical 2-name, revisions v{N}-{kind}-cycle{N}-{date}, verdict-tier 차등 업로드 mandate (SUPPORTED-STRONG/PARTIAL/AT-RISK/ckpt-LOST evidence-only)",
+    "g_fire_dispatch_robust: result.json 존재 verify → SAVE_POD=1 자동 promote → pull 재시도 ≥3회 mandate, set -e false-positive guards"
+  ]
+  trigger = "user 2026-05-15 'HF 네이밍 체계 과정 업로드 등등 AGENTS.tape 에 등록 혹은 개선' + .clm v1 P2 fire ckpt-LOST incident lesson"
+  cross_link = "AGENTS.tape g_hf_naming + g_fire_dispatch_robust + PR #65"
