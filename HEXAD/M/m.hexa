@@ -1,0 +1,175 @@
+// ════════════════════════════════════════════════════════════════════════════
+//  HEXAD/M/m.hexa — M 기억 (memory) hexa-native entry
+//
+//  PURPOSE
+//    pure-hexa 구현 of EmergentM 의 closed-form 핵심:
+//      store    = identity no-op (Hebbian LTP/LTD in C is the storage)
+//      retrieve = cosine-similarity top-k on C cell states (deterministic)
+//      no C    → null constant zero vector
+//
+//  STATUS
+//    🔵 SUPPORTED-FORMAL — B-M 3/3 sympy closed-form proofs PASS.
+//
+//  PYTHON ANCHOR
+//    ready/anima/hexad/m/emergent_m.py (96 LoC)
+//    state/verify_hexad_blue_2026_05_15/blue_falsifier.py :: bm()
+//
+//  COMPLIANCE
+//    raw#11 snake_case · raw#9/10 honest impl
+// ════════════════════════════════════════════════════════════════════════════
+
+
+// ── m_store: identity no-op (B-M-1 STORE-NOOP-STRUCTURAL) ───────────────────
+fn m_store(key, value) {
+    // C 의 Hebbian LTP/LTD 가 실 storage. 이 함수는 명시적 no-op.
+    return 0
+}
+
+
+// ── helpers: vector ops on flat lists ───────────────────────────────────────
+fn _m_dot(a, b) -> float {
+    let s = 0.0
+    let i = 0
+    while i < len(a) {
+        s = s + a[i] * b[i]
+        i = i + 1
+    }
+    return s
+}
+
+fn _m_norm(a) -> float {
+    let s = 0.0
+    let i = 0
+    while i < len(a) {
+        s = s + a[i] * a[i]
+        i = i + 1
+    }
+    let n = s
+    // simple sqrt via Newton (3 iter, sufficient for selftest)
+    let r = 1.0
+    if n > 0.0 {
+        let k = 0
+        while k < 12 {
+            r = 0.5 * (r + n / r)
+            k = k + 1
+        }
+    } else {
+        r = 0.0
+    }
+    return r
+}
+
+fn _m_cosine(a, b) -> float {
+    let na = _m_norm(a)
+    let nb = _m_norm(b)
+    let denom = na * nb
+    if denom <= 1e-12 { return 0.0 }
+    return _m_dot(a, b) / denom
+}
+
+
+// ── m_retrieve_topk: cosine-similarity top-k indices (B-M-2 DETERMINISTIC) ──
+// states: flat row-major (n × dim).  query: list of length dim.
+// returns: list of top_k indices (0-based) sorted by descending similarity.
+fn m_retrieve_topk(query, states, n: int, dim: int, top_k: int) {
+    let sims = []
+    let i = 0
+    while i < n {
+        let row = []
+        let j = 0
+        while j < dim {
+            row = row + [states[i * dim + j]]
+            j = j + 1
+        }
+        sims = sims + [_m_cosine(query, row)]
+        i = i + 1
+    }
+    // selection sort top_k (small k expected)
+    let chosen = []
+    let used = []
+    let u = 0
+    while u < n {
+        used = used + [false]
+        u = u + 1
+    }
+    let k_done = 0
+    let k_target = top_k
+    if k_target > n { k_target = n }
+    while k_done < k_target {
+        let best = -1
+        let best_v = -2.0
+        let p = 0
+        while p < n {
+            if (used[p] == false) && (sims[p] > best_v) {
+                best = p
+                best_v = sims[p]
+            }
+            p = p + 1
+        }
+        if best < 0 { return chosen }
+        chosen = chosen + [best]
+        used[best] = true
+        k_done = k_done + 1
+    }
+    return chosen
+}
+
+
+// ── m_retrieve_null: null constant fallback (B-M-3 NULL-CONSTANT) ───────────
+fn m_retrieve_null(dim: int) {
+    let z = []
+    let i = 0
+    while i < dim {
+        z = z + [0.0]
+        i = i + 1
+    }
+    return z
+}
+
+
+// ── helpers for selftest ────────────────────────────────────────────────────
+fn _approx_eq(a: float, b: float, tol: float) -> bool {
+    let d = a - b
+    if d < 0.0 { d = 0.0 - d }
+    return d <= tol
+}
+
+
+// ── selftest: B-M-{1,2,3} hexa-native witnesses ─────────────────────────────
+fn _selftest() {
+    // B-M-1 STORE-NOOP-STRUCTURAL — return 0 (sentinel) ∀ inputs
+    let r1 = m_store([1.0, 2.0], [3.0, 4.0])
+    let r2 = m_store([], [])
+    let noop_ok = (r1 == 0) && (r2 == 0)
+    print("  B-M-1 STORE-NOOP-STRUCTURAL  : " + to_string(noop_ok))
+
+    // B-M-2 RETRIEVE-DETERMINISTIC — same inputs → same top-k indices ∀ runs
+    // 3 cells in 2-D; query == cell-0, expect indices start with 0.
+    let states = [1.0, 0.0,   0.0, 1.0,   1.0, 1.0]
+    let query  = [1.0, 0.0]
+    let idx_a = m_retrieve_topk(query, states, 3, 2, 2)
+    let idx_b = m_retrieve_topk(query, states, 3, 2, 2)
+    let det_ok = (idx_a[0] == 0) && (idx_b[0] == 0)
+                  && (idx_a[1] == idx_b[1]) && (idx_a[0] == idx_b[0])
+    print("  B-M-2 RETRIEVE-DETERMINISTIC : " + to_string(det_ok))
+
+    // B-M-3 NULL-CONSTANT — m_retrieve_null(dim) → zeros(dim)
+    let z = m_retrieve_null(4)
+    let zero_ok = (len(z) == 4)
+                   && _approx_eq(z[0], 0.0, 1e-9)
+                   && _approx_eq(z[1], 0.0, 1e-9)
+                   && _approx_eq(z[2], 0.0, 1e-9)
+                   && _approx_eq(z[3], 0.0, 1e-9)
+    print("  B-M-3 NULL-CONSTANT          : " + to_string(zero_ok))
+
+    let all_ok = noop_ok && det_ok && zero_ok
+    print("=== HEXAD/M selftest: " + to_string(all_ok) + " ===")
+}
+
+
+fn main() {
+    print("HEXAD/M — 기억 (memory) hexa-native entry")
+    print("store = Hebbian no-op · retrieve = cosine top-k · null = zeros")
+    print("B-M 3/3 🔵 SUPPORTED-FORMAL anchor (sympy closed-form)")
+    _selftest()
+}

@@ -1,0 +1,170 @@
+// ════════════════════════════════════════════════════════════════════════════
+//  HEXAD/S/s.hexa — S 감각 (sense) hexa-native entry
+//
+//  PURPOSE
+//    pure-hexa 구현 of EmergentS 의 closed-form 핵심:
+//      perception = mean(states_after) − mean(states_before)
+//                 = column-mean delta on the C cell-pool state matrix
+//
+//    "감각 = C 의식의 상태 변화" (Law 50 — 본질은 상태 / Law 4 — 구조>기능).
+//    별도의 EMA/baseline 함수 없음 — C의 구조 자체가 감각 처리.
+//
+//  STATUS
+//    🔵 SUPPORTED-FORMAL — B-S 3/3 sympy closed-form proofs PASS.
+//    closed subset: linearity / uniform-shift / zero-change exact ∀ states.
+//
+//  SSOT
+//    HEXAD-S.tape (root)  ·  HEXAD/S/README.md  ·  HEXAD-S.tape s_blue_status
+//
+//  PYTHON ANCHOR
+//    ready/anima/hexad/s/emergent_s.py (108 LoC, .process method)
+//    state/verify_hexad_blue_2026_05_15/blue_falsifier.py :: bs()
+//
+//  COMPLIANCE
+//    raw#11 snake_case · raw#15 no-hardcode · raw#9/10 honest impl
+// ════════════════════════════════════════════════════════════════════════════
+
+
+// ── core: column-mean of a row-major matrix represented as flat list ────────
+// states is a flat list of length n_cells * dim, row-major.
+// returns: list of length dim (column means).
+fn _s_col_mean(states, n_cells: int, dim: int) {
+    let out = []
+    let j = 0
+    while j < dim {
+        let acc = 0.0
+        let i = 0
+        while i < n_cells {
+            acc = acc + states[i * dim + j]
+            i = i + 1
+        }
+        out = out + [acc / (n_cells * 1.0)]
+        j = j + 1
+    }
+    return out
+}
+
+
+// ── core: perception = column-mean(after) − column-mean(before) ─────────────
+// Closed-form S core. inputs are flat row-major (n_cells × dim).
+// returns: delta vector of length dim.
+fn s_perception(states_before, states_after, n_cells: int, dim: int) {
+    let mean_before = _s_col_mean(states_before, n_cells, dim)
+    let mean_after  = _s_col_mean(states_after,  n_cells, dim)
+    let delta = []
+    let i = 0
+    while i < dim {
+        delta = delta + [mean_after[i] - mean_before[i]]
+        i = i + 1
+    }
+    return delta
+}
+
+
+// ── fallback: raw input bytes → normalized vector (when no C engine) ────────
+// Each byte in [0, 256) → float in [0, 1). Pads/truncates to `dim`.
+fn s_to_bytes_vec(byte_list, dim: int) {
+    let out = []
+    let n_in = len(byte_list)
+    let i = 0
+    while i < dim {
+        if i < n_in {
+            out = out + [byte_list[i] / 256.0]
+        } else {
+            out = out + [0.0]
+        }
+        i = i + 1
+    }
+    return out
+}
+
+
+// ── helpers for selftest ────────────────────────────────────────────────────
+fn _approx_eq(a: float, b: float, tol: float) -> bool {
+    let d = a - b
+    if d < 0.0 { d = 0.0 - d }
+    return d <= tol
+}
+
+fn _vec_max_abs(v) -> float {
+    let m = 0.0
+    let i = 0
+    while i < len(v) {
+        let x = v[i]
+        if x < 0.0 { x = 0.0 - x }
+        if x > m { m = x }
+        i = i + 1
+    }
+    return m
+}
+
+
+// ── selftest: B-S-{1,2,3} hexa-native witnesses ─────────────────────────────
+fn _selftest() {
+    let tol = 1e-9
+    let dim = 4
+    let n   = 3
+
+    // B-S-3 ZERO-CHANGE-EXACT — states_after == states_before → delta == 0
+    let s1 = [0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0, 1.1, 1.2]
+    let d_zero = s_perception(s1, s1, n, dim)
+    let zero_ok = _vec_max_abs(d_zero) <= tol
+    print("  B-S-3 ZERO-CHANGE-EXACT      : " + to_string(zero_ok))
+
+    // B-S-2 UNIFORM-SHIFT-EXACT — shift every state by k → mean shifts by k → delta = k ⃗ 1
+    let k = 0.25
+    let s2 = []
+    let i = 0
+    while i < n * dim {
+        s2 = s2 + [s1[i] + k]
+        i = i + 1
+    }
+    let d_shift = s_perception(s1, s2, n, dim)
+    let shift_ok = true
+    let j = 0
+    while j < dim {
+        if (_approx_eq(d_shift[j], k, tol) == false) { shift_ok = false }
+        j = j + 1
+    }
+    print("  B-S-2 UNIFORM-SHIFT-EXACT    : " + to_string(shift_ok))
+
+    // B-S-1 LINEARITY-EXACT — mean(α·X + β·Y) = α·mean(X) + β·mean(Y)
+    // Build two state matrices X (=s1) and Y (constructed), verify:
+    //   delta(X + Y , X) + delta(X , X) == delta(X + Y , X)
+    // Easier closed witness: perception(X, X+Y) == column-mean(Y).
+    let Y = [0.05, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, 0.55, 0.6]
+    let XY = []
+    let p = 0
+    while p < n * dim {
+        XY = XY + [s1[p] + Y[p]]
+        p = p + 1
+    }
+    let d_lin = s_perception(s1, XY, n, dim)
+    let mean_Y = _s_col_mean(Y, n, dim)
+    let lin_ok = true
+    let q = 0
+    while q < dim {
+        if (_approx_eq(d_lin[q], mean_Y[q], tol) == false) { lin_ok = false }
+        q = q + 1
+    }
+    print("  B-S-1 LINEARITY-EXACT        : " + to_string(lin_ok))
+
+    // s_to_bytes_vec sanity
+    let bv = s_to_bytes_vec([128, 0, 255], 4)
+    let bv_ok = _approx_eq(bv[0], 0.5, 1e-6)
+                && _approx_eq(bv[1], 0.0, 1e-9)
+                && _approx_eq(bv[2], 255.0 / 256.0, 1e-6)
+                && _approx_eq(bv[3], 0.0, 1e-9)
+    print("  s_to_bytes_vec sanity        : " + to_string(bv_ok))
+
+    let all_ok = zero_ok && shift_ok && lin_ok && bv_ok
+    print("=== HEXAD/S selftest: " + to_string(all_ok) + " ===")
+}
+
+
+fn main() {
+    print("HEXAD/S — 감각 (sense) hexa-native entry")
+    print("perception = column-mean delta on C cell-pool states")
+    print("B-S 3/3 🔵 SUPPORTED-FORMAL anchor (sympy closed-form)")
+    _selftest()
+}

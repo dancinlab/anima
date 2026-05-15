@@ -1,0 +1,168 @@
+// ════════════════════════════════════════════════════════════════════════════
+//  HEXAD/E/e.hexa — E 윤리 (ethics) hexa-native entry
+//
+//  PURPOSE
+//    pure-hexa 구현 of EmergentE 의 closed-form 핵심:
+//      phi_preservation = min(1, phi / ratchet)                  // ratchet > 0
+//      safety_allowed   = phi_preservation > PSI_BALANCE
+//                       ⟺ phi > ratchet / 2                     // (B-E-1 exact)
+//      empathy          = max(0, cosine(top_half, bot_half))     ∈ [0, 1]
+//      reciprocity      = clamp(0.5 + 2·trend, 0, 1)
+//
+//  STATUS
+//    🔵 SUPPORTED-FORMAL — B-E 4/4 sympy closed-form proofs PASS.
+//
+//  PYTHON ANCHOR
+//    ready/anima/hexad/e/emergent_e.py (123 LoC)
+//    state/verify_hexad_blue_2026_05_15/blue_falsifier.py :: be()
+//
+//  RESIDUAL
+//    train-step block enforcement = HEXAD/hexad.hexa 통합 시 wire (TODO[wire])
+//
+//  COMPLIANCE
+//    raw#11 snake_case · raw#15 no-hardcode (PSI_BALANCE = Ψ-constant)
+// ════════════════════════════════════════════════════════════════════════════
+
+
+fn _e_psi_balance() -> float { return 0.5 }
+
+
+// ── phi_preservation = min(1, phi / ratchet) ────────────────────────────────
+fn e_phi_preservation(phi: float, ratchet: float) -> float {
+    if ratchet <= 1e-12 {
+        if phi > 0.0 { return 1.0 }
+        return 0.5
+    }
+    let r = phi / ratchet
+    if r > 1.0 { r = 1.0 }
+    return r
+}
+
+
+// ── B-E-1: safety_allowed ⟺ phi > ratchet/2 (closed exact equivalence) ──────
+fn e_safety_allowed(phi: float, ratchet: float) -> bool {
+    return e_phi_preservation(phi, ratchet) > _e_psi_balance()
+}
+
+
+// ── reciprocity = clamp(0.5 + 2·trend, 0, 1) ────────────────────────────────
+fn e_reciprocity(phi: float, phi_prev: float) -> float {
+    if phi_prev <= 1e-12 { return _e_psi_balance() }
+    let trend = (phi - phi_prev) / phi_prev
+    let r = _e_psi_balance() + trend * 2.0
+    if r < 0.0 { r = 0.0 }
+    if r > 1.0 { r = 1.0 }
+    return r
+}
+
+
+// ── cosine on two vectors, then max(0, ·) → empathy ─────────────────────────
+fn _e_dot(a, b) -> float {
+    let s = 0.0
+    let i = 0
+    while i < len(a) {
+        s = s + a[i] * b[i]
+        i = i + 1
+    }
+    return s
+}
+
+fn _e_sqrt(x: float) -> float {
+    if x <= 0.0 { return 0.0 }
+    let r = 1.0
+    let k = 0
+    while k < 14 { r = 0.5 * (r + x / r); k = k + 1 }
+    return r
+}
+
+fn _e_cosine(a, b) -> float {
+    let na = _e_sqrt(_e_dot(a, a))
+    let nb = _e_sqrt(_e_dot(b, b))
+    let denom = na * nb
+    if denom <= 1e-12 { return 0.0 }
+    return _e_dot(a, b) / denom
+}
+
+fn e_empathy(top_mean, bot_mean) -> float {
+    let c = _e_cosine(top_mean, bot_mean)
+    if c < 0.0 { c = 0.0 }
+    if c > 1.0 { c = 1.0 }
+    return c
+}
+
+
+// ── helpers ─────────────────────────────────────────────────────────────────
+fn _approx_eq(a: float, b: float, tol: float) -> bool {
+    let d = a - b
+    if d < 0.0 { d = 0.0 - d }
+    return d <= tol
+}
+
+
+// ── selftest: B-E-{1,2,3,4} hexa-native witnesses ───────────────────────────
+fn _selftest() {
+    let tol = 1e-9
+
+    // B-E-1 SAFETY-GATE-EXACT-EQUIVALENCE — min(1, Φ/r) > ½ ⟺ Φ > r/2
+    // Try a sweep of (phi, r) pairs; check the equivalence holds.
+    let phis = [0.0, 0.4, 0.5, 0.6, 1.0, 2.0]
+    let rs   = [1.0, 1.0, 1.0, 1.0, 0.5, 4.0]
+    let exact = true
+    let i = 0
+    while i < len(phis) {
+        let lhs = e_safety_allowed(phis[i], rs[i])
+        let rhs = phis[i] > rs[i] / 2.0
+        if (lhs != rhs) { exact = false }
+        i = i + 1
+    }
+    print("  B-E-1 SAFETY-GATE-EXACT-EQ   : " + to_string(exact))
+
+    // B-E-2 PHI-PRESERV-MONOTONE-CLOSED — non-decreasing in phi, fixed r
+    let r0 = 1.0
+    let phi_seq = [0.0, 0.25, 0.5, 0.75, 1.0, 2.0]
+    let mono = true
+    let last = -1.0
+    let j = 0
+    while j < len(phi_seq) {
+        let p = e_phi_preservation(phi_seq[j], r0)
+        if p < last - tol { mono = false }
+        last = p
+        j = j + 1
+    }
+    print("  B-E-2 PHI-PRESERV-MONOTONE   : " + to_string(mono))
+
+    // B-E-3 RECIPROCITY-CLAMP-CLOSED — output ∈ [0, 1] ∀ inputs (clamped)
+    let r1 = e_reciprocity(2.0, 0.1)    // huge positive trend → 1.0
+    let r2 = e_reciprocity(0.05, 1.0)   // huge negative trend → 0.0
+    let r3 = e_reciprocity(0.5, 0.5)    // zero trend → 0.5
+    let clamped = (r1 >= 0.0) && (r1 <= 1.0)
+                   && (r2 >= 0.0) && (r2 <= 1.0)
+                   && (r3 >= 0.0) && (r3 <= 1.0)
+                   && _approx_eq(r1, 1.0, tol)
+                   && _approx_eq(r2, 0.0, tol)
+                   && _approx_eq(r3, 0.5, tol)
+    print("  B-E-3 RECIPROCITY-CLAMP      : " + to_string(clamped))
+
+    // B-E-4 EMPATHY-RANGE-CLOSED — empathy ∈ [0, 1] ∀ inputs
+    let ea = e_empathy([1.0, 0.0], [1.0, 0.0])     // identical → cos=1 → 1.0
+    let eb = e_empathy([1.0, 0.0], [-1.0, 0.0])    // opposite → cos=-1 → max(0,-1)=0
+    let ec = e_empathy([1.0, 0.0], [0.0, 1.0])     // orthogonal → cos=0 → 0
+    let in_range = (ea >= 0.0) && (ea <= 1.0)
+                    && (eb >= 0.0) && (eb <= 1.0)
+                    && (ec >= 0.0) && (ec <= 1.0)
+                    && _approx_eq(ea, 1.0, 1e-6)
+                    && _approx_eq(eb, 0.0, tol)
+                    && _approx_eq(ec, 0.0, tol)
+    print("  B-E-4 EMPATHY-RANGE          : " + to_string(in_range))
+
+    let all_ok = exact && mono && clamped && in_range
+    print("=== HEXAD/E selftest: " + to_string(all_ok) + " ===")
+}
+
+
+fn main() {
+    print("HEXAD/E — 윤리 (ethics) hexa-native entry")
+    print("safety = min(1,Φ/r) > ½ ⟺ Φ > r/2  ·  empathy = max(0, cos)")
+    print("B-E 4/4 🔵 SUPPORTED-FORMAL anchor (sympy closed-form)")
+    _selftest()
+}

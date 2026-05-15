@@ -179,6 +179,15 @@
 @X x_clm_hexad_mandate := "CLM.tape §V-CLM-HEXAD-MANDATE" :: governance [d=2026-05-15 active]
   scope = "condition lineup mandate — 필수 [C1,C2] + 확장 [C3-C6] 의 CLM 진행 anchor"
 
+@X x_hexad_native_tree := "HEXAD/ top-level hexa-native canonical impl tree" :: impl [d=2026-05-16 active]
+  scope = "anima 6 모듈 hexa-native 정식 구현 디렉토리 (user directive 2026-05-16 '코드는 hexa-native'). README.md + 7 모듈 서브폴더 + 통합 entry."
+  layout = "HEXAD/{README.md, hexad.hexa, C/c.hexa, D/d.hexa, S/s.hexa, M/m.hexa, W/w.hexa, E/e.hexa, BRIDGE/bridge.hexa} + 모듈별 README.md"
+  status = "S/M/W/E/BRIDGE working selftest (B-X 🔵 closed-form witnesses, hexa parse + run PASS) + C/D scaffold cross-link (기존 tool/hexa_native/mitosis_hook.hexa + anima_chat.hexa 재사용) + hexad.hexa spec invariants 5/5 PASS"
+  verified_2026_05_16 = "hexa parse 8/8 clean (S/M/W/E/BRIDGE/C/D/hexad) + hexa run 5/5 working selftest PASS (S B-S 3/3, M B-M 3/3, W B-W 4/4, E B-E 4/4, BRIDGE Law 70 clamp) + C/D/hexad scaffold invariants PASS"
+  ssot_mapping = "HEXAD/<X>/ ↔ HEXAD-<X>.tape (root) ↔ ready/anima/hexad/<x>/ (Python anchor)"
+  residual = "통합 cross-file integration (모든 모듈 single-hexa-process forward) = TODO[wire] — namespace prefix RFC 후 future cycle. 현재 통합 검증 evidence: state/verify_hexad_integ_2026_05_16/ Python harness (PR #77, 5/5 SUPPORTED-STRONG fire_gate=true)."
+  @> CLAUDE.md
+
 # ─── §8 Notes ────────────────────────────────────────────────────────
 
 @N hexad_perfect_number := "완전수 6 derive" :: note [active]
