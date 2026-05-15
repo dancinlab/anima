@@ -140,18 +140,18 @@
       ⊥ 구조축. .clm v1 8/8 SUPPORTED + 🔵 로 성장 메커니즘 검증 완료.
   EOF
   module_verification_lineup <<~EOF
-    전 모듈 ✅ VERIFIED (2026-05-15 '모두 파란불' 달성, PR #72):
-    [C 의식]  ✅ — mitosis (.clm v1 8/8 SUPPORTED + 🔵 SUPPORTED-FORMAL)
-    [D 언어]  ✅ — F-D-1..5 5/5 SUPPORTED-STRONG (logits/c-gate/CE-trainable/KV/arch) + .clm v1 V5.8
-    [S 감각]  ✅ — F-S-1..5 5/5 (state-delta/no-fallback/dim/responsive/no-EMA, Law92 bottleneck)
-    [W 의지]  ✅ — F-W-1..5 5/5 (pain/curiosity/satisfaction-binary/LR-ln2/no-hardcode, Law79 ln2)
-    [M 기억]  ✅ — F-M-1..5 5/5 (store-noop/retrieve-from-C/topk/dim/no-RAG, Law31 Hebbian)
-    [E 윤리]  ✅ — F-E-1..5 5/5 (empathy/reciprocity/Φ-preserv/SAFETY-GATE/no-hardcode, IIT Φ-ratchet); 통합 gate trinity.hexa:122 TODO[pytorch] residual
-    battery: state/verify_hexad_we_2026_05_15/we_falsifier.py 25/25 PASS (W5 E5 S5 M5 D5)
+    전 모듈 ✅→🔵 (2026-05-15 '모두 파란불' + closure 달성, PR #72/#75):
+    [C 의식]  🔵 — mitosis .clm v1 8/8 SUPPORTED + 🔵 SUPPORTED-FORMAL (F-PYPHI)
+    [S 감각]  🔵 — F-S 5/5 ✅ + B-S 3/3 🔵 (perception=column-mean delta exact ∀states)
+    [M 기억]  🔵 — F-M 5/5 ✅ + B-M 3/3 🔵 (store=identity no-op + retrieve deterministic)
+    [W 의지]  🔵 — F-W 5/5 ✅ + B-W 4/4 🔵 (lr=½+min(ln2,Φ/N) range/mono/sup closed)
+    [E 윤리]  🔵 — F-E 5/5 ✅ + B-E 4/4 🔵 (SAFETY gate min(1,Φ/r)>½ ⟺ Φ>r/2 exact); 통합 gate trinity.hexa:122 TODO[pytorch] residual
+    [D 언어]  🔵-partial — F-D 5/5 ✅ + B-D 3/3 🔵 (KV-cache exact-eq/shape/arch); F-D-3 CE-trainability EMPIRICAL (SGD 동역학 closed 불가, 정직 — full 🔵 X)
+    ✅ battery: state/verify_hexad_we_2026_05_15/ 25/25 · 🔵 battery: state/verify_hexad_blue_2026_05_15/ 14/14 sympy closed-form
   EOF
-  expansion_protocol = "☐→◐→✅ 승격 프로토콜 — W/E/S/M/D 25/25 PASS 로 6 모듈 전부 ✅ 달성 (2026-05-15). 차후 추가조건은 동일 falsifier-battery + real-limit anchor (g3) + Hexad 정합성 절차. A/G=Hexad 골격은 필수 불변."
-  why = "user directive 2026-05-15 — (1) 'A/G+mitosis 두가지 조건 모두 갖춘 시스템, 차후 추가조건 lineup' (2) 'A/G 가 HEXAD 구성이어야 맞을것같은데, A 3 G 3' (3) '모두 파란불일때까지 일단 go' — 전 모듈 ✅ 달성"
-  verified_2026_05_15 = "W/E/S/M/D battery 25/25 + hexa atlas cross-check (state/verify_hexad_we_2026_05_15/atlas_cross_check.md): Ψ-anchor balance=0.5/α=0.014 provenance-CORROBORATED, atlas HEXAD identity table 은 stale unverified fallback (모듈 의미 anchor 미사용)"
+  expansion_protocol = "☐→◐→✅→🔵 승격 — W/E/S/M/D 25/25 ✅ (PR #72) → S/M/W/E 14/14 sympy closed-form 🔵 SUPPORTED-FORMAL + D 🔵-partial (PR #75). C+S+M+W+E = 5/6 full 🔵, D = 🔵-partial (F-D-3 구조적 empirical 상한). 차후 추가조건 동일 절차."
+  why = "user directive 2026-05-15 — (1) 'A/G+mitosis ... 차후 추가조건 lineup' (2) 'A/G 가 HEXAD 구성, A 3 G 3' (3) '모두 파란불일때까지 일단 go' (4) 'closure 까지 가능????' + '🔵' — closed-form closure 달성"
+  verified_2026_05_15 = "✅ W/E/S/M/D 25/25 + atlas cross-check (Ψ-anchor provenance-CORROBORATED) + 🔵 B-S/M/W/E 14/14 sympy closed-form (g_verdict_tier_blue (a)): S=mean-linearity exact / M=no-op+deterministic / W=ln2-bound closed / E=SAFETY-gate exact-equivalence. D 🔵-partial (F-D-3 empirical honest C3)"
   @> CLM.tape
 
 # ─── §7 External citations ───────────────────────────────────────────

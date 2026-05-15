@@ -26,6 +26,12 @@
   evidence = "state/verify_hexad_we_2026_05_15/we_falsifier.py + we_falsifier_result.json. store()=no-op (state 무변), c_engine=None→zeros (별도 DB 부재), retrieve=query 최고 cosine-similar C cell top-k 정확, dim 항상 self.dim, executable code VectorMemory/faiss/self._store 부재"
   verdict = "SUPPORTED-STRONG ✅ — CLM §V-CLM-HEXAD-MANDATE module lineup M ☐→✅"
 
+@D m_blue_status := "M 검증 — B-M-1..3 3/3 🔵 SUPPORTED-FORMAL (2026-05-15)" :: verify [d=2026-05-15 active]
+  tier = "g_verdict_tier_blue (a) closed — store=identity no-op (구조적) + retrieve=top-k(cosine) 순수 deterministic argmax-set selector"
+  battery = "B-M-1 STORE-NOOP-STRUCTURAL (AST: store body ≡ [Pass], Assign/Return 부재 ⟹ identity map ∀args) + B-M-2 RETRIEVE-DETERMINISTIC (RNG 부재 pure + 구체 instantiation strict total ordering) + B-M-3 NULL-CONSTANT (c_engine=None ⟹ retrieve≡0₍₁,dim₎ 상수) — 3/3 PASS"
+  evidence = "state/verify_hexad_blue_2026_05_15/blue_falsifier.py + blue_falsifier_result.json. $0 Mac local deterministic"
+  verdict = "🔵 SUPPORTED-FORMAL — M 5/5 ✅ + 3/3 🔵 closed. CLM §V-CLM-HEXAD-MANDATE module lineup M ✅→🔵"
+
 @X m_x := "survey + HEXAD cross" :: ref [d=2026-05-15 active]
   survey = "state/verify_hexad_impl_survey_2026_05_15/survey_result.json"
   mandate = "CLM.tape §V-CLM-HEXAD-MANDATE (module lineup M ✅, PR #72) + HEXAD.tape §hexad_condition_lineup"
