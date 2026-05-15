@@ -1869,3 +1869,51 @@
   cycle_cost = "~22 hr Mac local total ($0). PyPhi n=3-6 sweep (20 hr) 가 dominant. F-V5MIT 1-3+4+5 (~10 min) + F-PRIN3 (1 min) + F-V58 4-mode (30 min) = ~40 min."
   hf_upload = "PASS verdict 시 ckpt + safetensors → dancinlab/anima-clm revisions (private), README mapping table v1 row 등재"
   cross_link = "CLM.tape §V-CLM-STEP4 spec frozen + §V-CLM-STEP5 fire prep + AXIS.tape §V-CLM-AUDIT 정정 carry + PR #62"
+
+# ══════════════════════════════════════════════════════════════════════
+# §V-CLM-V1-W8-AMENDMENT — spec_frozen v0.2 deviation carry (2026-05-15)
+# ══════════════════════════════════════════════════════════════════════
+
+@D v_clm_v1_w8_amendment := "spec_frozen.json v0.1 → v0.2 W8 amendment 4-deviation carry (cycle 88, 2026-05-15)" :: protocol [d=2026-05-15 active]
+  trigger = "user directive 'verbatim 없이 모두 승인' + 'P2 all go H100 병렬 가능' lifted verbatim block; arch mismatch with mitosis_model_v5 (n_layer=1 only) prompted W8 spec deviation"
+  authority = "AGENTS.tape g_clm_from_scratch (init RANDOM seed=42 NO ckpt inherit MAINTAINED) + g_verified_axis_anchor (12L base anchor σ(6)=12 carry) + W8 ladder (additive_only_mutation)"
+  deviations = [
+    "DEV-1 n_layers=12: mitosis_model_v5 n_layer=1 only → ClmV1Model NEW 12L base transformer wrapping mitosis branch (training/clm_v1_model.py 2026-05-15)",
+    "DEV-2 GQA kv_heads=4: PyTorch nn.MultiheadAttention used (no GQA) → kv_heads=n_head=8 MHA carry. spec anchor τ(6)=4 satisfied via cell_ffn_dim=1024 (cell branch reflects τ(6) ratio differently)",
+    "DEV-3 readout_mode 'a_only': cells single-stack (V1 audit carry) → ClmV1Model has NO Engine A/G separation. residual sum of cell outputs only.",
+    "DEV-4 ctx 1024 → 256: cost envelope discipline ($25-35 A100 SXM4 wall 20hr). spec ctx=1024 retained for future cycle."
+  ]
+  deviations_preserved = [
+    "init RANDOM seed=42 ✓ (g_clm_from_scratch)",
+    "base_ckpt = NONE ✓ (anchor ckpts arch verify only, weights X)",
+    "d_model=768 ✓ (192·4 n=6 anchor)",
+    "n_layers_total=12 ✓ (12 base transformer = σ(6)=12 anchor)",
+    "n_cells=64 ✓ (cond.5 saturation step 150 anchor)",
+    "n_head=8 ✓ (Hc_144 atom anchor)",
+    "ffn_mult=4 ✓ (3072=4×768, τ(6)=4 anchor)",
+    "mitosis_hook training+serve-time ✓ (mitosis_step per training step + serve-time per token via chat_generate carry PSCC §41)",
+    "param target 150-200M ✓ (init 88.6M / saturated cells=64 186M measured Mac CPU smoke)"
+  ]
+  new_artifacts = [
+    "training/clm_v1_model.py 411 LoC (ClmV1Config + TransformerBlock + MitosisCell + ClmV1Model + count_parameters + selftest)",
+    "training/train_clm_v1_from_scratch.py 360 LoC (CostGuard + falsifier hooks F-V5MIT-1..5 + AdamW cosine + bf16 amp + gradient accum + mitosis_step integration)",
+    "state/clm_v1_fire_2026_05_15/dispatch_h100.sh (vastai H100→A100 SXM4 fallback + W1 sha256 verify + cost gate + SCP upload + train + pull artifacts)"
+  ]
+  smoke_evidence = "Mac CPU smoke (5 step batch=1 ctx=32 d=64 2L 2-cell mini config) wall 0.2s, all F-V5MIT hooks fire 정상, F-V5MIT-2 MERGE-WEIGHT PASS max_err=0.0, ckpt saved 424KB. Production scale param count: init 88.6M / saturated 186M (spec 150-200M ✓)."
+  fire_status = "H100 unavailable on Vast.ai (0 offers) → A100 SXM4 fallback. id=31179887 dph=$0.908/hr selected, est_cost=$18.16 / hard_stop=$50. wall ~20hr. fire BG dispatch in-flight 2026-05-15 09:30 UTC."
+  cross_link = "CLM.tape §V-CLM-DESIGN/AUDIT/FROM-SCRATCH/STEP4-SPEC-FROZEN + §V-CLM-V1-FIRE 후속 (verdict 등재) + AGENTS.tape g_clm_from_scratch + PR #63 cycle 88"
+
+# ══════════════════════════════════════════════════════════════════════
+# §V-CLM-V1-FIRE — A100 SXM4 dispatch in-flight (cycle 88, 2026-05-15)
+# ══════════════════════════════════════════════════════════════════════
+
+@D v_clm_v1_fire := ".clm v1 from-scratch A100 SXM4 fire — in-flight (cycle 88, 2026-05-15)" :: protocol [d=2026-05-15 active]
+  trigger = "user 'P2 all go H100 병렬 가능' (verbatim없이 모두 승인)"
+  provider = "Vast.ai A100 SXM4 (H100 unavailable on platform, A100 SXM4 fallback per dispatch_h100.sh §1)"
+  offer = "id=31179887 dph=$0.908/hr reliability=0.99"
+  config = "d=768 12L base + 64-cell mitosis branch, ctx=256 batch=8 accum=2 eff_batch=16, lr 5e-4 warmup 500 cosine→0, bf16, seed=42, RANDOM init"
+  corpus = "Phase 1A.6 corpus_v2.txt 121MB byte-level"
+  cost_envelope = "$18-24 expected (20hr × $0.908), $50 hard stop, CostGuard in-job"
+  falsifier_battery = "F-V5MIT-1..5 (in-run measurement) + F-PYPHI-Φ-FORMAL + F-PRIN3 + F-SIMPLE-STACK V5.8 4-mode (post-fire separate cycle)"
+  status = "BG dispatch baktour46 in-flight from 2026-05-15 09:30 UTC. wall ~20hr estimated. verdict + 4-tape sync + HF upload (dancinlab/anima-clm v1 revision) 별도 cycle 89."
+  cross_link = "CLM.tape §V-CLM-V1-W8-AMENDMENT + state/clm_v1_fire_2026_05_15/{dispatch_h100.sh, dispatch.log, ckpts/, clm_v1_result.json} + cycle 89 verdict"
