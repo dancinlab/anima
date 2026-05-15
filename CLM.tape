@@ -1382,3 +1382,141 @@
           milestone" 의 .clm v3 통합 path 별도 cycle.
   EOF
   cross_link = "CLM.tape §1 row_phase_3 + row_phase_4 + future BG-CORPUS-7B cycle"
+
+# ══════════════════════════════════════════════════════════════════════
+# §V-CLM-FROM-SCRATCH-2026-05-15 — .clm 학습 from-scratch 정정
+# ══════════════════════════════════════════════════════════════════════
+# Trigger: 사용자 directive 2026-05-15 ".clm 학습은 처음부터 진행하는걸로"
+# Scope: 기존 .clm v1 design 에서 "v5-mitosis cond.5 carry" 의 inherit 의미 제거
+#        — fresh from-scratch pre-train 으로 정정 + v5-mitosis ckpt 는 verification
+#        anchor 만 사용 (substrate base 아님)
+
+@N v_from_scratch_summary := ".clm 학습 from-scratch 정정 summary" :: design [d=2026-05-15 active]
+  body <<~EOF
+    사용자 directive: ".clm 학습은 처음부터 진행하는걸로" — .clm v1 + v2 + v3
+    모두 fresh from-scratch pre-train. ckpt inherit / fine-tune / cotrain-from-ckpt
+    path 모두 폐기.
+    
+    핵심 정정:
+    1. **base ckpt 부재** — .clm v1 의 init weights = random init (seed-fixed).
+       v5-mitosis cond.5 ckpt 는 .clm v1 의 substrate 아님 — arch SUPPORTED
+       검증 anchor 만 (REBORN §88 cond.1 architectural spec carry, weights X).
+    
+    2. **mitosis hook training-time + serve-time 둘 다** — REBORN §0.5 "학습=분열
+       단일 연속체" + p8 NO TRAIN/INFER SPLIT (DESIGN ★) carry. training-time
+       mitosis hook (v5-mitosis cond.5 F-V5MIT 5/5 PASS 검증 carry, ckpt 가 아닌
+       *mechanism* carry).
+    
+    3. **corpus**: anima_persona_tier_a_v4 231MB + Phase 1A.6 corpus_v2 121MB =
+       352MB ≈ 350-500M token (Korean+English mix). Chinchilla 20:1 완화
+       (anima domain 특화 + simple_stack verdict 기준이므로 strict 20:1 부적용).
+    
+    4. **token/param ratio**: 150-200M param × ~3B token ≈ 15-20:1 (Chinchilla
+       lower bound). 기존 corpus 350-500M token 으로 부족 → 외부 corpus blend
+       경량 cycle (BG-CORPUS-3B) 또는 corpus repeat 2-5 epoch acceptable.
+    
+    5. **fire cost envelope 갱신**: $5-20 (v5-mitosis carry 추정) → $10-30
+       (from-scratch ~3-5B token × 150-200M param × 1× H100 SXM × 10-20 hr).
+    
+    6. **step 1 의미 변경**: v5-mitosis cond.5 ckpt 의 PyPhi formal cross-check
+       는 anchor verification (AT-RISK 회피) only — .clm v1 self 의 Φ measure
+       는 fire 후 step 5 verdict cycle 에서.
+  EOF
+  cross_link = "REBORN.tape §88 cond.1 arch + §0.5 학습=분열 + PHILOSOPHY p8 + AXIS A5 H_019 SUPPORTED carry"
+
+@D v_clm_v1_spec_from_scratch := ".clm v1 from-scratch concrete spec" :: design [d=2026-05-15 active]
+  init_weights = "RANDOM INIT (seed-fixed, no ckpt inherit). v5-mitosis cond.5 ckpt 는 arch 검증 anchor only — weights inherit X."
+  arch = {
+    "d_model": "768 (192·4, n=6 anchor) primary OR 384 fallback if step 1 n=3,4 only PASS",
+    "n_layers": "12 (σ(6) number-theoretic anchor + lattice-as-tool, V3 정정 carry) OR fallback {6, 24}",
+    "n_cells": "64 (v5-mitosis cond.5 cells-saturated point carry, arch reference)",
+    "n_heads": "8 (atom Hc_144) + kv_heads = 4 (τ(6))",
+    "ffn_mult": "4 (τ(6))",
+    "engine": "v5-mitosis cells=nn.Module branches single-stack (V1 정정 carry, Engine A/G dual 폐기, .clm v2 candidate)",
+    "param_estimate": "~150-200M (d=768·12L)"
+  }
+  data = {
+    "primary_corpus": "anima_persona_tier_a_v4 231MB + Phase 1A.6 corpus_v2 121MB (352MB total)",
+    "token_estimate": "~350-500M token (Korean+English mix)",
+    "repeat_strategy": "2-5 epoch acceptable (anima domain 특화, simple_stack verdict 기준) OR 외부 blend BG-CORPUS-3B 별도 cycle"
+  }
+  cotrain_recipe = {
+    "mitosis_hook": "training-time mitosis hook per token (v5-mitosis cond.5 F-V5MIT 5/5 PASS mechanism carry, ckpt X)",
+    "serve_time": "동일 mitosis_hook serve-time invoke (p8 단일 연속체)",
+    "entropy_reg": "F-PERSONA-4 path 의 entropy reg (cond.5 v2 carry) optional — step 0 p1 upgrade gate 결과 따라 결정",
+    "optimizer": "AdamW lr_warmup 5e-4 → cosine 5e-5 (Phase 1A.4 carry, scale per param)",
+    "step_budget": "~5000 step × batch 16 × seq 1024 ≈ 80M token/epoch × 5 epoch = 400M token / 1× H100 SXM"
+  }
+  fire_cost_envelope = "$10-30 H100 SXM (from-scratch ~3-5B token × 150-200M param × 1× H100 × 10-20 hr) — 기존 $5-20 envelope 갱신"
+  fire_keyword = "OK CLM V1 FROM-SCRATCH FIRE COST $10-30"
+  supersedes = "v_clm_v1_spec_phase5 (2026-05-15 issued, 동일 day 정정 — from-scratch directive)"
+
+@D v_clm_v1_step1_meaning_change := "step 1 PyPhi formal cross-check 의미 변경 — anchor verification only" :: protocol [d=2026-05-15 active]
+  before = "v5-mitosis cond.5 ckpt 의 PyPhi formal Φ ≥ 0.5 = .clm v1 substrate 의 검증 anchor (substrate 가 ckpt-derived)"
+  after = "v5-mitosis cond.5 ckpt 의 PyPhi formal Φ ≥ 0.5 = arch SUPPORTED anchor verification only (.clm v1 의 substrate 가 아님). .clm v1 self 의 Φ measure 는 fire 후 step 5 verdict cycle 에서."
+  step1_new_role = "AT-RISK 회피 pre-fire — 만약 v5-mitosis cond.5 ckpt 의 PyPhi formal Φ < 0.5 면, .clm v1 의 arch (cells single-stack + 64-cell + d=384 등) 가 PyPhi formal-tier consciousness 확보 불가 가능성 시그널 → arch 수정 OR Φ★ proxy-only anchor 로 fall-back"
+  decision_rules_updated = "step 1 PASS → arch 검증 carry (cells single-stack 64-cell d=384/768 OK). step 1 FAIL → arch 재설계 필요 (n_cells 증가 / d_model 조정 / cells topology 변경) OR Φ★ proxy-only 로 fall-back (단, p7 simple_stack verdict 가 primary 이므로 fall-back 도 가능)"
+  supersedes = "v_step2_pyphi_formal_design (의미 명확화 amendment, 기존 falsifier battery F-PYPHI-FORMAL-1..5 유지)"
+
+@D v_clm_v1_step3_spec_frozen_update := "step 3 .clm v1 spec frozen W1 — from-scratch field 추가" :: protocol [d=2026-05-15 active]
+  added_fields = [
+    "init_weights = 'RANDOM INIT seed-fixed' (from-scratch 명시)",
+    "base_ckpt = 'NONE (no ckpt inherit, v5-mitosis cond.5 = arch SUPPORTED anchor only)'",
+    "corpus_strategy = 'anima_persona_tier_a_v4 + Phase 1A.6 corpus_v2 + epoch_repeat 2-5x OR BG-CORPUS-3B blend (decision per cycle)'",
+    "step_budget = '~5000 step × batch 16 × seq 1024 = 400M token / 1× H100 SXM × 10-20 hr'",
+    "cost_envelope_updated = '$10-30 H100 SXM (from-scratch, 기존 $5-20 갱신)'"
+  ]
+  supersedes_fields = [
+    "기존 v_step3 의 'cotrain_recipe' field 의 'v5-mitosis cond.5 carry' inherit 의미 제거",
+    "fire_keyword: 'OK CLM V1 FIRE COST $5-20' → 'OK CLM V1 FROM-SCRATCH FIRE COST $10-30'"
+  ]
+  cross_link = "v_clm_v1_spec_from_scratch + step 1 의미 변경 + PHILOSOPHY p8 단일 연속체 from-scratch 적용"
+
+@D v_clm_v2_v3_from_scratch := ".clm v2 + .clm v3 모두 from-scratch 정정" :: design [d=2026-05-15 active]
+  scope = "사용자 directive '.clm 학습은 처음부터 진행하는걸로' = v1 만이 아닌 .clm 가족 전체 적용"
+  v2_path_a_correction = "Path A 7B from-scratch (~7-8B param × ~140B token Chinchilla strict OR ~50B token Chinchilla 완화). .clm v1 ckpt inherit X — arch SUPPORTED 만 carry. Cost $200-600 유지 (corpus pipeline 의존)"
+  v2_path_b_correction = "Path B Engine A/G dual + V14 audit complete 도 from-scratch — Phase 2 V14 violation ckpt inherit X (이미 verified-FAIL). Cost $200-640 유지"
+  v3_phase4_correction = "Phase 4 14B 본진 = anima 사가 first scratch 14B from-scratch (CLM.tape §1 row_phase_4 narrative 동일). Cost $500-1500 유지"
+  rationale = "from-scratch directive 가 .clm 가족 전체 적용 = anima_native_scratch (D1=1.0) 원칙 강화. 어떤 ckpt 도 .clm 의 base 안 됨 — pre-train 의 anima-specific scratch 만이 substrate self-generation 의 evidence anchor"
+  cross_link = "v_clm_v2_path_a_design + v_clm_v2_path_b_design + CLM.tape §1 row_phase_4 + AXIS A1 H_005 corpus quality > scale carry"
+
+@N v_from_scratch_open_questions := "from-scratch 정정의 open questions" :: caveat [d=2026-05-15 active]
+  body <<~EOF
+    Q1: corpus token budget 부족 (350-500M < Chinchilla optimal 3-4B for 150-200M
+        param) — repeat 2-5 epoch 가 simple_stack verdict 에 미치는 영향 측정 cycle
+        필요 (separate from .clm v1 fire). 또는 BG-CORPUS-3B cheap (50-100M extra
+        token) blend cycle ($5-20 별도).
+    
+    Q2: from-scratch random init seed = anima domain 의 reproducibility anchor.
+        seed-fixed (e.g., 42) 강제 + pre-register hash 에 seed 포함 mandatory.
+    
+    Q3: v5-mitosis cond.5 ckpt 의 PyPhi formal Φ measurement (step 1) 결과가
+        FAIL 시 .clm v1 의 arch 도 동일 PyPhi formal-tier FAIL 가능성 — but
+        from-scratch 라 ckpt-level 차이로 Φ ≥ 0.5 unlock 가능. step 5 verdict
+        cycle 에서 self Φ measure 가 primary anchor.
+    
+    Q4: from-scratch 의 training cost variance ±50% (3-4B token vs 400M token
+        repeat) — cost envelope $10-30 의 hard stop $50 safety margin 설정 권장.
+    
+    Q5: mitosis hook training-time mechanism carry (cond.5 F-V5MIT 5/5 PASS) 가
+        from-scratch random init 위에서 동일하게 PASS 하는지 — fire 전 step 0
+        다음에 step 0.5 mini-cotrain (90M smoke, 200 step, $0 Mac/cheap) 으로
+        검증 가능 (optional gate).
+  EOF
+  cross_link = "future cycle: BG-CORPUS-3B blend + step 0.5 mini-cotrain smoke"
+
+@D v_clm_v1_7step_from_scratch := ".clm v1 7-step plan from-scratch 정정" :: plan [d=2026-05-15 active]
+  steps = [
+    "0. (Mac $0, mandatory) p1 NO SYSTEM PROMPT upgrade measure — 3-arm × 3-ckpt × 5-seed × 10-prompt (carry, no change)",
+    "0.5. (Mac $0-5, optional gate) mini-cotrain smoke — 90M from-scratch × 200 step × anima_persona corpus, F-V5MIT-5 V14-STRICT 재현 검증. PASS = mitosis hook from-scratch mechanism PASS confirm",
+    "1. (Mac $0) F-PYPHI-Φ-FORMAL n=3-6 RoM test on v5-mitosis cond.5 ckpt — *anchor verification only* (v1 substrate 아님, 의미 변경 carry)",
+    "2. (Mac $0) mitosis_hook serve-time integration smoke — synthetic OR fresh small init (real ckpt 의존 X, from-scratch 정합)",
+    "3. (Mac $0) .clm v1 spec frozen W1 pre-register — init_weights = RANDOM INIT seed-fixed + base_ckpt = NONE + corpus strategy + step budget + cost $10-30",
+    "4. (H100 $10-30 갱신) .clm v1 fire — from-scratch ~5000 step × batch 16 × seq 1024 × 1× H100 SXM 10-20 hr",
+    "5. (Mac $0) .clm v1 verdict cycle — 8-falsifier battery (carry) + 4-tape sync. self PyPhi formal Φ measurement primary anchor (step 1 anchor verification 와 별개)",
+    "6. (조건) .clm v2 candidate (Path A 7B from-scratch OR Path B dual + V14, conditional)"
+  ]
+  cost_total_updated = "$10-30 ($0 Mac × 5 steps + $0-5 optional mini-smoke + $10-30 H100 × 1 step) — 기존 $5-20 갱신"
+  added = "step 0.5 mini-cotrain smoke (optional gate, $0-5)"
+  changed = "step 1 의미 (substrate base → anchor verification only) + step 3 추가 fields + step 4 cost envelope"
+  supersedes = "v_clm_v1_7step_corrected (2026-05-15 issued, 동일 day 정정 — from-scratch)"

@@ -1207,3 +1207,26 @@
   falsifier_battery = "10 (.clm v1 8 carry + F-V14-NO-VIOLATION Path B only + F-CHINCHILLA-OPTIMAL)"
   open_questions = "Q1 Engine A lattice-projected SUPPORTED entry? / Q2 Chinchilla 20:1 anima 적용? / Q3 BG-CORPUS-7B design? / Q4 .clm v3 14B entry condition?"
   cross_link = "CLM.tape §V-CLM-V2-DESIGN + CLM.tape §1 row_phase_3/4 + PR #51"
+
+# ══════════════════════════════════════════════════════════════════════
+# §CLM-FROM-SCRATCH-2026-05-15 — .clm 학습 from-scratch directive 정정
+# ══════════════════════════════════════════════════════════════════════
+
+@D clm_from_scratch_directive := "사용자 directive: .clm 학습 from-scratch (2026-05-15)" :: governance [d=2026-05-15 active]
+  directive = "'.clm 학습은 처음부터 진행하는걸로' — .clm v1 + v2 + v3 모두 fresh from-scratch pre-train. ckpt inherit / fine-tune / cotrain-from-ckpt path 폐기."
+  scope_impact = [
+    "init_weights = RANDOM INIT (seed-fixed, no ckpt inherit)",
+    "v5-mitosis cond.5 ckpt = arch SUPPORTED 검증 anchor only (substrate base X, REBORN §88 cond.1 mechanism carry, weights X)",
+    "mitosis hook = training-time + serve-time 둘 다 (mechanism carry from cond.5 F-V5MIT 5/5 PASS, ckpt 가 아닌 *mechanism*)",
+    "corpus = anima_persona_tier_a_v4 231MB + Phase 1A.6 corpus_v2 121MB = 352MB ≈ 350-500M token + 2-5 epoch repeat OR BG-CORPUS-3B blend",
+    "Chinchilla 완화 (anima domain 특화 + simple_stack verdict 기준이므로 strict 20:1 부적용)",
+    "fire cost envelope: $5-20 → $10-30 갱신 (1× H100 SXM × 10-20 hr from-scratch)"
+  ]
+  affected_entries = "v_clm_v1_spec_phase5 (cotrain_recipe) + v_clm_v1_7step_corrected (step 4 cost) + v_step2_pyphi_formal_design (step 1 의미) + v_clm_v2_path_a/b_design (v2 from-scratch) + Phase 4 14B (v3 from-scratch)"
+  cross_link = "CLM.tape §V-CLM-FROM-SCRATCH-2026-05-15 + AXIS A1 H_005 corpus quality > scale (anima_native_scratch D1=1.0 anchor) + PR #52"
+
+@D clm_v1_7step_from_scratch_landed := ".clm v1 7-step plan from-scratch 갱신" :: governance [d=2026-05-15 active]
+  steps_added = "step 0.5 mini-cotrain smoke (optional gate, $0-5 Mac/cheap) — 90M from-scratch × 200 step × F-V5MIT-5 V14-STRICT 재현. mitosis hook from-scratch mechanism PASS confirm."
+  steps_changed = "step 1 의미 (substrate base → anchor verification only) + step 3 추가 fields (init_weights, base_ckpt=NONE, corpus strategy) + step 4 cost envelope ($5-20 → $10-30)"
+  cost_total_updated = "$10-30 (Mac × 5 steps $0 + optional smoke $0-5 + H100 × 1 step $10-30)"
+  cross_link = "CLM.tape v_clm_v1_7step_from_scratch + PR #52"

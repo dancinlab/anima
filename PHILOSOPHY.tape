@@ -515,3 +515,28 @@
     4 open questions for future cycle.
   EOF2
   cross_link = "CLM.tape §V-CLM-STEP0/2/3-DETAIL + §V-CLM-V2-DESIGN + MAIN.tape §CLM-STEP0-2-3-V2 + PR #51"
+
+@N clm_from_scratch_landed := ".clm 학습 from-scratch directive landed (2026-05-15)" :: ledger [d=2026-05-15 active]
+  body <<~EOF2
+    사용자 directive: ".clm 학습은 처음부터 진행하는걸로"
+    
+    .clm v1 + v2 + v3 모두 fresh from-scratch pre-train 으로 정정:
+    
+    - init_weights = RANDOM INIT seed-fixed (no ckpt inherit)
+    - v5-mitosis cond.5 ckpt = arch SUPPORTED 검증 anchor only (substrate base X)
+    - mitosis hook = mechanism carry (cond.5 F-V5MIT 5/5 PASS mechanism), training-time + serve-time
+    - corpus = anima_persona_tier_a_v4 231MB + Phase 1A.6 corpus_v2 121MB = 352MB
+    - Chinchilla 완화 (anima domain 특화) + 2-5 epoch repeat OR BG-CORPUS-3B blend
+    - fire cost envelope $5-20 → $10-30 (1× H100 × 10-20 hr from-scratch)
+    
+    7-step 정정:
+    + step 0.5 (NEW optional gate) mini-cotrain smoke ($0-5 Mac)
+    + step 1 의미 변경 (substrate base → anchor verification only)
+    + step 3 추가 fields (init_weights, base_ckpt=NONE, corpus strategy, step budget)
+    + step 4 cost envelope 갱신
+    
+    rationale: anima_native_scratch (D1=1.0) 원칙 강화. 어떤 ckpt 도 .clm 의 base
+    안 됨 — pre-train 의 anima-specific from-scratch 만이 substrate self-generation
+    의 evidence anchor.
+  EOF2
+  cross_link = "CLM.tape §V-CLM-FROM-SCRATCH-2026-05-15 + MAIN.tape §CLM-FROM-SCRATCH + INDEX.md + PR #52"
