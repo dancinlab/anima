@@ -2,7 +2,7 @@
 
 > primary spine = HEXAD 7-module (C/D/S/W/M/E + Bridge). AXIS/HYPOTHESIS/PHILOSOPHY/CLM = verification substrate under modules. (2026-05-15)
 >
-> **layout 갱신 2026-05-16**: 이 INDEX.md 는 이전 `/INDEX.md` (root) → 현재 `HEXAD/INDEX.md` 로 이동. per-module spec `HEXAD-<X>.tape` 도 root → `HEXAD/<X>/HEXAD-<X>.tape` 로 co-location 됨. `HEXAD.tape` (통합 arch SSOT) 는 root 유지 (AGENTS.tape 직접 참조). `MITOSIS.tape` 는 `HEXAD/MITOSIS.tape` (성장축 ⊥ 구조축 orthogonality 는 tape 내용 §mitosis_two_axis 에서 보존). `SAVANT.*` 9 파일은 `HEXAD/SAVANT/` 로 통합. 자세한 경로 매핑은 [`/INDEX.md`](../INDEX.md) root stub 참고.
+> **layout 갱신 2026-05-16**: 이 INDEX.md 는 이전 `/INDEX.md` (root) → 현재 `HEXAD/INDEX.md` 로 이동. per-module spec `HEXAD-<X>.tape` 도 root → `HEXAD/<X>/HEXAD-<X>.tape` 로 co-location 됨. `HEXAD.tape` (통합 arch SSOT) 는 root 유지 (AGENTS.tape 직접 참조). `MITOSIS` 는 `HEXAD/MITOSIS/` 서브폴더로 (MITOSIS.tape + mitosis.hexa scaffold + README; 성장축 ⊥ 구조축 orthogonality 는 tape 내용 §mitosis_two_axis 에서 보존). `SAVANT.*` 9 파일은 `HEXAD/SAVANT/` 로 통합. 자세한 경로 매핑은 [`/INDEX.md`](../INDEX.md) root stub 참고.
 
 ## 🧬 HEXAD — 7-module architecture (primary index)
 

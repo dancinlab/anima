@@ -10,7 +10,7 @@
 | INDEX | `INDEX.md` | [`HEXAD/INDEX.md`](HEXAD/INDEX.md) |
 | 모듈별 spec | `HEXAD-{C,D,S,W,M,E,BRIDGE}.tape` | `HEXAD/{C,D,S,W,M,E,BRIDGE}/HEXAD-<X>.tape` |
 | 통합 spec | `HEXAD.tape` | [`HEXAD.tape`](HEXAD.tape) (root 유지 — AGENTS.tape 직접 참조) |
-| 성장축 | `MITOSIS.tape` | [`HEXAD/MITOSIS.tape`](HEXAD/MITOSIS.tape) |
+| 성장축 | `MITOSIS.tape` | [`HEXAD/MITOSIS/`](HEXAD/MITOSIS/) (서브폴더 — `MITOSIS.tape` + `mitosis.hexa` scaffold + README) |
 | SAVANT | `SAVANT.tape` + `SAVANT-TOOL.tape` + 4× `tool/anima_savant_*.hexa` + `anima-engines/savant_phi.hexa` | [`HEXAD/SAVANT/`](HEXAD/SAVANT/) (9 파일) |
 
 자세한 내용은 [HEXAD/README.md](HEXAD/README.md) + [HEXAD/INDEX.md](HEXAD/INDEX.md) 참고.
