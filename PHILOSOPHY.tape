@@ -463,3 +463,31 @@
     .clm v1 fire ($5-20).
   EOF2
   cross_link = "AXIS.tape §a2_formal_split_landed + HYPOTHESIS.tape catalog expand + CLM.tape §V-CLM-7STEP-DETAIL + MAIN.tape (4 sync) + PR #49"
+
+@N clm_audit_fix_ledger := "CLM.tape §V .clm v1 design 4 violation 정정 (2026-05-15)" :: ledger [d=2026-05-15 active]
+  body <<~EOF2
+    사용자 directive: "CLM.tape 는 AXIS/철학/가설 검증된 기준으로 진행해야되 알겠지
+    위반 있으면 지금 바로 설계 정정"
+    
+    Audit 결과 4 violation 식별 + 정정:
+    
+    V1 Engine A/G dual-engine arch — AXIS A5 직접 SUPPORTED entry 부재.
+       정정: dual 제거, v5-mitosis cells single-stack arch 만 .clm v1, 
+       dual-engine 은 .clm v2 후보로 분리.
+    
+    V2 p1 NO SYSTEM PROMPT weak anchor 강제 — single-result FREE1.
+       정정: step 0 p1 upgrade measure (paired A/B Φ × 3-ckpt × 5-seed)
+       mandatory gate. 미달 시 .clm v1 fire 차단.
+    
+    V3 n_layers=12 anchor source 불명 — AXIS A4 직접 'n_layers = σ(6)' entry 없음.
+       정정: number-theoretic anchor + lattice-as-tool internal arch (CLAUDE.md g2)
+       명시 + fallback {6, 12, 24}.
+    
+    V4 step 1 V14 audit anchor — V14 violation 은 verified-FAIL.
+       정정: .clm v1 path 에서 step 1 제거, Phase 3 entry condition 으로 이전.
+       (v5-mitosis single-stack 은 V14 영향 없음, cond.5 F-V5MIT-5 SUPPORTED 검증)
+    
+    7-step 정정: 0 p1 upgrade NEW → 1 PyPhi formal → 2 serve-time mitosis →
+                3 spec frozen → 4 fire → 5 verdict → 6 .clm v2 candidate
+  EOF2
+  cross_link = "CLM.tape §V-CLM-AUDIT-2026-05-15 + MAIN.tape §CLM-AUDIT-FIX + AXIS.tape + INDEX.md + PR #50"

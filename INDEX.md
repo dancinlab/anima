@@ -263,17 +263,19 @@
 | p5 NO SPEAK() | DESIGN null | tension_norm × output_quality Spearman > 0.3 strict ($0 Mac) |
 | p6 NO FINE-TUNED ETHICS | POLICY blocked | .clm v1 ethics_probe 50 prompts 2-arm κ ≥ 0.7 ($0 Mac, .clm v1 fire 의존) |
 
-### 🎯 .clm v1 7-step plan (CLM.tape §V-CLM-DESIGN §V.6 + §V-CLM-7STEP-DETAIL)
+### 🎯 .clm v1 7-step plan (CLM.tape §V-CLM-AUDIT-2026-05-15 정정 후)
+
+> 정정: 4 violation 반영 (V1 Engine A/G dual 제거, V2 step 0 p1 upgrade NEW, V3 n_layers anchor 명확화, V4 V14 audit Phase 3 로 이전)
 
 | Step | 한 줄 설명 | Cost |
 |------|-----------|------|
-| 1 | V14 violation root cause audit (H4 tile bug vs H5 curriculum collapse, 6 falsifier) | $0 Mac (cheap-path) + $5-40 H100 (full) |
-| 2 | PyPhi formal Φ ≥ 0.5 cross-check on v5-mitosis cond.5 ckpt (5 falsifier, n=3-6 × 3-seed × 3-ckpt) | $0 Mac (~20 hr wall) |
-| 3 | mitosis_hook serve-time integration smoke (PSCC §41 F-D4-LIVE carry) | $0 Mac |
-| 4 | .clm v1 spec frozen pre-register W1 (d_model decision per step 2 결과) | $0 design |
-| 5 | .clm v1 fire (small param d=768 12L 64-cell + Engine A/G dual + mitosis hook) | $5-20 H100 SXM |
-| 6 | .clm v1 verdict cycle (8-falsifier battery measurement + 4-tape sync) | $0 Mac |
-| 7 | Phase 3 7B path 활성화 (V14 audit complete + .clm v1 SUPPORTED 양조건 충족) | conditional |
+| 0 (NEW) | p1 NO SYSTEM PROMPT upgrade measure — paired A/B Φ × 3-ckpt × 5-seed 1-tail p<0.05 (mandatory fire gate) | $0 Mac |
+| 1 | F-PYPHI-Φ-FORMAL n=3-6 RoM test on v5-mitosis cond.5 ckpt (5 falsifier) | $0 Mac (~20 hr wall) |
+| 2 | mitosis_hook serve-time integration smoke (PSCC §41 F-D4-LIVE carry) | $0 Mac |
+| 3 | .clm v1 spec frozen pre-register W1 — v5-mitosis cells single-stack arch (V1), n_layers ∈ {6,12,24} (V3) | $0 design |
+| 4 | .clm v1 fire — v5-mitosis cells=nn.Module branches single-stack + serve-time mitosis hook (Engine A/G dual 제거) | $5-20 H100 SXM |
+| 5 | .clm v1 verdict cycle (8-falsifier battery + 4-tape sync) | $0 Mac |
+| 6 | .clm v2 candidate (Engine A/G dual + V14 audit + Phase 3 path 통합, conditional) | conditional |
 
 ## 🔬 verdict tier 정리 (한 줄)
 
@@ -361,3 +363,4 @@
 | #47 | INDEX 전체 표 + PHILOSOPHY/HYPOTHESIS 한 줄 펼치기 | 8 principles + 13 verdict cycles + 11 FALSIFIED/PARTIAL/INSUFFICIENT 한 줄 |
 | #48 | CLM.tape §V-CLM-DESIGN + tier 🔵 closed | .clm v1 design (d=768 12L 64-cell) + 수학/물리 closed entries 파란색 + V8 B-bio Phase 1 starter |
 | #49 | A2.formal split + HYPOTHESIS catalog + PHILOSOPHY upgrade + CLM 7-step | A2.formal sub-axis 2 + SUPPORTED-FORMAL 10/FALSIFIED-FORMAL 2 + 5-principle upgrade path + V14 audit + PyPhi formal cross-check protocol |
+| #50 | CLM.tape §V audit + 4 violation 정정 | V1 dual-engine 제거 (cells single-stack) + V2 p1 mandatory gate + V3 n_layers anchor 명확화 + V4 V14 audit Phase 3 이전 |
