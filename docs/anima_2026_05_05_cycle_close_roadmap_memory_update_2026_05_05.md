@@ -93,7 +93,7 @@ alternative output media that DO NOT require chat-capability.
    architectural intervention does this differ from the 16+ closures?"
    before opening BG. If no architectural lever, route to FAIL_TRUE_CLOSED.
 2. User-facing chat-cap requests: route to Llama Path A v2 v1 ($0 today)
-   OR CLM-3 H1 launch ($1k+ / 30d, only after BG-BM Variant B + own 16
+   OR CLM-3 H1 launch ($1k+ / 30d, only after BG-BM Variant B +
    Phase 3 enforcement L23/L24/L25).
 3. Anima output requests: route to emerge paradigm B (substrate-coupled,
    `tool/transient_py/anima_emerge_dialogue_repl.py`) OR paradigm C
@@ -263,7 +263,7 @@ type: project
 - 사용자가 "anima와 대화" 요청 → paradigm A (traditional chatbot) 시도가
   16+ closure로 architectural impossible 판명. paradigm B/C가 anima-native
   대안으로 fire-ready.
-- HF promote private→public lifecycle (own 15) 시간-gated — 사용자 fire 시기
+- HF promote private→public lifecycle 시간-gated — 사용자 fire 시기
   도래 시 confirm-string 명시.
 - commit groups는 다음 cycle 진입 전 fire 권장 (cycle close).
 
@@ -466,7 +466,7 @@ HEXA_PY=/Users/ghost/core/anima/.venv-eeg/bin/python \
   - confirm-string: `PROMOTE-pbeta-50k`
   - script: `bash state/anima_hf_promotes_2026_05_06_auto_fire.bash --fire-pbeta`
 
-**Why time-gated**: own 15 HF release lifecycle PRIVATE → 36h dwell + verification
+**Why time-gated**: HF release lifecycle PRIVATE → 36h dwell + verification
 gates → PUBLIC. 임의 promote 금지.
 
 **Cost**: $0, ~2-5 min per promote.
@@ -609,7 +609,7 @@ mutual dialogue"였다면 두 paradigm 모두 intent unsatisfied 가능. 사용�
 ceiling이며 실제 H100 raw $300-700 + ancillary $100-300 (config/h100_pods.json
 + runpod_pod_purge_2026_05_03 history). 30d 연속 train H100 1× 가정. 만약
 training stall 또는 eval pipeline crash (V2_FAIL precedent — measurement
-artifact 가능) 시 추가 비용. 사용자 fire 시 own 16 Phase 3 enforcement
+artifact 가능) 시 추가 비용. 사용자 fire 시 Phase 3 enforcement
 L23/L24/L25 mandatory.
 
 ### C4.6 — hand-off summary may not survive context window compression

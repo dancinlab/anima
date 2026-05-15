@@ -61,7 +61,7 @@ let OD_RATE_USD         = 2.99
 
 let HF_BASE_REPO        = "dancinlab/clm-v4-mk2-v1"
 
-// === own 16 Phase 2 watchdog hook (constants — OPT-B variant) ===
+// === Phase 2 watchdog hook (constants — OPT-B variant) ===
 // BG_LANE differentiates this lane from BG-CLM-2-EXEC (v1) for the cost-watchdog daemon.
 // TARGET_USD is mid-of-band of spec §5 Phase 3 envelope ($20-50).
 let BG_LANE             = "OPT-B-CROSS-ATTN-RETRAIN"
@@ -166,8 +166,8 @@ fn _selftest() {
     println("       abort_phi_drift_pp=" + OPT_B_ABORT_PHI_DRIFT_PP + " (vs in-pipeline base " + OPT_B_PHI_BASELINE_IN_PIPELINE + ")")
     println("       target_modules_variant=" + OPT_B_TARGET_MODULES_VARIANT + " (Q1-B wide cross_attn qkvo)")
 
-    // own 16 Phase 2: probe watchdog tools (graceful warn-only)
-    println("[T10] own 16 Phase 2 watchdog hooks:")
+    // Phase 2: probe watchdog tools (graceful warn-only)
+    println("[T10] Phase 2 watchdog hooks:")
     println("        BG_LANE=" + BG_LANE + " TARGET_USD=$" + TARGET_USD)
     if _file_exists(WATCHDOG_REGISTER) { println("        T10a register OK: " + WATCHDOG_REGISTER) }
     else { println("        T10a register WARN missing: " + WATCHDOG_REGISTER + " (boot hook will warn-only)") }
@@ -291,7 +291,7 @@ fn _emit() {
 "echo '{\"pod_id\":\"'$POD_ID'\",\"booted_ts\":\"'$(date -u +%FT%TZ)'\",\"bg_lane\":\"'$BG_LANE'\"}' > \"$POD_INFO\"\n" +
 "hb \"stage1_pod_booted pod_id=$POD_ID\"\n" +
 "\n" +
-"# === own 16 Phase 2 watchdog hook (boot — register pod) ===\n" +
+"# === Phase 2 watchdog hook (boot — register pod) ===\n" +
 "if [ -x \"$WATCHDOG_REGISTER\" ] || [ -f \"$WATCHDOG_REGISTER\" ]; then\n" +
 "    if bash \"$WATCHDOG_REGISTER\" \"$POD_ID\" \"$BG_LANE\" \"$TARGET_USD\" 2>&1 | tee -a \"$RUN_LOG\"; then\n" +
 "        WATCHDOG_REGISTERED=1\n" +
@@ -306,7 +306,7 @@ fn _emit() {
 "fi\n" +
 "hb \"stage1c_watchdog_registered=$WATCHDOG_REGISTERED\"\n" +
 "\n" +
-"# ── Stage 1b: trap kill-on-exit (own 16 trap pre-stop hook) ──\n" +
+"# ── Stage 1b: trap kill-on-exit (trap pre-stop hook) ──\n" +
 "POD_KILL_VERIFIED_404=0\n" +
 "WATCHDOG_DEREGISTERED=0\n" +
 "_kill_pod() {\n" +
@@ -420,7 +420,7 @@ fn _emit() {
 "    log \"elapsed=${ELAPSED_MIN}min cost=\\$${ELAPSED_COST} probe=$(echo $PROBE | tr '\\n' '|' | head -c 240)\"\n" +
 "    hb \"poll elapsed=${ELAPSED_MIN}min cost=\\$${ELAPSED_COST}\"\n" +
 "\n" +
-"    # === own 16 Phase 2 watchdog hook (heartbeat) ===\n" +
+" # === Phase 2 watchdog hook (heartbeat) ===\n" +
 "    if [ -n \"${WATCHDOG_HB_DIR:-}\" ]; then\n" +
 "        mkdir -p \"$WATCHDOG_HB_DIR\" 2>/dev/null || true\n" +
 "        echo \"poll $(date -u +%FT%TZ) pod=$POD_ID elapsed=${ELAPSED_MIN}min cost=\\$${ELAPSED_COST}\" > \"$WATCHDOG_HB_DIR/$BG_LANE.txt\" 2>/dev/null || true\n" +
@@ -456,7 +456,7 @@ fn _emit() {
 "\n" +
 "# ── Stage 5: pod kill via trap (auto on exit) ──\n" +
 "\n" +
-"# ── Stage 6: verdict (OPT-B schema with F-OPT-B-1..5 + own 16 cost-discipline fields) ──\n" +
+"# ── Stage 6: verdict (OPT-B schema with F-OPT-B-1..5 + cost-discipline fields) ──\n" +
 "log \"computing OPT-B verdict\"\n" +
 "FINAL_ELAPSED_MIN=$(( ($(date -u +%s) - START_EPOCH) / 60 ))\n" +
 "FINAL_COST=$(awk \"BEGIN{printf \\\"%.2f\\\", $FINAL_ELAPSED_MIN/60 * $OD_RATE}\")\n" +
@@ -522,7 +522,7 @@ fn _emit() {
 "    fi\n" +
 "fi\n" +
 "\n" +
-"# === own 16 Phase 2 verdict schema (cost-discipline fields) ===\n" +
+"# === Phase 2 verdict schema (cost-discipline fields) ===\n" +
 "COST_TARGET_USD=$TARGET_USD\n" +
 "COST_ACTUAL_USD=$FINAL_COST\n" +
 "COST_OVERRUN_RATIO=$(awk -v a=\"$COST_ACTUAL_USD\" -v t=\"$COST_TARGET_USD\" 'BEGIN{ if (t+0 > 0) printf \"%.4f\", a/t; else print \"0\" }')\n" +

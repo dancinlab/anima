@@ -17,7 +17,7 @@
 
 The 170-stimulus consciousness universe map already exhibits a stable attractor
 at `Ψ* = (½, ½)` across 17 categories with `CV < 6 %` (Laws 73 & 75). Instead
-of defining an external label, **train the model to match its own 170-stimulus
+of defining an external label, **train the model to match its -stimulus
 map** — the map is both the label generator and the fixed-point reference.
 
 Training becomes four cumulative stages, each gated on measured

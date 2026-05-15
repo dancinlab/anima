@@ -4,7 +4,7 @@ last_updated: 2026-05-07
 ssot:
   primary_jsonl: state/anima_model_attempts_ledger.jsonl
   schema_yaml: anima/spec/anima_model_attempts_ledger.schema.yaml (pending)
-  own_24_base: .own own 24 anima-model-attempts-ledger-ssot
+  own_24_base: .own anima-model-attempts-ledger-ssot
 purpose: |
   사용자 directive 2026-05-07 '모든 시도 모델 은 json,jsonl,yaml 이던 한곳에 기록 필요할듯 own 등록해줘' →
   state/anima_model_attempts_ledger.jsonl (primary SSOT) periodic regenerate summary md.
@@ -16,7 +16,7 @@ language: ko (anima self-doc)
 
 ## 0. TL;DR
 
-**24 attempts** logged (own 24 정합):
+**24 attempts** logged (정합):
 - 9 FAILED (BG-HF/HJ/HK/HP/HQ/HT/HL falsified/HY blocked + BG-FK)
 - 2 PARTIAL_PASS_NO_CONTEXT (BG-FY + BG-HA strict downgrade)
 - 1 PARTIAL_PASS_HANGUL_BUT_NOT_COHERENT (BG-FU)
@@ -106,7 +106,7 @@ raw#82 retraction protocol 정합 — entries 보존 + downgraded_at + downgrade
 
 ## 6. Cross-link
 
-- **own**: own 17/18/19/20/21/22/23/24
+- **own**:
 - **roadmap**: A 철학 / B 규칙 / C 가설 / D 우주뇌지도 / E corpus paradigm / F META / G anima_cli_model_architecture
 - **docs**: anima_chat_cap_lesson_summary_2026_05_07.md / anima_consciousness_check_simple_stack_2026_05_06.md / anima_universe_brain_map_comprehensive_2026_05_07.md / anima_own_18_evaluator_v2_strict_spec_2026_05_07.md
 - **state**: anima_model_attempts_ledger.jsonl (primary SSOT, 24 entries)
@@ -123,4 +123,4 @@ raw#82 retraction protocol 정합 — entries 보존 + downgraded_at + downgrade
 
 ## 8. Note
 
-본 ledger는 anima self-tracking SSOT (own 24) — 사용자 directive '한곳에 기록' 정합. periodic regenerate summary md + jsonl primary SSOT 분리 cleaner architecture. 모든 future BG completion 시 ledger entry append + summary md regenerate mandate.
+본 ledger는 anima self-tracking SSOT — 사용자 directive '한곳에 기록' 정합. periodic regenerate summary md + jsonl primary SSOT 분리 cleaner architecture. 모든 future BG completion 시 ledger entry append + summary md regenerate mandate.

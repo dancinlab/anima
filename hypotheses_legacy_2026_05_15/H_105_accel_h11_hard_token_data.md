@@ -19,7 +19,7 @@ since: 2026-04-03
 Focusing training on the top 30% hardest tokens (highest CE loss) yields CE 1.89 vs 3.88 full-data — strongest single-technique training acceleration of all acceleration experiments.
 
 ## Migration Status
-Legacy individual entry from `ready/config/acceleration_hypotheses.json` (id=H11, lines 1057-1071, stage=applied, verdict=★★★ REVOLUTIONARY). Selected for round 4 individual due to ★★★ tier + decoder-acceleration corpus crossover relevance (own 19/20).
+Legacy individual entry from `ready/config/acceleration_hypotheses.json` (id=H11, lines 1057-1071, stage=applied, verdict=★★★ REVOLUTIONARY). Selected for round 4 individual due to ★★★ tier + decoder-acceleration corpus crossover relevance .
 
 ## Cross-Links
 - Source: `ready/config/acceleration_hypotheses.json` (H11)

@@ -1,6 +1,6 @@
 // ════════════════════════════════════════════════════════════════════════════
 //  tool/anima_cli/chat/verifiers/_registry.hexa — chat VERIFIER plugin registry
-//                                                  (own 41 axis-5 = axis-N+1)
+// (axis-5 = axis-N+1)
 //
 //  PURPOSE
 //    Single source of truth for chat VERIFIER (= per-turn / per-combo C3
@@ -8,14 +8,14 @@
 //    benchmark.hexa when --verifier flag is present (and by axes/_registry.hexa
 //    axis-5 row for meta-registry resolution).
 //
-//    이 파일은 own 41 axis-N+1 hook T+3 step (cycle 2026-05-10) 에서 신설.
+// 이 파일은 axis-N+1 hook T+3 step (cycle 2026-05-10) 에서 신설.
 //    T+1 (axes meta-registry) + T+2 (N-axis Cartesian product) 의 hook 정합
 //    검증 마무리 — axis-5 활성화 시 dispatcher (chat.hexa) / benchmark.hexa
 //    코드 변경 0 줄 (verifier case 만 raw#15 additive 신설; 기존 4 axis case
 //    그대로). F-axes-6 fixture LANDED.
 //
 //  USER DIRECTIVE (2026-05-09 verbatim)
-//    "진행가능한것들 all bg go" → cycle 2026-05-10 own 41 axis-5 verifier
+// "진행가능한것들 all bg go" → cycle 2026-05-10 axis-5 verifier
 //    registry T+3 step 구현 (4 modules: c3_per_turn / duo_d1234 / trio_3way /
 //    v14_strict).
 //
@@ -29,10 +29,10 @@
 //    list_flag            --list-verifiers
 //    describe_helper      verifier_describe (this file)
 //    status               LANDED | SKELETON | DEFERRED | SPEC_CARRY
-//    axis_label_internal  axis-N+1 (own 41 plugin pattern hook label)
+// axis_label_internal axis-N+1 (plugin pattern hook label)
 //    hexa_ssot            full module path (cross-link)
 //
-//  VERIFIER INVENTORY (own 22 mandatory report — 4 entries × T+3)
+// VERIFIER INVENTORY (mandatory report — 4 entries × T+3)
 //    1. c3_per_turn   per-turn C3 (PIV / DCR / D-RAND / V14) measurement —
 //                     skeleton wrapper around clm_v5_mount.hexa anchor
 //                     (실 측정은 별도 step; 본 T+3 = registry + skeleton).
@@ -45,7 +45,7 @@
 //                     skeleton wrapper (delta = trained_PPR - random_PPR;
 //                     is_violated = delta < 0; 실 측정 별도 step).
 //
-//  EXTENSION CONVENTION (future-proof — own 41 axis-N+1 mirror)
+// EXTENSION CONVENTION (future-proof — axis-N+1 mirror)
 //    NEW verifier → add file under chat/verifiers/<id>.hexa with
 //    fn verifier_describe() / fn verifier_smoke(repo, argv) -> int / fn
 //    verify(model, prompt, ctx) -> dict AND register entry below. chat.hexa
@@ -53,18 +53,18 @@
 //    verifier module's argv parse via _arg_value().
 //
 //  COMPLIANCE
-//    own 14 V14 — verifier 결정성 (random / time / env 의존 없음, skeleton 단계)
-//    own 16 — model load 절대 금지 (registry meta + skeleton only;
+// V14 — verifier 결정성 (random / time / env 의존 없음, skeleton 단계)
+// — model load 절대 금지 (registry meta + skeleton only;
 //             실 측정은 별도 step)
-//    own 17 D1 SCOPE_CLAMP — verifier 는 ambiguous_research lane (verdict shell)
-//    own 18 chat-cap C3 — 본 registry = C3 verdict shell axis 자체
-//    own 22 mandatory report — registry 자체 + 4 entries discovery
-//    own 33 trinity — registry entries cross-link own 17 / own 18 / own 34
-//    own 34 mandate-1 — wrapping 0 (verifier emit-only, model 출력 변형 0)
-//    own 38 매단계 — registry yaml↔md mirror in
+// D1 SCOPE_CLAMP — verifier 는 ambiguous_research lane (verdict shell)
+// chat-cap C3 — 본 registry = C3 verdict shell axis 자체
+// mandatory report — registry 자체 + 4 entries discovery
+// trinity — registry entries cross-link / /
+// mandate-1 — wrapping 0 (verifier emit-only, model 출력 변형 0)
+// 매단계 — registry yaml↔md mirror in
 //      anima/registry/anima_artifact_registry.yaml chat_verifiers section
-//    own 39 yaml↔md SSOT — registry yaml + this hexa file co-update
-//    own 41 chat lane plugin pattern — 본 파일 = own 41 axis-N+1 = axis-5
+// yaml↔md SSOT — registry yaml + this hexa file co-update
+// chat lane plugin pattern — 본 파일 = axis-N+1 = axis-5
 //      (T+3 land; F-axes-6 fixture 검증 완성)
 //
 //  CROSS-REFERENCE
@@ -190,7 +190,7 @@ fn verifiers_registry_path(id: string, root: string) -> string {
     return root + "/tool/anima_cli/chat/verifiers/" + _str(row[2])
 }
 
-// Selftest — registry shape sanity (no dispatch, no model load — own 16).
+// Selftest — registry shape sanity (no dispatch, no model load —).
 fn main() {
     let reg = verifiers_registry()
     if len(reg) < 4 {
@@ -215,6 +215,6 @@ fn main() {
         k = k + 1
     }
     println("")
-    println("(axis-5 hook = own 41 axis-N+1 LANDED 2026-05-10 T+3 step)")
-    println("(trio_3way DEFERRED — Phase B 미구현; honest C3 emit own 22)")
+    println("(axis-5 hook = axis-N+1 LANDED 2026-05-10 T+3 step)")
+    println("(trio_3way DEFERRED — Phase B 미구현; honest C3 emit)")
 }

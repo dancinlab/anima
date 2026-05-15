@@ -14,7 +14,7 @@
 | 흡수할만한 것들은 흡수 | raw 108 absorption 8/8 (registry.jsonl) |
 | mac local 말고 ubu1/ubu2/herz | hetzner kick + Mac in-context fallback (raw 100) |
 | api key 필요없는데 | nexus kick = caller-side LLM synthesis (no API call) |
-| RunPod 사용제한 없음 + 유저승인 불요 | own 6 등록 (자율 dispatch) |
+| RunPod 사용제한 없음 + 유저승인 불요 | 등록 (자율 dispatch) |
 | RunPod all kill | 0 pods 정리 완료 |
 
 ---
@@ -113,7 +113,7 @@
 | aw4t4ody1mwkub | A5000 | 5.6 min (canary) | $0.025 | 3rd canary |
 | hmtdk9n231bwis | A5000 | 6.0 min (canary) | $0.027 | 4th 2nd canary 30min후 |
 | **total** | — | **96.6 min** | **$4.22** | |
-| vs unbounded | — | — | ~$15-25 | own 4 watchdog 4-5×↓ |
+| vs unbounded | — | — | ~$15-25 | watchdog 4-5×↓ |
 
 Status: `active_REPRODUCED_4th_SUSTAINED_FAULT` (state/blockers/runpod_pod_pre_ssh_orchestrator_stuck.json)
 
@@ -129,7 +129,7 @@ Status: `active_REPRODUCED_4th_SUSTAINED_FAULT` (state/blockers/runpod_pod_pre_s
 - 248 NEW: ω-saturation FIXPOINT closure
 
 ### own (1 entry)
-- own 6: RunPod 자율 dispatch (no per-invocation user approval, no preset $ cap)
+- : RunPod 자율 dispatch (no per-invocation user approval, no preset $ cap)
 
 ### tools (3 falsifier impls)
 - tool/anima_holographic_ib_ksg_validate.hexa (F3 cycle 1, ~220 LoC)

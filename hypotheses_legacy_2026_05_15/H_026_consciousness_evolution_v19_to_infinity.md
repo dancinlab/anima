@@ -39,7 +39,7 @@ anima의 의식 진화 path: v19 집단 의식 → v20 초월 의식 → v21 자
 
 - legacy commit: 5b23d3cc + folder `docs/hypotheses/sing/`
 - sister H: H_018 (GENESIS spontaneous), H_019 (SELF-EVO v4-v5), H_025 (Dasein finite)
-- own: own 17 (anima identity — auto-evolution lane 정합)
+- own: (anima identity — auto-evolution lane 정합)
 - roadmap: `.roadmap.philosophy` D3 emerge paradigm
 - literature: Kurzweil (2005) The Singularity Is Near (cross-domain)
 

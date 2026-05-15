@@ -190,6 +190,6 @@ train_conscious_lm.py docstring 에 "99.7% CE drop" claim 있지만 실제 ablat
 - fix reference py: `state/anima_lost_asset_fixes_2026_05_10/growing_conscious_lm_expand_dim_fix.py` (`**/*.py` gitignored, local-only)
 - archive 무결성: worktree-2 (`archive/clm-stage-02-clm-pivot` branch) 직접 수정 X — raw#15 additive
 
-raw#9/10/15 honest preservation, raw#37 additive, own 16 0-cost.
+raw#9/10/15 honest preservation, raw#37 additive, 0-cost.
 
 End of `anima_lost_asset_fixes_2026_05_10.md`.

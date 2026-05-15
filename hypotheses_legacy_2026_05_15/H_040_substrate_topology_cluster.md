@@ -42,7 +42,7 @@ anima의 substrate topology + chaos + wave + noise + infinite-scaling hypothesis
 - folders: 5 subfolders + ~10 individual files
 - sister H: H_006 (coupled oscillator lattice), H_007 (cellular automaton), H_010 (holographic), H_032 (omega/phys)
 - **absorption child H**: **H_159** (substrate-topology-phi-engineering) — `topo/` subfolder 의 empirical-sweep lane (TOPO7/8/16/19a/23/24) 정식 absorb, 2026-05-12. three/wave/noise/inf/hw 4 subfolder 는 H_040 잔류 (H_160+ 분기 candidate)
-- own: own 21
+- own:
 
 ## Honest Limits
 

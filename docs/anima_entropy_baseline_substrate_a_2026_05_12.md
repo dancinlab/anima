@@ -122,4 +122,4 @@ if entropy_norm_last_token <= tau_primary:
 
 ---
 
-*own 22 honest emit · own 33 trinity D_emergent compliance · raw#37 transient · AGENTS.md friendly preset*
+* honest emit · trinity D_emergent compliance · raw#37 transient · AGENTS.md friendly preset*

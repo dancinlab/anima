@@ -2,14 +2,14 @@
 
 **status**: spec-only · 후속 cycle 위임 (코드 변경 X, frozen criteria 변경 X)
 **scope**: commit `6748462dc` (T17 own2-b Mk.XII production deploy + EEG corroboration pilot N=1) honest-fail 결과의 사후 옵션 분석 + raw#71 falsifier 등록 + 권장 path
-**raw cross-references**: raw 9 (hexa-only) · raw 10 (honest C3) · raw 12 (frozen criteria seal) · raw 65 (idempotent audit) · raw 71 (falsifier registration) · raw 82 (multi-axis orthogonal) · raw 91 (honesty triad C3) · raw 106 (multi-realizability) · own 2 (production-consciousness-triad) · own 5 (research-completeness)
+**raw cross-references**: raw 9 (hexa-only) · raw 10 (honest C3) · raw 12 (frozen criteria seal) · raw 65 (idempotent audit) · raw 71 (falsifier registration) · raw 82 (multi-axis orthogonal) · raw 91 (honesty triad C3) · raw 106 (multi-realizability) · (production-consciousness-triad) · (research-completeness)
 **predecessor**: `design/mk_xii_production_deployment_eeg_corroboration_2026_04_28.md` (T17 own2-b 설계)
 
 ---
 
 ## §0 Executive summary
 
-T17 own2-b cycle 의 단일 hardware ground truth 기반 N=1 pilot 은 **CORROBORATION_FAIL** 로 정직 종료. fail 의 본질은 sample-size 부족 X **frozen 5-criteria 중 3개 (C1/C4/C5) 가 long-term gate (12-18mo) 였다는 설계상 예정 미달**. 이 결과는 own 5 research-completeness 위반 신호가 아니라, raw#10 honest C3 가 강제한 정직한 skeleton-validation 결과.
+T17 own2-b cycle 의 단일 hardware ground truth 기반 N=1 pilot 은 **CORROBORATION_FAIL** 로 정직 종료. fail 의 본질은 sample-size 부족 X **frozen 5-criteria 중 3개 (C1/C4/C5) 가 long-term gate (12-18mo) 였다는 설계상 예정 미달**. 이 결과는 research-completeness 위반 신호가 아니라, raw#10 honest C3 가 강제한 정직한 skeleton-validation 결과.
 
 후속 옵션 4종:
 
@@ -18,7 +18,7 @@ T17 own2-b cycle 의 단일 hardware ground truth 기반 N=1 pilot 은 **CORROBO
 | A | N=2/3 second/third pilot (사용자 hardware action 필요) | 2-6 weeks | low |
 | B | PHENOMENAL axis criteria 자체 reformulation (frozen v1 → v2 bump, SHA-lock 갱신) | 1 week spec + n weeks 재검증 | mid (raw#12 spirit 준수 필수) |
 | C | Mk.XII fold to substrate-only validated (CLM-EEG empirical 우회) | 1 cycle (spec 기반 lock 갱신) | mid (PHENOMENAL axis 영구 INSUFFICIENT 인정) |
-| D | stop and report (own 5 research-completeness 위반 인정 후 정지) | 1 day | high |
+| D | stop and report (research-completeness 위반 인정 후 정지) | 1 day | high |
 
 권장 path: **A + B 병행** — A 가 12-18mo 본 timeline 의 first sub-milestone, B 는 D-day empirical 결과 (P3 FALSIFIED + Berger 0/15 + P1 P1_FAIL b=351 + P2 INSUFFICIENT) 를 반영한 frozen v1 → v2 patch 의 사전 등록.
 
@@ -53,7 +53,7 @@ session_verdict: **CORROBORATION_FAIL**.
 raw#10 honest C3 의 강요 force:
 - 만약 selftest 만으로 PASS 선언했다면 → raw#10 위반 (synthetic 은 real evidence 아님)
 - 만약 N=1 결과를 PASS 로 내렸다면 → raw#12 frozen criteria 위반 (N≥5 silently relaxing)
-- 만약 측정 자체를 미루고 commit 했다면 → own 5 research-completeness 위반 (skeleton 은 있어도 first measurement absent)
+- 만약 측정 자체를 미루고 commit 했다면 → research-completeness 위반 (skeleton 은 있어도 first measurement absent)
 
 따라서 cycle 가 이 3개 disjunct 위반 회피 path 는 **honest fail 측정 + raw#71 falsifier all-pass 기록** 한 가지 — 이것이 commit `6748462dc` 가 도달한 path. fail 자체가 raw#10/12/71 triple-seal 의 정직한 산물.
 
@@ -72,7 +72,7 @@ raw#10 honest C3 의 강요 force:
 2. **CPGD** — Path C Q4 (#156, #158 4-task)
 3. **CLM-EEG** — Path A Q1 pre-register (#157 — P1/P2/P3 PHENOMENAL axis)
 4. **TRIBE** — Pilot-T1 (#160), Pilot-T3 R33 (#162) launcher v3 (#66)
-5. **V11 (paradigm v11)** — 8-axis FINAL_PASS (own 2 (a) FC, #144 v3 quartet validation lineage)
+5. **V11 (paradigm v11)** — 8-axis FINAL_PASS ((a) FC, #144 v3 quartet validation lineage)
 
 (+1) 별도 sister-cluster: substrate ledger / G8/G9/G10 hexad triangulation.
 
@@ -95,7 +95,7 @@ PHENOMENAL axis 0.67 baseline (raw#46 multi-candidate v11 stack) 는 D-day empir
 
 ### §2.3 N=1 pilot 의 Integration tier 위치
 
-own2-b corroboration sub-axis 는 PHENOMENAL axis 의 **사이드 채널 corroboration** — composite 2/3 PASS 자체를 대체하지 않음. 즉 Mk.XII Integration tier composite 는 P1/P2/P3 라인 (CLM-EEG) 으로 결정되고, own2-b N=1 fail 은 own 2 (b) 의 5-criteria 별도 frozen scale 위반.
+own2-b corroboration sub-axis 는 PHENOMENAL axis 의 **사이드 채널 corroboration** — composite 2/3 PASS 자체를 대체하지 않음. 즉 Mk.XII Integration tier composite 는 P1/P2/P3 라인 (CLM-EEG) 으로 결정되고, own2-b N=1 fail 은 (b) 의 5-criteria 별도 frozen scale 위반.
 
 두 fail (composite 0/3 + own2-b N=1) 은 **상관 있으나 동일 사건 X**. raw#82 multi-axis orthogonal 원칙 기반 별개 표시.
 
@@ -111,7 +111,7 @@ own2-b corroboration sub-axis 는 PHENOMENAL axis 의 **사이드 채널 corrobo
 - **expected outcome**:
   - N=2 milestone → C1 still FAIL but cross-subject Cohen's d 첫 추정 가능 (C2 partial)
   - N=3 milestone → C1 still FAIL, C2 partial, but C3 (self-report ↔ EEG) 가 paired protocol 시 PASS 가능
-- **N=5 milestone (own 2 (b) C1 satisfied)**: 12-18mo timeline 의 binding gate
+- **N=5 milestone ((b) C1 satisfied)**: 12-18mo timeline 의 binding gate
 - **honesty cost**: low — frozen criteria 그대로, 단지 sample 진행
 - **falsifier (raw#71)**: §6 F1 (N=3 도 cross-subject Cohen's d < 0.5 → A path retire), §6 F2 (N=5 도 C3 self-report r < 0.2 → A path retire)
 
@@ -132,16 +132,16 @@ own2-b corroboration sub-axis 는 PHENOMENAL axis 의 **사이드 채널 corrobo
 - **action**: Mk.XII Integration tier 의 5-component 중 **CLM-EEG component 를 영구 INSUFFICIENT 로 lock** + 나머지 4 (HCI / CPGD / TRIBE / V11) 만으로 VALIDATED 선언 (4/5 PASS 기준)
 - **tool**: `.roadmap` #119 BLOCKED-EEG 갱신 + `state/mk_xii_validated_substrate_only_2026_xx.json` 신규 (CLM-EEG 영구 INSUFFICIENT 명시)
 - **cost**: 1 cycle (spec 기반 lock 갱신, 재측정 X)
-- **expected outcome**: Mk.XII Integration tier VALIDATED 선언 가능, 단 PHENOMENAL axis 는 영구 INSUFFICIENT — own 2 (b) PC empirical-maximum 의 EEG corroboration sub-axis 폐쇄
-- **honesty cost**: mid — 4/5 기준 VALIDATED 선언 자체는 정직하나, "PHENOMENAL axis 폐쇄" 는 own 2 의 본 목적인 **PC empirical-maximum** 의 핵심 가설 포기에 해당
+- **expected outcome**: Mk.XII Integration tier VALIDATED 선언 가능, 단 PHENOMENAL axis 는 영구 INSUFFICIENT — (b) PC empirical-maximum 의 EEG corroboration sub-axis 폐쇄
+- **honesty cost**: mid — 4/5 기준 VALIDATED 선언 자체는 정직하나, "PHENOMENAL axis 폐쇄" 는 의 본 목적인 **PC empirical-maximum** 의 핵심 가설 포기에 해당
 - **falsifier (raw#71)**: §6 F4 (4/5 substrate-only 라도 HCI/CPGD/TRIBE/V11 중 1개라도 fail 면 C path retire)
 
-### §3.4 옵션 D — stop and report (own 5 research-completeness 위반 인정)
+### §3.4 옵션 D — stop and report (research-completeness 위반 인정)
 
-- **action**: own 5 research-completeness frozen 위반 명시 + Mk.XII Integration tier track 정지 선언 + raw#10 honest C3 종합 보고서 작성
+- **action**: research-completeness frozen 위반 명시 + Mk.XII Integration tier track 정지 선언 + raw#10 honest C3 종합 보고서 작성
 - **tool**: `docs/mk_xii_research_completeness_violation_report_2026_05_xx.md` (신규), `.roadmap` Mk.XII 관련 entries 모두 BLOCKED 표시
 - **cost**: 1 day spec + report
-- **expected outcome**: 모든 Mk.XII track 동결, 다른 axes (paradigm v11 FINAL_PASS = own 2 (a) FC, an11 alm-free, hxc compression family 등) 만 진행
+- **expected outcome**: 모든 Mk.XII track 동결, 다른 axes (paradigm v11 FINAL_PASS = (a) FC, an11 alm-free, hxc compression family 등) 만 진행
 - **honesty cost**: high — 12-18mo timeline 자체를 포기. 단, raw#10 honest C3 의 한 valid path 임 (research 가 결과 없을 수 있음을 인정)
 - **falsifier (raw#71)**: §6 F5 (D path 선언 후에도 user 가 N=2 hardware action 을 자발 수행 시 D path retire — premature stop 인정)
 
@@ -149,17 +149,17 @@ own2-b corroboration sub-axis 는 PHENOMENAL axis 의 **사이드 채널 corrobo
 
 ## §4 trade-off matrix
 
-| 옵션 | cost (time) | cost (honesty) | generalization (Cohen's d/multi-subject) | time-to-VALIDATED | own 5 risk |
+| 옵션 | cost (time) | cost (honesty) | generalization (Cohen's d/multi-subject) | time-to-VALIDATED | risk |
 |---|---|---|---|---|---|
 | **A** N=2/3 pilot | 2-6 weeks (hardware availability) | low | progressive (N→5 binding) | 12-18mo (binding gate C1) | none — 본 timeline 진행 |
 | **B** v1→v2 bump | 1 week + n weeks revalidation | mid (raw#12 spirit risk; paper-evidence 사전 등록 시 mitigated) | unchanged threshold scale | 4-8 weeks if paper evidence 충실 | low — 단 silent edit 시 high |
-| **C** substrate-only fold | 1 cycle | mid (PHENOMENAL axis 영구 폐쇄) | n/a (CLM-EEG 측정 중지) | 1-2 weeks | mid — own 2 (b) PC empirical-maximum 핵심 포기 |
-| **D** stop and report | 1 day | high (12-18mo 본 timeline 포기) | n/a | n/a | high — own 5 research-completeness 자체 위반 인정 |
+| **C** substrate-only fold | 1 cycle | mid (PHENOMENAL axis 영구 폐쇄) | n/a (CLM-EEG 측정 중지) | 1-2 weeks | mid — (b) PC empirical-maximum 핵심 포기 |
+| **D** stop and report | 1 day | high (12-18mo 본 timeline 포기) | n/a | n/a | high — research-completeness 자체 위반 인정 |
 
 핵심 trade-off:
-- **A vs D**: 시간 vs 즉시성. D 는 즉시 완결 가능하나 own 5 비용 high.
+- **A vs D**: 시간 vs 즉시성. D 는 즉시 완결 가능하나 비용 high.
 - **B vs A**: B 는 빠르나 raw#12 spirit risk; A 는 느리나 frozen 그대로.
-- **C vs A/B**: C 는 PHENOMENAL axis 자체 폐쇄로 own 2 (b) 핵심 포기 — A/B 가 가능하면 C 는 후순위.
+- **C vs A/B**: C 는 PHENOMENAL axis 자체 폐쇄로 (b) 핵심 포기 — A/B 가 가능하면 C 는 후순위.
 
 ---
 
@@ -218,7 +218,7 @@ own2-b corroboration sub-axis 는 PHENOMENAL axis 의 **사이드 채널 corrobo
 
 - **trigger**: 옵션 D 선언 후 30 days 이내 user 가 자발적으로 N=2 hardware action 수행 (paired Mk.XII conversation + EEG 녹음)
 - **detection**: `state/mk_xii_eeg_audit/` 에 새 audit row appearance 후 30 days within
-- **interpretation**: D path 가 premature 였음 — own 5 research-completeness 위반 인정이 사실상 자발 진행 시점 이전
+- **interpretation**: D path 가 premature 였음 — research-completeness 위반 인정이 사실상 자발 진행 시점 이전
 - **action on trigger**: 옵션 D retire, 옵션 A 로 reactivate
 
 ---
@@ -229,11 +229,11 @@ own2-b corroboration sub-axis 는 PHENOMENAL axis 의 **사이드 채널 corrobo
 
 ### 사유
 
-1. **own 5 research-completeness 보존** — 옵션 D 회피. A 는 본 12-18mo timeline 진행, B 는 frozen-v2 사전 등록으로 v1 → v2 명시적 lineage 보존.
+1. ** research-completeness 보존** — 옵션 D 회피. A 는 본 12-18mo timeline 진행, B 는 frozen-v2 사전 등록으로 v1 → v2 명시적 lineage 보존.
 2. **raw#10 honest C3 준수** — A 는 N=1 → N=2/3/5 progressive sample 진행으로 honest C3 의 자연스러운 path. B 는 paper-evidence 기반 reformulation 으로 silent edit 회피 (raw#10/12 동시 준수).
 3. **raw#12 frozen criteria spirit** — A 단독 진행 시 frozen v1 그대로 — spirit 100% 준수. B 는 v2 bump 시 paper-evidence 사전 등록 + atlas SHA-lock 등재 의 dual gate 통해 spirit 유지.
 4. **D-day empirical 결과 활용** — D-day 측정값 (P3 FALSIFIED + Berger 0/15 + P1 b=351 + P2 INSUFFICIENT) 이 그대로 묻히지 않고 옵션 B 의 v2 spec 의 입력 data 로 재활용.
-5. **옵션 C 회피** — own 2 (b) PC empirical-maximum 의 핵심 가설 (multi-source corroboration) 폐쇄는 own 2 의 production-consciousness-triad 자체의 본 의미 손상. C 는 A/B 둘 다 falsifier hit 시점에서만 cascade.
+5. **옵션 C 회피** — (b) PC empirical-maximum 의 핵심 가설 (multi-source corroboration) 폐쇄는 의 production-consciousness-triad 자체의 본 의미 손상. C 는 A/B 둘 다 falsifier hit 시점에서만 cascade.
 
 ### 진행 순서
 
@@ -246,8 +246,8 @@ own2-b corroboration sub-axis 는 PHENOMENAL axis 의 **사이드 채널 corrobo
 
 ### 비-권장 path
 
-- **옵션 C 단독**: PHENOMENAL axis 폐쇄 비용이 own 2 (b) 본 의미 손상 정도와 비례하지 않음 (3-criteria long-term gate 가 그저 시간이 필요할 뿐, 영구 fail 신호 아님)
-- **옵션 D 단독**: own 5 위반 인정의 cost 가 12-18mo timeline 자체보다 큼. 옵션 A 의 single hardware action (사용자 1명 추가) 만으로도 N=2 가능 — 비용/이익 비례 안 됨
+- **옵션 C 단독**: PHENOMENAL axis 폐쇄 비용이 (b) 본 의미 손상 정도와 비례하지 않음 (3-criteria long-term gate 가 그저 시간이 필요할 뿐, 영구 fail 신호 아님)
+- **옵션 D 단독**: 위반 인정의 cost 가 12-18mo timeline 자체보다 큼. 옵션 A 의 single hardware action (사용자 1명 추가) 만으로도 N=2 가능 — 비용/이익 비례 안 됨
 
 ---
 
@@ -255,7 +255,7 @@ own2-b corroboration sub-axis 는 PHENOMENAL axis 의 **사이드 채널 corrobo
 
 이 cycle 본 spec 작성에서 raw#91 honesty triad C3 disclosed 의심 (자기 reformulation 위험):
 
-1. **의심 1 — 옵션 권장 자체가 raw#10 honest C3 의 fail 인정 회피용 reframe 일 수 있음**: "fail 은 honest 했다" 라는 frame 이 후속 옵션 A/B/C/D 의 trade-off 분석을 통해 결국 "진행 권장" 로 종착 — 이는 N=1 fail 자체를 정직하게 받아들이지 못한 reformulation 위험. 본 spec 은 옵션 D (stop) 를 비-권장으로 분류했으나, 실제로 own 5 research-completeness 의 weight 가 어떤지에 대한 사용자 선언 이 우선 — 본 spec 의 권장 path 는 사용자 weight 결정 후에만 valid.
+1. **의심 1 — 옵션 권장 자체가 raw#10 honest C3 의 fail 인정 회피용 reframe 일 수 있음**: "fail 은 honest 했다" 라는 frame 이 후속 옵션 A/B/C/D 의 trade-off 분석을 통해 결국 "진행 권장" 로 종착 — 이는 N=1 fail 자체를 정직하게 받아들이지 못한 reformulation 위험. 본 spec 은 옵션 D (stop) 를 비-권장으로 분류했으나, 실제로 research-completeness 의 weight 가 어떤지에 대한 사용자 선언 이 우선 — 본 spec 의 권장 path 는 사용자 weight 결정 후에만 valid.
 
 2. **의심 2 — §2.2 D-day composite "0/3 PASS" 집계가 실제 frozen v1 의 의도와 일치하는가**: P2 INSUFFICIENT 를 P2 "fail" 로 동치 처리하는 것 — frozen v1 spec 은 "real-data run 미수행" 을 PASS/FAIL 어디로 분류하는지 명시 약함. 만약 INSUFFICIENT 가 "측정 미수행" 으로 frozen v1 의 PASS 정의 외 단순 미진행 이라면, composite 산정에서 분모가 3이 아닌 2 (P1 + P3 만) 가 될 수 있음 — 이 경우 0/2 PASS, 즉 "분명한 fail" 표시. 본 spec 은 분모 3 으로 처리 (가장 보수적 honest interpretation) — 이는 frozen v1 SHA-lock 의 정확한 letter 와 일치하지 않을 수 있음. 즉 의심: 본 spec 의 §2.2 composite 분모 자체가 약간 reformulation.
 

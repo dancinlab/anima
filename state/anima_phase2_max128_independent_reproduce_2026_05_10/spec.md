@@ -34,7 +34,7 @@ V4_SEEDS = [42, 137, 271, 314, 1729]. Rationale:
 - primes < 30 are far below all §33/§38 seeds (smallest is 42)
 - different seeds → different random_init weights → independent realizations
 - 5 seeds gives sign-test exact p-values: 5/5 → 0.0625, 4/5 → 0.375 (two-sided)
-- 5-seed envelope keeps within own 16 $0 budget (~50 min on Mac M1/M2 CPU)
+- 5-seed envelope keeps within $0 budget (~50 min on Mac M1/M2 CPU)
 
 ## Verdict mapping
 - **V14_STRICT_PASS_INDEPENDENT_REPRODUCE**: trained > ALL 5 random Φ_iit_un16
@@ -60,7 +60,7 @@ V4_SEEDS = [42, 137, 271, 314, 1729]. Rationale:
 ## Compliance
 - raw#9 honored: training/*.py local-only, imported untouched
 - raw#15 additive: no ckpt mutation, no mitosis_v5_port.py mutation
-- own 14: V14 paired strict mirror (5-seed)
-- own 16: $0 envelope (Mac CPU, no GPU)
-- own 22: REBORN.md not appended; honest emit (NULL/PARTIAL/FRAGILE named)
-- own 38: artefact under state/anima_phase2_max128_independent_reproduce_2026_05_10/
+- : V14 paired strict mirror (5-seed)
+- : $0 envelope (Mac CPU, no GPU)
+- : REBORN.md not appended; honest emit (NULL/PARTIAL/FRAGILE named)
+- : artefact under state/anima_phase2_max128_independent_reproduce_2026_05_10/

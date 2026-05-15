@@ -25,12 +25,12 @@ Alternates rejected: corpus_v7_wiki_heavy (near-dup of v6), wikimatrix (smaller 
 - **Bytes**: 154,854,977 (~147.68 MB)
 - **SHA256**: `2d15ca7d277aaaef95c7dbc9eb810ec38f0510e0578269810aa4eb879f51e0e8`
 - **Ratio actual**: 70.0000% wiki / 30.0000% dialogue (line-anchor, drift = 0.0 pp)
-- **Git status**: IGNORED (own 14: corpus >5MB → HF only)
+- **Git status**: IGNORED (: corpus >5MB → HF only)
 
 ## Recipes Emitted
 - `state/anima_corpus_mix_70wiki_30dialogue_2026_05_06/build_recipe.bash` — reproducible local rebuild
 - `state/anima_corpus_mix_70wiki_30dialogue_2026_05_06/scp_recipe.txt` — mac → ubu1 transfer
-- `state/anima_corpus_mix_70wiki_30dialogue_2026_05_06/hf_upload_recipe.txt` — HF Hub PRIVATE upload (own 15 lifecycle)
+- `state/anima_corpus_mix_70wiki_30dialogue_2026_05_06/hf_upload_recipe.txt` — HF Hub PRIVATE upload (lifecycle)
 
 ## 5+ Honest C3 (raw#10)
 1. **C3-1 (concat ordering)**: wiki block first then dialogue block; if ubu1 trainer disables DataLoader shuffle, dialogue starvation in early steps. Mitigation: confirm shuffle=True on launch.

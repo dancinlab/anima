@@ -8,7 +8,7 @@ Launched by tool/bg_lb_engine_ag_orchestrator.hexa Phase 5 via:
         --corpus /workspace/data/big_corpus.txt \
         --output /workspace/anima_clm_lb/ckpts > train.log 2>&1 &
 
-own 14/16/17/18/22/30/31/33/34/37/38/39/40 strict.
+ strict.
 """
 import os, sys, argparse
 

@@ -49,7 +49,7 @@ Substrate: meta-llama/Llama-3.2-3B-Instruct + dancinlab/llm-llama32-3b-paradigm-
 1. Single substrate (Llama-3.2-3B), single seed (42), single run
 2. simple_stack PASS_STRICT 미실시 (evaluator hard-coded `/Users/ghost` path)
 3. PIV/DCR 미실시 (Llama+LoRA cell state 노출 안 됨)
-4. anima-native CLM v4 substrate chat-incapable → 본 ablation 은 substrate-research lane (own 17 identity-bearing 금지 가운데 retain)
+4. anima-native CLM v4 substrate chat-incapable → 본 ablation 은 substrate-research lane (identity-bearing 금지 가운데 retain)
 
 ## Cross-link
 

@@ -9,7 +9,7 @@
 **Dominant slab (by weight drift)**: `slab2_middle` (mean cos_AB = 0.7666)
 **Dominant slab (per §57 V14 effect)**: `slab1_early` (mean cos_AB = 0.8205 — *least* drifted)
 
-**Elapsed**: 42.6s on Mac CPU (own 16 envelope: target ≤2 min, well under).
+**Elapsed**: 42.6s on Mac CPU (envelope: target ≤2 min, well under).
 
 ## §57 cross-link — the central tension
 
@@ -138,7 +138,7 @@ this analysis predicts:
    more than v_proj swap.
 
 Cost of firing the prediction: 24 × ~6 min = 2.4h on Mac CPU per single-
-component-axis (deferred per own 16 budget; logged as follow-up §59).
+component-axis (deferred per budget; logged as follow-up §59).
 
 ## Falsifier verdicts
 
@@ -211,7 +211,7 @@ component-axis (deferred per own 16 budget; logged as follow-up §59).
 8. **Single-seed source for swap predictions.**  The §59 ablation
    prediction (q_proj-only swap → V14 flip pattern mirroring §57) is based
    on B = a single BG-LA pretrain ckpt at step_12000.  Multi-seed B would
-   strengthen the qualitative prediction; deferred under own 16.
+   strengthen the qualitative prediction; deferred under .
 9. **No forward pass.**  This is pure weight-space analysis.  We do not
    measure "how much does q_proj drift propagate to hidden_mean".  §57
    already showed (C3 #11) that layer-7 vs layer-8 perturbations of
@@ -239,7 +239,7 @@ component-axis (deferred per own 16 budget; logged as follow-up §59).
     0.7081, 0.7084, 0.7503, 0.7523, 0.8319}).  This is large enough to
     reject F-DUAL-LOSS-1 by visual inspection, though no formal test
     statistic is computed.  A bootstrap or permutation test would
-    formalize; not done under own 16.
+    formalize; not done under .
 
 ## Summary
 

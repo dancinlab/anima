@@ -27,7 +27,7 @@ CLM v4 의 16-layer decoder + hidden_dim 768 + 530M + paradigm v11 G3 cross-attn
 ## Migration TODO
 - [ ] Mix ratio ablation sweep ($0 doc): 60/25/10/5 vs 50/30/15/5 vs 40/35/20/5 (1B-token proxy)
 - [ ] Stage 3 emerge user-fire ≥ 30 sessions 누적 후 axis 디자인 informs
-- [ ] Variant B 1B H100 1× ~$1k 30d 시작 — own 16 budget guard user-fire
+- [ ] Variant B 1B H100 1× ~$1k 30d 시작 — budget guard user-fire
 - [ ] Variant C 3B parity escalation only if B clears F-CLM-3-2
 
 ## Falsifiers (scaffolded cycle #6 batch 4 mixed-template, 2026-05-12)

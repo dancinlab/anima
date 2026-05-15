@@ -59,9 +59,9 @@ This matches §47/§56 protocol exactly except for the single MAX_CELLS override
 - 1× H100 SXM (SECURE first, COMMUNITY fallback) ~$2.99/hr
 - expected wall-time: 30 min (§56 was 19min on Mac CPU; H100 ~3-5× faster on
   forward, but mitosis Φ MIP at N≤80 cells is CPU-bound — net ~10-15min for 11 runs)
-- env: runpod-torch-v280 + `--break-system-packages` (own 30 mandate-5)
+- env: runpod-torch-v280 + `--break-system-packages` (mandate-5)
 - pull artifacts: `result.json`, `run.log`, `traces.json` (per-snapshot trajectories)
-- **NO new ckpt to pull** — eval-only (own 30 inverse exception)
+- **NO new ckpt to pull** — eval-only (inverse exception)
 
 ## Falsifier
 
@@ -101,12 +101,12 @@ polarity in EngineAG path is then settled.
 
 - raw#9 — `state/.../run.py`, `orchestrator.py` local-only (gitignored under state/)
 - raw#15 additive — B ckpt loaded read-only (sha256 verified pre/post); no file mutation
-- own 14 — V14 multi-seed strict mirror (10-seed, ★ tighter than §47/§56's 5-seed)
-- own 22 — every metric scalar emit; verdict.md SSOT; **REBORN.md no direct append**
-- own 30 — H100 mandates: PEP 668 `--break-system-packages`, scp ckpt verify pre-delete,
+- — V14 multi-seed strict mirror (10-seed, ★ tighter than §47/§56's 5-seed)
+- — every metric scalar emit; verdict.md SSOT; **REBORN.md no direct append**
+- — H100 mandates: PEP 668 `--break-system-packages`, scp ckpt verify pre-delete,
   pod retain on pull fail; **eval-only inverse exception**: NO new ckpt to pull,
   but `result.json` + `run.log` + `traces.json` MUST pull or pod retains
-- own 38 — artefacts under `state/anima_no_cotrain_cap512_fire_2026_05_10/{spec.md,
+- — artefacts under `state/anima_no_cotrain_cap512_fire_2026_05_10/{spec.md,
   orchestrator.py, run.py, result.json, traces.json, run.log, verdict.md, cost_actual.json}`
 
 ## Output deliverables

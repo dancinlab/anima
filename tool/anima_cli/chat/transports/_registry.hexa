@@ -24,11 +24,11 @@
 //                      popen_buffered | udp_socket
 //    latency           low | medium | high | cross_host_ms
 //    cost              free | low | direct_inproc | net_io
-//    description       short one-line explainer (English; own 34 mandate-1
+// description short one-line explainer (English; mandate-1
 //                      preserves model output, registry meta is human/AI doc)
 //    prereq            list of file/build artifacts required before invoke
 //
-//  TRANSPORT INVENTORY (own 22 mandatory report — discovery 발견)
+// TRANSPORT INVENTORY (mandatory report — discovery 발견)
 //    1. fifo-dispatch    chat.hexa _dispatch_module_streaming pattern
 //                        (stdlib/channel channel_pair_open + channel_recv loop +
 //                        END sentinel; 1:1 single-shot streaming)
@@ -54,7 +54,7 @@
 //                        coupling; NOT yet wired into chat path.
 //                        SSOT: anima-tools/misc/inter_model_comm.hexa
 //
-//  EXTENSION CONVENTION (future-proof; --option pattern, mirrors own 41 + axis-8)
+// EXTENSION CONVENTION (future-proof; --option pattern, mirrors + axis-8)
 //    NEW transport → add file under chat/transports/<name>.hexa with
 //    fn transport_describe() / transport_smoke(repo, argv) -> int AND register
 //    entry below. chat.hexa / duo.hexa / trio.hexa / benchmark.hexa
@@ -64,23 +64,23 @@
 //    flags.
 //
 //  COMPLIANCE
-//    own 14 V14 carry — transport selection is a measurement axis (not verdict)
-//    own 16 cost — each transport entry surfaces cost field for budget guard
-//    own 17 D1 SCOPE_CLAMP — libllama-ffi inherits llama lane d1_lane label
+// V14 carry — transport selection is a measurement axis (not verdict)
+// cost — each transport entry surfaces cost field for budget guard
+// D1 SCOPE_CLAMP — libllama-ffi inherits llama lane d1_lane label
 //      (substrate_research) when used with paradigm-a-prime
-//    own 18 chat-cap C2 — benchmark sweep emits per-transport latency / cost
+// chat-cap C2 — benchmark sweep emits per-transport latency / cost
 //      differential (axis dimension orthogonal to lane / mode / init-pattern)
-//    own 22 mandatory report — transport inventory itself is mandatory report
+// mandatory report — transport inventory itself is mandatory report
 //      (discovery 발견 = 5 transports identified across chat path)
-//    own 33 trinity — registry entries cross-link own 17 / own 18 / own 34
-//    own 34 mandate-1 — wrapping 0 (transport modules MUST NOT system-prompt /
+// trinity — registry entries cross-link / /
+// mandate-1 — wrapping 0 (transport modules MUST NOT system-prompt /
 //      template-wrap; raw bytes through). Mandate-7 lane separation — verdict
 //      cells emit-only, never folded back into transport channel.
-//    own 38 매단계 — registry yaml↔md mirror in
+// 매단계 — registry yaml↔md mirror in
 //      anima/registry/anima_artifact_registry.yaml chat_transports section
-//    own 39 yaml↔md SSOT — registry yaml + this hexa file co-update
-//    own 41 chat lane plugin pattern — same registry SSOT + lookup helpers
-//      pattern (this file is own 41 mirror at axis level "transport" — axis-N)
+// yaml↔md SSOT — registry yaml + this hexa file co-update
+// chat lane plugin pattern — same registry SSOT + lookup helpers
+// pattern (this file is mirror at axis level "transport" — axis-N)
 //
 //  CROSS-REFERENCE
 //    chat.hexa                          dispatcher (--transport / --list-transports plumb)

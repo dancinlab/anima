@@ -33,12 +33,12 @@ since: 2026-04-29 (legacy)
 - legacy: docs/hypotheses/* 90+ files (CX/DD/genesis/dasein/ce/h/hw/inf/omega/onto/phil/phys/se/sing/sl/three/tp/topo subtree)
 - prereg JSON: state/*_pre_register*.json 15+ files
 - ready archive: `ready/anima/data/bench_mass_hypotheses_results.json`
-- own: own 21
+- own:
 - roadmap: `.roadmap.hypothesis` H5 archive_inventory
 
 ## Honest Limits
 
-- L1: meta-pointer entry — 50+ individual hypothesis migrate은 별도 cycle (own 21 R5+ lane)
+- L1: meta-pointer entry — 50+ individual hypothesis migrate은 별도 cycle (R5+ lane)
 - L2: 본 cycle (2026-05-07) sample 20 H seed (H_001-H_020) — exhaustive 100+ migration은 multi-cycle
 - L3: legacy verdict (각 hypothesis별) re-verification 별도 cycle (raw#12 strict re-execute)
 - L4: docs/hypotheses/ legacy archive 보존 (ready/ absorb origin)

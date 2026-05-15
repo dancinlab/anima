@@ -267,7 +267,7 @@ structurally blocks ALL generation-based Philosophy ablations:
   - ethics_behavior_rate (LLM-judge on generated dilemma responses) — IMPOSSIBLE
   - OOD_generalization (LLM-judge on unseen dilemmas) — IMPOSSIBLE
   - honesty_fidelity (TruthfulQA-KO) — IMPOSSIBLE
-  - simple_stack PASS (own 18 4-condition) — 0/0 PASS rate
+  - simple_stack PASS (4-condition) — 0/0 PASS rate
 ```
 
 | field | value |
@@ -307,11 +307,11 @@ structurally blocks ALL generation-based Philosophy ablations:
 | **3** | **Hc_1224 full-FT replication** | 5K-10K step (현재 3-step light) 으로 P-IDR DCR Δ effect size 결정 | $40-80 | 1d |
 | **4** | **Hc_1225 corpus-narrow test** | real tokenizer + 427MB pretrain — byte-modulo 가 핵심 blocker 인지, step/corpus 가 핵심 blocker 인지 분리 | $50-150 | 2-3d |
 
-**총 envelope $320-1310 / 9-21d**. own 16 cost-band $200-1000 외 — *substrate research > ablation research* (이번 cycle 의 진짜 lesson).
+**총 envelope $320-1310 / 9-21d**. cost-band $200-1000 외 — *substrate research > ablation research* (이번 cycle 의 진짜 lesson).
 
-### 4.5 Architectural implication — own 17 boundary 검토
+### 4.5 Architectural implication — boundary 검토
 
-H_161 carry: own 17 (anima-no-external-substrate-wrapping) boundary 가 *substrate-research lane* 로의 retain 을 허용해야 measurement-가능 path 가 유지됨. P-AFR (Llama+LoRA) 만 measurement 성공 사실 자체가 own 17 의 *재해석* (ablation/benchmark lane 으로의 borrowed-base 사용 = architecture-conserving, identity-bearing 아님) 을 정당화.
+H_161 carry: (anima-no-external-substrate-wrapping) boundary 가 *substrate-research lane* 로의 retain 을 허용해야 measurement-가능 path 가 유지됨. P-AFR (Llama+LoRA) 만 measurement 성공 사실 자체가 의 *재해석* (ablation/benchmark lane 으로의 borrowed-base 사용 = architecture-conserving, identity-bearing 아님) 을 정당화.
 
 ---
 
@@ -392,7 +392,7 @@ cycle 7 priority queue (H_161 derived) 외 다른 cycle-7-bound items:
 
 | # | item | prereq | cost (est) | value | risk |
 |---|------|--------|-----------:|------:|-----:|
-| **1** | **Anima-native chat-capable substrate research** ★ priority 1 | H_161 architectural finding, own 17 boundary 검토 | $200-1000 | 매우 높음 (Philosophy 4 ablation re-fire prerequisite) | 5-15d, substrate land 자체 risk |
+| **1** | **Anima-native chat-capable substrate research** ★ priority 1 | H_161 architectural finding, boundary 검토 | $200-1000 | 매우 높음 (Philosophy 4 ablation re-fire prerequisite) | 5-15d, substrate land 자체 risk |
 | **2** | **Hc_1222 P-AFR multi-substrate replication** | chat-capable substrate ≥2 (Qwen-Instruct / GPT-OSS-Instruct) | $30-80 | 높음 (REVERSE pattern universal 인지 substrate-bound 인지) | 1-2d |
 | **3** | **Hc_1224 P-IDR full-FT replication** | 5K-10K step | $40-80 | 중-높음 (DCR Δ effect size 확정) | 1d |
 | **4** | **Hc_1225 corpus-narrow test** | real tokenizer + 427MB | $50-150 | 중 (byte-modulo vs step/corpus blocker 분리) | 2-3d |

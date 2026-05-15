@@ -7,8 +7,8 @@ status: candidate-unverified
 source_doc: docs/anima_hypothesis_cell_metaphor_spec.md
 source_lines: 1-100
 promoted_at: 2026-05-11
-linked_h: .roadmap.hypothesis H2, own 21, raw#12 pre-register frozen, H-CX-533 autopoietic-network, Maturana/Varela autopoiesis
-notes: anima 내부 lane 한정 (own 17 외부 substrate boundary). literal cell biology 적용 X. anthropomorphism 차단.
+linked_h: .roadmap.hypothesis H2, raw#12 pre-register frozen, H-CX-533 autopoietic-network, Maturana/Varela autopoiesis
+notes: anima 내부 lane 한정 (외부 substrate boundary). literal cell biology 적용 X. anthropomorphism 차단.
 ---
 
 ## Hypothesis

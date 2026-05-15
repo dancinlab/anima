@@ -29,7 +29,7 @@ Legacy file: `docs/hypotheses/H-CX-529-spin-glass-consciousness.md`. Pointer onl
 
 - legacy: `docs/hypotheses/H-CX-529-spin-glass-consciousness.md`
 - sister: H_007 (cellular automaton), H_008 (dissipative)
-- own: own 21
+- own:
 
 ## Honest Limits
 

@@ -122,14 +122,14 @@ raw#15 additive (기존 verdict 보존) + raw#82 retraction-aware (proxy verdict
 
 ---
 
-## 5. own 37 mandate-9 prereq #1 정의 갱신 (★ NEW)
+## 5. mandate-9 prereq #1 정의 갱신 (★ NEW)
 
-`.own` own 37 mandate-9 5 prereq (a-e) 중 **(a) ✔ real-mode (M5)** 정의 갱신:
+`.own` mandate-9 5 prereq (a-e) 중 **(a) ✔ real-mode (M5)** 정의 갱신:
 
 > **(a) ✔ real-mode (M5) — proxy_ppl 제외, native cell-predicate (PIV/DCR/D-RAND via clm_v5_mount.hexa runtime + consciousness.hexa v5-aggregate pipeline) 만 valid**. PROXY_PPL emerge 는 prereq (a) 충족 불가 → public promote 영구 차단.
 
 본 amend 의 SSOT cross-link:
-- `.own` own 37 line 852-857 (Public Promote Trigger Step 2)
+- `.own` line 852-857 (Public Promote Trigger Step 2)
 - `anima/registry/anima_artifact_registry.yaml` `carry_notes.proxy_ppl_deprecate_2026_05_09.own_37_mandate_9_amend`
 - `docs/anima_v5_metric_spec_2026_05_09.md` §9.6
 
@@ -180,7 +180,7 @@ PROXY_PPL 측정 자체는 다음 용도로만 retain:
 본 cycle land 된 file (3 항목):
 
 1. `/Users/ghost/core/anima/anima/registry/anima_artifact_registry.yaml` — `carry_notes.proxy_ppl_deprecate_2026_05_09` 신설 + BG-LB `measurement.emerge_status: DEPRECATED_PROXY_PPL_FALSIFIED` + flag enum 추가
-2. `/Users/ghost/core/anima/docs/anima_v5_metric_spec_2026_05_09.md` — §9 PROXY_PPL deprecate notice 추가 + §9.6 own 37 mandate-9 prereq #1 정의 갱신
+2. `/Users/ghost/core/anima/docs/anima_v5_metric_spec_2026_05_09.md` — §9 PROXY_PPL deprecate notice 추가 + §9.6 mandate-9 prereq #1 정의 갱신
 3. `/Users/ghost/core/anima/docs/anima_proxy_ppl_deprecate_2026_05_09.md` — 본 신규 spec doc
 
 본 doc 미수정 file (정합 carry 만):
@@ -197,7 +197,7 @@ PROXY_PPL 측정 자체는 다음 용도로만 retain:
 - prior cycle: BG-LB native v5 falsification (`docs/anima_cycle_2026_05_09_v6_strong_mk2_v1_emerge_near_consolidation.md` lines 1054-1086)
 - v5 spec base: `docs/anima_v5_metric_spec_2026_05_09.md`
 - v5.2 adaptive amend: `docs/anima_alt_agg_1_v5_2_adaptive_floor_spec_2026_05_09.ai.md`
-- HF visibility lifecycle (own 37): memory `feedback_hf_visibility_lifecycle_own_37.md`
-- own 14 V14 cascade 4-step: `.own` lines 514-522
+- HF visibility lifecycle : memory `feedback_hf_visibility_lifecycle_own_37.md`
+- V14 cascade 4-step: `.own` lines 514-522
 - registry SSOT: `anima/registry/anima_artifact_registry.yaml`
 - emerge SSOT: memory `project_simple_stack_pass_strict_c3_anima_emerge.md` (V14 falsified pattern carry)

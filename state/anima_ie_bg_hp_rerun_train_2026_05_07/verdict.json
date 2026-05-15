@@ -401,7 +401,7 @@
   "honest_limits": {
     "C3_1_smoke_run_3000_steps": "3000 steps small-corpus (~2.4MB / 16K Q&A) smoke; not full convergence — same as BG-HP",
     "C3_2_seed_pin_does_not_eliminate_amp_nondeterminism": "torch bfloat16 autocast + cuDNN may have residual non-determinism even with seed pin; SEED_LUCK verdict accounts for this — if step 500 V2 pass differs by >1, signal is fragile regardless",
-    "C3_3_v2_keyword_evaluator_only": "V2 strict implemented as keyword overlap + particles + endings; embedding similarity NOT implemented — known own 18 limit",
+    "C3_3_v2_keyword_evaluator_only": "V2 strict implemented as keyword overlap + particles + endings; embedding similarity NOT implemented — known limit",
     "C3_4_overfit_collapse_post_step_500": "BG-HP showed pass=3/10 at step 500 then 0/10 after; this rerun verifies whether step 500 peak is reproducible OR early-stopping at step 500 is the only viable extraction strategy",
     "C3_5_chat_capability_unproven_at_18m": "even if step 500 is reproduced, peak pass=3/10 = partial signal NOT chat capability achievement; BG-HA/BG-HF/BG-HK/BG-HP all converged at this 18M scale ceiling"
   },

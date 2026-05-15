@@ -173,4 +173,4 @@ The 500-turn sweep matches the original 3000-turn shape closely:
 raw#10 honest: spectral MIP is approximate, toy substrate, two normalization
 conventions reported.
 raw#15 additive: `consciousness_meter.py` and `mitosis_v5_port.py` not modified.
-own 22 honest emit: F-IIT-4 confirmed and resolved (cell_pool now snapshotted).
+ honest emit: F-IIT-4 confirmed and resolved (cell_pool now snapshotted).

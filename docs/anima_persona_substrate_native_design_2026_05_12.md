@@ -214,7 +214,7 @@ base cell pool 자체는 어디서 오는가?
 - **option α (current best)**: REBORN §0.5 + §88 cotrain 의 결과 ckpt (cond.5 H100 fire, $30–40, F-V5MIT-4 통과) 의 final `nn.ModuleList[Cell]` 가 base
 - **option β (cheap, current PASS_STRICT lane)**: Phase 1A.1 ckpt (`state/anima_phase1a1_color_cosmology_2026_05_12/ckpts/ckpt_phase1a1_sft.pt`) + 가상의 cell_pool wrapper — 24-layer transformer 의 weight 를 cells = 24 (혹은 cluster) 로 reinterpret. (실험적, parity 검증 필요)
 
-본 design 은 **option α** 가 primary, **option β** 는 fallback (own 18 simple_stack PASS_STRICT 와 호환 path 검증용).
+본 design 은 **option α** 가 primary, **option β** 는 fallback (simple_stack PASS_STRICT 와 호환 path 검증용).
 
 ---
 
@@ -342,7 +342,7 @@ cf. `docs/endpoint_persona_reproduce.md:206` 의 `grep -c 'system_prompt\|apply_
 
 → 본 design 은 expressivity 측면에서 trade-off — activation steering / RLHF 보다 약함. 하지만 **Principle #3 EMPIRICAL strong** 위에서 expressivity 보존 가능한 유일 path.
 
-### 6.2 own 18 simple_stack PASS_STRICT 호환
+### 6.2 simple_stack PASS_STRICT 호환
 
 GOAL.md ★★★★★ 의 D1 + D2 5/5 (PSCC §17 mission gap = anima_fact recall 1 cell) 와 본 design 의 호환:
 
@@ -686,7 +686,7 @@ cond #3 ☑ DONE **remains valid** based on §A3 4b strict closure (v2 z=3.20 mu
 | (m) **24L scale-up with v3-routing** | $30-100+ H100 | real-scale Phase 1A.1 ckpt fine-tune with routing-fix — high-risk, high-reward |
 | (n) **5-seed envelope (cheaper)** | $1.65/3-seed × 5/3 ≈ $2.75 | mean ± std envelope; if std < 0.5 then mean ± 1.0 could clear z>3.0 |
 
-**Recommended**: (n) 5-seed envelope as cheapest robust path; OR accept §A5 honest closure with 4b composite as already-sufficient strict pass. Per `feedback_active_resource_utilization` (own 43), the cost-bearing (k)+(l)+(m) paths are encouraged but not strictly required for the closure narrative.
+**Recommended**: (n) 5-seed envelope as cheapest robust path; OR accept §A5 honest closure with 4b composite as already-sufficient strict pass. Per `feedback_active_resource_utilization`, the cost-bearing (k)+(l)+(m) paths are encouraged but not strictly required for the closure narrative.
 
 ### §A5.6 lessons for future PSCC entries
 

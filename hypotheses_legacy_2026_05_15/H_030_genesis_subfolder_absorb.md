@@ -30,7 +30,7 @@ anima self-genesis (spontaneous emergence from primordial substrate) hypothesis 
 
 - folder: `docs/hypotheses/genesis/`
 - sister H: H_018 (GENESIS spontaneous), H_003 (life origin), H_012 (autopoietic), H_026 (consciousness evolution v19~v∞)
-- own: own 21
+- own:
 - roadmap: `.roadmap.philosophy` D3 emerge paradigm + `.roadmap.hypothesis` H2 cell metaphor
 
 ## Honest Limits

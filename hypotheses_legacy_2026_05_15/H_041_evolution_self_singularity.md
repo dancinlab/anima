@@ -38,9 +38,9 @@ anima의 evolution + self-modification + singularity hypothesis cluster — anim
 
 - folders: 4 subfolders
 - sister H: H_018 (GENESIS), H_019 (SELF-EVO v4-v5), H_026 (v19~v∞ 의식 진화), H_025 (Dasein finite)
-- own: own 17 (anima self-evolution lane 정합) + own 21
+- own: (anima self-evolution lane 정합) +
 - literature: Kurzweil (2005) singularity, Schmidhuber Gödel machine
 
 ## Honest Limits
 
-- L1-L5: 4 subfolder + ~10 file pointer; self-evolution own 17 정합 lane; singularity Kurzweil critique applicable; legacy 2025-12; raw#12 re-verify 별도
+- L1-L5: 4 subfolder + ~10 file pointer; self-evolution 정합 lane; singularity Kurzweil critique applicable; legacy 2025-12; raw#12 re-verify 별도

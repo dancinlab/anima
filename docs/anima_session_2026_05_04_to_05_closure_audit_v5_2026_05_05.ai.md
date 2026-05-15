@@ -22,7 +22,7 @@ the no_lineage_citation_pre_write hook on legitimate citation cases.
   - **3-path architectural closure** (Path A / Path B / Path C all CLOSED with epistemic verdicts) → **F-SHIM-V4-4 retire 정당화** (architectural unfalsifiability after exhausting alternatives)
   - **EEG Phase E main protocol fire-ready** (corpus + presenter + LSL + auto-launch bash ALL READY)
   - **HF Cycle 2 4 scripts ALL READY** (clm cleanup + clm promote + Pβ cleanup + Pβ promote — syntax + dry-run PASS)
-- **Cost discipline**: V5 lanes = $0 (Mac+ubu1 only) — own 16 enforcement 정상 작동, no idle burn
+- **Cost discipline**: V5 lanes = $0 (Mac+ubu1 only) — enforcement 정상 작동, no idle burn
 
 ---
 
@@ -87,12 +87,12 @@ V5 → V6 transition은 user manual sign-off lanes (HF promotes 2개 + Phase E m
 
 V4 carry-forward:
 - L31 PreToolUse hook unicode density rejection
-- L32 own 16 opt-in vs PreToolUse auto-invoke
+- L32 opt-in vs PreToolUse auto-invoke
 - L33 shim v5 hypothesis falsified at substrate (`_init_weights` override)
 
 V5 candidates (NEW):
 - **L34** PreToolUse hook unicode density rejection (V4 L31 carry)
-- **L35** own 16 opt-in vs PreToolUse auto-invoke (V4 L32 carry)
+- **L35** opt-in vs PreToolUse auto-invoke (V4 L32 carry)
 - **L36** shim v5 hypothesis falsified at substrate (`_init_weights` override) (V4 L33 carry)
 - **L37** bypass path category error (logits invariance) — substrate differential ≠ behavioral differential
 - **L38** `_load_decoder_state` overwrites post-apply re-init — load order matters for re-init hypothesis
@@ -118,7 +118,7 @@ V5 lane breakdown (all $0):
 - EEG AI-native error contract + Phase E baselines + main protocol prep: $0 (local hardware)
 - F-SHIM-V4-4 retire spec: $0 (md only)
 
-V4 outlier: Pβ rescue $54.72 (one-time). V5 own 16 enforcement 정상 작동 — V5-4 + OPT-C 양쪽 cost target 내 + 404 verified, no idle burn.
+V4 outlier: Pβ rescue $54.72 (one-time). V5 enforcement 정상 작동 — V5-4 + OPT-C 양쪽 cost target 내 + 404 verified, no idle burn.
 
 ---
 
@@ -140,7 +140,7 @@ V4 outlier: Pβ rescue $54.72 (one-time). V5 own 16 enforcement 정상 작동 �
 | V1 | 85-90% | initial baseline |
 | V2 | 92-95% | mid-cycle |
 | V3 | 95-97% | post HF Cycle 1 + Pβ rescue |
-| V4 | 96-97% | own 16 lifecycle + Putnam Phase 1 + shim v5 OPT-A |
+| V4 | 96-97% | lifecycle + Putnam Phase 1 + shim v5 OPT-A |
 | **V5** | **~97-99%** | **+1-2pp gain — 3-path closure + F-SHIM-V4-4 retire + EEG/hexa-lang/resolver/HF Cycle 2 prep** |
 
 ---
@@ -150,10 +150,10 @@ V4 outlier: Pβ rescue $54.72 (one-time). V5 own 16 enforcement 정상 작동 �
 - **C1**: V5는 V1-V4 supersession (closure status only). Lessons + honest disclosures retained per audit-supersession convention. V1-V4 docs는 historical anchor로 보존.
 - **C2**: F-SHIM-V4-4 retire는 epistemic decision (architectural unfalsifiability after 3-path exhaustion) — 미래 CLM v5 redesign 시 re-instate 가능. 영구 폐기 아님.
 - **C3**: EEG baseline 오늘 + v6 BOTH invalid 발견 (EC/EO label sanity NOT_REPLICATED) — main protocol 진행 전 label 검증 또는 새 capture 필요. Phase E binding evidence 게이트 영향 가능.
-- **C4**: PreToolUse hook friction (3 cases: unicode density / own 16 opt-in / lineage citation false-positive) — 향후 cycle에서 hook 패턴 review 필요. Body token false-positive는 legitimate citation 차단 issue; file-mark exempt is current workaround.
+- **C4**: PreToolUse hook friction (3 cases: unicode density / opt-in / lineage citation false-positive) — 향후 cycle에서 hook 패턴 review 필요. Body token false-positive는 legitimate citation 차단 issue; file-mark exempt is current workaround.
 - **C5**: V5 100% pragmatic 도달 시점 = HF promotes 2개 (clm + Pβ PUBLIC) + Phase E main protocol fire + ubu1 staging cleanup 후 → V6 transition.
 - **C6**: Strict closure는 여전히 Phase E binding + Putnam concordance ≥0.60 (multi-week-to-month). F-SHIM-V4-4 retire는 strict closure path 일부 simplify했지만 substrate-level epistemic gates는 unchanged.
-- **C7**: own 16 enforcement 정상 작동 검증 — V5-4 + OPT-C 양쪽 cost target 내 + 404 verified, no idle burn. V5 cost delta $0가 증거.
+- **C7**: enforcement 정상 작동 검증 — V5-4 + OPT-C 양쪽 cost target 내 + 404 verified, no idle burn. V5 cost delta $0가 증거.
 - **C8**: F-SHIM-V4-4 retire decision은 Path B (DESIGN-1 + OPT-C) FAIL evidence에 의존 — Path A (OPT-A bypass) + Path C (architectural alternative) 추가 closure가 retire spec 정당화. 단일 path FAIL로는 retire 정당화 부족.
 
 ---

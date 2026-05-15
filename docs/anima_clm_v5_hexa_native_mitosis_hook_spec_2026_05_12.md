@@ -528,7 +528,7 @@ REBORN.md §10 foreground 0-cost 표에 다음 row 추가:
 
 ---
 
-raw#9/10/15/37 honest, own 16 0-cost (본 cycle 는 spec + stub only — RFC 031/032
-land 후 cost-bearing 실제 impl), own 42 REBORN.md SSOT.
+raw#9/10/15/37 honest, 0-cost (본 cycle 는 spec + stub only — RFC 031/032
+land 후 cost-bearing 실제 impl), REBORN.md SSOT.
 
 End of spec.

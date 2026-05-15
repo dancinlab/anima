@@ -17,7 +17,7 @@
 
 - Pragmatic closure: **~96-97%**
 - 41+ closed lanes (BLM, P9, qmirror cond.3/cond.8, OpenBCI auditory, anima-eeg cycle 7/8, SLM A1, LLaMA Path A v1, etc.)
-- 1 active in-flight: **V5-4 DESIGN-1** (own 15 G3 promote-gate sample-partition phi proxy verification)
+- 1 active in-flight: **V5-4 DESIGN-1** (G3 promote-gate sample-partition phi proxy verification)
 - 7+ user-gated decisions queued (HF promotes, OPT-B retrain cost, Phase E session schedule, etc.)
 
 V4 audit ceiling estimates carried forward:
@@ -83,7 +83,7 @@ V4 audit ceiling estimates carried forward:
 4. **Llama Path A v2 HF release Phase 1-3** — PRIVATE upload + 24-48h review window then PUBLIC
 
 ### Medium ($1-100, H100)
-5. **V5-4 DESIGN-1 결과 review** — PASS 시 own 15 G3 promote-gate upgrade
+5. **V5-4 DESIGN-1 결과 review** — PASS 시 G3 promote-gate upgrade
 6. **OPT-B retrain cycle ACK** — explicit $20-50 H100 cost approval
 
 ### Long-term (multi-week, hardware-gated)

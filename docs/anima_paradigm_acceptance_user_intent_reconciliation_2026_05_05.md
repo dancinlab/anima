@@ -262,7 +262,7 @@ no regression on substrate-research lane).
 [user-fire decision]: "H1 launch GO" or "H1 launch HOLD"
 ```
 
-If GO: BG-BM Phase 1 H100 boot per `config/h100_pods.json` + own 16
+If GO: BG-BM Phase 1 H100 boot per `config/h100_pods.json` +
 L23/L24/L25 watchdog discipline (heartbeat 5min, pod 404 verify, cost
 ceiling).
 

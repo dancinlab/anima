@@ -18,9 +18,9 @@ cycle 2026-05-10 reborn lane finalization: §29-§59 누적 ~31 sections, **§55
 
 - raw#9: training/*.py local-only ✓ (state/ only)
 - raw#15: existing REBORN.md content untouched
-- **own 22**: REBORN.md 절대 직접 append 금지 — dispatcher 가 §64 slot 에 append
-- own 38: 5-file split (spec/milestones_summary/mechanism_unification/next_cycle_carry/falsifier_disposition)
-- own 16: $0 design only (no GPU fire)
+- ****: REBORN.md 절대 직접 append 금지 — dispatcher 가 §64 slot 에 append
+- : 5-file split (spec/milestones_summary/mechanism_unification/next_cycle_carry/falsifier_disposition)
+- : $0 design only (no GPU fire)
 
 ## Falsifier
 

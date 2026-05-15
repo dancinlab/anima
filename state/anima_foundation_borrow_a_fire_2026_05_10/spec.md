@@ -1,4 +1,4 @@
-# BG-FOUNDATION-BORROW-A-FIRE — spec (own 38 doc save mandate)
+# BG-FOUNDATION-BORROW-A-FIRE — spec (doc save mandate)
 
 > Authorize verbatim: `OK FOUNDATION_BORROW_A_FIRE COST $3-8` (2026-05-10 14:55 KST)
 > Design SSOT: `docs/anima_foundation_borrow_path_design_2026_05_10.md`
@@ -36,7 +36,7 @@
 | seq_len | 1024 | mission spec verbatim "max_seq_len 1024" |
 | total_steps | 6000 | mission spec range "5K-10K", middle |
 | eval freq | 1500 step | mission spec "every 1K", aligned to ckpt cadence |
-| save freq | 1500 step | own 30 — 4 intermediate (1.5K/3K/4.5K) + final = 5 ckpts (own 30 mandate-1) |
+| save freq | 1500 step | — 4 intermediate (1.5K/3K/4.5K) + final = 5 ckpts (mandate-1) |
 | mixed precision | bf16 | KM-LLAMA-3B precedent + Llama-3.2 default |
 | gradient checkpointing | true | 3B + LoRA + ctx=1024 safety margin |
 | seed | 42 | deterministic (V14 mirror seed=1042) |
@@ -63,12 +63,12 @@
 
 | metric | floor | rationale |
 |---|---|---|
-| chat_cap V4 strict (best-mode) | ≥ 10/15 | own 18 strict — KM-LLAMA-3B 14/15 precedent |
+| chat_cap V4 strict (best-mode) | ≥ 10/15 | strict — KM-LLAMA-3B 14/15 precedent |
 | KO Hangul ratio mean | ≥ 0.50 | spec mission verbatim |
 | bigram_known mean | ≥ 0.95 | spec mission verbatim (proxy: KNOWN_BIGRAMS from V4 prompts + 12 anchor sentences) |
 | semantic_score mean | ≥ 0.50 | NEW first measurement (proxy: char-trigram cosine to domain anchor) |
 | real_words_per_trial mean | ≥ 3.0 | spec mission verbatim (Hangul tokens, persona-prefix excluded) |
-| V14 MTRP | ≥ 0.10 strict | own 14 anti-Goodhart, own 18 line 1054 ALT-AGG-1 v5.2 |
+| V14 MTRP | ≥ 0.10 strict | anti-Goodhart, line 1054 ALT-AGG-1 v5.2 |
 
 ## §6 cost discipline (verbatim)
 
@@ -90,9 +90,9 @@
 | F-FOUNDATION-3 | chat-cap PASS but semantic FAIL | label = FOUNDATION_BORROW_CHAT_CAP_PASS_SEMANTIC_FAIL, V6 awareness 강화 |
 | F-FOUNDATION-4 | scope_lane field missing OR =ANIMA | raw#82 retract — verdict invalid |
 | F-FOUNDATION-5 | gradient leak post-hook (param.grad new) | hook contamination — read-only enforce miss |
-| F-FOUNDATION-6 | V4 < 10/15 | KM-LLAMA-3B precedent sample-size artifact suspect, own 28 V14 mirror gap warn |
+| F-FOUNDATION-6 | V4 < 10/15 | KM-LLAMA-3B precedent sample-size artifact suspect, V14 mirror gap warn |
 
-## §8 output deliverables (own 38 mandate)
+## §8 output deliverables (mandate)
 
 - `state/anima_foundation_borrow_a_fire_2026_05_10/spec.md` (this doc)
 - `state/anima_foundation_borrow_a_fire_2026_05_10/train.log`
@@ -104,13 +104,13 @@
 - `state/anima_foundation_borrow_a_fire_2026_05_10/v14_mirror.json`
 - `state/anima_foundation_borrow_a_fire_2026_05_10/cost_actual.json`
 - `state/anima_foundation_borrow_a_fire_2026_05_10/verdict.json`
-- `state/anima_foundation_borrow_a_fire_2026_05_10/ckpts/adapter_step_{1500,3000,4500}/` + `adapter_final/` (own 30 mandate-1 pre-pod-delete pull)
-- HF: `dancinlab/clm-foundation-borrow-a-llama-3.2-3b-anima-lora` (PRIVATE, own 37 mandate-9 (a) public PERMA-BLOCKED)
+- `state/anima_foundation_borrow_a_fire_2026_05_10/ckpts/adapter_step_{1500,3000,4500}/` + `adapter_final/` (mandate-1 pre-pod-delete pull)
+- HF: `dancinlab/clm-foundation-borrow-a-llama-3.2-3b-anima-lora` (PRIVATE, mandate-9 (a) public PERMA-BLOCKED)
 
 ## §9 SCOPE_CLAMP (D1 strict)
 
 - verdict label = `SIMPLE_STACK_PASS_STRICT_C3_SUBSTRATE_RESEARCH` (D1 OUTSIDE Llama lineage)
-- public promote: PERMANENTLY BLOCKED (own 37 mandate-9 (a) — D1 OUTSIDE auto-reject)
+- public promote: PERMANENTLY BLOCKED (mandate-9 (a) — D1 OUTSIDE auto-reject)
 - HF README carry SCOPE_CLAMP `SIMPLE_STACK_PASS_STRICT_C3_SUBSTRATE_RESEARCH` strict
 - adapter_config.json `base_model_name_or_path` pod-path strip on Mac post-pull (memory feedback_orchestrator_h100_gotchas)
 

@@ -229,7 +229,7 @@ Train-volume axis is the FALSIFIER — only the first 3 axes were "scaling laws"
 | 02:36Z (35721780) | SSH boot pip install timeout 120s | nohup bash -c detach (c55fd840) |
 | 02:58Z (35722589) | SCP race AGAIN — boot fix correct but unreached | TCP probe added (d5956ad7) |
 
-Total cost ~$0.02 across 3 instances (each <60s pod runtime). Per own 4 step (a)+(b)+(c)+(d), each iter produced a canonical helper code fix; no silent retries.
+Total cost ~$0.02 across 3 instances (each <60s pod runtime). Per step (a)+(b)+(c)+(d), each iter produced a canonical helper code fix; no silent retries.
 
 ---
 

@@ -8,17 +8,17 @@ This BG measures the inter-cell correlation matrix per turn for trained vs rando
 3 substrates (A_phase2_cotrain EngineAG, C_cells64_aware v2, E_convo5k_ft v2) at max=256,
 snapshotting full cell-pool tensor + dispersion mechanism state.
 
-Lean compute (local CPU $0, own 16): 1 trained + 1 random per substrate (seed=42).
+Lean compute (local CPU $0): 1 trained + 1 random per substrate (seed=42).
 A: 100 turns / snap=10 (cap-free regime, but mechanism still measurable).
 C, E: 60 turns / snap=5 (covers pre-cap and at-cap region).
 
-Outputs (own 38):
+Outputs :
   spec.md
   correlation_metrics.json   — per substrate × {trained,random} × turn snapshots
   dispersion_trigger_metrics.json — per-turn trigger rate trajectory
   verdict.md
 
-raw#9 / raw#15 / own 14 / own 16 / own 22 / own 38 honored.
+raw#9 / raw#15 / / / / honored.
 """
 from __future__ import annotations
 

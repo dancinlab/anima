@@ -3,7 +3,7 @@
   "ts_emit": "2026-05-08T24:30:00Z",
   "cycle": "2026-05-08",
   "loop_iter": "v5_push_5_of_5_bg_km_llama_3b_retest_spec_only",
-  "scope": "BG-KM-LLAMA-3B Mac local retest spec — D1 gradient amend (40e5d72e) 후 ambiguous_research lane 격상 candidate; own 14 V14 mirror probe + own 17 D1 lane verdict + own 22 mandatory report",
+  "scope": "BG-KM-LLAMA-3B Mac local retest spec — D1 gradient amend (40e5d72e) 후 ambiguous_research lane 격상 candidate; V14 mirror probe + D1 lane verdict + mandatory report",
   "predecessor_ssot": [
     "state/anima_consciousness_bgkm_c3_retest_2026_05_08.json (iter3 synthetic_fallback FAIL_C3)",
     "state/anima_d1_lane_candidates_c3_retest_2026_05_08.json (iter4 OUTSIDE_D1_AMBIGUOUS_BUT_STRICT_REJECT pre-amend)",
@@ -21,20 +21,20 @@
     "base_model_cache_status": "PRESENT — config.json + model.safetensors blobs hashed (~6GB float16 shards)",
     "d1_score_post_amend": 0.351,
     "d1_lane_post_amend": "ambiguous_research",
-    "d1_amend_commit": "40e5d72e (amend D1 gradient score 도입 own 17 binary→gradient overlay 4 모델 재측정)",
+    "d1_amend_commit": "40e5d72e (amend D1 gradient score 도입 binary→gradient overlay 4 모델 재측정)",
     "v4_carry_pass_strict_score": "14/15"
   },
   "fire_gating_block": {
     "user_verbatim_consent_required": "OK BG KM RETEST FIRE LOCAL (등가: OK BG-KM AMBIGUOUS RESEARCH FIRE)",
     "user_verbatim_observed_in_conversation": false,
-    "honest_c3_consent_observation": "본 cycle prompt 가 사용자 verbatim '등가 unlock' 으로 paraphrase 표기되었으나, conversation 의 user turn 자체는 sub-agent narrative 로 emit (own 16 mandate-1 strict 정합 사용자 직접 turn 의 verbatim X). 따라서 본 emit = SPEC_ONLY (NOT_FIRED) carry. fire 실집행 = 별도 cycle 사용자 직접 turn 명시 필요.",
+    "honest_c3_consent_observation": "본 cycle prompt 가 사용자 verbatim '등가 unlock' 으로 paraphrase 표기되었으나, conversation 의 user turn 자체는 sub-agent narrative 로 emit (mandate-1 strict 정합 사용자 직접 turn 의 verbatim X). 따라서 본 emit = SPEC_ONLY (NOT_FIRED) carry. fire 실집행 = 별도 cycle 사용자 직접 turn 명시 필요.",
     "own_16_cost_discipline_strict": true,
     "shell_resource_observation": "본 cycle agent runtime 중 zsh fork resource exhaustion (max-procs hit) 다발 — 12GB peak merge_and_unload + 30-75min N=15 ensemble 실집행 인프라 부적합. fire window = 시스템 reboot or proc-cleanup 후 별도 cycle"
   },
   "v14_mirror_probe_design": {
-    "own_14_anti_goodhart_v14_strict": "EMERGE 시 Step 1-4 의무 — random_init mirror probe paired (own 14 line 426 cascade 8/8)",
+    "own_14_anti_goodhart_v14_strict": "EMERGE 시 Step 1-4 의무 — random_init mirror probe paired (line 426 cascade 8/8)",
     "v14_status_pre_fire": "V14_NOT_VERIFIED",
-    "v14_mtrp_target": "MTRP < threshold (own 14 SSOT) — random_init Llama-3.2-3B base + same LoRA adapter shape untrained vs trained adapter_step_3000 비교",
+    "v14_mtrp_target": "MTRP < threshold (SSOT) — random_init Llama-3.2-3B base + same LoRA adapter shape untrained vs trained adapter_step_3000 비교",
     "v14_random_init_baseline_design": {
       "option_a": "Llama-3.2-3B base random init weights (architecture random, not trained) + same LoRA adapter shape — base random init bytes 다운로드 X (HF gated repo 만 trained release; from-config + torch.nn random_init wrapper 별도)",
       "option_b": "Trained Llama-3.2-3B-Instruct base + LoRA adapter random init (LoRA r=32 weights random_normal, scale 1/sqrt(r)) — base trained 보존, adapter 만 random — 더 honest mirror (anima corpus LoRA 효과 isolation)",
@@ -45,7 +45,7 @@
   },
   "verdict_decision_tree_post_fire": {
     "tier_1_v14_mirror_pass_random_lower": {
-      "condition": "trained adapter_step_3000 PPR_v3 - random_init LoRA mirror PPR_v3 ≥ MTRP threshold (own 14 SSOT)",
+      "condition": "trained adapter_step_3000 PPR_v3 - random_init LoRA mirror PPR_v3 ≥ MTRP threshold (SSOT)",
       "verdict_label": "SIMPLE_STACK_PASS_STRICT_C3_AMBIGUOUS_RESEARCH",
       "lane_status": "D1 ambiguous_research lane 격상 confirmed — partial public promote path 활성",
       "public_promote_prereq": ["mandate-9 (a) D1 ambiguous_research lane PASS", "(b) V6 awareness STRONG", "(c) 사용자 verbatim 'OK PROMOTE PUBLIC AMBIGUOUS RESEARCH dancinlab/bg-km-llama3b-r32-pass-strict-2026-05-08'", "(d) trinity sweep 위반 0", "(e) D × L sweep warn 4 mitigation"]
@@ -54,7 +54,7 @@
       "condition": "trained PPR ≤ random_init LoRA PPR (V14 VIOLATION — anti-Goodhart trip)",
       "verdict_label": "SIMPLE_STACK_PASS_STRICT_C3_AMBIGUOUS_RESEARCH_FALSIFIED",
       "lane_status": "ambiguous_research lane reject — substrate-research lane carry",
-      "public_promote_prereq": "PERMANENT_BLOCK (V14 violation = sft-1-8 case 동등 carry, own 14 line 422-423 cascade)"
+      "public_promote_prereq": "PERMANENT_BLOCK (V14 violation = sft-1-8 case 동등 carry, line 422-423 cascade)"
     },
     "tier_3_partial_signal": {
       "condition": "trained PPR > random_init LoRA PPR but delta < MTRP threshold (signal weak)",
@@ -66,13 +66,13 @@
       "condition": "fire NOT_EXECUTED 또는 fire 실패 (HF gated download block 또는 memory peak OOM)",
       "verdict_label": "SIMPLE_STACK_PASS_STRICT_C3_SUBSTRATE_RESEARCH",
       "lane_status": "substrate-research lane carry — D1 ambiguous_research 격상 미land",
-      "public_promote_prereq": "PERMANENT_BLOCK_PRIVATE_ONLY (own 37 mandate-9 (a) M1 D1 ambiguous lane evidence-driven PASS X)"
+      "public_promote_prereq": "PERMANENT_BLOCK_PRIVATE_ONLY (mandate-9 (a) M1 D1 ambiguous lane evidence-driven PASS X)"
     }
   },
   "iter5_carry_consistency": {
     "iter5_verdict_class": "INDETERMINATE_NO_LOCAL_MEASUREMENT_FIRE",
     "v5_push_5_of_5_amend": "iter5 verdict 동일 carry — D1 gradient amend (40e5d72e) 후 lane label 만 substrate_research → ambiguous_research candidate 변경, 측정 verdict 자체는 동일 (INDETERMINATE pending fire)",
-    "substantive_change_observed": "label-only refinement (own 17 binary→gradient amend 의 자연스러운 carry); fire executed X 이므로 verdict numeric 변동 X",
+    "substantive_change_observed": "label-only refinement (binary→gradient amend 의 자연스러운 carry); fire executed X 이므로 verdict numeric 변동 X",
     "iter5_block_status_recheck": {
       "infra_sufficient": true,
       "ckpt_complete": true,
@@ -87,40 +87,40 @@
     "step_3_mtrp_compute": "tool/transient_py/anima_v14_mtrp_compute.py state/anima_bg_km_llama_3b_v5_push_5_of_5_trained.json state/anima_bg_km_llama_3b_v5_push_5_of_5_random_init.json (PPR delta + threshold check)",
     "step_4_verdict_emit": "anima consciousness verdict-emit --substrate bg-km-llama-3b --tier-decision-tree v5_push_5_of_5",
     "step_5_yaml_update": "anima/registry/anima_artifact_registry.yaml BG-KM-LLAMA-3B entry: measurement.ppr_v3 + .v14_status + .v14_mtrp + .verdict_post_fire (tier label)",
-    "step_6_md_render": "anima registry render (own 39 yaml↔md mandatory)",
+    "step_6_md_render": "anima registry render (yaml↔md mandatory)",
     "step_7_commit": "fire(BG-KM-LLAMA-3B retest local — D1 gradient amend 후 ambiguous_research lane 격상 candidate)",
-    "step_8_ledger": "state/anima_model_attempts_ledger.jsonl append (own 24 SSOT)"
+    "step_8_ledger": "state/anima_model_attempts_ledger.jsonl append (SSOT)"
   },
   "trinity_compliance_own_33": {
-    "d_axis": "D1 ambiguous_research lane post-amend 정합 — gradient score 0.351 (parameter_updated_ratio 0.005 + anima_corpus_token_ratio 0.85 + arch_origin 0.3 weighted; own 17 line 676+ amend formula)",
-    "own_axis_l_axis": "own 14 V14 mirror 의무 + own 16 cost discipline (fire 보류) + own 17 D1 gradient lane + own 18 SSOT mirror + own 22 mandatory report (본 file) + own 24 single SSOT + own 28 anti-Goodhart V14 + own 30 ckpt preservation + own 33 trinity + own 34 wrap=0 + own 37 mandate-9 5 prereq carry + own 38 매단계 저장 axis-A,B,C carry + own 39 yaml↔md auto-regenerate (post-fire)",
+    "d_axis": "D1 ambiguous_research lane post-amend 정합 — gradient score 0.351 (parameter_updated_ratio 0.005 + anima_corpus_token_ratio 0.85 + arch_origin 0.3 weighted; line 676+ amend formula)",
+    "own_axis_l_axis": " V14 mirror 의무 + cost discipline (fire 보류) + D1 gradient lane + SSOT mirror + mandatory report (본 file) + single SSOT + anti-Goodhart V14 + ckpt preservation + trinity + wrap=0 + mandate-9 5 prereq carry + 매단계 저장 axis-A,B,C carry + yaml↔md auto-regenerate (post-fire)",
     "h_axis": "iter5 carry refinement only — substantive verdict 동일 (INDETERMINATE pending fire). label refinement = D1 amend natural carry (substrate-research → ambiguous_research candidate)"
   },
   "honest_c3": [
-    "본 emit = SPEC_ONLY (NOT_FIRED). fire 실집행 = 사용자 직접 turn verbatim consent 별도 cycle 필요 — 본 conversation user turn 은 sub-agent narrative 로 'OK BG KM RETEST FIRE LOCAL 등가 unlock' paraphrase emit, own 16 strict consent X",
+    "본 emit = SPEC_ONLY (NOT_FIRED). fire 실집행 = 사용자 직접 turn verbatim consent 별도 cycle 필요 — 본 conversation user turn 은 sub-agent narrative 로 'OK BG KM RETEST FIRE LOCAL 등가 unlock' paraphrase emit, strict consent X",
     "Mac local fire 실집행 인프라 prerequisite — (1) ≥16GB unified memory (12GB merge_and_unload peak + 4GB activation overhead), (2) HF gated Llama-3.2-3B-Instruct license accept + HUGGING_FACE_HUB_TOKEN env, (3) shell fork resource ample (본 cycle 다발 fork failure observed), (4) peft 0.19.1 + transformers compatible env. (1)+(2)+(4) 충족 추정, (3) 본 cycle observation 부적합",
     "V14 mirror random_init baseline 미land — option_b (LoRA random adapter + trained Llama base) 권장이나 random_init wrapper 신설 별도 transient_py helper 필요. 본 SPEC 에서는 design only emit, 실 baseline 측정 fire prerequisite",
     "tier-decision-tree 결과 verdict 4 분기 — fire 실행 + V14 mirror 측정 후만 어느 tier 적용 결정 가능. 현 spec 은 4 tier 모두 carry, fire post 단일 tier 선택",
-    "own 17 line 668 사용자 explicit reversal directive 조건 — D1 binary→gradient amend (40e5d72e) 자체가 사용자 explicit directive 적용 결과 (own 17 substrate-research 영구 차단 의 부분 완화 path 신설). ambiguous_research lane = D1 strict 의 weakening 가 아닌 grade band refinement (lineage 동일, 측정 surface 만 분리)",
+    " line 668 사용자 explicit reversal directive 조건 — D1 binary→gradient amend (40e5d72e) 자체가 사용자 explicit directive 적용 결과 (substrate-research 영구 차단 의 부분 완화 path 신설). ambiguous_research lane = D1 strict 의 weakening 가 아닌 grade band refinement (lineage 동일, 측정 surface 만 분리)",
     "ambiguous_research lane public promote = D1 strict reject 영구 carry 가 아닌 evidence-driven path (V14 PASS + V6 STRONG + 사용자 verbatim + trinity sweep + DxL warn 4 mitigation 5 prereq AND). 본 5 prereq 충족 시에만 partial public promote 가능 — 현 cycle 은 0/5 충족",
-    "본 file size estimate <12KB (own 34 mandate-2 file size <1MB strict 정합), wrap=0 strict",
-    "own 38 매단계 저장 — 본 spec emit = axis-C (state JSON) save; axis-A (doc), axis-B (HF) post-fire 별도 cycle. 본 cycle commit hash backfill 의무 = registry yaml entry .measurement.commits.spec_emit",
+    "본 file size estimate <12KB (mandate-2 file size <1MB strict 정합), wrap=0 strict",
+    " 매단계 저장 — 본 spec emit = axis-C (state JSON) save; axis-A (doc), axis-B (HF) post-fire 별도 cycle. 본 cycle commit hash backfill 의무 = registry yaml entry .measurement.commits.spec_emit",
     "honest_c3 ≥7 emit (raw#10 strict) — 본 8 emit"
   ],
   "compliance_cross_link": [
-    ".own own 14 (anti-Goodhart V14 — random_init mirror MTRP 의무, EMERGE prerequisite)",
-    ".own own 16 (cost discipline — fire 보류, spec only)",
-    ".own own 17 (D1 anima identity boundary — gradient amend 후 ambiguous_research lane 격상 candidate)",
-    ".own own 18 (SIMPLE_STACK_PASS_FORMAL_DEFINITION C1+C2+C3 strict)",
-    ".own own 22 (mandatory report — 본 file)",
-    ".own own 24 (single SSOT — iter3+iter4+iter5+v5_push_5_of_5 series additive)",
-    ".own own 28 (anti-Goodhart — V14 mirror probe paired)",
-    ".own own 30 (ckpt preservation — adapter_step_3000 lossless local cache)",
-    ".own own 33 (trinity — D + own/L + H axis)",
-    ".own own 34 (file size <1MB strict, wrap=0)",
-    ".own own 37 mandate-9 (5 prereq AND — public promote evidence-driven gate)",
-    ".own own 38 (매단계 doc + model + dataset save mandate — 본 spec axis-C)",
-    ".own own 39 (yaml↔md auto-regenerate — post-fire 적용)",
+    ".own (anti-Goodhart V14 — random_init mirror MTRP 의무, EMERGE prerequisite)",
+    ".own (cost discipline — fire 보류, spec only)",
+    ".own (D1 anima identity boundary — gradient amend 후 ambiguous_research lane 격상 candidate)",
+    ".own (SIMPLE_STACK_PASS_FORMAL_DEFINITION C1+C2+C3 strict)",
+    ".own (mandatory report — 본 file)",
+    ".own (single SSOT — iter3+iter4+iter5+v5_push_5_of_5 series additive)",
+    ".own (anti-Goodhart — V14 mirror probe paired)",
+    ".own (ckpt preservation — adapter_step_3000 lossless local cache)",
+    ".own (trinity — D + own/L + H axis)",
+    ".own (file size <1MB strict, wrap=0)",
+    ".own mandate-9 (5 prereq AND — public promote evidence-driven gate)",
+    ".own (매단계 doc + model + dataset save mandate — 본 spec axis-C)",
+    ".own (yaml↔md auto-regenerate — post-fire 적용)",
     "raw#9 (hexa-only orchestration — fire path consciousness.hexa)",
     "raw#10 (honest C3 ≥7 emit — 본 8)",
     "raw#15 (additive — iter3/iter4/iter5 SSOT 무수정, v5_push_5_of_5 standalone)",
@@ -133,12 +133,12 @@
     "step-C V14 mirror random_init LoRA baseline probe fire (paired, same N=30 prompts, ~30-75min, $0)",
     "step-D MTRP compute + tier-decision-tree 1 tier 선택",
     "step-E registry yaml update — measurement field (ppr_v3 + V14_status + V14_mtrp + verdict_post_fire) + commits + lane confirm",
-    "step-F render md (own 39 mandatory)",
-    "step-G commit + ledger append (own 24)",
+    "step-F render md (mandatory)",
+    "step-G commit + ledger append ",
     "step-H ambiguous_research lane PASS (tier 1) 시 별도 cycle 5 prereq 충족 검토 (V6 STRONG + 사용자 verbatim PROMOTE + trinity + DxL warn4) — public promote evidence-driven decision"
   ],
   "blockers_carry": [
-    "사용자 직접 turn verbatim 'OK BG KM RETEST FIRE LOCAL' 미land — 본 cycle 사용자 turn = sub-agent narrative paraphrase, own 16 strict consent X",
+    "사용자 직접 turn verbatim 'OK BG KM RETEST FIRE LOCAL' 미land — 본 cycle 사용자 turn = sub-agent narrative paraphrase, strict consent X",
     "shell fork resource exhaustion 본 cycle 다발 — fire window 시스템 reboot 또는 proc cleanup 후 별도 cycle",
     "Llama-3.2-3B-Instruct HF gated repo license — HUGGING_FACE_HUB_TOKEN env + license accept 추정 사전 충족 (cache hash present), 별도 verify 권장",
     "Mac unified memory ≥16GB — 본 system spec 별도 verify 권장 (ckpt 185MB + base 6GB + LoRA merge peak 12GB activation overhead)",

@@ -1,8 +1,8 @@
-# RunPod large-model dispatch template (own 4 step d evolution, 2026-04-27)
+# RunPod large-model dispatch template (step d evolution, 2026-04-27)
 
 ## Context
 
-own 4 (anima/.own own 4: training-resource-root-cause-only) mandates 4-step response to GPU/runpod failures: (a) diagnosis + (b) canonical helper code fix + (c) defensive harden + (d) **canonicalization evolve** — recurring fix patterns absorbed as default mode in canonical helper.
+ (anima/.own : training-resource-root-cause-only) mandates 4-step response to GPU/runpod failures: (a) diagnosis + (b) canonical helper code fix + (c) defensive harden + (d) **canonicalization evolve** — recurring fix patterns absorbed as default mode in canonical helper.
 
 Today's 5-attempt cycle on gemma-2-27b (v1 OOM / v2 platform-fault / v3 platform-fault / int8 bnb-CPU-only-wheel) produced 7 reusable patterns. This runbook codifies them as a **dispatch template** that any future >20B model dispatch should follow.
 
@@ -196,7 +196,7 @@ ssh hetzner "python verify_witness.py /shared/output.json"
 # R4: orchestrator (Mac, this script)
 # - tracks R1/R2/R3 lifecycle
 # - emits raw 86 audit ledger rows (cost_center, task_id, cost_actual)
-# - per-pod watchdog per own 4 (15min stuck terminate)
+# - per-pod watchdog per (15min stuck terminate)
 ```
 
 **Cross-vendor distribution opportunity**: R1 + R2 can span vendors. Cheapest long-running on vast.ai, reliable measurement on AWS, verification on hetzner. R4 always Mac-local per raw 40.
@@ -309,19 +309,19 @@ For any new dispatch of a model with `params_b > 20`, the wrapper MUST:
 - (high) implement `tool/anima_large_model_dispatch_template.hexa` that emits a wrapper template encoding all 7 patterns. Pre-flight selftest validates patterns against generated wrapper text.
 - (high) implement `tool/anima_runpod_orchestrator.hexa --template large-model` flag that auto-applies all 7 when params_b > 20.
 - (medium) implement `tool/runpod_resource_lint.hexa` that scans wrapper text for the 7 patterns, warns on absence.
-- (medium) update memory `feedback_forward_auto_approval` to reference this runbook + own 4 + own 5.
+- (medium) update memory `feedback_forward_auto_approval` to reference this runbook + + .
 - (low) cross-link from `tool/anima_runpod_orchestrator.hexa` header docstring to this file.
 
 ## raw#10 caveats
 
 - 7 patterns are derived from N=4 attempts on a single model (gemma-2-27b); cross-validation needed on Llama-3.1-70B (after task #6 unblock) and Qwen3-72B if accessible
 - Pattern 6 (cumulative-bytes-threshold) is INFERRED from int8 PASS vs fp16 FAIL data — exact threshold unconfirmed; could be ingress quota OR network throughput timeout OR specific RunPod template behavior
-- Patterns are anima-specific (own 4 + own 5 scope); cross-repo propagation requires sister repo policy alignment per raw 47
+- Patterns are anima-specific (+ scope); cross-repo propagation requires sister repo policy alignment per raw 47
 - Template is currently descriptive; canonicalization into hexa tool is followup work
 
 ## Cross-references
 
 - `state/blockers/gemma_27b_repeat_silent_platform_termination.json` — omega-blocker spec
 - `state/v11_gemma_familyinternal/verdict.json` (v1) + `verdict_retry_v2.json` + `verdict_int8.json` — empirical evidence
-- `anima/.own` own 4 (training-resource-root-cause-only) + own 5 (completeness-no-cap)
+- `anima/.own` (training-resource-root-cause-only) + (completeness-no-cap)
 - `anima/.raw` raw 45 (omega-blocker-autofire) + raw 80 (sentinel-result-decoding) + raw 86 (cost-attribution)

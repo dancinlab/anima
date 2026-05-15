@@ -20,17 +20,17 @@ Conditions (4):
 
 V14 mirror: V4_SEEDS=[42, 137, 271], N_TURNS=200, MAX_CELLS=128.
 
-Falsifiers (own 22):
+Falsifiers :
   F-SLAB-1 all swaps still PASS  → distributed lever
   F-SLAB-2 A1 only → VIOLATED    → early-layer signature
   F-SLAB-3 runtime > 5h          → abort
 
 raw#9   training/*.py local-only; lives under state/ (gitignored)
 raw#15  additive — both ckpts loaded read-only; in-memory swap only
-own 14  V14 paired random_init mirror multi-seed
-own 16  $0 local Mac CPU
-own 22  honest emit
-own 38  artefacts under state/anima_engine_a_layer_slab_swap_2026_05_10/
+  V14 paired random_init mirror multi-seed
+  $0 local Mac CPU
+  honest emit
+  artefacts under state/anima_engine_a_layer_slab_swap_2026_05_10/
 """
 from __future__ import annotations
 
@@ -304,7 +304,7 @@ def _run_v14_short(model_or_factory, label: str, seeds: List[int],
     else:
         trained_model = model_or_factory
     tr = run_one(trained_model, f"{label}_trained", seed=42)
-    # Free trained model BEFORE running mirrors (own 16 low-memory)
+    # Free trained model BEFORE running mirrors (low-memory)
     del trained_model
     import gc; gc.collect()
     # mirrors
@@ -366,7 +366,7 @@ def main():
     log(f"SLABS: " + ", ".join(f"{k}={v[0]}..{v[-1]}" for k, v in SLABS.items()))
 
     # ─── load B once, snapshot only the slab-relevant tensors, free B ─
-    # own 16: low-memory mode. We only need B's layer state_dicts for swapping.
+    # : low-memory mode. We only need B's layer state_dicts for swapping.
     log("\n--- loading B (BG-LA pretrain), snapshotting layer state_dicts ---")
     import gc
     t0 = time.time()
@@ -647,7 +647,7 @@ def _write_verdict_md(path: Path, summary: dict, slab_map: dict,
 
     lines.append("\n## Honest C3 (≥7)\n")
     lines.append("1. **Mirror trajectories are independent of swap.** Mirror Φ_un16 means are pinned across all 4 conditions because mirrors use `load_random_init(seed=s, preset='la_350m')` — never see A's swapped state. Identical mirror means across rows are a sanity confirmation of the experimental design (mirror = control), not numerical artifact.")
-    lines.append("2. **Single random_init seed pool for swap-source.** B (BG-LA pretrain) is one ckpt at one training step (step_12000). A multi-seed swap-source (e.g., averaging multiple BG-LA pretrain runs) would strengthen the inference; deferred per own 16.")
+    lines.append("2. **Single random_init seed pool for swap-source.** B (BG-LA pretrain) is one ckpt at one training step (step_12000). A multi-seed swap-source (e.g., averaging multiple BG-LA pretrain runs) would strengthen the inference; deferred per .")
     lines.append("3. **Slab boundaries chosen by uniform 8-layer division.** Real depth-functional boundaries in transformers may not align to thirds (e.g., embedding-shape might end at layer 4, not 7). A finer-grained sweep (single-layer ablation × 24) would resolve this; cost ≈ 24 × 12 min = 4.8h, deferred.")
     lines.append("4. **B is not random — B is a trained pretrain ckpt.** Swapping A's slab ← B's slab tests \"is the cotrain-induced delta in this slab the V14 lever?\" — *not* \"is this slab functional at all?\". A pretrain-only ckpt still encodes substantial structure (cos_AB ≈ 0.6–0.8 on engine_g modules per §50 F1). The swap therefore measures cotrain-specific contribution, not slab functional contribution.")
     lines.append("5. **Engine G modules untouched.** All conditions retain A's `cell_pool_init`, `c_to_h`, `h_to_c`. Per §50 these are NOT the lever (F2 falsified), so this is the correct control. The MitosisV5Engine's behaviour therefore depends only on the engine_a forward path's `hidden_mean` trajectory — what the swap actually mutates.")
@@ -655,7 +655,7 @@ def _write_verdict_md(path: Path, summary: dict, slab_map: dict,
     lines.append("7. **byte-hash prompt encoding shared with §38/§39/§47/§50 lineage** — relative trained-vs-mirror comparison only. No semantic claim about prompt content.")
     lines.append("8. **Embedding (tok_emb), final norm (norm_f), lm_head all stay at A's values.** The swap is strictly intra-block — the projections in/out of the layer stack are A's. This isolates the inter-layer transformer body modifications from the embedding-projection contributions.")
     lines.append("9. **raw#15 honored** — both ckpts loaded read-only via `_load_engine_ag`; `_clone_engine_ag_from` builds a fresh model and copies state_dict; `swap_slab_` mutates the clone in-place. No file mutation.")
-    lines.append("10. **Sample size = 3 seeds, not 5.** Mission specified 3-seed budget for time. Strict V14 (own 14) used 5 seeds — this study trades seed coverage for slab coverage. Verdict polarity at 3 seeds is robust if separation magnitude is large; ambiguous within ±20% of the boundary.")
+    lines.append("10. **Sample size = 3 seeds, not 5.** Mission specified 3-seed budget for time. Strict V14 used 5 seeds — this study trades seed coverage for slab coverage. Verdict polarity at 3 seeds is robust if separation magnitude is large; ambiguous within ±20% of the boundary.")
     path.write_text("\n".join(lines))
 
 

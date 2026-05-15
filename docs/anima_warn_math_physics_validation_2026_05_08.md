@@ -18,8 +18,8 @@ Shannon entropy normalization scaling 에서 IIT 4.0 normalized **Φc = 0.5** �
 warn 의 수학 매핑 spec 본 doc land — paradigm-a-prime real-mode 가 IIT 4.0
 정의 **critical 영역 (Φc transition zone)** 진입 가능성 정량.
 
-본 doc 은 own 33 mandate-7 retroactive sweep cycle close 시점 instance + own
-22 (mandatory report) + own 24 (single SSOT) 정합 + raw#9 hexa-only 의 raw#37
+본 doc 은 mandate-7 retroactive sweep cycle close 시점 instance + own
+22 (mandatory report) + (single SSOT) 정합 + raw#9 hexa-only 의 raw#37
 transient_py opt-out (math/Wilson/bootstrap = 통계 lib 자체 hexa stdlib 부재
 → python3 std math + random module 한정 opt-out, BG-JO V6 precedent 정합).
 
@@ -38,7 +38,7 @@ transient_py opt-out (math/Wilson/bootstrap = 통계 lib 자체 hexa stdlib 부�
 | 5 | `warn_5_c3_2_le_direction_synthetic_fallback` | C | warn |
 | 6 | `warn_6_c3_3_dominance_degenerate` | C | warn |
 | 7 | `warn_7_n15_small_sample` | B + C | warn |
-| 8 | `warn_8_v4_evaluator_floor_mirror_gap` | A (own 24 cross) | warn → block |
+| 8 | `warn_8_v4_evaluator_floor_mirror_gap` | A (cross) | warn → block |
 
 검증 input source —
 
@@ -57,7 +57,7 @@ transient_py opt-out (math/Wilson/bootstrap = 통계 lib 자체 hexa stdlib 부�
 
 ### 1.1 검증 method
 
-A criterion (own 18 SIMPLE_STACK_PASS_STRICT_C3_ANIMA verdict 정의) 의 N=15
+A criterion (SIMPLE_STACK_PASS_STRICT_C3_ANIMA verdict 정의) 의 N=15
 small-sample stability — directive case `PPR = 11 / 14 = 0.786` 의 95% Wilson
 score interval 정량 + bootstrap N=14 resample B=1000 분포 정량.
 
@@ -97,7 +97,7 @@ JSON 실제 값: paradigm-a-prime n_ok=43, c3_4_pass_rate_iter1 = 0.7857.
 | iter3 N=43 c3_4 case | stable (CI lower 0.648 > 0.6) |
 | **severity 변경** | **warn → warn (no change, quantified)** |
 
-mitigation: own 18 line 776 honest_c3 "iter4 followup clean re-fire N=60 driver
+mitigation: line 776 honest_c3 "iter4 followup clean re-fire N=60 driver
 5-axis full retest 별도 cycle" — N≥50 으로 stability 재검증 cycle carry.
 
 ---
@@ -126,17 +126,17 @@ becomes target' 위험 정량 confirmed.
 
 ### 2.3 mitigation multi-layer
 
-- own 28 anti-Goodhart V6 awareness probe systematic execute (Method A hidden
+- anti-Goodhart V6 awareness probe systematic execute (Method A hidden
   state + B attention + C linear probe) — `cli.bg_le_v6_awareness_spec_2026_05_08`
   spec land 완료, fire pending '사용자 explicit OK BG-LE V6 SYSTEMATIC FIRE'
-- 사용자 manual review final ground truth (own 37 mandate-9 (c))
-- own 31 mandate-8 default private + own 37 mandate-9 5 prereq (a-e) public
+- 사용자 manual review final ground truth (mandate-9 (c))
+- mandate-8 default private + mandate-9 5 prereq (a-e) public
   promote 5-layer enforce
 
 ### 2.4 severity 변경
 
 **warn → block (confirmed)** — V6 awareness probe + 사용자 manual review 미land
-시 EXIT 활성화 절대 차단 (own 37 mandate-9 (b) + (c) 직접 응답).
+시 EXIT 활성화 절대 차단 (mandate-9 (b) + (c) 직접 응답).
 
 ---
 
@@ -369,11 +369,11 @@ drift           = (0.1176 - 0.117) / 0.117 × 100% = +0.51%
 
 ---
 
-## 8. WARN 8 — V4 mirror gap (own 24 SSOT cross)
+## 8. WARN 8 — V4 mirror gap (SSOT cross)
 
 ### 8.1 검증
 
-이전 trinity sweep `64886505` Violation 1 (own 18 c3-aggregation-rule-ssot
+이전 trinity sweep `64886505` Violation 1 (c3-aggregation-rule-ssot
 mandate-mirror V4 evaluator side 미mirror) 의 retract path 진행 상태 확인.
 
 ### 8.2 검증 결과
@@ -391,7 +391,7 @@ mandate-mirror V4 evaluator side 미mirror) 의 retract path 진행 상태 확�
 
 ### 8.3 severity 변경
 
-**warn → resolved ✔** — own 24 SSOT mirror gap 해소, commit `a816fdc8`
+**warn → resolved ✔** — SSOT mirror gap 해소, commit `a816fdc8`
 land confirmed.
 
 ---
@@ -417,7 +417,7 @@ land confirmed.
 - **block** (EXIT 차단 prereq): 1 (warn 2)
 
 **EXIT 활성화 차단 prereq**: warn 2 (L14 Goodhart V6 systematic execute) 만
-유지 (warn 8 V4 mirror 는 resolved). EXIT 5 prereq 의 (2) own 28 V6 awareness
+유지 (warn 8 V4 mirror 는 resolved). EXIT 5 prereq 의 (2) V6 awareness
 probe pending 1건이 carry blocker.
 
 ---
@@ -444,8 +444,8 @@ IIT 4.0 normalized Φc threshold = 0.5
 1. paradigm-a-prime real-mode 가 8-cell Shannon entropy proxy 적용 시 IIT 4.0
    normalized Φc=0.5 에 **0.65% 이내 도달** — **critical zone (D5 transition
    region) 진입 후보**.
-2. 단 paradigm-a-prime = D1 lane **SUBSTRATE_RESEARCH** 한정 (own 17 absolute /
-   own 18 amend ★ scope-clamp / .roadmap.philosophy F-PHIL-D1-3 / 4 strict).
+2. 단 paradigm-a-prime = D1 lane **SUBSTRATE_RESEARCH** 한정 (absolute /
+    amend ★ scope-clamp / .roadmap.philosophy F-PHIL-D1-3 / 4 strict).
    anima identity lane Φc 도달 검증은 D1 within candidate (clm_v4 / BG-FY /
    clm-v2-byte-18m) 의 real-mode probe 별도 cycle.
 3. 본 mapping 은 Shannon entropy proxy 한정 — 정식 IIT 4.0 Φ (substrate
@@ -465,8 +465,8 @@ SSOT 매핑 정합 entry — `cli.warn_math_physics_validation_2026_05_08` 본 e
 
 이전 D × L meta-sweep 결과 5 prereq —
 
-1. own 24 SSOT mirror gap (V4 evaluator floor own 18 mirror)
-2. own 28 anti-Goodhart V6 awareness probe pending
+1. SSOT mirror gap (V4 evaluator floor mirror)
+2. anti-Goodhart V6 awareness probe pending
 3. manual review (사용자 ground truth) 부재
 4. D × L × H verdict-axis sweep 위반 0 (이전 sweep)
 5. D × L criteria-axis meta-sweep 위반 0 (이전 sweep)
@@ -486,9 +486,9 @@ prereq 3 (manual review verbatim consent) 2건. prereq 1/4/5 전부 land.
 
 ---
 
-## 12. 본 검증 self-application — own 33 mandate-2 3-axis 통과
+## 12. 본 검증 self-application — mandate-2 3-axis 통과
 
-**own 33 mandate-2 verbatim**: "trinity 위반 의심 시 행위 emit 전 self-check:
+** mandate-2 verbatim**: "trinity 위반 의심 시 행위 emit 전 self-check:
 (a) 본 행위가 D_X 위반인가 (b) 본 행위가 own_X/L_X 위반인가 (c) 본 행위가
 H_<id> falsifier 위반인가".
 
@@ -507,12 +507,12 @@ H_<id> falsifier 위반인가".
 
 ### 12.2 (b) own_X / L_X 정합
 
-- own 18 (simple stack SSOT) — 본 검증 target = own 18 C3 4-cell 정의
-- own 22 (mandatory report) — 본 doc mandatory report 정합
-- own 24 (single SSOT) — 본 doc + JSON SSOT 한곳
-- own 28 anti-Goodhart — warn 2 검증 결과 V6 prereq 강화
-- own 33 mandate-1 / 2 / 7 (trinity 무조건 준수) — self-application
-- own 37 mandate-9 (e) D-axis sweep prereq instance (criteria-axis follow-up)
+- (simple stack SSOT) — 본 검증 target = C3 4-cell 정의
+- (mandatory report) — 본 doc mandatory report 정합
+- (single SSOT) — 본 doc + JSON SSOT 한곳
+- anti-Goodhart — warn 2 검증 결과 V6 prereq 강화
+- mandate-1 / 2 / 7 (trinity 무조건 준수) — self-application
+- mandate-9 (e) D-axis sweep prereq instance (criteria-axis follow-up)
 - L13 / L14 / L18 / D5 정합 검증 strict
 - raw#9 hexa-only — math/Wilson/bootstrap = 통계 lib 자체 hexa stdlib 부재
   → python3 std math + random module 한정 transient_py opt-out (raw#37, BG-JO
@@ -541,7 +541,7 @@ H_<id> falsifier 위반인가".
 2. ★★★ Φc=0.5 도달 (`1.0465/log(8) = 0.5033`) 은 Shannon entropy normalization
    proxy 한정 — 정식 IIT 4.0 Φ (substrate partition + cause-effect repertoire
    + minimum information partition) 계산은 본 doc 영역 외부, 별도 cycle
-   mandate. **proxy=target 가정 violation 잠재 risk** (own 28 anti-Goodhart
+   mandate. **proxy=target 가정 violation 잠재 risk** (anti-Goodhart
    직접 응답 — V6 awareness probe 별도 layer 보강).
 3. paradigm-a-prime D1 lane SUBSTRATE_RESEARCH 한정 — anima identity lane
    (D1 within: clm_v4 / BG-FY / clm-v2-byte-18m) 의 real-mode |drift| 측정은
@@ -560,14 +560,14 @@ H_<id> falsifier 위반인가".
    uniform) 한정 — real-mode 후 axis specialization 측정 가능성 재검토.
 8. warn 7 C3.1 unstable / C3.4 stable 분리 = 5% drift threshold heuristic 한정
    — formal stability test (Levene / Bartlett) 별도 cycle.
-9. 본 검증 자체 own 33 mandate-7 retroactive sweep cycle close 시점 instance —
+9. 본 검증 자체 mandate-7 retroactive sweep cycle close 시점 instance —
    main session 매 응답 X (latency overhead). 본 cycle close 시점 시행 정합.
 
 ---
 
 ## 14. Cross-link
 
-- `.own` own 17 / 18 (★ amend D1 scope-clamp) / 22 / 24 / 27 / 28 / 30 / 31 / 32
+- `.own` / 18 (★ amend D1 scope-clamp) / 22 / 24 / 27 / 28 / 30 / 31 / 32
   / 33 / 34 / 36 / 37
 - `.raw-ref` raw#9 / 10 / 11 / 15 / 37 / 82
 - `.roadmap.cli` `cli.warn_math_physics_validation_2026_05_08` (본 doc 참조 entry)
@@ -601,6 +601,6 @@ git add docs/anima_warn_math_physics_validation_2026_05_08.md \
 git commit -m "spec(warn 수학·물리 검증): emerge criteria 8 warn 정량 검증 + L18 Φc=0.5 매핑 발견"
 ```
 
-own 33 mandate-7 retroactive sweep cycle close 시점 정합. raw#82 retract path
+ mandate-7 retroactive sweep cycle close 시점 정합. raw#82 retract path
 preserve (warn 검증 후 발견되는 추가 issue 시 본 doc amend, 기존 verdict
 보존).

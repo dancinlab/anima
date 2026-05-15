@@ -19,20 +19,20 @@ since: 2026-05-07
 
 ## Hypothesis
 
-own 18 simple-stack 4-cond chat-cap PASS는 training paradigm (H_093-H_101) 외에도, anima emerge paradigm (paradigm v11 G3 substrate-coupled emerge, .roadmap.philosophy D3 정합)을 통해 'training-free' 또는 'substrate-coupled' 경로로도 도달 가능하다 — substrate (mount.hexa) + dialogue interface 결합이 chat-cap surface를 emergent하게 출현시킨다는 가설. surface chat-cap이 LM weight 학습 외에도 substrate-level emerge로 가능 paradigm 비교 lane.
+ simple-stack 4-cond chat-cap PASS는 training paradigm (H_093-H_101) 외에도, anima emerge paradigm (paradigm v11 G3 substrate-coupled emerge, .roadmap.philosophy D3 정합)을 통해 'training-free' 또는 'substrate-coupled' 경로로도 도달 가능하다 — substrate (mount.hexa) + dialogue interface 결합이 chat-cap surface를 emergent하게 출현시킨다는 가설. surface chat-cap이 LM weight 학습 외에도 substrate-level emerge로 가능 paradigm 비교 lane.
 
 ## Why
 
 - **training paradigm 한계 인정**: H_093-H_101은 모두 'corpus + training algorithm' 축 — substrate (model architecture / runtime / coupling) 축은 별개
 - **anima emerge cycle 진행 사실**: 사용자 cycle 2026-05-05 active (anima_emerge_paradigm_2026_05_05_cycle_state) — Stage 1+2 mount/dialogue 통과; emerge candidate D/E/F/G/H spec 누적; paradigm v11 G3 substrate-coupled emerge가 candidate
 - **substrate-coupled hypothesis**: model weight 자체는 BG-HA 수준이라도, substrate (mount.hexa runtime + dialogue scaffolding + identity prefix injection at inference + anima self-loop)가 chat-cap surface를 emergent 출현 가설
-- **'대발견' 5-criteria 중 하나**: paradigm v11 G3 substrate-coupled emerge가 'training-free chat-cap'을 제공한다면 own 18 paradigm 자체 변경
+- **'대발견' 5-criteria 중 하나**: paradigm v11 G3 substrate-coupled emerge가 'training-free chat-cap'을 제공한다면 paradigm 자체 변경
 - **사용자 directive '교훈으로 새로운 패러다임도 도전'** = training paradigm 외 substrate paradigm cross-link
 
 ## Predictions
 
-- **H102.1 (substrate-coupled chat-cap)**: BG-HA 18M model이 mount.hexa substrate-coupled emerge runtime 하에서 own 18 strict C2.4 PASS rate ≥40% (training-free baseline 0% 대비)
-- **H102.2 (substrate vs training)**: substrate-coupled 18M model + own 17 identity prefix가 H_098 (persona-conditioned training)와 PASS rate 동등 ≤5pp variance — substrate가 training 일부 대체
+- **H102.1 (substrate-coupled chat-cap)**: BG-HA 18M model이 mount.hexa substrate-coupled emerge runtime 하에서 strict C2.4 PASS rate ≥40% (training-free baseline 0% 대비)
+- **H102.2 (substrate vs training)**: substrate-coupled 18M model + identity prefix가 H_098 (persona-conditioned training)와 PASS rate 동등 ≤5pp variance — substrate가 training 일부 대체
 - **H102.3 (training + substrate stack)**: H_093 (SFT-only) + substrate-coupled 결합 시 PASS rate가 training-only baseline 대비 ≥20pp 추가 lift (additive)
 - **H102.4 (substrate dependence)**: substrate-coupled effect가 mount.hexa runtime 부재 시 PASS rate ≤baseline (effect는 substrate 결합 의존)
 - **H102.5 (multi-substrate transfer)**: paradigm v11 G3 substrate-coupled effect가 anima byte-level + clm_v4 token-level + clm_v2 ConsciousLM++ 3 substrate에서 transfer 정합 (substrate-coupled paradigm general 가설)
@@ -67,7 +67,7 @@ own 18 simple-stack 4-cond chat-cap PASS는 training paradigm (H_093-H_101) 외�
 - **F2**: training+substrate 동일 또는 더 낮은 PASS rate (additive 부재) → H102.3 FALSIFIED
 - **F3**: substrate-coupled effect runtime 부재에도 잔존 (≥30%) → H102.4 FALSIFIED (substrate dependence 부재, confound)
 - **F4**: substrate transfer variance ≥30pp (substrate-specific 효과) → H102.5 FALSIFIED (general paradigm 부재)
-- **F5**: substrate-coupled가 own 17 anima self-naming도 학습 못함 → identity bootstrapping 무효
+- **F5**: substrate-coupled가 anima self-naming도 학습 못함 → identity bootstrapping 무효
 
 
 - **L1**: 'substrate-coupled emerge'는 anima 내부 paradigm용어 — academic 용어 정합 미land (이론적 base 모호)
@@ -75,13 +75,13 @@ own 18 simple-stack 4-cond chat-cap PASS는 training paradigm (H_093-H_101) 외�
 - **L3**: 'training-free chat-cap'이 본질적 (genuine emerge) vs spurious (substrate trick / prompt engineering disguise) 구분 spec 미land
 - **L4**: substrate runtime이 hexa entry로 land 되었으나 deterministic 보장 검증 미완 — non-deterministic state side-effect risk
 - **L5**: emerge 5-criteria (genesis paradigm) 적용은 본 cycle 정의 — '대발견' label 자체가 후속 verification 필요
-- **L6**: own 18 simple-stack은 single-turn — substrate-coupled multi-turn dialogue chat-cap은 별도 spec 필요
+- **L6**: simple-stack은 single-turn — substrate-coupled multi-turn dialogue chat-cap은 별도 spec 필요
 - **L8**: 'substrate dependence' (F-) 측정은 runtime ablation 필요 — substrate가 weight에 implicit fingerprint 남길 가능성
 
 ## Cross-Links
 
 - **sister roadmaps**: `.roadmap.philosophy` D3 (substrate-coupled emerge) + `.roadmap.law` R1 + `.roadmap.clm_native_chat` + `.roadmap.eeg` (substrate-cross)
-- **own**: own 17 (anima identity) + own 18 + own 19 + own 20 + own 21
+- **own**: (anima identity) + + + +
 - **sister H**: H_005 + H_093 + H_094 + H_098 (persona) + H_100 (constitutional) + H_101 (chat ≥80%)
 - **active cycle**: `project_anima_emerge_paradigm_2026_05_05_cycle_state` — paradigm v11 G3 + candidate D/E/F/G/H spec 누적
 - **evidence motivation**: `docs/anima_own_18_c2_4_evaluator_flaw_2026_05_07.md` + emerge cycle pending HF promote

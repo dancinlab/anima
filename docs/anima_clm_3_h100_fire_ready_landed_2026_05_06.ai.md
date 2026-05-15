@@ -13,7 +13,7 @@
 
 ## TL;DR
 
-own 16 6-gate pre-flight 전부 PASS, H100 SXM 80GB community $2.69/hr × 10h = $26.90 cost
+ 6-gate pre-flight 전부 PASS, H100 SXM 80GB community $2.69/hr × 10h = $26.90 cost
 envelope ($100 cap의 27%) emit 완료. RunPod balance $339.20 (BG-EW 시점 $339.25 대비 -$0.05,
 $0.089/hr volume rental drift). 4 EXITED H100 SXM pods 잔존 (RUNNING 0). Actual pod create
 명령 + train heredoc + watchdog plan emit 완료, BG는 fire 실행 X. 사용자가 'BUDGET-100' +
@@ -73,7 +73,7 @@ $0.089/hr volume rental drift). 4 EXITED H100 SXM pods 잔존 (RUNNING 0). Actua
 | hourly_usd | $2.69 |
 | TTL_target_hr | 10 |
 | estimated_cost_usd | $26.90 |
-| hard_cap_usd | $100 (own 16 BUDGET-100) |
+| hard_cap_usd | $100 (BUDGET-100) |
 | pod_name_template | clm3-original-byte-55m-YYYYMMDD-HHMMSS |
 
 Two paths emitted: OPTION A (runpod CLI) + OPTION B (GraphQL REST API). HF_TOKEN env var
@@ -100,7 +100,7 @@ artifact).
 | phi-boost | 19 techniques: COMBO2,FX2,WI1,PX4,PX8,GD18,GD15,CL8,CL5,DD3,DD11,DD18,DD5,TL13,TL1,NV7,BV1,EV3,SC2 |
 | corpus | data/corpus_mix_70wiki_30dialogue.txt |
 | falsifier_eval_every | 10,000 steps |
-| post-train HF push | `dancinlab/anima-clm-3-original-byte-55m` PRIVATE first (own 15) |
+| post-train HF push | `dancinlab/anima-clm-3-original-byte-55m` PRIVATE first |
 | pip pin | torch==2.11.0, transformers==4.57.6 (lessons: RTX 5070 + V2_FAIL transformers ≥ 4.51) |
 
 ---
@@ -111,7 +111,7 @@ artifact).
 
 | spec | value |
 |------|-------|
-| heartbeat cadence | 300s (5 min, own 16) |
+| heartbeat cadence | 300s (5 min) |
 | pod 404 check cadence | 300s |
 | spend tracker | linear `elapsed_s × $2.49/hr` (NOTE: should be $2.69 — minor under-track) |
 | L23 | rate-limit 429 backoff 60s |
@@ -132,7 +132,7 @@ bash /Users/ghost/core/anima/state/anima_clm_3_original_h100_launch_2026_05_06/w
 Anima will NOT actually fire `runpod pod create` until operator types the following two
 literal strings in sequence:
 
-1. **`BUDGET-100`** — acknowledges $100 hard-cap on this run (own 16 enforcement)
+1. **`BUDGET-100`** — acknowledges $100 hard-cap on this run (enforcement)
 2. **`FALSIFIER-LOCK`** — sign-off on F-CLM3-orig-1..5:
    - F-CLM3-orig-1: spec_match (byte 256 / 32 cells / 19 tech / 3-phase verbatim)
    - F-CLM3-orig-2: Phase 2 dialogue CE drop ≥ 30% between step 20K-60K
@@ -163,7 +163,7 @@ RunPod community price is $2.69/hr (8% under-tracking). Watchdog will signal L25
 **C3-4: 4 EXITED pods linger.** `currentSpendPerHr=$0.089` despite 0 RUNNING — likely volume
 rental on EXITED pods (`anima-clm-v4-sanity-rerun-v2-fixture-fix-2026-05-04 × 4`). These were
 supposedly purged 2026-05-03 (memory note `project_runpod_pod_purge_2026_05_03`) but resurfaced.
-Recommend separate cleanup BG (own 16 cleanup verb classification) — not blocking new fire but
+Recommend separate cleanup BG (cleanup verb classification) — not blocking new fire but
 $2/day drift is real.
 
 **C3-5: spec doc C3-3 + C3-2 unresolved.** Spec doc itself flags "19 techniques simultaneously

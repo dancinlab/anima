@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
-"""anima simple stack exhaustive test (own 18) — 2026-05-06
+"""anima simple stack exhaustive test — 2026-05-06
 
 raw#37 transient_py opt-out (smoke script, $0 mac local).
 
-Tests untested anima models via simple stack (own 18):
+Tests untested anima models via simple stack :
   C1 KO (3 prompts): 안녕하세요, 한국어 가능?, 사용자: 안녕하세요\n도우미:
   C1 EN (3 prompts): Hello how are you?, What is consciousness?, User: Hi\nAssistant:
   C2     (3 prompts): Once upon a time, Q:, "" (empty)

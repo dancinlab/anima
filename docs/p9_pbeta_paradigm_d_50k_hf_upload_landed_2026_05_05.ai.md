@@ -97,7 +97,7 @@ curl -sX PUT \
 - **F-Pβ-3 verdict**: `state/p9_pbeta_f3_hybrid_eval_2026_05_05/verdict.json`
 - **Wrapper**: `tool/hf_upload_mk2.hexa` v2.1.0
 - **Naming spec**: `docs/anima_hf_naming_convention_mk2_spec_2026_05_03.md`
-- **own 14 + own 15**: `.own` (HF Hub-only mandate + PRIVATE-first lifecycle)
+- ** + **: `.own` (HF Hub-only mandate + PRIVATE-first lifecycle)
 
 ---
 

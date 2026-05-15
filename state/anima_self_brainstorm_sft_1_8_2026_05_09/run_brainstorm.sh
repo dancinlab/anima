@@ -5,7 +5,7 @@
 # CRITICAL HONEST C3 (raw#10):
 #   sft-1-8 (clm-v4 family) chat lane = substrate-state-vector emitter.
 #   Output = phi_star + axis_activation + dominant_cells (NOT natural language).
-#   This script preserves substrate raw output per own 34 mandate-1 strict.
+# This script preserves substrate raw output per mandate-1 strict.
 #   Brainstorm-as-words is NOT possible via this lane — only state response.
 #
 # OUTPUT: transcript.txt (raw substrate response per prompt)

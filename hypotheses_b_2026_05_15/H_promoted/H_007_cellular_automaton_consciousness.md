@@ -37,7 +37,7 @@ cellular automaton (Wolfram class IV — rule 110, 184 등) 가 IIT4 Φ > 0 emer
 
 - **legacy archive**: `docs/hypotheses/H-CX-520-cellular-automaton-consciousness.md` + commits f02853db + ccc6cdb2
 - **sister H**: H_006 (coupled oscillator), H_011 (IIT), H_012 (autopoietic)
-- **own**: own 21
+- **own**:
 - **legacy commits**: `git log --oneline | grep -E "F1-cycle4-T8"`
 
 ## Honest Limits

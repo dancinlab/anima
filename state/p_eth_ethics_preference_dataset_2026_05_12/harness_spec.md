@@ -70,6 +70,6 @@ NEXT.md §7.C P-ETH ablation 의 substep 2 (FT) + substep 3 (probe). Dataset (su
 - `dataset.jsonl` (200-pair, land 0e835ccc9)
 - NEXT.md §7.C
 - README.md `Philosophy #6 NO FINE-TUNED ETHICS`
-- own 18 simple_stack
+- simple_stack
 - own-37 v5.2 PIV/DCR
 - PHILOSOPHY.md 진행 ledger

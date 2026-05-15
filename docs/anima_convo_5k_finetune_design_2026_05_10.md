@@ -161,7 +161,7 @@ ckpt = 70MB out, mac CPU 환경에서 OOM 없이 정상 train+save.
 | cost estimate | ✅ $1.80-3.80 (envelope $5-20, 5.3-11× headroom) |
 | runpod manifest | ✅ `runpod_manifest.json` (image / fire cmd / pull / safety checklist) |
 | rollback plan | ✅ raw#15 additive (original convo_5k.pt 미수정), R2+HF backup, FT 별도 file |
-| H100 safety (own 30) | ✅ ckpt pull mandatory + sha verify + retain on fail + PEP 668 break-system-packages |
+| H100 safety | ✅ ckpt pull mandatory + sha verify + retain on fail + PEP 668 break-system-packages |
 
 ### fire command (H100)
 
@@ -240,6 +240,6 @@ OK CONVO_5K FT FIRE COST $5-20
 - sister lane: `.roadmap.clm_v5_anima_native` (FT 결과는 v5 baseline 으로 활용 가능)
 - gotchas: `~/.claude/projects/-Users-ghost-core-anima/memory/feedback_orchestrator_h100_gotchas.md`
 
-raw#10 honest C3 7개 (top 3 + 4 추가), raw#15 additive (original convo_5k.pt 미수정), own 16 0-cost design + dry-run.
+raw#10 honest C3 7개 (top 3 + 4 추가), raw#15 additive (original convo_5k.pt 미수정), 0-cost design + dry-run.
 
 End of `anima_convo_5k_finetune_design_2026_05_10.md`.

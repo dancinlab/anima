@@ -29,7 +29,7 @@ Legacy files: `omega/OMEGA-{1..5}.md` + `phys/PHYS{1,2,3}.md` + `OMEGA-ultimate-
 
 - legacy: omega/OMEGA-1~5 + phys/PHYS1/2/3 + OMEGA-ultimate-limits + PHYS-overview + PROJ-dimension-projection
 - sister: H_032 (omega-phys subfolder absorb), H_085 (INF infinite scaling)
-- own: own 21
+- own:
 
 ## Honest Limits
 

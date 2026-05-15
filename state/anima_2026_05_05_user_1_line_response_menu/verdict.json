@@ -22,7 +22,7 @@
   "honest_c3": [
     {"id": "C3-1", "concern": "사용자 silent carry-over → 무한 cycle 위험", "severity": "HIGH", "mitigation": "silent 5 cycle 후 self-stop trigger 권고 (BG-EF에서는 emit X)"},
     {"id": "C3-2", "concern": "B/B+/C fire는 anima 직접 dispatch X — 사용자 manual REPL 필요", "severity": "MEDIUM", "mitigation": "raw#37 transient_py opt-out 사용자 explicit 승인"},
-    {"id": "C3-3", "concern": "close 5-step의 HF promote time-gated wait — own 15 verification gates 선결", "severity": "MEDIUM", "mitigation": "promote orchestration emit only, 직접 promote X"},
+    {"id": "C3-3", "concern": "close 5-step의 HF promote time-gated wait — verification gates 선결", "severity": "MEDIUM", "mitigation": "promote orchestration emit only, 직접 promote X"},
     {"id": "C3-4", "concern": "BG-EE pending 시 B+ unavailable, B fallback 필요", "severity": "LOW", "mitigation": "BG-EE 상태 verify 후 fallback 권고"},
     {"id": "C3-5", "concern": "cycle-close 분류 회피의 의미적 fragility — BG-EF 후속 BG 무한 land 위험", "severity": "HIGH", "mitigation": "명시적 사용자 keyword 없는 한 BG-EF 후속 BG land 금지 self-rule 권고"}
   ],

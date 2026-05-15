@@ -29,7 +29,7 @@ Legacy file: `docs/hypotheses/cx/DOLPHIN-STAR.md`. Pointer only.
 
 - legacy: `docs/hypotheses/cx/DOLPHIN-STAR.md`
 - sister: H_022 (consciousness universe map 170-40-18), H_004
-- own: own 21
+- own:
 
 ## Honest Limits
 

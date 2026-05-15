@@ -63,8 +63,8 @@ V1 mode: **~12% ★★★★★ unlock**, mode outcome **★★★★ partial** 
 - F-FOUND-4 (D1 SCOPE_CLAMP misframe) NOT_TRIGGERED 95% — option (c) IS D1 WITHIN
 - F-FOUND-5 (gradient leak) NOT_TRIGGERED 95% — hook design unchanged
 - Semantic_score band 0.10-0.25 most-likely — 350M byte-hash capacity ceiling unaffected by §57/§58
-- D1 WITHIN scope_lane="ANIMA" expectation — own 17 carry
-- own 22 (REBORN.md untouched) + own 16 ($0) + own 38 (3 docs saved) + raw#9 (no training/*.py) — strict
+- D1 WITHIN scope_lane="ANIMA" expectation — carry
+- (REBORN.md untouched) + ($0) + (3 docs saved) + raw#9 (no training/*.py) — strict
 
 ## Forecast integrity check
 
@@ -85,4 +85,4 @@ Overfitting risk concentrated on P(V14 PASS) +13 pp because §59 rule itself has
 - `state/anima_foundation_c_phase2_prediction_v1_2026_05_10/prediction_v1.md` (full V1 prediction)
 - `state/anima_foundation_c_phase2_prediction_v1_2026_05_10/hypothesis_update.md` (this file)
 
-raw#9 ✓ (no training/*.py edits), raw#15 ✓ (§53 V0 untouched), own 16 ✓ ($0 design + analysis only), own 22 ✓ (REBORN.md not appended directly — dispatcher §63 slot), own 38 ✓ (3 docs saved).
+raw#9 ✓ (no training/*.py edits), raw#15 ✓ (§53 V0 untouched), ✓ ($0 design + analysis only), ✓ (REBORN.md not appended directly — dispatcher §63 slot), ✓ (3 docs saved).

@@ -380,7 +380,7 @@ def write_markdown(v, path):
     lines.append("- v2 chat-capable model (recovered 2026-05-06): R2 `conscious-lm/convo-ft/convo_5k.pt` (70.3 MB)")
     lines.append("- artifacts: `state/anima_clm_v2_mitosis_cells_recovery_2026_05_09/`")
     lines.append("")
-    lines.append("raw#9/10/15/37 + own 14/15 준수.")
+    lines.append("raw#9/10/15/37 + 준수.")
     lines.append("")
 
     with open(path, "w") as f:

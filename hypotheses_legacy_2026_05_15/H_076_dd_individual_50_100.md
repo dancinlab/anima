@@ -29,7 +29,7 @@ Legacy files: `docs/hypotheses/dd/DD5{0..9}.md`, `dd/DD6{0..9}.md`, `dd/DD7{0..6
 
 - legacy: dd/DD5{6..9} individual + DD6{0..9} individual + DD7{1..6} individual + DD51-60 + DD61-70 + DD71-80 + DD81-90 + DD91-100 + DD99-100 batch files
 - sister: H_028 (dd subfolder), H_075 (DD120-180)
-- own: own 21
+- own:
 
 ## Honest Limits
 

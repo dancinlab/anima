@@ -11,7 +11,7 @@ Phase 1 PASS, Phase 2 FAIL gradient flow, Phase 3 HOLD. Sibling train script and
 
 ## Phase 1 details
 
-Train script sibling at tool/transient_py/clm_v4_lora_train_opt_b.py, ~600 lines. Hyperparameter locks per spec section 3: Q1-B wide cross attn qkvo (16 layers x 8 projections = 128 modules total), Q2-A learning rate 5e-6 (10x lower vs v1 3e-5), Q3-A max steps 3000 (50% of v1 6000), Q4-A abort threshold -10pp drift from in-pipeline base 35.81. LoRA dropout 0.10 (2x v1), save and phi probe every 500 steps. Orchestrator sibling at tool/clm_v4_lora_train_orchestrator_opt_b.hexa with own 16 hooks: boot register, heartbeat during poll, trap pre stop EXITING marker, 404 verify 3 retries, deregister after 404. All 5 verdict schema fields in emitted exec.bash: pod_kill_verified_404, watchdog_deregistered, cost_target_usd, cost_actual_usd, cost_overrun_2x_alerted. BG_LANE=OPT-B-CROSS-ATTN-RETRAIN, TARGET_USD=30. Selftest PASS, emit produces exec.bash and run_h100.bash.
+Train script sibling at tool/transient_py/clm_v4_lora_train_opt_b.py, ~600 lines. Hyperparameter locks per spec section 3: Q1-B wide cross attn qkvo (16 layers x 8 projections = 128 modules total), Q2-A learning rate 5e-6 (10x lower vs v1 3e-5), Q3-A max steps 3000 (50% of v1 6000), Q4-A abort threshold -10pp drift from in-pipeline base 35.81. LoRA dropout 0.10 (2x v1), save and phi probe every 500 steps. Orchestrator sibling at tool/clm_v4_lora_train_orchestrator_opt_b.hexa with hooks: boot register, heartbeat during poll, trap pre stop EXITING marker, 404 verify 3 retries, deregister after 404. All 5 verdict schema fields in emitted exec.bash: pod_kill_verified_404, watchdog_deregistered, cost_target_usd, cost_actual_usd, cost_overrun_2x_alerted. BG_LANE=OPT-B-CROSS-ATTN-RETRAIN, TARGET_USD=30. Selftest PASS, emit produces exec.bash and run_h100.bash.
 
 ## Phase 2 details
 
@@ -35,7 +35,7 @@ D5 Phase 3 cost ACK timing. Recommendation ACK after amendment plus re-smoke PAS
 
 C5 sibling additive only preserved. v1 train script untouched. v1 orchestrator untouched. OPT-B orchestrator selftest pass on Mac.
 
-C6 own 16 hooks all five verdict schema fields present in emitted exec.bash. BG_LANE OPT-B-CROSS-ATTN-RETRAIN, TARGET_USD 30. Boot register, heartbeat, trap pre-stop EXITING marker, 404 verify, deregister-on-404 all replicated from v1.
+C6 hooks all five verdict schema fields present in emitted exec.bash. BG_LANE OPT-B-CROSS-ATTN-RETRAIN, TARGET_USD 30. Boot register, heartbeat, trap pre-stop EXITING marker, 404 verify, deregister-on-404 all replicated from v1.
 
 C7 Phase 1 plus 2 came in at zero actual cost. Wall ~90min within ~1.5h spec target. Saved up to 50 USD H100 spend by surfacing gate 3 blocker pre-Phase-3.
 

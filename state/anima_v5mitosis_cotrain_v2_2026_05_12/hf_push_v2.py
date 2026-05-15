@@ -2,7 +2,7 @@
 """hf_push_v2.py — push v5-mitosis cotrain v2 scale-up ckpt to dancinlab HF.
 
 PSCC §46 BG-V5MIT-COTRAIN-V2.
-own 31: all anima HF uploads → dancinlab org.
+: all anima HF uploads → dancinlab org.
 feedback_english_only: HF content English only.
 
 Target repo: dancinlab/anima-clm-v5-mitosis-cotrain-v2-5cat-scaleup-2026-05-12 (private)
@@ -149,7 +149,7 @@ engine.eval()
 
 ## Status
 
-PRIVATE (own 31 / 37 mandate). Research artifact for v5-mitosis architectural lane.
+PRIVATE (/ 37 mandate). Research artifact for v5-mitosis architectural lane.
 
 Generated 2026-05-12 KST by anima cycle.
 """

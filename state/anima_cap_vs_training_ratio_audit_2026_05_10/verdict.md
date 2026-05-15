@@ -187,7 +187,7 @@ In depth-3, ratio appears at threshold 2.39 to split AMBIGUOUS (≤2.39, e.g. D_
 
 11. **No re-fire required for this audit**. Per raw#15 additive, all 9 data points are from existing BG state. Total compute = local Python regression on 9-row data table (~2 seconds). own-16 honored.
 
-12. **REBORN.md NOT directly appended** (own 22). Dispatcher will inject §59 slot containing this verdict's top-line + falsifier ledger. spec.md, data_table.json, regression_result.json, verdict.md saved to state/anima_cap_vs_training_ratio_audit_2026_05_10/ per own 38.
+12. **REBORN.md NOT directly appended**. Dispatcher will inject §59 slot containing this verdict's top-line + falsifier ledger. spec.md, data_table.json, regression_result.json, verdict.md saved to state/anima_cap_vs_training_ratio_audit_2026_05_10/ per .
 
 ## 8. Falsifier ledger (final)
 

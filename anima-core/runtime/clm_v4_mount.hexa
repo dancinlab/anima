@@ -56,7 +56,7 @@
 //                     natural language emit. Delegates to
 //                     tool/transient_py/clm_v4_generate_helper.py (raw#37
 //                     transient). chat lane Path 3 FULL impl (cycle 2026-05-09).
-//                     own 34 mandate-1 raw bytes preserved (no chat template).
+// mandate-1 raw bytes preserved (no chat template).
 //
 // FLAGS
 //   --model PATH           HF cache path (default dancinlab/clm-v4-mk2-v1)
@@ -994,7 +994,7 @@ fn cmd_probe(cfg: MountConfig) {
 // ═══════════════════════════════════════════════════════════
 //
 // Delegates to tool/transient_py/clm_v4_generate_helper.py (raw#37 transient).
-// own 34 mandate-1: prompt fed verbatim; no chat template, no system prompt;
+// mandate-1: prompt fed verbatim; no chat template, no system prompt;
 // raw decoded bytes preserved in JSON record.
 fn cmd_generate(cfg: MountConfig) {
     println("── clm_v4_mount generate (Path 3 FULL impl chat lane) ──")
@@ -1079,7 +1079,7 @@ fn print_usage() {
     println("Path 3 generate (chat lane FULL impl, cycle 2026-05-09):")
     println("  generate <prompt> [N]  natural language generate via model.generate +")
     println("                         tokenizer.decode (delegates to transient_py helper).")
-    println("                         own 34 mandate-1 raw bytes preserved (no chat template).")
+    println(" mandate-1 raw bytes preserved (no chat template).")
 }
 
 fn main() {

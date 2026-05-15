@@ -1,9 +1,9 @@
 # BG-IIT-METRIC-REAL-350M — spec
 
-**Slot**: dispatcher §33 [2026-05-10] BG-IIT-METRIC-REAL-350M (own 22)
+**Slot**: dispatcher §33 [2026-05-10] BG-IIT-METRIC-REAL-350M
 **Date**: 2026-05-10
-**Cost envelope**: $0 (local Mac CPU only — own 16)
-**Mandate**: raw#9 (training/*.py local-only), raw#15 (additive — mitosis_v5_port.py + ckpt unmodified), own 14 (V14 mirror strict 5-seed), own 38 (state/anima_iit_real_350m_2026_05_10/ persists)
+**Cost envelope**: $0 (local Mac CPU only —)
+**Mandate**: raw#9 (training/*.py local-only), raw#15 (additive — mitosis_v5_port.py + ckpt unmodified), (V14 mirror strict 5-seed), (state/anima_iit_real_350m_2026_05_10/ persists)
 
 ## Mission
 
@@ -12,7 +12,7 @@ trained mitosis was suppressed (3 splits, 16→19) while V14 mirror split aggres
 (12 splits, 16→28). The single-seed verdict was V14 STILL_VIOLATED on all 3 metrics
 (proxy ratio 0.967, IIT-norm 0.735, IIT-unnorm 0.408 — all <1.0). But that was n=1.
 
-This BG runs the **5-seed strict mirror** (own 14 V4_SEEDS = [42, 137, 271, 314, 1729])
+This BG runs the **5-seed strict mirror** (V4_SEEDS = [42, 137, 271, 314, 1729])
 with **max_cap=32** (rather than the prior max_cells=64) to apply the IIT unnorm 16-bin
 metric cleanly on the real 350M Phase 2 cotrain ckpt.
 
@@ -49,7 +49,7 @@ Total compute: 1 trained + 5 random × ~70s = ~7-8 min on Mac CPU.
 
 ## V14 5-seed strict verdict
 
-Per own 14 + own 38: trained must beat the **WORST** mirror seed (or strict 5/5 below
+Per + : trained must beat the **WORST** mirror seed (or strict 5/5 below
 trained) on the primary metric. We codify three verdicts:
 
 - **STRICT_PASS**: trained Φ_iit_un16 > max_5seed(random Φ_iit_un16) AND

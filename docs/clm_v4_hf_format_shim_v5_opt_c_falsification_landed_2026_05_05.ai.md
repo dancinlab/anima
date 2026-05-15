@@ -30,7 +30,7 @@ This **CLOSES the shim v5 init-only architectural alternative** to F-SHIM-V4-4. 
 
 **Forward path**: Path B ($20-100 cross-attn-active SFT) or Path C ($100-300 full retrain), or retire F-SHIM-V4-4 from active falsifier set entirely.
 
-## own 16 self-validation
+## self-validation
 
 - boot_register: PASS (3 pods, all registered with target=$3.0)
 - heartbeat_hook: PASS (per-poll touch on `state/h100_watchdog/heartbeats/OPT-C-FALSIFICATION.txt`)

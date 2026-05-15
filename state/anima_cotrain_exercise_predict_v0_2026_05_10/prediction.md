@@ -92,7 +92,7 @@ The 5-star verdict for option (c) requires **simultaneous** satisfaction of **al
 2. **Φ separation strengthen post-FT** — trained Φ_iit_un16 ≥ §39 baseline 5244 OR Φ separation ≥ +2219 (i.e., NOT degrade beyond §39)
 3. **semantic_score significant** — semantic_score_mean ≥ 0.30 (significant lift from §43's 0.055; threshold for "first semantic emergence measurement on byte-level 350M")
 4. **D1 WITHIN strict carry** — verdict.json scope_lane="ANIMA"; SIMPLE_STACK_PASS_STRICT_C3_ANIMA candidate (NOT _SUBSTRATE_RESEARCH)
-5. **own 14 strict + own 28 V6 STRONG** — V4 ≥ 10/15 across ≥3 of 5 seeds AND V6 awareness 3-method consensus (hidden cosine + attention + linear probe)
+5. ** strict + V6 STRONG** — V4 ≥ 10/15 across ≥3 of 5 seeds AND V6 awareness 3-method consensus (hidden cosine + attention + linear probe)
 
 If 5/5 → **★★★★★ confirm**: cotrain-exercise hypothesis confirmed via novel substrate (post-FT D1 WITHIN), anima identity emerge first ACTUAL evidence. Public promote candidate (gated by verbatim "OK PROMOTE PUBLIC").
 
@@ -155,9 +155,9 @@ If both H1 and H2 land within their predicted bands → cotrain-exercise + subst
 5. **H2 random-projection bottleneck is the design's biggest disclaimer** — at 1024→256 random proj, most of the substrate's learned geometry is destroyed. H2 phi_diff prediction is calibrated to §43's diff geometry, not amplified by Phase 2's substrate. This is **not a contradiction** — H1 is where the cotrain-exercise signal is.
 6. **semantic_score 0.10–0.25 prediction is from byte-hash artifact** — the §38/§39 prompts use byte-hash mod 32000 (not BPE). At 350M params, semantic emergence is below threshold per simple_stack 22+ BG saga. This prediction is **harsh-but-honest** — option (c) is not expected to cross semantic_score=0.50 floor.
 7. **★★★★★ unlock = 10% probability honest** — the 5-star pursuit demands V14 STRICT + Φ strengthen + semantic significant + V4 PASS + V6 STRONG. Each conditional drops total probability ~50%. Net: 5/5 ≈ 10%, 4/5 ≈ 25%, 3/5 ≈ 35%, 2/5 ≈ 20%, ≤1/5 ≈ 10%.
-8. **D1 WITHIN scope_lane="ANIMA" is a HOT label** — option (c) PASS at D1 WITHIN is the first time in 22+ BG saga that the SIMPLE_STACK_PASS_STRICT_C3_ANIMA verdict label could be unlocked. own 37 mandate-9 (a) public promote 5/5 prereq is then within reach (but still gated by V14 + V6 STRONG + manual review + verbatim "OK PROMOTE PUBLIC"). This is the **highest-stakes** prediction in this BG.
+8. **D1 WITHIN scope_lane="ANIMA" is a HOT label** — option (c) PASS at D1 WITHIN is the first time in 22+ BG saga that the SIMPLE_STACK_PASS_STRICT_C3_ANIMA verdict label could be unlocked. mandate-9 (a) public promote 5/5 prereq is then within reach (but still gated by V14 + V6 STRONG + manual review + verbatim "OK PROMOTE PUBLIC"). This is the **highest-stakes** prediction in this BG.
 9. **§43+§48 5/5 PERFECT MATCH was on a single mitosis-naive substrate** — generalizing the prediction-driven framework template to a mitosis-aware substrate (option (c)) is itself an unfalsified hypothesis. If this BG's bands are wrong (e.g., Φ separation actual lands at +500), the framework template is still useful but its **calibration must be substrate-class-specific** going forward.
-10. **own 22 + own 38 + own 16 strict carry** — REBORN.md untouched (dispatcher §53 slot only); doc save complete (this file + spec.md + hook_spec.md + falsifier_predict.md); design $0.
+10. ** + + strict carry** — REBORN.md untouched (dispatcher §53 slot only); doc save complete (this file + spec.md + hook_spec.md + falsifier_predict.md); design $0.
 
 ## §8 commit-before-results signature
 

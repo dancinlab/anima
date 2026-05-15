@@ -4,7 +4,7 @@
 - **Date**: 2026-05-04
 - **Verdict**: `state/clm_v4_hf_release_v1_upload_2026_05_04/verdict.json`
 - **Audit JSONL**: `state/hf_upload_audit/20260504T232612Z_dancinlab__clm-v4-mk2-v1.jsonl`
-- **Mac stage mirror**: `state/clm_v4_hf_release_v1_upload_stage_2026_05_04/` (README + LICENSE + manifest copy only — weights stayed on ubu1 per own 14)
+- **Mac stage mirror**: `state/clm_v4_hf_release_v1_upload_stage_2026_05_04/` (README + LICENSE + manifest copy only — weights stayed on ubu1 per)
 - **Mode**: PRIVATE upload + audit-only landing, NO git commit, NO public promote
 - **Cost**: $0 (HF Hub free tier; mac wall ~30 min including 5GB LFS push from ubu1)
 

@@ -129,10 +129,10 @@ engine_g.c_to_h: 64 → 1024
 - ✅ ~14 layers, ~350M params (correct order)
 
 **Tokenizer mismatch (★ critical)**:
-- training/engine_a_g_arch.py line 85: `vocab_size = 32_000  # byte-pair (own 17 anima-native lane preserved)`
+- training/engine_a_g_arch.py line 85: `vocab_size = 32_000 # byte-pair (anima-native lane preserved)`
 - anima_chat.py line 131: `class ByteTokenizer:` (vocab 0..258 only)
 - **결과**: tok_emb (32000, 1024) 의 **first 259 rows 만 사용** → 나머지 ~31,700 rows = ~30MB dead space
-- 학습은 byte 토큰만 본 → 32000 vocab 은 "preserved for own 17 anima-native lane" (future BPE migration 용 보존)
+- 학습은 byte 토큰만 본 → 32000 vocab 은 "preserved for anima-native lane" (future BPE migration 용 보존)
 - chat 가 작동하는 이유: byte 토큰 ids (0..258) 이 32000 범위 안 → emb lookup 정상
 
 **확인된 arch (training/engine_a_g_arch.py)**:

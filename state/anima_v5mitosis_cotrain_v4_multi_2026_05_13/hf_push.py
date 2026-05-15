@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 """hf_push.py — push v5-mitosis cotrain v4-multi DDP fresh-init multi-GPU ckpt to dancinlab HF.
 
-Triggered IFF F-V5MIT-5 V14-STRICT proxy PASSES (own 37 mandate-9: V14-STRICT PASS → HF push).
-own 31: all anima HF uploads → dancinlab org.  feedback_english_only: HF content English only.
+Triggered IFF F-V5MIT-5 V14-STRICT proxy PASSES (mandate-9: V14-STRICT PASS → HF push).
+: all anima HF uploads → dancinlab org. feedback_english_only: HF content English only.
 
 NOTE on F-V5MIT-5 gate: v4-multi runs cells-static (splits=0 by design) so the strict V14
 gate `0 < splits ≤ max` is degenerate — it will return FAIL even though F-V5MIT-5 is
@@ -54,7 +54,7 @@ fv_v14 = fv.get("checks", {}).get("F-V5MIT-5_v14strict_proxy", {})
 if not fv_v14.get("pass", False):
     if not args.force_push:
         print(f"[ABORT] F-V5MIT-5 V14-STRICT proxy = FAIL (splits={fv_v14.get('splits')}) "
-              f"— HF push gated (own 37 mandate-9). Cells-static (splits=0) is expected for v4-multi; "
+              f"— HF push gated (mandate-9). Cells-static (splits=0) is expected for v4-multi; "
               f"pass --force-push to override with operator-vouched inherited PASS from v4 single saga.")
         sys.exit(2)
     print(f"[INFO] --force-push: bypassing F-V5MIT-5 gate (splits={fv_v14.get('splits')} cells-static by design; "

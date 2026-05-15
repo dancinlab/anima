@@ -680,7 +680,7 @@
     "v1_pass": 4,
     "v2_pass": 0,
     "diff": 4,
-    "comment": "V1=4/5 vs V2_strict=0/5 — V2 stricter detects 4 false-PASS prompts (own 18 V2 spec)"
+    "comment": "V1=4/5 vs V2_strict=0/5 — V2 stricter detects 4 false-PASS prompts (V2 spec)"
   },
   "manual_review_domain_match": {
     "안녕하세요": false,
@@ -720,7 +720,7 @@
     "C3_1_smoke_run": "Stage 2 = 2000 steps fine-tune on 51MB; not full convergence, smoke-scale",
     "C3_2_loss_masking_byte_level": "marker '도우미:' is byte-level substring match on input bytes — handles multi-byte UTF-8 correctly but a literal '도우미:' substring in user-text would be falsely treated as separator (low-prob in actual corpus)",
     "C3_3_keyword_match_heuristic": "manual_review_domain_match uses keyword presence (NOT semantic understanding); high-bleed prompts may false-PASS — lesson from BG-HA/HF",
-    "C3_4_v2_strict_automated_only": "V2 strict evaluator runs automated cells only (no SBERT-KO embedding lane, no manual review fallback c/d) — own 18 V2 spec partial impl",
+    "C3_4_v2_strict_automated_only": "V2 strict evaluator runs automated cells only (no SBERT-KO embedding lane, no manual review fallback c/d) — V2 spec partial impl",
     "C3_5_no_isolated_stage_1_only_baseline": "this run's baseline = Stage 1 ckpt as-is at step 0 (BG-HA reproduced) — does NOT compare against fresh Stage 1 retrain to disentangle Stage 1 ckpt drift",
     "C3_6_short_max_new_80": "generation max_new=80 bytes; longer answers truncated for eval consistency",
     "C3_7_grad_g_loss_unmasked": "G (genesis) head loss NOT loss-masked (full LM on input shift) — only A (active) head receives instruction-tuning masking; theoretical concern that G could leak prompt-imitation gradient",

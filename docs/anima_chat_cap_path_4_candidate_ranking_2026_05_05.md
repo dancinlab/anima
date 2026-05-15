@@ -233,7 +233,7 @@ as cite-not-own.
 |---|---|---|
 | `Path 1` or `head_b` | Path 1 (lm_head_b) | post BG-EI PASS — expand to full Korean SFT with F-LM-HEAD-B-1/2/3 falsifiers (anima-internal); estimate $2-5 mac CPU, 3-5 days |
 | `Path 2` or `Qwen` | Path 2 (Qwen) | spec out Qwen integration as chat-cap-cite reference; flag as not-anima-native in deliverable header |
-| `Path 3` or `CLM-3` | Path 3 (CLM-3) | own 16 budget guard pre-flight checklist + Variant B launch ($1k / 30d / H100×1); pre-launch F-CLM-3-5 weight-grid ablation per BG-DK refinement |
+| `Path 3` or `CLM-3` | Path 3 (CLM-3) | budget guard pre-flight checklist + Variant B launch ($1k / 30d / H100×1); pre-launch F-CLM-3-5 weight-grid ablation per BG-DK refinement |
 | `Path 4` or `hybrid` | Path 4 (paradigm-C) | fire `tool/transient_py/anima_emerge_chat_hybrid_repl.py` for live REPL session; log to `state/anima_core_dialogues/` |
 
 ### 4.2 Recommended fire sequence (BG-EI dependency-resolved)
@@ -251,7 +251,7 @@ Next cycle (BG-EI FAIL branch):
   -> close Path 1 lane under #115 closure 1 (head-swap adapter)
   -> fire `Path 4` for immediate Korean dialogue capability ($0)
   -> open `Path 3` decision:
-       if user-fire `CLM-3` -> own 16 + Variant B launch
+       if user-fire `CLM-3` -> + Variant B launch
        else                 -> accept 4-closure-of-class strength;
                               Path 4 hybrid is the canonical chat-cap UX
   -> Path 2 remains a chat-quality reference baseline only

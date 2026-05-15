@@ -33,7 +33,7 @@
     },
     "step2_scp_pull": {
       "status": "NOT_ATTEMPTED",
-      "reason": "Step 1 SSH verify never completed → SCP would inherit same fork-fail; would also leave a partial/corrupt ckpt on disk if interrupted mid-transfer (own 30 violation risk)."
+      "reason": "Step 1 SSH verify never completed → SCP would inherit same fork-fail; would also leave a partial/corrupt ckpt on disk if interrupted mid-transfer (violation risk)."
     },
     "step3_ckpt_verify": {
       "status": "NOT_ATTEMPTED",
@@ -50,18 +50,18 @@
   },
   "halt_decision": {
     "verdict": "HONEST_HALT",
-    "rationale": "own 17 strict + own 22 mandatory report + own 14 V14 require real, paired, non-fabricated measurement. With Mac fork quota exhausted, fabricating an N=30 probe result or inferring PPR_v5/MTRP would violate strict-no-fake mandate. Honest halt + registry annotation + clean state JSON is the only valid path.",
+    "rationale": " strict + mandatory report + V14 require real, paired, non-fabricated measurement. With Mac fork quota exhausted, fabricating an N=30 probe result or inferring PPR_v5/MTRP would violate strict-no-fake mandate. Honest halt + registry annotation + clean state JSON is the only valid path.",
     "no_emerge": true,
     "registry_change": "BG-FY measurement.attempts += 1; mac_ckpt_status remains ABSENT; emerge_state remains BLOCKED; new blocker note added for Mac-side fork-quota cause.",
     "pull_resumability": "On next session with healthy Mac fork capacity, SCP pull command is unchanged: scp -o ConnectTimeout=30 -o ServerAliveInterval=60 ubu1:/home/aiden/core/anima/runs/anima-native-ko-small-20260506_205612/ckpt_final.pt ~/.cache/anima/bg_fy_18m/ckpt_final.pt (timeout 3600). Symlink confirmed earlier this session: ckpt_final.pt → ckpt_10000.pt."
   },
   "v14_status": "V14_NOT_VERIFIED (no probe ran; random_init mirror also not constructed)",
   "trinity": {
-    "anchor": "own 22 mandatory report — halt must be recorded, not silenced",
+    "anchor": " mandatory report — halt must be recorded, not silenced",
     "support": [
-      "own 17 strict — no fake N=30 probe outputs",
-      "own 30 — partial SCP would corrupt ckpt cache",
-      "own 14 — V14 paired random_init still required pre-EMERGE"
+      " strict — no fake N=30 probe outputs",
+      " — partial SCP would corrupt ckpt cache",
+      " — V14 paired random_init still required pre-EMERGE"
     ]
   },
   "next_action_recommendation": [
@@ -69,5 +69,5 @@
     "Re-fire V5 PUSH 3/5 with single SSH ping → SCP → torch verify → N=30 probe",
     "Confirm ubu1:ckpt_10000.pt sha256 BEFORE SCP (single source-of-truth hash for verify after pull)"
   ],
-  "render_obligation": "own 39 yaml↔md — registry edit triggers anima_artifact_registry.md regeneration on next healthy-shell cycle"
+  "render_obligation": " yaml↔md — registry edit triggers anima_artifact_registry.md regeneration on next healthy-shell cycle"
 }

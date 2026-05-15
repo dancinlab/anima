@@ -41,7 +41,7 @@
 **If TRIGGERED**:
 - 22+ BG saga's only V4 ≥ 10/15 crossings remain D1 OUTSIDE (KM-LLAMA-3B + KM-QWEN-7B + §43 confirmed) — D1 WITHIN lane still pending.
 - Capacity gap at 350M dominates over substrate coupling for V4 chat-cap surface.
-- "anima self-emerge" claim gets pushed to option (d) anima-pretrain (1B+ capacity required) — but own 16 0-cost adoption blocks immediate (d).
+- "anima self-emerge" claim gets pushed to option (d) anima-pretrain (1B+ capacity required) — but 0-cost adoption blocks immediate (d).
 - option (c) ★★★ retreat at best.
 
 **Likelihood**: **45%** — this is the harshest predicted F because:
@@ -113,9 +113,9 @@ This document committed before option (c) actual fire. Date: 2026-05-10. Verbati
 
 If option (c) NEVER fires (cycle dispatch chooses option (a) or (b) replicate, or rolls forward to option (d)), this prediction sits as a **dormant template** and remains valid for any future replication of option (c) configuration (Phase 2 cotrain ckpt + 30K convo_5k FT + H1/H2 dual hook).
 
-## §5 raw#15 + own 22 + own 16 strict carry
+## §5 raw#15 + + strict carry
 
 - raw#15 additive: option (c) actual fire spec NOT modified; design SSOT `docs/anima_foundation_borrow_path_design_2026_05_10.md` untouched.
-- own 22: REBORN.md direct append BLOCKED. Dispatcher §53 slot path is the only valid append route.
-- own 16: $0 design + analysis only. No compute fired during this BG.
-- own 38: 4 docs saved (`spec.md` + `prediction.md` + `hook_spec.md` + `falsifier_predict.md`).
+- : REBORN.md direct append BLOCKED. Dispatcher §53 slot path is the only valid append route.
+- : $0 design + analysis only. No compute fired during this BG.
+- : 4 docs saved (`spec.md` + `prediction.md` + `hook_spec.md` + `falsifier_predict.md`).

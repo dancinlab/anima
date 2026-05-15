@@ -21,7 +21,7 @@
 //  PHASE GATES
 //    Phase 3b (THIS FILE): bindings + helpers. No chat surface yet.
 //    Phase 3c (next): tool/anima_cli/chat/llama/llama.hexa wires this into
-//                     the chat dispatcher (recursive-module pattern, own 34
+// the chat dispatcher (recursive-module pattern,
 //                     mandate-2 strict — raw output exposure).
 //
 //  COMPLIANCE
@@ -30,9 +30,9 @@
 //    raw#10  honest C3 (see end of file).
 //    raw#11  snake_case identifiers.
 //    raw#15  no-hardcode (paths via env / _resolve_root).
-//    own 31  GGUF source SSOT = dancinlab/ org (enforced upstream by
+// GGUF source SSOT = dancinlab/ org (enforced upstream by
 //            tool/anima_gguf_convert.py — this binding is org-agnostic).
-//    own 34  mandate-2 wrapping prohibited — none of the helpers here add a
+// mandate-2 wrapping prohibited — none of the helpers here add a
 //            system prompt, chat template, or persona. Tokenize → decode →
 //            sample is the literal model output path.
 //
@@ -237,14 +237,14 @@ fn _tokenize_alloc(vocab, text: string, max_tokens: int, add_bos: int) {
 
 // llama_generate — pure hexa inference loop.
 //   h           handle from llama_load
-//   prompt      raw user text — own 34 strict (no template/system prompt added)
+// prompt raw user text — strict (no template/system prompt added)
 //   max_tokens  generation cap
 //   temp        0.0 → greedy; else stochastic
 //   top_p       nucleus cap (0.9 typical); ignored if temp <= 0
 //
 // Returns generated text (UTF-8 string). EOS terminates early.
 //
-// own 34 mandate-2 compliance: this function emits ONLY the model's natural
+// mandate-2 compliance: this function emits ONLY the model's natural
 // token output. No system prompt / chat template / persona injection. The
 // raw `prompt` is the literal first-input text (caller-controlled).
 fn llama_generate(h, prompt: string, max_tokens: int, temp: float, top_p: float, seed: int) -> string {
@@ -330,7 +330,7 @@ fn llama_generate(h, prompt: string, max_tokens: int, temp: float, top_p: float,
 // llama_logits_probe — iter 4 (c) Llama real-mode hidden-state proxy.
 //
 //   h          handle from llama_load
-//   prompt     raw text (own 34 strict — no template)
+// prompt raw text (strict — no template)
 //   n_buckets  number of axis buckets to derive (5 for anima 5-axis taxonomy)
 //
 // Returns dict:

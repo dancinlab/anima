@@ -88,7 +88,7 @@ all 3 substrates PASS at max=256 → cap-conditional polarity confirmed substrat
 ## raw / own honored
 - raw#9: training/v5mitosis_d384_v14_mirror.py + state/.../_v14_5seed_run.py local-only (gitignored)
 - raw#15: 3 ckpts unmodified (sha256 verified)
-- own 14: V14 mirror per substrate (n=5 for A complete; n=2 for C/E partial)
-- own 16: $0 local CPU
-- own 22: REBORN.md NOT directly appended — dispatcher will inject §51 slot
-- own 38: doc save to state/anima_v14_max256_cap_free_multi_2026_05_10/{spec.md, per_substrate_max256_results.json, verdict.md, run_max256.py, parse_C_log.py, parse_E_log.py, build_verdict.py, run_A.stdout.log, run_C.stdout.log, run_E.stdout.log, result_A_phase2_cotrain.json, result_C_cells64_aware.json, result_E_convo5k_ft.json}
+- : V14 mirror per substrate (n=5 for A complete; n=2 for C/E partial)
+- : $0 local CPU
+- : REBORN.md NOT directly appended — dispatcher will inject §51 slot
+- : doc save to state/anima_v14_max256_cap_free_multi_2026_05_10/{spec.md, per_substrate_max256_results.json, verdict.md, run_max256.py, parse_C_log.py, parse_E_log.py, build_verdict.py, run_A.stdout.log, run_C.stdout.log, run_E.stdout.log, result_A_phase2_cotrain.json, result_C_cells64_aware.json, result_E_convo5k_ft.json}

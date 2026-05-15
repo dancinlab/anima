@@ -54,7 +54,7 @@ python ready/training/train_clm.py \
   --falsifier-eval-every 10000 \
   2>&1 | tee /workspace/anima/runs/clm3-original-byte-55m/train.log
 
-# --- post-train: HF private push (PRIVATE first per own 15) ---
+# --- post-train: HF private push (PRIVATE first per) ---
 python -c "
 from huggingface_hub import HfApi
 api = HfApi()
@@ -80,4 +80,4 @@ TRAIN_SCRIPT
 # - falsifier eval every 10K steps (5 falsifiers F-CLM3-orig-1..5)
 # - wall-clock target: ~10h on H100 SXM 80GB
 # - cost target: $26.90 (10h * $2.69/hr)
-# - hard-cap: $100 (own 16 BUDGET-100)
+# - hard-cap: $100 (BUDGET-100)

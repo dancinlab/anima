@@ -79,7 +79,7 @@ trained > random) — under independence approximation, joint sign-p ≈
 (1/2)^15 = 3.05 × 10^-5. The 5 random seeds are shared between v2
 substrates so independence is partial within v2; per-substrate strict
 sign-p remains 0.0625, and substrate A's 5/5 with independent EngineAG
-mirrors carries its own 0.0625 sign-p. Joint substrate-A × substrate-{C,E}
+mirrors carries its .0625 sign-p. Joint substrate-A × substrate-{C,E}
 sign-p (independent) ≈ 0.0625 × 0.0625 = 0.0039.
 
 ## Falsifier ledger
@@ -138,7 +138,7 @@ Polarity flip pattern (substrate C): VIOLATED (max=64) → AMBIGUOUS (max=128) �
 - raw#15: 2 ckpts unmodified (sha256 verified pre-run; matches §51)
   - C: 61e1d735cf4b5360683e40ab81ada593d757f3543d33d01c08944a4c8b039a4c
   - E: 608d38a599570c5f3da4cc5ffd9ee191bf68bf0463099f23268207feb1d5436f
-- own 14: V14 5-seed strict for C and E (V4_SEEDS=[42,137,271,314,1729] paired)
-- own 16: $0 local CPU (3 mirrors ~57 min on M-series host, no remote)
-- own 22: REBORN.md NOT directly appended — dispatcher will inject §52 slot
-- own 38: doc save → state/anima_v14_max256_ce_strict_n5_2026_05_10/{spec.md, result.json, verdict.md, run_n5_strict.py, sanity_s42_short.py, run_n5.log, run_n5.stdout}
+- : V14 5-seed strict for C and E (V4_SEEDS=[42,137,271,314,1729] paired)
+- : $0 local CPU (3 mirrors ~57 min on M-series host, no remote)
+- : REBORN.md NOT directly appended — dispatcher will inject §52 slot
+- : doc save → state/anima_v14_max256_ce_strict_n5_2026_05_10/{spec.md, result.json, verdict.md, run_n5_strict.py, sanity_s42_short.py, run_n5.log, run_n5.stdout}

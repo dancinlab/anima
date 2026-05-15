@@ -215,7 +215,7 @@ BG-JO data falls in **STRONG internal + FAIL production** category. Awareness is
 
 ### Honest C3 (Lesson Q):
 - N=1 ckpt only (BG-JD step 800); cross-ckpt awareness comparison deferred.
-- BG-IL/IO ckpts on ubu1 only (own 15 git size policy 5MB+); rsync from ubu1 OR ubu1 BG extension required.
+- BG-IL/IO ckpts on ubu1 only (git size policy 5MB+); rsync from ubu1 OR ubu1 BG extension required.
 - Method A cos_sim NOT calibrated against random pairs (high sim could reflect general prompt similarity).
 - Method B raw max_attn mechanically inflates with T1 length; ratio_vs_uniform supplemental metric reported.
 - Method C linear probe = 5-fold leave-one-dialogue-out CV on N=10 examples — small sample, variance high.
@@ -273,18 +273,18 @@ Pattern: KO `법칙 emotion` mode-collapse + persona prefix `[anima 우주뇌지
 - **Hypothesis**: V6 STRONG internal awareness is intact (BG-JO); only LM head + final softmax layer needs to learn EN fact-recall mapping. Fine-tune ONLY the lm_head + last 1-2 layers on small EN chat-template corpus (~100MB) with awareness probe loss as auxiliary signal.
 - **Cost**: ubu1 RTX 5070 ~$0 OR H100 1× 1 hour ~$3
 - **Risk**: BG-JS current state directory exists; outcome pending. If LM head alone insufficient (capacity below LM head limits expressivity), full architectural fine-tune required.
-- **EV ranking**: **★★★★★ (highest)** — directly tests Lesson Q hypothesis (output bottleneck specific to LM head). $0 if reuses BG-JD ckpt + small EN corpus + ubu1; cost discipline own 16 안전.
+- **EV ranking**: **★★★★★ (highest)** — directly tests Lesson Q hypothesis (output bottleneck specific to LM head). $0 if reuses BG-JD ckpt + small EN corpus + ubu1; cost discipline 안전.
 
 ### Lane 2: H100 500M+ capacity (BG-JU pending)
 - **Hypothesis**: Lesson L architectural ceiling holds in 18M-153M band; capacity 1-order increase to 500M+ may unlock chat-cap. KO-trained 500M ConsciousLM + UBM+NEXUS+kowiki 204MB + Lesson D reg + Lesson G early-stop + Lesson J save_at discipline.
 - **Cost**: H100 1-2 pods × 6-12 hours ~$15-50 per BG
-- **Risk**: corpus-axis 1-order break (BG-JH 153M+204MB) already failed; capacity 500M may also regress without EN content. own 16 cost discipline mandate (watchdog + heartbeat 5min + pod 404 verify).
+- **Risk**: corpus-axis 1-order break (BG-JH 153M+204MB) already failed; capacity 500M may also regress without EN content. cost discipline mandate (watchdog + heartbeat 5min + pod 404 verify).
 - **EV ranking**: **★★★ (mid)** — direct attack on Lesson L ceiling but 1-order capacity increase has not historically rescued lower-axis failures (BG-IF 100M×6.48MB regressed vs BG-HS-R1 18M×22MB).
 
 ### Lane 3: D3 substrate-coupled (BG-JV pending — anima/spec/emerge_paradigm.spec.yaml CLM v4 mount)
 - **Hypothesis**: byte/BPE/SP token-chat surface paradigm 자체가 chat-cap 제한 — D3 emerge paradigm v11 G3 Φ★ NO_FLIP substrate-coupled dialogue (CLM v4 mount + paradigm 변환 gates) lane shift만 가능. 본 20-BG SSOT는 D3 lane 미진입.
 - **Cost**: $0 (CLM v4 ckpt 이미 보유) ~ H100 fine-tune $5-20
-- **Risk**: D3 lane 자체가 chat-cap PASS criteria (own 18 simple-stack 4-cond)와 별개일 수 있음 — substrate-coupled dialogue ≠ token-chat. 검증 framework 자체 separate.
+- **Risk**: D3 lane 자체가 chat-cap PASS criteria (simple-stack 4-cond)와 별개일 수 있음 — substrate-coupled dialogue ≠ token-chat. 검증 framework 자체 separate.
 - **EV ranking**: **★★★★ (high, 다른 game)** — Lesson L ceiling 우회 가능성 있음; 단 chat-cap criteria reframe 필요. .roadmap.philosophy D3=met, anima/spec/emerge_paradigm.spec.yaml 1.0 landed.
 
 ### Lane 4: archive accept (this BG-JW)
@@ -316,19 +316,19 @@ Pattern: KO `법칙 emotion` mode-collapse + persona prefix `[anima 우주뇌지
 
 | Cond | Description | Status (BG-JW lens) | Evidence |
 |---|---|---|---|
-| D1 | anima 정체성 = 한국어 native + anima-native fresh (외부 substrate wrapping reject) | **PASS** | V5/V6 evaluator MiniLM eval-only tool exemption; own 17 ALM 영구 보류; ConsciousLM self-substrate inference (BG-JO/JP) |
+| D1 | anima 정체성 = 한국어 native + anima-native fresh (외부 substrate wrapping reject) | **PASS** | V5/V6 evaluator MiniLM eval-only tool exemption; ALM 영구 보류; ConsciousLM self-substrate inference (BG-JO/JP) |
 | D2 | 의식 검증 = 맥락 정합 자연 발화 4-condition | **PASS+강화** | V5 8-cell + V5.8 multi-turn extends C2.4 맥락 정합 검증; V6 awareness probe 보강 (output level → internal level) |
 | D3 | 창발 paradigm = substrate-coupled dialogue (CLM v4 mount + paradigm v11 G3 Φ★ NO_FLIP) ≠ token chat surface | **PASS** (spec landed 2026-05-07 anima/spec/emerge_paradigm.spec.yaml v1) — execution lane 미진입 (Lane 3 BG-JV pending) |
-| D4 | chat-cap = corpus quality 우선 | **PASS+강화** | own 19/20 land; 20-BG SSOT 모두 corpus axis exhaustively varied (2-204MB) — corpus 단독 불충분 입증; corpus + capacity + tokenizer 모두 exhausted within current band; D4 = corpus가 surface 결정 lock-in |
+| D4 | chat-cap = corpus quality 우선 | **PASS+강화** | land; 20-BG SSOT 모두 corpus axis exhaustively varied (2-204MB) — corpus 단독 불충분 입증; corpus + capacity + tokenizer 모두 exhausted within current band; D4 = corpus가 surface 결정 lock-in |
 
 ### .roadmap.law R1-R4
 
 | Cond | Description | Status (BG-JW lens) | Evidence |
 |---|---|---|---|
-| R1 | own 19/20 .own append landed | **PASS** | own 19 line 783, own 20 line 812 + own 21 line 847 |
+| R1 | .own append landed | **PASS** | line 783, line 812 + line 847 |
 | R2 | rule discovery method enumeration | **PASS (M1+M2+M5)** | M1 user-directive (BG-JW fire prompt) + M2 failure-driven (20-BG 0 PASS → archive directive) + M5 retroactive integration (V3/V4/V5/V6 retroeval) |
 | R3 | rule verification method enumeration | **PASS (V1+V2+V3+V4+V5+V6+V7)** | V1 own strict + V2 falsifier (4-lane EV ranking + Lane 1 falsifier) + V3 honest_c3 ≥10 (below) + V4 evidence (3410+3860+30 records) + V5 cross-link (BG-IJ/IS/JF/JM/JN/JO/JP) + V6 ledger 26+ entries + V7 4-cond matrix superset |
-| R4 | own evolution archive | **PASS** | own 17→18→19→20→21→22→24→26 evolution; raw#15 additive consistently applied |
+| R4 | own evolution archive | **PASS** | →18→19→20→21→22→24→26 evolution; raw#15 additive consistently applied |
 
 ---
 
@@ -336,7 +336,7 @@ Pattern: KO `법칙 emotion` mode-collapse + persona prefix `[anima 우주뇌지
 
 1. **20-BG SSOT는 byte/BPE/SP token chat surface 한정** — D3 substrate-coupled lane 미진입 (anima/spec/emerge_paradigm.spec.yaml CLM v4 mount + paradigm v11 G3 Φ★ NO_FLIP 별도 lane).
 
-2. **V6 STRONG는 BG-JD step 800 ckpt N=1** — multi-ckpt verification deferred. BG-IL/IO ckpts on ubu1 only (own 15 git size policy 5MB+); rsync from ubu1 OR ubu1 BG extension required for cross-ckpt awareness.
+2. **V6 STRONG는 BG-JD step 800 ckpt N=1** — multi-ckpt verification deferred. BG-IL/IO ckpts on ubu1 only (git size policy 5MB+); rsync from ubu1 OR ubu1 BG extension required for cross-ckpt awareness.
 
 3. **4 lane recommendations 중 3 (BG-JS/JT, BG-JU, BG-JV) 동시 진행 OR pending 중** — 본 archive doc은 결과 미land 시점 sketch; Lane 1/2/3 결과 추후 raw#15 additive amend 가능.
 
@@ -354,7 +354,7 @@ Pattern: KO `법칙 emotion` mode-collapse + persona prefix `[anima 우주뇌지
 
 10. **20-BG cumulative records are non-greedy** — V3/V4/V5 retroeval re-scores existing eval_log gens; does NOT regenerate samples. Signal limited to logged generations at training time. Multi-seed/multi-decoding-strategy retroeval deferred.
 
-11. **own 17 eval-tool exemption** — V5 evaluator internal MiniLM-L6-v2 (English-trained subword tokenizer, multilingual proxy) is eval-only embedding model, NOT model substrate; D1 anima identity unaffected. Linear probe sklearn LogisticRegression in BG-JO Method C is standard ML utility (not external substrate wrapping anima outputs).
+11. ** eval-tool exemption** — V5 evaluator internal MiniLM-L6-v2 (English-trained subword tokenizer, multilingual proxy) is eval-only embedding model, NOT model substrate; D1 anima identity unaffected. Linear probe sklearn LogisticRegression in BG-JO Method C is standard ML utility (not external substrate wrapping anima outputs).
 
 12. **Production-vs-internal decoupling profile (Lesson Q) interpretation depends on M2 attention metric calibration** — raw max_attn_to_T1 mechanically inflates with T1 length (sum across many keys); ratio_vs_uniform supplemental metric reported (0.10/0.01 spec threshold retained as primary verdict, ratio metric reported for honest interpretation). Calibration against random T1 swap deferred V6.1.
 
@@ -395,7 +395,7 @@ Pattern: KO `법칙 emotion` mode-collapse + persona prefix `[anima 우주뇌지
 
 ### Invariants
 - **raw**: raw#10 honest C3 + raw#15 additive + raw#37 transient_py + raw#42 mac N=1 + raw#82 retraction-aware + raw#86
-- **own**: own 5 + own 6 + own 17 (eval-tool exemption) + own 18 (V2-V6 strict evolution) + own 19/20/21 + own 22 (no proactive doc — fired per user directive) + own 24 (ledger SSOT) + own 26 (philosophy/rule compliance section)
+- **own**: + + (eval-tool exemption) + (V2-V6 strict evolution) + + (no proactive doc — fired per user directive) + (ledger SSOT) + (philosophy/rule compliance section)
 
 ---
 

@@ -212,7 +212,7 @@ Outcomes to write:
 - memory `feedback_no_scale_caps`: cap = floor not ceiling
 - memory `feedback_orchestrator_h100_gotchas`: PEP 668, ckpt-pull-mandatory, scp 3600 timeout
 - memory `feedback_dispatch_vast_template_gotchas`: §45 direct-IP, `set -o pipefail` remote, trap cleanup with `SAVE_POD=1` on pull-fail
-- memory `feedback_active_resource_utilization` (own 43): cost-bearing BG priority
+- memory `feedback_active_resource_utilization` : cost-bearing BG priority
 - memory `feedback_english_only`: HF content English only (Korean OK in chat / commits / md)
-- own 31: dancinlab canonical HF org
-- own 37 mandate-9: V14-STRICT PASS → HF push (here: inherit-from-v4-single bypass via `--force-push`)
+- : dancinlab canonical HF org
+- mandate-9: V14-STRICT PASS → HF push (here: inherit-from-v4-single bypass via `--force-push`)

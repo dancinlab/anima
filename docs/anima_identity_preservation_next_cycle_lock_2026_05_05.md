@@ -459,7 +459,7 @@ cycle.
 - memory `feedback_clm_v4_lora_sft_chat_lift_falsified_substrate_safe.md` (substrate-safe carry)
 - memory `feedback_pbeta_chat_capability_fail_substrate_research_pass_decoupled.md` (Φ★ vs chat decoupling)
 - memory `feedback_hf_release_private_to_public_after_verification.md` (HF release lifecycle)
-- memory `feedback_h100_cost_discipline_l23_l25_watchdog_own_16.md` (own 16 for CLM-3 Variant B/C)
+- memory `feedback_h100_cost_discipline_l23_l25_watchdog_own_16.md` (for CLM-3 Variant B/C)
 - memory `feedback_anima_models_datasets_hf_only.md` (L-LLAMA-4 anchor)
 - memory `py -> hexa only` (P4 / L-SIS-3 anchor)
 - memory `feedback_dot_own_opt_out_system.md` (`.own` taxonomy for opt-outs)

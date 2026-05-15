@@ -1,11 +1,11 @@
-"""build_verdict.py — post-process result.json into verdict.md (own 38).
+"""build_verdict.py — post-process result.json into verdict.md .
 
 Generates:
   - verdict.md: human-readable summary, race-vs-marathon, cap diagnostic, falsifier ledger
   - Comparison vs §37 (state/anima_v5mitosis_d384_sweep_2026_05_10/result.json)
 
 raw#9: local-only build script (gitignored)
-own 38: doc-save deliverable
+: doc-save deliverable
 
 Usage:
   python build_verdict.py [--in result.json] [--out verdict.md]

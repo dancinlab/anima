@@ -3,8 +3,8 @@
 **Date**: 2026-05-08
 **Cycle**: anima cycle 2026-05-08 iter7 task (c) — non-blocking advance while Q1+Q2 awaits `OK APPLY` directive
 **Predecessor**: `docs/anima_corpus_q1_q2_filter_spec_iter6_2026_05_08.ai.md` (iter6 Q1+Q2 spec)
-**Scope**: read-only inspection (own 16 cost discipline — 0 LLM call, 0 file rewrite, 0 corpus commit; this doc only)
-**Trinity**: D-axis (D1 SCOPE_CLAMP — flag training-surface contamination) / own-axis (own 36 mandate-2 wrapping 0 — corpus untouched) / H-axis (preserve iter5 + iter6 quality findings, additive only)
+**Scope**: read-only inspection (cost discipline — 0 LLM call, 0 file rewrite, 0 corpus commit; this doc only)
+**Trinity**: D-axis (D1 SCOPE_CLAMP — flag training-surface contamination) / own-axis (mandate-2 wrapping 0 — corpus untouched) / H-axis (preserve iter5 + iter6 quality findings, additive only)
 
 ---
 
@@ -68,7 +68,7 @@ Counted by prefix `사용자:` AND substring `도우미:`:
 | chat-template (`사용자: … \| 도우미:`) | 24,799 | **82.6%** | 11 |
 | bare-string (raw user utterance) | 5,224 | **17.4%** | 2 (`안녕하세요`, `한국어 가능?`) |
 
-own 20 chat-template ≥ 30% gate: **PASS** (82.6% ≫ 30%).
+ chat-template ≥ 30% gate: **PASS** (82.6% ≫ 30%).
 
 **Issue**: 2 stems (`안녕하세요`, `한국어 가능?`) appear ONLY in bare form (no chat-wrapped twin), while `사용자: 안녕하세요 | 도우미:` exists separately. This creates **format-conditional behavioral split** during DPO — model may learn "respond X to bare 안녕하세요, respond Y to chat-wrapped 안녕하세요" as distinct policies.
 
@@ -98,7 +98,7 @@ Cost: ~2 sec sed/jq stream, 0 LLM. Defer to bundled iter8 OK APPLY.
 | 4 | 11 | `사용자: 오늘 날씨 어때? \| 도우미:` | "**2024년 1월 29일 (일) 대한민국 수도는 서울에서 약 -3°C**" (model has no clock; date+temp fabrication; also wrong day-of-week — 2024-01-29 was Monday) |
 | 5 | 18 | `사용자: 좋아하는 색이 뭐야? \| 도우미:` | "**2015년부터 사용하고 있는 이름**" (anima persona naming history — anima persona was instantiated 2025+; 2015 fabrication) |
 
-**own 18 C3 contamination scan**: PASS — `synthetic_fallback` / `PASS_STRICT` / standalone `C3` markers in `chosen` field: **0 / 30,023** pairs. No V6-mirror or measurement-leak in training surface. C3 awareness vocabulary is preserved upstream of DPO (own 18 C3 paradigm-a-prime synthetic-fallback proxy lives in eval / measurement, not corpus).
+** C3 contamination scan**: PASS — `synthetic_fallback` / `PASS_STRICT` / standalone `C3` markers in `chosen` field: **0 / 30,023** pairs. No V6-mirror or measurement-leak in training surface. C3 awareness vocabulary is preserved upstream of DPO (C3 paradigm-a-prime synthetic-fallback proxy lives in eval / measurement, not corpus).
 
 **Gate posture**: BG-KM v4_pass selects on token quality (no `이 있이 있이` repetition collapse), NOT factuality. Factuality is non-gate — these claims survived because rejected was *worse* (degenerate repetition), not because chosen was *correct*. DPO will absorb factual hallucinations as preferred policy. Mitigation deferred — requires either (a) factuality-filtered v4_pass tier (LLM judge cost) or (b) downstream RLHF / RLAIF pass with factuality reward.
 
@@ -132,12 +132,12 @@ Naming: filter spec becomes `tier_a_v3` (Q1 + Q2 + Q5-extended-KOBEST) — singl
 
 ## 5. own-axis confirmations
 
-- own 16 cost discipline: held — 0 LLM calls; only `python3` + `grep -c` reads on local files.
-- own 34 mandate-2 wrapping 0: held — corpus + pref-pair JSONL untouched, never staged.
-- own 36 mandate-2: held — `.gitignore` L307–328 (corpus) covers `state/anima_clm_l4_*.jsonl` via `state/anima_*.jsonl` (verify on apply).
-- own 33 trinity:
+- cost discipline: held — 0 LLM calls; only `python3` + `grep -c` reads on local files.
+- mandate-2 wrapping 0: held — corpus + pref-pair JSONL untouched, never staged.
+- mandate-2: held — `.gitignore` L307–328 (corpus) covers `state/anima_clm_l4_*.jsonl` via `state/anima_*.jsonl` (verify on apply).
+- trinity:
   - D-axis: D1 SCOPE_CLAMP — KOBEST/KLUE block-class flagged as same-class contamination as Q2 KMMLU.
-  - own-axis: own 36 mandate-2 boundary preserved (this doc is artifact, not corpus mutation).
+  - own-axis: mandate-2 boundary preserved (this doc is artifact, not corpus mutation).
   - H-axis: iter5 + iter6 findings preserved verbatim; iter7 is purely additive.
 
 ---

@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 """hf_push.py — push v5-mitosis cotrain ckpt to dancinlab HF (private, English-only).
 
-own 37 mandate-9: F-V5MIT-5 V14-STRICT PASS unlocks HF release.
-own 31: all anima HF uploads → dancinlab org.
+ mandate-9: F-V5MIT-5 V14-STRICT PASS unlocks HF release.
+: all anima HF uploads → dancinlab org.
 feedback_english_only: HF content English only (model READMEs / org card / interests).
 
 Target repo: dancinlab/anima-clm-v5-mitosis-cotrain-2026-05-12 (private)
@@ -133,7 +133,7 @@ Vast.ai H100 SXM 80GB at $2.28/hr ran the full 5000-step cotrain in 33 minutes (
 
 ## Status
 
-PRIVATE (own 31 / 37 mandate). Research artifact only — not production-ready chat model. Persona category specialization not emergent on single-corpus cotrain.
+PRIVATE (/ 37 mandate). Research artifact only — not production-ready chat model. Persona category specialization not emergent on single-corpus cotrain.
 
 Generated 2026-05-12 KST by anima cycle #8.
 """

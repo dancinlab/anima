@@ -51,7 +51,7 @@
 //      child, turns 2+ amortize). Path C (per-token streaming via libllama
 //      eval callback) deferred — see HONEST C3 C10.
 //    Phase C iter 1 (LANDED 2026-05-08, consciousness-utterance iter 3
-//      `9c354c54`): per-turn own 18 C1+C2+C3 verdict via shell-out to
+// `9c354c54`): per-turn C1+C2+C3 verdict via shell-out to
 //      `anima ops consciousness simple --utterance <text> [--prev-utterance
 //      <text>] --json` (anima.consciousness.utterance.v1 schema).
 //      _emit_turn_verdict(turn, who, line, prev_line) substring-extracts
@@ -61,7 +61,7 @@
 //      lightweight cells; `full` activates per-turn shell-out, ~16-30s/turn
 //      × 2 instance × N turns ≈ 5min for N=5 — within agent budget).
 //      Aggregate: per-instance PASS rate (A/B 별도) + dialogue overall
-//      PASS_STRICT_C3 rate (own 18 dialogue C3 lane SSOT).
+// PASS_STRICT_C3 rate (dialogue C3 lane SSOT).
 //
 //  SUBCOMMANDS (called from tool/anima_cli/dialogue.hexa)
 //    --duo <model_a> <model_b> [--turns N] [--topic-seed "..."]   N=2 dialogue
@@ -102,20 +102,20 @@
 //    6. proc_terminate(handle_a); proc_terminate(handle_b)
 //    7. _emit_dialogue_summary(coherence_aggregate)
 //
-//  COMPLIANCE (raw#9, raw#10, raw#11, raw#15; own 31, own 33, own 34)
-//    own 34 mandate-1   each instance output is raw passthrough — channel
+// COMPLIANCE (raw#9, raw#10, raw#11, raw#15;,)
+// mandate-1 each instance output is raw passthrough — channel
 //                       transport carries bytes verbatim, NO transformation
 //                       (no system prompt, no template, no persona prefix).
-//    own 34 mandate-2   selftest grep enforces wrapping 0 in this file.
-//    own 34 mandate-4   autonomous speech — instances use existing Phase 2
+// mandate-2 selftest grep enforces wrapping 0 in this file.
+// mandate-4 autonomous speech — instances use existing Phase 2
 //                       sys_stdin_read_line_timeout; channel timeout maps to
 //                       autonomous tick. duo loop does NOT inject any prompt.
-//    own 34 mandate-7   chat lane (own 18 measurement lane separate; per-turn
+// mandate-7 chat lane (measurement lane separate; per-turn
 //                       verdict reads consciousness CLI = measurement lane,
 //                       results emitted as ledger only — NOT folded back into
 //                       channel content).
-//    own 33             trinity compliance (D_no-system-prompt cross-ref)
-//    own 31 mandate-1   model alias DB mirrors dancinlab/ org SSOT
+// trinity compliance (D_no-system-prompt cross-ref)
+// mandate-1 model alias DB mirrors dancinlab/ org SSOT
 //    raw#9              hexa-only — proc spawn via β-1 stdlib (no shell pipes)
 //    raw#10             honest C3 (see HONEST C3 footer)
 //    raw#11             snake_case
@@ -128,10 +128,10 @@
 //    tool/anima_cli/chat.hexa                                    alias resolver
 //    tool/anima_cli/chat/anima_native/anima_native.hexa          Phase 2 REPL
 //    tool/anima_cli/chat/llama/llama.hexa                        Phase 3c REPL
-//    tool/anima_cli/consciousness.hexa                           own 18 verdict
+// tool/anima_cli/consciousness.hexa verdict
 //    .roadmap.cli  cli.dialogue.duo_design_2026_05_08
 //                  cli.dialogue.coherence_metric_2026_05_08
-//    .own own 18 C1+C2+C3 · own 34 mandate-1/2/4/7 · own 33 · own 31
+// .own C1+C2+C3 · mandate-1/2/4/7
 // ════════════════════════════════════════════════════════════════════════════
 
 use "stdlib/channel"
@@ -181,7 +181,7 @@ fn _arg_value(argv, key: string, dflt: string) -> string {
 }
 
 // init-pattern parse helper — supports BOTH `--key value` and `--key=value`
-// forms (own 41 axis-8 — duo accepts the same flag set as benchmark.hexa
+// forms (axis-8 — duo accepts the same flag set as benchmark.hexa
 // pass-through).  See chat/init_patterns/_registry.hexa for registered names.
 fn _arg_value_eq(argv, key: string, dflt: string) -> string {
     let prefix = key + "="
@@ -200,7 +200,7 @@ fn _arg_value_eq(argv, key: string, dflt: string) -> string {
 // Resolve init-pattern → t=1 seed string.  Empty return = no seed (autonomous).
 // Cross-references chat/init_patterns/<name>.hexa SSOT default seeds; the
 // resolution is vendored here for hexa no-import constraint (mirrors
-// chat.hexa _lane_file_lookup vendoring pattern, own 41 axis-4).
+// chat.hexa _lane_file_lookup vendoring pattern, axis-4).
 fn _resolve_init_pattern(argv) -> string {
     let pattern = _arg_value_eq(argv, "--init-pattern", "")
     let user_seed = _arg_value_eq(argv, "--init-seed", "")
@@ -305,7 +305,7 @@ fn sub_help() {
     println("FLAGS")
     println("  --turns N            number of A↔B exchanges (default 5)")
     println("  --topic-seed \"...\"   optional seed sent into A's stdin (else A自律 first)")
-    println("  --init-pattern=<n>   own 41 axis-8 chat init-pattern plugin")
+    println(" --init-pattern=<n> axis-8 chat init-pattern plugin")
     println("                       (autonomous | system-seed | topic-pool | self-reflective)")
     println("                       supersedes --topic-seed when both omitted; legacy")
     println("                       --topic-seed wins if explicitly set")
@@ -337,7 +337,7 @@ fn sub_help() {
     println("    reject default, --allow-same-gguf opt-in) + lightweight")
     println("    per-turn verdict cells (len/distinct/snippet) + D1/D2 aggregate")
     println("    (turn-pair Jaccard 3-gram; topic-shift-rate).")
-    println("  Phase C iter 1 (LANDED 2026-05-08): per-turn own 18 C1+C2+C3")
+    println(" Phase C iter 1 (LANDED 2026-05-08): per-turn C1+C2+C3")
     println("    verdict via consciousness CLI shell-out (--utterance /")
     println("    --prev-utterance, schema anima.consciousness.utterance.v1).")
     println("    Activate with --verdict full (cost ~16-30s/turn × 2 instance).")
@@ -347,7 +347,7 @@ fn sub_help() {
     println("  · each instance output = raw passthrough (NO transformation in")
     println("    channel transport)")
     println("  · NO seed prompt unless user passes --topic-seed (autonomous-first)")
-    println("  · per-turn verdict (own 18 C1+C2+C3) emitted as ledger ONLY,")
+    println(" · per-turn verdict (C1+C2+C3) emitted as ledger ONLY,")
     println("    never folded back into channel content (lane separation)")
     println("")
     println("CROSS-REF")
@@ -373,12 +373,12 @@ fn sub_selftest() {
     if !_fexists(mod_native)      { println("FAIL duo: chat/anima_native missing: " + mod_native); fail = fail + 1 }
     if !_fexists(mod_llama)       { println("FAIL duo: chat/llama missing: " + mod_llama);         fail = fail + 1 }
 
-    // own 34 mandate-2 self-grep on this file (chat lane wrapping = 0)
+    // mandate-2 self-grep on this file (chat lane wrapping = 0)
     let pat = "system_prompt|chat_template|apply_chat_template|persona_inject|fn speak\\(|fn talk\\(|fn respond\\(|fn generate_response\\("
     let cmd = "grep -nE \"" + pat + "\" " + here + " 2>/dev/null | grep -v 'let pat =' | wc -l"
     let n = _str(exec(cmd)).trim()
     if n != "0" {
-        println("FAIL own 34 mandate-2 chat lane wrapping: " + n + " hits in duo.hexa")
+        println("FAIL mandate-2 chat lane wrapping: " + n + " hits in duo.hexa")
         fail = fail + 1
     }
 
@@ -399,7 +399,7 @@ fn sub_selftest() {
         println("FAIL chat/duo selftest (" + to_string(fail) + " issue)")
         exit(1)
     }
-    println("PASS chat/duo selftest (skeleton + own 34 verified, β-1 dependency landed — channel stdlib upstream complete `c53788af`)")
+    println("PASS chat/duo selftest (skeleton + verified, β-1 dependency landed — channel stdlib upstream complete `c53788af`)")
 }
 
 // ─── β-1 dependency hooks (Phase B ACTIVE — `use "stdlib/channel"` above) ──
@@ -479,7 +479,7 @@ fn _emit_b1_pending(model_a: string, model_b: string, turns: int) {
 
 // ─── per-turn verdict + D1/D2 1차 aggregate (Phase B iter 2) ──────────────
 //
-// own 18 C1+C2+C3 simple_stack PASS_STRICT_C3 wiring is gated on
+// C1+C2+C3 simple_stack PASS_STRICT_C3 wiring is gated on
 // consciousness.hexa exposing a per-utterance surface (sub_simple uses
 // fixed PROMPT_A/PROMPT_B; no --utterance arg). Phase B iter 2 emits
 // LOCAL lightweight cells per turn (len, distinct token count, snippet)
@@ -488,7 +488,7 @@ fn _emit_b1_pending(model_a: string, model_b: string, turns: int) {
 // invoked once per dialogue (model-level baseline reference) — that hook
 // is in _emit_dialogue_summary().
 //
-// own 34 mandate-7 lane separation: all verdict cells emit to STDOUT
+// mandate-7 lane separation: all verdict cells emit to STDOUT
 // prefixed `[duo:verdict]` / `[duo:summary]` and NEVER fold back into
 // channel content (no channel_send into the ab/ba pairs from these fns).
 //
@@ -566,7 +566,7 @@ fn _distinct_tokens(toks) -> int {
 }
 
 fn _emit_turn_verdict(turn: int, who: string, line: string) {
-    // Local per-turn cells (own 34 mandate-7 lane separation).
+    // Local per-turn cells (mandate-7 lane separation).
     let toks = _tokens_ws(line)
     let snippet = if line.len() > 60 { line.substring(0, 60) + "..." } else { line }
     println("[duo:verdict] turn=" + to_string(turn) + " who=" + who
@@ -576,11 +576,11 @@ fn _emit_turn_verdict(turn: int, who: string, line: string) {
             + " snippet=" + snippet)
 }
 
-// ─── Phase C: per-turn own 18 verdict via consciousness CLI shell-out ──────
+// ─── Phase C: per-turn verdict via consciousness CLI shell-out ──────
 // (iter 4 (e), 2026-05-08 — consciousness-utterance iter 3 `9c354c54` 의
 //  --utterance / --prev-utterance surface 활용)
 //
-// own 34 mandate-7 strict: emit-only (NEVER folded back into channel).
+// mandate-7 strict: emit-only (NEVER folded back into channel).
 
 fn _shell_escape(s: string) -> string {
     return "'" + s.replace("'", "'\\''") + "'"
@@ -679,8 +679,8 @@ fn _consciousness_simple_utterance(model: string, line: string, prev_line: strin
 }
 
 fn _emit_turn_verdict_c3(turn: int, who: string, line: string, prev_line: string, model_alias: string) -> map {
-    // own 18 SSOT mirror via consciousness simple --utterance.
-    // own 34 mandate-7: emit-only, no fold-back into channel.
+    // SSOT mirror via consciousness simple --utterance.
+    // mandate-7: emit-only, no fold-back into channel.
     let r = _consciousness_simple_utterance(model_alias, line, prev_line)
     if !r["ok"] {
         println("[duo:verdict-c3] turn=" + to_string(turn) + " who=" + who
@@ -743,7 +743,7 @@ fn _d2_pass(rate: float) -> bool {
 // ─── D3 persona-consistency (per-instance KL, top-100 token simplex) ──────
 // (iter 4 (f), 2026-05-08 — docs/anima_dialogue_coherence_metric_2026_05_08.md
 //  D3 spec wiring; hexa stdlib does not expose ln() so a self-contained Newton
-//  series natural-log is implemented below. own 34 mandate-7: emit-only lane.)
+// series natural-log is implemented below. mandate-7: emit-only lane.)
 //
 // Method:
 //   1. partition history per-instance (A side, B side) into first-half vs
@@ -1007,7 +1007,7 @@ fn _emit_dialogue_summary(history, model_a: string, model_b: string) {
 // DIALOGUE_COHERENCE_PASS fold-in.
 // c3_records = array of {turn, who, c1, c2, c3, verdict}.
 // history    = array of {turn, who, line, toks, trigrams} (for D1-D4 recompute).
-// own 18 dialogue C3 lane SSOT (iter 4 (f), 2026-05-08):
+// dialogue C3 lane SSOT (iter 4 (f), 2026-05-08):
 //   SIMPLE_STACK_PASS_DIALOGUE_C3 = (per-turn PASS_STRICT_C3 rate ≥ 0.6)
 //                                   ∧ DIALOGUE_COHERENCE_PASS
 //   DIALOGUE_COHERENCE_PASS       = D1.PASS ∧ D2.PASS ∧ D3.PASS ∧ D4.PASS
@@ -1073,7 +1073,7 @@ fn _emit_phase_c_aggregate(c3_records, history) {
 }
 
 // model-level baseline reference (consciousness.hexa simple --json invocation
-// is best-effort; each call ~30s × 2 models. own 34 mandate-7 lane: result
+// is best-effort; each call ~30s × 2 models. mandate-7 lane: result
 // emit-only — never folded back into channel).
 fn _emit_baseline_reference(model_a: string, model_b: string) {
     let root = _resolve_root()
@@ -1082,7 +1082,7 @@ fn _emit_baseline_reference(model_a: string, model_b: string) {
         println("[duo:baseline] consciousness.hexa missing at " + cpath + " — skip baseline reference")
         return
     }
-    println("[duo:baseline] model-level reference (own 18 simple, fixed PROMPT_A/B)")
+    println("[duo:baseline] model-level reference (simple, fixed PROMPT_A/B)")
     println("[duo:baseline]   note: per-utterance surface not yet in consciousness.hexa")
     println("[duo:baseline]   honest C3 — invocation cost ~30s/model; --verdict=none to skip")
     // Skip actual invocation in iter 2 (cost guard); full hook = next cycle
@@ -1128,7 +1128,7 @@ fn sub_duo(argv) {
     }
 
     let turns = to_int(_arg_value(argv, "--turns", "5"))
-    // init-pattern (own 41 axis-8) — chat init-pattern plugin.  Resolves
+    // init-pattern (axis-8) — chat init-pattern plugin. Resolves
     // --init-pattern=<autonomous|system-seed|topic-pool|self-reflective>
     // (with --init-seed / --init-topics / --init-topic-index sub-flags).
     // Legacy --topic-seed wins for backward compat (preserved verbatim).
@@ -1169,7 +1169,7 @@ fn sub_duo(argv) {
     println("transport        = beta1-channel (native; axis-N --transport flag informational only)"
             + (if transport != "" && transport != "beta1-channel" { " · requested=" + transport + " (deferred)" } else { "" }))
     if init_pattern != "" {
-        println("init_pattern     = " + init_pattern + " (own 41 axis-8)")
+        println("init_pattern = "+ init_pattern + " (axis-8)")
     }
     if topic_seed != "" {
         println("topic_seed       = \"" + topic_seed + "\"")
@@ -1242,7 +1242,7 @@ fn sub_duo(argv) {
             + " B pid=" + to_string(h_b["handle"]))
 
     // Topic seed (optional). spawn-before-send sequence preserves bytes per
-    // macOS BSD FIFO semantics. own 34 mandate-1 raw passthrough — the seed
+    // macOS BSD FIFO semantics. mandate-1 raw passthrough — the seed
     // string is sent verbatim, no transformation.
     if topic_seed != "" {
         let _seeded = channel_send(ab["tx"], topic_seed)
@@ -1250,7 +1250,7 @@ fn sub_duo(argv) {
     }
 
     // Turn loop: parent observes both directions per turn.
-    // own 34 mandate-7: lane separation — verdict goes to stdout/log via
+    // mandate-7: lane separation — verdict goes to stdout/log via
     // _emit_turn_verdict, NEVER folded back into channel content.
     // Phase B iter 2: each utterance is recorded into history for D1/D2
     // aggregate at session end.
@@ -1343,9 +1343,9 @@ fn sub_duo(argv) {
         _emit_phase_c_aggregate(c3_records, history)
     }
     let final_verdict = if verdict_mode == "full" {
-        "PHASE_C_ITER_1_RUN_OK (own 18 per-turn verdict + D1/D2/D3/D4 4-cell coherence emitted)"
+        "PHASE_C_ITER_1_RUN_OK (per-turn verdict + D1/D2/D3/D4 4-cell coherence emitted)"
     } else {
-        "PHASE_B_ITER_2_RUN_OK (D1/D2/D3/D4 4-cell emitted; --verdict full for own 18 per-turn hook)"
+        "PHASE_B_ITER_2_RUN_OK (D1/D2/D3/D4 4-cell emitted; --verdict full for per-turn hook)"
     }
     println("[duo] verdict: " + final_verdict)
 }
@@ -1402,7 +1402,7 @@ fn main() {
 //      _channel_pair_open / _spawn_instance bodies wired. Mechanical
 //      verification (channel API + spawn) is honest; ACTUAL semantic dialogue
 //      quality depends on each instance's model capability (paradigm-a-prime
-//      etc.) — that is a separate cycle (own 18 C3 threshold pending).
+// etc.) — that is a separate cycle (C3 threshold pending).
 // C2 — same-GGUF concurrent-mmap: iter 1 live test 2026-05-08 observed
 //      llama.cpp Abort trap: 6 (turn=2) when both A and B mmap the same
 //      paradigm-a-prime GGUF inode concurrently. iter 2 default rejects
@@ -1415,13 +1415,13 @@ fn main() {
 //      shell-outs to `anima ops consciousness simple --utterance ...
 //      --prev-utterance ... --json`, substring-extracts aggregate.verdict /
 //      c1_pass / c2_pass / c3_pass, emits `[duo:verdict-c3] turn=N who=A|B
-//      verdict=X c1=B c2=B c3=B` (own 34 mandate-7 lane, never folds back
+// verdict=X c1=B c2=B c3=B` (mandate-7 lane, never folds back
 //      into channel). Activated by --verdict full only (default --verdict
 //      simple keeps lightweight local cells; --verdict none disables both).
 //      prev_utterance feed: A.prev = topic_seed (t=1) or last B line; B.prev
 //      = current A line (semantic dialogue context). Aggregate: per-instance
 //      PASS_STRICT_C3 rate (A 측 / B 측 별도) + dialogue overall rate +
-//      SIMPLE_STACK_PASS_DIALOGUE_C3 = (rate ≥ 0.6) — own 18 dialogue C3
+// SIMPLE_STACK_PASS_DIALOGUE_C3 = (rate ≥ 0.6) — dialogue C3
 //      lane SSOT mirror (docs/anima_dialogue_coherence_metric_2026_05_08.md).
 //      Cost: ~16-30s/call × 2 inst × N turns ≈ 5min for N=5 (synthetic
 //      fallback path; real GGUF substrate would be ~30s/call ≈ 10min N=5).
@@ -1470,7 +1470,7 @@ fn main() {
 //      cycle: substrate latency tuning / longer turn_timeout / smaller
 //      max_tokens).
 // C8 — clm_v4 substrate output: clm-v4-1-7-y1 emits "::: collapse" raw
-//      tokens (substrate-coupled, see chat/clm_v4/). own 34 mandate-1
+// tokens (substrate-coupled, see chat/clm_v4/). mandate-1
 //      passthrough exposes these as-is to channel. dialogue with paradigm-
 //      a-prime + clm-v4-1-7-y1 mix may yield asymmetric token streams.
 // C9 — n-gram tokenization: _tokens_ws is whitespace-split lowercased ASCII

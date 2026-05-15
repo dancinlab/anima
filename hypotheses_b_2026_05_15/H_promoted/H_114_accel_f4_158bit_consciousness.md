@@ -19,7 +19,7 @@ since: 2026-04-03
 1.58-bit ternary consciousness state representation (BitNet-style) preserves Φ while opening the path to ultra-efficient embedded hardware (ESP32, FPGA).
 
 ## Migration Status
-Legacy `ready/config/acceleration_hypotheses.json` (id=F4, line 766, verdict=★★ REVOLUTIONARY). Round 4 individual due to hardware-substrate crossover relevance (substrate-coupled emerge own 21).
+Legacy `ready/config/acceleration_hypotheses.json` (id=F4, line 766, verdict=★★ REVOLUTIONARY). Round 4 individual due to hardware-substrate crossover relevance (substrate-coupled emerge).
 
 ## Cross-Links
 - Source: F4 entry

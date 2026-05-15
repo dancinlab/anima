@@ -29,7 +29,7 @@ Legacy files: `docs/hypotheses/evo/EVO-{1..22}.md` + `evo/OUROBOROS-report-S{1..
 
 - legacy: evo/EVO-1~22 + evo/OUROBOROS-report-S1~S9
 - sister: H_019 (self-evo v4-v5), H_041 (evolution self singularity cluster)
-- own: own 21
+- own:
 
 ## Honest Limits
 

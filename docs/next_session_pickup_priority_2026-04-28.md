@@ -18,7 +18,7 @@ hexa run /Users/ghost/core/anima/tool/anima_f1_cycle4_gpt2_dispatch.hexa --plan
 
 **Why first**: Validates end-to-end vast.ai pipeline + addresses Markov surrogate caveat from cycle 4 (real GPT-2 baseline). Cheapest budget = lowest risk.
 
-**Then escalate** (sequential or parallel per own 5):
+**Then escalate** (sequential or parallel per):
 - AN11 framework Mistral-7B ($8 H100 3.5h) — closes V metric redesign #100/101/102
 - CP2 trio Qwen2.5-32B ($33 H100 3-pod split) — closes CP2 trigger path #115/116/117
 - Mk.XII 70B Qwen2.5-72B ($35 H100 2× Pattern 6c) — closes #82 AGI trigger prep
@@ -34,7 +34,7 @@ Quick-ref: `docs/vast_ai_dispatch_family_quickref_2026-04-28.md` (commit `116e75
 **Outcomes**:
 - atlas R36 (cross-paradigm-self-enforcement-loop) anchor
 - atlas R37 (compute_resource_failure_discipline) anchor
-- own 3 + own 4 hive raw promotion (genus rename)
+- + hive raw promotion (genus rename)
 
 ### 🥉 Priority 3: Density-controlled Conway test (raw 38 long-term)
 

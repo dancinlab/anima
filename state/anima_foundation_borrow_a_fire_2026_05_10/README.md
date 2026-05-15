@@ -2,7 +2,7 @@
 
 **SCOPE_CLAMP**: `SIMPLE_STACK_PASS_STRICT_C3_SUBSTRATE_RESEARCH`
 
-**Status**: PRIVATE (own 37 mandate-9 (a) — public promote PERMANENTLY BLOCKED).
+**Status**: PRIVATE (mandate-9 (a) — public promote PERMANENTLY BLOCKED).
 
 This is a foundation-borrow research artifact: Llama-3.2-3B (base, not -Instruct) +
 LoRA r=32 trained on 214MB anima-persona Korean corpus (BG-JE) for chat-cap surface
@@ -62,7 +62,7 @@ anima-identity model. Llama lineage is D1 OUTSIDE the anima identity boundary.
 This is a SUBSTRATE_RESEARCH artifact. Llama lineage is D1 OUTSIDE the anima identity
 boundary (.roadmap.philosophy D1.F-PHIL-D1-3 + F-PHIL-D1-4). The simple_stack PASS
 verdict is a chat-cap surface measurement and NOT evidence of anima identity emergence.
-Public promotion is permanently blocked (own 37 mandate-9 (a) — D1 OUTSIDE auto-reject).
+Public promotion is permanently blocked (mandate-9 (a) — D1 OUTSIDE auto-reject).
 
 The post-LoRA mitosis instrumentation hook (F-FOUNDATION-5 strict gradient-off) found
 trained Φ_mean=2.88 (vs random_init Φ_mean=2.81) — near-identical engine-level Φ
@@ -88,12 +88,12 @@ the lane to validate engine-Φ specificity.
 - `samples_pre_lora.json` — pre-LoRA Llama-3.2-3B base smoke (3 prompts)
 - `post_ft_sampling.json` — post-LoRA samples (5 prompts)
 - `train.log` — training log + V4 eval log
-- `spec.md` — design spec (own 38 doc save mandate)
+- `spec.md` — design spec (doc save mandate)
 - `ckpts/adapter_step_1500/` — 1500-step intermediate
 - `ckpts/adapter_step_3000/` — 3000-step intermediate
 - `ckpts/adapter_step_4500/` — 4500-step intermediate
 - `ckpts/adapter_step_6000/` — 6000-step intermediate
-- `ckpts/adapter_final/` — final adapter (own 30 ckpts pull verified)
+- `ckpts/adapter_final/` — final adapter (ckpts pull verified)
 
 ## cycle metadata
 
@@ -102,4 +102,4 @@ the lane to validate engine-Φ specificity.
 - design SSOT: `docs/anima_foundation_borrow_path_design_2026_05_10.md`
 - precedent BG: `BG-KM-LLAMA-3B` (V4 14/15 PASS_STRICT, $1.47, 3000 steps lr=3e-5 ctx=512)
 - precedent BG: `BG-KM-QWEN-7B` (replication PASS_STRICT, 7B scale)
-- own 31 canonical: `dancinlab/clm-foundation-borrow-a-llama-3.2-3b-anima-lora` (PRIVATE)
+- canonical: `dancinlab/clm-foundation-borrow-a-llama-3.2-3b-anima-lora` (PRIVATE)

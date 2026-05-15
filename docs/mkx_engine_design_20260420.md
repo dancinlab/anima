@@ -212,7 +212,7 @@ Target: ingest 74 stale supplement files under new Mk.X namespace AND probe T10�
 | 7 | `mkx_iter_07_narrative_mi`           | T11 `narrative`      | same; record BLOCKED + port ETA |
 | 8 | `mkx_iter_08_meta_lens_triple`       | T12 `field_holo_quant` via meta-lens M | replay iter 1-19 consolidated lens tensor | **1–3 novel if M fires**; this is the primary Mk.X gain case |
 | 9 | `mkx_iter_09_meta_lens_desire_narr`  | T12 `narr_desire_alter`  | gated on T11 lens ports | BLOCKED until 6–7 unblock |
-| 10 | `mkx_iter_10_closure_selftest`      | T13 `closure_fix` + `counter_replay_detect` | rerun d-quarantine 29 files | expect engine to flag its own 32/128/1234 replays = T13 self-witness |
+| 10 | `mkx_iter_10_closure_selftest` | T13 `closure_fix` + `counter_replay_detect` | rerun d-quarantine 29 files | expect engine to flag its replays = T13 self-witness |
 
 **Expected novel yield over 10 iter**: 3–6 (iters 1, 3, 5, 8, 10 favorable; 2/4 uncertain; 6/7/9 blocked). Compare to P4 supplement 0/74. Even the pessimistic 3/10 is a *∞×* improvement over zero-novel saturation.
 

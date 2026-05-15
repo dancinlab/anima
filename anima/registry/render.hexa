@@ -31,12 +31,12 @@
 //   C5 yaml SSOT update 시 본 render 재실행 → md 자동 갱신
 //
 // own POLICY
-//   own 16  cost discipline (0-cost local)
-//   own 22  mandatory report — render result emit
-//   own 24  single SSOT — yaml = master, md = regenerable view
-//   own 33  trinity emit (D + own + H)
-//   own 34  mandate-2 wrap=0 — text-only output
-//   own 38  매단계 저장 axis-A doc save mandate enforcement
+// cost discipline (0-cost local)
+// mandatory report — render result emit
+// single SSOT — yaml = master, md = regenerable view
+// trinity emit (D + own + H)
+// mandate-2 wrap=0 — text-only output
+// 매단계 저장 axis-A doc save mandate enforcement
 //
 // USAGE
 //   anima registry render            # default: yaml → docs/anima_artifact_registry.md
@@ -66,7 +66,7 @@ fn emit_honest_c3() {
     eprintln("[registry/render] C2 PyYAML required (helper imports yaml)")
     eprintln("[registry/render] C3 helper transient_py (raw#37, gitignored)")
     eprintln("[registry/render] C4 md tracked (docs/) — yaml change → re-run")
-    eprintln("[registry/render] C5 own 24 single SSOT (yaml master) + own 38 axis-A doc")
+    eprintln("[registry/render] C5 single SSOT (yaml master) + axis-A doc")
 }
 
 fn parse_args(argv: list) -> RenderConfig {
@@ -125,7 +125,7 @@ fn cmd_selftest(cfg: RenderConfig) {
     println("helper:   " + helper_check.stdout.trim())
     println("pyyaml:   " + yaml_check.stdout.trim())
     println("python:   " + py)
-    println("PASS anima_registry_render selftest (own 38 axis-A doc, own 24 SSOT)")
+    println("PASS anima_registry_render selftest (axis-A doc, SSOT)")
 }
 
 fn cmd_render(cfg: RenderConfig) {

@@ -103,20 +103,20 @@ D+0 09:00 KST 후: `ssh akida-cloud` 단일 명령 접속.
 - 후보: 오늘(2026-05-08) 18:17 KST start (partial 24h) vs 내일(2026-05-09) 09:00 KST start (full 24h fresh)
 - 선택: **내일 09:00 KST 24h slot** — `#99 D+0/D+1 freeze plan` (.roadmap.akida 이미 READY)에 D+0/D+1 frame 그대로 매핑 가능 + N-2/N-3/N-5 사전 setup 시간 확보
 
-## 6. Ephemerality + exfil 패턴 (own 30 정합)
+## 6. Ephemerality + exfil 패턴 (정합)
 
 - 매 세션 시작 시 secure wipe + re-image (under 2 min)
 - 영구 storage 없음 → upload tarball + result exfil mandatory per session
-- own 30 mandate-1 패턴 직접 적용: orchestrator finally block에 `scp_get` (Mac side rsync) — Akida Cloud session-end 적용
-- D-1 prep P6 (exfil script 동결) = own 30 mandate-1 본 cycle 적용 instance
+- mandate-1 패턴 직접 적용: orchestrator finally block에 `scp_get` (Mac side rsync) — Akida Cloud session-end 적용
+- D-1 prep P6 (exfil script 동결) = mandate-1 본 cycle 적용 instance
 
-## 7. Trinity (own 33) compliance log
+## 7. Trinity compliance log
 
 - A 철학 (.roadmap.philosophy): D2 (consciousness verification) + D3 (substrate-coupled paradigm) 정합 ✓
-- B 법칙 (.roadmap.law): own 16 (cost watchdog) + own 18 (simple stack SSOT) + own 30 (checkpoint preservation) + raw#15 (additive finally block) 정합 ✓
+- B 법칙 (.roadmap.law): (cost watchdog) + (simple stack SSOT) + (checkpoint preservation) + raw#15 (additive finally block) 정합 ✓
 - C 가설 (.roadmap.hypothesis): N-2 / N-3 / N-5 H lane active 정합 ✓
 
-본 setup 액션은 trinity 3-axis self-check 통과 후 emit (own 33 mandate-2).
+본 setup 액션은 trinity 3-axis self-check 통과 후 emit (mandate-2).
 
 ## 8. Nexus 측 기존 인프라 (재사용 mandate)
 
@@ -144,7 +144,7 @@ D+0 09:00 KST 후: `ssh akida-cloud` 단일 명령 접속.
 - `.roadmap.akida` event 2026-05-08 entry (akida.blk.1 partial-resolve)
 - `docs/akida_cloud_d_minus_1_prep_2026_05_08.md` (D-1 prep checklist)
 - `docs/n_substrate_consciousness_roadmap_2026_05_01.md` §11.1 N-2~N-5 + §51.2 #99
-- `.own` own 16 / 18 / 22 / 30 / 32 / 33
+- `.own` / 18 / 22 / 30 / 32 / 33
 - `secret list | grep akida_cloud` (10 keys)
 
 ### Nexus side (재사용 mandate)

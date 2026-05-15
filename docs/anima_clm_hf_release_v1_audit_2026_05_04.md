@@ -3,7 +3,7 @@
 - **Date**: 2026-05-04
 - **Audit scope**: `.roadmap.clm` cond.2 = "HF release v1 — `dancinlab/anima-clm-mk2-v1` (license=mit, gated=false initial, README sync from `anima/docs/modules/clm.md`)" — current status `unmet`, blocker_reason "weight 확정 + model card draft 필요".
 - **Mode**: BG audit + spec only. **NO exec, NO pod, NO HF push, NO git commit.** No H100 cost, $0 mac-local.
-- **Constraints respected**: raw#9 (no `.py` created), raw#10 (≥5 honest C3 in §10), raw#15 (no destructive paths), anima own 14 (HF-only for weights).
+- **Constraints respected**: raw#9 (no `.py` created), raw#10 (≥5 honest C3 in §10), raw#15 (no destructive paths), anima (HF-only for weights).
 - **Decision questions** (4) are flagged inline and consolidated in the trailing handoff doc.
 
 ---
@@ -31,7 +31,7 @@ The cond.2 blocker_reason "weight 확정 + model card draft 필요" is therefore
 | Checkpoint identity | CLM v4 530M ConsciousDecoderV2 (label "350M" misleading per `docs/strategic_clm_v4_production_ready_2026_05_02.md` §1) | READY |
 | Paradigm v11 G3 | PASS +41.86 (5-substrate matrix unique positive integration; vs Mistral −16.7 / Qwen3 +1.04 / Llama +5.09 / Gemma −0.79) | READY |
 | Weight location (canonical) | `dancinlab/clm-v4-base-mirror/snapshots/856278beb59c5b39f16485cc8f3a46dcdaf9d1e3/best.pt` (HF cache, ubu1 + RunPod) | READY |
-| Local mac copy | NOT PRESENT (intentional; raw#9-style ban + 5GB size + anima own 14 HF-only) | OK |
+| Local mac copy | NOT PRESENT (intentional; raw#9-style ban + 5GB size + anima HF-only) | OK |
 | File size | 5 GB (best.pt raw); 2.12 GB (HF format `model.safetensors` post-shim) | READY |
 | Reproducibility manifest | step=20000, φ★=27.91, ce=0.046 (per `docs/clm_v4_lora_sft_spec_2026_05_04.md` §3 hyperparams table) | PARTIAL |
 | Train config | `state/strategic_clm_phase_a1_2026_05_01/run_log.json` cited; not extracted to repo-shippable form | GAP |

@@ -20,19 +20,19 @@
 //    - colon-attractor avoidance:
 //        (a) strip trailing ':' (memory feedback_clm_colon_attractor)
 //        (b) retry with temp+0.2 top_p-0.1 if generated starts with ':::'
-//    - own 34 mandate-1: prompt fed verbatim, no chat template, raw decode
+// - mandate-1: prompt fed verbatim, no chat template, raw decode
 //
 //  COMPLIANCE
-//    own 14 V14 — verdict-grade output subject to V14 if used for SIMPLE_STACK
-//    own 17 D1 within_strict — clm-v4 family (anima-native LoRA)
-//    own 18 chat-cap C2 — natural utterance scored (helper emits stub axes
+// V14 — verdict-grade output subject to V14 if used for SIMPLE_STACK
+// D1 within_strict — clm-v4 family (anima-native LoRA)
+// chat-cap C2 — natural utterance scored (helper emits stub axes
 //      spontaneity/coherence/persona; full V4 evaluator integration carry)
-//    own 22 mandatory report — bench mode marker + JSON record machine-parseable
-//    own 33 trinity ✓
-//    own 34 mandate-1/2 — wrapping 0 strict; no system prompt; raw decode
-//    own 38 매단계
-//    own 39 yaml↔md
-//    own 41 chat lane plugin pattern — Path 3 status FULL transition
+// mandatory report — bench mode marker + JSON record machine-parseable
+// trinity ✓
+// mandate-1/2 — wrapping 0 strict; no system prompt; raw decode
+// 매단계
+// yaml↔md
+// chat lane plugin pattern — Path 3 status FULL transition
 //
 //  HONEST C3 (raw#10 emit ≥1 to stderr)
 //    C1 generate path emits via model.generate(); CLM v4 has no past_kv cache
@@ -41,7 +41,7 @@
 //       fixes. CLM v4 mk2-v1 mode-collapse `:::` (p=46%) memory carry.
 //    C3 sampler defaults (T=0.7 top_p=0.9 top_k=40 rep_pen=1.1) are anima-
 //       internal; not benchmarked against CLM v4 base.
-//    C4 own 34 mandate-1: NO chat template, NO system prompt; output bytes
+// C4 mandate-1: NO chat template, NO system prompt; output bytes
 //       are decoded raw and emitted preserved (no .strip(), no truncation).
 //    C5 sft-1-8 substrate is undertrained for natural-language emit on Korean/
 //       English prompts (carry from c3e8ba2c C2_FAIL_BY_DESIGN); generate
@@ -158,7 +158,7 @@ fn _extract_generated(out: string) -> array {
     let ei = out.index_of(end)
     if ei < 0 || ei <= bi { return ["", ""] }
     let json_block = out.substring(bi + begin.len(), ei).trim()
-    // crude json key extract for "generated" — own 34 raw-byte preserve concern
+    // crude json key extract for "generated" — raw-byte preserve concern
     // means we keep the full JSON record as the verifiable provenance and
     // surface a best-effort text excerpt.
     let key = "\"generated\":"
@@ -193,7 +193,7 @@ fn _extract_generated(out: string) -> array {
     return [text, json_block]
 }
 
-// own 18 C2 axis-stub emit (own 22 mandatory report; helper records the canonical
+// C2 axis-stub emit (mandatory report; helper records the canonical
 // stub axes inside the JSON; this is the lane-level summary line for benchmarks).
 fn _emit_c2_stub(text: string, repo: string) {
     let spont = if text.trim() == "" { "empty" } else { "emit" }
@@ -255,7 +255,7 @@ fn main() {
         // honest C3 fallback — emit notice + delegate to substrate emit
         println("[lane=generate] HONEST C3: subcmd=" + (if has_subcmd { "LAND" } else { "PENDING" })
             + " helper=" + (if has_helper { "LAND" } else { "PENDING" }))
-        println("                falling back to substrate probe for parity (own 34 raw)")
+        println(" falling back to substrate probe for parity (raw)")
         let root = _resolve_root()
         let core = root + "/anima-core/runtime/clm_v4_mount.hexa"
         let model_arg = if repo != "" { " --model " + repo } else { "" }
@@ -275,12 +275,12 @@ fn main() {
     print(out)
     println("")
 
-    // Extract generated text + emit own 18 C2 axis stub
+    // Extract generated text + emit C2 axis stub
     let parts = _extract_generated(out)
     let generated_text = _str(parts[0])
     if bench_mode {
         // Surface a clean control-band summary line for benchmark consumers
-        // (own 36 control-band: lane meta-emit, NOT model output)
+        // (control-band: lane meta-emit, NOT model output)
         println("[GENERATED_TEXT lane=generate len=" + to_string(generated_text.len()) + "]")
         if generated_text != "" {
             println(generated_text)

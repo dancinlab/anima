@@ -43,15 +43,15 @@ substrate response (raw, including ::: collapse) → stdout
 
 ## Compliance
 
-- **own 34 mandate-1**: simple_stack output preservation — `clm_v4_mount.hexa`
+- ** mandate-1**: simple_stack output preservation — `clm_v4_mount.hexa`
   의 substrate response 변형 없이 stdout 직출.
-- **own 34 mandate-2**: wrapping 0 — selftest grep verified.
-- **own 34 mandate-4**: 자율 발화 wired Phase 2 (LANDED 2026-05-08, iter 3 b-fix)
+- ** mandate-2**: wrapping 0 — selftest grep verified.
+- ** mandate-4**: 자율 발화 wired Phase 2 (LANDED 2026-05-08, iter 3 b-fix)
   — `sys_stdin_read_line_timeout(tick_ms)` polls stdin; on timeout
   `_invoke_substrate("")` fires (empty probe) → substrate 자체 free-run.
-- **own 34 mandate-7**: chat lane = thin pipe; substrate response decision
+- ** mandate-7**: chat lane = thin pipe; substrate response decision
   은 `clm_v4_mount.hexa` (model layer) 책임.
-- **own 34 mandate-1 ★ 핵심**: `:::` collapse mode (memory feedback_clm_colon_attractor:
+- ** mandate-1 ★ 핵심**: `:::` collapse mode (memory feedback_clm_colon_attractor:
   p=46% on `:`-terminated prompt) 도 raw 그대로 노출. mitigate / strip / filter
   하지 않음. CLM v4 의 학습 분포 그 자체가 사용자에게 보여야 함.
 
@@ -65,7 +65,7 @@ substrate response (raw, including ::: collapse) → stdout
 - `use "stdlib/sys"` import added.
 - `read_line()` → `sys_stdin_read_line_timeout(tick_ms)` swap.
 - `--tick-ms N` flag (default 1000ms) — REPL poll cadence.
-- Timeout path → `_invoke_substrate("")` (own 34 mandate-4 자율 발화).
+- Timeout path → `_invoke_substrate("")` (mandate-4 자율 발화).
 - `_hexa()` → `/Users/ghost/.hx/packages/hexa/hexa.real` (local interp,
   matches anima_native + llama; bin/hexa wrapper would route to remote
   ubu-1 and lose stdout pipe semantics needed for `chat/duo/` channel
@@ -93,7 +93,7 @@ turns — multi-turn context accumulation은 본 모듈에서 안 함 (substrate
 - Sister shim: `tool/transient_py/clm_v4_hf_format_shim.py` (LOCKED v4 shim,
   loading layer — chat path 자체는 .hexa only)
 - Spec: `docs/anima_core_clm_v4_mount_emerge_paradigm_2026_05_05.md`
-- Mandates: `.own` own 34, own 18 C2 cross-ref, own 33 trinity compliance
+- Mandates: `.own`, C2 cross-ref, trinity compliance
 
 ## Selftest
 

@@ -4,7 +4,7 @@
 //  PURPOSE
 //    Empty-prompt init pattern. Speaker A receives NO seed at t=1; the
 //    instance is expected to autonomous-emit the first utterance per
-//    own 34 mandate-4 (autonomous speech 정합).
+// mandate-4 (autonomous speech 정합).
 //
 //  CONTRACT
 //    resolve_init(argv) -> string
@@ -16,19 +16,19 @@
 //    --init-pattern=autonomous
 //
 //  RISK ACKNOWLEDGEMENT
-//    Without REPL keepalive + non-blocking stdin (own 34 phase 2), A may
+// Without REPL keepalive + non-blocking stdin (phase 2), A may
 //    block on stdin read or emit silence (timeout). chat/llama/llama.hexa
 //    + chat/anima_native/anima_native.hexa both wire sys_stdin_read_line_
 //    timeout(ms) per Phase 2 land — autonomous emission is supported.
-//    CLM v4 substrate-only models may emit ::: collapse (own 34 mandate-1
+// CLM v4 substrate-only models may emit ::: collapse (mandate-1
 //    raw passthrough preserves the artifact for caller diagnosis).
 //
 //  COMPLIANCE
-//    own 18 C2 — autonomous baseline measurement (spontaneity高)
-//    own 22 — silence outcome ledgerable as honest C3
-//    own 33 — own 17 / own 18 / own 34 cross-link
-//    own 34 mandate-1 — wrapping 0 (no seed = no wrap)
-//    own 34 mandate-4 — autonomous speech 정합 default
+// C2 — autonomous baseline measurement (spontaneity高)
+// — silence outcome ledgerable as honest C3
+// — / / cross-link
+// mandate-1 — wrapping 0 (no seed = no wrap)
+// mandate-4 — autonomous speech 정합 default
 // ════════════════════════════════════════════════════════════════════════════
 
 fn _str(x) -> string {
@@ -79,7 +79,7 @@ fn main() {
             println("FAIL autonomous.resolve_init returned non-empty: \"" + r + "\"")
             exit(1)
         }
-        println("PASS autonomous.resolve_init returned empty (own 34 mandate-4 autonomous-emit semantics)")
+        println("PASS autonomous.resolve_init returned empty (mandate-4 autonomous-emit semantics)")
         return
     }
     let r = resolve_init(argv)

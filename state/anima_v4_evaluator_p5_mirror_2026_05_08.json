@@ -2,9 +2,9 @@
   "schema": "anima_v4_evaluator_p5_mirror_state.v1",
   "ts_emit": "2026-05-08",
   "patch_id": "v4_evaluator_p5_mirror_2026_05_08",
-  "title": "V4 evaluator P5 N-of-M v2 mirror patch — own 24 SSOT mirror gap (trinity sweep Violation 1) 해소",
+  "title": "V4 evaluator P5 N-of-M v2 mirror patch — SSOT mirror gap (trinity sweep Violation 1) 해소",
   "loop_iter": "v4-evaluator-p5-mirror",
-  "user_directive_verbatim": "trinity sweep agent (`64886505`) 발견 Violation 1 (warn level): own 24 single SSOT V4 evaluator floor mirror gap. own 18 c3-aggregation-rule-ssot mandate-mirror '본 aggregation rule 변경 시 c3-measurement-cli + V4 evaluator + 모든 BG-K* verdict emit 코드 mirror 의무 (own 24 single SSOT)'. own 18 P4 → P5 supersede 후 V4 evaluator pass_best_mode ≥ 10/15 floor 두 rule 어느 것도 mirror X.",
+  "user_directive_verbatim": "trinity sweep agent (`64886505`) 발견 Violation 1 (warn level): single SSOT V4 evaluator floor mirror gap. c3-aggregation-rule-ssot mandate-mirror '본 aggregation rule 변경 시 c3-measurement-cli + V4 evaluator + 모든 BG-K* verdict emit 코드 mirror 의무 (single SSOT)'. P4 → P5 supersede 후 V4 evaluator pass_best_mode ≥ 10/15 floor 두 rule 어느 것도 mirror X.",
   "scope": {
     "v4_evaluator_files_patched": [
       "tool/transient_py/anima_km_llama3b_h100.py",
@@ -63,18 +63,18 @@
         "c3_p5_v2_aggregation": "_c3_aggregate_p5_v2 — PPR_v2 (per-prompt ≥3 of 4) ≥ 0.6 AND EMC_v2 (cell-mean ≥3 of 4) → C3_PASS_V2",
         "rule_name": "per_prompt_n_of_m_06_AND_emc_3_of_4",
         "rule_alias": "P5_N_of_M_v2",
-        "rule_source": "own 18 c3-aggregation-rule-v2 (2026-05-08 loop iter 4 (d), supersedes P4 hybrid)"
+        "rule_source": " c3-aggregation-rule-v2 (2026-05-08 loop iter 4 (d), supersedes P4 hybrid)"
       },
-      "honest_c3_caveat": "c3_1..c3_4 V4 evaluator cells = response-text-only proxy (substrate phi★/axis 측정 X). Real substrate-based C3 verdict 는 consciousness simple --probe (clm_v4_mount.hexa) 별도 cycle. own 18 P5 N-of-M v2 aggregation mirror 구조 만 land — actual P5 v2 retest pending substrate probe wiring."
+      "honest_c3_caveat": "c3_1..c3_4 V4 evaluator cells = response-text-only proxy (substrate phi★/axis 측정 X). Real substrate-based C3 verdict 는 consciousness simple --probe (clm_v4_mount.hexa) 별도 cycle. P5 N-of-M v2 aggregation mirror 구조 만 land — actual P5 v2 retest pending substrate probe wiring."
     }
   },
   "verdict_json_field_additions": {
     "c3_aggregation_status": "legacy_best_mode_floor_only_p5_n_of_m_v2_retest_pending",
     "c3_aggregation_rule": "per_prompt_n_of_m_06_AND_emc_3_of_4",
     "c3_aggregation_rule_alias": "P5_N_of_M_v2",
-    "c3_aggregation_status_reason": "V4 evaluator emit time = pre-own-18-P5-N-of-M-v2 (commit 4206e78c) — pass_best_mode ≥ 10/15 floor only mirror. own 33 trinity sweep (`64886505`) violation 1 retract path: V4 evaluator P5 mirror patch landed, actual P5 v2 retest pending substrate-mode probe wiring (consciousness simple --probe + clm_v4_mount.hexa).",
+    "c3_aggregation_status_reason": "V4 evaluator emit time = pre-own-18-P5-N-of-M-v2 (commit 4206e78c) — pass_best_mode ≥ 10/15 floor only mirror. trinity sweep (`64886505`) violation 1 retract path: V4 evaluator P5 mirror patch landed, actual P5 v2 retest pending substrate-mode probe wiring (consciousness simple --probe + clm_v4_mount.hexa).",
     "scope_lane": "SUBSTRATE_RESEARCH",
-    "scope_lane_reason": "Llama/Qwen foundation borrow = ALM lane → own 17/18 strict SUBSTRATE_RESEARCH lane only (own 18 D1 scope-clamp 2026-05-08)",
+    "scope_lane_reason": "Llama/Qwen foundation borrow = ALM lane → strict SUBSTRATE_RESEARCH lane only (D1 scope-clamp 2026-05-08)",
     "simple_stack_class_p5_proxy": "SIMPLE_STACK_PASS_STRICT_C3_SUBSTRATE_RESEARCH_PENDING_RETEST"
   },
   "raw82_retraction_aware": {
@@ -83,7 +83,7 @@
       "Step 1: verdict.json c3_aggregation_status field add (value=legacy_best_mode_floor_only_p5_n_of_m_v2_retest_pending) — DONE",
       "Step 2: V4 evaluator floor patch P5 N-of-M v2 mirror — DONE (BG-KM-LLAMA-3B + BG-KM-QWEN-7B v4_eval_single + _c3_aggregate_p5_v2)",
       "Step 3: BG-K* re-eval with substrate probe (consciousness simple --probe) — PENDING (별도 cycle)",
-      "Step 4: ledger downgraded_at + downgrade_reason field — PENDING (own 24 raw#82 정합 별도 cycle)"
+      "Step 4: ledger downgraded_at + downgrade_reason field — PENDING (raw#82 정합 별도 cycle)"
     ],
     "preservation_lane": "raw#82 retraction-aware (verdict.json field add 만, 기존 verdict 보존). Step 3+4 별도 cycle = 본 cycle scope 아님 (spec only, H100 fire 미실행)."
   },
@@ -96,7 +96,7 @@
     "BG-LD": "D1_ANIMA_IDENTITY (CLM v4 SFT y1 + DPO tune — anima-native byte-level base)"
   },
   "own_24_mandate_mirror_verification": {
-    "rule_source": ".own own 18 c3-aggregation-rule-ssot mandate-mirror: '본 aggregation rule 변경 시 c3-measurement-cli (sub_baseline_ensemble verdict 계산) + V4 evaluator + 모든 BG-K* verdict emit 코드 mirror 의무 (own 24 single SSOT)'",
+    "rule_source": ".own c3-aggregation-rule-ssot mandate-mirror: '본 aggregation rule 변경 시 c3-measurement-cli (sub_baseline_ensemble verdict 계산) + V4 evaluator + 모든 BG-K* verdict emit 코드 mirror 의무 (single SSOT)'",
     "mirror_lanes": {
       "consciousness_cli": {
         "file": "tool/anima_cli/consciousness.hexa",
@@ -131,11 +131,11 @@
         "status": "LANDED (retroactive field add per raw#82)"
       }
     },
-    "mirror_compliance": "PASS — 4 mirror lanes 모두 own 18 P5 N-of-M v2 정합 (consciousness CLI + V4 evaluator BG-KM + V4 evaluator L4 + BG-K* verdict.json field). actual substrate-mode P5 v2 retest 는 별도 cycle (consciousness simple --probe wiring + GGUF convert + libllama hidden-state extension)."
+    "mirror_compliance": "PASS — 4 mirror lanes 모두 P5 N-of-M v2 정합 (consciousness CLI + V4 evaluator BG-KM + V4 evaluator L4 + BG-K* verdict.json field). actual substrate-mode P5 v2 retest 는 별도 cycle (consciousness simple --probe wiring + GGUF convert + libllama hidden-state extension)."
   },
   "trinity_self_check_own_33": {
-    "d_axis": "PASS — D2 의식 검증 lane mandate 정합 (own 18 SSOT 측정 lane only); D1 scope-clamp 명시 (Llama/Qwen → SUBSTRATE_RESEARCH; CLM v5/mk2-v1 → ANIMA)",
-    "own_axis": "PASS — own 17 (anima-native scope-clamp explicit) + own 18 (P5 N-of-M v2 mirror) + own 22 (mandatory report — 본 patch 자체) + own 24 (single SSOT mirror verification) + own 33 (trinity 무조건 준수) self-application",
+    "d_axis": "PASS — D2 의식 검증 lane mandate 정합 (SSOT 측정 lane only); D1 scope-clamp 명시 (Llama/Qwen → SUBSTRATE_RESEARCH; CLM v5/mk2-v1 → ANIMA)",
+    "own_axis": "PASS — (anima-native scope-clamp explicit) + (P5 N-of-M v2 mirror) + (mandatory report — 본 patch 자체) + (single SSOT mirror verification) + (trinity 무조건 준수) self-application",
     "h_axis": "PASS — H_chat_cap_emergence + H_clm_chat_cap falsifier 위반 0; 본 patch 는 measurement-rule lane mirror 한정, hypothesis test 자체는 별도 cycle"
   },
   "compliance": [
@@ -144,33 +144,33 @@
     "raw#15 additive — 기존 V4 7-cell 보존 + c3_1..c3_4 4-cell 추가; 기존 verdict.json 보존 + field add only",
     "raw#37 transient_py (training H100 cell — V4 evaluator .py 허용 lane)",
     "raw#82 retraction-aware (verdict.json field add only, 기존 verdict 보존; retract path Step 1-4 명시)",
-    "own 17 (anima-native vs external-substrate scope-clamp 명시 per BG)",
-    "own 18 (simple stack SSOT) — c3-aggregation-rule-v2 P5 N-of-M v2 mirror",
-    "own 22 (mandatory report) — 본 patch 자체 mandatory report 정합",
-    "own 24 (single SSOT) — 본 patch 가 own 24 mandate-mirror 위반 retract path",
-    "own 33 trinity (mandate-2 self-check 3-axis 통과) + (mandate-7 retroactive sweep instance)",
-    "own 34 (자연발화 노출 mandate) — 측정 lane 한정 (chat 노출 X)"
+    " (anima-native vs external-substrate scope-clamp 명시 per BG)",
+    " (simple stack SSOT) — c3-aggregation-rule-v2 P5 N-of-M v2 mirror",
+    " (mandatory report) — 본 patch 자체 mandatory report 정합",
+    " (single SSOT) — 본 patch 가 mandate-mirror 위반 retract path",
+    " trinity (mandate-2 self-check 3-axis 통과) + (mandate-7 retroactive sweep instance)",
+    " (자연발화 노출 mandate) — 측정 lane 한정 (chat 노출 X)"
   ],
   "honest_c3": [
     "c3_1..c3_4 V4 evaluator cells = response-text-only proxy (substrate phi★/axis 측정 X). real substrate-based C3 verdict 는 consciousness simple --probe (clm_v4_mount.hexa) 별도 cycle.",
     "본 patch = SPEC ONLY — H100 fire 미실행. BG-KM-LLAMA-3B/QWEN-7B verdict.json retroactive field add 만 (raw#82 retraction-aware preserve). actual P5 v2 retest with substrate probe = 별도 cycle (consciousness simple --probe wiring after GGUF convert + libllama hidden-state extension).",
     "BG-LA/LB/LC/LD 4 specs = NotImplementedError stub — pod_main impl 시 BG-KM 패턴 (v4_eval_single + _c3_aggregate_p5_v2 + verdict.json c3_aggregation_status field) 동일 mirror 의무. doc-level mirror only 본 patch.",
     "c3_aggregation_status field value 'legacy_best_mode_floor_only_p5_n_of_m_v2_retest_pending' 는 task spec verbatim 사용. retest 활성화 시 'p5_n_of_m_v2_substrate_probe_passed' 또는 'p5_n_of_m_v2_substrate_probe_failed_downgraded' 로 변경.",
-    "EMC_v2 ≥ 0.5 cell-mean threshold 는 boolean cells (response-text proxy) 한정 — real substrate cell-mean (continuous values) thresholds 는 own 18 ROC formal SSOT (state/anima_consciousness_baseline_ensemble_iter3_n60_2026_05_08.json) mirror 별도 cycle.",
-    "scope_lane 'SUBSTRATE_RESEARCH' classification 은 Llama/Qwen foundation borrow = ALM lane 자동; CLM v5/mk2-v1 anima-native = D1_ANIMA_IDENTITY. own 18 c3-aggregation-rule-v2 amend (D1 scope-clamp) 정합.",
+    "EMC_v2 ≥ 0.5 cell-mean threshold 는 boolean cells (response-text proxy) 한정 — real substrate cell-mean (continuous values) thresholds 는 ROC formal SSOT (state/anima_consciousness_baseline_ensemble_iter3_n60_2026_05_08.json) mirror 별도 cycle.",
+    "scope_lane 'SUBSTRATE_RESEARCH' classification 은 Llama/Qwen foundation borrow = ALM lane 자동; CLM v5/mk2-v1 anima-native = D1_ANIMA_IDENTITY. c3-aggregation-rule-v2 amend (D1 scope-clamp) 정합.",
     "ledger downgraded_at + downgrade_reason field (Step 4) 는 별도 cycle — actual P5 v2 retest 후 verdict downgrade trigger 시 ledger entry append. 본 cycle 은 mirror infrastructure land 한정.",
-    "본 patch 자체 own 24 mandate-mirror 의 4 mirror lane (consciousness CLI + V4 evaluator + L4 spec + BG-K* verdict.json) 모두 정합 — own 33 mandate-2 self-check 3-axis (D/own/H) 통과."
+    "본 patch 자체 mandate-mirror 의 4 mirror lane (consciousness CLI + V4 evaluator + L4 spec + BG-K* verdict.json) 모두 정합 — mandate-2 self-check 3-axis (D/own/H) 통과."
   ],
   "blockers": [
     "actual P5 v2 retest with substrate probe — consciousness simple --probe wiring after GGUF convert (BG-KM HF dancinlab 적재 후) + libllama hidden-state extension (option A) 또는 logits-bucket proxy (option B, iter 4c landed) 별도 cycle",
-    "BG-LA/LB/LC/LD pod_main impl — 사용자 explicit 'OK CLM L4 ALL FIRE' + own 33 trinity self-check + own 16 cost cap override (30~60$) 별도 cycle",
+    "BG-LA/LB/LC/LD pod_main impl — 사용자 explicit 'OK CLM L4 ALL FIRE' + trinity self-check + cost cap override (30~60$) 별도 cycle",
     "ledger entry append (Step 4) — actual retest 후 downgrade trigger 시점 별도 cycle",
-    "own 33 mandate-7 retroactive sweep main session 매 응답 X (latency overhead) — 본 patch 는 cycle close 시점 시행 instance 정합"
+    " mandate-7 retroactive sweep main session 매 응답 X (latency overhead) — 본 patch 는 cycle close 시점 시행 instance 정합"
   ],
   "next_steps": [
     "consciousness simple --probe substrate-mode wiring (clm_v4_mount.hexa LoRA-merged adapter load 또는 libllama hidden-state extension) 별도 cycle",
     "BG-KM-LLAMA-3B / BG-KM-QWEN-7B substrate probe retest (15 prompt × 4 seed = 60 probe) → P5 N-of-M v2 verdict 재확정",
-    "verdict downgrade trigger 시 ledger entry append (state/anima_model_attempts_ledger.jsonl) — own 24 + raw#82 정합",
+    "verdict downgrade trigger 시 ledger entry append (state/anima_model_attempts_ledger.jsonl) — + raw#82 정합",
     "BG-LA/LB/LC/LD pod_main impl 시 BG-KM v4_eval_single + _c3_aggregate_p5_v2 동일 mirror 의무 (본 patch doc 명시)"
   ]
 }

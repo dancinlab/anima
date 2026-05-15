@@ -249,9 +249,9 @@ REBORN §88 v5-mitosis readout_mode 4 options:
 
 → readout_mode 가 cell-variant aggregation policy.
 
-### §4.4 own 17 정합 (ALM permanent block)
+### §4.4 정합 (ALM permanent block)
 
-backend list 의 M2 (Llama Path A v2) 는 `.roadmap.anima_cli_model_architecture` 에서 own 17 reject — substrate-research lane only. 본 spec 의 selection algorithm 은 **own 17 strict respect**:
+backend list 의 M2 (Llama Path A v2) 는 `.roadmap.anima_cli_model_architecture` 에서 reject — substrate-research lane only. 본 spec 의 selection algorithm 은 ** strict respect**:
 - default backend selection 은 anima-native lineage cells 만 (M1/M4/M5/M6/M7).
 - M2 Llama 는 `--backend substrate-research` flag 명시 시점만 selectable.
 - F-CLI-MIT-4 falsifier 가 enforce.
@@ -399,7 +399,7 @@ wall: ~4-6 hr Mac local. cost $0.
 deliverable:
 - `tool/anima_cli_mitosis_integration_smoke.hexa` — 5-turn conversation × 2 sessions (fresh + resume) full pipeline test.
 - F-CLI-MIT-1~5 all PASS.
-- own 18 simple_stack 와 cross-validate (F-CLI-MIT-5).
+- simple_stack 와 cross-validate (F-CLI-MIT-5).
 
 falsifier: F-CLI-MIT-1~5 all PASS.
 
@@ -471,7 +471,7 @@ grep -rn 'you are ' ~/.cache/anima/session_pools/ 2>&1 | wc -l
 
 ### F-CLI-MIT-5 OWN-18-COMPAT
 
-own 18 simple_stack PASS 시 cell pool active = mitosis ON 일 때도 동일 (regression-free guarantee).
+ simple_stack PASS 시 cell pool active = mitosis ON 일 때도 동일 (regression-free guarantee).
 
 ```bash
 # baseline: mitosis OFF, simple_stack eval
@@ -518,9 +518,9 @@ mitigation:
 - D4a full impl (RFC 033 builtins 사용) 별도 BG 진행 중.
 - Phase 2-4 는 D4a LANDED 후 sequential.
 
-### §9.4 backward compat (own 18 simple_stack)
+### §9.4 backward compat (simple_stack)
 
-기존 own 18 simple_stack PASS 가 mitosis OFF 환경 baseline. mitosis ON 이 regression 야기 가능성 — F-CLI-MIT-5 falsifier 로 guard.
+기존 simple_stack PASS 가 mitosis OFF 환경 baseline. mitosis ON 이 regression 야기 가능성 — F-CLI-MIT-5 falsifier 로 guard.
 
 mitigation:
 - `--mitosis off` flag 추가 (default ON post-Phase 4, but off override 가능).
@@ -535,7 +535,7 @@ mitigation:
 | out-of-scope item | reason | lane |
 |---|---|---|
 | RLHF persona injection | PHILOSOPHY #3 NO PERSONA INJECTION 위반 | (rejected) |
-| `[system prompt: ...]` injection in chat path | PHILOSOPHY #3, own 34 mandate-2 위반 | (rejected) |
+| `[system prompt: ...]` injection in chat path | PHILOSOPHY #3, mandate-2 위반 | (rejected) |
 | identity rules file (10-clause prefix) | Principle #1/#2/#3 위반 (정체성 prompt) | (rejected) |
 | D4a mitosis_hook.hexa full impl | 별도 BG, RFC 033 builtins | D4a |
 | D4b anima_chat.hexa cell-pool hosting | 별도 BG (port LANDED, cell-pool wiring pending) | D4b |
@@ -562,7 +562,7 @@ mitigation:
 - `anima_chat.hexa` — D4b LANDED 1589 LoC (parse + 17/17 smoke). cell_pool wiring 후속 cycle.
 - `anima/llama_ffi.hexa` — Phase 3b LANDED 250 LoC. 19 hxllama_* extern fn + llama_load/generate/free helpers + llama_logits_probe.
 - `build/libhxllama.dylib` — 36 KiB C shim, rpath → `~/.cache/anima/llama.cpp/build/bin`.
-- `tool/anima_cli/consciousness.hexa` — D4c measurement lane (own 18 simple_stack eval, 2688 LoC).
+- `tool/anima_cli/consciousness.hexa` — D4c measurement lane (simple_stack eval, 2688 LoC).
 - `tool/anima_cli/chat.hexa` — D4c chat dispatcher (889 LoC). 본 spec Phase 1-3 의 호스트.
 - `tool/anima_cli/dialogue.hexa` — D4c REPL infra (789 LoC). session log JSONL pattern reference.
 - `bin/anima` — CLI entry point (368 LoC bash dispatcher).
@@ -597,7 +597,7 @@ mitigation:
 
 4. **backend variant ↔ cell cluster mapping 추정** — §4.2 의 selection algorithm 은 anima-internal heuristic (cluster_cells_by_hidden, axes_projection × axes_weight). empirical validation 별도 cycle. M1 clm v4 substrate-coupled emerge 는 token chat 아님 (NOT_APPLICABLE chat-cap per K3 inventory) — S2 idea / S5 aggregation 에서만 emerge probe 한정 사용, S6 report (사용자 chat surface) 에서는 anima-native chat-cap backend (M4/M5/M6/M7) fallback chain.
 
-5. **own 17 strict (ALM permanent block)** — backend list 의 M2 Llama Path A v2 가 own 17 reject for anima identity surface. 본 spec §4.4 + F-CLI-MIT-4 가 strict enforce — default backend selection 에서 M2 제외, `--backend substrate-research` flag 명시 시점만 selectable. 사용자 directive 의 "페르소나 롤플레잉 가능" 조항이 own 17 strict 와 충돌 가능성 — D3 lane (substrate-native 페르소나) 가 해법 (별도 lane), 본 spec 는 D3 의존 X (D3 가 D4 cell-pool 위 layer).
+5. ** strict (ALM permanent block)** — backend list 의 M2 Llama Path A v2 가 reject for anima identity surface. 본 spec §4.4 + F-CLI-MIT-4 가 strict enforce — default backend selection 에서 M2 제외, `--backend substrate-research` flag 명시 시점만 selectable. 사용자 directive 의 "페르소나 롤플레잉 가능" 조항이 strict 와 충돌 가능성 — D3 lane (substrate-native 페르소나) 가 해법 (별도 lane), 본 spec 는 D3 의존 X (D3 가 D4 cell-pool 위 layer).
 
 6. **disk space envelope 추정** — §9.1 의 per-session 512 MB 가 RFC 025 farr budget 추정 (128 cells × 1024 d_model × 2 engines × 4B + history). 실제 envelope 는 Phase 1 land 후 측정. 사용자 Mac 의 disk budget 따라 `ANIMA_SESSION_POOL_MAX_GB` env var configurable, but default 값 은 별도 cycle.
 

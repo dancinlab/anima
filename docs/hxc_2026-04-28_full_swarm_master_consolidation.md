@@ -35,7 +35,7 @@ This document **consolidates** outputs across 16 parallel agents that ran inside
 |---|---|---|---|---|---|---|
 | **a71f4164** | raw 142 cross-repo propagation | T+1h | T+2h | COMPLETE | 5/5 sister repos validate D1 (content-class topology) and D4 (self-correction cadence) UNIVERSALLY. D2 (try-and-revert) and D3 (orthogonality) FULL in 3/5 (anima, hexa-lang, nexus); PARTIAL in airgenome+n6 (architectural-level revert via idempotence). hexa-lang independent-of-anima validates all 4 → raw 142 promotion CRITERIA MET. | `state/format_witness/2026-04-28_raw142_cross_repo_validation.jsonl` |
 | **afcc24b5** | raw 143-148 등록 | T+1h | T+2h | COMPLETE | 6 raws registered with full triad compliance, falsifier preregistration, and self-application 10/10 at registration: raw 143 (entropy-coder mandate), 144 (exec-cmd-length-guard), 145 (aot-cache-canonical-path), 146 (prefix-length-mismatch-lint), 147 (prefix-aware-find-mandate), 148 (cross-file-shared-dictionary-mandate). | `hive/.raw` lines for raw 143-148 |
-| **a74685bb** | own 7/8/9 cross-repo audit | T+1h | T+2h | COMPLETE | 5 actionable mirror proposals across nexus + n6; hexa-lang REJECTED on parser-self-host scope; airgenome BLOCKED on `.own` bootstrap (no SSOT). own 7 (heredoc-arg-max) lowest cross-repo applicability; own 8 + own 9 propagate cleanly. | `state/format_witness/2026-04-28_own789_cross_repo_audit.jsonl` |
+| **a74685bb** | cross-repo audit | T+1h | T+2h | COMPLETE | 5 actionable mirror proposals across nexus + n6; hexa-lang REJECTED on parser-self-host scope; airgenome BLOCKED on `.own` bootstrap (no SSOT). (heredoc-arg-max) lowest cross-repo applicability; + propagate cleanly. | `state/format_witness/2026-04-28_own789_cross_repo_audit.jsonl` |
 | **a07ea3d2** | Phase 11 design + trajectory consolidation | T+1h | T+2h | COMPLETE | Post-A18 territory: 5 candidates evaluated (A19 universal compressor / A20 schema-aware tokenizer / A19-fed federation / A22 self-decoding / A21 write-side ref). Recommended priority `[A19, A20, A19-fed, A22, A21-ref]`. 6-repo aggregate projected 92-93% at Phase 11 P3 closure. | `docs/hxc_phase11_design_post_a18_20260428.md` (463 LoC), commit `8694b9ea`, raw 149-153 candidates |
 | **a9ee2e43** | A17 PPMd order-3 first ~150 LoC | T+2h | partial | RUNNING / partial | 87% selftest reported at compaction. PPM context tree memory ~4-16MB design preserved; integer-only Cleary-Witten 1984 PPM port path validated. | hxc_a17 work-in-progress (no commit yet) |
 
@@ -177,11 +177,11 @@ The Phase 5 → Phase 11 P3 trajectory: ~78pp gain over ~5800 LoC. Per-pp margin
 - raw 148 algorithm-cross-file-shared-dictionary-mandate (sourced from aba1a0ee A16 design)
 - All 6: 10/10 self-applied at registration · falsifier preregistered · raw 95 triad-compliant · raw 47 cross-repo propagation pending
 
-### 3.12 own 7/8/9 + cross-repo audit (a74685bb)
+### 3.12 + cross-repo audit (a74685bb)
 
-- own 7 anima-heredoc-arg-max-guard (Bug 1 anima scope mirror)
-- own 8 anima-content-class-topology (raw 142 D1 mirror)
-- own 9 anima-try-revert-orthogonality-wrapper (raw 142 D2/D3 mirror)
+- anima-heredoc-arg-max-guard (Bug 1 anima scope mirror)
+- anima-content-class-topology (raw 142 D1 mirror)
+- anima-try-revert-orthogonality-wrapper (raw 142 D2/D3 mirror)
 - Cross-repo audit verdict: 5 actionable mirrors (nexus 2 + n6 3); hexa-lang REJECTED on scope; airgenome BLOCKED on `.own` bootstrap
 
 ### 3.13 Bug 1 hxc_convert + anima MED-risk fix (ad0ef0d9)
@@ -236,20 +236,20 @@ The Phase 5 → Phase 11 P3 trajectory: ~78pp gain over ~5800 LoC. Per-pp margin
 
 ### 5.1 anima new this swarm
 
-- **own 7** anima-heredoc-arg-max-guard (Bug 1 anima scope, raw 144 anima mirror)
-- **own 8** anima-content-class-topology (raw 142 D1 mirror)
-- **own 9** anima-try-revert-orthogonality-wrapper (raw 142 D2/D3 mirror)
+- **** anima-heredoc-arg-max-guard (Bug 1 anima scope, raw 144 anima mirror)
+- **** anima-content-class-topology (raw 142 D1 mirror)
+- **** anima-try-revert-orthogonality-wrapper (raw 142 D2/D3 mirror)
 
 Total anima `.own` count: **9**.
 
 ### 5.2 Cross-repo mirror candidates (a74685bb audit)
 
-| repo | own 7 | own 8 | own 9 | overall |
+| repo | | | | overall |
 |---|---|---|---|---|
-| nexus | DEFER (hive raw 137b inheritance) | PROPOSE MIRROR own 4 | PROPOSE MIRROR own 5 | READY |
+| nexus | DEFER (hive raw 137b inheritance) | PROPOSE MIRROR | PROPOSE MIRROR | READY |
 | hexa-lang | REJECTED (parser-self-host scope) | REJECTED (scope) | REJECTED (scope) | architecturally inappropriate |
 | airgenome | BLOCKED (no `.own` SSOT) | BLOCKED (HIGHEST priority post-bootstrap) | BLOCKED (Python-tier extension needed) | infra prerequisite |
-| CANON | PROPOSE MIRROR own 24 (bash extension) | PROPOSE MIRROR own 25 (entropy-bound verdict absorb) | PROPOSE MIRROR own 26 (renumbered, own 9 already taken) | READY w/ adaptation |
+| CANON | PROPOSE MIRROR (bash extension) | PROPOSE MIRROR (entropy-bound verdict absorb) | PROPOSE MIRROR (renumbered, already taken) | READY w/ adaptation |
 
 5 actionable mirrors total; awaiting user approval gate.
 
@@ -362,7 +362,7 @@ For external auditors traversing this consolidation: each agent verdict is doubl
 | Bug 3 verdict | `state/format_witness/2026-04-28_bug3_substring_offset_verdict.jsonl` |
 | Bug 4 verdict | `state/format_witness/2026-04-28_bug4_findcall_verdict.jsonl` |
 | raw 142 cross-repo | `state/format_witness/2026-04-28_raw142_cross_repo_validation.jsonl` |
-| own 7/8/9 cross-repo audit | `state/format_witness/2026-04-28_own789_cross_repo_audit.jsonl` |
+| cross-repo audit | `state/format_witness/2026-04-28_own789_cross_repo_audit.jsonl` |
 | Subagent swarm status | `state/format_witness/2026-04-28_subagent_swarm_status.jsonl` |
 | Phase 8 final consolidated | `state/format_witness/2026-04-28_phase8_final_consolidated.jsonl` |
 | Phase 10 master roadmap | `docs/hxc_phase10_master_roadmap_20260428.md` |
@@ -381,8 +381,8 @@ For external auditors traversing this consolidation: each agent verdict is doubl
 | `73b8d4e8` | 13-agent swarm status snapshot |
 | `f1727967` | Bug 1 MED-risk 4 anima fixes (ad0ef0d9 partial) |
 | `41abae24` | Bug 4 verdict (ae7c7e125) |
-| `64dbdcfa` | own 9 anima-try-revert-orthogonality-wrapper |
-| `e5a0cabc` | own 7 + own 8 anima registrations |
+| `64dbdcfa` | anima-try-revert-orthogonality-wrapper |
+| `e5a0cabc` | + anima registrations |
 | `bfa959989` | raw 137 strengthening + raw 142 follow-up (abee441b) |
 | `1280895e` | Bug 3 verdict + Phase 10 master roadmap |
 | `b89c8975` | Bug 2 verdict (a38dcbed) |

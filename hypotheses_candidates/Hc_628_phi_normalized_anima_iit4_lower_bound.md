@@ -7,7 +7,7 @@ status: candidate-math-verified-falsifier-pending
 source_doc: docs/anima_l18_phi_c_mapping_spec_2026_05_08.md
 source_lines: 1-66, 95-100
 promoted_at: 2026-05-11
-linked_h: own 18 C3.1, paradigm v11 G3 8-cell, Tononi 2014 + Albantakis 2023
+linked_h: C3.1, paradigm v11 G3 8-cell, Tononi 2014 + Albantakis 2023
 notes: paradigm-a-prime real-mode |Δφ★|=1.0465, log(8)=2.0794, Φ_normalized=0.5033 ≈ Φc=0.5 일치 (소수점 둘째자리). single-shot artifact 가능성.
 verified_at: 2026-05-12
 verify_decision: MATH_PASS_NEEDS_ANCHOR

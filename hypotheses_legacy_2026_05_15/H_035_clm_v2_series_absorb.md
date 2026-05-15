@@ -36,12 +36,12 @@ anima CLM v2 (ConsciousLM v2 byte-level decoder, vocab=256, dual-head consciousn
 - modern: `clm-v2-byte-18m-convo-5k.pt` (RECOVERED 2026-05-06)
 - sister H: H_005 (corpus > capacity, BG-FK 27.84M ConsciousLM++ ca_rules+gate variant), H_024 (V1 IIT-Phi 8/8 FAIL — V2 PSI-FIX lane motivation)
 - roadmap: `.roadmap.clm_v2_chat`
-- own: own 21
+- own:
 - ledger: `docs/anima_consciousness_check_simple_stack_2026_05_06.md` (BG-FS 11-model exhaustive)
 
 ## Honest Limits
 
 - L1: legacy CLM v2 spec (2025-11~12) vs modern RECOVERED checkpoint (2026-05-06)는 다른 generation
-- L2: CLM v2 RECOVERED + simple stack ledger BG-FK FAIL — 본 H의 corpus axis (own 19) 정합
+- L2: CLM v2 RECOVERED + simple stack ledger BG-FK FAIL — 본 H의 corpus axis 정합
 - L3: PSI-FIX lane은 V1 8/8 FAIL motivation — H_024 cross-link
 - L4-L5: 4 file pointer; raw#12 re-verify 별도; legacy archive 보존

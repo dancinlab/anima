@@ -1,4 +1,4 @@
-# anima CLM-3-original H100 launch — script + own 16 watchdog landed (BG-EU)
+# anima CLM-3-original H100 launch — script + watchdog landed (BG-EU)
 
 - Date: 2026-05-06 (filed under 2026-05-05 cycle)
 - BG: BG-EU
@@ -47,7 +47,7 @@ Audit trail appended to `state/anima_clm_3_original_h100_launch_2026_05_06/launc
 
 ---
 
-## 2. watchdog_h100.bash — own 16 5min cadence
+## 2. watchdog_h100.bash — 5min cadence
 
 | Component | Cadence | Behavior |
 |---|---|---|
@@ -56,7 +56,7 @@ Audit trail appended to `state/anima_clm_3_original_h100_launch_2026_05_06/launc
 | Spend tracker | every iteration | linear `elapsed_s * 249 / 3600` cents (H100 80GB community list $2.49/hr); integer arithmetic for bash 3.2 compat |
 | L23 rate-limit | on `429` / `rate limit` | sleep 60s, continue loop |
 | L24 BG-done vs pod-down | on 404 | log final spend, exit 0 (operator interprets training log separately) |
-| L25 cost overrun | on `spend >= cap` | log L25_OVERRUN to ledger, **emit signal only**, no auto-kill (own 16 human-in-loop rule) |
+| L25 cost overrun | on `spend >= cap` | log L25_OVERRUN to ledger, **emit signal only**, no auto-kill (human-in-loop rule) |
 
 Watchdog is launched separately from the main fire (separate terminal) and takes the pod name as `$1`. Independent process so a launch crash doesn't take the watchdog down.
 

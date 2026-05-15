@@ -188,7 +188,7 @@ T 의 한 점에서 KL 이 maximize 되는 trade-off — entropy↑ 하면 cell-
 | cloud cost | **$0** (ubu-1 dedicated, electricity only) |
 | BG envelope | within (memory `feedback_always_commit_push_on_complete` $0 default) |
 
-own 43 active resource utilization: ubu-1 dedicated GPU 활용 — Vast.ai cold-fire 회피 (~$3-5 ablation). ckpt 581 MB Tailscale rsync 1회 transfer 후 future inference re-use 가능.
+ active resource utilization: ubu-1 dedicated GPU 활용 — Vast.ai cold-fire 회피 (~$3-5 ablation). ckpt 581 MB Tailscale rsync 1회 transfer 후 future inference re-use 가능.
 
 ---
 

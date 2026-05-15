@@ -894,11 +894,11 @@ bucket `anima-models` (created 2026-03-28, v2 milestone 같은 날):
 
 ## §18 본 문서 메타
 
-- 작성: 2026-05-09 cycle (own 16/33/34/39 strict)
+- 작성: 2026-05-09 cycle (strict)
 - 사용자 directive 4 chain: "최초 clm v2 히스토리 탐색" → "10단계+" → "표로 추천" → "OK 분리 + branch + memo" → "고갈시까지 / 싸그리" → "관련내용 root CLM_*.md 하나의 문서"
 - companion: `CLM_V2_ARCHIVE_2026_05_09.md` (overview + mitosis 본체 + branch inventory)
 - 13 worktree 영구 branch + per-worktree CLM_STAGE_MEMO.md (untracked) 동반 보관
-- raw#9/10/15 honest, raw#37 additive preserve, own 16 0-cost
+- raw#9/10/15 honest, raw#37 additive preserve, 0-cost
 - cross-link: 
   - `docs/anima_clm_origin_chat_history_archaeology_2026_05_05.md` (BG-EP)
   - `docs/anima_clm_v2_chat_recovered_2026_05_06.ai.md` (R2 recovery)

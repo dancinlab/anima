@@ -76,10 +76,10 @@ Reason: weights existed (manifest pickle header proves byte-level torch tensors)
 ## Next steps
 
 - **STEP-1**: filesystem search `/Users/ghost/Dev/ready/anima/anima/checkpoints/clm_v2*/final.pt` — path indicated by `.growth/absorbed` manifests; absorption was 2026-04-04, recent files plausible
-- **STEP-2**: if STEP-1 finds files → archive to HF Hub (own 14 mandate: weights → HF, not git)
+- **STEP-2**: if STEP-1 finds files → archive to HF Hub (mandate: weights → HF, not git)
 - **STEP-3**: if STEP-1 empty → treat clm_v2 as PERMANENTLY LOST WEIGHTS; only retrainable from preserved tokenizer / hypothesis-fixture / training data (corpus_v2.txt 70MB IS in anima git as blob 506f826e)
 - **STEP-4**: reorient clm-3 β' KoGPT2 head-swap as canonical chat-cap recovery path (already 2026-05-06 commit 45ab7e37 lane: `clm_native_chat / clm_v4_chat / clm_v2_chat` roadmap)
-- **STEP-5**: document v2 weight loss as historical incident — own 14 ('models → HF Hub only') mandate retroactively justified by this loss
+- **STEP-5**: document v2 weight loss as historical incident — ('models → HF Hub only') mandate retroactively justified by this loss
 
 ## Outputs
 

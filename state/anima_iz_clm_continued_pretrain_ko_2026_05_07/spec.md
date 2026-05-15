@@ -1,6 +1,6 @@
 # BG-IZ — CLM mk2-v1 continued pre-training on Korean conversational mass
 
-> own 29 (2026-05-07-late) reconcile: SIMPLE_STACK_PASS strict floor = V4 ≥ 10/15 per own 18 (≥2/3 prompts AND for C1+C2). Original 7/15 demoted to PARTIAL_PASS tier. Falsifier tables below retain 7/15 references but interpret as PARTIAL_PASS, NOT SIMPLE_STACK_PASS.
+> (2026-05-07-late) reconcile: SIMPLE_STACK_PASS strict floor = V4 ≥ 10/15 per (≥2/3 prompts AND for C1+C2). Original 7/15 demoted to PARTIAL_PASS tier. Falsifier tables below retain 7/15 references but interpret as PARTIAL_PASS, NOT SIMPLE_STACK_PASS.
 
 
 > raw#15 additive on .roadmap.chat_cap_emergence_pivot Stage 1' P1 + state/anima_iy_v4_calibration_polyglot_2026_05_07/verdict.json
@@ -50,8 +50,8 @@ H_pretrain_ko: CLM mk2-v1 477M base, after continued pre-training on Korean conv
 
 ## Eval
 
-- V4 strict 7-cell (own 18 v3) on 15-prompt set
-- V3 6-cell (own 17)
+- V4 strict 7-cell (v3) on 15-prompt set
+- V3 6-cell
 - Manual 5-prompt (Korean coherence)
 - Inference: greedy + sample(T=0.7 top_p=0.9) with `repetition_penalty=1.3 no_repeat_ngram_size=2` per Lesson T
 - Prompts MUST NOT end in `:` per Lesson T

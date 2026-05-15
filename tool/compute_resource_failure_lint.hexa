@@ -1,6 +1,6 @@
-// tool/compute_resource_failure_lint.hexa — own 4 L2 lint reference
+// tool/compute_resource_failure_lint.hexa — L2 lint reference
 // ─────────────────────────────────────────────────────────────────────────────
-// own 4 training-resource-root-cause-only / hive-promotion 'compute-resource-failure-discipline'
+// training-resource-root-cause-only / hive-promotion 'compute-resource-failure-discipline'
 //
 // 4-step mandate per failure event:
 //   (a) root-cause-diagnosis paragraph in verdict.json
@@ -204,7 +204,7 @@ fn _emit_agg30_helper() -> str {
 }
 
 fn _aggregate_30d() {
-    println("__COMPUTE_RESOURCE_FAILURE_LINT_BEGIN__ aggregate-30d F-ATLAS-1 emitter own 4")
+    println("__COMPUTE_RESOURCE_FAILURE_LINT_BEGIN__ aggregate-30d F-ATLAS-1 emitter ")
     let _path = _emit_agg30_helper()
     println("agg30_helper_emitted=" + AGG30_HELPER_PATH)
     println("F_ATLAS_1_threshold=" + F_ATLAS_1_THRESHOLD)
@@ -214,7 +214,7 @@ fn _aggregate_30d() {
 }
 
 fn _selftest() {
-    println("__COMPUTE_RESOURCE_FAILURE_LINT_BEGIN__ selftest own 4 raw#9 raw#10 raw#37")
+    println("__COMPUTE_RESOURCE_FAILURE_LINT_BEGIN__ selftest raw#9 raw#10 raw#37")
     println("4_step_mandate=diagnosis+canonical_fix+harden+evolve")
     println("violation_signatures=V1_skip+V2_tmp_wrapper+V3_scale_down+V4_retry_blind+V5_cap_bump")
     // PASS fixture: failure verdict has all 4 steps
@@ -251,12 +251,12 @@ fn _selftest() {
         println("__COMPUTE_RESOURCE_FAILURE_LINT_RESULT__ FAIL_SELFTEST")
     }
     println("raw_10_caveat=selftest verifies fixture logic + helper emission; production scan requires python3 invocation")
-    println("raw_10_caveat=lint is advisory severity warn (own 4 promotion candidate L2 layer)")
-    println("absorption_target=own 4 promotion to hive raw 'compute-resource-failure-discipline' Option D 4-layer")
+    println("raw_10_caveat=lint is advisory severity warn (promotion candidate L2 layer)")
+    println("absorption_target= promotion to hive raw 'compute-resource-failure-discipline' Option D 4-layer")
 }
 
 fn _scan() {
-    println("__COMPUTE_RESOURCE_FAILURE_LINT_BEGIN__ scan-blockers production own 4")
+    println("__COMPUTE_RESOURCE_FAILURE_LINT_BEGIN__ scan-blockers production ")
     let _path = _emit_helper()
     println("scan_helper_emitted=" + HELPER_PATH)
     println("__COMPUTE_RESOURCE_FAILURE_LINT_RESULT__ HELPER_READY")
@@ -281,7 +281,7 @@ fn main() {
     else if has_agg30 { _aggregate_30d() }
     else {
         println("usage: hexa run tool/compute_resource_failure_lint.hexa --selftest | --scan-blockers | --aggregate-30d")
-        println("raw 10 caveat: lint is advisory (own 4 promotion candidate L2 layer)")
+        println("raw 10 caveat: lint is advisory (promotion candidate L2 layer)")
     }
     return 0
 }

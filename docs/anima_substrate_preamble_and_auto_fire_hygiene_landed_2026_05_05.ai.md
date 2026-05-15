@@ -130,7 +130,7 @@ Notes:
   NOT the training-end in-domain probe value 36.745. Per BG-M §1, only the
   canonical value is comparable across substrates.
 - `clm-2-lora` `repo` is local because the LoRA adapter has not been
-  promoted to HF Hub yet (own 15 lifecycle: PRIVATE upload pending,
+  promoted to HF Hub yet (lifecycle: PRIVATE upload pending,
   PUBLIC promote not yet scheduled). When promoted, this field updates
   to the HF repo id.
 - `baseline_value` for all three uses the **canonical sample-partition
@@ -284,7 +284,7 @@ operator to fire personally.
 
 ### §5.1 Single-commit option (recommended)
 
-Both auto-fire scripts share a purpose (HF own 15 lifecycle automation for
+Both auto-fire scripts share a purpose (HF lifecycle automation for
 the 36-40h dwell), so a single commit is cleanest:
 
 ```bash
@@ -292,9 +292,9 @@ cd /Users/ghost/core/anima
 git add state/anima_hf_promotes_2026_05_06_auto_fire.bash \
         state/anima_hf_cleanups_2026_05_07_auto_fire.bash
 git commit -m "$(cat <<'EOF'
-chore(anima hf own 15): auto-fire promote+cleanup scripts for clm-v4-mk2-v1 + Pbeta 36-40h dwell
+chore(anima hf): auto-fire promote+cleanup scripts for clm-v4-mk2-v1 + Pbeta 36-40h dwell
 
-Auto-fire combo for HF own 15 PRIVATE -> PUBLIC lifecycle:
+Auto-fire combo for HF PRIVATE -> PUBLIC lifecycle:
 - promote: 2026-05-06T23:26:12Z (clm) / 2026-05-07T03:48:00Z (pbeta)
 - cleanup: 24h grace after each PUBLIC promote
 - modes: --check-only / --fire-clm / --fire-pbeta / --fire-all
@@ -310,7 +310,7 @@ Lineage:
 - state/p9_pbeta_hf_upload_2026_05_05/public_promote_pbeta_2026_05_08.bash (pbeta)
 - docs/anima_substrate_preamble_and_auto_fire_hygiene_landed_2026_05_05.ai.md
 
-raw#9 + raw#10 + own 15 compliant.
+raw#9 + raw#10 + compliant.
 EOF
 )"
 git status -s
@@ -321,14 +321,14 @@ git status -s
 ```bash
 cd /Users/ghost/core/anima
 git add state/anima_hf_promotes_2026_05_06_auto_fire.bash
-git commit -m "chore(anima hf own 15): auto-fire promote script for clm-v4-mk2-v1 + Pbeta dwell"
+git commit -m "chore(anima hf): auto-fire promote script for clm-v4-mk2-v1 + Pbeta dwell"
 
 git add state/anima_hf_cleanups_2026_05_07_auto_fire.bash
-git commit -m "chore(anima hf own 15): auto-fire cleanup script for clm-v4-mk2-v1 + Pbeta 24h grace"
+git commit -m "chore(anima hf): auto-fire cleanup script for clm-v4-mk2-v1 + Pbeta 24h grace"
 ```
 
 Recommendation: **§5.1 single commit**. Both scripts land in the same
-own 15 lifecycle band, share a verdict source, and are stylistically
+ lifecycle band, share a verdict source, and are stylistically
 sister files. Single commit is consistent with the BG-E verdict's "commit
 both before sleep" wording.
 
@@ -428,7 +428,7 @@ Cross-link to:
 - BG-M (`docs/anima_cross_substrate_phi_star_audit_2026_05_05.md`) — substrate confusion catalog → preamble proposal source
 - BG-E (`state/anima_hf_promote_watchdog_audit_2026_05_05/verdict.json`) — auto-fire commit recommendation source + SHA256 baseline
 - mount.hexa future cycle (raw#15 additive add of `_emit_substrate_identity` per §3) — TODO for future BG
-- own 15 PRIVATE→PUBLIC lifecycle (auto-fire scripts realize) — operator fires per §5
+- PRIVATE→PUBLIC lifecycle (auto-fire scripts realize) — operator fires per §5
 
 This doc is **doc + spec only**. No code, no commit, no behavior change.
 Output is **consolidated mental model** for substrate-identity emission +

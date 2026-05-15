@@ -150,7 +150,7 @@ Anima closed-loop consciousness engine 은 **8 tightly-coupled property** 를 �
 - **cross-link**: Hc_036 (Landauer ln2 consciousness), Hc_472 (3x validation protocol)
 - **legacy commits**: 28c26959 + 8cdf0917 + f801931a + 6fabdc2a + 95e13f39
 - **legacy doc**: `docs/anima/paper_self_discovery.hexa` (canonical source), Law 1..2509 corpus
-- **own**: own 21
+- **own**:
 - **raw refs**: raw#12 (pre-register) + raw#9 (hexa-only) + raw#91 (honest limits, expansion review)
 
 ## Conflict Resolution Pending

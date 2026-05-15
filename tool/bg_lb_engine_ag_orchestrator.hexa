@@ -10,29 +10,29 @@
 //     - corpus = persona_tier_a_v4 231MB + persona_tier_a 104MB + dialogue_tier_a_iter2 73MB
 //                concatenated (~408MB best-available; 1.5GB target deferred to corpus iter-3)
 //     - unique pod tag (timestamp + pid) for SSOT concurrency mitigation vs BG-LA sibling
-//     - HF target: dancinlab/clm-v5-bg-lb-350m-pretrain-path-a-remapped (own 31 Flavor B)
+// - HF target: dancinlab/clm-v5-bg-lb-350m-pretrain-path-a-remapped (Flavor B)
 //
 // raw#9   hexa-only Mac orchestration
 // raw#15  repo-relative paths
 // raw#37  transient-py for pod-side training (anima_clm_lb_h100.py)
 // raw#71  pre-registered cost caps locked
 //
-// SAFETY CAPS (own 16)
+// SAFETY CAPS
 //   max_wall_minutes    = 1200  (20h hard pod kill)
 //   budget_target_usd   = 60    (~20h × $2.99/hr ≈ $59.80)
 //   budget_hard_cap_usd = 65    (BG-LB spec L4 cap + 5 buffer)
 //
-// own 14 V14 paired random_init mirror MANDATORY pre-fire — _verify_v14 gate
-// own 16 cost discipline + override keyword
-// own 17 D1=0.99 anima_native_scratch within strict (Engine A/G shared arch)
-// own 18 C3 measurement adapter — V4 11-cell strict eval × 15 prompts × {greedy, sample×5}
-// own 22 honest emit — failure halts; no fabricated verdict
-// own 30 ckpt preservation — scp_get(POD_CKPTS_DIR/.) BEFORE pod delete; mandate-1/2/3
-// own 33 trinity self-check — D_emergent-consciousness + own 17/18/30/31/34 + H_clm_chat_cap
-// own 34 wrap=0 — chat lane V4 measurement only
-// own 38 yaml↔md SSOT — registry yaml lineage.base / V14_status updated post-land
-// own 39 yaml↔md render — docs/anima_artifact_registry.md regenerate post-land
-// own 40 resource CLI delegation strict — provision-ephemeral via canonical CLI
+// V14 paired random_init mirror MANDATORY pre-fire — _verify_v14 gate
+// cost discipline + override keyword
+// D1=0.99 anima_native_scratch within strict (Engine A/G shared arch)
+// C3 measurement adapter — V4 11-cell strict eval × 15 prompts × {greedy, sample×5}
+// honest emit — failure halts; no fabricated verdict
+// ckpt preservation — scp_get(POD_CKPTS_DIR/.) BEFORE pod delete; mandate-1/2/3
+// trinity self-check — D_emergent-consciousness + + H_clm_chat_cap
+// wrap=0 — chat lane V4 measurement only
+// yaml↔md SSOT — registry yaml lineage.base / V14_status updated post-land
+// yaml↔md render — docs/anima_artifact_registry.md regenerate post-land
+// resource CLI delegation strict — provision-ephemeral via canonical CLI
 //
 // USAGE
 //   hexa run tool/bg_lb_engine_ag_orchestrator.hexa --selftest
@@ -154,13 +154,13 @@ fn _selftest() {
     }
 
     if !_file_exists(RESOURCE_CLI) {
-        eprintln("FAIL: resource CLI missing (own 40 strict): " + RESOURCE_CLI)
+        eprintln("FAIL: resource CLI missing (strict): " + RESOURCE_CLI)
         exit(1)
     }
-    println("[T6] resource CLI OK (own 40 strict)")
+    println("[T6] resource CLI OK (strict)")
 
     println("[T7] cost caps: target=$" + to_string(BUDGET_TARGET_USD) + " hard=$" + to_string(BUDGET_HARD_CAP_USD) + " wall=" + to_string(MAX_WALL_MIN) + "min")
-    println("[T8] HF target (private): " + HF_TARGET_PRIVATE + " (own 37 visibility=" + HF_VISIBILITY_DEFAULT + ")")
+    println("[T8] HF target (private): " + HF_TARGET_PRIVATE + " (visibility=" + HF_VISIBILITY_DEFAULT + ")")
     println("[T9] override keywords: '" + OVERRIDE_KEYWORD_A + "' OR '" + OVERRIDE_KEYWORD_B + "'")
 
     println("[T10] V14 mirror dir: " + V14_MIRROR_DIR)
@@ -174,7 +174,7 @@ fn _selftest() {
     exit(0)
 }
 
-// ─── verify V14 mirrors (own 14 mandatory pre-fire) ───────────────────────
+// ─── verify V14 mirrors (mandatory pre-fire) ───────────────────────
 
 fn _verify_v14() {
     println("[verify-v14] mirror dir: " + V14_MIRROR_DIR)
@@ -207,7 +207,7 @@ fn _emit() {
         "#!/bin/bash\n" +
         "# emitted by tool/bg_lb_engine_ag_orchestrator.hexa\n" +
         "# BG-LB Engine A/G dual-engine 350M scratch pre-train (1.5GB target corpus) H100 lifecycle\n" +
-        "# own 14 V14 mirror prereq + own 16 cost cap + own 30 ckpt pull + own 40 resource CLI\n" +
+        "# V14 mirror prereq + cost cap + ckpt pull + resource CLI\n" +
         "set -uo pipefail\n" +
         "\n" +
         "STATE_DIR='" + STATE_DIR + "'\n" +
@@ -236,8 +236,8 @@ fn _emit() {
         "\n" +
         "log() { echo \"[$(date -u +%FT%TZ)] $*\" | tee -a \"$RUN_LOG\"; }\n" +
         "\n" +
-        "# Phase 0a: V14 mirror prereq verify (own 14)\n" +
-        "log \"=== Phase 0a: V14 mirror prereq verify (own 14) ===\"\n" +
+        "# Phase 0a: V14 mirror prereq verify \n" +
+        "log \"=== Phase 0a: V14 mirror prereq verify ===\"\n" +
         "hexa run /Users/ghost/core/anima/tool/bg_lb_engine_ag_orchestrator.hexa --verify-v14 || { log 'FATAL: V14 mirrors missing'; exit 2; }\n" +
         "\n" +
         "# Phase 0b: build combined corpus (tier_a_v4 + persona_2 + dialogue_2 — best available toward 1.5GB)\n" +
@@ -250,7 +250,7 @@ fn _emit() {
         "CORPUS_SZ=$(wc -c < \"$CORPUS_COMBINED\")\n" +
         "log \"corpus_combined size=${CORPUS_SZ} bytes (target 1.5GB; best-available without iter-3)\"\n" +
         "\n" +
-        "# Phase 1: provision-ephemeral with unique pod tag (own 40 + concurrency mitigation)\n" +
+        "# Phase 1: provision-ephemeral with unique pod tag (+ concurrency mitigation)\n" +
         "log \"=== Phase 1: provision-ephemeral via resource CLI (pod_name=$POD_NAME) ===\"\n" +
         "RESOURCE_EPHEMERAL_YES_COST=1 $RESOURCE provision-ephemeral --provider $PROVIDER --gpu $GPU --duration $DURATION --yes-cost --name \"$POD_NAME\" 2>&1 | tee -a \"$RUN_LOG\"\n" +
         "PROV_RC=${PIPESTATUS[0]}\n" +
@@ -301,36 +301,36 @@ fn _emit() {
         "    if [ \"$DONE\" = \"done\" ]; then log 'COMPLETE.sentinel detected'; break; fi\n" +
         "done\n" +
         "\n" +
-        "# Phase 7: ckpt pull (own 30 mandate-1 BEFORE pod delete)\n" +
-        "log \"=== Phase 7: ckpt pull (own 30 mandate-1) ===\"\n" +
+        "# Phase 7: ckpt pull (mandate-1 BEFORE pod delete)\n" +
+        "log \"=== Phase 7: ckpt pull (mandate-1) ===\"\n" +
         "scp -i \"$SSH_KEY\" -P \"$SSH_PORT\" -o StrictHostKeyChecking=no -r -o ConnectTimeout=3600 root@$SSH_HOST:/workspace/anima_clm_lb/ckpts/. \"$RESULTS_DIR/ckpts/\" 2>&1 | tee -a \"$RUN_LOG\"\n" +
         "PULL_RC=${PIPESTATUS[0]}\n" +
         "scp -i \"$SSH_KEY\" -P \"$SSH_PORT\" -o StrictHostKeyChecking=no -r root@$SSH_HOST:/workspace/anima_clm_lb/state/. \"$RESULTS_DIR/state/\" 2>&1 | tee -a \"$RUN_LOG\"\n" +
         "\n" +
-        "# Phase 8: size sanity check (own 30 mandate-2 ~1.3GB floor for 350M ckpt)\n" +
+        "# Phase 8: size sanity check (mandate-2 ~1.3GB floor for 350M ckpt)\n" +
         "POD_SZ=$(ssh -i \"$SSH_KEY\" -p \"$SSH_PORT\" -o StrictHostKeyChecking=no root@$SSH_HOST 'du -sb /workspace/anima_clm_lb/ckpts | cut -f1' 2>/dev/null || echo 0)\n" +
         "LOCAL_SZ=$(du -sb \"$RESULTS_DIR/ckpts\" 2>/dev/null | cut -f1 || echo 0)\n" +
-        "log \"size check: pod=$POD_SZ local=$LOCAL_SZ (own 30 mandate-2 floor 0.9× pod; expect ~1.3GB for 350M bf16)\"\n" +
+        "log \"size check: pod=$POD_SZ local=$LOCAL_SZ (mandate-2 floor 0.9× pod; expect ~1.3GB for 350M bf16)\"\n" +
         "\n" +
         "# Phase 9: pod release ONLY if pull succeeded — own slug only target (concurrency mitigation)\n" +
         "if [ $PULL_RC -eq 0 ] && [ \"$LOCAL_SZ\" != \"0\" ]; then\n" +
         "    log \"=== Phase 9: pod release (own slug only: $POD_NAME / pod_id=$POD_ID) ===\"\n" +
         "    $RESOURCE release \"$POD_NAME\" --reason 'BG-LB pull verified' 2>&1 | tee -a \"$RUN_LOG\"\n" +
         "else\n" +
-        "    log \"PULL FAILED — POD RETAINED (own 30 mandate-3); manual release after recovery\"\n" +
+        " log \"PULL FAILED — POD RETAINED (mandate-3); manual release after recovery\"\n" +
         "fi\n" +
         "\n" +
         "# Phase 10: ledger append\n" +
         "log \"=== Phase 10: ledger append ===\"\n" +
         "python3 -c \"import json,time,os; open('" + LEDGER_PATH + "','a').write(json.dumps({'ts':time.strftime('%FT%TZ'),'bg_id':'" + BG_ID + "','cycle':'" + CYCLE_TAG + "','verdict_path':'$VERDICT','pod_id':'$POD_ID','pod_name':'$POD_NAME','elapsed_s':$ELAPSED,'cost_usd_est':$COST,'corpus_size_bytes':$CORPUS_SZ}) + chr(10))\"\n" +
         "\n" +
-        "# Phase 11: verdict + HF promote (private only — own 37 lifecycle)\n" +
+        "# Phase 11: verdict + HF promote (private only — lifecycle)\n" +
         "log \"=== Phase 11: verdict + HF promote (private default) ===\"\n" +
         "if [ -f \"$VERDICT\" ]; then\n" +
         "    VERDICT_CLASS=$(python3 -c \"import json; print(json.load(open('$VERDICT')).get('final_class','UNKNOWN'))\" 2>/dev/null || echo UNKNOWN)\n" +
         "    log \"verdict=$VERDICT_CLASS\"\n" +
         "    if [[ \"$VERDICT_CLASS\" == \"SIMPLE_STACK_PASS_STRICT_C3\" || \"$VERDICT_CLASS\" == \"SIMPLE_STACK_PASS_STRICT_C3_ANIMA\" ]]; then\n" +
-        "        log \"HF private upload: " + HF_TARGET_PRIVATE + " (own 31 Flavor B + own 37 private default)\"\n" +
+        " log \"HF private upload: " + HF_TARGET_PRIVATE + " (Flavor B + private default)\"\n" +
         "        # huggingface-cli upload (private flag) — actual upload deferred to anima_clm_lb_h100.py post-eval\n" +
         "    fi\n" +
         "fi\n" +

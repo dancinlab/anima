@@ -29,7 +29,7 @@ Legacy files: `docs/hypotheses/cx/CE-BREAKTHROUGH.md`, `cx/CE-EXTREMES.md`, `doc
 
 - legacy: cx/CE-{BREAKTHROUGH,EXTREMES}.md + ce/ subfolder 24 files + CE-optimization.md
 - sister: H_032 (omega/phys subfolder), H_039 (PHI records)
-- own: own 21
+- own:
 
 ## Honest Limits
 

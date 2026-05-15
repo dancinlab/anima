@@ -179,7 +179,7 @@ Note: the user's BG-E request specified `PROMOTE-pbeta-...` as a placeholder; ac
 ### Pre-fire checklist (operator)
 
 1. Re-shasum the 8 files in §Sub-4 baseline; diff against verdict.json `sha256_baseline`. Any mismatch → ABORT + investigate.
-2. Re-affirm G1-G6 of own 15 (the script will print and ask, but pre-affirm before typing confirm-string).
+2. Re-affirm G1-G6 of (the script will print and ask, but pre-affirm before typing confirm-string).
 3. Confirm `secret get huggingface.token --raw` returns `hf_*` token.
 4. For pbeta: confirm clm is already PUBLIC by `curl -sS -H "Authorization: Bearer $TOKEN" "https://huggingface.co/api/models/dancinlab/clm-v4-mk2-v1" | python3 -c 'import json,sys; d=json.load(sys.stdin); print(d.get("private"))'` returns `False`.
 

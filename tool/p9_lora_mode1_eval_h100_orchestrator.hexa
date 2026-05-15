@@ -59,7 +59,7 @@ let BUDGET_TARGET_USD   = 1.50
 let BUDGET_HARD_CAP_USD = 2.50
 let OD_RATE_USD         = 2.99
 
-// === own 16 Phase 2 watchdog hook (constants) ===
+// === Phase 2 watchdog hook (constants) ===
 let BG_LANE             = "BG-P9-LORA-MODE1-EVAL"
 let TARGET_USD          = "1.5"
 let WATCHDOG_HEXA       = "/Users/ghost/core/anima/tool/h100_cost_watchdog.hexa"
@@ -142,8 +142,8 @@ fn _selftest() {
     println("[T5] HF LoRA target: " + HF_LORA_REPO + "@" + HF_LORA_REVISION)
     println("[T5] HF base:        " + HF_BASE_REPO)
 
-    // own 16 Phase 2: probe watchdog tools (graceful warn-only)
-    println("[T9] own 16 Phase 2 watchdog hooks:")
+    // Phase 2: probe watchdog tools (graceful warn-only)
+    println("[T9] Phase 2 watchdog hooks:")
     println("       BG_LANE=" + BG_LANE + " TARGET_USD=$" + TARGET_USD)
     let _wr_ok = exec_with_status("test -f " + _sq(WATCHDOG_REGISTER))[1] == 0
     if _wr_ok { println("       T9a register OK: " + WATCHDOG_REGISTER) }
@@ -244,7 +244,7 @@ fn _emit() {
 "echo '{\"pod_id\":\"'$POD_ID'\",\"booted_ts\":\"'$(date -u +%FT%TZ)'\"}' > \"$POD_INFO\"\n" +
 "hb \"stage1_pod_booted pod_id=$POD_ID\"\n" +
 "\n" +
-"# === own 16 Phase 2 watchdog hook (boot) ===\n" +
+"# === Phase 2 watchdog hook (boot) ===\n" +
 "BG_LANE='" + BG_LANE + "'\n" +
 "TARGET_USD='" + TARGET_USD + "'\n" +
 "WATCHDOG_REGISTER='" + WATCHDOG_REGISTER + "'\n" +
@@ -261,7 +261,7 @@ fn _emit() {
 "fi\n" +
 "\n" +
 "# ── Stage 1b: kill-on-exit trap MANDATORY ──\n" +
-"# === own 16 Phase 2 watchdog hook (trap pre-stop) ===\n" +
+"# === Phase 2 watchdog hook (trap pre-stop) ===\n" +
 "POD_KILL_VERIFIED_404=0\n" +
 "WATCHDOG_DEREGISTERED=0\n" +
 "_kill_pod() {\n" +
@@ -362,7 +362,7 @@ fn _emit() {
 "    log \"elapsed=${ELAPSED_MIN}min cost=\\$${ELAPSED_COST} probe=$(echo $PROBE | tr '\\n' '|')\"\n" +
 "    hb \"poll elapsed=${ELAPSED_MIN}min cost=\\$${ELAPSED_COST} probe=$(echo $PROBE | tr '\\n' '|' | head -c 200)\"\n" +
 "\n" +
-"    # === own 16 Phase 2 watchdog hook (heartbeat) ===\n" +
+" # === Phase 2 watchdog hook (heartbeat) ===\n" +
 "    if [ -n \"${WATCHDOG_HB_DIR:-}\" ]; then\n" +
 "        mkdir -p \"$WATCHDOG_HB_DIR\" 2>/dev/null || true\n" +
 "        echo \"poll $(date -u +%FT%TZ) pod=$POD_ID elapsed=${ELAPSED_MIN}min cost=\\$${ELAPSED_COST}\" > \"$WATCHDOG_HB_DIR/$BG_LANE.txt\" 2>/dev/null || true\n" +
@@ -506,7 +506,7 @@ fn _emit() {
 "    fi\n" +
 "fi\n" +
 "\n" +
-"# === own 16 Phase 2 verdict schema (cost-discipline fields) ===\n" +
+"# === Phase 2 verdict schema (cost-discipline fields) ===\n" +
 "COST_TARGET_USD=$TARGET_USD\n" +
 "COST_ACTUAL_USD=$FINAL_COST\n" +
 "COST_OVERRUN_RATIO=$(awk -v a=\"$COST_ACTUAL_USD\" -v t=\"$COST_TARGET_USD\" 'BEGIN{ if (t+0 > 0) printf \"%.4f\", a/t; else print \"0\" }')\n" +

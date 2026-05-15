@@ -158,7 +158,7 @@ def main():
     lines.append("variance lower → fewer outliers cross sigma_gate → split rate slower near cap.")
     lines.append("")
     lines.append(f"Run: 3 substrate × {{trained, random_seed=42}} × max_cells=256")
-    lines.append("Lean compute: 1 trained + 1 random per substrate ($0 local CPU, own 16).")
+    lines.append("Lean compute: 1 trained + 1 random per substrate ($0 local CPU).")
     lines.append("A: 100 turns / snap=10 (cap-free regime). C, E: 60 turns / snap=5 (cap-approach).")
     lines.append("")
 

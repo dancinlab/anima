@@ -130,4 +130,4 @@
 
 ---
 
-*own 16 strict — research + design only. 코드 수정 0, fire 0, commit/push 안 함.*
+* strict — research + design only. 코드 수정 0, fire 0, commit/push 안 함.*

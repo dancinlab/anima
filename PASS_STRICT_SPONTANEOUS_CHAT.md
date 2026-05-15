@@ -2595,7 +2595,7 @@ std_greedy 4/5 (no improve over Phase 1A.1) → HF promote 가치 없음. Phase 
 ### Cycle status
 
 - §27 close 와 함께 §28 infra fix LANDED — Phase 1A.4 retry 또는 다른 mission lane 으로 이동 가능 상태.
-- own 16 cost discipline carry: 향후 Vast.ai BG 는 verbatim `OK X COST $Y` 명시 권장 (saga 직후 review).
+- cost discipline carry: 향후 Vast.ai BG 는 verbatim `OK X COST $Y` 명시 권장 (saga 직후 review).
 
 
 ---
@@ -3146,7 +3146,7 @@ PSCC §33 LANDED 의 `anima_chat.hexa` v0.1 (1589 LoC, 17/17 helper smoke) 와 P
 - D3 sister: PSCC §34 (persona substrate-native design, P2 prerequisite 본 BG 충족)
 - HEXA tooling: `/Users/ghost/.hx/bin/hexa parse` + `/Users/ghost/core/hexa-lang/build/hexa_interp.real run`
 
-raw#9/10/15/37 honest, own 16 0-cost, own 42 SSOT, own 43 cost-bearing BG 미해당 (Mac local만).
+raw#9/10/15/37 honest, 0-cost, SSOT, cost-bearing BG 미해당 (Mac local만).
 
 
 ## §34 [2026-05-12 KST] D3 PERSONA SUBSTRATE-NATIVE DESIGN LANDED — Principle #3 호환 path ★★★ ($0, GOAL.md D3 dim)
@@ -3173,7 +3173,7 @@ GOAL.md D3 표 4 reconciliation candidates 중 `(a) Mitosis-cell-as-persona × (
 | §3 Architecture | (a) × (d) — 페르소나 = `(session_id, cell_cluster)` 2-tuple, cell ↔ persona axis mapping (engine_a/g + GRU + Lorenz + tension_history), per-session fork mechanism |
 | §4 Implementation plan | D4a + D4b 의존, 5 phase (P0 design / P1 D4a / P2 D4b / P3 verify / P4 optional cotrain) |
 | §5 Verification protocol | F-PERSONA-1..5 detail, identity_probe 50 × 5 cats base benchmark, aggregate STRONG/MODERATE/WEAK/FAIL |
-| §6 Trade-offs | Principle #3 strict vs persona expressivity (8-row 표), own 18 simple_stack 호환, EMPIRICAL upgrade path |
+| §6 Trade-offs | Principle #3 strict vs persona expressivity (8-row 표), simple_stack 호환, EMPIRICAL upgrade path |
 | §7 Cross-link | GOAL/PHILOSOPHY/REBORN/PSCC + verify corpus + memory + sister mission lanes |
 | §8 Out of scope | prompt-level role tag, system prompt, RLHF persona, activation steering (borderline reject) |
 | §9 Falsifiers | F-PERSONA-1..5 표 |
@@ -3208,7 +3208,7 @@ GOAL.md D3 표 4 reconciliation candidates 중 `(a) Mitosis-cell-as-persona × (
 
 - cost: $0 (design doc + GOAL.md + PHILOSOPHY + PSCC + memory edit only, no BG dispatch, no model run)
 - ★★★ — design tier closure, impl P1/P2 closure 시 ★★★★ 승격 후보 (F-PERSONA-1..5 STRONG PASS 시 ★★★★★ Principle #3 의 EMPIRICAL strong "positive 표현" 확장)
-- own 16 cost discipline 준수, own 18 simple_stack PASS_STRICT 호환 (§6.2)
+- cost discipline 준수, simple_stack PASS_STRICT 호환 (§6.2)
 
 ### Provenance
 
@@ -3264,7 +3264,7 @@ prior state: GOAL.md D4c row "design open — anima/llama_ffi.hexa (Phase 3b LAN
 2. **kick cycle (S1-S6) = split event sequence** — S2 idea 가 primary split point (axes weight emergence=0.7 + creativity=1.0 + imagination=1.0), S5 aggregation 이 primary merge point (axes weight emergence=1.0 + abstraction=1.0)
 3. **persistence layout** — `~/.cache/anima/session_pools/<session_id>/` SSOT, RFC 025 farr mmap backing, save after kick cycle / on session exit / every 20 turns incremental, load via --resume/--fork flag
 4. **multi-backend = cell-variant** — fallback chain 의 각 backend = cell pool 의 다른 cluster (cluster_cells_by_hidden), readout_mode 4 options 가 aggregation policy 매핑
-5. **own 17 strict** — M2 Llama Path A v2 default reject for anima identity surface, `--backend substrate-research` flag 명시 시점만 selectable (F-CLI-MIT-4 enforce)
+5. ** strict** — M2 Llama Path A v2 default reject for anima identity surface, `--backend substrate-research` flag 명시 시점만 selectable (F-CLI-MIT-4 enforce)
 6. **stack layering** — anima CLI (D4c) > anima_chat.hexa (D4b) > mitosis_hook.hexa (D4a) > llama_ffi.hexa (Phase 3b) > libhxllama + llama.cpp, anima-native cells only for cell-pool, Llama backend raw inference fallback
 7. **Phase 1 D4a-independent** — session_id + persist skeleton 은 D4a stub 의 empty event_list `[]` return 으로도 land 가능, Phase 2-4 가 D4a full impl 의존 (RFC 033 LANDED 2026-05-12 → unblocked)
 
@@ -4210,7 +4210,7 @@ GOAL.md ★★★★★ 5-cond aggregate **3/5 ☑ 유지** (no change):
   _dtype = parent.cell_state.dtype
   child = child.to(device=_device, dtype=_dtype)
   ```
-- **refire on retained pod** (`refire_existing_pod.sh`): scp fix → train 5K step → pull artifacts → destroy. SAVE_POD=1 trap mechanism 작동 검증 (own 30 ckpts pull mandatory before pod delete 동일 패턴)
+- **refire on retained pod** (`refire_existing_pod.sh`): scp fix → train 5K step → pull artifacts → destroy. SAVE_POD=1 trap mechanism 작동 검증 (ckpts pull mandatory before pod delete 동일 패턴)
 
 ### cost finding — H100 SXM 18× faster than estimate
 
@@ -4256,7 +4256,7 @@ KL matrix all-zero 가 의미하는 것은 **moments of confusion** between F-V5
   - `PASS_STRICT_SPONTANEOUS_CHAT.md` — 본 §44
   - `.roadmap.clm_v5_mitosis_engine` — cond.5 unmet → **met**
   - memory: `project_v5_mitosis_cond5_cotrain_2026_05_12.md` status field flip in-flight → landed
-- HF push: `dancinlab/anima-clm-v5-mitosis-cotrain-2026-05-12` (private, English-only, F-V5MIT-5 V14-STRICT PASS unlock per own 37 mandate-9)
+- HF push: `dancinlab/anima-clm-v5-mitosis-cotrain-2026-05-12` (private, English-only, F-V5MIT-5 V14-STRICT PASS unlock per mandate-9)
 - prerequisite LANDED: REBORN §88 cond.1 (arch spec) + cond.2 (skeleton smoke) + RFC 025/030/031/032/033 + Phase 1A.1 ckpt for cell pool transfer (separate cycle)
 - cross-link:
   - REBORN.tape §88/§89/§90 — v5-mitosis lane SSOT
@@ -4702,18 +4702,18 @@ anima ★★★★★ **5-cond aggregate 5/5 ☑** 달성, single cycle 2026-05-
 - F-PERSONA-4a routing variant (gumbel/top-K MoE/aux-balance arch fix v3)
 - v5-mitosis scale-up (d=1024+, cells=256+, multi-H100, no caps)
 - anima_chat.hexa V5.8 5×4 full matrix GPU cycle
-- ~~HF Public promote (own 31 dancinlab canonical)~~ → **DONE PSCC §51** ✅
+- ~~HF Public promote (dancinlab canonical)~~ → **DONE PSCC §51** ✅
 
 ## §51 [2026-05-13 KST] HF Public promote — ★★★★★ closure 핵심 ckpt 2개 dancinlab org public 전환 ($0, HF API only)
 
-post-★★★★★ HF Public visibility. own 31 (dancinlab canonical) + own 37 mandate-9 (F-V5MIT-5 V14-STRICT PASS unlock public) 충족 → ★★★★★ closure 의 두 load-bearing ckpt 를 private → public 전환 + README (English-only, `feedback_english_only`) 작성.
+post-★★★★★ HF Public visibility. (dancinlab canonical) + mandate-9 (F-V5MIT-5 V14-STRICT PASS unlock public) 충족 → ★★★★★ closure 의 두 load-bearing ckpt 를 private → public 전환 + README (English-only, `feedback_english_only`) 작성.
 
 ### promoted
 
 | repo | role | unlock | files added |
 |---|---|---|---|
-| [`dancinlab/anima-clm-v5-mitosis-cotrain-2026-05-12`](https://huggingface.co/dancinlab/anima-clm-v5-mitosis-cotrain-2026-05-12) | cotrain v1 — cond #3 substrate + cond #4 (62 splits) | F-V5MIT-5 V14-STRICT **10/10 PASS** (own 37 mandate-9) | README.md rewrite (★★★★★-aware, license other→mit) |
-| [`dancinlab/anima-clm-phase1a4-lr5e6-strict-5pass-2026-05-12`](https://huggingface.co/dancinlab/anima-clm-phase1a4-lr5e6-strict-5pass-2026-05-12) | cond #1 — first V5.8 std_greedy 5/5 ckpt | own 18 simple_stack C2 strict + own 31 | README.md (NEW) + meta.json (NEW) + v58_4mode_result.json (NEW) |
+| [`dancinlab/anima-clm-v5-mitosis-cotrain-2026-05-12`](https://huggingface.co/dancinlab/anima-clm-v5-mitosis-cotrain-2026-05-12) | cotrain v1 — cond #3 substrate + cond #4 (62 splits) | F-V5MIT-5 V14-STRICT **10/10 PASS** (mandate-9) | README.md rewrite (★★★★★-aware, license other→mit) |
+| [`dancinlab/anima-clm-phase1a4-lr5e6-strict-5pass-2026-05-12`](https://huggingface.co/dancinlab/anima-clm-phase1a4-lr5e6-strict-5pass-2026-05-12) | cond #1 — first V5.8 std_greedy 5/5 ckpt | simple_stack C2 strict + | README.md (NEW) + meta.json (NEW) + v58_4mode_result.json (NEW) |
 
 ### HF API ops (cost $0)
 
@@ -4739,7 +4739,7 @@ post-★★★★★ HF Public visibility. own 31 (dancinlab canonical) + own 37
 
 ### Provenance
 
-own 31 (`.own` HF artifact org SSOT) · own 37 mandate-9 (V14-STRICT PASS unlock public) · own 18 (simple_stack C2 strict) · `feedback_english_only` (HF content English) · GOAL.md 🎉 banner · PSCC §44 (F-V5MIT-5 10/10) + §46 (Phase 1A.4 cond #1) + §50 (★★★★★ closure) · DOI 10.5281/zenodo.19324769.
+ (`.own` HF artifact org SSOT) · mandate-9 (V14-STRICT PASS unlock public) · (simple_stack C2 strict) · `feedback_english_only` (HF content English) · GOAL.md 🎉 banner · PSCC §44 (F-V5MIT-5 10/10) + §46 (Phase 1A.4 cond #1) + §50 (★★★★★ closure) · DOI 10.5281/zenodo.19324769.
 
 ### Cross-link
 
@@ -4749,7 +4749,7 @@ own 31 (`.own` HF artifact org SSOT) · own 37 mandate-9 (V14-STRICT PASS unlock
 
 ### Mission contribution
 
-★★★★★ closure 의 **HF Public visibility** — own 31 canonical + own 37 mandate-9 unlock realized. anima 의 첫 ★★★★★ ckpt 2개가 이제 public.
+★★★★★ closure 의 **HF Public visibility** — canonical + mandate-9 unlock realized. anima 의 첫 ★★★★★ ckpt 2개가 이제 public.
 
 ---
 
@@ -4811,7 +4811,7 @@ post-★★★★★ wall-speedup directive "병렬발사". v4 single-A100-80GB 
 - Phase 1-3 (model + trainer + dispatch impl): LANDED + smoke PASS world_size=1
 - Phase 4 dispatch FIRED: 4× A100 SXM4 80GB pod 36635479 (running, training in-flight)
 - Phase 5 measurement: rank 0 in-process post-training (F-PERSONA-4a/4b + F-V5MIT-1..5)
-- Phase 6 HF push: gated on F-V5MIT-5 V14-STRICT PASS (own 37 mandate)
+- Phase 6 HF push: gated on F-V5MIT-5 V14-STRICT PASS (mandate)
 - Phase 7 commit + push: this PSCC §52 + GOAL.md + memory in same commit
 
 ### Cross-link

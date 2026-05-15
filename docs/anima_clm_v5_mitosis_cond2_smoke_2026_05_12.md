@@ -128,7 +128,7 @@
 | 3 ★★★ | cond.3 Mac CPU smoke 정밀화 | per-cell Φ tolerance calibration + 50+ step warmup smoke + V14 mirror reproduce | $0 | AUTO post 본 PASS | next |
 | 4 ★★ | cond.4 long-trajectory | 3K-10K turn, α metric + Φ-rate vs split correlation | $0 | AUTO post cond.3 PASS | pending |
 | 5 ★★★★ | cond.5 H100 cotrain | 5K step × cells 2→64, V14-STRICT 5-seed × 5-seed | **$30-40** | **`OK CLM V5-MITOSIS H100 FIRE COST $40`** verbatim | pending |
-| 6 ★★ | cond.6 HF promote | dancinlab/clm-v5-mitosis-engine private | $0 | own 37 5/5 prereq | pending |
+| 6 ★★ | cond.6 HF promote | dancinlab/clm-v5-mitosis-engine private | $0 | 5/5 prereq | pending |
 
 ---
 
@@ -158,6 +158,6 @@
 
 본 doc 는 cycle 2026-05-12 close 시점 cond.2 PASS snapshot. 향후 추가 finding (cond.3 calibration, F-V5MIT-3 mitigation, V14 mirror result) 는 §A 이후 append-only — `## §N [YYYY-MM-DD HH:MM KST] <title>` format.
 
-raw#9 (training/.py policy — repo 의 `**/*.py` 허용, gitignored 가 아님; 별도 명시 add 권장), raw#10 (honest C3 ≥3 — §2), raw#15 (additive — 기존 skeleton 미수정, smoke_test 만 신규), raw#37 (additive preserve), own 16 (cost discipline — $0 PASS).
+raw#9 (training/.py policy — repo 의 `**/*.py` 허용, gitignored 가 아님; 별도 명시 add 권장), raw#10 (honest C3 ≥3 — §2), raw#15 (additive — 기존 skeleton 미수정, smoke_test 만 신규), raw#37 (additive preserve), (cost discipline — $0 PASS).
 
 end of `anima_clm_v5_mitosis_cond2_smoke_2026_05_12.md`.

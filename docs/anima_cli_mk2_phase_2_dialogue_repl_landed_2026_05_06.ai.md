@@ -10,7 +10,7 @@ tool/anima_cli/dialogue.hexa Phase 2:
 3. JSONL session log emit (anima.dialogue.v1) — start/user/substrate/end/summary
 4. --probe one-shot path also auto-logs to daily session JSONL
 5. --selftest extends to 5-turn synthetic conversation
-6. raw#9/raw#10/raw#15 + own 17 정합 유지
+6. raw#9/raw#10/raw#15 + 정합 유지
 
 ## What changed
 
@@ -99,7 +99,7 @@ already routes correctly.
   per turn, prior_hidden persistence not wired (Phase 3 TODO)
 - C4 REPL parser is line-based regex on mount stdout; mount emit format
   changes break it
-- C5 chat-capability NOT promised (own 17 ALM forced learning closed)
+- C5 chat-capability NOT promised (ALM forced learning closed)
 - C6 Ctrl+C SIGINT handling unverified — readline behavior under signal is
   hexa-runtime-dependent
 - C7 mount cold-load ~25-30s/turn (transformers AutoModelForCausalLM) — not
@@ -107,12 +107,12 @@ already routes correctly.
 
 ## raw 준수
 
-- raw#9 hexa-only — no .py in this layer (mount.hexa transient_py shim is own 4 LOCKED)
+- raw#9 hexa-only — no .py in this layer (mount.hexa transient_py shim is LOCKED)
 - raw#10 honest C3 = 7 caveats (≥5 satisfied)
 - raw#15 additive — old --interactive stub replaced; --probe / --selftest
   preserved + extended; mount.hexa / bash wrapper / other anima_cli modules
   untouched
-- own 17 — ALM forced learning DEPRECATED, backend = clm_v4_mount only
+- — ALM forced learning DEPRECATED, backend = clm_v4_mount only
   (DEFAULT_MODEL = dancinlab/clm-v4-mk2-v1)
 
 ## Known limits

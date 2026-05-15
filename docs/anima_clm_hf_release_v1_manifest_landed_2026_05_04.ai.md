@@ -6,7 +6,7 @@
 - **Output**: `state/clm_v4_hf_release_v1_manifest_2026_05_04/manifest.json` (660 LoC; tracked locally)
 - **Schema**: `anima/clm/hf_release_v1/manifest/1`
 - **Model id targeted**: `dancinlab/clm-v4-mk2-v1` (Option A per audit §1.7 / plan §1 step 1 Q1)
-- **Constraints respected**: raw#9 (json + md only), raw#10 (≥5 honest C3, observed: 10), raw#15 (no destructive); anima own 14 (HF-only weights — manifest captures sha256 references, no local 5GB copy)
+- **Constraints respected**: raw#9 (json + md only), raw#10 (≥5 honest C3, observed: 10), raw#15 (no destructive); anima (HF-only weights — manifest captures sha256 references, no local 5GB copy)
 
 ---
 

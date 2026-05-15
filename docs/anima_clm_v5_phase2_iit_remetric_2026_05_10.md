@@ -103,4 +103,4 @@ The honest reading: trained Phase 2 cotrain ckpt's engine_g.h_to_c projection ac
 
 ## Status
 
-raw#15 additive (no upstream module touched). raw#10 honest C3 7+ documented inline. own 30 substrate-real (no pod). $0 cost (Mac CPU + local ckpt). Wall ≈5 min.
+raw#15 additive (no upstream module touched). raw#10 honest C3 7+ documented inline. substrate-real (no pod). $0 cost (Mac CPU + local ckpt). Wall ≈5 min.

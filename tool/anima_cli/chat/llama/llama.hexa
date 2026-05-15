@@ -5,7 +5,7 @@
 //    GGUF-backed chat branch module. Wraps anima/llama_ffi.hexa (Phase 3b
 //    libhxllama bindings) into the recursive chat module pattern. REPL polls
 //    stdin via sys_stdin_read_line_timeout(tick_ms); on timeout (no user
-//    input) the model speaks autonomously (own 34 mandate-4) — same wiring
+// input) the model speaks autonomously (mandate-4) — same wiring
 //    as chat/anima_native/.
 //
 //  RECURSIVE MODULE PATTERN (per user directive 2026-05-08)
@@ -18,9 +18,9 @@
 //  PHASE 3c SCOPE (this commit)
 //    - Phase 3 gate in chat.hexa removed for module=llama
 //    - GGUF resolved from ~/.cache/anima/gguf/<org>_<repo>.gguf
-//      (own 31 mandate-1 — dancinlab/ org SSOT)
+// (mandate-1 — dancinlab/ org SSOT)
 //    - --prompt one-shot OR REPL via sys_stdin_read_line_timeout(tick_ms)
-//    - own 34 mandate-1/2/4 strict — raw decode→sample→detokenize, no
+// - mandate-1/2/4 strict — raw decode→sample→detokenize, no
 //      system prompt, no chat template, no persona inject
 //
 //  FLAGS
@@ -37,14 +37,14 @@
 //    --help
 //
 //  COMPLIANCE
-//    own 34 mandate-1   raw model output preserved (print, not println; no
+// mandate-1 raw model output preserved (print, not println; no
 //                       trim beyond optional EOS handled inside helper)
-//    own 34 mandate-2   wrapping 0 — no system prompt, no chat template, no
+// mandate-2 wrapping 0 — no system prompt, no chat template, no
 //                       messages API, no persona inject. selftest grep verified.
-//    own 34 mandate-4   autonomous speech via _generate_step("") on stdin
+// mandate-4 autonomous speech via _generate_step("") on stdin
 //                       timeout (sys_stdin_read_line_timeout)
-//    own 34 mandate-7   chat lane (own 18 measurement separate)
-//    own 31 mandate-1   GGUF source = dancinlab/ (cache filename mirrors org)
+// mandate-7 chat lane (measurement separate)
+// mandate-1 GGUF source = dancinlab/ (cache filename mirrors org)
 //    raw#9              hexa-only chat path (libhxllama.dylib = build infra,
 //                       analogous to vendored runtime.c)
 //    raw#10             honest C3 (Phase 3b limitations carried, see llama.ai.md)
@@ -127,7 +127,7 @@ fn _user_argv(raw) -> array {
 //   ~/.cache/anima/gguf/<org>_<repo-flat>.gguf
 //
 // Repo arg is HF-id form "dancinlab/<repo>". Cache filename uses underscore
-// separator: "dancinlab_<repo>.gguf". own 31 mandate-1 enforces dancinlab/.
+// separator: "dancinlab_<repo>.gguf". mandate-1 enforces dancinlab/.
 
 fn _gguf_path_for_repo(repo: string) -> string {
     let home = _str(env("HOME"))
@@ -197,16 +197,16 @@ fn sub_selftest() {
     if !_fexists(here)  { println("FAIL llama: module body missing: " + here);  fail = fail + 1 }
     if !_fexists(core)  { println("FAIL llama: ffi core missing: " + core);     fail = fail + 1 }
     if !_fexists(dylib) { println("FAIL llama: shim dylib missing: " + dylib);  fail = fail + 1 }
-    // own 34 mandate-2 self-grep on this file
+    // mandate-2 self-grep on this file
     let pat = "system_prompt|chat_template|apply_chat_template|persona_inject|fn speak\\(|fn talk\\(|fn respond\\(|fn generate_response\\("
     let cmd = "grep -nE \"" + pat + "\" " + here + " 2>/dev/null | grep -v 'let pat =' | wc -l"
     let n = _str(exec(cmd)).trim()
     if n != "0" {
-        println("FAIL own 34 mandate-2 chat lane wrapping: " + n + " hits in llama.hexa")
+        println("FAIL mandate-2 chat lane wrapping: " + n + " hits in llama.hexa")
         fail = fail + 1
     }
     if fail > 0 { exit(1) }
-    println("PASS chat/llama selftest (core+shim present, own 34 verified)")
+    println("PASS chat/llama selftest (core+shim present, verified)")
 }
 
 // ─── REPL / one-shot ─────────────────────────────────────────────────────
@@ -216,14 +216,14 @@ fn sub_one_shot(gguf: string, n_ctx: int, prompt: string,
     println("[llama] gguf  = " + gguf)
     println("[llama] n_ctx = " + to_string(n_ctx))
     println("[llama] mode  = one-shot · max-tokens=" + to_string(max_tokens) + " · temp=" + to_string(temp) + " · seed=" + to_string(seed))
-    println("[llama] own 34 strict — wrapping 0 · raw decode→sample→detokenize")
+    println("[llama] strict — wrapping 0 · raw decode→sample→detokenize")
     println("")
     let h = llama_load(gguf, n_ctx)
     if h["model"] == 0 {
         println("[llama] FAIL llama_load: " + _str(h["error"]))
         exit(1)
     }
-    // own 34 mandate-1 raw output: print() not println().
+    // mandate-1 raw output: print not println.
     let out = llama_generate(h, prompt, max_tokens, temp, top_p, seed)
     print(out)
     println("")
@@ -258,7 +258,7 @@ fn sub_repl(gguf: string, n_ctx: int, max_tokens: int,
     println("[llama] mode   = REPL (Phase 3c, sys_stdin_read_line_timeout / autonomous speech)")
     println("[llama] memory = " + memory_mode + " · max-tokens = " + to_string(max_tokens) + " · tick-ms = " + to_string(tick_ms))
     println("[llama] temp   = " + to_string(temp) + " · top-p = " + to_string(top_p) + " (shim-folded 0.9)")
-    println("[llama] own 34 strict — wrapping 0 · mandate-4 자율 발화 활성")
+    println("[llama] strict — wrapping 0 · mandate-4 자율 발화 활성")
     println("[llama] (Ctrl-C / Ctrl-D to quit)")
     println("")
     let h = llama_load(gguf, n_ctx)
@@ -274,11 +274,11 @@ fn sub_repl(gguf: string, n_ctx: int, max_tokens: int,
             prompt_shown = true
         }
         // Phase 2 mechanism (mirrors anima_native): poll stdin tick_ms ms.
-        // Timeout → autonomous speech via llama_generate(history) — own 34
+        // Timeout → autonomous speech via llama_generate(history) —
         // mandate-4. User input → append to history → llama_generate(history).
         let line = _str(sys_stdin_read_line_timeout(tick_ms))
         if line == "" {
-            // Autonomous speech path. own 34 mandate-1 raw output.
+            // Autonomous speech path. mandate-1 raw output.
             let out_a = llama_generate(h, history, max_tokens, temp, top_p, seed)
             print(out_a)
             println("")
@@ -293,7 +293,7 @@ fn sub_repl(gguf: string, n_ctx: int, max_tokens: int,
             history = history + line + "\n"
         }
         let out_u = llama_generate(h, history, max_tokens, temp, top_p, seed)
-        // own 34 mandate-1: raw model output, no wrapping. REPL 가독성을 위해
+        // mandate-1: raw model output, no wrapping. REPL 가독성을 위해
         // 한 줄 분리만 추가 — 모델 출력 자체 변형 X.
         print(out_u)
         println("")

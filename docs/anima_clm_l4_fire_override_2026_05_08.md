@@ -1,6 +1,6 @@
 # anima CLM L4 fire override trace — 2026-05-08
 
-**Purpose**: own 16 cost discipline override 절차 SSOT — L4 BG (BG-LA/LB/LC/LD,
+**Purpose**: cost discipline override 절차 SSOT — L4 BG (BG-LA/LB/LC/LD,
 $150 total) fire 는 사용자 explicit 키워드 'OK CLM L4 ALL FIRE' 도착 시까지
 PENDING. 본 문서는 (a) override 키워드 정의, (b) poll 절차, (c) override 도착
 후 pre-flight 절차, (d) 본 cycle (loop iter e) poll 결과 trace.
@@ -11,7 +11,7 @@ PENDING. 본 문서는 (a) override 키워드 정의, (b) poll 절차, (c) overr
 - `docs/anima_clm_l4_corpus_2026_05_08.md`
 - `docs/anima_chat_autonomous_speech_roadmap_2026_05_08.md` L4 매트릭스
 - `tool/transient_py/anima_clm_l[abcd]_h100.py` (4 spec files, fire_status=pending_user_override)
-- `.own` own 16 (cost discipline) · own 18 (PASS_STRICT_C3) · own 30 (ckpt preservation) · own 31 (Flavor B naming) · own 33 (trinity)
+- `.own` (cost discipline) · (PASS_STRICT_C3) · (ckpt preservation) · (Flavor B naming) · (trinity)
 
 ---
 
@@ -21,13 +21,13 @@ PENDING. 본 문서는 (a) override 키워드 정의, (b) poll 절차, (c) overr
 |---|---|
 | Keyword | `OK CLM L4 ALL FIRE` |
 | Source | docs/anima_chat_autonomous_speech_roadmap_2026_05_08.md L227 |
-| Authority | own 16 cost discipline override (default $10/BG cap → 4 path 합계 $150) |
+| Authority | cost discipline override (default $10/BG cap → 4 path 합계 $150) |
 | Recipient | anima agent (loop iter poll) |
 | Issuer | 사용자 (verbatim) |
 
-**원칙**: own 16 cost discipline 의 default $10/BG cap 은 absolute floor. L4 4
+**원칙**: cost discipline 의 default $10/BG cap 은 absolute floor. L4 4
 paths 총 $150 는 default × 15. 따라서 사용자 explicit override 가 안 도착하면
-4 BG 모두 PENDING — 한 BG 라도 단독 fire 도 own 16 위반.
+4 BG 모두 PENDING — 한 BG 라도 단독 fire 도 위반.
 
 ---
 
@@ -53,9 +53,9 @@ directive 후 wiring agent 가 수행.
 2. C3 threshold formal ROC (현재 heuristic — `state/anima_consciousness_baseline.json`)
 3. BG-LC tokenizer mismatch strategy 결정 (3 options TBD)
 4. H100 pod 4 instance 생성 (`config/h100_pods.json` 현재 zero)
-5. own 33 trinity self-check 4 path 각각
-6. own 30 mandate-1/2/3/4 ckpt preservation 사전 확인
-7. own 31 mandate-4 Flavor B naming 정합 (이미 spec 내 명시)
+5. trinity self-check 4 path 각각
+6. mandate-1/2/3/4 ckpt preservation 사전 확인
+7. mandate-4 Flavor B naming 정합 (이미 spec 내 명시)
 8. emit `READY_FOR_FIRE` state + 사용자 confirmation 재요청
 
 ---
@@ -70,8 +70,8 @@ directive 후 wiring agent 가 수행.
 | repo full grep `OK CLM L4 ALL FIRE` | 3 files matched (`.roadmap.cli` × 5 lines, `docs/anima_clm_l4_corpus_2026_05_08.md` L148, `docs/anima_chat_autonomous_speech_roadmap_2026_05_08.md` L227) |
 | 매칭 meta_only? | YES — 모두 spec field declaration (`fire_keyword`) 또는 expectation reference (override 필요 statement). 사용자 발화 verbatim X |
 | **Verdict** | **NO_OVERRIDE_DETECTED** |
-| Fire authority | **DENIED** — own 16 cost discipline 유지 |
-| Spec readiness (4 BG) | spec_landed × 4, trinity × 4, own 30 × 4, own 31 × 4 = 100% spec-side |
+| Fire authority | **DENIED** — cost discipline 유지 |
+| Spec readiness (4 BG) | spec_landed × 4, trinity × 4, × 4, × 4 = 100% spec-side |
 | Data readiness (4 BG) | corpus 0/4 built, C3 threshold 0/4 formal ROC = ~25% data-side |
 | Total readiness | 71.25% (weighted estimate, see `state/anima_clm_l4_readiness_2026_05_08.json`) |
 
@@ -89,13 +89,13 @@ fire_status `pending_user_override` → `READY_FOR_FIRE` 갱신.
 
 - override poll = 단일 시점 grep — 사용자가 본 cycle 직후 발화 시 본 doc 갱신 lag 가능 (다음 iter 에서 pickup)
 - meta_only 매칭 5개 + 2개 = 8개 — false-positive risk 차단 (verbatim user-issued 만 fire authority)
-- BG-LB $60 = own 16 default × 6 — override 도착해도 단일 BG drift risk 명시
+- BG-LB $60 = default × 6 — override 도착해도 단일 BG drift risk 명시
 - corpus content 미build = 본 readiness JSON 의 `corpus_path_decided=false` 4건 — fire 직전 build cycle 필수
-- C3 threshold heuristic 만 존재 — formal ROC 누적 데이터 부족 (own 18 honest c3 traceback)
+- C3 threshold heuristic 만 존재 — formal ROC 누적 데이터 부족 (honest c3 traceback)
 
 ---
 
 ## 7. 변경 권한 (read-only mandate)
 
 본 agent (loop iter e) = read-only + state/spec/doc 신설만. spec file 수정 X,
-fire 실행 X. own 16 cost discipline strict 유지.
+fire 실행 X. cost discipline strict 유지.

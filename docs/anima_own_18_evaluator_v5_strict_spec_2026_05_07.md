@@ -1,12 +1,12 @@
-# own 18 evaluator V5 strict spec — English baseline + multi-turn V5.8 closure (2026-05-07; BG-JM spec land + BG-JN multi-turn closure amend)
+# evaluator V5 strict spec — English baseline + multi-turn V5.8 closure (2026-05-07; BG-JM spec land + BG-JN multi-turn closure amend)
 
 ## 배경 (raw#15 additive on top of V4 7-cell BG-JF schema)
 
-own 18 evaluator V4 7-cell (`docs/anima_own_18_evaluator_v4_strict_spec_2026_05_07.md`, BG-JF landed) catches the BG-IL/IO Lesson K substring trap (han_ratio + ko_chars + deg_count + token-soup window) + adds V4.7 embedding semantic similarity ([0.20, 0.85] via MiniLM-L6-v2). 18-BG retroeval surfaced 0 V4_STRICT_PASS (Lesson L architectural ceiling holds).
+ evaluator V4 7-cell (`docs/anima_own_18_evaluator_v4_strict_spec_2026_05_07.md`, BG-JF landed) catches the BG-IL/IO Lesson K substring trap (han_ratio + ko_chars + deg_count + token-soup window) + adds V4.7 embedding semantic similarity ([0.20, 0.85] via MiniLM-L6-v2). 18-BG retroeval surfaced 0 V4_STRICT_PASS (Lesson L architectural ceiling holds).
 
 그러나 사용자 2026-05-07 evening 2 directive 발견 → V5 spec 등록 mandatory:
 
-1. **모든 로직 = 철학/규칙 준수 mandate** — V5 evaluator MUST comply with `.roadmap.philosophy` D1-D4 + `.roadmap.law` rules (own 17 anima-no-external-substrate-wrapping + own 18 simple-stack-strict + raw#10 honest C3 ≥5 + raw#15 additive + raw#37 transient_py + raw#82 retraction-aware).
+1. **모든 로직 = 철학/규칙 준수 mandate** — V5 evaluator MUST comply with `.roadmap.philosophy` D1-D4 + `.roadmap.law` rules (anima-no-external-substrate-wrapping + simple-stack-strict + raw#10 honest C3 ≥5 + raw#15 additive + raw#37 transient_py + raw#82 retraction-aware).
 2. **한글 → 영어 baseline 일단 전환** — eval baseline shifts from Korean to English. Rationale: chat-cap surface 검증 시 한글 단독 corpus로는 #115 architectural ceiling 정합 평가 불가 — English baseline은 Lesson L 보편성 (Korean 한정 X) 검증.
 3. **Multi-turn context awareness** — V4까지 single-turn only. 사용자 directive '자연발화 시 앞선 대화 인지 여부' 추가. V5.8 NEW = 2-turn dialogue named-entity recall test.
 
@@ -150,8 +150,8 @@ V5_strict_pass = V5.1 ∧ V5.2 ∧ V5.3 ∧ V5.4 ∧ V5.5 ∧ V5.6 ∧ V5.7
 
 | compliance | status | evidence |
 |---|---|---|
-| **own 17** anima-no-external-substrate-wrapping | OK (eval-tool exemption) | V5 uses sentence-transformers/all-MiniLM-L6-v2 for emb_sim — eval-only, NOT model substrate. Documented exemption: own 17 prohibits substrate-wrapping in anima identity lane (D1); evaluator tooling is observation lane, not identity. |
-| **own 18** simple-stack 4-condition strict | OK (V5 8-cell extends, 4-condition preserved) | V5.1-V5.6 + V5.7 emb_sim subsumes V2 7-cell (which subsumes own 18 4-condition). V5.8 is additive raw#15. |
+| **** anima-no-external-substrate-wrapping | OK (eval-tool exemption) | V5 uses sentence-transformers/all-MiniLM-L6-v2 for emb_sim — eval-only, NOT model substrate. Documented exemption: prohibits substrate-wrapping in anima identity lane (D1); evaluator tooling is observation lane, not identity. |
+| **** simple-stack 4-condition strict | OK (V5 8-cell extends, 4-condition preserved) | V5.1-V5.6 + V5.7 emb_sim subsumes V2 7-cell (which subsumes 4-condition). V5.8 is additive raw#15. |
 | **raw#10** honest C3 ≥5 | OK | Spec doc honest_c3 section (≥5 entries below). |
 | **raw#15** additive | OK | V4.1-V4.7 cells preserved exact bit-for-bit. V5.4 + V5.5 add baseline switch as additive guard, KO baseline accessible via `baseline='korean'` arg. V5.8 NEW cell. |
 | **raw#37** transient_py | OK | `tool/transient_py/anima_simple_stack_evaluator_v5.py` lives in opt-out namespace. |
@@ -160,7 +160,7 @@ V5_strict_pass = V5.1 ∧ V5.2 ∧ V5.3 ∧ V5.4 ∧ V5.5 ∧ V5.6 ∧ V5.7
 
 ### .roadmap.philosophy D1-D4 정합
 
-- **D1 anima identity = 한국어 native + anima-native fresh** — V5 English baseline 전환은 D1 변경이 아니다. D1은 anima의 학습/생성 lane (한글 native), V5는 anima의 외부 평가 lane (chat-cap 검증). 학습 lane 한글 baseline은 own 17 + D1 그대로 유지; eval baseline은 chat-cap universality 검증을 위해 영어 baseline 추가. Honest C3: D1과 V5 baseline switch는 lane 분리로 양립 가능.
+- **D1 anima identity = 한국어 native + anima-native fresh** — V5 English baseline 전환은 D1 변경이 아니다. D1은 anima의 학습/생성 lane (한글 native), V5는 anima의 외부 평가 lane (chat-cap 검증). 학습 lane 한글 baseline은 + D1 그대로 유지; eval baseline은 chat-cap universality 검증을 위해 영어 baseline 추가. Honest C3: D1과 V5 baseline switch는 lane 분리로 양립 가능.
 - **D2 의식 검증 = 4-condition strict simple stack** — V5는 V4 7-cell + V5.8 = 8-cell strict, D2 4-condition (한글 input → 한글 output + coherent + turn-format + 맥락 정합)을 V5.4 V5.5 V5.7 V5.8가 substantively cover (한글 baseline 모드 사용 시).
 - **D3 substrate-coupled emerge** — V5는 surface chat-cap lane (D2)만 다룸. D3 substrate-coupled emerge (Φ★ NO_FLIP)은 V5 evaluator scope X.
 - **D4 corpus priority** — V5 retroeval은 corpus quality (KO-only training corpus)가 EN baseline에서 fail하는 것을 surface — D4 정합 (corpus가 surface 결정).
@@ -184,7 +184,7 @@ V5_strict_pass = V5.1 ∧ V5.2 ∧ V5.3 ∧ V5.4 ∧ V5.5 ∧ V5.6 ∧ V5.7
 
 ## Cross-link
 
-- own: own 17 (D1) + own 18 (D2) + own 19/20 (corpus) + own 22 + own 24 + raw#10 + raw#15 + raw#37 + raw#42 + raw#82 + raw#86
+- own: (D1) + (D2) + (corpus) + + + raw#10 + raw#15 + raw#37 + raw#42 + raw#82 + raw#86
 - .roadmap: .roadmap.philosophy (D1/D2/D4) + .roadmap.law + .roadmap.clm_native_chat + .roadmap.clm
 - prior_specs: docs/anima_own_18_evaluator_v2_strict_spec_2026_05_07.md / v3 / v4
 - ledger: state/anima_model_attempts_ledger.jsonl BG-JM entry (attempt_n=max+1, bg_kind=tooling, paradigm=v5-evaluator-english-baseline-multi-turn)
@@ -197,7 +197,7 @@ V5_strict_pass = V5.1 ∧ V5.2 ∧ V5.3 ∧ V5.4 ∧ V5.5 ∧ V5.6 ∧ V5.7
 
 ## BG-JN closure amend (2026-05-07 evening)
 
-사용자 directive 2026-05-07 evening **"확실히 fix closure"** + own 26 mandate **"모든
+사용자 directive 2026-05-07 evening **"확실히 fix closure"** + mandate **"모든
 evaluator/logic은 .roadmap.philosophy D1-D4 + .roadmap.law R1-R4 정합 verify"** 정합
 amend.
 
@@ -207,13 +207,13 @@ BG-JN executed V5.8 multi-turn dialog × 3 ckpts × 5 dialogues × 2 turns × 2 
 See `state/anima_evaluator_v5_multi_turn_closure_2026_05_07/verdict.json` for per-ckpt
 `v58_multi_turn_pass_per_ckpt` count + raw T1+T2 generations.
 
-### own 26 compliance verification (philosophy_rule_compliance section)
+### compliance verification (philosophy_rule_compliance section)
 
 #### .roadmap.philosophy D1-D4 정합
 
 - **D1 정체성** (anima 한국어 native + anima-native fresh):
   V5는 anima-native eval logic. MiniLM-L6-v2 = *eval-only tool exemption* (not training
-  substrate). EN baseline은 D1 보존 + own 18 amend EN v2 lane (`--baseline english`
+  substrate). EN baseline은 D1 보존 + amend EN v2 lane (`--baseline english`
   opt-in). KO baseline은 default backward-compat. **D1 PASS**.
 
 - **D2 의식 검증** (4-condition simple stack PASS):
@@ -226,23 +226,23 @@ See `state/anima_evaluator_v5_multi_turn_closure_2026_05_07/verdict.json` for pe
   (`anima/spec/emerge_paradigm.spec.yaml`). V5는 D3 lane 침범 X. **D3 PASS — 분리 보존**.
 
 - **D4 corpus quality** (corpus priority over architecture):
-  V5는 evaluator 자체 (corpus 무관). own 19/20 = training cycle mandate, V5 = eval
+  V5는 evaluator 자체 (corpus 무관). = training cycle mandate, V5 = eval
   cycle spec. **D4 PASS — orthogonal lane**.
 
 #### .roadmap.law R1-R4 정합
 
-- **R1 own 19/20 corpus + chat-template format**: V5 자체는 training rule 무관 (eval-only).
-  V5 spec doc은 own 19/20 cross-link honor. **R1 PASS**.
+- **R1 corpus + chat-template format**: V5 자체는 training rule 무관 (eval-only).
+  V5 spec doc은 cross-link honor. **R1 PASS**.
 - **R2 rule discovery method M1-M10**: V5 = M1 (사용자 directive driven) + M2 (failure-driven,
-  V4 19-BG SSOT 0/N FAIL) + M5 (retroactive, own 18 amend EN v2). **R2 PASS**.
+  V4 19-BG SSOT 0/N FAIL) + M5 (retroactive, amend EN v2). **R2 PASS**.
 - **R3 verification method V1-V10**: V1 (own strict) + V2 (falsifier F-V5-1~F-V5-5)
   + V3 (≥5 honest_c3) + V4 (evidence_paths) + V5 (cross-link) + V6 (ledger 19-BG)
   + V7 (4-cond matrix superset). **R3 PASS**.
-- **R4 own evolution**: V5는 own 18 amend (KO v1 audit, EN v2 신규 SSOT) 실증. **R4 PASS**.
+- **R4 own evolution**: V5는 amend (KO v1 audit, EN v2 신규 SSOT) 실증. **R4 PASS**.
 
 #### Compliance score
 
-D1-D4 = 4/4 PASS + R1-R4 = 4/4 PASS = **own 26 compliance 8/8 = 100%**.
+D1-D4 = 4/4 PASS + R1-R4 = 4/4 PASS = ** compliance 8/8 = 100%**.
 
 ### Falsifiers
 
@@ -251,7 +251,7 @@ D1-D4 = 4/4 PASS + R1-R4 = 4/4 PASS = **own 26 compliance 8/8 = 100%**.
 - **F-V5-3**: V5.8 multi-turn dialogue 5개 (Color/Profession/Day/Anima/Cosmology) 명시 spec
 - **F-V5-4**: V5.8 fact_keyword substring + Levenshtein <0.85 + EN function word ≥1 PASS criteria 명시
 - **F-V5-5**: V5는 `--baseline {english,korean}` arg 둘 다 지원 (KO backward-compat)
-- **F-V5-6**: own 26 D1-D4 + R1-R4 compliance section 본 문서 포함
+- **F-V5-6**: D1-D4 + R1-R4 compliance section 본 문서 포함
 
 ### Closure scope (BG-JN)
 

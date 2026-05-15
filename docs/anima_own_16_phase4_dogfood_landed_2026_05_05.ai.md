@@ -1,5 +1,5 @@
 ---
-title: own 16 Phase 4 dogfood smoke — landed (3/3 scenarios PASS, $0.32 actual vs $3 cap)
+title: Phase 4 dogfood smoke — landed (3/3 scenarios PASS, $0.32 actual vs $3 cap)
 cycle: 2026-05-05
 ts: 2026-05-05T_own_16_phase4_dogfood_landed
 bg_lane: OWN-16-PHASE4-DOGFOOD
@@ -28,7 +28,7 @@ raw_invariants:
   - raw#15 (additive — no roadmap mutation, no .own mutation, no commit per task §6 directive)
 ---
 
-# own 16 Phase 4 dogfood smoke — landed (2026-05-05)
+# Phase 4 dogfood smoke — landed (2026-05-05)
 
 ## Summary (5 bullets)
 
@@ -43,11 +43,11 @@ raw_invariants:
   8-min backdated heartbeat, distinct STALE_HEARTBEAT alert (age=481s)
   emitted to ledger.
 
-- **own 16 Phase 1+2+3+3.5+4 = ALL LANDED**. Phase 1 (4 tool files, selftests
+- ** Phase 1+2+3+3.5+4 = ALL LANDED**. Phase 1 (4 tool files, selftests
   9/9 PASS), Phase 2 (orchestrator hooks, 4 PASS / 2 unrelated T4 FAIL), Phase
   3 (BG launch template + memory), Phase 3.5 (own_16_preflight.hexa validator
   3/3 PASS), Phase 4 (this dogfood, 3/3 PASS). Compute-lifecycle triad
-  (own 14 HF Hub only + own 15 HF lifecycle + own 16 H100 cost discipline) is
+  (HF Hub only + HF lifecycle + H100 cost discipline) is
   complete in spec + tooling + dogfood; promotion from warn-tier to block-tier
   enforcement requires follow-up h100_bg_launch_lint.hexa (NOT yet emitted —
   see honest C7 in verdict).
@@ -78,7 +78,7 @@ raw_invariants:
   workaround for synthetic dogfood; (3) alert ledger location is
   state/h100_alert_ledger_<YYYY_MM>.jsonl not the spec's
   state/h100_watchdog/alerts/<ts>_<pod>.json — doc-vs-impl drift;
-  (4) own 16 enforcement currently warn-tier only — block-tier needs follow-up
+  (4) enforcement currently warn-tier only — block-tier needs follow-up
   linter; (5) no SSH workload was sent to H100 (registered + billed only) —
   L11/L13 orchestrator paths NOT validated by this dogfood.
 
@@ -137,7 +137,7 @@ probes after PATH sanitization.
 
 ## Closure claims
 
-- **own 16 Phase 1+2+3+3.5+4 fully landed**: yes — every preceding doc is
+- ** Phase 1+2+3+3.5+4 fully landed**: yes — every preceding doc is
   landed-status, this Phase 4 dogfood verdict 3/3 PASS, no outstanding
   blockers.
 - **L23/L24/L25 enforcement closure**: partial — L24 (BG-completion vs
@@ -147,7 +147,7 @@ probes after PATH sanitization.
   foreground-takeover trigger is NOT exercised in this dogfood (no rate-limit
   was simulated). L25 (cost-overrun escalation) is selftest-only — see
   honest C5 in verdict.
-- **Compute lifecycle triad (own 14 + own 15 + own 16) complete?**: yes in
+- **Compute lifecycle triad (+ +) complete?**: yes in
   spec + tooling + dogfood. Block-tier enforcement promotion (warn → block) is
   the next milestone via tool/h100_bg_launch_lint.hexa (proposed in spec
   §5.4, not yet emitted).
@@ -209,11 +209,11 @@ probes after PATH sanitization.
    0.5%). Cost computation is correct under the assumed continuous-billing
    model; real RunPod billing may differ on intermediate stop/start cycles.
 
-6. **Compute-lifecycle triad claim sensitivity.** "own 14 + own 15 + own 16 =
+6. **Compute-lifecycle triad claim sensitivity.** " + + =
    compute-lifecycle triad complete" is a strong claim. The narrower truthful
-   claim is "own 16 phases 1-4 are spec-tested and tool-validated against the
+   claim is " phases 1-4 are spec-tested and tool-validated against the
    operationalization spec". Promotion to canonical taxonomy requires
-   explicit .own mutation (admit own 16 entry per spec §5.4), which is NOT
+   explicit .own mutation (admit entry per spec §5.4), which is NOT
    performed in this BG (per task constraint).
 
 7. **Pod billable wall vs dogfood wall mismatch.** Pod was billable for

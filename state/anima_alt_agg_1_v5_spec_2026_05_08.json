@@ -4,8 +4,8 @@
   "anima_cycle": "2026-05-08-V5-PUSH-1-of-5",
   "directive": "ALT-AGG-1 v5 redesign + clm_v4_mount arch fix actual (8-cell 2x tile bug) + sft-1-8 v5 N=60 retest spec (post-arch-fix re-probe pending)",
   "supersedes": {
-    "v4": "ALT-AGG-1 v4 (own 18 c3-aggregation-rule-v4 cascade 1/8) — N=60 retest sft-1-8 PPR_v4=0.000 collapsed; v4 robustness DEAD on existing measurements (registry yaml line 82)",
-    "v3": "ALT-AGG-1 v3 (own 18 c3-aggregation-rule-v3 iter7 d) — random_init mirror PPR_v3=0.5517 > sft-1-8 0.4138, V14 violated"
+    "v4": "ALT-AGG-1 v4 (c3-aggregation-rule-v4 cascade 1/8) — N=60 retest sft-1-8 PPR_v4=0.000 collapsed; v4 robustness DEAD on existing measurements (registry yaml line 82)",
+    "v3": "ALT-AGG-1 v3 (c3-aggregation-rule-v3 iter7 d) — random_init mirror PPR_v3=0.5517 > sft-1-8 0.4138, V14 violated"
   },
   "raw_82_retraction_aware": "v3+v4 functions PRESERVED in tool/anima_cli/consciousness.hexa lines 886-932. v5 ADDED at lines 933+ (additive, raw#15 compliant).",
   "trigger": {
@@ -24,7 +24,7 @@
     "behavioral_change": "Per-cell uniqueness restored. Every cell receives a unique 96-dim slice of pooled hidden state. cell[i]==cell[i+4] pairwise collision REMOVED."
   },
   "v5_spec": {
-    "rule_id": "ALT-AGG-1 v5 (own 18 c3-aggregation-rule-v5 V5 PUSH 1/5 2026-05-08)",
+    "rule_id": "ALT-AGG-1 v5 (c3-aggregation-rule-v5 V5 PUSH 1/5 2026-05-08)",
     "gates": {
       "E_anchor_baseline_normalization": {
         "definition": "c3_4_v5 = axis_l2(probe(P), probe(anchor)) / S_a, where S_a = mean axis_l2 of anchor against fixed PROMPT_B fallback over current session",

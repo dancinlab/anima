@@ -289,7 +289,7 @@ RST-mega pending: three forward paths are proposed. Ranked by
   before scheduling its execution BG.
 - **C6 — RST-mega timeout risk underweighted.** BG-S-2 + BG-R-2 are
   H100 BGs; if either crashes mid-run or hits a watchdog timeout
-  (per own 16 cost discipline), criterion 4/5 verdict may slip
+  (per cost discipline), criterion 4/5 verdict may slip
   beyond this cycle. The §5 ranking assumes RST-mega completes within
   the same cycle; if it slips, Path B re-prioritizes to (1) sub-task 1
   + 2 (calibration + magnitude refinement), with (5) deferred.

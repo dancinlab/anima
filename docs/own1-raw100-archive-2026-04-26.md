@@ -2,7 +2,7 @@
 
 > **Original source**: `anima/.raw raw#100` (commit `4b16ffe6` migration to `anima/.own own#1`)
 > **Archive reason**: `raw_loader` strict format compliance (raw#2 self-format whitelist).
-> The original `own 1` body carried 9 `retired-2026-04-26`, 6 `exempt-via-gitignore`, 12 `r2-closed-*`, 1 `r2-cleaned-*`, 4 `r2-followup-*`, 19 R3 trailers, 22 R4/R5 trailers, 18 R6 trailers, plus prose continuation lines like `(1)` / `(a)` / `R6A.7+R6A.8` that are NOT valid `<key> <value>` identifiers.
+> The original `` body carried 9 `retired-2026-04-26`, 6 `exempt-via-gitignore`, 12 `r2-closed-*`, 1 `r2-cleaned-*`, 4 `r2-followup-*`, 19 R3 trailers, 22 R4/R5 trailers, 18 R6 trailers, plus prose continuation lines like `(1)` / `(a)` / `R6A.7+R6A.8` that are NOT valid `<key> <value>` identifiers.
 > 88 strict-format issues were emitted by `tool/raw_cli.hexa verify` on this single rule.
 > **Trimmed back-pointer**: `anima/.own own#1` (now ~25 lines, slug `anima-hexa-only-scope`) → references this archive doc.
 >
@@ -19,10 +19,10 @@
 
 ---
 
-## Original `own 1` body (verbatim, 158 lines)
+## Original `` body (verbatim, 158 lines)
 
 ```
-own 1 live "anima-local: raw 9 hexa-only scope override + grandfather list"
+ live "anima-local: raw 9 hexa-only scope override + grandfather list"
   slug anima-hexa-only-scope
   base raw 9 hexa-only
   since 2026-04-26 (ω-rules P4 Phase 0+1)

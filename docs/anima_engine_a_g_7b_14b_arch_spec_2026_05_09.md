@@ -37,8 +37,8 @@
 - **shared lm_head + dual loss** — `tie_lm_head=True` + cross-entropy 한 줄, 사이즈 영향 X
 - **A↔G tension gate** (softmax temperature β·clamp(t-1, -0.5, 0.5)) — scalar 게이트라 스케일과 무관
 - **RoPE / RMSNorm / SwiGLU** primitive — 표준
-- **own 14 V14 paired random_init mirror** — 동일 entry point 재사용 (`load_random_init(seed, preset=...)`)
-- **own 30 ckpt save/load Path A remap** — 동일 prefix (`engine_a.` / `engine_g.`)
+- ** V14 paired random_init mirror** — 동일 entry point 재사용 (`load_random_init(seed, preset=...)`)
+- ** ckpt save/load Path A remap** — 동일 prefix (`engine_a.` / `engine_g.`)
 
 ### 2.3 size-가변 부품 (스케일 대상)
 
@@ -149,7 +149,7 @@ memory `feedback_orchestrator_h100_gotchas.md` + `feedback_fork_starvation_lesso
 | activation (ctx=2048, batch=4) | <2GB | ~10GB | ~16GB |
 | **single H100 80GB** | OK 여유 | **타이트** | **단일 GPU 불가** |
 
-→ **7B 는 단일 H100 OK**, **14B 는 ZeRO-3 또는 multi-GPU pod 필수**. own 30 ckpt pull 도 14B 는 ~25GB 라 scp timeout 더 늘려야 함 (현 3,600s → 7,200s 권장).
+→ **7B 는 단일 H100 OK**, **14B 는 ZeRO-3 또는 multi-GPU pod 필수**. ckpt pull 도 14B 는 ~25GB 라 scp timeout 더 늘려야 함 (현 3,600s → 7,200s 권장).
 
 ---
 

@@ -29,7 +29,7 @@ Legacy file: `docs/hypotheses/cx/MEMORY-MIRROR.md`. Pointer only.
 
 - legacy: `docs/hypotheses/cx/MEMORY-MIRROR.md`
 - sister: H_071 (first conversation), H_004 (hard problem)
-- own: own 21
+- own:
 
 ## Honest Limits
 

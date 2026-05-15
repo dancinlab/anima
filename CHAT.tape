@@ -228,7 +228,7 @@
   text = "✅ Mission outcome 우선 — ★★★★★ 5-cond aggregate 도달이 단일 metric."
 
 @D b_bg_agent_cost_bearing_dispatch_v_4 :: chat [ok]
-  text = "✅ 운영 권장: BG agent 가 cost-bearing dispatch 시 verbatim 사용자 directive (예: \"fire\", \"all bg go\") 로 충분 (own 16 cost discipline 의 verbatim 요구 완화 직 2026-05-12)."
+  text = "✅ 운영 권장: BG agent 가 cost-bearing dispatch 시 verbatim 사용자 directive (예: \"fire\", \"all bg go\") 로 충분 (cost discipline 의 verbatim 요구 완화 직 2026-05-12)."
 
 @D b_reverse_signal_cap_x_y_directive_5 :: chat [ok]
   text = "🔄 Reverse signal: 사용자가 명시적으로 \"비용 cap $X\" 또는 \"모델 크기 제한 Y\" directive 시 그 시점부터 적용."
@@ -849,7 +849,7 @@
   text = "slash commands: `/new` `/load <id>` `/save` `/savant <on|off>` (placeholder, SAVANT-TOOL"
 
 @D b_f_cli_1_5_selftest_session_persi_7 :: chat [ok]
-  text = "F-CLI-1..5 selftest (session persist 왕복 + slash 명령 dispatch + own 18 strict 호환)"
+  text = "F-CLI-1..5 selftest (session persist 왕복 + slash 명령 dispatch + strict 호환)"
 
 @D b_savant_md_savant_tool_md_savant_8 :: chat [ok]
   text = "`SAVANT.tape` + `SAVANT-TOOL.tape` — savant mode toggle (D4c `/savant`)"

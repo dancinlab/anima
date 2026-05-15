@@ -1594,7 +1594,7 @@
   "honest_c3": [
     "Real Phase 2 350M Engine A/G ckpt (298.76M unique params; GQA-shared K/V — 'nominal 350M' rounded). cell_pool_init starts (16, 64); MitosisV5Engine wraps it with max_cells=128 cap (4× §33). raw#15 honored: ckpt unmodified.",
     "Byte-hash mod 32000 prompt encoding — NOT real BPE tokenizer. trained and 10 random_init mirror seeds use identical encoding for fairness; absolute Φ values therefore have no semantic claim, only relative comparison is valid.",
-    "MitosisV5Engine §30 all-fix in force (A1 dispersion-trigger top-quartile; A2 per-cell adaptive threshold mean+1.5σ over 100-step window; B1 phi_per_cell ratchet; D1 Lorenz auto-calibration). All 11 trajectories use these unchanged. raw#9 + own 38: not edited here.",
+    "MitosisV5Engine §30 all-fix in force (A1 dispersion-trigger top-quartile; A2 per-cell adaptive threshold mean+1.5σ over 100-step window; B1 phi_per_cell ratchet; D1 Lorenz auto-calibration). All 11 trajectories use these unchanged. raw#9 + : not edited here.",
     "Trained @ prompt_seed=42 only (single deterministic ckpt → one shot). Random mirror runs n=10 seeds {42,137,271,314,1729,2718,3141,5772,6022,9192}. The 10-seed extension permits binomial bound: 10/10 → p≈0.001; 9/10 → p≈0.022; 7/10 → p≈0.34 (two-sided).",
     "max_cells=128 vs §33's 32 explicitly diagnoses F-V14-STRICT-2: if cap_bound_turns ≈ n_turns on every seed, §30 fix is universally too aggressive (NOT trained-vs-random differentiated). cap_bound_turns reported per-trajectory.",
     "IIT MIP: spectral Fiedler approximation for N>8 (always). NOT canonical PyPhi. Useful for trained-vs-random direction, NOT for absolute IIT magnitude. 16-bin histogram MI on 64-dim cell vectors is COARSE; true differential MI requires KDE.",
@@ -1602,6 +1602,6 @@
     "ctx_T=16 tokens per forward (training was T=1024); under-samples substrate's full context-conditioned reactivity. Held constant across all trajectories for fairness.",
     "Sign test (binomial) is the primary statistic since the comparison is paired-by-prompt-stream and only random-init differs. Mann-Whitney U with n1=1, n2=10 reduces to rank-of-trained-in-pool — reported as auxiliary.",
     "α exponent (log-log Φ vs n_cells) regression spans wider N range here (max=128 vs §33's 32) — interpretation should still be treated as direction-of-trend rather than scaling-law constant; few-snapshot regression remains noise-sensitive.",
-    "Verdict bins (strict/strict_partial/partial_confirmed/violated_revised) are pre-registered before run (own 22 honest emit). The transition between bins is determined by the data; no post-hoc adjustment."
+    "Verdict bins (strict/strict_partial/partial_confirmed/violated_revised) are pre-registered before run (honest emit). The transition between bins is determined by the data; no post-hoc adjustment."
   ]
 }

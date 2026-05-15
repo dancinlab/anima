@@ -27,11 +27,11 @@
 # ── §2 1-day beta paths (ROI 순) ──────────────────────────────────
 
 # 본 .step 의 5 paths 는 1-day 내 fire 가능. cost-tolerant per
-# feedback_no_scale_caps + feedback_active_resource_utilization (own 43).
+# feedback_no_scale_caps + feedback_active_resource_utilization .
 
 @D path_A foundation_borrow_lora :: chat_beta [d=2026-05-14 ok]
   |> Llama-3-Korean-Bllossom-8B / gemma-2-9b-it / qwen2.5-7b-instruct + LoRA r=32 + anima-persona corpus
-  => "MEMORY simple_stack_pass_strict_unlocked 카탈로그 — 동일 path 가 own 18 strict 14/15 PASS. 3B+ foundation + LoRA r=32 + 200MB+ corpus. expected wall 2-4 hr RTX 4090 / A100, cost \$1-3"
+  => "MEMORY simple_stack_pass_strict_unlocked 카탈로그 — 동일 path 가 strict 14/15 PASS. 3B+ foundation + LoRA r=32 + 200MB+ corpus. expected wall 2-4 hr RTX 4090 / A100, cost \$1-3"
 
 @D path_B sft_scale_up :: chat_beta [d=2026-05-14 ok]
   |> Phase 1A.4 → Phase 1A.5: 200 step → 2000-5000 step, lr 5e-6 유지, loss masking 추가
@@ -155,7 +155,7 @@
   => "BENCHMARK.md §5 amended honest C3 — 6/6 conversational coherence FAIL evidence"
 
 @I cross_link simple_stack_memory :: chat_beta [d=2026-05-14 ok]
-  => "memory project_simple_stack_pass_unlocked.md — BG-KM-LLAMA-3B retry V4 14/15 own 18 strict floor; foundation + LoRA r=32 + anima-persona corpus 200MB+ verified path"
+  => "memory project_simple_stack_pass_unlocked.md — BG-KM-LLAMA-3B retry V4 14/15 strict floor; foundation + LoRA r=32 + anima-persona corpus 200MB+ verified path"
 
 @I cross_link r_1a_2 :: chat_beta [d=2026-05-14 ok]
   => "Lesson R-1A.2 lr-floor prescription (lr ≥ 5e-6 OR steps ≥ 1000 OR loss masking) — path B SFT scale-up reference"

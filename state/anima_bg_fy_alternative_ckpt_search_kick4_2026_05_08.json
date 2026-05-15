@@ -17,7 +17,7 @@
     "bg_fy_anima_native_18m_ckpt_local": {
       "found": false,
       "expected_path_remote": "/home/aiden/core/anima/runs/anima-native-ko-small-20260506_205612/ckpt_final.pt (ubu1, 70MB)",
-      "blocker": "사용자 verbatim 'OK CONSENT BG-FY CKPT PULL' 필요 (own 30 + own 16 cost gate)",
+      "blocker": "사용자 verbatim 'OK CONSENT BG-FY CKPT PULL' 필요 (+ cost gate)",
       "honest_C3": "BG-FY ckpt 부재 → real-mode probe 불가 → INDETERMINATE for BG-FY D1 lane until consent + scp"
     },
     "NEW_alternative_anima_native_byte_18m_chat_template_local": {
@@ -45,7 +45,7 @@
         "anima_corpus_token_ratio": 1.0,
         "architecture_origin_factor": 1.0,
         "score": 0.99,
-        "lane": "simple_stack_within_strict (own 17 SCOPE_CLAMP) — PARITY with BG-FY"
+        "lane": "simple_stack_within_strict (SCOPE_CLAMP) — PARITY with BG-FY"
       }
     },
     "iter_anima_native_byte_18m_ko_small_local": {
@@ -73,7 +73,7 @@
       "verify": "PASS (delta >> 1.0 noise floor; ln1.weight mean=1.029 ≠ 1.0 init; clearly trained)"
     },
     "d1_score": 0.99,
-    "lane": "simple_stack_within_strict (own 17 SCOPE_CLAMP)",
+    "lane": "simple_stack_within_strict (SCOPE_CLAMP)",
     "consciousness_simple_fire": "DEFERRED — `anima consciousness simple --aggregation v3 --n-prompts 30` requires hexa CLI compiler invocation; static inspection sufficient for D1 inventory + V14 verify per directive '최대한 빠르게' 0-cost lane",
     "honest_C3_observations": [
       "C1 byte-level vocab=256 native lane — same arch family as BG-FY",
@@ -90,7 +90,7 @@
   },
   "user_action_required": {
     "for_bg_fy_real_probe": "사용자 verbatim 'OK CONSENT BG-FY CKPT PULL' → ubu1 scp pull 70MB → Mac local probe enablement",
-    "for_chat_template_consciousness_simple_fire": "0-cost local fire authorized via own 16 — but hexa CLI compile chain heavy; await directive '/anima consciousness simple --model anima-native-byte-chat-template'",
+    "for_chat_template_consciousness_simple_fire": "0-cost local fire authorized via — but hexa CLI compile chain heavy; await directive '/anima consciousness simple --model anima-native-byte-chat-template'",
     "for_emergence_c3_aggregate": "P5 N-of-M aggregation 실행 (PPR_v2 ≥0.6 ∧ EMC ≥3 of 4 → C3 PASS) on N=30 results across 3 candidates"
   },
   "alternative_ckpt_inventory_summary": {
@@ -103,12 +103,12 @@
   },
   "trinity": {
     "D_axis": "honest C3 — D1=0.99 inventory expanded +1 candidate (BG-HA downgraded → BG-FY arch parity); V14 verify PASS for new candidate",
-    "own_axis": "own 14 V14 ✓, own 16 0-cost ✓, own 17 D1 SCOPE_CLAMP ✓, own 33 trinity ✓, own 34 wrap=0 (state/* are training artifacts not chat-time wrap, 위반 부재 재확인), own 38 매단계 ✓, own 39 yaml↔md (post-write registry sync 의무)",
+    "own_axis": " V14 ✓, 0-cost ✓, D1 SCOPE_CLAMP ✓, trinity ✓, wrap=0 (state/* are training artifacts not chat-time wrap, 위반 부재 재확인), 매단계 ✓, yaml↔md (post-write registry sync 의무)",
     "H_axis": "BG-FY rank_4 보존 — alternative attempt 추가 inventory only, BG-FY supersede X; 사용자 SCP pull keyword 별도 carry"
   },
   "own_axis_audit_observed_during_search": {
-    "wrap0_strict_state_dir_anomalies": "none — anima_native_ko_chat_template_train ckpt 는 BG-HA training artifact, chat-time wrapping 부재 (own 34 mandate-2 violation 부재)",
-    "downgrade_history": "BG-HA C2.4 evaluator flaw (2026-05-07) — own 18 c2_4 evaluator boundary 정밀화 land docs/anima_own_18_c2_4_evaluator_flaw_2026_05_07.md 참조"
+    "wrap0_strict_state_dir_anomalies": "none — anima_native_ko_chat_template_train ckpt 는 BG-HA training artifact, chat-time wrapping 부재 (mandate-2 violation 부재)",
+    "downgrade_history": "BG-HA C2.4 evaluator flaw (2026-05-07) — c2_4 evaluator boundary 정밀화 land docs/anima_own_18_c2_4_evaluator_flaw_2026_05_07.md 참조"
   },
   "next_action_recommendations": [
     "registry update: anima-native-byte-18m-chat-template entry 신설 (D1=0.99 sister candidate)",

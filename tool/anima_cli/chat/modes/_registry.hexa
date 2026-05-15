@@ -1,9 +1,9 @@
 // ════════════════════════════════════════════════════════════════════════════
-//  tool/anima_cli/chat/modes/_registry.hexa — chat MODE registry (own 41 axis-2)
+// tool/anima_cli/chat/modes/_registry.hexa — chat MODE registry (axis-2)
 //
 //  PURPOSE
 //    Single source of truth for chat MODE plugin discovery + metadata.
-//    이 파일은 own 41 axis-N+1 hook T+2 step (cycle 2026-05-10) 에서 inline
+// 이 파일은 axis-N+1 hook T+2 step (cycle 2026-05-10) 에서 inline
 //    anchor (lanes/benchmark.hexa#modes) → standalone registry 로 promote.
 //
 //    이전: benchmark.hexa 안에 vendored (_bench_modes / _mode_describe /
@@ -12,7 +12,7 @@
 //    helper 는 backward-compat mirror 로 유지 (raw#15 additive).
 //
 //  USER DIRECTIVE (2026-05-10 verbatim)
-//    "all bg go" → cycle 2026-05-10 own 41 axis-N+1 hook T+2 step
+// "all bg go" → cycle 2026-05-10 axis-N+1 hook T+2 step
 //    (benchmark.hexa N-axis cross-product 자동 흡수 + mode promote option A)
 //
 //  REGISTRY ENTRY SCHEMA (8-field; mirrors lanes/_registry.hexa +
@@ -24,28 +24,28 @@
 //    status            LANDED | SKELETON | SPEC_CARRY
 //    capability        single_shot | duo_dialogue | trio_round_robin
 //    pattern_type      user_x_model | model_x_model_x2 | model_x_model_x3
-//    description       short one-line explainer (English; own 34 mandate-1
+// description short one-line explainer (English; mandate-1
 //                      preserves model output, registry meta is human/AI doc)
 //    prereq            list of file/build artifacts required before invoke
 //    cost              free | duo_concurrent | trio_concurrent
 //
-//  EXTENSION CONVENTION (future-proof; mirrors own 41)
+// EXTENSION CONVENTION (future-proof; mirrors)
 //    NEW mode (e.g. ai-quartet, ai-moderated-N) → register entry below + add
 //    module path; benchmark.hexa _bench_modes vendored mirror auto-syncs via
-//    yaml↔md (own 39).
+// yaml↔md .
 //
 //  COMPLIANCE
-//    own 14 V14 carry — mode is a measurement axis (not verdict)
-//    own 16 — model load 절대 금지 (registry meta only)
-//    own 18 chat-cap C2/C3 — mode dimension differential
-//    own 22 mandatory report — registry self-emit per main()
-//    own 33 trinity — registry entries cross-link own 17 / own 18 / own 34
-//    own 34 mandate-1 — wrapping 0 (mode dispatch raw bytes)
-//    own 38 매단계 — registry yaml↔md mirror in
+// V14 carry — mode is a measurement axis (not verdict)
+// — model load 절대 금지 (registry meta only)
+// chat-cap C2/C3 — mode dimension differential
+// mandatory report — registry self-emit per main
+// trinity — registry entries cross-link / /
+// mandate-1 — wrapping 0 (mode dispatch raw bytes)
+// 매단계 — registry yaml↔md mirror in
 //      anima/registry/anima_artifact_registry.yaml chat_modes section
-//    own 39 yaml↔md SSOT — registry yaml + this hexa file co-update
-//    own 41 chat lane plugin pattern — same registry SSOT + lookup helpers
-//      pattern (this file is own 41 mirror at axis level "mode" — axis-2)
+// yaml↔md SSOT — registry yaml + this hexa file co-update
+// chat lane plugin pattern — same registry SSOT + lookup helpers
+// pattern (this file is mirror at axis level "mode" — axis-2)
 //
 //  CROSS-REFERENCE
 //    chat/lanes/benchmark.hexa           --mode dimension (vendored mirror retained)
@@ -73,7 +73,7 @@ fn mode_registry() -> array {
          "single_shot",
          "user_x_model",
          "single user → single model (default; current behavior — 1 user × 1 model × N prompts × all lanes)",
-         "chat lane plugin (own 41) — substrate / llama / axis-priority / generate",
+         "chat lane plugin — substrate / llama / axis-priority / generate",
          "free"],
 
         // ───── Mode 2 — ai-duo (2 models dialogue) ────────────────────────────
@@ -147,7 +147,7 @@ fn mode_describe(name: string) -> string {
         + "\n      prereq: " + _str(row[6])
 }
 
-// Selftest — registry shape sanity (no dispatch, no model load — own 16)
+// Selftest — registry shape sanity (no dispatch, no model load —)
 fn main() {
     let reg = mode_registry()
     if len(reg) < 3 {

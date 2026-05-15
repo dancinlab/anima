@@ -1,6 +1,6 @@
 // ════════════════════════════════════════════════════════════════════════════
 //  tool/anima_cli/chat/modalities/multi_modal.hexa — multi-modal fusion
-//                                                     (own 41 axis-6 / axis-N+2)
+// (axis-6 / axis-N+2)
 //
 //  PURPOSE
 //    Multi-modal fusion modality — text + audio + vision 한꺼번에. T+6 design
@@ -21,10 +21,10 @@
 //         status: "DEFERRED_PHASE_C_FUSION_NOT_READY"}
 //
 //  COMPLIANCE
-//    own 16 — model load 절대 금지 (stub only)
-//    own 22 — honest emit (DEFERRED_PHASE_C 명시; fusion encoder 부재)
-//    own 34 mandate-1 — wrapping 0
-//    own 41 axis-N+2 — axis-6 modality registry entry 4 (★ 1 순위 후보)
+// — model load 절대 금지 (stub only)
+// — honest emit (DEFERRED_PHASE_C 명시; fusion encoder 부재)
+// mandate-1 — wrapping 0
+// axis-N+2 — axis-6 modality registry entry 4 (★ 1 순위 후보)
 //
 //  CROSS-REFERENCE
 //    chat/modalities/_registry.hexa#multi_modal   registry SSOT
@@ -48,7 +48,7 @@ fn _arg_present(argv, key: string) -> bool {
 }
 
 fn modality_describe() -> string {
-    return "multi_modal — text+audio+vision fusion DEFERRED_PHASE_C stub (★ 1 순위 후보; Phase A→B→C 단계적 land 예정; honest C3 emit per own 22)"
+    return "multi_modal — text+audio+vision fusion DEFERRED_PHASE_C stub (★ 1 순위 후보; Phase A→B→C 단계적 land 예정; honest C3 emit per)"
 }
 
 // run_modality — multi_modal stub. fusion encoder 미준비 honest emit.
@@ -64,7 +64,7 @@ fn modality_smoke(repo: string, argv) -> int {
     if len(r) != 2 { return 2 }
     let vals = r[1]
     if _str(vals[2]) != "DEFERRED_PHASE_C_FUSION_NOT_READY" { return 3 }
-    println("[modality:multi_modal] smoke PASS — DEFERRED_PHASE_C stub honest emit (own 22; ★ 1 순위 후보)")
+    println("[modality:multi_modal] smoke PASS — DEFERRED_PHASE_C stub honest emit (; ★ 1 순위 후보)")
     return 0
 }
 

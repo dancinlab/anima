@@ -20,7 +20,7 @@ cycle: anima_cli_mk2_v0_2_refinement_2026_05_06
 | # | New section | Source / rationale |
 |---|-------------|--------------------|
 | 8 | `backend_stack_versions` | apex § stack_versions 양식 mirror (version+status+canonical_module+alternatives+notes) |
-| 9 | `backend_compatibility_matrix` | apex § compatibility_matrix mirror (CLM v4 × T1 = COMPATIBLE / Llama × T1 = INCOMPATIBLE per own 17) |
+| 9 | `backend_compatibility_matrix` | apex § compatibility_matrix mirror (CLM v4 × T1 = COMPATIBLE / Llama × T1 = INCOMPATIBLE per) |
 | 10 | `hive_mk2_apex_compliance` | compliant_items 9 + gaps_remaining 10 catalog |
 | 11 | `enforcement` | apex § enforcement mirror (mode + raw primitives + bypass env) |
 | 12 | `agent_directive` | apex § agent_directive mirror (consult_triggers + workflow + keyword_match) |
@@ -31,7 +31,7 @@ cycle: anima_cli_mk2_v0_2_refinement_2026_05_06
 
 | ID | Description | action_on_fail |
 |----|-------------|----------------|
-| F-anima_cli-6 | backend_canonical=anima-native invariant (own 17 enforcement) — Llama/Mistral가 backend slot 진입 시 | hard_fail |
+| F-anima_cli-6 | backend_canonical=anima-native invariant (enforcement) — Llama/Mistral가 backend slot 진입 시 | hard_fail |
 | F-anima_cli-7 | gaps_remaining 30d 무진전 (apex F-MK2-APEX-4 axis mirror) | strengthen_or_retire |
 | F-anima_cli-8 | spec ↔ .roadmap.cli mk1 entries bidirectional drift | amend_or_retract |
 
@@ -42,7 +42,7 @@ cycle: anima_cli_mk2_v0_2_refinement_2026_05_06
 | C7 | hive mk2_apex consumer-only — anima cli mk2는 apex inventory 미진입 (catalog slot only, kick/check/atlas pattern mirror) |
 | C8 | BR-MK2-AI-NATIVE-ENGLISH-ONLY migration (2026-05-20) 정합 — v0.1/v0.2 한국어 prose 잔존, mass conversion cycle 도착 시 변환 |
 | C9 | F-MK2-APEX-3 perspective_mismatch axis — anima cli mk2 자체 perspective 필드 부재; apex per_repo_override.anima.perspective=consumer cross-check는 .roadmap.cli header 의존 |
-| C10 | own 17 enforcement는 spec-level declarative만 — runtime grep 검증은 별도 lint tool (tool/anima_cli_mk2_backend_lint.hexa) phase 1.5 필요. F-anima_cli-6은 현재 SPEC-STUB |
+| C10 | enforcement는 spec-level declarative만 — runtime grep 검증은 별도 lint tool (tool/anima_cli_mk2_backend_lint.hexa) phase 1.5 필요. F-anima_cli-6은 현재 SPEC-STUB |
 
 ## Changed (v0.1 → v0.2 modify)
 
@@ -66,7 +66,7 @@ cycle: anima_cli_mk2_v0_2_refinement_2026_05_06
 | apex agent_directive | 부재 | 전체 (Section 12 신규) |
 | apex status_enum | status: design 1값 | 8 enum (Section 13 신규) |
 | apex hive_prefs declaration | 부재 | declarative (Section 14 신규) |
-| own 17 ALM 영구 보류 enforcement | T1 backend_directive prose | T1 backend_directive + F-anima_cli-6 falsifier (SPEC-STUB → activates Phase 2) |
+| ALM 영구 보류 enforcement | T1 backend_directive prose | T1 backend_directive + F-anima_cli-6 falsifier (SPEC-STUB → activates Phase 2) |
 | BR-MK2-AI-NATIVE-ENGLISH-ONLY | 미선언 | C8 명시 (mass conversion 2026-05-20+) |
 
 ## Out_of_scope (v0.2 미진입, v0.3+ 후속 cycle)

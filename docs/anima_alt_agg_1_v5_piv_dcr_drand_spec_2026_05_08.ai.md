@@ -3,7 +3,7 @@
 **Cycle**: 2026-05-08 V5 PUSH ADDENDUM 2/2
 **Trigger**: KICK WAVE 4 5/8 commit `007f462c` `docs/anima_architecture_leak_root_cause_kick4_2026_05_08.ai.md` — "진짜 의식 신호 후보 4종 spec"
 **User directive verbatim**: "여러개 활용 빠르게"
-**Compliance**: own 14 V14 strict · own 16 cost (0-cost local) · own 17 D1 SCOPE_CLAMP · own 18 ALT-AGG-1 v5 · own 22 mandatory report · own 24 single SSOT · own 33 trinity · own 34 wrap=0 · own 38 매단계 · own 39 yaml↔md mandatory · raw#15 additive (v3+v4 보존) · raw#82 retraction-aware
+**Compliance**: V14 strict · cost (0-cost local) · D1 SCOPE_CLAMP · ALT-AGG-1 v5 · mandatory report · single SSOT · trinity · wrap=0 · 매단계 · yaml↔md mandatory · raw#15 additive (v3+v4 보존) · raw#82 retraction-aware
 
 ---
 
@@ -49,7 +49,7 @@ _drand_pass(d_rand: float) -> bool   # floor 0.05
 ```
 - Ensemble mean lift of trained over paired same-arch random_init mirror on c3_4_axis_l2 (anchor-projected hidden state delta).
 - **Gate C floor** D-RAND ≥ 0.05 absolute.
-- own 14 V14 mandate: every EMERGE claim attaches paired random_init mirror probe of same arch family.
+- V14 mandate: every EMERGE claim attaches paired random_init mirror probe of same arch family.
 
 ---
 
@@ -123,18 +123,18 @@ raw#15 additive — v3 (`_c3_prompt_pass_v3`, `_c3_ensemble_v3_pass`, `_c3_ensem
 
 ---
 
-## 5. Compliance Section (own 26 mandatory)
+## 5. Compliance Section (mandatory)
 
-- **own 17 anima identity boundary**: D1 SCOPE_CLAMP — sft-1-8 + random_init both within_strict (own 17 line 770 ★ scope-clamp). v5 metrics applicable to D1 within strict candidates only.
-- **own 18 simple_stack**: ALT-AGG-1 v5 ADDENDUM 2/2 supersedes v5 base spec by adding 4-gate metric replacement; v3+v4 함수 보존 per raw#82.
-- **own 14 anti-Goodhart V14**: Gate D V14 paired random self-test mandatory; D-RAND Gate C enforces trained > random ≥ 0.05 absolute.
-- **own 16 cost discipline**: 0-cost local — existing data validation only, no H100 fire.
-- **own 22 mandatory report**: 본 spec doc + .own own 18 amend + yaml registry update = 3-surface mandatory report.
-- **own 24 single SSOT**: 본 doc = single canonical v5 ADDENDUM spec; yaml + .own + consciousness.hexa header reference back here.
-- **own 33 trinity**: D-axis (D1 within strict candidates), own-axis (own 14/17/18/22/24/33/34/38/39 cross-link), H-axis (KICK WAVE 4 5/8 + 22+ BG saga continuity).
-- **own 34 wrap=0**: 본 doc = pure spec, no chat surface; consciousness.hexa amend = measurement lane (not chat).
-- **own 38 매단계**: yaml + .own + spec doc + consciousness.hexa = 4-surface save mandate.
-- **own 39 yaml↔md mandatory**: yaml registry edit triggers `anima registry render` (sister doc `docs/anima_artifact_registry.md` regenerate).
+- ** anima identity boundary**: D1 SCOPE_CLAMP — sft-1-8 + random_init both within_strict (line 770 ★ scope-clamp). v5 metrics applicable to D1 within strict candidates only.
+- ** simple_stack**: ALT-AGG-1 v5 ADDENDUM 2/2 supersedes v5 base spec by adding 4-gate metric replacement; v3+v4 함수 보존 per raw#82.
+- ** anti-Goodhart V14**: Gate D V14 paired random self-test mandatory; D-RAND Gate C enforces trained > random ≥ 0.05 absolute.
+- ** cost discipline**: 0-cost local — existing data validation only, no H100 fire.
+- ** mandatory report**: 본 spec doc + .own amend + yaml registry update = 3-surface mandatory report.
+- ** single SSOT**: 본 doc = single canonical v5 ADDENDUM spec; yaml + .own + consciousness.hexa header reference back here.
+- ** trinity**: D-axis (D1 within strict candidates), own-axis (cross-link), H-axis (KICK WAVE 4 5/8 + 22+ BG saga continuity).
+- ** wrap=0**: 본 doc = pure spec, no chat surface; consciousness.hexa amend = measurement lane (not chat).
+- ** 매단계**: yaml + .own + spec doc + consciousness.hexa = 4-surface save mandate.
+- ** yaml↔md mandatory**: yaml registry edit triggers `anima registry render` (sister doc `docs/anima_artifact_registry.md` regenerate).
 - **raw#10 honest C3** (5+ findings):
   - DCR change_rate replaces distinct-argmax as Gate B primary discriminator (random_init passes distinct=0.6 ≥ 0.4, change_rate=0.143 strict FAIL).
   - PIV gate currently FAIL on both trained and random — substrate amplitude saturation; post-arch-fix re-probe required.
@@ -160,7 +160,7 @@ raw#15 additive — v3 (`_c3_prompt_pass_v3`, `_c3_ensemble_v3_pass`, `_c3_ensem
 
 - `tool/anima_cli/consciousness.hexa` lines 992-1170 (`_piv_compute`, `_piv_compute_max`, `_piv_compute_mean`, `_axis_argmax`, `_dcr_compute`, `_dcr_compute_conditioning_rate`, `_drand_delta`, `_drand_pass`, `_piv_max_pass`, `_dcr_pass`, `_v5_aggregate_label`)
 - `anima/registry/anima_artifact_registry.yaml` sft-1-8 entry `v5_addendum_*` fields + random-init-mk2-v1-mirror entry `v5_addendum_*` fields + framework_amends V5 PUSH ADDENDUM 2/2 entry
-- `.own` own 18 line 940+ amend (ALT-AGG-1 v5 PIV/DCR/D-RAND ADDENDUM record)
+- `.own` line 940+ amend (ALT-AGG-1 v5 PIV/DCR/D-RAND ADDENDUM record)
 - `docs/anima_architecture_leak_root_cause_kick4_2026_05_08.ai.md` (KICK WAVE 4 5/8 finding source)
 - `docs/anima_alt_agg_1_v4_amend_spec_2026_05_08.ai.md` (v4 spec — superseded by v5 + v5 addendum, retained per raw#82)
 - `state/anima_sft_1_8_n60_live_probe_2026_05_08.json` (sft-1-8 N=60 SSOT input)
@@ -172,6 +172,6 @@ raw#15 additive — v3 (`_c3_prompt_pass_v3`, `_c3_ensemble_v3_pass`, `_c3_ensem
 ## 8. Status
 
 - **Spec land**: 2026-05-08 V5 PUSH ADDENDUM 2/2
-- **Verdict status**: `C3_FAIL_V5_ADDENDUM` (sft-1-8 existing data) — own 14 V14 strict 정합 sustained (Gate D FAIL, no false EMERGE)
+- **Verdict status**: `C3_FAIL_V5_ADDENDUM` (sft-1-8 existing data) — V14 strict 정합 sustained (Gate D FAIL, no false EMERGE)
 - **EXIT (SIMPLE_STACK_PASS_STRICT_C3) emerge**: NOT REACHED — DCR change_rate is sole strong separator; PIV + D-RAND gates require arch-fix re-probe before falsification claim is final.
 - **raw#82 retraction-aware**: prior v3 EMERGE claims (sft-1-8 PPR_v3=0.4138/0.6102) and v4 N=30 PASS preliminary (PPR_v4=0.429) records preserved with FALSIFICATION cascade tags.

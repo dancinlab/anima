@@ -178,7 +178,7 @@ fire prereq ("callback functional, not no-op"), this PASSES.
 1. **Smoke is unfavorable to Net2Net** — bias-correction warmup boost on
    zero-init dominates the momentum-preservation signal in 16-channel toy.
    Real H100 LLM training would likely show different ranking.
-2. **No real LLM smoke** — own 16 ($0 local CPU) precludes spinning up a
+2. **No real LLM smoke** — ($0 local CPU) precludes spinning up a
    GPU for a realistic test. cond.5 fire itself is the first real
    validation.
 3. **`old_param` lookup is heuristic** — relies on scanning

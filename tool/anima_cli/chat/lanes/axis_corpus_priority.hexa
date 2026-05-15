@@ -21,18 +21,18 @@
 //                                                    (suggestion only; non-binding)
 //
 //  COMPLIANCE
-//    own 14 V14 — not a verdict-grade lane (curation signal only); V14
+// V14 — not a verdict-grade lane (curation signal only); V14
 //      enforcement N/A
-//    own 17 D1 within_strict — substrate-coupled (clm-v4 anima-native)
-//    own 18 chat-cap C2 — no natural utterance (spontaneity = 0); coherence
-//      via axis activation match score (own 18 C2 measurement spec)
-//    own 22 mandatory report — bench mode emits structured marker
-//    own 33 trinity ✓
-//    own 34 mandate-1 — substrate emit raw passthrough; CORPUS_SIGNAL line is
-//      a downstream meta-annotation (lane control band, own 36 convention),
+// D1 within_strict — substrate-coupled (clm-v4 anima-native)
+// chat-cap C2 — no natural utterance (spontaneity = 0); coherence
+// via axis activation match score (C2 measurement spec)
+// mandatory report — bench mode emits structured marker
+// trinity ✓
+// mandate-1 — substrate emit raw passthrough; CORPUS_SIGNAL line is
+// a downstream meta-annotation (lane control band, convention),
 //      NOT model output — does not violate wrapping 0
-//    own 38 매단계 — corpus_signal emit ledgerable
-//    own 39 yaml↔md
+// 매단계 — corpus_signal emit ledgerable
+// yaml↔md
 //
 //  PHASE
 //    LANDED (skeleton-functional) — axis parser uses naive substring match
@@ -115,7 +115,7 @@ fn _invoke_substrate(prompt: string, repo: string) -> string {
 
 // Naive axis parser — looks for `axis_X=<float>` or `axis-X: <float>` patterns
 // in substrate emit. Returns a simple dominant-axis label string.
-// own 34 mandate-1 정합: parsing is meta (own 36 control-band annotation),
+// mandate-1 정합: parsing is meta (control-band annotation),
 // substrate raw output already emitted before this call.
 fn _parse_dominant_axis(substrate_out: string) -> string {
     // Scan for known axis labels — minimal heuristic for skeleton.

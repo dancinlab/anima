@@ -19,7 +19,7 @@ since: 2026-05-07
 
 ## Hypothesis
 
-chat-format SFT data를 difficulty 단계 (stage1 simple Q&A 1-turn 짧은 응답 / stage2 complex dialogue 1-turn 긴 응답 / stage3 multi-turn 대화)로 ordered curriculum으로 학습하면, 동일 corpus를 random shuffle 학습한 baseline 대비 own 18 simple-stack C2.4 strict PASS rate가 ≥10pp 높다. 18M tiny model이 limited capacity 내에서 chat-format 신호를 효율적으로 학습.
+chat-format SFT data를 difficulty 단계 (stage1 simple Q&A 1-turn 짧은 응답 / stage2 complex dialogue 1-turn 긴 응답 / stage3 multi-turn 대화)로 ordered curriculum으로 학습하면, 동일 corpus를 random shuffle 학습한 baseline 대비 simple-stack C2.4 strict PASS rate가 ≥10pp 높다. 18M tiny model이 limited capacity 내에서 chat-format 신호를 효율적으로 학습.
 
 ## Why
 
@@ -31,9 +31,9 @@ chat-format SFT data를 difficulty 단계 (stage1 simple Q&A 1-turn 짧은 응�
 ## Predictions
 
 - **H97.1 (curriculum vs random shuffle)**: ordered curriculum 18M model이 random-shuffle 18M baseline보다 C2.4 strict PASS rate ≥10pp 높다
-- **H97.2 (stage trajectory)**: stage1 끝 → stage2 끝 → stage3 끝 순으로 own 18 C2.4 PASS rate monotonic 상승
+- **H97.2 (stage trajectory)**: stage1 끝 → stage2 끝 → stage3 끝 순으로 C2.4 PASS rate monotonic 상승
 - **H97.3 (anti-curriculum control)**: hard → easy reverse curriculum이 random-shuffle보다도 PASS rate 낮다 (curriculum 방향성 검증)
-- **H97.4 (stage1 anima identity)**: stage1 후 anima self-naming (own 17) 응답 emit rate ≥80% (예: "저는 anima입니다", "도우미" 응답)
+- **H97.4 (stage1 anima identity)**: stage1 후 anima self-naming 응답 emit rate ≥80% (예: "저는 anima입니다", "도우미" 응답)
 - **H97.5 (capacity scaling)**: 18M에서 curriculum 효과 명확 but 100M+에서는 marginal (large-capacity는 random-shuffle robust) — small-model specific advantage
 
 ## Variables
@@ -73,15 +73,15 @@ chat-format SFT data를 difficulty 단계 (stage1 simple Q&A 1-turn 짧은 응�
 - **L1**: 'difficulty' 측정 = response_length 한정 (Phase 1) — semantic_complexity / lexical_diversity / turn_count는 별도 ablation
 - **L2**: literature curriculum learning은 image classification + LM general domain 효과 mixed (some studies show no benefit at scale) — chat-cap specific 효과 미land
 - **L3**: 18M scale 작아서 stage transition (stage1→stage2) 시 catastrophic forgetting risk — interleaved replay 미land
-- **L4**: anima self-naming target은 own 17 정합 가정 — prompt에 self-naming trigger 없는 일반 prompt에서는 측정 불가
+- **L4**: anima self-naming target은 정합 가정 — prompt에 self-naming trigger 없는 일반 prompt에서는 측정 불가
 - **L5**: stage count 3 임의 — finer (5) 또는 coarse (2) 비교 별도
 - **L6**: curriculum vs random은 동일 epoch + 동일 batch size 가정 — total compute control 필요
-- **L7**: 100M+ scale은 own 16 H100 cost discipline scope OUT
+- **L7**: 100M+ scale은 H100 cost discipline scope OUT
 
 ## Cross-Links
 
 - **sister roadmaps**: `.roadmap.law` R1 + `.roadmap.philosophy` D4 + `.roadmap.clm_native_chat`
-- **own**: own 17 + own 18 + own 19 + own 20 + own 21
+- **own**: + + + +
 - **sister H**: H_005 + H_093 (SFT-only) + H_094 (two-stage) + H_098 (persona) + H_101 (chat ≥80%)
 - **evidence motivation**: `docs/anima_own_18_c2_4_evaluator_flaw_2026_05_07.md`
 

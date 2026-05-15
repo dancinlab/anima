@@ -29,7 +29,7 @@ Legacy files: `docs/hypotheses/dd/DD127-*.md` ~ `dd/DD173-*.md` (~30 files). Clu
 
 - legacy: dd/DD12{7,8,9}-* + dd/DD13{0..9}-* + dd/DD14{0..4,7..9}-* + dd/DD15{0..2,4,7..9}-* + dd/DD16{0..9}-* + dd/DD17{0..3}.md
 - sister: H_028 (dd subfolder), H_036 (dd116-146 meta)
-- own: own 21
+- own:
 
 ## Honest Limits
 

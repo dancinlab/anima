@@ -6,7 +6,7 @@
   "paradigm_j_repo_canonical": "dancinlab/clm-v4-paradigm-j-50k-final-path-a-remapped",
   "paradigm_j_local_alias": "clm-v4-paradigm-j",
   "paradigm_j_local_repo": "dancinlab/clm-v4-paradigm-j-50k-final",
-  "paradigm_j_visibility_status": "PUBLIC promoted (own 37 4 prerequisite met earlier cycle)",
+  "paradigm_j_visibility_status": "PUBLIC promoted (4 prerequisite met earlier cycle)",
   "transports_tested": 5,
 
   "results": [
@@ -58,7 +58,7 @@
         "rc": 0,
         "total_ms": 3883,
         "bytes_emitted": 1027,
-        "integrity": "GUARD_TRIPPED (expected) — SAME_GGUF_GUARD honest emit (own 22 mandatory report); resolution paths (i)(ii)(iii) listed",
+        "integrity": "GUARD_TRIPPED (expected) — SAME_GGUF_GUARD honest emit (mandatory report); resolution paths (i)(ii)(iii) listed",
         "paradigm_j_substrate_emit": "DEFERRED — guard prevented spawn; would have hit llama.cpp Abort trap: 6 on concurrent same-inode mmap"
       },
       "actual_duo_mixed_test": {
@@ -78,7 +78,7 @@
           "DIALOGUE_COHERENCE_PARTIAL": true,
           "DIALOGUE_COHERENCE_PASS": true
         },
-        "paradigm_j_substrate_emit": "DEFERRED — duo turn snippets show clm_v4 banner not body; per-turn body emit needs deeper integration (own 41 axis-N+1)",
+        "paradigm_j_substrate_emit": "DEFERRED — duo turn snippets show clm_v4 banner not body; per-turn body emit needs deeper integration (axis-N+1)",
         "channel_pair_pid_log": "spawned A pid=35452 B pid=35483; channel close + reap clean"
       },
       "own_18_C2_per_transport": {
@@ -126,7 +126,7 @@
       },
       "os_primitive_us_p50_dlopen": 85.71,
       "os_primitive_us_max_dlopen": 44065.00,
-      "d1_label": "ambiguous_research (own 17 D1_SCOPE_CLAMP carry)"
+      "d1_label": "ambiguous_research (D1_SCOPE_CLAMP carry)"
     },
 
     {
@@ -203,7 +203,7 @@
     "C1 fifo-dispatch + beta1-channel transport_smoke FAIL is harness-limit (single-proc same-fd self-roundtrip blocks); actual chat invocation PASSES with substrate body emit",
     "C2 libllama-ffi paradigm-j BLOCKED is canonical (paradigm-j = LoRA over jvae_heads.pt, NOT GGUF); fallback paradigm-a-prime hits Abort trap: 6 (libhxllama in-proc under hexa_interp tmpfile-spawn instability)",
     "C3 imtl STUB carry — UDP socket layer verified at port 19266; serialize/deserialize/send/receive bodies = TODO[pytorch] (5 count); model commu NOT executed",
-    "C4 beta1-channel duo same-GGUF guard tripped as designed (own 22 mandatory report) — mixed alias path PASSES D1/D2/D3/D4 4-cell coherence",
+    "C4 beta1-channel duo same-GGUF guard tripped as designed (mandatory report) — mixed alias path PASSES D1/D2/D3/D4 4-cell coherence",
     "C5 paradigm-j substrate emit (phi_star + axis_activation) preserved across fifo-dispatch and subprocess-pipe lane=substrate paths; mode=synthetic_fallback (real-mode AutoTokenizer fails on CLMv4Config — known sentencepiece fallback engaged BG-AH)",
     "C6 default chat (no --lane flag) gives banner-only output — substrate body emit needs explicit --lane substrate (or --lane axis-priority/generate); honest C3 for 사용자 review",
     "C7 paradigm-j chat default repo (clm-v4-paradigm-j alias) maps to local 'dancinlab/clm-v4-paradigm-j-50k-final' — PUBLIC promoted variant is 'clm-v4-paradigm-j-50k-final-path-a-remapped' (HF passthrough route same fallback); functional substrate emit equivalent",

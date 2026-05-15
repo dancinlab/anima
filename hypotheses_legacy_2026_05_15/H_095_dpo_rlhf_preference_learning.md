@@ -78,15 +78,15 @@ SFT (H_093 또는 H_094 stage2) 후 preference-pair (chosen vs rejected response
 - **L2**: DPO theory는 large-model (≥1B) 가정 기반 — 18M scale transfer 미보장 (literature gap)
 - **L3**: rejected response source = BG-HA-style sample (real model output) vs synthetic (rule-based corruption) 차이 미land
 - **L4**: RLHF PPO는 reward model 추가 학습 필요 — 18M scope 시 reward model size constraint
-- **L5**: own 18 evaluator V2 strict 자체 calibration 미완 — DPO 효과 측정 신뢰도 V2 spec 의존
+- **L5**: evaluator V2 strict 자체 calibration 미완 — DPO 효과 측정 신뢰도 V2 spec 의존
 - **L6**: mode collapse risk (over-aligned model이 동일 응답 반복) 정량 측정 spec 미land — distinct-2 임의 threshold
-- **L7**: 100M+ scale + 20k pair 이상은 own 16 H100 cost discipline scope OUT
+- **L7**: 100M+ scale + 20k pair 이상은 H100 cost discipline scope OUT
 
 ## Cross-Links
 
 - **sister roadmaps**: `.roadmap.law` R1 + `.roadmap.philosophy` D4 + `.roadmap.clm_native_chat`
 - **raw**: raw#12 + raw#10 + raw#9 + raw#15 + raw#37
-- **own**: own 17 + own 18 + own 19 + own 20 + own 21
+- **own**: + + + +
 - **sister H**: H_093 (SFT-only) + H_094 (two-stage) + H_099 (multi-objective) + H_100 (constitutional AI)
 - **evidence motivation**: `docs/anima_own_18_c2_4_evaluator_flaw_2026_05_07.md`
 

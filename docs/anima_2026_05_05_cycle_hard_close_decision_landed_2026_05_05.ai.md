@@ -128,7 +128,7 @@ unilateral termination authority. User declaration required.
 | option | decl | next state | cost | rec |
 |---|---|---|---|---|
 | **A** | "B" or "paradigm B" | execute Paradigm B REPL fire (§3.A.1); 5-turn smoke; cycle close after first session | $0 / ~5 min | **#1 RECOMMENDED — fire-ready, paradigm-honest, decisive cycle close** |
-| **B** | "H1" or "clm3" | BG-BM Variant B launch (CLM-3 H1); F-CLM-3-{1,2,3,4} LOCK; own 16 L23/L24/L25 enforce | ~$300-1k / 30d | **#4 — only if A-paradigm non-negotiable AND budget tolerance** |
+| **B** | "H1" or "clm3" | BG-BM Variant B launch (CLM-3 H1); F-CLM-3-{1,2,3,4} LOCK; L23/L24/L25 enforce | ~$300-1k / 30d | **#4 — only if A-paradigm non-negotiable AND budget tolerance** |
 | **C** | "close" or "commit" | BG-BZ priority 5 commits + cron stop; 100+ BG artifact preserve | $0 / ~5 min | **#3 — clean close, preserves H1 hope path; defers paradigm decision** |
 | **D** | "loop" or "go" | continue /loop 1m; accept anti-convergence + LOG-decay marginal | $0 / + rate-limit risk | **#5 LOWEST — only if explicit exhaustive H4 sweep declared** |
 | **E** | "llama" | Llama-3.2-3B Path A v2 promote (composite 0.5584) — non-anima-native | $0 (existing) | **#2 — if "any chatbot" intent; NOT anima-native** |
@@ -167,7 +167,7 @@ HEXA_PY=/Users/ghost/core/anima/.venv-eeg/bin/python \
   `runpod_pod_purge_2026_05_03` + `config/h100_pods.json`)
 - $1k = planning ceiling, NOT contract
 - F-CLM-3-{1,2,3,4} pre-LOCK
-- own 16 L23 watchdog + L24 heartbeat 5min + L25 pod 404 verify mandatory
+- L23 watchdog + L24 heartbeat 5min + L25 pod 404 verify mandatory
 - BG-BM C3-5 권고: emerge corpus n>=30 후 launch (option C+wait pattern)
 
 ### §3.C — Option C fire (cycle close + commit)
@@ -241,7 +241,7 @@ declare F ("stop") 시 즉시 execute, 그 외에는 suggest text 만 emit.
 | user 1-line | option | meaning | next action |
 |---|---|---|---|
 | `B` or `paradigm B` | A | Paradigm B REPL fire | execute §3.A fire 명령; await 5-turn session |
-| `H1` or `clm3` | B | CLM-3 H1 launch | BG-BM Variant B; own 16 enforce; H100 boot |
+| `H1` or `clm3` | B | CLM-3 H1 launch | BG-BM Variant B; enforce; H100 boot |
 | `close` or `commit` | C | cycle close + commit | cron stop + BG-BZ 5-commit serialize + HF promote |
 | `loop` or `go` | D | /loop 계속 | continue cron; suspend §4 auto-stop suggestion |
 | `llama` | E | Llama Path A v2 promote | adopt non-anima-native chatbot lane |
@@ -297,7 +297,7 @@ A paradigm (token-emit chat) 이라면 Paradigm B fire 결과는 paradigm-mismat
 ### C3.5 — Option B (CLM-3 H1) cost estimate 는 planning ceiling
 
 §3.B 의 ~$300-1k 는 H100 raw 시간 단가 + ancillary 추정. 실제 30 day 진행 중
-preempt / pod failure / re-launch 시 cost spike 가능. own 16 L25 cost
+preempt / pod failure / re-launch 시 cost spike 가능. L25 cost
 ceiling enforcement 가 활성화되더라도 0.5× 초과 spike risk 잔존. 30 day
 budget commit 은 사용자 explicit budget tolerance 확인 필수.
 

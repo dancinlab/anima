@@ -805,7 +805,7 @@
   "threshold_policy": "ROC formal — Youden's J max with constraints (random FAIL ≥ 0.95 ∧ chat-cap PASS ≥ 0.7); stricter (higher thr for direction='ge', lower for 'le') of paradigm-a-prime vs clm_v4 baselines.",
   "aggregation_rule_ssot": {
     "decision": "per_prompt_n_of_m_06_AND_emc_3_of_4",
-    "spec": ".own own 18 c3-aggregation-rule-v2 mirror — PPR_v2 (per-prompt ≥3 of 4 cells PASS) verdict rate ≥ 0.6 AND EMC_v2 (cell-mean ≥3 of 4 cells satisfy threshold) PASS = C3 PASS. iter3 d-retry SSOT 를 iter4 (d) 결정한 P5 rule 로 retrofit.",
+    "spec": ".own c3-aggregation-rule-v2 mirror — PPR_v2 (per-prompt ≥3 of 4 cells PASS) verdict rate ≥ 0.6 AND EMC_v2 (cell-mean ≥3 of 4 cells satisfy threshold) PASS = C3 PASS. iter3 d-retry SSOT 를 iter4 (d) 결정한 P5 rule 로 retrofit.",
     "rationale": [
       "iter 4 (d) blocker 해소 — P4 strict 4-cell AND 가 paradigm-a-prime 까지 FAIL 시키는 false-negative (C3.2 le-direction artifact + C3.3 degenerate 양쪽으로 EMC 4/4 절대 불가); P5 N-of-M 으로 두 axis (per-prompt + ensemble) 모두 완화.",
       "PPR_v2 = per-prompt ≥3 of 4 cells AND verdict (4-cell 모두 PASS 가 아닌 ≥3 cell 만족) → outlier 1 cell 허용; floor 0.6 (≥9/15 prompts).",
@@ -817,7 +817,7 @@
       "ensemble_mean": "단순 average — bimodal/long-tail distribution 정보 손실"
     },
     "fallback": "C3.4 pairwise 는 per-row 가 아닌 per-pair 이므로 동일 0.6 rate 적용 (n=14 pairs × 4 seeds = 56 pairs)",
-    "rule_version": "P5_v2_N_of_M (own 18 c3-aggregation-rule-v2, supersedes P4 hybrid)",
+    "rule_version": "P5_v2_N_of_M (c3-aggregation-rule-v2, supersedes P4 hybrid)",
     "supersedes": "P4 hybrid (per_prompt_06 + ensemble_mean 4-of-4 strict AND) — iter 3 (d-retry) initial SSOT 를 iter 4 (d) verdict matrix 분석 후 P5 v2 N-of-M 으로 retrofit"
   },
   "aggregation_per_model": {

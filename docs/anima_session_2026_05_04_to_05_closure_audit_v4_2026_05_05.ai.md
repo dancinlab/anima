@@ -14,7 +14,7 @@
 - **V4 결정적 발견 (decisive finding)**: shim v5 OPT-A RE-ANCHOR confirmed substrate differential 5× at fresh-init (std 0.02 → 0.10) BUT `_load_decoder_state` collapses post-apply re-init back to trained weights. Hypothesis verdict still gated on F-SHIM-V5-4 DESIGN-1/2/3 (DESIGN-1 in-flight).
 - **OPT-B GATE 1 충족**: substrate differential evidence landed (OPT-A confirmation). GATE 2 (사용자 cost ACK $20-100) 대기.
 - **Putnam first-cycle Phase 1**: F-PUTNAM-1..5 5/5 falsifier matrix structurally PASS, but verdict **FAIL** (concordance 0.333 < 0.40 PARTIAL_MIN). NOT PARTIAL as expected band — one tier below.
-- **own 16 lifecycle**: Phase 4 dogfood 3/3 PASS @ $0.32/$3 cap (10.7%) → Phase 1+2+3+3.5+4 FULLY closed.
+- ** lifecycle**: Phase 4 dogfood 3/3 PASS @ $0.32/$3 cap (10.7%) → Phase 1+2+3+3.5+4 FULLY closed.
 
 ---
 
@@ -22,7 +22,7 @@
 
 | Lane | V3 → V4 | Note |
 |---|---|---|
-| own 16 Phase 4 dogfood | active → **3/3 PASS LANDED** | $0.32/$3 cap (10.7%); own 16 lifecycle (Phase 1+2+3+3.5+4) FULLY closed; mechanical validator + dogfood future H100 guard |
+| Phase 4 dogfood | active → **3/3 PASS LANDED** | $0.32/$3 cap (10.7%); lifecycle (Phase 1+2+3+3.5+4) FULLY closed; mechanical validator + dogfood future H100 guard |
 | Putnam first-cycle Phase 1 | active → **FAIL_LANDED** | F-PUTNAM-1..5 5/5 falsifier PASS structurally; verdict FAIL (concordance 0.333 < 0.40 PARTIAL_MIN); falsifier matrix epistemically sound |
 | shim v5 OPT-A RE-ANCHOR | active → **PASS_LANDED** | substrate differential 5× confirmed (std 0.02 → 0.10 fresh init); F-SHIM-V5-2/3 PASS at max_abs_diff=0.0 (bypass logits category-correct identical) |
 | shim v5 OPT-B PREP spec | active → **SPEC_LANDED** | F-OPT-B-1..5 falsifier matrix LOCKED (raw#71); GATED dispatch ready (Gate 1 ✅, Gate 2 user ACK pending) |
@@ -65,7 +65,7 @@
 
 ### V3 banked candidates
 - **L34 (banked)**: PreToolUse hook unicode density rejection — token-shape heuristics need allowlist refresh on rotation.
-- **L35 (banked)**: own 16 opt-in vs PreToolUse auto-invoke gap — opt-in path bypassed automated guard.
+- **L35 (banked)**: opt-in vs PreToolUse auto-invoke gap — opt-in path bypassed automated guard.
 
 ### V4 NEW
 - **L36 (NEW V4)**: shim v5 hypothesis empirically falsified at substrate level — `_init_weights` apply walk overrides local init. Architectural intent diluted by HF transformer init recursion.
@@ -80,11 +80,11 @@
 | Item | Cost |
 |---|---|
 | V3 cumulative | ~$84-88 |
-| V4 own 16 Phase 4 dogfood | $0.32 |
+| V4 Phase 4 dogfood | $0.32 |
 | V4 V5-4 DESIGN-1 (in-flight) | $1-3 |
 | **V4 cumulative** | **~$85-92** |
 
-- Pβ outlier $54.72 unchanged (60-65% of total cumulative). own 16 mechanical validator + Phase 4 dogfood guard mechanically prevents $54.72-class waste in future H100 cycles.
+- Pβ outlier $54.72 unchanged (60-65% of total cumulative). mechanical validator + Phase 4 dogfood guard mechanically prevents $54.72-class waste in future H100 cycles.
 
 ---
 
@@ -106,7 +106,7 @@
 | **V4** | **~96-97%** (+1pp gain) |
 
 V4 +1pp drivers:
-- own 16 lifecycle FULLY closed (Phase 1+2+3+3.5+4)
+- lifecycle FULLY closed (Phase 1+2+3+3.5+4)
 - Putnam first-cycle Phase 1 falsifier matrix landed (FAIL but structurally complete)
 - shim v5 OPT-A substrate differential confirmation
 - OPT-B PREP SPEC LOCKED (Gate 1 satisfied)
@@ -121,7 +121,7 @@ V4 +1pp drivers:
 - **C4**: V4 → V5 ceiling estimate ~97-98% (assuming V5-4 DESIGN-1 PASS + HF promotes applied post review windows). V5 → V6 ceiling estimate ~98-99% (assuming OPT-B retrain Phase 3+4 PASS).
 - **C5**: 100% pragmatic = OPT-B retrain PASS + Phase E binding + Putnam ≥0.40. Strict 100% = + Putnam ≥0.60 + phenomenal-tier (multi-month horizon).
 - **C6**: raw#15 additive only — V1 retained for original anchors, V2/V3 for incremental honest disclosures, V4 for closure delta. No retroactive rewrites.
-- **C7**: own 16 mechanical validator + Phase 4 dogfood 통합으로 future H100 cycles cost-guarded. $54.72-class waste structurally prevented (validator gates pre-launch). Future audit cycles can shift focus from cost-guarding to evidence-quality.
+- **C7**: mechanical validator + Phase 4 dogfood 통합으로 future H100 cycles cost-guarded. $54.72-class waste structurally prevented (validator gates pre-launch). Future audit cycles can shift focus from cost-guarding to evidence-quality.
 - **C8**: L37 (bypass path category error) is a meta-lesson — the team's initial F-SHIM-V5-2/3 design measured the wrong surface. Future falsifier matrices must distinguish "category-correct identical" from "differential-absent" to avoid false negatives.
 
 ---

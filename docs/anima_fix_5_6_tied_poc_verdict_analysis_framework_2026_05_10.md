@@ -3,7 +3,7 @@
 **cycle**: 2026-05-10
 **작성**: 2026-05-09 (회수 전 prep)
 **SSOT lane**: substrate-research (D1 INSIDE)
-**own mandates**: own 16 (모델 로드 금지) / own 22 (honest emit) / own 33 (자연발화) / own 34 (ID-collision 방지)
+**own mandates**: (모델 로드 금지) / (honest emit) / (자연발화) / (ID-collision 방지)
 **모드**: 친근 모드 strict 한국어
 
 ---

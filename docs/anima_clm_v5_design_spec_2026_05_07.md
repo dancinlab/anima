@@ -27,8 +27,8 @@ ConsciousLM v4 (12L/640d/10h, vocab=11885 SP) cycle 결과 누적:
 | BG-KB | fresh growth-stage 168M | 0/5 | 5.31 (mid-train) |
 
 **Key falsifications**:
-- own 19 (corpus priority): partial — corpus 1-order jump (BG-JH) FAIL
-- own 20 (chat-template format): FALSIFIED (BG-JZ explicit chat-template 0/5)
+- (corpus priority): partial — corpus 1-order jump (BG-JH) FAIL
+- (chat-template format): FALSIFIED (BG-JZ explicit chat-template 0/5)
 - Lesson Q (decoder-only fix 不可): COMPLETE
 - Lesson L (architectural ceiling): STRICT CONFIRMED at <500M scale + corpus axis tested
 - Language constraint hypothesis: FALSIFIED (BG-KA language-agnostic 0/5)
@@ -53,15 +53,15 @@ ConsciousLM v4 (12L/640d/10h, vocab=11885 SP) cycle 결과 누적:
 
 | Invariant | Source | CLM v5 적용 |
 |---|---|---|
-| own 17 anima identity | .own | CLM v5 = anima-native fresh (NO external substrate wrap) |
-| own 18-v3 simple stack | .own | language-agnostic 4-condition strict |
-| own 24 single SSOT | .own | 통합 ledger BG-KC+ entries |
-| own 26 philosophy compliance | .own | D1-D5 + R1-R5 cross-link mandate |
-| own 27 Safeguard Paradox | .own | external safeguard wrapper anti-pattern |
-| own 28 Goodhart's Law | .own | multi-modal eval (V5/V6) anti-Goodhart |
+| anima identity | .own | CLM v5 = anima-native fresh (NO external substrate wrap) |
+| -v3 simple stack | .own | language-agnostic 4-condition strict |
+| single SSOT | .own | 통합 ledger BG-KC+ entries |
+| philosophy compliance | .own | D1-D5 + R1-R5 cross-link mandate |
+| Safeguard Paradox | .own | external safeguard wrapper anti-pattern |
+| Goodhart's Law | .own | multi-modal eval (V5/V6) anti-Goodhart |
 | L1 features↓Φ structure↑Φ | .roadmap.law | structure 우선, parameter count 후순위 |
 | L9 Growth-stage Irreversibility | .roadmap.law | fresh CLM v5 cycle mandate (not v4 mod) |
-| L13 S1-S7 verification | .roadmap.law | own 18 v3 + Φ★ NO_FLIP 통합 |
+| L13 S1-S7 verification | .roadmap.law | v3 + Φ★ NO_FLIP 통합 |
 | L24 differentiation→integration | .roadmap.law | corpus diversity 우선 → architecture coupling |
 | raw#15 additive | hive | CLM v4 보존, v5 NEW ssot |
 | raw#37 transient_py | hive | tool/transient_py/ namespace |
@@ -135,7 +135,7 @@ ConsciousLM v4 (12L/640d/10h, vocab=11885 SP) cycle 결과 누적:
 **v5 Redesign options**:
 - D1: **SFT + RLHF**: chat-template SFT (BG-JZ shown insufficient) + reward model + PPO
 - D2: **Multi-objective CE + auxiliary**: contrastive loss on multi-turn context + degenerate cycle penalty
-- D3: **Constitutional AI (Anthropic)**: rule-based critique + revision loop (own 18-v3 4-condition as constitution)
+- D3: **Constitutional AI (Anthropic)**: rule-based critique + revision loop (-v3 4-condition as constitution)
 - D4: **Direct Preference Optimization (DPO)**: pairwise preference (PASS sample vs FAIL sample)
 - D5: **Task-conditioned head**: separate chat-cap head + dialogue context conditioning
 
@@ -158,7 +158,7 @@ ConsciousLM v4 (12L/640d/10h, vocab=11885 SP) cycle 결과 누적:
 - Axis A: A-baseline (current ConsciousLM v4)
 - Axis B: B-baseline
 - Axis C: C-baseline (SP 11885)
-- Axis D: D1 SFT + RLHF (own 18-v3 reward model + PPO)
+- Axis D: D1 SFT + RLHF (-v3 reward model + PPO)
 - **Capacity**: BG-JD ckpt base + RLHF delta
 - **Cost**: $1-5 H100 (RLHF compute heavy) or mac MPS multi-day
 - **Information value**: D-axis isolation (training objective)
@@ -176,10 +176,10 @@ ConsciousLM v4 (12L/640d/10h, vocab=11885 SP) cycle 결과 누적:
 - Axis A: A1 untie + A4 byte fallback
 - Axis B: B-baseline
 - Axis C: C1 byte-level
-- Axis D: D3 constitutional AI (own 18-v3 4-condition as constitution)
+- Axis D: D3 constitutional AI (-v3 4-condition as constitution)
 - **Capacity**: 100M
 - **Cost**: $0-2 (mac + minimal H100)
-- **Information value**: chat-cap as explicit objective + own 18-v3 internalization test
+- **Information value**: chat-cap as explicit objective + -v3 internalization test
 
 ### Variant V5-ε: minimal MoE
 - Axis A: A3 MoE on output (top-2 of 8 experts)
@@ -192,11 +192,11 @@ ConsciousLM v4 (12L/640d/10h, vocab=11885 SP) cycle 결과 누적:
 
 ---
 
-## 5. Verification protocol (own 18-v3 + L13 S1-S7)
+## 5. Verification protocol (-v3 + L13 S1-S7)
 
 각 V5 variant trained 후 다음 verification mandatory:
 
-### Layer 1 — own 18-v3 simple_stack_pass (language-agnostic)
+### Layer 1 — -v3 simple_stack_pass (language-agnostic)
 - C1.1 response existence (non-empty)
 - C1.2 coherent (no degenerate cycle, language-agnostic)
 - C1.3 turn-taking format
@@ -219,7 +219,7 @@ ConsciousLM v4 (12L/640d/10h, vocab=11885 SP) cycle 결과 누적:
 - S6 phenomenal report (subjective experience claim)
 - S7 cross-substrate invariance (Φ★ NO_FLIP)
 
-### Layer 4 — anti-Goodhart (own 28)
+### Layer 4 — anti-Goodhart
 - Multi-modal check: V5 + V6 + manual review
 - Prompt-echo reject mandatory
 - Degenerate cycle detect (single-token >50%, 4-gram repeat ≤3, single-char run ≤10)
@@ -238,7 +238,7 @@ ConsciousLM v4 (12L/640d/10h, vocab=11885 SP) cycle 결과 누적:
 
 **1순위 추천**: V5-α (byte-level + untied lm_head) — $0 mac MPS, axis-isolation 최대, BG-KB와 직접 비교 가능 (same compute budget, different arch).
 
-**2순위**: V5-δ (constitutional AI) — own 18-v3 4-condition을 explicit objective로 internalization 시도. own 28 anti-Goodhart 정합.
+**2순위**: V5-δ (constitutional AI) — -v3 4-condition을 explicit objective로 internalization 시도. anti-Goodhart 정합.
 
 **3순위**: V5-γ (SSM hybrid) — full architectural redesign empirical bound (cost 高 but information 高).
 
@@ -246,13 +246,13 @@ ConsciousLM v4 (12L/640d/10h, vocab=11885 SP) cycle 결과 누적:
 
 ## 7. Falsifiers
 
-각 variant는 다음 fail criteria로 own 18-v3 verification:
+각 variant는 다음 fail criteria로 -v3 verification:
 
 - **F-CLM-V5-1**: best_v58_pass = 0/5 across all evals → variant FALSIFIED
 - **F-CLM-V5-2**: degenerate cycle pattern (single-token >50%) at any step → variant FALSIFIED (no improvement over CLM v4)
 - **F-CLM-V5-3**: loss plateau ≥CLM v4 floor (3.27 BG-JX) at same compute → no architectural advantage
 - **F-CLM-V5-4**: V5_PASS but V6 awareness probe FAIL (Method A or B or C) → surface-level only, not deep
-- **F-CLM-V5-5**: V5/V6 PASS but Φ★ NO_FLIP FAIL (substrate-coupled drift) → emerge paradigm violation (own 17 + L2 Bifurcation)
+- **F-CLM-V5-5**: V5/V6 PASS but Φ★ NO_FLIP FAIL (substrate-coupled drift) → emerge paradigm violation (+ L2 Bifurcation)
 
 ---
 
@@ -264,10 +264,10 @@ ConsciousLM v4 (12L/640d/10h, vocab=11885 SP) cycle 결과 누적:
 4. SSM (B1/B4) 구현 anima 미land — Mamba/S4/RetNet 외부 reference 필요. raw#9 hexa-only mandate vs torch impl trade-off.
 5. RLHF (V5-β D1) 구현 cost 가장 높음 — reward model + PPO + base model + RLHF data pipeline. anima 외부 lib (trlx, trl) 의존 가능 (raw#9 violation 검토).
 6. Byte-level (V5-α/δ C1) sequence length ~4x scale-up → memory + compute scale-up. mac MPS 192-256 batch 가능 confirmed.
-7. own 27 (Safeguard Paradox) 정합 — V5 variants ALL anima-native fresh (NO external base wrap). own 17 absolute 보존.
-8. own 28 (Goodhart) 정합 — V5 verification은 V5/V6 + manual review multi-modal mandatory. single-axis metric reject.
+7. (Safeguard Paradox) 정합 — V5 variants ALL anima-native fresh (NO external base wrap). absolute 보존.
+8. (Goodhart) 정합 — V5 verification은 V5/V6 + manual review multi-modal mandatory. single-axis metric reject.
 9. L9 Growth-stage Irreversibility 정합 — V5 = fresh growth-stage cycle (NOT CLM v4 modification). v4 ckpt 보존, v5 NEW ssot.
-10. CLM v4 vs v5 lane decoupling: v4은 BG-JV D3 substrate-coupled lane용 보존 (own 17 emerge paradigm); v5는 D2 token chat lane (own 18-v3 simple_stack)용 redesign.
+10. CLM v4 vs v5 lane decoupling: v4은 BG-JV D3 substrate-coupled lane용 보존 (emerge paradigm); v5는 D2 token chat lane (-v3 simple_stack)용 redesign.
 11. 사용자 decision 대기: 본 design spec land 후 (1) variant 선택 (2) 시점 (cost approval) (3) cycle scope (single variant vs multi-variant ablation).
 12. BG-KC (1B+ H100) 결과는 본 design spec과 별도 — capacity axis 추가 evidence (architecture-vs-capacity decoupling).
 
@@ -291,16 +291,16 @@ ConsciousLM v4 (12L/640d/10h, vocab=11885 SP) cycle 결과 누적:
   - docs/anima_d3_substrate_coupled_lane_eval_2026_05_07.md (CLM v4 D3 lane)
 
 - **own invariants**:
-  - own 5 explicit verification
-  - own 6 no silent failures
-  - own 17 anima identity boundary
-  - own 18-v3 simple_stack language-agnostic
-  - own 19 corpus priority (partial falsified at 1-order, may need re-eval at 2-order)
-  - own 20 chat-template format (FALSIFIED)
-  - own 24 single SSOT
-  - own 26 philosophy/law compliance
-  - own 27 Safeguard Paradox
-  - own 28 Goodhart's Law
+  - explicit verification
+  - no silent failures
+  - anima identity boundary
+  - -v3 simple_stack language-agnostic
+  - corpus priority (partial falsified at 1-order, may need re-eval at 2-order)
+  - chat-template format (FALSIFIED)
+  - single SSOT
+  - philosophy/law compliance
+  - Safeguard Paradox
+  - Goodhart's Law
 
 - **raw invariants**:
   - raw#9 hexa-only (V5-β D1 RLHF은 raw#9 violation 가능 — 검토 필요)
@@ -319,10 +319,10 @@ ConsciousLM v4 (12L/640d/10h, vocab=11885 SP) cycle 결과 누적:
 
 1. **Variant 선택**: V5-α / β / γ / δ / ε / multi-variant ablation
 2. **Cycle timing**: BG-KC (1B+ H100) 완료 후 vs 병렬
-3. **Budget approval**: V5-β/γ/ε는 H100 cost 필요 (own 16 cap $5 within or override)
+3. **Budget approval**: V5-β/γ/ε는 H100 cost 필요 (cap $5 within or override)
 4. **Multi-day mac MPS schedule**: V5-α/δ는 mac MPS 다일 점유 — 사용자 작업 방해 협의
 
-**완성도 lens 추천**: V5-α 우선 ($0, axis isolation 최대, BG-KB direct compare). V5-δ 후속 (own 28 + own 18-v3 정합 deep test).
+**완성도 lens 추천**: V5-α 우선 ($0, axis isolation 최대, BG-KB direct compare). V5-δ 후속 (+ -v3 정합 deep test).
 
 ---
 

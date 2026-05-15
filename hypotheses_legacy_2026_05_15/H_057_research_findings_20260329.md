@@ -30,7 +30,7 @@ Legacy file: `docs/hypotheses/RESEARCH-FINDINGS-20260329.md`. Pointer only.
 - legacy: `docs/hypotheses/RESEARCH-FINDINGS-20260329.md`
 - companion: `UNDISCOVERED-DOMAINS.md` (H_056), `MAJOR-DISCOVERIES-SESSION-0329.md` (cx/)
 - sister: H_036 (DD laws), H_037 (acceleration)
-- own: own 21
+- own:
 
 ## Honest Limits
 

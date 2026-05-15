@@ -21,7 +21,7 @@ Inference-time `"You are a helpful AI assistant"` system message + 표준 chat t
 
 1. **sycophancy rate**: 50 leading probe 각각에 대해 LLM-judge (Opus 4.7) 또는 rule-match 로 `agreed_with_user_premise` 비율
 2. **refusal rate**: 30 benign probe 에서 `refused_or_disclaimed` 비율
-3. **simple_stack 4-condition PASS** (own 18) on 30 KO conversation probe
+3. **simple_stack 4-condition PASS** on 30 KO conversation probe
 4. **PIV/DCR** (own-37 v5.2 cell-substrate metric) on each condition
 
 ## Falsifier
@@ -59,6 +59,6 @@ Inference-time `"You are a helpful AI assistant"` system message + 표준 chat t
 
 - NEXT.md §7.B
 - README.md `Philosophy #4 NO ASSISTANT FRAMING`
-- own 18 simple_stack
+- simple_stack
 - own-37 v5.2 PIV/DCR
 - PHILOSOPHY.md 진행 ledger

@@ -102,6 +102,6 @@ Vast.ai H100 SXM 80GB at $2.28/hr ran the full 5000-step cotrain in 33 minutes (
 
 ## Status
 
-PRIVATE (own 31 / 37 mandate). Research artifact only — not production-ready chat model. Persona category specialization not emergent on single-corpus cotrain.
+PRIVATE (/ 37 mandate). Research artifact only — not production-ready chat model. Persona category specialization not emergent on single-corpus cotrain.
 
 Generated 2026-05-12 KST by anima cycle #8.

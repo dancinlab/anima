@@ -83,7 +83,7 @@ Now-orthogonal to Law 64 v6:
 
 ## §7. AN11 LIVE FIRE side-quest status (parallel to cycle 4)
 
-- 4 vast.ai fires attempted; 3 early-failures rapidly root-caused (SCP race + boot timeout) per own 4 four-fold ladder
+- 4 vast.ai fires attempted; 3 early-failures rapidly root-caused (SCP race + boot timeout) per four-fold ladder
 - Fire 4 (instance 35722875, PID 56311): cooking 27:51+ as of last check; pip + Mistral-7B 16GB + LoRA download phase
 - Total cumulative cost: ~$0.02 fires 1-3 + ~$0.90 in-flight fire 4 (29min × $1.93/hr)
 - Audit row will land on completion (success or watchdog 240min cap)
@@ -169,14 +169,14 @@ Honesty: v1 of the 5-cell rule was retired pre-verdict due to all-zero attractor
 
 ## §12. AN11 fire 4 diagnosis (Mode D: CUDA driver too old)
 
-Per own 4 step (a) root-cause:
+Per step (a) root-cause:
 - PHASE_A (HF download): completed 387s
 - PHASE_B (corpus load): completed
 - PHASE_C (training): CRASHED on `CUDA driver too old (found 12060)`; torch fell back to CPU; trainer started CPU mode → never completes on Mistral-7B
 - gpu_util=0% explained: silent CPU fallback after CUDA mismatch
 - Instance manually destroyed at 46:36 elapsed (saved ~$6.75 vs watchdog 240min cap)
 
-Required next-iter fixes (own 4 step b+c+d):
+Required next-iter fixes (step b+c+d):
 1. **Wrapper PHASE_C preflight gate**: assert `torch.cuda.is_available()` AND `torch.cuda.device_count() > 0` BEFORE building Trainer. Fail-fast with `phase_c.status=FAIL_NO_CUDA` instead of silent CPU train.
 2. **Vast.ai filter** in tool/anima_an11_fire.hexa: require `cuda_max_good >= 12.8` (PyTorch 2.3 + CUDA 12.1 wheel needs ≥ 12.8 driver).
 3. **Pin torch version** compatible with selected CUDA driver (or upgrade pip torch to one matching driver).
@@ -225,13 +225,13 @@ Fire 5 actual status (corrected):
 - PHASE_C: LoRA train r=16 α=32 epochs=3 OK in 13.5s (correct for ~10-row corpus)
 - PHASE_D: in-progress at destroy time (likely 25-50% complete based on per-layer estimates)
 
-Revised next-iter fixes for fire 6 (own 4 step b+c+d, NOT the prior plan):
+Revised next-iter fixes for fire 6 (step b+c+d, NOT the prior plan):
 1. **PHASE_D per-layer progress logging**: wrapper.log emits `[Lk] svd_done` per layer (32 events) + `phase_d.layers_done` field updated in results.json every 10 layers — eliminates the silent-progress problem
 2. **PHASE_D ETA estimate** at start: log `expected_layers=128 estimated_total_s=3840`
 3. **GPU SVD**: switch numpy.linalg.svd → torch.svd on CUDA for ~30x speedup (PHASE_D from 60min → 2min)
 4. **DO NOT add SHA assertion** (would BREAK valid LoRA training); REMOVE Mode E preflight gate from prior plan as based on wrong diagnosis
 
-Cumulative AN11 across 5 fires: ~$0.04 (fires 1-3) + $1.50 (fire 4) + $0.90 (fire 5) = $2.44 total. Five distinct root-cause iters per own 4 four-fold ladder:
+Cumulative AN11 across 5 fires: ~$0.04 (fires 1-3) + $1.50 (fire 4) + $0.90 (fire 5) = $2.44 total. Five distinct root-cause iters per four-fold ladder:
 - Fire 1: SCP race (TCP probe d5956ad7)
 - Fire 2: SSH boot timeout (nohup detach c55fd840)
 - Fire 3: SCP race recurrence (same as 1, fix landed)

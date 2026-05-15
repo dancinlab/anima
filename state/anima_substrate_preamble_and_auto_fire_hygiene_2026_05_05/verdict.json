@@ -125,11 +125,11 @@
   "sub4_commit_ready_command_block": {
     "verdict": "PASS_OPERATOR_FIRES",
     "BG_does_not_commit": true,
-    "commit_strategy_recommendation": "single_commit (both files share own 15 lifecycle purpose)",
+    "commit_strategy_recommendation": "single_commit (both files share lifecycle purpose)",
     "single_commit_command": [
       "cd /Users/ghost/core/anima",
       "git add state/anima_hf_promotes_2026_05_06_auto_fire.bash state/anima_hf_cleanups_2026_05_07_auto_fire.bash",
-      "git commit -m \"$(cat <<'EOF'\\nchore(anima hf own 15): auto-fire promote+cleanup scripts for clm-v4-mk2-v1 + Pbeta 36-40h dwell\\n\\nAuto-fire combo for HF own 15 PRIVATE -> PUBLIC lifecycle:\\n- promote: 2026-05-06T23:26:12Z (clm) / 2026-05-07T03:48:00Z (pbeta)\\n- cleanup: 24h grace after each PUBLIC promote\\n- modes: --check-only / --fire-clm / --fire-pbeta / --fire-all\\n- gates G1-G6 verified in source promote scripts; auto-fire wraps with\\n  window enforcement + manual sign-off prompt\\n\\nSHA256 baseline (anchored to state/anima_hf_promote_watchdog_audit_2026_05_05/verdict.json):\\n- promotes: 440c85f4a0abbd508fa3561fcd3c18ad87cb809c4c925b7264832979a7755a9b\\n- cleanups: 9646dc4d7793fef9c2468b9e2c9c4f0663931a393f198c9ce7380f7b568d06e8\\n\\nLineage:\\n- state/clm_v4_hf_release_v1_upload_2026_05_04/public_promote_2026_05_07.bash (clm)\\n- state/p9_pbeta_hf_upload_2026_05_05/public_promote_pbeta_2026_05_08.bash (pbeta)\\n- docs/anima_substrate_preamble_and_auto_fire_hygiene_landed_2026_05_05.ai.md\\n\\nraw#9 + raw#10 + own 15 compliant.\\nEOF\\n)\"",
+      "git commit -m \"$(cat <<'EOF'\\nchore(anima hf): auto-fire promote+cleanup scripts for clm-v4-mk2-v1 + Pbeta 36-40h dwell\\n\\nAuto-fire combo for HF PRIVATE -> PUBLIC lifecycle:\\n- promote: 2026-05-06T23:26:12Z (clm) / 2026-05-07T03:48:00Z (pbeta)\\n- cleanup: 24h grace after each PUBLIC promote\\n- modes: --check-only / --fire-clm / --fire-pbeta / --fire-all\\n- gates G1-G6 verified in source promote scripts; auto-fire wraps with\\n window enforcement + manual sign-off prompt\\n\\nSHA256 baseline (anchored to state/anima_hf_promote_watchdog_audit_2026_05_05/verdict.json):\\n- promotes: 440c85f4a0abbd508fa3561fcd3c18ad87cb809c4c925b7264832979a7755a9b\\n- cleanups: 9646dc4d7793fef9c2468b9e2c9c4f0663931a393f198c9ce7380f7b568d06e8\\n\\nLineage:\\n- state/clm_v4_hf_release_v1_upload_2026_05_04/public_promote_2026_05_07.bash (clm)\\n- state/p9_pbeta_hf_upload_2026_05_05/public_promote_pbeta_2026_05_08.bash (pbeta)\\n- docs/anima_substrate_preamble_and_auto_fire_hygiene_landed_2026_05_05.ai.md\\n\\nraw#9 + raw#10 + compliant.\\nEOF\\n)\"",
       "git status -s"
     ],
     "post_commit_verification": [

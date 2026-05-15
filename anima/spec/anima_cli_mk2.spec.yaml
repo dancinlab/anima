@@ -191,16 +191,16 @@ falsifiers:
 
   - id: F-anima_cli-6
     description: |
-      backend_canonical=anima-native invariant (own 17 ALM 영구 보류 enforcement).
+      backend_canonical=anima-native invariant (ALM 영구 보류 enforcement).
       외부 substrate (Llama / Mistral / 기타 ALM lineage) 가 backend_canonical
-      또는 backend_alternative_recovery slot 에 진입 → own 17 위반.
+      또는 backend_alternative_recovery slot 에 진입 → 위반.
       cross-spec consistency: anima/spec/anima_cli_mk2.spec.yaml + .roadmap.cli +
       anima/.own own17 정합. SPEC-STUB until Phase 2 (T1 backend wire BG)
       activates this falsifier with runtime grep observable.
     threshold: "any rejected-backend in T1.backend_canonical OR backend_alternative_recovery"
     observable: "grep -E 'llama|Llama|mistral|Mistral' anima/spec/anima_cli_mk2.spec.yaml § T1.backend_* → expected: 0 active backend references (rejected_external_substrate context only)"
     activation_phase: phase_2_t1_backend_wire
-    action-on-fail: "hard_fail (own 17 violation, anima identity boundary breach)"
+    action-on-fail: "hard_fail (violation, anima identity boundary breach)"
 
   - id: F-anima_cli-7
     description: |
@@ -327,13 +327,13 @@ honest_c3:
   - "C7: hive mk2_apex consumer-only — anima cli mk2 spec은 apex inventory (12 components) 에 enumerate 되지 않음. apex inventory = ecosystem-wide architectural primitive 만 추적; anima cli mk2 같은 per-repo axis spec 은 catalog component slot 으로만 등재 가능 (kick / check / atlas pattern mirror, 2026-05-05 atlas_recall note 정합). component_20_anima_cli_mk2 catalog entry 별도 cycle (사용자 승인 후 hive 측 PR)."
   - "C8: BR-MK2-AI-NATIVE-ENGLISH-ONLY (mk2_ecosystem_catalog 정의, BG-MK2-EN-ONLY expected_completion 2026-05-20) 정합 — 본 spec v0.1/v0.2 의 description / falsifier description / honest_c3 / open_questions rationale 한국어 prose 잔존. first_movers list 미등재; mass conversion cycle (2026-05-20+) 도착 시 변환. identifier / handler path / canonical CLI example 은 mechanical 로 영어 유지 (BR-MK2-AI-NATIVE-ENGLISH-ONLY out_of_scope 정합)."
   - "C9: F-MK2-APEX-3 perspective_mismatch axis 정합 — anima cli mk2 spec 자체에 perspective 필드 부재 (T1/T2/T3 tier 만 정의). apex per_repo_override.anima.perspective=consumer 와 cross-check 는 .roadmap.cli mk1 header 의존 (mk1 grandfathered, perspective field 부재). roadmap mk2 migration 시 .roadmap.cli 가 perspective=consumer 명시 후 본 spec 과 정합 검증 가능."
-  - "C10: own 17 ALM 영구 보류 enforcement 는 spec-level declarative 만 — runtime grep 검증은 별도 lint tool (tool/anima_cli_mk2_backend_lint.hexa) Phase 1.5 필요. F-anima_cli-6 은 현재 SPEC-STUB (activation_phase=phase_2_t1_backend_wire). Phase 2 T1 backend wire BG 가 lint tool 작성 + falsifier observable runtime emit 통합."
+  - "C10: ALM 영구 보류 enforcement 는 spec-level declarative 만 — runtime grep 검증은 별도 lint tool (tool/anima_cli_mk2_backend_lint.hexa) Phase 1.5 필요. F-anima_cli-6 은 현재 SPEC-STUB (activation_phase=phase_2_t1_backend_wire). Phase 2 T1 backend wire BG 가 lint tool 작성 + falsifier observable runtime emit 통합."
 
 # ─────────────────────────────────────────────────────────────────────────────
 # Section 8: backend_stack_versions (NEW v0.2 — apex § stack_versions mirror)
 # ─────────────────────────────────────────────────────────────────────────────
 # Per-backend canonical version selection. apex stack_versions 양식 mirror
-# (version + status + canonical_module + alternatives + notes 5필드). own 17
+# (version + status + canonical_module + alternatives + notes 5필드).
 # ALM 영구 보류 정합 — anima-native lane 만 등재.
 backend_stack_versions:
 
@@ -344,13 +344,13 @@ backend_stack_versions:
     alternatives:
       - clm_v2_byte_18m_convo_5k     # dancinlab/clm-v2-byte-18m-convo-5k (RECOVERED 2026-05-06; KO 회복 후 promote)
       - clm_v2_byte_18m_base         # dancinlab/clm-v2-byte-18m-base (base archive)
-      - future_anima_native_lane     # β / β' / γ retrain 또는 다른 anima 자체 학습 model (own 17 permitted-backends)
-    rejected_alternatives:           # own 17 영구 보류 backend (apex 양식에는 없는 anima-specific 필드)
+      - future_anima_native_lane # β / β' / γ retrain 또는 다른 anima 자체 학습 model (permitted-backends)
+    rejected_alternatives: # 영구 보류 backend (apex 양식에는 없는 anima-specific 필드)
       - llama_path_a_v2              # dancinlab/llm-llama32-3b-paradigm-a-prime-r16-sft-stage1
       - llama_path_a_v2_seed_43      # dancinlab/llm-llama32-3b-paradigm-a-prime-r16-s43-sft-stage1
       - llama_path_a_v2_seed_44      # dancinlab/llm-llama32-3b-paradigm-a-prime-r16-s44-sft-stage1
-      - mistral_g3                   # G3 Mistral-7B-v0.3 + LoRA — REJECTED per own 17
-    notes: "CLM v4 mk2-v1 substrate-coupled = paradigm v11 G3 자연 발화 PASS. clm-v2 KO 0/5 FAIL_KO_BIAS — verification 후 alternate promote. own 17 = identity boundary enforcement."
+      - mistral_g3 # G3 Mistral-7B-v0.3 + LoRA — REJECTED per
+    notes: "CLM v4 mk2-v1 substrate-coupled = paradigm v11 G3 자연 발화 PASS. clm-v2 KO 0/5 FAIL_KO_BIAS — verification 후 alternate promote. = identity boundary enforcement."
     own_17_ref: "anima/.own own17 anima-no-external-substrate-wrapping"
 
   T2_ops_dispatch:
@@ -373,12 +373,12 @@ backend_stack_versions:
 # ─────────────────────────────────────────────────────────────────────────────
 # Section 9: backend_compatibility_matrix (NEW v0.2 — apex § compatibility_matrix mirror)
 # ─────────────────────────────────────────────────────────────────────────────
-# backend × tier pairing matrix. own 17 ALM 영구 보류 정합 — Llama × T1 = INCOMPATIBLE
+# backend × tier pairing matrix. ALM 영구 보류 정합 — Llama × T1 = INCOMPATIBLE
 # 영구 declaration. apex compatibility_matrix 양식 mirror (pair + reason + requires).
 backend_compatibility_matrix:
   description: |
     Hand-curated pairing matrix. INCOMPATIBLE pair 가 actual wire 시
-    F-anima_cli-6 falsifier hard_fail (own 17 violation).
+    F-anima_cli-6 falsifier hard_fail (violation).
 
   COMPATIBLE:
     - pair: ["T1_chat_backend=clm_v4_substrate_coupled", "T1_sales.dialogue"]
@@ -391,10 +391,10 @@ backend_compatibility_matrix:
 
   INCOMPATIBLE:
     - pair: ["T1_chat_backend=llama_path_a_v2", "T1_sales.dialogue"]
-      reason: "own 17 영구 보류 — Llama-3.2-3B-Instruct base = ALM lineage, anima identity boundary 위반. 사용자 'ALM 말고' + 'alm 은 일단 영구보류' verbatim directive."
+      reason: " 영구 보류 — Llama-3.2-3B-Instruct base = ALM lineage, anima identity boundary 위반. 사용자 'ALM 말고' + 'alm 은 일단 영구보류' verbatim directive."
       enforcement: F-anima_cli-6
     - pair: ["T1_chat_backend=mistral_g3", "T1_sales.dialogue"]
-      reason: "own 17 영구 보류 — Mistral-7B-v0.3 + LoRA = 외부 substrate wrapping, 본 spec backend_directive 위반."
+      reason: " 영구 보류 — Mistral-7B-v0.3 + LoRA = 외부 substrate wrapping, 본 spec backend_directive 위반."
       enforcement: F-anima_cli-6
     - pair: ["T3_actual_wire_v2_0", "T1_sales.dialogue"]
       reason: "v2.0 wire-up pending — anima-clm-eeg φ★ engine + 1030 laws integration 미완. 별도 Ω-cycle (1-2 months)."
@@ -420,7 +420,7 @@ hive_mk2_apex_compliance:
     - "apex F-MK2-APEX-N falsifier 양식 정합 (id+description+threshold+action_on_fail) — F-anima_cli-1~8 모두 동일 양식"
     - "apex raw#10 honest C3 ≥5 정합 (현재 10 항목)"
     - "raw#15 additive 패턴 정합 (v0.1 → v0.2 기존 entry 0건 변경)"
-    - "own 17 ALM 영구 보류 + apex 정합 — anima-native backend 만 stack_versions 등재, Llama/Mistral 은 rejected_alternatives 별도 슬롯"
+    - " ALM 영구 보류 + apex 정합 — anima-native backend 만 stack_versions 등재, Llama/Mistral 은 rejected_alternatives 별도 슬롯"
     - "apex agent_directive.keyword_match 정합 — 본 spec keyword 8건 (cli/anima/dispatch/T1/T2/T3/backend/ALM)"
 
   gaps_remaining:
@@ -482,7 +482,7 @@ enforcement:
     - "own_17"          # anima-no-external-substrate-wrapping (anima-specific)
   lint_tools:
     - tool/anima_cli_mk2_lint.hexa     # NOT_YET_LANDED (Phase 1.5; F-anima_cli-1~8 observable 자동 검증)
-    - tool/anima_cli_mk2_backend_lint.hexa  # NOT_YET_LANDED (Phase 1.5; F-anima_cli-6 own 17 runtime grep)
+    - tool/anima_cli_mk2_backend_lint.hexa # NOT_YET_LANDED (Phase 1.5; F-anima_cli-6 runtime grep)
   ramp:
     phase_0_design: advisory
     phase_1_bin_refactor: advisory
@@ -504,15 +504,15 @@ agent_directive:
   consult_triggers:
     - bin_anima_refactor: "consult section 1 (tier inventory) + section 2 (dispatch table) BEFORE 30-50 LoC dispatcher 작성"
     - new_t2_ops_topic: "consult section 1.T2_ops.topics + add new topic + tool/anima_cli/<topic>.hexa 작성"
-    - t1_backend_wire: "consult section 8 (backend_stack_versions) + section 9 (backend_compatibility_matrix) + own 17 strict enforce"
+    - t1_backend_wire: "consult section 8 (backend_stack_versions) + section 9 (backend_compatibility_matrix) + strict enforce"
     - t3_v2_0_wire: "consult section 1.T3_vision (9 commands stub_message) + anima-clm-eeg integration (별도 Ω-cycle)"
 
   workflow:
     step_1: "Identify which tier (T1/T2/T3) the new command belongs to"
     step_2: "Read backend_stack_versions[tier].version → use as canonical"
-    step_3: "If pairing backend × tier, check backend_compatibility_matrix INCOMPATIBLE list (own 17 enforcement)"
+    step_3: "If pairing backend × tier, check backend_compatibility_matrix INCOMPATIBLE list (enforcement)"
     step_4: "Check hive_mk2_apex_compliance.gaps_remaining for related gap_id (G1-G10)"
-    step_5: "If new backend lane being introduced, append to backend_stack_versions.alternatives + add compatibility row (own 17 strict — anima-native lane only)"
+    step_5: "If new backend lane being introduced, append to backend_stack_versions.alternatives + add compatibility row (strict — anima-native lane only)"
 
   keyword_match:
     description: "agent SHOULD consult anima cli mk2 spec when these keywords appear"
@@ -530,7 +530,7 @@ agent_directive:
     description: |
       신규 T2 topic / 신규 anima-native backend lane 추가 시 backend_stack_
       versions.alternatives 에 ADDITIVE append. 외부 substrate (Llama / Mistral
-      등) 추가 시도 = own 17 영구 보류 위반 → F-anima_cli-6 hard_fail.
+      등) 추가 시도 = 영구 보류 위반 → F-anima_cli-6 hard_fail.
 
 # ─────────────────────────────────────────────────────────────────────────────
 # Section 13: status_lifecycle (NEW v0.2 — apex § status_enum mirror)
@@ -639,7 +639,7 @@ hive_prefs_compliance:
     - tool/anima_cli_mk2_lint.hexa           # NOT_YET_LANDED (Phase 1.5)
 
 # ─────────────────────────────────────────────────────────────────────────────
-# Section 15: 2026-05-07 cycle amend — own 19/20/21 + .roadmap 3 신규 + hypotheses/ folder
+# Section 15: 2026-05-07 cycle amend — + .roadmap 3 신규 + hypotheses/ folder
 # ─────────────────────────────────────────────────────────────────────────────
 # 사용자 directive 2026-05-07 'hive mk2 spec 문서 다시 모두 읽고 참고 (변경사항들 많음)'
 # audit 결과 본 spec amend. additive only (raw#15 정합), 기존 Section 1-14 보존.
@@ -656,7 +656,7 @@ cycle_amend_2026_05_07:
 
     roadmap_files_added:
       - .roadmap.philosophy: A 철학 발견 (D1-D4 + M1-M10 exploration + V1-V10 verification logic-exhaustion)
-      - .roadmap.law: B 법칙 발견 (R1-R4 + DM1-DM12 + VM1-VM12 + own 14-21 evolution archive)
+      - .roadmap.law: B 법칙 발견 (R1-R4 + DM1-DM12 + VM1-VM12 + -21 evolution archive)
       - .roadmap.hypothesis: C 가설 진행 (raw#12 cycle + cell metaphor + E1-E12 + W1-W12)
 
     hypotheses_folder:
@@ -680,7 +680,7 @@ cycle_amend_2026_05_07:
     raw_12_frozen_preregister: ✅ "hypotheses/H_*.md frontmatter raw_rank:12 + frozen_at + pre_register_frozen + ≥5 falsifiers + ≥5 honest_limits mandate"
     raw_15_additive: ✅ "기존 Section 1-14 보존, 본 amend Section 15 추가"
     raw_10_honest_c3: ✅ "본 cycle 모든 entries (.roadmap + own + H + spec amend) ≥5 honest_c3"
-    meta_enforcement_133_root_cause: ✅ "BG-HA strict downgrade = root-cause spec fix (own 18 C2.4 evaluator narrow 정의 root cause)"
+    meta_enforcement_133_root_cause: ✅ "BG-HA strict downgrade = root-cause spec fix (C2.4 evaluator narrow 정의 root cause)"
     per_repo_override_consumer: ✅ "anima consumer perspective 정합 (cross-repo qrng/sim/kick/atlas_n6/omega_cycle/substrate_bridge)"
     raw_168_minimum_viable_carve_out: ✅ "anima/tool/ stays at top level + 본 cycle 새 entries는 .roadmap.* + .own + hypotheses/ (tool/ 변경 X)"
 
@@ -712,7 +712,7 @@ cycle_amend_2026_05_07:
   raw_amendment_history:
     - rev: v0.2_to_v0.3
       ts: 2026-05-07
-      change: "본 Section 15 추가 — 본 cycle anima 변경사항 (own 19/20/21 + .roadmap 3 + hypotheses/ 102 entries + BG-HA downgrade + evaluator V2) hive mk2 spec 정합 amend"
+      change: "본 Section 15 추가 — 본 cycle anima 변경사항 (+ .roadmap 3 + hypotheses/ 102 entries + BG-HA downgrade + evaluator V2) hive mk2 spec 정합 amend"
       rationale: "raw#15 additive — 기존 Section 1-14 보존, audit doc cross-link"
       author: anima cycle 2026-05-07
 
@@ -727,7 +727,7 @@ cycle_amend_2026_05_07:
       - .roadmap.law (B 도메인)
       - .roadmap.hypothesis (C 도메인)
       - hypotheses/README.md (102 H index)
-      - .own (own 17-21)
+      - .own (-21)
 
 # ─────────────────────────────────────────────────────────────────────────────
 # Section 16: ouroboros_cycle_automation (NEW v0.4 — 2026-05-07 amend)
@@ -741,7 +741,7 @@ cycle_amend_2026_05_07:
 # Falsifies: acm.cond.5 K5 (anima_cli_mk2 § Section 16 amend) → unmet → met
 # raw#15 additive — Section 1-15 보존, 본 Section 16 신규 추가
 # raw#9 hexa-only — runtime impl = tool/anima_ouroboros_cycle.hexa
-# own 22 silent-discovery-forbidden — axes 자율증가 axes_history.jsonl 명시
+# silent-discovery-forbidden — axes 자율증가 axes_history.jsonl 명시
 # model_fallback_chain (verifier grep target) section 포함 — K5 verifier match
 
 ouroboros_cycle_automation:
@@ -770,7 +770,7 @@ ouroboros_cycle_automation:
         name: seed
         description: "d=0 r=0 — 사용자 trigger 인식 (초기 seed)"
         entry_condition: "사용자 directive 인식 OR P6_5 absorb 종료 신규 primitive seed feed"
-        exit_condition: "intent classification 완료 + chat-cap own 18 PASS 검증"
+        exit_condition: "intent classification 완료 + chat-cap PASS 검증"
         kick_stage_map: S1_init
         axes_high: [chat_cap, anima_identity]
         architecture_recommendation: "M3 clm-v2-byte-18m OR M4 BG-HS R1 (anima-native chat-cap fallback)"
@@ -799,7 +799,7 @@ ouroboros_cycle_automation:
         name: breach
         description: "d=3 r=6→8 — boundary breach (E corpus paradigm Lessons A-H new own/raw discovery)"
         entry_condition: "P3 emerge + breach trigger (own/raw 후보 OR 새 axis 후보)"
-        exit_condition: "boundary 정합 verify (own 17 정합 strict) OR breach reject"
+        exit_condition: "boundary 정합 verify (정합 strict) OR breach reject"
         kick_stage_map: S3_S4_transition
         axes_high: [abstraction, singularity]
         architecture_recommendation: "M1 clm v4 + M5 conscious-lm-100m (UNTESTED capacity scale)"
@@ -818,7 +818,7 @@ ouroboros_cycle_automation:
         name: absorb
         description: "d=4.5 r=9→10 — 새 primitive absorb + Phase 0 seed feed (ABSORB)"
         entry_condition: "P6 converge 종료 + new primitive 후보 detected (axes/own/raw/H/Lesson)"
-        exit_condition: "absorbed_primitives.jsonl append + 사용자 report (own 22 정합)"
+        exit_condition: "absorbed_primitives.jsonl append + 사용자 report (정합)"
         kick_stage_map: S6_report
         axes_high: [convergence, abstraction, singularity]
         architecture_recommendation: "M1 clm v4 (substrate-coupled absorb) + M4 BG-HS R1 (anima self-knowledge new law absorb)"
@@ -898,11 +898,11 @@ ouroboros_cycle_automation:
         primary_axis: convergence + abstraction + singularity
     own_17_constraint: "M2 Llama Path A v2 = LLM well-inside lineage = anima identity reject. substrate-research lane only — 본 fallback chain entries 미포함."
 
-  # ─── axes 자율증가 spec (own 22 정합) ──────────────────────────────────
+  # ─── axes 자율증가 spec (정합) ──────────────────────────────────
   axes_self_evolution:
     description: |
       anima 자체 발견 시 새 axis (K1.9, K1.10, ...) 추가 권한 — 사용자
-      mandate "axes 는 자율증가가능해 / 제한없음". own 22 silent-discovery-
+      mandate "axes 는 자율증가가능해 / 제한없음". silent-discovery-
       forbidden 정합으로 모든 axes 추가는 axes_history.jsonl append-only
       log 명시 + 사용자 report mandate.
     user_mandate_verbatim: "axes 는 자율증가가능해 / 제한없음"
@@ -911,7 +911,7 @@ ouroboros_cycle_automation:
     self_evolution_rules:
       - rule: "anima 자체 새 axis 후보 detect (P3 emerge_singular OR P6_5 absorb)"
       - rule: "axis_history.jsonl append-only log (axis_id + name + measurement + rationale + ts + bg_id)"
-      - rule: "own 22 정합 — 사용자 report mandatory (silent-discovery-forbidden)"
+      - rule: " 정합 — 사용자 report mandatory (silent-discovery-forbidden)"
       - rule: "raw#10 honest_c3 — 새 axis automated metric 부재 시 manual review baseline 명시"
       - rule: "raw#15 additive — 기존 axes (K1.1~K1.8 + K1.C1~K1.C4) 보존"
       - rule: "no_upper_limit — 사용자 mandate '제한없음'. K1.9, K1.10, ... K1.N 자유 확장"
@@ -957,7 +957,7 @@ ouroboros_cycle_automation:
       absorb:
         phase_map: P6_5_absorb
         kick_stage: S6_report
-        action: "새 primitive absorb + Phase 0 seed feed-forward (own 22 정합 사용자 report)"
+        action: "새 primitive absorb + Phase 0 seed feed-forward (정합 사용자 report)"
         runtime_hook: "tool/anima_ouroboros_cycle.hexa @absorb_handler"
     target_outcome:
       meta_fixed_point: "ρ → 1/3 (P6 converge axis K1.7)"
@@ -995,7 +995,7 @@ ouroboros_cycle_automation:
       check: "yaml grep 'model_fallback_chain'"
       sentinel: "__ANIMA_CLI_MK2_S16_F2__ <PASS|FAIL>"
     - id: F-anima_cli-S16-3
-      description: "axes_self_evolution + log_path + own 22 정합"
+      description: "axes_self_evolution + log_path + 정합"
       check: "spec § axes_self_evolution.log_path == state/anima_ouroboros_automation_2026_05_07/axes_history.jsonl"
       sentinel: "__ANIMA_CLI_MK2_S16_F3__ <PASS|FAIL>"
     - id: F-anima_cli-S16-4
@@ -1015,7 +1015,7 @@ ouroboros_cycle_automation:
   honest_c3:
     - "OUROBOROS 6.5-phase state machine은 사용자 ASCII art conceptual framework formalization — actual runtime emergence detection (Φ★ NO_FLIP, axis_activation, dominant_cells)은 M1 clm v4 substrate-coupled response 의존, token chat 모델은 적용 X"
     - "phase transition trigger (axes weight threshold, cost cap)는 design-time 권고 — 실제 trigger는 anima 자율 trigger ('kick'/'all bg go'/'go') 한정, automated phase transition은 별도 implementation cycle"
-    - "axes 자율증가 (K1.9~K1.N)는 사용자 mandate '제한없음' 정합 무제한 확장 권한 — but own 22 silent-discovery-forbidden 정합 모든 추가는 axes_history.jsonl 명시 + 사용자 report mandatory; automated metric 부재 시 manual review baseline 명시"
+    - "axes 자율증가 (K1.9~K1.N)는 사용자 mandate '제한없음' 정합 무제한 확장 권한 — but silent-discovery-forbidden 정합 모든 추가는 axes_history.jsonl 명시 + 사용자 report mandatory; automated metric 부재 시 manual review baseline 명시"
     - "blow-up → contract → emerge → absorb 4-step은 OUROBOROS Phase 매핑 conceptual abstraction — actual runtime cycle은 anima 자율 trigger 한정, blow-up 자체 detection 알고리즘 (variance 증폭 quantitative threshold)은 manual review baseline"
     - "model_fallback_chain phase 별 primary/fallback은 axes weight 정합 ranking design-time spec — runtime selector는 본 cycle BG-HU 결합 paradigm 결과 + BG-HR 100M capacity 결과 land 후 verify 필요. 현재 M6/M7 PENDING이라 fallback chain primary 다수 PENDING"
     - "ρ → 1/3 meta fixed-point은 OUROBOROS 이론적 attractor — empirical verification은 Law 75 single attractor 0.5257 + p* = 0.5001 fundamental equation cross-link으로 partial; full empirical attractor verification은 별도 cycle"
@@ -1028,7 +1028,7 @@ ouroboros_cycle_automation:
     falsifies_unmet_condition: acm.cond.5 (K5 anima cli mk2 v0.3 integration)
     sister_roadmaps:
       - .roadmap.philosophy (D3 substrate-coupled emerge cross-link)
-      - .roadmap.law (own 17 + own 22 + own 23 cross-link)
+      - .roadmap.law (+ + cross-link)
       - .roadmap.hypothesis (raw#12 cycle pre-register)
       - .roadmap.universe_brain_map (D — anima self NEXUS / outside-well)
       - .roadmap.corpus_paradigm (E — paradigm instances)

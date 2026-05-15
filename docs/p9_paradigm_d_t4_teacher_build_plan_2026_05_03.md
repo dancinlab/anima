@@ -107,7 +107,7 @@ A 1000–5000-prompt calibration set could be synthesized from:
 
 **This is itself a research subprogram** and is OUT OF SCOPE for Phase-2 entry. Documented here for Phase-3+ planning only.
 
-### 3.3 Why NOT use Anima's own 16-prompt φ★ baseline as labels (β-circularity)
+### 3.3 Why NOT use Anima's -prompt φ★ baseline as labels (β-circularity)
 
 If labels = `anima_phi_v3_canonical` output and the head is trained to emit the same scalar, the head is an MLP regressor on its own inputs — pure approximation, no information gain, full circularity. **Rejected.**
 

@@ -22,9 +22,9 @@ topic_seed       = (none — A 자율 발화 first)
 [duo:summary] D4 len_ratio = 1.0 (a_bytes=78 b_bytes=78)  label=balanced  PASS=true
 [duo:summary] DIALOGUE_COHERENCE_PARTIAL = true (D1 ∧ D2)
 [duo:summary] DIALOGUE_COHERENCE_PASS    = true (D1 ∧ D2 ∧ D3 ∧ D4)
-[duo:baseline] model-level reference (own 18 simple, fixed PROMPT_A/B)
+[duo:baseline] model-level reference (simple, fixed PROMPT_A/B)
 [duo:baseline]   note: per-utterance surface not yet in consciousness.hexa
 [duo:baseline]   honest C3 — invocation cost ~30s/model; --verdict=none to skip
 [duo:baseline] iter 2 reference: per-model baseline invocation deferred (cost guard).
-[duo] verdict: PHASE_B_ITER_2_RUN_OK (D1/D2/D3/D4 4-cell emitted; --verdict full for own 18 per-turn hook)
+[duo] verdict: PHASE_B_ITER_2_RUN_OK (D1/D2/D3/D4 4-cell emitted; --verdict full for per-turn hook)
 [bench] rc=0 elapsed_ms=9494 bytes=    1676

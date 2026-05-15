@@ -30,7 +30,7 @@ Legacy file: `docs/hypotheses/PHI-GAP-816x-investigation.md`. Pointer only.
 - legacy: `docs/hypotheses/PHI-GAP-816x-investigation.md`
 - companion: `PHI-MEASUREMENT-DISCOVERY.md`, `PHI-RETEST-ALL-RECORDS.md`, `top-phi-records.md`
 - sister: H_039 (PHI records cluster), H_024 (Φ MIP 8/8 fail)
-- own: own 21
+- own:
 
 ## Honest Limits
 

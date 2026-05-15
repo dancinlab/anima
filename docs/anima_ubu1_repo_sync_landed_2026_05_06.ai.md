@@ -7,7 +7,7 @@ ubu1 `/home/aiden/core/anima/ready/` 비어있음 확인. mac canonical `/Users/
 ## TL;DR (EN)
 
 - ubu1 `ready/` empty; mac source 41GB but post-exclusion only 41MB
-- Excluded: `.git` (7.1GB embedded), Rust `target/` (~8.5GB), corpora `*.txt`/`*.jsonl` (HF-only per own 14), `*.pt`/`*.safetensors`/`*.bin`
+- Excluded: `.git` (7.1GB embedded), Rust `target/` (~8.5GB), corpora `*.txt`/`*.jsonl` (HF-only per), `*.pt`/`*.safetensors`/`*.bin`
 - 3,589 regular files + 228 dirs + 8 symlinks ready to sync
 - Recipe at `state/anima_ubu1_repo_sync_2026_05_06/rsync_recipe.txt`
 - BG-FE blocker: ubu1 corpus dependency requires HF download separately
@@ -40,4 +40,4 @@ ubu1 `/home/aiden/core/anima/ready/` 비어있음 확인. mac canonical `/Users/
 - raw#10 KO-only user face: compliant
 - raw#15 LOCKED: no LOCKED file modified
 - raw#37 transient_py: n/a
-- own 14 HF-only ≥5MB: compliant (all weight/corpus extensions excluded)
+- HF-only ≥5MB: compliant (all weight/corpus extensions excluded)

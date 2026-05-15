@@ -1,6 +1,6 @@
 // ════════════════════════════════════════════════════════════════════════════
 //  tool/anima_cli/chat/modalities/audio.hexa — audio modality (anima-voice 자산)
-//                                                (own 41 axis-6 / axis-N+2)
+// (axis-6 / axis-N+2)
 //
 //  PURPOSE
 //    Audio modality — wav ↔ str via anima-voice. T+6 = LANDED skeleton
@@ -13,11 +13,11 @@
 //         asset_anchor: "anima-voice/voice_e2e.hexa"}
 //
 //  COMPLIANCE
-//    own 14 V14 — 결정성 (skeleton 단계; 실 audio 결정성은 별도 step)
-//    own 16 — model load 절대 금지 (skeleton 단계, asset path 만 명시)
-//    own 22 — honest emit (NOT_MEASURED placeholder; 실 mic 미연결)
-//    own 34 mandate-1 — wrapping 0 (audio 통로 emit-only)
-//    own 41 axis-N+2 — axis-6 modality registry entry 2
+// V14 — 결정성 (skeleton 단계; 실 audio 결정성은 별도 step)
+// — model load 절대 금지 (skeleton 단계, asset path 만 명시)
+// — honest emit (NOT_MEASURED placeholder; 실 mic 미연결)
+// mandate-1 — wrapping 0 (audio 통로 emit-only)
+// axis-N+2 — axis-6 modality registry entry 2
 //
 //  CROSS-REFERENCE
 //    chat/modalities/_registry.hexa#audio   registry SSOT
@@ -40,7 +40,7 @@ fn _arg_present(argv, key: string) -> bool {
 }
 
 fn modality_describe() -> string {
-    return "audio — wav ↔ str via anima-voice 자산 (T+6 skeleton; 실 mic/tts 통합 별도 step; own 16)"
+    return "audio — wav ↔ str via anima-voice 자산 (T+6 skeleton; 실 mic/tts 통합 별도 step;)"
 }
 
 // run_modality — audio modality skeleton. anima-voice asset path 만 명시.
@@ -55,7 +55,7 @@ fn run_modality(ctx) -> array {
     return [keys, vals]
 }
 
-// modality_smoke — registry hook. own 16 carry — no model load.
+// modality_smoke — registry hook. carry — no model load.
 fn modality_smoke(repo: string, argv) -> int {
     let r = run_modality([])
     if len(r) != 2 { return 2 }
@@ -63,7 +63,7 @@ fn modality_smoke(repo: string, argv) -> int {
     let vals = r[1]
     if len(keys) != 4 || len(vals) != 4 { return 3 }
     if _str(vals[0]) != "wav" { return 4 }
-    println("[modality:audio] smoke PASS — wav↔str skeleton signature OK (asset=anima-voice/voice_e2e.hexa, own 16 model load 0)")
+    println("[modality:audio] smoke PASS — wav↔str skeleton signature OK (asset=anima-voice/voice_e2e.hexa, model load 0)")
     return 0
 }
 

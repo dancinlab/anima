@@ -77,7 +77,7 @@ research itself; paradigm declaration is N/A. Carry from L53 exception clause.
 P10 governs **interpretive disambiguation only**. It does NOT govern:
 - raw#9/10/15/37 honesty/integrity rules (those are absolute, no solicitation)
 - HF token leak rule (absolute)
-- own 16 H100 cost discipline (absolute, prior commitment)
+- H100 cost discipline (absolute, prior commitment)
 - user feedback memory entries (those carry across cycles, not per-cycle)
 
 ---

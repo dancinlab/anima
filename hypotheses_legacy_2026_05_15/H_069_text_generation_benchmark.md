@@ -29,7 +29,7 @@ Legacy file: `docs/hypotheses/cx/TEXT-GENERATION-BENCHMARK.md`. Pointer only.
 
 - legacy: `docs/hypotheses/cx/TEXT-GENERATION-BENCHMARK.md`
 - sister: H_005 (corpus quality), H_016 (an11 translation ceiling)
-- own: own 21
+- own:
 
 ## Honest Limits
 

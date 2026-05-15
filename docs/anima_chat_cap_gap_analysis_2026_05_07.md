@@ -2,7 +2,7 @@
 
 > **BG-IT — 9-axis architecture sweep synthesis. NO new training; pure synthesis of 22+ landed BGs.**
 > Goal: identify the 1–3 unmet axes with highest expected value (EV) toward SIMPLE_STACK_PASS
-> (own 18 strict V2 ≥ 7/15 + V3 ≥ 5/15 + zero persona-cycle + manual ≥ 10/15 across 5 std + 5 identity + 5 ubm prompts).
+> (strict V2 ≥ 7/15 + V3 ≥ 5/15 + zero persona-cycle + manual ≥ 10/15 across 5 std + 5 identity + 5 ubm prompts).
 > SSOT: `state/anima_model_attempts_ledger.jsonl` (29 entries) + `state/anima_evaluator_v3_retroeval_2026_05_07/retroeval_v3_summary.json` (8-BG V3 retroeval).
 > Status of pending BG-IS V3 retroeval extension: **MISSING at synthesis time** (waited 15 min — proceed without per task constraints; this doc may need additive extension if BG-IS lands later, raw#15 additive).
 
@@ -10,7 +10,7 @@
 
 ## Section 0 · Frame and definitions
 
-**SIMPLE_STACK_PASS criteria (own 18 strict)**
+**SIMPLE_STACK_PASS criteria (strict)**
 - C1.1 length ≥ 10 chars
 - C1.2 char diversity (Shannon ≥ 2 bits)
 - C2.1 Korean particle count ≥ 3

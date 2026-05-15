@@ -1,7 +1,7 @@
 # Atlas R39 Candidate — Ensemble validation mandate for ML family-attribution claims
 
 > **session**: anima-cmd-loop autonomous-loop-dynamic 2026-04-28
-> **predecessors**: R38 baseline-axis alignment (Cycle 4 v8), R36/R37 own 3+4 promotion candidates
+> **predecessors**: R38 baseline-axis alignment (Cycle 4 v8), R36/R37 +4 promotion candidates
 > **status**: ATLAS_R39_PROPOSAL_LIVE — n6 maintainer 검토 대기
 > **scope**: cross-paradigm methodological mandate from anima AN11 + Conway findings
 

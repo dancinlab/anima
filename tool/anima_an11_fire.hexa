@@ -20,7 +20,7 @@
 // raw 91 C3 honest: --selftest dry-run never creates instance; --fire prints
 //   confirmation + cost estimate + offer chosen BEFORE issuing vastai create.
 // raw 100 fallback: destroy instance in every exit branch (success/fail/timeout).
-// own 6 (multi-vendor GPU) + own 11 (parallel-loop-mandate) authorize.
+// (multi-vendor GPU) + (parallel-loop-mandate) authorize.
 // ─────────────────────────────────────────────────────────────────────────────
 
 let TOOL_VERSION = "v1"
@@ -82,7 +82,7 @@ fn _emit_helper() -> str {
         "    return r",
         "",
         "def search_offers():",
-        "    # own 4 step c — Mode D fire 4 fix: cuda_max_good>=12.8 filter excludes pods with old NVIDIA",
+        " # step c — Mode D fire 4 fix: cuda_max_good>=12.8 filter excludes pods with old NVIDIA",
         "    # drivers that report `CUDA driver too old (found 12060)` against torch 2.3.0+cu121 wheel.",
         "    # Witness: state/an11_dispatch fire 4 PHASE_C crashed CPU-fallback after 46min @ gpu_util=0%.",
         "    # fire 18+ Mode H fix #4: cuda_max_good>=12.8 복원 (cuda=13.0 native cu121 환경)",
@@ -129,7 +129,7 @@ fn _emit_helper() -> str {
         "    chosen = offers[0]",
         "    audit_row['chosen_offer'] = {'id': chosen.get('id'), 'dph_total': chosen.get('dph_total'),",
         "                                 'gpu_name': chosen.get('gpu_name'), 'reliability': chosen.get('reliability2'),",
-        "                                 'cuda_max_good': chosen.get('cuda_max_good')}  # own 4 step c debug capture",
+        " 'cuda_max_good': chosen.get('cuda_max_good')} # step c debug capture",
         "    audit_row['estimated_cost_usd'] = round(chosen.get('dph_total', MAX_PRICE) * (WATCHDOG_MIN / 60.0), 2)",
         "    if dry_run:",
         "        audit_row['result'] = 'DRY_RUN_OK'; audit_row['ended_utc'] = utc()",
@@ -159,7 +159,7 @@ fn _emit_helper() -> str {
         "        if not (ip and port):",
         "            audit_row['result'] = 'SSH_NOT_READY'; raise RuntimeError('ssh')",
         "        audit_row['ssh'] = {'host': ip, 'port': port}",
-        "        # own 4 step b root-cause fix #2: TCP probe — vast.ai populates ssh_host/port BEFORE",
+        " # step b root-cause fix #2: TCP probe — vast.ai populates ssh_host/port BEFORE",
         "        # in-pod sshd is listening (often by 30-60s). Without TCP probe, SCP races sshd-startup",
         "        # and gets 'Connection refused'. Witness: state/an11_dispatch/fire_log_20260428T0258* +",
         "        # fire_log_20260428T1135* both SCP_FAIL with 'connect to host port refused' immediately.",
@@ -178,7 +178,7 @@ fn _emit_helper() -> str {
         "        if not tcp_ready:",
         "            audit_row['result'] = 'TCP_NOT_READY'; raise RuntimeError('tcp')",
         "        time.sleep(15)  # extra buffer post-TCP-accept for sshd full-handshake readiness",
-        "        # scp uploads (fire 9 own 4 step b: SCP retry 3x backoff 10s — Mode G fix)",
+        " # scp uploads (fire 9 step b: SCP retry 3x backoff 10s — Mode G fix)",
         "        # Fire 8 (instance 35729543) SCP_FAIL despite TCP probe pass: 'Connection closed by",
         "        # 54.81.15.77 port 19542'. sshd transport-listening but auth/session not yet ready.",
         "        # TCP probe verifies port-listening only; SSH negotiation may still race. Retry covers race.",
@@ -199,7 +199,7 @@ fn _emit_helper() -> str {
         "            audit_row.setdefault('scp_attempts', {})[dst.split('/')[-1]] = scp_attempt",
         "            if not scp_ok:",
         "                audit_row['result'] = 'SCP_FAIL'; audit_row['scp_stderr'] = scp_last_err; raise RuntimeError('scp')",
-        "        # ssh exec wrapper — own 4 step b root-cause fix for SSH timeout:",
+        " # ssh exec wrapper — step b root-cause fix for SSH timeout:",
         "        #   pip install vllm+transformers+peft+datasets+safetensors+huggingface_hub takes 5-10min",
         "        #   on a fresh vast.ai pod. Original `pip ... && nohup python3 ... &` only backgrounded",
         "        #   the python3 step — pip install ran in SSH foreground → 120s SSH timeout → instance",
@@ -209,7 +209,7 @@ fn _emit_helper() -> str {
         "        #   Witness: state/an11_dispatch/fire_log_20260428T023631Z.log result=EXCEPTION timeout=120s.",
         "        ssh_base = ['ssh', '-i', VAST_SSH_KEY, '-o', 'StrictHostKeyChecking=no', '-p', str(port), ssh_dest]",
         "        # boot.log captured for post-mortem; pip stderr + python stderr both land there.",
-        "        # fire 10 own 4 step b: apt-get install gcc — Mode F-2 fix. --enforce-eager bypasses",
+        " # fire 10 step b: apt-get install gcc — Mode F-2 fix. --enforce-eager bypasses",
         "        # PyTorch torch.compile but vllm v0.20 Triton runtime/build still requires C compiler",
         "        # for kernel JIT. Witness: fire 9 vllm.log line ~18:04 'triton/runtime/build.py:32'",
         "        # 'RuntimeError: Failed to find C compiler.' even with --enforce-eager set.",
@@ -238,7 +238,7 @@ fn _emit_helper() -> str {
         "        audit_row['boot_dispatched'] = ('BOOT_DISPATCHED' in (rb.stdout or ''))",
         "        if not audit_row['boot_dispatched']:",
         "            audit_row['result'] = 'BOOT_DISPATCH_FAIL'; raise RuntimeError('boot_dispatch')",
-        "        # own 4 step c defensive — give pip install + model load 60s headroom before polling",
+        " # step c defensive — give pip install + model load 60s headroom before polling",
         "        # (pip install 5-10min, model download 2-5min; first poll won't find results.json regardless,",
         "        #  but the 60s pause keeps the audit log tidy + reduces SSH connect churn during boot).",
         "        time.sleep(60)",
@@ -256,7 +256,7 @@ fn _emit_helper() -> str {
         "                except Exception: pass",
         "        audit_row['final_wrapper_status'] = last_status",
         "        audit_row['watchdog_timeout'] = (last_status != 'FINAL')",
-        "        # scp results back (boot.log included — own 4 step c surfaces pip-install failures)",
+        " # scp results back (boot.log included — step c surfaces pip-install failures)",
         "        local_dir = os.path.join(RESULTS_LOCAL_DIR, tid); os.makedirs(local_dir, exist_ok=True)",
         "        for fn in ['results.json', 'wrapper.log', 'wrapper.stdout', 'vllm.log', 'boot.log']:",
         "            subprocess.run(scp_base + [ssh_dest + ':/workspace/' + fn, os.path.join(local_dir, fn)],",
@@ -266,7 +266,7 @@ fn _emit_helper() -> str {
         "    except Exception as e:",
         "        audit_row.setdefault('result', 'EXCEPTION'); audit_row['exception'] = str(e)",
         "    finally:",
-        "        # own 4 step d evolve — defensive boot.log retrieval BEFORE destroy. Without this,",
+        " # step d evolve — defensive boot.log retrieval BEFORE destroy. Without this,",
         "        # any failure between boot dispatch and FINAL would lose pip-install diagnostics with",
         "        # the destroyed pod. Idempotent: skipped silently if no SSH was ever established or",
         "        # boot.log was already pulled in the success path above.",

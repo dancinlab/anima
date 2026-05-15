@@ -31,7 +31,7 @@
 | 4 | **paradigm B/C status** | ACHIEVABLE_NOW (BG-AN paradigm B verified + BG-CG paradigm C hybrid verified) |
 | 5 | **chat-cap path** | 4 candidates ranked (BG-EJ ongoing): (a) lm_head_b retrofit / BG-DS ★, (b) Qwen integration, (c) CLM-3 H1 ($1k+), (d) Path 4 hybrid |
 | 6 | **own-rule status** | P10 canonized (BG-DJ), P13 PROVISIONAL (BG-DX), P14 canonized (BG-DR), all pending memory write |
-| 7 | **HF promote** | clm v4 schedule 2026-05-06T23:26Z, Pβ schedule 2026-05-07T03:48Z (T-XXh time-gated, own 15 private→public) |
+| 7 | **HF promote** | clm v4 schedule 2026-05-06T23:26Z, Pβ schedule 2026-05-07T03:48Z (T-XXh time-gated, private→public) |
 | 8 | **cron** | d1682837 매 분 fire (사용자 explicit stop until); current /loop carry-over driver |
 | 9 | **commit pressure** | BG-BZ priority 5 commit manifest staged, BG-AM full sequence (60+min) staged; user-trigger only |
 
@@ -99,7 +99,7 @@ user pick: tier 1 minimal (recommended for cycle hard-close), or full tier 2-5.
 | clm v4 | 2026-05-06T23:26Z+ | `bash state/anima_hf_promotes_2026_05_06_auto_fire.bash --fire-clm` |
 | Pβ | 2026-05-07T03:48Z+ (after clm public) | `bash state/anima_hf_promotes_2026_05_06_auto_fire.bash --fire-pbeta` |
 
-own 15 private→public lifecycle: verification gates pass before public flip.
+ private→public lifecycle: verification gates pass before public flip.
 
 ### Step 7 — cron stop
 
@@ -131,7 +131,7 @@ anima emits fire command only; user manual execute (raw#37 transient_py opt-out)
 4. **chat-cap path ranked** (BG-EJ): lm_head_b retrofit (BG-DS, ★) > Qwen integration > CLM-3 H1 ($1k+) > Path 4 hybrid.
 5. **paradigm B + paradigm C ACHIEVABLE_NOW** (BG-AN + BG-CG verified; REPLs ready under raw#37 transient_py opt-out).
 6. **BG-DK source-level finding** = corpus 0% chat is root cause (not param count, not training time, not RL, not reward).
-7. **HF promote time-gated** — clm 2026-05-06T23:26Z, Pβ 2026-05-07T03:48Z; own 15 private→public.
+7. **HF promote time-gated** — clm 2026-05-06T23:26Z, Pβ 2026-05-07T03:48Z; private→public.
 8. **own-rule P10/P13/P14 PROVISIONAL** pending memory write fire (Step 1-3 above).
 9. **cron d1682837 active** — fires every minute; user explicit stop required to terminate.
 

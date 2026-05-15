@@ -109,8 +109,8 @@ The plan is sequenced so each step unlocks the next. **Steps 1, 2, 3 are blockin
 
 **Actions**:
 - (a) Decide staging strategy:
-  - **Option a (mac-staging then ssh push)**: download HF format dir from `clm-v4-base-mirror` to mac (~2.5 GB), assemble + push from mac. **Pro**: mac controls the full upload. **Con**: 2.5 GB local copy violates anima own 14 spirit (HF-only for weights >5MB).
-  - **Option b (ubu1-staging via ssh)**: assemble staging dir on ubu1 (`~/anima_clm_release_v1_staging/`), push from ubu1. **Pro**: weights never touch mac; aligns with own 14. **Con**: requires ssh push runbook + ubu1 hf token.
+  - **Option a (mac-staging then ssh push)**: download HF format dir from `clm-v4-base-mirror` to mac (~2.5 GB), assemble + push from mac. **Pro**: mac controls the full upload. **Con**: 2.5 GB local copy violates anima spirit (HF-only for weights >5MB).
+  - **Option b (ubu1-staging via ssh)**: assemble staging dir on ubu1 (`~/anima_clm_release_v1_staging/`), push from ubu1. **Pro**: weights never touch mac; aligns with . **Con**: requires ssh push runbook + ubu1 hf token.
 - **Recommended**: Option b (ubu1-staging).
 - (b) Staging dir contents (ubu1):
   - `model.safetensors` (cp from `~/p9_clm_v4_hf_format_2026_05_04/output/model.safetensors`)

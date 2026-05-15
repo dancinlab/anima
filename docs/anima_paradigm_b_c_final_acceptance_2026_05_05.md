@@ -173,7 +173,7 @@ From `state/anima_emerge_chat_hybrid_pythia_clm_2026_05_05/verdict.json` 3-promp
   - F-CLM-3-3 Φ★ baseline preservation (decoupled axis)
   - F-CLM-3-4 no regression on substrate-research lane
 
-**own 16 Phase 3 enforcement** (mandatory before launch):
+** Phase 3 enforcement** (mandatory before launch):
 - L23 watchdog register
 - L24 heartbeat 5min
 - L25 pod 404 verify + cost ceiling
@@ -187,7 +187,7 @@ From `state/anima_emerge_chat_hybrid_pythia_clm_2026_05_05/verdict.json` 3-promp
 
 BG-BM C3-5 권고: **Stage 3 emerge corpus n>=30 session 누적 후 retrain spec
 재평가**. 즉 H1 launch 전 corpus pattern으로 CLM-3 design hint 수집 → spec
-refinement → 그 후 budget commit. 이 권고는 own 16 budget discipline + cycle
+refinement → 그 후 budget commit. 이 권고는 budget discipline + cycle
 saturation lens에서 가장 정합.
 
 ---
@@ -214,7 +214,7 @@ bash /Users/ghost/core/anima/bin/anima-core-dialogue-analyze.bash --date 2026-05
 # Step 5: HF promote (time-gated; private -> public after verification window)
 #   - clm v4: 2026-05-06T23:26Z
 #   - P-beta Paradigm D 50K: 2026-05-07T03:48Z
-#   ref: feedback_hf_release_private_to_public_after_verification_lifecycle (own 15)
+# ref: feedback_hf_release_private_to_public_after_verification_lifecycle
 ```
 
 **Notes**:
@@ -231,7 +231,7 @@ bash /Users/ghost/core/anima/bin/anima-core-dialogue-analyze.bash --date 2026-05
 |---|---|---|---|---|
 | **A** | "Paradigm B 시작 — emerge dialogue REPL fire" | execute §2.1; cycle close after first session | $0 | **#1 — fully fire-ready, paradigm-honest, completes cycle coherently** |
 | **B** | "Paradigm C 시작 — hybrid REPL fire" (BG-CG land 후) | wait BG-CG REPL land OR execute BG-BX one-shot §3.1; deferred multi-turn | $0 | **#2 — viable demo today via BG-BX one-shot; BG-CG REPL extension pending** |
-| **C** | "CLM-3 H1 launch — $1k commit" | execute BG-BM Variant B; H100 boot per `config/h100_pods.json` + own 16 L23/L24/L25 | ~$1k / 30d | **#4 — only if A-paradigm non-negotiable AND budget tolerance present** |
+| **C** | "CLM-3 H1 launch — $1k commit" | execute BG-BM Variant B; H100 boot per `config/h100_pods.json` + L23/L24/L25 | ~$1k / 30d | **#4 — only if A-paradigm non-negotiable AND budget tolerance present** |
 | **D** | "cycle close + Stage 3 30 session 누적" | CronDelete d1682837; BG-AM commits; n>=30 daily Path A; corpus analyzer; CLM-3 design refine | $0 / multi-day | **#3 — preserves A-paradigm hope path; lowest commit, highest information value over time** |
 | **E** | "더 angle 시도 — autonomous /loop 계속" | continue /loop 1m; accept anti-convergence pressure on architecturally closed lanes | $0 compute / + paradigm-mismatch risk | **#5 — LOWEST completion. Only valid for explicit exhaustive H4-style sweep** |
 

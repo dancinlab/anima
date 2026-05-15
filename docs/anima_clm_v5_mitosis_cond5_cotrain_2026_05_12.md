@@ -215,7 +215,7 @@ D3 transition: **STRONG (4/5 carry)** — single-corpus cotrain 으로는 F-PERS
 | absolute max ($) | 44.00 | 44.00 |
 | within envelope | ✅ pre-fire | **✅ 31.7× margin** |
 
-own 16 cost discipline + own 43 active resource utilization 균형 — recommended fire (arch spec §7.2 conservative) verbatim 적용. H100 SXM 80GB performance 가 추정보다 **18× 빠름** (152M param + batch=32 × ctx=256 매 step ~0.4s).
+ cost discipline + active resource utilization 균형 — recommended fire (arch spec §7.2 conservative) verbatim 적용. H100 SXM 80GB performance 가 추정보다 **18× 빠름** (152M param + batch=32 × ctx=256 매 step ~0.4s).
 
 추정 mismatch 원인: arch spec §7.2 의 "8hr H100" estimate 는 v2 historical (instrumentation-only mitosis) 의 wall extrapolation. 실제 v5-mitosis (real nn.Module branches × deepcopy split) 은 cell saturation 후 (step 150 이상) split overhead 없고 forward 만 — H100 SXM tensor core 가 d=384 transformer block × 64 cells 를 batch=32 로 효율 처리. 향후 cycle 의 cost estimate 는 본 결과 carry: 5K step × cells 64 d=384 = ~$1.30 H100 SXM ($2.28/hr).
 
@@ -224,13 +224,13 @@ own 16 cost discipline + own 43 active resource utilization 균형 — recommend
 ## §7 honest C3 (≥7)
 
 1. **device-mismatch bug discovered on first H100 fire** — `_split_cell` 의 freshly-constructed child 는 CPU 에 머무름, parent 가 cuda 면 `child.cell_state.add_(... * parent.cell_state.norm())` mixed-device RuntimeError. Mac CPU smoke (REBORN §90 cond.2) 는 surface 안 함 (all-CPU). 본 cycle commit `4360411c8` fix: `child = child.to(device, dtype)` 추가. **cond.2 → cond.5 transfer 의 substrate-mismatch carry**: Mac CPU 만으로 cuda 코드 검증 불가, GPU smoke (e.g. fp16 single-step) prerequisite 추가 필요.
-2. **F-V5MIT-5 random pool 비교 방식** = Bhattacharyya distance trained-vs-random > random-internal. 이 criterion 이 V14-STRICT 의 every-mirror-beat 정의에 정확히 적합한가는 가정 (memory `project_simple_stack_pass_unlocked` own 18 PASS_STRICT 정의 transfer 의 1차 시도). own 18 simple_stack 의 V14 는 prediction-text overlap criterion 이었고, 본 trans 는 internal representation distance — semantic equivalent 가정 미검증.
+2. **F-V5MIT-5 random pool 비교 방식** = Bhattacharyya distance trained-vs-random > random-internal. 이 criterion 이 V14-STRICT 의 every-mirror-beat 정의에 정확히 적합한가는 가정 (memory `project_simple_stack_pass_unlocked` PASS_STRICT 정의 transfer 의 1차 시도). simple_stack 의 V14 는 prediction-text overlap criterion 이었고, 본 trans 는 internal representation distance — semantic equivalent 가정 미검증.
 3. **F-PERSONA-4 KL=0.0 winner-take-all 해석** = post-cotrain softmax saturation 가설. 직접 cell-level winner-id distribution 측정 안 됨 (만약 winner cell 이 prompt 마다 다르다면 KL > 0 이어야 하는데 KL=0.0 정확히 = winner identical across all 50 prompts). 정확한 mechanism (cell 1 항상 winner, 또는 prompt-input 자체가 softmax 로 동일 weight 출력) 추가 forensic 필요.
 4. **5K step + 1.3MB corpus 의 category-specialization 부재** = §5.5 의 alternative explanations 4 개 (multi-corpus, τ tunable, metric 재정의, per-session pool) — 어느 path 가 F-PERSONA-4 PASS 시킬 수 있는가는 미검증. design §10 C3 #4 의 "category-prompt 의 substrate-level invariance" 가 본 cycle 의 main finding.
 5. **option (a) cell granularity 채택** 의 정당성은 본 cycle F-V5MIT-1~5 PASS 로 partial validation — 하지만 (b/c/d) ablation 여전히 없음. F-V5MIT-5 PASS 가 option (a) 의 정당성 의미하지만 option (b) sharing attn 이 더 cost-efficient 일 가능성 미배제.
 6. **AdamW optimizer state migration on split/merge** — 본 cycle 에서 `_optimizer_rebuild_callbacks` registered but no-op (lazy-init 가정). 5K step + 62 split 으로 학습 잘 converge 함이 lazy-init 가 적절 evidence — 하지만 longer training (50K step) 에서 momentum buffer accumulation 의 거동 미검증.
 7. **F-V5MIT-3 PHI-CONSERVATION promotion** advisory NOTE → gating PASS 가 cond.5 cotrained 위 force_split synth 의 결과 — actual continuous-training 환경 (매 step force_split 안 되는 자연 split) 의 Φ change 가 정확히 < 25% 인지는 logs aggregate 만으로는 not directly verified. Φ history 변동 폭 σ < 0.05 가 indirect evidence.
-8. **F-V5MIT-5 10/10 mirror-beat PASS** 의 mirror-beat 개수 (10) 가 sufficient? own 18 simple_stack 의 standard 는 5-seed × 5-seed × **every** mirror-beat — 본 cycle 의 "10 random byte windows from corpus" 는 own 18 의 stricter 정의의 1차 approximation. mirror-beat 50+ scale 의 ablation 필요.
+8. **F-V5MIT-5 10/10 mirror-beat PASS** 의 mirror-beat 개수 (10) 가 sufficient? simple_stack 의 standard 는 5-seed × 5-seed × **every** mirror-beat — 본 cycle 의 "10 random byte windows from corpus" 는 의 stricter 정의의 1차 approximation. mirror-beat 50+ scale 의 ablation 필요.
 9. **dispatch_h100.sh 의 trap cleanup partial-pull 보호** = SCP exit code 만 의존. 본 cycle 의 first-fire 는 train.log 만 캡처 successful (ckpt + result.json 없음) → SAVE_POD=1 set → 두 번째 fire 가능 (pod retain). 보호 메커니즘 작동 검증 됨, 하지만 partial truncated file 미감지 risk 잔여.
 10. **cost estimate 18× off** = arch spec §7.2 의 wall 추정 (8-10hr) 이 실측 (33 min) 보다 18× over. v2 historical (instrumentation only) extrapolation 한계 — H100 SXM 80GB + tensor core 의 d=384 × cells 64 × batch 32 throughput 이 estimate scope 밖. 향후 v5-mitosis estimate: ≈ $0.3/1000step on H100 SXM @ $2.28/hr.
 
@@ -260,7 +260,7 @@ own 16 cost discipline + own 43 active resource utilization 균형 — recommend
 - `project_v5_mitosis_cond5_cotrain_2026_05_12` (본 cycle 신규)
 - `feedback_orchestrator_h100_gotchas` (Ubuntu 24.04 / scp / peft pod-path)
 - `feedback_dispatch_vast_template_gotchas` (PSCC §28 canonical)
-- `project_simple_stack_pass_unlocked` (own 18 V14 PASS_STRICT criterion)
+- `project_simple_stack_pass_unlocked` (V14 PASS_STRICT criterion)
 
 ---
 
@@ -320,7 +320,7 @@ raw#10 honest C3 ≥7 (§7 = 10 항목), raw#15 additive (기존 spec/skeleton �
 ### §A2.4 cost
 | 항목 | 값 |
 |---|---:|
-| ubu-1 dedicated GPU | $0 (own 43 active resource utilization) |
+| ubu-1 dedicated GPU | $0 (active resource utilization) |
 | Mac local time | ~2 min |
 | BG envelope | $0 hard, no Vast.ai |
 

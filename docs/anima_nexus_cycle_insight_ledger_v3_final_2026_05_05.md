@@ -107,7 +107,7 @@ bash /Users/ghost/core/anima/state/anima_hf_promotes_2026_05_06_auto_fire.bash -
 
 **Modality**: PRIVATE→PUBLIC promotion of HF release after 24h verification
 window close. Per `feedback_hf_release_private_to_public_after_verification.md`
-(own 15) lifecycle.
+ lifecycle.
 
 ---
 

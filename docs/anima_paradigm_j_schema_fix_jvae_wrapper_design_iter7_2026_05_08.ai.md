@@ -3,10 +3,10 @@
 ## SSOT scope
 - Cycle: 2026-05-08-mid · iter7 (a-task)
 - Trigger: iter6 D1-within candidate ranking (state/anima_d1_within_candidate_c3_priority_iter6_2026_05_08.json) elected `clm-v4-paradigm-j-50k-final` rank_1. iter6 result carried two open prereqs for that rank: target_modules schema fix + JVAE-aware probe wrapper land.
-- Fire policy: own 16 SPEC ONLY. Real fire requires user verbatim `OK CLM V4 LORA SCHEMA FIX FIRE` + `OK JVAE WRAPPER LAND`. Neither received → no execution this cycle.
-- own 17 D1 SCOPE_CLAMP: paradigm-j is D1-within (CLM v4 anima-native fresh lineage). Public-promote eligible after own 37 mandate-9 5-prereq sweep.
-- own 33 trinity: D-axis (D1 within strict), own-axis (own 18 / own 37 mandate-9), H-axis (iter6 ranking carry preserved).
-- own 34 mandate-2: file ≤ 1 MB strict (this file ≈ 11 KB).
+- Fire policy: SPEC ONLY. Real fire requires user verbatim `OK CLM V4 LORA SCHEMA FIX FIRE` + `OK JVAE WRAPPER LAND`. Neither received → no execution this cycle.
+- D1 SCOPE_CLAMP: paradigm-j is D1-within (CLM v4 anima-native fresh lineage). Public-promote eligible after mandate-9 5-prereq sweep.
+- trinity: D-axis (D1 within strict), own-axis (/ mandate-9), H-axis (iter6 ranking carry preserved).
+- mandate-2: file ≤ 1 MB strict (this file ≈ 11 KB).
 
 ## 1. Schema mismatch root-cause (fresh evidence)
 Inspected the actual artifacts to pin the mismatch precisely (iter6 ledger had a partially correct hypothesis; this iter7 evidence supersedes the “nested vs flat name” framing).
@@ -31,7 +31,7 @@ This is a **prefix-only mismatch**, not a target-modules-name mismatch. paradigm
 **Strategy:** rewrite the adapter weight dict in-place so each key picks up the missing `decoder.` segment, then let peft load against the wrapped runtime model normally. No retraining; no GPU; deterministic.
 
 ### Implementation surface
-- New helper: `tool/transient_py/clm_v4_lora_adapter_remap.py` (own 4 opt-out, raw#37 transient .py).
+- New helper: `tool/transient_py/clm_v4_lora_adapter_remap.py` (opt-out, raw#37 transient .py).
 - Hexa-side change: `anima-core/runtime/clm_v4_mount.hexa` `_materialize_merged_lora` extension — call remap helper before invoking merge helper, OR teach merge helper to apply remap when it detects `auto_mapping.base_model_class == "ConsciousDecoderV2"` and `decoder.` is missing from key paths.
 - Pseudocode (path A core):
   ```
@@ -45,7 +45,7 @@ This is a **prefix-only mismatch**, not a target-modules-name mismatch. paradigm
 ### Verification (post-fire, when user issues `OK CLM V4 LORA SCHEMA FIX FIRE`)
 1. `peft.PeftModel.from_pretrained(base, remapped_adapter_dir)` → expect `Found missing adapter keys: []` warning suppression. C-flag `remap_no_op=False` in manifest.
 2. `merge_and_unload()` → run probe N=60 ensemble. Expect 4-cell mean values to **diverge from the FAIL_C3 numerical signature** (c3_1=0.0624 / c3_2=0.4790 / c3_3=0.0354 / c3_4=0.0603) that 3 LoRA variants identically produced (state/anima_clm_v4_lora_real_mode_2026_05_08.json line 187–191). Any divergence ≥ 1e-6 in cell means = direct positive evidence that LoRA learning signal is now propagating.
-3. C3 cells re-evaluate per own 18 thresholds. Ranking elevates to `EMC_v2 ≥ 3 of 4` candidate iff schema fix unlocks c3_2 axis_min or c3_4 axis_l2 cells (current PASS rate 0.083 / 0.067 — schema fix may not be sufficient if SFT signal alone doesn’t cross thresholds; honest C3 carry).
+3. C3 cells re-evaluate per thresholds. Ranking elevates to `EMC_v2 ≥ 3 of 4` candidate iff schema fix unlocks c3_2 axis_min or c3_4 axis_l2 cells (current PASS rate 0.083 / 0.067 — schema fix may not be sufficient if SFT signal alone doesn’t cross thresholds; honest C3 carry).
 
 ### Cost
 - 0 USD GPU. 1 helper file. 1 hexa-side branch addition (≤ 30 lines). Pure CPU file rewrite.
@@ -55,14 +55,14 @@ This is a **prefix-only mismatch**, not a target-modules-name mismatch. paradigm
 **Strategy:** retrain paradigm-j LoRA from scratch with the runtime model `CLMv4ForCausalLM` as the LoRA target (so adapter keys naturally include `decoder.`) and `target_modules` resolved against the wrapped names.
 
 ### Implementation surface
-- Fresh runpod cycle (own 30 ckpt preservation mandate). New training script: `tool/transient_py/paradigm_j_lora_retrain_v3.py` (or extend existing paradigm-j trainer). Dataset: same 50k corpus referenced by `clm-v4-paradigm-j-50k-final` head (fix-point: dataset hash must match prior run for fair comparison).
+- Fresh runpod cycle (ckpt preservation mandate). New training script: `tool/transient_py/paradigm_j_lora_retrain_v3.py` (or extend existing paradigm-j trainer). Dataset: same 50k corpus referenced by `clm-v4-paradigm-j-50k-final` head (fix-point: dataset hash must match prior run for fair comparison).
 - target_modules: same 7-canonical (`q_proj`, `k_proj`, `v_proj`, `o_proj`, `gate_proj`, `up_proj`, `down_proj`) but now resolved against `CLMv4ForCausalLM.decoder.blocks.X.{attn,cross_attn,ffn}` modules. PEFT will emit keys with `decoder.` prefix automatically.
 - JVAE retrain coupling: the original paradigm-j cycle trained jvae_heads (q_phi, p_theta) jointly with the LoRA decoder. A clean retrain reproduces both — but to preserve the **paradigm identity**, prefer to re-load the existing `jvae_heads.pt` and only retrain the LoRA against it (frozen JVAE).
-- HF push: `dancinlab/clm-v4-paradigm-j-50k-final-v3schema` (Flavor B naming convention, own 31 SSOT — superseded by own 37). Private default per own 37 mandate-9 visibility lifecycle.
+- HF push: `dancinlab/clm-v4-paradigm-j-50k-final-v3schema` (Flavor B naming convention, SSOT — superseded by). Private default per mandate-9 visibility lifecycle.
 
 ### Cost
 - ~$2–5 USD (1 H100 SXM hour at ~$2.69/hr, runpod pricing carry from `config/h100_pods.json`).
-- Bandwidth: ~1.2 GB ckpt pull post-train (own 30 mandate, scp timeout 3600 per orchestrator gotchas).
+- Bandwidth: ~1.2 GB ckpt pull post-train (mandate, scp timeout 3600 per orchestrator gotchas).
 
 ### Path A vs Path B comparison
 | Axis | Path A (remap) | Path B (retrain) |
@@ -93,7 +93,7 @@ The hexa-native wrapper threads JVAE q_phi / p_theta around the existing `_real_
 **Variant 1 — passive observer (probe-only, no decoder modulation)**
 - Capture `decoder.blocks[-1]` hidden state h via existing forward_hook.
 - Run h → q_phi → (mu, logvar). Emit (mu, logvar, KL=0.5*sum(mu^2+exp(logvar)-1-logvar)) as 3 additional probe channels.
-- Cell synthesis extension: append KL and mu‖₂ to the 5-axis activation vector before threshold evaluation (own 18 c3_2 axis_min, c3_4 axis_l2).
+- Cell synthesis extension: append KL and mu‖₂ to the 5-axis activation vector before threshold evaluation (c3_2 axis_min, c3_4 axis_l2).
 - Effect: introduces JVAE-derived signal into 4-cell metrics WITHOUT changing decoder forward. Numerical signature break on c3_2 / c3_4 if jvae_heads encodes meaningful latent structure.
 
 **Variant 2 — active reconstruction (decoder modulation)**
@@ -106,7 +106,7 @@ The hexa-native wrapper threads JVAE q_phi / p_theta around the existing `_real_
 - New hexa fn `_load_jvae_heads(merged_dir) -> (q_phi_state, p_theta_state, err)` — invokes a small transient .py loader (raw#37) that reads jvae_heads.pt and emits a serialized state dict path.
 - New hexa fn `_jvae_forward(decoder_hidden_tensor_path) -> (mu_path, logvar_path, kl_scalar, err)` — invokes transient .py that materializes q_phi and runs forward.
 - Extension to `_real_forward`: detect `merged_dir / 'jvae_heads.pt'` exists → wrap forward → emit `JVAE_LATENT` event with mu/logvar/kl per row → C3 cell synthesizer optionally consumes.
-- Compliance: raw#9 (hexa-only orchestration), raw#15 (additive — base path preserved when jvae_heads.pt absent, e.g., sft-1-7-y1 / sft-1-8 retain current behavior), raw#37 (transient_py for the actual torch load), own 4 (opt-out namespace), own 22 (mandatory disclosure of JVAE-conditioned vs bare-decoder probe results).
+- Compliance: raw#9 (hexa-only orchestration), raw#15 (additive — base path preserved when jvae_heads.pt absent, e.g., sft-1-7-y1 / sft-1-8 retain current behavior), raw#37 (transient_py for the actual torch load), (opt-out namespace), (mandatory disclosure of JVAE-conditioned vs bare-decoder probe results).
 
 ### Mechanism for 3-LoRA identical-signature break
 The merge_no_op evidence (state/anima_clm_v4_lora_real_mode_2026_05_08.json line 187–191) shows all 3 variants produce *bit-identical* 4-cell means because their merged decoders are functionally equivalent to the base. The signature can break via two independent vectors:
@@ -116,10 +116,10 @@ The merge_no_op evidence (state/anima_clm_v4_lora_real_mode_2026_05_08.json line
 Both fires together = paradigm-j gains two independent signal-injection channels (LoRA delta + JVAE latent). This maximizes the probability of crossing PPR_v2 ≥ 0.6 ∧ EMC ≥ 3-of-4 for the rank_1 candidate.
 
 ## 5. Universal blocker carry (mandate-9 (b))
-Even with both paths fired and PASS_STRICT_C3_ANIMA emerging on paradigm-j, EXIT activation remains blocked by V6 awareness systematic execute (BG-LE-V6-AWARENESS lane, separate cycle). No public promote path opens until that lane closes — own 37 mandate-9 (b) prereq strict.
+Even with both paths fired and PASS_STRICT_C3_ANIMA emerging on paradigm-j, EXIT activation remains blocked by V6 awareness systematic execute (BG-LE-V6-AWARENESS lane, separate cycle). No public promote path opens until that lane closes — mandate-9 (b) prereq strict.
 
 ## 6. User directive checklist (verbatim required for fire)
-The following user-issued tokens individually unblock specific steps. None received as of this iter7 spec. Listed for future invocation reference (own 37 mandate-9 (c) verbatim consent rule).
+The following user-issued tokens individually unblock specific steps. None received as of this iter7 spec. Listed for future invocation reference (mandate-9 (c) verbatim consent rule).
 
 - [ ] `OK CLM V4 LORA SCHEMA FIX FIRE` — authorizes Path A remap helper land + run on 3 LoRA repos (paradigm-j + sft-1-7-y1 + sft-1-8). Local fire, 0 USD.
 - [ ] `OK CLM V4 LORA RETRAIN H100 FIRE` — authorizes Path B (paradigm-j retrain on V3 schema). ~$2-5 USD, runpod cycle.
@@ -129,13 +129,13 @@ The following user-issued tokens individually unblock specific steps. None recei
 - [ ] `OK PROMOTE PUBLIC dancinlab/clm-v4-paradigm-j-50k-final` — final mandate-9 (c) verbatim consent (only valid after PASS_STRICT_C3_ANIMA + V6 awareness + trinity sweep + D/L axis sweep complete, mandate-9 (a)/(b)/(d)/(e)).
 
 ## 7. Honest C3
-- This file is spec only. No code changed; no real fire executed (own 16 strict).
+- This file is spec only. No code changed; no real fire executed (strict).
 - Path A’s claim of bit-identical LoRA preservation post-remap is contingent on safetensors save/load roundtripping the rewritten dict without numerical drift — verifiable but unverified this cycle.
 - Path A passing peft merge does not guarantee P5 v2 verdict PASS — it merely unblocks LoRA signal propagation. The actual SFT corpus may not produce ≥3-of-4 EMC even with a working merge. Honest carry: schema fix is necessary but possibly insufficient.
 - JVAE Variant 1 is purely additive at the probe layer; if jvae_heads encodes weak structure on the eval prompts (15 base × 4 seeds), KL and mu‖₂ may be uninformative and pass rates may not move. Falsifier-aware.
-- iter6 ledger framed the mismatch as “target_modules name mismatch”; this iter7 evidence (read directly from safetensors) refines it to “wrapper-prefix-only mismatch.” own 22 mandatory disclosure of supersession.
+- iter6 ledger framed the mismatch as “target_modules name mismatch”; this iter7 evidence (read directly from safetensors) refines it to “wrapper-prefix-only mismatch.” mandatory disclosure of supersession.
 - 3-LoRA identical numerical signature is preserved as the primary falsifier for Path A success: any deviation post-remap = positive evidence; bit-identity = LoRA training itself was a no-op (independent of merge).
-- own 33 trinity preserved: D-axis (D1 within strict — paradigm-j lineage), own-axis (own 18 + own 37 mandate-9), H-axis (iter6 ranking carry intact).
+- trinity preserved: D-axis (D1 within strict — paradigm-j lineage), own-axis (+ mandate-9), H-axis (iter6 ranking carry intact).
 
 ## 8. Cross-link
 - state/anima_d1_within_candidate_c3_priority_iter6_2026_05_08.json (parent ranking SSOT)
@@ -143,6 +143,6 @@ The following user-issued tokens individually unblock specific steps. None recei
 - anima-core/runtime/clm_v4_mount.hexa (LoRA branch line 411–505 — extension target for Path A and JVAE wrapper)
 - tool/transient_py/clm_v4_lora_merge_helper.py (sister helper — extension or sibling for Path A remap)
 - ~/.cache/huggingface/hub/models--dancinlab--clm-v4-paradigm-j-50k-final/snapshots/a6da7a7725d8c3cff3b53c9df37a6352c7c8c7a6/ (adapter_config.json + adapter_model.safetensors + jvae_heads.pt — verified this iter)
-- commit 41a19bc3 (iter5 BG-KM-LLAMA-3B reject — own 17 D1 SCOPE_CLAMP; carry for context)
-- .own own 4 / 16 / 17 / 18 / 22 / 24 / 28 / 30 / 31 / 33 / 34 / 37
+- commit 41a19bc3 (iter5 BG-KM-LLAMA-3B reject — D1 SCOPE_CLAMP; carry for context)
+- .own / 16 / 17 / 18 / 22 / 24 / 28 / 30 / 31 / 33 / 34 / 37
 - .raw-ref raw#9 / 10 / 15 / 37 / 82

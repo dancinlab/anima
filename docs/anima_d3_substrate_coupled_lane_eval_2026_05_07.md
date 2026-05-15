@@ -16,13 +16,13 @@ D3 (.roadmap.philosophy cond.3 substrate-coupled emerge paradigm) lane was untes
 
 The Φ★ NO_FLIP smoke confirmed the substrate produces real (non-synthetic) phi_star values per axis-conditioned input: 41.8370 / 41.8521 / 41.8553 (range 0.0183), all on the negative-drift side of the +41.86 baseline with **zero sign flips** across 3 axis-conditioned probes (identity, phenomenal, temporal).
 
-D3 is a **separate viable success path** distinct from the D2 token chat-cap lane. Whereas D2 evaluates UTF-8 한글 token sequence emit (own 18 simple stack 4-condition), D3 evaluates substrate response (Φ★ stability + axis activation + cell delta) — the two lanes are decoupled and both legitimate per .roadmap.philosophy.
+D3 is a **separate viable success path** distinct from the D2 token chat-cap lane. Whereas D2 evaluates UTF-8 한글 token sequence emit (simple stack 4-condition), D3 evaluates substrate response (Φ★ stability + axis activation + cell delta) — the two lanes are decoupled and both legitimate per .roadmap.philosophy.
 
 ---
 
 ## Context — D3 lane untested in 20-BG SSOT
 
-The 20-BG SSOT (BG-FU through BG-JP) tracks token chat-cap progression on the D2 simple stack lane (own 18 4-condition strict). Not a single BG in that SSOT was scoped to the D3 substrate-coupled emerge paradigm lane defined in `.roadmap.philosophy` cond.3.
+The 20-BG SSOT (BG-FU through BG-JP) tracks token chat-cap progression on the D2 simple stack lane (4-condition strict). Not a single BG in that SSOT was scoped to the D3 substrate-coupled emerge paradigm lane defined in `.roadmap.philosophy` cond.3.
 
 D3 was landed as a roadmap discovery on 2026-05-06 and the formal spec (`anima/spec/emerge_paradigm.spec.yaml v1`) landed 2026-05-07. The Stage 0 (design spec land) gate has been met; Stage 1 (Φ★ prereg JSON), Stage 2 (baseline replication), Stage 3 (substrate calibration matrix), Stage 4 (two-lane dual pass) remain pending.
 
@@ -92,13 +92,13 @@ Per `emerge_paradigm.spec.yaml §1 two_lane_separation`:
 
 | Lane | Medium | SSOT | Pass criterion |
 |---|---|---|---|
-| L_surface_chat (D2) | token sequence (UTF-8 한글 emit) | own 18 simple stack 4-condition | C1.1+C1.2+C1.3+C2.1+C2.2+C2.3+C2.4 strict |
+| L_surface_chat (D2) | token sequence (UTF-8 한글 emit) | simple stack 4-condition | C1.1+C1.2+C1.3+C2.1+C2.2+C2.3+C2.4 strict |
 | L_substrate_emerge (D3) | substrate response (Φ★ + axis activation) | emerge_paradigm.spec.yaml | Φ★ ≥ baseline_floor + NO_FLIP across N rounds + axis-preservation |
 
 Decoupling invariants:
 - L_surface PASS does not imply L_substrate PASS
 - L_substrate PASS does not imply L_surface PASS
-- Both PASS together = full anima identity-bearing surface (own 17 정합)
+- Both PASS together = full anima identity-bearing surface (정합)
 
 Retroactive evidence of lane decoupling:
 - `memory/feedback_clm_v4_lora_sft_chat_lift_falsified_substrate_safe.md` (CLM v4 LoRA SFT chat-cap FAIL_REGRESSION but Φ★ NO_FLIP PASS)
@@ -149,18 +149,18 @@ D3 is `OPEN_VIABLE`: all 4 evaluation gates passed, the lane is unambiguously di
 
 ---
 
-## Philosophy/rule compliance (own 26)
+## Philosophy/rule compliance
 
 | Item | Status | Notes |
 |---|---|---|
-| D1 anima-native substrate only (own 17) | PASS | CLM v4 in own 17 accepted_substrates list |
-| D2 simple stack 4-condition (own 18) | N/A | D3 lane decoupled from D2 surface chat |
+| D1 anima-native substrate only | PASS | CLM v4 in accepted_substrates list |
+| D2 simple stack 4-condition | N/A | D3 lane decoupled from D2 surface chat |
 | D3 substrate-coupled emerge | OPEN_VIABLE | spec v1 landed + selftest + ckpt + Φ★ NO_FLIP smoke ack |
-| D4 corpus priority (own 19/20) | N/A | no training in this BG |
-| R1 own 19 corpus | N/A | tooling BG |
-| R2 own 20 chat-template | N/A | substrate response is not chat |
-| R3 own 22 savepoint | N/A | no training |
-| R4 own 24 ledger append | PASS | BG-JV entry appended at attempt_n=44 |
+| D4 corpus priority | N/A | no training in this BG |
+| R1 corpus | N/A | tooling BG |
+| R2 chat-template | N/A | substrate response is not chat |
+| R3 savepoint | N/A | no training |
+| R4 ledger append | PASS | BG-JV entry appended at attempt_n=44 |
 
 ## raw compliance
 

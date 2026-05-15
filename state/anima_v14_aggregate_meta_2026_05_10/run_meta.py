@@ -12,7 +12,7 @@ Computes:
   - Confounding factor decomposition
 
 raw#15: only existing data; raw#9: local-only training (none here).
-own 16: $0 local CPU.
+: $0 local CPU.
 """
 import json
 import math

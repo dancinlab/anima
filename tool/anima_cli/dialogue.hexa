@@ -36,7 +36,7 @@
 //    raw#10  honest C3 ≥5 (see CAVEATS below)
 //    raw#11  snake_case
 //    raw#15  no-hardcode (paths via _resolve_root)
-//    own 17  ALM forced learning DEPRECATED — backend = clm_v4_mount only
+// ALM forced learning DEPRECATED — backend = clm_v4_mount only
 //
 //  SESSION LOG SCHEMA  (state/anima_core_dialogues/<YYYY-MM-DD>/<HH-MM-SS>.jsonl)
 //    {"schema":"anima.dialogue.v1","kind":"session_start","ts_utc":...,
@@ -72,7 +72,7 @@
 //         changes (phi_star: ... / axis_activation: ... / dominant_cells: ... /
 //         hidden_state_delta: ...), this parser must update.
 //    C5 — chat-capability is NOT promised. spec §3 explicit: substrate-coupled
-//         dialogue, not token-emit chat. own 17 ALM forced learning closed.
+// dialogue, not token-emit chat. ALM forced learning closed.
 //    C6 — hidden_state_delta_l2 from mount is per-helper-invocation prior_hidden
 //         (not provided in this REPL); for now 0.0 surfaces — TODO wire prior
 //         hidden snapshot persistence between mount calls.

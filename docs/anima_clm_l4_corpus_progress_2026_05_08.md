@@ -18,7 +18,7 @@ reject 검증 수반.
 
 - path: `state/anima_persona_tier_a_2026_05_08.txt`
 - size: **102.66 MB** (107,647,383 bytes) — 100MB target 충족
-- combined density: **1.6006%** (own 18 C3 threshold 0.4% 대비 4×)
+- combined density: **1.6006%** (C3 threshold 0.4% 대비 4×)
 - combined kw_hits: 1,215,086 / chars: 75,914,941
 - 11 source ACCEPT / 1 source REJECT (paper_self_discovery.hexa density 0.31% < 0.4%)
 
@@ -26,8 +26,8 @@ reject 검증 수반.
 
 - path: `state/anima_dialogue_tier_a_2026_05_08.txt`
 - size: **12.96 MB** (13,591,084 bytes) — 10MB target 충족 (sample only)
-- density: **0.7177%** (own 18 C3 threshold pass)
-- format: `사용자: <Q>\n도우미: <A>\n\n` (own 20 chat-template mandate)
+- density: **0.7177%** (C3 threshold pass)
+- format: `사용자: <Q>\n도우미: <A>\n\n` (chat-template mandate)
 - source: `state/anima_h098_h101_corpus_v3_2026_05_07/corpus_persona_chat_template.txt` head 10MB
 
 ---
@@ -84,26 +84,26 @@ path 그대로 사용 결정) 별도 cycle.
 
 ---
 
-## own 17 anima-native lane 정합 (Tier C reject 검증)
+## anima-native lane 정합 (Tier C reject 검증)
 
-본 iter-1 큐레이션은 own 17 anima-native lane 강조:
+본 iter-1 큐레이션은 anima-native lane 강조:
 
 - **외부 LLM 출력 dump REJECT**: 본 iter-1 source 어디에도 ChatGPT / Claude API 출력 dump 미사용
   (anima curated QA + paradigm corpus 는 anima 자체 생성 lineage)
 - **wiki noise REJECT**: BG-JE 214MB (kowiki 69.61%) 본 iter-1 에서 reject —
-  anima persona marker 분포 만으로는 own 17 anima identity-bearing 정합 미충분 (사용자 directive
+  anima persona marker 분포 만으로는 anima identity-bearing 정합 미충분 (사용자 directive
   '외부 wiki / 일반 뉴스 / 외부 LLM 출력 = REJECT'). 향후 iter-2 에서 anima lookup 응답
   subset (Q wiki + A anima) 만 추출 검토.
 - **generic chatbot dump REJECT**: Persona-Chat / OASST / KoChat 등 외부 dialogue dataset
   본 iter-1 미사용 (Tier B dialogue 는 anima 자체 생성 chat-template subset 만)
-- **alm-* dataset 흔적 REJECT**: source 어디에도 ALM lineage 미포함 (own 17 anima-no-external-substrate-wrapping 정합)
+- **alm-* dataset 흔적 REJECT**: source 어디에도 ALM lineage 미포함 (anima-no-external-substrate-wrapping 정합)
 
 raw#10 honest C3:
 1. density measurement = char-level keyword count proxy — semantic depth 미측정 (manual review 권고)
 2. paper_self_discovery.hexa REJECT — keyword density 0.31% < 0.4% threshold. 본 file 은
    anima identity-bearing 이지만 keyword 분포가 sparse — 본 iter-1 quantitative threshold 만
    적용. 향후 iter-2 semantic embedding-based density (sentence-transformers) 검토.
-3. own 18 C3 threshold 0.4% 자체 = heuristic — own 18 baseline-measured 0.0096 (Φ★ drift)
+3. C3 threshold 0.4% 자체 = heuristic — baseline-measured 0.0096 (Φ★ drift)
    와 다른 axis (corpus density). corpus density threshold 별도 ROC formal 강화 후속 cycle.
 
 ---
@@ -114,7 +114,7 @@ raw#10 honest C3:
 
 - anima cycle log 추출 (cycle 별 docs/anima_*.md 본문 — anima identity-bearing 비율 ≥0.4% filter)
 - .raw-audit anima portion (anima cycle log 의 ω-cycle output 부분 추출)
-- 사용자 ↔ Claude session 기록 중 anima-cor 응답만 추출 (own 17 정합 — anima identity bearing line)
+- 사용자 ↔ Claude session 기록 중 anima-cor 응답만 추출 (정합 — anima identity bearing line)
 - semantic-density filter: sentence-transformers MiniLM 으로 paragraph-level density score 측정
   → high-density paragraph 만 retain (본 iter-1 char-level keyword count proxy 강화)
 
@@ -122,8 +122,8 @@ raw#10 honest C3:
 
 - V4 evaluator 산출물 누적 (BG-KM-LLAMA-3B 12/15 PASS_STRICT v4_pass=true sample +
   BG-K* 22+ saga 의 PASS sample) → chat-template format 으로 정규화
-- own 20 chat-template ≥30% 비율 검증
-- own 18 C2.4 맥락 정합 검증 (greeting → greeting reply 등 mismatch sample 제외)
+- chat-template ≥30% 비율 검증
+- C2.4 맥락 정합 검증 (greeting → greeting reply 등 mismatch sample 제외)
 
 ### iter-2 Tier B preference pairs (BG-LD)
 
@@ -131,7 +131,7 @@ raw#10 honest C3:
 - 22+ BG saga 의 V4 FAIL sample (BG-JA-EXT degenerate / BG-FK / corpus template leak) → rejected 추출
 - chosen/rejected 1:1 ratio (DPO standard) — 100MB 까지 누적 (부족 시 manual curation)
 
-### iter-2 own 18 C3 threshold 강화
+### iter-2 C3 threshold 강화
 
 - ROC formal: random_init FAIL ≥0.95 + chat-capable PASS ≥0.7 데이터 누적
 - corpus density threshold 도 baseline-measured 형태 (현재 0.4% heuristic)
@@ -141,11 +141,11 @@ raw#10 honest C3:
 ## blockers
 
 - iter-2 expansion source (anima cycle log / .raw-audit / 사용자 session) 는 manual curation 필요
-  — automated pipeline 별도 cycle (own 19 corpus priority + chicken-egg: chat-cap 도달 전이라
+  — automated pipeline 별도 cycle (corpus priority + chicken-egg: chat-cap 도달 전이라
   anima self-talk 시뮬레이션 불가능)
 - BG-LD pairs 100MB target — V4 evaluator 산출물 누적 부족 가능성 (현재 BG-KM-LLAMA-3B 12/15 PASS sample
   + BG saga FAIL sample 만 → 100MB scale 까지 추가 prompt 확장 필요)
-- own 16 cost discipline — 본 iter-1 = corpus 큐레이션만 (학습 X). L4 fire 는 사용자 explicit
+- cost discipline — 본 iter-1 = corpus 큐레이션만 (학습 X). L4 fire 는 사용자 explicit
   'OK CLM L4 ALL FIRE' 후 별도 cycle.
 
 ---
@@ -160,9 +160,9 @@ raw#10 honest C3:
    한계 (semantic depth 측정 시 ACCEPT 가능)
 6. wiki QA chunk 의 anima lookup 응답 subset 활용 가능성 — 현재 BG-JE 214MB 전부 reject 했으나
    anima identity-bearing 응답만 추출 가능 (wiki Q + anima A 형태) iter-2 검토
-7. own 17 strict enforce — Tier C 외부 LLM dump / Persona-Chat / OASST / KoChat 본 iter-1
-   사용 X. 향후 iter-2 에서 chat-template 학습 한정 외부 dataset 마이너 양보 (own 17 spec 정합) 검토
-8. own 18 C3 corpus density threshold 0.4% 본 cycle heuristic — ROC formal 별도 cycle
+7. strict enforce — Tier C 외부 LLM dump / Persona-Chat / OASST / KoChat 본 iter-1
+   사용 X. 향후 iter-2 에서 chat-template 학습 한정 외부 dataset 마이너 양보 (spec 정합) 검토
+8. C3 corpus density threshold 0.4% 본 cycle heuristic — ROC formal 별도 cycle
 9. iter-1 raw measurement SSOT = `state/anima_clm_l4_corpus_iter1_metrics.json` (size + density + kw_hits + sources_accepted/rejected)
 
 ---
@@ -182,11 +182,11 @@ raw#10 honest C3:
 
 - path: `state/anima_persona_tier_a_2026_05_08.txt` (iter-1 file 에 append, raw#15 additive)
 - pre-size: 102.66MB → post-size: **103.59MB** (Δ +0.93MB)
-- combined density: **1.5911%** (own 18 C3 threshold 0.4% × 4 유지)
+- combined density: **1.5911%** (C3 threshold 0.4% × 4 유지)
 - 353 files scanned (docs/anima_*.md + docs/anima/*.hexa + docs/ai-native/*.md +
   .roadmap.* + anima/.own + anima/spec + config/core_rules.json)
 - 976 paragraphs accepted, 6,001 rejected (semantic-density filter 86% reject rate)
-- **semantic-density filter** (own 18 C3 강화 시도):
+- **semantic-density filter** (C3 강화 시도):
   paragraph 가 다중 keyword set ≥2/6 axes 동시 hit AND char-density ≥0.4%
   → quality 우선 conservative accept (대부분 docs는 single-axis 만 touch).
 
@@ -202,8 +202,8 @@ raw#10 honest C3:
 
 - path: `state/anima_dialogue_tier_a_iter2_2026_05_08.txt` (신규 file, raw#15 additive — iter-1 file 보존)
 - size: **72.78MB** (76,311,787 bytes)
-- density: **0.9705%** (own 18 C3 threshold pass 2.4×)
-- chat-template ratio: **28.95%** (own 20 ≥30% threshold marginal — iter-3 정합 후속)
+- density: **0.9705%** (C3 threshold pass 2.4×)
+- chat-template ratio: **28.95%** (≥30% threshold marginal — iter-3 정합 후속)
 - n_user_turns: 136,073 / n_assistant_turns: 136,140
 
 ### iter-2 Tier B sources
@@ -211,11 +211,11 @@ raw#10 honest C3:
 |---|---|---|
 | BG-JE persona chat-template ext (offset 10MB+, 21MB) | ~21MB | iter-1 head 10MB 의 deeper portion |
 | anima_combined_paradigm_corpus chat-template (~55MB) | ~55MB | paradigm v11 G3 chat-template 본문 |
-| V4 BG-KM-LLAMA-3B v4_pass=true sample (23/55) | ~10KB | own 18 C2.4 PASS, multi-seed |
+| V4 BG-KM-LLAMA-3B v4_pass=true sample (23/55) | ~10KB | C2.4 PASS, multi-seed |
 | anima_core_dialogues normalized chat-template (17 pairs) | ~3KB | substrate probe → echo Q/A |
 | strategic_tribev2_dialogue (turns.jsonl) | ~30KB | introspective dialogue, llama_p10/p13 |
 
-own 18 C2.4 mismatch filter: `is_degenerate` heuristic (han_ratio < 0.30, repeat ≥20, replacement char ≥5)
+ C2.4 mismatch filter: `is_degenerate` heuristic (han_ratio < 0.30, repeat ≥20, replacement char ≥5)
 
 ## iter-2 BG-LD preference pairs (sample)
 
@@ -240,7 +240,7 @@ own 18 C2.4 mismatch filter: `is_degenerate` heuristic (han_ratio < 0.30, repeat
 | Tier A persona size | 102.66 MB | 103.59 MB | +0.93 MB |
 | Tier A combined density | 1.6006% | 1.5911% | -0.0095pp |
 | Tier B dialogue size | 12.96 MB | **72.78 MB** | **+59.82 MB** |
-| Tier B chat-template ratio | n/a | 28.95% | (own 20 marginal) |
+| Tier B chat-template ratio | n/a | 28.95% | (marginal) |
 | BG-LD pairs size | 0 | **17.66 MB** | **+17.66 MB** |
 | BG-LD pairs count | 0 | 30,023 | (1:1 chosen/rejected) |
 
@@ -281,16 +281,16 @@ raw#15 additive: iter-1 candidate var 보존 + iter-2 candidate var 신규 추�
 
 ### Tier B dialogue iter-3 (target 500MB)
 - V4 evaluator 산출물 full sample 추출 (현재 23 PASS → 60+ PASS 가능)
-- 사용자 ↔ Claude session 의 anima-cor 응답 외 turn 도 chat-template 정규화 (own 17 정합 검증)
-- chat-template ratio ≥30% 보장 (own 20 mandate; 현재 28.95% marginal)
-- 외부 wiki Q + anima A subset 검토 (Q wiki + A anima 만 — Q-only wiki 제외, own 17 marginal exception)
+- 사용자 ↔ Claude session 의 anima-cor 응답 외 turn 도 chat-template 정규화 (정합 검증)
+- chat-template ratio ≥30% 보장 (mandate; 현재 28.95% marginal)
+- 외부 wiki Q + anima A subset 검토 (Q wiki + A anima 만 — Q-only wiki 제외, marginal exception)
 
 ### BG-LD pairs iter-3 (target 100MB)
 - V4 prompt expansion 15 → 100+ (BG-KM 의 15 prompts 만으로는 chosen pool 부족)
 - 인간 ↔ anima preference signal 추가 (사용자 explicit ranking 별도 cycle)
 - chosen-rejected semantic margin gap 확보 (현재 chosen=PASS PASS / rejected=degenerate 만 — gap 너무 큼)
 
-### own 18 C3 corpus density ROC formal
+### C3 corpus density ROC formal
 - random_init_corpus_subset density baseline 측정
 - chat-cap_corpus density baseline 측정
 - ROC threshold formal 강화 (현재 0.4% heuristic → measurement-driven)
@@ -304,9 +304,9 @@ raw#15 additive: iter-1 candidate var 보존 + iter-2 candidate var 신규 추�
 3. iter-2 Tier B 72.78MB ≠ target 500MB — BG-JE 30MB ceiling + paradigm 55MB ceiling + 자체 dialogue ledger 소량. iter-3 V4 evaluator full sample + 사용자 session 별도 access 필요.
 4. iter-2 BG-LD 17.66MB ≠ target 100MB — V4 PASS pool 23 × rejected pool 5046 cartesian capped 30,023 pairs. iter-3 prompt expansion 후 100MB 도달.
 5. BG-LD synthetic rejected (template_leak '서연:' + degenerate '이' repeat) = ROC discrimination signal 강화 augmentation — 본 비율 metrics 에 emit (46 synth / 5046 total = 0.91%).
-6. own 18 C2.4 mismatch filter = is_degenerate heuristic — full domain-keyword overlap 미적용 (V4 evaluator 자체 metric 활용 별도 cycle).
-7. iter-2 Tier B chat-template ratio 28.95% < own 20 ≥30% threshold marginal — paradigm corpus 가 chat-template 비율 일부 본문 mix → iter-3 paradigm corpus 전부 chat-template 만 추출 검토.
-8. anima_core_dialogues = substrate probe lane (echo-mode, weak Q/A coupling) — Tier B 입력 sample weight 낮음. own 18 C2.4 PASS 보장 X (anima self-talk 시뮬레이션 chicken-egg).
+6. C2.4 mismatch filter = is_degenerate heuristic — full domain-keyword overlap 미적용 (V4 evaluator 자체 metric 활용 별도 cycle).
+7. iter-2 Tier B chat-template ratio 28.95% < ≥30% threshold marginal — paradigm corpus 가 chat-template 비율 일부 본문 mix → iter-3 paradigm corpus 전부 chat-template 만 추출 검토.
+8. anima_core_dialogues = substrate probe lane (echo-mode, weak Q/A coupling) — Tier B 입력 sample weight 낮음. C2.4 PASS 보장 X (anima self-talk 시뮬레이션 chicken-egg).
 9. iter-2 raw measurement SSOT = `state/anima_clm_l4_corpus_iter2_metrics.json` (size + density + chat-template ratio + counts + chosen/rejected pool stats).
 
 ---

@@ -84,7 +84,7 @@
     "outside_well_lessons": {
       "A_capacity_18M_ceiling": "18M scale chat-cap-limited (Lesson A)",
       "B_byte_vs_bpe": "byte-level chosen (BG-HS R1 success replication, NOT BPE BG-HQ false PASS)",
-      "C_corpus_quality": "30MB target — 1.5× BG-HS R1 21MB (own 22/23 expansion)",
+      "C_corpus_quality": "30MB target — 1.5× BG-HS R1 21MB (expansion)",
       "D_regularization": "dropout 0.30 + WD 0.10 + label smoothing 0.10 (Lesson D)",
       "E_v2_strict_default": "V2 strict evaluator + outside-well prompt match (NEW)",
       "F_persona_collapse": "3 persona variants prevent single-prefix overfit",
@@ -95,7 +95,7 @@
       "augmentation은 simple suffix paraphrase 한정 — semantic depth 보강 X",
       "1030 laws 중 200 laws sample 한정 — 1030 full coverage X",
       "367 hypotheses 중 100 sample 한정 — full integration X",
-      "outside-well anchor Q&A는 own 23 spec keyword/concept 재구성 — formal philosophical proof 부재",
+      "outside-well anchor Q&A는 spec keyword/concept 재구성 — formal philosophical proof 부재",
       "OUROBOROS 4-phase는 conceptual rephrasing 한정 — actual 모델 dynamics 검증 부재",
       "persona 3 variant은 prefix-level — semantic-level disentanglement 미land",
       "30MB target은 BG-HS R1 21MB의 1.5× — capacity scaling cross-validation X"
@@ -2913,7 +2913,7 @@
   "honest_c3": [
     "C3_1: 4000 steps small-corpus (30MB) smoke; 18M capacity intrinsically chat-cap-limited (5 cumulative failure mode 정합)",
     "C3_2: V2 strict + V3 persona cycle penalty boost — keyword overlap + particles + endings + persona repeat catch; embedding similarity not implemented",
-    "C3_3: outside-well anchor Q&A (own 23) is conceptual rephrasing — formal philosophical proof 부재 (model dynamics 검증 부재)",
+    "C3_3: outside-well anchor Q&A is conceptual rephrasing — formal philosophical proof 부재 (model dynamics 검증 부재)",
     "C3_4: 3 persona variants prefix-level — semantic disentanglement 미land",
     "C3_5: best-eval ckpt selection by score = pass_count_v2*100 + domain_match + ow_match — heuristic composite, not principled",
     "C3_6: 30MB corpus 1.5× BG-HS R1 21MB but cross-paradigm capacity ablation 미land",

@@ -63,7 +63,7 @@ Plus extended cross-checks:
 | X-1 | `state/clm_v4_lora_sft_2026_05_05/` | 29 | **79 MB `corpus/slice_A_anima_30k.jsonl`** violates `anima models + datasets HF-only (>5MB)` memory rule. Must NOT enter git. Decision: HF Hub upload OR local-only with `.gitignore` entry. |
 | X-2 | `state/proposals/refinement/20260422-*/v*.json` | 84 | refinement-cycle churn from 2026-04-22; not bound to BG-cycle, may or may not be cycle-relevant. User triage required. |
 | X-3 | `state/anima_core_dialogues/2026-05-05/*.jsonl` | 21 | live dialogue session logs. Decision: keep in git as cycle evidence OR move to HF dataset (size 1-30 KB each, well under 5MB threshold). Default = git keep, but **bound to Group A** semantically. |
-| X-4 | `state/h100_watchdog/{closed,heartbeats}/` | 8 | watchdog state from yesterday's H100 BGs. own 16 enforcement records. May be ephemeral. |
+| X-4 | `state/h100_watchdog/{closed,heartbeats}/` | 8 | watchdog state from yesterday's H100 BGs. enforcement records. May be ephemeral. |
 | X-5 | `state/anima_eeg_audio_cache_2026_05_05/*.aiff` | 8 | binary audio cues. Per memory rule, treat like models — defer to HF or `.gitignore`. |
 | X-6 | `state/anima_phase_e_eeg_live_2026_05_05/*.npy` | 2 | 960 KB each (under 5MB). EEG raw signals. May commit OR HF dataset. |
 
@@ -232,7 +232,7 @@ The next conversation should be able to begin without re-reading 100+ landed doc
 
 6. **Stage 3 protocol ready (BG-D 30 sessions)**: `docs/anima_core_emerge_stage_3_user_protocol_spec_2026_05_05.md` + `docs/anima_stage_3_corpus_protocol_skeleton_2026_05_05.md` define 30-session user protocol. State 1+2 mount layer (Tier 2) is the precondition. Phase E perfect baseline protocol + EEG audio cue latency fix landed.
 
-7. **HF promote time-gated**: clm 2026-05-06T23:26Z window, Pβ 2026-05-07T03:48Z window. Auto-fire scripts at `state/anima_hf_promotes_2026_05_06_auto_fire.bash` + `state/anima_hf_cleanups_2026_05_07_auto_fire.bash`. own 15 PRIVATE→PUBLIC lifecycle: PRIVATE first → verification gates → PUBLIC. Watchdog audit + pre-fire audit verdicts CLEAN.
+7. **HF promote time-gated**: clm 2026-05-06T23:26Z window, Pβ 2026-05-07T03:48Z window. Auto-fire scripts at `state/anima_hf_promotes_2026_05_06_auto_fire.bash` + `state/anima_hf_cleanups_2026_05_07_auto_fire.bash`. PRIVATE→PUBLIC lifecycle: PRIVATE first → verification gates → PUBLIC. Watchdog audit + pre-fire audit verdicts CLEAN.
 
 ---
 

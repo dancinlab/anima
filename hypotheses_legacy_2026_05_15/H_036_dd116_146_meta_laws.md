@@ -46,7 +46,7 @@ anima DD (Discovery) 31 hypotheses (DD116-DD146)에서 derived 35 meta-laws (Law
 - consolidation: `docs/hypotheses/DD-major-discoveries.md`
 - 1030 laws: `ready/core/consciousness_laws.json`
 - sister H: H_028 (dd subfolder absorb), H_020 (MASS-50 meta-pointer)
-- own: own 21
+- own:
 
 ## Honest Limits
 

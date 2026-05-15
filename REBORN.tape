@@ -1086,7 +1086,7 @@
 @D b_0d4532dc_73a6596b_0cdaf665_095f6_29 :: reborn [ok]
   text = "`0d4532dc`, `73a6596b`, `0cdaf665`, `095f69a2`, `d4ce539e` — cycle 2026-05-09/10 통합 push 완료"
 
-# ── §A append convention (own 42 mandate, amended 2026-05-10 07:41 KST) ─────────────────────────────────────────
+# ── §A append convention (mandate, amended 2026-05-10 07:41 KST) ─────────────────────────────────────────
 
 
 @D b_header_format_n_yyyy_mm_dd_hh_mm_0 :: reborn [ok]
@@ -1099,10 +1099,10 @@
   text = "사용자 directive verbatim: \"날짜-시간별로 해서 append 되게 해줘 own 에도 반영\""
 
 @D b_own_42_amend_own_line_2197_times_3 :: reborn [ok]
-  text = "own 42 amend 동시 적용 (`.own` line 2197 추가 timestamp rule)"
+  text = "amend 동시 적용 (`.own` line 2197 추가 timestamp rule)"
 
 @D b_own_42_own_line_2197_convention_4 :: reborn [ok]
-  text = "own 42 (`.own` line 2197) 가 본 convention SSOT"
+  text = "(`.own` line 2197) 가 본 convention SSOT"
 
 @D b_roadmap_reborn_lane_ssot_root_mk_5 :: reborn [ok]
   text = "`.roadmap.reborn` 가 lane SSOT (root, mk1)"

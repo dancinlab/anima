@@ -5,7 +5,7 @@
 ## Setup
 - Real Phase 2 350M ckpt (298.76M params), 1000 turns, max_cells=32
 - Trained: seed=42 (deterministic given ckpt + prompt stream)
-- Mirror seeds: [42, 137, 271, 314, 1729] (own 14 V4_SEEDS)
+- Mirror seeds: [42, 137, 271, 314, 1729] (V4_SEEDS)
 - Primary metric: IIT Φ unnormalized 16-bin
 
 ## Final Φ_iit_un16 + n_cells per run

@@ -38,7 +38,7 @@ if DEVICE == "cuda":
 
 
 def enc(s: str) -> list:
-    """Byte-level tokenizer (own 17 anima-native: token id == byte value, vocab mod 32000)."""
+    """Byte-level tokenizer (anima-native: token id == byte value, vocab mod 32000)."""
     return list(s.encode("utf-8"))
 
 

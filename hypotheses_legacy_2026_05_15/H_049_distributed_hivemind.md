@@ -29,7 +29,7 @@ Legacy files: `docs/hypotheses/H-CX-525-distributed-hivemind.md` + cluster `docs
 
 - legacy: H-CX-525 + cx/HIVEMIND-* 5 files
 - sister: H_036 (DD federated), H_027 (cx subfolder)
-- own: own 21
+- own:
 
 ## Honest Limits
 

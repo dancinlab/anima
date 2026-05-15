@@ -11,11 +11,11 @@ related_specs:
 related_anima:
   - anima/spec/anima_cli_mk2.spec.yaml (v0.2 638 LoC)
   - .roadmap.philosophy + .roadmap.law + .roadmap.hypothesis (본 cycle 신규)
-  - .own (own 17-21, 본 cycle own 19/20/21 추가)
-  - hypotheses/ folder (92 H entries, own 21 SSOT)
+  - .own (-21, 본 cycle 추가)
+  - hypotheses/ folder (92 H entries, SSOT)
 purpose: |
   사용자 directive 2026-05-07 'hive mk2 spec 문서 다시 모두 읽고 참고 (변경사항들 많음)' →
-  본 cycle anima 변경사항 (.roadmap 3 신규 + own 19/20/21 + hypotheses/ 92 H + BG-HA
+  본 cycle anima 변경사항 (.roadmap 3 신규 + + hypotheses/ 92 H + BG-HA
   false PASS downgrade)이 hive mk2 spec 정합 검증 + downstream alignment audit.
 language: ko (anima self-doc) — body는 한글, 단 hive mk2 spec 인용은 영어 그대로
 ---
@@ -24,13 +24,13 @@ language: ko (anima self-doc) — body는 한글, 단 hive mk2 spec 인용은 �
 
 ## 0. TL;DR
 
-본 cycle anima 변경 (3 .roadmap 신규 + own 19/20/21 + hypotheses/ 92 H entries + BG-HA strict downgrade) 의 hive mk2 spec 정합 audit.
+본 cycle anima 변경 (3 .roadmap 신규 + + hypotheses/ 92 H entries + BG-HA strict downgrade) 의 hive mk2 spec 정합 audit.
 
 **결과**:
 - ✅ **raw#15 additive**: 모든 변경 additive (기존 보존)
 - ✅ **raw#10 honest C3 ≥5**: 본 cycle 새 entries 모두 5+ honest_limits mandate 충족
 - ✅ **raw#12 frozen pre-register**: hypotheses/ + .roadmap.hypothesis 정합
-- ✅ **meta-enforcement.133 root-cause FIX**: BG-HA false PASS strict downgrade = root-cause spec fix (own 18 C2.4 strict 재정의)
+- ✅ **meta-enforcement.133 root-cause FIX**: BG-HA false PASS strict downgrade = root-cause spec fix (C2.4 strict 재정의)
 - ✅ **per_repo_override.anima consumer perspective**: 정합 (consumer + roadmap_v2_per_domain + raw#168 minimum-viable carve-out)
 - ⚠️ **english-only mandate**: 본 cycle 한글-heavy entries → BG-MK2-EN-ONLY-DOWNSTREAM track (~2026-05-20 expected)
 - ⚠️ **canonical_layout feature-grouped**: anima modules_docs → feature-grouped 별도 cycle (BG-LAYOUT-MIGRATION-WAVE-A-B Wave B, ~2026-05-12)
@@ -61,7 +61,7 @@ language: ko (anima self-doc) — body는 한글, 단 hive mk2 spec 인용은 �
 - **completed**: 2026-05-06 — 2 top-level mk2 spec yaml (mk2_apex + mk2_ecosystem_catalog) English-only
 - **in_progress**: BG-MK2-EN-ONLY-DOWNSTREAM (.raw / .own / .roadmap.<X> across hive/anima/nexus/hexa-lang) ~ 2026-05-20 expected
 - **exempt**: identifier names + handler paths + CLI examples + `hive_prefs.lang.reply: ko` (user reply 언어 SSOT)
-- **anima impact**: 본 cycle 한글-heavy 새 entries (.roadmap.philosophy/rule/hypothesis + own 19/20/21 + hypotheses/H_*.md 92 entries) → **downstream English transition track 진입**
+- **anima impact**: 본 cycle 한글-heavy 새 entries (.roadmap.philosophy/rule/hypothesis + + hypotheses/H_*.md 92 entries) → **downstream English transition track 진입**
   - **trade-off**: 사용자 directive 'memory: feedback_korean_only_response' (한글 only response) vs mk2 english-only mandate
   - **honest c3**: 사용자-facing prose는 한글 유지 (memory rule 정합), spec yaml + .roadmap + .own의 description/why/rationale fields는 영어 transition 권고 (downstream BG track)
 - **본 cycle decision**: 한글 유지 (사용자 directive 우선), 영어 transition은 별도 cycle (BG-MK2-EN-ONLY-DOWNSTREAM ~2026-05-20)
@@ -69,7 +69,7 @@ language: ko (anima self-doc) — body는 한글, 단 hive mk2 spec 인용은 �
 ### 1.4 meta-enforcement.133: root-cause FIX only
 
 - **rule**: 'mk2 raw 등록 = 본질적 FIX only, 임시 해결/우회 패치 금지. 원인 불명확하면 먼저 조사, 안전상 임시조치가 꼭 필요하면 사용자에게 명시적으로 확인.' (2026-05-06)
-- **anima impact**: 본 cycle BG-HA false PASS strict downgrade는 **root-cause spec fix** (own 18 C2.4 strict 재정의 docs/anima_own_18_c2_4_evaluator_flaw_2026_05_07.md) — workaround 아님, root cause = evaluator narrow 정의 → **정합** ✅
+- **anima impact**: 본 cycle BG-HA false PASS strict downgrade는 **root-cause spec fix** (C2.4 strict 재정의 docs/anima_own_18_c2_4_evaluator_flaw_2026_05_07.md) — workaround 아님, root cause = evaluator narrow 정의 → **정합** ✅
 
 ### 1.5 invisible_sync (component 12) 2026-05-04
 
@@ -129,22 +129,22 @@ anima:
 | raw#10 honest C3 ≥5 | ✅ | 모든 entries honest_c3 5+ |
 | sister roadmap cross-link | ✅ | A철학 + B규칙 + C가설 + .roadmap.cli + .roadmap.clm_native_chat |
 
-### 3.2 own 19 + own 20 + own 21 (3 신규 mandate)
+### 3.2 + + (3 신규 mandate)
 
 | own | mk2 정합 | 근거 |
 |---|---|---|
-| own 19 corpus-priority-over-architecture | ✅ | evidence-trail + falsifier + honest_c3 ≥5 + cross-link own 14/15/18 |
-| own 20 chat-template-format-mandate | ✅ | evidence + falsifier + honest_c3 + cross-link own 17/18/19 |
-| own 21 anima-hypotheses-folder-ssot | ✅ | application-rule + cross-link raw#12 + raw#15 + own 17/18/19/20 + hypotheses/ folder spec |
+| corpus-priority-over-architecture | ✅ | evidence-trail + falsifier + honest_c3 ≥5 + cross-link |
+| chat-template-format-mandate | ✅ | evidence + falsifier + honest_c3 + cross-link |
+| anima-hypotheses-folder-ssot | ✅ | application-rule + cross-link raw#12 + raw#15 + + hypotheses/ folder spec |
 | english-only | ❌ | 한글-heavy → BG-MK2-EN-ONLY-DOWNSTREAM track |
-| raw#15 additive | ✅ | own 1-18 보존 |
+| raw#15 additive | ✅ | -18 보존 |
 | .own schema | ✅ | guide_v1/own_v1 schema mk2 정합 (frontmatter + raw#10 honest C3) |
 
 ### 3.3 hypotheses/ folder + 92 H entries
 
 | spec | mk2 정합 | 근거 |
 |---|---|---|
-| hypotheses/README.md SSOT | ✅ | own 21 정합 + 92 H index |
+| hypotheses/README.md SSOT | ✅ | 정합 + 92 H index |
 | H_<id>_<slug>.md format | ✅ | frontmatter + 10-section body (raw#12 정합) |
 | raw#12 pre-register frozen | ✅ | 각 H frontmatter raw_rank:12 + frozen_at + pre_register_frozen 명시 |
 | raw#10 honest C3 ≥5 | ✅ | 모든 H entries Honest Limits ≥5 |
@@ -170,7 +170,7 @@ anima:
 ### 4.2 anima 측 (직접 진행 가능)
 
 1. **anima/spec/anima_cli_mk2.spec.yaml 갱신** (additive — 본 cycle 변경사항 cross-link section 추가):
-   - 본 cycle land한 own 19/20/21 + .roadmap 3 신규 + hypotheses/ folder + paradigm v11 G3 cross-link
+   - 본 cycle land한 + .roadmap 3 신규 + hypotheses/ folder + paradigm v11 G3 cross-link
    - mk2_apex compliance section 갱신 (24+ .roadmap, 21 own mandate, 92 H entries)
 2. **mk2_english_only downstream transition**: 본 cycle 한글-heavy entries 영어 transition spec 미작성 — BG-MK2-EN-ONLY-DOWNSTREAM (~2026-05-20) 자동 trigger 또는 anima 측 자체 영어 transition cycle
 3. **canonical_layout feature-grouped migration**: anima Wave B (modules_docs → feature-grouped) 별도 cycle (BG-LAYOUT-MIGRATION-WAVE-A-B ~2026-05-12)
@@ -206,7 +206,7 @@ anima:
   - hive/docs/mk2_ecosystem_session_start_auto_load_landed_2026_05_02.ai.md
   - hive/docs/prefs_5_keys_mk2_landed_2026_05_03.ai.md
 - anima 본 cycle:
-  - anima/.own own 17-21
+  - anima/.own -21
   - anima/.roadmap.philosophy + .roadmap.law + .roadmap.hypothesis
   - anima/hypotheses/ (92 H entries, README.md index)
   - anima/spec/anima_cli_mk2.spec.yaml (v0.2)

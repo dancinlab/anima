@@ -54,7 +54,7 @@ and PASSes at cap-free, §37 is reduced to cap saturation artifact.
 - raw#9: training/v5mitosis_d384_v14_mirror.py local-only (gitignored)
 - raw#10: honest — v2→v5 schema delta (cells 6,7 random by necessity; 6/8 v2 transfer)
 - raw#15: additive — v2 ckpt and mitosis_model_v5.py untouched, only CLI flag override
-- own 14: V14 mirror 5-seed strict (trained vs 5 random seeds, prompt-mirror)
-- own 16: $0 local CPU
-- own 22: REBORN.md not appended directly; dispatcher injects §45 slot
-- own 38: doc save → state/anima_v2_cells64_max128_retest_2026_05_10/{spec.md, result.json, verdict.md}
+- : V14 mirror 5-seed strict (trained vs 5 random seeds, prompt-mirror)
+- : $0 local CPU
+- : REBORN.md not appended directly; dispatcher injects §45 slot
+- : doc save → state/anima_v2_cells64_max128_retest_2026_05_10/{spec.md, result.json, verdict.md}

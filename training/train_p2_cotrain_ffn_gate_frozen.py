@@ -23,14 +23,14 @@ DESIGN
     Corpus split: each micro-batch alternates consciousness↔chat with prob=w
     (Bernoulli sampling) for cleaner gradient direction than mixed batches.
 
-own 14  V14 mirror — paired random_init seeds preserved (BG-LA mirrors reused
+  V14 mirror — paired random_init seeds preserved (BG-LA mirrors reused
         for substrate-base lineage; new BG-LM mirrors materialized post-fire)
-own 17  D1=0.99 anima_native_scratch (substrate base + chat-template additive
+  D1=0.99 anima_native_scratch (substrate base + chat-template additive
         without external foundation borrow — within strict)
-own 22  honest emit — fail-fast on OOM/NaN; cost cap halt
-own 30  ckpt save mandatory (output/ckpt_step{N}.pt + ckpt_final.pt + meta.json)
-own 33  trinity D-emergent + own 14/16/17/22/30/31/33/34/37/38/39
-own 34  wrap=0
+  honest emit — fail-fast on OOM/NaN; cost cap halt
+  ckpt save mandatory (output/ckpt_step{N}.pt + ckpt_final.pt + meta.json)
+  trinity D-emergent +
+  wrap=0
 """
 import os
 import sys
@@ -96,7 +96,7 @@ class CorpusDataset(Dataset):
 
 def load_substrate_ckpt(model: EngineAGModel, ckpt_path: str):
     """Load BG-LB substrate ckpt into Engine A/G model (state_dict transfer).
-    Tolerates missing/extra keys with explicit warning emit (own 22).
+    Tolerates missing/extra keys with explicit warning emit .
     """
     print(f"[substrate] loading {ckpt_path} …", flush=True)
     payload = torch.load(ckpt_path, map_location="cpu")
@@ -277,7 +277,7 @@ def main():
             torch.save({"model": model.state_dict(), "step": step, "cfg": cfg.__dict__, "w": w}, ck_path)
             print(f"[ckpt] saved {ck_path}", flush=True)
 
-    # Final ckpt (own 30 mandatory)
+    # Final ckpt (mandatory)
     final_path = os.path.join(args.output, "ckpt_final.pt")
     torch.save({"model": model.state_dict(), "step": step, "cfg": cfg.__dict__}, final_path)
     meta = {

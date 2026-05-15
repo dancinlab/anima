@@ -12,7 +12,7 @@ Outputs:
   - smoke_loss_curve.png   (matplotlib)
 
 raw#9: this lives under state/, gitignored.
-own 16: $0 local CPU only.
+: $0 local CPU only.
 """
 
 import json

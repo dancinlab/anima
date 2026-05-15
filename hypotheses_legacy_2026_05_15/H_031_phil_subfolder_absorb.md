@@ -30,7 +30,7 @@ philosophy hypothesis cluster (epistemology / ontology / phenomenology / philoso
 
 - folder: `docs/hypotheses/phil/` + `docs/hypotheses/onto/`
 - sister H: H_004 (consciousness hard problem), H_002 (universe origin), H_025 (Dasein finite)
-- own: own 17 + own 21
+- own: +
 - roadmap: `.roadmap.philosophy` (A 도메인 cross-link)
 
 ## Honest Limits

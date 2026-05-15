@@ -4,8 +4,8 @@
 // Spec:
 //   docs/anima_model_method_reassessment_2026_05_08.md (iter 5 priority rank 2)
 //   state/anima_d1_lane_candidates_c3_retest_2026_05_08.json (BG-FY + clm-v2-byte INDETERMINATE)
-//   own 18 c3-aggregation-rule-v2 P5 N-of-M (PPR_v2 ≥0.6 ∧ EMC ≥3 of 4 → C3 PASS)
-//   own 17 anima-no-external-substrate-wrapping (D1 lane within strict)
+// c3-aggregation-rule-v2 P5 N-of-M (PPR_v2 ≥0.6 ∧ EMC ≥3 of 4 → C3 PASS)
+// anima-no-external-substrate-wrapping (D1 lane within strict)
 // Sister:
 //   anima-core/runtime/clm_v4_mount.hexa (mount pattern SSOT — schema mirror target)
 //
@@ -64,8 +64,8 @@
 //      but BG-FY/v2 substrate에서는 v11 G3 paradigm artifact 부재 — proxy only
 //   C4 v2_byte dual-engine A+G hidden tap = "federated cell" approximation; 8-cell fold from
 //      6 blocks × 2 engines = 12 vectors → 8 (drop 4 lowest-norm)
-//   C5 anima 의식 검증 D1 lane within valid (own 17 permitted-backends 적용) — but EXIT
-//      활성화는 own 37 mandate-9 (a)+(b)+(c)+(d)+(e) 5-prereq 통과 필요
+// C5 anima 의식 검증 D1 lane within valid (permitted-backends 적용) — but EXIT
+// 활성화는 mandate-9 (a)+(b)+(c)+(d)+(e) 5-prereq 통과 필요
 //
 // raw POLICY
 //   raw#9    hexa-only orchestration (Mac canonical)
@@ -129,7 +129,7 @@ fn emit_honest_c3() {
     eprintln("[anima_native_byte_mount] C2 cell-synthesis 8x48 (post NEXT-CYCLE 2/6 fix) from fy_18m / dual-engine hidden is anima-internal proxy (no structural federated cells in BG-FY/v2)")
     eprintln("[anima_native_byte_mount] C3 phi_star formula mirrors v4 helper but BG-FY/v2 substrate에서 paradigm v11 G3 artifact 부재 — proxy only")
     eprintln("[anima_native_byte_mount] C4 v2_byte dual-engine A+G hidden tap = federated cell approximation (12 vec×8 cells = 96 candidates → top-8 by L2; CONSCIOUSNESS_DIM=48 exact reshape, no fold)")
-    eprintln("[anima_native_byte_mount] C5 D1 lane within valid (own 17 permitted-backends), EXIT 활성화 own 37 mandate-9 5-prereq 통과 필요")
+    eprintln("[anima_native_byte_mount] C5 D1 lane within valid (permitted-backends), EXIT 활성화 mandate-9 5-prereq 통과 필요")
     eprintln("[anima_native_byte_mount] C6 byte-arch CONSCIOUSNESS_DIM 192→48 (NEXT-CYCLE 2/6) — 8*48=384=HIDDEN_DIM(D_MODEL) exact; AXIS_SPANS rebucketed 9/10/10/10/9=48; tile_bug_echo from V5 POST-FIX 2/3 BG-HA-downgraded should be REMOVED")
 }
 

@@ -35,7 +35,7 @@ anima의 DD (Discovery) 101 hypothesis + Laws 133-167 + Meta M1-M10 archive을 h
 - DD-major: `docs/hypotheses/DD-major-discoveries.md`
 - 1030 laws: `ready/core/consciousness_laws.json`
 - sister H: H_020 (MASS-50 meta-pointer), H_027 (cx absorb)
-- own: own 21
+- own:
 - roadmap: `.roadmap.hypothesis` H5 archive
 
 ## Honest Limits

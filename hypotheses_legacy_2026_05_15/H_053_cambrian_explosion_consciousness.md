@@ -29,7 +29,7 @@ Legacy file: `docs/hypotheses/H-CX-534-cambrian-explosion-consciousness.md`. Poi
 
 - legacy: `docs/hypotheses/H-CX-534-cambrian-explosion-consciousness.md`
 - sister: H_054 (symbiogenesis), H_018 (genesis), H_012 (autopoiesis)
-- own: own 21
+- own:
 
 ## Honest Limits
 

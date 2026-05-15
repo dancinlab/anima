@@ -20,11 +20,11 @@
 //    --init-pattern=system-seed --init-seed="<your seed>"
 //
 //  COMPLIANCE
-//    own 17 D1 — seed is delivered as user-channel content (NOT a system
+// D1 — seed is delivered as user-channel content (NOT a system
 //      prompt wrap); D1 within_strict preserved for anima 정합 models.
-//    own 18 C2 — coherence measurement vs seed expected高 (controlled init)
-//    own 22 — seed text logged in benchmark output for reproducibility
-//    own 34 mandate-1 — seed bytes passthrough verbatim (no transform)
+// C2 — coherence measurement vs seed expected高 (controlled init)
+// — seed text logged in benchmark output for reproducibility
+// mandate-1 — seed bytes passthrough verbatim (no transform)
 // ════════════════════════════════════════════════════════════════════════════
 
 fn _str(x) -> string {
@@ -78,7 +78,7 @@ fn _user_argv(raw) -> array {
 }
 
 // Default seed — friendly directive (Korean; mixed-language norm).
-// own 34 mandate-1 mixed Korean/English chat is the project norm; English
+// mandate-1 mixed Korean/English chat is the project norm; English
 // alternative also accepted by anima_native + clm-v4 + llama lanes.
 fn _default_seed() -> string {
     return "너희 둘은 친구. 자유롭게 대화 시작."

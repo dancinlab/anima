@@ -11,12 +11,12 @@
     "raw_15": "additive — clm_v4_mount.hexa _try_load_clm_v4 LoRA branch 추가, 기존 base path 보존",
     "raw_82": "retraction-aware — merge_no_op surfaced in manifest + state, not silently masked as PASS",
     "own_4": "tool/transient_py/ namespace opt-out",
-    "own_17": "D1 lane within (CLM v4 lineage anima-native fresh — own 17 permitted-backends 첫 항목 정합)",
+    "own_17": "D1 lane within (CLM v4 lineage anima-native fresh — permitted-backends 첫 항목 정합)",
     "own_18": "C3 4-cell ROC measurement infra 활성, P5 v2 N-of-M aggregation 적용",
     "own_18_scope_clamp": "line 770 ★ scope-clamp D1 anima identity lane only — verdict label SIMPLE_STACK_PASS_STRICT_C3_ANIMA D1 within 만 valid",
     "own_22": "본 cycle 발견 (LoRA target_modules mismatch + merge_no_op + 3 variant identical FAIL_C3) mandatory report 형식 (.roadmap.cli + 본 SSOT + commit message)",
     "own_24": "single SSOT — state/anima_clm_v4_lora_real_mode_2026_05_08.json (본 파일)",
-    "own_33": "trinity 무조건 준수 — D1 within (philosophy) + own 17/18 strict (law) + H_clm_v4_lora_emerge (hypothesis) sweep",
+    "own_33": "trinity 무조건 준수 — D1 within (philosophy) + strict (law) + H_clm_v4_lora_emerge (hypothesis) sweep",
     "own_37_mandate_9": "5 prereq strict — (a) D1 within + SIMPLE_STACK_PASS_STRICT_C3_ANIMA verdict 미달성 → PUBLIC promote 미충족 정합",
     "hexa_mem_unlimited": "HEXA_MEM_UNLIMITED=1 mandatory (env-set 적용)"
   },
@@ -37,7 +37,7 @@
     "py_helper_landed": {
       "file": "tool/transient_py/clm_v4_lora_merge_helper.py",
       "loc_approx": 290,
-      "raw_policy": "raw#37 transient (own 4 opt-out), Mac canonical preserve",
+      "raw_policy": "raw#37 transient (opt-out), Mac canonical preserve",
       "pipeline": [
         "1. snapshot_download(adapter_repo) → adapter_config + adapter_model.safetensors",
         "2. read adapter_config.json → base_model_name_or_path (null fallback to dancinlab/clm-v4-mk2-v1)",
@@ -222,8 +222,8 @@
       "iter5 blocker #1 (LoRA real-mode measurement infra 부재) UNBLOCKED — 본 cycle peft.merge_and_unload extension land 후 측정 가능 path 확보. 별도 blocker 발견: target_modules schema mismatch (iter6 cycle subject)",
       "iter3 SSOT의 clm-v4-mk2-v1 'real' label은 substrate-mode marker only — 실제 hidden_state 추출은 본 cycle hook-based path 가 첫 instance. 본 cycle measurement 가 더 conservative (iter3 보다 낮은 EMC pass rate 가능성 — iter3는 synthetic fallback 잔존 의심)",
       "본 cycle EXIT (SIMPLE_STACK_PASS_STRICT_C3_ANIMA) 미달성 — D1 within candidate emerge 0",
-      "anti-Goodhart V6 awareness systematic execute 미시행 — own 18 P5 v2 적용 valid 한정 (V6 통과 전 EXIT 활성화 차단 carry)",
-      "user manual review 'OK PROMOTE PUBLIC <repo-id>' 미수신 — own 37 mandate-9 (c) 미충족"
+      "anti-Goodhart V6 awareness systematic execute 미시행 — P5 v2 적용 valid 한정 (V6 통과 전 EXIT 활성화 차단 carry)",
+      "user manual review 'OK PROMOTE PUBLIC <repo-id>' 미수신 — mandate-9 (c) 미충족"
     ]
   },
   "own_37_mandate_9_5_prereq_eligibility": {
@@ -244,16 +244,16 @@
     "PPR_v2 N-of-M 정확 산출 — 본 cycle 은 per-prompt 60 row × 4 cell PASS pattern full matrix 계산. iter3 SSOT 보다 정확 (iter3 는 cell-wise rate aggregate only). PPR_v2=0.067 = 60 row 중 4 row 만 ≥3 of 4 PASS pattern",
     "iter5 blocker #1 (LoRA real-mode measurement infra 부재) UNBLOCKED — 본 cycle peft.merge_and_unload extension land. 단 D1-within SIMPLE_STACK_PASS_STRICT_C3_ANIMA EXIT 미달성 carry — adapter target_modules schema mismatch + merge_no_op 가 LoRA 실제 학습 signal 검증 차단. iter6 cycle subject (target_modules schema fix or LoRA retraining)",
     "raw#15 정합 — clm_v4_mount.hexa LoRA branch 추가 = 기존 base path 보존 (adapter_cfg None 시 동작 동일). raw#9 정합 — merge helper subprocess 호출 via os/subprocess (raw#37 transient_py opt-out). raw#37 정합 — clm_v4_lora_merge_helper.py 가 tool/transient_py/ namespace 안 (.own 4)",
-    "own 37 mandate-9 (a) 미충족 carry — D1 within 3 LoRA variants + base 모두 SIMPLE_STACK_PASS_STRICT_C3_ANIMA 미달성. PUBLIC promote 미충족 정합 (paradigm-a-prime ban 와 동일)",
+    " mandate-9 (a) 미충족 carry — D1 within 3 LoRA variants + base 모두 SIMPLE_STACK_PASS_STRICT_C3_ANIMA 미달성. PUBLIC promote 미충족 정합 (paradigm-a-prime ban 와 동일)",
     "anti-Goodhart V6 awareness systematic execute 본 cycle 미시행 — V6 lane 별도 cycle BG-LE-V6-AWARENESS pending. EXIT 활성화 mandate-9 (b) prereq 차단 carry"
   ],
   "blockers_carry": [
     "iter6: adapter_config target_modules schema mismatch fix — 3 LoRA variants 의 학습된 weights 가 ConsciousDecoderV2 flat 모듈 이름으로 저장되었을 가능성. 옵션 (a) adapter_config target_modules 를 'attn.q_proj' 등 nested 이름으로 rewrite + state_dict key remap, (b) ConsciousDecoderV3 module names 로 LoRA retraining (H100 cycle), (c) custom peft adapter loader (non-standard target_modules resolution)",
-    "BG-FY 18M Mac local ckpt 미수신 — own 33 mandate-2 (D1 within) 측정 차단 carry (iter5 blocker #2)",
+    "BG-FY 18M Mac local ckpt 미수신 — mandate-2 (D1 within) 측정 차단 carry (iter5 blocker #2)",
     "clm-v2-byte-18m-convo-5k v2 mount infra 미land (ConsciousLM++ federated multi-cell architecture) — iter5 blocker #3 carry",
     "BG-KM HF adapter push from H100 runpod — 사용자 explicit consent 후 retest carry (iter3 blocker carry)",
-    "anti-Goodhart V6 awareness probe systematic execute — EXIT 활성화 prereq own 37 mandate-9 (b) 차단 carry",
-    "own 18 chat-cap measurement lane (C1+C2+C2.4) 본 cycle 미시행 — substrate-only C3 측정 한정 (LoRA chat-cap 측정 별도 cycle)"
+    "anti-Goodhart V6 awareness probe systematic execute — EXIT 활성화 prereq mandate-9 (b) 차단 carry",
+    " chat-cap measurement lane (C1+C2+C2.4) 본 cycle 미시행 — substrate-only C3 측정 한정 (LoRA chat-cap 측정 별도 cycle)"
   ],
   "exit_trigger_status": {
     "simple_stack_pass_strict_c3_anima_emerge": false,
@@ -277,7 +277,7 @@
     "own_22": "본 발견 (3 LoRA variant FAIL_C3 + merge_no_op + iter6 blocker emerge) mandatory report 형식",
     "own_24": "single SSOT — 본 파일 (state/anima_clm_v4_lora_real_mode_2026_05_08.json)",
     "own_28": "anti-Goodhart awareness — V6 systematic execute pending 명시 (mandate-9 (b) 차단 carry)",
-    "own_33": "trinity 무조건 준수 — D1 within (philosophy) + own 17/18 strict (law) + H_clm_v4_lora_emerge (hypothesis) sweep",
+    "own_33": "trinity 무조건 준수 — D1 within (philosophy) + strict (law) + H_clm_v4_lora_emerge (hypothesis) sweep",
     "own_37_mandate_9": "5 prereq strict — 3 LoRA variant 모두 (a) 미충족 → PUBLIC promote 불충족 정합",
     "raw_9": "hexa-only orchestration via clm_v4_mount.hexa (merge helper subprocess 한정)",
     "raw_10": "honest C3 ≥5 emit (10 entries — merge_no_op + adapter schema mismatch + iter3 SSOT real-label caveat + jvae_heads + 5 추가)",

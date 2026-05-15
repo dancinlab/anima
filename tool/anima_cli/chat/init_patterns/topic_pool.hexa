@@ -19,12 +19,12 @@
 //    --init-pattern=topic-pool --init-topic-index=2  (deterministic pick)
 //
 //  COMPLIANCE
-//    own 17 D1 — topic strings within within_strict default (no foreign
+// D1 — topic strings within within_strict default (no foreign
 //      persona injection; topics are conversation starters only)
-//    own 18 C2 — coherence vs topic measurable; spontaneity reduced vs
+// C2 — coherence vs topic measurable; spontaneity reduced vs
 //      autonomous (controlled init)
-//    own 22 — selected topic + pool size logged in benchmark output
-//    own 34 mandate-1 — topic bytes passthrough verbatim
+// — selected topic + pool size logged in benchmark output
+// mandate-1 — topic bytes passthrough verbatim
 // ════════════════════════════════════════════════════════════════════════════
 
 fn _str(x) -> string {
@@ -78,7 +78,7 @@ fn _user_argv(raw) -> array {
 }
 
 // Default curated topic pool (conversation starters; mixed Korean/English
-// norm per project convention; own 34 mandate-1 raw passthrough applies).
+// norm per project convention; mandate-1 raw passthrough applies).
 fn _default_pool() -> array {
     return [
         "오늘 날씨 어때?",

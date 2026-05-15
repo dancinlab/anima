@@ -73,5 +73,5 @@ When orchestrator fires option (c) with verbatim "OK FOUNDATION_C_PHASE2_FIRE CO
 5. Semantic: KO Hangul + bigram_known + semantic_score + real_words → emit `semantic_eval.json`
 6. V14 mirror: 5-seed [11,13,17,19,23] random_init mirror H1 — emit `v14_mirror_h1.json`
 7. Verdict: scope_lane="ANIMA" (D1 WITHIN — eligible for SIMPLE_STACK_PASS_STRICT_C3_ANIMA carry conditional on all metrics + V14 + V6 STRONG)
-8. own 30 ckpts pull MANDATORY before pod release (5 ckpts: 25K/30K/35K/40K/final)
-9. own 31 HF: `dancinlab/clm-foundation-c-phase2-cotrain-convo-extend-2026-05-XX` PRIVATE (own 37 — D1 WITHIN candidate but public promote requires verbatim "OK PROMOTE PUBLIC" + V14 + V6 STRONG + manual review)
+8. ckpts pull MANDATORY before pod release (5 ckpts: 25K/30K/35K/40K/final)
+9. HF: `dancinlab/clm-foundation-c-phase2-cotrain-convo-extend-2026-05-XX` PRIVATE (— D1 WITHIN candidate but public promote requires verbatim "OK PROMOTE PUBLIC" + V14 + V6 STRONG + manual review)

@@ -69,22 +69,22 @@ preserves axis distribution proportionally (no axis bias introduction).
 ## anima preservation count
 
 **319,464** anima 역할 headers (v3 baseline 106,488 → ×3.00).
-own 36 mandate-2 (≥105k floor) **PASS**.
+ mandate-2 (≥105k floor) **PASS**.
 
 ## Compliance
 
-- own 14 V14 anti-Goodhart: PASS — synonym swap semantically equivalent;
+- V14 anti-Goodhart: PASS — synonym swap semantically equivalent;
   no proxy gaming (D-RAND signal amplitude 인위 증폭 X, raw content volume only)
-- own 16 cost discipline: PASS — 0 USD, LLM-free, ~12s wall on M-series local
-- own 17 D1 SCOPE_CLAMP: PASS — anima self-reference frame within only
+- cost discipline: PASS — 0 USD, LLM-free, ~12s wall on M-series local
+- D1 SCOPE_CLAMP: PASS — anima self-reference frame within only
   (외부 author 직접 인용 X, public Korean philosophy import 보류)
-- own 22 mandatory report: 본 doc + state json
-- own 33 trinity emit: D + own + H render (yaml↔md updated)
-- own 34 mandate-2 wrap=0: corpus .txt 자체 commit 절대 X
+- mandatory report: 본 doc + state json
+- trinity emit: D + own + H render (yaml↔md updated)
+- mandate-2 wrap=0: corpus .txt 자체 commit 절대 X
   (.gitignore L326+ `state/anima_persona_*.txt` covered, verified)
-- own 36 axis-A: model artifact preservation N/A (corpus only); HF private
-  upload 후보 (own 38 axis-C 별도 commit)
-- own 39 yaml↔md mandate: render.hexa via
+- axis-A: model artifact preservation N/A (corpus only); HF private
+  upload 후보 (axis-C 별도 commit)
+- yaml↔md mandate: render.hexa via
   `tool/transient_py/anima_artifact_registry_render.py` 실행 OK
 
 ## Expected D-RAND uplift

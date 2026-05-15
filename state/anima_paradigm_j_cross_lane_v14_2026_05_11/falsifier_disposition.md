@@ -15,7 +15,7 @@
 
 **Evidence for FIRED**:
 - Substrate audit: 0 v2-mitosis markers, 0 EngineAG markers, 352 clm-v4 LoRA keys → unambiguous NEW_arch classification
-- Cross-lane: paradigm-j v5.2 EMERGE ACTIVE (own 14 PUBLIC PROMOTE) **while** V14_VIOLATED at PPR_v3 — confirms metric-conditional polarity already empirically
+- Cross-lane: paradigm-j v5.2 EMERGE ACTIVE (PUBLIC PROMOTE) **while** V14_VIOLATED at PPR_v3 — confirms metric-conditional polarity already empirically
 
 **Caveat**: "FIRED at the structural level, not the metric level." The original phrasing assumed paradigm-j could be tested in the v2 metric space and would FAIL there. The empirical reality is stronger: paradigm-j is **not in the rule's metric domain at all**, which is a more fundamental form of "FAIL the rule's scope".
 

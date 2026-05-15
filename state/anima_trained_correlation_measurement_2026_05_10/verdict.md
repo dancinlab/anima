@@ -3,7 +3,7 @@
 §51 cap-conditional mechanism hypothesis: trained cells form more correlated structure →
 top-quartile dispersion variance lower → fewer outliers cross sigma_gate → split rate
 slower near cap → cap reached later. Tested on 3 substrates × {trained, random_seed=42} ×
-max_cells=256. Lean compute: 1 trained + 1 random per substrate ($0 local CPU, own 16).
+max_cells=256. Lean compute: 1 trained + 1 random per substrate ($0 local CPU).
 A: 100 turns / snap=10 (cap-free). C, E: 60 turns / snap=5 (cap-approach).
 
 ## Table 1 — Inter-cell cosine correlation (all snapshots)

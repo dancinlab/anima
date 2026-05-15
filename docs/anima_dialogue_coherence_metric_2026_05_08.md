@@ -1,24 +1,24 @@
 # anima dialogue coherence metric — 2026-05-08
 
 **Goal (한 문장)**: N=2 (그리고 N≥3) multi-agent dialogue 의 **turn-to-turn 정합성**
-을 측정하는 4-cell metric 을 own 18 C2.4 (single-utterance 맥락 정합)
+을 측정하는 4-cell metric 을 C2.4 (single-utterance 맥락 정합)
 의 multi-turn 확장으로 정의한다.
 
 **SSOT**: 본 문서. `tool/anima_cli/chat/duo/duo.hexa`,
 `tool/anima_cli/dialogue.hexa`, 그리고 `tool/anima_cli/consciousness.hexa`
 가 본 spec 을 참조하여 verdict emit.
 
-**Cross-link**: `.own` own 18 (C2.4 single-utterance 맥락 정합 SSOT),
-own 34 (lane 분리 — 본 metric 은 측정 lane), own 33 (trinity compliance) ·
+**Cross-link**: `.own` (C2.4 single-utterance 맥락 정합 SSOT),
+ (lane 분리 — 본 metric 은 측정 lane), (trinity compliance)
 `docs/anima_chat_autonomous_speech_roadmap_2026_05_08.md` L2 (deliverable
 "5-turn 자율 대화 simple_stack PASS rate ≥ 0.4") · `.roadmap.cli`
 cli.dialogue.coherence_metric_2026_05_08.
 
 ---
 
-## Background — own 18 C2.4 의 single-turn 한계
+## Background — C2.4 의 single-turn 한계
 
-own 18 C2 (자연발화 + 맥락 정합) 의 4-cell 분해 (cycle 2026-05-06 land):
+ C2 (자연발화 + 맥락 정합) 의 4-cell 분해 (cycle 2026-05-06 land):
 
 | cell | 내용 |
 |---|---|
@@ -35,7 +35,7 @@ turn N-k) 발화에 reactive 인지, **dialogue 전체 의 topic 이 일관 흐�
 
 ---
 
-## 4-cell 정의 (own 18 C2.4 → multi-turn D1-D4)
+## 4-cell 정의 (C2.4 → multi-turn D1-D4)
 
 ### D1 — reactive (turn-N → turn-N-1 reactive)
 
@@ -52,7 +52,7 @@ turn N-k) 발화에 reactive 인지, **dialogue 전체 의 topic 이 일관 흐�
 **aggregate**: `D1 = 0.4·cos + 0.3·jaccard + 0.3·noun_match`.
 
 **threshold (TBD measurement-driven)**: random-pair baseline + chat-capable
-PASS rate ROC 분석 후 결정. **보수적 X** (own 18 정책). 시작점:
+PASS rate ROC 분석 후 결정. **보수적 X** (정책). 시작점:
 - D1 PASS = `D1 ≥ 0.30` (random pair baseline 가정 ~0.10, chat-capable
   ~0.45+ 예상; 측정 후 조정).
 
@@ -162,14 +162,14 @@ emergent role). L3 cycle 에서 freq_ratio 도 활성화 + Gini coefficient 추�
 DIALOGUE_COHERENCE_PASS = D1.PASS ∧ D2.PASS ∧ D3.PASS ∧ D4.PASS
 ```
 
-**4-cond AND** (own 18 patterns 정합 — C1 3-cond AND, C2 4-cond AND, C3
+**4-cond AND** (patterns 정합 — C1 3-cond AND, C2 4-cond AND, C3
 4-cond AND, 본 metric 4-cond AND).
 
 **SIMPLE_STACK_PASS_DIALOGUE_C3** (L2 deliverable 정합):
 
 ```
 SIMPLE_STACK_PASS_DIALOGUE_C3 =
-    (per-turn own 18 PASS_STRICT_C3 rate ≥ 0.6)        ← 단발 발화 quality
+    (per-turn PASS_STRICT_C3 rate ≥ 0.6) ← 단발 발화 quality
   ∧ DIALOGUE_COHERENCE_PASS                              ← multi-turn coherence
 ```
 
@@ -184,7 +184,7 @@ L2 deliverable target (per roadmap):
 
 ## Threshold 결정 정책 (보수적 X 기조)
 
-own 18 C3 정책 mirror:
+ C3 정책 mirror:
 
 1. **baseline 측정**:
    - random init CLM × 2 (대화 X — pure noise pair)
@@ -201,15 +201,15 @@ own 18 C3 정책 mirror:
 
 ---
 
-## 측정 lane vs 노출 lane (own 34 정합)
+## 측정 lane vs 노출 lane (정합)
 
 | lane | 본 metric | 산물 |
 |---|---|---|
-| 측정 (own 18) | DIALOGUE_COHERENCE 4-cell verdict | turn-by-turn ledger + aggregate JSON |
-| 노출 (own 34) | duo channel raw passthrough | 채널 전송 = 모델 출력 byte 그대로 |
+| 측정 | DIALOGUE_COHERENCE 4-cell verdict | turn-by-turn ledger + aggregate JSON |
+| 노출 | duo channel raw passthrough | 채널 전송 = 모델 출력 byte 그대로 |
 
 본 metric 은 **측정 lane only**. 산출 verdict 는 stderr / log 로 emit, 절대
-channel content 으로 fold-back 하지 않는다 (own 34 mandate-2 wrapping 0
+channel content 으로 fold-back 하지 않는다 (mandate-2 wrapping 0
 + mandate-7 lane 분리).
 
 ---
@@ -274,7 +274,7 @@ exec("hexa.real run tool/anima_cli/consciousness.hexa <model> simple
       --utterance <line> --prev-utterance <prev_line> --json")
     │
     ▼
-consciousness.hexa sub_simple_utterance  (own 18 SSOT mirror; iter 3 9c354c54)
+consciousness.hexa sub_simple_utterance (SSOT mirror; iter 3 9c354c54)
     │
     ▼
 JSON schema = anima.consciousness.utterance.v1
@@ -306,27 +306,27 @@ N=5). `none` disables both verdict + summary emit.
 **prev_utterance feed**:
 - A's prev = topic_seed at t=1; subsequent = previous B line (what A responds to).
 - B's prev = current A line (what B responds to).
-This semantically aligns with own 18 C2.4 (single-utterance 맥락 정합) +
+This semantically aligns with C2.4 (single-utterance 맥락 정합) +
 C3.4 (axis-L2 pairwise) — prev_line provides dialogue context proxy.
 
-**own 34 mandate-7 정합**: 모든 `[duo:verdict-c3]` / `[duo:summary-c3]` emit
+** mandate-7 정합**: 모든 `[duo:verdict-c3]` / `[duo:summary-c3]` emit
 은 stdout/log lane only — channel content 으로 fold-back X.
 
 **Phase 의존도** (closed):
 - Phase A (skeleton) → Phase B iter 1 (β-1 channel) → Phase B iter 2 (D1/D2)
-  → Phase C iter 1 (per-turn own 18 verdict — 본 cycle).
+  → Phase C iter 1 (per-turn verdict — 본 cycle).
 - L0 measurement infra (clm_v4_mount.hexa --probe) wired via consciousness
   iter 3 (synthetic_fallback path가 N=15 baseline-ensemble로 활성).
 
 ---
 
-## Per-turn own 18 verdict ↔ D1-D4 통합
+## Per-turn verdict ↔ D1-D4 통합
 
-본 metric (D1-D4) 와 per-turn own 18 verdict 의 lane 분리:
+본 metric (D1-D4) 와 per-turn verdict 의 lane 분리:
 
 | lane | 측정 단위 | 산출 | 활성 phase |
 |---|---|---|---|
-| Per-turn own 18 (C1+C2+C3) | 단일 발화 (이번 turn) | SIMPLE_STACK_PASS_STRICT_C3 / PARTIAL / FAIL | Phase C iter 1 (LANDED) |
+| Per-turn (C1+C2+C3) | 단일 발화 (이번 turn) | SIMPLE_STACK_PASS_STRICT_C3 / PARTIAL / FAIL | Phase C iter 1 (LANDED) |
 | D1 reactive | 인접 turn-pair | Jaccard 3-gram (D1.b sub-channel) | Phase B iter 2 (LANDED) |
 | D2 topic-shift-rate | dialogue 전체 | shift_rate ∈ [0,1] | Phase B iter 2 (LANDED) |
 | D3 persona-consistency | per-instance utterance distribution | KL divergence (Newton-series ln, top-100 simplex) | iter 4 (f) (LANDED) |
@@ -345,7 +345,7 @@ duo `--verdict full` 모드 시 두 lane 모두 emit (단발 quality + multi-tur
 coherence 정합 검증 동시); `[duo:summary]` 라인 + `[duo:summary-c3]` 라인 으로
 DIALOGUE_COHERENCE_PASS / SIMPLE_STACK_PASS_DIALOGUE_C3 모두 표시.
 `--verdict simple` 시 D1/D2/D3/D4 4-cell 모두 측정 + DIALOGUE_COHERENCE_PASS
-emit (per-turn own 18 c3 lane는 비활성).
+emit (per-turn c3 lane는 비활성).
 
 ---
 
@@ -376,8 +376,8 @@ emit (per-turn own 18 c3 lane는 비활성).
    channel transport 이 buffered banner 수신 → 첫 turn 종종 silent → `[duo:verdict-c3]
    verdict=SHELL_OUT_FAIL` guard 활성. mechanical wiring 정합. 실제 multi-turn
    PASS_STRICT_C3 rate 측정은 chat.hexa streaming refactor 별도 cycle 후 가능.
-9. **single-utterance lane 한계**: consciousness simple --utterance 는 own 18
+9. **single-utterance lane 한계**: consciousness simple --utterance 는
    원본 의도 (chat output 평가) 와 lane 차이 — duo 에서 utterance = model output
    이므로 정합 (cli.consciousness_utterance_2026_05_08 honest_c3 #1). C1.3 / C2.4
    는 isolated heuristic (template-leak proxy 한정) — full V4 evaluator 11-cell
-   별도 lane 유지 (own 18 minor patch 별도 cycle).
+   별도 lane 유지 (minor patch 별도 cycle).

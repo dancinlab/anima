@@ -67,7 +67,7 @@ F-CE-STRICT-2 NOT fired → mirror reuse legitimate.
 ## raw / own
 - raw#9: training/v5mitosis_d384_v14_mirror.py local-only (gitignored)
 - raw#15 additive: 2 ckpts unmodified (sha256 verified pre-run, matches §51)
-- own 14: V14 5-seed strict per substrate (C, E)
-- own 16: $0 local CPU
-- own 22: REBORN.md NOT directly appended — dispatcher injects §52 slot
-- own 38: doc save to state/anima_v14_max256_ce_strict_n5_2026_05_10/{spec.md, result.json, verdict.md, run_n5_strict.py, sanity_s42_short.py, run_n5.log, run_n5.stdout}
+- : V14 5-seed strict per substrate (C, E)
+- : $0 local CPU
+- : REBORN.md NOT directly appended — dispatcher injects §52 slot
+- : doc save to state/anima_v14_max256_ce_strict_n5_2026_05_10/{spec.md, result.json, verdict.md, run_n5_strict.py, sanity_s42_short.py, run_n5.log, run_n5.stdout}

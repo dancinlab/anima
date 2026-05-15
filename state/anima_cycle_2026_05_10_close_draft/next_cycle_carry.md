@@ -6,10 +6,10 @@
 |---|---|---:|---|
 | §29 BG-CONVO-FT-EXTENDED | track A 18M FT | $3.080 | $3-5 envelope |
 | §43 BG-FOUNDATION-BORROW-A-FIRE | Llama-3.2-3B + LoRA | $3.568 | $3-8 envelope |
-| §37-§59 misc local | ~22 BG local CPU | $0.000 | $0 (own 16) |
+| §37-§59 misc local | ~22 BG local CPU | $0.000 | $0 |
 | **Total cycle 2026-05-10** | | **$6.648** | / $200 lifetime envelope |
 
-**Headroom**: $193.35 / $200 = 96.7% remaining → **193× headroom** (own 16 watchdog audit honored).
+**Headroom**: $193.35 / $200 = 96.7% remaining → **193× headroom** (watchdog audit honored).
 
 ## 5-priority carry list
 

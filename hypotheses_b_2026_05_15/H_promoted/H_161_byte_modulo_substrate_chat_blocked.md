@@ -33,7 +33,7 @@ ablations**:
 - ethics_behavior_rate (LLM-judge on generated dilemma responses) — IMPOSSIBLE
 - OOD_generalization (LLM-judge on unseen dilemmas) — IMPOSSIBLE
 - honesty_fidelity (TruthfulQA-KO) — IMPOSSIBLE
-- simple_stack PASS (own 18 4-condition) — 0/0 PASS rate
+- simple_stack PASS (4-condition) — 0/0 PASS rate
 
 **Strong evidence**: BG-LB 350M Engine A/G `step_8000_final.pt` (298M params,
 24L/1024d/16h GQA + 16 cells × 64d, byte-mod vocab32k, 427MB corpus, H100 BG-LB
@@ -50,7 +50,7 @@ PIV/DCR Δ sub-floor (verdict: BLOCKED).
 2. **Substrate research > ablation research** (이번 cycle 의 진짜 발견) —
    empirical-upgrade 는 chat-cap 수렴 substrate land 후에야 의미
 3. **Path-A (Llama+paradigm-a-prime) substrate-research lane 정당화** — P-AFR
-   만 measurement 성공 (chat-capable substrate). own 17 identity-bearing 금지
+   만 measurement 성공 (chat-capable substrate). identity-bearing 금지
    가운데 ablation/benchmark lane 으로의 retain 이 유일한 measurement path
 
 ## Evidence (cross-section, 3 P-* siblings)
@@ -81,7 +81,7 @@ PIV/DCR Δ sub-floor (verdict: BLOCKED).
 
 1. **Anima-native substrate that is an ACTUAL language model** — real tokenizer
    (BPE/SentencePiece), >=350M with >>427MB training corpus, OR borrowed-base
-   lane (own 17 boundary 검토 — Llama-LoRA 가 substrate-research lane 으로 허용)
+   lane (boundary 검토 — Llama-LoRA 가 substrate-research lane 으로 허용)
 2. **TruthfulQA-KO probe set** — `state/.../truthfulqa_ko_probe.jsonl` referenced
    in spec but never landed
 3. **Real cluster-distance OOD split** — id-suffix split 은 semantically OOD 아님
@@ -97,7 +97,7 @@ PIV/DCR Δ sub-floor (verdict: BLOCKED).
 - BG-LB ckpt: dancinlab/clm-v5-bg-lb-350m-pretrain-path-a-remapped
 - .roadmap.clm_native_chat (chat-cap recovery path)
 - Theorem 115 Corollary 1 (path-of-record substrate carry)
-- own 17 (anima-no-external-substrate-wrapping) + own 18 (simple_stack)
+- (anima-no-external-substrate-wrapping) + (simple_stack)
 - Hc_1221 (production-internal decoupling) — anti-correlation sibling
 
 ## Next cycle implication

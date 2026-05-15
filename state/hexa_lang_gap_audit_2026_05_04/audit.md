@@ -313,7 +313,7 @@ prior audits:
 
 policy refs:
   /Users/ghost/.hive/.../memory/feedback_py_to_hexa_only.md
-  /Users/ghost/core/anima/.own  (raw 9 + own 1 grandfather list)
+  /Users/ghost/core/anima/.own (raw 9 + grandfather list)
   /Users/ghost/core/hexa-lang/.roadmap  (RFC-001 + RFC-008 done)
 
 cost

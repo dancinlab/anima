@@ -8,7 +8,7 @@ status: PHASE3_LANDED
 type: convention_enforcement_handoff
 predecessor:
   - docs/anima_h100_cost_discipline_operationalization_spec_2026_05_05.md (§3.4 + §4 Phase 3 scope)
-  - docs/anima_own_16_h100_cost_discipline_landed_2026_05_05.ai.md (own 16 admission)
+  - docs/anima_own_16_h100_cost_discipline_landed_2026_05_05.ai.md (admission)
   - docs/anima_h100_cost_watchdog_phase1_landed_2026_05_05.ai.md (Phase 1 — tooling emission + selftest PASS)
   - (Phase 2 — orchestrator boot/heartbeat/trap/verdict hooks, in-flight sister BG)
 related:
@@ -42,7 +42,7 @@ raw_invariants:
   Pβ precedent / 7 honest-c3 entries / references). Boilerplate that any
   H100 BG launch prompt with `target_usd ≥ $1` can copy + lane-substitute.
 
-- **MEMORY.md cross-link added** as new line below the existing own 16
+- **MEMORY.md cross-link added** as new line below the existing
   entry: "BG launch prompt L23/L24/L25 template" pointing to the same
   memory file (Phase 3 section anchor) — provides discoverable index
   hook for future BG-launching subagents that need quick-reference to
@@ -75,11 +75,11 @@ raw_invariants:
   template-adherence checked by future validator. (6) Template is mac-
   centric in the Item 5 rescue command (`/opt/homebrew/bin/runpodctl`);
   ubu1/ubu2 operators copying literally will hit "command not found"
-  unless they substitute substrate-correct path. (7) own 14 + 15 + 16
+  unless they substitute substrate-correct path. (7) + 15 + 16
   triad coherence: Phase 3 closes the "compute lifecycle convention
-  layer" but storage (own 14) + publication (own 15) do NOT have parallel
+  layer" but storage + publication do NOT have parallel
   convention-layer templates; future cycle could mirror this 6-checklist
-  pattern for HF Hub upload prompts to harden own 14 + 15 enforcement.
+  pattern for HF Hub upload prompts to harden + 15 enforcement.
 
 ## Files written / updated
 
@@ -88,7 +88,7 @@ raw_invariants:
 | `docs/anima_h100_bg_launch_prompt_template_2026_05_05.md` | NEW | TEMPLATE doc (8 sections, 7 honest-c3) |
 | `docs/anima_h100_cost_watchdog_phase3_landed_2026_05_05.ai.md` | NEW | this handoff |
 | `~/.hive/.../memory/feedback_h100_cost_discipline_l23_l25_watchdog_own_16.md` | APPENDED | Phase 3 application § + deviation policy |
-| `~/.hive/.../memory/MEMORY.md` | APPENDED | cross-link line below own 16 entry |
+| `~/.hive/.../memory/MEMORY.md` | APPENDED | cross-link line below entry |
 
 ## Phase ladder status
 

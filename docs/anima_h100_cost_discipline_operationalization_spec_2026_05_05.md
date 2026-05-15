@@ -18,7 +18,7 @@ related:
   - tool/h100_idle_guard.bash (existing launchd reclaim wrapper — L23/L24/L25 precursor)
   - tool/h100_auto_kill.hexa (existing idle reclaim — propose-only mode)
   - tool/h100_cost_tracker.hexa (existing per-round cost aggregator)
-  - .own own 14 (HF Hub only) + own 15 (HF lifecycle PRIVATE→PUBLIC)
+  - .own (HF Hub only) + (HF lifecycle PRIVATE→PUBLIC)
 raw_invariants:
   - raw#9 (md only this cycle, no code emission)
   - raw#10 (≥5 honest C3 in §6)
@@ -269,13 +269,13 @@ Captures §3.4 launch prompt checklist as auto-memory; cross-links to `feedback_
 
 Similar additive `cross_link.h100_cost_discipline_operationalization` annotation; predecessor incident is the Pβ Paradigm D 50K cycle which sits under p9_sft.
 
-### 5.4 own 16 candidate — H100 cost discipline operationalization
+### 5.4 candidate — H100 cost discipline operationalization
 
-`.own` taxonomy currently lands at own 14 (HF Hub only) + own 15 (HF lifecycle PRIVATE→PUBLIC). own 14 + 15 form an HF triad pattern (WHERE + HOW). A parallel triad on the **compute lifecycle** axis is proposed:
+`.own` taxonomy currently lands at (HF Hub only) + (HF lifecycle PRIVATE→PUBLIC). + 15 form an HF triad pattern (WHERE + HOW). A parallel triad on the **compute lifecycle** axis is proposed:
 
-- **own 16 (proposed)**: "anima-local: H100 cost discipline operationalization — L23/L24/L25 watchdog + completion checklist + foreground fallback mandatory"
+- ** (proposed)**: "anima-local: H100 cost discipline operationalization — L23/L24/L25 watchdog + completion checklist + foreground fallback mandatory"
   - **slug**: `h100-cost-discipline-l23-l25-watchdog`
-  - **base**: anima/.own SSOT + own 5 (no preset cost cap) + own 6 (GPU dispatch + watchdog) + raw#10 honest-disclosure
+  - **base**: anima/.own SSOT + (no preset cost cap) + (GPU dispatch + watchdog) + raw#10 honest-disclosure
   - **scope**: every H100 BG launch lifecycle (boot → heartbeat → exit → kill → verdict) MUST integrate watchdog registration, heartbeat pings, trap-based 404 verification, deregistration, and verdict cost-overrun fields.
   - **rule (a)**: every H100 BG MUST register with watchdog at boot (write `state/h100_watchdog/pods/<pod_id>.json`).
   - **rule (b)**: every H100 BG MUST heartbeat every 5 min (`state/h100_watchdog/heartbeats/<bg_id>.txt`).
@@ -289,7 +289,7 @@ Similar additive `cross_link.h100_cost_discipline_operationalization` annotation
   - **category**: meta-triad + proof-truth.
   - **applies-to**: h100-bg-launch-lifecycle + cost-discipline.
   - **severity**: warn (escalate to block per follow-up linter).
-  - **note**: own 16 = compute-lifecycle triad partner to own 14 (HF WHERE) + own 15 (HF HOW lifecycle); together own 14 + 15 + 16 cover anima's external-resource-consumption axes (storage / publication / compute).
+  - **note**: = compute-lifecycle triad partner to (HF WHERE) + (HF HOW lifecycle); together + 15 + 16 cover anima's external-resource-consumption axes (storage / publication / compute).
 
 **DO NOT mutate `.own` in this BG. Proposal only — land in next-cycle additive_only commit.**
 
@@ -315,7 +315,7 @@ Similar additive `cross_link.h100_cost_discipline_operationalization` annotation
 
 - **C9 watchdog ownership question is unresolved (Q4).** macOS launchd vs cron vs anima-side hexa daemon — each has trade-offs. launchd is canonical for macOS persistent processes (already used by `h100_idle_guard.bash`); cron is portable but less reliable on sleep/wake. A hexa entry has best dogfood-coherence with the rest of anima but introduces the C4 recursion concern. Recommended default: launchd-supervised + bash inner loop + hexa for selftest/admin commands.
 
-- **C10 phase 4 smoke is itself a $1-3 cost — possibly violates own 5 "completeness-first" with sub-budget cap.** own 5 says "no preset cost cap" for research, but smoke tests are infra/tooling, not research. own 6 explicitly authorizes "canary-probe" — this is exactly that. $1-3 bound for a tooling smoke is justified per own 6; not in tension with own 5.
+- **C10 phase 4 smoke is itself a $1-3 cost — possibly violates "completeness-first" with sub-budget cap.** says "no preset cost cap" for research, but smoke tests are infra/tooling, not research. explicitly authorizes "canary-probe" — this is exactly that. $1-3 bound for a tooling smoke is justified per; not in tension with .
 
 ---
 
@@ -341,15 +341,15 @@ Similar additive `cross_link.h100_cost_discipline_operationalization` annotation
 
 **User decision needed**: ack the 3× + 30-min ladder OR adjust thresholds.
 
-### Q3: own 16 admission?
+### Q3: admission?
 
 **Trade-offs**:
-- **Yes admit own 16**: completes compute-lifecycle triad with own 14 + own 15; binding mandate for future BGs; warn-tier severity escalates to block via follow-up linter.
-- **Defer**: own taxonomy may already over-quantify; could fold cost discipline into existing own 6 (GPU dispatch + watchdog) as additive sub-rules.
+- **Yes admit **: completes compute-lifecycle triad with +; binding mandate for future BGs; warn-tier severity escalates to block via follow-up linter.
+- **Defer**: own taxonomy may already over-quantify; could fold cost discipline into existing (GPU dispatch + watchdog) as additive sub-rules.
 
-**Recommendation**: **admit own 16** — own 6 is too broad (covers entire GPU dispatch policy); own 16 specifically scopes **lifecycle enforcement + verdict.json schema additions + linter follow-up** which is a sharper, more actionable rule. Forms clean compute-lifecycle triad partner to HF triad (own 14 + own 15).
+**Recommendation**: **admit ** — is too broad (covers entire GPU dispatch policy); specifically scopes **lifecycle enforcement + verdict.json schema additions + linter follow-up** which is a sharper, more actionable rule. Forms clean compute-lifecycle triad partner to HF triad (+).
 
-**User decision needed**: ack own 16 admission with proposed slug + rules in §5.4 OR fold into own 6.
+**User decision needed**: ack admission with proposed slug + rules in §5.4 OR fold into .
 
 ### Q4: who owns watchdog process — anima daemon, cron, or launchd?
 
@@ -392,7 +392,7 @@ The filename suggests "auto-killer" but the action is auto-pause + user-confirm-
 | `tool/h100_cost_tracker.hexa` | existing per-round aggregator; complementary to live watchdog ledger |
 | `feedback_pbeta_chat_capability_fail_substrate_research_pass_decoupled.md` | sister memory; cross-link target |
 | `feedback_always_subagent_bg.md` | BG dispatch mandate; §3.4 checklist update target |
-| `.own own 5 + own 6 + own 14 + own 15` | predecessor own entries; own 16 candidate joins compute-lifecycle triad |
+| `.own + + + ` | predecessor own entries; candidate joins compute-lifecycle triad |
 | `.roadmap.p9_sft` + `.roadmap.training` | additive cross_link annotation targets (Phase 5.2 / 5.3) |
 
 ---

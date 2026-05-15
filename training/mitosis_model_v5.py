@@ -855,4 +855,4 @@ class MitosisModelEngine(nn.Module):
 #    (hidden mean + weight signature) is a future improvement (spec §5.1 (iv)).
 # 5. merge_threshold v2 default likely mismatched at d_model=384 — calibrate in cond.3.
 # 6. Per-param noise scaling is capped at 0.5 × p.std() to prevent LN-bias drift.
-# 7. lm_head weight-tied with tok_emb (own 31 norm); can be untied via cfg.weight_tied_lm_head.
+# 7. lm_head weight-tied with tok_emb (norm); can be untied via cfg.weight_tied_lm_head.

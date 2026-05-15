@@ -44,7 +44,7 @@ Both reconstructions match the Phase 2 OPT-A architectural prediction (best.pt o
 
 **RECOMMENDED: Decision-B**.
 
-## own 15 G3 carve-out impact
+## G3 carve-out impact
 
 STRENGTHENED — TWO independent eval points now corroborate the F-SHIM-V4-4 PREREQUISITE_BLOCKED finding:
 
@@ -62,7 +62,7 @@ ARCHITECTURALLY MOTIVATED — V5-4 DESIGN-1 fresh-init result is independent emp
 - Path B decision matrix: 3 options (A/B/C) ranked by 완성도
 - Root cause hypotheses: H1-H4 REJECTED, H5 CONFIRMED
 - Reconstructed eval points: 2 (V5-4 FAIL + OPT-C FAIL_EXPECTED)
-- own 15 G3 corroborating verdicts: 5 (Phase 2 OPT-A + V5-4 + OPT-C + this diagnose + closure spec)
+- G3 corroborating verdicts: 5 (Phase 2 OPT-A + V5-4 + OPT-C + this diagnose + closure spec)
 - honest C3 entries: 8 (>=5 per raw#10)
 - Cycle cost: $0 (Mac-side); cumulative shim v5 phase cost: $0.35
 
@@ -79,7 +79,7 @@ ARCHITECTURALLY MOTIVATED — V5-4 DESIGN-1 fresh-init result is independent emp
 - v5_4_design_1_carry: `state/clm_v4_hf_format_shim_v5_4_design_1_2026_05_05/verdict.json` + `results/eval_summary.json`
 - opt_c_carry: `state/clm_v4_hf_format_shim_v5_opt_c_2026_05_05/verdict.json` + `results/eval_summary.json`
 - opt_c_landed_doc: `docs/clm_v4_hf_format_shim_v5_opt_c_falsification_landed_2026_05_05.ai.md`
-- own_15_anchor: `anima/.own own 15 hf-release-private-then-public-after-verification`
+- own_15_anchor: `anima/.own hf-release-private-then-public-after-verification`
 - F-SHIM-V4-4 PREREQUISITE_BLOCKED: `state/clm_v4_f_shim_v4_4_harvest_2026_05_05/verdict.json`
 
 ## raw_compliance

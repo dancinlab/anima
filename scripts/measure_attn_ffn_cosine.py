@@ -1,7 +1,7 @@
 """
 Measure row-wise cosine similarity of attention + FFN weights between BG-LB and Phase 2 ckpts.
 
-Selective load strategy (own 16 strict, RAM 918MB free, load 93):
+Selective load strategy (strict, RAM 918MB free, load 93):
 - Load full state_dicts once (cannot be avoided cleanly with torch.load)
 - BUT only operate on attention+FFN keys, free everything else early
 - Compute cosine per-weight, immediately free pair, accumulate stats only

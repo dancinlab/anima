@@ -31,10 +31,10 @@ anima architecture self-evolution v4→v5 transition — substrate architecture�
 - legacy: `docs/hypotheses/SELF-EVO-v4-to-v5.md`
 - sister H: H_018, H_012
 - roadmap: `.roadmap.anima_engines` evolution lane
-- own: own 21
+- own:
 
 ## Honest Limits
 
-- L1: self-evolution = self-modification은 own 17 (anima-native lane) 정합 lane
+- L1: self-evolution = self-modification은 (anima-native lane) 정합 lane
 - L2: v4→v5 transition path 임의 — alternative v4→v6 직접 transition 가능
 - L3-L5: pointer; legacy archive

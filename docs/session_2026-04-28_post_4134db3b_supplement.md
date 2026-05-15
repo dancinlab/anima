@@ -157,7 +157,7 @@ All raw 9 hexa-only + raw 12 frozen pre-registration + chflags uchg.
 
 ### 7.2 Owner-approval gated
 - atlas R36 + R37 (CANON maintainer)
-- own 3 + own 4 hive raw promotion (genus rename)
+- + hive raw promotion (genus rename)
 
 ### 7.3 External-blocker
 - EEG hardware D-1 arrival (clm-eeg)

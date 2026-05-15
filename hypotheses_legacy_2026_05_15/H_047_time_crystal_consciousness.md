@@ -29,7 +29,7 @@ Legacy file: `docs/hypotheses/H-CX-523-time-crystal-consciousness.md`. Pointer o
 
 - legacy: `docs/hypotheses/H-CX-523-time-crystal-consciousness.md`
 - sister: H_008 (dissipative), H_046, H_011
-- own: own 21
+- own:
 
 ## Honest Limits
 

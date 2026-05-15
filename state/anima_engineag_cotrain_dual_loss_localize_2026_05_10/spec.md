@@ -52,7 +52,7 @@ Plus aggregate roll-ups: per-component (mean over 24 layers), per-layer
 (mean over 9 components), per-slab (cross-link with §57's 3-slab grouping).
 Also: tok_emb, norm_f, lm_head as global-extras.
 
-## Output deliverables (own 38)
+## Output deliverables
 
 | file | content |
 |---|---|
@@ -98,11 +98,11 @@ both the largest weight drift and the largest V14 effect).
   (gitignored).
 - **raw#15 additive** — A and B ckpts loaded read-only via `torch.load`;
   all tensor ops are out-of-place; no file mutation.
-- **own 16** — $0 local Mac CPU; weight-only analysis (no model forward,
+- **** — $0 local Mac CPU; weight-only analysis (no model forward,
   no GPU).  Wall-clock target ≤2 min.  Achieved: 42.6s.
-- **own 22** — every metric scalar emit; verdict.md SSOT.  REBORN.md
+- **** — every metric scalar emit; verdict.md SSOT. REBORN.md
   appendage handled by dispatcher §62.
-- **own 38** — artefacts under
+- **** — artefacts under
   `state/anima_engineag_cotrain_dual_loss_localize_2026_05_10/`.
 
 ## Time budget

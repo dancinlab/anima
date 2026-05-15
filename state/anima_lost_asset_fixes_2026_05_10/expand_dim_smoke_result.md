@@ -182,5 +182,5 @@ warmup tolerance.
 ---
 
 raw#9 OK (not training, smoke under `state/`). raw#15 OK (additive, fix py untouched).
-own 22 dispatcher slot: BG-LOSTASSET-D-EXPAND-VERIFY → PASS_ALL. own 38 doc save: this
-file + `expand_dim_smoke.py` co-located. own 16: $0 (local CPU, ~3 s).
+ dispatcher slot: BG-LOSTASSET-D-EXPAND-VERIFY → PASS_ALL. doc save: this
+file + `expand_dim_smoke.py` co-located. : $0 (local CPU, ~3 s).

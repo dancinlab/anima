@@ -76,7 +76,7 @@ Recommended driver: `watch -n 1800 'bash monitor_ubu1.bash <run>'` (30min cadenc
 5. watch -n 1800 'bash state/anima_clm_3_original_ubu1_launch_2026_05_06/monitor_ubu1.bash <run_name>'
 6. 5-10 days later:
    - ssh ubu1 'ls -la runs/<run>/best.pt'
-   - harvest best.pt → mac local OR HF Hub upload (per own 15 PRIVATE-first lifecycle)
+   - harvest best.pt → mac local OR HF Hub upload (per PRIVATE-first lifecycle)
    - run F-CLM3-orig-1..5 falsifiers
 ```
 
@@ -120,7 +120,7 @@ Launch script assumes `ready/training/train_clm.py` accepts every flag emitted (
 - no HF token in any output
 - bash 3.2 compatible (no `[[ ]]`, no `mapfile`, uses `case` not `[[ == ]]`)
 - py→hexa exempt: bash/ssh launcher = transient_py-class tooling infra, not py model code
-- own 15: HF release lifecycle PRIVATE-first noted in user_fire step 6 harvest
+- : HF release lifecycle PRIVATE-first noted in user_fire step 6 harvest
 
 ## 9 Verdict
 

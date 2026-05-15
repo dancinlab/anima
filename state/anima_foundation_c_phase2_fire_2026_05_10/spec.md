@@ -1,4 +1,4 @@
-# BG-FOUNDATION-C-PHASE2-FIRE — spec (own 38 doc save)
+# BG-FOUNDATION-C-PHASE2-FIRE — spec (doc save)
 
 > Authorize verbatim: `OK FOUNDATION_C_PHASE2_FIRE COST $2-4` (2026-05-10, user)
 > Reference SSOT (Phase 1 / §43): `state/anima_foundation_borrow_a_fire_2026_05_10/spec.md` + `verdict.md`
@@ -64,7 +64,7 @@ Both runs consume the same trained adapter. Engine + projection params `requires
 - 16-bin entropy on tension distribution × log(N+1) (proxy carry)
 - new in Phase 2: report Φ_iit_un16 separation `trained vs random_init` per cap setting
 
-## §6 V14 mirror multiseed (5-trial strict — own 14)
+## §6 V14 mirror multiseed (5-trial strict —)
 
 §43: random_init mirror n=1 paired config (seed=1042). Phase 2 n=5:
 
@@ -81,7 +81,7 @@ Each trial:
 - V4 multi-seed eval (5-seed × 15 prompt)
 - mitosis hook run on cap=128 + cap=256 (matching trained)
 
-**MTRP strict floor (own 14)**: trained_pass_best - max(mirror_pass_best across 5 trials) ≥ 0.10 (≥ 2/15 prompt advantage at upper bound).
+**MTRP strict floor **: trained_pass_best - max(mirror_pass_best across 5 trials) ≥ 0.10 (≥ 2/15 prompt advantage at upper bound).
 
 **Sign-test**: if trained Φ_iit_un16_proxy > all 5 mirror trials' max → strict V14 PASS (5/5).
 
@@ -89,12 +89,12 @@ Each trial:
 
 | metric | floor | rationale |
 |---|---|---|
-| chat_cap V4 strict (best-mode) | ≥ 10/15 | own 18 strict — KM-LLAMA-3B 14/15 + §43 11/15 precedent |
+| chat_cap V4 strict (best-mode) | ≥ 10/15 | strict — KM-LLAMA-3B 14/15 + §43 11/15 precedent |
 | KO Hangul ratio mean | ≥ 0.50 | §43 carry |
 | bigram_known mean | ≥ 0.95 | §43 carry (proxy-tight) |
 | semantic_score mean | ≥ 0.50 | §43 carry (proxy-tight) |
 | real_words_per_trial mean | ≥ 3.0 | §43 carry |
-| V14 MTRP (5-trial paired) | ≥ 0.10 strict | own 14, n=5 strengthening |
+| V14 MTRP (5-trial paired) | ≥ 0.10 strict |, n=5 strengthening |
 | Φ_iit_un16 trained vs random ratio | ≥ 1.5× separation | Phase 2 lift; F-FOUNDATION-1 boundary |
 
 ## §8 cost discipline
@@ -127,16 +127,16 @@ Each trial:
 ## §10 SCOPE_CLAMP (D1 strict — verbatim §43 carry)
 
 - verdict label = `SIMPLE_STACK_PASS_STRICT_C3_SUBSTRATE_RESEARCH` (D1 OUTSIDE Llama lineage)
-- public promote: PERMANENTLY BLOCKED (own 37 mandate-9 (a) — D1 OUTSIDE auto-reject)
+- public promote: PERMANENTLY BLOCKED (mandate-9 (a) — D1 OUTSIDE auto-reject)
 - HF (if PASS): `dancinlab/clm-foundation-c-phase2-llama-3.2-3b-anima-lora` PRIVATE
 - adapter_config.json `base_model_name_or_path` pod-path strip on Mac post-pull (memory feedback_orchestrator_h100_gotchas)
 
-## §11 deliverables (own 38)
+## §11 deliverables
 
 | path | role |
 |---|---|
 | `state/anima_foundation_c_phase2_fire_2026_05_10/spec.md` (this) | design spec |
-| `state/anima_foundation_c_phase2_fire_2026_05_10/verdict.md` | verdict (own 22 strict — dispatcher §65 slot append, NOT REBORN.md direct) |
+| `state/anima_foundation_c_phase2_fire_2026_05_10/verdict.md` | verdict (strict — dispatcher §65 slot append, NOT REBORN.md direct) |
 | `state/anima_foundation_c_phase2_fire_2026_05_10/verdict.json` | machine verdict |
 | `state/anima_foundation_c_phase2_fire_2026_05_10/v4_results_multiseed.jsonl` | V4 90 generation |
 | `state/anima_foundation_c_phase2_fire_2026_05_10/semantic_eval.json` | semantic floors |
@@ -147,7 +147,7 @@ Each trial:
 | `state/anima_foundation_c_phase2_fire_2026_05_10/samples_pre_lora.json` | pre-LoRA Llama base smoke |
 | `state/anima_foundation_c_phase2_fire_2026_05_10/train.log` | train + eval log |
 | `state/anima_foundation_c_phase2_fire_2026_05_10/launch.log` | orchestrator log |
-| `state/anima_foundation_c_phase2_fire_2026_05_10/ckpts/adapter_step_{1500,3000,4500}/` + `adapter_final/` | own 30 mandatory pre-pod-delete pull |
+| `state/anima_foundation_c_phase2_fire_2026_05_10/ckpts/adapter_step_{1500,3000,4500}/` + `adapter_final/` | mandatory pre-pod-delete pull |
 | `state/anima_foundation_c_phase2_fire_2026_05_10/README.md` | HF README (SCOPE_CLAMP carry) |
 | `tool/transient_py/anima_foundation_c_phase2_h100.py` | orchestrator (raw#37 transient gitignored) |
 

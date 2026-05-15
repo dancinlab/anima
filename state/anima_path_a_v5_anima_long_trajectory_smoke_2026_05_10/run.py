@@ -28,7 +28,7 @@ THIS RUN:
 Verdict: 4 PASS → ★★★★★, 3 PASS → ★★★★, 2 PASS → ★★★, ≤1 PASS → ★★ or carry.
 
 raw#15 additive — no model files modified.
-own 16 strict — Mac CPU only, no H100.
+ strict — Mac CPU only, no H100.
 """
 
 from __future__ import annotations
@@ -442,7 +442,7 @@ def main():
             "Lorenz autonomous chaos (σ=10, ρ=28, β=8/3) is the dominant driver of cell tension divergence; per the prior 10K-turn toy smoke this masks substrate-coupling and is the proximate cause of V14 violation. Real substrate may amplify or cancel this — the primary novel observation in THIS run.",
             "α regression filters duplicate n_cells values (avoids x-saturation when n_cells hits MAX_CELLS=64). If <4 unique n_cells points, α=NaN and C2 fails.",
             "Korean syllable check is the sampling-test reality (BG-R1 audit in recovery dir found 0/64 KO chars in similar setup); a positive C4 here would CONTRADICT the prior degeneracy finding and warrant investigation.",
-            "Resource: Mac CPU only (own 16 strict). No H100 fire. Single-pass ckpt load + V14 mirror sequential to control RAM at ~700MB free.",
+            "Resource: Mac CPU only (strict). No H100 fire. Single-pass ckpt load + V14 mirror sequential to control RAM at ~700MB free.",
         ],
     }
 

@@ -16,7 +16,7 @@
 //
 // SAFETY GATES
 //   --dry-run            no actual vastai create, prints plan only (default)
-//   --fire               LIVE — actually creates pod (own 6 autonomous OR user confirm)
+// --fire LIVE — actually creates pod (autonomous OR user confirm)
 //   --max-cost USD       cost cap (default $2)
 //   --watchdog-min M     auto-destroy if elapsed > M (default 240min)
 //
@@ -281,7 +281,7 @@ fn _selftest() {
     println("__F1_CYCLE4_GPT2_FIRE_RESULT__ PASS_SELFTEST")
     println("raw_91_caveat=DRY_RUN by default. --fire flag required for LIVE pod create.")
     println("raw_91_caveat=Watchdog 240min cap enforces raw 86 cost ceiling at ~$0.52/run.")
-    println("raw_91_caveat=Real fire still requires user confirm OR own 6 autonomous fire context.")
+    println("raw_91_caveat=Real fire still requires user confirm OR autonomous fire context.")
 }
 
 fn _dry_run() {

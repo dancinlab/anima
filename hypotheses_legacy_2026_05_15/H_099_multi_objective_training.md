@@ -19,7 +19,7 @@ since: 2026-05-07
 
 ## Hypothesis
 
-training loss를 단일 LM cross-entropy 대신 weighted sum (α·L_LM + β·L_chat_format_alignment + γ·L_prompt_response_semantic_similarity)으로 multi-objective 정의하면, baseline LM-only 18M model 대비 own 18 C2.4 strict PASS rate ≥20pp 상승. 각 loss term이 BG-HA failure mode를 명시적으로 처벌 (L_chat_align = chat-format 일탈, L_semantic = prompt-irrelevant emission).
+training loss를 단일 LM cross-entropy 대신 weighted sum (α·L_LM + β·L_chat_format_alignment + γ·L_prompt_response_semantic_similarity)으로 multi-objective 정의하면, baseline LM-only 18M model 대비 C2.4 strict PASS rate ≥20pp 상승. 각 loss term이 BG-HA failure mode를 명시적으로 처벌 (L_chat_align = chat-format 일탈, L_semantic = prompt-irrelevant emission).
 
 ## Why
 
@@ -80,14 +80,14 @@ training loss를 단일 LM cross-entropy 대신 weighted sum (α·L_LM + β·L_c
 - **L3**: multi-objective는 gradient interference (positive vs negative lift) literature 광범위 — 18M scale 효과 미보장
 - **L4**: weight balance hyperparameter는 grid search cost 큼 — Phase 1은 single ratio 한정
 - **L5**: L_chat_align과 L_semantic이 서로 독립이 아닐 가능성 — collinearity ablation 별도
-- **L6**: own 18 evaluator V2 strict 자체 calibration 미완 — 효과 측정 신뢰도 V2 의존
-- **L7**: 100M+ scale은 own 16 H100 cost discipline scope OUT
+- **L6**: evaluator V2 strict 자체 calibration 미완 — 효과 측정 신뢰도 V2 의존
+- **L7**: 100M+ scale은 H100 cost discipline scope OUT
 
 ## Cross-Links
 
 - **sister roadmaps**: `.roadmap.law` R1 + `.roadmap.philosophy` D4 + `.roadmap.clm_native_chat`
 - **raw**: raw#12 + raw#10 + raw#9 + raw#15 + raw#37
-- **own**: own 17 + own 18 + own 19 + own 20 + own 21
+- **own**: + + + +
 - **sister H**: H_093 + H_094 + H_095 + H_098 + H_100 + H_101
 - **evidence motivation**: `docs/anima_own_18_c2_4_evaluator_flaw_2026_05_07.md`
 

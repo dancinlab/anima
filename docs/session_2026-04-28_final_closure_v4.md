@@ -17,7 +17,7 @@
 ### Commits
 - **253+ commits** post-compaction
 - **75+ autonomous-loop iters** (dynamic + cron mixed)
-- **moder discoveries**: 13 distinct failure modes (own 4 4-fold ladder)
+- **moder discoveries**: 13 distinct failure modes (4-fold ladder)
 
 ---
 
@@ -48,7 +48,7 @@
 - N=2 partial first application (Fire 6 + Fire 10 reconstruction)
 - N=4 partial verified (Fire 6+10+18+20)
 
-### 5. own 4 four-fold ladder root-cause protocol
+### 5. four-fold ladder root-cause protocol
 - 13 distinct failure modes 발견 + canonical fix
 - ML infrastructure dispatch failure 진단 protocol
 
@@ -68,7 +68,7 @@
 1. ✅ Cycle 4 v8 alignment principle
 2. ✅ R38 + R39 cross-paradigm framework
 3. ✅ R39 인프라 (seed/schema/aggregator)
-4. ✅ own 4 root-cause protocol
+4. ✅ root-cause protocol
 5. ✅ raw 91 honesty-triad C1-C5
 
 ### Measurement layer ($1.50/sample, $7.50/N=5 ensemble)

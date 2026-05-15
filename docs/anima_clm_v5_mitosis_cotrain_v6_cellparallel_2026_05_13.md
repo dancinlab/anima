@@ -140,7 +140,7 @@ hidden across shards, all_gather(tensions) sync's the routing signal.
 - Phase 3 dispatch: LANDED + FIRED (4× A100 SXM4 80GB pod 36635479, $6.70/hr, est $33.50)
 - Phase 4 measurement: in-flight (rank 0 runs F-PERSONA + F-V5MIT post-training)
 - Phase 5 docs + GOAL.md + PSCC + memory: this doc + PSCC §52 + memory append in same commit
-- Phase 6 HF push: gated on F-V5MIT-5 V14-STRICT PASS (own 37 mandate)
+- Phase 6 HF push: gated on F-V5MIT-5 V14-STRICT PASS (mandate)
 - Phase 7 commit + push
 
 ## §7 cross-reference

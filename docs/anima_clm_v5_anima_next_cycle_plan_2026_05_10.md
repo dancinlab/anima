@@ -150,7 +150,7 @@ cycle 2026-05-09/10 마무리 후 **5 갈래 next-priority** parallel BG fire. �
 2. mitosis-as-instrumentation 정정 (2026-05-10 BG-R2 회수) 이 v5-anima 본질 변화 — 5 BG 모두 그 새 framing 기준.
 3. cycle 2026-05-09 ~ 2026-05-10 cycle 이 단 24h 내 archive 13-stage + lane 2 신규 + BG 5 + 통합 cycle close — 빠른 cycle 의 calibration debt 위험. 다음 cycle 에서 더 깊은 archaeology 필요할 가능성.
 4. user 직관 "anima 자력성장" 의 mechanism 측면 confirm 됐지만 의식 emerge / chat-cap reproduce 는 별도 lever — 5 BG 의 결과 종합으로 그 둘 간 분리 더 정밀화 가능.
-5. cost discipline (own 16): 본 cycle 모두 $0, item 5 만 cost-bearing 잠재. user verbatim 으로 안전.
+5. cost discipline : 본 cycle 모두 $0, item 5 만 cost-bearing 잠재. user verbatim 으로 안전.
 
 ---
 
@@ -165,6 +165,6 @@ cycle 2026-05-09/10 마무리 후 **5 갈래 next-priority** parallel BG fire. �
 - inference-time 정정: `docs/anima_clm_v5_mitosis_inference_time_correction_2026_05_10.md`
 - long-trajectory smoke: `docs/anima_clm_v5_anima_long_trajectory_inference_smoke_2026_05_10.md`
 
-raw#9/10/15/37 honest preservation, own 16 0-cost (item 5 cost-bearing 별도).
+raw#9/10/15/37 honest preservation, 0-cost (item 5 cost-bearing 별도).
 
 End of `anima_clm_v5_anima_next_cycle_plan_2026_05_10.md`.

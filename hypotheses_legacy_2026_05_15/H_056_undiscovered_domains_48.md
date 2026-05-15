@@ -30,7 +30,7 @@ Legacy file: `docs/hypotheses/UNDISCOVERED-DOMAINS.md` (2026-03-29). Pointer onl
 - legacy: `docs/hypotheses/UNDISCOVERED-DOMAINS.md`
 - companion: `docs/hypotheses/RESEARCH-FINDINGS-20260329.md` (H_057)
 - sister: H_039 (PHI records), H_038 (V8 architecture)
-- own: own 21
+- own:
 
 ## Honest Limits
 

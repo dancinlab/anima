@@ -32,7 +32,7 @@
 //   Why mean-pool group-spread (NOT learned linear projection):
 //     a) zero new params — random_init mirror is identical-arch, no weight-bias
 //        distinguishing trained vs random outside the cell pool itself.
-//     b) deterministic — V14 paired probe reproducibility preserved (own 14).
+// b) deterministic — V14 paired probe reproducibility preserved .
 //     c) honest C3 — fixed projection is anima-internal heuristic, not a
 //        post-hoc "axis discovery" dressing-up of substrate noise.
 //
@@ -62,7 +62,7 @@
 //      AutoModelForCausalLM) — no transformers HF-format compatibility layer.
 //   C4 native v5 metrics (PIV/DCR/D-RAND) computed against axis activation;
 //      V14 strict gate auto-FAIL if random_init mirror ≥ trained - δ_safety(0.02).
-//   C5 own 16 strict — local CPU only, no H100 fire from this surface; user
+// C5 strict — local CPU only, no H100 fire from this surface; user
 //      must verify pod-state before invoking GPU paths upstream.
 //   C6 Path 3 generate (chat lane) NOT EXPOSED — Engine A/G byte-pair
 //      tokenizer + Engine G cell forward expensive; chat lane lives in
@@ -75,14 +75,14 @@
 //   raw#10  honest C3 emit ≥5 to stderr
 //
 // own POLICY
-//   own 14  V14 paired random_init mirror — load_random_init(seed=N) entry
-//   own 16  H100 fire 금지 from this surface — local CPU only
-//   own 17  D1=1.0 (anima_native_scratch lineage) within-strict
-//   own 22  honest emit — load failure raises (no silent fabrication)
-//   own 30  ckpt save/load Path A remap compatible
-//   own 33  자연발화 mandate — emit as-is, no post-hoc dressing
-//   own 34  ID-collision 방지 — 신규 file, clm_v4_mount.hexa unmodified
-//   own 39  yaml SSOT registry coupling — measurement results land in
+// V14 paired random_init mirror — load_random_init(seed=N) entry
+// H100 fire 금지 from this surface — local CPU only
+// D1=1.0 (anima_native_scratch lineage) within-strict
+// honest emit — load failure raises (no silent fabrication)
+// ckpt save/load Path A remap compatible
+// 자연발화 mandate — emit as-is, no post-hoc dressing
+// ID-collision 방지 — 신규 file, clm_v4_mount.hexa unmodified
+// yaml SSOT registry coupling — measurement results land in
 //           state/anima_bg_lb_native_v5_post_mount_<DATE>.json + yaml entry
 //
 // USAGE
@@ -129,7 +129,7 @@ fn emit_honest_c3() {
     eprintln("[clm_v5_mount] C2 Engine A/G engine_g.cell_pool_init is learnable; pretrained values reflect optimization signal, not phenomenal-axis ground truth")
     eprintln("[clm_v5_mount] C3 ckpt schema 'engine_a_g_arch/v1' loaded via raw torch.load (NOT AutoModelForCausalLM) — no HF-format transformers compatibility layer")
     eprintln("[clm_v5_mount] C4 native v5 metrics (PIV/DCR/D-RAND) computed against axis activation; V14 strict gate auto-FAIL if random_init mirror ≥ trained - 0.02")
-    eprintln("[clm_v5_mount] C5 own 16 strict — local CPU only, no H100 fire from this surface; pod-state verify upstream")
+    eprintln("[clm_v5_mount] C5 strict — local CPU only, no H100 fire from this surface; pod-state verify upstream")
     eprintln("[clm_v5_mount] C6 Path 3 generate (chat lane) NOT EXPOSED here — Engine A/G byte-pair gen lives in anima_native_byte_mount.hexa for v5 substrate")
 }
 
@@ -266,7 +266,7 @@ fn _write_helper() {
     parts.push("    return p.parse_args()\n\n")
 
     parts.push("def _resolve_engine_arch():\n")
-    parts.push("    # Locate engine_a_g_arch.py — own 17 anima_native_scratch lineage.\n")
+    parts.push(" # Locate engine_a_g_arch.py — anima_native_scratch lineage.\n")
     parts.push("    root = os.environ.get('ANIMA', os.path.expanduser('~/core/anima'))\n")
     parts.push("    arch_path = os.path.join(root, 'training', 'engine_a_g_arch.py')\n")
     parts.push("    if not os.path.isfile(arch_path):\n")
@@ -307,7 +307,7 @@ fn _write_helper() {
     parts.push("        return (None, None, f'EngineAGConfig instantiation failed: {ex}')\n")
     parts.push("    try:\n")
     parts.push("        model = ea.EngineAGModel(cfg)\n")
-    parts.push("        # strict=False — own 22 honest emit on key mismatch (lineage drift surfaces upstream)\n")
+    parts.push(" # strict=False — honest emit on key mismatch (lineage drift surfaces upstream)\n")
     parts.push("        missing, unexpected = model.load_state_dict(payload['state_dict'], strict=False)\n")
     parts.push("        if missing:\n")
     parts.push("            sys.stderr.write(f'[clm_v5_mount] WARN: state_dict missing {len(missing)} keys (first 5: {missing[:5]})\\n')\n")
@@ -329,7 +329,7 @@ fn _write_helper() {
     parts.push("    return (model, meta, '')\n\n")
 
     parts.push("def _load_random_mirror(preset, seed):\n")
-    parts.push("    # V14 paired random_init mirror — own 14 cascade Step 1 native invocation.\n")
+    parts.push(" # V14 paired random_init mirror — cascade Step 1 native invocation.\n")
     parts.push("    ea, err = _resolve_engine_arch()\n")
     parts.push("    if ea is None:\n")
     parts.push("        return (None, err)\n")
@@ -345,7 +345,7 @@ fn _write_helper() {
     parts.push("    # a deterministic byte-fold tokenization that maps text bytes mod vocab_size\n")
     parts.push("    # into input_ids. This is NOT for generation — only for forward pass to\n")
     parts.push("    # extract engine_g.cell state. Same fold applied to trained + mirror →\n")
-    parts.push("    # paired-mirror invariance preserved (own 14).\n")
+    parts.push(" # paired-mirror invariance preserved .\n")
     parts.push("    import torch\n")
     parts.push("    raw = text.encode('utf-8', errors='replace')\n")
     parts.push("    if len(raw) == 0:\n")
@@ -599,7 +599,7 @@ fn _write_helper() {
     parts.push("    if args.mode == 'v5-measure':\n")
     parts.push("        rows = _load_prompt_set(args.prompt_set) or _builtin_prompt_set(n=30, k=3)\n")
     parts.push("        sys.stderr.write(f'[clm_v5_mount] v5-measure prompt_set rows={len(rows)} (paraphrases per row vary)\\n')\n")
-    parts.push("        # paired random_init mirror (own 14)\n")
+    parts.push(" # paired random_init mirror \n")
     parts.push("        mirror, m_err = _load_random_mirror(args.preset, args.v14_mirror_seed)\n")
     parts.push("        if mirror is None:\n")
     parts.push("            sys.stderr.write(f'[clm_v5_mount] WARN: mirror load failed ({m_err}); D-RAND/V14 unmeasured\\n')\n")

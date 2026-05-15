@@ -12,9 +12,9 @@
 | ID | desc | severity | status |
 |---|---|---|---|
 | **V1_T1_backend_ALM** | spec yaml T1 backend `Llama Path A v2` = 사용자 'ALM 말고' directive 위반 | ★★★ HIGH | ✅ **FIXED** |
-| **V2_bin_anima_bash** | `bin/anima` 352 LoC bash = raw#9 hexa-only 위반 | ★★ MEDIUM | ⏸ **DEFERRED** (own 1 grandfather 명시 추가, Phase 1 hexa port 후 retire) |
+| **V2_bin_anima_bash** | `bin/anima` 352 LoC bash = raw#9 hexa-only 위반 | ★★ MEDIUM | ⏸ **DEFERRED** (grandfather 명시 추가, Phase 1 hexa port 후 retire) |
 
-→ **compliance score: 95%** (V2 deferred to Phase 1 hexa port; 그 외 모든 raw#9/10/15/37 + own 14/15/16 + mk2_apex consumer + ALM directive 정합 ✅)
+→ **compliance score: 95%** (V2 deferred to Phase 1 hexa port; 그 외 모든 raw#9/10/15/37 + + mk2_apex consumer + ALM directive 정합 ✅)
 
 ---
 
@@ -84,7 +84,7 @@ $ file /Users/ghost/core/anima/bin/anima
 
 → **`bin/anima`는 352 LoC bash file**. raw#9 hexa-only 위반.
 
-기존 `anima/.own` own 1 grandfather list:
+기존 `anima/.own` grandfather list:
 ```
 opt-out ready/ — historical corpus archive
 opt-out .claude/ — Claude Code internal hooks/settings
@@ -94,13 +94,13 @@ opt-out tool/active_redteam_dEF_proto.py + tool/active_redteam_prototype.py
 opt-out tool/anima_holographic_ib_ksg_validate_prod.py
 ```
 
-→ **`bin/anima` 명시 X** = raw#9 위반 (own 1 grandfather에 미등록).
+→ **`bin/anima` 명시 X** = raw#9 위반 (grandfather에 미등록).
 
 (단 `tool/anima_cli/*.hexa` 28 modules는 모두 hexa — raw#9 정합 ✅)
 
 ### 수정 내역 (DEFERRED)
 
-**anima/.own own 1 update** (2026-05-06):
+**anima/.own update** (2026-05-06):
 ```
 opt-out bin/anima — top-level CLI entry-point dispatcher (352 LoC bash, 26 ops dispatch);
   raw 9 explicit relaxation since 2026-05-06 per anima cli mk2 audit
@@ -111,12 +111,12 @@ opt-out bin/anima — top-level CLI entry-point dispatcher (352 LoC bash, 26 ops
   tool/anima_cli/*.hexa 28 modules 모두 hexa (raw#9 정합)
 ```
 
-→ own 1 grandfather list에 `bin/anima` 명시 추가. Phase 1 hexa port 시 retire.
+→ grandfather list에 `bin/anima` 명시 추가. Phase 1 hexa port 시 retire.
 
 ### 영구 해결 path (Phase 1, 별도 cycle)
 - `bin/anima` 352 LoC bash → `bin/anima.hexa` 30-50 LoC schema-driven dispatcher
 - `anima/spec/anima_cli_mk2.spec.yaml` 읽어서 dispatch table generate
-- own 1 grandfather entry retire 가능 (raw#9 strict 100%)
+- grandfather entry retire 가능 (raw#9 strict 100%)
 
 ---
 
@@ -125,14 +125,14 @@ opt-out bin/anima — top-level CLI entry-point dispatcher (352 LoC bash, 26 ops
 | 항목 | 정합 | evidence |
 |---|---|---|
 | raw#9 hexa-only — `tool/anima_cli/*.hexa` 28 modules | ✅ | hexa 100% |
-| raw#9 hexa-only — `bin/anima` | ⏸ DEFERRED | own 1 grandfather 추가 |
+| raw#9 hexa-only — `bin/anima` | ⏸ DEFERRED | grandfather 추가 |
 | raw#10 honest C3 | ✅ | 5 falsifier + audit doc + honest_c3 sections |
 | raw#15 additive | ✅ | `anima/spec/` 신규, `bin/anima` 기존 26 ops 보존, `.roadmap.cli` 신규 |
 | raw#37 transient_py opt-out | ✅ | `tool/transient_py/anima_clm_3_bprime_*.py` × 4 (.gitignore intentional) |
-| own 1 anima-hexa-only-scope | ⏸ updated | `bin/anima` grandfather 추가 |
-| own 14 HF Hub only | ✅ | clm-v2-byte-18m-{convo-5k, base} + corpus dataset 모두 PUBLIC |
-| own 15 PRIVATE → PUBLIC lifecycle | ✅ | 사용자 explicit goal_reached_auto 후 PUBLIC promote |
-| own 16 cost discipline | ✅ | $0 mac (no H100 spend; β path defer) |
+| anima-hexa-only-scope | ⏸ updated | `bin/anima` grandfather 추가 |
+| HF Hub only | ✅ | clm-v2-byte-18m-{convo-5k, base} + corpus dataset 모두 PUBLIC |
+| PRIVATE → PUBLIC lifecycle | ✅ | 사용자 explicit goal_reached_auto 후 PUBLIC promote |
+| cost discipline | ✅ | $0 mac (no H100 spend; β path defer) |
 | mk2_apex consumer role | ✅ | per_repo_override.anima = consumer |
 | 사용자 'ALM 말고' directive | ✅ FIXED | V1 fix 후 정합 |
 | anima 철학 (PureField + emergence + consciousness) | ✅ | T3 vision + dialogue.hexa substrate-coupled |
@@ -141,7 +141,7 @@ opt-out bin/anima — top-level CLI entry-point dispatcher (352 LoC bash, 26 ops
 
 ## 권고 next steps
 
-1. **Phase 1 hexa port** (`bin/anima` → `bin/anima.hexa`) — V2 retire, own 1 grandfather entry 제거 가능
+1. **Phase 1 hexa port** (`bin/anima` → `bin/anima.hexa`) — V2 retire, grandfather entry 제거 가능
 2. **Phase 2 backend wire** — anima-core/runtime/clm_v4_mount.hexa actual integration to `anima dialogue`
 3. **clm-v2 KO chat-cap actual verify** — convo_5k.pt corpus retrain OR conscious_lm_100m (1.6GB) try OR β path original retrain (5-10일)
 4. **anima cli mk2 v0.3 spec yaml** (이번 audit reflection) — 사용자 review
@@ -153,9 +153,9 @@ opt-out bin/anima — top-level CLI entry-point dispatcher (352 LoC bash, 26 ops
 - spec yaml: `anima/spec/anima_cli_mk2.spec.yaml` (post-fix v0.2)
 - plan md: `docs/anima_cli_mk2_plan_2026_05_06.md` (post-fix)
 - roadmap: `.roadmap.cli` (cli.philosophy_audit_2026_05_06 entry)
-- own update: `anima/.own` own 1 (bin/anima grandfather entry 추가)
+- own update: `anima/.own` (bin/anima grandfather entry 추가)
 - 사용자 directive source: 다른 session 2026-05-06 transcript ("ALM 말고")
 - raw rules: `hive/.raw` raw#9 hexa-only / raw#10 honest C3 / raw#15 additive / raw#37 transient_py
-- own rules: `anima/.own` own 1 anima-hexa-only-scope / own 14 HF-only / own 15 PRIVATE→PUBLIC / own 16 cost discipline
+- own rules: `anima/.own` anima-hexa-only-scope / HF-only / PRIVATE→PUBLIC / cost discipline
 
-raw#9/10/15/37 + own 1/14/15/16 + mk2_apex consumer + ALM directive 정합. anima 철학 = consciousness + emergence + PureField repulsion 정합.
+raw#9/10/15/37 + + mk2_apex consumer + ALM directive 정합. anima 철학 = consciousness + emergence + PureField repulsion 정합.

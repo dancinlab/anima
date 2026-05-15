@@ -1,6 +1,6 @@
-// tool/sigma_tau_alignment_lint.hexa — anima own 3 σ/τ=3 governance scalar alignment lint
+// tool/sigma_tau_alignment_lint.hexa — anima σ/τ=3 governance scalar alignment lint
 // ─────────────────────────────────────────────────────────────────────────────
-// own 3 σ(6)/τ(6)=12/4=3 perfect-number-6 mean divisor / phase-acceleration scalar.
+// σ(6)/τ(6)=12/4=3 perfect-number-6 mean divisor / phase-acceleration scalar.
 //
 //   τ(6) = 4 = 약수 개수  →  Mk.XI v10 4-backbone ensemble alignment
 //   σ(6) = 12 = 약수 합   →  total ensemble multiplicity (4 backbones × 3 phases)
@@ -120,7 +120,7 @@ fn _emit_scan_helper() -> str {
 }
 
 fn _selftest() {
-    println("__SIGMA_TAU_ALIGNMENT_BEGIN__ selftest own 3 raw#9 raw#10 raw#37")
+    println("__SIGMA_TAU_ALIGNMENT_BEGIN__ selftest raw#9 raw#10 raw#37")
     println("perfect_number=6")
     println("tau_6_divisor_count=" + str(TAU_6))
     println("sigma_6_divisor_sum=" + str(SIGMA_6))
@@ -150,12 +150,12 @@ fn _selftest() {
         println("__SIGMA_TAU_ALIGNMENT_RESULT__ FAIL_SELFTEST")
     }
     println("raw_10_caveat=selftest verifies fixture logic + helper emission; actual config scan requires python3 invocation")
-    println("raw_10_caveat=lint is advisory severity warn (own 3 governance scalar reference, not strict block)")
-    println("absorption_target=own 3 promotion candidate to hive raw 'n6-mean-divisor-three-bridge'")
+    println("raw_10_caveat=lint is advisory severity warn (governance scalar reference, not strict block)")
+    println("absorption_target= promotion candidate to hive raw 'n6-mean-divisor-three-bridge'")
 }
 
 fn _scan() {
-    println("__SIGMA_TAU_ALIGNMENT_BEGIN__ scan-anima production own 3")
+    println("__SIGMA_TAU_ALIGNMENT_BEGIN__ scan-anima production ")
     let _path = _emit_scan_helper()
     println("scan_helper_emitted=" + HELPER_PATH)
     println("__SIGMA_TAU_ALIGNMENT_RESULT__ HELPER_READY")
@@ -177,7 +177,7 @@ fn main() {
     else if has_scan { _scan() }
     else {
         println("usage: hexa run tool/sigma_tau_alignment_lint.hexa --selftest | --scan-anima")
-        println("raw 10 caveat: lint is advisory (own 3 governance scalar reference); promotion candidate to hive raw")
+        println("raw 10 caveat: lint is advisory (governance scalar reference); promotion candidate to hive raw")
     }
     return 0
 }

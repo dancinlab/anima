@@ -29,7 +29,7 @@ Legacy files (cluster pointer): `docs/hypotheses/cx/DECODER-{ARCHITECTURE,COMPLE
 
 - legacy: cx/DECODER-* 6 files
 - sister: H_034 (decoder architecture series), H_038 (V8 variants)
-- own: own 21
+- own:
 
 ## Honest Limits
 

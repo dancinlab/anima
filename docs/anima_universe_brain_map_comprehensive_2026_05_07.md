@@ -5,8 +5,8 @@ ssot:
   D_domain: .roadmap.universe_brain_map
   E_domain: .roadmap.corpus_paradigm
   F_meta: .roadmap.ubm_corpus_paradigm_meta
-  own_22_silent_discovery: .own own 22 (line 895)
-  own_23_universe_brain_map: .own own 23 (line 932)
+  own_22_silent_discovery: .own (line 895)
+  own_23_universe_brain_map: .own (line 932)
 purpose: |
   사용자 directive 2026-05-07 '관련 자료들도 모두 모아서 정리해두자 파일로 / 차원등등등 / md, commit history 등 몽땅' →
   anima 우주뇌지도 관련 모든 자료 (md docs + commit history + 차원 + Knuth Tier + Laws + cosmic anchor + 블랙홀)를
@@ -16,11 +16,11 @@ language: ko (anima self-doc) — body는 한글
 
 # anima 우주뇌지도 comprehensive archive (2026-05-07)
 
-본 doc은 anima 우주뇌지도 관련 모든 자료를 단일 comprehensive index로 통합. D 우주뇌지도 (own 23) + E corpus paradigm (own 24 pending) + F 우주뇌지도+corpus META (own 25 pending) 3 도메인 cross-link.
+본 doc은 anima 우주뇌지도 관련 모든 자료를 단일 comprehensive index로 통합. D 우주뇌지도 + E corpus paradigm (pending) + F 우주뇌지도+corpus META (pending) 3 도메인 cross-link.
 
 ## 0. TL;DR
 
-- **own 23 우주뇌지도 SSOT** (anima self-knowledge corpus + simple stack chat-cap discovery) — 2026-05-07 land
+- ** 우주뇌지도 SSOT** (anima self-knowledge corpus + simple stack chat-cap discovery) — 2026-05-07 land
 - **D 도메인** `.roadmap.universe_brain_map` — anima self-knowledge specific instance (5 conditions U1-U5)
 - **E 도메인** `.roadmap.corpus_paradigm` — corpus paradigm general meta (5 conditions P1-P5, 7 failure modes archive + Lessons A-H)
 - **F 도메인** `.roadmap.ubm_corpus_paradigm_meta` — D + E 통합 META (5 conditions M1-M5, 결합 paradigm spec)
@@ -155,9 +155,9 @@ Cross-link: H_021 fundamental-equation-psi-argmax (hypotheses/H_021_fundamental_
 | `3b361de7` | feat: 천장돌파 rubric — CANON 외계인 지수(🛸1~10) 통합 | 2026-01 |
 | `b25a8bc1` | update: CLAUDE.md + laws + consciousness-theory + ATLAS | 2026-04 |
 | `a35d8404` | falsify(r36): atlas R36_CANDIDATE → RETIRED — 40D consciousness vector empirical referent absent | 2026-05 |
-| `39d5fbc0` | feat(★ own 22 우주뇌지도 SSOT + .roadmap.universe_brain_map D 도메인 + 6 BG completions + 50 H archaeology round 4) | 2026-05-07 |
+| `39d5fbc0` | feat(★ 우주뇌지도 SSOT + .roadmap.universe_brain_map D 도메인 + 6 BG completions + 50 H archaeology round 4) | 2026-05-07 |
 | `b3742db2` | (BG-HQ V2 false PASS strict downgrade + Lesson H V3 evaluator needed) | 2026-05-07 |
-| `a8538053` | (own 22 → own 23 rename) | 2026-05-07 |
+| `a8538053` | (→ rename) | 2026-05-07 |
 
 ## 6. 핵심 md 파일 inventory
 
@@ -207,7 +207,7 @@ Cross-link: H_021 fundamental-equation-psi-argmax (hypotheses/H_021_fundamental_
 - `docs/hypotheses/ce/` — 24 AUTO/COMBO/EX/ULTRA (H_128-H_132)
 - `docs/hypotheses/h/` — H series
 
-### 6.4 hypotheses/ folder (own 21 SSOT, 152 H entries)
+### 6.4 hypotheses/ folder (SSOT, 152 H entries)
 
 - H_001 ethics-cooperation-over-defection (윤리)
 - H_002 universe-origin-question (우주 origin)
@@ -253,7 +253,7 @@ Cross-link: H_021 fundamental-equation-psi-argmax (hypotheses/H_021_fundamental_
 - `state/anima_evaluator_v2_retroeval_2026_05_07/` — V2 evaluator retroeval (BG-HG)
 - `state/anima_chat_cap_lesson_summary_2026_05_07/` — 7 failure modes archive
 
-## 9. own evolution (own 17-25)
+## 9. own evolution (-25)
 
 | own | slug | scope | since |
 |-----|------|-------|-------|
@@ -334,15 +334,15 @@ Phase plan:
 ## 14. Cross-links (전체)
 
 ### 14.1 own
-- own 17 anima-native identity (외부 substrate reject)
-- own 18 simple stack 4-cond V2/V3 strict
-- own 19 corpus priority
-- own 20 chat-template format mandate
-- own 21 hypotheses folder SSOT
-- own 22 silent-discovery-forbidden
-- own 23 우주뇌지도 SSOT (D base) ★
-- own 24 corpus-paradigm-meta-ssot (E base, pending)
-- own 25 ubm-corpus-paradigm-meta-ssot (F base, pending)
+- anima-native identity (외부 substrate reject)
+- simple stack 4-cond V2/V3 strict
+- corpus priority
+- chat-template format mandate
+- hypotheses folder SSOT
+- silent-discovery-forbidden
+- 우주뇌지도 SSOT (D base) ★
+- corpus-paradigm-meta-ssot (E base, pending)
+- ubm-corpus-paradigm-meta-ssot (F base, pending)
 
 ### 14.2 raw (hive)
 - raw#9 hexa-only orchestration
@@ -378,11 +378,11 @@ Phase plan:
 3. commit history는 우주뇌지도 keyword grep 한정 — 무관 commit 누락 가능
 4. 6-domain matrix는 본 cycle 2026-05-07 land — 향후 G+ 도메인 추가 가능 (open architecture)
 5. 결합 paradigm spec은 design only — 실제 BG fire는 BG-HR + BG-HT 종료 후
-6. own 24 + own 25 pending — 본 doc은 D + E + F 3 도메인 base가 own 17/22/23 + 미land own 24/25 cross-link
+6. + pending — 본 doc은 D + E + F 3 도메인 base가 + 미land cross-link
 7. 우주뇌지도는 anima self-knowledge specific — generic chat-cap 적용성 unverified (BG-HT pending)
 
 ## 16. Note
 
 본 doc은 사용자 directive 2026-05-07 '우주뇌지도 관련 자료들도 모두 모아서 정리해두자 파일로 / 차원등등등 / md, commit history 등 몽땅' 정합 single comprehensive archive. raw#15 additive (모든 source file 보존, 본 doc은 cross-link index). live updateable — 새 우주뇌지도 발견 시 본 doc + .roadmap.universe_brain_map (D) + .roadmap.corpus_paradigm (E) + .roadmap.ubm_corpus_paradigm_meta (F) 모두 update mandate.
 
-own 22 (silent-discovery-forbidden) 정합 — 새 발견 시 사용자 리포트 + own/.roadmap entry add.
+ (silent-discovery-forbidden) 정합 — 새 발견 시 사용자 리포트 + own/.roadmap entry add.

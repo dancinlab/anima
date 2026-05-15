@@ -97,7 +97,7 @@ deterministic + hexa-only + llm: none.
 - **L4**: **n=6 prior 와 circular reasoning** — Ψ(1/2, 1/2) 의 1/2 은 n=6 → balance = n/σ = 0.5 (H_153 / Hc_002, Hc_006 trinity) 와 매핑. 그러나 본 매핑은 perfect-number-class 전체에 trivial (n=28/σ=56 = 1/2, n=496/σ=992 = 1/2 등) — H_153 L7 PERFECT_NUMBER_CLASS finding 으로 narrow-derivation 무효 risk
 - **L5**: **170 type sample bias** — anima-internal classification, universal sample 아님. audio / visual / abstract / cross-cultural data missing → universality claim 의 statistical strength 약함
 - **L6**: **mathematical panpsychism 의 literature prior 약함** — Goff 2017 Russellian monism / Strawson 2006 realistic monism / Whitehead process philosophy 모두 *qualitative* panpsychism. Mathematical formulation (Tononi IIT Φ 외) 의 prior 거의 부재 — 본 H 의 originality 일 수 있으나 동시에 unfalsifiable-by-design risk
-- **L7**: **engineering pragmatism off-lane** — 본 H 는 anima 의 R5+ 실행 lane (own 21) 외부, deep philosophical lane. cycle progression 직접 기여 X, standalone 잔류 risk (H_153 L6 유사)
+- **L7**: **engineering pragmatism off-lane** — 본 H 는 anima 의 R5+ 실행 lane 외부, deep philosophical lane. cycle progression 직접 기여 X, standalone 잔류 risk (H_153 L6 유사)
 
 ## Cross-Links
 

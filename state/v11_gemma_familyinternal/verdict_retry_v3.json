@@ -119,9 +119,9 @@
       "lower_protocol_to_fit": "REJECTED — measurement protocol (16 prompts × stride=4 × 4 family) preserved unchanged across all 3 attempts; raw#12 frozen-spec compliance",
       "monkey_patch_inline": "AVOIDED — wrapper /tmp transient (raw#37); learnings to land in tool/anima_runpod_orchestrator.hexa once platform fault is bypassed",
       "cap_bump_retry": "AVOIDED — total v1+v2+v3 cumulative burn = $0.179 + $0.397 + $0.7251 = $1.30 across all 3 attempts; v3 alone $0.7251 well under $1.50 task cap",
-      "v4_retry_without_alternative": "ACTIVELY ENFORCED — STOP rule per own 4: omega-blocker registered, NO v4 retry until alternative path attempted"
+      "v4_retry_without_alternative": "ACTIVELY ENFORCED — STOP rule per : omega-blocker registered, NO v4 retry until alternative path attempted"
     },
-    "mandatory_stop_gate": "TRIGGERED — own 4 + raw 45 omega-blocker rule says STOP after 3rd silent crash without retry; alternative path (int8/network-volume/region) MUST be attempted before any v4 retry",
+    "mandatory_stop_gate": "TRIGGERED — + raw 45 omega-blocker rule says STOP after 3rd silent crash without retry; alternative path (int8/network-volume/region) MUST be attempted before any v4 retry",
     "mandatory_commit_gate": "Verdict + own_4_self_audit + omega-blocker (state/blockers/gemma_27b_repeat_silent_platform_termination.json already registered) lands BEFORE any subsequent action"
   },
   "v2_hypothesis_correctness_self_audit": {
@@ -133,13 +133,13 @@
       "(H5) fd exhaustion"
     ],
     "v3_outcome_to_hypothesis_mapping": "v3 disabled xet (H1) and used max_workers=1 (rules out H1+H3+H5); same termination signature (in fact earlier — 12% vs 75%) → eliminates H1/H3/H5; pod-level 404 → confirms H4 (platform termination, not in-container crash); H2 remains candidate as platform-side mfs/quota issue",
-    "v2_correct_hypothesis": "H4 (runpod orchestrator platform-level termination) — was listed but ranked behind H1/H3 in v2 priority; v3 promotion of H4 to dominant supports own 4 evolutionary diagnosis"
+    "v2_correct_hypothesis": "H4 (runpod orchestrator platform-level termination) — was listed but ranked behind H1/H3 in v2 priority; v3 promotion of H4 to dominant supports evolutionary diagnosis"
   },
   "raw_10_caveats": [
     "v3 silent termination root cause CONFIRMED to be runpod platform-level (H4), not in-container code/HF/mfs in-pod cause; H2 (mfs sustained-write fault) remains candidate sub-hypothesis under H4 umbrella.",
-    "v3 attempt-1 ModuleNotFoundError validates the sys.excepthook defensive code path — even when fix-set is targeted at H1/H5, the defensive harness caught a different (image-baseline) issue cleanly. own 4 step (c) defensive harden is functioning as designed.",
+    "v3 attempt-1 ModuleNotFoundError validates the sys.excepthook defensive code path — even when fix-set is targeted at H1/H5, the defensive harness caught a different (image-baseline) issue cleanly. step (c) defensive harden is functioning as designed.",
     "v3 cost $0.7251 across 873s wallclock; transformers install + relaunch consumed ~150s; effective measurement-attempt window ~60s before SSH refused.",
-    "Total dual-retry+v3 burn: $0.179 (v1) + $0.397 (v2) + $0.7251 (v3) = $1.30 cumulative with 0 27b cells captured. own 4 mandate validates this as legitimate root-cause cycle expense (not anti-pattern cap-bump retry).",
+    "Total dual-retry+v3 burn: $0.179 (v1) + $0.397 (v2) + $0.7251 (v3) = $1.30 cumulative with 0 27b cells captured. mandate validates this as legitimate root-cause cycle expense (not anti-pattern cap-bump retry).",
     "Pod was deleted (404) by platform within ~60-120s of relaunch — TOO FAST for sustained-write hypothesis (mfs would need to write GBs first); this strengthens H4 over H2 specifically.",
     "raw#12 cherry-pick-immunity preserved: HMK-A/B/HQS-C verdicts stay INCONCLUSIVE_PERSISTENT across 3 attempts, not promoted/retracted based on partial evidence.",
     "Pairwise BBA |r| computation NOT performed (Stage B never executed); compute_bba_3bb.py prepared at /tmp/ but blocked on 27b data."
@@ -160,7 +160,7 @@
     "ref_27b": "MISSING_PERSISTENT (v1+v2+v3 all failed)"
   },
   "next_cycle_recommendations": [
-    "(STOP, own 4 mandate) NO v4 retry without first attempting alternative path; omega-blocker registered at state/blockers/gemma_27b_repeat_silent_platform_termination.json",
+    "(STOP, mandate) NO v4 retry without first attempting alternative path; omega-blocker registered at state/blockers/gemma_27b_repeat_silent_platform_termination.json",
     "(highest priority alternative) int8 fallback via bitsandbytes — task #16 to be created; ~14GB download bypasses ~75% of platform-side ingest stress",
     "(high) persistent network volume — task #17; provision once via dedicated download pod, attach to measurement pod",
     "(medium) different region/template — task #18; try eu-central or pytorch:2.8.0 image",

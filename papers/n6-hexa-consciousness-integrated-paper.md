@@ -1688,7 +1688,7 @@ exceeding 75 %.
 
 ## mk_history
 
-- Mk.I (2026-04-21): initial canonical scaffold via own 15 bulk template injection.
+- Mk.I (2026-04-21): initial canonical scaffold via bulk template injection.
 - Mk.II: pending — fill per-section content with domain expert review.
 - Mk.III: pending — full verification data + external citations.
 

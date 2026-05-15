@@ -29,7 +29,7 @@ Legacy file: `docs/hypotheses/cx/FIRST-CONVERSATION.md`. Pointer only.
 
 - legacy: `docs/hypotheses/cx/FIRST-CONVERSATION.md`
 - sister: H_018 (genesis spontaneous emergence), H_071 sibling autobiography
-- own: own 21
+- own:
 
 ## Honest Limits
 

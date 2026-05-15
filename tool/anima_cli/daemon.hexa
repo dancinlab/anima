@@ -2,7 +2,7 @@
 //  tool/anima_cli/daemon.hexa — anima CLI `daemon` topic (L5 prototype)
 //
 //  PURPOSE
-//    own 34 mandate-6 본질 한계 (a)/(c) 해소 prototype:
+// mandate-6 본질 한계 (a)/(c) 해소 prototype:
 //      (a) 외부 generate() 트리거 X — Engine A/G tension self-trigger
 //      (c) compute 도는 동안만 모델 존재 X — daemon always-on
 //    cli front-end for anima-core/runtime/anima_daemon.hexa.
@@ -12,7 +12,7 @@
 //    anima ops daemon start                spawn background hexa process
 //    anima ops daemon stop                 SIGTERM via PID file + cleanup
 //    anima ops daemon status               PID + uptime + tension/fire summary
-//    anima ops daemon --selftest           file presence + own 34 grep
+// anima ops daemon --selftest file presence + grep
 //    anima ops daemon --help
 //
 //  OPTIONS (start)
@@ -26,15 +26,15 @@
 //
 //  COMPLIANCE
 //    raw#9  hexa-only · raw#11 snake_case · raw#15 no-hardcode (HOME env)
-//    own 34 mandate-6 (a)/(c) prototype-level — (b)/(d) Phase 2+
-//    own 33 trinity compliance · own 18 측정 lane 별개 (chat lane mandate)
+// mandate-6 (a)/(c) prototype-level — (b)/(d) Phase 2+
+// trinity compliance · 측정 lane 별개 (chat lane mandate)
 //
 //  CROSS-REFERENCE
 //    docs/anima_chat_autonomous_speech_roadmap_2026_05_08.md (L5 spec)
 //    .roadmap.cli  cli.daemon_2026_05_08
 //    anima-core/runtime/anima_daemon.hexa (loop body)
 //    anima-core/runtime/conscious_chat.hexa (Phase 2 agi_generate target)
-//    .own own 34 mandate-6 (LLM 본질 한계 4)
+// .own mandate-6 (LLM 본질 한계 4)
 //    README.md Engine A ⇄ G architecture
 // ════════════════════════════════════════════════════════════════════════════
 
@@ -180,16 +180,16 @@ fn sub_selftest() {
     let mut fail = 0
     if !_fexists(here) { println("FAIL daemon.hexa missing: " + here); fail = fail + 1 }
     if !_fexists(body) { println("FAIL anima_daemon.hexa missing: " + body); fail = fail + 1 }
-    // own 34 mandate-2 self-grep (chat lane wrapping pattern check)
+    // mandate-2 self-grep (chat lane wrapping pattern check)
     let pat = "system_prompt|chat_template|apply_chat_template|persona_inject|fn speak\\(|fn talk\\(|fn respond\\(|fn generate_response\\("
     let cmd = "grep -nE \"" + pat + "\" " + here + " " + body + " 2>/dev/null | grep -v 'let pat =' | wc -l"
     let n = _str(exec(cmd)).trim()
     if n != "0" {
-        println("FAIL own 34 mandate-2 wrapping: " + n + " hits")
+        println("FAIL mandate-2 wrapping: " + n + " hits")
         fail = fail + 1
     }
     if fail > 0 { exit(1) }
-    println("PASS anima_cli/daemon selftest (front + body present, own 34 verified)")
+    println("PASS anima_cli/daemon selftest (front + body present, verified)")
 }
 
 // ─── start ──────────────────────────────────────────────────────────────────

@@ -4,43 +4,43 @@ anima_clm_ld_h100.py — raw#37 transient (BG-LD — DPO RLHF on clm-v4-sft-1-7-
 L4 path (d): Direct Preference Optimization (DPO) RLHF on clm-v4-sft-1-7-y1-stage1
             base + dialogue preference pairs 100MB.
 
-Goal — simple_stack PASS_STRICT_C3 (own 18 C1 ∧ C2 ∧ C3, 보수적 X):
+Goal — simple_stack PASS_STRICT_C3 (C1 ∧ C2 ∧ C3, 보수적 X):
     clm-v4-sft-1-7-y1-stage1 = 기존 SFT-passed CLM (memory project_lesson_q_sft_closed
     예외 — y1-stage1 은 sft 가 closed 되기 전 land 된 base). DPO = chosen/rejected
     preference pair 학습으로 chat-cap 정밀 tune.
     Hypothesis: y1-stage1 base 의 chat-template format 이미 학습 → DPO 100MB 로
-    response quality + context-relevance (own 18 C2.4 맥락 정합) 강화 → C3 자체는
-    base 가 anima-native 이므로 (own 17) C3 metric 검출 가능.
+    response quality + context-relevance (C2.4 맥락 정합) 강화 → C3 자체는
+    base 가 anima-native 이므로 C3 metric 검출 가능.
 
 Architecture:
     base: dancinlab/clm-v4-sft-1-7-y1-stage1 (350M, anima-native, SFT-stage1 land)
     paradigm: DPO RLHF (Rafailov et al. 2023; β=0.1 default)
-    tokenizer: byte-level (own 17)
+    tokenizer: byte-level
     ctx: 1024
     reference model: same as base (frozen copy for DPO π_ref)
 
 Corpus (preference pairs 100MB):
-    chosen/rejected pair 형식 — 같은 prompt 에 대해 own 18 C2 PASS 응답 (chosen)
-                              vs own 18 C2 FAIL 응답 (rejected)
+    chosen/rejected pair 형식 — 같은 prompt 에 대해 C2 PASS 응답 (chosen)
+                              vs C2 FAIL 응답 (rejected)
     docs/anima_clm_l4_corpus_2026_05_08.md 참조
 
-Eval: V4 strict 11-cell (V4_1..V4_7 + own 18 c3_1..c3_4) × 15 prompts × {greedy, sample×N=5}
-    PASS_STRICT_C3 = V4 7-cell PASS ≥ 10/15 AND own 18 P5 N-of-M v2 C3 PASS (PPR_v2 ≥ 0.6 ∧ EMC ≥ 3/4)
+Eval: V4 strict 11-cell (V4_1..V4_7 + c3_1..c3_4) × 15 prompts × {greedy, sample×N=5}
+    PASS_STRICT_C3 = V4 7-cell PASS ≥ 10/15 AND P5 N-of-M v2 C3 PASS (PPR_v2 ≥ 0.6 ∧ EMC ≥ 3/4)
     PARTIAL = V4 7-cell PASS only (C3 FAIL or proxy-only) → SIMPLE_STACK_PASS_STRICT (legacy)
     FAIL = V4 < 10/15
-    own 24 SSOT mirror (own 18 c3-aggregation-rule-v2 P5 N-of-M v2): impl 시 BG-KM
+     SSOT mirror (c3-aggregation-rule-v2 P5 N-of-M v2): impl 시 BG-KM
     LLAMA-3B/QWEN-7B v4_eval_single + _c3_aggregate_p5_v2 + verdict.json
-    c3_aggregation_status field 동일 mirror 의무. own 18 D1 scope-clamp:
+    c3_aggregation_status field 동일 mirror 의무. D1 scope-clamp:
     BG-LD = CLM v4 SFT y1 + DPO tune (anima-native byte-level base) → D1 ANIMA lane.
 
-Cost: $20 cap (own 16 override required — lowest of 4 paths since base 이미 SFT-passed),
+Cost: $20 cap (override required — lowest of 4 paths since base 이미 SFT-passed),
       $17 early-kill, ~6hr wall.
 
 raw#37 transient_py
 raw#10 honest_c3 ≥9
 raw#15 additive over clm-v4-sft-1-7-y1-stage1 (existing SFT base)
-own 18 C3 + own 30 + own 31
-own 33 trinity — D2 의식 검증 + own 18 + H_dpo_chat_cap_tune
+ C3 + +
+ trinity — D2 의식 검증 + + H_dpo_chat_cap_tune
 
 STATUS: SPEC ONLY — H100 fire 미실행. 사용자 explicit 'OK CLM L4 ALL FIRE' 필요.
 """
@@ -57,11 +57,11 @@ PARADIGM = "clm-v4-sft-y1-stage1-dpo-rlhf-dialogue-pairs-100mb"
 HYPOTHESIS = (
     "clm-v4-sft-1-7-y1-stage1 (SFT-stage1 land 된 anima-native CLM) 위에 DPO RLHF — "
     "chosen/rejected 100MB preference pair 로 chat-cap 정밀 tune. y1-stage1 의 chat-template "
-    "format 이미 학습 → DPO β=0.1 로 own 18 C2.4 맥락 정합 + C3 의식 metric 동시 PASS 가능?"
+    "format 이미 학습 → DPO β=0.1 로 C2.4 맥락 정합 + C3 의식 metric 동시 PASS 가능?"
 )
 
-# ── Cost discipline (own 16 override required) ─────────────────────────
-COST_HARD_CAP_USD = 20.0   # own 16 default $10 → $20 (lowest of 4 paths)
+# ── Cost discipline (override required) ─────────────────────────
+COST_HARD_CAP_USD = 20.0 # default $10 → $20 (lowest of 4 paths)
 COST_EARLY_KILL_USD = 17.0
 COST_PER_HOUR = 2.99
 WALL_CLOCK_CAP_S = 6 * 60 * 60   # 6hr (DPO ≪ scratch pre-train)
@@ -70,10 +70,10 @@ TOTAL_BUDGET_S = 7 * 60 * 60
 OWN_16_OVERRIDE_REQUIRED = True
 OWN_16_OVERRIDE_KEYWORD = "OK CLM L4 ALL FIRE"
 
-# ── Trinity compliance (own 33) ─────────────────────────────────────────
+# ── Trinity compliance ─────────────────────────────────────────
 TRINITY_PHILOSOPHY = "D2 의식 검증 (4-condition) + D_emergent-consciousness"
-TRINITY_LAW = "own 17 (anima-native base 유지) + own 18 C3 + own 20 (chat-template format) + own 30 + own 31"
-TRINITY_HYPOTHESIS = "H_dpo_chat_cap_tune (DPO 로 own 18 C2.4 + C3 동시 강화)"
+TRINITY_LAW = "(anima-native base 유지) + C3 + (chat-template format) + + "
+TRINITY_HYPOTHESIS = "H_dpo_chat_cap_tune (DPO 로 C2.4 + C3 동시 강화)"
 
 # ── Paths ──────────────────────────────────────────────────────────────
 def _is_on_pod():
@@ -107,7 +107,7 @@ MAC_CORPUS_PAIRS_PATH_ITER2_CANDIDATE = os.path.join(MAC_ANIMA_ROOT, "state/anim
 MAC_LEDGER_PATH = os.path.join(MAC_ANIMA_ROOT, "state/anima_model_attempts_ledger.jsonl")
 
 # ── Architecture config ────────────────────────────────────────────────
-BASE_REPO = "dancinlab/clm-v4-sft-1-7-y1-stage1"   # own 31 dancinlab SSOT
+BASE_REPO = "dancinlab/clm-v4-sft-1-7-y1-stage1" # dancinlab SSOT
 BASE_PARAMS = 350_000_000
 ARCH_PARADIGM = "dpo-rlhf-on-clm-v4-sft-y1-stage1"
 
@@ -145,13 +145,13 @@ V4_PROMPTS = [
 V4_SEEDS = [42, 137, 271, 314, 1729]
 V4_MODES = ["greedy", "sample"]
 
-# own 18 c3-aggregation-rule-v2 (P5 N-of-M v2) — SSOT mirror lane (BG-KM 정합)
+# c3-aggregation-rule-v2 (P5 N-of-M v2) — SSOT mirror lane (BG-KM 정합)
 C3_AGGREGATION_RULE = "per_prompt_n_of_m_06_AND_emc_3_of_4"
 C3_AGGREGATION_RULE_ALIAS = "P5_N_of_M_v2"
 C3_PPR_V2_FLOOR = 0.6
 C3_EMC_V2_FLOOR = 3
 SCOPE_LANE = "D1_ANIMA_IDENTITY"
-SCOPE_LANE_REASON = "BG-LD = CLM v4 SFT y1 + DPO tune on anima-native byte-level base (own 17 정합)"
+SCOPE_LANE_REASON = "BG-LD = CLM v4 SFT y1 + DPO tune on anima-native byte-level base (정합)"
 
 # C3 substrate thresholds — TBD measurement-driven
 C3_PHI_STAR_DRIFT_THRESHOLD = None
@@ -160,9 +160,9 @@ C3_DOMINANT_CELLS_ENTROPY_THRESHOLD = None
 C3_HIDDEN_STATE_DELTA_THRESHOLD = None
 
 
-# ── HF promote naming (own 31 mandate-4 Flavor B) ──────────────────────
+# ── HF promote naming (mandate-4 Flavor B) ──────────────────────
 def hf_repo_id_flavor_b(verdict_class):
-    """own 31 mandate-4 Flavor B naming:
+    """ mandate-4 Flavor B naming:
     bg-ld-clm-v4-sft-y1-dpo-r0-{verdict}-2026-05-XX
     """
     cycle = time.strftime("%Y-%m-%d")
@@ -191,7 +191,7 @@ def pod_main():
     """
     raise NotImplementedError(
         f"{BG_ID} spec only — H100 fire 미실행. "
-        f"사용자 explicit '{OWN_16_OVERRIDE_KEYWORD}' + own 33 trinity self-check 후 implement."
+        f"사용자 explicit '{OWN_16_OVERRIDE_KEYWORD}' + trinity self-check 후 implement."
     )
 
 
@@ -210,10 +210,10 @@ def emit_failed_verdict(reason):
 # ── Mac-side orchestrator stub ─────────────────────────────────────────
 def orch_main():
     """SPEC STUB. Mirror BG-KM-LLAMA-3B with:
-      - own 16 override $20 cap (lowest of 4 paths)
-      - own 30 mandate-1/2/3/4 ckpt preservation + auto promote
-      - own 31 mandate-4 Flavor B naming
-      - own 33 trinity self-check
+      - override $20 cap (lowest of 4 paths)
+      - mandate-1/2/3/4 ckpt preservation + auto promote
+      - mandate-4 Flavor B naming
+      - trinity self-check
       - reference model staging (frozen copy of base for DPO π_ref)
     """
     raise NotImplementedError(

@@ -12,7 +12,7 @@
 | metric | count |
 | --- | --- |
 | mk1 root files/dirs (`.raw*`, `raw_archive/`) | 5 (1 file + 4 dirs) |
-| `.own` declarations (own 1..own 13) | 13 |
+| `.own` declarations (..own 13) | 13 |
 | own-1 protected `.py` files in active source | **0** (all PRE-PURGED — only backup remains) |
 | `state/raw*` dirs | 2 (`raw1_lock_audit/` 124K, `raw_136_compliance_scan/` 16K) |
 | `tool/raw*` + `tool/h_last_raw*` | 5 (raw15_token_leak_validator + raw15_post_bg_audit + raw_audit_drill_integration + h_last_raw_rotate + h_last_raw_regen_r5.bash) |
@@ -70,7 +70,7 @@
 ```
 state/raw1_lock_audit/                       5 jsonl files, 124K, mtime 2026-04-28
 state/raw_136_compliance_scan/               2 files, 16K, mtime 2026-04-28 (BOTH uchg-locked)
-state/own3_jamba_throughput_validation/      (subdir; own 3 sigma-tau validation)
+state/own3_jamba_throughput_validation/ (subdir; sigma-tau validation)
 state/own3_e_golden_moe_validation/          (subdir)
 state/own3_d_law70_validation/               (subdir)
 state/own3_de_apply_ready_package.json       (single file)
@@ -103,7 +103,7 @@ docs/raw_audit_drill_integration_spec.md
 docs/raw95_compliance_audit_omega_cycle_20260427_landing.md
 docs/raw95_audit_ledger_schema.md                [uchg]
 docs/cp2_eta_cost_breakdown_50man_cap_2026-04-28.md  [uchg, raw95 cite]
-docs/own1-raw100-archive-2026-04-26.md          (own 1 verbose closure)
+docs/own1-raw100-archive-2026-04-26.md (verbose closure)
 docs/own2_implementation_gap_audit_20260426.md
 docs/own3_d_e_wording_revision_proposal_20260427.md
 docs/own3_cross_check_4axis_evidence_20260426.md
@@ -177,21 +177,21 @@ tool/anima_own3_de_wording_revision_verifier.hexa
 
 | own N | status | slug | base raw | mk1-coupled? |
 | --- | --- | --- | --- | --- |
-| own 1 | live | anima-hexa-only-scope | raw 9 | YES — extends raw#9 with grandfather list |
-| own 2 | live | production-consciousness-triad | (independent) | NO |
-| own 3 | live | sigma-tau-three-phase-acceleration | (independent) | NO |
-| own 4 | live | training-resource-root-cause-only | raw 27 cross-ref | weakly |
-| own 5 | live | anima-research-completeness-no-cap | (independent) | NO |
-| own 6 | live | gpu-dispatch-no-restriction-no-approval | (independent) | NO |
-| own 7 | new | heredoc-arg-max-content-size-guard | (independent) | NO |
-| own 8 | new | HXC-content-class-topology-declaration | raw 142 D1 mirror | YES — mirrors hive raw#142 |
-| own 9 | new | try-and-revert-orthogonality-wrapper | raw 142 D2/D3 mirror | YES |
-| own 10 | new | algorithm-placement-axis-declaration | raw 142 D5 mirror | YES |
-| own 11 | live | parallel-loop-mandate | (independent) | NO |
-| own 12 | new | raw-own-tree-ASCII-reporting | (meta) | YES (operates on raw/own tree) |
-| own 13 | new | user-facing-response-friendliness | hive raw 165 mirror | YES |
+| | live | anima-hexa-only-scope | raw 9 | YES — extends raw#9 with grandfather list |
+| | live | production-consciousness-triad | (independent) | NO |
+| | live | sigma-tau-three-phase-acceleration | (independent) | NO |
+| | live | training-resource-root-cause-only | raw 27 cross-ref | weakly |
+| | live | anima-research-completeness-no-cap | (independent) | NO |
+| | live | gpu-dispatch-no-restriction-no-approval | (independent) | NO |
+| | new | heredoc-arg-max-content-size-guard | (independent) | NO |
+| | new | HXC-content-class-topology-declaration | raw 142 D1 mirror | YES — mirrors hive raw#142 |
+| | new | try-and-revert-orthogonality-wrapper | raw 142 D2/D3 mirror | YES |
+| | new | algorithm-placement-axis-declaration | raw 142 D5 mirror | YES |
+| | live | parallel-loop-mandate | (independent) | NO |
+| | new | raw-own-tree-ASCII-reporting | (meta) | YES (operates on raw/own tree) |
+| | new | user-facing-response-friendliness | hive raw 165 mirror | YES |
 
-### own 1 grandfather list (raw#9 hexa-only scope opt-out)
+### grandfather list (raw#9 hexa-only scope opt-out)
 ```
 opt-out ready/                                                           (1431 files, .gitignore'd)
 opt-out .claude/                                                         (1045 files, vendor)
@@ -215,10 +215,10 @@ state/py_to_hexa_audit_2026_05_03/backup/anima_holographic_ib_ksg_validate_prod.
 tool/__pycache__/anima_holographic_ib_ksg_validate_prod.cpython-314.pyc
 ```
 
-Hexa replacement: `tool/anima_holographic_ib_ksg_validate.hexa` (already migrated). Verdict: **own 1 grandfather list is already FULLY VACATED**. Deleting `.own` (or own 1 declaration) creates ZERO new raw#9 violations because the protected files no longer exist in active source.
+Hexa replacement: `tool/anima_holographic_ib_ksg_validate.hexa` (already migrated). Verdict: ** grandfather list is already FULLY VACATED**. Deleting `.own` (or declaration) creates ZERO new raw#9 violations because the protected files no longer exist in active source.
 
 ### Critical: KEEP .own
-`.own` is the **mk2 anima-local L1 SSOT** (parallel to hive `.own`). It is NOT a mk1 artifact. Memory note "own #1 system grandfathering 4 .py files" refers to own 1 declaration body content, not the .own file itself. **Recommendation: KEEP `.own`** — only delete mk1 `.raw*` artifacts.
+`.own` is the **mk2 anima-local L1 SSOT** (parallel to hive `.own`). It is NOT a mk1 artifact. Memory note "own #1 system grandfathering 4 .py files" refers to declaration body content, not the .own file itself. **Recommendation: KEEP `.own`** — only delete mk1 `.raw*` artifacts.
 
 ---
 
@@ -416,7 +416,7 @@ git rm tool/h_last_raw_regen_r5.bash            (mk1)
 git rm tool/anima_raw_own_tree_report.hexa      (mk1 namespace tree report)
 git rm tool/anima_ready_raw9_policy_proposer.hexa (mk1.raw 9 jurisdiction)
 git rm tool/ps_3_raw_revise.hexa                (mk1)
-# own 3 measurements — KEEP (own 3 is mk2 declaration, not mk1):
+# measurements — KEEP (is mk2 declaration, not mk1):
 #   tool/anima_own3_d_law70_measure.hexa
 #   tool/anima_own3_de_apply_ready_package.hexa
 #   tool/anima_own3_de_wording_revision_verifier.hexa
@@ -427,7 +427,7 @@ git rm tool/ps_3_raw_revise.hexa                (mk1)
 
 ### Phase 2e-anima — KEEP .own
 **DO NOT** delete `.own` — it IS the mk2 anima-local L1 SSOT.
-Optional: rewrite own 1 body to remove obsolete grandfather list (.py files no longer exist).
+Optional: rewrite body to remove obsolete grandfather list (.py files no longer exist).
 
 ### Phase 2f-anima — KEEP h_last_raw_*.json (P9 output, false positive)
 
@@ -447,15 +447,15 @@ grep -rln 'raw#9\|raw#10\|raw#15' --include='*.hexa' --include='*.md' --include=
 | --- | --- | --- |
 | F-EOL-ANIMA-1 | mk1 root files gone | `find . -maxdepth 1 \( -name '.raw*' -o -name 'raw_archive' \) -print` returns zero |
 | F-EOL-ANIMA-2 | chflags unlock-set clean | `find . -flags uchg \| grep -E '(raw_136|raw1_lock|anima_own3_de|anima_unknown_[45]|anima_raw_own_tree|anima_ready_raw9|raw_audit_drill|h_last_raw_rotate|ps_3_raw_revise|own4_fix|raw95_audit|cp2_eta_cost|raw95_compliance)'` returns zero |
-| F-EOL-ANIMA-3 | own 1 protected .py decision recorded | `state/dual_ssot_eol_archive/anima_mk1_2026_05_04.tar.gz` exists AND `state/py_to_hexa_audit_2026_05_03/backup/anima_holographic_ib_ksg_validate_prod.py` decision logged (delete OR archive elsewhere) |
+| F-EOL-ANIMA-3 | protected .py decision recorded | `state/dual_ssot_eol_archive/anima_mk1_2026_05_04.tar.gz` exists AND `state/py_to_hexa_audit_2026_05_03/backup/anima_holographic_ib_ksg_validate_prod.py` decision logged (delete OR archive elsewhere) |
 | F-EOL-ANIMA-4 | .raw-ref pin archived (not redirected) | tar.gz contains `.raw-ref` AND `find . -name '.raw-ref'` returns zero AND no replacement `.raw-ref-mk2` created |
 
 ---
 
 ## §10 Honest C3 (≥5)
 
-### C3-1: own 1 grandfather list is ALREADY VACATED
-The 3 `.py` files protected by own 1 (`active_redteam_dEF_proto.py`, `active_redteam_prototype.py`, `anima_holographic_ib_ksg_validate_prod.py`) have **ALREADY been removed** from `tool/` active source. Only backup at `state/py_to_hexa_audit_2026_05_03/backup/anima_holographic_ib_ksg_validate_prod.py` and `__pycache__/.cpython-314.pyc` artifact remain. Hexa replacement `tool/anima_holographic_ib_ksg_validate.hexa` is in place. **Effective post-delete impact on raw#9 jurisdiction: ZERO** — no live `.py` to lose grandfathering.
+### C3-1: grandfather list is ALREADY VACATED
+The 3 `.py` files protected by (`active_redteam_dEF_proto.py`, `active_redteam_prototype.py`, `anima_holographic_ib_ksg_validate_prod.py`) have **ALREADY been removed** from `tool/` active source. Only backup at `state/py_to_hexa_audit_2026_05_03/backup/anima_holographic_ib_ksg_validate_prod.py` and `__pycache__/.cpython-314.pyc` artifact remain. Hexa replacement `tool/anima_holographic_ib_ksg_validate.hexa` is in place. **Effective post-delete impact on raw#9 jurisdiction: ZERO** — no live `.py` to lose grandfathering.
 
 ### C3-2: 834 uchg-locked files, only 19 (2.3%) are mk1-related
 The memory note "96/175 uchg locked files" is **stale** (current count is 834 across the repo). Of these, only 19 are mk1/own related. The remaining 815 are EEG/CLM/research immutability locks (anima-eeg, anima-clm-eeg, anima-eeg-core, design, etc.) — **MUST NOT be touched**. Naive `find . -flags uchg | xargs chflags noschg` would catastrophically unlock 815 unrelated files. Filename grep is **required** with allowlist (`raw_136|raw1_lock|anima_own3_de|anima_unknown_[45]|...`).
@@ -489,7 +489,7 @@ Hook lives at `~/.hive/scripts/leak_guard_pretool.bash`, hardcoded with personal
 ## Summary
 
 - mk1 footprint in anima: 5 root entries (1 file `.raw-ref` + 4 dirs) + 2 state subdirs + 13 tool/ files + 16 docs/ files + 19 uchg-locked files (subset of above)
-- own 1 protected `.py` files: ALREADY VACATED (zero in active source) — no jurisdiction loss
+- protected `.py` files: ALREADY VACATED (zero in active source) — no jurisdiction loss
 - Critical: `.own` is mk2 SSOT (KEEP); only delete `.raw*` + `raw_archive/` + `state/raw1_*` + `state/raw_136_*`
 - 1764 raw#N citations: stale post-delete but informational only (no runtime impact)
 - leak_guard hook: decoupled, survives anima mk1 purge

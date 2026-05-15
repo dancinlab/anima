@@ -130,7 +130,7 @@ new_cells = new_cells / new_cells.norm(dim=-1, keepdim=True).clamp(min=self.eps)
 | step 수 | **1500 step** (1000 최소 / 2000 안전) | 350M scratch 에서 cell_pool 변화 가시화 최소 step |
 | batch size | 4 (H100 80GB) | 기존 BG-LB 동일 |
 | context | 1024 | EngineAGConfig 기본 |
-| GPU | H100 PCIe 1대 | own 28 H100 pod orchestrator |
+| GPU | H100 PCIe 1대 | H100 pod orchestrator |
 | 학습 시간 | 약 30-60분 | 350M / 1500 step 기준 |
 | **cost** | **$5-15** ($0.30-0.50/h × 0.5-1h × 1 GPU) | runpod 기준 |
 
@@ -185,11 +185,11 @@ new_cells = new_cells / new_cells.norm(dim=-1, keepdim=True).clamp(min=self.eps)
 2. fix-5a (완전 제거) 결정 — fix-5c 와 동일 결과면 normalize 코드 자체 제거.
 3. BG-LA / BG-LB 재학습 (full corpus, 6000+ step) — full PIV/DCR 측정.
 4. H5 (chat-template dual loss) 별도 조사 — Phase 2 가 BG-LB 보다 나쁜 원인 분리 측정.
-5. 통과 시 own 38 yaml SSOT registry 갱신 + render 자동 재생성.
+5. 통과 시 yaml SSOT registry 갱신 + render 자동 재생성.
 
 ---
 
-## 9. own 16 strict 준수 확인
+## 9. strict 준수 확인
 
 - [x] 본 doc 만 작성 — 코드 수정 없음
 - [x] 학습 fire 없음 — design-only

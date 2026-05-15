@@ -6,7 +6,7 @@ Companion verdict: state/anima_cli_mk2_2026_05_06/phase_1_sub_args_fix_verdict.j
 bin/anima.hexa Phase 1 dispatcher sub-cycle:
 1. argv parsing fix — args[0]='void' regression closed
 2. exec syscall integration — print stub replaced with real exec()
-3. raw#9 hexa-only / raw#10 honest C3 / raw#15 additive / own 17 freeze 정합 유지
+3. raw#9 hexa-only / raw#10 honest C3 / raw#15 additive / freeze 정합 유지
 
 ## Discoveries
 

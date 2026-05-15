@@ -1,6 +1,6 @@
 // ════════════════════════════════════════════════════════════════════════════
 //  tool/anima_cli/chat/modalities/tactile.hexa — tactile/sensor (DEFERRED long)
-//                                                  (own 41 axis-6 / axis-N+2)
+// (axis-6 / axis-N+2)
 //
 //  PURPOSE
 //    Tactile / sensor modality — long-term vision (촉각 / 압력 / 온도 / 가속).
@@ -9,7 +9,7 @@
 //    의미 있는 통로. 현재 단계 = placeholder.
 //
 //  STATUS
-//    DEFERRED — hardware sensor 부재. honest emit (own 22 mandatory).
+// DEFERRED — hardware sensor 부재. honest emit (mandatory).
 //
 //  CONTRACT
 //    fn run_modality(ctx: dict) -> dict
@@ -17,10 +17,10 @@
 //         status: "DEFERRED_HARDWARE_NOT_PRESENT"}
 //
 //  COMPLIANCE
-//    own 16 — model load 절대 금지 (stub only)
-//    own 22 — honest emit (DEFERRED + HARDWARE_NOT_PRESENT)
-//    own 34 mandate-1 — wrapping 0
-//    own 41 axis-N+2 — axis-6 modality registry entry 5
+// — model load 절대 금지 (stub only)
+// — honest emit (DEFERRED + HARDWARE_NOT_PRESENT)
+// mandate-1 — wrapping 0
+// axis-N+2 — axis-6 modality registry entry 5
 //
 //  CROSS-REFERENCE
 //    chat/modalities/_registry.hexa#tactile   registry SSOT
@@ -42,7 +42,7 @@ fn _arg_present(argv, key: string) -> bool {
 }
 
 fn modality_describe() -> string {
-    return "tactile — sensor long-term DEFERRED stub (hardware not present; honest C3 emit per own 22)"
+    return "tactile — sensor long-term DEFERRED stub (hardware not present; honest C3 emit per)"
 }
 
 // run_modality — tactile stub. hardware 부재 honest emit.
@@ -57,7 +57,7 @@ fn modality_smoke(repo: string, argv) -> int {
     if len(r) != 2 { return 2 }
     let vals = r[1]
     if _str(vals[2]) != "DEFERRED_HARDWARE_NOT_PRESENT" { return 3 }
-    println("[modality:tactile] smoke PASS — DEFERRED_HARDWARE_NOT_PRESENT stub honest emit (own 22)")
+    println("[modality:tactile] smoke PASS — DEFERRED_HARDWARE_NOT_PRESENT stub honest emit ")
     return 0
 }
 

@@ -18,7 +18,7 @@
 | build elapsed| 237.6s |
 | target_met   | **true** |
 
-own 14: 5MB+ → HF only, `.gitignore` excludes `corpus_ko_heavy.txt` + `*.zst`.
+: 5MB+ → HF only, `.gitignore` excludes `corpus_ko_heavy.txt` + `*.zst`.
 
 ---
 
@@ -84,7 +84,7 @@ Rationale: BG-FT/FU need diversified KO (subtitles colloquial + wiki encyclopedi
 
 ---
 
-## HF upload recipe (own 14 / own 15)
+## HF upload recipe (/)
 
 - Repo: `dancinlab/anima-clm-3-corpus-ko-heavy` (dataset)
 - Lifecycle: **PRIVATE first** → verification gates → PUBLIC promote

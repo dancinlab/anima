@@ -1,9 +1,9 @@
 // ════════════════════════════════════════════════════════════════════════════
-//  tool/anima_cli/chat/axes/_registry.hexa — chat AXIS meta-registry (own 41)
+// tool/anima_cli/chat/axes/_registry.hexa — chat AXIS meta-registry
 //
 //  PURPOSE
 //    Single source of truth for chat AXIS-OF-AXES (= "axis 의 axis").
-//    이 파일은 own 41 plugin pattern 의 hook 한 층 더 위 — 어떤 axis
+// 이 파일은 plugin pattern 의 hook 한 층 더 위 — 어떤 axis
 //    들이 chat orchestra 에 존재하는지 자체를 데이터로 보유.
 //
 //    기존 4 registry (lanes/_registry.hexa, modes(benchmark.hexa#modes),
@@ -16,12 +16,12 @@
 //    5 차원으로 확장됩니다.
 //
 //  USER DIRECTIVE (2026-05-09 verbatim)
-//    "all bg go" + "next" → cycle 2026-05-10 own 41 axis-N+1 hook T+1 step
+// "all bg go" + "next" → cycle 2026-05-10 axis-N+1 hook T+1 step
 //    원 directive 누적: "전부 cli 에 구현하고 사용할지는 --option 으로
 //      가능하게" + "앞으로도 기본값 또는 --option 형태 여러가지 생길꺼니까
 //      고려해서 설계 구현".
 //
-//  REGISTRY ENTRY SCHEMA (8-field; own 41 plugin pattern mirror)
+// REGISTRY ENTRY SCHEMA (8-field; plugin pattern mirror)
 //    axis_id              short hook id (axis-1 / axis-2 / axis-3 / axis-4)
 //    name                 axis 이름 (lane / mode / init-pattern / transport)
 //    registry_file        relative path under tool/anima_cli/chat/
@@ -31,28 +31,28 @@
 //    describe_helper      helper function 이름 (lane_describe /
 //                         mode_describe / pattern_describe / transport_describe)
 //    status               LANDED | SKELETON | SPEC_CARRY | DEFERRED
-//    axis_label_internal  own 41 internal label (axis-3 / axis-6 / axis-8 /
+// axis_label_internal internal label (axis-3 / axis-6 / axis-8 /
 //                         axis-N) — not necessarily contiguous with axis_id
 //
-//  EXTENSION CONVENTION (own 41 axis-N+1 hook 정의)
+// EXTENSION CONVENTION (axis-N+1 hook 정의)
 //    NEW axis (e.g. verifier) → 본 파일에 1 줄 row 추가 + 새 axis 의 own
 //    registry hexa (e.g. tool/anima_cli/chat/verifiers/_registry.hexa) +
 //    plugin 모듈들. dispatcher (chat.hexa) / benchmark.hexa 코드 변경 0 줄
 //    — 이게 hook 성공의 정의.
 //
 //  COMPLIANCE
-//    own 14 V14 — registry helper 결정성 보존 (no random / no time / no env)
-//    own 16 — model load 절대 금지 (registry meta only)
-//    own 18 chat-cap C2 — axis hook 은 측정 차원 자체 (verdict 아님)
-//    own 22 mandatory report — axis 발견 자체가 mandatory report
-//    own 24 single SSOT — 본 파일 = axis 의 single SSOT (4 registry 는
+// V14 — registry helper 결정성 보존 (no random / no time / no env)
+// — model load 절대 금지 (registry meta only)
+// chat-cap C2 — axis hook 은 측정 차원 자체 (verdict 아님)
+// mandatory report — axis 발견 자체가 mandatory report
+// single SSOT — 본 파일 = axis 의 single SSOT (4 registry 는
 //      axis 내부 SSOT 유지, hierarchy 정리)
-//    own 33 trinity — registry entries cross-link own 17 / own 18 / own 34
-//    own 34 mandate-1 — wrapping 0 (registry 는 meta only; no model wrap)
-//    own 38 매단계 — registry yaml↔md mirror in
+// trinity — registry entries cross-link / /
+// mandate-1 — wrapping 0 (registry 는 meta only; no model wrap)
+// 매단계 — registry yaml↔md mirror in
 //      anima/registry/anima_artifact_registry.yaml chat_axes_meta section
-//    own 39 yaml↔md SSOT — registry yaml + this hexa file co-update
-//    own 41 chat lane plugin pattern — 본 파일 = own 41 의 hook 한 층 위
+// yaml↔md SSOT — registry yaml + this hexa file co-update
+// chat lane plugin pattern — 본 파일 = 의 hook 한 층 위
 //      (axis 의 axis = meta-registry; T+1 step land)
 //
 //  CROSS-REFERENCE
@@ -77,7 +77,7 @@ fn _str(x) -> string {
 //              describe_helper, status, axis_label_internal
 fn axes_registry() -> array {
     return [
-        // ───── axis-1 — lane plugin (own 39 / own 41 land 2026-05-09) ─────────
+        // ───── axis-1 — lane plugin (/ land 2026-05-09) ─────────
         ["axis-1",
          "lane",
          "lanes/_registry.hexa",
@@ -87,7 +87,7 @@ fn axes_registry() -> array {
          "LANDED",
          "axis-3"],
 
-        // ───── axis-2 — mode plugin (own 41 axis-6 promote 2026-05-10 T+2) ───
+        // ───── axis-2 — mode plugin (axis-6 promote 2026-05-10 T+2) ───
         // T+2 step: inline anchor (lanes/benchmark.hexa#modes) → standalone
         // modes/_registry.hexa promote (option A; cleaner future-proof).
         // benchmark.hexa _bench_modes / _mode_describe vendored mirror retained
@@ -101,7 +101,7 @@ fn axes_registry() -> array {
          "LANDED",
          "axis-6"],
 
-        // ───── axis-3 — init-pattern plugin (own 41 axis-8 land 2026-05-09) ───
+        // ───── axis-3 — init-pattern plugin (axis-8 land 2026-05-09) ───
         ["axis-3",
          "init-pattern",
          "init_patterns/_registry.hexa",
@@ -111,7 +111,7 @@ fn axes_registry() -> array {
          "LANDED",
          "axis-8"],
 
-        // ───── axis-4 — transport plugin (own 41 axis-N land 2026-05-09) ──────
+        // ───── axis-4 — transport plugin (axis-N land 2026-05-09) ──────
         ["axis-4",
          "transport",
          "transports/_registry.hexa",
@@ -121,7 +121,7 @@ fn axes_registry() -> array {
          "LANDED",
          "axis-N"],
 
-        // ───── axis-5 — verifier plugin (own 41 axis-N+1 land 2026-05-10 T+3) ─
+        // ───── axis-5 — verifier plugin (axis-N+1 land 2026-05-10 T+3) ─
         // T+1 슬롯에서 활성: dispatcher (chat.hexa) / benchmark.hexa 모두
         // raw#15 additive 방식으로 verifier case 추가 (4 axis 기존 case 보존).
         // F-axes-6 fixture LANDED — axis-5 추가 시 코드 변경 0 줄 (verifier
@@ -135,7 +135,7 @@ fn axes_registry() -> array {
          "LANDED_2026_05_10_T_3",
          "axis-N+1"],
 
-        // ───── axis-6 — modality plugin (own 41 axis-N+2 land 2026-05-10 T+6) ─
+        // ───── axis-6 — modality plugin (axis-N+2 land 2026-05-10 T+6) ─
         // T+5 design spec carry → T+6 5 plugin module skeleton + axis-6 활성.
         // raw#15 additive — dispatcher (chat.hexa) / benchmark.hexa 모두
         // modality case 만 추가; 기존 5 axis (lane/mode/init-pattern/transport/
@@ -216,7 +216,7 @@ fn axes_registry_path(key: string, root: string) -> string {
     return root + "/tool/anima_cli/chat/" + rf
 }
 
-// Selftest — registry shape sanity (no dispatch, no model load — own 16).
+// Selftest — registry shape sanity (no dispatch, no model load —).
 fn main() {
     let reg = axes_registry()
     if len(reg) < 6 {

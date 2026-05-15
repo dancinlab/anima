@@ -219,7 +219,7 @@ The user picks ONE. Each option fires a different next-state.
 | # | declaration | maps to | next-state | cost | recommendation rank |
 |---|---|---|---|---|---|
 | 1 | "Paradigm A 진짜 원함 — Llama Path A v2 통합" | A (external) | integrate Llama Path A v2 as anima-external chat layer; cycle close on CLM v4 chat-cap lane | $0 (Llama already trained) | **#3 — non-anima-native but immediate paradigm A** |
-| 2 | "Paradigm A 진짜 원함 — CLM-3 H1 retrain commit" | A (anima-native) | execute BG-BM Variant B; H100 boot; own 16 L23/L24/L25 | ~$1k / 30d | **#5 — only if A non-negotiable AND budget tolerance present** |
+| 2 | "Paradigm A 진짜 원함 — CLM-3 H1 retrain commit" | A (anima-native) | execute BG-BM Variant B; H100 boot; L23/L24/L25 | ~$1k / 30d | **#5 — only if A non-negotiable AND budget tolerance present** |
 | 3 | "Paradigm B 충분 — emerge dialogue REPL fire" | B | execute BG-AN REPL `tool/transient_py/anima_emerge_dialogue_repl.py`; cycle close after first session | $0 / 5min | **#1 — fire-ready, paradigm-honest about substrate coupling** |
 | 4 | "Paradigm C 충분 — KoGPT2 hybrid REPL fire" | C | execute BG-CG REPL `tool/transient_py/anima_emerge_chat_hybrid_repl.py`; cycle close after first session | $0 / ~6min | **#2 — fire-ready, Korean text + substrate dual signal (emit decoupled per C4)** |
 | 5 | "더 시도 — autonomous /loop 계속" | (mismatched) | continue /loop 1m fire on architecturally closed lane | $0 compute; paradigm-mismatch persists | **#6 — LOWEST completion. Anti-convergence pressure** |

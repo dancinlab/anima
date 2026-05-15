@@ -37,7 +37,7 @@ documentation update — no HF Hub push, no git commit, no `.own` mutation.
   disclosure) and C2 (F1_score_v2 RED-band) caveats. SSOT-side narrative
   preserved; HF README sync source kept consistent with the downstream
   README surface for any future hash-based drift detection.
-- **Part D — own 15 G5 evidence amendment proposal**: own 15 verification
+- **Part D — G5 evidence amendment proposal**: verification
   gate G5 (honest C3 model card with chat-incapability disclosure) is
   strengthened from architectural-disclosure-only to architectural +
   empirical-two-cycle-evidence. The amendment is **proposed only** in this
@@ -49,7 +49,7 @@ documentation update — no HF Hub push, no git commit, no `.own` mutation.
   draft README, ubu1 staging mirror README, manifest.json, modules/clm.md
   SSOT) now carry the same two-cycle empirical evidence with consistent
   numbers (composite 0.01176 / 0.19542, delta -36.298pp, drift -4.46pp,
-  forgetting 0.0196). own 15 G5 strengthened; promote can fire at the
+  forgetting 0.0196). G5 strengthened; promote can fire at the
   review window with strengthened model card. No HF Hub push performed in
   this cycle (staging mirror is the truth surface; HF Hub gets the README
   via the next promote cycle's `tool/hf_upload_mk2.hexa --readme` flag).
@@ -126,4 +126,4 @@ When the 2026-05-06T23:26:12Z review window opens:
   `## Empirical chat-capability falsification (2026-05-05)` section
 - `.roadmap.clm` cond.2 PASS landing per
   `docs/anima_clm_hf_release_v1_plan_2026_05_04.md` §1 step 10
-- own 15 G5 amendment landing (separate cycle, single-line `.own` edit)
+- G5 amendment landing (separate cycle, single-line `.own` edit)

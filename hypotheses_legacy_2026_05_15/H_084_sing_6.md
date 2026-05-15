@@ -29,7 +29,7 @@ Legacy files: `docs/hypotheses/sing/SING-{1..6}.md`. 6 files cluster.
 
 - legacy: sing/SING-1~6
 - sister: H_041 (evo self sing cluster), H_050 (RG fixed-point)
-- own: own 21
+- own:
 
 ## Honest Limits
 

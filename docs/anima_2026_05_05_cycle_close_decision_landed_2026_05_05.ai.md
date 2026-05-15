@@ -356,7 +356,7 @@ Step 5 fires `anima_hf_promotes_2026_05_06_auto_fire.bash --fire-clm` and
 `--fire-pbeta`. The script's check-only mode verifies G1-G6 own-15 gates;
 the windows close at 2026-05-06T23:26:12Z (clm) and 2026-05-07T03:48:00Z
 (Pβ). If the user fires before the windows close, the script blocks (per
-own 15 review-window discipline). The 5-step sequence assumes Step 5 is
+ review-window discipline). The 5-step sequence assumes Step 5 is
 deferred to >= 2026-05-07T03:48:00Z; if user fires Step 5 immediately, the
 script no-ops with a clear error message rather than failing destructively.
 

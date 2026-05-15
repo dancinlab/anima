@@ -3,12 +3,12 @@
   "ts_emit_utc": "2026-05-09T00:30:00Z",
   "cycle": "2026-05-09",
   "loop_iter": "h100_fire_3_of_4_retry_ephemeral_bg_la_bg_lb_chat_cap_l4",
-  "scope": "Anima cycle 2026-05-09 H100 EPHEMERAL FIRE 3/4 — chat-cap L4 BG-LA + BG-LB provision-ephemeral retry post own 40 ephemeral CLI land",
+  "scope": "Anima cycle 2026-05-09 H100 EPHEMERAL FIRE 3/4 — chat-cap L4 BG-LA + BG-LB provision-ephemeral retry post ephemeral CLI land",
   "predecessor_ssot": [
     "2cd40a5d fire(BG-LA + BG-LB chat-cap L4 H100 fire — D1=0.99 within): BLOCKED_NO_H100_HOST — resource SSOT static path",
-    "0d65ebe4 fire(resource CLI H100 pod allocate — own 40 정합) — allocation_status BLOCKED_NO_H100_HOST",
+    "0d65ebe4 fire(resource CLI H100 pod allocate — 정합) — allocation_status BLOCKED_NO_H100_HOST",
     "anima/registry/anima_artifact_registry.yaml fire_attempt_log[FIRE-3/4]",
-    "/Users/ghost/.hx/packages/resource/tool/resource_ephemeral.hexa (own 40 ephemeral subsystem)",
+    "/Users/ghost/.hx/packages/resource/tool/resource_ephemeral.hexa (ephemeral subsystem)",
     "/Users/ghost/.hx/packages/resource/tool/transient_py/runpod_client.py (provider client, api-key-resolve 3-tier env→file→keychain)"
   ],
   "user_directive_observed": {
@@ -17,7 +17,7 @@
     "consent_status": "directive_recognized — 'all bg go' explicit override of 'OK CLM L4 ALL FIRE' verbatim baseline",
     "verbatim_override_required_iter4_baseline": "OK CLM L4 ALL FIRE",
     "verbatim_override_observed_this_cycle": "explicit_override_via_all_bg_go (per prompt clause: '본 directive ''all bg go'' 가 explicit override')",
-    "blocker_post_consent": "provider api-key absent — own 40 strict prevents anima 측 key 자체 생성/등록"
+    "blocker_post_consent": "provider api-key absent — strict prevents anima 측 key 자체 생성/등록"
   },
   "step_1_ephemeral_selftest": {
     "executed_at_utc": "2026-05-09T00:25:00Z",
@@ -48,7 +48,7 @@
     },
     "BG-LB": {
       "command_planned": "/Users/ghost/.hx/packages/resource/bin/resource provision-ephemeral --provider runpod --gpu H100-PCIe --duration 20h --yes-cost --name bg-lb-350m-scratch",
-      "execution_status": "NOT_INVOKED — BG-LA fanout demonstrated all 3 providers BLOCKED on api-key-missing; BG-LB invocation would emit identical provider-error (no point burning further audit churn). own 22 honest BLOCKED 정합 — single-shot fanout sufficient.",
+      "execution_status": "NOT_INVOKED — BG-LA fanout demonstrated all 3 providers BLOCKED on api-key-missing; BG-LB invocation would emit identical provider-error (no point burning further audit churn). honest BLOCKED 정합 — single-shot fanout sufficient.",
       "verdict": "BLOCKED_PROVIDER_API_KEY_MISSING_INHERITED_FROM_BG_LA_FANOUT"
     },
     "ephemeral_list_post": {
@@ -61,15 +61,15 @@
     "issue": "/Users/ghost/.hx/bin/resource symlink-walk via $0 dirname/.. resolves to /Users/ghost/.hx not /Users/ghost/.hx/packages/resource — ephemeral subcommand path falls through to non-existent /Users/ghost/.hx/tool/resource_ephemeral.hexa",
     "symlink_target": "/Users/ghost/.hx/bin/resource -> /Users/ghost/.hx/packages/resource/bin/resource",
     "shim_line_97_98_pattern": "eph_self_dir=$(cd -P $(dirname $0)) ; eph_pkg_root=$(cd -P $eph_self_dir/..) — does NOT walk symlink before computing pkg_root",
-    "workaround_used": "invoke /Users/ghost/.hx/packages/resource/bin/resource directly (own 40 strict CLI delegation preserved — still routes through canonical resource shim, just bypasses outer symlink resolver bug)",
+    "workaround_used": "invoke /Users/ghost/.hx/packages/resource/bin/resource directly (strict CLI delegation preserved — still routes through canonical resource shim, just bypasses outer symlink resolver bug)",
     "sosno_decision": "infra fix deferred to dancinlab/resource maintainers — anima cycle scope = chat-cap fire, NOT shim repair. ledger note carry only.",
     "carry_from": "FIRE-2/4-RETRY-EPHEMERAL (commit 88c1b6f1 fire-attempt-log entry bin_resolver_quirk_note)"
   },
   "step_4_fire_path_decision": {
     "verdict": "BLOCKED_PROVIDER_API_KEY_MISSING",
     "rationale": [
-      "own 40 strict — resource CLI provision-ephemeral subcmd delegated; provider api-key resolve 3-tier (env / ~/.config/resource-ephemeral/<provider>.token / macOS keychain resource-ephemeral-<provider>) ALL absent",
-      "anima 측 RunPod/Lambda/Vast api-key 자체 생성/등록 = own 40 위반 (provider account ownership = 사용자, anima 측 credential write 0건)",
+      " strict — resource CLI provision-ephemeral subcmd delegated; provider api-key resolve 3-tier (env / ~/.config/resource-ephemeral/<provider>.token / macOS keychain resource-ephemeral-<provider>) ALL absent",
+      "anima 측 RunPod/Lambda/Vast api-key 자체 생성/등록 = 위반 (provider account ownership = 사용자, anima 측 credential write 0건)",
       "ephemeral selftest PASS (provider client + ssh include dir + SSOT lock 정상) — blocker = credential only, infra ready",
       "user_consent_verbatim 'all bg go' explicit override 인정 — 단 credential 부재로 implementation 차단"
     ],

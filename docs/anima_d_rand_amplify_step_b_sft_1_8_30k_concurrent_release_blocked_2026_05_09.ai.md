@@ -24,7 +24,7 @@
 Audit log `/Users/ghost/.hx/packages/resource/state/audit/audit.jsonl` reveals:
 - **02:11-02:18 KST**: BG-LA/LB/LC/LD chat-cap L4 fire chain provisioned 4 sibling pods + released them all with `ckpt_override=y` (Engine A/G arch absent honest abort).
 - **02:12:50Z**: our `nfvcb923nq920j` provisioned for sft-1-8 fire (concurrent with sibling activity).
-- **02:29:34Z**: our pod released with `ckpt_override=y`. **Anima current task did NOT call release.** Concurrent process operating on shared `.resource` SSOT terminated mid-tokenization with own 30 ckpt-pull bypass.
+- **02:29:34Z**: our pod released with `ckpt_override=y`. **Anima current task did NOT call release.** Concurrent process operating on shared `.resource` SSOT terminated mid-tokenization with ckpt-pull bypass.
 
 ## Honest C3 findings (4 newly surfaced)
 
@@ -38,16 +38,16 @@ Audit log `/Users/ghost/.hx/packages/resource/state/audit/audit.jsonl` reveals:
 
 ## Compliance
 
-- **own 14** V14 strict — carry (no fire ckpt to mirror)
-- **own 16** cost discipline — PARTIAL_PASS ($0.88 incurred; 16.6 of $17.5 cap unspent)
-- **own 22** mandatory report — PASS (state json + ledger entry + this md + 4 honest_findings_c3 + commit)
-- **own 30** ckpt-pull-pre-release — NOT_VIOLATED_BY_ANIMA (concurrent actor initiated release with ckpt_override=y)
-- **own 33** trinity — carry
-- **own 34** wrap=0 — PASS
-- **own 37** HF visibility lifecycle — carry (no upload)
-- **own 38** 단계별 저장 — PASS (state json captures phase 1-8)
-- **own 39** yaml↔md — this md is the paired render
-- **own 40** resource CLI delegation — MOSTLY_PASS (provision/release via CLI; manual ssh_alias rebuild from GraphQL = deterministic repair for documented CLI bug, NOT lifecycle bypass)
+- **** V14 strict — carry (no fire ckpt to mirror)
+- **** cost discipline — PARTIAL_PASS ($0.88 incurred; 16.6 of $17.5 cap unspent)
+- **** mandatory report — PASS (state json + ledger entry + this md + 4 honest_findings_c3 + commit)
+- **** ckpt-pull-pre-release — NOT_VIOLATED_BY_ANIMA (concurrent actor initiated release with ckpt_override=y)
+- **** trinity — carry
+- **** wrap=0 — PASS
+- **** HF visibility lifecycle — carry (no upload)
+- **** 단계별 저장 — PASS (state json captures phase 1-8)
+- **** yaml↔md — this md is the paired render
+- **** resource CLI delegation — MOSTLY_PASS (provision/release via CLI; manual ssh_alias rebuild from GraphQL = deterministic repair for documented CLI bug, NOT lifecycle bypass)
 
 ## Next actions (post-block)
 
@@ -60,5 +60,5 @@ Audit log `/Users/ghost/.hx/packages/resource/state/audit/audit.jsonl` reveals:
 
 - State JSON: `state/anima_d_rand_amplify_step_b_sft_1_8_30k_concurrent_release_blocked_2026_05_09.json`
 - Ledger entry: `anima/registry/anima_artifact_registry.yaml` line 1457 (`FIRE-2/4-RETRY-EPHEMERAL-3`)
-- This doc (own 39 yaml↔md): `docs/anima_d_rand_amplify_step_b_sft_1_8_30k_concurrent_release_blocked_2026_05_09.ai.md`
+- This doc (yaml↔md): `docs/anima_d_rand_amplify_step_b_sft_1_8_30k_concurrent_release_blocked_2026_05_09.ai.md`
 - Commit: pending — "fire(sft-1-8 Step B 30K H100 ephemeral actual fire — concurrent SSOT release killed mid-tokenization)"

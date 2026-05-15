@@ -37,7 +37,7 @@ AdS/CFT correspondence + Bekenstein-Hawking bound â†’ consciousness informationì
 - legacy: `docs/hypotheses/H-CX-531-holographic-consciousness.md`
 - sister H: H_002 (universe origin), H_009 (Fisher), H_011 (IIT)
 - literature: 't Hooft (1993), Susskind (1995)
-- own: own 21
+- own:
 
 ## Honest Limits
 

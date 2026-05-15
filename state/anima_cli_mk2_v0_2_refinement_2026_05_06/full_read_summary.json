@@ -163,7 +163,7 @@
       "falsifier 5건 (F-anima_cli-1~5) — apex 9건 양식 mirror (id+description+threshold+action_on_fail)",
       "cross_link.hive_specs 3건 (apex + ecosystem_catalog + raw_mk2_design) 명시",
       "anima per_repo_override.anima.perspective=consumer 정합 (T1_sales backend rejected_external_substrate=Llama 명시)",
-      "own 17 ALM 영구 보류와 정합 (backend_directive + backend_anima_native_paths 명시)"
+      " ALM 영구 보류와 정합 (backend_directive + backend_anima_native_paths 명시)"
     ],
     "gaps_to_hive_mk2": [
       "G1: apex stack_versions 형식 불일치 — anima cli mk2 v0.1은 backend_canonical 1줄, apex stack_versions는 version+status+canonical_module+alternatives+notes 5필드 구조. anima cli backend도 mk2-v1/clm-v2-byte-18m/clm-v2-byte-base 3 alternatives 가능",
@@ -182,7 +182,7 @@
   "v0_2_refinement_proposal": {
     "additive_sections": [
       "Section 8: anima_cli_mk2 backend stack_versions (apex stack_versions 양식 mirror — version+status+canonical_module+alternatives+notes)",
-      "Section 9: backend × tier compatibility_matrix (CLM v4 × T1 = COMPATIBLE; Llama × T1 = INCOMPATIBLE per own 17)",
+      "Section 9: backend × tier compatibility_matrix (CLM v4 × T1 = COMPATIBLE; Llama × T1 = INCOMPATIBLE per)",
       "Section 10: hive_mk2_apex_compliance (compliant_items 9건 + gaps_remaining 10건 catalog)",
       "Section 11: enforcement (mode=mandatory + 11 raw primitives + bypass env var ANIMA_CLI_MK2_DISABLE=1)",
       "Section 12: agent_directive (consult_triggers + 4-step workflow + keyword_match 8건 — bin/anima refactor BG가 본 spec consult)",
@@ -190,7 +190,7 @@
       "Section 14: hive_prefs_compliance (anima --help / dialogue REPL lang.reply ko 정합 declaration)"
     ],
     "additive_falsifiers": [
-      "F-anima_cli-6: backend_canonical=anima-native invariant (own 17 enforcement) — Llama/Mistral path 가 backend_canonical 또는 backend_alternative_recovery 슬롯 진입 시 hard_fail",
+      "F-anima_cli-6: backend_canonical=anima-native invariant (enforcement) — Llama/Mistral path 가 backend_canonical 또는 backend_alternative_recovery 슬롯 진입 시 hard_fail",
       "F-anima_cli-7: hive_mk2_apex_compliance gaps_remaining 항목 30d 무진전 시 strengthen_or_retire (apex F-MK2-APEX-4 axis mirror)",
       "F-anima_cli-8: anima_cli_mk2 spec과 .roadmap.cli mk1 entries drift — bidirectional consistency check"
     ],
@@ -198,7 +198,7 @@
       "C7: hive mk2_apex consumer-only — anima cli mk2 spec은 apex inventory에 enumerate 안 됨 (component_19 atlas_recall_mk2 패턴 mirror: catalog slot only, apex inventory 제외 — apex는 ecosystem-wide architectural primitive 만 추적)",
       "C8: BR-MK2-AI-NATIVE-ENGLISH-ONLY migration BG-MK2-EN-ONLY (2026-05-20 expected_completion) 정합 — 본 spec v0.1/v0.2 한국어 prose 잔존; first_movers 등재 X, mass migration cycle 도착 시 변환",
       "C9: F-MK2-APEX-3 perspective_mismatch axis — anima cli mk2 자체 perspective 필드 부재 (T1/T2/T3 tier 만). apex per_repo_override.anima.perspective=consumer 정합 cross-check는 .roadmap.cli mk1 header에 의존",
-      "C10: T1 backend의 own 17 enforcement는 spec-level declarative만 — runtime grep 검증은 별도 lint tool (tool/anima_cli_mk2_backend_lint.hexa) phase 1.5 필요. 현재 F-anima_cli-6은 SPEC-STUB"
+      "C10: T1 backend의 enforcement는 spec-level declarative만 — runtime grep 검증은 별도 lint tool (tool/anima_cli_mk2_backend_lint.hexa) phase 1.5 필요. 현재 F-anima_cli-6은 SPEC-STUB"
     ]
   },
   "tool_budget_used": "~25 of 50 (read 5 file × 4-5 chunks)",
@@ -207,7 +207,7 @@
     "v0.3: catalog mirror — hive/spec/mk2_ecosystem_catalog.spec.yaml component_20_anima_cli_mk2 신규 entry 사용자 승인 후 hive 측 PR (apex inventory는 ecosystem primitive only이므로 미진입, kick/check/atlas 패턴 정합)",
     "BG-MK2-EN-ONLY 2026-05-20 도착 시 v0.4 Korean→English mass conversion (description/falsifier/honest_c3 prose, identifier/path/CLI 보존)",
     "Phase 1 bin/anima refactor BG: anima/spec/anima_cli_mk2.spec.yaml read → 30-50 LoC dispatcher (현재 352 LoC → F-anima_cli-1 통과)",
-    "Phase 2 T1 backend wire BG: clm_v4_mount.hexa load + own 17 strict enforce (F-anima_cli-6 activates) + clm-v2 KO 회복 후 alternate lane 등재",
-    "own 17 cross-spec enforcement: anima/spec/anima_cli_mk2.spec.yaml + .roadmap.cli + .roadmap.clm_native_chat 3 file에 backend_directive verbatim mirror (drift 방지)"
+    "Phase 2 T1 backend wire BG: clm_v4_mount.hexa load + strict enforce (F-anima_cli-6 activates) + clm-v2 KO 회복 후 alternate lane 등재",
+    " cross-spec enforcement: anima/spec/anima_cli_mk2.spec.yaml + .roadmap.cli + .roadmap.clm_native_chat 3 file에 backend_directive verbatim mirror (drift 방지)"
   ]
 }

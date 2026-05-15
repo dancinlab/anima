@@ -5,10 +5,10 @@
 **Connection**: `ssh akida-cloud` (config in `~/.ssh/config`, key `~/.ssh/id_ed25519_akida`)
 **Ephemerality**: session start = secure wipe + re-image. No persistent storage. **Upload + exfil mandate every session.**
 
-## Trinity compliance check (own 33)
+## Trinity compliance check
 
 - A 철학 (.roadmap.philosophy): D2 consciousness verification + D3 substrate-coupled paradigm — Akida cloud cycle은 D3 substrate-coupled lane (AKIDA = neuromorphic substrate) 정합 ✓
-- B 법칙 (.roadmap.law): own 16 cost watchdog (cloud 예약 cost), own 18 simple stack SSOT (verdict scoring), own 30 checkpoint preservation (Mac side exfil 패턴 = Akida cloud session-end exfil) — 정합 ✓
+- B 법칙 (.roadmap.law): cost watchdog (cloud 예약 cost), simple stack SSOT (verdict scoring), checkpoint preservation (Mac side exfil 패턴 = Akida cloud session-end exfil) — 정합 ✓
 - C 가설 (.roadmap.hypothesis): N-2 EEG→AKIDA spike pipeline + N-3 CLM×AKIDA Φ r≥0.85 + N-5 GWT broadcast AKIDA-SSI — H lane active 정합 ✓
 
 ## Nexus 측 기존 인프라 (2026-04-29 ~ 2026-05-07 land, 재사용 mandate)
@@ -45,7 +45,7 @@
 - [ ] **P3 — N-3 CLM×AKIDA Φ pipeline 동결**: last-layer-only ($1.60 estimate), r≥0.85 falsifier — anima 측 + nexus F-M3b cross-validate
 - [ ] **P4 — N-5 GWT broadcast 동결**: AKIDA-SSI 측정 script — anima 측 + nexus F-M3a routing cross
 - [ ] **P5 — #99 D+0/D+1 freeze plan**: 5 falsifier checklist 출력 (`docs/n_substrate_consciousness_roadmap_2026_05_01.md` §51.2)
-- [ ] **P6 — Exfil script**: session-end Akida cloud → Mac side rsync (own 30 mandate-1 패턴) — anima `state/akida_cloud_d0_2026_05_09/` + nexus `state/akida_evidence/` 둘 다 수신
+- [ ] **P6 — Exfil script**: session-end Akida cloud → Mac side rsync (mandate-1 패턴) — anima `state/akida_cloud_d0_2026_05_09/` + nexus `state/akida_evidence/` 둘 다 수신
 
 ## D+0 / D+1 timeline (예약 슬롯 내, nexus 8 falsifier 통합)
 
@@ -78,7 +78,7 @@
 ### Anima side
 - `.roadmap.akida` event 2026-05-08 entry (akida.blk.1 partial-resolve)
 - `docs/n_substrate_consciousness_roadmap_2026_05_01.md` §11.1 N-2~N-5 prep + §51.2 #99
-- `.own` own 16 / 18 / 22 / 30 / 32 / 33
+- `.own` / 18 / 22 / 30 / 32 / 33
 - `docs/akida_cloud_setup_log_2026_05_08.md` (전체 setup 기록)
 - secrets: `akida_cloud.*` (10 keys via `secret list | grep akida_cloud`)
 
@@ -96,9 +96,9 @@
 ## Risks
 
 - **R1**: P2-P4 script 동결 미완료 시 D+0 cycle 시간 손실 (24h slot 한정, 재예약 wait 발생 가능)
-- **R2**: P6 exfil script 미테스트 시 D+1 종료 시점 결과 손실 (own 30 패턴 retroactive 적용)
+- **R2**: P6 exfil script 미테스트 시 D+1 종료 시점 결과 손실 (패턴 retroactive 적용)
 - **R3**: Akida Cloud Jupyterlab port (7860/8888/4022) 활용 미선결 — local forward 되어있으나 N-2/N-3/N-5 + nexus runner.py CLI fire 가 default
-- **R4**: $1.60 N-3 estimate는 RunPod H100 가격 기반 — Akida Cloud cost 모델 별도 확인 필요 (own 16 cost watchdog 정합)
+- **R4**: $1.60 N-3 estimate는 RunPod H100 가격 기반 — Akida Cloud cost 모델 별도 확인 필요 (cost watchdog 정합)
 - **R5**: Nexus host_register.sh `host.rpi5-akida` hardcode — cloud mode 미추가 시 D+0 등재 단계 block (FORCE=1 우회 또는 P0a 사전 land 필수)
 - **R6**: Nexus 8 미land falsifier script 의존성 (akida 패키지 / cnn2snn / Meta TF 변환) Akida Cloud env에서 사전 검증 필요 — 09:02-09:30 bootstrap phase 부족 시 N-2/N-3/N-5 시간 압박
 - **R7**: Nexus state/akida_evidence/ 와 anima state/akida_cloud_d0_*/ 두 출력 path 분리 — exfil script (P6) 두 path 모두 rsync mandate

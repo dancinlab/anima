@@ -1,6 +1,6 @@
 # anima-native-ko-small ubu1 fresh train — LANDED 2026-05-06 (BG-FY)
 
-**Status**: SIMPLE_STACK_PASS (own 18 strict 3-condition, 3/3 prompts)
+**Status**: SIMPLE_STACK_PASS (strict 3-condition, 3/3 prompts)
 **Spec**: F-anima-native-ko-small-1
 **Host**: ubu1 (192.168.50.119), RTX 5070 12GB, bf16
 **Cost**: $0 (owned hardware)
@@ -11,7 +11,7 @@
 
 ConsciousLM small (18M params, 6L/384d/6h, byte-level) fresh from-scratch
 on corpus_ko_heavy.txt (235MB Hangul-heavy KO) for 10000 steps **passes
-own 18 strict 3-condition on 3/3 KO prompts** with avg Hangul ratio 0.687
+ strict 3-condition on 3/3 KO prompts** with avg Hangul ratio 0.687
 and final deg_rate 0.33 — first anima-native KO model to clear the
 coherent + turn-format gates.
 
@@ -33,7 +33,7 @@ coherent + turn-format gates.
 | corpus split | 95/5 train/val |
 | tension lambda | 0.005 |
 
-## 3. eval progression — own 18 strict 3-condition
+## 3. eval progression — strict 3-condition
 
 | step | avg_hangul | deg_rate | own18 pass / 3 |
 |------|-----------|----------|----------------|
@@ -61,7 +61,7 @@ Greedy mode still produces some n-gram repetition ("이러한 이러한",
 with named speakers ("서연:", "유진:", "하은:") consistent with the
 corpus's bilingual conversation contract.
 
-## 5. own 18 strict per-prompt verdict (final)
+## 5. strict per-prompt verdict (final)
 
 ```
 안녕하세요          : avg_hangul=0.625  any_coherent=True   tform=0.85   ALL_PASS
@@ -98,18 +98,18 @@ ubu1:
 - `/home/aiden/anima_v2_source/conscious_lm.py` — SCP'd source
 - `/home/aiden/core/anima/state/anima_ko_corpus_assembly_2026_05_06/corpus_ko_heavy.txt` — SCP'd corpus (sha 2e98257f9...)
 
-own 14 enforced: ckpts (~70MB each, 350MB total) stay on ubu1 + HF, NOT in anima git.
+ enforced: ckpts (~70MB each, 350MB total) stay on ubu1 + HF, NOT in anima git.
 
-## 8. HF upload plan (own 14 + own 15 lifecycle)
+## 8. HF upload plan (+ lifecycle)
 
 Repo: `dancinlab/anima-native-ko-small-byte-18m` (TBD final naming)
 
-**Stage A — PRIVATE first (own 15)**:
+**Stage A — PRIVATE first **:
 
 1. Convert ckpt_final.pt → HF-style format:
    - `model_state_dict` (already saved)
    - Add minimal config json: `{architecture: "ConsciousLM", vocab: 256, n_layer: 6, d_model: 384, n_head: 6, block_size: 256, dropout: 0.20, dtype: "fp32"}`
-   - README with own 18 verdict embedded + reproduction command
+   - README with verdict embedded + reproduction command
 2. Upload via `hf` CLI (ubu1 venv_orchestrator hf at `/home/aiden/venv_orchestrator/bin/hf`):
    ```
    HF_TOKEN=$(secret get HF_TOKEN_NS) /home/aiden/venv_orchestrator/bin/hf \
@@ -119,8 +119,8 @@ Repo: `dancinlab/anima-native-ko-small-byte-18m` (TBD final naming)
    ```
 3. Verification gate:
    - re-download → SHA round-trip ckpt
-   - load + re-run own 18 strict eval → verdict.json should match
-4. After PRIVATE verification PASS → flip to PUBLIC (own 15 lifecycle).
+   - load + re-run strict eval → verdict.json should match
+4. After PRIVATE verification PASS → flip to PUBLIC (lifecycle).
 
 **Stage B — sister datasets repo** (corpus_ko_heavy + reproduction notes):
 - Already covered by separate `anima_ko_corpus_assembly_2026_05_06` lane;
@@ -140,7 +140,7 @@ Repo: `dancinlab/anima-native-ko-small-byte-18m` (TBD final naming)
 
 ## 10. next steps
 
-**PASS path → HF promote** (own 14 / 15 lifecycle):
+**PASS path → HF promote** (/ 15 lifecycle):
 - Stage A PRIVATE upload (~10 min, $0)
 - Verification gate (re-download + re-eval)
 - Stage B PUBLIC flip after gate PASS

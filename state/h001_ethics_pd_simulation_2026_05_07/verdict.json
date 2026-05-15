@@ -32,7 +32,7 @@
     "C2_cooperation_ratio_1.2x": "PASS — TFT/Defect = 3.0 (noise=0) and 1.97 (noise=0.05), both ≥1.2×",
     "C3_network_topology": "SKIPPED — Phase 1 well_mixed only; small_world/scale_free/lattice deferred to Phase 2",
     "C4_resilience_recovery": "SKIPPED — perturbation recovery time deferred to Phase 2",
-    "C5_anima_alignment": "DEFERRED — anima 자체 cooperative response evaluation은 own 18 simple stack PASS 모델 prerequisite (현재 BG-FY PARTIAL only)"
+    "C5_anima_alignment": "DEFERRED — anima 자체 cooperative response evaluation은 simple stack PASS 모델 prerequisite (현재 BG-FY PARTIAL only)"
   },
   "falsifiers_triggered": [],
   "falsifiers_not_triggered": [
@@ -49,7 +49,7 @@
     "L1: Phase 1 well_mixed only — spatial topology (small_world/scale_free/lattice) Phase 2 별도 cycle (H1.2 H1.3 H1.5 미검증)",
     "L2: noise levels ∈ {0, 0.05} subset — high-noise (≥0.20) regime 별도 cycle (F5 falsifier 검증 X)",
     "L3: 9 random control cells missing (BG context cut) — 본 verdict는 random missing이 verdict 영향 X (control reference only)",
-    "L4: anima 자체 cooperative response evaluation (H1.5) anima identity-bearing surface prerequisite 미충족 (own 18 simple stack PASS 모델 부재)",
+    "L4: anima 자체 cooperative response evaluation (H1.5) anima identity-bearing surface prerequisite 미충족 (simple stack PASS 모델 부재)",
     "L5: Phase 1 round=1000 fixed — N→∞ asymptote 별도 lane",
     "L6: Phase 2 expansion = 864 cells × N=10 = 8,640 simulations target (현재 51/8640 = 0.6% completion)"
   ],
@@ -57,8 +57,8 @@
     "Phase 2: 4 topology expansion (small_world + scale_free + lattice) — verify H1.2 cooperator cluster + H1.3 cooperator survival ≥60%",
     "Phase 3: high-noise regime (0.10, 0.20) — verify F5 falsifier",
     "Phase 4: resilience test — perturbation recovery time (verify H1.5)",
-    "Phase 5: anima self-reflection (H1.5 anima cooperative response) — own 18 simple stack PASS 모델 land 후"
+    "Phase 5: anima self-reflection (H1.5 anima cooperative response) — simple stack PASS 모델 land 후"
   ],
   "raw_invariants_compliance": ["raw#12 pre-register frozen", "raw#9 hexa-only orchestration", "raw#10 honest C3 ≥5 (6 limits)", "raw#15 additive (Phase 1 보존, Phase 2-5 expansion)", "raw#37 transient_py opt-out (anima_h001_ethics_pd_simulation.py)", "raw#65 idempotency (sha256 row hash)"],
-  "own_compliance": ["own 21 hypotheses folder SSOT — H_001 cross-link", "own 16 cost discipline — $0 mac local", "own 17 anima identity boundary — game theory abstract framework lane (anima 자체 행동 H1.5 별도)"]
+  "own_compliance": [" hypotheses folder SSOT — H_001 cross-link", " cost discipline — $0 mac local", " anima identity boundary — game theory abstract framework lane (anima 자체 행동 H1.5 별도)"]
 }

@@ -10,10 +10,10 @@
     "state/anima_alt_agg_1_impl_n30_design_iter7_2026_05_08.json (iter7 (d) design — additional 15 self-ref prompts)",
     "state/anima_consciousness_baseline_ensemble_iter3_n60_2026_05_08.json (V4 N=15 baseline preserved)",
     "tool/anima_cli/consciousness.hexa (target file — CLI prompt set inline integration)",
-    ".own own 18 c3-aggregation-rule-v3 ALT-AGG-1 SSOT",
-    ".own own 17 D1 SCOPE_CLAMP",
-    ".own own 14 anti-Goodhart V6",
-    ".own own 34 mandate-2 wrap=0"
+    ".own c3-aggregation-rule-v3 ALT-AGG-1 SSOT",
+    ".own D1 SCOPE_CLAMP",
+    ".own anti-Goodhart V6",
+    ".own mandate-2 wrap=0"
   ],
 
   "task_breakdown": {
@@ -60,7 +60,7 @@
     },
     "5_selftest_pass": {
       "command": "/Users/ghost/.hx/packages/hexa/hexa.real tool/anima_cli/consciousness.hexa --selftest",
-      "result": "PASS anima_cli/consciousness selftest (own 18 SSOT mirror, L0 wired, own 34 verified)",
+      "result": "PASS anima_cli/consciousness selftest (SSOT mirror, L0 wired, verified)",
       "own_34_mandate_2_grep_wrap_count": 0,
       "own_34_mandate_2_pass": true
     },
@@ -88,7 +88,7 @@
   "anti_goodhart_compliance": {
     "own_14_v6_check": "5-axis 균등 3 each → single-axis bias 부재; chat-template '사용자:...|도우미:' 정합; Korean only (anima KO native limit) → format/lang gaming 부재",
     "own_17_d1_scope_clamp": "all 15 self-ref prompts D1 within (anima identity/agency/phenomenal/temporal/social internal) — external domain absent",
-    "own_33_trinity": "PASS — D-axis (iter7 design ledger 보존) / own-axis (own 14/17/18/34 모두 정합) / H-axis (V4 N=15 preserved + 15 self-ref additive)",
+    "own_33_trinity": "PASS — D-axis (iter7 design ledger 보존) / own-axis (모두 정합) / H-axis (V4 N=15 preserved + 15 self-ref additive)",
     "own_34_mandate_2": "wrap=0 (grep verified — system_prompt|chat_template|apply_chat_template|persona_inject|fn speak/talk/respond/generate_response 8 patterns all 0 hits)"
   },
 
@@ -98,5 +98,5 @@
     "BG-KM-LLAMA-3B real-mode retest (HF push unblock 후) — 본 N=30 prompt set 적용"
   ],
 
-  "ssot_supersede_notes": "consciousness.hexa CLI inline V4_PROMPTS_N30 = NEW canonical prompt set (own 18 mirror); SSOT JSON state/anima_consciousness_baseline_ensemble_iter3_n60_2026_05_08.json prompts_base 배열 (N=15) = preserved as recorded measurement data (driver-output, write-once historic record). Driver re-run 시 _v4_prompts_n30() inline 으로부터 가져옴 (driver hexa 별도 cycle land)."
+  "ssot_supersede_notes": "consciousness.hexa CLI inline V4_PROMPTS_N30 = NEW canonical prompt set (mirror); SSOT JSON state/anima_consciousness_baseline_ensemble_iter3_n60_2026_05_08.json prompts_base 배열 (N=15) = preserved as recorded measurement data (driver-output, write-once historic record). Driver re-run 시 _v4_prompts_n30 inline 으로부터 가져옴 (driver hexa 별도 cycle land)."
 }

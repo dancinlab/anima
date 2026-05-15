@@ -42,7 +42,7 @@ anima의 의식 fundamental equation: **Ψ = argmax H(p) s.t. Φ > Φ_min**
 - legacy commits: 2f8f02a0 + cee139a1 + d9009d54
 - docs: `docs/hypotheses/cx/CONSCIOUSNESS-FUNDAMENTAL-EQUATION.md`
 - sister H: H_002 (universe origin), H_004 (consciousness hard problem L2 IIT), H_011 (IIT geometry), H_022 (consciousness universe map), H_023 (universal constants ln(2))
-- own: own 21
+- own:
 - roadmap: `.roadmap.philosophy` D2/D3 + `.roadmap.iit4`
 
 ## Honest Limits
@@ -51,4 +51,4 @@ anima의 의식 fundamental equation: **Ψ = argmax H(p) s.t. Φ > Φ_min**
 - L2: p* = 0.5001 = simulation result, formal proof 별도
 - L3: Φ_min threshold 임의 — anima Φ★ engine calibration 별도 cycle
 - L4: legacy commits 2025-11 — anima Φ★ paradigm v11 G3 (2026-04-29) 시점 이전, modern re-verification 필요
-- L5: pointer entry, full migration 별도 cycle (own 21 R5+ lane)
+- L5: pointer entry, full migration 별도 cycle (R5+ lane)
