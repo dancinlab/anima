@@ -193,3 +193,12 @@
 @N index_table_sync := "INDEX.md 표 형식 변환 sync" :: note [d=2026-05-15 active]
   text = "INDEX.md AXIS section 9 sub-axis 각 sub-table (Tier | ID | 한 줄 설명) — 본 AXIS.tape 32 entries 와 1:1 매핑 (A1 3 + A2 6 + A3 1 + A4 8 + A5 6 + A6 2 + A7 1 + A8 4 + A9 2 — INDEX 측 Hc_1283 RoM/n=5,6 별행 표기로 A2 5→6 적용)."
   cross_link = "INDEX.md ## AXIS section + MAIN.tape §INDEX-TABLE-FORMAT + PR #47"
+
+# ──────────────────────────────────────────────────────────────────────
+# §VERDICT-TIER-BLUE sync (2026-05-15)
+# ──────────────────────────────────────────────────────────────────────
+
+@N axis_blue_classify := "AXIS entries 🔵 파란색 reclassify" :: note [d=2026-05-15 active]
+  text = "AXIS.tape 32 SUPPORTED 중 수학/물리 closed entries 🔵 (12 entries): A2 Hc_1283 n=5,6 (PyPhi formal) + H_011 (PyPhi canonical) / A3 H_191 sub K_c (sympy + Kuramoto 1975) / A4 Hc_1282 + H_158 + H_160 + H_153 + H_176 + H_164 + H_181 (모두 sympy closed-form, H_173 만 numerical sim 으로 🟢 유지). 나머지 20 entries 🟢 SUPPORTED (numerical sim or evidence-aggregate)."
+  ratio = "🔵 12 / 🟢 20 (32 SUPPORTED total)"
+  cross_link = "INDEX.md ## AXIS sub-axis tables + MAIN.tape §VERDICT-TIER-BLUE + PR #48"

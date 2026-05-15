@@ -1099,3 +1099,25 @@
   scope = "INDEX.md sections 전체 표 형식 — AXIS (9 sub-axis tables) + HYPOTHESIS (5 폴더 + FALSIFIED 5 + NOT-PASSED 3 + META 1 + PARTIAL 9 + INSUFFICIENT 7 + DEFERRED 4) + PHILOSOPHY (8 principles + 13 verdict cycle + 4 §verdict-sync ledger)"
   format = "| Tier | ID | 한 줄 설명 | (3-column standard)"
   cross_link = "INDEX.md root SSOT — MAIN/AXIS/HYPOTHESIS/PHILOSOPHY 4-tape integrated navigation, PR #47"
+
+# ══════════════════════════════════════════════════════════════════════
+# §CLM-V1-DESIGN — CLM.tape §V-CLM-DESIGN-2026-05-15 .clm v1 design landed
+# ══════════════════════════════════════════════════════════════════════
+
+@D clm_v1_design := ".clm v1 design CLM.tape §V land (2026-05-15)" :: governance [d=2026-05-15 active]
+  scope = "CLM.tape §V-CLM-DESIGN-2026-05-15 — 검증된 AXIS 32 SUPPORTED + 8 PHILOSOPHY principles + HYPOTHESIS verdict catalog 기반 .clm v1 design"
+  arch = "d_model=768 (192·4, n=6 anchor) · 12L (σ=12) · 64-cell (v5-mitosis carry) · 8-head (atom Hc_144) · 4-kv (τ(6)=4) · Engine A/G dual + serve-time mitosis hook · param ~150-200M"
+  falsifier_battery = "F-V5MIT 5/5 + F-PYPHI-Φ-FORMAL n=3-6 RoM ≥0.5 + F-PRIN3 + F-PERSONA 4/5 + F-D4-LIVE + F-V58 4-mode + F-DD21-LOG-PHI + F-PHI-CE-NO-DIRECT-COUPLING (8 mandatory)"
+  cost_envelope = "$5-20 H100 SXM (small param d=768, cheap experimental vs Phase 3 7B $200-600)"
+  forbidden = "d_model ∈ {1024, 2048} (phi_star aliasing) · CE 단독 verdict · anima Φ★ 단독 direction-sensitive · surrogate Mac 단독 verdict"
+  cross_link = "CLM.tape §V-CLM-DESIGN-2026-05-15 + AXIS.tape (32 anchor) + PHILOSOPHY.tape (8 principles) + HYPOTHESIS.tape (verdict catalog)"
+
+# ══════════════════════════════════════════════════════════════════════
+# §VERDICT-TIER-BLUE — 수학/물리 closed verdict tier 파란색 분류
+# ══════════════════════════════════════════════════════════════════════
+
+@D verdict_tier_blue := "verdict tier 🔵 파란색 — 수학적/물리적 closed" :: governance [d=2026-05-15 active]
+  rule = "🔵 SUPPORTED-IDENTITY (sympy closed-form) + 🔵 SUPPORTED-FORMAL (PyPhi formal IIT 3.0 / Kuramoto K_c universal) + 🔵 FALSIFIED-FORMAL (sympy/formal disproof) — 결과 무관 closed-by-deterministic-test"
+  green_remaining = "🟢 SUPPORTED (numerical sim only, closed-form 미확보) + 🟢 SUPPORTED-STRONG (다중 evidence) + 🟢 SUPPORTED-BY-PROXY (anchor carry)"
+  reclassification = "A4 math 8 SUPPORTED 중 H_173 (numerical sim) 제외 7개 모두 🔵 + A3 H_191 sub K_c 🔵 + A2 Hc_1283 n=5,6 🔵 + H_011 PyPhi canonical 2.3125 🔵 + Critical findings H_191 HCE FALSIFIED-FORMAL 🔵 + H_178 NOT-PASSED-FORMAL 🔵 + PyPhi direction CORRECT-FORMAL 🔵"
+  cross_link = "INDEX.md ## verdict tier 정리 section + PR #48"

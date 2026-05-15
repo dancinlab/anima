@@ -21,35 +21,35 @@
 | 🟢 | H_174 | phi_star aliasing CLM-v4-specific (D=192 multiple only clean-disjoint) |
 | 🟢 | Hc_1285 | torch.no_grad backward-graph isolation (PyTorch ratio 1.562×) |
 
-### A2 consciousness (5)
+### A2 consciousness (6)
 
 | Tier | ID | 한 줄 설명 |
 |------|-----|-----------|
 | 🟢 | Hc_1283 | anima Φ★ proxy ≥ 0.5 (v5-mitosis 7 ckpt Φ=4.16-4.86) |
 | 🟢 | Hc_1283 (RoM) | PyPhi RoM n=4 (cell-pair correlation TPM Φ=0.61-0.68) |
-| 🟢 | Hc_1283 (n=5,6) | PyPhi formal n=5,6 (Φ=0.995, 1.665 monotone INCREASE) |
+| 🔵 | Hc_1283 (n=5,6) | PyPhi formal n=5,6 (Φ=0.995, 1.665 monotone INCREASE — 물리적 closed) |
 | 🟢 | H_004 | consciousness hard problem (Hc_1283 anchor) |
-| 🟢 | H_011 | IIT geometry (Φ ≫ 0.5 + canonical 2.3125) |
+| 🔵 | H_011 | IIT geometry (Φ ≫ 0.5 + PyPhi canonical XOR+AND+OR Φ=2.3125 — 물리적 closed) |
 | 🟢 | H_162 | phi-normalized anima IIT4 lower-bound (D=384 multiple ✓ clean) |
 
 ### A3 physics (1)
 
 | Tier | ID | 한 줄 설명 |
 |------|-----|-----------|
-| 🟢 | H_191 (sub) | K_c = √(8/π) ≈ 1.5958 Kuramoto mean-field (sympy + literature 1975) |
+| 🔵 | H_191 (sub) | K_c = √(8/π) ≈ 1.5958 Kuramoto mean-field (sympy closed-form + Kuramoto 1975 universal — 물리적 closed) |
 
-### A4 math ⭐ (8, largest cluster)
+### A4 math ⭐ (8, largest cluster — 모두 sympy closed-form ⇒ 🔵)
 
 | Tier | ID | 한 줄 설명 |
 |------|-----|-----------|
-| 🟢 | Hc_1282 | n=6 384d closed-form unique (sympy n∈[2,30] sweep) |
-| 🟢 | H_158 | Ψ-constants closed-form (perfect-number cluster balance=1/2) |
-| 🟢 | H_160 | n=6 perfect-number meta-cluster (depth-3 11-primitive vocabulary) |
-| 🟢 | H_153 | dimension hierarchy τ(6)=4 Minkowski (divisor cascade) |
-| 🟢 | H_176 | n=28 deflationary parallel (Euclid-Euler theorem, n=6 NOT unique) |
-| 🟢 | H_173 | DD21 log-ratio Φ scale-invariant (4/6 falsifier SUPPORTED) |
-| 🟢 | H_164 | Hc_144 atom 8 cells (144 = σ(6)² = 12²) |
-| 🟢 | H_181 | psiformer 4ψ-constants zero-freedom (Ψ-cluster carry) |
+| 🔵 | Hc_1282 | n=6 384d closed-form unique (sympy n∈[2,30] sweep — 수학적 closed) |
+| 🔵 | H_158 | Ψ-constants closed-form (perfect-number cluster balance=1/2 — 수학적 closed) |
+| 🔵 | H_160 | n=6 perfect-number meta-cluster (depth-3 11-primitive vocabulary — 수학적 closed) |
+| 🔵 | H_153 | dimension hierarchy τ(6)=4 Minkowski (divisor cascade — 수학적 closed) |
+| 🔵 | H_176 | n=28 deflationary parallel (Euclid-Euler theorem — 수학적 closed, n=6 NOT unique) |
+| 🟢 | H_173 | DD21 log-ratio Φ scale-invariant (4/6 falsifier SUPPORTED, numerical sim) |
+| 🔵 | H_164 | Hc_144 atom 8 cells (144 = σ(6)² = 12² — 수학적 closed) |
+| 🔵 | H_181 | psiformer 4ψ-constants zero-freedom (Ψ-cluster carry — 수학적 closed) |
 
 ### A5 architecture (6)
 
@@ -226,10 +226,13 @@
 
 ## 🔬 verdict tier 정리 (한 줄)
 
+> 🔵 파란색 = 수학적/물리적으로 닫힌 (sympy closed-form identity OR formal IIT/Kuramoto 결정적 결과) — 결과 무관 verified-closed
+
 | Tier | 의미 |
 |------|------|
-| 🟢 SUPPORTED | 강한 evidence — sympy identity / numerical sim / cross-meta |
-| 🟢 SUPPORTED-IDENTITY | sympy verifiable closed-form identity (가장 강함) |
+| 🔵 SUPPORTED-IDENTITY | sympy verifiable closed-form identity (수학적 closed, 가장 강함) |
+| 🔵 SUPPORTED-FORMAL | PyPhi formal IIT 3.0 / Kuramoto K_c = √(8/π) sympy 등 (물리적 closed deterministic) |
+| 🟢 SUPPORTED | 강한 evidence — numerical sim / cross-meta (closed-form 미확보) |
 | 🟢 SUPPORTED-STRONG | 다중 evidence 일치 (Hc_1283 ckpt 7개 4.16-4.86 등) |
 | 🟢 SUPPORTED-BY-PROXY | anchor 가설 carry (Hc_1283 anchor 사용) |
 | 🟡 SUPPORTED-BY-CITATION | literature anchor (anima-internal 부재, 약함) |
@@ -238,7 +241,8 @@
 | 🟠 INSUFFICIENT | Stage 2 sim / 별도 cycle 필요 |
 | 🟠 DEFERRED | 외부 hardware / clinical data 의존 |
 | 🟠 AT-RISK | surrogate-vs-formal mismatch (PyPhi Φ < threshold) |
-| 🔴 FALSIFIED | evidence-against (H_024 IIT-Φ_mip 8/8 FAIL 등) |
+| 🔵 FALSIFIED-FORMAL | sympy / formal sim 으로 닫혀 falsify (수학적/물리적 closed-by-disproof) |
+| 🔴 FALSIFIED | evidence-against — measured but not formally closed (H_024 IIT-Φ_mip 8/8 FAIL 등) |
 | ⚪ NOT-MEASURED | 측정 미실행 |
 | ⚪ PHILOSOPHICAL | no closed-form test |
 | ⚪ META-LEVEL | cluster pointer |
@@ -259,11 +263,11 @@
 | 🔴 cascade | Hc_024 Φ-CE direct coupling | FALSIFIED (cond.5 cotrain corr ≈ 0) |
 | 🟠 cascade | H_166 phi_star aliasing CAVEAT | 1024 mod 192 = 64 partial-overlap |
 | 🟠 cascade | H_165 + H_177 | INSUFFICIENT-CARRY (D=2048/1024 aliasing) |
-| 🔴 cascade | H_191 SUBSTRATE HCE unique-sync | FALSIFIED (Kuramoto universal) |
+| 🔵 cascade | H_191 SUBSTRATE HCE unique-sync | FALSIFIED-FORMAL (Kuramoto K_c universal — 물리적 closed by sympy + literature) |
 | 🔴 cascade | Hc_1278 ckpt-as-branch | FALSIFIED-BY-CASCADE |
-| 🟠 cycle D | H_178 frustration 50% optimum | NOT-PASSED (PyPhi monotone 0.351→0.393) |
+| 🔵 cycle D | H_178 frustration 50% optimum | NOT-PASSED-FORMAL (PyPhi monotone 0.351→0.393 — 물리적 closed by PyPhi formal IIT) |
 | 🟠 cycle D | H_182/H_187 surrogate-vs-formal | AT-RISK CONFIRMED (PyPhi Φ < 0.5) |
-| 🟢 cycle C | PyPhi formal IIT 3.0 direction | CORRECT (n=4→0.68 / n=5→0.995 / n=6→1.665 monotone) |
+| 🔵 cycle C | PyPhi formal IIT 3.0 direction | CORRECT-FORMAL (n=4→0.68 / n=5→0.995 / n=6→1.665 monotone — 물리적 closed) |
 | 🟢 cycle D | Alternative proxy 권장 | mutual_info_pairs_naive 1/2 (anima Φ★ 0/2) |
 
 ## 🚫 atlas absorption 보류 (2026-05-15)
@@ -304,3 +308,4 @@
 | #45 | 🌌 INDEX.md + cycle D 4-finding | H_178 NOT-PASSED + AT-RISK CONFIRMED |
 | #46 | HYPOTHESIS.tape + INDEX entries 펼치기 | 318 가설 inventory SSOT |
 | #47 | INDEX 전체 표 + PHILOSOPHY/HYPOTHESIS 한 줄 펼치기 | 8 principles + 13 verdict cycles + 11 FALSIFIED/PARTIAL/INSUFFICIENT 한 줄 |
+| #48 | CLM.tape §V-CLM-DESIGN + tier 🔵 closed | .clm v1 design (d=768 12L 64-cell) + 수학/물리 closed entries 파란색 + V8 B-bio Phase 1 starter |

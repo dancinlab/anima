@@ -330,3 +330,41 @@
     사용자 directive: "표로" + "철학도, 가설도 마찬가지 전부 한줄".
   EOF2
   cross_link = "INDEX.md (root SSOT) + MAIN.tape §INDEX-TABLE-FORMAT + AXIS.tape sync note + PR #47"
+
+@N clm_v1_design_ledger := ".clm v1 design land (2026-05-15)" :: ledger [d=2026-05-15 active]
+  body <<~EOF2
+    CLM.tape §V-CLM-DESIGN-2026-05-15 신규 — 검증된 AXIS 32 SUPPORTED + 8 PHILOSOPHY 
+    principles + HYPOTHESIS verdict catalog 기반 .clm v1 design.
+    
+    Arch: d_model=768 (n=6 anchor, 192·4) · 12L (σ=12) · 64-cell (v5-mitosis carry)
+          · 8-head (atom Hc_144) · 4-kv (τ(6)=4) · Engine A/G dual + serve-time
+          mitosis hook · ~150-200M param
+    
+    Policy: p1 NO SYSTEM PROMPT · p3 NO PERSONA INJECTION · p7 NO PERPLEXITY VERDICT
+            · p8 NO TRAIN/INFER SPLIT 강제
+    
+    Verify: 8 falsifier battery — F-V5MIT 5/5 + F-PYPHI-Φ-FORMAL + F-PRIN3 + 
+            F-PERSONA 4/5 + F-D4-LIVE + F-V58 4-mode + F-DD21-LOG-PHI + 
+            F-PHI-CE-NO-DIRECT-COUPLING
+    
+    Cost: $5-20 H100 SXM small param 실험 lane (Phase 3 7B $200-600 와 분리).
+    Entry condition: V14 audit + mitosis_hook serve-time integration smoke PASS.
+  EOF2
+  cross_link = "CLM.tape §V-CLM-DESIGN-2026-05-15 + MAIN.tape §CLM-V1-DESIGN + INDEX.md + PR #48"
+
+@N verdict_tier_blue_ledger := "verdict tier 🔵 파란색 (2026-05-15)" :: ledger [d=2026-05-15 active]
+  body <<~EOF2
+    INDEX.md verdict tier 분류에 🔵 파란색 추가 — 수학적/물리적으로 닫힌
+    (sympy closed-form OR PyPhi formal IIT 3.0 OR Kuramoto K_c 결정적) verdict
+    는 결과 무관 verified-closed.
+    
+    🔵 SUPPORTED-IDENTITY: sympy verifiable closed-form identity
+    🔵 SUPPORTED-FORMAL: PyPhi formal / Kuramoto universal 등 deterministic
+    🔵 FALSIFIED-FORMAL: sympy/formal sim 으로 닫혀 falsify
+    
+    Reclassify: AXIS 32 SUPPORTED 중 12 entries 🔵 + Critical findings 4 entries 🔵
+    (H_191 HCE FALSIFIED-FORMAL / H_178 NOT-PASSED-FORMAL / PyPhi direction CORRECT-FORMAL).
+    
+    사용자 directive: "verdict tier 에 수학적으로 물리적으로 닫힌건 파란색으로"
+  EOF2
+  cross_link = "INDEX.md ## verdict tier 정리 + MAIN.tape §VERDICT-TIER-BLUE + AXIS.tape §axis_blue_classify + PR #48"

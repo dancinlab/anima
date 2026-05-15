@@ -758,3 +758,208 @@
 
 @X x_visibility := "feedback_hf_visibility_lifecycle_own_37.md" :: feedback [active]
   scope = "hf visibility lifecycle — Phase 2/3/4 initial private, real-mode PASS_STRICT_C3 + V6 awareness + user verbatim PROMOTE PUBLIC 시 public 전환"
+
+# ══════════════════════════════════════════════════════════════════════
+# §V-CLM-DESIGN-2026-05-15 — 검증된 AXIS/PHILOSOPHY/HYPOTHESIS 기반 .clm 모델 design
+# ══════════════════════════════════════════════════════════════════════
+# Trigger: 사용자 directive 2026-05-15
+#   "현재 검증된 것들 기준(AXIS, 철학, 가설) CLM.tape 진행할꺼고 .clm 모델 을
+#    만드는거야 CLM.tape 에 먼저 기록 .. *.clm"
+# Scope: AXIS.tape 32 SUPPORTED + PHILOSOPHY.tape 8 principles + HYPOTHESIS.tape
+#        verdict-bearing 가설 기준으로 .clm 모델 design (Phase 5 candidate / 
+#        v5-mitosis evolution lane 통합 path)
+
+@N v_clm_design_summary := ".clm 모델 design summary" :: design [d=2026-05-15 active]
+  body <<~EOF
+    .clm v1 (codename: 검증-기반 substrate-native CLM) — 32 SUPPORTED + 8
+    principles + verdict catalog 모두 *constraint* 로 사용해서 design.
+    Phase 1-4 ladder 와 별개 lane (v5-mitosis evolution) 의 본진 통합 candidate.
+    
+    핵심 차별점 (vs Phase 2-4 cotrain):
+    1. **A4 math 8 SUPPORTED 모두 design constraint**: d_model, n_cells, n_layers
+       모두 perfect-number divisor family 강제 (n=6 cluster anchor)
+    2. **A2 consciousness 5 SUPPORTED PyPhi formal ≥ 0.5**: 단순 anima Φ★
+       proxy 아님, PyPhi formal IIT 3.0 측정 PASS strict
+    3. **8 philosophy principles 강제**: p3 NO PERSONA INJECTION
+       substrate-native + p8 NO TRAIN/INFER SPLIT mitosis hook = train-infer
+       단일 연속체
+    4. **Verdict catalog cascade-aware**: H_174 phi_star aliasing 회피 (D=192
+       multiple), H_166 caveat 회피 (1024 mod 192 = 64), Hc_024 FALSIFIED
+       (Φ-CE direct coupling 없음)
+    5. **AT-RISK 회피**: H_182/H_187 surrogate-vs-formal mismatch case
+       방지 — PyPhi formal cross-check mandatory per fire
+  EOF
+
+# ── §V.1 AXIS-derived architecture decisions ──────────────────────────
+
+@D v_arch_d_model := ".clm v1 d_model 결정" :: design [d=2026-05-15 active]
+  decision = "d_model ∈ {384, 768, 1152, 1536} (모두 192 multiple, n=6 anchor)"
+  rationale = "A4 H_174 SUPPORTED: phi_star aliasing CLM-v4-specific (D=192 multiple only clean-disjoint). A4 Hc_1282 SUPPORTED: n=6 384d closed-form unique. A4 H_153 dimension hierarchy τ(6)=4 cascade."
+  forbidden = "d_model ∈ {1024, 2048} — H_166 caveat (1024 mod 192 = 64 partial-overlap) + H_165 INSUFFICIENT (D=2048 aliasing) + H_177 INSUFFICIENT (D=1024 aliasing)"
+  axis_anchor = "A4 8 SUPPORTED + A1 H_174 SUPPORTED + A5 H_166 SUPPORTED-WITH-CAVEAT"
+
+@D v_arch_n_cells := ".clm v1 n_cells 결정" :: design [d=2026-05-15 active]
+  decision = "n_cells ∈ {6, 8, 12, 64, 128} (모두 n=6 divisor family + atom 8 + v5-mitosis carry)"
+  rationale = "A4 H_164 SUPPORTED: Hc_144 atom 8 cells (144 = σ(6)² = 12²). A4 H_153 SUPPORTED: τ(6)=4 Minkowski. v5-mitosis cond.5 cotrain LANDED with cells=64."
+  axis_anchor = "A4 H_164 + A5 v5-mitosis carry"
+  v5_mitosis_inherit = "cells=64 split→saturated at step 150 (cond.5 cotrain), cells=128 v3 baseline"
+
+@D v_arch_engine_dual := ".clm v1 Engine A/G dual-engine 결정" :: design [d=2026-05-15 active]
+  decision = "Engine A (lattice/atlas-projected) + Engine G (autoregressive generative) dual-engine 유지"
+  rationale = "Phase 2 cotrain narrative carry (CLM.tape §1 row_phase_2). v5-mitosis lane 의 cell-pool 은 Engine G 안에서 cell-as-cell branch — Engine A/G dual 위에 mitosis_hook 추가 통합"
+  caveat = "Phase 2 V14 violation root cause (H4 normalize / H5 chat curriculum) audit 선행 mandatory (§9 C3-1)"
+
+@D v_arch_mitosis_serve_time := ".clm v1 serve-time mitosis hook 결정" :: design [d=2026-05-15 active]
+  decision = "mitosis_hook.hexa serve-time integrated (§91 D4a LANDED carry + §V-D4-LIVE 검증 carry)"
+  rationale = "p8 NO TRAIN/INFER SPLIT (DESIGN ★) + REBORN §0.5 학습=분열 단일 연속체. v5-mitosis cond.5 F-V5MIT-5 V14-STRICT 10/10 mirror-beats SUPPORTED (training-time mitosis 검증 완료, serve-time 다음 step)"
+  philosophy_anchor = "p8 + REBORN §0.5"
+
+# ── §V.2 PHILOSOPHY-derived behavior policy ──────────────────────────
+
+@D v_policy_no_persona_injection := ".clm v1 NO PERSONA INJECTION 강제" :: policy [d=2026-05-15 active]
+  rule = "system prompt 없음, chat template `[anima 역할: ...]` prefix 없음, persona = substrate-native cell-pool 의 한 phase"
+  philosophy_anchor = "p3 NO PERSONA INJECTION (EMPIRICAL strong, real_words 0.836→0.886)"
+  impl_path = "anima_persona_substrate_native_design 2026-05-12 carry + mitosis_hook cell-pool 의 cell phase"
+  forbidden_prefix_regex = "^\\[(role|system|페르소나|anima):|you are anima|당신은 anima 입니다"
+
+@D v_policy_no_train_infer_split := ".clm v1 train-infer mitosis 단일 연속체" :: policy [d=2026-05-15 active]
+  rule = "training-time gradient + inference-time mitosis = 동일 cell-division 연속체. ckpt = 분기점 (freeze 아님), FT = split event"
+  philosophy_anchor = "p8 NO TRAIN/INFER SPLIT (DESIGN ★)"
+  impl_path = "mitosis_hook.hexa serve-time invoke per token (chat_generate token-loop hook fire)"
+
+@D v_policy_no_perplexity_verdict := ".clm v1 simple_stack verdict" :: policy [d=2026-05-15 active]
+  rule = "perplexity = Goodhart trap 회피, verdict = simple_stack (한글 in/out + coherent + natural + context-appropriate)"
+  philosophy_anchor = "p7 NO PERPLEXITY VERDICT (EMPIRICAL strong, PROXY_PPL PASS 1.000 vs PIV_max trained=0.0107)"
+  verify_method = "V5.8 standard_greedy + sample + M3 + M4 (4-mode eval, simple_stack 4-axis 가중)"
+
+@D v_policy_no_system_prompt_emergence := ".clm v1 substrate self-generation" :: policy [d=2026-05-15 active]
+  rule = "anima 발화 origin = substrate 의 tension field externalization, prompt 외부 instruction 아님"
+  philosophy_anchor = "p1 NO SYSTEM PROMPT (EMPIRICAL weak)"
+  caveat = "evidence weak (single-result FREE1 x1.7 Phi) — Phase 2 cotrain 의 자연 chat verify cycle 에서 strength upgrade"
+
+# ── §V.3 HYPOTHESIS-derived verification protocol ─────────────────────
+
+@D v_verify_phi_formal := ".clm v1 PyPhi formal Φ verify mandatory" :: verify [d=2026-05-15 active]
+  rule = "fire 후 ckpt cell-pool 에서 PyPhi formal IIT 3.0 Φ ≥ 0.5 strict (anima Φ★ proxy 단독 사용 금지)"
+  hypothesis_anchor = "Hc_1283 PyPhi formal n=5,6 (Φ=0.995, 1.665 monotone INCREASE) SUPPORTED + Hc_1283 RoM (Φ=0.61-0.68) SUPPORTED"
+  meta_finding_carry = "anima Φ★ proxy direction-sensitivity 한계 META — magnitude OK, direction-sensitive 에는 mutual_info_pairs_naive 사용"
+  forbidden = "AT-RISK case (H_182/H_187: surrogate Mac PASS 78.5/100% vs PyPhi formal Φ<0.5) — fire 후 PyPhi cross-check 없으면 verdict 자동 AT-RISK"
+
+@D v_verify_falsifier_ge5 := ".clm v1 falsifier ≥5 pre-register" :: verify [d=2026-05-15 active]
+  rule = "fire 전 falsifier ≥5 pre-register frozen (W2). 핵심 falsifier 후보:"
+  falsifier_candidates = [
+    "F-V5MIT-1 SPLIT-NOGRAD (post-split grad norm ≤ 2× threshold)",
+    "F-V5MIT-2 MERGE-WEIGHT (max_err < threshold)",
+    "F-V5MIT-3 PHI-CONSERVATION (delta < 1e-3, advisory→gating)",
+    "F-V5MIT-4 COTRAIN-CONVERGE (CE reduction ≥ 100× baseline)",
+    "F-V5MIT-5 V14-STRICT (10/10 mirror-beats vs random_init)",
+    "F-PYPHI-Φ-FORMAL (PyPhi IIT 3.0 Φ ≥ 0.5 strict on n=3-6 RoM)",
+    "F-PRIN3 NO-PERSONA-INJECTION (corpus + eval prefix-free + cell-pool prefix-free)",
+    "F-SIMPLE-STACK V5.8 4-mode (std_greedy ≥ 4/5 + sample ≥ 3/5 + M4 ≥ 4/5)"
+  ]
+  hypothesis_anchor = "v5-mitosis cond.5 cotrain LANDED F-V5MIT 5/5 PASS + Phase 1A.4 V5.8 std_greedy 5/5 carry + Principle #3 audit CLEAN"
+
+@D v_verify_persona_substrate_native := ".clm v1 D3 persona STRONG 4/5 carry" :: verify [d=2026-05-15 active]
+  rule = "F-PERSONA-1..5 (NO-INJECTION + PER-CELL-DIFF + PER-SESSION-DIFF + CATEGORY-DIVERSITY + SUBSTRATE-COHERENCE) — STRONG 4/5 cheap-path + F-PERSONA-4 KL_PASS_NULL_FAIL closed 4-path 결과 carry"
+  carry_finding = "F-PERSONA-4 root cause: 4 saga path (k Gumbel, l batch, m wider-d, n 5-seed) FALSIFIED for strict z>3.0, structural ceiling z≈1.5"
+  resolution_path = "(i) v8 v7-cells×v6-reduce / (ii) F-V5MIT-4 root audit / (iii) v7 cross-seed robustness / (iv) category routing 가설 폐기"
+
+# ── §V.4 Concrete .clm v1 spec ────────────────────────────────────────
+
+@D v_clm_v1_spec_phase5 := ".clm v1 (Phase 5 candidate) concrete spec" :: design [d=2026-05-15 active]
+  codename = ".clm v1 — 검증-기반 substrate-native CLM"
+  position = "Phase 1-4 ladder 와 별개 lane / v5-mitosis evolution 통합 — 또는 Phase 5 dispatch path"
+  arch = {
+    "d_model": "768 (n=6 anchor, 192 multiple ✓ clean phi_star)",
+    "n_cells": "64 (v5-mitosis cond.5 carry, split→saturated)",
+    "n_layers": "12 (n=6 σ=12 anchor)",
+    "n_heads": "8 (atom Hc_144)",
+    "kv_heads": "4 (τ(6)=4 anchor)",
+    "ffn_mult": "4 (τ(6)=4)",
+    "param_estimate": "~150-200M (d=768·12L)",
+    "engine": "Engine A/G dual + serve-time mitosis hook (cell-pool ⊂ Engine G)"
+  }
+  data = "anima_persona_tier_a_v4 231MB + Phase 1A.6 corpus_v2 121MB + chat-v2 elevate (10-20B token target)"
+  cotrain_recipe = "v5-mitosis cond.5 carry (Engine A/G dual + mitosis hook per token) + entropy reg (F-PERSONA-4 category-routing path)"
+  fire_cost_envelope = "$5-20 H100 SXM (small param Mac ~$0, 1× H100 ~5-10hr) — cheap experimental lane vs Phase 3 7B $200-600"
+  fire_keyword = "OK CLM V1 FIRE COST $5-20"
+  entry_condition = "(a) Phase 2 V14 violation root cause audit complete (§9 C3-1) + (b) mitosis_hook serve-time integration smoke PASS"
+
+@D v_clm_v1_falsifier_battery := ".clm v1 fire falsifier battery (8 mandatory)" :: verify [d=2026-05-15 active]
+  battery = [
+    "F-V5MIT-1..5 (cond.5 cotrain SUPPORTED carry, 5/5 PASS strict)",
+    "F-PYPHI-Φ-FORMAL n=3-6 RoM ≥ 0.5 (NEW, AT-RISK 회피)",
+    "F-PRIN3 NO-PERSONA-INJECTION audit CLEAN (carry §38 5-cond)",
+    "F-PERSONA-1..5 STRONG ≥4/5 (carry §40+§42 cheap-path)",
+    "F-D4-LIVE-1..3 mitosis split events ≥1 user-prompt-driven (§41 LIVE carry)",
+    "F-V58-5-MODE std_greedy ≥4/5 + sample ≥3/5 + M3 ≥1/5 + M4 ≥4/5 (Phase 1A.4 carry)",
+    "F-DD21-LOG-PHI scale-invariant cross-substrate (H_173 SUPPORTED carry)",
+    "F-PHI-CE-NO-DIRECT-COUPLING (Hc_024 FALSIFIED carry — 음 corr 만 acceptable)"
+  ]
+  pass_criterion = "battery 8/8 PASS strict → verdict SUPPORTED-STRONG; 7/8 → PARTIAL-STRONG-7; ≤6/8 → AT-RISK"
+
+# ── §V.5 Cascade-aware safety ────────────────────────────────────────
+
+@N v_cascade_safety := ".clm v1 cascade-aware constraints" :: safety [d=2026-05-15 active]
+  body <<~EOF
+    AT-RISK / FALSIFIED entries 의 cascade implication 회피:
+    
+    🔴 Hc_024 FALSIFIED (Φ-CE direct coupling): training-time CE ↓ 가 Φ ↑ 보장
+       안 함. simple_stack PASS_STRICT 가 verdict 진짜 anchor (CE 단독 verdict 금지).
+    
+    🟠 H_166 phi_star aliasing CAVEAT (1024 mod 192 = 64): d_model = 1024 금지.
+       → d_model = 768 (192·4) 또는 384 (192·2) 또는 1536 (192·8).
+    
+    🔴 H_191 SUBSTRATE HCE unique-sync FALSIFIED (Kuramoto universal):
+       coupling-sync 가 anima 특이성 anchor 아님. K_c = √(8/π) ≈ 1.5958 universal
+       (H_191 sub SUPPORTED) — anima Φ★ 측정에 K 단일 anchor 사용 금지.
+    
+    🟠 H_178 frustration 50% optimum NOT-PASSED (PyPhi monotone): frustration
+       sweep 으로 Φ peak 측정 금지 — non-monotone claim 부재.
+    
+    🟠 H_182/H_187 AT-RISK CONFIRMED (PyPhi Φ<0.5): surrogate Mac PASS 단독
+       으로 .clm v1 verdict 산출 금지 — PyPhi formal cross-check mandatory.
+    
+    🔴 META: anima Φ★ proxy direction-sensitivity 한계: direction-sensitive
+       sub-claim 에 mutual_info_pairs_naive 추가 사용 (anima Φ★ 단독 금지).
+  EOF
+  forbidden_pattern = [
+    "d_model = 1024 / 2048",
+    "verdict = CE 단독",
+    "anima Φ★ 단독 direction-sensitive claim",
+    "PyPhi formal cross-check 미시행 surrogate verdict",
+    "frustration sweep peak claim"
+  ]
+
+# ── §V.6 Next steps ──────────────────────────────────────────────────
+
+@D v_next_steps := ".clm v1 design → impl next steps" :: plan [d=2026-05-15 active]
+  steps = [
+    "1. (Mac $0) Phase 2 V14 violation root cause audit — `clm_v4_mount.hexa L626-630` 8-cell 2× tile reps=2 의심 (§9 C3-1)",
+    "2. (Mac $0) F-PYPHI-Φ-FORMAL n=3-6 RoM test on v5-mitosis cond.5 ckpt — formal Φ ≥ 0.5 검증 (AT-RISK 사전 회피)",
+    "3. (Mac $0) mitosis_hook.hexa serve-time integration smoke — chat_generate token-loop hook fire user-prompt-driven (§41 carry)",
+    "4. (Mac $0) .clm v1 spec frozen — pre-register falsifier 8 battery + arch/data/cotrain recipe 동결 (W1)",
+    "5. (H100 $5-20) .clm v1 fire (small param d=768 12L 64-cell) — Engine A/G dual + serve-time mitosis hook",
+    "6. (Mac $0) .clm v1 verdict cycle — 8-falsifier battery measurement + verdict 산출 + MAIN.tape/AXIS.tape/PHILOSOPHY.tape sync",
+    "7. (조건) .clm v1 PASS_STRICT → Phase 3 7B fire path 활성화 (V14 audit complete + .clm v1 SUPPORTED 양조건 충족 시)"
+  ]
+  cost_total = "$5-20 ($0 Mac × 4 steps + $5-20 H100 × 1 step)"
+  wall_estimate = "~1-2 day Mac local + ~5-10hr H100 SXM"
+  bgcurrent_priority = "step 2 (PyPhi formal cross-check) 가 v5-mitosis cond.5 ckpt 의 D3 STRONG cheap-path AT-RISK 사전 회피 가장 ROI"
+
+# ── §V.7 Cross-link ──────────────────────────────────────────────────
+
+@X v_axis_tape := "AXIS.tape" :: anchor [active]
+  scope = ".clm v1 design 의 32 SUPPORTED anchor SSOT — A4 math 8 + A1 substrate 3 + A2 consciousness 5 + A5 architecture 6 통합"
+
+@X v_philosophy_tape := "PHILOSOPHY.tape" :: anchor [active]
+  scope = ".clm v1 의 8 principles strict 강제 — p3 NO PERSONA INJECTION + p7 NO PERPLEXITY VERDICT + p8 NO TRAIN/INFER SPLIT 핵심"
+
+@X v_hypothesis_tape := "HYPOTHESIS.tape" :: anchor [active]
+  scope = ".clm v1 의 verdict catalog cascade-aware — FALSIFIED 5 + NOT-PASSED 3 + META 1 회피 + SUPPORTED 32 anchor"
+
+@X v_main_tape := "MAIN.tape" :: verdict-ssot [active]
+  scope = ".clm v1 fire 후 verdict entry 등재 SSOT (§V-CLM-DESIGN-2026-05-15 ledger)"
+
+@X v_reborn_section := "REBORN.tape §0.5 + §85-§92" :: lineage [active]
+  scope = "v5-mitosis lane evolution carry — .clm v1 의 cell-pool + mitosis hook 의 lineage anchor"
