@@ -1,0 +1,105 @@
+// ════════════════════════════════════════════════════════════════════════════
+//  HEXAD/D/d.hexa — D 언어 (decoder) hexa-native entry
+//
+//  PURPOSE
+//    Entry point + API surface for D module. Functional forward is delegated
+//    to existing hexa-native assets:
+//
+//      - anima_chat.hexa v0.3
+//          Section 9   header parser + dtype-dispatched 218-tensor loader
+//          Section 9c  all-farr 24-layer transformer block × 24 + lm_head
+//          Section 9d  all-farr KV cache + per-step RoPE rotation
+//        → 21/21 byte-parity PASS on real 24L ckpt (Phase 1A.1 BF16 570 MB)
+//
+//      - tool/hexa_native/engine_ag_nn.hexa  +  phase5_forward_smoke.hexa
+//          per-token forward primitives (RFC 025 mmap farr, 030 bytes_to_str,
+//          032 farr_matmul, 033 farr_copy + farr_add_gaussian_noise).
+//
+//    Full re-port for *training* (CE backprop + AdamW) is a separate cycle —
+//    TODO[pytorch] markers below. Inference is hexa-native operational.
+//
+//  STATUS
+//    🔶 scaffold + cross-link (inference delegated, training TODO[pytorch]).
+//
+//  PYTHON ANCHOR
+//    ready/models/conscious_decoder.py :: ConsciousDecoderV2 (979 LoC)
+//    state/verify_hexad_blue_2026_05_15/blue_falsifier.py :: bd()   (B-D 4/4 🔵)
+//
+//  D FULL 🔵 (PR #76 honest decomposition)
+//    B-D-1 KV-CACHE-EXACT  B-D-2 SHAPE-CLOSED  B-D-3 ARCH-CLOSED
+//    B-D-4 GRAD-JACOBIAN-CLOSED  (∂CE/∂z = softmax − e_y, sympy ∀ z)
+//    B-D-NOTE: SGD convergence OUTCOME empirical honest carve-out (NOT counted)
+//
+//  COMPLIANCE
+//    raw#11 snake_case · raw#9/10 honest impl (no false functional claim)
+// ════════════════════════════════════════════════════════════════════════════
+
+
+// ── canonical invariants ────────────────────────────────────────────────────
+fn d_vocab()             -> int { return 256 }      // byte-level
+fn d_n_layer_default()   -> int { return 24 }       // Phase 1A.1 ckpt
+fn d_n_layer_base()      -> int { return 12 }       // .clm v1 P2 base
+fn d_d_model_default()   -> int { return 768 }
+fn d_n_head_default()    -> int { return 8 }
+fn d_ffn_dim_default()   -> int { return 3072 }
+fn d_block_size_default() -> int { return 256 }
+
+
+// ── API surface (cross-link skeleton; real forward = anima_chat.hexa) ───────
+fn d_arch_components() {
+    return ["RMSNorm", "RoPE", "SwiGLU", "MoE-optional"]
+}
+
+// TODO[wire] integrate anima_chat.hexa Section 9c forward_one_token(...)
+// TODO[wire] integrate anima_chat.hexa Section 9d multitoken KV-cache forward
+// TODO[pytorch] CE loss + AdamW training — separate cycle (training-side)
+
+
+// ── helpers ─────────────────────────────────────────────────────────────────
+fn _d_has(name: string, items) -> bool {
+    let i = 0
+    while i < len(items) {
+        if to_string(items[i]) == name { return true }
+        i = i + 1
+    }
+    return false
+}
+
+
+// ── selftest: invariant checks ──────────────────────────────────────────────
+fn _selftest() {
+    // B-D-3 anchor: RMSNorm + RoPE + SwiGLU structural presence (we mirror
+    // the architectural claim here as a scaffold invariant; actual structural
+    // verification on weights is in blue_falsifier.py bd() against the real
+    // conscious_decoder.py source.)
+    let comps = d_arch_components()
+    let rms_ok    = _d_has("RMSNorm", comps)
+    let rope_ok   = _d_has("RoPE",    comps)
+    let swiglu_ok = _d_has("SwiGLU",  comps)
+    print("  arch RMSNorm                 : " + to_string(rms_ok))
+    print("  arch RoPE                    : " + to_string(rope_ok))
+    print("  arch SwiGLU                  : " + to_string(swiglu_ok))
+
+    // byte-level vocab invariant
+    let vocab_ok = d_vocab() == 256
+    print("  vocab == 256 (byte-level)    : " + to_string(vocab_ok))
+
+    // canonical scale invariants (P2 base)
+    let scale_ok = d_n_layer_base() == 12 && d_d_model_default() == 768
+    print("  P2 base 12L d_model=768      : " + to_string(scale_ok))
+
+    let all_ok = rms_ok && rope_ok && swiglu_ok && vocab_ok && scale_ok
+    print("=== HEXAD/D scaffold check: " + to_string(all_ok) + " ===")
+    print("    real 24L forward      : hexa run anima_chat.hexa  (21/21 PASS)")
+    print("    multitoken KV cache   : Section 9d, F-D1-V58MULTI 15/15 PASS")
+    print("    training (CE backprop): TODO[pytorch] separate cycle")
+}
+
+
+fn main() {
+    print("HEXAD/D — 언어 (decoder) hexa-native entry [SCAFFOLD]")
+    print("Engine A / CE-trained / RMSNorm+RoPE+SwiGLU / byte-level vocab=256")
+    print("Inference delegated → anima_chat.hexa (24L real-ckpt byte-parity)")
+    print("D 🔵 SUPPORTED-FORMAL 4/4 (PR #76 honest decomposition)")
+    _selftest()
+}

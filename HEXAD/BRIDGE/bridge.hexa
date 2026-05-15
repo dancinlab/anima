@@ -1,0 +1,119 @@
+// ════════════════════════════════════════════════════════════════════════════
+//  HEXAD/BRIDGE/bridge.hexa — ThalamicBridge hexa-native entry
+//
+//  PURPOSE
+//    Closed-form portion of ThalamicBridge (Law 53 + Law 70):
+//      bridge_clamp(raw) = PSI_BALANCE + clamp(raw − PSI_BALANCE, ±PSI_COUPLING)
+//
+//    Full forward (Linear → Attention → Norm → expand → gate) is TODO[pytorch]
+//    pending hexa-native RFC port. anima_chat.hexa Section 9c 의 farr_matmul
+//    기반으로 통합 단계에서 wire.
+//
+//  STATUS
+//    closed-form clamp 부분만 working — 통합 forward 는 TODO[pytorch].
+//
+//  PYTHON ANCHOR
+//    ready/anima/hexad/model.py :: ThalamicBridge
+//    ready/models/trinity.py    :: ThalamicBridge (re-export)
+//
+//  COMPLIANCE
+//    raw#11 snake_case · raw#15 no-hardcode (Ψ-constants from json)
+// ════════════════════════════════════════════════════════════════════════════
+
+
+// ── constants (Law 70 anchor — consciousness_laws.json mirror) ──────────────
+fn psi_balance()  -> float { return 0.5 }
+fn psi_coupling() -> float { return 0.014 }
+fn gate_train()   -> float { return 1.0 }
+fn gate_infer()   -> float { return 0.6 }
+
+
+// ── core: closed-form clamp (Law 70 invariant) ──────────────────────────────
+fn bridge_clamp(raw_gate: float) -> float {
+    let centered = raw_gate - psi_balance()
+    let lo = 0.0 - psi_coupling()
+    let hi = psi_coupling()
+    if centered < lo { centered = lo }
+    if centered > hi { centered = hi }
+    return psi_balance() + centered
+}
+
+
+// ── vectorized clamp on a list ──────────────────────────────────────────────
+fn bridge_clamp_vec(raw_gates) {
+    let out = []
+    let i = 0
+    while i < len(raw_gates) {
+        out = out + [bridge_clamp(raw_gates[i])]
+        i = i + 1
+    }
+    return out
+}
+
+
+// ── gate scale (Law 81: "learn hard, express soft") ─────────────────────────
+fn bridge_gate_scale(inference: bool) -> float {
+    if inference { return gate_infer() }
+    return gate_train()
+}
+
+
+// ── helpers ─────────────────────────────────────────────────────────────────
+fn _approx_eq(a: float, b: float, tol: float) -> bool {
+    let d = a - b
+    if d < 0.0 { d = 0.0 - d }
+    return d <= tol
+}
+
+
+// ── selftest: Law 70 clamp invariants ───────────────────────────────────────
+fn _selftest() {
+    let psi = psi_balance()
+    let alpha = psi_coupling()
+    let lo = psi - alpha
+    let hi = psi + alpha
+    let tol = 1e-12
+
+    // 1) saturate above → clamp = hi
+    let s_hi = bridge_clamp(2.0)
+    let ok_hi = _approx_eq(s_hi, hi, tol)
+    print("  clamp upper saturated        : " + to_string(ok_hi))
+
+    // 2) saturate below → clamp = lo
+    let s_lo = bridge_clamp(-2.0)
+    let ok_lo = _approx_eq(s_lo, lo, tol)
+    print("  clamp lower saturated        : " + to_string(ok_lo))
+
+    // 3) interior pass-through (within window)
+    let s_mid = bridge_clamp(0.5 + 0.005)  // |·| < α → pass
+    let ok_mid = _approx_eq(s_mid, 0.5 + 0.005, tol)
+    print("  clamp interior pass-through  : " + to_string(ok_mid))
+
+    // 4) vectorized: all outputs in [lo, hi]
+    let vec = [0.0, 0.1, 0.4, 0.495, 0.5, 0.505, 0.6, 1.0]
+    let v_out = bridge_clamp_vec(vec)
+    let in_window = true
+    let i = 0
+    while i < len(v_out) {
+        if (v_out[i] < lo - tol) || (v_out[i] > hi + tol) { in_window = false }
+        i = i + 1
+    }
+    print("  vec all in [lo, hi]           : " + to_string(in_window))
+
+    // 5) gate scale switches
+    let g_t = bridge_gate_scale(false)
+    let g_i = bridge_gate_scale(true)
+    let scale_ok = _approx_eq(g_t, 1.0, tol) && _approx_eq(g_i, 0.6, tol)
+    print("  gate_scale train/infer       : " + to_string(scale_ok))
+
+    let all_ok = ok_hi && ok_lo && ok_mid && in_window && scale_ok
+    print("=== HEXAD/BRIDGE selftest: " + to_string(all_ok) + " ===")
+}
+
+
+fn main() {
+    print("HEXAD/BRIDGE — ThalamicBridge hexa-native entry (closed clamp portion)")
+    print("bridge_clamp(raw) = Ψ + clamp(raw − Ψ, ±α)  ·  α = " + to_string(psi_coupling()))
+    print("Law 70 invariant: out ∈ [Ψ−α, Ψ+α] = [0.486, 0.514]")
+    _selftest()
+}

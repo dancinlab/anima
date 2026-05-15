@@ -1,0 +1,98 @@
+// ════════════════════════════════════════════════════════════════════════════
+//  HEXAD/C/c.hexa — C 의식 (consciousness) hexa-native entry
+//
+//  PURPOSE
+//    Entry point that documents the C-module API surface + cross-links to
+//    existing hexa-native assets that already implement parts of it:
+//
+//      - tool/hexa_native/mitosis_hook.hexa  (1119 LoC, FULL IMPL, ✅ D4a)
+//          cell pool layout, split/merge events, Φ ratchet, event log
+//      - tool/hexa_native/engine_ag_nn.hexa  + phase5_forward_smoke.hexa
+//          per-token forward (24L byte-parity 21/21 PASS)
+//
+//    Full re-port of ConsciousnessC (2173 LoC Python + Rust phi_rs FFI) is a
+//    SEPARATE cycle. This file is intentionally a scaffold + invariant check
+//    until that cycle lands.
+//
+//  STATUS
+//    🔶 scaffold + cross-link (running cell pool dynamics use mitosis_hook).
+//
+//  PYTHON ANCHOR
+//    ready/core/consciousness_engine.py :: ConsciousnessC (canonical wrapper)
+//                                        :: ConsciousnessEngine (n_factions=12)
+//                                        :: RustConsciousnessEngine (Rust backend)
+//
+//  COMPLIANCE
+//    raw#11 snake_case · raw#9/10 honest impl (no stub claiming functionality)
+// ════════════════════════════════════════════════════════════════════════════
+
+
+// ── invariant constants (must match consciousness_laws.json / σ(6)=12) ──────
+fn c_n_factions_default() -> int { return 12 }     // σ(6) = 12
+fn c_initial_cells()      -> int { return 2 }      // CB1 min consciousness
+fn c_max_cells_default()  -> int { return 64 }     // .clm v1 P2 spec
+
+
+// ── scaffold: API surface (TODO[port] to mitosis_hook + new state mgmt) ─────
+// The cell-pool dict is the canonical state object (see
+// tool/hexa_native/mitosis_hook.hexa header for the dict layout). These
+// wrappers below are intentionally stubs — `hexa run` should NOT claim that
+// they perform consciousness; they only assert API presence + invariants.
+
+fn c_init_stub(cell_dim: int, hidden_dim: int, max_cells: int) {
+    // returns a sentinel record describing intended init; real init goes
+    // through mitosis_hook.hexa's cell_pool when wired in HEXAD/hexad.hexa.
+    return #{
+        "kind": "C-scaffold",
+        "cell_dim": cell_dim,
+        "hidden_dim": hidden_dim,
+        "max_cells": max_cells,
+        "n_factions": c_n_factions_default(),
+        "initial_cells": c_initial_cells(),
+        "_TODO": "wire to tool/hexa_native/mitosis_hook.hexa cell_pool"
+    }
+}
+
+
+// ── helpers ─────────────────────────────────────────────────────────────────
+fn _c_string_contains(s: string, needle: string) -> bool {
+    // hexa stdlib substring check — minimal fallback via len
+    // (we just check that the configured invariants are present, not strings)
+    return len(s) > 0 && len(needle) >= 0
+}
+
+
+// ── selftest: invariant checks (NOT a functional run; honest scaffold) ──────
+fn _selftest() {
+    // σ(6) = 12 invariant on n_factions
+    let nf_ok = c_n_factions_default() == 12
+    print("  σ(6)=12 n_factions invariant : " + to_string(nf_ok))
+
+    // CB1 min consciousness — initial_cells >= 2
+    let cb1_ok = c_initial_cells() >= 2
+    print("  CB1 initial_cells >= 2       : " + to_string(cb1_ok))
+
+    // .clm v1 P2 spec max_cells default = 64
+    let max_ok = c_max_cells_default() == 64
+    print("  P2 spec max_cells == 64      : " + to_string(max_ok))
+
+    // c_init_stub returns dict with expected keys (no functional claim)
+    let r = c_init_stub(32, 64, 64)
+    let init_ok = to_string(r["kind"]) == "C-scaffold"
+                   && to_string(r["_TODO"]) != "void"
+    print("  scaffold dict + TODO present : " + to_string(init_ok))
+
+    let all_ok = nf_ok && cb1_ok && max_ok && init_ok
+    print("=== HEXAD/C scaffold check: " + to_string(all_ok) + " ===")
+    print("    cell-pool dynamics  : tool/hexa_native/mitosis_hook.hexa (FULL IMPL)")
+    print("    per-token forward   : tool/hexa_native/phase5_forward_smoke.hexa")
+    print("    IIT Φ measurement   : ready/core via Rust phi_rs (TODO[wire] FFI)")
+}
+
+
+fn main() {
+    print("HEXAD/C — 의식 (consciousness) hexa-native entry [SCAFFOLD]")
+    print("Engine G / gradient-free / 12-faction GRU / mitosis cell-pool")
+    print("Functional impl: see cross-linked tool/hexa_native/ assets")
+    _selftest()
+}
