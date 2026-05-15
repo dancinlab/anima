@@ -42,6 +42,17 @@ LIBS=(
   "HEXAD/MITOSIS/mitosis_lib.hexa"
   "HEXAD/CHAT/wiring_verify_lib.hexa"
 )
+# DEFERRED (honest named blocker — NOT in pass-count; hexa parse clean both):
+#   HEXAD/CHAT/chat_lib.hexa  (R1 lib-split, pure-fn lib, NO main)
+#   HEXAD/CHAT/anima_chat.hexa(R1 entrypoint, imports chat_lib)
+# blocker: compiled codegen 에 `hexa_safetensors_mmap_data_offset` (+ ckpt
+#   mmap safetensors intrinsic 일족) C decl 부재 → runtime.h/.c 0 선언.
+#   interp-only builtin (이 파일 과거 `hexa run` 21/21 byte-parity 만 검증,
+#   compiled native 최초 시도라 표면화). RFC 034 가 runtime.h `hexa_farr_*`
+#   decl 추가로 RFC 032/033 compiled smoke 복구한 것과 동일 trivial class.
+#   FIX = hexa-lang upstream: runtime.h 에 safetensors-mmap compiled decl 추가.
+#   R2(Phase5 d_lib→chat_lib compiled wire) 가 이 blocker 를 상속.
+#   decl land 후 위 ENTRYPOINTS 에 anima_chat.hexa / LIBS 에 chat_lib.hexa 재편입.
 PASS_MARKER='selftest: true|7/7 cross-file|spec invariants: true|scaffold check: true'
 
 ep_pass=0; ep_fail=0; lib_ok=0; lib_fail=0; failed=""
