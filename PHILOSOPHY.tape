@@ -227,3 +227,13 @@
   pass-rate = "25% (5/20 SUPPORTED) fast audit 기준"
   stage-breakdown = "Stage 1 (4): 1S+2P+1I · Stage 2 (9): 1S+4P+4I · Stage 3 (7): 3S+4P"
   remaining-deep-cycles = "V8 family GPU sweep (5 INSUFFICIENT, $200-600) + H_188 PCI clinical data (외부 의존)"
+
+# ── Hc_1283 진짜 verdict — anima Φ★ proxy 7-ckpt aggregate ────────────────────
+
+@D verdict_hc_1283_ckpt := "Hc_1283 ckpt phi extraction" :: verdict [d=2026-05-15 active]
+  verdict-class = "SUPPORTED-STRONG"
+  method = "torch.load 7 v5-mitosis ckpt + extract phi/phi_best field"
+  evidence = "7 ckpt 모두 phi = 4.16 ~ 4.86 ≫ Hc_1283 threshold 0.5 (8~10× 초과); cells={64,128}, d_model={384,512,768}; cotrain v1/v2/v3/v7"
+  caveat = "anima Φ★ proxy ≠ PyPhi IIT 3.0 formal Φ — H_162 IIT 4.0 normalized lower bound 정합; PyPhi formal cell-coupling→TPM 변환 DEFERRED"
+  artifact = "state/verify_a_stage1_2026_05_15/stage2_ckpt_phi_real.json"
+  cross-link = "H_191 SUBSTRATE HCE 0.92 의 empirical anchor — substrate Φ proxy 4.17~4.86 ≫ 0.92"

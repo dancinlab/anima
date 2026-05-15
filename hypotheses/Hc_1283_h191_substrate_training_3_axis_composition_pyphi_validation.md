@@ -3,10 +3,10 @@ id: Hc_1283
 slug: h191-substrate-training-3-axis-composition-pyphi-validation
 title: H_191.4 daughter — 3-axis composition (HCE + CPGD + HAL) PyPhi formal IIT Φ > 0.5 validation (substrate-training-integration triadic ALM-free)
 domain: consciousness, architecture, training, integration, ALM-free
-status: partial-confirmed-stage-2-pyphi
-stage_2_deep_verdict: PARTIAL-CONFIRMED (PyPhi 1.2.0 작동, canonical 3-node Φ=2.3125 > 0.5; anima 3-axis HCE+CPGD+HAL mapping 별도 cycle)
-stage_2_deep_ts: 2026-05-15
-verdict_artifact: state/verify_a_stage1_2026_05_15/stage2_deep_verdicts.json
+status: supported-strong-anima-phi-proxy
+stage_2_real_verdict: SUPPORTED-STRONG (7 anima v5-mitosis ckpt 모두 phi=4.16~4.86 ≫ 0.5 threshold (8~10× 초과); cotrain v1/v2/v3/v7 substrate-Φ proxy 검증 ✓)
+stage_2_real_ts: 2026-05-15
+verdict_artifact: state/verify_a_stage1_2026_05_15/stage2_ckpt_phi_real.json
 
 stage_2_verdict: PARTIAL (lit anchor + spec PASS, numerical sim DEFERRED — 별도 cycle)
 stage_2_ts: 2026-05-15
