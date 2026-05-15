@@ -759,3 +759,27 @@
     PARTIAL-CROSS-CONFIRMED (3-5 별도 cycle).
   EOF2
   cross_link = "AXIS.tape §A1-A5-A6 + §V8-PHASE3-PASS + MAIN.tape (4 governance entries) + INDEX.md + PR #57"
+
+@N axis_a2_a4_a7_a8_v3_narrative_step2_landed := "AXIS A2+A4+A7+A8 +8 🔵 + .clm v3 narrative + step 2 carry + p1 real run 시도 (2026-05-15)" :: ledger [d=2026-05-15 active]
+  body <<~EOF2
+    AXIS A2+A4+A7+A8 sympy +8 🔵 (8/9 PASS, 1 sympy edge case):
+    - A2 +2 🔵 (IIT 4.0 lower bound + MI chain rule Shannon 1948)
+    - A4 +3 🔵 (Euler-Euclid + Aliquot s(6)=6 + σ multiplicative)
+    - A7 +2 🔵 (Michaelis-Menten + Hill equation) AT-RISK 회피 path
+    - A8 +1 🔵 (Kolmogorov K(x)) + 1 pseudo (Shannon H_max log/log edge)
+    AXIS Total: 52 → 60 entries, 32 🔵 → 39 🔵 (65% closed).
+    
+    .clm v3 14B 본진 narrative detail:
+    anima_native_scratch full-scale 실현, precursor lane 통합. Q1-Q4 해결:
+    - Q1 Engine A: A4+A5 sympy anchor 충분, Path A carry
+    - Q2 Chinchilla: anima narrow 특화 10-20:1 acceptable
+    - Q3 corpus blend: 70% RedPajama + 15% FineWeb + ...
+    - Q4 v3 entry: .clm v2 PASS_STRICT 10/12 + 16× H100
+    
+    CLM step 2 mitosis serve-time smoke — PSCC §41 synthetic carry (PARTIAL):
+    synthetic 21 split + invocations=65 3/5 PASS, production d=768 12L 별도 ~7hr.
+    
+    p1 measure real run 시도 — silent fail (truncated run 도 fail).
+    smoke evidence (PR #57) carry. real measurement 디버그 별도 cycle.
+  EOF2
+  cross_link = "AXIS.tape §A2-A4-A7-A8 + CLM.tape §V3-NARRATIVE + STEP2-CARRY + MAIN.tape (3 governance) + PR #58"
