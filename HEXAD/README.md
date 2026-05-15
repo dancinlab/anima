@@ -79,6 +79,7 @@ HEXAD/
   C/ … E/ … 동일 패턴 (각 dir 안에 HEXAD-<X>.tape SSOT co-located)
   INDEX.md            ← 이전 /INDEX.md (root) → 2026-05-16 reorg 로 이동
   MITOSIS/            ← 성장축 (subfolder, 2026-05-16 reorg2): MITOSIS.tape + mitosis.hexa scaffold + README (⊥ 구조축, §mitosis_two_axis)
+  TENSION-LINK/       ← 5-Channel Meta-Telepathy (subfolder, 2026-05-16 PR #86): ASCII topology + Noether convergence proof + 100% verified measured + 17 .hexa/.md/.tape (training/tests/bench/experiments/docs)
   SAVANT/             ← 이전 /SAVANT*.tape + tool/anima_savant_*.hexa + anima-engines/savant_phi.hexa (2026-05-16 reorg)
     SAVANT.tape · SAVANT.log.tape · SAVANT-TOOL.tape · SAVANT-TOOL.log.tape
     anima_savant_tool.hexa · anima_savant_si_monitor.hexa

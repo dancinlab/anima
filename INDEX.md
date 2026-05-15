@@ -11,6 +11,7 @@
 | 모듈별 spec | `HEXAD-{C,D,S,W,M,E,BRIDGE}.tape` | `HEXAD/{C,D,S,W,M,E,BRIDGE}/HEXAD-<X>.tape` |
 | 통합 spec | `HEXAD.tape` | [`HEXAD.tape`](HEXAD.tape) (root 유지 — AGENTS.tape 직접 참조) |
 | 성장축 | `MITOSIS.tape` | [`HEXAD/MITOSIS/`](HEXAD/MITOSIS/) (서브폴더 — `MITOSIS.tape` + `mitosis.hexa` scaffold + README) |
-| SAVANT | `SAVANT.tape` + `SAVANT-TOOL.tape` + 4× `tool/anima_savant_*.hexa` + `anima-engines/savant_phi.hexa` | [`HEXAD/SAVANT/`](HEXAD/SAVANT/) (9 파일) |
+| TENSION-LINK | `TENSION-LINK.tape/.log.tape` + `training/tension_link_*.hexa` (5) + `tests/test_tension_link*.hexa` (2) + `bench/bench_tension_link.hexa` + `experiments/verify_tension_link.hexa` + `docs/tension_link_*.md` (4) | [`HEXAD/TENSION-LINK/`](HEXAD/TENSION-LINK/) (17 파일 + README, ASCII topology + 100% verified measured + Noether proof) |
+| SAVANT | `SAVANT.tape` + `SAVANT-TOOL.tape` + 4× `tool/anima_savant_*.hexa` + `anima-engines/savant_phi.hexa` | [`HEXAD/SAVANT/`](HEXAD/SAVANT/) (9 파일 + COMPENDIUM 783L + Π 증명 + H359, PR #85) |
 
 자세한 내용은 [HEXAD/README.md](HEXAD/README.md) + [HEXAD/INDEX.md](HEXAD/INDEX.md) 참고.
