@@ -13,7 +13,7 @@
 - **Savant** = dropout 을 GZ_CENTER (1/e) → GZ_LOWER (0.2123) 로 내려 inhibition 해제한 cell/layer. SI = max/min domain tension > 3 → specialization 확립.
 - 본 디렉토리 (`HEXAD/SAVANT/`) = **현재 hexa-native impl** (PR #81 통합). **canonical compendium + Π 증명 + ASCII 차트** 는 모두 외부 (`~/core/archive-TECS-L`) 또는 **deleted commit** 에 있음 — 이 README 가 location index.
 
-## 1. 현재 `HEXAD/SAVANT/` (PR #81 통합, 9 파일)
+## 1. 현재 `HEXAD/SAVANT/` (PR #81 통합 9 + PR #85 복구 4 = 13 파일)
 
 | 파일 | 역할 |
 |---|---|
@@ -24,6 +24,10 @@
 | `anima_savant_si_monitor.hexa` | SI auto-monitor (Phase 3-b, commit `b4a3e2ba8`) |
 | `anima_savant_routing_overlay.hexa` | routing overlay top-k mask (Phase 3-c, GZ_LOWER 21% / GZ_CENTER 37%) |
 | `savant_phi.hexa` | Φ 계산 engine (PR #81 anima-engines/ 에서 이동) |
+| **🆕 `COMPENDIUM.md` (PR #85)** | **GZ + Savant 전수조사 cumulative compendium 783 lines** (commit `c7d0548f7` retrieval = 539-line `63ca36abe` original + §10/§11/§12 부록 누적) |
+| **🆕 `H359-savant-canonical.md` (PR #85)** | Savant H359 canonical doc (ASCII 차트 다수, archive-TECS-L copy) |
+| **🆕 `proofs/gz_analytical_proof.py` (PR #85)** | GZ_CENTER (1/e) / GZ_WIDTH (ln 4/3) closed-form 증명 (archive-TECS-L copy 799 lines) |
+| **🆕 `proofs/README.md` (PR #85)** | proofs/ 디렉토리 overview + cross-link |
 
 ## 2. anima 내부 — `HEXAD/SAVANT/` 외 잔존
 
@@ -141,26 +145,27 @@ Singularity Rate by Inhibition (50% transition @ I≈0.27):
 
 (전체 그래프 + 다른 표 = `~/core/archive-TECS-L/docs/hypotheses/359-savant-golden-zone-inhibition.md`)
 
-## 7. 누락분 priority 평가
+## 7. 누락분 priority 평가 (PR #85 4 항목 ✅ restored)
 
-| priority | 항목 | 추천 action |
+| priority | 항목 | 상태 |
 |---|---|---|
-| ★★★ critical | SAVANT.md compendium 539 lines (commit `63ca36abe`) | restore as `HEXAD/SAVANT/COMPENDIUM.md` (또는 archive 안에 보존) — 검증된 canonical, 다른 모든 게 이 vocabulary 사용 |
-| ★★★ critical | `archive-TECS-L/math/proofs/gz_analytical_proof.py` Π 증명 | copy to `HEXAD/SAVANT/proofs/gz_analytical_proof.py` (read-only evidence anchor) |
-| ★★ high | `archive-TECS-L/docs/hypotheses/359-savant-golden-zone-inhibition.md` (ASCII 차트) | copy to `HEXAD/SAVANT/H359-savant-canonical.md` |
-| ★★ high | SAVANT.md §10/§11/§12 부록 (commits `c05c397bd`, `2f2f98404`, `7386c8a96`) | git retrieval + 통합 → `HEXAD/SAVANT/COMPENDIUM-APPENDIX.md` |
+| ★★★ critical | SAVANT.md compendium 539 → 783 lines (cumulative `c7d0548f7`) | ✅ **RESTORED PR #85** → `COMPENDIUM.md` (§10/§11/§12 부록 자동 통합 — 누적 cumulative) |
+| ★★★ critical | `archive-TECS-L/math/proofs/gz_analytical_proof.py` Π 증명 | ✅ **RESTORED PR #85** → `proofs/gz_analytical_proof.py` (799 lines copy) |
+| ★★ high | `archive-TECS-L/docs/hypotheses/359-savant-golden-zone-inhibition.md` (ASCII 차트) | ✅ **RESTORED PR #85** → `H359-savant-canonical.md` (906 lines copy) |
+| ★★ high | SAVANT.md §10/§11/§12 부록 (commits `c05c397bd`/`2f2f98404`/`7386c8a96` 등) | ✅ **자동 통합** in `COMPENDIUM.md` 누적 cumulative version |
 | ★ medium | archive-TECS-L 엔진 8개 (golden_moe variants) | reference-only (cite path), 본격 import 는 RFC |
-| ★ medium | archive-TECS-L 가설 15+ (002-/008-/013-/044-/082-/126-/151-/162-/236-/327-/359-/403-/404-) | citation index — `HEXAD/SAVANT/HYPOTHESES-INDEX.md` |
+| ★ medium | archive-TECS-L 가설 15+ (002-/008-/013-/044-/082-/126-/151-/162-/236-/327-/359-/403-/404-) | citation index — `HEXAD/SAVANT/HYPOTHESES-INDEX.md` (별도 cycle) |
 | medium | `state/savant_containment_audit_2026_05_14/` raw outputs | 잔존 carry, audit 결과 요약 시 가공 |
 | low | DELETED commit 의 §10.1 v6 cell-parallel FAIL ledger | git history 만으로 충분 |
 
 ## 8. 복구 roadmap (사용자 게이트 별)
 
-1. **즉시 가능 ($0)**:
-   - SAVANT.md compendium retrieval: `git show 63ca36abe:SAVANT.md > HEXAD/SAVANT/COMPENDIUM.md` + commit
-   - H359 doc copy: `cp ~/core/archive-TECS-L/docs/hypotheses/359-savant-golden-zone-inhibition.md HEXAD/SAVANT/H359-savant-canonical.md`
-   - gz_analytical_proof.py copy: `cp ~/core/archive-TECS-L/math/proofs/gz_analytical_proof.py HEXAD/SAVANT/proofs/`
-2. **별도 cycle (low)**: 가설 15+ citation index 작성
+1. ✅ **즉시 가능 ($0) — LANDED PR #85 (2026-05-16)**:
+   - ✅ SAVANT.md compendium retrieval (cumulative 783 lines, `c7d0548f7`) → `COMPENDIUM.md`
+   - ✅ H359 doc copy → `H359-savant-canonical.md`
+   - ✅ gz_analytical_proof.py copy → `proofs/gz_analytical_proof.py`
+   - ✅ proofs/README.md (proofs 디렉토리 overview)
+2. **별도 cycle**: 가설 15+ citation index 작성 (low priority)
 3. **별도 RFC**: golden-moe 엔진 8개 hexa-native 포팅 (HEXAD/PLAN.md Phase 의 외연)
 
 ## 9. Honest C3
