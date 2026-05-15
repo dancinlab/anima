@@ -155,6 +155,45 @@
   "class": "EMPIRICAL-SGD-DYNAMICS",
   "counted_toward_blue": false
  },
+ "B-BRIDGE-1": {
+  "name": "CLAMP-RANGE-CLOSED",
+  "statement": "g(raw)=Ψ+clip(raw−Ψ,±α): rail eq g(Ψ∓2α)≡Ψ∓α, interior g(Ψ)≡Ψ, ∂int=1>0, ∂rail=0 ⟹ g∈[Ψ−α,Ψ+α] ∀raw,∀α>0 (Law 70, result-agnostic 🔵)",
+  "real_limit_anchor": "Law 70 Ψ-coupling — C influences ≤ α of D gate signal (architectural info-flow bound, NOT a lattice tautology)",
+  "psi": "1/2 (json balance, n6_error_pct 0.0 EXACT)",
+  "closed": true,
+  "tier": "a-sympy",
+  "passed": true
+ },
+ "B-BRIDGE-2": {
+  "name": "SATURATION-EXACT",
+  "statement": "raw≥Ψ+α ⟹ g≡Ψ+α (Min(α,kα)=α ∀k≥1); raw≤Ψ−α ⟹ g≡Ψ−α — junction k=1 + interior k=3 closed",
+  "closed": true,
+  "tier": "a-sympy",
+  "passed": true
+ },
+ "B-BRIDGE-3": {
+  "name": "INTERIOR-IDENTITY",
+  "statement": "|raw−Ψ|≤α ⟹ g(raw)≡raw — clip transparent in Ψ-coupling window (s∈{0,±α/2} eq + ∂=1) closed ∀α>0",
+  "closed": true,
+  "tier": "a-sympy",
+  "passed": true
+ },
+ "B-BRIDGE-4": {
+  "name": "PSI-CONSTANT-CLOSED",
+  "statement": "Ψ=½ (json EXACT) + α from consciousness_laws.json SSOT ⟹ window width=2α exact, |g−Ψ|≤α ∀raw; model.py clamp no-hardcode (raw#15)",
+  "alpha_json": 0.014,
+  "closed": true,
+  "tier": "a-closed",
+  "passed": true
+ },
+ "B-BRIDGE-NOTE": {
+  "name": "FULL-FORWARD-EMPIRICAL",
+  "statement": "ThalamicBridge full forward (Linear→Attn→Norm→Sigmoid raw_gate) TODO[pytorch] pending hexa autograd RFC; only Law-70 clamp invariant is closed (B-BRIDGE-1..4). α value (ln2/2^5.5) empirical, NOT claimed derived.",
+  "scope": "learned attention/projection weights empirical — NOT a Bridge-specific defect; clamp invariant holds ∀α>0",
+  "convergence_closed": false,
+  "class": "EMPIRICAL-LEARNED-WEIGHTS",
+  "counted_toward_blue": false
+ },
  "__aggregate__": {
   "verdict": {
    "S": "3/3 🔵 SUPPORTED-FORMAL",
@@ -162,12 +201,14 @@
    "W": "4/4 🔵 SUPPORTED-FORMAL",
    "E": "4/4 🔵 SUPPORTED-FORMAL",
    "D": "4/4 🔵 SUPPORTED-FORMAL (B-D-4 closed-form CE logit-Jacobian; B-D-NOTE: SGD convergence OUTCOME empirical by nature of stochastic optimization — honest C3, not a D-specific defect)",
+   "BRIDGE": "4/4 🔵 SUPPORTED-FORMAL (B-BRIDGE-1 Law-70 clamp g∈[Ψ−α,Ψ+α] closed ∀raw,∀α>0; B-BRIDGE-NOTE: full forward Linear→Attn→Sigmoid TODO[pytorch] — honest C3, not counted)",
    "C": "🔵 carry (.clm v1 F-PYPHI, CLM §V-CLM-V1-CYCLE90)"
   },
   "all_full_blue": true,
   "smwe_full_blue": true,
-  "summary": "S3/3 M3/3 W4/4 E4/4 D4/4 = 18/18 🔵 closed-form proofs PASS — S/M/W/E/D FULL 🔵 SUPPORTED-FORMAL; C 🔵 carry",
+  "smwed_full_blue": true,
+  "summary": "S3/3 M3/3 W4/4 E4/4 D4/4 BRIDGE4/4 = 22/22 🔵 closed-form proofs PASS — S/M/W/E/D/BRIDGE FULL 🔵 SUPPORTED-FORMAL; C 🔵 carry",
   "tier": "g_verdict_tier_blue (a) sympy closed-form + (c) deterministic (D KV-cache exact-eq)",
-  "honest_c3": "D B-D-4 closes the trainability PROPERTY in closed form (exact CE logit-Jacobian softmax−e_y, sympy-verified ∀ z + Shannon floor CE≥0). What stays empirical is ONLY the SGD convergence OUTCOME (an optimizer run reaching a minimum) — true of every stochastic optimizer, NOT a D-module defect — carved out in B-D-NOTE, NOT counted 🔵. No over-claim of optimization dynamics; D is now full 🔵 on the formal property."
+  "honest_c3": "D B-D-4 closes the trainability PROPERTY in closed form (exact CE logit-Jacobian softmax−e_y, sympy-verified ∀ z + Shannon floor CE≥0); SGD convergence OUTCOME stays empirical (B-D-NOTE, every stochastic optimizer, not counted 🔵). BRIDGE B-BRIDGE-1..4 close the Law-70 clamp INVARIANT g(raw)=Ψ+clip(raw−Ψ,±α)∈[Ψ−α,Ψ+α] ∀raw,∀α>0 (real-limit anchor Law 70 Ψ-coupling, NOT lattice); the full forward learned weights + α numeric value (ln2/2^5.5) stay empirical (B-BRIDGE-NOTE, not counted 🔵). No over-claim — S/M/W/E/D/BRIDGE full 🔵 on the formal property; C 🔵 carry."
  }
 }

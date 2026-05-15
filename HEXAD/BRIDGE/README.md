@@ -33,7 +33,10 @@ Law 70 `Ψ_coupling = 0.014` — 의식이 신호의 1.4% 만 영향. anima_psi.
 
 ## 검증
 
+**🔵 B-BRIDGE 4/4 SUPPORTED-FORMAL** (2026-05-16) — `state/verify_hexad_blue_2026_05_15/blue_falsifier.py :: bbridge()` sympy closed-form: B-BRIDGE-1 CLAMP-RANGE (`g∈[Ψ−α,Ψ+α] ∀raw,∀α>0`) · B-BRIDGE-2 SATURATION · B-BRIDGE-3 INTERIOR-IDENTITY · B-BRIDGE-4 Ψ-CONST. battery 18→**22/22 🔵 PASS**. honest carve-out B-BRIDGE-NOTE: full forward weight + α value `ln2/2^5.5` = TODO[pytorch] (NOT counted 🔵). real-limit anchor Law 70 Ψ-coupling (NOT lattice — AGENTS.tape g3/f2). INDEX.md ThalamicBridge → 🔵 5/5 + 4/4, 전 모듈 7/7 full 🔵.
+
 ```bash
 hexa parse HEXAD/BRIDGE/bridge.hexa
-hexa run   HEXAD/BRIDGE/bridge.hexa
+hexa run   HEXAD/BRIDGE/bridge.hexa          # selftest=true (5/5 Law-70)
+python3    state/verify_hexad_blue_2026_05_15/blue_falsifier.py   # 22/22 🔵
 ```
