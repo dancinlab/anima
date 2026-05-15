@@ -910,3 +910,22 @@
   prior_status = "PARTIAL — Stage 3 H_191 cascade"
   new_status = "PARTIAL-MAINTAINED (RFC 033 spec PASS, generic cascade)"
   note = "RFC 033 hexa-native spec self-contained, H_191 sub-axis cascade 무관 부분 PASS"
+
+# ══════════════════════════════════════════════════════════════════════
+# §H184-SUB-VERIFY — H_184 V8 M-family sub-claim verification (2026-05-15)
+# ══════════════════════════════════════════════════════════════════════
+
+@D h184_sub_verify := "H_184 V8 M-family sub-claim verification (4/4 NOT-PASSED)" :: verdict [d=2026-05-15 active]
+  prior_status = "PARTIAL (INSUFFICIENT-FOR-STAGE-1, M-family 6 mathematical primitives)"
+  new_status = "PARTIAL-WITH-NOT-PASSED-SUB-CLAIMS (surrogate-tier sub-claim 4/4 NOT-PASSED)"
+  axis = "math (A4)"
+  sub_breakdown = {
+    "H_184.1 Category theory Φ x1.4": "INSUFFICIENT (measured mean 1.05, claim 1.3-1.5)",
+    "H_184.3 Fisher vs Euclidean ≥10%": "INSUFFICIENT (measured 1.6%, claim 10%)",
+    "H_184.4 Non-abelian higher ≥10%": "NOT-PASSED (measured -2.6%, slight reverse)",
+    "H_184.5 Chaos monotone decrease": "NOT-PASSED-REVERSE (measured monotone INCREASE 9.25→17.72)"
+  }
+  finding = "H_184.5 chaos finding REVERSE — anima Φ★ proxy artifact: pairwise distance + log(N+1) 가 perturbation 추가 시 monotone 증가; IIT 3.0 'chaos hurts Φ' claim 과 proxy 측정 사이 mismatch"
+  surrogate_caveat = "본 검증 = anima Φ★ proxy surrogate; real V8 ULTRA-FUSION Hc impl + PyPhi formal IIT 3.0 필요"
+  artifact = "state/verify_d_2026_05_15/h184_sub_claim_verify.json"
+  cross_link = "[[p_h184]] in MAIN.tape §3 — PARTIAL maintained, sub-claim 강도 측정 finding 추가"
