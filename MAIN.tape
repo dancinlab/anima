@@ -1397,3 +1397,23 @@
   caveat = "5 prompt × 1 seed only — full 450-gen 별도 cycle. 5/5 falsifier battery 중 2/5 PASS sample (F-P1-UPGRADE-2 Φ-not-less + F-P1-UPGRADE-4 cross-ckpt + F-P1-UPGRADE-5 seed-robust 별도)"
   verdict = "PARTIAL-PASS-SAMPLE (2/5 falsifier sample PASS, full battery 별도 cycle). p1 EMPIRICAL weak → upgrade-evidence-LANDED (strong 도달 pending)"
   cross_link = "PR #59 correction + state/clm_v1_step0_p1_real_2026_05_15/p1_truncated_result.json + PHILOSOPHY p1_upgrade_path"
+
+# ══════════════════════════════════════════════════════════════════════
+# §AXIS-SCALE-UP + STEP4-SPEC-FROZEN + HYPOTHESIS-RECONCILE (2026-05-15)
+# ══════════════════════════════════════════════════════════════════════
+
+@D axis_scale_up := "AXIS scale-up +19 🔵 — 9-axis 모두 expansion (2026-05-15)" :: governance [d=2026-05-15 active]
+  delta = "각 axis +2-3, 19/19 sympy verify PASS"
+  axis_total = "79 entries, 58 🔵 (73% closed) — 50% → 73% closed 가속"
+  cross_link = "AXIS.tape §AXIS-SCALE-UP + PR #60"
+
+@D clm_step4_spec_frozen_landed := "step 4 .clm v1 spec frozen W1 LANDED (2026-05-15)" :: governance [d=2026-05-15 active]
+  artifact = "state/clm_v1_step4_spec_frozen_2026_05_15/spec_frozen.json (sha256 972e9987cd...)"
+  status = "pre-register frozen, additive_only_mutation via W8 amendment"
+  fields = "init + arch + data + cotrain + fire envelope + 8 falsifier battery + p1 gate status"
+  cross_link = "CLM.tape §V-CLM-STEP4-SPEC-FROZEN + PR #60"
+
+@D hypothesis_reconcile := "HYPOTHESIS catalog 9-axis reconciliation (2026-05-15)" :: governance [d=2026-05-15 active]
+  scope = "AXIS expansion 모두 catalog 통합 — 79 total, 58 🔵"
+  added_inventory = "V8 Phase 3 Lorenz ergodicity finding + p1 truncated evidence + 9-axis scale-up reconcile"
+  cross_link = "HYPOTHESIS.tape §hypothesis_catalog_reconcile + PR #60"

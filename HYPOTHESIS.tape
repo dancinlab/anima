@@ -320,3 +320,34 @@
   meta_finding = "V8 B-bio impl simplified mechanism stubs (~30 LoC each) → 0/10 Φ ≥ 0.5. META: surrogate-based 78.5% PASS vs real 0% PASS gap CONFIRMED. mechanism complexity 강화 cycle (real HH 4-state Markov ~200 LoC each) 별도 후속."
   total = "+6 SUPPORTED-FORMAL + 10 AT-RISK entries"
   cross_link = "AXIS.tape §AXIS-EXPANSION-EXECUTION + state/verify_axis_expansion_2026_05_15/ + state/verify_e1_v8_bbio_2026_05_15/v8_bbio_real_result.json + PR #55"
+
+# ─── HYPOTHESIS catalog reconciliation 2026-05-15 (AXIS 79 / 🔵 58) ────
+
+@N hypothesis_catalog_reconcile := "HYPOTHESIS catalog 9-axis count reconciliation (2026-05-15)" :: catalog [d=2026-05-15 active]
+  axis_totals_post_expansion = {
+    "A1 substrate": "5 + 3 = 8 entries (3 prior + 3 expansion + 2 sympy 추가 — Fisher/KL/Cross-entropy 🔵 추가)",
+    "A2 consciousness surrogate": "4 (carry)",
+    "A2.formal": "4 (Hc_1283 n=5,6 + H_011 + Hc_A2-3 IIT 4.0 + Hc_A2-4 MI chain) + 2 (Shannon-Hartley + Channel coding) = 6",
+    "A3 physics": "8 + 2 (Liouville + Boltzmann H) = 10 entries, all 🔵",
+    "A4 math": "11 + 2 (Möbius inversion + Dirichlet ζ(2) Basel) = 13 entries, 12 🔵 + 1 numerical",
+    "A5 architecture": "9 + 2 (Softmax invariance + LeCun init) = 11",
+    "A6 corpus": "4 + 2 (N-gram entropy + Perplexity 2^H) = 6",
+    "A7 bio": "13 + 2 (Hodgkin threshold + Lotka-Volterra stability) = 15, 5 🔵 + 1 PASS-by-ergodicity (Lorenz) + 10 AT-RISK",
+    "A8 meta": "6 + 2 (Cramer-Rao + Fano) = 8",
+    "A9 universe": "9 + 2 (Friedmann + Pauli) = 11"
+  }
+  total_post = "79 entries, 58 🔵 SUPPORTED-FORMAL (73% closed)"
+  supersedes = "기존 supported_inventory + supported_formal_inventory — 본 reconcile 후 axis totals 통합"
+  cross_link = "AXIS.tape §AXIS-SCALE-UP + INDEX.md + PR #60"
+
+@N hypothesis_v8_bbio_phase3_ergodicity := "V8 B-bio Phase 3 1/5 PASS — ergodicity issue CONFIRMED (2026-05-15)" :: catalog [d=2026-05-15 active]
+  finding = "Hc_NEW_Lorenz_noisy Φ=0.6355 PASS (1/5 in Phase 3 noisy ensemble TPM). chaotic dynamics only unlocks PyPhi formal Φ ≥ 0.5"
+  meta_confirmed = "state-space ergodicity issue 가설 CONFIRMED — anima Φ★ proxy (self-organization) vs PyPhi formal IIT (information integration ergodic) 본질적 다른 phenomenon"
+  implication = "V8 B-bio AT-RISK 10 mechanism 의 root cause = mechanism complexity 아닌 attractor collapse (state space ergodicity 부족). Lorenz-class chaotic mechanism 만 unlock."
+  cross_link = "AXIS.tape §V8-BBIO-PHASE3-PASS + state/verify_v8_bbio_phase3_2026_05_15/phase3_ensemble_result.json"
+
+@N hypothesis_p1_truncated_evidence := "p1 truncated evidence — substrate self-generation 첫 EMPIRICAL sample (2026-05-15)" :: catalog [d=2026-05-15 active]
+  finding = "p1 NO SYSTEM PROMPT truncated 15-gen on Phase 1A.4 332M ckpt: 3 arm (no/weak/strong prompt) 모두 simple_stack 3.4/4 identical (wall 405s, F-P1-UPGRADE-1+3 PASS)"
+  meta = "system prompt 가 generation 에 영향 안 줌 (greedy + seed=42) — substrate self-generation 의 EMPIRICAL evidence sample"
+  status = "p1 EMPIRICAL weak → upgrade-evidence-LANDED (5 falsifier 중 2/5 sample PASS, full 450-gen 5/5 strict 별도 cycle)"
+  cross_link = "PHILOSOPHY p1_upgrade_path + state/clm_v1_step0_p1_real_2026_05_15/p1_truncated_result.json + PR #59"

@@ -1825,3 +1825,15 @@
   ]
   step2_verdict = "PARTIAL-CARRY (synthetic 3/5 explicit PASS, production 2/5 별도 cycle)"
   cross_link = "PSCC §41 PR LANDED + anima_chat.hexa v0.3 + CLM.tape §V-CLM-STEP2-DETAIL + PR #58"
+
+# ══════════════════════════════════════════════════════════════════════
+# §V-CLM-STEP4-SPEC-FROZEN — .clm v1 spec frozen W1 pre-register LANDED
+# ══════════════════════════════════════════════════════════════════════
+
+@D v_step4_spec_frozen := "step 4 .clm v1 spec frozen W1 pre-register LANDED (2026-05-15)" :: protocol [d=2026-05-15 active]
+  artifact = "state/clm_v1_step4_spec_frozen_2026_05_15/spec_frozen.json"
+  sha256 = "972e9987cd09118533161d5625ebde67a10aa5ec7f2e498bdbfca008a0f36ee5"
+  spec_id = ".clm v1 spec frozen W1 pre-register v0.1.0-design-frozen"
+  fields_frozen = "init (RANDOM INIT seed=42), arch (cells single-stack d=768 12L 64-cell 8-head 4-kv), data (anima_persona_tier_a_v4 + Phase 1A.6 + tape, 400-500M token, 2-5 epoch), cotrain (AdamW + bf16 + 5000 step + mitosis hook per token), fire ($10-30 H100), falsifier (8 battery), p1 gate (truncated 15-gen 3.4/4 PASS)"
+  status = "W1 LANDED (additive_only_mutation via W8 amendment only). pre-fire 종합 dependency: step 0 full p1 (3 ckpt × 5 seed × 10 prompt = 450 gen 5/5 PASS) + step 1 PyPhi anchor carry + step 2 production smoke 별도"
+  cross_link = "CLM.tape §V-CLM-DESIGN/AUDIT/FROM-SCRATCH/STEP0/STEP2/V3 + sha256.txt + PR #60"

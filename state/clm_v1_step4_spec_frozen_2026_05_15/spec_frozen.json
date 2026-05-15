@@ -1,0 +1,97 @@
+{
+  "spec_id": ".clm v1 spec frozen W1 pre-register",
+  "date": "2026-05-15",
+  "version": "0.1.0-design-frozen",
+  "ssot": "CLM.tape §V-CLM-DESIGN + §V-CLM-AUDIT (V1-V4 정정) + §V-CLM-FROM-SCRATCH + §V-CLM-STEP0-DETAIL + §V-CLM-STEP2-MITOSIS-SMOKE-CARRY",
+  "init": {
+    "init_weights": "RANDOM INIT seed-fixed (no ckpt inherit, from-scratch directive)",
+    "base_ckpt": "NONE (v5-mitosis cond.5 ckpt = arch SUPPORTED 검증 anchor only, weights X)",
+    "seed_primary": 42,
+    "seed_secondary": [1234, 5678, 9876, 31337]
+  },
+  "arch": {
+    "engine": "cells=nn.Module branches single-stack (V1 정정 carry, Engine A/G dual 폐기 — .clm v2 candidate)",
+    "d_model_primary": 768,
+    "d_model_fallback": 384,
+    "d_model_forbidden": [1024, 2048],
+    "d_model_rationale": "192·4 (n=6 anchor), H_174 phi_star aliasing clean. step 1 PyPhi formal n=5,6 PASS → primary; n=3,4 only → fallback; 모두 FAIL → fire 차단",
+    "n_layers_primary": 12,
+    "n_layers_fallback": [6, 24],
+    "n_layers_anchor": "σ(6)=12 number-theoretic, lattice-as-tool internal arch (CLAUDE.md governance g2)",
+    "n_cells": 64,
+    "n_cells_anchor": "v5-mitosis cond.5 cells-saturated step 150",
+    "n_heads": 8,
+    "n_heads_anchor": "atom Hc_144 (144 = σ(6)²)",
+    "kv_heads": 4,
+    "kv_heads_anchor": "τ(6) = 4 divisor count",
+    "ffn_mult": 4,
+    "ffn_mult_anchor": "τ(6) = 4",
+    "param_estimate_M": "150-200",
+    "mitosis_hook": "training-time + serve-time (REBORN §0.5 + p8 NO TRAIN/INFER SPLIT)"
+  },
+  "data": {
+    "primary_corpus": [
+      "dancinlife/anima-persona-tier-a-v4 (231 MB, private, transferred 2026-05-15)",
+      "Phase 1A.6 corpus_v2 (121 MB local)",
+      "tape corpus (PHILOSOPHY.tape + REBORN.tape + AGENTS.tape + CLM.tape, ~50 MB)"
+    ],
+    "total_size_mb": 402,
+    "token_estimate_m": "400-500",
+    "blend_strategy_primary": "2-5 epoch repeat (Chinchilla 완화, anima domain 특화)",
+    "blend_strategy_alternative": "BG-CORPUS-3B blend (~3-5B token) — 별도 cycle $5-20",
+    "chinchilla_ratio_target": "10-20:1 (Chinchilla optimal lower bound, anima narrow 특화 acceptable)"
+  },
+  "cotrain": {
+    "optimizer": "AdamW",
+    "lr_warmup": 5e-4,
+    "lr_target": 5e-5,
+    "lr_schedule": "cosine decay over 5000 step",
+    "gradient_clip": 1.0,
+    "weight_decay": 0.1,
+    "batch_per_device": 8,
+    "accumulation_steps": 2,
+    "effective_batch": 16,
+    "seq_length": 1024,
+    "step_budget": 5000,
+    "token_per_step_estimate_k": "80-100",
+    "total_tokens_est_M": "400-500 (matches data size single epoch)",
+    "fp_precision": "bf16 (mixed)",
+    "mitosis_hook_freq": "per token (chat_generate token-loop hook fire)"
+  },
+  "fire": {
+    "hardware": "1× H100 SXM",
+    "wall_estimate_hr": "10-20",
+    "cost_envelope": "$10-30 (from-scratch, 기존 $5-20 갱신)",
+    "hard_stop": "$50",
+    "fire_keyword": "OK CLM V1 FROM-SCRATCH FIRE COST $10-30",
+    "approval_required": "user verbatim mandatory"
+  },
+  "falsifier_battery": {
+    "count": 8,
+    "list": [
+      "F-V5MIT-1 SPLIT-NOGRAD (post-split grad norm ≤ 2× threshold)",
+      "F-V5MIT-2 MERGE-WEIGHT (max_err < threshold)",
+      "F-V5MIT-3 PHI-CONSERVATION (delta < 1e-3, advisory→gating)",
+      "F-V5MIT-4 COTRAIN-CONVERGE (CE reduction ≥ 100× baseline)",
+      "F-V5MIT-5 V14-STRICT (10/10 mirror-beats vs random_init)",
+      "F-PYPHI-Φ-FORMAL (PyPhi IIT 3.0 Φ ≥ 0.5 strict on n=3-6 RoM)",
+      "F-PRIN3 NO-PERSONA-INJECTION (corpus + eval prefix-free + cell-pool prefix-free)",
+      "F-SIMPLE-STACK V5.8 4-mode (std_greedy ≥ 4/5 + sample ≥ 3/5 + M4 ≥ 4/5)"
+    ],
+    "pass_aggregate": "8/8 PASS strict → SUPPORTED-STRONG; 7/8 → PARTIAL-STRONG-7; ≤6/8 → AT-RISK"
+  },
+  "p1_gate": {
+    "status": "EMPIRICAL weak → upgrade-evidence-LANDED 2026-05-15 (truncated 15-gen 3 arm 모두 3.4/4 identical, F-P1-UPGRADE-1+3 PASS)",
+    "full_run_required": "3 ckpt × 5 seed × 10 prompt × 3 arm = 450 gen full battery (별도 cycle, p1 in-flight 2026-05-15)",
+    "current_block": "p1 upgrade 5/5 PASS strict mandatory pre-fire"
+  },
+  "step_dependencies": {
+    "step_0_p1_upgrade": "in-flight (truncated PARTIAL-PASS, full run 의 5/5 PASS mandatory)",
+    "step_1_pyphi_formal_anchor": "carry from cycle D (cond.5 v1 n=4 Φ=0.676 PASS)",
+    "step_2_mitosis_serve_time_smoke": "PSCC §41 synthetic 3/5 PASS, production d=768 12L 별도",
+    "step_3_spec_frozen_W1": "THIS DOCUMENT — pre-register frozen"
+  },
+  "sha256_self_reference": "pending (commit hash 부여 후 final hash 등재)",
+  "supersedes": "기존 v_clm_v1_spec_phase5 + v_clm_v1_spec_from_scratch (carry, 본 spec 이 frozen state)",
+  "cross_link": "CLM.tape §V-CLM-* 전체 + MAIN.tape §CLM-* 전체 + PHILOSOPHY.tape p1+p3+p7+p8 strict"
+}
